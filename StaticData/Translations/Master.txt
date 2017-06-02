@@ -6166,3 +6166,6 @@ Translated:Z Offset is too large.
 English:The Z Offset for your printer, sometimes called Babby Stepping, is greater than 2mm and invalid. Clear the value and re-level the bed.
 Translated:The Z Offset for your printer, sometimes called Babby Stepping, is greater than 2mm and invalid. Clear the value and re-level the bed.
 
+English:The distance the z probe is from the extruder in z. For manual probing, this is the negated thickness of the paper (or other calibration device).
+Translated:The distance the z probe is from the extruder in z. For manual probing, this is the negated thickness of the paper (or other calibration device).
+

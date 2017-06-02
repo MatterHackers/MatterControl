@@ -1231,9 +1231,9 @@
 	{
 		"QuickMenuSettings": [ ],
 		"SetSettingsOnChange": [ ],
-		"SlicerConfigName": "manual_probe_paper_width",
-		"PresentationName": "Paper Width / Z Offset",
-		"HelpText": "The offset to use whene probing. For manual probing, this is the thickness of the paper (or other calibration device).",
+		"SlicerConfigName": "z_probe_z_offset",
+		"PresentationName": "Z Offset",
+		"HelpText": "The distance the z probe is from the extruder in z. For manual probing, this is thickness of the paper (or other calibration device).",
 		"DataEditType": "DOUBLE",
 		"ExtraSettings": "mm",
 		"ShowAsOverride": true,

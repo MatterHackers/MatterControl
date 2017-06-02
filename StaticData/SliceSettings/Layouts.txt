@@ -334,8 +334,8 @@ Advanced
         print_leveling_probe_start
         use_z_probe
         z_probe_samples
-        manual_probe_paper_width
         z_probe_xy_offset
+        z_probe_z_offset
         z_servo_depolyed_angle
         z_servo_retracted_angle
     Print Recovery

@@ -95,7 +95,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string layer_to_pause = nameof(layer_to_pause);
 		public const string leveling_manual_positions = nameof(leveling_manual_positions);
 		public const string make = nameof(make);
-		public const string manual_probe_paper_width = nameof(manual_probe_paper_width);
+		public const string z_probe_z_offset = nameof(z_probe_z_offset);
 		public const string merge_overlapping_lines = nameof(merge_overlapping_lines);
 		public const string min_fan_speed = nameof(min_fan_speed);
 		public const string model = nameof(model);

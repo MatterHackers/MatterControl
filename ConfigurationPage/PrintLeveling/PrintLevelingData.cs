@@ -159,5 +159,23 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			return true;
 		}
+
+		public bool SamplesAreSame(List<Vector3> sampledPositions)
+		{
+			if (sampledPositions.Count == SampledPositions.Count)
+			{
+				for (int i = 0; i < sampledPositions.Count; i++)
+				{
+					if (sampledPositions[i] != SampledPositions[i])
+					{
+						return false;
+					}
+				}
+
+				return true;
+			}
+
+			return false;
+		}
 	}
 }

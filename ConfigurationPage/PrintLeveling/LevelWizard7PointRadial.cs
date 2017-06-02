@@ -155,7 +155,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			if (currentLevelingFunctions == null
 				|| currentLevelingFunctions.NumberOfRadialSamples != numberOfRadialSamples
 				|| currentLevelingFunctions.BedCenter != bedCenter
-				|| currentLevelingFunctions.LevelingData != levelingData)
+				|| !levelingData.SamplesAreSame(currentLevelingFunctions.SampledPositions))
 			{
 				if (currentLevelingFunctions != null)
 				{
@@ -178,7 +178,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public RadialLevlingFunctions(int numberOfRadialSamples, PrintLevelingData levelingData, Vector2 bedCenter)
 		{
-			this.LevelingData = levelingData;
+			this.SampledPositions = new List<Vector3>(levelingData.SampledPositions);
 			this.BedCenter = bedCenter;
 			this.NumberOfRadialSamples = numberOfRadialSamples;
 
@@ -190,10 +190,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			get; set;
 		}
 
-		public PrintLevelingData LevelingData
-		{
-			get; set;
-		}
+		public List<Vector3> SampledPositions { get; private set; }
 
 		public int NumberOfRadialSamples { get; set; }
 
@@ -247,7 +244,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public Vector3 GetPositionWithZOffset(Vector3 currentDestination)
 		{
-			if (LevelingData.SampledPositions.Count == NumberOfRadialSamples + 1)
+			if (SampledPositions.Count == NumberOfRadialSamples + 1)
 			{
 				Vector2 destinationFromCenter = new Vector2(currentDestination) - BedCenter;
 
@@ -266,7 +263,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					lastIndex = 0;
 				}
 
-				Plane currentPlane = new Plane(LevelingData.SampledPositions[firstIndex], LevelingData.SampledPositions[lastIndex], LevelingData.SampledPositions[NumberOfRadialSamples]);
+				Plane currentPlane = new Plane(SampledPositions[firstIndex], SampledPositions[lastIndex], SampledPositions[NumberOfRadialSamples]);
 
 				double hitDistance = currentPlane.GetDistanceToIntersection(new Vector3(currentDestination.x, currentDestination.y, 0), Vector3.UnitZ);
 
