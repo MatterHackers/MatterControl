@@ -65,10 +65,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
 			levelingData.SampledPositions.Clear();
 
-			Vector3 paperWidth = new Vector3(0, 0, ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.manual_probe_paper_width));
+			Vector3 zProbeOffset = new Vector3(0, 0, ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.z_probe_z_offset));
 			for (int i = 0; i < probePositions.Count; i++)
 			{
-				levelingData.SampledPositions.Add(probePositions[i].position - paperWidth);
+				levelingData.SampledPositions.Add(probePositions[i].position - zProbeOffset);
 			}
 
 			// Invoke setter forcing persistence of leveling data
