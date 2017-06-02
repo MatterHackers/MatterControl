@@ -383,7 +383,7 @@ English:No printer is currently selected. Select printer to edit slice settings.
 Translated:目前没有打印机被选中。选择打印机来编辑切片设置。
 
 English:Attempts to minimize the number of perimeter crossing. This can help with oozing or strings.
-Translated:尝试尽量减少周界数量。这可以帮助渗透或字符串。
+Translated:试图尽量减少周界数量。这可以帮助渗透或字符串。
 
 English:The shape of the physical print bed.
 Translated:物理打印床的形状。
@@ -464,7 +464,7 @@ English:If a layer is estimated to take less than this to print, the fan will be
 Translated:如果图层估计需要少于此值才能打印，则风扇将被打开。
 
 English:This should be set to the actual diameter of the filament you are using on your printer. Measure 5 times with calipers, throw out the top and bottom, and average the remaining 3.
-Translated:这应该设置为您在打印机上使用的灯丝的实际直径。用卡钳测量5次，扔出顶部和底部，平均剩余3。
+Translated:这应该设置为您在打印机上使用的灯丝的实际直径。用卡尺测量5次，扔出顶部和底部，平均剩余3。
 
 English:Sets the starting angle of the infill. Not used when bridging.
 Translated:设置填充的起始角度。桥接时不使用。
@@ -479,7 +479,7 @@ English:Acceleration to use while printing the first layer. Set to 0 to the defa
 Translated:在打印第一层时加速使用。设置为0到默认的第一层加速。
 
 English:The temperature to set the bed to before printing the first layer. The printer will wait until this temperature has been reached before printing. Set to 0 to eliminate bed temperature commands.
-Translated:打印第一层之前将床设置为温度。在打印之前，打印机将等到达到此温度。设置为0以消除床温命令。
+Translated:在打印第一层之前将床设置为温度。在打印之前，打印机将等到达到此温度。设置为0以消除床温命令。
 
 English:Setting this to greater than 100% can often help the first layer have better adhesion to the print bed.
 Translated:将其设定为大于100％通常可以帮助第一层与印刷床具有更好的附着力。
@@ -611,7 +611,7 @@ English:No updates are currently available.
 Translated:目前没有更新。
 
 English:Additional amount of filament that will be extruded after a retraction.
-Translated:在退缩后将被挤出的额外的细丝数量。
+Translated:在退缩后将被挤出的额外量的细丝。
 
 English:The amount of extra extrusion that will occur when an extruder is selected.
 Translated:当选择挤出机时将发生的额外挤出量。
@@ -728,7 +728,7 @@ English:Speed to move when not extruding material.
 Translated:不挤出材料时移动的速度。
 
 English:Request the firmware to do retractions rather than specify the extruder movements directly.
-Translated:请求固件进行撤销，而不是直接指定挤出机的运动。
+Translated:请求固件进行撤销，而不是直接指定挤出机移动。
 
 English:Normally you will want to use absolute e distances. Only check this if you know your printer needs relative e distances.
 Translated:通常你将要使用绝对距离。只有当您知道您的打印机需要相对距离时才检查。
@@ -1250,7 +1250,7 @@ English:Support Material Extruder
 Translated:支撑材料挤出机
 
 English:Support Interface Extruder
-Translated:支撑接口挤出机
+Translated:支持接口挤出机
 
 English:Extruders
 Translated:挤出机
@@ -1337,7 +1337,7 @@ English:Extruder Offset
 Translated:挤出机胶印
 
 English:Position (for multi-extrude printers)
-Translated:位置（适用于多次挤压打印机）
+Translated:位置（适用于多次打印机）
 
 English:Change Tool
 Translated:更换工具
@@ -1532,7 +1532,7 @@ English:The amount to remove from the bottom of the model
 Translated:从模型底部移除的量
 
 English:The amount the infill edge will push into the preimiter. Helps ensure the infill is connected to the edge.
-Translated:填充边缘将推入预定影片的量。有助于确保填充物连接到边缘。
+Translated:填充边缘将推入预定影像的量。有助于确保填充物连接到边缘。
 
 English:The distance to start drawing the first skirt loop. Make this 0 to create an anchor for the part to the bed.
 Translated:开始绘制第一个裙环的距离。使此0为床上的零件创建一个锚点。
@@ -1697,7 +1697,7 @@ English:The file you are attempting to print is a GCode file.\n\nGCode files tel
 Translated:您尝试打印的文件是GCode文件。\n\nGCode文件告诉您的打印机要做什么。它们不被SliceSettings修改，我不适合您的特定打印机配置。 \ NN \只有在您知道当前打印机和配置的情况下，才能从GCode文件打印。 \ NN \您确定要打印此GCode文件吗？
 
 English:Cannot find\n'{0}'.\nWould you like to remove it from the queue?
-Translated:找不到\ n“{0}”。 \ n要将其从队列中删除吗？
+Translated:找不到\ n“{0}”。 \ n是否要将其从队列中删除？
 
 English:Item not found
 Translated:找不到物品
@@ -1925,7 +1925,7 @@ English:Attempting to connect
 Translated:尝试连接
 
 English:Connection succeeded
-Translated:连接成功了
+Translated:连接成功
 
 English:You cannot move any lower. This position on your bed is too low for the extruder to reach. You need to raise your bed, or adjust your limits to allow the extruder to go lower.
 Translated:你不能移动任何更低。床上的这个位置对于挤出机来说太低了。您需要升高床，或调整您的极限，以使挤出机降低。
@@ -2312,13 +2312,13 @@ English:Note: Slice Settings are applied before the print actually starts. Chang
 Translated:注意：打印实际开始之前应用切片设置。打印时更改不会影响活动打印。
 
 English:The extruder is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting extruder temperature in 'Slice Settings' -> 'Filament'.\n\n{1}
-Translated:挤出机目前正在加热，其目标温度不能改变，直到达到{0}℃。 \ NN \您可以在“切片设置” - >“长丝”中设置起始挤出机温度。\n\n{1}
+Translated:挤出机目前正在加热，其目标温度不能改变，直到达到{0}℃。 \ NN \您可以在“切片设置” - >“长丝”中设置起始挤出机的温度。\n\n{1}
 
 English:Waiting For Extruder To Heat
 Translated:等待挤出机加热
 
 English:The bed is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting bed temperature in 'Slice Settings' -> 'Filament'.\n\n{1}
-Translated:床正在加热，其目标温度不能改变，直到达到{0}℃。 \ NN \您可以在“切片设置” - >“长丝”中设置起始床温度。\n\n{1}
+Translated:床正在加热，其目标温度不能改变，直到达到{0}°C。 \ NN \您可以在“切片设置” - >“长丝”中设置起始床温度。\n\n{1}
 
 English:Waiting For Bed To Heat
 Translated:等待床热
@@ -3116,7 +3116,7 @@ English:Please wait. Slicing files {0} of {1}
 Translated:请稍候。切片{0} {1}
 
 English:Normally while printing the printer will home before heating the extruder(s). Set this to cause the heating to happen before the homing. This can help with printers that touch the bed while homing.
-Translated:打印机打印机通常在加热挤出机之前将回家。将其设置为导致加热在归位之前发生。这可以帮助打印机触摸床而归位。
+Translated:打印机打印机通常在加热挤出机之前将回家。将其设置为导致加热在归位之前发生。这可以帮助打印机触摸床，而归位。
 
 English:Heat Before Homing
 Translated:回归之前的热
@@ -3422,7 +3422,7 @@ English:Delete folder?
 Translated:删除文件夹？
 
 English:The folder '{0}' is not empty.\n\nWould you like to delete it anyway?
-Translated:文件夹“{0}”不是空的。 \ NN \你想删除它吗？
+Translated:文件夹“{0}”不为空。 \ NN \你想删除它吗？
 
 English:Delete folder?
 Translated:删除文件夹？
@@ -3506,7 +3506,7 @@ English:The file you are attempting to print is a GCode file.\n\nIt is recommend
 Translated:您尝试打印的文件是GCode文件。 \ NN \建议您只打印已知与您的打印机配置相匹配的Gcode文件。 \ NN \您确定要打印此GCode文件吗？
 
 English:This printer requires print leveling to run correctly.
-Translated:该打印机要求打印调整正常运行。
+Translated:此打印机要求打印调平正常运行。
 
 English:Require Leveling To Print
 Translated:需要调平打印
@@ -3707,7 +3707,7 @@ English:Rebuild Thumbnails Now
 Translated:重建缩略图
 
 English:You are switching to a different thumbnail rendering mode. If you want, your current thumbnails can be removed and recreated in the new style. You can switch back and forth at any time. There will be some processing overhead while the new thumbnails are created.\n\nDo you want to rebuild your existing thumbnails now?
-Translated:您正在切换到不同的缩略图呈现模式。如果需要，您当前的缩略图可以删除并重新创建新的样式。您可以随时来回切换。在创建新的缩略图时会有一些处理开销。 \ NN \现在要重建现有的缩略图吗？
+Translated:您正在切换到不同的缩略图渲染模式。如果需要，您当前的缩略图可以删除，并以新样式重新创建。您可以随时来回切换。在创建新的缩略图时会有一些处理开销。 \ NN \现在要重建现有的缩略图吗？
 
 English:Loading...
 Translated:载入中...
@@ -3758,7 +3758,7 @@ English:Your Share Code:
 Translated:您的分享代码：
 
 English:Anyone with this code will have access
-Translated:任何具有此代码的人都可以访问
+Translated:任何拥有此代码的人都可以访问
 
 English:Share with someone
 Translated:与某人分享
@@ -4127,7 +4127,7 @@ English:The amount of infill material to generate, expressed as a ratio or a per
 Translated:填充材料的产生量，以比例或百分比表示。
 
 English:The geometric shape of the support structure for the inside of parts.
-Translated:零件内部支撑结构的几何形状。
+Translated:部件内部的支撑结构的几何形状。
 
 English:Acceleration to use while printing the first layer. Set to 0 to use the default first layer acceleration.
 Translated:在打印第一层时加速使用。设置为0以使用默认的第一层加速。
@@ -4142,7 +4142,7 @@ English:Include detailed comments in the G-Code.
 Translated:在G-Code中包含详细的评论。
 
 English:The version of G-Code the printer's firmware communicates with. Some firmware use different G and M codes. Setting this ensures that the output G-Code will use the correct commands.
-Translated:打印机固件与G-Code进行通信的版本。某些固件使用不同的G和M代码。设置此项可确保输出G代码将使用正确的命令。
+Translated:打印机固件与G-Code进行通信的版本。某些固件使用不同的G和M代码。设置此选项可确保输出G代码将使用正确的命令。
 
 English:The printer has a layer-cooling fan.
 Translated:打印机有一个层冷却风扇。
@@ -4238,7 +4238,7 @@ English:The distance filament will reverse before each qualifying non-print move
 Translated:每次合格的非打印移动之前，距离丝将反转
 
 English:When using multiple extruders, the distance filament will reverse before changing to a different extruder.
-Translated:当使用多个挤出机时，在改变为不同的挤出机之前，距离丝将反转。
+Translated:当使用多个挤出机时，距离长丝将转向不同的挤出机。
 
 English:Force a retraction when moving between islands (distinct parts on the layer).
 Translated:在岛屿之间移动时强制撤回（层上的不同部分）。
@@ -4556,7 +4556,7 @@ English:Used to specify if more than one extruder share a common heater cartridg
 Translated:用于指定是否有多个挤出机共用一个通用加热器盒。
 
 English:The actual diameter of the filament used for printing. Measure 5 times with calipers, throw out the top and bottom, and average the remaining 3.
-Translated:用于印刷的细丝的实际直径。用卡钳测量5次，扔出顶部和底部，平均剩余3。
+Translated:用于印刷的细丝的实际直径。用卡尺测量5次，扔出顶部和底部，平均剩余3。
 
 English:The height of the first layer. A first layer taller than the default layer height can ensure good adhesion to the build plate.
 Translated:第一层的高度。高于默认层高度的第一层可以确保对建筑板的良好粘附。
@@ -4589,7 +4589,7 @@ English:User Manual
 Translated:用户手册
 
 English:The height of the printer's printable volume, in millimeters. Controls the height of the visual print area displayed in 3D View.
-Translated:打印机可打印卷的高度，单位为毫米。控制3D视图中显示的视觉打印区域的高度。
+Translated:打印机可打印卷的高度，单位为毫米。控制3D视图中显示的可视打印区域的高度。
 
 English:Extruder 3
 Translated:挤出机3
@@ -4700,7 +4700,7 @@ English:Retract When Changing Islands
 Translated:改变群岛时撤回
 
 English:Minimum Extrusion Requiring Retraction
-Translated:最小挤出需要退缩
+Translated:最小挤出要求退缩
 
 English:Slow Down If Layer Print Time Is Below
 Translated:如果图层打印时间在下面，请慢下来
@@ -5525,7 +5525,7 @@ English:Oops! Please select a folder to search
 Translated:哎呀！请选择要搜索的文件夹
 
 English:The bed is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting bed temperature in SETTINGS -> Filament -> Temperatures.\n\n{1}
-Translated:床正在加热，其目标温度不能改变，直到达到{0}℃。 \ NN \您可以在SETTINGS  - >灯丝 - >温度中设置起始床温度。\n\n{1}
+Translated:床正在加热，其目标温度不能改变，直到达到{0}°C。 \ NN \您可以在SETTINGS  - >灯丝 - >温度中设置起始床温度。\n\n{1}
 
 English:This is automatically set by MatterControl. You do not need to adjust it.
 Translated:这是由MatterControl自动设置的。你不需要调整它。
@@ -5981,7 +5981,7 @@ English:Enter 12 Digit Redemption Code
 Translated:输入12位数字兑换代码
 
 English:This is located on the rear of your card
-Translated:这是位于你的卡的后面
+Translated:这位于您的卡片的后面
 
 English:Please wait. Verifying code...
 Translated:请稍候。验证码...
@@ -6095,7 +6095,7 @@ English:Out of filament detected\nYour 3D print has been paused.
 Translated:检出的灯丝出现\ n您的3D打印已暂停。
 
 English:Your 3D print has been auto-pasued.\nPause layer{0} reached.
-Translated:您的3D打印已被自动发现。 \ n达到暂停层{0}。
+Translated:您的3D打印已被自动发现。 \ n到达暂停层{0}。
 
 English:Has Filament Runout Sensor
 Translated:有灯丝漏气传感器
@@ -6108,4 +6108,67 @@ Translated:有Z探头
 
 English:Use Z Probe
 Translated:使用Z探头
+
+English:The printer has a servo for lowering and rasing the z probe.
+Translated:打印机具有用于降低和降低z探头的伺服。
+
+English:The offset to use whene probing. For manual probing, this is the thickness of the paper (or other calibration device).
+Translated:用于探测的偏移量。对于手动探测，这是纸（或其他校准装置）的厚度。
+
+English:The distance the z probe is from the extruder in x and y.
+Translated:z探头距离挤出机在x和y处的距离。
+
+English:This is the angle that lowers or deploys the z probe.
+Translated:这是降低或部署z探头的角度。
+
+English:This is the angle that raises or stows the z probe.
+Translated:这是提高或收藏z探针的角度。
+
+English:Has Z Servo
+Translated:有Z伺服
+
+English:Start Height
+Translated:开始高度
+
+English:Use Automatic Z Probe
+Translated:使用自动Z探头
+
+English:Paper Width / Z Offset
+Translated:纸张宽度/ Z偏移量
+
+English:XY Offset
+Translated:XY偏移
+
+English:Lower / Deploy
+Translated:下/部署
+
+English:Raise / Stow
+Translated:提升/停放
+
+English:The number of times to sample each probe position (results will be averaged).
+Translated:对每个探针位置进行采样的次数（结果将被平均）。
+
+English:Number of Samples
+Translated:样品数量
+
+English:Location: 'Controls' -> 'Movement' -> 'Z Offset'
+Translated:位置：'控制' - >'运动' - >'Z偏移'
+
+English:Controls Z Offset is too large.
+Translated:控件Z偏移太大。
+
+English:Your active print Z Offset (sometimes called Babby Stepping) is greater than 1mm and invalid. Printer needs to be re-calibrated, or value cleared.
+Translated:您的主动打印Z偏移（有时称为Babby Stepping）大于1mm，无效。打印机需要重新校准或清除。
+
+English:Calibration Error
+Translated:校准错误
+
+English:Z Offset is too large.
+Translated:Z偏移量太大。
+
+English:The Z Offset for your printer, sometimes called Babby Stepping, is greater than 2mm and invalid. Clear the value and re-level the bed.
+Translated:您的打印机Z偏移（有时称为Babby Stepping）大于2mm，无效。清除价值并重新调整床位。
+
+English:The distance the z probe is from the extruder in z. For manual probing, this is the negated thickness of the paper (or other calibration device).
+Translated:z探头距离z的挤出机的距离。对于手动探测，这是纸张（或其他校准装置）的否定厚度。
 

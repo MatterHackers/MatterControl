@@ -134,7 +134,7 @@ English:Extra
 Translated:अतिरिक्त
 
 English: Create Part Sheet
-Translated: पार्ट शीट बनाएं
+Translated: पार्ट शीट बनाएँ
 
 English:Search
 Translated:खोज
@@ -185,7 +185,7 @@ English:Slic3r
 Translated:Slic3r
 
 English:and to David Braam and Ultimaker BV, for the amazing 
-Translated:और डेविड ब्राम और अल्टीमेकर बीवी के लिए, कमाल के लिए
+Translated:और डेविड ब्राम और अल्टीमकेर बीवी के लिए, कमाल के लिए
 
 English:CuraEngine
 Translated:CuraEngine
@@ -452,13 +452,13 @@ English:This is the identifier used in the gcode to specify the extruder.
 Translated:इस पहचानकर्ता को extruder निर्दिष्ट करने के लिए gcode में इस्तेमाल किया गया है।
 
 English:All extrusions are multiplied by this value. Increasing it above 1 (1.1 is a good max value) will increase the amount of filament being extruded; decreasing it (.9 is a good min value) will decrease the amount being extruded.
-Translated:सभी मूल्यों को इस मूल्य से गुणा किया जाता है। 1 से ऊपर बढ़ाना (1.1 एक अच्छा अधिकतम मूल्य है) फिलामेंट की मात्रा बढ़ाया जा रहा है; इसे घटाना (.9 एक अच्छा न्यूनतम मूल्य है) की मात्रा घटाई जायेगी।
+Translated:सभी मूल्यों को इस मूल्य से गुणा किया जाता है। 1 से ऊपर बढ़ाना (1.1 एक अच्छा अधिकतम मूल्य है) फिलामेंट की मात्रा बढ़ाकर बढ़ेगी; इसे घटाना (.9 एक अच्छा न्यूनतम मूल्य है) की मात्रा घटाई जायेगी।
 
 English:Leave this as 0 to allow automatic calculation of extrusion width.
-Translated:एक्सट्रूज़न चौड़ाई की स्वचालित गणना की अनुमति देने के लिए इसे 0 के रूप में छोड़ दें।
+Translated:एक्सट्रूज़न चौड़ाई के स्वचालित गणना की अनुमति देने के लिए इसे 0 के रूप में छोड़ दें।
 
 English:This will force the fan to remain on throughout the print. In general you should have this off and just enable auto cooling.
-Translated:यह प्रशंसकों को प्रिंट भर में रहने के लिए मजबूर करेगी। सामान्य तौर पर आपको इसे बंद करना चाहिए और ऑटो कूलिंग को सक्षम करना चाहिए।
+Translated:इससे प्रशंसक पूरे प्रिंट पर बने रहने के लिए मजबूर हो जाएगा। सामान्य तौर पर आपको इसे बंद करना चाहिए और ऑटो कूलिंग को सक्षम करना चाहिए।
 
 English:If a layer is estimated to take less than this to print, the fan will be turned on.
 Translated:यदि एक परत को इस से कम प्रिंट करने का अनुमान है, तो प्रशंसक चालू होगा।
@@ -536,7 +536,7 @@ English:This is the maximum speed that your fan can run at.
 Translated:यह अधिकतम गति है जो आपके प्रशंसक पर चल सकते हैं
 
 English:This is the minimum amount of filament that must be extruded before a rectarction can occure.
-Translated:यह रेशा की न्यूनतम राशि है जिसे एक रिक्तीकरण से पहले एक्सट्रूज किया जाना चाहिए।
+Translated:यह रेशा की न्यूनतम राशि है जो एक रिक्तियां हो सकती है इससे पहले कि इसे extruded किया जाना चाहिए।
 
 English:This is the minimum fan speed that your fan can run at.
 Translated:यह न्यूनतम प्रशंसक गति है जो आपके पंखे में चल सकते हैं।
@@ -548,7 +548,7 @@ English:Sets the minimum amount of filament to use drawing the skirt loops. This
 Translated:स्कर्ट लूप ड्राइंग का उपयोग करने के लिए फिलामेंट की न्यूनतम राशि निर्धारित करता है इससे रेशा की मात्रा का उपयोग करने के लिए कम से कम पर्याप्त स्कर्ट लूप तैयार किए जा सकते हैं।
 
 English:These notes will be added as comments in the header of the output gcode.
-Translated:इन नोट्स को आउटपुट जीकोड के शीर्ष लेख में टिप्पणी के रूप में जोड़ा जाएगा।
+Translated:इन नोटों को आउटपुट जीकोड के शीर्ष लेख में टिप्पणी के रूप में जोड़ा जाएगा।
 
 English:This is the diameter of your extruder nozle.
 Translated:यह आपके extruder नोजल का व्यास है
@@ -614,7 +614,7 @@ English:Additional amount of filament that will be extruded after a retraction.
 Translated:फिलामेंट की अतिरिक्त मात्रा जिसे वापस लेने के बाद एक्सट्रुडेड किया जाएगा।
 
 English:The amount of extra extrusion that will occur when an extruder is selected.
-Translated:अतिरिक्त extrusion की मात्रा तब होगी जब एक extruder का चयन किया जाता है।
+Translated:अतिरिक्त एक्सट्रूज़न की मात्रा तब होगी जब एक एक्सट्रूडर का चयन किया जाता है।
 
 English:The speed that the filament will be retracted (and re-extruded).
 Translated:गति जो रेशा (और फिर से extruded) वापस ले लिया जाएगा
@@ -1583,7 +1583,7 @@ English:If greater than 0, this is the distance away from parts to create a pari
 Translated:अगर 0 से अधिक से अधिक, यह भागों से दूर दूरी है जिसमें प्रवेश करने के लिए एक पैरामीटर बनाने के लिए
 
 English:Wipe Shield Dist
-Translated:शील्ड जिले को साफ करें
+Translated:वाइप शील्ड जि
 
 English:Wipe Shield
 Translated:ढाल पोंछे
@@ -1592,7 +1592,7 @@ English:  Remove All
 Translated:  सभी हटाएं
 
 English:The number of layers to skip in z. The gap between the support and the model.
-Translated:परतों की संख्या में z को छोड़ने के लिए समर्थन और मॉडल के बीच अंतर।
+Translated:परतों की संख्या में z को छोड़ दें समर्थन और मॉडल के बीच अंतर।
 
 English:Z Gap
 Translated:जेड गैप
@@ -1817,7 +1817,7 @@ English:This controls the ratio of material extruder during bridging.Reducing th
 Translated:यह ब्रिजिंग के दौरान सामग्री एक्सट्रूडर के अनुपात को नियंत्रित करता है। इस से थोड़ी-थोड़ी-थोड़ी-सी सुधार से फिलामेंट को खींचकर ब्रिजिंग में मदद मिल सकती है, एक प्रशंसक का उपयोग करके भी बहुत मदद मिल सकती है।
 
 English:The default temperature to set the bed to. Can sometimes be overriden on the first layer. Set to 0 to eliminate bed temperature commands.
-Translated:डिफ़ॉल्ट तापमान को बिस्तर पर सेट करने के लिए कभी-कभी पहली परत पर ओवरराइड किया जा सकता है बिस्तर तापमान आदेश को खत्म करने के लिए 0 पर सेट करें
+Translated:बिस्तर पर सेट करने के लिए डिफ़ॉल्ट तापमान कभी-कभी पहली परत पर ओवरराइड किया जा सकता है बिस्तर तापमान आदेश को खत्म करने के लिए 0 पर सेट करें
 
 English:The default temperature to set the extruder to. Can sometimes be overriden on the first layer.
 Translated:एक्सट्रूडर को सेट करने के लिए डिफ़ॉल्ट तापमान कभी-कभी पहली परत पर ओवरराइड किया जा सकता है
@@ -1925,7 +1925,7 @@ English:Attempting to connect
 Translated:कनेक्ट करने का प्रयास करना
 
 English:Connection succeeded
-Translated:कनेक्शन सफल रहा
+Translated:कनेक्शन सफल हुआ
 
 English:You cannot move any lower. This position on your bed is too low for the extruder to reach. You need to raise your bed, or adjust your limits to allow the extruder to go lower.
 Translated:आप किसी भी कम स्थानांतरित नहीं कर सकते एक्स्ट्राडर तक पहुंचने के लिए आपके बिस्तर पर यह स्थिति बहुत कम है। आपको अपने बिस्तर को बढ़ाने या अपनी सीमाएं समायोजित करने की आवश्यकता है ताकि एक्सट्रुडर को कम हो सके।
@@ -2018,7 +2018,7 @@ English:How can we help?
 Translated:हम आपकी सहायता किस तरह से कर सकते है?
 
 English:Submitting your information...
-Translated:आपकी जानकारी जमा कर रहा है ...
+Translated:आपकी जानकारी जमा करना ...
 
 English:Question*
 Translated:प्रश्न*
@@ -2090,7 +2090,7 @@ English:Connection succeeded!
 Translated:कनेक्शन सफल हुआ!
 
 English:Oops! Unable to install update.
-Translated:ऊप्स! अपडेट को स्थापित करने में असमर्थ
+Translated:ऊप्स! अद्यतन को स्थापित करने में असमर्थ
 
 English:Motor de Capas
 Translated:मोटर डी कैपास
@@ -2129,7 +2129,7 @@ English:Press 'Connect' to select a printer.
 Translated:प्रिंटर चुनने के लिए 'कनेक्ट' दबाएं।
 
 English:Marlin Firmware EEPROM Settings
-Translated:मार्लिन फर्मवेयर ईईपीआरओ सेटिंग्स
+Translated:मार्लिन फर्मवेयर EEPROM सेटिंग्स
 
 English:Re-Load Default Settings
 Translated:पुनः लोड डिफ़ॉल्ट सेटिंग्स
@@ -2177,7 +2177,7 @@ English:Make Settings Active
 Translated:सेटिंग सक्रिय बनाएं
 
 English:Make Settings Active\nAnd Save To Default
-Translated:सेटिंग्स सक्रिय करें\nऔर डिफ़ॉल्ट पर सहेजें
+Translated:सेटिंग सक्रिय करें\nऔर डिफ़ॉल्ट पर सहेजें
 
 English:Design Add-ons
 Translated:डिजाइन ऐड-ऑन
@@ -2195,7 +2195,7 @@ English:The extra distance the raft will extend around the part.
 Translated:अतिरिक्त दूरी बेड़ा भाग के आसपास विस्तार होगा।
 
 English:The percent of the 'Nozzle Diameter' that is the gap between the raft and the first layer. A smaller percent will make the part stick more. A larger percent will make it stick less.
-Translated:'नोजल व्यास' का प्रतिशत, जो बेड़ा और पहली परत के बीच का अंतर है। एक छोटे प्रतिशत हिस्सा अधिक छड़ी कर देगा एक बड़ा प्रतिशत यह कम छड़ी कर देगा
+Translated:'नोजल व्यास' का प्रतिशत, जो बेड़ा और पहली परत के बीच का अंतर है। एक छोटे प्रतिशत हिस्सा अधिक छड़ी कर देगा। एक बड़ा प्रतिशत यह कम छड़ी कर देगा
 
 English:Distance
 Translated:दूरी
@@ -2207,7 +2207,7 @@ English:Try to connect mesh edges when the actual mesh data is not all the way c
 Translated:मेष किनारों को कनेक्ट करने का प्रयास करें जब वास्तविक मेष डेटा सभी तरह से कनेक्ट नहीं होता है।
 
 English:Sometime a mesh will not have closed a perimeters. When this is checked these non-closed perimeters while be closed.
-Translated:कभी-कभी एक मेष ने एक परिधि बंद नहीं किया होगा जब यह बंद हो जाने पर इन गैर-बंद परिधीय की जांच की जाती है।
+Translated:कभी-कभी एक मेष ने एक परिधि बंद नहीं किया होगा जब यह बंद हो जाने पर इन गैर-बंद परिधीय की जांच हो जाती है।
 
 English:Reverse the orientation of overlaps. This can make some unintended holes go away.
 Translated:ओवरलैप के अभिविन्यास उल्टा करें यह कुछ अनपेक्षित छेद कर सकते हैं चले जाओ।
@@ -2219,7 +2219,7 @@ English:Repair
 Translated:मरम्मत
 
 English:Connect Bad Edges
-Translated:खराब किनारों से कनेक्ट करें
+Translated:खराब किनारों को कनेक्ट करें
 
 English:Close Polygons
 Translated:बहुभुज को बंद करें
@@ -2318,7 +2318,7 @@ English:Waiting For Extruder To Heat
 Translated:उष्मायन के लिए गर्मी के लिए प्रतीक्षा कर रहा है
 
 English:The bed is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting bed temperature in 'Slice Settings' -> 'Filament'.\n\n{1}
-Translated:वर्तमान में बिस्तर गर्म है और इसका लक्ष्य तापमान तब तक नहीं बदला जा सकता जब तक कि यह {0} डिग्री सेल्सियस तक पहुंच न हो\n\nआप 'स्लाइस सेटिंग्स' में शुरू बिस्तर तापमान सेट कर सकते हैं -> 'रेशा'\n\n{1}
+Translated:वर्तमान में बिस्तर गर्म है और इसका लक्ष्य तापमान तब तक नहीं बदला जा सकता जब तक कि यह {0} डिग्री सेल्सियस तक नहीं पहुंचता।\n\nआप 'स्लाइस सेटिंग्स' में शुरू बिस्तर तापमान सेट कर सकते हैं -> 'रेशा'\n\n{1}
 
 English:Waiting For Bed To Heat
 Translated:बिस्तर पर गर्मी के लिए प्रतीक्षा कर रहा है
@@ -2459,7 +2459,7 @@ English:Play a Sound
 Translated:एक ध्वनि चलायें
 
 English:Play a sound after your print is finished
-Translated:प्रिंट होने के बाद ध्वनि चलाएं
+Translated:प्रिंट होने के बाद एक ध्वनि चलाएं
 
 English:Printing From SD Card
 Translated:एसडी कार्ड से प्रिंटिंग
@@ -2513,7 +2513,7 @@ English:Select the baud rate.
 Translated:बॉड दर चुनें
 
 English:The term 'Baud Rate' roughly means the speed at which\ndata is transmitted.  Baud rates may differ from printer to\nprinter. Refer to your printer manual for more info.\n\nTip: If you are uncertain - try 250000.
-Translated:शब्द 'बौद दर' का लगभग मतलब गति है जिस पर डेटा प्रसारित किया जाता है। बउड की दरें प्रिंटर से\nप्रिंटर के बीच भिन्न हो सकती हैं अधिक जानकारी के लिए अपने प्रिंटर मैनुअल को देखें।\n\nटिप: यदि आप अनिश्चित हैं - 250000 का प्रयास करें
+Translated:शब्द 'बौद दर' का लगभग मतलब गति है जिस पर डेटा प्रसारित होता है। बउड की दर प्रिंटर से\nप्रिंटर के बीच भिन्न हो सकती है अधिक जानकारी के लिए अपने प्रिंटर मैनुअल को देखें।\n\nटिप: यदि आप अनिश्चित हैं - 250000 का प्रयास करें
 
 English:This is the minimum amount of filament that must be extruded before a retraction can occur.
 Translated:यह रेशा की न्यूनतम राशि है जिसे अपग्रेड होने से पहले extruded किया जाना चाहिए।
@@ -2609,7 +2609,7 @@ English:The number of extruders this machine has.
 Translated:इस मशीन में एक्स्ट्राडर की संख्या है
 
 English:All extrusions are multiplied by this value. Increasing it above 1 (1.1 is a good max value) will increase the amount of filament being extruded; decreasing it (.9 is a good minimum value) will decrease the amount being extruded.
-Translated:सभी मूल्यों को इस मूल्य से गुणा किया जाता है। 1 से ऊपर बढ़ाना (1.1 एक अच्छा अधिकतम मूल्य है) फिलामेंट की मात्रा बढ़ाया जा रहा है; इसे घटाना (.9 एक अच्छा न्यूनतम मूल्य है) की मात्रा घटाई जायेगी।
+Translated:सभी मूल्यों को इस मूल्य से गुणा किया जाता है। 1 से ऊपर बढ़ाना (1.1 एक अच्छा अधिकतम मूल्य है) फिलामेंट की मात्रा बढ़ाकर बढ़ेगी; इसे घटाना (.9 एक अच्छा न्यूनतम मूल्य है) की मात्रा घटाई जायेगी।
 
 English:This is the minimum speed that the printer will reduce to to make the layer take long enough to satisfy the minimum layer time.
 Translated:यह न्यूनतम गति है कि प्रिंटर कम से कम न्यूनतम स्तर को पूरा करने के लिए लंबे समय तक ले जाने के लिए कम हो जाएगा।
@@ -2825,7 +2825,7 @@ English:This is the diameter of your extruder nozzle.
 Translated:यह आपके extruder नोजल का व्यास है
 
 English:Sometime a mesh will not have closed a perimeter. When this is checked these non-closed perimeters while be closed.
-Translated:कभी-कभी एक मेष ने परिधि को बंद नहीं किया होता जब यह बंद हो जाने पर इन गैर-बंद परिधीय की जांच की जाती है।
+Translated:कभी-कभी एक मेष ने परिधि को बंद नहीं किया होता जब यह बंद हो जाने पर इन गैर-बंद परिधीय की जांच हो जाती है।
 
 English:You can specify the extrusion with or set this to a % of the main extrusion width. Leave this as 0 to allow automatic calculation.
 Translated:आप एक्सट्रूज़न निर्दिष्ट कर सकते हैं या इसे मुख्य एक्सट्रूज़न चौड़ाई के% में सेट कर सकते हैं। स्वत: गणना करने के लिए इसे 0 के रूप में छोड़ दें
@@ -2918,7 +2918,7 @@ English:Intermediate
 Translated:मध्यम
 
 English:The default temperature to set the bed to. Can sometimes be overridden on the first layer. Set to 0 to eliminate bed temperature commands.
-Translated:डिफ़ॉल्ट तापमान को बिस्तर पर सेट करने के लिए कभी-कभी पहले परत पर ओवरराइड किया जा सकता है बिस्तर तापमान आदेश को खत्म करने के लिए 0 पर सेट करें
+Translated:बिस्तर पर सेट करने के लिए डिफ़ॉल्ट तापमान कभी-कभी पहले परत पर ओवरराइड किया जा सकता है बिस्तर तापमान आदेश को खत्म करने के लिए 0 पर सेट करें
 
 English:Turns on and off the creation of a raft which can help parts adhere to the bed.
 Translated:एक बेड़ा के निर्माण को चालू और बंद किया जाता है जो भागों को बेड की सहायता कर सकता है।
@@ -3113,7 +3113,7 @@ English:Reboots the firmware on the controller
 Translated:नियंत्रक पर फर्मवेयर को रीबूट करता है
 
 English:Please wait. Slicing files {0} of {1}
-Translated:कृपया प्रतीक्षा करें। {1} के टुकड़े टुकड़े फ़ाइलें {0}
+Translated:कृपया प्रतीक्षा करें। {1} का टुकड़ा करने की क्रिया फ़ाइलें {0}
 
 English:Normally while printing the printer will home before heating the extruder(s). Set this to cause the heating to happen before the homing. This can help with printers that touch the bed while homing.
 Translated:आम तौर पर प्रिंटर छपाई करने पर घर को बाहर निकालना (एस) को गर्म करने से पहले घर आने से पहले हीटिंग होने के कारण इसे सेट करें यह प्रिंटर के साथ मदद कर सकता है, जो घर पर पहुंचने पर बिस्तर को छूते हैं।
@@ -3230,7 +3230,7 @@ English:Sets the size of the outer solid surface for the entire print.
 Translated:संपूर्ण प्रिंट के लिए बाहरी ठोस सतह के आकार को निर्धारित करता है
 
 English:The number, or total width, of external shells to create. Add mm to the end of the number to specify width.
-Translated:नंबर, या कुल चौड़ाई, बनाने के लिए बाहरी गोले का चौड़ाई निर्दिष्ट करने के लिए संख्या के अंत में मिमी जोड़ें
+Translated:नंबर, या कुल चौड़ाई, बनाने के लिए बाहरी गोले का। चौड़ाई निर्दिष्ट करने के लिए संख्या के अंत में मिमी जोड़ें
 
 English:Layers/Surface
 Translated:परतें / भूतल
@@ -3317,7 +3317,7 @@ English:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Filament
 Translated:स्थान: 'सेटिंग्स और नियंत्रण' -> 'सेटिंग्स' -> 'रेशा' -> 'रेशा' -> 'अपवर्तन'
 
 English:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'Frist Layer'
-Translated:स्थान: 'सेटिंग्स और नियंत्रण' -> 'सेटिंग्स' -> 'रेशा' -> 'एक्सट्रूज़न' -> 'फ्रिस्ट लेयर'
+Translated:स्थान: 'सेटिंग्स और नियंत्रण' -> 'सेटिंग' -> 'रेशा' -> 'एक्सट्रूज़न' -> 'फ्रिस्ट लेयर'
 
 English:Open
 Translated:खुला
@@ -3704,7 +3704,7 @@ English:Login Required
 Translated:लॉगिन आवश्यक
 
 English:Rebuild Thumbnails Now
-Translated:अब थंबनेल को फिर से बनाएं
+Translated:अब थंबनेल पुनर्स्थापित करें
 
 English:You are switching to a different thumbnail rendering mode. If you want, your current thumbnails can be removed and recreated in the new style. You can switch back and forth at any time. There will be some processing overhead while the new thumbnails are created.\n\nDo you want to rebuild your existing thumbnails now?
 Translated:आप एक अलग थंबनेल रेंडरिंग मोड पर स्विच कर रहे हैं। यदि आप चाहें, तो आपके वर्तमान थंबनेल को हटाया जा सकता है और नई शैली में पुन: निर्मित किया जा सकता है। आप किसी भी समय आगे और पीछे स्विच कर सकते हैं। कुछ प्रोसेसिंग ओवरहेड होंगे जबकि नए थंबनेल बनाए जाएंगे।\n\nक्या आप अब अपने मौजूदा थंबनेल को पुनर्निर्माण करना चाहते हैं?
@@ -3842,7 +3842,7 @@ English:Layer Height = {0}\nNozzle Diameter = {1}
 Translated:परत ऊंचाई = {0}\nनोजल व्यास = {1}
 
 English:Solid Infill works best when set tu LINES.
-Translated:ठोस इन्फिल सबसे अच्छा काम करता है जब ट्यू लाइन सेट करते हैं
+Translated:ठोस इन्फिल सबसे अच्छा काम करता है जब सेट ट्यू लाइनें
 
 English:Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Infill Type'
 Translated:स्थान: 'सेटिंग्स और नियंत्रण' -> 'सेटिंग' -> 'सामान्य' -> 'इन्फिल प्रकार'
@@ -3881,7 +3881,7 @@ English:Maximum Fan Speed
 Translated:अधिकतम फैन स्पीड
 
 English:The amount that the filament will be reversed before each qualifying non-printing move.
-Translated:प्रत्येक क्वालिफाइंग गैर-प्रिंटिंग चाल से पहले रेशा को उलट कर दिया जाएगा।
+Translated:प्रत्येक क्वालीफाइंग गैर-प्रिंटिंग चाल से पहले रेशा को उलट कर दिया जाएगा।
 
 English:Wipe After Retract
 Translated:पीछे हटने के बाद पोछो
@@ -4031,7 +4031,7 @@ English:Offset:
 Translated:ऑफसेट:
 
 English:Are you sure you want to abort the current print and close MatterControl?
-Translated:क्या आप वाकई वर्तमान प्रिंट को बंद करना चाहते हैं और मैटरकंट्रोल को बंद करना चाहते हैं?
+Translated:क्या आप वाकई वर्तमान प्रिंट को बंद करना चाहते हैं और मैटर कंट्रोल नियंत्रित करना चाहते हैं?
 
 English:Abort Print
 Translated:Abort प्रिंट
@@ -4076,7 +4076,7 @@ English:G-Code to run upon successful connection to a printer. This can be usefu
 Translated:जी-कोड को प्रिंटर के सफल कनेक्शन पर चलाने के लिए। यह निर्दिष्ट प्रिंटर के लिए विशिष्ट सेटिंग सेट करने के लिए उपयोगी हो सकता है।
 
 English:Creates a raft under the printed part. Useful to prevent warping when printing ABS (and other warping-prone plastics) as it helps parts adhere to the bed.
-Translated:मुद्रित भाग के तहत एक बेड़ा बनाता है एबीएस (और अन्य वायरपिंग प्रवण प्लास्टिक) को छपाई करते समय युद्ध की स्थिति को रोकने के लिए उपयोगी है क्योंकि यह भागों को बेड का पालन करने में मदद करता है।
+Translated:मुद्रित भाग के तहत एक बेड़ा बनाता है एबीएस (और अन्य वायरपिंग प्रवण प्लास्टिक) को छपाई करते समय युद्ध की स्थिति को रोकने के लिए उपयोगी है क्योंकि यह भागों को बेड का पालन करने में मदद करता है
 
 English:The extra distance the raft will extend around the edge of the part.
 Translated:अतिरिक्त दूरी बेड़ा भाग के किनारे के आसपास विस्तार होगा
@@ -4205,7 +4205,7 @@ English:The minimum length of filament to use printing the skirt loops. Enough s
 Translated:स्कार्ट लूप छपाई करने के लिए फिलामेंट की न्यूनतम लंबाई। लूप्स में मान सेट को ओवरराइड करने के लिए पर्याप्त स्कर्ट लूप को इस रेशा के उपयोग के लिए तैयार किया जाएगा, यदि लूप में मान इस मान से छोटा स्कर्ट का उत्पादन करेगा।
 
 English:These notes will be added as comments in the header of the output G-Code.
-Translated:इन नोटों को आउटपुट जी-कोड के शीर्ष लेख में टिप्पणी के रूप में जोड़ा जाएगा
+Translated:इन नोट्स को आउटपुट जी-कोड के शीर्ष लेख में टिप्पणी के रूप में जोड़ा जाएगा।
 
 English:The diameter of the extruder's nozzle.
 Translated:एक्सट्रुडर की नोजल का व्यास
@@ -4220,7 +4220,7 @@ English:The speed at which inside perimeters will print.
 Translated:गति जिसके अंदर परिमाएं प्रिंट होंगी
 
 English:The number, or total width, of external shells to create. Add mm to the end of the number to specify width in millimeters.
-Translated:नंबर, या कुल चौड़ाई, बनाने के लिए बाहरी गोले का मिलीमीटर में चौड़ाई निर्दिष्ट करने के लिए संख्या के अंत में मिमी जोड़ें।
+Translated:नंबर, या कुल चौड़ाई, बनाने के लिए बाहरी गोले का। मिलीमीटर में चौड़ाई निर्दिष्ट करने के लिए संख्या के अंत में मिमी जोड़ें।
 
 English:You can include additional programs to process the G-Code after slicer is finished. The complete path of the program to run should be included here.
 Translated:आप स्लाइसर समाप्त होने के बाद जी कोड को संसाधित करने के लिए अतिरिक्त प्रोग्राम शामिल कर सकते हैं। चलाने के लिए प्रोग्राम का पूरा पथ यहां शामिल होना चाहिए।
@@ -4256,7 +4256,7 @@ English:The number of loops to draw around all the parts on the bed before start
 Translated:हिस्सों पर शुरू होने से पहले बिस्तर पर सभी भागों के चारों ओर घूमने के लिए छोरों की संख्या। प्राइम नोजल में ज्यादातर का उपयोग किया जाता है, इसलिए प्रवाह तब होता है जब वास्तविक प्रिंट शुरू होता है।
 
 English:The minimum amount of time a layer must take to print. If a layer will take less than this amount of time, the movement speed is reduced so the layer print time will match this value, down to the minimum print speed at the slowest.
-Translated:एक परत को प्रिंट करने के लिए समय की न्यूनतम राशि लेनी चाहिए। यदि एक परत इस राशि से कम समय लेगा, तो आंदोलन की गति कम हो जाती है, इसलिए परत प्रिंट समय इस मान से मेल खाएगा, धीमेतम न्यूनतम प्रिंट गति से नीचे।
+Translated:एक परत को प्रिंट करने के लिए समय की न्यूनतम राशि लेनी चाहिए। अगर एक परत इस समय से कम समय लेगा, तो आंदोलन की गति कम हो जाती है, इसलिए परत प्रिंट समय इस मान से मेल खाएगा, धीमेतम न्यूनतम प्रिंट गति से नीचे होगा।
 
 English:Forces the print to have only one extrusion and gradually increase the extruder height during the print. Only one part will print at a time with this feature.
 Translated:प्रिंट को केवल एक एक्सट्रूज़न के लिए मजबूर करता है और मुद्रण के दौरान धीरे-धीरे एक्सट्रूडर की ऊँचाई बढ़ जाती है। इस सुविधा के साथ एक समय में केवल एक हिस्सा प्रिंट होगा
@@ -4322,7 +4322,7 @@ English:The temperature to which the bed will heat (or cool) in order to remove 
 Translated:कस्टम जी-कोड में विनिर्दिष्ट अनुसार तापमान को निकालने के लिए जिस तापमान पर बिस्तर गर्मी (या ठंडा) होता है।
 
 English:G-Code to be run after every tool change.
-Translated:प्रत्येक उपकरण के परिवर्तन के बाद जी-कोड चलाना
+Translated:प्रत्येक उपकरण के परिवर्तन के बाद जी कोड चलाना होगा।
 
 English:The number of layers, or the distance in millimeters, to solid fill on the top surface(s) of the object. Add mm to the end of the number to specify distance in millimeters.
 Translated:ऑब्जेक्ट की शीर्ष सतह (ओं) पर ठोस भरने के लिए परतों की संख्या, या मिलीमीटर में दूरी। मिलीमीटर में दूरी निर्दिष्ट करने के लिए संख्या के अंत में मिमी जोड़ें।
@@ -4334,7 +4334,7 @@ English:The extruder will wipe the nozzle over the last up to 10 mm of tool path
 Translated:एक्सट्रूडर वापस ले जाने के बाद आखिरी 10 मिमी तक टूल पथ पर नोजल मिटा देगा।
 
 English:Creates a perimeter around the part on which to wipe the other nozzle when printing using dual extrusion. Set to 0 to disable.
-Translated:दोहरी एक्सट्रूज़न का उपयोग करते समय दूसरी नोजल को पोंछने वाले हिस्से के चारों ओर परिधि बनाता है। निष्क्रिय करने के लिए 0 पर सेट करें
+Translated:दोहरी एक्सट्रूज़न का उपयोग करते समय दूसरी नोजल को पोंछने के लिए उस भाग के चारों ओर एक परिधि बनाता है। निष्क्रिय करने के लिए 0 पर सेट करें
 
 English:The length and width of a tower created at the back left of the print used for wiping the next nozzle when changing between multiple extruders. Set to 0 to disable.
 Translated:कई एक्स्ट्राइडर्स के बीच बदलते समय अगली नोजल को पोंछने के लिए उपयोग की जाने वाली प्रिंट की बाईं ओर बनाए गए एक टॉवर की लंबाई और चौड़ाई। निष्क्रिय करने के लिए 0 पर सेट करें
@@ -4445,7 +4445,7 @@ English:A modifier of the width of the extrusion for the first layer of the prin
 Translated:प्रिंट की पहली परत के लिए एक्सट्रूज़न की चौड़ाई का एक संशोधक। 100% से अधिक मूल्य प्रिंट बिस्तर पर आसंजन के साथ मदद कर सकता है।
 
 English:The distance from the model at which the first skirt loop is drawn. Make this 0 to create an anchor for the part to the bed, also known as a brim.
-Translated:जिस मॉडल पर पहला स्कर्ट लूप तैयार किया गया है उससे दूरी। इस 0 को बिस्तर के हिस्से के लिए एक लंगर बनाने के लिए इसे बनाओ, जिसे एक कबाई के रूप में भी जाना जाता है
+Translated:जिस मॉडल पर पहला स्कर्ट लूप तैयार किया गया है उससे दूरी। इस 0 को बिस्तर के हिस्से के लिए एक लंगर बनाने के लिए इसे बनाएं, जिसे एक कबाई के रूप में भी जाना जाता है
 
 English:The speed at which the top solid layers will print. Can be set explicitly or as a percentage of the Infill speed.
 Translated:जिस गति पर शीर्ष ठोस परतें मुद्रित होंगी स्पष्ट रूप से या इन्फिल गति के प्रतिशत के रूप में सेट किया जा सकता है
@@ -4487,7 +4487,7 @@ English:Extruder 2
 Translated:Extruder 2
 
 English:To re-calibrate the printer, or to turn off Auto Print Leveling, the print leveling controls can be found under 'Options'->'Calibration'.\n\nClick 'Done' to close this window.
-Translated:प्रिंटर को फिर से जांचना, या ऑटो प्रिंट लेवलिंग को बंद करने के लिए, प्रिंट लेवलिंग नियंत्रण 'विकल्प' -> 'अंशांकन' के अंतर्गत पाये जा सकते हैं।\n\nइस विंडो को बंद करने के लिए 'पूर्ण' क्लिक करें।
+Translated:प्रिंटर को फिर से जांचने या ऑटो प्रिंट लेवलिंग को बंद करने के लिए, प्रिंट लेवलिंग नियंत्रण 'विकल्प' -> 'अंशांकन' के अंतर्गत पाये जा सकते हैं।\n\nइस विंडो को बंद करने के लिए 'पूर्ण' क्लिक करें।
 
 English:Start G-Code cannot contain G29 if Print Leveling is enabled.
 Translated:प्रारंभ करें जी-कोड में G29 शामिल नहीं है यदि प्रिंट लेवलिंग सक्षम है।
@@ -4502,7 +4502,7 @@ English:Start G-Code cannot contain G30 if Print Leveling is enabled.
 Translated:प्रारंभ करें जी कोड में G30 शामिल नहीं है यदि प्रिंट लेवलिंग सक्षम है।
 
 English:Your Start G-Code should not contain a G30 if you are planning on using print leveling. Change your start G-Code or turn off print leveling
-Translated:यदि आप प्रिंट लेवलिंग का उपयोग करने की योजना बना रहे हैं तो आपका आरंभ जी-कोड में जी 30 शामिल नहीं होना चाहिए। अपनी शुरुआत जी-कोड बदलें या प्रिंट स्तरीकरण बंद करें
+Translated:यदि आप प्रिंट लेवलिंग का उपयोग करने की योजना बना रहे हैं तो आपका आरंभ जी-कोड में जी 30 शामिल नहीं होना चाहिए। अपना प्रारंभ करना जी-कोड बदलें या प्रिंट स्तरीकरण बंद करें
 
 English:Loading G-Code
 Translated:जी-कोड लोड हो रहा है
@@ -4553,7 +4553,7 @@ English:The speed at which outside, external, or the otherwise visible perimeter
 Translated:जिस गति से बाहर, बाहरी, या अन्यथा परिमित पैरों को प्रिंट किया जाएगा
 
 English:Used to specify if more than one extruder share a common heater cartridge.
-Translated:यह निर्दिष्ट करने के लिए उपयोग किया जाता है कि एक से अधिक extruder साझा हीटर कारतूस साझा करता है।
+Translated:यह निर्दिष्ट करने के लिए उपयोग किया जाता है कि एक से अधिक extruder एक साझा हीटर कारतूस साझा करता है।
 
 English:The actual diameter of the filament used for printing. Measure 5 times with calipers, throw out the top and bottom, and average the remaining 3.
 Translated:मुद्रण के लिए इस्तेमाल रेशा के वास्तविक व्यास कैलिपर के साथ 5 बार मापन करें, ऊपर और नीचे फेंक दें, शेष 3 शेष।
@@ -4589,7 +4589,7 @@ English:User Manual
 Translated:उपयोगकर्ता पुस्तिका
 
 English:The height of the printer's printable volume, in millimeters. Controls the height of the visual print area displayed in 3D View.
-Translated:प्रिंटर की प्रिंट करने योग्य मात्रा की ऊंचाई, मिलीमीटर में 3 डी व्यू में प्रदर्शित दृश्य प्रिंट क्षेत्र की ऊंचाई को नियंत्रित करता है।
+Translated:प्रिंटर की प्रिंट करने योग्य मात्रा की ऊंचाई, मिलीमीटर में 3D व्यू में प्रदर्शित दृश्य प्रिंट क्षेत्र की ऊंचाई को नियंत्रित करता है।
 
 English:Extruder 3
 Translated:Extruder 3
@@ -4868,7 +4868,7 @@ English:Printer Settings
 Translated:प्रिंटर सेटिंग
 
 English:Delete the currently selected printer profile.
-Translated:वर्तमान में चयनित प्रिंटर प्रोफ़ाइल को हटाएं
+Translated:वर्तमान में चयनित प्रिंटर प्रोफ़ाइल हटाएं
 
 English:Delete Printer
 Translated:प्रिंटर हटाएं
@@ -4928,7 +4928,7 @@ English:Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Infill'
 Translated:स्थान: 'सेटिंग्स और नियंत्रण' -> 'सेटिंग' -> 'सामान्य' -> 'इन्फिल'
 
 English:Length of extra filament to extrude after a complete tool change (in addition to the re-extrusion of the tool change retraction distance).
-Translated:एक अतिरिक्त उपकरण परिवर्तन के बाद निकाले जाने के लिए अतिरिक्त फिलामेंट की लंबाई (उपकरण परिवर्तन से हटना दूरी के पुनः-एक्सट्रूज़न के अतिरिक्त)।
+Translated:एक अतिरिक्त उपकरण परिवर्तन के बाद निकाले जाने के लिए अतिरिक्त फिलामेंट की लंबाई (उपकरण परिवर्तन से हटना दूरी के पुनः-एक्सट्रूज़न के अलावा)।
 
 English:Extra Length After Tool Change
 Translated:टूल चेंज के अतिरिक्त अतिरिक्त लंबाई
@@ -4982,7 +4982,7 @@ English:Export Settings
 Translated:सेटिंग निर्यात करें
 
 English:Resetting to default values will remove your current overrides and restore your original printer settings.\nAre you sure you want to continue?
-Translated:डिफ़ॉल्ट मानों को रीसेट करने से आपके वर्तमान ओवरराइड को हटा दिया जाएगा और आपकी मूल प्रिंटर सेटिंग पुनर्स्थापित हो जाएगी। \ N क्या आप वाकई जारी रखना चाहते हैं?
+Translated:डिफ़ॉल्ट मानों को रीसेट करने से आपकी वर्तमान ओवरराइड निकल जाएगी और आपकी मूल प्रिंटर सेटिंग पुनर्स्थापित की जाएगी। \ N क्या आप वाकई जारी रखना चाहते हैं?
 
 English:Revert Settings
 Translated:सेटिंग वापस करें
@@ -5093,7 +5093,7 @@ English:Cloud Profiles
 Translated:बादल प्रोफाइल
 
 English:Create your machine settings once, and have them available anywhere you want to print. All your changes appear on all your devices.
-Translated:अपनी मशीन सेटिंग्स को एक बार बनाएँ, और उन्हें प्रिंट करना चाहते हैं कहीं भी। आपके सभी परिवर्तन आपके सभी उपकरणों पर दिखाई देते हैं।
+Translated:अपनी मशीन सेटिंग्स को एक बार बनाएँ, और उन्हें कहीं भी प्रिंट करें, जहां आप प्रिंट करना चाहते हैं। आपके सभी परिवर्तन आपके सभी उपकरणों पर दिखाई देते हैं।
 
 English:Remote Monitoring
 Translated:दूरस्थ निगरानी
@@ -5273,7 +5273,7 @@ English:IP Address of printer/printer controller
 Translated:प्रिंटर / प्रिंटर नियंत्रक का आईपी पता
 
 English:Port number to be used with IP Adress to connect to printer over the network
-Translated:नेटवर्क पर प्रिंटर से कनेक्ट करने के लिए आईपी एड्रेस के साथ पोर्ट नंबर का उपयोग करना
+Translated:नेटवर्क पर प्रिंटर से कनेक्ट करने के लिए आईपी एड्रेस के साथ पोर्ट नंबर का इस्तेमाल किया जाए
 
 English:IP Address
 Translated:आईपी ​​पता
@@ -5525,7 +5525,7 @@ English:Oops! Please select a folder to search
 Translated:ऊप्स! कृपया खोज करने के लिए एक फ़ोल्डर चुनें
 
 English:The bed is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting bed temperature in SETTINGS -> Filament -> Temperatures.\n\n{1}
-Translated:वर्तमान में बिस्तर गर्म है और इसका लक्ष्य तापमान तब तक नहीं बदला जा सकता जब तक कि यह {0} डिग्री सेल्सियस तक पहुंच न हो\n\nआप सेटिंग्स में शुरू बिस्तर तापमान सेट कर सकते हैं -> रेशा -> तापमान\n\n{1}
+Translated:वर्तमान में बिस्तर गर्म है और इसका लक्ष्य तापमान तब तक नहीं बदला जा सकता जब तक कि यह {0} डिग्री सेल्सियस तक नहीं पहुंचता।\n\nआप सेटिंग्स में शुरू बिस्तर तापमान सेट कर सकते हैं -> रेशा -> तापमान\n\n{1}
 
 English:This is automatically set by MatterControl. You do not need to adjust it.
 Translated:यह मैटरकंट्रोल द्वारा स्वचालित रूप से सेट किया गया है आपको इसे समायोजित करने की आवश्यकता नहीं है
@@ -5600,7 +5600,7 @@ English:This controls the ratio of material extruded during bridging. Reducing t
 Translated:यह ब्रिजिंग के दौरान extruded सामग्री के अनुपात को नियंत्रित करता है। इसे कम करने से फिलामेंट को अधिक खींचकर ब्रिजिंग में मदद मिल सकती है, और एक प्रशंसक का उपयोग करके भी बहुत मदद मिल सकती है।
 
 English:Each individual part is printed to completion then the nozzle is lowered back to the bed and the next part is printed.
-Translated:प्रत्येक व्यक्ति के भाग को पूरा करने के लिए प्रिंट किया जाता है, फिर नोजल को बिस्तर पर वापस कर दिया जाता है और अगले भाग मुद्रित होता है।
+Translated:प्रत्येक व्यक्ति का भाग पूरा करने के लिए छपा हुआ है, फिर नोजल को बिस्तर पर वापस कर दिया जाता है और अगले भाग मुद्रित होता है।
 
 English:Moves the nozzle up and off the part to allow cooling.
 Translated:कूलिंग की अनुमति देने के लिए नोजल को ऊपर और भाग से निकाला जाता है
@@ -5636,13 +5636,13 @@ English:WARNING: Disconnecting will stop the current print
 Translated:चेतावनी: डिस्कनेक्ट करने से वर्तमान प्रिंट को रोक दिया जाएगा
 
 English:WARNING: Disconnecting will stop the current print.\n\nAre you sure you want to disconnect?
-Translated:चेतावनी: डिस्कनेक्ट करने से वर्तमान प्रिंट को रोक दिया जाएगा।\n\nक्या आप सुनिश्चित हैं कि आप डिस्कनेक्ट करना चाहते हैं?
+Translated:चेतावनी: डिस्कनेक्ट करने से वर्तमान प्रिंट को रोक दिया जाएगा।\n\nक्या आप निश्चित रूप से डिस्कनेक्ट करना चाहते हैं?
 
 English:Select a printer.
 Translated:एक प्रिंटर चुनें।
 
 English:Note: Be sure the tip of the extruder is clean.
-Translated:नोट: सुनिश्चित करें कि extruder की नोक साफ है
+Translated:नोट: सुनिश्चित करें कि extruder की नोक साफ है।
 
 English:- none -
 Translated:- कोई नहीं -
@@ -5756,7 +5756,7 @@ English:Move Z negative
 Translated:Z नकारात्मक ले जाएँ
 
 English:Enable cursor keys for movement
-Translated:आंदोलन के लिए कर्सर कुंजी सक्षम करें
+Translated:आंदोलन के लिए कर्सर कुंजियां सक्षम करें
 
 English:Retract filament
 Translated:रेशा हटाना
@@ -5870,7 +5870,7 @@ English:External Perimeter Extrusion Width = {0}\nNozzle Diameter = {1}
 Translated:बाहरी परिधि एक्सट्रूज़न की चौड़ाई = {0}\nनोजल व्यास = {1}
 
 English:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'External Perimeter'
-Translated:स्थान: 'सेटिंग्स और नियंत्रण' -> 'सेटिंग्स' -> 'फिलामेंट' -> 'एक्सट्रूज़न' -> 'बाहरी परिधि'
+Translated:स्थान: 'सेटिंग्स और नियंत्रण' -> 'सेटिंग्स' -> 'रेशा' -> 'एक्सट्रूज़न' -> 'बाहरी परिधि'
 
 English:'External Perimeter Extrusion Width' must be greater than 0.
 Translated:'बाहरी परिधि एक्सट्रूज़न की चौड़ाई' 0 से अधिक होनी चाहिए
@@ -6071,7 +6071,7 @@ English:Include a picture of my print
 Translated:मेरे प्रिंट की एक तस्वीर शामिल करें
 
 English:If set, these positions will be used when running the 3 point leveling solution. Leave empty for defaults. Data Format:'x1,y1:x2,y2:x3,y3'
-Translated:यदि सेट किया गया है, तो इन स्थितियों का उपयोग किया जाएगा, जब 3 प्वाइंट स्लेवलिंग समाधान चलाते हैं। चूक के लिए खाली छोड़ दें डेटा प्रारूप: 'x1, y1: x2, y2: x3, y3'
+Translated:यदि सेट किया गया है, तो इन स्थितियों का उपयोग तब किया जाएगा जब 3 प्वाइंट स्लेवलिंग समाधान चलाना होगा। चूक के लिए खाली छोड़ें डाटा प्रारूप: 'x1, y1: x2, y2: x3, y3'
 
 English:Leveling Positions
 Translated:स्तरों की स्थिति
@@ -6086,7 +6086,7 @@ English:Specifies that the firmware has support for ros_0 enstop reporting on M1
 Translated:निर्दिष्ट करता है कि फर्मवेयर को M119 पर ros_0 एंस्टॉप रिपोर्टिंग के लिए समर्थन है ट्रिगर्डेड अवस्था में परिभाषित करता है कि फिलामेंट रन आउट है। यदि रनआउट का पता चला है तो प्रिंटर को रोकें जी-कोड चलाया जाता है।
 
 English:If set, these positions will be used when running the leveling solution. Leave empty for defaults. Data Format:'X1,Y1:...:Xn,Yn'
-Translated:यदि सेट किया जाता है, तो स्लेवलिंग समाधान चलाते समय इन पदों का उपयोग किया जाएगा। चूक के लिए खाली छोड़ दें डेटा प्रारूप: 'X1, Y1: ...: Xn, Yn'
+Translated:यदि सेट किया जाता है, तो स्लेवलिंग समाधान चलाते समय इन पदों का उपयोग किया जाएगा। चूक के लिए खाली छोड़ें डेटा प्रारूप: 'X1, Y1: ...: Xn, Yn'
 
 English:Printer Paused
 Translated:प्रिंटर रोका गया
@@ -6108,4 +6108,67 @@ Translated:Z जांच है
 
 English:Use Z Probe
 Translated:Z जांच का उपयोग करें
+
+English:The printer has a servo for lowering and rasing the z probe.
+Translated:प्रिंटर की जांच करने के लिए कम से कम एक प्रोवो है।
+
+English:The offset to use whene probing. For manual probing, this is the thickness of the paper (or other calibration device).
+Translated:जब जांच करने के लिए ऑफसेट का उपयोग करें मैनुअल जांच के लिए, यह कागज की मोटाई है (या अन्य कैलिब्रेशन डिवाइस)
+
+English:The distance the z probe is from the extruder in x and y.
+Translated:एक्स और वाई में एक्स्ट्राडर से z जांच दूरी है।
+
+English:This is the angle that lowers or deploys the z probe.
+Translated:यह कोण है जो z जांच को कम करता है या तैनात करता है।
+
+English:This is the angle that raises or stows the z probe.
+Translated:यह कोण है जो z जांच को बढ़ाता है या रखता है।
+
+English:Has Z Servo
+Translated:Z सर्वो है
+
+English:Start Height
+Translated:ऊँचाई प्रारंभ करें
+
+English:Use Automatic Z Probe
+Translated:स्वचालित Z जांच का उपयोग करें
+
+English:Paper Width / Z Offset
+Translated:पेपर चौड़ाई / जेड ऑफ़सेट
+
+English:XY Offset
+Translated:एक्सवाई ऑफसेट
+
+English:Lower / Deploy
+Translated:कम / परिनियोजित करें
+
+English:Raise / Stow
+Translated:उठो / छत
+
+English:The number of times to sample each probe position (results will be averaged).
+Translated:प्रत्येक जांच स्थिति को नमूने के लिए समय की संख्या (परिणाम औसत होगा)।
+
+English:Number of Samples
+Translated:नमूनों की संख्या
+
+English:Location: 'Controls' -> 'Movement' -> 'Z Offset'
+Translated:स्थान: 'नियंत्रण' -> 'आंदोलन' -> 'जेड ऑफसेट'
+
+English:Controls Z Offset is too large.
+Translated:नियंत्रण Z ऑफसेट बहुत बड़ा है।
+
+English:Your active print Z Offset (sometimes called Babby Stepping) is greater than 1mm and invalid. Printer needs to be re-calibrated, or value cleared.
+Translated:आपका सक्रिय प्रिंट जेड ऑफसेट (कभी-कभी बबी स्टेपिंग कहा जाता है) 1 मिमी से अधिक है और अमान्य है। प्रिंटर को फिर से कैलिब्रेट किए जाने की ज़रूरत है, या मूल्य साफ़ किया गया है।
+
+English:Calibration Error
+Translated:कैलिब्रेशन त्रुटि
+
+English:Z Offset is too large.
+Translated:Z ऑफ़सेट बहुत बड़ा है
+
+English:The Z Offset for your printer, sometimes called Babby Stepping, is greater than 2mm and invalid. Clear the value and re-level the bed.
+Translated:आपके प्रिंटर के लिए Z ऑफ़सेट, जिसे कभी-कभी बुबी स्टेपिंग कहा जाता है, 2 मिमी से अधिक है और अमान्य है। मूल्य साफ़ करें और बिस्तर को फिर से बदलें
+
+English:The distance the z probe is from the extruder in z. For manual probing, this is the negated thickness of the paper (or other calibration device).
+Translated:जेएस जांच एक्स में extruder से दूरी है मैनुअल जांच के लिए, यह कागज (या अन्य अंशांकन डिवाइस) की नकारात्मक मोटाई है।
 

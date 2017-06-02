@@ -53,7 +53,7 @@ English:Pause the current print
 Translated:Pause den aktuelle udskrift
 
 English:Cancel Connect
-Translated:Annuller Forbind
+Translated:Annuller Connect
 
 English:Stop trying to connect to the printer.
 Translated:Stop med at forsøge at oprette forbindelse til printeren.
@@ -227,7 +227,7 @@ English:Show Print Area
 Translated:Vis udskriftsområde
 
 English:Show Wireframe
-Translated:Vis Wireframe
+Translated:Vis wireframe
 
 English:Auto-Arrange
 Translated:Auto-Arranger
@@ -353,7 +353,7 @@ English:Controls
 Translated:Controls
 
 English:Slice Settings
-Translated:Skiveindstillinger
+Translated:Skæreindstillinger
 
 English:Show Help
 Translated:Vis hjælp
@@ -419,7 +419,7 @@ English:Each individual part is printed to completion then the extruder is lower
 Translated:Hver enkelt del udskrives til færdiggørelse, så ekstruderen sænkes tilbage til sengen, og den næste del udskrives.
 
 English:Moves the extruder up off the part to allow cooling.
-Translated:Flytter ekstruderen op af delen for at muliggøre afkøling.
+Translated:Flytter ekstruderen op af delen for at tillade afkøling.
 
 English:Turns on and off all cooling settings (all settings below this one).
 Translated:Tænder og slukker for alle køleindstillinger (alle indstillinger under denne).
@@ -452,7 +452,7 @@ English:This is the identifier used in the gcode to specify the extruder.
 Translated:Dette er den identifikator, der anvendes i kodeordet for at angive ekstruderen.
 
 English:All extrusions are multiplied by this value. Increasing it above 1 (1.1 is a good max value) will increase the amount of filament being extruded; decreasing it (.9 is a good min value) will decrease the amount being extruded.
-Translated:Alle ekstruderinger multipliceres med denne værdi. Forøgelse af det over 1 (1,1 er en god max værdi) vil øge mængden af ​​filament, der ekstruderes; Faldende det (.9 er en god min værdi) vil reducere mængden, der ekstruderes.
+Translated:Alle ekstruderinger multipliceres med denne værdi. At øge det over 1 (1,1 er en god max værdi) vil øge mængden af ​​filament, der ekstruderes; Faldende det (.9 er en god min værdi) vil reducere mængden, der ekstruderes.
 
 English:Leave this as 0 to allow automatic calculation of extrusion width.
 Translated:Lad dette være 0 for at tillade automatisk beregning af ekstruderingsbredde.
@@ -557,7 +557,7 @@ English:Prevents retraction while within a printing perimeter.
 Translated:Forhindrer tilbagekaldelse, mens du er inden for en udskrivning.
 
 English:This will lower the temperature of the non-printing extruder to help prevent oozing.
-Translated:Dette vil sænke temperaturen på den ikke-trykte ekstruder for at forhindre udstødning.
+Translated:Dette vil sænke temperaturen på ikke-tryk ekstruderen for at forhindre udstødning.
 
 English:Experimental feature that attempts to improve overhangs using the fan and bridge settings.
 Translated:Eksperimentelle egenskaber, der forsøger at forbedre overhæng ved hjælp af fan- og broindstillingerne.
@@ -590,7 +590,7 @@ English:Start each new layer from a different vertex to reduce seams.
 Translated:Start hvert nyt lag fra et andet hjørne for at reducere sømme.
 
 English:The minimum distance of a non-printing move that will result in a retraction.
-Translated:Den mindste afstand af et ikke-trykt træk, der vil resultere i tilbagetrækning.
+Translated:Den mindste afstand for et ikke-trykt træk, der vil resultere i en tilbagetrækning.
 
 English:If set, a retraction will occur prior to changing the layer height.
 Translated:Hvis indstillet, vil en tilbagetrækning ske inden ændring af laghøjde.
@@ -638,7 +638,7 @@ English:Used for small perimeters (usually holes). This can be set explicitly or
 Translated:Anvendes til små perimetre (normalt huller). Dette kan indstilles eksplicit eller som en procentdel af Perimeters 'hastighed.
 
 English:The pattern used on the bottom and top layers of the print.
-Translated:Mønsteret, der anvendes på bunden og øverste lag i udskriften.
+Translated:Mønsteret der bruges på bunden og øverste lag af printet.
 
 English:Forces solid infill for any area less than this amount.
 Translated:Forces solid infill for ethvert område mindre end dette beløb.
@@ -734,7 +734,7 @@ English:Normally you will want to use absolute e distances. Only check this if y
 Translated:Normalt vil du bruge absolutte afstande. Kontroller kun dette, hvis du ved, at din printer har brug for relative e-afstande.
 
 English:This is to help reduce vibrations during printing. If your printer has a resonance frequency that is causing trouble you can set this to try and reduce printing at that frequency.
-Translated:Dette er for at hjælpe med at reducere vibrationer under udskrivning. Hvis din printer har en resonansfrekvens, der forårsager problemer, kan du indstille dette for at forsøge at reducere udskrivningen på den pågældende frekvens.
+Translated:Dette er for at hjælpe med at reducere vibrationer under udskrivning. Hvis din printer har en resonansfrekvens, der forårsager problemer, kan du indstille dette for at forsøge at reducere udskrivningen ved den frekvens.
 
 English:This will cause the extruder to move while retracting to minimize blobs.
 Translated:Dette vil få ekstruderen til at bevæge sig under tilbagetrækning for at minimere blobs.
@@ -1100,7 +1100,7 @@ English:Minimum Travel After\nRetraction
 Translated:Minimum rejse efter\ntilbagekaldelse
 
 English:Min Extrusion
-Translated:Min ekstrudering
+Translated:Min Ekstrudering
 
 English:Retraction
 Translated:tilbagetrækning
@@ -1238,7 +1238,7 @@ English:Output File
 Translated:Output File
 
 English:Post-Processing Scripts
-Translated:Efterbehandling af scripts
+Translated:Post-Processing Scripts
 
 English:Perimeter Extruder
 Translated:Perimeter Ekstruder
@@ -1283,7 +1283,7 @@ English:Extrusion Axis
 Translated:Ekstruderingsakse
 
 English:Optimize Overhangs
-Translated:Optimer Overhæng
+Translated:Optimer overhæng
 
 English:Keep Fan Always On
 Translated:Hold ventilatoren altid tændt
@@ -1610,7 +1610,7 @@ English:Create Raft
 Translated:Opret raft
 
 English:The amount of overhangs to support. 0 is no support 100 is support every overhang regardless of angle.
-Translated:Mængden af ​​overhæng for at understøtte. 0 er ingen støtte 100 er støtte hvert overhæng uanset vinkel.
+Translated:Mængden af ​​overhæng til at understøtte. 0 er ingen støtte 100 er støtte hvert overhæng uanset vinkel.
 
 English:Overhang Percent
 Translated:Overhæng Procent
@@ -2189,7 +2189,7 @@ English:Retrieving download info...
 Translated:Henter downloadoplysninger ...
 
 English:G-Code Output
-Translated:G-kode udgang
+Translated:G-kode output
 
 English:The extra distance the raft will extend around the part.
 Translated:Den ekstra afstand raften vil strække sig rundt om delen.
@@ -2522,7 +2522,7 @@ English:Support Options
 Translated:Supportindstillinger
 
 English:If this is checked support will be allowed starting on top of internal surfaces. If it is not checked support will only be created starting at the bed.
-Translated:Hvis dette er markeret, vil det være tilladt at starte på toppen af ​​de indre overflader. Hvis den ikke er markeret, oprettes kun support, der starter ved sengen.
+Translated:Hvis dette er markeret, vil det være tilladt at starte på toppen af ​​de indre overflader. Hvis det ikke er markeret, oprettes kun support, der starter ved sengen.
 
 English:Support Everywhere
 Translated:Støtte overalt
@@ -2609,7 +2609,7 @@ English:The number of extruders this machine has.
 Translated:Antallet af ekstrudere, som denne maskine har.
 
 English:All extrusions are multiplied by this value. Increasing it above 1 (1.1 is a good max value) will increase the amount of filament being extruded; decreasing it (.9 is a good minimum value) will decrease the amount being extruded.
-Translated:Alle ekstruderinger multipliceres med denne værdi. Forøgelse af det over 1 (1,1 er en god max værdi) vil øge mængden af ​​filament, der ekstruderes; Faldende det (.9 er en god minimumsværdi) vil reducere mængden, der ekstruderes.
+Translated:Alle ekstruderinger multipliceres med denne værdi. At øge det over 1 (1,1 er en god max værdi) vil øge mængden af ​​filament, der ekstruderes; Faldende det (.9 er en god minimumsværdi) vil reducere mængden, der ekstruderes.
 
 English:This is the minimum speed that the printer will reduce to to make the layer take long enough to satisfy the minimum layer time.
 Translated:Dette er den minimale hastighed, som printeren vil reducere til for at gøre laget tilstrækkeligt lang tid til at tilfredsstille minimumslagetiden.
@@ -2819,7 +2819,7 @@ English:WARNING: Disconnecting will cancel the print.
 Translated:ADVARSEL: Afbrydelse afbryder udskriften.
 
 English:The amount the infill edge will push into the perimeter. Helps ensure the infill is connected to the edge.
-Translated:Mængden af ​​infillkanten vil skubbe ind i omkredsen. Hjælper med at sikre, at infillet er forbundet med kanten.
+Translated:Mængden indfældningskanten vil skubbe ind i omkredsen. Hjælper med at sikre, at infillet er forbundet med kanten.
 
 English:This is the diameter of your extruder nozzle.
 Translated:Dette er diameteren af ​​din ekstruderdyser.
@@ -3095,7 +3095,7 @@ English:Has Hardware Leveling
 Translated:Har hardwarenivellering
 
 English:The Fill Density must be between 0 and 1 inclusive.
-Translated:Fyldighedsstyrken skal være mellem 0 og 1 inklusive.
+Translated:Fyldighedsdensiteten skal være mellem 0 og 1 inklusive.
 
 English:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Infill'
 Translated:Placering: 'Advanced Controls' -> 'Slice Settings' -> 'Udskriv' -> 'Infill'
@@ -3245,7 +3245,7 @@ English:The speed to move while printing the first layer. If expressed as a perc
 Translated:Hastigheden til at bevæge sig, mens du udskriver det første lag. Hvis den udtrykkes som en procentdel, vil den ændre den tilsvarende hastighed, der er angivet ovenfor.
 
 English:This gcode will sent to the printer immediately after connecting. It can be used to set settings specific to a given printer.
-Translated:Denne kode sendes til printeren umiddelbart efter tilslutning. Det kan bruges til at indstille indstillinger, der er specifikke for en given printer.
+Translated:Denne kode bliver sendt til printeren umiddelbart efter tilslutning. Det kan bruges til at indstille indstillinger, der er specifikke for en given printer.
 
 English:Features
 Translated:Funktioner
@@ -3422,7 +3422,7 @@ English:Delete folder?
 Translated:Slet mappe?
 
 English:The folder '{0}' is not empty.\n\nWould you like to delete it anyway?
-Translated:Mappen '{0}' er ikke tom.\n\nVil du gerne slette det alligevel?
+Translated:Mappen '{0}' er ikke tom.\n\nVil du slette det alligevel?
 
 English:Delete folder?
 Translated:Slet mappe?
@@ -3524,7 +3524,7 @@ English:Add Folder To Library
 Translated:Tilføj mappe til bibliotek
 
 English:Using the above controls
-Translated:Brug ovenstående kontrol
+Translated:Brug af ovenstående kontroller
 
 English:Add Local Folder To Library
 Translated:Tilføj lokal mappe til bibliotek
@@ -3599,7 +3599,7 @@ English:Alpha: The in development version of MatterControl.
 Translated:Alpha: Den i udviklingsversion af MatterControl.
 
 English:Choose a Create Tool to generate custom designs
-Translated:Vælg et Opret Værktøj til at generere brugerdefinerede designs
+Translated:Vælg et Opret værktøj til at generere brugerdefinerede designs
 
 English:Switch to Settings, Controls and Options
 Translated:Skift til Indstillinger, Kontrol og Indstillinger
@@ -3788,7 +3788,7 @@ English:Enter Share Code:
 Translated:Indtast Share kode:
 
 English:This code to will provide read-only access.
-Translated:Denne kode vil give adgang til skrivebeskyttet.
+Translated:Denne kode vil give adgang til læseadgang.
 
 English:Please wait. Redeeming code...
 Translated:Vent venligst. Indløsning kode ...
@@ -4253,7 +4253,7 @@ English:The speed at which filament will retract and re-extrude.
 Translated:Den hastighed, hvormed filamentet trækker sig og reekstruderes.
 
 English:The number of loops to draw around all the parts on the bed before starting on the parts. Used mostly to prime the nozzle so the flow is even when the actual print begins.
-Translated:Antallet af løkker til at trække rundt om alle dele på sengen, før de starter på delene. Bruges for det meste til at prime dysen, så strømmen er selv når den egentlige udskrivning begynder.
+Translated:Antallet af løkker til at trække rundt om alle dele på sengen, før de starter på delene. Bruges for det meste til at prime dysen, så strømmen er selv når den faktiske print begynder.
 
 English:The minimum amount of time a layer must take to print. If a layer will take less than this amount of time, the movement speed is reduced so the layer print time will match this value, down to the minimum print speed at the slowest.
 Translated:Den mindste mængde tid, et lag skal tage for at udskrive. Hvis et lag tager mindre tid end denne tid, reduceres bevægelseshastigheden, så lagets udskrifts tid vil matche denne værdi ned til den laveste udskrivningshastighed ved den langsomste.
@@ -4316,7 +4316,7 @@ English:The target temperature the extruder will attempt to reach during the pri
 Translated:Måltemperaturen, som ekstruderen vil forsøge at nå under udskriften.
 
 English:The temperature at which the extruder will wipe the nozzle, as specified by Custom G-Code.
-Translated:Temperaturen, hvor ekstruderen tørrer dysen, som angivet ved brugerdefineret G-kode.
+Translated:Den temperatur, hvor ekstruderen tørrer dysen, som specificeret ved brugerdefineret G-kode.
 
 English:The temperature to which the bed will heat (or cool) in order to remove the part, as specified in Custom G-Code.
 Translated:Den temperatur, som sengen vil varme (eller afkøle) for at fjerne delen, som angivet i Brugerdefineret G-kode.
@@ -4334,13 +4334,13 @@ English:The extruder will wipe the nozzle over the last up to 10 mm of tool path
 Translated:Ekstruderen tørrer dysen over den sidste op til 10 mm værktøjsstien efter tilbagetrækning.
 
 English:Creates a perimeter around the part on which to wipe the other nozzle when printing using dual extrusion. Set to 0 to disable.
-Translated:Opretter en omkreds rundt om den del, hvor den anden dyse skal tørres ved udskrivning ved hjælp af dobbelt ekstrudering. Indstil til 0 for at deaktivere.
+Translated:Opretter en omkreds rundt om den del, hvorved den anden dyse skal tørres ved udskrivning ved hjælp af dobbelt ekstrudering. Indstil til 0 for at deaktivere.
 
 English:The length and width of a tower created at the back left of the print used for wiping the next nozzle when changing between multiple extruders. Set to 0 to disable.
 Translated:Længden og bredden af ​​et tårn skabt bagtil til venstre for printet, der bruges til at tørre den næste dyse, når der skiftes mellem flere ekstrudere. Indstil til 0 for at deaktivere.
 
 English:Allows the printer to attempt going below 0 along the Z axis during the Software Print Leveling wizard, and disables related warnings. Does not override actual endstops, physical or software.
-Translated:Giver printeren mulighed for at forsøge at gå under 0 langs Z-aksen under guiden Software Print Leveling og deaktiverer relaterede advarsler. Overskrider ikke faktiske endstops, fysiske eller software.
+Translated:Giver printeren mulighed for at forsøge at gå under 0 langs Z-aksen under guiden Software Printing Leveling og deaktivere relaterede advarsler. Overskrider ikke faktiske endstops, fysiske eller software.
 
 English:The distance to move the nozzle along the Z axis to ensure that it is the correct distance from the print bed. A positive number will raise the nozzle, and a negative number will lower it.
 Translated:Afstanden til at bevæge dysen langs Z-aksen for at sikre, at det er den korrekte afstand fra tryktefarvet. Et positivt tal vil hæve dysen, og et negativt tal vil sænke det.
@@ -4628,7 +4628,7 @@ English:Sphere
 Translated:Sphere
 
 English:Output only the first layer of the print. Especially useful for outputting gcode data for applications like engraving or cutting.
-Translated:Udfør kun det første lag i udskriften. Specielt nyttigt til udgivelse af gcode data til applikationer som gravering eller skæring.
+Translated:Udfør kun det første lag i udskriften. Især nyttigt til udgivelse af gcode data til applikationer som gravering eller skæring.
 
 English:First Layer Only
 Translated:Kun første lag
@@ -5003,7 +5003,7 @@ English:Oops! Please select a serial port.
 Translated:Ups! Vælg venligst en seriel port.
 
 English:The layers at which the print will pause, allowing for a change in filament. Leave blank to disable. To pause on multiple layers, separate the layer numbers with semicolons. For example: "16; 37".
-Translated:De lag, hvor printet vil pause, hvilket gør det muligt at ændre filamentet. Forlad blank for at deaktivere. For at sætte pause på flere lag skal du adskille lagnumre med semikolon. For eksempel: "16; 37".
+Translated:De lag, hvor printet vil pause, hvilket gør det muligt at ændre filamentet. Forlad blank for at deaktivere. Hvis du vil sætte en pause i flere lag, skal du skille lagstallene med semikolonerne. Eksempel: "16; 37".
 
 English:Layers To Pause:
 Translated:Lag til pausen:
@@ -5072,7 +5072,7 @@ English:You have successfully imported a new {1} setting. You can find '{0}' in 
 Translated:Du har importeret en ny {1} indstilling. Du kan finde '{0}' i din liste over {1} indstillinger.
 
 English:Select what you would like to merge into your current profile.
-Translated:Vælg, hvad du gerne vil fusionere i din nuværende profil.
+Translated:Vælg, hvad du vil fusionere i din nuværende profil.
 
 English:Settings have been merged into your current printer.
 Translated:Indstillinger er blevet slået sammen i din nuværende printer.
@@ -5288,7 +5288,7 @@ English:Determines the method of communication used to talk to your printer.
 Translated:Bestemmer den kommunikationsmetode, der bruges til at tale med din printer.
 
 English:The layer(s) at which the print will pause, allowing for a change in filament. Leave blank to disable. To pause on multiple layers, separate the layer numbers with semicolons. For example: "16; 37".
-Translated:Det lag (er), hvorpå udskriften vil standse, hvilket muliggør en ændring i filament. Forlad blank for at deaktivere. For at sætte pause på flere lag skal du adskille lagnumre med semikolon. For eksempel: "16; 37".
+Translated:Det lag (er), hvorpå udskriften vil standse, hvilket muliggør en ændring i filament. Forlad blank for at deaktivere. Hvis du vil sætte en pause i flere lag, skal du skille lagstallene med semikolonerne. Eksempel: "16; 37".
 
 English:All extrusions are multiplied by this value. Increasing it above 1 will increase the amount of filament being extruded (1.1 is a good max value); decreasing it will decrease the amount being extruded (.9 is a good minimum value).
 Translated:Alle ekstruderinger multipliceres med denne værdi. Forøgelse af det over 1 vil øge mængden af ​​filament, der ekstruderes (1,1 er en god max værdi); Faldende det vil reducere mængden, der ekstruderes (.9 er en god minimumsværdi).
@@ -5624,7 +5624,7 @@ English:The distance that a perimeter will overlap itself when it completes its 
 Translated:Den afstand, som en omkreds overlapper sig selv, når den fuldender sin sløjfe, udtrykt som en procentdel af dysediameteren.
 
 English:Forces the print to have only one extrusion and gradually increase the Z height during the print. Only one part will print at a time with this feature.
-Translated:Forcerer udskriften til kun at have en ekstrudering og gradvist øge Z højden under udskriften. Kun en del udskrives ad gangen med denne funktion.
+Translated:Forcerer udskrivningen til kun at have en ekstrudering og gradvist øge Z højden under udskriften. Kun en del udskrives ad gangen med denne funktion.
 
 English:The number of degrees Centigrade to lower the temperature of a nozzle while it is not active.
 Translated:Antallet grader Celsius for at sænke temperaturen på en dyse, mens den ikke er aktiv.
@@ -5909,7 +5909,7 @@ English:Confirm the material you are unloading.
 Translated:Bekræft det materiale, du læser.
 
 English:Waiting for extruder to heat to 205, before unloading.
-Translated:Venter på ekstruderen at varme til 205, før aflæsning.
+Translated:Venter på ekstruderen at varme til 205, før losning.
 
 English:Unloading filament...
 Translated:Aflæsning af filament ...
@@ -6108,4 +6108,67 @@ Translated:Har Z Probe
 
 English:Use Z Probe
 Translated:Brug Z Probe
+
+English:The printer has a servo for lowering and rasing the z probe.
+Translated:Printeren har en servo til sænkning og rasing af z-sonden.
+
+English:The offset to use whene probing. For manual probing, this is the thickness of the paper (or other calibration device).
+Translated:Modregningen til at bruge Whene probing. Ved manuel sondering er dette tykkelsen på papiret (eller en anden kalibreringsenhed).
+
+English:The distance the z probe is from the extruder in x and y.
+Translated:Afstanden z-sonden er fra ekstruderen i x og y.
+
+English:This is the angle that lowers or deploys the z probe.
+Translated:Dette er den vinkel, der sænker eller deployerer z-sonden.
+
+English:This is the angle that raises or stows the z probe.
+Translated:Dette er den vinkel, der rejser eller støder z-sonden.
+
+English:Has Z Servo
+Translated:Har Z Servo
+
+English:Start Height
+Translated:Start højde
+
+English:Use Automatic Z Probe
+Translated:Brug Automatisk Z Probe
+
+English:Paper Width / Z Offset
+Translated:Papirbredde / Z Offset
+
+English:XY Offset
+Translated:XY Offset
+
+English:Lower / Deploy
+Translated:Lavere / implementere
+
+English:Raise / Stow
+Translated:Hæve / Stow
+
+English:The number of times to sample each probe position (results will be averaged).
+Translated:Antallet af gange for at prøve hver sondeposition (resultaterne bliver gennemsnitlige).
+
+English:Number of Samples
+Translated:Antal prøver
+
+English:Location: 'Controls' -> 'Movement' -> 'Z Offset'
+Translated:Placering: 'Controls' -> 'Movement' -> 'Z Offset'
+
+English:Controls Z Offset is too large.
+Translated:Kontrol Z Offset er for stort.
+
+English:Your active print Z Offset (sometimes called Babby Stepping) is greater than 1mm and invalid. Printer needs to be re-calibrated, or value cleared.
+Translated:Din aktive print Z Offset (undertiden kaldet Babby Stepping) er større end 1 mm og ugyldig. Printeren skal omkalibreres, eller værdien ryddes.
+
+English:Calibration Error
+Translated:Kalibreringsfejl
+
+English:Z Offset is too large.
+Translated:Z Offset er for stort.
+
+English:The Z Offset for your printer, sometimes called Babby Stepping, is greater than 2mm and invalid. Clear the value and re-level the bed.
+Translated:Z-forskydningen til din printer, undertiden kaldet Babby Stepping, er større end 2 mm og ugyldig. Ryd værdien og genindstil sengen.
+
+English:The distance the z probe is from the extruder in z. For manual probing, this is the negated thickness of the paper (or other calibration device).
+Translated:Afstanden z-sonden er fra ekstruderen i z. Til manuel sondering er dette den negerede tykkelse af papiret (eller en anden kalibreringsenhed).
 
