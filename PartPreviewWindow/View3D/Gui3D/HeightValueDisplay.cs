@@ -80,12 +80,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 						for (int i = 0; i < 4; i++)
 						{
-							Vector2 testScreenPosition = MeshViewerToDrawWith.TrackballTumbleWidget.GetScreenPosition(bottomPoints[i]);
+							Vector2 testScreenPosition = MeshViewerToDrawWith.World.GetScreenPosition(bottomPoints[i]);
 							if (testScreenPosition.x > screenPosition.x)
 							{
 								startLineSelectionPos = testScreenPosition;
-								startLineGroundPos = MeshViewerToDrawWith.TrackballTumbleWidget.GetScreenPosition(bottomPoints[i] + new Vector3(0, 0, -bottomPoints[i].z));
-								midLinePos = MeshViewerToDrawWith.TrackballTumbleWidget.GetScreenPosition(bottomPoints[i] + new Vector3(0, 0, -bottomPoints[i].z/2));
+								startLineGroundPos = MeshViewerToDrawWith.World.GetScreenPosition(bottomPoints[i] + new Vector3(0, 0, -bottomPoints[i].z));
+								midLinePos = MeshViewerToDrawWith.World.GetScreenPosition(bottomPoints[i] + new Vector3(0, 0, -bottomPoints[i].z/2));
 								screenPosition = testScreenPosition + new Vector2(HorizontalLineLength, 0);
 							}
 						}

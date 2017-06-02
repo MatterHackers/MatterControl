@@ -57,59 +57,59 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			MeshSelectInfo meshSelectInfo = view3DWidget.CurrentSelectInfo;
 
-			var trackballWidget = MeshViewerToDrawWith.TrackballTumbleWidget;
+			var world = MeshViewerToDrawWith.World;
 
 			switch (meshSelectInfo.HitQuadrant)
 			{
 				case HitQuadrant.LB:
 					{
 						Vector3 cornerPoint = new Vector3(selectedBounds.minXYZ.x, selectedBounds.minXYZ.y, 0);
-						double distBetweenPixelsWorldSpace = trackballWidget.GetWorldUnitsPerScreenPixelAtPosition(cornerPoint);
+						double distBetweenPixelsWorldSpace = world.GetWorldUnitsPerScreenPixelAtPosition(cornerPoint);
 
-						lines[0] = trackballWidget.GetScreenPosition(cornerPoint - new Vector3(distToStart * distBetweenPixelsWorldSpace, 0, 0));
-						lines[1] = trackballWidget.GetScreenPosition(cornerPoint - new Vector3((distToStart + lineLength) * distBetweenPixelsWorldSpace, 0, 0));
+						lines[0] = world.GetScreenPosition(cornerPoint - new Vector3(distToStart * distBetweenPixelsWorldSpace, 0, 0));
+						lines[1] = world.GetScreenPosition(cornerPoint - new Vector3((distToStart + lineLength) * distBetweenPixelsWorldSpace, 0, 0));
 
-						lines[2] = trackballWidget.GetScreenPosition(cornerPoint - new Vector3(0, distToStart * distBetweenPixelsWorldSpace, 0));
-						lines[3] = trackballWidget.GetScreenPosition(cornerPoint - new Vector3(0, (distToStart + lineLength) * distBetweenPixelsWorldSpace, 0));
+						lines[2] = world.GetScreenPosition(cornerPoint - new Vector3(0, distToStart * distBetweenPixelsWorldSpace, 0));
+						lines[3] = world.GetScreenPosition(cornerPoint - new Vector3(0, (distToStart + lineLength) * distBetweenPixelsWorldSpace, 0));
 					}
 					break;
 
 				case HitQuadrant.LT:
 					{
 						Vector3 cornerPoint = new Vector3(selectedBounds.minXYZ.x, selectedBounds.maxXYZ.y, 0);
-						double distBetweenPixelsWorldSpace = trackballWidget.GetWorldUnitsPerScreenPixelAtPosition(cornerPoint);
+						double distBetweenPixelsWorldSpace = world.GetWorldUnitsPerScreenPixelAtPosition(cornerPoint);
 
-						lines[0] = trackballWidget.GetScreenPosition(cornerPoint - new Vector3(distToStart * distBetweenPixelsWorldSpace, 0, 0));
-						lines[1] = trackballWidget.GetScreenPosition(cornerPoint - new Vector3((distToStart + lineLength) * distBetweenPixelsWorldSpace, 0, 0));
+						lines[0] = world.GetScreenPosition(cornerPoint - new Vector3(distToStart * distBetweenPixelsWorldSpace, 0, 0));
+						lines[1] = world.GetScreenPosition(cornerPoint - new Vector3((distToStart + lineLength) * distBetweenPixelsWorldSpace, 0, 0));
 
-						lines[2] = trackballWidget.GetScreenPosition(cornerPoint + new Vector3(0, distToStart * distBetweenPixelsWorldSpace, 0));
-						lines[3] = trackballWidget.GetScreenPosition(cornerPoint + new Vector3(0, (distToStart + lineLength) * distBetweenPixelsWorldSpace, 0));
+						lines[2] = world.GetScreenPosition(cornerPoint + new Vector3(0, distToStart * distBetweenPixelsWorldSpace, 0));
+						lines[3] = world.GetScreenPosition(cornerPoint + new Vector3(0, (distToStart + lineLength) * distBetweenPixelsWorldSpace, 0));
 					}
 					break;
 
 				case HitQuadrant.RB:
 					{
 						Vector3 cornerPoint = new Vector3(selectedBounds.maxXYZ.x, selectedBounds.minXYZ.y, 0);
-						double distBetweenPixelsWorldSpace = trackballWidget.GetWorldUnitsPerScreenPixelAtPosition(cornerPoint);
+						double distBetweenPixelsWorldSpace = world.GetWorldUnitsPerScreenPixelAtPosition(cornerPoint);
 
-						lines[0] = trackballWidget.GetScreenPosition(cornerPoint + new Vector3(distToStart * distBetweenPixelsWorldSpace, 0, 0));
-						lines[1] = trackballWidget.GetScreenPosition(cornerPoint + new Vector3((distToStart + lineLength) * distBetweenPixelsWorldSpace, 0, 0));
+						lines[0] = world.GetScreenPosition(cornerPoint + new Vector3(distToStart * distBetweenPixelsWorldSpace, 0, 0));
+						lines[1] = world.GetScreenPosition(cornerPoint + new Vector3((distToStart + lineLength) * distBetweenPixelsWorldSpace, 0, 0));
 
-						lines[2] = trackballWidget.GetScreenPosition(cornerPoint - new Vector3(0, distToStart * distBetweenPixelsWorldSpace, 0));
-						lines[3] = trackballWidget.GetScreenPosition(cornerPoint - new Vector3(0, (distToStart + lineLength) * distBetweenPixelsWorldSpace, 0));
+						lines[2] = world.GetScreenPosition(cornerPoint - new Vector3(0, distToStart * distBetweenPixelsWorldSpace, 0));
+						lines[3] = world.GetScreenPosition(cornerPoint - new Vector3(0, (distToStart + lineLength) * distBetweenPixelsWorldSpace, 0));
 					}
 					break;
 
 				case HitQuadrant.RT:
 					{
 						Vector3 cornerPoint = new Vector3(selectedBounds.maxXYZ.x, selectedBounds.maxXYZ.y, 0);
-						double distBetweenPixelsWorldSpace = trackballWidget.GetWorldUnitsPerScreenPixelAtPosition(cornerPoint);
+						double distBetweenPixelsWorldSpace = world.GetWorldUnitsPerScreenPixelAtPosition(cornerPoint);
 
-						lines[0] = trackballWidget.GetScreenPosition(cornerPoint + new Vector3(distToStart * distBetweenPixelsWorldSpace, 0, 0));
-						lines[1] = trackballWidget.GetScreenPosition(cornerPoint + new Vector3((distToStart + lineLength) * distBetweenPixelsWorldSpace, 0, 0));
+						lines[0] = world.GetScreenPosition(cornerPoint + new Vector3(distToStart * distBetweenPixelsWorldSpace, 0, 0));
+						lines[1] = world.GetScreenPosition(cornerPoint + new Vector3((distToStart + lineLength) * distBetweenPixelsWorldSpace, 0, 0));
 
-						lines[2] = trackballWidget.GetScreenPosition(cornerPoint + new Vector3(0, distToStart * distBetweenPixelsWorldSpace, 0));
-						lines[3] = trackballWidget.GetScreenPosition(cornerPoint + new Vector3(0, (distToStart + lineLength) * distBetweenPixelsWorldSpace, 0));
+						lines[2] = world.GetScreenPosition(cornerPoint + new Vector3(0, distToStart * distBetweenPixelsWorldSpace, 0));
+						lines[3] = world.GetScreenPosition(cornerPoint + new Vector3(0, (distToStart + lineLength) * distBetweenPixelsWorldSpace, 0));
 					}
 					break;
 			}

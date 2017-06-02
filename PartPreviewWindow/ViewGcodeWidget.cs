@@ -632,13 +632,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void CenterPartInView()
 		{
-			RectangleDouble partBounds = LoadedGCode.GetBounds();
-			Vector2 weightedCenter = LoadedGCode.GetWeightedCenter();
+			if (LoadedGCode != null)
+			{
+				RectangleDouble partBounds = LoadedGCode.GetBounds();
+				Vector2 weightedCenter = LoadedGCode.GetWeightedCenter();
 
-			unscaledRenderOffset = -weightedCenter;
-			layerScale = Math.Min(Height / partBounds.Height, Width / partBounds.Width);
+				unscaledRenderOffset = -weightedCenter;
+				layerScale = Math.Min(Height / partBounds.Height, Width / partBounds.Width);
 
-			Invalidate();
+				Invalidate();
+			}
 		}
 	}
 }
