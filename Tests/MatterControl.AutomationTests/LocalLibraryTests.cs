@@ -132,7 +132,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				return Task.FromResult(0);
 			});
 		}
-	
+
 		[Test]
 		public async Task RenameButtonRenameLocalLibraryItem()
 		{
@@ -210,7 +210,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// Make sure the renamed Library Folder exists
 				Assert.IsTrue(testRunner.WaitForName("Renamed Library Folder Row Item Collection", 2), "Renamed folder should exist");
 
-				return Task.FromResult(0);	
+				return Task.FromResult(0);
 			});
 		}
 
@@ -220,7 +220,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				testRunner.CloseSignInAndPrinterSelect();
-				
+
 				// Navigate to Local Library
 				testRunner.ClickByName("Library Tab");
 				testRunner.NavigateToFolder("Local Library Row Item Collection");
@@ -377,45 +377,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.IsTrue(testRunner.WaitForName("Row Item Fennec Fox", 5), "Fennec item should exist in the Queue after Add");
 				Assert.IsTrue(testRunner.WaitForName("Row Item Batman", 5), "Batman item should exist in the Queue after Add");
 
-				return Task.FromResult(0);	
-			});
-		}
-		[Test]
-		public async Task PrintLibraryItem()
-		{
-			AutomationTest testToRun = (testRunner) =>
-			{
-				testRunner.WaitForName("Cancel Wizard Button", 1);
-
-				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
-				{
-					// Navigate to Local Library
-					testRunner.ClickByName("Library Tab");
-					testRunner.NavigateToFolder("Local Library Row Item Collection");
-
-					testRunner.ClickByName("Row Item Calibration - Box");
-
-					int initialQueueCount = QueueData.Instance.ItemCount;
-
-					// Click Library Item Print Button
-					testRunner.ClickByName("Row Item Calibration - Box Print Button");
-					testRunner.Delay(2);
-
-					Assert.AreEqual(initialQueueCount + 1, QueueData.Instance.ItemCount, "Queue count should increment by one after clicking 'Print'");
-					Assert.AreEqual("Calibration - Box", QueueData.Instance.PrintItems[0].Name, "Library item should be inserted at queue index 0");
-					Assert.AreEqual("Calibration - Box", QueueData.Instance.SelectedPrintItem.Name, "Library item should be the selected item");
-					Assert.AreEqual("Calibration - Box", PrinterConnectionAndCommunication.Instance.ActivePrintItem.Name, "PrinterConnectionCommunication item should be the expected item");
-
-					testRunner.CancelPrint();
-					testRunner.Delay(1);
-
-					testRunner.NameExists("Start Print Button");
-				}
-
 				return Task.FromResult(0);
-			};
-
-			await MatterControlUtilities.RunTest(testToRun);
+			});
 		}
 	}
 }
