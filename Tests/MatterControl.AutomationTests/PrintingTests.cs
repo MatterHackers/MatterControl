@@ -271,14 +271,15 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				{
 					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
 
+					testRunner.AddDefaultFileToBedPlate();
+					
+					testRunner.ClickByName("Controls Tab", 1);
+
 					// Wait for printing to complete
 					var printFinishedResetEvent = new AutoResetEvent(false);
 					PrinterConnectionAndCommunication.Instance.PrintFinished.RegisterEvent((s, e) => printFinishedResetEvent.Set(), ref unregisterEvents);
 
-					testRunner.AddDefaultFileToBedPlate();
 					testRunner.ClickByName("Start Print Button", 1);
-
-					testRunner.ClickByName("Controls Tab", 1);
 
 					var container = testRunner.GetWidgetByName("ManualPrinterControls.ControlsContainer", out systemWindow, 5);
 
@@ -350,7 +351,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			double initialExtrusionRate = 0.6;
 			double initialFeedRate = 0.7;
 
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				SystemWindow systemWindow;
 
@@ -365,7 +366,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				{
 					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
 
+					testRunner.AddDefaultFileToBedPlate();
+
 					testRunner.ClickByName("Controls Tab", 1);
+
+					var printFinishedResetEvent = new AutoResetEvent(false);
+					PrinterConnectionAndCommunication.Instance.PrintFinished.RegisterEvent((s, e) => printFinishedResetEvent.Set(), ref unregisterEvents);
 
 					testRunner.ClickByName("Start Print Button", 1);
 
@@ -407,15 +413,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate);
 
 					// Wait for printing to complete
-					var resetEvent = new AutoResetEvent(false);
-					PrinterConnectionAndCommunication.Instance.PrintFinished.RegisterEvent((s, e) => resetEvent.Set(), ref unregisterEvents);
-					resetEvent.WaitOne();
+					printFinishedResetEvent.WaitOne();
 
-					testRunner.WaitForName("Done Button", 30);
-					testRunner.WaitForName("Print Again Button", 1);
+					testRunner.WaitForPrintFinished();
 
 					// Values should match entered values
-					testRunner.ClickByName("Print Again Button", 1);
+					testRunner.ClickByName("Start Print Button", 1);
 					testRunner.Delay(2);
 
 					// Values should match entered values
@@ -429,9 +432,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				}
 
 				return Task.FromResult(0);
-			};
-
-			await MatterControlUtilities.RunTest(testToRun, overrideHeight: 900, maxTimeToRun: 990);
+			}, overrideHeight: 900, maxTimeToRun: 120);
 		}
 
 		[Test, Apartment(ApartmentState.STA)]
