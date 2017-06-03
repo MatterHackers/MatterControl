@@ -6109,3 +6109,66 @@ Translated:است Z پروب
 English:Use Z Probe
 Translated:استفاده از Z پروب
 
+English:The printer has a servo for lowering and rasing the z probe.
+Translated:است که پرینتر دارای یک سروو برای کاهش و rasing پروب Z است.
+
+English:The offset to use whene probing. For manual probing, this is the thickness of the paper (or other calibration device).
+Translated:افست استفاده whene کاوش. برای کاوش دستی، این ضخامت کاغذ (و یا دستگاه های کالیبراسیون دیگر) است.
+
+English:The distance the z probe is from the extruder in x and y.
+Translated:فاصله پروب Z را از اکسترودر در x و y است.
+
+English:This is the angle that lowers or deploys the z probe.
+Translated:این زاویه است که باعث کاهش و یا اعزام کاوشگر Z است.
+
+English:This is the angle that raises or stows the z probe.
+Translated:این زاویه است که می آفریند و یا stows پروب Z است.
+
+English:Has Z Servo
+Translated:است Z سروو
+
+English:Start Height
+Translated:شروع قد
+
+English:Use Automatic Z Probe
+Translated:استفاده از خودکار Z پروب
+
+English:Paper Width / Z Offset
+Translated:کاغذ عرض / Z افست
+
+English:XY Offset
+Translated:XY افست
+
+English:Lower / Deploy
+Translated:پایین / استقرار
+
+English:Raise / Stow
+Translated:بالا بردن / استوی
+
+English:The number of times to sample each probe position (results will be averaged).
+Translated:تعداد دفعاتی که به نمونه هر موقعیت پروب (نتایج به طور متوسط ​​خواهد شد).
+
+English:Number of Samples
+Translated:تعداد نمونه
+
+English:Location: 'Controls' -> 'Movement' -> 'Z Offset'
+Translated:محل سکونت: کنترل "->" جنبش "->" Z افست،
+
+English:Controls Z Offset is too large.
+Translated:کنترل Z افست خیلی بزرگ است.
+
+English:Your active print Z Offset (sometimes called Babby Stepping) is greater than 1mm and invalid. Printer needs to be re-calibrated, or value cleared.
+Translated:Z چاپ افست فعال شما (گاهی اوقات Babby پله نامیده می شود) بیشتر از 1mm و نامعتبر است. پرینتر نیاز به دوباره کالیبره شده، یا ارزش پاک.
+
+English:Calibration Error
+Translated:خطای کالیبراسیون
+
+English:Z Offset is too large.
+Translated:Z افست خیلی بزرگ است.
+
+English:The Z Offset for your printer, sometimes called Babby Stepping, is greater than 2mm and invalid. Clear the value and re-level the bed.
+Translated:Z از افست برای چاپگر خود، گاهی به نام Babby پله، بزرگتر از ضخامت 2mm و نامعتبر است. پاک کردن ارزش و سطح دوباره تخت.
+
+English:The distance the z probe is from the extruder in z. For manual probing, this is the negated thickness of the paper (or other calibration device).
+Translated:فاصله پروب Z را از اکسترودر در z است. برای کاوش دستی، این ضخامت نفی کاغذ (و یا دستگاه های کالیبراسیون دیگر) است.
+

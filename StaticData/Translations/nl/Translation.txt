@@ -80,7 +80,7 @@ English:Done
 Translated:Gedaan
 
 English:Move to next print in queue
-Translated:Ga naar de volgende afdruk in de rij
+Translated:Ga naar de volgende afdruk in de wachtrij
 
 English:No printer selected.  Press 'Connect' to choose a printer.
 Translated:Geen printer geselecteerd. Druk op 'Verbinden' om een ​​printer te kiezen.
@@ -428,7 +428,7 @@ English:Acceleration to use on all moves not defined above. Set to 0 to disable 
 Translated:Versnelling om te gebruiken op alle bewegingen die niet hierboven gedefinieerd zijn. Stel op 0 om de acceleratie van de printer te wijzigen.
 
 English:The number of layers for which the fan will be forced to remain off.
-Translated:Het aantal lagen waarvoor de ventilator wordt gedwongen om weg te blijven.
+Translated:Het aantal lagen waarvoor de ventilator wordt gedwongen te blijven.
 
 English:This gcode will be inserted at the end of all automatic output (the very end of the gcode commands).
 Translated:Deze code wordt toegevoegd aan het einde van alle automatische uitvoer (het einde van de gc-commando's).
@@ -719,7 +719,7 @@ English:This gcode will be inserted after every tool change.
 Translated:Deze code wordt ingevoegd na elke gereedschapswijziging.
 
 English:The speed to print the top infill. This can be set explicitly or as a percentage of the Infill speed.
-Translated:De snelheid om de bovenste invulling af te drukken. Dit kan expliciet of als percentage van de infill snelheid worden ingesteld.
+Translated:De snelheid om de topinvulling af te drukken. Dit kan expliciet of als percentage van de infill snelheid worden ingesteld.
 
 English:How many layers will be solid filled on the top surfaces of the object.
 Translated:Hoeveel lagen zullen op de bovenoppervlakken van het object stevig worden gevuld.
@@ -734,7 +734,7 @@ English:Normally you will want to use absolute e distances. Only check this if y
 Translated:Normaal gesproken wilt u absolute e-afstande gebruiken. Controleer dit alleen als u weet dat uw printer relatieve e afstande heeft.
 
 English:This is to help reduce vibrations during printing. If your printer has a resonance frequency that is causing trouble you can set this to try and reduce printing at that frequency.
-Translated:Dit kan vibraties verminderen tijdens het afdrukken. Als uw printer een resonantiefrequentie heeft die problemen veroorzaakt, kunt u dit instellen om te proberen om de afdruk op die frequentie te verminderen.
+Translated:Dit kan vibraties verminderen tijdens het afdrukken. Als uw printer een resonantiefrequentie heeft die problemen veroorzaakt, kunt u dit instellen om te proberen om afdrukken op die frequentie te verminderen.
 
 English:This will cause the extruder to move while retracting to minimize blobs.
 Translated:Dit zorgt ervoor dat de extruder beweegt terwijl hij terugtrekt om blobs te minimaliseren.
@@ -1061,7 +1061,7 @@ English:Advanced
 Translated:gevorderd
 
 English:Enable Extruder Lift
-Translated:Extruder lift inschakelen
+Translated:Extruder Lift inschakelen
 
 English:Min Fan Speed
 Translated:Min ventilatorsnelheid
@@ -1124,7 +1124,7 @@ English:Quality (slower slicing)
 Translated:Kwaliteit (langzamer snijden)
 
 English:Randomize Starting Points
-Translated:Randomiseer startpunten
+Translated:Randomize Start Points
 
 English:External Perimeters First
 Translated:Externe perimeters eerst
@@ -1592,7 +1592,7 @@ English:  Remove All
 Translated:  Verwijder alles
 
 English:The number of layers to skip in z. The gap between the support and the model.
-Translated:Het aantal lagen om in z te slaan. De kloof tussen de ondersteuning en het model.
+Translated:Het aantal lagen om in z te overslaan. De kloof tussen de ondersteuning en het model.
 
 English:Z Gap
 Translated:Z Gap
@@ -1610,7 +1610,7 @@ English:Create Raft
 Translated:Creëer Raft
 
 English:The amount of overhangs to support. 0 is no support 100 is support every overhang regardless of angle.
-Translated:Het aantal overhangen om te ondersteunen. 0 is geen ondersteuning 100 ondersteunt elke overhang, ongeacht de hoek.
+Translated:De hoeveelheid overhangen om te ondersteunen. 0 is geen ondersteuning 100 ondersteunt elke overhang, ongeacht de hoek.
 
 English:Overhang Percent
 Translated:Overhang percentage
@@ -1703,7 +1703,7 @@ English:Item not found
 Translated:Item niet gevonden
 
 English:Welcome to the print leveling wizard. Here is a quick overview on what we are going to do.
-Translated:Welkom bij de wizard Niveau. Hier is een snel overzicht van wat we gaan doen.
+Translated:Welkom bij de wizard Printniveaus. Hier is een snel overzicht van wat we gaan doen.
 
 English:'Home' the printer
 Translated:'Home' de printer
@@ -1814,7 +1814,7 @@ English:About
 Translated:Over
 
 English:This controls the ratio of material extruder during bridging.Reducing this slightly can help bridging by stretching the filament more, using a fan can also help greatly.
-Translated:Dit controleert de verhouding van materiaal extruder tijdens het overbruggen. Door dit iets te verminderen kan het overbruggen door het filament meer uit te breiden, met behulp van een ventilator kan het ook sterk helpen.
+Translated:Dit controleert de verhouding van materiaal extruder tijdens het overbruggen. Door dit iets te verminderen kan het overbruggen door het filament meer uit te breiden, met behulp van een ventilator kan het ook zeer helpen.
 
 English:The default temperature to set the bed to. Can sometimes be overriden on the first layer. Set to 0 to eliminate bed temperature commands.
 Translated:De standaard temperatuur om het bed op te zetten. Kan soms worden overschreden op de eerste laag. Stel op op 0 om de bedtemperatuur opdrachten uit te schakelen.
@@ -2333,7 +2333,7 @@ English:There is a recommended update avalible for MatterControl. Would you like
 Translated:Er is een aanbevolen update beschikbaar voor MatterControl. Wilt u het nu downloaden?
 
 English:Recommended Update Available
-Translated:Aanbevolen update beschikbaar
+Translated:Aanbevolen Update beschikbaar
 
 English:Download Now
 Translated:Download nu
@@ -2780,7 +2780,7 @@ English:Cancelled
 Translated:Geannuleerd
 
 English:You can only connect when not currently connected.
-Translated:U kunt alleen verbinden als er geen verbinding is.
+Translated:U kunt alleen verbinden als er geen verbinding is gemaakt.
 
 English:Warning - No EEProm Mapping
 Translated:Waarschuwing - Geen EEProm Mapping
@@ -2975,7 +2975,7 @@ English:Infill:
 Translated:infill:
 
 English:Unlock to Save
-Translated:Ontgrendelen opslaan
+Translated:Ontgrendel opslaan
 
 English:Save & Exit
 Translated:Opslaan en afsluiten
@@ -3008,7 +3008,7 @@ English:Inserting image...
 Translated:Afbeelding invoegen ...
 
 English:Completed Prints:
-Translated:Afgesloten afdrukken:
+Translated:Afgedrukte afdrukken:
 
 English:Total Print Time:
 Translated:Totale afdruk tijd:
@@ -3299,7 +3299,7 @@ English:Print Area
 Translated:Afdrukgebied
 
 English:First Layer Extrusion Width = {0}\nNozzle Diameter = {1}
-Translated:Breedte van eerste laag extreem = {0}\nSpuitdiameter = {1}
+Translated:Breedte van de eerste laag extreem = {0}\nSpuitdiameter = {1}
 
 English:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Print' -> 'Advanced' -> 'Frist Layer'
 Translated:Locatie: 'Geavanceerde besturingselementen' -> 'Snijinstellingen' -> 'Afdrukken' -> 'Geavanceerd' -> 'Snijvlak'
@@ -3704,7 +3704,7 @@ English:Login Required
 Translated:Aanmelden vereist
 
 English:Rebuild Thumbnails Now
-Translated:Nu miniaturen opbouwen
+Translated:Thumbnails nu opnieuw opbouwen
 
 English:You are switching to a different thumbnail rendering mode. If you want, your current thumbnails can be removed and recreated in the new style. You can switch back and forth at any time. There will be some processing overhead while the new thumbnails are created.\n\nDo you want to rebuild your existing thumbnails now?
 Translated:U schakelt over naar een andere miniatuurweergave modus. Als u wilt, kunt u de huidige miniaturen verwijderen en opnieuw maken in de nieuwe stijl. U kunt op elk gewenst moment heen en weer schakelen. Er zullen overheadkosten zijn terwijl de nieuwe miniaturen worden gemaakt.\n\nWilt u uw bestaande thumbnails nu herbouwen?
@@ -4247,7 +4247,7 @@ English:The distance the nozzle will lift after each retraction.
 Translated:De afstand die de mondstuk zal opheffen na elke terugtrekking.
 
 English:Length of filament to extrude after a complete retraction (in addition to the re-extrusion of the Length on Move distance).
-Translated:Lengte van het filament om te extruderen na een volledige terugtrekking (naast de re-extrusie van de Lengte op Verplaatsafstand).
+Translated:Lengte van het filament om te extruderen na een volledige terugtrekking (naast de re-extrusie van de Lengte op Bewegingsafstand).
 
 English:The speed at which filament will retract and re-extrude.
 Translated:De snelheid waarmee filament terugtrekt en opnieuw extrudeert.
@@ -4265,7 +4265,7 @@ English:G-Code to be run immediately following the temperature setting commands.
 Translated:G-Code om direct na de temperatuurinstellingen te worden uitgevoerd. Met inbegrip van opdrachten om de temperatuur in deze sectie in te stellen, zullen ze niet worden gegenereerd buiten dit gedeelte. Zal de G-Code variabelen accepteren.
 
 English:The distance between the first layer (the bottom) and the top of the raft. A good value depends on the type of material. For PLA and ABS a value between 0.1 and 0.3 generaly works well.
-Translated:De afstand tussen de eerste laag (de bodem) en de bovenkant van de vlot. Een goede waarde hangt af van het type materiaal. Voor PLA en ABS werkt een waarde tussen 0,1 en 0,3 generaly goed.
+Translated:De afstand tussen de eerste laag (de bodem) en de bovenkant van de vlot. Een goede waarde hangt af van het type materiaal. Voor PLA en ABS werkt een waarde tussen 0.1 en 0.3 generaly goed.
 
 English:The percent of the extrusion width that can be overlapped and still generate.
 Translated:Het percentage extrusiebreedte dat overlappend kan worden en nog steeds genereert.
@@ -4412,7 +4412,7 @@ English:Success! Your account has been created.
 Translated:Succes! Je account is aangemaakt.
 
 English:Please log in to continue.
-Translated:Log in om door te gaan.
+Translated:Log in om verder te gaan.
 
 English:Oops! Invalid username, email or password.
 Translated:Oops! Ongeldige gebruikersnaam, e-mail of wachtwoord.
@@ -4628,7 +4628,7 @@ English:Sphere
 Translated:Gebied
 
 English:Output only the first layer of the print. Especially useful for outputting gcode data for applications like engraving or cutting.
-Translated:Uitvoer alleen de eerste laag van de afdruk. Vooral handig voor het uitgeven van gcode data voor toepassingen zoals gravure of snijden.
+Translated:Uitsluitend de eerste laag van de afdruk uitvoeren. Vooral handig voor het uitgeven van gcode data voor toepassingen zoals gravure of snijden.
 
 English:First Layer Only
 Translated:Alleen eerste laag
@@ -4751,7 +4751,7 @@ English:Import an existing Settings Preset
 Translated:Voer een bestaande instellingen voorinstelling in
 
 English:The serial port communication speed of the printers firmware.
-Translated:De seriële poort communicatie snelheid van de firmware van de printers.
+Translated:De seriële poortcommunicatiesnelheid van de firmware van de printers.
 
 English:Home Z Max
 Translated:Home Z Max
@@ -5036,7 +5036,7 @@ English:Import Successful
 Translated:Succesvol importeren
 
 English:The distance between the first layer (the bottom) and the top of the support material. A good value depends on the type of material. For PLA and ABS a value between 0.1 and 0.3 generaly works well.
-Translated:De afstand tussen de eerste laag (de bodem) en de bovenkant van het draagmateriaal. Een goede waarde hangt af van het type materiaal. Voor PLA en ABS werkt een waarde tussen 0,1 en 0,3 generaly goed.
+Translated:De afstand tussen de eerste laag (de bodem) en de bovenkant van het draagmateriaal. Een goede waarde hangt af van het type materiaal. Voor PLA en ABS werkt een waarde tussen 0.1 en 0.3 generaly goed.
 
 English:Printers...
 Translated:Printers ...
@@ -5255,7 +5255,7 @@ English:Select a Printer.
 Translated:Selecteer een printer.
 
 English:The profile you are attempting to load has been corrupted. We loaded your last usable {0} {1} profile from your recent profile history instead.
-Translated:Het profiel dat u probeert te laden is beschadigd. We hebben je laatste bruikbare {0} {1} profiel vanuit uw recente profielgeschiedenis in plaats geladen.
+Translated:Het profiel dat u probeert te laden is beschadigd. We hebben uw laatste bruikbare {0} {1} profiel vanuit uw recente profielgeschiedenis in plaats geladen.
 
 English:Recovered printer profile
 Translated:Hersteld printerprofiel
@@ -5468,7 +5468,7 @@ English:Retry Login
 Translated:Probeer opnieuw in te loggen
 
 English:It's time to migrate your existing printer settings to your MatterHackers account. Once added, these printers will be available whenever and wherever you sign in to MatterControl. Printers that are not migrated will only be available in 'guest' mode.
-Translated:Het is tijd om uw bestaande printerinstellingen naar uw MatterHackers-account te migreren. Eenmaal toegevoegd, zullen deze printers beschikbaar zijn wanneer en waar u zich aanmeldt bij MatterControl. Printers die niet worden gemigreerd, zijn alleen beschikbaar in de modus 'Gast'.
+Translated:Het is tijd om uw bestaande printerinstellingen te migreren naar uw MatterHackers-account. Eenmaal toegevoegd, zullen deze printers beschikbaar zijn wanneer en waar u zich aanmeldt bij MatterControl. Printers die niet worden gemigreerd, zijn alleen beschikbaar in de modus 'Gast'.
 
 English:Migrate Printers to Account
 Translated:Migreer printers naar account
@@ -5726,7 +5726,7 @@ English:Firmware updated successfully. Please reconnect.
 Translated:Firmware is succesvol bijgewerkt. Gelieve opnieuw te verbinden.
 
 English:The 'Serial Port' section lists all available serial\nports on your device. Changing which USB port the printer\nis conneted to may change the associated serial port.\n\nTip: If you are uncertain, unplug/plug in your printer\nand hit refresh. The new port that appears should be\nyour printer.
-Translated:De sectie 'Seriële poort' bevat alle beschikbare seriële\npoorten op uw apparaat. Als u de USB-poort waarop de printer wordt aangesloten veranderen, kan de bijbehorende seriële poort worden gewijzigd.\n\nTip: Als u niet zeker bent, koppel / sluit uw printer aan\nen klik op Vernieuwen. De nieuwe poort die verschijnt, moet\nuw printer zijn.
+Translated:De sectie 'Seriële poort' bevat alle beschikbare seriële\npoorten op uw apparaat. Als u de USB-poort waarop de printer wordt aangesloten veranderen, kan de bijbehorende seriële poort worden gewijzigd.\n\nTip: Als u onseker bent, koppel / sluit uw printer aan\nen druk op refresh. De nieuwe poort die verschijnt, moet\nuw printer zijn.
 
 English:Reverting firmware to previous version...
 Translated:Firmware terugzetten naar vorige versie ...
@@ -5864,7 +5864,7 @@ English:calibration_files
 Translated:calibration_files
 
 English:'External Perimeter Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.
-Translated:De extrusiebreedte van de externe perimeter moet minder dan of gelijk zijn aan de 'nozzle diameter' * 4.
+Translated:De extruderbreedte van de externe perimeter moet minder dan of gelijk zijn aan de 'nozzle diameter' * 4.
 
 English:External Perimeter Extrusion Width = {0}\nNozzle Diameter = {1}
 Translated:Extruderbreedte externe rand = {0}\nSpuitdiameter = {1}
@@ -5909,7 +5909,7 @@ English:Confirm the material you are unloading.
 Translated:Bevestig het materiaal dat u loopt.
 
 English:Waiting for extruder to heat to 205, before unloading.
-Translated:Wachten op extruder om te verwarmen tot 205, voor het lossen.
+Translated:Wachten op extruder om te verhit tot 205, voor het lossen.
 
 English:Unloading filament...
 Translated:Afvoeren van filament ...
@@ -6026,7 +6026,7 @@ English:Auto Print Leveling is now configured and enabled.
 Translated:Auto Print Leveling is nu geconfigureerd en ingeschakeld.
 
 English:Click 'Done' to close this window.
-Translated:Klik op 'Gereed' om dit venster te sluiten.
+Translated:Klik op 'Done' om dit venster te sluiten.
 
 English:To complete the next few steps you will need
 Translated:Om de volgende stappen te voltooien, zal u nodig hebben
@@ -6108,4 +6108,67 @@ Translated:Heeft Z Probe
 
 English:Use Z Probe
 Translated:Gebruik Z Probe
+
+English:The printer has a servo for lowering and rasing the z probe.
+Translated:De printer heeft een servo voor het verlagen en rassen van de z-sonde.
+
+English:The offset to use whene probing. For manual probing, this is the thickness of the paper (or other calibration device).
+Translated:De compensatie om te gebruiken waarheen. Voor handmatig onderzoeken is dit de dikte van het papier (of ander kalibratieapparaat).
+
+English:The distance the z probe is from the extruder in x and y.
+Translated:De afstand van de z-sonde komt uit de extruder in x en y.
+
+English:This is the angle that lowers or deploys the z probe.
+Translated:Dit is de hoek die de z-probe verlaagt of ontploft.
+
+English:This is the angle that raises or stows the z probe.
+Translated:Dit is de hoek die de z-sensor verhoogt of stoott.
+
+English:Has Z Servo
+Translated:Heeft Z Servo
+
+English:Start Height
+Translated:Start Hoogte
+
+English:Use Automatic Z Probe
+Translated:Gebruik Automatische Z Probe
+
+English:Paper Width / Z Offset
+Translated:Papierbreedte / Z Offset
+
+English:XY Offset
+Translated:XY Offset
+
+English:Lower / Deploy
+Translated:Laag / Implementeer
+
+English:Raise / Stow
+Translated:Raise / Stow
+
+English:The number of times to sample each probe position (results will be averaged).
+Translated:Het aantal keren dat elke sondepositie wordt gemeten (resultaten worden gemiddeld gemeten).
+
+English:Number of Samples
+Translated:Aantal monsters
+
+English:Location: 'Controls' -> 'Movement' -> 'Z Offset'
+Translated:Locatie: 'Controles' -> 'Beweging' -> 'Z Offset'
+
+English:Controls Z Offset is too large.
+Translated:Controles Z Offset is te groot.
+
+English:Your active print Z Offset (sometimes called Babby Stepping) is greater than 1mm and invalid. Printer needs to be re-calibrated, or value cleared.
+Translated:Uw actieve afdruk Z Offset (soms Babby Stepping genoemd) is groter dan 1 mm en ongeldig. Printer moet opnieuw worden gekalibreerd, of waarde gewist.
+
+English:Calibration Error
+Translated:Kalibreringsfout
+
+English:Z Offset is too large.
+Translated:Z Offset is te groot.
+
+English:The Z Offset for your printer, sometimes called Babby Stepping, is greater than 2mm and invalid. Clear the value and re-level the bed.
+Translated:De Z Offset voor uw printer, soms Babby Stepping genoemd, is groter dan 2 mm en ongeldig. Maak de waarde wis en maak het bed opnieuw op.
+
+English:The distance the z probe is from the extruder in z. For manual probing, this is the negated thickness of the paper (or other calibration device).
+Translated:De afstand van de z-sonde is van de extruder in z. Voor handmatig onderzoek is dit de negatieve dikte van het papier (of ander kalibratieapparaat).
 

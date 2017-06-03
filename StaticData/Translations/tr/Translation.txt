@@ -56,7 +56,7 @@ English:Cancel Connect
 Translated:Bağlantıyı iptal et
 
 English:Stop trying to connect to the printer.
-Translated:Yazıcıya bağlanmayı kesin.
+Translated:Yazıcıya bağlanmaya çalışmayı bırakın.
 
 English:Cancel
 Translated:İptal etmek
@@ -158,7 +158,7 @@ English:There are updates available.
 Translated:Mevcut güncellemeler var.
 
 English:Checking for updates...
-Translated:Güncellemeleri kontrol ediyor ...
+Translated:Güncellemeleri kontrol ediliyor ...
 
 English:MatterControl
 Translated:MatterControl
@@ -227,7 +227,7 @@ English:Show Print Area
 Translated:Baskı Alanını Göster
 
 English:Show Wireframe
-Translated:Tel kafesini Göster
+Translated:Tel kafesini göster
 
 English:Auto-Arrange
 Translated:Otomatik Yerleştir
@@ -251,7 +251,7 @@ English:reset
 Translated:sıfırlamak
 
 English:Apply Scale
-Translated:Ölçek Uygula
+Translated:Ölçeği Uygula
 
 English:Finding Parts
 Translated:Parçaları Bulma
@@ -395,7 +395,7 @@ English:The temperature to set the bed to after the first layer has been printed
 Translated:Yatağı ilk kattan sonra koyacak sıcaklık basılmıştır. Yatak sıcaklık komutlarını ortadan kaldırmak için 0'a ayarlayın.
 
 English:How many layers will be solid filled on the bottom surfaces of the object.
-Translated:Nesnenin alt yüzeylerinde kaç kat dolu dolu olacak.
+Translated:Nesnenin alt yüzeylerinde kaç kat dolu olacak.
 
 English:Acceleration to during bridging. Set to 0 to disable changing the printer's acceleration.
 Translated:Köprüleme sırasında hızlanma. Yazıcının ivmesini değiştirmeyi devre dışı bırakmak için 0 değerine ayarlayın.
@@ -506,7 +506,7 @@ English:Include detailed comments in the gcode.
 Translated:Ayrıntılı yorumları gcode'ya ekleyin.
 
 English:Some firmware use different g and m codes. Setting this ensures that the output gcode will use the correct commands.
-Translated:Bazı ürün yazılımı farklı g ve m kodları kullanmaktadır. Bu ayar, çıktı gcode'unun doğru komutları kullanmasını sağlar.
+Translated:Bazı ürün yazılımı farklı g ve m kodları kullanır. Bu ayar, çıktı gcode'unun doğru komutları kullanmasını sağlar.
 
 English:Acceleration to use while infilling. Set to 0 to disable changing the printer's acceleration.
 Translated:Doldurma işlemi sırasında hızlanma. Yazıcının ivmesini değiştirmeyi devre dışı bırakmak için 0 değerine ayarlayın.
@@ -647,10 +647,10 @@ English:Sets how often a layer will be forced to be solid infilled. Zero will re
 Translated:Bir katmanın katı dolgulu olması için ne sıklıkta zorlanacağını ayarlar. Sıfır boyunca dolum normal dolgu ile sonuçlanacaktır.
 
 English:The speed to print infill when completely solid. This can be set explicitly or as a percentage of the Infill speed.
-Translated:Tamamen sağlamken dolgu basma hızı. Bu, açıkça veya Dolum hızının bir yüzdesi olarak ayarlanabilir.
+Translated:Tamamen sağlam olduğunda dolgu basma hızı. Bu, açıkça veya Dolum hızının bir yüzdesi olarak ayarlanabilir.
 
 English:Force the print to have only one layer and gradually increase the extruder height during the print. Only one part can be printed at a time with this feature.
-Translated:Baskıyı yalnızca bir katmana zorlayın ve baskı sırasında ekstrüzyon yüksekliğini kademeli olarak arttırın. Bu özellik ile aynı anda yalnızca bir parça basılabilir.
+Translated:Baskıyı baskı sırasında yalnızca bir katmana zorlayın ve ekstrüzyon yüksekliğini kademeli olarak arttırın. Bu özellik ile aynı anda yalnızca bir parça basılabilir.
 
 English:This is the amount to lower the temperature of an extruder that is not currently printing.
 Translated:Bu, şu anda yazdırılmayan bir ekstrüzyon presinin sıcaklığını düşürmek için gereken miktardır.
@@ -722,7 +722,7 @@ English:The speed to print the top infill. This can be set explicitly or as a pe
 Translated:Üst dolguyu yazdırma hızı. Bu, açıkça veya Dolum hızının bir yüzdesi olarak ayarlanabilir.
 
 English:How many layers will be solid filled on the top surfaces of the object.
-Translated:Kaç katman, nesnenin üst yüzeylerinde dolu olacak.
+Translated:Nesnenin üst yüzeylerinde kaç kat dolu dolu olacak.
 
 English:Speed to move when not extruding material.
 Translated:Mukabaka çıkarmayınca hareket ettirme hızı.
@@ -770,7 +770,7 @@ English:Support Material
 Translated:Destek Malzemesi
 
 English:Generate Support Material
-Translated:Destek Malzemesi Yaratın
+Translated:Destek Malzemesi Yarat
 
 English:Filament
 Translated:filaman
@@ -983,7 +983,7 @@ English:MatterControl - Terminal
 Translated:MatterControl - Terminal
 
 English:First Layer Height
-Translated:Birinci Kat Yüksekliği
+Translated:İlk Kat Yüksekliği
 
 English:Spiral Vase
 Translated:Spiral vazo
@@ -1124,7 +1124,7 @@ English:Quality (slower slicing)
 Translated:Kalite (daha yavaş dilimleme)
 
 English:Randomize Starting Points
-Translated:Başlangıç ​​Noktalarını Rastgele Başlat
+Translated:Başlangıç ​​Noktalarını Rasgel Edin
 
 English:External Perimeters First
 Translated:Önce Dış Perimetreler
@@ -1226,7 +1226,7 @@ English:Extruder Clearance Radius
 Translated:Ekstruder Boşluk Yarıçapı
 
 English:Sequential Printing
-Translated:Ardışık Baskı
+Translated:Sıralı Baskı
 
 English:Verbose G-Code
 Translated:Ayrıntılı G-Kodu
@@ -1715,7 +1715,7 @@ English:Turn auto leveling on
 Translated:Otomatik tesviye uygulamasını açın
 
 English:You should be done in about 3 minutes.
-Translated:Yaklaşık 3 dakika içinde yapılması gerekir.
+Translated:Yaklaşık 3 dakika içinde yapılmalıdır.
 
 English:Click 'Next' to continue.
 Translated:Devam etmek için 'İleri'yi tıklayın.
@@ -1973,7 +1973,7 @@ English:Release Options
 Translated:Sürüm Seçenekleri
 
 English:No items to select. Press 'Add' to select a file to print.
-Translated:Seçilecek öğe yok. Yazdırılacak dosyayı seçmek için 'Ekle' tuşuna basın.
+Translated:Seçilecek öğe yok. Yazdırılacak dosyayı seçmek için 'Ekle' düğmesine basın.
 
 English:Unknown
 Translated:bilinmeyen
@@ -2084,7 +2084,7 @@ English:What's this?
 Translated:Bu nedir?
 
 English:The 'Serial Port' identifies which connected device is\nyour printer. Changing which usb plug you use may\nchange the associated serial port.\n\nTip: If you are uncertain, plug-in in your printer and hit\nrefresh. The new port that appears should be your\nprinter.
-Translated:'Seri Bağlantı Noktası' hangi yazıcının bağlı aygıt olduğunu belirtir. Hangi usb fişini değiştirdiğinizde\nilişkili seri bağlantı noktası değişebilir.\n\nİpucu: Belirsiz iseniz, yazıcınıza takın ve\nyenilene tıklayın. Görüntülenen yeni bağlantı noktası\nyazıcınız olmalıdır.
+Translated:'Seri Bağlantı Noktası' hangi yazıcının bağlı aygıt olduğunu belirtir. Hangi usb fişini değiştirdiğinizde\nilişkili seri port değişebilir.\n\nİpucu: Belirsiz iseniz, yazıcınıza takın ve\nyenilene tıklayın. Görüntülenen yeni bağlantı noktası\nyazıcınız olmalıdır.
 
 English:Connection succeeded!
 Translated:Bağlantı başarılı oldu!
@@ -2306,7 +2306,7 @@ English:Disconnect and cancel the current print?
 Translated:Mevcut baskıyı çıkarıp iptal ettiniz mi?
 
 English:WARNING: Disconnecting will cancel the current print.\n\nDo you want to disconnect?
-Translated:UYARı: Bağlantı kesildiğinde, geçerli baskı iptal edilir.\n\nBağlantı kesmek istiyor musunuz?
+Translated:UYARı: Bağlantı kesildiğinde, mevcut baskı iptal edilir.\n\nBağlantı kesmek istiyor musunuz?
 
 English:Note: Slice Settings are applied before the print actually starts. Changes while printing will not effect the active print.
 Translated:Not: Dilim Ayarları, baskı gerçek başlamadan önce uygulanır. Yazdırma sırasında yapılan değişiklikler etkin yazdırmayı etkilemez.
@@ -2834,7 +2834,7 @@ English:The default temperature to set the extruder to. Can sometimes be overrid
 Translated:Ekstrüzyon cihazını ayarlamak için varsayılan sıcaklık. İlk katmanda bazen geçersiz kılınabilir.
 
 English:If greater than 0, this is the distance away from parts to create a perimeter to wipe when entering.
-Translated:0'dan büyükse, bu, girerken silinecek bir çevre oluşturmak için parçalardan uzaklıktır.
+Translated:0'dan büyükse, bu, girerken silinecek bir çevre oluşturmak için parçalardan uzaktır.
 
 English:Please Confirm
 Translated:Lütfen onaylayın
@@ -3026,7 +3026,7 @@ English:Slice Error
 Translated:Dilim hatası
 
 English:Location: 'Advanced Controls' -> 'Slice Settings' -> 'Filament' -> 'Filament' -> 'Retraction'
-Translated:Konum: 'Gelişmiş Kontroller' -> 'Dilim Ayarları' -> 'Filament' -> 'Filament' -> 'Geri çekilme'
+Translated:Konum: 'Gelişmiş Kontroller' -> 'Dilim Ayarları' -> 'Filament' -> 'Filament' -> 'Geri Çekilme'
 
 English:Save Slice Configuration
 Translated:Dilim Konfigürasyonunu Kaydet
@@ -3038,7 +3038,7 @@ English:Finished Print: {0}
 Translated:Bitmiş Baskı: {0}
 
 English:Smaller numbers create less support. Larger numbers create more support. Starting at 0, the angles from the bed that requires support.
-Translated:Daha küçük numaralar daha az destek oluşturur. Büyük rakamlar daha fazla destek oluşturur. 0'dan başlayarak yatağı destekleyen açılar.
+Translated:Daha küçük numaralar daha az destek oluşturur. Büyük rakamlar daha fazla destek oluşturur. 0'dan başlayarak, yatağı destekleyen açılar.
 
 English:Preview
 Translated:Önizleme
@@ -3065,7 +3065,7 @@ English:Token request failed...
 Translated:Token isteği başarısız oldu ...
 
 English:Oops! Your session has expired.  Please sign-in again to continue.
-Translated:Hata! Oturumunuz sona erdi. Devam etmek için lütfen yeniden oturum açın.
+Translated:Hata! Oturumunuz sona erdi. Devam etmek için lütfen tekrar oturum açın.
 
 English:Sorry! Unable to connect to server. Please try again later.
 Translated:Afedersiniz! Sunucuya bağlanılamıyor. Lütfen daha sonra tekrar deneyiniz.
@@ -3176,7 +3176,7 @@ English:Off
 Translated:kapalı
 
 English:How many layers, or the distance, that will be solid filled on the bottom surfaces of the object. Add mm to the end of the number to specify distance.
-Translated:Nesnenin alt yüzeylerinde katı olacak kaç katman veya mesafe vardır. Mesafeyi belirtmek için numaranın sonuna mm ekleyin.
+Translated:Kaç tane katman veya mesafe, nesnenin alt yüzeylerinde dolu olacak. Mesafeyi belirtmek için numaranın sonuna mm ekleyin.
 
 English:The number of layers, or the distance, to print between the supports and the part. Add mm to the end of the number to specify distance.
 Translated:Destekler ve parça arasında yazdırılacak katman sayısı veya mesafe. Mesafeyi belirtmek için numaranın sonuna mm ekleyin.
@@ -4109,7 +4109,7 @@ English:Indicate that the extruders share a common heater cartridge.
 Translated:Ekstrüderlerin ortak bir ısıtıcı kartuşu paylaştıklarını belirtin.
 
 English:Forces the printer to heat the nozzle before homing.
-Translated:Yazıcının homing işleminden önce püskürtücüyü ısıtması için yazıcıyı zorlar.
+Translated:Yazıcının homing işleminden önce memeyi ısıtması için yazıcıyı zorlar.
 
 English:This is the identifier used in the G-Code to specify the extruder.
 Translated:Bu, ekstrüzyon cihazını belirlemek için G-Kodunda kullanılan tanımlayıcıdır.
@@ -4199,10 +4199,10 @@ English:The minimum speed at which the layer cooling fan will run, expressed as 
 Translated:Katman soğutma fanının çalışacağı minimum hız, tam güç yüzdesi olarak ifade edilir.
 
 English:The minimum speed to which the printer will reduce to in order to attempt to make the layer print time long enough to satisfy the minimum layer time.
-Translated:Katman baskı süresinin minimum katman süresini karşılayacak kadar uzun olmasını sağlamaya çalışmak için yazıcının azaltacağı minimum hız.
+Translated:Katman baskı süresinin minimum katman süresini karşılayacak kadar uzun olmasını sağlamaya çalışmak için yazıcının küçülteceği minimum hız.
 
 English:The minimum length of filament to use printing the skirt loops. Enough skirt loops will be drawn to use this amount of filament, overriding the value set in Loops if the value in Loops will produce a skirt shorter than this value.
-Translated:Etek ilmeklerini basmak için kullanılacak filamentin minimum uzunluğu. Döngülerdeki değer bu değerden daha kısa bir etek üretecekse, Döngüler'de ayarlanan değeri geçersiz kılarak, bu filament miktarını kullanacak kadar etek ilmekleri çekilecektir.
+Translated:Etek ilmeklerini basmak için kullanılacak filamentin minimum uzunluğu. Döngülerdeki değer bu değerden daha kısa bir etek üretecekse, Döngüler'de ayarlanan değeri geçersiz kılarak, bu filament miktarını kullanmak için yeterli etek ilmekleri çizilecektir.
 
 English:These notes will be added as comments in the header of the output G-Code.
 Translated:Bu notlar, çıkış G-Kodunun başlığına yorum olarak eklenecektir.
@@ -4238,7 +4238,7 @@ English:The distance filament will reverse before each qualifying non-print move
 Translated:Mesafeli filament, her nitelenen baskısız hareketten önce tersine dönecektir
 
 English:When using multiple extruders, the distance filament will reverse before changing to a different extruder.
-Translated:Birden fazla ekstrüzyon makinesi kullanırken mesafe filamanı, farklı bir ekstrüzyon presine geçmeden önce ters dönecektir.
+Translated:Birden çok ekstrüzyon makinesi kullanırken mesafe filamanı, farklı bir ekstrüzyon presine geçmeden önce ters dönecektir.
 
 English:Force a retraction when moving between islands (distinct parts on the layer).
 Translated:Adalar arasında hareket ederken geri çekmeyi zorla (katmandaki farklı parçalar).
@@ -4283,7 +4283,7 @@ English:The index of the extruder to use to print the raft. Set to 0 to use the 
 Translated:Salı basmak için kullanılacak ekstrüderin indeksi. Destek ekstrüzyon endeksini kullanmak için 0'a ayarlayın.
 
 English:A modifier of the width of the extrusion when printing support material. Set to 0 for automatic calculation.
-Translated:Destek malzemesini bastırırken ekstrüzyonun genişliğinin değiştiricisi. Otomatik hesaplama için 0'a ayarlayın.
+Translated:Destek malzemesini basarken ekstrüzyon genişliğinin değiştiricisi. Otomatik hesaplama için 0'a ayarlayın.
 
 English:The index of the extruder to use for support material interface layer(s).
 Translated:Destek malzemesi arayüz tabakası (ları) için kullanılacak ekstrüderin indeksi.
@@ -4334,7 +4334,7 @@ English:The extruder will wipe the nozzle over the last up to 10 mm of tool path
 Translated:Ekstrüdör, memeyi geri çekildikten sonra enjektörü en son 10 mm'ye kadar silip süpürecektir.
 
 English:Creates a perimeter around the part on which to wipe the other nozzle when printing using dual extrusion. Set to 0 to disable.
-Translated:Çift ekstrüzyon kullanarak baskı yaparken diğer memenin silineceği bölüm etrafında bir çevre oluşturur. Devre dışı bırakmak için 0 olarak ayarlayın.
+Translated:Çift ekstrüzyon kullanarak yazdırırken diğer memenin silineceği bölümün çevresinde bir çevre oluşturur. Devre dışı bırakmak için 0 olarak ayarlayın.
 
 English:The length and width of a tower created at the back left of the print used for wiping the next nozzle when changing between multiple extruders. Set to 0 to disable.
 Translated:Birden çok ekstrüzyon makinesi arasında geçiş yaparken bir sonraki memenin silinmesinde kullanılan baskının sol arka tarafında oluşturulan bir kulenin uzunluğu ve genişliği. Devre dışı bırakmak için 0 olarak ayarlayın.
@@ -4472,7 +4472,7 @@ English:Display Mode
 Translated:Ekran modu
 
 English:Parts are not on the bed or outside the print area.\n\nWould you like to center them on the bed?
-Translated:Parçalar yatakta değil veya baskı alanının dışında değildir.\n\nOnları yatakta ortalamak ister misin?
+Translated:Parçalar yatakta değil veya yazdırma alanının dışında değildir.\n\nOnları yatakta ortalamak ister misin?
 
 English:Parts not in print area
 Translated:Baskı bölgesi dışındaki parçalar
@@ -4550,7 +4550,7 @@ English:The height of the printer's printable volume, in millimeters. Serves no 
 Translated:Yazıcının yazdırılabilir hacminin milimetre olarak yüksekliği. Dilimleme amacı taşımaz, ancak 3D Görünümde görüntülenen görsel yazdırılacak alanın yüksekliğini kontrol eder.
 
 English:The speed at which outside, external, or the otherwise visible perimeters will print.
-Translated:Dış, dış veya aksi takdirde görünür çevre ölçülerinin hangi hızda yazdırılacağı.
+Translated:Dış, dış veya aksi takdirde görünür çevre ölçüleri yazdırılacağı hız.
 
 English:Used to specify if more than one extruder share a common heater cartridge.
 Translated:Birden fazla ekstrüzyon cihazının ortak bir ısıtıcı kartuşu paylaşıp hesaplamadığını belirtmek için kullanılır.
@@ -4904,7 +4904,7 @@ English:2. Attach your 3D Printer via USB.
 Translated:2. 3D Yazıcınızı USB ile takın.
 
 English:3. Press 'Connect'.
-Translated:3. 'Bağlan'a basın.
+Translated:3. 'Bağlantı' düğmesine basın.
 
 English:(Press 'Skip' to setup connection later)
 Translated:(Daha sonra bağlantı kurmak için 'Atla'ya basın)
@@ -5048,7 +5048,7 @@ English:Quality preset
 Translated:Kalite ön ayarı
 
 English:Material preset
-Translated:Materyal hazır ayarı
+Translated:Materyal ön ayarı
 
 English:You have successfully imported a new {0} setting. You can find '{1}' in your list of {2} settings.
 Translated:{0} ayarını başarıyla içe aktardınız. '{1}' öğesini {2} ayarlar listenizde bulabilirsiniz.
@@ -5285,7 +5285,7 @@ English:Enable Network Printing
 Translated:Ağdan Basmayı Etkinleştir
 
 English:Determines the method of communication used to talk to your printer.
-Translated:Yazıcınızla konuşmak için kullanılan iletişim metodunu belirler.
+Translated:Yazıcınızla konuşmak için kullanılan iletişim yöntemini belirler.
 
 English:The layer(s) at which the print will pause, allowing for a change in filament. Leave blank to disable. To pause on multiple layers, separate the layer numbers with semicolons. For example: "16; 37".
 Translated:Baskının duracağı kat (lar), filamentte bir değişiklik yapmaya izin verir. Devre dışı bırakmak için boş bırakın. Birden fazla katmanı duraklatmak için katman sayılarını noktalı virgüllerle ayırın. Örneğin: "16; 37".
@@ -5621,7 +5621,7 @@ English:This will lower the temperature of the non-printing nozzle to help preve
 Translated:Bu, sızdırmayı önlemeye yardımcı olmak için yazdırılmayan memenin sıcaklığını düşürecektir.
 
 English:The distance that a perimeter will overlap itself when it completes its loop, expressed as a percentage of the Nozzle Diameter.
-Translated:Çember çapının yüzdesi olarak ifade edilen, çevresinin kendi döngüsünü tamamladığında kendisinin üst üste gelecek mesafesi.
+Translated:Çember çapının yüzdesi olarak ifade edilen, çevresinin döngü tamamlandığında kendisinin üst üste gelecek mesafesi.
 
 English:Forces the print to have only one extrusion and gradually increase the Z height during the print. Only one part will print at a time with this feature.
 Translated:Baskıyı baskı sırasında yalnızca bir ekstrüzyona zorlar ve Z yüksekliğini aşamalı olarak artırır. Bu özellik ile aynı anda yalnızca bir parça yazdırılacaktır.
@@ -5843,7 +5843,7 @@ English:Oops! Unable to initialize device.
 Translated:Hata! Aygıt başlatılamadı.
 
 English:The distance between the top of the raft and the bottom of the model. 0.6 mm is a good starting point for PLA and 0.4 mm is a good starting point for ABS. Lower values give a smoother surface, higher values make the print easier to remove.
-Translated:Salın üstü ile modelin alt kısmı arasındaki mesafe. 0,6 mm, PLA için iyi bir başlangıç ​​noktası ve 0,4 mm, ABS için iyi bir başlangıç ​​noktasıdır. Daha düşük değerler daha pürüzsüz bir yüzey verir, daha yüksek değerler baskıyı kaldırmayı kolaylaştırır.
+Translated:Salın üstü ile modelin alt kısmı arasındaki mesafe. 0,6 mm, PLA için iyi bir başlangıç ​​noktası ve 0,4 mm, ABS için iyi bir başlangıç ​​noktasıdır. Daha düşük değerler daha pürüzsüz bir yüzey verir; daha yüksek değerler baskıyı kaldırmayı kolaylaştırır.
 
 English:Clear ZOffset
 Translated:ZOffset'i temizle
@@ -6062,7 +6062,7 @@ English:Send email notifications
 Translated:E-posta bildirimleri gönder
 
 English:Have MatterControl send you email messages about your print
-Translated:MatterControl, baskınızla ilgili size e-posta mesajları gönderir mi?
+Translated:MatterControl size baskı hakkında e-posta mesajları göndermenizi rica ederim
 
 English:Play a sound for notifications
 Translated:Bildirimler için bir ses çal
@@ -6108,4 +6108,67 @@ Translated:Z Probe Var mı
 
 English:Use Z Probe
 Translated:Z Probe'yi kullanın
+
+English:The printer has a servo for lowering and rasing the z probe.
+Translated:Yazıcının, z tarama aletini alçaltması ve çalıştırması için bir servo vardır.
+
+English:The offset to use whene probing. For manual probing, this is the thickness of the paper (or other calibration device).
+Translated:Ne zaman incelemek için kullanılacak ofset. Elle tarama için, bu kağıt kalınlığıdır (veya diğer kalibrasyon cihazının).
+
+English:The distance the z probe is from the extruder in x and y.
+Translated:Z sondasının ekstrüzyon makinesinden x ve y mesafesinde olan mesafesi.
+
+English:This is the angle that lowers or deploys the z probe.
+Translated:Bu, z taramayı düşüren veya yerleştiren açıdır.
+
+English:This is the angle that raises or stows the z probe.
+Translated:Bu, z taramasını kaldıran veya tutan açıdır.
+
+English:Has Z Servo
+Translated:Z Servoya Sahip
+
+English:Start Height
+Translated:Yüksekliği Başlat
+
+English:Use Automatic Z Probe
+Translated:Otomatik Z Probu kullanın
+
+English:Paper Width / Z Offset
+Translated:Kağıt Genişliği / Z Ofset
+
+English:XY Offset
+Translated:XY Ofset
+
+English:Lower / Deploy
+Translated:Alt / Dağıt
+
+English:Raise / Stow
+Translated:Kaldır / Taşı
+
+English:The number of times to sample each probe position (results will be averaged).
+Translated:Her bir sonda pozisyonunu örnekleme sayısı (sonuçlar ortalaması alınır).
+
+English:Number of Samples
+Translated:Numunelerin Sayısı
+
+English:Location: 'Controls' -> 'Movement' -> 'Z Offset'
+Translated:Konum: 'Kontroller' -> 'Hareket' -> 'Z Ofset'
+
+English:Controls Z Offset is too large.
+Translated:Kontroller Z Ofset çok büyük.
+
+English:Your active print Z Offset (sometimes called Babby Stepping) is greater than 1mm and invalid. Printer needs to be re-calibrated, or value cleared.
+Translated:Aktif baskı Z Ofsetiniz (bazen Babby Stepping olarak anılır) 1mm'den büyüktür ve geçersizdir. Yazıcının yeniden kalibre edilmesi veya temizlenmesi gerekiyor.
+
+English:Calibration Error
+Translated:Kalibrasyon Hatası
+
+English:Z Offset is too large.
+Translated:Z Ofset çok büyük.
+
+English:The Z Offset for your printer, sometimes called Babby Stepping, is greater than 2mm and invalid. Clear the value and re-level the bed.
+Translated:Yazıcınız için bazen Babby Stepping olarak da bilinen Z Ofset'i 2 mm'den büyük ve geçersiz. Değeri temizleyin ve yatağı yeniden düzleştirin.
+
+English:The distance the z probe is from the extruder in z. For manual probing, this is the negated thickness of the paper (or other calibration device).
+Translated:Z-probunun ekstrüzyon makinesinden z mesafesi. Elle tarama için, bu, kağıdın (veya diğer kalibrasyon cihazının) negatif kalınlığıdır.
 

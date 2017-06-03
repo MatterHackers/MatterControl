@@ -6169,3 +6169,6 @@ Translated:The Z Offset for your printer, sometimes called Babby Stepping, is gr
 English:The distance the z probe is from the extruder in z. For manual probing, this is the negated thickness of the paper (or other calibration device).
 Translated:The distance the z probe is from the extruder in z. For manual probing, this is the negated thickness of the paper (or other calibration device).
 
+English:The distance the z probe is from the extruder in z. For manual probing, this is thickness of the paper (or other calibration device).
+Translated:The distance the z probe is from the extruder in z. For manual probing, this is thickness of the paper (or other calibration device).
+

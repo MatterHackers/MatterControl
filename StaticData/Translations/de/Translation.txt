@@ -89,7 +89,7 @@ English:Press 'Add' to choose an item to print
 Translated:Drücken Sie 'Hinzufügen', um einen zu druckenden Artikel auszuwählen
 
 English:No items in the print queue
-Translated:Keine Elemente in der Druckwarteschlange
+Translated:Keine Einträge in der Druckwarteschlange
 
 English:Queued to Print
 Translated:Warteschlange zum Drucken
@@ -167,7 +167,7 @@ English:Version {0}
 Translated:Version {0}
 
 English:Developed by MatterHackers
-Translated:Entwickelt von MatterHackers
+Translated:Entwickelt von MatterHackern
 
 English:Please consider 
 Translated:Beachten Sie bitte
@@ -239,7 +239,7 @@ English:Degrees
 Translated:Grad
 
 English:Align to Bed
-Translated:Richten Sie sich an das Bett
+Translated:Richten Sie sich an Bed
 
 English:Ratio
 Translated:Verhältnis
@@ -461,7 +461,7 @@ English:This will force the fan to remain on throughout the print. In general yo
 Translated:Dies zwingt den Lüfter, während des gesamten Drucks zu bleiben. Im Allgemeinen solltest du das ausschalten und einfach nur die Kühlung aktivieren.
 
 English:If a layer is estimated to take less than this to print, the fan will be turned on.
-Translated:Wenn eine Schicht geschätzt wird, um weniger als diese zu drucken, wird der Lüfter eingeschaltet.
+Translated:Wenn eine Schicht geschätzt wird, um weniger als dies zu drucken, wird der Lüfter eingeschaltet.
 
 English:This should be set to the actual diameter of the filament you are using on your printer. Measure 5 times with calipers, throw out the top and bottom, and average the remaining 3.
 Translated:Dies sollte auf den tatsächlichen Durchmesser des Filaments eingestellt werden, den Sie auf Ihrem Drucker verwenden. Messen Sie 5 mal mit Bremssätteln, werfen Sie die obere und untere, und durchschnittlich die restlichen 3.
@@ -572,7 +572,7 @@ English:The index of the extruder to use for perimeters.
 Translated:Der Index des Extruders für Perimeter zu verwenden.
 
 English:Sets the default movement speed while printing perimeters.
-Translated:Setzt die Standardbewegungsgeschwindigkeit beim Drucken von Perimetern.
+Translated:Legt die Standardbewegungsgeschwindigkeit fest, während Sie die Perimeter drucken.
 
 English:The number of external layers or shells to create.
 Translated:Die Anzahl der äußeren Ebenen oder Schalen zu erstellen.
@@ -653,7 +653,7 @@ English:Force the print to have only one layer and gradually increase the extrud
 Translated:Erzwinge den Druck, nur eine Schicht zu haben und allmählich die Extruderhöhe während des Druckes zu erhöhen. Mit diesem Merkmal kann nur ein Teil gedruckt werden.
 
 English:This is the amount to lower the temperature of an extruder that is not currently printing.
-Translated:Dies ist die Menge, um die Temperatur eines Extruders zu senken, der derzeit nicht druckt.
+Translated:Dies ist die Menge, um die Temperatur eines Extruders zu senken, der momentan nicht druckt.
 
 English:This gcode will be inserted into the output right after the temperature setting. If you have the commands to set temperature in this section they will not be generated outside of this section. You can also include values from other settings such as [first_layer_temperature].
 Translated:Dieser Gcode wird nach der Temperatureinstellung direkt in den Ausgang eingefügt. Wenn Sie die Befehle haben, um die Temperatur in diesem Abschnitt einzustellen, werden sie nicht außerhalb dieses Abschnitts erzeugt. Sie können auch Werte aus anderen Einstellungen wie [first_layer_temperature] enthalten.
@@ -1256,7 +1256,7 @@ English:Extruders
 Translated:Extruder
 
 English:Temp Lower Amount
-Translated:Temp niedrigerer Betrag
+Translated:Temp niedriger Betrag
 
 English:Ooze Prevention
 Translated:Ooze Vorbeugung
@@ -1790,7 +1790,7 @@ English:High Precision
 Translated:Hohe Präzision
 
 English:We will now finalize our measurement of the extruder height at this position.
-Translated:Wir werden nun die Messung der Extruderhöhe an dieser Stelle abschließen.
+Translated:Wir werden nun unsere Messung der Extruderhöhe an dieser Stelle abschließen.
 
 English:Press [Z-] one click PAST the first hint of resistance
 Translated:Drücken Sie [Z-] einen Klick PAST den ersten Hinweis auf Widerstand
@@ -2210,7 +2210,7 @@ English:Sometime a mesh will not have closed a perimeters. When this is checked 
 Translated:Irgendwann hat ein Netz nicht eine Perimeter geschlossen. Wenn dies überprüft wird, werden diese nicht geschlossenen Perimeter geschlossen.
 
 English:Reverse the orientation of overlaps. This can make some unintended holes go away.
-Translated:Umkehren Sie die Ausrichtung der Überlappungen. Dies kann dazu führen, dass einige unbeabsichtigte Löcher weggehen.
+Translated:Umgekehrt die Ausrichtung der Überlappungen. Dies kann dazu führen, dass einige unbeabsichtigte Löcher weggehen.
 
 English:Make all overlap areas into one big area. This can make some unintended holes go away..
 Translated:Machen Sie alle Überlappungsbereiche in einen großen Bereich. Dies kann dazu führen, dass einige unbeabsichtigte Löcher weggehen
@@ -2501,7 +2501,7 @@ English:Value
 Translated:Wert
 
 English:Save To EEPROM
-Translated:In EEPROM speichern
+Translated:Im EEPROM speichern
 
 English:Firmware EEPROM Settings
 Translated:Firmware EEPROM Einstellungen
@@ -2513,7 +2513,7 @@ English:Select the baud rate.
 Translated:Wählen Sie die Baudrate.
 
 English:The term 'Baud Rate' roughly means the speed at which\ndata is transmitted.  Baud rates may differ from printer to\nprinter. Refer to your printer manual for more info.\n\nTip: If you are uncertain - try 250000.
-Translated:Der Begriff "Baudrate" bedeutet in etwa die Geschwindigkeit, mit der die Daten übertragen werden. Die Baudraten können vom Drucker zum Drucker abweichen. Weitere Informationen finden Sie in Ihrem Druckerhandbuch.\n\nTipp: Wenn Sie unsicher sind - versuchen Sie 250000.
+Translated:Der Begriff "Baudrate" bedeutet in etwa die Geschwindigkeit, mit der\nDaten übertragen werden. Die Baudraten können vom Drucker zum Drucker abweichen. Weitere Informationen finden Sie in Ihrem Druckerhandbuch.\n\nTipp: Wenn Sie unsicher sind - versuchen Sie 250000.
 
 English:This is the minimum amount of filament that must be extruded before a retraction can occur.
 Translated:Dies ist die minimale Menge an Filament, die extrudiert werden muss, bevor ein Rückzug auftreten kann.
@@ -3665,7 +3665,7 @@ English:Zoom
 Translated:Zoom
 
 English:Preview 3D Design
-Translated:Vorschau 3D-Design
+Translated:Vorschau 3D Design
 
 English:Rotate (Alt + L. Mouse)
 Translated:Drehen (Alt + L. Maus)
@@ -4082,7 +4082,7 @@ English:The extra distance the raft will extend around the edge of the part.
 Translated:Der zusätzliche Abstand, den das Floß um den Rand des Teils herum erstreckt.
 
 English:The distance between the first layer and the top of the raft. A good value is typically about half the extrusion diameter. For a 0.4 mm nozzle, a value between 0.0 and 0.2 would be best.
-Translated:Der Abstand zwischen der ersten Schicht und der Oberseite des Floßes. Ein guter Wert ist typischerweise etwa die Hälfte des Extrusionsdurchmessers. Für eine 0,4 mm Düse wäre ein Wert zwischen 0,0 und 0,2 am besten.
+Translated:Der Abstand zwischen der ersten Schicht und der Oberseite des Floßes. Ein guter Wert ist typischerweise etwa die Hälfte des Extrusionsdurchmessers. Bei einer 0,4 mm Düse wäre ein Wert zwischen 0,0 und 0,2 am besten.
 
 English:The speed at which the cooling fan(s) will run during the printing of the raft, expressed as a percentage of full power.
 Translated:Die Geschwindigkeit, mit der das Kühlgebläse während des Druckens des Floßes ausgehen wird, ausgedrückt als Prozentsatz der vollen Leistung.
@@ -4277,7 +4277,7 @@ English:Generates support material starting on top of internal surfaces. If unch
 Translated:Erzeugt Stützmaterial, das auf der Oberseite der Innenflächen beginnt. Wenn die unkontrollierte Unterstützung nur auf dem Bett beginnt.
 
 English:The index of the extruder to use for printing support material. Applicable only when Extruder Count is set to a value more than 1.
-Translated:Der Index des Extruders, der zum Bedrucken von Trägermaterial verwendet wird. Nur gültig, wenn Extruder Count auf einen Wert von mehr als 1 gesetzt ist.
+Translated:Der Index des Extruders, der zum Bedrucken von Trägermaterial verwendet wird. Nur gültig, wenn Extruderzähler auf einen Wert von mehr als 1 gesetzt ist.
 
 English:The index of the extruder to use to print the raft. Set to 0 to use the support extruder index.
 Translated:Der Index des Extruders, um das Floß zu drucken. Auf 0 setzen, um den Extruderindex zu verwenden.
@@ -5177,7 +5177,7 @@ English:'First Layer Extrusion Width' must be greater than 0.
 Translated:'First Layer Extrusion Width' muss größer als 0 sein.
 
 English:It's time to upload your existing printers to your MatterHackers account. Once uploaded, these printers will be available every time you log into MatterControl.
-Translated:Es ist Zeit, deine vorhandenen Drucker auf dein MatterHackers-Konto hochzuladen. Nach dem Hochladen werden diese Drucker jedes Mal verfügbar sein, wenn Sie sich bei MatterControl anmelden.
+Translated:Es ist Zeit, deine vorhandenen Drucker auf dein MatterHackers-Konto hochzuladen. Nach dem Hochladen werden diese Drucker jedes Mal verfügbar, wenn Sie sich bei MatterControl anmelden.
 
 English:Select Printers to Upload
 Translated:Wählen Sie Drucker zum Hochladen aus
@@ -6108,4 +6108,67 @@ Translated:Hat Z Probe
 
 English:Use Z Probe
 Translated:Z Probe prüfen
+
+English:The printer has a servo for lowering and rasing the z probe.
+Translated:Der Drucker verfügt über einen Servo zum Absenken und Fräsen der Z-Sonde.
+
+English:The offset to use whene probing. For manual probing, this is the thickness of the paper (or other calibration device).
+Translated:Der Versatz, um die Sondierung zu verwenden. Für manuelles Sondieren ist dies die Dicke des Papiers (oder eines anderen Kalibriergeräts).
+
+English:The distance the z probe is from the extruder in x and y.
+Translated:Der Abstand der z-Sonde ist vom Extruder in x und y.
+
+English:This is the angle that lowers or deploys the z probe.
+Translated:Dies ist der Winkel, der die z-Sonde senkt oder entfaltet.
+
+English:This is the angle that raises or stows the z probe.
+Translated:Dies ist der Winkel, der die Z-Sonde anhebt oder verstaut.
+
+English:Has Z Servo
+Translated:Hat Z Servo
+
+English:Start Height
+Translated:Starthöhe
+
+English:Use Automatic Z Probe
+Translated:Automatische Z Probe verwenden
+
+English:Paper Width / Z Offset
+Translated:Papierbreite / Z Offset
+
+English:XY Offset
+Translated:XY Offset
+
+English:Lower / Deploy
+Translated:Niedriger / deploy
+
+English:Raise / Stow
+Translated:Heben / Stauen
+
+English:The number of times to sample each probe position (results will be averaged).
+Translated:Die Anzahl der Zeiten, um jede Sondenposition zu probieren (Ergebnisse werden gemittelt).
+
+English:Number of Samples
+Translated:Anzahl von Beispielen
+
+English:Location: 'Controls' -> 'Movement' -> 'Z Offset'
+Translated:Ort: 'Kontrollen' -> 'Bewegung' -> 'Z Offset'
+
+English:Controls Z Offset is too large.
+Translated:Kontrollen Z Offset ist zu groß.
+
+English:Your active print Z Offset (sometimes called Babby Stepping) is greater than 1mm and invalid. Printer needs to be re-calibrated, or value cleared.
+Translated:Ihr aktiver Druck Z Offset (manchmal auch Babby Stepping genannt) ist größer als 1mm und ungültig. Drucker muss neu kalibriert oder Wert gelöscht werden.
+
+English:Calibration Error
+Translated:Kalibrierungsfehler
+
+English:Z Offset is too large.
+Translated:Z Offset ist zu groß.
+
+English:The Z Offset for your printer, sometimes called Babby Stepping, is greater than 2mm and invalid. Clear the value and re-level the bed.
+Translated:Der Z Offset für Ihren Drucker, manchmal auch Babby Stepping genannt, ist größer als 2mm und ungültig. Löschen Sie den Wert und re-level das Bett.
+
+English:The distance the z probe is from the extruder in z. For manual probing, this is the negated thickness of the paper (or other calibration device).
+Translated:Der Abstand der z-Sonde ist vom Extruder in z. Für manuelles Sondieren ist dies die negierte Dicke des Papiers (oder eines anderen Kalibriergeräts).
 
