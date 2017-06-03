@@ -438,7 +438,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[Test, Apartment(ApartmentState.STA)]
 		public async Task CancelingSdCardPrintLeavesHeatAndFanOn()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				testRunner.WaitForName("Cancel Wizard Button", 1);
 
@@ -476,15 +476,13 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				}
 
 				return Task.FromResult(0);
-			};
-
-			await MatterControlUtilities.RunTest(testToRun, overrideHeight: 900, maxTimeToRun: 990);
+			}, overrideHeight: 900, maxTimeToRun: 90);
 		}
 
 		[Test, Apartment(ApartmentState.STA)]
 		public async Task CancelingNormalPrintTurnsHeatAndFanOff()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				testRunner.WaitForName("Cancel Wizard Button", 1);
 
@@ -492,6 +490,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				{
 					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
 
+					testRunner.AddDefaultFileToBedPlate();
 					testRunner.ClickByName("Start Print Button", 1);
 					testRunner.Delay(5);
 
@@ -511,9 +510,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				}
 
 				return Task.FromResult(0);
-			};
-
-			await MatterControlUtilities.RunTest(testToRun, overrideHeight: 900, maxTimeToRun: 990);
+			}, overrideHeight: 900, maxTimeToRun: 90);
 		}
 
 		private static void ConfirmExpectedSpeeds(AutomationRunner testRunner, double targetExtrusionRate, double targetFeedRate)
