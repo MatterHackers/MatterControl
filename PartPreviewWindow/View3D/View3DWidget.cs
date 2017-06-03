@@ -2371,6 +2371,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			Invalidate();
 		}
 
+		// Before printing persist any changes to disk
+		internal void PersistPlateIfNeeded()
+		{
+			if (partHasBeenEdited)
+			{
+				SaveChanges(null);
+			}
+		}
+
 		public void UnlockEditControls()
 		{
 			buttonRightPanelDisabledCover.Visible = false;
