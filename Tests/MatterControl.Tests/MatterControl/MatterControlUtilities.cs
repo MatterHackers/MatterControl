@@ -267,8 +267,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void AddAndSelectPrinter(AutomationRunner testRunner, string make, string model)
 		{
-			if (!testRunner.NameExists("Select Make"))
+			if (!testRunner.WaitForName("Select Make", 1))
 			{
+				// TODO: The overflow menu needs to always be on screen and when there's not enough room siblings should be removed from the actions bar and pushed into the overflow menu, rather than the menu clipping from the screen
+				testRunner.ClickByName("Printer Overflow Menu", 2, delayBeforeReturn: .5);
 				testRunner.ClickByName("Printers... Menu", 2, delayBeforeReturn: .5);
 				testRunner.ClickByName("Add New Printer... Menu Item", 5, delayBeforeReturn: .5);
 			}

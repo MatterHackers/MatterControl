@@ -37,11 +37,25 @@ using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.PolygonMesh;
 using MatterHackers.PolygonMesh.Processors;
 
+
+
+
 namespace MatterHackers.MatterControl.Library
 {
+	public class SqliteFileItem : FileSystemItem
+	{
+		public SqliteFileItem(string filePath)
+			: base(filePath)
+		{
+		}
+
+		public override string Name { get; set; }
+	}
+
 	public class SqliteLibraryContainer : WritableContainer
 	{
 		protected List<PrintItemCollection> childCollections = new List<PrintItemCollection>();
@@ -94,7 +108,10 @@ namespace MatterHackers.MatterControl.Library
 				{
 					if (File.Exists(f.FileLocation))
 					{
-						return new FileSystemFileItem(f.FileLocation);
+						return new SqliteFileItem(f.FileLocation)
+						{
+							Name = f.Name
+						};
 					}
 					else
 					{
@@ -145,7 +162,7 @@ namespace MatterHackers.MatterControl.Library
 					{
 						using (var stream = File.OpenRead(filePath))
 						{
-							AddItem(stream, Path.GetExtension(filePath).ToUpper(), filePath);
+							AddItem(stream, Path.GetExtension(filePath).ToUpper(), PrintItemWrapperExtensionMethods.GetFriendlyName(Path.GetFileNameWithoutExtension(filePath)));
 						}
 					}
 

@@ -116,6 +116,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				overflowDropdown = new OverflowDropdown(allowLightnessInvert: true)
 				{
 					AlignToRightEdge = true,
+					Name = "Printer Overflow Menu"
 				};
 				overflowDropdown.DynamicPopupContent = GeneratePrinterOverflowMenu;
 

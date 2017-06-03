@@ -505,8 +505,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.Delay(5);
 					Assert.AreEqual(0, emulator.ExtruderGoalTemperature, "We need to set the temp to 0.");
-					// TODO: chagne this to checking that the fan speed is 0 - when the emulator tracks fan speed.
-					Assert.AreEqual(1, fanChangedCount, "We expected to see fan chage on quiting.");
+					// TODO: change this to checking that the fan speed is 0 - when the emulator tracks fan speed.
+					Assert.AreEqual(1, fanChangedCount, "We expected to see fan change on quiting.");
 				}
 
 				return Task.FromResult(0);
