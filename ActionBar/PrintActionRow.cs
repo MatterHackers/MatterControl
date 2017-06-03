@@ -322,6 +322,7 @@ namespace MatterHackers.MatterControl.ActionBar
 						break;
 
 					case PrinterConnectionAndCommunication.CommunicationStates.FinishedPrint:
+						this.activePrintButtons.Add(startButton);
 						EnableActiveButtons();
 						break;
 
