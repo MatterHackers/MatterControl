@@ -380,35 +380,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				return Task.FromResult(0);	
 			});
 		}
-
-		[Test]
-		public async Task LibraryItemThumbnailClickedOpensPartPreview()
-		{
-			AutomationTest testToRun = (testRunner) =>
-			{
-				testRunner.CloseSignInAndPrinterSelect();
-
-				// Navigate to Local Library
-				testRunner.ClickByName("Library Tab");
-				testRunner.NavigateToFolder("Local Library Row Item Collection");
-
-				Assert.IsFalse(testRunner.WaitForName("Part Preview Window", 1), "Preview Window should not exist before we click the view button");
-
-				testRunner.ClickByName("Row Item Calibration - Box");
-				testRunner.Delay(1);
-
-				// Click Library Item View Button
-				testRunner.ClickByName("Row Item Calibration - Box View Button");
-
-				Assert.IsTrue(testRunner.WaitForName("Part Preview Window", 2), "Part Preview Window should be open after View button is clicked");
-				testRunner.Delay(.2);
-
-				return Task.FromResult(0);
-			};
-
-			await MatterControlUtilities.RunTest(testToRun);
-		}
-
 		[Test]
 		public async Task PrintLibraryItem()
 		{
