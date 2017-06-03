@@ -27,15 +27,12 @@ The views and conclusions contained in the software and documentation are those
 of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
+using System;
+using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.SetupWizard;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -51,8 +48,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		string resetToDefaultsWindowTitle = "Revert Settings".Localize();
 		bool primarySettingsView;
 
-		public SliceSettingsDetailControl(List<PrinterSettingsLayer> layerCascade)
+		private SliceSettingsWidget sliceSettingsWidget;
+
+		public SliceSettingsDetailControl(List<PrinterSettingsLayer> layerCascade, SliceSettingsWidget sliceSettingsWidget)
 		{
+			this.sliceSettingsWidget = sliceSettingsWidget;
+
 			primarySettingsView = layerCascade == null;
 			settingsDetailSelector = new DropDownList("Basic", maxHeight: 200);
 			settingsDetailSelector.Name = "User Level Dropdown";
@@ -160,7 +161,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private void RebuildSlicerSettings(object sender, EventArgs e)
 		{
 			UserSettings.Instance.set(SliceSettingsLevelEntry, settingsDetailSelector.SelectedValue);
-			ApplicationController.Instance.ReloadAdvancedControlsPanel();
+			sliceSettingsWidget.RebuildSliceSettingsTabs();
 		}
 
 		private void ResetToDefaults()

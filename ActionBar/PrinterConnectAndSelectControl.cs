@@ -57,10 +57,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			printerSelector.AddPrinter += (s, e) => WizardWindow.ShowPrinterSetup(true);
 			this.AddChild(printerSelector);
 
-			editPrinterButton = TextImageButtonFactory.GetThemedEditButton();
-			editPrinterButton.Name = "Edit Printer Button";
-			editPrinterButton.VAnchor = VAnchor.ParentCenter;
-			editPrinterButton.Click += UiNavigation.OpenEditPrinterWizard_Click;
+			editPrinterButton = CreatePrinterEditButton();
 			this.AddChild(editPrinterButton);
 
 			printerSelectorAndEditOverlay = new GuiWidget()
@@ -73,6 +70,17 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			PrinterConnectionAndCommunication.Instance.EnableChanged.RegisterEvent(SetVisibleStates, ref unregisterEvents);
 			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(SetVisibleStates, ref unregisterEvents);
+		}
+
+
+		public static Button CreatePrinterEditButton()
+		{
+			var button = TextImageButtonFactory.GetThemedEditButton();
+			button.Name = "Edit Printer Button";
+			button.VAnchor = VAnchor.ParentCenter;
+			button.Click += UiNavigation.OpenEditPrinterWizard_Click;
+
+			return button;
 		}
 
 		public override void OnClosed(ClosedEventArgs e)
@@ -244,22 +252,9 @@ namespace MatterHackers.MatterControl.ActionBar
 			this.VAnchor = VAnchor.FitToChildren;
 			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
-			if (false)
-			{
-				// Create the image button with the normal and disabled ImageBuffers
-				connectButton = new SimpleButton("Connect".Localize().ToUpper(), StaticData.Instance.LoadIcon("connect.png", 16, 16))
-				{
-					Name = "Connect to printer button",
-					ToolTipText = "Connect to the currently selected printer".Localize(),
-					ImageMargin = 6,
-					Margin = 6,
-					MinimumSize = new VectorMath.Vector2(100, 0)
-				};
-			}
-			else
-			{
-				connectButton = buttonFactory.Generate("Connect".Localize().ToUpper(), StaticData.Instance.LoadIcon("connect.png", 16, 16));
-			}
+			connectButton = buttonFactory.Generate("Connect".Localize().ToUpper(), StaticData.Instance.LoadIcon("connect.png", 16, 16));
+			connectButton.Name = "Connect to printer button";
+			connectButton.ToolTipText = "Connect to the currently selected printer".Localize();
 			connectButton.Click += (s, e) =>
 			{
 				if (connectButton.Enabled)

@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using MatterHackers.Agg.PlatformAbstract;
 
@@ -178,6 +179,15 @@ namespace MatterHackers.MatterControl.Library
 		private void ActiveContainer_Reloaded(object sender, EventArgs args)
 		{
 			ContainerReloaded?.Invoke(this, new ContainerChangedEventArgs(this.ActiveContainer, null));
+		}
+
+		public bool IsContentFileType(string fileName)
+		{
+			string fileExtensionLower = Path.GetExtension(fileName).ToLower().Trim('.');
+
+			return !string.IsNullOrEmpty(fileExtensionLower)
+				&& (ApplicationSettings.LibraryFilterFileExtensions.Contains(fileExtensionLower)
+					|| ApplicationController.Instance.Library.ContentProviders.Keys.Contains(fileExtensionLower));
 		}
 	}
 }

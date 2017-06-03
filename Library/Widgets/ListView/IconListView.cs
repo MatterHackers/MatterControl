@@ -126,7 +126,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			imageWidget.Click += (sender, e) =>
 			{
-				if (listViewItem.Model is ILibraryContentItem)
+				bool isContentItem = listViewItem.Model is ILibraryContentItem;
+				bool isValidStream = (listViewItem.Model is ILibraryContentStream stream
+					&& ApplicationController.Instance.Library.IsContentFileType(stream.FileName));
+
+				if (isContentItem || isValidStream)
 				{
 					if (this.IsSelected)
 					{

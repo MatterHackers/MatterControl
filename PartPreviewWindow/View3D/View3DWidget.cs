@@ -1970,7 +1970,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						{
 							Scene.ModifyChildren(children => children.Add(contentResult.Object3D));
 
-							PlatingHelper.MoveToOpenPosition(contentResult.Object3D, this.Scene);
+							PlatingHelper.MoveToOpenPosition(contentResult.Object3D, this.Scene.Children);
 
 							// TODO: There should be a batch insert so you can undo large 'add to scene' operations in one go
 							//this.InsertNewItem(tempScene);
@@ -2531,7 +2531,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					if (renderTypeCheckBox.Checked)
 					{
 						// TODO: Determine if Scene is available in scope
-						var scene = MatterControlApplication.Instance.ActiveView3DWidget.Scene;
+						var scene = this.Scene;
 
 						meshViewerWidget.RenderType = RenderTypes.Overhang;
 

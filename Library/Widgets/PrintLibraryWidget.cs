@@ -42,7 +42,6 @@ using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PrintLibrary
@@ -158,6 +157,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			overflowDropdown = new OverflowDropdown(allowLightnessInvert: true)
 			{
 				AlignToRightEdge = true,
+				Name = "Print Library Overflow Menu"
 			};
 			breadCrumbAndActionBar.AddChild(overflowDropdown);
 
@@ -347,6 +347,46 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		private void CreateActionMenuItems(DropDownMenu dropDownMenu)
 		{
+			// edit menu item
+			menuActions.Add(new PrintItemAction()
+			{
+				Title = "Add to Plate".Localize(),
+				AllowMultiple = true,
+				AllowProtected = true,
+				AllowContainers = false,
+				Action = async (selectedLibraryItems, listView) =>
+				{
+					var itemsToAdd = new List<IObject3D>();
+
+					var library = ApplicationController.Instance.Library;
+
+					foreach (var item in selectedLibraryItems.Where(o => o is ILibraryContentStream))
+					{
+						var contentProvider = library.GetContentProvider(item) as ISceneContentProvider;
+						var result = contentProvider?.CreateItem(item, null);
+
+						// TODO: Bounding box should be part of IObject3D state so we don't have this constraint
+						// We must wait for the mesh to load so we can use it's bounds below to calculate its position
+						await result.MeshLoaded;
+
+						if (result?.Object3D != null)
+						{
+							itemsToAdd.Add(result.Object3D);
+						}
+					}
+
+					var scene = ApplicationController.Instance.ActiveView3DWidget.Scene;
+					scene.ModifyChildren(children =>
+					{
+						foreach (var sceneItem in itemsToAdd)
+						{
+							PlatingHelper.MoveToOpenPosition(sceneItem, children);
+							children.Add(sceneItem);
+						}
+					});
+				}
+			});
+
 			// edit menu item
 			menuActions.Add(new PrintItemAction()
 			{
@@ -591,6 +631,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				else
 				{
 					item.MenuItem = dropDownMenu.AddItem(item.Title);
+					item.MenuItem.Name = $"{item.Title} MenuItem";
 				}
 
 				item.MenuItem.Enabled = item.Action != null;

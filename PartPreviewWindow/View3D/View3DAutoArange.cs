@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				foreach (var sceneItem in Scene.Children)
 				{
-					PlatingHelper.MoveToOpenPosition(sceneItem, Scene);
+					PlatingHelper.MoveToOpenPosition(sceneItem, Scene.Children);
 
 					arrangedScene.Children.Add(sceneItem);
 				}

@@ -28,14 +28,11 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.MatterControl.PrintQueue;
-using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
@@ -110,7 +107,7 @@ namespace MatterHackers.MatterControl
 			// HACK: Short term restore auto population of ActivePrintItem based on Queue Index0. Long term, persist Scene as needed before running operations that depend on ActivePrintItem
 			if (PrinterConnectionAndCommunication.Instance.ActivePrintItem == null)
 			{
-				PrinterConnectionAndCommunication.Instance.ActivePrintItem = QueueData.Instance.GetPrintItemWrapper(0);
+				ApplicationController.Instance.ClearPlate();
 			}
 
 			PartPreviewContent partViewContent = new PartPreviewContent(PrinterConnectionAndCommunication.Instance.ActivePrintItem, View3DWidget.WindowMode.Embeded, View3DWidget.AutoRotate.Disabled);

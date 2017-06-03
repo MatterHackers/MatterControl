@@ -380,8 +380,6 @@ namespace MatterHackers.MatterControl
 
 		private static Vector2 minSize { get; set; } = new Vector2(600, 600);
 
-		public View3DWidget ActiveView3DWidget { get; internal set; }
-
 		public static MatterControlApplication CreateInstance(int overrideWidth = -1, int overrideHeight = -1)
 		{
 			int width = 0;

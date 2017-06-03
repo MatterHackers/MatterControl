@@ -301,7 +301,7 @@ if (hasID
 						var result = contentModel.CreateContent(listViewItem.ProgressReporter);
 						if (result.Object3D != null)
 						{
-							var scene = MatterControlApplication.Instance.ActiveView3DWidget.Scene;
+							var scene = ApplicationController.Instance.ActiveView3DWidget.Scene;
 
 							scene.ModifyChildren(children =>
 							{

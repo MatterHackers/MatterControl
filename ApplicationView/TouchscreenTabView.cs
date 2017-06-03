@@ -97,7 +97,7 @@ namespace MatterHackers.MatterControl
 						// sliceSettingsWidget = (ActiveSliceSettings.Instance.PrinterSelected) ? new SliceSettingsWidget() : new NoSettingsWidget();
 						if (ActiveSliceSettings.Instance.PrinterSelected)
 						{
-							sliceSettingsWidget = new SliceSettingsWidget();
+							sliceSettingsWidget = new SliceSettingsWidget(null);
 						}
 						else
 						{

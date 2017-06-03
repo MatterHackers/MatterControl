@@ -77,6 +77,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private TabControl topCategoryTabs;
 		private AltGroupBox noConnectionMessageContainer;
 		internal SettingsControlBar settingsControlBar;
+		private FlowLayoutWidget pageTopToBottomLayout;
 
 		private TextImageButtonFactory textImageButtonFactory;
 
@@ -134,7 +135,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			buttonFactory.normalFillColor = RGBA_Bytes.White;
 			buttonFactory.normalTextColor = RGBA_Bytes.DarkGray;
 
-			FlowLayoutWidget pageTopToBottomLayout = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			pageTopToBottomLayout = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				VAnchor = VAnchor.ParentTop
 			};
@@ -166,14 +167,31 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			noConnectionMessageContainer.AddChild(noConnectionMessage);
 			pageTopToBottomLayout.AddChild(noConnectionMessageContainer);
 
+			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
+			PrinterConnectionAndCommunication.Instance.EnableChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
+
+			RebuildSliceSettingsTabs();
+
+			this.AnchorAll();
+		}
+
+		internal void RebuildSliceSettingsTabs()
+		{
+			if (topCategoryTabs != null)
+			{
+				// Close and remove children
+				topCategoryTabs.Close();
+			}
+
 			topCategoryTabs = new TabControl();
 			topCategoryTabs.TabBar.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
 			topCategoryTabs.Margin = new BorderDouble(top: 8);
 			topCategoryTabs.AnchorAll();
 
-			sliceSettingsDetailControl = new SliceSettingsDetailControl(layerCascade);
+			sliceSettingsDetailControl = new SliceSettingsDetailControl(layerCascade, this);
 
-			List<TabBar> sideTabBarsListForLayout = new List<TabBar>();
+			var sideTabBarsListForLayout = new List<TabBar>();
+
 			for (int topCategoryIndex = 0; topCategoryIndex < SliceSettingsOrganizer.Instance.UserLevels[UserLevel].CategoriesList.Count; topCategoryIndex++)
 			{
 				OrganizerCategory category = SliceSettingsOrganizer.Instance.UserLevels[UserLevel].CategoriesList[topCategoryIndex];
@@ -204,9 +222,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			// check if there is only one left side tab. If so hide the left tabs and expand the content.
-			foreach(var tabList in sideTabBarsListForLayout)
+			foreach (var tabList in sideTabBarsListForLayout)
 			{
-				if(tabList.CountVisibleChildren() == 1)
+				if (tabList.CountVisibleChildren() == 1)
 				{
 					tabList.MinimumSize = new Vector2(0, 0);
 					tabList.Width = 0;
@@ -214,9 +232,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			pageTopToBottomLayout.AddChild(topCategoryTabs);
-
-			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
-			PrinterConnectionAndCommunication.Instance.EnableChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
 
 			SetVisibleControls();
 
@@ -238,8 +253,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					}
 				};
 			}
-
-			this.AnchorAll();
 		}
 
 		public string UserLevel

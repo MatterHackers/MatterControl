@@ -383,28 +383,26 @@ namespace MatterHackers.MatterControl.ActionBar
 		private void onStartButton_Click(object sender, EventArgs mouseEvent)
 		{
 			UiThread.RunOnIdle(() =>
+			{
+				var view3D = ApplicationController.Instance.ActiveView3DWidget;
+
+				if (view3D != null && false)
+					//&& view3D.ShouldBeSaved)
 				{
-					var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
-					var view3D = systemWindow.ChildrenRecursive<View3DWidget>().FirstOrDefault();
-
-					if (view3D != null && false)
-						//&& view3D.ShouldBeSaved)
+					StyledMessageBox.ShowMessageBox((bool startPrint) =>
 					{
-						StyledMessageBox.ShowMessageBox((bool startPrint) =>
+						if (startPrint)
 						{
-							if (startPrint)
-							{
-								PrinterConnectionAndCommunication.Instance.PrintActivePartIfPossible();
-							}
+							PrinterConnectionAndCommunication.Instance.PrintActivePartIfPossible();
+						}
 
-						}, unsavedChangesMessage, unsavedChangesCaption, StyledMessageBox.MessageType.YES_NO, "Start Print", "Cancel");
-					}
-					else
-					{
-						PrinterConnectionAndCommunication.Instance.PrintActivePartIfPossible();
-					}
+					}, unsavedChangesMessage, unsavedChangesCaption, StyledMessageBox.MessageType.YES_NO, "Start Print", "Cancel");
 				}
-			);
+				else
+				{
+					PrinterConnectionAndCommunication.Instance.PrintActivePartIfPossible();
+				}
+			});
 		}
 
 		private void onStateChanged(object sender, EventArgs e)

@@ -213,7 +213,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			public override void OnLoad(EventArgs args)
 			{
-				MatterControlApplication.Instance.ActiveView3DWidget = modelViewer;
+				ApplicationController.Instance.ActiveView3DWidget = modelViewer;
 				LoadActivePrintItem();
 				base.OnLoad(args);
 			}

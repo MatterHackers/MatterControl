@@ -50,6 +50,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+using System.IO.Compression;
 
 namespace MatterHackers.MatterControl.PrinterCommunication
 {
@@ -2590,6 +2591,25 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					bool originalIsGCode = Path.GetExtension(partToPrint.FileLocation).ToUpper() == ".GCODE";
 					if (File.Exists(gcodePathAndFileName))
 					{
+						// Create archive point for printing attempt
+						if (Path.GetExtension(partToPrint.FileLocation).ToUpper() == ".MCX")
+						{
+							// TODO: We should zip mcx and settings when starting a print
+							string platingDirectory = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, "PrintHistory");
+							Directory.CreateDirectory(platingDirectory);
+
+							string now = DateTime.Now.ToString("yyyyMMdd-HHmmss");
+							string archivePath = Path.Combine(platingDirectory, now + ".zip");
+
+							using (var file = File.OpenWrite(archivePath))
+							using (var zip = new ZipArchive(file, ZipArchiveMode.Create))
+							{
+								zip.CreateEntryFromFile(partToPrint.FileLocation, "PrinterPlate.mcx");
+								zip.CreateEntryFromFile(ActiveSliceSettings.Instance.DocumentPath, ActiveSliceSettings.Instance.GetValue(SettingsKey.printer_name) + ".printer");
+								zip.CreateEntryFromFile(gcodePathAndFileName, "sliced.gcode");
+							}
+						}
+
 						// read the last few k of the file and see if it says "filament used". We use this marker to tell if the file finished writing
 						if (originalIsGCode)
 						{

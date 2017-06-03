@@ -179,14 +179,8 @@ namespace MatterHackers.MatterControl.Library
 					var matchedFiles = (filter == "") ? nonZipFiles : nonZipFiles.Where(filePath =>
 					{
 						string fileName = Path.GetFileName(filePath);
-						string fileExtensionLower = Path.GetExtension(fileName).ToLower().Trim('.');
-
-						bool isContentFileType = ApplicationSettings.LibraryFilterFileExtensions.Contains(fileExtensionLower)
-								|| ApplicationController.Instance.Library.ContentProviders.Keys.Contains(fileExtensionLower);
-
-						return !string.IsNullOrEmpty(fileExtensionLower)
-							&& isContentFileType
-							&& FileNameContainsFilter(filePath, filter);
+						return FileNameContainsFilter(filePath, filter)
+							&& ApplicationController.Instance.Library.IsContentFileType(fileName);
 					});
 					
 					UiThread.RunOnIdle(() =>

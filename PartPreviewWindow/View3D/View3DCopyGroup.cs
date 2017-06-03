@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				IObject3D newItem = await Task.Run(() =>
 				{
 					var clonedItem = Scene.SelectedItem.Clone();
-					PlatingHelper.MoveToOpenPosition(clonedItem, Scene);
+					PlatingHelper.MoveToOpenPosition(clonedItem, Scene.Children);
 
 					return clonedItem;
 				});
