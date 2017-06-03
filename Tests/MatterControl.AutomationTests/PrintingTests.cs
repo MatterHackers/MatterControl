@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[Test, Apartment(ApartmentState.STA)]
 		public async Task PulseRequiresLevelingAndLevelingWorks()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				testRunner.WaitForName("Cancel Wizard Button", 1);
 
@@ -98,22 +98,19 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.Delay(1);
 
 					// print a part
+					testRunner.AddDefaultFileToBedPlate();
 					testRunner.ClickByName("Start Print Button", 1);
 
-					// assert the leveling is working
-					testRunner.WaitForName("Yes Button", 200);
-					// close the pause dialog pop-up
-					testRunner.ClickByName("Yes Button");
+					testRunner.Delay(() => emulator.ZPosition > 5, 3);
 
+					// assert the leveling is working
 					Assert.Greater(emulator.ZPosition, 5);
 
 					testRunner.ClickByName("Cancel Print Button", 1);
 				}
 
 				return Task.FromResult(0);
-			};
-
-			await MatterControlUtilities.RunTest(testToRun, maxTimeToRun: 300);
+			}, maxTimeToRun: 90);
 		}
 
 		[Test, Apartment(ApartmentState.STA)]
