@@ -27,6 +27,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				{
 					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
 
+					testRunner.ClickByName("Slice Settings Tab");
+
 					MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
 
 					testRunner.ClickByName("Printer Tab", 1);
@@ -36,15 +38,24 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.Type("{BACKSPACE}");
 					testRunner.Type("G28");
 
+					testRunner.ClickByName("Library Tab");
+					testRunner.NavigateToFolder("Calibration Parts Row Item Collection");
+					testRunner.ClickByName("Row Item Calibration - Box.stl", 1);
+
+					testRunner.ClickByName("Print Library Overflow Menu", 1);
+					testRunner.ClickByName("Add to Plate MenuItem");
+
 					testRunner.ClickByName("Start Print Button", 1);
 
-					testRunner.WaitForName("Done Button", 120);
-					Assert.True(testRunner.NameExists("Done Button"), "The print has completed");
-					testRunner.WaitForName("Print Again Button", 1);
+					// Wait for print to finish
+					testRunner.Delay(() => PrinterConnectionAndCommunication.Instance.CommunicationState == PrinterConnectionAndCommunication.CommunicationStates.FinishedPrint, 120);
 
-					testRunner.Delay(5);
-
+					// Wait for expected temp
+					testRunner.Delay(() => PrinterConnectionAndCommunication.Instance.GetActualExtruderTemperature(0) <= 0, 5);
 					Assert.Less(PrinterConnectionAndCommunication.Instance.GetActualExtruderTemperature(0), 30);
+
+					// Wait for expected temp
+					testRunner.Delay(() => PrinterConnectionAndCommunication.Instance.ActualBedTemperature <= 10, 5);
 					Assert.Less(PrinterConnectionAndCommunication.Instance.ActualBedTemperature, 10);
 				}
 

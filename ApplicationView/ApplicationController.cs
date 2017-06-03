@@ -51,6 +51,7 @@ namespace MatterHackers.MatterControl
 	using Agg.Font;
 	using Agg.Image;
 	using CustomWidgets;
+	using MatterHackers.DataConverters3D;
 	using MatterHackers.MatterControl.Library;
 	using MatterHackers.MatterControl.PartPreviewWindow;
 	using MatterHackers.VectorMath;
@@ -191,6 +192,20 @@ namespace MatterHackers.MatterControl
 
 				return advancedControls;
 			}
+		}
+
+		internal void ClearPlate()
+		{
+			string now = DateTime.Now.ToString("yyyyMMdd-HHmmss");
+
+			string platingDirectory = Path.Combine(ApplicationDataStorage.Instance.ApplicationTempDataPath, "Plating");
+			Directory.CreateDirectory(platingDirectory);
+
+			string mcxPath = Path.Combine(platingDirectory, now + ".mcx");
+
+			PrinterConnectionAndCommunication.Instance.ActivePrintItem = new PrintItemWrapper(new PrintItem(now, mcxPath));
+
+			File.WriteAllText(mcxPath, new Object3D().ToJson());
 		}
 
 		public ThemeConfig Theme { get; set; } = new ThemeConfig();
