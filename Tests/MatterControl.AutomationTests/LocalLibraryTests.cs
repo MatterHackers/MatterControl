@@ -140,7 +140,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
-				//Navigate To Local Library 
+				// Navigate To Local Library 
 				testRunner.ClickByName("Library Tab");
 				testRunner.NavigateToFolder("Local Library Row Item Collection");
 
@@ -221,7 +221,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 				
-				//Navigate to Local Library
+				// Navigate to Local Library
 				testRunner.ClickByName("Library Tab");
 				testRunner.NavigateToFolder("Local Library Row Item Collection");
 
@@ -237,7 +237,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				MatterControlUtilities.LibraryRemoveSelectedItem(testRunner);
 				testRunner.Delay(1);
 
-				//Make sure that Export Item Window exists after Export button is clicked
+				// Make sure that Export Item Window exists after Export button is clicked
 				Assert.IsFalse(testRunner.WaitForName("Row Item Rook", 1));
 
 				return Task.FromResult(0);
@@ -291,50 +291,42 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[Test]
 		public async Task AddToQueueFromLibraryButtonAddsItemToQueue()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
+				int expectedCount = QueueData.Instance.ItemCount + 1;
+
 				testRunner.CloseSignInAndPrinterSelect();
 
-				//Navigate to Local Library
+				// Navigate to Local Library
 				testRunner.ClickByName("Library Tab");
 				testRunner.NavigateToFolder("Local Library Row Item Collection");
 
+				// Add Library item
+				testRunner.ClickByName("Library Add Button", 5);
+				testRunner.Delay(2);
+				testRunner.Type(MatterControlUtilities.GetTestItemPath("Rook.amf"));
 				testRunner.Delay(1);
-				testRunner.ClickByName("Library Edit Button");
-				testRunner.Delay(1);
+				testRunner.Type("{Enter}");
 
-				//Select Library Item
-				string rowItemOne = "Row Item Calibration - Box";
-				testRunner.ClickByName(rowItemOne);
+				// Select Library Item
+				testRunner.ClickByName("Row Item Rook");
 
-				testRunner.Delay(1);
-
-				int queueCountBeforeAdd = QueueData.Instance.ItemCount;
-
-				//Add Library Item to the Print Queue
+				// Add Library Item to the Print Queue
 				MatterControlUtilities.LibraryAddSelectionToQueue(testRunner);
-
 				testRunner.Delay(2);
 
-				//Make sure that the Queue Count increases by one
-				int queueCountAfterAdd = QueueData.Instance.ItemCount;
+				// Make sure that the Queue Count increases by one
+				Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue item count should increase by one after add");
 
-				Assert.IsTrue(queueCountAfterAdd == queueCountBeforeAdd + 1);
+				// Navigate to Queue
+				testRunner.ClickByName("Bread Crumb Button Home");
+				testRunner.NavigateToFolder("Print Queue Row Item Collection");
 
-				//Navigate to Queue
-				testRunner.ClickByName("Queue Tab");
-
-				testRunner.Delay(1);
-
-				//Make sure that the Print Item was added
-				string queueItem = "Queue Item Calibration - Box";
-				bool queueItemWasAdded = testRunner.WaitForName(queueItem, 2);
-				Assert.IsTrue(queueItemWasAdded == true);
+				// Make sure that the Print Item was added
+				Assert.IsTrue(testRunner.WaitForName("Row Item Rook", 5), "Rook item should exist in the Queue after Add");
 
 				return Task.FromResult(0);
-			};
-
-			await MatterControlUtilities.RunTest(testToRun);
+			});
 		}
 
 		[Test]

@@ -62,7 +62,10 @@ namespace MatterHackers.MatterControl.Library
 
 				return fileName;
 			}
-			set { }
+			set
+			{
+				fileName = value;
+			}
 		}
 	}
 }

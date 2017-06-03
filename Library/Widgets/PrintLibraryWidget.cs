@@ -740,18 +740,13 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			});
 		}
 
-		private void addToQueueButton_Click(object sender, EventArgs e)
+		private async void addToQueueButton_Click(object sender, EventArgs e)
 		{
-			foreach (var item in libraryView.SelectedItems)
+			var selectedItems = libraryView.SelectedItems.Select(o => o.Model);
+			if (selectedItems.Any())
 			{
-				throw new NotImplementedException("addToQueueButton_Click");
-
-				// Get content
-				// Create printitemwrapper (or not) - an implementation for this exists in cloud library
-				// Add printitemwrapper to queue
+				await PrintQueueContainer.AddAllItems(selectedItems);
 			}
-
-			libraryView.SelectedItems.Clear();
 		}
 
 		private void EnableMenus()
