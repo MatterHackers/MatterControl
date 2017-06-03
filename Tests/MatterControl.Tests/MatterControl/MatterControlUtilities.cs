@@ -187,7 +187,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}
 		}
 
-		public static IDisposable LaunchAndConnectToPrinterEmulator(this AutomationRunner testRunner, string make = "Airwolf 3D", string model = "HD", bool runSlow = false)
+		public static Emulator LaunchAndConnectToPrinterEmulator(this AutomationRunner testRunner, string make = "Airwolf 3D", string model = "HD", bool runSlow = false)
 		{
 			// Load the TestEnv config
 			var config = TestAutomationConfig.Load();
@@ -195,7 +195,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			// Create the printer
 			MatterControlUtilities.AddAndSelectPrinter(testRunner, make, model);
 
-			Emulator emulator = new Emulator();
+			var emulator = new Emulator();
 
 			emulator.PortName = config.Printer;
 			emulator.RunSlow = runSlow;

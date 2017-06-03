@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.WaitForName("Cancel Wizard Button", 1);
 
-				using (var emulatorDisposable = testRunner.LaunchAndConnectToPrinterEmulator())
+				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
 					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
 
@@ -113,7 +113,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.WaitForName("Cancel Wizard Button", 1);
 
-				using (var emulatorDisposable = testRunner.LaunchAndConnectToPrinterEmulator())
+				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
 					ActiveSliceSettings.Instance.SetValue(SettingsKey.cancel_gcode, "G28 ; Cancel GCode");
 

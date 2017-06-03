@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.CloseSignInAndPrinterSelect();
 
 				// make a jump start printer
-				using (var emulatorProcess = testRunner.LaunchAndConnectToPrinterEmulator("JumpStart", "V1", runSlow: false))
+				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator("JumpStart", "V1", runSlow: false))
 				{
 					// make sure it is showing the correct button
 					Assert.IsTrue(!testRunner.WaitForName("Start Print Button", .5), "Start Print hidden");

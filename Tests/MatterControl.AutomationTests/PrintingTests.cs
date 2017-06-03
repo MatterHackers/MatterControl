@@ -23,7 +23,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.WaitForName("Cancel Wizard Button", 1);
 
-				using (var emulatorDisposable = testRunner.LaunchAndConnectToPrinterEmulator())
+				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
 					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
 
@@ -65,9 +65,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.WaitForName("Cancel Wizard Button", 1);
 
-				using (var emulatorDisposable = testRunner.LaunchAndConnectToPrinterEmulator("Pulse", "A-134"))
+				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator("Pulse", "A-134"))
 				{
-					var emulator = emulatorDisposable as Emulator;
 					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
 
 					// close the finish setup window
@@ -221,9 +220,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.WaitForName("Cancel Wizard Button", 1);
 
-				using (var emulatorDisposable = testRunner.LaunchAndConnectToPrinterEmulator())
+				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
-					var emulator = emulatorDisposable as Emulator;
 					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
 
 					testRunner.SwitchToAdvancedSliceSettings();
@@ -276,7 +274,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.WaitForName("Cancel Wizard Button", 1);
 
-				using (var emulatorDisposable = testRunner.LaunchAndConnectToPrinterEmulator())
+				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
 					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
 
@@ -371,7 +369,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				ExtrusionMultiplyerStream.ExtrusionRatio = initialExtrusionRate;
 
 				// Then validate that they are picked up
-				using (var emulatorDisposable = testRunner.LaunchAndConnectToPrinterEmulator())
+				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
 					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
 
@@ -451,10 +449,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.WaitForName("Cancel Wizard Button", 1);
 
-				using (var emulatorDisposable = testRunner.LaunchAndConnectToPrinterEmulator())
+				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
-					Emulator emulator = (Emulator)emulatorDisposable;
-
 					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
 
 					testRunner.ClickByName("Queue... Menu", 2);
@@ -499,10 +495,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.WaitForName("Cancel Wizard Button", 1);
 
-				using (var emulatorDisposable = testRunner.LaunchAndConnectToPrinterEmulator())
+				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
-					Emulator emulator = (Emulator)emulatorDisposable;
-
 					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
 
 					testRunner.ClickByName("Start Print Button", 1);
