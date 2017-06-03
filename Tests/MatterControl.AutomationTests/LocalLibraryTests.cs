@@ -214,35 +214,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		}
 
 		[Test]
-		public async Task ClickLibraryEditButtonOpensPartPreviewWindow()
-		{
-			AutomationTest testToRun = (testRunner) =>
-			{
-				testRunner.CloseSignInAndPrinterSelect();
-				//Navigate to Local Library
-				testRunner.ClickByName("Library Tab");
-				testRunner.NavigateToFolder("Local Library Row Item Collection");
-
-				testRunner.Delay(1);
-
-				string rowItem = "Row Item Calibration - Box";
-				testRunner.ClickByName("Library Edit Button");
-				testRunner.Delay(1);
-				testRunner.ClickByName(rowItem);
-
-				MatterControlUtilities.LibraryEditSelectedItem(testRunner);
-
-				//Make sure that Export Item Window exists after Export button is clicked
-				bool exportItemWindowExists = testRunner.WaitForName("Part Preview Window", 2);
-				Assert.IsTrue(exportItemWindowExists == true);
-
-				return Task.FromResult(0);
-			};
-
-			await MatterControlUtilities.RunTest(testToRun);
-		}
-
-		[Test]
 		public async Task RemoveButtonClickedRemovesSingleItem()
 		{
 			AutomationTest testToRun = (testRunner) =>
