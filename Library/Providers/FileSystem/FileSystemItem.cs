@@ -36,6 +36,8 @@ namespace MatterHackers.MatterControl.Library
 	/// </summary>
 	public class FileSystemItem : ILibraryItem
 	{
+		private string fileName;
+
 		public string Path { get; set; }
 		public string Category { get; set; }
 		public string ThumbnailKey { get; set; } = "";
@@ -45,11 +47,22 @@ namespace MatterHackers.MatterControl.Library
 		public FileSystemItem(string path)
 		{
 			this.Path = path;
-			this.Name = System.IO.Path.GetFileName(path);
 		}
 
 		public string ID => this.Path.GetHashCode().ToString();
 
-		public virtual string Name { get; set; }
+		public virtual string Name
+		{
+			get
+			{
+				if (fileName == null)
+				{
+					fileName = System.IO.Path.GetFileName(this.Path);
+				}
+
+				return fileName;
+			}
+			set { }
+		}
 	}
 }

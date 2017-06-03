@@ -46,20 +46,21 @@ using MatterHackers.PolygonMesh.Processors;
 
 namespace MatterHackers.MatterControl.Library
 {
-	public class SqliteFileItem : FileSystemItem
+	public class SqliteFileItem : FileSystemFileItem
 	{
-		public SqliteFileItem(string filePath)
-			: base(filePath)
+		public PrintItem PrintItem { get; }
+		public SqliteFileItem(PrintItem printItem)
+			: base(printItem.FileLocation)
 		{
+			this.PrintItem = printItem;
 		}
 
-		public override string Name { get; set; }
+		public override string Name { get => this.PrintItem.Name; set => this.PrintItem.Name = value; }
 	}
 
 	public class SqliteLibraryContainer : WritableContainer
 	{
 		protected List<PrintItemCollection> childCollections = new List<PrintItemCollection>();
-		private List<PrintItem> printItems = new List<PrintItem>();
 
 		public SqliteLibraryContainer(int collectionID)
 		{
@@ -97,28 +98,24 @@ namespace MatterHackers.MatterControl.Library
 			Task.Run(() =>
 			{
 				childCollections = GetChildCollections();
-				printItems = GetLibraryItems(KeywordFilter);
 
 				this.ChildContainers = childCollections.Select(c => new SqliteLibraryContainerLink()
 				{
 					ContainerID = c.Id, Name = c.Name }).ToList<ILibraryContainerLink>(); //
 
 				// PrintItems projected onto FileSystemFileItem
-				Items = printItems.Select<PrintItem, ILibraryItem>(f =>
+				Items = GetLibraryItems(KeywordFilter).Select<PrintItem, ILibraryItem>(printItem =>
 				{
-					if (File.Exists(f.FileLocation))
+					if (File.Exists(printItem.FileLocation))
 					{
-						return new SqliteFileItem(f.FileLocation)
-						{
-							Name = f.Name
-						};
+						return new SqliteFileItem(printItem);
 					}
 					else
 					{
-						return new MessageItem($"{f.Name} (Missing)");
+						return new MessageItem($"{printItem.Name} (Missing)");
 						//return new MissingFileItem() // Needs to return a content specific icon with a missing overlay - needs to lack all print operations
 					}
-				}).ToList<ILibraryItem>();
+				}).ToList();
 
 				UiThread.RunOnIdle(this.OnReloaded);
 			});
@@ -209,33 +206,15 @@ namespace MatterHackers.MatterControl.Library
 
 		public override void Remove(IEnumerable<ILibraryItem> items)
 		{
-			/*
-			 * 			var sqliteContainer = container as SqliteLibraryContainer;
-			if (sqliteContainer != null)
+			// TODO: Handle Containers
+			foreach(var item in items)
 			{
-				foreach (var match in childCollections.Where(c => c.Id == sqliteContainer.CollectionID))
+				if (item is SqliteFileItem sqlItem)
 				{
-					match.Delete();
+					sqlItem.PrintItem.Delete();
 				}
 
-				//childCollections[collectionIndexToRemove].Delete();
-				this.ReloadContainer();
-			}
-*/
-
-			foreach (ILibraryContentStream item in items)
-			{
-				var fileSystemItem = item as FileSystemFileItem;
-				if (fileSystemItem != null)
-				{
-					foreach (var printItem in printItems.Where(p => p.FileLocation == fileSystemItem.Path).ToList())
-					{
-						// and remove it from the data base
-						printItem.Delete();
-
-						printItems.Remove(printItem);
-					}
-				}
+				this.Items.Remove(item);
 			}
 
 			this.OnReloaded();
@@ -243,29 +222,15 @@ namespace MatterHackers.MatterControl.Library
 
 		public override void Rename(ILibraryItem selectedItem, string revisedName)
 		{
-			/* var container = selectedItem as SqliteLibraryContainer;
-			if (container != null)
+			if (selectedItem is SqliteFileItem sqliteItem)
 			{
-				var match = childCollections.Where(c => c.Id == container.CollectionID).FirstOrDefault();
-				if (match != null)
-				{
-					match.Name = revisedName;
-					match.Commit();
-				}
-			} */
-
-			this.ReloadContainer();
-
-			// TODO: Figure out how to get details about Sqlite row items from ILibraryItem - likely need custom type
-			var container = selectedItem as SqliteLibraryContainer;
-			if (container != null)
+				sqliteItem.PrintItem.Name = revisedName;
+				sqliteItem.PrintItem.Commit();
+			}
+			else if (selectedItem is SqliteLibraryContainerLink)
 			{
-				var match = childCollections.Where(c => c.Id == container.CollectionID).FirstOrDefault();
-				if (match != null)
-				{
-					match.Name = revisedName;
-					match.Commit();
-				}
+				// TODO: lookup collection by id, rename, commit, release, reload
+				System.Diagnostics.Debugger.Break();
 			}
 
 			this.ReloadContainer();

@@ -346,37 +346,34 @@ namespace MatterHackers.MatterControl.Library
 
 		public override void Rename(ILibraryItem item, string revisedName)
 		{
-			/*
-			 * var fileSystemContainer = container as FileSystemContainer;
-			if (fileSystemContainer != null
-				&& Directory.Exists(fileSystemContainer.fullPath))
+			if (item is ContainerLink directoryLink)
 			{
-				string destPath = Path.Combine(Path.GetDirectoryName(fileSystemContainer.fullPath), revisedName);
-				Directory.Move(fileSystemContainer.fullPath, destPath);
-
-				await Task.Delay(150);
-
-				GetFilesAndCollectionsInCurrentDirectory();
-			}*/
-
-			/*
-			string sourceFile = Path.Combine(rootPath, currentDirectoryFiles[itemIndexToRename]);
-			if (File.Exists(sourceFile))
-			{
-				string extension = Path.GetExtension(sourceFile);
-				string destFile = Path.Combine(Path.GetDirectoryName(sourceFile), newName);
-				destFile = Path.ChangeExtension(destFile, extension);
-				File.Move(sourceFile, destFile);
-				Stopwatch time = Stopwatch.StartNew();
-				// Wait for up to some amount of time for the directory to be gone.
-				while (File.Exists(destFile)
-					&& time.ElapsedMilliseconds < 100)
+				if (Directory.Exists(directoryLink.Path))
 				{
-					Thread.Sleep(1); // make sure we are not eating all the cpu time.
+					//string destPath = Path.Combine(Path.GetDirectoryName(fileSystemContainer.fullPath), revisedName);
+					//Directory.Move(fileSystemContainer.fullPath, destPath);
+
+					//await Task.Delay(150);
+
+					//GetFilesAndCollectionsInCurrentDirectory();
 				}
-				//				GetFilesAndCollectionsInCurrentDirectory();
 			}
-			*/
+			else if (item is FileSystemFileItem fileItem)
+			{
+				string sourceFile = fileItem.Path;
+				if (File.Exists(sourceFile))
+				{
+					string extension = Path.GetExtension(sourceFile);
+					string destFile = Path.Combine(Path.GetDirectoryName(sourceFile), revisedName);
+					destFile = Path.ChangeExtension(destFile, extension);
+
+					File.Move(sourceFile, destFile);
+
+					fileItem.Path = destFile;
+
+					this.OnReloaded();
+				}
+			}
 		}
 
 		#endregion
