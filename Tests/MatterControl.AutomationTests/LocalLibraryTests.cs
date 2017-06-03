@@ -8,46 +8,40 @@ using NUnit.Framework;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
+	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain, Apartment(ApartmentState.STA)]
 	public class LocalLibraryTests
 	{
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task LocalLibraryAddButtonAddSingleItemToLibrary()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
 				string itemName = "Row Item Fennec Fox";
 
-				//Navigate to Local Library 
+				// Navigate to Local Library 
 				testRunner.ClickByName("Library Tab");
 				testRunner.NavigateToFolder("Local Library Row Item Collection");
 
-				//Make sure that Item does not exist before the test begins
-				bool rowItemExists = testRunner.WaitForName(itemName, 1);
-				Assert.IsTrue(rowItemExists == false);
+				Assert.IsFalse(testRunner.WaitForName(itemName, 1), "Fennec Fox should not exist at test start");
 
-				//Click Local Library Add Button
+				// Click Local Library Add Button
 				testRunner.ClickByName("Library Add Button");
 
-				//Get Library Item to Add
-				string rowItemPath = MatterControlUtilities.GetTestItemPath("Fennec_Fox.stl");
+				// Get Library Item to Add
 				testRunner.Delay(2);
-				testRunner.Type(rowItemPath);
+				testRunner.Type(MatterControlUtilities.GetTestItemPath("Fennec_Fox.stl"));
 				testRunner.Delay(1);
 				testRunner.Type("{Enter}");
 
-				bool rowItemWasAdded = testRunner.WaitForName(itemName, 2);
-				Assert.IsTrue(rowItemWasAdded == true);
+				Assert.IsTrue(testRunner.WaitForName(itemName, 2));
 
 				return Task.FromResult(0);
-			};
-
-			await MatterControlUtilities.RunTest(testToRun);
+			});
 		}
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task LocalLibraryAddButtonAddsMultipleItemsToLibrary()
 		{
 			AutomationTest testToRun = (testRunner) =>
@@ -91,7 +85,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			await MatterControlUtilities.RunTest(testToRun);
 		}
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task LocalLibraryAddButtonAddAMFToLibrary()
 		{
 			AutomationTest testToRun = (testRunner) =>
@@ -127,7 +121,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			await MatterControlUtilities.RunTest(testToRun, overrideWidth: 1024, overrideHeight: 800);
 		}
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task LocalLibraryAddButtonAddZipToLibrary()
 		{
 			AutomationTest testToRun = (testRunner) =>
@@ -169,7 +163,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			await MatterControlUtilities.RunTest(testToRun);
 		}
 	
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task RenameButtonRenameLocalLibraryItem()
 		{
 			AutomationTest testToRun = (testRunner) =>
@@ -207,7 +201,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			await MatterControlUtilities.RunTest(testToRun, overrideWidth: 600);
 		}
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task RenameButtonRenamesLocalLibraryFolder()
 		{
 			AutomationTest testToRun = (testRunner) =>
@@ -254,7 +248,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			await MatterControlUtilities.RunTest(testToRun);
 		}
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task ClickLibraryEditButtonOpensPartPreviewWindow()
 		{
 			AutomationTest testToRun = (testRunner) =>
@@ -283,7 +277,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			await MatterControlUtilities.RunTest(testToRun);
 		}
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task RemoveButtonClickedRemovesSingleItem()
 		{
 			AutomationTest testToRun = (testRunner) =>
@@ -314,7 +308,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			await MatterControlUtilities.RunTest(testToRun);
 		}
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task RemoveButtonClickedRemovesMultipleItems()
 		{
 			AutomationTest testToRun = (testRunner) =>
@@ -363,7 +357,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			await MatterControlUtilities.RunTest(testToRun);
 		}
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task AddToQueueFromLibraryButtonAddsItemToQueue()
 		{
 			AutomationTest testToRun = (testRunner) =>
@@ -412,7 +406,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			await MatterControlUtilities.RunTest(testToRun);
 		}
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task AddToQueueFromLibraryButtonAddsItemsToQueue()
 		{
 			AutomationTest testToRun = (testRunner) =>
@@ -474,7 +468,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			await MatterControlUtilities.RunTest(testToRun);
 		}
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task LibraryItemThumbnailClickedOpensPartPreview()
 		{
 			AutomationTest testToRun = (testRunner) =>
@@ -502,8 +496,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			await MatterControlUtilities.RunTest(testToRun);
 		}
 
-
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task PrintLibraryItem()
 		{
 			AutomationTest testToRun = (testRunner) =>

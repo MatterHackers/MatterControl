@@ -54,7 +54,7 @@ using System.IO.Compression;
 
 namespace MatterHackers.MatterControl.PrinterCommunication
 {
-	public static class ExtensionMethods
+	public static class PrintItemWrapperExtensionMethods
 	{
 		private static TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
 
@@ -66,6 +66,16 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 
 			return textInfo?.ToTitleCase(printItemWrapper.Name.Replace('_', ' '));
+		}
+
+		public static string GetFriendlyName(string fileName)
+		{
+			if (fileName == null)
+			{
+				return "";
+			}
+
+			return textInfo?.ToTitleCase(fileName.Replace('_', ' '));
 		}
 	}
 
