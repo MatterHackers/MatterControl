@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Bread Crumb Button Home", 1);
 				testRunner.Delay(.2);
 
-				MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
+				testRunner.SwitchToAdvancedSliceSettings();
 				testRunner.Delay(.2);
 
 				testRunner.ClickByName("Raft / Priming Tab", 1);
@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				{
 					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
 
-					MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
+					testRunner.SwitchToAdvancedSliceSettings();
 
 					testRunner.ClickByName("General Tab", 1);
 					testRunner.ClickByName("Single Print Tab", 1);
@@ -119,7 +119,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
 
-					MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
+					testRunner.SwitchToAdvancedSliceSettings();
 
 					testRunner.ClickByName("General Tab", 1);
 					testRunner.ClickByName("Single Print Tab", 1);
@@ -191,7 +191,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
 
 				//Navigate to Local Library 
-				MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
+				testRunner.SwitchToAdvancedSliceSettings();
 
 				testRunner.ClickByName("Printer Tab", 1);
 				testRunner.ClickByName("Features Tab", 1);
@@ -230,7 +230,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
 
 				//Navigate to Local Library 
-				MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
+				testRunner.SwitchToAdvancedSliceSettings();
 
 				testRunner.ClickByName("General Tab", 1);
 				testRunner.ClickByName("Layers / Surface Tab", 1);
@@ -308,7 +308,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
 
 				//Navigate to Settings Tab and make sure Bed Temp Text box is visible 
-				MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
+				testRunner.SwitchToAdvancedSliceSettings();
 
 				testRunner.ClickByName("Filament Tab", 1);
 				testRunner.ClickByName("Temperatures Tab", 1);
@@ -351,8 +351,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				// Add Guest printers
 				MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
-				MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
-
+				testRunner.SwitchToAdvancedSliceSettings();
 
 				testRunner.ClickByName("Layer Height Textbox", 2);
 				testRunner.Type(".5\n");

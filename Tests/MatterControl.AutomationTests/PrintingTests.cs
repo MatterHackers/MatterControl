@@ -27,9 +27,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				{
 					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
 
-					testRunner.ClickByName("Slice Settings Tab");
-
-					MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
+					testRunner.SwitchToAdvancedSliceSettings();
 
 					testRunner.ClickByName("Printer Tab", 1);
 					testRunner.ClickByName("Custom G-Code Tab", 1);
@@ -80,7 +78,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					// close the finish setup window
 					testRunner.ClickByName("Cancel Button");
 
-					MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
+					testRunner.SwitchToAdvancedSliceSettings();
 
 					testRunner.ClickByName("General Tab", 1);
 					testRunner.ClickByName("Single Print Tab", 1);
@@ -233,7 +231,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					var emulator = emulatorDisposable as Emulator;
 					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
 
-					MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
+					testRunner.SwitchToAdvancedSliceSettings();
 
 					testRunner.ClickByName("General Tab", 1);
 					testRunner.ClickByName("Single Print Tab", 1);

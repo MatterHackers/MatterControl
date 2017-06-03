@@ -473,8 +473,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			Environment.CurrentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 		}
 
-		public static void SwitchToAdvancedSettings(AutomationRunner testRunner)
+		public static void SwitchToAdvancedSliceSettings(this AutomationRunner testRunner)
 		{
+			// Switch to Slice Settings Tab
+			testRunner.ClickByName("Slice Settings Tab");
+
+			// Change to Advanced view
 			testRunner.ClickByName("User Level Dropdown");
 			testRunner.ClickByName("Advanced Menu Item");
 			testRunner.Delay(.5);
