@@ -41,6 +41,7 @@ using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.PrinterEmulator;
 using Newtonsoft.Json;
@@ -376,6 +377,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			testRunner.ClickByName("Print Library Overflow Menu", 1);
 			testRunner.ClickByName("Add to Plate MenuItem");
+		}
+
+		public static void WaitForPrintFinished(this AutomationRunner testRunner)
+		{
+			testRunner.Delay(() => PrinterConnectionAndCommunication.Instance.CommunicationState == PrinterConnectionAndCommunication.CommunicationStates.FinishedPrint, 120);
 		}
 
 		public static async Task RunTest(

@@ -41,7 +41,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("Start Print Button", 1);
 
 					// Wait for print to finish
-					testRunner.Delay(() => PrinterConnectionAndCommunication.Instance.CommunicationState == PrinterConnectionAndCommunication.CommunicationStates.FinishedPrint, 120);
+					testRunner.WaitForPrintFinished();
 
 					// Wait for expected temp
 					testRunner.Delay(() => PrinterConnectionAndCommunication.Instance.GetActualExtruderTemperature(0) <= 0, 5);
@@ -211,7 +211,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[Test, Apartment(ApartmentState.STA)]
 		public async Task PrinterRequestsResumeWorkingAsExpected()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				testRunner.WaitForName("Cancel Wizard Button", 1);
 
@@ -230,6 +230,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("Controls Tab");
 
 					// print a part
+					testRunner.AddDefaultFileToBedPlate();
 					testRunner.ClickByName("Start Print Button", 1);
 
 					// turn on line error simulation
@@ -239,20 +240,17 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("No Button", 200);
 
 					// simulate board reboot
-					emulator.SimulateRebot();
+					emulator.SimulateReboot();
 
 					// close the pause dialog pop-up (resume)
 					testRunner.ClickByName("No Button", 200);
 
 					// Wait for done
-					testRunner.WaitForName("Done Button", 60);
-					testRunner.WaitForName("Print Again Button", 1);
+					testRunner.WaitForPrintFinished();
 				}
 
 				return Task.FromResult(0);
-			};
-
-			await MatterControlUtilities.RunTest(testToRun, maxTimeToRun: 300);
+			}, maxTimeToRun: 90);
 		}
 
 		private EventHandler unregisterEvents;
