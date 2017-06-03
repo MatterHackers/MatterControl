@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using MatterHackers.Agg.UI;
 using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintQueue;
@@ -247,7 +248,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[Test]
 		public async Task RemoveButtonClickedRemovesMultipleItems()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
@@ -255,42 +256,37 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Library Tab");
 				testRunner.NavigateToFolder("Local Library Row Item Collection");
 
-				testRunner.Delay(1);
-				testRunner.ClickByName("Library Edit Button");
-				testRunner.Delay(1);
-
-				string rowItemPath = MatterControlUtilities.GetTestItemPath("Fennec_Fox.stl");
 				testRunner.ClickByName("Library Add Button");
 
 				testRunner.Delay(2);
-				testRunner.Type(rowItemPath);
+
+				// Type file paths for each file into File Open dialog
+				testRunner.Type(string.Format("\"{0}\" \"{1}\"",
+					MatterControlUtilities.GetTestItemPath("Fennec_Fox.stl"),
+					MatterControlUtilities.GetTestItemPath("Batman.stl")));
+
 				testRunner.Type("{Enter}");
-				testRunner.Delay(1);
-
-				string rowItemOne = "Row Item Calibration - Box";
-				testRunner.ClickByName(rowItemOne, 1);
-
-				string rowItemTwo = "Row Item Fennec Fox";
-				testRunner.ClickByName(rowItemTwo, 1);
-
-				testRunner.Delay(1);
 
 				// Make sure row items exist before remove
-				Assert.IsTrue(testRunner.WaitForName(rowItemOne, 2), "rowItemOne should exist before remove");
-				Assert.IsTrue(testRunner.WaitForName(rowItemTwo, 2), "rowItemTwo should exist before remove");
+				Assert.IsTrue(testRunner.WaitForName("Row Item Batman", 6), "Batman part should exist after add");
+				Assert.IsTrue(testRunner.WaitForName("Row Item Fennec Fox", 2), "Fennec part should exist after add");
+
+				testRunner.ClickByName("Row Item Fennec Fox", 1);
+
+				Keyboard.SetKeyDownState(Keys.ControlKey, down: true);
+				testRunner.ClickByName("Row Item Batman", 1);
+				Keyboard.SetKeyDownState(Keys.ControlKey, down: false);
 
 				// Remove items
 				MatterControlUtilities.LibraryRemoveSelectedItem(testRunner);
 				testRunner.Delay(1);
 
 				// Make sure both selected items are removed
-				Assert.IsFalse(testRunner.WaitForName(rowItemOne, 2), "rowItemOne should *not* exist after remove");
-				Assert.IsFalse(testRunner.WaitForName(rowItemTwo, 2), "rowItemTwo should *not* exist after remove");
+				Assert.IsFalse(testRunner.WaitForName("Row Item Batman", 1), "Batman part should *not* exist after remove");
+				Assert.IsFalse(testRunner.WaitForName("Row Item Fennec Fox", 1), "Fennec part *not* exist after remove");
 
 				return Task.FromResult(0);
-			};
-
-			await MatterControlUtilities.RunTest(testToRun);
+			});
 		}
 
 		[Test]

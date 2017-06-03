@@ -125,8 +125,6 @@ namespace MatterHackers.MatterControl.Library
 		{
 			await Task.Run(async () =>
 			{
-
-
 				if (items.FirstOrDefault() is ILibraryContainerLink containerInfo)
 				{
 					var newCollection = new PrintItemCollection(containerInfo.Name, "");
@@ -135,7 +133,6 @@ namespace MatterHackers.MatterControl.Library
 				}
 				else
 				{
-
 					foreach (var item in items.OfType<ILibraryContentStream>())
 					{
 						string filePath;
