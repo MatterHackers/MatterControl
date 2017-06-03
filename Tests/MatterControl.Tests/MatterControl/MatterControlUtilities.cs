@@ -378,7 +378,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.ClickByName(partName, 1);
 
 			testRunner.ClickByName("Print Library Overflow Menu", 1);
-			testRunner.ClickByName("Add to Plate MenuItem");
+			testRunner.ClickByName("Add to Plate Menu Item");
 		}
 
 		public static void WaitForPrintFinished(this AutomationRunner testRunner)
@@ -445,28 +445,28 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void LibraryAddSelectionToQueue(AutomationRunner testRunner)
 		{
-			testRunner.ClickByName("LibraryActionMenu");
+			testRunner.ClickByName("Print Library Overflow Menu");
 			testRunner.ClickByName("Add to Queue Menu Item", 1);
 		}
 
 		public static void LibraryEditSelectedItem(AutomationRunner testRunner)
 		{
-			testRunner.ClickByName("LibraryActionMenu");
 			testRunner.ClickByName("Edit Menu Item", 1);
 			testRunner.Delay(1); // wait for the new window to open
 		}
 
-		public static void LibraryRenameSelectedItem(AutomationRunner testRunner)
+		public static void LibraryRenameSelectedItem(this AutomationRunner testRunner)
 		{
-			testRunner.ClickByName("LibraryActionMenu");
+			testRunner.ClickByName("Print Library Overflow Menu");
 			testRunner.ClickByName("Rename Menu Item", 1);
 		}
 
 		public static void LibraryRemoveSelectedItem(AutomationRunner testRunner)
 		{
-			testRunner.ClickByName("LibraryActionMenu");
+			testRunner.ClickByName("Print Library Overflow Menu");
 			testRunner.ClickByName("Remove Menu Item", 1);
 		}
+
 		public static string ResolveProjectPath(this TestContext context, int stepsToProjectRoot, params string[] relativePathSteps)
 		{
 			string assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);

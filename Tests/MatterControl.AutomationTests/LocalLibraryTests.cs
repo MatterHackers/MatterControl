@@ -135,7 +135,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[Test]
 		public async Task RenameButtonRenameLocalLibraryItem()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
@@ -143,31 +143,31 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Library Tab");
 				testRunner.NavigateToFolder("Local Library Row Item Collection");
 
-				testRunner.Delay(1);
-
-				string rowItemToRename = "Row Item Calibration - Box";
-				testRunner.ClickByName("Library Edit Button");
-				testRunner.Delay(1);
-				testRunner.ClickByName(rowItemToRename);
-				MatterControlUtilities.LibraryRenameSelectedItem(testRunner);
-
+				// Add Library item
+				testRunner.ClickByName("Library Add Button", 5);
 				testRunner.Delay(2);
+				testRunner.Type(MatterControlUtilities.GetTestItemPath("Rook.amf"));
+				testRunner.Delay(1);
+				testRunner.Type("{Enter}");
 
-				testRunner.Type("Library Item Renamed");
+				testRunner.ClickByName("Row Item Rook", 2);
 
+				// Open and wait rename window
+				testRunner.LibraryRenameSelectedItem();
+				testRunner.WaitForName("Rename Button");
+
+				testRunner.Delay(1);
+
+				// Rename item
+				testRunner.Type("Rook Renamed");
 				testRunner.ClickByName("Rename Button");
 
-				string renamedRowItem = "Row Item Library Item Renamed";
-				bool libraryItemWasRenamed = testRunner.WaitForName(renamedRowItem, 2);
-				bool libraryItemBeforeRenameExists = testRunner.WaitForName(rowItemToRename, 2);
-
-				Assert.IsTrue(libraryItemWasRenamed == true);
-				Assert.IsTrue(libraryItemBeforeRenameExists == false);
+				// Confirm
+				Assert.IsTrue(testRunner.WaitForName("Row Item Rook Renamed", 5));
+				Assert.IsFalse(testRunner.WaitForName("Row Item Rook", 2));
 
 				return Task.FromResult(0);
-			};
-
-			await MatterControlUtilities.RunTest(testToRun, overrideWidth: 600);
+			}, overrideWidth: 600);
 		}
 
 		[Test]
@@ -201,7 +201,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("New Folder Row Item Collection");
 				testRunner.Delay(.2);
 
-				MatterControlUtilities.LibraryRenameSelectedItem(testRunner);
+				testRunner.LibraryRenameSelectedItem();
+
 				testRunner.Delay(.5);
 				testRunner.Type("Renamed Library Folder");
 

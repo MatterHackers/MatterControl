@@ -141,7 +141,6 @@ namespace MatterHackers.MatterControl
 				container.BeforeDraw -= beforeDraw;
 			};
 			container.BeforeDraw += beforeDraw;
-			
 		}
 
 		public static void AddLocalLibraryItemToQueue(GuiWidget container, double secondsBetweenClicks = .1)
@@ -182,7 +181,9 @@ namespace MatterHackers.MatterControl
 					testRunner.ClickByName("Library Edit Button");
 					testRunner.ClickByName("Row Item Calibration - Box");
 					testRunner.Delay(.5);
-					MatterControlUtilities.LibraryRenameSelectedItem(testRunner);
+
+					testRunner.LibraryRenameSelectedItem();
+
 					testRunner.Delay(.5);
 					testRunner.Type("Renamed Calibration Cube");
 					testRunner.ClickByName("Rename Button");
@@ -211,7 +212,9 @@ namespace MatterHackers.MatterControl
 					testRunner.ClickByName("Create Folder Button");
 					testRunner.ClickByName("Library Edit Button");
 					testRunner.ClickByName("Row Item New Folder");
-					MatterControlUtilities.LibraryRenameSelectedItem(testRunner);
+
+					testRunner.LibraryRenameSelectedItem();
+
 					testRunner.Delay(.5);
 					testRunner.Type("Renamed Folder");
 					testRunner.ClickByName("Rename Button");

@@ -631,7 +631,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				else
 				{
 					item.MenuItem = dropDownMenu.AddItem(item.Title);
-					item.MenuItem.Name = $"{item.Title} MenuItem";
+					item.MenuItem.Name = $"{item.Title} Menu Item";
 				}
 
 				item.MenuItem.Enabled = item.Action != null;
@@ -694,7 +694,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				if (renameItemWindow == null)
 				{
 					renameItemWindow = new RenameItemWindow(
-						selectedItem.Text,
+						selectedItem.Model.Name,
 						(returnInfo) =>
 						{
 							var model = libraryView.SelectedItems.FirstOrDefault()?.Model;
@@ -785,14 +785,13 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		private void deleteFromLibraryButton_Click(object sender, EventArgs e)
 		{
-			// TODO: If we don't filter to non-container content here, then the providers could be passed a container to move to some other container
-			var libraryItems = libraryView.SelectedItems.Where(item => item is ILibraryContentItem);
+			var libraryItems = libraryView.SelectedItems.Select(p => p.Model);
 			if (libraryItems.Any())
 			{
 				var container = libraryView.ActiveContainer as ILibraryWritableContainer;
 				if (container != null)
 				{
-					container.Remove(libraryItems.Select(p => p.Model));
+					container.Remove(libraryItems);
 				}
 			}
 
