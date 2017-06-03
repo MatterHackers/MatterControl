@@ -160,9 +160,27 @@ namespace MatterHackers.MatterControl.Library
 
 					if (!string.IsNullOrEmpty(filePath) && File.Exists(filePath))
 					{
-						using (var stream = File.OpenRead(filePath))
+						if (Path.GetExtension(filePath).ToUpper() == ".ZIP")
 						{
-							AddItem(stream, Path.GetExtension(filePath).ToUpper(), PrintItemWrapperExtensionMethods.GetFriendlyName(Path.GetFileNameWithoutExtension(filePath)));
+							List<PrintItem> partFiles = ProjectFileHandler.ImportFromProjectArchive(filePath);
+							if (partFiles != null)
+							{
+								foreach (PrintItem part in partFiles)
+								{
+									string childFilePath = part.FileLocation;
+									using (var fileStream = File.OpenRead(part.FileLocation))
+									{
+										AddItem(fileStream, Path.GetExtension(childFilePath).ToUpper(), PrintItemWrapperExtensionMethods.GetFriendlyName(Path.GetFileNameWithoutExtension(childFilePath)));
+									}
+								}
+							}
+						}
+						else
+						{
+							using (var stream = File.OpenRead(filePath))
+							{
+								AddItem(stream, Path.GetExtension(filePath).ToUpper(), PrintItemWrapperExtensionMethods.GetFriendlyName(Path.GetFileNameWithoutExtension(filePath)));
+							}
 						}
 					}
 

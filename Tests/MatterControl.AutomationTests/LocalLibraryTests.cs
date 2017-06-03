@@ -106,43 +106,30 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[Test]
 		public async Task LocalLibraryAddButtonAddZipToLibrary()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
-				//Items in Batman.zip
-				string firstItemName = "Row Item Batman";
-				string secondItemName = "Row Item 2013-01-25 Mouthpiece v2";
-
-				//Navigate to Local Library 
+				// Navigate to Local Library 
 				testRunner.ClickByName("Library Tab");
 				testRunner.NavigateToFolder("Local Library Row Item Collection");
 
-				//Make sure that Item does not exist before the test begins
-				bool firstItemInZipExists = testRunner.WaitForName(firstItemName, 1);
-				bool secondItemInZipExists = testRunner.WaitForName(secondItemName, 1);
-				Assert.IsTrue(firstItemInZipExists == false);
-				Assert.IsTrue(firstItemInZipExists == false);
+				// Make sure that Item does not exist before the test begins
+				Assert.IsFalse(testRunner.WaitForName("Row Item Batman", 1), "Batman part should not exist at test start");
+				Assert.IsFalse(testRunner.WaitForName("Row Item 2013-01-25 Mouthpiece V2", 1), "Mouthpiece part should not exist at test start");
 
-				//Click Local Library Add Button
+				// Add Library item
 				testRunner.ClickByName("Library Add Button");
-
-				//Get Library Item to Add
-				string rowItemPath = MatterControlUtilities.GetTestItemPath("Batman.zip");
 				testRunner.Delay(2);
-				testRunner.Type(rowItemPath);
+				testRunner.Type(MatterControlUtilities.GetTestItemPath("Batman.zip"));
 				testRunner.Delay(1);
 				testRunner.Type("{Enter}");
 
-				bool firstItemInZipWasAdded = testRunner.WaitForName(firstItemName, 2);
-				bool secondItemInZipWasAdded = testRunner.WaitForName(secondItemName, 2);
-				Assert.IsTrue(firstItemInZipWasAdded == true);
-				Assert.IsTrue(secondItemInZipWasAdded == true);
+				Assert.IsTrue(testRunner.WaitForName("Row Item Batman", 2), "Batman part should exist after adding");
+				Assert.IsTrue(testRunner.WaitForName("Row Item 2013-01-25 Mouthpiece V2", 2), "Mouthpiece part should exist after adding");
 
 				return Task.FromResult(0);
-			};
-
-			await MatterControlUtilities.RunTest(testToRun);
+			});
 		}
 	
 		[Test]
