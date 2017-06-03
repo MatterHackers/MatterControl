@@ -19,7 +19,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[Test, Apartment(ApartmentState.STA)]
 		public async Task CompletingPrintTurnsoffHeat()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				testRunner.WaitForName("Cancel Wizard Button", 1);
 
@@ -53,9 +53,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				}
 
 				return Task.FromResult(0);
-			};
-
-			await MatterControlUtilities.RunTest(testToRun, maxTimeToRun: 200);
+			}, maxTimeToRun: 200);
 		}
 
 		[Test, Apartment(ApartmentState.STA)]
