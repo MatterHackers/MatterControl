@@ -36,12 +36,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.Type("{BACKSPACE}");
 					testRunner.Type("G28");
 
-					testRunner.ClickByName("Library Tab");
-					testRunner.NavigateToFolder("Calibration Parts Row Item Collection");
-					testRunner.ClickByName("Row Item Calibration - Box.stl", 1);
-
-					testRunner.ClickByName("Print Library Overflow Menu", 1);
-					testRunner.ClickByName("Add to Plate MenuItem");
+					testRunner.AddDefaultFileToBedPlate();
 
 					testRunner.ClickByName("Start Print Button", 1);
 
