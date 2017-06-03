@@ -270,8 +270,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.IsTrue(testRunner.WaitForName("Row Item Batman", 6), "Batman part should exist after add");
 				Assert.IsTrue(testRunner.WaitForName("Row Item Fennec Fox", 2), "Fennec part should exist after add");
 
+				// Select both items
 				testRunner.ClickByName("Row Item Fennec Fox", 1);
-
 				Keyboard.SetKeyDownState(Keys.ControlKey, down: true);
 				testRunner.ClickByName("Row Item Batman", 1);
 				Keyboard.SetKeyDownState(Keys.ControlKey, down: false);
@@ -318,11 +318,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// Make sure that the Queue Count increases by one
 				Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue item count should increase by one after add");
 
-				// Navigate to Queue
+				// Navigate to the PrintQueueContainer
 				testRunner.ClickByName("Bread Crumb Button Home");
 				testRunner.NavigateToFolder("Print Queue Row Item Collection");
 
-				// Make sure that the Print Item was added
+				// Make sure that the item exists in the PrintQueueContainer
 				Assert.IsTrue(testRunner.WaitForName("Row Item Rook", 5), "Rook item should exist in the Queue after Add");
 
 				return Task.FromResult(0);
@@ -332,63 +332,53 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[Test]
 		public async Task AddToQueueFromLibraryButtonAddsItemsToQueue()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
+				int expectedCount = QueueData.Instance.ItemCount + 2;
+
 				testRunner.CloseSignInAndPrinterSelect();
 
-				//Navigate to Local Library
+				// Navigate to Local Library
 				testRunner.ClickByName("Library Tab");
 				testRunner.NavigateToFolder("Local Library Row Item Collection");
 
-				//Add an item to the library
-				string libraryItemToAdd = MatterControlUtilities.GetTestItemPath("Fennec_Fox.stl");
+				// Add an item to the library
 				testRunner.ClickByName("Library Add Button");
+				testRunner.Delay(2);
 
-				testRunner.Delay(2);
-				testRunner.Type(libraryItemToAdd);
-				testRunner.Delay(2);
+				// Type file paths for each file into File Open dialog
+				testRunner.Type(string.Format("\"{0}\" \"{1}\"",
+					MatterControlUtilities.GetTestItemPath("Fennec_Fox.stl"),
+					MatterControlUtilities.GetTestItemPath("Batman.stl")));
+
 				testRunner.Type("{Enter}");
 
-				testRunner.Delay(1);
-				testRunner.ClickByName("Library Edit Button");
-				testRunner.Delay(1);
+				// Select both items
+				testRunner.ClickByName("Row Item Fennec Fox", 5);
+				Keyboard.SetKeyDownState(Keys.ControlKey, down: true);
+				testRunner.ClickByName("Row Item Batman", 1);
+				Keyboard.SetKeyDownState(Keys.ControlKey, down: false);
 
-				int queueCountBeforeAdd = QueueData.Instance.ItemCount;
-
-				//Select both Library Items
-				string rowItemOne = "Row Item Calibration - Box";
-				testRunner.ClickByName(rowItemOne);
-
-				string rowItemTwo = "Row Item Fennec Fox";
-				testRunner.ClickByName(rowItemTwo);
-
-				//Click the Add To Queue button
+				// Click the Add To Queue button
 				testRunner.Delay(1);
 				MatterControlUtilities.LibraryAddSelectionToQueue(testRunner);
-				testRunner.Delay(2);
 
-				//Make sure Queue Count increases by the correct amount
-				int queueCountAfterAdd = QueueData.Instance.ItemCount;
+				// TODO: Somehow thumbnail generation is happening on the UI thread and bogging this down. Leave at 15 second for a short-term workaround
+				testRunner.Delay(() => QueueData.Instance.ItemCount == expectedCount, 15, 500);
 
-				Assert.IsTrue(queueCountAfterAdd == queueCountBeforeAdd + 2);
+				// Make sure Queue Count increases by the correct amount
+				Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount);
 
-				//Navigate to the Print Queue
-				testRunner.ClickByName("Queue Tab");
-				testRunner.Delay(1);
+				// Navigate to the PrintQueueContainer
+				testRunner.ClickByName("Bread Crumb Button Home");
+				testRunner.NavigateToFolder("Print Queue Row Item Collection");
 
-				//Test that both added print items exist
-				string queueItemOne = "Queue Item Calibration - Box";
-				string queueItemTwo = "Queue Item Fennec_Fox";
-				bool queueItemOneWasAdded = testRunner.WaitForName(queueItemOne, 2);
-				bool queueItemTwoWasAdded = testRunner.WaitForName(queueItemTwo, 2);
-
-				Assert.IsTrue(queueItemOneWasAdded == true);
-				Assert.IsTrue(queueItemTwoWasAdded == true);
+				// Make sure that the items exist in the PrintQueueContainer
+				Assert.IsTrue(testRunner.WaitForName("Row Item Fennec Fox", 5), "Fennec item should exist in the Queue after Add");
+				Assert.IsTrue(testRunner.WaitForName("Row Item Batman", 5), "Batman item should exist in the Queue after Add");
 
 				return Task.FromResult(0);	
-			};
-
-			await MatterControlUtilities.RunTest(testToRun);
+			});
 		}
 
 		[Test]
