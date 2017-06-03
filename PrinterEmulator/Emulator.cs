@@ -239,7 +239,7 @@ namespace MatterHackers.PrinterEmulator
 			shutDown = true;
 		}
 
-		public void SimulateRebot()
+		public void SimulateReboot()
 		{
 			commandIndex = 1;
 			recievedCount = 0;

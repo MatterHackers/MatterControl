@@ -19,17 +19,15 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[Test, Apartment(ApartmentState.STA)]
 		public async Task CompletingPrintTurnsoffHeat()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				testRunner.WaitForName("Cancel Wizard Button", 1);
 
-				using (var emulatorDisposable = testRunner.LaunchAndConnectToPrinterEmulator())
+				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
 					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
 
-					testRunner.ClickByName("Slice Settings Tab");
-
-					MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
+					testRunner.SwitchToAdvancedSliceSettings();
 
 					testRunner.ClickByName("Printer Tab", 1);
 					testRunner.ClickByName("Custom G-Code Tab", 1);
@@ -38,17 +36,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.Type("{BACKSPACE}");
 					testRunner.Type("G28");
 
-					testRunner.ClickByName("Library Tab");
-					testRunner.NavigateToFolder("Calibration Parts Row Item Collection");
-					testRunner.ClickByName("Row Item Calibration - Box.stl", 1);
-
-					testRunner.ClickByName("Print Library Overflow Menu", 1);
-					testRunner.ClickByName("Add to Plate MenuItem");
+					testRunner.AddDefaultFileToBedPlate();
 
 					testRunner.ClickByName("Start Print Button", 1);
 
 					// Wait for print to finish
-					testRunner.Delay(() => PrinterConnectionAndCommunication.Instance.CommunicationState == PrinterConnectionAndCommunication.CommunicationStates.FinishedPrint, 120);
+					testRunner.WaitForPrintFinished();
 
 					// Wait for expected temp
 					testRunner.Delay(() => PrinterConnectionAndCommunication.Instance.GetActualExtruderTemperature(0) <= 0, 5);
@@ -60,27 +53,24 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				}
 
 				return Task.FromResult(0);
-			};
-
-			await MatterControlUtilities.RunTest(testToRun, maxTimeToRun: 200);
+			}, maxTimeToRun: 200);
 		}
 
 		[Test, Apartment(ApartmentState.STA)]
 		public async Task PulseRequiresLevelingAndLevelingWorks()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				testRunner.WaitForName("Cancel Wizard Button", 1);
 
-				using (var emulatorDisposable = testRunner.LaunchAndConnectToPrinterEmulator("Pulse", "A-134"))
+				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator("Pulse", "A-134"))
 				{
-					var emulator = emulatorDisposable as Emulator;
 					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
 
 					// close the finish setup window
 					testRunner.ClickByName("Cancel Button");
 
-					MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
+					testRunner.SwitchToAdvancedSliceSettings();
 
 					testRunner.ClickByName("General Tab", 1);
 					testRunner.ClickByName("Single Print Tab", 1);
@@ -108,22 +98,19 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.Delay(1);
 
 					// print a part
+					testRunner.AddDefaultFileToBedPlate();
 					testRunner.ClickByName("Start Print Button", 1);
 
-					// assert the leveling is working
-					testRunner.WaitForName("Yes Button", 200);
-					// close the pause dialog pop-up
-					testRunner.ClickByName("Yes Button");
+					testRunner.Delay(() => emulator.ZPosition > 5, 3);
 
+					// assert the leveling is working
 					Assert.Greater(emulator.ZPosition, 5);
 
 					testRunner.ClickByName("Cancel Print Button", 1);
 				}
 
 				return Task.FromResult(0);
-			};
-
-			await MatterControlUtilities.RunTest(testToRun, maxTimeToRun: 300);
+			}, maxTimeToRun: 90);
 		}
 
 		[Test, Apartment(ApartmentState.STA)]
@@ -224,16 +211,15 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[Test, Apartment(ApartmentState.STA)]
 		public async Task PrinterRequestsResumeWorkingAsExpected()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				testRunner.WaitForName("Cancel Wizard Button", 1);
 
-				using (var emulatorDisposable = testRunner.LaunchAndConnectToPrinterEmulator())
+				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
-					var emulator = emulatorDisposable as Emulator;
 					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
 
-					MatterControlUtilities.SwitchToAdvancedSettings(testRunner);
+					testRunner.SwitchToAdvancedSliceSettings();
 
 					testRunner.ClickByName("General Tab", 1);
 					testRunner.ClickByName("Single Print Tab", 1);
@@ -244,6 +230,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("Controls Tab");
 
 					// print a part
+					testRunner.AddDefaultFileToBedPlate();
 					testRunner.ClickByName("Start Print Button", 1);
 
 					// turn on line error simulation
@@ -253,20 +240,17 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("No Button", 200);
 
 					// simulate board reboot
-					emulator.SimulateRebot();
+					emulator.SimulateReboot();
 
 					// close the pause dialog pop-up (resume)
 					testRunner.ClickByName("No Button", 200);
 
 					// Wait for done
-					testRunner.WaitForName("Done Button", 60);
-					testRunner.WaitForName("Print Again Button", 1);
+					testRunner.WaitForPrintFinished();
 				}
 
 				return Task.FromResult(0);
-			};
-
-			await MatterControlUtilities.RunTest(testToRun, maxTimeToRun: 300);
+			}, maxTimeToRun: 90);
 		}
 
 		private EventHandler unregisterEvents;
@@ -277,17 +261,23 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			double targetExtrusionRate = 1.5;
 			double targetFeedRate = 2;
 
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				SystemWindow systemWindow;
 
 				testRunner.WaitForName("Cancel Wizard Button", 1);
 
-				using (var emulatorDisposable = testRunner.LaunchAndConnectToPrinterEmulator())
+				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
 					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
 
+					testRunner.AddDefaultFileToBedPlate();
+					
 					testRunner.ClickByName("Controls Tab", 1);
+
+					// Wait for printing to complete
+					var printFinishedResetEvent = new AutoResetEvent(false);
+					PrinterConnectionAndCommunication.Instance.PrintFinished.RegisterEvent((s, e) => printFinishedResetEvent.Set(), ref unregisterEvents);
 
 					testRunner.ClickByName("Start Print Button", 1);
 
@@ -327,19 +317,15 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate);
 
-					// Wait for printing to complete
-					var resetEvent = new AutoResetEvent(false);
-					PrinterConnectionAndCommunication.Instance.PrintFinished.RegisterEvent((s, e) => resetEvent.Set(), ref unregisterEvents);
-					resetEvent.WaitOne();
-
-					testRunner.WaitForName("Done Button", 30);
-					testRunner.WaitForName("Print Again Button", 1);
+					printFinishedResetEvent.WaitOne();
 
 					// Values should match entered values
 					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate);
 
+					testRunner.WaitForPrintFinished();
+
 					// Restart the print
-					testRunner.ClickByName("Print Again Button", 1);
+					testRunner.ClickByName("Start Print Button", 2);
 					testRunner.Delay(2);
 
 					// Values should match entered values
@@ -353,9 +339,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				}
 
 				return Task.FromResult(0);
-			};
-
-			await MatterControlUtilities.RunTest(testToRun, overrideHeight:900, maxTimeToRun: 990);
+			}, overrideHeight:900, maxTimeToRun: 120);
 		}
 
 		[Test, Apartment(ApartmentState.STA)]
@@ -367,7 +351,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			double initialExtrusionRate = 0.6;
 			double initialFeedRate = 0.7;
 
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				SystemWindow systemWindow;
 
@@ -378,11 +362,16 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				ExtrusionMultiplyerStream.ExtrusionRatio = initialExtrusionRate;
 
 				// Then validate that they are picked up
-				using (var emulatorDisposable = testRunner.LaunchAndConnectToPrinterEmulator())
+				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
 					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
 
+					testRunner.AddDefaultFileToBedPlate();
+
 					testRunner.ClickByName("Controls Tab", 1);
+
+					var printFinishedResetEvent = new AutoResetEvent(false);
+					PrinterConnectionAndCommunication.Instance.PrintFinished.RegisterEvent((s, e) => printFinishedResetEvent.Set(), ref unregisterEvents);
 
 					testRunner.ClickByName("Start Print Button", 1);
 
@@ -424,15 +413,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate);
 
 					// Wait for printing to complete
-					var resetEvent = new AutoResetEvent(false);
-					PrinterConnectionAndCommunication.Instance.PrintFinished.RegisterEvent((s, e) => resetEvent.Set(), ref unregisterEvents);
-					resetEvent.WaitOne();
+					printFinishedResetEvent.WaitOne();
 
-					testRunner.WaitForName("Done Button", 30);
-					testRunner.WaitForName("Print Again Button", 1);
+					testRunner.WaitForPrintFinished();
 
 					// Values should match entered values
-					testRunner.ClickByName("Print Again Button", 1);
+					testRunner.ClickByName("Start Print Button", 1);
 					testRunner.Delay(2);
 
 					// Values should match entered values
@@ -446,22 +432,18 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				}
 
 				return Task.FromResult(0);
-			};
-
-			await MatterControlUtilities.RunTest(testToRun, overrideHeight: 900, maxTimeToRun: 990);
+			}, overrideHeight: 900, maxTimeToRun: 120);
 		}
 
 		[Test, Apartment(ApartmentState.STA)]
 		public async Task CancelingSdCardPrintLeavesHeatAndFanOn()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				testRunner.WaitForName("Cancel Wizard Button", 1);
 
-				using (var emulatorDisposable = testRunner.LaunchAndConnectToPrinterEmulator())
+				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
-					Emulator emulator = (Emulator)emulatorDisposable;
-
 					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
 
 					testRunner.ClickByName("Queue... Menu", 2);
@@ -494,24 +476,21 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				}
 
 				return Task.FromResult(0);
-			};
-
-			await MatterControlUtilities.RunTest(testToRun, overrideHeight: 900, maxTimeToRun: 990);
+			}, overrideHeight: 900, maxTimeToRun: 90);
 		}
 
 		[Test, Apartment(ApartmentState.STA)]
 		public async Task CancelingNormalPrintTurnsHeatAndFanOff()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				testRunner.WaitForName("Cancel Wizard Button", 1);
 
-				using (var emulatorDisposable = testRunner.LaunchAndConnectToPrinterEmulator())
+				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
-					Emulator emulator = (Emulator)emulatorDisposable;
-
 					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
 
+					testRunner.AddDefaultFileToBedPlate();
 					testRunner.ClickByName("Start Print Button", 1);
 					testRunner.Delay(5);
 
@@ -531,9 +510,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				}
 
 				return Task.FromResult(0);
-			};
-
-			await MatterControlUtilities.RunTest(testToRun, overrideHeight: 900, maxTimeToRun: 990);
+			}, overrideHeight: 900, maxTimeToRun: 90);
 		}
 
 		private static void ConfirmExpectedSpeeds(AutomationRunner testRunner, double targetExtrusionRate, double targetFeedRate)

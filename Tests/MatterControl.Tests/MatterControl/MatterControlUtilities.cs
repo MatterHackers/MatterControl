@@ -41,6 +41,7 @@ using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.PrinterEmulator;
 using Newtonsoft.Json;
@@ -187,7 +188,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}
 		}
 
-		public static IDisposable LaunchAndConnectToPrinterEmulator(this AutomationRunner testRunner, string make = "Airwolf 3D", string model = "HD", bool runSlow = false)
+		public static Emulator LaunchAndConnectToPrinterEmulator(this AutomationRunner testRunner, string make = "Airwolf 3D", string model = "HD", bool runSlow = false)
 		{
 			// Load the TestEnv config
 			var config = TestAutomationConfig.Load();
@@ -195,7 +196,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			// Create the printer
 			MatterControlUtilities.AddAndSelectPrinter(testRunner, make, model);
 
-			Emulator emulator = new Emulator();
+			var emulator = new Emulator();
 
 			emulator.PortName = config.Printer;
 			emulator.RunSlow = runSlow;
@@ -368,6 +369,21 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.Delay(.5);
 		}
 
+		public static void AddDefaultFileToBedPlate(this AutomationRunner testRunner, string containerName = "Calibration Parts Row Item Collection", string partName = "Row Item Calibration - Box.stl")
+		{
+			testRunner.ClickByName("Library Tab");
+			testRunner.NavigateToFolder(containerName);
+			testRunner.ClickByName(partName, 1);
+
+			testRunner.ClickByName("Print Library Overflow Menu", 1);
+			testRunner.ClickByName("Add to Plate MenuItem");
+		}
+
+		public static void WaitForPrintFinished(this AutomationRunner testRunner)
+		{
+			testRunner.Delay(() => PrinterConnectionAndCommunication.Instance.CommunicationState == PrinterConnectionAndCommunication.CommunicationStates.FinishedPrint, 120);
+		}
+
 		public static async Task RunTest(
 			AutomationTest testMethod,
 			string staticDataPathOverride = null,
@@ -473,8 +489,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			Environment.CurrentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 		}
 
-		public static void SwitchToAdvancedSettings(AutomationRunner testRunner)
+		public static void SwitchToAdvancedSliceSettings(this AutomationRunner testRunner)
 		{
+			// Switch to Slice Settings Tab
+			testRunner.ClickByName("Slice Settings Tab");
+
+			// Change to Advanced view
 			testRunner.ClickByName("User Level Dropdown");
 			testRunner.ClickByName("Advanced Menu Item");
 			testRunner.Delay(.5);

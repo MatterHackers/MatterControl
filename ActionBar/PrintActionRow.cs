@@ -322,6 +322,7 @@ namespace MatterHackers.MatterControl.ActionBar
 						break;
 
 					case PrinterConnectionAndCommunication.CommunicationStates.FinishedPrint:
+						this.activePrintButtons.Add(startButton);
 						EnableActiveButtons();
 						break;
 
@@ -378,30 +379,11 @@ namespace MatterHackers.MatterControl.ActionBar
 			WizardWindow.Show<SetupWizardTroubleshooting>("TroubleShooting", "Trouble Shooting");
 		}
 
-		string unsavedChangesCaption = "Unsaved Changes";
-		string unsavedChangesMessage = "You have unsaved changes to your part. Are you sure you want to start this print?";
 		private void onStartButton_Click(object sender, EventArgs mouseEvent)
 		{
 			UiThread.RunOnIdle(() =>
 			{
-				var view3D = ApplicationController.Instance.ActiveView3DWidget;
-
-				if (view3D != null && false)
-					//&& view3D.ShouldBeSaved)
-				{
-					StyledMessageBox.ShowMessageBox((bool startPrint) =>
-					{
-						if (startPrint)
-						{
-							PrinterConnectionAndCommunication.Instance.PrintActivePartIfPossible();
-						}
-
-					}, unsavedChangesMessage, unsavedChangesCaption, StyledMessageBox.MessageType.YES_NO, "Start Print", "Cancel");
-				}
-				else
-				{
-					PrinterConnectionAndCommunication.Instance.PrintActivePartIfPossible();
-				}
+				PrinterConnectionAndCommunication.Instance.PrintActivePartIfPossible();
 			});
 		}
 

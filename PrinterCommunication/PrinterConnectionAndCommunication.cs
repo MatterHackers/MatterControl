@@ -1341,6 +1341,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					}
 				}
 
+				// Save any pending changes before starting the print
+				ApplicationController.Instance.ActiveView3DWidget.PersistPlateIfNeeded();
+
 				if (ActivePrintItem != null)
 				{
 					string pathAndFile = ActivePrintItem.FileLocation;
