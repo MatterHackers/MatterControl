@@ -79,37 +79,28 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[Test]
 		public async Task LocalLibraryAddButtonAddAMFToLibrary()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
-				string itemName = "Row Item Rook";
-
-				//Navigate to Local Library 
+				// Navigate to Local Library 
 				testRunner.ClickByName("Library Tab");
 				testRunner.NavigateToFolder("Local Library Row Item Collection");
 
-				//Make sure that Item does not exist before the test begins
-				bool rowItemExists = testRunner.WaitForName(itemName, 1);
-				Assert.IsTrue(rowItemExists == false);
+				// Make sure that Item does not exist before the test begins
+				Assert.IsFalse(testRunner.WaitForName("Row Item Rook", 1), "Rook part should not exist at test start");
 
-				//Click Local Library Add Button
+				// Add Library item
 				testRunner.ClickByName("Library Add Button");
-
-				//Get Library Item to Add
-				string rowItemPath = MatterControlUtilities.GetTestItemPath("Rook.amf");
 				testRunner.Delay(2);
-				testRunner.Type(rowItemPath);
+				testRunner.Type(MatterControlUtilities.GetTestItemPath("Rook.amf"));
 				testRunner.Delay(1);
 				testRunner.Type("{Enter}");
 
-				bool rowItemWasAdded = testRunner.WaitForName(itemName, 2);
-				Assert.IsTrue(rowItemWasAdded == true);
+				Assert.IsTrue(testRunner.WaitForName("Row Item Rook", 2), "Rook part should exist after adding");
 
 				return Task.FromResult(0);
-			};
-
-			await MatterControlUtilities.RunTest(testToRun, overrideWidth: 1024, overrideHeight: 800);
+			}, overrideWidth: 1024, overrideHeight: 800);
 		}
 
 		[Test]
