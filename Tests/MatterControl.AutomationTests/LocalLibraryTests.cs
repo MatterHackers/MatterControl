@@ -217,32 +217,31 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[Test]
 		public async Task RemoveButtonClickedRemovesSingleItem()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				testRunner.CloseSignInAndPrinterSelect();
+				
 				//Navigate to Local Library
 				testRunner.ClickByName("Library Tab");
 				testRunner.NavigateToFolder("Local Library Row Item Collection");
 
+				// Add Library item
+				testRunner.ClickByName("Library Add Button", 5);
+				testRunner.Delay(2);
+				testRunner.Type(MatterControlUtilities.GetTestItemPath("Rook.amf"));
 				testRunner.Delay(1);
+				testRunner.Type("{Enter}");
 
-				string rowItem = "Row Item Calibration - Box";
-				testRunner.ClickByName("Library Edit Button");
-				testRunner.Delay(1);
-				testRunner.ClickByName(rowItem);
-
+				// Select and remove item
+				testRunner.ClickByName("Row Item Rook", 5);
 				MatterControlUtilities.LibraryRemoveSelectedItem(testRunner);
-
 				testRunner.Delay(1);
 
 				//Make sure that Export Item Window exists after Export button is clicked
-				bool rowItemExists = testRunner.WaitForName(rowItem, 1);
-				Assert.IsTrue(rowItemExists == false);
+				Assert.IsFalse(testRunner.WaitForName("Row Item Rook", 1));
 
 				return Task.FromResult(0);
-			};
-
-			await MatterControlUtilities.RunTest(testToRun);
+			});
 		}
 
 		[Test]
