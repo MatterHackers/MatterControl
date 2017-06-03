@@ -138,6 +138,33 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			SetItemThumbnail(thumbnail);
 		}
 
+		internal void OnItemSelect()
+		{
+			bool isContentItem = listViewItem.Model is ILibraryContentItem;
+			bool isValidStream = (listViewItem.Model is ILibraryContentStream stream
+				&& ApplicationController.Instance.Library.IsContentFileType(stream.FileName));
+			bool isContainerLink = listViewItem.Model is ILibraryContainerLink;
+
+			if (isContentItem || isValidStream || isContainerLink)
+			{
+				if (this.IsSelected)
+				{
+					listViewItem.ListView.SelectedItems.Remove(listViewItem);
+				}
+				else
+				{
+					if (!Keyboard.IsKeyDown(Keys.ControlKey))
+					{
+						listViewItem.ListView.SelectedItems.Clear();
+					}
+
+					listViewItem.ListView.SelectedItems.Add(listViewItem);
+				}
+
+				Invalidate();
+			}
+		}
+
 		protected void SetItemThumbnail(ImageBuffer thumbnail, bool colorize = false)
 		{
 			if (thumbnail != null)

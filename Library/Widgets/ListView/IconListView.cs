@@ -28,9 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Linq;
 using MatterHackers.Agg;
-using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.VectorMath;
@@ -126,28 +124,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			imageWidget.Click += (sender, e) =>
 			{
-				bool isContentItem = listViewItem.Model is ILibraryContentItem;
-				bool isValidStream = (listViewItem.Model is ILibraryContentStream stream
-					&& ApplicationController.Instance.Library.IsContentFileType(stream.FileName));
-
-				if (isContentItem || isValidStream)
-				{
-					if (this.IsSelected)
-					{
-						listViewItem.ListView.SelectedItems.Remove(listViewItem);
-					}
-					else
-					{
-						if (!Keyboard.IsKeyDown(Keys.ControlKey))
-						{
-							listViewItem.ListView.SelectedItems.Clear();
-						}
-
-						listViewItem.ListView.SelectedItems.Add(listViewItem);
-					}
-
-					Invalidate();
-				}
+				this.OnItemSelect();
 			};
 
 			container.AddChild(imageWidget);

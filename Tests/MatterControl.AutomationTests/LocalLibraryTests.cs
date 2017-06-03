@@ -173,7 +173,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[Test]
 		public async Task RenameButtonRenamesLocalLibraryFolder()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 				// Navigate to Local Library
@@ -195,9 +195,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// Confirm newly created folder exists
 				Assert.IsTrue(testRunner.WaitForName("New Folder Row Item Collection", 1), "New folder should appear as GuiWidget");
 
-				testRunner.ClickByName("Library Edit Button");
-				testRunner.Delay(.2);
-
 				testRunner.ClickByName("New Folder Row Item Collection");
 				testRunner.Delay(.2);
 
@@ -213,9 +210,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.IsTrue(testRunner.WaitForName("Renamed Library Folder Row Item Collection", 2), "Renamed folder should exist");
 
 				return Task.FromResult(0);	
-			};
-
-			await MatterControlUtilities.RunTest(testToRun);
+			});
 		}
 
 		[Test]

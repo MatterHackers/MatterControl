@@ -174,35 +174,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				middleColumn.MouseUp += (sender, e) =>
 				{
 					if (mouseDownOnMiddle
-						&& listViewItem.Model is ILibraryContentItem
 						&& middleColumn.LocalBounds.Contains(e.Position))
 					{
-						// TODO: Resolve missing .EditMode condition
-						if (false /*this.libraryDataView.EditMode*/)
-						{
-							if (this.IsSelected)
-							{
-								listViewItem.ListView.SelectedItems.Remove(listViewItem);
-							}
-							else
-							{
-								listViewItem.ListView.SelectedItems.Remove(listViewItem);
-							}
-							Invalidate();
-						}
-						else
-						{
-							if (!this.IsSelected)
-							{
-								if (!Keyboard.IsKeyDown(Keys.ControlKey))
-								{
-									listViewItem.ListView.SelectedItems.Clear();
-								}
-
-								listViewItem.ListView.SelectedItems.Add(listViewItem);
-								Invalidate();
-							}
-						}
+						this.OnItemSelect();
 					}
 
 					mouseDownOnMiddle = false;

@@ -286,11 +286,13 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			{
 				if (createFolderWindow == null)
 				{
-					createFolderWindow = new CreateFolderWindow((returnInfo) =>
+					createFolderWindow = new CreateFolderWindow((result) =>
 					{
-						// TODO: Implement
-						throw new NotImplementedException("createFolderButton click");
-						//this.libraryView.ActiveContainer.AddCollectionToLibrary(returnInfo.newName);
+						if (!string.IsNullOrEmpty(result.newName)
+							&& this.libraryView.ActiveContainer is ILibraryWritableContainer writableContainer)
+						{
+							writableContainer.Add(new[] { new DynamicContainerLink(result.newName, null) });
+						}
 					});
 					createFolderWindow.Closed += (sender2, e2) => { createFolderWindow = null; };
 				}

@@ -410,7 +410,7 @@ namespace MatterHackers.MatterControl
 					if (Directory.Exists(directory))
 					{
 						this.Library.RegisterRootProvider(
-							new FileSystemContainer.ContainerLink(directory)
+							new FileSystemContainer.DirectoryContainerLink(directory)
 							{
 								UseIncrementedNameDuringTypeChange = true
 							});

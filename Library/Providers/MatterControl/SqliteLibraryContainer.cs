@@ -125,65 +125,68 @@ namespace MatterHackers.MatterControl.Library
 		{
 			await Task.Run(async () =>
 			{
-				/*
-				 * 			var newCollection = new PrintItemCollection(container.Name, "");
-			newCollection.ParentCollectionID = this.CollectionID;
-			newCollection.Commit();
 
-			this.ReloadContainer();
-				 * */
 
-				foreach (var item in items.OfType<ILibraryContentStream>())
+				if (items.FirstOrDefault() is ILibraryContainerLink containerInfo)
 				{
-					string filePath;
+					var newCollection = new PrintItemCollection(containerInfo.Name, "");
+					newCollection.ParentCollectionID = this.CollectionID;
+					newCollection.Commit();
+				}
+				else
+				{
 
-					if (item is FileSystemFileItem)
+					foreach (var item in items.OfType<ILibraryContentStream>())
 					{
-						// Get existing file path
-						var fileItem = item as FileSystemFileItem;
-						filePath = fileItem.Path;
-					}
-					else
-					{
-						// Copy stream to library path
-						filePath = ApplicationDataStorage.Instance.GetNewLibraryFilePath("." + item.ContentType);
+						string filePath;
 
-						using (var outputStream = File.OpenWrite(filePath))
-						using (var streamInteface = await item.GetContentStream(null))
+						if (item is FileSystemFileItem)
 						{
-							streamInteface.Stream.CopyTo(outputStream);
-						}
-					}
-
-					if (!string.IsNullOrEmpty(filePath) && File.Exists(filePath))
-					{
-						if (Path.GetExtension(filePath).ToUpper() == ".ZIP")
-						{
-							List<PrintItem> partFiles = ProjectFileHandler.ImportFromProjectArchive(filePath);
-							if (partFiles != null)
-							{
-								foreach (PrintItem part in partFiles)
-								{
-									string childFilePath = part.FileLocation;
-									using (var fileStream = File.OpenRead(part.FileLocation))
-									{
-										AddItem(fileStream, Path.GetExtension(childFilePath).ToUpper(), PrintItemWrapperExtensionMethods.GetFriendlyName(Path.GetFileNameWithoutExtension(childFilePath)));
-									}
-								}
-							}
+							// Get existing file path
+							var fileItem = item as FileSystemFileItem;
+							filePath = fileItem.Path;
 						}
 						else
 						{
-							using (var stream = File.OpenRead(filePath))
+							// Copy stream to library path
+							filePath = ApplicationDataStorage.Instance.GetNewLibraryFilePath("." + item.ContentType);
+
+							using (var outputStream = File.OpenWrite(filePath))
+							using (var streamInteface = await item.GetContentStream(null))
 							{
-								AddItem(stream, Path.GetExtension(filePath).ToUpper(), PrintItemWrapperExtensionMethods.GetFriendlyName(Path.GetFileNameWithoutExtension(filePath)));
+								streamInteface.Stream.CopyTo(outputStream);
+							}
+						}
+
+						if (!string.IsNullOrEmpty(filePath) && File.Exists(filePath))
+						{
+							if (Path.GetExtension(filePath).ToUpper() == ".ZIP")
+							{
+								List<PrintItem> partFiles = ProjectFileHandler.ImportFromProjectArchive(filePath);
+								if (partFiles != null)
+								{
+									foreach (PrintItem part in partFiles)
+									{
+										string childFilePath = part.FileLocation;
+										using (var fileStream = File.OpenRead(part.FileLocation))
+										{
+											AddItem(fileStream, Path.GetExtension(childFilePath).ToUpper(), PrintItemWrapperExtensionMethods.GetFriendlyName(Path.GetFileNameWithoutExtension(childFilePath)));
+										}
+									}
+								}
+							}
+							else
+							{
+								using (var stream = File.OpenRead(filePath))
+								{
+									AddItem(stream, Path.GetExtension(filePath).ToUpper(), PrintItemWrapperExtensionMethods.GetFriendlyName(Path.GetFileNameWithoutExtension(filePath)));
+								}
 							}
 						}
 					}
-
-					this.ReloadContainer();
 				}
 
+				this.ReloadContainer();
 				this.OnReloaded();
 			});
 		}
@@ -227,10 +230,16 @@ namespace MatterHackers.MatterControl.Library
 				sqliteItem.PrintItem.Name = revisedName;
 				sqliteItem.PrintItem.Commit();
 			}
-			else if (selectedItem is SqliteLibraryContainerLink)
+			else if (selectedItem is SqliteLibraryContainerLink containerLink)
 			{
-				// TODO: lookup collection by id, rename, commit, release, reload
-				System.Diagnostics.Debugger.Break();
+				string sql = $"SELECT * FROM PrintItemCollection WHERE ID = {containerLink.ContainerID}";
+
+				var container = Datastore.Instance.dbSQLite.Query<PrintItemCollection>(sql).FirstOrDefault();
+				if (container != null)
+				{
+					container.Name = revisedName;
+					container.Commit();
+				}
 			}
 
 			this.ReloadContainer();
