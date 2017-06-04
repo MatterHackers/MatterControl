@@ -14,7 +14,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				// Add printer that has hardware leveling
-				MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
+				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
 
 				testRunner.SwitchToAdvancedSliceSettings();
 
@@ -24,7 +24,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.IsFalse(testRunner.WaitForName("Print Leveling Tab", 3), "Print leveling should not exist for an Airwolf HD");
 
 				// Add printer that does not have hardware leveling
-				MatterControlUtilities.AddAndSelectPrinter(testRunner, "3D Factory", "MendelMax 1.5");
+				testRunner.AddAndSelectPrinter("3D Factory", "MendelMax 1.5");
 
 				testRunner.ClickByName("Slice Settings Tab", 1);
 				testRunner.ClickByName("Printer Tab", 1);

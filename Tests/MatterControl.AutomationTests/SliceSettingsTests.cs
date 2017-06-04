@@ -21,7 +21,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
+				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
 
 				testRunner.AddTestAssetsToLibrary("Rook.amf");
 
@@ -160,7 +160,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
+				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
 
 				// Navigate to Local Library 
 				testRunner.SwitchToAdvancedSliceSettings();
@@ -196,7 +196,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					}
 				}, ref unregisterEvents);
 
-				MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
+				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
 
 				// Navigate to Local Library 
 				testRunner.SwitchToAdvancedSliceSettings();
@@ -224,7 +224,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// assert no profiles
 				Assert.AreEqual(0, ProfileManager.Instance.ActiveProfiles.Count());
 
-				MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
+				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
 
 				// assert one profile
 				Assert.AreEqual(1, ProfileManager.Instance.ActiveProfiles.Count(), "One profile should exist after add");
@@ -266,7 +266,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
+				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
 
 				// Navigate to Settings Tab and make sure Bed Temp Text box is visible 
 				testRunner.SwitchToAdvancedSliceSettings();
@@ -304,7 +304,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				// Add Guest printers
-				MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
+				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
 				testRunner.SwitchToAdvancedSliceSettings();
 
 				testRunner.ClickByName("Layer Height Textbox", 2);
@@ -317,7 +317,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Delay(.5);
 				Assert.AreEqual(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.layer_height), .1, "Layer height is the fine override");
 
-				MatterControlUtilities.AddAndSelectPrinter(testRunner, "BCN", "Sigma");
+				testRunner.AddAndSelectPrinter("BCN", "Sigma");
 
 				// Check Guest printer count 
 				Assert.AreEqual(2, ProfileManager.Instance.ActiveProfiles.Count(), "ProfileManager has 2 Profiles");

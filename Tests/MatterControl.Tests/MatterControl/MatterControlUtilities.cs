@@ -194,7 +194,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			var config = TestAutomationConfig.Load();
 
 			// Create the printer
-			MatterControlUtilities.AddAndSelectPrinter(testRunner, make, model);
+			testRunner.AddAndSelectPrinter(make, model);
 
 			var emulator = new Emulator();
 
@@ -265,7 +265,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.WaitForReloadAll(() => testRunner.ClickByName("Yes Button", 5));
 		}
 
-		public static void AddAndSelectPrinter(AutomationRunner testRunner, string make, string model)
+		public static void AddAndSelectPrinter(this AutomationRunner testRunner, string make, string model)
 		{
 			if (!testRunner.WaitForName("Select Make", 1))
 			{
