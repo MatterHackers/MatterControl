@@ -87,7 +87,7 @@ namespace MatterHackers.MatterControl.Library
 					return brailleItem;
 			}),
 			// TODO: Filepath won't work on Android. Needs to load from/to stream via custom type
-			new FileSystemFileItem(StaticData.Instance.MapPath(Path.Combine("Icons", "mh-logo.png")))
+			new FileSystemFileItem(StaticData.Instance.MapPath(Path.Combine("Images", "mh-logo.png")))
 			{
 				Name = "Image Converter".Localize()
 			}
