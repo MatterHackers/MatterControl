@@ -377,6 +377,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.NavigateToFolder(containerName);
 			testRunner.ClickByName(partName);
 
+			testRunner.AddSelectedItemToBedplate();
+		}
+
+		public static void AddSelectedItemToBedplate(this AutomationRunner testRunner)
+		{
 			testRunner.ClickByName("Print Library Overflow Menu");
 			testRunner.ClickByName("Add to Plate Menu Item");
 
