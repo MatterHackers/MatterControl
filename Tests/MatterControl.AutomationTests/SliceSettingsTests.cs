@@ -108,10 +108,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[Test]
 		public async Task CancelWorksAsExpected()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				testRunner.WaitForName("Cancel Wizard Button", 1);
-
 				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
 					ActiveSliceSettings.Instance.SetValue(SettingsKey.cancel_gcode, "G28 ; Cancel GCode");
@@ -125,7 +123,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("Layer(s) To Pause: Edit");
 					testRunner.Type("2");
 
-					testRunner.ClickByName("Layer View Tab");
+					testRunner.AddDefaultFileToBedplate();
+
+					testRunner.ClickByName("Toggle Layer View Button");
 
 					testRunner.ClickByName("Generate Gcode Button", 1);
 					testRunner.ClickByName("Display Checkbox", 10);
@@ -157,9 +157,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				}
 
 				return Task.FromResult(0);
-			};
-
-			await MatterControlUtilities.RunTest(testToRun, maxTimeToRun: 110);
+			}, maxTimeToRun: 120);
 		}
 
 		private static void WaitForLayerAndResume(AutomationRunner testRunner, int indexToWaitFor)
