@@ -19,10 +19,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[Test]
 		public async Task RaftEnabledPassedToSliceEngine()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				testRunner.CloseSignInAndPrinterSelect();
-
 				MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
 
 				// Navigate to Local Library 
@@ -57,13 +55,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.Delay(() => MatterControlUtilities.CompareExpectedSliceSettingValueWithActualVaue("enableRaft", "True"), 10);
 
-				//Call compare slice settings method here
+				// Call compare slice settings method here
 				Assert.IsTrue(MatterControlUtilities.CompareExpectedSliceSettingValueWithActualVaue("enableRaft", "True"));
 
 				return Task.FromResult(0);
-			};
-
-			await MatterControlUtilities.RunTest(testToRun, overrideWidth: 1224, overrideHeight: 800);
+			}, overrideWidth: 1224, overrideHeight: 800);
 		}
 
 		[Test]
@@ -185,7 +181,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
 
-				//Navigate to Local Library 
+				// Navigate to Local Library 
 				testRunner.SwitchToAdvancedSliceSettings();
 
 				testRunner.ClickByName("Printer Tab", 1);
@@ -221,7 +217,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
 
-				//Navigate to Local Library 
+				// Navigate to Local Library 
 				testRunner.SwitchToAdvancedSliceSettings();
 
 				testRunner.ClickByName("General Tab", 1);
