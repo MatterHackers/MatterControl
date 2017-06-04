@@ -184,6 +184,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				//var iconWithOverlay = ActiveContainer.DrawOverlay()
 
 				this.imageWidget.Image = thumbnail;
+
+				this.Invalidate();
 			}
 		}
 
