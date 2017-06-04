@@ -95,7 +95,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[Test]
 		public async Task AddToQueueMenuItemAddsZipFiles()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
@@ -104,22 +104,22 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Add File To Queue Menu Item");
 				testRunner.Delay(2);
 
-				int beforeCount = QueueData.Instance.ItemCount;
+				int expectedCount = QueueData.Instance.ItemCount + 2;
 
-				string pathToType = MatterControlUtilities.GetTestItemPath("Batman.zip");
-				testRunner.Type(pathToType);
+				testRunner.Type(MatterControlUtilities.GetTestItemPath("Batman.zip"));
 				testRunner.Delay(1);
 				testRunner.Type("{Enter}");
 				testRunner.Delay(1);
 
-				Assert.IsTrue(testRunner.WaitForName("Queue Item Batman", 1));
-				Assert.IsTrue(testRunner.WaitForName("Queue Item 2013-01-25_Mouthpiece_v2", 1));
-				Assert.IsTrue(QueueData.Instance.ItemCount == beforeCount + 2);
+				testRunner.NavigateToFolder("Print Queue Row Item Collection");
+
+				Assert.IsTrue(testRunner.WaitForName("Row Item Batman", 1));
+				Assert.IsTrue(testRunner.WaitForName("Row Item 2013-01-25_Mouthpiece_v2", 1));
+
+				Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should increase by two after adding contents of Batmap.zip");
 
 				return Task.CompletedTask;
-			};
-
-			await MatterControlUtilities.RunTest(testToRun);
+			});
 		}
 	}
 }
