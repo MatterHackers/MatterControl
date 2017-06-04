@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl
 			{
 				// make sure the contents are centered
 				GuiWidget leftSpace = new GuiWidget(0, 1);
-				leftSpace.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+				leftSpace.HAnchor = HAnchor.ParentLeftRight;
 				container.AddChild(leftSpace);
 			}
 
@@ -89,18 +89,18 @@ namespace MatterHackers.MatterControl
 			if (centerText)
 			{
 				GuiWidget rightSpace = new GuiWidget(0, 1);
-				rightSpace.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+				rightSpace.HAnchor = HAnchor.ParentLeftRight;
 				container.AddChild(rightSpace);
 
-				container.HAnchor = Agg.UI.HAnchor.ParentLeftRight | Agg.UI.HAnchor.FitToChildren;
+				container.HAnchor = HAnchor.ParentLeftRight | HAnchor.FitToChildren;
 			}
-			container.VAnchor = Agg.UI.VAnchor.ParentCenter;
+			container.VAnchor = VAnchor.ParentCenter;
 
 			container.MinimumSize = new Vector2(width, height);
 			container.Margin = margin;
 			this.AddChild(container);
 			HAnchor = HAnchor.ParentLeftRight | HAnchor.FitToChildren;
-			VAnchor = VAnchor.ParentCenter | Agg.UI.VAnchor.FitToChildren;
+			VAnchor = VAnchor.ParentCenter | VAnchor.FitToChildren;
 		}
 
 		public override void OnDraw(Graphics2D graphics2D)
@@ -218,8 +218,8 @@ namespace MatterHackers.MatterControl
 			editButton = GetThemedEditButton();
 
 			editButton.Margin = new BorderDouble(2, 2, 2, 0);
-			editButton.VAnchor = Agg.UI.VAnchor.ParentBottom;
-			textWidget.VAnchor = Agg.UI.VAnchor.ParentBottom;
+			editButton.VAnchor = VAnchor.ParentBottom;
+			textWidget.VAnchor = VAnchor.ParentBottom;
 			groupLableAndEditControl.AddChild(textWidget);
 			groupLableAndEditControl.AddChild(editButton);
 
@@ -256,9 +256,9 @@ namespace MatterHackers.MatterControl
 			editButton = GetThemedEditButton();
 
 			editButton.Margin = new BorderDouble(2, 2, 2, 0);
-			editButton.VAnchor = Agg.UI.VAnchor.ParentBottom;
+			editButton.VAnchor = VAnchor.ParentBottom;
 			TextWidget textLabel = new TextWidget(label, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 12);
-			textLabel.VAnchor = Agg.UI.VAnchor.ParentBottom;
+			textLabel.VAnchor = VAnchor.ParentBottom;
 			groupLableAndEditControl.AddChild(textLabel);
 			groupLableAndEditControl.AddChild(editButton);
 
