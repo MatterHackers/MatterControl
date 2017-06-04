@@ -242,27 +242,23 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[Test]
 		public async Task DeleteProfileWorksForGuest()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				testRunner.CloseSignInAndPrinterSelect();
-
 				// assert no profiles
-				Assert.IsTrue(ProfileManager.Instance.ActiveProfiles.Count() == 0);
+				Assert.AreEqual(0, ProfileManager.Instance.ActiveProfiles.Count());
 
 				MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
 
 				// assert one profile
-				Assert.IsTrue(ProfileManager.Instance.ActiveProfiles.Count() == 1);
+				Assert.AreEqual(1, ProfileManager.Instance.ActiveProfiles.Count(), "One profile should exist after add");
 
 				MatterControlUtilities.DeleteSelectedPrinter(testRunner);
 
 				// assert no profiles
-				Assert.IsTrue(ProfileManager.Instance.ActiveProfiles.Count() == 0);
+				Assert.AreEqual(0, ProfileManager.Instance.ActiveProfiles.Count(), "No profiles should exist after delete");
 
 				return Task.FromResult(0);
-			};
-
-			await MatterControlUtilities.RunTest(testToRun, overrideWidth: 1224, overrideHeight: 900);
+			}, overrideWidth: 1224, overrideHeight: 900);
 		}
 
 		private static void CheckAndUncheckSetting(AutomationRunner testRunner, string settingToChange, string checkBoxName, bool expected)
