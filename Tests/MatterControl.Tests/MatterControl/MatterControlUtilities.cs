@@ -371,14 +371,18 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.Delay(.5);
 		}
 
-		public static void AddDefaultFileToBedPlate(this AutomationRunner testRunner, string containerName = "Calibration Parts Row Item Collection", string partName = "Row Item Calibration - Box.stl")
+		public static void AddDefaultFileToBedplate(this AutomationRunner testRunner, string containerName = "Calibration Parts Row Item Collection", string partName = "Row Item Calibration - Box.stl")
 		{
 			testRunner.ClickByName("Library Tab");
 			testRunner.NavigateToFolder(containerName);
-			testRunner.ClickByName(partName, 1);
+			testRunner.ClickByName(partName);
 
-			testRunner.ClickByName("Print Library Overflow Menu", 1);
+			testRunner.ClickByName("Print Library Overflow Menu");
 			testRunner.ClickByName("Add to Plate Menu Item");
+
+			testRunner.ClickByName("Save Button");
+
+			testRunner.Delay(1);
 		}
 
 		public static void WaitForPrintFinished(this AutomationRunner testRunner)

@@ -215,8 +215,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				// Notify listeners of a ProfileListChange event due to this printers removal
 				ProfileManager.ProfilesListChanged.CallEvents(this, null);
 
-				// Force sync after marking for delete
-				ApplicationController.SyncPrinterProfiles("SettingsHelpers.SetMarkedForDelete()", null);
+				// Force sync after marking for delete if assigned
+				ApplicationController.SyncPrinterProfiles?.Invoke("SettingsHelpers.SetMarkedForDelete()", null);
 			});
 		}
 

@@ -164,6 +164,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			iconPath = Path.Combine("ViewTransformControls", "layers.png");
 			var layersButton = buttonFactory.Generate("", StaticData.Instance.LoadIcon(iconPath, 32, 32).InvertLightness());
+			layersButton.Name = "Toggle Layer View Button";
 			layersButton.ToolTipText = "Layers".Localize();
 			layersButton.Margin = 3;
 			layersButton.Click += (s, e) =>

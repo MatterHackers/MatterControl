@@ -13,10 +13,10 @@ using NUnit.Framework;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
+	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain, Apartment(ApartmentState.STA)]
 	public class SliceSetingsTests
 	{
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task RaftEnabledPassedToSliceEngine()
 		{
 			AutomationTest testToRun = (testRunner) =>
@@ -66,10 +66,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			await MatterControlUtilities.RunTest(testToRun, overrideWidth: 1224, overrideHeight: 800);
 		}
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task PauseOnLayerDoesPauseOnPrint()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				testRunner.WaitForName("Cancel Wizard Button", 1);
 
@@ -79,40 +79,37 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.SwitchToAdvancedSliceSettings();
 
-					testRunner.ClickByName("General Tab", 1);
-					testRunner.ClickByName("Single Print Tab", 1);
+					testRunner.ClickByName("General Tab");
+					testRunner.ClickByName("Single Print Tab");
 					testRunner.ClickByName("Layer(s) To Pause: Edit");
 					testRunner.Type("4;2;a;not;6");
 
-					testRunner.ClickByName("Layer View Tab");
+					testRunner.AddDefaultFileToBedplate();
 
-					testRunner.ClickByName("Generate Gcode Button", 1);
+					testRunner.ClickByName("Toggle Layer View Button");
+
+					testRunner.ClickByName("Generate Gcode Button");
 					testRunner.ClickByName("Display Checkbox", 10);
-					testRunner.ClickByName("Sync To Print Checkbox", 1);
+					testRunner.ClickByName("Sync To Print Checkbox");
 
-					testRunner.ClickByName("Start Print Button", 1);
+					testRunner.ClickByName("Start Print Button");
 
 					WaitForLayerAndResume(testRunner, 2);
 					WaitForLayerAndResume(testRunner, 4);
 					WaitForLayerAndResume(testRunner, 6);
 
-					testRunner.WaitForName("Done Button", 30);
-					testRunner.WaitForName("Print Again Button", 1);
+					testRunner.WaitForPrintFinished();
 				}
 
 				return Task.FromResult(0);
-			};
-
-			await MatterControlUtilities.RunTest(testToRun, maxTimeToRun: 90);
+			}, maxTimeToRun: 120);
 		}
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task CancelWorksAsExpected()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				testRunner.WaitForName("Cancel Wizard Button", 1);
-
 				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
 					ActiveSliceSettings.Instance.SetValue(SettingsKey.cancel_gcode, "G28 ; Cancel GCode");
@@ -126,7 +123,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("Layer(s) To Pause: Edit");
 					testRunner.Type("2");
 
-					testRunner.ClickByName("Layer View Tab");
+					testRunner.AddDefaultFileToBedplate();
+
+					testRunner.ClickByName("Toggle Layer View Button");
 
 					testRunner.ClickByName("Generate Gcode Button", 1);
 					testRunner.ClickByName("Display Checkbox", 10);
@@ -158,9 +157,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				}
 
 				return Task.FromResult(0);
-			};
-
-			await MatterControlUtilities.RunTest(testToRun, maxTimeToRun: 110);
+			}, maxTimeToRun: 120);
 		}
 
 		private static void WaitForLayerAndResume(AutomationRunner testRunner, int indexToWaitFor)
@@ -181,13 +178,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.Delay(.1);
 		}
 
-		[Test, Apartment(ApartmentState.STA) /* Test will fail if screen size is and "HeatBeforeHoming" falls below the fold */]
+		[Test /* Test will fail if screen size is and "HeatBeforeHoming" falls below the fold */]
 		public async Task ClearingCheckBoxClearsUserOverride()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				testRunner.CloseSignInAndPrinterSelect();
-
 				MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
 
 				//Navigate to Local Library 
@@ -201,21 +196,20 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				CheckAndUncheckSetting(testRunner, SettingsKey.has_fan, "Has Fan Checkbox", true);
 
 				return Task.FromResult(0);
-			};
-
-			await MatterControlUtilities.RunTest(testToRun, overrideWidth: 1224, overrideHeight: 900);
+			}, overrideWidth: 1224, overrideHeight: 900);
 		}
 
-		[Test, Apartment(ApartmentState.STA) /* Test will fail if screen size is and "HeatBeforeHoming" falls below the fold */]
+		[Test /* Test will fail if screen size is and "HeatBeforeHoming" falls below the fold */]
 		public async Task SwitchingMaterialsCausesSettingsChangedEvents()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				EventHandler unregisterEvents = null;
 				int layerHeightChangedCount = 0;
+
 				ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
 				{
-					StringEventArgs stringEvent = e as StringEventArgs;
+					var stringEvent = e as StringEventArgs;
 					if (stringEvent != null)
 					{
 						if (stringEvent.Data == SettingsKey.layer_height)
@@ -224,8 +218,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 						}
 					}
 				}, ref unregisterEvents);
-
-				testRunner.CloseSignInAndPrinterSelect();
 
 				MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
 
@@ -244,35 +236,29 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.AreEqual(2, layerHeightChangedCount, "Changed to standard.");
 
 				return Task.FromResult(0);
-			};
-
-			await MatterControlUtilities.RunTest(testToRun, overrideWidth: 1224, overrideHeight: 900);
+			}, overrideWidth: 1224, overrideHeight: 900);
 		}
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task DeleteProfileWorksForGuest()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				testRunner.CloseSignInAndPrinterSelect();
-
 				// assert no profiles
-				Assert.IsTrue(ProfileManager.Instance.ActiveProfiles.Count() == 0);
+				Assert.AreEqual(0, ProfileManager.Instance.ActiveProfiles.Count());
 
 				MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
 
 				// assert one profile
-				Assert.IsTrue(ProfileManager.Instance.ActiveProfiles.Count() == 1);
+				Assert.AreEqual(1, ProfileManager.Instance.ActiveProfiles.Count(), "One profile should exist after add");
 
 				MatterControlUtilities.DeleteSelectedPrinter(testRunner);
 
 				// assert no profiles
-				Assert.IsTrue(ProfileManager.Instance.ActiveProfiles.Count() == 0);
+				Assert.AreEqual(0, ProfileManager.Instance.ActiveProfiles.Count(), "No profiles should exist after delete");
 
 				return Task.FromResult(0);
-			};
-
-			await MatterControlUtilities.RunTest(testToRun, overrideWidth: 1224, overrideHeight: 900);
+			}, overrideWidth: 1224, overrideHeight: 900);
 		}
 
 		private static void CheckAndUncheckSetting(AutomationRunner testRunner, string settingToChange, string checkBoxName, bool expected)
@@ -298,7 +284,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			Assert.IsTrue(ActiveSliceSettings.Instance.UserLayer.ContainsKey(settingToChange) == false);
 		}
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task HasHeatedBedCheckedHidesBedTemperatureOptions()
 		{
 			AutomationTest testToRun = (testRunner) =>
@@ -337,18 +323,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			await MatterControlUtilities.RunTest(testToRun, overrideWidth: 550);
 		}
-	}
-
-	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
-	public class QualitySettingsStayAsOverrides
-	{
-		[Test, Apartment(ApartmentState.STA)]
-		public async Task SettingsStayAsOverrides()
+	
+		[Test]
+		public async Task QualitySettingsStayAsOverrides()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				testRunner.CloseSignInAndPrinterSelect();
-
 				// Add Guest printers
 				MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
 				testRunner.SwitchToAdvancedSliceSettings();
@@ -369,20 +349,22 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.AreEqual(2, ProfileManager.Instance.ActiveProfiles.Count(), "ProfileManager has 2 Profiles");
 
 				// Check if Guest printer names exists in dropdown
+				testRunner.ClickByName("Printer Overflow Menu", 2);
 				testRunner.ClickByName("Printers... Menu", 2);
 				testRunner.ClickByName("Airwolf 3D HD Menu Item", 5);
 
 				testRunner.Delay(1);
 				Assert.AreEqual(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.layer_height), .1, "Layer height is the fine override");
 
+				// Switch to Slice Settings Tab
+				testRunner.ClickByName("Slice Settings Tab");
+
 				testRunner.ClickByName("Quality", 2);
 				testRunner.ClickByName("- none - Menu Item", 2, delayBeforeReturn: .5);
 				Assert.AreEqual(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.layer_height), .5, "Layer height is what we set it to");
 
 				return Task.FromResult(0);
-			};
-
-			await MatterControlUtilities.RunTest(testToRun, maxTimeToRun: 120);
+			}, maxTimeToRun: 120);
 		}
 	}
 }

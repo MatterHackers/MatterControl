@@ -13,10 +13,10 @@ using NUnit.Framework;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
+	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain, Apartment(ApartmentState.STA)]
 	public class PrintingTests
 	{
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task CompletingPrintTurnsoffHeat()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -36,7 +36,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.Type("{BACKSPACE}");
 					testRunner.Type("G28");
 
-					testRunner.AddDefaultFileToBedPlate();
+					testRunner.AddDefaultFileToBedplate();
 
 					testRunner.ClickByName("Start Print Button", 1);
 
@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, maxTimeToRun: 200);
 		}
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task PulseRequiresLevelingAndLevelingWorks()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -98,7 +98,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.Delay(1);
 
 					// print a part
-					testRunner.AddDefaultFileToBedPlate();
+					testRunner.AddDefaultFileToBedplate();
 					testRunner.ClickByName("Start Print Button", 1);
 
 					testRunner.Delay(() => emulator.ZPosition > 5, 3);
@@ -113,7 +113,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, maxTimeToRun: 90);
 		}
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public void ExpectedEmulatorResponses()
 		{
 			string[] test1 = new string[]
@@ -208,7 +208,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}
 		}
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task PrinterRequestsResumeWorkingAsExpected()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -230,7 +230,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("Controls Tab");
 
 					// print a part
-					testRunner.AddDefaultFileToBedPlate();
+					testRunner.AddDefaultFileToBedplate();
 					testRunner.ClickByName("Start Print Button", 1);
 
 					// turn on line error simulation
@@ -255,7 +255,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		private EventHandler unregisterEvents;
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task TuningAdjustmentsDefaultToOneAndPersists()
 		{
 			double targetExtrusionRate = 1.5;
@@ -271,7 +271,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				{
 					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
 
-					testRunner.AddDefaultFileToBedPlate();
+					testRunner.AddDefaultFileToBedplate();
 					
 					testRunner.ClickByName("Controls Tab", 1);
 
@@ -342,7 +342,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideHeight:900, maxTimeToRun: 120);
 		}
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task TuningAdjustmentControlsBoundToStreamValues()
 		{
 			double targetExtrusionRate = 1.5;
@@ -366,7 +366,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				{
 					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
 
-					testRunner.AddDefaultFileToBedPlate();
+					testRunner.AddDefaultFileToBedplate();
 
 					testRunner.ClickByName("Controls Tab", 1);
 
@@ -435,7 +435,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideHeight: 900, maxTimeToRun: 120);
 		}
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task CancelingSdCardPrintLeavesHeatAndFanOn()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -479,7 +479,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideHeight: 900, maxTimeToRun: 90);
 		}
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task CancelingNormalPrintTurnsHeatAndFanOff()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -490,7 +490,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				{
 					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
 
-					testRunner.AddDefaultFileToBedPlate();
+					testRunner.AddDefaultFileToBedplate();
 					testRunner.ClickByName("Start Print Button", 1);
 					testRunner.Delay(5);
 

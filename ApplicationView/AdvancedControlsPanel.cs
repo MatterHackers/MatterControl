@@ -92,6 +92,10 @@ namespace MatterHackers.MatterControl
 		private TabControl CreateTabControl()
 		{
 			var newTabControl = ApplicationController.Instance.Theme.CreateTabControl();
+			newTabControl.TabBar.TabIndexChanged += (s, e) =>
+			{
+				ApplicationController.Instance.ActiveAdvancedControlsTab = newTabControl.SelectedTabIndex;
+			};
 
 			RGBA_Bytes unselectedTextColor = ActiveTheme.Instance.TabLabelUnselected;
 
@@ -129,14 +133,6 @@ namespace MatterHackers.MatterControl
 			newTabControl.AddTab(sliceSettingPopOut);
 			newTabControl.AddTab(controlsPopOut);
 
-#if !__ANDROID__
-			if (!UserSettings.Instance.IsTouchScreen)
-			{
-				MenuOptionSettings.sliceSettingsPopOut = sliceSettingPopOut;
-				MenuOptionSettings.controlsPopOut = controlsPopOut;
-			}
-#endif
-
 			newTabControl.AddTab(
 				new SimpleTextTabWidget(
 					new TabPage(new PrinterConfigurationScrollWidget(), "Options".Localize().ToUpper()), 
@@ -144,9 +140,15 @@ namespace MatterHackers.MatterControl
 					newTabControl.TextPointSize,
 					ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
 
-			// MatterControl historically started with the queue selected, force to 0 to remain consistent
-			newTabControl.SelectedTabIndex = 0;
+			newTabControl.SelectedTabIndex = ApplicationController.Instance.ActiveAdvancedControlsTab;
 
+#if !__ANDROID__
+			if (!UserSettings.Instance.IsTouchScreen)
+			{
+				MenuOptionSettings.sliceSettingsPopOut = sliceSettingPopOut;
+				MenuOptionSettings.controlsPopOut = controlsPopOut;
+			}
+#endif
 			return newTabControl;
 		}
 	}

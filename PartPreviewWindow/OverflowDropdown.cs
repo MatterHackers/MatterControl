@@ -28,7 +28,6 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using MatterHackers.Agg;
 using MatterHackers.Agg.ImageProcessing;
@@ -81,23 +80,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.buttonView = buttonView;
 
 			this.AddChild(buttonView);
-
-			// After the buttonView looses focus, wait a moment for the mouse to arrive at the target and if not found, close the menu
-			buttonView.MouseLeaveBounds += (s, e) =>
-			{
-				if (menuVisible)
-				{
-					UiThread.RunOnIdle(() =>
-					{
-						if (this.PopupContent?.UnderMouseState != UnderMouseState.NotUnderMouse)
-						{
-							return;
-						}
-
-						popupWidget?.CloseMenu();
-					}, 0.1);
-				}
-			};
 		}
 
 		public Direction PopDirection { get; set; } = Direction.Down;
