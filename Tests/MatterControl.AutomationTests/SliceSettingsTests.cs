@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[Test]
 		public async Task PauseOnLayerDoesPauseOnPrint()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				testRunner.WaitForName("Cancel Wizard Button", 1);
 
@@ -79,31 +79,30 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.SwitchToAdvancedSliceSettings();
 
-					testRunner.ClickByName("General Tab", 1);
-					testRunner.ClickByName("Single Print Tab", 1);
+					testRunner.ClickByName("General Tab");
+					testRunner.ClickByName("Single Print Tab");
 					testRunner.ClickByName("Layer(s) To Pause: Edit");
 					testRunner.Type("4;2;a;not;6");
 
-					testRunner.ClickByName("Layer View Tab");
+					testRunner.AddDefaultFileToBedplate();
 
-					testRunner.ClickByName("Generate Gcode Button", 1);
+					testRunner.ClickByName("Toggle Layer View Button");
+
+					testRunner.ClickByName("Generate Gcode Button");
 					testRunner.ClickByName("Display Checkbox", 10);
-					testRunner.ClickByName("Sync To Print Checkbox", 1);
+					testRunner.ClickByName("Sync To Print Checkbox");
 
-					testRunner.ClickByName("Start Print Button", 1);
+					testRunner.ClickByName("Start Print Button");
 
 					WaitForLayerAndResume(testRunner, 2);
 					WaitForLayerAndResume(testRunner, 4);
 					WaitForLayerAndResume(testRunner, 6);
 
-					testRunner.WaitForName("Done Button", 30);
-					testRunner.WaitForName("Print Again Button", 1);
+					testRunner.WaitForPrintFinished();
 				}
 
 				return Task.FromResult(0);
-			};
-
-			await MatterControlUtilities.RunTest(testToRun, maxTimeToRun: 90);
+			}, maxTimeToRun: 120);
 		}
 
 		[Test]

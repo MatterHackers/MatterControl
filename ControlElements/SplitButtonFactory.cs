@@ -79,6 +79,7 @@ namespace MatterHackers.MatterControl
 			};
 
 			Button button = buttonFactory.Generate(primaryAction.Title, normalImageName: imageName, centerText: true);
+			button.Name = $"{primaryAction.Title} Button";
 			button.Click += (s, e) =>
 			{
 				primaryAction.Action();
