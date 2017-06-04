@@ -19,7 +19,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
-				MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
+				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
 
 				string firstItemName = "Queue Item Batman";
 				//Navigate to Downloads Library Provider

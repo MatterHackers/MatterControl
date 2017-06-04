@@ -59,6 +59,7 @@
       <Link>MatterControlUtilities.cs</Link>
     </Compile>
     <Compile Include="CheckBoxInLibraryIsClickable.cs" />
+    <Compile Include="MatterControlTests.cs" />
     <Compile Include="CreateLibraryFolder.cs" />
     <Compile Include="ExportItemWindowTests.cs" />
     <Compile Include="FileMenuTest.cs" />

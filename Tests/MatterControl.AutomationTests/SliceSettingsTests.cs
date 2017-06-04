@@ -21,38 +21,19 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
+				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
 
-				// Navigate to Local Library 
-				testRunner.ClickByName("Library Tab");
-				testRunner.NavigateToFolder("Local Library Row Item Collection");
-				testRunner.Delay(1);
+				testRunner.AddTestAssetsToLibrary("Rook.amf");
 
-				testRunner.ClickByName("Row Item Calibration - Box");
-				testRunner.Delay(.2);
-
-				// Add the Calibration box to the queue and selects it
-				testRunner.ClickByName("Row Item Calibration - Box Print Button");
-				testRunner.Delay(1);
-
-				testRunner.ClickByName("Layer View Tab");
-				testRunner.Delay(.2);
-
-				testRunner.ClickByName("Bread Crumb Button Home", 1);
-				testRunner.Delay(.2);
+				testRunner.ClickByName("Row Item Rook");
+				testRunner.AddSelectedItemToBedplate();
 
 				testRunner.SwitchToAdvancedSliceSettings();
-				testRunner.Delay(.2);
+				testRunner.ClickByName("Raft / Priming Tab");
+				testRunner.ClickByName("Create Raft Checkbox");
 
-				testRunner.ClickByName("Raft / Priming Tab", 1);
-				testRunner.Delay(.2);
-
-				testRunner.ClickByName("Create Raft Checkbox", 1);
-				testRunner.Delay(1.5);
-
-				testRunner.ClickByName("Generate Gcode Button", 1);
-				testRunner.Delay(2);
-
+				testRunner.ClickByName("Toggle Layer View Button");
+				testRunner.ClickByName("Generate Gcode Button");
 				testRunner.Delay(() => MatterControlUtilities.CompareExpectedSliceSettingValueWithActualVaue("enableRaft", "True"), 10);
 
 				// Call compare slice settings method here
@@ -179,7 +160,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
+				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
 
 				// Navigate to Local Library 
 				testRunner.SwitchToAdvancedSliceSettings();
@@ -215,7 +196,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					}
 				}, ref unregisterEvents);
 
-				MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
+				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
 
 				// Navigate to Local Library 
 				testRunner.SwitchToAdvancedSliceSettings();
@@ -243,7 +224,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// assert no profiles
 				Assert.AreEqual(0, ProfileManager.Instance.ActiveProfiles.Count());
 
-				MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
+				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
 
 				// assert one profile
 				Assert.AreEqual(1, ProfileManager.Instance.ActiveProfiles.Count(), "One profile should exist after add");
@@ -285,7 +266,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
+				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
 
 				// Navigate to Settings Tab and make sure Bed Temp Text box is visible 
 				testRunner.SwitchToAdvancedSliceSettings();
@@ -323,7 +304,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				// Add Guest printers
-				MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
+				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
 				testRunner.SwitchToAdvancedSliceSettings();
 
 				testRunner.ClickByName("Layer Height Textbox", 2);
@@ -336,7 +317,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Delay(.5);
 				Assert.AreEqual(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.layer_height), .1, "Layer height is the fine override");
 
-				MatterControlUtilities.AddAndSelectPrinter(testRunner, "BCN", "Sigma");
+				testRunner.AddAndSelectPrinter("BCN", "Sigma");
 
 				// Check Guest printer count 
 				Assert.AreEqual(2, ProfileManager.Instance.ActiveProfiles.Count(), "ProfileManager has 2 Profiles");

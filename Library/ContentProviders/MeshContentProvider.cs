@@ -38,10 +38,10 @@ namespace MatterHackers.MatterControl
 	using MatterHackers.Agg.PlatformAbstract;
 	using MatterHackers.DataConverters3D;
 	using MatterHackers.MatterControl.Library;
-	using MatterHackers.PolygonMesh;
-	using MatterHackers.RayTracer;
-	using MatterHackers.PolygonMesh.Processors;
 	using MatterHackers.MatterControl.PrinterCommunication;
+	using MatterHackers.PolygonMesh;
+	using MatterHackers.PolygonMesh.Processors;
+	using MatterHackers.RayTracer;
 	using MatterHackers.VectorMath;
 
 	/// <summary>
@@ -145,7 +145,15 @@ namespace MatterHackers.MatterControl
 					return;
 				}
 
-				var thumbnail = this.TraceThumbnail(object3D, BigRenderSize.x, BigRenderSize.y);
+				bool RenderOrthographic = UserSettings.Instance.get(UserSettingsKey.ThumbnailRenderingMode) == "orthographic";
+
+				var thumbnail = ThumbnailEngine.Generate(
+					object3D,
+					RenderOrthographic ? RenderType.ORTHOGROPHIC : RenderType.RAY_TRACE,
+					BigRenderSize.x, 
+					BigRenderSize.y, 
+					allowMultiThreading: !PrinterConnectionAndCommunication.Instance.PrinterIsPrinting);
+
 				if (thumbnail != null)
 				{
 					string cachePath = ApplicationController.Instance.CachePath(item);
@@ -155,34 +163,10 @@ namespace MatterHackers.MatterControl
 				}
 				else
 				{
+					// If thumbnail generation was aborted or failed, return the default icon for this content type
 					imageCallback(DefaultImage.MultiplyWithPrimaryAccent());
 				}
 			}
-		}
-
-		private ImageBuffer TraceThumbnail(IObject3D object3D, int width, int height)
-		{
-			/* TODO: from PrimitivesSideBar.cs - what's the value in thumb.CopyFrom rather than using directly?
-			var thumbnailIcon = new ImageBuffer(width, height);
-			thumbnailIcon.SetRecieveBlender(new BlenderPreMultBGRA());
-			thumbnailIcon.CopyFrom(tracer.destImage); */
-
-			// TODO - necessary - disabling doesn't seem to change much? 
-			object3D.Mesh?.Triangulate();
-
-			var tracer = new ThumbnailTracer(object3D, width, height)
-			{
-				MultiThreaded = !PrinterConnectionAndCommunication.Instance.PrinterIsPrinting
-			};
-			tracer.TraceScene();
-
-			var thumbnailIcon = tracer.destImage;
-			if (thumbnailIcon != null)
-			{
-				thumbnailIcon.SetRecieveBlender(new BlenderPreMultBGRA());
-			}
-
-			return thumbnailIcon;
 		}
 
 		public ImageBuffer DefaultImage => LibraryProviderHelpers.LoadInvertIcon("mesh.png");
