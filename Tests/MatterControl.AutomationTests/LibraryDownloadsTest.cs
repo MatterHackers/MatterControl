@@ -41,7 +41,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.IsTrue(testRunner.WaitForName("Row Item Batman", 2), "Batman item exists");
 				testRunner.Delay(1);
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			};
 
 			// TODO: The standard assignment without a try/catch should be used and DeleteDownloadsSubFolder should be called from a TearDown method
@@ -81,7 +81,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.IsTrue(testRunner.WaitForName("Row Item Rook", 2), "Rook item exists");
 				testRunner.Delay(1);
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			};
 
 			try
@@ -123,7 +123,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.Delay(1);
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			};
 
 			try
@@ -172,7 +172,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Rename Button");
 				Assert.IsTrue(testRunner.WaitForName("Row Item Batman Renamed", 2));
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			};
 
 			try
@@ -210,7 +210,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Delay(2);
 				Assert.IsTrue(testRunner.WaitForName(newFolderName + " Row Item Collection", 2), $"{newFolderName} exists");
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			};
 
 			try

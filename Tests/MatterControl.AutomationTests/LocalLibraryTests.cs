@@ -18,27 +18,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				testRunner.CloseSignInAndPrinterSelect();
+				testRunner.AddTestAssetsToLibrary("Batman.stl");
 
-				string itemName = "Row Item Fennec Fox";
-
-				// Navigate to Local Library 
-				testRunner.ClickByName("Library Tab");
-				testRunner.NavigateToFolder("Local Library Row Item Collection");
-
-				Assert.IsFalse(testRunner.WaitForName(itemName, 1), "Fennec Fox should not exist at test start");
-
-				// Click Local Library Add Button
-				testRunner.ClickByName("Library Add Button");
-
-				// Get Library Item to Add
-				testRunner.Delay(2);
-				testRunner.Type(MatterControlUtilities.GetTestItemPath("Fennec_Fox.stl"));
-				testRunner.Delay(1);
-				testRunner.Type("{Enter}");
-
-				Assert.IsTrue(testRunner.WaitForName(itemName, 2));
-
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			});
 		}
 
@@ -48,32 +30,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				testRunner.CloseSignInAndPrinterSelect();
+				testRunner.AddTestAssetsToLibrary("Rook.amf", "Batman.stl");
 
-				// Navigate to Local Library 
-				testRunner.ClickByName("Library Tab");
-				testRunner.NavigateToFolder("Local Library Row Item Collection");
-
-				// Make sure both Items do not exist before the test begins
-				Assert.IsFalse(testRunner.WaitForName("Row Item Fennec Fox", 1), "Fennec Fox part should not exist at test start");
-				Assert.IsFalse(testRunner.WaitForName("Row Item Batman", 1), "Batman part should not exist at test start");
-
-				// Click Local Library Add Button
-				testRunner.ClickByName("Library Add Button");
-
-				testRunner.Delay(2);
-
-				// Type file paths for each file into File Open dialog
-				testRunner.Type(string.Format("\"{0}\" \"{1}\"",
-					MatterControlUtilities.GetTestItemPath("Fennec_Fox.stl"),
-					MatterControlUtilities.GetTestItemPath("Batman.stl")));
-
-				testRunner.Delay(1);
-				testRunner.Type("{Enter}");
-
-				Assert.IsTrue(testRunner.WaitForName("Row Item Fennec Fox", 2), "Fennec Fox part should exist after adding");
-				Assert.IsTrue(testRunner.WaitForName("Row Item Batman", 2), "Batman part should exist after adding");
-
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			});
 		}
 
@@ -83,24 +42,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				testRunner.CloseSignInAndPrinterSelect();
+				testRunner.AddTestAssetsToLibrary("Rook.amf");
 
-				// Navigate to Local Library 
-				testRunner.ClickByName("Library Tab");
-				testRunner.NavigateToFolder("Local Library Row Item Collection");
-
-				// Make sure that Item does not exist before the test begins
-				Assert.IsFalse(testRunner.WaitForName("Row Item Rook", 1), "Rook part should not exist at test start");
-
-				// Add Library item
-				testRunner.ClickByName("Library Add Button");
-				testRunner.Delay(2);
-				testRunner.Type(MatterControlUtilities.GetTestItemPath("Rook.amf"));
-				testRunner.Delay(1);
-				testRunner.Type("{Enter}");
-
-				Assert.IsTrue(testRunner.WaitForName("Row Item Rook", 2), "Rook part should exist after adding");
-
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			}, overrideWidth: 1024, overrideHeight: 800);
 		}
 
@@ -129,7 +73,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.IsTrue(testRunner.WaitForName("Row Item Batman", 2), "Batman part should exist after adding");
 				Assert.IsTrue(testRunner.WaitForName("Row Item 2013-01-25 Mouthpiece V2", 2), "Mouthpiece part should exist after adding");
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			});
 		}
 
@@ -140,16 +84,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
-				// Navigate To Local Library 
-				testRunner.ClickByName("Library Tab");
-				testRunner.NavigateToFolder("Local Library Row Item Collection");
-
-				// Add Library item
-				testRunner.ClickByName("Library Add Button", 5);
-				testRunner.Delay(2);
-				testRunner.Type(MatterControlUtilities.GetTestItemPath("Rook.amf"));
-				testRunner.Delay(1);
-				testRunner.Type("{Enter}");
+				testRunner.AddTestAssetsToLibrary("Rook.amf");
 
 				testRunner.ClickByName("Row Item Rook", 2);
 
@@ -167,7 +102,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.IsTrue(testRunner.WaitForName("Row Item Rook Renamed", 5));
 				Assert.IsFalse(testRunner.WaitForName("Row Item Rook", 2));
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			}, overrideWidth: 600);
 		}
 
@@ -177,6 +112,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				testRunner.CloseSignInAndPrinterSelect();
+
 				// Navigate to Local Library
 				testRunner.ClickByName("Library Tab");
 				testRunner.Delay(.2);
@@ -210,7 +146,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// Make sure the renamed Library Folder exists
 				Assert.IsTrue(testRunner.WaitForName("Renamed Library Folder Row Item Collection", 2), "Renamed folder should exist");
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			});
 		}
 
@@ -221,26 +157,16 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
-				// Navigate to Local Library
-				testRunner.ClickByName("Library Tab");
-				testRunner.NavigateToFolder("Local Library Row Item Collection");
-
-				// Add Library item
-				testRunner.ClickByName("Library Add Button", 5);
-				testRunner.Delay(2);
-				testRunner.Type(MatterControlUtilities.GetTestItemPath("Rook.amf"));
-				testRunner.Delay(1);
-				testRunner.Type("{Enter}");
+				testRunner.AddTestAssetsToLibrary("Rook.amf");
 
 				// Select and remove item
-				testRunner.ClickByName("Row Item Rook", 5);
+				testRunner.ClickByName("Row Item Rook");
 				MatterControlUtilities.LibraryRemoveSelectedItem(testRunner);
-				testRunner.Delay(1);
 
-				// Make sure that Export Item Window exists after Export button is clicked
-				Assert.IsFalse(testRunner.WaitForName("Row Item Rook", 1));
+				// Make sure that the item has been removed
+				Assert.IsFalse(testRunner.WaitForName("Row Item Rook"));
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			});
 		}
 
@@ -251,27 +177,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
-				// Navigate to Local Library
-				testRunner.ClickByName("Library Tab");
-				testRunner.NavigateToFolder("Local Library Row Item Collection");
-
-				testRunner.ClickByName("Library Add Button");
-
-				testRunner.Delay(2);
-
-				// Type file paths for each file into File Open dialog
-				testRunner.Type(string.Format("\"{0}\" \"{1}\"",
-					MatterControlUtilities.GetTestItemPath("Fennec_Fox.stl"),
-					MatterControlUtilities.GetTestItemPath("Batman.stl")));
-
-				testRunner.Type("{Enter}");
-
-				// Make sure row items exist before remove
-				Assert.IsTrue(testRunner.WaitForName("Row Item Batman", 6), "Batman part should exist after add");
-				Assert.IsTrue(testRunner.WaitForName("Row Item Fennec Fox", 2), "Fennec part should exist after add");
+				testRunner.AddTestAssetsToLibrary("Rook.amf", "Batman.stl");
 
 				// Select both items
-				testRunner.ClickByName("Row Item Fennec Fox", 1);
+				testRunner.ClickByName("Row Item Rook", 1);
 				Keyboard.SetKeyDownState(Keys.ControlKey, down: true);
 				testRunner.ClickByName("Row Item Batman", 1);
 				Keyboard.SetKeyDownState(Keys.ControlKey, down: false);
@@ -281,10 +190,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Delay(1);
 
 				// Make sure both selected items are removed
-				Assert.IsFalse(testRunner.WaitForName("Row Item Batman", 1), "Batman part should *not* exist after remove");
-				Assert.IsFalse(testRunner.WaitForName("Row Item Fennec Fox", 1), "Fennec part *not* exist after remove");
+				Assert.IsFalse(testRunner.WaitForName("Row Item Rook", 1), "Rook part should *not* exist after remove");
+				Assert.IsFalse(testRunner.WaitForName("Row Item Batman", 1), "Batman part *not* exist after remove");
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			});
 		}
 
@@ -297,16 +206,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.CloseSignInAndPrinterSelect();
 
-				// Navigate to Local Library
-				testRunner.ClickByName("Library Tab");
-				testRunner.NavigateToFolder("Local Library Row Item Collection");
-
-				// Add Library item
-				testRunner.ClickByName("Library Add Button", 5);
-				testRunner.Delay(2);
-				testRunner.Type(MatterControlUtilities.GetTestItemPath("Rook.amf"));
-				testRunner.Delay(1);
-				testRunner.Type("{Enter}");
+				testRunner.AddTestAssetsToLibrary("Rook.amf");
 
 				// Select Library Item
 				testRunner.ClickByName("Row Item Rook");
@@ -325,7 +225,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// Make sure that the item exists in the PrintQueueContainer
 				Assert.IsTrue(testRunner.WaitForName("Row Item Rook", 5), "Rook item should exist in the Queue after Add");
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			});
 		}
 
@@ -338,23 +238,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.CloseSignInAndPrinterSelect();
 
-				// Navigate to Local Library
-				testRunner.ClickByName("Library Tab");
-				testRunner.NavigateToFolder("Local Library Row Item Collection");
-
-				// Add an item to the library
-				testRunner.ClickByName("Library Add Button");
-				testRunner.Delay(2);
-
-				// Type file paths for each file into File Open dialog
-				testRunner.Type(string.Format("\"{0}\" \"{1}\"",
-					MatterControlUtilities.GetTestItemPath("Fennec_Fox.stl"),
-					MatterControlUtilities.GetTestItemPath("Batman.stl")));
-
-				testRunner.Type("{Enter}");
-
+				testRunner.AddTestAssetsToLibrary("Rook.amf", "Batman.stl");
+				
 				// Select both items
-				testRunner.ClickByName("Row Item Fennec Fox", 5);
+				testRunner.ClickByName("Row Item Rook", 5);
 				Keyboard.SetKeyDownState(Keys.ControlKey, down: true);
 				testRunner.ClickByName("Row Item Batman", 1);
 				Keyboard.SetKeyDownState(Keys.ControlKey, down: false);
@@ -374,10 +261,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.NavigateToFolder("Print Queue Row Item Collection");
 
 				// Make sure that the items exist in the PrintQueueContainer
-				Assert.IsTrue(testRunner.WaitForName("Row Item Fennec Fox", 5), "Fennec item should exist in the Queue after Add");
+				Assert.IsTrue(testRunner.WaitForName("Row Item Rook", 5), "Rook item should exist in the Queue after Add");
 				Assert.IsTrue(testRunner.WaitForName("Row Item Batman", 5), "Batman item should exist in the Queue after Add");
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			});
 		}
 	}

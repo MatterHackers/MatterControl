@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Library Tab");
 				Assert.IsTrue(checkBoxWidget.Checked == false, "currently not checked");
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			};
 
 			await MatterControlUtilities.RunTest(testToRun);

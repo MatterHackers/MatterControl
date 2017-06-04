@@ -27,7 +27,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				containingWindow.CloseOnIdle();
 				testRunner.Delay(.5);
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			});
 		}
 	}

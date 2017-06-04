@@ -265,6 +265,8 @@ namespace MatterHackers.MatterControl
 
 		private async void ThumbGeneration()
 		{
+			Thread.CurrentThread.Name = $"ThumbnailGeneration";
+
 			while(true)
 			{
 				while(queuedThumbCallbacks.Count > 0)
@@ -283,6 +285,10 @@ namespace MatterHackers.MatterControl
 					try
 					{
 						await callback();
+					}
+					catch(ThreadAbortException e)
+					{
+						return;
 					}
 					catch (Exception ex)
 					{

@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					Assert.Less(PrinterConnectionAndCommunication.Instance.ActualBedTemperature, 10);
 				}
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			}, maxTimeToRun: 200);
 		}
 
@@ -109,7 +109,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("Cancel Print Button", 1);
 				}
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			}, maxTimeToRun: 90);
 		}
 
@@ -249,7 +249,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.WaitForPrintFinished();
 				}
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			}, maxTimeToRun: 90);
 		}
 
@@ -338,7 +338,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate);
 				}
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			}, overrideHeight:900, maxTimeToRun: 120);
 		}
 
@@ -431,7 +431,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate);
 				}
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			}, overrideHeight: 900, maxTimeToRun: 120);
 		}
 
@@ -475,7 +475,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					Assert.AreEqual(0, fanChangedCount, "We should not change this while exiting an sd card print.");
 				}
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			}, overrideHeight: 900, maxTimeToRun: 90);
 		}
 
@@ -509,7 +509,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					Assert.AreEqual(1, fanChangedCount, "We expected to see fan change on quiting.");
 				}
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			}, overrideHeight: 900, maxTimeToRun: 90);
 		}
 

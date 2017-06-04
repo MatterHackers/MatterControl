@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				Assert.IsTrue(File.Exists(fullPathToGcodeFile + ".gcode") == true);
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			};
 
 			await MatterControlUtilities.RunTest(testToRun);

@@ -19,10 +19,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[Test]
 		public async Task RaftEnabledPassedToSliceEngine()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				testRunner.CloseSignInAndPrinterSelect();
-
 				MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
 
 				// Navigate to Local Library 
@@ -57,13 +55,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.Delay(() => MatterControlUtilities.CompareExpectedSliceSettingValueWithActualVaue("enableRaft", "True"), 10);
 
-				//Call compare slice settings method here
+				// Call compare slice settings method here
 				Assert.IsTrue(MatterControlUtilities.CompareExpectedSliceSettingValueWithActualVaue("enableRaft", "True"));
 
-				return Task.FromResult(0);
-			};
-
-			await MatterControlUtilities.RunTest(testToRun, overrideWidth: 1224, overrideHeight: 800);
+				return Task.CompletedTask;
+			}, overrideWidth: 1224, overrideHeight: 800);
 		}
 
 		[Test]
@@ -101,7 +97,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.WaitForPrintFinished();
 				}
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			}, maxTimeToRun: 120);
 		}
 
@@ -156,7 +152,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					Assert.AreEqual(2, g28Count, "There should be the start come and the cancel print home");
 				}
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			}, maxTimeToRun: 120);
 		}
 
@@ -185,7 +181,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
 
-				//Navigate to Local Library 
+				// Navigate to Local Library 
 				testRunner.SwitchToAdvancedSliceSettings();
 
 				testRunner.ClickByName("Printer Tab", 1);
@@ -195,7 +191,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				CheckAndUncheckSetting(testRunner, SettingsKey.has_fan, "Has Fan Checkbox", true);
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			}, overrideWidth: 1224, overrideHeight: 900);
 		}
 
@@ -221,7 +217,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
 
-				//Navigate to Local Library 
+				// Navigate to Local Library 
 				testRunner.SwitchToAdvancedSliceSettings();
 
 				testRunner.ClickByName("General Tab", 1);
@@ -235,7 +231,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Standard Menu", 2, delayBeforeReturn: .5);
 				Assert.AreEqual(2, layerHeightChangedCount, "Changed to standard.");
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			}, overrideWidth: 1224, overrideHeight: 900);
 		}
 
@@ -257,7 +253,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// assert no profiles
 				Assert.AreEqual(0, ProfileManager.Instance.ActiveProfiles.Count(), "No profiles should exist after delete");
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			}, overrideWidth: 1224, overrideHeight: 900);
 		}
 
@@ -287,21 +283,20 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[Test]
 		public async Task HasHeatedBedCheckedHidesBedTemperatureOptions()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				testRunner.CloseSignInAndPrinterSelect();
-
 				MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
 
-				//Navigate to Settings Tab and make sure Bed Temp Text box is visible 
+				// Navigate to Settings Tab and make sure Bed Temp Text box is visible 
 				testRunner.SwitchToAdvancedSliceSettings();
 
 				testRunner.ClickByName("Filament Tab", 1);
 				testRunner.ClickByName("Temperatures Tab", 1);
+
 				Assert.IsTrue(testRunner.WaitForName("Extruder Temperature Textbox", 2)); 
 				Assert.IsTrue(testRunner.WaitForName("Bed Temperature Textbox", 2));
 
-				//Uncheck Has Heated Bed checkbox and make sure Bed Temp Textbox is not visible
+				// Uncheck Has Heated Bed checkbox and make sure Bed Temp Textbox is not visible
 				testRunner.ClickByName("Printer Tab", 1);
 				testRunner.ClickByName("Features Tab", 1);
 				testRunner.DragByName("Show Reset Connection Checkbox", 1, offset: new Agg.Point2D(-40, 0));
@@ -309,19 +304,17 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Drop();
 				testRunner.ClickByName("Has Heated Bed Checkbox", 1);
 				testRunner.Delay(.5);
+
 				testRunner.ClickByName("Filament Tab", 1);
-				bool bedTemperatureTextBoxVisible = testRunner.WaitForName("Bed Temperature Textbox", 2);
-				Assert.IsTrue(bedTemperatureTextBoxVisible == false);
+				Assert.IsFalse(testRunner.WaitForName("Bed Temperature Textbox", 2), "Filament -> Bed Temp should not be visible after Heated Bed unchecked");
 
-				//Make sure Bed Temperature Options are not visible in printer controls
+				// Make sure Bed Temperature Options are not visible in printer controls
 				testRunner.ClickByName("Controls Tab");
-				bool bedTemperatureControlsWidget = testRunner.WaitForName("Bed Temperature Controls Widget", 2);
-				Assert.IsTrue(bedTemperatureTextBoxVisible == false);
 
-				return Task.FromResult(0);
-			};
+				Assert.IsFalse(testRunner.WaitForName("Bed Temperature Controls Widget", 2), "Controls -> Bed Temp should not be visible after Heated Bed unchecked");
 
-			await MatterControlUtilities.RunTest(testToRun, overrideWidth: 550);
+				return Task.CompletedTask;
+			}, overrideWidth: 550);
 		}
 	
 		[Test]
@@ -363,7 +356,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("- none - Menu Item", 2, delayBeforeReturn: .5);
 				Assert.AreEqual(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.layer_height), .5, "Layer height is what we set it to");
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			}, maxTimeToRun: 120);
 		}
 	}

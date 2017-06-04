@@ -505,6 +505,42 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.ClickByName("Advanced Menu Item");
 			testRunner.Delay(.5);
 		}
+
+		/// <summary>
+		/// Adds the given asset names to the local library and validates the result
+		/// </summary>
+		/// <param name="testRunner"></param>
+		/// <param name="assetNames">The test assets to add to the library</param>
+		public static void AddTestAssetsToLibrary(this AutomationRunner testRunner, params string[] assetNames)
+		{
+			// Switch to the Local Library tab
+			testRunner.ClickByName("Library Tab");
+			testRunner.NavigateToFolder("Local Library Row Item Collection");
+
+			// Assert that the requested items are not currently in the list
+			foreach (string assetName in assetNames)
+			{
+				string friendlyName = Path.GetFileNameWithoutExtension(assetName);
+				Assert.IsFalse(testRunner.WaitForName($"Row Item {friendlyName}", 1), $"{friendlyName} part should not exist at test start");
+			}
+
+			// Generate the full, quoted paths for the requested assets
+			string fullQuotedAssetPaths = string.Join(" ", assetNames.Select(name => $"\"{MatterControlUtilities.GetTestItemPath(name)}\""));
+
+			// Add Library item
+			testRunner.ClickByName("Library Add Button");
+			testRunner.Delay(2);
+			testRunner.Type(fullQuotedAssetPaths);
+			testRunner.Delay(1);
+			testRunner.Type("{Enter}");
+
+			// Assert that the requested items are not currently in the list
+			foreach (string assetName in assetNames)
+			{
+				string friendlyName = Path.GetFileNameWithoutExtension(assetName);
+				Assert.IsTrue(testRunner.WaitForName($"Row Item {friendlyName}", 2), $"{friendlyName} part should exist after adding");
+			}
+		}
 	}
 
 	/// <summary>

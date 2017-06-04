@@ -110,7 +110,7 @@ namespace MatterControl.Tests
 				Assert.IsTrue(testRunner.WaitForName("Library Tab", 3));
 				testRunner.ClickByName("Library Tab");
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			});
 		}
 #endif
