@@ -323,8 +323,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.AreEqual(2, ProfileManager.Instance.ActiveProfiles.Count(), "ProfileManager has 2 Profiles");
 
 				// Check if Guest printer names exists in dropdown
-				testRunner.ClickByName("Printer Overflow Menu", 2);
-				testRunner.ClickByName("Printers... Menu", 2);
+				testRunner.OpenPrintersDropdown();
 				testRunner.ClickByName("Airwolf 3D HD Menu Item", 5);
 
 				testRunner.Delay(1);

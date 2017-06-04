@@ -267,11 +267,17 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void AddAndSelectPrinter(this AutomationRunner testRunner, string make, string model)
 		{
+			// If SelectMake is not visible and the ConnectionWizard is, click Skip
+			if (!testRunner.NameExists("Select Make") 
+				&& testRunner.WaitForName("Connection Wizard Skip Sign In Button", 1))
+			{
+				testRunner.ClickByName("Connection Wizard Skip Sign In Button");
+			}
+
 			if (!testRunner.WaitForName("Select Make", 1))
 			{
 				// TODO: The overflow menu needs to always be on screen and when there's not enough room siblings should be removed from the actions bar and pushed into the overflow menu, rather than the menu clipping from the screen
-				testRunner.ClickByName("Printer Overflow Menu", 2, delayBeforeReturn: .5);
-				testRunner.ClickByName("Printers... Menu", 2, delayBeforeReturn: .5);
+				testRunner.OpenPrintersDropdown();
 				testRunner.ClickByName("Add New Printer... Menu Item", 5, delayBeforeReturn: .5);
 			}
 
@@ -289,6 +295,23 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			testRunner.ClickByName("Cancel Wizard Button", 5);
 			testRunner.Delay(1);
+		}
+
+		public static void OpenPrintersDropdown(this AutomationRunner testRunner)
+		{
+			testRunner.ClickByName("Printer Overflow Menu");
+			testRunner.ClickByName("Printers... Menu");
+		}
+
+		public static void ClosePrintersDropdown(this AutomationRunner testRunner)
+		{
+			testRunner.ClickByName("Printer Overflow Menu");
+
+			// If a sub menu is open the first click will close it but not the main menu. Second click as needed
+			if (testRunner.WaitForName("Printers... Menu", 0.5))
+			{
+				testRunner.ClickByName("Printer Overflow Menu");
+			}
 		}
 
 		private static void OutputImage(ImageBuffer imageToOutput, string fileName)
