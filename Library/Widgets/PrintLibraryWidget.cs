@@ -286,11 +286,13 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			{
 				if (createFolderWindow == null)
 				{
-					createFolderWindow = new CreateFolderWindow((returnInfo) =>
+					createFolderWindow = new CreateFolderWindow((result) =>
 					{
-						// TODO: Implement
-						throw new NotImplementedException("createFolderButton click");
-						//this.libraryView.ActiveContainer.AddCollectionToLibrary(returnInfo.newName);
+						if (!string.IsNullOrEmpty(result.newName)
+							&& this.libraryView.ActiveContainer is ILibraryWritableContainer writableContainer)
+						{
+							writableContainer.Add(new[] { new DynamicContainerLink(result.newName, null) });
+						}
 					});
 					createFolderWindow.Closed += (sender2, e2) => { createFolderWindow = null; };
 				}
@@ -738,18 +740,13 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			});
 		}
 
-		private void addToQueueButton_Click(object sender, EventArgs e)
+		private async void addToQueueButton_Click(object sender, EventArgs e)
 		{
-			foreach (var item in libraryView.SelectedItems)
+			var selectedItems = libraryView.SelectedItems.Select(o => o.Model);
+			if (selectedItems.Any())
 			{
-				throw new NotImplementedException("addToQueueButton_Click");
-
-				// Get content
-				// Create printitemwrapper (or not) - an implementation for this exists in cloud library
-				// Add printitemwrapper to queue
+				await PrintQueueContainer.AddAllItems(selectedItems);
 			}
-
-			libraryView.SelectedItems.Clear();
 		}
 
 		private void EnableMenus()

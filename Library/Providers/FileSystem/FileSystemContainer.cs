@@ -168,7 +168,7 @@ namespace MatterHackers.MatterControl.Library
 					List<ILibraryContainerLink> containers;
 					if (filter == "")
 					{
-						var directories = Directory.GetDirectories(fullPath, "*.*", searchDepth).Select(p => new ContainerLink(p)).ToList<ILibraryContainerLink>();
+						var directories = Directory.GetDirectories(fullPath, "*.*", searchDepth).Select(p => new DirectoryContainerLink(p)).ToList<ILibraryContainerLink>();
 						containers = directories.Concat(zipFiles.Select(f => new LocalZipContainerLink(f))).OrderBy(d => d.Name).ToList();
 					}
 					else
@@ -346,7 +346,7 @@ namespace MatterHackers.MatterControl.Library
 
 		public override void Rename(ILibraryItem item, string revisedName)
 		{
-			if (item is ContainerLink directoryLink)
+			if (item is DirectoryContainerLink directoryLink)
 			{
 				if (Directory.Exists(directoryLink.Path))
 				{
@@ -378,9 +378,9 @@ namespace MatterHackers.MatterControl.Library
 
 		#endregion
 
-		public class ContainerLink : FileSystemItem, ILibraryContainerLink
+		public class DirectoryContainerLink : FileSystemItem, ILibraryContainerLink
 		{
-			public ContainerLink(string path)
+			public DirectoryContainerLink(string path)
 				: base(path)
 			{
 			}

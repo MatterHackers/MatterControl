@@ -65,6 +65,13 @@ namespace MatterHackers.MatterControl.Library
 
 		public override async void Add(IEnumerable<ILibraryItem> items)
 		{
+			await AddAllItems(items);
+
+			this.ReloadContainer();
+		}
+
+		public static async Task AddAllItems(IEnumerable<ILibraryItem> items)
+		{
 			await Task.Run(async () =>
 			{
 				foreach (var item in items.OfType<ILibraryContentStream>())
@@ -98,8 +105,6 @@ namespace MatterHackers.MatterControl.Library
 							0);
 					}
 				}
-
-				this.ReloadContainer();
 			});
 		}
 
@@ -110,7 +115,7 @@ namespace MatterHackers.MatterControl.Library
 				var fileSystemItem = item as FileSystemFileItem;
 				if (fileSystemItem != null)
 				{
-					var matches = QueueData.Instance.PrintItems.Where(p => p.FileLocation == fileSystemItem.Path);
+					var matches = QueueData.Instance.PrintItems.Where(p => p.FileLocation == fileSystemItem.Path).ToList();
 
 					foreach(var printItem in matches)
 					{

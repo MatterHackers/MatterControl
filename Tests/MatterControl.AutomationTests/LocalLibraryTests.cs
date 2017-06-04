@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using MatterHackers.Agg.UI;
 using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintQueue;
@@ -131,7 +132,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				return Task.FromResult(0);
 			});
 		}
-	
+
 		[Test]
 		public async Task RenameButtonRenameLocalLibraryItem()
 		{
@@ -139,7 +140,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
-				//Navigate To Local Library 
+				// Navigate To Local Library 
 				testRunner.ClickByName("Library Tab");
 				testRunner.NavigateToFolder("Local Library Row Item Collection");
 
@@ -173,7 +174,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[Test]
 		public async Task RenameButtonRenamesLocalLibraryFolder()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 				// Navigate to Local Library
@@ -195,9 +196,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// Confirm newly created folder exists
 				Assert.IsTrue(testRunner.WaitForName("New Folder Row Item Collection", 1), "New folder should appear as GuiWidget");
 
-				testRunner.ClickByName("Library Edit Button");
-				testRunner.Delay(.2);
-
 				testRunner.ClickByName("New Folder Row Item Collection");
 				testRunner.Delay(.2);
 
@@ -212,76 +210,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// Make sure the renamed Library Folder exists
 				Assert.IsTrue(testRunner.WaitForName("Renamed Library Folder Row Item Collection", 2), "Renamed folder should exist");
 
-				return Task.FromResult(0);	
-			};
-
-			await MatterControlUtilities.RunTest(testToRun);
-		}
-
-		[Test]
-		public async Task ClickLibraryEditButtonOpensPartPreviewWindow()
-		{
-			AutomationTest testToRun = (testRunner) =>
-			{
-				testRunner.CloseSignInAndPrinterSelect();
-				//Navigate to Local Library
-				testRunner.ClickByName("Library Tab");
-				testRunner.NavigateToFolder("Local Library Row Item Collection");
-
-				testRunner.Delay(1);
-
-				string rowItem = "Row Item Calibration - Box";
-				testRunner.ClickByName("Library Edit Button");
-				testRunner.Delay(1);
-				testRunner.ClickByName(rowItem);
-
-				MatterControlUtilities.LibraryEditSelectedItem(testRunner);
-
-				//Make sure that Export Item Window exists after Export button is clicked
-				bool exportItemWindowExists = testRunner.WaitForName("Part Preview Window", 2);
-				Assert.IsTrue(exportItemWindowExists == true);
-
 				return Task.FromResult(0);
-			};
-
-			await MatterControlUtilities.RunTest(testToRun);
+			});
 		}
 
 		[Test]
 		public async Task RemoveButtonClickedRemovesSingleItem()
 		{
-			AutomationTest testToRun = (testRunner) =>
-			{
-				testRunner.CloseSignInAndPrinterSelect();
-				//Navigate to Local Library
-				testRunner.ClickByName("Library Tab");
-				testRunner.NavigateToFolder("Local Library Row Item Collection");
-
-				testRunner.Delay(1);
-
-				string rowItem = "Row Item Calibration - Box";
-				testRunner.ClickByName("Library Edit Button");
-				testRunner.Delay(1);
-				testRunner.ClickByName(rowItem);
-
-				MatterControlUtilities.LibraryRemoveSelectedItem(testRunner);
-
-				testRunner.Delay(1);
-
-				//Make sure that Export Item Window exists after Export button is clicked
-				bool rowItemExists = testRunner.WaitForName(rowItem, 1);
-				Assert.IsTrue(rowItemExists == false);
-
-				return Task.FromResult(0);
-			};
-
-			await MatterControlUtilities.RunTest(testToRun);
-		}
-
-		[Test]
-		public async Task RemoveButtonClickedRemovesMultipleItems()
-		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
@@ -289,219 +225,160 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Library Tab");
 				testRunner.NavigateToFolder("Local Library Row Item Collection");
 
+				// Add Library item
+				testRunner.ClickByName("Library Add Button", 5);
+				testRunner.Delay(2);
+				testRunner.Type(MatterControlUtilities.GetTestItemPath("Rook.amf"));
 				testRunner.Delay(1);
-				testRunner.ClickByName("Library Edit Button");
+				testRunner.Type("{Enter}");
+
+				// Select and remove item
+				testRunner.ClickByName("Row Item Rook", 5);
+				MatterControlUtilities.LibraryRemoveSelectedItem(testRunner);
 				testRunner.Delay(1);
 
-				string rowItemPath = MatterControlUtilities.GetTestItemPath("Fennec_Fox.stl");
+				// Make sure that Export Item Window exists after Export button is clicked
+				Assert.IsFalse(testRunner.WaitForName("Row Item Rook", 1));
+
+				return Task.FromResult(0);
+			});
+		}
+
+		[Test]
+		public async Task RemoveButtonClickedRemovesMultipleItems()
+		{
+			await MatterControlUtilities.RunTest((testRunner) =>
+			{
+				testRunner.CloseSignInAndPrinterSelect();
+
+				// Navigate to Local Library
+				testRunner.ClickByName("Library Tab");
+				testRunner.NavigateToFolder("Local Library Row Item Collection");
+
 				testRunner.ClickByName("Library Add Button");
 
 				testRunner.Delay(2);
-				testRunner.Type(rowItemPath);
+
+				// Type file paths for each file into File Open dialog
+				testRunner.Type(string.Format("\"{0}\" \"{1}\"",
+					MatterControlUtilities.GetTestItemPath("Fennec_Fox.stl"),
+					MatterControlUtilities.GetTestItemPath("Batman.stl")));
+
 				testRunner.Type("{Enter}");
-				testRunner.Delay(1);
-
-				string rowItemOne = "Row Item Calibration - Box";
-				testRunner.ClickByName(rowItemOne, 1);
-
-				string rowItemTwo = "Row Item Fennec Fox";
-				testRunner.ClickByName(rowItemTwo, 1);
-
-				testRunner.Delay(1);
 
 				// Make sure row items exist before remove
-				Assert.IsTrue(testRunner.WaitForName(rowItemOne, 2), "rowItemOne should exist before remove");
-				Assert.IsTrue(testRunner.WaitForName(rowItemTwo, 2), "rowItemTwo should exist before remove");
+				Assert.IsTrue(testRunner.WaitForName("Row Item Batman", 6), "Batman part should exist after add");
+				Assert.IsTrue(testRunner.WaitForName("Row Item Fennec Fox", 2), "Fennec part should exist after add");
+
+				// Select both items
+				testRunner.ClickByName("Row Item Fennec Fox", 1);
+				Keyboard.SetKeyDownState(Keys.ControlKey, down: true);
+				testRunner.ClickByName("Row Item Batman", 1);
+				Keyboard.SetKeyDownState(Keys.ControlKey, down: false);
 
 				// Remove items
 				MatterControlUtilities.LibraryRemoveSelectedItem(testRunner);
 				testRunner.Delay(1);
 
 				// Make sure both selected items are removed
-				Assert.IsFalse(testRunner.WaitForName(rowItemOne, 2), "rowItemOne should *not* exist after remove");
-				Assert.IsFalse(testRunner.WaitForName(rowItemTwo, 2), "rowItemTwo should *not* exist after remove");
+				Assert.IsFalse(testRunner.WaitForName("Row Item Batman", 1), "Batman part should *not* exist after remove");
+				Assert.IsFalse(testRunner.WaitForName("Row Item Fennec Fox", 1), "Fennec part *not* exist after remove");
 
 				return Task.FromResult(0);
-			};
-
-			await MatterControlUtilities.RunTest(testToRun);
+			});
 		}
 
 		[Test]
 		public async Task AddToQueueFromLibraryButtonAddsItemToQueue()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				testRunner.CloseSignInAndPrinterSelect();
+				int expectedCount = QueueData.Instance.ItemCount + 1;
 
-				//Navigate to Local Library
-				testRunner.ClickByName("Library Tab");
-				testRunner.NavigateToFolder("Local Library Row Item Collection");
-
-				testRunner.Delay(1);
-				testRunner.ClickByName("Library Edit Button");
-				testRunner.Delay(1);
-
-				//Select Library Item
-				string rowItemOne = "Row Item Calibration - Box";
-				testRunner.ClickByName(rowItemOne);
-
-				testRunner.Delay(1);
-
-				int queueCountBeforeAdd = QueueData.Instance.ItemCount;
-
-				//Add Library Item to the Print Queue
-				MatterControlUtilities.LibraryAddSelectionToQueue(testRunner);
-
-				testRunner.Delay(2);
-
-				//Make sure that the Queue Count increases by one
-				int queueCountAfterAdd = QueueData.Instance.ItemCount;
-
-				Assert.IsTrue(queueCountAfterAdd == queueCountBeforeAdd + 1);
-
-				//Navigate to Queue
-				testRunner.ClickByName("Queue Tab");
-
-				testRunner.Delay(1);
-
-				//Make sure that the Print Item was added
-				string queueItem = "Queue Item Calibration - Box";
-				bool queueItemWasAdded = testRunner.WaitForName(queueItem, 2);
-				Assert.IsTrue(queueItemWasAdded == true);
-
-				return Task.FromResult(0);
-			};
-
-			await MatterControlUtilities.RunTest(testToRun);
-		}
-
-		[Test]
-		public async Task AddToQueueFromLibraryButtonAddsItemsToQueue()
-		{
-			AutomationTest testToRun = (testRunner) =>
-			{
-				testRunner.CloseSignInAndPrinterSelect();
-
-				//Navigate to Local Library
-				testRunner.ClickByName("Library Tab");
-				testRunner.NavigateToFolder("Local Library Row Item Collection");
-
-				//Add an item to the library
-				string libraryItemToAdd = MatterControlUtilities.GetTestItemPath("Fennec_Fox.stl");
-				testRunner.ClickByName("Library Add Button");
-
-				testRunner.Delay(2);
-				testRunner.Type(libraryItemToAdd);
-				testRunner.Delay(2);
-				testRunner.Type("{Enter}");
-
-				testRunner.Delay(1);
-				testRunner.ClickByName("Library Edit Button");
-				testRunner.Delay(1);
-
-				int queueCountBeforeAdd = QueueData.Instance.ItemCount;
-
-				//Select both Library Items
-				string rowItemOne = "Row Item Calibration - Box";
-				testRunner.ClickByName(rowItemOne);
-
-				string rowItemTwo = "Row Item Fennec Fox";
-				testRunner.ClickByName(rowItemTwo);
-
-				//Click the Add To Queue button
-				testRunner.Delay(1);
-				MatterControlUtilities.LibraryAddSelectionToQueue(testRunner);
-				testRunner.Delay(2);
-
-				//Make sure Queue Count increases by the correct amount
-				int queueCountAfterAdd = QueueData.Instance.ItemCount;
-
-				Assert.IsTrue(queueCountAfterAdd == queueCountBeforeAdd + 2);
-
-				//Navigate to the Print Queue
-				testRunner.ClickByName("Queue Tab");
-				testRunner.Delay(1);
-
-				//Test that both added print items exist
-				string queueItemOne = "Queue Item Calibration - Box";
-				string queueItemTwo = "Queue Item Fennec_Fox";
-				bool queueItemOneWasAdded = testRunner.WaitForName(queueItemOne, 2);
-				bool queueItemTwoWasAdded = testRunner.WaitForName(queueItemTwo, 2);
-
-				Assert.IsTrue(queueItemOneWasAdded == true);
-				Assert.IsTrue(queueItemTwoWasAdded == true);
-
-				return Task.FromResult(0);	
-			};
-
-			await MatterControlUtilities.RunTest(testToRun);
-		}
-
-		[Test]
-		public async Task LibraryItemThumbnailClickedOpensPartPreview()
-		{
-			AutomationTest testToRun = (testRunner) =>
-			{
 				testRunner.CloseSignInAndPrinterSelect();
 
 				// Navigate to Local Library
 				testRunner.ClickByName("Library Tab");
 				testRunner.NavigateToFolder("Local Library Row Item Collection");
 
-				Assert.IsFalse(testRunner.WaitForName("Part Preview Window", 1), "Preview Window should not exist before we click the view button");
-
-				testRunner.ClickByName("Row Item Calibration - Box");
+				// Add Library item
+				testRunner.ClickByName("Library Add Button", 5);
+				testRunner.Delay(2);
+				testRunner.Type(MatterControlUtilities.GetTestItemPath("Rook.amf"));
 				testRunner.Delay(1);
+				testRunner.Type("{Enter}");
 
-				// Click Library Item View Button
-				testRunner.ClickByName("Row Item Calibration - Box View Button");
+				// Select Library Item
+				testRunner.ClickByName("Row Item Rook");
 
-				Assert.IsTrue(testRunner.WaitForName("Part Preview Window", 2), "Part Preview Window should be open after View button is clicked");
-				testRunner.Delay(.2);
+				// Add Library Item to the Print Queue
+				MatterControlUtilities.LibraryAddSelectionToQueue(testRunner);
+				testRunner.Delay(2);
+
+				// Make sure that the Queue Count increases by one
+				Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue item count should increase by one after add");
+
+				// Navigate to the PrintQueueContainer
+				testRunner.ClickByName("Bread Crumb Button Home");
+				testRunner.NavigateToFolder("Print Queue Row Item Collection");
+
+				// Make sure that the item exists in the PrintQueueContainer
+				Assert.IsTrue(testRunner.WaitForName("Row Item Rook", 5), "Rook item should exist in the Queue after Add");
 
 				return Task.FromResult(0);
-			};
-
-			await MatterControlUtilities.RunTest(testToRun);
+			});
 		}
 
 		[Test]
-		public async Task PrintLibraryItem()
+		public async Task AddToQueueFromLibraryButtonAddsItemsToQueue()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				testRunner.WaitForName("Cancel Wizard Button", 1);
+				int expectedCount = QueueData.Instance.ItemCount + 2;
 
-				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
-				{
-					// Navigate to Local Library
-					testRunner.ClickByName("Library Tab");
-					testRunner.NavigateToFolder("Local Library Row Item Collection");
+				testRunner.CloseSignInAndPrinterSelect();
 
-					testRunner.ClickByName("Row Item Calibration - Box");
+				// Navigate to Local Library
+				testRunner.ClickByName("Library Tab");
+				testRunner.NavigateToFolder("Local Library Row Item Collection");
 
-					int initialQueueCount = QueueData.Instance.ItemCount;
+				// Add an item to the library
+				testRunner.ClickByName("Library Add Button");
+				testRunner.Delay(2);
 
-					// Click Library Item Print Button
-					testRunner.ClickByName("Row Item Calibration - Box Print Button");
-					testRunner.Delay(2);
+				// Type file paths for each file into File Open dialog
+				testRunner.Type(string.Format("\"{0}\" \"{1}\"",
+					MatterControlUtilities.GetTestItemPath("Fennec_Fox.stl"),
+					MatterControlUtilities.GetTestItemPath("Batman.stl")));
 
-					Assert.AreEqual(initialQueueCount + 1, QueueData.Instance.ItemCount, "Queue count should increment by one after clicking 'Print'");
-					Assert.AreEqual("Calibration - Box", QueueData.Instance.PrintItems[0].Name, "Library item should be inserted at queue index 0");
-					Assert.AreEqual("Calibration - Box", QueueData.Instance.SelectedPrintItem.Name, "Library item should be the selected item");
-					Assert.AreEqual("Calibration - Box", PrinterConnectionAndCommunication.Instance.ActivePrintItem.Name, "PrinterConnectionCommunication item should be the expected item");
+				testRunner.Type("{Enter}");
 
-					testRunner.CancelPrint();
-					testRunner.Delay(1);
+				// Select both items
+				testRunner.ClickByName("Row Item Fennec Fox", 5);
+				Keyboard.SetKeyDownState(Keys.ControlKey, down: true);
+				testRunner.ClickByName("Row Item Batman", 1);
+				Keyboard.SetKeyDownState(Keys.ControlKey, down: false);
 
-					testRunner.NameExists("Start Print Button");
-				}
+				// Click the Add To Queue button
+				testRunner.Delay(1);
+				MatterControlUtilities.LibraryAddSelectionToQueue(testRunner);
+
+				// TODO: Somehow thumbnail generation is happening on the UI thread and bogging this down. Leave at 15 second for a short-term workaround
+				testRunner.Delay(() => QueueData.Instance.ItemCount == expectedCount, 15, 500);
+
+				// Make sure Queue Count increases by the correct amount
+				Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount);
+
+				// Navigate to the PrintQueueContainer
+				testRunner.ClickByName("Bread Crumb Button Home");
+				testRunner.NavigateToFolder("Print Queue Row Item Collection");
+
+				// Make sure that the items exist in the PrintQueueContainer
+				Assert.IsTrue(testRunner.WaitForName("Row Item Fennec Fox", 5), "Fennec item should exist in the Queue after Add");
+				Assert.IsTrue(testRunner.WaitForName("Row Item Batman", 5), "Batman item should exist in the Queue after Add");
 
 				return Task.FromResult(0);
-			};
-
-			await MatterControlUtilities.RunTest(testToRun);
+			});
 		}
 	}
 }
