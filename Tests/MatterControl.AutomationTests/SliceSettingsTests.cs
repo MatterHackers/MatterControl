@@ -13,10 +13,10 @@ using NUnit.Framework;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
+	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain, Apartment(ApartmentState.STA)]
 	public class SliceSetingsTests
 	{
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task RaftEnabledPassedToSliceEngine()
 		{
 			AutomationTest testToRun = (testRunner) =>
@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			await MatterControlUtilities.RunTest(testToRun, overrideWidth: 1224, overrideHeight: 800);
 		}
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task PauseOnLayerDoesPauseOnPrint()
 		{
 			AutomationTest testToRun = (testRunner) =>
@@ -106,7 +106,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			await MatterControlUtilities.RunTest(testToRun, maxTimeToRun: 90);
 		}
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task CancelWorksAsExpected()
 		{
 			AutomationTest testToRun = (testRunner) =>
@@ -181,7 +181,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.Delay(.1);
 		}
 
-		[Test, Apartment(ApartmentState.STA) /* Test will fail if screen size is and "HeatBeforeHoming" falls below the fold */]
+		[Test /* Test will fail if screen size is and "HeatBeforeHoming" falls below the fold */]
 		public async Task ClearingCheckBoxClearsUserOverride()
 		{
 			AutomationTest testToRun = (testRunner) =>
@@ -206,7 +206,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			await MatterControlUtilities.RunTest(testToRun, overrideWidth: 1224, overrideHeight: 900);
 		}
 
-		[Test, Apartment(ApartmentState.STA) /* Test will fail if screen size is and "HeatBeforeHoming" falls below the fold */]
+		[Test /* Test will fail if screen size is and "HeatBeforeHoming" falls below the fold */]
 		public async Task SwitchingMaterialsCausesSettingsChangedEvents()
 		{
 			AutomationTest testToRun = (testRunner) =>
@@ -249,7 +249,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			await MatterControlUtilities.RunTest(testToRun, overrideWidth: 1224, overrideHeight: 900);
 		}
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task DeleteProfileWorksForGuest()
 		{
 			AutomationTest testToRun = (testRunner) =>
@@ -298,7 +298,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			Assert.IsTrue(ActiveSliceSettings.Instance.UserLayer.ContainsKey(settingToChange) == false);
 		}
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task HasHeatedBedCheckedHidesBedTemperatureOptions()
 		{
 			AutomationTest testToRun = (testRunner) =>
@@ -337,18 +337,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			await MatterControlUtilities.RunTest(testToRun, overrideWidth: 550);
 		}
-	}
-
-	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
-	public class QualitySettingsStayAsOverrides
-	{
-		[Test, Apartment(ApartmentState.STA)]
-		public async Task SettingsStayAsOverrides()
+	
+		[Test]
+		public async Task QualitySettingsStayAsOverrides()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				testRunner.CloseSignInAndPrinterSelect();
-
 				// Add Guest printers
 				MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
 				testRunner.SwitchToAdvancedSliceSettings();
@@ -369,20 +363,22 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.AreEqual(2, ProfileManager.Instance.ActiveProfiles.Count(), "ProfileManager has 2 Profiles");
 
 				// Check if Guest printer names exists in dropdown
+				testRunner.ClickByName("Printer Overflow Menu", 2);
 				testRunner.ClickByName("Printers... Menu", 2);
 				testRunner.ClickByName("Airwolf 3D HD Menu Item", 5);
 
 				testRunner.Delay(1);
 				Assert.AreEqual(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.layer_height), .1, "Layer height is the fine override");
 
+				// Switch to Slice Settings Tab
+				testRunner.ClickByName("Slice Settings Tab");
+
 				testRunner.ClickByName("Quality", 2);
 				testRunner.ClickByName("- none - Menu Item", 2, delayBeforeReturn: .5);
 				Assert.AreEqual(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.layer_height), .5, "Layer height is what we set it to");
 
 				return Task.FromResult(0);
-			};
-
-			await MatterControlUtilities.RunTest(testToRun, maxTimeToRun: 120);
+			}, maxTimeToRun: 120);
 		}
 	}
 }

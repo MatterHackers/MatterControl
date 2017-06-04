@@ -13,10 +13,10 @@ using NUnit.Framework;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
+	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain, Apartment(ApartmentState.STA)]
 	public class PrintingTests
 	{
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task CompletingPrintTurnsoffHeat()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, maxTimeToRun: 200);
 		}
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task PulseRequiresLevelingAndLevelingWorks()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -113,7 +113,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, maxTimeToRun: 90);
 		}
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public void ExpectedEmulatorResponses()
 		{
 			string[] test1 = new string[]
@@ -208,7 +208,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}
 		}
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task PrinterRequestsResumeWorkingAsExpected()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -255,7 +255,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		private EventHandler unregisterEvents;
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task TuningAdjustmentsDefaultToOneAndPersists()
 		{
 			double targetExtrusionRate = 1.5;
@@ -342,7 +342,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideHeight:900, maxTimeToRun: 120);
 		}
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task TuningAdjustmentControlsBoundToStreamValues()
 		{
 			double targetExtrusionRate = 1.5;
@@ -435,7 +435,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideHeight: 900, maxTimeToRun: 120);
 		}
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task CancelingSdCardPrintLeavesHeatAndFanOn()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -479,7 +479,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideHeight: 900, maxTimeToRun: 90);
 		}
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task CancelingNormalPrintTurnsHeatAndFanOff()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
