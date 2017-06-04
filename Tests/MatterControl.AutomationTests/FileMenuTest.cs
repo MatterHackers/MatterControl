@@ -8,13 +8,13 @@ using NUnit.Framework;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
+	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain, Apartment(ApartmentState.STA)]
 	public class FileMenuTest
 	{
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task FileMenuAddPrinter()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
@@ -27,12 +27,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Cancel Wizard Button");
 
 				return Task.CompletedTask;
-			};
-
-			await MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
+			}, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
 		}
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task AddToQueueMenuItemAddsSingleFile()
 		{
 			AutomationTest testToRun = (testRunner) =>
@@ -64,7 +62,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			await MatterControlUtilities.RunTest(testToRun);
 		}
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task AddToQueueMenuItemAddsMultipleFiles()
 		{
 			AutomationTest testToRun = (testRunner) =>
@@ -100,7 +98,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			await MatterControlUtilities.RunTest(testToRun);
 		}
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task AddToQueueMenuItemAddsZipFiles()
 		{
 			AutomationTest testToRun = (testRunner) =>
