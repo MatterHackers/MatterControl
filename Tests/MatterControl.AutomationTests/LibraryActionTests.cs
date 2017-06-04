@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				bool imageExists2 = testRunner.ImageExists("MatterHackersStoreImage.png", 10);
 				Assert.IsTrue(imageExists2 == true, "Web page is open");
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			};
 
 			await MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
@@ -80,7 +80,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				GuiWidget exportWindow = testRunner.GetWidgetByName("Export Item Window", out containingWindow, 5);
 				Assert.IsTrue(exportWindow != null, "Export window does exist");
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			};
 
 			await MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
@@ -139,7 +139,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				}
 				catch { }
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			};
 
 			await MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
@@ -168,7 +168,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Delay(() => !exportButton.Enabled, 4);
 				Assert.IsFalse(exportButton.Enabled, "Export button should be disabled after Queue Menu -> Remove All");
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			};
 
 			await MatterControlUtilities.RunTest(testToRun);
@@ -197,7 +197,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.IsTrue(testRunner.WaitForName("Queue Item Batman - copy", 2), "Copied Batman item exists with expected name");
 				testRunner.Delay(.3);
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			};
 
 			await MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
@@ -231,7 +231,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// Close dialog before exiting
 				testRunner.ClickByName("Ok Button");
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			};
 
 			await MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
@@ -279,7 +279,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					File.Delete(validatePartSheetPath);
 				}
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			};
 
 			await MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);

@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				SystemWindow containingWindow;
 				Assert.IsNotNull(testRunner.GetWidgetByName("Part Preview Window", out containingWindow, 3), "Part Preview Window Exists");
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			};
 
 			await MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
@@ -103,7 +103,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					Assert.IsTrue(foundWidget == null, "We should not have an actual checkbox");
 				}
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			};
 
 			await MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items, overrideWidth: 600);
@@ -139,7 +139,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.GetWidgetByName("Queue Item Checkbox", out systemWindow, 1, searchRegion),
 					"After exiting Edit mode, checkboxes should not exist on queue items");
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			};
 
 			await MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
@@ -178,7 +178,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.IsFalse(testRunner.NameExists("Queue Item Fennec_Fox"), "Fox part removed");
 				Assert.IsFalse(testRunner.NameExists("Queue Item 2013-01-25_Mouthpiece_v2"), "Mouthpiece part removed");
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			};
 
 			await MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
@@ -218,7 +218,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				Assert.IsTrue(testRunner.WaitForName("Queue Item 2013-01-25_Mouthpiece_v2 Part Preview", 2), "The Mouthpiece Part Preview should appear after the view button is clicked");
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			};
 
 			await MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items, overrideWidth: 600);

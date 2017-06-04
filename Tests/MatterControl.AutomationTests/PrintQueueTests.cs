@@ -67,7 +67,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should increase by 1 when adding 1 item");
 				Assert.IsTrue(testRunner.WaitForName("Row Item Fennec_Fox.stl", 2), "Named widget should exist after add(Fennec_Fox)");
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			});
 		}
 
@@ -102,7 +102,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.IsTrue(testRunner.WaitForName("Row Item Fennec_Fox.stl", 2), "Named widget should exist after add(Fennec_Fox)");
 				Assert.IsTrue(testRunner.WaitForName("Row Item Batman.stl", 2), "Named widget should exist after add(Batman)");
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			});
 		}
 
@@ -134,7 +134,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.AreEqual(expectedQueueCount, QueueData.Instance.ItemCount, "After Remove button click, Queue count should be 1 less");
 				Assert.IsFalse(testRunner.WaitForName("Queue Item 2013-01-25_Mouthpiece_v2", 1), "Target item should not exist after Remove");
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			};
 
 			await MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
@@ -168,7 +168,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.AreEqual(expectedQueueCount, QueueData.Instance.ItemCount, "After Remove button click, Queue count should be 1 less");
 				Assert.IsFalse(testRunner.WaitForName("Queue Item MatterControl - Coin", .5), "Target item should not exist after Remove");
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			};
 
 			await MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
@@ -209,7 +209,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.IsTrue(queueItemExists == false);
 				Assert.IsTrue(secondQueueItemExists == false);
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			};
 
 			await MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
@@ -252,7 +252,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.IsTrue(checkBoxWidget.Checked == false, "currently not checked");
 
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			};
 
 			await MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
@@ -283,7 +283,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				Assert.IsTrue(view3D.Scene.Children.Count() == 2);
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			};
 
 			await MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
@@ -316,7 +316,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should increase by 1 when adding 1 item");
 				Assert.IsTrue(testRunner.WaitForName("Row Item Rook.amf", 2), "Named widget should exist after add(Rook)");
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			});
 		}
 
@@ -347,7 +347,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should increase by 1 when adding 1 item");
 				Assert.IsTrue(testRunner.WaitForName("Row Item Batman.stl", 2), "Named widget should exist after add(Batman)");
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			});
 		}
 
@@ -378,7 +378,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should increase by 1 when adding 1 item");
 				Assert.IsTrue(testRunner.WaitForName("Row Item chichen-itza_pyramid.gcode", 2), "Named widget should exist after add(chichen-itza)");
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			});
 		}
 	}

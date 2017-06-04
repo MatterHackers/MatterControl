@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.Delay(.5);
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			};
 
 			await MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items, overrideWidth: 600);

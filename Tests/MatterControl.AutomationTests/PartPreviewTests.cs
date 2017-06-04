@@ -50,7 +50,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Delay(() => view3D.Scene.Children.Count == 3, 3);
 				Assert.AreEqual(3, view3D.Scene.Children.Count, "Should have 3 parts after 2nd copy");
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			};
 
 			await MatterControlUtilities.RunTest(testToRun, overrideWidth: 800, maxTimeToRun: 60);
@@ -98,7 +98,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Delay(() => view3D.Scene.Children.Count == 6, 3);
 				Assert.AreEqual(6, view3D.Scene.Children.Count, $"Should have 6 parts after ungroup");
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			};
 
 			await MatterControlUtilities.RunTest(testToRun, overrideWidth: 600);
@@ -146,7 +146,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				int meshCountAfterRemove = view3D.Scene.Children.Count();
 				Assert.IsTrue(meshCountAfterRemove == 5);
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			};
 
 			await MatterControlUtilities.RunTest(testToRun, overrideWidth:600);
@@ -211,7 +211,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					Assert.AreEqual(meshCountBeforeRedo + 1, view3D.Scene.Children.Count());
 				}
 
-				return Task.FromResult(0);	
+				return Task.CompletedTask;	
 			};
 
 			await MatterControlUtilities.RunTest(testToRun, overrideWidth: 640);
@@ -263,7 +263,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				view3D.CloseOnIdle();
 				testRunner.Delay(.1);
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			};
 
 			await MatterControlUtilities.RunTest(testToRun, overrideWidth: 800);
@@ -314,7 +314,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Delay(1);
 				Assert.IsTrue(testRunner.WaitForName("Queue Item Save As Print Queue", 5));
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			};
 
 			await MatterControlUtilities.RunTest(testToRun, overrideWidth: 600);

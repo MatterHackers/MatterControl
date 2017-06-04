@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				//Make sure the Active profile name changes as well
 				Assert.IsTrue(ProfileManager.Instance.ActiveProfile.Name == newName, "ActiveProfile has updated name");
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			};
 
 			await MatterControlUtilities.RunTest(testToRun);

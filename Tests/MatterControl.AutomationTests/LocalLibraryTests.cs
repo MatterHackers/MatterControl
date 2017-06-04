@@ -20,7 +20,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.CloseSignInAndPrinterSelect();
 				testRunner.AddTestAssetsToLibrary("Batman.stl");
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			});
 		}
 
@@ -32,7 +32,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.CloseSignInAndPrinterSelect();
 				testRunner.AddTestAssetsToLibrary("Rook.amf", "Batman.stl");
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			});
 		}
 
@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.CloseSignInAndPrinterSelect();
 				testRunner.AddTestAssetsToLibrary("Rook.amf");
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			}, overrideWidth: 1024, overrideHeight: 800);
 		}
 
@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.IsTrue(testRunner.WaitForName("Row Item Batman", 2), "Batman part should exist after adding");
 				Assert.IsTrue(testRunner.WaitForName("Row Item 2013-01-25 Mouthpiece V2", 2), "Mouthpiece part should exist after adding");
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			});
 		}
 
@@ -102,7 +102,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.IsTrue(testRunner.WaitForName("Row Item Rook Renamed", 5));
 				Assert.IsFalse(testRunner.WaitForName("Row Item Rook", 2));
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			}, overrideWidth: 600);
 		}
 
@@ -146,7 +146,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// Make sure the renamed Library Folder exists
 				Assert.IsTrue(testRunner.WaitForName("Renamed Library Folder Row Item Collection", 2), "Renamed folder should exist");
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			});
 		}
 
@@ -166,7 +166,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// Make sure that the item has been removed
 				Assert.IsFalse(testRunner.WaitForName("Row Item Rook"));
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			});
 		}
 
@@ -193,7 +193,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.IsFalse(testRunner.WaitForName("Row Item Rook", 1), "Rook part should *not* exist after remove");
 				Assert.IsFalse(testRunner.WaitForName("Row Item Batman", 1), "Batman part *not* exist after remove");
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			});
 		}
 
@@ -225,7 +225,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// Make sure that the item exists in the PrintQueueContainer
 				Assert.IsTrue(testRunner.WaitForName("Row Item Rook", 5), "Rook item should exist in the Queue after Add");
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			});
 		}
 
@@ -264,7 +264,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.IsTrue(testRunner.WaitForName("Row Item Rook", 5), "Rook item should exist in the Queue after Add");
 				Assert.IsTrue(testRunner.WaitForName("Row Item Batman", 5), "Batman item should exist in the Queue after Add");
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			});
 		}
 	}

@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// Call compare slice settings method here
 				Assert.IsTrue(MatterControlUtilities.CompareExpectedSliceSettingValueWithActualVaue("enableRaft", "True"));
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			}, overrideWidth: 1224, overrideHeight: 800);
 		}
 
@@ -97,7 +97,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.WaitForPrintFinished();
 				}
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			}, maxTimeToRun: 120);
 		}
 
@@ -152,7 +152,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					Assert.AreEqual(2, g28Count, "There should be the start come and the cancel print home");
 				}
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			}, maxTimeToRun: 120);
 		}
 
@@ -191,7 +191,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				CheckAndUncheckSetting(testRunner, SettingsKey.has_fan, "Has Fan Checkbox", true);
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			}, overrideWidth: 1224, overrideHeight: 900);
 		}
 
@@ -231,7 +231,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Standard Menu", 2, delayBeforeReturn: .5);
 				Assert.AreEqual(2, layerHeightChangedCount, "Changed to standard.");
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			}, overrideWidth: 1224, overrideHeight: 900);
 		}
 
@@ -253,7 +253,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// assert no profiles
 				Assert.AreEqual(0, ProfileManager.Instance.ActiveProfiles.Count(), "No profiles should exist after delete");
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			}, overrideWidth: 1224, overrideHeight: 900);
 		}
 
@@ -313,7 +313,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				Assert.IsFalse(testRunner.WaitForName("Bed Temperature Controls Widget", 2), "Controls -> Bed Temp should not be visible after Heated Bed unchecked");
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			}, overrideWidth: 550);
 		}
 	
@@ -356,7 +356,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("- none - Menu Item", 2, delayBeforeReturn: .5);
 				Assert.AreEqual(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.layer_height), .5, "Layer height is what we set it to");
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			}, maxTimeToRun: 120);
 		}
 	}

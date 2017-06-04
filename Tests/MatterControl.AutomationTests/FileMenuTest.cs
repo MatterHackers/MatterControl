@@ -26,7 +26,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.ClickByName("Cancel Wizard Button");
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			};
 
 			await MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				Assert.IsTrue(queueAfterCount == queueBeforeCount + 1);
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			};
 
 			await MatterControlUtilities.RunTest(testToRun);
@@ -94,7 +94,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				Assert.IsTrue(queueAfterAddCount == queueBeforeAddCount + 2);
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			};
 
 			await MatterControlUtilities.RunTest(testToRun);
@@ -124,7 +124,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.IsTrue(testRunner.WaitForName("Queue Item 2013-01-25_Mouthpiece_v2", 1));
 				Assert.IsTrue(QueueData.Instance.ItemCount == beforeCount + 2);
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			};
 
 			await MatterControlUtilities.RunTest(testToRun);

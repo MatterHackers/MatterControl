@@ -31,7 +31,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				Assert.IsTrue(testRunner.WaitForName("Print Leveling Tab", 3), "Print leveling should exist for a 3D Factory MendelMax");
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			}, overrideHeight: 800);
 		}
 
@@ -78,7 +78,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					Assert.IsTrue(testRunner.WaitForName("Finish Setup Button", 1), "Finish Setup should not be visible after reset to Defaults");
 				}
 
-				return Task.FromResult(0);
+				return Task.CompletedTask;
 			});
 		}
 	}
