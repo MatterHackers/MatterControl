@@ -202,13 +202,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[Test /* Test will fail if screen size is and "HeatBeforeHoming" falls below the fold */]
 		public async Task SwitchingMaterialsCausesSettingsChangedEvents()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				EventHandler unregisterEvents = null;
 				int layerHeightChangedCount = 0;
+
 				ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
 				{
-					StringEventArgs stringEvent = e as StringEventArgs;
+					var stringEvent = e as StringEventArgs;
 					if (stringEvent != null)
 					{
 						if (stringEvent.Data == SettingsKey.layer_height)
@@ -217,8 +218,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 						}
 					}
 				}, ref unregisterEvents);
-
-				testRunner.CloseSignInAndPrinterSelect();
 
 				MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
 
@@ -237,9 +236,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.AreEqual(2, layerHeightChangedCount, "Changed to standard.");
 
 				return Task.FromResult(0);
-			};
-
-			await MatterControlUtilities.RunTest(testToRun, overrideWidth: 1224, overrideHeight: 900);
+			}, overrideWidth: 1224, overrideHeight: 900);
 		}
 
 		[Test]
