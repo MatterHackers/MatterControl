@@ -181,10 +181,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[Test /* Test will fail if screen size is and "HeatBeforeHoming" falls below the fold */]
 		public async Task ClearingCheckBoxClearsUserOverride()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				testRunner.CloseSignInAndPrinterSelect();
-
 				MatterControlUtilities.AddAndSelectPrinter(testRunner, "Airwolf 3D", "HD");
 
 				//Navigate to Local Library 
@@ -198,9 +196,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				CheckAndUncheckSetting(testRunner, SettingsKey.has_fan, "Has Fan Checkbox", true);
 
 				return Task.FromResult(0);
-			};
-
-			await MatterControlUtilities.RunTest(testToRun, overrideWidth: 1224, overrideHeight: 900);
+			}, overrideWidth: 1224, overrideHeight: 900);
 		}
 
 		[Test /* Test will fail if screen size is and "HeatBeforeHoming" falls below the fold */]
