@@ -1,5 +1,6 @@
 language: csharp
 solution: MatterControl.sln
+mono: beta
 
 notifications:
   webhooks:
