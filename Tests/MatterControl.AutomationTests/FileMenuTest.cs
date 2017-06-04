@@ -33,7 +33,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[Test]
 		public async Task AddToQueueMenuItemAddsSingleFile()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
@@ -42,24 +42,20 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Add File To Queue Menu Item");
 				testRunner.Delay(2);
 
-				string queueItemPath = MatterControlUtilities.GetTestItemPath("Fennec_Fox.stl");
+				int expectedCount = QueueData.Instance.ItemCount + 1;
 
-				int queueBeforeCount = QueueData.Instance.ItemCount;
-
-				testRunner.Type(queueItemPath);
+				testRunner.Type(MatterControlUtilities.GetTestItemPath("Fennec_Fox.stl"));
 				testRunner.Delay(1);
 				testRunner.Type("{Enter}");
 				testRunner.Delay(2);
-				Assert.IsTrue(testRunner.WaitForName("Queue Item Fennec_Fox", 2));
 
-				int queueAfterCount = QueueData.Instance.ItemCount;
+				testRunner.NavigateToFolder("Print Queue Row Item Collection");
 
-				Assert.IsTrue(queueAfterCount == queueBeforeCount + 1);
+				Assert.IsTrue(testRunner.WaitForName("Row Item Fennec_Fox"));
+				Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should increase by one after adding Fennec part");
 
 				return Task.CompletedTask;
-			};
-
-			await MatterControlUtilities.RunTest(testToRun);
+			});
 		}
 
 		[Test]
