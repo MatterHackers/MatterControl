@@ -6202,3 +6202,6 @@ Translated:Creating Mesh
 English:XOffset
 Translated:XOffset
 
+English:Add to Plate
+Translated:Add to Plate
+

@@ -1084,7 +1084,98 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (DragSelectionInProgress)
 			{
-				e.graphics2D.Rectangle(new RectangleDouble(DragSelectionStartPosition, DragSelectionEndPosition), RGBA_Bytes.Yellow);
+				var selectionRectangle = new RectangleDouble(DragSelectionStartPosition, DragSelectionEndPosition);
+				e.graphics2D.Rectangle(selectionRectangle, RGBA_Bytes.Red);
+				RendereSceneTraceData(selectionRectangle, e);
+			}
+		}
+
+		Vector2[] traceBottoms = new Vector2[4];
+		Vector2[] traceTops = new Vector2[4];
+
+		private void RendereSceneTraceData(RectangleDouble selectionRectangle, DrawEventArgs e)
+		{
+			var bvhIterator = new BvhIterator(Scene?.TraceData(), decentFilter: (x) =>
+			{
+				// calculate all the top and bottom screen positions
+				for (int i = 0; i < 4; i++)
+				{
+					Vector3 bottomStartPosition = Vector3.Transform(x.Bvh.GetAxisAlignedBoundingBox().GetBottomCorner(i), x.TransformToWorld);
+					traceBottoms[i] = meshViewerWidget.World.GetScreenPosition(bottomStartPosition);
+
+					Vector3 topStartPosition = Vector3.Transform(x.Bvh.GetAxisAlignedBoundingBox().GetTopCorner(i), x.TransformToWorld);
+					traceTops[i] = meshViewerWidget.World.GetScreenPosition(topStartPosition);
+				}
+
+				RectangleDouble.OutCode allPoints = RectangleDouble.OutCode.Inside;
+				// check if we are inside all the points
+				for (int i = 0; i < 4; i++)
+				{
+					allPoints |= selectionRectangle.ComputeOutCode(traceBottoms[i]);
+					allPoints |= selectionRectangle.ComputeOutCode(traceTops[i]);
+				}
+
+				if(allPoints == RectangleDouble.OutCode.Surrounded)
+				{
+					return true;
+				}
+
+				for (int i = 0; i < 4; i++)
+				{
+					if (selectionRectangle.ClipLine(traceBottoms[i], traceBottoms[(i+1)%4])
+						|| selectionRectangle.ClipLine(traceTops[i], traceTops[(i+1)%4])
+						|| selectionRectangle.ClipLine(traceTops[i], traceBottoms[i]))
+					{
+						return true;
+					}
+				}
+
+				return false;
+			});
+
+			int count = bvhIterator.Count();
+
+			foreach (var x in bvhIterator)
+			{
+				for (int i = 0; i < 4; i++)
+				{
+					Vector3 bottomStartPosition = Vector3.Transform(x.Bvh.GetAxisAlignedBoundingBox().GetBottomCorner(i), x.TransformToWorld);
+					var bottomStartScreenPos = meshViewerWidget.World.GetScreenPosition(bottomStartPosition);
+
+					Vector3 bottomEndPosition = Vector3.Transform(x.Bvh.GetAxisAlignedBoundingBox().GetBottomCorner((i + 1) % 4), x.TransformToWorld);
+					var bottomEndScreenPos = meshViewerWidget.World.GetScreenPosition(bottomEndPosition);
+
+					Vector3 topStartPosition = Vector3.Transform(x.Bvh.GetAxisAlignedBoundingBox().GetTopCorner(i), x.TransformToWorld);
+					var topStartScreenPos = meshViewerWidget.World.GetScreenPosition(topStartPosition);
+
+					Vector3 topEndPosition = Vector3.Transform(x.Bvh.GetAxisAlignedBoundingBox().GetTopCorner((i + 1) % 4), x.TransformToWorld);
+					var topEndScreenPos = meshViewerWidget.World.GetScreenPosition(topEndPosition);
+
+					e.graphics2D.Line(bottomStartScreenPos, bottomEndScreenPos, RGBA_Bytes.Black);
+					e.graphics2D.Line(topStartScreenPos, topEndScreenPos, RGBA_Bytes.Black);
+					e.graphics2D.Line(topStartScreenPos, bottomStartScreenPos, RGBA_Bytes.Black);
+				}
+
+				TriangleShape tri = x.Bvh as TriangleShape;
+				if (tri != null)
+				{
+					for (int i = 0; i < 3; i++)
+					{
+						var vertexPos = tri.GetVertex(i);
+						var screenCenter = Vector3.Transform(vertexPos, x.TransformToWorld);
+						var screenPos = meshViewerWidget.World.GetScreenPosition(screenCenter);
+
+						e.graphics2D.Circle(screenPos, 3, RGBA_Bytes.Red);
+					}
+				}
+				else
+				{
+					var center = x.Bvh.GetCenter();
+					var worldCenter = Vector3.Transform(center, x.TransformToWorld);
+					var screenPos2 = meshViewerWidget.World.GetScreenPosition(worldCenter);
+					e.graphics2D.Circle(screenPos2, 3, RGBA_Bytes.Yellow);
+					e.graphics2D.DrawString($"{x.Depth},", screenPos2.x + 12 * x.Depth, screenPos2.y);
+				}
 			}
 		}
 
@@ -1279,7 +1370,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 							// start a selection rect
 							DragSelectionStartPosition = mouseEvent.Position - OffsetToMeshViewerWidget();
-							DragSelectionEndPosition = DragSelectionStartPosition- OffsetToMeshViewerWidget();
+							DragSelectionEndPosition = DragSelectionStartPosition;
 							DragSelectionInProgress = true;
 						}
 						else
