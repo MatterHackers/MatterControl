@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.IO;
+using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
@@ -44,7 +45,7 @@ namespace MatterHackers.MatterControl
 
 	public class SaveAsWindow : SystemWindow
 	{
-		private Action<SaveAsReturnInfo, Action> functionToCallOnSaveAs;
+		private Func<SaveAsReturnInfo, Task> functionToCallOnSaveAs;
 		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 		private MHTextEditWidget textToAddWidget;
 		private ListView librarySelectorWidget;
@@ -52,7 +53,7 @@ namespace MatterHackers.MatterControl
 
 		private ILibraryContext libraryNavContext;
 
-        public SaveAsWindow(Action<SaveAsReturnInfo, Action> functionToCallOnSaveAs, ILibraryContainer providerLocator, bool showQueue, bool getNewName)
+        public SaveAsWindow(Func<SaveAsReturnInfo, Task> functionToCallOnSaveAs, ILibraryContainer providerLocator, bool showQueue, bool getNewName)
 			: base(480, 500)
 		{
 			textImageButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -224,7 +225,7 @@ namespace MatterHackers.MatterControl
 				string fileName = Path.ChangeExtension(Path.GetRandomFileName(), ".amf");
 				string fileNameAndPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, fileName);
 
-				functionToCallOnSaveAs(new SaveAsReturnInfo(newName, fileNameAndPath, librarySelectorWidget.ActiveContainer), null);
+				functionToCallOnSaveAs(new SaveAsReturnInfo(newName, fileNameAndPath, librarySelectorWidget.ActiveContainer));
 
 				CloseOnIdle();
 			}

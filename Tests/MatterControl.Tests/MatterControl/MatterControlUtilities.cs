@@ -401,21 +401,18 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.ClickByName(partName);
 
 			testRunner.AddSelectedItemToBedplate();
+			testRunner.Delay(1);
 		}
 
 		public static void AddSelectedItemToBedplate(this AutomationRunner testRunner)
 		{
 			testRunner.ClickByName("Print Library Overflow Menu");
 			testRunner.ClickByName("Add to Plate Menu Item");
-
-			testRunner.ClickByName("Save Button");
-
-			testRunner.Delay(1);
 		}
 
 		public static void WaitForPrintFinished(this AutomationRunner testRunner)
 		{
-			testRunner.Delay(() => PrinterConnectionAndCommunication.Instance.CommunicationState == PrinterConnectionAndCommunication.CommunicationStates.FinishedPrint, 120);
+			testRunner.Delay(() => PrinterConnectionAndCommunication.Instance.CommunicationState == PrinterConnectionAndCommunication.CommunicationStates.FinishedPrint, 500);
 		}
 
 		public static async Task RunTest(

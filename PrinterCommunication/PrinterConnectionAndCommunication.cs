@@ -1335,7 +1335,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		public void PrintActivePart(bool overrideAllowGCode = false)
+		public async void PrintActivePart(bool overrideAllowGCode = false)
 		{
 			try
 			{
@@ -1352,7 +1352,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				}
 
 				// Save any pending changes before starting the print
-				ApplicationController.Instance.ActiveView3DWidget.PersistPlateIfNeeded();
+				await ApplicationController.Instance.ActiveView3DWidget.PersistPlateIfNeeded();
 
 				if (ActivePrintItem != null)
 				{
