@@ -10,26 +10,19 @@ using NUnit.Framework;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
+	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain, Apartment(ApartmentState.STA)]
 	public class PartPreviewTests
 	{
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task CopyButtonMakesCopyOfPart()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				SystemWindow systemWindow;
 
 				testRunner.CloseSignInAndPrinterSelect();
 
-				// Navigate to Local Library 
-				testRunner.ClickByName("Library Tab");
-				testRunner.NavigateToFolder("Local Library Row Item Collection");
-				testRunner.Delay(1);
-
-				testRunner.ClickByName("Row Item Calibration - Box");
-				testRunner.ClickByName("Row Item Calibration - Box View Button");
-				testRunner.Delay(1);
+				testRunner.AddDefaultFileToBedplate();
 
 				// Get View3DWidget
 				View3DWidget view3D = testRunner.GetWidgetByName("View3DWidget", out systemWindow, 3) as View3DWidget;
@@ -38,7 +31,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.WaitForName("3D View Copy", 3);
 				Assert.AreEqual(1, view3D.Scene.Children.Count, "Should have 1 part before copy");
 
-				testRunner.Select3DPart("Calibration - Box");
+				testRunner.Delay(20);
+				testRunner.Select3DPart("Calibration - Box.stl");
 
 				// Click Copy button and count Scene.Children 
 				testRunner.ClickByName("3D View Copy");
@@ -51,12 +45,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.AreEqual(3, view3D.Scene.Children.Count, "Should have 3 parts after 2nd copy");
 
 				return Task.CompletedTask;
-			};
-
-			await MatterControlUtilities.RunTest(testToRun, overrideWidth: 800, maxTimeToRun: 60);
+			}, overrideWidth: 1300, maxTimeToRun: 60);
 		}
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task GroupAndUngroup()
 		{
 			AutomationTest testToRun = (testRunner) =>
@@ -104,7 +96,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			await MatterControlUtilities.RunTest(testToRun, overrideWidth: 600);
 		}
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task RemoveButtonRemovesParts()
 		{
 			AutomationTest testToRun = (testRunner) =>
@@ -152,7 +144,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			await MatterControlUtilities.RunTest(testToRun, overrideWidth:600);
 		}
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task UndoRedoCopy()
 		{
 			AutomationTest testToRun = (testRunner) =>
@@ -217,7 +209,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			await MatterControlUtilities.RunTest(testToRun, overrideWidth: 640);
 		}
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task CopyRemoveUndoRedo()
 		{
 			AutomationTest testToRun = (testRunner) =>
@@ -269,7 +261,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			await MatterControlUtilities.RunTest(testToRun, overrideWidth: 800);
 		}
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task SaveAsToQueue()
 		{
 			AutomationTest testToRun = (testRunner) =>
