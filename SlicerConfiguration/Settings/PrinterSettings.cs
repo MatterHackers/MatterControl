@@ -354,6 +354,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
+		[JsonIgnore]
 		public string DocumentPath => ProfileManager.Instance.ProfilePath(this.ID);
 
 		[JsonIgnore]

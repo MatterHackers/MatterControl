@@ -8,13 +8,13 @@ using NUnit.Framework;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
+	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain, Apartment(ApartmentState.STA)]
 	public class FileMenuTest
 	{
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task FileMenuAddPrinter()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
@@ -27,15 +27,13 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Cancel Wizard Button");
 
 				return Task.CompletedTask;
-			};
-
-			await MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
+			}, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
 		}
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task AddToQueueMenuItemAddsSingleFile()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
@@ -44,30 +42,26 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Add File To Queue Menu Item");
 				testRunner.Delay(2);
 
-				string queueItemPath = MatterControlUtilities.GetTestItemPath("Fennec_Fox.stl");
+				int expectedCount = QueueData.Instance.ItemCount + 1;
 
-				int queueBeforeCount = QueueData.Instance.ItemCount;
-
-				testRunner.Type(queueItemPath);
+				testRunner.Type(MatterControlUtilities.GetTestItemPath("Fennec_Fox.stl"));
 				testRunner.Delay(1);
 				testRunner.Type("{Enter}");
 				testRunner.Delay(2);
-				Assert.IsTrue(testRunner.WaitForName("Queue Item Fennec_Fox", 2));
 
-				int queueAfterCount = QueueData.Instance.ItemCount;
+				testRunner.NavigateToFolder("Print Queue Row Item Collection");
 
-				Assert.IsTrue(queueAfterCount == queueBeforeCount + 1);
+				Assert.IsTrue(testRunner.WaitForName("Row Item Fennec_Fox"));
+				Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should increase by one after adding Fennec part");
 
 				return Task.CompletedTask;
-			};
-
-			await MatterControlUtilities.RunTest(testToRun);
+			});
 		}
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task AddToQueueMenuItemAddsMultipleFiles()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
@@ -76,34 +70,32 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Add File To Queue Menu Item");
 				testRunner.Delay(2);
 
-				string queueItemPath = MatterControlUtilities.GetTestItemPath("Fennec_Fox.stl");
+				int expectedCount = QueueData.Instance.ItemCount + 2;
 
-				string pathToSecondQueueItem = MatterControlUtilities.GetTestItemPath("Batman.stl");
-				string textForBothQueueItems = string.Format("\"{0}\" \"{1}\"", queueItemPath, pathToSecondQueueItem);
+				testRunner.Type(
+					string.Format("\"{0}\" \"{1}\"",
+						MatterControlUtilities.GetTestItemPath("Fennec_Fox.stl"),
+						MatterControlUtilities.GetTestItemPath("Batman.stl")));
 
-				int queueBeforeAddCount = QueueData.Instance.ItemCount;
-
-				testRunner.Type(textForBothQueueItems);
 				testRunner.Delay(2);
 				testRunner.Type("{Enter}");
 				testRunner.Delay(2);
-				Assert.IsTrue(testRunner.WaitForName("Queue Item Fennec_Fox", 2));
-				Assert.IsTrue(testRunner.WaitForName("Queue Item Batman", 2));
 
-				int queueAfterAddCount = QueueData.Instance.ItemCount;
+				testRunner.NavigateToFolder("Print Queue Row Item Collection");
 
-				Assert.IsTrue(queueAfterAddCount == queueBeforeAddCount + 2);
+				Assert.IsTrue(testRunner.WaitForName("Row Item Fennec_Fox", 2));
+				Assert.IsTrue(testRunner.WaitForName("Row Item Batman", 2));
+
+				Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should increase by two after adding Fennec and Batman parts");
 
 				return Task.CompletedTask;
-			};
-
-			await MatterControlUtilities.RunTest(testToRun);
+			});
 		}
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task AddToQueueMenuItemAddsZipFiles()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
@@ -112,22 +104,22 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Add File To Queue Menu Item");
 				testRunner.Delay(2);
 
-				int beforeCount = QueueData.Instance.ItemCount;
+				int expectedCount = QueueData.Instance.ItemCount + 2;
 
-				string pathToType = MatterControlUtilities.GetTestItemPath("Batman.zip");
-				testRunner.Type(pathToType);
+				testRunner.Type(MatterControlUtilities.GetTestItemPath("Batman.zip"));
 				testRunner.Delay(1);
 				testRunner.Type("{Enter}");
 				testRunner.Delay(1);
 
-				Assert.IsTrue(testRunner.WaitForName("Queue Item Batman", 1));
-				Assert.IsTrue(testRunner.WaitForName("Queue Item 2013-01-25_Mouthpiece_v2", 1));
-				Assert.IsTrue(QueueData.Instance.ItemCount == beforeCount + 2);
+				testRunner.NavigateToFolder("Print Queue Row Item Collection");
+
+				Assert.IsTrue(testRunner.WaitForName("Row Item Batman", 1));
+				Assert.IsTrue(testRunner.WaitForName("Row Item 2013-01-25_Mouthpiece_v2", 1));
+
+				Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should increase by two after adding contents of Batmap.zip");
 
 				return Task.CompletedTask;
-			};
-
-			await MatterControlUtilities.RunTest(testToRun);
+			});
 		}
 	}
 }

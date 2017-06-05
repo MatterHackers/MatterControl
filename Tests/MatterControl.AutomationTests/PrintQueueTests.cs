@@ -38,10 +38,10 @@ using NUnit.Framework;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Category("MatterControl.UI.Automation"), Category("MatterControl.Automation"), RunInApplicationDomain]
+	[TestFixture, Category("MatterControl.UI.Automation"), Category("MatterControl.Automation"), RunInApplicationDomain, Apartment(ApartmentState.STA)]
 	public class PrintQueueTests
 	{
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task AddOneItemToQueue()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			});
 		}
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task AddTwoItemsToQueue()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -112,7 +112,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		/// 2. QueueData.Instance.Count is correctly decremented after remove
 		/// 3. Target item does not exist after remove
 		/// </summary>
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task RemoveButtonRemovesSingleItem()
 		{
 			AutomationTest testToRun = (testRunner) =>
@@ -140,10 +140,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			await MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
 		}
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task RemoveLastItemInListChangesSelection()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
@@ -169,12 +169,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.IsFalse(testRunner.WaitForName("Queue Item MatterControl - Coin", .5), "Target item should not exist after Remove");
 
 				return Task.CompletedTask;
-			};
-
-			await MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
+			}, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
 		}
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task RemoveButtonRemovesMultipleItems()
 		{
 			AutomationTest testToRun = (testRunner) =>
@@ -215,7 +213,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			await MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
 		}
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task QueueSelectCheckBoxWorks()
 		{
 			AutomationTest testToRun = (testRunner) =>
@@ -258,7 +256,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			await MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
 		}
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task DragTo3DViewAddsItem()
 		{
 			AutomationTest testToRun = (testRunner) =>
@@ -289,7 +287,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			await MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
 		}
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task AddAmfFile()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -320,7 +318,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			});
 		}
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task AddStlFile()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -351,7 +349,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			});
 		}
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task AddGCodeFile()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>

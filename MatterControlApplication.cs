@@ -441,25 +441,6 @@ namespace MatterHackers.MatterControl
 		[STAThread]
 		public static void Main()
 		{
-			//foreach (string file in Directory.GetFiles(@"D:\Sources\TempTestX\MatterControl\StaticData\Icons\FileDialog", "*.png").Where(n => !n.Contains(".x.") && n.Contains("shared_folder")))
-			//{
-			//	var image = new ImageBuffer();
-			//	ImageIO.LoadImageData(file, image);
-
-			//	image = image.ReplaceColor(new RGBA_Bytes(255, 255, 255, 0), RGBA_Bytes.Blue, false);
-			//	image = image.ReplaceColor(RGBA_Bytes.Transparent, RGBA_Bytes.Blue, false);
-			//	image = image.ReplaceColor(RGBA_Bytes.Black, RGBA_Bytes.Transparent, false);
-
-			//	//				image = image.ReplaceColor(RGBA_Bytes.Blue, RGBA_Bytes.Black, false);
-			//	image = image.AllWhite(RGBA_Bytes.Black);
-
-			//	ImageIO.SaveImageData(file, image);
-			//	//ImageIO.SaveImageData(Path.ChangeExtension(file, ".x.png"), image);
-			//	//5break;
-			//}
-
-			//return;
-
 			PerformanceTimer.GetParentWindowFunction = () => { return MatterControlApplication.instance; };
 
 			CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;

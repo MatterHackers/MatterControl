@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 using System;
 using MatterHackers.Agg;
+using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ActionBar;
@@ -63,10 +64,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.AddChild(new PrintActionRow(buttonFactory, this));
 
 				//ImageBuffer terminalSettingsImage = StaticData.Instance.LoadIcon("terminal-24x24.png", 24, 24).InvertLightness();
-				var terminalButton = buttonFactory.Generate("Terminal".Localize().ToUpper());
-				terminalButton.Name = "Show Terminal Button";
-				terminalButton.Click += (s, e) => UiThread.RunOnIdle(TerminalWindow.Show);
-				this.AddChild(terminalButton);
 
 				/*
 				ImageBuffer levelingImage = StaticData.Instance.LoadIcon("leveling_32x32.png", 24, 24);
@@ -75,18 +72,29 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					levelingImage.InvertLightness();
 				}*/
 
-				Button configureEePromButton = buttonFactory.Generate("EEProm".Localize().ToUpper());
-				configureEePromButton.Click += configureEePromButton_Click;
-				this.AddChild(configureEePromButton);
 
 				//this.AddChild(new PrintStatusRow());
 
 				this.AddChild(new HorizontalSpacer());
 
-				//this.AddChild(GeneratePopupContent());
+				var initialMargin = buttonFactory.Margin;
 
-				Button undoButton = buttonFactory.Generate("Undo".Localize(), centerText: true);
+				buttonFactory.Margin = new BorderDouble(8, 0);
+
+				Button terminalButton = buttonFactory.Generate("", StaticData.Instance.LoadIcon("terminal-24x24.png", 16, 16));
+				terminalButton.Name = "Show Terminal Button";
+				terminalButton.ToolTipText = "Terminal";
+				terminalButton.Click += (s, e) => UiThread.RunOnIdle(TerminalWindow.Show);
+				this.AddChild(terminalButton);
+
+				Button configureEePromButton = buttonFactory.Generate("", StaticData.Instance.LoadIcon("chip_24x24.png", 16, 16));
+				configureEePromButton.ToolTipText = "EEProm";
+				configureEePromButton.Click += configureEePromButton_Click;
+				this.AddChild(configureEePromButton);
+
+				Button undoButton = buttonFactory.Generate("", StaticData.Instance.LoadIcon("undo_24x24.png", 16, 16));
 				undoButton.Name = "3D View Undo";
+				undoButton.ToolTipText = "Undo";
 				undoButton.Enabled = false;
 				undoButton.Margin = new BorderDouble(8, 0);
 				undoButton.Click += (sender, e) =>
@@ -94,15 +102,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					undoBuffer.Undo();
 				};
 				this.AddChild(undoButton);
+				undoButton.VAnchor = VAnchor.ParentCenter;
+				undoButton.Margin = 3;
 
-				Button redoButton = buttonFactory.Generate("Redo".Localize(), centerText: true);
+				Button redoButton = buttonFactory.Generate("", StaticData.Instance.LoadIcon("redo_24x24.png", 16, 16));
 				redoButton.Name = "3D View Redo";
+				redoButton.ToolTipText = "Redo";
 				redoButton.Enabled = false;
 				redoButton.Click += (sender, e) =>
 				{
 					undoBuffer.Redo();
 				};
 				this.AddChild(redoButton);
+				redoButton.VAnchor = VAnchor.ParentCenter;
+				redoButton.Margin = 3;
+
+				buttonFactory.Margin = initialMargin;
 
 				undoBuffer.Changed += (sender, e) =>
 				{
