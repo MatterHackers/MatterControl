@@ -62,6 +62,7 @@ namespace MatterHackers.MatterControl
 			{
 				// Initial 'Loading...' mesh
 				Mesh = PlatonicSolids.CreateCube(1, 3, 1),
+				Name = item.Name
 			};
 
 			return new ContentResult()
