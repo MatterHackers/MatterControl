@@ -454,8 +454,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			if (queueItemFolderToAdd != QueueTemplate.None)
 			{
-				string queueTemplateDirectory = queueItemFolderToAdd.ToString();
-				MatterControlUtilities.AddItemsToQueue(queueTemplateDirectory);
+				MatterControlUtilities.AddItemsToQueue(queueItemFolderToAdd.ToString());
 			}
 
 			if (defaultTestImages == null)
