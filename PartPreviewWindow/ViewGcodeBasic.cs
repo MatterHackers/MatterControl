@@ -204,12 +204,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					if (ActiveSliceSettings.Instance.PrinterSelected)
 					{
-						if (ActiveSliceSettings.Instance.IsValid() && printItem != null)
+						// Save any pending changes before starting the print
+						ApplicationController.Instance.ActiveView3DWidget.PersistPlateIfNeeded().ContinueWith((t) =>
 						{
-							generateGCodeButton.Visible = false;
-							SlicingQueue.Instance.QueuePartForSlicing(printItem);
-							startedSliceFromGenerateButton = true;
-						}
+							if (ActiveSliceSettings.Instance.IsValid() && printItem != null)
+							{
+								generateGCodeButton.Visible = false;
+								SlicingQueue.Instance.QueuePartForSlicing(printItem);
+								startedSliceFromGenerateButton = true;
+							}
+						});
 					}
 					else
 					{

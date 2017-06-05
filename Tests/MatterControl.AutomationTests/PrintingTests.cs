@@ -29,8 +29,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.SwitchToAdvancedSliceSettings();
 
-					testRunner.ClickByName("Printer Tab", 1);
-					testRunner.ClickByName("Custom G-Code Tab", 1);
+					testRunner.ClickByName("Printer Tab");
+					testRunner.ClickByName("Custom G-Code Tab");
 					testRunner.ClickByName("end_gcode Edit Field");
 					testRunner.Type("^a");
 					testRunner.Type("{BACKSPACE}");
@@ -38,7 +38,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.AddDefaultFileToBedplate();
 
-					testRunner.ClickByName("Start Print Button", 1);
+					testRunner.ClickByName("Start Print Button");
 
 					// Wait for print to finish
 					testRunner.WaitForPrintFinished();

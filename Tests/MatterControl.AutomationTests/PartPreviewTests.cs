@@ -18,20 +18,17 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				SystemWindow systemWindow;
-
 				testRunner.CloseSignInAndPrinterSelect();
 
 				testRunner.AddDefaultFileToBedplate();
 
 				// Get View3DWidget
-				View3DWidget view3D = testRunner.GetWidgetByName("View3DWidget", out systemWindow, 3) as View3DWidget;
+				View3DWidget view3D = testRunner.GetWidgetByName("View3DWidget", out _, 3) as View3DWidget;
 
-				// Click Edit button to make edit controls visible
-				testRunner.WaitForName("3D View Copy", 3);
+				testRunner.WaitForName("Calibration - Box.stl");
 				Assert.AreEqual(1, view3D.Scene.Children.Count, "Should have 1 part before copy");
 
-				testRunner.Delay(20);
+				// Select scene object
 				testRunner.Select3DPart("Calibration - Box.stl");
 
 				// Click Copy button and count Scene.Children 
@@ -41,7 +38,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				// Click Copy button a second time and count Scene.Children
 				testRunner.ClickByName("3D View Copy");
-				testRunner.Delay(() => view3D.Scene.Children.Count == 3, 3);
+				testRunner.Delay(() => view3D.Scene.Children.Count > 2, 3);
 				Assert.AreEqual(3, view3D.Scene.Children.Count, "Should have 3 parts after 2nd copy");
 
 				return Task.CompletedTask;
@@ -51,34 +48,30 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[Test]
 		public async Task GroupAndUngroup()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
-				//Navigate to Local Library 
-				testRunner.ClickByName("Library Tab");
-				testRunner.NavigateToFolder("Local Library Row Item Collection");
-				testRunner.Delay(1);
-				testRunner.ClickByName("Row Item Calibration - Box");
-				MatterControlUtilities.LibraryEditSelectedItem(testRunner);
+				testRunner.AddDefaultFileToBedplate();
 
-				//Get View3DWidget and count Scene.Children before Copy button is clicked
-				SystemWindow systemWindow;
-				GuiWidget partPreview = testRunner.GetWidgetByName("View3DWidget", out systemWindow, 3);
-				View3DWidget view3D = partPreview as View3DWidget;
+				// Get View3DWidget and count Scene.Children before Copy button is clicked
+				View3DWidget view3D = testRunner.GetWidgetByName("View3DWidget", out _, 3) as View3DWidget;
 
-				int partCountBeforeCopy = view3D.Scene.Children.Count();
-				Assert.IsTrue(partCountBeforeCopy == 1);
+				// Assert expected start count
+				Assert.AreEqual(1, view3D.Scene.Children.Count, "Should have one part before copy");
 
-				for (int i = 0; i <= 4; i++)
+				// Select scene object
+				testRunner.Select3DPart("Calibration - Box.stl");
+
+				for (int i = 2; i <= 6; i++)
 				{
 					testRunner.ClickByName("3D View Copy");
-					testRunner.Delay(() => view3D.Scene.Children.Count == i+2, 3);
-					Assert.AreEqual(i + 2, view3D.Scene.Children.Count, $"Should have {i+2} parts after copy");
+					testRunner.Delay(() => view3D.Scene.Children.Count == i, 3);
+					Assert.AreEqual(i, view3D.Scene.Children.Count, $"Should have {i} parts after copy");
 				}
 
-				//Get MeshGroupCount before Group is clicked
-				Assert.AreEqual(6, view3D.Scene.Children.Count());
+				// Get MeshGroupCount before Group is clicked
+				Assert.AreEqual(6, view3D.Scene.Children.Count, "Scene should have 6 parts after copy loop");
 
 				testRunner.Type("^a");
 
@@ -91,9 +84,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.AreEqual(6, view3D.Scene.Children.Count, $"Should have 6 parts after ungroup");
 
 				return Task.CompletedTask;
-			};
-
-			await MatterControlUtilities.RunTest(testToRun, overrideWidth: 600);
+			}, overrideWidth: 1300);
 		}
 
 		[Test]

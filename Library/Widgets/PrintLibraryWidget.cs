@@ -377,6 +377,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						}
 					}
 
+					ApplicationController.Instance.ActiveView3DWidget.partHasBeenEdited = true;
+
 					var scene = ApplicationController.Instance.ActiveView3DWidget.Scene;
 					scene.ModifyChildren(children =>
 					{

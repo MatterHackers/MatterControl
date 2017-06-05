@@ -182,14 +182,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private static string PartsNotPrintableMessage = "Parts are not on the bed or outside the print area.\n\nWould you like to center them on the bed?".Localize();
 		private static string PartsNotPrintableTitle = "Parts not in print area".Localize();
 
-		private Action afterSaveCallback = null;
 		private bool editorThatRequestedSave = false;
 		private ExportPrintItemWindow exportingWindow = null;
 		private ObservableCollection<GuiWidget> extruderButtons = new ObservableCollection<GuiWidget>();
 		private bool hasDrawn = false;
 
 		private OpenMode openMode;
-		private bool partHasBeenEdited = false;
+		internal bool partHasBeenEdited = false;
 		private PrintItemWrapper printItemWrapper { get; set; }
 		private ProgressControl processingProgressControl;
 		private SaveAsWindow saveAsWindow = null;
@@ -552,11 +551,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// make sure the colors are set correct
 			ThemeChanged(this, null);
-
-			saveButtons.VisibleChanged += (sender, e) =>
-			{
-				partHasBeenEdited = true;
-			};
 
 			if (DoBooleanTest)
 			{
@@ -976,6 +970,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.deferEditorTillMouseUp = false;
 			Scene_SelectionChanged(null, null);
+
+			this.PartHasBeenChanged();
 		}
 
 		public override void OnLoad(EventArgs args)
@@ -1060,6 +1056,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				dragDropItem.Matrix = loadedItem.Matrix * dragDropItem.Matrix;
 				dragDropItem.Matrix *= Matrix4X4.CreateTranslation(-meshGroupCenter.x, -meshGroupCenter.y, -dragDropItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity).minXYZ.z);
 			}
+
+			this.PartHasBeenChanged();
 		}
 
 		public override void OnDraw(Graphics2D graphics2D)
@@ -1556,6 +1554,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void PartHasBeenChanged()
 		{
+			partHasBeenEdited = true;
 			saveButtons.Visible = true;
 			SelectedTransformChanged?.Invoke(this, null);
 			Invalidate();
@@ -1985,6 +1984,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					currentRatioDone += ratioPerFile;
 				}
 			}
+
+			this.PartHasBeenChanged();
 		}
 
 		public void LockEditControls()
@@ -2091,10 +2092,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private GuiWidget selectedObjectPanel;
 		private FlowLayoutWidget editorPanel;
 
-		private async void SaveChanges(SaveAsWindow.SaveAsReturnInfo returnInfo = null, Action eventToCallAfterSave = null)
+		private async Task SaveChanges(SaveAsWindow.SaveAsReturnInfo returnInfo = null)
 		{
 			editorThatRequestedSave = true;
-			afterSaveCallback = eventToCallAfterSave;
 
 			if (Scene.HasChildren)
 			{
@@ -2176,7 +2176,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				UnlockEditControls();
 				saveButtons.Visible = true;
-				afterSaveCallback?.Invoke();
+				partHasBeenEdited = false;
 			}
 		}
 
@@ -2372,11 +2372,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		}
 
 		// Before printing persist any changes to disk
-		internal void PersistPlateIfNeeded()
+		internal async Task PersistPlateIfNeeded()
 		{
 			if (partHasBeenEdited)
 			{
-				SaveChanges(null);
+				await SaveChanges(null);
 			}
 		}
 
