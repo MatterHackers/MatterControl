@@ -203,20 +203,16 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[Test]
 		public async Task CopyRemoveUndoRedo()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				SystemWindow systemWindow;
-
 				testRunner.CloseSignInAndPrinterSelect();
 
-				// Navigate to Local Library 
-				testRunner.ClickByName("Library Tab");
-				testRunner.NavigateToFolder("Local Library Row Item Collection");
-				testRunner.ClickByName("Row Item Calibration - Box", 1);
-				MatterControlUtilities.LibraryEditSelectedItem(testRunner);
+				testRunner.AddDefaultFileToBedplate();
 
 				// Get View3DWidget
-				View3DWidget view3D = testRunner.GetWidgetByName("View3DWidget", out systemWindow, 3) as View3DWidget;
+				var view3D = testRunner.GetWidgetByName("View3DWidget", out _) as View3DWidget;
+
+				testRunner.Select3DPart("Calibration - Box.stl");
 
 				// Click Edit button to make edit controls visible
 				testRunner.WaitForName("3D View Copy", 3);
@@ -247,9 +243,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Delay(.1);
 
 				return Task.CompletedTask;
-			};
-
-			await MatterControlUtilities.RunTest(testToRun, overrideWidth: 800);
+			}, overrideWidth: 1300);
 		}
 
 		[Test]
