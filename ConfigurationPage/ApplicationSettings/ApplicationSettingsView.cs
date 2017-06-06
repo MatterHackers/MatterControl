@@ -84,6 +84,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				mainContainer.AddChild(new HorizontalLine(50));
 
 				mainContainer.AddChild(GetDisplayControl());
+				mainContainer.AddChild(GetTextSizeControl());
 				mainContainer.AddChild(new HorizontalLine(50));
 			}
 			#endif
@@ -187,6 +188,76 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			buttonRow.AddChild(settingLabel);
 			buttonRow.AddChild(colorSelectorContainer);
 
+			return buttonRow;
+		}
+
+		private FlowLayoutWidget GetTextSizeControl()
+		{
+			FlowLayoutWidget buttonRow = new FlowLayoutWidget();
+			buttonRow.HAnchor = HAnchor.ParentLeftRight;
+			buttonRow.Margin = new BorderDouble(top: 4);
+
+			TextWidget settingsLabel = new TextWidget("Text Size".Localize());
+			settingsLabel.AutoExpandBoundsToText = true;
+			settingsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			settingsLabel.VAnchor = VAnchor.ParentTop;
+
+			Button textSizeControlRestartButton = textImageButtonFactory.Generate("Restart".Localize());
+			textSizeControlRestartButton.VAnchor = Agg.UI.VAnchor.ParentCenter;
+			textSizeControlRestartButton.Visible = false;
+			textSizeControlRestartButton.Margin = new BorderDouble(right: 6);
+			textSizeControlRestartButton.Click += (sender, e) =>
+			{
+				if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting)
+				{
+					StyledMessageBox.ShowMessageBox(null, cannotRestartWhilePrintIsActiveMessage, cannotRestartWhileActive);
+				}
+				else
+				{
+					RestartApplication();
+				}
+			};
+
+			FlowLayoutWidget optionsContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
+			optionsContainer.Margin = new BorderDouble(bottom: 6);
+
+			DropDownList interfaceOptionsDropList = new DropDownList("Development", maxHeight: 200);
+			interfaceOptionsDropList.HAnchor = HAnchor.ParentLeftRight;
+
+			optionsContainer.AddChild(interfaceOptionsDropList);
+			optionsContainer.Width = 200;
+
+			interfaceOptionsDropList.AddItem(".8");
+			interfaceOptionsDropList.AddItem(".9");
+			interfaceOptionsDropList.AddItem("1.0");
+			interfaceOptionsDropList.AddItem("1.1");
+			interfaceOptionsDropList.AddItem("1.2");
+			interfaceOptionsDropList.AddItem("1.3");
+			interfaceOptionsDropList.AddItem("1.4");
+
+			List<string> acceptableUpdateFeedTypeValues = new List<string>() { ".8", ".9", "1.0", "1.1", "1.2", "1.3", "1.4" };
+			string currentTextModeType = UserSettings.Instance.get(UserSettingsKey.ApplicationTextSize);
+
+			if (acceptableUpdateFeedTypeValues.IndexOf(currentTextModeType) == -1)
+			{
+				currentTextModeType = "1.0";
+			}
+
+			interfaceOptionsDropList.SelectedValue = currentTextModeType;
+			interfaceOptionsDropList.SelectionChanged += (sender, e) =>
+			{
+				string textSizeMode = ((DropDownList)sender).SelectedValue;
+				if (textSizeMode != UserSettings.Instance.get(UserSettingsKey.ApplicationTextSize))
+				{
+					UserSettings.Instance.set(UserSettingsKey.ApplicationTextSize, textSizeMode);
+					textSizeControlRestartButton.Visible = true;
+				}
+			};
+
+			buttonRow.AddChild(settingsLabel);
+			buttonRow.AddChild(new HorizontalSpacer());
+			buttonRow.AddChild(textSizeControlRestartButton);
+			buttonRow.AddChild(optionsContainer);
 			return buttonRow;
 		}
 

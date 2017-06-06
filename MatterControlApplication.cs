@@ -274,6 +274,16 @@ namespace MatterHackers.MatterControl
 				GuiWidget.DeviceScale = 1.3;
 				SystemWindow.ShareSingleOsWindow = true;
 			}
+			string textSizeMode = UserSettings.Instance.get(UserSettingsKey.ApplicationTextSize);
+			if (!string.IsNullOrEmpty(textSizeMode))
+			{
+				double textSize = 1.0;
+				if(double.TryParse(textSizeMode, out textSize))
+				{
+					GuiWidget.DeviceScale = textSize;
+				}
+			}
+
 			//GuiWidget.DeviceScale = 2;
 
 			using (new PerformanceTimer("Startup", "MainView"))

@@ -6205,3 +6205,6 @@ Translated:XOffset
 English:Add to Plate
 Translated:Add to Plate
 
+English:Text Size
+Translated:Text Size
+
