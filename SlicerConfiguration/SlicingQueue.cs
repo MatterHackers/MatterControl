@@ -302,6 +302,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 									savedStlCount++;
 								}
 							}
+							else
+							{
+								extruderFilesToSlice.Add(SaveAndGetFilenameForMaterial(meshGroup, materialsToInclude));
+							}
 						}
 
 						return extruderFilesToSlice.ToArray();
