@@ -232,8 +232,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private FoundStringStartsWithCallbacks ReadLineStartCallBacks = new FoundStringStartsWithCallbacks();
 
-		private string removeFromQueueMessage = "Cannot find this file\nWould you like to remove it from the queue?".Localize();
-
 		// we start out by setting it to a nothing file
 		private IFrostedSerialPort serialPort;
 
@@ -1401,11 +1399,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 								partToPrint.SlicingDone += partToPrint_SliceDone;
 							}
 						}
-						else
-						{
-							string message = String.Format(removeFromQueueMessage, pathAndFile);
-							StyledMessageBox.ShowMessageBox(onRemoveMessageConfirm, message, itemNotFoundMessage, StyledMessageBox.MessageType.YES_NO, "Remove".Localize(), "Cancel".Localize());
-						}
 					}
 				}
 			}
@@ -2571,14 +2564,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		private void OnFirmwareVersionRead(EventArgs e)
 		{
 			FirmwareVersionRead.CallEvents(this, e);
-		}
-
-		private void onRemoveMessageConfirm(bool messageBoxResponse)
-		{
-			if (messageBoxResponse)
-			{
-				QueueData.Instance.RemoveAt(QueueData.Instance.SelectedIndex);
-			}
 		}
 
 		private bool IsNetworkPrinting()

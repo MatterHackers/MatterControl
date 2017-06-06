@@ -176,7 +176,14 @@ namespace MatterHackers.MatterControl.Library
 							{
 								using (var stream = File.OpenRead(filePath))
 								{
-									AddItem(stream, Path.GetExtension(filePath).ToUpper(), PrintItemWrapperExtensionMethods.GetFriendlyName(Path.GetFileNameWithoutExtension(filePath)));
+									// If the passed in item name equals the fileName, perform friendly name conversion, otherwise use supplied value
+									string itemName = item.Name;
+									if (itemName == Path.GetFileName(filePath))
+									{
+										itemName = PrintItemWrapperExtensionMethods.GetFriendlyName(Path.GetFileNameWithoutExtension(filePath));
+									}
+									
+									AddItem(stream, Path.GetExtension(filePath).ToUpper(), itemName);
 								}
 							}
 						}

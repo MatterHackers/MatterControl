@@ -2291,11 +2291,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								var writableContainer = libraryToSaveTo as ILibraryWritableContainer;
 								if (writableContainer != null)
 								{
-									writableContainer.Add(new[] { new FileSystemFileItem(printItemWrapper.FileLocation) });
-
-									// HACK: This is a short term hack to get back into the game
-									// Set active item
-									//PrinterConnectionAndCommunication.Instance.ActivePrintItem = printItemWrapper;
+									writableContainer.Add(new[]
+									{
+										new FileSystemFileItem(printItemWrapper.FileLocation)
+										{
+											Name = returnInfo.newName
+										}
+									});
 								}
 
 								libraryToSaveTo.Dispose();
