@@ -227,32 +227,24 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[Test]
 		public async Task DragTo3DViewAddsItem()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
-				int queueItemCount = QueueData.Instance.ItemCount;
+				testRunner.AddTestAssetsToLibrary("Batman.stl");
 
-				bool queueItemExists = testRunner.WaitForName("Queue Item Batman", 2);
-				bool secondQueueItemExists = testRunner.WaitForName("Queue Item 2013-01-25_Mouthpiece_v2", 2);
+				var view3D = testRunner.GetWidgetByName("View3DWidget", out _) as View3DWidget;
 
-				SystemWindow systemWindow;
-				GuiWidget partPreview = testRunner.GetWidgetByName("View3DWidget", out systemWindow, 3);
-				View3DWidget view3D = partPreview as View3DWidget;
+				Assert.AreEqual(0, view3D.Scene.Children.Count, "The scene should have zero items before drag/drop");
 
-				Assert.IsTrue(view3D.Scene.Children.Count() == 1);
-				testRunner.DragDropByName("Queue Item Batman", "centerPartPreviewAndControls");
-				Assert.IsTrue(view3D.Scene.Children.Count() == 1);
+				testRunner.DragDropByName("Row Item Batman", "centerPartPreviewAndControls");
+				Assert.AreEqual(1, view3D.Scene.Children.Count, "The scene should have one item after drag/drop");
 
-				testRunner.ClickByName("3D View Edit");
-				testRunner.DragDropByName("Queue Item Batman", "centerPartPreviewAndControls");
-
-				Assert.IsTrue(view3D.Scene.Children.Count() == 2);
+				testRunner.DragDropByName("Row Item Batman", "centerPartPreviewAndControls");
+				Assert.AreEqual(2, view3D.Scene.Children.Count, "The scene should have two items after drag/drop");
 
 				return Task.CompletedTask;
-			};
-
-			await MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
+			}, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
 		}
 
 		[Test]
