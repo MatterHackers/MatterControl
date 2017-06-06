@@ -141,38 +141,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		}
 
 		[Test]
-		public async Task RemoveLastItemInListChangesSelection()
-		{
-			await MatterControlUtilities.RunTest((testRunner) =>
-			{
-				testRunner.CloseSignInAndPrinterSelect();
-
-				testRunner.Delay(1);
-
-				int expectedQueueCount = QueueData.Instance.ItemCount - 1;
-
-				Assert.AreEqual(QueueData.Instance.SelectedIndex, 0);
-
-				testRunner.ClickByName("Queue Item Calibration - Box", 2);
-
-				Assert.AreEqual(QueueData.Instance.SelectedIndex, 3);
-
-				// Remove target item
-				testRunner.ClickByName("Queue Remove Button", 2);
-				testRunner.Delay(.5);
-
-				// after remove we select the next up the list
-				Assert.AreEqual(QueueData.Instance.SelectedIndex, 0);
-
-				// Assert removed
-				Assert.AreEqual(expectedQueueCount, QueueData.Instance.ItemCount, "After Remove button click, Queue count should be 1 less");
-				Assert.IsFalse(testRunner.WaitForName("Queue Item MatterControl - Coin", .5), "Target item should not exist after Remove");
-
-				return Task.CompletedTask;
-			}, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
-		}
-
-		[Test]
 		public async Task RemoveButtonRemovesMultipleItems()
 		{
 			AutomationTest testToRun = (testRunner) =>

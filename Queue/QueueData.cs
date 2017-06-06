@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Kevin Pope
+Copyright (c) 2017, Kevin Pope, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,6 +27,11 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
 using MatterHackers.Agg;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
@@ -34,13 +39,6 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.PolygonMesh.Processors;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using System.Collections.ObjectModel;
-using System.Linq;
 
 namespace MatterHackers.MatterControl.PrintQueue
 {
@@ -65,47 +63,8 @@ namespace MatterHackers.MatterControl.PrintQueue
 			get { return printItems; }
 		}
 
-		private List<int> selectedIndices = new List<int>();
-
-		public IEnumerable<int> SelectedIndexes
-		{
-			get
-			{
-				return selectedIndices.ToArray();
-			}
-		}
-
-		public int SelectedIndex
-		{
-			get
-			{
-				if (ItemCount > 0)
-				{
-					if (selectedIndices.Count == 0)
-					{
-						// always have a selection if we have items
-						selectedIndices.Add(0);
-					}
-					return selectedIndices[0];
-				}
-
-				return -1;
-			}
-			set
-			{
-				if (!selectedIndices.Contains(value)
-					|| selectedIndices.Count > 1)
-				{
-					selectedIndices.Clear();
-					selectedIndices.Add(value);
-					OnSelectedIndexChanged(null);
-			}
-		}
-		}
-
 		public RootedObjectEventHandler ItemAdded = new RootedObjectEventHandler();
 		public RootedObjectEventHandler ItemRemoved = new RootedObjectEventHandler();
-		public RootedObjectEventHandler SelectedIndexChanged = new RootedObjectEventHandler();
 
 		private static QueueData instance;
 		public static QueueData Instance
@@ -121,53 +80,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 			}
 		}
 
-		public void MoveToNext()
-		{
-			if (SelectedIndex >= 0 && SelectedIndex < ItemCount)
-			{
-				if (this.SelectedIndex == ItemCount - 1)
-				{
-					this.SelectedIndex = 0;
-				}
-				else
-				{
-					this.SelectedIndex++;
-				}
-			}
-		}
-
-		public PrintItemWrapper SelectedPrintItem
-		{
-			get
-			{
-				if (SelectedIndex >= 0)
-				{
-					return GetPrintItemWrapper(SelectedIndex);
-				}
-				else
-				{
-					return null;
-				}
-			}
-
-			set
-			{
-				if (SelectedPrintItem != value)
-				{
-					for (int index = 0; index < PrintItems.Count; index++)
-					{
-						if (PrintItems[index] == value)
-						{
-							SelectedIndex = index;
-							return;
-						}
-					}
-
-					throw new Exception("Item not in queue.");
-				}
-			}
-		}
-
 		public void RemoveAt(int index)
 		{
 			if (index >= 0 && index < ItemCount)
@@ -179,8 +91,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 					PrintItems.RemoveAt(index);
 
 					OnItemRemoved(new ItemChangedArgs(index));
-					OnSelectedIndexChanged(null);
-
 					SaveDefaultQueue();
 				}
 			}
@@ -189,11 +99,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 		public void OnItemRemoved(EventArgs e)
 		{
 			ItemRemoved.CallEvents(this, e);
-		}
-
-		public void OnSelectedIndexChanged(EventArgs e)
-		{
-			SelectedIndexChanged.CallEvents(this, e);
 		}
 
 		public PrintItemWrapper GetPrintItemWrapper(int index)
@@ -398,7 +303,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 			PrintItems.Insert(insertAt, item);
 			OnItemAdded(new ItemChangedArgs(insertAt));
-			OnSelectedIndexChanged(null);
 			SaveDefaultQueue();
 		}
 
@@ -449,107 +353,11 @@ namespace MatterHackers.MatterControl.PrintQueue
 			}
 		}
 
-		public int SelectedCount
-		{
-			get
-			{
-				if (ItemCount > 0)
-				{
-					if (selectedIndices.Count > 0)
-					{
-						return selectedIndices.Count;
-					}
-
-					return 1;
-				}
-
-				return 0;
-			}
-		}
-
 		public void RemoveAll()
 		{
 			for (int i = PrintItems.Count - 1; i >= 0; i--)
 			{
 				RemoveAt(i);
-			}
-		}
-
-		public void RemoveSelected()
-		{
-			if (ItemCount > 0 && SelectedCount > 0)
-			{
-				// Sort by index in the QueueData list to prevent positions shifting due to removes
-				var sortedByValue = SelectedIndexes.OrderByDescending(rowItem => rowItem);
-
-				// Once sorted, remove each selected item
-				foreach (var index in sortedByValue)
-				{
-					RemoveAt(index);
-	}
-
-				selectedIndices.Clear();
-				OnSelectedIndexChanged(null);
-			}
-		}
-
-		public void ToggleSelect(int index)
-		{
-			if (selectedIndices.Contains(index))
-			{
-				Unselect(index);
-			}
-			else
-			{
-				Select(index);
-			}
-		}
-
-		public void ToggleSelect(PrintItemWrapper printItem)
-		{
-			ToggleSelect(GetIndex(printItem));
-		}
-
-		public void MakeSingleSelection()
-		{
-			if (ItemCount > 0
-				&& SelectedCount > 1)
-			{
-				SelectedIndex = selectedIndices[selectedIndices.Count - 1];
-			}
-
-			if(ItemCount > 0
-				&& SelectedIndex < 0)
-			{
-				SelectedIndex = 0;
-			}
-			else if(ItemCount > 0
-				&& SelectedIndex >= ItemCount)
-			{
-				SelectedIndex = ItemCount - 1;
-			}
-		}
-
-		public void Select(int index)
-		{
-			if (!selectedIndices.Contains(index)
-				&& index >= 0
-				&& index < ItemCount)
-			{
-				selectedIndices.Add(index);
-				OnSelectedIndexChanged(null);
-			}
-		}
-	
-
-		public void Unselect(int index)
-		{
-			if (selectedIndices.Contains(index)
-				&& index >= 0
-				&& index < ItemCount)
-			{
-				selectedIndices.Remove(index);
-				OnSelectedIndexChanged(null);
 			}
 		}
 	}
