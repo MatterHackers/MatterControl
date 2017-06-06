@@ -1085,36 +1085,36 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				var selectionRectangle = new RectangleDouble(DragSelectionStartPosition, DragSelectionEndPosition);
 				e.graphics2D.Rectangle(selectionRectangle, RGBA_Bytes.Red);
-				//DoRectangleSelction(e);
+				//DoRectangleSelection(e);
 			}
 		}
 
 		bool foundTriangleInSelectionBounds;
-		private void DoRectangleSelction(DrawEventArgs e)
+		private void DoRectangleSelection(DrawEventArgs e)
 		{
 			var allResults = new List<BvhIterator>();
 
-			var matches = Scene.Children.Where(item =>
+			var matchingSceneChildren = Scene.Children.Where(item =>
 			{
 				foundTriangleInSelectionBounds = false;
+
+				// Filter the IPrimitive trace data finding matches as defined in InSelectionBounds
 				var filteredResults = item.TraceData().Filter(InSelectionBounds);
 
+				// Accumulate all matching BvhIterator results for debug rendering
 				allResults.AddRange(filteredResults);
 
-				int count2 = filteredResults.Count();
 				return foundTriangleInSelectionBounds;
 			});
 
-
-			int count = allResults.Count();
-
-			if (matches.Any())
+			// Apply selection
+			if (matchingSceneChildren.Any())
 			{
 				Scene.ClearSelection();
 
-				foreach (var x in matches)
+				foreach (var sceneItem in matchingSceneChildren)
 				{
-					Scene.AddToSelection(x);
+					Scene.AddToSelection(sceneItem);
 				}
 			}
 
@@ -1577,7 +1577,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 				else if (DragSelectionInProgress)
 				{
-					DoRectangleSelction(null);
+					DoRectangleSelection(null);
 					DragSelectionInProgress = false;
 				}
 			}
