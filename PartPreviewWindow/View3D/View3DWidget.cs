@@ -1093,49 +1093,88 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		Vector2[] traceBottoms = new Vector2[4];
 		Vector2[] traceTops = new Vector2[4];
 
+
+
 		private void RendereSceneTraceData(RectangleDouble selectionRectangle, DrawEventArgs e)
 		{
-			var bvhIterator = new BvhIterator(Scene?.TraceData(), decentFilter: (x) =>
+			var allResults = new List<BvhIterator>();
+
+			var matches = Scene.Children.Where(item =>
 			{
-				// calculate all the top and bottom screen positions
-				for (int i = 0; i < 4; i++)
+				int triangleCount = 0;
+				var filteredResults = item.TraceData().Filter((x) =>
 				{
-					Vector3 bottomStartPosition = Vector3.Transform(x.Bvh.GetAxisAlignedBoundingBox().GetBottomCorner(i), x.TransformToWorld);
-					traceBottoms[i] = meshViewerWidget.World.GetScreenPosition(bottomStartPosition);
-
-					Vector3 topStartPosition = Vector3.Transform(x.Bvh.GetAxisAlignedBoundingBox().GetTopCorner(i), x.TransformToWorld);
-					traceTops[i] = meshViewerWidget.World.GetScreenPosition(topStartPosition);
-				}
-
-				RectangleDouble.OutCode allPoints = RectangleDouble.OutCode.Inside;
-				// check if we are inside all the points
-				for (int i = 0; i < 4; i++)
-				{
-					allPoints |= selectionRectangle.ComputeOutCode(traceBottoms[i]);
-					allPoints |= selectionRectangle.ComputeOutCode(traceTops[i]);
-				}
-
-				if(allPoints == RectangleDouble.OutCode.Surrounded)
-				{
-					return true;
-				}
-
-				for (int i = 0; i < 4; i++)
-				{
-					if (selectionRectangle.ClipLine(traceBottoms[i], traceBottoms[(i+1)%4])
-						|| selectionRectangle.ClipLine(traceTops[i], traceTops[(i+1)%4])
-						|| selectionRectangle.ClipLine(traceTops[i], traceBottoms[i]))
+					if(triangleCount > 1)
 					{
+						return false;
+					}
+					if (x.Bvh is TriangleShape tri)
+					{
+						// check if any vertex in screen rect
+
+						triangleCount++;
 						return true;
 					}
-				}
+					else
+					{
+						// calculate all the top and bottom screen positions
+						for (int i = 0; i < 4; i++)
+						{
+							Vector3 bottomStartPosition = Vector3.Transform(x.Bvh.GetAxisAlignedBoundingBox().GetBottomCorner(i), x.TransformToWorld);
+							traceBottoms[i] = meshViewerWidget.World.GetScreenPosition(bottomStartPosition);
 
-				return false;
+							Vector3 topStartPosition = Vector3.Transform(x.Bvh.GetAxisAlignedBoundingBox().GetTopCorner(i), x.TransformToWorld);
+							traceTops[i] = meshViewerWidget.World.GetScreenPosition(topStartPosition);
+						}
+
+						RectangleDouble.OutCode allPoints = RectangleDouble.OutCode.Inside;
+						// check if we are inside all the points
+						for (int i = 0; i < 4; i++)
+						{
+							allPoints |= selectionRectangle.ComputeOutCode(traceBottoms[i]);
+							allPoints |= selectionRectangle.ComputeOutCode(traceTops[i]);
+						}
+
+						if (allPoints == RectangleDouble.OutCode.Surrounded)
+						{
+							return true;
+						}
+
+						for (int i = 0; i < 4; i++)
+						{
+							if (selectionRectangle.ClipLine(traceBottoms[i], traceBottoms[(i + 1) % 4])
+								|| selectionRectangle.ClipLine(traceTops[i], traceTops[(i + 1) % 4])
+								|| selectionRectangle.ClipLine(traceTops[i], traceBottoms[i]))
+							{
+								return true;
+							}
+						}
+					}
+
+					return false;
+				});
+
+				allResults.AddRange(filteredResults);
+
+				int count2 = filteredResults.Count();
+				return triangleCount > 0;
 			});
 
-			int count = bvhIterator.Count();
 
-			foreach (var x in bvhIterator)
+			int count = allResults.Count();
+
+			if (matches.Any())
+			{
+				Scene.ClearSelection();
+
+				foreach (var x in matches)
+				{
+					Scene.AddToSelection(x);
+				}
+			}
+
+
+			foreach (var x in allResults)
 			{
 				for (int i = 0; i < 4; i++)
 				{
