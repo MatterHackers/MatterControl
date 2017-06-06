@@ -1080,96 +1080,29 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private void AfterDraw3DContent(object sender, DrawEventArgs e)
 		{
 			//RendereSceneTraceData(e);
-			//RenderSceneObjectData(e);
 
 			if (DragSelectionInProgress)
 			{
 				var selectionRectangle = new RectangleDouble(DragSelectionStartPosition, DragSelectionEndPosition);
 				e.graphics2D.Rectangle(selectionRectangle, RGBA_Bytes.Red);
-				RendereSceneTraceData(selectionRectangle, e);
+				//DoRectangleSelction(e);
 			}
 		}
 
-		Vector2[] traceBottoms = new Vector2[4];
-		Vector2[] traceTops = new Vector2[4];
-
-
-
-		private void RendereSceneTraceData(RectangleDouble selectionRectangle, DrawEventArgs e)
+		bool foundTriangleInSelectionBounds;
+		private void DoRectangleSelction(DrawEventArgs e)
 		{
 			var allResults = new List<BvhIterator>();
 
 			var matches = Scene.Children.Where(item =>
 			{
-				int triangleCount = 0;
-				var filteredResults = item.TraceData().Filter((x) =>
-				{
-					if(triangleCount > 1)
-					{
-						return false;
-					}
-					if (x.Bvh is TriangleShape tri)
-					{
-						// check if any vertex in screen rect
-						// calculate all the top and bottom screen positions
-						for (int i = 0; i < 3; i++)
-						{
-							Vector3 bottomStartPosition = Vector3.Transform(tri.GetVertex(i), x.TransformToWorld);
-							traceBottoms[i] = meshViewerWidget.World.GetScreenPosition(bottomStartPosition);
-						}
-
-						for (int i = 0; i < 3; i++)
-						{
-							if (selectionRectangle.ClipLine(traceBottoms[i], traceBottoms[(i + 1) % 3]))
-							{
-								triangleCount++;
-								return true;
-							}
-						}
-					}
-					else
-					{
-						// calculate all the top and bottom screen positions
-						for (int i = 0; i < 4; i++)
-						{
-							Vector3 bottomStartPosition = Vector3.Transform(x.Bvh.GetAxisAlignedBoundingBox().GetBottomCorner(i), x.TransformToWorld);
-							traceBottoms[i] = meshViewerWidget.World.GetScreenPosition(bottomStartPosition);
-
-							Vector3 topStartPosition = Vector3.Transform(x.Bvh.GetAxisAlignedBoundingBox().GetTopCorner(i), x.TransformToWorld);
-							traceTops[i] = meshViewerWidget.World.GetScreenPosition(topStartPosition);
-						}
-
-						RectangleDouble.OutCode allPoints = RectangleDouble.OutCode.Inside;
-						// check if we are inside all the points
-						for (int i = 0; i < 4; i++)
-						{
-							allPoints |= selectionRectangle.ComputeOutCode(traceBottoms[i]);
-							allPoints |= selectionRectangle.ComputeOutCode(traceTops[i]);
-						}
-
-						if (allPoints == RectangleDouble.OutCode.Surrounded)
-						{
-							return true;
-						}
-
-						for (int i = 0; i < 4; i++)
-						{
-							if (selectionRectangle.ClipLine(traceBottoms[i], traceBottoms[(i + 1) % 4])
-								|| selectionRectangle.ClipLine(traceTops[i], traceTops[(i + 1) % 4])
-								|| selectionRectangle.ClipLine(traceTops[i], traceBottoms[i]))
-							{
-								return true;
-							}
-						}
-					}
-
-					return false;
-				});
+				foundTriangleInSelectionBounds = false;
+				var filteredResults = item.TraceData().Filter(InSelectionBounds);
 
 				allResults.AddRange(filteredResults);
 
 				int count2 = filteredResults.Count();
-				return triangleCount > 0;
+				return foundTriangleInSelectionBounds;
 			});
 
 
@@ -1185,7 +1118,83 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
+			if (e != null)
+			{
+				RenderBounds(e, allResults);
+			}
+		}
 
+		private bool InSelectionBounds(BvhIterator x)
+		{
+			var selectionRectangle = new RectangleDouble(DragSelectionStartPosition, DragSelectionEndPosition);
+
+			Vector2[] traceBottoms = new Vector2[4];
+			Vector2[] traceTops = new Vector2[4];
+
+			if (foundTriangleInSelectionBounds)
+			{
+				return false;
+			}
+			if (x.Bvh is TriangleShape tri)
+			{
+				// check if any vertex in screen rect
+				// calculate all the top and bottom screen positions
+				for (int i = 0; i < 3; i++)
+				{
+					Vector3 bottomStartPosition = Vector3.Transform(tri.GetVertex(i), x.TransformToWorld);
+					traceBottoms[i] = meshViewerWidget.World.GetScreenPosition(bottomStartPosition);
+				}
+
+				for (int i = 0; i < 3; i++)
+				{
+					if (selectionRectangle.ClipLine(traceBottoms[i], traceBottoms[(i + 1) % 3]))
+					{
+						foundTriangleInSelectionBounds = true;
+						return true;
+					}
+				}
+			}
+			else
+			{
+				// calculate all the top and bottom screen positions
+				for (int i = 0; i < 4; i++)
+				{
+					Vector3 bottomStartPosition = Vector3.Transform(x.Bvh.GetAxisAlignedBoundingBox().GetBottomCorner(i), x.TransformToWorld);
+					traceBottoms[i] = meshViewerWidget.World.GetScreenPosition(bottomStartPosition);
+
+					Vector3 topStartPosition = Vector3.Transform(x.Bvh.GetAxisAlignedBoundingBox().GetTopCorner(i), x.TransformToWorld);
+					traceTops[i] = meshViewerWidget.World.GetScreenPosition(topStartPosition);
+				}
+
+				RectangleDouble.OutCode allPoints = RectangleDouble.OutCode.Inside;
+				// check if we are inside all the points
+				for (int i = 0; i < 4; i++)
+				{
+					allPoints |= selectionRectangle.ComputeOutCode(traceBottoms[i]);
+					allPoints |= selectionRectangle.ComputeOutCode(traceTops[i]);
+				}
+
+				if (allPoints == RectangleDouble.OutCode.Surrounded)
+				{
+					return true;
+				}
+
+				for (int i = 0; i < 4; i++)
+				{
+					if (selectionRectangle.ClipLine(traceBottoms[i], traceBottoms[(i + 1) % 4])
+						|| selectionRectangle.ClipLine(traceTops[i], traceTops[(i + 1) % 4])
+						|| selectionRectangle.ClipLine(traceTops[i], traceBottoms[i]))
+					{
+						return true;
+					}
+				}
+			}
+
+			return false;
+		}
+
+		private void RenderBounds(DrawEventArgs e, IEnumerable<BvhIterator> allResults)
+		{
 			foreach (var x in allResults)
 			{
 				for (int i = 0; i < 4; i++)
@@ -1244,110 +1253,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				return false;
 			});
 
-			int count = bvhIterator.Count();
-
-			foreach (var subBvhIterator in bvhIterator)
-			{
-				for (int i = 0; i < 4; i++)
-				{
-					Vector3 bottomStartPosition = Vector3.Transform(subBvhIterator.Bvh.GetAxisAlignedBoundingBox().GetBottomCorner(i), subBvhIterator.TransformToWorld);
-					var bottomStartScreenPos = meshViewerWidget.World.GetScreenPosition(bottomStartPosition);
-
-					Vector3 bottomEndPosition = Vector3.Transform(subBvhIterator.Bvh.GetAxisAlignedBoundingBox().GetBottomCorner((i + 1) % 4), subBvhIterator.TransformToWorld);
-					var bottomEndScreenPos = meshViewerWidget.World.GetScreenPosition(bottomEndPosition);
-
-					Vector3 topStartPosition = Vector3.Transform(subBvhIterator.Bvh.GetAxisAlignedBoundingBox().GetTopCorner(i), subBvhIterator.TransformToWorld);
-					var topStartScreenPos = meshViewerWidget.World.GetScreenPosition(topStartPosition);
-
-					Vector3 topEndPosition = Vector3.Transform(subBvhIterator.Bvh.GetAxisAlignedBoundingBox().GetTopCorner((i + 1) % 4), subBvhIterator.TransformToWorld);
-					var topEndScreenPos = meshViewerWidget.World.GetScreenPosition(topEndPosition);
-
-					e.graphics2D.Line(bottomStartScreenPos, bottomEndScreenPos, RGBA_Bytes.Black);
-					e.graphics2D.Line(topStartScreenPos, topEndScreenPos, RGBA_Bytes.Black);
-					e.graphics2D.Line(topStartScreenPos, bottomStartScreenPos, RGBA_Bytes.Black);
-				}
-
-				TriangleShape tri = subBvhIterator.Bvh as TriangleShape;
-				if (tri != null)
-				{
-					for (int i = 0; i < 3; i++)
-					{
-						var vertexPos = tri.GetVertex(i);
-						var screenCenter = Vector3.Transform(vertexPos, subBvhIterator.TransformToWorld);
-						var screenPos = meshViewerWidget.World.GetScreenPosition(screenCenter);
-
-						e.graphics2D.Circle(screenPos, 3, RGBA_Bytes.Red);
-					}
-				}
-				else
-				{
-					var center = subBvhIterator.Bvh.GetCenter();
-					var worldCenter = Vector3.Transform(center, subBvhIterator.TransformToWorld);
-					var screenPos2 = meshViewerWidget.World.GetScreenPosition(worldCenter);
-					e.graphics2D.Circle(screenPos2, 3, RGBA_Bytes.Yellow);
-					e.graphics2D.DrawString($"{subBvhIterator.Depth},", screenPos2.x + 12 * subBvhIterator.Depth, screenPos2.y);
-				}
-			}
-		}
-
-		private void RenderSceneObjectData(DrawEventArgs e)
-		{
-			var object3DIterator = new Object3DIterator(Scene, decentFilter: (x) =>
-			{
-				var center = x.IObject3D.GetAxisAlignedBoundingBox(Matrix4X4.Identity).GetCenter();
-				var worldCenter = Vector3.Transform(center, Matrix4X4.Identity);
-				if (worldCenter.z > 0)
-				{
-					return true;
-				}
-
-				return false;
-			});
-
-			int count = object3DIterator.Count();
-
-			foreach (var subObject3DIterator in object3DIterator)
-			{
-				for (int i = 0; i < 4; i++)
-				{
-					Vector3 bottomStartPosition = Vector3.Transform(subObject3DIterator.IObject3D.GetAxisAlignedBoundingBox(Matrix4X4.Identity).GetBottomCorner(i), Matrix4X4.Identity);
-					var bottomStartScreenPos = meshViewerWidget.World.GetScreenPosition(bottomStartPosition);
-
-					Vector3 bottomEndPosition = Vector3.Transform(subObject3DIterator.IObject3D.GetAxisAlignedBoundingBox(Matrix4X4.Identity).GetBottomCorner((i + 1) % 4), Matrix4X4.Identity);
-					var bottomEndScreenPos = meshViewerWidget.World.GetScreenPosition(bottomEndPosition);
-
-					Vector3 topStartPosition = Vector3.Transform(subObject3DIterator.IObject3D.GetAxisAlignedBoundingBox(Matrix4X4.Identity).GetTopCorner(i), Matrix4X4.Identity);
-					var topStartScreenPos = meshViewerWidget.World.GetScreenPosition(topStartPosition);
-
-					Vector3 topEndPosition = Vector3.Transform(subObject3DIterator.IObject3D.GetAxisAlignedBoundingBox(Matrix4X4.Identity).GetTopCorner((i + 1) % 4), Matrix4X4.Identity);
-					var topEndScreenPos = meshViewerWidget.World.GetScreenPosition(topEndPosition);
-
-					e.graphics2D.Line(bottomStartScreenPos, bottomEndScreenPos, RGBA_Bytes.Black);
-					e.graphics2D.Line(topStartScreenPos, topEndScreenPos, RGBA_Bytes.Black);
-					e.graphics2D.Line(topStartScreenPos, bottomStartScreenPos, RGBA_Bytes.Black);
-				}
-
-				Mesh tri = subObject3DIterator.IObject3D.Mesh;
-				if (false)//tri != null)
-				{
-					for (int i = 0; i < 3; i++)
-					{
-						//var vertexPos = tri.GetVertex(i);
-						//var screenCenter = Vector3.Transform(vertexPos, bvhAndTransform.TransformToWorld);
-						//var screenPos = meshViewerWidget.TrackballTumbleWidget.GetScreenPosition(screenCenter);
-
-						//e.graphics2D.Circle(screenPos, 3, RGBA_Bytes.Red);
-					}
-				}
-				else
-				{
-					var center = subObject3DIterator.IObject3D.GetAxisAlignedBoundingBox(Matrix4X4.Identity).GetCenter();
-					var worldCenter = Vector3.Transform(center, Matrix4X4.Identity);
-					var screenPos2 = meshViewerWidget.World.GetScreenPosition(worldCenter);
-					e.graphics2D.Circle(screenPos2, 3, RGBA_Bytes.Yellow);
-					e.graphics2D.DrawString($"{subObject3DIterator.Depth},", screenPos2.x + 12 * subObject3DIterator.Depth, screenPos2.y);
-				}
-			}
+			RenderBounds(e, bvhIterator);
 		}
 
 		private ViewControls3DButtons? activeButtonBeforeMouseOverride = null;
@@ -1671,6 +1577,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 				else if (DragSelectionInProgress)
 				{
+					DoRectangleSelction(null);
 					DragSelectionInProgress = false;
 				}
 			}
