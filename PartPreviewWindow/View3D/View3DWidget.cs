@@ -630,24 +630,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnKeyDown(KeyEventArgs keyEvent)
 		{
-			if (activeButtonBeforeKeyOverride == null)
-			{
-				activeButtonBeforeKeyOverride = viewControls3D.ActiveButton;
-
-				if (keyEvent.Alt)
-				{
-					viewControls3D.ActiveButton = ViewControls3DButtons.Rotate;
-				}
-				else if (keyEvent.Shift)
-				{
-					viewControls3D.ActiveButton = ViewControls3DButtons.Translate;
-				}
-				else if (keyEvent.Control)
-				{
-					viewControls3D.ActiveButton = ViewControls3DButtons.Scale;
-				}
-			}
-
 			switch (keyEvent.KeyCode)
 			{
 				case Keys.A:
@@ -1257,18 +1239,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		}
 
 		private ViewControls3DButtons? activeButtonBeforeMouseOverride = null;
-		private ViewControls3DButtons? activeButtonBeforeKeyOverride = null;
-
-		public override void OnKeyUp(KeyEventArgs keyEvent)
-		{
-			if (activeButtonBeforeKeyOverride != null)
-			{
-				viewControls3D.ActiveButton = (ViewControls3DButtons)activeButtonBeforeKeyOverride;
-				activeButtonBeforeKeyOverride = null;
-			}
-
-			base.OnKeyUp(keyEvent);
-		}
 
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
 		{
@@ -1297,11 +1267,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				if (mouseEvent.Button == MouseButtons.Left
 					&&
-					ModifierKeys == Keys.Shift ||
-					(
-					meshViewerWidget.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None
-					&& ModifierKeys != Keys.Control
-					&& ModifierKeys != Keys.Alt))
+					(ModifierKeys == Keys.Shift || ModifierKeys == Keys.Control)
+					|| (
+						meshViewerWidget.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None
+						&& ModifierKeys != Keys.Control
+						&& ModifierKeys != Keys.Alt))
 				{
 					if (!meshViewerWidget.MouseDownOnInteractionVolume)
 					{
@@ -1341,7 +1311,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 									// No selection exists
 									Scene.Select(hitObject);
 								}
-								else if (ModifierKeys == Keys.Shift && !Scene.SelectedItem.Children.Contains(hitObject))
+								else if ((ModifierKeys == Keys.Shift || ModifierKeys == Keys.Control)
+									&& !Scene.SelectedItem.Children.Contains(hitObject))
 								{
 									Scene.AddToSelection(hitObject);
 								}

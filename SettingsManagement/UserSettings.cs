@@ -9,6 +9,7 @@ namespace MatterHackers.MatterControl
 	{
 		public const string UpdateFeedType = nameof(UpdateFeedType);
 		public const string ApplicationDisplayMode = nameof(ApplicationDisplayMode);
+		public const string ApplicationTextSize = nameof(ApplicationTextSize);
 		public const string defaultRenderSetting = nameof(defaultRenderSetting);
 		public const string ThumbnailRenderingMode = nameof(ThumbnailRenderingMode);
 		public const string CredentialsInvalid = nameof(CredentialsInvalid);
