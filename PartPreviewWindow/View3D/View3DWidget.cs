@@ -1268,10 +1268,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (mouseEvent.Button == MouseButtons.Left
 					&&
 					(ModifierKeys == Keys.Shift || ModifierKeys == Keys.Control)
-					(
-					meshViewerWidget.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None
-					&& ModifierKeys != Keys.Control
-					&& ModifierKeys != Keys.Alt))
+					|| (
+						meshViewerWidget.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None
+						&& ModifierKeys != Keys.Control
+						&& ModifierKeys != Keys.Alt))
 				{
 					if (!meshViewerWidget.MouseDownOnInteractionVolume)
 					{
