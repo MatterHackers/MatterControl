@@ -90,49 +90,35 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[Test]
 		public async Task RemoveButtonRemovesParts()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
-				SystemWindow systemWindow;
+				testRunner.AddDefaultFileToBedplate();
+				
+				var view3D = testRunner.GetWidgetByName("View3DWidget", out _) as View3DWidget;
 
-				//Navigate to Local Library 
-				testRunner.ClickByName("Library Tab");
-				testRunner.NavigateToFolder("Local Library Row Item Collection");
-				testRunner.Delay(1);
-				testRunner.ClickByName("Row Item Calibration - Box");
-				MatterControlUtilities.LibraryEditSelectedItem(testRunner);
+				testRunner.Select3DPart("Calibration - Box.stl");
 
-				//Get View3DWidget and count Scene.Children before Copy button is clicked
-				GuiWidget partPreview = testRunner.GetWidgetByName("View3DWidget", out systemWindow, 3);
-				View3DWidget view3D = partPreview as View3DWidget;
+				Assert.AreEqual(1, view3D.Scene.Children.Count, "There should be 1 part on the bed after AddDefaultFileToBedplate()");
 
-				string copyButtonName = "3D View Copy";
-
-				int partCountBeforeCopy = view3D.Scene.Children.Count();
-				Assert.IsTrue(partCountBeforeCopy == 1);
-
+				// Add 5 items
 				for (int i = 0; i <= 4; i++)
 				{
-					testRunner.ClickByName(copyButtonName);
+					testRunner.ClickByName("3D View Copy");
 					testRunner.Delay(.5);
 				}
 
-				//Get MeshGroupCount before Group is clicked
-				System.Threading.Thread.Sleep(2000);
-				int partsOnBedBeforeRemove = view3D.Scene.Children.Count();
-				Assert.IsTrue(partsOnBedBeforeRemove == 6);
+				Assert.AreEqual(6, view3D.Scene.Children.Count, "There should be 6 parts on the bed after the copy loop");
 
-				//Check that MeshCount decreases by 1 
+				// Remove an item
 				testRunner.ClickByName("3D View Remove");
-				System.Threading.Thread.Sleep(2000);
-				int meshCountAfterRemove = view3D.Scene.Children.Count();
-				Assert.IsTrue(meshCountAfterRemove == 5);
+
+				// Confirm
+				Assert.AreEqual(5, view3D.Scene.Children.Count, "There should be 5 parts on the bed after remove");
 
 				return Task.CompletedTask;
-			};
-
-			await MatterControlUtilities.RunTest(testToRun, overrideWidth:600);
+			}, overrideWidth:1300);
 		}
 
 		[Test]
