@@ -1111,9 +1111,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					if (x.Bvh is TriangleShape tri)
 					{
 						// check if any vertex in screen rect
+						// calculate all the top and bottom screen positions
+						for (int i = 0; i < 3; i++)
+						{
+							Vector3 bottomStartPosition = Vector3.Transform(tri.GetVertex(i), x.TransformToWorld);
+							traceBottoms[i] = meshViewerWidget.World.GetScreenPosition(bottomStartPosition);
+						}
 
-						triangleCount++;
-						return true;
+						for (int i = 0; i < 3; i++)
+						{
+							if (selectionRectangle.ClipLine(traceBottoms[i], traceBottoms[(i + 1) % 3]))
+							{
+								triangleCount++;
+								return true;
+							}
+						}
 					}
 					else
 					{
