@@ -208,7 +208,6 @@
     <Compile Include="PartPreviewWindow\OverflowDropdown.cs" />
     <Compile Include="PartPreviewWindow\View3D\GridOptionsPanel.cs" />
     <Compile Include="PartPreviewWindow\View3D\PrinterActionsBar.cs" />
-    <Compile Include="PartPreviewWindow\View3D\SideBar\RotateControls.cs" />
     <Compile Include="PrinterCommunication\Io\NotPrintingStream.cs" />
     <Compile Include="Library\Widgets\ListView\ListView.cs" />
     <Compile Include="Library\Widgets\ListView\ListViewItem.cs" />
@@ -219,7 +218,6 @@
     <Compile Include="PartPreviewWindow\ColorGradientWidget.cs" />
     <Compile Include="PartPreviewWindow\PartPreviewContent.cs" />
     <Compile Include="PartPreviewWindow\View3D\DebugBvh.cs" />
-    <Compile Include="PartPreviewWindow\View3D\SideBar\ScaleControls.cs" />
     <Compile Include="PartPreviewWindow\View3D\UndoCommands\UngroupCommand.cs" />
     <Compile Include="PartPreviewWindow\View3D\UndoCommands\InsertCommand.cs" />
     <Compile Include="PartPreviewWindow\View3D\UndoCommands\DeleteUndoCommand.cs" />
