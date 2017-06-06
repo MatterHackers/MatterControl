@@ -32,7 +32,16 @@ using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public partial class MirrorControls : PopupActionPanel
+	public class PopupActionPanel : FlowLayoutWidget, IIgnoredPopupChild
+	{
+		public PopupActionPanel() : base(FlowDirection.TopToBottom)
+		{
+			this.Padding = 15;
+			this.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
+		}
+	}
+
+	public class MirrorControls : PopupActionPanel
 	{
 		private View3DWidget view3DWidget;
 

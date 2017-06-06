@@ -423,20 +423,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					// Normal margin factory
 					var normalMarginButtonFactory = ApplicationController.Instance.Theme.BreadCrumbButtonFactory;
 
-					var rotateButton = new PopupButton(smallMarginButtonFactory.Generate("Rotate".Localize()))
-					{
-						PopDirection = Direction.Up,
-						PopupContent = new RotateControls(this, normalMarginButtonFactory, smallMarginButtonFactory)
-					};
-					doEdittingButtonsContainer.AddChild(rotateButton);
-
-					var scaleButton = new PopupButton(smallMarginButtonFactory.Generate("Scale".Localize()))
-					{
-						PopDirection = Direction.Up,
-						PopupContent = new ScaleControls(this, normalMarginButtonFactory)
-					};
-					doEdittingButtonsContainer.AddChild(scaleButton);
-
 					var mirrorButton = new PopupButton(smallMarginButtonFactory.Generate("Mirror".Localize()))
 					{
 						PopDirection = Direction.Up,
