@@ -27,7 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg.UI;
@@ -121,7 +120,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.SelectListItems("Row Item 2013-01-25_Mouthpiece_v2");
 
 				// Remove item
-				MatterControlUtilities.LibraryRemoveSelectedItem(testRunner);
+				testRunner.LibraryRemoveSelectedItem();
 				testRunner.Delay(() => QueueData.Instance.ItemCount == expectedCount, 5, 500);
 
 				Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should decrease by one after clicking Remove");
@@ -148,7 +147,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.SelectListItems("Row Item Batman", "Row Item 2013-01-25_Mouthpiece_v2");
 
 				// Remove items
-				MatterControlUtilities.LibraryRemoveSelectedItem(testRunner);
+				testRunner.LibraryRemoveSelectedItem();
 				testRunner.Delay(() => QueueData.Instance.ItemCount == expectedCount, 5, 500);
 
 				Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should decrease by two after clicking Remove");

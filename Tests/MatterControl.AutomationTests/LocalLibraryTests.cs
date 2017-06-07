@@ -1,9 +1,6 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg.UI;
-using MatterHackers.GuiAutomation;
-using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintQueue;
 using NUnit.Framework;
 
@@ -161,7 +158,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				// Select and remove item
 				testRunner.ClickByName("Row Item Rook");
-				MatterControlUtilities.LibraryRemoveSelectedItem(testRunner);
+				testRunner.LibraryRemoveSelectedItem();
 
 				// Make sure that the item has been removed
 				Assert.IsFalse(testRunner.WaitForName("Row Item Rook"));
@@ -183,7 +180,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.SelectListItems("Row Item Rook", "Row Item Batman");
 
 				// Remove items
-				MatterControlUtilities.LibraryRemoveSelectedItem(testRunner);
+				testRunner.LibraryRemoveSelectedItem();
 				testRunner.Delay(1);
 
 				// Make sure both selected items are removed

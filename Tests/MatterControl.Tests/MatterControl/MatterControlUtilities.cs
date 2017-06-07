@@ -506,7 +506,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.ClickByName("Rename Menu Item", 1);
 		}
 
-		public static void LibraryRemoveSelectedItem(AutomationRunner testRunner)
+		public static void LibraryRemoveSelectedItem(this AutomationRunner testRunner)
 		{
 			testRunner.ClickByName("Print Library Overflow Menu");
 			testRunner.ClickByName("Remove Menu Item", 1);
