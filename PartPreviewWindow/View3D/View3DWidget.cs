@@ -616,50 +616,55 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnKeyDown(KeyEventArgs keyEvent)
 		{
-			switch (keyEvent.KeyCode)
+			var childWithFocus = this.ChildrenRecursive<GuiWidget>().Where(x => x.Focused).FirstOrDefault();
+
+			if (!(childWithFocus is InternalTextEditWidget))
 			{
-				case Keys.A:
-					if (keyEvent.Control)
-					{
-						SelectAll();
-						keyEvent.Handled = true;
-						keyEvent.SuppressKeyPress = true;
-					}
-					break;
+				switch (keyEvent.KeyCode)
+				{
+					case Keys.A:
+						if (keyEvent.Control)
+						{
+							SelectAll();
+							keyEvent.Handled = true;
+							keyEvent.SuppressKeyPress = true;
+						}
+						break;
 
-				case Keys.Z:
-					if (keyEvent.Control)
-					{
-						UndoBuffer.Undo();
-						keyEvent.Handled = true;
-						keyEvent.SuppressKeyPress = true;
-					}
-					break;
+					case Keys.Z:
+						if (keyEvent.Control)
+						{
+							UndoBuffer.Undo();
+							keyEvent.Handled = true;
+							keyEvent.SuppressKeyPress = true;
+						}
+						break;
 
-				case Keys.Y:
-					if (keyEvent.Control)
-					{
-						UndoBuffer.Redo();
-						keyEvent.Handled = true;
-						keyEvent.SuppressKeyPress = true;
-					}
-					break;
+					case Keys.Y:
+						if (keyEvent.Control)
+						{
+							UndoBuffer.Redo();
+							keyEvent.Handled = true;
+							keyEvent.SuppressKeyPress = true;
+						}
+						break;
 
-				case Keys.Delete:
-				case Keys.Back:
-					DeleteSelectedMesh();
-					break;
+					case Keys.Delete:
+					case Keys.Back:
+						DeleteSelectedMesh();
+						break;
 
-				case Keys.Escape:
-					if (CurrentSelectInfo.DownOnPart)
-					{
-						CurrentSelectInfo.DownOnPart = false;
+					case Keys.Escape:
+						if (CurrentSelectInfo.DownOnPart)
+						{
+							CurrentSelectInfo.DownOnPart = false;
 
-						Scene.SelectedItem.Matrix = transformOnMouseDown;
+							Scene.SelectedItem.Matrix = transformOnMouseDown;
 
-						Invalidate();
-					}
-					break;
+							Invalidate();
+						}
+						break;
+				}
 			}
 
 			base.OnKeyDown(keyEvent);

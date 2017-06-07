@@ -36,6 +36,7 @@ using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
@@ -210,7 +211,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public static MeshLevlingFunctions GetLevelingFunctions(int gridWidth, int gridHeight, PrintLevelingData levelingData)
 		{
 			if (currentLevelingFunctions == null
-				|| currentLevelingFunctions.LevelingData != levelingData)
+				|| !levelingData.SamplesAreSame(currentLevelingFunctions.SampledPositions))
 			{
 				if (currentLevelingFunctions != null)
 				{
@@ -234,7 +235,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public MeshLevlingFunctions(int gridWidth, int gridHeight, PrintLevelingData levelingData)
 		{
-			this.LevelingData = levelingData;
+			this.SampledPositions = new List<Vector3>(levelingData.SampledPositions);
 
 			PrinterConnectionAndCommunication.Instance.PositionRead.RegisterEvent(PrinterReportedPosition, ref unregisterEvents);
 
@@ -255,7 +256,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		}
 
 		// you can only set this on construction
-		public PrintLevelingData LevelingData { get; private set; }
+		public List<Vector3> SampledPositions { get; private set; }
 
 		public List<Region> Regions { get; private set; } = new List<Region>();
 

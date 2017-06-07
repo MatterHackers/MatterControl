@@ -126,6 +126,5 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 			return lineBeingSent;
 		}
-
 	}
 }

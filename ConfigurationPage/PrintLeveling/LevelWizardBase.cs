@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
@@ -172,6 +173,16 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				printLevelWizardWindow.Closed += (sender, e) =>
 				{
 					printLevelWizardWindow = null;
+
+					// make sure we raise the probe on close 
+					if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_z_probe)
+						&& ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.use_z_probe)
+						&& ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_z_servo))
+					{
+						// make sure the servo is retracted
+						var servoRetract = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.z_servo_retracted_angle);
+						PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow($"M280 S{servoRetract}");
+					}
 				};
 			}
 			else
