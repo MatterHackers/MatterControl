@@ -180,10 +180,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.AddTestAssetsToLibrary("Rook.amf", "Batman.stl");
 
 				// Select both items
-				testRunner.ClickByName("Row Item Rook", 1);
-				Keyboard.SetKeyDownState(Keys.ControlKey, down: true);
-				testRunner.ClickByName("Row Item Batman", 1);
-				Keyboard.SetKeyDownState(Keys.ControlKey, down: false);
+				testRunner.SelectListItems("Row Item Rook", "Row Item Batman");
 
 				// Remove items
 				MatterControlUtilities.LibraryRemoveSelectedItem(testRunner);

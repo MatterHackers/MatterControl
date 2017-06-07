@@ -582,6 +582,22 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.IsTrue(testRunner.WaitForName($"Row Item {friendlyName}", 2), $"{friendlyName} part should exist after adding");
 			}
 		}
+
+		/// <summary>
+		/// Control clicks each specified item
+		/// </summary>
+		/// <param name="testRunner"></param>
+		/// <param name="widgetNames">The widgets to click</param>
+		public static void SelectListItems(this AutomationRunner testRunner, params string[] widgetNames)
+		{
+			// Control click all items
+			Keyboard.SetKeyDownState(Keys.ControlKey, down: true);
+			foreach(var widgetName in widgetNames)
+			{
+				testRunner.ClickByName(widgetName);
+			}
+			Keyboard.SetKeyDownState(Keys.ControlKey, down: false);
+		}
 	}
 
 	/// <summary>

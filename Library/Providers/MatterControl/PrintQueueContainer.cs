@@ -110,9 +110,8 @@ namespace MatterHackers.MatterControl.Library
 
 		public override void Remove(IEnumerable<ILibraryItem> items)
 		{
-			foreach (ILibraryContentStream item in items)
+			foreach (var fileSystemItem in items.OfType<FileSystemFileItem>())
 			{
-				var fileSystemItem = item as FileSystemFileItem;
 				if (fileSystemItem != null)
 				{
 					var matches = QueueData.Instance.PrintItems.Where(p => p.FileLocation == fileSystemItem.Path).ToList();
@@ -125,11 +124,10 @@ namespace MatterHackers.MatterControl.Library
 							QueueData.Instance.RemoveAt(index);
 						}
 					}
-
 				}
 			}
 
-			this.OnReloaded();
+			this.ReloadContainer();
 		}
 
 		public override bool AllowAction(ContainerActions containerActions)
