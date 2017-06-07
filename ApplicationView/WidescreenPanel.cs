@@ -187,12 +187,11 @@ namespace MatterHackers.MatterControl
 			leftBorderLine = new GuiWidget()
 			{
 				VAnchor = VAnchor.ParentBottomTop,
-				Width = 15,
-				Padding = 5
+				Width = 15
 			};
 			leftBorderLine.AddChild(new VerticalLine(alpha:50)
 			{
-				HAnchor = HAnchor.ParentLeft
+				HAnchor = HAnchor.ParentCenter
 			});
 			this.AddChild(leftBorderLine);
 

@@ -85,7 +85,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public ILibraryContainer ActiveContainer => this.LibraryContext.ActiveContainer;
 
-		public RGBA_Bytes ThumbnailBackground { get; } = ActiveTheme.Instance.TertiaryBackgroundColor.AdjustLightness(1.1).GetAsRGBA_Bytes();
+		public RGBA_Bytes ThumbnailBackground { get; } = ActiveTheme.Instance.TertiaryBackgroundColor.AdjustLightness(1.05).GetAsRGBA_Bytes();
 		public RGBA_Bytes ThumbnailForeground { get; set; } = ActiveTheme.Instance.PrimaryAccentColor;
 
 		private GuiWidget stashedView = null;

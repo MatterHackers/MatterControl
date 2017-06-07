@@ -347,7 +347,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			providerMessageContainer.AddChild(providerMessageWidget);
 		}
 
-		private void CreateActionMenuItems(DropDownMenu dropDownMenu)
+		private void CreateMenuActions()
 		{
 			// edit menu item
 			menuActions.Add(new PrintItemAction()
@@ -470,7 +470,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			// Extension point - RegisteredLibraryActions not defined in this file/assembly can insert here via this named token
 			menuActions.AddRange(ApplicationController.Instance.RegisteredLibraryActions("StandardLibraryOperations"));
 
-			#region Classic QueueMenu items
 #if !__ANDROID__
 			menuActions.Add(new MenuSeparator("Design"));
 			menuActions.Add(new PrintItemAction()
@@ -519,32 +518,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					}
 				}
 			});
-#endif
-
-			/* TODO: Reconsider - these are actions that apply to the printer, no the selection. We could Add items from SD but how is ContainerContext -> SD -> Eject relevant?
-			if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_sd_card_reader))
-			{
-				menuItems.Add(new Tuple<string, Func<bool>>("SD Card".Localize(), null));
-				menuItems.Add(new Tuple<string, Func<bool>>(" Load Files".Localize(), () =>
-				{
-					QueueData.Instance.LoadFilesFromSD();
-					return true;
-				}));
-				menuItems.Add(new Tuple<string, Func<bool>>("Eject SD Card".Localize(), () =>
-				{
-					// Remove all the QueueData.SdCardFileName parts from the queue
-					QueueData.Instance.RemoveAllSdCardFiles();
-					PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("M22"); // (Release SD card)
-					return true;
-				}));
-			} */
 
 			menuActions.Add(new MenuSeparator("Other"));
+
+			// PDF export is limited to Windows
 			if (OsInformation.OperatingSystem == OSType.Windows)
 			{
-#if !__ANDROID__
-				// The pdf export library is not working on the mac at the moment so we don't include the
-				// part sheet export option on mac.
 				menuActions.Add(new PrintItemAction()
 				{
 					Title = "Create Part Sheet".Localize(),
@@ -586,9 +565,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						});
 					}
 				});
-#endif
 			}
-			#endregion
+#endif
 
 			menuActions.Add(new MenuSeparator("ListView Options"));
 			menuActions.Add(new PrintItemAction()
@@ -624,24 +602,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					};
 				},
 			});
-
-			// Create menu items in the DropList for each element in this.menuActions
-			foreach (var item in menuActions)
-			{
-				if (item is MenuSeparator)
-				{
-					item.MenuItem = dropDownMenu.AddHorizontalLine();
-				}
-				else
-				{
-					item.MenuItem = dropDownMenu.AddItem(item.Title);
-					item.MenuItem.Name = $"{item.Title} Menu Item";
-				}
-
-				item.MenuItem.Enabled = item.Action != null;
-			}
-
-			EnableMenus();
 		}
 
 		private void SelectLocationToExportGCode()
@@ -935,41 +895,42 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public override void OnLoad(EventArgs args)
 		{
-			var actionMenu = new DropDownMenu("Actions".Localize() + "... ")
-			{
-				AlignToRightEdge = true,
-				NormalColor = new RGBA_Bytes(),
-				BorderWidth = 1,
-				BorderColor = new RGBA_Bytes(ActiveTheme.Instance.SecondaryTextColor, 100),
-				MenuAsWideAsItems = false,
-				VAnchor = VAnchor.ParentBottomTop,
-				Margin = new BorderDouble(3),
-				Padding = new BorderDouble(10),
-				Name = "LibraryActionMenu"
-			};
-
 			// Defer creating menu items until plugins have loaded
-			CreateActionMenuItems(actionMenu);
+			CreateMenuActions();
 
-			var topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				Name = "_topToBottom",
-			};
-
+			var popupContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
+			
+			// Create menu items in the DropList for each element in this.menuActions
 			foreach (var menuAction in menuActions)
 			{
-				var menu = menuAction.MenuItem;
-				menu?.ClearRemovedFlag();
+				MenuItem menuItem;
 
-				menu.Click += (s, e) =>
+				if (menuAction is MenuSeparator)
+				{
+					menuItem = overflowDropdown.CreateHorizontalLine();
+				}
+				else
+				{
+					menuItem = overflowDropdown.CreateMenuItem((string)menuAction.Title);
+					menuItem.Name = $"{menuAction.Title} Menu Item";
+				}
+
+				menuItem.Enabled = menuAction.Action != null;
+				menuItem.ClearRemovedFlag();
+				menuItem.Click += (s, e) =>
 				{
 					menuAction.Action?.Invoke(libraryView.SelectedItems.Select(i => i.Model), libraryView);
 				};
 
-				topToBottom.AddChild(menu);
+				// Store a reference to the newly created MenuItem back on the MenuAction definition
+				menuAction.MenuItem = menuItem;
+
+				popupContainer.AddChild(menuItem);
 			}
 
-			overflowDropdown.PopupContent = topToBottom;
+			EnableMenus();
+
+			overflowDropdown.PopupContent = popupContainer;
 
 			base.OnLoad(args);
 		}
