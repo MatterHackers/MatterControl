@@ -27,7 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg.UI;
@@ -106,79 +105,59 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			});
 		}
 
-		/// <summary>
-		/// Tests that
-		/// 1. Target item exists
-		/// 2. QueueData.Instance.Count is correctly decremented after remove
-		/// 3. Target item does not exist after remove
-		/// </summary>
 		[Test]
 		public async Task RemoveButtonRemovesSingleItem()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
+				int expectedCount = QueueData.Instance.ItemCount - 1;
+
 				testRunner.CloseSignInAndPrinterSelect();
 
-				testRunner.Delay(1);
+				testRunner.NavigateToFolder("Print Queue Row Item Collection");
 
-				int expectedQueueCount = QueueData.Instance.ItemCount - 1;
+				// Select both items
+				testRunner.SelectListItems("Row Item 2013-01-25_Mouthpiece_v2");
 
-				// Assert exists
-				Assert.IsTrue(testRunner.NameExists("Queue Item 2013-01-25_Mouthpiece_v2"), "Target item should exist before Remove");
+				// Remove item
+				testRunner.LibraryRemoveSelectedItem();
+				testRunner.Delay(() => QueueData.Instance.ItemCount == expectedCount, 5, 500);
 
-				// Remove target item
-				testRunner.ClickByName("Queue Remove Button", 2);
-				testRunner.Delay(1);
+				Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should decrease by one after clicking Remove");
 
-				// Assert removed
-				Assert.AreEqual(expectedQueueCount, QueueData.Instance.ItemCount, "After Remove button click, Queue count should be 1 less");
-				Assert.IsFalse(testRunner.WaitForName("Queue Item 2013-01-25_Mouthpiece_v2", 1), "Target item should not exist after Remove");
+				// Make sure selected item was removed
+				Assert.IsFalse(testRunner.WaitForName("Row Item 2013-01-25_Mouthpiece_v2", 1), "Mouthpiece part should *not* exist after remove");
 
 				return Task.CompletedTask;
-			};
-
-			await MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
+			}, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
 		}
 
 		[Test]
 		public async Task RemoveButtonRemovesMultipleItems()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
+				int expectedCount = QueueData.Instance.ItemCount - 2;
+
 				testRunner.CloseSignInAndPrinterSelect();
-				/*
-				 *Tests that when one item is selected  
-				 *1. Queue Item count equals three before the test starts 
-				 *2. Selecting multiple queue items and then clicking the Remove button removes the item 
-				 *3. Selecting multiple queue items and then clicking the Remove button decreases the queue tab count by one
-				 */
 
-				int queueItemCount = QueueData.Instance.ItemCount;
+				testRunner.NavigateToFolder("Print Queue Row Item Collection");
 
-				testRunner.Delay(2);
+				// Select both items
+				testRunner.SelectListItems("Row Item Batman", "Row Item 2013-01-25_Mouthpiece_v2");
 
-				testRunner.ClickByName("Queue Edit Button", 2);
+				// Remove items
+				testRunner.LibraryRemoveSelectedItem();
+				testRunner.Delay(() => QueueData.Instance.ItemCount == expectedCount, 5, 500);
 
-				testRunner.ClickByName("Queue Item Batman", 2);
+				Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should decrease by two after clicking Remove");
 
-				testRunner.ClickByName("Queue Remove Button", 2);
-
-				testRunner.Delay(1);
-
-				int queueItemCountAfterRemove = QueueData.Instance.ItemCount;
-
-				Assert.IsTrue(queueItemCount - 2 == queueItemCountAfterRemove);
-
-				bool queueItemExists = testRunner.WaitForName("Queue Item Batman", 2);
-				bool secondQueueItemExists = testRunner.WaitForName("Queue Item 2013-01-25_Mouthpiece_v2", 2);
-
-				Assert.IsTrue(queueItemExists == false);
-				Assert.IsTrue(secondQueueItemExists == false);
+				// Make sure both selected items are removed
+				Assert.IsFalse(testRunner.WaitForName("Row Item Batman", 1), "Batman part should *not* exist after remove");
+				Assert.IsFalse(testRunner.WaitForName("Row Item 2013-01-25_Mouthpiece_v2", 1), "Mouthpiece part should *not* exist after remove");
 
 				return Task.CompletedTask;
-			};
-
-			await MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
+			}, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
 		}
 
 		[Test]

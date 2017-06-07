@@ -404,6 +404,23 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.Delay(1);
 		}
 
+		public static void SaveBedplateToFolder(this AutomationRunner testRunner, string newFileName, string folderName)
+		{
+			testRunner.ClickByName("Save As Menu");
+			testRunner.ClickByName("Save As Menu Item");
+
+			testRunner.Delay(1);
+
+			testRunner.Type(newFileName);
+
+			testRunner.NavigateToFolder(folderName);
+
+			testRunner.ClickByName("Save As Save Button");
+
+			// Give the SaveAs window time to close before returning to the caller
+			testRunner.Delay(2);
+		}
+
 		public static void AddSelectedItemToBedplate(this AutomationRunner testRunner)
 		{
 			testRunner.ClickByName("Print Library Overflow Menu");
@@ -489,7 +506,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.ClickByName("Rename Menu Item", 1);
 		}
 
-		public static void LibraryRemoveSelectedItem(AutomationRunner testRunner)
+		public static void LibraryRemoveSelectedItem(this AutomationRunner testRunner)
 		{
 			testRunner.ClickByName("Print Library Overflow Menu");
 			testRunner.ClickByName("Remove Menu Item", 1);
@@ -564,6 +581,22 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				string friendlyName = Path.GetFileNameWithoutExtension(assetName);
 				Assert.IsTrue(testRunner.WaitForName($"Row Item {friendlyName}", 2), $"{friendlyName} part should exist after adding");
 			}
+		}
+
+		/// <summary>
+		/// Control clicks each specified item
+		/// </summary>
+		/// <param name="testRunner"></param>
+		/// <param name="widgetNames">The widgets to click</param>
+		public static void SelectListItems(this AutomationRunner testRunner, params string[] widgetNames)
+		{
+			// Control click all items
+			Keyboard.SetKeyDownState(Keys.ControlKey, down: true);
+			foreach(var widgetName in widgetNames)
+			{
+				testRunner.ClickByName(widgetName);
+			}
+			Keyboard.SetKeyDownState(Keys.ControlKey, down: false);
 		}
 	}
 

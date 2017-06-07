@@ -1,11 +1,8 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using MatterHackers.Agg.UI;
-using MatterHackers.Agg.UI.Tests;
-using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.MatterControl.PrintQueue;
 using NUnit.Framework;
 
 namespace MatterHackers.MatterControl.Tests.Automation
@@ -224,20 +221,15 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[Test]
 		public async Task SaveAsToQueue()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
-				//Navigate to Local Library 
-				testRunner.ClickByName("Library Tab");
-				testRunner.NavigateToFolder("Local Library Row Item Collection");
-				testRunner.Delay(1);
-				testRunner.ClickByName("Row Item Calibration - Box");
-				MatterControlUtilities.LibraryEditSelectedItem(testRunner);
+				testRunner.AddDefaultFileToBedplate();
 
-				SystemWindow systemWindow;
-				GuiWidget partPreview = testRunner.GetWidgetByName("View3DWidget", out systemWindow, 3);
-				View3DWidget view3D = partPreview as View3DWidget;
+				var view3D = testRunner.GetWidgetByName("View3DWidget", out _) as View3DWidget;
+
+				testRunner.Select3DPart("Calibration - Box.stl");
 
 				for (int i = 0; i <= 2; i++)
 				{
@@ -245,31 +237,22 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.Delay(.5);
 				}
 
-				//Click Save As button to save changes to the part
-				testRunner.ClickByName("Save As Menu");
-				testRunner.Delay(1);
-				testRunner.ClickByName("Save As Menu Item");
-				testRunner.Delay(1);
+				int expectedCount = QueueData.Instance.ItemCount + 1;
 
-				//Type in name of new part and then save to Print Queue
-				testRunner.Type("Save As Print Queue");
+				testRunner.SaveBedplateToFolder("Test PartA", "Print Queue Row Item Collection");
+
+				// Click Home -> Local Library
+				testRunner.ClickByName("Bread Crumb Button Home");
 				testRunner.NavigateToFolder("Print Queue Row Item Collection");
-				testRunner.Delay(1);
-				testRunner.ClickByName("Save As Save Button");
 
 				view3D.CloseOnIdle();
 				testRunner.Delay(.5);
 
-				//Make sure there is a new Queue item with a name that matches the new part
-				testRunner.Delay(1);
-				testRunner.ClickByName("Queue Tab");
-				testRunner.Delay(1);
-				Assert.IsTrue(testRunner.WaitForName("Queue Item Save As Print Queue", 5));
+				Assert.IsTrue(testRunner.WaitForName("Row Item Test PartA", 5), "The part we added should be in the library");
+				Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should increase by one after Save operation");
 
 				return Task.CompletedTask;
-			};
-
-			await MatterControlUtilities.RunTest(testToRun, overrideWidth: 600);
+			}, overrideWidth: 1300);
 		}
 	}
 }
