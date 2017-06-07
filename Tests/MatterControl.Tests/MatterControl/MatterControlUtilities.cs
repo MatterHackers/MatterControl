@@ -404,6 +404,23 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.Delay(1);
 		}
 
+		public static void SaveBedplateToFolder(this AutomationRunner testRunner, string newFileName, string folderName)
+		{
+			testRunner.ClickByName("Save As Menu");
+			testRunner.ClickByName("Save As Menu Item");
+
+			testRunner.Delay(1);
+
+			testRunner.Type(newFileName);
+
+			testRunner.NavigateToFolder(folderName);
+
+			testRunner.ClickByName("Save As Save Button");
+
+			// Give the SaveAs window time to close before returning to the caller
+			testRunner.Delay(2);
+		}
+
 		public static void AddSelectedItemToBedplate(this AutomationRunner testRunner)
 		{
 			testRunner.ClickByName("Print Library Overflow Menu");

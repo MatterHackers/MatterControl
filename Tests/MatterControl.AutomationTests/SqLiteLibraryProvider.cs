@@ -30,18 +30,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// wait for the copy to finish
 				testRunner.Delay(.1);
 				testRunner.ClickByName("3D View Remove");
-				testRunner.ClickByName("Save As Menu");
-				testRunner.ClickByName("Save As Menu Item");
 
-				testRunner.Delay(1);
-
-				testRunner.Type("0Test Part");
-				testRunner.NavigateToFolder("Local Library Row Item Collection");
-
-				testRunner.ClickByName("Save As Save Button");
-
-				// Give the SaveAs window time to close to ensure we click the right Home button
-				testRunner.Delay(2);
+				testRunner.SaveBedplateToFolder("0Test Part", "Local Library Row Item Collection");
 
 				// Click Home -> Local Library
 				testRunner.ClickByName("Bread Crumb Button Home");
