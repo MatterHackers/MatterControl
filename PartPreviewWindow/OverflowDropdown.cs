@@ -57,6 +57,38 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			return new ImageWidget(imageBuffer);
 		}
+
+		public MenuItem CreateHorizontalLine()
+		{
+			return new MenuItem(new GuiWidget()
+			{
+				HAnchor = HAnchor.ParentLeftRight,
+				Height = 1,
+				BackgroundColor = RGBA_Bytes.LightGray,
+				Margin = new BorderDouble(10, 1),
+				VAnchor = VAnchor.ParentCenter,
+			}, "HorizontalLine");
+		}
+
+		public MenuItem CreateMenuItem(string name, string value = null, double pointSize = 12)
+		{
+			var menuStatesView = new MenuItemColorStatesView(name)
+			{
+				NormalBackgroundColor = RGBA_Bytes.White,
+				OverBackgroundColor = RGBA_Bytes.Gray,
+				NormalTextColor = RGBA_Bytes.Black,
+				OverTextColor = RGBA_Bytes.Black,
+				DisabledTextColor = RGBA_Bytes.Gray,
+				PointSize = pointSize,
+				Padding = new BorderDouble(40, 8, 20, 8),
+			};
+
+			return new MenuItem(menuStatesView, value ?? name)
+			{
+				Text = name,
+				Name = name + " Menu Item"
+			};
+		}
 	}
 
 	public class PopupButton : GuiWidget
