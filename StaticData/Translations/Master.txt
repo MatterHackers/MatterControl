@@ -6208,3 +6208,42 @@ Translated:Add to Plate
 English:Text Size
 Translated:Text Size
 
+English:The printer has a servo for lowering and rasing the z probe.
+Translated:The printer has a servo for lowering and rasing the z probe.
+
+English:The distance the z probe is from the extruder in z. For manual probing, this is thickness of the paper (or other calibration device).
+Translated:The distance the z probe is from the extruder in z. For manual probing, this is thickness of the paper (or other calibration device).
+
+English:The distance the z probe is from the extruder in x and y.
+Translated:The distance the z probe is from the extruder in x and y.
+
+English:The number of times to sample each probe position (results will be averaged).
+Translated:The number of times to sample each probe position (results will be averaged).
+
+English:This is the angle that lowers or deploys the z probe.
+Translated:This is the angle that lowers or deploys the z probe.
+
+English:This is the angle that raises or stows the z probe.
+Translated:This is the angle that raises or stows the z probe.
+
+English:Has Z Servo
+Translated:Has Z Servo
+
+English:Start Height
+Translated:Start Height
+
+English:Use Automatic Z Probe
+Translated:Use Automatic Z Probe
+
+English:Number of Samples
+Translated:Number of Samples
+
+English:XY Offset
+Translated:XY Offset
+
+English:Lower / Deploy
+Translated:Lower / Deploy
+
+English:Raise / Stow
+Translated:Raise / Stow
+

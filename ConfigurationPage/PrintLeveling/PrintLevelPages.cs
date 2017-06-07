@@ -48,46 +48,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		}
 	}
 
-	public class LastPage3PointInstructions : InstructionsPage
-	{
-		protected WizardControl container;
-		private List<ProbePosition> probePositions = new List<ProbePosition>(3)
-		{
-			new ProbePosition(),new ProbePosition(),new ProbePosition()
-		};
-
-		public LastPage3PointInstructions(WizardControl container, string pageDescription, string instructionsText, List<ProbePosition> probePositions)
-			: base(pageDescription, instructionsText)
-		{
-			this.probePositions = probePositions;
-			this.container = container;
-		}
-
-		public override void PageIsBecomingActive()
-		{
-			Vector3 paperWidth = new Vector3(0, 0, ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.manual_probe_paper_width));
-
-			PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
-			levelingData.SampledPositions.Clear();
-			levelingData.SampledPositions.Add(probePositions[0].position - paperWidth);
-			levelingData.SampledPositions.Add(probePositions[1].position - paperWidth);
-			levelingData.SampledPositions.Add(probePositions[2].position - paperWidth);
-
-			// Invoke setter forcing persistence of leveling data
-			ActiveSliceSettings.Instance.Helpers.SetPrintLevelingData(levelingData, true);
-			ActiveSliceSettings.Instance.Helpers.DoPrintLeveling ( true);
-
-			if(ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.z_homes_to_max))
-			{
-				PrinterConnectionAndCommunication.Instance.HomeAxis(PrinterConnectionAndCommunication.Axis.XYZ);
-			}
-
-			container.backButton.Enabled = false;
-
-			base.PageIsBecomingActive();
-		}
-	}
-
 	public class LastPagelInstructions : InstructionsPage
 	{
 		protected WizardControl container;
@@ -105,10 +65,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
 			levelingData.SampledPositions.Clear();
 
-			Vector3 paperWidth = new Vector3(0, 0, ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.manual_probe_paper_width));
+			Vector3 zProbeOffset = new Vector3(0, 0, ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.z_probe_z_offset));
 			for (int i = 0; i < probePositions.Count; i++)
 			{
-				levelingData.SampledPositions.Add(probePositions[i].position - paperWidth);
+				levelingData.SampledPositions.Add(probePositions[i].position - zProbeOffset);
 			}
 
 			// Invoke setter forcing persistence of leveling data
@@ -358,6 +318,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			this.allowLessThan0 = allowLessThan0;
 			this.probePositions = probePositions;
+
 			this.lastReportedPosition = PrinterConnectionAndCommunication.Instance.LastReportedPosition;
 			this.probePositionsBeingEditedIndex = probePositionsBeingEditedIndex;
 
@@ -393,7 +354,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				{
 					samples.Add(sampleRead);
 
-					if (samples.Count == NumberOfSamples)
+					int numberOfSamples = ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.z_probe_samples);
+					if (samples.Count == numberOfSamples)
 					{
 						samples.Sort();
 						if (samples.Count > 3)
@@ -419,7 +381,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			base.OnClosed(e);
 		}
 
-		readonly int NumberOfSamples = 5;
 		List<double> samples = new List<double>();
 
 		public override void PageIsBecomingActive()
@@ -429,11 +390,27 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			base.PageIsBecomingActive();
 
+			if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_z_probe)
+				&& ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.use_z_probe)
+				&& ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_z_servo))
+			{
+				// make sure the servo is deployed
+				var servoDeploy = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.z_servo_depolyed_angle);
+				PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow($"M280 S{servoDeploy}");
+			}
+
 			var feedRates = ActiveSliceSettings.Instance.Helpers.ManualMovementSpeeds();
 
+			var adjustedProbePosition = probeStartPosition;
+			// subtract out the probe offset
+			var probeOffset = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.z_probe_xy_offset);
+			adjustedProbePosition -= new Vector3(probeOffset);
+
 			PrinterConnectionAndCommunication.Instance.MoveAbsolute(PrinterConnectionAndCommunication.Axis.Z, probeStartPosition.z, feedRates.z);
-			PrinterConnectionAndCommunication.Instance.MoveAbsolute(probeStartPosition, feedRates.x);
-			for (int i = 0; i < NumberOfSamples; i++)
+			PrinterConnectionAndCommunication.Instance.MoveAbsolute(adjustedProbePosition, feedRates.x);
+
+			int numberOfSamples = ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.z_probe_samples);
+			for (int i = 0; i < numberOfSamples; i++)
 			{
 				PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G30"); // probe the current position
 			}

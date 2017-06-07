@@ -312,6 +312,7 @@ Advanced
         has_power_control
         filament_runout_sensor
         has_z_probe
+        has_z_servo
         enable_network_printing
         enable_sailfish_communication
       Behavior
@@ -332,8 +333,12 @@ Advanced
         print_leveling_required_to_print
       Probe Settings
         print_leveling_probe_start
-        manual_probe_paper_width
         use_z_probe
+        z_probe_samples
+        z_probe_xy_offset
+        z_probe_z_offset
+        z_servo_depolyed_angle
+        z_servo_retracted_angle
     Print Recovery
       Recover Settings
         recover_is_enabled

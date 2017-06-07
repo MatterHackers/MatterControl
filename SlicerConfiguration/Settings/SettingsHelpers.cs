@@ -95,7 +95,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string layer_to_pause = nameof(layer_to_pause);
 		public const string leveling_manual_positions = nameof(leveling_manual_positions);
 		public const string make = nameof(make);
-		public const string manual_probe_paper_width = nameof(manual_probe_paper_width);
+		public const string z_probe_z_offset = nameof(z_probe_z_offset);
 		public const string merge_overlapping_lines = nameof(merge_overlapping_lines);
 		public const string min_fan_speed = nameof(min_fan_speed);
 		public const string model = nameof(model);
@@ -120,7 +120,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string start_gcode = nameof(start_gcode);
 		public const string temperature = nameof(temperature);
 		public const string use_z_probe = nameof(use_z_probe);
+		public const string z_probe_samples = nameof(z_probe_samples);
 		public const string has_z_probe = nameof(has_z_probe);
+		public const string has_z_servo = nameof(has_z_servo);
+		public const string z_probe_xy_offset = nameof(z_probe_xy_offset);
+		public const string z_servo_depolyed_angle = nameof(z_servo_depolyed_angle);
+		public const string z_servo_retracted_angle = nameof(z_servo_retracted_angle);
 		public const string windows_driver = nameof(windows_driver);
 		public const string z_can_be_negative = nameof(z_can_be_negative);
 		public const string z_homes_to_max = nameof(z_homes_to_max);
