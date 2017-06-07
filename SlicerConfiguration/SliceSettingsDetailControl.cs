@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.SetupWizard;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
@@ -76,7 +77,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				settingsDetailSelector.SelectedValue = "Advanced";
 			}
 
-			settingsDetailSelector.SelectionChanged += (s, e) => RebuildSlicerSettings(null, null);
+			settingsDetailSelector.SelectionChanged += (s, e) =>
+			{
+				UserSettings.Instance.set(SliceSettingsLevelEntry, settingsDetailSelector.SelectedValue);
+				sliceSettingsWidget.RebuildSliceSettingsTabs();
+			};
 			settingsDetailSelector.VAnchor = VAnchor.ParentCenter;
 			settingsDetailSelector.Margin = new BorderDouble(5, 3);
 			settingsDetailSelector.BorderColor = new RGBA_Bytes(ActiveTheme.Instance.SecondaryTextColor, 100);
@@ -85,7 +90,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				// only add these in the default view
 				this.AddChild(settingsDetailSelector);
-				this.AddChild(GetSliceOptionsMenuDropList());
+				this.AddChild(CreateOverflowMenu());
 			}
 
 			VAnchor = VAnchor.ParentCenter;
@@ -97,22 +102,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public bool ShowingHelp => primarySettingsView ? showHelpBox.Checked : false;
 
-		private DropDownMenu GetSliceOptionsMenuDropList()
+		private GuiWidget CreateOverflowMenu()
 		{
-			DropDownMenu sliceOptionsMenuDropList;
-			sliceOptionsMenuDropList = new DropDownMenu("Options".Localize() + "... ")
+			var overflowDropdown = new OverflowDropdown(false)
 			{
-				HoverColor = new RGBA_Bytes(0, 0, 0, 50),
-				NormalColor = new RGBA_Bytes(0, 0, 0, 0),
-				BorderColor = new RGBA_Bytes(ActiveTheme.Instance.SecondaryTextColor, 100),
-				BackgroundColor = new RGBA_Bytes(0, 0, 0, 0),
-				BorderWidth = 1,
-				MenuAsWideAsItems = false,
 				AlignToRightEdge = true,
+				Name = "Slice Settings Options Menu"
 			};
-			sliceOptionsMenuDropList.Name = "Slice Settings Options Menu";
-			sliceOptionsMenuDropList.VAnchor |= VAnchor.ParentCenter;
-
 
 			showHelpBox = new CheckBox("Show Help".Localize());
 
@@ -132,68 +128,79 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				ShowHelpChanged?.Invoke(this, null);
 			};
 
-			MenuItem showHelp = new MenuItem(showHelpBox, "Show Help Checkbox")
+			var popupContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
+
+			popupContainer.AddChild(new MenuItem(showHelpBox, "Show Help Checkbox")
 			{
-				Padding = sliceOptionsMenuDropList.MenuItemsPadding,
+				Padding = overflowDropdown.MenuPadding,
+			});
+
+			popupContainer.AddChild(overflowDropdown.CreateHorizontalLine());
+
+			MenuItem menuItem;
+
+			menuItem = overflowDropdown.CreateMenuItem("Import".Localize());
+			menuItem.Click += (s, e) => 
+			{
+				UiThread.RunOnIdle(() => WizardWindow.Show<ImportSettingsPage>("ImportSettingsPage", "Import Settings Page"));
 			};
-			sliceOptionsMenuDropList.MenuItems.Add(showHelp);
-			sliceOptionsMenuDropList.AddHorizontalLine();
+			popupContainer.AddChild(menuItem);
 
-			sliceOptionsMenuDropList.AddItem("Import".Localize()).Selected += (s, e) => { ImportSettingsMenu_Click(); };
-			sliceOptionsMenuDropList.AddItem("Export".Localize()).Selected += (s, e) => { WizardWindow.Show<ExportSettingsPage>("ExportSettingsPage", "Export Settings"); };
+			menuItem = overflowDropdown.CreateMenuItem("Export".Localize());
+			menuItem.Click += (s, e) => 
+			{
+				WizardWindow.Show<ExportSettingsPage>("ExportSettingsPage", "Export Settings");
+			};
+			popupContainer.AddChild(menuItem);
 
-			MenuItem settingsHistory = sliceOptionsMenuDropList.AddItem("Restore Settings".Localize());
-			settingsHistory.Selected += (s, e) => { WizardWindow.Show<PrinterProfileHistoryPage>("PrinterProfileHistory", "Restore Settings"); };
+			menuItem = overflowDropdown.CreateMenuItem("Restore Settings".Localize());
+			menuItem.Click += (s, e) => 
+			{
+				WizardWindow.Show<PrinterProfileHistoryPage>("PrinterProfileHistory", "Restore Settings");
+			};
+			menuItem.Enabled = !string.IsNullOrEmpty(AuthenticationData.Instance.ActiveSessionUsername);
+			popupContainer.AddChild(menuItem);
 
-			settingsHistory.Enabled = !string.IsNullOrEmpty(AuthenticationData.Instance.ActiveSessionUsername);
-
-			sliceOptionsMenuDropList.AddItem("Reset to Defaults".Localize()).Selected += (s, e) => { UiThread.RunOnIdle(ResetToDefaults); };
-
-			return sliceOptionsMenuDropList;
-		}
-
-		private bool ImportSettingsMenu_Click()
-		{
-			UiThread.RunOnIdle(() => WizardWindow.Show<ImportSettingsPage>("ImportSettingsPage", "Import Settings Page"));
-			return true;
-		}
-
-		private void RebuildSlicerSettings(object sender, EventArgs e)
-		{
-			UserSettings.Instance.set(SliceSettingsLevelEntry, settingsDetailSelector.SelectedValue);
-			sliceSettingsWidget.RebuildSliceSettingsTabs();
-		}
-
-		private void ResetToDefaults()
-		{
-			StyledMessageBox.ShowMessageBox(
-				revertSettings =>
+			menuItem = overflowDropdown.CreateMenuItem("Reset to Defaults".Localize());
+			menuItem.Click += (s, e) => 
+			{
+				UiThread.RunOnIdle(() =>
 				{
-					if (revertSettings)
-					{
-						bool onlyReloadSliceSettings = true;
-						if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_required_to_print)
-						&& ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_enabled))
+					StyledMessageBox.ShowMessageBox(
+						revertSettings =>
 						{
-							onlyReloadSliceSettings = false;
-						}
-					
-						ActiveSliceSettings.Instance.ClearUserOverrides();
-						ActiveSliceSettings.Instance.Save();
+							if (revertSettings)
+							{
+								bool onlyReloadSliceSettings = true;
+								if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_required_to_print)
+								&& ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_enabled))
+								{
+									onlyReloadSliceSettings = false;
+								}
 
-						if (onlyReloadSliceSettings)
-						{
-							ApplicationController.Instance.ReloadAdvancedControlsPanel();
-						}
-						else
-						{
-							ApplicationController.Instance.ReloadAll();
-						}
-					}
-				},
-				resetToDefaultsMessage,
-				resetToDefaultsWindowTitle,
-				StyledMessageBox.MessageType.YES_NO);
+								ActiveSliceSettings.Instance.ClearUserOverrides();
+								ActiveSliceSettings.Instance.Save();
+
+								if (onlyReloadSliceSettings)
+								{
+									ApplicationController.Instance.ReloadAdvancedControlsPanel();
+								}
+								else
+								{
+									ApplicationController.Instance.ReloadAll();
+								}
+							}
+						},
+						resetToDefaultsMessage,
+						resetToDefaultsWindowTitle,
+						StyledMessageBox.MessageType.YES_NO);
+				});
+			};
+			popupContainer.AddChild(menuItem);
+
+			overflowDropdown.PopupContent = popupContainer;
+
+			return overflowDropdown;
 		}
 	}
 }

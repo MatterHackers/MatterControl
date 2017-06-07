@@ -898,11 +898,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			// Defer creating menu items until plugins have loaded
 			CreateMenuActions();
 
-			var topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				Name = "_topToBottom",
-			};
-
+			var popupContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
+			
 			// Create menu items in the DropList for each element in this.menuActions
 			foreach (var menuAction in menuActions)
 			{
@@ -928,12 +925,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				// Store a reference to the newly created MenuItem back on the MenuAction definition
 				menuAction.MenuItem = menuItem;
 
-				topToBottom.AddChild(menuItem);
+				popupContainer.AddChild(menuItem);
 			}
 
 			EnableMenus();
 
-			overflowDropdown.PopupContent = topToBottom;
+			overflowDropdown.PopupContent = popupContainer;
 
 			base.OnLoad(args);
 		}

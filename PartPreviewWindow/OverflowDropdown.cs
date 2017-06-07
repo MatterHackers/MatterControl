@@ -47,6 +47,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.ToolTipText = "More...".Localize();
 		}
 
+		public BorderDouble MenuPadding { get; set; } = new BorderDouble(40, 8, 20, 8);
+
 		public static ImageWidget LoadThemedIcon(bool allowLightnessInvert)
 		{
 			var imageBuffer = StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "overflow.png"), 32, 32);
@@ -80,7 +82,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				OverTextColor = RGBA_Bytes.Black,
 				DisabledTextColor = RGBA_Bytes.Gray,
 				PointSize = pointSize,
-				Padding = new BorderDouble(40, 8, 20, 8),
+				Padding = this.MenuPadding,
 			};
 
 			return new MenuItem(menuStatesView, value ?? name)
