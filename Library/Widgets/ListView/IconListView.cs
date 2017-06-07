@@ -37,8 +37,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 {
 	public class IconListView : FlowLayoutWidget, IListContentView
 	{
-		public int ThumbWidth { get; set; } = 128;
-		public int ThumbHeight { get; set; } = 128;
+		public int ThumbWidth { get; set; } = 100;
+		public int ThumbHeight { get; set; } = 100;
 
 		private FlowLayoutWidget rowButtonContainer = null;
 
