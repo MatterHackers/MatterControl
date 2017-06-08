@@ -115,14 +115,6 @@
 		"RebuildGCodeOnChange": false
 	},
 	{
-		"SlicerConfigName": "center_part_on_bed",
-		"PresentationName": "Center On Bed",
-		"HelpText": "Centers the print on the bed, regardless of where it is moved in Edit Mode. Disable to allow printing a model anywhere on the bed.",
-		"DataEditType": "CHECK_BOX",
-		"DefaultValue": "1",
-		"ReloadUiWhenChanged": true
-	},
-	{
 		"SlicerConfigName": "complete_objects",
 		"PresentationName": "Complete Individual Objects",
 		"HelpText": "Each individual part is printed to completion then the nozzle is lowered back to the bed and the next part is printed.",

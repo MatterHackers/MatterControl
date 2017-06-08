@@ -1732,15 +1732,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				meshViewerWidget.LoadDone += new EventHandler(meshViewerWidget_LoadDone);
 
 				Vector2 bedCenter = new Vector2();
-				MeshViewerWidget.CenterPartAfterLoad doCentering = MeshViewerWidget.CenterPartAfterLoad.DONT;
 
-				if (ActiveSliceSettings.Instance?.GetValue<bool>(SettingsKey.center_part_on_bed) == true)
-				{
-					doCentering = MeshViewerWidget.CenterPartAfterLoad.DO;
-					bedCenter = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center);
-				}
-
-				await meshViewerWidget.LoadItemIntoScene(newPrintItem.FileLocation, doCentering, bedCenter, newPrintItem.Name);
+				await meshViewerWidget.LoadItemIntoScene(newPrintItem.FileLocation, bedCenter, newPrintItem.Name);
 
 				Invalidate();
 			}
@@ -2238,24 +2231,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private bool PartsAreInPrintVolume()
 		{
-			if (ActiveSliceSettings.Instance?.GetValue<bool>(SettingsKey.center_part_on_bed) == false)
+			AxisAlignedBoundingBox allBounds = AxisAlignedBoundingBox.Empty;
+			foreach (var aabb in Scene.Children.Select(item => item.GetAxisAlignedBoundingBox(Matrix4X4.Identity)))
 			{
-				AxisAlignedBoundingBox allBounds = AxisAlignedBoundingBox.Empty;
-				foreach(var aabb in Scene.Children.Select(item => item.GetAxisAlignedBoundingBox(Matrix4X4.Identity)))
-				{
-					allBounds += aabb;
-				}
-
-				bool onBed = allBounds.minXYZ.z > -.001 && allBounds.minXYZ.z < .001; // really close to the bed
-				RectangleDouble bedRect = new RectangleDouble(0, 0, ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.bed_size).x, ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.bed_size).y);
-				bedRect.Offset(ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center) - ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.bed_size) / 2);
-
-				bool inBounds = bedRect.Contains(new Vector2(allBounds.minXYZ)) && bedRect.Contains(new Vector2(allBounds.maxXYZ));
-
-				return onBed && inBounds;
+				allBounds += aabb;
 			}
 
-			return true;
+			bool onBed = allBounds.minXYZ.z > -.001 && allBounds.minXYZ.z < .001; // really close to the bed
+			RectangleDouble bedRect = new RectangleDouble(0, 0, ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.bed_size).x, ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.bed_size).y);
+			bedRect.Offset(ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center) - ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.bed_size) / 2);
+
+			bool inBounds = bedRect.Contains(new Vector2(allBounds.minXYZ)) && bedRect.Contains(new Vector2(allBounds.maxXYZ));
+
+			return onBed && inBounds;
 		}
 
 		private void OpenExportWindow()

@@ -116,7 +116,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				new MappedToBoolString("support_material_create_internal_support", "generateInternalSupport"),
 				new MappedToBoolString("support_material_create_perimeter", "generateSupportPerimeter"),
 				new MappedToBoolString("wipe", "wipeAfterRetraction"),
-				new MappedToBoolString(SettingsKey.center_part_on_bed, "centerObjectInXy"),
 				new MappedToBoolString(SettingsKey.expand_thin_walls, "expandThinWalls"),
 				new MappedToBoolString(SettingsKey.merge_overlapping_lines, "MergeOverlappingLines"),
 				new MappedToBoolString(SettingsKey.fill_thin_gaps, "fillThinGaps"),

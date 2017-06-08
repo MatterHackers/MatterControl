@@ -387,16 +387,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 									Slic3rEngineMappings.WriteSliceSettingsFile(configFilePath);
 
 									// if we have centering turend on and are printing a model loaded up from meshes (not gcode)
-									if(ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.center_part_on_bed))
-									{
-										// figure out the center position of this file
-										Vector2 bedCenter = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center);
-										commandArgs = $"--print-center {bedCenter.x:0.##},{bedCenter.y:0.##} --load \"{configFilePath}\" --output \"{gcodeFilePath}\" \"{fileToSlice}\"";
-									}
-									else
-									{
-										commandArgs = $"--load \"{configFilePath}\" --output \"{gcodeFilePath}\" \"{fileToSlice}\"";
-									}
+									commandArgs = $"--load \"{configFilePath}\" --output \"{gcodeFilePath}\" \"{fileToSlice}\"";
 									break;
 
 								case SlicingEngineTypes.CuraEngine:
