@@ -250,7 +250,6 @@ namespace MatterHackers.MatterControl.ActionBar
 		{
 			this.HAnchor = HAnchor.ParentLeft | HAnchor.FitToChildren;
 			this.VAnchor = VAnchor.FitToChildren;
-			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
 			connectButton = buttonFactory.Generate("Connect".Localize().ToUpper(), StaticData.Instance.LoadIcon("connect.png", 16, 16));
 			connectButton.Name = "Connect to printer button";

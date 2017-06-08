@@ -284,10 +284,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			centerPartPreviewAndControls.AddChild(viewArea);
 			mainContainerTopToBottom.AddChild(centerPartPreviewAndControls);
 
-			FlowLayoutWidget buttonBottomPanel = new FlowLayoutWidget(FlowDirection.LeftToRight);
-			buttonBottomPanel.HAnchor = HAnchor.ParentLeftRight;
-			buttonBottomPanel.Padding = new BorderDouble(3, 3);
-			buttonBottomPanel.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+			var buttonBottomPanel = new FlowLayoutWidget(FlowDirection.LeftToRight)
+			{
+				HAnchor = HAnchor.ParentLeftRight,
+				Padding = new BorderDouble(3, 3),
+				BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor
+			};
 
 			HashSet<IObject3DEditor> mappedEditors;
 			objectEditorsByType = new Dictionary<Type, HashSet<IObject3DEditor>>();
@@ -312,16 +314,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// add in the plater tools
 			{
+				processingProgressControl = new ProgressControl("", ActiveTheme.Instance.PrimaryTextColor, ActiveTheme.Instance.PrimaryAccentColor)
+				{
+					VAnchor = VAnchor.ParentCenter,
+					Visible = false
+				};
+
 				FlowLayoutWidget editToolBar = new FlowLayoutWidget();
-
-				string progressFindPartsLabel = "Entering Editor".Localize();
-				string progressFindPartsLabelFull = "{0}:".FormatWith(progressFindPartsLabel);
-
-				processingProgressControl = new ProgressControl(progressFindPartsLabelFull, ActiveTheme.Instance.PrimaryTextColor, ActiveTheme.Instance.PrimaryAccentColor);
-				processingProgressControl.VAnchor = VAnchor.ParentCenter;
 				editToolBar.AddChild(processingProgressControl);
 				editToolBar.VAnchor |= VAnchor.ParentCenter;
-				processingProgressControl.Visible = false;
+
 				doEdittingButtonsContainer = new FlowLayoutWidget();
 				doEdittingButtonsContainer.Visible = false;
 

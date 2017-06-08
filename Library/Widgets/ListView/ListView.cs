@@ -59,7 +59,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			// Set Display Attributes
 			this.MinimumSize = new Vector2(0, 200);
 			this.AnchorAll();
-			this.BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor;
 			this.AutoScroll = true;
 			this.ScrollArea.Padding = new BorderDouble(3);
 

@@ -53,7 +53,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				UndoBuffer undoBuffer = modelViewer.UndoBuffer;
 
-				this.Padding = new BorderDouble(0, 5);
 				this.HAnchor = HAnchor.ParentLeftRight;
 				this.VAnchor = VAnchor.FitToChildren;
 

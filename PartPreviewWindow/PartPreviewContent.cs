@@ -112,15 +112,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			public PrinterTabPage(PrinterSettings activeSettings, PrintItemWrapper printItem)
 			{
-				double buildHeight = activeSettings.GetValue<double>(SettingsKey.build_height);
+				this.BackgroundColor = ApplicationController.Instance.Theme.TabBodyBackground;
+				this.Padding = new BorderDouble(top: 3);
 
+				double buildHeight = activeSettings.GetValue<double>(SettingsKey.build_height);
+				
 				viewControls3D = new ViewControls3D(ApplicationController.Instance.Theme.ViewControlsButtonFactory)
 				{
 					PartSelectVisible = false,
 					VAnchor = VAnchor.ParentTop | VAnchor.FitToChildren | VAnchor.AbsolutePosition,
 					HAnchor = HAnchor.ParentLeft | HAnchor.FitToChildren,
 					Visible = true,
-					Margin = new BorderDouble(3, 0, 0, 51)
+					Margin = new BorderDouble(11, 0, 0, 50)
 				};
 				viewControls3D.ResetView += (sender, e) =>
 				{
@@ -151,7 +154,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.AddChild(topToBottom);
 
 				// Must come after we have an instance of View3DWidget an its undo buffer
-				topToBottom.AddChild(new PrinterActionsBar(modelViewer));
+				topToBottom.AddChild(new PrinterActionsBar(modelViewer)
+				{
+					Padding = new BorderDouble(bottom: 2)
+				});
 				topToBottom.AddChild(modelViewer);
 
 				// The slice layers view
@@ -164,6 +170,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				gcodeViewer.AnchorAll();
 				this.gcodeViewer.Visible = false;
 				topToBottom.AddChild(gcodeViewer);
+
+				modelViewer.BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor;
+				gcodeViewer.BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor;
 
 				if (ApplicationController.Instance.PartPreviewState.RotationMatrix == Matrix4X4.Identity)
 				{

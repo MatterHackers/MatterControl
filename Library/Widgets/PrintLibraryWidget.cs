@@ -72,7 +72,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public PrintLibraryWidget()
 		{
-			this.Padding = new BorderDouble(3);
+			this.Padding = new BorderDouble(top: 3);
+
 			this.BackgroundColor = ApplicationController.Instance.Theme.TabBodyBackground;
 			this.AnchorAll();
 
@@ -136,32 +137,32 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				allControls.AddChild(searchPanel);
 			}
 
-			libraryView = new ListView(ApplicationController.Instance.Library);
+			libraryView = new ListView(ApplicationController.Instance.Library)
+			{
+				BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor
+			};
+
 			libraryView.SelectedItems.CollectionChanged += SelectedItems_CollectionChanged;
 
 			ApplicationController.Instance.Library.ContainerChanged += Library_ContainerChanged;
 
-			breadCrumbWidget = new FolderBreadCrumbWidget(libraryView);
-			var breadCrumbSpaceHolder = new FlowLayoutWidget()
+			var breadCrumbBar = new FlowLayoutWidget()
 			{
 				HAnchor = HAnchor.ParentLeftRight,
+				Padding = new BorderDouble(bottom: 2)
 			};
-			breadCrumbSpaceHolder.AddChild(breadCrumbWidget);
 
-			var breadCrumbAndActionBar = new FlowLayoutWidget()
-			{
-				HAnchor = HAnchor.ParentLeftRight,
-			};
-			breadCrumbAndActionBar.AddChild(breadCrumbSpaceHolder);
+			breadCrumbWidget = new FolderBreadCrumbWidget(libraryView);
+			breadCrumbBar.AddChild(breadCrumbWidget);
 
 			overflowDropdown = new OverflowDropdown(allowLightnessInvert: true)
 			{
 				AlignToRightEdge = true,
 				Name = "Print Library Overflow Menu"
 			};
-			breadCrumbAndActionBar.AddChild(overflowDropdown);
+			breadCrumbBar.AddChild(overflowDropdown);
 
-			allControls.AddChild(breadCrumbAndActionBar);
+			allControls.AddChild(breadCrumbBar);
 
 			allControls.AddChild(libraryView);
 
@@ -169,7 +170,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			{
 				HAnchor = HAnchor.ParentLeftRight,
 				Padding = new BorderDouble(0, 3),
-				MinimumSize = new Vector2(0, 46)
+				MinimumSize = new Vector2(0, 46),
+				BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor
 			};
 			AddLibraryButtonElements();
 			allControls.AddChild(buttonPanel);
