@@ -35,6 +35,7 @@ using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintHistory;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -197,66 +198,61 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			buttonRow.HAnchor = HAnchor.ParentLeftRight;
 			buttonRow.Margin = new BorderDouble(top: 4);
 
-			TextWidget settingsLabel = new TextWidget("Text Size".Localize());
+			double currentTexSize = 1.0;
+			if (!double.TryParse(UserSettings.Instance.get(UserSettingsKey.ApplicationTextSize), out currentTexSize))
+			{
+				currentTexSize = 1.0;
+			}
+
+			TextWidget settingsLabel = new TextWidget("Text Size".Localize() + $" : {currentTexSize:0.0}")
+			{
+				AutoExpandBoundsToText = true
+			};
 			settingsLabel.AutoExpandBoundsToText = true;
 			settingsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			settingsLabel.VAnchor = VAnchor.ParentTop;
 
-			Button textSizeControlRestartButton = textImageButtonFactory.Generate("Restart".Localize());
-			textSizeControlRestartButton.VAnchor = Agg.UI.VAnchor.ParentCenter;
-			textSizeControlRestartButton.Visible = false;
-			textSizeControlRestartButton.Margin = new BorderDouble(right: 6);
-			textSizeControlRestartButton.Click += (sender, e) =>
+			double sliderThumbWidth = 10 * GuiWidget.DeviceScale;
+			double sliderWidth = 100 * GuiWidget.DeviceScale;
+			var textSizeSlider = new SolidSlider(new Vector2(), sliderThumbWidth, .7, 1.4)
 			{
-				if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting)
-				{
-					StyledMessageBox.ShowMessageBox(null, cannotRestartWhilePrintIsActiveMessage, cannotRestartWhileActive);
-				}
-				else
-				{
-					RestartApplication();
-				}
+				Name = "Text Size Slider",
+				Margin = new BorderDouble(5, 0),
+				Value = currentTexSize,
+				HAnchor = HAnchor.ParentLeftRight,
+				TotalWidthInPixels = sliderWidth,
 			};
 
 			FlowLayoutWidget optionsContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			optionsContainer.Margin = new BorderDouble(bottom: 6);
+			optionsContainer.AddChild(textSizeSlider);
+			optionsContainer.Width = 200 * GuiWidget.DeviceScale;
 
-			DropDownList interfaceOptionsDropList = new DropDownList("Development", maxHeight: 200);
-			interfaceOptionsDropList.HAnchor = HAnchor.ParentLeftRight;
-
-			optionsContainer.AddChild(interfaceOptionsDropList);
-			optionsContainer.Width = 200;
-
-			interfaceOptionsDropList.AddItem(".8");
-			interfaceOptionsDropList.AddItem(".9");
-			interfaceOptionsDropList.AddItem("1.0");
-			interfaceOptionsDropList.AddItem("1.1");
-			interfaceOptionsDropList.AddItem("1.2");
-			interfaceOptionsDropList.AddItem("1.3");
-			interfaceOptionsDropList.AddItem("1.4");
-
-			List<string> acceptableUpdateFeedTypeValues = new List<string>() { ".8", ".9", "1.0", "1.1", "1.2", "1.3", "1.4" };
 			string currentTextModeType = UserSettings.Instance.get(UserSettingsKey.ApplicationTextSize);
 
-			if (acceptableUpdateFeedTypeValues.IndexOf(currentTextModeType) == -1)
+			Button textSizeControlApplyButton = textImageButtonFactory.Generate("Apply".Localize());
+			textSizeControlApplyButton.VAnchor = Agg.UI.VAnchor.ParentCenter;
+			textSizeControlApplyButton.Visible = false;
+			textSizeControlApplyButton.Margin = new BorderDouble(right: 6);
+			textSizeControlApplyButton.Click += (sender, e) =>
 			{
-				currentTextModeType = "1.0";
-			}
-
-			interfaceOptionsDropList.SelectedValue = currentTextModeType;
-			interfaceOptionsDropList.SelectionChanged += (sender, e) =>
-			{
-				string textSizeMode = ((DropDownList)sender).SelectedValue;
-				if (textSizeMode != UserSettings.Instance.get(UserSettingsKey.ApplicationTextSize))
-				{
-					UserSettings.Instance.set(UserSettingsKey.ApplicationTextSize, textSizeMode);
-					textSizeControlRestartButton.Visible = true;
-				}
+				GuiWidget.DeviceScale = textSizeSlider.Value;
+				ApplicationController.Instance.ReloadAll();
 			};
+
+			textSizeSlider.ValueChanged += (sender, e) =>
+			{
+				double textSizeNew = ((SolidSlider)sender).Value;
+				UserSettings.Instance.set(UserSettingsKey.ApplicationTextSize, textSizeNew.ToString("0.0"));
+				settingsLabel.Text = "Text Size".Localize() + $" : {textSizeNew:0.0}";
+				textSizeControlApplyButton.Visible = textSizeNew != currentTexSize;
+			};
+
+			string currentTexSizeString = UserSettings.Instance.get(UserSettingsKey.ApplicationTextSize);
 
 			buttonRow.AddChild(settingsLabel);
 			buttonRow.AddChild(new HorizontalSpacer());
-			buttonRow.AddChild(textSizeControlRestartButton);
+			buttonRow.AddChild(textSizeControlApplyButton);
 			buttonRow.AddChild(optionsContainer);
 			return buttonRow;
 		}
