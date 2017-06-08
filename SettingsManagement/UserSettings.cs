@@ -14,6 +14,8 @@ namespace MatterHackers.MatterControl
 		public const string ThumbnailRenderingMode = nameof(ThumbnailRenderingMode);
 		public const string CredentialsInvalid = nameof(CredentialsInvalid);
 		public const string CredentialsInvalidReason = nameof(CredentialsInvalidReason);
+		public const string SliceSettingsLevel = nameof(SliceSettingsLevel);
+		public const string SliceSettingsShowHelp = nameof(SliceSettingsShowHelp);
 	}
 
 	public class UserSettings

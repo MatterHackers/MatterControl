@@ -39,8 +39,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class SliceSettingsDetailControl : FlowLayoutWidget
 	{
-		private const string SliceSettingsLevelEntry = "SliceSettingsLevel";
-		private const string SliceSettingsShowHelpEntry = "SliceSettingsShowHelp";
 		private DropDownList settingsDetailSelector;
 		private CheckBox showHelpBox;
 		private List<NamedAction> slicerOptionsMenuItems;
@@ -73,10 +71,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			if (primarySettingsView)
 			{
 				// set to the user requested value when in default view
-				if (UserSettings.Instance.get(SliceSettingsLevelEntry) != null
-					&& SliceSettingsOrganizer.Instance.UserLevels.ContainsKey(UserSettings.Instance.get(SliceSettingsLevelEntry)))
+				if (UserSettings.Instance.get(UserSettingsKey.SliceSettingsLevel) != null
+					&& SliceSettingsOrganizer.Instance.UserLevels.ContainsKey(UserSettings.Instance.get(UserSettingsKey.SliceSettingsLevel)))
 				{
-					settingsDetailSelector.SelectedValue = UserSettings.Instance.get(SliceSettingsLevelEntry);
+					settingsDetailSelector.SelectedValue = UserSettings.Instance.get(UserSettingsKey.SliceSettingsLevel);
 				}
 			}
 			else // in settings editor view
@@ -87,7 +85,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			settingsDetailSelector.SelectionChanged += (s, e) =>
 			{
-				UserSettings.Instance.set(SliceSettingsLevelEntry, settingsDetailSelector.SelectedValue);
+				UserSettings.Instance.set(UserSettingsKey.SliceSettingsLevel, settingsDetailSelector.SelectedValue);
 				sliceSettingsWidget.RebuildSliceSettingsTabs();
 			};
 
@@ -120,7 +118,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			if (primarySettingsView)
 			{
 				// only turn on the help if in the main view and it is set to on
-				showHelpBox.Checked = UserSettings.Instance.get(SliceSettingsShowHelpEntry) == "true";
+				showHelpBox.Checked = UserSettings.Instance.get(UserSettingsKey.SliceSettingsShowHelp) == "true";
 			}
 
 			showHelpBox.CheckedStateChanged += (s, e) =>
@@ -128,7 +126,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (primarySettingsView)
 				{
 					// only save the help settings if in the main view
-					UserSettings.Instance.set(SliceSettingsShowHelpEntry, showHelpBox.Checked.ToString().ToLower());
+					UserSettings.Instance.set(UserSettingsKey.SliceSettingsShowHelp, showHelpBox.Checked.ToString().ToLower());
 				}
 				ShowHelpChanged?.Invoke(this, null);
 			};
