@@ -132,8 +132,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (stringEvent.Data == SettingsKey.bed_size
 					|| stringEvent.Data == SettingsKey.print_center
 					|| stringEvent.Data == SettingsKey.build_height
-					|| stringEvent.Data == SettingsKey.bed_shape
-					|| stringEvent.Data == SettingsKey.center_part_on_bed)
+					|| stringEvent.Data == SettingsKey.bed_shape)
 				{
 					viewerVolume = new Vector3(ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.bed_size), ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.build_height));
 					bedShape = ActiveSliceSettings.Instance.GetValue<BedShape>(SettingsKey.bed_shape);

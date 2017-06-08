@@ -56,7 +56,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string bottom_clip_amount = nameof(bottom_clip_amount);
 		public const string build_height = nameof(build_height);
 		public const string cancel_gcode = nameof(cancel_gcode);
-		public const string center_part_on_bed = nameof(center_part_on_bed);
 		public const string com_port = nameof(com_port);
 		public const string connect_gcode = nameof(connect_gcode);
 		public const string created_date = nameof(created_date);
