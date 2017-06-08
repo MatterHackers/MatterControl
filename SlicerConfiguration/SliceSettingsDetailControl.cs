@@ -27,8 +27,6 @@ The views and conclusions contained in the software and documentation are those
 of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
-using System;
-using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
@@ -39,24 +37,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class SliceSettingsDetailControl : FlowLayoutWidget
 	{
-		private DropDownList settingsDetailSelector;
 		private CheckBox showHelpBox;
-		private List<NamedAction> slicerOptionsMenuItems;
 
 		string resetToDefaultsMessage = "Resetting to default values will remove your current overrides and restore your original printer settings.\nAre you sure you want to continue?".Localize();
 		string resetToDefaultsWindowTitle = "Revert Settings".Localize();
-		bool primarySettingsView;
 
 		private SliceSettingsWidget sliceSettingsWidget;
 
-		public SliceSettingsDetailControl(List<PrinterSettingsLayer> layerCascade, SliceSettingsWidget sliceSettingsWidget)
+		public SliceSettingsDetailControl(SliceSettingsWidget sliceSettingsWidget)
 		{
 			this.sliceSettingsWidget = sliceSettingsWidget;
 
-			// LayerCascade contains a filtered list of settings layers when in preset editing mode, thus when null, we're in the primarySettingsView
-			primarySettingsView = layerCascade == null;
-
-			settingsDetailSelector = new DropDownList("Basic", maxHeight: 200)
+			var settingsDetailSelector = new DropDownList("Basic", maxHeight: 200)
 			{
 				Name = "User Level Dropdown",
 				VAnchor = VAnchor.ParentCenter,
@@ -68,20 +60,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			settingsDetailSelector.AddItem("Standard".Localize(), "Intermediate");
 			settingsDetailSelector.AddItem("Advanced".Localize(), "Advanced");
 
-			if (primarySettingsView)
-			{
-				// set to the user requested value when in default view
-				if (UserSettings.Instance.get(UserSettingsKey.SliceSettingsLevel) != null
-					&& SliceSettingsOrganizer.Instance.UserLevels.ContainsKey(UserSettings.Instance.get(UserSettingsKey.SliceSettingsLevel)))
-				{
-					settingsDetailSelector.SelectedValue = UserSettings.Instance.get(UserSettingsKey.SliceSettingsLevel);
-				}
-			}
-			else // in settings editor view
-			{
-				// set to advanced
-				settingsDetailSelector.SelectedValue = "Advanced";
-			}
+			// set to advanced
+			settingsDetailSelector.SelectedValue = sliceSettingsWidget.UserLevel;
 
 			settingsDetailSelector.SelectionChanged += (s, e) =>
 			{
@@ -89,7 +69,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				sliceSettingsWidget.RebuildSliceSettingsTabs();
 			};
 
-			if (primarySettingsView)
 			{
 				// only add these in the default view
 				this.AddChild(settingsDetailSelector);
@@ -98,12 +77,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			VAnchor = VAnchor.ParentCenter;
 		}
-
-		public event EventHandler ShowHelpChanged;
-
-		public string SelectedValue => settingsDetailSelector.SelectedValue; 
-
-		public bool ShowingHelp => primarySettingsView ? showHelpBox.Checked : false;
 
 		private GuiWidget CreateOverflowMenu()
 		{
@@ -114,21 +87,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			};
 
 			showHelpBox = new CheckBox("Show Help".Localize());
-
-			if (primarySettingsView)
-			{
-				// only turn on the help if in the main view and it is set to on
-				showHelpBox.Checked = UserSettings.Instance.get(UserSettingsKey.SliceSettingsShowHelp) == "true";
-			}
-
+			showHelpBox.Checked = sliceSettingsWidget.ShowHelpControls;
 			showHelpBox.CheckedStateChanged += (s, e) =>
 			{
-				if (primarySettingsView)
-				{
-					// only save the help settings if in the main view
-					UserSettings.Instance.set(UserSettingsKey.SliceSettingsShowHelp, showHelpBox.Checked.ToString().ToLower());
-				}
-				ShowHelpChanged?.Invoke(this, null);
+				sliceSettingsWidget.ShowHelpControls = showHelpBox.Checked;
+				sliceSettingsWidget.RebuildSliceSettingsTabs();
 			};
 
 			var popupContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
