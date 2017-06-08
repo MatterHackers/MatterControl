@@ -55,9 +55,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			this.sliceSettingsWidget = sliceSettingsWidget;
 
+			// LayerCascade contains a filtered list of settings layers when in preset editing mode, thus when null, we're in the primarySettingsView
 			primarySettingsView = layerCascade == null;
-			settingsDetailSelector = new DropDownList("Basic", maxHeight: 200);
-			settingsDetailSelector.Name = "User Level Dropdown";
+
+			settingsDetailSelector = new DropDownList("Basic", maxHeight: 200)
+			{
+				Name = "User Level Dropdown",
+				VAnchor = VAnchor.ParentCenter,
+				Margin = new BorderDouble(5, 3),
+				BorderColor = new RGBA_Bytes(ActiveTheme.Instance.SecondaryTextColor, 100)
+			};
+
 			settingsDetailSelector.AddItem("Basic".Localize(), "Simple");
 			settingsDetailSelector.AddItem("Standard".Localize(), "Intermediate");
 			settingsDetailSelector.AddItem("Advanced".Localize(), "Advanced");
@@ -82,9 +90,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				UserSettings.Instance.set(SliceSettingsLevelEntry, settingsDetailSelector.SelectedValue);
 				sliceSettingsWidget.RebuildSliceSettingsTabs();
 			};
-			settingsDetailSelector.VAnchor = VAnchor.ParentCenter;
-			settingsDetailSelector.Margin = new BorderDouble(5, 3);
-			settingsDetailSelector.BorderColor = new RGBA_Bytes(ActiveTheme.Instance.SecondaryTextColor, 100);
 
 			if (primarySettingsView)
 			{
