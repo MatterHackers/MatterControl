@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 	public partial class View3DWidget
 	{
-		private async void AutoArrangePartsInBackground()
+		private async void AutoArrangeChildren()
 		{
 			// TODO: ******************** !!!!!!!!!!!!!!! ********************
 			var arrangedScene = new Object3D();
