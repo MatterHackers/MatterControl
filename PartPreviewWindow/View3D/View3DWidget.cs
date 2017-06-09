@@ -399,7 +399,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					doEdittingButtonsContainer.AddChild(deleteButton);
 					deleteButton.Click += (sender, e) =>
 					{
-						DeleteSelectedMesh();
+						DeleteSelection();
 					};
 
 					GuiWidget separatorThree = new GuiWidget(1, 2);
@@ -653,7 +653,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					case Keys.Delete:
 					case Keys.Back:
-						DeleteSelectedMesh();
+						DeleteSelection();
 						break;
 
 					case Keys.Escape:
@@ -1841,7 +1841,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			editorPanel.AddChild(newEditor);
 		}
 
-		private void DeleteSelectedMesh()
+		private void DeleteSelection()
 		{
 			if (Scene.HasSelection && Scene.Children.Count > 1)
 			{
