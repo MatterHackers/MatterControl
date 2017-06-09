@@ -119,7 +119,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			} */
 		}
 
-		private async void AlignToSelectedMeshGroup()
+		private async void AlignToSelection()
 		{
 			if (Scene.HasChildren)
 			{
