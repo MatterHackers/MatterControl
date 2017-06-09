@@ -37,18 +37,13 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
-	public class WidescreenPanel : FlowLayoutWidget
+	public class WidescreenPanel : Splitter
 	{
-		private static readonly int ColumnOneFixedWidth = 590;
-		private int lastNumberOfVisiblePanels = 0;
-
 		private TextImageButtonFactory advancedControlsButtonFactory = new TextImageButtonFactory();
 		private RGBA_Bytes unselectedTextColor = ActiveTheme.Instance.TabLabelUnselected;
 
 		private FlowLayoutWidget ColumnOne;
 		private FlowLayoutWidget ColumnTwo;
-		private double Force1PanelWidth = 990 * GuiWidget.DeviceScale;
-		private double Force2PanelWidth = 1590 * GuiWidget.DeviceScale;
 
 		private GuiWidget leftBorderLine;
 
@@ -57,7 +52,6 @@ namespace MatterHackers.MatterControl
 		public static RootedObjectEventHandler PreChangePanels = new RootedObjectEventHandler();
 
 		public WidescreenPanel()
-			: base(FlowDirection.LeftToRight)
 		{
 			Name = "WidescreenPanel";
 			AnchorAll();
@@ -65,16 +59,9 @@ namespace MatterHackers.MatterControl
 			Padding = new BorderDouble(4);
 
 			ApplicationController.Instance.AdvancedControlsPanelReloading.RegisterEvent((s, e) => UiThread.RunOnIdle(ReloadAdvancedControlsPanel), ref unregisterEvents);
-		}
 
-		public override void OnBoundsChanged(EventArgs e)
-		{
-			if (this.VisiblePanelCount != lastNumberOfVisiblePanels)
-			{
-				RecreateAllPanels();
-			}
-
-			base.OnBoundsChanged(e);
+			LoadColumnOne();
+			LoadColumnTwo();
 		}
 
 		public override void OnClosed(ClosedEventArgs e)
@@ -85,8 +72,10 @@ namespace MatterHackers.MatterControl
 
 		AdvancedControlsPanel advancedControlsPanel;
 
-		private void LoadCompactView()
+		private void LoadColumnOne()
 		{
+			ColumnOne = new FlowLayoutWidget(FlowDirection.TopToBottom);
+
 			ColumnOne.RemoveAllChildren();
 
 			advancedControlsPanel = new AdvancedControlsPanel()
@@ -96,10 +85,17 @@ namespace MatterHackers.MatterControl
 
 			ColumnOne.AddChild(advancedControlsPanel);
 			ColumnOne.AnchorAll();
+
+			SplitterDistance = 590;
+			SplitterWidth = 10;
+
+			this.Panel1.AddChild(ColumnOne);
 		}
 
 		private void LoadColumnTwo()
 		{
+			ColumnTwo = new FlowLayoutWidget(FlowDirection.TopToBottom);
+
 			PopOutManager.SaveIfClosed = false;
 			ColumnTwo.CloseAllChildren();
 			PopOutManager.SaveIfClosed = true;
@@ -116,86 +112,8 @@ namespace MatterHackers.MatterControl
 			ColumnTwo.AddChild(partViewContent);
 
 			ColumnTwo.AnchorAll();
-		}
 
-		private int VisiblePanelCount => (this.Width < Force1PanelWidth) ? 1 : 2;
-
-		public void RecreateAllPanels(object state = null)
-		{
-			if (Width == 0)
-			{
-				return;
-			}
-
-			int numberOfPanels = this.VisiblePanelCount;
-
-			PreChangePanels.CallEvents(this, null);
-			RemovePanelsAndCreateEmpties();
-
-			LoadCompactView();
-
-			// Load ColumnTwo if applicable - i.e. widescreen view
-			if (numberOfPanels == 2)
-			{
-				LoadColumnTwo();
-			}
-
-			SetColumnVisibility();
-
-			lastNumberOfVisiblePanels = numberOfPanels;
-		}
-
-		private void SetColumnVisibility(object state = null)
-		{
-			int numberOfPanels = this.VisiblePanelCount;
-
-			switch (numberOfPanels)
-			{
-				case 1:
-					{
-						ColumnTwo.Visible = false;
-						ColumnOne.Visible = true;
-
-						Padding = new BorderDouble(0);
-
-						leftBorderLine.Visible = false;
-					}
-					break;
-
-				case 2:
-					Padding = new BorderDouble(4);
-					ColumnOne.Visible = true;
-					ColumnTwo.Visible = true;
-					ColumnOne.HAnchor = HAnchor.AbsolutePosition;
-					ColumnOne.Width = ColumnOneFixedWidth; // it can hold the slice settings so it needs to be bigger.
-
-					// TODO: Couldn't this just use this.Width so that we could lose the advancedControlsPanel variable?
-					ColumnOne.MinimumSize = new Vector2(Math.Max(advancedControlsPanel.Width, ColumnOneFixedWidth), 0); //Ordering here matters - must go after children are added
-					break;
-			}
-		}
-
-		private void RemovePanelsAndCreateEmpties()
-		{
-			CloseAllChildren();
-
-			ColumnOne = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			ColumnTwo = new FlowLayoutWidget(FlowDirection.TopToBottom);
-
-			this.AddChild(ColumnOne);
-
-			leftBorderLine = new GuiWidget()
-			{
-				VAnchor = VAnchor.ParentBottomTop,
-				Width = 8
-			};
-			//leftBorderLine.AddChild(new VerticalLine(alpha:50)
-			//{
-			//	HAnchor = HAnchor.ParentCenter
-			//});
-			this.AddChild(leftBorderLine);
-
-			this.AddChild(ColumnTwo);
+			this.Panel2.AddChild(ColumnTwo);
 		}
 
 		public void ReloadAdvancedControlsPanel()
