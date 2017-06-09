@@ -39,7 +39,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public partial class View3DWidget
 	{
-		private async void MakeCopyOfGroup()
+		private async void DuplicateSelection()
 		{
 			if (Scene.HasSelection)
 			{
