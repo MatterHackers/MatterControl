@@ -38,175 +38,172 @@ using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public partial class View3DWidget : PartPreview3DWidget
+	public class PrinterActionsBar : FlowLayoutWidget
 	{
-		public class PrinterActionsBar : FlowLayoutWidget
+		private static EePromMarlinWindow openEePromMarlinWidget = null;
+		private static EePromRepetierWindow openEePromRepetierWidget = null;
+		private string noEepromMappingMessage = "Oops! There is no eeprom mapping for your printer's firmware.".Localize() + "\n\n" + "You may need to wait a minute for your printer to finish initializing.".Localize();
+		private string noEepromMappingTitle = "Warning - No EEProm Mapping".Localize();
+
+		private OverflowDropdown overflowDropdown;
+
+		public PrinterActionsBar(View3DWidget modelViewer)
 		{
-			private static EePromMarlinWindow openEePromMarlinWidget = null;
-			private static EePromRepetierWindow openEePromRepetierWidget = null;
-			private string noEepromMappingMessage = "Oops! There is no eeprom mapping for your printer's firmware.".Localize() + "\n\n" + "You may need to wait a minute for your printer to finish initializing.".Localize();
-			private string noEepromMappingTitle = "Warning - No EEProm Mapping".Localize();
+			UndoBuffer undoBuffer = modelViewer.UndoBuffer;
 
-			private OverflowDropdown overflowDropdown;
+			this.HAnchor = HAnchor.ParentLeftRight;
+			this.VAnchor = VAnchor.FitToChildren;
 
-			public PrinterActionsBar(View3DWidget modelViewer)
+			var buttonFactory = ApplicationController.Instance.Theme.BreadCrumbButtonFactory;
+
+			this.AddChild(new PrinterConnectButton(buttonFactory));
+
+			this.AddChild(new PrintActionRow(buttonFactory, this));
+
+			//ImageBuffer terminalSettingsImage = StaticData.Instance.LoadIcon("terminal-24x24.png", 24, 24).InvertLightness();
+
+			/*
+			ImageBuffer levelingImage = StaticData.Instance.LoadIcon("leveling_32x32.png", 24, 24);
+			if (!ActiveTheme.Instance.IsDarkTheme)
 			{
-				UndoBuffer undoBuffer = modelViewer.UndoBuffer;
-
-				this.HAnchor = HAnchor.ParentLeftRight;
-				this.VAnchor = VAnchor.FitToChildren;
-
-				var buttonFactory = ApplicationController.Instance.Theme.BreadCrumbButtonFactory;
-				
-				this.AddChild(new PrinterConnectButton(buttonFactory));
-
-				this.AddChild(new PrintActionRow(buttonFactory, this));
-
-				//ImageBuffer terminalSettingsImage = StaticData.Instance.LoadIcon("terminal-24x24.png", 24, 24).InvertLightness();
-
-				/*
-				ImageBuffer levelingImage = StaticData.Instance.LoadIcon("leveling_32x32.png", 24, 24);
-				if (!ActiveTheme.Instance.IsDarkTheme)
-				{
-					levelingImage.InvertLightness();
-				}*/
+				levelingImage.InvertLightness();
+			}*/
 
 
-				//this.AddChild(new PrintStatusRow());
+			//this.AddChild(new PrintStatusRow());
 
-				this.AddChild(new HorizontalSpacer());
+			this.AddChild(new HorizontalSpacer());
 
-				var initialMargin = buttonFactory.Margin;
+			var initialMargin = buttonFactory.Margin;
 
-				buttonFactory.Margin = new BorderDouble(8, 0);
+			buttonFactory.Margin = new BorderDouble(8, 0);
 
-				Button terminalButton = buttonFactory.Generate("", StaticData.Instance.LoadIcon("terminal-24x24.png", 16, 16));
-				terminalButton.Name = "Show Terminal Button";
-				terminalButton.ToolTipText = "Terminal";
-				terminalButton.Click += (s, e) => UiThread.RunOnIdle(TerminalWindow.Show);
-				this.AddChild(terminalButton);
+			Button terminalButton = buttonFactory.Generate("", StaticData.Instance.LoadIcon("terminal-24x24.png", 16, 16));
+			terminalButton.Name = "Show Terminal Button";
+			terminalButton.ToolTipText = "Terminal";
+			terminalButton.Click += (s, e) => UiThread.RunOnIdle(TerminalWindow.Show);
+			this.AddChild(terminalButton);
 
-				Button configureEePromButton = buttonFactory.Generate("", StaticData.Instance.LoadIcon("chip_24x24.png", 16, 16));
-				configureEePromButton.ToolTipText = "EEProm";
-				configureEePromButton.Click += configureEePromButton_Click;
-				this.AddChild(configureEePromButton);
+			Button configureEePromButton = buttonFactory.Generate("", StaticData.Instance.LoadIcon("chip_24x24.png", 16, 16));
+			configureEePromButton.ToolTipText = "EEProm";
+			configureEePromButton.Click += configureEePromButton_Click;
+			this.AddChild(configureEePromButton);
 
-				Button undoButton = buttonFactory.Generate("", StaticData.Instance.LoadIcon("undo_24x24.png", 16, 16));
-				undoButton.Name = "3D View Undo";
-				undoButton.ToolTipText = "Undo";
-				undoButton.Enabled = false;
-				undoButton.Margin = new BorderDouble(8, 0);
-				undoButton.Click += (sender, e) =>
-				{
-					undoBuffer.Undo();
-				};
-				this.AddChild(undoButton);
-				undoButton.VAnchor = VAnchor.ParentCenter;
-				undoButton.Margin = 3;
+			Button undoButton = buttonFactory.Generate("", StaticData.Instance.LoadIcon("undo_24x24.png", 16, 16));
+			undoButton.Name = "3D View Undo";
+			undoButton.ToolTipText = "Undo";
+			undoButton.Enabled = false;
+			undoButton.Margin = new BorderDouble(8, 0);
+			undoButton.Click += (sender, e) =>
+			{
+				undoBuffer.Undo();
+			};
+			this.AddChild(undoButton);
+			undoButton.VAnchor = VAnchor.ParentCenter;
+			undoButton.Margin = 3;
 
-				Button redoButton = buttonFactory.Generate("", StaticData.Instance.LoadIcon("redo_24x24.png", 16, 16));
-				redoButton.Name = "3D View Redo";
-				redoButton.ToolTipText = "Redo";
-				redoButton.Enabled = false;
-				redoButton.Click += (sender, e) =>
-				{
-					undoBuffer.Redo();
-				};
-				this.AddChild(redoButton);
-				redoButton.VAnchor = VAnchor.ParentCenter;
-				redoButton.Margin = 3;
+			Button redoButton = buttonFactory.Generate("", StaticData.Instance.LoadIcon("redo_24x24.png", 16, 16));
+			redoButton.Name = "3D View Redo";
+			redoButton.ToolTipText = "Redo";
+			redoButton.Enabled = false;
+			redoButton.Click += (sender, e) =>
+			{
+				undoBuffer.Redo();
+			};
+			this.AddChild(redoButton);
+			redoButton.VAnchor = VAnchor.ParentCenter;
+			redoButton.Margin = 3;
 
-				buttonFactory.Margin = initialMargin;
+			buttonFactory.Margin = initialMargin;
 
-				undoBuffer.Changed += (sender, e) =>
-				{
-					undoButton.Enabled = undoBuffer.UndoCount > 0;
-					redoButton.Enabled = undoBuffer.RedoCount > 0;
-				};
+			undoBuffer.Changed += (sender, e) =>
+			{
+				undoButton.Enabled = undoBuffer.UndoCount > 0;
+				redoButton.Enabled = undoBuffer.RedoCount > 0;
+			};
 
-				var editPrinterButton = PrinterSelectEditDropdown.CreatePrinterEditButton();
-				this.AddChild(editPrinterButton);
+			var editPrinterButton = PrinterSelectEditDropdown.CreatePrinterEditButton();
+			this.AddChild(editPrinterButton);
 
-				overflowDropdown = new OverflowDropdown(allowLightnessInvert: true)
-				{
-					AlignToRightEdge = true,
-					Name = "Printer Overflow Menu"
-				};
+			overflowDropdown = new OverflowDropdown(allowLightnessInvert: true)
+			{
+				AlignToRightEdge = true,
+				Name = "Printer Overflow Menu"
+			};
+			overflowDropdown.DynamicPopupContent = GeneratePrinterOverflowMenu;
+
+			// Deregister on close
+			this.Closed += (s, e) =>
+			{
 				overflowDropdown.DynamicPopupContent = GeneratePrinterOverflowMenu;
+			};
 
-				// Deregister on close
-				this.Closed += (s, e) =>
-				{
-					overflowDropdown.DynamicPopupContent = GeneratePrinterOverflowMenu;
-				};
+			this.AddChild(overflowDropdown);
+		}
 
-				this.AddChild(overflowDropdown);
-			}
-
-			private GuiWidget GeneratePrinterOverflowMenu()
+		private GuiWidget GeneratePrinterOverflowMenu()
+		{
+			var widgetToPop = new FlowLayoutWidget()
 			{
-				var widgetToPop = new FlowLayoutWidget()
-				{
-					HAnchor = HAnchor.FitToChildren,
-					VAnchor = VAnchor.FitToChildren,
-					BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor
-				};
+				HAnchor = HAnchor.FitToChildren,
+				VAnchor = VAnchor.FitToChildren,
+				BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor
+			};
 
-				widgetToPop.AddChild(new PrinterSelectEditDropdown()
-				{
-					Margin = 10
-				});
-
-				return widgetToPop;
-			}
-
-			private void configureEePromButton_Click(object sender, EventArgs mouseEvent)
+			widgetToPop.AddChild(new PrinterSelectEditDropdown()
 			{
-				UiThread.RunOnIdle(() =>
-				{
+				Margin = 10
+			});
+
+			return widgetToPop;
+		}
+
+		private void configureEePromButton_Click(object sender, EventArgs mouseEvent)
+		{
+			UiThread.RunOnIdle(() =>
+			{
 #if false // This is to force the creation of the repetier window for testing when we don't have repetier firmware.
                         new MatterHackers.MatterControl.EeProm.EePromRepetierWidget();
 #else
 					switch (PrinterConnectionAndCommunication.Instance.FirmwareType)
-					{
-						case PrinterConnectionAndCommunication.FirmwareTypes.Repetier:
-							if (openEePromRepetierWidget != null)
+				{
+					case PrinterConnectionAndCommunication.FirmwareTypes.Repetier:
+						if (openEePromRepetierWidget != null)
+						{
+							openEePromRepetierWidget.BringToFront();
+						}
+						else
+						{
+							openEePromRepetierWidget = new EePromRepetierWindow();
+							openEePromRepetierWidget.Closed += (RepetierWidget, RepetierEvent) =>
 							{
-								openEePromRepetierWidget.BringToFront();
-							}
-							else
-							{
-								openEePromRepetierWidget = new EePromRepetierWindow();
-								openEePromRepetierWidget.Closed += (RepetierWidget, RepetierEvent) =>
-								{
-									openEePromRepetierWidget = null;
-								};
-							}
-							break;
+								openEePromRepetierWidget = null;
+							};
+						}
+						break;
 
-						case PrinterConnectionAndCommunication.FirmwareTypes.Marlin:
-							if (openEePromMarlinWidget != null)
+					case PrinterConnectionAndCommunication.FirmwareTypes.Marlin:
+						if (openEePromMarlinWidget != null)
+						{
+							openEePromMarlinWidget.BringToFront();
+						}
+						else
+						{
+							openEePromMarlinWidget = new EePromMarlinWindow();
+							openEePromMarlinWidget.Closed += (marlinWidget, marlinEvent) =>
 							{
-								openEePromMarlinWidget.BringToFront();
-							}
-							else
-							{
-								openEePromMarlinWidget = new EePromMarlinWindow();
-								openEePromMarlinWidget.Closed += (marlinWidget, marlinEvent) =>
-								{
-									openEePromMarlinWidget = null;
-								};
-							}
-							break;
+								openEePromMarlinWidget = null;
+							};
+						}
+						break;
 
-						default:
-							PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("M115");
-							StyledMessageBox.ShowMessageBox(null, noEepromMappingMessage, noEepromMappingTitle, StyledMessageBox.MessageType.OK);
-							break;
-					}
+					default:
+						PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("M115");
+						StyledMessageBox.ShowMessageBox(null, noEepromMappingMessage, noEepromMappingTitle, StyledMessageBox.MessageType.OK);
+						break;
+				}
 #endif
 				});
-			}
 		}
 	}
 }
