@@ -399,7 +399,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					doEdittingButtonsContainer.AddChild(deleteButton);
 					deleteButton.Click += (sender, e) =>
 					{
-						DeleteSelection();
+						this.Scene.DeleteSelection(this);
 					};
 
 					GuiWidget separatorThree = new GuiWidget(1, 2);
@@ -653,7 +653,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					case Keys.Delete:
 					case Keys.Back:
-						DeleteSelection();
+						this.Scene.DeleteSelection(this);
 						break;
 
 					case Keys.Escape:
@@ -1839,19 +1839,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var newEditor = editor.Create(Scene.SelectedItem, this);
 			editorPanel.AddChild(newEditor);
-		}
-
-		private void DeleteSelection()
-		{
-			if (Scene.HasSelection && Scene.Children.Count > 1)
-			{
-				// Create and perform the delete operation 
-				var deleteOperation = new DeleteCommand(this, Scene.SelectedItem);
-				deleteOperation.Do();
-
-				// Store the operation for undo/redo
-				UndoBuffer.Add(deleteOperation);
-			}
 		}
 
 		private void DrawStuffForSelectedPart(Graphics2D graphics2D)

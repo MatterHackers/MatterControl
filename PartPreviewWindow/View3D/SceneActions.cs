@@ -329,6 +329,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			view3DWidget.UndoBuffer.Add(insertOperation);
 		}
 
+		public static void DeleteSelection(this InteractiveScene Scene, View3DWidget view3DWidget)
+		{
+			if (Scene.HasSelection && Scene.Children.Count > 1)
+			{
+				// Create and perform the delete operation 
+				var deleteOperation = new DeleteCommand(view3DWidget, Scene.SelectedItem);
+				deleteOperation.Do();
+
+				// Store the operation for undo/redo
+				view3DWidget.UndoBuffer.Add(deleteOperation);
+			}
+		}
+
 		internal class ArangeUndoCommand : IUndoRedoCommand
 		{
 			private List<TransformUndoCommand> allUndoTransforms = new List<TransformUndoCommand>();
