@@ -215,5 +215,40 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
+		public static async void GroupSelection(this InteractiveScene Scene, View3DWidget view3DWidget)
+		{
+			if (Scene.HasChildren)
+			{
+				view3DWidget.processingProgressControl.PercentComplete = 0;
+				view3DWidget.processingProgressControl.Visible = true;
+				view3DWidget.LockEditControls();
+				view3DWidget.viewIsInEditModePreLock = true;
+
+				var item = Scene.SelectedItem;
+
+				await Task.Run(() =>
+				{
+					if (Scene.IsSelected(Object3DTypes.SelectionGroup))
+					{
+						// Create and perform the delete operation
+						var operation = new GroupCommand(view3DWidget, Scene.SelectedItem);
+						operation.Do();
+
+						// Store the operation for undo/redo
+						view3DWidget.UndoBuffer.Add(operation);
+					}
+				});
+
+				if (view3DWidget.HasBeenClosed)
+				{
+					return;
+				}
+
+				view3DWidget.UnlockEditControls();
+
+				view3DWidget.Invalidate();
+			}
+		}
+
 	}
 }
