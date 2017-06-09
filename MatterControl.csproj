@@ -227,11 +227,7 @@
     <Compile Include="PartPreviewWindow\View3D\Gui3D\SelectionShadow.cs" />
     <Compile Include="PartPreviewWindow\View3D\Gui3D\UpArrow3D.cs" />
     <Compile Include="PartPreviewWindow\View3D\UndoCommands\TransformUndoCommand.cs" />
-    <Compile Include="PartPreviewWindow\View3D\View3DAlign.cs" />
-    <Compile Include="PartPreviewWindow\View3D\View3DAutoArange.cs" />
-    <Compile Include="PartPreviewWindow\View3D\View3DCopyGroup.cs" />
-    <Compile Include="PartPreviewWindow\View3D\View3DGroup.cs" />
-    <Compile Include="PartPreviewWindow\View3D\View3DUngroup.cs" />
+    <Compile Include="PartPreviewWindow\View3D\SceneActions.cs" />
     <Compile Include="PartPreviewWindow\View3D\SideBar\MirrorControls.cs" />
     <Compile Include="PartPreviewWindow\View3D\IObject3DEditor.cs" />
     <Compile Include="PartPreviewWindow\View3D\View3DWidget.cs" />

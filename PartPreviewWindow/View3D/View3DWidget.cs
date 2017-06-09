@@ -190,7 +190,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private OpenMode openMode;
 		internal bool partHasBeenEdited = false;
 		private PrintItemWrapper printItemWrapper { get; set; }
-		private ProgressControl processingProgressControl;
+		internal ProgressControl processingProgressControl;
 		private SaveAsWindow saveAsWindow = null;
 		private SplitButton saveButtons;
 		private bool saveSucceded = true;
@@ -200,7 +200,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private Matrix4X4 transformOnMouseDown = Matrix4X4.Identity;
 		private EventHandler unregisterEvents;
 
-		private bool viewIsInEditModePreLock = false;
+		internal bool viewIsInEditModePreLock = false;
 
 		private bool wasInSelectMode = false;
 
@@ -355,7 +355,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					doEdittingButtonsContainer.AddChild(ungroupButton);
 					ungroupButton.Click += (sender, e) =>
 					{
-						UngroupSelectedMeshGroup();
+						this.Scene.UngroupSelection(this);
 					};
 
 					Button groupButton = smallMarginButtonFactory.Generate("Group".Localize());
@@ -363,21 +363,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					doEdittingButtonsContainer.AddChild(groupButton);
 					groupButton.Click += (sender, e) =>
 					{
-						GroupSelectedMeshs();
+						this.Scene.GroupSelection(this);
 					};
 
 					Button alignButton = smallMarginButtonFactory.Generate("Align".Localize());
 					doEdittingButtonsContainer.AddChild(alignButton);
 					alignButton.Click += (sender, e) =>
 					{
-						AlignToSelectedMeshGroup();
+						this.Scene.AlignToSelection(this);
 					};
 
 					Button arrangeButton = smallMarginButtonFactory.Generate("Arrange".Localize());
 					doEdittingButtonsContainer.AddChild(arrangeButton);
 					arrangeButton.Click += (sender, e) =>
 					{
-						AutoArrangePartsInBackground();
+						this.Scene.AutoArrangeChildren(this);
 					};
 
 					GuiWidget separatorTwo = new GuiWidget(1, 2);
@@ -391,7 +391,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					doEdittingButtonsContainer.AddChild(copyButton);
 					copyButton.Click += (sender, e) =>
 					{
-						MakeCopyOfGroup();
+						this.Scene.DuplicateSelection(this);
 					};
 
 					Button deleteButton = smallMarginButtonFactory.Generate("Remove".Localize());
@@ -399,7 +399,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					doEdittingButtonsContainer.AddChild(deleteButton);
 					deleteButton.Click += (sender, e) =>
 					{
-						DeleteSelectedMesh();
+						this.Scene.DeleteSelection(this);
 					};
 
 					GuiWidget separatorThree = new GuiWidget(1, 2);
@@ -653,7 +653,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					case Keys.Delete:
 					case Keys.Back:
-						DeleteSelectedMesh();
+						this.Scene.DeleteSelection(this);
 						break;
 
 					case Keys.Escape:
@@ -1699,7 +1699,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			ReportProgressChanged(progress0To1, processingState, out continueProcessing);
 		}
 
-		private void ReportProgressChanged(double progress0To1, string processingState, out bool continueProcessing)
+		internal void ReportProgressChanged(double progress0To1, string processingState, out bool continueProcessing)
 		{
 			if (!timeSinceReported.IsRunning || timeSinceReported.ElapsedMilliseconds > 100
 				|| processingState != processingProgressControl.ProgressMessage)
@@ -1839,19 +1839,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var newEditor = editor.Create(Scene.SelectedItem, this);
 			editorPanel.AddChild(newEditor);
-		}
-
-		private void DeleteSelectedMesh()
-		{
-			if (Scene.HasSelection && Scene.Children.Count > 1)
-			{
-				// Create and perform the delete operation 
-				var deleteOperation = new DeleteCommand(this, Scene.SelectedItem);
-				deleteOperation.Do();
-
-				// Store the operation for undo/redo
-				UndoBuffer.Add(deleteOperation);
-			}
 		}
 
 		private void DrawStuffForSelectedPart(Graphics2D graphics2D)
