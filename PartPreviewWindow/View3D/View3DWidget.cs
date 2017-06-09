@@ -391,7 +391,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					doEdittingButtonsContainer.AddChild(copyButton);
 					copyButton.Click += (sender, e) =>
 					{
-						DuplicateSelection();
+						this.Scene.DuplicateSelection(this);
 					};
 
 					Button deleteButton = smallMarginButtonFactory.Generate("Remove".Localize());

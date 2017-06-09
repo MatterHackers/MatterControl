@@ -273,6 +273,62 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			});
 		}
 
+		public static async void DuplicateSelection(this InteractiveScene Scene, View3DWidget view3DWidget)
+		{
+			if (Scene.HasSelection)
+			{
+				view3DWidget.processingProgressControl.ProcessType = "Making Copy".Localize() + ":";
+				view3DWidget.processingProgressControl.Visible = true;
+				view3DWidget.processingProgressControl.PercentComplete = 0;
+				view3DWidget.LockEditControls();
+
+				// Copy selected item
+				IObject3D newItem = await Task.Run(() =>
+				{
+					var clonedItem = Scene.SelectedItem.Clone();
+					PlatingHelper.MoveToOpenPosition(clonedItem, Scene.Children);
+
+					return clonedItem;
+				});
+
+				if (view3DWidget.HasBeenClosed)
+				{
+					return;
+				}
+
+				Scene.InsertNewItem(view3DWidget, newItem);
+
+				view3DWidget.UnlockEditControls();
+				view3DWidget.PartHasBeenChanged();
+
+				// TODO: jlewin - why do we need to reset the scale?
+
+				// now set the selection to the new copy
+				Scene.Children.Last().ExtraData.CurrentScale = Scene.SelectedItem.ExtraData.CurrentScale;
+			}
+		}
+
+		public static void InsertNewItem(this InteractiveScene Scene, View3DWidget view3DWidget, IObject3D newItem)
+		{
+			// Reposition first item to bed center
+			if (Scene.Children.Count == 0)
+			{
+				var aabb = newItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+				var center = aabb.Center;
+				newItem.Matrix *= Matrix4X4.CreateTranslation(
+					(MeshViewerWidget.BedCenter.x + center.x),
+					(MeshViewerWidget.BedCenter.y + center.y),
+					 -aabb.minXYZ.z);
+			}
+
+			// Create and perform a new insert operation
+			var insertOperation = new InsertCommand(view3DWidget, newItem);
+			insertOperation.Do();
+
+			// Store the operation for undo/redo
+			view3DWidget.UndoBuffer.Add(insertOperation);
+		}
+
 		internal class ArangeUndoCommand : IUndoRedoCommand
 		{
 			private List<TransformUndoCommand> allUndoTransforms = new List<TransformUndoCommand>();
