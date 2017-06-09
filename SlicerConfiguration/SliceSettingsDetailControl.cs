@@ -47,35 +47,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public SliceSettingsDetailControl(SliceSettingsWidget sliceSettingsWidget)
 		{
 			this.sliceSettingsWidget = sliceSettingsWidget;
+			this.VAnchor = VAnchor.FitToChildren | VAnchor.ParentCenter;
 
-			var settingsDetailSelector = new DropDownList("Basic", maxHeight: 200)
-			{
-				Name = "User Level Dropdown",
-				VAnchor = VAnchor.ParentCenter,
-				Margin = new BorderDouble(5, 3),
-				BorderColor = new RGBA_Bytes(ActiveTheme.Instance.SecondaryTextColor, 100)
-			};
-
-			settingsDetailSelector.AddItem("Basic".Localize(), "Simple");
-			settingsDetailSelector.AddItem("Standard".Localize(), "Intermediate");
-			settingsDetailSelector.AddItem("Advanced".Localize(), "Advanced");
-
-			// set to advanced
-			settingsDetailSelector.SelectedValue = sliceSettingsWidget.UserLevel;
-
-			settingsDetailSelector.SelectionChanged += (s, e) =>
-			{
-				UserSettings.Instance.set(UserSettingsKey.SliceSettingsLevel, settingsDetailSelector.SelectedValue);
-				sliceSettingsWidget.RebuildSliceSettingsTabs();
-			};
-
-			{
-				// only add these in the default view
-				this.AddChild(settingsDetailSelector);
-				this.AddChild(CreateOverflowMenu());
-			}
-
-			VAnchor = VAnchor.ParentCenter;
+			this.AddChild(CreateOverflowMenu());
 		}
 
 		private GuiWidget CreateOverflowMenu()
@@ -164,9 +138,45 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			};
 			popupContainer.AddChild(menuItem);
 
+			popupContainer.AddChild(overflowDropdown.CreateHorizontalLine());
+
+			popupContainer.AddChild(new TextWidget("Mode")
+			{
+				Margin = new BorderDouble(35, 2, 8, 8),
+				TextColor = RGBA_Bytes.Gray
+			});
+
+			var modeSelector = new SettingsModeSelector()
+			{
+				SelectedValue = sliceSettingsWidget.UserLevel,
+				Name = "User Level Dropdown",
+				Margin = new BorderDouble(35, 15, 35, 5),
+				BorderColor = new RGBA_Bytes(ActiveTheme.Instance.SecondaryTextColor, 100)
+			};
+			modeSelector.SelectionChanged += (s, e) =>
+			{
+				UserSettings.Instance.set(UserSettingsKey.SliceSettingsLevel, modeSelector.SelectedValue);
+				sliceSettingsWidget.RebuildSliceSettingsTabs();
+			};
+
+			popupContainer.AddChild(modeSelector);
+
 			overflowDropdown.PopupContent = popupContainer;
 
 			return overflowDropdown;
+		}
+	}
+
+	public class SettingsModeSelector : DropDownList, IIgnoredPopupChild
+	{
+		public SettingsModeSelector()
+			: base("Basic")
+		{
+			this.TextColor = RGBA_Bytes.Black;
+
+			this.AddItem("Basic".Localize(), "Simple");
+			this.AddItem("Standard".Localize(), "Intermediate");
+			this.AddItem("Advanced".Localize(), "Advanced");
 		}
 	}
 }
