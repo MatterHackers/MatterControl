@@ -36,7 +36,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public partial class View3DWidget
 	{
-		private async void UngroupSelectedMeshGroup()
+		private async void UngroupSelection()
 		{
 			if (Scene.HasSelection)
 			{
@@ -50,7 +50,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					var selectedItem = Scene.SelectedItem;
 					bool isGroupItemType = Scene.IsSelected(Object3DTypes.Group);
 
-					// If not a Group ItemType, look for mesh volumes and split into disctinct objects if found
+					// If not a Group ItemType, look for mesh volumes and split into distinct objects if found
 					if (!isGroupItemType 
 						&& !selectedItem.HasChildren
 						&& selectedItem.Mesh != null)

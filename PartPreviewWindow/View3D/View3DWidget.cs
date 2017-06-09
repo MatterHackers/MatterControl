@@ -355,7 +355,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					doEdittingButtonsContainer.AddChild(ungroupButton);
 					ungroupButton.Click += (sender, e) =>
 					{
-						UngroupSelectedMeshGroup();
+						UngroupSelection();
 					};
 
 					Button groupButton = smallMarginButtonFactory.Generate("Group".Localize());
