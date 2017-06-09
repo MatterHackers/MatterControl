@@ -363,7 +363,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					doEdittingButtonsContainer.AddChild(groupButton);
 					groupButton.Click += (sender, e) =>
 					{
-						GroupSelectedMeshs();
+						GroupSelection();
 					};
 
 					Button alignButton = smallMarginButtonFactory.Generate("Align".Localize());

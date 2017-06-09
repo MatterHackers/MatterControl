@@ -34,7 +34,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public partial class View3DWidget
 	{
-		private async void GroupSelectedMeshs()
+		private async void GroupSelection()
 		{
 			if (Scene.HasChildren)
 			{
