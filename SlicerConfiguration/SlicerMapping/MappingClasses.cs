@@ -204,6 +204,31 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public override string Value => null;
 	}
 
+	public class MapLayerChangeGCode : InjectGCodeCommands
+	{
+		public MapLayerChangeGCode(string canonicalSettingsName, string exportedName)
+			: base(canonicalSettingsName, exportedName)
+		{
+		}
+
+		public override string Value
+		{
+			get
+			{
+				string macroReplaced = base.Value;
+				if (!macroReplaced.Contains("; LAYER:") 
+					&& !macroReplaced.Contains(";LAYER:"))
+				{
+					macroReplaced += "; LAYER:[layer_num]\n";
+				}
+
+				macroReplaced = GCodeProcessing.ReplaceMacroValues(macroReplaced.Replace("\n", "\\n"));
+
+				return macroReplaced;
+			}
+		}
+	}
+
 	public class MapStartGCode : InjectGCodeCommands
 	{
 		private bool escapeNewlineCharacters;
