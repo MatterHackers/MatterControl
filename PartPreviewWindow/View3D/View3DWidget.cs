@@ -377,7 +377,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					doEdittingButtonsContainer.AddChild(arrangeButton);
 					arrangeButton.Click += (sender, e) =>
 					{
-						AutoArrangeChildren();
+						this.Scene.AutoArrangeChildren(this);
 					};
 
 					GuiWidget separatorTwo = new GuiWidget(1, 2);
