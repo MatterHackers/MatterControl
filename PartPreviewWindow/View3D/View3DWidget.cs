@@ -370,7 +370,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					doEdittingButtonsContainer.AddChild(alignButton);
 					alignButton.Click += (sender, e) =>
 					{
-						AlignToSelection();
+						this.Scene.AlignToSelection(this);
 					};
 
 					Button arrangeButton = smallMarginButtonFactory.Generate("Arrange".Localize());
