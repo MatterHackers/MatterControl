@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2017, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,23 +27,23 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.DataConverters3D;
-using System.Threading.Tasks;
-using MatterHackers.PolygonMesh;
 using System.Linq;
+using System.Threading.Tasks;
+using MatterHackers.DataConverters3D;
+using MatterHackers.MeshVisualizer;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public partial class View3DWidget
+	public static class SceneActions
 	{
-		private async void UngroupSelection()
+		public static async void UngroupSelection(this InteractiveScene Scene, View3DWidget view3DWidget)
 		{
 			if (Scene.HasSelection)
 			{
-				processingProgressControl.PercentComplete = 0;
-				processingProgressControl.Visible = true;
-				LockEditControls();
-				viewIsInEditModePreLock = true;
+				view3DWidget.processingProgressControl.PercentComplete = 0;
+				view3DWidget.processingProgressControl.Visible = true;
+				view3DWidget.LockEditControls();
+				view3DWidget.viewIsInEditModePreLock = true;
 
 				await Task.Run(() =>
 				{
@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						var discreetMeshes = CreateDiscreteMeshes.SplitVolumesIntoMeshes(Scene.SelectedItem.Mesh, (double progress0To1, string processingState, out bool continueProcessing) =>
 						{
-							ReportProgressChanged(progress0To1 * .5, processingState, out continueProcessing);
+							view3DWidget.ReportProgressChanged(progress0To1 * .5, processingState, out continueProcessing);
 						});
 
 						if (discreetMeshes.Count == 1)
@@ -82,15 +82,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					if (isGroupItemType)
 					{
 						// Create and perform the delete operation
-						var operation = new UngroupCommand(this, Scene.SelectedItem);
+						var operation = new UngroupCommand(view3DWidget, Scene.SelectedItem);
 						operation.Do();
 
 						// Store the operation for undo/redo
-						UndoBuffer.Add(operation);
+						view3DWidget.UndoBuffer.Add(operation);
 					}
 				});
 
-				if (HasBeenClosed)
+				if (view3DWidget.HasBeenClosed)
 				{
 					return;
 				}
@@ -98,11 +98,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// our selection changed to the mesh we just added which is at the end
 				Scene.SelectLastChild();
 
-				UnlockEditControls();
+				view3DWidget.UnlockEditControls();
 
-				PartHasBeenChanged();
+				view3DWidget.PartHasBeenChanged();
 
-				Invalidate();
+				view3DWidget.Invalidate();
 			}
 		}
 	}

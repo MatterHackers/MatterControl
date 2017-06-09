@@ -190,7 +190,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private OpenMode openMode;
 		internal bool partHasBeenEdited = false;
 		private PrintItemWrapper printItemWrapper { get; set; }
-		private ProgressControl processingProgressControl;
+		internal ProgressControl processingProgressControl;
 		private SaveAsWindow saveAsWindow = null;
 		private SplitButton saveButtons;
 		private bool saveSucceded = true;
@@ -200,7 +200,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private Matrix4X4 transformOnMouseDown = Matrix4X4.Identity;
 		private EventHandler unregisterEvents;
 
-		private bool viewIsInEditModePreLock = false;
+		internal bool viewIsInEditModePreLock = false;
 
 		private bool wasInSelectMode = false;
 
@@ -355,7 +355,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					doEdittingButtonsContainer.AddChild(ungroupButton);
 					ungroupButton.Click += (sender, e) =>
 					{
-						UngroupSelection();
+						this.Scene.UngroupSelection(this);
 					};
 
 					Button groupButton = smallMarginButtonFactory.Generate("Group".Localize());
@@ -1699,7 +1699,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			ReportProgressChanged(progress0To1, processingState, out continueProcessing);
 		}
 
-		private void ReportProgressChanged(double progress0To1, string processingState, out bool continueProcessing)
+		internal void ReportProgressChanged(double progress0To1, string processingState, out bool continueProcessing)
 		{
 			if (!timeSinceReported.IsRunning || timeSinceReported.ElapsedMilliseconds > 100
 				|| processingState != processingProgressControl.ProgressMessage)
