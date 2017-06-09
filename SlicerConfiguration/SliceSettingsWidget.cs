@@ -72,7 +72,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	public class SliceSettingsWidget : GuiWidget
 	{
 		private TextImageButtonFactory buttonFactory = new TextImageButtonFactory();
-		private SliceSettingsDetailControl sliceSettingsDetailControl;
 
 		private TabControl topCategoryTabs;
 		private AltGroupBox noConnectionMessageContainer;
@@ -85,6 +84,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private PrinterSettingsLayer persistenceLayer = null;
 
 		private NamedSettingsLayers viewFilter;
+
+		private bool isPrimarySettingsView { get; set; }
 
 		internal static ImageBuffer restoreNormal;
 		internal static ImageBuffer restoreHover;
@@ -109,6 +110,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public SliceSettingsWidget(List<PrinterSettingsLayer> layerCascade = null, NamedSettingsLayers viewFilter = NamedSettingsLayers.All)
 		{
+			// When editing presets, LayerCascade contains a filtered list of settings layers. If the list is null we're in the primarySettingsView
+			isPrimarySettingsView = layerCascade == null;
+
 			this.BackgroundColor = ApplicationController.Instance.Theme.TabBodyBackground;
 
 			this.layerCascade = layerCascade;
@@ -188,9 +192,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			topCategoryTabs.Margin = new BorderDouble(top: 8);
 			topCategoryTabs.AnchorAll();
 
-			sliceSettingsDetailControl = new SliceSettingsDetailControl(layerCascade, this);
-
 			var sideTabBarsListForLayout = new List<TabBar>();
+
+			// Cache results from database read for the duration of this function
+			bool showHelpControls = this.ShowHelpControls;
 
 			for (int topCategoryIndex = 0; topCategoryIndex < SliceSettingsOrganizer.Instance.UserLevels[UserLevel].CategoriesList.Count; topCategoryIndex++)
 			{
@@ -202,14 +207,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				categoryPage.AnchorAll();
 				topCategoryTabs.AddTab(textTabWidget);
 
-				TabControl sideTabs = CreateSideTabsAndPages(category);
+				TabControl sideTabs = CreateSideTabsAndPages(category, showHelpControls);
 				sideTabBarsListForLayout.Add(sideTabs.TabBar);
 
 				categoryPage.AddChild(sideTabs);
 			}
 
 			topCategoryTabs.TabBar.AddChild(new HorizontalSpacer());
-			topCategoryTabs.TabBar.AddChild(sliceSettingsDetailControl);
+
+			if (isPrimarySettingsView)
+			{
+				var sliceSettingsDetailControl = new SliceSettingsDetailControl(this);
+				topCategoryTabs.TabBar.AddChild(sliceSettingsDetailControl);
+			}
 
 			double sideTabBarsMinimumWidth = 0;
 			foreach (TabBar tabBar in sideTabBarsListForLayout)
@@ -259,9 +269,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			get
 			{
-				if (SliceSettingsOrganizer.Instance.UserLevels.ContainsKey(sliceSettingsDetailControl.SelectedValue))
+				// Preset windows that are not the primary view should be in Advanced mode
+				if (!isPrimarySettingsView)
 				{
-					return sliceSettingsDetailControl.SelectedValue;
+					return "Advanced";
+				}
+
+				string settingsLevel = UserSettings.Instance.get(UserSettingsKey.SliceSettingsLevel);
+				if (SliceSettingsOrganizer.Instance.UserLevels.ContainsKey(settingsLevel))
+				{
+					return settingsLevel;
 				}
 
 				return "Simple";
@@ -353,16 +370,33 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private int tabIndexForItem = 0;
 
-		private TabControl CreateSideTabsAndPages(OrganizerCategory category)
+		// Cache show help at construction time - rebuild SliceSettingsWidget on value changed
+		internal bool ShowHelpControls
 		{
+			get
+			{
+				return UserSettings.Instance.get(UserSettingsKey.SliceSettingsShowHelp) == "true";
+			}
+			set
+			{
+				UserSettings.Instance.set(UserSettingsKey.SliceSettingsShowHelp, value.ToString().ToLower());
+			}
+		}
+
+		private TabControl CreateSideTabsAndPages(OrganizerCategory category, bool showHelpControls)
+		{
+			this.HAnchor = HAnchor.ParentLeftRight;
+
+			var sliceEngineMapping = ActiveSliceSettings.Instance.Helpers.ActiveSliceEngine();
+
 			TabControl leftSideGroupTabs = new TabControl(Orientation.Vertical);
 			leftSideGroupTabs.Margin = new BorderDouble(0, 0, 0, 5);
 			leftSideGroupTabs.TabBar.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
 			foreach (OrganizerGroup group in category.GroupsList)
 			{
 				tabIndexForItem = 0;
-				string groupTabLabel = group.Name.Localize();
-				TabPage groupTabPage = new TabPage(groupTabLabel);
+				
+				TabPage groupTabPage = new TabPage(group.Name.Localize());
 				groupTabPage.HAnchor = HAnchor.ParentLeftRight;
 
 				//Side Tabs
@@ -395,9 +429,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						FlowLayoutWidget topToBottomSettings = new FlowLayoutWidget(FlowDirection.TopToBottom);
 						topToBottomSettings.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
 
-						this.HAnchor = HAnchor.ParentLeftRight;
-
-						var sliceEngineMapping = ActiveSliceSettings.Instance.Helpers.ActiveSliceEngine();
 
 						foreach (SliceSettingData settingData in subGroup.SettingDataList)
 						{
@@ -409,29 +440,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								&& settingShouldBeShown)
 							{
 								addedSettingToSubGroup = true;
-								bool addControl;
-								GuiWidget controlsForThisSetting = CreateSettingInfoUIControls(
+								topToBottomSettings.AddChild(
+									CreateSettingInfoUIControls(
 									settingData, 
 									layerCascade, 
 									persistenceLayer, 
 									viewFilter, 
 									copyIndex,
-									out addControl,
-									ref tabIndexForItem);
+									ref tabIndexForItem));
 
-								if (addControl)
+								if (showHelpControls)
 								{
-									topToBottomSettings.AddChild(controlsForThisSetting);
-									GuiWidget helpBox = AddInHelpText(topToBottomSettings, settingData);
-									if (!sliceSettingsDetailControl.ShowingHelp)
-									{
-										helpBox.Visible = false;
-									}
-									sliceSettingsDetailControl.ShowHelpChanged += (s, e) =>
-									{
-										helpBox.Visible = sliceSettingsDetailControl.ShowingHelp;
-									};
-									topToBottomSettings.AddChild(helpBox);
+									topToBottomSettings.AddChild(AddInHelpText(topToBottomSettings, settingData));
 								}
 							}
 						}
@@ -465,7 +485,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 					// Make sure we have the right scroll position when we create this view
 					// This code is not working yet. Scroll widgets get a scroll event when the tab becomes visible that is always reseting them.
-					// So it is not usefull to enable this and in fact makes the tabs inconsistently scrolled. It is just here for reference. // 2015 04 16, LBB
+					// So it is not useful to enable this and in fact makes the tabs inconsistently scrolled. It is just here for reference. // 2015 04 16, LBB
 					if (false)
 					{
 						string settingsScrollPosition = "SliceSettingsWidget_{0}_{1}_ScrollPosition".FormatWith(category.Name, group.Name);
@@ -496,23 +516,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			// Make sure we are on the right tab when we create this view
-			{
-				string settingsTypeName = "SliceSettingsWidget_{0}_CurrentTab".FormatWith(category.Name);
-				string selectedTab = UserSettings.Instance.get(settingsTypeName);
-				leftSideGroupTabs.SelectTab(selectedTab);
+			string settingsTypeName = "SliceSettingsWidget_{0}_CurrentTab".FormatWith(category.Name);
+			string selectedTab = UserSettings.Instance.get(settingsTypeName);
+			leftSideGroupTabs.SelectTab(selectedTab);
 
-				leftSideGroupTabs.TabBar.TabIndexChanged += (object sender, EventArgs e) =>
+			leftSideGroupTabs.TabBar.TabIndexChanged += (object sender, EventArgs e) =>
+			{
+				string selectedTabName = leftSideGroupTabs.TabBar.SelectedTabName;
+				if (!string.IsNullOrEmpty(selectedTabName) 
+					&& isPrimarySettingsView)
 				{
-					string selectedTabName = leftSideGroupTabs.TabBar.SelectedTabName;
-					if (!string.IsNullOrEmpty(selectedTabName))
-					{
-						if (layerCascade == null)
-						{
-							UserSettings.Instance.set(settingsTypeName, selectedTabName);
-						}
-					}
-				};
-			}
+					UserSettings.Instance.set(settingsTypeName, selectedTabName);
+				}
+			};
 
 			return leftSideGroupTabs;
 		}
@@ -583,20 +599,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						SliceSettingData settingData = new SliceSettingData(keyValue.Key, keyValue.Key, SliceSettingData.DataEditTypes.STRING);
 						if (sliceEngineMapping.MapContains(settingData.SlicerConfigName))
 						{
-							bool addControl;
 							GuiWidget controlsForThisSetting = CreateSettingInfoUIControls(
 								settingData,
 								layerCascade,
 								persistenceLayer,
 								viewFilter,
 								0,
-								out addControl,
 								ref tabIndexForItem);
 
-							if (addControl)
-							{
-								topToBottomSettings.AddChild(controlsForThisSetting);
-							}
+							topToBottomSettings.AddChild(controlsForThisSetting);
+
 							count++;
 						}
 					}
@@ -789,22 +801,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public static GuiWidget CreateSettingControl(string sliceSettingsKey, ref int tabIndex)
 		{
-			bool addControl;
-			GuiWidget settingsRow = CreateSettingInfoUIControls(
+			return CreateSettingInfoUIControls(
 				SliceSettingsOrganizer.Instance.GetSettingsData(sliceSettingsKey),
 				null,
 				ActiveSliceSettings.Instance.UserLayer,
 				NamedSettingsLayers.All,
 				0,
-				out addControl,
 				ref tabIndex);
-
-			if (addControl)
-			{
-				return settingsRow;
-			}
-
-			return null;
 		}
 
 		private static GuiWidget CreateSettingInfoUIControls(
@@ -813,11 +816,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			PrinterSettingsLayer persistenceLayer,
 			NamedSettingsLayers viewFilter,
 			int extruderIndex, 
-			out bool addControl, 
 			ref int tabIndexForItem)
 		{
-			addControl = true;
-
 			string sliceSettingValue = GetActiveValue(settingData.SlicerConfigName, layerCascade);
 
 			GuiWidget nameArea = new GuiWidget()

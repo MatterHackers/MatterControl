@@ -27,8 +27,6 @@ The views and conclusions contained in the software and documentation are those
 of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
-using System;
-using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
@@ -39,68 +37,20 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class SliceSettingsDetailControl : FlowLayoutWidget
 	{
-		private const string SliceSettingsLevelEntry = "SliceSettingsLevel";
-		private const string SliceSettingsShowHelpEntry = "SliceSettingsShowHelp";
-		private DropDownList settingsDetailSelector;
 		private CheckBox showHelpBox;
-		private List<NamedAction> slicerOptionsMenuItems;
 
 		string resetToDefaultsMessage = "Resetting to default values will remove your current overrides and restore your original printer settings.\nAre you sure you want to continue?".Localize();
 		string resetToDefaultsWindowTitle = "Revert Settings".Localize();
-		bool primarySettingsView;
 
 		private SliceSettingsWidget sliceSettingsWidget;
 
-		public SliceSettingsDetailControl(List<PrinterSettingsLayer> layerCascade, SliceSettingsWidget sliceSettingsWidget)
+		public SliceSettingsDetailControl(SliceSettingsWidget sliceSettingsWidget)
 		{
 			this.sliceSettingsWidget = sliceSettingsWidget;
+			this.VAnchor = VAnchor.FitToChildren | VAnchor.ParentCenter;
 
-			primarySettingsView = layerCascade == null;
-			settingsDetailSelector = new DropDownList("Basic", maxHeight: 200);
-			settingsDetailSelector.Name = "User Level Dropdown";
-			settingsDetailSelector.AddItem("Basic".Localize(), "Simple");
-			settingsDetailSelector.AddItem("Standard".Localize(), "Intermediate");
-			settingsDetailSelector.AddItem("Advanced".Localize(), "Advanced");
-
-			if (primarySettingsView)
-			{
-				// set to the user requested value when in default view
-				if (UserSettings.Instance.get(SliceSettingsLevelEntry) != null
-					&& SliceSettingsOrganizer.Instance.UserLevels.ContainsKey(UserSettings.Instance.get(SliceSettingsLevelEntry)))
-				{
-					settingsDetailSelector.SelectedValue = UserSettings.Instance.get(SliceSettingsLevelEntry);
-				}
-			}
-			else // in settings editor view
-			{
-				// set to advanced
-				settingsDetailSelector.SelectedValue = "Advanced";
-			}
-
-			settingsDetailSelector.SelectionChanged += (s, e) =>
-			{
-				UserSettings.Instance.set(SliceSettingsLevelEntry, settingsDetailSelector.SelectedValue);
-				sliceSettingsWidget.RebuildSliceSettingsTabs();
-			};
-			settingsDetailSelector.VAnchor = VAnchor.ParentCenter;
-			settingsDetailSelector.Margin = new BorderDouble(5, 3);
-			settingsDetailSelector.BorderColor = new RGBA_Bytes(ActiveTheme.Instance.SecondaryTextColor, 100);
-
-			if (primarySettingsView)
-			{
-				// only add these in the default view
-				this.AddChild(settingsDetailSelector);
-				this.AddChild(CreateOverflowMenu());
-			}
-
-			VAnchor = VAnchor.ParentCenter;
+			this.AddChild(CreateOverflowMenu());
 		}
-
-		public event EventHandler ShowHelpChanged;
-
-		public string SelectedValue => settingsDetailSelector.SelectedValue; 
-
-		public bool ShowingHelp => primarySettingsView ? showHelpBox.Checked : false;
 
 		private GuiWidget CreateOverflowMenu()
 		{
@@ -111,21 +61,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			};
 
 			showHelpBox = new CheckBox("Show Help".Localize());
-
-			if (primarySettingsView)
-			{
-				// only turn on the help if in the main view and it is set to on
-				showHelpBox.Checked = UserSettings.Instance.get(SliceSettingsShowHelpEntry) == "true";
-			}
-
+			showHelpBox.Checked = sliceSettingsWidget.ShowHelpControls;
 			showHelpBox.CheckedStateChanged += (s, e) =>
 			{
-				if (primarySettingsView)
-				{
-					// only save the help settings if in the main view
-					UserSettings.Instance.set(SliceSettingsShowHelpEntry, showHelpBox.Checked.ToString().ToLower());
-				}
-				ShowHelpChanged?.Invoke(this, null);
+				sliceSettingsWidget.ShowHelpControls = showHelpBox.Checked;
+				sliceSettingsWidget.RebuildSliceSettingsTabs();
 			};
 
 			var popupContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
@@ -198,9 +138,45 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			};
 			popupContainer.AddChild(menuItem);
 
+			popupContainer.AddChild(overflowDropdown.CreateHorizontalLine());
+
+			popupContainer.AddChild(new TextWidget("Mode")
+			{
+				Margin = new BorderDouble(35, 2, 8, 8),
+				TextColor = RGBA_Bytes.Gray
+			});
+
+			var modeSelector = new SettingsModeSelector()
+			{
+				SelectedValue = sliceSettingsWidget.UserLevel,
+				Name = "User Level Dropdown",
+				Margin = new BorderDouble(35, 15, 35, 5),
+				BorderColor = new RGBA_Bytes(ActiveTheme.Instance.SecondaryTextColor, 100)
+			};
+			modeSelector.SelectionChanged += (s, e) =>
+			{
+				UserSettings.Instance.set(UserSettingsKey.SliceSettingsLevel, modeSelector.SelectedValue);
+				sliceSettingsWidget.RebuildSliceSettingsTabs();
+			};
+
+			popupContainer.AddChild(modeSelector);
+
 			overflowDropdown.PopupContent = popupContainer;
 
 			return overflowDropdown;
+		}
+	}
+
+	public class SettingsModeSelector : DropDownList, IIgnoredPopupChild
+	{
+		public SettingsModeSelector()
+			: base("Basic")
+		{
+			this.TextColor = RGBA_Bytes.Black;
+
+			this.AddItem("Basic".Localize(), "Simple");
+			this.AddItem("Standard".Localize(), "Intermediate");
+			this.AddItem("Advanced".Localize(), "Advanced");
 		}
 	}
 }
