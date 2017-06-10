@@ -276,7 +276,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 
 				string settingsLevel = UserSettings.Instance.get(UserSettingsKey.SliceSettingsLevel);
-				if (SliceSettingsOrganizer.Instance.UserLevels.ContainsKey(settingsLevel))
+				if (!string.IsNullOrEmpty(settingsLevel)
+					&& SliceSettingsOrganizer.Instance.UserLevels.ContainsKey(settingsLevel))
 				{
 					return settingsLevel;
 				}

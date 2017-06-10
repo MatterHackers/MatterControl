@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			var overflowDropdown = new OverflowDropdown(false)
 			{
 				AlignToRightEdge = true,
-				Name = "Slice Settings Options Menu"
+				Name = "Slice Settings Overflow Menu"
 			};
 
 			showHelpBox = new CheckBox("Show Help".Localize());

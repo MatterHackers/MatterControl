@@ -68,8 +68,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					// reset to defaults and make sure print leveling is cleared
 					testRunner.SwitchToAdvancedSliceSettings();
 
-					testRunner.ClickByName("Slice Settings Options Menu", 1);
-					testRunner.ClickByName("Reset to Defaults Menu Item", 1);
+					testRunner.ClickByName("Slice Settings Overflow Menu");
+					testRunner.ClickByName("Reset to Defaults Menu Item");
 					testRunner.ClickByName("Yes Button", .5);
 					testRunner.Delay(1);
 
