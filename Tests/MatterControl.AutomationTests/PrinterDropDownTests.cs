@@ -9,30 +9,26 @@ using NUnit.Framework;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
+	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain, Apartment(ApartmentState.STA)]
 	public class PrinterNameChangePersists
 	{
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task PrinterNameStaysChanged()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				testRunner.CloseSignInAndPrinterSelect();
-
 				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
 
 				testRunner.SwitchToAdvancedSliceSettings();
 
 				testRunner.ClickByName("Printer Tab", 1);
 
-				string widgetName = "Printer Name Edit";
-				testRunner.ClickByName(widgetName);
+				testRunner.ClickByName("Printer Name Edit");
 
-				SystemWindow window;
-				var textWidget = testRunner.GetWidgetByName(widgetName, out window);
+				var textWidget = testRunner.GetWidgetByName("Printer Name Edit", out _);
 				string newName = "Updated name";
 				textWidget.Text = newName;
-				testRunner.ClickByName("Printer Tab", 1);
+				testRunner.ClickByName("Printer Tab");
 				testRunner.Delay(4);
 
 				//Check to make sure the Printer dropdown gets the name change 
@@ -40,12 +36,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.IsTrue(testRunner.WaitForName(newName + " Menu Item"), "Widget with updated printer name exists");
 
 				//Make sure the Active profile name changes as well
-				Assert.IsTrue(ProfileManager.Instance.ActiveProfile.Name == newName, "ActiveProfile has updated name");
+				Assert.AreEqual(newName, ProfileManager.Instance.ActiveProfile.Name, "ActiveProfile has updated name");
 
 				return Task.CompletedTask;
-			};
-
-			await MatterControlUtilities.RunTest(testToRun);
+			});
 		}
 	}
 }

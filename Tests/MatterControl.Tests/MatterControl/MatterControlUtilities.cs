@@ -541,6 +541,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			// Switch to Slice Settings Tab
 			testRunner.ClickByName("Slice Settings Tab");
 
+			// Show the overflow menu
+			testRunner.ClickByName("Slice Settings Overflow Menu");
+
 			// Change to Advanced view
 			testRunner.ClickByName("User Level Dropdown");
 			testRunner.ClickByName("Advanced Menu Item");
