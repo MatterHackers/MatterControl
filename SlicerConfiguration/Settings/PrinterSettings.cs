@@ -323,7 +323,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			if (extruderIndex == 0)
 			{
 				MaterialLayer = GetMaterialLayer(materialKey);
-				ApplicationController.Instance.ReloadAdvancedControlsPanel();
+
+				ActiveSliceSettings.OnMaterialPresetChanged();
 			}
 
 			Save();

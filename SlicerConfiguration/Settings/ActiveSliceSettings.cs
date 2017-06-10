@@ -28,19 +28,15 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using MatterHackers.MatterControl.PrinterCommunication;
-using System.IO;
-using System.Net;
-using Newtonsoft.Json;
-using MatterHackers.MatterControl.SettingsManagement;
-using MatterHackers.Agg;
-using System.Linq;
 using System.Collections.Generic;
-using MatterHackers.Agg.PlatformAbstract;
-using MatterHackers.SerialPortCommunication.FrostedSerial;
-using MatterHackers.Agg.UI;
+using System.IO;
 using System.Threading.Tasks;
-using MatterHackers.Localizations;
+using MatterHackers.Agg;
+using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.UI;
+using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.SettingsManagement;
+using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -51,6 +47,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public static RootedObjectEventHandler ActivePrinterChanged = new RootedObjectEventHandler();
 		public static RootedObjectEventHandler ActiveProfileModified = new RootedObjectEventHandler();
 		public static RootedObjectEventHandler SettingChanged = new RootedObjectEventHandler();
+
+		public static event EventHandler MaterialPresetChanged;
 
 		private static PrinterSettings activeInstance;
 		public static PrinterSettings Instance
@@ -173,6 +171,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private static void OnActivePrinterChanged(EventArgs e)
 		{
 			ActivePrinterChanged.CallEvents(null, e);
+		}
+
+		internal static void OnMaterialPresetChanged()
+		{
+			MaterialPresetChanged?.Invoke(null, null);
 		}
 	}
 
