@@ -134,7 +134,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public override void OnMouseUp(MouseEventArgs mouseEvent)
 		{
 			// Only show the popup if the menu was hidden as the mouse events started
-			if (buttonView.MouseCaptured && !menuVisibileAtMouseDown)
+			if ((buttonView.MouseCaptured || this.MouseCaptured)
+				&& !menuVisibileAtMouseDown)
 			{
 				ShowPopup();
 				this.BackgroundColor = slightShade;
