@@ -448,6 +448,11 @@ namespace MatterHackers.MatterControl
 			// Name = "MainSlidePanel";
 			ActiveTheme.ThemeChanged.RegisterEvent((s, e) => ReloadAll(), ref unregisterEvents);
 
+			ActiveSliceSettings.MaterialPresetChanged += (s, e) =>
+			{
+				ApplicationController.Instance.ReloadAdvancedControlsPanel();
+			};
+
 			// Remove consumed ClientToken from running list on shutdown
 			ApplicationClosed += (s, e) => ApplicationSettings.Instance.ReleaseClientToken();
 
