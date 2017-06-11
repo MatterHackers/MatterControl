@@ -63,9 +63,31 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			AddChild(topToBottom);
 		}
 
-		class RemainOpenWrapper : GuiWidget, IIgnoredPopupChild
+		class UnpinnedDockWindow : GuiWidget, IIgnoredPopupChild
 		{
+			internal UnpinnedDockWindow(GuiWidget child, string title)
+			{
+				FlowLayoutWidget topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
+				{
+					VAnchor = VAnchor.ParentBottomTop,
+					HAnchor = HAnchor.ParentLeftRight
+				};
 
+				FlowLayoutWidget titleBar = new FlowLayoutWidget()
+				{
+					HAnchor = HAnchor.ParentLeftRight
+				};
+				titleBar.AddChild(new TextWidget(title));
+				titleBar.AddChild(new GuiWidget() { HAnchor = HAnchor.ParentLeftRight });
+				titleBar.AddChild(new CheckBox("[pin icon]"));
+				topToBottom.AddChild(titleBar);
+
+				Width = 500;
+				Height = 640;
+				topToBottom.AddChild(child);
+
+				AddChild(topToBottom);
+			}
 		}
 
 		public void AddPage(string name, GuiWidget widget)
@@ -86,7 +108,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				var bounds = stringPrinter3.Bounds();
 				stringPrinter3.Transform = ((Affine)stringPrinter3.Transform) * Affine.NewTranslation(new Vector2(0, -bounds.Bottom + 0));
 
-				optionsText = new GuiWidget(12, bounds.Height)
+				optionsText = new GuiWidget(bounds.Width, bounds.Height)
 				{
 					DoubleBuffer = true,
 					//BackgroundColor = RGBA_Bytes.Green,
@@ -104,12 +126,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				AlignToRightEdge = true,
 			};
 
-			settingsButton.PopupContent = new RemainOpenWrapper()
-			{
-				Width = 500,
-				Height = 640,
-			};
-			settingsButton.PopupContent.AddChild(widget);
+			settingsButton.PopupContent = new UnpinnedDockWindow(widget, name);
 
 			topToBottom.AddChild(settingsButton);
 		}
