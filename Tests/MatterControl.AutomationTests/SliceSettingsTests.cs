@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideWidth: 1224, overrideHeight: 800);
 		}
 
-		[Test]
+		[Test, Category("Emulator")]
 		public async Task PauseOnLayerDoesPauseOnPrint()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, maxTimeToRun: 120);
 		}
 
-		[Test]
+		[Test, Category("Emulator")]
 		public async Task CancelWorksAsExpected()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
