@@ -364,19 +364,10 @@ namespace MatterHackers.MatterControl.PrinterControls
 			};
 			zOffsetStreamContainer.AddChild(zOffsetStreamDisplay);
 
-			clearZOffsetButton = new Button(
-				new ButtonViewStates(
-					new ImageWidget(SliceSettingsWidget.restoreNormal),
-					new ImageWidget(SliceSettingsWidget.restoreHover),
-					new ImageWidget(SliceSettingsWidget.restorePressed),
-					new ImageWidget(SliceSettingsWidget.restoreNormal)))
-			{
-				Name = "Clear ZOffset button",
-				VAnchor = VAnchor.ParentCenter,
-				Margin = new BorderDouble(0, 0, 5, 0),
-				ToolTipText = "Clear ZOffset".Localize(),
-				Visible = allowRemoveButton && zoffset != 0
-			};
+			clearZOffsetButton = ApplicationController.Instance.Theme.CreateSmallResetButton();
+			clearZOffsetButton.Name = "Clear ZOffset button";
+			clearZOffsetButton.ToolTipText = "Clear ZOffset".Localize();
+			clearZOffsetButton.Visible = allowRemoveButton && zoffset != 0;
 			clearZOffsetButton.Click += (sender, e) =>
 			{
 				ActiveSliceSettings.Instance.SetValue(SettingsKey.baby_step_z_offset, "0");

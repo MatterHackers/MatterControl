@@ -82,6 +82,23 @@ namespace MatterHackers.MatterControl
 
 			private EventHandler unregisterEvents;
 
+			static ThemeConfig()
+			{
+				// EnsureRestoreButtonImages
+				int size = (int)(16 * GuiWidget.DeviceScale);
+
+				if (OsInformation.OperatingSystem == OSType.Android)
+				{
+					restoreNormal = ColorCircle(size, new RGBA_Bytes(200, 0, 0));
+				}
+				else
+				{
+					restoreNormal = ColorCircle(size, new RGBA_Bytes(128, 128, 128));
+				}
+				restoreHover = ColorCircle(size, new RGBA_Bytes(200, 0, 0));
+				restorePressed = ColorCircle(size, new RGBA_Bytes(255, 0, 0));
+			}
+
 			public ThemeConfig()
 			{
 				ActiveTheme.ThemeChanged.RegisterEvent((s, e) => RebuildTheme(), ref unregisterEvents);
@@ -193,6 +210,32 @@ namespace MatterHackers.MatterControl
 
 				return advancedControls;
 			}
+
+			private static ImageBuffer ColorCircle(int size, RGBA_Bytes color)
+			{
+				ImageBuffer imageBuffer = new ImageBuffer(size, size);
+				Graphics2D normalGraphics = imageBuffer.NewGraphics2D();
+				Vector2 center = new Vector2(size / 2.0, size / 2.0);
+				normalGraphics.Circle(center, size / 2.0, color);
+				normalGraphics.Line(center + new Vector2(-size / 4.0, -size / 4.0), center + new Vector2(size / 4.0, size / 4.0), RGBA_Bytes.White, 2 * GuiWidget.DeviceScale);
+				normalGraphics.Line(center + new Vector2(-size / 4.0, size / 4.0), center + new Vector2(size / 4.0, -size / 4.0), RGBA_Bytes.White, 2 * GuiWidget.DeviceScale);
+
+				return imageBuffer;
+			}
+
+			internal Button CreateSmallResetButton()
+			{
+				return new Button(
+					new ButtonViewStates(
+						new ImageWidget(restoreNormal),
+						new ImageWidget(restoreHover),
+						new ImageWidget(restorePressed),
+						new ImageWidget(restoreNormal)))
+				{
+					VAnchor = VAnchor.ParentCenter,
+					Margin = new BorderDouble(0, 0, 5, 0)
+				};
+		}
 		}
 
 		internal void ClearPlate()
@@ -225,6 +268,10 @@ namespace MatterHackers.MatterControl
 		
 		public static Action WebRequestFailed;
 		public static Action WebRequestSucceeded;
+
+		private static ImageBuffer restoreNormal;
+		private static ImageBuffer restoreHover;
+		private static ImageBuffer restorePressed;
 
 		public TerminalRedirector Terminal { get; } = new TerminalRedirector();
 

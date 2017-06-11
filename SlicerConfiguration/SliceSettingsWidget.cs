@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class NoSettingsWidget : FlowLayoutWidget
 	{
-		public NoSettingsWidget() : base (FlowDirection.TopToBottom)
+		public NoSettingsWidget() : base(FlowDirection.TopToBottom)
 		{
 			this.AnchorAll();
 			this.Padding = new BorderDouble(3, 0);
@@ -87,25 +87,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private bool isPrimarySettingsView { get; set; }
 
-		internal static ImageBuffer restoreNormal;
-		internal static ImageBuffer restoreHover;
-		internal static ImageBuffer restorePressed;
-
 		static SliceSettingsWidget()
 		{
-			// EnsureRestoreButtonImages
-			int size = (int)(16 * GuiWidget.DeviceScale);
-
-			if (OsInformation.OperatingSystem == OSType.Android)
-			{
-				restoreNormal = ColorCircle(size, new RGBA_Bytes(200, 0, 0));
-			}
-			else
-			{
-				restoreNormal = ColorCircle(size, new RGBA_Bytes(128, 128, 128));
-			}
-			restoreHover = ColorCircle(size, new RGBA_Bytes(200, 0, 0));
-			restorePressed = ColorCircle(size, new RGBA_Bytes(255, 0, 0));
 		}
 
 		public SliceSettingsWidget(List<PrinterSettingsLayer> layerCascade = null, NamedSettingsLayers viewFilter = NamedSettingsLayers.All)
@@ -396,7 +379,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			foreach (OrganizerGroup group in category.GroupsList)
 			{
 				tabIndexForItem = 0;
-				
+
 				TabPage groupTabPage = new TabPage(group.Name.Localize());
 				groupTabPage.HAnchor = HAnchor.ParentLeftRight;
 
@@ -443,10 +426,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								addedSettingToSubGroup = true;
 								topToBottomSettings.AddChild(
 									CreateSettingInfoUIControls(
-									settingData, 
-									layerCascade, 
-									persistenceLayer, 
-									viewFilter, 
+									settingData,
+									layerCascade,
+									persistenceLayer,
+									viewFilter,
 									copyIndex,
 									ref tabIndexForItem));
 
@@ -510,7 +493,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					}
 				}
 
-				if(group.Name == "Connection")
+				if (group.Name == "Connection")
 				{
 					subGroupLayoutTopToBottom.AddChild(SliceSettingsWidget.CreatePrinterExtraControls(isPrimaryView: true));
 				}
@@ -524,7 +507,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			leftSideGroupTabs.TabBar.TabIndexChanged += (object sender, EventArgs e) =>
 			{
 				string selectedTabName = leftSideGroupTabs.TabBar.SelectedTabName;
-				if (!string.IsNullOrEmpty(selectedTabName) 
+				if (!string.IsNullOrEmpty(selectedTabName)
 					&& isPrimarySettingsView)
 				{
 					UserSettings.Instance.set(settingsTypeName, selectedTabName);
@@ -812,11 +795,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 
 		private static GuiWidget CreateSettingInfoUIControls(
-			SliceSettingData settingData, 
-			List<PrinterSettingsLayer> layerCascade, 
+			SliceSettingData settingData,
+			List<PrinterSettingsLayer> layerCascade,
 			PrinterSettingsLayer persistenceLayer,
 			NamedSettingsLayers viewFilter,
-			int extruderIndex, 
+			int extruderIndex,
 			ref int tabIndexForItem)
 		{
 			string sliceSettingValue = GetActiveValue(settingData.SlicerConfigName, layerCascade);
@@ -991,7 +974,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								doubleEditWidget.ActuallNumberEdit.Value = currentValue;
 							}
 							doubleEditWidget.ActuallNumberEdit.InternalTextEditWidget.MarkAsStartingState();
-							
+
 							doubleEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
 							{
 								NumberEdit numberEdit = (NumberEdit)sender;
@@ -1251,7 +1234,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								Name = settingData.PresentationName + " Edit",
 							};
 							stringEdit.ToolTipText = settingData.HelpText;
-							
+
 							stringEdit.ActualTextEditWidget.EditComplete += (sender, e) =>
 							{
 								ActiveSliceSettings.Instance.SetValue(settingData.SlicerConfigName, ((TextEditWidget)sender).Text, persistenceLayer);
@@ -1559,13 +1542,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			Button restoreButton = null;
 			if (settingData.ShowAsOverride)
 			{
-				restoreButton = new Button(new ButtonViewStates(new ImageWidget(restoreNormal), new ImageWidget(restoreHover), new ImageWidget(restorePressed), new ImageWidget(restoreNormal)))
-				{
-					Name = "Restore " + settingData.SlicerConfigName,
-					VAnchor = VAnchor.ParentCenter,
-					Margin = new BorderDouble(0, 0, 5, 0),
-					ToolTipText = "Restore Default".Localize()
-				};
+				restoreButton = ApplicationController.Instance.Theme.CreateSmallResetButton();
+				restoreButton.Name = "Restore " + settingData.SlicerConfigName;
+				restoreButton.ToolTipText = "Restore Default".Localize();
 
 				restoreButton.Click += (sender, e) =>
 				{
@@ -1698,18 +1677,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					settingsRow.UpdateStyle();
 				};
 			}
-		}
-
-		private static ImageBuffer ColorCircle(int size, RGBA_Bytes color)
-		{
-			ImageBuffer imageBuffer = new ImageBuffer(size, size);
-			Graphics2D normalGraphics = imageBuffer.NewGraphics2D();
-			Vector2 center = new Vector2(size / 2.0, size / 2.0);
-			normalGraphics.Circle(center, size / 2.0, color);
-			normalGraphics.Line(center + new Vector2(-size / 4.0, -size / 4.0), center + new Vector2(size / 4.0, size / 4.0), RGBA_Bytes.White, 2 * GuiWidget.DeviceScale);
-			normalGraphics.Line(center + new Vector2(-size / 4.0, size / 4.0), center + new Vector2(size / 4.0, -size / 4.0), RGBA_Bytes.White, 2 * GuiWidget.DeviceScale);
-
-			return imageBuffer;
 		}
 
 		private static GuiWidget CreateQuickMenu(SliceSettingData settingData, PrinterSettingsLayer persistenceLayer, GuiWidget content, InternalTextEditWidget internalTextWidget, List<PrinterSettingsLayer> layerCascade)
