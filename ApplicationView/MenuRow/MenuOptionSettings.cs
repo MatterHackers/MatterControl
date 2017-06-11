@@ -15,7 +15,6 @@ namespace MatterHackers.MatterControl
 	public class MenuOptionSettings : MenuBase
 	{
 		static public PopOutTextTabWidget sliceSettingsPopOut = null;
-		static public PopOutTextTabWidget controlsPopOut = null;
 
 		public MenuOptionSettings() : base("View".Localize())
 		{
@@ -26,7 +25,6 @@ namespace MatterHackers.MatterControl
 			return new List<MenuItemAction>
 			{
 				new MenuItemAction("Settings".Localize(), () => sliceSettingsPopOut?.ShowInWindow()),
-				new MenuItemAction("Controls".Localize(), () => controlsPopOut?.ShowInWindow()),
 				new MenuItemAction("Terminal".Localize(), () => UiThread.RunOnIdle(TerminalWindow.Show)),
 			};
 		}
