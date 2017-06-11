@@ -35,7 +35,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideHeight: 800);
 		}
 
-		[Test]
+		[Test, Category("Emulator")]
 		public async Task SoftwareLevelingRequiredCorrectWorkflow()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
