@@ -34,18 +34,16 @@ using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.VectorMath;
+using MatterHackers.Agg.Font;
+using MatterHackers.Agg.Transform;
+using MatterHackers.Agg.VertexSource;
 
 namespace MatterHackers.MatterControl
 {
-	public class WidescreenPanel : Splitter
+	public class WidescreenPanel : FlowLayoutWidget
 	{
 		private TextImageButtonFactory advancedControlsButtonFactory = new TextImageButtonFactory();
 		private RGBA_Bytes unselectedTextColor = ActiveTheme.Instance.TabLabelUnselected;
-
-		private FlowLayoutWidget ColumnOne;
-		private FlowLayoutWidget ColumnTwo;
-
-		private GuiWidget leftBorderLine;
 
 		private EventHandler unregisterEvents;
 
@@ -53,67 +51,45 @@ namespace MatterHackers.MatterControl
 
 		public WidescreenPanel()
 		{
-			Name = "WidescreenPanel";
+		}
+
+		public override void Initialize()
+		{
+			base.Initialize();
+
 			AnchorAll();
-			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-			Padding = new BorderDouble(4);
+
+			Splitter library3DViewSplitter = new Splitter();
+			AddChild(library3DViewSplitter);
+
+			Name = "WidescreenPanel";
+			library3DViewSplitter.AnchorAll();
+			library3DViewSplitter.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+			library3DViewSplitter.Padding = new BorderDouble(4);
 
 			ApplicationController.Instance.AdvancedControlsPanelReloading.RegisterEvent((s, e) => UiThread.RunOnIdle(ReloadAdvancedControlsPanel), ref unregisterEvents);
 
-			LoadColumnOne();
-			LoadColumnTwo();
+			// put in the left column
+			library3DViewSplitter.SplitterDistance = 590;
+			library3DViewSplitter.SplitterWidth = 10;
+
+			library3DViewSplitter.Panel1.AddChild(new AdvancedControlsPanel()
+			{
+				Name = "For - CompactSlidePanel"
+			});
+
+			// put in the right column
+			library3DViewSplitter.Panel2.AddChild(new PartPreviewContent(PrinterConnectionAndCommunication.Instance.ActivePrintItem, View3DWidget.WindowMode.Embeded, View3DWidget.AutoRotate.Disabled)
+			{
+				VAnchor = VAnchor.ParentBottom | VAnchor.ParentTop,
+				HAnchor = HAnchor.ParentLeft | HAnchor.ParentRight
+			});
 		}
 
 		public override void OnClosed(ClosedEventArgs e)
 		{
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
-		}
-
-		AdvancedControlsPanel advancedControlsPanel;
-
-		private void LoadColumnOne()
-		{
-			ColumnOne = new FlowLayoutWidget(FlowDirection.TopToBottom);
-
-			ColumnOne.RemoveAllChildren();
-
-			advancedControlsPanel = new AdvancedControlsPanel()
-			{
-				Name = "For - CompactSlidePanel"
-			};
-
-			ColumnOne.AddChild(advancedControlsPanel);
-			ColumnOne.AnchorAll();
-
-			SplitterDistance = 590;
-			SplitterWidth = 10;
-
-			this.Panel1.AddChild(ColumnOne);
-		}
-
-		private void LoadColumnTwo()
-		{
-			ColumnTwo = new FlowLayoutWidget(FlowDirection.TopToBottom);
-
-			PopOutManager.SaveIfClosed = false;
-			ColumnTwo.CloseAllChildren();
-			PopOutManager.SaveIfClosed = true;
-
-			// HACK: Short term restore auto population of ActivePrintItem based on Queue Index0. Long term, persist Scene as needed before running operations that depend on ActivePrintItem
-			if (PrinterConnectionAndCommunication.Instance.ActivePrintItem == null)
-			{
-				ApplicationController.Instance.ClearPlate();
-			}
-
-			PartPreviewContent partViewContent = new PartPreviewContent(PrinterConnectionAndCommunication.Instance.ActivePrintItem, View3DWidget.WindowMode.Embeded, View3DWidget.AutoRotate.Disabled);
-			partViewContent.AnchorAll();
-
-			ColumnTwo.AddChild(partViewContent);
-
-			ColumnTwo.AnchorAll();
-
-			this.Panel2.AddChild(ColumnTwo);
 		}
 
 		public void ReloadAdvancedControlsPanel()

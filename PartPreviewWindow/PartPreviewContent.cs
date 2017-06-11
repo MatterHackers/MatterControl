@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2017, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -31,6 +31,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
@@ -149,9 +150,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					viewControls3D,
 					View3DWidget.OpenMode.Editing);
 
+				var leftToRight = new FlowLayoutWidget();
+				leftToRight.AnchorAll();
+				this.AddChild(leftToRight);
+
 				var topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
 				topToBottom.AnchorAll();
-				this.AddChild(topToBottom);
+				leftToRight.AddChild(topToBottom);
 
 				// Must come after we have an instance of View3DWidget an its undo buffer
 				topToBottom.AddChild(new PrinterActionsBar(modelViewer)
@@ -194,7 +199,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				this.AddChild(viewControls3D);
 
+				AddSettingsTabBar(leftToRight);
+
 				this.AnchorAll();
+			}
+
+			private void AddSettingsTabBar(GuiWidget parent)
+			{
+				var sideBar = new DockingTabControl();
+				parent.AddChild(sideBar);
+
+				if (ActiveSliceSettings.Instance.PrinterSelected)
+				{
+					sideBar.AddPage("Settings", new SliceSettingsWidget());
+				}
+				else
+				{
+					sideBar.AddPage("Settings", new SliceSettingsWidget());
+				}
+				sideBar.AddPage("Controls", new ManualPrinterControls());
 			}
 
 			public void ToggleView()
