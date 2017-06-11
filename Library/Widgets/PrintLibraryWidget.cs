@@ -58,7 +58,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		private Button addToLibraryButton;
 		private Button createFolderButton;
-		private Button enterEditModeButton;
 		private FlowLayoutWidget buttonPanel;
 		private MHTextEditWidget searchInput;
 		private ListView libraryView;
@@ -104,15 +103,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			{
 				var searchPanel = new FlowLayoutWidget()
 				{
-					BackgroundColor = ActiveTheme.Instance.TransparentDarkOverlay,
 					HAnchor = HAnchor.ParentLeftRight,
-					Padding = new BorderDouble(0),
-					Visible = false // TODO: Restore ASAP
+					Padding = new BorderDouble(10, 0),
 				};
-
-				enterEditModeButton = editButtonFactory.Generate("Edit".Localize(), centerText: true);
-				enterEditModeButton.Name = "Library Edit Button";
-				searchPanel.AddChild(enterEditModeButton);
 
 				searchInput = new MHTextEditWidget(messageWhenEmptyAndNotSelected: "Search Library".Localize())
 				{
