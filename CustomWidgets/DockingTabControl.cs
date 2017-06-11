@@ -36,6 +36,10 @@ using System.Text;
 using System.Threading.Tasks;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.Agg.Font;
+using MatterHackers.Agg.Transform;
+using MatterHackers.Agg.VertexSource;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.CustomWidgets
 {
@@ -66,7 +70,35 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public void AddPage(string name, GuiWidget widget)
 		{
-			TextWidget optionsText = new TextWidget(name);
+			GuiWidget optionsText;
+			if (false)
+			{
+				optionsText = new TextWidget(name);
+			}
+			else
+			{
+				TypeFacePrinter stringPrinter = new TypeFacePrinter(name, 12);
+
+				var stringPrinter2 = new VertexSourceApplyTransform(stringPrinter, Affine.NewTranslation(new Vector2(200, 200)));
+				//graphics2D.Render(stringPrinter2, RGBA_Bytes.Black);
+
+				var stringPrinter3 = new VertexSourceApplyTransform(stringPrinter, Affine.NewRotation(MathHelper.DegreesToRadians(-90)));
+				var bounds = stringPrinter3.Bounds();
+				stringPrinter3.Transform = ((Affine)stringPrinter3.Transform) * Affine.NewTranslation(new Vector2(0, -bounds.Bottom + 0));
+
+				optionsText = new GuiWidget(12, bounds.Height)
+				{
+					DoubleBuffer = true,
+					//BackgroundColor = RGBA_Bytes.Green,
+				};
+
+				optionsText.AfterDraw += (s, e) =>
+				{
+					e.graphics2D.Render(stringPrinter3, RGBA_Bytes.Black);
+					//e.graphics2D.DrawString(name, 0, 0);
+				};
+			}
+
 			PopupButton settingsButton = new PopupButton(optionsText)
 			{
 				AlignToRightEdge = true,
