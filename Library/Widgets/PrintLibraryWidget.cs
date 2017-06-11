@@ -69,6 +69,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		//private DropDownMenu actionMenu;
 		private List<PrintItemAction> menuActions = new List<PrintItemAction>();
 
+		private ILibraryContainer searchContainer;
+
 		public PrintLibraryWidget()
 		{
 			this.Padding = new BorderDouble(top: 3);
@@ -159,8 +161,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				}
 				else
 				{
+					searchContainer = this.libraryView.ActiveContainer;
+
 					breadCrumbWidget.Visible = false;
 					searchPanel.Visible = true;
+					searchInput.Focus();
 				}
 			};
 			buttonFactory.Margin = initialMargin;
@@ -719,8 +724,14 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			UiThread.RunOnIdle(() =>
 			{
-				libraryView.ActiveContainer.KeywordFilter = "";
+				searchContainer.KeywordFilter = "";
+
+				// Restore the original ActiveContainer before search started - some containers may change context
+				ApplicationController.Instance.Library.ActiveContainer = searchContainer;
+
 				breadCrumbWidget.SetBreadCrumbs(libraryView.ActiveContainer);
+
+				searchContainer = null;
 			});
 		}
 
