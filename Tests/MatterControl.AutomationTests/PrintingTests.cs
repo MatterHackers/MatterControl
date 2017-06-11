@@ -189,20 +189,22 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		private static void SimulatePrint(string[] sendRecieveLog)
 		{
-			Emulator emulator = new Emulator();
-			int lineIndex = 0;
-			while (lineIndex < sendRecieveLog.Length)
+			using (var emulator = new Emulator())
 			{
-				var sentCommand = sendRecieveLog[lineIndex];
-				string response = emulator.GetCorrectResponse(sentCommand);
-				lineIndex++;
-				var lines = response.Split('\n');
-				for (int i = 0; i < lines.Length; i++)
+				int lineIndex = 0;
+				while (lineIndex < sendRecieveLog.Length)
 				{
-					if (!string.IsNullOrEmpty(lines[i]))
+					var sentCommand = sendRecieveLog[lineIndex];
+					string response = emulator.GetCorrectResponse(sentCommand);
+					lineIndex++;
+					var lines = response.Split('\n');
+					for (int i = 0; i < lines.Length; i++)
 					{
-						Assert.AreEqual(sendRecieveLog[lineIndex], lines[i]);
-						lineIndex++;
+						if (!string.IsNullOrEmpty(lines[i]))
+						{
+							Assert.AreEqual(sendRecieveLog[lineIndex], lines[i]);
+							lineIndex++;
+						}
 					}
 				}
 			}
