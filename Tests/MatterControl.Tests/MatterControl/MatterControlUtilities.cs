@@ -485,7 +485,17 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			// Extract mouse speed from config
 			AutomationRunner.TimeToMoveMouse = config.TimeToMoveMouse;
 
-			await AutomationRunner.ShowWindowAndExecuteTests(matterControlWindow, testMethod, maxTimeToRun, defaultTestImages, config.AutomationInputType);
+			await AutomationRunner.ShowWindowAndExecuteTests(matterControlWindow, testMethod, maxTimeToRun, defaultTestImages, config.AutomationInputType, () =>
+			{
+				if (PrinterConnectionAndCommunication.Instance.CommunicationState == PrinterConnectionAndCommunication.CommunicationStates.Printing)
+				{
+					PrinterConnectionAndCommunication.Instance.Disable();
+				}
+
+				MatterControlApplication app = MatterControlApplication.Instance;
+				app.RestartOnClose = false;
+				app.Close();
+			});
 		}
 
 		public static void LibraryAddSelectionToQueue(AutomationRunner testRunner)
