@@ -91,9 +91,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Name = name + " Menu Item"
 			};
 		}
+
+		public override void ShowPopup()
+		{
+			if (this.PopupContent.BackgroundColor == RGBA_Bytes.Transparent)
+			{
+				this.PopupContent.BackgroundColor = RGBA_Bytes.Blue;
+			}
+
+			base.ShowPopup();
+		}
 	}
 
-	public class PopupButton : GuiWidget
+	public class PopupButton : GuiWidget, IIgnoredPopupChild
 	{
 		private static readonly RGBA_Bytes slightShade = new RGBA_Bytes(0, 0, 0, 40);
 
@@ -122,6 +132,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public Func<GuiWidget> DynamicPopupContent { get; set; }
 
+		public RGBA_Bytes BorderColor { get; set; } = RGBA_Bytes.Gray;
+
 		public bool AlignToRightEdge { get; set; }
 
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
@@ -144,7 +156,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnMouseUp(mouseEvent);
 		}
 
-		public void ShowPopup()
+		public virtual void ShowPopup()
 		{
 			menuVisible = true;
 
@@ -163,12 +175,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			popupWidget = new PopupWidget(this.PopupContent, this, Vector2.Zero, this.PopDirection, 0, this.AlignToRightEdge)
 			{
 				BorderWidth = 1,
-				BorderColor = RGBA_Bytes.Gray,
+				BorderColor = this.BorderColor,
 			};
 
 			popupWidget.Closed += (s, e) =>
 			{
-				this.BackgroundColor = RGBA_Bytes.Transparent;
 				menuVisible = false;
 				popupWidget = null;
 			};
