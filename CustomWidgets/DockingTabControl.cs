@@ -42,16 +42,14 @@ namespace MatterHackers.MatterControl.CustomWidgets
 {
 	public class DockingTabControl : GuiWidget
 	{
-		public bool ControlIsPinned { get; set; } = true;
+		// TODO: Pinned state should preferably come from MCWS, default to local data if guest and be per user not printer
+		public bool ControlIsPinned { get; set; } = false;
 		private GuiWidget topToBottom;
 
 		Dictionary<string, GuiWidget> allTabs = new Dictionary<string, GuiWidget>();
 
 		public DockingTabControl()
 		{
-			// load up the state data for this control and printer
-			// ActiveSliceSettings.Instance.PrinterSelected
-			ControlIsPinned = true;
 		}
 
 		public void AddPage(string name, GuiWidget widget)
