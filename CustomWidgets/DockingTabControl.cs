@@ -88,7 +88,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				if (ControlIsPinned)
 				{
-					var content = new DockWindowContent(this, nameWidget.Value, nameWidget.Key);
+					var content = new DockWindowContent(this, nameWidget.Value, nameWidget.Key, ControlIsPinned);
 					tabControl.AddTab(new TabPage(content, nameWidget.Key), nameWidget.Key);
 				}
 				else // control is floating
@@ -119,7 +119,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						AlignToRightEdge = true,
 					};
 
-					settingsButton.PopupContent = new DockWindowContent(this, nameWidget.Value, nameWidget.Key);
+					settingsButton.PopupContent = new DockWindowContent(this, nameWidget.Value, nameWidget.Key, ControlIsPinned);
 
 					topToBottom.AddChild(settingsButton);
 				}
@@ -191,7 +191,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		private class DockWindowContent : GuiWidget, IIgnoredPopupChild
 		{
-			internal DockWindowContent(DockingTabControl parent, GuiWidget child, string title)
+			internal DockWindowContent(DockingTabControl parent, GuiWidget child, string title, bool isDocked)
 			{
 				FlowLayoutWidget topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
 				{
@@ -205,7 +205,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				};
 				titleBar.AddChild(new TextWidget(title));
 				titleBar.AddChild(new GuiWidget() { HAnchor = HAnchor.ParentLeftRight });
-				var checkBox = new CheckBox("[pin icon]");
+				var checkBox = new CheckBox("[pin icon]")
+				{
+					Checked = isDocked
+				};
 				titleBar.AddChild(checkBox);
 				checkBox.CheckedStateChanged += (s, e) =>
 				{
