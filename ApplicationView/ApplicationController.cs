@@ -79,6 +79,7 @@ namespace MatterHackers.MatterControl
 			public RGBA_Bytes TabBodyBackground => new RGBA_Bytes(ActiveTheme.Instance.TertiaryBackgroundColor, 175);
 
 			public TextImageButtonFactory ViewControlsButtonFactory { get; internal set; }
+			public RGBA_Bytes SplitterBackground { get; internal set; } = new RGBA_Bytes(0, 0, 0, 60);
 
 			private EventHandler unregisterEvents;
 

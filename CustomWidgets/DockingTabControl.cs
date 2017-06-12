@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker
+Copyright (c) 2017, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,15 +27,16 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
+using MatterHackers.Agg.ImageProcessing;
+using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.VectorMath;
-using System.Collections.Generic;
-using System;
 
 namespace MatterHackers.MatterControl.CustomWidgets
 {
@@ -77,8 +78,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				{
 					Width = 640,
 					VAnchor = VAnchor.ParentBottomTop,
+					BorderColor = ApplicationController.Instance.Theme.SplitterBackground
 				};
-				tabControl = new TabControl();
+
+				tabControl = ApplicationController.Instance.Theme.CreateTabControl();
 				resizePage.AddChild(tabControl);
 
 				topToBottom.AddChild(resizePage);
@@ -89,38 +92,44 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				if (ControlIsPinned)
 				{
 					var content = new DockWindowContent(this, nameWidget.Value, nameWidget.Key, ControlIsPinned);
-					tabControl.AddTab(new TabPage(content, nameWidget.Key), nameWidget.Key);
+
+					var tabPage = new TabPage(content, nameWidget.Key);
+
+					tabControl.AddTab(new SimpleTextTabWidget(
+						tabPage,
+						nameWidget.Key + " Tab",
+						12,
+						ActiveTheme.Instance.TabLabelSelected,
+						RGBA_Bytes.Transparent,
+						ActiveTheme.Instance.TabLabelUnselected,
+						RGBA_Bytes.Transparent));
 				}
 				else // control is floating
 				{
-					TypeFacePrinter stringPrinter = new TypeFacePrinter(nameWidget.Key, 12);
+					var rotatedLabel = new VertexSourceApplyTransform(
+						new TypeFacePrinter(nameWidget.Key, 12), 
+						Affine.NewRotation(MathHelper.DegreesToRadians(-90)));
 
-					var stringPrinter2 = new VertexSourceApplyTransform(stringPrinter, Affine.NewTranslation(new Vector2(200, 200)));
-					//graphics2D.Render(stringPrinter2, RGBA_Bytes.Black);
+					var bounds = rotatedLabel.Bounds();
+					rotatedLabel.Transform = ((Affine)rotatedLabel.Transform) * Affine.NewTranslation(new Vector2(0, -bounds.Bottom + 0));
 
-					var stringPrinter3 = new VertexSourceApplyTransform(stringPrinter, Affine.NewRotation(MathHelper.DegreesToRadians(-90)));
-					var bounds = stringPrinter3.Bounds();
-					stringPrinter3.Transform = ((Affine)stringPrinter3.Transform) * Affine.NewTranslation(new Vector2(0, -bounds.Bottom + 0));
-
-					GuiWidget optionsText = new GuiWidget(bounds.Width, bounds.Height)
+					var optionsText = new GuiWidget(bounds.Width, bounds.Height)
 					{
 						DoubleBuffer = true,
-						//BackgroundColor = RGBA_Bytes.Green,
 					};
-
 					optionsText.AfterDraw += (s, e) =>
 					{
-						e.graphics2D.Render(stringPrinter3, RGBA_Bytes.Black);
-					//e.graphics2D.DrawString(name, 0, 0);
-				};
+						e.graphics2D.Render(rotatedLabel, ActiveTheme.Instance.PrimaryTextColor);
+					};
 
-					PopupButton settingsButton = new PopupButton(optionsText)
+					var settingsButton = new PopupButton(optionsText)
 					{
 						AlignToRightEdge = true,
 					};
-
-					settingsButton.PopupContent = new DockWindowContent(this, nameWidget.Value, nameWidget.Key, ControlIsPinned);
-
+					settingsButton.PopupContent = new DockWindowContent(this, nameWidget.Value, nameWidget.Key, ControlIsPinned)
+					{
+						BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor
+					};
 					topToBottom.AddChild(settingsButton);
 				}
 			}
@@ -133,7 +142,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			Width = 30;
 			VAnchor = VAnchor.ParentBottomTop;
 			HAnchor = HAnchor.FitToChildren;
-			BackgroundColor = RGBA_Bytes.Red;
+			//BackgroundColor = RGBA_Bytes.Red;
 			topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.FitToChildren,
@@ -151,15 +160,18 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			internal ResizeContainer()
 			{
-				Padding = new BorderDouble(resizeWidth, 0, 0, 0);
-				HAnchor = HAnchor.AbsolutePosition;
+				this.Padding = new BorderDouble(resizeWidth, 0, 0, 0);
+				this.HAnchor = HAnchor.AbsolutePosition;
+				this.Cursor = Cursors.WaitCursor;
 			}
 
 			public override void OnDraw(Graphics2D graphics2D)
 			{
-				graphics2D.FillRectangle(LocalBounds.Left, LocalBounds.Bottom, LocalBounds.Left + resizeWidth, LocalBounds.Top, RGBA_Bytes.Black);
+				graphics2D.FillRectangle(LocalBounds.Left, LocalBounds.Bottom, LocalBounds.Left + resizeWidth, LocalBounds.Top, this.BorderColor);
 				base.OnDraw(graphics2D);
 			}
+
+			public RGBA_Bytes BorderColor { get; set; } = ActiveTheme.Instance.TertiaryBackgroundColor;
 
 			public override void OnMouseDown(MouseEventArgs mouseEvent)
 			{
@@ -193,28 +205,39 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			internal DockWindowContent(DockingTabControl parent, GuiWidget child, string title, bool isDocked)
 			{
-				FlowLayoutWidget topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
+				var topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
 				{
 					VAnchor = VAnchor.ParentBottomTop,
 					HAnchor = HAnchor.ParentLeftRight
 				};
 
-				FlowLayoutWidget titleBar = new FlowLayoutWidget()
+				var titleBar = new FlowLayoutWidget()
 				{
-					HAnchor = HAnchor.ParentLeftRight
+					HAnchor = HAnchor.ParentLeftRight,
+					VAnchor = VAnchor.FitToChildren,
 				};
-				titleBar.AddChild(new TextWidget(title));
-				titleBar.AddChild(new GuiWidget() { HAnchor = HAnchor.ParentLeftRight });
-				var checkBox = new CheckBox("[pin icon]")
+
+				if (!isDocked)
 				{
-					Checked = isDocked
-				};
-				titleBar.AddChild(checkBox);
-				checkBox.CheckedStateChanged += (s, e) =>
+					titleBar.AddChild(new TextWidget(title, textColor: ActiveTheme.Instance.PrimaryTextColor)
+					{
+						Margin = new BorderDouble(left: 12)
+					});
+				}
+
+				titleBar.AddChild(new HorizontalSpacer() { Height = 5, DebugShowBounds = false });
+
+				var icon = StaticData.Instance.LoadIcon((isDocked) ? "Pushpin_16x.png" : "PushpinUnpin_16x.png", 16, 16).InvertLightness();
+				var imageWidget = new ImageWidget(icon);
+				imageWidget.Margin = new BorderDouble(right: 25, top: 6);
+				imageWidget.MinimumSize = new Vector2(16, 16);
+				imageWidget.Click += (s, e) =>
 				{
 					parent.ControlIsPinned = !parent.ControlIsPinned;
 					parent.Rebuild();
 				};
+				titleBar.AddChild(imageWidget);
+
 				topToBottom.AddChild(titleBar);
 
 				Width = 500;

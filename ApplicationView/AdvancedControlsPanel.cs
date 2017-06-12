@@ -91,16 +91,14 @@ namespace MatterHackers.MatterControl
 				ApplicationController.Instance.ActiveAdvancedControlsTab = newTabControl.SelectedTabIndex;
 			};
 
-			RGBA_Bytes unselectedTextColor = ActiveTheme.Instance.TabLabelUnselected;
-
 			var libraryTabPage = new TabPage(new PrintLibraryWidget(), "Library".Localize().ToUpper());
 			newTabControl.AddTab(new SimpleTextTabWidget(
 				libraryTabPage, 
 				"Library Tab",
 				newTabControl.TextPointSize,
 				ActiveTheme.Instance.TabLabelSelected, 
-				new RGBA_Bytes(), 
-				unselectedTextColor, 
+				new RGBA_Bytes(),
+				ActiveTheme.Instance.TabLabelUnselected, 
 				new RGBA_Bytes()));
 
 
@@ -109,7 +107,7 @@ namespace MatterHackers.MatterControl
 					new TabPage(new PrinterConfigurationScrollWidget(), "Options".Localize().ToUpper()), 
 					"Options Tab", 
 					newTabControl.TextPointSize,
-					ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
+					ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), ActiveTheme.Instance.TabLabelUnselected, new RGBA_Bytes()));
 
 			newTabControl.SelectedTabIndex = ApplicationController.Instance.ActiveAdvancedControlsTab;
 

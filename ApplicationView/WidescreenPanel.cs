@@ -57,22 +57,20 @@ namespace MatterHackers.MatterControl
 		{
 			base.Initialize();
 
-			AnchorAll();
+			this.AnchorAll();
+			this.Name = "WidescreenPanel";
 
-			Splitter library3DViewSplitter = new Splitter();
+			var library3DViewSplitter = new Splitter()
+			{
+				Padding = new BorderDouble(4),
+				SplitterDistance = 590,
+				SplitterWidth = 10,
+				SplitterBackground = ApplicationController.Instance.Theme.SplitterBackground
+			};
+			library3DViewSplitter.AnchorAll();
 			AddChild(library3DViewSplitter);
 
-			Name = "WidescreenPanel";
-			library3DViewSplitter.AnchorAll();
-			library3DViewSplitter.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-			library3DViewSplitter.Padding = new BorderDouble(4);
-
-			ApplicationController.Instance.AdvancedControlsPanelReloading.RegisterEvent((s, e) => UiThread.RunOnIdle(ReloadAdvancedControlsPanel), ref unregisterEvents);
-
 			// put in the left column
-			library3DViewSplitter.SplitterDistance = 590;
-			library3DViewSplitter.SplitterWidth = 10;
-
 			library3DViewSplitter.Panel1.AddChild(new AdvancedControlsPanel()
 			{
 				Name = "For - CompactSlidePanel"
@@ -84,6 +82,8 @@ namespace MatterHackers.MatterControl
 				VAnchor = VAnchor.ParentBottom | VAnchor.ParentTop,
 				HAnchor = HAnchor.ParentLeft | HAnchor.ParentRight
 			});
+
+			ApplicationController.Instance.AdvancedControlsPanelReloading.RegisterEvent((s, e) => UiThread.RunOnIdle(ReloadAdvancedControlsPanel), ref unregisterEvents);
 		}
 
 		public override void OnClosed(ClosedEventArgs e)
