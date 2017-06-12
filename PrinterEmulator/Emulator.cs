@@ -284,6 +284,7 @@ namespace MatterHackers.PrinterEmulator
 				while (!shutDown)
 				{
 					string line = "";
+
 					try
 					{
 						line = serialPort.ReadLine(); // read a '\n' terminated line
@@ -294,6 +295,7 @@ namespace MatterHackers.PrinterEmulator
 					catch (Exception)
 					{
 					}
+
 					if (line.Length > 0)
 					{
 						Console.WriteLine(line);

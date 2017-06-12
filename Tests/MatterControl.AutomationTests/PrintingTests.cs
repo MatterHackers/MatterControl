@@ -16,7 +16,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain, Apartment(ApartmentState.STA)]
 	public class PrintingTests
 	{
-		[Test]
+		[Test, Category("Emulator")]
 		public async Task CompletingPrintTurnsoffHeat()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, maxTimeToRun: 200);
 		}
 
-		[Test]
+		[Test, Category("Emulator")]
 		public async Task PulseRequiresLevelingAndLevelingWorks()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -113,7 +113,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, maxTimeToRun: 90);
 		}
 
-		[Test]
+		[Test, Category("Emulator")]
 		public void ExpectedEmulatorResponses()
 		{
 			string[] test1 = new string[]
@@ -189,26 +189,28 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		private static void SimulatePrint(string[] sendRecieveLog)
 		{
-			Emulator emulator = new Emulator();
-			int lineIndex = 0;
-			while (lineIndex < sendRecieveLog.Length)
+			using (var emulator = new Emulator())
 			{
-				var sentCommand = sendRecieveLog[lineIndex];
-				string response = emulator.GetCorrectResponse(sentCommand);
-				lineIndex++;
-				var lines = response.Split('\n');
-				for (int i = 0; i < lines.Length; i++)
+				int lineIndex = 0;
+				while (lineIndex < sendRecieveLog.Length)
 				{
-					if (!string.IsNullOrEmpty(lines[i]))
+					var sentCommand = sendRecieveLog[lineIndex];
+					string response = emulator.GetCorrectResponse(sentCommand);
+					lineIndex++;
+					var lines = response.Split('\n');
+					for (int i = 0; i < lines.Length; i++)
 					{
-						Assert.AreEqual(sendRecieveLog[lineIndex], lines[i]);
-						lineIndex++;
+						if (!string.IsNullOrEmpty(lines[i]))
+						{
+							Assert.AreEqual(sendRecieveLog[lineIndex], lines[i]);
+							lineIndex++;
+						}
 					}
 				}
 			}
 		}
 
-		[Test]
+		[Test, Category("Emulator")]
 		public async Task PrinterRequestsResumeWorkingAsExpected()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -255,7 +257,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		private EventHandler unregisterEvents;
 
-		[Test]
+		[Test, Category("Emulator")]
 		public async Task TuningAdjustmentsDefaultToOneAndPersists()
 		{
 			double targetExtrusionRate = 1.5;
@@ -342,7 +344,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideHeight:900, maxTimeToRun: 120);
 		}
 
-		[Test]
+		[Test, Category("Emulator")]
 		public async Task TuningAdjustmentControlsBoundToStreamValues()
 		{
 			double targetExtrusionRate = 1.5;
@@ -435,7 +437,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideHeight: 900, maxTimeToRun: 120);
 		}
 
-		[Test]
+		[Test, Category("Emulator")]
 		public async Task CancelingSdCardPrintLeavesHeatAndFanOn()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -479,7 +481,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideHeight: 900, maxTimeToRun: 90);
 		}
 
-		[Test]
+		[Test, Category("Emulator")]
 		public async Task CancelingNormalPrintTurnsHeatAndFanOff()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>

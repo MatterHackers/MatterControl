@@ -136,6 +136,7 @@
     <Compile Include="ActionBar\TemperatureWidgetBase.cs" />
     <Compile Include="ActionBar\TemperatureWidgetExtruder.cs" />
     <Compile Include="ApplicationView\ApplicationController.cs" />
+    <Compile Include="CustomWidgets\DockingTabControl.cs" />
     <Compile Include="CustomWidgets\NamedAction.cs" />
     <Compile Include="Library\ContentProviders\IContentProvider.cs" />
     <Compile Include="ApplicationView\MenuRow\MenuOptionAction.cs" />

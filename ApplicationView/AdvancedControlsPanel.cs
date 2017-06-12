@@ -41,11 +41,7 @@ namespace MatterHackers.MatterControl
 {
 	public class AdvancedControlsPanel : GuiWidget
 	{
-		private static readonly string ThirdPanelTabView_AdvancedControls_CurrentTab = "ThirdPanelTabView_AdvancedControls_CurrentTab";
-
 		private EventHandler unregisterEvents;
-
-		private GuiWidget sliceSettingsWidget;
 
 		private TabControl tabControl;
 
@@ -61,8 +57,6 @@ namespace MatterHackers.MatterControl
 		}
 
 		public static string SliceSettingsTabName { get; } = "Slice Settings Tab";
-
-		public static string ControlsTabName { get; } = "Controls Tab";
 
 		public void ReloadSliceSettings()
 		{
@@ -109,29 +103,6 @@ namespace MatterHackers.MatterControl
 				unselectedTextColor, 
 				new RGBA_Bytes()));
 
-			if (ActiveSliceSettings.Instance.PrinterSelected)
-			{
-				sliceSettingsWidget = new SliceSettingsWidget();
-			}
-			else
-			{
-				sliceSettingsWidget = new NoSettingsWidget();
-			}
-
-			var sliceSettingPopOut = new PopOutTextTabWidget(
-					new TabPage(sliceSettingsWidget, "Settings".Localize().ToUpper()),
-					SliceSettingsTabName,
-					new Vector2(590, 400),
-					newTabControl.TextPointSize);
-
-			var controlsPopOut = new PopOutTextTabWidget(
-					new TabPage(new ManualPrinterControls(), "Controls".Localize().ToUpper()),
-					ControlsTabName,
-					new Vector2(400, 300),
-					newTabControl.TextPointSize);
-
-			newTabControl.AddTab(sliceSettingPopOut);
-			newTabControl.AddTab(controlsPopOut);
 
 			newTabControl.AddTab(
 				new SimpleTextTabWidget(
@@ -142,13 +113,6 @@ namespace MatterHackers.MatterControl
 
 			newTabControl.SelectedTabIndex = ApplicationController.Instance.ActiveAdvancedControlsTab;
 
-#if !__ANDROID__
-			if (!UserSettings.Instance.IsTouchScreen)
-			{
-				MenuOptionSettings.sliceSettingsPopOut = sliceSettingPopOut;
-				MenuOptionSettings.controlsPopOut = controlsPopOut;
-			}
-#endif
 			return newTabControl;
 		}
 	}
