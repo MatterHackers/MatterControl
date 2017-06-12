@@ -161,49 +161,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		}
 
 		[Test]
-		public async Task QueueSelectCheckBoxWorks()
-		{
-			AutomationTest testToRun = (testRunner) =>
-			{
-				testRunner.CloseSignInAndPrinterSelect();
-				/*
-				 *Tests that when one item is selected  
-				 *1. Queue Item count equals three before the test starts 
-				 *2. Selecting multiple queue items and then clicking the Remove button removes the item 
-				 *3. Selecting multiple queue items and then clicking the Remove button decreases the queue tab count by one
-				 */
-
-				int queueItemCount = QueueData.Instance.ItemCount;
-
-				bool queueItemExists = testRunner.WaitForName("Queue Item Batman", 2);
-				bool secondQueueItemExists = testRunner.WaitForName("Queue Item 2013-01-25_Mouthpiece_v2", 2);
-
-				SystemWindow systemWindow;
-				GuiWidget rowItem = testRunner.GetWidgetByName("Queue Item Batman", out systemWindow, 3);
-
-				SearchRegion rowItemRegion = testRunner.GetRegionByName("Queue Item Batman", 3);
-
-				testRunner.ClickByName("Queue Edit Button", 3);
-
-				GuiWidget foundWidget = testRunner.GetWidgetByName("Queue Item Checkbox", out systemWindow, 3, searchRegion: rowItemRegion);
-				CheckBox checkBoxWidget = foundWidget as CheckBox;
-				Assert.IsTrue(checkBoxWidget != null, "We should have an actual checkbox");
-				Assert.IsTrue(checkBoxWidget.Checked == false, "currently not checked");
-
-				testRunner.ClickByName("Queue Item Batman", 3);
-				Assert.IsTrue(checkBoxWidget.Checked == true, "currently checked");
-
-				testRunner.ClickByName("Queue Item Checkbox", 3, searchRegion: rowItemRegion);
-				Assert.IsTrue(checkBoxWidget.Checked == false, "currently not checked");
-
-
-				return Task.CompletedTask;
-			};
-
-			await MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
-		}
-
-		[Test]
 		public async Task DragTo3DViewAddsItem()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>

@@ -58,7 +58,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		private Button addToLibraryButton;
 		private Button createFolderButton;
-		private Button enterEditModeButton;
 		private FlowLayoutWidget buttonPanel;
 		private MHTextEditWidget searchInput;
 		private ListView libraryView;
@@ -69,6 +68,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		//private DropDownMenu actionMenu;
 		private List<PrintItemAction> menuActions = new List<PrintItemAction>();
+
+		private ILibraryContainer searchContainer;
 
 		public PrintLibraryWidget()
 		{
@@ -100,43 +101,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			var allControls = new FlowLayoutWidget(FlowDirection.TopToBottom);
 
-			// Create search panel
-			{
-				var searchPanel = new FlowLayoutWidget()
-				{
-					BackgroundColor = ActiveTheme.Instance.TransparentDarkOverlay,
-					HAnchor = HAnchor.ParentLeftRight,
-					Padding = new BorderDouble(0),
-					Visible = false // TODO: Restore ASAP
-				};
-
-				enterEditModeButton = editButtonFactory.Generate("Edit".Localize(), centerText: true);
-				enterEditModeButton.Name = "Library Edit Button";
-				searchPanel.AddChild(enterEditModeButton);
-
-				searchInput = new MHTextEditWidget(messageWhenEmptyAndNotSelected: "Search Library".Localize())
-				{
-					Name = "Search Library Edit",
-					Margin = new BorderDouble(0, 3, 0, 0),
-					HAnchor = HAnchor.ParentLeftRight,
-					VAnchor = VAnchor.ParentCenter
-				};
-				searchInput.ActualTextEditWidget.EnterPressed += (s, e) => PerformSearch();
-				searchPanel.AddChild(searchInput);
-
-				// TODO: We should describe the intent of setting to zero and immediately restoring to the original value. Not clear, looks pointless
-				double oldWidth = editButtonFactory.FixedWidth;
-				editButtonFactory.FixedWidth = 0;
-
-				Button searchButton = editButtonFactory.Generate("Search".Localize(), centerText: true);
-				searchButton.Name = "Search Library Button";
-				searchButton.Click += (s, e) => PerformSearch();
-				editButtonFactory.FixedWidth = oldWidth;
-				searchPanel.AddChild(searchButton);
-
-				allControls.AddChild(searchPanel);
-			}
-
 			libraryView = new ListView(ApplicationController.Instance.Library)
 			{
 				BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor
@@ -154,6 +118,58 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			breadCrumbWidget = new FolderBreadCrumbWidget(libraryView);
 			breadCrumbBar.AddChild(breadCrumbWidget);
+
+			var icon = StaticData.Instance.LoadIcon("icon_search_24x24.png", 16, 16);
+
+			var buttonFactory = ApplicationController.Instance.Theme.BreadCrumbButtonFactory;
+			var initialMargin = buttonFactory.Margin;
+			buttonFactory.Margin = new BorderDouble(8, 0);
+
+			var searchPanel = new SearchInputBox()
+			{
+				Visible = false,
+				Margin = new BorderDouble(10, 0, 5, 0)
+			};
+			searchPanel.searchInput.ActualTextEditWidget.EnterPressed += (s, e) =>
+			{
+				this.PerformSearch();
+			};
+			searchPanel.resetButton.Click += (s, e) =>
+			{
+				breadCrumbWidget.Visible = true;
+				searchPanel.Visible = false;
+
+				searchPanel.searchInput.Text = "";
+
+				this.ClearSearch();
+			};
+
+			// Store a reference to the input field
+			this.searchInput = searchPanel.searchInput;
+
+			breadCrumbBar.AddChild(searchPanel);
+
+			Button searchButton = buttonFactory.Generate("", icon);
+			searchButton.ToolTipText = "Search".Localize();
+			searchButton.Name = "Search Library Button";
+			searchButton.Margin = 0;
+			searchButton.Click += (s, e) =>
+			{
+				if (searchPanel.Visible)
+				{
+					PerformSearch();
+				}
+				else
+				{
+					searchContainer = this.libraryView.ActiveContainer;
+
+					breadCrumbWidget.Visible = false;
+					searchPanel.Visible = true;
+					searchInput.Focus();
+				}
+			};
+			buttonFactory.Margin = initialMargin;
+			breadCrumbBar.AddChild(searchButton);
 
 			overflowDropdown = new OverflowDropdown(allowLightnessInvert: true)
 			{
@@ -704,6 +720,21 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			});
 		}
 
+		private void ClearSearch()
+		{
+			UiThread.RunOnIdle(() =>
+			{
+				searchContainer.KeywordFilter = "";
+
+				// Restore the original ActiveContainer before search started - some containers may change context
+				ApplicationController.Instance.Library.ActiveContainer = searchContainer;
+
+				breadCrumbWidget.SetBreadCrumbs(libraryView.ActiveContainer);
+
+				searchContainer = null;
+			});
+		}
+
 		private async void addToQueueButton_Click(object sender, EventArgs e)
 		{
 			var selectedItems = libraryView.SelectedItems.Select(o => o.Model);
@@ -936,5 +967,34 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			base.OnLoad(args);
 		}
+
+		private class SearchInputBox : GuiWidget
+		{
+			internal MHTextEditWidget searchInput;
+			internal Button resetButton;
+
+			public SearchInputBox()
+			{
+				this.VAnchor = VAnchor.ParentCenter | VAnchor.FitToChildren;
+				this.HAnchor = HAnchor.ParentLeftRight;
+
+				searchInput = new MHTextEditWidget(messageWhenEmptyAndNotSelected: "Search Library".Localize())
+				{
+					Name = "Search Library Edit",
+					HAnchor = HAnchor.ParentLeftRight,
+					VAnchor = VAnchor.ParentCenter
+				};
+				this.AddChild(searchInput);
+
+				resetButton = ApplicationController.Instance.Theme.CreateSmallResetButton();
+				resetButton.HAnchor = HAnchor.ParentRight | HAnchor.FitToChildren;
+				resetButton.VAnchor = VAnchor.ParentCenter | VAnchor.FitToChildren;
+				resetButton.Name = "Close Search";
+				resetButton.ToolTipText = "Clear".Localize();
+
+				this.AddChild(resetButton);
+			}
+		}
+
 	}
 }
