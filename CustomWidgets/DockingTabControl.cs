@@ -34,73 +34,95 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.VectorMath;
+using System.Collections.Generic;
+using System;
 
 namespace MatterHackers.MatterControl.CustomWidgets
 {
 	public class DockingTabControl : GuiWidget
 	{
-		private bool controlIsPinned = false;
-		private TabControl tabControl;
+		public bool ControlIsPinned { get; set; } = true;
 		private GuiWidget topToBottom;
+
+		Dictionary<string, GuiWidget> allTabs = new Dictionary<string, GuiWidget>();
 
 		public DockingTabControl()
 		{
 			// load up the state data for this control and printer
 			// ActiveSliceSettings.Instance.PrinterSelected
-			controlIsPinned = true;
+			ControlIsPinned = true;
 		}
 
 		public void AddPage(string name, GuiWidget widget)
 		{
-			if (controlIsPinned)
+			allTabs.Add(name, widget);
+			Rebuild();
+		}
+
+		void Rebuild()
+		{
+			foreach(var nameWidget in allTabs)
 			{
-				if (tabControl == null)
-				{
-					var resizePage = new ResizeContainer()
-					{
-						Width = 640,
-						VAnchor = VAnchor.ParentBottomTop,
-					};
-					tabControl = new TabControl();
-					resizePage.AddChild(tabControl);
-
-					topToBottom.AddChild(resizePage);
-				}
-
-				var content = new DockWindowContent(widget, name);
-				tabControl.AddTab(new TabPage(content, name), name);
+				nameWidget.Value.Parent?.RemoveChild(nameWidget.Value);
+				nameWidget.Value.ClearRemovedFlag();
 			}
-			else // control is floating
+
+			topToBottom.RemoveAllChildren();
+
+			var tabControl = new TabControl();
+
+			if (ControlIsPinned)
 			{
-				TypeFacePrinter stringPrinter = new TypeFacePrinter(name, 12);
-
-				var stringPrinter2 = new VertexSourceApplyTransform(stringPrinter, Affine.NewTranslation(new Vector2(200, 200)));
-				//graphics2D.Render(stringPrinter2, RGBA_Bytes.Black);
-
-				var stringPrinter3 = new VertexSourceApplyTransform(stringPrinter, Affine.NewRotation(MathHelper.DegreesToRadians(-90)));
-				var bounds = stringPrinter3.Bounds();
-				stringPrinter3.Transform = ((Affine)stringPrinter3.Transform) * Affine.NewTranslation(new Vector2(0, -bounds.Bottom + 0));
-
-				GuiWidget optionsText = new GuiWidget(bounds.Width, bounds.Height)
+				var resizePage = new ResizeContainer()
 				{
-					DoubleBuffer = true,
-					//BackgroundColor = RGBA_Bytes.Green,
+					Width = 640,
+					VAnchor = VAnchor.ParentBottomTop,
 				};
+				tabControl = new TabControl();
+				resizePage.AddChild(tabControl);
 
-				optionsText.AfterDraw += (s, e) =>
+				topToBottom.AddChild(resizePage);
+			}
+
+			foreach (var nameWidget in allTabs)
+			{
+				if (ControlIsPinned)
 				{
-					e.graphics2D.Render(stringPrinter3, RGBA_Bytes.Black);
+					var content = new DockWindowContent(this, nameWidget.Value, nameWidget.Key, ControlIsPinned);
+					tabControl.AddTab(new TabPage(content, nameWidget.Key), nameWidget.Key);
+				}
+				else // control is floating
+				{
+					TypeFacePrinter stringPrinter = new TypeFacePrinter(nameWidget.Key, 12);
+
+					var stringPrinter2 = new VertexSourceApplyTransform(stringPrinter, Affine.NewTranslation(new Vector2(200, 200)));
+					//graphics2D.Render(stringPrinter2, RGBA_Bytes.Black);
+
+					var stringPrinter3 = new VertexSourceApplyTransform(stringPrinter, Affine.NewRotation(MathHelper.DegreesToRadians(-90)));
+					var bounds = stringPrinter3.Bounds();
+					stringPrinter3.Transform = ((Affine)stringPrinter3.Transform) * Affine.NewTranslation(new Vector2(0, -bounds.Bottom + 0));
+
+					GuiWidget optionsText = new GuiWidget(bounds.Width, bounds.Height)
+					{
+						DoubleBuffer = true,
+						//BackgroundColor = RGBA_Bytes.Green,
+					};
+
+					optionsText.AfterDraw += (s, e) =>
+					{
+						e.graphics2D.Render(stringPrinter3, RGBA_Bytes.Black);
 					//e.graphics2D.DrawString(name, 0, 0);
 				};
 
-				PopupButton settingsButton = new PopupButton(optionsText)
-				{
-					AlignToRightEdge = true,
-				};
+					PopupButton settingsButton = new PopupButton(optionsText)
+					{
+						AlignToRightEdge = true,
+					};
 
-				settingsButton.PopupContent = new DockWindowContent(widget, name);
+					settingsButton.PopupContent = new DockWindowContent(this, nameWidget.Value, nameWidget.Key, ControlIsPinned);
 
-				topToBottom.AddChild(settingsButton);
+					topToBottom.AddChild(settingsButton);
+				}
 			}
 		}
 
@@ -155,7 +177,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				if (mouseDownOnBar)
 				{
 					int currentMouseX = (int)TransformToScreenSpace(mouseEvent.Position).x;
-					Width = downWidth + mouseDownX - currentMouseX;
+					UiThread.RunOnIdle(() => Width = downWidth + mouseDownX - currentMouseX);
 				}
 				base.OnMouseMove(mouseEvent);
 			}
@@ -169,7 +191,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		private class DockWindowContent : GuiWidget, IIgnoredPopupChild
 		{
-			internal DockWindowContent(GuiWidget child, string title)
+			internal DockWindowContent(DockingTabControl parent, GuiWidget child, string title, bool isDocked)
 			{
 				FlowLayoutWidget topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
 				{
@@ -183,7 +205,16 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				};
 				titleBar.AddChild(new TextWidget(title));
 				titleBar.AddChild(new GuiWidget() { HAnchor = HAnchor.ParentLeftRight });
-				titleBar.AddChild(new CheckBox("[pin icon]"));
+				var checkBox = new CheckBox("[pin icon]")
+				{
+					Checked = isDocked
+				};
+				titleBar.AddChild(checkBox);
+				checkBox.CheckedStateChanged += (s, e) =>
+				{
+					parent.ControlIsPinned = !parent.ControlIsPinned;
+					parent.Rebuild();
+				};
 				topToBottom.AddChild(titleBar);
 
 				Width = 500;
