@@ -40,6 +40,7 @@ using MatterHackers.VectorMath;
 using System;
 using System.IO;
 using static MatterHackers.MatterControl.PartPreviewWindow.View3DWidget;
+using MatterHackers.MatterControl.PrinterControls;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -150,20 +151,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					viewControls3D,
 					View3DWidget.OpenMode.Editing);
 
-				var leftToRight = new FlowLayoutWidget();
-				leftToRight.AnchorAll();
-				this.AddChild(leftToRight);
-
 				var topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
 				topToBottom.AnchorAll();
-				leftToRight.AddChild(topToBottom);
+				this.AddChild(topToBottom);
 
 				// Must come after we have an instance of View3DWidget an its undo buffer
 				topToBottom.AddChild(new PrinterActionsBar(modelViewer)
 				{
 					Padding = new BorderDouble(bottom: 2)
 				});
-				topToBottom.AddChild(modelViewer);
+
+				var leftToRight = new FlowLayoutWidget();
+				leftToRight.AnchorAll();
+				topToBottom.AddChild(leftToRight);
+
+				leftToRight.AddChild(modelViewer);
 
 				// The slice layers view
 				gcodeViewer = new ViewGcodeBasic(
@@ -174,7 +176,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					viewControls3D);
 				gcodeViewer.AnchorAll();
 				this.gcodeViewer.Visible = false;
-				topToBottom.AddChild(gcodeViewer);
+				leftToRight.AddChild(gcodeViewer);
+
+				AddSettingsTabBar(leftToRight);
 
 				modelViewer.BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor;
 				gcodeViewer.BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor;
@@ -199,8 +203,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				this.AddChild(viewControls3D);
 
-				AddSettingsTabBar(leftToRight);
-
 				this.AnchorAll();
 			}
 
@@ -215,9 +217,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 				else
 				{
-					sideBar.AddPage("Settings", new SliceSettingsWidget());
+					sideBar.AddPage("Settings".Localize(), new SliceSettingsWidget());
 				}
-				sideBar.AddPage("Controls", new ManualPrinterControls());
+				sideBar.AddPage("Controls".Localize(), new ManualPrinterControls());
+
+				var terminalControls = new TerminalControls();
+				terminalControls.VAnchor |= VAnchor.ParentBottomTop;
+				sideBar.AddPage("Terminal".Localize(), terminalControls);
 			}
 
 			public void ToggleView()
