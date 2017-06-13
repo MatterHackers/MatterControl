@@ -125,6 +125,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public Func<GuiWidget> DynamicPopupContent { get; set; }
 		public IPopupLayoutEngine PopupLayoutEngine { get; set; }
 		public Direction PopDirection { get; set; } = Direction.Down;
+		public bool MakeScrollable { get; set; } = true;
 
 		public GuiWidget PopupContent { get; set; }
 
@@ -170,7 +171,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.BeforeShowPopup();
 
-			popupWidget = new PopupWidget(this.PopupContent, PopupLayoutEngine)
+			popupWidget = new PopupWidget(this.PopupContent, PopupLayoutEngine, MakeScrollable)
 			{
 				BorderWidth = 1,
 				BorderColor = this.BorderColor,

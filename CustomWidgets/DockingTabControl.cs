@@ -162,8 +162,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					var settingsButton = new PopupButton(optionsText)
 					{
 						AlignToRightEdge = true,
-						Name = $"{tabTitle} Sidebar"
+						Name = $"{tabTitle} Sidebar",
+						MakeScrollable = false,
 					};
+
 					settingsButton.PopupContent = new DockWindowContent(this, nameWidget.Value, tabTitle)
 					{
 						BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor
