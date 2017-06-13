@@ -78,7 +78,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.Type("2");
 
 					// switch to controls so we can see the heights
-					testRunner.ClickByName("Controls Tab");
+					testRunner.SwitchToControlsTab();
 
 					// run the leveling wizard
 					testRunner.ClickByName("Finish Setup Button");
@@ -228,8 +228,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("Layer(s) To Pause: Edit");
 					testRunner.Type("2;6");
 
-					// switch to controls so we can see the heights
-					testRunner.ClickByName("Controls Tab");
+					testRunner.ClickByName("Pin Settings Button");
 
 					// print a part
 					testRunner.AddDefaultFileToBedplate();
@@ -275,7 +274,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.AddDefaultFileToBedplate();
 					
-					testRunner.ClickByName("Controls Tab", 1);
+					testRunner.SwitchToControlsTab();
 
 					// Wait for printing to complete
 					var printFinishedResetEvent = new AutoResetEvent(false);
@@ -308,8 +307,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.Type(targetFeedRate.ToString());
 
 					// Force focus away from the feed rate field, causing an persisted update
-					testRunner.ClickByName("Controls Tab", 1);
-					testRunner.Delay();
+					testRunner.ClickByName("Extrusion Multiplier NumberEdit");
 
 					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate);
 
@@ -368,7 +366,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.AddDefaultFileToBedplate();
 
-					testRunner.ClickByName("Controls Tab", 1);
+					testRunner.SwitchToControlsTab();
 
 					var printFinishedResetEvent = new AutoResetEvent(false);
 					PrinterConnectionAndCommunication.Instance.PrintFinished.RegisterEvent((s, e) => printFinishedResetEvent.Set(), ref unregisterEvents);
@@ -400,8 +398,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.Type(targetFeedRate.ToString());
 
 					// Force focus away from the feed rate field, causing an persisted update
-					testRunner.ClickByName("Controls Tab", 1);
-					testRunner.Delay();
+					testRunner.SwitchToControlsTab();
 
 					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate);
 
