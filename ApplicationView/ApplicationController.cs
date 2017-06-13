@@ -771,6 +771,8 @@ namespace MatterHackers.MatterControl
 		public View3DWidget ActiveView3DWidget { get; internal set; }
 		public int ActiveAdvancedControlsTab { get; internal set; }
 
+		public bool PrintSettingsPinned { get; internal set; }
+
 		public string CachePath(ILibraryItem libraryItem)
 		{
 			// TODO: Use content SHA

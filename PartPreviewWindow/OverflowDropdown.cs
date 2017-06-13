@@ -91,14 +91,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 		}
 
-		public override void ShowPopup()
+		protected override void BeforeShowPopup()
 		{
 			if (this.PopupContent.BackgroundColor == RGBA_Bytes.Transparent)
 			{
-				this.PopupContent.BackgroundColor = RGBA_Bytes.Blue;
+				this.PopupContent.BackgroundColor = RGBA_Bytes.White;
 			}
-
-			base.ShowPopup();
 		}
 	}
 
@@ -149,7 +147,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnMouseUp(mouseEvent);
 		}
 
-		public virtual void ShowPopup()
+		public void ShowPopup()
 		{
 			menuVisible = true;
 
@@ -165,6 +163,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				return;
 			}
 
+			this.BeforeShowPopup();
+
 			popupWidget = new PopupWidget(this.PopupContent, this, Vector2.Zero, this.PopDirection, 0, this.AlignToRightEdge)
 			{
 				BorderWidth = 1,
@@ -177,6 +177,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				popupWidget = null;
 			};
 			popupWidget.Focus();
+		}
+
+		protected virtual void BeforeShowPopup()
+		{
 		}
 	}
 }
