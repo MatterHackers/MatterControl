@@ -244,6 +244,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.openMode = openMode;
 			allowAutoRotate = (autoRotate == AutoRotate.Enabled);
 			meshViewerWidget = new MeshViewerWidget(viewerVolume, bedCenter, bedShape);
+			this.printItemWrapper = printItemWrapper;
 		}
 
 		public override void Initialize()
@@ -253,7 +254,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.windowType = windowType;
 			autoRotating = allowAutoRotate;
 
-			this.printItemWrapper = printItemWrapper;
 			this.Name = "View3DWidget";
 
 			this.BackgroundColor = ApplicationController.Instance.Theme.TabBodyBackground;
