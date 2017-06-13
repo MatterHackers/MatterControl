@@ -123,6 +123,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public bool AlignToRightEdge { get; set; }
 		public RGBA_Bytes BorderColor { get; set; } = RGBA_Bytes.Gray;
 		public Func<GuiWidget> DynamicPopupContent { get; set; }
+		public IPopupLayoutEngine PopupLayoutEngine { get; set; }
 		public Direction PopDirection { get; set; } = Direction.Down;
 
 		public GuiWidget PopupContent { get; set; }
@@ -149,6 +150,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void ShowPopup()
 		{
+			if (PopupLayoutEngine == null)
+			{
+				PopupLayoutEngine = new PopupLayoutEngine(this.PopupContent, this, Vector2.Zero, this.PopDirection, 0, this.AlignToRightEdge);
+			}
 			menuVisible = true;
 
 			this.PopupContent?.ClearRemovedFlag();
@@ -165,7 +170,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.BeforeShowPopup();
 
-			popupWidget = new PopupWidget(this.PopupContent, this, Vector2.Zero, this.PopDirection, 0, this.AlignToRightEdge)
+			popupWidget = new PopupWidget(this.PopupContent, PopupLayoutEngine)
 			{
 				BorderWidth = 1,
 				BorderColor = this.BorderColor,

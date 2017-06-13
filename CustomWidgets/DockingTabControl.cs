@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
 using MatterHackers.Agg.ImageProcessing;
@@ -43,25 +44,32 @@ namespace MatterHackers.MatterControl.CustomWidgets
 {
 	public class DockingTabControl : GuiWidget
 	{
-		public event EventHandler PinStatusChanged;
+		private Dictionary<string, GuiWidget> allTabs = new Dictionary<string, GuiWidget>();
 
 		// TODO: Pinned state should preferably come from MCWS, default to local data if guest and be per user not printer
 		private bool isPinned;
-		public bool ControlIsPinned
-		{
-			get => isPinned;
-			set {
-				isPinned = value;
-				PinStatusChanged?.Invoke(this, null);
-			}
-		}
 
 		private GuiWidget topToBottom;
 
-		Dictionary<string, GuiWidget> allTabs = new Dictionary<string, GuiWidget>();
+		protected GuiWidget widgetTodockTo;
+		public DockSide DockSide { get; set; }
 
-		public DockingTabControl()
+		public DockingTabControl(GuiWidget widgetTodockTo, DockSide dockSide)
 		{
+			this.widgetTodockTo = widgetTodockTo;
+			this.DockSide = dockSide;
+		}
+
+		public event EventHandler PinStatusChanged;
+
+		public bool ControlIsPinned
+		{
+			get => isPinned;
+			set
+			{
+				isPinned = value;
+				PinStatusChanged?.Invoke(this, null);
+			}
 		}
 
 		public void AddPage(string name, GuiWidget widget)
@@ -70,9 +78,25 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			Rebuild();
 		}
 
-		void Rebuild()
+		public override void Initialize()
 		{
-			foreach(var nameWidget in allTabs)
+			base.Initialize();
+
+			Width = 30;
+			VAnchor = VAnchor.ParentBottomTop;
+			HAnchor = HAnchor.FitToChildren;
+			topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.FitToChildren,
+				VAnchor = VAnchor.ParentBottomTop
+			};
+			AddChild(topToBottom);
+		}
+
+		private void Rebuild()
+		{
+			Focus();
+			foreach (var nameWidget in allTabs)
 			{
 				nameWidget.Value.Parent?.RemoveChild(nameWidget.Value);
 				nameWidget.Value.ClearRemovedFlag();
@@ -119,7 +143,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				else // control is floating
 				{
 					var rotatedLabel = new VertexSourceApplyTransform(
-						new TypeFacePrinter(tabTitle, 12), 
+						new TypeFacePrinter(tabTitle, 12),
 						Affine.NewRotation(MathHelper.DegreesToRadians(-90)));
 
 					var bounds = rotatedLabel.Bounds();
@@ -128,6 +152,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					var optionsText = new GuiWidget(bounds.Width, bounds.Height)
 					{
 						DoubleBuffer = true,
+						Margin = new BorderDouble(3, 10)
 					};
 					optionsText.AfterDraw += (s, e) =>
 					{
@@ -143,6 +168,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					{
 						BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor
 					};
+					settingsButton.PopupLayoutEngine = new UnpinnedLayoutEngine(settingsButton.PopupContent, widgetTodockTo, DockSide);
 					topToBottom.AddChild(settingsButton);
 				}
 			}
@@ -155,21 +181,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				pinButton.Margin = new BorderDouble(right: 18, bottom: 7);
 				tabControl.TabBar.AddChild(pinButton);
 			}
-		}
-
-		public override void Initialize()
-		{
-			base.Initialize();
-
-			Width = 30;
-			VAnchor = VAnchor.ParentBottomTop;
-			HAnchor = HAnchor.FitToChildren;
-			topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				HAnchor = HAnchor.FitToChildren,
-				VAnchor = VAnchor.ParentBottomTop
-			};
-			AddChild(topToBottom);
 		}
 
 		internal class ResizeContainer : FlowLayoutWidget
@@ -186,13 +197,13 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				this.Cursor = Cursors.WaitCursor;
 			}
 
+			public RGBA_Bytes BorderColor { get; set; } = ActiveTheme.Instance.TertiaryBackgroundColor;
+
 			public override void OnDraw(Graphics2D graphics2D)
 			{
 				graphics2D.FillRectangle(LocalBounds.Left, LocalBounds.Bottom, LocalBounds.Left + resizeWidth, LocalBounds.Top, this.BorderColor);
 				base.OnDraw(graphics2D);
 			}
-
-			public RGBA_Bytes BorderColor { get; set; } = ActiveTheme.Instance.TertiaryBackgroundColor;
 
 			public override void OnMouseDown(MouseEventArgs mouseEvent)
 			{
@@ -272,9 +283,118 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 				Width = 500;
 				Height = 640;
+				//VAnchor = VAnchor.ParentBottomTop;
 				topToBottom.AddChild(child);
 
 				AddChild(topToBottom);
+			}
+		}
+	}
+
+	public enum DockSide { Left, Bottom, Right, Top };
+
+	public class UnpinnedLayoutEngine : IPopupLayoutEngine
+	{
+		protected GuiWidget widgetTodockTo;
+		private GuiWidget contentWidget;
+		private HashSet<GuiWidget> hookedParents = new HashSet<GuiWidget>();
+		private PopupWidget popupWidget;
+
+		public DockSide DockSide { get; set; }
+
+		public UnpinnedLayoutEngine(GuiWidget contentWidget, GuiWidget widgetTodockTo, DockSide dockSide)
+		{
+			this.contentWidget = contentWidget;
+			this.widgetTodockTo = widgetTodockTo;
+			DockSide = dockSide;
+		}
+
+		public double MaxHeight { get; private set; }
+
+		public void Closed()
+		{
+			// Unbind callbacks on parents for position_changed if we're closing
+			foreach (GuiWidget widget in hookedParents)
+			{
+				widget.PositionChanged -= widgetRelativeTo_PositionChanged;
+				widget.BoundsChanged -= widgetRelativeTo_PositionChanged;
+			}
+
+			// Long lived originating item must be unregistered
+			widgetTodockTo.Closed -= widgetRelativeTo_Closed;
+
+			// Restore focus to originating widget on close
+			if (this.widgetTodockTo != null
+				&& !widgetTodockTo.HasBeenClosed)
+			{
+				// On menu close, select the first scrollable parent of the widgetRelativeTo
+				var scrollableParent = widgetTodockTo.Parents<ScrollableWidget>().FirstOrDefault();
+				if (scrollableParent != null)
+				{
+					scrollableParent.Focus();
+				}
+			}
+		}
+
+		public void ShowPopup(PopupWidget popupWidget)
+		{
+			this.popupWidget = popupWidget;
+			SystemWindow windowToAddTo = widgetTodockTo.Parents<SystemWindow>().FirstOrDefault();
+			windowToAddTo?.AddChild(popupWidget);
+
+			GuiWidget topParent = widgetTodockTo.Parent;
+			while (topParent.Parent != null
+				&& topParent as SystemWindow == null)
+			{
+				// Regrettably we don't know who it is that is the window that will actually think it is moving relative to its parent
+				// but we need to know anytime our widgetRelativeTo has been moved by any change, so we hook them all.
+				if (!hookedParents.Contains(topParent))
+				{
+					hookedParents.Add(topParent);
+					topParent.PositionChanged += widgetRelativeTo_PositionChanged;
+					topParent.BoundsChanged += widgetRelativeTo_PositionChanged;
+				}
+
+				topParent = topParent.Parent;
+			}
+
+			widgetRelativeTo_PositionChanged(widgetTodockTo, null);
+			widgetTodockTo.Closed += widgetRelativeTo_Closed;
+		}
+
+		private void widgetRelativeTo_Closed(object sender, ClosedEventArgs e)
+		{
+			// If the owning widget closed, so should we
+			popupWidget.CloseMenu();
+		}
+
+		private void widgetRelativeTo_PositionChanged(object sender, EventArgs e)
+		{
+			if (widgetTodockTo != null)
+			{
+				RectangleDouble bounds = widgetTodockTo.BoundsRelativeToParent;
+
+				GuiWidget topParent = widgetTodockTo.Parent;
+				while (topParent != null && topParent.Parent != null)
+				{
+					topParent.ParentToChildTransform.transform(ref bounds);
+					topParent = topParent.Parent;
+				}
+
+				switch (DockSide)
+				{
+					case DockSide.Left:
+						throw new NotImplementedException();
+					case DockSide.Bottom:
+						throw new NotImplementedException();
+					case DockSide.Right:
+						popupWidget.LocalBounds = new RectangleDouble(bounds.Right - contentWidget.Width, bounds.Bottom, bounds.Right, bounds.Top);
+						break;
+					case DockSide.Top:
+						throw new NotImplementedException();
+					default:
+						throw new NotImplementedException();
+				}
 			}
 		}
 	}
