@@ -316,46 +316,35 @@ namespace MatterHackers.MatterControl
 		{
 			Thread.CurrentThread.Name = $"ThumbnailGeneration";
 
-			while(true)
+			while(!MatterControlApplication.Instance.HasBeenClosed)
 			{
-				while(queuedThumbCallbacks.Count > 0)
+				Thread.Sleep(100);
+
+				try
 				{
-					if (MatterControlApplication.Instance.HasBeenClosed)
+					if (queuedThumbCallbacks.Count > 0)
 					{
-						return;
-					}
+						Func<Task> callback;
+						lock (thumbsLock)
+						{
+							callback = queuedThumbCallbacks.Dequeue();
+						}
 
-					Func<Task> callback;
-					lock(thumbsLock)
-					{
-						callback = queuedThumbCallbacks.Dequeue();
-					}
-
-					try
-					{
 						await callback();
 					}
-					catch(ThreadAbortException e)
+					else
 					{
-						return;
+						// Process until queuedThumbCallbacks is empty then wait for new tasks via QueueForGeneration 
+						thumbGenResetEvent.WaitOne();
 					}
-					catch (Exception ex)
-					{
-						Console.WriteLine("Error generating thumbnail: " + ex.Message);
-					}
-
-					Thread.Sleep(100);
 				}
-
-				// Process until queuedThumbCallbacks is empty then wait for new tasks via QueueForGeneration 
-				thumbGenResetEvent.WaitOne();
-
-				// TODO: Call thumbGenResetEvent on application close to gracefully shutdown
-
-				// Abort if closing
-				if (MatterControlApplication.Instance.HasBeenClosed)
+				catch (ThreadAbortException e)
 				{
 					return;
+				}
+				catch (Exception ex)
+				{
+					Console.WriteLine("Error generating thumbnail: " + ex.Message);
 				}
 			}
 		}
@@ -502,7 +491,13 @@ namespace MatterHackers.MatterControl
 			};
 
 			// Remove consumed ClientToken from running list on shutdown
-			ApplicationClosed += (s, e) => ApplicationSettings.Instance.ReleaseClientToken();
+			ApplicationClosed += (s, e) =>
+			{
+				ApplicationSettings.Instance.ReleaseClientToken();
+
+				// Release the waiting ThumbnailGeneration task so it can shutdown gracefully
+				thumbGenResetEvent?.Set();
+			};
 
 			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent((s, e) =>
 			{
@@ -519,6 +514,8 @@ namespace MatterHackers.MatterControl
 			}, ref unregisterEvents);
 
 			this.InitializeLibrary();
+
+
 		}
 
 		public void StartSignIn()

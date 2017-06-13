@@ -290,12 +290,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.IsFalse(testRunner.WaitForName("Bed Temperature Textbox", 2), "Filament -> Bed Temp should not be visible after Heated Bed unchecked");
 
 				// Make sure Bed Temperature Options are not visible in printer controls
-				testRunner.ClickByName("Controls Tab");
+				testRunner.SwitchToControlsTab();
 
 				Assert.IsFalse(testRunner.WaitForName("Bed Temperature Controls Widget", 2), "Controls -> Bed Temp should not be visible after Heated Bed unchecked");
 
 				return Task.CompletedTask;
-			}, overrideWidth: 550);
+			}, overrideWidth: 1300);
 		}
 	
 		[Test]
