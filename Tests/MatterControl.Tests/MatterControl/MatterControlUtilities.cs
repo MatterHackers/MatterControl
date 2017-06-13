@@ -549,9 +549,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public static void SwitchToAdvancedSliceSettings(this AutomationRunner testRunner)
 		{
 			testRunner.ClickByName("Slice Settings Sidebar");
-
 			testRunner.ClickByName("Pin Settings Button");
-
 			testRunner.Delay(1);
 
 			// Switch to Slice Settings Tab
@@ -564,6 +562,19 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.ClickByName("User Level Dropdown");
 			testRunner.ClickByName("Advanced Menu Item");
 			testRunner.Delay(.5);
+		}
+
+		public static void SwitchToControlsTab(this AutomationRunner testRunner)
+		{
+			// If the sidebar exists, we need to expand and pin it
+			if (testRunner.WaitForName("Slice Settings Sidebar", 0.2))
+			{
+				testRunner.ClickByName("Slice Settings Sidebar");
+				testRunner.ClickByName("Pin Settings Button");
+				testRunner.Delay(1);
+			}
+
+			testRunner.ClickByName("Controls Tab");
 		}
 
 		/// <summary>

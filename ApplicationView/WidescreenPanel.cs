@@ -60,6 +60,12 @@ namespace MatterHackers.MatterControl
 			this.AnchorAll();
 			this.Name = "WidescreenPanel";
 
+			// HACK: Long term we need a better solution which does not rely on ActivePrintItem/PrintItemWrapper
+			if (PrinterConnectionAndCommunication.Instance.ActivePrintItem == null)
+			{
+				ApplicationController.Instance.ClearPlate();
+			}
+
 			var library3DViewSplitter = new Splitter()
 			{
 				Padding = new BorderDouble(4),
