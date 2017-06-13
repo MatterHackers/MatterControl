@@ -107,7 +107,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				else // control is floating
 				{
 					var rotatedLabel = new VertexSourceApplyTransform(
-						new TypeFacePrinter(nameWidget.Key, 12), 
+						new TypeFacePrinter(nameWidget.Key, 12),
 						Affine.NewRotation(MathHelper.DegreesToRadians(-90)));
 
 					var bounds = rotatedLabel.Bounds();
@@ -132,6 +132,26 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					};
 					topToBottom.AddChild(settingsButton);
 				}
+			}
+
+			if (ControlIsPinned)
+			{
+				tabControl.TabBar.AddChild(new HorizontalSpacer());
+
+				var icon = StaticData.Instance.LoadIcon("Pushpin_16x.png", 16, 16).InvertLightness();
+				var imageWidget = new ImageWidget(icon)
+				{
+					VAnchor = VAnchor.ParentCenter
+				};
+				imageWidget.Margin = new BorderDouble(right: 25, top: 6);
+				imageWidget.DebugShowBounds = true;
+				imageWidget.MinimumSize = new Vector2(16, 16);
+				imageWidget.Click += (s, e) =>
+				{
+					ControlIsPinned = !ControlIsPinned;
+					UiThread.RunOnIdle(() => Rebuild());
+				};
+				tabControl.TabBar.AddChild(imageWidget);
 			}
 		}
 
@@ -211,34 +231,35 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					HAnchor = HAnchor.ParentLeftRight
 				};
 
-				var titleBar = new FlowLayoutWidget()
-				{
-					HAnchor = HAnchor.ParentLeftRight,
-					VAnchor = VAnchor.FitToChildren,
-				};
-
 				if (!isDocked)
 				{
+					var titleBar = new FlowLayoutWidget()
+					{
+						HAnchor = HAnchor.ParentLeftRight,
+						VAnchor = VAnchor.FitToChildren,
+					};
+
 					titleBar.AddChild(new TextWidget(title, textColor: ActiveTheme.Instance.PrimaryTextColor)
 					{
 						Margin = new BorderDouble(left: 12)
 					});
+
+
+					titleBar.AddChild(new HorizontalSpacer() { Height = 5, DebugShowBounds = false });
+
+					var icon = StaticData.Instance.LoadIcon((isDocked) ? "Pushpin_16x.png" : "PushpinUnpin_16x.png", 16, 16).InvertLightness();
+					var imageWidget = new ImageWidget(icon);
+					imageWidget.Margin = new BorderDouble(right: 25, top: 6);
+					imageWidget.MinimumSize = new Vector2(16, 16);
+					imageWidget.Click += (s, e) =>
+					{
+						parent.ControlIsPinned = !parent.ControlIsPinned;
+						UiThread.RunOnIdle(() => parent.Rebuild());
+					};
+					titleBar.AddChild(imageWidget);
+
+					topToBottom.AddChild(titleBar);
 				}
-
-				titleBar.AddChild(new HorizontalSpacer() { Height = 5, DebugShowBounds = false });
-
-				var icon = StaticData.Instance.LoadIcon((isDocked) ? "Pushpin_16x.png" : "PushpinUnpin_16x.png", 16, 16).InvertLightness();
-				var imageWidget = new ImageWidget(icon);
-				imageWidget.Margin = new BorderDouble(right: 25, top: 6);
-				imageWidget.MinimumSize = new Vector2(16, 16);
-				imageWidget.Click += (s, e) =>
-				{
-					parent.ControlIsPinned = !parent.ControlIsPinned;
-					parent.Rebuild();
-				};
-				titleBar.AddChild(imageWidget);
-
-				topToBottom.AddChild(titleBar);
 
 				Width = 500;
 				Height = 640;
