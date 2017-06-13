@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
@@ -42,8 +43,19 @@ namespace MatterHackers.MatterControl.CustomWidgets
 {
 	public class DockingTabControl : GuiWidget
 	{
+		public event EventHandler PinStatusChanged;
+
 		// TODO: Pinned state should preferably come from MCWS, default to local data if guest and be per user not printer
-		public bool ControlIsPinned { get; set; } = false;
+		private bool isPinned;
+		public bool ControlIsPinned
+		{
+			get => isPinned;
+			set {
+				isPinned = value;
+				PinStatusChanged?.Invoke(this, null);
+			}
+		}
+
 		private GuiWidget topToBottom;
 
 		Dictionary<string, GuiWidget> allTabs = new Dictionary<string, GuiWidget>();
@@ -87,15 +99,17 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			foreach (var nameWidget in allTabs)
 			{
+				string tabTitle = nameWidget.Key;
+
 				if (ControlIsPinned)
 				{
-					var content = new DockWindowContent(this, nameWidget.Value, nameWidget.Key, ControlIsPinned);
+					var content = new DockWindowContent(this, nameWidget.Value, tabTitle, ControlIsPinned);
 
-					var tabPage = new TabPage(content, nameWidget.Key);
+					var tabPage = new TabPage(content, tabTitle);
 
 					tabControl.AddTab(new SimpleTextTabWidget(
 						tabPage,
-						nameWidget.Key + " Tab",
+						tabTitle + " Tab",
 						12,
 						ActiveTheme.Instance.TabLabelSelected,
 						RGBA_Bytes.Transparent,
@@ -105,7 +119,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				else // control is floating
 				{
 					var rotatedLabel = new VertexSourceApplyTransform(
-						new TypeFacePrinter(nameWidget.Key, 12),
+						new TypeFacePrinter(tabTitle, 12), 
 						Affine.NewRotation(MathHelper.DegreesToRadians(-90)));
 
 					var bounds = rotatedLabel.Bounds();
@@ -123,8 +137,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					var settingsButton = new PopupButton(optionsText)
 					{
 						AlignToRightEdge = true,
+						Name = $"{tabTitle} Sidebar"
 					};
-					settingsButton.PopupContent = new DockWindowContent(this, nameWidget.Value, nameWidget.Key, ControlIsPinned)
+					settingsButton.PopupContent = new DockWindowContent(this, nameWidget.Value, tabTitle, ControlIsPinned)
 					{
 						BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor
 					};
@@ -142,7 +157,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					VAnchor = VAnchor.ParentCenter
 				};
 				imageWidget.Margin = new BorderDouble(right: 25, top: 6);
-				imageWidget.DebugShowBounds = true;
 				imageWidget.MinimumSize = new Vector2(16, 16);
 				imageWidget.Click += (s, e) =>
 				{
@@ -246,9 +260,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					titleBar.AddChild(new HorizontalSpacer() { Height = 5, DebugShowBounds = false });
 
 					var icon = StaticData.Instance.LoadIcon((isDocked) ? "Pushpin_16x.png" : "PushpinUnpin_16x.png", 16, 16).InvertLightness();
-					var imageWidget = new ImageWidget(icon);
-					imageWidget.Margin = new BorderDouble(right: 25, top: 6);
-					imageWidget.MinimumSize = new Vector2(16, 16);
+					var imageWidget = new ImageWidget(icon)
+					{
+						Name = "Pin Settings Button",
+						Margin = new BorderDouble(right: 25, top: 6),
+						MinimumSize = new Vector2(16, 16)
+					};
 					imageWidget.Click += (s, e) =>
 					{
 						parent.ControlIsPinned = !parent.ControlIsPinned;
