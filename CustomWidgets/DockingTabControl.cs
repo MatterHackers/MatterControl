@@ -103,7 +103,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 				if (ControlIsPinned)
 				{
-					var content = new DockWindowContent(this, nameWidget.Value, tabTitle, ControlIsPinned);
+					var content = new DockWindowContent(this, nameWidget.Value, tabTitle);
 
 					var tabPage = new TabPage(content, tabTitle);
 
@@ -139,7 +139,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						AlignToRightEdge = true,
 						Name = $"{tabTitle} Sidebar"
 					};
-					settingsButton.PopupContent = new DockWindowContent(this, nameWidget.Value, tabTitle, ControlIsPinned)
+					settingsButton.PopupContent = new DockWindowContent(this, nameWidget.Value, tabTitle)
 					{
 						BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor
 					};
@@ -151,19 +151,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				tabControl.TabBar.AddChild(new HorizontalSpacer());
 
-				var icon = StaticData.Instance.LoadIcon("Pushpin_16x.png", 16, 16).InvertLightness();
-				var imageWidget = new ImageWidget(icon)
-				{
-					VAnchor = VAnchor.ParentCenter
-				};
-				imageWidget.Margin = new BorderDouble(right: 25, top: 6);
-				imageWidget.MinimumSize = new Vector2(16, 16);
-				imageWidget.Click += (s, e) =>
-				{
-					ControlIsPinned = !ControlIsPinned;
-					UiThread.RunOnIdle(() => Rebuild());
-				};
-				tabControl.TabBar.AddChild(imageWidget);
+				var pinButton = this.CreatePinButton();
+				pinButton.Margin = new BorderDouble(right: 18, bottom: 7);
+				tabControl.TabBar.AddChild(pinButton);
 			}
 		}
 
@@ -174,7 +164,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			Width = 30;
 			VAnchor = VAnchor.ParentBottomTop;
 			HAnchor = HAnchor.FitToChildren;
-			//BackgroundColor = RGBA_Bytes.Red;
 			topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.FitToChildren,
@@ -233,9 +222,27 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			}
 		}
 
+		private ImageWidget CreatePinButton()
+		{
+			var icon = StaticData.Instance.LoadIcon(this.isPinned ? "Pushpin_16x.png" : "PushpinUnpin_16x.png", 16, 16).InvertLightness();
+			var imageWidget = new ImageWidget(icon)
+			{
+				Name = "Pin Settings Button",
+				Margin = new BorderDouble(right: 25, top: 6),
+				MinimumSize = new Vector2(16, 16)
+			};
+			imageWidget.Click += (s, e) =>
+			{
+				this.ControlIsPinned = !this.ControlIsPinned;
+				UiThread.RunOnIdle(() => this.Rebuild());
+			};
+
+			return imageWidget;
+		}
+
 		private class DockWindowContent : GuiWidget, IIgnoredPopupChild
 		{
-			internal DockWindowContent(DockingTabControl parent, GuiWidget child, string title, bool isDocked)
+			internal DockWindowContent(DockingTabControl dockingControl, GuiWidget child, string title)
 			{
 				var topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
 				{
@@ -243,7 +250,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					HAnchor = HAnchor.ParentLeftRight
 				};
 
-				if (!isDocked)
+				if (!dockingControl.ControlIsPinned)
 				{
 					var titleBar = new FlowLayoutWidget()
 					{
@@ -256,22 +263,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						Margin = new BorderDouble(left: 12)
 					});
 
+					titleBar.AddChild(new HorizontalSpacer());
 
-					titleBar.AddChild(new HorizontalSpacer() { Height = 5, DebugShowBounds = false });
-
-					var icon = StaticData.Instance.LoadIcon((isDocked) ? "Pushpin_16x.png" : "PushpinUnpin_16x.png", 16, 16).InvertLightness();
-					var imageWidget = new ImageWidget(icon)
-					{
-						Name = "Pin Settings Button",
-						Margin = new BorderDouble(right: 25, top: 6),
-						MinimumSize = new Vector2(16, 16)
-					};
-					imageWidget.Click += (s, e) =>
-					{
-						parent.ControlIsPinned = !parent.ControlIsPinned;
-						UiThread.RunOnIdle(() => parent.Rebuild());
-					};
-					titleBar.AddChild(imageWidget);
+					titleBar.AddChild(dockingControl.CreatePinButton());
 
 					topToBottom.AddChild(titleBar);
 				}
