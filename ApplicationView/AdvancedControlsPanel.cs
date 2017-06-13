@@ -60,7 +60,6 @@ namespace MatterHackers.MatterControl
 
 		public void ReloadSliceSettings()
 		{
-			WidescreenPanel.PreChangePanels.CallEvents(null, null);
 			if (tabControl.HasBeenClosed)
 			{
 				return;
