@@ -548,8 +548,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void SwitchToAdvancedSliceSettings(this AutomationRunner testRunner)
 		{
+			testRunner.ClickByName("Slice Settings Sidebar");
+
+			testRunner.ClickByName("Pin Settings Button");
+
+			testRunner.Delay(1);
+
 			// Switch to Slice Settings Tab
-			testRunner.ClickByName("Slice Settings Tab");
+			//testRunner.ClickByName("Slice Settings Tab");
 
 			// Show the overflow menu
 			testRunner.ClickByName("Slice Settings Overflow Menu");

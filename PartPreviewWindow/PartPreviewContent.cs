@@ -220,12 +220,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				if (ActiveSliceSettings.Instance.PrinterSelected)
 				{
-					sideBar.AddPage("Settings", new SliceSettingsWidget());
+					sideBar.AddPage("Slice Settings".Localize(), new SliceSettingsWidget());
 				}
 				else
 				{
-					sideBar.AddPage("Settings".Localize(), new SliceSettingsWidget());
+					sideBar.AddPage("Slice Settings".Localize(), new NoSettingsWidget());
 				}
+
 				sideBar.AddPage("Controls".Localize(), new ManualPrinterControls());
 
 				var terminalControls = new TerminalControls();

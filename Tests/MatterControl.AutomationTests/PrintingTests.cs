@@ -355,8 +355,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				SystemWindow systemWindow;
-
 				testRunner.WaitForName("Cancel Wizard Button", 1);
 
 				// Set custom adjustment values
@@ -377,7 +375,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.ClickByName("Start Print Button", 1);
 
-					var container = testRunner.GetWidgetByName("ManualPrinterControls.ControlsContainer", out systemWindow, 5);
+					var container = testRunner.GetWidgetByName("ManualPrinterControls.ControlsContainer", out _, 5);
 
 					// Scroll the widget into view
 					var scrollable = container.Parents<ManualPrinterControls>().First().Children<ScrollableWidget>().First();
