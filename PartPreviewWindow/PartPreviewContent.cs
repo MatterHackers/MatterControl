@@ -178,7 +178,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.gcodeViewer.Visible = false;
 				leftToRight.AddChild(gcodeViewer);
 
-				AddSettingsTabBar(leftToRight);
+				AddSettingsTabBar(leftToRight, modelViewer);
 
 				modelViewer.BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor;
 				gcodeViewer.BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor;
@@ -206,9 +206,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.AnchorAll();
 			}
 
-			private void AddSettingsTabBar(GuiWidget parent)
+			private void AddSettingsTabBar(GuiWidget parent, GuiWidget widgetTodockTo)
 			{
-				var sideBar = new DockingTabControl()
+				var sideBar = new DockingTabControl(widgetTodockTo, DockSide.Right)
 				{
 					ControlIsPinned = ApplicationController.Instance.PrintSettingsPinned
 				};
