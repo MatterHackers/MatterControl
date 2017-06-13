@@ -60,29 +60,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.AddChild(new PrintActionRow(buttonFactory, this));
 
-			//ImageBuffer terminalSettingsImage = StaticData.Instance.LoadIcon("terminal-24x24.png", 24, 24).InvertLightness();
-
-			/*
-			ImageBuffer levelingImage = StaticData.Instance.LoadIcon("leveling_32x32.png", 24, 24);
-			if (!ActiveTheme.Instance.IsDarkTheme)
-			{
-				levelingImage.InvertLightness();
-			}*/
-
-
-			//this.AddChild(new PrintStatusRow());
-
 			this.AddChild(new HorizontalSpacer());
 
 			var initialMargin = buttonFactory.Margin;
 
 			buttonFactory.Margin = new BorderDouble(8, 0);
-
-			Button terminalButton = buttonFactory.Generate("", StaticData.Instance.LoadIcon("terminal-24x24.png", 16, 16));
-			terminalButton.Name = "Show Terminal Button";
-			terminalButton.ToolTipText = "Terminal";
-			terminalButton.Click += (s, e) => UiThread.RunOnIdle(TerminalWindow.Show);
-			this.AddChild(terminalButton);
 
 			Button configureEePromButton = buttonFactory.Generate("", StaticData.Instance.LoadIcon("chip_24x24.png", 16, 16));
 			configureEePromButton.ToolTipText = "EEProm";

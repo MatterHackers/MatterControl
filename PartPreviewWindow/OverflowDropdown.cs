@@ -38,7 +38,6 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-
 	public class OverflowDropdown : PopupButton
 	{
 		public OverflowDropdown(bool allowLightnessInvert)
@@ -107,15 +106,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		private static readonly RGBA_Bytes slightShade = new RGBA_Bytes(0, 0, 0, 40);
 
-		private bool menuVisible = false;
+		private GuiWidget buttonView;
 		private bool menuVisibileAtMouseDown = false;
-
+		private bool menuVisible = false;
 		private PopupWidget popupWidget;
 
 		//private GuiWidget buttonView;
-
-		private GuiWidget buttonView;
-
 		public PopupButton(GuiWidget buttonView)
 		{
 			this.Margin = 3;
@@ -126,15 +122,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.AddChild(buttonView);
 		}
 
+		public bool AlignToRightEdge { get; set; }
+		public RGBA_Bytes BorderColor { get; set; } = RGBA_Bytes.Gray;
+		public Func<GuiWidget> DynamicPopupContent { get; set; }
 		public Direction PopDirection { get; set; } = Direction.Down;
 
 		public GuiWidget PopupContent { get; set; }
-
-		public Func<GuiWidget> DynamicPopupContent { get; set; }
-
-		public RGBA_Bytes BorderColor { get; set; } = RGBA_Bytes.Gray;
-
-		public bool AlignToRightEdge { get; set; }
 
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
 		{
