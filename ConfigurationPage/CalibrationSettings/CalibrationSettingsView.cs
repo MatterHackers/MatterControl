@@ -38,8 +38,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			AddChild(mainContainer);
 
-			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(PrinterStatusChanged, ref unregisterEvents);
-			PrinterConnectionAndCommunication.Instance.EnableChanged.RegisterEvent(PrinterStatusChanged, ref unregisterEvents);
+			PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent(PrinterStatusChanged, ref unregisterEvents);
+			PrinterConnection.Instance.EnableChanged.RegisterEvent(PrinterStatusChanged, ref unregisterEvents);
 
 			SetVisibleControls();
 		}
@@ -151,8 +151,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		private void SetVisibleControls()
 		{
 			if (!ActiveSliceSettings.Instance.PrinterSelected
-				|| PrinterConnectionAndCommunication.Instance.CommunicationState == PrinterConnectionAndCommunication.CommunicationStates.Printing
-				|| PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
+				|| PrinterConnection.Instance.CommunicationState == PrinterConnection.CommunicationStates.Printing
+				|| PrinterConnection.Instance.PrinterIsPaused)
 			{
 				printLevelingContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 				runPrintLevelingButton.Enabled = true; // setting this true when the element is disabled makes the colors stay correct
@@ -160,7 +160,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			else
 			{
 				printLevelingContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-				runPrintLevelingButton.Enabled = PrinterConnectionAndCommunication.Instance.PrinterIsConnected;
+				runPrintLevelingButton.Enabled = PrinterConnection.Instance.PrinterIsConnected;
 			}
 		}
 	}

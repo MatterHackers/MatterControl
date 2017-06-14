@@ -52,26 +52,26 @@ namespace MatterHackers.MatterControl.ActionBar
 			ToolTipText = "Current bed temperature".Localize();
 			preheatButton.ToolTipText = "Preheat the Bed".Localize();
 
-			PrinterConnectionAndCommunication.Instance.BedTemperatureRead.RegisterEvent((s, e) => DisplayCurrentTemperature(), ref unregisterEvents);
+			PrinterConnection.Instance.BedTemperatureRead.RegisterEvent((s, e) => DisplayCurrentTemperature(), ref unregisterEvents);
 		}
 
 		private void DisplayCurrentTemperature()
 		{
 			string tempDirectionIndicator = "";
 
-			if (PrinterConnectionAndCommunication.Instance.TargetBedTemperature > 0)
+			if (PrinterConnection.Instance.TargetBedTemperature > 0)
 			{
-				if ((int)(PrinterConnectionAndCommunication.Instance.TargetBedTemperature + 0.5) < (int)(PrinterConnectionAndCommunication.Instance.ActualBedTemperature + 0.5))
+				if ((int)(PrinterConnection.Instance.TargetBedTemperature + 0.5) < (int)(PrinterConnection.Instance.ActualBedTemperature + 0.5))
 				{
 					tempDirectionIndicator = "↓";
 				}
-				else if ((int)(PrinterConnectionAndCommunication.Instance.TargetBedTemperature + 0.5) > (int)(PrinterConnectionAndCommunication.Instance.ActualBedTemperature + 0.5))
+				else if ((int)(PrinterConnection.Instance.TargetBedTemperature + 0.5) > (int)(PrinterConnection.Instance.ActualBedTemperature + 0.5))
 				{
 					tempDirectionIndicator = "↑";
 				}
 			}
 
-			this.IndicatorValue = string.Format(" {0:0.#}°{1}", PrinterConnectionAndCommunication.Instance.ActualBedTemperature, tempDirectionIndicator);
+			this.IndicatorValue = string.Format(" {0:0.#}°{1}", PrinterConnection.Instance.ActualBedTemperature, tempDirectionIndicator);
 		}
 
 		protected override void SetTargetTemperature()
@@ -80,16 +80,16 @@ namespace MatterHackers.MatterControl.ActionBar
 			if (targetTemp != 0)
 			{
 				double goalTemp = (int)(targetTemp + .5);
-				if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting
-					&& PrinterConnectionAndCommunication.Instance.PrintingState == PrinterConnectionAndCommunication.DetailedPrintingState.HeatingBed
-					&& goalTemp != PrinterConnectionAndCommunication.Instance.TargetBedTemperature)
+				if (PrinterConnection.Instance.PrinterIsPrinting
+					&& PrinterConnection.Instance.PrintingState == PrinterConnection.DetailedPrintingState.HeatingBed
+					&& goalTemp != PrinterConnection.Instance.TargetBedTemperature)
 				{
-					string message = string.Format(waitingForBedToHeatMessage, PrinterConnectionAndCommunication.Instance.TargetBedTemperature, sliceSettingsNote);
+					string message = string.Format(waitingForBedToHeatMessage, PrinterConnection.Instance.TargetBedTemperature, sliceSettingsNote);
 					StyledMessageBox.ShowMessageBox(null, message, waitingForBedToHeatTitle);
 				}
 				else
 				{
-					PrinterConnectionAndCommunication.Instance.TargetBedTemperature = (int)(targetTemp + .5);
+					PrinterConnection.Instance.TargetBedTemperature = (int)(targetTemp + .5);
 				}
 			}
 		}

@@ -243,15 +243,15 @@ namespace MatterHackers.MatterControl.EeProm
 			string cmdho = "M206 X" + hox + " Y" + hoy + " Z" + hoz;
 			string cmdpid = "M301 P" + ppid + " I" + ipid + " D" + dpid;
 
-			PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow(cmdsteps);
-			PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow(cmdfeed);
-			PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow(cmdmacc);
-			PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow(cmdacc);
-			PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow(cmdav);
-			PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow(cmdho);
+			PrinterConnection.Instance.SendLineToPrinterNow(cmdsteps);
+			PrinterConnection.Instance.SendLineToPrinterNow(cmdfeed);
+			PrinterConnection.Instance.SendLineToPrinterNow(cmdmacc);
+			PrinterConnection.Instance.SendLineToPrinterNow(cmdacc);
+			PrinterConnection.Instance.SendLineToPrinterNow(cmdav);
+			PrinterConnection.Instance.SendLineToPrinterNow(cmdho);
 			if (hasPID)
 			{
-				PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow(cmdpid);
+				PrinterConnection.Instance.SendLineToPrinterNow(cmdpid);
 			}
 
 			changed = false;
@@ -502,14 +502,14 @@ namespace MatterHackers.MatterControl.EeProm
 
 		public void SaveToEeProm()
 		{
-			PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("M500");
+			PrinterConnection.Instance.SendLineToPrinterNow("M500");
 		}
 
 		// this does not save them to eeprom
 		public void SetPrinterToFactorySettings()
 		{
 			hasPID = false;
-			PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("M502");
+			PrinterConnection.Instance.SendLineToPrinterNow("M502");
 		}
 
 		public void Add(object sender, EventArgs e)
@@ -542,7 +542,7 @@ namespace MatterHackers.MatterControl.EeProm
 		public void Update()
 		{
 			hasPID = false;
-			PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("M503");
+			PrinterConnection.Instance.SendLineToPrinterNow("M503");
 		}
 	}
 }

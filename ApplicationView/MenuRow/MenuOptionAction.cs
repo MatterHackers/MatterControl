@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl
 		{
 			Name = "Actions Menu";
 
-			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent((s,e) => SetEnabledState(), ref unregisterEvents);
+			PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent((s,e) => SetEnabledState(), ref unregisterEvents);
 		}
 
 		public override void OnLoad(EventArgs args)
@@ -64,8 +64,8 @@ namespace MatterHackers.MatterControl
 			for(int i=0; i<MenuDropList.MenuItems.Count; i++)
 			{
 				MenuDropList.MenuItems[i].Enabled = ActiveSliceSettings.Instance.PrinterSelected 
-					&& PrinterConnectionAndCommunication.Instance.PrinterIsConnected
-					&& !PrinterConnectionAndCommunication.Instance.PrinterIsPrinting;
+					&& PrinterConnection.Instance.PrinterIsConnected
+					&& !PrinterConnection.Instance.PrinterIsPrinting;
 			}
 		}
 

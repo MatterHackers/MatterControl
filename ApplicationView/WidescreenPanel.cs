@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl
 			this.Name = "WidescreenPanel";
 
 			// HACK: Long term we need a better solution which does not rely on ActivePrintItem/PrintItemWrapper
-			if (PrinterConnectionAndCommunication.Instance.ActivePrintItem == null)
+			if (PrinterConnection.Instance.ActivePrintItem == null)
 			{
 				ApplicationController.Instance.ClearPlate();
 			}
@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl
 			});
 
 			// put in the right column
-			library3DViewSplitter.Panel2.AddChild(new PartPreviewContent(PrinterConnectionAndCommunication.Instance.ActivePrintItem, View3DWidget.WindowMode.Embeded, View3DWidget.AutoRotate.Disabled)
+			library3DViewSplitter.Panel2.AddChild(new PartPreviewContent(PrinterConnection.Instance.ActivePrintItem, View3DWidget.WindowMode.Embeded, View3DWidget.AutoRotate.Disabled)
 			{
 				VAnchor = VAnchor.ParentBottom | VAnchor.ParentTop,
 				HAnchor = HAnchor.ParentLeft | HAnchor.ParentRight

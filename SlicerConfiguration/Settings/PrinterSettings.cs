@@ -305,7 +305,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public void SetMaterialPreset(int extruderIndex, string materialKey)
 		{
-			if (extruderIndex >= PrinterCommunication.PrinterConnectionAndCommunication.MAX_EXTRUDERS)
+			if (extruderIndex >= PrinterCommunication.PrinterConnection.MAX_EXTRUDERS)
 			{
 				throw new ArgumentOutOfRangeException("Requested extruder index is outside of bounds: " + extruderIndex);
 			}

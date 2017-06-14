@@ -64,9 +64,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public void Run()
 		{
-			if (PrinterConnectionAndCommunication.Instance.PrinterIsConnected)
+			if (PrinterConnection.Instance.PrinterIsConnected)
 			{
-				PrinterConnectionAndCommunication.Instance.MacroStart();
+				PrinterConnection.Instance.MacroStart();
 				SendCommandToPrinter(GCode);
 				if (GCode.Contains(QueuedCommandsStream.MacroPrefix))
 				{
@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		protected void SendCommandToPrinter(string command)
 		{
-			PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow(command);
+			PrinterConnection.Instance.SendLineToPrinterNow(command);
 		}
 	}
 }

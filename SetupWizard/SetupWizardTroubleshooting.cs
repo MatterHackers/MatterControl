@@ -57,12 +57,12 @@ namespace MatterHackers.MatterControl
 			footerRow.AddChild(cancelButton);
 
 			// Register for connection notifications
-			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(ConnectionStatusChanged, ref unregisterEvents);
+			PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent(ConnectionStatusChanged, ref unregisterEvents);
 		}
 
 		public void ConnectionStatusChanged(object test, EventArgs args)
 		{
-			if(PrinterConnectionAndCommunication.Instance.CommunicationState == PrinterConnectionAndCommunication.CommunicationStates.Connected && connectToPrinterRow != null)
+			if(PrinterConnection.Instance.CommunicationState == PrinterConnection.CommunicationStates.Connected && connectToPrinterRow != null)
 			{
 				connectToPrinterRow.SetSuccessful();
 				nextButton.Visible = true;
@@ -177,7 +177,7 @@ namespace MatterHackers.MatterControl
 				"Connect",
 				"Click the 'Connect' button to retry the original connection attempt",
 				false,
-				() => PrinterConnectionAndCommunication.Instance.ConnectToActivePrinter());
+				() => PrinterConnection.Instance.ConnectToActivePrinter());
 
 			contentRow.AddChild(connectToPrinterRow);
 

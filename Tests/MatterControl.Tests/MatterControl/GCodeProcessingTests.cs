@@ -58,7 +58,7 @@ namespace MatterControl.Tests.MatterControl
 		{
 			double[] extruders = new double[16];
 			double bed = 0;
-			PrinterConnectionAndCommunication.ParseTemperatureString(gcodeString, extruders, null, ref bed, null);
+			PrinterConnection.ParseTemperatureString(gcodeString, extruders, null, ref bed, null);
 			Assert.IsTrue(extruders[0] == extruder0);
 			Assert.IsTrue(extruders[1] == extruder1);
 			Assert.IsTrue(extruders[2] == extruder2);

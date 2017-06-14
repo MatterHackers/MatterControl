@@ -173,12 +173,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 							int extruderCount = ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.extruder_count);
 							for (int i = 0; i < extruderCount; i++)
 							{
-								startingExtruderTemps.Add(PrinterConnectionAndCommunication.Instance.GetTargetExtruderTemperature(i));
+								startingExtruderTemps.Add(PrinterConnection.Instance.GetTargetExtruderTemperature(i));
 							}
 
 							if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_heated_bed))
 							{
-								startingBedTemp = PrinterConnectionAndCommunication.Instance.TargetBedTemperature;
+								startingBedTemp = PrinterConnection.Instance.TargetBedTemperature;
 							}
 						}
 						int parensAfterCommand = lineToSend.IndexOf('(', MacroPrefix.Length);
@@ -270,12 +270,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				runningMacro = false;
 				for (int i = 0; i < startingExtruderTemps.Count; i++)
 				{
-					PrinterConnectionAndCommunication.Instance.SetTargetExtruderTemperature(i, startingExtruderTemps[i]);
+					PrinterConnection.Instance.SetTargetExtruderTemperature(i, startingExtruderTemps[i]);
 				}
 
 				if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_heated_bed))
 				{
-					PrinterConnectionAndCommunication.Instance.TargetBedTemperature = startingBedTemp;
+					PrinterConnection.Instance.TargetBedTemperature = startingBedTemp;
 				}
 			}
 			waitingForUserInput = false;

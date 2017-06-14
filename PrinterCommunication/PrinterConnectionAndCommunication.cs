@@ -84,7 +84,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 	/// It handles opening and closing the serial port and does quite a bit of gcode parsing.
 	/// It should be refactored into better modules at some point.
 	/// </summary>
-	public class PrinterConnectionAndCommunication
+	public class PrinterConnection
 	{
 		public RootedObjectEventHandler ActivePrintItemChanged = new RootedObjectEventHandler();
 
@@ -151,7 +151,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private const int MAX_INVALID_CONNECTION_CHARS = 3;
 
-		private static PrinterConnectionAndCommunication globalInstance;
+		private static PrinterConnection globalInstance;
 
 		private object locker = new object();
 
@@ -268,7 +268,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private double feedRateRatio = 1;
 
-		private PrinterConnectionAndCommunication()
+		private PrinterConnection()
 		{
 			MonitorPrinterTemperature = true;
 
@@ -383,13 +383,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public enum FirmwareTypes { Unknown, Repetier, Marlin, Sprinter };
 
-		public static PrinterConnectionAndCommunication Instance
+		public static PrinterConnection Instance
 		{
 			get
 			{
 				if (globalInstance == null)
 				{
-					globalInstance = new PrinterConnectionAndCommunication();
+					globalInstance = new PrinterConnection();
 				}
 				return globalInstance;
 			}
@@ -1393,7 +1393,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 							}
 							else
 							{
-								CommunicationState = PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrint;
+								CommunicationState = PrinterConnection.CommunicationStates.PreparingToPrint;
 								PrintItemWrapper partToPrint = ActivePrintItem;
 								SlicingQueue.Instance.QueuePartForSlicing(partToPrint);
 								partToPrint.SlicingDone += partToPrint_SliceDone;
@@ -2539,7 +2539,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			if (messageBoxResponse)
 			{
-				CommunicationState = PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrint;
+				CommunicationState = PrinterConnection.CommunicationStates.PreparingToPrint;
 				PrintItemWrapper partToPrint = ActivePrintItem;
 				SlicingQueue.Instance.QueuePartForSlicing(partToPrint);
 				partToPrint.SlicingDone += partToPrint_SliceDone;
@@ -3017,13 +3017,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				{
 					try
 					{
-						PrinterConnectionAndCommunication.Instance.ReadFromPrinter(this);
+						PrinterConnection.Instance.ReadFromPrinter(this);
 					}
 					catch
 					{
 					}
 
-					PrinterConnectionAndCommunication.Instance.CommunicationUnconditionalToPrinter.CallEvents(this, new StringEventArgs("Read Thread Has Exited.\n"));
+					PrinterConnection.Instance.CommunicationUnconditionalToPrinter.CallEvents(this, new StringEventArgs("Read Thread Has Exited.\n"));
 					numRunning--;
 				});
 			}

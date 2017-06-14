@@ -264,7 +264,7 @@ namespace MatterHackers.MatterControl.EeProm
 				mainContainer.AddChild(bottomButtonBar);
 			}
 
-			PrinterConnectionAndCommunication.Instance.CommunicationUnconditionalFromPrinter.RegisterEvent(currentEePromSettings.Add, ref unregisterEvents);
+			PrinterConnection.Instance.CommunicationUnconditionalFromPrinter.RegisterEvent(currentEePromSettings.Add, ref unregisterEvents);
 
 			AddChild(mainContainer);
 

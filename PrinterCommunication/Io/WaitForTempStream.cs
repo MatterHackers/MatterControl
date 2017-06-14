@@ -133,7 +133,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 				case State.waitingForExtruderTemp:
 					{
-						double extruderTemp = PrinterConnectionAndCommunication.Instance.GetActualExtruderTemperature((int)extruderIndex);
+						double extruderTemp = PrinterConnection.Instance.GetActualExtruderTemperature((int)extruderIndex);
 						bool tempWithinRange = extruderTemp >= targetTemp - sameTempRange && extruderTemp <= targetTemp + sameTempRange;
 						if (tempWithinRange && !timeHaveBeenAtTemp.IsRunning)
 						{
@@ -141,7 +141,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						}
 
 						if (timeHaveBeenAtTemp.Elapsed.TotalSeconds > waitAfterReachTempTime
-							|| PrinterConnectionAndCommunication.Instance.PrintWasCanceled)
+							|| PrinterConnection.Instance.PrintWasCanceled)
 						{
 							// switch to pass through and continue
 							state = State.passthrough;
@@ -157,7 +157,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 				case State.waitingForBedTemp:
 					{
-						double bedTemp = PrinterConnectionAndCommunication.Instance.ActualBedTemperature;
+						double bedTemp = PrinterConnection.Instance.ActualBedTemperature;
 						bool tempWithinRange;
 						if (waitWhenCooling)
 						{
@@ -175,7 +175,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						}
 
 						if (timeHaveBeenAtTemp.Elapsed.TotalSeconds > waitAfterReachTempTime
-							|| PrinterConnectionAndCommunication.Instance.PrintWasCanceled)
+							|| PrinterConnection.Instance.PrintWasCanceled)
 						{
 							// switch to pass through and continue
 							state = State.passthrough;

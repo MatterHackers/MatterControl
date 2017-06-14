@@ -53,24 +53,24 @@ namespace MatterHackers.MatterControl.ActionBar
 			ToolTipText = "Current extruder temperature".Localize();
 			preheatButton.ToolTipText = "Preheat the Extruder".Localize();
 
-			PrinterConnectionAndCommunication.Instance.ExtruderTemperatureRead.RegisterEvent((s, e) => DisplayCurrentTemperature(), ref unregisterEvents);
+			PrinterConnection.Instance.ExtruderTemperatureRead.RegisterEvent((s, e) => DisplayCurrentTemperature(), ref unregisterEvents);
 		}
 
 		private void DisplayCurrentTemperature()
 		{
 			string tempDirectionIndicator = "";
-			if (PrinterConnectionAndCommunication.Instance.GetTargetExtruderTemperature(extruderIndex) > 0)
+			if (PrinterConnection.Instance.GetTargetExtruderTemperature(extruderIndex) > 0)
 			{
-				if ((int)(PrinterConnectionAndCommunication.Instance.GetTargetExtruderTemperature(extruderIndex) + 0.5) < (int)(PrinterConnectionAndCommunication.Instance.GetActualExtruderTemperature(extruderIndex) + 0.5))
+				if ((int)(PrinterConnection.Instance.GetTargetExtruderTemperature(extruderIndex) + 0.5) < (int)(PrinterConnection.Instance.GetActualExtruderTemperature(extruderIndex) + 0.5))
 				{
 					tempDirectionIndicator = "↓";
 				}
-				else if ((int)(PrinterConnectionAndCommunication.Instance.GetTargetExtruderTemperature(extruderIndex) + 0.5) > (int)(PrinterConnectionAndCommunication.Instance.GetActualExtruderTemperature(extruderIndex) + 0.5))
+				else if ((int)(PrinterConnection.Instance.GetTargetExtruderTemperature(extruderIndex) + 0.5) > (int)(PrinterConnection.Instance.GetActualExtruderTemperature(extruderIndex) + 0.5))
 				{
 					tempDirectionIndicator = "↑";
 				}
 			}
-			this.IndicatorValue = string.Format(" {0:0.#}°{1}", PrinterConnectionAndCommunication.Instance.GetActualExtruderTemperature(extruderIndex), tempDirectionIndicator);
+			this.IndicatorValue = string.Format(" {0:0.#}°{1}", PrinterConnection.Instance.GetActualExtruderTemperature(extruderIndex), tempDirectionIndicator);
 		}
 
 		protected override void SetTargetTemperature()
@@ -79,16 +79,16 @@ namespace MatterHackers.MatterControl.ActionBar
 			if (double.TryParse(ActiveSliceSettings.Instance.GetValue(SettingsKey.temperature), out targetTemp))
 			{
 				double goalTemp = (int)(targetTemp + .5);
-				if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting
-					&& PrinterConnectionAndCommunication.Instance.PrintingState == PrinterConnectionAndCommunication.DetailedPrintingState.HeatingExtruder
-					&& goalTemp != PrinterConnectionAndCommunication.Instance.GetTargetExtruderTemperature(extruderIndex))
+				if (PrinterConnection.Instance.PrinterIsPrinting
+					&& PrinterConnection.Instance.PrintingState == PrinterConnection.DetailedPrintingState.HeatingExtruder
+					&& goalTemp != PrinterConnection.Instance.GetTargetExtruderTemperature(extruderIndex))
 				{
-					string message = string.Format(waitingForExtruderToHeatMessage, PrinterConnectionAndCommunication.Instance.GetTargetExtruderTemperature(extruderIndex), sliceSettingsNote);
+					string message = string.Format(waitingForExtruderToHeatMessage, PrinterConnection.Instance.GetTargetExtruderTemperature(extruderIndex), sliceSettingsNote);
 					StyledMessageBox.ShowMessageBox(null, message, "Waiting For Extruder To Heat".Localize());
 				}
 				else
 				{
-					PrinterConnectionAndCommunication.Instance.SetTargetExtruderTemperature(extruderIndex, (int)(targetTemp + .5));
+					PrinterConnection.Instance.SetTargetExtruderTemperature(extruderIndex, (int)(targetTemp + .5));
 				}
 			}
 		}

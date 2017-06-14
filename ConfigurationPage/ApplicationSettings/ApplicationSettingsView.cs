@@ -274,7 +274,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			displayControlRestartButton.Margin = new BorderDouble(right: 6);
 			displayControlRestartButton.Click += (sender, e) =>
 			{
-				if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting)
+				if (PrinterConnection.Instance.PrinterIsPrinting)
 				{
 					StyledMessageBox.ShowMessageBox(null, cannotRestartWhilePrintIsActiveMessage, cannotRestartWhileActive);
 				}
@@ -435,7 +435,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			languageRestartButton.Click += (sender, e) =>
 			{
-				if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting)
+				if (PrinterConnection.Instance.PrinterIsPrinting)
 				{
 					StyledMessageBox.ShowMessageBox(null, cannotRestartWhilePrintIsActiveMessage, cannotRestartWhileActive);
 				}

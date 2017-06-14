@@ -80,8 +80,8 @@ namespace MatterHackers.MatterControl.ActionBar
 			AddChildElements(buttonFactory, parentWidget);
 
 			// Add Handlers
-			PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(onStateChanged, ref unregisterEvents);
-			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(onStateChanged, ref unregisterEvents);
+			PrinterConnection.Instance.ActivePrintItemChanged.RegisterEvent(onStateChanged, ref unregisterEvents);
+			PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent(onStateChanged, ref unregisterEvents);
 			ProfileManager.ProfilesListChanged.RegisterEvent(onStateChanged, ref unregisterEvents);
 		}
 
@@ -124,8 +124,8 @@ namespace MatterHackers.MatterControl.ActionBar
 					else
 #endif
 					{
-						PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
-						PrinterConnectionAndCommunication.Instance.ConnectToActivePrinter(true);
+						PrinterConnection.Instance.HaltConnectionThread();
+						PrinterConnection.Instance.ConnectToActivePrinter(true);
 					}
 				}
 			};
@@ -149,13 +149,13 @@ namespace MatterHackers.MatterControl.ActionBar
 			resetConnectionButton = buttonFactory.GenerateTooltipButton("Reset".Localize().ToUpper(), StaticData.Instance.LoadIcon("e_stop4.png", 32,32).InvertLightness());
 			resetConnectionButton.ToolTipText = "Reboots the firmware on the controller".Localize();
 			resetConnectionButton.Margin = new BorderDouble(6, 6, 6, 3);
-			resetConnectionButton.Click += (s, e) => UiThread.RunOnIdle(PrinterConnectionAndCommunication.Instance.RebootBoard);
+			resetConnectionButton.Click += (s, e) => UiThread.RunOnIdle(PrinterConnection.Instance.RebootBoard);
 
 			pauseButton = buttonFactory.GenerateTooltipButton("Pause".Localize().ToUpper());
 			pauseButton.ToolTipText = "Pause the current print".Localize();
 			pauseButton.Click += (s, e) =>
 			{
-				UiThread.RunOnIdle(PrinterConnectionAndCommunication.Instance.RequestPause);
+				UiThread.RunOnIdle(PrinterConnection.Instance.RequestPause);
 				pauseButton.Enabled = false;
 			};
 			parentWidget.AddChild(pauseButton);
@@ -184,9 +184,9 @@ namespace MatterHackers.MatterControl.ActionBar
 			resumeButton.Name = "Resume Button";
 			resumeButton.Click += (s, e) =>
 			{
-				if (PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
+				if (PrinterConnection.Instance.PrinterIsPaused)
 				{
-					PrinterConnectionAndCommunication.Instance.Resume();
+					PrinterConnection.Instance.Resume();
 				}
 				pauseButton.Enabled = true;
 			};
@@ -248,8 +248,8 @@ namespace MatterHackers.MatterControl.ActionBar
 		protected void SetButtonStates()
 		{
 			this.activePrintButtons.Clear();
-			if (!PrinterConnectionAndCommunication.Instance.PrinterIsConnected
-				&& PrinterConnectionAndCommunication.Instance.CommunicationState != PrinterConnectionAndCommunication.CommunicationStates.AttemptingToConnect)
+			if (!PrinterConnection.Instance.PrinterIsConnected
+				&& PrinterConnection.Instance.CommunicationState != PrinterConnection.CommunicationStates.AttemptingToConnect)
 			{
 				if (!ProfileManager.Instance.ActiveProfiles.Any())
 				{
@@ -273,14 +273,14 @@ namespace MatterHackers.MatterControl.ActionBar
 			}
 			else
 			{
-				switch (PrinterConnectionAndCommunication.Instance.CommunicationState)
+				switch (PrinterConnection.Instance.CommunicationState)
 				{
-					case PrinterConnectionAndCommunication.CommunicationStates.AttemptingToConnect:
+					case PrinterConnection.CommunicationStates.AttemptingToConnect:
 						this.activePrintButtons.Add(cancelConnectButton);
 						EnableActiveButtons();
 						break;
 
-					case PrinterConnectionAndCommunication.CommunicationStates.Connected:
+					case PrinterConnection.CommunicationStates.Connected:
 						PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
 						if (levelingData != null && ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_required_to_print)
 							&& !levelingData.HasBeenRunAndEnabled())
@@ -295,14 +295,14 @@ namespace MatterHackers.MatterControl.ActionBar
 						EnableActiveButtons();
 						break;
 
-					case PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrint:
+					case PrinterConnection.CommunicationStates.PreparingToPrint:
 						this.activePrintButtons.Add(cancelButton);
 						EnableActiveButtons();
 						break;
 
-					case PrinterConnectionAndCommunication.CommunicationStates.PrintingFromSd:
-					case PrinterConnectionAndCommunication.CommunicationStates.Printing:
-						if (!PrinterConnectionAndCommunication.Instance.PrintWasCanceled)
+					case PrinterConnection.CommunicationStates.PrintingFromSd:
+					case PrinterConnection.CommunicationStates.Printing:
+						if (!PrinterConnection.Instance.PrintWasCanceled)
 						{
 							this.activePrintButtons.Add(pauseButton);
 							this.activePrintButtons.Add(cancelButton);
@@ -315,13 +315,13 @@ namespace MatterHackers.MatterControl.ActionBar
 						EnableActiveButtons();
 						break;
 
-					case PrinterConnectionAndCommunication.CommunicationStates.Paused:
+					case PrinterConnection.CommunicationStates.Paused:
 						this.activePrintButtons.Add(resumeButton);
 						this.activePrintButtons.Add(cancelButton);
 						EnableActiveButtons();
 						break;
 
-					case PrinterConnectionAndCommunication.CommunicationStates.FinishedPrint:
+					case PrinterConnection.CommunicationStates.FinishedPrint:
 						this.activePrintButtons.Add(startButton);
 						EnableActiveButtons();
 						break;
@@ -332,7 +332,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				}
 			}
 
-			if (PrinterConnectionAndCommunication.Instance.PrinterIsConnected
+			if (PrinterConnection.Instance.PrinterIsConnected
 				&& ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.show_reset_connection)
 				&& UserSettings.Instance.IsTouchScreen)
 			{
@@ -383,7 +383,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		{
 			UiThread.RunOnIdle(() =>
 			{
-				PrinterConnectionAndCommunication.Instance.PrintActivePartIfPossible();
+				PrinterConnection.Instance.PrintActivePartIfPossible();
 			});
 		}
 

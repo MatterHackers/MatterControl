@@ -511,14 +511,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (windowType == WindowMode.Embeded)
 			{
-				PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(SetEditControlsBasedOnPrinterState, ref unregisterEvents);
+				PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent(SetEditControlsBasedOnPrinterState, ref unregisterEvents);
 				if (windowType == WindowMode.Embeded)
 				{
 					// make sure we lock the controls if we are printing or paused
-					switch (PrinterConnectionAndCommunication.Instance.CommunicationState)
+					switch (PrinterConnection.Instance.CommunicationState)
 					{
-						case PrinterConnectionAndCommunication.CommunicationStates.Printing:
-						case PrinterConnectionAndCommunication.CommunicationStates.Paused:
+						case PrinterConnection.CommunicationStates.Printing:
+						case PrinterConnection.CommunicationStates.Paused:
 							LockEditControls();
 							break;
 					}
@@ -2179,10 +2179,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (windowType == WindowMode.Embeded)
 			{
-				switch (PrinterConnectionAndCommunication.Instance.CommunicationState)
+				switch (PrinterConnection.Instance.CommunicationState)
 				{
-					case PrinterConnectionAndCommunication.CommunicationStates.Printing:
-					case PrinterConnectionAndCommunication.CommunicationStates.Paused:
+					case PrinterConnection.CommunicationStates.Printing:
+					case PrinterConnection.CommunicationStates.Paused:
 						break;
 
 					default:
@@ -2297,10 +2297,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (windowType == WindowMode.Embeded)
 			{
-				switch (PrinterConnectionAndCommunication.Instance.CommunicationState)
+				switch (PrinterConnection.Instance.CommunicationState)
 				{
-					case PrinterConnectionAndCommunication.CommunicationStates.Printing:
-					case PrinterConnectionAndCommunication.CommunicationStates.Paused:
+					case PrinterConnection.CommunicationStates.Printing:
+					case PrinterConnection.CommunicationStates.Paused:
 						LockEditControls();
 						break;
 

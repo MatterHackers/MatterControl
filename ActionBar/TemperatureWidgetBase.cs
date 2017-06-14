@@ -111,7 +111,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		public override void OnMouseEnterBounds(MouseEventArgs mouseEvent)
 		{
 			temperatureTypeName.Visible = true;
-			if (PrinterConnectionAndCommunication.Instance.PrinterIsConnected && !PrinterConnectionAndCommunication.Instance.PrinterIsPrinting)
+			if (PrinterConnection.Instance.PrinterIsConnected && !PrinterConnection.Instance.PrinterIsPrinting)
 			{
 				preheatButton.Visible = true;
 			}

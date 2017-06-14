@@ -68,8 +68,8 @@ namespace MatterHackers.MatterControl.ActionBar
 			};
 			this.AddChild(printerSelectorAndEditOverlay);
 
-			PrinterConnectionAndCommunication.Instance.EnableChanged.RegisterEvent(SetVisibleStates, ref unregisterEvents);
-			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(SetVisibleStates, ref unregisterEvents);
+			PrinterConnection.Instance.EnableChanged.RegisterEvent(SetVisibleStates, ref unregisterEvents);
+			PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent(SetVisibleStates, ref unregisterEvents);
 		}
 
 
@@ -93,8 +93,8 @@ namespace MatterHackers.MatterControl.ActionBar
 		{
 			UiThread.RunOnIdle(() =>
 			{
-				bool printerIsPrintingOrPaused = PrinterConnectionAndCommunication.Instance.PrinterIsPrinting
-					|| PrinterConnectionAndCommunication.Instance.PrinterIsPaused;
+				bool printerIsPrintingOrPaused = PrinterConnection.Instance.PrinterIsPrinting
+					|| PrinterConnection.Instance.PrinterIsPaused;
 
 				editPrinterButton.Enabled = ActiveSliceSettings.Instance.PrinterSelected && !printerIsPrintingOrPaused;
 				printerSelector.Enabled = !printerIsPrintingOrPaused;
@@ -125,7 +125,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			resetConnectionButton.Visible = ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.show_reset_connection);
 			resetConnectionButton.Click += (s, e) =>
 			{
-				UiThread.RunOnIdle(PrinterConnectionAndCommunication.Instance.RebootBoard);
+				UiThread.RunOnIdle(PrinterConnection.Instance.RebootBoard);
 			};
 			this.AddChild(resetConnectionButton);
 
@@ -272,15 +272,15 @@ namespace MatterHackers.MatterControl.ActionBar
 			disconnectButton.ToolTipText = "Disconnect from current printer".Localize();
 			disconnectButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
-				if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting)
+				if (PrinterConnection.Instance.PrinterIsPrinting)
 				{
 					StyledMessageBox.ShowMessageBox(
 						(bool disconnectCancel) =>
 						{
 							if (disconnectCancel)
 							{
-								PrinterConnectionAndCommunication.Instance.Stop(false);
-								PrinterConnectionAndCommunication.Instance.Disable();
+								PrinterConnection.Instance.Stop(false);
+								PrinterConnection.Instance.Disable();
 							}
 						},
 						disconnectAndCancelMessage,
@@ -291,7 +291,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				}
 				else
 				{
-					PrinterConnectionAndCommunication.Instance.Disable();
+					PrinterConnection.Instance.Disable();
 				}
 			});
 			this.AddChild(disconnectButton);
@@ -306,8 +306,8 @@ namespace MatterHackers.MatterControl.ActionBar
 			// Bind connect button states to active printer state
 			this.SetVisibleStates(null, null);
 
-			PrinterConnectionAndCommunication.Instance.EnableChanged.RegisterEvent(SetVisibleStates, ref unregisterEvents);
-			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(SetVisibleStates, ref unregisterEvents);
+			PrinterConnection.Instance.EnableChanged.RegisterEvent(SetVisibleStates, ref unregisterEvents);
+			PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent(SetVisibleStates, ref unregisterEvents);
 		}
 
 		public override void OnClosed(ClosedEventArgs e)
@@ -318,15 +318,15 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		static public void UserRequestedConnectToActivePrinter()
 		{
-			PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
-			PrinterConnectionAndCommunication.Instance.ConnectToActivePrinter(true);
+			PrinterConnection.Instance.HaltConnectionThread();
+			PrinterConnection.Instance.ConnectToActivePrinter(true);
 		}
 
 		private void SetVisibleStates(object sender, EventArgs e)
 		{
 			UiThread.RunOnIdle(() =>
 			{
-				if (PrinterConnectionAndCommunication.Instance.PrinterIsConnected)
+				if (PrinterConnection.Instance.PrinterIsConnected)
 				{
 					disconnectButton.Visible = true;
 					connectButton.Visible = false;
@@ -337,13 +337,13 @@ namespace MatterHackers.MatterControl.ActionBar
 					connectButton.Visible = true;
 				}
 
-				var communicationState = PrinterConnectionAndCommunication.Instance.CommunicationState;
+				var communicationState = PrinterConnection.Instance.CommunicationState;
 
 				// Ensure connect buttons are locked while long running processes are executing to prevent duplicate calls into said actions
 				connectButton.Enabled = ActiveSliceSettings.Instance.PrinterSelected
-					&& communicationState != PrinterConnectionAndCommunication.CommunicationStates.AttemptingToConnect;
+					&& communicationState != PrinterConnection.CommunicationStates.AttemptingToConnect;
 
-				disconnectButton.Enabled = communicationState != PrinterConnectionAndCommunication.CommunicationStates.Disconnecting;
+				disconnectButton.Enabled = communicationState != PrinterConnection.CommunicationStates.Disconnecting;
 			});
 		}
 	}

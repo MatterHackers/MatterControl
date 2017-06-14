@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 			cancelButton.Click += (s, e) =>
 			{
-				PrinterConnectionAndCommunication.Instance.MacroCancel();
+				PrinterConnection.Instance.MacroCancel();
 			};
 
 			if (macroData.showMaterialSelector)
@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				contentRow.AddChild(materialSelector);
 			}
 
-			PrinterConnectionAndCommunication.Instance.WroteLine.RegisterEvent(LookForTempRequest, ref unregisterEvents);
+			PrinterConnection.Instance.WroteLine.RegisterEvent(LookForTempRequest, ref unregisterEvents);
 
 			if (macroData.waitOk | macroData.expireTime > 0)
 			{
@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 				okButton.Click += (s, e) =>
 				{
-					PrinterConnectionAndCommunication.Instance.MacroContinue();
+					PrinterConnection.Instance.MacroContinue();
 					UiThread.RunOnIdle(() => WizardWindow?.Close());
 				};
 
@@ -146,7 +146,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 		{
 			if(e.OsEvent)
 			{
-				PrinterConnectionAndCommunication.Instance.MacroCancel();
+				PrinterConnection.Instance.MacroCancel();
 			}
 			unregisterEvents?.Invoke(this, null);
 
@@ -173,7 +173,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			if(stringEvent != null
 				&& stringEvent.Data.Contains("M104"))
 			{
-				startingTemp = PrinterConnectionAndCommunication.Instance.GetActualExtruderTemperature(0);
+				startingTemp = PrinterConnection.Instance.GetActualExtruderTemperature(0);
 				UiThread.RunOnIdle(ShowTempChangeProgress);
 			}
 		}
@@ -181,8 +181,8 @@ namespace MatterHackers.MatterControl.PrinterControls
 		private void ShowTempChangeProgress()
 		{
 			progressBar.Visible = true;
-			double targetTemp = PrinterConnectionAndCommunication.Instance.GetTargetExtruderTemperature(0);
-			double actualTemp = PrinterConnectionAndCommunication.Instance.GetActualExtruderTemperature(0);
+			double targetTemp = PrinterConnection.Instance.GetTargetExtruderTemperature(0);
+			double actualTemp = PrinterConnection.Instance.GetActualExtruderTemperature(0);
 			double totalDelta = targetTemp - startingTemp;
 			double currentDelta = actualTemp - startingTemp;
 			double ratioDone = totalDelta != 0 ? (currentDelta / totalDelta) : 1;

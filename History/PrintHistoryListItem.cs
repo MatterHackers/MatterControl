@@ -235,11 +235,11 @@ namespace MatterHackers.MatterControl.PrintHistory
 					{
 						UiThread.RunOnIdle(() =>
 						{
-							if (!PrinterCommunication.PrinterConnectionAndCommunication.Instance.PrintIsActive)
+							if (!PrinterCommunication.PrinterConnection.Instance.PrintIsActive)
 							{
 								QueueData.Instance.AddItem(new PrintItemWrapper(printTask.PrintItemId), 0);
 
-								PrinterCommunication.PrinterConnectionAndCommunication.Instance.PrintActivePartIfPossible();
+								PrinterCommunication.PrinterConnection.Instance.PrintActivePartIfPossible();
 							}
 							else
 							{

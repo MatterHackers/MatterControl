@@ -147,9 +147,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 #if false // This is to force the creation of the repetier window for testing when we don't have repetier firmware.
                         new MatterHackers.MatterControl.EeProm.EePromRepetierWidget();
 #else
-					switch (PrinterConnectionAndCommunication.Instance.FirmwareType)
+					switch (PrinterConnection.Instance.FirmwareType)
 				{
-					case PrinterConnectionAndCommunication.FirmwareTypes.Repetier:
+					case PrinterConnection.FirmwareTypes.Repetier:
 						if (openEePromRepetierWidget != null)
 						{
 							openEePromRepetierWidget.BringToFront();
@@ -164,7 +164,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						}
 						break;
 
-					case PrinterConnectionAndCommunication.FirmwareTypes.Marlin:
+					case PrinterConnection.FirmwareTypes.Marlin:
 						if (openEePromMarlinWidget != null)
 						{
 							openEePromMarlinWidget.BringToFront();
@@ -180,7 +180,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						break;
 
 					default:
-						PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("M115");
+						PrinterConnection.Instance.SendLineToPrinterNow("M115");
 						StyledMessageBox.ShowMessageBox(null, noEepromMappingMessage, noEepromMappingTitle, StyledMessageBox.MessageType.OK);
 						break;
 				}
