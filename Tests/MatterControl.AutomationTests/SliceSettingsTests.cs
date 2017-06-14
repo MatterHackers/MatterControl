@@ -118,7 +118,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.WaitForName("Resume Button", 30);
 					testRunner.ClickByName("Cancel Print Button");
 
-					testRunner.WaitForName("Start Print Button");
 					Assert.IsTrue(testRunner.NameExists("Start Print Button"));
 
 					int g28Count = 0;

@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.CloseSignInAndPrinterSelect();
 
 				// Tests that clicking a queue item thumbnail opens a Part Preview window
-				Assert.IsFalse(testRunner.NameExists("Part Preview Window"), "Part Preview Window should not exist");
+				Assert.IsFalse(testRunner.NameExists("Part Preview Window", .2), "Part Preview Window should not exist");
 
 				testRunner.ClickByName("Queue Item Thumbnail");
 
@@ -172,11 +172,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.AreEqual(0, QueueData.Instance.ItemCount, "Queue is empty after RemoveAll action");
 
 				// Assert that widgets have been removed
-				testRunner.Delay(.5);
-
-				Assert.IsFalse(testRunner.NameExists("Queue Item Batman"), "Batman part removed");
-				Assert.IsFalse(testRunner.NameExists("Queue Item Fennec_Fox"), "Fox part removed");
-				Assert.IsFalse(testRunner.NameExists("Queue Item 2013-01-25_Mouthpiece_v2"), "Mouthpiece part removed");
+				Assert.IsFalse(testRunner.NameExists("Queue Item Batman", .2), "Batman part removed");
+				Assert.IsFalse(testRunner.NameExists("Queue Item Fennec_Fox", .2), "Fox part removed");
+				Assert.IsFalse(testRunner.NameExists("Queue Item 2013-01-25_Mouthpiece_v2", .2), "Mouthpiece part removed");
 
 				return Task.CompletedTask;
 			};
@@ -209,9 +207,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Delay(2);
 
 				Assert.AreEqual(3, QueueData.Instance.ItemCount, "Batman item removed");
-				Assert.IsFalse(testRunner.NameExists("Queue Item Batman"), "Batman item removed");
+				Assert.IsFalse(testRunner.NameExists("Queue Item Batman", .2), "Batman item removed");
 
-				Assert.IsFalse(testRunner.NameExists("Queue Item 2013-01-25_Mouthpiece_v2 Part Preview"), "Mouthpiece Part Preview should not initially be visible");
+				Assert.IsFalse(testRunner.NameExists("Queue Item 2013-01-25_Mouthpiece_v2 Part Preview", .2), "Mouthpiece Part Preview should not initially be visible");
 				testRunner.ClickByName("Queue Item 2013-01-25_Mouthpiece_v2");
 				testRunner.Delay(2);
 				testRunner.ClickByName("Queue Item 2013-01-25_Mouthpiece_v2 View");

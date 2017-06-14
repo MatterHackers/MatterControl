@@ -145,7 +145,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void Select3DPart(this AutomationRunner testRunner, string partNameToSelect)
 		{
-			if(testRunner.NameExists("3D View Edit"))
+			if(testRunner.NameExists("3D View Edit", .2))
 			{
 				testRunner.ClickByName("3D View Edit");
 			}
@@ -268,7 +268,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public static void AddAndSelectPrinter(this AutomationRunner testRunner, string make, string model)
 		{
 			// If SelectMake is not visible and the ConnectionWizard is, click Skip
-			if (!testRunner.NameExists("Select Make") 
+			if (!testRunner.NameExists("Select Make", .2) 
 				&& testRunner.WaitForName("Connection Wizard Skip Sign In Button", 1))
 			{
 				testRunner.ClickByName("Connection Wizard Skip Sign In Button");
