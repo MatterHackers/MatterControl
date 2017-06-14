@@ -67,8 +67,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Delay(1);
 				testRunner.Type("{Enter}");
 
-				Assert.IsTrue(testRunner.WaitForName("Row Item Batman", 2), "Batman part should exist after adding");
-				Assert.IsTrue(testRunner.WaitForName("Row Item 2013-01-25 Mouthpiece V2", 2), "Mouthpiece part should exist after adding");
+				Assert.IsTrue(testRunner.WaitForName("Row Item Batman"), "Batman part should exist after adding");
+				Assert.IsTrue(testRunner.WaitForName("Row Item 2013-01-25 Mouthpiece V2"), "Mouthpiece part should exist after adding");
 
 				return Task.CompletedTask;
 			});
@@ -96,8 +96,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Rename Button");
 
 				// Confirm
-				Assert.IsTrue(testRunner.WaitForName("Row Item Rook Renamed", 5));
-				Assert.IsFalse(testRunner.WaitForName("Row Item Rook", 2));
+				Assert.IsTrue(testRunner.WaitForName("Row Item Rook Renamed"));
+				Assert.IsFalse(testRunner.WaitForName("Row Item Rook", 1));
 
 				return Task.CompletedTask;
 			}, overrideWidth: 600);
@@ -127,7 +127,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Delay(.2);
 
 				// Confirm newly created folder exists
-				Assert.IsTrue(testRunner.WaitForName("New Folder Row Item Collection", 1), "New folder should appear as GuiWidget");
+				Assert.IsTrue(testRunner.WaitForName("New Folder Row Item Collection"), "New folder should appear as GuiWidget");
 
 				testRunner.ClickByName("New Folder Row Item Collection");
 				testRunner.Delay(.2);
@@ -141,7 +141,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Delay(.2);
 
 				// Make sure the renamed Library Folder exists
-				Assert.IsTrue(testRunner.WaitForName("Renamed Library Folder Row Item Collection", 2), "Renamed folder should exist");
+				Assert.IsTrue(testRunner.WaitForName("Renamed Library Folder Row Item Collection"), "Renamed folder should exist");
 
 				return Task.CompletedTask;
 			});
@@ -217,7 +217,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.NavigateToFolder("Print Queue Row Item Collection");
 
 				// Make sure that the item exists in the PrintQueueContainer
-				Assert.IsTrue(testRunner.WaitForName("Row Item Rook", 5), "Rook item should exist in the Queue after Add");
+				Assert.IsTrue(testRunner.WaitForName("Row Item Rook"), "Rook item should exist in the Queue after Add");
 
 				return Task.CompletedTask;
 			});
@@ -255,8 +255,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.NavigateToFolder("Print Queue Row Item Collection");
 
 				// Make sure that the items exist in the PrintQueueContainer
-				Assert.IsTrue(testRunner.WaitForName("Row Item Rook", 5), "Rook item should exist in the Queue after Add");
-				Assert.IsTrue(testRunner.WaitForName("Row Item Batman", 5), "Batman item should exist in the Queue after Add");
+				Assert.IsTrue(testRunner.WaitForName("Row Item Rook"), "Rook item should exist in the Queue after Add");
+				Assert.IsTrue(testRunner.WaitForName("Row Item Batman"), "Batman item should exist in the Queue after Add");
 
 				return Task.CompletedTask;
 			});

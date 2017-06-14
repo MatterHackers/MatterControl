@@ -38,7 +38,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.NavigateToFolder("Local Library Row Item Collection");
 
 				// ensure that it is now in the library folder (that the folder updated)
-				Assert.IsTrue(testRunner.WaitForName("Row Item 0Test Part", 5), "The part we added should be in the library");
+				Assert.IsTrue(testRunner.WaitForName("Row Item 0Test Part"), "The part we added should be in the library");
 
 				testRunner.Delay(.5);
 

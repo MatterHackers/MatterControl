@@ -215,8 +215,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				testRunner.WaitForName("Cancel Wizard Button", 1);
-
 				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
 					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
@@ -238,12 +236,15 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					emulator.SimulateLineErrors = true;
 
 					// close the pause dialog pop-up (resume)
+					testRunner.WaitForName("No Button", 90);
 					testRunner.ClickByName("No Button");
 
 					// simulate board reboot
 					emulator.SimulateReboot();
 
 					// close the pause dialog pop-up (resume)
+					testRunner.Delay(3);
+					testRunner.WaitForName("No Button", 90);
 					testRunner.ClickByName("No Button");
 
 					// Wait for done
@@ -264,9 +265,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				SystemWindow systemWindow;
-
-				testRunner.WaitForName("Cancel Wizard Button", 1);
+				testRunner.WaitForName("Cancel Wizard Button");
 
 				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
@@ -282,7 +281,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.ClickByName("Start Print Button");
 
-					var container = testRunner.GetWidgetByName("ManualPrinterControls.ControlsContainer", out systemWindow, 5);
+					var container = testRunner.GetWidgetByName("ManualPrinterControls.ControlsContainer", out _, 5);
 
 					// Scroll the widget into view
 					var scrollable = container.Parents<ManualPrinterControls>().First().Children<ScrollableWidget>().First();
@@ -353,7 +352,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				testRunner.WaitForName("Cancel Wizard Button", 1);
+				testRunner.WaitForName("Cancel Wizard Button");
 
 				// Set custom adjustment values
 				FeedRateMultiplyerStream.FeedRateRatio = initialFeedRate;
@@ -437,7 +436,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				testRunner.WaitForName("Cancel Wizard Button", 1);
+				testRunner.WaitForName("Cancel Wizard Button");
 
 				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
@@ -481,7 +480,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				testRunner.WaitForName("Cancel Wizard Button", 1);
+				testRunner.WaitForName("Cancel Wizard Button");
 
 				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
 				{

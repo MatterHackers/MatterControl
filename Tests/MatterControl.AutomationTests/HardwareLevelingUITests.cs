@@ -21,7 +21,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Printer Tab");
 				testRunner.Delay(1);
 
-				Assert.IsFalse(testRunner.WaitForName("Print Leveling Tab", 3), "Print leveling should not exist for an Airwolf HD");
+				Assert.IsFalse(testRunner.WaitForName("Print Leveling Tab"), "Print leveling should not exist for an Airwolf HD");
 
 				// Add printer that does not have hardware leveling
 				testRunner.AddAndSelectPrinter("3D Factory", "MendelMax 1.5");
@@ -29,7 +29,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Slice Settings Tab");
 				testRunner.ClickByName("Printer Tab");
 
-				Assert.IsTrue(testRunner.WaitForName("Print Leveling Tab", 3), "Print leveling should exist for a 3D Factory MendelMax");
+				Assert.IsTrue(testRunner.WaitForName("Print Leveling Tab"), "Print leveling should exist for a 3D Factory MendelMax");
 
 				return Task.CompletedTask;
 			}, overrideHeight: 800);
@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				{
 					// make sure it is showing the correct button
 					Assert.IsFalse(testRunner.WaitForName("Start Print Button", .5), "Start Print should not be visible if PrintLeveling is required");
-					Assert.IsTrue(testRunner.WaitForName("Finish Setup Button", .5), "Finish Setup should be visible if PrintLeveling is required");
+					Assert.IsTrue(testRunner.WaitForName("Finish Setup Button"), "Finish Setup should be visible if PrintLeveling is required");
 
 					// do print leveling
 					testRunner.ClickByName("Next Button");
@@ -62,8 +62,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("Done Button");
 
 					// make sure the button has changed to start print
-					Assert.IsTrue(testRunner.WaitForName("Start Print Button", 5), "Start Print should be visible after leveling the printer");
-					Assert.IsFalse(testRunner.WaitForName("Finish Setup Button", 1), "Finish Setup should not be visible after leveling the printer");
+					Assert.IsTrue(testRunner.WaitForName("Start Print Button"), "Start Print should be visible after leveling the printer");
+					Assert.IsFalse(testRunner.WaitForName("Finish Setup Button"), "Finish Setup should not be visible after leveling the printer");
 
 					// reset to defaults and make sure print leveling is cleared
 					testRunner.SwitchToAdvancedSliceSettings();
@@ -74,8 +74,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.Delay(1);
 
 					// make sure it is showing the correct button
-					Assert.IsTrue(!testRunner.WaitForName("Start Print Button", 1), "Start Print should be visible after reset to Defaults");
-					Assert.IsTrue(testRunner.WaitForName("Finish Setup Button", 1), "Finish Setup should not be visible after reset to Defaults");
+					Assert.IsTrue(!testRunner.WaitForName("Start Print Button"), "Start Print should be visible after reset to Defaults");
+					Assert.IsTrue(testRunner.WaitForName("Finish Setup Button"), "Finish Setup should not be visible after reset to Defaults");
 				}
 
 				return Task.CompletedTask;
