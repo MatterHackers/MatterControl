@@ -14,18 +14,13 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				testRunner.CloseSignInAndPrinterSelect();
-				testRunner.ClickByName("Options Tab", 6);
 
-				Assert.IsFalse(testRunner.WaitForName("Gcode Terminal", 0.5), "Terminal Window should not exist");
+				Assert.IsFalse(testRunner.WaitForName("TerminalWidget", 0.5), "Terminal Window should not exist");
 
-				testRunner.ClickByName("Show Terminal Button", 6);
+				testRunner.ClickByName("Terminal Sidebar");
 				testRunner.Delay(1);
 
-				SystemWindow containingWindow;
-				GuiWidget terminalWindow = testRunner.GetWidgetByName("Gcode Terminal", out containingWindow, 3);
-				Assert.IsNotNull(terminalWindow, "Terminal Window should exists after Show Terminal button is clicked");
-				containingWindow.CloseOnIdle();
-				testRunner.Delay(.5);
+				Assert.IsTrue(testRunner.WaitForName("TerminalWidget"), "Terminal Window should exists after Show Terminal button is clicked");
 
 				return Task.CompletedTask;
 			});
