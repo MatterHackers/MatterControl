@@ -36,12 +36,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Type("{Enter}");
 
 				//Get test results 
-				Assert.IsTrue(testRunner.WaitForName(firstItemName, 2) == true);
+				Assert.IsTrue(testRunner.WaitForName(firstItemName));
 
 				testRunner.ClickByName("Queue Export Button");
 				testRunner.Delay(2);
 
-				testRunner.WaitForName("Export Item Window", 2);
+				testRunner.WaitForName("Export Item Window");
 				testRunner.ClickByName("Export as GCode Button");
 				testRunner.Delay(2);
 

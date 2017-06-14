@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				testRunner.WaitForName("Cancel Wizard Button", 1);
+				testRunner.WaitForName("Cancel Wizard Button");
 
 				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
@@ -118,7 +118,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.WaitForName("Resume Button", 30);
 					testRunner.ClickByName("Cancel Print Button");
 
-					testRunner.WaitForName("Start Print Button", 1);
+					testRunner.WaitForName("Start Print Button");
 					Assert.IsTrue(testRunner.NameExists("Start Print Button"));
 
 					int g28Count = 0;
@@ -274,8 +274,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Filament Tab");
 				testRunner.ClickByName("Temperatures Tab");
 
-				Assert.IsTrue(testRunner.WaitForName("Extruder Temperature Textbox", 2)); 
-				Assert.IsTrue(testRunner.WaitForName("Bed Temperature Textbox", 2));
+				Assert.IsTrue(testRunner.WaitForName("Extruder Temperature Textbox")); 
+				Assert.IsTrue(testRunner.WaitForName("Bed Temperature Textbox"));
 
 				// Uncheck Has Heated Bed checkbox and make sure Bed Temp Textbox is not visible
 				testRunner.ClickByName("Printer Tab");
@@ -287,12 +287,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Delay(.5);
 
 				testRunner.ClickByName("Filament Tab");
-				Assert.IsFalse(testRunner.WaitForName("Bed Temperature Textbox", 2), "Filament -> Bed Temp should not be visible after Heated Bed unchecked");
+				Assert.IsFalse(testRunner.WaitForName("Bed Temperature Textbox"), "Filament -> Bed Temp should not be visible after Heated Bed unchecked");
 
 				// Make sure Bed Temperature Options are not visible in printer controls
 				testRunner.SwitchToControlsTab();
 
-				Assert.IsFalse(testRunner.WaitForName("Bed Temperature Controls Widget", 2), "Controls -> Bed Temp should not be visible after Heated Bed unchecked");
+				Assert.IsFalse(testRunner.WaitForName("Bed Temperature Controls Widget"), "Controls -> Bed Temp should not be visible after Heated Bed unchecked");
 
 				return Task.CompletedTask;
 			}, overrideWidth: 1300);

@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				// Click Add button and select files
 				testRunner.ClickByName("Library Add Button");
-				testRunner.WaitForName("Automation Dialog TextEdit", 3);
+				testRunner.WaitForName("Automation Dialog TextEdit");
 				testRunner.Type(MatterControlUtilities.GetTestItemPath("Fennec_Fox.stl"));
 				testRunner.Delay(1);
 				testRunner.Type("{Enter}");
@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				// Assert - one part  added and queue count increases by one
 				Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should increase by 1 when adding 1 item");
-				Assert.IsTrue(testRunner.WaitForName("Row Item Fennec_Fox.stl", 2), "Named widget should exist after add(Fennec_Fox)");
+				Assert.IsTrue(testRunner.WaitForName("Row Item Fennec_Fox.stl"), "Named widget should exist after add(Fennec_Fox)");
 
 				return Task.CompletedTask;
 			});
@@ -84,7 +84,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				// Click Add button and select files
 				testRunner.ClickByName("Library Add Button");
-				testRunner.WaitForName("Automation Dialog TextEdit", 3);
+				testRunner.WaitForName("Automation Dialog TextEdit");
 				testRunner.Type(string.Format(
 					"\"{0}\" \"{1}\"",
 					MatterControlUtilities.GetTestItemPath("Fennec_Fox.stl"),
@@ -98,8 +98,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				// Assert - two parts added and queue count increases by two
 				Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should increase by 2 when adding 2 items");
-				Assert.IsTrue(testRunner.WaitForName("Row Item Fennec_Fox.stl", 2), "Named widget should exist after add(Fennec_Fox)");
-				Assert.IsTrue(testRunner.WaitForName("Row Item Batman.stl", 2), "Named widget should exist after add(Batman)");
+				Assert.IsTrue(testRunner.WaitForName("Row Item Fennec_Fox.stl"), "Named widget should exist after add(Fennec_Fox)");
+				Assert.IsTrue(testRunner.WaitForName("Row Item Batman.stl"), "Named widget should exist after add(Batman)");
 
 				return Task.CompletedTask;
 			});
@@ -126,7 +126,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should decrease by one after clicking Remove");
 
 				// Make sure selected item was removed
-				Assert.IsFalse(testRunner.WaitForName("Row Item 2013-01-25_Mouthpiece_v2", 1), "Mouthpiece part should *not* exist after remove");
+				Assert.IsFalse(testRunner.WaitForName("Row Item 2013-01-25_Mouthpiece_v2"), "Mouthpiece part should *not* exist after remove");
 
 				return Task.CompletedTask;
 			}, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
@@ -153,8 +153,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should decrease by two after clicking Remove");
 
 				// Make sure both selected items are removed
-				Assert.IsFalse(testRunner.WaitForName("Row Item Batman", 1), "Batman part should *not* exist after remove");
-				Assert.IsFalse(testRunner.WaitForName("Row Item 2013-01-25_Mouthpiece_v2", 1), "Mouthpiece part should *not* exist after remove");
+				Assert.IsFalse(testRunner.WaitForName("Row Item Batman"), "Batman part should *not* exist after remove");
+				Assert.IsFalse(testRunner.WaitForName("Row Item 2013-01-25_Mouthpiece_v2"), "Mouthpiece part should *not* exist after remove");
 
 				return Task.CompletedTask;
 			}, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
@@ -197,7 +197,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				// Click Add button and select files
 				testRunner.ClickByName("Library Add Button");
-				testRunner.WaitForName("Automation Dialog TextEdit", 3);
+				testRunner.WaitForName("Automation Dialog TextEdit");
 
 				testRunner.Type(MatterControlUtilities.GetTestItemPath("Rook.amf"));
 				testRunner.Delay(1);
@@ -208,7 +208,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				// Assert - one part  added and queue count increases by one
 				Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should increase by 1 when adding 1 item");
-				Assert.IsTrue(testRunner.WaitForName("Row Item Rook.amf", 2), "Named widget should exist after add(Rook)");
+				Assert.IsTrue(testRunner.WaitForName("Row Item Rook.amf"), "Named widget should exist after add(Rook)");
 
 				return Task.CompletedTask;
 			});
@@ -228,7 +228,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				// Click Add button and select files
 				testRunner.ClickByName("Library Add Button");
-				testRunner.WaitForName("Automation Dialog TextEdit", 3);
+				testRunner.WaitForName("Automation Dialog TextEdit");
 
 				testRunner.Type(MatterControlUtilities.GetTestItemPath("Batman.stl"));
 				testRunner.Delay(1);
@@ -239,7 +239,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				// Assert - one part  added and queue count increases by one
 				Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should increase by 1 when adding 1 item");
-				Assert.IsTrue(testRunner.WaitForName("Row Item Batman.stl", 2), "Named widget should exist after add(Batman)");
+				Assert.IsTrue(testRunner.WaitForName("Row Item Batman.stl"), "Named widget should exist after add(Batman)");
 
 				return Task.CompletedTask;
 			});
@@ -259,7 +259,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				// Click Add button and select files
 				testRunner.ClickByName("Library Add Button");
-				testRunner.WaitForName("Automation Dialog TextEdit", 3);
+				testRunner.WaitForName("Automation Dialog TextEdit");
 
 				testRunner.Type(MatterControlUtilities.GetTestItemPath("chichen-itza_pyramid.gcode"));
 				testRunner.Delay(1);
@@ -270,7 +270,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				// Assert - one part  added and queue count increases by one
 				Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should increase by 1 when adding 1 item");
-				Assert.IsTrue(testRunner.WaitForName("Row Item chichen-itza_pyramid.gcode", 2), "Named widget should exist after add(chichen-itza)");
+				Assert.IsTrue(testRunner.WaitForName("Row Item chichen-itza_pyramid.gcode"), "Named widget should exist after add(chichen-itza)");
 
 				return Task.CompletedTask;
 			});

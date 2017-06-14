@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				 *3. Selecting multiple queue items and then clicking the Remove button decreases the queue tab count by one
 				 */
 
-				bool checkboxExists = testRunner.WaitForName("Queue Item Checkbox", 2);
+				bool checkboxExists = testRunner.WaitForName("Queue Item Checkbox");
 
 				Assert.IsTrue(checkboxExists == false);
 
@@ -201,8 +201,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Delay(2);
 
 				Assert.AreEqual(4, QueueData.Instance.ItemCount, "Queue should initially have four items");
-				Assert.IsTrue(testRunner.WaitForName("Queue Item Batman", 1));
-				Assert.IsTrue(testRunner.WaitForName("Queue Item 2013-01-25_Mouthpiece_v2", 1));
+				Assert.IsTrue(testRunner.WaitForName("Queue Item Batman"));
+				Assert.IsTrue(testRunner.WaitForName("Queue Item 2013-01-25_Mouthpiece_v2"));
 
 				testRunner.ClickByName("Queue Item Batman");
 				testRunner.ClickByName("Queue Item Batman Remove");
@@ -216,7 +216,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Delay(2);
 				testRunner.ClickByName("Queue Item 2013-01-25_Mouthpiece_v2 View");
 
-				Assert.IsTrue(testRunner.WaitForName("Queue Item 2013-01-25_Mouthpiece_v2 Part Preview", 2), "The Mouthpiece Part Preview should appear after the view button is clicked");
+				Assert.IsTrue(testRunner.WaitForName("Queue Item 2013-01-25_Mouthpiece_v2 Part Preview"), "The Mouthpiece Part Preview should appear after the view button is clicked");
 
 				return Task.CompletedTask;
 			};

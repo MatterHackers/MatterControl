@@ -194,7 +194,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Delay(() => QueueData.Instance.ItemCount == expectedQueueCount, 3);
 
 				Assert.AreEqual(expectedQueueCount, QueueData.Instance.ItemCount, "Copy button increases queue count by one");
-				Assert.IsTrue(testRunner.WaitForName("Queue Item Batman - copy", 2), "Copied Batman item exists with expected name");
+				Assert.IsTrue(testRunner.WaitForName("Queue Item Batman - copy"), "Copied Batman item exists with expected name");
 				testRunner.Delay(.3);
 
 				return Task.CompletedTask;
@@ -221,7 +221,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Delay(.2);
 
 				// WaitFor Ok button and ensure parent window has expected title and named button
-				testRunner.WaitForName("Ok Button", 2);
+				testRunner.WaitForName("Ok Button");
 				var widget = testRunner.GetWidgetByName("Ok Button", out parentWindow);
 				Assert.IsTrue(widget != null
 					&& parentWindow.Title == "MatterControl - Alert", "Send Disabled warning appears when no plugins exists to satisfy behavior");
