@@ -30,13 +30,8 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
-using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.VectorMath;
-using MatterHackers.Agg.Font;
-using MatterHackers.Agg.Transform;
-using MatterHackers.Agg.VertexSource;
 
 namespace MatterHackers.MatterControl
 {
@@ -44,10 +39,6 @@ namespace MatterHackers.MatterControl
 	{
 		private TextImageButtonFactory advancedControlsButtonFactory = new TextImageButtonFactory();
 		private RGBA_Bytes unselectedTextColor = ActiveTheme.Instance.TabLabelUnselected;
-
-		private EventHandler unregisterEvents;
-
-		public static RootedObjectEventHandler PreChangePanels = new RootedObjectEventHandler();
 
 		public WidescreenPanel()
 		{
@@ -61,7 +52,7 @@ namespace MatterHackers.MatterControl
 			this.Name = "WidescreenPanel";
 
 			// HACK: Long term we need a better solution which does not rely on ActivePrintItem/PrintItemWrapper
-			if (PrinterConnectionAndCommunication.Instance.ActivePrintItem == null)
+			if (PrinterConnection.Instance.ActivePrintItem == null)
 			{
 				ApplicationController.Instance.ClearPlate();
 			}
@@ -74,7 +65,8 @@ namespace MatterHackers.MatterControl
 				SplitterBackground = ApplicationController.Instance.Theme.SplitterBackground
 			};
 			library3DViewSplitter.AnchorAll();
-			AddChild(library3DViewSplitter);
+
+			this.AddChild(library3DViewSplitter);
 
 			// put in the left column
 			library3DViewSplitter.Panel1.AddChild(new AdvancedControlsPanel()
@@ -83,24 +75,11 @@ namespace MatterHackers.MatterControl
 			});
 
 			// put in the right column
-			library3DViewSplitter.Panel2.AddChild(new PartPreviewContent(PrinterConnectionAndCommunication.Instance.ActivePrintItem, View3DWidget.WindowMode.Embeded, View3DWidget.AutoRotate.Disabled)
+			library3DViewSplitter.Panel2.AddChild(new PartPreviewContent(PrinterConnection.Instance.ActivePrintItem, View3DWidget.WindowMode.Embeded, View3DWidget.AutoRotate.Disabled)
 			{
 				VAnchor = VAnchor.ParentBottom | VAnchor.ParentTop,
 				HAnchor = HAnchor.ParentLeft | HAnchor.ParentRight
 			});
-
-			ApplicationController.Instance.AdvancedControlsPanelReloading.RegisterEvent((s, e) => UiThread.RunOnIdle(ReloadAdvancedControlsPanel), ref unregisterEvents);
-		}
-
-		public override void OnClosed(ClosedEventArgs e)
-		{
-			unregisterEvents?.Invoke(this, null);
-			base.OnClosed(e);
-		}
-
-		public void ReloadAdvancedControlsPanel()
-		{
-			PreChangePanels.CallEvents(this, null);
 		}
 	}
 

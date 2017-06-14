@@ -84,8 +84,8 @@ namespace MatterHackers.MatterControl.PrintQueue
 		{
 			if (index >= 0 && index < ItemCount)
 			{
-				bool ActiveItemMustStayInQueue = PrinterConnectionAndCommunication.Instance.PrinterIsPrinting || PrinterConnectionAndCommunication.Instance.PrinterIsPaused;
-				bool PartMustStayInQueue = ActiveItemMustStayInQueue && PrintItems[index] == PrinterConnectionAndCommunication.Instance.ActivePrintItem;
+				bool ActiveItemMustStayInQueue = PrinterConnection.Instance.PrinterIsPrinting || PrinterConnection.Instance.PrinterIsPaused;
+				bool PartMustStayInQueue = ActiveItemMustStayInQueue && PrintItems[index] == PrinterConnection.Instance.ActivePrintItem;
 				if (!PartMustStayInQueue)
 				{
 					PrintItems.RemoveAt(index);
@@ -138,16 +138,16 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		public void LoadFilesFromSD()
 		{
-			if (PrinterConnectionAndCommunication.Instance.PrinterIsConnected
-				&& !(PrinterConnectionAndCommunication.Instance.PrinterIsPrinting
-				|| PrinterConnectionAndCommunication.Instance.PrinterIsPaused))
+			if (PrinterConnection.Instance.PrinterIsConnected
+				&& !(PrinterConnection.Instance.PrinterIsPrinting
+				|| PrinterConnection.Instance.PrinterIsPaused))
 			{
 				gotBeginFileList = false;
-				PrinterConnectionAndCommunication.Instance.ReadLine.RegisterEvent(GetSdCardList, ref unregisterEvents);
+				PrinterConnection.Instance.ReadLine.RegisterEvent(GetSdCardList, ref unregisterEvents);
 				StringBuilder commands = new StringBuilder();
 				commands.AppendLine("M21"); // Init SD card
 				commands.AppendLine("M20"); // List SD card
-				PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow(commands.ToString());
+				PrinterConnection.Instance.SendLineToPrinterNow(commands.ToString());
 			}
 		}
 
@@ -197,7 +197,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 							break;
 
 						case "End file list":
-							PrinterConnectionAndCommunication.Instance.ReadLine.UnregisterEvent(GetSdCardList, ref unregisterEvents);
+							PrinterConnection.Instance.ReadLine.UnregisterEvent(GetSdCardList, ref unregisterEvents);
 							break;
 					}
 				}

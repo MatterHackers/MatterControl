@@ -197,7 +197,7 @@ namespace MatterHackers.MatterControl
 					case "CONNECT_TO_PRINTER":
 						if (currentCommandIndex + 1 <= commandLineArgs.Length)
 						{
-							PrinterConnectionAndCommunication.Instance.ConnectToActivePrinter();
+							PrinterConnection.Instance.ConnectToActivePrinter();
 						}
 						break;
 
@@ -212,12 +212,12 @@ namespace MatterHackers.MatterControl
 							{
 								string fileName = Path.GetFileNameWithoutExtension(fullPath);
 								QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(fileName, fullPath)));
-								PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent((sender, e) =>
+								PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent((sender, e) =>
 								{
-									if (!hasBeenRun && PrinterConnectionAndCommunication.Instance.CommunicationState == PrinterConnectionAndCommunication.CommunicationStates.Connected)
+									if (!hasBeenRun && PrinterConnection.Instance.CommunicationState == CommunicationStates.Connected)
 									{
 										hasBeenRun = true;
-										PrinterConnectionAndCommunication.Instance.PrintActivePartIfPossible();
+										PrinterConnection.Instance.PrintActivePartIfPossible();
 									}
 								}, ref unregisterEvent);
 							}
@@ -539,12 +539,12 @@ namespace MatterHackers.MatterControl
 			UserSettings.Instance.Fields.StartCountDurringExit = UserSettings.Instance.Fields.StartCount;
 
 			TerminalWindow.CloseIfOpen();
-			if (PrinterConnectionAndCommunication.Instance.CommunicationState != PrinterConnectionAndCommunication.CommunicationStates.PrintingFromSd)
+			if (PrinterConnection.Instance.CommunicationState != CommunicationStates.PrintingFromSd)
 			{
-				PrinterConnectionAndCommunication.Instance.Disable();
+				PrinterConnection.Instance.Disable();
 			}
 			//Close connection to the local datastore
-			PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
+			PrinterConnection.Instance.HaltConnectionThread();
 			SlicingQueue.Instance.ShutDownSlicingThread();
 			ApplicationController.Instance.OnApplicationClosed();
 
@@ -589,13 +589,13 @@ namespace MatterHackers.MatterControl
 
 			if (!closeHasBeenConfirmed 
 				&& !closeMessageBoxIsOpen
-				&& PrinterConnectionAndCommunication.Instance.PrinterIsPrinting)
+				&& PrinterConnection.Instance.PrinterIsPrinting)
 			{
 				cancelClose = true;
 				// Record that we are waiting for a response to the request to close
 				closeMessageBoxIsOpen = true;
 
-				if (PrinterConnectionAndCommunication.Instance.CommunicationState != PrinterConnectionAndCommunication.CommunicationStates.PrintingFromSd)
+				if (PrinterConnection.Instance.CommunicationState != CommunicationStates.PrintingFromSd)
 				{
 					// Needed as we can't assign to CancelClose inside of the lambda below
 					StyledMessageBox.ShowMessageBox(ConditionalyCloseNow,
@@ -632,12 +632,12 @@ namespace MatterHackers.MatterControl
 			if (continueWithShutdown)
 			{
 				closeHasBeenConfirmed = true;
-				bool printingFromSdCard = PrinterConnectionAndCommunication.Instance.CommunicationState == PrinterConnectionAndCommunication.CommunicationStates.PrintingFromSd
-					|| (PrinterConnectionAndCommunication.Instance.CommunicationState == PrinterConnectionAndCommunication.CommunicationStates.Paused
-					&& PrinterConnectionAndCommunication.Instance.PrePauseCommunicationState == PrinterConnectionAndCommunication.CommunicationStates.PrintingFromSd);
+				bool printingFromSdCard = PrinterConnection.Instance.CommunicationState == CommunicationStates.PrintingFromSd
+					|| (PrinterConnection.Instance.CommunicationState == CommunicationStates.Paused
+					&& PrinterConnection.Instance.PrePauseCommunicationState == CommunicationStates.PrintingFromSd);
 				if (!printingFromSdCard)
 				{
-					PrinterConnectionAndCommunication.Instance.Disable();
+					PrinterConnection.Instance.Disable();
 				}
 
 				MatterControlApplication app = MatterControlApplication.Instance;
@@ -826,7 +826,7 @@ namespace MatterHackers.MatterControl
 		{
 			try
 			{
-				PrinterConnectionAndCommunication.Instance.OnIdle();
+				PrinterConnection.Instance.OnIdle();
 			}
 			catch (Exception e)
 			{

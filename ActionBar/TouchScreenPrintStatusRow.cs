@@ -64,23 +64,23 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			AddChildElements();
 
-			PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent((s, e) =>
+			PrinterConnection.Instance.ActivePrintItemChanged.RegisterEvent((s, e) =>
 			{
 				UpdatePrintItemName();
 				UpdatePrintStatus();
 			}, ref unregisterEvents);
 
-			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent((s, e) =>
+			PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent((s, e) =>
 			{
 				UpdatePrintStatus();
 			}, ref unregisterEvents);
 
-			PrinterConnectionAndCommunication.Instance.WroteLine.RegisterEvent((s, e) =>
+			PrinterConnection.Instance.WroteLine.RegisterEvent((s, e) =>
 			{
 				UpdatePrintStatus();
 			}, ref unregisterEvents);
 
-			PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(onActivePrintItemChanged, ref unregisterEvents);
+			PrinterConnection.Instance.ActivePrintItemChanged.RegisterEvent(onActivePrintItemChanged, ref unregisterEvents);
 
 			onActivePrintItemChanged(null, null);
 		}
@@ -245,7 +245,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				activePrintPreviewImage.ItemWrapper.SlicingOutputMessage -= PrintItem_SlicingOutputMessage;
 			}
 
-			activePrintPreviewImage.ItemWrapper = PrinterConnectionAndCommunication.Instance.ActivePrintItem;
+			activePrintPreviewImage.ItemWrapper = PrinterConnection.Instance.ActivePrintItem;
 
 			// then hook up our new part
 			if (activePrintPreviewImage.ItemWrapper != null)
@@ -258,7 +258,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		private void OnIdle()
 		{
-			if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting)
+			if (PrinterConnection.Instance.PrinterIsPrinting)
 			{
 				UpdatePrintStatus();
 			}
@@ -291,9 +291,9 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		private void UpdatePrintItemName()
 		{
-			if (PrinterConnectionAndCommunication.Instance.ActivePrintItem != null)
+			if (PrinterConnection.Instance.ActivePrintItem != null)
 			{
-				this.activePrintName.Text = PrinterConnectionAndCommunication.Instance.ActivePrintItem.GetFriendlyName();
+				this.activePrintName.Text = PrinterConnection.Instance.ActivePrintItem.GetFriendlyName();
 			}
 			else
 			{
@@ -303,9 +303,9 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		private void UpdatePrintStatus()
 		{
-			if (PrinterConnectionAndCommunication.Instance.ActivePrintItem != null)
+			if (PrinterConnection.Instance.ActivePrintItem != null)
 			{
-				int totalSecondsInPrint = PrinterConnectionAndCommunication.Instance.TotalSecondsInPrint;
+				int totalSecondsInPrint = PrinterConnection.Instance.TotalSecondsInPrint;
 
 				int totalHoursInPrint = (int)(totalSecondsInPrint / (60 * 60));
 				int totalMinutesInPrint = (int)(totalSecondsInPrint / 60 - totalHoursInPrint * 60);
@@ -340,38 +340,38 @@ namespace MatterHackers.MatterControl.ActionBar
 
 				activePrintLabel.Text = "Next Print".Localize() + ":";
 
-				switch (PrinterConnectionAndCommunication.Instance.CommunicationState)
+				switch (PrinterConnection.Instance.CommunicationState)
 				{
-					case PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrint:
+					case CommunicationStates.PreparingToPrint:
 						activePrintLabel.Text = "Preparing To Print".Localize() + ":";
 						break;
 
-					case PrinterConnectionAndCommunication.CommunicationStates.Printing:
-						activePrintLabel.Text = PrinterConnectionAndCommunication.Instance.PrintingStateString;
+					case CommunicationStates.Printing:
+						activePrintLabel.Text = PrinterConnection.Instance.PrintingStateString;
 						activePrintStatus.Text = totalPrintTimeText;
 						break;
 
-					case PrinterConnectionAndCommunication.CommunicationStates.Paused:
+					case CommunicationStates.Paused:
 						activePrintLabel.Text = "Printing Paused".Localize() + ":";
 						activePrintStatus.Text = totalPrintTimeText;
 						break;
 
-					case PrinterConnectionAndCommunication.CommunicationStates.FinishedPrint:
+					case CommunicationStates.FinishedPrint:
 						activePrintLabel.Text = "Done Printing".Localize() + ":";
 						activePrintStatus.Text = totalPrintTimeText;
 						break;
 
-					case PrinterConnectionAndCommunication.CommunicationStates.Disconnected:
+					case CommunicationStates.Disconnected:
 						activePrintStatus.Text = "Not connected. Press 'Connect' to enable printing.".Localize();
 						break;
 
-					case PrinterConnectionAndCommunication.CommunicationStates.AttemptingToConnect:
+					case CommunicationStates.AttemptingToConnect:
 						activePrintStatus.Text = "Attempting to Connect".Localize() + "...";
 						break;
 
-					case PrinterConnectionAndCommunication.CommunicationStates.ConnectionLost:
-					case PrinterConnectionAndCommunication.CommunicationStates.FailedToConnect:
-						activePrintStatus.Text = "Connection Failed".Localize() + ": " + PrinterConnectionAndCommunication.Instance.ConnectionFailureMessage;
+					case CommunicationStates.ConnectionLost:
+					case CommunicationStates.FailedToConnect:
+						activePrintStatus.Text = "Connection Failed".Localize() + ": " + PrinterConnection.Instance.ConnectionFailureMessage;
 						break;
 
 					default:

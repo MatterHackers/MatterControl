@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl
 			contentRow.AddChild(new TextWidget("3. Press 'Connect'.".Localize(), 0, 0, 12,textColor:ActiveTheme.Instance.PrimaryTextColor));
 
 			//Add inputs to main container
-			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(communicationStateChanged, ref unregisterEvents);
+			PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent(communicationStateChanged, ref unregisterEvents);
 
 			connectButtonContainer = new FlowLayoutWidget()
 			{
@@ -142,7 +142,7 @@ namespace MatterHackers.MatterControl
 			
 		void ConnectButton_Click(object sender, EventArgs mouseEvent)
 		{
-			PrinterConnectionAndCommunication.Instance.ConnectToActivePrinter(true);
+			PrinterConnection.Instance.ConnectToActivePrinter(true);
 		}
 
 		void NextButton_Click(object sender, EventArgs mouseEvent)
@@ -168,19 +168,19 @@ namespace MatterHackers.MatterControl
 			connectButtonContainer.Visible = false;
 			retryButtonContainer.Visible = false;
 
-			if (PrinterConnectionAndCommunication.Instance.PrinterIsConnected)
+			if (PrinterConnection.Instance.PrinterIsConnected)
 			{
 				generalError.Text = "{0}!".FormatWith ("Connection succeeded".Localize ());
 				generalError.Visible = true;
 				nextButton.Visible = true;
 			}
-			else if (firstLoad || PrinterConnectionAndCommunication.Instance.CommunicationState == PrinterConnectionAndCommunication.CommunicationStates.Disconnected)
+			else if (firstLoad || PrinterConnection.Instance.CommunicationState == CommunicationStates.Disconnected)
 			{
 				generalError.Text = "";
 				connectButton.Visible = true;
 				connectButtonContainer.Visible = true;
 			}
-			else if (PrinterConnectionAndCommunication.Instance.CommunicationState == PrinterConnectionAndCommunication.CommunicationStates.AttemptingToConnect)
+			else if (PrinterConnection.Instance.CommunicationState == CommunicationStates.AttemptingToConnect)
 			{
 				generalError.Text = "{0}...".FormatWith("Attempting to connect".Localize());
 				generalError.Visible = true;

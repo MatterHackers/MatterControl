@@ -44,12 +44,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.WaitForPrintFinished();
 
 					// Wait for expected temp
-					testRunner.Delay(() => PrinterConnectionAndCommunication.Instance.GetActualExtruderTemperature(0) <= 0, 5);
-					Assert.Less(PrinterConnectionAndCommunication.Instance.GetActualExtruderTemperature(0), 30);
+					testRunner.Delay(() => PrinterConnection.Instance.GetActualExtruderTemperature(0) <= 0, 5);
+					Assert.Less(PrinterConnection.Instance.GetActualExtruderTemperature(0), 30);
 
 					// Wait for expected temp
-					testRunner.Delay(() => PrinterConnectionAndCommunication.Instance.ActualBedTemperature <= 10, 5);
-					Assert.Less(PrinterConnectionAndCommunication.Instance.ActualBedTemperature, 10);
+					testRunner.Delay(() => PrinterConnection.Instance.ActualBedTemperature <= 10, 5);
+					Assert.Less(PrinterConnection.Instance.ActualBedTemperature, 10);
 				}
 
 				return Task.CompletedTask;
@@ -278,7 +278,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					// Wait for printing to complete
 					var printFinishedResetEvent = new AutoResetEvent(false);
-					PrinterConnectionAndCommunication.Instance.PrintFinished.RegisterEvent((s, e) => printFinishedResetEvent.Set(), ref unregisterEvents);
+					PrinterConnection.Instance.PrintFinished.RegisterEvent((s, e) => printFinishedResetEvent.Set(), ref unregisterEvents);
 
 					testRunner.ClickByName("Start Print Button", 1);
 
@@ -312,7 +312,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate);
 
 					// Wait for slicing to complete before setting target values
-					testRunner.Delay(() => PrinterConnectionAndCommunication.Instance.PrintingState == PrinterConnectionAndCommunication.DetailedPrintingState.Printing, 8);
+					testRunner.Delay(() => PrinterConnection.Instance.PrintingState == DetailedPrintingState.Printing, 8);
 					testRunner.Delay();
 
 					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate);
@@ -369,7 +369,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.SwitchToControlsTab();
 
 					var printFinishedResetEvent = new AutoResetEvent(false);
-					PrinterConnectionAndCommunication.Instance.PrintFinished.RegisterEvent((s, e) => printFinishedResetEvent.Set(), ref unregisterEvents);
+					PrinterConnection.Instance.PrintFinished.RegisterEvent((s, e) => printFinishedResetEvent.Set(), ref unregisterEvents);
 
 					testRunner.ClickByName("Start Print Button", 1);
 
@@ -403,7 +403,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate);
 
 					// Wait for slicing to complete before setting target values
-					testRunner.Delay(() => PrinterConnectionAndCommunication.Instance.PrintingState == PrinterConnectionAndCommunication.DetailedPrintingState.Printing, 8);
+					testRunner.Delay(() => PrinterConnection.Instance.PrintingState == DetailedPrintingState.Printing, 8);
 					testRunner.Delay();
 
 					// Values should remain after print completes

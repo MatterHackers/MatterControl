@@ -80,10 +80,10 @@ namespace MatterHackers.MatterControl.PrintHistory
 			{
 				UiThread.RunOnIdle(() =>
 				{
-					if (PrinterConnectionAndCommunication.Instance.CommunicationState == PrinterConnectionAndCommunication.CommunicationStates.Connected)
+					if (PrinterConnection.Instance.CommunicationState == CommunicationStates.Connected)
 					{
-						PrinterConnectionAndCommunication.Instance.CommunicationState = PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrint;
-						PrinterConnectionAndCommunication.Instance.StartPrint(lastPrintTask.PrintingGCodeFileName, lastPrintTask);
+						PrinterConnection.Instance.CommunicationState = CommunicationStates.PreparingToPrint;
+						PrinterConnection.Instance.StartPrint(lastPrintTask.PrintingGCodeFileName, lastPrintTask);
 					}
 				});
 			}
@@ -112,7 +112,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 				if (instance == null)
 				{
 					instance = new PrintHistoryData();
-					PrinterConnectionAndCommunication.Instance.ConnectionSucceeded.RegisterEvent(PrintRecovery.CheckIfNeedToRecoverPrint, ref unregisterEvents);
+					PrinterConnection.Instance.ConnectionSucceeded.RegisterEvent(PrintRecovery.CheckIfNeedToRecoverPrint, ref unregisterEvents);
                 }
 				return instance;
 			}

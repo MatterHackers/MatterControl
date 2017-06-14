@@ -305,7 +305,7 @@ namespace MatterHackers.MatterControl
 			}
 			commandHistory.Add(textToSend);
 			commandHistoryIndex = commandHistory.Count;
-			PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow(textToSend);
+			PrinterConnection.Instance.SendLineToPrinterNow(textToSend);
 			manualCommandTextEdit.Text = "";
 		}
 	}

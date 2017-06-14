@@ -216,7 +216,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			disableMotors.Margin = new BorderDouble(0);
 			disableMotors.Click += (s, e) =>
 			{
-				PrinterConnectionAndCommunication.Instance.ReleaseMotors();
+				PrinterConnection.Instance.ReleaseMotors();
 			};
 
 			GuiWidget spacerReleaseShow = new GuiWidget(10 * GuiWidget.DeviceScale, 0);
@@ -271,7 +271,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				});
 			});
 
-			PrinterConnectionAndCommunication.Instance.DestinationChanged.RegisterEvent((object sender, EventArgs e) =>
+			PrinterConnection.Instance.DestinationChanged.RegisterEvent((object sender, EventArgs e) =>
 			{
 				reportDestinationChanged.CallEvent();
 			}, ref unregisterEvents);
@@ -281,7 +281,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		private static void SetDestinationPositionText(TextWidget xPosition, TextWidget yPosition, TextWidget zPosition)
 		{
-			Vector3 destinationPosition = PrinterConnectionAndCommunication.Instance.CurrentDestination;
+			Vector3 destinationPosition = PrinterConnection.Instance.CurrentDestination;
 			xPosition.Text = "X: {0:0.00}".FormatWith(destinationPosition.x);
 			yPosition.Text = "Y: {0:0.00}".FormatWith(destinationPosition.y);
 			zPosition.Text = "Z: {0:0.00}".FormatWith(destinationPosition.z);
@@ -289,22 +289,22 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		private void homeAll_Click(object sender, EventArgs mouseEvent)
 		{
-			PrinterConnectionAndCommunication.Instance.HomeAxis(PrinterConnectionAndCommunication.Axis.XYZ);
+			PrinterConnection.Instance.HomeAxis(PrinterConnection.Axis.XYZ);
 		}
 
 		private void homeXButton_Click(object sender, EventArgs mouseEvent)
 		{
-			PrinterConnectionAndCommunication.Instance.HomeAxis(PrinterConnectionAndCommunication.Axis.X);
+			PrinterConnection.Instance.HomeAxis(PrinterConnection.Axis.X);
 		}
 
 		private void homeYButton_Click(object sender, EventArgs mouseEvent)
 		{
-			PrinterConnectionAndCommunication.Instance.HomeAxis(PrinterConnectionAndCommunication.Axis.Y);
+			PrinterConnection.Instance.HomeAxis(PrinterConnection.Axis.Y);
 		}
 
 		private void homeZButton_Click(object sender, EventArgs mouseEvent)
 		{
-			PrinterConnectionAndCommunication.Instance.HomeAxis(PrinterConnectionAndCommunication.Axis.Z);
+			PrinterConnection.Instance.HomeAxis(PrinterConnection.Axis.Z);
 		}
 	}
 

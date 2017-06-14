@@ -182,7 +182,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			this.BedCenter = bedCenter;
 			this.NumberOfRadialSamples = numberOfRadialSamples;
 
-			PrinterConnectionAndCommunication.Instance.PositionRead.RegisterEvent(PrinterReportedPosition, ref unregisterEvents);
+			PrinterConnection.Instance.PositionRead.RegisterEvent(PrinterReportedPosition, ref unregisterEvents);
 		}
 
 		public Vector2 BedCenter
@@ -291,7 +291,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		private void PrinterReportedPosition(object sender, EventArgs e)
 		{
-			lastDestinationWithLevelingApplied = GetPositionWithZOffset(PrinterConnectionAndCommunication.Instance.LastReportedPosition);
+			lastDestinationWithLevelingApplied = GetPositionWithZOffset(PrinterConnection.Instance.LastReportedPosition);
 		}
 	}
 }

@@ -72,8 +72,8 @@ namespace MatterHackers.MatterControl
 
 		private void AddPrinter_Click()
 		{
-			if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting
-				|| PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
+			if (PrinterConnection.Instance.PrinterIsPrinting
+				|| PrinterConnection.Instance.PrinterIsPaused)
 			{
 				UiThread.RunOnIdle(() =>
 				StyledMessageBox.ShowMessageBox(null, "Please wait until the print has finished and try again.".Localize(), "Can't add printers while printing".Localize())

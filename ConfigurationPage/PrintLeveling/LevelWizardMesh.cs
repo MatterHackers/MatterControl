@@ -237,7 +237,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 			this.SampledPositions = new List<Vector3>(levelingData.SampledPositions);
 
-			PrinterConnectionAndCommunication.Instance.PositionRead.RegisterEvent(PrinterReportedPosition, ref unregisterEvents);
+			PrinterConnection.Instance.PositionRead.RegisterEvent(PrinterReportedPosition, ref unregisterEvents);
 
 			for (int y = 0; y < gridHeight - 1; y++)
 			{
@@ -385,7 +385,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		private void PrinterReportedPosition(object sender, EventArgs e)
 		{
-			lastDestinationWithLevelingApplied = GetPositionWithZOffset(PrinterConnectionAndCommunication.Instance.LastReportedPosition);
+			lastDestinationWithLevelingApplied = GetPositionWithZOffset(PrinterConnection.Instance.LastReportedPosition);
 		}
 
 		public class Region

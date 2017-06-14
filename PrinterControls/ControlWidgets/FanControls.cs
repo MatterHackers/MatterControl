@@ -66,10 +66,10 @@ namespace MatterHackers.MatterControl.PrinterControls
 			leftToRight.AddChild(fanControlsLayout);
 			SetDisplayAttributes();
 
-			fanSpeedDisplay = new EditableNumberDisplay(textImageButtonFactory, "{0}%".FormatWith(PrinterConnectionAndCommunication.Instance.FanSpeed0To255.ToString()), "100%");
+			fanSpeedDisplay = new EditableNumberDisplay(textImageButtonFactory, "{0}%".FormatWith(PrinterConnection.Instance.FanSpeed0To255.ToString()), "100%");
 			fanSpeedDisplay.EditComplete += (sender, e) =>
 			{
-				PrinterConnectionAndCommunication.Instance.FanSpeed0To255 = (int)(fanSpeedDisplay.GetValue() * 255.5 / 100);
+				PrinterConnection.Instance.FanSpeed0To255 = (int)(fanSpeedDisplay.GetValue() * 255.5 / 100);
 			};
 			leftToRight.AddChild(fanSpeedDisplay);
 
@@ -106,13 +106,13 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		private GuiWidget CreateFanControls()
 		{
-			PrinterConnectionAndCommunication.Instance.FanSpeedSet.RegisterEvent(FanSpeedChanged_Event, ref unregisterEvents);
+			PrinterConnection.Instance.FanSpeedSet.RegisterEvent(FanSpeedChanged_Event, ref unregisterEvents);
 
 			FlowLayoutWidget leftToRight = new FlowLayoutWidget();
 			leftToRight.Padding = new BorderDouble(3, 0, 0, 5);
 
 			//Matt's test editing to add a on/off toggle switch
-			bool fanActive = PrinterConnectionAndCommunication.Instance.FanSpeed0To255 != 0;
+			bool fanActive = PrinterConnection.Instance.FanSpeed0To255 != 0;
 
 			toggleSwitch = ImageButtonFactory.CreateToggleSwitch(fanActive);
 			toggleSwitch.VAnchor = VAnchor.ParentCenter;
@@ -128,7 +128,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		private void FanSpeedChanged_Event(object sender, EventArgs e)
 		{
-			int printerFanSpeed = PrinterConnectionAndCommunication.Instance.FanSpeed0To255;
+			int printerFanSpeed = PrinterConnection.Instance.FanSpeed0To255;
 
 			fanSpeedDisplay.SetDisplayString("{0}%".FormatWith((int)(printerFanSpeed * 100.5 / 255)));
 
@@ -153,11 +153,11 @@ namespace MatterHackers.MatterControl.PrinterControls
 				CheckBox toggleSwitch = (CheckBox)sender;
 				if (toggleSwitch.Checked)
 				{
-					PrinterConnectionAndCommunication.Instance.FanSpeed0To255 = 255;
+					PrinterConnection.Instance.FanSpeed0To255 = 255;
 				}
 				else
 				{
-					PrinterConnectionAndCommunication.Instance.FanSpeed0To255 = 0;
+					PrinterConnection.Instance.FanSpeed0To255 = 0;
 				}
 			}
 		}

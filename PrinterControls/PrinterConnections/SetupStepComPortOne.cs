@@ -95,7 +95,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		private void SkipConnectionLink_Click(object sender, EventArgs mouseEvent)
 		{
 			UiThread.RunOnIdle(() => {
-				PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
+				PrinterConnection.Instance.HaltConnectionThread();
 				Parent.Close();
 			});
 		}

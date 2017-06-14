@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			atxPowertoggleSwitch.Margin = new BorderDouble(6, 0, 6, 6);
 			atxPowertoggleSwitch.CheckedStateChanged += (sender, e) =>
 			{
-				PrinterConnectionAndCommunication.Instance.AtxPowerEnabled = atxPowertoggleSwitch.Checked;
+				PrinterConnection.Instance.AtxPowerEnabled = atxPowertoggleSwitch.Checked;
 			};
 
 			FlowLayoutWidget paddingContainer = new FlowLayoutWidget();
@@ -66,8 +66,8 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 			UpdateControlVisibility(null, null);
 
-			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(this.UpdateControlVisibility, ref unregisterEvents);
-			PrinterConnectionAndCommunication.Instance.AtxPowerStateChanged.RegisterEvent(this.UpdatePowerSwitch, ref unregisterEvents);
+			PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent(this.UpdateControlVisibility, ref unregisterEvents);
+			PrinterConnection.Instance.AtxPowerStateChanged.RegisterEvent(this.UpdatePowerSwitch, ref unregisterEvents);
 
 			this.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
 			this.HAnchor = HAnchor.ParentLeftRight;
@@ -77,12 +77,12 @@ namespace MatterHackers.MatterControl.PrinterControls
 		private void UpdateControlVisibility(object sender, EventArgs args)
 		{
 			this.Visible = ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_power_control);
-			this.SetEnableLevel(PrinterConnectionAndCommunication.Instance.PrinterIsConnected ? EnableLevel.Enabled : EnableLevel.Disabled);
+			this.SetEnableLevel(PrinterConnection.Instance.PrinterIsConnected ? EnableLevel.Enabled : EnableLevel.Disabled);
 		}
 
 		private void UpdatePowerSwitch(object sender, EventArgs args)
 		{
-			this.atxPowertoggleSwitch.Checked = PrinterConnectionAndCommunication.Instance.AtxPowerEnabled;
+			this.atxPowertoggleSwitch.Checked = PrinterConnection.Instance.AtxPowerEnabled;
 		}
 
 		private void SetDisplayAttributes()

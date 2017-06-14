@@ -100,8 +100,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 		private void AddHandlers()
 		{
-			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent((e, s) => SetEnabledStates(), ref unregisterEvents);
-			PrinterConnectionAndCommunication.Instance.EnableChanged.RegisterEvent((e,s) => SetEnabledStates(), ref unregisterEvents);
+			PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent((e, s) => SetEnabledStates(), ref unregisterEvents);
+			PrinterConnection.Instance.EnableChanged.RegisterEvent((e,s) => SetEnabledStates(), ref unregisterEvents);
 		}
 
 		private void openCameraPreview_Click(object sender, EventArgs e)
@@ -118,30 +118,30 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			else // we at least have a printer selected
 			{
 				//cloudMonitorContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-				switch (PrinterConnectionAndCommunication.Instance.CommunicationState)
+				switch (PrinterConnection.Instance.CommunicationState)
 				{
-					case PrinterConnectionAndCommunication.CommunicationStates.Disconnecting:
-					case PrinterConnectionAndCommunication.CommunicationStates.ConnectionLost:
-					case PrinterConnectionAndCommunication.CommunicationStates.Disconnected:
-					case PrinterConnectionAndCommunication.CommunicationStates.AttemptingToConnect:
-					case PrinterConnectionAndCommunication.CommunicationStates.FailedToConnect:
+					case CommunicationStates.Disconnecting:
+					case CommunicationStates.ConnectionLost:
+					case CommunicationStates.Disconnected:
+					case CommunicationStates.AttemptingToConnect:
+					case CommunicationStates.FailedToConnect:
 						break;
 
-					case PrinterConnectionAndCommunication.CommunicationStates.FinishedPrint:
-					case PrinterConnectionAndCommunication.CommunicationStates.Connected:
+					case CommunicationStates.FinishedPrint:
+					case CommunicationStates.Connected:
 						break;
 
-					case PrinterConnectionAndCommunication.CommunicationStates.PrintingFromSd:
+					case CommunicationStates.PrintingFromSd:
 						break;
 
-					case PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrint:
-					case PrinterConnectionAndCommunication.CommunicationStates.Printing:
-						switch (PrinterConnectionAndCommunication.Instance.PrintingState)
+					case CommunicationStates.PreparingToPrint:
+					case CommunicationStates.Printing:
+						switch (PrinterConnection.Instance.PrintingState)
 						{
-							case PrinterConnectionAndCommunication.DetailedPrintingState.HomingAxis:
-							case PrinterConnectionAndCommunication.DetailedPrintingState.HeatingBed:
-							case PrinterConnectionAndCommunication.DetailedPrintingState.HeatingExtruder:
-							case PrinterConnectionAndCommunication.DetailedPrintingState.Printing:
+							case DetailedPrintingState.HomingAxis:
+							case DetailedPrintingState.HeatingBed:
+							case DetailedPrintingState.HeatingExtruder:
+							case DetailedPrintingState.Printing:
 								break;
 
 							default:
@@ -149,7 +149,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 						}
 						break;
 
-					case PrinterConnectionAndCommunication.CommunicationStates.Paused:
+					case CommunicationStates.Paused:
 						break;
 
 					default:

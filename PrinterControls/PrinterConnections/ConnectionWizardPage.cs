@@ -12,7 +12,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 	{
 		public ConnectionWizardPage()
 		{
-			cancelButton.Click += (s, e) => PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
+			cancelButton.Click += (s, e) => PrinterConnection.Instance.HaltConnectionThread();
 		}
 	}
 }

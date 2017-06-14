@@ -61,8 +61,8 @@ namespace MatterHackers.MatterControl
 				}
 				else
 				{
-					if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting
-						|| PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
+					if (PrinterConnection.Instance.PrinterIsPrinting
+						|| PrinterConnection.Instance.PrinterIsPaused)
 					{
 						if (this.SelectedIndex != lastSelectedIndex)
 						{
@@ -109,8 +109,8 @@ namespace MatterHackers.MatterControl
 			{
 				if (AddPrinter != null)
 				{
-					if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting
-						|| PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
+					if (PrinterConnection.Instance.PrinterIsPrinting
+						|| PrinterConnection.Instance.PrinterIsPaused)
 					{
 						UiThread.RunOnIdle(() =>
 							StyledMessageBox.ShowMessageBox(null, "Please wait until the print has finished and try again.".Localize(), "Can't add printers while printing".Localize())

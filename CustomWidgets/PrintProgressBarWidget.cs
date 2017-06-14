@@ -131,8 +131,8 @@ namespace MatterHackers.MatterControl
 			};
 			AddChild(clickOverlay);
 
-			PrinterConnectionAndCommunication.Instance.ActivePrintItemChanged.RegisterEvent(Instance_PrintItemChanged, ref unregisterEvents);
-			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(Instance_PrintItemChanged, ref unregisterEvents);
+			PrinterConnection.Instance.ActivePrintItemChanged.RegisterEvent(Instance_PrintItemChanged, ref unregisterEvents);
+			PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent(Instance_PrintItemChanged, ref unregisterEvents);
 
 			SetThemedColors();
 
@@ -171,7 +171,7 @@ namespace MatterHackers.MatterControl
 
 		private void OnIdle()
 		{
-			currentPercent = PrinterConnectionAndCommunication.Instance.PercentComplete;
+			currentPercent = PrinterConnection.Instance.PercentComplete;
 			UpdatePrintStatus();
 
 			if (!HasBeenClosed)
@@ -182,14 +182,14 @@ namespace MatterHackers.MatterControl
 
 		private void UpdatePrintStatus()
 		{
-			if (PrinterConnectionAndCommunication.Instance.ActivePrintItem == null)
+			if (PrinterConnection.Instance.ActivePrintItem == null)
 			{
 				printTimeElapsed.Text = string.Format("");
 				printTimeRemaining.Text = string.Format("");
 			}
 			else
 			{
-				int secondsPrinted = PrinterConnectionAndCommunication.Instance.SecondsPrinted;
+				int secondsPrinted = PrinterConnection.Instance.SecondsPrinted;
 				int hoursPrinted = (int)(secondsPrinted / (60 * 60));
 				int minutesPrinted = (int)(secondsPrinted / 60 - hoursPrinted * 60);
 				secondsPrinted = secondsPrinted % 60;
@@ -217,11 +217,11 @@ namespace MatterHackers.MatterControl
 
 				string printPercentRemainingText = string.Format("{0:0.0}%", currentPercent);
 
-				if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting || PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
+				if (PrinterConnection.Instance.PrinterIsPrinting || PrinterConnection.Instance.PrinterIsPaused)
 				{
 					printTimeRemaining.Text = printPercentRemainingText;
 				}
-				else if (PrinterConnectionAndCommunication.Instance.PrintIsFinished)
+				else if (PrinterConnection.Instance.PrintIsFinished)
 				{
 					printTimeRemaining.Text = "Done!";
 				}

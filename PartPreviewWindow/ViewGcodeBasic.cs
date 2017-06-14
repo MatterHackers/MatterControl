@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private TextWidget gcodeProcessingStateInfoText;
 		private ViewGcodeWidget gcodeViewWidget;
-		private PrintItemWrapper printItem => PrinterConnectionAndCommunication.Instance.ActivePrintItem;
+		private PrintItemWrapper printItem => PrinterConnection.Instance.ActivePrintItem;
 		private bool startedSliceFromGenerateButton = false;
 		private Button generateGCodeButton;
 		private FlowLayoutWidget buttonBottomPanel;
@@ -441,7 +441,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void SetAnimationPosition()
 		{
-			int currentLayer = PrinterConnectionAndCommunication.Instance.CurrentlyPrintingLayer;
+			int currentLayer = PrinterConnection.Instance.CurrentlyPrintingLayer;
 			if (currentLayer <= 0)
 			{
 				selectLayerSlider.Value = 0;
@@ -451,7 +451,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			else
 			{
 				selectLayerSlider.Value = currentLayer - 1;
-				layerRenderRatioSlider.SecondValue = PrinterConnectionAndCommunication.Instance.RatioIntoCurrentLayer;
+				layerRenderRatioSlider.SecondValue = PrinterConnection.Instance.RatioIntoCurrentLayer;
 				layerRenderRatioSlider.FirstValue = 0;
 			}
 		}
@@ -577,7 +577,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			modelInfoContainer.AddChild(GetEstimatedMassInfo());
 			modelInfoContainer.AddChild(GetEstimatedCostInfo());
 
-			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(HookUpGCodeMessagesWhenDonePrinting, ref unregisterEvents);
+			PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent(HookUpGCodeMessagesWhenDonePrinting, ref unregisterEvents);
 
 			buttonPanel.AddChild(modelInfoContainer);
 
@@ -827,8 +827,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// The idea here is we just got asked to rebuild the window (and it is being created now)
 				// because the gcode finished creating for the print that is printing.
 				// We don't want to be notified if any other updates happen to this gcode while it is printing.
-				if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting
-					&& PrinterConnectionAndCommunication.Instance.ActivePrintItem == printItem)
+				if (PrinterConnection.Instance.PrinterIsPrinting
+					&& PrinterConnection.Instance.ActivePrintItem == printItem)
 				{
 					printItem.SlicingOutputMessage -= sliceItem_SlicingOutputMessage;
 					printItem.SlicingDone -= sliceItem_Done;
@@ -836,7 +836,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					generateGCodeButton.Visible = false;
 
 					// However if the print finished or is canceled we are going to want to get updates again. So, hook the status event
-					PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(HookUpGCodeMessagesWhenDonePrinting, ref unregisterEvents);
+					PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent(HookUpGCodeMessagesWhenDonePrinting, ref unregisterEvents);
 					UiThread.RunOnIdle(SetSyncToPrintVisibility);
 				}
 			}
@@ -852,7 +852,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (windowMode == WindowMode.Embeded)
 			{
-				bool printerIsRunningPrint = PrinterConnectionAndCommunication.Instance.PrinterIsPaused || PrinterConnectionAndCommunication.Instance.PrinterIsPrinting;
+				bool printerIsRunningPrint = PrinterConnection.Instance.PrinterIsPaused || PrinterConnection.Instance.PrinterIsPrinting;
 
 				if (syncToPrint.Checked && printerIsRunningPrint)
 				{
@@ -898,7 +898,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void HookUpGCodeMessagesWhenDonePrinting(object sender, EventArgs e)
 		{
-			if (!PrinterConnectionAndCommunication.Instance.PrinterIsPaused && !PrinterConnectionAndCommunication.Instance.PrinterIsPrinting)
+			if (!PrinterConnection.Instance.PrinterIsPaused && !PrinterConnection.Instance.PrinterIsPrinting)
 			{
 				// unregister first to make sure we don't double up in error (should not be needed but no harm)
 				printItem.SlicingOutputMessage -= sliceItem_SlicingOutputMessage;
@@ -930,7 +930,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{
-			bool printerIsRunningPrint = PrinterConnectionAndCommunication.Instance.PrinterIsPaused || PrinterConnectionAndCommunication.Instance.PrinterIsPrinting;
+			bool printerIsRunningPrint = PrinterConnection.Instance.PrinterIsPaused || PrinterConnection.Instance.PrinterIsPrinting;
 			if (syncToPrint != null
 				&& syncToPrint.Checked
 				&& printerIsRunningPrint)

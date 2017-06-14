@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl
 
 		public static void OpenEditPrinterWizard(string widgetNameToHighlight)
 		{
-			if (PrinterConnectionAndCommunication.Instance?.ActivePrinter?.ID != null
+			if (PrinterConnection.Instance?.ActivePrinter?.ID != null
 				&& ActiveSliceSettings.Instance.PrinterSelected
 				&& !WizardWindow.IsOpen("PrinterSetup"))
 			{

@@ -111,7 +111,7 @@ namespace MatterHackers.MatterControl
 			disconnectButton.VAnchor = VAnchor.ParentCenter;
 			disconnectButton.Click += (sender, e) =>
 			{
-				PrinterConnectionAndCommunication.Instance.Disable();
+				PrinterConnection.Instance.Disable();
 				UiThread.RunOnIdle(WizardPage.WizardWindow.ChangeToPage<SetupOptionsPage>);
 			};
 			buttonContainer.AddChild(disconnectButton);
@@ -122,7 +122,7 @@ namespace MatterHackers.MatterControl
 			};
 			mainContainer.AddChild(connectionStatus);
 
-			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(updateConnectedState, ref unregisterEvents);
+			PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent(updateConnectedState, ref unregisterEvents);
 			updateConnectedState(null, null);
 		}
 
@@ -130,12 +130,12 @@ namespace MatterHackers.MatterControl
 		{
 			if (disconnectButton != null)
 			{
-				disconnectButton.Visible = PrinterConnectionAndCommunication.Instance.PrinterIsConnected;
+				disconnectButton.Visible = PrinterConnection.Instance.PrinterIsConnected;
 			}
 
 			if (connectionStatus != null)
 			{
-				connectionStatus.Text = string.Format ("{0}: {1}", "Status".Localize().ToUpper(), PrinterConnectionAndCommunication.Instance.PrinterConnectionStatusVerbose);
+				connectionStatus.Text = string.Format ("{0}: {1}", "Status".Localize().ToUpper(), PrinterConnection.Instance.PrinterConnectionStatusVerbose);
 			}
 
 			this.Invalidate();

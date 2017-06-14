@@ -248,7 +248,7 @@ namespace MatterHackers.MatterControl
 
 			string mcxPath = Path.Combine(platingDirectory, now + ".mcx");
 
-			PrinterConnectionAndCommunication.Instance.ActivePrintItem = new PrintItemWrapper(new PrintItem(now, mcxPath));
+			PrinterConnection.Instance.ActivePrintItem = new PrintItemWrapper(new PrintItem(now, mcxPath));
 
 			File.WriteAllText(mcxPath, new Object3D().ToJson());
 		}
@@ -468,7 +468,7 @@ namespace MatterHackers.MatterControl
 						() => new SDCardContainer(),
 						() =>
 						{
-							var printer = PrinterConnectionAndCommunication.Instance;
+							var printer = PrinterConnection.Instance;
 
 							return ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_sd_card_reader)
 								&& printer.PrinterIsConnected
@@ -499,11 +499,11 @@ namespace MatterHackers.MatterControl
 				thumbGenResetEvent?.Set();
 			};
 
-			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent((s, e) =>
+			PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent((s, e) =>
 			{
-				switch (PrinterConnectionAndCommunication.Instance.CommunicationState)
+				switch (PrinterConnection.Instance.CommunicationState)
 				{
-					case PrinterConnectionAndCommunication.CommunicationStates.Printing:
+					case CommunicationStates.Printing:
 						if (UserSettings.Instance.IsTouchScreen)
 						{
 							UiThread.RunOnIdle(PrintingWindow.Show);
@@ -520,8 +520,8 @@ namespace MatterHackers.MatterControl
 
 		public void StartSignIn()
 		{
-			if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting
-				|| PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
+			if (PrinterConnection.Instance.PrinterIsPrinting
+				|| PrinterConnection.Instance.PrinterIsPaused)
 			{
 				// can't sign in while printing
 				UiThread.RunOnIdle(() =>
@@ -636,8 +636,8 @@ namespace MatterHackers.MatterControl
 
 		public void StartSignOut()
 		{
-			if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting
-				|| PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
+			if (PrinterConnection.Instance.PrinterIsPrinting
+				|| PrinterConnection.Instance.PrinterIsPaused)
 			{
 				// can't log out while printing
 				UiThread.RunOnIdle(() =>
@@ -682,7 +682,6 @@ namespace MatterHackers.MatterControl
 					// give the widget a chance to hear about the close before they are actually closed.
 					PopOutManager.SaveIfClosed = false;
 
-					WidescreenPanel.PreChangePanels.CallEvents(this, null);
 					MainView?.CloseAllChildren();
 					using (new QuickTimer("ReloadAll_AddElements"))
 					{
@@ -908,7 +907,7 @@ namespace MatterHackers.MatterControl
 				UiThread.RunOnIdle(() =>
 				{
 					//PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
-					PrinterConnectionAndCommunication.Instance.ConnectToActivePrinter();
+					PrinterConnection.Instance.ConnectToActivePrinter();
 				}, 2);
 			}
 		}
@@ -928,13 +927,13 @@ namespace MatterHackers.MatterControl
 		{
 			QueueData.Instance.RemoveAll();
 			QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem("LaunchTestPrint", @"/storage/sdcard0/Download/LaunchTestPrint.stl")));
-			PrinterConnectionAndCommunication.Instance.ConnectToActivePrinter();
+			PrinterConnection.Instance.ConnectToActivePrinter();
 
-			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent((sender, e) =>
+			PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent((sender, e) =>
 			{
-				if (PrinterConnectionAndCommunication.Instance.CommunicationState == PrinterConnectionAndCommunication.CommunicationStates.Connected)
+				if (PrinterConnection.Instance.CommunicationState == CommunicationStates.Connected)
 				{
-					PrinterConnectionAndCommunication.Instance.PrintActivePartIfPossible();
+					PrinterConnection.Instance.PrintActivePartIfPossible();
 				}
 			}, ref unregisterEvent);
 		}
@@ -1022,14 +1021,14 @@ namespace MatterHackers.MatterControl
 		{
 			bool canceled = false;
 
-			if (PrinterConnectionAndCommunication.Instance.SecondsPrinted > 120)
+			if (PrinterConnection.Instance.SecondsPrinted > 120)
 			{
 				StyledMessageBox.ShowMessageBox(
 					(bool response) =>
 					{
 						if (response)
 						{
-							UiThread.RunOnIdle(() => PrinterConnectionAndCommunication.Instance.Stop());
+							UiThread.RunOnIdle(() => PrinterConnection.Instance.Stop());
 							canceled = true;
 						}
 
@@ -1043,7 +1042,7 @@ namespace MatterHackers.MatterControl
 			}
 			else
 			{
-				PrinterConnectionAndCommunication.Instance.Stop();
+				PrinterConnection.Instance.Stop();
 				canceled = false;
 			}
 

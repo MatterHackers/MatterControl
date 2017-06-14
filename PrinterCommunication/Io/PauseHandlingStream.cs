@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		public PauseHandlingStream(GCodeStream internalStream)
 			: base(internalStream)
 		{
-			PrinterConnectionAndCommunication.Instance.ReadLine.RegisterEvent((s, e) =>
+			PrinterConnection.Instance.ReadLine.RegisterEvent((s, e) =>
 			{
 				StringEventArgs currentEvent = e as StringEventArgs;
 				if (currentEvent != null)
@@ -95,7 +95,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		public void DoPause(PauseReason pauseReason, string layerNumber = "")
 		{
-			var pcc = PrinterConnectionAndCommunication.Instance;
+			var pcc = PrinterConnection.Instance;
 			switch (pauseReason)
 			{
 				case PauseReason.UserRequested:
@@ -129,9 +129,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		private void ResumePrint(bool clickedOk)
 		{
 			// They clicked either Resume or Ok
-			if (!clickedOk && PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
+			if (!clickedOk && PrinterConnection.Instance.PrinterIsPaused)
 			{
-				PrinterConnectionAndCommunication.Instance.Resume();
+				PrinterConnection.Instance.Resume();
 			}
 		}
 
@@ -150,7 +150,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 			if (lineToSend == null)
 			{
-				if (!PrinterConnectionAndCommunication.Instance.PrinterIsPaused)
+				if (!PrinterConnection.Instance.PrinterIsPaused)
 				{
 					lineToSend = base.ReadLine();
 					if (lineToSend == null)
@@ -164,7 +164,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						// request to read the endstop state
 						if (!timeSinceLastEndstopRead.IsRunning || timeSinceLastEndstopRead.ElapsedMilliseconds > 5000)
 						{
-							PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("M119");
+							PrinterConnection.Instance.SendLineToPrinterNow("M119");
 							timeSinceLastEndstopRead.Restart();
 						}
 					}
@@ -193,10 +193,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			{
 				moveLocationAtEndOfPauseCode = LastDestination;
 
-				if (PrinterConnectionAndCommunication.Instance.PrinterIsPrinting)
+				if (PrinterConnection.Instance.PrinterIsPrinting)
 				{
 					// remember where we were after we ran the pause gcode
-					PrinterConnectionAndCommunication.Instance.CommunicationState = PrinterConnectionAndCommunication.CommunicationStates.Paused;
+					PrinterConnection.Instance.CommunicationState = CommunicationStates.Paused;
 				}
 
 				lineToSend = "";

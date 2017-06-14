@@ -44,9 +44,9 @@ namespace MatterHackers.MatterControl.EeProm
 		public CloseOnDisconnectWindow(double width, double height)
 			: base(width, height)
 		{
-			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent((s, e) =>
+			PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent((s, e) =>
 			{
-				if(!PrinterConnectionAndCommunication.Instance.PrinterIsConnected)
+				if(!PrinterConnection.Instance.PrinterIsConnected)
 				{
 					this.CloseOnIdle();
 				}
@@ -217,7 +217,7 @@ namespace MatterHackers.MatterControl.EeProm
 			ShowAsSystemWindow();
 
 			currentEePromSettings.Clear();
-			PrinterConnectionAndCommunication.Instance.CommunicationUnconditionalFromPrinter.RegisterEvent(currentEePromSettings.Add, ref unregisterEvents);
+			PrinterConnection.Instance.CommunicationUnconditionalFromPrinter.RegisterEvent(currentEePromSettings.Add, ref unregisterEvents);
 			currentEePromSettings.eventAdded += NewSettingReadFromPrinter;
 			currentEePromSettings.AskPrinterForSettings();
 

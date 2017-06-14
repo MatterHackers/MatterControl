@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			footerRow.AddChild(new HorizontalSpacer());
 			footerRow.AddChild(cancelButton);
 
-			PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
+			PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
 		}
 
 		public override void OnClosed(ClosedEventArgs e)
@@ -111,7 +111,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 		private void onPrinterStatusChanged(object sender, EventArgs e)
 		{
-			if (PrinterConnectionAndCommunication.Instance.PrinterIsConnected)
+			if (PrinterConnection.Instance.PrinterIsConnected)
 			{
 				printerComPortHelpLink.Visible = false;
 				printerComPortError.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -120,7 +120,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				connectButton.Visible = false;
 				UiThread.RunOnIdle(() => this?.Parent?.Close());
 			}
-			else if (PrinterConnectionAndCommunication.Instance.CommunicationState != PrinterConnectionAndCommunication.CommunicationStates.AttemptingToConnect)
+			else if (PrinterConnection.Instance.CommunicationState != CommunicationStates.AttemptingToConnect)
 			{
 				printerComPortHelpLink.Visible = false;
 				printerComPortError.TextColor = RGBA_Bytes.Red;
@@ -146,7 +146,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				printerComPortError.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 
 				ActiveSliceSettings.Instance.Helpers.SetComPort(GetSelectedSerialPort());
-				PrinterConnectionAndCommunication.Instance.ConnectToActivePrinter();
+				PrinterConnection.Instance.ConnectToActivePrinter();
 
 				connectButton.Visible = false;
 				refreshButton.Visible = false;

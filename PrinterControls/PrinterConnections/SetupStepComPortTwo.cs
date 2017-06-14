@@ -33,7 +33,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				connectButton = textImageButtonFactory.Generate("Connect".Localize());
 				connectButton.Click += ConnectButton_Click;
 
-				PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
+				PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
 
 				//Add buttons to buttonContainer
 				footerRow.AddChild(nextButton);
@@ -116,14 +116,14 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				printerErrorMessage.Text = "Attempting to connect".Localize() + "...";
 
 				ActiveSliceSettings.Instance.Helpers.SetComPort(candidatePort);
-				PrinterConnectionAndCommunication.Instance.ConnectToActivePrinter();
+				PrinterConnection.Instance.ConnectToActivePrinter();
 				connectButton.Visible = false;
 			}
 		}
 
 		private void onPrinterStatusChanged(object sender, EventArgs e)
 		{
-			if (PrinterConnectionAndCommunication.Instance.PrinterIsConnected)
+			if (PrinterConnection.Instance.PrinterIsConnected)
 			{
 				printerErrorMessage.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 				printerErrorMessage.Text = "Connection succeeded".Localize() + "!";
@@ -131,7 +131,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				connectButton.Visible = false;
 				UiThread.RunOnIdle(() => this?.Parent?.Close());
 			}
-			else if (PrinterConnectionAndCommunication.Instance.CommunicationState != PrinterConnectionAndCommunication.CommunicationStates.AttemptingToConnect)
+			else if (PrinterConnection.Instance.CommunicationState != CommunicationStates.AttemptingToConnect)
 			{
 				printerErrorMessage.TextColor = RGBA_Bytes.Red;
 				printerErrorMessage.Text = "Uh-oh! Could not connect to printer.".Localize();
