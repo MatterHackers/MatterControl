@@ -90,7 +90,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		}
 
 		string pauseCaption = "Printer Paused".Localize();
-		string layerPauseMessage = "Your 3D print has been auto-pasued.\nPause layer{0} reached.".Localize();
+		string layerPauseMessage = "Your 3D print has been auto-paused.\nPause layer{0} reached.".Localize();
 		string filamentPauseMessage = "Out of filament detected\nYour 3D print has been paused.".Localize();
 
 		public void DoPause(PauseReason pauseReason, string layerNumber = "")
