@@ -127,7 +127,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string z_servo_depolyed_angle = nameof(z_servo_depolyed_angle);
 		public const string z_servo_retracted_angle = nameof(z_servo_retracted_angle);
 		public const string windows_driver = nameof(windows_driver);
-		public const string z_can_be_negative = nameof(z_can_be_negative);
 		public const string z_homes_to_max = nameof(z_homes_to_max);
 	}
 
