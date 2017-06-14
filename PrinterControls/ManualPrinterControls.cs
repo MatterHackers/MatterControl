@@ -215,11 +215,11 @@ namespace MatterHackers.MatterControl
 			{
 				switch (PrinterConnection.Instance.CommunicationState)
 				{
-					case PrinterConnection.CommunicationStates.Disconnecting:
-					case PrinterConnection.CommunicationStates.ConnectionLost:
-					case PrinterConnection.CommunicationStates.Disconnected:
-					case PrinterConnection.CommunicationStates.AttemptingToConnect:
-					case PrinterConnection.CommunicationStates.FailedToConnect:
+					case CommunicationStates.Disconnecting:
+					case CommunicationStates.ConnectionLost:
+					case CommunicationStates.Disconnected:
+					case CommunicationStates.AttemptingToConnect:
+					case CommunicationStates.FailedToConnect:
 						foreach (DisableableWidget extruderTemperatureControlWidget in temperatureControlsContainer.ExtruderWidgetContainers)
 						{
 							extruderTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
@@ -239,8 +239,8 @@ namespace MatterHackers.MatterControl
 
 						break;
 
-					case PrinterConnection.CommunicationStates.FinishedPrint:
-					case PrinterConnection.CommunicationStates.Connected:
+					case CommunicationStates.FinishedPrint:
+					case CommunicationStates.Connected:
 						foreach (DisableableWidget extruderTemperatureControlWidget in temperatureControlsContainer.ExtruderWidgetContainers)
 						{
 							extruderTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
@@ -259,7 +259,7 @@ namespace MatterHackers.MatterControl
 						movementControlsContainer?.jogControls.SetEnabledLevels(false, true);
 						break;
 
-					case PrinterConnection.CommunicationStates.PrintingFromSd:
+					case CommunicationStates.PrintingFromSd:
 						foreach (DisableableWidget extruderTemperatureControlWidget in temperatureControlsContainer.ExtruderWidgetContainers)
 						{
 							extruderTemperatureControlWidget?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
@@ -272,14 +272,14 @@ namespace MatterHackers.MatterControl
 						tuningAdjustmentControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 						break;
 
-					case PrinterConnection.CommunicationStates.PreparingToPrint:
-					case PrinterConnection.CommunicationStates.Printing:
+					case CommunicationStates.PreparingToPrint:
+					case CommunicationStates.Printing:
 						switch (PrinterConnection.Instance.PrintingState)
 						{
-							case PrinterConnection.DetailedPrintingState.HomingAxis:
-							case PrinterConnection.DetailedPrintingState.HeatingBed:
-							case PrinterConnection.DetailedPrintingState.HeatingExtruder:
-							case PrinterConnection.DetailedPrintingState.Printing:
+							case DetailedPrintingState.HomingAxis:
+							case DetailedPrintingState.HeatingBed:
+							case DetailedPrintingState.HeatingExtruder:
+							case DetailedPrintingState.Printing:
 								foreach (DisableableWidget extruderTemperatureControlWidget in temperatureControlsContainer.ExtruderWidgetContainers)
 								{
 									extruderTemperatureControlWidget?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
@@ -303,7 +303,7 @@ namespace MatterHackers.MatterControl
 						}
 						break;
 
-					case PrinterConnection.CommunicationStates.Paused:
+					case CommunicationStates.Paused:
 						foreach (DisableableWidget extruderTemperatureControlWidget in temperatureControlsContainer.ExtruderWidgetContainers)
 						{
 							extruderTemperatureControlWidget?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
@@ -514,11 +514,11 @@ namespace MatterHackers.MatterControl
 			{
 				switch (PrinterConnection.Instance.CommunicationState)
 				{
-					case PrinterConnection.CommunicationStates.Disconnecting:
-					case PrinterConnection.CommunicationStates.ConnectionLost:
-					case PrinterConnection.CommunicationStates.Disconnected:
-					case PrinterConnection.CommunicationStates.AttemptingToConnect:
-					case PrinterConnection.CommunicationStates.FailedToConnect:
+					case CommunicationStates.Disconnecting:
+					case CommunicationStates.ConnectionLost:
+					case CommunicationStates.Disconnected:
+					case CommunicationStates.AttemptingToConnect:
+					case CommunicationStates.FailedToConnect:
 						foreach (DisableableWidget extruderTemperatureControlWidget in temperatureControlsContainer.ExtruderWidgetContainers)
 						{
 							extruderTemperatureControlWidget?.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
@@ -538,8 +538,8 @@ namespace MatterHackers.MatterControl
 
 						break;
 
-					case PrinterConnection.CommunicationStates.FinishedPrint:
-					case PrinterConnection.CommunicationStates.Connected:
+					case CommunicationStates.FinishedPrint:
+					case CommunicationStates.Connected:
 						foreach (DisableableWidget extruderTemperatureControlWidget in temperatureControlsContainer.ExtruderWidgetContainers)
 						{
 							extruderTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
@@ -559,7 +559,7 @@ namespace MatterHackers.MatterControl
 
 						break;
 
-					case PrinterConnection.CommunicationStates.PrintingFromSd:
+					case CommunicationStates.PrintingFromSd:
 						foreach (DisableableWidget extruderTemperatureControlWidget in temperatureControlsContainer.ExtruderWidgetContainers)
 						{
 							extruderTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
@@ -572,14 +572,14 @@ namespace MatterHackers.MatterControl
 						tuningAdjustmentControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 						break;
 
-					case PrinterConnection.CommunicationStates.PreparingToPrint:
-					case PrinterConnection.CommunicationStates.Printing:
+					case CommunicationStates.PreparingToPrint:
+					case CommunicationStates.Printing:
 						switch (PrinterConnection.Instance.PrintingState)
 						{
-							case PrinterConnection.DetailedPrintingState.HomingAxis:
-							case PrinterConnection.DetailedPrintingState.HeatingBed:
-							case PrinterConnection.DetailedPrintingState.HeatingExtruder:
-							case PrinterConnection.DetailedPrintingState.Printing:
+							case DetailedPrintingState.HomingAxis:
+							case DetailedPrintingState.HeatingBed:
+							case DetailedPrintingState.HeatingExtruder:
+							case DetailedPrintingState.Printing:
 								foreach (DisableableWidget extruderTemperatureControlWidget in temperatureControlsContainer.ExtruderWidgetContainers)
 								{
 									extruderTemperatureControlWidget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
@@ -605,7 +605,7 @@ namespace MatterHackers.MatterControl
 						}
 						break;
 
-					case PrinterConnection.CommunicationStates.Paused:
+					case CommunicationStates.Paused:
 						foreach (DisableableWidget extruderTemperatureControlWidget in temperatureControlsContainer.ExtruderWidgetContainers)
 						{
 							extruderTemperatureControlWidget?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);

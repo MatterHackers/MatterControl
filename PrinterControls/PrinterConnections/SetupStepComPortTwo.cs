@@ -131,7 +131,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				connectButton.Visible = false;
 				UiThread.RunOnIdle(() => this?.Parent?.Close());
 			}
-			else if (PrinterConnection.Instance.CommunicationState != PrinterConnection.CommunicationStates.AttemptingToConnect)
+			else if (PrinterConnection.Instance.CommunicationState != CommunicationStates.AttemptingToConnect)
 			{
 				printerErrorMessage.TextColor = RGBA_Bytes.Red;
 				printerErrorMessage.Text = "Uh-oh! Could not connect to printer.".Localize();

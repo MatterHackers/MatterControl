@@ -174,13 +174,13 @@ namespace MatterHackers.MatterControl
 				generalError.Visible = true;
 				nextButton.Visible = true;
 			}
-			else if (firstLoad || PrinterConnection.Instance.CommunicationState == PrinterConnection.CommunicationStates.Disconnected)
+			else if (firstLoad || PrinterConnection.Instance.CommunicationState == CommunicationStates.Disconnected)
 			{
 				generalError.Text = "";
 				connectButton.Visible = true;
 				connectButtonContainer.Visible = true;
 			}
-			else if (PrinterConnection.Instance.CommunicationState == PrinterConnection.CommunicationStates.AttemptingToConnect)
+			else if (PrinterConnection.Instance.CommunicationState == CommunicationStates.AttemptingToConnect)
 			{
 				generalError.Text = "{0}...".FormatWith("Attempting to connect".Localize());
 				generalError.Visible = true;

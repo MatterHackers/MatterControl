@@ -149,7 +149,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 #else
 					switch (PrinterConnection.Instance.FirmwareType)
 				{
-					case PrinterConnection.FirmwareTypes.Repetier:
+					case FirmwareTypes.Repetier:
 						if (openEePromRepetierWidget != null)
 						{
 							openEePromRepetierWidget.BringToFront();
@@ -164,7 +164,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						}
 						break;
 
-					case PrinterConnection.FirmwareTypes.Marlin:
+					case FirmwareTypes.Marlin:
 						if (openEePromMarlinWidget != null)
 						{
 							openEePromMarlinWidget.BringToFront();

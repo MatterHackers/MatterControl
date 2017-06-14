@@ -502,7 +502,7 @@ namespace MatterHackers.MatterControl
 			{
 				double goalTemp = (int)(targetTemp + .5);
 				if (PrinterConnection.Instance.PrinterIsPrinting
-					&& PrinterConnection.Instance.PrintingState == PrinterConnection.DetailedPrintingState.HeatingExtruder
+					&& PrinterConnection.Instance.PrintingState == DetailedPrintingState.HeatingExtruder
 					&& goalTemp != PrinterConnection.Instance.GetTargetExtruderTemperature(extruderIndex0Based))
 				{
 					string sliceSettingsNote = "Note: Slice Settings are applied before the print actually starts. Changes while printing will not effect the active print.";
@@ -599,7 +599,7 @@ namespace MatterHackers.MatterControl
 		{
 			double goalTemp = (int)(targetTemp + .5);
 			if (PrinterConnection.Instance.PrinterIsPrinting
-				&& PrinterConnection.Instance.PrintingState == PrinterConnection.DetailedPrintingState.HeatingBed
+				&& PrinterConnection.Instance.PrintingState == DetailedPrintingState.HeatingBed
 				&& goalTemp != PrinterConnection.Instance.TargetBedTemperature)
 			{
 				string sliceSettingsNote = "Note: Slice Settings are applied before the print actually starts. Changes while printing will not effect the active print.";

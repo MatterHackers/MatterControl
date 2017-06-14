@@ -349,9 +349,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				// Close if not Preparing, Printing or Paused
 				switch (PrinterConnection.Instance.CommunicationState)
 				{
-					case PrinterConnection.CommunicationStates.PreparingToPrint:
-					case PrinterConnection.CommunicationStates.Printing:
-					case PrinterConnection.CommunicationStates.Paused:
+					case CommunicationStates.PreparingToPrint:
+					case CommunicationStates.Printing:
+					case CommunicationStates.Paused:
 						break;
 
 					default:
@@ -497,9 +497,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				// Here for safety
 				switch (PrinterConnection.Instance.CommunicationState)
 				{
-					case PrinterConnection.CommunicationStates.PreparingToPrint:
-					case PrinterConnection.CommunicationStates.Printing:
-					case PrinterConnection.CommunicationStates.Paused:
+					case CommunicationStates.PreparingToPrint:
+					case CommunicationStates.Printing:
+					case CommunicationStates.Paused:
 						break;
 
 					default:

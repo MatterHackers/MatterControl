@@ -517,8 +517,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					// make sure we lock the controls if we are printing or paused
 					switch (PrinterConnection.Instance.CommunicationState)
 					{
-						case PrinterConnection.CommunicationStates.Printing:
-						case PrinterConnection.CommunicationStates.Paused:
+						case CommunicationStates.Printing:
+						case CommunicationStates.Paused:
 							LockEditControls();
 							break;
 					}
@@ -2181,8 +2181,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				switch (PrinterConnection.Instance.CommunicationState)
 				{
-					case PrinterConnection.CommunicationStates.Printing:
-					case PrinterConnection.CommunicationStates.Paused:
+					case CommunicationStates.Printing:
+					case CommunicationStates.Paused:
 						break;
 
 					default:
@@ -2299,8 +2299,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				switch (PrinterConnection.Instance.CommunicationState)
 				{
-					case PrinterConnection.CommunicationStates.Printing:
-					case PrinterConnection.CommunicationStates.Paused:
+					case CommunicationStates.Printing:
+					case CommunicationStates.Paused:
 						LockEditControls();
 						break;
 

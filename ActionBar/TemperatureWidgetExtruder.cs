@@ -80,7 +80,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			{
 				double goalTemp = (int)(targetTemp + .5);
 				if (PrinterConnection.Instance.PrinterIsPrinting
-					&& PrinterConnection.Instance.PrintingState == PrinterConnection.DetailedPrintingState.HeatingExtruder
+					&& PrinterConnection.Instance.PrintingState == DetailedPrintingState.HeatingExtruder
 					&& goalTemp != PrinterConnection.Instance.GetTargetExtruderTemperature(extruderIndex))
 				{
 					string message = string.Format(waitingForExtruderToHeatMessage, PrinterConnection.Instance.GetTargetExtruderTemperature(extruderIndex), sliceSettingsNote);

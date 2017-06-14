@@ -328,12 +328,12 @@ namespace MatterHackers.MatterControl
 			int eMoveAmountNegative = -EAxisMoveAmount;
 
 			// if we are not printing and on mac or PC
-			if (PrinterConnection.Instance.CommunicationState != PrinterConnection.CommunicationStates.Printing
+			if (PrinterConnection.Instance.CommunicationState != CommunicationStates.Printing
 				&& (OsInformation.OperatingSystem == OSType.Windows || OsInformation.OperatingSystem == OSType.Mac))
 			{
 				if (e.KeyCode == Keys.Z)
 				{
-					if (PrinterConnection.Instance.CommunicationState != PrinterConnection.CommunicationStates.Printing)
+					if (PrinterConnection.Instance.CommunicationState != CommunicationStates.Printing)
 					{
 						PrinterConnection.Instance.HomeAxis(PrinterConnection.Axis.Z);
 					}
@@ -379,7 +379,7 @@ namespace MatterHackers.MatterControl
 			if ((OsInformation.OperatingSystem == OSType.Windows && e.KeyCode == Keys.PageUp)
 				|| (OsInformation.OperatingSystem == OSType.Mac && e.KeyCode == (Keys.Back | Keys.Cancel)))
 			{
-				if (PrinterConnection.Instance.CommunicationState == PrinterConnection.CommunicationStates.Printing)
+				if (PrinterConnection.Instance.CommunicationState == CommunicationStates.Printing)
 				{
 					var currentZ = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.baby_step_z_offset);
 					currentZ += moveAmountPositive;
@@ -393,7 +393,7 @@ namespace MatterHackers.MatterControl
 			else if ((OsInformation.OperatingSystem == OSType.Windows && e.KeyCode == Keys.PageDown)
 				|| (OsInformation.OperatingSystem == OSType.Mac && e.KeyCode == Keys.Clear))
 			{
-				if (PrinterConnection.Instance.CommunicationState == PrinterConnection.CommunicationStates.Printing)
+				if (PrinterConnection.Instance.CommunicationState == CommunicationStates.Printing)
 				{
 					var currentZ = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.baby_step_z_offset);
 					currentZ += moveAmountNegative;
@@ -656,7 +656,7 @@ namespace MatterHackers.MatterControl
 				{
 					MoveButton moveButton = (MoveButton)s;
 
-					if (PrinterConnection.Instance.CommunicationState == PrinterConnection.CommunicationStates.Printing)
+					if (PrinterConnection.Instance.CommunicationState == CommunicationStates.Printing)
 					{
 						if (moveAxis == PrinterConnection.Axis.Z) // only works on z
 						{

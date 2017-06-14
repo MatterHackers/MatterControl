@@ -342,35 +342,35 @@ namespace MatterHackers.MatterControl.ActionBar
 
 				switch (PrinterConnection.Instance.CommunicationState)
 				{
-					case PrinterConnection.CommunicationStates.PreparingToPrint:
+					case CommunicationStates.PreparingToPrint:
 						activePrintLabel.Text = "Preparing To Print".Localize() + ":";
 						break;
 
-					case PrinterConnection.CommunicationStates.Printing:
+					case CommunicationStates.Printing:
 						activePrintLabel.Text = PrinterConnection.Instance.PrintingStateString;
 						activePrintStatus.Text = totalPrintTimeText;
 						break;
 
-					case PrinterConnection.CommunicationStates.Paused:
+					case CommunicationStates.Paused:
 						activePrintLabel.Text = "Printing Paused".Localize() + ":";
 						activePrintStatus.Text = totalPrintTimeText;
 						break;
 
-					case PrinterConnection.CommunicationStates.FinishedPrint:
+					case CommunicationStates.FinishedPrint:
 						activePrintLabel.Text = "Done Printing".Localize() + ":";
 						activePrintStatus.Text = totalPrintTimeText;
 						break;
 
-					case PrinterConnection.CommunicationStates.Disconnected:
+					case CommunicationStates.Disconnected:
 						activePrintStatus.Text = "Not connected. Press 'Connect' to enable printing.".Localize();
 						break;
 
-					case PrinterConnection.CommunicationStates.AttemptingToConnect:
+					case CommunicationStates.AttemptingToConnect:
 						activePrintStatus.Text = "Attempting to Connect".Localize() + "...";
 						break;
 
-					case PrinterConnection.CommunicationStates.ConnectionLost:
-					case PrinterConnection.CommunicationStates.FailedToConnect:
+					case CommunicationStates.ConnectionLost:
+					case CommunicationStates.FailedToConnect:
 						activePrintStatus.Text = "Connection Failed".Localize() + ": " + PrinterConnection.Instance.ConnectionFailureMessage;
 						break;
 

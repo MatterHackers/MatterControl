@@ -151,7 +151,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		private void SetVisibleControls()
 		{
 			if (!ActiveSliceSettings.Instance.PrinterSelected
-				|| PrinterConnection.Instance.CommunicationState == PrinterConnection.CommunicationStates.Printing
+				|| PrinterConnection.Instance.CommunicationState == CommunicationStates.Printing
 				|| PrinterConnection.Instance.PrinterIsPaused)
 			{
 				printLevelingContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);

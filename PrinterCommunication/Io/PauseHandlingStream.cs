@@ -196,7 +196,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				if (PrinterConnection.Instance.PrinterIsPrinting)
 				{
 					// remember where we were after we ran the pause gcode
-					PrinterConnection.Instance.CommunicationState = PrinterConnection.CommunicationStates.Paused;
+					PrinterConnection.Instance.CommunicationState = CommunicationStates.Paused;
 				}
 
 				lineToSend = "";

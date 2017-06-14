@@ -214,7 +214,7 @@ namespace MatterHackers.MatterControl
 								QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(fileName, fullPath)));
 								PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent((sender, e) =>
 								{
-									if (!hasBeenRun && PrinterConnection.Instance.CommunicationState == PrinterConnection.CommunicationStates.Connected)
+									if (!hasBeenRun && PrinterConnection.Instance.CommunicationState == CommunicationStates.Connected)
 									{
 										hasBeenRun = true;
 										PrinterConnection.Instance.PrintActivePartIfPossible();
@@ -539,7 +539,7 @@ namespace MatterHackers.MatterControl
 			UserSettings.Instance.Fields.StartCountDurringExit = UserSettings.Instance.Fields.StartCount;
 
 			TerminalWindow.CloseIfOpen();
-			if (PrinterConnection.Instance.CommunicationState != PrinterConnection.CommunicationStates.PrintingFromSd)
+			if (PrinterConnection.Instance.CommunicationState != CommunicationStates.PrintingFromSd)
 			{
 				PrinterConnection.Instance.Disable();
 			}
@@ -595,7 +595,7 @@ namespace MatterHackers.MatterControl
 				// Record that we are waiting for a response to the request to close
 				closeMessageBoxIsOpen = true;
 
-				if (PrinterConnection.Instance.CommunicationState != PrinterConnection.CommunicationStates.PrintingFromSd)
+				if (PrinterConnection.Instance.CommunicationState != CommunicationStates.PrintingFromSd)
 				{
 					// Needed as we can't assign to CancelClose inside of the lambda below
 					StyledMessageBox.ShowMessageBox(ConditionalyCloseNow,
@@ -632,9 +632,9 @@ namespace MatterHackers.MatterControl
 			if (continueWithShutdown)
 			{
 				closeHasBeenConfirmed = true;
-				bool printingFromSdCard = PrinterConnection.Instance.CommunicationState == PrinterConnection.CommunicationStates.PrintingFromSd
-					|| (PrinterConnection.Instance.CommunicationState == PrinterConnection.CommunicationStates.Paused
-					&& PrinterConnection.Instance.PrePauseCommunicationState == PrinterConnection.CommunicationStates.PrintingFromSd);
+				bool printingFromSdCard = PrinterConnection.Instance.CommunicationState == CommunicationStates.PrintingFromSd
+					|| (PrinterConnection.Instance.CommunicationState == CommunicationStates.Paused
+					&& PrinterConnection.Instance.PrePauseCommunicationState == CommunicationStates.PrintingFromSd);
 				if (!printingFromSdCard)
 				{
 					PrinterConnection.Instance.Disable();

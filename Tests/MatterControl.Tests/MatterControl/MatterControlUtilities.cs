@@ -429,7 +429,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void WaitForPrintFinished(this AutomationRunner testRunner)
 		{
-			testRunner.Delay(() => PrinterConnection.Instance.CommunicationState == PrinterConnection.CommunicationStates.FinishedPrint, 500);
+			testRunner.Delay(() => PrinterConnection.Instance.CommunicationState == CommunicationStates.FinishedPrint, 500);
 		}
 
 		public static async Task RunTest(
@@ -487,7 +487,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			await AutomationRunner.ShowWindowAndExecuteTests(matterControlWindow, testMethod, maxTimeToRun, defaultTestImages, config.AutomationInputType, () =>
 			{
-				if (PrinterConnection.Instance.CommunicationState == PrinterConnection.CommunicationStates.Printing)
+				if (PrinterConnection.Instance.CommunicationState == CommunicationStates.Printing)
 				{
 					PrinterConnection.Instance.Disable();
 				}

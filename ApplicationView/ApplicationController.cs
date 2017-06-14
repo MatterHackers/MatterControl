@@ -503,7 +503,7 @@ namespace MatterHackers.MatterControl
 			{
 				switch (PrinterConnection.Instance.CommunicationState)
 				{
-					case PrinterConnection.CommunicationStates.Printing:
+					case CommunicationStates.Printing:
 						if (UserSettings.Instance.IsTouchScreen)
 						{
 							UiThread.RunOnIdle(PrintingWindow.Show);
@@ -931,7 +931,7 @@ namespace MatterHackers.MatterControl
 
 			PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent((sender, e) =>
 			{
-				if (PrinterConnection.Instance.CommunicationState == PrinterConnection.CommunicationStates.Connected)
+				if (PrinterConnection.Instance.CommunicationState == CommunicationStates.Connected)
 				{
 					PrinterConnection.Instance.PrintActivePartIfPossible();
 				}

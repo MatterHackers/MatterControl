@@ -80,9 +80,9 @@ namespace MatterHackers.MatterControl.PrintHistory
 			{
 				UiThread.RunOnIdle(() =>
 				{
-					if (PrinterConnection.Instance.CommunicationState == PrinterConnection.CommunicationStates.Connected)
+					if (PrinterConnection.Instance.CommunicationState == CommunicationStates.Connected)
 					{
-						PrinterConnection.Instance.CommunicationState = PrinterConnection.CommunicationStates.PreparingToPrint;
+						PrinterConnection.Instance.CommunicationState = CommunicationStates.PreparingToPrint;
 						PrinterConnection.Instance.StartPrint(lastPrintTask.PrintingGCodeFileName, lastPrintTask);
 					}
 				});

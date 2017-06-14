@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl
 
 		public void ConnectionStatusChanged(object test, EventArgs args)
 		{
-			if(PrinterConnection.Instance.CommunicationState == PrinterConnection.CommunicationStates.Connected && connectToPrinterRow != null)
+			if(PrinterConnection.Instance.CommunicationState == CommunicationStates.Connected && connectToPrinterRow != null)
 			{
 				connectToPrinterRow.SetSuccessful();
 				nextButton.Visible = true;

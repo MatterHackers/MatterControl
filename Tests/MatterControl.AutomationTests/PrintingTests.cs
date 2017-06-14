@@ -312,7 +312,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate);
 
 					// Wait for slicing to complete before setting target values
-					testRunner.Delay(() => PrinterConnection.Instance.PrintingState == PrinterConnection.DetailedPrintingState.Printing, 8);
+					testRunner.Delay(() => PrinterConnection.Instance.PrintingState == DetailedPrintingState.Printing, 8);
 					testRunner.Delay();
 
 					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate);
@@ -403,7 +403,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate);
 
 					// Wait for slicing to complete before setting target values
-					testRunner.Delay(() => PrinterConnection.Instance.PrintingState == PrinterConnection.DetailedPrintingState.Printing, 8);
+					testRunner.Delay(() => PrinterConnection.Instance.PrintingState == DetailedPrintingState.Printing, 8);
 					testRunner.Delay();
 
 					// Values should remain after print completes

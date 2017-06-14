@@ -249,7 +249,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		{
 			this.activePrintButtons.Clear();
 			if (!PrinterConnection.Instance.PrinterIsConnected
-				&& PrinterConnection.Instance.CommunicationState != PrinterConnection.CommunicationStates.AttemptingToConnect)
+				&& PrinterConnection.Instance.CommunicationState != CommunicationStates.AttemptingToConnect)
 			{
 				if (!ProfileManager.Instance.ActiveProfiles.Any())
 				{
@@ -275,12 +275,12 @@ namespace MatterHackers.MatterControl.ActionBar
 			{
 				switch (PrinterConnection.Instance.CommunicationState)
 				{
-					case PrinterConnection.CommunicationStates.AttemptingToConnect:
+					case CommunicationStates.AttemptingToConnect:
 						this.activePrintButtons.Add(cancelConnectButton);
 						EnableActiveButtons();
 						break;
 
-					case PrinterConnection.CommunicationStates.Connected:
+					case CommunicationStates.Connected:
 						PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
 						if (levelingData != null && ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_required_to_print)
 							&& !levelingData.HasBeenRunAndEnabled())
@@ -295,13 +295,13 @@ namespace MatterHackers.MatterControl.ActionBar
 						EnableActiveButtons();
 						break;
 
-					case PrinterConnection.CommunicationStates.PreparingToPrint:
+					case CommunicationStates.PreparingToPrint:
 						this.activePrintButtons.Add(cancelButton);
 						EnableActiveButtons();
 						break;
 
-					case PrinterConnection.CommunicationStates.PrintingFromSd:
-					case PrinterConnection.CommunicationStates.Printing:
+					case CommunicationStates.PrintingFromSd:
+					case CommunicationStates.Printing:
 						if (!PrinterConnection.Instance.PrintWasCanceled)
 						{
 							this.activePrintButtons.Add(pauseButton);
@@ -315,13 +315,13 @@ namespace MatterHackers.MatterControl.ActionBar
 						EnableActiveButtons();
 						break;
 
-					case PrinterConnection.CommunicationStates.Paused:
+					case CommunicationStates.Paused:
 						this.activePrintButtons.Add(resumeButton);
 						this.activePrintButtons.Add(cancelButton);
 						EnableActiveButtons();
 						break;
 
-					case PrinterConnection.CommunicationStates.FinishedPrint:
+					case CommunicationStates.FinishedPrint:
 						this.activePrintButtons.Add(startButton);
 						EnableActiveButtons();
 						break;

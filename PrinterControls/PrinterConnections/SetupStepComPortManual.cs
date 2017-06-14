@@ -120,7 +120,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				connectButton.Visible = false;
 				UiThread.RunOnIdle(() => this?.Parent?.Close());
 			}
-			else if (PrinterConnection.Instance.CommunicationState != PrinterConnection.CommunicationStates.AttemptingToConnect)
+			else if (PrinterConnection.Instance.CommunicationState != CommunicationStates.AttemptingToConnect)
 			{
 				printerComPortHelpLink.Visible = false;
 				printerComPortError.TextColor = RGBA_Bytes.Red;

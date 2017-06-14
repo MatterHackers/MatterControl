@@ -120,28 +120,28 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				//cloudMonitorContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 				switch (PrinterConnection.Instance.CommunicationState)
 				{
-					case PrinterConnection.CommunicationStates.Disconnecting:
-					case PrinterConnection.CommunicationStates.ConnectionLost:
-					case PrinterConnection.CommunicationStates.Disconnected:
-					case PrinterConnection.CommunicationStates.AttemptingToConnect:
-					case PrinterConnection.CommunicationStates.FailedToConnect:
+					case CommunicationStates.Disconnecting:
+					case CommunicationStates.ConnectionLost:
+					case CommunicationStates.Disconnected:
+					case CommunicationStates.AttemptingToConnect:
+					case CommunicationStates.FailedToConnect:
 						break;
 
-					case PrinterConnection.CommunicationStates.FinishedPrint:
-					case PrinterConnection.CommunicationStates.Connected:
+					case CommunicationStates.FinishedPrint:
+					case CommunicationStates.Connected:
 						break;
 
-					case PrinterConnection.CommunicationStates.PrintingFromSd:
+					case CommunicationStates.PrintingFromSd:
 						break;
 
-					case PrinterConnection.CommunicationStates.PreparingToPrint:
-					case PrinterConnection.CommunicationStates.Printing:
+					case CommunicationStates.PreparingToPrint:
+					case CommunicationStates.Printing:
 						switch (PrinterConnection.Instance.PrintingState)
 						{
-							case PrinterConnection.DetailedPrintingState.HomingAxis:
-							case PrinterConnection.DetailedPrintingState.HeatingBed:
-							case PrinterConnection.DetailedPrintingState.HeatingExtruder:
-							case PrinterConnection.DetailedPrintingState.Printing:
+							case DetailedPrintingState.HomingAxis:
+							case DetailedPrintingState.HeatingBed:
+							case DetailedPrintingState.HeatingExtruder:
+							case DetailedPrintingState.Printing:
 								break;
 
 							default:
@@ -149,7 +149,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 						}
 						break;
 
-					case PrinterConnection.CommunicationStates.Paused:
+					case CommunicationStates.Paused:
 						break;
 
 					default:
