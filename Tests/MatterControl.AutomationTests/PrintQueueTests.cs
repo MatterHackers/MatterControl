@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ChangeToQueueContainer();
 
 				// Click Add button and select files
-				testRunner.ClickByName("Library Add Button", 2);
+				testRunner.ClickByName("Library Add Button");
 				testRunner.WaitForName("Automation Dialog TextEdit", 3);
 				testRunner.Type(MatterControlUtilities.GetTestItemPath("Fennec_Fox.stl"));
 				testRunner.Delay(1);
@@ -83,7 +83,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ChangeToQueueContainer();
 
 				// Click Add button and select files
-				testRunner.ClickByName("Library Add Button", 2);
+				testRunner.ClickByName("Library Add Button");
 				testRunner.WaitForName("Automation Dialog TextEdit", 3);
 				testRunner.Type(string.Format(
 					"\"{0}\" \"{1}\"",
@@ -196,7 +196,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ChangeToQueueContainer();
 
 				// Click Add button and select files
-				testRunner.ClickByName("Library Add Button", 2);
+				testRunner.ClickByName("Library Add Button");
 				testRunner.WaitForName("Automation Dialog TextEdit", 3);
 
 				testRunner.Type(MatterControlUtilities.GetTestItemPath("Rook.amf"));
@@ -227,7 +227,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ChangeToQueueContainer();
 
 				// Click Add button and select files
-				testRunner.ClickByName("Library Add Button", 2);
+				testRunner.ClickByName("Library Add Button");
 				testRunner.WaitForName("Automation Dialog TextEdit", 3);
 
 				testRunner.Type(MatterControlUtilities.GetTestItemPath("Batman.stl"));
@@ -258,7 +258,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ChangeToQueueContainer();
 
 				// Click Add button and select files
-				testRunner.ClickByName("Library Add Button", 2);
+				testRunner.ClickByName("Library Add Button");
 				testRunner.WaitForName("Automation Dialog TextEdit", 3);
 
 				testRunner.Type(MatterControlUtilities.GetTestItemPath("chichen-itza_pyramid.gcode"));

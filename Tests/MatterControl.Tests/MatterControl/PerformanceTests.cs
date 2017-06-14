@@ -114,7 +114,7 @@ namespace MatterHackers.MatterControl
 				{
 					foreach (string clickName in clickThings)
 					{
-						clickPreview.ClickByName(clickName, 10);
+						clickPreview.ClickByName(clickName);
 						Thread.Sleep((int)(secondsBetweenClicks * 1000));
 					}
 				});

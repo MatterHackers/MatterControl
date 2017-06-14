@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.IsTrue(imageExists == false, "Web page is not open");
 
 				//Click Buy button and test that the MatterHackers store web page is open
-				testRunner.ClickByName("Buy Materials Button", 5);
+				testRunner.ClickByName("Buy Materials Button");
 				bool imageExists2 = testRunner.ImageExists("MatterHackersStoreImage.png", 10);
 				Assert.IsTrue(imageExists2 == true, "Web page is open");
 
@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				bool exportWindowExists1 = testRunner.WaitForName("Export Item Window", 0);
 				Assert.IsTrue(exportWindowExists1 == false, "Export window does not exist");
 
-				testRunner.ClickByName("Queue Export Button", 5);
+				testRunner.ClickByName("Queue Export Button");
 				SystemWindow containingWindow;
 				GuiWidget exportWindow = testRunner.GetWidgetByName("Export Item Window", out containingWindow, 5);
 				Assert.IsTrue(exportWindow != null, "Export window does exist");
@@ -107,9 +107,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.AreEqual(4, QueueData.Instance.ItemCount, "Queue should initially have 4 items");
 
 				// Invoke Queue -> Export to Zip dialog
-				testRunner.ClickByName("Queue... Menu", 2);
+				testRunner.ClickByName("Queue... Menu");
 				testRunner.Delay(.2);
-				testRunner.ClickByName(" Export to Zip Menu Item", 2);
+				testRunner.ClickByName(" Export to Zip Menu Item");
 				testRunner.Delay(2);
 				testRunner.Type(exportZipPath);
 				testRunner.Delay(2);
@@ -154,17 +154,17 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				SystemWindow systemWindow;
 
-				testRunner.ClickByName("Queue... Menu", 2);
+				testRunner.ClickByName("Queue... Menu");
 
 				var exportButton = testRunner.GetWidgetByName(" Export to Zip Menu Item", out systemWindow, 5);
 				Assert.IsNotNull(exportButton, "Export button should exist");
 				Assert.IsTrue(exportButton.Enabled, "Export button should be enabled");
 
-				testRunner.ClickByName(" Remove All Menu Item", 2);
+				testRunner.ClickByName(" Remove All Menu Item");
 
 				testRunner.Delay(1);
 
-				testRunner.ClickByName("Queue... Menu", 2);
+				testRunner.ClickByName("Queue... Menu");
 				testRunner.Delay(() => !exportButton.Enabled, 4);
 				Assert.IsFalse(exportButton.Enabled, "Export button should be disabled after Queue Menu -> Remove All");
 
@@ -187,10 +187,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.CloseSignInAndPrinterSelect();
 
-				testRunner.ClickByName("Queue Item Batman", 3);
+				testRunner.ClickByName("Queue Item Batman");
 				testRunner.Delay(.2);
 
-				testRunner.ClickByName("Queue Copy Button", 3);
+				testRunner.ClickByName("Queue Copy Button");
 				testRunner.Delay(() => QueueData.Instance.ItemCount == expectedQueueCount, 3);
 
 				Assert.AreEqual(expectedQueueCount, QueueData.Instance.ItemCount, "Copy button increases queue count by one");
@@ -214,10 +214,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				Assert.IsTrue(QueueData.Instance.ItemCount > 0, "Queue is not empty at test startup");
 
-				testRunner.ClickByName("More...  Menu", 2);
+				testRunner.ClickByName("More...  Menu");
 				testRunner.Delay(.2);
 
-				testRunner.ClickByName("Send Menu Item", 2);
+				testRunner.ClickByName("Send Menu Item");
 				testRunner.Delay(.2);
 
 				// WaitFor Ok button and ensure parent window has expected title and named button
@@ -255,9 +255,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				}
 
 				Assert.IsTrue(queueEmpty == false);
-				testRunner.ClickByName("Queue... Menu", 2);
+				testRunner.ClickByName("Queue... Menu");
 				testRunner.Delay(.2);
-				testRunner.ClickByName(" Create Part Sheet Menu Item", 2);
+				testRunner.ClickByName(" Create Part Sheet Menu Item");
 				testRunner.Delay(2);
 
 				string pathToSavePartSheet = MatterControlUtilities.GetTestItemPath("CreatePartSheet");

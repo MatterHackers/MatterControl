@@ -24,7 +24,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				string firstItemName = "Queue Item Batman";
 				//Navigate to Downloads Library Provider
 				testRunner.ClickByName("Queue Tab");
-				testRunner.ClickByName("Queue Add Button", 2);
+				testRunner.ClickByName("Queue Add Button");
 
 				//Get parts to add
 				string rowItemPath = MatterControlUtilities.GetTestItemPath("Batman.stl");
@@ -42,7 +42,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Delay(2);
 
 				testRunner.WaitForName("Export Item Window", 2);
-				testRunner.ClickByName("Export as GCode Button", 2);
+				testRunner.ClickByName("Export as GCode Button");
 				testRunner.Delay(2);
 
 				string gcodeOutputPath = MatterControlUtilities.PathToExportGcodeFolder;

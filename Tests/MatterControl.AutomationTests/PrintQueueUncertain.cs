@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				SearchRegion queueItemRegion = testRunner.GetRegionByName(itemName, 3);
 
 				{
-					testRunner.ClickByName("Queue Edit Button", 2);
+					testRunner.ClickByName("Queue Edit Button");
 
 					SystemWindow containingWindow;
 					GuiWidget foundWidget = testRunner.GetWidgetByName("Queue Item Checkbox", out containingWindow, 3, searchRegion: queueItemRegion);
@@ -94,7 +94,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				}
 
 				{
-					testRunner.ClickByName("Queue Done Button", 2);
+					testRunner.ClickByName("Queue Done Button");
 
 					testRunner.Delay(.5);
 
@@ -126,14 +126,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				SearchRegion searchRegion = testRunner.GetRegionByName("Queue Item 2013-01-25_Mouthpiece_v2", 3);
 
 				// Enter Edit mode and confirm checkboxes exist
-				testRunner.ClickByName("Queue Edit Button", 2);
+				testRunner.ClickByName("Queue Edit Button");
 				testRunner.Delay(.3);
 				Assert.IsNotNull(
 					testRunner.GetWidgetByName("Queue Item Checkbox", out systemWindow, 3, searchRegion),
 					"While in Edit mode, checkboxes should exist on queue items");
 
 				// Exit Edit mode and confirm checkboxes are missing
-				testRunner.ClickByName("Queue Done Button", 1);
+				testRunner.ClickByName("Queue Done Button");
 				testRunner.Delay(.3);
 				Assert.IsNull(
 					testRunner.GetWidgetByName("Queue Item Checkbox", out systemWindow, 1, searchRegion),
@@ -204,7 +204,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.IsTrue(testRunner.WaitForName("Queue Item Batman", 1));
 				Assert.IsTrue(testRunner.WaitForName("Queue Item 2013-01-25_Mouthpiece_v2", 1));
 
-				testRunner.ClickByName("Queue Item Batman", 1);
+				testRunner.ClickByName("Queue Item Batman");
 				testRunner.ClickByName("Queue Item Batman Remove");
 				testRunner.Delay(2);
 
@@ -212,9 +212,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.IsFalse(testRunner.NameExists("Queue Item Batman"), "Batman item removed");
 
 				Assert.IsFalse(testRunner.NameExists("Queue Item 2013-01-25_Mouthpiece_v2 Part Preview"), "Mouthpiece Part Preview should not initially be visible");
-				testRunner.ClickByName("Queue Item 2013-01-25_Mouthpiece_v2", 1);
+				testRunner.ClickByName("Queue Item 2013-01-25_Mouthpiece_v2");
 				testRunner.Delay(2);
-				testRunner.ClickByName("Queue Item 2013-01-25_Mouthpiece_v2 View", 1);
+				testRunner.ClickByName("Queue Item 2013-01-25_Mouthpiece_v2 View");
 
 				Assert.IsTrue(testRunner.WaitForName("Queue Item 2013-01-25_Mouthpiece_v2 Part Preview", 2), "The Mouthpiece Part Preview should appear after the view button is clicked");
 

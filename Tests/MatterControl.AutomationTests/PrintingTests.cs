@@ -72,8 +72,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.SwitchToAdvancedSliceSettings();
 
-					testRunner.ClickByName("General Tab", 1);
-					testRunner.ClickByName("Single Print Tab", 1);
+					testRunner.ClickByName("General Tab");
+					testRunner.ClickByName("Single Print Tab");
 					testRunner.ClickByName("Layer(s) To Pause: Edit");
 					testRunner.Type("2");
 
@@ -88,10 +88,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("Next Button");
 					for (int i = 0; i < 3; i++)
 					{
-						testRunner.ClickByName("Move Z positive", .5);
-						testRunner.ClickByName("Next Button", .5);
-						testRunner.ClickByName("Next Button", .5);
-						testRunner.ClickByName("Next Button", .5);
+						testRunner.ClickByName("Move Z positive");
+						testRunner.ClickByName("Next Button");
+						testRunner.ClickByName("Next Button");
+						testRunner.ClickByName("Next Button");
 					}
 					testRunner.ClickByName("Done Button");
 
@@ -99,14 +99,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					// print a part
 					testRunner.AddDefaultFileToBedplate();
-					testRunner.ClickByName("Start Print Button", 1);
+					testRunner.ClickByName("Start Print Button");
 
 					testRunner.Delay(() => emulator.ZPosition > 5, 3);
 
 					// assert the leveling is working
 					Assert.Greater(emulator.ZPosition, 5);
 
-					testRunner.ClickByName("Cancel Print Button", 1);
+					testRunner.ClickByName("Cancel Print Button");
 				}
 
 				return Task.CompletedTask;
@@ -223,8 +223,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.SwitchToAdvancedSliceSettings();
 
-					testRunner.ClickByName("General Tab", 1);
-					testRunner.ClickByName("Single Print Tab", 1);
+					testRunner.ClickByName("General Tab");
+					testRunner.ClickByName("Single Print Tab");
 					testRunner.ClickByName("Layer(s) To Pause: Edit");
 					testRunner.Type("2;6");
 
@@ -232,19 +232,19 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					// print a part
 					testRunner.AddDefaultFileToBedplate();
-					testRunner.ClickByName("Start Print Button", 1);
+					testRunner.ClickByName("Start Print Button");
 
 					// turn on line error simulation
 					emulator.SimulateLineErrors = true;
 
 					// close the pause dialog pop-up (resume)
-					testRunner.ClickByName("No Button", 200);
+					testRunner.ClickByName("No Button");
 
 					// simulate board reboot
 					emulator.SimulateReboot();
 
 					// close the pause dialog pop-up (resume)
-					testRunner.ClickByName("No Button", 200);
+					testRunner.ClickByName("No Button");
 
 					// Wait for done
 					testRunner.WaitForPrintFinished();
@@ -280,7 +280,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					var printFinishedResetEvent = new AutoResetEvent(false);
 					PrinterConnection.Instance.PrintFinished.RegisterEvent((s, e) => printFinishedResetEvent.Set(), ref unregisterEvents);
 
-					testRunner.ClickByName("Start Print Button", 1);
+					testRunner.ClickByName("Start Print Button");
 
 					var container = testRunner.GetWidgetByName("ManualPrinterControls.ControlsContainer", out systemWindow, 5);
 
@@ -325,7 +325,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.WaitForPrintFinished();
 
 					// Restart the print
-					testRunner.ClickByName("Start Print Button", 2);
+					testRunner.ClickByName("Start Print Button");
 					testRunner.Delay(2);
 
 					// Values should match entered values
@@ -371,7 +371,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					var printFinishedResetEvent = new AutoResetEvent(false);
 					PrinterConnection.Instance.PrintFinished.RegisterEvent((s, e) => printFinishedResetEvent.Set(), ref unregisterEvents);
 
-					testRunner.ClickByName("Start Print Button", 1);
+					testRunner.ClickByName("Start Print Button");
 
 					var container = testRunner.GetWidgetByName("ManualPrinterControls.ControlsContainer", out _, 5);
 
@@ -415,7 +415,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.WaitForPrintFinished();
 
 					// Values should match entered values
-					testRunner.ClickByName("Start Print Button", 1);
+					testRunner.ClickByName("Start Print Button");
 					testRunner.Delay(2);
 
 					// Values should match entered values
@@ -443,13 +443,13 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				{
 					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
 
-					testRunner.ClickByName("Queue... Menu", 2);
-					testRunner.ClickByName(" Remove All Menu Item", 2);
-					testRunner.ClickByName("Queue... Menu", 2);
-					testRunner.ClickByName(" Load Files Menu Item", 2);
+					testRunner.ClickByName("Queue... Menu");
+					testRunner.ClickByName(" Remove All Menu Item");
+					testRunner.ClickByName("Queue... Menu");
+					testRunner.ClickByName(" Load Files Menu Item");
 					testRunner.Delay(2);
 
-					testRunner.ClickByName("Start Print Button", 1);
+					testRunner.ClickByName("Start Print Button");
 					testRunner.Delay(2);
 
 					int tempChangedCount = 0;
@@ -488,7 +488,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
 
 					testRunner.AddDefaultFileToBedplate();
-					testRunner.ClickByName("Start Print Button", 1);
+					testRunner.ClickByName("Start Print Button");
 					testRunner.Delay(5);
 
 					int fanChangedCount = 0;

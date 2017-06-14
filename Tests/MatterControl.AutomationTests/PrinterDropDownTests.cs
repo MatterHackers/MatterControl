@@ -21,7 +21,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.SwitchToAdvancedSliceSettings();
 
-				testRunner.ClickByName("Printer Tab", 1);
+				testRunner.ClickByName("Printer Tab");
 
 				testRunner.ClickByName("Printer Name Edit");
 

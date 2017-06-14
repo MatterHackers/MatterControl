@@ -193,13 +193,13 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				for (int i = 0; i <= 4; i++)
 				{
-					testRunner.ClickByName("3D View Copy", 1);
+					testRunner.ClickByName("3D View Copy");
 					testRunner.Delay(.2);
 				}
 
 				Assert.AreEqual(6, view3D.Scene.Children.Count, "Should have 6 parts after batch copy");
 
-				testRunner.ClickByName("3D View Remove", 1);
+				testRunner.ClickByName("3D View Remove");
 				testRunner.Delay(() => view3D.Scene.Children.Count == 5, 3);
 				Assert.AreEqual(5, view3D.Scene.Children.Count, "Should have 5 parts after Remove");
 
