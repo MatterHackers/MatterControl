@@ -22,7 +22,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Delay(1);
 				testRunner.ClickByName("Add Printer Menu Item");
 				testRunner.Delay(1);
-				Assert.IsTrue(testRunner.WaitForName("Select Make", 3));
+				Assert.IsTrue(testRunner.WaitForName("Select Make"));
 
 				testRunner.ClickByName("Cancel Wizard Button");
 
@@ -83,8 +83,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.NavigateToFolder("Print Queue Row Item Collection");
 
-				Assert.IsTrue(testRunner.WaitForName("Row Item Fennec_Fox", 2));
-				Assert.IsTrue(testRunner.WaitForName("Row Item Batman", 2));
+				Assert.IsTrue(testRunner.WaitForName("Row Item Fennec_Fox"));
+				Assert.IsTrue(testRunner.WaitForName("Row Item Batman"));
 
 				Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should increase by two after adding Fennec and Batman parts");
 
@@ -113,8 +113,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.NavigateToFolder("Print Queue Row Item Collection");
 
-				Assert.IsTrue(testRunner.WaitForName("Row Item Batman", 1));
-				Assert.IsTrue(testRunner.WaitForName("Row Item 2013-01-25_Mouthpiece_v2", 1));
+				Assert.IsTrue(testRunner.WaitForName("Row Item Batman"));
+				Assert.IsTrue(testRunner.WaitForName("Row Item 2013-01-25_Mouthpiece_v2"));
 
 				Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should increase by two after adding contents of Batmap.zip");
 

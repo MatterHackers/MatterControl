@@ -187,7 +187,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Select3DPart("Calibration - Box.stl");
 
 				// Click Edit button to make edit controls visible
-				testRunner.WaitForName("3D View Copy", 3);
+				testRunner.WaitForName("3D View Copy");
 				testRunner.Delay(1); // wait for window to finish opening
 				Assert.AreEqual(1, view3D.Scene.Children.Count, "Should have 1 part before copy");
 

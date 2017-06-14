@@ -204,8 +204,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			emulator.Startup();
 
 			// edit the com port
-			SystemWindow containingWindow;
-			var editButton = testRunner.GetWidgetByName("Edit Printer Button", out containingWindow);
+			var editButton = testRunner.GetWidgetByName("Edit Printer Button", out _);
 
 			testRunner.Delay(() => editButton.Enabled, 5); // Wait until the edit button is ready to click it. Ensures the printer is loaded.
 			testRunner.ClickByName("Edit Printer Button");
@@ -219,7 +218,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			// connect to the created printer
 			testRunner.ClickByName("Connect to printer button");
 
-			testRunner.WaitForName("Disconnect from printer button", 5);
+			testRunner.WaitForName("Disconnect from printer button");
 
 			return emulator;
 	}
@@ -609,7 +608,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			foreach (string assetName in assetNames)
 			{
 				string friendlyName = Path.GetFileNameWithoutExtension(assetName);
-				Assert.IsTrue(testRunner.WaitForName($"Row Item {friendlyName}", 2), $"{friendlyName} part should exist after adding");
+				Assert.IsTrue(testRunner.WaitForName($"Row Item {friendlyName}", 0.5), $"{friendlyName} part should exist after adding");
 			}
 		}
 
