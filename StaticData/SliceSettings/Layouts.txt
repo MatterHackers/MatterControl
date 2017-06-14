@@ -316,7 +316,6 @@ Advanced
         enable_sailfish_communication
       Behavior
         z_homes_to_max
-        z_can_be_negative
         heat_extruder_before_homing
         extruders_share_temperature
       Firmware
