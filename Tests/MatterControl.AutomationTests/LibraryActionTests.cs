@@ -37,10 +37,10 @@ using NUnit.Framework;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Ignore("Product code still needs to be implemented"), Category("MatterControl.UI.Automation"), Category("MatterControl.Automation"), RunInApplicationDomain]
+	[TestFixture, Ignore("Product code still needs to be implemented"), Category("MatterControl.UI.Automation"), Category("MatterControl.Automation"), RunInApplicationDomain, Apartment(ApartmentState.STA)]
 	public class LibraryActionTests
 	{
-		[Test, Apartment(ApartmentState.STA), Category("FixNeeded" /* Not Finished */)]
+		[Test, Category("FixNeeded" /* Not Finished */)]
 		public async Task ClickOnBuyButton()
 		{
 			AutomationTest testToRun = (testRunner) =>
@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			await MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
 		}
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task ClickOnExportButton()
 		{
 			AutomationTest testToRun = (testRunner) =>
@@ -90,7 +90,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		/// Confirms the Export to Zip feature compresses and exports to a zip file and that file imports without issue
 		/// </summary>
 		/// <returns></returns>
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task ExportToZipImportFromZip()
 		{
 			AutomationTest testToRun = (testRunner) =>
@@ -145,7 +145,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			await MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
 		}
 
-		[Test, Apartment(ApartmentState.STA), Category("FixNeeded") /* Test now works as expected but product does not implement expected functionality */]
+		[Test, Category("FixNeeded") /* Test now works as expected but product does not implement expected functionality */]
 		public async Task QueueExportIsDisabledIfEmpty()
 		{
 			AutomationTest testToRun = (testRunner) =>
@@ -178,7 +178,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		/// Tests that Queue Copy button increases the queue count by one and that a new queue item appears with the expected name
 		/// </summary>
 		/// <returns></returns>
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task CopyButtonMakesACopyOfPartInTheQueue()
 		{
 			AutomationTest testToRun = (testRunner) =>
@@ -203,7 +203,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			await MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
 		}
 
-		[Test, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task SendMenuClickedWithoutCloudPlugins()
 		{
 			AutomationTest testToRun = (testRunner) =>
@@ -237,7 +237,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			await MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
 		}
 
-		[Test, Apartment(ApartmentState.STA), Category("FixNeeded" /* Not Finished */)]
+		[Test, Category("FixNeeded" /* Not Finished */)]
 		public async Task ClickCreatePartSheetButton()
 		{
 			AutomationTest testToRun = (testRunner) =>
