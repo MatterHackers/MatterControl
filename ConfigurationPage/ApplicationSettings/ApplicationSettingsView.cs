@@ -46,17 +46,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 {
 	public class ApplicationSettingsWidget : SettingsViewBase
 	{
-		private Button languageRestartButton;
-		private Button configureUpdateFeedButton;
-		public DropDownList releaseOptionsDropList;
-		private string cannotRestartWhilePrintIsActiveMessage;
-		private string cannotRestartWhileActive;
+		private string cannotRestartWhilePrintIsActiveMessage = "Oops! You cannot restart while a print is active.".Localize();
+		private string cannotRestartWhileActive = "Unable to restart".Localize();
 
 		public ApplicationSettingsWidget()
 			: base("Application".Localize())
 		{
-			cannotRestartWhilePrintIsActiveMessage = "Oops! You cannot restart while a print is active.".Localize();
-			cannotRestartWhileActive = "Unable to restart".Localize();
 			if (UserSettings.Instance.IsTouchScreen)
 			{
 				mainContainer.AddChild(new HorizontalLine(50));
@@ -118,7 +113,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			clearHistoryLabel.VAnchor = VAnchor.ParentCenter;
 
 			Button clearHistoryButton = textImageButtonFactory.Generate("Remove All".Localize().ToUpper());
-			clearHistoryButton.Click += clearHistoryButton_Click;
+			clearHistoryButton.Click += (sender, e) =>
+			{
+				PrintHistoryData.Instance.ClearHistory();
+			};
 
 			//buttonRow.AddChild(eePromIcon);
 			buttonRow.AddChild(clearHistoryLabel);
@@ -126,11 +124,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			buttonRow.AddChild(clearHistoryButton);
 
 			return buttonRow;
-		}
-
-		private void clearHistoryButton_Click(object sender, EventArgs e)
-		{
-			PrintHistoryData.Instance.ClearHistory();
 		}
 
 		private void SetDisplayAttributes()
@@ -234,15 +227,15 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			textSizeControlApplyButton.VAnchor = Agg.UI.VAnchor.ParentCenter;
 			textSizeControlApplyButton.Visible = false;
 			textSizeControlApplyButton.Margin = new BorderDouble(right: 6);
-			textSizeControlApplyButton.Click += (sender, e) =>
+			textSizeControlApplyButton.Click += (s, e) =>
 			{
 				GuiWidget.DeviceScale = textSizeSlider.Value;
 				ApplicationController.Instance.ReloadAll();
 			};
 
-			textSizeSlider.ValueChanged += (sender, e) =>
+			textSizeSlider.ValueChanged += (s, e) =>
 			{
-				double textSizeNew = ((SolidSlider)sender).Value;
+				double textSizeNew = ((SolidSlider)s).Value;
 				UserSettings.Instance.set(UserSettingsKey.ApplicationTextSize, textSizeNew.ToString("0.0"));
 				settingsLabel.Text = "Text Size".Localize() + $" : {textSizeNew:0.0}";
 				textSizeControlApplyButton.Visible = textSizeNew != currentTexSize;
@@ -272,7 +265,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			displayControlRestartButton.VAnchor = Agg.UI.VAnchor.ParentCenter;
 			displayControlRestartButton.Visible = false;
 			displayControlRestartButton.Margin = new BorderDouble(right: 6);
-			displayControlRestartButton.Click += (sender, e) =>
+			displayControlRestartButton.Click += (s, e) =>
 			{
 				if (PrinterConnection.Instance.PrinterIsPrinting)
 				{
@@ -305,9 +298,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			}
 
 			interfaceOptionsDropList.SelectedValue = UserSettings.Instance.get(UserSettingsKey.ApplicationDisplayMode);
-			interfaceOptionsDropList.SelectionChanged += (sender, e) =>
+			interfaceOptionsDropList.SelectionChanged += (s, e) =>
 			{
-				string displayMode = ((DropDownList)sender).SelectedValue;
+				string displayMode = ((DropDownList)s).SelectedValue;
 				if (displayMode != UserSettings.Instance.get(UserSettingsKey.ApplicationDisplayMode))
 				{
 					UserSettings.Instance.set(UserSettingsKey.ApplicationDisplayMode, displayMode);
@@ -346,7 +339,19 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			MenuItem advancedModeDropDownItem = interfaceModeDropList.AddItem("Advanced".Localize(), "False");
 
 			interfaceModeDropList.SelectedValue = UserSettings.Instance.Fields.IsSimpleMode.ToString();
-			interfaceModeDropList.SelectionChanged += new EventHandler(InterfaceModeDropList_SelectionChanged);
+			interfaceModeDropList.SelectionChanged += (sender, e) =>
+			{
+				string isSimpleMode = ((DropDownList)sender).SelectedValue;
+				if (isSimpleMode == "True")
+				{
+					UserSettings.Instance.Fields.IsSimpleMode = true;
+				}
+				else
+				{
+					UserSettings.Instance.Fields.IsSimpleMode = false;
+				}
+				ApplicationController.Instance.ReloadAll();
+			};
 
 			buttonRow.AddChild(settingsLabel);
 			buttonRow.AddChild(new HorizontalSpacer());
@@ -360,7 +365,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			buttonRow.HAnchor = HAnchor.ParentLeftRight;
 			buttonRow.Margin = new BorderDouble(top: 4);
 
-			configureUpdateFeedButton = textImageButtonFactory.Generate("Configure".Localize().ToUpper());
+			Button configureUpdateFeedButton = textImageButtonFactory.Generate("Configure".Localize().ToUpper());
 			configureUpdateFeedButton.Margin = new BorderDouble(left: 6);
 			configureUpdateFeedButton.VAnchor = VAnchor.ParentCenter;
 
@@ -372,20 +377,20 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			FlowLayoutWidget optionsContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			optionsContainer.Margin = new BorderDouble(bottom: 6);
 
-			releaseOptionsDropList = new DropDownList("Development", maxHeight: 200);
+			var releaseOptionsDropList = new DropDownList("Development", maxHeight: 200);
 			releaseOptionsDropList.HAnchor = HAnchor.ParentLeftRight;
 
 			optionsContainer.AddChild(releaseOptionsDropList);
 			optionsContainer.Width = 200;
 
 			MenuItem releaseOptionsDropDownItem = releaseOptionsDropList.AddItem("Stable".Localize(), "release");
-			releaseOptionsDropDownItem.Selected += new EventHandler(FixTabDot);
+			releaseOptionsDropDownItem.Selected += (s, e) => UpdateControlData.Instance.CheckForUpdateUserRequested();
 
 			MenuItem preReleaseDropDownItem = releaseOptionsDropList.AddItem("Beta".Localize(), "pre-release");
-			preReleaseDropDownItem.Selected += new EventHandler(FixTabDot);
+			preReleaseDropDownItem.Selected += (s, e) => UpdateControlData.Instance.CheckForUpdateUserRequested();
 
 			MenuItem developmentDropDownItem = releaseOptionsDropList.AddItem("Alpha".Localize(), "development");
-			developmentDropDownItem.Selected += new EventHandler(FixTabDot);
+			developmentDropDownItem.Selected += (s, e) => UpdateControlData.Instance.CheckForUpdateUserRequested();
 
 			List<string> acceptableUpdateFeedTypeValues = new List<string>() { "release", "pre-release", "development" };
 			string currentUpdateFeedType = UserSettings.Instance.get(UserSettingsKey.UpdateFeedType);
@@ -396,7 +401,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			}
 
 			releaseOptionsDropList.SelectedValue = UserSettings.Instance.get(UserSettingsKey.UpdateFeedType);
-			releaseOptionsDropList.SelectionChanged += new EventHandler(ReleaseOptionsDropList_SelectionChanged);
+			releaseOptionsDropList.SelectionChanged += (sender, e) =>
+			{
+				string releaseCode = releaseOptionsDropList.SelectedValue;
+				if (releaseCode != UserSettings.Instance.get(UserSettingsKey.UpdateFeedType))
+				{
+					UserSettings.Instance.set(UserSettingsKey.UpdateFeedType, releaseCode);
+				}
+			};
 
 			buttonRow.AddChild(settingsLabel);
 			buttonRow.AddChild(new HorizontalSpacer());
@@ -421,14 +433,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			FlowLayoutWidget optionsContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			optionsContainer.Margin = new BorderDouble(bottom: 6);
 
-			LanguageSelector languageSelector = new LanguageSelector();
-			languageSelector.SelectionChanged += new EventHandler(LanguageDropList_SelectionChanged);
-			languageSelector.HAnchor = HAnchor.ParentLeftRight;
-
-			optionsContainer.AddChild(languageSelector);
-			optionsContainer.Width = 200;
-
-			languageRestartButton = textImageButtonFactory.Generate("Restart".Localize());
+			Button languageRestartButton = textImageButtonFactory.Generate("Apply".Localize());
 			languageRestartButton.VAnchor = Agg.UI.VAnchor.ParentCenter;
 			languageRestartButton.Visible = false;
 			languageRestartButton.Margin = new BorderDouble(right: 6);
@@ -441,9 +446,31 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				}
 				else
 				{
-					RestartApplication();
+					LocalizedString.ResetTranslationMap();
+					ApplicationController.Instance.ReloadAll();
 				}
 			};
+
+			LanguageSelector languageSelector = new LanguageSelector();
+			languageSelector.SelectionChanged += (s, e) =>
+			{
+				string languageCode = languageSelector.SelectedValue;
+				if (languageCode != UserSettings.Instance.get("Language"))
+				{
+					UserSettings.Instance.set("Language", languageCode);
+					languageRestartButton.Visible = true;
+
+					if (languageCode == "L10N")
+					{
+						GenerateLocalizationValidationFile();
+					}
+				}
+			};
+
+			languageSelector.HAnchor = HAnchor.ParentLeftRight;
+
+			optionsContainer.AddChild(languageSelector);
+			optionsContainer.Width = 200;
 
 			buttonRow.AddChild(settingsLabel);
 			buttonRow.AddChild(new HorizontalSpacer());
@@ -527,9 +554,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			}
 
 			interfaceOptionsDropList.SelectedValue = UserSettings.Instance.get(UserSettingsKey.ThumbnailRenderingMode);
-			interfaceOptionsDropList.SelectionChanged += (sender, e) =>
+			interfaceOptionsDropList.SelectionChanged += (s, e) =>
 			{
-				string thumbnailRenderingMode = ((DropDownList)sender).SelectedValue;
+				string thumbnailRenderingMode = interfaceOptionsDropList.SelectedValue;
 				if (thumbnailRenderingMode != UserSettings.Instance.get(UserSettingsKey.ThumbnailRenderingMode))
 				{
 					UserSettings.Instance.set(UserSettingsKey.ThumbnailRenderingMode, thumbnailRenderingMode);
@@ -600,49 +627,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
                 app.AnchorAll();
 #endif
 			});
-		}
-
-		private void FixTabDot(object sender, EventArgs e)
-		{
-			UpdateControlData.Instance.CheckForUpdateUserRequested();
-		}
-
-		private void InterfaceModeDropList_SelectionChanged(object sender, EventArgs e)
-		{
-			string isSimpleMode = ((DropDownList)sender).SelectedValue;
-			if (isSimpleMode == "True")
-			{
-				UserSettings.Instance.Fields.IsSimpleMode = true;
-			}
-			else
-			{
-				UserSettings.Instance.Fields.IsSimpleMode = false;
-			}
-			ApplicationController.Instance.ReloadAll();
-		}
-
-		private void ReleaseOptionsDropList_SelectionChanged(object sender, EventArgs e)
-		{
-			string releaseCode = ((DropDownList)sender).SelectedValue;
-			if (releaseCode != UserSettings.Instance.get(UserSettingsKey.UpdateFeedType))
-			{
-				UserSettings.Instance.set(UserSettingsKey.UpdateFeedType, releaseCode);
-			}
-		}
-
-		private void LanguageDropList_SelectionChanged(object sender, EventArgs e)
-		{
-			string languageCode = ((Agg.UI.DropDownList)sender).SelectedValue;
-			if (languageCode != UserSettings.Instance.get("Language"))
-			{
-				UserSettings.Instance.set("Language", languageCode);
-				languageRestartButton.Visible = true;
-
-				if(languageCode == "L10N")
-				{
-					GenerateLocalizationValidationFile();
-				}
-			}
 		}
 
 		[Conditional("DEBUG")]
