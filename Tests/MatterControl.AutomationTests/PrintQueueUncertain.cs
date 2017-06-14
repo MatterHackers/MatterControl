@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.CloseSignInAndPrinterSelect();
 
 				// Tests that clicking a queue item thumbnail opens a Part Preview window
-				Assert.IsFalse(testRunner.NameExists("Part Preview Window"), "Part Preview Window should not exist");
+				Assert.IsFalse(testRunner.NameExists("Part Preview Window", .2), "Part Preview Window should not exist");
 
 				testRunner.ClickByName("Queue Item Thumbnail");
 
@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				 *3. Selecting multiple queue items and then clicking the Remove button decreases the queue tab count by one
 				 */
 
-				bool checkboxExists = testRunner.WaitForName("Queue Item Checkbox", 2);
+				bool checkboxExists = testRunner.WaitForName("Queue Item Checkbox");
 
 				Assert.IsTrue(checkboxExists == false);
 
@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				SearchRegion queueItemRegion = testRunner.GetRegionByName(itemName, 3);
 
 				{
-					testRunner.ClickByName("Queue Edit Button", 2);
+					testRunner.ClickByName("Queue Edit Button");
 
 					SystemWindow containingWindow;
 					GuiWidget foundWidget = testRunner.GetWidgetByName("Queue Item Checkbox", out containingWindow, 3, searchRegion: queueItemRegion);
@@ -94,7 +94,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				}
 
 				{
-					testRunner.ClickByName("Queue Done Button", 2);
+					testRunner.ClickByName("Queue Done Button");
 
 					testRunner.Delay(.5);
 
@@ -126,14 +126,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				SearchRegion searchRegion = testRunner.GetRegionByName("Queue Item 2013-01-25_Mouthpiece_v2", 3);
 
 				// Enter Edit mode and confirm checkboxes exist
-				testRunner.ClickByName("Queue Edit Button", 2);
+				testRunner.ClickByName("Queue Edit Button");
 				testRunner.Delay(.3);
 				Assert.IsNotNull(
 					testRunner.GetWidgetByName("Queue Item Checkbox", out systemWindow, 3, searchRegion),
 					"While in Edit mode, checkboxes should exist on queue items");
 
 				// Exit Edit mode and confirm checkboxes are missing
-				testRunner.ClickByName("Queue Done Button", 1);
+				testRunner.ClickByName("Queue Done Button");
 				testRunner.Delay(.3);
 				Assert.IsNull(
 					testRunner.GetWidgetByName("Queue Item Checkbox", out systemWindow, 1, searchRegion),
@@ -172,11 +172,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.AreEqual(0, QueueData.Instance.ItemCount, "Queue is empty after RemoveAll action");
 
 				// Assert that widgets have been removed
-				testRunner.Delay(.5);
-
-				Assert.IsFalse(testRunner.NameExists("Queue Item Batman"), "Batman part removed");
-				Assert.IsFalse(testRunner.NameExists("Queue Item Fennec_Fox"), "Fox part removed");
-				Assert.IsFalse(testRunner.NameExists("Queue Item 2013-01-25_Mouthpiece_v2"), "Mouthpiece part removed");
+				Assert.IsFalse(testRunner.NameExists("Queue Item Batman", .2), "Batman part removed");
+				Assert.IsFalse(testRunner.NameExists("Queue Item Fennec_Fox", .2), "Fox part removed");
+				Assert.IsFalse(testRunner.NameExists("Queue Item 2013-01-25_Mouthpiece_v2", .2), "Mouthpiece part removed");
 
 				return Task.CompletedTask;
 			};
@@ -201,22 +199,22 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Delay(2);
 
 				Assert.AreEqual(4, QueueData.Instance.ItemCount, "Queue should initially have four items");
-				Assert.IsTrue(testRunner.WaitForName("Queue Item Batman", 1));
-				Assert.IsTrue(testRunner.WaitForName("Queue Item 2013-01-25_Mouthpiece_v2", 1));
+				Assert.IsTrue(testRunner.WaitForName("Queue Item Batman"));
+				Assert.IsTrue(testRunner.WaitForName("Queue Item 2013-01-25_Mouthpiece_v2"));
 
-				testRunner.ClickByName("Queue Item Batman", 1);
+				testRunner.ClickByName("Queue Item Batman");
 				testRunner.ClickByName("Queue Item Batman Remove");
 				testRunner.Delay(2);
 
 				Assert.AreEqual(3, QueueData.Instance.ItemCount, "Batman item removed");
-				Assert.IsFalse(testRunner.NameExists("Queue Item Batman"), "Batman item removed");
+				Assert.IsFalse(testRunner.NameExists("Queue Item Batman", .2), "Batman item removed");
 
-				Assert.IsFalse(testRunner.NameExists("Queue Item 2013-01-25_Mouthpiece_v2 Part Preview"), "Mouthpiece Part Preview should not initially be visible");
-				testRunner.ClickByName("Queue Item 2013-01-25_Mouthpiece_v2", 1);
+				Assert.IsFalse(testRunner.NameExists("Queue Item 2013-01-25_Mouthpiece_v2 Part Preview", .2), "Mouthpiece Part Preview should not initially be visible");
+				testRunner.ClickByName("Queue Item 2013-01-25_Mouthpiece_v2");
 				testRunner.Delay(2);
-				testRunner.ClickByName("Queue Item 2013-01-25_Mouthpiece_v2 View", 1);
+				testRunner.ClickByName("Queue Item 2013-01-25_Mouthpiece_v2 View");
 
-				Assert.IsTrue(testRunner.WaitForName("Queue Item 2013-01-25_Mouthpiece_v2 Part Preview", 2), "The Mouthpiece Part Preview should appear after the view button is clicked");
+				Assert.IsTrue(testRunner.WaitForName("Queue Item 2013-01-25_Mouthpiece_v2 Part Preview"), "The Mouthpiece Part Preview should appear after the view button is clicked");
 
 				return Task.CompletedTask;
 			};

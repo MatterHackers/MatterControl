@@ -18,7 +18,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.SwitchToAdvancedSliceSettings();
 
-				testRunner.ClickByName("Printer Tab", 1);
+				testRunner.ClickByName("Printer Tab");
 				testRunner.Delay(1);
 
 				Assert.IsFalse(testRunner.WaitForName("Print Leveling Tab", 3), "Print leveling should not exist for an Airwolf HD");
@@ -26,8 +26,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// Add printer that does not have hardware leveling
 				testRunner.AddAndSelectPrinter("3D Factory", "MendelMax 1.5");
 
-				testRunner.ClickByName("Slice Settings Tab", 1);
-				testRunner.ClickByName("Printer Tab", 1);
+				testRunner.ClickByName("Slice Settings Tab");
+				testRunner.ClickByName("Printer Tab");
 
 				Assert.IsTrue(testRunner.WaitForName("Print Leveling Tab", 3), "Print leveling should exist for a 3D Factory MendelMax");
 
@@ -48,18 +48,18 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					Assert.IsTrue(testRunner.WaitForName("Finish Setup Button", .5), "Finish Setup should be visible if PrintLeveling is required");
 
 					// do print leveling
-					testRunner.ClickByName("Next Button", .5);
-					testRunner.ClickByName("Next Button", .5);
-					testRunner.ClickByName("Next Button", .5);
+					testRunner.ClickByName("Next Button");
+					testRunner.ClickByName("Next Button");
+					testRunner.ClickByName("Next Button");
 					for (int i = 0; i < 3; i++)
 					{
-						testRunner.ClickByName("Move Z positive", .5);
-						testRunner.ClickByName("Next Button", .5);
-						testRunner.ClickByName("Next Button", .5);
-						testRunner.ClickByName("Next Button", .5);
+						testRunner.ClickByName("Move Z positive");
+						testRunner.ClickByName("Next Button");
+						testRunner.ClickByName("Next Button");
+						testRunner.ClickByName("Next Button");
 					}
 
-					testRunner.ClickByName("Done Button", 1);
+					testRunner.ClickByName("Done Button");
 
 					// make sure the button has changed to start print
 					Assert.IsTrue(testRunner.WaitForName("Start Print Button", 5), "Start Print should be visible after leveling the printer");
@@ -70,7 +70,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.ClickByName("Slice Settings Overflow Menu");
 					testRunner.ClickByName("Reset to Defaults Menu Item");
-					testRunner.ClickByName("Yes Button", .5);
+					testRunner.ClickByName("Yes Button");
 					testRunner.Delay(1);
 
 					// make sure it is showing the correct button

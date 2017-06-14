@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				testRunner.WaitForName("Cancel Wizard Button", 1);
+				testRunner.WaitForName("Cancel Wizard Button");
 
 				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("Toggle Layer View Button");
 
 					testRunner.ClickByName("Generate Gcode Button");
-					testRunner.ClickByName("Display Checkbox", 10);
+					testRunner.ClickByName("Display Checkbox");
 					testRunner.ClickByName("Sync To Print Checkbox");
 
 					testRunner.ClickByName("Start Print Button");
@@ -95,8 +95,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.SwitchToAdvancedSliceSettings();
 
-					testRunner.ClickByName("General Tab", 1);
-					testRunner.ClickByName("Single Print Tab", 1);
+					testRunner.ClickByName("General Tab");
+					testRunner.ClickByName("Single Print Tab");
 					testRunner.ClickByName("Layer(s) To Pause: Edit");
 					testRunner.Type("2");
 
@@ -104,11 +104,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.ClickByName("Toggle Layer View Button");
 
-					testRunner.ClickByName("Generate Gcode Button", 1);
-					testRunner.ClickByName("Display Checkbox", 10);
-					testRunner.ClickByName("Sync To Print Checkbox", 1);
+					testRunner.ClickByName("Generate Gcode Button");
+					testRunner.ClickByName("Display Checkbox");
+					testRunner.ClickByName("Sync To Print Checkbox");
 
-					testRunner.ClickByName("Start Print Button", 1);
+					testRunner.ClickByName("Start Print Button");
 
 					// assert the leveling is working
 					testRunner.WaitForName("Yes Button", 200);
@@ -118,7 +118,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.WaitForName("Resume Button", 30);
 					testRunner.ClickByName("Cancel Print Button");
 
-					testRunner.WaitForName("Start Print Button", 1);
 					Assert.IsTrue(testRunner.NameExists("Start Print Button"));
 
 					int g28Count = 0;
@@ -151,7 +150,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.Delay(() => layerNumber.Text == indexToWaitFor.ToString(), 2);
 
 			Assert.IsTrue(layerNumber.Text == indexToWaitFor.ToString());
-			testRunner.ClickByName("Resume Button", 1);
+			testRunner.ClickByName("Resume Button");
 			testRunner.Delay(.1);
 		}
 
@@ -165,8 +164,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// Navigate to Local Library 
 				testRunner.SwitchToAdvancedSliceSettings();
 
-				testRunner.ClickByName("Printer Tab", 1);
-				testRunner.ClickByName("Features Tab", 1);
+				testRunner.ClickByName("Printer Tab");
+				testRunner.ClickByName("Features Tab");
 
 				CheckAndUncheckSetting(testRunner, SettingsKey.heat_extruder_before_homing, "Heat Before Homing Checkbox", false);
 
@@ -201,15 +200,15 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// Navigate to Local Library 
 				testRunner.SwitchToAdvancedSliceSettings();
 
-				testRunner.ClickByName("General Tab", 1);
-				testRunner.ClickByName("Layers / Surface Tab", 1);
+				testRunner.ClickByName("General Tab");
+				testRunner.ClickByName("Layers / Surface Tab");
 
 				Assert.AreEqual(0, layerHeightChangedCount, "No change to layer height yet.");
-				testRunner.ClickByName("Quality", 2);
-				testRunner.ClickByName("Fine Menu", 2, delayBeforeReturn: .5);
+				testRunner.ClickByName("Quality");
+				testRunner.ClickByName("Fine Menu", delayBeforeReturn: .5);
 				Assert.AreEqual(1, layerHeightChangedCount, "Changed to fine.");
-				testRunner.ClickByName("Quality", 2);
-				testRunner.ClickByName("Standard Menu", 2, delayBeforeReturn: .5);
+				testRunner.ClickByName("Quality");
+				testRunner.ClickByName("Standard Menu", delayBeforeReturn: .5);
 				Assert.AreEqual(2, layerHeightChangedCount, "Changed to standard.");
 
 				return Task.CompletedTask;
@@ -245,7 +244,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			Assert.IsTrue(ActiveSliceSettings.Instance.UserLayer.ContainsKey(settingToChange) == false);
 
 			// Click the checkbox
-			testRunner.ClickByName(checkBoxName, 1);
+			testRunner.ClickByName(checkBoxName);
 			testRunner.Delay(2);
 
 			// Assert the checkbox is checked and the user override is set
@@ -253,7 +252,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			Assert.IsTrue(ActiveSliceSettings.Instance.UserLayer.ContainsKey(settingToChange) == true);
 
 			// Click the cancel user override button
-			testRunner.ClickByName("Restore " + settingToChange, 1);
+			testRunner.ClickByName("Restore " + settingToChange);
 			testRunner.Delay(2);
 
 			// Assert the checkbox is unchecked and there is no user override
@@ -271,28 +270,28 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// Navigate to Settings Tab and make sure Bed Temp Text box is visible 
 				testRunner.SwitchToAdvancedSliceSettings();
 
-				testRunner.ClickByName("Filament Tab", 1);
-				testRunner.ClickByName("Temperatures Tab", 1);
+				testRunner.ClickByName("Filament Tab");
+				testRunner.ClickByName("Temperatures Tab");
 
-				Assert.IsTrue(testRunner.WaitForName("Extruder Temperature Textbox", 2)); 
-				Assert.IsTrue(testRunner.WaitForName("Bed Temperature Textbox", 2));
+				Assert.IsTrue(testRunner.WaitForName("Extruder Temperature Textbox")); 
+				Assert.IsTrue(testRunner.WaitForName("Bed Temperature Textbox"));
 
 				// Uncheck Has Heated Bed checkbox and make sure Bed Temp Textbox is not visible
-				testRunner.ClickByName("Printer Tab", 1);
-				testRunner.ClickByName("Features Tab", 1);
+				testRunner.ClickByName("Printer Tab");
+				testRunner.ClickByName("Features Tab");
 				testRunner.DragByName("Show Reset Connection Checkbox", 1, offset: new Agg.Point2D(-40, 0));
 				testRunner.MoveToByName("Show Reset Connection Checkbox", 1, offset: new Agg.Point2D(0, 120));
 				testRunner.Drop();
-				testRunner.ClickByName("Has Heated Bed Checkbox", 1);
+				testRunner.ClickByName("Has Heated Bed Checkbox");
 				testRunner.Delay(.5);
 
-				testRunner.ClickByName("Filament Tab", 1);
-				Assert.IsFalse(testRunner.WaitForName("Bed Temperature Textbox", 2), "Filament -> Bed Temp should not be visible after Heated Bed unchecked");
+				testRunner.ClickByName("Filament Tab");
+				Assert.IsFalse(testRunner.WaitForName("Bed Temperature Textbox"), "Filament -> Bed Temp should not be visible after Heated Bed unchecked");
 
 				// Make sure Bed Temperature Options are not visible in printer controls
 				testRunner.SwitchToControlsTab();
 
-				Assert.IsFalse(testRunner.WaitForName("Bed Temperature Controls Widget", 2), "Controls -> Bed Temp should not be visible after Heated Bed unchecked");
+				Assert.IsFalse(testRunner.WaitForName("Bed Temperature Controls Widget"), "Controls -> Bed Temp should not be visible after Heated Bed unchecked");
 
 				return Task.CompletedTask;
 			}, overrideWidth: 1300);
@@ -307,12 +306,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
 				testRunner.SwitchToAdvancedSliceSettings();
 
-				testRunner.ClickByName("Layer Height Textbox", 2);
+				testRunner.ClickByName("Layer Height Textbox");
 				testRunner.Type(".5\n");
 				testRunner.Delay(.5);
 				Assert.AreEqual(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.layer_height), .5, "Layer height is what we set it to");
-				testRunner.ClickByName("Quality", 2);
-				testRunner.ClickByName("Fine Menu", 2);
+				testRunner.ClickByName("Quality");
+				testRunner.ClickByName("Fine Menu");
 
 				testRunner.Delay(.5);
 				Assert.AreEqual(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.layer_height), .1, "Layer height is the fine override");
@@ -324,7 +323,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				// Check if Guest printer names exists in dropdown
 				testRunner.OpenPrintersDropdown();
-				testRunner.ClickByName("Airwolf 3D HD Menu Item", 5);
+				testRunner.ClickByName("Airwolf 3D HD Menu Item");
 
 				testRunner.Delay(1);
 				Assert.AreEqual(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.layer_height), .1, "Layer height is the fine override");
@@ -332,8 +331,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// Switch to Slice Settings Tab
 				testRunner.ClickByName("Slice Settings Tab");
 
-				testRunner.ClickByName("Quality", 2);
-				testRunner.ClickByName("- none - Menu Item", 2, delayBeforeReturn: .5);
+				testRunner.ClickByName("Quality");
+				testRunner.ClickByName("- none - Menu Item", delayBeforeReturn: .5);
 				Assert.AreEqual(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.layer_height), .5, "Layer height is what we set it to");
 
 				return Task.CompletedTask;

@@ -63,9 +63,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void RemoveAllFromQueue(this AutomationRunner testRunner)
 		{
-			testRunner.ClickByName("Queue... Menu", 2);
+			testRunner.ClickByName("Queue... Menu");
 			testRunner.Delay(1);
-			testRunner.ClickByName(" Remove All Menu Item", 2);
+			testRunner.ClickByName(" Remove All Menu Item");
 		}
 
 		public static void CreateDownloadsSubFolder()
@@ -88,8 +88,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void SignOut(AutomationRunner testRunner)
 		{
-			testRunner.ClickByName("User Options Menu", 2);
-			testRunner.ClickByName("Sign Out Menu Item", 2);
+			testRunner.ClickByName("User Options Menu");
+			testRunner.ClickByName("Sign Out Menu Item");
 			testRunner.Delay(.5);
 
 			// Rather than waiting a fixed amount of time, we wait for the ReloadAll to complete before returning
@@ -128,8 +128,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public static void CloseMatterControlViaMenu(this AutomationRunner testRunner)
 		{
 			SystemWindow mcWindowLocal = MatterControlApplication.Instance;
-			testRunner.ClickByName("File Menu", 5);
-			testRunner.ClickByName("Exit Menu Item", 5);
+			testRunner.ClickByName("File Menu");
+			testRunner.ClickByName("Exit Menu Item");
 
 			testRunner.Delay(.2);
 			if (mcWindowLocal.Parent != null)
@@ -145,7 +145,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void Select3DPart(this AutomationRunner testRunner, string partNameToSelect)
 		{
-			if(testRunner.NameExists("3D View Edit"))
+			if(testRunner.NameExists("3D View Edit", .2))
 			{
 				testRunner.ClickByName("3D View Edit");
 			}
@@ -208,16 +208,16 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			var editButton = testRunner.GetWidgetByName("Edit Printer Button", out containingWindow);
 
 			testRunner.Delay(() => editButton.Enabled, 5); // Wait until the edit button is ready to click it. Ensures the printer is loaded.
-			testRunner.ClickByName("Edit Printer Button", 3);
+			testRunner.ClickByName("Edit Printer Button");
 
-			testRunner.ClickByName("Serial Port Dropdown", 3);
+			testRunner.ClickByName("Serial Port Dropdown");
 
-			testRunner.ClickByName(config.MCPort + " Menu Item", 5);
+			testRunner.ClickByName(config.MCPort + " Menu Item");
 
 			testRunner.ClickByName("Cancel Wizard Button");
 
 			// connect to the created printer
-			testRunner.ClickByName("Connect to printer button", 2);
+			testRunner.ClickByName("Connect to printer button");
 
 			testRunner.WaitForName("Disconnect from printer button", 5);
 
@@ -256,19 +256,19 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public static void DeleteSelectedPrinter(AutomationRunner testRunner)
 		{
 			// delete printer
-			testRunner.ClickByName("Edit Printer Button", 5);
+			testRunner.ClickByName("Edit Printer Button");
 			testRunner.Delay(.5);
 
-			testRunner.ClickByName("Delete Printer Button", 5);
+			testRunner.ClickByName("Delete Printer Button");
 			testRunner.Delay(.5);
 
-			testRunner.WaitForReloadAll(() => testRunner.ClickByName("Yes Button", 5));
+			testRunner.WaitForReloadAll(() => testRunner.ClickByName("Yes Button"));
 		}
 
 		public static void AddAndSelectPrinter(this AutomationRunner testRunner, string make, string model)
 		{
 			// If SelectMake is not visible and the ConnectionWizard is, click Skip
-			if (!testRunner.NameExists("Select Make") 
+			if (!testRunner.NameExists("Select Make", .2) 
 				&& testRunner.WaitForName("Connection Wizard Skip Sign In Button", 1))
 			{
 				testRunner.ClickByName("Connection Wizard Skip Sign In Button");
@@ -278,22 +278,22 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				// TODO: The overflow menu needs to always be on screen and when there's not enough room siblings should be removed from the actions bar and pushed into the overflow menu, rather than the menu clipping from the screen
 				testRunner.OpenPrintersDropdown();
-				testRunner.ClickByName("Add New Printer... Menu Item", 5, delayBeforeReturn: .5);
+				testRunner.ClickByName("Add New Printer... Menu Item", delayBeforeReturn: .5);
 			}
 
-			testRunner.ClickByName("Select Make", 5);
+			testRunner.ClickByName("Select Make");
 			testRunner.Type(make);
 			testRunner.Type("{Enter}");
 
-			testRunner.ClickByName("Select Model", 5);
+			testRunner.ClickByName("Select Model");
 			testRunner.Type(model);
 			testRunner.Type("{Enter}");
 
 			// An unpredictable period of time will pass between Clicking Save, everything reloading and us returning to the caller.
 			// Block until ReloadAll has completed then close and return to the caller, at which point hopefully everything is reloaded.
-			WaitForReloadAll(testRunner, () => testRunner.ClickByName("Save & Continue Button", 2));
+			WaitForReloadAll(testRunner, () => testRunner.ClickByName("Save & Continue Button"));
 
-			testRunner.ClickByName("Cancel Wizard Button", 5);
+			testRunner.ClickByName("Cancel Wizard Button");
 			testRunner.Delay(1);
 		}
 
@@ -501,25 +501,25 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public static void LibraryAddSelectionToQueue(AutomationRunner testRunner)
 		{
 			testRunner.ClickByName("Print Library Overflow Menu");
-			testRunner.ClickByName("Add to Queue Menu Item", 1);
+			testRunner.ClickByName("Add to Queue Menu Item");
 		}
 
 		public static void LibraryEditSelectedItem(AutomationRunner testRunner)
 		{
-			testRunner.ClickByName("Edit Menu Item", 1);
+			testRunner.ClickByName("Edit Menu Item");
 			testRunner.Delay(1); // wait for the new window to open
 		}
 
 		public static void LibraryRenameSelectedItem(this AutomationRunner testRunner)
 		{
 			testRunner.ClickByName("Print Library Overflow Menu");
-			testRunner.ClickByName("Rename Menu Item", 1);
+			testRunner.ClickByName("Rename Menu Item");
 		}
 
 		public static void LibraryRemoveSelectedItem(this AutomationRunner testRunner)
 		{
 			testRunner.ClickByName("Print Library Overflow Menu");
-			testRunner.ClickByName("Remove Menu Item", 1);
+			testRunner.ClickByName("Remove Menu Item");
 		}
 
 		public static string ResolveProjectPath(this TestContext context, int stepsToProjectRoot, params string[] relativePathSteps)

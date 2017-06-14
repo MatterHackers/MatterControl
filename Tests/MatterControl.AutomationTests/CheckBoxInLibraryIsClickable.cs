@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
-				testRunner.ClickByName("Library Tab", 3);
+				testRunner.ClickByName("Library Tab");
 				testRunner.NavigateToFolder("Local Library Row Item Collection");
 
 				SystemWindow systemWindow;
@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				SearchRegion rowItemRegion = testRunner.GetRegionByName(itemName, 3);
 
-				testRunner.ClickByName("Library Edit Button", 3);
+				testRunner.ClickByName("Library Edit Button");
 				testRunner.Delay(.5);
 
 				GuiWidget foundWidget = testRunner.GetWidgetByName("Row Item Select Checkbox", out systemWindow, 3, searchRegion: rowItemRegion);
@@ -65,11 +65,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.IsTrue(checkBoxWidget != null, "We should have an actual checkbox");
 				Assert.IsTrue(checkBoxWidget.Checked == false, "currently not checked");
 
-				testRunner.ClickByName("Row Item Select Checkbox", 3, searchRegion: rowItemRegion);
+				testRunner.ClickByName("Row Item Select Checkbox", searchRegion: rowItemRegion);
 				testRunner.ClickByName("Library Tab");
 				Assert.IsTrue(checkBoxWidget.Checked == true, "currently checked");
 
-				testRunner.ClickByName(itemName, 3);
+				testRunner.ClickByName(itemName);
 				testRunner.ClickByName("Library Tab");
 				Assert.IsTrue(checkBoxWidget.Checked == false, "currently not checked");
 
