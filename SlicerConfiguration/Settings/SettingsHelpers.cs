@@ -243,11 +243,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			printerSettings.SetValue($"{Environment.MachineName}_com_port", port, layer);
 		}
 
-		public void SetSlicingEngine(string engine)
-		{
-			printerSettings.SetValue("slicing_engine", engine);
-		}
-
 		public void SetDriverType(string driver)
 		{
 			printerSettings.SetValue("driver_type", driver);
@@ -345,48 +340,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			return Vector2.Zero;
-		}
-
-		public SlicingEngineTypes ActiveSliceEngineType()
-		{
-			if (OsInformation.OperatingSystem == OSType.Android
-				|| SlicingQueue.AvailableSliceEngines.Count == 1)
-			{
-				// android only has MatterSlice available, so always return it.
-				return SlicingEngineTypes.MatterSlice;
-			}
-
-			string engineType = printerSettings.GetValue("slicing_engine");
-			if (string.IsNullOrEmpty(engineType))
-			{
-				return SlicingEngineTypes.MatterSlice;
-			}
-
-			var engine = (SlicingEngineTypes)Enum.Parse(typeof(SlicingEngineTypes), engineType);
-			return engine;
-		}
-
-		public void ActiveSliceEngineType(SlicingEngineTypes type)
-		{
-			printerSettings.SetValue("slicing_engine", type.ToString());
-		}
-
-		public SliceEngineMapping ActiveSliceEngine()
-		{
-			switch (ActiveSliceEngineType())
-			{
-				case SlicingEngineTypes.CuraEngine:
-					return EngineMappingCura.Instance;
-
-				case SlicingEngineTypes.MatterSlice:
-					return EngineMappingsMatterSlice.Instance;
-
-				case SlicingEngineTypes.Slic3r:
-					return Slic3rEngineMappings.Instance;
-
-				default:
-					return null;
-			}
 		}
 
 		public void ExportAsMatterControlConfig()

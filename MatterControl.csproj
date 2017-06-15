@@ -304,10 +304,7 @@
     <Compile Include="Queue\QueueData.cs" />
     <Compile Include="SettingsManagement\OemSettings.cs" />
     <Compile Include="SettingsManagement\UserSettingsFields.cs" />
-    <Compile Include="SlicerConfiguration\CuraEngineInfo.cs" />
     <Compile Include="SlicerConfiguration\MatterSliceInfo.cs" />
-    <Compile Include="SlicerConfiguration\Slic3rInfo.cs" />
-    <Compile Include="SlicerConfiguration\SliceEngineInfo.cs" />
     <Compile Include="SlicerConfiguration\SettingsControlSelectors.cs" />
     <Compile Include="SlicerConfiguration\SlicePresetsWindow\SlicePresetsWindow.cs" />
     <Compile Include="SlicerConfiguration\SlicerMapping\EngineMappingMatterSlice.cs" />

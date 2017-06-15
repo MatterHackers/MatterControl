@@ -371,8 +371,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			this.HAnchor = HAnchor.ParentLeftRight;
 
-			var sliceEngineMapping = ActiveSliceSettings.Instance.Helpers.ActiveSliceEngine();
-
 			TabControl leftSideGroupTabs = new TabControl(Orientation.Vertical);
 			leftSideGroupTabs.Margin = new BorderDouble(0, 0, 0, 5);
 			leftSideGroupTabs.TabBar.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -420,7 +418,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							// settingShouldBeShown / addedSettingToSubGroup / needToAddSubGroup
 							bool settingShouldBeShown = CheckIfShouldBeShown(settingData);
 
-							if (sliceEngineMapping.MapContains(settingData.SlicerConfigName)
+							if (EngineMappingsMatterSlice.Instance.MapContains(settingData.SlicerConfigName)
 								&& settingShouldBeShown)
 							{
 								addedSettingToSubGroup = true;
@@ -574,14 +572,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				this.HAnchor = HAnchor.ParentLeftRight;
 
-				var sliceEngineMapping = ActiveSliceSettings.Instance.Helpers.ActiveSliceEngine();
-
 				foreach (var keyValue in ActiveSliceSettings.Instance.BaseLayer)
 				{
 					if (!SliceSettingsOrganizer.Instance.Contains(UserLevel, keyValue.Key))
 					{
 						SliceSettingData settingData = new SliceSettingData(keyValue.Key, keyValue.Key, SliceSettingData.DataEditTypes.STRING);
-						if (sliceEngineMapping.MapContains(settingData.SlicerConfigName))
+						if (EngineMappingsMatterSlice.Instance.MapContains(settingData.SlicerConfigName))
 						{
 							GuiWidget controlsForThisSetting = CreateSettingInfoUIControls(
 								settingData,

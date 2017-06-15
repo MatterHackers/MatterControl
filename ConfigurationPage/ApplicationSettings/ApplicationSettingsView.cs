@@ -66,12 +66,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			mainContainer.AddChild(new HorizontalLine(50));
 			mainContainer.AddChild(GetLanguageControl());
 			mainContainer.AddChild(new HorizontalLine(50));
-			GuiWidget sliceEngineControl = GetSliceEngineControl();
-			if (ActiveSliceSettings.Instance.PrinterSelected)
-			{
-				mainContainer.AddChild(sliceEngineControl);
-				mainContainer.AddChild(new HorizontalLine(50));
-			}
 
 
 			#if !__ANDROID__
@@ -439,42 +433,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			languageSelector.HAnchor = HAnchor.ParentLeftRight;
 
 			optionsContainer.AddChild(languageSelector);
-			optionsContainer.Width = 200;
-
-			buttonRow.AddChild(settingsLabel);
-			buttonRow.AddChild(new HorizontalSpacer());
-			buttonRow.AddChild(optionsContainer);
-			return buttonRow;
-		}
-
-		private FlowLayoutWidget GetSliceEngineControl()
-		{
-			FlowLayoutWidget buttonRow = new FlowLayoutWidget();
-			buttonRow.HAnchor = HAnchor.ParentLeftRight;
-			buttonRow.Margin = new BorderDouble(top: 4);
-
-			TextWidget settingsLabel = new TextWidget("Slice Engine".Localize());
-			settingsLabel.AutoExpandBoundsToText = true;
-			settingsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			settingsLabel.VAnchor = VAnchor.ParentTop;
-
-			FlowLayoutWidget controlsContainer = new FlowLayoutWidget();
-			controlsContainer.HAnchor = HAnchor.ParentLeftRight;
-
-			FlowLayoutWidget optionsContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			optionsContainer.Margin = new BorderDouble(bottom: 6);
-
-			var settings = ActiveSliceSettings.Instance;
-
-			// Reset active slicer to MatterSlice when multi-extruder is detected and MatterSlice is not already set
-			if (settings?.GetValue<int>(SettingsKey.extruder_count) > 1 
-				&& settings.Helpers.ActiveSliceEngineType() != SlicingEngineTypes.MatterSlice)
-			{
-				settings.Helpers.ActiveSliceEngineType(SlicingEngineTypes.MatterSlice);
-				ApplicationController.Instance.ReloadAll();
-			} 
-
-			optionsContainer.AddChild(new SliceEngineSelector("Slice Engine".Localize()));
 			optionsContainer.Width = 200;
 
 			buttonRow.AddChild(settingsLabel);
