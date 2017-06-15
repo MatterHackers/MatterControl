@@ -1715,9 +1715,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		public void ReadPosition()
+		public void ReadPosition(bool forceToTopOfQueue = false)
 		{
-			SendLineToPrinterNow("M114", true);
+			SendLineToPrinterNow("M114", forceToTopOfQueue);
 			PositionReadQueued = true;
 		}
 
@@ -2893,7 +2893,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						|| lineWithoutChecksum.StartsWith("G92") // is a reset of printer position
 						|| (lineWithoutChecksum.StartsWith("T") && !lineWithoutChecksum.StartsWith("T:"))) // is a switch extruder (verify this is the right time to ask this)
 					{
-						ReadPosition();
+						ReadPosition(true);
 					}
 
 					// write data to communication
