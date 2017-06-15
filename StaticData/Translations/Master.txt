@@ -6247,3 +6247,6 @@ Translated:Lower / Deploy
 English:Raise / Stow
 Translated:Raise / Stow
 
+English:Touch Screen Mode
+Translated:Touch Screen Mode
+

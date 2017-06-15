@@ -256,26 +256,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			buttonRow.HAnchor = HAnchor.ParentLeftRight;
 			buttonRow.Margin = new BorderDouble(top: 4);
 
-			TextWidget settingsLabel = new TextWidget("Display Mode".Localize());
+			TextWidget settingsLabel = new TextWidget("Touch Screen Mode".Localize());
 			settingsLabel.AutoExpandBoundsToText = true;
 			settingsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			settingsLabel.VAnchor = VAnchor.ParentTop;
-
-			Button displayControlRestartButton = textImageButtonFactory.Generate("Restart".Localize());
-			displayControlRestartButton.VAnchor = Agg.UI.VAnchor.ParentCenter;
-			displayControlRestartButton.Visible = false;
-			displayControlRestartButton.Margin = new BorderDouble(right: 6);
-			displayControlRestartButton.Click += (s, e) =>
-			{
-				if (PrinterConnection.Instance.PrinterIsPrinting)
-				{
-					StyledMessageBox.ShowMessageBox(null, cannotRestartWhilePrintIsActiveMessage, cannotRestartWhileActive);
-				}
-				else
-				{
-					RestartApplication();
-				}
-			};
 
 			FlowLayoutWidget optionsContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			optionsContainer.Margin = new BorderDouble(bottom: 6);
@@ -286,32 +270,29 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			optionsContainer.AddChild(interfaceOptionsDropList);
 			optionsContainer.Width = 200;
 
-			interfaceOptionsDropList.AddItem("Normal".Localize(), "responsive");
-			interfaceOptionsDropList.AddItem("Touchscreen".Localize(), "touchscreen");
-
 			List<string> acceptableUpdateFeedTypeValues = new List<string>() { "responsive", "touchscreen" };
 			string currentDisplayModeType = UserSettings.Instance.get(UserSettingsKey.ApplicationDisplayMode);
 
-			if (acceptableUpdateFeedTypeValues.IndexOf(currentDisplayModeType) == -1)
+			CheckBox touchScreenModeSwitch = ImageButtonFactory.CreateToggleSwitch(currentDisplayModeType == acceptableUpdateFeedTypeValues[1]);
+			touchScreenModeSwitch.VAnchor = VAnchor.ParentCenter;
+			touchScreenModeSwitch.CheckedStateChanged += (sender, e) =>
 			{
-				UserSettings.Instance.set(UserSettingsKey.ApplicationDisplayMode, "responsive");
-			}
-
-			interfaceOptionsDropList.SelectedValue = UserSettings.Instance.get(UserSettingsKey.ApplicationDisplayMode);
-			interfaceOptionsDropList.SelectionChanged += (s, e) =>
-			{
-				string displayMode = ((DropDownList)s).SelectedValue;
+				string displayMode = acceptableUpdateFeedTypeValues[0];
+				if(touchScreenModeSwitch.Checked)
+				{
+					displayMode = acceptableUpdateFeedTypeValues[1];
+				}
 				if (displayMode != UserSettings.Instance.get(UserSettingsKey.ApplicationDisplayMode))
 				{
 					UserSettings.Instance.set(UserSettingsKey.ApplicationDisplayMode, displayMode);
-					displayControlRestartButton.Visible = true;
+					ApplicationController.Instance.ReloadAll();
 				}
 			};
 
 			buttonRow.AddChild(settingsLabel);
 			buttonRow.AddChild(new HorizontalSpacer());
-			buttonRow.AddChild(displayControlRestartButton);
-			buttonRow.AddChild(optionsContainer);
+			buttonRow.AddChild(touchScreenModeSwitch);
+
 			return buttonRow;
 		}
 
@@ -433,38 +414,26 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			FlowLayoutWidget optionsContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			optionsContainer.Margin = new BorderDouble(bottom: 6);
 
-			Button languageRestartButton = textImageButtonFactory.Generate("Apply".Localize());
-			languageRestartButton.VAnchor = Agg.UI.VAnchor.ParentCenter;
-			languageRestartButton.Visible = false;
-			languageRestartButton.Margin = new BorderDouble(right: 6);
-
-			languageRestartButton.Click += (sender, e) =>
-			{
-				if (PrinterConnection.Instance.PrinterIsPrinting)
-				{
-					StyledMessageBox.ShowMessageBox(null, cannotRestartWhilePrintIsActiveMessage, cannotRestartWhileActive);
-				}
-				else
-				{
-					LocalizedString.ResetTranslationMap();
-					ApplicationController.Instance.ReloadAll();
-				}
-			};
 
 			LanguageSelector languageSelector = new LanguageSelector();
 			languageSelector.SelectionChanged += (s, e) =>
 			{
-				string languageCode = languageSelector.SelectedValue;
-				if (languageCode != UserSettings.Instance.get("Language"))
+				UiThread.RunOnIdle(() =>
 				{
-					UserSettings.Instance.set("Language", languageCode);
-					languageRestartButton.Visible = true;
-
-					if (languageCode == "L10N")
+					string languageCode = languageSelector.SelectedValue;
+					if (languageCode != UserSettings.Instance.get("Language"))
 					{
-						GenerateLocalizationValidationFile();
+						UserSettings.Instance.set("Language", languageCode);
+
+						if (languageCode == "L10N")
+						{
+							GenerateLocalizationValidationFile();
+						}
+
+						LocalizedString.ResetTranslationMap();
+						ApplicationController.Instance.ReloadAll();
 					}
-				}
+				});
 			};
 
 			languageSelector.HAnchor = HAnchor.ParentLeftRight;
@@ -474,7 +443,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			buttonRow.AddChild(settingsLabel);
 			buttonRow.AddChild(new HorizontalSpacer());
-			buttonRow.AddChild(languageRestartButton);
 			buttonRow.AddChild(optionsContainer);
 			return buttonRow;
 		}

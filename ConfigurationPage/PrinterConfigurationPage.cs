@@ -40,7 +40,7 @@ using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl
 {
-	public class PrinterConfigurationScrollWidget : ScrollableWidget
+	public class PrinterConfigurationScrollWidget : ScrollableWidget, IIgnoredPopupChild
 	{
 		public PrinterConfigurationScrollWidget()
 			: base(true)

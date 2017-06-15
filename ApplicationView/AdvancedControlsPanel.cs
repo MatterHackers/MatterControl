@@ -100,14 +100,6 @@ namespace MatterHackers.MatterControl
 				ActiveTheme.Instance.TabLabelUnselected, 
 				new RGBA_Bytes()));
 
-
-			newTabControl.AddTab(
-				new SimpleTextTabWidget(
-					new TabPage(new PrinterConfigurationScrollWidget(), "Options".Localize().ToUpper()), 
-					"Options Tab", 
-					newTabControl.TextPointSize,
-					ActiveTheme.Instance.PrimaryTextColor, new RGBA_Bytes(), ActiveTheme.Instance.TabLabelUnselected, new RGBA_Bytes()));
-
 			newTabControl.SelectedTabIndex = ApplicationController.Instance.ActiveAdvancedControlsTab;
 
 			return newTabControl;
