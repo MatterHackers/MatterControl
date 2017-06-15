@@ -1,0 +1,14 @@
+{
+  "scripts": {
+    "precommit": "lint-staged",
+    "yaspeller-ci": "yaspeller-ci"
+  },
+  "lint-staged": {
+    "Master.txt": "yaspeller-ci"
+  },
+  "devDependencies": {
+    "husky": "^0.13.4",
+    "lint-staged": "^3.6.1",
+    "yaspeller-ci": "^0.4.0"
+  }
+}
