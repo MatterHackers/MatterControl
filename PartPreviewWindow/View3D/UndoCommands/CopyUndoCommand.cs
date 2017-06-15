@@ -2,6 +2,7 @@
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
 using System.Linq;
+using MatterHackers.DataConverters3D;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
