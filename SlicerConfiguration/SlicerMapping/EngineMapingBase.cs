@@ -76,7 +76,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			SettingsKey.recover_position_before_z_home,
 			SettingsKey.resume_gcode,
 			SettingsKey.temperature,
-			"z_can_be_negative",
 			"z_homes_to_max",
 
 			// TODO: merge the items below into the list above after some validation - setting that weren't previously mapped to Cura but probably should be. 
