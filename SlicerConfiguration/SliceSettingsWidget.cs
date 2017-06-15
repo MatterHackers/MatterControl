@@ -1280,9 +1280,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 					case SliceSettingData.DataEditTypes.COM_PORT:
 						{
-#if __ANDROID__
-							addControl = false;
-#endif
+							// TODO: Conditionally opt out on Android
 
 							EventHandler localUnregisterEvents = null;
 

@@ -737,7 +737,12 @@ namespace MatterHackers.MatterControl
 						// Accessing any property on ProfileManager will run the static constructor and spin up the ProfileManager instance
 						bool na = ProfileManager.Instance.IsGuestProfile;
 
+						// TODO: Short-term workaround to force DesktopView on Android
+#if __ANDROID__
+						if (false)
+#else
 						if (UserSettings.Instance.IsTouchScreen)
+#endif
 						{
 							// and make sure we have the check for print recovery wired up needed for lazy tabs.
 							var temp2 = PrintHistoryData.Instance;

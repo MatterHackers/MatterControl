@@ -122,7 +122,7 @@ namespace MatterHackers.MatterControl.FieldValidation
 	{
 		public delegate ValidationStatus ValidationHandler(string valueToValidate);
 
-		private MHTextEditWidget FieldEditWidget { get; set; }
+		public MHTextEditWidget FieldEditWidget { get; set; }
 
 		public TextWidget FieldErrorMessageWidget { get; set; }
 
