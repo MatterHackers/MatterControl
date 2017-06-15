@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.Library
 
 			this.ChildContainers = new List<ILibraryContainerLink>();
 			this.Items = new List<ILibraryItem>();
-
+#if !__ANDROID__
 			if (OsInformation.OperatingSystem == OSType.Windows)
 			{
 				directoryWatcher = new FileSystemWatcher(path);
@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl.Library
 				// Begin watching.
 				directoryWatcher.EnableRaisingEvents = true;
 			}
-
+#endif
 			GetFilesAndCollectionsInCurrentDirectory();
 		}
 

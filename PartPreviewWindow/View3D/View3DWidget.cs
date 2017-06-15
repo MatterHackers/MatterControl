@@ -179,9 +179,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public UndoBuffer UndoBuffer { get; private set; } = new UndoBuffer();
 		public readonly int EditButtonHeight = 44;
 
-		private static string PartsNotPrintableMessage = "Parts are not on the bed or outside the print area.\n\nWould you like to center them on the bed?".Localize();
-		private static string PartsNotPrintableTitle = "Parts not in print area".Localize();
-
 		private bool editorThatRequestedSave = false;
 		private ExportPrintItemWindow exportingWindow = null;
 		private ObservableCollection<GuiWidget> extruderButtons = new ObservableCollection<GuiWidget>();
