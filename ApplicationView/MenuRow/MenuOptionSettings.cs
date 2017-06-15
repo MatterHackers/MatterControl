@@ -9,24 +9,27 @@ using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using MatterHackers.MatterControl.PartPreviewWindow;
 
 namespace MatterHackers.MatterControl
 {
-	public class MenuOptionSettings : MenuBase
+
+	public class MenuOptionSettings : PopupButton
 	{
-		static public PopOutTextTabWidget sliceSettingsPopOut = null;
-
-		public MenuOptionSettings() : base("View".Localize())
+		public MenuOptionSettings()
+			: base(new TextWidget("Options".Localize().ToUpper(), 0, 0, 10, textColor: ActiveTheme.Instance.PrimaryTextColor))
 		{
-		}
+			Margin = new BorderDouble(0);
+			Padding = new BorderDouble(4);
+			VAnchor = VAnchor.ParentCenter;
+			OpenOffset = new Vector2(-3, -5);
 
-		protected override IEnumerable<MenuItemAction> GetMenuActions()
-		{
-			return new List<MenuItemAction>
+			var container = new GuiWidget(640, 600)
 			{
-				new MenuItemAction("Settings".Localize(), () => sliceSettingsPopOut?.ShowInWindow()),
-				new MenuItemAction("Terminal".Localize(), () => UiThread.RunOnIdle(TerminalWindow.Show)),
+				BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor,
 			};
+			container.AddChild(new PrinterConfigurationScrollWidget());
+			this.PopupContent = container;
 		}
 	}
 }

@@ -66,8 +66,6 @@ namespace MatterHackers.MatterControl
 			// put in the file menu
 			this.AddChild(new MenuOptionFile());
 
-			this.AddChild(new MenuOptionSettings());
-
 			// put in the action menu
 			if (ActiveSliceSettings.Instance?.ActionMacros().Any() == true)
 			{
@@ -76,6 +74,8 @@ namespace MatterHackers.MatterControl
 
 			// put in the help menu
 			this.AddChild(new MenuOptionHelp());
+
+			this.AddChild(new MenuOptionSettings());
 
 			//linkButtonFactory.textColor = ActiveTheme.Instance.SecondaryAccentColor;
 			linkButtonFactory.fontSize = 10;
