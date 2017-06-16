@@ -92,7 +92,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			printerComPortHelpLink.VAnchor = VAnchor.ParentBottom;
 			printerComPortHelpLink.Click += (s, e) => printerComPortHelpMessage.Visible = !printerComPortHelpMessage.Visible;
 
-			printerComPortHelpMessage = new TextWidget("The 'Serial Port' section lists all available serial\nports on your device. Changing which USB port the printer\nis conneted to may change the associated serial port.\n\nTip: If you are uncertain, unplug/plug in your printer\nand hit refresh. The new port that appears should be\nyour printer.".Localize(), 0, 0, 10);
+			printerComPortHelpMessage = new TextWidget("The 'Serial Port' section lists all available serial\nports on your device. Changing which USB port the printer\nis connected to may change the associated serial port.\n\nTip: If you are uncertain, unplug/plug in your printer\nand hit refresh. The new port that appears should be\nyour printer.".Localize(), 0, 0, 10);
 			printerComPortHelpMessage.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			printerComPortHelpMessage.Margin = new BorderDouble(top: 10);
 			printerComPortHelpMessage.Visible = false;
