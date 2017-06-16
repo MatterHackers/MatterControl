@@ -40,6 +40,7 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
+using MatterHackers.MatterControl.ConfigurationPage;
 
 namespace MatterHackers.MatterControl
 {
@@ -169,7 +170,7 @@ namespace MatterHackers.MatterControl
 			this.AddTab(
 				"Options Tab",
 				"Options".Localize().ToUpper(),
-				() => new PrinterConfigurationScrollWidget());
+				() => new ApplicationSettingsWidget(ApplicationController.Instance.Theme.BreadCrumbButtonFactorySmallMargins));
 
 			this.AddTab(
 				"About Tab",

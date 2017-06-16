@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Kevin Pope
+Copyright (c) 2017, Kevin Pope, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,127 +27,198 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg;
-using MatterHackers.Agg.PlatformAbstract;
-using MatterHackers.Agg.UI;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.MatterControl.PrintHistory;
-using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
+using MatterHackers.Agg.ImageProcessing;
+using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.ConfigurationPage
 {
-	public class ApplicationSettingsWidget : SettingsViewBase
+	public class ApplicationSettingsWidget : FlowLayoutWidget, IIgnoredPopupChild
 	{
+		public static Action OpenPrintNotification = null;
+
 		private string cannotRestartWhilePrintIsActiveMessage = "Oops! You cannot restart while a print is active.".Localize();
 		private string cannotRestartWhileActive = "Unable to restart".Localize();
 
-		public ApplicationSettingsWidget()
-			: base("Application".Localize())
+		private TextImageButtonFactory buttonFactory;
+
+		private RGBA_Bytes menuTextColor = RGBA_Bytes.Black;
+
+		public ApplicationSettingsWidget(TextImageButtonFactory buttonFactory)
+			: base(FlowDirection.TopToBottom)
 		{
-			if (UserSettings.Instance.IsTouchScreen)
-			{
-				mainContainer.AddChild(new HorizontalLine(50));
-			}
+			this.buttonFactory = buttonFactory;
+			this.HAnchor = HAnchor.ParentLeftRight;
+			this.VAnchor = VAnchor.FitToChildren;
+			this.Padding = 15;
 
 			if (UserSettings.Instance.IsTouchScreen)
 			{
-				mainContainer.AddChild(GetUpdateControl());
-				mainContainer.AddChild(new HorizontalLine(50));
+				this.AddSettingsRow(this.GetUpdateControl());
 			}
-			
-			mainContainer.AddChild(new HorizontalLine(50));
-			mainContainer.AddChild(GetLanguageControl());
-			mainContainer.AddChild(new HorizontalLine(50));
 
+			this.AddSettingsRow(this.GetCameraMonitoringControl());
+
+			this.AddSettingsRow(this.GetNotificationControls());
+
+			this.AddSettingsRow(this.GetLanguageControl());
 
 			#if !__ANDROID__
 			{
-				mainContainer.AddChild(GetThumbnailRenderingControl());
-				mainContainer.AddChild(new HorizontalLine(50));
+				this.AddSettingsRow(this.GetThumbnailRenderingControl());
 
-				mainContainer.AddChild(GetDisplayControl());
-				mainContainer.AddChild(GetTextSizeControl());
-				mainContainer.AddChild(new HorizontalLine(50));
+				this.AddSettingsRow(this.GetDisplayControl());
+
+				this.AddSettingsRow(this.GetTextSizeControl());
 			}
 			#endif
 			
 			if (UserSettings.Instance.IsTouchScreen)
 			{
-				mainContainer.AddChild(GetModeControl());
-				mainContainer.AddChild(new HorizontalLine(50));
+				this.AddSettingsRow(this.GetModeControl());
 			}
 
-			mainContainer.AddChild(GetClearHistoryControl());
-			mainContainer.AddChild(new HorizontalLine(50));
-
-			mainContainer.AddChild(GetThemeControl());
-
-			AddChild(mainContainer);
-
-			AddHandlers();
+			this.AddSettingsRow(this.GetThemeControl());
 		}
 
-		private FlowLayoutWidget GetClearHistoryControl()
+		private void AddSettingsRow(GuiWidget widget)
 		{
-			FlowLayoutWidget buttonRow = new FlowLayoutWidget();
-			buttonRow.HAnchor = HAnchor.ParentLeftRight;
-			buttonRow.Margin = new BorderDouble(3, 4);
+			this.AddChild(widget);
+			this.AddChild(new HorizontalLine(50));
+		}
 
-			TextWidget clearHistoryLabel = new TextWidget("Clear Print History".Localize());
-			clearHistoryLabel.AutoExpandBoundsToText = true;
-			clearHistoryLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			clearHistoryLabel.VAnchor = VAnchor.ParentCenter;
+		private FlowLayoutWidget GetNotificationControls()
+		{
+			FlowLayoutWidget notificationSettingsContainer = new FlowLayoutWidget();
+			notificationSettingsContainer.HAnchor |= HAnchor.ParentLeftRight;
+			notificationSettingsContainer.VAnchor |= Agg.UI.VAnchor.ParentCenter;
+			notificationSettingsContainer.Margin = new BorderDouble(0, 0, 0, 0);
+			notificationSettingsContainer.Padding = new BorderDouble(0);
 
-			Button clearHistoryButton = textImageButtonFactory.Generate("Remove All".Localize().ToUpper());
-			clearHistoryButton.Click += (sender, e) =>
+			ImageBuffer notifiImage = StaticData.Instance.LoadIcon("notify-24x24.png");
+			notifiImage.SetRecieveBlender(new BlenderPreMultBGRA());
+
+			ImageWidget notificationSettingsIcon = new ImageWidget(notifiImage);
+			notificationSettingsIcon.VAnchor = VAnchor.ParentCenter;
+			notificationSettingsIcon.Margin = new BorderDouble(right: 6, bottom: 6);
+
+			var configureNotificationSettingsButton = buttonFactory.Generate("Configure".Localize().ToUpper());
+			configureNotificationSettingsButton.Name = "Configure Notification Settings Button";
+			configureNotificationSettingsButton.Margin = new BorderDouble(left: 6);
+			configureNotificationSettingsButton.VAnchor = VAnchor.ParentCenter;
+			configureNotificationSettingsButton.Click += (s, e) =>
 			{
-				PrintHistoryData.Instance.ClearHistory();
+				if (OpenPrintNotification != null)
+				{
+					UiThread.RunOnIdle(OpenPrintNotification);
+				}
 			};
 
-			//buttonRow.AddChild(eePromIcon);
-			buttonRow.AddChild(clearHistoryLabel);
-			buttonRow.AddChild(new HorizontalSpacer());
-			buttonRow.AddChild(clearHistoryButton);
+			var notificationSettingsLabel = new TextWidget("Notifications".Localize());
+			notificationSettingsLabel.AutoExpandBoundsToText = true;
+			notificationSettingsLabel.TextColor = menuTextColor;
+			notificationSettingsLabel.VAnchor = VAnchor.ParentCenter;
 
-			return buttonRow;
+			GuiWidget printNotificationsSwitchContainer = new FlowLayoutWidget();
+			printNotificationsSwitchContainer.VAnchor = VAnchor.ParentCenter;
+			printNotificationsSwitchContainer.Margin = new BorderDouble(left: 16);
+
+			CheckBox enablePrintNotificationsSwitch = ImageButtonFactory.CreateToggleSwitch(UserSettings.Instance.get("PrintNotificationsEnabled") == "true", menuTextColor);
+			enablePrintNotificationsSwitch.VAnchor = VAnchor.ParentCenter;
+			enablePrintNotificationsSwitch.CheckedStateChanged += (sender, e) =>
+			{
+				UserSettings.Instance.set("PrintNotificationsEnabled", enablePrintNotificationsSwitch.Checked ? "true" : "false");
+			};
+			printNotificationsSwitchContainer.AddChild(enablePrintNotificationsSwitch);
+			printNotificationsSwitchContainer.SetBoundsToEncloseChildren();
+
+			notificationSettingsContainer.AddChild(notificationSettingsIcon);
+			notificationSettingsContainer.AddChild(notificationSettingsLabel);
+			notificationSettingsContainer.AddChild(new HorizontalSpacer());
+			notificationSettingsContainer.AddChild(configureNotificationSettingsButton);
+			notificationSettingsContainer.AddChild(printNotificationsSwitchContainer);
+
+			return notificationSettingsContainer;
 		}
 
-		private void SetDisplayAttributes()
+		private FlowLayoutWidget GetCameraMonitoringControl()
 		{
-			//this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-			this.Margin = new BorderDouble(2, 4, 2, 0);
-			this.textImageButtonFactory.normalFillColor = RGBA_Bytes.White;
-			this.textImageButtonFactory.disabledFillColor = RGBA_Bytes.White;
+			bool hasCamera = true || ApplicationSettings.Instance.get(ApplicationSettingsKey.HardwareHasCamera) == "true";
 
-			this.textImageButtonFactory.FixedHeight = TallButtonHeight;
-			this.textImageButtonFactory.fontSize = 11;
+			var settingsRow = new FlowLayoutWidget()
+			{
+				HAnchor = HAnchor.ParentLeftRight,
+				Margin = new BorderDouble(bottom: 4),
+			};
 
-			this.textImageButtonFactory.disabledTextColor = RGBA_Bytes.DarkGray;
-			this.textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			this.textImageButtonFactory.normalTextColor = RGBA_Bytes.Black;
-			this.textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			ImageBuffer cameraIconImage = StaticData.Instance.LoadIcon("camera-24x24.png", 24, 24);
+			cameraIconImage.SetRecieveBlender(new BlenderPreMultBGRA());
 
-			this.linkButtonFactory.fontSize = 11;
+			var openCameraButton = buttonFactory.Generate("Preview".Localize().ToUpper());
+			openCameraButton.Click += (s, e) =>
+			{
+				MatterControlApplication.Instance.OpenCameraPreview();
+			};
+			openCameraButton.Margin = new BorderDouble(left: 6);
+
+			settingsRow.AddChild(new ImageWidget(cameraIconImage)
+			{
+				Margin = new BorderDouble(right: 6)
+			});
+			settingsRow.AddChild(new TextWidget("Camera Monitoring".Localize())
+			{
+				AutoExpandBoundsToText = true,
+				TextColor = menuTextColor,
+				VAnchor = VAnchor.ParentCenter
+			});
+			settingsRow.AddChild(new HorizontalSpacer());
+			settingsRow.AddChild(openCameraButton);
+
+			if (hasCamera)
+			{
+				var publishImageSwitchContainer = new FlowLayoutWidget()
+				{
+					VAnchor = VAnchor.ParentCenter,
+					Margin = new BorderDouble(left: 16)
+				};
+
+				CheckBox toggleSwitch = ImageButtonFactory.CreateToggleSwitch(ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.publish_bed_image), menuTextColor);
+
+				toggleSwitch.CheckedStateChanged += (sender, e) =>
+				{
+					ActiveSliceSettings.Instance.SetValue(SettingsKey.publish_bed_image, toggleSwitch.Checked ? "1" : "0");
+				};
+				publishImageSwitchContainer.AddChild(toggleSwitch);
+
+				publishImageSwitchContainer.SetBoundsToEncloseChildren();
+
+				settingsRow.AddChild(publishImageSwitchContainer);
+			}
+
+			return settingsRow;
 		}
 
 		private FlowLayoutWidget GetThemeControl()
 		{
-			FlowLayoutWidget buttonRow = new FlowLayoutWidget(Agg.UI.FlowDirection.TopToBottom);
+			FlowLayoutWidget buttonRow = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			buttonRow.HAnchor = HAnchor.ParentLeftRight;
 			buttonRow.Margin = new BorderDouble(0, 6);
 
 			TextWidget settingLabel = new TextWidget("Theme".Localize());
 			settingLabel.AutoExpandBoundsToText = true;
-			settingLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			settingLabel.HAnchor = Agg.UI.HAnchor.ParentLeft;
+			settingLabel.TextColor = menuTextColor;
+			settingLabel.HAnchor = HAnchor.ParentLeft;
 
 			FlowLayoutWidget colorSelectorContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
 			colorSelectorContainer.HAnchor = HAnchor.ParentLeftRight;
@@ -158,7 +229,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			currentColorThemeBorder.VAnchor = VAnchor.ParentBottomTop;
 			currentColorThemeBorder.Padding = new BorderDouble(5);
 			currentColorThemeBorder.Width = 80;
-			currentColorThemeBorder.BackgroundColor = RGBA_Bytes.White;
+			currentColorThemeBorder.BackgroundColor = RGBA_Bytes.LightGray;
 
 			GuiWidget currentColorTheme = new GuiWidget();
 			currentColorTheme.HAnchor = HAnchor.ParentLeftRight;
@@ -196,7 +267,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				AutoExpandBoundsToText = true
 			};
 			settingsLabel.AutoExpandBoundsToText = true;
-			settingsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			settingsLabel.TextColor = menuTextColor;
 			settingsLabel.VAnchor = VAnchor.ParentTop;
 
 			double sliderThumbWidth = 10 * GuiWidget.DeviceScale;
@@ -217,8 +288,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			string currentTextModeType = UserSettings.Instance.get(UserSettingsKey.ApplicationTextSize);
 
-			Button textSizeControlApplyButton = textImageButtonFactory.Generate("Apply".Localize());
-			textSizeControlApplyButton.VAnchor = Agg.UI.VAnchor.ParentCenter;
+			Button textSizeControlApplyButton = buttonFactory.Generate("Apply".Localize());
+			textSizeControlApplyButton.VAnchor = VAnchor.ParentCenter;
 			textSizeControlApplyButton.Visible = false;
 			textSizeControlApplyButton.Margin = new BorderDouble(right: 6);
 			textSizeControlApplyButton.Click += (s, e) =>
@@ -252,7 +323,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			TextWidget settingsLabel = new TextWidget("Touch Screen Mode".Localize());
 			settingsLabel.AutoExpandBoundsToText = true;
-			settingsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			settingsLabel.TextColor = menuTextColor;
 			settingsLabel.VAnchor = VAnchor.ParentTop;
 
 			FlowLayoutWidget optionsContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
@@ -267,7 +338,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			List<string> acceptableUpdateFeedTypeValues = new List<string>() { "responsive", "touchscreen" };
 			string currentDisplayModeType = UserSettings.Instance.get(UserSettingsKey.ApplicationDisplayMode);
 
-			CheckBox touchScreenModeSwitch = ImageButtonFactory.CreateToggleSwitch(currentDisplayModeType == acceptableUpdateFeedTypeValues[1]);
+			CheckBox touchScreenModeSwitch = ImageButtonFactory.CreateToggleSwitch(currentDisplayModeType == acceptableUpdateFeedTypeValues[1], menuTextColor);
 			touchScreenModeSwitch.VAnchor = VAnchor.ParentCenter;
 			touchScreenModeSwitch.CheckedStateChanged += (sender, e) =>
 			{
@@ -298,7 +369,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			TextWidget settingsLabel = new TextWidget("Interface Mode".Localize());
 			settingsLabel.AutoExpandBoundsToText = true;
-			settingsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			settingsLabel.TextColor = menuTextColor;
 			settingsLabel.VAnchor = VAnchor.ParentTop;
 
 			FlowLayoutWidget optionsContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
@@ -340,13 +411,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			buttonRow.HAnchor = HAnchor.ParentLeftRight;
 			buttonRow.Margin = new BorderDouble(top: 4);
 
-			Button configureUpdateFeedButton = textImageButtonFactory.Generate("Configure".Localize().ToUpper());
+			Button configureUpdateFeedButton = buttonFactory.Generate("Configure".Localize().ToUpper());
 			configureUpdateFeedButton.Margin = new BorderDouble(left: 6);
 			configureUpdateFeedButton.VAnchor = VAnchor.ParentCenter;
 
 			TextWidget settingsLabel = new TextWidget("Update Notification Feed".Localize());
 			settingsLabel.AutoExpandBoundsToText = true;
-			settingsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			settingsLabel.TextColor = menuTextColor;
 			settingsLabel.VAnchor = VAnchor.ParentTop;
 
 			FlowLayoutWidget optionsContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
@@ -399,7 +470,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			TextWidget settingsLabel = new TextWidget("Language".Localize());
 			settingsLabel.AutoExpandBoundsToText = true;
-			settingsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			settingsLabel.TextColor = menuTextColor;
 			settingsLabel.VAnchor = VAnchor.ParentTop;
 
 			FlowLayoutWidget controlsContainer = new FlowLayoutWidget();
@@ -410,6 +481,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 
 			LanguageSelector languageSelector = new LanguageSelector();
+			languageSelector.TextColor = menuTextColor;
 			languageSelector.SelectionChanged += (s, e) =>
 			{
 				UiThread.RunOnIdle(() =>
@@ -449,13 +521,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			TextWidget settingsLabel = new TextWidget("Thumbnail Rendering".Localize());
 			settingsLabel.AutoExpandBoundsToText = true;
-			settingsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			settingsLabel.TextColor = menuTextColor;
 			settingsLabel.VAnchor = VAnchor.ParentTop;
 
 			FlowLayoutWidget optionsContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			optionsContainer.Margin = new BorderDouble(bottom: 6);
 
 			DropDownList interfaceOptionsDropList = new DropDownList("Development", maxHeight: 200);
+			interfaceOptionsDropList.TextColor = menuTextColor;
 			interfaceOptionsDropList.HAnchor = HAnchor.ParentLeftRight;
 
 			optionsContainer.AddChild(interfaceOptionsDropList);
@@ -524,10 +597,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 		private string rebuildThumbnailsMessage = "You are switching to a different thumbnail rendering mode. If you want, your current thumbnails can be removed and recreated in the new style. You can switch back and forth at any time. There will be some processing overhead while the new thumbnails are created.\n\nDo you want to rebuild your existing thumbnails now?".Localize();
 		private string rebuildThumbnailsTitle = "Rebuild Thumbnails Now".Localize();
-
-		private void AddHandlers()
-		{
-		}
 
 		private void RestartApplication()
 		{

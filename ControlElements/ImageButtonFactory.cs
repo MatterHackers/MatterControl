@@ -43,6 +43,11 @@ namespace MatterHackers.MatterControl
 
 		public static CheckBox CreateToggleSwitch(bool initialState)
 		{
+			return CreateToggleSwitch(initialState, ActiveTheme.Instance.PrimaryTextColor);
+		}
+
+		public static CheckBox CreateToggleSwitch(bool initialState, RGBA_Bytes textColor)
+		{
 			string on = "On";
 			string off = "Off";
 			if (StaticData.Instance != null)
@@ -55,7 +60,7 @@ namespace MatterHackers.MatterControl
 				ActiveTheme.Instance.PrimaryBackgroundColor,
 				new RGBA_Bytes(220, 220, 220),
 				ActiveTheme.Instance.PrimaryAccentColor,
-				ActiveTheme.Instance.PrimaryTextColor);
+				textColor);
 			CheckBox toggleBox = new CheckBox(toggleView);
 			toggleBox.Checked = initialState;
 			return toggleBox;

@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.MatterControl.ConfigurationPage;
 
 namespace MatterHackers.MatterControl
 {
@@ -24,12 +25,13 @@ namespace MatterHackers.MatterControl
 			VAnchor = VAnchor.ParentCenter;
 			OpenOffset = new Vector2(-3, -5);
 
-			var container = new GuiWidget(640, 600)
+			this.PopupContent = new ApplicationSettingsWidget(ApplicationController.Instance.Theme.MenuButtonFactory)
 			{
-				BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor,
+				HAnchor = HAnchor.AbsolutePosition,
+				VAnchor = VAnchor.FitToChildren,
+				Width = 500,
+				BackgroundColor = RGBA_Bytes.White
 			};
-			container.AddChild(new PrinterConfigurationScrollWidget());
-			this.PopupContent = container;
 		}
 	}
 }
