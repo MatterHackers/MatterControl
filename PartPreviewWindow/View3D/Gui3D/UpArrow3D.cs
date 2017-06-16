@@ -102,13 +102,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnMouseDown(MouseEvent3DArgs mouseEvent3D)
 		{
-			zHitHeight = mouseEvent3D.info.hitPosition.z;
+			zHitHeight = mouseEvent3D.info.HitPosition.z;
 			lastMoveDelta = new Vector3();
-			double distanceToHit = Vector3.Dot(mouseEvent3D.info.hitPosition, mouseEvent3D.MouseRay.directionNormal);
+			double distanceToHit = Vector3.Dot(mouseEvent3D.info.HitPosition, mouseEvent3D.MouseRay.directionNormal);
 			hitPlane = new PlaneShape(mouseEvent3D.MouseRay.directionNormal, distanceToHit, null);
 
 			IntersectInfo info = hitPlane.GetClosestIntersection(mouseEvent3D.MouseRay);
-			zHitHeight = info.hitPosition.z;
+			zHitHeight = info.HitPosition.z;
 
 			var selectedItem = MeshViewerToDrawWith.Scene.SelectedItem;
 			if (selectedItem != null)
@@ -126,7 +126,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (info != null && MeshViewerToDrawWith.Scene.HasSelection)
 			{
 				var selectedItem = MeshViewerToDrawWith.Scene.SelectedItem;
-				Vector3 delta = new Vector3(0, 0, info.hitPosition.z - zHitHeight);
+				Vector3 delta = new Vector3(0, 0, info.HitPosition.z - zHitHeight);
 
 				// move it back to where it started
 				selectedItem.Matrix *= Matrix4X4.CreateTranslation(new Vector3(-lastMoveDelta));
