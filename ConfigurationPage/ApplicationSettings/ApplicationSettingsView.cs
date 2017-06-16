@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Kevin Pope
+Copyright (c) 2017, Kevin Pope, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -41,56 +41,56 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.ConfigurationPage
 {
-	public class ApplicationSettingsWidget : SettingsViewBase
+	public class ApplicationSettingsWidget : FlowLayoutWidget
 	{
 		private string cannotRestartWhilePrintIsActiveMessage = "Oops! You cannot restart while a print is active.".Localize();
 		private string cannotRestartWhileActive = "Unable to restart".Localize();
 
+		private TextImageButtonFactory buttonFactory;
 		public ApplicationSettingsWidget(TextImageButtonFactory buttonFactory)
-			: base("Application".Localize(), buttonFactory)
+			: base(FlowDirection.TopToBottom)
 		{
 			this.buttonFactory = buttonFactory;
+			this.HAnchor = HAnchor.ParentLeftRight;
+			this.VAnchor = VAnchor.FitToChildren;
+			this.Padding = 15;
 
 			if (UserSettings.Instance.IsTouchScreen)
 			{
-				mainContainer.AddChild(new HorizontalLine(50));
+				this.AddChild(new HorizontalLine(50));
 			}
 
 			if (UserSettings.Instance.IsTouchScreen)
 			{
-				mainContainer.AddChild(GetUpdateControl());
-				mainContainer.AddChild(new HorizontalLine(50));
+				this.AddChild(GetUpdateControl());
+				this.AddChild(new HorizontalLine(50));
 			}
 			
-			mainContainer.AddChild(new HorizontalLine(50));
+			this.AddChild(new HorizontalLine(50));
 
-			mainContainer.AddChild(GetLanguageControl());
-			mainContainer.AddChild(new HorizontalLine(50));
+			this.AddChild(GetLanguageControl());
+			this.AddChild(new HorizontalLine(50));
 
 			#if !__ANDROID__
 			{
-				mainContainer.AddChild(GetThumbnailRenderingControl());
-				mainContainer.AddChild(new HorizontalLine(50));
+				this.AddChild(GetThumbnailRenderingControl());
+				this.AddChild(new HorizontalLine(50));
 
-				mainContainer.AddChild(GetDisplayControl());
-				mainContainer.AddChild(new HorizontalLine(50));
+				this.AddChild(GetDisplayControl());
+				this.AddChild(new HorizontalLine(50));
 
-				mainContainer.AddChild(GetTextSizeControl());
-				mainContainer.AddChild(new HorizontalLine(50));
+				this.AddChild(GetTextSizeControl());
+				this.AddChild(new HorizontalLine(50));
 			}
 			#endif
 			
 			if (UserSettings.Instance.IsTouchScreen)
 			{
-				mainContainer.AddChild(GetModeControl());
-				mainContainer.AddChild(new HorizontalLine(50));
+				this.AddChild(GetModeControl());
+				this.AddChild(new HorizontalLine(50));
 			}
 
-			mainContainer.AddChild(GetThemeControl());
-
-			AddChild(mainContainer);
-
-			AddHandlers();
+			this.AddChild(GetThemeControl());
 		}
 
 
@@ -480,10 +480,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 		private string rebuildThumbnailsMessage = "You are switching to a different thumbnail rendering mode. If you want, your current thumbnails can be removed and recreated in the new style. You can switch back and forth at any time. There will be some processing overhead while the new thumbnails are created.\n\nDo you want to rebuild your existing thumbnails now?".Localize();
 		private string rebuildThumbnailsTitle = "Rebuild Thumbnails Now".Localize();
-
-		private void AddHandlers()
-		{
-		}
 
 		private void RestartApplication()
 		{
