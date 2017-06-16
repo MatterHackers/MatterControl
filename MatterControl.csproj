@@ -151,7 +151,6 @@
     <Compile Include="ConfigurationPage\CloudSettings\CloudSettingsView.cs" />
     <Compile Include="ConfigurationPage\LanguageSelector.cs" />
     <Compile Include="ConfigurationPage\CalibrationSettings\CalibrationSettingsView.cs" />
-    <Compile Include="ConfigurationPage\PrinterSettings\PrinterSettingsView.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\InstructionsPage.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\LevelingStrings.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\LevelWizardMesh.cs" />

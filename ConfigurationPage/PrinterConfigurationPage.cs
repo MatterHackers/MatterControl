@@ -60,7 +60,6 @@ namespace MatterHackers.MatterControl
 				this.AddChild(new CalibrationSettingsWidget(buttonFactory));
 			}
 
-			this.AddChild(new HardwareSettingsWidget(buttonFactory));
 			this.AddChild(new CloudSettingsWidget(buttonFactory));
 			this.AddChild(new ApplicationSettingsWidget(buttonFactory));
 		}
