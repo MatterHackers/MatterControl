@@ -1,49 +1,30 @@
-﻿using MatterHackers.Agg;
+﻿using System;
+using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
 using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.MatterControl.PluginSystem;
-using System;
-using System.IO;
-using MatterHackers.Agg.Image;
 
 namespace MatterHackers.MatterControl.ConfigurationPage
 {
 	public class CloudSettingsWidget : SettingsViewBase
 	{
-		private DisableableWidget notificationSettingsContainer;
-
-		private Button configureNotificationSettingsButton;
+		public static Action openPrintNotificationFunction = null;
 
 		public CloudSettingsWidget(TextImageButtonFactory buttonFactory)
 			: base("Cloud".Localize(), buttonFactory)
 		{
 			mainContainer.AddChild(new HorizontalLine(50));
 
-			notificationSettingsContainer = new DisableableWidget();
+			var notificationSettingsContainer = new DisableableWidget();
 			notificationSettingsContainer.AddChild(GetNotificationControls());
 			mainContainer.AddChild(notificationSettingsContainer);
 			mainContainer.AddChild(new HorizontalLine(50));
 
 			AddChild(mainContainer);
-
-			AddHandlers();
 		}
-
-		public static Action enableCloudMonitorFunction = null;
-
-		private void enableCloudMonitor_Click(object sender, EventArgs mouseEvent)
-		{
-			if (enableCloudMonitorFunction != null)
-			{
-				UiThread.RunOnIdle(enableCloudMonitorFunction);
-			}
-		}
-
-		private TextWidget notificationSettingsLabel;
 
 		private FlowLayoutWidget GetNotificationControls()
 		{
@@ -65,13 +46,19 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			notificationSettingsIcon.VAnchor = VAnchor.ParentCenter;
 			notificationSettingsIcon.Margin = new BorderDouble(right: 6, bottom: 6);
 
-			configureNotificationSettingsButton = buttonFactory.Generate("Configure".Localize().ToUpper());
+			var configureNotificationSettingsButton = buttonFactory.Generate("Configure".Localize().ToUpper());
 			configureNotificationSettingsButton.Name = "Configure Notification Settings Button";
 			configureNotificationSettingsButton.Margin = new BorderDouble(left: 6);
 			configureNotificationSettingsButton.VAnchor = VAnchor.ParentCenter;
-			configureNotificationSettingsButton.Click += configureNotificationSettingsButton_Click;
+			configureNotificationSettingsButton.Click += (s, e) =>
+			{
+				if (openPrintNotificationFunction != null)
+				{
+					UiThread.RunOnIdle(openPrintNotificationFunction);
+				}
+			};
 
-			notificationSettingsLabel = new TextWidget("Notifications".Localize());
+			var notificationSettingsLabel = new TextWidget("Notifications".Localize());
 			notificationSettingsLabel.AutoExpandBoundsToText = true;
 			notificationSettingsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			notificationSettingsLabel.VAnchor = VAnchor.ParentCenter;
@@ -97,45 +84,5 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			return notificationSettingsContainer;
 		}
-
-		public override void OnClosed(ClosedEventArgs e)
-		{
-			unregisterEvents?.Invoke(this, null);
-			base.OnClosed(e);
-		}
-
-		public static Action openUserDashBoardFunction = null;
-
-		private void cloudSyncGoButton_Click(object sender, EventArgs mouseEvent)
-		{
-			if (openUserDashBoardFunction != null)
-			{
-				UiThread.RunOnIdle(openUserDashBoardFunction);
-			}
-		}
-
-		private EventHandler unregisterEvents;
-
-		private void AddHandlers()
-		{
-			PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
-			PrinterConnection.Instance.EnableChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
-		}
-
-		private void onPrinterStatusChanged(object sender, EventArgs e)
-		{
-			this.Invalidate();
-		}
-
-		public static Action openPrintNotificationFunction = null;
-
-		private void configureNotificationSettingsButton_Click(object sender, EventArgs mouseEvent)
-		{
-			if (openPrintNotificationFunction != null)
-			{
-				UiThread.RunOnIdle(openPrintNotificationFunction);
-			}
-		}
-
 	}
 }
