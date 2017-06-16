@@ -148,7 +148,6 @@
     <Compile Include="ApplicationView\TouchscreenTabView.cs" />
     <Compile Include="ApplicationView\AdvancedControlsPanel.cs" />
     <Compile Include="ConfigurationPage\ApplicationSettings\ApplicationSettingsView.cs" />
-    <Compile Include="ConfigurationPage\CloudSettings\CloudSettingsView.cs" />
     <Compile Include="ConfigurationPage\LanguageSelector.cs" />
     <Compile Include="ConfigurationPage\CalibrationSettings\CalibrationSettingsView.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\InstructionsPage.cs" />
