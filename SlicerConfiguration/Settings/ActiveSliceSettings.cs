@@ -178,6 +178,4 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			MaterialPresetChanged?.Invoke(null, null);
 		}
 	}
-
-	public enum SlicingEngineTypes { Slic3r, CuraEngine, MatterSlice };
 }

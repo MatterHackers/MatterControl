@@ -55,47 +55,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private static List<PrintItemWrapper> listOfSlicingItems = new List<PrintItemWrapper>();
 		private static bool haltSlicingThread = false;
 
-		private static List<SliceEngineInfo> availableSliceEngines;
-
-		static public List<SliceEngineInfo> AvailableSliceEngines
-		{
-			get
-			{
-				if (availableSliceEngines == null)
-				{
-					availableSliceEngines = new List<SliceEngineInfo>();
-					Slic3rInfo slic3rEngineInfo = new Slic3rInfo();
-					if (slic3rEngineInfo.Exists())
-					{
-						availableSliceEngines.Add(slic3rEngineInfo);
-					}
-					CuraEngineInfo curaEngineInfo = new CuraEngineInfo();
-					if (curaEngineInfo.Exists())
-					{
-						availableSliceEngines.Add(curaEngineInfo);
-					}
-					MatterSliceInfo matterSliceEngineInfo = new MatterSliceInfo();
-					if (matterSliceEngineInfo.Exists())
-					{
-						availableSliceEngines.Add(matterSliceEngineInfo);
-					}
-				}
-				return availableSliceEngines;
-			}
-		}
-
-		static private SliceEngineInfo getSliceEngineInfoByType(SlicingEngineTypes engineType)
-		{
-			foreach (SliceEngineInfo info in AvailableSliceEngines)
-			{
-				if (info.GetSliceEngineType() == engineType)
-				{
-					return info;
-				}
-			}
-			return null;
-		}
-
 		private SlicingQueue()
 		{
 			if (slicePartThread == null)
@@ -151,15 +110,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		private static string getSlicerFullPath()
-		{
-			var engineType = ActiveSliceSettings.Instance.Helpers.ActiveSliceEngineType();
-			return getSliceEngineInfoByType(engineType)?.GetEnginePath();
-		}
-
 		public static List<bool> extrudersUsed = new List<bool>();
 
-		public static string[] GetStlFileLocations(string fileToSlice, bool doMergeInSlicer, ref string mergeRules)
+		public static string[] GetStlFileLocations(string fileToSlice, ref string mergeRules)
 		{
 			extrudersUsed.Clear();
 
@@ -244,63 +197,56 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								}
 							}
 
-							if (doMergeInSlicer)
+							int meshCount = meshGroup.Meshes.Count;
+							if (meshCount > 0)
 							{
-								int meshCount = meshGroup.Meshes.Count;
-								if (meshCount > 0)
+								for (int meshIndex = 0; meshIndex < meshCount; meshIndex++)
 								{
-									for (int meshIndex = 0; meshIndex < meshCount; meshIndex++)
+									Mesh mesh = meshGroup.Meshes[meshIndex];
+									if ((meshIndex % 2) == 0)
 									{
-										Mesh mesh = meshGroup.Meshes[meshIndex];
-										if ((meshIndex % 2) == 0)
+										mergeRules += "({0}".FormatWith(savedStlCount);
+									}
+									else
+									{
+										if (meshIndex < meshCount - 1)
 										{
-											mergeRules += "({0}".FormatWith(savedStlCount);
+											mergeRules += ",({0}".FormatWith(savedStlCount);
 										}
 										else
 										{
-											if (meshIndex < meshCount - 1)
-											{
-												mergeRules += ",({0}".FormatWith(savedStlCount);
-											}
-											else
-											{
-												mergeRules += ",{0}".FormatWith(savedStlCount);
-											}
+											mergeRules += ",{0}".FormatWith(savedStlCount);
 										}
-										int currentMeshMaterialIntdex = MeshMaterialData.Get(mesh).MaterialIndex;
-										if (materialsToInclude.Contains(currentMeshMaterialIntdex))
-										{
-											extruderFilesToSlice.Add(SaveAndGetFilenameForMesh(mesh));
-										}
-										savedStlCount++;
 									}
-
-									for (int i = 0; i < meshCount; i++)
+									int currentMeshMaterialIntdex = MeshMaterialData.Get(mesh).MaterialIndex;
+									if (materialsToInclude.Contains(currentMeshMaterialIntdex))
 									{
-										mergeRules += ")";
+										extruderFilesToSlice.Add(SaveAndGetFilenameForMesh(mesh));
 									}
-								}
-								else // this extruder has no meshes
-								{
-									// check if there are any more meshes after this extruder that will be added
-									int otherMeshCounts = 0;
-									for (int otherExtruderIndex = extruderIndex + 1; otherExtruderIndex < extruderMeshGroups.Count; otherExtruderIndex++)
-									{
-										otherMeshCounts += extruderMeshGroups[otherExtruderIndex].Meshes.Count;
-									}
-									if (otherMeshCounts > 0) // there are more extrudes to use after this not used one
-									{
-										// add in a blank for this extruder
-										mergeRules += $"({savedStlCount})";
-									}
-									// save an empty mesh
-									extruderFilesToSlice.Add(SaveAndGetFilenameForMesh(PlatonicSolids.CreateCube(.001,.001,.001)));
 									savedStlCount++;
 								}
+
+								for (int i = 0; i < meshCount; i++)
+								{
+									mergeRules += ")";
+								}
 							}
-							else
+							else // this extruder has no meshes
 							{
-								extruderFilesToSlice.Add(SaveAndGetFilenameForMaterial(meshGroup, materialsToInclude));
+								// check if there are any more meshes after this extruder that will be added
+								int otherMeshCounts = 0;
+								for (int otherExtruderIndex = extruderIndex + 1; otherExtruderIndex < extruderMeshGroups.Count; otherExtruderIndex++)
+								{
+									otherMeshCounts += extruderMeshGroups[otherExtruderIndex].Meshes.Count;
+								}
+								if (otherMeshCounts > 0) // there are more extrudes to use after this not used one
+								{
+									// add in a blank for this extruder
+									mergeRules += $"({savedStlCount})";
+								}
+								// save an empty mesh
+								extruderFilesToSlice.Add(SaveAndGetFilenameForMesh(PlatonicSolids.CreateCube(.001, .001, .001)));
+								savedStlCount++;
 							}
 						}
 
@@ -359,10 +305,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (listOfSlicingItems.Count > 0)
 				{
 					PrintItemWrapper itemToSlice = listOfSlicingItems[0];
-					bool doMergeInSlicer = ActiveSliceSettings.Instance.Helpers.ActiveSliceEngineType() == SlicingEngineTypes.MatterSlice;
 					string mergeRules = "";
 					
-					string[] stlFileLocations = GetStlFileLocations(itemToSlice.FileLocation, doMergeInSlicer, ref mergeRules);
+					string[] stlFileLocations = GetStlFileLocations(itemToSlice.FileLocation, ref mergeRules);
 					string fileToSlice = stlFileLocations[0];
 
 					// check that the STL file is currently on disk
@@ -381,21 +326,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						{
 							string commandArgs = "";
 
-							switch (ActiveSliceSettings.Instance.Helpers.ActiveSliceEngineType())
-							{
-								case SlicingEngineTypes.Slic3r:
-									Slic3rEngineMappings.WriteSliceSettingsFile(configFilePath);
-
-									// if we have centering turend on and are printing a model loaded up from meshes (not gcode)
-									commandArgs = $"--load \"{configFilePath}\" --output \"{gcodeFilePath}\" \"{fileToSlice}\"";
-									break;
-
-								case SlicingEngineTypes.CuraEngine:
-									commandArgs = $"-v -o \"{gcodeFilePath}\" {EngineMappingCura.GetCuraCommandLineSettings()} \"{fileToSlice}\"";
-									break;
-
-								case SlicingEngineTypes.MatterSlice:
-									{
 										EngineMappingsMatterSlice.WriteSliceSettingsFile(configFilePath);
 										if (mergeRules == "")
 										{
@@ -410,10 +340,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 										{
 											commandArgs +=  $" \"{filename}\"";
 										}
-									}
-									break;
-							}
-
 #if false
 							Mesh loadedMesh = StlProcessing.Load(fileToSlice);
 							SliceLayers layers = new SliceLayers();
@@ -421,9 +347,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							layers.DumpSegmentsToGcode("test.gcode");
 #endif
 
-							if (OsInformation.OperatingSystem == OSType.Android ||
-								((OsInformation.OperatingSystem == OSType.Mac || runInProcess)
-									&& ActiveSliceSettings.Instance.Helpers.ActiveSliceEngineType() == SlicingEngineTypes.MatterSlice))
+							if (OsInformation.OperatingSystem == OSType.Android 
+								|| OsInformation.OperatingSystem == OSType.Mac 
+								|| runInProcess)
 							{
 								itemCurrentlySlicing = itemToSlice;
 								MatterHackers.MatterSlice.LogOutput.GetLogWrites += SendProgressToItem;
@@ -442,7 +368,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 										WindowStyle = ProcessWindowStyle.Hidden,
 										RedirectStandardError = true,
 										RedirectStandardOutput = true,
-										FileName = getSlicerFullPath(),
+										FileName = MatterSliceInfo.GetEnginePath(),
 										UseShellExecute = false
 									}
 								};

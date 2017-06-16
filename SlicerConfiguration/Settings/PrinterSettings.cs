@@ -1092,7 +1092,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			if (!valueWasNumber
-				|| (ActiveSliceSettings.Instance.Helpers.ActiveSliceEngine().MapContains(speedSetting)
+				|| (EngineMappingsMatterSlice.Instance.MapContains(speedSetting)
 				&& speedToCheck <= 0))
 			{
 				SliceSettingData data = SliceSettingsOrganizer.Instance.GetSettingsData(speedSetting);

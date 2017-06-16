@@ -1,55 +1,48 @@
 ﻿using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.MatterControl.DataStorage;
 using System.IO;
+using System;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class MatterSliceInfo : SliceEngineInfo
+	public static class MatterSliceInfo
 	{
-		public MatterSliceInfo()
-			: base(MatterSliceInfo.DisplayName)
-		{
-		}
+		public static string DisplayName { get; } = "MatterSlice";
 
-		public static string DisplayName = "MatterSlice";
-
-		public override SlicingEngineTypes GetSliceEngineType()
+		public static string GetEnginePath()
 		{
-			return SlicingEngineTypes.MatterSlice;
-		}
-
-		public override bool Exists()
-		{
-			if (OsInformation.OperatingSystem == OSType.Android || OsInformation.OperatingSystem == OSType.Mac || SlicingQueue.runInProcess)
+			switch (OsInformation.OperatingSystem)
 			{
-				return true;
-			}
-			else
-			{
-				if (this.GetEnginePath() == null)
-				{
-					return false;
-				}
-				else
-				{
-					return System.IO.File.Exists(this.GetEnginePath());
-				}
+				case OSType.Windows:
+					return getWindowsPath();
+
+				case OSType.Mac:
+					return getMacPath();
+
+				case OSType.X11:
+					return getLinuxPath();
+
+				case OSType.Android:
+					return null;
+
+				default:
+					throw new NotImplementedException();
 			}
 		}
 
-		protected override string getWindowsPath()
+		private static string getWindowsPath()
 		{
 			string matterSliceRelativePath = Path.Combine(".", "MatterSlice.exe");
 			return Path.GetFullPath(matterSliceRelativePath);
 		}
 
-		protected override string getMacPath()
+		private static string getMacPath()
 		{
 			string applicationPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationPath, "MatterSlice");
 			return applicationPath;
 		}
 
-		protected override string getLinuxPath()
+		private static string getLinuxPath()
 		{
 			string matterSliceRelativePath = Path.Combine(".", "MatterSlice.exe");
 			return Path.GetFullPath(matterSliceRelativePath);

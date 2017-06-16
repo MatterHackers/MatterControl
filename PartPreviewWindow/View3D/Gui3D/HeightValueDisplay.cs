@@ -105,7 +105,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						Vector2 pointerBottom = new Vector2(startLineGroundPos.x + HorizontalLineLength / 2, yGround);
 						Vector2 pointerTop = new Vector2(startLineSelectionPos.x + HorizontalLineLength / 2, ySelection);
 
-						InteractionVolume.DrawMeasureLine(drawEvent.graphics2D, pointerBottom, pointerTop, RGBA_Bytes.Black, InteractionVolume.LineArrows.End);
+						InteractionVolume.DrawMeasureLine(drawEvent.graphics2D, pointerBottom, pointerTop, RGBA_Bytes.Black, LineArrows.End);
 					}
 				}
 			}
