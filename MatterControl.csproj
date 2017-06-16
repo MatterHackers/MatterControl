@@ -235,7 +235,6 @@
     <Compile Include="PartPreviewWindow\ViewControlsToggle.cs" />
     <Compile Include="PartPreviewWindow\BaseClasses\PartPreview3DWidget.cs" />
     <Compile Include="PartPreviewWindow\ViewGcodeWidget.cs" />
-    <Compile Include="ConfigurationPage\PrinterConfigurationPage.cs" />
     <Compile Include="CustomWidgets\DisableableWidget.cs" />
     <Compile Include="CustomWidgets\ExportPrintItemWindow.cs" />
     <Compile Include="PrinterCommunication\Io\FeedRateMultiplyerStream.cs" />

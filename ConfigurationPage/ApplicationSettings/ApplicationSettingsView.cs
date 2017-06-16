@@ -44,7 +44,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.ConfigurationPage
 {
-	public class ApplicationSettingsWidget : FlowLayoutWidget
+	public class ApplicationSettingsWidget : FlowLayoutWidget, IIgnoredPopupChild
 	{
 		public static Action OpenPrintNotification = null;
 
@@ -52,6 +52,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		private string cannotRestartWhileActive = "Unable to restart".Localize();
 
 		private TextImageButtonFactory buttonFactory;
+
+		private RGBA_Bytes menuTextColor = RGBA_Bytes.Black;
+
 		public ApplicationSettingsWidget(TextImageButtonFactory buttonFactory)
 			: base(FlowDirection.TopToBottom)
 		{
@@ -103,13 +106,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			notificationSettingsContainer.Margin = new BorderDouble(0, 0, 0, 0);
 			notificationSettingsContainer.Padding = new BorderDouble(0);
 
-			ImageBuffer notifiImage = StaticData.Instance.LoadIcon("notify-24x24.png").InvertLightness();
+			ImageBuffer notifiImage = StaticData.Instance.LoadIcon("notify-24x24.png");
 			notifiImage.SetRecieveBlender(new BlenderPreMultBGRA());
-			int iconSize = (int)(24 * GuiWidget.DeviceScale);
-			if (!ActiveTheme.Instance.IsDarkTheme)
-			{
-				notifiImage.InvertLightness();
-			}
 
 			ImageWidget notificationSettingsIcon = new ImageWidget(notifiImage);
 			notificationSettingsIcon.VAnchor = VAnchor.ParentCenter;
@@ -129,14 +127,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			var notificationSettingsLabel = new TextWidget("Notifications".Localize());
 			notificationSettingsLabel.AutoExpandBoundsToText = true;
-			notificationSettingsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			notificationSettingsLabel.TextColor = menuTextColor;
 			notificationSettingsLabel.VAnchor = VAnchor.ParentCenter;
 
 			GuiWidget printNotificationsSwitchContainer = new FlowLayoutWidget();
 			printNotificationsSwitchContainer.VAnchor = VAnchor.ParentCenter;
 			printNotificationsSwitchContainer.Margin = new BorderDouble(left: 16);
 
-			CheckBox enablePrintNotificationsSwitch = ImageButtonFactory.CreateToggleSwitch(UserSettings.Instance.get("PrintNotificationsEnabled") == "true");
+			CheckBox enablePrintNotificationsSwitch = ImageButtonFactory.CreateToggleSwitch(UserSettings.Instance.get("PrintNotificationsEnabled") == "true", menuTextColor);
 			enablePrintNotificationsSwitch.VAnchor = VAnchor.ParentCenter;
 			enablePrintNotificationsSwitch.CheckedStateChanged += (sender, e) =>
 			{
@@ -161,16 +159,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			var settingsRow = new FlowLayoutWidget()
 			{
 				HAnchor = HAnchor.ParentLeftRight,
-				Margin = new BorderDouble(0, 4),
+				Margin = new BorderDouble(bottom: 4),
 			};
 
-			ImageBuffer cameraIconImage = StaticData.Instance.LoadIcon("camera-24x24.png", 24, 24).InvertLightness();
+			ImageBuffer cameraIconImage = StaticData.Instance.LoadIcon("camera-24x24.png", 24, 24);
 			cameraIconImage.SetRecieveBlender(new BlenderPreMultBGRA());
-
-			if (!ActiveTheme.Instance.IsDarkTheme)
-			{
-				cameraIconImage.InvertLightness();
-			}
 
 			var openCameraButton = buttonFactory.Generate("Preview".Localize().ToUpper());
 			openCameraButton.Click += (s, e) =>
@@ -186,7 +179,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			settingsRow.AddChild(new TextWidget("Camera Monitoring".Localize())
 			{
 				AutoExpandBoundsToText = true,
-				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				TextColor = menuTextColor,
 				VAnchor = VAnchor.ParentCenter
 			});
 			settingsRow.AddChild(new HorizontalSpacer());
@@ -200,7 +193,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 					Margin = new BorderDouble(left: 16)
 				};
 
-				CheckBox toggleSwitch = ImageButtonFactory.CreateToggleSwitch(ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.publish_bed_image));
+				CheckBox toggleSwitch = ImageButtonFactory.CreateToggleSwitch(ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.publish_bed_image), menuTextColor);
+
 				toggleSwitch.CheckedStateChanged += (sender, e) =>
 				{
 					ActiveSliceSettings.Instance.SetValue(SettingsKey.publish_bed_image, toggleSwitch.Checked ? "1" : "0");
@@ -223,7 +217,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			TextWidget settingLabel = new TextWidget("Theme".Localize());
 			settingLabel.AutoExpandBoundsToText = true;
-			settingLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			settingLabel.TextColor = menuTextColor;
 			settingLabel.HAnchor = HAnchor.ParentLeft;
 
 			FlowLayoutWidget colorSelectorContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
@@ -235,7 +229,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			currentColorThemeBorder.VAnchor = VAnchor.ParentBottomTop;
 			currentColorThemeBorder.Padding = new BorderDouble(5);
 			currentColorThemeBorder.Width = 80;
-			currentColorThemeBorder.BackgroundColor = RGBA_Bytes.White;
+			currentColorThemeBorder.BackgroundColor = RGBA_Bytes.LightGray;
 
 			GuiWidget currentColorTheme = new GuiWidget();
 			currentColorTheme.HAnchor = HAnchor.ParentLeftRight;
@@ -273,7 +267,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				AutoExpandBoundsToText = true
 			};
 			settingsLabel.AutoExpandBoundsToText = true;
-			settingsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			settingsLabel.TextColor = menuTextColor;
 			settingsLabel.VAnchor = VAnchor.ParentTop;
 
 			double sliderThumbWidth = 10 * GuiWidget.DeviceScale;
@@ -329,7 +323,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			TextWidget settingsLabel = new TextWidget("Touch Screen Mode".Localize());
 			settingsLabel.AutoExpandBoundsToText = true;
-			settingsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			settingsLabel.TextColor = menuTextColor;
 			settingsLabel.VAnchor = VAnchor.ParentTop;
 
 			FlowLayoutWidget optionsContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
@@ -344,7 +338,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			List<string> acceptableUpdateFeedTypeValues = new List<string>() { "responsive", "touchscreen" };
 			string currentDisplayModeType = UserSettings.Instance.get(UserSettingsKey.ApplicationDisplayMode);
 
-			CheckBox touchScreenModeSwitch = ImageButtonFactory.CreateToggleSwitch(currentDisplayModeType == acceptableUpdateFeedTypeValues[1]);
+			CheckBox touchScreenModeSwitch = ImageButtonFactory.CreateToggleSwitch(currentDisplayModeType == acceptableUpdateFeedTypeValues[1], menuTextColor);
 			touchScreenModeSwitch.VAnchor = VAnchor.ParentCenter;
 			touchScreenModeSwitch.CheckedStateChanged += (sender, e) =>
 			{
@@ -375,7 +369,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			TextWidget settingsLabel = new TextWidget("Interface Mode".Localize());
 			settingsLabel.AutoExpandBoundsToText = true;
-			settingsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			settingsLabel.TextColor = menuTextColor;
 			settingsLabel.VAnchor = VAnchor.ParentTop;
 
 			FlowLayoutWidget optionsContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
@@ -423,7 +417,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			TextWidget settingsLabel = new TextWidget("Update Notification Feed".Localize());
 			settingsLabel.AutoExpandBoundsToText = true;
-			settingsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			settingsLabel.TextColor = menuTextColor;
 			settingsLabel.VAnchor = VAnchor.ParentTop;
 
 			FlowLayoutWidget optionsContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
@@ -476,7 +470,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			TextWidget settingsLabel = new TextWidget("Language".Localize());
 			settingsLabel.AutoExpandBoundsToText = true;
-			settingsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			settingsLabel.TextColor = menuTextColor;
 			settingsLabel.VAnchor = VAnchor.ParentTop;
 
 			FlowLayoutWidget controlsContainer = new FlowLayoutWidget();
@@ -487,6 +481,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 
 			LanguageSelector languageSelector = new LanguageSelector();
+			languageSelector.TextColor = menuTextColor;
 			languageSelector.SelectionChanged += (s, e) =>
 			{
 				UiThread.RunOnIdle(() =>
@@ -526,13 +521,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			TextWidget settingsLabel = new TextWidget("Thumbnail Rendering".Localize());
 			settingsLabel.AutoExpandBoundsToText = true;
-			settingsLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			settingsLabel.TextColor = menuTextColor;
 			settingsLabel.VAnchor = VAnchor.ParentTop;
 
 			FlowLayoutWidget optionsContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			optionsContainer.Margin = new BorderDouble(bottom: 6);
 
 			DropDownList interfaceOptionsDropList = new DropDownList("Development", maxHeight: 200);
+			interfaceOptionsDropList.TextColor = menuTextColor;
 			interfaceOptionsDropList.HAnchor = HAnchor.ParentLeftRight;
 
 			optionsContainer.AddChild(interfaceOptionsDropList);

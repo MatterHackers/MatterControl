@@ -75,6 +75,7 @@ namespace MatterHackers.MatterControl
 			public TextImageButtonFactory PrinterConnectButtonFactory { get; private set; }
 			public TextImageButtonFactory BreadCrumbButtonFactory { get; internal set; }
 			public TextImageButtonFactory BreadCrumbButtonFactorySmallMargins { get; internal set; }
+			public TextImageButtonFactory MenuButtonFactory { get; internal set; }
 
 			public RGBA_Bytes TabBodyBackground => new RGBA_Bytes(ActiveTheme.Instance.TertiaryBackgroundColor, 175);
 
@@ -157,7 +158,6 @@ namespace MatterHackers.MatterControl
 				this.BreadCrumbButtonFactory = new TextImageButtonFactory()
 				{
 					normalTextColor = theme.PrimaryTextColor,
-					//normalFillColor = RGBA_Bytes.Blue,
 					hoverTextColor = theme.PrimaryTextColor,
 					pressedTextColor = theme.PrimaryTextColor,
 					disabledTextColor = theme.TertiaryBackgroundColor,
@@ -172,6 +172,18 @@ namespace MatterHackers.MatterControl
 					hoverTextColor = theme.PrimaryTextColor,
 					pressedTextColor = theme.PrimaryTextColor,
 					disabledTextColor = theme.TertiaryBackgroundColor,
+					Margin = new BorderDouble(8, 0),
+					borderWidth = 0,
+					FixedHeight = 32,
+				};
+
+				this.MenuButtonFactory = new TextImageButtonFactory()
+				{
+					normalTextColor = RGBA_Bytes.Black,
+					hoverTextColor = RGBA_Bytes.Black,
+					pressedTextColor = RGBA_Bytes.Black,
+					disabledTextColor = theme.TertiaryBackgroundColor,
+					normalFillColor = RGBA_Bytes.LightGray,
 					Margin = new BorderDouble(8, 0),
 					borderWidth = 0,
 					FixedHeight = 32,
