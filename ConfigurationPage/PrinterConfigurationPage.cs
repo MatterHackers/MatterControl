@@ -42,13 +42,13 @@ namespace MatterHackers.MatterControl
 			this.ScrollArea.HAnchor |= HAnchor.ParentLeftRight;
 			this.BackgroundColor = ApplicationController.Instance.Theme.TabBodyBackground;
 			this.AnchorAll();
-			this.AddChild(new PrinterConfigurationWidget());
+			this.AddChild(new PrinterConfigurationWidget(ApplicationController.Instance.Theme.BreadCrumbButtonFactorySmallMargins));
 		}
 	}
 
 	public class PrinterConfigurationWidget : FlowLayoutWidget
 	{
-		public PrinterConfigurationWidget()
+		public PrinterConfigurationWidget(TextImageButtonFactory buttonFactory)
 			: base(FlowDirection.TopToBottom)
 		{
 			this.HAnchor = HAnchor.ParentLeftRight;
@@ -57,12 +57,12 @@ namespace MatterHackers.MatterControl
 
 			if (!ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_hardware_leveling))
 			{
-				this.AddChild(new CalibrationSettingsWidget());
+				this.AddChild(new CalibrationSettingsWidget(buttonFactory));
 			}
 
-			this.AddChild(new HardwareSettingsWidget());
-			this.AddChild(new CloudSettingsWidget());
-			this.AddChild(new ApplicationSettingsWidget());
+			this.AddChild(new HardwareSettingsWidget(buttonFactory));
+			this.AddChild(new CloudSettingsWidget(buttonFactory));
+			this.AddChild(new ApplicationSettingsWidget(buttonFactory));
 		}
 	}
 }

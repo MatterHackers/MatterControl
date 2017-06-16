@@ -12,8 +12,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 {
 	public class HardwareSettingsWidget : SettingsViewBase
 	{
-		public HardwareSettingsWidget()
-			: base("Hardware".Localize())
+		public HardwareSettingsWidget(TextImageButtonFactory buttonFactory)
+			: base("Hardware".Localize(), buttonFactory)
 		{
 			bool hasCamera = true || ApplicationSettings.Instance.get(ApplicationSettingsKey.HardwareHasCamera) == "true";
 
@@ -31,7 +31,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				cameraIconImage.InvertLightness();
 			}
 
-			var openCameraButton = textImageButtonFactory.Generate("Preview".Localize().ToUpper());
+			var openCameraButton = buttonFactory.Generate("Preview".Localize().ToUpper());
 			openCameraButton.Click += (s, e) =>
 			{
 				MatterControlApplication.Instance.OpenCameraPreview();

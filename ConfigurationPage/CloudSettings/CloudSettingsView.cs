@@ -15,12 +15,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 	public class CloudSettingsWidget : SettingsViewBase
 	{
 		private DisableableWidget notificationSettingsContainer;
-        private DisableableWidget cloudSyncContainer;
 
 		private Button configureNotificationSettingsButton;
 
-		public CloudSettingsWidget()
-			: base("Cloud".Localize())
+		public CloudSettingsWidget(TextImageButtonFactory buttonFactory)
+			: base("Cloud".Localize(), buttonFactory)
 		{
 			mainContainer.AddChild(new HorizontalLine(50));
 
@@ -28,30 +27,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			notificationSettingsContainer.AddChild(GetNotificationControls());
 			mainContainer.AddChild(notificationSettingsContainer);
 			mainContainer.AddChild(new HorizontalLine(50));
-			cloudSyncContainer = new DisableableWidget();
-			cloudSyncContainer.AddChild(GetCloudSyncDashboardControls());
-			mainContainer.AddChild(cloudSyncContainer);
 
 			AddChild(mainContainer);
 
 			AddHandlers();
-		}
-
-		private void SetDisplayAttributes()
-		{
-			this.Margin = new BorderDouble(2, 4, 2, 0);
-			this.textImageButtonFactory.normalFillColor = RGBA_Bytes.White;
-			this.textImageButtonFactory.disabledFillColor = RGBA_Bytes.White;
-
-			this.textImageButtonFactory.FixedHeight = TallButtonHeight;
-			this.textImageButtonFactory.fontSize = 11;
-
-			this.textImageButtonFactory.disabledTextColor = RGBA_Bytes.DarkGray;
-			this.textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			this.textImageButtonFactory.normalTextColor = RGBA_Bytes.Black;
-			this.textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
-
-			this.linkButtonFactory.fontSize = 11;
 		}
 
 		public static Action enableCloudMonitorFunction = null;
@@ -64,49 +43,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			}
 		}
 
-		private FlowLayoutWidget GetCloudSyncDashboardControls()
-		{
-			FlowLayoutWidget cloudSyncContainer = new FlowLayoutWidget();
-			cloudSyncContainer.HAnchor |= HAnchor.ParentLeftRight;
-			cloudSyncContainer.VAnchor |= Agg.UI.VAnchor.ParentCenter;
-			cloudSyncContainer.Margin = new BorderDouble(0, 0, 0, 0);
-			cloudSyncContainer.Padding = new BorderDouble(0);
-
-			ImageBuffer cloudMonitorImage = StaticData.Instance.LoadIcon("cloud-24x24.png").InvertLightness();
-			cloudMonitorImage.SetRecieveBlender(new BlenderPreMultBGRA());
-			int iconSize = (int)(24 * GuiWidget.DeviceScale);
-			if (!ActiveTheme.Instance.IsDarkTheme)
-			{
-				cloudMonitorImage.InvertLightness();
-			}
-
-            ImageWidget cloudSyncIcon = new ImageWidget(cloudMonitorImage);
-            cloudSyncIcon.Margin = new BorderDouble(right: 6, bottom: 6);
-			cloudSyncIcon.VAnchor = VAnchor.ParentCenter;
-
-			TextWidget cloudSyncLabel = new TextWidget("Cloud Sync".Localize());
-            cloudSyncLabel.AutoExpandBoundsToText = true;
-            cloudSyncLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-            cloudSyncLabel.VAnchor = VAnchor.ParentCenter;
-
-            linkButtonFactory.fontSize = 10;
-            Button cloudSyncGoLink = linkButtonFactory.Generate("Go to Dashboard".Localize().ToUpper());
-            cloudSyncGoLink.ToolTipText = "Open cloud sync dashboard in web browser".Localize();
-            cloudSyncGoLink.Click += cloudSyncGoButton_Click;
-			cloudSyncGoLink.VAnchor = VAnchor.ParentCenter;
-
-
-			cloudSyncContainer.AddChild(cloudSyncIcon);
-            cloudSyncContainer.AddChild(cloudSyncLabel);
-            cloudSyncContainer.AddChild(new HorizontalSpacer()
-			{
-				VAnchor = VAnchor.ParentCenter,
-			});
-            cloudSyncContainer.AddChild(cloudSyncGoLink);
-
-			return cloudSyncContainer;
-		}
-
 		private TextWidget notificationSettingsLabel;
 
 		private FlowLayoutWidget GetNotificationControls()
@@ -116,8 +52,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			notificationSettingsContainer.VAnchor |= Agg.UI.VAnchor.ParentCenter;
 			notificationSettingsContainer.Margin = new BorderDouble(0, 0, 0, 0);
 			notificationSettingsContainer.Padding = new BorderDouble(0);
-
-			this.textImageButtonFactory.FixedHeight = TallButtonHeight;
 
 			ImageBuffer notifiImage = StaticData.Instance.LoadIcon("notify-24x24.png").InvertLightness();
 			notifiImage.SetRecieveBlender(new BlenderPreMultBGRA());
@@ -131,7 +65,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			notificationSettingsIcon.VAnchor = VAnchor.ParentCenter;
 			notificationSettingsIcon.Margin = new BorderDouble(right: 6, bottom: 6);
 
-			configureNotificationSettingsButton = textImageButtonFactory.Generate("Configure".Localize().ToUpper());
+			configureNotificationSettingsButton = buttonFactory.Generate("Configure".Localize().ToUpper());
 			configureNotificationSettingsButton.Name = "Configure Notification Settings Button";
 			configureNotificationSettingsButton.Margin = new BorderDouble(left: 6);
 			configureNotificationSettingsButton.VAnchor = VAnchor.ParentCenter;
@@ -166,22 +100,19 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 		public override void OnClosed(ClosedEventArgs e)
 		{
-			if (unregisterEvents != null)
-			{
-				unregisterEvents(this, null);
-			}
+			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
 		}
 
-        public static Action openUserDashBoardFunction = null;
+		public static Action openUserDashBoardFunction = null;
 
-        private void cloudSyncGoButton_Click(object sender, EventArgs mouseEvent)
-        {
-            if(openUserDashBoardFunction != null)
-            {
-                UiThread.RunOnIdle(openUserDashBoardFunction);
-            }
-        }
+		private void cloudSyncGoButton_Click(object sender, EventArgs mouseEvent)
+		{
+			if (openUserDashBoardFunction != null)
+			{
+				UiThread.RunOnIdle(openUserDashBoardFunction);
+			}
+		}
 
 		private EventHandler unregisterEvents;
 

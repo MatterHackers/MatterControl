@@ -27,20 +27,17 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg;
-using MatterHackers.Agg.PlatformAbstract;
-using MatterHackers.Agg.UI;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.MatterControl.PrintHistory;
-using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using MatterHackers.Agg;
+using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.ConfigurationPage
 {
@@ -49,9 +46,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		private string cannotRestartWhilePrintIsActiveMessage = "Oops! You cannot restart while a print is active.".Localize();
 		private string cannotRestartWhileActive = "Unable to restart".Localize();
 
-		public ApplicationSettingsWidget()
-			: base("Application".Localize())
+		public ApplicationSettingsWidget(TextImageButtonFactory buttonFactory)
+			: base("Application".Localize(), buttonFactory)
 		{
+			this.buttonFactory = buttonFactory;
+
 			if (UserSettings.Instance.IsTouchScreen)
 			{
 				mainContainer.AddChild(new HorizontalLine(50));
@@ -64,9 +63,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			}
 			
 			mainContainer.AddChild(new HorizontalLine(50));
+
 			mainContainer.AddChild(GetLanguageControl());
 			mainContainer.AddChild(new HorizontalLine(50));
-
 
 			#if !__ANDROID__
 			{
@@ -74,6 +73,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				mainContainer.AddChild(new HorizontalLine(50));
 
 				mainContainer.AddChild(GetDisplayControl());
+				mainContainer.AddChild(new HorizontalLine(50));
+
 				mainContainer.AddChild(GetTextSizeControl());
 				mainContainer.AddChild(new HorizontalLine(50));
 			}
@@ -85,9 +86,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				mainContainer.AddChild(new HorizontalLine(50));
 			}
 
-			mainContainer.AddChild(GetClearHistoryControl());
-			mainContainer.AddChild(new HorizontalLine(50));
-
 			mainContainer.AddChild(GetThemeControl());
 
 			AddChild(mainContainer);
@@ -95,59 +93,17 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			AddHandlers();
 		}
 
-		private FlowLayoutWidget GetClearHistoryControl()
-		{
-			FlowLayoutWidget buttonRow = new FlowLayoutWidget();
-			buttonRow.HAnchor = HAnchor.ParentLeftRight;
-			buttonRow.Margin = new BorderDouble(3, 4);
-
-			TextWidget clearHistoryLabel = new TextWidget("Clear Print History".Localize());
-			clearHistoryLabel.AutoExpandBoundsToText = true;
-			clearHistoryLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			clearHistoryLabel.VAnchor = VAnchor.ParentCenter;
-
-			Button clearHistoryButton = textImageButtonFactory.Generate("Remove All".Localize().ToUpper());
-			clearHistoryButton.Click += (sender, e) =>
-			{
-				PrintHistoryData.Instance.ClearHistory();
-			};
-
-			//buttonRow.AddChild(eePromIcon);
-			buttonRow.AddChild(clearHistoryLabel);
-			buttonRow.AddChild(new HorizontalSpacer());
-			buttonRow.AddChild(clearHistoryButton);
-
-			return buttonRow;
-		}
-
-		private void SetDisplayAttributes()
-		{
-			//this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-			this.Margin = new BorderDouble(2, 4, 2, 0);
-			this.textImageButtonFactory.normalFillColor = RGBA_Bytes.White;
-			this.textImageButtonFactory.disabledFillColor = RGBA_Bytes.White;
-
-			this.textImageButtonFactory.FixedHeight = TallButtonHeight;
-			this.textImageButtonFactory.fontSize = 11;
-
-			this.textImageButtonFactory.disabledTextColor = RGBA_Bytes.DarkGray;
-			this.textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			this.textImageButtonFactory.normalTextColor = RGBA_Bytes.Black;
-			this.textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
-
-			this.linkButtonFactory.fontSize = 11;
-		}
 
 		private FlowLayoutWidget GetThemeControl()
 		{
-			FlowLayoutWidget buttonRow = new FlowLayoutWidget(Agg.UI.FlowDirection.TopToBottom);
+			FlowLayoutWidget buttonRow = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			buttonRow.HAnchor = HAnchor.ParentLeftRight;
 			buttonRow.Margin = new BorderDouble(0, 6);
 
 			TextWidget settingLabel = new TextWidget("Theme".Localize());
 			settingLabel.AutoExpandBoundsToText = true;
 			settingLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			settingLabel.HAnchor = Agg.UI.HAnchor.ParentLeft;
+			settingLabel.HAnchor = HAnchor.ParentLeft;
 
 			FlowLayoutWidget colorSelectorContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
 			colorSelectorContainer.HAnchor = HAnchor.ParentLeftRight;
@@ -217,8 +173,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			string currentTextModeType = UserSettings.Instance.get(UserSettingsKey.ApplicationTextSize);
 
-			Button textSizeControlApplyButton = textImageButtonFactory.Generate("Apply".Localize());
-			textSizeControlApplyButton.VAnchor = Agg.UI.VAnchor.ParentCenter;
+			Button textSizeControlApplyButton = buttonFactory.Generate("Apply".Localize());
+			textSizeControlApplyButton.VAnchor = VAnchor.ParentCenter;
 			textSizeControlApplyButton.Visible = false;
 			textSizeControlApplyButton.Margin = new BorderDouble(right: 6);
 			textSizeControlApplyButton.Click += (s, e) =>
@@ -340,7 +296,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			buttonRow.HAnchor = HAnchor.ParentLeftRight;
 			buttonRow.Margin = new BorderDouble(top: 4);
 
-			Button configureUpdateFeedButton = textImageButtonFactory.Generate("Configure".Localize().ToUpper());
+			Button configureUpdateFeedButton = buttonFactory.Generate("Configure".Localize().ToUpper());
 			configureUpdateFeedButton.Margin = new BorderDouble(left: 6);
 			configureUpdateFeedButton.VAnchor = VAnchor.ParentCenter;
 

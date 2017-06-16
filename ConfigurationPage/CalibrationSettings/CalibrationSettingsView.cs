@@ -23,9 +23,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		private TextWidget printLevelingStatusLabel;
 		Button runPrintLevelingButton;
 
-		public CalibrationSettingsWidget()
-			: base("Calibration".Localize())
+		public CalibrationSettingsWidget(TextImageButtonFactory buttonFactory)
+			: base("Calibration".Localize(), buttonFactory)
 		{
+			this.buttonFactory = buttonFactory;
+
 			printLevelingContainer = new DisableableWidget();
 			if (!ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_hardware_leveling))
 			{
@@ -104,7 +106,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			buttonRow.AddChild(new HorizontalSpacer());
 
 			// configure button
-			runPrintLevelingButton = textImageButtonFactory.Generate("Configure".Localize().ToUpper());
+			runPrintLevelingButton = buttonFactory.Generate("Configure".Localize().ToUpper());
 			runPrintLevelingButton.Margin = new BorderDouble(left: 6);
 			runPrintLevelingButton.VAnchor = VAnchor.ParentCenter;
 			runPrintLevelingButton.Click += (sender, e) =>
