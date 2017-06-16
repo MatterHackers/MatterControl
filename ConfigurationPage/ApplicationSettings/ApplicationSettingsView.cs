@@ -60,37 +60,35 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			if (UserSettings.Instance.IsTouchScreen)
 			{
-				this.AddChild(new HorizontalLine(50));
-				this.AddChild(GetUpdateControl());
-				this.AddChild(new HorizontalLine(50));
+				this.AddSettingsRow(this.GetUpdateControl());
 			}
 
-			this.AddChild(this.GetCameraMonitoringControl());
-			this.AddChild(new HorizontalLine(50));
+			this.AddSettingsRow(this.GetCameraMonitoringControl());
 
-			this.AddChild(GetLanguageControl());
-			this.AddChild(new HorizontalLine(50));
+			this.AddSettingsRow(this.GetLanguageControl());
 
 			#if !__ANDROID__
 			{
-				this.AddChild(GetThumbnailRenderingControl());
-				this.AddChild(new HorizontalLine(50));
+				this.AddSettingsRow(this.GetThumbnailRenderingControl());
 
-				this.AddChild(GetDisplayControl());
-				this.AddChild(new HorizontalLine(50));
+				this.AddSettingsRow(this.GetDisplayControl());
 
-				this.AddChild(GetTextSizeControl());
-				this.AddChild(new HorizontalLine(50));
+				this.AddSettingsRow(this.GetTextSizeControl());
 			}
 			#endif
 			
 			if (UserSettings.Instance.IsTouchScreen)
 			{
-				this.AddChild(GetModeControl());
-				this.AddChild(new HorizontalLine(50));
+				this.AddSettingsRow(this.GetModeControl());
 			}
 
-			this.AddChild(GetThemeControl());
+			this.AddSettingsRow(this.GetThemeControl());
+		}
+
+		private void AddSettingsRow(GuiWidget widget)
+		{
+			this.AddChild(widget);
+			this.AddChild(new HorizontalLine(50));
 		}
 
 		private FlowLayoutWidget GetCameraMonitoringControl()
