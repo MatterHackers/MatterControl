@@ -1,21 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using MatterHackers.Csg;
+using System.Linq;
+using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
+using MatterHackers.Agg.UI;
+using MatterHackers.Csg;
 using MatterHackers.Csg.Solids;
 using MatterHackers.Csg.Transform;
-using MatterHackers.Csg.Processors;
-using MatterHackers.VectorMath;
-using MatterHackers.RenderOpenGl;
 using MatterHackers.DataConverters3D;
-using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.Agg.UI;
-using MatterHackers.MatterControl;
 using MatterHackers.Localizations;
-using MatterHackers.Agg;
 using MatterHackers.MatterControl.CustomWidgets;
-using System.Linq;
+using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.RenderOpenGl;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.SimplePartScripting
 {

@@ -42,10 +42,11 @@ namespace MatterHackers.MatterControl.Library
 			this.IsProtected = true;
 		}
 
-		public GeneratorItem(string name, Func<IObject3D> collector)
+		public GeneratorItem(string name, Func<IObject3D> collector, string category = null)
 		{
 			this.Name = name;
 			this.Collector = collector;
+			this.Category = category;
 		}
 
 		public string ID => $"MatterHackers/ItemGenerator/{Name}".GetHashCode().ToString();

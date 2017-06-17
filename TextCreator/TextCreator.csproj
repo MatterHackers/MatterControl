@@ -142,7 +142,6 @@
     <Compile Include="Braille\BrailleGrade2Mapping.cs" />
     <Compile Include="CardHolderTool\CardHolder.cs" />
     <Compile Include="TextCreatorPlugin.cs" />
-    <Compile Include="Library\TextLibraryContainer.cs" />
     <Compile Include="Text\TextGenerator.cs" />
     <Compile Include="Text\TextEditor.cs" />
   </ItemGroup>
