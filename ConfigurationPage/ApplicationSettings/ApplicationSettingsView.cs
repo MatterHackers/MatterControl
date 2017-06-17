@@ -121,9 +121,39 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 					configureNotificationsButton,
 					StaticData.Instance.LoadIcon("notify-24x24.png")));
 
-			this.AddSettingsRow(this.GetLanguageControl());
+			// LanguageControl
 
-			#if !__ANDROID__
+			var languageSelector = new LanguageSelector()
+			{
+				TextColor = menuTextColor
+			};
+			languageSelector.SelectionChanged += (s, e) =>
+			{
+				UiThread.RunOnIdle(() =>
+				{
+					string languageCode = languageSelector.SelectedValue;
+					if (languageCode != UserSettings.Instance.get("Language"))
+					{
+						UserSettings.Instance.set("Language", languageCode);
+
+						if (languageCode == "L10N")
+						{
+							GenerateLocalizationValidationFile();
+						}
+
+						LocalizedString.ResetTranslationMap();
+						ApplicationController.Instance.ReloadAll();
+					}
+				});
+			};
+
+			this.AddSettingsRow(
+				new SettingsItem(
+					"Language".Localize(),
+					buttonFactory,
+					languageSelector));
+
+#if !__ANDROID__
 			{
 				this.AddSettingsRow(this.GetThumbnailRenderingControl());
 
@@ -400,57 +430,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			return buttonRow;
 		}
 		
-		private FlowLayoutWidget GetLanguageControl()
-		{
-			FlowLayoutWidget buttonRow = new FlowLayoutWidget();
-			buttonRow.HAnchor = HAnchor.ParentLeftRight;
-			buttonRow.Margin = new BorderDouble(top: 4);
-
-			TextWidget settingsLabel = new TextWidget("Language".Localize());
-			settingsLabel.AutoExpandBoundsToText = true;
-			settingsLabel.TextColor = menuTextColor;
-			settingsLabel.VAnchor = VAnchor.ParentTop;
-
-			FlowLayoutWidget controlsContainer = new FlowLayoutWidget();
-			controlsContainer.HAnchor = HAnchor.ParentLeftRight;
-
-			FlowLayoutWidget optionsContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			optionsContainer.Margin = new BorderDouble(bottom: 6);
-
-
-			LanguageSelector languageSelector = new LanguageSelector();
-			languageSelector.TextColor = menuTextColor;
-			languageSelector.SelectionChanged += (s, e) =>
-			{
-				UiThread.RunOnIdle(() =>
-				{
-					string languageCode = languageSelector.SelectedValue;
-					if (languageCode != UserSettings.Instance.get("Language"))
-					{
-						UserSettings.Instance.set("Language", languageCode);
-
-						if (languageCode == "L10N")
-						{
-							GenerateLocalizationValidationFile();
-						}
-
-						LocalizedString.ResetTranslationMap();
-						ApplicationController.Instance.ReloadAll();
-					}
-				});
-			};
-
-			languageSelector.HAnchor = HAnchor.ParentLeftRight;
-
-			optionsContainer.AddChild(languageSelector);
-			optionsContainer.Width = 200;
-
-			buttonRow.AddChild(settingsLabel);
-			buttonRow.AddChild(new HorizontalSpacer());
-			buttonRow.AddChild(optionsContainer);
-			return buttonRow;
-		}
-
 		private FlowLayoutWidget GetThumbnailRenderingControl()
 		{
 			FlowLayoutWidget buttonRow = new FlowLayoutWidget();
