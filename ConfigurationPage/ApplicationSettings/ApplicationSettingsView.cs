@@ -240,10 +240,57 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 						thumbnailsModeDropList));
 
 				// TextSize
-				this.AddSettingsRow(this.GetTextSizeControl());
+				if (!double.TryParse(UserSettings.Instance.get(UserSettingsKey.ApplicationTextSize), out double currentTexSize))
+				{
+					currentTexSize = 1.0;
+				}
+
+				double sliderThumbWidth = 10 * GuiWidget.DeviceScale;
+				double sliderWidth = 100 * GuiWidget.DeviceScale;
+				var textSizeSlider = new SolidSlider(new Vector2(), sliderThumbWidth, .7, 1.4)
+				{
+					Name = "Text Size Slider",
+					Margin = new BorderDouble(5, 0),
+					Value = currentTexSize,
+					HAnchor = HAnchor.ParentLeftRight,
+					TotalWidthInPixels = sliderWidth,
+				};
+
+				var optionalContainer = new FlowLayoutWidget();
+
+				TextWidget sectionLabel = null;
+
+				var textSizeApplyButton = buttonFactory.Generate("Apply".Localize());
+				textSizeApplyButton.VAnchor = VAnchor.ParentCenter;
+				textSizeApplyButton.Visible = false;
+				textSizeApplyButton.Margin = new BorderDouble(right: 6);
+				textSizeApplyButton.Click += (s, e) =>
+				{
+					GuiWidget.DeviceScale = textSizeSlider.Value;
+					ApplicationController.Instance.ReloadAll();
+				};
+				optionalContainer.AddChild(textSizeApplyButton);
+
+				textSizeSlider.ValueChanged += (s, e) =>
+				{
+					double textSizeNew = textSizeSlider.Value;
+					UserSettings.Instance.set(UserSettingsKey.ApplicationTextSize, textSizeNew.ToString("0.0"));
+					sectionLabel.Text = "Text Size".Localize() + $" : {textSizeNew:0.0}";
+					textSizeApplyButton.Visible = textSizeNew != currentTexSize;
+				};
+
+				var section = new SettingsItem(
+						"Text Size".Localize() + $" : {currentTexSize:0.0}",
+						buttonFactory,
+						textSizeSlider,
+						optionalContainer);
+
+				sectionLabel = section.Children<TextWidget>().FirstOrDefault();
+
+				this.AddSettingsRow(section);
 			}
-			#endif
-			
+#endif
+
 			if (UserSettings.Instance.IsTouchScreen)
 			{
 				this.AddSettingsRow(this.GetModeControl());
@@ -255,7 +302,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		private void AddSettingsRow(GuiWidget widget)
 		{
 			this.AddChild(widget);
-			this.AddChild(new HorizontalLine(50));
+			this.AddChild(new HorizontalLine(50)
+			{
+				Margin = new BorderDouble(left: 24),
+			});
 		}
 
 		private FlowLayoutWidget GetThemeControl()
@@ -296,71 +346,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			buttonRow.AddChild(settingLabel);
 			buttonRow.AddChild(colorSelectorContainer);
 
-			return buttonRow;
-		}
-
-		private FlowLayoutWidget GetTextSizeControl()
-		{
-			FlowLayoutWidget buttonRow = new FlowLayoutWidget();
-			buttonRow.HAnchor = HAnchor.ParentLeftRight;
-			buttonRow.Margin = new BorderDouble(top: 4);
-
-			double currentTexSize = 1.0;
-			if (!double.TryParse(UserSettings.Instance.get(UserSettingsKey.ApplicationTextSize), out currentTexSize))
-			{
-				currentTexSize = 1.0;
-			}
-
-			TextWidget settingsLabel = new TextWidget("Text Size".Localize() + $" : {currentTexSize:0.0}")
-			{
-				AutoExpandBoundsToText = true
-			};
-			settingsLabel.AutoExpandBoundsToText = true;
-			settingsLabel.TextColor = menuTextColor;
-			settingsLabel.VAnchor = VAnchor.ParentTop;
-
-			double sliderThumbWidth = 10 * GuiWidget.DeviceScale;
-			double sliderWidth = 100 * GuiWidget.DeviceScale;
-			var textSizeSlider = new SolidSlider(new Vector2(), sliderThumbWidth, .7, 1.4)
-			{
-				Name = "Text Size Slider",
-				Margin = new BorderDouble(5, 0),
-				Value = currentTexSize,
-				HAnchor = HAnchor.ParentLeftRight,
-				TotalWidthInPixels = sliderWidth,
-			};
-
-			FlowLayoutWidget optionsContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			optionsContainer.Margin = new BorderDouble(bottom: 6);
-			optionsContainer.AddChild(textSizeSlider);
-			optionsContainer.Width = 200 * GuiWidget.DeviceScale;
-
-			string currentTextModeType = UserSettings.Instance.get(UserSettingsKey.ApplicationTextSize);
-
-			Button textSizeControlApplyButton = buttonFactory.Generate("Apply".Localize());
-			textSizeControlApplyButton.VAnchor = VAnchor.ParentCenter;
-			textSizeControlApplyButton.Visible = false;
-			textSizeControlApplyButton.Margin = new BorderDouble(right: 6);
-			textSizeControlApplyButton.Click += (s, e) =>
-			{
-				GuiWidget.DeviceScale = textSizeSlider.Value;
-				ApplicationController.Instance.ReloadAll();
-			};
-
-			textSizeSlider.ValueChanged += (s, e) =>
-			{
-				double textSizeNew = ((SolidSlider)s).Value;
-				UserSettings.Instance.set(UserSettingsKey.ApplicationTextSize, textSizeNew.ToString("0.0"));
-				settingsLabel.Text = "Text Size".Localize() + $" : {textSizeNew:0.0}";
-				textSizeControlApplyButton.Visible = textSizeNew != currentTexSize;
-			};
-
-			string currentTexSizeString = UserSettings.Instance.get(UserSettingsKey.ApplicationTextSize);
-
-			buttonRow.AddChild(settingsLabel);
-			buttonRow.AddChild(new HorizontalSpacer());
-			buttonRow.AddChild(textSizeControlApplyButton);
-			buttonRow.AddChild(optionsContainer);
 			return buttonRow;
 		}
 
