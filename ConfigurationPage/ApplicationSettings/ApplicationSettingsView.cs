@@ -121,6 +121,25 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 					configureNotificationsButton,
 					StaticData.Instance.LoadIcon("notify-24x24.png")));
 
+			// Touch Screen Mode
+			this.AddSettingsRow(
+				new SettingsItem(
+					"Touch Screen Mode".Localize(),
+					buttonFactory,
+					new SettingsItem.ToggleSwitchConfig()
+					{
+						Checked = UserSettings.Instance.get(UserSettingsKey.ApplicationDisplayMode) == "touchscreen",
+						ToggleAction = (itemChecked) =>
+						{
+							string displayMode = itemChecked ? "touchscreen" : "responsive";
+							if (displayMode != UserSettings.Instance.get(UserSettingsKey.ApplicationDisplayMode))
+							{
+								UserSettings.Instance.set(UserSettingsKey.ApplicationDisplayMode, displayMode);
+								ApplicationController.Instance.ReloadAll();
+							}
+						}
+					}));
+
 			// LanguageControl
 			var languageSelector = new LanguageSelector()
 			{
@@ -219,25 +238,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 						"Thumbnails".Localize(),
 						buttonFactory,
 						thumbnailsModeDropList));
-
-				// Touch Screen Mode
-				this.AddSettingsRow(
-					new SettingsItem(
-						"Touch Screen Mode".Localize(),
-						buttonFactory,
-						new SettingsItem.ToggleSwitchConfig()
-						{
-							Checked = UserSettings.Instance.get(UserSettingsKey.ApplicationDisplayMode) == "touchscreen",
-							ToggleAction = (itemChecked) =>
-							{
-								string displayMode = itemChecked ? "touchscreen" : "responsive";
-								if (displayMode != UserSettings.Instance.get(UserSettingsKey.ApplicationDisplayMode))
-								{
-									UserSettings.Instance.set(UserSettingsKey.ApplicationDisplayMode, displayMode);
-									ApplicationController.Instance.ReloadAll();
-								}
-							}
-						}));
 
 				// TextSize
 				this.AddSettingsRow(this.GetTextSizeControl());
