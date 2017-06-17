@@ -107,8 +107,7 @@ namespace MatterControl.Tests
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				Assert.IsTrue(testRunner.WaitForName("Library Tab", 3));
-				testRunner.ClickByName("Library Tab");
+				Assert.IsTrue(testRunner.NameExists("WidescreenPanel"));
 
 				return Task.CompletedTask;
 			});
