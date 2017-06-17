@@ -122,7 +122,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 					StaticData.Instance.LoadIcon("notify-24x24.png")));
 
 			// LanguageControl
-
 			var languageSelector = new LanguageSelector()
 			{
 				TextColor = menuTextColor
@@ -155,10 +154,76 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 #if !__ANDROID__
 			{
-				this.AddSettingsRow(this.GetThumbnailRenderingControl());
+				// ThumbnailRendering
+				var thumbnailsModeDropList = new DropDownList("", maxHeight: 200)
+				{
+					TextColor = menuTextColor,
+				};
+				thumbnailsModeDropList.AddItem("Flat".Localize(), "orthographic");
+				thumbnailsModeDropList.AddItem("3D".Localize(), "raytraced");
 
+				var acceptableUpdateFeedTypeValues = new List<string>() { "orthographic", "raytraced" };
+				string currentThumbnailRenderingMode = UserSettings.Instance.get(UserSettingsKey.ThumbnailRenderingMode);
+
+				if (acceptableUpdateFeedTypeValues.IndexOf(currentThumbnailRenderingMode) == -1)
+				{
+					if (!UserSettings.Instance.IsTouchScreen)
+					{
+						UserSettings.Instance.set(UserSettingsKey.ThumbnailRenderingMode, "orthographic");
+					}
+					else
+					{
+						UserSettings.Instance.set(UserSettingsKey.ThumbnailRenderingMode, "raytraced");
+					}
+				}
+
+				thumbnailsModeDropList.SelectedValue = UserSettings.Instance.get(UserSettingsKey.ThumbnailRenderingMode);
+				thumbnailsModeDropList.SelectionChanged += (s, e) =>
+				{
+					string thumbnailRenderingMode = thumbnailsModeDropList.SelectedValue;
+					if (thumbnailRenderingMode != UserSettings.Instance.get(UserSettingsKey.ThumbnailRenderingMode))
+					{
+						UserSettings.Instance.set(UserSettingsKey.ThumbnailRenderingMode, thumbnailRenderingMode);
+
+						// Ask if the user would like to rebuild all their thumbnails
+						Action<bool> removeThumbnails = (bool shouldRebuildThumbnails) =>
+						{
+							if (shouldRebuildThumbnails)
+							{
+								string directoryToRemove = PartThumbnailWidget.ThumbnailsPath;
+								try
+								{
+									if (Directory.Exists(directoryToRemove))
+									{
+										Directory.Delete(directoryToRemove, true);
+									}
+								}
+								catch (Exception)
+								{
+									GuiWidget.BreakInDebugger();
+								}
+							}
+
+							ApplicationController.Instance.ReloadAll();
+						};
+
+						UiThread.RunOnIdle(() =>
+						{
+							StyledMessageBox.ShowMessageBox(removeThumbnails, rebuildThumbnailsMessage, rebuildThumbnailsTitle, StyledMessageBox.MessageType.YES_NO, "Rebuild".Localize());
+						});
+					}
+				};
+
+				this.AddSettingsRow(
+					new SettingsItem(
+						"Thumbnails".Localize(),
+						buttonFactory,
+						thumbnailsModeDropList));
+
+				// DisplayMode
 				this.AddSettingsRow(this.GetDisplayControl());
 
+				// TextSize
 				this.AddSettingsRow(this.GetTextSizeControl());
 			}
 			#endif
@@ -430,88 +495,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			return buttonRow;
 		}
 		
-		private FlowLayoutWidget GetThumbnailRenderingControl()
-		{
-			FlowLayoutWidget buttonRow = new FlowLayoutWidget();
-			buttonRow.HAnchor = HAnchor.ParentLeftRight;
-			buttonRow.Margin = new BorderDouble(top: 4);
-
-			TextWidget settingsLabel = new TextWidget("Thumbnail Rendering".Localize());
-			settingsLabel.AutoExpandBoundsToText = true;
-			settingsLabel.TextColor = menuTextColor;
-			settingsLabel.VAnchor = VAnchor.ParentTop;
-
-			FlowLayoutWidget optionsContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			optionsContainer.Margin = new BorderDouble(bottom: 6);
-
-			DropDownList interfaceOptionsDropList = new DropDownList("Development", maxHeight: 200);
-			interfaceOptionsDropList.TextColor = menuTextColor;
-			interfaceOptionsDropList.HAnchor = HAnchor.ParentLeftRight;
-
-			optionsContainer.AddChild(interfaceOptionsDropList);
-			optionsContainer.Width = 200;
-
-			interfaceOptionsDropList.AddItem("Flat".Localize(), "orthographic");
-			interfaceOptionsDropList.AddItem("3D".Localize(), "raytraced");
-
-			List<string> acceptableUpdateFeedTypeValues = new List<string>() { "orthographic", "raytraced" };
-			string currentThumbnailRenderingMode = UserSettings.Instance.get(UserSettingsKey.ThumbnailRenderingMode);
-
-			if (acceptableUpdateFeedTypeValues.IndexOf(currentThumbnailRenderingMode) == -1)
-			{
-				if (!UserSettings.Instance.IsTouchScreen)
-				{
-					UserSettings.Instance.set(UserSettingsKey.ThumbnailRenderingMode, "orthographic");
-				}
-				else
-				{
-					UserSettings.Instance.set(UserSettingsKey.ThumbnailRenderingMode, "raytraced");
-				}
-			}
-
-			interfaceOptionsDropList.SelectedValue = UserSettings.Instance.get(UserSettingsKey.ThumbnailRenderingMode);
-			interfaceOptionsDropList.SelectionChanged += (s, e) =>
-			{
-				string thumbnailRenderingMode = interfaceOptionsDropList.SelectedValue;
-				if (thumbnailRenderingMode != UserSettings.Instance.get(UserSettingsKey.ThumbnailRenderingMode))
-				{
-					UserSettings.Instance.set(UserSettingsKey.ThumbnailRenderingMode, thumbnailRenderingMode);
-
-					// Ask if the user would like to rebuild all their thumbnails
-					Action<bool> removeThumbnails = (bool shouldRebuildThumbnails) =>
-					{
-						if (shouldRebuildThumbnails)
-						{
-							string directoryToRemove = PartThumbnailWidget.ThumbnailsPath;
-							try
-							{
-								if (Directory.Exists(directoryToRemove))
-								{
-									Directory.Delete(directoryToRemove, true);
-								}
-							}
-							catch (Exception)
-							{
-								GuiWidget.BreakInDebugger();
-							}
-						}
-
-						ApplicationController.Instance.ReloadAll();
-					};
-
-					UiThread.RunOnIdle(() =>
-					{
-						StyledMessageBox.ShowMessageBox(removeThumbnails, rebuildThumbnailsMessage, rebuildThumbnailsTitle, StyledMessageBox.MessageType.YES_NO, "Rebuild".Localize());
-					});
-				}
-			};
-
-			buttonRow.AddChild(settingsLabel);
-			buttonRow.AddChild(new HorizontalSpacer());
-			buttonRow.AddChild(optionsContainer);
-			return buttonRow;
-		}
-
 		private string rebuildThumbnailsMessage = "You are switching to a different thumbnail rendering mode. If you want, your current thumbnails can be removed and recreated in the new style. You can switch back and forth at any time. There will be some processing overhead while the new thumbnails are created.\n\nDo you want to rebuild your existing thumbnails now?".Localize();
 		private string rebuildThumbnailsTitle = "Rebuild Thumbnails Now".Localize();
 
