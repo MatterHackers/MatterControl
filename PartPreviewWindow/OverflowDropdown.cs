@@ -144,6 +144,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				&& !menuVisibileAtMouseDown)
 			{
 				ShowPopup();
+
+				// Set a background color while the menu is active
 				this.BackgroundColor = slightShade;
 			}
 
@@ -180,6 +182,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			popupWidget.Closed += (s, e) =>
 			{
+				// Clear the temp background color
+				this.BackgroundColor = RGBA_Bytes.Transparent;
 				menuVisible = false;
 				popupWidget = null;
 			};
