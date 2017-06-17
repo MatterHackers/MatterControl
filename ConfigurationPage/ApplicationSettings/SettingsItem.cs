@@ -4,6 +4,7 @@ using MatterHackers.Agg.Image;
 using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.ConfigurationPage
 {
@@ -17,7 +18,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 		private RGBA_Bytes menuTextColor = RGBA_Bytes.Black;
 
-		public SettingsItem(string text, TextImageButtonFactory buttonFactory, ToggleSwitchConfig toggleSwitchConfig = null, GuiWidget optionalControls = null, ImageBuffer iconImage = null)
+		public SettingsItem(string text, ToggleSwitchConfig toggleSwitchConfig = null, GuiWidget optionalControls = null, ImageBuffer iconImage = null)
 			: base(FlowDirection.LeftToRight)
 		{
 			var switchContainer = new FlowLayoutWidget()
@@ -27,10 +28,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				Width = 45
 			};
 
-			CheckBox toggleSwitch = null;
 			if (toggleSwitchConfig != null)
 			{
-				toggleSwitch = GenerateToggleSwitch(toggleSwitchConfig.Checked);
+				CheckBox toggleSwitch = ImageButtonFactory.CreateToggleSwitch(toggleSwitchConfig.Checked, menuTextColor);
+				toggleSwitch.VAnchor = Agg.UI.VAnchor.ParentCenter;
 				toggleSwitch.CheckedStateChanged += (sender, e) =>
 				{
 					toggleSwitchConfig.ToggleAction?.Invoke(toggleSwitch.Checked);
@@ -42,7 +43,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			CreateChildControls(text, switchContainer, optionalControls, iconImage);
 		}
 
-		public SettingsItem (string text, TextImageButtonFactory buttonFactory, GuiWidget settingsControls, GuiWidget optionalControls = null, ImageBuffer iconImage = null)
+		public SettingsItem (string text, GuiWidget settingsControls, GuiWidget optionalControls = null, ImageBuffer iconImage = null)
 			: base (FlowDirection.LeftToRight)
 		{
 			CreateChildControls(text, settingsControls, optionalControls, iconImage);
@@ -51,7 +52,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		private void CreateChildControls(string text, GuiWidget settingsControls, GuiWidget optionalControls, ImageBuffer imageBuffer = null)
 		{
 			this.HAnchor = HAnchor.ParentLeftRight;
-			this.Height = 40;
+			this.MinimumSize = new Vector2(0, 40);
+
+			settingsControls.VAnchor |= VAnchor.ParentCenter;
+
+			if (optionalControls != null)
+			{
+				optionalControls.VAnchor |= VAnchor.ParentCenter;
+			}
 
 			var sectionLabel = new TextWidget(text)
 			{
@@ -92,14 +100,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				this.AddChild(optionalControls);
 			}
 			this.AddChild(settingsControls);
-		}
-
-		private CheckBox GenerateToggleSwitch(bool initiallyChecked)
-		{
-			CheckBox toggleSwitch = ImageButtonFactory.CreateToggleSwitch(initiallyChecked, menuTextColor);
-			toggleSwitch.VAnchor = Agg.UI.VAnchor.ParentCenter;
-
-			return toggleSwitch;
 		}
 	}
 }

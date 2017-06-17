@@ -33,8 +33,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using MatterHackers.Agg;
-using MatterHackers.Agg.Image;
-using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
@@ -61,7 +59,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			this.buttonFactory = buttonFactory;
 			this.HAnchor = HAnchor.ParentLeftRight;
 			this.VAnchor = VAnchor.FitToChildren;
-			this.Padding = 15;
+			this.Padding = new BorderDouble(right: 4);
 
 			if (UserSettings.Instance.IsTouchScreen)
 			{
@@ -80,7 +78,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			this.AddSettingsRow(
 				new SettingsItem(
 					"Camera Monitoring".Localize(),
-					buttonFactory,
 					new SettingsItem.ToggleSwitchConfig()
 					{
 						Checked = ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.publish_bed_image),
@@ -109,7 +106,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			this.AddSettingsRow(
 				new SettingsItem(
 					"Notifications".Localize(),
-					buttonFactory,
 					new SettingsItem.ToggleSwitchConfig()
 					{
 						Checked = UserSettings.Instance.get("PrintNotificationsEnabled") == "true",
@@ -125,7 +121,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			this.AddSettingsRow(
 				new SettingsItem(
 					"Touch Screen Mode".Localize(),
-					buttonFactory,
 					new SettingsItem.ToggleSwitchConfig()
 					{
 						Checked = UserSettings.Instance.get(UserSettingsKey.ApplicationDisplayMode) == "touchscreen",
@@ -165,11 +160,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				});
 			};
 
-			this.AddSettingsRow(
-				new SettingsItem(
-					"Language".Localize(),
-					buttonFactory,
-					languageSelector));
+			this.AddSettingsRow(new SettingsItem("Language".Localize(), languageSelector));
 
 #if !__ANDROID__
 			{
@@ -236,7 +227,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				this.AddSettingsRow(
 					new SettingsItem(
 						"Thumbnails".Localize(),
-						buttonFactory,
 						thumbnailsModeDropList));
 
 				// TextSize
@@ -281,7 +271,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 				var section = new SettingsItem(
 						"Text Size".Localize() + $" : {currentTexSize:0.0}",
-						buttonFactory,
 						textSizeSlider,
 						optionalContainer);
 
@@ -302,9 +291,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		private void AddSettingsRow(GuiWidget widget)
 		{
 			this.AddChild(widget);
-			this.AddChild(new HorizontalLine(50)
+			this.AddChild(new HorizontalLine(70)
 			{
-				Margin = new BorderDouble(left: 24),
+				Margin = new BorderDouble(left: 30),
 			});
 		}
 
