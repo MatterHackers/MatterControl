@@ -112,7 +112,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				{
 					Width = 640,
 					VAnchor = VAnchor.ParentBottomTop,
-					BorderColor = ApplicationController.Instance.Theme.SplitterBackground
+					BorderColor = ApplicationController.Instance.Theme.SplitterBackground,
+					SplitterWidth = ApplicationController.Instance.Theme.SplitterWidth
 				};
 
 				tabControl = ApplicationController.Instance.Theme.CreateTabControl();
@@ -190,26 +191,39 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			private double downWidth = 0;
 			private bool mouseDownOnBar = false;
 			private double mouseDownX;
-			private int resizeWidth = 10;
+
+
+			int splitterWidth = 10;
+			public int SplitterWidth
+			{
+				get => splitterWidth;
+				set
+				{
+					if (splitterWidth != value)
+					{
+						splitterWidth = value;
+						this.Padding = new BorderDouble(splitterWidth, 0, 0, 0);
+					}
+				}
+			}
 
 			internal ResizeContainer()
 			{
-				this.Padding = new BorderDouble(resizeWidth, 0, 0, 0);
 				this.HAnchor = HAnchor.AbsolutePosition;
-				this.Cursor = Cursors.WaitCursor;
+				this.Cursor = Cursors.VSplit;
 			}
 
 			public RGBA_Bytes BorderColor { get; set; } = ActiveTheme.Instance.TertiaryBackgroundColor;
 
 			public override void OnDraw(Graphics2D graphics2D)
 			{
-				graphics2D.FillRectangle(LocalBounds.Left, LocalBounds.Bottom, LocalBounds.Left + resizeWidth, LocalBounds.Top, this.BorderColor);
+				graphics2D.FillRectangle(LocalBounds.Left, LocalBounds.Bottom, LocalBounds.Left + this.SplitterWidth, LocalBounds.Top, this.BorderColor);
 				base.OnDraw(graphics2D);
 			}
 
 			public override void OnMouseDown(MouseEventArgs mouseEvent)
 			{
-				if (mouseEvent.Position.x < resizeWidth)
+				if (mouseEvent.Position.x < this.SplitterWidth)
 				{
 					mouseDownOnBar = true;
 					mouseDownX = TransformToScreenSpace(mouseEvent.Position).x;

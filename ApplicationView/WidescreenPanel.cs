@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl
 			{
 				Padding = new BorderDouble(4),
 				SplitterDistance = 254,
-				SplitterWidth = 10,
+				SplitterWidth = ApplicationController.Instance.Theme.SplitterWidth,
 				SplitterBackground = ApplicationController.Instance.Theme.SplitterBackground
 			};
 			library3DViewSplitter.AnchorAll();
