@@ -85,6 +85,8 @@ namespace MatterHackers.MatterControl
 			public TextImageButtonFactory ViewControlsButtonFactory { get; internal set; }
 			public RGBA_Bytes SplitterBackground { get; internal set; } = new RGBA_Bytes(0, 0, 0, 60);
 
+			public RGBA_Bytes SlightShade { get; } = new RGBA_Bytes(0, 0, 0, 40);
+
 			private EventHandler unregisterEvents;
 
 			static ThemeConfig()
