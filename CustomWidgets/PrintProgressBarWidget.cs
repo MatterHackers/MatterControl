@@ -131,7 +131,7 @@ namespace MatterHackers.MatterControl
 			};
 			AddChild(clickOverlay);
 
-			PrinterConnection.Instance.ActivePrintItemChanged.RegisterEvent(Instance_PrintItemChanged, ref unregisterEvents);
+			ApplicationController.Instance.ActivePrintItemChanged.RegisterEvent(Instance_PrintItemChanged, ref unregisterEvents);
 			PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent(Instance_PrintItemChanged, ref unregisterEvents);
 
 			SetThemedColors();
@@ -182,7 +182,7 @@ namespace MatterHackers.MatterControl
 
 		private void UpdatePrintStatus()
 		{
-			if (PrinterConnection.Instance.ActivePrintItem == null)
+			if (ApplicationController.Instance.ActivePrintItem == null)
 			{
 				printTimeElapsed.Text = string.Format("");
 				printTimeRemaining.Text = string.Format("");

@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private TextWidget gcodeProcessingStateInfoText;
 		private ViewGcodeWidget gcodeViewWidget;
-		private PrintItemWrapper printItem => PrinterConnection.Instance.ActivePrintItem;
+		private PrintItemWrapper printItem => ApplicationController.Instance.ActivePrintItem;
 		private bool startedSliceFromGenerateButton = false;
 		private Button generateGCodeButton;
 		private FlowLayoutWidget buttonBottomPanel;
@@ -828,7 +828,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// because the gcode finished creating for the print that is printing.
 				// We don't want to be notified if any other updates happen to this gcode while it is printing.
 				if (PrinterConnection.Instance.PrinterIsPrinting
-					&& PrinterConnection.Instance.ActivePrintItem == printItem)
+					&& ApplicationController.Instance.ActivePrintItem == printItem)
 				{
 					printItem.SlicingOutputMessage -= sliceItem_SlicingOutputMessage;
 					printItem.SlicingDone -= sliceItem_Done;

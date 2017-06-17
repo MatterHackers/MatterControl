@@ -31,18 +31,14 @@ using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Gaming.Game;
 using MatterHackers.Agg;
-using MatterHackers.Agg.UI;
 using MatterHackers.GCodeVisualizer;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
-using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.MatterControl.PrintQueue;
@@ -105,8 +101,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 	/// </summary>
 	public class PrinterConnection
 	{
-		public RootedObjectEventHandler ActivePrintItemChanged = new RootedObjectEventHandler();
-
 		public RootedObjectEventHandler BedTemperatureRead = new RootedObjectEventHandler();
 
 		public RootedObjectEventHandler BedTemperatureSet = new RootedObjectEventHandler();
@@ -176,8 +170,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private readonly int JoinThreadTimeoutMs = 5000;
 
-		private PrintItemWrapper activePrintItem;
-
 		private PrintTask activePrintTask;
 
 		private double actualBedTemperature;
@@ -204,8 +196,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private double currentSdBytes = 0;
 
-		private string doNotAskAgainMessage = "Don't remind me again".Localize();
-
 		private PrinterMachineInstruction.MovementTypes extruderMode = PrinterMachineInstruction.MovementTypes.Absolute;
 
 		private int fanSpeed;
@@ -215,8 +205,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		private int currentLineIndexToSend = 0;
 
 		private bool ForceImmediateWrites = false;
-
-		private string gcodeWarningMessage = "The file you are attempting to print is a GCode file.\n\nIt is recommended that you only print Gcode files known to match your printer's configuration.\n\nAre you sure you want to print this GCode file?".Localize();
 
 		private string itemNotFoundMessage = "Item not found".Localize();
 
@@ -392,28 +380,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					globalInstance = new PrinterConnection();
 				}
 				return globalInstance;
-			}
-		}
-
-		public PrintItemWrapper ActivePrintItem
-		{
-			get
-			{
-				return this.activePrintItem;
-			}
-			set
-			{
-				if (!PrinterIsPrinting
-					&& !PrinterIsPaused
-					&& this.activePrintItem != value)
-				{
-					this.activePrintItem = value;
-					if (CommunicationState == CommunicationStates.FinishedPrint)
-					{
-						CommunicationState = CommunicationStates.Connected;
-					}
-					OnActivePrintItemChanged(null);
-				}
 			}
 		}
 
@@ -1310,7 +1276,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public void OnPrintFinished(EventArgs e)
 		{
-			PrintFinished.CallEvents(this, new PrintItemWrapperEventArgs(this.ActivePrintItem));
+			PrintFinished.CallEvents(this, new PrintItemWrapperEventArgs(this.activePrintItem));
 
 			// TODO: Shouldn't this logic be in the UI layer where the controls are owned and hooked in via PrintFinished?
 			bool oneOrMoreValuesReset = false;
@@ -1330,88 +1296,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			if (oneOrMoreValuesReset)
 			{
 				ApplicationController.Instance.ReloadAdvancedControlsPanel();
-			}
-		}
-
-		public async void PrintActivePart(bool overrideAllowGCode = false)
-		{
-			try
-			{
-				// If leveling is required or is currently on
-				if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_required_to_print)
-					|| ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_enabled))
-				{
-					PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
-					if (levelingData?.HasBeenRunAndEnabled() != true)
-					{
-						LevelWizardBase.ShowPrintLevelWizard();
-						return;
-					}
-				}
-
-				// Save any pending changes before starting the print
-				await ApplicationController.Instance.ActiveView3DWidget.PersistPlateIfNeeded();
-
-				if (ActivePrintItem != null)
-				{
-					string pathAndFile = ActivePrintItem.FileLocation;
-					if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_sd_card_reader)
-						&& pathAndFile == QueueData.SdCardFileName)
-					{
-						StartSdCardPrint();
-					}
-					else if (ActiveSliceSettings.Instance.IsValid())
-					{
-						if (File.Exists(pathAndFile))
-						{
-							// clear the output cache prior to starting a print
-							PrinterOutputCache.Instance.Clear();
-
-							string hideGCodeWarning = ApplicationSettings.Instance.get(ApplicationSettingsKey.HideGCodeWarning);
-
-							if (Path.GetExtension(pathAndFile).ToUpper() == ".GCODE"
-								&& hideGCodeWarning == null
-								&& !overrideAllowGCode)
-							{
-								CheckBox hideGCodeWarningCheckBox = new CheckBox(doNotAskAgainMessage);
-								hideGCodeWarningCheckBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-								hideGCodeWarningCheckBox.Margin = new BorderDouble(top: 6, left: 6);
-								hideGCodeWarningCheckBox.HAnchor = Agg.UI.HAnchor.ParentLeft;
-								hideGCodeWarningCheckBox.Click += (sender, e) =>
-								{
-									if (hideGCodeWarningCheckBox.Checked)
-									{
-										ApplicationSettings.Instance.set(ApplicationSettingsKey.HideGCodeWarning, "true");
-									}
-									else
-									{
-										ApplicationSettings.Instance.set(ApplicationSettingsKey.HideGCodeWarning, null);
-									}
-								};
-
-								UiThread.RunOnIdle(() => StyledMessageBox.ShowMessageBox(onConfirmPrint, gcodeWarningMessage, "Warning - GCode file".Localize(), new GuiWidget[] { new VerticalSpacer(), hideGCodeWarningCheckBox }, StyledMessageBox.MessageType.YES_NO));
-							}
-							else
-							{
-								CommunicationState = CommunicationStates.PreparingToPrint;
-								PrintItemWrapper partToPrint = ActivePrintItem;
-								SlicingQueue.Instance.QueuePartForSlicing(partToPrint);
-								partToPrint.SlicingDone += partToPrint_SliceDone;
-							}
-						}
-					}
-				}
-			}
-			catch (Exception)
-			{
-			}
-		}
-
-		public void PrintActivePartIfPossible(bool overrideAllowGCode = false)
-		{
-			if (CommunicationState == CommunicationStates.Connected || CommunicationState == CommunicationStates.FinishedPrint)
-			{
-				PrintActivePart(overrideAllowGCode);
 			}
 		}
 
@@ -1452,22 +1336,18 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private bool haveReportedError = false;
 
+		public event EventHandler ErrorReported;
+
 		public void PrinterReportsError(object sender, EventArgs e)
 		{
 			if (!haveReportedError)
 			{
 				haveReportedError = true;
+
 				FoundStringEventArgs foundStringEventArgs = e as FoundStringEventArgs;
 				if (foundStringEventArgs != null)
 				{
-					string message = "Your printer is reporting a hardware Error. This may prevent your printer from functioning properly.".Localize()
-						+ "\n"
-						+ "\n"
-						+ "Error Reported".Localize() + ":"
-						+ $" \"{foundStringEventArgs.LineToCheck}\".";
-					UiThread.RunOnIdle(() =>
-					StyledMessageBox.ShowMessageBox(null, message, "Printer Hardware Error".Localize())
-					);
+					ErrorReported?.Invoke(null, foundStringEventArgs);
 				}
 			}
 		}
@@ -1656,18 +1536,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 											SendLineToPrinterNow(connectGCode);
 
 											// and call back anyone who would like to know we connected
-											UiThread.RunOnIdle(() => ConnectionSucceeded.CallEvents(this, null));
-
-											// run the print leveling wizard if we need to for this printer
-											if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_required_to_print)
-												|| ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_enabled))
-											{
-												PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
-												if (levelingData?.HasBeenRunAndEnabled() != true)
-												{
-													UiThread.RunOnIdle(LevelWizardBase.ShowPrintLevelWizard);
-												}
-											}
+											ConnectionSucceeded.CallEvents(this, null);
 										}
 										else
 										{
@@ -1840,11 +1709,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						CommunicationState = CommunicationStates.Disconnected;
 
 						// We were connected to a printer so try to reconnect
-						UiThread.RunOnIdle(() =>
-						{
-							//HaltConnectionThread();
-							ConnectToActivePrinter();
-						}, 2);
+						ConnectToActivePrinter();
 					}
 					else
 					{
@@ -2066,7 +1931,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			if (!PrinterIsConnected
 				|| PrinterIsPrinting
-				|| ActivePrintItem.PrintItem.FileLocation != QueueData.SdCardFileName)
+				|| activePrintItem.PrintItem.FileLocation != QueueData.SdCardFileName)
 			{
 				return false;
 			}
@@ -2076,7 +1941,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			ClearQueuedGCode();
 			CommunicationState = CommunicationStates.PrintingFromSd;
 
-			SendLineToPrinterNow("M23 {0}".FormatWith(ActivePrintItem.PrintItem.Name.ToLower())); // Select SD File
+			SendLineToPrinterNow("M23 {0}".FormatWith(activePrintItem.PrintItem.Name.ToLower())); // Select SD File
 			SendLineToPrinterNow("M24"); // Start/resume SD print
 
 			ReadLineStartCallBacks.AddCallbackToKey("Done printing file", DonePrintingSdFile);
@@ -2328,10 +2193,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private void DonePrintingSdFile(object sender, FoundStringEventArgs e)
 		{
-			UiThread.RunOnIdle(() =>
-			{
-				ReadLineStartCallBacks.RemoveCallbackFromKey("Done printing file", DonePrintingSdFile);
-			});
+			ReadLineStartCallBacks.RemoveCallbackFromKey("Done printing file", DonePrintingSdFile);
 			CommunicationState = CommunicationStates.FinishedPrint;
 
 			this.PrintJobName = null;
@@ -2354,10 +2216,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private void FileDeleteConfirmed(object sender, EventArgs e)
 		{
-			UiThread.RunOnIdle(() =>
-			{
-				ReadLineStartCallBacks.RemoveCallbackFromKey("File deleted:", FileDeleteConfirmed);
-			});
+			ReadLineStartCallBacks.RemoveCallbackFromKey("File deleted:", FileDeleteConfirmed);
 			PrintingCanContinue(this, null);
 		}
 
@@ -2459,6 +2318,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			CreateStreamProcessors(gcodeFilename, ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.recover_is_enabled));
 		}
 
+		internal PrintItemWrapper activePrintItem;
+
 		private void DoneLoadingGCodeToPrint()
 		{
 			switch (communicationState)
@@ -2468,9 +2329,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					break;
 
 				case CommunicationStates.PreparingToPrint:
-					if (ActivePrintItem.PrintItem.Id == 0)
+					if (activePrintItem.PrintItem.Id == 0)
 					{
-						ActivePrintItem.PrintItem.Commit();
+						activePrintItem.PrintItem.Commit();
 					}
 
 					if (activePrintTask == null)
@@ -2479,9 +2340,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						activePrintTask = new PrintTask();
 						activePrintTask.PrintStart = DateTime.Now;
 						activePrintTask.PrinterId = this.ActivePrinter.ID.GetHashCode();
-						activePrintTask.PrintName = ActivePrintItem.PrintItem.Name;
-						activePrintTask.PrintItemId = ActivePrintItem.PrintItem.Id;
-						activePrintTask.PrintingGCodeFileName = ActivePrintItem.GetGCodePathAndFileName();
+						activePrintTask.PrintName = activePrintItem.PrintItem.Name;
+						activePrintTask.PrintItemId = activePrintItem.PrintItem.Id;
+						activePrintTask.PrintingGCodeFileName = activePrintItem.GetGCodePathAndFileName();
 						activePrintTask.PrintComplete = false;
 
 						activePrintTask.Commit();
@@ -2520,11 +2381,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			OnAtxPowerStateChanged(false);
 		}
 
-		private void OnActivePrintItemChanged(EventArgs e)
-		{
-			ActivePrintItemChanged.CallEvents(this, e);
-		}
-
 		private void OnBedTemperatureRead(EventArgs e)
 		{
 			BedTemperatureRead.CallEvents(this, e);
@@ -2533,17 +2389,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		private void OnBedTemperatureSet(EventArgs e)
 		{
 			BedTemperatureSet.CallEvents(this, e);
-		}
-
-		private void onConfirmPrint(bool messageBoxResponse)
-		{
-			if (messageBoxResponse)
-			{
-				CommunicationState = CommunicationStates.PreparingToPrint;
-				PrintItemWrapper partToPrint = ActivePrintItem;
-				SlicingQueue.Instance.QueuePartForSlicing(partToPrint);
-				partToPrint.SlicingDone += partToPrint_SliceDone;
-			}
 		}
 
 		private void OnEnabledChanged(EventArgs e)
@@ -2580,84 +2425,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			atxPowerIsOn = enableAtxPower;
 			AtxPowerStateChanged.CallEvents(this, null);
-		}
-
-		private void partToPrint_SliceDone(object sender, EventArgs e)
-		{
-			PrintItemWrapper partToPrint = sender as PrintItemWrapper;
-			if (partToPrint != null)
-			{
-				partToPrint.SlicingDone -= partToPrint_SliceDone;
-				string gcodePathAndFileName = partToPrint.GetGCodePathAndFileName();
-				if (gcodePathAndFileName != "")
-				{
-					bool originalIsGCode = Path.GetExtension(partToPrint.FileLocation).ToUpper() == ".GCODE";
-					if (File.Exists(gcodePathAndFileName))
-					{
-						// Create archive point for printing attempt
-						if (Path.GetExtension(partToPrint.FileLocation).ToUpper() == ".MCX")
-						{
-							// TODO: We should zip mcx and settings when starting a print
-							string platingDirectory = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, "PrintHistory");
-							Directory.CreateDirectory(platingDirectory);
-
-							string now = DateTime.Now.ToString("yyyyMMdd-HHmmss");
-							string archivePath = Path.Combine(platingDirectory, now + ".zip");
-
-							using (var file = File.OpenWrite(archivePath))
-							using (var zip = new ZipArchive(file, ZipArchiveMode.Create))
-							{
-								zip.CreateEntryFromFile(partToPrint.FileLocation, "PrinterPlate.mcx");
-								zip.CreateEntryFromFile(ActiveSliceSettings.Instance.DocumentPath, ActiveSliceSettings.Instance.GetValue(SettingsKey.printer_name) + ".printer");
-								zip.CreateEntryFromFile(gcodePathAndFileName, "sliced.gcode");
-							}
-						}
-
-						// read the last few k of the file and see if it says "filament used". We use this marker to tell if the file finished writing
-						if (originalIsGCode)
-						{
-							StartPrint(gcodePathAndFileName);
-							return;
-						}
-						else
-						{
-							int bufferSize = 32000;
-							using (Stream fileStream = new FileStream(gcodePathAndFileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-							{
-								byte[] buffer = new byte[bufferSize];
-								fileStream.Seek(Math.Max(0, fileStream.Length - bufferSize), SeekOrigin.Begin);
-								int numBytesRead = fileStream.Read(buffer, 0, bufferSize);
-								fileStream.Close();
-
-								string fileEnd = System.Text.Encoding.UTF8.GetString(buffer);
-								if (fileEnd.Contains("filament used"))
-								{
-									if (firmwareUriGcodeSend)
-									{
-										currentSdBytes = 0;
-
-										ClearQueuedGCode();
-
-										SendLineToPrinterNow("M23 {0}".FormatWith(gcodePathAndFileName)); // Send the SD File
-										SendLineToPrinterNow("M24"); // Start/resume SD print
-
-										CommunicationState = CommunicationStates.PrintingFromSd;
-
-										ReadLineStartCallBacks.AddCallbackToKey("Done printing file", DonePrintingSdFile);
-									}
-									else
-									{
-										StartPrint(gcodePathAndFileName);
-									}
-									return;
-								}
-							}
-						}
-					}
-
-					CommunicationState = CommunicationStates.Connected;
-				}
-			}
 		}
 
 		private void SetDetailedPrintingState(string lineBeingSetToPrinter)

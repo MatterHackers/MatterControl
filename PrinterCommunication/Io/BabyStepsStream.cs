@@ -28,7 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using MatterHackers.Agg.UI;
+using MatterHackers.Agg;
 using MatterHackers.GCodeVisualizer;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;

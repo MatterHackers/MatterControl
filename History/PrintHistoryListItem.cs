@@ -27,18 +27,18 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Globalization;
+using System.IO;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrintQueue;
-using System;
-using System.Globalization;
-using System.IO;
-using MatterHackers.MatterControl.Library;
 
 namespace MatterHackers.MatterControl.PrintHistory
 {
@@ -239,7 +239,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 							{
 								QueueData.Instance.AddItem(new PrintItemWrapper(printTask.PrintItemId), 0);
 
-								PrinterCommunication.PrinterConnection.Instance.PrintActivePartIfPossible();
+								ApplicationController.Instance.PrintActivePartIfPossible();
 							}
 							else
 							{
