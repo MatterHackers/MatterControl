@@ -68,9 +68,58 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				this.AddSettingsRow(this.GetUpdateControl());
 			}
 
-			this.AddSettingsRow(this.GetCameraMonitoringControl());
+			// Camera Monitoring
+			bool hasCamera = true || ApplicationSettings.Instance.get(ApplicationSettingsKey.HardwareHasCamera) == "true";
 
-			this.AddSettingsRow(this.GetNotificationControls());
+			var previewButton = buttonFactory.Generate("Preview".Localize().ToUpper());
+			previewButton.Click += (s, e) =>
+			{
+				MatterControlApplication.Instance.OpenCameraPreview();
+			};
+
+			this.AddSettingsRow(
+				new SettingsItem(
+					"Camera Monitoring".Localize(),
+					buttonFactory,
+					new SettingsItem.ToggleSwitchConfig()
+					{
+						Checked = ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.publish_bed_image),
+						ToggleAction = (itemChecked) =>
+						{
+							ActiveSliceSettings.Instance.SetValue(SettingsKey.publish_bed_image, itemChecked ? "1" : "0");
+						}
+					},
+					previewButton,
+					StaticData.Instance.LoadIcon("camera-24x24.png", 24, 24))
+			);
+
+			// Print Notifications
+			var configureNotificationsButton = buttonFactory.Generate("Configure".Localize().ToUpper());
+			configureNotificationsButton.Name = "Configure Notification Settings Button";
+			configureNotificationsButton.Margin = new BorderDouble(left: 6);
+			configureNotificationsButton.VAnchor = VAnchor.ParentCenter;
+			configureNotificationsButton.Click += (s, e) =>
+			{
+				if (OpenPrintNotification != null)
+				{
+					UiThread.RunOnIdle(OpenPrintNotification);
+				}
+			};
+
+			this.AddSettingsRow(
+				new SettingsItem(
+					"Notifications".Localize(),
+					buttonFactory,
+					new SettingsItem.ToggleSwitchConfig()
+					{
+						Checked = UserSettings.Instance.get("PrintNotificationsEnabled") == "true",
+						ToggleAction = (itemChecked) =>
+						{
+							UserSettings.Instance.set("PrintNotificationsEnabled", itemChecked ? "true" : "false");
+						}
+					},
+					configureNotificationsButton,
+					StaticData.Instance.LoadIcon("notify-24x24.png")));
 
 			this.AddSettingsRow(this.GetLanguageControl());
 
@@ -96,85 +145,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		{
 			this.AddChild(widget);
 			this.AddChild(new HorizontalLine(50));
-		}
-
-		private FlowLayoutWidget GetNotificationControls()
-		{
-			FlowLayoutWidget notificationSettingsContainer = new FlowLayoutWidget();
-			notificationSettingsContainer.HAnchor |= HAnchor.ParentLeftRight;
-			notificationSettingsContainer.VAnchor |= Agg.UI.VAnchor.ParentCenter;
-			notificationSettingsContainer.Margin = new BorderDouble(0, 0, 0, 0);
-			notificationSettingsContainer.Padding = new BorderDouble(0);
-
-			ImageBuffer notifiImage = StaticData.Instance.LoadIcon("notify-24x24.png");
-			notifiImage.SetRecieveBlender(new BlenderPreMultBGRA());
-
-			ImageWidget notificationSettingsIcon = new ImageWidget(notifiImage);
-			notificationSettingsIcon.VAnchor = VAnchor.ParentCenter;
-			notificationSettingsIcon.Margin = new BorderDouble(right: 6, bottom: 6);
-
-			var configureNotificationSettingsButton = buttonFactory.Generate("Configure".Localize().ToUpper());
-			configureNotificationSettingsButton.Name = "Configure Notification Settings Button";
-			configureNotificationSettingsButton.Margin = new BorderDouble(left: 6);
-			configureNotificationSettingsButton.VAnchor = VAnchor.ParentCenter;
-			configureNotificationSettingsButton.Click += (s, e) =>
-			{
-				if (OpenPrintNotification != null)
-				{
-					UiThread.RunOnIdle(OpenPrintNotification);
-				}
-			};
-
-			var notificationSettingsLabel = new TextWidget("Notifications".Localize());
-			notificationSettingsLabel.AutoExpandBoundsToText = true;
-			notificationSettingsLabel.TextColor = menuTextColor;
-			notificationSettingsLabel.VAnchor = VAnchor.ParentCenter;
-
-			GuiWidget printNotificationsSwitchContainer = new FlowLayoutWidget();
-			printNotificationsSwitchContainer.VAnchor = VAnchor.ParentCenter;
-			printNotificationsSwitchContainer.Margin = new BorderDouble(left: 16);
-
-			CheckBox enablePrintNotificationsSwitch = ImageButtonFactory.CreateToggleSwitch(UserSettings.Instance.get("PrintNotificationsEnabled") == "true", menuTextColor);
-			enablePrintNotificationsSwitch.VAnchor = VAnchor.ParentCenter;
-			enablePrintNotificationsSwitch.CheckedStateChanged += (sender, e) =>
-			{
-				UserSettings.Instance.set("PrintNotificationsEnabled", enablePrintNotificationsSwitch.Checked ? "true" : "false");
-			};
-			printNotificationsSwitchContainer.AddChild(enablePrintNotificationsSwitch);
-			printNotificationsSwitchContainer.SetBoundsToEncloseChildren();
-
-			notificationSettingsContainer.AddChild(notificationSettingsIcon);
-			notificationSettingsContainer.AddChild(notificationSettingsLabel);
-			notificationSettingsContainer.AddChild(new HorizontalSpacer());
-			notificationSettingsContainer.AddChild(configureNotificationSettingsButton);
-			notificationSettingsContainer.AddChild(printNotificationsSwitchContainer);
-
-			return notificationSettingsContainer;
-		}
-
-		private FlowLayoutWidget GetCameraMonitoringControl()
-		{
-			bool hasCamera = true || ApplicationSettings.Instance.get(ApplicationSettingsKey.HardwareHasCamera) == "true";
-
-			var previewButton = buttonFactory.Generate("Preview".Localize().ToUpper());
-			previewButton.Click += (s, e) =>
-			{
-				MatterControlApplication.Instance.OpenCameraPreview();
-			};
-
-			return new SettingsItem(
-				"Camera Monitoring".Localize(),
-				buttonFactory,
-				new SettingsItem.ToggleSwitchConfig()
-				{
-					Checked = ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.publish_bed_image),
-					ToggleAction = (itemChecked) =>
-					{
-						ActiveSliceSettings.Instance.SetValue(SettingsKey.publish_bed_image, itemChecked ? "1" : "0");
-					}
-				},
-				previewButton,
-				StaticData.Instance.LoadIcon("camera-24x24.png", 24, 24));
 		}
 
 		private FlowLayoutWidget GetThemeControl()
