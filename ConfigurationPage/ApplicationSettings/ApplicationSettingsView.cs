@@ -285,7 +285,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				this.AddSettingsRow(this.GetModeControl());
 			}
 
-			this.AddSettingsRow(this.GetThemeControl());
+			this.AddChild(new SettingsItem("Theme".Localize(), new GuiWidget()));
+			this.AddChild(this.GetThemeControl());
 		}
 
 		private void AddSettingsRow(GuiWidget widget)
@@ -299,43 +300,36 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 		private FlowLayoutWidget GetThemeControl()
 		{
-			FlowLayoutWidget buttonRow = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			buttonRow.HAnchor = HAnchor.ParentLeftRight;
-			buttonRow.Margin = new BorderDouble(0, 6);
+			var colorSelectorContainer = new FlowLayoutWidget()
+			{
+				HAnchor = HAnchor.ParentLeftRight,
+				Margin = new BorderDouble(30, 5, 0, 0)
+			};
 
-			TextWidget settingLabel = new TextWidget("Theme".Localize());
-			settingLabel.AutoExpandBoundsToText = true;
-			settingLabel.TextColor = menuTextColor;
-			settingLabel.HAnchor = HAnchor.ParentLeft;
+			var currentColorThemeBorder = new GuiWidget()
+			{
+				VAnchor = VAnchor.ParentBottomTop,
+				Padding = new BorderDouble(5, 3),
+				Width = 80,
+			};
 
-			FlowLayoutWidget colorSelectorContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
-			colorSelectorContainer.HAnchor = HAnchor.ParentLeftRight;
-			colorSelectorContainer.Margin = new BorderDouble(top: 4);
-
-			GuiWidget currentColorThemeBorder = new GuiWidget();
-
-			currentColorThemeBorder.VAnchor = VAnchor.ParentBottomTop;
-			currentColorThemeBorder.Padding = new BorderDouble(5);
-			currentColorThemeBorder.Width = 80;
-			currentColorThemeBorder.BackgroundColor = RGBA_Bytes.LightGray;
-
-			GuiWidget currentColorTheme = new GuiWidget();
-			currentColorTheme.HAnchor = HAnchor.ParentLeftRight;
-			currentColorTheme.VAnchor = VAnchor.ParentBottomTop;
-			currentColorTheme.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
-
+			var currentColorTheme = new GuiWidget()
+			{
+				HAnchor = HAnchor.ParentLeftRight,
+				VAnchor = VAnchor.ParentBottomTop,
+				BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor
+			};
 			currentColorThemeBorder.AddChild(currentColorTheme);
 
-			ThemeColorSelectorWidget themeSelector = new ThemeColorSelectorWidget(colorToChangeTo: currentColorTheme);
-			themeSelector.Margin = new BorderDouble(right: 5);
+			var themeSelector = new ThemeColorSelectorWidget(colorToChangeTo: currentColorTheme)
+			{
+				Margin = new BorderDouble(right: 5)
+			};
 
 			colorSelectorContainer.AddChild(themeSelector);
 			colorSelectorContainer.AddChild(currentColorThemeBorder);
 
-			buttonRow.AddChild(settingLabel);
-			buttonRow.AddChild(colorSelectorContainer);
-
-			return buttonRow;
+			return colorSelectorContainer;
 		}
 
 		private FlowLayoutWidget GetModeControl()
