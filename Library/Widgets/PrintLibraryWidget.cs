@@ -367,6 +367,19 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		private void CreateMenuActions()
 		{
+			menuActions.Add(new PrintItemAction()
+			{
+				Title = "Pin to Library",
+				AllowMultiple = false,
+				AllowContainers = true,
+				AllowProtected = true,
+				Action = (selectedLibraryItems, listView) =>
+				{
+					Console.WriteLine();
+				}
+			});
+
+
 			// edit menu item
 			menuActions.Add(new PrintItemAction()
 			{

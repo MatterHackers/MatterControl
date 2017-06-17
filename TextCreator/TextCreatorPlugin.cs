@@ -27,10 +27,15 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System.IO;
+using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
+using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.Library;
+using MatterHackers.MatterControl.Plugins.BrailleBuilder;
+using MatterHackers.MatterControl.Plugins.TextCreator;
 using MatterHackers.MatterControl.PluginSystem;
 
 namespace MatterHackers.Plugins.EditorTools
@@ -39,13 +44,47 @@ namespace MatterHackers.Plugins.EditorTools
 	{
 		public override void Initialize(GuiWidget application)
 		{
-			string name = "Text Tools".Localize();
+			string category = "Text Tools".Localize();
+			var library = ApplicationController.Instance.Library;
 
-			ApplicationController.Instance.Library.RegisterCreator(
-				new DynamicContainerLink(
-					name,
-					LibraryProviderHelpers.LoadInvertIcon("FileDialog", "folder.png"),
-					() => new TextLibraryContainer(name)));
+			library.RegisterCreator(
+				new GeneratorItem(
+					"Text".Localize(), 
+					() =>
+					{
+						var generator = new TextGenerator();
+						return generator.CreateText(
+							"Text".Localize(),
+							1,
+							.25,
+							1,
+							true);
+					},
+					category));
+
+			library.RegisterCreator(
+				new GeneratorItem(
+					"Braille".Localize(), 
+					() =>
+					{
+						string braille = "Braille".Localize();
+						var generator = new BrailleGenerator();
+						return generator.CreateText(
+							braille,
+							1,
+							.25,
+							true,
+							braille);
+					}, 
+					category));
+
+			// TODO: Filepath won't work on Android. Needs to load from/to stream via custom type
+			library.RegisterCreator(
+				new FileSystemFileItem(StaticData.Instance.MapPath(Path.Combine("Images", "mh-logo.png")))
+				{
+					Name = "Image Converter".Localize(),
+					Category = category
+				});
 
 			base.Initialize(application);
 		}

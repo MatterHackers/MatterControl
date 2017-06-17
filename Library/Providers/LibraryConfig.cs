@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl.Library
 		/// <summary>
 		/// Storage for plugin 'Creators' added via RegisterCreator
 		/// </summary>
-		private CreatorsContainer registeredCreators;
+		//private CreatorsContainer registeredCreators;
 
 		private List<ILibraryContainerLink> libraryProviders;
 
@@ -73,19 +73,20 @@ namespace MatterHackers.MatterControl.Library
 		
 		public LibraryConfig()
 		{
-			registeredCreators = new CreatorsContainer()
-			{
-				Name = "Creators",
-				ChildContainers = new List<ILibraryContainerLink>(),
-				Items = new List<ILibraryItem>()
-			};
+			//registeredCreators = new CreatorsContainer()
+			//{
+			//	Name = "Creators",
+			//	ChildContainers = new List<ILibraryContainerLink>(),
+			//	Items = new List<ILibraryItem>()
+			//};
 
 			libraryProviders = new List<ILibraryContainerLink>()
 			{
+				/*
 				new DynamicContainerLink(
 					registeredCreators.Name,
 					StaticData.Instance.LoadIcon("icon_creator.png"),
-					() => registeredCreators),
+					() => registeredCreators), */
 			};
 
 			this.RootLibaryContainer = new RootLibraryContainer(libraryProviders);
@@ -167,7 +168,19 @@ namespace MatterHackers.MatterControl.Library
 
 		public void RegisterCreator(ILibraryContainerLink containerItem)
 		{
-			registeredCreators.ChildContainers.Add(containerItem);
+			this.RootLibaryContainer.ChildContainers.Add(containerItem);
+			OnLibraryItemsChanged();
+		}
+
+		public void RegisterCreator(ILibraryContentItem libraryItem)
+		{
+			this.RootLibaryContainer.Items.Add(libraryItem);
+			OnLibraryItemsChanged();
+		}
+
+		public void RegisterCreator(ILibraryContentStream libraryItem)
+		{
+			this.RootLibaryContainer.Items.Add(libraryItem);
 			OnLibraryItemsChanged();
 		}
 
