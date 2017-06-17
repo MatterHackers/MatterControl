@@ -147,7 +147,6 @@
     <Compile Include="ApplicationView\MenuRow\MenuBase.cs" />
     <Compile Include="ApplicationView\MenuRow\ApplicationMenuRow.cs" />
     <Compile Include="ApplicationView\TouchscreenTabView.cs" />
-    <Compile Include="ApplicationView\AdvancedControlsPanel.cs" />
     <Compile Include="ConfigurationPage\ApplicationSettings\ApplicationSettingsView.cs" />
     <Compile Include="ConfigurationPage\LanguageSelector.cs" />
     <Compile Include="ConfigurationPage\CalibrationSettings\CalibrationSettingsView.cs" />

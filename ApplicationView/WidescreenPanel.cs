@@ -32,6 +32,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.PrintLibrary;
 
 namespace MatterHackers.MatterControl
 {
@@ -60,7 +61,7 @@ namespace MatterHackers.MatterControl
 			var library3DViewSplitter = new Splitter()
 			{
 				Padding = new BorderDouble(4),
-				SplitterDistance = 410,
+				SplitterDistance = 234,
 				SplitterWidth = 10,
 				SplitterBackground = ApplicationController.Instance.Theme.SplitterBackground
 			};
@@ -69,10 +70,7 @@ namespace MatterHackers.MatterControl
 			this.AddChild(library3DViewSplitter);
 
 			// put in the left column
-			library3DViewSplitter.Panel1.AddChild(new AdvancedControlsPanel()
-			{
-				Name = "For - CompactSlidePanel"
-			});
+			library3DViewSplitter.Panel1.AddChild(new PrintLibraryWidget());
 
 			// put in the right column
 			library3DViewSplitter.Panel2.AddChild(new PartPreviewContent(ApplicationController.Instance.ActivePrintItem, View3DWidget.WindowMode.Embeded, View3DWidget.AutoRotate.Disabled)

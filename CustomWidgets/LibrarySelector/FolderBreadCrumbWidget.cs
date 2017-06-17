@@ -88,69 +88,80 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			bool firstItem = true;
 
-			foreach(var container in ItemAndParents(currentContainer).Reverse())
+			if (this.Width < 250)
 			{
-				if (!firstItem)
+				Button containerButton = buttonFactory.Generate(listView.ActiveContainer.Name);
+				containerButton.Name = "Bread Crumb Button " + listView.ActiveContainer.Name;
+				containerButton.Margin = new BorderDouble(firstItem ? 0 : 3, 0, 3, 0);
+
+				this.AddChild(containerButton);
+			}
+			else
+			{
+				foreach (var container in ItemAndParents(currentContainer).Reverse())
 				{
-					// Create separator chevron
-					this.AddChild(new TextWidget(">", textColor: ActiveTheme.Instance.PrimaryTextColor)
+					if (!firstItem)
 					{
-						VAnchor = VAnchor.ParentCenter,
-						Margin = new BorderDouble(0)
-					});
+						// Create separator chevron
+						this.AddChild(new TextWidget(">", textColor: ActiveTheme.Instance.PrimaryTextColor)
+						{
+							VAnchor = VAnchor.ParentCenter,
+							Margin = new BorderDouble(0)
+						});
+					}
+
+					Button gotoProviderButton = buttonFactory.Generate(container.Name);
+					gotoProviderButton.Name = "Bread Crumb Button " + container.Name;
+					gotoProviderButton.Margin = new BorderDouble(firstItem ? 0 : 3, 0, 3, 0);
+					gotoProviderButton.Click += (s, e) =>
+					{
+						UiThread.RunOnIdle(() => listView.LoadContainer(container));
+					};
+					this.AddChild(gotoProviderButton);
+
+					firstItem = false;
 				}
 
-				Button gotoProviderButton = buttonFactory.Generate(container.Name);
-				gotoProviderButton.Name = "Bread Crumb Button " + container.Name;
-				gotoProviderButton.Margin = new BorderDouble(firstItem ? 0 : 3, 0, 3, 0);
-				gotoProviderButton.Click += (s, e) =>
+				if (haveFilterRunning)
 				{
-					UiThread.RunOnIdle(() => listView.LoadContainer(container));
-				};
-				this.AddChild(gotoProviderButton);
+					GuiWidget separator = new TextWidget(">", textColor: ActiveTheme.Instance.PrimaryTextColor);
+					separator.VAnchor = VAnchor.ParentCenter;
+					separator.Margin = new BorderDouble(0);
+					this.AddChild(separator);
 
-				firstItem = false;
-			}
-
-			if (haveFilterRunning)
-			{
-				GuiWidget separator = new TextWidget(">", textColor: ActiveTheme.Instance.PrimaryTextColor);
-				separator.VAnchor = VAnchor.ParentCenter;
-				separator.Margin = new BorderDouble(0);
-				this.AddChild(separator);
-
-				Button searchResultsButton = null;
-				if (UserSettings.Instance.IsTouchScreen)
-				{
-					searchResultsButton = buttonFactory.Generate("Search Results".Localize(), "icon_search_32x32.png");
+					Button searchResultsButton = null;
+					if (UserSettings.Instance.IsTouchScreen)
+					{
+						searchResultsButton = buttonFactory.Generate("Search Results".Localize(), "icon_search_32x32.png");
+					}
+					else
+					{
+						searchResultsButton = buttonFactory.Generate("Search Results".Localize(), "icon_search_24x24.png");
+					}
+					searchResultsButton.Name = "Bread Crumb Button " + "Search Results";
+					searchResultsButton.Margin = new BorderDouble(3, 0);
+					this.AddChild(searchResultsButton);
 				}
-				else
-				{
-					searchResultsButton = buttonFactory.Generate("Search Results".Localize(), "icon_search_24x24.png");
-				}
-				searchResultsButton.Name = "Bread Crumb Button " + "Search Results";
-				searchResultsButton.Margin = new BorderDouble(3, 0);
-				this.AddChild(searchResultsButton);
-			}
 
-			// while all the buttons don't fit in the control
-			if (this.Parent != null
-				&& this.Width > 0
-				&& this.Children.Count > 4
-				&& this.GetChildrenBoundsIncludingMargins().Width > (this.Width - 20))
-			{
-				// lets take out the > and put in a ...
-				this.RemoveChild(1);
-				GuiWidget separator = new TextWidget("...", textColor: ActiveTheme.Instance.PrimaryTextColor);
-				separator.VAnchor = VAnchor.ParentCenter;
-				separator.Margin = new BorderDouble(3, 0);
-				this.AddChild(separator, 1);
-
-				while (this.GetChildrenBoundsIncludingMargins().Width > this.Width - 20
-					&& this.Children.Count > 4)
+				// while all the buttons don't fit in the control
+				if (this.Parent != null
+					&& this.Width > 0
+					&& this.Children.Count > 4
+					&& this.GetChildrenBoundsIncludingMargins().Width > (this.Width - 20))
 				{
-					this.RemoveChild(3);
-					this.RemoveChild(2);
+					// lets take out the > and put in a ...
+					this.RemoveChild(1);
+					GuiWidget separator = new TextWidget("...", textColor: ActiveTheme.Instance.PrimaryTextColor);
+					separator.VAnchor = VAnchor.ParentCenter;
+					separator.Margin = new BorderDouble(3, 0);
+					this.AddChild(separator, 1);
+
+					while (this.GetChildrenBoundsIncludingMargins().Width > this.Width - 20
+						&& this.Children.Count > 4)
+					{
+						this.RemoveChild(3);
+						this.RemoveChild(2);
+					}
 				}
 			}
 		}

@@ -46,8 +46,8 @@ namespace MatterHackers.MatterControl.ActionBar
 		{
 			FixedHeight = 18 * GuiWidget.DeviceScale,
 			fontSize = 7,
-			normalFillColor = RGBA_Bytes.White,
-			normalTextColor = RGBA_Bytes.DarkGray,
+			normalFillColor = ApplicationController.Instance.Theme.TabBodyBackground,
+			normalTextColor = ActiveTheme.Instance.PrimaryTextColor,
 		};
 
 		private static RGBA_Bytes borderColor = new RGBA_Bytes(255, 255, 255);
@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		public TemperatureWidgetBase(string textValue)
 			: base(52 * GuiWidget.DeviceScale, 52 * GuiWidget.DeviceScale)
 		{
-			this.BackgroundColor = new RGBA_Bytes(255, 255, 255, 200);
+			this.BackgroundColor = ApplicationController.Instance.Theme.SlightShade;
 			this.Margin = new BorderDouble(0, 2) * GuiWidget.DeviceScale;
 
 			temperatureTypeName = new TextWidget("", pointSize: 8)
@@ -80,14 +80,14 @@ namespace MatterHackers.MatterControl.ActionBar
 				HAnchor = HAnchor.ParentCenter,
 				VAnchor = VAnchor.ParentTop,
 				Margin = new BorderDouble(0, 3),
-				TextColor = ActiveTheme.Instance.SecondaryAccentColor,
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
 				Visible = false
 			};
 			this.AddChild(temperatureTypeName);
 
 			currentTempIndicator = new TextWidget(textValue, pointSize: 11)
 			{
-				TextColor = ActiveTheme.Instance.PrimaryAccentColor,
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
 				HAnchor = HAnchor.ParentCenter,
 				VAnchor = VAnchor.ParentCenter,
 				AutoExpandBoundsToText = true
@@ -125,14 +125,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			preheatButton.Visible = false;
 
 			base.OnMouseLeaveBounds(mouseEvent);
-		}
-
-		public override void OnDraw(Graphics2D graphics2D)
-		{
-			base.OnDraw(graphics2D);
-
-			var borderRect = new RoundedRect(this.LocalBounds, 0);
-			graphics2D.Render(new Stroke(borderRect, borderWidth), borderColor);
 		}
 
 		protected virtual void SetTargetTemperature() { }

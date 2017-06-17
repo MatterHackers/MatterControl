@@ -152,7 +152,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					var optionsText = new GuiWidget(bounds.Width, bounds.Height)
 					{
 						DoubleBuffer = true,
-						Margin = new BorderDouble(3, 10)
+						Margin = new BorderDouble(3, 6, 3, 0)
 					};
 					optionsText.AfterDraw += (s, e) =>
 					{
