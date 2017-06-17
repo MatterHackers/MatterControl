@@ -220,8 +220,24 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 						buttonFactory,
 						thumbnailsModeDropList));
 
-				// DisplayMode
-				this.AddSettingsRow(this.GetDisplayControl());
+				// Touch Screen Mode
+				this.AddSettingsRow(
+					new SettingsItem(
+						"Touch Screen Mode".Localize(),
+						buttonFactory,
+						new SettingsItem.ToggleSwitchConfig()
+						{
+							Checked = UserSettings.Instance.get(UserSettingsKey.ApplicationDisplayMode) == "touchscreen",
+							ToggleAction = (itemChecked) =>
+							{
+								string displayMode = itemChecked ? "touchscreen" : "responsive";
+								if (displayMode != UserSettings.Instance.get(UserSettingsKey.ApplicationDisplayMode))
+								{
+									UserSettings.Instance.set(UserSettingsKey.ApplicationDisplayMode, displayMode);
+									ApplicationController.Instance.ReloadAll();
+								}
+							}
+						}));
 
 				// TextSize
 				this.AddSettingsRow(this.GetTextSizeControl());
@@ -345,52 +361,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			buttonRow.AddChild(new HorizontalSpacer());
 			buttonRow.AddChild(textSizeControlApplyButton);
 			buttonRow.AddChild(optionsContainer);
-			return buttonRow;
-		}
-
-		private FlowLayoutWidget GetDisplayControl()
-		{
-			FlowLayoutWidget buttonRow = new FlowLayoutWidget();
-			buttonRow.HAnchor = HAnchor.ParentLeftRight;
-			buttonRow.Margin = new BorderDouble(top: 4);
-
-			TextWidget settingsLabel = new TextWidget("Touch Screen Mode".Localize());
-			settingsLabel.AutoExpandBoundsToText = true;
-			settingsLabel.TextColor = menuTextColor;
-			settingsLabel.VAnchor = VAnchor.ParentTop;
-
-			FlowLayoutWidget optionsContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			optionsContainer.Margin = new BorderDouble(bottom: 6);
-
-			DropDownList interfaceOptionsDropList = new DropDownList("Development", maxHeight: 200);
-			interfaceOptionsDropList.HAnchor = HAnchor.ParentLeftRight;
-
-			optionsContainer.AddChild(interfaceOptionsDropList);
-			optionsContainer.Width = 200;
-
-			List<string> acceptableUpdateFeedTypeValues = new List<string>() { "responsive", "touchscreen" };
-			string currentDisplayModeType = UserSettings.Instance.get(UserSettingsKey.ApplicationDisplayMode);
-
-			CheckBox touchScreenModeSwitch = ImageButtonFactory.CreateToggleSwitch(currentDisplayModeType == acceptableUpdateFeedTypeValues[1], menuTextColor);
-			touchScreenModeSwitch.VAnchor = VAnchor.ParentCenter;
-			touchScreenModeSwitch.CheckedStateChanged += (sender, e) =>
-			{
-				string displayMode = acceptableUpdateFeedTypeValues[0];
-				if(touchScreenModeSwitch.Checked)
-				{
-					displayMode = acceptableUpdateFeedTypeValues[1];
-				}
-				if (displayMode != UserSettings.Instance.get(UserSettingsKey.ApplicationDisplayMode))
-				{
-					UserSettings.Instance.set(UserSettingsKey.ApplicationDisplayMode, displayMode);
-					ApplicationController.Instance.ReloadAll();
-				}
-			};
-
-			buttonRow.AddChild(settingsLabel);
-			buttonRow.AddChild(new HorizontalSpacer());
-			buttonRow.AddChild(touchScreenModeSwitch);
-
 			return buttonRow;
 		}
 
