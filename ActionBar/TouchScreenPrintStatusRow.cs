@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			AddChildElements();
 
-			PrinterConnection.Instance.ActivePrintItemChanged.RegisterEvent((s, e) =>
+			ApplicationController.Instance.ActivePrintItemChanged.RegisterEvent((s, e) =>
 			{
 				UpdatePrintItemName();
 				UpdatePrintStatus();
@@ -80,7 +80,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				UpdatePrintStatus();
 			}, ref unregisterEvents);
 
-			PrinterConnection.Instance.ActivePrintItemChanged.RegisterEvent(onActivePrintItemChanged, ref unregisterEvents);
+			ApplicationController.Instance.ActivePrintItemChanged.RegisterEvent(onActivePrintItemChanged, ref unregisterEvents);
 
 			onActivePrintItemChanged(null, null);
 		}
@@ -245,7 +245,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				activePrintPreviewImage.ItemWrapper.SlicingOutputMessage -= PrintItem_SlicingOutputMessage;
 			}
 
-			activePrintPreviewImage.ItemWrapper = PrinterConnection.Instance.ActivePrintItem;
+			activePrintPreviewImage.ItemWrapper = ApplicationController.Instance.ActivePrintItem;
 
 			// then hook up our new part
 			if (activePrintPreviewImage.ItemWrapper != null)
@@ -291,9 +291,9 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		private void UpdatePrintItemName()
 		{
-			if (PrinterConnection.Instance.ActivePrintItem != null)
+			if (ApplicationController.Instance.ActivePrintItem != null)
 			{
-				this.activePrintName.Text = PrinterConnection.Instance.ActivePrintItem.GetFriendlyName();
+				this.activePrintName.Text = ApplicationController.Instance.ActivePrintItem.GetFriendlyName();
 			}
 			else
 			{
@@ -303,7 +303,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		private void UpdatePrintStatus()
 		{
-			if (PrinterConnection.Instance.ActivePrintItem != null)
+			if (ApplicationController.Instance.ActivePrintItem != null)
 			{
 				int totalSecondsInPrint = PrinterConnection.Instance.TotalSecondsInPrint;
 

@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl
 				"Preview".Localize().ToUpper(),
 				generator: () =>
 				{
-					partPreviewContainer = new PartPreviewContent(PrinterConnection.Instance.ActivePrintItem, View3DWidget.WindowMode.Embeded, View3DWidget.AutoRotate.Enabled, View3DWidget.OpenMode.Viewing);
+					partPreviewContainer = new PartPreviewContent(ApplicationController.Instance.ActivePrintItem, View3DWidget.WindowMode.Embeded, View3DWidget.AutoRotate.Enabled, View3DWidget.OpenMode.Viewing);
 					return partPreviewContainer;
 				});
 
@@ -179,12 +179,12 @@ namespace MatterHackers.MatterControl
 
 			SetUpdateNotification(this, null);
 
-			PrinterConnection.Instance.ActivePrintItemChanged.RegisterEvent((s, e) =>
+			ApplicationController.Instance.ActivePrintItemChanged.RegisterEvent((s, e) =>
 			{
 				// ReloadPartPreview
 				UiThread.RunOnIdle(() =>
 				{
-					partPreviewContainer?.Reload(PrinterConnection.Instance.ActivePrintItem);
+					partPreviewContainer?.Reload(ApplicationController.Instance.ActivePrintItem);
 				}, 1);
 
 			}, ref unregisterEvents);

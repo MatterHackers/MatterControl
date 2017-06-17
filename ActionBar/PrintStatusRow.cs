@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			AddChildElements();
 
-			PrinterConnection.Instance.ActivePrintItemChanged.RegisterEvent((s, e) =>
+			ApplicationController.Instance.ActivePrintItemChanged.RegisterEvent((s, e) =>
 			{
 				UpdatePrintItemName();
 				UpdatePrintStatus();
@@ -201,9 +201,9 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		private void UpdatePrintItemName()
 		{
-			if (PrinterConnection.Instance.ActivePrintItem != null)
+			if (ApplicationController.Instance.ActivePrintItem != null)
 			{
-				this.activePrintName.Text = PrinterConnection.Instance.ActivePrintItem.GetFriendlyName();
+				this.activePrintName.Text = ApplicationController.Instance.ActivePrintItem.GetFriendlyName();
 			}
 			else
 			{
@@ -216,7 +216,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			string printLabel = "Next Print".Localize() + ":";
 			string printerStatus = activePrintStatus.Text;
 
-			if (PrinterConnection.Instance.ActivePrintItem != null)
+			if (ApplicationController.Instance.ActivePrintItem != null)
 			{
 				int totalSecondsInPrint = PrinterConnection.Instance.TotalSecondsInPrint;
 

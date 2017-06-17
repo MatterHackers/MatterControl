@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 	{
 		static PrintTask lastPrintTask;
 
-        public static void CheckIfNeedToRecoverPrint(object sender, EventArgs e)
+		public static void CheckIfNeedToRecoverPrint()
 		{
 			string recoverPrint = "Recover Print".Localize();
 			string cancelRecovery = "Cancel".Localize();
@@ -112,8 +112,11 @@ namespace MatterHackers.MatterControl.PrintHistory
 				if (instance == null)
 				{
 					instance = new PrintHistoryData();
-					PrinterConnection.Instance.ConnectionSucceeded.RegisterEvent(PrintRecovery.CheckIfNeedToRecoverPrint, ref unregisterEvents);
-                }
+					PrinterConnection.Instance.ConnectionSucceeded.RegisterEvent((s, e) =>
+					{
+						UiThread.RunOnIdle(PrintRecovery.CheckIfNeedToRecoverPrint);
+					}, ref unregisterEvents);
+				}
 				return instance;
 			}
 		}

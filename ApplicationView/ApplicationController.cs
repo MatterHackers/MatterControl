@@ -45,6 +45,7 @@ using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl
 {
+	using System.IO.Compression;
 	using System.Net;
 	using System.Reflection;
 	using System.Threading;
@@ -52,8 +53,10 @@ namespace MatterHackers.MatterControl
 	using Agg.Image;
 	using CustomWidgets;
 	using MatterHackers.DataConverters3D;
+	using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 	using MatterHackers.MatterControl.Library;
 	using MatterHackers.MatterControl.PartPreviewWindow;
+	using MatterHackers.SerialPortCommunication;
 	using MatterHackers.VectorMath;
 	using PrintHistory;
 	using SettingsManagement;
@@ -260,7 +263,7 @@ namespace MatterHackers.MatterControl
 
 			string mcxPath = Path.Combine(platingDirectory, now + ".mcx");
 
-			PrinterConnection.Instance.ActivePrintItem = new PrintItemWrapper(new PrintItem(now, mcxPath));
+			ApplicationController.Instance.ActivePrintItem = new PrintItemWrapper(new PrintItem(now, mcxPath));
 
 			File.WriteAllText(mcxPath, new Object3D().ToJson());
 		}
@@ -527,6 +530,19 @@ namespace MatterHackers.MatterControl
 
 			this.InitializeLibrary();
 
+			PrinterConnection.Instance.ConnectionSucceeded.RegisterEvent((s, e) =>
+			{
+				// run the print leveling wizard if we need to for this printer
+				if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_required_to_print)
+					|| ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_enabled))
+				{
+					PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
+					if (levelingData?.HasBeenRunAndEnabled() != true)
+					{
+						UiThread.RunOnIdle(LevelWizardBase.ShowPrintLevelWizard);
+					}
+				}
+			}, ref unregisterEvents);
 
 		}
 
@@ -950,7 +966,7 @@ namespace MatterHackers.MatterControl
 			{
 				if (PrinterConnection.Instance.CommunicationState == CommunicationStates.Connected)
 				{
-					PrinterConnection.Instance.PrintActivePartIfPossible();
+					ApplicationController.Instance.PrintActivePartIfPossible();
 				}
 			}, ref unregisterEvent);
 		}
@@ -1098,5 +1114,220 @@ namespace MatterHackers.MatterControl
 
 			return Enumerable.Empty<PrintItemAction>();
 		}
+
+		private PrintItemWrapper activePrintItem;
+
+		public PrintItemWrapper ActivePrintItem
+		{
+			get
+			{
+				return this.activePrintItem;
+			}
+			set
+			{
+				if (!PrinterConnection.Instance.PrinterIsPrinting
+					&& !PrinterConnection.Instance.PrinterIsPaused
+					&& this.activePrintItem != value)
+				{
+					this.activePrintItem = value;
+					if (PrinterConnection.Instance.CommunicationState == CommunicationStates.FinishedPrint)
+					{
+						PrinterConnection.Instance.CommunicationState = CommunicationStates.Connected;
+					}
+
+					PrinterConnection.Instance.activePrintItem = value;
+
+					OnActivePrintItemChanged(null);
+				}
+			}
+		}
+
+		private void OnActivePrintItemChanged(EventArgs e)
+		{
+			ActivePrintItemChanged.CallEvents(this, e);
+		}
+
+		private string doNotAskAgainMessage = "Don't remind me again".Localize();
+
+		public async void PrintActivePart(bool overrideAllowGCode = false)
+		{
+			try
+			{
+				// If leveling is required or is currently on
+				if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_required_to_print)
+					|| ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_enabled))
+				{
+					PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
+					if (levelingData?.HasBeenRunAndEnabled() != true)
+					{
+						LevelWizardBase.ShowPrintLevelWizard();
+						return;
+					}
+				}
+
+				// Save any pending changes before starting the print
+				await ApplicationController.Instance.ActiveView3DWidget.PersistPlateIfNeeded();
+
+				if (activePrintItem != null)
+				{
+					string pathAndFile = activePrintItem.FileLocation;
+					if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_sd_card_reader)
+						&& pathAndFile == QueueData.SdCardFileName)
+					{
+						PrinterConnection.Instance.StartSdCardPrint();
+					}
+					else if (ActiveSliceSettings.Instance.IsValid())
+					{
+						if (File.Exists(pathAndFile))
+						{
+							// clear the output cache prior to starting a print
+							PrinterOutputCache.Instance.Clear();
+
+							string hideGCodeWarning = ApplicationSettings.Instance.get(ApplicationSettingsKey.HideGCodeWarning);
+
+							if (Path.GetExtension(pathAndFile).ToUpper() == ".GCODE"
+								&& hideGCodeWarning == null
+								&& !overrideAllowGCode)
+							{
+								CheckBox hideGCodeWarningCheckBox = new CheckBox(doNotAskAgainMessage);
+								hideGCodeWarningCheckBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+								hideGCodeWarningCheckBox.Margin = new BorderDouble(top: 6, left: 6);
+								hideGCodeWarningCheckBox.HAnchor = Agg.UI.HAnchor.ParentLeft;
+								hideGCodeWarningCheckBox.Click += (sender, e) =>
+								{
+									if (hideGCodeWarningCheckBox.Checked)
+									{
+										ApplicationSettings.Instance.set(ApplicationSettingsKey.HideGCodeWarning, "true");
+									}
+									else
+									{
+										ApplicationSettings.Instance.set(ApplicationSettingsKey.HideGCodeWarning, null);
+									}
+								};
+
+								UiThread.RunOnIdle(() => StyledMessageBox.ShowMessageBox(onConfirmPrint, gcodeWarningMessage, "Warning - GCode file".Localize(), new GuiWidget[] { new VerticalSpacer(), hideGCodeWarningCheckBox }, StyledMessageBox.MessageType.YES_NO));
+							}
+							else
+							{
+								PrinterConnection.Instance.CommunicationState = CommunicationStates.PreparingToPrint;
+								PrintItemWrapper partToPrint = activePrintItem;
+								SlicingQueue.Instance.QueuePartForSlicing(partToPrint);
+								partToPrint.SlicingDone += partToPrint_SliceDone;
+							}
+						}
+					}
+				}
+			}
+			catch (Exception)
+			{
+			}
+		}
+
+		private string gcodeWarningMessage = "The file you are attempting to print is a GCode file.\n\nIt is recommended that you only print Gcode files known to match your printer's configuration.\n\nAre you sure you want to print this GCode file?".Localize();
+
+		private void onConfirmPrint(bool messageBoxResponse)
+		{
+			if (messageBoxResponse)
+			{
+				PrinterConnection.Instance.CommunicationState = CommunicationStates.PreparingToPrint;
+				PrintItemWrapper partToPrint = activePrintItem;
+				SlicingQueue.Instance.QueuePartForSlicing(partToPrint);
+				partToPrint.SlicingDone += partToPrint_SliceDone;
+			}
+		}
+
+
+		public void PrintActivePartIfPossible(bool overrideAllowGCode = false)
+		{
+			if (PrinterConnection.Instance.CommunicationState == CommunicationStates.Connected || PrinterConnection.Instance.CommunicationState == CommunicationStates.FinishedPrint)
+			{
+				PrintActivePart(overrideAllowGCode);
+			}
+		}
+
+		private void partToPrint_SliceDone(object sender, EventArgs e)
+		{
+			PrintItemWrapper partToPrint = sender as PrintItemWrapper;
+			if (partToPrint != null)
+			{
+				partToPrint.SlicingDone -= partToPrint_SliceDone;
+				string gcodePathAndFileName = partToPrint.GetGCodePathAndFileName();
+				if (gcodePathAndFileName != "")
+				{
+					bool originalIsGCode = Path.GetExtension(partToPrint.FileLocation).ToUpper() == ".GCODE";
+					if (File.Exists(gcodePathAndFileName))
+					{
+						// Create archive point for printing attempt
+						if (Path.GetExtension(partToPrint.FileLocation).ToUpper() == ".MCX")
+						{
+							// TODO: We should zip mcx and settings when starting a print
+							string platingDirectory = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, "PrintHistory");
+							Directory.CreateDirectory(platingDirectory);
+
+							string now = DateTime.Now.ToString("yyyyMMdd-HHmmss");
+							string archivePath = Path.Combine(platingDirectory, now + ".zip");
+
+							using (var file = File.OpenWrite(archivePath))
+							using (var zip = new ZipArchive(file, ZipArchiveMode.Create))
+							{
+								zip.CreateEntryFromFile(partToPrint.FileLocation, "PrinterPlate.mcx");
+								zip.CreateEntryFromFile(ActiveSliceSettings.Instance.DocumentPath, ActiveSliceSettings.Instance.GetValue(SettingsKey.printer_name) + ".printer");
+								zip.CreateEntryFromFile(gcodePathAndFileName, "sliced.gcode");
+							}
+						}
+
+						// read the last few k of the file and see if it says "filament used". We use this marker to tell if the file finished writing
+						if (originalIsGCode)
+						{
+							PrinterConnection.Instance.StartPrint(gcodePathAndFileName);
+							return;
+						}
+						else
+						{
+							int bufferSize = 32000;
+							using (Stream fileStream = new FileStream(gcodePathAndFileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+							{
+								byte[] buffer = new byte[bufferSize];
+								fileStream.Seek(Math.Max(0, fileStream.Length - bufferSize), SeekOrigin.Begin);
+								int numBytesRead = fileStream.Read(buffer, 0, bufferSize);
+								fileStream.Close();
+
+								string fileEnd = System.Text.Encoding.UTF8.GetString(buffer);
+								if (fileEnd.Contains("filament used"))
+								{
+									PrinterConnection.Instance.StartPrint(gcodePathAndFileName);
+									return;
+								}
+							}
+						}
+					}
+
+					PrinterConnection.Instance.CommunicationState = CommunicationStates.Connected;
+				}
+			}
+		}
+
+		// TODO: this must be wired up to PrinterConnection.ErrorReported
+		public void PrinterReportsError(object sender, EventArgs e)
+		{
+			var foundStringEventArgs = e as FoundStringEventArgs;
+			if (foundStringEventArgs != null)
+			{
+				string message = "Your printer is reporting a hardware Error. This may prevent your printer from functioning properly.".Localize()
+					+ "\n"
+					+ "\n"
+					+ "Error Reported".Localize() + ":"
+					+ $" \"{foundStringEventArgs.LineToCheck}\".";
+				UiThread.RunOnIdle(() =>
+				StyledMessageBox.ShowMessageBox(null, message, "Printer Hardware Error".Localize())
+				);
+			}
+		}
+
+
+
+
+		public RootedObjectEventHandler ActivePrintItemChanged = new RootedObjectEventHandler();
+
 	}
 }

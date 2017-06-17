@@ -217,7 +217,7 @@ namespace MatterHackers.MatterControl
 									if (!hasBeenRun && PrinterConnection.Instance.CommunicationState == CommunicationStates.Connected)
 									{
 										hasBeenRun = true;
-										PrinterConnection.Instance.PrintActivePartIfPossible();
+										ApplicationController.Instance.PrintActivePartIfPossible();
 									}
 								}, ref unregisterEvent);
 							}

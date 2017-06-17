@@ -27,17 +27,16 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg.UI;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using MatterHackers.Agg;
 using MatterHackers.DataConverters3D;
 using MatterHackers.GCodeVisualizer;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.VectorMath;
-using System;
-using System.Collections.Generic;
-using System.IO;
 
 namespace MatterHackers.MatterControl.PrintQueue
 {

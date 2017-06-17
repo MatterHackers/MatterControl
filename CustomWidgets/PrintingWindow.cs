@@ -633,7 +633,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 				progressContainer.AddChild(printerName);
 
-				partName = new TextWidget(PrinterConnection.Instance.ActivePrintItem.GetFriendlyName(), pointSize: 16, textColor: ActiveTheme.Instance.PrimaryTextColor)
+				partName = new TextWidget(ApplicationController.Instance.ActivePrintItem.GetFriendlyName(), pointSize: 16, textColor: ActiveTheme.Instance.PrimaryTextColor)
 				{
 					HAnchor = HAnchor.ParentCenter,
 					MinimumSize = new Vector2(maxTextWidth, MinimumSize.y),
