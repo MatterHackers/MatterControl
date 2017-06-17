@@ -15,6 +15,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			public Action<bool> ToggleAction { get; set; }
 		}
 
+		private RGBA_Bytes menuTextColor = RGBA_Bytes.Black;
+
 		public SettingsItem(string text, TextImageButtonFactory buttonFactory, ToggleSwitchConfig toggleSwitchConfig = null, GuiWidget optionalControls = null, ImageBuffer iconImage = null)
 			: base(FlowDirection.LeftToRight)
 		{
@@ -54,7 +56,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			var sectionLabel = new TextWidget(text)
 			{
 				AutoExpandBoundsToText = true,
-				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				TextColor = menuTextColor,
 				VAnchor = VAnchor.ParentCenter
 			};
 
@@ -94,7 +96,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 		private CheckBox GenerateToggleSwitch(bool initiallyChecked)
 		{
-			CheckBox toggleSwitch = ImageButtonFactory.CreateToggleSwitch(initiallyChecked);
+			CheckBox toggleSwitch = ImageButtonFactory.CreateToggleSwitch(initiallyChecked, menuTextColor);
 			toggleSwitch.VAnchor = Agg.UI.VAnchor.ParentCenter;
 
 			return toggleSwitch;
