@@ -156,57 +156,25 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		{
 			bool hasCamera = true || ApplicationSettings.Instance.get(ApplicationSettingsKey.HardwareHasCamera) == "true";
 
-			var settingsRow = new FlowLayoutWidget()
-			{
-				HAnchor = HAnchor.ParentLeftRight,
-				Margin = new BorderDouble(bottom: 4),
-			};
-
-			ImageBuffer cameraIconImage = StaticData.Instance.LoadIcon("camera-24x24.png", 24, 24);
-			cameraIconImage.SetRecieveBlender(new BlenderPreMultBGRA());
-
-			var openCameraButton = buttonFactory.Generate("Preview".Localize().ToUpper());
-			openCameraButton.Click += (s, e) =>
+			var previewButton = buttonFactory.Generate("Preview".Localize().ToUpper());
+			previewButton.Click += (s, e) =>
 			{
 				MatterControlApplication.Instance.OpenCameraPreview();
 			};
-			openCameraButton.Margin = new BorderDouble(left: 6);
 
-			settingsRow.AddChild(new ImageWidget(cameraIconImage)
-			{
-				Margin = new BorderDouble(right: 6)
-			});
-			settingsRow.AddChild(new TextWidget("Camera Monitoring".Localize())
-			{
-				AutoExpandBoundsToText = true,
-				TextColor = menuTextColor,
-				VAnchor = VAnchor.ParentCenter
-			});
-			settingsRow.AddChild(new HorizontalSpacer());
-			settingsRow.AddChild(openCameraButton);
-
-			if (hasCamera)
-			{
-				var publishImageSwitchContainer = new FlowLayoutWidget()
+			return new SettingsItem(
+				"Camera Monitoring".Localize(),
+				buttonFactory,
+				new SettingsItem.ToggleSwitchConfig()
 				{
-					VAnchor = VAnchor.ParentCenter,
-					Margin = new BorderDouble(left: 16)
-				};
-
-				CheckBox toggleSwitch = ImageButtonFactory.CreateToggleSwitch(ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.publish_bed_image), menuTextColor);
-
-				toggleSwitch.CheckedStateChanged += (sender, e) =>
-				{
-					ActiveSliceSettings.Instance.SetValue(SettingsKey.publish_bed_image, toggleSwitch.Checked ? "1" : "0");
-				};
-				publishImageSwitchContainer.AddChild(toggleSwitch);
-
-				publishImageSwitchContainer.SetBoundsToEncloseChildren();
-
-				settingsRow.AddChild(publishImageSwitchContainer);
-			}
-
-			return settingsRow;
+					Checked = ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.publish_bed_image),
+					ToggleAction = (itemChecked) =>
+					{
+						ActiveSliceSettings.Instance.SetValue(SettingsKey.publish_bed_image, itemChecked ? "1" : "0");
+					}
+				},
+				previewButton,
+				StaticData.Instance.LoadIcon("camera-24x24.png", 24, 24));
 		}
 
 		private FlowLayoutWidget GetThemeControl()
