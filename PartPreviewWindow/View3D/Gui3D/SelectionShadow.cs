@@ -117,7 +117,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void DrawGlContent(EventArgs e)
 		{
-			if (MeshViewerToDrawWith.Scene.HasSelection)
+			if (MeshViewerToDrawWith.Scene.HasSelection
+				&& MeshViewerToDrawWith.Scene.ShowSelectionShadow)
 			{
 				// draw the bounds on the bed
 				AxisAlignedBoundingBox selectedBounds = MeshViewerToDrawWith.Scene.SelectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);

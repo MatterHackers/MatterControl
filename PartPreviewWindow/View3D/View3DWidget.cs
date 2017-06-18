@@ -904,9 +904,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					var center = sourceItemBounds.Center;
 
 					DragDropSource.Matrix *= Matrix4X4.CreateTranslation(-center.x, -center.y, -sourceItemBounds.minXYZ.z);
-					DragDropSource.Matrix *= Matrix4X4.CreateTranslation(new Vector3(intersectInfo.hitPosition));
+					DragDropSource.Matrix *= Matrix4X4.CreateTranslation(new Vector3(intersectInfo.HitPosition));
 
-					CurrentSelectInfo.PlaneDownHitPos = intersectInfo.hitPosition;
+					CurrentSelectInfo.PlaneDownHitPos = intersectInfo.HitPosition;
 					CurrentSelectInfo.LastMoveDelta = Vector3.Zero;
 
 					this.deferEditorTillMouseUp = true;
@@ -1330,9 +1330,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 							AxisAlignedBoundingBox selectedBounds = meshViewerWidget.Scene.SelectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 
-							if (info.hitPosition.x < selectedBounds.Center.x)
+							if (info.HitPosition.x < selectedBounds.Center.x)
 							{
-								if (info.hitPosition.y < selectedBounds.Center.y)
+								if (info.HitPosition.y < selectedBounds.Center.y)
 								{
 									CurrentSelectInfo.HitQuadrant = HitQuadrant.LB;
 								}
@@ -1343,7 +1343,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							}
 							else
 							{
-								if (info.hitPosition.y < selectedBounds.Center.y)
+								if (info.HitPosition.y < selectedBounds.Center.y)
 								{
 									CurrentSelectInfo.HitQuadrant = HitQuadrant.RB;
 								}
@@ -1392,7 +1392,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Scene.SelectedItem.Matrix *= totalTransform;
 				}
 
-				Vector3 delta = info.hitPosition - CurrentSelectInfo.PlaneDownHitPos;
+				Vector3 delta = info.HitPosition - CurrentSelectInfo.PlaneDownHitPos;
 
 				double snapGridDistance = meshViewerWidget.SnapGridDistance;
 				if (snapGridDistance > 0)

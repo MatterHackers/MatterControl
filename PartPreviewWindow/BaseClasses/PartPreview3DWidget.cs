@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					if (object3D.TraceData().Contains(intersectionInfo.closestHitObject))
 					{
-						CurrentSelectInfo.PlaneDownHitPos = intersectionInfo.hitPosition;
+						CurrentSelectInfo.PlaneDownHitPos = intersectionInfo.HitPosition;
 						CurrentSelectInfo.LastMoveDelta = new Vector3();
 						return object3D;
 					}

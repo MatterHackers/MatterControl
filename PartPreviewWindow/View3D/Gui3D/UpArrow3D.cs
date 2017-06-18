@@ -102,13 +102,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnMouseDown(MouseEvent3DArgs mouseEvent3D)
 		{
-			zHitHeight = mouseEvent3D.info.hitPosition.z;
+			zHitHeight = mouseEvent3D.info.HitPosition.z;
 			lastMoveDelta = new Vector3();
-			double distanceToHit = Vector3.Dot(mouseEvent3D.info.hitPosition, mouseEvent3D.MouseRay.directionNormal);
+			double distanceToHit = Vector3.Dot(mouseEvent3D.info.HitPosition, mouseEvent3D.MouseRay.directionNormal);
 			hitPlane = new PlaneShape(mouseEvent3D.MouseRay.directionNormal, distanceToHit, null);
 
 			IntersectInfo info = hitPlane.GetClosestIntersection(mouseEvent3D.MouseRay);
-			zHitHeight = info.hitPosition.z;
+			zHitHeight = info.HitPosition.z;
 
 			var selectedItem = MeshViewerToDrawWith.Scene.SelectedItem;
 			if (selectedItem != null)
@@ -121,35 +121,38 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnMouseMove(MouseEvent3DArgs mouseEvent3D)
 		{
-			IntersectInfo info = hitPlane.GetClosestIntersection(mouseEvent3D.MouseRay);
-
-			if (info != null && MeshViewerToDrawWith.Scene.HasSelection)
+			if (MouseDownOnControl)
 			{
-				var selectedItem = MeshViewerToDrawWith.Scene.SelectedItem;
-				Vector3 delta = new Vector3(0, 0, info.hitPosition.z - zHitHeight);
+				IntersectInfo info = hitPlane.GetClosestIntersection(mouseEvent3D.MouseRay);
 
-				// move it back to where it started
-				selectedItem.Matrix *= Matrix4X4.CreateTranslation(new Vector3(-lastMoveDelta));
-
-				if (MeshViewerToDrawWith.SnapGridDistance > 0)
+				if (info != null && MeshViewerToDrawWith.Scene.HasSelection)
 				{
-					// snap this position to the grid
-					double snapGridDistance = MeshViewerToDrawWith.SnapGridDistance;
-					AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+					var selectedItem = MeshViewerToDrawWith.Scene.SelectedItem;
+					Vector3 delta = new Vector3(0, 0, info.HitPosition.z - zHitHeight);
 
-					// snap the z position
-					double bottom = selectedBounds.minXYZ.z + delta.z;
-					double snappedBottom = (Math.Round((bottom / snapGridDistance))) * snapGridDistance;
-					delta.z = snappedBottom - selectedBounds.minXYZ.z;
+					// move it back to where it started
+					selectedItem.Matrix *= Matrix4X4.CreateTranslation(new Vector3(-lastMoveDelta));
+
+					if (MeshViewerToDrawWith.SnapGridDistance > 0)
+					{
+						// snap this position to the grid
+						double snapGridDistance = MeshViewerToDrawWith.SnapGridDistance;
+						AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+
+						// snap the z position
+						double bottom = selectedBounds.minXYZ.z + delta.z;
+						double snappedBottom = (Math.Round((bottom / snapGridDistance))) * snapGridDistance;
+						delta.z = snappedBottom - selectedBounds.minXYZ.z;
+					}
+
+					// and move it from there to where we are now
+					selectedItem.Matrix *= Matrix4X4.CreateTranslation(new Vector3(delta));
+
+					lastMoveDelta = delta;
+
+					view3DWidget.PartHasBeenChanged();
+					Invalidate();
 				}
-
-				// and move it from there to where we are now
-				selectedItem.Matrix *= Matrix4X4.CreateTranslation(new Vector3(delta));
-
-				lastMoveDelta = delta;
-
-				view3DWidget.PartHasBeenChanged();
-				Invalidate();
 			}
 
 			base.OnMouseMove(mouseEvent3D);

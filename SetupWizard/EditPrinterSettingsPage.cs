@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl
 			else
 			{
 				AddNameSetting(SettingsKey.baud_rate, contentRow, ref tabIndex);
-				AddNameSetting(SettingsKey.com_port, contentRow, ref tabIndex);
+				AddNameSetting(SettingsKey.com_port, contentRow, ref tabIndex); 
 			}
 
 			contentRow.AddChild(new VerticalSpacer());

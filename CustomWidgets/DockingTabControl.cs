@@ -400,7 +400,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				switch (DockSide)
 				{
 					case DockSide.Left:
-						throw new NotImplementedException();
+						popupWidget.LocalBounds = new RectangleDouble(bounds.Left, bounds.Bottom, bounds.Left - contentWidget.Width, bounds.Top);
+						break;
 					case DockSide.Bottom:
 						throw new NotImplementedException();
 					case DockSide.Right:

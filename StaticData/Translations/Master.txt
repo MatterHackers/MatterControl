@@ -4213,3 +4213,15 @@ Translated:Note: Be sure the tip of the extruder is clean and the bed is clear.
 English:Rename Item:
 Translated:Rename Item:
 
+English:Rotation Count:
+Translated:Rotation Count:
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'Printer' -> 'Print Recovery' -> 'Enable Recovery'
+Translated:Location: 'Settings & Controls' -> 'Settings' -> 'Printer' -> 'Print Recovery' -> 'Enable Recovery'
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Speed'
+Translated:Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Speed'
+
+English:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Filament' -> 'Retraction'
+Translated:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Filament' -> 'Retraction'
+
