@@ -84,7 +84,7 @@ namespace MatterHackers.MatterControl
 			}, ref unregisterEvents);
 		}
 
-		private void AddNameSetting(string sliceSettingsKey, FlowLayoutWidget contentRow, ref int tabIndex)
+		public void ReloadSliceSettings()
 		{
 			GuiWidget control = SliceSettingsWidget.CreateSettingControl(sliceSettingsKey, ref tabIndex);
 			if (control != null)
