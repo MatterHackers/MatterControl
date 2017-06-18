@@ -393,6 +393,17 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.Delay(.5);
 		}
 
+		public static void NavigateToLibraryHome(this AutomationRunner testRunner)
+		{
+			while(!testRunner.NameExists("Local Library Row Item Collection", .5))
+			{
+				testRunner.ClickByName("Library Up Button");
+				testRunner.Delay(1);
+			}
+
+			testRunner.Delay(.5);
+		}
+
 		public static void AddDefaultFileToBedplate(this AutomationRunner testRunner, string containerName = "Calibration Parts Row Item Collection", string partName = "Row Item Calibration - Box.stl")
 		{
 			testRunner.ClickByName("Library Tab");

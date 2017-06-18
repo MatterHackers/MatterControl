@@ -213,7 +213,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue item count should increase by one after add");
 
 				// Navigate to the PrintQueueContainer
-				testRunner.ClickByName("Bread Crumb Button Home");
+				testRunner.NavigateToLibraryHome();
 				testRunner.NavigateToFolder("Print Queue Row Item Collection");
 
 				// Make sure that the item exists in the PrintQueueContainer
@@ -251,7 +251,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount);
 
 				// Navigate to the PrintQueueContainer
-				testRunner.ClickByName("Bread Crumb Button Home");
+				testRunner.NavigateToLibraryHome();
 				testRunner.NavigateToFolder("Print Queue Row Item Collection");
 
 				// Make sure that the items exist in the PrintQueueContainer

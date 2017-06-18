@@ -34,7 +34,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.SaveBedplateToFolder("0Test Part", "Local Library Row Item Collection");
 
 				// Click Home -> Local Library
-				testRunner.ClickByName("Bread Crumb Button Home");
+				testRunner.NavigateToLibraryHome();
 				testRunner.NavigateToFolder("Local Library Row Item Collection");
 
 				// ensure that it is now in the library folder (that the folder updated)

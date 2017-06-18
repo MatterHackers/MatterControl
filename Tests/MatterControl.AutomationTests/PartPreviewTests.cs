@@ -242,7 +242,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.SaveBedplateToFolder("Test PartA", "Print Queue Row Item Collection");
 
 				// Click Home -> Local Library
-				testRunner.ClickByName("Bread Crumb Button Home");
+				testRunner.NavigateToLibraryHome();
 				testRunner.NavigateToFolder("Print Queue Row Item Collection");
 
 				view3D.CloseOnIdle();
