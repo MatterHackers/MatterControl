@@ -126,7 +126,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should decrease by one after clicking Remove");
 
 				// Make sure selected item was removed
-				Assert.IsFalse(testRunner.WaitForName("Row Item 2013-01-25_Mouthpiece_v2"), "Mouthpiece part should *not* exist after remove");
+				Assert.IsFalse(testRunner.WaitForName("Row Item 2013-01-25_Mouthpiece_v2", .5), "Mouthpiece part should *not* exist after remove");
 
 				return Task.CompletedTask;
 			}, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
@@ -153,8 +153,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should decrease by two after clicking Remove");
 
 				// Make sure both selected items are removed
-				Assert.IsFalse(testRunner.WaitForName("Row Item Batman"), "Batman part should *not* exist after remove");
-				Assert.IsFalse(testRunner.WaitForName("Row Item 2013-01-25_Mouthpiece_v2"), "Mouthpiece part should *not* exist after remove");
+				Assert.IsFalse(testRunner.WaitForName("Row Item Batman", .5), "Batman part should *not* exist after remove");
+				Assert.IsFalse(testRunner.WaitForName("Row Item 2013-01-25_Mouthpiece_v2", .5), "Mouthpiece part should *not* exist after remove");
 
 				return Task.CompletedTask;
 			}, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);

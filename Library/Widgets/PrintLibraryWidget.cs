@@ -113,7 +113,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			var breadCrumbBar = new FlowLayoutWidget()
 			{
 				HAnchor = HAnchor.ParentLeftRight,
-				Padding = new BorderDouble(bottom: 2)
+				Padding = new BorderDouble(bottom: 2),
+				Name = "Library Tab" // TODO: Short term workaround for automation tests - move name to tab once leftNav becomes dockable
 			};
 
 			breadCrumbWidget = new FolderBreadCrumbWidget(libraryView);

@@ -161,7 +161,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.LibraryRemoveSelectedItem();
 
 				// Make sure that the item has been removed
-				Assert.IsFalse(testRunner.WaitForName("Row Item Rook"));
+				Assert.IsFalse(testRunner.WaitForName("Row Item Rook", .5));
 
 				return Task.CompletedTask;
 			});

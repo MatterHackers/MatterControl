@@ -283,12 +283,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Delay(.5);
 
 				testRunner.ClickByName("Filament Tab");
-				Assert.IsFalse(testRunner.WaitForName("Bed Temperature Textbox"), "Filament -> Bed Temp should not be visible after Heated Bed unchecked");
+				Assert.IsFalse(testRunner.WaitForName("Bed Temperature Textbox", .5), "Filament -> Bed Temp should not be visible after Heated Bed unchecked");
 
 				// Make sure Bed Temperature Options are not visible in printer controls
 				testRunner.SwitchToControlsTab();
 
-				Assert.IsFalse(testRunner.WaitForName("Bed Temperature Controls Widget"), "Controls -> Bed Temp should not be visible after Heated Bed unchecked");
+				Assert.IsFalse(testRunner.WaitForName("Bed Temperature Controls Widget", .5), "Controls -> Bed Temp should not be visible after Heated Bed unchecked");
 
 				return Task.CompletedTask;
 			}, overrideWidth: 1300);

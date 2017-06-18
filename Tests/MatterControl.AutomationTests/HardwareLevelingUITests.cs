@@ -21,7 +21,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Printer Tab");
 				testRunner.Delay(1);
 
-				Assert.IsFalse(testRunner.WaitForName("Print Leveling Tab"), "Print leveling should not exist for an Airwolf HD");
+				Assert.IsFalse(testRunner.WaitForName("Print Leveling Tab", .5), "Print leveling should not exist for an Airwolf HD");
 
 				// Add printer that does not have hardware leveling
 				testRunner.AddAndSelectPrinter("3D Factory", "MendelMax 1.5");
@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					// make sure the button has changed to start print
 					Assert.IsTrue(testRunner.WaitForName("Start Print Button"), "Start Print should be visible after leveling the printer");
-					Assert.IsFalse(testRunner.WaitForName("Finish Setup Button"), "Finish Setup should not be visible after leveling the printer");
+					Assert.IsFalse(testRunner.WaitForName("Finish Setup Button", .5), "Finish Setup should not be visible after leveling the printer");
 
 					// reset to defaults and make sure print leveling is cleared
 					testRunner.SwitchToAdvancedSliceSettings();
