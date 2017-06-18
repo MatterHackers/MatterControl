@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl
 			else
 			{
 				AddNameSetting(SettingsKey.baud_rate, contentRow, ref tabIndex);
-				AddNameSetting(SettingsKey.com_port, contentRow, ref tabIndex);
+				AddNameSetting(SettingsKey.com_port, contentRow, ref tabIndex); 
 			}
 
 			contentRow.AddChild(new VerticalSpacer());
@@ -84,7 +84,7 @@ namespace MatterHackers.MatterControl
 			}, ref unregisterEvents);
 		}
 
-		public void ReloadSliceSettings()
+		private void AddNameSetting(string sliceSettingsKey, FlowLayoutWidget contentRow, ref int tabIndex)
 		{
 			GuiWidget control = SliceSettingsWidget.CreateSettingControl(sliceSettingsKey, ref tabIndex);
 			if (control != null)
