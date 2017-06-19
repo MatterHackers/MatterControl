@@ -42,12 +42,15 @@ using System.IO;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public abstract class PartPreview3DWidget : PartPreviewWidget
+	public abstract class PartPreview3DWidget : GuiWidget
 	{
 		protected static readonly int DefaultScrollBarWidth = 120;
 		
 		protected bool autoRotating = false;
 		protected bool allowAutoRotate = false;
+
+		protected GuiWidget buttonRightPanelDisabledCover;
+		protected FlowLayoutWidget buttonRightPanel;
 
 		public MeshViewerWidget meshViewerWidget;
 
