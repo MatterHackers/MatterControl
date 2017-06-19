@@ -61,7 +61,7 @@ namespace MatterHackers.MatterControl
 	using PrintHistory;
 	using SettingsManagement;
 
-	public partial class ApplicationController
+	public class ApplicationController
 	{
 		internal void ClearPlate()
 		{
