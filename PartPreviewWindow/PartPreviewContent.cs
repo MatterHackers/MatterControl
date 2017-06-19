@@ -150,6 +150,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					View3DWidget.WindowMode.Embeded,
 					View3DWidget.AutoRotate.Disabled,
 					viewControls3D,
+					ApplicationController.Instance.Theme,
 					View3DWidget.OpenMode.Editing);
 
 				var topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
@@ -174,7 +175,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					activeSettings.GetValue<Vector2>(SettingsKey.print_center),
 					activeSettings.GetValue<BedShape>(SettingsKey.bed_shape),
 					ViewGcodeBasic.WindowMode.Embeded,
-					viewControls3D);
+					viewControls3D,
+					ApplicationController.Instance.Theme);
 				gcodeViewer.AnchorAll();
 				this.gcodeViewer.Visible = false;
 				leftToRight.AddChild(gcodeViewer);

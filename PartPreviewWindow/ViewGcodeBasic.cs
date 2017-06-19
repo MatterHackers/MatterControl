@@ -90,9 +90,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private PartViewMode activeViewMode = PartViewMode.Layers3D;
 
-		public ViewGcodeBasic(Vector3 viewerVolume, Vector2 bedCenter, BedShape bedShape, WindowMode windowMode, ViewControls3D viewControls3D)
+		private TextImageButtonFactory textImageButtonFactory;
+		private TextImageButtonFactory ExpandMenuOptionFactory;
+
+		public ViewGcodeBasic(Vector3 viewerVolume, Vector2 bedCenter, BedShape bedShape, WindowMode windowMode, ViewControls3D viewControls3D, ThemeConfig theme)
 			: base(viewControls3D)
 		{
+			this.textImageButtonFactory = theme.textImageButtonFactory;
+			this.ExpandMenuOptionFactory = theme.ExpandMenuOptionFactory;
+
 			this.viewerVolume = viewerVolume;
 			this.bedShape = bedShape;
 			this.bedCenter = bedCenter;

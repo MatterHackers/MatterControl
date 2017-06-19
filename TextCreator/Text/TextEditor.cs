@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 			return new Type[] { typeof(TextObject) };
 		}
 
-		public GuiWidget Create(IObject3D item, View3DWidget parentView3D)
+		public GuiWidget Create(IObject3D item, View3DWidget parentView3D, ThemeConfig theme)
 		{
 			injectedItem = parentView3D.Scene?.SelectedItem as TextObject;
 
@@ -72,7 +72,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 			{
 				HAnchor = HAnchor.AbsolutePosition,
 				Visible = true,
-				Width = view3DWidget.WhiteButtonFactory.FixedWidth
+				Width = theme.WhiteButtonFactory.FixedWidth
 			};
 			mainContainer.AddChild(tabContainer);
 
@@ -104,7 +104,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 			createUnderline.CheckedStateChanged += CreateUnderline_CheckedStateChanged;
 			tabContainer.AddChild(createUnderline);
 
-			Button updateButton = view3DWidget.textImageButtonFactory.Generate("Update".Localize());
+			Button updateButton = theme.textImageButtonFactory.Generate("Update".Localize());
 			updateButton.Margin = new BorderDouble(5);
 			updateButton.HAnchor = HAnchor.ParentRight;
 			updateButton.Click += (s, e) => RebuildText(textToAddWidget.Text);

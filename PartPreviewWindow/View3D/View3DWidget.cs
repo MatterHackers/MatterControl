@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return new Type[] { typeof(Object3D) };
 		}
 
-		public GuiWidget Create(IObject3D item, View3DWidget view3DWidget)
+		public GuiWidget Create(IObject3D item, View3DWidget view3DWidget, ThemeConfig theme)
 		{
 			this.view3DWidget = view3DWidget;
 			this.item = item;
@@ -85,11 +85,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				HAnchor = HAnchor.AbsolutePosition,
 				Visible = true,
-				Width = view3DWidget.WhiteButtonFactory.FixedWidth
+				Width = theme.WhiteButtonFactory.FixedWidth
 			};
 			mainContainer.AddChild(tabContainer);
 
-			Button updateButton = view3DWidget.textImageButtonFactory.Generate("Color".Localize());
+			Button updateButton = theme.textImageButtonFactory.Generate("Color".Localize());
 			updateButton.Margin = new BorderDouble(5);
 			updateButton.HAnchor = HAnchor.ParentRight;
 			updateButton.Click += ChangeColor;
@@ -234,10 +234,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		}
 
 		protected FlowLayoutWidget editPlateButtonsContainer;
+		private ThemeConfig theme;
 
-		public View3DWidget(PrintItemWrapper printItemWrapper, Vector3 viewerVolume, Vector2 bedCenter, BedShape bedShape, WindowMode windowType, AutoRotate autoRotate, ViewControls3D viewControls3D, OpenMode openMode = OpenMode.Viewing)
+		public View3DWidget(PrintItemWrapper printItemWrapper, Vector3 viewerVolume, Vector2 bedCenter, BedShape bedShape, WindowMode windowType, AutoRotate autoRotate, ViewControls3D viewControls3D, ThemeConfig theme, OpenMode openMode = OpenMode.Viewing)
 			: base(viewControls3D)
 		{
+			this.theme = theme;
 			this.openMode = openMode;
 			allowAutoRotate = (autoRotate == AutoRotate.Enabled);
 			meshViewerWidget = new MeshViewerWidget(viewerVolume, bedCenter, bedShape);
@@ -1834,7 +1836,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			editorPanel.CloseAllChildren();
 
-			var newEditor = editor.Create(Scene.SelectedItem, this);
+			var newEditor = editor.Create(Scene.SelectedItem, this, this.theme);
 			editorPanel.AddChild(newEditor);
 		}
 
