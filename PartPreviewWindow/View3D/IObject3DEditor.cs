@@ -40,6 +40,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		bool Unlocked { get; }
 		string Name { get; }
 		IEnumerable<Type> SupportedTypes();
-		GuiWidget Create(IObject3D item, View3DWidget parentView3D);
+		GuiWidget Create(IObject3D item, View3DWidget parentView3D, ThemeConfig theme);
 	}
 }

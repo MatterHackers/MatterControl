@@ -40,7 +40,7 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 			typeof(MatterCadObject3D),
 		};
 
-		public GuiWidget Create(IObject3D item, View3DWidget view3DWidget)
+		public GuiWidget Create(IObject3D item, View3DWidget view3DWidget, ThemeConfig theme)
 		{
 			this.view3DWidget = view3DWidget;
 			this.item = item;
@@ -51,18 +51,18 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 			{
 				HAnchor = HAnchor.AbsolutePosition,
 				Visible = true,
-				Width = view3DWidget.WhiteButtonFactory.FixedWidth
+				Width = theme.WhiteButtonFactory.FixedWidth
 			};
 			mainContainer.AddChild(tabContainer);
 
 			if (item is MatterCadObject3D)
 			{
-				ModifyCadObject(view3DWidget, tabContainer);
+				ModifyCadObject(view3DWidget, tabContainer, theme);
 			}
 			return mainContainer;
 		}
 
-		private void ModifyCadObject(View3DWidget view3DWidget, FlowLayoutWidget tabContainer)
+		private void ModifyCadObject(View3DWidget view3DWidget, FlowLayoutWidget tabContainer, ThemeConfig theme)
 		{
 			var stringPropertyNamesAndValues = this.item.GetType()
 				.GetProperties()
@@ -94,7 +94,7 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 				tabContainer.AddChild(rowContainer);
 			}
 
-			var updateButton = view3DWidget.textImageButtonFactory.Generate("Update".Localize());
+			var updateButton = theme.textImageButtonFactory.Generate("Update".Localize());
 			updateButton.Margin = new BorderDouble(5);
 			updateButton.HAnchor = HAnchor.ParentRight;
 			updateButton.Click += (s, e) =>

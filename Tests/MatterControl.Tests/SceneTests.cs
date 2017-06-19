@@ -117,6 +117,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
 				View3DWidget.WindowMode.Embeded,
 				View3DWidget.AutoRotate.Disabled,
 				new ViewControls3D(new MatterControl.TextImageButtonFactory()),
+				new MatterControl.ThemeConfig(),
 				View3DWidget.OpenMode.Editing);
 
 			// because we are using it without adding it into a parent we need to initialize it
