@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2017, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,30 +27,16 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg;
-using MatterHackers.Agg.Font;
-using MatterHackers.Agg.Image;
-using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.ContactForm;
-using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.HtmlParsing;
-using MatterHackers.MatterControl.PrintLibrary;
-using MatterHackers.MatterControl.PrintQueue;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Net;
 
 namespace MatterHackers.MatterControl
 {
 	public class AboutWindow : SystemWindow
 	{
 		private static AboutWindow aboutWindow = null;
-		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 
-		public AboutWindow()
+		public AboutWindow(TextImageButtonFactory textImageButtonFactory)
 			: base(500, 640)
 		{
 			GuiWidget aboutPage = new AboutWidget();
@@ -58,7 +44,10 @@ namespace MatterHackers.MatterControl
 			this.AddChild(aboutPage);
 
 			Button cancelButton = textImageButtonFactory.Generate("Close".Localize());
-			cancelButton.Click += (s, e) => CancelButton_Click();
+			cancelButton.Click += (s, e) =>
+			{
+				UiThread.RunOnIdle(aboutWindow.Close);
+			};
 			cancelButton.HAnchor = HAnchor.ParentRight;
 			this.AddChild(cancelButton);
 
@@ -71,7 +60,7 @@ namespace MatterHackers.MatterControl
 		{
 			if (aboutWindow == null)
 			{
-				aboutWindow = new AboutWindow();
+				aboutWindow = new AboutWindow(ApplicationController.Instance.Theme.textImageButtonFactory);
 				aboutWindow.Closed += (parentSender, e) =>
 				{
 					aboutWindow = null;
@@ -81,11 +70,6 @@ namespace MatterHackers.MatterControl
 			{
 				aboutWindow.BringToFront();
 			}
-		}
-
-		private void CancelButton_Click()
-		{
-			UiThread.RunOnIdle(aboutWindow.Close);
 		}
 	}
 }
