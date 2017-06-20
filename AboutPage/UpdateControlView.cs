@@ -44,23 +44,18 @@ namespace MatterHackers.MatterControl
 
 		private EventHandler unregisterEvents;
 
-		private RGBA_Bytes offWhite = new RGBA_Bytes(245, 245, 245);
-		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
-
-		public UpdateControlView()
+		public UpdateControlView(ThemeConfig theme)
 		{
-			textImageButtonFactory.normalFillColor = RGBA_Bytes.Gray;
-			textImageButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			this.HAnchor = HAnchor.ParentLeftRight;
+			this.BackgroundColor = ActiveTheme.Instance.TransparentDarkOverlay;
+			this.Padding = new BorderDouble(6, 5);
 
-			HAnchor = HAnchor.ParentLeftRight;
-			BackgroundColor = ActiveTheme.Instance.TransparentDarkOverlay;
-			Padding = new BorderDouble(6, 5);
 			{
 				updateStatusText = new TextWidget(string.Format(""), textColor: ActiveTheme.Instance.PrimaryTextColor);
 				updateStatusText.AutoExpandBoundsToText = true;
 				updateStatusText.VAnchor = VAnchor.ParentCenter;
 
-				checkUpdateLink = textImageButtonFactory.Generate("Check for Update".Localize());
+				checkUpdateLink = theme.GrayButtonFactory.Generate("Check for Update".Localize());
 				checkUpdateLink.VAnchor = VAnchor.ParentCenter;
 				checkUpdateLink.Click += (s, e) =>
 				{
@@ -68,7 +63,7 @@ namespace MatterHackers.MatterControl
 				};
 				checkUpdateLink.Visible = false;
 
-				downloadUpdateLink = textImageButtonFactory.Generate("Download Update".Localize());
+				downloadUpdateLink = theme.GrayButtonFactory.Generate("Download Update".Localize());
 				downloadUpdateLink.Visible = false;
 				downloadUpdateLink.VAnchor = VAnchor.ParentCenter;
 				downloadUpdateLink.Click += (s, e) =>
@@ -79,7 +74,7 @@ namespace MatterHackers.MatterControl
 					UpdateControlData.Instance.InitiateUpdateDownload();
 				};
 				
-				installUpdateLink = textImageButtonFactory.Generate("Install Update".Localize());
+				installUpdateLink = theme.GrayButtonFactory.Generate("Install Update".Localize());
 				installUpdateLink.Visible = false;
 				installUpdateLink.VAnchor = VAnchor.ParentCenter;
 				installUpdateLink.Click += (s, e) =>

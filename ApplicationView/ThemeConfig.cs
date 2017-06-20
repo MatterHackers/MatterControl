@@ -70,6 +70,7 @@ namespace MatterHackers.MatterControl
 		public TextImageButtonFactory BreadCrumbButtonFactory { get; internal set; }
 		public TextImageButtonFactory BreadCrumbButtonFactorySmallMargins { get; internal set; }
 		public TextImageButtonFactory MenuButtonFactory { get; internal set; }
+		public TextImageButtonFactory GrayButtonFactory { get; internal set; }
 
 		public TextImageButtonFactory imageConverterExpandMenuOptionFactory;
 		public TextImageButtonFactory imageConverterButtonFactory;
@@ -110,6 +111,7 @@ namespace MatterHackers.MatterControl
 		public void RebuildTheme()
 		{
 			var theme = ActiveTheme.Instance;
+
 			this.ImageButtonFactory = new TextImageButtonFactory()
 			{
 				normalFillColor = RGBA_Bytes.Transparent,
@@ -187,6 +189,12 @@ namespace MatterHackers.MatterControl
 				Margin = new BorderDouble(8, 0),
 				borderWidth = 0,
 				FixedHeight = 32,
+			};
+
+			this.GrayButtonFactory = new TextImageButtonFactory()
+			{
+				normalFillColor = RGBA_Bytes.Gray,
+				normalTextColor = ActiveTheme.Instance.PrimaryTextColor
 			};
 
 			int buttonHeight;

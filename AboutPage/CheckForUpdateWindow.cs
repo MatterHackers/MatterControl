@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl.AboutPage
 			checkUpdateLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			checkUpdateLabel.Margin = new BorderDouble(2, 10, 10, 5);
 
-			UpdateControlView updateStatusWidget = new UpdateControlView();
+			UpdateControlView updateStatusWidget = new UpdateControlView(ApplicationController.Instance.Theme);
 
 			TextWidget feedLabel = new TextWidget("Update Channel".Localize(), pointSize: 12);
 			feedLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
