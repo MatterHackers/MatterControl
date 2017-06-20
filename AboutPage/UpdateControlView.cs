@@ -53,6 +53,9 @@ namespace MatterHackers.MatterControl
 			updateStatusText = new TextWidget(string.Format(""), textColor: ActiveTheme.Instance.PrimaryTextColor);
 			updateStatusText.AutoExpandBoundsToText = true;
 			updateStatusText.VAnchor = VAnchor.ParentCenter;
+			this.AddChild(updateStatusText);
+
+			this.AddChild(new HorizontalSpacer());
 
 			checkUpdateLink = theme.GrayButtonFactory.Generate("Check for Update".Localize());
 			checkUpdateLink.VAnchor = VAnchor.ParentCenter;
@@ -61,6 +64,7 @@ namespace MatterHackers.MatterControl
 				UpdateControlData.Instance.CheckForUpdateUserRequested();
 			};
 			checkUpdateLink.Visible = false;
+			this.AddChild(checkUpdateLink);
 
 			downloadUpdateLink = theme.GrayButtonFactory.Generate("Download Update".Localize());
 			downloadUpdateLink.Visible = false;
@@ -72,6 +76,7 @@ namespace MatterHackers.MatterControl
 
 				UpdateControlData.Instance.InitiateUpdateDownload();
 			};
+			this.AddChild(downloadUpdateLink);
 
 			installUpdateLink = theme.GrayButtonFactory.Generate("Install Update".Localize());
 			installUpdateLink.Visible = false;
@@ -93,12 +98,7 @@ namespace MatterHackers.MatterControl
 					updateStatusText.Text = string.Format("Oops! Unable to install update.".Localize());
 				}
 			};
-
-			AddChild(updateStatusText);
-			AddChild(new HorizontalSpacer());
-			AddChild(checkUpdateLink);
-			AddChild(downloadUpdateLink);
-			AddChild(installUpdateLink);
+			this.AddChild(installUpdateLink);
 
 			UpdateControlData.Instance.UpdateStatusChanged.RegisterEvent(UpdateStatusChanged, ref unregisterEvents);
 
