@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2017, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,12 +27,11 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
-using System;
-using System.Diagnostics;
 
 namespace MatterHackers.MatterControl
 {
@@ -63,18 +62,43 @@ namespace MatterHackers.MatterControl
 
 				checkUpdateLink = textImageButtonFactory.Generate("Check for Update".Localize());
 				checkUpdateLink.VAnchor = VAnchor.ParentCenter;
-				checkUpdateLink.Click += CheckForUpdate;
+				checkUpdateLink.Click += (s, e) =>
+				{
+					UpdateControlData.Instance.CheckForUpdateUserRequested();
+				};
 				checkUpdateLink.Visible = false;
 
 				downloadUpdateLink = textImageButtonFactory.Generate("Download Update".Localize());
-				downloadUpdateLink.VAnchor = VAnchor.ParentCenter;
-				downloadUpdateLink.Click += DownloadUpdate;
 				downloadUpdateLink.Visible = false;
+				downloadUpdateLink.VAnchor = VAnchor.ParentCenter;
+				downloadUpdateLink.Click += (s, e) =>
+				{
+					downloadUpdateLink.Visible = false;
+					updateStatusText.Text = string.Format("Retrieving download info...".Localize());
 
+					UpdateControlData.Instance.InitiateUpdateDownload();
+				};
+				
 				installUpdateLink = textImageButtonFactory.Generate("Install Update".Localize());
-				installUpdateLink.VAnchor = VAnchor.ParentCenter;
-				installUpdateLink.Click += InstallUpdate;
 				installUpdateLink.Visible = false;
+				installUpdateLink.VAnchor = VAnchor.ParentCenter;
+				installUpdateLink.Click += (s, e) =>
+				{
+					try
+					{
+						if (!UpdateControlData.Instance.InstallUpdate())
+						{
+							installUpdateLink.Visible = false;
+							updateStatusText.Text = string.Format("Oops! Unable to install update.".Localize());
+						}
+					}
+					catch
+					{
+						GuiWidget.BreakInDebugger();
+						installUpdateLink.Visible = false;
+						updateStatusText.Text = string.Format("Oops! Unable to install update.".Localize());
+					}
+				};
 
 				AddChild(updateStatusText);
 				AddChild(new HorizontalSpacer());
@@ -94,37 +118,6 @@ namespace MatterHackers.MatterControl
 		{
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
-		}
-
-		public void CheckForUpdate(object sender, EventArgs e)
-		{
-			UpdateControlData.Instance.CheckForUpdateUserRequested();
-		}
-
-		public void InstallUpdate(object sender, EventArgs e)
-		{
-			try
-			{
-				if (!UpdateControlData.Instance.InstallUpdate())
-				{
-					installUpdateLink.Visible = false;
-					updateStatusText.Text = string.Format("Oops! Unable to install update.".Localize());
-				}
-			}
-			catch
-			{
-				GuiWidget.BreakInDebugger();
-				installUpdateLink.Visible = false;
-				updateStatusText.Text = string.Format("Oops! Unable to install update.".Localize());
-			}
-		}
-
-		public void DownloadUpdate(object sender, EventArgs e)
-		{
-			downloadUpdateLink.Visible = false;
-			updateStatusText.Text = string.Format("Retrieving download info...".Localize());
-
-			UpdateControlData.Instance.InitiateUpdateDownload();
 		}
 
 		string recommendedUpdateAvailable = "There is a recommended update available.".Localize();
