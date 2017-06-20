@@ -27,20 +27,15 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintLibrary;
 
 namespace MatterHackers.MatterControl
 {
 	public class WidescreenPanel : FlowLayoutWidget
 	{
-		private TextImageButtonFactory advancedControlsButtonFactory = new TextImageButtonFactory();
-		private RGBA_Bytes unselectedTextColor = ActiveTheme.Instance.TabLabelUnselected;
-
 		public WidescreenPanel()
 		{
 		}

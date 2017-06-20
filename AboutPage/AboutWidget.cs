@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl
 
 			if (UserSettings.Instance.IsTouchScreen)
 			{
-				customInfoTopToBottom.AddChild(new UpdateControlView());
+				customInfoTopToBottom.AddChild(new UpdateControlView(ApplicationController.Instance.Theme));
 			}
 
 			//AddMatterHackersInfo(customInfoTopToBottom);

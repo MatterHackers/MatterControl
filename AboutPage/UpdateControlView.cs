@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2017, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,12 +27,11 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
-using System;
-using System.Diagnostics;
 
 namespace MatterHackers.MatterControl
 {
@@ -45,86 +44,73 @@ namespace MatterHackers.MatterControl
 
 		private EventHandler unregisterEvents;
 
-		private RGBA_Bytes offWhite = new RGBA_Bytes(245, 245, 245);
-		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
-
-		public UpdateControlView()
+		public UpdateControlView(ThemeConfig theme)
 		{
-			textImageButtonFactory.normalFillColor = RGBA_Bytes.Gray;
-			textImageButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			this.HAnchor = HAnchor.ParentLeftRight;
+			this.BackgroundColor = ActiveTheme.Instance.TransparentDarkOverlay;
+			this.Padding = new BorderDouble(6, 5);
 
-			HAnchor = HAnchor.ParentLeftRight;
-			BackgroundColor = ActiveTheme.Instance.TransparentDarkOverlay;
-			Padding = new BorderDouble(6, 5);
+			updateStatusText = new TextWidget(string.Format(""), textColor: ActiveTheme.Instance.PrimaryTextColor);
+			updateStatusText.AutoExpandBoundsToText = true;
+			updateStatusText.VAnchor = VAnchor.ParentCenter;
+			this.AddChild(updateStatusText);
+
+			this.AddChild(new HorizontalSpacer());
+
+			checkUpdateLink = theme.GrayButtonFactory.Generate("Check for Update".Localize());
+			checkUpdateLink.VAnchor = VAnchor.ParentCenter;
+			checkUpdateLink.Click += (s, e) =>
 			{
-				updateStatusText = new TextWidget(string.Format(""), textColor: ActiveTheme.Instance.PrimaryTextColor);
-				updateStatusText.AutoExpandBoundsToText = true;
-				updateStatusText.VAnchor = VAnchor.ParentCenter;
+				UpdateControlData.Instance.CheckForUpdateUserRequested();
+			};
+			checkUpdateLink.Visible = false;
+			this.AddChild(checkUpdateLink);
 
-				checkUpdateLink = textImageButtonFactory.Generate("Check for Update".Localize());
-				checkUpdateLink.VAnchor = VAnchor.ParentCenter;
-				checkUpdateLink.Click += CheckForUpdate;
-				checkUpdateLink.Visible = false;
-
-				downloadUpdateLink = textImageButtonFactory.Generate("Download Update".Localize());
-				downloadUpdateLink.VAnchor = VAnchor.ParentCenter;
-				downloadUpdateLink.Click += DownloadUpdate;
+			downloadUpdateLink = theme.GrayButtonFactory.Generate("Download Update".Localize());
+			downloadUpdateLink.Visible = false;
+			downloadUpdateLink.VAnchor = VAnchor.ParentCenter;
+			downloadUpdateLink.Click += (s, e) =>
+			{
 				downloadUpdateLink.Visible = false;
+				updateStatusText.Text = string.Format("Retrieving download info...".Localize());
 
-				installUpdateLink = textImageButtonFactory.Generate("Install Update".Localize());
-				installUpdateLink.VAnchor = VAnchor.ParentCenter;
-				installUpdateLink.Click += InstallUpdate;
-				installUpdateLink.Visible = false;
+				UpdateControlData.Instance.InitiateUpdateDownload();
+			};
+			this.AddChild(downloadUpdateLink);
 
-				AddChild(updateStatusText);
-				AddChild(new HorizontalSpacer());
-				AddChild(checkUpdateLink);
-				AddChild(downloadUpdateLink);
-				AddChild(installUpdateLink);
-			}
+			installUpdateLink = theme.GrayButtonFactory.Generate("Install Update".Localize());
+			installUpdateLink.Visible = false;
+			installUpdateLink.VAnchor = VAnchor.ParentCenter;
+			installUpdateLink.Click += (s, e) =>
+			{
+				try
+				{
+					if (!UpdateControlData.Instance.InstallUpdate())
+					{
+						installUpdateLink.Visible = false;
+						updateStatusText.Text = string.Format("Oops! Unable to install update.".Localize());
+					}
+				}
+				catch
+				{
+					GuiWidget.BreakInDebugger();
+					installUpdateLink.Visible = false;
+					updateStatusText.Text = string.Format("Oops! Unable to install update.".Localize());
+				}
+			};
+			this.AddChild(installUpdateLink);
 
 			UpdateControlData.Instance.UpdateStatusChanged.RegisterEvent(UpdateStatusChanged, ref unregisterEvents);
 
-			MinimumSize = new VectorMath.Vector2(0, 50);
+			this.MinimumSize = new VectorMath.Vector2(0, 50);
 
-			UpdateStatusChanged(null, null);
+			this.UpdateStatusChanged(null, null);
 		}
 
 		public override void OnClosed(ClosedEventArgs e)
 		{
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
-		}
-
-		public void CheckForUpdate(object sender, EventArgs e)
-		{
-			UpdateControlData.Instance.CheckForUpdateUserRequested();
-		}
-
-		public void InstallUpdate(object sender, EventArgs e)
-		{
-			try
-			{
-				if (!UpdateControlData.Instance.InstallUpdate())
-				{
-					installUpdateLink.Visible = false;
-					updateStatusText.Text = string.Format("Oops! Unable to install update.".Localize());
-				}
-			}
-			catch
-			{
-				GuiWidget.BreakInDebugger();
-				installUpdateLink.Visible = false;
-				updateStatusText.Text = string.Format("Oops! Unable to install update.".Localize());
-			}
-		}
-
-		public void DownloadUpdate(object sender, EventArgs e)
-		{
-			downloadUpdateLink.Visible = false;
-			updateStatusText.Text = string.Format("Retrieving download info...".Localize());
-
-			UpdateControlData.Instance.InitiateUpdateDownload();
 		}
 
 		string recommendedUpdateAvailable = "There is a recommended update available.".Localize();
