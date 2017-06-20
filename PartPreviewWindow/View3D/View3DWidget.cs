@@ -1665,7 +1665,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		// Indicates if MatterControl is in a mode that allows DragDrop
 		private bool AllowDragDrop()
 		{
-			return printItemWrapper?.PrintItem.ReadOnly != false;
+			// Allow drop if printItem is not null and not ReadOnly
+			return !printItemWrapper?.PrintItem.ReadOnly ?? false;
 		}
 
 		private void AutoSpin()
