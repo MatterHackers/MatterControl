@@ -53,6 +53,8 @@ namespace MatterHackers.MatterControl
 		private int shortButtonHeight = 25;
 		private int sideBarButtonWidth;
 
+		public LinkButtonFactory LinkButtonFactory { get; private set; }
+
 		public TextImageButtonFactory textImageButtonFactory;
 		private TextImageButtonFactory checkboxButtonFactory;
 		public TextImageButtonFactory ExpandMenuOptionFactory;
@@ -308,6 +310,12 @@ namespace MatterHackers.MatterControl
 				disabledFillColor = new RGBA_Bytes(255, 255, 255, 50)
 			};
 			#endregion
+
+			LinkButtonFactory = new LinkButtonFactory()
+			{
+				fontSize = fontSizeA,
+				textColor = ActiveTheme.Instance.PrimaryTextColor
+			};
 		}
 
 	internal TabControl CreateTabControl()

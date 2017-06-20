@@ -300,36 +300,67 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 		private FlowLayoutWidget GetThemeControl()
 		{
-			var colorSelectorContainer = new FlowLayoutWidget()
+			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				HAnchor = HAnchor.ParentLeftRight,
-				Margin = new BorderDouble(30, 5, 0, 0)
+				Margin = new BorderDouble(left: 30)
 			};
 
-			var currentColorThemeBorder = new GuiWidget()
+			// Determine if we should set the dark or light version of the theme
+			var activeThemeIndex = ActiveTheme.AvailableThemes.IndexOf(ActiveTheme.Instance);
+
+			var midPoint = ActiveTheme.AvailableThemes.Count / 2;
+
+			int darkThemeIndex;
+			int lightThemeIndex;
+
+			bool isLightTheme = activeThemeIndex >= midPoint;
+			if (isLightTheme)
 			{
-				VAnchor = VAnchor.ParentBottomTop,
-				Padding = new BorderDouble(5, 3),
+				lightThemeIndex = activeThemeIndex;
+				darkThemeIndex = activeThemeIndex - midPoint;
+			}
+			else
+			{
+				darkThemeIndex = activeThemeIndex;
+				lightThemeIndex = activeThemeIndex + midPoint;
+			}
+
+			var darkPreview = new ThemePreviewButton(ActiveTheme.AvailableThemes[darkThemeIndex], !isLightTheme)
+			{
+				HAnchor = HAnchor.AbsolutePosition,
+				VAnchor = VAnchor.AbsolutePosition,
 				Width = 80,
+				Height = 65,
+				Margin = new BorderDouble(5, 15, 10, 10)
 			};
 
-			var currentColorTheme = new GuiWidget()
+			var lightPreview = new ThemePreviewButton(ActiveTheme.AvailableThemes[lightThemeIndex], isLightTheme)
 			{
-				HAnchor = HAnchor.ParentLeftRight,
-				VAnchor = VAnchor.ParentBottomTop,
-				BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor
+				HAnchor = HAnchor.AbsolutePosition,
+				VAnchor = VAnchor.AbsolutePosition,
+				Width = 80,
+				Height = 65,
+				Margin = new BorderDouble(5, 15, 10, 10)
 			};
-			currentColorThemeBorder.AddChild(currentColorTheme);
 
-			var themeSelector = new ThemeColorSelectorWidget(colorToChangeTo: currentColorTheme)
+			// Add color selector
+			container.AddChild(new ThemeColorSelectorWidget(darkPreview, lightPreview)
 			{
 				Margin = new BorderDouble(right: 5)
+			});
+
+			var themePreviews = new FlowLayoutWidget()
+			{
+				HAnchor = HAnchor.ParentLeftRight,
+				VAnchor = VAnchor.FitToChildren
 			};
 
-			colorSelectorContainer.AddChild(themeSelector);
-			colorSelectorContainer.AddChild(currentColorThemeBorder);
+			themePreviews.AddChild(darkPreview);
+			themePreviews.AddChild(lightPreview);
 
-			return colorSelectorContainer;
+			container.AddChild(themePreviews);
+
+			return container;
 		}
 
 		private FlowLayoutWidget GetModeControl()

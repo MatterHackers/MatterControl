@@ -138,6 +138,7 @@
     <Compile Include="ApplicationView\ApplicationController.cs" />
     <Compile Include="ApplicationView\ThemeConfig.cs" />
     <Compile Include="ConfigurationPage\ApplicationSettings\SettingsItem.cs" />
+    <Compile Include="ConfigurationPage\ApplicationSettings\ThemePreviewButton.cs" />
     <Compile Include="CustomWidgets\DockingTabControl.cs" />
     <Compile Include="CustomWidgets\NamedAction.cs" />
     <Compile Include="Library\ContentProviders\IContentProvider.cs" />
