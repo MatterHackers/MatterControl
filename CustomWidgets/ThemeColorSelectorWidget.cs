@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2014, Kevin Pope
+Copyright (c) 2017, Kevin Pope, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,22 +27,30 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.MatterControl.ConfigurationPage;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl
 {
 	public class ThemeColorSelectorWidget : FlowLayoutWidget
 	{
-		private GuiWidget colorToChangeTo;
+		private ThemePreviewButton darkPreviewButton;
+		private ThemePreviewButton lightPreviewButton;
+
 		private int containerHeight = (int)(30 * GuiWidget.DeviceScale + .5);
 		private int colorSelectSize = (int)(28 * GuiWidget.DeviceScale + .5);
 
-		public ThemeColorSelectorWidget(GuiWidget colorToChangeTo)
+		public ThemeColorSelectorWidget(ThemePreviewButton darkPreview, ThemePreviewButton lightPreview)
 		{
 			this.Padding = new BorderDouble(2, 0);
-			this.colorToChangeTo = colorToChangeTo;
+
+			this.darkPreviewButton = darkPreview;
+			this.lightPreviewButton = lightPreview;
+
 			int themeCount = ActiveTheme.AvailableThemes.Count;
 
 			var allThemes = ActiveTheme.AvailableThemes;
@@ -50,61 +58,82 @@ namespace MatterHackers.MatterControl
 			int index = 0;
 			for (int x = 0; x < themeCount / 2; x++)
 			{
-				var columnContainer = new FlowLayoutWidget(Agg.UI.FlowDirection.TopToBottom)
-				{
-					Width = containerHeight
-				};
-				columnContainer.AddChild(CreateThemeButton(allThemes[index]));
+				var themeButton = CreateThemeButton(allThemes[index], index);
+				themeButton.Width = containerHeight;
 
-				int secondRowIndex = index + themeCount / 2;
-				columnContainer.AddChild(CreateThemeButton(allThemes[secondRowIndex]));
-
-				this.AddChild(columnContainer);
+				this.AddChild(themeButton);
 
 				index++;
 			}
-			this.BackgroundColor = RGBA_Bytes.White;
+
 			this.Width = containerHeight * (themeCount / 2);
 		}
 
-		public Button CreateThemeButton(IThemeColors theme)
+		private int hoveredThemeIndex = 0;
+		private int midPoint = ActiveTheme.AvailableThemes.Count / 2;
+			
+		public Button CreateThemeButton(IThemeColors darkTheme, int darkThemeIndex)
 		{
 			var normal = new GuiWidget(colorSelectSize, colorSelectSize);
-			normal.BackgroundColor = theme.PrimaryAccentColor;
+			normal.BackgroundColor = darkTheme.PrimaryAccentColor;
 
 			var hover = new GuiWidget(colorSelectSize, colorSelectSize);
-			hover.BackgroundColor = theme.SecondaryAccentColor;
+			hover.BackgroundColor = darkTheme.SecondaryAccentColor;
 
 			var pressed = new GuiWidget(colorSelectSize, colorSelectSize);
-			pressed.BackgroundColor = theme.SecondaryAccentColor;
+			pressed.BackgroundColor = darkTheme.SecondaryAccentColor;
 
 			var disabled = new GuiWidget(colorSelectSize, colorSelectSize);
 
-			var colorButton = new Button(0, 0, new ButtonViewStates(normal, hover, pressed, disabled))
-			{
-				Name = theme.Name,
-			};
+			int lightThemeIndex = darkThemeIndex + midPoint;
+			var lightTheme = ActiveTheme.AvailableThemes[lightThemeIndex];
+
+			var colorButton = new Button(0, 0, new ButtonViewStates(normal, hover, pressed, disabled));
+			colorButton.Cursor = Cursors.Hand;
 			colorButton.Click += (s, e) =>
 			{
-				string themeName = ((GuiWidget)s).Name;
+				// Determine if we should set the dark or light version of the theme
+				var activeThemeIndex = ActiveTheme.AvailableThemes.IndexOf(ActiveTheme.Instance);
 
-				// save it for this printer
-				ActiveSliceSettings.Instance.SetValue(SettingsKey.active_theme_name, themeName);
-				//Set new user selected Default
-				ActiveTheme.Instance = ActiveTheme.GetThemeColors(themeName);
+				bool useLightTheme = activeThemeIndex >= midPoint;
+
+				SetTheme(darkThemeIndex, useLightTheme);
 			};
 
 			colorButton.MouseEnterBounds += (s, e) =>
 			{
-				colorToChangeTo.BackgroundColor = theme.PrimaryAccentColor;
+				darkPreviewButton.SetThemeColors(darkTheme);
+				lightPreviewButton.SetThemeColors(lightTheme);
+
+				hoveredThemeIndex = darkThemeIndex;
 			};
 
 			colorButton.MouseLeaveBounds += (s, e) =>
 			{
-				colorToChangeTo.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
+				// darkPreviewButton.SetThemeColors(ActiveTheme.Instance);
 			};
 
 			return colorButton;
+		}
+
+		private static void SetTheme(int themeIndex, bool useLightTheme)
+		{
+			if (useLightTheme)
+			{
+				themeIndex += (ActiveTheme.AvailableThemes.Count / 2);
+			}
+
+			// save it for this printer
+			SetTheme(ActiveTheme.AvailableThemes[themeIndex].Name);
+		}
+
+		public static void SetTheme(string themeName)
+		{
+			// save it for this printer
+			ActiveSliceSettings.Instance.SetValue(SettingsKey.active_theme_name, themeName);
+
+			//Set new user selected Default
+			ActiveTheme.Instance = ActiveTheme.GetThemeColors(themeName);
 		}
 	}
 }
