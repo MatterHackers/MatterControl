@@ -219,15 +219,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			return listToReturn;
 		}
 
-		private static bool Is32Bit()
-		{
-			if (IntPtr.Size == 4)
-			{
-				return true;
-			}
-
-			return false;
-		}
+		private static readonly bool Is32Bit = IntPtr.Size == 4;
 
 		private PrintItemWrapper partUnderConsideration = null;
 
@@ -235,7 +227,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		public void AddItem(PrintItemWrapper item, int indexToInsert = -1, ValidateSizeOn32BitSystems checkSize = ValidateSizeOn32BitSystems.Required)
 		{
-			if (Is32Bit())
+			if (Is32Bit)
 			{
 				// Check if the part we are adding is BIG. If it is warn the user and
 				// possibly don't add it
@@ -292,7 +284,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 				DoAddItem(partUnderConsideration, -1);
 			}
 		}
-
 
 		private void DoAddItem(PrintItemWrapper item, int insertAt)
 		{
