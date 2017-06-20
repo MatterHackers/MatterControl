@@ -45,15 +45,17 @@ namespace MatterHackers.MatterControl
 		private static ImageBuffer restorePressed;
 
 		private readonly int fizedHeightA = (int)(25 * GuiWidget.DeviceScale + .5);
-		private readonly int fontSizeA = 11;
-
 		private readonly double fizedHeightB = 52 * GuiWidget.DeviceScale;
-		private readonly int fontSizeB = 14;
+
+		private readonly int fontSize10 = 10;
+		private readonly int fontSize11 = 11;
+		private readonly int fontSize14 = 14;
 
 		private int shortButtonHeight = 25;
 		private int sideBarButtonWidth;
 
 		public LinkButtonFactory LinkButtonFactory { get; private set; }
+		public LinkButtonFactory HelpLinkFactory { get; private set; }
 
 		public TextImageButtonFactory textImageButtonFactory;
 		private TextImageButtonFactory checkboxButtonFactory;
@@ -120,7 +122,7 @@ namespace MatterHackers.MatterControl
 				disabledBorderColor = new RGBA_Bytes(theme.PrimaryTextColor, 100),
 				disabledTextColor = new RGBA_Bytes(theme.PrimaryTextColor, 100),
 				FixedHeight = fizedHeightA,
-				fontSize = fontSizeA,
+				fontSize = fontSize11,
 				borderWidth = borderWidth
 			};
 
@@ -133,7 +135,7 @@ namespace MatterHackers.MatterControl
 				AllowThemeToAdjustImage = false,
 				borderWidth = borderWidth,
 				FixedHeight = fizedHeightB,
-				fontSize = fontSizeB,
+				fontSize = fontSize14,
 				normalBorderColor = new RGBA_Bytes(255, 255, 255, 100),
 				hoverBorderColor = new RGBA_Bytes(255, 255, 255, 100)
 			};
@@ -311,14 +313,20 @@ namespace MatterHackers.MatterControl
 			};
 			#endregion
 
-			LinkButtonFactory = new LinkButtonFactory()
+			this.LinkButtonFactory = new LinkButtonFactory()
 			{
-				fontSize = fontSizeA,
+				fontSize = fontSize11,
 				textColor = ActiveTheme.Instance.PrimaryTextColor
+			};
+
+			this.HelpLinkFactory = new LinkButtonFactory()
+			{
+				fontSize = fontSize10,
+				textColor = ActiveTheme.Instance.SecondaryAccentColor
 			};
 		}
 
-	internal TabControl CreateTabControl()
+		internal TabControl CreateTabControl()
 		{
 			var tabControl = new TabControl(separator: new HorizontalLine(alpha: 50));
 			tabControl.TabBar.BorderColor = RGBA_Bytes.Transparent; // theme.SecondaryTextColor;
