@@ -55,25 +55,29 @@ namespace MatterHackers.MatterControl.AboutPage
 			releaseOptionsDropList = new DropDownList("Development", maxHeight: 200);
 			releaseOptionsDropList.HAnchor = HAnchor.ParentLeftRight;
 
-			MenuItem releaseOptionsDropDownItem = releaseOptionsDropList.AddItem("Stable".Localize(), "release");
-            releaseOptionsDropDownItem.Selected += new EventHandler(FixTabDot);
+			releaseOptionsDropList.AddItem("Stable".Localize(), "release");
+			releaseOptionsDropList.AddItem("Beta".Localize(), "pre-release");
+			releaseOptionsDropList.AddItem("Alpha".Localize(), "development");
 
-			MenuItem preReleaseDropDownItem = releaseOptionsDropList.AddItem("Beta".Localize(), "pre-release");
-            preReleaseDropDownItem.Selected += new EventHandler(FixTabDot);
+			var acceptableUpdateFeedTypeValues = new List<string>() { "release", "pre-release", "development" };
 
-			MenuItem developmentDropDownItem = releaseOptionsDropList.AddItem("Alpha".Localize(), "development");
-            developmentDropDownItem.Selected += new EventHandler(FixTabDot);
-
-			List<string> acceptableUpdateFeedTypeValues = new List<string>() { "release", "pre-release", "development" };
 			string currentUpdateFeedType = UserSettings.Instance.get(UserSettingsKey.UpdateFeedType);
-
 			if (acceptableUpdateFeedTypeValues.IndexOf(currentUpdateFeedType) == -1)
 			{
 				UserSettings.Instance.set(UserSettingsKey.UpdateFeedType, "release");
 			}
 
-			releaseOptionsDropList.SelectedValue = UserSettings.Instance.get(UserSettingsKey.UpdateFeedType);
-			releaseOptionsDropList.SelectionChanged += new EventHandler(ReleaseOptionsDropList_SelectionChanged);
+			releaseOptionsDropList.SelectedValue = currentUpdateFeedType;
+			releaseOptionsDropList.SelectionChanged += (s, e) =>
+			{
+				string releaseCode = releaseOptionsDropList.SelectedValue;
+				if (releaseCode != UserSettings.Instance.get(UserSettingsKey.UpdateFeedType))
+				{
+					UserSettings.Instance.set(UserSettingsKey.UpdateFeedType, releaseCode);
+				}
+
+				UpdateControlData.Instance.CheckForUpdateUserRequested();
+			};
 
 			string currentBuildNo = VersionInfo.Instance.BuildVersion;
 			string currentBuildInfoLabel = String.Format("Current Build : {0}", currentBuildNo);
@@ -87,7 +91,7 @@ namespace MatterHackers.MatterControl.AboutPage
 			additionalInfoContainer.HAnchor = HAnchor.ParentLeftRight;
 			additionalInfoContainer.Padding = new BorderDouble(left: 6, top: 6);
 
-			string aboutUpdateChannel = "Changing your update channel will change the version of MatterControl  \nthat you receive when updating:";
+			string aboutUpdateChannel = "Changing your update channel will change the version of MatterControl \nthat you receive when updating:".Localize();
 			updateChannelLabel = new TextWidget(aboutUpdateChannel);
 			updateChannelLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			updateChannelLabel.HAnchor = HAnchor.ParentLeftRight;
@@ -161,6 +165,7 @@ namespace MatterHackers.MatterControl.AboutPage
 			this.AddChild(topToBottom);
 
 			additionalInfoContainer.Visible = false;
+
 			if (UpdateControlData.Instance.UpdateRequired)
 			{
 				this.Title = "Update Required".Localize();
@@ -169,6 +174,7 @@ namespace MatterHackers.MatterControl.AboutPage
 			{
 				this.Title = "Check for Update".Localize();
 			}
+
 			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 			this.ShowAsSystemWindow();
 			this.AlwaysOnTopOfMain = true;
@@ -189,22 +195,5 @@ namespace MatterHackers.MatterControl.AboutPage
 				checkUpdate.BringToFront();
 			}
 		}
-
-		private void ReleaseOptionsDropList_SelectionChanged(object sender, EventArgs e)
-		{
-			//getAdditionalFeedInfo();
-
-			string releaseCode = ((DropDownList)sender).SelectedValue;
-			if (releaseCode != UserSettings.Instance.get(UserSettingsKey.UpdateFeedType))
-			{
-				UserSettings.Instance.set(UserSettingsKey.UpdateFeedType, releaseCode);
-			}
-
-		}
-
-       private void FixTabDot(object sender, EventArgs e)
-        {
-            UpdateControlData.Instance.CheckForUpdateUserRequested();
-        }
 	}
 }
