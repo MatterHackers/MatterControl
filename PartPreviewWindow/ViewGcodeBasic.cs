@@ -76,6 +76,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private EventHandler unregisterEvents;
 		private WindowMode windowMode;
 
+		private string partToStartLoadingOnFirstDraw = null;
+		private string gcodeLoading = "Loading G-Code".Localize();
+
 		public delegate Vector2 GetSizeFunction();
 
 		private string slicingErrorMessage = "Slicing Error.\nPlease review your slice settings.".Localize();
@@ -116,7 +119,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			CreateAndAddChildren();
 
 			ActiveSliceSettings.SettingChanged.RegisterEvent(CheckSettingChanged, ref unregisterEvents);
-			ApplicationController.Instance.AdvancedControlsPanelReloading.RegisterEvent((s, e) => Clear3DGCode(), ref unregisterEvents);
+			ApplicationController.Instance.AdvancedControlsPanelReloading.RegisterEvent((s, e) => gcodeViewWidget?.Clear3DGCode(), ref unregisterEvents);
 		}
 
 		private void CheckSettingChanged(object sender, EventArgs e)
@@ -156,17 +159,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 				else if (stringEvent.Data == "extruder_offset")
 				{
-					Clear3DGCode();
+					gcodeViewWidget.Clear3DGCode();
 				}
-			}
-		}
-
-		private void Clear3DGCode()
-		{
-			if (gcodeViewWidget?.gCodeRenderer != null)
-			{
-				gcodeViewWidget.gCodeRenderer.Clear3DGCode();
-				gcodeViewWidget.Invalidate();
 			}
 		}
 
@@ -919,14 +913,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			SetSyncToPrintVisibility();
 		}
 
-		private string partToStartLoadingOnFirstDraw = null;
+		private void LoadProgress_Changed(double progress0To1, string processingState, out bool continueProcessing)
+		{
+			SetProcessingMessage(string.Format("{0} {1:0}%...", gcodeLoading, progress0To1 * 100));
+			continueProcessing = !this.HasBeenClosed;
+		}
 
 		private GuiWidget CreateGCodeViewWidget(string pathAndFileName)
 		{
-			gcodeViewWidget = new ViewGcodeWidget(new Vector2(viewerVolume.x, viewerVolume.y), bedCenter);
+			gcodeViewWidget = new ViewGcodeWidget(new Vector2(viewerVolume.x, viewerVolume.y), bedCenter, LoadProgress_Changed);
 			gcodeViewWidget.DoneLoading += DoneLoadingGCode;
 			gcodeViewWidget.Visible = (activeViewMode == PartViewMode.Layers2D);
-			gcodeViewWidget.LoadingProgressChanged += LoadingProgressChanged;
 			partToStartLoadingOnFirstDraw = pathAndFileName;
 
 			return gcodeViewWidget;
@@ -1015,22 +1012,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (gcodeProcessingStateInfoText == null)
 			{
-				gcodeProcessingStateInfoText = new TextWidget(message);
-				gcodeProcessingStateInfoText.HAnchor = HAnchor.ParentCenter;
-				gcodeProcessingStateInfoText.VAnchor = VAnchor.ParentCenter;
-				gcodeProcessingStateInfoText.AutoExpandBoundsToText = true;
+				gcodeProcessingStateInfoText = new TextWidget(message)
+				{
+					HAnchor = HAnchor.ParentCenter,
+					VAnchor = VAnchor.ParentCenter,
+					AutoExpandBoundsToText = true
+				};
 
-				GuiWidget labelContainer = new GuiWidget();
+				var labelContainer = new GuiWidget();
+				labelContainer.Selectable = false;
 				labelContainer.AnchorAll();
 				labelContainer.AddChild(gcodeProcessingStateInfoText);
-				labelContainer.Selectable = false;
 
 				gcodeDisplayWidget.AddChild(labelContainer);
 			}
 
 			if (message == "")
 			{
-				gcodeProcessingStateInfoText.BackgroundColor = new RGBA_Bytes();
+				gcodeProcessingStateInfoText.BackgroundColor = RGBA_Bytes.Transparent;
 			}
 			else
 			{
@@ -1038,19 +1037,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			gcodeProcessingStateInfoText.Text = message;
-		}
-
-		private void LoadingProgressChanged(object sender, ProgressChangedEventArgs e)
-		{
-			SetProcessingMessage(string.Format("{0} {1}%...", "Loading G-Code".Localize(), e.ProgressPercentage));
-		}
-
-		private void CloseIfNotNull(GuiWidget widget)
-		{
-			if (widget != null)
-			{
-				widget.Close();
-			}
 		}
 
 		private static bool RunningIn32Bit()
@@ -1084,7 +1070,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				&& gcodeViewWidget.LoadedGCode != null
 				&& gcodeViewWidget.LoadedGCode.LineCount > 0)
 			{
-				CloseIfNotNull(gradientWidget);
+				// TODO: Shouldn't we be clearing children from some known container and rebuilding?
+				gradientWidget?.Close();
 				gradientWidget = new ColorGradientWidget(gcodeViewWidget.LoadedGCode);
 				AddChild(gradientWidget);
 				gradientWidget.Visible = false;
@@ -1094,23 +1081,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				buttonRightPanel.Visible = true;
 				viewControlsToggle.Visible = true;
 
-				CloseIfNotNull(setLayerWidget);
+				setLayerWidget?.Close();
 				setLayerWidget = new SetLayerWidget(gcodeViewWidget);
 				setLayerWidget.VAnchor = Agg.UI.VAnchor.ParentTop;
 				layerSelectionButtonsPanel.AddChild(setLayerWidget);
 
-				CloseIfNotNull(navigationWidget);
+				navigationWidget?.Close();
 				navigationWidget = new LayerNavigationWidget(gcodeViewWidget);
 				navigationWidget.Margin = new BorderDouble(0, 0, 20, 0);
 				layerSelectionButtonsPanel.AddChild(navigationWidget);
 
-				CloseIfNotNull(selectLayerSlider);
+				selectLayerSlider?.Close();
 				selectLayerSlider = new SolidSlider(new Vector2(), sliderWidth, 0, gcodeViewWidget.LoadedGCode.NumChangesInZ - 1, Orientation.Vertical);
 				selectLayerSlider.ValueChanged += new EventHandler(selectLayerSlider_ValueChanged);
 				gcodeViewWidget.ActiveLayerChanged += new EventHandler(gcodeViewWidget_ActiveLayerChanged);
 				AddChild(selectLayerSlider);
 
-				CloseIfNotNull(layerRenderRatioSlider);
+				layerRenderRatioSlider?.Close();
 				layerRenderRatioSlider = new DoubleSolidSlider(new Vector2(), sliderWidth);
 				layerRenderRatioSlider.FirstValue = 0;
 				layerRenderRatioSlider.FirstValueChanged += new EventHandler(layerStartRenderRatioSlider_ValueChanged);
