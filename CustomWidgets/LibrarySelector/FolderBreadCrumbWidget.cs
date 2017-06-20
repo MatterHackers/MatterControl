@@ -61,6 +61,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		public void SetBreadCrumbs(ILibraryContainer currentContainer)
 		{
 			var buttonFactory = ApplicationController.Instance.Theme.BreadCrumbButtonFactory;
+
+			var linkButtonFactory = ApplicationController.Instance.Theme.LinkButtonFactory;
+
 			this.CloseAllChildren();
 
 			bool haveFilterRunning = !string.IsNullOrEmpty(currentContainer.KeywordFilter);
@@ -90,9 +93,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			if (this.Width < 250)
 			{
-				Button containerButton = buttonFactory.Generate(listView.ActiveContainer.Name);
+				Button containerButton = linkButtonFactory.Generate(listView.ActiveContainer.Name);
 				containerButton.Name = "Bread Crumb Button " + listView.ActiveContainer.Name;
-				containerButton.Margin = new BorderDouble(firstItem ? 0 : 3, 0, 3, 0);
+				containerButton.VAnchor = VAnchor.ParentCenter;
+				containerButton.Margin = new BorderDouble(right:  5);
 
 				this.AddChild(containerButton);
 			}
@@ -102,17 +106,18 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				{
 					if (!firstItem)
 					{
-						// Create separator chevron
+						// Add separator
 						this.AddChild(new TextWidget(">", textColor: ActiveTheme.Instance.PrimaryTextColor)
 						{
 							VAnchor = VAnchor.ParentCenter,
-							Margin = new BorderDouble(0)
+							Margin = new BorderDouble(right: 5)
 						});
 					}
 
-					Button gotoProviderButton = buttonFactory.Generate(container.Name);
+					Button gotoProviderButton =  linkButtonFactory.Generate(container.Name);
 					gotoProviderButton.Name = "Bread Crumb Button " + container.Name;
-					gotoProviderButton.Margin = new BorderDouble(firstItem ? 0 : 3, 0, 3, 0);
+					gotoProviderButton.VAnchor = VAnchor.ParentCenter;
+					gotoProviderButton.Margin = new BorderDouble(right:  5);
 					gotoProviderButton.Click += (s, e) =>
 					{
 						UiThread.RunOnIdle(() => listView.LoadContainer(container));
@@ -124,10 +129,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 				if (haveFilterRunning)
 				{
-					GuiWidget separator = new TextWidget(">", textColor: ActiveTheme.Instance.PrimaryTextColor);
-					separator.VAnchor = VAnchor.ParentCenter;
-					separator.Margin = new BorderDouble(0);
-					this.AddChild(separator);
+					// Add separator ;
+					this.AddChild(new TextWidget(">", textColor: ActiveTheme.Instance.PrimaryTextColor)
+					{
+						VAnchor = VAnchor.ParentCenter,
+						Margin = new BorderDouble(right: 5)
+					});
 
 					Button searchResultsButton = null;
 					if (UserSettings.Instance.IsTouchScreen)
@@ -139,7 +146,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						searchResultsButton = buttonFactory.Generate("Search Results".Localize(), "icon_search_24x24.png");
 					}
 					searchResultsButton.Name = "Bread Crumb Button " + "Search Results";
-					searchResultsButton.Margin = new BorderDouble(3, 0);
+					searchResultsButton.Margin = new BorderDouble(right:  5);
 					this.AddChild(searchResultsButton);
 				}
 
@@ -151,9 +158,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				{
 					// lets take out the > and put in a ...
 					this.RemoveChild(1);
-					GuiWidget separator = new TextWidget("...", textColor: ActiveTheme.Instance.PrimaryTextColor);
-					separator.VAnchor = VAnchor.ParentCenter;
-					separator.Margin = new BorderDouble(3, 0);
+
+					var separator = new TextWidget("...", textColor: ActiveTheme.Instance.PrimaryTextColor)
+					{
+						VAnchor = VAnchor.ParentCenter,
+						Margin = new BorderDouble(right:  5)
+					};
 					this.AddChild(separator, 1);
 
 					while (this.GetChildrenBoundsIncludingMargins().Width > this.Width - 20

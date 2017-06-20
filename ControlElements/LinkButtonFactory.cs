@@ -106,11 +106,11 @@ namespace MatterHackers.MatterControl
 			ButtonViewStates buttonViewWidget = new ButtonViewStates(buttonWidgetNormal, buttonWidgetHover, buttonWidgetPressed, buttonWidgetDisabled);
 
 			//Create button based on view container widget
-			Button controlButton = new Button(0, 0, buttonViewWidget);
-			controlButton.Margin = margin;
-			controlButton.Cursor = Cursors.Hand;
-
-			return controlButton;
+			return new Button(0, 0, buttonViewWidget)
+			{
+				Margin = margin,
+				Cursor = Cursors.Hand,
+			};
 		}
 
 		private LinkButtonViewBase getButtonWidgetPressed(string buttonText)
