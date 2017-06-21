@@ -432,7 +432,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		}
 
 		[Test, Category("Emulator")]
-		public async Task CancelingSdCardPrintLeavesHeatAndFanOn()
+		public async Task CloseShouldNotStopSDPrint()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
@@ -442,13 +442,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				{
 					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
 
-					testRunner.ClickByName("Queue... Menu");
-					testRunner.ClickByName(" Remove All Menu Item");
-					testRunner.ClickByName("Queue... Menu");
-					testRunner.ClickByName(" Load Files Menu Item");
-					testRunner.Delay(2);
+					testRunner.WaitForName("SD Card Row Item Collection");
+					testRunner.NavigateToFolder("SD Card Row Item Collection");
 
-					testRunner.ClickByName("Start Print Button");
+					testRunner.ClickByName("Row Item Item 1.gcode");
+
+					testRunner.ClickByName("Print Library Overflow Menu", delayBeforeReturn: 1);
+					testRunner.ClickByName("Print Menu Item");
+
 					testRunner.Delay(2);
 
 					int tempChangedCount = 0;

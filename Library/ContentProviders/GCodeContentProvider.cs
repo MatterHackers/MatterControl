@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2017, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,51 +27,53 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg.UI;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.PrintQueue;
-using MatterHackers.VectorMath;
-using System;
-using System.IO;
+using System.Threading.Tasks;
 
-namespace MatterHackers.MatterControl.PartPreviewWindow
+namespace MatterHackers.MatterControl
 {
-	public class PartPreviewMainWindow : SystemWindow
+	using System;
+	using MatterHackers.Agg;
+	using MatterHackers.Agg.Font;
+	using MatterHackers.Agg.Image;
+	using MatterHackers.Agg.VertexSource;
+	using MatterHackers.MatterControl.Library;
+	using MatterHackers.VectorMath;
+
+	public class GCodeContentProvider : ISceneContentProvider
 	{
-		private EventHandler unregisterEvents;
+		public ImageBuffer DefaultImage => throw new NotImplementedException();
 
-		private PartPreviewContent partPreviewWidget;
+		private ImageBuffer thumbnailImage;
 
-		public PartPreviewMainWindow(PrintItemWrapper printItem, View3DWidget.AutoRotate autoRotate3DView, View3DWidget.OpenMode openMode = View3DWidget.OpenMode.Viewing)
-			: base(750, 550)
+		public GCodeContentProvider()
 		{
-			UseOpenGL = true;
-			string partPreviewTitle = "MatterControl".Localize();
-			Title = string.Format("{0}: ", partPreviewTitle) + Path.GetFileName(printItem.Name);
+			int width = 60;
 
-			this.Name = "Part Preview Window";
+			var thumbIcon = new ImageBuffer(width, width);
+			var graphics2D = thumbIcon.NewGraphics2D();
+			var center = new Vector2(width / 2.0, width / 2.0);
 
-			partPreviewWidget = new PartPreviewContent(printItem, View3DWidget.WindowMode.StandAlone, autoRotate3DView, openMode);
-			partPreviewWidget.Closed += (sender, e) =>
-			{
-				Close();
-			};
+			graphics2D.DrawString("GCode", center.x, center.y, 8 * width / 50, Justification.Center, Baseline.BoundsCenter, color: RGBA_Bytes.White);
+			graphics2D.Render(
+				new Stroke(
+					new Ellipse(center, width / 2 - width / 12),
+					width / 12),
+				RGBA_Bytes.White);
 
-			this.AddChild(partPreviewWidget);
-
-			ActiveTheme.ThemeChanged.RegisterEvent((s, e) => this.Invalidate(), ref unregisterEvents);
-
-			Width = 750;
-			Height = 550;
-
-			MinimumSize = new Vector2(400, 300);
-			ShowAsSystemWindow();
+			thumbnailImage = thumbIcon;
 		}
 
-		public override void OnClosed(ClosedEventArgs e)
+		public ContentResult CreateItem(ILibraryItem item, ReportProgressRatio reporter)
 		{
-			unregisterEvents?.Invoke(this, null);
-			base.OnClosed(e);
+			System.Diagnostics.Debugger.Break();
+			return null;
+		}
+
+		public Task GetThumbnail(ILibraryItem item, int width, int height, Action<ImageBuffer> imageCallback)
+		{
+			imageCallback(thumbnailImage);
+
+			return Task.CompletedTask;
 		}
 	}
 }

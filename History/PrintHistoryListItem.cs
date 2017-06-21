@@ -409,11 +409,6 @@ namespace MatterHackers.MatterControl.PrintHistory
 			base.OnClosed(e);
 		}
 
-		public void ThemeChanged(object sender, EventArgs e)
-		{
-			this.Invalidate();
-		}
-
 		public override void OnDraw(Graphics2D graphics2D)
 		{
 			base.OnDraw(graphics2D);

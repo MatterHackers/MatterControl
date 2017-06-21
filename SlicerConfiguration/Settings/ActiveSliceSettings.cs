@@ -72,7 +72,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 					BedSettings.SetMakeAndModel(activeInstance.GetValue(SettingsKey.make), activeInstance.GetValue(SettingsKey.model));
 
-					SwitchToPrinterTheme(!MatterControlApplication.IsLoading);
+					SwitchToPrinterTheme();
 					if (!MatterControlApplication.IsLoading)
 					{
 						OnActivePrinterChanged(null);
@@ -129,7 +129,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			if (themeChanged)
 			{
-				UiThread.RunOnIdle(() => SwitchToPrinterTheme(true));
+				UiThread.RunOnIdle(SwitchToPrinterTheme);
 			}
 			else
 			{
@@ -142,7 +142,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		/// allows the theme state to be updated before the ActivePrinterChanged event fires, resulting in a single ReloadAll
 		/// occurring rather than two
 		/// </summary>
-		public static void SwitchToPrinterTheme(bool doReloadEvent)
+		public static void SwitchToPrinterTheme()
 		{
 			if (ActiveSliceSettings.Instance.PrinterSelected)
 			{
@@ -150,14 +150,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				string activeThemeName = ActiveSliceSettings.Instance.GetValue(SettingsKey.active_theme_name);
 				if (!string.IsNullOrEmpty(activeThemeName))
 				{
-					if (!doReloadEvent)
-					{
-						ActiveTheme.SuspendEvents();
-					}
-
 					ActiveTheme.Instance = ActiveTheme.GetThemeColors(activeThemeName);
-
-					ActiveTheme.ResumeEvents();
 				}
 			}
 		}

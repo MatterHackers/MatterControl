@@ -4225,3 +4225,15 @@ Translated:Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Speed'
 English:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Filament' -> 'Retraction'
 Translated:Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Filament' -> 'Retraction'
 
+English:Thumbnails
+Translated:Thumbnails
+
+English:Note: Slice Settings are applied before the print actually starts. Changes while printing will not effect the active print.
+Translated:Note: Slice Settings are applied before the print actually starts. Changes while printing will not effect the active print.
+
+English:Material 1
+Translated:Material 1
+
+English:Extruder 2
+Translated:Extruder 2
+

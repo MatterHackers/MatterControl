@@ -302,8 +302,16 @@ namespace MatterHackers.MatterControl
 			this.Library = new LibraryConfig();
 			this.Library.ContentProviders.Add(new[] { "stl", "amf", "mcx" }, new MeshContentProvider());
 
+			this.Library.ContentProviders.Add("gcode", new GCodeContentProvider());
+
 			// Name = "MainSlidePanel";
-			ActiveTheme.ThemeChanged.RegisterEvent((s, e) => ReloadAll(), ref unregisterEvents);
+			ActiveTheme.ThemeChanged.RegisterEvent((s, e) =>
+			{
+				if (!MatterControlApplication.IsLoading)
+				{
+					ReloadAll();
+				}
+			}, ref unregisterEvents);
 
 			ActiveSliceSettings.MaterialPresetChanged += (s, e) =>
 			{
@@ -537,8 +545,6 @@ namespace MatterHackers.MatterControl
 
 		static void LoadOemOrDefaultTheme()
 		{
-			ActiveTheme.SuspendEvents();
-
 			// if not check for the oem color and use it if set
 			// else default to "Blue - Light"
 			string oemColor = OemSettings.Instance.ThemeColor;
@@ -550,8 +556,6 @@ namespace MatterHackers.MatterControl
 			{
 				ActiveTheme.Instance = ActiveTheme.GetThemeColors(oemColor);
 			}
-
-			ActiveTheme.ResumeEvents();
 		}
 
 		public static ApplicationController Instance
