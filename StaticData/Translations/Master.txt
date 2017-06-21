@@ -6172,3 +6172,6 @@ Translated:The distance the z probe is from the extruder in z. For manual probin
 English:The distance the z probe is from the extruder in z. For manual probing, this is thickness of the paper (or other calibration device).
 Translated:The distance the z probe is from the extruder in z. For manual probing, this is thickness of the paper (or other calibration device).
 
+English:Your 3D print has been auto-paused.\nPause layer{0} reached.
+Translated:Your 3D print has been auto-paused.\nPause layer{0} reached.
+
