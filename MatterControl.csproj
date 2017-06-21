@@ -141,6 +141,7 @@
     <Compile Include="ConfigurationPage\ApplicationSettings\ThemePreviewButton.cs" />
     <Compile Include="CustomWidgets\DockingTabControl.cs" />
     <Compile Include="CustomWidgets\NamedAction.cs" />
+    <Compile Include="Library\ContentProviders\GCodeContentProvider.cs" />
     <Compile Include="Library\ContentProviders\IContentProvider.cs" />
     <Compile Include="ApplicationView\MenuRow\MenuOptionAction.cs" />
     <Compile Include="ApplicationView\MenuRow\MenuOptionHelp.cs" />

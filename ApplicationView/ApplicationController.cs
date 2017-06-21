@@ -302,6 +302,8 @@ namespace MatterHackers.MatterControl
 			this.Library = new LibraryConfig();
 			this.Library.ContentProviders.Add(new[] { "stl", "amf", "mcx" }, new MeshContentProvider());
 
+			this.Library.ContentProviders.Add("gcode", new GCodeContentProvider());
+
 			// Name = "MainSlidePanel";
 			ActiveTheme.ThemeChanged.RegisterEvent((s, e) =>
 			{
