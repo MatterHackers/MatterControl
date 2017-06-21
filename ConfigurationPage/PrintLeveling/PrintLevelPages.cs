@@ -380,7 +380,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			{
 				// make sure the servo is deployed
 				var servoDeploy = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.z_servo_depolyed_angle);
-				PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow($"M280 S{servoDeploy}");
+				PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow($"M280 P0 S{servoDeploy}");
 			}
 
 			var feedRates = ActiveSliceSettings.Instance.Helpers.ManualMovementSpeeds();
@@ -396,7 +396,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			int numberOfSamples = ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.z_probe_samples);
 			for (int i = 0; i < numberOfSamples; i++)
 			{
-				PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G30"); // probe the current position
+				// probe the current position
+				PrinterConnectionAndCommunication.Instance.SendLineToPrinterNow("G30");
+				// raise the probe after each sample
+				PrinterConnectionAndCommunication.Instance.MoveAbsolute(adjustedProbePosition, feedRates.x);
 			}
 
 			container.backButton.Enabled = false;
