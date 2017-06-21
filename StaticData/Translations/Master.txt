@@ -4237,3 +4237,15 @@ Translated:Material 1
 English:Extruder 2
 Translated:Extruder 2
 
+English:Size:
+Translated:Size:
+
+English:Infill:
+Translated:Infill:
+
+English:Start Threshold:
+Translated:Start Threshold:
+
+English:End Threshold:
+Translated:End Threshold:
+
