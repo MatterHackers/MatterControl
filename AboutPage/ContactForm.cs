@@ -327,7 +327,12 @@ namespace MatterHackers.MatterControl.ContactForm
 			contactFormWidget = new ContactFormWidget(subject, bodyText);
 
 			AddChild(contactFormWidget);
-			AddHandlers();
+
+			ActiveTheme.ThemeChanged.RegisterEvent((s, e) => this.Invalidate(), ref unregisterEvents);
+			contactFormWidget.Closed += (sender, e) => 
+			{
+				Close();
+			};
 
 			ShowAsSystemWindow();
 			MinimumSize = new Vector2(500, 550);
@@ -335,21 +340,10 @@ namespace MatterHackers.MatterControl.ContactForm
 
 		private EventHandler unregisterEvents;
 
-		private void AddHandlers()
-		{
-			ActiveTheme.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
-			contactFormWidget.Closed += (sender, e) => { Close(); };
-		}
-
 		public override void OnClosed(ClosedEventArgs e)
 		{
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
-		}
-
-		public void ThemeChanged(object sender, EventArgs e)
-		{
-			this.Invalidate();
 		}
 	}
 }

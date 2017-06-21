@@ -524,7 +524,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
-			ActiveTheme.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
+			ActiveTheme.ThemeChanged.RegisterEvent((s, e) =>
+			{
+				processingProgressControl.FillColor = ActiveTheme.Instance.PrimaryAccentColor;
+				MeshViewerWidget.SetMaterialColor(1, ActiveTheme.Instance.PrimaryAccentColor);
+			}, ref unregisterEvents);
 
 			meshViewerWidget.interactionVolumes.Add(new UpArrow3D(this));
 			meshViewerWidget.interactionVolumes.Add(new SelectionShadow(this));
@@ -535,9 +539,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				meshViewerWidget.interactionVolumes.Add(plugin.CreateInteractionVolume(this));
 			}
-
-			// make sure the colors are set correct
-			ThemeChanged(this, null);
 
 			if (DoBooleanTest)
 			{
@@ -1570,13 +1571,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			saveButtons.Visible = true;
 			SelectedTransformChanged?.Invoke(this, null);
 			Invalidate();
-		}
-
-		public void ThemeChanged(object sender, EventArgs e)
-		{
-			processingProgressControl.FillColor = ActiveTheme.Instance.PrimaryAccentColor;
-
-			MeshViewerWidget.SetMaterialColor(1, ActiveTheme.Instance.PrimaryAccentColor);
 		}
 
 		internal GuiWidget AddMaterialControls()

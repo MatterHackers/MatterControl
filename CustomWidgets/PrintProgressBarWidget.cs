@@ -134,7 +134,9 @@ namespace MatterHackers.MatterControl
 			ApplicationController.Instance.ActivePrintItemChanged.RegisterEvent(Instance_PrintItemChanged, ref unregisterEvents);
 			PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent(Instance_PrintItemChanged, ref unregisterEvents);
 
-			SetThemedColors();
+			this.printTimeElapsed.TextColor = ActiveTheme.Instance.PrimaryAccentColor;
+			this.printTimeRemaining.TextColor = ActiveTheme.Instance.PrimaryAccentColor;
+			this.BackgroundColor = ActiveTheme.Instance.SecondaryAccentColor;
 
 			// This is a bit of a hack. Now that we have the printing window we don't want this to show progress but it is still used on touch screen for expanding the display.
 			if (!UserSettings.Instance.IsTouchScreen)
@@ -148,20 +150,6 @@ namespace MatterHackers.MatterControl
 		{
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
-		}
-
-		private void SetThemedColors()
-		{
-			this.printTimeElapsed.TextColor = ActiveTheme.Instance.PrimaryAccentColor;
-			this.printTimeRemaining.TextColor = ActiveTheme.Instance.PrimaryAccentColor;
-			this.BackgroundColor = ActiveTheme.Instance.SecondaryAccentColor;
-		}
-
-		public void ThemeChanged(object sender, EventArgs e)
-		{
-			//Set background color to new theme
-			SetThemedColors();
-			this.Invalidate();
 		}
 
 		private void Instance_PrintItemChanged(object sender, EventArgs e)

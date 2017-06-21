@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.AddChild(partPreviewWidget);
 
-			AddHandlers();
+			ActiveTheme.ThemeChanged.RegisterEvent((s, e) => this.Invalidate(), ref unregisterEvents);
 
 			Width = 750;
 			Height = 550;
@@ -68,22 +68,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			ShowAsSystemWindow();
 		}
 
-		private void AddHandlers()
-		{
-			ActiveTheme.ThemeChanged.RegisterEvent(ThemeChanged, ref unregisterEvents);
-		}
-
-		public void ThemeChanged(object sender, EventArgs e)
-		{
-			this.Invalidate();
-		}
-
 		public override void OnClosed(ClosedEventArgs e)
 		{
-			if (unregisterEvents != null)
-			{
-				unregisterEvents(this, null);
-			}
+			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
 		}
 	}
