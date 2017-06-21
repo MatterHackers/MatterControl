@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.IO;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
@@ -145,7 +146,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				&& ApplicationController.Instance.Library.IsContentFileType(stream.FileName));
 			bool isContainerLink = listViewItem.Model is ILibraryContainerLink;
 
-			if (isContentItem || isValidStream || isContainerLink)
+			bool isGCode = listViewItem.Model is FileSystemFileItem item && Path.GetExtension(item.FileName.ToUpper()) == ".GCODE"
+				|| listViewItem.Model is SDCardFileItem sdItem && Path.GetExtension(sdItem.Name.ToUpper()) == ".GCODE";
+
+			if (isContentItem || isValidStream || isContainerLink || isGCode)
 			{
 				if (this.IsSelected)
 				{

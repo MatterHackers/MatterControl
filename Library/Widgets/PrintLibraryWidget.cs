@@ -37,8 +37,10 @@ using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
@@ -370,16 +372,29 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			menuActions.Add(new PrintItemAction()
 			{
-				Title = "Pin to Library",
+				Title = "Print",
 				AllowMultiple = false,
-				AllowContainers = true,
+				AllowContainers = false,
 				AllowProtected = true,
 				Action = (selectedLibraryItems, listView) =>
 				{
-					Console.WriteLine();
+					var firstItem = selectedLibraryItems.FirstOrDefault();
+					if (firstItem is SDCardFileItem sdcardItem)
+					{
+						ApplicationController.Instance.ActivePrintItem = new PrintItemWrapper(new PrintItem(sdcardItem.Name, QueueData.SdCardFileName));
+					}
+					else if (firstItem is FileSystemFileItem fileItem && Path.GetExtension(fileItem.FileName).ToUpper() == ".GCODE")
+					{
+						ApplicationController.Instance.ActivePrintItem = new PrintItemWrapper(new PrintItem(fileItem.Name, fileItem.Path));
+					}
+					else
+					{
+						//TODO: Otherwise add the selected items to the plate
+					}
+
+					ApplicationController.Instance.PrintActivePart();
 				}
 			});
-
 
 			// edit menu item
 			menuActions.Add(new PrintItemAction()

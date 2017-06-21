@@ -38,6 +38,7 @@ using MatterHackers.Agg.Image;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.Library;
+using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.CustomWidgets
@@ -80,6 +81,17 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.ListContentView = new IconListView();
 			context.ContainerChanged += ActiveContainer_Changed;
 			context.ContainerReloaded += ActiveContainer_Reloaded;
+
+			bool printerConnected = false;
+			PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent(async (s, e) =>
+			{
+				bool isConnected = PrinterConnection.Instance.PrinterIsConnected;
+				if (printerConnected != isConnected)
+				{
+					await DisplayContainerContent(ActiveContainer);
+					printerConnected = isConnected;
+				}
+			}, ref unregisterEvents);
 		}
 
 		public ILibraryContainer ActiveContainer => this.LibraryContext.ActiveContainer;
