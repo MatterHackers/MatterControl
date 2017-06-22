@@ -1085,17 +1085,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Apply selection
 			if (matchingSceneChildren.Any())
 			{
-				Scene.ClearSelection();
-
-				foreach (var sceneItem in matchingSceneChildren)
+				// If we are actually doing the selection rather than debugging the data
+				if (e == null)
 				{
-					Scene.AddToSelection(sceneItem);
-				}
-			}
+					Scene.ClearSelection();
 
-			if (e != null)
-			{
-				RenderBounds(e, allResults);
+					foreach (var sceneItem in matchingSceneChildren)
+					{
+						Scene.AddToSelection(sceneItem);
+					}
+				}
+				else
+				{
+					RenderBounds(e, allResults);
+				}
 			}
 		}
 
