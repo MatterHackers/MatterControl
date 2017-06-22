@@ -40,14 +40,13 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class ViewGcodeWidget : GuiWidget
 	{
 		public event EventHandler DoneLoading;
-
-		public ProgressChangedEventHandler LoadingProgressChanged;
 
 		public bool RenderGrid
 		{
@@ -143,7 +142,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private BackgroundWorker backgroundWorker = null;
 		private Vector2 lastMousePosition = new Vector2(0, 0);
 		private Vector2 mouseDownPosition = new Vector2(0, 0);
 
@@ -177,7 +175,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private Vector2 unscaledRenderOffset = new Vector2(0, 0);
 
-		public string FileNameAndPath;
 		public GCodeRenderer gCodeRenderer;
 
 		public event EventHandler ActiveLayerChanged;
@@ -212,31 +209,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		public ViewGcodeWidget(Vector2 gridSizeMm, Vector2 gridCenterMm)
+		private ReportProgressRatio progressReporter;
+
+		public ViewGcodeWidget(Vector2 gridSizeMm, Vector2 gridCenterMm, ReportProgressRatio progressReporter)
 		{
+			this.progressReporter = progressReporter;
 			this.gridSizeMm = gridSizeMm;
 			this.gridCenterMm = gridCenterMm;
 			LocalBounds = new RectangleDouble(0, 0, 100, 100);
 			//DoubleBuffer = true;
 			AnchorAll();
-		}
-
-		public void SetGCodeAfterLoad(GCodeFile loadedGCode)
-		{
-			this.LoadedGCode = loadedGCode;
-			if (loadedGCode == null)
-			{
-				TextWidget noGCodeLoaded = new TextWidget(string.Format("Not a valid GCode file."));
-				noGCodeLoaded.Margin = new BorderDouble(0, 0, 0, 0);
-				noGCodeLoaded.VAnchor = Agg.UI.VAnchor.ParentCenter;
-				noGCodeLoaded.HAnchor = Agg.UI.HAnchor.ParentCenter;
-				this.AddChild(noGCodeLoaded);
-			}
-			else
-			{
-				SetInitalLayer();
-				CenterPartInView();
-			}
 		}
 
 		private void SetInitalLayer()
@@ -274,42 +256,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private void initialLoading_ProgressChanged(object sender, ProgressChangedEventArgs e)
+		internal void Clear3DGCode()
 		{
-			LoadingProgressChanged?.Invoke(this, e);
-		}
-
-		private async void initialLoading_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-		{
-			SetGCodeAfterLoad((GCodeFile)e.Result);
-
-			gCodeRenderer = new GCodeRenderer(LoadedGCode);
-
-			if (ActiveSliceSettings.Instance.PrinterSelected)
+			if (gCodeRenderer != null)
 			{
-				GCodeRenderer.ExtruderWidth = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.nozzle_diameter);
+				gCodeRenderer.Clear3DGCode();
+				this.Invalidate();
 			}
-			else
-			{
-				GCodeRenderer.ExtruderWidth = .4;
-			}
-
-			await Task.Run(() =>
-			{
-				// DoPostLoadInitialization()
-				try
-				{
-					gCodeRenderer.GCodeFileToDraw?.GetFilamentUsedMm(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_diameter));
-				}
-				catch (Exception ex)
-				{
-					Debug.Print(ex.Message);
-					GuiWidget.BreakInDebugger();
-				}
-				gCodeRenderer.CreateFeaturesForLayerIfRequired(0);
-			});
-
-			DoneLoading?.Invoke(this, null);
 		}
 
 		private PathStorage grid = new PathStorage();
@@ -484,7 +437,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnMouseWheel(mouseEvent);
 			if (FirstWidgetUnderMouse) // TODO: find a good way to decide if you are what the wheel is trying to do
 			{
-
 				const double deltaFor1Click = 120;
 				double scaleAmount = (mouseEvent.WheelDelta / deltaFor1Click) * .1;
 
@@ -573,25 +525,53 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		public void Load(string gcodePathAndFileName)
+		public async void LoadInBackground(string gcodePathAndFileName)
 		{
-			LoadedGCode = GCodeFile.Load(gcodePathAndFileName);
-			SetInitalLayer();
-			CenterPartInView();
-		}
+			var loadedGCode = await GCodeFileLoaded.LoadInBackground(gcodePathAndFileName, this.progressReporter);
+			this.LoadedGCode = loadedGCode;
 
-		public void LoadInBackground(string gcodePathAndFileName)
-		{
-			this.FileNameAndPath = gcodePathAndFileName;
-			backgroundWorker = new BackgroundWorker();
-			backgroundWorker.WorkerReportsProgress = true;
-			backgroundWorker.WorkerSupportsCancellation = true;
+			if (this.LoadedGCode == null)
+			{
+				this.AddChild(new TextWidget("Not a valid GCode file.".Localize())
+				{
+					Margin = 0,
+					VAnchor = VAnchor.ParentCenter,
+					HAnchor = HAnchor.ParentCenter
+				});
+			}
+			else
+			{
+				SetInitalLayer();
+				CenterPartInView();
+			}
 
-			backgroundWorker.ProgressChanged += new ProgressChangedEventHandler(initialLoading_ProgressChanged);
-			backgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(initialLoading_RunWorkerCompleted);
+			gCodeRenderer = new GCodeRenderer(this.LoadedGCode);
 
-			LoadedGCode = null;
-			GCodeFileLoaded.LoadInBackground(backgroundWorker, gcodePathAndFileName);
+			if (ActiveSliceSettings.Instance.PrinterSelected)
+			{
+				GCodeRenderer.ExtruderWidth = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.nozzle_diameter);
+			}
+			else
+			{
+				GCodeRenderer.ExtruderWidth = .4;
+			}
+
+			await Task.Run(() =>
+			{
+				try
+				{
+					// TODO: Why call this then throw away the result? What does calling initialize the otherwise would be invalid?
+					gCodeRenderer.GCodeFileToDraw?.GetFilamentUsedMm(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_diameter));
+				}
+				catch (Exception ex)
+				{
+					Debug.Print(ex.Message);
+					GuiWidget.BreakInDebugger();
+				}
+				gCodeRenderer.CreateFeaturesForLayerIfRequired(0);
+			});
+
+			DoneLoading?.Invoke(this, null);
 		}
 
 		public override void OnClosed(ClosedEventArgs e)
@@ -601,10 +581,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				gCodeRenderer.Dispose();
 			}
 
-			if (backgroundWorker != null)
-			{
-				backgroundWorker.CancelAsync();
-			}
 			base.OnClosed(e);
 		}
 

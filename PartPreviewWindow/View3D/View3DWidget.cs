@@ -170,7 +170,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		}
 	}
 
-	public partial class View3DWidget : PartPreview3DWidget
+	public class View3DWidget : PartPreview3DWidget
 	{
 		private bool DoBooleanTest = false;
 		private bool deferEditorTillMouseUp = false;
