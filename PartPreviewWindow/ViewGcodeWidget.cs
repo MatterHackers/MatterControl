@@ -27,20 +27,20 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Diagnostics;
+using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.GCodeVisualizer;
+using MatterHackers.Localizations;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.MeshVisualizer;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.RenderOpenGl.OpenGl;
 using MatterHackers.VectorMath;
-using System;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Threading.Tasks;
-using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -299,7 +299,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					GCodeRenderInfo renderInfo = new GCodeRenderInfo(activeLayerIndex, activeLayerIndex, transform, layerScale, CreateRenderInfo(),
 						FeatureToStartOnRatio0To1, FeatureToEndOnRatio0To1,
-						new Vector2[] { ActiveSliceSettings.Instance.Helpers.ExtruderOffset(0), ActiveSliceSettings.Instance.Helpers.ExtruderOffset(1) });
+						new Vector2[] { ActiveSliceSettings.Instance.Helpers.ExtruderOffset(0), ActiveSliceSettings.Instance.Helpers.ExtruderOffset(1) },
+						 MeshViewerWidget.GetMaterialColor);
 
 					//using (new PerformanceTimer("GCode Timer", "Render"))
 					{

@@ -166,10 +166,6 @@
       <Project>{04667764-DC7B-4B95-AEF6-B4E6C87A54E9}</Project>
       <Name>DataConverters3D</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Submodules\agg-sharp\examples\MeshViewer\MeshViewer.csproj">
-      <Project>{A737BC76-165B-46C6-82B7-8871C7C92942}</Project>
-      <Name>MeshViewer</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Submodules\agg-sharp\Gui\Gui.csproj">
       <Project>{74F6BB6C-9D02-4512-A59A-21940E35C532}</Project>
       <Name>Gui</Name>
