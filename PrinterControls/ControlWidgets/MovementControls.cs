@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Kevin Pope
+Copyright (c) 2017, Kevin Pope, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,6 +27,8 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.ImageProcessing;
@@ -38,11 +40,6 @@ using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.Utilities;
 using MatterHackers.VectorMath;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PrinterControls
 {
@@ -109,7 +106,14 @@ namespace MatterHackers.MatterControl.PrinterControls
 		public MovementControls()
 		{
 			Button editButton;
-			movementControlsGroupBox = new AltGroupBox(textImageButtonFactory.GenerateGroupBoxLabelWithEdit(new TextWidget("Movement".Localize(), pointSize: 18, textColor: ActiveTheme.Instance.SecondaryAccentColor), out editButton));
+			movementControlsGroupBox = new AltGroupBox(textImageButtonFactory.GenerateGroupBoxLabelWithEdit(new TextWidget("Movement".Localize(), pointSize: 18, textColor: ActiveTheme.Instance.SecondaryAccentColor), out editButton))
+			{
+				Margin = new BorderDouble(0),
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				HAnchor = HAnchor.ParentLeftRight,
+				VAnchor = VAnchor.FitToChildren
+			};
+
 			editButton.Click += (sender, e) =>
 			{
 				if (editManualMovementSettingsWindow == null)
@@ -126,32 +130,26 @@ namespace MatterHackers.MatterControl.PrinterControls
 				}
 			};
 
-			movementControlsGroupBox.Margin = new BorderDouble(0);
-			movementControlsGroupBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			movementControlsGroupBox.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
-			movementControlsGroupBox.VAnchor = Agg.UI.VAnchor.FitToChildren;
 
 			jogControls = new JogControls(new XYZColors());
 			jogControls.Margin = new BorderDouble(0);
+
+			manualControlsLayout = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				manualControlsLayout = new FlowLayoutWidget(FlowDirection.TopToBottom);
-				manualControlsLayout.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-				manualControlsLayout.VAnchor = Agg.UI.VAnchor.FitToChildren;
-				manualControlsLayout.Padding = new BorderDouble(3, 5, 3, 0);
-				{
-					FlowLayoutWidget leftToRightContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
+				HAnchor = HAnchor.ParentLeftRight,
+				VAnchor = VAnchor.FitToChildren,
+				Padding = new BorderDouble(3, 5, 3, 0)
+			};
 
-					manualControlsLayout.AddChild(CreateDisableableContainer(GetHomeButtonBar()));
-					manualControlsLayout.AddChild(CreateDisableableContainer(CreateSeparatorLine()));
-					manualControlsLayout.AddChild(jogControls);
-					////manualControlsLayout.AddChild(leftToRightContainer);
-					manualControlsLayout.AddChild(CreateDisableableContainer(CreateSeparatorLine()));
-					manualControlsLayout.AddChild(CreateDisableableContainer(GetHWDestinationBar()));
-					manualControlsLayout.AddChild(CreateDisableableContainer(CreateSeparatorLine()));
-				}
+			manualControlsLayout.AddChild(CreateDisableableContainer(GetHomeButtonBar()));
+			manualControlsLayout.AddChild(CreateSeparatorLine());
+			manualControlsLayout.AddChild(jogControls);
 
-				movementControlsGroupBox.AddChild(manualControlsLayout);
-			}
+			manualControlsLayout.AddChild(CreateSeparatorLine());
+			manualControlsLayout.AddChild(CreateDisableableContainer(GetHWDestinationBar()));
+			manualControlsLayout.AddChild(CreateSeparatorLine());
+
+			movementControlsGroupBox.AddChild(manualControlsLayout);
 
 			this.AddChild(movementControlsGroupBox);
 		}
