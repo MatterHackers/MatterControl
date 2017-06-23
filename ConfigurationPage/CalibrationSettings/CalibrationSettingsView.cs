@@ -48,13 +48,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 		private FlowLayoutWidget GetAutoLevelControl()
 		{
-			FlowLayoutWidget buttonRow = new FlowLayoutWidget();
-			buttonRow.Name = "AutoLevelRowItem";
-			buttonRow.HAnchor = HAnchor.ParentLeftRight;
-			buttonRow.Margin = new BorderDouble(0, 4);
+			var buttonRow = new FlowLayoutWidget()
+			{
+				Name = "AutoLevelRowItem",
+				HAnchor = HAnchor.ParentLeftRight,
+				Margin = new BorderDouble(0, 4),
+			};
 
 			ImageBuffer levelingImage = StaticData.Instance.LoadIcon("leveling_32x32.png", 24, 24).InvertLightness();
-
 			if (!ActiveTheme.Instance.IsDarkTheme)
 			{
 				levelingImage.InvertLightness();
@@ -73,14 +74,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				VAnchor = VAnchor.ParentCenter,
 				Text = "Software Print Leveling".Localize()
 			};
-
 			buttonRow.AddChild(printLevelingStatusLabel);
 
 			// edit button
 			Button editButton = TextImageButtonFactory.GetThemedEditButton();
 			editButton.Margin = new BorderDouble(2, 2, 2, 0);
-			editButton.VAnchor = Agg.UI.VAnchor.ParentTop;
-
+			editButton.VAnchor = VAnchor.ParentTop;
 			editButton.VAnchor = VAnchor.ParentCenter;
 			editButton.Click += (sender, e) =>
 			{
