@@ -331,7 +331,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public static void DeleteSelection(this InteractiveScene Scene, View3DWidget view3DWidget)
 		{
-			if (Scene.HasSelection && Scene.Children.Count > 1)
+			if (Scene.HasSelection)
 			{
 				// Create and perform the delete operation 
 				var deleteOperation = new DeleteCommand(view3DWidget, Scene.SelectedItem);
