@@ -970,8 +970,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				setLayerWidget.VAnchor = Agg.UI.VAnchor.ParentTop;
 				layerSelectionButtonsPanel.AddChild(setLayerWidget);
 
+				
 				navigationWidget?.Close();
-				navigationWidget = new LayerNavigationWidget(gcodeViewWidget);
+				navigationWidget = new LayerNavigationWidget(gcodeViewWidget, ApplicationController.Instance.Theme.GCodeLayerButtons);
 				navigationWidget.Margin = new BorderDouble(0, 0, 20, 0);
 				layerSelectionButtonsPanel.AddChild(navigationWidget);
 
@@ -1139,54 +1140,46 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 	public class LayerNavigationWidget : FlowLayoutWidget
 	{
-		private Button prevLayerButton;
-		private Button nextLayerButton;
 		private TextWidget layerCountTextWidget;
 		private ViewGcodeWidget gcodeViewWidget;
-		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
-
-		public LayerNavigationWidget(ViewGcodeWidget gcodeViewWidget)
+		
+		public LayerNavigationWidget(ViewGcodeWidget gcodeViewWidget, TextImageButtonFactory buttonFactory)
 			: base(FlowDirection.LeftToRight)
 		{
 			this.gcodeViewWidget = gcodeViewWidget;
 
-			textImageButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			textImageButtonFactory.disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
-
-			prevLayerButton = textImageButtonFactory.Generate("<<");
-			prevLayerButton.Click += prevLayer_ButtonClick;
+			var prevLayerButton = buttonFactory.Generate("<<");
+			prevLayerButton.Click += (s, e) =>
+			{
+				gcodeViewWidget.ActiveLayerIndex = (gcodeViewWidget.ActiveLayerIndex - 1);
+			};
 			this.AddChild(prevLayerButton);
 
-			layerCountTextWidget = new TextWidget("/1____", 12);
-			layerCountTextWidget.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			layerCountTextWidget.VAnchor = VAnchor.ParentCenter;
-			layerCountTextWidget.AutoExpandBoundsToText = true;
-			layerCountTextWidget.Margin = new BorderDouble(5, 0);
+			layerCountTextWidget = new TextWidget("/1____", 12)
+			{
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				VAnchor = VAnchor.ParentCenter,
+				AutoExpandBoundsToText = true,
+				Margin = new BorderDouble(5, 0)
+			};
 			this.AddChild(layerCountTextWidget);
 
-			nextLayerButton = textImageButtonFactory.Generate(">>");
-			nextLayerButton.Click += nextLayer_ButtonClick;
+			var nextLayerButton = buttonFactory.Generate(">>");
+			nextLayerButton.Click += (s, e) =>
+			{
+				gcodeViewWidget.ActiveLayerIndex = (gcodeViewWidget.ActiveLayerIndex + 1);
+			};
 			this.AddChild(nextLayerButton);
 		}
 
-		private void nextLayer_ButtonClick(object sender, EventArgs mouseEvent)
-		{
-			gcodeViewWidget.ActiveLayerIndex = (gcodeViewWidget.ActiveLayerIndex + 1);
-		}
-
-		private void prevLayer_ButtonClick(object sender, EventArgs mouseEvent)
-		{
-			gcodeViewWidget.ActiveLayerIndex = (gcodeViewWidget.ActiveLayerIndex - 1);
-		}
-
+		
 		public override void OnDraw(Graphics2D graphics2D)
 		{
 			if (gcodeViewWidget.LoadedGCode != null)
 			{
 				layerCountTextWidget.Text = string.Format("{0} / {1}", gcodeViewWidget.ActiveLayerIndex + 1, gcodeViewWidget.LoadedGCode.NumChangesInZ.ToString());
 			}
+
 			base.OnDraw(graphics2D);
 		}
 	}
