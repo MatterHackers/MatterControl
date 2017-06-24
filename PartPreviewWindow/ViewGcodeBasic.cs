@@ -112,7 +112,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			CreateAndAddChildren();
 
 			ActiveSliceSettings.SettingChanged.RegisterEvent(CheckSettingChanged, ref unregisterEvents);
-			ApplicationController.Instance.AdvancedControlsPanelReloading.RegisterEvent((s, e) => gcodeViewWidget?.Clear3DGCode(), ref unregisterEvents);
+
+			// TODO: Why do we clear GCode on AdvancedControlsPanelReloading - assume some slice settings should invalidate. If so, code should be more specific and bound to slice settings changed
+			ApplicationController.Instance.AdvancedControlsPanelReloading.RegisterEvent((s, e) => printer.BedPlate.GCodeRenderer?.Clear3DGCode(), ref unregisterEvents);
 		}
 
 		private GCodeFile loadedGCode => printer.BedPlate.LoadedGCode;
@@ -154,7 +156,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 				else if (stringEvent.Data == "extruder_offset")
 				{
-					gcodeViewWidget.Clear3DGCode();
+					printer.BedPlate.GCodeRenderer.Clear3DGCode();
 				}
 			}
 		}

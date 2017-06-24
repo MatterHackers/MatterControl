@@ -133,9 +133,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.progressReporter = progressReporter;
 			this.gridSizeMm = gridSizeMm;
 			this.gridCenterMm = gridCenterMm;
-			LocalBounds = new RectangleDouble(0, 0, 100, 100);
-			//DoubleBuffer = true;
-			AnchorAll();
+
+			this.LocalBounds = new RectangleDouble(0, 0, 100, 100);
+			this.AnchorAll();
 		}
 
 		private void SetInitalLayer()
@@ -170,16 +170,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						}
 					}
 				}
-			}
-		}
-
-		internal void Clear3DGCode()
-		{
-			var renderer = printer.BedPlate.GCodeRenderer;
-			if (renderer != null)
-			{
-				renderer.Clear3DGCode();
-				this.Invalidate();
 			}
 		}
 
