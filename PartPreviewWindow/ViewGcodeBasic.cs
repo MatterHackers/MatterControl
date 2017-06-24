@@ -330,8 +330,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Visible = false,
 				HAnchor = HAnchor.ParentRight
 			};
-			AddChild(viewControlsToggle);
-
+			viewControlsToggle.ViewModeChanged += (s, e) =>
+			{
+				// Respond to user driven view mode change events and store and switch to the new mode
+				activeViewMode = e.ViewMode;
+				SwitchViewModes();
+			};
 			viewControls3D.TransformStateChanged += (s, e) =>
 			{
 				switch (e.TransformMode)
@@ -356,6 +360,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				}
 			};
+			this.AddChild(viewControlsToggle);
 		}
 
 		private void MeshViewerWidget_Closed(object sender, ClosedEventArgs e)
@@ -676,16 +681,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				popupContainer.AddChild(hideExtruderOffsets);
 			}
 
-			// Respond to user driven view mode change events and store and switch to the new mode
-			viewControlsToggle.ViewModeChanged += (s, e) =>
-			{
-				activeViewMode = e.ViewMode;
-				SwitchViewModes();
-			};
-
-			// Switch to the most recent view mode, defaulting to Layers3D
-			SwitchViewModes();
-
 			// Put in the sync to print checkbox
 			if (windowMode == WindowMode.Embeded)
 			{
@@ -932,6 +927,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				BoundsChanged += new EventHandler(PartPreviewGCode_BoundsChanged);
 
 				this.AddChild(CreateModelInfo());
+
+				// Switch to the most recent view mode, defaulting to Layers3D
+				SwitchViewModes();
 
 				meshViewerWidget.partProcessingInfo.Visible = false;
 			}
