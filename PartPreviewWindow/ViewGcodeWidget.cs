@@ -88,8 +88,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private Vector2 unscaledRenderOffset = new Vector2(0, 0);
 
-		public GCodeRenderer gCodeRenderer { get; private set; }
-
 		public event EventHandler ActiveLayerChanged;
 
 		private GCodeFile loadedGCode => printer.BedPlate.LoadedGCode;
@@ -107,7 +105,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					activeLayerIndex = value;
 
-					if (gCodeRenderer == null || activeLayerIndex < 0)
+					if (printer.BedPlate.GCodeRenderer == null || activeLayerIndex < 0)
 					{
 						activeLayerIndex = 0;
 					}
@@ -177,9 +175,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		internal void Clear3DGCode()
 		{
-			if (gCodeRenderer != null)
+			var renderer = printer.BedPlate.GCodeRenderer;
+			if (renderer != null)
 			{
-				gCodeRenderer.Clear3DGCode();
+				renderer.Clear3DGCode();
 				this.Invalidate();
 			}
 		}
@@ -223,7 +222,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					//using (new PerformanceTimer("GCode Timer", "Render"))
 					{
-						gCodeRenderer?.Render(graphics2D, renderInfo);
+						printer.BedPlate.GCodeRenderer?.Render(graphics2D, renderInfo);
 					}
 				}
 			}
@@ -446,6 +445,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
+		// TODO: The bulk of this should move to the data model rather than in this widget
 		public async void LoadInBackground(string gcodePathAndFileName)
 		{
 			printer.BedPlate.LoadedGCode = await GCodeFileLoaded.LoadInBackground(gcodePathAndFileName, this.progressReporter);
@@ -465,7 +465,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				CenterPartInView();
 			}
 
-			gCodeRenderer = new GCodeRenderer(loadedGCode);
+			printer.BedPlate.GCodeRenderer = new GCodeRenderer(loadedGCode);
 
 			if (ActiveSliceSettings.Instance.PrinterSelected)
 			{
@@ -481,14 +481,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				try
 				{
 					// TODO: Why call this then throw away the result? What does calling initialize the otherwise would be invalid?
-					gCodeRenderer.GCodeFileToDraw?.GetFilamentUsedMm(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_diameter));
+					printer.BedPlate.GCodeRenderer.GCodeFileToDraw?.GetFilamentUsedMm(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_diameter));
 				}
 				catch (Exception ex)
 				{
 					Debug.Print(ex.Message);
 					GuiWidget.BreakInDebugger();
 				}
-				gCodeRenderer.CreateFeaturesForLayerIfRequired(0);
+
+				printer.BedPlate.GCodeRenderer.CreateFeaturesForLayerIfRequired(0);
 			});
 
 			DoneLoading?.Invoke(this, null);
@@ -496,11 +497,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnClosed(ClosedEventArgs e)
 		{
-			if (gCodeRenderer != null)
-			{
-				gCodeRenderer.Dispose();
-			}
-
+			printer.BedPlate.GCodeRenderer?.Dispose();
 			base.OnClosed(e);
 		}
 
@@ -519,7 +516,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					layerScale = layerScale * (Width / oldWidth);
 				}
-				else if (gCodeRenderer != null)
+				else if (printer.BedPlate.GCodeRenderer != null)
 				{
 					CenterPartInView();
 				}

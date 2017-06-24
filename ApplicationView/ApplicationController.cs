@@ -70,6 +70,9 @@ namespace MatterHackers.MatterControl
 	public class BedConfig
 	{
 		public GCodeFile LoadedGCode { get; set; }
+
+		// TODO: Make assignment private, wire up post slicing initialization here
+		public GCodeRenderer GCodeRenderer { get; set; }
 	}
 
 	public class PrinterConfig

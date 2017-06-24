@@ -400,7 +400,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void TrackballTumbleWidget_DrawGlContent(object sender, EventArgs e)
 		{
-			if (loadedGCode == null || gcodeViewWidget.gCodeRenderer == null)
+			if (loadedGCode == null || printer.BedPlate.GCodeRenderer == null)
 			{
 				return;
 			}
@@ -417,7 +417,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				new Vector2[] { ActiveSliceSettings.Instance.Helpers.ExtruderOffset(0), ActiveSliceSettings.Instance.Helpers.ExtruderOffset(1) },
 				MeshViewerWidget.GetMaterialColor);
 
-			gcodeViewWidget.gCodeRenderer.Render3D(renderInfo);
+			printer.BedPlate.GCodeRenderer.Render3D(renderInfo);
 		}
 
 		private void SetAnimationPosition()
