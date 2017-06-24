@@ -591,6 +591,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		internal GuiWidget ShowOverflowMenu()
 		{
+			var textColor = RGBA_Bytes.Black;
+
 			var popupContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.ParentLeftRight,
@@ -599,7 +601,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			// put in a show grid check box
-			CheckBox showGrid = new CheckBox("Print Bed".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
+			CheckBox showGrid = new CheckBox("Print Bed".Localize(), textColor: textColor);
 			showGrid.Checked = options.RenderGrid;
 			meshViewerWidget.RenderBed = showGrid.Checked;
 			showGrid.CheckedStateChanged += (sender, e) =>
@@ -609,7 +611,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			popupContainer.AddChild(showGrid);
 
 			// put in a show moves checkbox
-			var showMoves = new CheckBox("Moves".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
+			var showMoves = new CheckBox("Moves".Localize(), textColor: textColor);
 			showMoves.Checked = options.RenderMoves;
 			showMoves.CheckedStateChanged += (sender, e) =>
 			{
@@ -618,7 +620,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			popupContainer.AddChild(showMoves);
 
 			// put in a show Retractions checkbox
-			CheckBox showRetractions = new CheckBox("Retractions".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
+			CheckBox showRetractions = new CheckBox("Retractions".Localize(), textColor: textColor);
 			showRetractions.Checked = options.RenderRetractions;
 			showRetractions.CheckedStateChanged += (sender, e) =>
 			{
@@ -628,7 +630,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			
 
 			// put in a show speed checkbox
-			var showSpeeds = new CheckBox("Speeds".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
+			var showSpeeds = new CheckBox("Speeds".Localize(), textColor: textColor);
 			showSpeeds.Checked = options.RenderSpeeds;
 			//showSpeeds.Checked = gradient.Visible;
 			showSpeeds.CheckedStateChanged += (sender, e) =>
@@ -640,7 +642,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			popupContainer.AddChild(showSpeeds);
 
 			// put in a simulate extrusion checkbox
-			var simulateExtrusion = new CheckBox("Extrusion".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
+			var simulateExtrusion = new CheckBox("Extrusion".Localize(), textColor: textColor);
 			simulateExtrusion.Checked = options.SimulateExtrusion;
 			simulateExtrusion.CheckedStateChanged += (sender, e) =>
 			{
@@ -649,7 +651,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			popupContainer.AddChild(simulateExtrusion);
 
 			// put in a render extrusion transparent checkbox
-			var transparentExtrusion = new CheckBox("Transparent".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor)
+			var transparentExtrusion = new CheckBox("Transparent".Localize(), textColor: textColor)
 			{
 				Checked = options.TransparentExtrusion,
 				Margin = new BorderDouble(5, 0, 0, 0),
@@ -665,7 +667,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// put in a simulate extrusion checkbox
 			if (ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.extruder_count) > 1)
 			{
-				CheckBox hideExtruderOffsets = new CheckBox("Hide Offsets", textColor: ActiveTheme.Instance.PrimaryTextColor);
+				CheckBox hideExtruderOffsets = new CheckBox("Hide Offsets", textColor: textColor);
 				hideExtruderOffsets.Checked = options.HideExtruderOffsets;
 				hideExtruderOffsets.CheckedStateChanged += (sender, e) =>
 				{
@@ -687,7 +689,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Put in the sync to print checkbox
 			if (windowMode == WindowMode.Embeded)
 			{
-				var syncToPrint = new CheckBox("Sync To Print".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
+				var syncToPrint = new CheckBox("Sync To Print".Localize(), textColor: textColor);
 				syncToPrint.Checked = (UserSettings.Instance.get("LayerViewSyncToPrint") == "True");
 				syncToPrint.Name = "Sync To Print Checkbox";
 				syncToPrint.CheckedStateChanged += (s, e) =>
