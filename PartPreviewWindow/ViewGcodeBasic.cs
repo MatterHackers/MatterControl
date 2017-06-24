@@ -966,7 +966,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				viewControlsToggle.Visible = true;
 
 				setLayerWidget?.Close();
-				setLayerWidget = new SetLayerWidget(gcodeViewWidget);
+				setLayerWidget = new SetLayerWidget(gcodeViewWidget, ApplicationController.Instance.Theme.GCodeLayerButtons);
 				setLayerWidget.VAnchor = Agg.UI.VAnchor.ParentTop;
 				layerSelectionButtonsPanel.AddChild(setLayerWidget);
 
@@ -1092,49 +1092,34 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 	public class SetLayerWidget : FlowLayoutWidget
 	{
-		private NumberEdit editCurrentLayerIndex;
-		private Button setLayerButton;
-		private ViewGcodeWidget gcodeViewWidget;
-		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
-
-		public SetLayerWidget(ViewGcodeWidget gcodeViewWidget)
+		public SetLayerWidget(ViewGcodeWidget gcodeViewWidget, TextImageButtonFactory buttonFactory)
 			: base(FlowDirection.LeftToRight)
 		{
-			this.gcodeViewWidget = gcodeViewWidget;
-
-			textImageButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			textImageButtonFactory.disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
-
-			editCurrentLayerIndex = new NumberEdit(1, pixelWidth: 40);
-			editCurrentLayerIndex.VAnchor = VAnchor.ParentCenter;
-			editCurrentLayerIndex.Margin = new BorderDouble(5, 0);
-			editCurrentLayerIndex.EditComplete += editCurrentLayerIndex_EditComplete;
-			editCurrentLayerIndex.Name = "Current GCode Layer Edit";
+			var editCurrentLayerIndex = new NumberEdit(1, pixelWidth: 40)
+			{
+				VAnchor = VAnchor.ParentCenter,
+				Name = "Current GCode Layer Edit",
+				Margin = new BorderDouble(5, 0)
+			};
+			editCurrentLayerIndex.EditComplete += (s, e) =>
+			{
+				gcodeViewWidget.ActiveLayerIndex = ((int)editCurrentLayerIndex.Value - 1);
+				editCurrentLayerIndex.Value = gcodeViewWidget.ActiveLayerIndex + 1;
+			};
 			this.AddChild(editCurrentLayerIndex);
-			gcodeViewWidget.ActiveLayerChanged += gcodeViewWidget_ActiveLayerChanged;
 
-			setLayerButton = textImageButtonFactory.Generate("Go".Localize());
-			setLayerButton.VAnchor = Agg.UI.VAnchor.ParentCenter;
-			setLayerButton.Click += layerCountTextWidget_EditComplete;
+			gcodeViewWidget.ActiveLayerChanged += (s, e) =>
+			{
+				editCurrentLayerIndex.Value = gcodeViewWidget.ActiveLayerIndex + 1;
+			};
+
+			var setLayerButton = buttonFactory.Generate("Go".Localize());
+			setLayerButton.VAnchor = VAnchor.ParentCenter;
+			setLayerButton.Click += (s, e) =>
+			{
+				gcodeViewWidget.ActiveLayerIndex = ((int)editCurrentLayerIndex.Value - 1);
+			};
 			this.AddChild(setLayerButton);
-		}
-
-		private void gcodeViewWidget_ActiveLayerChanged(object sender, EventArgs e)
-		{
-			editCurrentLayerIndex.Value = gcodeViewWidget.ActiveLayerIndex + 1;
-		}
-
-		private void editCurrentLayerIndex_EditComplete(object sender, EventArgs e)
-		{
-			gcodeViewWidget.ActiveLayerIndex = ((int)editCurrentLayerIndex.Value - 1);
-			editCurrentLayerIndex.Value = gcodeViewWidget.ActiveLayerIndex + 1;
-		}
-
-		private void layerCountTextWidget_EditComplete(object sender, EventArgs e)
-		{
-			gcodeViewWidget.ActiveLayerIndex = ((int)editCurrentLayerIndex.Value - 1);
 		}
 	}
 }
