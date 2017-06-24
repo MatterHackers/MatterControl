@@ -1089,37 +1089,4 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			startedSliceFromGenerateButton = false;
 		}
 	}
-
-	public class SetLayerWidget : FlowLayoutWidget
-	{
-		public SetLayerWidget(ViewGcodeWidget gcodeViewWidget, TextImageButtonFactory buttonFactory)
-			: base(FlowDirection.LeftToRight)
-		{
-			var editCurrentLayerIndex = new NumberEdit(1, pixelWidth: 40)
-			{
-				VAnchor = VAnchor.ParentCenter,
-				Name = "Current GCode Layer Edit",
-				Margin = new BorderDouble(5, 0)
-			};
-			editCurrentLayerIndex.EditComplete += (s, e) =>
-			{
-				gcodeViewWidget.ActiveLayerIndex = ((int)editCurrentLayerIndex.Value - 1);
-				editCurrentLayerIndex.Value = gcodeViewWidget.ActiveLayerIndex + 1;
-			};
-			this.AddChild(editCurrentLayerIndex);
-
-			gcodeViewWidget.ActiveLayerChanged += (s, e) =>
-			{
-				editCurrentLayerIndex.Value = gcodeViewWidget.ActiveLayerIndex + 1;
-			};
-
-			var setLayerButton = buttonFactory.Generate("Go".Localize());
-			setLayerButton.VAnchor = VAnchor.ParentCenter;
-			setLayerButton.Click += (s, e) =>
-			{
-				gcodeViewWidget.ActiveLayerIndex = ((int)editCurrentLayerIndex.Value - 1);
-			};
-			this.AddChild(setLayerButton);
-		}
-	}
 }
