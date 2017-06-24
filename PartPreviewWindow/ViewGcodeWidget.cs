@@ -47,100 +47,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public class ViewGcodeWidget : GuiWidget
 	{
 		public event EventHandler DoneLoading;
-
-		public bool RenderGrid
-		{
-			get
-			{
-				string value = UserSettings.Instance.get("GcodeViewerRenderGrid");
-				if (value == null)
-				{
-					RenderGrid = true;
-					return true;
-				}
-				return (value == "True");
-			}
-			set
-			{
-				UserSettings.Instance.set("GcodeViewerRenderGrid", value.ToString());
-				Invalidate();
-			}
-		}
-
+		
 		public double FeatureToStartOnRatio0To1 = 0;
 		public double FeatureToEndOnRatio0To1 = 1;
 
 		public enum ETransformState { Move, Scale };
 
 		public ETransformState TransformState { get; set; }
-
-		public bool RenderMoves
-		{
-			get { return (UserSettings.Instance.get("GcodeViewerRenderMoves") == "True"); }
-			set
-			{
-				UserSettings.Instance.set("GcodeViewerRenderMoves", value.ToString());
-				Invalidate();
-			}
-		}
-
-		public bool RenderRetractions
-		{
-			get { return (UserSettings.Instance.get("GcodeViewerRenderRetractions") == "True"); }
-			set
-			{
-				UserSettings.Instance.set("GcodeViewerRenderRetractions", value.ToString());
-				Invalidate();
-			}
-		}
-
-		public bool RenderSpeeds
-		{
-			get { return (UserSettings.Instance.get("GcodeViewerRenderSpeeds") == "True"); }
-			set
-			{
-				UserSettings.Instance.set("GcodeViewerRenderSpeeds", value.ToString());
-				Invalidate();
-			}
-		}
-
-		public bool SimulateExtrusion
-		{
-			get { return (UserSettings.Instance.get("GcodeViewerSimulateExtrusion") == "True"); }
-			set
-			{
-				UserSettings.Instance.set("GcodeViewerSimulateExtrusion", value.ToString());
-				Invalidate();
-			}
-		}
-
-		public bool TransparentExtrusion
-		{
-			get { return (UserSettings.Instance.get("GcodeViewerTransparentExtrusion") == "True"); }
-			set
-			{
-				UserSettings.Instance.set("GcodeViewerTransparentExtrusion", value.ToString());
-				Invalidate();
-			}
-		}
-
-		public bool HideExtruderOffsets
-		{
-			get
-			{
-				string value = UserSettings.Instance.get("GcodeViewerHideExtruderOffsets");
-				if (value == null)
-				{
-					return true;
-				}
-				return (value == "True");
-			}
-			set
-			{
-				UserSettings.Instance.set("GcodeViewerHideExtruderOffsets", value.ToString());
-				Invalidate();
-			}
-		}
 
 		private Vector2 lastMousePosition = new Vector2(0, 0);
 		private Vector2 mouseDownPosition = new Vector2(0, 0);
@@ -211,8 +124,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private ReportProgressRatio progressReporter;
 
+		private ApplicationController.View3DConfig options;
 		public ViewGcodeWidget(Vector2 gridSizeMm, Vector2 gridCenterMm, ReportProgressRatio progressReporter)
 		{
+			this.options = ApplicationController.Instance.Options.View3D;
 			this.progressReporter = progressReporter;
 			this.gridSizeMm = gridSizeMm;
 			this.gridCenterMm = gridCenterMm;
@@ -276,7 +191,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					Affine transform = TotalTransform;
 
-					if (RenderGrid)
+					if (options.RenderGrid)
 					{
 						//using (new PerformanceTimer("GCode Timer", "Render Grid"))
 						{
@@ -314,28 +229,29 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private RenderType CreateRenderInfo()
 		{
+			var options = ApplicationController.Instance.Options.View3D;
 			RenderType renderType = RenderType.Extrusions;
-			if (RenderMoves)
+			if (options.RenderMoves)
 			{
 				renderType |= RenderType.Moves;
 			}
-			if (RenderRetractions)
+			if (options.RenderRetractions)
 			{
 				renderType |= RenderType.Retractions;
 			}
-			if (RenderSpeeds)
+			if (options.RenderSpeeds)
 			{
 				renderType |= RenderType.SpeedColors;
 			}
-			if (SimulateExtrusion)
+			if (options.SimulateExtrusion)
 			{
 				renderType |= RenderType.SimulateExtrusion;
 			}
-			if (TransparentExtrusion)
+			if (options.TransparentExtrusion)
 			{
 				renderType |= RenderType.TransparentExtrusion;
 			}
-			if (HideExtruderOffsets)
+			if (options.HideExtruderOffsets)
 			{
 				renderType |= RenderType.HideExtruderOffsets;
 			}

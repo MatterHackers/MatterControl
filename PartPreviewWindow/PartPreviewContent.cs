@@ -138,8 +138,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						return modelViewer.ShowOverflowMenu();
 					}
-
-					return null;
+					else
+					{
+						return gcodeViewer.ShowOverflowMenu();
+					}
 				};
 
 				// The 3D model view

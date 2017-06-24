@@ -79,6 +79,103 @@ namespace MatterHackers.MatterControl
 
 		public ThemeConfig Theme { get; set; } = new ThemeConfig();
 
+		public class View3DConfig
+		{
+			public bool RenderGrid
+			{
+				get
+				{
+					string value = UserSettings.Instance.get("GcodeViewerRenderGrid");
+					if (value == null)
+					{
+						RenderGrid = true;
+						return true;
+					}
+					return (value == "True");
+				}
+				set
+				{
+					UserSettings.Instance.set("GcodeViewerRenderGrid", value.ToString());
+				}
+			}
+
+			public bool RenderMoves
+			{
+				get { return (UserSettings.Instance.get("GcodeViewerRenderMoves") == "True"); }
+				set
+				{
+					UserSettings.Instance.set("GcodeViewerRenderMoves", value.ToString());
+				}
+			}
+
+			public bool RenderRetractions
+			{
+				get { return (UserSettings.Instance.get("GcodeViewerRenderRetractions") == "True"); }
+				set
+				{
+					UserSettings.Instance.set("GcodeViewerRenderRetractions", value.ToString());
+				}
+			}
+
+			public bool RenderSpeeds
+			{
+				get { return (UserSettings.Instance.get("GcodeViewerRenderSpeeds") == "True"); }
+				set
+				{
+					UserSettings.Instance.set("GcodeViewerRenderSpeeds", value.ToString());
+				}
+			}
+
+			public bool SimulateExtrusion
+			{
+				get { return (UserSettings.Instance.get("GcodeViewerSimulateExtrusion") == "True"); }
+				set
+				{
+					UserSettings.Instance.set("GcodeViewerSimulateExtrusion", value.ToString());
+				}
+			}
+
+			public bool TransparentExtrusion
+			{
+				get { return (UserSettings.Instance.get("GcodeViewerTransparentExtrusion") == "True"); }
+				set
+				{
+					UserSettings.Instance.set("GcodeViewerTransparentExtrusion", value.ToString());
+				}
+			}
+
+			public bool HideExtruderOffsets
+			{
+				get
+				{
+					string value = UserSettings.Instance.get("GcodeViewerHideExtruderOffsets");
+					if (value == null)
+					{
+						return true;
+					}
+					return (value == "True");
+				}
+				set
+				{
+					UserSettings.Instance.set("GcodeViewerHideExtruderOffsets", value.ToString());
+				}
+			}
+
+			public bool SyncToPrint
+			{
+				get => UserSettings.Instance.get("GcodeViewerHideExtruderOffsets") == "True";
+				set => UserSettings.Instance.set("LayerViewSyncToPrint", value.ToString());
+			}
+		}
+
+		public class ApplicationConfig
+		{
+			public View3DConfig View3D { get; } = new View3DConfig();
+		}
+
+
+		public ApplicationConfig Options { get; } = new ApplicationConfig();
+
 		public Action RedeemDesignCode;
 		public Action EnterShareCode;
 

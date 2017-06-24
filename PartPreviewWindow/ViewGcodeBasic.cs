@@ -59,14 +59,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private FlowLayoutWidget buttonBottomPanel;
 		private FlowLayoutWidget layerSelectionButtonsPanel;
 
-		private FlowLayoutWidget modelOptionsContainer;
-		private FlowLayoutWidget displayOptionsContainer;
 		private ViewControlsToggle viewControlsToggle;
-
-		private CheckBox expandModelOptions;
-		private CheckBox expandDisplayOptions;
-		private CheckBox syncToPrint;
-		private CheckBox showSpeeds;
 
 		private GuiWidget gcodeDisplayWidget;
 
@@ -95,9 +88,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private TextImageButtonFactory textImageButtonFactory;
 		private TextImageButtonFactory ExpandMenuOptionFactory;
 
+		private ApplicationController.View3DConfig options;
+
 		public ViewGcodeBasic(Vector3 viewerVolume, Vector2 bedCenter, BedShape bedShape, WindowMode windowMode, ViewControls3D viewControls3D, ThemeConfig theme)
 			: base(viewControls3D)
 		{
+			this.options = ApplicationController.Instance.Options.View3D;
 			this.textImageButtonFactory = theme.textImageButtonFactory;
 			this.ExpandMenuOptionFactory = theme.ExpandMenuOptionFactory;
 
@@ -239,9 +235,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 			}
 
-			FlowLayoutWidget centerPartPreviewAndControls = new FlowLayoutWidget(FlowDirection.LeftToRight);
-			centerPartPreviewAndControls.AnchorAll();
-
 			gcodeDisplayWidget = new GuiWidget()
 			{
 				HAnchor = HAnchor.ParentLeftRight,
@@ -293,11 +286,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			SetProcessingMessage(firstProcessingMessage);
-			centerPartPreviewAndControls.AddChild(gcodeDisplayWidget);
 
-			buttonRightPanel = CreateRightButtonPanel();
-			buttonRightPanel.Visible = false;
-			centerPartPreviewAndControls.AddChild(buttonRightPanel);
+			mainContainerTopToBottom.AddChild(gcodeDisplayWidget);
 
 			// add in a spacer
 			layerSelectionButtonsPanel.AddChild(new GuiWidget()
@@ -306,7 +296,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			});
 			buttonBottomPanel.AddChild(layerSelectionButtonsPanel);
 
-			mainContainerTopToBottom.AddChild(centerPartPreviewAndControls);
 			mainContainerTopToBottom.AddChild(buttonBottomPanel);
 			this.AddChild(mainContainerTopToBottom);
 
@@ -372,9 +361,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				}
 			};
-
-			expandModelOptions.CheckedStateChanged += expandModelOptions_CheckedStateChanged;
-			expandDisplayOptions.CheckedStateChanged += expandDisplayOptions_CheckedStateChanged;
 		}
 
 		private void MeshViewerWidget_Closed(object sender, ClosedEventArgs e)
@@ -388,28 +374,30 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private RenderType GetRenderType()
 		{
+			var options = ApplicationController.Instance.Options.View3D;
+
 			RenderType renderType = RenderType.Extrusions;
-			if (gcodeViewWidget.RenderMoves)
+			if (options.RenderMoves)
 			{
 				renderType |= RenderType.Moves;
 			}
-			if (gcodeViewWidget.RenderRetractions)
+			if (options.RenderRetractions)
 			{
 				renderType |= RenderType.Retractions;
 			}
-			if (gcodeViewWidget.RenderSpeeds)
+			if (options.RenderSpeeds)
 			{
 				renderType |= RenderType.SpeedColors;
 			}
-			if (gcodeViewWidget.SimulateExtrusion)
+			if (options.SimulateExtrusion)
 			{
 				renderType |= RenderType.SimulateExtrusion;
 			}
-			if (gcodeViewWidget.TransparentExtrusion)
+			if (options.TransparentExtrusion)
 			{
 				renderType |= RenderType.TransparentExtrusion;
 			}
-			if (gcodeViewWidget.HideExtruderOffsets)
+			if (options.HideExtruderOffsets)
 			{
 				renderType |= RenderType.HideExtruderOffsets;
 			}
@@ -456,72 +444,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private FlowLayoutWidget CreateRightButtonPanel()
+		private FlowLayoutWidget CreateModelInfo()
 		{
-			FlowLayoutWidget buttonRightPanel = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			buttonRightPanel.Width = 200;
-			{
-				string label = "Model".Localize().ToUpper();
-				expandModelOptions = ExpandMenuOptionFactory.GenerateCheckBoxButton(label,
-					View3DWidget.ArrowRight,
-					View3DWidget.ArrowDown);
-				expandModelOptions.Margin = new BorderDouble(bottom: 2);
-				buttonRightPanel.AddChild(expandModelOptions);
-				expandModelOptions.Checked = true;
-
-				modelOptionsContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-				modelOptionsContainer.HAnchor = HAnchor.ParentLeftRight;
-				//modelOptionsContainer.Visible = false;
-				buttonRightPanel.AddChild(modelOptionsContainer);
-
-				expandDisplayOptions = ExpandMenuOptionFactory.GenerateCheckBoxButton("Display".Localize().ToUpper(),
-					View3DWidget.ArrowRight,
-					View3DWidget.ArrowDown);
-				expandDisplayOptions.Name = "Display Checkbox";
-				expandDisplayOptions.Margin = new BorderDouble(bottom: 2);
-				buttonRightPanel.AddChild(expandDisplayOptions);
-				expandDisplayOptions.Checked = false;
-
-				displayOptionsContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-				displayOptionsContainer.HAnchor = HAnchor.ParentLeftRight;
-				displayOptionsContainer.Padding = new BorderDouble(left: 6);
-				displayOptionsContainer.Visible = false;
-				buttonRightPanel.AddChild(displayOptionsContainer);
-
-				GuiWidget verticalSpacer = new GuiWidget();
-				verticalSpacer.VAnchor = VAnchor.ParentBottomTop;
-				buttonRightPanel.AddChild(verticalSpacer);
-			}
-
-			buttonRightPanel.Padding = new BorderDouble(6, 6);
-			buttonRightPanel.Margin = new BorderDouble(0, 1);
-			buttonRightPanel.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-			buttonRightPanel.VAnchor = VAnchor.ParentBottomTop;
-
-			return buttonRightPanel;
-		}
-
-		private void CreateOptionsContent()
-		{
-			AddModelInfo(modelOptionsContainer);
-			AddDisplayControls(displayOptionsContainer);
-		}
-
-		private void AddModelInfo(FlowLayoutWidget buttonPanel)
-		{
-			buttonPanel.CloseAllChildren();
-
 			double oldWidth = textImageButtonFactory.FixedWidth;
 			textImageButtonFactory.FixedWidth = 44 * GuiWidget.DeviceScale;
 
-			FlowLayoutWidget modelInfoContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			modelInfoContainer.HAnchor = HAnchor.ParentLeftRight;
-			modelInfoContainer.Padding = new BorderDouble(5);
+			var modelInfoContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				Padding = new BorderDouble(5),
+				Margin = new BorderDouble(0, 0, 35, 5),
+				BackgroundColor = new RGBA_Bytes(0, 0, 0, ViewControlsBase.overlayAlpha),
+				HAnchor = HAnchor.ParentRight | HAnchor.AbsolutePosition,
+				VAnchor = VAnchor.ParentTop | VAnchor.FitToChildren,
+				Width = 150
+			};
 
-			string printTimeLabel = "Print Time".Localize();
-			string printTimeLabelFull = string.Format("{0}:", printTimeLabel);
 			// put in the print time
-			modelInfoContainer.AddChild(new TextWidget(printTimeLabelFull, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 9));
+			modelInfoContainer.AddChild(new TextWidget("Print Time".Localize() + ":", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 9));
 			{
 				string timeRemainingText = "---";
 
@@ -533,43 +472,34 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					secondsRemaining = secondsRemaining % 60;
 					if (hoursRemaining > 0)
 					{
-						timeRemainingText = string.Format("{0} h, {1} min", hoursRemaining, minutesRemaining);
+						timeRemainingText = $"{hoursRemaining} h, {minutesRemaining} min";
 					}
 					else
 					{
-						timeRemainingText = string.Format("{0} min", minutesRemaining);
+						timeRemainingText = $"{minutesRemaining} min";
 					}
 				}
 
-				GuiWidget estimatedPrintTime = new TextWidget(string.Format("{0}", timeRemainingText), textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 14);
-				//estimatedPrintTime.HAnchor = Agg.UI.HAnchor.ParentLeft;
+				GuiWidget estimatedPrintTime = new TextWidget(timeRemainingText, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 14);
 				estimatedPrintTime.Margin = new BorderDouble(0, 9, 0, 3);
 				modelInfoContainer.AddChild(estimatedPrintTime);
 			}
 
-			//modelInfoContainer.AddChild(new TextWidget("Size:", textColor: ActiveTheme.Instance.PrimaryTextColor));
-
-			string filamentLengthLabel = "Filament Length".Localize();
-			string filamentLengthLabelFull = string.Format("{0}:", filamentLengthLabel);
 			// show the filament used
-			modelInfoContainer.AddChild(new TextWidget(filamentLengthLabelFull, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 9));
+			modelInfoContainer.AddChild(new TextWidget("Filament Length".Localize() + ":", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 9));
 			{
 				double filamentUsed = gcodeViewWidget.LoadedGCode.GetFilamentUsedMm(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_diameter));
 
 				GuiWidget estimatedPrintTime = new TextWidget(string.Format("{0:0.0} mm", filamentUsed), pointSize: 14, textColor: ActiveTheme.Instance.PrimaryTextColor);
-				//estimatedPrintTime.HAnchor = Agg.UI.HAnchor.ParentLeft;
 				estimatedPrintTime.Margin = new BorderDouble(0, 9, 0, 3);
 				modelInfoContainer.AddChild(estimatedPrintTime);
 			}
 
-			string filamentVolumeLabel = "Filament Volume".Localize();
-			string filamentVolumeLabelFull = string.Format("{0}:", filamentVolumeLabel);
-			modelInfoContainer.AddChild(new TextWidget(filamentVolumeLabelFull, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 9));
+			modelInfoContainer.AddChild(new TextWidget("Filament Volume".Localize() + ":", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 9));
 			{
 				double filamentMm3 = gcodeViewWidget.LoadedGCode.GetFilamentCubicMm(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_diameter));
 
 				GuiWidget estimatedPrintTime = new TextWidget(string.Format("{0:0.00} cm³", filamentMm3 / 1000), pointSize: 14, textColor: ActiveTheme.Instance.PrimaryTextColor);
-				//estimatedPrintTime.HAnchor = Agg.UI.HAnchor.ParentLeft;
 				estimatedPrintTime.Margin = new BorderDouble(0, 9, 0, 3);
 				modelInfoContainer.AddChild(estimatedPrintTime);
 			}
@@ -577,11 +507,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			modelInfoContainer.AddChild(GetEstimatedMassInfo());
 			modelInfoContainer.AddChild(GetEstimatedCostInfo());
 
+			// TODO: Every time you click Generate we wire up a listener - only when we close do they get released. This is a terrible pattern that has a good chance of creating a high leak scenario. Since RootedEventHandlers are normally only cleared when a widget is closed, we should **only** register them in widget constructors
 			PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent(HookUpGCodeMessagesWhenDonePrinting, ref unregisterEvents);
 
-			buttonPanel.AddChild(modelInfoContainer);
-
 			textImageButtonFactory.FixedWidth = oldWidth;
+
+			return modelInfoContainer;
 		}
 
 		double totalMass
@@ -668,137 +599,92 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return estimatedCostInfo;
 		}
 
-		private void AddLayerInfo(FlowLayoutWidget buttonPanel)
+		internal GuiWidget ShowOverflowMenu()
 		{
 			double oldWidth = textImageButtonFactory.FixedWidth;
 			textImageButtonFactory.FixedWidth = 44 * GuiWidget.DeviceScale;
 
-			FlowLayoutWidget layerInfoContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			layerInfoContainer.HAnchor = HAnchor.ParentLeftRight;
-			layerInfoContainer.Padding = new BorderDouble(5);
-
-			layerInfoContainer.AddChild(new TextWidget("Layer Number:", textColor: ActiveTheme.Instance.PrimaryTextColor));
-			layerInfoContainer.AddChild(new TextWidget("Layer Height:", textColor: ActiveTheme.Instance.PrimaryTextColor));
-			layerInfoContainer.AddChild(new TextWidget("Num GCodes:", textColor: ActiveTheme.Instance.PrimaryTextColor));
-			layerInfoContainer.AddChild(new TextWidget("Filament Used:", textColor: ActiveTheme.Instance.PrimaryTextColor));
-			layerInfoContainer.AddChild(new TextWidget("Weight:", textColor: ActiveTheme.Instance.PrimaryTextColor));
-			layerInfoContainer.AddChild(new TextWidget("Print Time:", textColor: ActiveTheme.Instance.PrimaryTextColor));
-			layerInfoContainer.AddChild(new TextWidget("Extrude Speeds:", textColor: ActiveTheme.Instance.PrimaryTextColor));
-			layerInfoContainer.AddChild(new TextWidget("Move Speeds:", textColor: ActiveTheme.Instance.PrimaryTextColor));
-			layerInfoContainer.AddChild(new TextWidget("Retract Speeds:", textColor: ActiveTheme.Instance.PrimaryTextColor));
-
-			buttonPanel.AddChild(layerInfoContainer);
-
-			textImageButtonFactory.FixedWidth = oldWidth;
-		}
-
-		private void AddDisplayControls(FlowLayoutWidget buttonPanel)
-		{
-			buttonPanel.CloseAllChildren();
-
-			double oldWidth = textImageButtonFactory.FixedWidth;
-			textImageButtonFactory.FixedWidth = 44 * GuiWidget.DeviceScale;
-
-			FlowLayoutWidget layerInfoContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			layerInfoContainer.HAnchor = HAnchor.ParentLeftRight;
-			layerInfoContainer.Padding = new BorderDouble(5);
+			var popupContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.ParentLeftRight,
+				Padding = 12,
+				BackgroundColor = RGBA_Bytes.White
+			};
 
 			// put in a show grid check box
+			CheckBox showGrid = new CheckBox("Print Bed".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
+			showGrid.Checked = options.RenderGrid;
+			meshViewerWidget.RenderBed = showGrid.Checked;
+			showGrid.CheckedStateChanged += (sender, e) =>
 			{
-				CheckBox showGrid = new CheckBox("Print Bed".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
-				showGrid.Checked = gcodeViewWidget.RenderGrid;
-				meshViewerWidget.RenderBed = showGrid.Checked;
-				showGrid.CheckedStateChanged += (sender, e) =>
-				{
-					gcodeViewWidget.RenderGrid = showGrid.Checked;
-					meshViewerWidget.RenderBed = showGrid.Checked;
-				};
-				layerInfoContainer.AddChild(showGrid);
-			}
+				options.RenderGrid = showGrid.Checked;
+			};
+			popupContainer.AddChild(showGrid);
 
 			// put in a show moves checkbox
+			var showMoves = new CheckBox("Moves".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
+			showMoves.Checked = options.RenderMoves;
+			showMoves.CheckedStateChanged += (sender, e) =>
 			{
-				CheckBox showMoves = new CheckBox("Moves".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
-				showMoves.Checked = gcodeViewWidget.RenderMoves;
-				showMoves.CheckedStateChanged += (sender, e) =>
-				{
-					gcodeViewWidget.RenderMoves = showMoves.Checked;
-				};
-				layerInfoContainer.AddChild(showMoves);
-			}
+				options.RenderMoves = showMoves.Checked;
+			};
+			popupContainer.AddChild(showMoves);
 
 			// put in a show Retractions checkbox
+			CheckBox showRetractions = new CheckBox("Retractions".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
+			showRetractions.Checked = options.RenderRetractions;
+			showRetractions.CheckedStateChanged += (sender, e) =>
 			{
-				CheckBox showRetractions = new CheckBox("Retractions".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
-				showRetractions.Checked = gcodeViewWidget.RenderRetractions;
-				showRetractions.CheckedStateChanged += (sender, e) =>
-				{
-					gcodeViewWidget.RenderRetractions = showRetractions.Checked;
-				};
-				layerInfoContainer.AddChild(showRetractions);
-			}
+				options.RenderRetractions = showRetractions.Checked;
+			};
+			popupContainer.AddChild(showRetractions);
+			
 
 			// put in a show speed checkbox
+			var showSpeeds = new CheckBox("Speeds".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
+			showSpeeds.Checked = options.RenderSpeeds;
+			//showSpeeds.Checked = gradient.Visible;
+			showSpeeds.CheckedStateChanged += (sender, e) =>
 			{
-				showSpeeds = new CheckBox("Speeds".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
-				showSpeeds.Checked = gcodeViewWidget.RenderSpeeds;
-				//showSpeeds.Checked = gradient.Visible;
-				showSpeeds.CheckedStateChanged += (sender, e) =>
-				{
-					/* if (!showSpeeds.Checked)
-					 {
-						 gradient.Visible = false;
-					 }
-					 else
-					 {
-						 gradient.Visible = true;
-					 }*/
+				gradientWidget.Visible = showSpeeds.Checked;
+				options.RenderSpeeds = showSpeeds.Checked;
+			};
 
-					gradientWidget.Visible = showSpeeds.Checked;
-
-					gcodeViewWidget.RenderSpeeds = showSpeeds.Checked;
-				};
-
-				layerInfoContainer.AddChild(showSpeeds);
-			}
+			popupContainer.AddChild(showSpeeds);
 
 			// put in a simulate extrusion checkbox
+			var simulateExtrusion = new CheckBox("Extrusion".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
+			simulateExtrusion.Checked = options.SimulateExtrusion;
+			simulateExtrusion.CheckedStateChanged += (sender, e) =>
 			{
-				CheckBox simulateExtrusion = new CheckBox("Extrusion".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
-				simulateExtrusion.Checked = gcodeViewWidget.SimulateExtrusion;
-				simulateExtrusion.CheckedStateChanged += (sender, e) =>
-				{
-					gcodeViewWidget.SimulateExtrusion = simulateExtrusion.Checked;
-				};
-				layerInfoContainer.AddChild(simulateExtrusion);
-			}
+				options.SimulateExtrusion = simulateExtrusion.Checked;
+			};
+			popupContainer.AddChild(simulateExtrusion);
 
 			// put in a render extrusion transparent checkbox
+			var transparentExtrusion = new CheckBox("Transparent".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
-				CheckBox transparentExtrusion = new CheckBox("Transparent".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor)
-				{
-					Checked = gcodeViewWidget.TransparentExtrusion,
-					Margin = new BorderDouble(5, 0, 0, 0),
-					HAnchor = HAnchor.ParentLeft,
-				};
+				Checked = options.TransparentExtrusion,
+				Margin = new BorderDouble(5, 0, 0, 0),
+				HAnchor = HAnchor.ParentLeft,
+			};
 
-				transparentExtrusion.CheckedStateChanged += (sender, e) =>
-				{
-					gcodeViewWidget.TransparentExtrusion = transparentExtrusion.Checked;
-				};
-				layerInfoContainer.AddChild(transparentExtrusion);
-			}
+			transparentExtrusion.CheckedStateChanged += (sender, e) =>
+			{
+				options.TransparentExtrusion = transparentExtrusion.Checked;
+			};
+			popupContainer.AddChild(transparentExtrusion);
 
 			// put in a simulate extrusion checkbox
 			if (ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.extruder_count) > 1)
 			{
 				CheckBox hideExtruderOffsets = new CheckBox("Hide Offsets", textColor: ActiveTheme.Instance.PrimaryTextColor);
-				hideExtruderOffsets.Checked = gcodeViewWidget.HideExtruderOffsets;
+				hideExtruderOffsets.Checked = options.HideExtruderOffsets;
 				hideExtruderOffsets.CheckedStateChanged += (sender, e) =>
 				{
-					gcodeViewWidget.HideExtruderOffsets = hideExtruderOffsets.Checked;
+					options.HideExtruderOffsets = hideExtruderOffsets.Checked;
 				};
-				layerInfoContainer.AddChild(hideExtruderOffsets);
+				popupContainer.AddChild(hideExtruderOffsets);
 			}
 
 			// Respond to user driven view mode change events and store and switch to the new mode
@@ -814,15 +700,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Put in the sync to print checkbox
 			if (windowMode == WindowMode.Embeded)
 			{
-				syncToPrint = new CheckBox("Sync To Print".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
+				var syncToPrint = new CheckBox("Sync To Print".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
 				syncToPrint.Checked = (UserSettings.Instance.get("LayerViewSyncToPrint") == "True");
 				syncToPrint.Name = "Sync To Print Checkbox";
-				syncToPrint.CheckedStateChanged += (sender, e) =>
+				syncToPrint.CheckedStateChanged += (s, e) =>
 				{
-					UserSettings.Instance.set("LayerViewSyncToPrint", syncToPrint.Checked.ToString());
+					options.SyncToPrint = syncToPrint.Checked;
+					
 					SetSyncToPrintVisibility();
 				};
-				layerInfoContainer.AddChild(syncToPrint);
+				popupContainer.AddChild(syncToPrint);
 
 				// The idea here is we just got asked to rebuild the window (and it is being created now)
 				// because the gcode finished creating for the print that is printing.
@@ -835,17 +722,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					generateGCodeButton.Visible = false;
 
+					// TODO: Bad pattern - figure out how to revise
 					// However if the print finished or is canceled we are going to want to get updates again. So, hook the status event
 					PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent(HookUpGCodeMessagesWhenDonePrinting, ref unregisterEvents);
 					UiThread.RunOnIdle(SetSyncToPrintVisibility);
 				}
 			}
 
-			//layerInfoContainer.AddChild(new CheckBox("Show Retractions", textColor: ActiveTheme.Instance.PrimaryTextColor));
-
-			buttonPanel.AddChild(layerInfoContainer);
-
 			textImageButtonFactory.FixedWidth = oldWidth;
+
+			return popupContainer;
 		}
 
 		private void SetSyncToPrintVisibility()
@@ -854,7 +740,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				bool printerIsRunningPrint = PrinterConnection.Instance.PrinterIsPaused || PrinterConnection.Instance.PrinterIsPrinting;
 
-				if (syncToPrint.Checked && printerIsRunningPrint)
+				if (options.SyncToPrint && printerIsRunningPrint)
 				{
 					SetAnimationPosition();
 					//navigationWidget.Visible = false;
@@ -934,8 +820,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public override void OnDraw(Graphics2D graphics2D)
 		{
 			bool printerIsRunningPrint = PrinterConnection.Instance.PrinterIsPaused || PrinterConnection.Instance.PrinterIsPrinting;
-			if (syncToPrint != null
-				&& syncToPrint.Checked
+			if (options.SyncToPrint
 				&& printerIsRunningPrint)
 			{
 				SetAnimationPosition();
@@ -1076,9 +961,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				AddChild(gradientWidget);
 				gradientWidget.Visible = false;
 
-				CreateOptionsContent();
-				setGradientVisibility();
-				buttonRightPanel.Visible = true;
+				gradientWidget.Visible = options.RenderSpeeds;
+
 				viewControlsToggle.Visible = true;
 
 				setLayerWidget?.Close();
@@ -1113,19 +997,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				BoundsChanged += new EventHandler(PartPreviewGCode_BoundsChanged);
 
-				meshViewerWidget.partProcessingInfo.Visible = false;
-			}
-		}
+				this.AddChild(CreateModelInfo());
 
-		private void setGradientVisibility()
-		{
-			if (showSpeeds.Checked)
-			{
-				gradientWidget.Visible = true;
-			}
-			else
-			{
-				gradientWidget.Visible = false;
+				meshViewerWidget.partProcessingInfo.Visible = false;
 			}
 		}
 
@@ -1168,36 +1042,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			layerRenderRatioSlider.OriginRelativeParent = new Vector2(60, 70);
 			layerRenderRatioSlider.TotalWidthInPixels = gcodeDisplayWidget.Width - 100;
-		}
-
-		private void AddHandlers()
-		{
-			expandModelOptions.CheckedStateChanged += expandModelOptions_CheckedStateChanged;
-			expandDisplayOptions.CheckedStateChanged += expandDisplayOptions_CheckedStateChanged;
-		}
-
-		private void expandModelOptions_CheckedStateChanged(object sender, EventArgs e)
-		{
-			if (modelOptionsContainer.Visible = expandModelOptions.Checked)
-			{
-				if (expandModelOptions.Checked == true)
-				{
-					expandDisplayOptions.Checked = false;
-				}
-				modelOptionsContainer.Visible = expandModelOptions.Checked;
-			}
-		}
-
-		private void expandDisplayOptions_CheckedStateChanged(object sender, EventArgs e)
-		{
-			if (displayOptionsContainer.Visible != expandDisplayOptions.Checked)
-			{
-				if (expandDisplayOptions.Checked == true)
-				{
-					expandModelOptions.Checked = false;
-				}
-				displayOptionsContainer.Visible = expandDisplayOptions.Checked;
-			}
 		}
 
 		public override void OnClosed(ClosedEventArgs e)

@@ -50,7 +50,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		protected bool allowAutoRotate = false;
 
 		protected GuiWidget buttonRightPanelDisabledCover;
-		protected FlowLayoutWidget buttonRightPanel;
 
 		public MeshViewerWidget meshViewerWidget;
 
