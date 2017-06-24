@@ -85,13 +85,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private PartViewMode activeViewMode = PartViewMode.Layers3D;
 
+		private View3DConfig options;
 
-		private ApplicationController.View3DConfig options;
+		private PrinterConfig printer;
 
 		public ViewGcodeBasic(Vector3 viewerVolume, Vector2 bedCenter, BedShape bedShape, WindowMode windowMode, ViewControls3D viewControls3D, ThemeConfig theme)
 			: base(viewControls3D)
 		{
-			this.options = ApplicationController.Instance.Options.View3D;
+			options = ApplicationController.Instance.Options.View3D;
+			printer = ApplicationController.Instance.Printer;
 
 			this.viewerVolume = viewerVolume;
 			this.bedShape = bedShape;
@@ -113,12 +115,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			ApplicationController.Instance.AdvancedControlsPanelReloading.RegisterEvent((s, e) => gcodeViewWidget?.Clear3DGCode(), ref unregisterEvents);
 		}
 
+		private GCodeFile loadedGCode => printer.BedPlate.LoadedGCode;
+
 		private void CheckSettingChanged(object sender, EventArgs e)
 		{
 			StringEventArgs stringEvent = e as StringEventArgs;
 			if (stringEvent != null)
 			{
-				if (gcodeViewWidget?.LoadedGCode != null
+				if (loadedGCode != null
 					&& (
 					stringEvent.Data == SettingsKey.filament_cost
 					|| stringEvent.Data == SettingsKey.filament_diameter
@@ -396,7 +400,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void TrackballTumbleWidget_DrawGlContent(object sender, EventArgs e)
 		{
-			if (gcodeViewWidget?.LoadedGCode == null)
+			if (loadedGCode == null || gcodeViewWidget.gCodeRenderer == null)
 			{
 				return;
 			}
@@ -404,7 +408,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			GCodeRenderer.ExtrusionColor = ActiveTheme.Instance.PrimaryAccentColor;
 
 			GCodeRenderInfo renderInfo = new GCodeRenderInfo(0,
-				Math.Min(gcodeViewWidget.ActiveLayerIndex + 1, gcodeViewWidget.LoadedGCode.NumChangesInZ),
+				Math.Min(gcodeViewWidget.ActiveLayerIndex + 1, loadedGCode.NumChangesInZ),
 				gcodeViewWidget.TotalTransform,
 				1,
 				GetRenderType(),
@@ -450,9 +454,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				string timeRemainingText = "---";
 
-				if (gcodeViewWidget != null && gcodeViewWidget.LoadedGCode != null)
+				if (gcodeViewWidget != null && loadedGCode != null)
 				{
-					int secondsRemaining = (int)gcodeViewWidget.LoadedGCode.Instruction(0).secondsToEndFromHere;
+					int secondsRemaining = (int)loadedGCode.Instruction(0).secondsToEndFromHere;
 					int hoursRemaining = (int)(secondsRemaining / (60 * 60));
 					int minutesRemaining = (int)((secondsRemaining + 30) / 60 - hoursRemaining * 60); // +30 for rounding
 					secondsRemaining = secondsRemaining % 60;
@@ -474,7 +478,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// show the filament used
 			modelInfoContainer.AddChild(new TextWidget("Filament Length".Localize() + ":", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 9));
 			{
-				double filamentUsed = gcodeViewWidget.LoadedGCode.GetFilamentUsedMm(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_diameter));
+				double filamentUsed = loadedGCode.GetFilamentUsedMm(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_diameter));
 
 				GuiWidget estimatedPrintTime = new TextWidget(string.Format("{0:0.0} mm", filamentUsed), pointSize: 14, textColor: ActiveTheme.Instance.PrimaryTextColor);
 				estimatedPrintTime.Margin = new BorderDouble(0, 9, 0, 3);
@@ -483,7 +487,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			modelInfoContainer.AddChild(new TextWidget("Filament Volume".Localize() + ":", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 9));
 			{
-				double filamentMm3 = gcodeViewWidget.LoadedGCode.GetFilamentCubicMm(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_diameter));
+				double filamentMm3 = loadedGCode.GetFilamentCubicMm(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_diameter));
 
 				GuiWidget estimatedPrintTime = new TextWidget(string.Format("{0:0.00} cm³", filamentMm3 / 1000), pointSize: 14, textColor: ActiveTheme.Instance.PrimaryTextColor);
 				estimatedPrintTime.Margin = new BorderDouble(0, 9, 0, 3);
@@ -506,7 +510,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				double filamentDiameter = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_diameter);
 				double filamentDensity = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_density);
 
-				return gcodeViewWidget.LoadedGCode.GetFilamentWeightGrams(filamentDiameter, filamentDensity);
+				return loadedGCode.GetFilamentWeightGrams(filamentDiameter, filamentDensity);
 			}
 		}
 
@@ -864,7 +868,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			SetProcessingMessage("");
 			if (gcodeViewWidget != null
-				&& gcodeViewWidget.LoadedGCode == null)
+				&& loadedGCode == null)
 			{
 				// If we have finished loading the gcode and the source file exists but we don't have any loaded gcode it is because the loader decided to not load it.
 				if (File.Exists(printItem.FileLocation))
@@ -878,12 +882,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			if (gcodeViewWidget != null
-				&& gcodeViewWidget.LoadedGCode != null
-				&& gcodeViewWidget.LoadedGCode.LineCount > 0)
+				&& loadedGCode?.LineCount > 0)
 			{
 				// TODO: Shouldn't we be clearing children from some known container and rebuilding?
 				gradientWidget?.Close();
-				gradientWidget = new ColorGradientWidget(gcodeViewWidget.LoadedGCode);
+				gradientWidget = new ColorGradientWidget(loadedGCode);
 				AddChild(gradientWidget);
 				gradientWidget.Visible = false;
 
@@ -903,7 +906,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				layerSelectionButtonsPanel.AddChild(navigationWidget);
 
 				selectLayerSlider?.Close();
-				selectLayerSlider = new SolidSlider(new Vector2(), sliderWidth, 0, gcodeViewWidget.LoadedGCode.NumChangesInZ - 1, Orientation.Vertical);
+				selectLayerSlider = new SolidSlider(new Vector2(), sliderWidth, 0, loadedGCode.NumChangesInZ - 1, Orientation.Vertical);
 				selectLayerSlider.ValueChanged += new EventHandler(selectLayerSlider_ValueChanged);
 				gcodeViewWidget.ActiveLayerChanged += new EventHandler(gcodeViewWidget_ActiveLayerChanged);
 				AddChild(selectLayerSlider);

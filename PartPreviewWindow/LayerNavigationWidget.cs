@@ -36,11 +36,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		private TextWidget layerCountTextWidget;
 		private ViewGcodeWidget gcodeViewWidget;
-		
+
+		private PrinterConfig printer;
+
 		public LayerNavigationWidget(ViewGcodeWidget gcodeViewWidget, TextImageButtonFactory buttonFactory)
 			: base(FlowDirection.LeftToRight)
 		{
 			this.gcodeViewWidget = gcodeViewWidget;
+
+			printer = ApplicationController.Instance.Printer;
 
 			var prevLayerButton = buttonFactory.Generate("<<");
 			prevLayerButton.Click += (s, e) =>
@@ -69,9 +73,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		
 		public override void OnDraw(Graphics2D graphics2D)
 		{
-			if (gcodeViewWidget.LoadedGCode != null)
+			if (printer.BedPlate.LoadedGCode != null)
 			{
-				layerCountTextWidget.Text = string.Format("{0} / {1}", gcodeViewWidget.ActiveLayerIndex + 1, gcodeViewWidget.LoadedGCode.NumChangesInZ.ToString());
+				layerCountTextWidget.Text = string.Format("{0} / {1}", gcodeViewWidget.ActiveLayerIndex + 1, printer.BedPlate.LoadedGCode.NumChangesInZ.ToString());
 			}
 
 			base.OnDraw(graphics2D);
