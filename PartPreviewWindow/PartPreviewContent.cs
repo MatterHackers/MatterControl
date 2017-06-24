@@ -169,7 +169,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				leftToRight.AnchorAll();
 				topToBottom.AddChild(leftToRight);
 
-				leftToRight.AddChild(modelViewer);
+				var container = new GuiWidget();
+				container.AnchorAll();
+				container.AddChild(modelViewer);
+
+				leftToRight.AddChild(container);
 
 				// The slice layers view
 				gcodeViewer = new ViewGcodeBasic(
@@ -182,12 +186,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					modelViewer.meshViewerWidget);
 				gcodeViewer.AnchorAll();
 				this.gcodeViewer.Visible = false;
-				leftToRight.AddChild(gcodeViewer);
+
+				container.AddChild(gcodeViewer);
 
 				AddSettingsTabBar(leftToRight, modelViewer);
 
 				modelViewer.BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor;
-				gcodeViewer.BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor;
 
 				if (ApplicationController.Instance.PartPreviewState.RotationMatrix == Matrix4X4.Identity)
 				{
@@ -260,8 +264,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			public void ToggleView()
 			{
-				bool layersVisible = gcodeViewer.Visible;				modelViewer.Visible = layersVisible;
-				gcodeViewer.Visible = !modelViewer.Visible;
+				gcodeViewer.Visible = !gcodeViewer.Visible;
 			}
 
 			private async void LoadActivePrintItem()
