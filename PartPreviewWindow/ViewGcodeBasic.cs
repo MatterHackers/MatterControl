@@ -815,8 +815,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return gcodeViewWidget;
 		}
 
-		private GuiWidget widgetThatHasKeyDownHooked = null;
-
 		public override void OnDraw(Graphics2D graphics2D)
 		{
 			bool printerIsRunningPrint = PrinterConnection.Instance.PrinterIsPaused || PrinterConnection.Instance.PrinterIsPrinting;
@@ -826,53 +824,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				SetAnimationPosition();
 			}
 
-			EnsureKeyDownHooked();
-
 			if (partToStartLoadingOnFirstDraw != null)
 			{
 				gcodeViewWidget.LoadInBackground(partToStartLoadingOnFirstDraw);
 				partToStartLoadingOnFirstDraw = null;
 			}
 			base.OnDraw(graphics2D);
-		}
-
-		private void EnsureKeyDownHooked()
-		{
-			// let's just check that we are still hooked up to our parent window (this is to make pop outs work correctly)
-			if (widgetThatHasKeyDownHooked != null)
-			{
-				GuiWidget topParent = Parent;
-				while (topParent as SystemWindow == null)
-				{
-					topParent = topParent.Parent;
-				}
-
-				if (topParent != widgetThatHasKeyDownHooked)
-				{
-					widgetThatHasKeyDownHooked.KeyDown -= Parent_KeyDown;
-					widgetThatHasKeyDownHooked = null;
-				}
-			}
-
-			if (widgetThatHasKeyDownHooked == null)
-			{
-				GuiWidget parent = Parent;
-				while (parent as SystemWindow == null)
-				{
-					parent = parent.Parent;
-				}
-				UnHookWidgetThatHasKeyDownHooked();
-				parent.KeyDown += Parent_KeyDown;
-				widgetThatHasKeyDownHooked = parent;
-			}
-		}
-
-		private void UnHookWidgetThatHasKeyDownHooked()
-		{
-			if (widgetThatHasKeyDownHooked != null)
-			{
-				widgetThatHasKeyDownHooked.KeyDown -= Parent_KeyDown;
-			}
 		}
 
 		private void Parent_KeyDown(object sender, KeyEventArgs keyEvent)
@@ -922,16 +879,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			gcodeProcessingStateInfoText.Text = message;
-		}
-
-		private static bool RunningIn32Bit()
-		{
-			if (IntPtr.Size == 4)
-			{
-				return true;
-			}
-
-			return false;
 		}
 
 		private void DoneLoadingGCode(object sender, EventArgs e)
@@ -1047,8 +994,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnClosed(ClosedEventArgs e)
 		{
-			UnHookWidgetThatHasKeyDownHooked();
-
 			unregisterEvents?.Invoke(this, null);
 
 			if (printItem != null)
