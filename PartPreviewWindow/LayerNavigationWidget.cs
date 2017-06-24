@@ -35,21 +35,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public class LayerNavigationWidget : FlowLayoutWidget
 	{
 		private TextWidget layerCountTextWidget;
-		private ViewGcodeWidget gcodeViewWidget;
+		private GCode2DWidget gcode2DWidget;
 
 		private PrinterConfig printer;
 
-		public LayerNavigationWidget(ViewGcodeWidget gcodeViewWidget, TextImageButtonFactory buttonFactory)
+		public LayerNavigationWidget(GCode2DWidget gcode2DWidget, TextImageButtonFactory buttonFactory)
 			: base(FlowDirection.LeftToRight)
 		{
-			this.gcodeViewWidget = gcodeViewWidget;
+			this.gcode2DWidget = gcode2DWidget;
 
 			printer = ApplicationController.Instance.Printer;
 
 			var prevLayerButton = buttonFactory.Generate("<<");
 			prevLayerButton.Click += (s, e) =>
 			{
-				gcodeViewWidget.ActiveLayerIndex = (gcodeViewWidget.ActiveLayerIndex - 1);
+				gcode2DWidget.ActiveLayerIndex = (gcode2DWidget.ActiveLayerIndex - 1);
 			};
 			this.AddChild(prevLayerButton);
 
@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var nextLayerButton = buttonFactory.Generate(">>");
 			nextLayerButton.Click += (s, e) =>
 			{
-				gcodeViewWidget.ActiveLayerIndex = (gcodeViewWidget.ActiveLayerIndex + 1);
+				gcode2DWidget.ActiveLayerIndex = (gcode2DWidget.ActiveLayerIndex + 1);
 			};
 			this.AddChild(nextLayerButton);
 		}
@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (printer.BedPlate.LoadedGCode != null)
 			{
-				layerCountTextWidget.Text = string.Format("{0} / {1}", gcodeViewWidget.ActiveLayerIndex + 1, printer.BedPlate.LoadedGCode.NumChangesInZ.ToString());
+				layerCountTextWidget.Text = string.Format("{0} / {1}", gcode2DWidget.ActiveLayerIndex + 1, printer.BedPlate.LoadedGCode.NumChangesInZ.ToString());
 			}
 
 			base.OnDraw(graphics2D);

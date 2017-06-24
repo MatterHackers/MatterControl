@@ -35,7 +35,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class SetLayerWidget : FlowLayoutWidget
 	{
-		public SetLayerWidget(ViewGcodeWidget gcodeViewWidget, TextImageButtonFactory buttonFactory)
+		public SetLayerWidget(GCode2DWidget gcode2DWidget, TextImageButtonFactory buttonFactory)
 			: base(FlowDirection.LeftToRight)
 		{
 			var editCurrentLayerIndex = new NumberEdit(1, pixelWidth: 40)
@@ -46,21 +46,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			editCurrentLayerIndex.EditComplete += (s, e) =>
 			{
-				gcodeViewWidget.ActiveLayerIndex = ((int)editCurrentLayerIndex.Value - 1);
-				editCurrentLayerIndex.Value = gcodeViewWidget.ActiveLayerIndex + 1;
+				gcode2DWidget.ActiveLayerIndex = ((int)editCurrentLayerIndex.Value - 1);
+				editCurrentLayerIndex.Value = gcode2DWidget.ActiveLayerIndex + 1;
 			};
 			this.AddChild(editCurrentLayerIndex);
 
-			gcodeViewWidget.ActiveLayerChanged += (s, e) =>
+			gcode2DWidget.ActiveLayerChanged += (s, e) =>
 			{
-				editCurrentLayerIndex.Value = gcodeViewWidget.ActiveLayerIndex + 1;
+				editCurrentLayerIndex.Value = gcode2DWidget.ActiveLayerIndex + 1;
 			};
 
 			var setLayerButton = buttonFactory.Generate("Go".Localize());
 			setLayerButton.VAnchor = VAnchor.ParentCenter;
 			setLayerButton.Click += (s, e) =>
 			{
-				gcodeViewWidget.ActiveLayerIndex = ((int)editCurrentLayerIndex.Value - 1);
+				gcode2DWidget.ActiveLayerIndex = ((int)editCurrentLayerIndex.Value - 1);
 			};
 			this.AddChild(setLayerButton);
 		}

@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public DoubleSolidSlider layerRenderRatioSlider;
 
 		private TextWidget gcodeProcessingStateInfoText;
-		private ViewGcodeWidget gcodeViewWidget;
+		private GCode2DWidget gcode2DWidget;
 		private PrintItemWrapper printItem => ApplicationController.Instance.ActivePrintItem;
 		private bool startedSliceFromGenerateButton = false;
 		private Button generateGCodeButton;
@@ -173,7 +173,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			meshViewerWidget = null;
-			gcodeViewWidget = null;
+			gcode2DWidget = null;
 			gcodeProcessingStateInfoText = null;
 
 			FlowLayoutWidget mainContainerTopToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
@@ -315,7 +315,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				if (gcodeDisplayWidget.Visible)
 				{
-					gcodeViewWidget.CenterPartInView();
+					gcode2DWidget.CenterPartInView();
 				}
 				else
 				{
@@ -341,16 +341,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				switch (e.TransformMode)
 				{
 					case ViewControls3DButtons.Translate:
-						if (gcodeViewWidget != null)
+						if (gcode2DWidget != null)
 						{
-							gcodeViewWidget.TransformState = ViewGcodeWidget.ETransformState.Move;
+							gcode2DWidget.TransformState = GCode2DWidget.ETransformState.Move;
 						}
 						meshViewerWidget.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Translation;
 						break;
 					case ViewControls3DButtons.Scale:
-						if (gcodeViewWidget != null)
+						if (gcode2DWidget != null)
 						{
-							gcodeViewWidget.TransformState = ViewGcodeWidget.ETransformState.Scale;
+							gcode2DWidget.TransformState = GCode2DWidget.ETransformState.Scale;
 						}
 						meshViewerWidget.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Scale;
 						break;
@@ -415,12 +415,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			GCodeRenderer.ExtrusionColor = ActiveTheme.Instance.PrimaryAccentColor;
 
 			GCodeRenderInfo renderInfo = new GCodeRenderInfo(0,
-				Math.Min(gcodeViewWidget.ActiveLayerIndex + 1, loadedGCode.NumChangesInZ),
-				gcodeViewWidget.TotalTransform,
+				Math.Min(gcode2DWidget.ActiveLayerIndex + 1, loadedGCode.NumChangesInZ),
+				gcode2DWidget.TotalTransform,
 				1,
 				GetRenderType(),
-				gcodeViewWidget.FeatureToStartOnRatio0To1,
-				gcodeViewWidget.FeatureToEndOnRatio0To1,
+				gcode2DWidget.FeatureToStartOnRatio0To1,
+				gcode2DWidget.FeatureToEndOnRatio0To1,
 				new Vector2[] { ActiveSliceSettings.Instance.Helpers.ExtruderOffset(0), ActiveSliceSettings.Instance.Helpers.ExtruderOffset(1) },
 				MeshViewerWidget.GetMaterialColor);
 
@@ -461,7 +461,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				string timeRemainingText = "---";
 
-				if (gcodeViewWidget != null && loadedGCode != null)
+				if (gcode2DWidget != null && loadedGCode != null)
 				{
 					int secondsRemaining = (int)loadedGCode.Instruction(0).secondsToEndFromHere;
 					int hoursRemaining = (int)(secondsRemaining / (60 * 60));
@@ -757,11 +757,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				UserSettings.Instance.set("LayerViewDefault", "2D Layer");
 
 				// HACK: Getting the Layer2D view to show content only works if CenterPartInView is called after the control is visible and after some cycles have passed
-				UiThread.RunOnIdle(gcodeViewWidget.CenterPartInView);
+				UiThread.RunOnIdle(gcode2DWidget.CenterPartInView);
 			}
 
 			meshViewerWidget.Visible = inLayers3DMode;
-			gcodeViewWidget.Visible = !inLayers3DMode;
+			gcode2DWidget.Visible = !inLayers3DMode;
 		}
 
 		private void HookUpGCodeMessagesWhenDonePrinting(object sender, EventArgs e)
@@ -789,12 +789,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private GuiWidget CreateGCodeViewWidget(string pathAndFileName)
 		{
-			gcodeViewWidget = new ViewGcodeWidget(new Vector2(viewerVolume.x, viewerVolume.y), bedCenter, LoadProgress_Changed);
-			gcodeViewWidget.DoneLoading += DoneLoadingGCode;
-			gcodeViewWidget.Visible = (activeViewMode == PartViewMode.Layers2D);
+			gcode2DWidget = new GCode2DWidget(new Vector2(viewerVolume.x, viewerVolume.y), bedCenter, LoadProgress_Changed);
+			gcode2DWidget.DoneLoading += DoneLoadingGCode;
+			gcode2DWidget.Visible = (activeViewMode == PartViewMode.Layers2D);
 			partToStartLoadingOnFirstDraw = pathAndFileName;
 
-			return gcodeViewWidget;
+			return gcode2DWidget;
 		}
 
 		public override void OnDraw(Graphics2D graphics2D)
@@ -808,7 +808,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (partToStartLoadingOnFirstDraw != null)
 			{
-				gcodeViewWidget.LoadInBackground(partToStartLoadingOnFirstDraw);
+				gcode2DWidget.LoadInBackground(partToStartLoadingOnFirstDraw);
 				partToStartLoadingOnFirstDraw = null;
 			}
 			base.OnDraw(graphics2D);
@@ -818,16 +818,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (keyEvent.KeyCode == Keys.Up)
 			{
-				if (gcodeViewWidget != null)
+				if (gcode2DWidget != null)
 				{
-					gcodeViewWidget.ActiveLayerIndex = (gcodeViewWidget.ActiveLayerIndex + 1);
+					gcode2DWidget.ActiveLayerIndex = (gcode2DWidget.ActiveLayerIndex + 1);
 				}
 			}
 			else if (keyEvent.KeyCode == Keys.Down)
 			{
-				if (gcodeViewWidget != null)
+				if (gcode2DWidget != null)
 				{
-					gcodeViewWidget.ActiveLayerIndex = (gcodeViewWidget.ActiveLayerIndex - 1);
+					gcode2DWidget.ActiveLayerIndex = (gcode2DWidget.ActiveLayerIndex - 1);
 				}
 			}
 		}
@@ -866,7 +866,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private void DoneLoadingGCode(object sender, EventArgs e)
 		{
 			SetProcessingMessage("");
-			if (gcodeViewWidget != null
+			if (gcode2DWidget != null
 				&& loadedGCode == null)
 			{
 				// If we have finished loading the gcode and the source file exists but we don't have any loaded gcode it is because the loader decided to not load it.
@@ -880,7 +880,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
-			if (gcodeViewWidget != null
+			if (gcode2DWidget != null
 				&& loadedGCode?.LineCount > 0)
 			{
 				// TODO: Shouldn't we be clearing children from some known container and rebuilding?
@@ -894,20 +894,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				viewControlsToggle.Visible = true;
 
 				setLayerWidget?.Close();
-				setLayerWidget = new SetLayerWidget(gcodeViewWidget, ApplicationController.Instance.Theme.GCodeLayerButtons);
+				setLayerWidget = new SetLayerWidget(gcode2DWidget, ApplicationController.Instance.Theme.GCodeLayerButtons);
 				setLayerWidget.VAnchor = Agg.UI.VAnchor.ParentTop;
 				layerSelectionButtonsPanel.AddChild(setLayerWidget);
 
 				
 				navigationWidget?.Close();
-				navigationWidget = new LayerNavigationWidget(gcodeViewWidget, ApplicationController.Instance.Theme.GCodeLayerButtons);
+				navigationWidget = new LayerNavigationWidget(gcode2DWidget, ApplicationController.Instance.Theme.GCodeLayerButtons);
 				navigationWidget.Margin = new BorderDouble(0, 0, 20, 0);
 				layerSelectionButtonsPanel.AddChild(navigationWidget);
 
 				selectLayerSlider?.Close();
 				selectLayerSlider = new SolidSlider(new Vector2(), sliderWidth, 0, loadedGCode.NumChangesInZ - 1, Orientation.Vertical);
 				selectLayerSlider.ValueChanged += new EventHandler(selectLayerSlider_ValueChanged);
-				gcodeViewWidget.ActiveLayerChanged += new EventHandler(gcodeViewWidget_ActiveLayerChanged);
+				gcode2DWidget.ActiveLayerChanged += new EventHandler(gcodeViewWidget_ActiveLayerChanged);
 				AddChild(selectLayerSlider);
 
 				layerRenderRatioSlider?.Close();
@@ -921,8 +921,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				SetSliderSizes();
 
 				// let's change the active layer so that it is set to the first layer with data
-				gcodeViewWidget.ActiveLayerIndex = gcodeViewWidget.ActiveLayerIndex + 1;
-				gcodeViewWidget.ActiveLayerIndex = gcodeViewWidget.ActiveLayerIndex - 1;
+				gcode2DWidget.ActiveLayerIndex = gcode2DWidget.ActiveLayerIndex + 1;
+				gcode2DWidget.ActiveLayerIndex = gcode2DWidget.ActiveLayerIndex - 1;
 
 				BoundsChanged += new EventHandler(PartPreviewGCode_BoundsChanged);
 
@@ -937,29 +937,29 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void layerStartRenderRatioSlider_ValueChanged(object sender, EventArgs e)
 		{
-			gcodeViewWidget.FeatureToStartOnRatio0To1 = layerRenderRatioSlider.FirstValue;
-			gcodeViewWidget.FeatureToEndOnRatio0To1 = layerRenderRatioSlider.SecondValue;
-			gcodeViewWidget.Invalidate();
+			gcode2DWidget.FeatureToStartOnRatio0To1 = layerRenderRatioSlider.FirstValue;
+			gcode2DWidget.FeatureToEndOnRatio0To1 = layerRenderRatioSlider.SecondValue;
+			gcode2DWidget.Invalidate();
 		}
 
 		private void layerEndRenderRatioSlider_ValueChanged(object sender, EventArgs e)
 		{
-			gcodeViewWidget.FeatureToStartOnRatio0To1 = layerRenderRatioSlider.FirstValue;
-			gcodeViewWidget.FeatureToEndOnRatio0To1 = layerRenderRatioSlider.SecondValue;
-			gcodeViewWidget.Invalidate();
+			gcode2DWidget.FeatureToStartOnRatio0To1 = layerRenderRatioSlider.FirstValue;
+			gcode2DWidget.FeatureToEndOnRatio0To1 = layerRenderRatioSlider.SecondValue;
+			gcode2DWidget.Invalidate();
 		}
 
 		private void gcodeViewWidget_ActiveLayerChanged(object sender, EventArgs e)
 		{
-			if (gcodeViewWidget.ActiveLayerIndex != (int)(selectLayerSlider.Value + .5))
+			if (gcode2DWidget.ActiveLayerIndex != (int)(selectLayerSlider.Value + .5))
 			{
-				selectLayerSlider.Value = gcodeViewWidget.ActiveLayerIndex;
+				selectLayerSlider.Value = gcode2DWidget.ActiveLayerIndex;
 			}
 		}
 
 		private void selectLayerSlider_ValueChanged(object sender, EventArgs e)
 		{
-			gcodeViewWidget.ActiveLayerIndex = (int)(selectLayerSlider.Value + .5);
+			gcode2DWidget.ActiveLayerIndex = (int)(selectLayerSlider.Value + .5);
 		}
 
 		private void PartPreviewGCode_BoundsChanged(object sender, EventArgs e)

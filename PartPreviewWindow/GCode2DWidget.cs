@@ -44,7 +44,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class ViewGcodeWidget : GuiWidget
+	public class GCode2DWidget : GuiWidget
 	{
 		public event EventHandler DoneLoading;
 		
@@ -125,7 +125,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private View3DConfig options;
 		private PrinterConfig printer;
 
-		public ViewGcodeWidget(Vector2 gridSizeMm, Vector2 gridCenterMm, ReportProgressRatio progressReporter)
+		public GCode2DWidget(Vector2 gridSizeMm, Vector2 gridCenterMm, ReportProgressRatio progressReporter)
 		{
 			options = ApplicationController.Instance.Options.View3D;
 			printer = ApplicationController.Instance.Printer;
@@ -214,6 +214,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						printer.BedPlate.GCodeRenderer?.Render(graphics2D, renderInfo);
 					}
+
+					this.DebugShowBounds = true;
 				}
 			}
 
