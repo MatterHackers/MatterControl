@@ -85,8 +85,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private PartViewMode activeViewMode = PartViewMode.Layers3D;
 
-		private TextImageButtonFactory textImageButtonFactory;
-		private TextImageButtonFactory ExpandMenuOptionFactory;
 
 		private ApplicationController.View3DConfig options;
 
@@ -94,8 +92,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			: base(viewControls3D)
 		{
 			this.options = ApplicationController.Instance.Options.View3D;
-			this.textImageButtonFactory = theme.textImageButtonFactory;
-			this.ExpandMenuOptionFactory = theme.ExpandMenuOptionFactory;
 
 			this.viewerVolume = viewerVolume;
 			this.bedShape = bedShape;
@@ -161,16 +157,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void CreateAndAddChildren()
 		{
-			var textImageButtonFactory = new TextImageButtonFactory()
-			{
-				normalTextColor = ActiveTheme.Instance.PrimaryTextColor,
-				hoverTextColor = ActiveTheme.Instance.PrimaryTextColor,
-				disabledTextColor = ActiveTheme.Instance.PrimaryTextColor,
-				pressedTextColor = ActiveTheme.Instance.PrimaryTextColor
-			};
-
 			CloseAllChildren();
 
+			var buttonFactory = ApplicationController.Instance.Theme.BreadCrumbButtonFactory;
 			if (meshViewerWidget != null)
 			{
 				meshViewerWidget.Closed -= MeshViewerWidget_Closed;
@@ -190,7 +179,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			buttonBottomPanel.Padding = new BorderDouble(3, 3);
 			buttonBottomPanel.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
-			generateGCodeButton = textImageButtonFactory.Generate("Generate".Localize());
+			generateGCodeButton = buttonFactory.Generate("Generate".Localize());
 			generateGCodeButton.Name = "Generate Gcode Button";
 			generateGCodeButton.Click += (s, e) =>
 			{
@@ -227,7 +216,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (windowMode == WindowMode.StandAlone)
 			{
-				Button closeButton = textImageButtonFactory.Generate("Close".Localize());
+				Button closeButton = buttonFactory.Generate("Close".Localize());
 				layerSelectionButtonsPanel.AddChild(closeButton);
 				closeButton.Click += (sender, e) =>
 				{
@@ -446,9 +435,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private FlowLayoutWidget CreateModelInfo()
 		{
-			double oldWidth = textImageButtonFactory.FixedWidth;
-			textImageButtonFactory.FixedWidth = 44 * GuiWidget.DeviceScale;
-
 			var modelInfoContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				Padding = new BorderDouble(5),
@@ -509,8 +495,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// TODO: Every time you click Generate we wire up a listener - only when we close do they get released. This is a terrible pattern that has a good chance of creating a high leak scenario. Since RootedEventHandlers are normally only cleared when a widget is closed, we should **only** register them in widget constructors
 			PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent(HookUpGCodeMessagesWhenDonePrinting, ref unregisterEvents);
-
-			textImageButtonFactory.FixedWidth = oldWidth;
 
 			return modelInfoContainer;
 		}
@@ -601,9 +585,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		internal GuiWidget ShowOverflowMenu()
 		{
-			double oldWidth = textImageButtonFactory.FixedWidth;
-			textImageButtonFactory.FixedWidth = 44 * GuiWidget.DeviceScale;
-
 			var popupContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.ParentLeftRight,
@@ -728,8 +709,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					UiThread.RunOnIdle(SetSyncToPrintVisibility);
 				}
 			}
-
-			textImageButtonFactory.FixedWidth = oldWidth;
 
 			return popupContainer;
 		}
