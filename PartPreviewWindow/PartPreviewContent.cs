@@ -178,7 +178,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					activeSettings.GetValue<BedShape>(SettingsKey.bed_shape),
 					ViewGcodeBasic.WindowMode.Embeded,
 					viewControls3D,
-					ApplicationController.Instance.Theme);
+					ApplicationController.Instance.Theme,
+					modelViewer.meshViewerWidget);
 				gcodeViewer.AnchorAll();
 				this.gcodeViewer.Visible = false;
 				leftToRight.AddChild(gcodeViewer);
@@ -199,9 +200,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					modelViewer.meshViewerWidget.World.RotationMatrix = ApplicationController.Instance.PartPreviewState.RotationMatrix;
 					modelViewer.meshViewerWidget.World.TranslationMatrix = ApplicationController.Instance.PartPreviewState.TranslationMatrix;
-
-					gcodeViewer.meshViewerWidget.World.RotationMatrix = ApplicationController.Instance.PartPreviewState.RotationMatrix;
-					gcodeViewer.meshViewerWidget.World.TranslationMatrix = ApplicationController.Instance.PartPreviewState.TranslationMatrix;
 				}
 
 				this.printItem = printItem;
@@ -262,19 +260,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			public void ToggleView()
 			{
-				bool layersVisible = gcodeViewer.Visible;
-				if (layersVisible)
-				{
-					// Copy layers tumble state to partpreview
-					modelViewer.meshViewerWidget.TrackballTumbleWidget.TrackBallController.CopyTransforms(gcodeViewer.meshViewerWidget.TrackballTumbleWidget.TrackBallController);
-				}
-				else
-				{
-					// Copy partpreview tumble state to layers
-					gcodeViewer.meshViewerWidget.TrackballTumbleWidget.TrackBallController.CopyTransforms(modelViewer.meshViewerWidget.TrackballTumbleWidget.TrackBallController);
-				}
-
-				modelViewer.Visible = layersVisible;
+				bool layersVisible = gcodeViewer.Visible;				modelViewer.Visible = layersVisible;
 				gcodeViewer.Visible = !modelViewer.Visible;
 			}
 
@@ -292,7 +278,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			public override void OnClosed(ClosedEventArgs e)
 			{
-				var visibleWidget = (gcodeViewer.Visible) ? gcodeViewer.meshViewerWidget : modelViewer.meshViewerWidget;
+				var visibleWidget = modelViewer.meshViewerWidget;
 
 				ApplicationController.Instance.PartPreviewState.RotationMatrix = visibleWidget.World.RotationMatrix;
 				ApplicationController.Instance.PartPreviewState.TranslationMatrix = visibleWidget.World.TranslationMatrix;

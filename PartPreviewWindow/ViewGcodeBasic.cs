@@ -41,8 +41,10 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class ViewGcodeBasic : PartPreview3DWidget
+	public class ViewGcodeBasic : GuiWidget
 	{
+		private MeshViewerWidget externalMeshViewer;
+
 		public enum WindowMode { Embeded, StandAlone };
 
 		public SolidSlider selectLayerSlider;
@@ -69,10 +71,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private WindowMode windowMode;
 
 		private string partToStartLoadingOnFirstDraw = null;
-		private string gcodeLoading = "Loading G-Code".Localize();
 
 		public delegate Vector2 GetSizeFunction();
 
+		private string gcodeLoading = "Loading G-Code".Localize();
 		private string slicingErrorMessage = "Slicing Error.\nPlease review your slice settings.".Localize();
 		private string pressGenerateMessage = "Press 'generate' to view layers".Localize();
 		private string fileNotFoundMessage = "File not found on disk.".Localize();
@@ -88,13 +90,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private View3DConfig options;
 
 		private PrinterConfig printer;
+		private ViewControls3D viewControls3D;
 
-		public ViewGcodeBasic(Vector3 viewerVolume, Vector2 bedCenter, BedShape bedShape, WindowMode windowMode, ViewControls3D viewControls3D, ThemeConfig theme)
-			: base(viewControls3D)
+		public ViewGcodeBasic(Vector3 viewerVolume, Vector2 bedCenter, BedShape bedShape, WindowMode windowMode, ViewControls3D viewControls3D, ThemeConfig theme, MeshViewerWidget externalMeshViewer)
 		{
+			this.externalMeshViewer = externalMeshViewer;
+			this.externalMeshViewer.TrackballTumbleWidget.DrawGlContent += TrackballTumbleWidget_DrawGlContent;
+
 			options = ApplicationController.Instance.Options.View3D;
 			printer = ApplicationController.Instance.Printer;
 
+			this.viewControls3D = viewControls3D;
 			this.viewerVolume = viewerVolume;
 			this.bedShape = bedShape;
 			this.bedCenter = bedCenter;
@@ -135,26 +141,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					UpdateEstimatedCost();
 				}
 
-				if (stringEvent.Data == SettingsKey.bed_size
-					|| stringEvent.Data == SettingsKey.print_center
-					|| stringEvent.Data == SettingsKey.build_height
-					|| stringEvent.Data == SettingsKey.bed_shape)
-				{
-					viewerVolume = new Vector3(ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.bed_size), ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.build_height));
-					bedShape = ActiveSliceSettings.Instance.GetValue<BedShape>(SettingsKey.bed_shape);
-					bedCenter = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center);
-
-					double buildHeight = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.build_height);
-
-					UiThread.RunOnIdle(() =>
-					{
-						meshViewerWidget.CreatePrintBed(
-							viewerVolume,
-							bedCenter,
-							bedShape);
-					});
-				}
-				else if (stringEvent.Data == "extruder_offset")
+				if (stringEvent.Data == "extruder_offset")
 				{
 					printer.BedPlate.GCodeRenderer.Clear3DGCode();
 				}
@@ -166,13 +153,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			CloseAllChildren();
 
 			var buttonFactory = ApplicationController.Instance.Theme.BreadCrumbButtonFactory;
-			if (meshViewerWidget != null)
-			{
-				meshViewerWidget.Closed -= MeshViewerWidget_Closed;
-				meshViewerWidget.TrackballTumbleWidget.DrawGlContent -= TrackballTumbleWidget_DrawGlContent;
-			}
 
-			meshViewerWidget = null;
+			externalMeshViewer = null;
 			gcode2DWidget = null;
 			gcodeProcessingStateInfoText = null;
 
@@ -294,32 +276,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			mainContainerTopToBottom.AddChild(buttonBottomPanel);
 			this.AddChild(mainContainerTopToBottom);
 
-			meshViewerWidget = new MeshViewerWidget(viewerVolume, bedCenter, bedShape, "")
-			{
-				Visible = (activeViewMode == PartViewMode.Layers3D),
-				AllowBedRenderingWhenEmpty = true
-			};
-			meshViewerWidget.AnchorAll();
-			gcodeDisplayWidget.AddChild(meshViewerWidget);
-			meshViewerWidget.TrackballTumbleWidget.DrawGlContent += TrackballTumbleWidget_DrawGlContent;
-			meshViewerWidget.Closed += MeshViewerWidget_Closed;
-
-			// Apply active world view if initialized
-			if (ApplicationController.Instance.PartPreviewState.RotationMatrix != Matrix4X4.Identity)
-			{
-				meshViewerWidget.World.RotationMatrix = ApplicationController.Instance.PartPreviewState.RotationMatrix;
-				meshViewerWidget.World.TranslationMatrix = ApplicationController.Instance.PartPreviewState.TranslationMatrix;
-			}
-
 			viewControls3D.ResetView += (sender, e) =>
 			{
 				if (gcodeDisplayWidget.Visible)
 				{
 					gcode2DWidget.CenterPartInView();
-				}
-				else
-				{
-					meshViewerWidget.ResetView();
 				}
 			};
 
@@ -345,31 +306,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						{
 							gcode2DWidget.TransformState = GCode2DWidget.ETransformState.Move;
 						}
-						meshViewerWidget.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Translation;
 						break;
+
 					case ViewControls3DButtons.Scale:
 						if (gcode2DWidget != null)
 						{
 							gcode2DWidget.TransformState = GCode2DWidget.ETransformState.Scale;
 						}
-						meshViewerWidget.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Scale;
 						break;
-					case ViewControls3DButtons.Rotate:
-						meshViewerWidget.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Rotation;
-						break;
-
 				}
 			};
 			this.AddChild(viewControlsToggle);
-		}
-
-		private void MeshViewerWidget_Closed(object sender, ClosedEventArgs e)
-		{
-			if (meshViewerWidget.Visible)
-			{
-				ApplicationController.Instance.PartPreviewState.RotationMatrix = meshViewerWidget.World.RotationMatrix;
-				ApplicationController.Instance.PartPreviewState.TranslationMatrix = meshViewerWidget.World.TranslationMatrix;
-			}
 		}
 
 		private RenderType GetRenderType()
@@ -608,9 +555,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// put in a show grid check box
 			CheckBox showGrid = new CheckBox("Print Bed".Localize(), textColor: textColor);
 			showGrid.Checked = options.RenderGrid;
-			meshViewerWidget.RenderBed = showGrid.Checked;
 			showGrid.CheckedStateChanged += (sender, e) =>
 			{
+				// TODO: How (if at all) do we disable bed rendering on GCode2D?
 				options.RenderGrid = showGrid.Checked;
 			};
 			popupContainer.AddChild(showGrid);
@@ -760,7 +707,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				UiThread.RunOnIdle(gcode2DWidget.CenterPartInView);
 			}
 
-			meshViewerWidget.Visible = inLayers3DMode;
 			gcode2DWidget.Visible = !inLayers3DMode;
 		}
 
@@ -930,8 +876,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				// Switch to the most recent view mode, defaulting to Layers3D
 				SwitchViewModes();
-
-				meshViewerWidget.partProcessingInfo.Visible = false;
 			}
 		}
 
@@ -979,6 +923,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public override void OnClosed(ClosedEventArgs e)
 		{
 			unregisterEvents?.Invoke(this, null);
+
+			if (externalMeshViewer != null)
+			{
+				externalMeshViewer.TrackballTumbleWidget.DrawGlContent -= TrackballTumbleWidget_DrawGlContent;
+			}
 
 			if (printItem != null)
 			{
