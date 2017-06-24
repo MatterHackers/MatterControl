@@ -4249,3 +4249,6 @@ Translated:Start Threshold:
 English:End Threshold:
 Translated:End Threshold:
 
+English:Firmware Version: {0}
+Translated:Firmware Version: {0}
+
