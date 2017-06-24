@@ -2118,7 +2118,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				// If the serial port isn't available (i.e. the specified port name wasn't found in GetPortNames()) or the serial
 				// port is already opened in another instance or process, then report the connection problem back to the user
 				connectionFailureMessage = (serialPortIsAlreadyOpen ?
-					this.ComPort + " in use".Localize() :
+					this.ComPort + " " + "in use".Localize() :
 					"Port not found".Localize());
 
 				OnConnectionFailed(null);
@@ -2298,7 +2298,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			relativeToAbsoluteStream3 = new RelativeToAbsoluteStream(queuedCommandStream2);
 			printLevelingStream4 = new PrintLevelingStream(relativeToAbsoluteStream3, true);
 			waitForTempStream5 = new WaitForTempStream(printLevelingStream4);
-			babyStepsStream6 = new BabyStepsStream(waitForTempStream5);
+			babyStepsStream6 = new BabyStepsStream(waitForTempStream5, gcodeFilename == null ? 2000 : 1);
 			if (activePrintTask != null)
 			{
 				// make sure we are in the position we were when we stopped printing

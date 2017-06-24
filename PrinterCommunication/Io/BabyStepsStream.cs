@@ -42,7 +42,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		private OffsetStream offsetStream;
 		private EventHandler unregisterEvents;
 
-		public BabyStepsStream(GCodeStream internalStream)
+		public BabyStepsStream(GCodeStream internalStream, double startingMaxLength = 1)
 			: base(null)
 		{
 			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 			}, ref unregisterEvents);
 
-			maxLengthStream = new MaxLengthStream(internalStream, 1);
+			maxLengthStream = new MaxLengthStream(internalStream, startingMaxLength);
 			offsetStream = new OffsetStream(maxLengthStream, new Vector3(0, 0, ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.baby_step_z_offset)));
 			base.internalStream = offsetStream;
 		}
