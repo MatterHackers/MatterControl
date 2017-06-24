@@ -207,6 +207,7 @@
     <Compile Include="Library\Providers\Zip\LocalZipContainerLink.cs" />
     <Compile Include="Library\Providers\Zip\ZipMemoryItem.cs" />
     <Compile Include="Library\Providers\Zip\ZipMemoryContainer.cs" />
+    <Compile Include="PartPreviewWindow\LayerNavigationWidget.cs" />
     <Compile Include="PartPreviewWindow\OverflowDropdown.cs" />
     <Compile Include="PartPreviewWindow\View3D\GridOptionsPanel.cs" />
     <Compile Include="PartPreviewWindow\View3D\InteractionVolume.cs" />
