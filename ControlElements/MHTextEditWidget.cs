@@ -128,11 +128,12 @@ namespace MatterHackers.MatterControl
 
 	public class MHNumberEdit : GuiWidget
 	{
-		private NumberEdit actuallNumberEdit;
+		public NumberEdit ActuallNumberEdit { get; private set; }
 
-		public NumberEdit ActuallNumberEdit
+		public double Value
 		{
-			get { return actuallNumberEdit; }
+			get { return ActuallNumberEdit.Value; }
+			set { ActuallNumberEdit.Value = value; }
 		}
 
 		public MHNumberEdit(double startingValue,
@@ -145,10 +146,10 @@ namespace MatterHackers.MatterControl
 			int tabIndex = 0)
 		{
 			Padding = new BorderDouble(3);
-			actuallNumberEdit = new NumberEdit(startingValue, x, y, pointSize, pixelWidth, pixelHeight,
+			ActuallNumberEdit = new NumberEdit(startingValue, x, y, pointSize, pixelWidth, pixelHeight,
 				allowNegatives, allowDecimals, minValue, maxValue, increment, tabIndex);
-			actuallNumberEdit.VAnchor = Agg.UI.VAnchor.ParentBottom;
-			AddChild(actuallNumberEdit);
+			ActuallNumberEdit.VAnchor = Agg.UI.VAnchor.ParentBottom;
+			AddChild(ActuallNumberEdit);
 			BackgroundColor = RGBA_Bytes.White;
 			HAnchor = HAnchor.FitToChildren;
 			VAnchor = VAnchor.FitToChildren;
@@ -162,7 +163,7 @@ namespace MatterHackers.MatterControl
 			}
 			set
 			{
-				actuallNumberEdit.TabIndex = value;
+				ActuallNumberEdit.TabIndex = value;
 			}
 		}
 
@@ -179,11 +180,11 @@ namespace MatterHackers.MatterControl
 		{
 			get
 			{
-				return actuallNumberEdit.Text;
+				return ActuallNumberEdit.Text;
 			}
 			set
 			{
-				actuallNumberEdit.Text = value;
+				ActuallNumberEdit.Text = value;
 			}
 		}
 
