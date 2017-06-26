@@ -4252,3 +4252,6 @@ Translated:End Threshold:
 English:Firmware Version: {0}
 Translated:Firmware Version: {0}
 
+English:Location: 'Settings & Controls' -> 'Settings' -> 'Printer' -> 'Custom G-Code' -> 'Start G-Code'
+Translated:Location: 'Settings & Controls' -> 'Settings' -> 'Printer' -> 'Custom G-Code' -> 'Start G-Code'
+
