@@ -83,6 +83,10 @@
       <Project>{0B8D6F56-BD7F-4426-B858-D9292B084656}</Project>
       <Name>MatterControl</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\MatterControl.Printing\MatterControl.Printing.csproj">
+      <Project>{97d5ade3-c1b4-4b46-8a3e-718a4f7f079f}</Project>
+      <Name>MatterControl.Printing</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\PrinterEmulator\PrinterEmulator.csproj">
       <Project>{bb58ca42-991b-41b7-bde7-dcd2911df8b9}</Project>
       <Name>PrinterEmulator</Name>
@@ -94,14 +98,6 @@
     <ProjectReference Include="..\..\Submodules\agg-sharp\DataConverters3D\DataConverters3D.csproj">
       <Project>{04667764-dc7b-4b95-aef6-b4e6c87a54e9}</Project>
       <Name>DataConverters3D</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Submodules\agg-sharp\examples\GCodeVisualizer\GCodeVisualizer.csproj">
-      <Project>{F67AE800-B0C7-42A8-836F-597B4E74591C}</Project>
-      <Name>GCodeVisualizer</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Submodules\agg-sharp\examples\MeshViewer\MeshViewer.csproj">
-      <Project>{a737bc76-165b-46c6-82b7-8871c7c92942}</Project>
-      <Name>MeshViewer</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Submodules\agg-sharp\GuiAutomation\GuiAutomation.csproj">
       <Project>{E9102310-0029-4D8F-B1E9-88FBA6147D45}</Project>

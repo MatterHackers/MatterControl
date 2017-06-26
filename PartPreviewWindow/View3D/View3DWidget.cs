@@ -2285,11 +2285,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.saveAsWindow = null;
 		}
 
-		private bool scaleQueueMenu_Click()
-		{
-			return true;
-		}
-
 		private void SetEditControlsBasedOnPrinterState(object sender, EventArgs e)
 		{
 			if (windowType == WindowMode.Embeded)
@@ -2358,6 +2353,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			Invalidate();
 		}
 
+		private bool showSliceLayers;
+		public bool ShowSliceLayers
+		{
+			get => showSliceLayers;
+			set
+			{
+				showSliceLayers = value;
+				meshViewerWidget.IsActive = !value;
+
+				if (showSliceLayers)
+				{
+					selectedObjectPanel.Visible = false;
+					Scene.ClearSelection();
+				}
+			}
+		}
+
 		// Before printing persist any changes to disk
 		internal async Task PersistPlateIfNeeded()
 		{
@@ -2386,7 +2398,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			SelectedTransformChanged?.Invoke(this, null);
 		}
-
 
 		// ViewControls3D {{
 		internal GuiWidget ShowOverflowMenu()

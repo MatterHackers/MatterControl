@@ -82,6 +82,7 @@ namespace MatterHackers.MatterControl
 		public int SplitterWidth => (int)(7 * (GuiWidget.DeviceScale <= 1 ? GuiWidget.DeviceScale : GuiWidget.DeviceScale * 1.4));
 
 		public RGBA_Bytes SlightShade { get; } = new RGBA_Bytes(0, 0, 0, 40);
+		public TextImageButtonFactory GCodeLayerButtons { get; internal set; }
 
 		private EventHandler unregisterEvents;
 
@@ -217,6 +218,14 @@ namespace MatterHackers.MatterControl
 				FixedWidth = buttonHeight,
 				AllowThemeToAdjustImage = false,
 				checkedBorderColor = RGBA_Bytes.White
+			};
+
+			this.GCodeLayerButtons = new TextImageButtonFactory()
+			{
+				normalTextColor = ActiveTheme.Instance.PrimaryTextColor,
+				hoverTextColor = ActiveTheme.Instance.PrimaryTextColor,
+				disabledTextColor = ActiveTheme.Instance.PrimaryTextColor,
+				pressedTextColor = ActiveTheme.Instance.PrimaryTextColor
 			};
 
 			#region PartPreviewWidget

@@ -138,8 +138,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						return modelViewer.ShowOverflowMenu();
 					}
-
-					return null;
+					else
+					{
+						return gcodeViewer.ShowOverflowMenu();
+					}
 				};
 
 				// The 3D model view
@@ -167,7 +169,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				leftToRight.AnchorAll();
 				topToBottom.AddChild(leftToRight);
 
-				leftToRight.AddChild(modelViewer);
+				var container = new GuiWidget();
+				container.AnchorAll();
+				container.AddChild(modelViewer);
+
+				leftToRight.AddChild(container);
 
 				// The slice layers view
 				gcodeViewer = new ViewGcodeBasic(
@@ -176,15 +182,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					activeSettings.GetValue<BedShape>(SettingsKey.bed_shape),
 					ViewGcodeBasic.WindowMode.Embeded,
 					viewControls3D,
-					ApplicationController.Instance.Theme);
+					ApplicationController.Instance.Theme,
+					modelViewer.meshViewerWidget);
 				gcodeViewer.AnchorAll();
 				this.gcodeViewer.Visible = false;
-				leftToRight.AddChild(gcodeViewer);
+
+				container.AddChild(gcodeViewer);
 
 				AddSettingsTabBar(leftToRight, modelViewer);
 
 				modelViewer.BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor;
-				gcodeViewer.BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor;
 
 				if (ApplicationController.Instance.PartPreviewState.RotationMatrix == Matrix4X4.Identity)
 				{
@@ -197,9 +204,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					modelViewer.meshViewerWidget.World.RotationMatrix = ApplicationController.Instance.PartPreviewState.RotationMatrix;
 					modelViewer.meshViewerWidget.World.TranslationMatrix = ApplicationController.Instance.PartPreviewState.TranslationMatrix;
-
-					gcodeViewer.meshViewerWidget.World.RotationMatrix = ApplicationController.Instance.PartPreviewState.RotationMatrix;
-					gcodeViewer.meshViewerWidget.World.TranslationMatrix = ApplicationController.Instance.PartPreviewState.TranslationMatrix;
 				}
 
 				this.printItem = printItem;
@@ -260,20 +264,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			public void ToggleView()
 			{
-				bool layersVisible = gcodeViewer.Visible;
-				if (layersVisible)
-				{
-					// Copy layers tumble state to partpreview
-					modelViewer.meshViewerWidget.TrackballTumbleWidget.TrackBallController.CopyTransforms(gcodeViewer.meshViewerWidget.TrackballTumbleWidget.TrackBallController);
-				}
-				else
-				{
-					// Copy partpreview tumble state to layers
-					gcodeViewer.meshViewerWidget.TrackballTumbleWidget.TrackBallController.CopyTransforms(modelViewer.meshViewerWidget.TrackballTumbleWidget.TrackBallController);
-				}
-
-				modelViewer.Visible = layersVisible;
-				gcodeViewer.Visible = !modelViewer.Visible;
+				gcodeViewer.Visible = !gcodeViewer.Visible;
+				modelViewer.ShowSliceLayers = gcodeViewer.Visible;
 			}
 
 			private async void LoadActivePrintItem()
@@ -290,7 +282,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			public override void OnClosed(ClosedEventArgs e)
 			{
-				var visibleWidget = (gcodeViewer.Visible) ? gcodeViewer.meshViewerWidget : modelViewer.meshViewerWidget;
+				var visibleWidget = modelViewer.meshViewerWidget;
 
 				ApplicationController.Instance.PartPreviewState.RotationMatrix = visibleWidget.World.RotationMatrix;
 				ApplicationController.Instance.PartPreviewState.TranslationMatrix = visibleWidget.World.TranslationMatrix;

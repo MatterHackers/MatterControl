@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{CBDEEC31-D688-417B-9BF2-F0DB2E4FB268}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>MatterControl.OpenGL</RootNamespace>
+    <AssemblyName>MatterControl.OpenGL</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="GCodeRenderer\ColorVertexData.cs" />
+    <Compile Include="GCodeRenderer\ExtrusionColors.cs" />
+    <Compile Include="GCodeRenderer\GCodeRenderer.cs" />
+    <Compile Include="GCodeRenderer\GCodeRenderInfo.cs" />
+    <Compile Include="GCodeRenderer\GCodeVertexBuffer.cs" />
+    <Compile Include="GCodeRenderer\RenderFeatures\RenderFeatureBase.cs" />
+    <Compile Include="GCodeRenderer\RenderFeatures\RenderFeatureExtrusion.cs" />
+    <Compile Include="GCodeRenderer\RenderFeatures\RenderFeatureRetract.cs" />
+    <Compile Include="GCodeRenderer\RenderFeatures\RenderFeatureTravel.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MatterControl.Printing\MatterControl.Printing.csproj">
+      <Project>{97d5ade3-c1b4-4b46-8a3e-718a4f7f079f}</Project>
+      <Name>MatterControl.Printing</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Submodules\agg-sharp\agg\Agg.csproj">
+      <Project>{657dbc6d-c3ea-4398-a3fa-ddb73c14f71b}</Project>
+      <Name>Agg</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Submodules\agg-sharp\Gui\Gui.csproj">
+      <Project>{74f6bb6c-9d02-4512-a59a-21940e35c532}</Project>
+      <Name>Gui</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Submodules\agg-sharp\RenderOpenGl\RenderOpenGl.csproj">
+      <Project>{545b6912-77ff-4b34-ba76-6c3d6a32be6a}</Project>
+      <Name>RenderOpenGl</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Submodules\agg-sharp\VectorMath\VectorMath.csproj">
+      <Project>{d3e41b4e-bfbb-44ca-94c8-95c00f754fdd}</Project>
+      <Name>VectorMath</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

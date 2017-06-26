@@ -207,8 +207,13 @@
     <Compile Include="Library\Providers\Zip\LocalZipContainerLink.cs" />
     <Compile Include="Library\Providers\Zip\ZipMemoryItem.cs" />
     <Compile Include="Library\Providers\Zip\ZipMemoryContainer.cs" />
+    <Compile Include="PartPreviewWindow\LayerNavigationWidget.cs" />
     <Compile Include="PartPreviewWindow\OverflowDropdown.cs" />
+    <Compile Include="PartPreviewWindow\SetLayerWidget.cs" />
     <Compile Include="PartPreviewWindow\View3D\GridOptionsPanel.cs" />
+    <Compile Include="PartPreviewWindow\View3D\InteractionVolume.cs" />
+    <Compile Include="PartPreviewWindow\View3D\MeshViewerWidget.cs" />
+    <Compile Include="PartPreviewWindow\View3D\MouseEvent3DArgs.cs" />
     <Compile Include="PartPreviewWindow\View3D\PrinterActionsBar.cs" />
     <Compile Include="PrinterCommunication\Io\NotPrintingStream.cs" />
     <Compile Include="Library\Widgets\ListView\ListView.cs" />
@@ -237,7 +242,7 @@
     <Compile Include="PartPreviewWindow\ViewControls3D.cs" />
     <Compile Include="PartPreviewWindow\ViewControlsToggle.cs" />
     <Compile Include="PartPreviewWindow\BaseClasses\PartPreview3DWidget.cs" />
-    <Compile Include="PartPreviewWindow\ViewGcodeWidget.cs" />
+    <Compile Include="PartPreviewWindow\GCode2DWidget.cs" />
     <Compile Include="CustomWidgets\DisableableWidget.cs" />
     <Compile Include="CustomWidgets\ExportPrintItemWindow.cs" />
     <Compile Include="PrinterCommunication\Io\FeedRateMultiplyerStream.cs" />
@@ -474,6 +479,14 @@
     <Folder Include="SlicerConfiguration\SettingsEditors\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="MatterControl.OpenGL\MatterControl.OpenGL.csproj">
+      <Project>{CBDEEC31-D688-417B-9BF2-F0DB2E4FB268}</Project>
+      <Name>MatterControl.OpenGL</Name>
+    </ProjectReference>
+    <ProjectReference Include="MatterControl.Printing\MatterControl.Printing.csproj">
+      <Project>{97D5ADE3-C1B4-4B46-8A3E-718A4F7F079F}</Project>
+      <Name>MatterControl.Printing</Name>
+    </ProjectReference>
     <ProjectReference Include="Submodules\agg-sharp\clipper_library\clipper_library.csproj">
       <Project>{9B062971-A88E-4A3D-B3C9-12B78D15FA66}</Project>
       <Name>clipper_library</Name>
@@ -518,10 +531,6 @@
       <Project>{D3E41B4E-BFBB-44CA-94C8-95C00F754FDD}</Project>
       <Name>VectorMath</Name>
     </ProjectReference>
-    <ProjectReference Include="Submodules\agg-sharp\examples\GCodeVisualizer\GCodeVisualizer.csproj">
-      <Project>{F67AE800-B0C7-42A8-836F-597B4E74591C}</Project>
-      <Name>GCodeVisualizer</Name>
-    </ProjectReference>
     <ProjectReference Include="Submodules\agg-sharp\SerialPortCommunication\SerialPortCommunication.csproj">
       <Project>{D3ABF72C-64C2-4E51-A119-E077210FA990}</Project>
       <Name>SerialPortCommunication</Name>
@@ -533,10 +542,6 @@
     <ProjectReference Include="Submodules\MatterSlice\MatterSlice.csproj">
       <Project>{C46CA728-DD2F-4DD1-971A-AAA89D9DFF95}</Project>
       <Name>MatterSlice</Name>
-    </ProjectReference>
-    <ProjectReference Include="Submodules\agg-sharp\examples\MeshViewer\MeshViewer.csproj">
-      <Project>{A737BC76-165B-46C6-82B7-8871C7C92942}</Project>
-      <Name>MeshViewer</Name>
     </ProjectReference>
     <ProjectReference Include="Submodules\agg-sharp\Tesselate\Tesselate.csproj">
       <Project>{AE37DE1F-22F7-49EE-8732-FC6BC8DC58D9}</Project>

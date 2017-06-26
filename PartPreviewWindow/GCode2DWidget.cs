@@ -27,120 +27,33 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Diagnostics;
+using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.GCodeVisualizer;
+using MatterHackers.Localizations;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.MeshVisualizer;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.RenderOpenGl.OpenGl;
 using MatterHackers.VectorMath;
-using System;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Threading.Tasks;
-using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class ViewGcodeWidget : GuiWidget
+	public class GCode2DWidget : GuiWidget
 	{
 		public event EventHandler DoneLoading;
-
-		public bool RenderGrid
-		{
-			get
-			{
-				string value = UserSettings.Instance.get("GcodeViewerRenderGrid");
-				if (value == null)
-				{
-					RenderGrid = true;
-					return true;
-				}
-				return (value == "True");
-			}
-			set
-			{
-				UserSettings.Instance.set("GcodeViewerRenderGrid", value.ToString());
-				Invalidate();
-			}
-		}
-
+		
 		public double FeatureToStartOnRatio0To1 = 0;
 		public double FeatureToEndOnRatio0To1 = 1;
 
 		public enum ETransformState { Move, Scale };
 
 		public ETransformState TransformState { get; set; }
-
-		public bool RenderMoves
-		{
-			get { return (UserSettings.Instance.get("GcodeViewerRenderMoves") == "True"); }
-			set
-			{
-				UserSettings.Instance.set("GcodeViewerRenderMoves", value.ToString());
-				Invalidate();
-			}
-		}
-
-		public bool RenderRetractions
-		{
-			get { return (UserSettings.Instance.get("GcodeViewerRenderRetractions") == "True"); }
-			set
-			{
-				UserSettings.Instance.set("GcodeViewerRenderRetractions", value.ToString());
-				Invalidate();
-			}
-		}
-
-		public bool RenderSpeeds
-		{
-			get { return (UserSettings.Instance.get("GcodeViewerRenderSpeeds") == "True"); }
-			set
-			{
-				UserSettings.Instance.set("GcodeViewerRenderSpeeds", value.ToString());
-				Invalidate();
-			}
-		}
-
-		public bool SimulateExtrusion
-		{
-			get { return (UserSettings.Instance.get("GcodeViewerSimulateExtrusion") == "True"); }
-			set
-			{
-				UserSettings.Instance.set("GcodeViewerSimulateExtrusion", value.ToString());
-				Invalidate();
-			}
-		}
-
-		public bool TransparentExtrusion
-		{
-			get { return (UserSettings.Instance.get("GcodeViewerTransparentExtrusion") == "True"); }
-			set
-			{
-				UserSettings.Instance.set("GcodeViewerTransparentExtrusion", value.ToString());
-				Invalidate();
-			}
-		}
-
-		public bool HideExtruderOffsets
-		{
-			get
-			{
-				string value = UserSettings.Instance.get("GcodeViewerHideExtruderOffsets");
-				if (value == null)
-				{
-					return true;
-				}
-				return (value == "True");
-			}
-			set
-			{
-				UserSettings.Instance.set("GcodeViewerHideExtruderOffsets", value.ToString());
-				Invalidate();
-			}
-		}
 
 		private Vector2 lastMousePosition = new Vector2(0, 0);
 		private Vector2 mouseDownPosition = new Vector2(0, 0);
@@ -175,11 +88,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private Vector2 unscaledRenderOffset = new Vector2(0, 0);
 
-		public GCodeRenderer gCodeRenderer;
-
 		public event EventHandler ActiveLayerChanged;
 
-		public GCodeFile LoadedGCode { get; set; }
+		private GCodeFile loadedGCode => printer.BedPlate.LoadedGCode;
 
 		public int ActiveLayerIndex
 		{
@@ -194,13 +105,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					activeLayerIndex = value;
 
-					if (gCodeRenderer == null || activeLayerIndex < 0)
+					if (printer.BedPlate.GCodeRenderer == null || activeLayerIndex < 0)
 					{
 						activeLayerIndex = 0;
 					}
-					else if (activeLayerIndex >= LoadedGCode.NumChangesInZ)
+					else if (activeLayerIndex >= loadedGCode.NumChangesInZ)
 					{
-						activeLayerIndex = LoadedGCode.NumChangesInZ - 1;
+						activeLayerIndex = loadedGCode.NumChangesInZ - 1;
 					}
 					Invalidate();
 
@@ -211,28 +122,34 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private ReportProgressRatio progressReporter;
 
-		public ViewGcodeWidget(Vector2 gridSizeMm, Vector2 gridCenterMm, ReportProgressRatio progressReporter)
+		private View3DConfig options;
+		private PrinterConfig printer;
+
+		public GCode2DWidget(Vector2 gridSizeMm, Vector2 gridCenterMm, ReportProgressRatio progressReporter)
 		{
+			options = ApplicationController.Instance.Options.View3D;
+			printer = ApplicationController.Instance.Printer;
+
 			this.progressReporter = progressReporter;
 			this.gridSizeMm = gridSizeMm;
 			this.gridCenterMm = gridCenterMm;
-			LocalBounds = new RectangleDouble(0, 0, 100, 100);
-			//DoubleBuffer = true;
-			AnchorAll();
+
+			this.LocalBounds = new RectangleDouble(0, 0, 100, 100);
+			this.AnchorAll();
 		}
 
 		private void SetInitalLayer()
 		{
 			activeLayerIndex = 0;
-			if (LoadedGCode.LineCount > 0)
+			if (loadedGCode.LineCount > 0)
 			{
 				int firstExtrusionIndex = 0;
-				Vector3 lastPosition = LoadedGCode.Instruction(0).Position;
-				double ePosition = LoadedGCode.Instruction(0).EPosition;
+				Vector3 lastPosition = loadedGCode.Instruction(0).Position;
+				double ePosition = loadedGCode.Instruction(0).EPosition;
 				// let's find the first layer that has extrusion if possible and go to that
-				for (int i = 1; i < LoadedGCode.LineCount; i++)
+				for (int i = 1; i < loadedGCode.LineCount; i++)
 				{
-					PrinterMachineInstruction currentInstruction = LoadedGCode.Instruction(i);
+					PrinterMachineInstruction currentInstruction = loadedGCode.Instruction(i);
 					if (currentInstruction.EPosition > ePosition && lastPosition != currentInstruction.Position)
 					{
 						firstExtrusionIndex = i;
@@ -244,9 +161,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				if (firstExtrusionIndex > 0)
 				{
-					for (int layerIndex = 0; layerIndex < LoadedGCode.NumChangesInZ; layerIndex++)
+					for (int layerIndex = 0; layerIndex < loadedGCode.NumChangesInZ; layerIndex++)
 					{
-						if (firstExtrusionIndex < LoadedGCode.GetInstructionIndexAtLayer(layerIndex))
+						if (firstExtrusionIndex < loadedGCode.GetInstructionIndexAtLayer(layerIndex))
 						{
 							activeLayerIndex = Math.Max(0, layerIndex - 1);
 							break;
@@ -256,27 +173,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		internal void Clear3DGCode()
-		{
-			if (gCodeRenderer != null)
-			{
-				gCodeRenderer.Clear3DGCode();
-				this.Invalidate();
-			}
-		}
-
 		private PathStorage grid = new PathStorage();
 		static RGBA_Bytes gridColor = new RGBA_Bytes(190, 190, 190, 255);
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{
-			if (LoadedGCode != null)
+			if (loadedGCode != null)
 			{
 				//using (new PerformanceTimer("GCode Timer", "Total"))
 				{
 					Affine transform = TotalTransform;
 
-					if (RenderGrid)
+					if (options.RenderGrid)
 					{
 						//using (new PerformanceTimer("GCode Timer", "Render Grid"))
 						{
@@ -297,13 +205,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						}
 					}
 
-					GCodeRenderInfo renderInfo = new GCodeRenderInfo(activeLayerIndex, activeLayerIndex, transform, layerScale, CreateRenderInfo(),
-						FeatureToStartOnRatio0To1, FeatureToEndOnRatio0To1,
-						new Vector2[] { ActiveSliceSettings.Instance.Helpers.ExtruderOffset(0), ActiveSliceSettings.Instance.Helpers.ExtruderOffset(1) });
+					var renderInfo = new GCodeRenderInfo(
+						activeLayerIndex,
+						activeLayerIndex,
+						transform,
+						layerScale,
+						CreateRenderInfo(),
+						FeatureToStartOnRatio0To1,
+						FeatureToEndOnRatio0To1,
+						new Vector2[] 
+						{
+							ActiveSliceSettings.Instance.Helpers.ExtruderOffset(0),
+							ActiveSliceSettings.Instance.Helpers.ExtruderOffset(1)
+						},
+						MeshViewerWidget.GetMaterialColor);
 
 					//using (new PerformanceTimer("GCode Timer", "Render"))
 					{
-						gCodeRenderer?.Render(graphics2D, renderInfo);
+						printer.BedPlate.GCodeRenderer?.Render(graphics2D, renderInfo);
 					}
 				}
 			}
@@ -313,28 +232,29 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private RenderType CreateRenderInfo()
 		{
+			var options = ApplicationController.Instance.Options.View3D;
 			RenderType renderType = RenderType.Extrusions;
-			if (RenderMoves)
+			if (options.RenderMoves)
 			{
 				renderType |= RenderType.Moves;
 			}
-			if (RenderRetractions)
+			if (options.RenderRetractions)
 			{
 				renderType |= RenderType.Retractions;
 			}
-			if (RenderSpeeds)
+			if (options.RenderSpeeds)
 			{
 				renderType |= RenderType.SpeedColors;
 			}
-			if (SimulateExtrusion)
+			if (options.SimulateExtrusion)
 			{
 				renderType |= RenderType.SimulateExtrusion;
 			}
-			if (TransparentExtrusion)
+			if (options.TransparentExtrusion)
 			{
 				renderType |= RenderType.TransparentExtrusion;
 			}
-			if (HideExtruderOffsets)
+			if (options.HideExtruderOffsets)
 			{
 				renderType |= RenderType.HideExtruderOffsets;
 			}
@@ -525,12 +445,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
+		// TODO: The bulk of this should move to the data model rather than in this widget
 		public async void LoadInBackground(string gcodePathAndFileName)
 		{
-			var loadedGCode = await GCodeFileLoaded.LoadInBackground(gcodePathAndFileName, this.progressReporter);
-			this.LoadedGCode = loadedGCode;
+			printer.BedPlate.LoadedGCode = await GCodeFileLoaded.LoadInBackground(gcodePathAndFileName, this.progressReporter);
 
-			if (this.LoadedGCode == null)
+			if (loadedGCode == null)
 			{
 				this.AddChild(new TextWidget("Not a valid GCode file.".Localize())
 				{
@@ -545,7 +465,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				CenterPartInView();
 			}
 
-			gCodeRenderer = new GCodeRenderer(this.LoadedGCode);
+			printer.BedPlate.GCodeRenderer = new GCodeRenderer(loadedGCode);
 
 			if (ActiveSliceSettings.Instance.PrinterSelected)
 			{
@@ -561,14 +481,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				try
 				{
 					// TODO: Why call this then throw away the result? What does calling initialize the otherwise would be invalid?
-					gCodeRenderer.GCodeFileToDraw?.GetFilamentUsedMm(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_diameter));
+					printer.BedPlate.GCodeRenderer.GCodeFileToDraw?.GetFilamentUsedMm(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_diameter));
 				}
 				catch (Exception ex)
 				{
 					Debug.Print(ex.Message);
 					GuiWidget.BreakInDebugger();
 				}
-				gCodeRenderer.CreateFeaturesForLayerIfRequired(0);
+
+				printer.BedPlate.GCodeRenderer.CreateFeaturesForLayerIfRequired(0);
 			});
 
 			DoneLoading?.Invoke(this, null);
@@ -576,11 +497,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnClosed(ClosedEventArgs e)
 		{
-			if (gCodeRenderer != null)
-			{
-				gCodeRenderer.Dispose();
-			}
-
+			printer.BedPlate.GCodeRenderer?.Dispose();
 			base.OnClosed(e);
 		}
 
@@ -599,7 +516,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					layerScale = layerScale * (Width / oldWidth);
 				}
-				else if (gCodeRenderer != null)
+				else if (printer.BedPlate.GCodeRenderer != null)
 				{
 					CenterPartInView();
 				}
@@ -608,10 +525,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void CenterPartInView()
 		{
-			if (LoadedGCode != null)
+			if (loadedGCode != null)
 			{
-				RectangleDouble partBounds = LoadedGCode.GetBounds();
-				Vector2 weightedCenter = LoadedGCode.GetWeightedCenter();
+				RectangleDouble partBounds = loadedGCode.GetBounds();
+				Vector2 weightedCenter = loadedGCode.GetWeightedCenter();
 
 				unscaledRenderOffset = -weightedCenter;
 				layerScale = Math.Min(Height / partBounds.Height, Width / partBounds.Width);
