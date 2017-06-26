@@ -354,21 +354,26 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void TrackballTumbleWidget_DrawGlContent(object sender, EventArgs e)
 		{
-			if (loadedGCode == null || printer.BedPlate.GCodeRenderer == null)
+			if (loadedGCode == null || printer.BedPlate.GCodeRenderer == null || !this.Visible)
 			{
 				return;
 			}
 
 			GCodeRenderer.ExtrusionColor = ActiveTheme.Instance.PrimaryAccentColor;
 
-			GCodeRenderInfo renderInfo = new GCodeRenderInfo(0,
+			var renderInfo = new GCodeRenderInfo(
+				0,
 				Math.Min(gcode2DWidget.ActiveLayerIndex + 1, loadedGCode.NumChangesInZ),
 				gcode2DWidget.TotalTransform,
 				1,
 				GetRenderType(),
 				gcode2DWidget.FeatureToStartOnRatio0To1,
 				gcode2DWidget.FeatureToEndOnRatio0To1,
-				new Vector2[] { ActiveSliceSettings.Instance.Helpers.ExtruderOffset(0), ActiveSliceSettings.Instance.Helpers.ExtruderOffset(1) },
+				new Vector2[] 
+				{
+					ActiveSliceSettings.Instance.Helpers.ExtruderOffset(0),
+					ActiveSliceSettings.Instance.Helpers.ExtruderOffset(1)
+				},
 				MeshViewerWidget.GetMaterialColor);
 
 			printer.BedPlate.GCodeRenderer.Render3D(renderInfo);

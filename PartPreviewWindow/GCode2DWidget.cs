@@ -205,17 +205,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						}
 					}
 
-					GCodeRenderInfo renderInfo = new GCodeRenderInfo(activeLayerIndex, activeLayerIndex, transform, layerScale, CreateRenderInfo(),
-						FeatureToStartOnRatio0To1, FeatureToEndOnRatio0To1,
-						new Vector2[] { ActiveSliceSettings.Instance.Helpers.ExtruderOffset(0), ActiveSliceSettings.Instance.Helpers.ExtruderOffset(1) },
-						 MeshViewerWidget.GetMaterialColor);
+					var renderInfo = new GCodeRenderInfo(
+						activeLayerIndex,
+						activeLayerIndex,
+						transform,
+						layerScale,
+						CreateRenderInfo(),
+						FeatureToStartOnRatio0To1,
+						FeatureToEndOnRatio0To1,
+						new Vector2[] 
+						{
+							ActiveSliceSettings.Instance.Helpers.ExtruderOffset(0),
+							ActiveSliceSettings.Instance.Helpers.ExtruderOffset(1)
+						},
+						MeshViewerWidget.GetMaterialColor);
 
 					//using (new PerformanceTimer("GCode Timer", "Render"))
 					{
 						printer.BedPlate.GCodeRenderer?.Render(graphics2D, renderInfo);
 					}
-
-					this.DebugShowBounds = true;
 				}
 			}
 

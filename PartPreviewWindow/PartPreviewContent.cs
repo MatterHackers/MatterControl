@@ -265,6 +265,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			public void ToggleView()
 			{
 				gcodeViewer.Visible = !gcodeViewer.Visible;
+				modelViewer.ShowSliceLayers = gcodeViewer.Visible;
 			}
 
 			private async void LoadActivePrintItem()

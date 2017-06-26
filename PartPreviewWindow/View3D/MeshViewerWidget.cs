@@ -240,7 +240,7 @@ namespace MatterHackers.MeshVisualizer
 
 		public RenderTypes RenderType
 		{
-			get { return renderType; }
+			get => this.IsActive ? renderType : RenderTypes.Wireframe;
 			set
 			{
 				if (renderType != value)
@@ -773,6 +773,8 @@ namespace MatterHackers.MeshVisualizer
 			});
 		}
 
+		public bool IsActive { get; set; } = true;
+
 		private void DrawObject(IObject3D object3D, Matrix4X4 transform, bool parentSelected)
 		{
 			foreach(MeshAndTransform meshAndTransform in object3D.VisibleMeshes(transform))
@@ -782,11 +784,12 @@ namespace MatterHackers.MeshVisualizer
 
 				MeshMaterialData meshData = MeshMaterialData.Get(meshAndTransform.MeshData);
 				RGBA_Bytes drawColor = object3D.Color;
+
 				if (drawColor.Alpha0To1 == 0)
 				{
 					drawColor = isSelected ? GetSelectedMaterialColor(meshData.MaterialIndex) : GetMaterialColor(meshData.MaterialIndex);
 				}
-
+				
 				GLHelper.Render(meshAndTransform.MeshData, drawColor, meshAndTransform.Matrix, RenderType);
 			}
 		}
