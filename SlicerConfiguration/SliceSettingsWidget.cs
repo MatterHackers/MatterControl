@@ -51,19 +51,22 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.AnchorAll();
 			this.Padding = new BorderDouble(3, 0);
 
-			var noConnectionMessageContainer = new AltGroupBox(new TextWidget("No Printer Selected".Localize(), pointSize: 18, textColor: ActiveTheme.Instance.SecondaryAccentColor));
-			noConnectionMessageContainer.Margin = new BorderDouble(top: 10);
-			noConnectionMessageContainer.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
-			noConnectionMessageContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-			noConnectionMessageContainer.Height = 90;
-
+			var noConnectionMessageContainer = new AltGroupBox(new WrappedTextWidget("No Printer Selected".Localize(), pointSize: 18, textColor: ActiveTheme.Instance.SecondaryAccentColor))
+			{
+				Margin = new BorderDouble(top: 10),
+				BorderColor = ActiveTheme.Instance.PrimaryTextColor,
+				HAnchor = Agg.UI.HAnchor.ParentLeftRight,
+				Height = 90
+			};
 			string noConnectionString = "No printer is currently selected. Please select a printer to edit slice settings.".Localize();
 			noConnectionString += "\n\n" + "NOTE: You need to select a printer, but do not need to connect to it.".Localize();
-			TextWidget noConnectionMessage = new TextWidget(noConnectionString, pointSize: 10);
-			noConnectionMessage.Margin = new BorderDouble(5);
-			noConnectionMessage.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			noConnectionMessage.VAnchor = VAnchor.ParentCenter;
-
+			var noConnectionMessage = new WrappedTextWidget(noConnectionString, pointSize: 10)
+			{
+				Margin = new BorderDouble(5),
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				//noConnectionMessage.VAnchor = VAnchor.ParentCenter;
+				HAnchor = HAnchor.ParentLeftRight
+			};
 			noConnectionMessageContainer.AddChild(noConnectionMessage);
 			this.AddChild(noConnectionMessageContainer);
 		}
@@ -74,7 +77,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private TextImageButtonFactory buttonFactory = new TextImageButtonFactory();
 
 		private TabControl topCategoryTabs;
-		private AltGroupBox noConnectionMessageContainer;
 		internal SettingsControlBar settingsControlBar;
 		private FlowLayoutWidget pageTopToBottomLayout;
 
@@ -138,22 +140,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			pageTopToBottomLayout.AddChild(settingsControlBar);
 
-			noConnectionMessageContainer = new AltGroupBox(new TextWidget("No Printer Selected".Localize(), pointSize: 18, textColor: ActiveTheme.Instance.SecondaryAccentColor));
-			noConnectionMessageContainer.Margin = new BorderDouble(top: 10);
-			noConnectionMessageContainer.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
-			noConnectionMessageContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-			noConnectionMessageContainer.Height = 90;
-
 			string noConnectionString = "No printer is currently selected. Please select a printer to edit slice settings.".Localize();
 			noConnectionString += "\n\n" + "NOTE: You need to select a printer, but do not need to connect to it.".Localize();
-			TextWidget noConnectionMessage = new TextWidget(noConnectionString, pointSize: 10);
-			noConnectionMessage.Margin = new BorderDouble(5);
-			noConnectionMessage.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			noConnectionMessage.VAnchor = VAnchor.ParentCenter;
-
-			noConnectionMessageContainer.AddChild(noConnectionMessage);
-			pageTopToBottomLayout.AddChild(noConnectionMessageContainer);
-
+			var noConnectionMessage = new WrappedTextWidget(noConnectionString, pointSize: 10)
+			{
+				Margin = new BorderDouble(5),
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				HAnchor = HAnchor.ParentLeftRight
+			};
 			PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
 			PrinterConnection.Instance.EnableChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
 
@@ -342,13 +336,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				topCategoryTabs.Visible = true;
 				settingsControlBar.Visible = showControlBar;
-				noConnectionMessageContainer.Visible = false;
 			}
 			else
 			{
 				topCategoryTabs.Visible = false;
 				settingsControlBar.Visible = showControlBar;
-				noConnectionMessageContainer.Visible = true;
 			}
 		}
 

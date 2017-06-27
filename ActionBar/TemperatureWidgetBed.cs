@@ -50,7 +50,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			temperatureTypeName.Text = "Print Bed";
 			DisplayCurrentTemperature();
 			ToolTipText = "Current bed temperature".Localize();
-			preheatButton.ToolTipText = "Preheat the Bed".Localize();
 
 			PrinterConnection.Instance.BedTemperatureRead.RegisterEvent((s, e) => DisplayCurrentTemperature(), ref unregisterEvents);
 		}

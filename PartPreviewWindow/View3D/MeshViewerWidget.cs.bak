@@ -546,8 +546,6 @@ namespace MatterHackers.MeshVisualizer
 					{
 						interactionVolumes[i].MouseOver = true;
 						interactionVolumes[i].MouseMoveInfo = info;
-
-						HoveredInteractionVolume = interactionVolumes[i];
 					}
 					else
 					{
