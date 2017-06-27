@@ -52,13 +52,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				string fullPathToGcodeFile = Path.Combine(gcodeOutputPath, "Batman");
 				testRunner.Type(fullPathToGcodeFile);
 				testRunner.Type("{Enter}");
-				testRunner.Delay(2);
 
-				Console.WriteLine(gcodeOutputPath);
+				testRunner.Delay(() => File.Exists(fullPathToGcodeFile + ".gcode"), 10);
 
 				Assert.IsTrue(File.Exists(fullPathToGcodeFile + ".gcode") == true);
 
-				return Task.CompletedTask;
+				return Task.FromResult(0);
 			};
 
 			await MatterControlUtilities.RunTest(testToRun);
