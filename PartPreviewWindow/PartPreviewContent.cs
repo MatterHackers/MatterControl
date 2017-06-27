@@ -210,27 +210,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				this.AddChild(viewControls3D);
 
-				var extruderTemperatureWidget = new TemperatureWidgetExtruder()
-				{
-					VAnchor = VAnchor.ParentTop | VAnchor.FitToChildren | VAnchor.AbsolutePosition,
-					HAnchor = HAnchor.ParentRight | HAnchor.FitToChildren,
-					Visible = true,
-					Margin = new BorderDouble(0, 0, 800, 50)
-				};
-				this.AddChild(extruderTemperatureWidget);
-
-				if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_heated_bed))
-				{
-					var bedTemperatureWidget = new TemperatureWidgetBed()
-					{
-						VAnchor = VAnchor.ParentTop | VAnchor.FitToChildren | VAnchor.AbsolutePosition,
-						HAnchor = HAnchor.ParentRight | HAnchor.FitToChildren,
-						Visible = true,
-						Margin = new BorderDouble(0, 0, 860, 50)
-					};
-					this.AddChild(bedTemperatureWidget);
-				}
-
 				this.AnchorAll();
 			}
 

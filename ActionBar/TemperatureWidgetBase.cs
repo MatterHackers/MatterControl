@@ -40,7 +40,6 @@ namespace MatterHackers.MatterControl.ActionBar
 	{
 		private TextWidget currentTempIndicator;
 		protected TextWidget temperatureTypeName;
-		protected Button preheatButton;
 
 		protected TextImageButtonFactory whiteButtonFactory = new TextImageButtonFactory()
 		{
@@ -51,7 +50,6 @@ namespace MatterHackers.MatterControl.ActionBar
 		};
 
 		private static RGBA_Bytes borderColor = new RGBA_Bytes(255, 255, 255);
-		private int borderWidth = 2;
 
 		public string IndicatorValue
 		{
@@ -81,7 +79,6 @@ namespace MatterHackers.MatterControl.ActionBar
 				VAnchor = VAnchor.ParentTop,
 				Margin = new BorderDouble(0, 3),
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
-				Visible = false
 			};
 			this.AddChild(temperatureTypeName);
 
@@ -100,31 +97,6 @@ namespace MatterHackers.MatterControl.ActionBar
 				Height = 18 * GuiWidget.DeviceScale
 			};
 			this.AddChild(buttonContainer);
-
-			preheatButton = whiteButtonFactory.Generate("Preheat".Localize().ToUpper());
-			preheatButton.Cursor = Cursors.Hand;
-			preheatButton.Visible = false;
-			preheatButton.Click += (s, e) => SetTargetTemperature();
-			buttonContainer.AddChild(preheatButton);
-		}
-
-		public override void OnMouseEnterBounds(MouseEventArgs mouseEvent)
-		{
-			temperatureTypeName.Visible = true;
-			if (PrinterConnection.Instance.PrinterIsConnected && !PrinterConnection.Instance.PrinterIsPrinting)
-			{
-				preheatButton.Visible = true;
-			}
-
-			base.OnMouseEnterBounds(mouseEvent);
-		}
-
-		public override void OnMouseLeaveBounds(MouseEventArgs mouseEvent)
-		{
-			temperatureTypeName.Visible = false;
-			preheatButton.Visible = false;
-
-			base.OnMouseLeaveBounds(mouseEvent);
 		}
 
 		protected virtual void SetTargetTemperature() { }

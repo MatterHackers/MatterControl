@@ -51,7 +51,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			DisplayCurrentTemperature();
 
 			ToolTipText = "Current extruder temperature".Localize();
-			preheatButton.ToolTipText = "Preheat the Extruder".Localize();
 
 			PrinterConnection.Instance.ExtruderTemperatureRead.RegisterEvent((s, e) => DisplayCurrentTemperature(), ref unregisterEvents);
 		}

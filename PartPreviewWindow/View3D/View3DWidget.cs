@@ -58,6 +58,7 @@ using MatterHackers.RayTracer;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
 using MatterHackers.RayTracer.Traceable;
+using MatterHackers.MatterControl.ActionBar;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -446,6 +447,27 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				editToolBar.AddChild(doEdittingButtonsContainer);
 				buttonBottomPanel.AddChild(editToolBar);
+
+				var extruderTemperatureWidget = new TemperatureWidgetExtruder()
+				{
+					VAnchor = VAnchor.ParentTop | VAnchor.FitToChildren | VAnchor.AbsolutePosition,
+					HAnchor = HAnchor.ParentRight | HAnchor.FitToChildren,
+					Visible = true,
+					Margin = new BorderDouble(0, 0, 210, 5)
+				};
+				this.AddChild(extruderTemperatureWidget);
+
+				if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_heated_bed))
+				{
+					var bedTemperatureWidget = new TemperatureWidgetBed()
+					{
+						VAnchor = VAnchor.ParentTop | VAnchor.FitToChildren | VAnchor.AbsolutePosition,
+						HAnchor = HAnchor.ParentRight | HAnchor.FitToChildren,
+						Visible = true,
+						Margin = new BorderDouble(0, 0, 150, 5)
+					};
+					this.AddChild(bedTemperatureWidget);
+				}
 			}
 
 			GuiWidget buttonRightPanelHolder = new GuiWidget()
