@@ -1310,7 +1310,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				// marlin and repetier send a : before the number and then and ok
 				if (!GCodeFile.GetFirstNumberAfter(":", line, ref currentLineIndexToSend))
 				{
-					if(currentLineIndexToSend == allCheckSumLinesSent.Count)
+					if (currentLineIndexToSend == allCheckSumLinesSent.Count)
 					{
 						// asking for the next line don't do anything, conitue with sending next instruction
 						return;
@@ -1321,6 +1321,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						// clear waiting for ok because smoothie will not send it
 						PrintingCanContinue(null, null);
 					}
+				}
+
+				if (currentLineIndexToSend == allCheckSumLinesSent.Count)
+				{
+					// asking for the next line don't do anything, conitue with sending next instruction
+					return;
 				}
 
 				if (currentLineIndexToSend >= allCheckSumLinesSent.Count
