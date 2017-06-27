@@ -1438,6 +1438,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					}
 				}
 
+				if (currentLineIndexToSend == allCheckSumLinesSent.Count)
+				{
+					// asking for the next line don't do anything, conitue with sending next instruction
+					return;
+				}
+
 				if (currentLineIndexToSend >= allCheckSumLinesSent.Count
 					|| currentLineIndexToSend == 1)
 				{
