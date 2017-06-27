@@ -294,11 +294,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			ReadLineContainsCallBacks.AddCallbackToKey("T0:", ReadTemperatures); // marlin
 			ReadLineContainsCallBacks.AddCallbackToKey("T:", ReadTemperatures); // repatier
 
-            ReadLineStartCallBacks.AddCallbackToKey("SD printing byte", ReadSdProgress); // repetier
+			ReadLineStartCallBacks.AddCallbackToKey("SD printing byte", ReadSdProgress); // repetier
 
 			ReadLineStartCallBacks.AddCallbackToKey("C:", ReadTargetPositions);
 			ReadLineStartCallBacks.AddCallbackToKey("ok C:", ReadTargetPositions); // smoothie is reporting the C: with an ok first.
 			ReadLineStartCallBacks.AddCallbackToKey("X:", ReadTargetPositions);
+			ReadLineStartCallBacks.AddCallbackToKey("ok X:", ReadTargetPositions); // 
 
 			ReadLineStartCallBacks.AddCallbackToKey("rs ", PrinterRequestsResend); // smoothie is lower case and no :
 			ReadLineStartCallBacks.AddCallbackToKey("RS:", PrinterRequestsResend);
