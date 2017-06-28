@@ -27,11 +27,14 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.MatterControl.SlicerConfiguration;
-using System;
+using System.Linq;
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
+using MatterHackers.MatterControl.ConfigurationPage;
+using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.PrinterControls;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.ActionBar
 {
@@ -39,38 +42,28 @@ namespace MatterHackers.MatterControl.ActionBar
 	{
 		// Extruder widget is hard-wired to extruder 0
 		private const int extruderIndex = 0;
-		private EventHandler unregisterEvents;
+		private int moveAmount = 1;
 
 		private string sliceSettingsNote = "Note: Slice Settings are applied before the print actually starts. Changes while printing will not effect the active print.".Localize();
 		private string waitingForExtruderToHeatMessage = "The extruder is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting extruder temperature in 'Slice Settings' -> 'Filament'.\n\n{1}".Localize();
 
-		public TemperatureWidgetExtruder()
+		private TextImageButtonFactory buttonFactory;
+
+		public TemperatureWidgetExtruder(TextImageButtonFactory buttonFactory)
 			: base("150.3°")
 		{
-			temperatureTypeName.Text = "Extruder";
-			DisplayCurrentTemperature();
+			this.buttonFactory = buttonFactory;
+			this.DisplayCurrentTemperature();
+			this.ToolTipText = "Current extruder temperature".Localize();
 
-			ToolTipText = "Current extruder temperature".Localize();
+			this.PopupContent = this.GetPopupContent();
 
 			PrinterConnection.Instance.ExtruderTemperatureRead.RegisterEvent((s, e) => DisplayCurrentTemperature(), ref unregisterEvents);
 		}
 
-		private void DisplayCurrentTemperature()
-		{
-			string tempDirectionIndicator = "";
-			if (PrinterConnection.Instance.GetTargetExtruderTemperature(extruderIndex) > 0)
-			{
-				if ((int)(PrinterConnection.Instance.GetTargetExtruderTemperature(extruderIndex) + 0.5) < (int)(PrinterConnection.Instance.GetActualExtruderTemperature(extruderIndex) + 0.5))
-				{
-					tempDirectionIndicator = "↓";
-				}
-				else if ((int)(PrinterConnection.Instance.GetTargetExtruderTemperature(extruderIndex) + 0.5) > (int)(PrinterConnection.Instance.GetActualExtruderTemperature(extruderIndex) + 0.5))
-				{
-					tempDirectionIndicator = "↑";
-				}
-			}
-			this.IndicatorValue = string.Format(" {0:0.#}°{1}", PrinterConnection.Instance.GetActualExtruderTemperature(extruderIndex), tempDirectionIndicator);
-		}
+		protected override int TargetTemperature => (int)PrinterConnection.Instance.GetTargetExtruderTemperature(extruderIndex);
+
+		protected override int ActualTemperature => (int)PrinterConnection.Instance.GetActualExtruderTemperature(extruderIndex);
 
 		protected override void SetTargetTemperature()
 		{
@@ -92,10 +85,173 @@ namespace MatterHackers.MatterControl.ActionBar
 			}
 		}
 
-		public override void OnClosed(ClosedEventArgs e)
+		protected override GuiWidget GetPopupContent()
 		{
-			unregisterEvents?.Invoke(this, null);
-			base.OnClosed(e);
+			var widget = new IgnoredPopupWidget()
+			{
+				Width = 300,
+				HAnchor = HAnchor.AbsolutePosition,
+				VAnchor = VAnchor.FitToChildren,
+				BackgroundColor = RGBA_Bytes.White,
+				Padding = new BorderDouble(12, 0)
+			};
+
+			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.ParentLeftRight,
+				VAnchor = VAnchor.FitToChildren | VAnchor.ParentTop,
+				BackgroundColor = RGBA_Bytes.White
+			};
+
+			container.AddChild(new SettingsItem(
+				string.Format("{0} {1}", "HotEnd".Localize(), extruderIndex + 1),
+				new SettingsItem.ToggleSwitchConfig()
+				{
+					Checked = false,
+					ToggleAction = (itemChecked) =>
+					{
+						if (itemChecked)
+						{
+							// Set to goal temp
+							SetTargetTemperature();
+						}
+						else
+						{
+							// Turn off extruder
+							PrinterConnection.Instance.SetTargetExtruderTemperature(extruderIndex, 0);
+						}
+					}
+				}, 
+				enforceGutter: false));
+
+			var presetsSelector = new PresetSelectorWidget(string.Format($"{"Material".Localize()} {extruderIndex + 1}"), RGBA_Bytes.Transparent, NamedSettingsLayers.Material, extruderIndex)
+			{
+				Margin = 0,
+				BackgroundColor = RGBA_Bytes.Transparent,
+				HAnchor = HAnchor.AbsolutePosition,
+				Width = 150
+			};
+
+			this.Width = 150;
+
+			// HACK: remove undesired item
+			var label = presetsSelector.Children<TextWidget>().FirstOrDefault();
+			label.Close();
+
+			var pulldownContainer = presetsSelector.FindNamedChildRecursive("Preset Pulldown Container");
+			if (pulldownContainer != null)
+			{
+				pulldownContainer.Padding = 0;
+			}
+
+			var dropList = presetsSelector.FindNamedChildRecursive("Material") as DropDownList;
+			if (dropList != null)
+			{
+				dropList.TextColor = buttonFactory.normalTextColor;
+			}
+
+			container.AddChild(new SettingsItem("Material".Localize(), presetsSelector, enforceGutter: false));
+
+			widget.AddChild(container);
+
+			// Extrude buttons {{
+
+			var moveButtonFactory = new TextImageButtonFactory()
+			{
+				FixedHeight = 20 * GuiWidget.DeviceScale,
+				FixedWidth = 30 * GuiWidget.DeviceScale,
+				fontSize = 8,
+				Margin = new BorderDouble(2, 0),
+				checkedBorderColor = buttonFactory.normalTextColor,
+				normalTextColor = buttonFactory.normalTextColor,
+				normalFillColor = buttonFactory.normalFillColor,
+				hoverFillColor = buttonFactory.hoverFillColor,
+				pressedFillColor = buttonFactory.pressedFillColor,
+				pressedTextColor = buttonFactory.pressedTextColor
+			};
+
+			var buttonContainer = new FlowLayoutWidget()
+			{
+				HAnchor = HAnchor.FitToChildren,
+				VAnchor = VAnchor.FitToChildren
+			};
+
+			var retractButton = buttonFactory.Generate("Retract".Localize());
+			retractButton.ToolTipText = "Retract filament".Localize();
+			retractButton.Margin = new BorderDouble(8, 0);
+			retractButton.Click += (s, e) =>
+			{
+				PrinterConnection.Instance.MoveExtruderRelative(moveAmount * -1, MovementControls.EFeedRate(extruderIndex), extruderIndex);
+			};
+			buttonContainer.AddChild(retractButton);
+
+			var extrudeButton = buttonFactory.Generate("Extrude".Localize());
+			extrudeButton.ToolTipText = "Extrude filament".Localize();
+			extrudeButton.Margin = 0;
+			extrudeButton.Click += (s, e) =>
+			{
+				PrinterConnection.Instance.MoveExtruderRelative(moveAmount, MovementControls.EFeedRate(extruderIndex), extruderIndex);
+			};
+			buttonContainer.AddChild(extrudeButton);
+
+			container.AddChild(new SettingsItem(
+				string.Format("{0} {1}", "Extruder".Localize(), extruderIndex + 1),
+				buttonContainer, 
+				enforceGutter: false));
+
+			var moveButtonsContainer = new FlowLayoutWidget()
+			{
+				VAnchor = VAnchor.FitToChildren,
+				HAnchor = HAnchor.FitToChildren,
+				Margin = new BorderDouble(0, 3)
+			};
+
+			RadioButton oneButton = moveButtonFactory.GenerateRadioButton("1");
+			oneButton.VAnchor = VAnchor.ParentCenter;
+			oneButton.CheckedStateChanged += (s, e) =>
+			{
+				if (oneButton.Checked)
+				{
+					moveAmount = 1;
+				}
+			};
+			moveButtonsContainer.AddChild(oneButton);
+
+			RadioButton tenButton = moveButtonFactory.GenerateRadioButton("10");
+			tenButton.VAnchor = VAnchor.ParentCenter;
+			tenButton.CheckedStateChanged += (s, e) =>
+			{
+				if (tenButton.Checked)
+				{
+					moveAmount = 10;
+				}
+			};
+			moveButtonsContainer.AddChild(tenButton);
+
+			RadioButton oneHundredButton = moveButtonFactory.GenerateRadioButton("100");
+			oneHundredButton.VAnchor = VAnchor.ParentCenter;
+			oneHundredButton.CheckedStateChanged += (s, e) =>
+			{
+				if (oneHundredButton.Checked)
+				{
+					moveAmount = 100;
+				}
+			};
+			moveButtonsContainer.AddChild(oneHundredButton);
+
+			tenButton.Checked = true;
+
+			moveButtonsContainer.AddChild(new TextWidget("mm", textColor: buttonFactory.normalTextColor, pointSize: 8)
+			{
+				VAnchor = VAnchor.ParentCenter,
+				Margin = new BorderDouble(3, 0)
+			});
+
+			container.AddChild(new SettingsItem("Distance".Localize(), moveButtonsContainer, enforceGutter: false));
+
+			// Extrude buttons }}
+
+			return widget;
 		}
 	}
 }

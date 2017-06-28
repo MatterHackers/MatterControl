@@ -29,76 +29,108 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using MatterHackers.Agg;
+using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
-using MatterHackers.Agg.VertexSource;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.PartPreviewWindow;
 
 namespace MatterHackers.MatterControl.ActionBar
 {
-	internal class TemperatureWidgetBase : GuiWidget
+	internal class TemperatureWidgetBase : PopupButton
 	{
-		private TextWidget currentTempIndicator;
-		protected TextWidget temperatureTypeName;
+		protected TextWidget CurrentTempIndicator;
+		private TextWidget goalTempIndicator;
+		protected TextWidget DirectionIndicator;
 
-		protected TextImageButtonFactory whiteButtonFactory = new TextImageButtonFactory()
+		protected ImageWidget ImageWidget = new ImageWidget(StaticData.Instance.LoadIcon("Hotend.png"))
 		{
-			FixedHeight = 18 * GuiWidget.DeviceScale,
-			fontSize = 7,
-			normalFillColor = ApplicationController.Instance.Theme.TabBodyBackground,
-			normalTextColor = ActiveTheme.Instance.PrimaryTextColor,
+			VAnchor = VAnchor.ParentCenter,
+			Margin = new BorderDouble(right: 5)
 		};
 
-		private static RGBA_Bytes borderColor = new RGBA_Bytes(255, 255, 255);
+		protected EventHandler unregisterEvents;
 
-		public string IndicatorValue
-		{
-			get
-			{
-				return currentTempIndicator.Text;
-			}
-			set
-			{
-				if (currentTempIndicator.Text != value)
-				{
-					currentTempIndicator.Text = value;
-				}
-			}
-		}
+		protected virtual int ActualTemperature { get; }
+		protected virtual int TargetTemperature { get; }
 
 		public TemperatureWidgetBase(string textValue)
-			: base(52 * GuiWidget.DeviceScale, 52 * GuiWidget.DeviceScale)
 		{
 			this.BackgroundColor = ApplicationController.Instance.Theme.SlightShade;
 			this.Margin = new BorderDouble(0, 2) * GuiWidget.DeviceScale;
+			this.HAnchor = HAnchor.FitToChildren;
+			this.VAnchor = VAnchor.FitToChildren;
+			this.Cursor = Cursors.Hand;
 
-			temperatureTypeName = new TextWidget("", pointSize: 8)
+			this.AlignToRightEdge = true;
+
+			var container = new FlowLayoutWidget()
 			{
-				AutoExpandBoundsToText = true,
-				HAnchor = HAnchor.ParentCenter,
-				VAnchor = VAnchor.ParentTop,
-				Margin = new BorderDouble(0, 3),
-				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				HAnchor = HAnchor.FitToChildren,
+				VAnchor = VAnchor.FitToChildren,
+				Padding = new BorderDouble(5)
 			};
-			this.AddChild(temperatureTypeName);
+			this.AddChild(container);
 
-			currentTempIndicator = new TextWidget(textValue, pointSize: 11)
+			container.AddChild(this.ImageWidget);
+
+			CurrentTempIndicator = new TextWidget(textValue, pointSize: 11)
 			{
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
-				HAnchor = HAnchor.ParentCenter,
 				VAnchor = VAnchor.ParentCenter,
 				AutoExpandBoundsToText = true
 			};
-			this.AddChild(currentTempIndicator);
+			container.AddChild(CurrentTempIndicator);
 
-			var buttonContainer = new GuiWidget()
+			container.AddChild(new TextWidget("/") { TextColor = ActiveTheme.Instance.PrimaryTextColor });
+
+			goalTempIndicator = new TextWidget(textValue, pointSize: 11)
 			{
-				HAnchor = Agg.UI.HAnchor.ParentLeftRight,
-				Height = 18 * GuiWidget.DeviceScale
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				VAnchor = VAnchor.ParentCenter,
+				AutoExpandBoundsToText = true
 			};
-			this.AddChild(buttonContainer);
+			container.AddChild(goalTempIndicator);
+
+			DirectionIndicator = new TextWidget(textValue, pointSize: 11)
+			{
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				VAnchor = VAnchor.ParentCenter,
+				AutoExpandBoundsToText = true,
+				Margin = new BorderDouble(left: 5)
+			};
+			container.AddChild(DirectionIndicator);
 		}
 
+		protected void DisplayCurrentTemperature()
+		{
+			int actualTemperature =  this.ActualTemperature;
+			int targetTemperature = this.TargetTemperature;
+
+			if (targetTemperature > 0)
+			{
+				int targetTemp = (int)(targetTemperature + 0.5);
+				int actualTemp = (int)(actualTemperature + 0.5);
+
+				this.goalTempIndicator.Text = $"{targetTemperature:0.#}°";
+				this.DirectionIndicator.Text = (targetTemp < actualTemp) ? "↓" : "↑";
+			}
+			else
+			{
+				this.DirectionIndicator.Text = "";
+			}
+
+
+			this.CurrentTempIndicator.Text = $"{actualTemperature:0.#}";
+		}
+
+
 		protected virtual void SetTargetTemperature() { }
+
+		protected virtual GuiWidget GetPopupContent() { return null; }
+
+		public override void OnClosed(ClosedEventArgs e)
+		{
+			unregisterEvents?.Invoke(this, null);
+			base.OnClosed(e);
+		}
 	}
 }

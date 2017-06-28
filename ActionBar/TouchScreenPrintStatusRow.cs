@@ -114,7 +114,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			tempWidgets.Width = 120;
 
-			extruderTemperatureWidget = new TemperatureWidgetExtruder();
+			extruderTemperatureWidget = new TemperatureWidgetExtruder(ApplicationController.Instance.Theme.MenuButtonFactory);
 			//extruderTemperatureWidget.Margin = new BorderDouble(right: 6);
 			extruderTemperatureWidget.VAnchor = VAnchor.ParentTop;
 

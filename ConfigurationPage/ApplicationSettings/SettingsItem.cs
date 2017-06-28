@@ -18,9 +18,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 		private RGBA_Bytes menuTextColor = RGBA_Bytes.Black;
 
-		public SettingsItem(string text, ToggleSwitchConfig toggleSwitchConfig = null, GuiWidget optionalControls = null, ImageBuffer iconImage = null)
+		public SettingsItem(string text, ToggleSwitchConfig toggleSwitchConfig = null, GuiWidget optionalControls = null, ImageBuffer iconImage = null, bool enforceGutter = true)
 			: base(FlowDirection.LeftToRight)
 		{
+			this.HAnchor = HAnchor.ParentLeftRight;
 			var switchContainer = new FlowLayoutWidget()
 			{
 				VAnchor = VAnchor.ParentCenter,
@@ -40,16 +41,16 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				switchContainer.SetBoundsToEncloseChildren();
 			}
 
-			CreateChildControls(text, switchContainer, optionalControls, iconImage);
+			CreateChildControls(text, switchContainer, optionalControls, enforceGutter, iconImage);
 		}
 
-		public SettingsItem (string text, GuiWidget settingsControls, GuiWidget optionalControls = null, ImageBuffer iconImage = null)
+		public SettingsItem (string text, GuiWidget settingsControls, GuiWidget optionalControls = null, ImageBuffer iconImage = null, bool enforceGutter = true)
 			: base (FlowDirection.LeftToRight)
 		{
-			CreateChildControls(text, settingsControls, optionalControls, iconImage);
+			CreateChildControls(text, settingsControls, optionalControls, enforceGutter, iconImage);
 		}
 
-		private void CreateChildControls(string text, GuiWidget settingsControls, GuiWidget optionalControls, ImageBuffer imageBuffer = null)
+		private void CreateChildControls(string text, GuiWidget settingsControls, GuiWidget optionalControls, bool enforceGutter, ImageBuffer imageBuffer = null)
 		{
 			this.HAnchor = HAnchor.ParentLeftRight;
 			this.MinimumSize = new Vector2(0, 40);
@@ -60,13 +61,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			{
 				optionalControls.VAnchor |= VAnchor.ParentCenter;
 			}
-
-			var sectionLabel = new TextWidget(text)
-			{
-				AutoExpandBoundsToText = true,
-				TextColor = menuTextColor,
-				VAnchor = VAnchor.ParentCenter
-			};
 
 			if (imageBuffer != null)
 			{
@@ -81,7 +75,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 					VAnchor = VAnchor.ParentCenter
 				});
 			}
-			else
+			else if (enforceGutter)
 			{
 				// Add an icon place holder to get consistent label indenting on items lacking icons 
 				this.AddChild(new GuiWidget()
@@ -92,13 +86,20 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				});
 			}
 
-			// Add flag to align all labels - fill empty space if sectionIconPath is empty
-			this.AddChild(sectionLabel, -1);
+			this.AddChild(new TextWidget(text)
+			{
+				AutoExpandBoundsToText = true,
+				TextColor = menuTextColor,
+				VAnchor = VAnchor.ParentCenter,
+			});
+
 			this.AddChild(new HorizontalSpacer());
+
 			if (optionalControls != null)
 			{
 				this.AddChild(optionalControls);
 			}
+
 			this.AddChild(settingsControls);
 		}
 	}

@@ -266,9 +266,6 @@
     <Compile Include="PrinterControls\ControlWidgets\FanControls.cs" />
     <Compile Include="PrinterControls\ControlWidgets\MovementControls.cs" />
     <Compile Include="PrinterControls\ControlWidgets\PowerControls.cs" />
-    <Compile Include="PrinterControls\ControlWidgets\TemperatureControls.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="PrinterControls\PrinterConnections\ShowAuthPanel.cs" />
     <Compile Include="PrinterControls\TerminalWindow\PrinterOutputCache.cs" />
     <Compile Include="PrinterControls\TerminalWindow\TextScrolBar.cs" />
@@ -319,9 +316,6 @@
     <Compile Include="PartPreviewWindow\CreateDiscreteMeshes.cs" />
     <Compile Include="CustomWidgets\EditableNumberDisplay.cs" />
     <Compile Include="PartPreviewWindow\PlatingHelper.cs" />
-    <Compile Include="PrinterControls\EditTemperaturePresetsWindow.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="PrinterControls\ControlWidgets\MacroControls.cs" />
     <Compile Include="PrinterControls\EditManualMovementSpeedsWindow.cs" />
     <Compile Include="PrinterControls\EditMacrosWindow.cs" />
@@ -372,7 +366,6 @@
     <Compile Include="PrinterControls\PrinterConnections\BaseConnectionWidget.cs" />
     <Compile Include="PrinterControls\PrinterConnections\PrinterChooser.cs" />
     <Compile Include="PrinterControls\PrinterConnections\ConnectionWizardPage.cs" />
-    <Compile Include="PrinterControls\TemperatureIndicator.cs" />
     <Compile Include="PrinterControls\XYZJogControls.cs" />
     <Compile Include="Library\Widgets\PrintLibraryWidget.cs" />
     <Compile Include="Queue\OptionsMenu\ExportToFolderProcess.cs" />

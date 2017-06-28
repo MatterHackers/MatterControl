@@ -28,20 +28,15 @@ either expressed or implied, of the FreeBSD Project.
 */
 //#define DO_IN_PLACE_EDIT
 
-using MatterHackers.Agg;
-using MatterHackers.Agg.Image;
-using MatterHackers.Agg.ImageProcessing;
-using MatterHackers.Agg.PlatformAbstract;
-using MatterHackers.Agg.UI;
-using MatterHackers.ImageProcessing;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
+using MatterHackers.Agg;
+using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -108,7 +103,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			FlowLayoutWidget container = new FlowLayoutWidget()
 			{
 				HAnchor = HAnchor.ParentLeftRight,
-				Padding = new BorderDouble(12, 0)
+				Padding = new BorderDouble(12, 0),
+				Name = "Preset Pulldown Container"
 			};
 
 			editButton = TextImageButtonFactory.GetThemedEditButton();
