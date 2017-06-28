@@ -283,7 +283,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 			ReadLineStartCallBacks.AddCallbackToKey("C:", ReadTargetPositions);
 			ReadLineStartCallBacks.AddCallbackToKey("ok C:", ReadTargetPositions); // smoothie is reporting the C: with an ok first.
-			ReadLineStartCallBacks.AddCallbackToKey("ok X:", ReadTargetPositions);
+			ReadLineStartCallBacks.AddCallbackToKey("X:", ReadTargetPositions);
 
 			ReadLineContainsCallBacks.AddCallbackToKey("T:", ReadTemperatures);
 

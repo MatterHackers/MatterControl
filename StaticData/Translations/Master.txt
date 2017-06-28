@@ -6175,3 +6175,15 @@ Translated:The distance the z probe is from the extruder in z. For manual probin
 English:Your 3D print has been auto-paused.\nPause layer{0} reached.
 Translated:Your 3D print has been auto-paused.\nPause layer{0} reached.
 
+English:This is a set of regular expressions to apply to lines prior to sending to a printer. They will be applied in the order listed before sending.
+Translated:This is a set of regular expressions to apply to lines prior to sending to a printer. They will be applied in the order listed before sending.
+
+English:This is a set of regular expressions to apply to lines after they are recived from the printer. They will be applied in order to each line recieved.
+Translated:This is a set of regular expressions to apply to lines after they are recived from the printer. They will be applied in order to each line recieved.
+
+English:Write Filters
+Translated:Write Filters
+
+English:Read Filters
+Translated:Read Filters
+
