@@ -45,12 +45,6 @@ namespace MatterHackers.MatterControl
 		static public RootedObjectEventHandler AddPluginControls = new RootedObjectEventHandler();
 		private static bool pluginsQueuedToAdd = false;
 
-		public void AddPlugins()
-		{
-			AddPluginControls.CallEvents(this, null);
-			pluginsQueuedToAdd = false;
-		}
-
 		public ManualPrinterControls()
 		{
 			this.BackgroundColor = ApplicationController.Instance.Theme.TabBodyBackground;
@@ -63,12 +57,21 @@ namespace MatterHackers.MatterControl
 			{
 				AddChild(new ManualPrinterControlsDesktop());
 			}
+		}
 
+		public override void OnLoad(EventArgs args)
+		{
 			if (!pluginsQueuedToAdd && ActiveSliceSettings.Instance.GetValue("include_firmware_updater") == "Simple Arduino")
 			{
-				UiThread.RunOnIdle(AddPlugins);
+				UiThread.RunOnIdle(() =>
+				{
+					AddPluginControls.CallEvents(this, null);
+					pluginsQueuedToAdd = false;
+				});
 				pluginsQueuedToAdd = true;
 			}
+
+			base.OnLoad(args);
 		}
 	}
 
