@@ -266,7 +266,7 @@ namespace MatterControl.Tests.MatterControl
 		public void noCurlyBracketsInStartGcode(PrinterSettingsLayer layer, string sourceFile)
 		{
 			string settingValue;
-			if (!layer.TryGetValue("start_gcode", out settingValue))
+			if (!layer.TryGetValue(SettingsKey.start_gcode, out settingValue))
 			{
 				return;
 			}
@@ -299,7 +299,7 @@ namespace MatterControl.Tests.MatterControl
 		public void testFirstLayerTempNotInStartGcode(PrinterSettingsLayer layer, string sourceFile)
 		{
 			string settingValue;
-			if (!layer.TryGetValue("start_gcode", out settingValue))
+			if (!layer.TryGetValue(SettingsKey.start_gcode, out settingValue))
 			{
 				return;
 			}
@@ -310,7 +310,7 @@ namespace MatterControl.Tests.MatterControl
 		public void testFirstLayerBedTemperatureNotInStartGcode(PrinterSettingsLayer layer, string sourceFile)
 		{
 			string settingValue;
-			if (!layer.TryGetValue("start_gcode", out settingValue))
+			if (!layer.TryGetValue(SettingsKey.start_gcode, out settingValue))
 			{
 				return;
 			}
