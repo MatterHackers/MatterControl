@@ -109,7 +109,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private bool menuVisible = false;
 		private PopupWidget popupWidget;
 
-		//private GuiWidget buttonView;
+		public PopupButton()
+		{
+		}
+		
 		public PopupButton(GuiWidget buttonView)
 		{
 			this.Margin = 3;
@@ -139,8 +142,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnMouseUp(MouseEventArgs mouseEvent)
 		{
+			// HACK: Child controls seem to be interfering with this.MouseCaptured - this short term workaround ensure we get clicks but likely mean mouse down outside of the control will fire the popup
+			bool mouseUpInBounds = this.PositionWithinLocalBounds(mouseEvent.X, mouseEvent.Y);
+			
 			// Only show the popup if the menu was hidden as the mouse events started
-			if ((buttonView.MouseCaptured || this.MouseCaptured)
+			if ((mouseUpInBounds || buttonView?.MouseCaptured == true)
 				&& !menuVisibileAtMouseDown)
 			{
 				ShowPopup();

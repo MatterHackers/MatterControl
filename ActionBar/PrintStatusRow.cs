@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		{
 			var temperatureWidgets = new FlowLayoutWidget();
 			{
-				extruderTemperatureWidget = new TemperatureWidgetExtruder();
+				extruderTemperatureWidget = new TemperatureWidgetExtruder(ApplicationController.Instance.Theme.MenuButtonFactory);
 				temperatureWidgets.AddChild(extruderTemperatureWidget);
 
 				bedTemperatureWidget = new TemperatureWidgetBed();

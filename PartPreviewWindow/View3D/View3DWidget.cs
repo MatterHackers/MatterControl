@@ -27,7 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -46,6 +45,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.ActionBar;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.Library;
@@ -57,8 +57,6 @@ using MatterHackers.PolygonMesh;
 using MatterHackers.RayTracer;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
-using MatterHackers.RayTracer.Traceable;
-using MatterHackers.MatterControl.ActionBar;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -273,8 +271,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			GuiWidget viewArea = new GuiWidget();
 			viewArea.AnchorAll();
 			{
-				//viewControls3D.RegisterViewer(meshViewerWidget);
-
 				PutOemImageOnBed();
 
 				meshViewerWidget.AnchorAll();
@@ -447,64 +443,32 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				editToolBar.AddChild(doEdittingButtonsContainer);
 				buttonBottomPanel.AddChild(editToolBar);
-
-				var extruderTemperatureWidget = new TemperatureWidgetExtruder()
-				{
-					VAnchor = VAnchor.ParentTop | VAnchor.FitToChildren | VAnchor.AbsolutePosition,
-					HAnchor = HAnchor.ParentRight | HAnchor.FitToChildren,
-					Visible = true,
-					Margin = new BorderDouble(0, 0, 210, 5)
-				};
-				this.AddChild(extruderTemperatureWidget);
-
-				if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_heated_bed))
-				{
-					var bedTemperatureWidget = new TemperatureWidgetBed()
-					{
-						VAnchor = VAnchor.ParentTop | VAnchor.FitToChildren | VAnchor.AbsolutePosition,
-						HAnchor = HAnchor.ParentRight | HAnchor.FitToChildren,
-						Visible = true,
-						Margin = new BorderDouble(0, 0, 150, 5)
-					};
-					this.AddChild(bedTemperatureWidget);
-				}
 			}
-
-			GuiWidget buttonRightPanelHolder = new GuiWidget()
-			{
-				HAnchor = HAnchor.FitToChildren,
-				VAnchor = VAnchor.ParentBottomTop
-			};
-			buttonRightPanelHolder.Name = "buttonRightPanelHolder";
-			centerPartPreviewAndControls.AddChild(buttonRightPanelHolder);
-
-			buttonRightPanelDisabledCover = new GuiWidget()
-			{
-				HAnchor = HAnchor.ParentLeftRight,
-				VAnchor = VAnchor.ParentBottomTop
-			};
-			buttonRightPanelDisabledCover.BackgroundColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryBackgroundColor, 150);
-			buttonRightPanelHolder.AddChild(buttonRightPanelDisabledCover);
 
 			LockEditControls();
-
-			GuiWidget leftRightSpacer = new GuiWidget();
-			leftRightSpacer.HAnchor = HAnchor.ParentLeftRight;
-			buttonBottomPanel.AddChild(leftRightSpacer);
-
-			if (windowType == WindowMode.StandAlone)
-			{
-				Button closeButton = smallMarginButtonFactory.Generate("Close".Localize());
-				buttonBottomPanel.AddChild(closeButton);
-				closeButton.Click += (sender, e) =>
-				{
-					CloseOnIdle();
-				};
-			}
 
 			mainContainerTopToBottom.AddChild(buttonBottomPanel);
 
 			this.AddChild(mainContainerTopToBottom);
+
+			var temperatureBar = new FlowLayoutWidget()
+			{
+				VAnchor = VAnchor.ParentTop | VAnchor.FitToChildren,
+				HAnchor = HAnchor.ParentRight | HAnchor.FitToChildren,
+				Margin = new BorderDouble(right: 165, top: 5)
+			};
+
+			temperatureBar.AddChild(new TemperatureWidgetExtruder(ApplicationController.Instance.Theme.MenuButtonFactory)
+			{
+				Margin = new BorderDouble(right: 10)
+			});
+
+			if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_heated_bed))
+			{
+				temperatureBar.AddChild(new TemperatureWidgetBed());
+			}
+			this.AddChild(temperatureBar);
+
 			this.AnchorAll();
 
 			meshViewerWidget.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Rotation;
@@ -2004,7 +1968,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			viewIsInEditModePreLock = doEdittingButtonsContainer.Visible;
 			doEdittingButtonsContainer.Visible = false;
-			buttonRightPanelDisabledCover.Visible = true;
 			if (viewControls3D.PartSelectVisible == true)
 			{
 				viewControls3D.PartSelectVisible = false;
@@ -2403,7 +2366,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void UnlockEditControls()
 		{
-			buttonRightPanelDisabledCover.Visible = false;
 			processingProgressControl.Visible = false;
 
 			if (viewIsInEditModePreLock)

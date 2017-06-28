@@ -27,9 +27,11 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
+using MatterHackers.Agg;
+using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.ConfigurationPage;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
@@ -37,41 +39,25 @@ namespace MatterHackers.MatterControl.ActionBar
 {
 	internal class TemperatureWidgetBed : TemperatureWidgetBase
 	{
-		private EventHandler unregisterEvents;
-
 		private string sliceSettingsNote = "Note: Slice Settings are applied before the print actually starts. Changes while printing will not effect the active print.".Localize();
 		private string waitingForBedToHeatMessage = "The bed is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting bed temperature in SETTINGS -> Filament -> Temperatures.\n\n{1}".Localize();
 		private string waitingForBedToHeatTitle = "Waiting For Bed To Heat".Localize();
 
-		//Not currently hooked up to anything
 		public TemperatureWidgetBed()
 			: base("150.3°")
 		{
-			temperatureTypeName.Text = "Print Bed";
-			DisplayCurrentTemperature();
-			ToolTipText = "Current bed temperature".Localize();
+			this.DisplayCurrentTemperature();
+			this.ToolTipText = "Current bed temperature".Localize();
+			this.ImageWidget.Image = StaticData.Instance.LoadIcon("Bed.png");
+			
+			this.PopupContent = this.GetPopupContent();
 
 			PrinterConnection.Instance.BedTemperatureRead.RegisterEvent((s, e) => DisplayCurrentTemperature(), ref unregisterEvents);
 		}
 
-		private void DisplayCurrentTemperature()
-		{
-			string tempDirectionIndicator = "";
+		protected override int TargetTemperature => (int)PrinterConnection.Instance.TargetBedTemperature;
 
-			if (PrinterConnection.Instance.TargetBedTemperature > 0)
-			{
-				if ((int)(PrinterConnection.Instance.TargetBedTemperature + 0.5) < (int)(PrinterConnection.Instance.ActualBedTemperature + 0.5))
-				{
-					tempDirectionIndicator = "↓";
-				}
-				else if ((int)(PrinterConnection.Instance.TargetBedTemperature + 0.5) > (int)(PrinterConnection.Instance.ActualBedTemperature + 0.5))
-				{
-					tempDirectionIndicator = "↑";
-				}
-			}
-
-			this.IndicatorValue = string.Format(" {0:0.#}°{1}", PrinterConnection.Instance.ActualBedTemperature, tempDirectionIndicator);
-		}
+		protected override int ActualTemperature => (int)PrinterConnection.Instance.ActualBedTemperature;
 
 		protected override void SetTargetTemperature()
 		{
@@ -93,10 +79,65 @@ namespace MatterHackers.MatterControl.ActionBar
 			}
 		}
 
-		public override void OnClosed(ClosedEventArgs e)
+		protected override GuiWidget GetPopupContent()
 		{
-			unregisterEvents?.Invoke(this, null);
-			base.OnClosed(e);
+			var widget = new IgnoredPopupWidget()
+			{
+				Width = 300,
+				HAnchor = HAnchor.AbsolutePosition,
+				VAnchor = VAnchor.FitToChildren,
+				BackgroundColor = RGBA_Bytes.White,
+				Padding = new BorderDouble(12, 0)
+			};
+
+			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.ParentLeftRight,
+				VAnchor = VAnchor.FitToChildren | VAnchor.ParentTop,
+				BackgroundColor = RGBA_Bytes.White
+			};
+			widget.AddChild(container);
+
+			container.AddChild(new SettingsItem(
+				"Heated Bed".Localize(),
+				new SettingsItem.ToggleSwitchConfig()
+				{
+					Checked = false,
+					ToggleAction = (itemChecked) =>
+					{
+						var goalTemp = itemChecked ? ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.bed_temperature) : 0;
+
+						if (PrinterConnection.Instance.PrinterIsPrinting
+							&& PrinterConnection.Instance.PrintingState == DetailedPrintingState.HeatingBed
+							&& goalTemp != PrinterConnection.Instance.TargetBedTemperature)
+						{
+							string sliceSettingsNote = "Note: Slice Settings are applied before the print actually starts. Changes while printing will not effect the active print.";
+							string message = string.Format(
+								"The bed is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting bed temperature in 'Slice Settings' -> 'Filament'.\n\n{1}", 
+								PrinterConnection.Instance.TargetBedTemperature, 
+								sliceSettingsNote);
+
+							StyledMessageBox.ShowMessageBox(null, message, "Waiting For Bed To Heat");
+						}
+						else
+						{
+							if (itemChecked)
+							{
+								SetTargetTemperature();
+							}
+							else
+							{
+								PrinterConnection.Instance.TargetBedTemperature = 0;
+
+								//string displayString = string.Format("{0:0.0}°C", PrinterConnectionAndCommunication.Instance.TargetBedTemperature);
+								//targetTemperatureDisplay.SetDisplayString(displayString);
+							}
+						}
+					}
+				},
+				enforceGutter: false));
+
+			return widget;
 		}
 	}
 }

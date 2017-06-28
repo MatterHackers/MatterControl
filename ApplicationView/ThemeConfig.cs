@@ -187,6 +187,7 @@ namespace MatterHackers.MatterControl
 				pressedTextColor = RGBA_Bytes.Black,
 				disabledTextColor = theme.TertiaryBackgroundColor,
 				normalFillColor = RGBA_Bytes.LightGray,
+				pressedFillColor = RGBA_Bytes.LightGray,
 				Margin = new BorderDouble(8, 0),
 				borderWidth = 0,
 				FixedHeight = 32,
