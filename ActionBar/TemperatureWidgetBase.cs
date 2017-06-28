@@ -41,7 +41,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		private TextWidget goalTempIndicator;
 		protected TextWidget DirectionIndicator;
 
-		protected ImageWidget ImageWidget = new ImageWidget(StaticData.Instance.LoadIcon("Hotend.png"))
+		protected ImageWidget ImageWidget = new ImageWidget(StaticData.Instance.LoadIcon("hotend.png"))
 		{
 			VAnchor = VAnchor.ParentCenter,
 			Margin = new BorderDouble(right: 5)
