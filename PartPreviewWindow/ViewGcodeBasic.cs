@@ -92,6 +92,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private PrinterConfig printer;
 		private ViewControls3D viewControls3D;
 
+		private BedConfig bedPlate;
+
 		public ViewGcodeBasic(Vector3 viewerVolume, Vector2 bedCenter, BedShape bedShape, WindowMode windowMode, ViewControls3D viewControls3D, ThemeConfig theme, MeshViewerWidget externalMeshViewer)
 		{
 			this.externalMeshViewer = externalMeshViewer;
@@ -128,8 +130,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}, ref unregisterEvents);
 
+			bedPlate = ApplicationController.Instance.Printer.BedPlate;
+
+			bedPlate.ActiveLayerChanged += ActiveLayer_Changed;
+
 			// TODO: Why do we clear GCode on AdvancedControlsPanelReloading - assume some slice settings should invalidate. If so, code should be more specific and bound to slice settings changed
 			ApplicationController.Instance.AdvancedControlsPanelReloading.RegisterEvent((s, e) => printer.BedPlate.GCodeRenderer?.Clear3DGCode(), ref unregisterEvents);
+		}
+
+		private void ActiveLayer_Changed(object sender, EventArgs e)
+		{
+			if (bedPlate.ActiveLayerIndex != (int)(selectLayerSlider.Value + .5))
+			{
+				selectLayerSlider.Value = bedPlate.ActiveLayerIndex;
+			}
 		}
 
 		private GCodeFile loadedGCode => printer.BedPlate.LoadedGCode;
@@ -145,8 +159,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			gcodeProcessingStateInfoText = null;
 
 			FlowLayoutWidget mainContainerTopToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			mainContainerTopToBottom.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
-			mainContainerTopToBottom.VAnchor = Agg.UI.VAnchor.Max_FitToChildren_ParentHeight;
+			mainContainerTopToBottom.HAnchor = HAnchor.Max_FitToChildren_ParentWidth;
+			mainContainerTopToBottom.VAnchor = VAnchor.Max_FitToChildren_ParentHeight;
 
 			buttonBottomPanel = new FlowLayoutWidget(FlowDirection.LeftToRight);
 			buttonBottomPanel.HAnchor = HAnchor.ParentLeftRight;
@@ -345,24 +359,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				return;
 			}
 
-			GCodeRenderer.ExtrusionColor = ActiveTheme.Instance.PrimaryAccentColor;
-
-			var renderInfo = new GCodeRenderInfo(
-				0,
-				Math.Min(gcode2DWidget.ActiveLayerIndex + 1, loadedGCode.NumChangesInZ),
-				gcode2DWidget.TotalTransform,
-				1,
-				GetRenderType(),
-				gcode2DWidget.FeatureToStartOnRatio0To1,
-				gcode2DWidget.FeatureToEndOnRatio0To1,
-				new Vector2[] 
-				{
-					ActiveSliceSettings.Instance.Helpers.ExtruderOffset(0),
-					ActiveSliceSettings.Instance.Helpers.ExtruderOffset(1)
-				},
-				MeshViewerWidget.GetMaterialColor);
-
-			printer.BedPlate.GCodeRenderer.Render3D(renderInfo);
+			printer.BedPlate.RenderExtra();
 		}
 
 		private void SetAnimationPosition()
@@ -646,6 +643,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
+			var printer = ApplicationController.Instance.Printer;
+
 			if (gcode2DWidget != null
 				&& loadedGCode?.LineCount > 0)
 			{
@@ -660,8 +659,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				viewControlsToggle.Visible = true;
 
 				setLayerWidget?.Close();
-				setLayerWidget = new SetLayerWidget(gcode2DWidget, ApplicationController.Instance.Theme.GCodeLayerButtons);
-				setLayerWidget.VAnchor = Agg.UI.VAnchor.ParentTop;
+				setLayerWidget = new SetLayerWidget(gcode2DWidget, ApplicationController.Instance.Theme.GCodeLayerButtons, ApplicationController.Instance.Printer.BedPlate);
+				setLayerWidget.VAnchor = VAnchor.ParentTop;
 				layerSelectionButtonsPanel.AddChild(setLayerWidget);
 
 				navigationWidget?.Close();
@@ -673,20 +672,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				selectLayerSlider = new SolidSlider(new Vector2(), sliderWidth, 0, loadedGCode.NumChangesInZ - 1, Orientation.Vertical);
 				selectLayerSlider.ValueChanged += (s, e) =>
 				{
-					gcode2DWidget.FeatureToStartOnRatio0To1 = layerRenderRatioSlider.FirstValue;
-					gcode2DWidget.FeatureToEndOnRatio0To1 = layerRenderRatioSlider.SecondValue;
-					gcode2DWidget.Invalidate();
+					// TODO: Why would these need to be updated here as well as in assigned in the hslider below?
+					printer.BedPlate.RenderInfo.FeatureToStartOnRatio0To1 = layerRenderRatioSlider.FirstValue;
+					printer.BedPlate.RenderInfo.FeatureToEndOnRatio0To1 = layerRenderRatioSlider.SecondValue;
 
-					gcode2DWidget.ActiveLayerIndex = (int)(selectLayerSlider.Value + .5);
+					printer.BedPlate.ActiveLayerIndex = (int)(selectLayerSlider.Value + .5);
+
+					this.Invalidate();
 				};
 
-				gcode2DWidget.ActiveLayerChanged += (s, e) =>
-				{
-					if (gcode2DWidget.ActiveLayerIndex != (int)(selectLayerSlider.Value + .5))
-					{
-						selectLayerSlider.Value = gcode2DWidget.ActiveLayerIndex;
-					}
-				};
 				AddChild(selectLayerSlider);
 
 				layerRenderRatioSlider?.Close();
@@ -694,24 +688,40 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				layerRenderRatioSlider.FirstValue = 0;
 				layerRenderRatioSlider.FirstValueChanged += (s, e) =>
 				{
-					gcode2DWidget.FeatureToStartOnRatio0To1 = layerRenderRatioSlider.FirstValue;
-					gcode2DWidget.FeatureToEndOnRatio0To1 = layerRenderRatioSlider.SecondValue;
-					gcode2DWidget.Invalidate();
+					printer.BedPlate.RenderInfo.FeatureToStartOnRatio0To1 = layerRenderRatioSlider.FirstValue;
+					printer.BedPlate.RenderInfo.FeatureToEndOnRatio0To1 = layerRenderRatioSlider.SecondValue;
+
+					this.Invalidate();
 				};
 				layerRenderRatioSlider.SecondValue = 1;
 				layerRenderRatioSlider.SecondValueChanged += (s, e) =>
 				{
-					gcode2DWidget.FeatureToStartOnRatio0To1 = layerRenderRatioSlider.FirstValue;
-					gcode2DWidget.FeatureToEndOnRatio0To1 = layerRenderRatioSlider.SecondValue;
-					gcode2DWidget.Invalidate();
+					printer.BedPlate.RenderInfo.FeatureToStartOnRatio0To1 = layerRenderRatioSlider.FirstValue;
+					printer.BedPlate.RenderInfo.FeatureToEndOnRatio0To1 = layerRenderRatioSlider.SecondValue;
+
+
+					this.Invalidate();
 				};
 				AddChild(layerRenderRatioSlider);
 
 				SetSliderSizes();
 
-				// let's change the active layer so that it is set to the first layer with data
-				gcode2DWidget.ActiveLayerIndex = gcode2DWidget.ActiveLayerIndex + 1;
-				gcode2DWidget.ActiveLayerIndex = gcode2DWidget.ActiveLayerIndex - 1;
+				GCodeRenderer.ExtrusionColor = ActiveTheme.Instance.PrimaryAccentColor;
+				// ResetRenderInfo
+				printer.BedPlate.RenderInfo = new GCodeRenderInfo(
+					0,
+					1,
+					Agg.Transform.Affine.NewIdentity(),
+					1,
+					GetRenderType(),
+					0,
+					1,
+					new Vector2[]
+					{
+						ActiveSliceSettings.Instance.Helpers.ExtruderOffset(0),
+						ActiveSliceSettings.Instance.Helpers.ExtruderOffset(1)
+					},
+					MeshViewerWidget.GetMaterialColor);
 
 				this.gcodeDetails = new GCodeDetails(this.loadedGCode);
 

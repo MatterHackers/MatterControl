@@ -48,9 +48,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		public event EventHandler DoneLoading;
 		
-		public double FeatureToStartOnRatio0To1 = 0;
-		public double FeatureToEndOnRatio0To1 = 1;
-
 		public enum ETransformState { Move, Scale };
 
 		public ETransformState TransformState { get; set; }
@@ -59,7 +56,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private Vector2 mouseDownPosition = new Vector2(0, 0);
 
 		private double layerScale = 1;
-		private int activeLayerIndex;
 		private Vector2 gridSizeMm;
 		private Vector2 gridCenterMm;
 
@@ -88,37 +84,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private Vector2 unscaledRenderOffset = new Vector2(0, 0);
 
-		public event EventHandler ActiveLayerChanged;
-
 		private GCodeFile loadedGCode => printer.BedPlate.LoadedGCode;
-
-		public int ActiveLayerIndex
-		{
-			get
-			{
-				return activeLayerIndex;
-			}
-
-			set
-			{
-				if (activeLayerIndex != value)
-				{
-					activeLayerIndex = value;
-
-					if (printer.BedPlate.GCodeRenderer == null || activeLayerIndex < 0)
-					{
-						activeLayerIndex = 0;
-					}
-					else if (activeLayerIndex >= loadedGCode.NumChangesInZ)
-					{
-						activeLayerIndex = loadedGCode.NumChangesInZ - 1;
-					}
-					Invalidate();
-
-					ActiveLayerChanged?.Invoke(this, null);
-				}
-			}
-		}
 
 		private ReportProgressRatio progressReporter;
 
@@ -127,6 +93,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public GCode2DWidget(Vector2 gridSizeMm, Vector2 gridCenterMm, ReportProgressRatio progressReporter)
 		{
+			
 			options = ApplicationController.Instance.Options.View3D;
 			printer = ApplicationController.Instance.Printer;
 
@@ -141,7 +108,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void SetInitalLayer()
 		{
-			activeLayerIndex = 0;
 			if (loadedGCode.LineCount > 0)
 			{
 				int firstExtrusionIndex = 0;
@@ -166,7 +132,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						if (firstExtrusionIndex < loadedGCode.GetInstructionIndexAtLayer(layerIndex))
 						{
-							activeLayerIndex = Math.Max(0, layerIndex - 1);
+							printer.BedPlate.ActiveLayerIndex = Math.Max(0, layerIndex - 1);
 							break;
 						}
 					}
@@ -207,13 +173,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 
 					var renderInfo = new GCodeRenderInfo(
-						activeLayerIndex,
-						activeLayerIndex,
+						printer.BedPlate.ActiveLayerIndex,
+						printer.BedPlate.ActiveLayerIndex,
 						transform,
 						layerScale,
 						CreateRenderInfo(),
-						FeatureToStartOnRatio0To1,
-						FeatureToEndOnRatio0To1,
+						printer.BedPlate.RenderInfo.FeatureToStartOnRatio0To1,
+						printer.BedPlate.RenderInfo.FeatureToEndOnRatio0To1,
 						new Vector2[] 
 						{
 							ActiveSliceSettings.Instance.Helpers.ExtruderOffset(0),

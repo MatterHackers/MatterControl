@@ -275,6 +275,11 @@ namespace MatterHackers.GCodeVisualizer
 
 		public void Render3D(GCodeRenderInfo renderInfo)
 		{
+			if (renderInfo == null)
+			{
+				return;
+			}
+
 			if (layerVertexBuffer == null)
 			{
 				layerVertexBuffer = new List<GCodeVertexBuffer>();
