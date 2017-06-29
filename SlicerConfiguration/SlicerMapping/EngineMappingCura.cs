@@ -104,8 +104,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				new InfillTranslator("fill_density", "sparseInfillLineDistance"),
 
-				new MapStartGCode("start_gcode", "startCode", false),
-				new MapEndGCode("end_gcode", "endCode"),
+				new MapStartGCode(SettingsKey.start_gcode, "startCode", false),
+				new MapEndGCode(SettingsKey.end_gcode, "endCode"),
 			};
 
 			curaSettingNames = new HashSet<string>(curaSettings.Select(m => m.CanonicalSettingsName));

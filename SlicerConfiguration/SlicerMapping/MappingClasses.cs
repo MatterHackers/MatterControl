@@ -268,7 +268,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public List<string> PreStartGCode(List<bool> extrudersUsed)
 		{
-			string startGCode = ActiveSliceSettings.Instance.GetValue("start_gcode");
+			string startGCode = ActiveSliceSettings.Instance.GetValue(SettingsKey.start_gcode);
 			string[] preStartGCodeLines = startGCode.Split(new string[] { "\\n" }, StringSplitOptions.RemoveEmptyEntries);
 
 			List<string> preStartGCode = new List<string>();
@@ -339,7 +339,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public List<string> PostStartGCode(List<bool> extrudersUsed)
 		{
-			string startGCode = ActiveSliceSettings.Instance.GetValue("start_gcode");
+			string startGCode = ActiveSliceSettings.Instance.GetValue(SettingsKey.start_gcode);
 			string[] postStartGCodeLines = startGCode.Split(new string[] { "\\n" }, StringSplitOptions.RemoveEmptyEntries);
 
 			List<string> postStartGCode = new List<string>();

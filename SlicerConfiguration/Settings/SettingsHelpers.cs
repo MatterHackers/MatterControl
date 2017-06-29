@@ -117,6 +117,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string show_reset_connection = nameof(show_reset_connection);
 		public const string spiral_vase = nameof(spiral_vase);
 		public const string start_gcode = nameof(start_gcode);
+		public const string end_gcode = nameof(end_gcode);
+		public const string write_regex = nameof(write_regex);
+		public const string read_regex = nameof(read_regex);
 		public const string temperature = nameof(temperature);
 		public const string use_z_probe = nameof(use_z_probe);
 		public const string z_probe_samples = nameof(z_probe_samples);

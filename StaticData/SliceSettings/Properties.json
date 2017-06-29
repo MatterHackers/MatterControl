@@ -1326,6 +1326,32 @@
 		"DefaultValue": "G28 ; home all axes\\nG1 Z5 F5000 ; lift nozzle"
 	},
 	{
+		"QuickMenuSettings": [ ],
+		"SetSettingsOnChange": [ ],
+		"SlicerConfigName": "write_regex",
+		"PresentationName": "Write RegEx",
+		"HelpText": "This is a set of regular expressions to apply to lines prior to sending to a printer. They will be applied in the order listed before sending. To return more than one instruction separate them with comma.",
+		"DataEditType": "MULTI_LINE_TEXT",
+		"ExtraSettings": "",
+		"ShowAsOverride": true,
+		"ShowIfSet": null,
+		"ResetAtEndOfPrint": false,
+		"DefaultValue": ""
+	},
+	{
+		"QuickMenuSettings": [ ],
+		"SetSettingsOnChange": [ ],
+		"SlicerConfigName": "read_regex",
+		"PresentationName": "Recieve RegEx",
+		"HelpText": "This is a set of regular expressions to apply to lines after they are recived from the printer. They will be applied in order to each line recieved.",
+		"DataEditType": "MULTI_LINE_TEXT",
+		"ExtraSettings": "",
+		"ShowAsOverride": true,
+		"ShowIfSet": null,
+		"ResetAtEndOfPrint": false,
+		"DefaultValue": ""
+	},
+	{
 		"SlicerConfigName": "start_perimeters_at_concave_points",
 		"PresentationName": "Start At Concave Points",
 		"HelpText": "Make sure the first point on a perimeter is a concave point.",
