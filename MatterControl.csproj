@@ -220,6 +220,7 @@
     <Compile Include="PrinterCommunication\Io\NotPrintingStream.cs" />
     <Compile Include="Library\Widgets\ListView\ListView.cs" />
     <Compile Include="Library\Widgets\ListView\ListViewItem.cs" />
+    <Compile Include="PrinterCommunication\Io\RequestTemperaturesStream.cs" />
     <Compile Include="SetupWizard\CopyGuestProfilesToUser.cs" />
     <Compile Include="Library\Widgets\SystemWindows\RenameItemWindow.cs" />
     <Compile Include="LocalizedString.cs" />
@@ -258,7 +259,7 @@
     <Compile Include="PrinterCommunication\Io\GCodeFileStream.cs" />
     <Compile Include="PrinterCommunication\Io\GCodeStream.cs" />
     <Compile Include="PrinterCommunication\Io\PrinterMove.cs" />
-    <Compile Include="PrinterCommunication\Io\RequestTemperaturesStream.cs" />
+    <Compile Include="PrinterCommunication\Io\ProcessWriteRegExStream.cs" />
     <Compile Include="PrinterCommunication\Io\QueuedCommandsStream.cs" />
     <Compile Include="PrinterCommunication\Io\PrintLevelingStream.cs" />
     <Compile Include="PrinterCommunication\Io\BabyStepsStream.cs" />
