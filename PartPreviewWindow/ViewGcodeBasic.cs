@@ -699,7 +699,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				layerSelectionButtonsPanel.AddChild(navigationWidget);
 
 				selectLayerSlider?.Close();
-				selectLayerSlider = new SolidSlider(new Vector2(), sliderWidth, 0, loadedGCode.NumChangesInZ - 1, Orientation.Vertical);
+				selectLayerSlider = new SolidSlider(new Vector2(), sliderWidth, 0, loadedGCode.LayerCount - 1, Orientation.Vertical);
 				selectLayerSlider.ValueChanged += (s, e) =>
 				{
 					// TODO: Why would these need to be updated here as well as in assigned in the hslider below?

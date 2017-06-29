@@ -876,8 +876,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			{
 				try
 				{
-					int layerCount = loadedGCode.NumChangesInZ;
-					return layerCount;
+					return loadedGCode.LayerCount;
 				}
 				catch (Exception)
 				{

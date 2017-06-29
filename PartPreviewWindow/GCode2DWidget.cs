@@ -128,7 +128,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				if (firstExtrusionIndex > 0)
 				{
-					for (int layerIndex = 0; layerIndex < loadedGCode.NumChangesInZ; layerIndex++)
+					for (int layerIndex = 0; layerIndex < loadedGCode.LayerCount; layerIndex++)
 					{
 						if (firstExtrusionIndex < loadedGCode.GetInstructionIndexAtLayer(layerIndex))
 						{

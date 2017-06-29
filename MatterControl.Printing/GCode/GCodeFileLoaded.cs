@@ -395,7 +395,7 @@ namespace MatterHackers.GCodeVisualizer
 			get { return indexOfChangeInZ; }
 		}
 
-		public override int NumChangesInZ
+		public override int LayerCount
 		{
 			get { return indexOfChangeInZ.Count; }
 		}
@@ -928,7 +928,7 @@ namespace MatterHackers.GCodeVisualizer
 			if (instructionIndex >= 0
 				&& instructionIndex < LineCount)
 			{
-				for (int zIndex = 0; zIndex < NumChangesInZ; zIndex++)
+				for (int zIndex = 0; zIndex < LayerCount; zIndex++)
 				{
 					if (instructionIndex < IndexOfChangeInZ[zIndex])
 					{
@@ -936,7 +936,7 @@ namespace MatterHackers.GCodeVisualizer
 					}
 				}
 
-				return NumChangesInZ - 1;
+				return LayerCount - 1;
 			}
 
 			return -1;
@@ -954,7 +954,7 @@ namespace MatterHackers.GCodeVisualizer
 					startIndex = IndexOfChangeInZ[currentLayer - 1];
 				}
 				int endIndex = LineCount - 1;
-				if (currentLayer < NumChangesInZ - 1)
+				if (currentLayer < LayerCount - 1)
 				{
 					endIndex = IndexOfChangeInZ[currentLayer];
 				}

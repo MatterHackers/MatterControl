@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (printer.BedPlate.LoadedGCode != null)
 			{
-				layerCountTextWidget.Text = string.Format("{0} / {1}", printer.BedPlate.ActiveLayerIndex + 1, printer.BedPlate.LoadedGCode.NumChangesInZ.ToString());
+				layerCountTextWidget.Text = string.Format("{0} / {1}", printer.BedPlate.ActiveLayerIndex + 1, printer.BedPlate.LoadedGCode.LayerCount);
 			}
 
 			base.OnDraw(graphics2D);
