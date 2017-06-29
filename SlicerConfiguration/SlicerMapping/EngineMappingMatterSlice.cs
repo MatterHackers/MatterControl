@@ -122,7 +122,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				new MappedToBoolString(SettingsKey.fill_thin_gaps, "fillThinGaps"),
 				new MappedToBoolString(SettingsKey.spiral_vase, "continuousSpiralOuterPerimeter"),
 				new MapPositionToPlaceObjectCenter(SettingsKey.print_center, "positionToPlaceObjectCenter"),
-				new MapStartGCode("start_gcode", "startCode", true),
+				new MapStartGCode(SettingsKey.start_gcode, "startCode", true),
 				new ScaledSingleNumber("fill_density", "infillPercent", 100),
 				new ScaledSingleNumber(SettingsKey.perimeter_start_end_overlap, "perimeterStartEndOverlapRatio", .01),
 				new SkirtLengthMapping("min_skirt_length", "skirtMinLength"),

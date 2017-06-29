@@ -906,7 +906,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (GetValue<bool>(SettingsKey.recover_is_enabled))
 				{
 					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'Printer' -> 'Print Recovery' -> 'Enable Recovery'".Localize();
-					string[] startGCode = GetValue("start_gcode").Replace("\\n", "\n").Split('\n');
+					string[] startGCode = GetValue(SettingsKey.start_gcode).Replace("\\n", "\n").Split('\n');
 					foreach (string startGCodeLine in startGCode)
 					{
 						if (startGCodeLine.StartsWith("G29"))
@@ -931,7 +931,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (GetValue<bool>(SettingsKey.print_leveling_enabled))
 				{
 					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'Printer' -> 'Custom G-Code' -> 'Start G-Code'".Localize();
-					string[] startGCode = GetValue("start_gcode").Replace("\\n", "\n").Split('\n');
+					string[] startGCode = GetValue(SettingsKey.start_gcode).Replace("\\n", "\n").Split('\n');
 					foreach (string startGCodeLine in startGCode)
 					{
 						if (startGCodeLine.StartsWith("G29"))

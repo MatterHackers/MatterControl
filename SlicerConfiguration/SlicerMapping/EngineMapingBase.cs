@@ -48,6 +48,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			SettingsKey.build_height,
 			SettingsKey.cancel_gcode,
 			SettingsKey.connect_gcode,
+			SettingsKey.write_regex,
+			SettingsKey.read_regex,
 			SettingsKey.has_fan,
 			SettingsKey.has_hardware_leveling,
 			SettingsKey.has_heated_bed,

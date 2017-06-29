@@ -361,6 +361,10 @@ Advanced
         cancel_gcode
       On Connect G-Code
         connect_gcode
+      Write Filters
+        write_regex
+      Read Filters
+        read_regex
     Extruder
       Extruder X
         nozzle_diameter

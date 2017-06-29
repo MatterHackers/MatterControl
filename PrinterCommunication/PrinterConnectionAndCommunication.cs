@@ -50,6 +50,8 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
+using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl.PrinterCommunication
 {
@@ -282,7 +284,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			ReadLineStartCallBacks.AddCallbackToKey("C:", ReadTargetPositions);
 			ReadLineStartCallBacks.AddCallbackToKey("ok C:", ReadTargetPositions); // smoothie is reporting the C: with an ok first.
 			ReadLineStartCallBacks.AddCallbackToKey("X:", ReadTargetPositions);
-			ReadLineStartCallBacks.AddCallbackToKey("ok X:", ReadTargetPositions);
 
 			ReadLineContainsCallBacks.AddCallbackToKey("T:", ReadTemperatures);
 
@@ -1426,7 +1427,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				// marlin and repetier send a : before the number and then and ok
 				if (!GCodeFile.GetFirstNumberAfter(":", line, ref currentLineIndexToSend))
 				{
-					if(currentLineIndexToSend == allCheckSumLinesSent.Count)
+					if (currentLineIndexToSend == allCheckSumLinesSent.Count)
 					{
 						// asking for the next line don't do anything, conitue with sending next instruction
 						return;
@@ -1618,6 +1619,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 										timeSinceRecievedOk.Restart();
 									}
 									lastLineRead = dataLastRead.Substring(0, returnPosition);
+
+									lastLineRead = ProcessReadRegEx(lastLineRead);
+
 									dataLastRead = dataLastRead.Substring(returnPosition + 1);
 
 									// process this command
@@ -1982,7 +1986,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					if (lineToWrite.Trim().Length > 0)
 					{
 						// sometimes we need to send code without buffering (like when we are closing the program).
-						WriteRawToPrinter(lineToWrite + "\n", lineToWrite);
+						WriteRawToPrinter(ProcessWriteRegEx(lineToWrite) + "\n", lineToWrite);
 					}
 				}
 				else
@@ -1995,6 +1999,89 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				}
 			}
 		}
+
+		#region RegExProcess
+		Regex getQuotedParts = new Regex(@"([""'])(\\?.)*?\1", RegexOptions.Compiled);
+		#region ProcessRead
+		string read_regex = "";
+		private List<Tuple<Regex, string>> ReadRegEx = new List<Tuple<Regex, string>>();
+
+		private string ProcessReadRegEx(string lineBeingRead)
+		{
+			if (read_regex != ActiveSliceSettings.Instance.GetValue(SettingsKey.read_regex))
+			{
+				ReadRegEx.Clear();
+				string splitString = "\\n";
+				read_regex = ActiveSliceSettings.Instance.GetValue(SettingsKey.read_regex);
+				foreach (string regExLine in read_regex.Split(splitString.ToCharArray(), StringSplitOptions.RemoveEmptyEntries))
+				{
+					var matches = getQuotedParts.Matches(regExLine);
+					if (matches.Count == 2)
+					{
+						var search = matches[0].Value.Substring(1, matches[0].Value.Length - 2);
+						var replace = matches[1].Value.Substring(1, matches[1].Value.Length - 2);
+						ReadRegEx.Add(new Tuple<Regex, string>(new Regex(search, RegexOptions.Compiled), replace));
+					}
+				}
+			}
+
+			foreach(var regEx in ReadRegEx)
+			{
+				lineBeingRead = regEx.Item1.Replace(lineBeingRead, regEx.Item2);
+			}
+
+			return lineBeingRead;
+		}
+		#endregion // ProcessRead
+
+		#region ProcessWrite
+		string write_regex = "";
+		private List<Tuple<Regex, string>> WriteRegEx = new List<Tuple<Regex, string>>();
+
+		private string ProcessWriteRegEx(string lineToWrite)
+		{
+			if (write_regex != ActiveSliceSettings.Instance.GetValue(SettingsKey.write_regex))
+			{
+				WriteRegEx.Clear();
+				string splitString = "\\n";
+				write_regex = ActiveSliceSettings.Instance.GetValue(SettingsKey.write_regex);
+				foreach (string regExLine in write_regex.Split(splitString.ToCharArray(), StringSplitOptions.RemoveEmptyEntries))
+				{
+					var matches = getQuotedParts.Matches(regExLine);
+					if (matches.Count == 2)
+					{
+						var search = matches[0].Value.Substring(1, matches[0].Value.Length - 2);
+						var replace = matches[1].Value.Substring(1, matches[1].Value.Length - 2);
+						WriteRegEx.Add(new Tuple<Regex, string>(new Regex(search, RegexOptions.Compiled), replace));
+					}
+				}
+			}
+
+			foreach (var regEx in WriteRegEx)
+			{
+				var replaced = regEx.Item1.Replace(lineToWrite, regEx.Item2); ;
+				if (replaced != lineToWrite)
+				{
+					var lines = replaced.Split(',');
+					if (lines.Length > 1)
+					{
+						lineToWrite = lines[0];
+						for (int i = 1; i < lines.Length; i++)
+						{
+							SendLineToPrinterNow(lines[i]);
+						}
+					}
+					else
+					{
+						lineToWrite = replaced;
+					}
+				}
+			}
+
+			return lineToWrite;
+		}
+		#endregion
+		#endregion
 
 		public bool SerialPortIsAvailable(string portName)
 		//Check is serial port is in the list of available serial ports
@@ -2264,7 +2351,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		private void ClearQueuedGCode()
 		{
 			loadedGCode.Clear();
-			WriteChecksumLineToPrinter("M110 N1");
+			WriteChecksumLineToPrinter(ProcessWriteRegEx("M110 N1"));
 		}
 
 		private void Connect_Thread()
@@ -2742,10 +2829,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 					if (currentSentLine != null)
 					{
-						string[] splitOnSemicolon = currentSentLine.Split(';');
-						string trimedLine = splitOnSemicolon[0].Trim().ToUpper();
-
-						if (trimedLine.Contains("M114")
+						if (currentSentLine.Contains("M114")
 							&& PrinterIsConnected)
 						{
 							waitingForPosition.Restart();
@@ -2778,7 +2862,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 							secondsSinceUpdateHistory = secondsSinceStartedPrint;
 						}
 
-						if (trimedLine.Length > 0)
+						currentSentLine = ProcessWriteRegEx(currentSentLine).Trim();
+						if (currentSentLine.Length > 0)
 						{
 							WriteChecksumLineToPrinter(currentSentLine);
 
