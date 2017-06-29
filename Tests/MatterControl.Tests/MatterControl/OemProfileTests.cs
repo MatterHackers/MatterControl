@@ -268,7 +268,7 @@ namespace MatterControl.Tests.MatterControl
 			ValidateOnAllPrinters((printer, settings) =>
 			{
 				// TODO: Why aren't we testing all gcode sections?
-				string[] keysToTest = { "start_gcode", "end_gcode" };
+				string[] keysToTest = { SettingsKey.start_gcode, SettingsKey.end_gcode };
 				foreach (string gcodeKey in keysToTest)
 				{
 					string gcode = settings.GetValue(gcodeKey);
@@ -304,7 +304,7 @@ namespace MatterControl.Tests.MatterControl
 		{
 			ValidateOnAllPrinters((printer, settings) =>
 			{
-				string startGcode = settings.GetValue("start_gcode");
+				string startGcode = settings.GetValue(SettingsKey.start_gcode);
 				Assert.False(startGcode.Contains("first_layer_bed_temperature"), "[start_gcode] should not contain [first_layer_bed_temperature]" + printer.RelativeFilePath);
 			});
 		}
