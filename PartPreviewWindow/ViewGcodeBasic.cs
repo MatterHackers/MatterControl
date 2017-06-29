@@ -598,24 +598,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnDraw(graphics2D);
 		}
 
-		private void Parent_KeyDown(object sender, KeyEventArgs keyEvent)
-		{
-			if (keyEvent.KeyCode == Keys.Up)
-			{
-				if (gcode2DWidget != null)
-				{
-					gcode2DWidget.ActiveLayerIndex = (gcode2DWidget.ActiveLayerIndex + 1);
-				}
-			}
-			else if (keyEvent.KeyCode == Keys.Down)
-			{
-				if (gcode2DWidget != null)
-				{
-					gcode2DWidget.ActiveLayerIndex = (gcode2DWidget.ActiveLayerIndex - 1);
-				}
-			}
-		}
-
 		private void SetProcessingMessage(string message)
 		{
 			if (gcodeProcessingStateInfoText == null)
@@ -647,7 +629,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			gcodeProcessingStateInfoText.Text = message;
 		}
 
-		private void DoneLoadingGCode(object sender, EventArgs e)
+		private void DoneLoadingGCode(object sender, EventArgs e2)
 		{
 			SetProcessingMessage("");
 			if (gcode2DWidget != null
@@ -682,7 +664,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				setLayerWidget.VAnchor = Agg.UI.VAnchor.ParentTop;
 				layerSelectionButtonsPanel.AddChild(setLayerWidget);
 
-
 				navigationWidget?.Close();
 				navigationWidget = new LayerNavigationWidget(gcode2DWidget, ApplicationController.Instance.Theme.GCodeLayerButtons);
 				navigationWidget.Margin = new BorderDouble(0, 0, 20, 0);
@@ -690,16 +671,40 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				selectLayerSlider?.Close();
 				selectLayerSlider = new SolidSlider(new Vector2(), sliderWidth, 0, loadedGCode.NumChangesInZ - 1, Orientation.Vertical);
-				selectLayerSlider.ValueChanged += new EventHandler(selectLayerSlider_ValueChanged);
-				gcode2DWidget.ActiveLayerChanged += new EventHandler(gcodeViewWidget_ActiveLayerChanged);
+				selectLayerSlider.ValueChanged += (s, e) =>
+				{
+					gcode2DWidget.FeatureToStartOnRatio0To1 = layerRenderRatioSlider.FirstValue;
+					gcode2DWidget.FeatureToEndOnRatio0To1 = layerRenderRatioSlider.SecondValue;
+					gcode2DWidget.Invalidate();
+
+					gcode2DWidget.ActiveLayerIndex = (int)(selectLayerSlider.Value + .5);
+				};
+
+				gcode2DWidget.ActiveLayerChanged += (s, e) =>
+				{
+					if (gcode2DWidget.ActiveLayerIndex != (int)(selectLayerSlider.Value + .5))
+					{
+						selectLayerSlider.Value = gcode2DWidget.ActiveLayerIndex;
+					}
+				};
 				AddChild(selectLayerSlider);
 
 				layerRenderRatioSlider?.Close();
 				layerRenderRatioSlider = new DoubleSolidSlider(new Vector2(), sliderWidth);
 				layerRenderRatioSlider.FirstValue = 0;
-				layerRenderRatioSlider.FirstValueChanged += new EventHandler(layerStartRenderRatioSlider_ValueChanged);
+				layerRenderRatioSlider.FirstValueChanged += (s, e) =>
+				{
+					gcode2DWidget.FeatureToStartOnRatio0To1 = layerRenderRatioSlider.FirstValue;
+					gcode2DWidget.FeatureToEndOnRatio0To1 = layerRenderRatioSlider.SecondValue;
+					gcode2DWidget.Invalidate();
+				};
 				layerRenderRatioSlider.SecondValue = 1;
-				layerRenderRatioSlider.SecondValueChanged += new EventHandler(layerEndRenderRatioSlider_ValueChanged);
+				layerRenderRatioSlider.SecondValueChanged += (s, e) =>
+				{
+					gcode2DWidget.FeatureToStartOnRatio0To1 = layerRenderRatioSlider.FirstValue;
+					gcode2DWidget.FeatureToEndOnRatio0To1 = layerRenderRatioSlider.SecondValue;
+					gcode2DWidget.Invalidate();
+				};
 				AddChild(layerRenderRatioSlider);
 
 				SetSliderSizes();
@@ -707,8 +712,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// let's change the active layer so that it is set to the first layer with data
 				gcode2DWidget.ActiveLayerIndex = gcode2DWidget.ActiveLayerIndex + 1;
 				gcode2DWidget.ActiveLayerIndex = gcode2DWidget.ActiveLayerIndex - 1;
-
-				BoundsChanged += new EventHandler(PartPreviewGCode_BoundsChanged);
 
 				this.gcodeDetails = new GCodeDetails(this.loadedGCode);
 
@@ -732,36 +735,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private void layerStartRenderRatioSlider_ValueChanged(object sender, EventArgs e)
-		{
-			gcode2DWidget.FeatureToStartOnRatio0To1 = layerRenderRatioSlider.FirstValue;
-			gcode2DWidget.FeatureToEndOnRatio0To1 = layerRenderRatioSlider.SecondValue;
-			gcode2DWidget.Invalidate();
-		}
-
-		private void layerEndRenderRatioSlider_ValueChanged(object sender, EventArgs e)
-		{
-			gcode2DWidget.FeatureToStartOnRatio0To1 = layerRenderRatioSlider.FirstValue;
-			gcode2DWidget.FeatureToEndOnRatio0To1 = layerRenderRatioSlider.SecondValue;
-			gcode2DWidget.Invalidate();
-		}
-
-		private void gcodeViewWidget_ActiveLayerChanged(object sender, EventArgs e)
-		{
-			if (gcode2DWidget.ActiveLayerIndex != (int)(selectLayerSlider.Value + .5))
-			{
-				selectLayerSlider.Value = gcode2DWidget.ActiveLayerIndex;
-			}
-		}
-
-		private void selectLayerSlider_ValueChanged(object sender, EventArgs e)
-		{
-			gcode2DWidget.ActiveLayerIndex = (int)(selectLayerSlider.Value + .5);
-		}
-
-		private void PartPreviewGCode_BoundsChanged(object sender, EventArgs e)
+		public override void OnBoundsChanged(EventArgs e)
 		{
 			SetSliderSizes();
+			base.OnBoundsChanged(e);
 		}
 
 		private void SetSliderSizes()
@@ -797,8 +774,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void sliceItem_SlicingOutputMessage(object sender, EventArgs e)
 		{
-			StringEventArgs message = e as StringEventArgs;
-			if (message != null && message.Data != null)
+			if (e is StringEventArgs message && message.Data != null)
 			{
 				SetProcessingMessage(message.Data);
 			}
