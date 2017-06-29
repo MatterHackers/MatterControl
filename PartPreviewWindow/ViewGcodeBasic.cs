@@ -127,8 +127,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void CheckSettingChanged(object sender, EventArgs e)
 		{
-			StringEventArgs stringEvent = e as StringEventArgs;
-			if (stringEvent != null)
+			if (e is StringEventArgs stringEvent)
 			{
 				if (loadedGCode != null
 					&& (
@@ -137,8 +136,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					|| stringEvent.Data == SettingsKey.filament_density)
 					)
 				{
-					UpdateMassText();
-					UpdateEstimatedCost();
+					massTextWidget.Text = gcodeDetails.EstimatedMass;
+					conditionalCostPanel.Visible = gcodeDetails.TotalCost > 0;
+
+					if (gcodeDetails.TotalCost > 0)
+					{
+						costTextWidget.Text = gcodeDetails.EstimatedCost;
+					}
 				}
 
 				if (stringEvent.Data == "extruder_offset")
@@ -396,7 +400,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private FlowLayoutWidget CreateModelInfo()
+		TextWidget massTextWidget;
+		TextWidget costTextWidget;
+
+		// Cost info is only displayed when available - conditionalCostPanel is invisible when cost <= 0
+		GuiWidget conditionalCostPanel;
+
+		GCodeDetails gcodeDetails;
+
+		private FlowLayoutWidget CreateModelInfo(GCodeDetails gcodeDetails)
 		{
 			var modelInfoContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -410,140 +422,50 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// put in the print time
 			modelInfoContainer.AddChild(new TextWidget("Print Time".Localize() + ":", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 9));
+			modelInfoContainer.AddChild(new TextWidget(gcodeDetails.EstimatedPrintTime, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 14)
 			{
-				string timeRemainingText = "---";
-
-				if (gcode2DWidget != null && loadedGCode != null)
-				{
-					int secondsRemaining = (int)loadedGCode.Instruction(0).secondsToEndFromHere;
-					int hoursRemaining = (int)(secondsRemaining / (60 * 60));
-					int minutesRemaining = (int)((secondsRemaining + 30) / 60 - hoursRemaining * 60); // +30 for rounding
-					secondsRemaining = secondsRemaining % 60;
-					if (hoursRemaining > 0)
-					{
-						timeRemainingText = $"{hoursRemaining} h, {minutesRemaining} min";
-					}
-					else
-					{
-						timeRemainingText = $"{minutesRemaining} min";
-					}
-				}
-
-				GuiWidget estimatedPrintTime = new TextWidget(timeRemainingText, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 14);
-				estimatedPrintTime.Margin = new BorderDouble(0, 9, 0, 3);
-				modelInfoContainer.AddChild(estimatedPrintTime);
-			}
+				Margin = new BorderDouble(0, 9, 0, 3)
+			});
 
 			// show the filament used
 			modelInfoContainer.AddChild(new TextWidget("Filament Length".Localize() + ":", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 9));
+			modelInfoContainer.AddChild(new TextWidget(gcodeDetails.FilamentUsed, pointSize: 14, textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
-				double filamentUsed = loadedGCode.GetFilamentUsedMm(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_diameter));
-
-				GuiWidget estimatedPrintTime = new TextWidget(string.Format("{0:0.0} mm", filamentUsed), pointSize: 14, textColor: ActiveTheme.Instance.PrimaryTextColor);
-				estimatedPrintTime.Margin = new BorderDouble(0, 9, 0, 3);
-				modelInfoContainer.AddChild(estimatedPrintTime);
-			}
+				Margin = new BorderDouble(0, 9, 0, 3)
+			});
 
 			modelInfoContainer.AddChild(new TextWidget("Filament Volume".Localize() + ":", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 9));
+			modelInfoContainer.AddChild(new TextWidget(gcodeDetails.FilamentVolume, pointSize: 14, textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
-				double filamentMm3 = loadedGCode.GetFilamentCubicMm(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_diameter));
+				Margin = new BorderDouble(0, 9, 0, 3)
+			});
 
-				GuiWidget estimatedPrintTime = new TextWidget(string.Format("{0:0.00} cm³", filamentMm3 / 1000), pointSize: 14, textColor: ActiveTheme.Instance.PrimaryTextColor);
-				estimatedPrintTime.Margin = new BorderDouble(0, 9, 0, 3);
-				modelInfoContainer.AddChild(estimatedPrintTime);
-			}
+			modelInfoContainer.AddChild(new TextWidget("Estimated Mass".Localize() + ":", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 9));
 
-			modelInfoContainer.AddChild(GetEstimatedMassInfo());
-			modelInfoContainer.AddChild(GetEstimatedCostInfo());
+			modelInfoContainer.AddChild(massTextWidget = new TextWidget(gcodeDetails.EstimatedMass, pointSize: 14, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			{
+				Margin = new BorderDouble(0, 9, 0, 3)
+			});
+
+			conditionalCostPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.ParentLeftRight,
+				VAnchor = VAnchor.FitToChildren,
+				Visible = gcodeDetails.TotalCost > 0
+			};
+
+			conditionalCostPanel.AddChild(new TextWidget("Estimated Cost".Localize() + ":", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 9));
+			conditionalCostPanel.AddChild(costTextWidget = new TextWidget(gcodeDetails.EstimatedCost, pointSize: 14, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			{
+				Margin = new BorderDouble(0, 9, 0, 3)
+			});
+
+			modelInfoContainer.AddChild(conditionalCostPanel);
 
 			// TODO: Every time you click Generate we wire up a listener - only when we close do they get released. This is a terrible pattern that has a good chance of creating a high leak scenario. Since RootedEventHandlers are normally only cleared when a widget is closed, we should **only** register them in widget constructors
 			PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent(HookUpGCodeMessagesWhenDonePrinting, ref unregisterEvents);
 
 			return modelInfoContainer;
-		}
-
-		double totalMass
-		{
-			get
-			{
-				double filamentDiameter = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_diameter);
-				double filamentDensity = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_density);
-
-				return loadedGCode.GetFilamentWeightGrams(filamentDiameter, filamentDensity);
-			}
-		}
-
-		double totalCost
-		{
-			get
-			{
-				double filamentCost = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_cost);
-				return totalMass / 1000 * filamentCost;
-			}
-		}
-
-		TextWidget massTextWidget;
-
-		void UpdateMassText()
-		{
-			if (totalMass != 0)
-			{
-				massTextWidget.Text = string.Format("{0:0.00} g", totalMass);
-			}
-			else
-			{
-				massTextWidget.Text = "Unknown";
-			}
-		}
-
-		private GuiWidget GetEstimatedMassInfo()
-		{
-			FlowLayoutWidget estimatedMassInfo = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			estimatedMassInfo.AddChild(new TextWidget("Estimated Mass".Localize() + ":", pointSize: 9, textColor: ActiveTheme.Instance.PrimaryTextColor));
-			massTextWidget = new TextWidget("", pointSize: 14, textColor: ActiveTheme.Instance.PrimaryTextColor)
-			{
-				AutoExpandBoundsToText = true,
-			};
-			massTextWidget.Margin = new BorderDouble(0, 9, 0, 3);
-			estimatedMassInfo.AddChild(massTextWidget);
-
-			UpdateMassText();
-
-			return estimatedMassInfo;
-		}
-
-		FlowLayoutWidget estimatedCostInfo;
-		TextWidget costTextWidget;
-
-		void UpdateEstimatedCost()
-		{
-			costTextWidget.Text = string.Format("${0:0.00}", totalCost);
-			if (totalCost == 0)
-			{
-				estimatedCostInfo.Visible = false;
-			}
-			else
-			{
-				estimatedCostInfo.Visible = true;
-			}
-		}
-
-		private GuiWidget GetEstimatedCostInfo()
-		{
-			estimatedCostInfo = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			string costLabel = "Estimated Cost".Localize();
-			string costLabelFull = string.Format("{0}:", costLabel);
-			estimatedCostInfo.AddChild(new TextWidget(costLabelFull, pointSize: 9, textColor: ActiveTheme.Instance.PrimaryTextColor));
-			costTextWidget = new TextWidget("", pointSize: 14, textColor: ActiveTheme.Instance.PrimaryTextColor)
-			{
-				AutoExpandBoundsToText = true,
-			};
-			costTextWidget.Margin = new BorderDouble(0, 9, 0, 3);
-			estimatedCostInfo.AddChild(costTextWidget);
-
-			UpdateEstimatedCost();
-
-			return estimatedCostInfo;
 		}
 
 		internal GuiWidget ShowOverflowMenu()
@@ -877,7 +799,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				BoundsChanged += new EventHandler(PartPreviewGCode_BoundsChanged);
 
-				this.AddChild(CreateModelInfo());
+				this.gcodeDetails = new GCodeDetails(this.loadedGCode);
+				this.AddChild(CreateModelInfo(gcodeDetails));
 
 				// Switch to the most recent view mode, defaulting to Layers3D
 				SwitchViewModes();
