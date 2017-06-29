@@ -117,36 +117,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			CreateAndAddChildren();
 
-			ActiveSliceSettings.SettingChanged.RegisterEvent(CheckSettingChanged, ref unregisterEvents);
+			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
+			{
+				if (e is StringEventArgs stringEvent)
+				{
+					if (stringEvent.Data == "extruder_offset")
+					{
+						printer.BedPlate.GCodeRenderer.Clear3DGCode();
+					}
+				}
+			}, ref unregisterEvents);
 
 			// TODO: Why do we clear GCode on AdvancedControlsPanelReloading - assume some slice settings should invalidate. If so, code should be more specific and bound to slice settings changed
 			ApplicationController.Instance.AdvancedControlsPanelReloading.RegisterEvent((s, e) => printer.BedPlate.GCodeRenderer?.Clear3DGCode(), ref unregisterEvents);
 		}
 
 		private GCodeFile loadedGCode => printer.BedPlate.LoadedGCode;
-
-		private void CheckSettingChanged(object sender, EventArgs e)
-		{
-			StringEventArgs stringEvent = e as StringEventArgs;
-			if (stringEvent != null)
-			{
-				if (loadedGCode != null
-					&& (
-					stringEvent.Data == SettingsKey.filament_cost
-					|| stringEvent.Data == SettingsKey.filament_diameter
-					|| stringEvent.Data == SettingsKey.filament_density)
-					)
-				{
-					UpdateMassText();
-					UpdateEstimatedCost();
-				}
-
-				if (stringEvent.Data == "extruder_offset")
-				{
-					printer.BedPlate.GCodeRenderer.Clear3DGCode();
-				}
-			}
-		}
 
 		private void CreateAndAddChildren()
 		{
@@ -396,155 +382,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private FlowLayoutWidget CreateModelInfo()
-		{
-			var modelInfoContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				Padding = new BorderDouble(5),
-				Margin = new BorderDouble(0, 0, 35, 5),
-				BackgroundColor = new RGBA_Bytes(0, 0, 0, ViewControlsBase.overlayAlpha),
-				HAnchor = HAnchor.ParentRight | HAnchor.AbsolutePosition,
-				VAnchor = VAnchor.ParentTop | VAnchor.FitToChildren,
-				Width = 150
-			};
-
-			// put in the print time
-			modelInfoContainer.AddChild(new TextWidget("Print Time".Localize() + ":", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 9));
-			{
-				string timeRemainingText = "---";
-
-				if (gcode2DWidget != null && loadedGCode != null)
-				{
-					int secondsRemaining = (int)loadedGCode.Instruction(0).secondsToEndFromHere;
-					int hoursRemaining = (int)(secondsRemaining / (60 * 60));
-					int minutesRemaining = (int)((secondsRemaining + 30) / 60 - hoursRemaining * 60); // +30 for rounding
-					secondsRemaining = secondsRemaining % 60;
-					if (hoursRemaining > 0)
-					{
-						timeRemainingText = $"{hoursRemaining} h, {minutesRemaining} min";
-					}
-					else
-					{
-						timeRemainingText = $"{minutesRemaining} min";
-					}
-				}
-
-				GuiWidget estimatedPrintTime = new TextWidget(timeRemainingText, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 14);
-				estimatedPrintTime.Margin = new BorderDouble(0, 9, 0, 3);
-				modelInfoContainer.AddChild(estimatedPrintTime);
-			}
-
-			// show the filament used
-			modelInfoContainer.AddChild(new TextWidget("Filament Length".Localize() + ":", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 9));
-			{
-				double filamentUsed = loadedGCode.GetFilamentUsedMm(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_diameter));
-
-				GuiWidget estimatedPrintTime = new TextWidget(string.Format("{0:0.0} mm", filamentUsed), pointSize: 14, textColor: ActiveTheme.Instance.PrimaryTextColor);
-				estimatedPrintTime.Margin = new BorderDouble(0, 9, 0, 3);
-				modelInfoContainer.AddChild(estimatedPrintTime);
-			}
-
-			modelInfoContainer.AddChild(new TextWidget("Filament Volume".Localize() + ":", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 9));
-			{
-				double filamentMm3 = loadedGCode.GetFilamentCubicMm(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_diameter));
-
-				GuiWidget estimatedPrintTime = new TextWidget(string.Format("{0:0.00} cm³", filamentMm3 / 1000), pointSize: 14, textColor: ActiveTheme.Instance.PrimaryTextColor);
-				estimatedPrintTime.Margin = new BorderDouble(0, 9, 0, 3);
-				modelInfoContainer.AddChild(estimatedPrintTime);
-			}
-
-			modelInfoContainer.AddChild(GetEstimatedMassInfo());
-			modelInfoContainer.AddChild(GetEstimatedCostInfo());
-
-			// TODO: Every time you click Generate we wire up a listener - only when we close do they get released. This is a terrible pattern that has a good chance of creating a high leak scenario. Since RootedEventHandlers are normally only cleared when a widget is closed, we should **only** register them in widget constructors
-			PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent(HookUpGCodeMessagesWhenDonePrinting, ref unregisterEvents);
-
-			return modelInfoContainer;
-		}
-
-		double totalMass
-		{
-			get
-			{
-				double filamentDiameter = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_diameter);
-				double filamentDensity = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_density);
-
-				return loadedGCode.GetFilamentWeightGrams(filamentDiameter, filamentDensity);
-			}
-		}
-
-		double totalCost
-		{
-			get
-			{
-				double filamentCost = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_cost);
-				return totalMass / 1000 * filamentCost;
-			}
-		}
-
-		TextWidget massTextWidget;
-
-		void UpdateMassText()
-		{
-			if (totalMass != 0)
-			{
-				massTextWidget.Text = string.Format("{0:0.00} g", totalMass);
-			}
-			else
-			{
-				massTextWidget.Text = "Unknown";
-			}
-		}
-
-		private GuiWidget GetEstimatedMassInfo()
-		{
-			FlowLayoutWidget estimatedMassInfo = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			estimatedMassInfo.AddChild(new TextWidget("Estimated Mass".Localize() + ":", pointSize: 9, textColor: ActiveTheme.Instance.PrimaryTextColor));
-			massTextWidget = new TextWidget("", pointSize: 14, textColor: ActiveTheme.Instance.PrimaryTextColor)
-			{
-				AutoExpandBoundsToText = true,
-			};
-			massTextWidget.Margin = new BorderDouble(0, 9, 0, 3);
-			estimatedMassInfo.AddChild(massTextWidget);
-
-			UpdateMassText();
-
-			return estimatedMassInfo;
-		}
-
-		FlowLayoutWidget estimatedCostInfo;
-		TextWidget costTextWidget;
-
-		void UpdateEstimatedCost()
-		{
-			costTextWidget.Text = string.Format("${0:0.00}", totalCost);
-			if (totalCost == 0)
-			{
-				estimatedCostInfo.Visible = false;
-			}
-			else
-			{
-				estimatedCostInfo.Visible = true;
-			}
-		}
-
-		private GuiWidget GetEstimatedCostInfo()
-		{
-			estimatedCostInfo = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			string costLabel = "Estimated Cost".Localize();
-			string costLabelFull = string.Format("{0}:", costLabel);
-			estimatedCostInfo.AddChild(new TextWidget(costLabelFull, pointSize: 9, textColor: ActiveTheme.Instance.PrimaryTextColor));
-			costTextWidget = new TextWidget("", pointSize: 14, textColor: ActiveTheme.Instance.PrimaryTextColor)
-			{
-				AutoExpandBoundsToText = true,
-			};
-			costTextWidget.Margin = new BorderDouble(0, 9, 0, 3);
-			estimatedCostInfo.AddChild(costTextWidget);
-
-			UpdateEstimatedCost();
-
-			return estimatedCostInfo;
-		}
+		private GCodeDetails gcodeDetails;
 
 		internal GuiWidget ShowOverflowMenu()
 		{
@@ -657,11 +495,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					printItem.SlicingDone -= sliceItem_Done;
 
 					generateGCodeButton.Visible = false;
-
-					// TODO: Bad pattern - figure out how to revise
-					// However if the print finished or is canceled we are going to want to get updates again. So, hook the status event
-					PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent(HookUpGCodeMessagesWhenDonePrinting, ref unregisterEvents);
-					UiThread.RunOnIdle(SetSyncToPrintVisibility);
 				}
 			}
 
@@ -765,24 +598,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnDraw(graphics2D);
 		}
 
-		private void Parent_KeyDown(object sender, KeyEventArgs keyEvent)
-		{
-			if (keyEvent.KeyCode == Keys.Up)
-			{
-				if (gcode2DWidget != null)
-				{
-					gcode2DWidget.ActiveLayerIndex = (gcode2DWidget.ActiveLayerIndex + 1);
-				}
-			}
-			else if (keyEvent.KeyCode == Keys.Down)
-			{
-				if (gcode2DWidget != null)
-				{
-					gcode2DWidget.ActiveLayerIndex = (gcode2DWidget.ActiveLayerIndex - 1);
-				}
-			}
-		}
-
 		private void SetProcessingMessage(string message)
 		{
 			if (gcodeProcessingStateInfoText == null)
@@ -814,7 +629,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			gcodeProcessingStateInfoText.Text = message;
 		}
 
-		private void DoneLoadingGCode(object sender, EventArgs e)
+		private void DoneLoadingGCode(object sender, EventArgs e2)
 		{
 			SetProcessingMessage("");
 			if (gcode2DWidget != null
@@ -849,7 +664,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				setLayerWidget.VAnchor = Agg.UI.VAnchor.ParentTop;
 				layerSelectionButtonsPanel.AddChild(setLayerWidget);
 
-				
 				navigationWidget?.Close();
 				navigationWidget = new LayerNavigationWidget(gcode2DWidget, ApplicationController.Instance.Theme.GCodeLayerButtons);
 				navigationWidget.Margin = new BorderDouble(0, 0, 20, 0);
@@ -857,16 +671,40 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				selectLayerSlider?.Close();
 				selectLayerSlider = new SolidSlider(new Vector2(), sliderWidth, 0, loadedGCode.NumChangesInZ - 1, Orientation.Vertical);
-				selectLayerSlider.ValueChanged += new EventHandler(selectLayerSlider_ValueChanged);
-				gcode2DWidget.ActiveLayerChanged += new EventHandler(gcodeViewWidget_ActiveLayerChanged);
+				selectLayerSlider.ValueChanged += (s, e) =>
+				{
+					gcode2DWidget.FeatureToStartOnRatio0To1 = layerRenderRatioSlider.FirstValue;
+					gcode2DWidget.FeatureToEndOnRatio0To1 = layerRenderRatioSlider.SecondValue;
+					gcode2DWidget.Invalidate();
+
+					gcode2DWidget.ActiveLayerIndex = (int)(selectLayerSlider.Value + .5);
+				};
+
+				gcode2DWidget.ActiveLayerChanged += (s, e) =>
+				{
+					if (gcode2DWidget.ActiveLayerIndex != (int)(selectLayerSlider.Value + .5))
+					{
+						selectLayerSlider.Value = gcode2DWidget.ActiveLayerIndex;
+					}
+				};
 				AddChild(selectLayerSlider);
 
 				layerRenderRatioSlider?.Close();
 				layerRenderRatioSlider = new DoubleSolidSlider(new Vector2(), sliderWidth);
 				layerRenderRatioSlider.FirstValue = 0;
-				layerRenderRatioSlider.FirstValueChanged += new EventHandler(layerStartRenderRatioSlider_ValueChanged);
+				layerRenderRatioSlider.FirstValueChanged += (s, e) =>
+				{
+					gcode2DWidget.FeatureToStartOnRatio0To1 = layerRenderRatioSlider.FirstValue;
+					gcode2DWidget.FeatureToEndOnRatio0To1 = layerRenderRatioSlider.SecondValue;
+					gcode2DWidget.Invalidate();
+				};
 				layerRenderRatioSlider.SecondValue = 1;
-				layerRenderRatioSlider.SecondValueChanged += new EventHandler(layerEndRenderRatioSlider_ValueChanged);
+				layerRenderRatioSlider.SecondValueChanged += (s, e) =>
+				{
+					gcode2DWidget.FeatureToStartOnRatio0To1 = layerRenderRatioSlider.FirstValue;
+					gcode2DWidget.FeatureToEndOnRatio0To1 = layerRenderRatioSlider.SecondValue;
+					gcode2DWidget.Invalidate();
+				};
 				AddChild(layerRenderRatioSlider);
 
 				SetSliderSizes();
@@ -875,45 +713,32 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				gcode2DWidget.ActiveLayerIndex = gcode2DWidget.ActiveLayerIndex + 1;
 				gcode2DWidget.ActiveLayerIndex = gcode2DWidget.ActiveLayerIndex - 1;
 
-				BoundsChanged += new EventHandler(PartPreviewGCode_BoundsChanged);
+				this.gcodeDetails = new GCodeDetails(this.loadedGCode);
 
-				this.AddChild(CreateModelInfo());
+				this.AddChild(new GCodeDetailsView(gcodeDetails)
+				{
+					Margin = new BorderDouble(0, 0, 35, 5),
+					Padding = new BorderDouble(10),
+					BackgroundColor = new RGBA_Bytes(0, 0, 0, ViewControlsBase.overlayAlpha),
+					HAnchor = HAnchor.ParentRight | HAnchor.AbsolutePosition,
+					VAnchor = VAnchor.ParentTop | VAnchor.FitToChildren,
+					Width = 150
+				});
+
+				// TODO: Bad pattern - figure out how to revise
+				// However if the print finished or is canceled we are going to want to get updates again. So, hook the status event
+				PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent(HookUpGCodeMessagesWhenDonePrinting, ref unregisterEvents);
+				UiThread.RunOnIdle(SetSyncToPrintVisibility);
 
 				// Switch to the most recent view mode, defaulting to Layers3D
 				SwitchViewModes();
 			}
 		}
 
-		private void layerStartRenderRatioSlider_ValueChanged(object sender, EventArgs e)
-		{
-			gcode2DWidget.FeatureToStartOnRatio0To1 = layerRenderRatioSlider.FirstValue;
-			gcode2DWidget.FeatureToEndOnRatio0To1 = layerRenderRatioSlider.SecondValue;
-			gcode2DWidget.Invalidate();
-		}
-
-		private void layerEndRenderRatioSlider_ValueChanged(object sender, EventArgs e)
-		{
-			gcode2DWidget.FeatureToStartOnRatio0To1 = layerRenderRatioSlider.FirstValue;
-			gcode2DWidget.FeatureToEndOnRatio0To1 = layerRenderRatioSlider.SecondValue;
-			gcode2DWidget.Invalidate();
-		}
-
-		private void gcodeViewWidget_ActiveLayerChanged(object sender, EventArgs e)
-		{
-			if (gcode2DWidget.ActiveLayerIndex != (int)(selectLayerSlider.Value + .5))
-			{
-				selectLayerSlider.Value = gcode2DWidget.ActiveLayerIndex;
-			}
-		}
-
-		private void selectLayerSlider_ValueChanged(object sender, EventArgs e)
-		{
-			gcode2DWidget.ActiveLayerIndex = (int)(selectLayerSlider.Value + .5);
-		}
-
-		private void PartPreviewGCode_BoundsChanged(object sender, EventArgs e)
+		public override void OnBoundsChanged(EventArgs e)
 		{
 			SetSliderSizes();
+			base.OnBoundsChanged(e);
 		}
 
 		private void SetSliderSizes()
@@ -949,8 +774,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void sliceItem_SlicingOutputMessage(object sender, EventArgs e)
 		{
-			StringEventArgs message = e as StringEventArgs;
-			if (message != null && message.Data != null)
+			if (e is StringEventArgs message && message.Data != null)
 			{
 				SetProcessingMessage(message.Data);
 			}

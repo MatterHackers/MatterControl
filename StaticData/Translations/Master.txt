@@ -4255,3 +4255,9 @@ Translated:Firmware Version: {0}
 English:Location: 'Settings & Controls' -> 'Settings' -> 'Printer' -> 'Custom G-Code' -> 'Start G-Code'
 Translated:Location: 'Settings & Controls' -> 'Settings' -> 'Printer' -> 'Custom G-Code' -> 'Start G-Code'
 
+English:HotEnd
+Translated:HotEnd
+
+English:Heated Bed
+Translated:Heated Bed
+

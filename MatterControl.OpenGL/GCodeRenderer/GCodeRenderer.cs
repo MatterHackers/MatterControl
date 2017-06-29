@@ -314,7 +314,7 @@ namespace MatterHackers.GCodeVisualizer
 						}
 						else // don't render any of the layers below this and in fact remove them from memory if possible
 						{
-							renderInfo.startLayerIndex = i + 1;
+							renderInfo.StartLayerIndex = i + 1;
 							cleanUnusedLayers = true; 
 							break;
 						}

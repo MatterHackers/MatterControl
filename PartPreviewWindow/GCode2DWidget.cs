@@ -133,6 +133,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.progressReporter = progressReporter;
 			this.gridSizeMm = gridSizeMm;
 			this.gridCenterMm = gridCenterMm;
+			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
 			this.LocalBounds = new RectangleDouble(0, 0, 100, 100);
 			this.AnchorAll();
