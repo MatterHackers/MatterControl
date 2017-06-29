@@ -2862,12 +2862,16 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 							secondsSinceUpdateHistory = secondsSinceStartedPrint;
 						}
 
-						currentSentLine = ProcessWriteRegEx(currentSentLine).Trim();
-						if (currentSentLine.Length > 0)
+						// Check if there is anything in front of the ;.
+						if (currentSentLine.Split(';')[0].Trim().Length > 0)
 						{
-							WriteChecksumLineToPrinter(currentSentLine);
+							currentSentLine = ProcessWriteRegEx(currentSentLine).Trim();
+							if (currentSentLine.Length > 0)
+							{
+								WriteChecksumLineToPrinter(currentSentLine);
 
-							currentLineIndexToSend++;
+								currentLineIndexToSend++;
+							}
 						}
 					}
 					else if (this.PrintWasCanceled)
@@ -2985,7 +2989,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						}
 
 						if (lineWithoutChecksum != null)
-						{
+						{ 
 							WriteLineStartCallBacks.CheckForKeys(foundStringEvent);
 							WriteLineContainsCallBacks.CheckForKeys(foundStringEvent);
 
