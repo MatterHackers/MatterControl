@@ -210,6 +210,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		private ExtrusionMultiplyerStream extrusionMultiplyerStream7 = null;
 		private FeedRateMultiplyerStream feedrateMultiplyerStream8 = null;
 		private RequestTemperaturesStream requestTemperaturesStream9 = null;
+		private ProcessWriteRegexStream processWriteRegExStream10 = null;
 
 		private GCodeStream totalGCodeStream = null;
 
@@ -1986,7 +1987,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					if (lineToWrite.Trim().Length > 0)
 					{
 						// sometimes we need to send code without buffering (like when we are closing the program).
-						WriteRawToPrinter(ProcessWriteRegEx(lineToWrite) + "\n", lineToWrite);
+						WriteRawToPrinter(lineToWrite + "\n", lineToWrite);
 					}
 				}
 				else
@@ -2000,9 +2001,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		#region RegExProcess
-		Regex getQuotedParts = new Regex(@"([""'])(\\?.)*?\1", RegexOptions.Compiled);
 		#region ProcessRead
+		Regex getQuotedParts = new Regex(@"([""'])(\\?.)*?\1", RegexOptions.Compiled);
 		string read_regex = "";
 		private List<(Regex Regex, string Replacement)> ReadLineReplacements = new List<(Regex Regex, string Replacement)>();
 
@@ -2033,55 +2033,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			return lineBeingRead;
 		}
 		#endregion // ProcessRead
-
-		#region ProcessWrite
-		string write_regex = "";
-		private List<(Regex Regex, string Replacement)> WriteLineReplacements = new List<(Regex Regex, string Replacement)>();
-
-		private string ProcessWriteRegEx(string lineToWrite)
-		{
-			if (write_regex != ActiveSliceSettings.Instance.GetValue(SettingsKey.write_regex))
-			{
-				WriteLineReplacements.Clear();
-				string splitString = "\\n";
-				write_regex = ActiveSliceSettings.Instance.GetValue(SettingsKey.write_regex);
-				foreach (string regExLine in write_regex.Split(splitString.ToCharArray(), StringSplitOptions.RemoveEmptyEntries))
-				{
-					var matches = getQuotedParts.Matches(regExLine);
-					if (matches.Count == 2)
-					{
-						var search = matches[0].Value.Substring(1, matches[0].Value.Length - 2);
-						var replace = matches[1].Value.Substring(1, matches[1].Value.Length - 2);
-						WriteLineReplacements.Add((new Regex(search, RegexOptions.Compiled), replace));
-					}
-				}
-			}
-
-			foreach (var item in WriteLineReplacements)
-			{
-				var replaced = item.Regex.Replace(lineToWrite, item.Replacement);
-				if (replaced != lineToWrite)
-				{
-					var lines = replaced.Split(',');
-					if (lines.Length > 1)
-					{
-						lineToWrite = lines[0];
-						for (int i = 1; i < lines.Length; i++)
-						{
-							SendLineToPrinterNow(lines[i]);
-						}
-					}
-					else
-					{
-						lineToWrite = replaced;
-					}
-				}
-			}
-
-			return lineToWrite;
-		}
-		#endregion
-		#endregion
 
 		public bool SerialPortIsAvailable(string portName)
 		//Check is serial port is in the list of available serial ports
@@ -2351,7 +2302,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		private void ClearQueuedGCode()
 		{
 			loadedGCode.Clear();
-			WriteChecksumLineToPrinter(ProcessWriteRegEx("M110 N1"));
+			WriteChecksumLineToPrinter("M110 N1");
 		}
 
 		private void Connect_Thread()
@@ -2536,7 +2487,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			extrusionMultiplyerStream7 = new ExtrusionMultiplyerStream(babyStepsStream6);
 			feedrateMultiplyerStream8 = new FeedRateMultiplyerStream(extrusionMultiplyerStream7);
 			requestTemperaturesStream9 = new RequestTemperaturesStream(feedrateMultiplyerStream8);
-			totalGCodeStream = requestTemperaturesStream9;
+			processWriteRegExStream10 = new ProcessWriteRegexStream(requestTemperaturesStream9);
+			totalGCodeStream = processWriteRegExStream10;
 
 			// Get the current position of the printer any time we reset our streams
 			ReadPosition();
@@ -2863,9 +2815,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						}
 
 						// Check if there is anything in front of the ;.
+						currentSentLine = currentSentLine.Trim();
 						if (currentSentLine.Split(';')[0].Trim().Length > 0)
 						{
-							currentSentLine = ProcessWriteRegEx(currentSentLine).Trim();
 							if (currentSentLine.Length > 0)
 							{
 								WriteChecksumLineToPrinter(currentSentLine);

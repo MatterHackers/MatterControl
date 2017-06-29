@@ -348,15 +348,17 @@ namespace MatterHackers.MatterControl
 						GCodeFileStream gCodeFileStream0 = new GCodeFileStream(loadedGCode);
 						PrintLevelingStream printLevelingStream4 = new PrintLevelingStream(gCodeFileStream0, false);
 						// this is added to ensure we are rewriting the G0 G1 commands as needed
-						FeedRateMultiplyerStream extrusionMultiplyerStream = new FeedRateMultiplyerStream(printLevelingStream4);
+						FeedRateMultiplyerStream extrusionMultiplyerStream5 = new FeedRateMultiplyerStream(printLevelingStream4);
+						var processWriteRegExStream6 = new ProcessWriteRegexStream(extrusionMultiplyerStream5);
+						GCodeStream finalStream = processWriteRegExStream6;
 
 						using (StreamWriter file = new StreamWriter(dest))
 						{
-							string nextLine = extrusionMultiplyerStream.ReadLine();
+							string nextLine = finalStream.ReadLine();
 							while (nextLine != null)
 							{
 								file.WriteLine(nextLine);
-								nextLine = extrusionMultiplyerStream.ReadLine();
+								nextLine = finalStream.ReadLine();
 							}
 						}
 					}

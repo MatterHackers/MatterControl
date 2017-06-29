@@ -177,6 +177,7 @@
     <Compile Include="CustomWidgets\ThumbnailTracer.cs" />
     <Compile Include="DataStorage\Models.cs" />
     <Compile Include="PrinterCommunication\Io\NotPrintingStream.cs" />
+    <Compile Include="PrinterCommunication\Io\ProcessWriteRegexStream.cs" />
     <Compile Include="SetupWizard\CopyGuestProfilesToUser.cs" />
     <Compile Include="Library\RenameItemWindow.cs" />
     <Compile Include="Library\Provider\LibraryProviderHistory.cs" />
