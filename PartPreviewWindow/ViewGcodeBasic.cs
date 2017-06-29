@@ -117,40 +117,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			CreateAndAddChildren();
 
-			ActiveSliceSettings.SettingChanged.RegisterEvent(CheckSettingChanged, ref unregisterEvents);
+			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
+			{
+				if (e is StringEventArgs stringEvent)
+				{
+					if (stringEvent.Data == "extruder_offset")
+					{
+						printer.BedPlate.GCodeRenderer.Clear3DGCode();
+					}
+				}
+			}, ref unregisterEvents);
 
 			// TODO: Why do we clear GCode on AdvancedControlsPanelReloading - assume some slice settings should invalidate. If so, code should be more specific and bound to slice settings changed
 			ApplicationController.Instance.AdvancedControlsPanelReloading.RegisterEvent((s, e) => printer.BedPlate.GCodeRenderer?.Clear3DGCode(), ref unregisterEvents);
 		}
 
 		private GCodeFile loadedGCode => printer.BedPlate.LoadedGCode;
-
-		private void CheckSettingChanged(object sender, EventArgs e)
-		{
-			if (e is StringEventArgs stringEvent)
-			{
-				if (loadedGCode != null
-					&& (
-					stringEvent.Data == SettingsKey.filament_cost
-					|| stringEvent.Data == SettingsKey.filament_diameter
-					|| stringEvent.Data == SettingsKey.filament_density)
-					)
-				{
-					massTextWidget.Text = gcodeDetails.EstimatedMass;
-					conditionalCostPanel.Visible = gcodeDetails.TotalCost > 0;
-
-					if (gcodeDetails.TotalCost > 0)
-					{
-						costTextWidget.Text = gcodeDetails.EstimatedCost;
-					}
-				}
-
-				if (stringEvent.Data == "extruder_offset")
-				{
-					printer.BedPlate.GCodeRenderer.Clear3DGCode();
-				}
-			}
-		}
 
 		private void CreateAndAddChildren()
 		{
@@ -400,73 +382,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		TextWidget massTextWidget;
-		TextWidget costTextWidget;
-
-		// Cost info is only displayed when available - conditionalCostPanel is invisible when cost <= 0
-		GuiWidget conditionalCostPanel;
-
-		GCodeDetails gcodeDetails;
-
-		private FlowLayoutWidget CreateModelInfo(GCodeDetails gcodeDetails)
-		{
-			var modelInfoContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				Padding = new BorderDouble(5),
-				Margin = new BorderDouble(0, 0, 35, 5),
-				BackgroundColor = new RGBA_Bytes(0, 0, 0, ViewControlsBase.overlayAlpha),
-				HAnchor = HAnchor.ParentRight | HAnchor.AbsolutePosition,
-				VAnchor = VAnchor.ParentTop | VAnchor.FitToChildren,
-				Width = 150
-			};
-
-			// put in the print time
-			modelInfoContainer.AddChild(new TextWidget("Print Time".Localize() + ":", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 9));
-			modelInfoContainer.AddChild(new TextWidget(gcodeDetails.EstimatedPrintTime, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 14)
-			{
-				Margin = new BorderDouble(0, 9, 0, 3)
-			});
-
-			// show the filament used
-			modelInfoContainer.AddChild(new TextWidget("Filament Length".Localize() + ":", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 9));
-			modelInfoContainer.AddChild(new TextWidget(gcodeDetails.FilamentUsed, pointSize: 14, textColor: ActiveTheme.Instance.PrimaryTextColor)
-			{
-				Margin = new BorderDouble(0, 9, 0, 3)
-			});
-
-			modelInfoContainer.AddChild(new TextWidget("Filament Volume".Localize() + ":", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 9));
-			modelInfoContainer.AddChild(new TextWidget(gcodeDetails.FilamentVolume, pointSize: 14, textColor: ActiveTheme.Instance.PrimaryTextColor)
-			{
-				Margin = new BorderDouble(0, 9, 0, 3)
-			});
-
-			modelInfoContainer.AddChild(new TextWidget("Estimated Mass".Localize() + ":", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 9));
-
-			modelInfoContainer.AddChild(massTextWidget = new TextWidget(gcodeDetails.EstimatedMass, pointSize: 14, textColor: ActiveTheme.Instance.PrimaryTextColor)
-			{
-				Margin = new BorderDouble(0, 9, 0, 3)
-			});
-
-			conditionalCostPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				HAnchor = HAnchor.ParentLeftRight,
-				VAnchor = VAnchor.FitToChildren,
-				Visible = gcodeDetails.TotalCost > 0
-			};
-
-			conditionalCostPanel.AddChild(new TextWidget("Estimated Cost".Localize() + ":", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 9));
-			conditionalCostPanel.AddChild(costTextWidget = new TextWidget(gcodeDetails.EstimatedCost, pointSize: 14, textColor: ActiveTheme.Instance.PrimaryTextColor)
-			{
-				Margin = new BorderDouble(0, 9, 0, 3)
-			});
-
-			modelInfoContainer.AddChild(conditionalCostPanel);
-
-			// TODO: Every time you click Generate we wire up a listener - only when we close do they get released. This is a terrible pattern that has a good chance of creating a high leak scenario. Since RootedEventHandlers are normally only cleared when a widget is closed, we should **only** register them in widget constructors
-			PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent(HookUpGCodeMessagesWhenDonePrinting, ref unregisterEvents);
-
-			return modelInfoContainer;
-		}
+		private GCodeDetails gcodeDetails;
 
 		internal GuiWidget ShowOverflowMenu()
 		{
@@ -579,11 +495,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					printItem.SlicingDone -= sliceItem_Done;
 
 					generateGCodeButton.Visible = false;
-
-					// TODO: Bad pattern - figure out how to revise
-					// However if the print finished or is canceled we are going to want to get updates again. So, hook the status event
-					PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent(HookUpGCodeMessagesWhenDonePrinting, ref unregisterEvents);
-					UiThread.RunOnIdle(SetSyncToPrintVisibility);
 				}
 			}
 
@@ -771,7 +682,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				setLayerWidget.VAnchor = Agg.UI.VAnchor.ParentTop;
 				layerSelectionButtonsPanel.AddChild(setLayerWidget);
 
-				
+
 				navigationWidget?.Close();
 				navigationWidget = new LayerNavigationWidget(gcode2DWidget, ApplicationController.Instance.Theme.GCodeLayerButtons);
 				navigationWidget.Margin = new BorderDouble(0, 0, 20, 0);
@@ -800,7 +711,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				BoundsChanged += new EventHandler(PartPreviewGCode_BoundsChanged);
 
 				this.gcodeDetails = new GCodeDetails(this.loadedGCode);
-				this.AddChild(CreateModelInfo(gcodeDetails));
+
+				this.AddChild(new GCodeDetailsView(gcodeDetails)
+				{
+					Margin = new BorderDouble(0, 0, 35, 5),
+					Padding = new BorderDouble(10),
+					BackgroundColor = new RGBA_Bytes(0, 0, 0, ViewControlsBase.overlayAlpha),
+					HAnchor = HAnchor.ParentRight | HAnchor.AbsolutePosition,
+					VAnchor = VAnchor.ParentTop | VAnchor.FitToChildren,
+					Width = 150
+				});
+
+				// TODO: Bad pattern - figure out how to revise
+				// However if the print finished or is canceled we are going to want to get updates again. So, hook the status event
+				PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent(HookUpGCodeMessagesWhenDonePrinting, ref unregisterEvents);
+				UiThread.RunOnIdle(SetSyncToPrintVisibility);
 
 				// Switch to the most recent view mode, defaulting to Layers3D
 				SwitchViewModes();
