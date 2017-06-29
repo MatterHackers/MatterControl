@@ -743,6 +743,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void SetSliderSizes()
 		{
+			if (selectLayerSlider == null)
+			{
+				return;
+			}
+
 			selectLayerSlider.OriginRelativeParent = new Vector2(gcodeDisplayWidget.Width - 20, 70);
 			selectLayerSlider.TotalWidthInPixels = gcodeDisplayWidget.Height - 80;
 
