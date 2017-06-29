@@ -51,33 +51,19 @@ namespace MatterHackers.GCodeVisualizer
 
 		public Func<int, RGBA_Bytes> GetMaterialColor { get; }
 
-		public int startLayerIndex;
+		public int StartLayerIndex { get; set; }
 
-		public int StartLayerIndex { get { return startLayerIndex; } }
+		public int EndLayerIndex { get; }
 
-		private int endLayerIndex;
+		public Affine Transform { get; }
 
-		public int EndLayerIndex { get { return endLayerIndex; } }
+		public double LayerScale { get; }
 
-		private Affine transform;
+		public RenderType CurrentRenderType { get; }
 
-		public Affine Transform { get { return transform; } }
+		public double FeatureToStartOnRatio0To1 { get; }
 
-		private double layerScale;
-
-		public double LayerScale { get { return layerScale; } }
-
-		private RenderType currentRenderType;
-
-		public RenderType CurrentRenderType { get { return currentRenderType; } }
-
-		private double featureToStartOnRatio0To1;
-
-		public double FeatureToStartOnRatio0To1 { get { return featureToStartOnRatio0To1; } }
-
-		private double featureToEndOnRatio0To1;
-
-		public double FeatureToEndOnRatio0To1 { get { return featureToEndOnRatio0To1; } }
+		public double FeatureToEndOnRatio0To1 { get; }
 
 		public GCodeRenderInfo()
 		{
@@ -90,13 +76,13 @@ namespace MatterHackers.GCodeVisualizer
 			Func<int, RGBA_Bytes> getMaterialColor)
 		{
 			this.GetMaterialColor = getMaterialColor;
-			this.startLayerIndex = startLayerIndex;
-			this.endLayerIndex = endLayerIndex;
-			this.transform = transform;
-			this.layerScale = layerScale;
-			this.currentRenderType = renderType;
-			this.featureToStartOnRatio0To1 = featureToStartOnRatio0To1;
-			this.featureToEndOnRatio0To1 = featureToEndOnRatio0To1;
+			this.StartLayerIndex = startLayerIndex;
+			this.EndLayerIndex = endLayerIndex;
+			this.Transform = transform;
+			this.LayerScale = layerScale;
+			this.CurrentRenderType = renderType;
+			this.FeatureToStartOnRatio0To1 = featureToStartOnRatio0To1;
+			this.FeatureToEndOnRatio0To1 = featureToEndOnRatio0To1;
 			this.extruderOffsets = extruderOffsets;
 		}
 	}
