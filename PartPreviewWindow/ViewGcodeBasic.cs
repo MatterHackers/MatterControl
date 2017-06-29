@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.IO;
+using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.GCodeVisualizer;
@@ -94,6 +95,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private BedConfig bedPlate;
 
+		private SystemWindow parentSystemWindow;
+
 		public ViewGcodeBasic(Vector3 viewerVolume, Vector2 bedCenter, BedShape bedShape, WindowMode windowMode, ViewControls3D viewControls3D, ThemeConfig theme, MeshViewerWidget externalMeshViewer)
 		{
 			this.externalMeshViewer = externalMeshViewer;
@@ -138,9 +141,38 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			ApplicationController.Instance.AdvancedControlsPanelReloading.RegisterEvent((s, e) => printer.BedPlate.GCodeRenderer?.Clear3DGCode(), ref unregisterEvents);
 		}
 
+		public override void OnLoad(EventArgs args)
+		{
+			// Find and hook the parent system window KeyDown event
+			if (this.Parents<SystemWindow>().FirstOrDefault() is SystemWindow systemWindow)
+			{
+				systemWindow.KeyDown += Parent_KeyDown;
+				parentSystemWindow = systemWindow;
+			}
+
+			base.OnLoad(args);
+		}
+
+		private void Parent_KeyDown(object sender, KeyEventArgs keyEvent)
+		{
+			if (this.Visible)
+			{
+				switch(keyEvent.KeyCode)
+				{
+					case Keys.Up:
+						bedPlate.ActiveLayerIndex += 1;
+						break;
+					case Keys.Down:
+						bedPlate.ActiveLayerIndex -= 1;
+						break;
+				}
+			}
+		}
+
 		private void ActiveLayer_Changed(object sender, EventArgs e)
 		{
-			if (bedPlate.ActiveLayerIndex != (int)(selectLayerSlider.Value + .5))
+			if (selectLayerSlider != null 
+				&& bedPlate.ActiveLayerIndex != (int)(selectLayerSlider.Value + .5))
 			{
 				selectLayerSlider.Value = bedPlate.ActiveLayerIndex;
 			}
@@ -421,10 +453,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			popupContainer.AddChild(showRetractions);
 			
 
-			// put in a show speed checkbox
+			// Speeds checkbox
 			var showSpeeds = new CheckBox("Speeds".Localize(), textColor: textColor);
 			showSpeeds.Checked = options.RenderSpeeds;
-			//showSpeeds.Checked = gradient.Visible;
 			showSpeeds.CheckedStateChanged += (sender, e) =>
 			{
 				gradientWidget.Visible = showSpeeds.Checked;
@@ -433,7 +464,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			popupContainer.AddChild(showSpeeds);
 
-			// put in a simulate extrusion checkbox
+			// Extrusion checkbox
 			var simulateExtrusion = new CheckBox("Extrusion".Localize(), textColor: textColor);
 			simulateExtrusion.Checked = options.SimulateExtrusion;
 			simulateExtrusion.CheckedStateChanged += (sender, e) =>
@@ -442,21 +473,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			popupContainer.AddChild(simulateExtrusion);
 
-			// put in a render extrusion transparent checkbox
+			// Transparent checkbox
 			var transparentExtrusion = new CheckBox("Transparent".Localize(), textColor: textColor)
 			{
 				Checked = options.TransparentExtrusion,
 				Margin = new BorderDouble(5, 0, 0, 0),
 				HAnchor = HAnchor.ParentLeft,
 			};
-
 			transparentExtrusion.CheckedStateChanged += (sender, e) =>
 			{
 				options.TransparentExtrusion = transparentExtrusion.Checked;
 			};
 			popupContainer.AddChild(transparentExtrusion);
 
-			// put in a simulate extrusion checkbox
+			// Extrusion checkbox
 			if (ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.extruder_count) > 1)
 			{
 				CheckBox hideExtruderOffsets = new CheckBox("Hide Offsets", textColor: textColor);
@@ -468,7 +498,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				popupContainer.AddChild(hideExtruderOffsets);
 			}
 
-			// Put in the sync to print checkbox
+			// Sync To Print checkbox
 			if (windowMode == WindowMode.Embeded)
 			{
 				var syncToPrint = new CheckBox("Sync To Print".Localize(), textColor: textColor);
@@ -768,6 +798,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public override void OnClosed(ClosedEventArgs e)
 		{
 			unregisterEvents?.Invoke(this, null);
+
+			// Find and unhook the parent system window KeyDown event
+			if (parentSystemWindow != null)
+			{
+				parentSystemWindow.KeyDown -= Parent_KeyDown;
+			}
 
 			if (externalMeshViewer != null)
 			{
