@@ -59,7 +59,7 @@ namespace MatterHackers.GCodeVisualizer
 		// the number of lines in the file
 		public abstract int LineCount { get; }
 
-		public abstract int NumChangesInZ { get; }
+		public abstract int LayerCount { get; }
 		public abstract double TotalSecondsInPrint { get; }
 
 		public abstract void Clear();
@@ -183,7 +183,7 @@ namespace MatterHackers.GCodeVisualizer
 			}
 			else
 			{
-				return new GCodeFileLoaded(fileName);
+				return new GCodeMemoryFile(fileName);
 			}
 		}
 

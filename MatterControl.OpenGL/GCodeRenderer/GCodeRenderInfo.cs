@@ -53,7 +53,7 @@ namespace MatterHackers.GCodeVisualizer
 
 		public int StartLayerIndex { get; set; }
 
-		public int EndLayerIndex { get; }
+		public int EndLayerIndex { get; set; }
 
 		public Affine Transform { get; }
 
@@ -61,9 +61,9 @@ namespace MatterHackers.GCodeVisualizer
 
 		public RenderType CurrentRenderType { get; }
 
-		public double FeatureToStartOnRatio0To1 { get; }
+		public double FeatureToStartOnRatio0To1 { get; set; }
 
-		public double FeatureToEndOnRatio0To1 { get; }
+		public double FeatureToEndOnRatio0To1 { get; set; }
 
 		public GCodeRenderInfo()
 		{

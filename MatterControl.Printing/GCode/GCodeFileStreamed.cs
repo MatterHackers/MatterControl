@@ -193,7 +193,7 @@ namespace MatterHackers.GCodeVisualizer
 			return 0;
 		}
 
-		public override int NumChangesInZ
+		public override int LayerCount
 		{
 			get
 			{

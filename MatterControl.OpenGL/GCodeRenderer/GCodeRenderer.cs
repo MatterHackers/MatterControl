@@ -71,7 +71,7 @@ namespace MatterHackers.GCodeVisualizer
 			{
 				this.gCodeFileToDraw = gCodeFileToDraw;
 
-				for (int i = 0; i < gCodeFileToDraw.NumChangesInZ; i++)
+				for (int i = 0; i < gCodeFileToDraw.LayerCount; i++)
 				{
 					renderFeatures.Add(new List<RenderFeatureBase>());
 				}
@@ -114,7 +114,7 @@ namespace MatterHackers.GCodeVisualizer
 
 			int startRenderIndex = gCodeFileToDraw.GetInstructionIndexAtLayer(layerToCreate);
 			int endRenderIndex = gCodeFileToDraw.LineCount - 1;
-			if (layerToCreate < gCodeFileToDraw.NumChangesInZ - 1)
+			if (layerToCreate < gCodeFileToDraw.LayerCount - 1)
 			{
 				endRenderIndex = gCodeFileToDraw.GetInstructionIndexAtLayer(layerToCreate + 1);
 			}
@@ -275,11 +275,16 @@ namespace MatterHackers.GCodeVisualizer
 
 		public void Render3D(GCodeRenderInfo renderInfo)
 		{
+			if (renderInfo == null)
+			{
+				return;
+			}
+
 			if (layerVertexBuffer == null)
 			{
 				layerVertexBuffer = new List<GCodeVertexBuffer>();
-				layerVertexBuffer.Capacity = gCodeFileToDraw.NumChangesInZ;
-				for (int layerIndex = 0; layerIndex < gCodeFileToDraw.NumChangesInZ; layerIndex++)
+				layerVertexBuffer.Capacity = gCodeFileToDraw.LayerCount;
+				for (int layerIndex = 0; layerIndex < gCodeFileToDraw.LayerCount; layerIndex++)
 				{
 					layerVertexBuffer.Add(null);
 					featureStartIndex.Add(new List<int>());
@@ -287,7 +292,7 @@ namespace MatterHackers.GCodeVisualizer
 				}
 			}
 
-			for (int layerIndex = 0; layerIndex < gCodeFileToDraw.NumChangesInZ; layerIndex++)
+			for (int layerIndex = 0; layerIndex < gCodeFileToDraw.LayerCount; layerIndex++)
 			{
 				CreateFeaturesForLayerIfRequired(layerIndex);
 			}

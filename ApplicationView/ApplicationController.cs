@@ -52,6 +52,7 @@ namespace MatterHackers.MatterControl
 	using Agg.Font;
 	using Agg.Image;
 	using CustomWidgets;
+	using MatterHackers.Agg.Transform;
 	using MatterHackers.DataConverters3D;
 	using MatterHackers.GCodeVisualizer;
 	using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
@@ -69,10 +70,54 @@ namespace MatterHackers.MatterControl
 
 	public class BedConfig
 	{
+		public event EventHandler ActiveLayerChanged;
+
 		public GCodeFile LoadedGCode { get; set; }
 
 		// TODO: Make assignment private, wire up post slicing initialization here
 		public GCodeRenderer GCodeRenderer { get; set; }
+
+		public int ActiveLayerIndex
+		{
+			get
+			{
+				return activeLayerIndex;
+			}
+
+			set
+			{
+				if (activeLayerIndex != value)
+				{
+					activeLayerIndex = value;
+
+					if (this.GCodeRenderer == null || activeLayerIndex < 0)
+					{
+						activeLayerIndex = 0;
+					}
+					else if (activeLayerIndex >= this.LoadedGCode.LayerCount)
+					{
+						activeLayerIndex = this.LoadedGCode.LayerCount - 1;
+					}
+
+					// When the active layer changes we update the selected range accordingly - constrain to applicable values
+					this.RenderInfo.EndLayerIndex = Math.Min(this.LoadedGCode.LayerCount - 1, Math.Max(activeLayerIndex, 1));
+
+					ActiveLayerChanged?.Invoke(this, null);
+				}
+			}
+		}
+
+		private int activeLayerIndex;
+
+		public GCodeRenderInfo RenderInfo { get; set; }
+
+		internal void RenderExtra()
+		{
+			if (this.RenderInfo != null)
+			{
+				this.GCodeRenderer.Render3D(this.RenderInfo);
+			}
+		}
 	}
 
 	public class PrinterConfig

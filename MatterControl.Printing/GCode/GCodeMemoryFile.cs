@@ -39,7 +39,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.GCodeVisualizer
 {
-	public class GCodeFileLoaded : GCodeFile
+	public class GCodeMemoryFile : GCodeFile
 	{
 		private double amountOfAccumulatedEWhileParsing = 0;
 
@@ -55,12 +55,12 @@ namespace MatterHackers.GCodeVisualizer
 
 		private List<PrinterMachineInstruction> GCodeCommandQueue = new List<PrinterMachineInstruction>();
 
-		public GCodeFileLoaded(bool gcodeHasExplicitLayerChangeInfo = false)
+		public GCodeMemoryFile(bool gcodeHasExplicitLayerChangeInfo = false)
 		{
 			this.gcodeHasExplicitLayerChangeInfo = gcodeHasExplicitLayerChangeInfo;
 		}
 
-		public GCodeFileLoaded(string pathAndFileName, bool gcodeHasExplicitLayerChangeInfo = false)
+		public GCodeMemoryFile(string pathAndFileName, bool gcodeHasExplicitLayerChangeInfo = false)
 		{
 			this.gcodeHasExplicitLayerChangeInfo = gcodeHasExplicitLayerChangeInfo;
 			this.Load(pathAndFileName);
@@ -104,9 +104,9 @@ namespace MatterHackers.GCodeVisualizer
 			return ParseFileContents(gcodeContents, null);
 		}
 
-		public static GCodeFileLoaded Load(Stream fileStream)
+		public static GCodeMemoryFile Load(Stream fileStream)
 		{
-			GCodeFileLoaded loadedGCode = null;
+			GCodeMemoryFile loadedGCode = null;
 			try
 			{
 				string gCodeString = "";
@@ -125,7 +125,7 @@ namespace MatterHackers.GCodeVisualizer
 			return loadedGCode;
 		}
 
-		public static async Task<GCodeFileLoaded> LoadInBackground(string fileName, ReportProgressRatio progressReporter)
+		public static async Task<GCodeMemoryFile> LoadInBackground(string fileName, ReportProgressRatio progressReporter)
 		{
 			if (Path.GetExtension(fileName).ToUpper() == ".GCODE")
 			{
@@ -156,7 +156,7 @@ namespace MatterHackers.GCodeVisualizer
 				{
 					using (StreamReader streamReader = new StreamReader(fileStream))
 					{
-						GCodeFileLoaded loadedFile = GCodeFileLoaded.Load(streamReader.BaseStream);
+						GCodeMemoryFile loadedFile = GCodeMemoryFile.Load(streamReader.BaseStream);
 
 						this.indexOfChangeInZ = loadedFile.indexOfChangeInZ;
 						this.center = loadedFile.center;
@@ -198,7 +198,7 @@ namespace MatterHackers.GCodeVisualizer
 			return crCount + 1;
 		}
 
-		public static GCodeFileLoaded ParseFileContents(string gCodeString, ReportProgressRatio progressReporter)
+		public static GCodeMemoryFile ParseFileContents(string gCodeString, ReportProgressRatio progressReporter)
 		{
 			if (gCodeString == null)
 			{
@@ -217,7 +217,7 @@ namespace MatterHackers.GCodeVisualizer
 				gcodeHasExplicitLayerChangeInfo = true;
 			}
 
-			GCodeFileLoaded loadedGCodeFile = new GCodeFileLoaded(gcodeHasExplicitLayerChangeInfo);
+			GCodeMemoryFile loadedGCodeFile = new GCodeMemoryFile(gcodeHasExplicitLayerChangeInfo);
 
 			int crCount = CountNumLines(gCodeString);
 			int lineIndex = 0;
@@ -395,7 +395,7 @@ namespace MatterHackers.GCodeVisualizer
 			get { return indexOfChangeInZ; }
 		}
 
-		public override int NumChangesInZ
+		public override int LayerCount
 		{
 			get { return indexOfChangeInZ.Count; }
 		}
@@ -928,7 +928,7 @@ namespace MatterHackers.GCodeVisualizer
 			if (instructionIndex >= 0
 				&& instructionIndex < LineCount)
 			{
-				for (int zIndex = 0; zIndex < NumChangesInZ; zIndex++)
+				for (int zIndex = 0; zIndex < LayerCount; zIndex++)
 				{
 					if (instructionIndex < IndexOfChangeInZ[zIndex])
 					{
@@ -936,7 +936,7 @@ namespace MatterHackers.GCodeVisualizer
 					}
 				}
 
-				return NumChangesInZ - 1;
+				return LayerCount - 1;
 			}
 
 			return -1;
@@ -954,7 +954,7 @@ namespace MatterHackers.GCodeVisualizer
 					startIndex = IndexOfChangeInZ[currentLayer - 1];
 				}
 				int endIndex = LineCount - 1;
-				if (currentLayer < NumChangesInZ - 1)
+				if (currentLayer < LayerCount - 1)
 				{
 					endIndex = IndexOfChangeInZ[currentLayer];
 				}
