@@ -606,9 +606,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnKeyDown(KeyEventArgs keyEvent)
 		{
-			var childWithFocus = this.ChildrenRecursive<GuiWidget>().Where(x => x.Focused).FirstOrDefault();
+			// this must be called first to unsure we get the correct Handled state
+			base.OnKeyDown(keyEvent);
 
-			if (!(childWithFocus is InternalTextEditWidget))
+			if (!keyEvent.Handled)
 			{
 				switch (keyEvent.KeyCode)
 				{
@@ -656,8 +657,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						break;
 				}
 			}
-
-			base.OnKeyDown(keyEvent);
 		}
 
 		public bool IsEditing { get; private set; }
