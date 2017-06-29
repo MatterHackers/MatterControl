@@ -926,7 +926,7 @@ namespace MatterHackers.MatterControl
 
 		public override void OnKeyDown(KeyEventArgs keyEvent)
 		{
-			// this must be called first to unsure we get the correct Handled state
+			// this must be called first to ensure we get the correct Handled state
 			base.OnKeyDown(keyEvent);
 
 			if (!keyEvent.Handled)
