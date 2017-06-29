@@ -2004,13 +2004,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		Regex getQuotedParts = new Regex(@"([""'])(\\?.)*?\1", RegexOptions.Compiled);
 		#region ProcessRead
 		string read_regex = "";
-		private List<Tuple<Regex, string>> ReadRegEx = new List<Tuple<Regex, string>>();
+		private List<(Regex Regex, string Replacement)> ReadLineReplacements = new List<(Regex Regex, string Replacement)>();
 
 		private string ProcessReadRegEx(string lineBeingRead)
 		{
 			if (read_regex != ActiveSliceSettings.Instance.GetValue(SettingsKey.read_regex))
 			{
-				ReadRegEx.Clear();
+				ReadLineReplacements.Clear();
 				string splitString = "\\n";
 				read_regex = ActiveSliceSettings.Instance.GetValue(SettingsKey.read_regex);
 				foreach (string regExLine in read_regex.Split(splitString.ToCharArray(), StringSplitOptions.RemoveEmptyEntries))
@@ -2020,14 +2020,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					{
 						var search = matches[0].Value.Substring(1, matches[0].Value.Length - 2);
 						var replace = matches[1].Value.Substring(1, matches[1].Value.Length - 2);
-						ReadRegEx.Add(new Tuple<Regex, string>(new Regex(search, RegexOptions.Compiled), replace));
+						ReadLineReplacements.Add((new Regex(search, RegexOptions.Compiled), replace));
 					}
 				}
 			}
 
-			foreach(var regEx in ReadRegEx)
+			foreach(var item in ReadLineReplacements)
 			{
-				lineBeingRead = regEx.Item1.Replace(lineBeingRead, regEx.Item2);
+				lineBeingRead = item.Regex.Replace(lineBeingRead, item.Replacement);
 			}
 
 			return lineBeingRead;
@@ -2036,13 +2036,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		#region ProcessWrite
 		string write_regex = "";
-		private List<Tuple<Regex, string>> WriteRegEx = new List<Tuple<Regex, string>>();
+		private List<(Regex Regex, string Replacement)> WriteLineReplacements = new List<(Regex Regex, string Replacement)>();
 
 		private string ProcessWriteRegEx(string lineToWrite)
 		{
 			if (write_regex != ActiveSliceSettings.Instance.GetValue(SettingsKey.write_regex))
 			{
-				WriteRegEx.Clear();
+				WriteLineReplacements.Clear();
 				string splitString = "\\n";
 				write_regex = ActiveSliceSettings.Instance.GetValue(SettingsKey.write_regex);
 				foreach (string regExLine in write_regex.Split(splitString.ToCharArray(), StringSplitOptions.RemoveEmptyEntries))
@@ -2052,14 +2052,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					{
 						var search = matches[0].Value.Substring(1, matches[0].Value.Length - 2);
 						var replace = matches[1].Value.Substring(1, matches[1].Value.Length - 2);
-						WriteRegEx.Add(new Tuple<Regex, string>(new Regex(search, RegexOptions.Compiled), replace));
+						WriteLineReplacements.Add((new Regex(search, RegexOptions.Compiled), replace));
 					}
 				}
 			}
 
-			foreach (var regEx in WriteRegEx)
+			foreach (var item in WriteLineReplacements)
 			{
-				var replaced = regEx.Item1.Replace(lineToWrite, regEx.Item2); ;
+				var replaced = item.Regex.Replace(lineToWrite, item.Replacement);
 				if (replaced != lineToWrite)
 				{
 					var lines = replaced.Split(',');
