@@ -2001,7 +2001,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		}
 
 		#region RegExProcess
-		Regex findSearchAndReplace = new Regex(@"([""'])(\\?.)*?\1", RegexOptions.Compiled);
+		Regex getQuotedParts = new Regex(@"([""'])(\\?.)*?\1", RegexOptions.Compiled);
 		#region ProcessRead
 		string read_regex = "";
 		private List<Tuple<Regex, string>> ReadRegEx = new List<Tuple<Regex, string>>();
@@ -2015,7 +2015,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				read_regex = ActiveSliceSettings.Instance.GetValue(SettingsKey.read_regex);
 				foreach (string regExLine in read_regex.Split(splitString.ToCharArray(), StringSplitOptions.RemoveEmptyEntries))
 				{
-					var matches = findSearchAndReplace.Matches(regExLine);
+					var matches = getQuotedParts.Matches(regExLine);
 					if (matches.Count == 2)
 					{
 						var search = matches[0].Value.Substring(1, matches[0].Value.Length - 2);
@@ -2047,7 +2047,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				write_regex = ActiveSliceSettings.Instance.GetValue(SettingsKey.write_regex);
 				foreach (string regExLine in write_regex.Split(splitString.ToCharArray(), StringSplitOptions.RemoveEmptyEntries))
 				{
-					var matches = findSearchAndReplace.Matches(regExLine);
+					var matches = getQuotedParts.Matches(regExLine);
 					if (matches.Count == 2)
 					{
 						var search = matches[0].Value.Substring(1, matches[0].Value.Length - 2);
@@ -2062,7 +2062,19 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				var replaced = regEx.Item1.Replace(lineToWrite, regEx.Item2); ;
 				if (replaced != lineToWrite)
 				{
-					lineToWrite = replaced;
+					var lines = replaced.Split(',');
+					if (lines.Length > 1)
+					{
+						lineToWrite = lines[0];
+						for (int i = 1; i < lines.Length; i++)
+						{
+							SendLineToPrinterNow(lines[i]);
+						}
+					}
+					else
+					{
+						lineToWrite = replaced;
+					}
 				}
 			}
 

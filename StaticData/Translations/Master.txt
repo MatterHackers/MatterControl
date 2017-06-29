@@ -6187,3 +6187,6 @@ Translated:Write Filters
 English:Read Filters
 Translated:Read Filters
 
+English:This is a set of regular expressions to apply to lines prior to sending to a printer. They will be applied in the order listed before sending. To return more than one instruction separate them with comma.
+Translated:This is a set of regular expressions to apply to lines prior to sending to a printer. They will be applied in the order listed before sending. To return more than one instruction separate them with comma.
+

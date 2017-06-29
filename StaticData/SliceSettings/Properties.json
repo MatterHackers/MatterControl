@@ -2085,7 +2085,7 @@
 		"SetSettingsOnChange": [ ],
 		"SlicerConfigName": "write_regex",
 		"PresentationName": "Write RegEx",
-		"HelpText": "This is a set of regular expressions to apply to lines prior to sending to a printer. They will be applied in the order listed before sending.",
+		"HelpText": "This is a set of regular expressions to apply to lines prior to sending to a printer. They will be applied in the order listed before sending. To return more than one instruction separate them with comma.",
 		"DataEditType": "MULTI_LINE_TEXT",
 		"ExtraSettings": "",
 		"ShowAsOverride": true,
