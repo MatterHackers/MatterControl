@@ -190,7 +190,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 						if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_enabled))
 						{
-							GCodeFileLoaded unleveledGCode = new GCodeFileLoaded(savedGcodeFileName);
+							GCodeMemoryFile unleveledGCode = new GCodeMemoryFile(savedGcodeFileName);
 
 							for (int j = 0; j < unleveledGCode.LineCount; j++)
 							{

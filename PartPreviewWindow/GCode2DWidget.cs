@@ -415,7 +415,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		// TODO: The bulk of this should move to the data model rather than in this widget
 		public async void LoadInBackground(string gcodePathAndFileName)
 		{
-			printer.BedPlate.LoadedGCode = await GCodeFileLoaded.LoadInBackground(gcodePathAndFileName, this.progressReporter);
+			printer.BedPlate.LoadedGCode = await GCodeMemoryFile.LoadInBackground(gcodePathAndFileName, this.progressReporter);
 
 			if (loadedGCode == null)
 			{

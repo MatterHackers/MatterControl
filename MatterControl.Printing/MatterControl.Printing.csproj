@@ -43,7 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GCode\GCodeFile.cs" />
-    <Compile Include="GCode\GCodeFileLoaded.cs" />
+    <Compile Include="GCode\GCodeMemoryFile.cs" />
     <Compile Include="GCode\GCodeFileStreamed.cs" />
     <Compile Include="GCode\PrinterMachineInstruction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

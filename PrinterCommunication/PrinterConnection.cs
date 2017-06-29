@@ -216,7 +216,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private DataViewGraph sendTimeAfterOkGraph;
 
-		private GCodeFile loadedGCode = new GCodeFileLoaded();
+		private GCodeFile loadedGCode = new GCodeMemoryFile();
 
 		private GCodeFileStream gCodeFileStream0 = null;
 		private PauseHandlingStream pauseHandlingStream1 = null;

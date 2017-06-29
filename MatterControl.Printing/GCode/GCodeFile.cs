@@ -183,7 +183,7 @@ namespace MatterHackers.GCodeVisualizer
 			}
 			else
 			{
-				return new GCodeFileLoaded(fileName);
+				return new GCodeMemoryFile(fileName);
 			}
 		}
 
