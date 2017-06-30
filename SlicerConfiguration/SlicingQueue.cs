@@ -1,15 +1,4 @@
-﻿using MatterHackers.Agg;
-using MatterHackers.Agg.PlatformAbstract;
-using MatterHackers.Agg.UI;
-using MatterHackers.DataConverters3D;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.PrintQueue;
-using MatterHackers.MatterControl.SettingsManagement;
-using MatterHackers.PolygonMesh;
-using MatterHackers.PolygonMesh.Processors;
-
-/*
+﻿/*
 Copyright (c) 2014, Lars Brubaker
 All rights reserved.
 
@@ -44,8 +33,16 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Threading;
-using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.VectorMath;
+using MatterHackers.Agg;
+using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.UI;
+using MatterHackers.DataConverters3D;
+using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.PrintQueue;
+using MatterHackers.MatterControl.SettingsManagement;
+using MatterHackers.PolygonMesh;
+using MatterHackers.PolygonMesh.Processors;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -221,7 +218,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 									int currentMeshMaterialIntdex = MeshMaterialData.Get(mesh).MaterialIndex;
 									if (materialsToInclude.Contains(currentMeshMaterialIntdex))
 									{
-										extruderFilesToSlice.Add(SaveAndGetFilenameForMesh(mesh));
+										extruderFilesToSlice.Add(SaveAndGetFilePathForMesh(mesh));
 									}
 									savedStlCount++;
 								}
@@ -245,7 +242,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 									mergeRules += $"({savedStlCount})";
 								}
 								// save an empty mesh
-								extruderFilesToSlice.Add(SaveAndGetFilenameForMesh(PlatonicSolids.CreateCube(.001, .001, .001)));
+								extruderFilesToSlice.Add(SaveAndGetFilePathForMesh(PlatonicSolids.CreateCube(.001, .001, .001)));
 								savedStlCount++;
 							}
 						}
@@ -259,38 +256,38 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		private static string SaveAndGetFilenameForMesh(Mesh meshToSave)
+		private static string SaveAndGetFilePathForMesh(Mesh meshToSave)
 		{
-			string fileName = Path.ChangeExtension(Path.GetRandomFileName(), ".stl");
-			string applicationUserDataPath = ApplicationDataStorage.ApplicationUserDataPath;
-			string folderToSaveStlsTo = Path.Combine(applicationUserDataPath, "data", "temp", "amf_to_stl");
-			if (!Directory.Exists(folderToSaveStlsTo))
-			{
-				Directory.CreateDirectory(folderToSaveStlsTo);
-			}
-			string saveStlFileName = Path.Combine(folderToSaveStlsTo, fileName);
-			MeshFileIo.Save(meshToSave, saveStlFileName);
-			return saveStlFileName;
+			string folderToSaveStlsTo = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "amf_to_stl");
+
+			// Create directory if needed
+			Directory.CreateDirectory(folderToSaveStlsTo);
+
+			string filePath = Path.Combine(folderToSaveStlsTo, Path.ChangeExtension(Path.GetRandomFileName(), ".stl"));
+
+			MeshFileIo.Save(meshToSave, filePath);
+
+			return filePath;
 		}
 
-		private static string SaveAndGetFilenameForMaterial(MeshGroup extruderMeshGroup, List<int> materialIndexsToSaveInThisSTL)
+		private static string SaveAndGetFilePathForMaterial(MeshGroup extruderMeshGroup, List<int> materialIndexsToSaveInThisSTL)
 		{
-			string fileName = Path.ChangeExtension(Path.GetRandomFileName(), ".stl");
-			string applicationUserDataPath = ApplicationDataStorage.ApplicationUserDataPath;
-			string folderToSaveStlsTo = Path.Combine(applicationUserDataPath, "data", "temp", "amf_to_stl");
-			if (!Directory.Exists(folderToSaveStlsTo))
-			{
-				Directory.CreateDirectory(folderToSaveStlsTo);
-			}
+			string folderToSaveStlsTo = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "amf_to_stl");
 
-			MeshOutputSettings settings = new MeshOutputSettings()
-			{
-				MaterialIndexsToSave = materialIndexsToSaveInThisSTL
-			};
+			// Create directory if needed
+			Directory.CreateDirectory(folderToSaveStlsTo);
 
-			string extruder1StlFileToSlice = Path.Combine(folderToSaveStlsTo, fileName);
-			MeshFileIo.Save(extruderMeshGroup, extruder1StlFileToSlice, settings);
-			return extruder1StlFileToSlice;
+			string filePath = Path.Combine(folderToSaveStlsTo, Path.ChangeExtension(Path.GetRandomFileName(), ".stl"));
+
+			MeshFileIo.Save(
+				extruderMeshGroup, 
+				filePath, 
+				new MeshOutputSettings()
+				{
+					MaterialIndexsToSave = materialIndexsToSaveInThisSTL
+				});
+
+			return filePath;
 		}
 
 		public static bool runInProcess = false;
@@ -326,20 +323,20 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						{
 							string commandArgs = "";
 
-										EngineMappingsMatterSlice.WriteSliceSettingsFile(configFilePath);
-										if (mergeRules == "")
-										{
-											commandArgs = $"-v -o \"{gcodeFilePath}\" -c \"{configFilePath}\"";
-										}
-										else
-										{
-											commandArgs = $"-b {mergeRules} -v -o \"{gcodeFilePath}\" -c \"{configFilePath}\"";
-										}
+							EngineMappingsMatterSlice.WriteSliceSettingsFile(configFilePath);
+							if (mergeRules == "")
+							{
+								commandArgs = $"-v -o \"{gcodeFilePath}\" -c \"{configFilePath}\"";
+							}
+							else
+							{
+								commandArgs = $"-b {mergeRules} -v -o \"{gcodeFilePath}\" -c \"{configFilePath}\"";
+							}
 
-										foreach (string filename in stlFileLocations)
-										{
-											commandArgs +=  $" \"{filename}\"";
-										}
+							foreach (string filename in stlFileLocations)
+							{
+								commandArgs +=  $" \"{filename}\"";
+							}
 #if false
 							Mesh loadedMesh = StlProcessing.Load(fileToSlice);
 							SliceLayers layers = new SliceLayers();
