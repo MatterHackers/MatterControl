@@ -35,6 +35,7 @@ using MatterHackers.MatterControl.ActionBar;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.EeProm;
 using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -63,6 +64,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.AddChild(new HorizontalSpacer());
 
 			var initialMargin = buttonFactory.Margin;
+
+			this.AddChild(new TemperatureWidgetExtruder(ApplicationController.Instance.Theme.MenuButtonFactory)
+			{
+				Margin = new BorderDouble(right: 10)
+			});
+
+			if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_heated_bed))
+			{
+				this.AddChild(new TemperatureWidgetBed());
+			}
 
 			buttonFactory.Margin = new BorderDouble(8, 0);
 
