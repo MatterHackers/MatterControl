@@ -36,6 +36,7 @@ using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.EeProm;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.MeshVisualizer;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -48,9 +49,38 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private OverflowDropdown overflowDropdown;
 
-		public PrinterActionsBar(View3DWidget modelViewer)
+		private SliceProgressReporter sliceProgressReporter;
+
+		public class SliceProgressReporter : IProgress<string>
+		{
+			private MeshViewerWidget meshViewer;
+
+			public SliceProgressReporter(MeshViewerWidget meshViewer)
+			{
+				this.meshViewer = meshViewer;
+			}
+
+			public void StartReporting()
+			{
+				meshViewer.BeginProgressReporting("Slicing Part");
+			}
+
+			public void EndReporting()
+			{
+				meshViewer.EndProgressReporting();
+			}
+
+			public void Report(string value)
+			{
+				meshViewer.partProcessingInfo.centeredInfoDescription.Text = value;
+			}
+		}
+
+		public PrinterActionsBar(View3DWidget modelViewer, PartPreviewContent.PrinterTabPage printerTabPage)
 		{
 			UndoBuffer undoBuffer = modelViewer.UndoBuffer;
+
+			sliceProgressReporter = new SliceProgressReporter(modelViewer.meshViewerWidget);
 
 			this.HAnchor = HAnchor.ParentLeftRight;
 			this.VAnchor = VAnchor.FitToChildren;
@@ -64,6 +94,55 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.AddChild(new HorizontalSpacer());
 
 			var initialMargin = buttonFactory.Margin;
+
+			var sliceButton = buttonFactory.Generate("Slice".Localize());
+			sliceButton.ToolTipText = "Slice Parts".Localize();
+			sliceButton.Name = "Generate Gcode Button";
+			sliceButton.Margin = new BorderDouble(8, 0);
+			sliceButton.Click += async (s, e) =>
+			{
+				if (ActiveSliceSettings.Instance.PrinterSelected)
+				{
+					var printItem = ApplicationController.Instance.ActivePrintItem;
+
+					if (ActiveSliceSettings.Instance.IsValid() && printItem != null)
+					{
+						sliceButton.Enabled = false;
+
+						try
+						{
+							sliceProgressReporter.StartReporting();
+
+							// Save any pending changes before starting the print
+							await ApplicationController.Instance.ActiveView3DWidget.PersistPlateIfNeeded();
+							
+							await SlicingQueue.SliceFileAsync(printItem, sliceProgressReporter);
+
+							sliceProgressReporter.EndReporting();
+
+							printerTabPage.SwitchToLayerView();
+
+							// HACK: directly fire method which previously ran on SlicingDone event on PrintItemWrapper
+							UiThread.RunOnIdle(printerTabPage.gcodeViewer.CreateAndAddChildren);
+						}
+						catch (Exception ex)
+						{
+							Console.WriteLine("Error slicing file: " + ex.Message);
+						}
+
+						sliceButton.Enabled = true;
+					};
+				}
+				else
+				{
+					UiThread.RunOnIdle(() =>
+					{
+						StyledMessageBox.ShowMessageBox(null, "Oops! Please select a printer in order to continue slicing.", "Select Printer", StyledMessageBox.MessageType.OK);
+					});
+				}
+			};
+
+			this.AddChild(sliceButton);
 
 			this.AddChild(new TemperatureWidgetExtruder(ApplicationController.Instance.Theme.MenuButtonFactory)
 			{

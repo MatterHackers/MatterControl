@@ -59,7 +59,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private GCode2DWidget gcode2DWidget;
 		private PrintItemWrapper printItem => ApplicationController.Instance.ActivePrintItem;
 		private bool startedSliceFromGenerateButton = false;
-		private Button generateGCodeButton;
 		private FlowLayoutWidget buttonBottomPanel;
 		private FlowLayoutWidget layerSelectionButtonsPanel;
 
@@ -183,7 +182,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private GCodeFile loadedGCode => printer.BedPlate.LoadedGCode;
 
-		private void CreateAndAddChildren()
+		internal void CreateAndAddChildren()
 		{
 			CloseAllChildren();
 
@@ -202,39 +201,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			buttonBottomPanel.Padding = new BorderDouble(3, 3);
 			buttonBottomPanel.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
-			generateGCodeButton = buttonFactory.Generate("Generate".Localize());
-			generateGCodeButton.Name = "Generate Gcode Button";
-			generateGCodeButton.Click += (s, e) =>
-			{
-				UiThread.RunOnIdle(() =>
-				{
-					if (ActiveSliceSettings.Instance.PrinterSelected)
-					{
-						// Save any pending changes before starting the print
-						ApplicationController.Instance.ActiveView3DWidget.PersistPlateIfNeeded().ContinueWith((t) =>
-						{
-							if (ActiveSliceSettings.Instance.IsValid() && printItem != null)
-							{
-								generateGCodeButton.Visible = false;
-								SlicingQueue.Instance.QueuePartForSlicing(printItem);
-								startedSliceFromGenerateButton = true;
-							}
-						});
-					}
-					else
-					{
-						StyledMessageBox.ShowMessageBox(null, "Oops! Please select a printer in order to continue slicing.", "Select Printer", StyledMessageBox.MessageType.OK);
-					}
-				});
-			};
-
-			buttonBottomPanel.AddChild(generateGCodeButton);
-
+		
 			layerSelectionButtonsPanel = new FlowLayoutWidget(FlowDirection.RightToLeft);
 			layerSelectionButtonsPanel.HAnchor = HAnchor.ParentLeftRight;
 			layerSelectionButtonsPanel.Padding = new BorderDouble(0);
 
-			GuiWidget holdPanelOpen = new GuiWidget(1, generateGCodeButton.Height);
+			GuiWidget holdPanelOpen = new GuiWidget(1, 40);
 			layerSelectionButtonsPanel.AddChild(holdPanelOpen);
 
 			if (windowMode == WindowMode.StandAlone)
@@ -252,6 +224,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				HAnchor = HAnchor.ParentLeftRight,
 				VAnchor = VAnchor.ParentBottomTop
 			};
+
 			string firstProcessingMessage = "Press 'Add' to select an item.".Localize();
 
 			if (printItem != null)
@@ -291,10 +264,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						firstProcessingMessage = string.Format("{0}\n'{1}'", fileNotFoundMessage, printItem.Name);
 					}
 				}
-			}
-			else
-			{
-				generateGCodeButton.Visible = false;
 			}
 
 			SetProcessingMessage(firstProcessingMessage);
@@ -523,8 +492,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					printItem.SlicingOutputMessage -= sliceItem_SlicingOutputMessage;
 					printItem.SlicingDone -= sliceItem_Done;
-
-					generateGCodeButton.Visible = false;
 				}
 			}
 
@@ -589,8 +556,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// register for done slicing and slicing messages
 				printItem.SlicingOutputMessage += sliceItem_SlicingOutputMessage;
 				printItem.SlicingDone += sliceItem_Done;
-
-				generateGCodeButton.Visible = true;
 			}
 			SetSyncToPrintVisibility();
 		}
