@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl.Library
 
 		public bool IsVisible => this.visibilityResolver();
 
-		public Task<ILibraryContainer> GetContainer(ReportProgressRatio reportProgress)
+		public Task<ILibraryContainer> GetContainer(ReportProgressRatio<(double ratio, string state)> reportProgress)
 		{
 			return Task.FromResult(this.containerCreator());
 		}

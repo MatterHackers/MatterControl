@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl.Library
 		/// </summary>
 		public Func<IObject3D> Collector { get; }
 
-		public Task<IObject3D> GetContent(ReportProgressRatio reportProgress) => Task.FromResult(Collector?.Invoke());
+		public Task<IObject3D> GetContent(ReportProgressRatio<(double ratio, string state)> reportProgress) => Task.FromResult(Collector?.Invoke());
 
 		public void SetContent(IObject3D item)
 		{

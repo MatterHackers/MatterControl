@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.VectorMath;
@@ -125,7 +126,7 @@ namespace MatterHackers.GCodeVisualizer
 			return loadedGCode;
 		}
 
-		public static async Task<GCodeMemoryFile> LoadInBackground(string fileName, ReportProgressRatio progressReporter)
+		public static async Task<GCodeMemoryFile> LoadInBackground(string fileName, ReportProgressRatio<(double ratio, string state)> progressReporter)
 		{
 			if (Path.GetExtension(fileName).ToUpper() == ".GCODE")
 			{
@@ -198,7 +199,7 @@ namespace MatterHackers.GCodeVisualizer
 			return crCount + 1;
 		}
 
-		public static GCodeMemoryFile ParseFileContents(string gCodeString, ReportProgressRatio progressReporter)
+		public static GCodeMemoryFile ParseFileContents(string gCodeString, ReportProgressRatio<(double ratio, string state)> progressReporter)
 		{
 			if (gCodeString == null)
 			{
@@ -277,8 +278,9 @@ namespace MatterHackers.GCodeVisualizer
 
 				if (progressReporter != null && maxProgressReport.ElapsedMilliseconds > 200)
 				{
-					progressReporter((double)lineIndex / crCount / 2, "", out bool continueProcessing);
-					if (!continueProcessing)
+					var continueProcessing = new CancellationTokenSource();
+					progressReporter(((double)lineIndex / crCount / 2, ""), continueProcessing);
+					if (continueProcessing.IsCancellationRequested)
 					{
 						return null;
 					}
@@ -297,7 +299,7 @@ namespace MatterHackers.GCodeVisualizer
 			return loadedGCodeFile;
 		}
 
-		private void AnalyzeGCodeLines(ReportProgressRatio progressReporter)
+		private void AnalyzeGCodeLines(ReportProgressRatio<(double ratio, string state)> progressReporter)
 		{
 			double feedRateMmPerMin = 0;
 			Vector3 lastPrinterPosition = new Vector3();
@@ -351,8 +353,9 @@ namespace MatterHackers.GCodeVisualizer
 
 				if (progressReporter != null && maxProgressReport.ElapsedMilliseconds > 200)
 				{
-					progressReporter(((double) lineIndex / GCodeCommandQueue.Count / 2) + .5, "", out bool continueProcessing);
-					if (!continueProcessing)
+					var continueProcessing = new CancellationTokenSource();
+					progressReporter((((double) lineIndex / GCodeCommandQueue.Count / 2) + .5, ""), continueProcessing);
+					if (continueProcessing.IsCancellationRequested)
 					{
 						return;
 					}

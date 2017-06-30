@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.GCodeVisualizer;
@@ -594,10 +595,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			SetSyncToPrintVisibility();
 		}
 
-		private void LoadProgress_Changed(double progress0To1, string processingState, out bool continueProcessing)
+		private void LoadProgress_Changed((double progress0To1, string processingState) progress, CancellationTokenSource continueProcessing)
 		{
-			SetProcessingMessage(string.Format("{0} {1:0}%...", gcodeLoading, progress0To1 * 100));
-			continueProcessing = !this.HasBeenClosed;
+			SetProcessingMessage(string.Format("{0} {1:0}%...", gcodeLoading, progress.progress0To1 * 100));
+			if(this.HasBeenClosed)
+			{
+				continueProcessing.Cancel();
+			}
 		}
 
 		private GuiWidget CreateGCodeViewWidget(string pathAndFileName)

@@ -34,6 +34,6 @@ namespace MatterHackers.MatterControl.Library
 {
 	public interface ILibraryContainerLink : ILibraryItem
 	{
-		Task<ILibraryContainer> GetContainer(ReportProgressRatio reportProgress);
+		Task<ILibraryContainer> GetContainer(ReportProgressRatio<(double ratio, string state)> reportProgress);
 	}
 }

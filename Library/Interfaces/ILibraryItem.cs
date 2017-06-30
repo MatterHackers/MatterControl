@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl.Library
 	{
 		string ContentType { get; }
 		string Category { get; }
-		Task<IObject3D> GetContent(ReportProgressRatio reportProgress);
+		Task<IObject3D> GetContent(ReportProgressRatio<(double ratio, string state)> reportProgress);
 		void SetContent(IObject3D item);
 	}
 
@@ -58,6 +58,6 @@ namespace MatterHackers.MatterControl.Library
 		string ContentType { get; }
 		string FileName { get; }
 		string AssetPath { get; }
-		Task<StreamAndLength> GetContentStream(ReportProgressRatio reportProgress);
+		Task<StreamAndLength> GetContentStream(ReportProgressRatio<(double ratio, string state)> reportProgress);
 	}
 }

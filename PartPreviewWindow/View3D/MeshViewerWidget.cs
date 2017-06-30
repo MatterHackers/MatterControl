@@ -48,6 +48,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using System.Threading;
 
 namespace MatterHackers.MeshVisualizer
 {
@@ -751,27 +752,23 @@ namespace MatterHackers.MeshVisualizer
 			partProcessingInfo.Visible = false;
 		}
 
-		public void ReportProgress0to100(double progress0To1, string processingState, out bool continueProcessing)
+		public void ReportProgress0to100((double progress0To1, string processingState) progress, CancellationTokenSource continueProcessing)
 		{
 			if (this.HasBeenClosed)
 			{
-				continueProcessing = false;
-			}
-			else
-			{
-				continueProcessing = true;
+				continueProcessing.Cancel();
 			}
 
 			UiThread.RunOnIdle(() =>
 			{
-				int percentComplete = (int)(progress0To1 * 100);
+				int percentComplete = (int)(progress.progress0To1 * 100);
 				partProcessingInfo.centeredInfoText.Text =  "{0} {1}%...".FormatWith(progressReportingPrimaryTask, percentComplete);
 				partProcessingInfo.progressControl.PercentComplete = percentComplete;
 
 				// Only assign to textbox if value passed through
-				if (processingState != null)
+				if (progress.processingState != null)
 				{
-					partProcessingInfo.centeredInfoDescription.Text = processingState;
+					partProcessingInfo.centeredInfoDescription.Text = progress.processingState;
 				}
 			});
 		}

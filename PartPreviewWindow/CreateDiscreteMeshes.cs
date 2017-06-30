@@ -37,6 +37,7 @@ using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace MatterHackers.MatterControl
 {
@@ -46,23 +47,19 @@ namespace MatterHackers.MatterControl
 
 	public static class CreateDiscreteMeshes
 	{
-		public static List<Mesh> SplitConnectedIntoMeshes(MeshGroup meshGroupToSplit, ReportProgressRatio reportProgress)
+		public static List<Mesh> SplitConnectedIntoMeshes(MeshGroup meshGroupToSplit, ReportProgressRatio<(double ratio, string state)> reportProgress)
 		{
 			List<Mesh> discreteMeshes = new List<Mesh>();
 			double ratioPerDiscreetMesh = 1.0 / meshGroupToSplit.Meshes.Count;
 			double currentRatioDone = 0;
 			foreach (Mesh mesh in meshGroupToSplit.Meshes)
 			{
-				List<Mesh> discreteVolumes = SplitVolumesIntoMeshes(mesh, (double progress0To1, string processingState, out bool continueProcessing) =>
+				List<Mesh> discreteVolumes = SplitVolumesIntoMeshes(mesh, ((double progress0To1, string processingState) progressIn, CancellationTokenSource continueProcessing) =>
 				{
 					if (reportProgress != null)
 					{
-						double progress = (currentRatioDone + ratioPerDiscreetMesh * progress0To1);
-						reportProgress(progress, "Split Into Meshes", out continueProcessing);
-					}
-					else
-					{
-						continueProcessing = true;
+						double progress = (currentRatioDone + ratioPerDiscreetMesh * progressIn.progress0To1);
+						reportProgress((progress, "Split Into Meshes"), continueProcessing);
 					}
 				});
 				discreteMeshes.AddRange(discreteVolumes);
@@ -73,7 +70,7 @@ namespace MatterHackers.MatterControl
 			return discreteMeshes;
 		}
 
-		public static List<Mesh> SplitVolumesIntoMeshes(Mesh meshToSplit, ReportProgressRatio reportProgress)
+		public static List<Mesh> SplitVolumesIntoMeshes(Mesh meshToSplit, ReportProgressRatio<(double ratio, string state)> reportProgress)
 		{
 			List<Mesh> discreetVolumes = new List<Mesh>();
 			HashSet<Face> facesThatHaveBeenAdded = new HashSet<Face>();
@@ -127,15 +124,15 @@ namespace MatterHackers.MatterControl
 				if (reportProgress != null)
 				{
 					double progress = faceIndex / (double)meshToSplit.Faces.Count;
-					bool continueProcessing;
-					reportProgress(progress, "Split Into Meshes", out continueProcessing);
+					var continueProcessing = new CancellationTokenSource();
+					reportProgress((progress, "Split Into Meshes"), continueProcessing);
 				}
 			}
 
 			return discreetVolumes;
 		}
 
-		public static Mesh[] SplitIntoMeshesOnOrthographicZ(Mesh meshToSplit, Vector3 buildVolume, ReportProgressRatio reportProgress)
+		public static Mesh[] SplitIntoMeshesOnOrthographicZ(Mesh meshToSplit, Vector3 buildVolume, ReportProgressRatio<(double ratio, string state)> reportProgress)
 		{
 			// check if the part is bigger than the build plate (if it is we need to use that as our size)
 			AxisAlignedBoundingBox partBounds = meshToSplit.GetAxisAlignedBoundingBox();
@@ -153,10 +150,10 @@ namespace MatterHackers.MatterControl
 
 			PolygonMesh.Rendering.OrthographicZProjection.DrawTo(partPlate.NewGraphics2D(), meshToSplit, renderOffset, scaleFactor, RGBA_Bytes.White);
 
-			bool continueProcessin = true;
+			var continueProcessin = new CancellationTokenSource();
 			if (reportProgress != null)
 			{
-				reportProgress(.2, "", out continueProcessin);
+				reportProgress((.2, ""), continueProcessin);
 			}
 
 			//ImageIO.SaveImageData("test part plate 0.png", partPlate);
@@ -196,7 +193,7 @@ namespace MatterHackers.MatterControl
 			}
 			if (reportProgress != null)
 			{
-				reportProgress(.5, "", out continueProcessin);
+				reportProgress((.5, ""), continueProcessin);
 			}
 			//ImageIO.SaveImageData("test part plate 2.png", partPlate);
 
@@ -243,7 +240,7 @@ namespace MatterHackers.MatterControl
 
 			if (reportProgress != null)
 			{
-				reportProgress(.8, "", out continueProcessin);
+				reportProgress((.8, ""), continueProcessin);
 			}
 
 			for (int i = 0; i < discreteMeshes.Count(); i++)

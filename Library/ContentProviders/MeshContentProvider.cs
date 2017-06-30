@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl
 		private static readonly int MaxFileSize = (OsInformation.OperatingSystem == OSType.Android) ? tooBigAndroid : tooBigDesktop;
 		private static readonly Point2D BigRenderSize = new Point2D(460, 460);
 
-		public ContentResult CreateItem(ILibraryItem item, ReportProgressRatio progressReporter)
+		public ContentResult CreateItem(ILibraryItem item, ReportProgressRatio<(double ratio, string state)> progressReporter)
 		{
 			var sceneItem = new Object3D()
 			{
