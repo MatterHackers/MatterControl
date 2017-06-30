@@ -35,7 +35,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class SetLayerWidget : FlowLayoutWidget
 	{
-		public SetLayerWidget(GCode2DWidget gcode2DWidget, TextImageButtonFactory buttonFactory, BedConfig bedConfig)
+		public SetLayerWidget(TextImageButtonFactory buttonFactory, BedConfig bedConfig)
 			: base(FlowDirection.LeftToRight)
 		{
 			var editCurrentLayerIndex = new NumberEdit(1, pixelWidth: 40)

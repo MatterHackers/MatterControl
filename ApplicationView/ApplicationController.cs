@@ -72,7 +72,21 @@ namespace MatterHackers.MatterControl
 	{
 		public event EventHandler ActiveLayerChanged;
 
-		public GCodeFile LoadedGCode { get; set; }
+		public event EventHandler LoadedGCodeChanged;
+
+		private GCodeFile loadedGCode;
+		public GCodeFile LoadedGCode
+		{
+			get => loadedGCode;
+			set
+			{
+				if (loadedGCode != value)
+				{
+					loadedGCode = value;
+					LoadedGCodeChanged?.Invoke(null, null);
+				}
+			}
+		}
 
 		// TODO: Make assignment private, wire up post slicing initialization here
 		public GCodeRenderer GCodeRenderer { get; set; }

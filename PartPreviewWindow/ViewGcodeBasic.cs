@@ -71,13 +71,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private EventHandler unregisterEvents;
 		private WindowMode windowMode;
 
-		private string partToStartLoadingOnFirstDraw = null;
-
 		public delegate Vector2 GetSizeFunction();
 
 		private string gcodeLoading = "Loading G-Code".Localize();
 		private string slicingErrorMessage = "Slicing Error.\nPlease review your slice settings.".Localize();
-		private string pressGenerateMessage = "Press 'generate' to view layers".Localize();
 		private string fileNotFoundMessage = "File not found on disk.".Localize();
 		private string fileTooBigToLoad = "GCode file too big to preview ({0}).".Localize();
 
@@ -200,7 +197,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			buttonBottomPanel.HAnchor = HAnchor.ParentLeftRight;
 			buttonBottomPanel.Padding = new BorderDouble(3, 3);
 			buttonBottomPanel.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-
 		
 			layerSelectionButtonsPanel = new FlowLayoutWidget(FlowDirection.RightToLeft);
 			layerSelectionButtonsPanel.HAnchor = HAnchor.ParentLeftRight;
@@ -225,47 +221,26 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.ParentBottomTop
 			};
 
-			string firstProcessingMessage = "Press 'Add' to select an item.".Localize();
-
 			if (printItem != null)
 			{
-				firstProcessingMessage = "Loading G-Code...".Localize();
-				if (Path.GetExtension(printItem.FileLocation).ToUpper() == ".GCODE")
+				SetProcessingMessage("Loading G-Code...".Localize());
+
+				bool isGCode = Path.GetExtension(printItem.FileLocation).ToUpper() == ".GCODE";
+
+				string gcodeFilePath = isGCode ? printItem.FileLocation : printItem.GetGCodePathAndFileName();
+				if (File.Exists(gcodeFilePath))
 				{
-					gcodeDisplayWidget.AddChild(CreateGCodeViewWidget(printItem.FileLocation));
+					var gcode2DWidget = new GCode2DWidget(new Vector2(viewerVolume.x, viewerVolume.y), bedCenter)
+					{
+						Visible = (activeViewMode == PartViewMode.Layers2D)
+					};
+					gcodeDisplayWidget.AddChild(gcode2DWidget);
 				}
 				else
 				{
-					if (File.Exists(printItem.FileLocation))
-					{
-						string gcodePathAndFileName = printItem.GetGCodePathAndFileName();
-
-						if (printItem.SlicingHadError)
-						{
-							firstProcessingMessage = slicingErrorMessage;
-						}
-						else
-						{
-							firstProcessingMessage = pressGenerateMessage;
-						}
-
-						if (File.Exists(gcodePathAndFileName))
-						{
-							gcodeDisplayWidget.AddChild(CreateGCodeViewWidget(gcodePathAndFileName));
-						}
-
-						// we only hook these up to make sure we can regenerate the gcode when we want
-						printItem.SlicingOutputMessage += sliceItem_SlicingOutputMessage;
-						printItem.SlicingDone += sliceItem_Done;
-					}
-					else
-					{
-						firstProcessingMessage = string.Format("{0}\n'{1}'", fileNotFoundMessage, printItem.Name);
-					}
+					SetProcessingMessage(string.Format("{0}\n'{1}'", fileNotFoundMessage, printItem.Name));
 				}
 			}
-
-			SetProcessingMessage(firstProcessingMessage);
 
 			mainContainerTopToBottom.AddChild(gcodeDisplayWidget);
 
@@ -320,7 +295,108 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			};
 			this.AddChild(viewControlsToggle);
+
+			this.AddGCodeFileControls(ApplicationController.Instance.Printer, ApplicationController.Instance.Theme);
 		}
+
+
+		private void AddGCodeFileControls(PrinterConfig printer, ThemeConfig theme)
+		{
+			SetProcessingMessage("");
+			if (gcode2DWidget != null
+				&& loadedGCode == null)
+			{
+				// If we have finished loading the gcode and the source file exists but we don't have any loaded gcode it is because the loader decided to not load it.
+				if (File.Exists(printItem.FileLocation))
+				{
+					SetProcessingMessage(string.Format(fileTooBigToLoad, printItem.Name));
+				}
+				else
+				{
+					SetProcessingMessage(string.Format("{0}\n'{1}'", fileNotFoundMessage, Path.GetFileName(printItem.FileLocation)));
+				}
+			}
+
+			if (gcode2DWidget != null
+				&& loadedGCode?.LineCount > 0)
+			{
+				// TODO: Shouldn't we be clearing children from some known container and rebuilding?
+				gradientWidget = new ColorGradientWidget(loadedGCode);
+				AddChild(gradientWidget);
+				gradientWidget.Visible = false;
+
+				gradientWidget.Visible = options.RenderSpeeds;
+
+				viewControlsToggle.Visible = true;
+
+				setLayerWidget = new SetLayerWidget(theme.GCodeLayerButtons, printer.BedPlate);
+				setLayerWidget.VAnchor = VAnchor.ParentTop;
+				layerSelectionButtonsPanel.AddChild(setLayerWidget);
+
+				navigationWidget = new LayerNavigationWidget(theme.GCodeLayerButtons);
+				navigationWidget.Margin = new BorderDouble(0, 0, 20, 0);
+				layerSelectionButtonsPanel.AddChild(navigationWidget);
+
+				selectLayerSlider = new SolidSlider(new Vector2(), sliderWidth, 0, loadedGCode.LayerCount - 1, Orientation.Vertical);
+				selectLayerSlider.ValueChanged += (s, e) =>
+				{
+					// TODO: Why would these need to be updated here as well as in assigned in the hslider below?
+					printer.BedPlate.RenderInfo.FeatureToStartOnRatio0To1 = layerRenderRatioSlider.FirstValue;
+					printer.BedPlate.RenderInfo.FeatureToEndOnRatio0To1 = layerRenderRatioSlider.SecondValue;
+
+					printer.BedPlate.ActiveLayerIndex = (int)(selectLayerSlider.Value + .5);
+
+					this.Invalidate();
+				};
+
+				AddChild(selectLayerSlider);
+
+				layerRenderRatioSlider = new DoubleSolidSlider(new Vector2(), sliderWidth);
+				layerRenderRatioSlider.FirstValue = 0;
+				layerRenderRatioSlider.FirstValueChanged += (s, e) =>
+				{
+					printer.BedPlate.RenderInfo.FeatureToStartOnRatio0To1 = layerRenderRatioSlider.FirstValue;
+					printer.BedPlate.RenderInfo.FeatureToEndOnRatio0To1 = layerRenderRatioSlider.SecondValue;
+
+					this.Invalidate();
+				};
+				layerRenderRatioSlider.SecondValue = 1;
+				layerRenderRatioSlider.SecondValueChanged += (s, e) =>
+				{
+					printer.BedPlate.RenderInfo.FeatureToStartOnRatio0To1 = layerRenderRatioSlider.FirstValue;
+					printer.BedPlate.RenderInfo.FeatureToEndOnRatio0To1 = layerRenderRatioSlider.SecondValue;
+
+
+					this.Invalidate();
+				};
+				AddChild(layerRenderRatioSlider);
+
+				SetSliderSizes();
+
+				GCodeRenderer.ExtrusionColor = ActiveTheme.Instance.PrimaryAccentColor;
+
+				this.gcodeDetails = new GCodeDetails(this.loadedGCode);
+
+				this.AddChild(new GCodeDetailsView(gcodeDetails)
+				{
+					Margin = new BorderDouble(0, 0, 35, 5),
+					Padding = new BorderDouble(10),
+					BackgroundColor = new RGBA_Bytes(0, 0, 0, ViewControlsBase.overlayAlpha),
+					HAnchor = HAnchor.ParentRight | HAnchor.AbsolutePosition,
+					VAnchor = VAnchor.ParentTop | VAnchor.FitToChildren,
+					Width = 150
+				});
+
+				// TODO: Bad pattern - figure out how to revise
+				// However if the print finished or is canceled we are going to want to get updates again. So, hook the status event
+				PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent(HookUpGCodeMessagesWhenDonePrinting, ref unregisterEvents);
+				UiThread.RunOnIdle(SetSyncToPrintVisibility);
+
+				// Switch to the most recent view mode, defaulting to Layers3D
+				SwitchViewModes();
+			}
+		}
+
 
 		private RenderType GetRenderType()
 		{
@@ -568,16 +644,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private GuiWidget CreateGCodeViewWidget(string pathAndFileName)
-		{
-			gcode2DWidget = new GCode2DWidget(new Vector2(viewerVolume.x, viewerVolume.y), bedCenter, LoadProgress_Changed);
-			gcode2DWidget.DoneLoading += DoneLoadingGCode;
-			gcode2DWidget.Visible = (activeViewMode == PartViewMode.Layers2D);
-			partToStartLoadingOnFirstDraw = pathAndFileName;
-
-			return gcode2DWidget;
-		}
-
 		public override void OnDraw(Graphics2D graphics2D)
 		{
 			bool printerIsRunningPrint = PrinterConnection.Instance.PrinterIsPaused || PrinterConnection.Instance.PrinterIsPrinting;
@@ -587,11 +653,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				SetAnimationPosition();
 			}
 
-			if (partToStartLoadingOnFirstDraw != null)
-			{
-				gcode2DWidget.LoadInBackground(partToStartLoadingOnFirstDraw);
-				partToStartLoadingOnFirstDraw = null;
-			}
 			base.OnDraw(graphics2D);
 		}
 
@@ -624,125 +685,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			gcodeProcessingStateInfoText.Text = message;
-		}
-
-		private void DoneLoadingGCode(object sender, EventArgs e2)
-		{
-			SetProcessingMessage("");
-			if (gcode2DWidget != null
-				&& loadedGCode == null)
-			{
-				// If we have finished loading the gcode and the source file exists but we don't have any loaded gcode it is because the loader decided to not load it.
-				if (File.Exists(printItem.FileLocation))
-				{
-					SetProcessingMessage(string.Format(fileTooBigToLoad, printItem.Name));
-				}
-				else
-				{
-					SetProcessingMessage(string.Format("{0}\n'{1}'", fileNotFoundMessage, Path.GetFileName(printItem.FileLocation)));
-				}
-			}
-
-			var printer = ApplicationController.Instance.Printer;
-
-			if (gcode2DWidget != null
-				&& loadedGCode?.LineCount > 0)
-			{
-				// TODO: Shouldn't we be clearing children from some known container and rebuilding?
-				gradientWidget?.Close();
-				gradientWidget = new ColorGradientWidget(loadedGCode);
-				AddChild(gradientWidget);
-				gradientWidget.Visible = false;
-
-				gradientWidget.Visible = options.RenderSpeeds;
-
-				viewControlsToggle.Visible = true;
-
-				setLayerWidget?.Close();
-				setLayerWidget = new SetLayerWidget(gcode2DWidget, ApplicationController.Instance.Theme.GCodeLayerButtons, ApplicationController.Instance.Printer.BedPlate);
-				setLayerWidget.VAnchor = VAnchor.ParentTop;
-				layerSelectionButtonsPanel.AddChild(setLayerWidget);
-
-				navigationWidget?.Close();
-				navigationWidget = new LayerNavigationWidget(gcode2DWidget, ApplicationController.Instance.Theme.GCodeLayerButtons);
-				navigationWidget.Margin = new BorderDouble(0, 0, 20, 0);
-				layerSelectionButtonsPanel.AddChild(navigationWidget);
-
-				selectLayerSlider?.Close();
-				selectLayerSlider = new SolidSlider(new Vector2(), sliderWidth, 0, loadedGCode.LayerCount - 1, Orientation.Vertical);
-				selectLayerSlider.ValueChanged += (s, e) =>
-				{
-					// TODO: Why would these need to be updated here as well as in assigned in the hslider below?
-					printer.BedPlate.RenderInfo.FeatureToStartOnRatio0To1 = layerRenderRatioSlider.FirstValue;
-					printer.BedPlate.RenderInfo.FeatureToEndOnRatio0To1 = layerRenderRatioSlider.SecondValue;
-
-					printer.BedPlate.ActiveLayerIndex = (int)(selectLayerSlider.Value + .5);
-
-					this.Invalidate();
-				};
-
-				AddChild(selectLayerSlider);
-
-				layerRenderRatioSlider?.Close();
-				layerRenderRatioSlider = new DoubleSolidSlider(new Vector2(), sliderWidth);
-				layerRenderRatioSlider.FirstValue = 0;
-				layerRenderRatioSlider.FirstValueChanged += (s, e) =>
-				{
-					printer.BedPlate.RenderInfo.FeatureToStartOnRatio0To1 = layerRenderRatioSlider.FirstValue;
-					printer.BedPlate.RenderInfo.FeatureToEndOnRatio0To1 = layerRenderRatioSlider.SecondValue;
-
-					this.Invalidate();
-				};
-				layerRenderRatioSlider.SecondValue = 1;
-				layerRenderRatioSlider.SecondValueChanged += (s, e) =>
-				{
-					printer.BedPlate.RenderInfo.FeatureToStartOnRatio0To1 = layerRenderRatioSlider.FirstValue;
-					printer.BedPlate.RenderInfo.FeatureToEndOnRatio0To1 = layerRenderRatioSlider.SecondValue;
-
-
-					this.Invalidate();
-				};
-				AddChild(layerRenderRatioSlider);
-
-				SetSliderSizes();
-
-				GCodeRenderer.ExtrusionColor = ActiveTheme.Instance.PrimaryAccentColor;
-				// ResetRenderInfo
-				printer.BedPlate.RenderInfo = new GCodeRenderInfo(
-					0,
-					1,
-					Agg.Transform.Affine.NewIdentity(),
-					1,
-					GetRenderType(),
-					0,
-					1,
-					new Vector2[]
-					{
-						ActiveSliceSettings.Instance.Helpers.ExtruderOffset(0),
-						ActiveSliceSettings.Instance.Helpers.ExtruderOffset(1)
-					},
-					MeshViewerWidget.GetMaterialColor);
-
-				this.gcodeDetails = new GCodeDetails(this.loadedGCode);
-
-				this.AddChild(new GCodeDetailsView(gcodeDetails)
-				{
-					Margin = new BorderDouble(0, 0, 35, 5),
-					Padding = new BorderDouble(10),
-					BackgroundColor = new RGBA_Bytes(0, 0, 0, ViewControlsBase.overlayAlpha),
-					HAnchor = HAnchor.ParentRight | HAnchor.AbsolutePosition,
-					VAnchor = VAnchor.ParentTop | VAnchor.FitToChildren,
-					Width = 150
-				});
-
-				// TODO: Bad pattern - figure out how to revise
-				// However if the print finished or is canceled we are going to want to get updates again. So, hook the status event
-				PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent(HookUpGCodeMessagesWhenDonePrinting, ref unregisterEvents);
-				UiThread.RunOnIdle(SetSyncToPrintVisibility);
-
-				// Switch to the most recent view mode, defaulting to Layers3D
-				SwitchViewModes();
-			}
 		}
 
 		public override void OnBoundsChanged(EventArgs e)
