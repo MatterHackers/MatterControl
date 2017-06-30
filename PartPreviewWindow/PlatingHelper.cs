@@ -327,7 +327,7 @@ namespace MatterHackers.MatterControl
 		}
 
 		/*
-		public static void CreateITraceableForMeshGroup(List<PlatingMeshGroupData> perMeshGroupInfo, List<MeshGroup> meshGroups, int meshGroupIndex, ReportProgressRatio reportProgress)
+		public static void CreateITraceableForMeshGroup(List<PlatingMeshGroupData> perMeshGroupInfo, List<MeshGroup> meshGroups, int meshGroupIndex, ReportProgressRatio<(double ratio, string state)> reportProgress)
 		{
 			if (meshGroups != null)
 			{
@@ -348,8 +348,8 @@ namespace MatterHackers.MatterControl
 					needUpdateTitle = true;
 					if (reportProgress != null)
 					{
-						bool continueProcessing;
-						reportProgress(currentAction / (double)totalActionCount, "Creating Trace Group", out continueProcessing);
+						var continueProcessing = new CancellationTokenSource();
+						reportProgress(currentAction / (double)totalActionCount, "Creating Trace Group", continueProcessing);
 					}
 
 					// only allow limited recursion to speed this up building this data
@@ -367,9 +367,9 @@ namespace MatterHackers.MatterControl
 			return BoundingVolumeHierarchy.CreateNewHierachy(allPolys);
 		}
 
-		private static List<IPrimitive> AddTraceDataForMesh(Mesh mesh, int totalActionCount, ref int currentAction, ref bool needToUpdateProgressReport, ReportProgressRatio reportProgress)
+		private static List<IPrimitive> AddTraceDataForMesh(Mesh mesh, int totalActionCount, ref int currentAction, ref bool needToUpdateProgressReport, ReportProgressRatio<(double ratio, string state)> reportProgress)
 		{
-			bool continueProcessing;
+			var continueProcessing = new CancellationTokenSource();
 
 			List<IPrimitive> allPolys = new List<IPrimitive>();
 			List<Vector3> positions = new List<Vector3>();
@@ -403,7 +403,7 @@ namespace MatterHackers.MatterControl
 				{
 					if ((currentAction % 256) == 0 || needToUpdateProgressReport)
 					{
-						reportProgress(currentAction / (double)totalActionCount, "Creating Trace Polygons", out continueProcessing);
+						reportProgress(currentAction / (double)totalActionCount, "Creating Trace Polygons", continueProcessing);
 						needToUpdateProgressReport = false;
 					}
 					currentAction++;

@@ -32,6 +32,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
@@ -61,9 +62,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						&& !selectedItem.HasChildren
 						&& selectedItem.Mesh != null)
 					{
-						var discreetMeshes = CreateDiscreteMeshes.SplitVolumesIntoMeshes(Scene.SelectedItem.Mesh, (double progress0To1, string processingState, out bool continueProcessing) =>
+						var discreetMeshes = CreateDiscreteMeshes.SplitVolumesIntoMeshes(Scene.SelectedItem.Mesh, ((double progress0To1, string processingState) progress, CancellationTokenSource continueProcessing) =>
 						{
-							view3DWidget.ReportProgressChanged(progress0To1 * .5, processingState, out continueProcessing);
+							view3DWidget.ReportProgressChanged(progress.progress0To1 * .5, progress.processingState, continueProcessing);
 						});
 
 						if (discreetMeshes.Count == 1)
@@ -194,9 +195,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					for (int i = 0; i < MeshGroups.Count; i++)
 					{
 						// create the selection info
-						PlatingHelper.CreateITraceableForMeshGroup(MeshGroups, i, (double progress0To1, string processingState, out bool continueProcessing) =>
+						PlatingHelper.CreateITraceableForMeshGroup(MeshGroups, i, (double progress0To1, string processingState, CancellationTokenSource continueProcessing) =>
 						{
-							ReportProgressChanged(progress0To1, processingState, out continueProcessing);
+							ReportProgressChanged(progress0To1, processingState, continueProcessing);
 						});
 
 						currentRatioDone += ratioPerMeshGroup;

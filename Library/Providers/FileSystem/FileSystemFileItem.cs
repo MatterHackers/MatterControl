@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl.Library
 			}
 		}
 
-		public Task<StreamAndLength> GetContentStream(ReportProgressRatio reportProgress)
+		public Task<StreamAndLength> GetContentStream(ReportProgressRatio<(double ratio, string state)> reportProgress)
 		{
 			if (ApplicationController.Instance.IsLoadableFile(this.Path)
 				&& File.Exists(this.Path))
@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl.Library
 			return Task.FromResult<StreamAndLength>(null);
 		}
 
-		public Task<IObject3D> GetContent(ReportProgressRatio reportProgress)
+		public Task<IObject3D> GetContent(ReportProgressRatio<(double ratio, string state)> reportProgress)
 		{
 			throw new NotImplementedException();
 		}

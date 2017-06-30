@@ -342,7 +342,7 @@ namespace MatterHackers.MatterControl.Library
 
 			public bool IsVisible { get; set; } = true;
 
-			public Task<ILibraryContainer> GetContainer(ReportProgressRatio reportProgress)
+			public Task<ILibraryContainer> GetContainer(ReportProgressRatio<(double ratio, string state)> reportProgress)
 			{
 				return Task.FromResult<ILibraryContainer>(
 					new SqliteLibraryContainer(this.ContainerID)

@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl.Library
 			}
 		}
 
-		public static ContentResult CreateContent(this ILibraryContentStream item, ReportProgressRatio reporter = null)
+		public static ContentResult CreateContent(this ILibraryContentStream item, ReportProgressRatio<(double ratio, string state)> reporter = null)
 		{
 			var contentProvider = ApplicationController.Instance.Library.GetContentProvider(item) as ISceneContentProvider;
 			return contentProvider?.CreateItem(item, reporter);

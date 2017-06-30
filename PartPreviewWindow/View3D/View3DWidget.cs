@@ -145,11 +145,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		public void ProgressReporter(double progress0To1, string processingState, out bool continueProcessing)
+		public void ProgressReporter((double progress0To1, string processingState) progress, CancellationTokenSource continueProcessing)
 		{
-			continueProcessing = true;
-			progressBar.RatioComplete = progress0To1;
-			if (progress0To1 == 1)
+			progressBar.RatioComplete = progress.progress0To1;
+			if (progress.progress0To1 == 1)
 			{
 				if (view3DWidget != null)
 				{
@@ -988,17 +987,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						sourceListItem.StartProgress();
 
-						contentResult = DragSourceModel.CreateContent((double progress0To1, string processingState, out bool continueProcessing) =>
+						contentResult = DragSourceModel.CreateContent(((double progress0To1, string processingState) progress, CancellationTokenSource continueProcessing) =>
 						{
-							sourceListItem.ProgressReporter(progress0To1, processingState, out continueProcessing);
-							loadProgress.ProgressReporter(progress0To1, processingState, out continueProcessing);
+							sourceListItem.ProgressReporter(progress, continueProcessing);
+							loadProgress.ProgressReporter(progress, continueProcessing);
 						});
 
 						await contentResult.MeshLoaded;
 
 						sourceListItem.EndProgress();
 
-						loadProgress.ProgressReporter(1, "", out bool continuex);
+						loadProgress.ProgressReporter((1, ""), new CancellationTokenSource());
 					}
 
 					return contentResult?.Object3D;
@@ -1679,11 +1678,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void ReportProgressChanged(double progress0To1, string processingState)
 		{
-			bool continueProcessing;
-			ReportProgressChanged(progress0To1, processingState, out continueProcessing);
+			var continueProcessing = new CancellationTokenSource();
+			ReportProgressChanged(progress0To1, processingState, continueProcessing);
 		}
 
-		internal void ReportProgressChanged(double progress0To1, string processingState, out bool continueProcessing)
+		internal void ReportProgressChanged(double progress0To1, string processingState, CancellationTokenSource continueProcessing)
 		{
 			if (!timeSinceReported.IsRunning || timeSinceReported.ElapsedMilliseconds > 100
 				|| processingState != processingProgressControl.ProgressMessage)
@@ -1695,7 +1694,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				});
 				timeSinceReported.Restart();
 			}
-			continueProcessing = true;
 		}
 
 		public async Task ClearBedAndLoadPrintItemWrapper(PrintItemWrapper newPrintItem, bool switchToEditingMode = false)
@@ -1933,11 +1931,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					var libraryItem = new FileSystemFileItem(filePath);
 
-					var contentResult = libraryItem.CreateContent((double progress0To1, string processingState, out bool continueProcessing) =>
+					var contentResult = libraryItem.CreateContent(((double progress0To1, string processingState) progress, CancellationTokenSource continueProcessing) =>
 					{
 						double ratioAvailable = (ratioPerFile * .5);
-						double currentRatio = currentRatioDone + progress0To1 * ratioAvailable;
-						ReportProgressChanged(currentRatio, progressMessage, out continueProcessing);
+						double currentRatio = currentRatioDone + progress.progress0To1 * ratioAvailable;
+						ReportProgressChanged(currentRatio, progressMessage, continueProcessing);
 					});
 
 					contentResult?.MeshLoaded.ContinueWith((task) =>
@@ -2321,7 +2319,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					// TODO: Why were we recreating GLData on edit? 
 					//bool continueProcessing2;
-					//ReportProgressChanged(1, "Creating GL Data", out continueProcessing2);
+					//ReportProgressChanged(1, "Creating GL Data", continueProcessing2);
 					//meshViewerWidget.CreateGlDataForMeshes(Scene.Children);
 				});
 

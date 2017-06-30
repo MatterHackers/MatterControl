@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl.Library
 	public interface ISceneContentProvider : IContentProvider
 	{
 		// TODO: Needs to take a progress reporter that is used in the background task which creates the actual IObject3D mesh and children
-		ContentResult CreateItem(ILibraryItem item, ReportProgressRatio reporter);
+		ContentResult CreateItem(ILibraryItem item, ReportProgressRatio<(double ratio, string state)> reporter);
 	}
 
 	public interface IPrintableContentProvider : IContentProvider

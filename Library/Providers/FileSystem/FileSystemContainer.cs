@@ -385,7 +385,7 @@ namespace MatterHackers.MatterControl.Library
 
 			public bool UseIncrementedNameDuringTypeChange { get; set; }
 
-			public Task<ILibraryContainer> GetContainer(ReportProgressRatio reportProgress)
+			public Task<ILibraryContainer> GetContainer(ReportProgressRatio<(double ratio, string state)> reportProgress)
 			{
 				return Task.FromResult<ILibraryContainer>(
 					new FileSystemContainer(this.Path)

@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl.Library
 
 		public bool IsVisible => true;
 
-		public Task<StreamAndLength> GetContentStream(ReportProgressRatio reportProgress)
+		public Task<StreamAndLength> GetContentStream(ReportProgressRatio<(double ratio, string state)> reportProgress)
 		{
 			throw new NotImplementedException();
 		}

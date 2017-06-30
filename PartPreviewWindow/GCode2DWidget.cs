@@ -86,12 +86,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private GCodeFile loadedGCode => printer.BedPlate.LoadedGCode;
 
-		private ReportProgressRatio progressReporter;
+		private ReportProgressRatio<(double ratio, string state)> progressReporter;
 
 		private View3DConfig options;
 		private PrinterConfig printer;
 
-		public GCode2DWidget(Vector2 gridSizeMm, Vector2 gridCenterMm, ReportProgressRatio progressReporter)
+		public GCode2DWidget(Vector2 gridSizeMm, Vector2 gridCenterMm, ReportProgressRatio<(double ratio, string state)> progressReporter)
 		{
 			
 			options = ApplicationController.Instance.Options.View3D;
