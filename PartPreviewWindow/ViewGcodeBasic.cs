@@ -239,7 +239,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					if (File.Exists(printItem.FileLocation))
 					{
 						string gcodePathAndFileName = printItem.GetGCodePathAndFileName();
-						bool gcodeFileIsComplete = printItem.IsGCodeFileComplete(gcodePathAndFileName);
 
 						if (printItem.SlicingHadError)
 						{
@@ -250,7 +249,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							firstProcessingMessage = pressGenerateMessage;
 						}
 
-						if (File.Exists(gcodePathAndFileName) && gcodeFileIsComplete)
+						if (File.Exists(gcodePathAndFileName))
 						{
 							gcodeDisplayWidget.AddChild(CreateGCodeViewWidget(gcodePathAndFileName));
 						}

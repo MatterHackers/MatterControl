@@ -348,14 +348,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							itemCurrentlySlicing = itemToSlice;
 							MatterHackers.MatterSlice.LogOutput.GetLogWrites += SendProgressToItem;
 
-							SliceFile(itemToSlice.FileLocation, gcodeFilePath, itemToSlice.IsGCodeFileComplete(gcodeFilePath), reporter);
+							SliceFile(itemToSlice.FileLocation, gcodeFilePath, reporter);
 
 							MatterHackers.MatterSlice.LogOutput.GetLogWrites -= SendProgressToItem;
 							itemCurrentlySlicing = null;
 						}
 						else
 						{
-							SliceFile(itemToSlice.FileLocation, gcodeFilePath, itemToSlice.IsGCodeFileComplete(gcodeFilePath), reporter);
+							SliceFile(itemToSlice.FileLocation, gcodeFilePath, reporter);
 						}
 					}
 
@@ -382,30 +382,27 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			await Task.Run(() => SliceFile(
 				printItem.FileLocation, 
 				gcodeFilePath, 
-				printItem.IsGCodeFileComplete(gcodeFilePath), 
 				progressReporter));
 		}
 
-		public static async Task SliceFileAsync(string sourceFile, string gcodeFilePath, bool gcodeFileIsComplete, IProgress<string> progressReporter)
+		public static async Task SliceFileAsync(string sourceFile, string gcodeFilePath, IProgress<string> progressReporter)
 		{
-			await Task.Run(() => SliceFile(sourceFile, gcodeFilePath, gcodeFileIsComplete, progressReporter));
+			await Task.Run(() => SliceFile(sourceFile, gcodeFilePath, progressReporter));
 		}
 
-		private static void SliceFile(string sourceFile, string gcodeFilePath, bool gcodeFileIsComplete, IProgress<string> progressReporter)
+		private static void SliceFile(string sourceFile, string gcodeFilePath, IProgress<string> progressReporter)
 		{
 			string mergeRules = "";
 
 			string[] stlFileLocations = GetStlFileLocations(sourceFile, ref mergeRules);
 			string fileToSlice = stlFileLocations[0];
 
-			// check that the STL file is currently on disk
-			if (File.Exists(fileToSlice))
 			{
 				string configFilePath = Path.Combine(
 					ApplicationDataStorage.Instance.GCodeOutputPath,
 					string.Format("config_{0}.ini", ActiveSliceSettings.Instance.GetLongHashCode().ToString()));
 
-				if (!File.Exists(gcodeFilePath) || !gcodeFileIsComplete)
+				if (!File.Exists(gcodeFilePath))
 				{
 					string commandArgs;
 

@@ -278,42 +278,9 @@ namespace MatterHackers.MatterControl.PrintQueue
 			}
 		}
 
-		public bool IsGCodeFileComplete(string gcodePathAndFileName)
-		{
-			if (Path.GetExtension(FileLocation).ToUpper() == ".GCODE")
-			{
-				return true;
-			}
-
-			bool gCodeFileIsComplete = false;
-			if (File.Exists(gcodePathAndFileName))
-			{
-				string gcodeFileContents = "";
-				using (FileStream fileStream = new FileStream(gcodePathAndFileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-				{
-					using (StreamReader gcodeStreamReader = new StreamReader(fileStream))
-					{
-						gcodeFileContents = gcodeStreamReader.ReadToEnd();
-					}
-				}
-
-				// check if there is a known line at the end of the file (this will let us know if slicer finished building the file).
-				if (gcodeFileContents.Contains("filament used ="))
-				{
-					gCodeFileIsComplete = true;
-				}
-			}
-
-			return gCodeFileIsComplete;
-		}
-
 		public void OnSlicingOutputMessage(EventArgs e)
 		{
-			StringEventArgs message = e as StringEventArgs;
-			if (SlicingOutputMessage != null)
-			{
-				SlicingOutputMessage(this, message);
-			}
+			SlicingOutputMessage?.Invoke(this, e as StringEventArgs);
 		}
 	}
 }
