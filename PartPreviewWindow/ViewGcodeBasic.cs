@@ -112,14 +112,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.bedCenter = bedCenter;
 			this.windowMode = windowMode;
 
-			if (UserSettings.Instance.IsTouchScreen)
-			{
-				sliderWidth = 20;
-			}
-			else
-			{
-				sliderWidth = 10;
-			}
+			sliderWidth = (UserSettings.Instance.IsTouchScreen) ? 20 : 10;
 
 			RenderOpenGl.GLHelper.WireframeColor = ActiveTheme.Instance.PrimaryAccentColor;
 
@@ -208,31 +201,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			gcode2DWidget = null;
 			gcodeProcessingStateInfoText = null;
 
-			FlowLayoutWidget mainContainerTopToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			mainContainerTopToBottom.HAnchor = HAnchor.Max_FitToChildren_ParentWidth;
-			mainContainerTopToBottom.VAnchor = VAnchor.Max_FitToChildren_ParentHeight;
-
-			buttonBottomPanel = new FlowLayoutWidget(FlowDirection.LeftToRight);
-			buttonBottomPanel.HAnchor = HAnchor.ParentLeftRight;
-			buttonBottomPanel.Padding = new BorderDouble(3, 3);
-			buttonBottomPanel.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-		
-			layerSelectionButtonsPanel = new FlowLayoutWidget(FlowDirection.RightToLeft);
-			layerSelectionButtonsPanel.HAnchor = HAnchor.ParentLeftRight;
-			layerSelectionButtonsPanel.Padding = new BorderDouble(0);
-
-			GuiWidget holdPanelOpen = new GuiWidget(1, 40);
-			layerSelectionButtonsPanel.AddChild(holdPanelOpen);
-
-			if (windowMode == WindowMode.StandAlone)
+			var mainContainerTopToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				Button closeButton = buttonFactory.Generate("Close".Localize());
-				layerSelectionButtonsPanel.AddChild(closeButton);
-				closeButton.Click += (sender, e) =>
-				{
-					CloseOnIdle();
-				};
-			}
+				HAnchor = HAnchor.Max_FitToChildren_ParentWidth,
+				VAnchor = VAnchor.Max_FitToChildren_ParentHeight
+			};
+
+			buttonBottomPanel = new FlowLayoutWidget(FlowDirection.LeftToRight)
+			{
+				HAnchor = HAnchor.ParentLeftRight,
+				Padding = new BorderDouble(3, 3),
+				BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor
+			};
+
+			layerSelectionButtonsPanel = new FlowLayoutWidget(FlowDirection.RightToLeft)
+			{
+				HAnchor = HAnchor.ParentLeftRight,
+				Padding = 0,
+			};
 
 			gcodeDisplayWidget = new GuiWidget()
 			{
