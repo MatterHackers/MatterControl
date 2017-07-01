@@ -94,13 +94,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private SystemWindow parentSystemWindow;
 
+		private TextImageButtonFactory buttonFactory;
+
 		public ViewGcodeBasic(Vector3 viewerVolume, Vector2 bedCenter, BedShape bedShape, WindowMode windowMode, ViewControls3D viewControls3D, ThemeConfig theme, MeshViewerWidget externalMeshViewer)
 		{
 			this.externalMeshViewer = externalMeshViewer;
 			this.externalMeshViewer.TrackballTumbleWidget.DrawGlContent += TrackballTumbleWidget_DrawGlContent;
 
+			buttonFactory = ApplicationController.Instance.Theme.BreadCrumbButtonFactory;
 			options = ApplicationController.Instance.Options.View3D;
 			printer = ApplicationController.Instance.Printer;
+			printer.BedPlate.LoadedGCodeChanged += BedPlate_LoadedGCodeChanged;
 
 			this.viewControls3D = viewControls3D;
 			this.viewerVolume = viewerVolume;
@@ -133,11 +137,29 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}, ref unregisterEvents);
 
 			bedPlate = ApplicationController.Instance.Printer.BedPlate;
-
 			bedPlate.ActiveLayerChanged += ActiveLayer_Changed;
 
 			// TODO: Why do we clear GCode on AdvancedControlsPanelReloading - assume some slice settings should invalidate. If so, code should be more specific and bound to slice settings changed
 			ApplicationController.Instance.AdvancedControlsPanelReloading.RegisterEvent((s, e) => printer.BedPlate.GCodeRenderer?.Clear3DGCode(), ref unregisterEvents);
+		}
+
+		private void BedPlate_LoadedGCodeChanged(object sender, EventArgs e)
+		{
+			// ResetRenderInfo
+			printer.BedPlate.RenderInfo = new GCodeRenderInfo(
+				0,
+				1,
+				Agg.Transform.Affine.NewIdentity(),
+				1,
+				this.GetRenderType(),
+				0,
+				1,
+				new Vector2[]
+				{
+					ActiveSliceSettings.Instance.Helpers.ExtruderOffset(0),
+					ActiveSliceSettings.Instance.Helpers.ExtruderOffset(1)
+				},
+				MeshViewerWidget.GetMaterialColor);
 		}
 
 		public override void OnLoad(EventArgs args)
@@ -183,9 +205,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			CloseAllChildren();
 
-			var buttonFactory = ApplicationController.Instance.Theme.BreadCrumbButtonFactory;
-
-			externalMeshViewer = null;
 			gcode2DWidget = null;
 			gcodeProcessingStateInfoText = null;
 
@@ -230,7 +249,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				string gcodeFilePath = isGCode ? printItem.FileLocation : printItem.GetGCodePathAndFileName();
 				if (File.Exists(gcodeFilePath))
 				{
-					var gcode2DWidget = new GCode2DWidget(new Vector2(viewerVolume.x, viewerVolume.y), bedCenter)
+					gcode2DWidget = new GCode2DWidget(new Vector2(viewerVolume.x, viewerVolume.y), bedCenter)
 					{
 						Visible = (activeViewMode == PartViewMode.Layers2D)
 					};
@@ -299,7 +318,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.AddGCodeFileControls(ApplicationController.Instance.Printer, ApplicationController.Instance.Theme);
 		}
 
-
 		private void AddGCodeFileControls(PrinterConfig printer, ThemeConfig theme)
 		{
 			SetProcessingMessage("");
@@ -317,15 +335,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
-			if (gcode2DWidget != null
-				&& loadedGCode?.LineCount > 0)
+			if (loadedGCode?.LineCount > 0)
 			{
-				// TODO: Shouldn't we be clearing children from some known container and rebuilding?
-				gradientWidget = new ColorGradientWidget(loadedGCode);
+				gradientWidget = new ColorGradientWidget(loadedGCode)
+				{
+					Margin = new BorderDouble(top: 55, left: 11),
+					HAnchor = HAnchor.FitToChildren | HAnchor.ParentLeft,
+					VAnchor = VAnchor.ParentTop,
+					Visible = options.RenderSpeeds
+				};
 				AddChild(gradientWidget);
-				gradientWidget.Visible = false;
-
-				gradientWidget.Visible = options.RenderSpeeds;
 
 				viewControlsToggle.Visible = true;
 
@@ -387,9 +406,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Width = 150
 				});
 
-				// TODO: Bad pattern - figure out how to revise
-				// However if the print finished or is canceled we are going to want to get updates again. So, hook the status event
-				PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent(HookUpGCodeMessagesWhenDonePrinting, ref unregisterEvents);
 				UiThread.RunOnIdle(SetSyncToPrintVisibility);
 
 				// Switch to the most recent view mode, defaulting to Layers3D
@@ -558,16 +574,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					SetSyncToPrintVisibility();
 				};
 				popupContainer.AddChild(syncToPrint);
-
-				// The idea here is we just got asked to rebuild the window (and it is being created now)
-				// because the gcode finished creating for the print that is printing.
-				// We don't want to be notified if any other updates happen to this gcode while it is printing.
-				if (PrinterConnection.Instance.PrinterIsPrinting
-					&& ApplicationController.Instance.ActivePrintItem == printItem)
-				{
-					printItem.SlicingOutputMessage -= sliceItem_SlicingOutputMessage;
-					printItem.SlicingDone -= sliceItem_Done;
-				}
 			}
 
 			return popupContainer;
@@ -617,25 +623,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				UiThread.RunOnIdle(gcode2DWidget.CenterPartInView);
 			}
 
-			gcode2DWidget.Visible = !inLayers3DMode;
-		}
-
-		private void HookUpGCodeMessagesWhenDonePrinting(object sender, EventArgs e)
-		{
-			if (!PrinterConnection.Instance.PrinterIsPaused && !PrinterConnection.Instance.PrinterIsPrinting)
+			if (gcode2DWidget != null)
 			{
-				// unregister first to make sure we don't double up in error (should not be needed but no harm)
-				printItem.SlicingOutputMessage -= sliceItem_SlicingOutputMessage;
-				printItem.SlicingDone -= sliceItem_Done;
-
-				// register for done slicing and slicing messages
-				printItem.SlicingOutputMessage += sliceItem_SlicingOutputMessage;
-				printItem.SlicingDone += sliceItem_Done;
+				gcode2DWidget.Visible = !inLayers3DMode;
 			}
-			SetSyncToPrintVisibility();
 		}
 
-		private void LoadProgress_Changed((double progress0To1, string processingState) progress, CancellationTokenSource continueProcessing)
+		internal void LoadProgress_Changed((double progress0To1, string processingState) progress, CancellationTokenSource continueProcessing)
 		{
 			SetProcessingMessage(string.Format("{0} {1:0}%...", gcodeLoading, progress.progress0To1 * 100));
 			if(this.HasBeenClosed)
@@ -711,6 +705,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			unregisterEvents?.Invoke(this, null);
 
+			bedPlate.ActiveLayerChanged -= ActiveLayer_Changed;
+
 			// Find and unhook the parent system window KeyDown event
 			if (parentSystemWindow != null)
 			{
@@ -725,7 +721,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (printItem != null)
 			{
 				printItem.SlicingOutputMessage -= sliceItem_SlicingOutputMessage;
-				printItem.SlicingDone -= sliceItem_Done;
 				if (startedSliceFromGenerateButton && printItem.CurrentlySlicing)
 				{
 					SlicingQueue.Instance.CancelCurrentSlicing();
@@ -745,18 +740,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				SetProcessingMessage("");
 			}
-		}
-
-		private void sliceItem_Done(object sender, EventArgs e)
-		{
-			// We can add this while we have it open (when we are done loading).
-			// So we need to make sure we only have it added once. This will be ok to run when
-			// not added or when added and will ensure we only have one hook.
-			printItem.SlicingOutputMessage -= sliceItem_SlicingOutputMessage;
-			printItem.SlicingDone -= sliceItem_Done;
-
-			UiThread.RunOnIdle(CreateAndAddChildren);
-			startedSliceFromGenerateButton = false;
 		}
 	}
 }
