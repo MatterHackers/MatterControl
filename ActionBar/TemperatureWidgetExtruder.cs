@@ -27,11 +27,13 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrinterControls;
 using MatterHackers.MatterControl.SlicerConfiguration;
@@ -93,13 +95,13 @@ namespace MatterHackers.MatterControl.ActionBar
 				HAnchor = HAnchor.AbsolutePosition,
 				VAnchor = VAnchor.FitToChildren,
 				BackgroundColor = RGBA_Bytes.White,
-				Padding = new BorderDouble(12, 0)
+				Padding = new BorderDouble(12, 5, 12, 0)
 			};
 
 			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.ParentLeftRight,
-				VAnchor = VAnchor.FitToChildren | VAnchor.ParentTop,
+				VAnchor = VAnchor.FitToChildren,
 				BackgroundColor = RGBA_Bytes.White
 			};
 
@@ -248,6 +250,26 @@ namespace MatterHackers.MatterControl.ActionBar
 			});
 
 			container.AddChild(new SettingsItem("Distance".Localize(), moveButtonsContainer, enforceGutter: false));
+
+			var graph = new DataViewGraph()
+			{
+				Width = widget.Width - 20,
+				Height = 20,
+			};
+
+			Action fillGraph = null;
+			fillGraph = () =>
+			{
+				graph.AddData(this.ActualTemperature);
+				if (!graph.HasBeenClosed)
+				{
+					UiThread.RunOnIdle(fillGraph, 1);
+				}
+			};
+
+			UiThread.RunOnIdle(fillGraph);
+
+			container.AddChild(graph);
 
 			// Extrude buttons }}
 

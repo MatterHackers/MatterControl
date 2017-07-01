@@ -35,7 +35,6 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading;
-using Gaming.Game;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.PlatformAbstract;
@@ -76,7 +75,6 @@ namespace MatterHackers.MatterControl
 		private bool DoCGCollectEveryDraw = false;
 		private int drawCount = 0;
 		private AverageMillisecondTimer millisecondTimer = new AverageMillisecondTimer();
-		private DataViewGraph msGraph = new DataViewGraph(50, 50, 0, 200);
 		private string savePartsSheetExitAnywayMessage = "You are currently saving a parts sheet, are you sure you want to exit?".Localize();
 		private bool ShowMemoryUsed = false;
 
