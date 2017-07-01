@@ -680,11 +680,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				return;
 			}
 
-			selectLayerSlider.OriginRelativeParent = new Vector2(gcodeDisplayWidget.Width - 20, 70);
-			selectLayerSlider.TotalWidthInPixels = gcodeDisplayWidget.Height - 80;
+			selectLayerSlider.OriginRelativeParent = new Vector2(gcodeDisplayWidget.Width - 20, 78);
+			selectLayerSlider.TotalWidthInPixels = gcodeDisplayWidget.Height - 38;
 
-			layerRenderRatioSlider.OriginRelativeParent = new Vector2(60, 70);
-			layerRenderRatioSlider.TotalWidthInPixels = gcodeDisplayWidget.Width - 100;
+			layerRenderRatioSlider.OriginRelativeParent = new Vector2(11, 65);
+			layerRenderRatioSlider.TotalWidthInPixels = gcodeDisplayWidget.Width - 45;
 		}
 
 		public override void OnClosed(ClosedEventArgs e)
