@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl
 
 		private readonly int fontSize10 = 10;
 		private readonly int fontSize11 = 11;
-		private readonly int fontSize14 = 14;
+		private readonly int fontSize12 = 12;
 
 		private int shortButtonHeight = 25;
 		private int sideBarButtonWidth;
@@ -65,7 +65,6 @@ namespace MatterHackers.MatterControl
 		private readonly int borderWidth = 1;
 
 		public TextImageButtonFactory ImageButtonFactory { get; private set; }
-		public TextImageButtonFactory ActionRowButtonFactory { get; private set; }
 		public TextImageButtonFactory PrinterConnectButtonFactory { get; private set; }
 		public TextImageButtonFactory BreadCrumbButtonFactory { get; internal set; }
 		public TextImageButtonFactory BreadCrumbButtonFactorySmallMargins { get; internal set; }
@@ -127,20 +126,6 @@ namespace MatterHackers.MatterControl
 				FixedHeight = fizedHeightA,
 				fontSize = fontSize11,
 				borderWidth = borderWidth
-			};
-
-			this.ActionRowButtonFactory = new TextImageButtonFactory()
-			{
-				normalTextColor = RGBA_Bytes.White,
-				disabledTextColor = RGBA_Bytes.LightGray,
-				hoverTextColor = RGBA_Bytes.White,
-				pressedTextColor = RGBA_Bytes.White,
-				AllowThemeToAdjustImage = false,
-				borderWidth = borderWidth,
-				FixedHeight = fizedHeightB,
-				fontSize = fontSize14,
-				normalBorderColor = new RGBA_Bytes(255, 255, 255, 100),
-				hoverBorderColor = new RGBA_Bytes(255, 255, 255, 100)
 			};
 
 			this.PrinterConnectButtonFactory = new TextImageButtonFactory()
@@ -350,7 +335,7 @@ namespace MatterHackers.MatterControl
 			tabControl.TabBar.BorderColor = RGBA_Bytes.Transparent; // theme.SecondaryTextColor;
 			tabControl.TabBar.Margin = 0;
 			tabControl.TabBar.Padding = 0;
-			tabControl.TextPointSize = 14;
+			tabControl.TextPointSize = fontSize12;
 
 			return tabControl;
 		}
