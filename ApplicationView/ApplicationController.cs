@@ -132,7 +132,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public void LoadGCode(string filePath, ReportProgressRatio progressReporter)
+		public void LoadGCode(string filePath, ReportProgressRatio<(double,string)> progressReporter)
 		{
 			this.LoadedGCode = GCodeMemoryFile.Load(filePath, progressReporter);
 			this.GCodeRenderer = new GCodeRenderer(loadedGCode);
