@@ -27,20 +27,16 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using MatterHackers.Agg;
-using MatterHackers.Agg.Font;
-using MatterHackers.Agg.Image;
-using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.SerialPortCommunication.FrostedSerial;
 using MatterHackers.VectorMath;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -55,7 +51,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				Margin = new BorderDouble(top: 10),
 				BorderColor = ActiveTheme.Instance.PrimaryTextColor,
-				HAnchor = Agg.UI.HAnchor.ParentLeftRight,
+				HAnchor = HAnchor.ParentLeftRight,
 				Height = 90
 			};
 			string noConnectionString = "No printer is currently selected. Please select a printer to edit slice settings.".Localize();
@@ -64,7 +60,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				Margin = new BorderDouble(5),
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
-				//noConnectionMessage.VAnchor = VAnchor.ParentCenter;
 				HAnchor = HAnchor.ParentLeftRight
 			};
 			noConnectionMessageContainer.AddChild(noConnectionMessage);
@@ -177,12 +172,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			for (int topCategoryIndex = 0; topCategoryIndex < SliceSettingsOrganizer.Instance.UserLevels[UserLevel].CategoriesList.Count; topCategoryIndex++)
 			{
 				OrganizerCategory category = SliceSettingsOrganizer.Instance.UserLevels[UserLevel].CategoriesList[topCategoryIndex];
-				string categoryPageLabel = category.Name.Localize();
-				TabPage categoryPage = new TabPage(categoryPageLabel);
-				SimpleTextTabWidget textTabWidget = new SimpleTextTabWidget(categoryPage, category.Name + " Tab", 16,
-					ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), ActiveTheme.Instance.TabLabelUnselected, new RGBA_Bytes());
+
+				var categoryPage = new TabPage(category.Name.Localize());
 				categoryPage.AnchorAll();
-				topCategoryTabs.AddTab(textTabWidget);
+
+				topCategoryTabs.AddTab(new SimpleTextTabWidget(
+					categoryPage,
+					category.Name + " Tab", 
+					14,
+					ActiveTheme.Instance.TabLabelSelected,
+					new RGBA_Bytes(),
+					ActiveTheme.Instance.TabLabelUnselected,
+					new RGBA_Bytes()));
 
 				TabControl sideTabs = CreateSideTabsAndPages(category, showHelpControls);
 				sideTabBarsListForLayout.Add(sideTabs.TabBar);
@@ -366,19 +367,31 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			TabControl leftSideGroupTabs = new TabControl(Orientation.Vertical);
 			leftSideGroupTabs.Margin = new BorderDouble(0, 0, 0, 5);
 			leftSideGroupTabs.TabBar.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
+
 			foreach (OrganizerGroup group in category.GroupsList)
 			{
 				tabIndexForItem = 0;
 
-				TabPage groupTabPage = new TabPage(group.Name.Localize());
-				groupTabPage.HAnchor = HAnchor.ParentLeftRight;
+				var groupTabPage = new TabPage(group.Name.Localize())
+				{
+					HAnchor = HAnchor.ParentLeftRight
+				};
 
 				//Side Tabs
-				SimpleTextTabWidget groupTabWidget = new SimpleTextTabWidget(groupTabPage, group.Name + " Tab", 14,
-				   ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), ActiveTheme.Instance.TabLabelUnselected, new RGBA_Bytes());
-				groupTabWidget.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+				var groupTabWidget = new SimpleTextTabWidget(
+					groupTabPage, 
+					group.Name + " Tab", 
+					14,
+					ActiveTheme.Instance.TabLabelSelected, 
+					new RGBA_Bytes(), 
+					ActiveTheme.Instance.TabLabelUnselected,
+					new RGBA_Bytes(),
+					32);
 
-				FlowLayoutWidget subGroupLayoutTopToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
+				groupTabWidget.DebugShowBounds = true;
+				groupTabWidget.HAnchor = HAnchor.ParentLeftRight;
+
+				var subGroupLayoutTopToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
 				subGroupLayoutTopToBottom.AnchorAll();
 
 				bool needToAddSubGroup = false;
@@ -400,9 +413,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						}
 
 						bool addedSettingToSubGroup = false;
-						FlowLayoutWidget topToBottomSettings = new FlowLayoutWidget(FlowDirection.TopToBottom);
-						topToBottomSettings.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
 
+						var topToBottomSettings = new FlowLayoutWidget(FlowDirection.TopToBottom)
+						{
+							HAnchor = HAnchor.ParentLeftRight
+						};
 
 						foreach (SliceSettingData settingData in subGroup.SettingDataList)
 						{
@@ -433,13 +448,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						if (addedSettingToSubGroup)
 						{
 							needToAddSubGroup = true;
-							string groupBoxLabel = subGroupTitle.Localize();
-							AltGroupBox groupBox = new AltGroupBox(groupBoxLabel);
-							groupBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-							groupBox.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
+
+							var groupBox = new AltGroupBox(subGroupTitle.Localize())
+							{
+								TextColor = ActiveTheme.Instance.PrimaryTextColor,
+								BorderColor = ActiveTheme.Instance.PrimaryTextColor,
+								HAnchor = HAnchor.ParentLeftRight,
+								Margin = new BorderDouble(3, 3, 3, 0)
+							};
 							groupBox.AddChild(topToBottomSettings);
-							groupBox.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-							groupBox.Margin = new BorderDouble(3, 3, 3, 0);
 
 							subGroupLayoutTopToBottom.AddChild(groupBox);
 						}
@@ -451,7 +468,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					SliceSettingListControl scrollOnGroupTab = new SliceSettingListControl();
 
 					subGroupLayoutTopToBottom.VAnchor = VAnchor.FitToChildren;
-					subGroupLayoutTopToBottom.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+					subGroupLayoutTopToBottom.HAnchor = HAnchor.ParentLeftRight;
 
 					scrollOnGroupTab.AddChild(subGroupLayoutTopToBottom);
 					groupTabPage.AddChild(scrollOnGroupTab);
@@ -490,7 +507,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			// Make sure we are on the right tab when we create this view
-			string settingsTypeName = "SliceSettingsWidget_{0}_CurrentTab".FormatWith(category.Name);
+			string settingsTypeName = $"SliceSettingsWidget_{category.Name}_CurrentTab";
 			string selectedTab = UserSettings.Instance.get(settingsTypeName);
 			leftSideGroupTabs.SelectTab(selectedTab);
 
@@ -556,11 +573,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				leftSideGroupTabs.AddTab(groupTabWidget);
 
 				FlowLayoutWidget subGroupLayoutTopToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
-				subGroupLayoutTopToBottom.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
+				subGroupLayoutTopToBottom.HAnchor = HAnchor.Max_FitToChildren_ParentWidth;
 				subGroupLayoutTopToBottom.VAnchor = VAnchor.FitToChildren;
 
 				FlowLayoutWidget topToBottomSettings = new FlowLayoutWidget(FlowDirection.TopToBottom);
-				topToBottomSettings.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
+				topToBottomSettings.HAnchor = HAnchor.Max_FitToChildren_ParentWidth;
 
 				this.HAnchor = HAnchor.ParentLeftRight;
 
@@ -591,7 +608,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				groupBox.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
 				groupBox.AddChild(topToBottomSettings);
 				groupBox.VAnchor = VAnchor.FitToChildren;
-				groupBox.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
+				groupBox.HAnchor = HAnchor.Max_FitToChildren_ParentWidth;
 
 				subGroupLayoutTopToBottom.AddChild(groupBox);
 
@@ -634,7 +651,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				Margin = new BorderDouble(0, 2);
 				Padding = new BorderDouble(3);
-				HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+				HAnchor = HAnchor.ParentLeftRight;
 
 				ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
 				{
@@ -1181,7 +1198,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							{
 								Name = settingData.PresentationName + " Checkbox",
 								ToolTipText = settingData.HelpText,
-								VAnchor = Agg.UI.VAnchor.ParentBottom,
+								VAnchor = VAnchor.ParentBottom,
 								TextColor = ActiveTheme.Instance.PrimaryTextColor,
 								Checked = sliceSettingValue == "1"
 							};
@@ -1360,7 +1377,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							{
 								Name = settingData.PresentationName + " Checkbox",
 								ToolTipText = settingData.HelpText,
-								VAnchor = Agg.UI.VAnchor.ParentBottom,
+								VAnchor = VAnchor.ParentBottom,
 								TextColor = ActiveTheme.Instance.PrimaryTextColor,
 								Checked = sliceSettingValue == "1"
 							};
@@ -1773,10 +1790,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			this.AnchorAll();
 			this.AutoScroll = true;
-			this.ScrollArea.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
+			this.ScrollArea.HAnchor |= HAnchor.ParentLeftRight;
 
 			topToBottomItemList = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			topToBottomItemList.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
+			topToBottomItemList.HAnchor = HAnchor.Max_FitToChildren_ParentWidth;
 			topToBottomItemList.Margin = new BorderDouble(top: 3);
 
 			base.AddChild(topToBottomItemList);
@@ -1786,7 +1803,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			FlowLayoutWidget itemHolder = new FlowLayoutWidget();
 			itemHolder.Margin = new BorderDouble(0, 0, 0, 0);
-			itemHolder.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
+			itemHolder.HAnchor = HAnchor.Max_FitToChildren_ParentWidth;
 			itemHolder.AddChild(child);
 			itemHolder.VAnchor = VAnchor.FitToChildren;
 
