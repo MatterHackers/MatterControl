@@ -174,7 +174,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private bool deferEditorTillMouseUp = false;
 
 		public FlowLayoutWidget doEdittingButtonsContainer;
-		public UndoBuffer UndoBuffer { get; private set; } = new UndoBuffer();
+		public UndoBuffer UndoBuffer { get; } = new UndoBuffer();
 		public readonly int EditButtonHeight = 44;
 
 		private bool editorThatRequestedSave = false;
@@ -315,7 +315,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Visible = false
 				};
 
-				FlowLayoutWidget editToolBar = new FlowLayoutWidget();
+				var editToolBar = new FlowLayoutWidget();
 				editToolBar.AddChild(processingProgressControl);
 				editToolBar.VAnchor |= VAnchor.ParentCenter;
 
@@ -324,7 +324,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				{
 					Button addButton = smallMarginButtonFactory.Generate("Insert".Localize(), "icon_insert_32x32.png");
-					addButton.Margin = new BorderDouble(right: 10);
 					doEdittingButtonsContainer.AddChild(addButton);
 					addButton.Click += (sender, e) =>
 					{
@@ -339,11 +338,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						});
 					};
 
-					GuiWidget separator = new GuiWidget(1, 2);
-					separator.BackgroundColor = ActiveTheme.Instance.PrimaryTextColor;
-					separator.Margin = new BorderDouble(4, 2);
-					separator.VAnchor = VAnchor.ParentBottomTop;
-					doEdittingButtonsContainer.AddChild(separator);
+					doEdittingButtonsContainer.AddChild(new VerticalLine(70)
+					{
+						Margin = new BorderDouble(6, 4),
+					});
 
 					Button ungroupButton = smallMarginButtonFactory.Generate("Ungroup".Localize());
 					ungroupButton.Name = "3D View Ungroup";
@@ -375,11 +373,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						this.Scene.AutoArrangeChildren(this);
 					};
 
-					GuiWidget separatorTwo = new GuiWidget(1, 2);
-					separatorTwo.BackgroundColor = ActiveTheme.Instance.PrimaryTextColor;
-					separatorTwo.Margin = new BorderDouble(4, 2);
-					separatorTwo.VAnchor = VAnchor.ParentBottomTop;
-					doEdittingButtonsContainer.AddChild(separatorTwo);
+					doEdittingButtonsContainer.AddChild(new VerticalLine(70)
+					{
+						Margin = new BorderDouble(6, 4),
+					});
 
 					Button copyButton = smallMarginButtonFactory.Generate("Copy".Localize());
 					copyButton.Name = "3D View Copy";
@@ -397,11 +394,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						this.Scene.DeleteSelection(this);
 					};
 
-					GuiWidget separatorThree = new GuiWidget(1, 2);
-					separatorThree.BackgroundColor = ActiveTheme.Instance.PrimaryTextColor;
-					separatorThree.Margin = new BorderDouble(4, 1);
-					separatorThree.VAnchor = VAnchor.ParentBottomTop;
-					doEdittingButtonsContainer.AddChild(separatorThree);
+					doEdittingButtonsContainer.AddChild(new VerticalLine(70)
+					{
+						Margin = new BorderDouble(6, 4),
+					});
 
 					Button exportButton = smallMarginButtonFactory.Generate("Export".Localize() + "...");
 
@@ -454,23 +450,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			meshViewerWidget.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Rotation;
 
-
-			/* TODO: Why doesn't this pattern work but using new SelectedObjectPanel object does?
-			selectedObjectPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				Width = 215,
-				Margin = new BorderDouble(0, 0, buttonRightPanel.Width + 5, 5),
-				BackgroundColor = RGBA_Bytes.Red,
-				HAnchor = HAnchor.ParentRight,
-				VAnchor = VAnchor.ParentTop
-			}; */
-
 			selectedObjectPanel = new SelectedObjectPanel()
 			{
 				Margin = 5,
 				BackgroundColor = new RGBA_Bytes(0, 0, 0, ViewControlsBase.overlayAlpha)
 			};
-
 			AddChild(selectedObjectPanel);
 
 			UiThread.RunOnIdle(AutoSpin);
@@ -548,6 +532,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Scene.AddToSelection(child);
 			}
 		}
+
 		public ILibraryContentStream DragSourceModel { get; set; }
 
 		// TODO: Rename to DragDropItem
@@ -575,7 +560,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 		}
-
 
 		private void TrackballTumbleWidget_DrawGlContent(object sender, EventArgs e)
 		{
