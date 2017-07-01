@@ -36,11 +36,11 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
-	public class ProcessWriteRegExStream : GCodeStreamProxy
+	public class ProcessWriteRegexStream : GCodeStreamProxy
 	{
 		static Regex getQuotedParts = new Regex(@"([""'])(\\?.)*?\1", RegexOptions.Compiled);
 
-		public ProcessWriteRegExStream(GCodeStream internalStream)
+		public ProcessWriteRegexStream(GCodeStream internalStream)
 			: base(internalStream)
 		{
 		}

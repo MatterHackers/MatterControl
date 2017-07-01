@@ -339,42 +339,34 @@ namespace MatterHackers.MatterControl
 		{
 			try
 			{
-				if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_enabled))
-				{
-					if (applyLeveling.Checked)
-					{
-						GCodeFile loadedGCode = GCodeFile.Load(gcodeFilename);
-						GCodeFileStream gCodeFileStream0 = new GCodeFileStream(loadedGCode);
-						PrintLevelingStream printLevelingStream4 = new PrintLevelingStream(gCodeFileStream0, false);
-						// this is added to ensure we are rewriting the G0 G1 commands as needed
-						FeedRateMultiplyerStream extrusionMultiplyerStream5 = new FeedRateMultiplyerStream(printLevelingStream4);
-						var processWriteRegExStream6 = new ProcessWriteRegExStream(extrusionMultiplyerStream5);
-						GCodeStream finalStream = processWriteRegExStream6;
+				GCodeFileStream gCodeFileStream = new GCodeFileStream(GCodeFile.Load(gcodeFilename));
 
-						using (StreamWriter file = new StreamWriter(dest))
-						{
-							string nextLine = finalStream.ReadLine();
-							while (nextLine != null)
-							{
-								file.WriteLine(nextLine);
-								nextLine = finalStream.ReadLine();
-							}
-						}
-					}
-					else
-					{
-						File.Copy(gcodeFilename, dest, true);
-					}
-				}
-				else
+				bool addLevelingStream = ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_enabled) && applyLeveling.Checked;
+
+				// this is added to ensure we are rewriting the G0 G1 commands as needed
+				GCodeStream finalStream = addLevelingStream
+					? new ProcessWriteRegexStream(new PrintLevelingStream(gCodeFileStream, false))
+					: new ProcessWriteRegexStream(gCodeFileStream);
+
+				using (StreamWriter file = new StreamWriter(dest))
 				{
-					File.Copy(gcodeFilename, dest, true);
+					string nextLine = finalStream.ReadLine();
+					while (nextLine != null)
+					{
+						if (nextLine.Trim().Length > 0)
+						{
+							file.WriteLine(nextLine);
+						}
+						nextLine = finalStream.ReadLine();
+					}
 				}
+
 				ShowFileIfRequested(dest);
 			}
 			catch (Exception e)
 			{
-				UiThread.RunOnIdle (() => {
+				UiThread.RunOnIdle(() =>
+				{
 					StyledMessageBox.ShowMessageBox(null, e.Message, "Couldn't save file".Localize());
 				});
 			}
