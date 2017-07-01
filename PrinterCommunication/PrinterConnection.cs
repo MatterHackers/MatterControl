@@ -37,7 +37,6 @@ using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using Gaming.Game;
 using MatterHackers.Agg;
 using MatterHackers.GCodeVisualizer;
 using MatterHackers.Localizations;
@@ -213,8 +212,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		private string lastLineRead = "";
 
 		private PrinterMove lastReportedPosition;
-
-		private DataViewGraph sendTimeAfterOkGraph;
 
 		private GCodeFile loadedGCode = new GCodeMemoryFile();
 
@@ -2739,17 +2736,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						lock (locker)
 						{
 							serialPort.Write(lineToWrite);
-							if (false) // this is for debugging. Eventually it could be hooked up to a user config option so it can be turned on in the field.
-							{
-								timeSinceRecievedOk.Stop();
-								if (!haveHookedDrawing)
-								{
-									sendTimeAfterOkGraph = new DataViewGraph(150, 150, 0, 30);
-									MatterControlApplication.Instance.AddChild(sendTimeAfterOkGraph);
-									haveHookedDrawing = true;
-								}
-								sendTimeAfterOkGraph.AddData("ok->send", timeSinceRecievedOk.ElapsedMilliseconds);
-							}
 							timeSinceLastWrite.Restart();
 							timeHaveBeenWaitingForOK.Restart();
 						}
@@ -2802,8 +2788,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			queuedCommandStream2?.Continue();
 		}
-
-		private bool haveHookedDrawing = false;
 
 		public class ReadThread
 		{
