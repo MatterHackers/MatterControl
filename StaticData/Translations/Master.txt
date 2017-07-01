@@ -4273,3 +4273,15 @@ Translated:Write Filters
 English:Read Filters
 Translated:Read Filters
 
+English:Material 3
+Translated:Material 3
+
+English:Material 4
+Translated:Material 4
+
+English:Extruder 3
+Translated:Extruder 3
+
+English:Extruder 4
+Translated:Extruder 4
+

@@ -1040,13 +1040,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void AfterDraw3DContent(object sender, DrawEventArgs e)
 		{
-			//RendereSceneTraceData(e);
-
 			if (DragSelectionInProgress)
 			{
 				var selectionRectangle = new RectangleDouble(DragSelectionStartPosition, DragSelectionEndPosition);
 				e.graphics2D.Rectangle(selectionRectangle, RGBA_Bytes.Red);
-				//DoRectangleSelection(e);
 			}
 		}
 
@@ -1465,6 +1462,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (DragSelectionInProgress)
 			{
 				DragSelectionEndPosition = mouseEvent.Position - OffsetToMeshViewerWidget();
+				DragSelectionEndPosition = new Vector2(
+					Math.Max(Math.Min(DragSelectionEndPosition.x, meshViewerWidget.LocalBounds.Right), meshViewerWidget.LocalBounds.Left),
+					Math.Max(Math.Min(DragSelectionEndPosition.y, meshViewerWidget.LocalBounds.Top), meshViewerWidget.LocalBounds.Bottom));
 				Invalidate();
 			}
 
