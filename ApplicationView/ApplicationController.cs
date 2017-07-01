@@ -52,7 +52,6 @@ namespace MatterHackers.MatterControl
 	using Agg.Font;
 	using Agg.Image;
 	using CustomWidgets;
-	using MatterHackers.Agg.Transform;
 	using MatterHackers.DataConverters3D;
 	using MatterHackers.GCodeVisualizer;
 	using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
@@ -130,6 +129,31 @@ namespace MatterHackers.MatterControl
 			if (this.RenderInfo != null)
 			{
 				this.GCodeRenderer.Render3D(this.RenderInfo);
+			}
+		}
+
+		public void LoadGCode(string filePath, ReportProgressRatio progressReporter)
+		{
+			this.LoadedGCode = GCodeMemoryFile.Load(filePath, progressReporter);
+			this.GCodeRenderer = new GCodeRenderer(loadedGCode);
+
+			if (ActiveSliceSettings.Instance.PrinterSelected)
+			{
+				GCodeRenderer.ExtruderWidth = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.nozzle_diameter);
+			}
+			else
+			{
+				GCodeRenderer.ExtruderWidth = .4;
+			}
+
+			try
+			{
+				// TODO: After loading we reprocess the entire document just to compute filament used. If it's a feature we need, seems like it should just be normal step during load and result stored in a property
+				GCodeRenderer.GCodeFileToDraw?.GetFilamentUsedMm(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_diameter));
+			}
+			catch (Exception ex)
+			{
+				Debug.Print(ex.Message);
 			}
 		}
 	}

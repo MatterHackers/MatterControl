@@ -118,6 +118,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							
 							await SlicingQueue.SliceFileAsync(printItem, sliceProgressReporter);
 
+							ApplicationController.Instance.Printer.BedPlate.LoadGCode(printItem.GetGCodePathAndFileName(), printerTabPage.gcodeViewer.LoadProgress_Changed);
 							sliceProgressReporter.EndReporting();
 
 							printerTabPage.SwitchToLayerView();
