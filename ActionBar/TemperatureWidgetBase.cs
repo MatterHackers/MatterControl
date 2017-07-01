@@ -54,7 +54,6 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		public TemperatureWidgetBase(string textValue)
 		{
-			this.BackgroundColor = ApplicationController.Instance.Theme.SlightShade;
 			this.HAnchor = HAnchor.FitToChildren;
 			this.VAnchor = VAnchor.FitToChildren | VAnchor.ParentCenter;
 			this.Cursor = Cursors.Hand;
