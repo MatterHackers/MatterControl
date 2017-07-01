@@ -4285,3 +4285,9 @@ Translated:Extruder 3
 English:Extruder 4
 Translated:Extruder 4
 
+English:Slice
+Translated:Slice
+
+English:Slice Parts
+Translated:Slice Parts
+

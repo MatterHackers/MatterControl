@@ -294,7 +294,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public static bool runInProcess = false;
 		private static Process slicerProcess = null;
 
-
 		private class SliceMessageReporter : IProgress<string>
 		{
 			private PrintItemWrapper printItem;

@@ -116,11 +116,9 @@ namespace MatterHackers.MatterControl.ActionBar
 				this.DirectionIndicator.Text = "";
 			}
 
-
 			this.CurrentTempIndicator.Text = $"{actualTemperature:0.#}";
 			this.goalTempIndicator.Text = $"{targetTemperature:0.#}";
 		}
-
 
 		protected virtual void SetTargetTemperature() { }
 
