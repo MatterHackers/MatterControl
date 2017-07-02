@@ -178,12 +178,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				topCategoryTabs.AddTab(new SimpleTextTabWidget(
 					categoryPage,
-					category.Name + " Tab", 
+					category.Name + " Tab",
 					14,
 					ActiveTheme.Instance.TabLabelSelected,
 					new RGBA_Bytes(),
 					ActiveTheme.Instance.TabLabelUnselected,
-					new RGBA_Bytes()));
+					new RGBA_Bytes(),
+					useUnderlineStyling: true));
 
 				TabControl sideTabs = CreateSideTabsAndPages(category, showHelpControls);
 				sideTabBarsListForLayout.Add(sideTabs.TabBar);
@@ -388,7 +389,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					new RGBA_Bytes(),
 					32);
 
-				groupTabWidget.DebugShowBounds = true;
 				groupTabWidget.HAnchor = HAnchor.ParentLeftRight;
 
 				var subGroupLayoutTopToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);

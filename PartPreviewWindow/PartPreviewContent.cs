@@ -92,7 +92,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				selectedTabColor,
 				new RGBA_Bytes(),
 				ActiveTheme.Instance.TabLabelUnselected,
-				new RGBA_Bytes());
+				new RGBA_Bytes(),
+				useUnderlineStyling: true);
 			printerTab.ToolTipText = "Preview 3D Design".Localize();
 			tabControl.AddTab(printerTab);
 
