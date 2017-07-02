@@ -72,10 +72,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				ColorToSpeedWidget colorToSpeedWidget = new ColorToSpeedWidget(colorWidget, feedRateToMMPerSecond);
 				this.AddChild(colorToSpeedWidget);
 			}
-
-			Margin = new BorderDouble(5, 5, 200, 50);
-			HAnchor |= Agg.UI.HAnchor.ParentLeft;
-			VAnchor = Agg.UI.VAnchor.ParentTop;
 		}
 
 		public class ColorToSpeedWidget : FlowLayoutWidget

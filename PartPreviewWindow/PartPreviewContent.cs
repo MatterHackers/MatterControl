@@ -109,7 +109,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public class PrinterTabPage : GuiWidget
 		{
 			private View3DWidget modelViewer;
-			private ViewGcodeBasic gcodeViewer;
+			internal ViewGcodeBasic gcodeViewer;
 			private PrintItemWrapper printItem;
 			private ViewControls3D viewControls3D;
 
@@ -160,7 +160,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.AddChild(topToBottom);
 
 				// Must come after we have an instance of View3DWidget an its undo buffer
-				topToBottom.AddChild(new PrinterActionsBar(modelViewer)
+				topToBottom.AddChild(new PrinterActionsBar(modelViewer, this)
 				{
 					Padding = new BorderDouble(bottom: 2)
 				});
@@ -239,6 +239,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				var terminalControls = new TerminalControls();
 				terminalControls.VAnchor |= VAnchor.ParentBottomTop;
 				sideBar.AddPage("Terminal".Localize(), terminalControls);
+			}
+
+			public void SwitchToLayerView()
+			{
+				gcodeViewer.Visible = true;
+				modelViewer.ShowSliceLayers = true;
 			}
 
 			public void ToggleView()

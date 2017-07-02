@@ -35,15 +35,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public class LayerNavigationWidget : FlowLayoutWidget
 	{
 		private TextWidget layerCountTextWidget;
-		private GCode2DWidget gcode2DWidget;
 
 		private PrinterConfig printer;
 
-		public LayerNavigationWidget(GCode2DWidget gcode2DWidget, TextImageButtonFactory buttonFactory)
+		public LayerNavigationWidget(TextImageButtonFactory buttonFactory)
 			: base(FlowDirection.LeftToRight)
 		{
-			this.gcode2DWidget = gcode2DWidget;
-
 			printer = ApplicationController.Instance.Printer;
 
 			var prevLayerButton = buttonFactory.Generate("<<");
@@ -70,9 +67,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.AddChild(nextLayerButton);
 		}
 
-		
 		public override void OnDraw(Graphics2D graphics2D)
 		{
+			// TODO: Why do we assign text in OnDraw rather than updating in response to an event, like ActiveLayerChanged?
 			if (printer.BedPlate.LoadedGCode != null)
 			{
 				layerCountTextWidget.Text = string.Format("{0} / {1}", printer.BedPlate.ActiveLayerIndex + 1, printer.BedPlate.LoadedGCode.LayerCount);

@@ -46,8 +46,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class GCode2DWidget : GuiWidget
 	{
-		public event EventHandler DoneLoading;
-		
 		public enum ETransformState { Move, Scale };
 
 		public ETransformState TransformState { get; set; }
@@ -86,29 +84,40 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private GCodeFile loadedGCode => printer.BedPlate.LoadedGCode;
 
-		private ReportProgressRatio<(double ratio, string state)> progressReporter;
-
 		private View3DConfig options;
 		private PrinterConfig printer;
 
-		public GCode2DWidget(Vector2 gridSizeMm, Vector2 gridCenterMm, ReportProgressRatio<(double ratio, string state)> progressReporter)
+		public GCode2DWidget(Vector2 gridSizeMm, Vector2 gridCenterMm)
 		{
-			
 			options = ApplicationController.Instance.Options.View3D;
 			printer = ApplicationController.Instance.Printer;
 
-			this.progressReporter = progressReporter;
 			this.gridSizeMm = gridSizeMm;
 			this.gridCenterMm = gridCenterMm;
 			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
 			this.LocalBounds = new RectangleDouble(0, 0, 100, 100);
 			this.AnchorAll();
+
+			printer.BedPlate.LoadedGCodeChanged += BedPlate_LoadedGCodeChanged;
+		}
+
+		private void BedPlate_LoadedGCodeChanged(object sender, EventArgs e)
+		{
+			if (loadedGCode == null)
+			{
+				// TODO: Display an overlay for invalid GCode
+			}
+			else
+			{
+				SetInitalLayer();
+				CenterPartInView();
+			}
 		}
 
 		private void SetInitalLayer()
 		{
-			if (loadedGCode.LineCount > 0)
+			if (loadedGCode?.LineCount > 0)
 			{
 				int firstExtrusionIndex = 0;
 				Vector3 lastPosition = loadedGCode.Instruction(0).Position;
@@ -412,59 +421,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		// TODO: The bulk of this should move to the data model rather than in this widget
-		public async void LoadInBackground(string gcodePathAndFileName)
-		{
-			printer.BedPlate.LoadedGCode = await GCodeMemoryFile.LoadInBackground(gcodePathAndFileName, this.progressReporter);
-
-			if (loadedGCode == null)
-			{
-				this.AddChild(new TextWidget("Not a valid GCode file.".Localize())
-				{
-					Margin = 0,
-					VAnchor = VAnchor.ParentCenter,
-					HAnchor = HAnchor.ParentCenter
-				});
-			}
-			else
-			{
-				SetInitalLayer();
-				CenterPartInView();
-			}
-
-			printer.BedPlate.GCodeRenderer = new GCodeRenderer(loadedGCode);
-
-			if (ActiveSliceSettings.Instance.PrinterSelected)
-			{
-				GCodeRenderer.ExtruderWidth = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.nozzle_diameter);
-			}
-			else
-			{
-				GCodeRenderer.ExtruderWidth = .4;
-			}
-
-			await Task.Run(() =>
-			{
-				try
-				{
-					// TODO: Why call this then throw away the result? What does calling initialize the otherwise would be invalid?
-					printer.BedPlate.GCodeRenderer.GCodeFileToDraw?.GetFilamentUsedMm(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_diameter));
-				}
-				catch (Exception ex)
-				{
-					Debug.Print(ex.Message);
-					GuiWidget.BreakInDebugger();
-				}
-
-				printer.BedPlate.GCodeRenderer.CreateFeaturesForLayerIfRequired(0);
-			});
-
-			DoneLoading?.Invoke(this, null);
-		}
-
 		public override void OnClosed(ClosedEventArgs e)
 		{
 			printer.BedPlate.GCodeRenderer?.Dispose();
+			printer.BedPlate.LoadedGCodeChanged -= BedPlate_LoadedGCodeChanged;
+
 			base.OnClosed(e);
 		}
 

@@ -1,15 +1,4 @@
-﻿using MatterHackers.Agg;
-using MatterHackers.Agg.PlatformAbstract;
-using MatterHackers.Agg.UI;
-using MatterHackers.DataConverters3D;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.PrintQueue;
-using MatterHackers.MatterControl.SettingsManagement;
-using MatterHackers.PolygonMesh;
-using MatterHackers.PolygonMesh.Processors;
-
-/*
+﻿/*
 Copyright (c) 2014, Lars Brubaker
 All rights reserved.
 
@@ -44,8 +33,17 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Threading;
-using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.VectorMath;
+using System.Threading.Tasks;
+using MatterHackers.Agg;
+using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.UI;
+using MatterHackers.DataConverters3D;
+using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.PrintQueue;
+using MatterHackers.MatterControl.SettingsManagement;
+using MatterHackers.PolygonMesh;
+using MatterHackers.PolygonMesh.Processors;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -221,7 +219,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 									int currentMeshMaterialIntdex = MeshMaterialData.Get(mesh).MaterialIndex;
 									if (materialsToInclude.Contains(currentMeshMaterialIntdex))
 									{
-										extruderFilesToSlice.Add(SaveAndGetFilenameForMesh(mesh));
+										extruderFilesToSlice.Add(SaveAndGetFilePathForMesh(mesh));
 									}
 									savedStlCount++;
 								}
@@ -245,7 +243,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 									mergeRules += $"({savedStlCount})";
 								}
 								// save an empty mesh
-								extruderFilesToSlice.Add(SaveAndGetFilenameForMesh(PlatonicSolids.CreateCube(.001, .001, .001)));
+								extruderFilesToSlice.Add(SaveAndGetFilePathForMesh(PlatonicSolids.CreateCube(.001, .001, .001)));
 								savedStlCount++;
 							}
 						}
@@ -259,42 +257,59 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		private static string SaveAndGetFilenameForMesh(Mesh meshToSave)
+		private static string SaveAndGetFilePathForMesh(Mesh meshToSave)
 		{
-			string fileName = Path.ChangeExtension(Path.GetRandomFileName(), ".stl");
-			string applicationUserDataPath = ApplicationDataStorage.ApplicationUserDataPath;
-			string folderToSaveStlsTo = Path.Combine(applicationUserDataPath, "data", "temp", "amf_to_stl");
-			if (!Directory.Exists(folderToSaveStlsTo))
-			{
-				Directory.CreateDirectory(folderToSaveStlsTo);
-			}
-			string saveStlFileName = Path.Combine(folderToSaveStlsTo, fileName);
-			MeshFileIo.Save(meshToSave, saveStlFileName);
-			return saveStlFileName;
+			string folderToSaveStlsTo = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "amf_to_stl");
+
+			// Create directory if needed
+			Directory.CreateDirectory(folderToSaveStlsTo);
+
+			string filePath = Path.Combine(folderToSaveStlsTo, Path.ChangeExtension(Path.GetRandomFileName(), ".stl"));
+
+			MeshFileIo.Save(meshToSave, filePath);
+
+			return filePath;
 		}
 
-		private static string SaveAndGetFilenameForMaterial(MeshGroup extruderMeshGroup, List<int> materialIndexsToSaveInThisSTL)
+		private static string SaveAndGetFilePathForMaterial(MeshGroup extruderMeshGroup, List<int> materialIndexsToSaveInThisSTL)
 		{
-			string fileName = Path.ChangeExtension(Path.GetRandomFileName(), ".stl");
-			string applicationUserDataPath = ApplicationDataStorage.ApplicationUserDataPath;
-			string folderToSaveStlsTo = Path.Combine(applicationUserDataPath, "data", "temp", "amf_to_stl");
-			if (!Directory.Exists(folderToSaveStlsTo))
-			{
-				Directory.CreateDirectory(folderToSaveStlsTo);
-			}
+			string folderToSaveStlsTo = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "amf_to_stl");
 
-			MeshOutputSettings settings = new MeshOutputSettings()
-			{
-				MaterialIndexsToSave = materialIndexsToSaveInThisSTL
-			};
+			// Create directory if needed
+			Directory.CreateDirectory(folderToSaveStlsTo);
 
-			string extruder1StlFileToSlice = Path.Combine(folderToSaveStlsTo, fileName);
-			MeshFileIo.Save(extruderMeshGroup, extruder1StlFileToSlice, settings);
-			return extruder1StlFileToSlice;
+			string filePath = Path.Combine(folderToSaveStlsTo, Path.ChangeExtension(Path.GetRandomFileName(), ".stl"));
+
+			MeshFileIo.Save(
+				extruderMeshGroup, 
+				filePath, 
+				new MeshOutputSettings()
+				{
+					MaterialIndexsToSave = materialIndexsToSaveInThisSTL
+				});
+
+			return filePath;
 		}
 
 		public static bool runInProcess = false;
 		private static Process slicerProcess = null;
+
+		private class SliceMessageReporter : IProgress<string>
+		{
+			private PrintItemWrapper printItem;
+			public SliceMessageReporter(PrintItemWrapper printItem)
+			{
+				this.printItem = printItem;
+			}
+
+			public void Report(string message)
+			{
+				UiThread.RunOnIdle(() =>
+				{
+					printItem.OnSlicingOutputMessage(new StringEventArgs(message));
+				});
+			}
+		}
 
 		private static void CreateSlicedPartsThread()
 		{
@@ -305,148 +320,41 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (listOfSlicingItems.Count > 0)
 				{
 					PrintItemWrapper itemToSlice = listOfSlicingItems[0];
-					string mergeRules = "";
-					
-					string[] stlFileLocations = GetStlFileLocations(itemToSlice.FileLocation, ref mergeRules);
-					string fileToSlice = stlFileLocations[0];
 
-					// check that the STL file is currently on disk
-					if (File.Exists(fileToSlice))
+					/* 
+					 * 
+			#if false
+									Mesh loadedMesh = StlProcessing.Load(fileToSlice);
+									SliceLayers layers = new SliceLayers();
+									layers.GetPerimetersForAllLayers(loadedMesh, .2, .2);
+									layers.DumpSegmentsToGcode("test.gcode");
+			#endif
+					 * */
+
+					if (File.Exists(itemToSlice.FileLocation))
 					{
 						itemToSlice.CurrentlySlicing = true;
 
-						string configFilePath = Path.Combine(
-							ApplicationDataStorage.Instance.GCodeOutputPath,
-							string.Format("config_{0}.ini", ActiveSliceSettings.Instance.GetLongHashCode().ToString()));
-
 						string gcodeFilePath = itemToSlice.GetGCodePathAndFileName();
-						bool gcodeFileIsComplete = itemToSlice.IsGCodeFileComplete(gcodeFilePath);
 
-						if (!File.Exists(gcodeFilePath) || !gcodeFileIsComplete)
+						var reporter = new SliceMessageReporter(itemToSlice);
+
+						if (OsInformation.OperatingSystem == OSType.Android
+							|| OsInformation.OperatingSystem == OSType.Mac
+							|| runInProcess)
 						{
-							string commandArgs = "";
 
-										EngineMappingsMatterSlice.WriteSliceSettingsFile(configFilePath);
-										if (mergeRules == "")
-										{
-											commandArgs = $"-v -o \"{gcodeFilePath}\" -c \"{configFilePath}\"";
-										}
-										else
-										{
-											commandArgs = $"-b {mergeRules} -v -o \"{gcodeFilePath}\" -c \"{configFilePath}\"";
-										}
+							itemCurrentlySlicing = itemToSlice;
+							MatterHackers.MatterSlice.LogOutput.GetLogWrites += SendProgressToItem;
 
-										foreach (string filename in stlFileLocations)
-										{
-											commandArgs +=  $" \"{filename}\"";
-										}
-#if false
-							Mesh loadedMesh = StlProcessing.Load(fileToSlice);
-							SliceLayers layers = new SliceLayers();
-							layers.GetPerimetersForAllLayers(loadedMesh, .2, .2);
-							layers.DumpSegmentsToGcode("test.gcode");
-#endif
+							SliceFile(itemToSlice.FileLocation, gcodeFilePath, reporter);
 
-							if (OsInformation.OperatingSystem == OSType.Android 
-								|| OsInformation.OperatingSystem == OSType.Mac 
-								|| runInProcess)
-							{
-								itemCurrentlySlicing = itemToSlice;
-								MatterHackers.MatterSlice.LogOutput.GetLogWrites += SendProgressToItem;
-								MatterSlice.MatterSlice.ProcessArgs(commandArgs);
-								MatterHackers.MatterSlice.LogOutput.GetLogWrites -= SendProgressToItem;
-								itemCurrentlySlicing = null;
-							}
-							else
-							{
-								slicerProcess = new Process()
-								{
-									StartInfo = new ProcessStartInfo()
-									{
-										Arguments = commandArgs,
-										CreateNoWindow = true,
-										WindowStyle = ProcessWindowStyle.Hidden,
-										RedirectStandardError = true,
-										RedirectStandardOutput = true,
-										FileName = MatterSliceInfo.GetEnginePath(),
-										UseShellExecute = false
-									}
-								};
-
-								slicerProcess.OutputDataReceived += (sender, args) =>
-								{
-									if (args.Data != null)
-									{
-										string message = args.Data.Replace("=>", "").Trim();
-										if (message.Contains(".gcode"))
-										{
-											message = "Saving intermediate file";
-										}
-										message += "...";
-
-										UiThread.RunOnIdle(() =>
-										{
-											itemToSlice.OnSlicingOutputMessage(new StringEventArgs(message));
-										});
-									}
-								};
-
-								slicerProcess.Start();
-								slicerProcess.BeginOutputReadLine();
-								string stdError = slicerProcess.StandardError.ReadToEnd();
-
-								slicerProcess.WaitForExit();
-								lock(slicerProcess)
-								{
-									slicerProcess = null;
-								}
-							}
+							MatterHackers.MatterSlice.LogOutput.GetLogWrites -= SendProgressToItem;
+							itemCurrentlySlicing = null;
 						}
-
-						try
+						else
 						{
-							if (File.Exists(gcodeFilePath)
-								&& File.Exists(configFilePath))
-							{
-								// make sure we have not already written the settings onto this file
-								bool fileHasSettings = false;
-								int bufferSize = 32000;
-								using (Stream fileStream = File.OpenRead(gcodeFilePath))
-								{
-									// Read the tail of the file to determine if the given token exists
-									byte[] buffer = new byte[bufferSize];
-									fileStream.Seek(Math.Max(0, fileStream.Length - bufferSize), SeekOrigin.Begin);
-									int numBytesRead = fileStream.Read(buffer, 0, bufferSize);
-									string fileEnd = System.Text.Encoding.UTF8.GetString(buffer);
-									if (fileEnd.Contains("GCode settings used"))
-									{
-										fileHasSettings = true;
-									}
-								}
-
-								if (!fileHasSettings)
-								{
-									using (StreamWriter gcodeWriter = File.AppendText(gcodeFilePath))
-									{
-										string oemName = "MatterControl";
-										if (OemSettings.Instance.WindowTitleExtra != null && OemSettings.Instance.WindowTitleExtra.Trim().Length > 0)
-										{
-											oemName += $" - {OemSettings.Instance.WindowTitleExtra}";
-										}
-
-										gcodeWriter.WriteLine("; {0} Version {1} Build {2} : GCode settings used", oemName, VersionInfo.Instance.ReleaseVersion, VersionInfo.Instance.BuildVersion);
-										gcodeWriter.WriteLine("; Date {0} Time {1}:{2:00}", DateTime.Now.Date, DateTime.Now.Hour, DateTime.Now.Minute);
-
-										foreach (string line in File.ReadLines(configFilePath))
-										{
-											gcodeWriter.WriteLine("; {0}", line);
-										}
-									}
-								}
-							}
-						}
-						catch (Exception)
-						{
+							SliceFile(itemToSlice.FileLocation, gcodeFilePath, reporter);
 						}
 					}
 
@@ -456,13 +364,158 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						itemToSlice.DoneSlicing = true;
 					});
 
-					lock(listOfSlicingItems)
+					lock (listOfSlicingItems)
 					{
 						listOfSlicingItems.RemoveAt(0);
 					}
 				}
 
 				Thread.Sleep(100);
+			}
+		}
+
+		public static async Task SliceFileAsync(PrintItemWrapper printItem, IProgress<string> progressReporter)
+		{
+			string gcodeFilePath = printItem.GetGCodePathAndFileName();
+
+			await Task.Run(() => SliceFile(
+				printItem.FileLocation, 
+				gcodeFilePath, 
+				progressReporter));
+		}
+
+		public static async Task SliceFileAsync(string sourceFile, string gcodeFilePath, IProgress<string> progressReporter)
+		{
+			await Task.Run(() => SliceFile(sourceFile, gcodeFilePath, progressReporter));
+		}
+
+		private static void SliceFile(string sourceFile, string gcodeFilePath, IProgress<string> progressReporter)
+		{
+			string mergeRules = "";
+
+			string[] stlFileLocations = GetStlFileLocations(sourceFile, ref mergeRules);
+			string fileToSlice = stlFileLocations[0];
+
+			{
+				string configFilePath = Path.Combine(
+					ApplicationDataStorage.Instance.GCodeOutputPath,
+					string.Format("config_{0}.ini", ActiveSliceSettings.Instance.GetLongHashCode().ToString()));
+
+				if (!File.Exists(gcodeFilePath))
+				{
+					string commandArgs;
+
+					EngineMappingsMatterSlice.WriteSliceSettingsFile(configFilePath);
+
+					if (mergeRules == "")
+					{
+						commandArgs = $"-v -o \"{gcodeFilePath}\" -c \"{configFilePath}\"";
+					}
+					else
+					{
+						commandArgs = $"-b {mergeRules} -v -o \"{gcodeFilePath}\" -c \"{configFilePath}\"";
+					}
+
+					foreach (string filename in stlFileLocations)
+					{
+						commandArgs += $" \"{filename}\"";
+					}
+
+					if (OsInformation.OperatingSystem == OSType.Android
+						|| OsInformation.OperatingSystem == OSType.Mac
+						|| runInProcess)
+					{
+						MatterSlice.MatterSlice.ProcessArgs(commandArgs);
+					}
+					else
+					{
+						slicerProcess = new Process()
+						{
+							StartInfo = new ProcessStartInfo()
+							{
+								Arguments = commandArgs,
+								CreateNoWindow = true,
+								WindowStyle = ProcessWindowStyle.Hidden,
+								RedirectStandardError = true,
+								RedirectStandardOutput = true,
+								FileName = MatterSliceInfo.GetEnginePath(),
+								UseShellExecute = false
+							}
+						};
+
+						slicerProcess.OutputDataReceived += (sender, args) =>
+						{
+							if (args.Data != null)
+							{
+								string message = args.Data.Replace("=>", "").Trim();
+								if (message.Contains(".gcode"))
+								{
+									message = "Saving intermediate file";
+								}
+								message += "...";
+
+								progressReporter.Report(message);
+							}
+						};
+
+						slicerProcess.Start();
+						slicerProcess.BeginOutputReadLine();
+
+						string stdError = slicerProcess.StandardError.ReadToEnd();
+
+						slicerProcess.WaitForExit();
+						lock (slicerProcess)
+						{
+							slicerProcess = null;
+						}
+					}
+				}
+
+				try
+				{
+					if (File.Exists(gcodeFilePath)
+						&& File.Exists(configFilePath))
+					{
+						// make sure we have not already written the settings onto this file
+						bool fileHasSettings = false;
+						int bufferSize = 32000;
+						using (Stream fileStream = File.OpenRead(gcodeFilePath))
+						{
+							// Read the tail of the file to determine if the given token exists
+							byte[] buffer = new byte[bufferSize];
+							fileStream.Seek(Math.Max(0, fileStream.Length - bufferSize), SeekOrigin.Begin);
+							int numBytesRead = fileStream.Read(buffer, 0, bufferSize);
+							string fileEnd = System.Text.Encoding.UTF8.GetString(buffer);
+							if (fileEnd.Contains("GCode settings used"))
+							{
+								fileHasSettings = true;
+							}
+						}
+
+						if (!fileHasSettings)
+						{
+							using (StreamWriter gcodeWriter = File.AppendText(gcodeFilePath))
+							{
+								string oemName = "MatterControl";
+								if (OemSettings.Instance.WindowTitleExtra != null && OemSettings.Instance.WindowTitleExtra.Trim().Length > 0)
+								{
+									oemName += $" - {OemSettings.Instance.WindowTitleExtra}";
+								}
+
+								gcodeWriter.WriteLine("; {0} Version {1} Build {2} : GCode settings used", oemName, VersionInfo.Instance.ReleaseVersion, VersionInfo.Instance.BuildVersion);
+								gcodeWriter.WriteLine("; Date {0} Time {1}:{2:00}", DateTime.Now.Date, DateTime.Now.Hour, DateTime.Now.Minute);
+
+								foreach (string line in File.ReadLines(configFilePath))
+								{
+									gcodeWriter.WriteLine("; {0}", line);
+								}
+							}
+						}
+					}
+				}
+				catch (Exception)
+				{
+				}
 			}
 		}
 

@@ -64,7 +64,15 @@ namespace MatterHackers.GCodeVisualizer
 		public GCodeMemoryFile(string pathAndFileName, bool gcodeHasExplicitLayerChangeInfo = false)
 		{
 			this.gcodeHasExplicitLayerChangeInfo = gcodeHasExplicitLayerChangeInfo;
-			this.Load(pathAndFileName);
+
+			var loadedFile = GCodeMemoryFile.Load(pathAndFileName, null);
+			if (loadedFile != null)
+			{
+				this.indexOfChangeInZ = loadedFile.indexOfChangeInZ;
+				this.center = loadedFile.center;
+				this.parsingLastZ = loadedFile.parsingLastZ;
+				this.GCodeCommandQueue = loadedFile.GCodeCommandQueue;
+			}
 		}
 
 		public override PrinterMachineInstruction Instruction(int index)
@@ -105,68 +113,41 @@ namespace MatterHackers.GCodeVisualizer
 			return ParseFileContents(gcodeContents, null);
 		}
 
-		public static GCodeMemoryFile Load(Stream fileStream)
+		public static GCodeMemoryFile Load(Stream fileStream, ReportProgressRatio<(double ratio, string state)> progressReporter = null)
 		{
-			GCodeMemoryFile loadedGCode = null;
 			try
 			{
-				string gCodeString = "";
 				using (var reader = new StreamReader(fileStream))
 				{
-					gCodeString = reader.ReadToEnd();
+					return ParseFileContents(reader.ReadToEnd(), progressReporter);
 				}
-
-				loadedGCode = ParseFileContents(gCodeString, null);
 			}
-			catch (IOException e)
+			catch (Exception e)
 			{
 				Debug.Print(e.Message);
 			}
 
-			return loadedGCode;
+			return null;
 		}
 
-		public static async Task<GCodeMemoryFile> LoadInBackground(string fileName, ReportProgressRatio<(double ratio, string state)> progressReporter)
+		public static GCodeMemoryFile Load(string filePath, ReportProgressRatio<(double ratio, string state)> progressReporter)
 		{
-			if (Path.GetExtension(fileName).ToUpper() == ".GCODE")
+			if (Path.GetExtension(filePath).ToUpper() == ".GCODE")
 			{
 				try
 				{
-					if (File.Exists(fileName) && !FileTooBigToLoad(fileName))
+					using (var stream = File.OpenRead(filePath))
 					{
-						return await Task.Run(() =>
-						{
-							return ParseFileContents(File.ReadAllText(fileName), progressReporter);
-						});
+						return Load(stream, progressReporter);
 					}
 				}
-				catch (IOException e)
+				catch (Exception e)
 				{
 					Debug.Print(e.Message);
 				}
 			}
 
 			return null;
-		}
-
-		public new void Load(string gcodePathAndFileName)
-		{
-			if (!FileTooBigToLoad(gcodePathAndFileName))
-			{
-				using (FileStream fileStream = new FileStream(gcodePathAndFileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-				{
-					using (StreamReader streamReader = new StreamReader(fileStream))
-					{
-						GCodeMemoryFile loadedFile = GCodeMemoryFile.Load(streamReader.BaseStream);
-
-						this.indexOfChangeInZ = loadedFile.indexOfChangeInZ;
-						this.center = loadedFile.center;
-						this.parsingLastZ = loadedFile.parsingLastZ;
-
-						this.GCodeCommandQueue = loadedFile.GCodeCommandQueue;
-					}
-				}
-			}
 		}
 
 		private static IEnumerable<string> CustomSplit(string newtext, char splitChar)

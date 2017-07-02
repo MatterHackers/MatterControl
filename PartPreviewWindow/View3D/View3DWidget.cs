@@ -195,8 +195,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private Matrix4X4 transformOnMouseDown = Matrix4X4.Identity;
 		private EventHandler unregisterEvents;
 
-		private FlowLayoutWidget temperatureBar;
-
 		internal bool viewIsInEditModePreLock = false;
 
 		private bool wasInSelectMode = false;
@@ -451,24 +449,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			mainContainerTopToBottom.AddChild(buttonBottomPanel);
 
 			this.AddChild(mainContainerTopToBottom);
-
-			temperatureBar = new FlowLayoutWidget()
-			{
-				VAnchor = VAnchor.ParentTop | VAnchor.FitToChildren,
-				HAnchor = HAnchor.ParentRight | HAnchor.FitToChildren,
-				Margin = new BorderDouble(right: 165, top: 5)
-			};
-
-			temperatureBar.AddChild(new TemperatureWidgetExtruder(ApplicationController.Instance.Theme.MenuButtonFactory)
-			{
-				Margin = new BorderDouble(right: 10)
-			});
-
-			if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_heated_bed))
-			{
-				temperatureBar.AddChild(new TemperatureWidgetBed());
-			}
-			this.AddChild(temperatureBar);
 
 			this.AnchorAll();
 
@@ -2352,7 +2332,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 
 				selectedObjectPanel.Visible = !showSliceLayers;
-				temperatureBar.Visible = !showSliceLayers;
 			}
 		}
 
