@@ -122,6 +122,10 @@
       <Project>{545B6912-77FF-4B34-BA76-6C3D6A32BE6A}</Project>
       <Name>RenderOpenGl</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Submodules\agg-sharp\SerialPortCommunication\SerialPortCommunication.csproj">
+      <Project>{D3ABF72C-64C2-4E51-A119-E077210FA990}</Project>
+      <Name>SerialPortCommunication</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Submodules\agg-sharp\Tests\Agg.Tests\Agg.Tests.csproj">
       <Project>{195cbe56-e654-437b-ab05-3be1b9452497}</Project>
       <Name>Agg.Tests</Name>

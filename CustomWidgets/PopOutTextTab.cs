@@ -96,6 +96,8 @@ namespace MatterHackers.Agg.UI
 		public TextWidget tabTitle;
 		private FlowLayoutWidget leftToRight;
 
+		public bool UseUnderlineStyling { get; set; }
+
 		private void AddText(string tabText, GuiWidget widgetState, RGBA_Bytes textColor, RGBA_Bytes backgroundColor, double pointSize, bool isActive)
 		{
 			leftToRight = new FlowLayoutWidget()
@@ -138,7 +140,7 @@ namespace MatterHackers.Agg.UI
 			widgetState.AddChild(leftToRight);
 			widgetState.BackgroundColor = backgroundColor;
 
-			EnforceSizingAdornActive(widgetState, isActive);
+			EnforceSizingAdornActive(widgetState, isActive, this.UseUnderlineStyling);
 		}
 	}
 }

@@ -486,6 +486,10 @@
       <Project>{97D5ADE3-C1B4-4B46-8A3E-718A4F7F079F}</Project>
       <Name>MatterControl.Printing</Name>
     </ProjectReference>
+    <ProjectReference Include="PrinterEmulator\PrinterEmulator.csproj" Condition="'$(Configuration)'=='Debug'">
+      <Project>{bb58ca42-991b-41b7-bde7-dcd2911df8b9}</Project>
+      <Name>PrinterEmulator</Name>
+    </ProjectReference>
     <ProjectReference Include="Submodules\agg-sharp\clipper_library\clipper_library.csproj">
       <Project>{9B062971-A88E-4A3D-B3C9-12B78D15FA66}</Project>
       <Name>clipper_library</Name>

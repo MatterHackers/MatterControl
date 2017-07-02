@@ -72,7 +72,6 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		private EventHandler unregisterEvents;
 
-
 		public PrintActionRow(TextImageButtonFactory buttonFactory, GuiWidget parentWidget)
 		{
 			this.HAnchor = HAnchor.ParentLeftRight;

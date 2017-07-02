@@ -530,7 +530,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public string ComPort => ActiveSliceSettings.Instance?.Helpers.ComPort();
 
-		public string DriverType => ActiveSliceSettings.Instance?.GetValue("driver_type");
+		public string DriverType => (this.ComPort == "Emulator") ? "Emulator" : ActiveSliceSettings.Instance?.GetValue("driver_type");
 
 		public bool AtxPowerEnabled
 		{
@@ -2111,7 +2111,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			var portFactory = FrostedSerialPortFactory.GetAppropriateFactory(this.DriverType);
 
 			bool serialPortIsAvailable = portFactory.SerialPortIsAvailable(serialPortName);
-			bool serialPortIsAlreadyOpen = portFactory.SerialPortAlreadyOpen(serialPortName);
+			bool serialPortIsAlreadyOpen = this.ComPort != "Emulator" &&
+				portFactory.SerialPortAlreadyOpen(serialPortName);
 
 			if (serialPortIsAvailable && !serialPortIsAlreadyOpen)
 			{
