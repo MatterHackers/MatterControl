@@ -196,12 +196,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			// Create the printer
 			testRunner.AddAndSelectPrinter(make, model);
 
-			var emulator = new Emulator();
-
-			emulator.PortName = config.Printer;
-			emulator.RunSlow = runSlow;
-
-			emulator.Startup();
+			// Force the configured printer to use the emulator driver
+			ActiveSliceSettings.Instance.SetValue("driver_type", "Emulator");
 
 			// edit the com port
 			var editButton = testRunner.GetWidgetByName("Edit Printer Button", out _);
@@ -211,7 +207,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			testRunner.ClickByName("Serial Port Dropdown");
 
-			testRunner.ClickByName(config.MCPort + " Menu Item");
+			testRunner.ClickByName("Emulator Menu Item");
 
 			testRunner.ClickByName("Cancel Wizard Button");
 
@@ -220,7 +216,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			testRunner.WaitForName("Disconnect from printer button");
 
-			return emulator;
+			// Access through static instance must occur after Connect has occurred and the port has spun up
+			Emulator.Instance.RunSlow = runSlow;
+
+			return Emulator.Instance;
 	}
 
 		public static void CancelPrint(this AutomationRunner testRunner)

@@ -28,10 +28,11 @@ using System.IO.Ports;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using MatterHackers.SerialPortCommunication.FrostedSerial;
 
 namespace MatterHackers.PrinterEmulator
 {
-	public class Emulator : IDisposable
+	public partial class Emulator : IDisposable
 	{
 		public int CDChangeCount;
 		public bool CDState;
@@ -45,14 +46,18 @@ namespace MatterHackers.PrinterEmulator
 
 		private int recievedCount = 0;
 
+		// Instance reference allows test to access the most recently initialized emulator
+		public static Emulator Instance { get; private set; }
+
 		// Dictionary of command and response callback
 		private Dictionary<string, Func<string, string>> responses = new Dictionary<string, Func<string, string>>();
 
-		private SerialPort serialPort = null;
 		private bool shutDown = false;
 
 		public Emulator()
 		{
+			Emulator.Instance = this;
+
 			responses.Add("A", Echo);
 			responses.Add("G0", SetPosition);
 			responses.Add("G1", SetPosition);
@@ -87,7 +92,7 @@ namespace MatterHackers.PrinterEmulator
 
 		public string PortName { get; set; }
 
-		public bool RunSlow { get; set; }
+		public bool RunSlow { get; set; } = false;
 
 		public bool SimulateLineErrors { get; set; } = false;
 		public double XPosition { get; private set; }
@@ -136,7 +141,10 @@ namespace MatterHackers.PrinterEmulator
 
 		public void Dispose()
 		{
+			this.IsOpen = false;
 			ShutDown();
+
+			Emulator.Instance = null;
 		}
 
 		public string Echo(string command)
@@ -245,72 +253,6 @@ namespace MatterHackers.PrinterEmulator
 			recievedCount = 0;
 		}
 
-		public void Startup()
-		{
-			serialPort = new SerialPort(PortName);
-
-			serialPort.ReadTimeout = 500;
-			serialPort.WriteTimeout = 500;
-			serialPort.Open();
-			string speed = RunSlow ? "slow" : "fast";
-			Console.WriteLine($"\n Initializing emulator on port {serialPort.PortName} (Speed: {speed})");
-
-			Task.Run(() =>
-			{
-				while (!shutDown)
-				{
-					if (serialPort.CDHolding != CDState)
-					{
-						CDState = serialPort.CDHolding;
-						CDChangeCount++;
-					}
-					if (serialPort.CtsHolding != CtsState)
-					{
-						CtsState = serialPort.CtsHolding;
-						CtsChangeCount++;
-					}
-					if (serialPort.DsrHolding != DsrState)
-					{
-						DsrState = serialPort.DsrHolding;
-						DsrChangeCount++;
-					}
-
-					Thread.Sleep(10);
-				}
-			});
-
-			Task.Run(() =>
-			{
-				while (!shutDown)
-				{
-					string line = "";
-
-					try
-					{
-						line = serialPort.ReadLine(); // read a '\n' terminated line
-					}
-					catch (TimeoutException te)
-					{
-					}
-					catch (Exception)
-					{
-					}
-
-					if (line.Length > 0)
-					{
-						Console.WriteLine(line);
-						var response = GetCorrectResponse(line);
-
-						Console.WriteLine(response);
-						serialPort.Write(response);
-					}
-				}
-
-				serialPort.Close();
-				serialPort.Dispose();
-			});
-		}
-
 		private string HomePosition(string command)
 		{
 			XPosition = 0;
@@ -337,7 +279,7 @@ namespace MatterHackers.PrinterEmulator
 			foreach (var response in responsList)
 			{
 				Console.WriteLine(response);
-				serialPort.WriteLine(response);
+				this.SendLine(response);
 			}
 
 			return "ok\n";
@@ -478,6 +420,136 @@ namespace MatterHackers.PrinterEmulator
 			}
 
 			return "ok\n";
+		}
+	}
+
+	public class EmulatorPortFactory : FrostedSerialPortFactory
+	{
+		override protected string GetDriverType() => "Emulator";
+		public override IFrostedSerialPort Create(string serialPortName) => new Emulator();
+	}
+
+	// EmulatorPort
+	public partial class Emulator : IFrostedSerialPort
+	{
+		public bool RtsEnable { get; set; }
+		public bool DtrEnable { get; set; }
+		public int BaudRate { get; set; }
+
+		public int BytesToRead => lineToSend?.Length ?? 0;
+
+		public int WriteTimeout { get; set; }
+		public int ReadTimeout { get; set; }
+
+		public bool IsOpen { get; private set; }
+
+		public void Close()
+		{
+			this.shutDown = true;
+		}
+
+		private AutoResetEvent receiveResetEvent;
+		private AutoResetEvent sendResetEvent;
+
+		public void Open()
+		{
+			this.IsOpen = true;
+
+			receiveResetEvent = new AutoResetEvent(false);
+			sendResetEvent = new AutoResetEvent(true);
+
+			this.ReadTimeout = 500;
+			this.WriteTimeout = 500;
+
+			Console.WriteLine("\n Initializing emulator (Speed: {0})", (this.RunSlow) ? "slow" : "fast");
+
+			Task.Run(() =>
+			{
+				while (!shutDown)
+				{
+					if (this.DtrEnable != DsrState)
+					{
+						DsrState = this.DtrEnable;
+						DsrChangeCount++;
+					}
+
+					Thread.Sleep(10);
+				}
+			});
+
+			Task.Run(() =>
+			{
+				SimulateReboot();
+
+				while (!shutDown)
+				{
+					string line = "";
+
+					try
+					{
+						line = this.ReceiveLine(); // read a '\n' terminated line
+					}
+					catch (Exception)
+					{
+					}
+
+					if (line.Length > 0)
+					{
+						var response = GetCorrectResponse(line);
+						lineToSend = response;
+						sendResetEvent.Set();
+					}
+				}
+
+				this.IsOpen = false;
+
+				this.Close();
+				this.Dispose();
+			});
+
+			this.IsOpen = true;
+		}
+
+		private string receivedLine;
+		private string lineToSend;
+
+		private string ReceiveLine()
+		{
+			receiveResetEvent.WaitOne();
+			return receivedLine;
+		}
+
+		public void SendLine(string str)
+		{
+			lineToSend = str;
+			sendResetEvent.Set();
+		}
+
+		public int Read(byte[] buffer, int offset, int count)
+		{
+			Console.WriteLine();
+			return 0;
+		}
+
+		public string ReadExisting()
+		{
+			sendResetEvent.WaitOne(1000);
+
+			var send = lineToSend;
+			lineToSend = "";
+
+			return send;
+		}
+
+		public void Write(string str)
+		{
+			receivedLine = str;
+			receiveResetEvent.Set();
+		}
+
+		public void Write(byte[] buffer, int offset, int count)
+		{
+			Console.WriteLine();
 		}
 	}
 }

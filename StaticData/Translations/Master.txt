@@ -4291,3 +4291,15 @@ Translated:Slice
 English:Slice Parts
 Translated:Slice Parts
 
+English:Spacing:
+Translated:Spacing:
+
+English:Your 3D print has been auto-paused.\nPause layer{0} reached.
+Translated:Your 3D print has been auto-paused.\nPause layer{0} reached.
+
+English:Printing: {0}
+Translated:Printing: {0}
+
+English:Finished Print: {0}
+Translated:Finished Print: {0}
+
