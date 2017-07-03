@@ -247,7 +247,7 @@ namespace MatterHackers.MatterControl
 
 		public bool SyncToPrint
 		{
-			get => UserSettings.Instance.get("GcodeViewerHideExtruderOffsets") == "True";
+			get => UserSettings.Instance.get("LayerViewSyncToPrint") == "True";
 			set => UserSettings.Instance.set("LayerViewSyncToPrint", value.ToString());
 		}
 	}
