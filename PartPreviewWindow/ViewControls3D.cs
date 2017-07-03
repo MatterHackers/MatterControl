@@ -174,9 +174,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			AddChild(layersButton);
 
-			OverflowButton = new OverflowDropdown(allowLightnessInvert: false);
-			OverflowButton.ToolTipText = "More...".Localize();
-			OverflowButton.Margin = 3;
+			OverflowButton = new OverflowDropdown(allowLightnessInvert: false)
+			{
+				Name = "View3D Overflow Menu",
+				ToolTipText = "More...".Localize(),
+				Margin = 3
+			};
 			AddChild(OverflowButton);
 
 			rotateButton.Checked = true;
