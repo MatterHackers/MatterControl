@@ -556,7 +556,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				syncToPrint.CheckedStateChanged += (s, e) =>
 				{
 					options.SyncToPrint = syncToPrint.Checked;
-					
 					SetSyncToPrintVisibility();
 				};
 				popupContainer.AddChild(syncToPrint);

@@ -63,7 +63,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("Toggle Layer View Button");
 
 					testRunner.ClickByName("Generate Gcode Button");
-					testRunner.ClickByName("Display Checkbox");
+
+					testRunner.WaitForName("Current GCode Layer Edit");
+
+					testRunner.ClickByName("View3D Overflow Menu");
 					testRunner.ClickByName("Sync To Print Checkbox");
 
 					testRunner.ClickByName("Start Print Button");
@@ -102,7 +105,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("Toggle Layer View Button");
 
 					testRunner.ClickByName("Generate Gcode Button");
-					testRunner.ClickByName("Display Checkbox");
+					testRunner.ClickByName("View3D Overflow Menu");
 					testRunner.ClickByName("Sync To Print Checkbox");
 
 					testRunner.ClickByName("Start Print Button");
@@ -140,13 +143,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			// close the pause dialog pop-up
 			testRunner.ClickByName("Yes Button");
 
-			SystemWindow containingWindow;
-			GuiWidget layerNumber = testRunner.GetWidgetByName("Current GCode Layer Edit", out containingWindow, 20);
+			GuiWidget layerNumber = testRunner.GetWidgetByName("Current GCode Layer Edit", out _, 20);
 
 			layerNumber.Invalidate();
 			testRunner.Delay(() => layerNumber.Text == indexToWaitFor.ToString(), 2);
 
-			Assert.IsTrue(layerNumber.Text == indexToWaitFor.ToString());
+			Assert.AreEqual(indexToWaitFor.ToString(), layerNumber.Text);
 			testRunner.ClickByName("Resume Button");
 			testRunner.Delay(.1);
 		}

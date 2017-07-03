@@ -135,13 +135,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 				viewControls3D.OverflowButton.DynamicPopupContent = () =>
 				{
-					if (modelViewer.Visible)
+					if (gcodeViewer.Visible)
 					{
-						return modelViewer.ShowOverflowMenu();
+						return gcodeViewer.ShowOverflowMenu();
 					}
 					else
 					{
-						return gcodeViewer.ShowOverflowMenu();
+						return modelViewer.ShowOverflowMenu();
 					}
 				};
 
