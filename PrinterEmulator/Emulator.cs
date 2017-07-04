@@ -172,6 +172,7 @@ namespace MatterHackers.PrinterEmulator
 				{
 					return command + "ok\n";
 				}
+
 				var commandKey = GetCommandKey(command);
 				if (responses.ContainsKey(commandKey))
 				{
@@ -180,6 +181,7 @@ namespace MatterHackers.PrinterEmulator
 						// do the right amount of time for the given command
 						Thread.Sleep(20);
 					}
+
 					return responses[commandKey](command);
 				}
 				else
@@ -278,8 +280,7 @@ namespace MatterHackers.PrinterEmulator
 
 			foreach (var response in responsList)
 			{
-				Console.WriteLine(response);
-				this.SendLine(response);
+				this.QueueResponse(response);
 			}
 
 			return "ok\n";
@@ -436,7 +437,26 @@ namespace MatterHackers.PrinterEmulator
 		public bool DtrEnable { get; set; }
 		public int BaudRate { get; set; }
 
-		public int BytesToRead => lineToSend?.Length ?? 0;
+		private Queue<string> sendQueue = new Queue<string>();
+		private Queue<string> receiveQueue = new Queue<string>();
+
+		private AutoResetEvent receiveResetEvent;
+
+		private object receiveLock = new object();
+		private object sendLock = new object();
+
+		public int BytesToRead
+		{
+			get
+			{
+				if (sendQueue.Count == 0)
+				{
+					return 0;
+				}
+
+				return sendQueue?.Peek().Length ?? 0;
+			}
+		}
 
 		public int WriteTimeout { get; set; }
 		public int ReadTimeout { get; set; }
@@ -448,15 +468,11 @@ namespace MatterHackers.PrinterEmulator
 			this.shutDown = true;
 		}
 
-		private AutoResetEvent receiveResetEvent;
-		private AutoResetEvent sendResetEvent;
-
 		public void Open()
 		{
 			this.IsOpen = true;
 
 			receiveResetEvent = new AutoResetEvent(false);
-			sendResetEvent = new AutoResetEvent(true);
 
 			this.ReadTimeout = 500;
 			this.WriteTimeout = 500;
@@ -479,25 +495,36 @@ namespace MatterHackers.PrinterEmulator
 
 			Task.Run(() =>
 			{
-				SimulateReboot();
-
 				while (!shutDown)
 				{
-					string line = "";
-
-					try
+					if (receiveQueue.Count == 0)
 					{
-						line = this.ReceiveLine(); // read a '\n' terminated line
-					}
-					catch (Exception)
-					{
+						receiveResetEvent.WaitOne();
 					}
 
-					if (line.Length > 0)
+					if (receiveQueue.Count == 0)
 					{
-						var response = GetCorrectResponse(line);
-						lineToSend = response;
-						sendResetEvent.Set();
+						Thread.Sleep(10);
+					}
+					else
+					{
+						string receivedLine;
+
+						lock (receiveLock)
+						{
+							receivedLine = receiveQueue.Dequeue();
+						}
+
+						if (receivedLine?.Length > 0)
+						{
+							//Thread.Sleep(250);
+							string emulatedResponse = GetCorrectResponse(receivedLine);
+
+							lock(sendLock)
+							{
+								sendQueue.Enqueue(emulatedResponse);
+							}
+						}
 					}
 				}
 
@@ -510,46 +537,33 @@ namespace MatterHackers.PrinterEmulator
 			this.IsOpen = true;
 		}
 
-		private string receivedLine;
-		private string lineToSend;
-
-		private string ReceiveLine()
+		public void QueueResponse(string line)
 		{
-			receiveResetEvent.WaitOne();
-			return receivedLine;
-		}
-
-		public void SendLine(string str)
-		{
-			lineToSend = str;
-			sendResetEvent.Set();
-		}
-
-		public int Read(byte[] buffer, int offset, int count)
-		{
-			Console.WriteLine();
-			return 0;
+			sendQueue.Enqueue(line);
 		}
 
 		public string ReadExisting()
 		{
-			sendResetEvent.WaitOne(1000);
-
-			var send = lineToSend;
-			lineToSend = "";
-
-			return send;
+			lock(sendLock)
+			{
+				return sendQueue.Dequeue();
+			}
 		}
 
-		public void Write(string str)
+		public void Write(string receivedLine)
 		{
-			receivedLine = str;
+			lock(receiveLock)
+			{
+				receiveQueue.Enqueue(receivedLine);
+			}
+
+
+			// Release the main loop to process the received command
 			receiveResetEvent.Set();
 		}
 
-		public void Write(byte[] buffer, int offset, int count)
-		{
-			Console.WriteLine();
-		}
+		public int Read(byte[] buffer, int offset, int count) => throw new NotImplementedException();
+
+		public void Write(byte[] buffer, int offset, int count) => throw new NotImplementedException();
 	}
 }
