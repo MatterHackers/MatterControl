@@ -280,7 +280,7 @@ namespace MatterHackers.PrinterEmulator
 
 			foreach (var response in responsList)
 			{
-				this.QueueResponse(response);
+				this.QueueResponse(response + '\n');
 			}
 
 			return "ok\n";
