@@ -92,17 +92,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return null;
 		}
 
-		public GuiWidget GenerateHorizontalRule()
-		{
-			return new GuiWidget()
-			{
-				Height = 1,
-				Margin = new BorderDouble(0, 1, 0, 3),
-				HAnchor = HAnchor.ParentLeftRight,
-				BackgroundColor = new RGBA_Bytes(255, 255, 255, 200)
-			};
-		}
-
 		private void CheckSettingChanged(object sender, EventArgs e)
 		{
 			StringEventArgs stringEvent = e as StringEventArgs;
@@ -117,8 +106,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 		}
-
-		public virtual bool InEditMode { get { return false; } }
 
 		private void RecreateBed()
 		{

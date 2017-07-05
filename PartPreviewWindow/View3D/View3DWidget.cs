@@ -547,17 +547,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			set
 			{
-				if (InEditMode)
-				{
-					// <IObject3D>
-					dragDropSource = value;
+				// <IObject3D>
+				dragDropSource = value;
 
-					// Clear the DragSourceModel - <ILibraryItem>
-					DragSourceModel = null;
+				// Clear the DragSourceModel - <ILibraryItem>
+				DragSourceModel = null;
 
-					// Suppress ui volumes when dragDropSource is not null
-					meshViewerWidget.SuppressUiVolumes = (dragDropSource != null);
-				}
+				// Suppress ui volumes when dragDropSource is not null
+				meshViewerWidget.SuppressUiVolumes = (dragDropSource != null);
 			}
 		}
 
@@ -2241,8 +2238,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 		}
-
-		public override bool InEditMode => true;
 
 		public Vector2 DragSelectionStartPosition { get; private set; }
 		public bool DragSelectionInProgress { get; private set; }
