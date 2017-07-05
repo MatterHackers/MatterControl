@@ -368,7 +368,7 @@ namespace MatterHackers.MatterControl
 			};
 		}
 
-		public SolidSlider InsertUiForSlider(GuiWidget wordOptionContainer, string header, double min = 0, double max = .5)
+		public SolidSlider CreateSolidSlider(GuiWidget wordOptionContainer, string header, double min = 0, double max = .5)
 		{
 			double scrollBarWidth = 10;
 			if (UserSettings.Instance.IsTouchScreen)
@@ -398,7 +398,7 @@ namespace MatterHackers.MatterControl
 			return namedSlider;
 		}
 
-		public MenuItem AddCheckbox(string text, string itemValue, bool itemChecked, BorderDouble padding, EventHandler eventHandler)
+		public MenuItem CreateCheckboxMenuItem(string text, string itemValue, bool itemChecked, BorderDouble padding, EventHandler eventHandler)
 		{
 			var checkbox = new CheckBox(text)
 			{

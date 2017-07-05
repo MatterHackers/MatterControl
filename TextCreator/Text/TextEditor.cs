@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 			textToAddWidget.ActualTextEditWidget.EnterPressed += (s, e) => RebuildText(textToAddWidget.Text);
 			tabContainer.AddChild(textToAddWidget);
 
-			spacingScrollBar = theme.InsertUiForSlider(tabContainer, "Spacing:".Localize(), .5, 1);
+			spacingScrollBar = theme.CreateSolidSlider(tabContainer, "Spacing:".Localize(), .5, 1);
 			spacingScrollBar.ValueChanged += (sender, e) =>
 			{
 				if (injectedItem != null)
