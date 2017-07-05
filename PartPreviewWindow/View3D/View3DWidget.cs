@@ -2356,7 +2356,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			popupContainer.AddChild(
 				this.theme.CreateCheckboxMenuItem(
 					"Show Print Bed".Localize(),
-					"Show Help Checkbox",
+					"ShowPrintBed",
 					meshViewer.RenderBed,
 					5,
 					(s, e) =>
@@ -2373,7 +2373,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				popupContainer.AddChild(
 					this.theme.CreateCheckboxMenuItem(
 						"Show Print Area".Localize(),
-						"Show Help Checkbox",
+						"ShowPrintArea",
 						meshViewer.RenderBed,
 						5,
 						(s, e) =>
