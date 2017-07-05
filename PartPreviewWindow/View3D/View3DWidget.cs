@@ -2370,7 +2370,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					this.theme.CreateCheckboxMenuItem(
 						"Show Print Area".Localize(),
 						"ShowPrintArea",
-						meshViewer.RenderBed,
+						meshViewer.RenderBuildVolume,
 						5,
 						(s, e) =>
 						{
