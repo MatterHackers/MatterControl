@@ -50,7 +50,7 @@ namespace MatterHackers.PrinterEmulator
 		public static Emulator Instance { get; private set; }
 
 		// Dictionary of command and response callback
-		private Dictionary<string, Func<string, string>> responses = new Dictionary<string, Func<string, string>>();
+		private Dictionary<string, Func<string, string>> responses;
 
 		private bool shutDown = false;
 
@@ -58,24 +58,27 @@ namespace MatterHackers.PrinterEmulator
 		{
 			Emulator.Instance = this;
 
-			responses.Add("A", Echo);
-			responses.Add("G0", SetPosition);
-			responses.Add("G1", SetPosition);
-			responses.Add("G28", HomePosition);
-			responses.Add("G4", Wait);
-			responses.Add("G92", ResetPosition);
-			responses.Add("M104", SetExtruderTemperature);
-			responses.Add("M105", ReturnTemp);
-			responses.Add("M106", SetFan);
-			responses.Add("M109", SetExtruderTemperature);
-			responses.Add("M110", SetLineCount);
-			responses.Add("M114", GetPosition);
-			responses.Add("M115", ReportMarlinFirmware);
-			responses.Add("M140", SetBedTemperature);
-			responses.Add("M190", SetBedTemperature);
-			responses.Add("M20", ListSdCard);
-			responses.Add("M21", InitSdCard);
-			responses.Add("N", ParseChecksumLine);
+			responses = new Dictionary<string, Func<string, string>>()
+			{
+				{ "A", Echo },
+				{ "G0", SetPosition },
+				{ "G1", SetPosition },
+				{ "G28", HomePosition },
+				{ "G4", Wait },
+				{ "G92", ResetPosition },
+				{ "M104", SetExtruderTemperature },
+				{ "M105", ReturnTemp },
+				{ "M106", SetFan },
+				{ "M109", SetExtruderTemperature },
+				{ "M110", SetLineCount },
+				{ "M114", GetPosition },
+				{ "M115", ReportMarlinFirmware },
+				{ "M140", SetBedTemperature },
+				{ "M190", SetBedTemperature },
+				{ "M20", ListSdCard },
+				{ "M21", InitSdCard },
+				{ "N", ParseChecksumLine },
+			};
 		}
 
 		public event EventHandler ExtruderTemperatureChanged;
@@ -141,7 +144,6 @@ namespace MatterHackers.PrinterEmulator
 
 		public void Dispose()
 		{
-			this.IsOpen = false;
 			ShutDown();
 
 			Emulator.Instance = null;
@@ -280,7 +282,7 @@ namespace MatterHackers.PrinterEmulator
 
 			foreach (var response in responsList)
 			{
-				this.QueueResponse(response);
+				this.QueueResponse(response + '\n');
 			}
 
 			return "ok\n";
