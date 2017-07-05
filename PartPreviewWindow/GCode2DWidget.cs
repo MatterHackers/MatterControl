@@ -181,62 +181,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						}
 					}
 
+					var activeOptions = printer.BedPlate.RenderInfo;
+
 					var renderInfo = new GCodeRenderInfo(
 						printer.BedPlate.ActiveLayerIndex,
 						printer.BedPlate.ActiveLayerIndex,
 						transform,
 						layerScale,
-						printer.BedPlate.RenderInfo.FeatureToStartOnRatio0To1,
-						printer.BedPlate.RenderInfo.FeatureToEndOnRatio0To1,
-						new Vector2[] 
-						{
-							ActiveSliceSettings.Instance.Helpers.ExtruderOffset(0),
-							ActiveSliceSettings.Instance.Helpers.ExtruderOffset(1)
-						},
-						this.CreateRenderInfo,
-						MeshViewerWidget.GetMaterialColor);
+						activeOptions.FeatureToStartOnRatio0To1,
+						activeOptions.FeatureToEndOnRatio0To1,
+						activeOptions.extruderOffsets,
+						activeOptions.GetRenderType,
+						activeOptions.GetMaterialColor);
 
-					//using (new PerformanceTimer("GCode Timer", "Render"))
-					{
-						printer.BedPlate.GCodeRenderer?.Render(graphics2D, renderInfo);
-					}
+					printer.BedPlate.GCodeRenderer?.Render(graphics2D, renderInfo);
 				}
 			}
 
 			base.OnDraw(graphics2D);
-		}
-
-		private RenderType CreateRenderInfo()
-		{
-			var options = ApplicationController.Instance.Printer.BedPlate.RendererOptions;
-
-			RenderType renderType = RenderType.Extrusions;
-			if (options.RenderMoves)
-			{
-				renderType |= RenderType.Moves;
-			}
-			if (options.RenderRetractions)
-			{
-				renderType |= RenderType.Retractions;
-			}
-			if (options.RenderSpeeds)
-			{
-				renderType |= RenderType.SpeedColors;
-			}
-			if (options.SimulateExtrusion)
-			{
-				renderType |= RenderType.SimulateExtrusion;
-			}
-			if (options.TransparentExtrusion)
-			{
-				renderType |= RenderType.TransparentExtrusion;
-			}
-			if (options.HideExtruderOffsets)
-			{
-				renderType |= RenderType.HideExtruderOffsets;
-			}
-
-			return renderType;
 		}
 
 		private void GlRenderGrid(Graphics2DOpenGL graphics2DGl, Affine transform, double width)

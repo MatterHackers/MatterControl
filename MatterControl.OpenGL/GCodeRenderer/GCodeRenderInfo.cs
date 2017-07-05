@@ -36,7 +36,7 @@ namespace MatterHackers.GCodeVisualizer
 {
 	public class GCodeRenderInfo
 	{
-		private Vector2[] extruderOffsets;
+		public Vector2[] extruderOffsets;
 
 		public Vector2 GetExtruderOffset(int index)
 		{
@@ -65,7 +65,7 @@ namespace MatterHackers.GCodeVisualizer
 
 		public double FeatureToEndOnRatio0To1 { get; set; }
 
-		private Func<RenderType> GetRenderType;
+		public Func<RenderType> GetRenderType { get; }
 
 		public GCodeRenderInfo()
 		{
