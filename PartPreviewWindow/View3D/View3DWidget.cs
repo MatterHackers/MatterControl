@@ -2361,8 +2361,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					5,
 					(s, e) =>
 					{
-						var checkbox = s as CheckBox;
-						if (checkbox != null)
+						if (s is CheckBox checkbox)
 						{
 							meshViewer.RenderBed = checkbox.Checked;
 						}
@@ -2379,8 +2378,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						5,
 						(s, e) =>
 						{
-							var checkbox = s as CheckBox;
-							if (checkbox != null)
+							if (s is CheckBox checkbox)
 							{
 								meshViewer.RenderBuildVolume = checkbox.Checked;
 							}
