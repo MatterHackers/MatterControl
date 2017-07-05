@@ -622,8 +622,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		public bool IsEditing { get; private set; }
-
 		public bool DragingPart
 		{
 			get { return CurrentSelectInfo.DownOnPart; }
@@ -2254,8 +2252,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		internal async void SwitchStateToEditing()
 		{
-			this.IsEditing = true;
-
 			viewControls3D.ActiveButton = ViewControls3DButtons.PartSelect;
 
 			processingProgressControl.Visible = true;
