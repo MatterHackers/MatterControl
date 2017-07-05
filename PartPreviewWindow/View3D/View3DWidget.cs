@@ -260,12 +260,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			viewControls3D.TransformStateChanged += ViewControls3D_TransformStateChanged;
 
-			FlowLayoutWidget mainContainerTopToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			mainContainerTopToBottom.HAnchor = HAnchor.Max_FitToChildren_ParentWidth;
-			mainContainerTopToBottom.VAnchor = VAnchor.Max_FitToChildren_ParentHeight;
+			var mainContainerTopToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.Max_FitToChildren_ParentWidth,
+				VAnchor = VAnchor.Max_FitToChildren_ParentHeight
+			};
 
-			var centerPartPreviewAndControls = new FlowLayoutWidget(FlowDirection.LeftToRight);
-			centerPartPreviewAndControls.Name = "centerPartPreviewAndControls";
+			var centerPartPreviewAndControls = new FlowLayoutWidget(FlowDirection.LeftToRight)
+			{
+				Name = "centerPartPreviewAndControls"
+			};
 			centerPartPreviewAndControls.AnchorAll();
 
 			var smallMarginButtonFactory = ApplicationController.Instance.Theme.BreadCrumbButtonFactorySmallMargins;
@@ -765,6 +769,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			// Not needed but safer than without
 			viewControls3D.TransformStateChanged -= ViewControls3D_TransformStateChanged;
+
+			if (meshViewerWidget != null)
+			{
+				meshViewerWidget.AfterDraw -= AfterDraw3DContent;
+			}
 
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
