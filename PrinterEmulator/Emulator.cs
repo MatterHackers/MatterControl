@@ -144,7 +144,6 @@ namespace MatterHackers.PrinterEmulator
 
 		public void Dispose()
 		{
-			this.IsOpen = false;
 			ShutDown();
 
 			Emulator.Instance = null;
