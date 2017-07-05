@@ -62,16 +62,13 @@ namespace MatterHackers.MatterControl
 	using PrintHistory;
 	using SettingsManagement;
 
-	public class ApplicationConfig
-	{
-		public View3DConfig View3D { get; } = new View3DConfig();
-	}
-
 	public class BedConfig
 	{
 		public event EventHandler ActiveLayerChanged;
 
 		public event EventHandler LoadedGCodeChanged;
+
+		public View3DConfig RendererOptions { get; } = new View3DConfig();
 
 		private GCodeFile loadedGCode;
 		public GCodeFile LoadedGCode
@@ -128,6 +125,12 @@ namespace MatterHackers.MatterControl
 		{
 			if (this.RenderInfo != null)
 			{
+				if (RendererOptions.IsDirty)
+				{
+					this.RenderInfo.RefreshRenderType();
+					RendererOptions.IsDirty = false;
+				}
+
 				this.GCodeRenderer.Render3D(this.RenderInfo);
 			}
 		}
@@ -165,6 +168,8 @@ namespace MatterHackers.MatterControl
 
 	public class View3DConfig
 	{
+		public bool IsDirty { get; internal set; }
+
 		public bool RenderGrid
 		{
 			get
@@ -180,6 +185,7 @@ namespace MatterHackers.MatterControl
 			set
 			{
 				UserSettings.Instance.set("GcodeViewerRenderGrid", value.ToString());
+				this.IsDirty = true;
 			}
 		}
 
@@ -189,6 +195,7 @@ namespace MatterHackers.MatterControl
 			set
 			{
 				UserSettings.Instance.set("GcodeViewerRenderMoves", value.ToString());
+				this.IsDirty = true;
 			}
 		}
 
@@ -198,6 +205,7 @@ namespace MatterHackers.MatterControl
 			set
 			{
 				UserSettings.Instance.set("GcodeViewerRenderRetractions", value.ToString());
+				this.IsDirty = true;
 			}
 		}
 
@@ -207,6 +215,7 @@ namespace MatterHackers.MatterControl
 			set
 			{
 				UserSettings.Instance.set("GcodeViewerRenderSpeeds", value.ToString());
+				this.IsDirty = true;
 			}
 		}
 
@@ -216,6 +225,7 @@ namespace MatterHackers.MatterControl
 			set
 			{
 				UserSettings.Instance.set("GcodeViewerSimulateExtrusion", value.ToString());
+				this.IsDirty = true;
 			}
 		}
 
@@ -225,6 +235,7 @@ namespace MatterHackers.MatterControl
 			set
 			{
 				UserSettings.Instance.set("GcodeViewerTransparentExtrusion", value.ToString());
+				this.IsDirty = true;
 			}
 		}
 
@@ -242,13 +253,18 @@ namespace MatterHackers.MatterControl
 			set
 			{
 				UserSettings.Instance.set("GcodeViewerHideExtruderOffsets", value.ToString());
+				this.IsDirty = true;
 			}
 		}
 
 		public bool SyncToPrint
 		{
 			get => UserSettings.Instance.get("LayerViewSyncToPrint") == "True";
-			set => UserSettings.Instance.set("LayerViewSyncToPrint", value.ToString());
+			set
+			{
+				UserSettings.Instance.set("LayerViewSyncToPrint", value.ToString());
+				this.IsDirty = true;
+			}
 		}
 	}
 
@@ -271,8 +287,6 @@ namespace MatterHackers.MatterControl
 		public ThemeConfig Theme { get; set; } = new ThemeConfig();
 
 		public PrinterConfig Printer { get; } = new PrinterConfig();
-
-		public ApplicationConfig Options { get; } = new ApplicationConfig();
 
 		public Action RedeemDesignCode;
 		public Action EnterShareCode;

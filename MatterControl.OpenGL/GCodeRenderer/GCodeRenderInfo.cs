@@ -59,20 +59,23 @@ namespace MatterHackers.GCodeVisualizer
 
 		public double LayerScale { get; }
 
-		public RenderType CurrentRenderType { get; }
+		public RenderType CurrentRenderType { get; private set; }
 
 		public double FeatureToStartOnRatio0To1 { get; set; }
 
 		public double FeatureToEndOnRatio0To1 { get; set; }
+
+		private Func<RenderType> GetRenderType;
 
 		public GCodeRenderInfo()
 		{
 		}
 
 		public GCodeRenderInfo(int startLayerIndex, int endLayerIndex,
-			Affine transform, double layerScale, RenderType renderType,
+			Affine transform, double layerScale,
 			double featureToStartOnRatio0To1, double featureToEndOnRatio0To1,
 			Vector2[] extruderOffsets,
+			Func<RenderType> getRenderType,
 			Func<int, RGBA_Bytes> getMaterialColor)
 		{
 			this.GetMaterialColor = getMaterialColor;
@@ -80,10 +83,21 @@ namespace MatterHackers.GCodeVisualizer
 			this.EndLayerIndex = endLayerIndex;
 			this.Transform = transform;
 			this.LayerScale = layerScale;
-			this.CurrentRenderType = renderType;
+
+			// Store delegate
+			this.GetRenderType = getRenderType;
+
+			// Invoke delegate
+			this.CurrentRenderType = this.GetRenderType();
+
 			this.FeatureToStartOnRatio0To1 = featureToStartOnRatio0To1;
 			this.FeatureToEndOnRatio0To1 = featureToEndOnRatio0To1;
 			this.extruderOffsets = extruderOffsets;
+		}
+
+		public void RefreshRenderType()
+		{
+			this.CurrentRenderType = this.GetRenderType();
 		}
 	}
 }

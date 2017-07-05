@@ -89,7 +89,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public GCode2DWidget(Vector2 gridSizeMm, Vector2 gridCenterMm)
 		{
-			options = ApplicationController.Instance.Options.View3D;
+			options = ApplicationController.Instance.Printer.BedPlate.RendererOptions;
 			printer = ApplicationController.Instance.Printer;
 
 			this.gridSizeMm = gridSizeMm;
@@ -186,7 +186,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						printer.BedPlate.ActiveLayerIndex,
 						transform,
 						layerScale,
-						CreateRenderInfo(),
 						printer.BedPlate.RenderInfo.FeatureToStartOnRatio0To1,
 						printer.BedPlate.RenderInfo.FeatureToEndOnRatio0To1,
 						new Vector2[] 
@@ -194,6 +193,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							ActiveSliceSettings.Instance.Helpers.ExtruderOffset(0),
 							ActiveSliceSettings.Instance.Helpers.ExtruderOffset(1)
 						},
+						this.CreateRenderInfo,
 						MeshViewerWidget.GetMaterialColor);
 
 					//using (new PerformanceTimer("GCode Timer", "Render"))
@@ -208,7 +208,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private RenderType CreateRenderInfo()
 		{
-			var options = ApplicationController.Instance.Options.View3D;
+			var options = ApplicationController.Instance.Printer.BedPlate.RendererOptions;
+
 			RenderType renderType = RenderType.Extrusions;
 			if (options.RenderMoves)
 			{

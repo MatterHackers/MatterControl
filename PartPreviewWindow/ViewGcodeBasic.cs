@@ -102,7 +102,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.externalMeshViewer.TrackballTumbleWidget.DrawGlContent += TrackballTumbleWidget_DrawGlContent;
 
 			buttonFactory = ApplicationController.Instance.Theme.BreadCrumbButtonFactory;
-			options = ApplicationController.Instance.Options.View3D;
+
+			options = ApplicationController.Instance.Printer.BedPlate.RendererOptions;
 			printer = ApplicationController.Instance.Printer;
 			printer.BedPlate.LoadedGCodeChanged += BedPlate_LoadedGCodeChanged;
 
@@ -144,7 +145,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				1,
 				Agg.Transform.Affine.NewIdentity(),
 				1,
-				this.GetRenderType(),
 				0,
 				1,
 				new Vector2[]
@@ -152,6 +152,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					ActiveSliceSettings.Instance.Helpers.ExtruderOffset(0),
 					ActiveSliceSettings.Instance.Helpers.ExtruderOffset(1)
 				},
+				this.GetRenderType,
 				MeshViewerWidget.GetMaterialColor);
 		}
 
@@ -402,7 +403,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private RenderType GetRenderType()
 		{
-			var options = ApplicationController.Instance.Options.View3D;
+			var options = ApplicationController.Instance.Printer.BedPlate.RendererOptions;
 
 			RenderType renderType = RenderType.Extrusions;
 			if (options.RenderMoves)
