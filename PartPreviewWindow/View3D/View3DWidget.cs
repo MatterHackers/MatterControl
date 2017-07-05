@@ -1931,15 +1931,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			viewIsInEditModePreLock = doEdittingButtonsContainer.Visible;
 			doEdittingButtonsContainer.Visible = false;
-			if (viewControls3D.PartSelectVisible == true)
-			{
-				viewControls3D.PartSelectVisible = false;
-				if (viewControls3D.ActiveButton == ViewControls3DButtons.PartSelect)
-				{
-					wasInSelectMode = true;
-					viewControls3D.ActiveButton = ViewControls3DButtons.Rotate;
-				}
-			}
 		}
 
 		internal void MakeLowestFaceFlat(IObject3D objectToLayFlatGroup)

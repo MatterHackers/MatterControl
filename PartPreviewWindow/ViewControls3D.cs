@@ -75,8 +75,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			get { return partSelectSeparator.Visible; }
 			set
 			{
-				partSelectSeparator.Visible = value;
-				partSelectButton.Visible = value;
+				partSelectSeparator.Visible = false;
+				partSelectButton.Visible = false;
 			}
 		}
 
@@ -92,15 +92,27 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				switch (this.activeTransformState)
 				{
 					case ViewControls3DButtons.Rotate:
-						rotateButton.Checked = true;
+						if (rotateButton != null)
+						{
+							rotateButton.Checked = true;
+						}
+
 						break;
 
 					case ViewControls3DButtons.Translate:
-						translateButton.Checked = true;
+						if (translateButton != null)
+						{
+							translateButton.Checked = true;
+						}
+
 						break;
 
 					case ViewControls3DButtons.Scale:
-						scaleButton.Checked = true;
+						if (scaleButton != null)
+						{
+							scaleButton.Checked = true;
+						}
+
 						break;
 
 					case ViewControls3DButtons.PartSelect:
@@ -129,26 +141,31 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			resetViewButton.Click += (s, e) => ResetView?.Invoke(this, null);
 			AddChild(resetViewButton);
 
-			iconPath = Path.Combine("ViewTransformControls", "rotate.png");
-			rotateButton = buttonFactory.GenerateRadioButton("", StaticData.Instance.LoadIcon(iconPath,32,32));
-			rotateButton.ToolTipText = "Rotate (Alt + Left Mouse)".Localize();
-			rotateButton.Margin = new BorderDouble(3);
-			rotateButton.Click += (s, e) => this.ActiveButton = ViewControls3DButtons.Rotate;
-			AddChild(rotateButton);
+			if (UserSettings.Instance.IsTouchScreen)
+			{
+				iconPath = Path.Combine("ViewTransformControls", "rotate.png");
+				rotateButton = buttonFactory.GenerateRadioButton("", StaticData.Instance.LoadIcon(iconPath, 32, 32));
+				rotateButton.ToolTipText = "Rotate (Alt + Left Mouse)".Localize();
+				rotateButton.Margin = new BorderDouble(3);
+				rotateButton.Click += (s, e) => this.ActiveButton = ViewControls3DButtons.Rotate;
+				AddChild(rotateButton);
 
-			iconPath = Path.Combine("ViewTransformControls", "translate.png");
-			translateButton = buttonFactory.GenerateRadioButton("", StaticData.Instance.LoadIcon(iconPath,32,32));
-			translateButton.ToolTipText = "Move (Shift + Left Mouse)".Localize();
-			translateButton.Margin = new BorderDouble(3);
-			translateButton.Click += (s, e) => this.ActiveButton = ViewControls3DButtons.Translate;
-			AddChild(translateButton);
+				iconPath = Path.Combine("ViewTransformControls", "translate.png");
+				translateButton = buttonFactory.GenerateRadioButton("", StaticData.Instance.LoadIcon(iconPath, 32, 32));
+				translateButton.ToolTipText = "Move (Shift + Left Mouse)".Localize();
+				translateButton.Margin = new BorderDouble(3);
+				translateButton.Click += (s, e) => this.ActiveButton = ViewControls3DButtons.Translate;
+				AddChild(translateButton);
 
-			iconPath = Path.Combine("ViewTransformControls", "scale.png");
-			scaleButton = buttonFactory.GenerateRadioButton("", StaticData.Instance.LoadIcon(iconPath,32,32));
-			scaleButton.ToolTipText = "Zoom (Ctrl + Left Mouse)".Localize();
-			scaleButton.Margin = 3;
-			scaleButton.Click += (s, e) => this.ActiveButton = ViewControls3DButtons.Scale;
-			AddChild(scaleButton);
+				iconPath = Path.Combine("ViewTransformControls", "scale.png");
+				scaleButton = buttonFactory.GenerateRadioButton("", StaticData.Instance.LoadIcon(iconPath, 32, 32));
+				scaleButton.ToolTipText = "Zoom (Ctrl + Left Mouse)".Localize();
+				scaleButton.Margin = 3;
+				scaleButton.Click += (s, e) => this.ActiveButton = ViewControls3DButtons.Scale;
+				AddChild(scaleButton);
+
+				rotateButton.Checked = true;
+			}
 
 			partSelectSeparator = new GuiWidget(2, 32);
 			partSelectSeparator.BackgroundColor = RGBA_Bytes.White;
@@ -158,6 +175,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			iconPath = Path.Combine("ViewTransformControls", "partSelect.png");
 			partSelectButton = buttonFactory.GenerateRadioButton("", StaticData.Instance.LoadIcon(iconPath,32,32));
 			partSelectButton.ToolTipText = "Select Part".Localize();
+			partSelectButton.Visible = false;
 			partSelectButton.Margin = new BorderDouble(3);
 			partSelectButton.Click += (s, e) => this.ActiveButton = ViewControls3DButtons.PartSelect;
 			AddChild(partSelectButton);
@@ -181,8 +199,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Margin = 3
 			};
 			AddChild(OverflowButton);
-
-			rotateButton.Checked = true;
 		}
 
 		public override void OnClosed(ClosedEventArgs e)
