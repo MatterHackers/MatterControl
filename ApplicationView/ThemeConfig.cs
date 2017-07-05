@@ -397,5 +397,19 @@ namespace MatterHackers.MatterControl
 
 			return namedSlider;
 		}
+
+		public MenuItem AddCheckbox(string text, string itemValue, bool itemChecked, BorderDouble padding, EventHandler eventHandler)
+		{
+			var checkbox = new CheckBox(text)
+			{
+				Checked = itemChecked
+			};
+			checkbox.CheckedStateChanged += eventHandler;
+
+			return new MenuItem(checkbox, itemValue)
+			{
+				Padding = padding,
+			};
+		}
 	}
 }

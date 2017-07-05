@@ -2354,7 +2354,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var meshViewer = meshViewerWidget;
 
 			popupContainer.AddChild(
-				AddCheckbox(
+				this.theme.AddCheckbox(
 					"Show Print Bed".Localize(),
 					"Show Help Checkbox",
 					meshViewer.RenderBed,
@@ -2372,7 +2372,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (buildHeight > 0)
 			{
 				popupContainer.AddChild(
-					AddCheckbox(
+					this.theme.AddCheckbox(
 						"Show Print Area".Localize(),
 						"Show Help Checkbox",
 						meshViewer.RenderBed,
@@ -2613,19 +2613,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private static MenuItem AddCheckbox(string text, string itemValue, bool itemChecked, BorderDouble padding, EventHandler eventHandler)
-		{
-			var checkbox = new CheckBox(text)
-			{
-				Checked = itemChecked
-			};
-			checkbox.CheckedStateChanged += eventHandler;
-
-			return new MenuItem(checkbox, itemValue)
-			{
-				Padding = padding,
-			};
-		}
 		// ViewControls3D }}
 	}
 
