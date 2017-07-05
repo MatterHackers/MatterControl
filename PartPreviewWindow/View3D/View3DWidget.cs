@@ -270,16 +270,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var smallMarginButtonFactory = ApplicationController.Instance.Theme.BreadCrumbButtonFactorySmallMargins;
 
-			GuiWidget viewArea = new GuiWidget();
-			viewArea.AnchorAll();
-			{
-				PutOemImageOnBed();
+			PutOemImageOnBed();
 
-				meshViewerWidget.AnchorAll();
-			}
-			viewArea.AddChild(meshViewerWidget);
+			meshViewerWidget.AnchorAll();
+			centerPartPreviewAndControls.AddChild(meshViewerWidget);
 
-			centerPartPreviewAndControls.AddChild(viewArea);
 			mainContainerTopToBottom.AddChild(centerPartPreviewAndControls);
 
 			var buttonBottomPanel = new FlowLayoutWidget(FlowDirection.LeftToRight)
