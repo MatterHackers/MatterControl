@@ -168,7 +168,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		}
 	}
 
-	public class View3DWidget : PartPreview3DWidget
+	public class View3DWidget : GuiWidget
 	{
 		private bool DoBooleanTest = false;
 		private bool deferEditorTillMouseUp = false;
@@ -235,13 +235,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private ThemeConfig theme;
 
 		public View3DWidget(PrintItemWrapper printItemWrapper, Vector3 viewerVolume, Vector2 bedCenter, BedShape bedShape, WindowMode windowType, AutoRotate autoRotate, ViewControls3D viewControls3D, ThemeConfig theme, OpenMode openMode = OpenMode.Viewing)
-			: base(viewControls3D)
 		{
+			this.viewControls3D = viewControls3D;
 			this.theme = theme;
 			this.openMode = openMode;
 			allowAutoRotate = (autoRotate == AutoRotate.Enabled);
 			meshViewerWidget = new MeshViewerWidget(viewerVolume, bedCenter, bedShape);
 			this.printItemWrapper = printItemWrapper;
+
+			ActiveSliceSettings.SettingChanged.RegisterEvent(CheckSettingChanged, ref unregisterEvents);
+			ApplicationController.Instance.AdvancedControlsPanelReloading.RegisterEvent(CheckSettingChanged, ref unregisterEvents);
 		}
 
 		public override void Initialize()
@@ -984,6 +987,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{
+			if (needToRecreateBed)
+			{
+				needToRecreateBed = false;
+				RecreateBed();
+			}
+
 			if (Scene.HasSelection)
 			{
 				var selectedItem = Scene.SelectedItem;
@@ -2518,6 +2527,89 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				container.AddChild(renderTypeCheckBox);
 
 				return container;
+			}
+		}
+
+		protected bool autoRotating = false;
+		protected bool allowAutoRotate = false;
+
+		public MeshViewerWidget meshViewerWidget;
+
+		// Proxy to MeshViewerWidget
+		public InteractiveScene Scene => meshViewerWidget.Scene;
+
+		protected ViewControls3D viewControls3D { get; }
+
+		private bool needToRecreateBed = false;
+
+		public MeshSelectInfo CurrentSelectInfo { get; private set; } = new MeshSelectInfo();
+
+		protected IObject3D FindHitObject3D(Vector2 screenPosition, ref IntersectInfo intersectionInfo)
+		{
+			Vector2 meshViewerWidgetScreenPosition = meshViewerWidget.TransformFromParentSpace(this, screenPosition);
+			Ray ray = meshViewerWidget.World.GetRayForLocalBounds(meshViewerWidgetScreenPosition);
+
+			intersectionInfo = Scene.TraceData().GetClosestIntersection(ray);
+			if (intersectionInfo != null)
+			{
+				foreach (Object3D object3D in Scene.Children)
+				{
+					if (object3D.TraceData().Contains(intersectionInfo.closestHitObject))
+					{
+						CurrentSelectInfo.PlaneDownHitPos = intersectionInfo.HitPosition;
+						CurrentSelectInfo.LastMoveDelta = new Vector3();
+						return object3D;
+					}
+				}
+			}
+
+			return null;
+		}
+
+		private void CheckSettingChanged(object sender, EventArgs e)
+		{
+			StringEventArgs stringEvent = e as StringEventArgs;
+			if (stringEvent != null)
+			{
+				if (stringEvent.Data == SettingsKey.bed_size
+					|| stringEvent.Data == SettingsKey.print_center
+					|| stringEvent.Data == SettingsKey.build_height
+					|| stringEvent.Data == SettingsKey.bed_shape)
+				{
+					needToRecreateBed = true;
+				}
+			}
+		}
+
+		private void RecreateBed()
+		{
+			double buildHeight = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.build_height);
+
+			UiThread.RunOnIdle((Action)(() =>
+			{
+				meshViewerWidget.CreatePrintBed(
+					new Vector3(ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.bed_size), buildHeight),
+					ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center),
+					ActiveSliceSettings.Instance.GetValue<BedShape>(SettingsKey.bed_shape));
+				PutOemImageOnBed();
+			}));
+		}
+
+		static ImageBuffer wattermarkImage = null;
+		protected void PutOemImageOnBed()
+		{
+			// this is to add an image to the bed
+			string imagePathAndFile = Path.Combine("OEMSettings", "bedimage.png");
+			if (StaticData.Instance.FileExists(imagePathAndFile))
+			{
+				if (wattermarkImage == null)
+				{
+					wattermarkImage = StaticData.Instance.LoadImage(imagePathAndFile);
+				}
+
+				ImageBuffer bedImage = MeshViewerWidget.BedImage;
+				Graphics2D bedGraphics = bedImage.NewGraphics2D();
+				bedGraphics.Render(wattermarkImage, new Vector2((bedImage.Width - wattermarkImage.Width) / 2, (bedImage.Height - wattermarkImage.Height) / 2));
 			}
 		}
 
