@@ -1820,19 +1820,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private void ExitEditingAndSaveIfRequested(bool userResponseYesSave)
-		{
-			if (userResponseYesSave)
-			{
-				SaveChanges(null);
-			}
-			else
-			{
-				// and reload the part
-				ClearBedAndLoadPrintItemWrapper(printItemWrapper);
-			}
-		}
-
 		private async void LoadAndAddPartsToPlate(string[] filesToLoad)
 		{
 			if (Scene.HasChildren && filesToLoad != null && filesToLoad.Length > 0)
