@@ -439,7 +439,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				return;
 			}
 
-			printer.BedPlate.RenderExtra();
+			printer.BedPlate.Render3DLayerFeatures();
 		}
 
 		private void SetAnimationPosition()
@@ -704,7 +704,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (printItem != null)
 			{
-				printItem.SlicingOutputMessage -= sliceItem_SlicingOutputMessage;
 				if (startedSliceFromGenerateButton && printItem.CurrentlySlicing)
 				{
 					SlicingQueue.Instance.CancelCurrentSlicing();
@@ -712,18 +711,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			base.OnClosed(e);
-		}
-
-		private void sliceItem_SlicingOutputMessage(object sender, EventArgs e)
-		{
-			if (e is StringEventArgs message && message.Data != null)
-			{
-				SetProcessingMessage(message.Data);
-			}
-			else
-			{
-				SetProcessingMessage("");
-			}
 		}
 	}
 }
