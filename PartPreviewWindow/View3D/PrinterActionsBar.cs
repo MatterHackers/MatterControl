@@ -76,7 +76,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		public PrinterActionsBar(View3DWidget modelViewer, PartPreviewContent.PrinterTabPage printerTabPage)
+		public PrinterActionsBar(View3DWidget modelViewer, PrinterTabPage printerTabPage)
 		{
 			UndoBuffer undoBuffer = modelViewer.UndoBuffer;
 

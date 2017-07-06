@@ -187,7 +187,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			layersButton.Margin = 3;
 			layersButton.Click += (s, e) =>
 			{
-				var parentTabPage = this.Parents<PartPreviewContent.PrinterTabPage>().First();
+				var parentTabPage = this.Parents<PrinterTabPage>().First();
 				parentTabPage.ToggleView();
 			};
 			AddChild(layersButton);

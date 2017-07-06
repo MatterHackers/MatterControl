@@ -231,7 +231,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		protected FlowLayoutWidget editPlateButtonsContainer;
 		private ThemeConfig theme;
 
 		public View3DWidget(PrintItemWrapper printItemWrapper, Vector3 viewerVolume, Vector2 bedCenter, BedShape bedShape, WindowMode windowType, AutoRotate autoRotate, ViewControls3D viewControls3D, ThemeConfig theme, OpenMode openMode = OpenMode.Viewing)
@@ -1820,19 +1819,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private void ExitEditingAndSaveIfRequested(bool userResponseYesSave)
-		{
-			if (userResponseYesSave)
-			{
-				SaveChanges(null);
-			}
-			else
-			{
-				// and reload the part
-				ClearBedAndLoadPrintItemWrapper(printItemWrapper);
-			}
-		}
-
 		private async void LoadAndAddPartsToPlate(string[] filesToLoad)
 		{
 			if (Scene.HasChildren && filesToLoad != null && filesToLoad.Length > 0)
@@ -2026,7 +2012,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public static Regex fileNameNumberMatch = new Regex("\\(\\d+\\)", RegexOptions.Compiled);
 
-		private GuiWidget selectedObjectPanel;
+		internal GuiWidget selectedObjectPanel;
 		private FlowLayoutWidget editorPanel;
 
 		private async Task SaveChanges(SaveAsWindow.SaveAsReturnInfo returnInfo = null)
@@ -2294,24 +2280,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			viewControls3D.ActiveButton = ViewControls3DButtons.PartSelect;
 
 			Invalidate();
-		}
-
-		private bool showSliceLayers;
-		public bool ShowSliceLayers
-		{
-			get => showSliceLayers;
-			set
-			{
-				showSliceLayers = value;
-				meshViewerWidget.IsActive = !value;
-
-				if (showSliceLayers)
-				{
-					Scene.ClearSelection();
-				}
-
-				selectedObjectPanel.Visible = !showSliceLayers;
-			}
 		}
 
 		// Before printing persist any changes to disk
