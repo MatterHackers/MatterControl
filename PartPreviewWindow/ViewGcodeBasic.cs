@@ -56,9 +56,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private GCode2DWidget gcode2DWidget;
 		private PrintItemWrapper printItem => ApplicationController.Instance.ActivePrintItem;
 		private bool startedSliceFromGenerateButton = false;
-		private FlowLayoutWidget buttonBottomPanel;
-		private FlowLayoutWidget layerSelectionButtonsPanel;
-
+		
 		private ViewControlsToggle viewControlsToggle;
 
 		private GuiWidget gcodeDisplayWidget;
@@ -66,7 +64,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private ColorGradientWidget gradientWidget;
 
 		private EventHandler unregisterEvents;
-		private WindowMode windowMode;
 
 		public delegate Vector2 GetSizeFunction();
 
@@ -77,8 +74,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private Vector2 bedCenter;
 		private Vector3 viewerVolume;
-		private BedShape bedShape;
-		private int sliderWidth;
 
 		private PartViewMode activeViewMode = PartViewMode.Layers3D;
 
@@ -93,7 +88,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private TextImageButtonFactory buttonFactory;
 
-		public ViewGcodeBasic(Vector3 viewerVolume, Vector2 bedCenter, BedShape bedShape, WindowMode windowMode, ViewControls3D viewControls3D, ThemeConfig theme, MeshViewerWidget externalMeshViewer)
+		public ViewGcodeBasic(Vector3 viewerVolume, Vector2 bedCenter, BedShape bedShape, ViewControls3D viewControls3D, ThemeConfig theme, MeshViewerWidget externalMeshViewer)
 		{
 			this.externalMeshViewer = externalMeshViewer;
 			this.externalMeshViewer.TrackballTumbleWidget.DrawGlContent += TrackballTumbleWidget_DrawGlContent;
@@ -106,11 +101,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.viewControls3D = viewControls3D;
 			this.viewerVolume = viewerVolume;
-			this.bedShape = bedShape;
 			this.bedCenter = bedCenter;
-			this.windowMode = windowMode;
-
-			sliderWidth = (UserSettings.Instance.IsTouchScreen) ? 20 : 10;
 
 			RenderOpenGl.GLHelper.WireframeColor = ActiveTheme.Instance.PrimaryAccentColor;
 
@@ -195,19 +186,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Max_FitToChildren_ParentHeight
 			};
 
-			buttonBottomPanel = new FlowLayoutWidget(FlowDirection.LeftToRight)
-			{
-				HAnchor = HAnchor.ParentLeftRight,
-				Padding = new BorderDouble(3, 3),
-				BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor
-			};
-
-			layerSelectionButtonsPanel = new FlowLayoutWidget(FlowDirection.RightToLeft)
-			{
-				HAnchor = HAnchor.ParentLeftRight,
-				Padding = 0,
-			};
-
 			gcodeDisplayWidget = new GuiWidget()
 			{
 				HAnchor = HAnchor.ParentLeftRight,
@@ -237,14 +215,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			mainContainerTopToBottom.AddChild(gcodeDisplayWidget);
 
-			// add in a spacer
-			layerSelectionButtonsPanel.AddChild(new GuiWidget()
-			{
-				HAnchor = HAnchor.ParentLeftRight
-			});
-			buttonBottomPanel.AddChild(layerSelectionButtonsPanel);
-
-			mainContainerTopToBottom.AddChild(buttonBottomPanel);
 			this.AddChild(mainContainerTopToBottom);
 
 			viewControls3D.ResetView += (sender, e) =>
@@ -320,17 +290,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				viewControlsToggle.Visible = true;
 
-				setLayerWidget = new SetLayerWidget(theme.GCodeLayerButtons, printer.BedPlate);
-				setLayerWidget.VAnchor = VAnchor.ParentTop;
-				layerSelectionButtonsPanel.AddChild(setLayerWidget);
-
-				navigationWidget = new LayerNavigationWidget(theme.GCodeLayerButtons);
-				navigationWidget.Margin = new BorderDouble(0, 0, 20, 0);
-				layerSelectionButtonsPanel.AddChild(navigationWidget);
-
 				GCodeRenderer.ExtrusionColor = ActiveTheme.Instance.PrimaryAccentColor;
 
-				this.gcodeDetails = new GCodeDetails(this.loadedGCode);
+				gcodeDetails = new GCodeDetails(this.loadedGCode);
 
 				this.AddChild(new GCodeDetailsView(gcodeDetails)
 				{
@@ -342,13 +304,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Width = 150
 				});
 
-				//UiThread.RunOnIdle(SetSyncToPrintVisibility);
-
 				// Switch to the most recent view mode, defaulting to Layers3D
 				SwitchViewModes();
 			}
 		}
-
 
 		private RenderType GetRenderType()
 		{

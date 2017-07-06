@@ -165,7 +165,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				new Vector3(activeSettings.GetValue<Vector2>(SettingsKey.bed_size), buildHeight),
 				activeSettings.GetValue<Vector2>(SettingsKey.print_center),
 				activeSettings.GetValue<BedShape>(SettingsKey.bed_shape),
-				ViewGcodeBasic.WindowMode.Embeded,
 				viewControls3D,
 				ApplicationController.Instance.Theme,
 				modelViewer.meshViewerWidget);
