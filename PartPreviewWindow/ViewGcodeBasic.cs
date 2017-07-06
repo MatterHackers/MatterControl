@@ -45,13 +45,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class ViewGcodeBasic : GuiWidget
 	{
-		private MeshViewerWidget externalMeshViewer;
-
-		public enum WindowMode { Embeded, StandAlone };
-
-		private SetLayerWidget setLayerWidget;
-		private LayerNavigationWidget navigationWidget;
-
 		private TextWidget gcodeProcessingStateInfoText;
 		private GCode2DWidget gcode2DWidget;
 		private PrintItemWrapper printItem => ApplicationController.Instance.ActivePrintItem;
@@ -82,16 +75,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private PrinterConfig printer;
 		private ViewControls3D viewControls3D;
 
+		private ThemeConfig theme;
 		private BedConfig bedPlate;
 
 		private SystemWindow parentSystemWindow;
 
 		private TextImageButtonFactory buttonFactory;
 
-		public ViewGcodeBasic(Vector3 viewerVolume, Vector2 bedCenter, BedShape bedShape, ViewControls3D viewControls3D, ThemeConfig theme, MeshViewerWidget externalMeshViewer)
+		public ViewGcodeBasic(Vector3 viewerVolume, Vector2 bedCenter, BedShape bedShape, ViewControls3D viewControls3D, ThemeConfig theme)
 		{
-			this.externalMeshViewer = externalMeshViewer;
-
 			buttonFactory = ApplicationController.Instance.Theme.BreadCrumbButtonFactory;
 
 			options = ApplicationController.Instance.Printer.BedPlate.RendererOptions;
@@ -100,6 +92,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.viewControls3D = viewControls3D;
 			this.viewerVolume = viewerVolume;
 			this.bedCenter = bedCenter;
+			this.theme = theme;
 
 			RenderOpenGl.GLHelper.WireframeColor = ActiveTheme.Instance.PrimaryAccentColor;
 
@@ -236,11 +229,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			this.AddChild(viewControlsToggle);
 
-			this.AddGCodeFileControls(ApplicationController.Instance.Printer, ApplicationController.Instance.Theme);
-		}
-
-		private void AddGCodeFileControls(PrinterConfig printer, ThemeConfig theme)
-		{
+			// *************** AddGCodeFileControls ***************
 			SetProcessingMessage("");
 			if (gcode2DWidget != null
 				&& loadedGCode == null)
@@ -271,7 +260,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				GCodeRenderer.ExtrusionColor = ActiveTheme.Instance.PrimaryAccentColor;
 
-				gcodeDetails = new GCodeDetails(this.loadedGCode);
+				var gcodeDetails = new GCodeDetails(this.loadedGCode);
 
 				this.AddChild(new GCodeDetailsView(gcodeDetails)
 				{
@@ -287,8 +276,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				SwitchViewModes();
 			}
 		}
-
-		private GCodeDetails gcodeDetails;
 
 		private void SwitchViewModes()
 		{

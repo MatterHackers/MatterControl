@@ -169,8 +169,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				activeSettings.GetValue<Vector2>(SettingsKey.print_center),
 				activeSettings.GetValue<BedShape>(SettingsKey.bed_shape),
 				viewControls3D,
-				ApplicationController.Instance.Theme,
-				modelViewer.meshViewerWidget);
+				ApplicationController.Instance.Theme);
 			gcodeViewer.AnchorAll();
 			this.gcodeViewer.Visible = false;
 
