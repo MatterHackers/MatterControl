@@ -6193,3 +6193,9 @@ Translated:This is a set of regular expressions to apply to lines prior to sendi
 English:Couldn't save file
 Translated:Couldn't save file
 
+English:The time over which to increase the Extra Length On Restart to its maximum value. Below this time only a portion of the extra length will be applied. Leave 0 to apply the entire amount all the time.
+Translated:The time over which to increase the Extra Length On Restart to its maximum value. Below this time only a portion of the extra length will be applied. Leave 0 to apply the entire amount all the time.
+
+English:Time For Extra Length
+Translated:Time For Extra Length
+
