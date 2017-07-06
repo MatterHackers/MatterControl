@@ -308,14 +308,14 @@ namespace MatterHackers.GCodeVisualizer
 				if (Is32Bit && !GL.GlHasBufferObjects)
 				{
 					int maxFeaturesForThisSystem = 125000;
-					int totalFeaturesToRunder = 0;
+					int totalFeaturesToRender = 0;
 					bool cleanUnusedLayers = false;
 					// if on 32 bit system make sure we don't run out of memory rendering too many features
 					for (int i = renderInfo.EndLayerIndex - 1; i >= renderInfo.StartLayerIndex; i--)
 					{
-						if (totalFeaturesToRunder + renderFeatures[i].Count < maxFeaturesForThisSystem)
+						if (totalFeaturesToRender + renderFeatures[i].Count < maxFeaturesForThisSystem)
 						{
-							totalFeaturesToRunder += renderFeatures[i].Count;
+							totalFeaturesToRender += renderFeatures[i].Count;
 						}
 						else // don't render any of the layers below this and in fact remove them from memory if possible
 						{

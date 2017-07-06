@@ -121,10 +121,11 @@ namespace MatterHackers.MatterControl
 
 		public GCodeRenderInfo RenderInfo { get; set; }
 
-		internal void RenderExtra()
+		internal void Render3DLayerFeatures()
 		{
 			if (this.RenderInfo != null)
 			{
+				// If needed, update the RenderType flags to match to current user selection
 				if (RendererOptions.IsDirty)
 				{
 					this.RenderInfo.RefreshRenderType();

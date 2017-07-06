@@ -439,7 +439,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				return;
 			}
 
-			printer.BedPlate.RenderExtra();
+			printer.BedPlate.Render3DLayerFeatures();
 		}
 
 		private void SetAnimationPosition()
