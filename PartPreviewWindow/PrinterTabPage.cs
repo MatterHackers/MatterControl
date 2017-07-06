@@ -135,6 +135,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				ApplicationController.Instance.Theme,
 				View3DWidget.OpenMode.Editing);
 
+			modelViewer.BoundsChanged += (s, e) =>
+			{
+				SetSliderSizes();
+			};
+
 			var topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			topToBottom.AnchorAll();
 			this.AddChild(topToBottom);
@@ -295,12 +300,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnDraw(graphics2D);
 		}
 
-		public override void OnBoundsChanged(EventArgs e)
-		{
-			SetSliderSizes();
-			base.OnBoundsChanged(e);
-		}
-
 		public override void OnClosed(ClosedEventArgs e)
 		{
 			// Store active transforms on close
@@ -444,16 +443,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void SetSliderSizes()
 		{
-			if (selectLayerSlider == null || view3DContainer == null)
+			if (selectLayerSlider == null || modelViewer == null)
 			{
 				return;
 			}
 
-			selectLayerSlider.OriginRelativeParent = new Vector2(view3DContainer.Width - 20, 78);
-			selectLayerSlider.TotalWidthInPixels = view3DContainer.Height - 38;
+			selectLayerSlider.OriginRelativeParent = new Vector2(modelViewer.Width - 20, 78);
+			selectLayerSlider.TotalWidthInPixels = modelViewer.Height - 85;
 
 			layerRenderRatioSlider.OriginRelativeParent = new Vector2(11, 65);
-			layerRenderRatioSlider.TotalWidthInPixels = view3DContainer.Width - 45;
+			layerRenderRatioSlider.TotalWidthInPixels = modelViewer.Width - 45;
 		}
 		private void SetAnimationPosition()
 		{
