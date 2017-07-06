@@ -91,13 +91,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public ViewGcodeBasic(Vector3 viewerVolume, Vector2 bedCenter, BedShape bedShape, ViewControls3D viewControls3D, ThemeConfig theme, MeshViewerWidget externalMeshViewer)
 		{
 			this.externalMeshViewer = externalMeshViewer;
-			this.externalMeshViewer.TrackballTumbleWidget.DrawGlContent += TrackballTumbleWidget_DrawGlContent;
 
 			buttonFactory = ApplicationController.Instance.Theme.BreadCrumbButtonFactory;
 
 			options = ApplicationController.Instance.Printer.BedPlate.RendererOptions;
 			printer = ApplicationController.Instance.Printer;
-			printer.BedPlate.LoadedGCodeChanged += BedPlate_LoadedGCodeChanged;
 
 			this.viewControls3D = viewControls3D;
 			this.viewerVolume = viewerVolume;
@@ -122,25 +120,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// TODO: Why do we clear GCode on AdvancedControlsPanelReloading - assume some slice settings should invalidate. If so, code should be more specific and bound to slice settings changed
 			ApplicationController.Instance.AdvancedControlsPanelReloading.RegisterEvent((s, e) => printer.BedPlate.GCodeRenderer?.Clear3DGCode(), ref unregisterEvents);
-		}
-
-		private void BedPlate_LoadedGCodeChanged(object sender, EventArgs e)
-		{
-			// ResetRenderInfo
-			printer.BedPlate.RenderInfo = new GCodeRenderInfo(
-				0,
-				1,
-				Agg.Transform.Affine.NewIdentity(),
-				1,
-				0,
-				1,
-				new Vector2[]
-				{
-					ActiveSliceSettings.Instance.Helpers.ExtruderOffset(0),
-					ActiveSliceSettings.Instance.Helpers.ExtruderOffset(1)
-				},
-				this.GetRenderType,
-				MeshViewerWidget.GetMaterialColor);
 		}
 
 		public override void OnLoad(EventArgs args)
@@ -309,49 +288,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private RenderType GetRenderType()
-		{
-			var options = ApplicationController.Instance.Printer.BedPlate.RendererOptions;
-
-			RenderType renderType = RenderType.Extrusions;
-			if (options.RenderMoves)
-			{
-				renderType |= RenderType.Moves;
-			}
-			if (options.RenderRetractions)
-			{
-				renderType |= RenderType.Retractions;
-			}
-			if (options.RenderSpeeds)
-			{
-				renderType |= RenderType.SpeedColors;
-			}
-			if (options.SimulateExtrusion)
-			{
-				renderType |= RenderType.SimulateExtrusion;
-			}
-			if (options.TransparentExtrusion)
-			{
-				renderType |= RenderType.TransparentExtrusion;
-			}
-			if (options.HideExtruderOffsets)
-			{
-				renderType |= RenderType.HideExtruderOffsets;
-			}
-
-			return renderType;
-		}
-
-		private void TrackballTumbleWidget_DrawGlContent(object sender, EventArgs e)
-		{
-			if (loadedGCode == null || printer.BedPlate.GCodeRenderer == null || !this.Visible)
-			{
-				return;
-			}
-
-			printer.BedPlate.Render3DLayerFeatures();
-		}
-
 		private GCodeDetails gcodeDetails;
 
 		private void SwitchViewModes()
@@ -423,11 +359,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (parentSystemWindow != null)
 			{
 				parentSystemWindow.KeyDown -= Parent_KeyDown;
-			}
-
-			if (externalMeshViewer != null)
-			{
-				externalMeshViewer.TrackballTumbleWidget.DrawGlContent -= TrackballTumbleWidget_DrawGlContent;
 			}
 
 			if (printItem != null)

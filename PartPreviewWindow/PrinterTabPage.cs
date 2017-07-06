@@ -38,6 +38,7 @@ using MatterHackers.VectorMath;
 using System;
 using MatterHackers.MatterControl.PrinterControls;
 using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.GCodeVisualizer;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -135,6 +136,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				ApplicationController.Instance.Theme,
 				View3DWidget.OpenMode.Editing);
 
+			modelViewer.meshViewerWidget.TrackballTumbleWidget.DrawGlContent += TrackballTumbleWidget_DrawGlContent;
+
 			modelViewer.BoundsChanged += (s, e) =>
 			{
 				SetSliderSizes();
@@ -195,7 +198,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			printer.BedPlate.LoadedGCodeChanged += BedPlate_LoadedGCodeChanged;
-
+			
 			this.ShowSliceLayers = false;
 
 			this.printItem = printItem;
@@ -208,6 +211,53 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private void BedPlate_LoadedGCodeChanged(object sender, EventArgs e)
 		{
 			selectLayerSlider.Maximum = printer.BedPlate.LoadedGCode.LayerCount - 1;
+		
+			// ResetRenderInfo
+			printer.BedPlate.RenderInfo = new GCodeRenderInfo(
+				0,
+				1,
+				Agg.Transform.Affine.NewIdentity(),
+				1,
+				0,
+				1,
+				new Vector2[]
+				{
+					ActiveSliceSettings.Instance.Helpers.ExtruderOffset(0),
+					ActiveSliceSettings.Instance.Helpers.ExtruderOffset(1)
+				},
+				this.GetRenderType,
+				MeshViewerWidget.GetMaterialColor);
+		}
+
+		private RenderType GetRenderType()
+		{
+			RenderType renderType = RenderType.Extrusions;
+			if (gcodeOptions.RenderMoves)
+			{
+				renderType |= RenderType.Moves;
+			}
+			if (gcodeOptions.RenderRetractions)
+			{
+				renderType |= RenderType.Retractions;
+			}
+			if (gcodeOptions.RenderSpeeds)
+			{
+				renderType |= RenderType.SpeedColors;
+			}
+			if (gcodeOptions.SimulateExtrusion)
+			{
+				renderType |= RenderType.SimulateExtrusion;
+			}
+			if (gcodeOptions.TransparentExtrusion)
+			{
+				renderType |= RenderType.TransparentExtrusion;
+			}
+			if (gcodeOptions.HideExtruderOffsets)
+			{
+				renderType |= RenderType.HideExtruderOffsets;
+			}
+
+			return renderType;
 		}
 
 		private void AddSettingsTabBar(GuiWidget parent, GuiWidget widgetTodockTo)
@@ -247,6 +297,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			this.ShowSliceLayers = !gcodeViewer.Visible;
 		}
+
+		private GCodeFile loadedGCode => printer.BedPlate.LoadedGCode;
 
 		private bool showSliceLayers;
 		public bool ShowSliceLayers
@@ -306,10 +358,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			ApplicationController.Instance.PartPreviewState.RotationMatrix = visibleWidget.World.RotationMatrix;
 			ApplicationController.Instance.PartPreviewState.TranslationMatrix = visibleWidget.World.TranslationMatrix;
 
+			if (modelViewer?.meshViewerWidget != null)
+			{
+				modelViewer.meshViewerWidget.TrackballTumbleWidget.DrawGlContent -= TrackballTumbleWidget_DrawGlContent;
+			}
+
 			printer.BedPlate.ActiveLayerChanged -= ActiveLayer_Changed;
 			printer.BedPlate.LoadedGCodeChanged -= BedPlate_LoadedGCodeChanged;
 
 			base.OnClosed(e);
+		}
+
+		private void TrackballTumbleWidget_DrawGlContent(object sender, EventArgs e)
+		{
+			if (loadedGCode == null || printer.BedPlate.GCodeRenderer == null || !this.Visible)
+			{
+				return;
+			}
+
+			printer.BedPlate.Render3DLayerFeatures();
 		}
 
 		internal GuiWidget ShowGCodeOverflowMenu()
