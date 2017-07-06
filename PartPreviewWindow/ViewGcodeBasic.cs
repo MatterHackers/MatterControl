@@ -70,13 +70,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private PartViewMode activeViewMode = PartViewMode.Layers3D;
 
-		private View3DConfig options;
-
 		private PrinterConfig printer;
 		private ViewControls3D viewControls3D;
 
 		private ThemeConfig theme;
-		private BedConfig bedPlate;
 
 		private SystemWindow parentSystemWindow;
 
@@ -86,7 +83,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			buttonFactory = ApplicationController.Instance.Theme.BreadCrumbButtonFactory;
 
-			options = ApplicationController.Instance.Printer.BedPlate.RendererOptions;
 			printer = ApplicationController.Instance.Printer;
 
 			this.viewControls3D = viewControls3D;
@@ -109,7 +105,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}, ref unregisterEvents);
 
-			bedPlate = ApplicationController.Instance.Printer.BedPlate;
 
 			// TODO: Why do we clear GCode on AdvancedControlsPanelReloading - assume some slice settings should invalidate. If so, code should be more specific and bound to slice settings changed
 			ApplicationController.Instance.AdvancedControlsPanelReloading.RegisterEvent((s, e) => printer.BedPlate.GCodeRenderer?.Clear3DGCode(), ref unregisterEvents);
@@ -134,10 +129,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				switch(keyEvent.KeyCode)
 				{
 					case Keys.Up:
-						bedPlate.ActiveLayerIndex += 1;
+						printer.BedPlate.ActiveLayerIndex += 1;
 						break;
 					case Keys.Down:
-						bedPlate.ActiveLayerIndex -= 1;
+						printer.BedPlate.ActiveLayerIndex -= 1;
 						break;
 				}
 			}
@@ -252,7 +247,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Margin = new BorderDouble(top: 55, left: 11),
 					HAnchor = HAnchor.FitToChildren | HAnchor.ParentLeft,
 					VAnchor = VAnchor.ParentTop,
-					Visible = options.RenderSpeeds
+					Visible = printer.BedPlate.RendererOptions.RenderSpeeds
 				};
 				AddChild(gradientWidget);
 
