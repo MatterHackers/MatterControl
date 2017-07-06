@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.Name = "Part Preview Window";
 
-			partPreviewWidget = new PartPreviewContent(printItem, View3DWidget.WindowMode.StandAlone, autoRotate3DView, openMode);
+			partPreviewWidget = new PartPreviewContent(printItem);
 			partPreviewWidget.Closed += (sender, e) =>
 			{
 				Close();

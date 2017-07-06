@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl
 			library3DViewSplitter.Panel1.AddChild(new PrintLibraryWidget());
 
 			// put in the right column
-			library3DViewSplitter.Panel2.AddChild(new PartPreviewContent(ApplicationController.Instance.ActivePrintItem, View3DWidget.WindowMode.Embeded, View3DWidget.AutoRotate.Disabled)
+			library3DViewSplitter.Panel2.AddChild(new PartPreviewContent(ApplicationController.Instance.ActivePrintItem)
 			{
 				VAnchor = VAnchor.ParentBottom | VAnchor.ParentTop,
 				HAnchor = HAnchor.ParentLeft | HAnchor.ParentRight

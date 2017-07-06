@@ -38,24 +38,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class PartPreviewContent : FlowLayoutWidget
 	{
-		private EventHandler unregisterEvents;
-
-		private View3DWidget.AutoRotate autoRotate3DView;
-		private View3DWidget.OpenMode openMode;
-		private View3DWidget.WindowMode windowMode;
-
-		PrintItemWrapper printItem;
-
-		public PartPreviewContent(PrintItemWrapper printItem, View3DWidget.WindowMode windowMode, View3DWidget.AutoRotate autoRotate3DView, View3DWidget.OpenMode openMode = View3DWidget.OpenMode.Viewing)
+		public PartPreviewContent(PrintItemWrapper printItem)
 		{
-			this.printItem = printItem;
-			this.openMode = openMode;
-			this.autoRotate3DView = autoRotate3DView;
-			this.windowMode = windowMode;
-
 			this.AnchorAll();
 
-			// LoadPrintItem {{
 			var activeSettings = ActiveSliceSettings.Instance;
 
 			var tabControl = ApplicationController.Instance.Theme.CreateTabControl();
@@ -88,13 +74,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			tabControl.AddTab(printerTab);
 
 			this.AddChild(tabControl);
-		}
-
-		public void Reload(PrintItemWrapper printItem)
-		{
-			this.CloseAllChildren();
-			//this.LoadPrintItem(printItem);
-			System.Diagnostics.Debugger.Break();
 		}
 	}
 }
