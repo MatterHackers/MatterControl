@@ -231,7 +231,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		protected FlowLayoutWidget editPlateButtonsContainer;
 		private ThemeConfig theme;
 
 		public View3DWidget(PrintItemWrapper printItemWrapper, Vector3 viewerVolume, Vector2 bedCenter, BedShape bedShape, WindowMode windowType, AutoRotate autoRotate, ViewControls3D viewControls3D, ThemeConfig theme, OpenMode openMode = OpenMode.Viewing)
