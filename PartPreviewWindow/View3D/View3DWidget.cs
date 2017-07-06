@@ -2012,7 +2012,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public static Regex fileNameNumberMatch = new Regex("\\(\\d+\\)", RegexOptions.Compiled);
 
-		private GuiWidget selectedObjectPanel;
+		internal GuiWidget selectedObjectPanel;
 		private FlowLayoutWidget editorPanel;
 
 		private async Task SaveChanges(SaveAsWindow.SaveAsReturnInfo returnInfo = null)
@@ -2280,24 +2280,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			viewControls3D.ActiveButton = ViewControls3DButtons.PartSelect;
 
 			Invalidate();
-		}
-
-		private bool showSliceLayers;
-		public bool ShowSliceLayers
-		{
-			get => showSliceLayers;
-			set
-			{
-				showSliceLayers = value;
-				meshViewerWidget.IsActive = !value;
-
-				if (showSliceLayers)
-				{
-					Scene.ClearSelection();
-				}
-
-				selectedObjectPanel.Visible = !showSliceLayers;
-			}
 		}
 
 		// Before printing persist any changes to disk

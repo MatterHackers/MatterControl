@@ -49,11 +49,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public enum WindowMode { Embeded, StandAlone };
 
-		public SolidSlider selectLayerSlider;
-
 		private SetLayerWidget setLayerWidget;
 		private LayerNavigationWidget navigationWidget;
-		public DoubleSolidSlider layerRenderRatioSlider;
 
 		private TextWidget gcodeProcessingStateInfoText;
 		private GCode2DWidget gcode2DWidget;
@@ -131,7 +128,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}, ref unregisterEvents);
 
 			bedPlate = ApplicationController.Instance.Printer.BedPlate;
-			bedPlate.ActiveLayerChanged += ActiveLayer_Changed;
 
 			// TODO: Why do we clear GCode on AdvancedControlsPanelReloading - assume some slice settings should invalidate. If so, code should be more specific and bound to slice settings changed
 			ApplicationController.Instance.AdvancedControlsPanelReloading.RegisterEvent((s, e) => printer.BedPlate.GCodeRenderer?.Clear3DGCode(), ref unregisterEvents);
@@ -181,15 +177,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						bedPlate.ActiveLayerIndex -= 1;
 						break;
 				}
-			}
-		}
-
-		private void ActiveLayer_Changed(object sender, EventArgs e)
-		{
-			if (selectLayerSlider != null 
-				&& bedPlate.ActiveLayerIndex != (int)(selectLayerSlider.Value + .5))
-			{
-				selectLayerSlider.Value = bedPlate.ActiveLayerIndex;
 			}
 		}
 
@@ -341,42 +328,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				navigationWidget.Margin = new BorderDouble(0, 0, 20, 0);
 				layerSelectionButtonsPanel.AddChild(navigationWidget);
 
-				selectLayerSlider = new SolidSlider(new Vector2(), sliderWidth, 0, loadedGCode.LayerCount - 1, Orientation.Vertical);
-				selectLayerSlider.ValueChanged += (s, e) =>
-				{
-					// TODO: Why would these need to be updated here as well as in assigned in the hslider below?
-					printer.BedPlate.RenderInfo.FeatureToStartOnRatio0To1 = layerRenderRatioSlider.FirstValue;
-					printer.BedPlate.RenderInfo.FeatureToEndOnRatio0To1 = layerRenderRatioSlider.SecondValue;
-
-					printer.BedPlate.ActiveLayerIndex = (int)(selectLayerSlider.Value + .5);
-
-					this.Invalidate();
-				};
-
-				AddChild(selectLayerSlider);
-
-				layerRenderRatioSlider = new DoubleSolidSlider(new Vector2(), sliderWidth);
-				layerRenderRatioSlider.FirstValue = 0;
-				layerRenderRatioSlider.FirstValueChanged += (s, e) =>
-				{
-					printer.BedPlate.RenderInfo.FeatureToStartOnRatio0To1 = layerRenderRatioSlider.FirstValue;
-					printer.BedPlate.RenderInfo.FeatureToEndOnRatio0To1 = layerRenderRatioSlider.SecondValue;
-
-					this.Invalidate();
-				};
-				layerRenderRatioSlider.SecondValue = 1;
-				layerRenderRatioSlider.SecondValueChanged += (s, e) =>
-				{
-					printer.BedPlate.RenderInfo.FeatureToStartOnRatio0To1 = layerRenderRatioSlider.FirstValue;
-					printer.BedPlate.RenderInfo.FeatureToEndOnRatio0To1 = layerRenderRatioSlider.SecondValue;
-
-
-					this.Invalidate();
-				};
-				AddChild(layerRenderRatioSlider);
-
-				SetSliderSizes();
-
 				GCodeRenderer.ExtrusionColor = ActiveTheme.Instance.PrimaryAccentColor;
 
 				this.gcodeDetails = new GCodeDetails(this.loadedGCode);
@@ -391,7 +342,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Width = 150
 				});
 
-				UiThread.RunOnIdle(SetSyncToPrintVisibility);
+				//UiThread.RunOnIdle(SetSyncToPrintVisibility);
 
 				// Switch to the most recent view mode, defaulting to Layers3D
 				SwitchViewModes();
@@ -442,155 +393,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			printer.BedPlate.Render3DLayerFeatures();
 		}
 
-		private void SetAnimationPosition()
-		{
-			int currentLayer = PrinterConnection.Instance.CurrentlyPrintingLayer;
-			if (currentLayer <= 0)
-			{
-				selectLayerSlider.Value = 0;
-				layerRenderRatioSlider.SecondValue = 0;
-				layerRenderRatioSlider.FirstValue = 0;
-			}
-			else
-			{
-				selectLayerSlider.Value = currentLayer - 1;
-				layerRenderRatioSlider.SecondValue = PrinterConnection.Instance.RatioIntoCurrentLayer;
-				layerRenderRatioSlider.FirstValue = 0;
-			}
-		}
-
 		private GCodeDetails gcodeDetails;
-
-		internal GuiWidget ShowOverflowMenu()
-		{
-			var textColor = RGBA_Bytes.Black;
-
-			var popupContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				HAnchor = HAnchor.ParentLeftRight,
-				Padding = 12,
-				BackgroundColor = RGBA_Bytes.White
-			};
-
-			// put in a show grid check box
-			CheckBox showGrid = new CheckBox("Print Bed".Localize(), textColor: textColor);
-			showGrid.Checked = options.RenderGrid;
-			showGrid.CheckedStateChanged += (sender, e) =>
-			{
-				// TODO: How (if at all) do we disable bed rendering on GCode2D?
-				options.RenderGrid = showGrid.Checked;
-			};
-			popupContainer.AddChild(showGrid);
-
-			// put in a show moves checkbox
-			var showMoves = new CheckBox("Moves".Localize(), textColor: textColor);
-			showMoves.Checked = options.RenderMoves;
-			showMoves.CheckedStateChanged += (sender, e) =>
-			{
-				options.RenderMoves = showMoves.Checked;
-			};
-			popupContainer.AddChild(showMoves);
-
-			// put in a show Retractions checkbox
-			CheckBox showRetractions = new CheckBox("Retractions".Localize(), textColor: textColor);
-			showRetractions.Checked = options.RenderRetractions;
-			showRetractions.CheckedStateChanged += (sender, e) =>
-			{
-				options.RenderRetractions = showRetractions.Checked;
-			};
-			popupContainer.AddChild(showRetractions);
-			
-
-			// Speeds checkbox
-			var showSpeeds = new CheckBox("Speeds".Localize(), textColor: textColor);
-			showSpeeds.Checked = options.RenderSpeeds;
-			showSpeeds.CheckedStateChanged += (sender, e) =>
-			{
-				gradientWidget.Visible = showSpeeds.Checked;
-				options.RenderSpeeds = showSpeeds.Checked;
-			};
-
-			popupContainer.AddChild(showSpeeds);
-
-			// Extrusion checkbox
-			var simulateExtrusion = new CheckBox("Extrusion".Localize(), textColor: textColor);
-			simulateExtrusion.Checked = options.SimulateExtrusion;
-			simulateExtrusion.CheckedStateChanged += (sender, e) =>
-			{
-				options.SimulateExtrusion = simulateExtrusion.Checked;
-			};
-			popupContainer.AddChild(simulateExtrusion);
-
-			// Transparent checkbox
-			var transparentExtrusion = new CheckBox("Transparent".Localize(), textColor: textColor)
-			{
-				Checked = options.TransparentExtrusion,
-				Margin = new BorderDouble(5, 0, 0, 0),
-				HAnchor = HAnchor.ParentLeft,
-			};
-			transparentExtrusion.CheckedStateChanged += (sender, e) =>
-			{
-				options.TransparentExtrusion = transparentExtrusion.Checked;
-			};
-			popupContainer.AddChild(transparentExtrusion);
-
-			// Extrusion checkbox
-			if (ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.extruder_count) > 1)
-			{
-				CheckBox hideExtruderOffsets = new CheckBox("Hide Offsets", textColor: textColor);
-				hideExtruderOffsets.Checked = options.HideExtruderOffsets;
-				hideExtruderOffsets.CheckedStateChanged += (sender, e) =>
-				{
-					options.HideExtruderOffsets = hideExtruderOffsets.Checked;
-				};
-				popupContainer.AddChild(hideExtruderOffsets);
-			}
-
-			// Sync To Print checkbox
-			if (windowMode == WindowMode.Embeded)
-			{
-				var syncToPrint = new CheckBox("Sync To Print".Localize(), textColor: textColor);
-				syncToPrint.Checked = (UserSettings.Instance.get("LayerViewSyncToPrint") == "True");
-				syncToPrint.Name = "Sync To Print Checkbox";
-				syncToPrint.CheckedStateChanged += (s, e) =>
-				{
-					options.SyncToPrint = syncToPrint.Checked;
-					SetSyncToPrintVisibility();
-				};
-				popupContainer.AddChild(syncToPrint);
-			}
-
-			return popupContainer;
-		}
-
-		private void SetSyncToPrintVisibility()
-		{
-			if (windowMode == WindowMode.Embeded)
-			{
-				bool printerIsRunningPrint = PrinterConnection.Instance.PrinterIsPaused || PrinterConnection.Instance.PrinterIsPrinting;
-
-				if (options.SyncToPrint && printerIsRunningPrint)
-				{
-					SetAnimationPosition();
-					//navigationWidget.Visible = false;
-					//setLayerWidget.Visible = false;
-					layerRenderRatioSlider.Visible = false;
-					selectLayerSlider.Visible = false;
-				}
-				else
-				{
-					if (layerRenderRatioSlider != null)
-					{
-						layerRenderRatioSlider.FirstValue = 0;
-						layerRenderRatioSlider.SecondValue = 1;
-					}
-					navigationWidget.Visible = true;
-					setLayerWidget.Visible = true;
-					layerRenderRatioSlider.Visible = true;
-					selectLayerSlider.Visible = true;
-				}
-			}
-		}
 
 		private void SwitchViewModes()
 		{
@@ -620,18 +423,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				continueProcessing.Cancel();
 			}
-		}
-
-		public override void OnDraw(Graphics2D graphics2D)
-		{
-			bool printerIsRunningPrint = PrinterConnection.Instance.PrinterIsPaused || PrinterConnection.Instance.PrinterIsPrinting;
-			if (options.SyncToPrint
-				&& printerIsRunningPrint)
-			{
-				SetAnimationPosition();
-			}
-
-			base.OnDraw(graphics2D);
 		}
 
 		private void SetProcessingMessage(string message)
@@ -665,31 +456,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			gcodeProcessingStateInfoText.Text = message;
 		}
 
-		public override void OnBoundsChanged(EventArgs e)
-		{
-			SetSliderSizes();
-			base.OnBoundsChanged(e);
-		}
-
-		private void SetSliderSizes()
-		{
-			if (selectLayerSlider == null)
-			{
-				return;
-			}
-
-			selectLayerSlider.OriginRelativeParent = new Vector2(gcodeDisplayWidget.Width - 20, 78);
-			selectLayerSlider.TotalWidthInPixels = gcodeDisplayWidget.Height - 38;
-
-			layerRenderRatioSlider.OriginRelativeParent = new Vector2(11, 65);
-			layerRenderRatioSlider.TotalWidthInPixels = gcodeDisplayWidget.Width - 45;
-		}
-
 		public override void OnClosed(ClosedEventArgs e)
 		{
 			unregisterEvents?.Invoke(this, null);
-
-			bedPlate.ActiveLayerChanged -= ActiveLayer_Changed;
 
 			// Find and unhook the parent system window KeyDown event
 			if (parentSystemWindow != null)
