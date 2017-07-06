@@ -35,7 +35,6 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.GCodeVisualizer;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MeshVisualizer;
@@ -73,22 +72,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private PrinterConfig printer;
 		private ViewControls3D viewControls3D;
 
-		private ThemeConfig theme;
-
 		private SystemWindow parentSystemWindow;
 
-		private TextImageButtonFactory buttonFactory;
-
-		public ViewGcodeBasic(Vector3 viewerVolume, Vector2 bedCenter, BedShape bedShape, ViewControls3D viewControls3D, ThemeConfig theme)
+		public ViewGcodeBasic(Vector3 viewerVolume, Vector2 bedCenter, BedShape bedShape, ViewControls3D viewControls3D)
 		{
-			buttonFactory = ApplicationController.Instance.Theme.BreadCrumbButtonFactory;
-
 			printer = ApplicationController.Instance.Printer;
 
 			this.viewControls3D = viewControls3D;
 			this.viewerVolume = viewerVolume;
 			this.bedCenter = bedCenter;
-			this.theme = theme;
 
 			RenderOpenGl.GLHelper.WireframeColor = ActiveTheme.Instance.PrimaryAccentColor;
 
@@ -104,7 +96,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 				}
 			}, ref unregisterEvents);
-
 
 			// TODO: Why do we clear GCode on AdvancedControlsPanelReloading - assume some slice settings should invalidate. If so, code should be more specific and bound to slice settings changed
 			ApplicationController.Instance.AdvancedControlsPanelReloading.RegisterEvent((s, e) => printer.BedPlate.GCodeRenderer?.Clear3DGCode(), ref unregisterEvents);
