@@ -268,8 +268,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			};
 
-			viewControls3D.ActiveButton = ViewControls3DButtons.Rotate;
-
 			viewControlsToggle = new ViewControlsToggle(ApplicationController.Instance.Theme.ViewControlsButtonFactory, activeViewMode)
 			{
 				Visible = false,

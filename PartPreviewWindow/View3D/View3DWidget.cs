@@ -168,7 +168,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		}
 	}
 
-	public class View3DWidget : PartPreview3DWidget
+	public class View3DWidget : GuiWidget
 	{
 		private bool DoBooleanTest = false;
 		private bool deferEditorTillMouseUp = false;
@@ -235,13 +235,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private ThemeConfig theme;
 
 		public View3DWidget(PrintItemWrapper printItemWrapper, Vector3 viewerVolume, Vector2 bedCenter, BedShape bedShape, WindowMode windowType, AutoRotate autoRotate, ViewControls3D viewControls3D, ThemeConfig theme, OpenMode openMode = OpenMode.Viewing)
-			: base(viewControls3D)
 		{
+			this.viewControls3D = viewControls3D;
 			this.theme = theme;
 			this.openMode = openMode;
 			allowAutoRotate = (autoRotate == AutoRotate.Enabled);
 			meshViewerWidget = new MeshViewerWidget(viewerVolume, bedCenter, bedShape);
 			this.printItemWrapper = printItemWrapper;
+
+			ActiveSliceSettings.SettingChanged.RegisterEvent(CheckSettingChanged, ref unregisterEvents);
+			ApplicationController.Instance.AdvancedControlsPanelReloading.RegisterEvent(CheckSettingChanged, ref unregisterEvents);
 		}
 
 		public override void Initialize()
@@ -257,26 +260,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			viewControls3D.TransformStateChanged += ViewControls3D_TransformStateChanged;
 
-			FlowLayoutWidget mainContainerTopToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			mainContainerTopToBottom.HAnchor = HAnchor.Max_FitToChildren_ParentWidth;
-			mainContainerTopToBottom.VAnchor = VAnchor.Max_FitToChildren_ParentHeight;
+			var mainContainerTopToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.Max_FitToChildren_ParentWidth,
+				VAnchor = VAnchor.Max_FitToChildren_ParentHeight
+			};
 
-			var centerPartPreviewAndControls = new FlowLayoutWidget(FlowDirection.LeftToRight);
-			centerPartPreviewAndControls.Name = "centerPartPreviewAndControls";
+			var centerPartPreviewAndControls = new FlowLayoutWidget(FlowDirection.LeftToRight)
+			{
+				Name = "centerPartPreviewAndControls"
+			};
 			centerPartPreviewAndControls.AnchorAll();
 
 			var smallMarginButtonFactory = ApplicationController.Instance.Theme.BreadCrumbButtonFactorySmallMargins;
 
-			GuiWidget viewArea = new GuiWidget();
-			viewArea.AnchorAll();
-			{
-				PutOemImageOnBed();
+			PutOemImageOnBed();
 
-				meshViewerWidget.AnchorAll();
-			}
-			viewArea.AddChild(meshViewerWidget);
+			meshViewerWidget.AnchorAll();
+			centerPartPreviewAndControls.AddChild(meshViewerWidget);
 
-			centerPartPreviewAndControls.AddChild(viewArea);
 			mainContainerTopToBottom.AddChild(centerPartPreviewAndControls);
 
 			var buttonBottomPanel = new FlowLayoutWidget(FlowDirection.LeftToRight)
@@ -547,17 +549,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			set
 			{
-				if (InEditMode)
-				{
-					// <IObject3D>
-					dragDropSource = value;
+				// <IObject3D>
+				dragDropSource = value;
 
-					// Clear the DragSourceModel - <ILibraryItem>
-					DragSourceModel = null;
+				// Clear the DragSourceModel - <ILibraryItem>
+				DragSourceModel = null;
 
-					// Suppress ui volumes when dragDropSource is not null
-					meshViewerWidget.SuppressUiVolumes = (dragDropSource != null);
-				}
+				// Suppress ui volumes when dragDropSource is not null
+				meshViewerWidget.SuppressUiVolumes = (dragDropSource != null);
 			}
 		}
 
@@ -621,8 +620,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 		}
-
-		public bool IsEditing { get; private set; }
 
 		public bool DragingPart
 		{
@@ -772,6 +769,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			// Not needed but safer than without
 			viewControls3D.TransformStateChanged -= ViewControls3D_TransformStateChanged;
+
+			if (meshViewerWidget != null)
+			{
+				meshViewerWidget.AfterDraw -= AfterDraw3DContent;
+			}
 
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
@@ -987,6 +989,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{
+			if (needToRecreateBed)
+			{
+				needToRecreateBed = false;
+				RecreateBed();
+			}
+
 			if (Scene.HasSelection)
 			{
 				var selectedItem = Scene.SelectedItem;
@@ -1931,15 +1939,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			viewIsInEditModePreLock = doEdittingButtonsContainer.Visible;
 			doEdittingButtonsContainer.Visible = false;
-			if (viewControls3D.PartSelectVisible == true)
-			{
-				viewControls3D.PartSelectVisible = false;
-				if (viewControls3D.ActiveButton == ViewControls3DButtons.PartSelect)
-				{
-					wasInSelectMode = true;
-					viewControls3D.ActiveButton = ViewControls3DButtons.Rotate;
-				}
-			}
 		}
 
 		internal void MakeLowestFaceFlat(IObject3D objectToLayFlatGroup)
@@ -2251,16 +2250,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		public override bool InEditMode => true;
-
 		public Vector2 DragSelectionStartPosition { get; private set; }
 		public bool DragSelectionInProgress { get; private set; }
 		public Vector2 DragSelectionEndPosition { get; private set; }
 
 		internal async void SwitchStateToEditing()
 		{
-			this.IsEditing = true;
-
 			viewControls3D.ActiveButton = ViewControls3DButtons.PartSelect;
 
 			processingProgressControl.Visible = true;
@@ -2359,15 +2354,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var meshViewer = meshViewerWidget;
 
 			popupContainer.AddChild(
-				AddCheckbox(
+				this.theme.CreateCheckboxMenuItem(
 					"Show Print Bed".Localize(),
-					"Show Help Checkbox",
+					"ShowPrintBed",
 					meshViewer.RenderBed,
 					5,
 					(s, e) =>
 					{
-						var checkbox = s as CheckBox;
-						if (checkbox != null)
+						if (s is CheckBox checkbox)
 						{
 							meshViewer.RenderBed = checkbox.Checked;
 						}
@@ -2377,15 +2371,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (buildHeight > 0)
 			{
 				popupContainer.AddChild(
-					AddCheckbox(
+					this.theme.CreateCheckboxMenuItem(
 						"Show Print Area".Localize(),
-						"Show Help Checkbox",
-						meshViewer.RenderBed,
+						"ShowPrintArea",
+						meshViewer.RenderBuildVolume,
 						5,
 						(s, e) =>
 						{
-							var checkbox = s as CheckBox;
-							if (checkbox != null)
+							if (s is CheckBox checkbox)
 							{
 								meshViewer.RenderBuildVolume = checkbox.Checked;
 							}
@@ -2535,19 +2528,89 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private static MenuItem AddCheckbox(string text, string itemValue, bool itemChecked, BorderDouble padding, EventHandler eventHandler)
-		{
-			var checkbox = new CheckBox(text)
-			{
-				Checked = itemChecked
-			};
-			checkbox.CheckedStateChanged += eventHandler;
+		protected bool autoRotating = false;
+		protected bool allowAutoRotate = false;
 
-			return new MenuItem(checkbox, itemValue)
+		public MeshViewerWidget meshViewerWidget;
+
+		// Proxy to MeshViewerWidget
+		public InteractiveScene Scene => meshViewerWidget.Scene;
+
+		protected ViewControls3D viewControls3D { get; }
+
+		private bool needToRecreateBed = false;
+
+		public MeshSelectInfo CurrentSelectInfo { get; private set; } = new MeshSelectInfo();
+
+		protected IObject3D FindHitObject3D(Vector2 screenPosition, ref IntersectInfo intersectionInfo)
+		{
+			Vector2 meshViewerWidgetScreenPosition = meshViewerWidget.TransformFromParentSpace(this, screenPosition);
+			Ray ray = meshViewerWidget.World.GetRayForLocalBounds(meshViewerWidgetScreenPosition);
+
+			intersectionInfo = Scene.TraceData().GetClosestIntersection(ray);
+			if (intersectionInfo != null)
 			{
-				Padding = padding,
-			};
+				foreach (Object3D object3D in Scene.Children)
+				{
+					if (object3D.TraceData().Contains(intersectionInfo.closestHitObject))
+					{
+						CurrentSelectInfo.PlaneDownHitPos = intersectionInfo.HitPosition;
+						CurrentSelectInfo.LastMoveDelta = new Vector3();
+						return object3D;
+					}
+				}
+			}
+
+			return null;
 		}
+
+		private void CheckSettingChanged(object sender, EventArgs e)
+		{
+			StringEventArgs stringEvent = e as StringEventArgs;
+			if (stringEvent != null)
+			{
+				if (stringEvent.Data == SettingsKey.bed_size
+					|| stringEvent.Data == SettingsKey.print_center
+					|| stringEvent.Data == SettingsKey.build_height
+					|| stringEvent.Data == SettingsKey.bed_shape)
+				{
+					needToRecreateBed = true;
+				}
+			}
+		}
+
+		private void RecreateBed()
+		{
+			double buildHeight = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.build_height);
+
+			UiThread.RunOnIdle((Action)(() =>
+			{
+				meshViewerWidget.CreatePrintBed(
+					new Vector3(ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.bed_size), buildHeight),
+					ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center),
+					ActiveSliceSettings.Instance.GetValue<BedShape>(SettingsKey.bed_shape));
+				PutOemImageOnBed();
+			}));
+		}
+
+		static ImageBuffer wattermarkImage = null;
+		protected void PutOemImageOnBed()
+		{
+			// this is to add an image to the bed
+			string imagePathAndFile = Path.Combine("OEMSettings", "bedimage.png");
+			if (StaticData.Instance.FileExists(imagePathAndFile))
+			{
+				if (wattermarkImage == null)
+				{
+					wattermarkImage = StaticData.Instance.LoadImage(imagePathAndFile);
+				}
+
+				ImageBuffer bedImage = MeshViewerWidget.BedImage;
+				Graphics2D bedGraphics = bedImage.NewGraphics2D();
+				bedGraphics.Render(wattermarkImage, new Vector2((bedImage.Width - wattermarkImage.Width) / 2, (bedImage.Height - wattermarkImage.Height) / 2));
+			}
+		}
+
 		// ViewControls3D }}
 	}
 

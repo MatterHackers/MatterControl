@@ -40,6 +40,8 @@ namespace MatterHackers.MatterControl
 
 	public class ThemeConfig
 	{
+		protected static readonly int DefaultScrollBarWidth = 120;
+
 		private static ImageBuffer restoreNormal;
 		private static ImageBuffer restoreHover;
 		private static ImageBuffer restorePressed;
@@ -363,6 +365,50 @@ namespace MatterHackers.MatterControl
 			{
 				VAnchor = VAnchor.ParentCenter,
 				Margin = new BorderDouble(0, 0, 5, 0)
+			};
+		}
+
+		public SolidSlider CreateSolidSlider(GuiWidget wordOptionContainer, string header, double min = 0, double max = .5)
+		{
+			double scrollBarWidth = 10;
+			if (UserSettings.Instance.IsTouchScreen)
+			{
+				scrollBarWidth = 20;
+			}
+
+			TextWidget spacingText = new TextWidget(header, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			{
+				Margin = new BorderDouble(10, 3, 3, 5),
+				HAnchor = HAnchor.ParentLeft
+			};
+			wordOptionContainer.AddChild(spacingText);
+
+			SolidSlider namedSlider = new SolidSlider(new Vector2(), scrollBarWidth, 0, 1)
+			{
+				TotalWidthInPixels = DefaultScrollBarWidth,
+				Minimum = min,
+				Maximum = max,
+				Margin = new BorderDouble(3, 5, 3, 3),
+				HAnchor = HAnchor.ParentCenter,
+			};
+			namedSlider.View.BackgroundColor = new RGBA_Bytes();
+
+			wordOptionContainer.AddChild(namedSlider);
+
+			return namedSlider;
+		}
+
+		public MenuItem CreateCheckboxMenuItem(string text, string itemValue, bool itemChecked, BorderDouble padding, EventHandler eventHandler)
+		{
+			var checkbox = new CheckBox(text)
+			{
+				Checked = itemChecked
+			};
+			checkbox.CheckedStateChanged += eventHandler;
+
+			return new MenuItem(checkbox, itemValue)
+			{
+				Padding = padding,
 			};
 		}
 	}
