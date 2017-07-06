@@ -243,6 +243,7 @@ Advanced
       While Printing
         retract_length
         retract_restart_extra
+        retract_restart_extra_time_to_apply
         retract_speed
         retract_lift
         retract_before_travel

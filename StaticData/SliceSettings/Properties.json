@@ -1836,6 +1836,19 @@
 	{
 		"QuickMenuSettings": [ ],
 		"SetSettingsOnChange": [ ],
+		"SlicerConfigName": "retract_restart_extra_time_to_apply",
+		"PresentationName": "Time For Extra Length",
+		"HelpText": "The time over which to increase the Extra Length On Restart to its maximum value. Below this time only a portion of the extra length will be applied. Leave 0 to apply the entire amount all the time.",
+		"DataEditType": "DOUBLE",
+		"ExtraSettings": "s",
+		"ShowAsOverride": true,
+		"ShowIfSet": null,
+		"ResetAtEndOfPrint": false,
+		"DefaultValue": "0"
+	},
+	{
+		"QuickMenuSettings": [ ],
+		"SetSettingsOnChange": [ ],
 		"SlicerConfigName": "retract_speed",
 		"PresentationName": "Speed",
 		"HelpText": "The speed at which filament will retract and re-extrude.",
