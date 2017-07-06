@@ -47,7 +47,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private TextWidget gcodeProcessingStateInfoText;
 		private GCode2DWidget gcode2DWidget;
 		private PrintItemWrapper printItem => ApplicationController.Instance.ActivePrintItem;
-		private bool startedSliceFromGenerateButton = false;
 		
 		private ViewControlsToggle viewControlsToggle;
 
@@ -332,14 +331,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (parentSystemWindow != null)
 			{
 				parentSystemWindow.KeyDown -= Parent_KeyDown;
-			}
-
-			if (printItem != null)
-			{
-				if (startedSliceFromGenerateButton && printItem.CurrentlySlicing)
-				{
-					SlicingQueue.Instance.CancelCurrentSlicing();
-				}
 			}
 
 			base.OnClosed(e);
