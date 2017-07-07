@@ -407,7 +407,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void TrackballTumbleWidget_DrawGlContent(object sender, EventArgs e)
 		{
-			if (loadedGCode == null || printer.BedPlate.GCodeRenderer == null || !this.Visible)
+			if (loadedGCode == null || printer.BedPlate.GCodeRenderer == null || !gcodeViewer.Visible)
 			{
 				return;
 			}
