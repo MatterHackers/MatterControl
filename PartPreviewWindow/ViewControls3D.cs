@@ -54,6 +54,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public class ViewControls3D : ViewControlsBase
 	{
 		public event EventHandler ResetView;
+		public event EventHandler<ViewModeChangedEventArgs> ViewModeChanged;
+
 		public event EventHandler<TransformStateChangedEventArgs> TransformStateChanged;
 
 		internal OverflowDropdown OverflowButton;
@@ -180,17 +182,32 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			partSelectButton.Click += (s, e) => this.ActiveButton = ViewControls3DButtons.PartSelect;
 			AddChild(partSelectButton);
 
-			iconPath = Path.Combine("ViewTransformControls", "layers.png");
-			var layersButton = buttonFactory.Generate("", StaticData.Instance.LoadIcon(iconPath, 32, 32).InvertLightness());
-			layersButton.Name = "Toggle Layer View Button";
-			layersButton.ToolTipText = "Layers".Localize();
-			layersButton.Margin = 3;
-			layersButton.Click += (s, e) =>
+			iconPath = Path.Combine("ViewTransformControls", "model.png");
+			var modelViewButton = buttonFactory.GenerateRadioButton("", StaticData.Instance.LoadIcon(iconPath, 32, 32));
+			modelViewButton.Name = "Model View Button";
+			modelViewButton.ToolTipText = "Model".Localize();
+			modelViewButton.Checked = true;
+			modelViewButton.Margin = 3;
+			modelViewButton.Click += SwitchModes_Click;
+			AddChild(modelViewButton);
+
+			var layers3DButton = buttonFactory.GenerateRadioButton("", Path.Combine("ViewTransformControls", "3d.png"));
+			layers3DButton.Name = "Layers3D Button";
+			layers3DButton.ToolTipText = "3D Layers".Localize();
+			layers3DButton.Click += SwitchModes_Click;
+			layers3DButton.Margin = new BorderDouble(3);
+
+			if (!UserSettings.Instance.IsTouchScreen)
 			{
-				var parentTabPage = this.Parents<PrinterTabPage>().First();
-				parentTabPage.ToggleView();
-			};
-			AddChild(layersButton);
+				this.AddChild(layers3DButton);
+			}
+
+			var layers2DButton = buttonFactory.GenerateRadioButton("", Path.Combine("ViewTransformControls", "2d.png"));
+			layers2DButton.Name = "Layers2D Button";
+			layers2DButton.ToolTipText = "2D Layers".Localize();
+			layers2DButton.Margin = new BorderDouble(3);
+			layers2DButton.Click += SwitchModes_Click;
+			this.AddChild(layers2DButton);
 
 			OverflowButton = new OverflowDropdown(allowLightnessInvert: false)
 			{
@@ -199,6 +216,32 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Margin = 3
 			};
 			AddChild(OverflowButton);
+		}
+
+		private void SwitchModes_Click(object sender, MouseEventArgs e)
+		{
+			if (sender is GuiWidget widget)
+			{
+				PartViewMode viewMode;
+
+				if (widget.Name == "Layers2D Button")
+				{
+					viewMode = PartViewMode.Layers2D;
+				}
+				else if (widget.Name == "Layers3D Button")
+				{
+					viewMode = PartViewMode.Layers3D;
+				}
+				else
+				{
+					viewMode = PartViewMode.Model;
+				}
+
+				ViewModeChanged?.Invoke(this, new ViewModeChangedEventArgs()
+				{
+					ViewMode = viewMode
+				});
+			}
 		}
 
 		public override void OnClosed(ClosedEventArgs e)

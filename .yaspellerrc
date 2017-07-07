@@ -119,6 +119,7 @@
 		"nis",
 		"ComPort",
 		"ms",
-		"HotEnd"
+		"HotEnd",
+		"2D"
 	]
 }

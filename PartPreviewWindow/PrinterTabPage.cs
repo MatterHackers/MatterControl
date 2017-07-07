@@ -38,6 +38,7 @@ using MatterHackers.VectorMath;
 using System;
 using MatterHackers.MatterControl.PrinterControls;
 using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.GCodeVisualizer;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -73,6 +74,37 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Visible = true,
 				Margin = new BorderDouble(11, 0, 0, 50)
 			};
+			viewControls3D.ViewModeChanged += (s, e) =>
+			{
+				switch(e.ViewMode)
+				{
+					case PartViewMode.Layers2D:
+						UserSettings.Instance.set("LayerViewDefault", "2D Layer");
+						if (gcodeViewer.gcode2DWidget != null)
+						{
+							gcodeViewer.gcode2DWidget.Visible = true;
+
+							// HACK: Getting the Layer2D view to show content only works if CenterPartInView is called after the control is visible and after some cycles have passed
+							UiThread.RunOnIdle(gcodeViewer.gcode2DWidget.CenterPartInView);
+						}
+						this.SwitchToLayerView();
+						break;
+
+					case PartViewMode.Layers3D:
+						UserSettings.Instance.set("LayerViewDefault", "3D Layer");
+						if (gcodeViewer.gcode2DWidget != null)
+						{
+							gcodeViewer.gcode2DWidget.Visible = false;
+						}
+						this.SwitchToLayerView();
+						break;
+
+					case PartViewMode.Model:
+						this.SwitchToModelView();
+						break;
+				}
+			};
+
 			viewControls3D.ResetView += (sender, e) =>
 			{
 				modelViewer.meshViewerWidget.ResetView();
@@ -135,6 +167,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				ApplicationController.Instance.Theme,
 				View3DWidget.OpenMode.Editing);
 
+			modelViewer.meshViewerWidget.TrackballTumbleWidget.DrawGlContent += TrackballTumbleWidget_DrawGlContent;
+
 			modelViewer.BoundsChanged += (s, e) =>
 			{
 				SetSliderSizes();
@@ -165,10 +199,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				new Vector3(activeSettings.GetValue<Vector2>(SettingsKey.bed_size), buildHeight),
 				activeSettings.GetValue<Vector2>(SettingsKey.print_center),
 				activeSettings.GetValue<BedShape>(SettingsKey.bed_shape),
-				ViewGcodeBasic.WindowMode.Embeded,
-				viewControls3D,
-				ApplicationController.Instance.Theme,
-				modelViewer.meshViewerWidget);
+				viewControls3D);
 			gcodeViewer.AnchorAll();
 			this.gcodeViewer.Visible = false;
 
@@ -196,7 +227,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			printer.BedPlate.LoadedGCodeChanged += BedPlate_LoadedGCodeChanged;
-
+			
 			this.ShowSliceLayers = false;
 
 			this.printItem = printItem;
@@ -209,6 +240,53 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private void BedPlate_LoadedGCodeChanged(object sender, EventArgs e)
 		{
 			selectLayerSlider.Maximum = printer.BedPlate.LoadedGCode.LayerCount - 1;
+		
+			// ResetRenderInfo
+			printer.BedPlate.RenderInfo = new GCodeRenderInfo(
+				0,
+				1,
+				Agg.Transform.Affine.NewIdentity(),
+				1,
+				0,
+				1,
+				new Vector2[]
+				{
+					ActiveSliceSettings.Instance.Helpers.ExtruderOffset(0),
+					ActiveSliceSettings.Instance.Helpers.ExtruderOffset(1)
+				},
+				this.GetRenderType,
+				MeshViewerWidget.GetMaterialColor);
+		}
+
+		private RenderType GetRenderType()
+		{
+			RenderType renderType = RenderType.Extrusions;
+			if (gcodeOptions.RenderMoves)
+			{
+				renderType |= RenderType.Moves;
+			}
+			if (gcodeOptions.RenderRetractions)
+			{
+				renderType |= RenderType.Retractions;
+			}
+			if (gcodeOptions.RenderSpeeds)
+			{
+				renderType |= RenderType.SpeedColors;
+			}
+			if (gcodeOptions.SimulateExtrusion)
+			{
+				renderType |= RenderType.SimulateExtrusion;
+			}
+			if (gcodeOptions.TransparentExtrusion)
+			{
+				renderType |= RenderType.TransparentExtrusion;
+			}
+			if (gcodeOptions.HideExtruderOffsets)
+			{
+				renderType |= RenderType.HideExtruderOffsets;
+			}
+
+			return renderType;
 		}
 
 		private void AddSettingsTabBar(GuiWidget parent, GuiWidget widgetTodockTo)
@@ -244,10 +322,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.ShowSliceLayers = true;
 		}
 
+		public void SwitchToModelView()
+		{
+			this.ShowSliceLayers = false;
+		}
+
 		public void ToggleView()
 		{
 			this.ShowSliceLayers = !gcodeViewer.Visible;
 		}
+
+		private GCodeFile loadedGCode => printer.BedPlate.LoadedGCode;
 
 		private bool showSliceLayers;
 		public bool ShowSliceLayers
@@ -307,10 +392,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			ApplicationController.Instance.PartPreviewState.RotationMatrix = visibleWidget.World.RotationMatrix;
 			ApplicationController.Instance.PartPreviewState.TranslationMatrix = visibleWidget.World.TranslationMatrix;
 
+			if (modelViewer?.meshViewerWidget != null)
+			{
+				modelViewer.meshViewerWidget.TrackballTumbleWidget.DrawGlContent -= TrackballTumbleWidget_DrawGlContent;
+			}
+
 			printer.BedPlate.ActiveLayerChanged -= ActiveLayer_Changed;
 			printer.BedPlate.LoadedGCodeChanged -= BedPlate_LoadedGCodeChanged;
 
 			base.OnClosed(e);
+		}
+
+		private void TrackballTumbleWidget_DrawGlContent(object sender, EventArgs e)
+		{
+			if (loadedGCode == null || printer.BedPlate.GCodeRenderer == null || !this.Visible)
+			{
+				return;
+			}
+
+			printer.BedPlate.Render3DLayerFeatures();
 		}
 
 		internal GuiWidget ShowGCodeOverflowMenu()
