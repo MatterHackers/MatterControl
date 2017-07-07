@@ -74,6 +74,37 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Visible = true,
 				Margin = new BorderDouble(11, 0, 0, 50)
 			};
+			viewControls3D.ViewModeChanged += (s, e) =>
+			{
+				switch(e.ViewMode)
+				{
+					case PartViewMode.Layers2D:
+						UserSettings.Instance.set("LayerViewDefault", "2D Layer");
+						if (gcodeViewer.gcode2DWidget != null)
+						{
+							gcodeViewer.gcode2DWidget.Visible = true;
+
+							// HACK: Getting the Layer2D view to show content only works if CenterPartInView is called after the control is visible and after some cycles have passed
+							UiThread.RunOnIdle(gcodeViewer.gcode2DWidget.CenterPartInView);
+						}
+						this.SwitchToLayerView();
+						break;
+
+					case PartViewMode.Layers3D:
+						UserSettings.Instance.set("LayerViewDefault", "3D Layer");
+						if (gcodeViewer.gcode2DWidget != null)
+						{
+							gcodeViewer.gcode2DWidget.Visible = false;
+						}
+						this.SwitchToLayerView();
+						break;
+
+					case PartViewMode.Model:
+						this.SwitchToModelView();
+						break;
+				}
+			};
+
 			viewControls3D.ResetView += (sender, e) =>
 			{
 				modelViewer.meshViewerWidget.ResetView();
@@ -289,6 +320,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public void SwitchToLayerView()
 		{
 			this.ShowSliceLayers = true;
+		}
+
+		public void SwitchToModelView()
+		{
+			this.ShowSliceLayers = false;
 		}
 
 		public void ToggleView()

@@ -45,11 +45,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public class ViewGcodeBasic : GuiWidget
 	{
 		private TextWidget gcodeProcessingStateInfoText;
-		private GCode2DWidget gcode2DWidget;
+		internal GCode2DWidget gcode2DWidget;
 		private PrintItemWrapper printItem => ApplicationController.Instance.ActivePrintItem;
 		
-		private ViewControlsToggle viewControlsToggle;
-
 		private GuiWidget gcodeDisplayWidget;
 
 		private ColorGradientWidget gradientWidget;
@@ -181,18 +179,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					gcode2DWidget.CenterPartInView();
 				}
 			};
-
-			viewControlsToggle = new ViewControlsToggle(ApplicationController.Instance.Theme.ViewControlsButtonFactory, activeViewMode)
-			{
-				Visible = false,
-				HAnchor = HAnchor.ParentRight
-			};
-			viewControlsToggle.ViewModeChanged += (s, e) =>
-			{
-				// Respond to user driven view mode change events and store and switch to the new mode
-				activeViewMode = e.ViewMode;
-				SwitchViewModes();
-			};
 			viewControls3D.TransformStateChanged += (s, e) =>
 			{
 				switch (e.TransformMode)
@@ -212,7 +198,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						break;
 				}
 			};
-			this.AddChild(viewControlsToggle);
 
 			// *************** AddGCodeFileControls ***************
 			SetProcessingMessage("");
@@ -241,8 +226,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 				AddChild(gradientWidget);
 
-				viewControlsToggle.Visible = true;
-
 				GCodeRenderer.ExtrusionColor = ActiveTheme.Instance.PrimaryAccentColor;
 
 				var gcodeDetails = new GCodeDetails(this.loadedGCode);
@@ -256,32 +239,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					VAnchor = VAnchor.ParentTop | VAnchor.FitToChildren,
 					Width = 150
 				});
-
-				// Switch to the most recent view mode, defaulting to Layers3D
-				SwitchViewModes();
 			}
 		}
 
-		private void SwitchViewModes()
-		{
-			bool inLayers3DMode = activeViewMode == PartViewMode.Layers3D;
-			if (inLayers3DMode)
-			{
-				UserSettings.Instance.set("LayerViewDefault", "3D Layer");
-			}
-			else
-			{
-				UserSettings.Instance.set("LayerViewDefault", "2D Layer");
-
-				// HACK: Getting the Layer2D view to show content only works if CenterPartInView is called after the control is visible and after some cycles have passed
-				UiThread.RunOnIdle(gcode2DWidget.CenterPartInView);
-			}
-
-			if (gcode2DWidget != null)
-			{
-				gcode2DWidget.Visible = !inLayers3DMode;
-			}
-		}
 
 		internal void LoadProgress_Changed((double progress0To1, string processingState) progress, CancellationTokenSource continueProcessing)
 		{
