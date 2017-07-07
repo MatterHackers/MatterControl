@@ -71,6 +71,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				new MapFirstValue("retract_length", "retractionOnTravel"),
 				new MapFirstValue("retract_lift", "retractionZHop"),
 				new MapFirstValue("retract_restart_extra", "unretractExtraExtrusion"),
+				new MapFirstValue("retract_restart_extra_time_to_apply", "retractRestartExtraTimeToApply"),
 				new MapFirstValue("retract_speed", "retractionSpeed"),
 				new MappedSetting("bridge_fan_speed", "bridgeFanSpeedPercent"),
 				new MappedSetting("bridge_speed", "bridgeSpeed"),

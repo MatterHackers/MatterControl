@@ -4303,3 +4303,18 @@ Translated:3D Layers
 English:2D Layers
 Translated:2D Layers
 
+English:The time over which to increase the Extra Length On Restart to its maximum value. Below this time only a portion of the extra length will be applied. Leave 0 to apply the entire amount all the time.
+Translated:The time over which to increase the Extra Length On Restart to its maximum value. Below this time only a portion of the extra length will be applied. Leave 0 to apply the entire amount all the time.
+
+English:Time For Extra Length
+Translated:Time For Extra Length
+
+English:s
+Translated:s
+
+English:This is a set of regular expressions to apply to lines prior to sending to a printer. They will be applied in the order listed before sending. To return more than one instruction separate them with comma.
+Translated:This is a set of regular expressions to apply to lines prior to sending to a printer. They will be applied in the order listed before sending. To return more than one instruction separate them with comma.
+
+English:This is a set of regular expressions to apply to lines after they are received from the printer. They will be applied in order to each line received.
+Translated:This is a set of regular expressions to apply to lines after they are received from the printer. They will be applied in order to each line received.
+
