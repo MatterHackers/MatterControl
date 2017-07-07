@@ -76,33 +76,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			viewControls3D.ViewModeChanged += (s, e) =>
 			{
-				switch(e.ViewMode)
-				{
-					case PartViewMode.Layers2D:
-						UserSettings.Instance.set("LayerViewDefault", "2D Layer");
-						if (gcodeViewer.gcode2DWidget != null)
-						{
-							gcodeViewer.gcode2DWidget.Visible = true;
-
-							// HACK: Getting the Layer2D view to show content only works if CenterPartInView is called after the control is visible and after some cycles have passed
-							UiThread.RunOnIdle(gcodeViewer.gcode2DWidget.CenterPartInView);
-						}
-						this.SwitchToLayerView();
-						break;
-
-					case PartViewMode.Layers3D:
-						UserSettings.Instance.set("LayerViewDefault", "3D Layer");
-						if (gcodeViewer.gcode2DWidget != null)
-						{
-							gcodeViewer.gcode2DWidget.Visible = false;
-						}
-						this.SwitchToLayerView();
-						break;
-
-					case PartViewMode.Model:
-						this.SwitchToModelView();
-						break;
-				}
+				this.ViewMode = e.ViewMode;
 			};
 
 			viewControls3D.ResetView += (sender, e) =>
@@ -317,25 +291,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			sideBar.AddPage("Terminal".Localize(), terminalControls);
 		}
 
-		public void SwitchToLayerView()
-		{
-			this.ShowSliceLayers = true;
-		}
-
-		public void SwitchToModelView()
-		{
-			this.ShowSliceLayers = false;
-		}
-
-		public void ToggleView()
-		{
-			this.ShowSliceLayers = !gcodeViewer.Visible;
-		}
-
 		private GCodeFile loadedGCode => printer.BedPlate.LoadedGCode;
 
 		private bool showSliceLayers;
-		public bool ShowSliceLayers
+		private bool ShowSliceLayers
 		{
 			get => showSliceLayers;
 			set
@@ -356,6 +315,49 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				layerRenderRatioSlider.Visible = slidersVisible;
 
 				modelViewer.selectedObjectPanel.Visible = !showSliceLayers;
+			}
+		}
+
+		private PartViewMode viewMode;
+		public PartViewMode ViewMode
+		{
+			get => viewMode;
+			set
+			{
+				if (viewMode != value)
+				{
+					viewMode = value;
+
+					viewControls3D.ViewMode = viewMode;
+
+					switch (viewMode)
+					{
+						case PartViewMode.Layers2D:
+							UserSettings.Instance.set("LayerViewDefault", "2D Layer");
+							if (gcodeViewer.gcode2DWidget != null)
+							{
+								gcodeViewer.gcode2DWidget.Visible = true;
+
+								// HACK: Getting the Layer2D view to show content only works if CenterPartInView is called after the control is visible and after some cycles have passed
+								UiThread.RunOnIdle(gcodeViewer.gcode2DWidget.CenterPartInView);
+							}
+							this.ShowSliceLayers = true;
+							break;
+
+						case PartViewMode.Layers3D:
+							UserSettings.Instance.set("LayerViewDefault", "3D Layer");
+							if (gcodeViewer.gcode2DWidget != null)
+							{
+								gcodeViewer.gcode2DWidget.Visible = false;
+							}
+							this.ShowSliceLayers = true;
+							break;
+
+						case PartViewMode.Model:
+							this.ShowSliceLayers = false;
+							break;
+					}
+				}
 			}
 		}
 

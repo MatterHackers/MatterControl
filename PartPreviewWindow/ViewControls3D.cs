@@ -222,25 +222,57 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (sender is GuiWidget widget)
 			{
-				PartViewMode viewMode;
-
 				if (widget.Name == "Layers2D Button")
 				{
-					viewMode = PartViewMode.Layers2D;
+					this.ViewMode = PartViewMode.Layers2D;
 				}
 				else if (widget.Name == "Layers3D Button")
 				{
-					viewMode = PartViewMode.Layers3D;
+					this.ViewMode = PartViewMode.Layers3D;
 				}
 				else
 				{
-					viewMode = PartViewMode.Model;
+					this.ViewMode = PartViewMode.Model;
 				}
 
 				ViewModeChanged?.Invoke(this, new ViewModeChangedEventArgs()
 				{
-					ViewMode = viewMode
+					ViewMode = this.ViewMode
 				});
+			}
+		}
+
+		private PartViewMode viewMode;
+		public PartViewMode ViewMode
+		{
+			get => viewMode;
+			set
+			{
+				if (viewMode != value)
+				{
+					viewMode = value;
+
+					string controlName;
+
+					if (viewMode == PartViewMode.Layers2D)
+					{
+						controlName = "Layers2D Button";
+					}
+					else if (viewMode == PartViewMode.Layers3D)
+					{
+						controlName = "Layers3D Button";
+					}
+					else
+					{
+						controlName = "Model View Button";
+					}
+
+					var targetChild = Children.Where(c => c.Name == controlName).FirstOrDefault();
+					if (targetChild != null && targetChild is RadioButton button)
+					{
+						button.Checked = true;
+					}
+				}
 			}
 		}
 
