@@ -45,8 +45,8 @@ namespace MatterHackers.GCodeVisualizer
 		SpeedColors = 8,
 		SimulateExtrusion = 16,
 		HideExtruderOffsets = 32,
-        TransparentExtrusion = 64,
-    };
+		TransparentExtrusion = 64,
+	};
 
 	public class GCodeRenderer : IDisposable
 	{
@@ -154,8 +154,8 @@ namespace MatterHackers.GCodeVisualizer
 							layerThickness = gCodeFileToDraw.GetFirstLayerHeight();
 						}
 
-                        RGBA_Bytes extrusionColor = extrusionColors.GetColorForSpeed((float)currentInstruction.FeedRate);
-                        renderFeaturesForLayer.Add(new RenderFeatureExtrusion(previousInstruction.Position, currentInstruction.Position, currentInstruction.ExtruderIndex, currentInstruction.FeedRate, currentInstruction.EPosition - previousInstruction.EPosition, gCodeFileToDraw.GetFilamentDiameter(), layerThickness, extrusionColor));
+						RGBA_Bytes extrusionColor = extrusionColors.GetColorForSpeed((float)currentInstruction.FeedRate);
+						renderFeaturesForLayer.Add(new RenderFeatureExtrusion(previousInstruction.Position, currentInstruction.Position, currentInstruction.ExtruderIndex, currentInstruction.FeedRate, currentInstruction.EPosition - previousInstruction.EPosition, gCodeFileToDraw.GetFilamentDiameter(), layerThickness, extrusionColor));
 					}
 					else
 					{
@@ -320,7 +320,7 @@ namespace MatterHackers.GCodeVisualizer
 						else // don't render any of the layers below this and in fact remove them from memory if possible
 						{
 							renderInfo.StartLayerIndex = i + 1;
-							cleanUnusedLayers = true; 
+							cleanUnusedLayers = true;
 							break;
 						}
 					}

@@ -45,7 +45,7 @@ namespace MatterHackers.GCodeVisualizer
 			: base(start, end, extruderIndex, travelSpeed)
 		{
 			this.color = color;
-            double filamentRadius = filamentDiameterMm / 2;
+			double filamentRadius = filamentDiameterMm / 2;
 			double areaSquareMm = (filamentRadius * filamentRadius) * Math.PI;
 
 			this.extrusionVolumeMm3 = (float)(areaSquareMm * totalExtrusionMm);
@@ -57,11 +57,11 @@ namespace MatterHackers.GCodeVisualizer
 			return GetExtrusionWidth(renderType) / 2;
 		}
 
-        private double GetExtrusionWidth(RenderType renderType)
-        {
+		private double GetExtrusionWidth(RenderType renderType)
+		{
 			double width = GCodeRenderer.ExtruderWidth;
-            if ((renderType & RenderType.SimulateExtrusion) == RenderType.SimulateExtrusion)
-            {
+			if ((renderType & RenderType.SimulateExtrusion) == RenderType.SimulateExtrusion)
+			{
 				double moveLength = (end - start).Length;
 
 				if (moveLength > .1) // we get truncation errors from the slice engine when the length is very small, so don't do them
@@ -69,12 +69,12 @@ namespace MatterHackers.GCodeVisualizer
 					double area = extrusionVolumeMm3 / moveLength;
 					width = area / layerHeight;
 				}
-            }
+			}
 
 			return width;
-        }
+		}
 
-        public override void CreateRender3DData(VectorPOD<ColorVertexData> colorVertexData, VectorPOD<int> indexData, GCodeRenderInfo renderInfo)
+		public override void CreateRender3DData(VectorPOD<ColorVertexData> colorVertexData, VectorPOD<int> indexData, GCodeRenderInfo renderInfo)
 		{
 			if ((renderInfo.CurrentRenderType & RenderType.Extrusions) == RenderType.Extrusions)
 			{
@@ -115,13 +115,13 @@ namespace MatterHackers.GCodeVisualizer
 					extrusionColor = color;
 				}
 
-                if (renderInfo.CurrentRenderType.HasFlag(RenderType.TransparentExtrusion))
-                {
-                    extrusionColor = new RGBA_Bytes(extrusionColor, 200);
-                }
+				if (renderInfo.CurrentRenderType.HasFlag(RenderType.TransparentExtrusion))
+				{
+					extrusionColor = new RGBA_Bytes(extrusionColor, 200);
+				}
 
-                // render the part using opengl
-                Graphics2DOpenGL graphics2DGl = graphics2D as Graphics2DOpenGL;
+				// render the part using opengl
+				Graphics2DOpenGL graphics2DGl = graphics2D as Graphics2DOpenGL;
 				if (graphics2DGl != null)
 				{
 					Vector3Float startF = this.GetStart(renderInfo);
@@ -132,13 +132,13 @@ namespace MatterHackers.GCodeVisualizer
 					Vector2 end = new Vector2(endF.x, endF.y);
 					renderInfo.Transform.transform(ref end);
 
-					graphics2DGl.DrawAALineRounded(start, end, extrusionLineWidths/2, extrusionColor);
+					graphics2DGl.DrawAALineRounded(start, end, extrusionLineWidths / 2, extrusionColor);
 				}
 				else
 				{
 					PathStorage pathStorage = new PathStorage();
 					VertexSourceApplyTransform transformedPathStorage = new VertexSourceApplyTransform(pathStorage, renderInfo.Transform);
-					Stroke stroke = new Stroke(transformedPathStorage, extrusionLineWidths/2);
+					Stroke stroke = new Stroke(transformedPathStorage, extrusionLineWidths / 2);
 
 					stroke.line_cap(LineCap.Round);
 					stroke.line_join(LineJoin.Round);
