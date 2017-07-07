@@ -27,18 +27,18 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.GCodeVisualizer;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.PrinterControls;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
-using System;
-using MatterHackers.MatterControl.PrinterControls;
-using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.GCodeVisualizer;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -55,6 +55,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private PrinterConfig printer;
 		private View3DConfig gcodeOptions;
 		private GuiWidget view3DContainer;
+
+		private TextWidget layerCountText;
+		private TextWidget layerStartText;
+
+		private ValueDisplayInfo currentLayerInfo;
 
 		public PrinterTabPage(PrinterSettings activeSettings, PrintItemWrapper printItem)
 		{
@@ -98,6 +103,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			int sliderWidth = (UserSettings.Instance.IsTouchScreen) ? 20 : 10;
 
+			layerCountText = new TextWidget("", pointSize: 9, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			{
+				Visible = false,
+				AutoExpandBoundsToText = true
+			};
+
+			layerStartText = new TextWidget("1", pointSize: 9, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			{
+				Visible = false,
+				AutoExpandBoundsToText = true
+			};
+
 			selectLayerSlider = new SolidSlider(new Vector2(), sliderWidth, 0, 1, Orientation.Vertical);
 			selectLayerSlider.ValueChanged += (s, e) =>
 			{
@@ -126,7 +143,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				printer.BedPlate.RenderInfo.FeatureToStartOnRatio0To1 = layerRenderRatioSlider.FirstValue;
 				printer.BedPlate.RenderInfo.FeatureToEndOnRatio0To1 = layerRenderRatioSlider.SecondValue;
-
 
 				this.Invalidate();
 			};
@@ -183,38 +199,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			view3DContainer.AddChild(gcodeViewer);
 			view3DContainer.AddChild(layerRenderRatioSlider);
 			view3DContainer.AddChild(selectLayerSlider);
+			view3DContainer.AddChild(layerCountText);
+			view3DContainer.AddChild(layerStartText);
 
-			ValueDisplayInfo currentLayerInfo = new ValueDisplayInfo()
+			//currentLayerInfo = new ValueDisplayInfo("1000", Agg.Font.Justification.Right)
+			currentLayerInfo = new ValueDisplayInfo("1000")
 			{
-				GetDisplayString = (value) => $"{value + 1}/{printer?.BedPlate?.LoadedGCode?.LayerCount}"
+				GetDisplayString = (value) => $"{value + 1}"
 			};
 
 			currentLayerInfo.EditComplete += (s, e) =>
 			{
-				printer.BedPlate.ActiveLayerIndex = (int)currentLayerInfo.Value;
+				printer.BedPlate.ActiveLayerIndex = (int)currentLayerInfo.Value - 1;
 			};
 
-			printer.BedPlate.ActiveLayerChanged += (s, e) =>
-			{
-				UiThread.RunOnIdle(() =>
-				{
-					currentLayerInfo.Value = printer.BedPlate.ActiveLayerIndex;
-					currentLayerInfo.OriginRelativeParent = selectLayerSlider.OriginRelativeParent
-						+ new Vector2(-currentLayerInfo.Width, selectLayerSlider.PositionPixelsFromFirstValue - currentLayerInfo.Height / 2);
-					currentLayerInfo.Visible = true;
-				});
-			};
-
-			selectLayerSlider.MouseEnter += (s, e) =>
-			{
-				UiThread.RunOnIdle(() =>
-				{
-					currentLayerInfo.Value = printer.BedPlate.ActiveLayerIndex;
-					currentLayerInfo.OriginRelativeParent = selectLayerSlider.OriginRelativeParent
-						+ new Vector2(-currentLayerInfo.Width, selectLayerSlider.PositionPixelsFromFirstValue - currentLayerInfo.Height / 2);
-					currentLayerInfo.Visible = true;
-				});
-			};
+			printer.BedPlate.ActiveLayerChanged += SetPositionAndValue;
+			selectLayerSlider.MouseEnter += SetPositionAndValue;
 
 			currentLayerInfo.Visible = false;
 
@@ -250,10 +250,27 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.AnchorAll();
 		}
 
+		private void SetPositionAndValue(object sender, EventArgs e)
+		{
+			UiThread.RunOnIdle(() =>
+			{
+				currentLayerInfo.Value = printer.BedPlate.ActiveLayerIndex;
+				//currentLayerInfo.DebugShowBounds = true;
+				currentLayerInfo.OriginRelativeParent = selectLayerSlider.OriginRelativeParent
+					+ new Vector2(-currentLayerInfo.Width - 10, selectLayerSlider.PositionPixelsFromFirstValue - currentLayerInfo.Height / 2);
+				currentLayerInfo.Visible = true;
+			});
+		}
+
 		private void BedPlate_LoadedGCodeChanged(object sender, EventArgs e)
 		{
-			selectLayerSlider.Maximum = printer.BedPlate.LoadedGCode.LayerCount - 1;
-		
+			var layerCount = printer.BedPlate.LoadedGCode.LayerCount;
+			selectLayerSlider.Maximum = layerCount - 1;
+
+			layerCountText.Text = layerCount.ToString();
+			layerCountText.Visible = true;
+			layerStartText.Visible = true;
+
 			// ResetRenderInfo
 			printer.BedPlate.RenderInfo = new GCodeRenderInfo(
 				0,
@@ -441,6 +458,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			printer.BedPlate.ActiveLayerChanged -= ActiveLayer_Changed;
 			printer.BedPlate.LoadedGCodeChanged -= BedPlate_LoadedGCodeChanged;
 
+			printer.BedPlate.ActiveLayerChanged -= SetPositionAndValue;
+			selectLayerSlider.MouseEnter -= SetPositionAndValue;
+
 			base.OnClosed(e);
 		}
 
@@ -554,6 +574,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return popupContainer;
 		}
 
+
 		private void SetSyncToPrintVisibility()
 		{
 			bool printerIsRunningPrint = PrinterConnection.Instance.PrinterIsPaused || PrinterConnection.Instance.PrinterIsPrinting;
@@ -590,10 +611,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			selectLayerSlider.OriginRelativeParent = new Vector2(modelViewer.Width - 20, 78);
-			selectLayerSlider.TotalWidthInPixels = modelViewer.Height - 85;
+			selectLayerSlider.TotalWidthInPixels = modelViewer.Height - 100;
 
 			layerRenderRatioSlider.OriginRelativeParent = new Vector2(11, 65);
 			layerRenderRatioSlider.TotalWidthInPixels = modelViewer.Width - 45;
+
+			layerCountText.OriginRelativeParent = new Vector2(modelViewer.Width - 26 + (layerCountText.Width / 2), modelViewer.Height - 15);
+			layerStartText.OriginRelativeParent = new Vector2(modelViewer.Width - 26 + (layerStartText.Width / 2), 63);
 		}
 		private void SetAnimationPosition()
 		{
