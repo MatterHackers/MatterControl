@@ -121,7 +121,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							ApplicationController.Instance.Printer.BedPlate.LoadGCode(printItem.GetGCodePathAndFileName(), printerTabPage.gcodeViewer.LoadProgress_Changed);
 							sliceProgressReporter.EndReporting();
 
-							printerTabPage.SwitchToLayerView();
+							printerTabPage.ViewMode = PartViewMode.Layers3D;
 
 							// HACK: directly fire method which previously ran on SlicingDone event on PrintItemWrapper
 							UiThread.RunOnIdle(printerTabPage.gcodeViewer.CreateAndAddChildren);
