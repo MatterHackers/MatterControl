@@ -195,7 +195,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				}
 			}
 
-			if (ForceHide?.Invoke() == true)
+			if (Visible && ForceHide?.Invoke() == true)
 			{
 				// If the user is hovering on a different control
 				Visible = false;
