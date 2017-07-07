@@ -4261,12 +4261,6 @@ Translated:HotEnd
 English:Heated Bed
 Translated:Heated Bed
 
-English:This is a set of regular expressions to apply to lines prior to sending to a printer. They will be applied in the order listed before sending. To return more than one instruction separate them with comma.
-Translated:This is a set of regular expressions to apply to lines prior to sending to a printer. They will be applied in the order listed before sending. To return more than one instruction separate them with comma.
-
-English:This is a set of regular expressions to apply to lines after they are recived from the printer. They will be applied in order to each line recieved.
-Translated:This is a set of regular expressions to apply to lines after they are recived from the printer. They will be applied in order to each line recieved.
-
 English:Write Filters
 Translated:Write Filters
 
@@ -4302,4 +4296,10 @@ Translated:Printing: {0}
 
 English:Finished Print: {0}
 Translated:Finished Print: {0}
+
+English:3D Layers
+Translated:3D Layers
+
+English:2D Layers
+Translated:2D Layers
 
