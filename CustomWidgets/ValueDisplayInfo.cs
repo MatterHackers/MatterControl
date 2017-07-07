@@ -37,13 +37,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 {
 	public class ValueDisplayInfo : GuiWidget
 	{
-		private string formatString;
 		private TextWidget numberDisplay;
 		private NumberEdit numberEdit;
 
-		public ValueDisplayInfo(string formatString, InteractionVolume interactionVolume)
+		public ValueDisplayInfo()
 		{
-			this.formatString = formatString;
 			double pointSize = 12;
 			numberDisplay = new TextWidget("-0000.00", 0, 0, pointSize)
 			{
@@ -61,7 +59,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			};
 			numberEdit.InternalNumberEdit.TextChanged += (s, e) =>
 			{
-				numberDisplay.Text = formatString.FormatWith(Value);
+				numberDisplay.Text = GetDisplayString?.Invoke(Value);
 				base.OnTextChanged(e);
 			};
 			numberEdit.InternalNumberEdit.MaxDecimalsPlaces = 2;
@@ -94,6 +92,20 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public Func<bool> ForceHide { get; set; }
 
+		Func<double, string> _GetDisplayString;
+		public Func<double, string> GetDisplayString
+		{
+			get { return _GetDisplayString; }
+			set
+			{
+				_GetDisplayString = value;
+				if (GetDisplayString != null)
+				{
+					numberDisplay.Text = GetDisplayString?.Invoke(Value);
+				}
+			}
+		}
+
 		public double Value
 		{
 			get
@@ -125,9 +137,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					timeSinceMouseUp.Reset();
 				}
 
-				base.Visible = value;
-				numberEdit.Visible = false;
-				numberDisplay.Visible = true;
+				if (base.Visible != value)
+				{
+					base.Visible = value;
+					numberEdit.Visible = false;
+					numberDisplay.Visible = true;
+				}
 			}
 		}
 

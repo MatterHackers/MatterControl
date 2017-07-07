@@ -59,6 +59,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public PrinterTabPage(PrinterSettings activeSettings, PrintItemWrapper printItem)
 		{
 			printer = ApplicationController.Instance.Printer;
+
 			gcodeOptions = printer.BedPlate.RendererOptions;
 
 			this.BackgroundColor = ApplicationController.Instance.Theme.TabBodyBackground;
@@ -131,6 +132,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				printer.BedPlate.RenderInfo.FeatureToEndOnRatio0To1 = layerRenderRatioSlider.SecondValue;
 
 				printer.BedPlate.ActiveLayerIndex = (int)(selectLayerSlider.Value + .5);
+
+				// show the layer info next to the slider
 
 				this.Invalidate();
 			};
@@ -206,6 +209,42 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			view3DContainer.AddChild(gcodeViewer);
 			view3DContainer.AddChild(layerRenderRatioSlider);
 			view3DContainer.AddChild(selectLayerSlider);
+
+			ValueDisplayInfo currentLayerInfo = new ValueDisplayInfo()
+			{
+				GetDisplayString = (value) => $"{value + 1}/{printer?.BedPlate?.LoadedGCode?.LayerCount}"
+			};
+
+			currentLayerInfo.EditComplete += (s, e) =>
+			{
+				printer.BedPlate.ActiveLayerIndex = (int)currentLayerInfo.Value;
+			};
+
+			printer.BedPlate.ActiveLayerChanged += (s, e) =>
+			{
+				UiThread.RunOnIdle(() =>
+				{
+					currentLayerInfo.Value = printer.BedPlate.ActiveLayerIndex;
+					currentLayerInfo.OriginRelativeParent = selectLayerSlider.OriginRelativeParent
+						+ new Vector2(-currentLayerInfo.Width, selectLayerSlider.PositionPixelsFromFirstValue - currentLayerInfo.Height / 2);
+					currentLayerInfo.Visible = true;
+				});
+			};
+
+			selectLayerSlider.MouseEnter += (s, e) =>
+			{
+				UiThread.RunOnIdle(() =>
+				{
+					currentLayerInfo.Value = printer.BedPlate.ActiveLayerIndex;
+					currentLayerInfo.OriginRelativeParent = selectLayerSlider.OriginRelativeParent
+						+ new Vector2(-currentLayerInfo.Width, selectLayerSlider.PositionPixelsFromFirstValue - currentLayerInfo.Height / 2);
+					currentLayerInfo.Visible = true;
+				});
+			};
+
+			currentLayerInfo.Visible = false;
+
+			view3DContainer.AddChild(currentLayerInfo);
 
 			printer.BedPlate.ActiveLayerChanged += ActiveLayer_Changed;
 
