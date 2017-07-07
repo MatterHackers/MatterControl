@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using MatterHackers.Agg;
@@ -143,27 +144,36 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			resetViewButton.Click += (s, e) => ResetView?.Invoke(this, null);
 			AddChild(resetViewButton);
 
+			var buttonGroupA = new ObservableCollection<GuiWidget>();
+
+
 			if (UserSettings.Instance.IsTouchScreen)
 			{
 				iconPath = Path.Combine("ViewTransformControls", "rotate.png");
 				rotateButton = buttonFactory.GenerateRadioButton("", StaticData.Instance.LoadIcon(iconPath, 32, 32));
+				rotateButton.SiblingRadioButtonList = buttonGroupA;
 				rotateButton.ToolTipText = "Rotate (Alt + Left Mouse)".Localize();
-				rotateButton.Margin = new BorderDouble(3);
+				rotateButton.Margin = 3;
 				rotateButton.Click += (s, e) => this.ActiveButton = ViewControls3DButtons.Rotate;
+				buttonGroupA.Add(rotateButton);
 				AddChild(rotateButton);
 
 				iconPath = Path.Combine("ViewTransformControls", "translate.png");
 				translateButton = buttonFactory.GenerateRadioButton("", StaticData.Instance.LoadIcon(iconPath, 32, 32));
+				translateButton.SiblingRadioButtonList = buttonGroupA;
 				translateButton.ToolTipText = "Move (Shift + Left Mouse)".Localize();
-				translateButton.Margin = new BorderDouble(3);
+				translateButton.Margin = 3;
 				translateButton.Click += (s, e) => this.ActiveButton = ViewControls3DButtons.Translate;
+				buttonGroupA.Add(translateButton);
 				AddChild(translateButton);
 
 				iconPath = Path.Combine("ViewTransformControls", "scale.png");
 				scaleButton = buttonFactory.GenerateRadioButton("", StaticData.Instance.LoadIcon(iconPath, 32, 32));
+				scaleButton.SiblingRadioButtonList = buttonGroupA;
 				scaleButton.ToolTipText = "Zoom (Ctrl + Left Mouse)".Localize();
 				scaleButton.Margin = 3;
 				scaleButton.Click += (s, e) => this.ActiveButton = ViewControls3DButtons.Scale;
+				buttonGroupA.Add(scaleButton);
 				AddChild(scaleButton);
 
 				rotateButton.Checked = true;
@@ -176,26 +186,34 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			iconPath = Path.Combine("ViewTransformControls", "partSelect.png");
 			partSelectButton = buttonFactory.GenerateRadioButton("", StaticData.Instance.LoadIcon(iconPath,32,32));
+			partSelectButton.SiblingRadioButtonList = buttonGroupA;
 			partSelectButton.ToolTipText = "Select Part".Localize();
 			partSelectButton.Visible = false;
-			partSelectButton.Margin = new BorderDouble(3);
+			partSelectButton.Margin = 3;
 			partSelectButton.Click += (s, e) => this.ActiveButton = ViewControls3DButtons.PartSelect;
+			buttonGroupA.Add(partSelectButton);
 			AddChild(partSelectButton);
+
+			var buttonGroupB = new ObservableCollection<GuiWidget>();
 
 			iconPath = Path.Combine("ViewTransformControls", "model.png");
 			var modelViewButton = buttonFactory.GenerateRadioButton("", StaticData.Instance.LoadIcon(iconPath, 32, 32));
+			modelViewButton.SiblingRadioButtonList = buttonGroupB;
 			modelViewButton.Name = "Model View Button";
+			modelViewButton.Checked = false;
 			modelViewButton.ToolTipText = "Model".Localize();
-			modelViewButton.Checked = true;
 			modelViewButton.Margin = 3;
 			modelViewButton.Click += SwitchModes_Click;
+			buttonGroupB.Add(modelViewButton);
 			AddChild(modelViewButton);
 
 			var layers3DButton = buttonFactory.GenerateRadioButton("", Path.Combine("ViewTransformControls", "3d.png"));
+			layers3DButton.SiblingRadioButtonList = buttonGroupB;
 			layers3DButton.Name = "Layers3D Button";
 			layers3DButton.ToolTipText = "3D Layers".Localize();
+			layers3DButton.Margin = 3;
 			layers3DButton.Click += SwitchModes_Click;
-			layers3DButton.Margin = new BorderDouble(3);
+			buttonGroupB.Add(layers3DButton);
 
 			if (!UserSettings.Instance.IsTouchScreen)
 			{
@@ -203,10 +221,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			var layers2DButton = buttonFactory.GenerateRadioButton("", Path.Combine("ViewTransformControls", "2d.png"));
+			layers2DButton.SiblingRadioButtonList = buttonGroupB;
 			layers2DButton.Name = "Layers2D Button";
 			layers2DButton.ToolTipText = "2D Layers".Localize();
-			layers2DButton.Margin = new BorderDouble(3);
+			layers2DButton.Margin = 3;
 			layers2DButton.Click += SwitchModes_Click;
+			buttonGroupB.Add(layers2DButton);
 			this.AddChild(layers2DButton);
 
 			OverflowButton = new OverflowDropdown(allowLightnessInvert: false)
@@ -216,6 +236,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Margin = 3
 			};
 			AddChild(OverflowButton);
+
+			this.ViewMode = PartViewMode.Model;
 		}
 
 		private void SwitchModes_Click(object sender, MouseEventArgs e)
