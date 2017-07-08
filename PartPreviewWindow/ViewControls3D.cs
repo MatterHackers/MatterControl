@@ -207,7 +207,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			buttonGroupB.Add(modelViewButton);
 			AddChild(modelViewButton);
 
-			var layers3DButton = buttonFactory.GenerateRadioButton("", Path.Combine("ViewTransformControls", "3d.png"));
+			iconPath = Path.Combine("ViewTransformControls", "3d.png");
+			var layers3DButton = buttonFactory.GenerateRadioButton("",  StaticData.Instance.LoadIcon(iconPath, 32, 32));
 			layers3DButton.SiblingRadioButtonList = buttonGroupB;
 			layers3DButton.Name = "Layers3D Button";
 			layers3DButton.ToolTipText = "3D Layers".Localize();
@@ -220,7 +221,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.AddChild(layers3DButton);
 			}
 
-			var layers2DButton = buttonFactory.GenerateRadioButton("", Path.Combine("ViewTransformControls", "2d.png"));
+			iconPath = Path.Combine("ViewTransformControls", "2d.png");
+			var layers2DButton = buttonFactory.GenerateRadioButton("",  StaticData.Instance.LoadIcon(iconPath, 32, 32));
 			layers2DButton.SiblingRadioButtonList = buttonGroupB;
 			layers2DButton.Name = "Layers2D Button";
 			layers2DButton.ToolTipText = "2D Layers".Localize();
