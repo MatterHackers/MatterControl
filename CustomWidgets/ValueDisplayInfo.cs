@@ -40,10 +40,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		private TextWidget numberDisplay;
 		private NumberEdit numberEdit;
 
-		public ValueDisplayInfo()
+		public ValueDisplayInfo(string defaultSizeString = "-0000.00", Agg.Font.Justification justification = Agg.Font.Justification.Left)
 		{
 			double pointSize = 12;
-			numberDisplay = new TextWidget("-0000.00", 0, 0, pointSize)
+			numberDisplay = new TextWidget(defaultSizeString, 0, 0, pointSize, justification: justification)
 			{
 				VAnchor = VAnchor.ParentBottom,
 				HAnchor = HAnchor.ParentLeft,
