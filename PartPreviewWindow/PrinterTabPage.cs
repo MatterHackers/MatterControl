@@ -46,6 +46,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		private View3DWidget modelViewer;
 		internal ViewGcodeBasic gcodeViewer;
+		internal GCode2DWidget gcode2DWidget;
+
 		private PrintItemWrapper printItem;
 		private ViewControls3D viewControls3D;
 
@@ -60,6 +62,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private TextWidget layerStartText;
 
 		private ValueDisplayInfo currentLayerInfo;
+
+		private Vector3 viewerVolume;
+		private Vector2 bedCenter;
 
 		public PrinterTabPage(PrinterSettings activeSettings, PrintItemWrapper printItem)
 		{
@@ -85,9 +90,36 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.ViewMode = e.ViewMode;
 			};
 
+			viewControls3D.TransformStateChanged += (s, e) =>
+			{
+				switch (e.TransformMode)
+				{
+					case ViewControls3DButtons.Translate:
+						if (gcode2DWidget != null)
+						{
+							gcode2DWidget.TransformState = GCode2DWidget.ETransformState.Move;
+						}
+						break;
+
+					case ViewControls3DButtons.Scale:
+						if (gcode2DWidget != null)
+						{
+							gcode2DWidget.TransformState = GCode2DWidget.ETransformState.Scale;
+						}
+						break;
+				}
+			};
+
 			viewControls3D.ResetView += (sender, e) =>
 			{
-				modelViewer.meshViewerWidget.ResetView();
+				if (gcode2DWidget.Visible)
+				{
+					gcode2DWidget.CenterPartInView();
+				}
+				else if (modelViewer.Visible)
+				{
+					modelViewer.meshViewerWidget.ResetView();
+				}
 			};
 			viewControls3D.OverflowButton.DynamicPopupContent = () =>
 			{
@@ -149,10 +181,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			SetSliderSizes();
 
+			this.viewerVolume = new Vector3(activeSettings.GetValue<Vector2>(SettingsKey.bed_size), buildHeight);
+			this.bedCenter = activeSettings.GetValue<Vector2>(SettingsKey.print_center);
+
 			// The 3D model view
 			modelViewer = new View3DWidget(printItem,
-				new Vector3(activeSettings.GetValue<Vector2>(SettingsKey.bed_size), buildHeight),
-				activeSettings.GetValue<Vector2>(SettingsKey.print_center),
+				this.viewerVolume,
+				this.bedCenter,
 				activeSettings.GetValue<BedShape>(SettingsKey.bed_shape),
 				View3DWidget.WindowMode.Embeded,
 				View3DWidget.AutoRotate.Disabled,
@@ -286,6 +321,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				},
 				this.GetRenderType,
 				MeshViewerWidget.GetMaterialColor);
+
+			// Close and remove any existing widget reference
+			gcode2DWidget?.Close();
+
+			// Create and append new widget
+			gcode2DWidget = new GCode2DWidget( new Vector2(viewerVolume.x, viewerVolume.y), this.bedCenter)
+			{
+				Visible = (this.ViewMode == PartViewMode.Layers2D)
+			};
+			view3DContainer.AddChild(gcode2DWidget);
+
+			viewControls3D.Layers2DButton.Enabled = true;
 		}
 
 		private RenderType GetRenderType()
@@ -390,21 +437,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						case PartViewMode.Layers2D:
 							UserSettings.Instance.set("LayerViewDefault", "2D Layer");
-							if (gcodeViewer.gcode2DWidget != null)
+							if (gcode2DWidget != null)
 							{
-								gcodeViewer.gcode2DWidget.Visible = true;
+								gcode2DWidget.Visible = true;
 
 								// HACK: Getting the Layer2D view to show content only works if CenterPartInView is called after the control is visible and after some cycles have passed
-								UiThread.RunOnIdle(gcodeViewer.gcode2DWidget.CenterPartInView);
+								UiThread.RunOnIdle(gcode2DWidget.CenterPartInView);
 							}
 							this.ShowSliceLayers = true;
 							break;
 
 						case PartViewMode.Layers3D:
 							UserSettings.Instance.set("LayerViewDefault", "3D Layer");
-							if (gcodeViewer.gcode2DWidget != null)
+							if (gcode2DWidget != null)
 							{
-								gcodeViewer.gcode2DWidget.Visible = false;
+								gcode2DWidget.Visible = false;
 							}
 							this.ShowSliceLayers = true;
 							break;

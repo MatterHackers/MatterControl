@@ -69,6 +69,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private RadioButton scaleButton;
 		private RadioButton partSelectButton;
 
+		public RadioButton Layers2DButton;
+
 		private EventHandler unregisterEvents;
 
 		private ViewControls3DButtons activeTransformState = ViewControls3DButtons.Rotate;
@@ -222,14 +224,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			iconPath = Path.Combine("ViewTransformControls", "2d.png");
-			var layers2DButton = buttonFactory.GenerateRadioButton("",  StaticData.Instance.LoadIcon(iconPath, 32, 32));
-			layers2DButton.SiblingRadioButtonList = buttonGroupB;
-			layers2DButton.Name = "Layers2D Button";
-			layers2DButton.ToolTipText = "2D Layers".Localize();
-			layers2DButton.Margin = 3;
-			layers2DButton.Click += SwitchModes_Click;
-			buttonGroupB.Add(layers2DButton);
-			this.AddChild(layers2DButton);
+			Layers2DButton = buttonFactory.GenerateRadioButton("",  StaticData.Instance.LoadIcon(iconPath, 32, 32));
+			Layers2DButton.SiblingRadioButtonList = buttonGroupB;
+			Layers2DButton.Name = "Layers2D Button";
+			Layers2DButton.ToolTipText = "2D Layers".Localize();
+			Layers2DButton.Enabled = false;
+			Layers2DButton.Margin = 3;
+			Layers2DButton.Click += SwitchModes_Click;
+			buttonGroupB.Add(Layers2DButton);
+			this.AddChild(Layers2DButton);
 
 			OverflowButton = new OverflowDropdown(allowLightnessInvert: false)
 			{
