@@ -4318,3 +4318,6 @@ Translated:This is a set of regular expressions to apply to lines prior to sendi
 English:This is a set of regular expressions to apply to lines after they are received from the printer. They will be applied in order to each line received.
 Translated:This is a set of regular expressions to apply to lines after they are received from the printer. They will be applied in order to each line received.
 
+English:Sign in to access your cloud printer profiles.\n\nOnce signed in you will be able to access:
+Translated:Sign in to access your cloud printer profiles.\n\nOnce signed in you will be able to access:
+
