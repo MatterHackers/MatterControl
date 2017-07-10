@@ -234,10 +234,9 @@
     <Compile Include="PartPreviewWindow\View3D\UndoCommands\InsertCommand.cs" />
     <Compile Include="PartPreviewWindow\View3D\UndoCommands\DeleteUndoCommand.cs" />
     <Compile Include="PartPreviewWindow\View3D\UndoCommands\GroupCommand.cs" />
-    <Compile Include="PartPreviewWindow\View3D\Gui3D\HeightValueDisplay.cs" />
     <Compile Include="PartPreviewWindow\View3D\Gui3D\SnapingIndicator.cs" />
     <Compile Include="PartPreviewWindow\View3D\Gui3D\SelectionShadow.cs" />
-    <Compile Include="PartPreviewWindow\View3D\Gui3D\UpArrow3D.cs" />
+    <Compile Include="PartPreviewWindow\View3D\Gui3D\MoveInZControl.cs" />
     <Compile Include="PartPreviewWindow\View3D\UndoCommands\TransformUndoCommand.cs" />
     <Compile Include="PartPreviewWindow\View3D\SceneActions.cs" />
     <Compile Include="PartPreviewWindow\View3D\SideBar\MirrorControls.cs" />

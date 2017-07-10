@@ -482,7 +482,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				MeshViewerWidget.SetMaterialColor(1, ActiveTheme.Instance.PrimaryAccentColor);
 			}, ref unregisterEvents);
 
-			meshViewerWidget.interactionVolumes.Add(new UpArrow3D(this));
+			meshViewerWidget.interactionVolumes.Add(new MoveInZControl(this));
 			meshViewerWidget.interactionVolumes.Add(new SelectionShadow(this));
 			meshViewerWidget.interactionVolumes.Add(new SnappingIndicators(this));
 
