@@ -68,8 +68,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private PrinterConfig printer;
 		private ViewControls3D viewControls3D;
 
-		private SystemWindow parentSystemWindow;
-
 		public ViewGcodeBasic(Vector3 viewerVolume, Vector2 bedCenter, BedShape bedShape, ViewControls3D viewControls3D)
 		{
 			printer = ApplicationController.Instance.Printer;
@@ -95,34 +93,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// TODO: Why do we clear GCode on AdvancedControlsPanelReloading - assume some slice settings should invalidate. If so, code should be more specific and bound to slice settings changed
 			ApplicationController.Instance.AdvancedControlsPanelReloading.RegisterEvent((s, e) => printer.BedPlate.GCodeRenderer?.Clear3DGCode(), ref unregisterEvents);
-		}
-
-		public override void OnLoad(EventArgs args)
-		{
-			// Find and hook the parent system window KeyDown event
-			if (this.Parents<SystemWindow>().FirstOrDefault() is SystemWindow systemWindow)
-			{
-				systemWindow.KeyDown += Parent_KeyDown;
-				parentSystemWindow = systemWindow;
-			}
-
-			base.OnLoad(args);
-		}
-
-		private void Parent_KeyDown(object sender, KeyEventArgs keyEvent)
-		{
-			if (this.Visible)
-			{
-				switch(keyEvent.KeyCode)
-				{
-					case Keys.Up:
-						printer.BedPlate.ActiveLayerIndex += 1;
-						break;
-					case Keys.Down:
-						printer.BedPlate.ActiveLayerIndex -= 1;
-						break;
-				}
-			}
 		}
 
 		private GCodeFile loadedGCode => printer.BedPlate.LoadedGCode;
@@ -248,13 +218,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public override void OnClosed(ClosedEventArgs e)
 		{
 			unregisterEvents?.Invoke(this, null);
-
-			// Find and unhook the parent system window KeyDown event
-			if (parentSystemWindow != null)
-			{
-				parentSystemWindow.KeyDown -= Parent_KeyDown;
-			}
-
 			base.OnClosed(e);
 		}
 	}

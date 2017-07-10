@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.GCodeVisualizer;
@@ -65,6 +66,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private Vector3 viewerVolume;
 		private Vector2 bedCenter;
+
+		private SystemWindow parentSystemWindow;
 
 		public PrinterTabPage(PrinterSettings activeSettings, PrintItemWrapper printItem)
 		{
@@ -473,7 +476,31 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			ApplicationController.Instance.ActiveView3DWidget = modelViewer;
 			LoadActivePrintItem();
+
+			// Find and hook the parent system window KeyDown event
+			if (this.Parents<SystemWindow>().FirstOrDefault() is SystemWindow systemWindow)
+			{
+				systemWindow.KeyDown += Parent_KeyDown;
+				parentSystemWindow = systemWindow;
+			}
+
 			base.OnLoad(args);
+		}
+
+		private void Parent_KeyDown(object sender, KeyEventArgs keyEvent)
+		{
+			if (gcodeViewer.Visible)
+			{
+				switch (keyEvent.KeyCode)
+				{
+					case Keys.Up:
+						printer.BedPlate.ActiveLayerIndex += 1;
+						break;
+					case Keys.Down:
+						printer.BedPlate.ActiveLayerIndex -= 1;
+						break;
+				}
+			}
 		}
 
 		public override void OnDraw(Graphics2D graphics2D)
@@ -500,6 +527,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (modelViewer?.meshViewerWidget != null)
 			{
 				modelViewer.meshViewerWidget.TrackballTumbleWidget.DrawGlContent -= TrackballTumbleWidget_DrawGlContent;
+			}
+
+			// Find and unhook the parent system window KeyDown event
+			if (parentSystemWindow != null)
+			{
+				parentSystemWindow.KeyDown -= Parent_KeyDown;
 			}
 
 			printer.BedPlate.ActiveLayerChanged -= ActiveLayer_Changed;
