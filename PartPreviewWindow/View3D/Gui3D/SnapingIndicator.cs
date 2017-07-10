@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			this.view3DWidget = view3DWidget;
 			this.DrawOnTop = true;
-			MeshViewerToDrawWith.AfterDraw += MeshViewerToDrawWith_Draw;
+			MeshViewerToDrawWith.ParentSurface.AfterDraw += MeshViewerToDrawWith_Draw;
 		}
 
 		public override void SetPosition(IObject3D selectedItem)

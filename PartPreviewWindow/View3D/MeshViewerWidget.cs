@@ -64,13 +64,15 @@ namespace MatterHackers.MeshVisualizer
 		}
 	}
 
-	public class MeshViewerWidget : GuiWidget
+	public class MeshViewerWidget : GuiWidget, IInteractionVolumeContext
 	{
 		static public ImageBuffer BedImage = null;
 		public List<InteractionVolume> interactionVolumes = new List<InteractionVolume>();
 		public InteractionVolume SelectedInteractionVolume { get; set; } = null;
 		public InteractionVolume HoveredInteractionVolume { get; set; } = null;		
-		public bool MouseDownOnInteractionVolume { get { return SelectedInteractionVolume != null; } }
+		public bool MouseDownOnInteractionVolume => SelectedInteractionVolume != null;
+
+		public GuiWidget ParentSurface { get; set; }
 
 		public PartProcessingInfo partProcessingInfo;
 		private static ImageBuffer lastCreatedBedImage = new ImageBuffer();
@@ -119,6 +121,12 @@ namespace MatterHackers.MeshVisualizer
 			this.trackballTumbleWidget.DrawGlContent += this.trackballTumbleWidget_DrawGlContent;
 
 			this.World = worldView;
+		}
+
+		public override void OnParentChanged(EventArgs e)
+		{
+			this.ParentSurface = this.Parent;
+			base.OnParentChanged(e);
 		}
 
 		public WorldView World { get; }
