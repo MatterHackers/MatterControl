@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Linq;
 using MatterHackers.Agg;
+using MatterHackers.Agg.OpenGlGui;
 using MatterHackers.Agg.UI;
 using MatterHackers.GCodeVisualizer;
 using MatterHackers.Localizations;
@@ -45,8 +46,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class PrinterTabPage : GuiWidget
 	{
-		private View3DWidget modelViewer;
-		internal ViewGcodeBasic gcodeViewer;
+		internal View3DWidget modelViewer;
 		internal GCode2DWidget gcode2DWidget;
 
 		private PrintItemWrapper printItem;
@@ -121,12 +121,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 				else if (modelViewer.Visible)
 				{
-					modelViewer.meshViewerWidget.ResetView();
+					this.modelViewer.ResetView();
 				}
 			};
 			viewControls3D.OverflowButton.DynamicPopupContent = () =>
 			{
-				if (gcodeViewer.Visible)
+				if (modelViewer.gcodeViewer.Visible)
 				{
 					return this.ShowGCodeOverflowMenu();
 				}
@@ -198,8 +198,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				ApplicationController.Instance.Theme,
 				View3DWidget.OpenMode.Editing);
 
-			modelViewer.meshViewerWidget.TrackballTumbleWidget.DrawGlContent += TrackballTumbleWidget_DrawGlContent;
-
 			modelViewer.BoundsChanged += (s, e) =>
 			{
 				SetSliderSizes();
@@ -225,16 +223,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			leftToRight.AddChild(view3DContainer);
 
-			// The slice layers view
-			gcodeViewer = new ViewGcodeBasic(
-				new Vector3(activeSettings.GetValue<Vector2>(SettingsKey.bed_size), buildHeight),
-				activeSettings.GetValue<Vector2>(SettingsKey.print_center),
-				activeSettings.GetValue<BedShape>(SettingsKey.bed_shape),
-				viewControls3D);
-			gcodeViewer.AnchorAll();
-			this.gcodeViewer.Visible = false;
-
-			view3DContainer.AddChild(gcodeViewer);
 			view3DContainer.AddChild(layerRenderRatioSlider);
 			view3DContainer.AddChild(selectLayerSlider);
 			view3DContainer.AddChild(layerCountText);
@@ -266,7 +254,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (ApplicationController.Instance.PartPreviewState.RotationMatrix == Matrix4X4.Identity)
 			{
-				modelViewer.meshViewerWidget.ResetView();
+				this.modelViewer.ResetView();
 
 				ApplicationController.Instance.PartPreviewState.RotationMatrix = modelViewer.meshViewerWidget.World.RotationMatrix;
 				ApplicationController.Instance.PartPreviewState.TranslationMatrix = modelViewer.meshViewerWidget.World.TranslationMatrix;
@@ -406,7 +394,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			set
 			{
 				showSliceLayers = value;
-				gcodeViewer.Visible = value;
+				modelViewer.gcodeViewer.Visible = value;
 
 				modelViewer.meshViewerWidget.IsActive = !value;
 
@@ -489,7 +477,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void Parent_KeyDown(object sender, KeyEventArgs keyEvent)
 		{
-			if (gcodeViewer.Visible)
+			if (modelViewer.gcodeViewer.Visible)
 			{
 				switch (keyEvent.KeyCode)
 				{
@@ -508,7 +496,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			bool printerIsRunningPrint = PrinterConnection.Instance.PrinterIsPaused || PrinterConnection.Instance.PrinterIsPrinting;
 			if (gcodeOptions.SyncToPrint
 				&& printerIsRunningPrint
-				&& gcodeViewer.Visible)
+				&& modelViewer.gcodeViewer.Visible)
 			{
 				SetAnimationPosition();
 				this.Invalidate();
@@ -524,11 +512,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			ApplicationController.Instance.PartPreviewState.RotationMatrix = visibleWidget.World.RotationMatrix;
 			ApplicationController.Instance.PartPreviewState.TranslationMatrix = visibleWidget.World.TranslationMatrix;
 
-			if (modelViewer?.meshViewerWidget != null)
-			{
-				modelViewer.meshViewerWidget.TrackballTumbleWidget.DrawGlContent -= TrackballTumbleWidget_DrawGlContent;
-			}
-
 			// Find and unhook the parent system window KeyDown event
 			if (parentSystemWindow != null)
 			{
@@ -542,16 +525,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			selectLayerSlider.MouseEnter -= SetPositionAndValue;
 
 			base.OnClosed(e);
-		}
-
-		private void TrackballTumbleWidget_DrawGlContent(object sender, EventArgs e)
-		{
-			if (loadedGCode == null || printer.BedPlate.GCodeRenderer == null || !gcodeViewer.Visible)
-			{
-				return;
-			}
-
-			printer.BedPlate.Render3DLayerFeatures();
 		}
 
 		internal GuiWidget ShowGCodeOverflowMenu()

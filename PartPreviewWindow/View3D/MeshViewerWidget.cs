@@ -87,11 +87,9 @@ namespace MatterHackers.MeshVisualizer
 
 		public double SnapGridDistance { get; set; } = 1;
 
-		private TrackballTumbleWidget trackballTumbleWidget;
-
 		private int volumeIndexWithMouseDown = -1;
 		
-		public MeshViewerWidget(Vector3 displayVolume, Vector2 bedCenter, BedShape bedShape, string startingTextMessage = "")
+		public MeshViewerWidget(Vector3 displayVolume, Vector2 bedCenter, BedShape bedShape, TrackballTumbleWidget trackballTumbleWidget, WorldView worldView, string startingTextMessage = "")
 		{
 			Scene.SelectionChanged += (sender, e) =>
 			{
@@ -104,16 +102,7 @@ namespace MatterHackers.MeshVisualizer
 			BedColor = new RGBA_Floats(.8, .8, .8, .7).GetAsRGBA_Bytes();
 			BuildVolumeColor = new RGBA_Floats(.2, .8, .3, .2).GetAsRGBA_Bytes();
 
-			trackballTumbleWidget = new TrackballTumbleWidget(this.World);
-			trackballTumbleWidget.DrawRotationHelperCircle = false;
-			trackballTumbleWidget.DrawGlContent += trackballTumbleWidget_DrawGlContent;
-			trackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Rotation;
-
-			AddChild(trackballTumbleWidget);
-
 			CreatePrintBed(displayVolume, bedCenter, bedShape);
-
-			trackballTumbleWidget.AnchorAll();
 
 			partProcessingInfo = new PartProcessingInfo(startingTextMessage);
 
@@ -125,9 +114,14 @@ namespace MatterHackers.MeshVisualizer
 			SetMaterialColor(1, ActiveTheme.Instance.PrimaryAccentColor);
 
 			this.AddChild(labelContainer);
+
+			this.trackballTumbleWidget = trackballTumbleWidget;
+			this.trackballTumbleWidget.DrawGlContent += this.trackballTumbleWidget_DrawGlContent;
+
+			this.World = worldView;
 		}
 
-		public WorldView World { get; } = new WorldView(0, 0);
+		public WorldView World { get; }
 
 		public event EventHandler LoadDone;
 
@@ -253,14 +247,6 @@ namespace MatterHackers.MeshVisualizer
 						renderTransfrom.MeshData.MarkAsChanged();
 					}
 				}
-			}
-		}
-
-		public TrackballTumbleWidget TrackballTumbleWidget
-		{
-			get
-			{
-				return trackballTumbleWidget;
 			}
 		}
 
@@ -492,14 +478,6 @@ namespace MatterHackers.MeshVisualizer
 		{
 			base.OnMouseDown(mouseEvent);
 
-			if (trackballTumbleWidget.MouseCaptured)
-			{
-				if (trackballTumbleWidget.TransformState == TrackBallController.MouseDownType.Rotation || mouseEvent.Button == MouseButtons.Right)
-				{
-					trackballTumbleWidget.DrawRotationHelperCircle = true;
-				}
-			}
-
 			int volumeHitIndex;
 			Ray ray = this.World.GetRayForLocalBounds(mouseEvent.Position);
 			IntersectInfo info;
@@ -563,7 +541,6 @@ namespace MatterHackers.MeshVisualizer
 
 		public override void OnMouseUp(MouseEventArgs mouseEvent)
 		{
-			trackballTumbleWidget.DrawRotationHelperCircle = false;
 			Invalidate();
 
 			if(SuppressUiVolumes)
@@ -596,17 +573,6 @@ namespace MatterHackers.MeshVisualizer
 			}
 
 			base.OnMouseUp(mouseEvent);
-		}
-
-		public void ResetView()
-		{
-			trackballTumbleWidget.ZeroVelocity();
-
-			this.World.Reset();
-			this.World.Scale = .03;
-			this.World.Translate(-new Vector3(BedCenter));
-			this.World.Rotate(Quaternion.FromEulerAngles(new Vector3(0, 0, MathHelper.Tau / 16)));
-			this.World.Rotate(Quaternion.FromEulerAngles(new Vector3(-MathHelper.Tau * .19, 0, 0)));
 		}
 
 		private void CreateCircularBedGridImage(int linesInX, int linesInY, int increment = 1)
@@ -736,6 +702,7 @@ namespace MatterHackers.MeshVisualizer
 		}
 
 		private string progressReportingPrimaryTask = "";
+		private TrackballTumbleWidget trackballTumbleWidget;
 
 		public void BeginProgressReporting(string taskDescription)
 		{

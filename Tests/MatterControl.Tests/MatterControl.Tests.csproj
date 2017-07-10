@@ -110,6 +110,10 @@
       <Project>{74F6BB6C-9D02-4512-A59A-21940E35C532}</Project>
       <Name>Gui</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Submodules\agg-sharp\OpenGlGui\OpenGlGui.csproj">
+      <Project>{C958F745-156E-4BDC-A24A-3721C7BE7B8A}</Project>
+      <Name>OpenGlGui</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Submodules\agg-sharp\PlatformAbstract\PlatformAbstract.csproj">
       <Project>{3E4AABA8-D85F-4922-88C6-5C1B2D2308FB}</Project>
       <Name>PlatformAbstract</Name>

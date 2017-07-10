@@ -95,7 +95,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			ApplicationController.Instance.AdvancedControlsPanelReloading.RegisterEvent((s, e) => printer.BedPlate.GCodeRenderer?.Clear3DGCode(), ref unregisterEvents);
 		}
 
-		private GCodeFile loadedGCode => printer.BedPlate.LoadedGCode;
+		internal GCodeFile loadedGCode => printer.BedPlate.LoadedGCode;
 
 		internal void CreateAndAddChildren()
 		{
@@ -173,7 +173,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				});
 			}
 		}
-
 
 		internal void LoadProgress_Changed((double progress0To1, string processingState) progress, CancellationTokenSource continueProcessing)
 		{
