@@ -29,7 +29,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Raft / Priming Tab");
 				testRunner.ClickByName("Create Raft Checkbox");
 
-				testRunner.ClickByName("Toggle Layer View Button");
 				testRunner.ClickByName("Generate Gcode Button");
 				testRunner.Delay(() => MatterControlUtilities.CompareExpectedSliceSettingValueWithActualVaue("enableRaft", "True"), 10);
 
@@ -59,8 +58,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.Type("4;2;a;not;6");
 
 					testRunner.AddDefaultFileToBedplate();
-
-					testRunner.ClickByName("Toggle Layer View Button");
 
 					testRunner.ClickByName("Generate Gcode Button");
 
@@ -102,8 +99,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.AddDefaultFileToBedplate();
 
-					testRunner.ClickByName("Toggle Layer View Button");
-
 					testRunner.ClickByName("Generate Gcode Button");
 					testRunner.ClickByName("View3D Overflow Menu");
 					testRunner.ClickByName("Sync To Print Checkbox");
@@ -143,12 +138,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			// close the pause dialog pop-up
 			testRunner.ClickByName("Yes Button");
 
-			GuiWidget layerNumber = testRunner.GetWidgetByName("Current GCode Layer Edit", out _, 20);
+			var printer = ApplicationController.Instance.Printer;
 
-			layerNumber.Invalidate();
-			testRunner.Delay(() => layerNumber.Text == indexToWaitFor.ToString(), 2);
+			testRunner.Delay(() => printer.BedPlate.ActiveLayerIndex + 1 == indexToWaitFor, 30, 500);
 
-			Assert.AreEqual(indexToWaitFor.ToString(), layerNumber.Text);
+			Assert.AreEqual(indexToWaitFor, printer.BedPlate.ActiveLayerIndex + 1);
 			testRunner.ClickByName("Resume Button");
 			testRunner.Delay(.1);
 		}
