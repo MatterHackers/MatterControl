@@ -222,7 +222,6 @@ Advanced
     Single Print
       Settings Will Clear at End of Print
         spiral_vase
-        bottom_clip_amount
         layer_to_pause
   Filament
     Material

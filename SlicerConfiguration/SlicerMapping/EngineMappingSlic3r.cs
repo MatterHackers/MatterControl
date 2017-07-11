@@ -65,7 +65,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				"infill_type",
 				"create_raft",
 				"z_gap",
-				SettingsKey.bottom_clip_amount,
 				"gcode_output_type",
 				"raft_extra_distance_around_part",
 				"output_only_first_layer",

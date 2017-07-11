@@ -53,7 +53,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string bed_shape = nameof(bed_shape);
 		public const string bed_size = nameof(bed_size);
 		public const string bed_temperature = nameof(bed_temperature);
-		public const string bottom_clip_amount = nameof(bottom_clip_amount);
 		public const string build_height = nameof(build_height);
 		public const string cancel_gcode = nameof(cancel_gcode);
 		public const string com_port = nameof(com_port);

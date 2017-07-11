@@ -1553,8 +1553,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (this.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None)
 			{
-				if (CurrentSelectInfo.DownOnPart
-				&& CurrentSelectInfo.LastMoveDelta != Vector3.Zero)
+				if (Scene.SelectedItem != null
+					&& CurrentSelectInfo.DownOnPart
+					&& CurrentSelectInfo.LastMoveDelta != Vector3.Zero)
 				{
 					if (Scene.SelectedItem.Matrix != transformOnMouseDown)
 					{

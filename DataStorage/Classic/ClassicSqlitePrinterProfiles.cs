@@ -134,7 +134,6 @@ namespace MatterHackers.MatterControl.DataStorage.ClassicDB
 
 			// make sure we clear the one time settings
 			printerSettings.OemLayer[SettingsKey.spiral_vase] = "";
-			printerSettings.OemLayer[SettingsKey.bottom_clip_amount] = "";
 			printerSettings.OemLayer[SettingsKey.layer_to_pause] = "";
 
 			// TODO: Where can we find CalibrationFiiles in the current model?

@@ -103,7 +103,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				new MappedSetting("wipe_shield_distance", "wipeShieldDistanceFromObject"),
 				new MappedSetting("wipe_tower_size", "wipeTowerSize"),
 				new MappedSetting("z_offset", "zOffset"),
-				new MappedSetting(SettingsKey.bottom_clip_amount, "bottomClipAmount"),
 				new MappedSetting(SettingsKey.filament_diameter, "filamentDiameter"),
 				new MappedSetting(SettingsKey.layer_height, "layerThickness"),
 				new MappedSetting(SettingsKey.nozzle_diameter, "extrusionWidth"),
@@ -120,7 +119,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				new MappedToBoolString(SettingsKey.merge_overlapping_lines, "MergeOverlappingLines"),
 				new MappedToBoolString(SettingsKey.fill_thin_gaps, "fillThinGaps"),
 				new MappedToBoolString(SettingsKey.spiral_vase, "continuousSpiralOuterPerimeter"),
-				new MapPositionToPlaceObjectCenter(SettingsKey.print_center, "positionToPlaceObjectCenter"),
 				new MapStartGCode(SettingsKey.start_gcode, "startCode", true),
 				new MapLayerChangeGCode("layer_gcode", "layerChangeCode"),
 				new ScaledSingleNumber("fill_density", "infillPercent", 100),
@@ -248,24 +246,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					}
 
 					return ((int)(linespacing * 1000)).ToString();
-				}
-			}
-		}
-
-		public class MapPositionToPlaceObjectCenter : MappedSetting
-		{
-			public MapPositionToPlaceObjectCenter(string canonicalSettingsName, string exportedName)
-				: base(canonicalSettingsName, exportedName)
-			{
-			}
-
-			public override string Value
-			{
-				get
-				{
-					Vector2 PrinteCenter = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center);
-
-					return "[{0},{1}]".FormatWith(PrinteCenter.x, PrinteCenter.y);
 				}
 			}
 		}
