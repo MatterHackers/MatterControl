@@ -36,7 +36,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class GridOptionsPanel : FlowLayoutWidget, IIgnoredPopupChild
 	{
-		public GridOptionsPanel(MeshViewerWidget meshViewerWidget) : base(FlowDirection.TopToBottom)
+		public GridOptionsPanel(InteractionLayer interactionLayer) : base(FlowDirection.TopToBottom)
 		{
 			this.HAnchor = HAnchor.ParentLeftRight;
 			this.Padding = 10;
@@ -66,14 +66,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			foreach (var snapSetting in snapSettings)
 			{
 				MenuItem newItem = dropDownList.AddItem(snapSetting.Value);
-				if (meshViewerWidget.SnapGridDistance == snapSetting.Key)
+				if (interactionLayer.SnapGridDistance == snapSetting.Key)
 				{
 					dropDownList.SelectedLabel = snapSetting.Value;
 				}
 
 				newItem.Selected += (sender, e) =>
 				{
-					meshViewerWidget.SnapGridDistance = snapSetting.Key;
+					interactionLayer.SnapGridDistance = snapSetting.Key;
 				};
 			}
 			this.AddChild(dropDownList);

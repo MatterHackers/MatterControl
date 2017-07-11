@@ -43,11 +43,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private View3DWidget view3DWidget;
 
 		public SnappingIndicators(View3DWidget view3DWidget)
-			: base(null, view3DWidget.meshViewerWidget)
+			: base(null, view3DWidget.InteractionLayer)
 		{
 			this.view3DWidget = view3DWidget;
 			this.DrawOnTop = true;
-			MeshViewerToDrawWith.ParentSurface.AfterDraw += MeshViewerToDrawWith_Draw;
+			InteractionContext.GuiSurface.AfterDraw += MeshViewerToDrawWith_Draw;
 		}
 
 		public override void SetPosition(IObject3D selectedItem)
@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			MeshSelectInfo meshSelectInfo = view3DWidget.CurrentSelectInfo;
 
-			var world = MeshViewerToDrawWith.World;
+			var world = InteractionContext.World;
 
 			switch (meshSelectInfo.HitQuadrant)
 			{
@@ -117,8 +117,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void MeshViewerToDrawWith_Draw(object drawingWidget, DrawEventArgs drawEvent)
 		{
-			if (MeshViewerToDrawWith.Scene.HasSelection
-				&& view3DWidget.meshViewerWidget.SnapGridDistance > 0
+			if (InteractionContext.Scene.HasSelection
+				&& InteractionContext.SnapGridDistance > 0
 				&& view3DWidget.CurrentSelectInfo.DownOnPart)
 			{
 				if (drawEvent != null)

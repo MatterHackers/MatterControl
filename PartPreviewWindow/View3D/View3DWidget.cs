@@ -134,7 +134,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				AxisAlignedBoundingBox bounds = trackingObject.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 				Vector3 renderPosition = bounds.Center;
-				Vector2 cornerScreenSpace = view3DWidget.meshViewerWidget.World.GetScreenPosition(renderPosition) - new Vector2(40, 20);
+				Vector2 cornerScreenSpace = view3DWidget.World.GetScreenPosition(renderPosition) - new Vector2(40, 20);
 
 				e.graphics2D.PushTransform();
 				Affine currentGraphics2DTransform = e.graphics2D.GetTransform();
@@ -169,7 +169,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		}
 	}
 
-	public class View3DWidget : GuiWidget
+	public partial class View3DWidget : GuiWidget
 	{
 		private bool DoBooleanTest = false;
 		private bool deferEditorTillMouseUp = false;
@@ -237,13 +237,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private PrinterConfig printer;
 
 		// TODO: Make dynamic
-		public WorldView World { get; }  = ApplicationController.Instance.Printer.BedPlate.World;
+		public WorldView World { get; } = ApplicationController.Instance.Printer.BedPlate.World;
 
 		public TrackballTumbleWidget TrackballTumbleWidget { get; }
 
 		private Vector2 bedCenter;
 
 		internal ViewGcodeBasic gcodeViewer;
+
+		public InteractionLayer InteractionLayer { get; }
 
 		public View3DWidget(PrintItemWrapper printItemWrapper, Vector3 viewerVolume, Vector2 bedCenter, BedShape bedShape, WindowMode windowType, AutoRotate autoRotate, ViewControls3D viewControls3D, ThemeConfig theme, OpenMode openMode = OpenMode.Viewing)
 		{
@@ -257,11 +259,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			this.TrackballTumbleWidget.AnchorAll();
 
+			this.InteractionLayer = new InteractionLayer(this.World)
+			{
+				Name = "InteractionLayer",
+			};
+			this.InteractionLayer.AnchorAll();
+
 			this.viewControls3D = viewControls3D;
 			this.theme = theme;
 			this.openMode = openMode;
 			allowAutoRotate = (autoRotate == AutoRotate.Enabled);
-			meshViewerWidget = new MeshViewerWidget(viewerVolume, bedCenter, bedShape, this.TrackballTumbleWidget, this.World);
+			meshViewerWidget = new MeshViewerWidget(viewerVolume, bedCenter, bedShape, this.TrackballTumbleWidget, this.InteractionLayer);
 			this.printItemWrapper = printItemWrapper;
 
 			ActiveSliceSettings.SettingChanged.RegisterEvent(CheckSettingChanged, ref unregisterEvents);
@@ -282,18 +290,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Max_FitToChildren_ParentHeight
 			};
 
-			var centerPartPreviewAndControls = new GuiWidget()
-			{
-				Name = "centerPartPreviewAndControls",
-			};
-			centerPartPreviewAndControls.AnchorAll();
-
 			var smallMarginButtonFactory = ApplicationController.Instance.Theme.BreadCrumbButtonFactorySmallMargins;
 
 			PutOemImageOnBed();
 
 			meshViewerWidget.AnchorAll();
-			centerPartPreviewAndControls.AddChild(meshViewerWidget);
+			this.InteractionLayer.AddChild(meshViewerWidget);
 
 			// The slice layers view
 			gcodeViewer = new ViewGcodeBasic(
@@ -304,10 +306,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			gcodeViewer.AnchorAll();
 			this.gcodeViewer.Visible = false;
 
-			centerPartPreviewAndControls.AddChild(gcodeViewer);
-			centerPartPreviewAndControls.AddChild(this.TrackballTumbleWidget);
+			this.InteractionLayer.AddChild(gcodeViewer);
+			this.InteractionLayer.AddChild(this.TrackballTumbleWidget);
 
-			mainContainerTopToBottom.AddChild(centerPartPreviewAndControls);
+			mainContainerTopToBottom.AddChild(this.InteractionLayer);
 
 			var buttonBottomPanel = new FlowLayoutWidget(FlowDirection.LeftToRight)
 			{
@@ -511,14 +513,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				MeshViewerWidget.SetMaterialColor(1, ActiveTheme.Instance.PrimaryAccentColor);
 			}, ref unregisterEvents);
 
-			meshViewerWidget.interactionVolumes.Add(new MoveInZControl(this));
-			meshViewerWidget.interactionVolumes.Add(new SelectionShadow(this));
-			meshViewerWidget.interactionVolumes.Add(new SnappingIndicators(this));
+			this.InteractionLayer.InteractionVolumes.Add(new MoveInZControl(this));
+			this.InteractionLayer.InteractionVolumes.Add(new SelectionShadow(this));
+			this.InteractionLayer.InteractionVolumes.Add(new SnappingIndicators(this));
 
-			PluginFinder<InteractionVolumePlugin> InteractionVolumePlugins = new PluginFinder<InteractionVolumePlugin>();
-			foreach (InteractionVolumePlugin plugin in InteractionVolumePlugins.Plugins)
+			PluginFinder<InteractionVolumePlugin> interactionVolumePlugins = new PluginFinder<InteractionVolumePlugin>();
+			foreach (InteractionVolumePlugin plugin in interactionVolumePlugins.Plugins)
 			{
-				meshViewerWidget.interactionVolumes.Add(plugin.CreateInteractionVolume(this));
+				this.InteractionLayer.InteractionVolumes.Add(plugin.CreateInteractionVolume(this));
 			}
 
 			if (DoBooleanTest)
@@ -1036,7 +1038,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				var selectedItem = Scene.SelectedItem;
 
-				foreach (InteractionVolume volume in meshViewerWidget.interactionVolumes)
+				foreach (InteractionVolume volume in this.InteractionLayer.InteractionVolumes)
 				{
 					volume.SetPosition(selectedItem);
 				}
@@ -1269,7 +1271,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						&& ModifierKeys != Keys.Control
 						&& ModifierKeys != Keys.Alt))
 				{
-					if (!meshViewerWidget.MouseDownOnInteractionVolume)
+					if (!this.InteractionLayer.MouseDownOnInteractionVolume)
 					{
 						meshViewerWidget.SuppressUiVolumes = true;
 
@@ -1400,7 +1402,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				Vector3 delta = info.HitPosition - CurrentSelectInfo.PlaneDownHitPos;
 
-				double snapGridDistance = meshViewerWidget.SnapGridDistance;
+				double snapGridDistance = this.InteractionLayer.SnapGridDistance;
 				if (snapGridDistance > 0)
 				{
 					// snap this position to the grid
@@ -1697,7 +1699,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					hasDrawn = false;
 					timeSinceLastSpin.Restart();
 
-					Quaternion currentRotation = meshViewerWidget.World.RotationMatrix.GetRotation();
+					Quaternion currentRotation = this.World.RotationMatrix.GetRotation();
 					Quaternion invertedRotation = Quaternion.Invert(currentRotation);
 
 					Quaternion rotateAboutZ = Quaternion.FromEulerAngles(new Vector3(0, 0, .01));
@@ -2419,7 +2421,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var renderOptions = CreateRenderTypeRadioButtons();
 			popupContainer.AddChild(renderOptions);
 
-			popupContainer.AddChild(new GridOptionsPanel(meshViewer));
+			popupContainer.AddChild(new GridOptionsPanel(this.InteractionLayer));
 
 			return popupContainer;
 		}

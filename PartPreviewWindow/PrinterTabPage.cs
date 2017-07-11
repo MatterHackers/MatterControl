@@ -256,13 +256,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				this.modelViewer.ResetView();
 
-				ApplicationController.Instance.PartPreviewState.RotationMatrix = modelViewer.meshViewerWidget.World.RotationMatrix;
-				ApplicationController.Instance.PartPreviewState.TranslationMatrix = modelViewer.meshViewerWidget.World.TranslationMatrix;
+				ApplicationController.Instance.PartPreviewState.RotationMatrix = modelViewer.World.RotationMatrix;
+				ApplicationController.Instance.PartPreviewState.TranslationMatrix = modelViewer.World.TranslationMatrix;
 			}
 			else
 			{
-				modelViewer.meshViewerWidget.World.RotationMatrix = ApplicationController.Instance.PartPreviewState.RotationMatrix;
-				modelViewer.meshViewerWidget.World.TranslationMatrix = ApplicationController.Instance.PartPreviewState.TranslationMatrix;
+				modelViewer.World.RotationMatrix = ApplicationController.Instance.PartPreviewState.RotationMatrix;
+				modelViewer.World.TranslationMatrix = ApplicationController.Instance.PartPreviewState.TranslationMatrix;
 			}
 
 			printer.BedPlate.LoadedGCodeChanged += BedPlate_LoadedGCodeChanged;
@@ -508,9 +508,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public override void OnClosed(ClosedEventArgs e)
 		{
 			// Store active transforms on close
-			var visibleWidget = modelViewer.meshViewerWidget;
-			ApplicationController.Instance.PartPreviewState.RotationMatrix = visibleWidget.World.RotationMatrix;
-			ApplicationController.Instance.PartPreviewState.TranslationMatrix = visibleWidget.World.TranslationMatrix;
+			ApplicationController.Instance.PartPreviewState.RotationMatrix = modelViewer.World.RotationMatrix;
+			ApplicationController.Instance.PartPreviewState.TranslationMatrix = modelViewer.World.TranslationMatrix;
 
 			// Find and unhook the parent system window KeyDown event
 			if (parentSystemWindow != null)

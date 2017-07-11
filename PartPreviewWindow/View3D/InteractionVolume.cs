@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Transform;
@@ -52,7 +53,7 @@ namespace MatterHackers.MeshVisualizer
 		public InteractionVolume(IPrimitive collisionVolume, IInteractionVolumeContext meshViewerToDrawWith)
 		{
 			this.CollisionVolume = collisionVolume;
-			this.MeshViewerToDrawWith = meshViewerToDrawWith;
+			this.InteractionContext = meshViewerToDrawWith;
 		}
 
 		public IPrimitive CollisionVolume { get; set; }
@@ -76,7 +77,7 @@ namespace MatterHackers.MeshVisualizer
 			}
 		}
 
-		protected IInteractionVolumeContext MeshViewerToDrawWith { get; }
+		protected IInteractionVolumeContext InteractionContext { get; }
 		protected double SecondsToShowNumberEdit { get; private set; } = 4;
 		protected Stopwatch timeSinceMouseUp { get; private set; } = new Stopwatch();
 
@@ -136,13 +137,13 @@ namespace MatterHackers.MeshVisualizer
 
 		public void Invalidate()
 		{
-			MeshViewerToDrawWith.ParentSurface.Invalidate();
+			InteractionContext.GuiSurface.Invalidate();
 		}
 
 		public virtual void OnMouseDown(MouseEvent3DArgs mouseEvent3D)
 		{
 			MouseDownOnControl = true;
-			MeshViewerToDrawWith.ParentSurface.Invalidate();
+			InteractionContext.GuiSurface.Invalidate();
 		}
 
 		public virtual void OnMouseMove(MouseEvent3DArgs mouseEvent3D)
@@ -167,6 +168,8 @@ namespace MatterHackers.MeshVisualizer
 		WorldView World { get; }
 		double SnapGridDistance { get; }
 
-		GuiWidget ParentSurface { get; }
+		GuiWidget GuiSurface { get; }
+
+		List<InteractionVolume> InteractionVolumes { get; }
 	}
 }
