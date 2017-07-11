@@ -634,8 +634,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (gcodeOptions.SyncToPrint && printerIsRunningPrint)
 			{
 				SetAnimationPosition();
-				//navigationWidget.Visible = false;
-				//setLayerWidget.Visible = false;
 				layerRenderRatioSlider.Visible = false;
 				selectLayerSlider.Visible = false;
 			}
@@ -646,9 +644,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					layerRenderRatioSlider.FirstValue = 0;
 					layerRenderRatioSlider.SecondValue = 1;
 				}
-
-				//navigationWidget.Visible = true;
-				//setLayerWidget.Visible = true;
 
 				layerRenderRatioSlider.Visible = true;
 				selectLayerSlider.Visible = true;
