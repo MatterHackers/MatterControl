@@ -29,7 +29,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Raft / Priming Tab");
 				testRunner.ClickByName("Create Raft Checkbox");
 
-				testRunner.ClickByName("Toggle Layer View Button");
 				testRunner.ClickByName("Generate Gcode Button");
 				testRunner.Delay(() => MatterControlUtilities.CompareExpectedSliceSettingValueWithActualVaue("enableRaft", "True"), 10);
 
