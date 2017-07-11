@@ -157,12 +157,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			buttonFactory.Margin = new BorderDouble(8, 0);
 
-			Button configureEePromButton = buttonFactory.Generate("", StaticData.Instance.LoadIcon("chip_24x24.png", 16, 16));
+			Button configureEePromButton = buttonFactory.Generate("", StaticData.Instance.LoadIcon("memory_16x16.png", 16, 16));
 			configureEePromButton.ToolTipText = "EEProm";
 			configureEePromButton.Click += configureEePromButton_Click;
 			this.AddChild(configureEePromButton);
 
-			Button undoButton = buttonFactory.Generate("", StaticData.Instance.LoadIcon("undo_24x24.png", 16, 16));
+			Button undoButton = buttonFactory.Generate("", StaticData.Instance.LoadIcon("Undo_grey_16x.png", 16, 16));
 			undoButton.Name = "3D View Undo";
 			undoButton.ToolTipText = "Undo";
 			undoButton.Enabled = false;
@@ -175,7 +175,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			undoButton.VAnchor = VAnchor.ParentCenter;
 			undoButton.Margin = 3;
 
-			Button redoButton = buttonFactory.Generate("", StaticData.Instance.LoadIcon("redo_24x24.png", 16, 16));
+			Button redoButton = buttonFactory.Generate("", StaticData.Instance.LoadIcon("Redo_grey_16x.png", 16, 16));
 			redoButton.Name = "3D View Redo";
 			redoButton.ToolTipText = "Redo";
 			redoButton.Enabled = false;
