@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg;
+using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
@@ -48,7 +49,15 @@ namespace MatterHackers.MatterControl.ActionBar
 		{
 			this.DisplayCurrentTemperature();
 			this.ToolTipText = "Current bed temperature".Localize();
-			this.ImageWidget.Image = StaticData.Instance.LoadIcon("bed.png");
+
+			var icon = StaticData.Instance.LoadIcon("bed.png");
+
+			if (!ActiveTheme.Instance.IsDarkTheme)
+			{
+				icon = icon.InvertLightness();
+			}
+
+			this.ImageWidget.Image = icon;
 			
 			this.PopupContent = this.GetPopupContent();
 
