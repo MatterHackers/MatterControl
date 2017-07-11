@@ -1556,7 +1556,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (CurrentSelectInfo.DownOnPart
 				&& CurrentSelectInfo.LastMoveDelta != Vector3.Zero)
 				{
-					if (Scene.SelectedItem.Matrix != transformOnMouseDown)
+					if (Scene.SelectedItem?.Matrix != transformOnMouseDown)
 					{
 						AddUndoForSelectedMeshGroupTransform(transformOnMouseDown);
 						PartHasBeenChanged();
