@@ -68,8 +68,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				new MappedSetting("perimeter_speed", "insetXSpeed"),
 				new AsPercentOfReferenceOrDirect("external_perimeter_speed", "inset0Speed", "perimeter_speed"),
 
-				new ScaledSingleNumber(SettingsKey.bottom_clip_amount, "objectSink", 1000),
-
 				new MappedSetting("max_fan_speed", "fanSpeedMin"),
 				new MappedSetting("min_fan_speed", "fanSpeedMax"),
 

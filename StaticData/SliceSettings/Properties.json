@@ -33,15 +33,6 @@
 		"DefaultValue": "70"
 	},
 	{
-		"SlicerConfigName": "bottom_clip_amount",
-		"PresentationName": "Bottom Clip",
-		"HelpText": "The amount to remove from the bottom of the model, in millimeters.",
-		"DataEditType": "DOUBLE",
-		"ExtraSettings": "mm",
-		"ResetAtEndOfPrint": true,
-		"DefaultValue": "0"
-	},
-	{
 		"SlicerConfigName": "bottom_solid_layers",
 		"PresentationName": "Bottom Solid Layers:",
 		"HelpText": "The number of layers or the distance in millimeters to solid fill on the bottom surface(s) of the object. Add mm to the end of the number to specify distance in millimeters.",
