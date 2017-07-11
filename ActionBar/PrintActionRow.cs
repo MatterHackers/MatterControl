@@ -27,6 +27,12 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+
 using MatterHackers.Agg;
 using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.PlatformAbstract;
@@ -34,7 +40,6 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
@@ -42,12 +47,6 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 #if __ANDROID__
 using MatterHackers.SerialPortCommunication.FrostedSerial;
 #endif
-
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
 
 namespace MatterHackers.MatterControl.ActionBar
 {
@@ -71,8 +70,6 @@ namespace MatterHackers.MatterControl.ActionBar
 		private Button finishSetupButton;
 
 		private EventHandler unregisterEvents;
-
-		//public BorderDouble DefaultMargin = new BorderDouble(6, 6, 6, 3);
 
 		public PrintActionRow(TextImageButtonFactory buttonFactory, GuiWidget parentWidget, BorderDouble defaultMargin)
 		{
