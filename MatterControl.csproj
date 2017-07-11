@@ -210,10 +210,8 @@
     <Compile Include="Library\Providers\Zip\ZipMemoryContainer.cs" />
     <Compile Include="PartPreviewWindow\GCodeDetails.cs" />
     <Compile Include="PartPreviewWindow\GCodeDetailsView.cs" />
-    <Compile Include="PartPreviewWindow\LayerNavigationWidget.cs" />
     <Compile Include="PartPreviewWindow\OverflowDropdown.cs" />
     <Compile Include="PartPreviewWindow\PrinterTabPage.cs" />
-    <Compile Include="PartPreviewWindow\SetLayerWidget.cs" />
     <Compile Include="PartPreviewWindow\View3D\GridOptionsPanel.cs" />
     <Compile Include="PartPreviewWindow\View3D\InteractionLayer.cs" />
     <Compile Include="PartPreviewWindow\View3D\InteractionVolume.cs" />
