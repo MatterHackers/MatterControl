@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private bool HadClickOnControl;
 
 		public MoveInZControl(View3DWidget view3DWidget)
-			: base(null, view3DWidget.meshViewerWidget)
+			: base(null, view3DWidget.InteractionLayer)
 		{
 			this.view3DWidget = view3DWidget;
 
@@ -73,15 +73,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				ForceHide = () =>
 				{
 					// if the selection changes
-					if (MeshViewerToDrawWith.Scene.SelectedItem != SelectedItemOnMouseDown
-						&& MeshViewerToDrawWith.Scene.SelectedItem != SelectedItemOnMouseMove)
+					if (InteractionContext.Scene.SelectedItem != SelectedItemOnMouseDown
+						&& InteractionContext.Scene.SelectedItem != SelectedItemOnMouseMove)
 					{
 						return true;
 					}
 
 					// if another control gets a hover
-					if (MeshViewerToDrawWith.HoveredInteractionVolume != this
-					&& MeshViewerToDrawWith.HoveredInteractionVolume != null)
+					if (InteractionContext.HoveredInteractionVolume != this
+					&& InteractionContext.HoveredInteractionVolume != null)
 					{
 						return true;
 					}
@@ -109,16 +109,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			zHeightDisplayInfo.EditComplete += (s, e) =>
 			{
-				var selectedItem = MeshViewerToDrawWith.Scene.SelectedItem;
+				var selectedItem = InteractionContext.Scene.SelectedItem;
 
 				Matrix4X4 startingTransform = selectedItem.Matrix;
 
 				var newZPosition = zHeightDisplayInfo.Value;
 
-				if (MeshViewerToDrawWith.SnapGridDistance > 0)
+				if (InteractionContext.SnapGridDistance > 0)
 				{
 					// snap this position to the grid
-					double snapGridDistance = MeshViewerToDrawWith.SnapGridDistance;
+					double snapGridDistance = InteractionContext.SnapGridDistance;
 
 					// snap this position to the grid
 					newZPosition = ((int)((newZPosition / snapGridDistance) + .5)) * snapGridDistance;
@@ -134,7 +134,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Invalidate();
 				}
 
-				if (MeshViewerToDrawWith?.Scene?.SelectedItem?.Matrix != startingTransform)
+				if (InteractionContext?.Scene?.SelectedItem?.Matrix != startingTransform)
 				{
 					view3DWidget.PartHasBeenChanged();
 					Invalidate();
@@ -143,7 +143,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			};
 
-			MeshViewerToDrawWith.AddChild(zHeightDisplayInfo);
+			InteractionContext.GuiSurface.AddChild(zHeightDisplayInfo);
 
 			DrawOnTop = true;
 
@@ -155,19 +155,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			CollisionVolume = upArrowMesh.CreateTraceData();
 
-			MeshViewerToDrawWith.AfterDraw += MeshViewerToDrawWith_AfterDraw;
+			InteractionContext.GuiSurface.AfterDraw += MeshViewerToDrawWith_AfterDraw;
 		}
 
 		public override void DrawGlContent(EventArgs e)
 		{
 			bool shouldDrawScaleControls = true;
-			if (MeshViewerToDrawWith.SelectedInteractionVolume != null
-				&& MeshViewerToDrawWith.SelectedInteractionVolume as MoveInZControl == null)
+			if (InteractionContext.SelectedInteractionVolume != null
+				&& InteractionContext.SelectedInteractionVolume as MoveInZControl == null)
 			{
 				shouldDrawScaleControls = false;
 			}
 
-			if (MeshViewerToDrawWith.Scene.HasSelection)
+			if (InteractionContext.Scene.HasSelection)
 			{
 				if (shouldDrawScaleControls)
 				{
@@ -194,14 +194,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnMouseDown(MouseEvent3DArgs mouseEvent3D)
 		{
-			if (mouseEvent3D.info != null && MeshViewerToDrawWith.Scene.HasSelection)
+			if (mouseEvent3D.info != null && InteractionContext.Scene.HasSelection)
 			{
 				HadClickOnControl = true;
-				SelectedItemOnMouseDown = MeshViewerToDrawWith.Scene.SelectedItem;
+				SelectedItemOnMouseDown = InteractionContext.Scene.SelectedItem;
 
 				zHeightDisplayInfo.Visible = true;
 
-				var selectedItem = MeshViewerToDrawWith.Scene.SelectedItem;
+				var selectedItem = InteractionContext.Scene.SelectedItem;
 
 				double distanceToHit = Vector3.Dot(mouseEvent3D.info.HitPosition, mouseEvent3D.MouseRay.directionNormal);
 				hitPlane = new PlaneShape(mouseEvent3D.MouseRay.directionNormal, distanceToHit, null);
@@ -216,7 +216,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnMouseMove(MouseEvent3DArgs mouseEvent3D)
 		{
-			SelectedItemOnMouseMove = MeshViewerToDrawWith.Scene.SelectedItem;
+			SelectedItemOnMouseMove = InteractionContext.Scene.SelectedItem;
 			if (MouseOver)
 			{
 				zHeightDisplayInfo.Visible = true;
@@ -230,18 +230,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				IntersectInfo info = hitPlane.GetClosestIntersection(mouseEvent3D.MouseRay);
 
-				if (info != null && MeshViewerToDrawWith.Scene.HasSelection)
+				if (info != null && InteractionContext.Scene.HasSelection)
 				{
-					var selectedItem = MeshViewerToDrawWith.Scene.SelectedItem;
+					var selectedItem = InteractionContext.Scene.SelectedItem;
 
 					var delta = info.HitPosition.z - initialHitPosition.z;
 
 					double newZPosition = mouseDownSelectedBounds.minXYZ.z + delta;
 
-					if (MeshViewerToDrawWith.SnapGridDistance > 0)
+					if (InteractionContext.SnapGridDistance > 0)
 					{
 						// snap this position to the grid
-						double snapGridDistance = MeshViewerToDrawWith.SnapGridDistance;
+						double snapGridDistance = InteractionContext.SnapGridDistance;
 
 						// snap this position to the grid
 						newZPosition = ((int)((newZPosition / snapGridDistance) + .5)) * snapGridDistance;
@@ -264,7 +264,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnMouseUp(MouseEvent3DArgs mouseEvent3D)
 		{
-			if (MeshViewerToDrawWith?.Scene?.SelectedItem?.Matrix != transformOnMouseDown)
+			if (InteractionContext?.Scene?.SelectedItem?.Matrix != transformOnMouseDown)
 			{
 				view3DWidget.AddUndoForSelectedMeshGroupTransform(transformOnMouseDown);
 			}
@@ -278,7 +278,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			Vector3 topPosition = GetTopPosition(selectedItem);
 			Vector3 bottomPosition = new Vector3(topPosition.x, topPosition.y, selectedBounds.minXYZ.z);
-			double distBetweenPixelsWorldSpace = MeshViewerToDrawWith.World.GetWorldUnitsPerScreenPixelAtPosition(topPosition);
+			double distBetweenPixelsWorldSpace = InteractionContext.World.GetWorldUnitsPerScreenPixelAtPosition(topPosition);
 
 			Vector3 boxCenter = topPosition;
 			boxCenter.z += (10 + upArrowSize / 2) * distBetweenPixelsWorldSpace;
@@ -291,20 +291,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// left lines
 			// the lines on the bed
 			var bedPosition = new Vector3(topPosition.x, topPosition.y, 0);
-			lines.Add(MeshViewerToDrawWith.World.GetScreenPosition(bedPosition + new Vector3(distToStart * distBetweenPixelsWorldSpace, 0, 0)));
+			lines.Add(InteractionContext.World.GetScreenPosition(bedPosition + new Vector3(distToStart * distBetweenPixelsWorldSpace, 0, 0)));
 			lines.Add(new Vector2(lines[0].x + lineLength, lines[0].y));
 
-			lines.Add(MeshViewerToDrawWith.World.GetScreenPosition(bottomPosition + new Vector3(distToStart * distBetweenPixelsWorldSpace, 0, 0)));
+			lines.Add(InteractionContext.World.GetScreenPosition(bottomPosition + new Vector3(distToStart * distBetweenPixelsWorldSpace, 0, 0)));
 			lines.Add(new Vector2(lines[2].x + lineLength, lines[2].y));
 		}
 
 		private void MeshViewerToDrawWith_AfterDraw(object sender, DrawEventArgs drawEvent)
 		{
-			if (MeshViewerToDrawWith.Scene.HasSelection)
+			if (InteractionContext.Scene.HasSelection)
 			{
 				if (zHeightDisplayInfo.Visible)
 				{
-					var selectedItem = MeshViewerToDrawWith.Scene.SelectedItem;
+					var selectedItem = InteractionContext.Scene.SelectedItem;
 
 					for (int i = 0; i < lines.Count; i += 2)
 					{

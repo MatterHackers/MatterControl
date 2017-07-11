@@ -84,6 +84,8 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
+		public WorldView World { get; } = new WorldView(0, 0);
+
 		// TODO: Make assignment private, wire up post slicing initialization here
 		public GCodeRenderer GCodeRenderer { get; set; }
 

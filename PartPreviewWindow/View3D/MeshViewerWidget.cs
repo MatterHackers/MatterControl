@@ -49,6 +49,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using System.Threading;
+using MatterHackers.MatterControl.PartPreviewWindow;
 
 namespace MatterHackers.MeshVisualizer
 {
@@ -67,10 +68,8 @@ namespace MatterHackers.MeshVisualizer
 	public class MeshViewerWidget : GuiWidget
 	{
 		static public ImageBuffer BedImage = null;
-		public List<InteractionVolume> interactionVolumes = new List<InteractionVolume>();
-		public InteractionVolume SelectedInteractionVolume { get; set; } = null;
-		public InteractionVolume HoveredInteractionVolume { get; set; } = null;		
-		public bool MouseDownOnInteractionVolume { get { return SelectedInteractionVolume != null; } }
+
+		public GuiWidget ParentSurface { get; set; }
 
 		public PartProcessingInfo partProcessingInfo;
 		private static ImageBuffer lastCreatedBedImage = new ImageBuffer();
@@ -85,14 +84,15 @@ namespace MatterHackers.MeshVisualizer
 		private static Mesh printerBed = null;
 		private RenderTypes renderType = RenderTypes.Shaded;
 
-		public double SnapGridDistance { get; set; } = 1;
+		private InteractionLayer interactionLayer;
 
-		private TrackballTumbleWidget trackballTumbleWidget;
-
-		private int volumeIndexWithMouseDown = -1;
-		
-		public MeshViewerWidget(Vector3 displayVolume, Vector2 bedCenter, BedShape bedShape, string startingTextMessage = "")
+		public MeshViewerWidget(Vector3 displayVolume, Vector2 bedCenter, BedShape bedShape, TrackballTumbleWidget trackballTumbleWidget, InteractionLayer interactionLayer, string startingTextMessage = "")
 		{
+			interactionLayer.Scene = Scene;
+
+			this.interactionLayer = interactionLayer;
+			this.World = interactionLayer.World;
+			
 			Scene.SelectionChanged += (sender, e) =>
 			{
 				Invalidate();
@@ -104,16 +104,7 @@ namespace MatterHackers.MeshVisualizer
 			BedColor = new RGBA_Floats(.8, .8, .8, .7).GetAsRGBA_Bytes();
 			BuildVolumeColor = new RGBA_Floats(.2, .8, .3, .2).GetAsRGBA_Bytes();
 
-			trackballTumbleWidget = new TrackballTumbleWidget(this.World);
-			trackballTumbleWidget.DrawRotationHelperCircle = false;
-			trackballTumbleWidget.DrawGlContent += trackballTumbleWidget_DrawGlContent;
-			trackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Rotation;
-
-			AddChild(trackballTumbleWidget);
-
 			CreatePrintBed(displayVolume, bedCenter, bedShape);
-
-			trackballTumbleWidget.AnchorAll();
 
 			partProcessingInfo = new PartProcessingInfo(startingTextMessage);
 
@@ -125,9 +116,18 @@ namespace MatterHackers.MeshVisualizer
 			SetMaterialColor(1, ActiveTheme.Instance.PrimaryAccentColor);
 
 			this.AddChild(labelContainer);
+
+			this.trackballTumbleWidget = trackballTumbleWidget;
+			this.trackballTumbleWidget.DrawGlContent += this.trackballTumbleWidget_DrawGlContent;
 		}
 
-		public WorldView World { get; } = new WorldView(0, 0);
+		public override void OnParentChanged(EventArgs e)
+		{
+			this.ParentSurface = this.Parent;
+			base.OnParentChanged(e);
+		}
+
+		public WorldView World { get; }
 
 		public event EventHandler LoadDone;
 
@@ -177,7 +177,6 @@ namespace MatterHackers.MeshVisualizer
 
 			base.OnLoad(args);
 		}
-
 
 		public override void FindNamedChildrenRecursive(string nameToSearchFor, List<WidgetAndPosition> foundChildren, RectangleDouble touchingBounds, SearchType seachType, bool allowInvalidItems = true)
 		{
@@ -253,14 +252,6 @@ namespace MatterHackers.MeshVisualizer
 						renderTransfrom.MeshData.MarkAsChanged();
 					}
 				}
-			}
-		}
-
-		public TrackballTumbleWidget TrackballTumbleWidget
-		{
-			get
-			{
-				return trackballTumbleWidget;
 			}
 		}
 
@@ -481,132 +472,11 @@ namespace MatterHackers.MeshVisualizer
 
 			//if (!SuppressUiVolumes)
 			{
-				foreach (InteractionVolume interactionVolume in interactionVolumes)
+				foreach (InteractionVolume interactionVolume in interactionLayer.InteractionVolumes)
 				{
 					interactionVolume.Draw2DContent(graphics2D);
 				}
 			}
-		}
-
-		public override void OnMouseDown(MouseEventArgs mouseEvent)
-		{
-			base.OnMouseDown(mouseEvent);
-
-			if (trackballTumbleWidget.MouseCaptured)
-			{
-				if (trackballTumbleWidget.TransformState == TrackBallController.MouseDownType.Rotation || mouseEvent.Button == MouseButtons.Right)
-				{
-					trackballTumbleWidget.DrawRotationHelperCircle = true;
-				}
-			}
-
-			int volumeHitIndex;
-			Ray ray = this.World.GetRayForLocalBounds(mouseEvent.Position);
-			IntersectInfo info;
-			if (this.Scene.HasSelection
-				&& !SuppressUiVolumes 
-				&& FindInteractionVolumeHit(ray, out volumeHitIndex, out info))
-			{
-				MouseEvent3DArgs mouseEvent3D = new MouseEvent3DArgs(mouseEvent, ray, info);
-				volumeIndexWithMouseDown = volumeHitIndex;
-				interactionVolumes[volumeHitIndex].OnMouseDown(mouseEvent3D);
-				SelectedInteractionVolume = interactionVolumes[volumeHitIndex];
-			}
-			else
-			{
-				SelectedInteractionVolume = null;
-			}
-		}
-
-		public override void OnMouseMove(MouseEventArgs mouseEvent)
-		{
-			base.OnMouseMove(mouseEvent);
-
-			if (SuppressUiVolumes)
-			{
-				return;
-			}
-
-			Ray ray = this.World.GetRayForLocalBounds(mouseEvent.Position);
-			IntersectInfo info = null;
-			if (MouseDownOnInteractionVolume && volumeIndexWithMouseDown != -1)
-			{
-				MouseEvent3DArgs mouseEvent3D = new MouseEvent3DArgs(mouseEvent, ray, info);
-				interactionVolumes[volumeIndexWithMouseDown].OnMouseMove(mouseEvent3D);
-			}
-			else
-			{
-				MouseEvent3DArgs mouseEvent3D = new MouseEvent3DArgs(mouseEvent, ray, info);
-
-				int volumeHitIndex;
-				FindInteractionVolumeHit(ray, out volumeHitIndex, out info);
-
-				for (int i = 0; i < interactionVolumes.Count; i++)
-				{
-					if (i == volumeHitIndex)
-					{
-						interactionVolumes[i].MouseOver = true;
-						interactionVolumes[i].MouseMoveInfo = info;
-
-						HoveredInteractionVolume = interactionVolumes[i];
-					}
-					else
-					{
-						interactionVolumes[i].MouseOver = false;
-						interactionVolumes[i].MouseMoveInfo = null;
-					}
-
-					interactionVolumes[i].OnMouseMove(mouseEvent3D);
-				}
-			}
-		}
-
-		public override void OnMouseUp(MouseEventArgs mouseEvent)
-		{
-			trackballTumbleWidget.DrawRotationHelperCircle = false;
-			Invalidate();
-
-			if(SuppressUiVolumes)
-			{
-				return;
-			}
-
-			int volumeHitIndex;
-			Ray ray = this.World.GetRayForLocalBounds(mouseEvent.Position);
-			IntersectInfo info;
-			bool anyInteractionVolumeHit = FindInteractionVolumeHit(ray, out volumeHitIndex, out info);
-			MouseEvent3DArgs mouseEvent3D = new MouseEvent3DArgs(mouseEvent, ray, info);
-
-			if (MouseDownOnInteractionVolume && volumeIndexWithMouseDown != -1)
-			{
-				interactionVolumes[volumeIndexWithMouseDown].OnMouseUp(mouseEvent3D);
-				SelectedInteractionVolume = null;
-
-				volumeIndexWithMouseDown = -1;
-			}
-			else
-			{
-				volumeIndexWithMouseDown = -1;
-
-				if (anyInteractionVolumeHit)
-				{
-					interactionVolumes[volumeHitIndex].OnMouseUp(mouseEvent3D);
-				}
-				SelectedInteractionVolume = null;
-			}
-
-			base.OnMouseUp(mouseEvent);
-		}
-
-		public void ResetView()
-		{
-			trackballTumbleWidget.ZeroVelocity();
-
-			this.World.Reset();
-			this.World.Scale = .03;
-			this.World.Translate(-new Vector3(BedCenter));
-			this.World.Rotate(Quaternion.FromEulerAngles(new Vector3(0, 0, MathHelper.Tau / 16)));
-			this.World.Rotate(Quaternion.FromEulerAngles(new Vector3(-MathHelper.Tau * .19, 0, 0)));
 		}
 
 		private void CreateCircularBedGridImage(int linesInX, int linesInY, int increment = 1)
@@ -694,48 +564,8 @@ namespace MatterHackers.MeshVisualizer
 			}
 		}
 
-		private bool FindInteractionVolumeHit(Ray ray, out int interactionVolumeHitIndex, out IntersectInfo info)
-		{
-			interactionVolumeHitIndex = -1;
-			if (interactionVolumes.Count == 0 || interactionVolumes[0].CollisionVolume == null)
-			{
-				info = null;
-				return false;
-			}
-
-			List<IPrimitive> uiTraceables = new List<IPrimitive>();
-			foreach (InteractionVolume interactionVolume in interactionVolumes)
-			{
-				if (interactionVolume.CollisionVolume != null)
-				{
-					IPrimitive traceData = interactionVolume.CollisionVolume;
-					uiTraceables.Add(new Transform(traceData, interactionVolume.TotalTransform));
-				}
-			}
-			IPrimitive allUiObjects = BoundingVolumeHierarchy.CreateNewHierachy(uiTraceables);
-
-			info = allUiObjects.GetClosestIntersection(ray);
-			if (info != null)
-			{
-				for (int i = 0; i < interactionVolumes.Count; i++)
-				{
-					List<IBvhItem> insideBounds = new List<IBvhItem>();
-					if (interactionVolumes[i].CollisionVolume != null)
-					{
-						interactionVolumes[i].CollisionVolume.GetContained(insideBounds, info.closestHitObject.GetAxisAlignedBoundingBox());
-						if (insideBounds.Contains(info.closestHitObject))
-						{
-							interactionVolumeHitIndex = i;
-							return true;
-						}
-					}
-				}
-			}
-
-			return false;
-		}
-
 		private string progressReportingPrimaryTask = "";
+		private TrackballTumbleWidget trackballTumbleWidget;
 
 		public void BeginProgressReporting(string taskDescription)
 		{
@@ -838,7 +668,7 @@ namespace MatterHackers.MeshVisualizer
 			}
 
 			// draw on top of anything that is already drawn
-			foreach (InteractionVolume interactionVolume in interactionVolumes)
+			foreach (InteractionVolume interactionVolume in interactionLayer.InteractionVolumes)
 			{
 				if (interactionVolume.DrawOnTop)
 				{
@@ -849,7 +679,7 @@ namespace MatterHackers.MeshVisualizer
 			}
 
 			// Draw again setting the depth buffer and ensuring that all the interaction objects are sorted as well as we can
-			foreach (InteractionVolume interactionVolume in interactionVolumes)
+			foreach (InteractionVolume interactionVolume in interactionLayer.InteractionVolumes)
 			{
 				interactionVolume.DrawGlContent(new DrawGlContentEventArgs(true));
 			}

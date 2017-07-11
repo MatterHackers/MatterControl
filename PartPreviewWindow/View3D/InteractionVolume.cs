@@ -28,9 +28,11 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Transform;
+using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.RayTracer;
@@ -48,10 +50,10 @@ namespace MatterHackers.MeshVisualizer
 
 		private bool mouseOver = false;
 
-		public InteractionVolume(IPrimitive collisionVolume, MeshViewerWidget meshViewerToDrawWith)
+		public InteractionVolume(IPrimitive collisionVolume, IInteractionVolumeContext meshViewerToDrawWith)
 		{
 			this.CollisionVolume = collisionVolume;
-			this.MeshViewerToDrawWith = meshViewerToDrawWith;
+			this.InteractionContext = meshViewerToDrawWith;
 		}
 
 		public IPrimitive CollisionVolume { get; set; }
@@ -75,7 +77,7 @@ namespace MatterHackers.MeshVisualizer
 			}
 		}
 
-		protected MeshViewerWidget MeshViewerToDrawWith { get; }
+		protected IInteractionVolumeContext InteractionContext { get; }
 		protected double SecondsToShowNumberEdit { get; private set; } = 4;
 		protected Stopwatch timeSinceMouseUp { get; private set; } = new Stopwatch();
 
@@ -135,13 +137,13 @@ namespace MatterHackers.MeshVisualizer
 
 		public void Invalidate()
 		{
-			MeshViewerToDrawWith.Invalidate();
+			InteractionContext.GuiSurface.Invalidate();
 		}
 
 		public virtual void OnMouseDown(MouseEvent3DArgs mouseEvent3D)
 		{
 			MouseDownOnControl = true;
-			MeshViewerToDrawWith.Invalidate();
+			InteractionContext.GuiSurface.Invalidate();
 		}
 
 		public virtual void OnMouseMove(MouseEvent3DArgs mouseEvent3D)
@@ -156,5 +158,18 @@ namespace MatterHackers.MeshVisualizer
 		public virtual void SetPosition(IObject3D selectedItem)
 		{
 		}
+	}
+
+	public interface IInteractionVolumeContext
+	{
+		InteractionVolume HoveredInteractionVolume { get; }
+		InteractionVolume SelectedInteractionVolume { get; }
+		InteractiveScene Scene { get; }
+		WorldView World { get; }
+		double SnapGridDistance { get; }
+
+		GuiWidget GuiSurface { get; }
+
+		List<InteractionVolume> InteractionVolumes { get; }
 	}
 }

@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private View3DWidget view3DWidget;
 
 		public SelectionShadow(View3DWidget view3DWidget)
-			: base(null, view3DWidget.meshViewerWidget)
+			: base(null, view3DWidget.InteractionLayer)
 		{
 			this.view3DWidget = view3DWidget;
 		}
@@ -117,11 +117,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void DrawGlContent(EventArgs e)
 		{
-			if (MeshViewerToDrawWith.Scene.HasSelection
-				&& MeshViewerToDrawWith.Scene.ShowSelectionShadow)
+			if (InteractionContext.Scene.HasSelection
+				&& InteractionContext.Scene.ShowSelectionShadow)
 			{
 				// draw the bounds on the bed
-				AxisAlignedBoundingBox selectedBounds = MeshViewerToDrawWith.Scene.SelectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+				AxisAlignedBoundingBox selectedBounds = InteractionContext.Scene.SelectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 
 				var withScale = Matrix4X4.CreateScale(selectedBounds.XSize, selectedBounds.YSize, 1) * TotalTransform;
 

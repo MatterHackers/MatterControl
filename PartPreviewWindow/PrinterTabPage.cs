@@ -28,7 +28,9 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Linq;
 using MatterHackers.Agg;
+using MatterHackers.Agg.OpenGlGui;
 using MatterHackers.Agg.UI;
 using MatterHackers.GCodeVisualizer;
 using MatterHackers.Localizations;
@@ -44,8 +46,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class PrinterTabPage : GuiWidget
 	{
-		private View3DWidget modelViewer;
-		internal ViewGcodeBasic gcodeViewer;
+		internal View3DWidget modelViewer;
+		internal GCode2DWidget gcode2DWidget;
+
 		private PrintItemWrapper printItem;
 		private ViewControls3D viewControls3D;
 
@@ -60,6 +63,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private TextWidget layerStartText;
 
 		private ValueDisplayInfo currentLayerInfo;
+
+		private Vector3 viewerVolume;
+		private Vector2 bedCenter;
+
+		private SystemWindow parentSystemWindow;
 
 		public PrinterTabPage(PrinterSettings activeSettings, PrintItemWrapper printItem)
 		{
@@ -85,13 +93,40 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.ViewMode = e.ViewMode;
 			};
 
+			viewControls3D.TransformStateChanged += (s, e) =>
+			{
+				switch (e.TransformMode)
+				{
+					case ViewControls3DButtons.Translate:
+						if (gcode2DWidget != null)
+						{
+							gcode2DWidget.TransformState = GCode2DWidget.ETransformState.Move;
+						}
+						break;
+
+					case ViewControls3DButtons.Scale:
+						if (gcode2DWidget != null)
+						{
+							gcode2DWidget.TransformState = GCode2DWidget.ETransformState.Scale;
+						}
+						break;
+				}
+			};
+
 			viewControls3D.ResetView += (sender, e) =>
 			{
-				modelViewer.meshViewerWidget.ResetView();
+				if (gcode2DWidget.Visible)
+				{
+					gcode2DWidget.CenterPartInView();
+				}
+				else if (modelViewer.Visible)
+				{
+					this.modelViewer.ResetView();
+				}
 			};
 			viewControls3D.OverflowButton.DynamicPopupContent = () =>
 			{
-				if (gcodeViewer.Visible)
+				if (modelViewer.gcodeViewer.Visible)
 				{
 					return this.ShowGCodeOverflowMenu();
 				}
@@ -149,18 +184,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			SetSliderSizes();
 
+			this.viewerVolume = new Vector3(activeSettings.GetValue<Vector2>(SettingsKey.bed_size), buildHeight);
+			this.bedCenter = activeSettings.GetValue<Vector2>(SettingsKey.print_center);
+
 			// The 3D model view
 			modelViewer = new View3DWidget(printItem,
-				new Vector3(activeSettings.GetValue<Vector2>(SettingsKey.bed_size), buildHeight),
-				activeSettings.GetValue<Vector2>(SettingsKey.print_center),
+				this.viewerVolume,
+				this.bedCenter,
 				activeSettings.GetValue<BedShape>(SettingsKey.bed_shape),
 				View3DWidget.WindowMode.Embeded,
 				View3DWidget.AutoRotate.Disabled,
 				viewControls3D,
 				ApplicationController.Instance.Theme,
 				View3DWidget.OpenMode.Editing);
-
-			modelViewer.meshViewerWidget.TrackballTumbleWidget.DrawGlContent += TrackballTumbleWidget_DrawGlContent;
 
 			modelViewer.BoundsChanged += (s, e) =>
 			{
@@ -187,16 +223,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			leftToRight.AddChild(view3DContainer);
 
-			// The slice layers view
-			gcodeViewer = new ViewGcodeBasic(
-				new Vector3(activeSettings.GetValue<Vector2>(SettingsKey.bed_size), buildHeight),
-				activeSettings.GetValue<Vector2>(SettingsKey.print_center),
-				activeSettings.GetValue<BedShape>(SettingsKey.bed_shape),
-				viewControls3D);
-			gcodeViewer.AnchorAll();
-			this.gcodeViewer.Visible = false;
-
-			view3DContainer.AddChild(gcodeViewer);
 			view3DContainer.AddChild(layerRenderRatioSlider);
 			view3DContainer.AddChild(selectLayerSlider);
 			view3DContainer.AddChild(layerCountText);
@@ -228,15 +254,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (ApplicationController.Instance.PartPreviewState.RotationMatrix == Matrix4X4.Identity)
 			{
-				modelViewer.meshViewerWidget.ResetView();
+				this.modelViewer.ResetView();
 
-				ApplicationController.Instance.PartPreviewState.RotationMatrix = modelViewer.meshViewerWidget.World.RotationMatrix;
-				ApplicationController.Instance.PartPreviewState.TranslationMatrix = modelViewer.meshViewerWidget.World.TranslationMatrix;
+				ApplicationController.Instance.PartPreviewState.RotationMatrix = modelViewer.World.RotationMatrix;
+				ApplicationController.Instance.PartPreviewState.TranslationMatrix = modelViewer.World.TranslationMatrix;
 			}
 			else
 			{
-				modelViewer.meshViewerWidget.World.RotationMatrix = ApplicationController.Instance.PartPreviewState.RotationMatrix;
-				modelViewer.meshViewerWidget.World.TranslationMatrix = ApplicationController.Instance.PartPreviewState.TranslationMatrix;
+				modelViewer.World.RotationMatrix = ApplicationController.Instance.PartPreviewState.RotationMatrix;
+				modelViewer.World.TranslationMatrix = ApplicationController.Instance.PartPreviewState.TranslationMatrix;
 			}
 
 			printer.BedPlate.LoadedGCodeChanged += BedPlate_LoadedGCodeChanged;
@@ -286,6 +312,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				},
 				this.GetRenderType,
 				MeshViewerWidget.GetMaterialColor);
+
+			// Close and remove any existing widget reference
+			gcode2DWidget?.Close();
+
+			// Create and append new widget
+			gcode2DWidget = new GCode2DWidget( new Vector2(viewerVolume.x, viewerVolume.y), this.bedCenter)
+			{
+				Visible = (this.ViewMode == PartViewMode.Layers2D)
+			};
+			view3DContainer.AddChild(gcode2DWidget);
+
+			viewControls3D.Layers2DButton.Enabled = true;
 		}
 
 		private RenderType GetRenderType()
@@ -356,7 +394,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			set
 			{
 				showSliceLayers = value;
-				gcodeViewer.Visible = value;
+				modelViewer.gcodeViewer.Visible = value;
 
 				modelViewer.meshViewerWidget.IsActive = !value;
 
@@ -390,21 +428,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						case PartViewMode.Layers2D:
 							UserSettings.Instance.set("LayerViewDefault", "2D Layer");
-							if (gcodeViewer.gcode2DWidget != null)
+							if (gcode2DWidget != null)
 							{
-								gcodeViewer.gcode2DWidget.Visible = true;
+								gcode2DWidget.Visible = true;
 
 								// HACK: Getting the Layer2D view to show content only works if CenterPartInView is called after the control is visible and after some cycles have passed
-								UiThread.RunOnIdle(gcodeViewer.gcode2DWidget.CenterPartInView);
+								UiThread.RunOnIdle(gcode2DWidget.CenterPartInView);
 							}
 							this.ShowSliceLayers = true;
 							break;
 
 						case PartViewMode.Layers3D:
 							UserSettings.Instance.set("LayerViewDefault", "3D Layer");
-							if (gcodeViewer.gcode2DWidget != null)
+							if (gcode2DWidget != null)
 							{
-								gcodeViewer.gcode2DWidget.Visible = false;
+								gcode2DWidget.Visible = false;
 							}
 							this.ShowSliceLayers = true;
 							break;
@@ -426,7 +464,31 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			ApplicationController.Instance.ActiveView3DWidget = modelViewer;
 			LoadActivePrintItem();
+
+			// Find and hook the parent system window KeyDown event
+			if (this.Parents<SystemWindow>().FirstOrDefault() is SystemWindow systemWindow)
+			{
+				systemWindow.KeyDown += Parent_KeyDown;
+				parentSystemWindow = systemWindow;
+			}
+
 			base.OnLoad(args);
+		}
+
+		private void Parent_KeyDown(object sender, KeyEventArgs keyEvent)
+		{
+			if (modelViewer.gcodeViewer.Visible)
+			{
+				switch (keyEvent.KeyCode)
+				{
+					case Keys.Up:
+						printer.BedPlate.ActiveLayerIndex += 1;
+						break;
+					case Keys.Down:
+						printer.BedPlate.ActiveLayerIndex -= 1;
+						break;
+				}
+			}
 		}
 
 		public override void OnDraw(Graphics2D graphics2D)
@@ -434,7 +496,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			bool printerIsRunningPrint = PrinterConnection.Instance.PrinterIsPaused || PrinterConnection.Instance.PrinterIsPrinting;
 			if (gcodeOptions.SyncToPrint
 				&& printerIsRunningPrint
-				&& gcodeViewer.Visible)
+				&& modelViewer.gcodeViewer.Visible)
 			{
 				SetAnimationPosition();
 				this.Invalidate();
@@ -446,13 +508,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public override void OnClosed(ClosedEventArgs e)
 		{
 			// Store active transforms on close
-			var visibleWidget = modelViewer.meshViewerWidget;
-			ApplicationController.Instance.PartPreviewState.RotationMatrix = visibleWidget.World.RotationMatrix;
-			ApplicationController.Instance.PartPreviewState.TranslationMatrix = visibleWidget.World.TranslationMatrix;
+			ApplicationController.Instance.PartPreviewState.RotationMatrix = modelViewer.World.RotationMatrix;
+			ApplicationController.Instance.PartPreviewState.TranslationMatrix = modelViewer.World.TranslationMatrix;
 
-			if (modelViewer?.meshViewerWidget != null)
+			// Find and unhook the parent system window KeyDown event
+			if (parentSystemWindow != null)
 			{
-				modelViewer.meshViewerWidget.TrackballTumbleWidget.DrawGlContent -= TrackballTumbleWidget_DrawGlContent;
+				parentSystemWindow.KeyDown -= Parent_KeyDown;
 			}
 
 			printer.BedPlate.ActiveLayerChanged -= ActiveLayer_Changed;
@@ -462,16 +524,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			selectLayerSlider.MouseEnter -= SetPositionAndValue;
 
 			base.OnClosed(e);
-		}
-
-		private void TrackballTumbleWidget_DrawGlContent(object sender, EventArgs e)
-		{
-			if (loadedGCode == null || printer.BedPlate.GCodeRenderer == null || !gcodeViewer.Visible)
-			{
-				return;
-			}
-
-			printer.BedPlate.Render3DLayerFeatures();
 		}
 
 		internal GuiWidget ShowGCodeOverflowMenu()

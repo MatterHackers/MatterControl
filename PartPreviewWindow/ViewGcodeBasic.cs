@@ -45,7 +45,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public class ViewGcodeBasic : GuiWidget
 	{
 		private TextWidget gcodeProcessingStateInfoText;
-		internal GCode2DWidget gcode2DWidget;
 		private PrintItemWrapper printItem => ApplicationController.Instance.ActivePrintItem;
 		
 		private GuiWidget gcodeDisplayWidget;
@@ -68,8 +67,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private PrinterConfig printer;
 		private ViewControls3D viewControls3D;
-
-		private SystemWindow parentSystemWindow;
 
 		public ViewGcodeBasic(Vector3 viewerVolume, Vector2 bedCenter, BedShape bedShape, ViewControls3D viewControls3D)
 		{
@@ -98,41 +95,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			ApplicationController.Instance.AdvancedControlsPanelReloading.RegisterEvent((s, e) => printer.BedPlate.GCodeRenderer?.Clear3DGCode(), ref unregisterEvents);
 		}
 
-		public override void OnLoad(EventArgs args)
-		{
-			// Find and hook the parent system window KeyDown event
-			if (this.Parents<SystemWindow>().FirstOrDefault() is SystemWindow systemWindow)
-			{
-				systemWindow.KeyDown += Parent_KeyDown;
-				parentSystemWindow = systemWindow;
-			}
-
-			base.OnLoad(args);
-		}
-
-		private void Parent_KeyDown(object sender, KeyEventArgs keyEvent)
-		{
-			if (this.Visible)
-			{
-				switch(keyEvent.KeyCode)
-				{
-					case Keys.Up:
-						printer.BedPlate.ActiveLayerIndex += 1;
-						break;
-					case Keys.Down:
-						printer.BedPlate.ActiveLayerIndex -= 1;
-						break;
-				}
-			}
-		}
-
-		private GCodeFile loadedGCode => printer.BedPlate.LoadedGCode;
+		internal GCodeFile loadedGCode => printer.BedPlate.LoadedGCode;
 
 		internal void CreateAndAddChildren()
 		{
 			CloseAllChildren();
 
-			gcode2DWidget = null;
 			gcodeProcessingStateInfoText = null;
 
 			var mainContainerTopToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
@@ -154,15 +122,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				bool isGCode = Path.GetExtension(printItem.FileLocation).ToUpper() == ".GCODE";
 
 				string gcodeFilePath = isGCode ? printItem.FileLocation : printItem.GetGCodePathAndFileName();
-				if (File.Exists(gcodeFilePath))
-				{
-					gcode2DWidget = new GCode2DWidget(new Vector2(viewerVolume.x, viewerVolume.y), bedCenter)
-					{
-						Visible = (activeViewMode == PartViewMode.Layers2D)
-					};
-					gcodeDisplayWidget.AddChild(gcode2DWidget);
-				}
-				else
+				if (!File.Exists(gcodeFilePath))
 				{
 					SetProcessingMessage(string.Format("{0}\n'{1}'", fileNotFoundMessage, printItem.Name));
 				}
@@ -172,37 +132,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.AddChild(mainContainerTopToBottom);
 
-			viewControls3D.ResetView += (sender, e) =>
-			{
-				if (gcodeDisplayWidget.Visible)
-				{
-					gcode2DWidget.CenterPartInView();
-				}
-			};
-			viewControls3D.TransformStateChanged += (s, e) =>
-			{
-				switch (e.TransformMode)
-				{
-					case ViewControls3DButtons.Translate:
-						if (gcode2DWidget != null)
-						{
-							gcode2DWidget.TransformState = GCode2DWidget.ETransformState.Move;
-						}
-						break;
-
-					case ViewControls3DButtons.Scale:
-						if (gcode2DWidget != null)
-						{
-							gcode2DWidget.TransformState = GCode2DWidget.ETransformState.Scale;
-						}
-						break;
-				}
-			};
-
 			// *************** AddGCodeFileControls ***************
 			SetProcessingMessage("");
-			if (gcode2DWidget != null
-				&& loadedGCode == null)
+			if (loadedGCode == null)
 			{
 				// If we have finished loading the gcode and the source file exists but we don't have any loaded gcode it is because the loader decided to not load it.
 				if (File.Exists(printItem.FileLocation))
@@ -241,7 +173,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				});
 			}
 		}
-
 
 		internal void LoadProgress_Changed((double progress0To1, string processingState) progress, CancellationTokenSource continueProcessing)
 		{
@@ -286,13 +217,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public override void OnClosed(ClosedEventArgs e)
 		{
 			unregisterEvents?.Invoke(this, null);
-
-			// Find and unhook the parent system window KeyDown event
-			if (parentSystemWindow != null)
-			{
-				parentSystemWindow.KeyDown -= Parent_KeyDown;
-			}
-
 			base.OnClosed(e);
 		}
 	}

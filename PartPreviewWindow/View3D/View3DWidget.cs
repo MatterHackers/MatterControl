@@ -39,6 +39,7 @@ using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.ImageProcessing;
+using MatterHackers.Agg.OpenGlGui;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
@@ -129,11 +130,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void View3DWidget_AfterDraw(object sender, DrawEventArgs e)
 		{
-			if (view3DWidget?.meshViewerWidget?.TrackballTumbleWidget != null)
+			if (view3DWidget?.HasBeenClosed == false)
 			{
 				AxisAlignedBoundingBox bounds = trackingObject.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 				Vector3 renderPosition = bounds.Center;
-				Vector2 cornerScreenSpace = view3DWidget.meshViewerWidget.World.GetScreenPosition(renderPosition) - new Vector2(40, 20);
+				Vector2 cornerScreenSpace = view3DWidget.World.GetScreenPosition(renderPosition) - new Vector2(40, 20);
 
 				e.graphics2D.PushTransform();
 				Affine currentGraphics2DTransform = e.graphics2D.GetTransform();
@@ -168,7 +169,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		}
 	}
 
-	public class View3DWidget : GuiWidget
+	public partial class View3DWidget : GuiWidget
 	{
 		private bool DoBooleanTest = false;
 		private bool deferEditorTillMouseUp = false;
@@ -233,22 +234,46 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private ThemeConfig theme;
 
+		private PrinterConfig printer;
+
+		// TODO: Make dynamic
+		public WorldView World { get; } = ApplicationController.Instance.Printer.BedPlate.World;
+
+		public TrackballTumbleWidget TrackballTumbleWidget { get; }
+
+		private Vector2 bedCenter;
+
+		internal ViewGcodeBasic gcodeViewer;
+
+		public InteractionLayer InteractionLayer { get; }
+
 		public View3DWidget(PrintItemWrapper printItemWrapper, Vector3 viewerVolume, Vector2 bedCenter, BedShape bedShape, WindowMode windowType, AutoRotate autoRotate, ViewControls3D viewControls3D, ThemeConfig theme, OpenMode openMode = OpenMode.Viewing)
 		{
+			this.printer = ApplicationController.Instance.Printer;
+			this.bedCenter = bedCenter;
+
+			this.TrackballTumbleWidget = new TrackballTumbleWidget(ApplicationController.Instance.Printer.BedPlate.World)
+			{
+				DrawRotationHelperCircle = false,
+				TransformState = TrackBallController.MouseDownType.Rotation
+			};
+			this.TrackballTumbleWidget.AnchorAll();
+
+			this.InteractionLayer = new InteractionLayer(this.World)
+			{
+				Name = "InteractionLayer",
+			};
+			this.InteractionLayer.AnchorAll();
+
 			this.viewControls3D = viewControls3D;
 			this.theme = theme;
 			this.openMode = openMode;
 			allowAutoRotate = (autoRotate == AutoRotate.Enabled);
-			meshViewerWidget = new MeshViewerWidget(viewerVolume, bedCenter, bedShape);
+			meshViewerWidget = new MeshViewerWidget(viewerVolume, bedCenter, bedShape, this.TrackballTumbleWidget, this.InteractionLayer);
 			this.printItemWrapper = printItemWrapper;
 
 			ActiveSliceSettings.SettingChanged.RegisterEvent(CheckSettingChanged, ref unregisterEvents);
 			ApplicationController.Instance.AdvancedControlsPanelReloading.RegisterEvent(CheckSettingChanged, ref unregisterEvents);
-		}
-
-		public override void Initialize()
-		{
-			base.Initialize();
 
 			this.windowType = windowType;
 			autoRotating = allowAutoRotate;
@@ -265,20 +290,26 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Max_FitToChildren_ParentHeight
 			};
 
-			var centerPartPreviewAndControls = new FlowLayoutWidget(FlowDirection.LeftToRight)
-			{
-				Name = "centerPartPreviewAndControls"
-			};
-			centerPartPreviewAndControls.AnchorAll();
-
 			var smallMarginButtonFactory = ApplicationController.Instance.Theme.BreadCrumbButtonFactorySmallMargins;
 
 			PutOemImageOnBed();
 
 			meshViewerWidget.AnchorAll();
-			centerPartPreviewAndControls.AddChild(meshViewerWidget);
+			this.InteractionLayer.AddChild(meshViewerWidget);
 
-			mainContainerTopToBottom.AddChild(centerPartPreviewAndControls);
+			// The slice layers view
+			gcodeViewer = new ViewGcodeBasic(
+				viewerVolume,
+				bedCenter,
+				bedShape,
+				viewControls3D);
+			gcodeViewer.AnchorAll();
+			this.gcodeViewer.Visible = false;
+
+			this.InteractionLayer.AddChild(gcodeViewer);
+			this.InteractionLayer.AddChild(this.TrackballTumbleWidget);
+
+			mainContainerTopToBottom.AddChild(this.InteractionLayer);
 
 			var buttonBottomPanel = new FlowLayoutWidget(FlowDirection.LeftToRight)
 			{
@@ -449,7 +480,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.AnchorAll();
 
-			meshViewerWidget.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Rotation;
+			this.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Rotation;
 
 			selectedObjectPanel = new SelectedObjectPanel()
 			{
@@ -482,14 +513,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				MeshViewerWidget.SetMaterialColor(1, ActiveTheme.Instance.PrimaryAccentColor);
 			}, ref unregisterEvents);
 
-			meshViewerWidget.interactionVolumes.Add(new MoveInZControl(this));
-			meshViewerWidget.interactionVolumes.Add(new SelectionShadow(this));
-			meshViewerWidget.interactionVolumes.Add(new SnappingIndicators(this));
+			this.InteractionLayer.InteractionVolumes.Add(new MoveInZControl(this));
+			this.InteractionLayer.InteractionVolumes.Add(new SelectionShadow(this));
+			this.InteractionLayer.InteractionVolumes.Add(new SnappingIndicators(this));
 
-			PluginFinder<InteractionVolumePlugin> InteractionVolumePlugins = new PluginFinder<InteractionVolumePlugin>();
-			foreach (InteractionVolumePlugin plugin in InteractionVolumePlugins.Plugins)
+			PluginFinder<InteractionVolumePlugin> interactionVolumePlugins = new PluginFinder<InteractionVolumePlugin>();
+			foreach (InteractionVolumePlugin plugin in interactionVolumePlugins.Plugins)
 			{
-				meshViewerWidget.interactionVolumes.Add(plugin.CreateInteractionVolume(this));
+				this.InteractionLayer.InteractionVolumes.Add(plugin.CreateInteractionVolume(this));
 			}
 
 			if (DoBooleanTest)
@@ -500,7 +531,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			meshViewerWidget.AfterDraw += AfterDraw3DContent;
 
-			meshViewerWidget.TrackballTumbleWidget.DrawGlContent += TrackballTumbleWidget_DrawGlContent;
+			this.TrackballTumbleWidget.DrawGlContent += TrackballTumbleWidget_DrawGlContent;
 		}
 
 		private void ViewControls3D_TransformStateChanged(object sender, TransformStateChangedEventArgs e)
@@ -508,19 +539,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			switch (e.TransformMode)
 			{
 				case ViewControls3DButtons.Rotate:
-					meshViewerWidget.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Rotation;
+					this.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Rotation;
 					break;
 
 				case ViewControls3DButtons.Translate:
-					meshViewerWidget.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Translation;
+					this.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Translation;
 					break;
 
 				case ViewControls3DButtons.Scale:
-					meshViewerWidget.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Scale;
+					this.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Scale;
 					break;
 
 				case ViewControls3DButtons.PartSelect:
-					meshViewerWidget.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.None;
+					this.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.None;
 					break;
 			}
 		}
@@ -563,6 +594,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			// This shows the BVH as rects around the scene items
 			//Scene?.TraceData().RenderBvhRecursive(0, 3);
+
+			if (gcodeViewer?.loadedGCode == null || printer.BedPlate.GCodeRenderer == null || !gcodeViewer.Visible)
+			{
+				return;
+			}
+
+			printer.BedPlate.Render3DLayerFeatures();
 		}
 
 		public override void OnKeyDown(KeyEventArgs keyEvent)
@@ -774,6 +812,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				meshViewerWidget.AfterDraw -= AfterDraw3DContent;
 			}
 
+			this.TrackballTumbleWidget.DrawGlContent -= TrackballTumbleWidget_DrawGlContent;
+			
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
 		}
@@ -998,7 +1038,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				var selectedItem = Scene.SelectedItem;
 
-				foreach (InteractionVolume volume in meshViewerWidget.interactionVolumes)
+				foreach (InteractionVolume volume in this.InteractionLayer.InteractionVolumes)
 				{
 					volume.SetPosition(selectedItem);
 				}
@@ -1074,7 +1114,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				for (int i = 0; i < 3; i++)
 				{
 					Vector3 bottomStartPosition = Vector3.Transform(tri.GetVertex(i), x.TransformToWorld);
-					traceBottoms[i] = meshViewerWidget.World.GetScreenPosition(bottomStartPosition);
+					traceBottoms[i] = this.World.GetScreenPosition(bottomStartPosition);
 				}
 
 				for (int i = 0; i < 3; i++)
@@ -1092,10 +1132,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				for (int i = 0; i < 4; i++)
 				{
 					Vector3 bottomStartPosition = Vector3.Transform(x.Bvh.GetAxisAlignedBoundingBox().GetBottomCorner(i), x.TransformToWorld);
-					traceBottoms[i] = meshViewerWidget.World.GetScreenPosition(bottomStartPosition);
+					traceBottoms[i] = this.World.GetScreenPosition(bottomStartPosition);
 
 					Vector3 topStartPosition = Vector3.Transform(x.Bvh.GetAxisAlignedBoundingBox().GetTopCorner(i), x.TransformToWorld);
-					traceTops[i] = meshViewerWidget.World.GetScreenPosition(topStartPosition);
+					traceTops[i] = this.World.GetScreenPosition(topStartPosition);
 				}
 
 				RectangleDouble.OutCode allPoints = RectangleDouble.OutCode.Inside;
@@ -1132,16 +1172,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				for (int i = 0; i < 4; i++)
 				{
 					Vector3 bottomStartPosition = Vector3.Transform(x.Bvh.GetAxisAlignedBoundingBox().GetBottomCorner(i), x.TransformToWorld);
-					var bottomStartScreenPos = meshViewerWidget.World.GetScreenPosition(bottomStartPosition);
+					var bottomStartScreenPos = this.World.GetScreenPosition(bottomStartPosition);
 
 					Vector3 bottomEndPosition = Vector3.Transform(x.Bvh.GetAxisAlignedBoundingBox().GetBottomCorner((i + 1) % 4), x.TransformToWorld);
-					var bottomEndScreenPos = meshViewerWidget.World.GetScreenPosition(bottomEndPosition);
+					var bottomEndScreenPos = this.World.GetScreenPosition(bottomEndPosition);
 
 					Vector3 topStartPosition = Vector3.Transform(x.Bvh.GetAxisAlignedBoundingBox().GetTopCorner(i), x.TransformToWorld);
-					var topStartScreenPos = meshViewerWidget.World.GetScreenPosition(topStartPosition);
+					var topStartScreenPos = this.World.GetScreenPosition(topStartPosition);
 
 					Vector3 topEndPosition = Vector3.Transform(x.Bvh.GetAxisAlignedBoundingBox().GetTopCorner((i + 1) % 4), x.TransformToWorld);
-					var topEndScreenPos = meshViewerWidget.World.GetScreenPosition(topEndPosition);
+					var topEndScreenPos = this.World.GetScreenPosition(topEndPosition);
 
 					e.graphics2D.Line(bottomStartScreenPos, bottomEndScreenPos, RGBA_Bytes.Black);
 					e.graphics2D.Line(topStartScreenPos, topEndScreenPos, RGBA_Bytes.Black);
@@ -1155,7 +1195,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						var vertexPos = tri.GetVertex(i);
 						var screenCenter = Vector3.Transform(vertexPos, x.TransformToWorld);
-						var screenPos = meshViewerWidget.World.GetScreenPosition(screenCenter);
+						var screenPos = this.World.GetScreenPosition(screenCenter);
 
 						e.graphics2D.Circle(screenPos, 3, RGBA_Bytes.Red);
 					}
@@ -1164,7 +1204,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					var center = x.Bvh.GetCenter();
 					var worldCenter = Vector3.Transform(center, x.TransformToWorld);
-					var screenPos2 = meshViewerWidget.World.GetScreenPosition(worldCenter);
+					var screenPos2 = this.World.GetScreenPosition(worldCenter);
 					e.graphics2D.Circle(screenPos2, 3, RGBA_Bytes.Yellow);
 					e.graphics2D.DrawString($"{x.Depth},", screenPos2.x + 12 * x.Depth, screenPos2.y);
 				}
@@ -1192,6 +1232,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
 		{
+			if (this.TrackballTumbleWidget.MouseCaptured)
+			{
+				if (TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.Rotation || mouseEvent.Button == MouseButtons.Right)
+				{
+					TrackballTumbleWidget.DrawRotationHelperCircle = true;
+				}
+			}
+		
 			// Show transform override
 			if (activeButtonBeforeMouseOverride == null && mouseEvent.Button == MouseButtons.Right)
 			{
@@ -1213,17 +1261,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			autoRotating = false;
 			base.OnMouseDown(mouseEvent);
 
-			if (meshViewerWidget.TrackballTumbleWidget.UnderMouseState == UnderMouseState.FirstUnderMouse)
+			if (this.TrackballTumbleWidget.UnderMouseState == UnderMouseState.FirstUnderMouse)
 			{
 				if (mouseEvent.Button == MouseButtons.Left
 					&&
 					(ModifierKeys == Keys.Shift || ModifierKeys == Keys.Control)
 					|| (
-						meshViewerWidget.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None
+						this.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None
 						&& ModifierKeys != Keys.Control
 						&& ModifierKeys != Keys.Alt))
 				{
-					if (!meshViewerWidget.MouseDownOnInteractionVolume)
+					if (!this.InteractionLayer.MouseDownOnInteractionVolume)
 					{
 						meshViewerWidget.SuppressUiVolumes = true;
 
@@ -1333,7 +1381,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Translate to local
 			Vector2 localPosition = this.TransformFromScreenSpace(screenSpacePosition);
 
-			Ray ray = meshViewerWidget.World.GetRayForLocalBounds(localPosition);
+			Ray ray = this.World.GetRayForLocalBounds(localPosition);
 
 			return CurrentSelectInfo.HitPlane.GetClosestIntersection(ray);
 		}
@@ -1341,7 +1389,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public void DragSelectedObject(Vector2 localMousePostion)
 		{
 			Vector2 meshViewerWidgetScreenPosition = meshViewerWidget.TransformFromParentSpace(this, localMousePostion);
-			Ray ray = meshViewerWidget.World.GetRayForLocalBounds(meshViewerWidgetScreenPosition);
+			Ray ray = this.World.GetRayForLocalBounds(meshViewerWidgetScreenPosition);
 
 			IntersectInfo info = CurrentSelectInfo.HitPlane.GetClosestIntersection(ray);
 			if (info != null)
@@ -1354,7 +1402,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				Vector3 delta = info.HitPosition - CurrentSelectInfo.PlaneDownHitPos;
 
-				double snapGridDistance = meshViewerWidget.SnapGridDistance;
+				double snapGridDistance = this.InteractionLayer.SnapGridDistance;
 				if (snapGridDistance > 0)
 				{
 					// snap this position to the grid
@@ -1425,7 +1473,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// AcceptDrop anytime a DropSource has been queued
 			mouseEvent.AcceptDrop = this.DragDropSource != null;
 
-			if (CurrentSelectInfo.DownOnPart && meshViewerWidget.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None)
+			if (CurrentSelectInfo.DownOnPart && this.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None)
 			{
 				DragSelectedObject(new Vector2(mouseEvent.X, mouseEvent.Y));
 			}
@@ -1467,8 +1515,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
+		public void ResetView()
+		{
+			this.TrackballTumbleWidget.ZeroVelocity();
+
+			var world = this.World;
+
+			world.Reset();
+			world.Scale = .03;
+			world.Translate(-new Vector3(bedCenter));
+			world.Rotate(Quaternion.FromEulerAngles(new Vector3(0, 0, MathHelper.Tau / 16)));
+			world.Rotate(Quaternion.FromEulerAngles(new Vector3(-MathHelper.Tau * .19, 0, 0)));
+		}
+
 		public override void OnMouseUp(MouseEventArgs mouseEvent)
 		{
+			this.TrackballTumbleWidget.DrawRotationHelperCircle = false;
+
 			if (mouseEvent.DragFiles?.Count > 0)
 			{
 				if (AllowDragDrop() && mouseEvent.DragFiles.Count == 1)
@@ -1488,7 +1551,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
-			if (meshViewerWidget.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None)
+			if (this.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None)
 			{
 				if (CurrentSelectInfo.DownOnPart
 				&& CurrentSelectInfo.LastMoveDelta != Vector3.Zero)
@@ -1636,12 +1699,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					hasDrawn = false;
 					timeSinceLastSpin.Restart();
 
-					Quaternion currentRotation = meshViewerWidget.World.RotationMatrix.GetRotation();
+					Quaternion currentRotation = this.World.RotationMatrix.GetRotation();
 					Quaternion invertedRotation = Quaternion.Invert(currentRotation);
 
 					Quaternion rotateAboutZ = Quaternion.FromEulerAngles(new Vector3(0, 0, .01));
 					rotateAboutZ = invertedRotation * rotateAboutZ * currentRotation;
-					meshViewerWidget.World.Rotate(rotateAboutZ);
+					this.World.Rotate(rotateAboutZ);
 					Invalidate();
 				}
 			}
@@ -1802,7 +1865,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Vector3 boundsCenter = selectedBounds.Center;
 				Vector3 centerTop = new Vector3(boundsCenter.x, boundsCenter.y, selectedBounds.maxXYZ.z);
 
-				Vector2 centerTopScreenPosition = meshViewerWidget.World.GetScreenPosition(centerTop);
+				Vector2 centerTopScreenPosition = this.World.GetScreenPosition(centerTop);
 				centerTopScreenPosition = meshViewerWidget.TransformToParentSpace(this, centerTopScreenPosition);
 				//graphics2D.Circle(screenPosition.x, screenPosition.y, 5, RGBA_Bytes.Cyan);
 
@@ -2358,7 +2421,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var renderOptions = CreateRenderTypeRadioButtons();
 			popupContainer.AddChild(renderOptions);
 
-			popupContainer.AddChild(new GridOptionsPanel(meshViewer));
+			popupContainer.AddChild(new GridOptionsPanel(this.InteractionLayer));
 
 			return popupContainer;
 		}
@@ -2513,7 +2576,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		protected IObject3D FindHitObject3D(Vector2 screenPosition, ref IntersectInfo intersectionInfo)
 		{
 			Vector2 meshViewerWidgetScreenPosition = meshViewerWidget.TransformFromParentSpace(this, screenPosition);
-			Ray ray = meshViewerWidget.World.GetRayForLocalBounds(meshViewerWidgetScreenPosition);
+			Ray ray = this.World.GetRayForLocalBounds(meshViewerWidgetScreenPosition);
 
 			intersectionInfo = Scene.TraceData().GetClosestIntersection(ray);
 			if (intersectionInfo != null)

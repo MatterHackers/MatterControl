@@ -149,7 +149,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.ClickByName("3D View Edit");
 			}
-			testRunner.DragDropByName("centerPartPreviewAndControls", "centerPartPreviewAndControls", offsetDrop: new Agg.Point2D(10, 15), mouseButtons: MouseButtons.Right);
+			testRunner.DragDropByName("InteractionLayer", "InteractionLayer", offsetDrop: new Agg.Point2D(10, 15), mouseButtons: MouseButtons.Right);
 
 			testRunner.Delay(1);
 			testRunner.ClickByName(partNameToSelect);

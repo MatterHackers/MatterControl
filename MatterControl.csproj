@@ -215,6 +215,7 @@
     <Compile Include="PartPreviewWindow\PrinterTabPage.cs" />
     <Compile Include="PartPreviewWindow\SetLayerWidget.cs" />
     <Compile Include="PartPreviewWindow\View3D\GridOptionsPanel.cs" />
+    <Compile Include="PartPreviewWindow\View3D\InteractionLayer.cs" />
     <Compile Include="PartPreviewWindow\View3D\InteractionVolume.cs" />
     <Compile Include="PartPreviewWindow\View3D\MeshViewerWidget.cs" />
     <Compile Include="PartPreviewWindow\View3D\MouseEvent3DArgs.cs" />
