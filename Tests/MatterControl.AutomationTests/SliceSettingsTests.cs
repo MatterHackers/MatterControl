@@ -60,8 +60,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.AddDefaultFileToBedplate();
 
-					testRunner.ClickByName("Toggle Layer View Button");
-
 					testRunner.ClickByName("Generate Gcode Button");
 
 					testRunner.WaitForName("Current GCode Layer Edit");
@@ -143,12 +141,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			// close the pause dialog pop-up
 			testRunner.ClickByName("Yes Button");
 
-			GuiWidget layerNumber = testRunner.GetWidgetByName("Current GCode Layer Edit", out _, 20);
+			var printer = ApplicationController.Instance.Printer;
 
-			layerNumber.Invalidate();
-			testRunner.Delay(() => layerNumber.Text == indexToWaitFor.ToString(), 2);
+			testRunner.Delay(() => printer.BedPlate.ActiveLayerIndex + 1 == indexToWaitFor, 30, 500);
 
-			Assert.AreEqual(indexToWaitFor.ToString(), layerNumber.Text);
+			Assert.AreEqual(indexToWaitFor, printer.BedPlate.ActiveLayerIndex + 1);
 			testRunner.ClickByName("Resume Button");
 			testRunner.Delay(.1);
 		}

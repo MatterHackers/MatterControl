@@ -102,6 +102,7 @@ namespace MatterHackers.MatterControl
 				{
 					activeLayerIndex = value;
 
+					// Clamp activeLayerIndex to valid range
 					if (this.GCodeRenderer == null || activeLayerIndex < 0)
 					{
 						activeLayerIndex = 0;
