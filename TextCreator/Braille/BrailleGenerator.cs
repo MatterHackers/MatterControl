@@ -27,6 +27,9 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
 using MatterHackers.Agg.PlatformAbstract;
@@ -34,8 +37,6 @@ using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
-using System.IO;
-using System.Linq;
 
 namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 {
@@ -50,13 +51,15 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 		private const double unscaledBaseHeight = 7;
 		private const double unscaledLetterHeight = 3;
 
+		private Vector2[] characterSpacing;
+
 		public BrailleGenerator()
 		{
 			boldTypeFace = TypeFace.LoadFrom(StaticData.Instance.ReadAllText(Path.Combine("Fonts", "LiberationMono.svg")));
 			brailTypeFace = TypeFace.LoadFrom(StaticData.Instance.ReadAllText(Path.Combine("Fonts", "Braille.svg")));
 		}
 
-		public IObject3D CreateText(string brailleText, double wordSize, double wordHeight, bool includeText = false, string wordText = null)
+		public IObject3D CreateText(string brailleText, double wordSize, double wordHeight, string wordText = null)
 		{
 			var group = new TextObject
 			{
@@ -69,19 +72,12 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 
 			StyledTypeFace boldStyled = new StyledTypeFace(boldTypeFace, 12);
 
-			if (includeText)
-			{
-				TypeFacePrinter normalPrinter = new TypeFacePrinter(wordText, boldStyled);
-				Vector2 normalSize = normalPrinter.GetSize();
-				AddCharacterMeshes(group, wordText, normalPrinter);
-			}
-
 			AddCharacterMeshes(group, brailleText, brailPrinter);
 			Vector2 brailSize = brailPrinter.GetSize();
 
-			foreach (var object3D in group.Children)
+			for (int i = 0; i < brailleText.Length; i++)
 			{
-				object3D.ExtraData.Spacing += new Vector2(0, boldStyled.CapHeightInPixels * 1.5);
+				characterSpacing[i] += new Vector2(0, boldStyled.CapHeightInPixels * 1.5);
 			}
 
 			IObject3D basePlate = CreateBaseplate(group);
@@ -104,6 +100,8 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 		private void AddCharacterMeshes(IObject3D group, string currentText, TypeFacePrinter printer)
 		{
 			StyledTypeFace typeFace = printer.TypeFaceStyle;
+
+			characterSpacing = new Vector2[currentText.Length];
 
 			for (int i = 0; i < currentText.Length; i++)
 			{
@@ -139,7 +137,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 						ItemType = Object3DTypes.Model
 					};
 
-					characterObject.ExtraData.Spacing = printer.GetOffsetLeftOfCharacterIndex(i);
+					characterSpacing[i] = printer.GetOffsetLeftOfCharacterIndex(i);
 					characterObject.Matrix *= Matrix4X4.CreateTranslation(new Vector3(0, 0, unscaledLetterHeight / 2));
 
 					group.Children.Add(characterObject);
@@ -153,13 +151,16 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 		{
 			if (group.HasChildren)
 			{
-				foreach (IObject3D child in group.Children)
+				for (int i = 0; i < characterSpacing.Length; i++)
 				{
-					Vector3 startPosition = Vector3.Transform(Vector3.Zero, child.Matrix);
-					//child.Matrix *= Matrix4X4.CreateTranslation(-startPosition);
+					IObject3D child = group.Children[i];
 
-					double newX = child.ExtraData.Spacing.x * lastSizeValue;
-					double newY = child.ExtraData.Spacing.y * lastSizeValue;
+					Vector3 startPosition = Vector3.Transform(Vector3.Zero, child.Matrix);
+
+					var spacing = characterSpacing[i];
+
+					double newX = spacing.x * lastSizeValue;
+					double newY = spacing.y * lastSizeValue;
 
 					child.Matrix *= Matrix4X4.CreateTranslation(new Vector3(newX, newY, startPosition.z));
 				}

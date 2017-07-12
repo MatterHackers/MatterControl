@@ -73,7 +73,6 @@ namespace MatterHackers.Plugins.EditorTools
 							braille,
 							1,
 							.25,
-							true,
 							braille);
 					}, 
 					category));

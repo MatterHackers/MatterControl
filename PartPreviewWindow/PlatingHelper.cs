@@ -101,8 +101,7 @@ namespace MatterHackers.MatterControl
 			return output;
 		}
 
-		public static void ArrangeMeshGroups(List<IObject3D> object3DList, List<Matrix4X4> asyncMeshGroupTransforms, List<PlatingData> MeshGroupExtraData,
-	Action<double, string> reportProgressChanged)
+		public static void ArrangeMeshGroups(List<IObject3D> object3DList, List<Matrix4X4> asyncMeshGroupTransforms, Action<double, string> reportProgressChanged)
 		{
 			// TODO: ******************** !!!!!!!!!!!!!!! ********************
 		}

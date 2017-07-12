@@ -35,6 +35,7 @@ using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
 using System.IO;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl.Plugins.TextCreator
 {
@@ -45,19 +46,20 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 		private bool hasUnderline;
 
 		private TypeFace boldTypeFace;
+		private Vector2[] characterSpacing;
 
 		public TextGenerator()
 		{
 			boldTypeFace = TypeFace.LoadFrom(StaticData.Instance.ReadAllText(Path.Combine("Fonts", "LiberationSans-Bold.svg")));
 		}
 
-		public IObject3D CreateText(string wordText, double wordSize, double wordHeight, double characterSpacing, bool createUnderline)
+		public IObject3D CreateText(string wordText, double wordSize, double wordHeight, double spacing, bool createUnderline)
 		{
 			var groupItem = new TextObject()
 			{
 				ItemType = Object3DTypes.Group,
 				Text = wordText,
-				Spacing = characterSpacing,
+				Spacing = spacing,
 				ActiveEditor = "TextEditor"
 			};
 
@@ -69,6 +71,8 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 
 			double ratioPerMeshGroup = 1.0 / wordText.Length;
 			double currentRatioDone = 0;
+
+			characterSpacing = new Vector2[wordText.Length];
 
 			for (int i = 0; i < wordText.Length; i++)
 			{
@@ -83,7 +87,8 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 						Mesh = textMesh,
 						ItemType = Object3DTypes.Model
 					};
-					characterObject.ExtraData.Spacing.x = printer.GetOffsetLeftOfCharacterIndex(i).x + centerOffset;
+
+					characterSpacing[i] = new Vector2( printer.GetOffsetLeftOfCharacterIndex(i).x + centerOffset, 0);
 
 					groupItem.Children.Add(characterObject);
 
@@ -101,7 +106,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 				//processingProgressControl.PercentComplete = ((i + 1) * 95 / wordText.Length);
 			}
 
-			SetWordSpacing(groupItem, characterSpacing);
+			SetWordSpacing(groupItem, spacing);
 			SetWordSize(groupItem, wordSize);
 			SetWordHeight(groupItem, wordHeight);
 
@@ -171,14 +176,16 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 		{
 			if (group.HasChildren)
 			{
+				int i = 0;
 				foreach (var sceneItem in group.Children)
 				{
 					Vector3 startPosition = Vector3.Transform(Vector3.Zero, sceneItem.Matrix);
 
 					sceneItem.Matrix *= Matrix4X4.CreateTranslation(-startPosition);
 
-					double newX = sceneItem.ExtraData.Spacing.x * spacing * lastSizeValue;
+					double newX = characterSpacing[i].x * spacing * lastSizeValue;
 					sceneItem.Matrix *= Matrix4X4.CreateTranslation(new Vector3(newX, 0, 0) + new Vector3(MeshViewerWidget.BedCenter));
+					i += 1;
 				}
 
 				if (rebuildUnderline)
