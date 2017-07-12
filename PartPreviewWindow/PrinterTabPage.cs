@@ -311,7 +311,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					ActiveSliceSettings.Instance.Helpers.ExtruderOffset(1)
 				},
 				this.GetRenderType,
-				MeshViewerWidget.GetMaterialColor);
+				MeshViewerWidget.GetExtruderColor);
 
 			// Close and remove any existing widget reference
 			gcode2DWidget?.Close();

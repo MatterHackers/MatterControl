@@ -74,7 +74,7 @@ namespace MatterHackers.MeshVisualizer
 		public PartProcessingInfo partProcessingInfo;
 		private static ImageBuffer lastCreatedBedImage = new ImageBuffer();
 
-		private static Dictionary<int, RGBA_Bytes> materialColors = new Dictionary<int, RGBA_Bytes>();
+		private static Dictionary<int, RGBA_Bytes> extruderlColors = new Dictionary<int, RGBA_Bytes>();
 		private RGBA_Bytes bedBaseColor = new RGBA_Bytes(245, 245, 255);
 		static public Vector2 BedCenter { get; private set; }
 		private RGBA_Bytes bedMarkingsColor = RGBA_Bytes.Black;
@@ -100,7 +100,6 @@ namespace MatterHackers.MeshVisualizer
 			RenderType = RenderTypes.Shaded;
 			RenderBed = true;
 			RenderBuildVolume = false;
-			//SetMaterialColor(1, RGBA_Bytes.LightGray, RGBA_Bytes.White);
 			BedColor = new RGBA_Floats(.8, .8, .8, .7).GetAsRGBA_Bytes();
 			BuildVolumeColor = new RGBA_Floats(.2, .8, .3, .2).GetAsRGBA_Bytes();
 
@@ -113,7 +112,7 @@ namespace MatterHackers.MeshVisualizer
 			labelContainer.AddChild(partProcessingInfo);
 			labelContainer.Selectable = false;
 
-			SetMaterialColor(1, ActiveTheme.Instance.PrimaryAccentColor);
+			SetExtruderColor(0, ActiveTheme.Instance.PrimaryAccentColor);
 
 			this.AddChild(labelContainer);
 
@@ -262,26 +261,26 @@ namespace MatterHackers.MeshVisualizer
 #endif
 		}
 
-		public static RGBA_Bytes GetMaterialColor(int materialIndexBase1)
+		public static RGBA_Bytes GetExtruderColor(int extruderIndex)
 		{
-			lock (materialColors)
+			lock (extruderlColors)
 			{
-				if (materialColors.ContainsKey(materialIndexBase1))
+				if (extruderlColors.ContainsKey(extruderIndex))
 				{
-					return materialColors[materialIndexBase1];
+					return extruderlColors[extruderIndex];
 				}
 			}
 
 			// we currently expect at most 4 extruders
-			return RGBA_Floats.FromHSL((materialIndexBase1 % 4) / 4.0, .5, .5).GetAsRGBA_Bytes();
+			return RGBA_Floats.FromHSL((extruderIndex % 4) / 4.0, .5, .5).GetAsRGBA_Bytes();
 		}
 
-		public static RGBA_Bytes GetSelectedMaterialColor(int materialIndexBase1)
+		public static RGBA_Bytes GetSelectedExtruderColor(int extruderIndex)
 		{
 			double hue0To1;
 			double saturation0To1;
 			double lightness0To1;
-			GetMaterialColor(materialIndexBase1).GetAsRGBA_Floats().GetHSL(out hue0To1, out saturation0To1, out lightness0To1);
+			GetExtruderColor(extruderIndex).GetAsRGBA_Floats().GetHSL(out hue0To1, out saturation0To1, out lightness0To1);
 
 			// now make it a bit lighter and less saturated
 			saturation0To1 = Math.Min(1, saturation0To1 * 2);
@@ -291,17 +290,17 @@ namespace MatterHackers.MeshVisualizer
 			return RGBA_Floats.FromHSL(hue0To1, saturation0To1, lightness0To1).GetAsRGBA_Bytes();
 		}
 
-		public static void SetMaterialColor(int materialIndexBase1, RGBA_Bytes color)
+		public static void SetExtruderColor(int extruderIndex, RGBA_Bytes color)
 		{
-			lock (materialColors)
+			lock (extruderlColors)
 			{
-				if (!materialColors.ContainsKey(materialIndexBase1))
+				if (!extruderlColors.ContainsKey(extruderIndex))
 				{
-					materialColors.Add(materialIndexBase1, color);
+					extruderlColors.Add(extruderIndex, color);
 				}
 				else
 				{
-					materialColors[materialIndexBase1] = color;
+					extruderlColors[extruderIndex] = color;
 				}
 			}
 		}
@@ -612,12 +611,12 @@ namespace MatterHackers.MeshVisualizer
 				bool isSelected = parentSelected ||
 					Scene.HasSelection && (object3D == Scene.SelectedItem || Scene.SelectedItem.Children.Contains(object3D));
 
-				MeshMaterialData meshData = MeshMaterialData.Get(meshAndTransform.MeshData);
 				RGBA_Bytes drawColor = object3D.Color;
 
 				if (drawColor.Alpha0To1 == 0)
 				{
-					drawColor = isSelected ? GetSelectedMaterialColor(meshData.MaterialIndex) : GetMaterialColor(meshData.MaterialIndex);
+					int extruderIndex = Math.Max(0, object3D.ExtruderIndex);
+					drawColor = isSelected ? GetSelectedExtruderColor(extruderIndex) : GetExtruderColor(extruderIndex);
 				}
 				
 				GLHelper.Render(meshAndTransform.MeshData, drawColor, meshAndTransform.Matrix, RenderType);
