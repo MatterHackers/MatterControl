@@ -302,10 +302,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				view3DWidget.UnlockEditControls();
 				view3DWidget.PartHasBeenChanged();
 
-				// TODO: jlewin - why do we need to reset the scale?
-
-				// now set the selection to the new copy
-				Scene.Children.Last().ExtraData.CurrentScale = Scene.SelectedItem.ExtraData.CurrentScale;
 			}
 		}
 
