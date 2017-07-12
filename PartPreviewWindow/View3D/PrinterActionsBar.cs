@@ -80,6 +80,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			UndoBuffer undoBuffer = modelViewer.UndoBuffer;
 
+			var defaultMargin = new BorderDouble(8, 0);
+
 			sliceProgressReporter = new SliceProgressReporter(modelViewer.meshViewerWidget);
 
 			this.HAnchor = HAnchor.ParentLeftRight;
@@ -89,7 +91,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.AddChild(new PrinterConnectButton(buttonFactory));
 
-			this.AddChild(new PrintActionRow(buttonFactory, this));
+			this.AddChild(new PrintActionRow(buttonFactory, this, defaultMargin));
 
 			this.AddChild(new HorizontalSpacer());
 
@@ -98,7 +100,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var sliceButton = buttonFactory.Generate("Slice".Localize());
 			sliceButton.ToolTipText = "Slice Parts".Localize();
 			sliceButton.Name = "Generate Gcode Button";
-			sliceButton.Margin = new BorderDouble(8, 0);
+			sliceButton.Margin = defaultMargin;
 			sliceButton.Click += async (s, e) =>
 			{
 				if (ActiveSliceSettings.Instance.PrinterSelected)
@@ -155,27 +157,26 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.AddChild(new TemperatureWidgetBed());
 			}
 
-			buttonFactory.Margin = new BorderDouble(8, 0);
+			buttonFactory.Margin = defaultMargin;
 
-			Button configureEePromButton = buttonFactory.Generate("", StaticData.Instance.LoadIcon("chip_24x24.png", 16, 16));
+			Button configureEePromButton = buttonFactory.Generate("", StaticData.Instance.LoadIcon("memory_16x16.png", 16, 16));
 			configureEePromButton.ToolTipText = "EEProm";
 			configureEePromButton.Click += configureEePromButton_Click;
 			this.AddChild(configureEePromButton);
 
-			Button undoButton = buttonFactory.Generate("", StaticData.Instance.LoadIcon("undo_24x24.png", 16, 16));
+			Button undoButton = buttonFactory.Generate("", StaticData.Instance.LoadIcon("Undo_grey_16x.png", 16, 16));
 			undoButton.Name = "3D View Undo";
 			undoButton.ToolTipText = "Undo";
 			undoButton.Enabled = false;
-			undoButton.Margin = new BorderDouble(8, 0);
+			undoButton.Margin = defaultMargin;
 			undoButton.Click += (sender, e) =>
 			{
 				undoBuffer.Undo();
 			};
 			this.AddChild(undoButton);
 			undoButton.VAnchor = VAnchor.ParentCenter;
-			undoButton.Margin = 3;
 
-			Button redoButton = buttonFactory.Generate("", StaticData.Instance.LoadIcon("redo_24x24.png", 16, 16));
+			Button redoButton = buttonFactory.Generate("", StaticData.Instance.LoadIcon("Redo_grey_16x.png", 16, 16));
 			redoButton.Name = "3D View Redo";
 			redoButton.ToolTipText = "Redo";
 			redoButton.Enabled = false;
@@ -185,7 +186,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			this.AddChild(redoButton);
 			redoButton.VAnchor = VAnchor.ParentCenter;
-			redoButton.Margin = 3;
 
 			buttonFactory.Margin = initialMargin;
 
@@ -201,7 +201,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			overflowDropdown = new OverflowDropdown(allowLightnessInvert: true)
 			{
 				AlignToRightEdge = true,
-				Name = "Printer Overflow Menu"
+				Name = "Printer Overflow Menu",
+				Margin = defaultMargin
 			};
 			overflowDropdown.DynamicPopupContent = GeneratePrinterOverflowMenu;
 
@@ -209,7 +210,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.Closed += (s, e) =>
 			{
 				overflowDropdown.DynamicPopupContent = GeneratePrinterOverflowMenu;
-			};
+			}; 
 
 			this.AddChild(overflowDropdown);
 		}

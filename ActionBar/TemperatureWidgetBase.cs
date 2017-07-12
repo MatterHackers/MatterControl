@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using MatterHackers.Agg;
+using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.PartPreviewWindow;
@@ -67,6 +68,11 @@ namespace MatterHackers.MatterControl.ActionBar
 				Padding = new BorderDouble(5)
 			};
 			this.AddChild(container);
+
+			if (!ActiveTheme.Instance.IsDarkTheme)
+			{
+				this.ImageWidget.Image = this.ImageWidget.Image.InvertLightness();
+			}
 
 			container.AddChild(this.ImageWidget);
 
