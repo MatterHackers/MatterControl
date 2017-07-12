@@ -654,6 +654,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							Invalidate();
 						}
 						break;
+					case Keys.Space:
+						this.Scene.ClearSelection();
+						break;
 				}
 			}
 		}
@@ -938,6 +941,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			Scene_SelectionChanged(null, null);
 
 			this.PartHasBeenChanged();
+
+			// Set focus to View3DWidget after drag-drop
+			UiThread.RunOnIdle(this.Focus);
 		}
 
 		public override void OnLoad(EventArgs args)
