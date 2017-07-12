@@ -78,6 +78,8 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			string tempPath = GetSceneTempPath();
 			string filePath = Path.Combine(tempPath, "some.mcx");
 
+			Object3D.AssetsPath = Path.Combine(tempPath, "Assets");
+
 			scene.Save(filePath, tempPath);
 
 			Assert.IsTrue(File.Exists(filePath));
@@ -88,7 +90,8 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			IObject3D meshItem = loadedItem.Children.First();
 
 			Assert.IsTrue(!string.IsNullOrEmpty(meshItem.MeshPath));
-			Assert.IsTrue(File.Exists(meshItem.MeshPath));
+
+			Assert.IsTrue(File.Exists(Path.Combine(tempPath, "Assets", meshItem.MeshPath)));
 			Assert.IsNotNull(meshItem.Mesh);
 			Assert.IsTrue(meshItem.Mesh.Faces.Count > 0);
 		}
