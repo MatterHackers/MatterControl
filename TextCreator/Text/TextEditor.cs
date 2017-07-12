@@ -27,24 +27,23 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Threading;
+using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.PolygonMesh;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.Plugins.TextCreator
 {
 	public class TextEditor : IObject3DEditor
 	{
 		private MHTextEditWidget textToAddWidget;
-		private SolidSlider spacingScrollBar;
 		private CheckBox createUnderline;
 
 		private TextGenerator textGenerator;
@@ -86,15 +85,6 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 			textToAddWidget.ActualTextEditWidget.EnterPressed += (s, e) => RebuildText(textToAddWidget.Text);
 			tabContainer.AddChild(textToAddWidget);
 
-			spacingScrollBar = theme.CreateSolidSlider(tabContainer, "Spacing:".Localize(), .5, 1);
-			spacingScrollBar.ValueChanged += (sender, e) =>
-			{
-				if (injectedItem != null)
-				{
-					textGenerator.SetWordSpacing(injectedItem, spacingScrollBar.Value, rebuildUnderline: true);
-				}
-			};
-
 			createUnderline = new CheckBox(new CheckBoxViewText("Underline".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor))
 			{
 				Checked = true,
@@ -117,7 +107,6 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 
 		private void ResetWordLayoutSettings()
 		{
-			spacingScrollBar.Value = 1;
 			textGenerator.ResetSettings();
 		}
 
@@ -148,7 +137,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 					text,
 					1,
 					.25,
-					spacingScrollBar.Value,
+					1,
 					createUnderline.Checked);
 			});
 
