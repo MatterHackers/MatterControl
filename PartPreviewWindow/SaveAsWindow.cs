@@ -238,11 +238,11 @@ namespace MatterHackers.MatterControl
 		{
 			public string fileNameAndPath;
 			public string newName;
-			public ILibraryContainer destinationLibraryProvider;
+			public ILibraryContainer DestinationContainer;
 
 			public SaveAsReturnInfo(string newName, string fileNameAndPath, ILibraryContainer destinationLibraryProvider)
 			{
-				this.destinationLibraryProvider = destinationLibraryProvider;
+				this.DestinationContainer = destinationLibraryProvider;
 				this.newName = newName;
 				this.fileNameAndPath = fileNameAndPath;
 			}
