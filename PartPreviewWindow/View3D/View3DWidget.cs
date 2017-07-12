@@ -1655,7 +1655,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				{
 					"Save".Localize(),
-					() =>
+					async () =>
 					{
 						if (printItemWrapper == null)
 						{
@@ -1663,7 +1663,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						}
 						else
 						{
-							SaveChanges(null);
+							await this.SaveChanges();
 						}
 					}
 				},
@@ -1686,12 +1686,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			flowToAddTo.AddChild(saveButtons);
 		}
 
-		// Indicates if MatterControl is in a mode that allows DragDrop
-		private bool AllowDragDrop()
-		{
-			// Allow drop if printItem is not null and not ReadOnly
-			return !printItemWrapper?.PrintItem.ReadOnly ?? false;
-		}
+		// Indicates if MatterControl is in a mode that allows DragDrop  - true if printItem not null and not ReadOnly
+		private bool AllowDragDrop() => !printItemWrapper?.PrintItem.ReadOnly ?? false;
 
 		private void AutoSpin()
 		{
@@ -2085,7 +2081,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		internal GuiWidget selectedObjectPanel;
 		private FlowLayoutWidget editorPanel;
 
-		private async Task SaveChanges(SaveAsWindow.SaveAsReturnInfo returnInfo = null)
+		private async Task SaveChanges()
 		{
 			editorThatRequestedSave = true;
 
@@ -2104,24 +2100,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					try
 					{
-						// If null we are replacing a file from the current print item wrapper
-						if (returnInfo == null)
+						// Force to .mcx
+						if (Path.GetExtension(printItemWrapper.FileLocation) != ".mcx")
 						{
-							// Only save as .mcx
-							if (Path.GetExtension(printItemWrapper.FileLocation) != ".mcx")
-							{
-								printItemWrapper.FileLocation = Path.ChangeExtension(printItemWrapper.FileLocation, ".mcx");
-							}
-						}
-						else // Otherwise we are saving a new file
-						{
-							printItemWrapper = new PrintItemWrapper(
-								new PrintItem()
-								{
-									Name = returnInfo.newName,
-									FileLocation = Path.ChangeExtension(returnInfo.fileNameAndPath, ".mcx")
-								}, 
-								returnInfo.destinationLibraryProvider);
+							printItemWrapper.FileLocation = Path.ChangeExtension(printItemWrapper.FileLocation, ".mcx");
 						}
 
 						// TODO: Hook up progress reporting
@@ -2131,29 +2113,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 						// Wait for a second to report the file changed to give the OS a chance to finish closing it.
 						UiThread.RunOnIdle(printItemWrapper.ReportFileChange, 3);
-
-						// Save to the destination provider, otherwise it already exists and has a file monitor
-						if (returnInfo?.destinationLibraryProvider != null)
-						{
-							// save this part to correct library provider
-							var libraryToSaveTo = returnInfo.destinationLibraryProvider;
-							if (libraryToSaveTo != null)
-							{
-								var writableContainer = libraryToSaveTo as ILibraryWritableContainer;
-								if (writableContainer != null)
-								{
-									writableContainer.Add(new[]
-									{
-										new FileSystemFileItem(printItemWrapper.FileLocation)
-										{
-											Name = returnInfo.newName
-										}
-									});
-								}
-
-								libraryToSaveTo.Dispose();
-							}
-						}
 
 						saveSucceded = true;
 					}
@@ -2254,7 +2213,44 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (saveAsWindow == null)
 			{
-				saveAsWindow = new SaveAsWindow(SaveChanges, printItemWrapper?.SourceLibraryProviderLocator, true, true);
+				saveAsWindow = new SaveAsWindow(
+					async (returnInfo) =>
+					{
+						// TODO: The PrintItemWrapper seems unnecessary in the new LibraryContainer model. Couldn't we just pass the scene to the LibraryContainer via it's add function, no need to perist to disk?
+						// Create a new PrintItemWrapper
+						printItemWrapper = new PrintItemWrapper(
+						new PrintItem()
+						{
+							Name = returnInfo.newName,
+							FileLocation = Path.ChangeExtension(returnInfo.fileNameAndPath, ".mcx")
+						},
+						returnInfo.DestinationContainer);
+
+						// Save the scene to disk
+						await this.SaveChanges();
+
+						// Save to the destination provider
+						if (returnInfo?.DestinationContainer != null)
+						{
+							// save this part to correct library provider
+							if (returnInfo.DestinationContainer is ILibraryWritableContainer writableContainer)
+							{
+								writableContainer.Add(new[]
+								{
+									new FileSystemFileItem(printItemWrapper.FileLocation)
+									{
+										Name = returnInfo.newName
+									}
+								});
+
+								returnInfo.DestinationContainer.Dispose();
+							}
+						}
+					}, 
+					printItemWrapper?.SourceLibraryProviderLocator, 
+					true, 
+					true);
+
 				saveAsWindow.Closed += SaveAsWindow_Closed;
 			}
 			else
@@ -2357,7 +2353,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (partHasBeenEdited)
 			{
-				await SaveChanges(null);
+				await this.SaveChanges();
 			}
 		}
 
