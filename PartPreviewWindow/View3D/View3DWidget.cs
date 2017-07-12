@@ -89,20 +89,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			mainContainer.AddChild(tabContainer);
 
-			Button updateButton = theme.textImageButtonFactory.Generate("Color".Localize());
-			updateButton.Margin = new BorderDouble(5);
-			updateButton.HAnchor = HAnchor.ParentRight;
-			updateButton.Click += ChangeColor;
-			tabContainer.AddChild(updateButton);
+			Button changeColorButton = theme.textImageButtonFactory.Generate("Color".Localize());
+			changeColorButton.Margin = new BorderDouble(5);
+			changeColorButton.HAnchor = HAnchor.ParentRight;
+			Random rand = new Random();
+			changeColorButton.Click += (s, e) =>
+			{
+				item.Color = new RGBA_Bytes(rand.Next(255), rand.Next(255), rand.Next(255));
+				view3DWidget.Invalidate();
+			};
+
+			tabContainer.AddChild(changeColorButton);
 
 			return mainContainer;
-		}
-
-		Random rand = new Random();
-		private void ChangeColor(object sender, EventArgs e)
-		{
-			item.Color = new RGBA_Bytes(rand.Next(255), rand.Next(255), rand.Next(255));
-			view3DWidget.Invalidate();
 		}
 	}
 
@@ -510,7 +509,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			ActiveTheme.ThemeChanged.RegisterEvent((s, e) =>
 			{
 				processingProgressControl.FillColor = ActiveTheme.Instance.PrimaryAccentColor;
-				MeshViewerWidget.SetMaterialColor(1, ActiveTheme.Instance.PrimaryAccentColor);
+				MeshViewerWidget.SetExtruderColor(1, ActiveTheme.Instance.PrimaryAccentColor);
 			}, ref unregisterEvents);
 
 			this.InteractionLayer.InteractionVolumes.Add(new MoveInZControl(this));
@@ -1620,26 +1619,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				colorSelectionContainer.HAnchor = HAnchor.FitToChildren;
 				colorSelectionContainer.Padding = new BorderDouble(5);
 
-				string colorLabelText = string.Format("{0} {1}", "Material".Localize(), extruderIndex + 1);
+				string extruderLabelText = string.Format("{0} {1}", "Extruder".Localize(), extruderIndex + 1);
 
-				RadioButton extruderSelection = new RadioButton(colorLabelText, textColor: ActiveTheme.Instance.PrimaryTextColor);
+				RadioButton extruderSelection = new RadioButton(extruderLabelText, textColor: ActiveTheme.Instance.PrimaryTextColor);
 				extruderButtons.Add(extruderSelection);
 				extruderSelection.SiblingRadioButtonList = extruderButtons;
 				colorSelectionContainer.AddChild(extruderSelection);
 				colorSelectionContainer.AddChild(new HorizontalSpacer());
-				int extruderIndexLocal = extruderIndex;
+				int extruderIndexCanPassToClick = extruderIndex;
 				extruderSelection.Click += (sender, e) =>
 				{
 					if (Scene.HasSelection)
 					{
-						// TODO: In the new model, we probably need to iterate this object and all its children, setting 
-						// some state along the way or modify the tree processing to pass the parent value down the chain
-						MeshMaterialData material = MeshMaterialData.Get(Scene.SelectedItem.Mesh);
-						if (material.MaterialIndex != extruderIndexLocal + 1)
-						{
-							material.MaterialIndex = extruderIndexLocal + 1;
-							PartHasBeenChanged();
-						}
+						Scene.SelectedItem.ExtruderIndex = extruderIndexCanPassToClick;
+						PartHasBeenChanged();
 					}
 				};
 
@@ -1787,9 +1780,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			HashSet<IObject3DEditor> mappedEditors;
 			objectEditorsByType.TryGetValue(selectedItem.GetType(), out mappedEditors);
 
-			if(mappedEditors == null)
+			if (mappedEditors == null)
 			{
-				foreach(var editor in objectEditorsByType)
+				foreach (var editor in objectEditorsByType)
 				{
 					if (selectedItem.GetType().IsSubclassOf(editor.Key))
 					{
@@ -1826,20 +1819,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				// Select the active editor or fall back to the first if not found
 				this.ActiveSelectionEditor = (from editor in mappedEditors
-								   let type = editor.GetType()
-								   where type.Name == selectedItem.ActiveEditor
-								   select editor).FirstOrDefault();
+											  let type = editor.GetType()
+											  where type.Name == selectedItem.ActiveEditor
+											  select editor).FirstOrDefault();
 
 				// Fall back to default editor?
-				if(this.ActiveSelectionEditor == null)
+				if (this.ActiveSelectionEditor == null)
 				{
 					this.ActiveSelectionEditor = mappedEditors.First();
 				}
 
 				int selectedIndex = 0;
-				for(int i = 0; i < dropDownList.MenuItems.Count; i++)
+				for (int i = 0; i < dropDownList.MenuItems.Count; i++)
 				{
-					if(dropDownList.MenuItems[i].Text == this.ActiveSelectionEditor.Name)
+					if (dropDownList.MenuItems[i].Text == this.ActiveSelectionEditor.Name)
 					{
 						selectedIndex = i;
 						break;
@@ -1849,6 +1842,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				dropDownList.SelectedIndex = selectedIndex;
 
 				ShowObjectEditor(this.ActiveSelectionEditor);
+			}
+
+			if (extruderButtons?.Count > 0)
+			{
+				bool setSelection = false;
+				// Set the material selector to have the correct material button selected
+				for (int i = 0; i < extruderButtons.Count; i++)
+				{
+					if (selectedItem.ExtruderIndex == i)
+					{
+						((RadioButton)extruderButtons[i]).Checked = true;
+						setSelection = true;
+					}
+				}
+
+				if(!setSelection)
+				{
+					((RadioButton)extruderButtons[0]).Checked = true;
+				}
 			}
 		}
 
@@ -2152,21 +2164,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			else
 			{
 				UnlockEditControls();
-			}
-
-			// Used to be bound to SelectionChanged event that no one was using and that overlapped with Queue SelectionChanged events that already signify this state change. 
-			// Eliminate unnecessary event and restore later if some external caller needs this hook
-			if (Scene.HasSelection && Scene.SelectedItem.Mesh != null)
-			{
-				// TODO: Likely needs to be reviewed as described above and in the context of the scene graph
-				MeshMaterialData material = MeshMaterialData.Get(Scene.SelectedItem.Mesh);
-				for (int i = 0; i < extruderButtons.Count; i++)
-				{
-					if (material.MaterialIndex - 1 == i)
-					{
-						((RadioButton)extruderButtons[i]).Checked = true;
-					}
-				}
 			}
 
 			if (openMode == OpenMode.Editing)

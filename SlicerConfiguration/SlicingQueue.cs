@@ -164,8 +164,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						{
 							foreach (Mesh mesh in meshGroup.Meshes)
 							{
-								MeshMaterialData material = MeshMaterialData.Get(mesh);
-								int extruderIndex = Math.Max(0, material.MaterialIndex - 1);
+								MeshExtruderData material = MeshExtruderData.Get(mesh);
+								int extruderIndex = Math.Max(0, material.ExtruderIndex - 1);
 								maxExtruderIndex = Math.Max(maxExtruderIndex, extruderIndex);
 								if (extruderIndex >= extruderCount)
 								{
@@ -216,8 +216,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 											mergeRules += ",{0}".FormatWith(savedStlCount);
 										}
 									}
-									int currentMeshMaterialIntdex = MeshMaterialData.Get(mesh).MaterialIndex;
-									if (materialsToInclude.Contains(currentMeshMaterialIntdex))
+									int meshExtruderIndex = MeshExtruderData.Get(mesh).ExtruderIndex;
+									if (materialsToInclude.Contains(meshExtruderIndex))
 									{
 										extruderFilesToSlice.Add(SaveAndGetFilePathForMesh(mesh));
 									}
@@ -285,13 +285,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				filePath, 
 				new MeshOutputSettings()
 				{
-					MaterialIndexsToSave = materialIndexsToSaveInThisSTL
+					ExtruderIndexesToSave = materialIndexsToSaveInThisSTL
 				});
 
 			return filePath;
 		}
 
-		public static bool runInProcess = false;
+		public static bool runInProcess = true;
 		private static Process slicerProcess = null;
 
 		private class SliceMessageReporter : IProgress<string>
