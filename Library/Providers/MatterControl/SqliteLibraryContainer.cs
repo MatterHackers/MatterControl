@@ -167,7 +167,7 @@ namespace MatterHackers.MatterControl.Library
 										string childFilePath = part.FileLocation;
 										using (var fileStream = File.OpenRead(part.FileLocation))
 										{
-											AddItem(fileStream, Path.GetExtension(childFilePath).ToUpper(), PrintItemWrapperExtensionMethods.GetFriendlyName(Path.GetFileNameWithoutExtension(childFilePath)));
+											AddItem(fileStream, Path.GetExtension(childFilePath), PrintItemWrapperExtensionMethods.GetFriendlyName(Path.GetFileNameWithoutExtension(childFilePath)));
 										}
 									}
 								}
@@ -183,7 +183,7 @@ namespace MatterHackers.MatterControl.Library
 										itemName = PrintItemWrapperExtensionMethods.GetFriendlyName(Path.GetFileNameWithoutExtension(filePath));
 									}
 									
-									AddItem(stream, Path.GetExtension(filePath).ToUpper(), itemName);
+									AddItem(stream, Path.GetExtension(filePath), itemName);
 								}
 							}
 						}
