@@ -654,6 +654,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							Invalidate();
 						}
 						break;
+					case Keys.Space:
+						this.Scene.ClearSelection();
+						break;
 				}
 			}
 		}
