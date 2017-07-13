@@ -55,7 +55,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		protected Mesh upArrowMesh;
 		protected AxisAlignedBoundingBox mouseDownSelectedBounds;
 		protected Matrix4X4 transformOnMouseDown = Matrix4X4.Identity;
-		protected View3DWidget view3DWidget;
 		private double distToStart = 5;
 		private double lineLength = 55;
 		private List<Vector2> lines = new List<Vector2>();
@@ -63,11 +62,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private ValueDisplayInfo zHeightDisplayInfo;
 		private bool HadClickOnControl;
 
-		public MoveInZControl(View3DWidget view3DWidget)
-			: base(null, view3DWidget.InteractionLayer)
+		public MoveInZControl(IInteractionVolumeContext context)
+			: base(context)
 		{
-			this.view3DWidget = view3DWidget;
-
 			zHeightDisplayInfo = new ValueDisplayInfo()
 			{
 				ForceHide = () =>
@@ -85,7 +82,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						return true;
 					}
-
 
 					// if we clicked on the control
 					if (HadClickOnControl)
@@ -130,17 +126,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (moveAmount != 0)
 				{
 					selectedItem.Matrix = selectedItem.Matrix * Matrix4X4.CreateTranslation(0, 0, moveAmount);
-					view3DWidget.PartHasBeenChanged();
 					Invalidate();
 				}
 
-				if (InteractionContext?.Scene?.SelectedItem?.Matrix != startingTransform)
-				{
-					view3DWidget.PartHasBeenChanged();
-					Invalidate();
-
-					view3DWidget.AddUndoForSelectedMeshGroupTransform(startingTransform);
-				}
+				context.AddTransformSnapshot(startingTransform);
 			};
 
 			InteractionContext.GuiSurface.AddChild(zHeightDisplayInfo);
@@ -253,7 +242,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					if (moveAmount != 0)
 					{
 						selectedItem.Matrix = selectedItem.Matrix * Matrix4X4.CreateTranslation(0, 0, moveAmount);
-						view3DWidget.PartHasBeenChanged();
 						Invalidate();
 					}
 				}
@@ -264,11 +252,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnMouseUp(MouseEvent3DArgs mouseEvent3D)
 		{
-			if (InteractionContext?.Scene?.SelectedItem?.Matrix != transformOnMouseDown)
-			{
-				view3DWidget.AddUndoForSelectedMeshGroupTransform(transformOnMouseDown);
-			}
-
+			InteractionContext.AddTransformSnapshot(transformOnMouseDown);
 			base.OnMouseUp(mouseEvent3D);
 		}
 

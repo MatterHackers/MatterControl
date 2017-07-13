@@ -50,9 +50,8 @@ namespace MatterHackers.MeshVisualizer
 
 		private bool mouseOver = false;
 
-		public InteractionVolume(IPrimitive collisionVolume, IInteractionVolumeContext meshViewerToDrawWith)
+		public InteractionVolume(IInteractionVolumeContext meshViewerToDrawWith)
 		{
-			this.CollisionVolume = collisionVolume;
 			this.InteractionContext = meshViewerToDrawWith;
 		}
 
@@ -170,6 +169,16 @@ namespace MatterHackers.MeshVisualizer
 
 		GuiWidget GuiSurface { get; }
 
+		void AddTransformSnapshot(Matrix4X4 originalTransform);
+
 		List<InteractionVolume> InteractionVolumes { get; }
+	}
+
+	public class InteractionVolumePlugin
+	{
+		public virtual InteractionVolume CreateInteractionVolume(IInteractionVolumeContext context)
+		{
+			return null;
+		}
 	}
 }

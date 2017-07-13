@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2016, Lars Brubaker, John Lewin
+Copyright (c) 2017, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -26,35 +26,61 @@ The views and conclusions contained in the software and documentation are those
 of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
-
+using System.Threading;
+using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
-using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	internal class TransformUndoCommand : IUndoRedoCommand
+	public class DragDropLoadProgress
 	{
-		private IObject3D transformedObject;
-		private Matrix4X4 redoTransform;
-		private Matrix4X4 undoTransform;
+		IObject3D trackingObject;
+		View3DWidget view3DWidget;
+		private ProgressBar progressBar;
 
-		public TransformUndoCommand(IObject3D transformedObject, Matrix4X4 undoTransform, Matrix4X4 redoTransform)
+		public DragDropLoadProgress(View3DWidget view3DWidget, IObject3D trackingObject)
 		{
-			this.transformedObject = transformedObject;
-			this.undoTransform = undoTransform;
-			this.redoTransform = redoTransform;
+			this.trackingObject = trackingObject;
+			this.view3DWidget = view3DWidget;
+			view3DWidget.AfterDraw += View3DWidget_AfterDraw;
+			progressBar = new ProgressBar(80, 15)
+			{
+				FillColor = ActiveTheme.Instance.PrimaryAccentColor,
+			};
 		}
 
-		public void Do()
+		private void View3DWidget_AfterDraw(object sender, DrawEventArgs e)
 		{
-			transformedObject.Matrix = redoTransform;
+			if (view3DWidget?.HasBeenClosed == false)
+			{
+				AxisAlignedBoundingBox bounds = trackingObject.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+				Vector3 renderPosition = bounds.Center;
+				Vector2 cornerScreenSpace = view3DWidget.World.GetScreenPosition(renderPosition) - new Vector2(40, 20);
+
+				e.graphics2D.PushTransform();
+				Affine currentGraphics2DTransform = e.graphics2D.GetTransform();
+				Affine accumulatedTransform = currentGraphics2DTransform * Affine.NewTranslation(cornerScreenSpace.x, cornerScreenSpace.y);
+				e.graphics2D.SetTransform(accumulatedTransform);
+
+				progressBar.OnDraw(e.graphics2D);
+				e.graphics2D.PopTransform();
+			}
 		}
 
-		public void Undo()
+		public void ProgressReporter((double progress0To1, string processingState) progress, CancellationTokenSource continueProcessing)
 		{
-			transformedObject.Matrix = undoTransform;
+			progressBar.RatioComplete = progress.progress0To1;
+			if (progress.progress0To1 == 1)
+			{
+				if (view3DWidget != null)
+				{
+					view3DWidget.AfterDraw -= View3DWidget_AfterDraw;
+				}
+
+				view3DWidget = null;
+			}
 		}
 	}
 }

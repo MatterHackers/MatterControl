@@ -61,114 +61,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class BaseObject3DEditor : IObject3DEditor
-	{
-		private IObject3D item;
-		private View3DWidget view3DWidget;
-
-		public string Name => "General";
-
-		public bool Unlocked => true;
-
-		public IEnumerable<Type> SupportedTypes()
-		{
-			return new Type[] { typeof(Object3D) };
-		}
-
-		public GuiWidget Create(IObject3D item, View3DWidget view3DWidget, ThemeConfig theme)
-		{
-			this.view3DWidget = view3DWidget;
-			this.item = item;
-			FlowLayoutWidget mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-
-			FlowLayoutWidget tabContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				HAnchor = HAnchor.AbsolutePosition,
-				Visible = true,
-				Width = theme.WhiteButtonFactory.FixedWidth
-			};
-			mainContainer.AddChild(tabContainer);
-
-			Button changeColorButton = theme.textImageButtonFactory.Generate("Color".Localize());
-			changeColorButton.Margin = new BorderDouble(5);
-			changeColorButton.HAnchor = HAnchor.ParentRight;
-			Random rand = new Random();
-			changeColorButton.Click += (s, e) =>
-			{
-				item.Color = new RGBA_Bytes(rand.Next(255), rand.Next(255), rand.Next(255));
-				view3DWidget.Invalidate();
-			};
-
-			tabContainer.AddChild(changeColorButton);
-
-			return mainContainer;
-		}
-	}
-
-	public interface IInteractionVolumeCreator
-	{
-		InteractionVolume CreateInteractionVolume(View3DWidget widget);
-	}
-
-	public class DragDropLoadProgress
-	{
-		IObject3D trackingObject;
-		View3DWidget view3DWidget;
-		private ProgressBar progressBar;
-
-		public DragDropLoadProgress(View3DWidget view3DWidget, IObject3D trackingObject)
-		{
-			this.trackingObject = trackingObject;
-			this.view3DWidget = view3DWidget;
-			view3DWidget.AfterDraw += View3DWidget_AfterDraw;
-			progressBar = new ProgressBar(80, 15)
-			{
-				FillColor = ActiveTheme.Instance.PrimaryAccentColor,
-			};
-		}
-
-		private void View3DWidget_AfterDraw(object sender, DrawEventArgs e)
-		{
-			if (view3DWidget?.HasBeenClosed == false)
-			{
-				AxisAlignedBoundingBox bounds = trackingObject.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
-				Vector3 renderPosition = bounds.Center;
-				Vector2 cornerScreenSpace = view3DWidget.World.GetScreenPosition(renderPosition) - new Vector2(40, 20);
-
-				e.graphics2D.PushTransform();
-				Affine currentGraphics2DTransform = e.graphics2D.GetTransform();
-				Affine accumulatedTransform = currentGraphics2DTransform * Affine.NewTranslation(cornerScreenSpace.x, cornerScreenSpace.y);
-				e.graphics2D.SetTransform(accumulatedTransform);
-
-				progressBar.OnDraw(e.graphics2D);
-				e.graphics2D.PopTransform();
-			}
-		}
-
-		public void ProgressReporter((double progress0To1, string processingState) progress, CancellationTokenSource continueProcessing)
-		{
-			progressBar.RatioComplete = progress.progress0To1;
-			if (progress.progress0To1 == 1)
-			{
-				if (view3DWidget != null)
-				{
-					view3DWidget.AfterDraw -= View3DWidget_AfterDraw;
-				}
-
-				view3DWidget = null;
-			}
-		}
-	}
-
-	public class InteractionVolumePlugin : IInteractionVolumeCreator
-	{
-		public virtual InteractionVolume CreateInteractionVolume(View3DWidget widget)
-		{
-			return null;
-		}
-	}
-
-	public partial class View3DWidget : GuiWidget
+	public class View3DWidget : GuiWidget
 	{
 		private bool DoBooleanTest = false;
 		private bool deferEditorTillMouseUp = false;
@@ -188,7 +81,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		internal ProgressControl processingProgressControl;
 		private SaveAsWindow saveAsWindow = null;
 		private SplitButton saveButtons;
-		private bool saveSucceded = true;
 		private RGBA_Bytes[] SelectionColors = new RGBA_Bytes[] { new RGBA_Bytes(131, 4, 66), new RGBA_Bytes(227, 31, 61), new RGBA_Bytes(255, 148, 1), new RGBA_Bytes(247, 224, 23), new RGBA_Bytes(143, 212, 1) };
 		private Stopwatch timeSinceLastSpin = new Stopwatch();
 		private Stopwatch timeSinceReported = new Stopwatch();
@@ -258,7 +150,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			this.TrackballTumbleWidget.AnchorAll();
 
-			this.InteractionLayer = new InteractionLayer(this.World)
+			this.InteractionLayer = new InteractionLayer(this.World, this.UndoBuffer, this.PartHasBeenChanged)
 			{
 				Name = "InteractionLayer",
 			};
@@ -512,14 +404,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				MeshViewerWidget.SetExtruderColor(1, ActiveTheme.Instance.PrimaryAccentColor);
 			}, ref unregisterEvents);
 
-			this.InteractionLayer.InteractionVolumes.Add(new MoveInZControl(this));
-			this.InteractionLayer.InteractionVolumes.Add(new SelectionShadow(this));
-			this.InteractionLayer.InteractionVolumes.Add(new SnappingIndicators(this));
+			var interactionVolumes = this.InteractionLayer.InteractionVolumes;
+			interactionVolumes.Add(new MoveInZControl(this.InteractionLayer));
+			interactionVolumes.Add(new SelectionShadow(this.InteractionLayer));
+			interactionVolumes.Add(new SnappingIndicators(this.InteractionLayer, this.CurrentSelectInfo));
 
 			PluginFinder<InteractionVolumePlugin> interactionVolumePlugins = new PluginFinder<InteractionVolumePlugin>();
 			foreach (InteractionVolumePlugin plugin in interactionVolumePlugins.Plugins)
 			{
-				this.InteractionLayer.InteractionVolumes.Add(plugin.CreateInteractionVolume(this));
+				interactionVolumes.Add(plugin.CreateInteractionVolume(this.InteractionLayer));
 			}
 
 			if (DoBooleanTest)
@@ -1512,14 +1405,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return offset;
 		}
 
-		public void AddUndoForSelectedMeshGroupTransform(Matrix4X4 undoTransform)
-		{
-			if (Scene.HasSelection && undoTransform != Scene.SelectedItem?.Matrix)
-			{
-				UndoBuffer.Add(new TransformUndoCommand(this, Scene.SelectedItem, undoTransform, Scene.SelectedItem.Matrix));
-			}
-		}
-
 		public void ResetView()
 		{
 			this.TrackballTumbleWidget.ZeroVelocity();
@@ -1562,11 +1447,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					&& CurrentSelectInfo.DownOnPart
 					&& CurrentSelectInfo.LastMoveDelta != Vector3.Zero)
 				{
-					if (Scene.SelectedItem.Matrix != transformOnMouseDown)
-					{
-						AddUndoForSelectedMeshGroupTransform(transformOnMouseDown);
-						PartHasBeenChanged();
-					}
+					InteractionLayer.AddTransformSnapshot(transformOnMouseDown);
 				}
 				else if (DragSelectionInProgress)
 				{
@@ -2125,8 +2006,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 						// Wait for a second to report the file changed to give the OS a chance to finish closing it.
 						UiThread.RunOnIdle(printItemWrapper.ReportFileChange, 3);
-
-						saveSucceded = true;
 					}
 					catch (Exception ex)
 					{
@@ -2571,7 +2450,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private bool needToRecreateBed = false;
 
-		public MeshSelectInfo CurrentSelectInfo { get; private set; } = new MeshSelectInfo();
+		public MeshSelectInfo CurrentSelectInfo { get; } = new MeshSelectInfo();
 
 		protected IObject3D FindHitObject3D(Vector2 screenPosition, ref IntersectInfo intersectionInfo)
 		{
