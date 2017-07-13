@@ -115,7 +115,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			viewControls3D.ResetView += (sender, e) =>
 			{
-				if (gcode2DWidget.Visible)
+				if (gcode2DWidget?.Visible == true)
 				{
 					gcode2DWidget.CenterPartInView();
 				}
