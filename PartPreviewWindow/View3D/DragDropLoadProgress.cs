@@ -36,13 +36,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class DragDropLoadProgress
 	{
-		IObject3D trackingObject;
-		View3DWidget view3DWidget;
+		private View3DWidget view3DWidget;
 		private ProgressBar progressBar;
 
 		public DragDropLoadProgress(View3DWidget view3DWidget, IObject3D trackingObject)
 		{
-			this.trackingObject = trackingObject;
+			this.TrackingObject = trackingObject;
 			this.view3DWidget = view3DWidget;
 			view3DWidget.AfterDraw += View3DWidget_AfterDraw;
 			progressBar = new ProgressBar(80, 15)
@@ -51,11 +50,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 		}
 
+		public IObject3D TrackingObject { get; set; }
+
 		private void View3DWidget_AfterDraw(object sender, DrawEventArgs e)
 		{
-			if (view3DWidget?.HasBeenClosed == false)
+			if (view3DWidget?.HasBeenClosed == false && this.TrackingObject != null)
 			{
-				AxisAlignedBoundingBox bounds = trackingObject.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+				AxisAlignedBoundingBox bounds = TrackingObject.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 				Vector3 renderPosition = bounds.Center;
 				Vector2 cornerScreenSpace = view3DWidget.World.GetScreenPosition(renderPosition) - new Vector2(40, 20);
 
