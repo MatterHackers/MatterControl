@@ -61,21 +61,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-
-	public interface IInteractionVolumeCreator
-	{
-		InteractionVolume CreateInteractionVolume(IInteractionVolumeContext context);
-	}
-
-	public class InteractionVolumePlugin : IInteractionVolumeCreator
-	{
-		public virtual InteractionVolume CreateInteractionVolume(IInteractionVolumeContext context)
-		{
-			return null;
-		}
-	}
-
-	public partial class View3DWidget : GuiWidget
+	public class View3DWidget : GuiWidget
 	{
 		private bool DoBooleanTest = false;
 		private bool deferEditorTillMouseUp = false;
