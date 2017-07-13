@@ -244,15 +244,17 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				if (view3DWidget != null && view3DWidget.DragDropSource == null)
 				{
-					if (listViewItem.Model is ILibraryContentStream)
+					if (listViewItem.Model is ILibraryContentStream contentModel)
 					{
-						// Use provider to acquire Object3D
-						var contentModel = listViewItem.Model as ILibraryContentStream;
-
 						// Update the ListView pointer for the dragging item
 						listViewItem.ListView.DragSourceRowItem = listViewItem;
 
-						var contentResult = contentModel.CreateContent();
+						var progressBar = new DragDropLoadProgress(this.view3DWidget, null);
+
+						var contentResult = contentModel.CreateContent(progressBar.ProgressReporter);
+
+						progressBar.TrackingObject = contentResult.Object3D;
+
 						if (contentResult != null)
 						{
 							// Assign a new drag source

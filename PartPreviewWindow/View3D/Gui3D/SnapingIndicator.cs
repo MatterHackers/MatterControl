@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			this.DrawOnTop = true;
 			this.meshSelectInfo = currentSelectInfo;
-			InteractionContext.GuiSurface.AfterDraw += MeshViewerToDrawWith_Draw;
+			InteractionContext.GuiSurface.AfterDraw += InteractionLayer_AfterDraw;
 		}
 
 		public override void SetPosition(IObject3D selectedItem)
@@ -114,7 +114,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private void MeshViewerToDrawWith_Draw(object drawingWidget, DrawEventArgs drawEvent)
+		private void InteractionLayer_AfterDraw(object drawingWidget, DrawEventArgs drawEvent)
 		{
 			if (InteractionContext.Scene.HasSelection
 				&& InteractionContext.SnapGridDistance > 0
