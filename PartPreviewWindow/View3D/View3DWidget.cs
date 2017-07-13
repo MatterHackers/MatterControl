@@ -1457,11 +1457,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					&& CurrentSelectInfo.DownOnPart
 					&& CurrentSelectInfo.LastMoveDelta != Vector3.Zero)
 				{
-					if (Scene.SelectedItem.Matrix != transformOnMouseDown)
-					{
-						AddUndoForSelectedMeshGroupTransform(transformOnMouseDown);
-						PartHasBeenChanged();
-					}
+					InteractionLayer.AddTransformSnapshot(transformOnMouseDown);
 				}
 				else if (DragSelectionInProgress)
 				{
