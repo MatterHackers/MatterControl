@@ -170,6 +170,8 @@ namespace MatterHackers.MeshVisualizer
 
 		GuiWidget GuiSurface { get; }
 
+		void AddTransformSnapshot(Matrix4X4 originalTransform);
+
 		List<InteractionVolume> InteractionVolumes { get; }
 	}
 }

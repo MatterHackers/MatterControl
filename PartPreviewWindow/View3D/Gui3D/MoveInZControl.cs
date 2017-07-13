@@ -134,13 +134,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Invalidate();
 				}
 
-				if (InteractionContext?.Scene?.SelectedItem?.Matrix != startingTransform)
-				{
-					view3DWidget.PartHasBeenChanged();
-					Invalidate();
-
-					view3DWidget.AddUndoForSelectedMeshGroupTransform(startingTransform);
-				}
+				view3DWidget.AddUndoForSelectedMeshGroupTransform(startingTransform);
 			};
 
 			InteractionContext.GuiSurface.AddChild(zHeightDisplayInfo);
@@ -264,11 +258,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnMouseUp(MouseEvent3DArgs mouseEvent3D)
 		{
-			if (InteractionContext?.Scene?.SelectedItem?.Matrix != transformOnMouseDown)
-			{
-				view3DWidget.AddUndoForSelectedMeshGroupTransform(transformOnMouseDown);
-			}
-
+			view3DWidget.AddUndoForSelectedMeshGroupTransform(transformOnMouseDown);
 			base.OnMouseUp(mouseEvent3D);
 		}
 

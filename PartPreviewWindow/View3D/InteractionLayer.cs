@@ -48,10 +48,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private List<InteractionVolume> interactionVolumes = new List<InteractionVolume>();
 		public List<InteractionVolume> InteractionVolumes { get; }
 
-		public InteractionLayer(WorldView world)
+		private UndoBuffer undoBuffer;
+
+		private Action notifyPartChanged;
+
+		public InteractionLayer(WorldView world, UndoBuffer undoBuffer, Action notifyPartChanged)
 		{
 			this.World = world;
 			this.InteractionVolumes = interactionVolumes;
+			this.undoBuffer = undoBuffer;
+			this.notifyPartChanged = notifyPartChanged;
 		}
 
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
@@ -196,6 +202,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			return false;
+		}
+
+		public void AddTransformSnapshot(Matrix4X4 originalTransform)
+		{
+			if (this.Scene.HasSelection && this.Scene.SelectedItem.Matrix != originalTransform)
+			{
+				this.undoBuffer.Add(new TransformUndoCommand(Scene.SelectedItem, originalTransform, Scene.SelectedItem.Matrix));
+				this.notifyPartChanged?.Invoke();
+			}
 		}
 
 		public bool SuppressUiVolumes { get; set; } = false;

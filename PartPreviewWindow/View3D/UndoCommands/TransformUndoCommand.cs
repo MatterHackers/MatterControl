@@ -39,11 +39,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private IObject3D transformedObject;
 		private Matrix4X4 redoTransform;
 		private Matrix4X4 undoTransform;
-		private View3DWidget view3DWidget;
 
-		public TransformUndoCommand(View3DWidget view3DWidget, IObject3D transformedObject, Matrix4X4 undoTransform, Matrix4X4 redoTransform)
+		public TransformUndoCommand(IObject3D transformedObject, Matrix4X4 undoTransform, Matrix4X4 redoTransform)
 		{
-			this.view3DWidget = view3DWidget;
 			this.transformedObject = transformedObject;
 			this.undoTransform = undoTransform;
 			this.redoTransform = redoTransform;

@@ -64,12 +64,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 	public interface IInteractionVolumeCreator
 	{
-		InteractionVolume CreateInteractionVolume(View3DWidget widget);
+		InteractionVolume CreateInteractionVolume(IInteractionVolumeContext context);
 	}
 
 	public class InteractionVolumePlugin : IInteractionVolumeCreator
 	{
-		public virtual InteractionVolume CreateInteractionVolume(View3DWidget widget)
+		public virtual InteractionVolume CreateInteractionVolume(IInteractionVolumeContext context)
 		{
 			return null;
 		}
@@ -164,7 +164,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			this.TrackballTumbleWidget.AnchorAll();
 
-			this.InteractionLayer = new InteractionLayer(this.World)
+			this.InteractionLayer = new InteractionLayer(this.World, this.UndoBuffer, this.PartHasBeenChanged)
 			{
 				Name = "InteractionLayer",
 			};
@@ -425,7 +425,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			PluginFinder<InteractionVolumePlugin> interactionVolumePlugins = new PluginFinder<InteractionVolumePlugin>();
 			foreach (InteractionVolumePlugin plugin in interactionVolumePlugins.Plugins)
 			{
-				this.InteractionLayer.InteractionVolumes.Add(plugin.CreateInteractionVolume(this));
+				this.InteractionLayer.InteractionVolumes.Add(plugin.CreateInteractionVolume(this.InteractionLayer));
 			}
 
 			if (DoBooleanTest)
@@ -1420,9 +1420,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void AddUndoForSelectedMeshGroupTransform(Matrix4X4 undoTransform)
 		{
-			if (Scene.HasSelection && undoTransform != Scene.SelectedItem?.Matrix)
+			if (Scene.HasSelection && undoTransform != Scene.SelectedItem.Matrix)
 			{
-				UndoBuffer.Add(new TransformUndoCommand(this, Scene.SelectedItem, undoTransform, Scene.SelectedItem.Matrix));
+				UndoBuffer.Add(new TransformUndoCommand(Scene.SelectedItem, undoTransform, Scene.SelectedItem.Matrix));
+				this.PartHasBeenChanged();
+				this.Invalidate();
 			}
 		}
 
