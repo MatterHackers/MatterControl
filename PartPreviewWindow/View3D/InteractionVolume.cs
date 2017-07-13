@@ -175,12 +175,7 @@ namespace MatterHackers.MeshVisualizer
 		List<InteractionVolume> InteractionVolumes { get; }
 	}
 
-	public interface IInteractionVolumeCreator
-	{
-		InteractionVolume CreateInteractionVolume(IInteractionVolumeContext context);
-	}
-
-	public class InteractionVolumePlugin : IInteractionVolumeCreator
+	public class InteractionVolumePlugin
 	{
 		public virtual InteractionVolume CreateInteractionVolume(IInteractionVolumeContext context)
 		{
