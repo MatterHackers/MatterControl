@@ -404,14 +404,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				MeshViewerWidget.SetExtruderColor(1, ActiveTheme.Instance.PrimaryAccentColor);
 			}, ref unregisterEvents);
 
-			this.InteractionLayer.InteractionVolumes.Add(new MoveInZControl(this));
-			this.InteractionLayer.InteractionVolumes.Add(new SelectionShadow(this));
-			this.InteractionLayer.InteractionVolumes.Add(new SnappingIndicators(this));
+			var interactionVolumes = this.InteractionLayer.InteractionVolumes;
+			interactionVolumes.Add(new MoveInZControl(this.InteractionLayer));
+			interactionVolumes.Add(new SelectionShadow(this.InteractionLayer));
+			interactionVolumes.Add(new SnappingIndicators(this.InteractionLayer, this.CurrentSelectInfo));
 
 			PluginFinder<InteractionVolumePlugin> interactionVolumePlugins = new PluginFinder<InteractionVolumePlugin>();
 			foreach (InteractionVolumePlugin plugin in interactionVolumePlugins.Plugins)
 			{
-				this.InteractionLayer.InteractionVolumes.Add(plugin.CreateInteractionVolume(this.InteractionLayer));
+				interactionVolumes.Add(plugin.CreateInteractionVolume(this.InteractionLayer));
 			}
 
 			if (DoBooleanTest)
@@ -2463,7 +2464,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private bool needToRecreateBed = false;
 
-		public MeshSelectInfo CurrentSelectInfo { get; private set; } = new MeshSelectInfo();
+		public MeshSelectInfo CurrentSelectInfo { get; } = new MeshSelectInfo();
 
 		protected IObject3D FindHitObject3D(Vector2 screenPosition, ref IntersectInfo intersectionInfo)
 		{

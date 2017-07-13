@@ -40,13 +40,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private double distToStart = 10;
 		private double lineLength = 15;
 		private Vector2[] lines = new Vector2[4];
-		private View3DWidget view3DWidget;
 
-		public SnappingIndicators(View3DWidget view3DWidget)
-			: base(null, view3DWidget.InteractionLayer)
+		private MeshSelectInfo meshSelectInfo;
+
+		public SnappingIndicators(IInteractionVolumeContext context, MeshSelectInfo currentSelectInfo)
+			: base(null, context)
 		{
-			this.view3DWidget = view3DWidget;
 			this.DrawOnTop = true;
+			this.meshSelectInfo = currentSelectInfo;
 			InteractionContext.GuiSurface.AfterDraw += MeshViewerToDrawWith_Draw;
 		}
 
@@ -54,8 +55,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			// draw the hight from the bottom to the bed
 			AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
-
-			MeshSelectInfo meshSelectInfo = view3DWidget.CurrentSelectInfo;
 
 			var world = InteractionContext.World;
 
@@ -119,7 +118,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (InteractionContext.Scene.HasSelection
 				&& InteractionContext.SnapGridDistance > 0
-				&& view3DWidget.CurrentSelectInfo.DownOnPart)
+				&& meshSelectInfo.DownOnPart)
 			{
 				if (drawEvent != null)
 				{

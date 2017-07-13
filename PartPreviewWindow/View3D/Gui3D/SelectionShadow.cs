@@ -51,12 +51,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		static RGBA_Bytes shadowColor = new RGBA_Bytes(22, 80, 220);
 		readonly int shadowAlpha = 40;
 
-		private View3DWidget view3DWidget;
 
-		public SelectionShadow(View3DWidget view3DWidget)
-			: base(null, view3DWidget.InteractionLayer)
+		public SelectionShadow(IInteractionVolumeContext context)
+			: base(null, context)
 		{
-			this.view3DWidget = view3DWidget;
 		}
 
 		public override void SetPosition(IObject3D selectedItem)
@@ -125,7 +123,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				var withScale = Matrix4X4.CreateScale(selectedBounds.XSize, selectedBounds.YSize, 1) * TotalTransform;
 
-				bool authorized = view3DWidget?.ActiveSelectionEditor.Unlocked == true;
+				bool authorized = ApplicationController.Instance.ActiveView3DWidget?.ActiveSelectionEditor.Unlocked == true;
 				if (authorized)
 				{
 					GLHelper.Render(GetNormalShadowMesh(), new RGBA_Bytes(shadowColor, shadowAlpha), withScale, RenderTypes.Shaded);
