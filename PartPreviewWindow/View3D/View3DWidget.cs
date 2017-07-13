@@ -1405,16 +1405,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return offset;
 		}
 
-		public void AddUndoForSelectedMeshGroupTransform(Matrix4X4 undoTransform)
-		{
-			if (Scene.HasSelection && undoTransform != Scene.SelectedItem.Matrix)
-			{
-				UndoBuffer.Add(new TransformUndoCommand(Scene.SelectedItem, undoTransform, Scene.SelectedItem.Matrix));
-				this.PartHasBeenChanged();
-				this.Invalidate();
-			}
-		}
-
 		public void ResetView()
 		{
 			this.TrackballTumbleWidget.ZeroVelocity();
