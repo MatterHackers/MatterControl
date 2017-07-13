@@ -186,7 +186,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						{
 							MeshGroup meshGroup = extruderMeshGroups[extruderIndex];
 							List<int> materialsToInclude = new List<int>();
-							materialsToInclude.Add(extruderIndex + 1);
+							materialsToInclude.Add(extruderIndex);
 							if (extruderIndex == 0)
 							{
 								for (int j = extruderCount + 1; j < maxExtruderIndex + 2; j++)
