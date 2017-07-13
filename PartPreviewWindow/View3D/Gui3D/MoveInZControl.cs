@@ -144,7 +144,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			CollisionVolume = upArrowMesh.CreateTraceData();
 
-			InteractionContext.GuiSurface.AfterDraw += MeshViewerToDrawWith_AfterDraw;
+			InteractionContext.GuiSurface.AfterDraw += InteractionLayer_AfterDraw;
 		}
 
 		public override void DrawGlContent(EventArgs e)
@@ -282,7 +282,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			lines.Add(new Vector2(lines[2].x + lineLength, lines[2].y));
 		}
 
-		private void MeshViewerToDrawWith_AfterDraw(object sender, DrawEventArgs drawEvent)
+		private void InteractionLayer_AfterDraw(object sender, DrawEventArgs drawEvent)
 		{
 			if (InteractionContext.Scene.HasSelection)
 			{
