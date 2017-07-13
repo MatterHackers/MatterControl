@@ -61,103 +61,10 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class BaseObject3DEditor : IObject3DEditor
-	{
-		private IObject3D item;
-		private View3DWidget view3DWidget;
-
-		public string Name => "General";
-
-		public bool Unlocked => true;
-
-		public IEnumerable<Type> SupportedTypes()
-		{
-			return new Type[] { typeof(Object3D) };
-		}
-
-		public GuiWidget Create(IObject3D item, View3DWidget view3DWidget, ThemeConfig theme)
-		{
-			this.view3DWidget = view3DWidget;
-			this.item = item;
-			FlowLayoutWidget mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-
-			FlowLayoutWidget tabContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				HAnchor = HAnchor.AbsolutePosition,
-				Visible = true,
-				Width = theme.WhiteButtonFactory.FixedWidth
-			};
-			mainContainer.AddChild(tabContainer);
-
-			Button changeColorButton = theme.textImageButtonFactory.Generate("Color".Localize());
-			changeColorButton.Margin = new BorderDouble(5);
-			changeColorButton.HAnchor = HAnchor.ParentRight;
-			Random rand = new Random();
-			changeColorButton.Click += (s, e) =>
-			{
-				item.Color = new RGBA_Bytes(rand.Next(255), rand.Next(255), rand.Next(255));
-				view3DWidget.Invalidate();
-			};
-
-			tabContainer.AddChild(changeColorButton);
-
-			return mainContainer;
-		}
-	}
 
 	public interface IInteractionVolumeCreator
 	{
 		InteractionVolume CreateInteractionVolume(View3DWidget widget);
-	}
-
-	public class DragDropLoadProgress
-	{
-		IObject3D trackingObject;
-		View3DWidget view3DWidget;
-		private ProgressBar progressBar;
-
-		public DragDropLoadProgress(View3DWidget view3DWidget, IObject3D trackingObject)
-		{
-			this.trackingObject = trackingObject;
-			this.view3DWidget = view3DWidget;
-			view3DWidget.AfterDraw += View3DWidget_AfterDraw;
-			progressBar = new ProgressBar(80, 15)
-			{
-				FillColor = ActiveTheme.Instance.PrimaryAccentColor,
-			};
-		}
-
-		private void View3DWidget_AfterDraw(object sender, DrawEventArgs e)
-		{
-			if (view3DWidget?.HasBeenClosed == false)
-			{
-				AxisAlignedBoundingBox bounds = trackingObject.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
-				Vector3 renderPosition = bounds.Center;
-				Vector2 cornerScreenSpace = view3DWidget.World.GetScreenPosition(renderPosition) - new Vector2(40, 20);
-
-				e.graphics2D.PushTransform();
-				Affine currentGraphics2DTransform = e.graphics2D.GetTransform();
-				Affine accumulatedTransform = currentGraphics2DTransform * Affine.NewTranslation(cornerScreenSpace.x, cornerScreenSpace.y);
-				e.graphics2D.SetTransform(accumulatedTransform);
-
-				progressBar.OnDraw(e.graphics2D);
-				e.graphics2D.PopTransform();
-			}
-		}
-
-		public void ProgressReporter((double progress0To1, string processingState) progress, CancellationTokenSource continueProcessing)
-		{
-			progressBar.RatioComplete = progress.progress0To1;
-			if (progress.progress0To1 == 1)
-			{
-				if (view3DWidget != null)
-				{
-					view3DWidget.AfterDraw -= View3DWidget_AfterDraw;
-				}
-
-				view3DWidget = null;
-			}
-		}
 	}
 
 	public class InteractionVolumePlugin : IInteractionVolumeCreator
