@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				await Task.Run(() =>
 				{
 					var selectedItem = Scene.SelectedItem;
-					bool isGroupItemType = Scene.IsSelected(Object3DTypes.Group);
+					bool isGroupItemType = Scene.IsSelected(Object3DTypes.Group) || selectedItem.Name.ToLower().EndsWith(".mcx");
 
 					// If not a Group ItemType, look for mesh volumes and split into distinct objects if found
 					if (!isGroupItemType 
