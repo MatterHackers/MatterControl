@@ -95,7 +95,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		internal ProgressControl processingProgressControl;
 		private SaveAsWindow saveAsWindow = null;
 		private SplitButton saveButtons;
-		private bool saveSucceded = true;
 		private RGBA_Bytes[] SelectionColors = new RGBA_Bytes[] { new RGBA_Bytes(131, 4, 66), new RGBA_Bytes(227, 31, 61), new RGBA_Bytes(255, 148, 1), new RGBA_Bytes(247, 224, 23), new RGBA_Bytes(143, 212, 1) };
 		private Stopwatch timeSinceLastSpin = new Stopwatch();
 		private Stopwatch timeSinceReported = new Stopwatch();
@@ -2032,8 +2031,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 						// Wait for a second to report the file changed to give the OS a chance to finish closing it.
 						UiThread.RunOnIdle(printItemWrapper.ReportFileChange, 3);
-
-						saveSucceded = true;
 					}
 					catch (Exception ex)
 					{
