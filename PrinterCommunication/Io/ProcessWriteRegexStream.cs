@@ -76,14 +76,19 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			{
 				foreach (var item in WriteLineReplacements)
 				{
-					var replaced = item.Regex.Replace(lineToWrite, item.Replacement);
-					if (replaced != lineToWrite)
+					var splitReplacement = item.Replacement.Split(',');
+					if (splitReplacement.Length > 0)
 					{
-						var replacedLines = replaced.Split(',');
-						linesToWrite[i] = replacedLines[0];
-						for (int j = 1; j < replacedLines.Length; j++)
+						if (item.Regex.IsMatch(lineToWrite))
 						{
-							addedLines.Add(replacedLines[j]);
+							// replace on the first replacement group only
+							var replacedString = item.Regex.Replace(lineToWrite, splitReplacement[0]);
+							linesToWrite[i] = replacedString;
+							// add in the othre replacement groups
+							for (int j = 1; j < splitReplacement.Length; j++)
+							{
+								addedLines.Add(splitReplacement[j]);
+							}
 						}
 					}
 				}
