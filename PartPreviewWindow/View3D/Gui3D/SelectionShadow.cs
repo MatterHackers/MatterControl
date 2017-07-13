@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 
 		public SelectionShadow(IInteractionVolumeContext context)
-			: base(null, context)
+			: base(context)
 		{
 		}
 

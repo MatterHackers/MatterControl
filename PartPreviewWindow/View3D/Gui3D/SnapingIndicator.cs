@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private MeshSelectInfo meshSelectInfo;
 
 		public SnappingIndicators(IInteractionVolumeContext context, MeshSelectInfo currentSelectInfo)
-			: base(null, context)
+			: base(context)
 		{
 			this.DrawOnTop = true;
 			this.meshSelectInfo = currentSelectInfo;

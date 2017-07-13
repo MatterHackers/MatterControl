@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private bool HadClickOnControl;
 
 		public MoveInZControl(IInteractionVolumeContext context)
-			: base(null, context)
+			: base(context)
 		{
 			zHeightDisplayInfo = new ValueDisplayInfo()
 			{

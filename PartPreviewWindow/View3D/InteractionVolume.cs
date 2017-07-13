@@ -50,9 +50,8 @@ namespace MatterHackers.MeshVisualizer
 
 		private bool mouseOver = false;
 
-		public InteractionVolume(IPrimitive collisionVolume, IInteractionVolumeContext meshViewerToDrawWith)
+		public InteractionVolume(IInteractionVolumeContext meshViewerToDrawWith)
 		{
-			this.CollisionVolume = collisionVolume;
 			this.InteractionContext = meshViewerToDrawWith;
 		}
 
