@@ -27,30 +27,24 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg.PlatformAbstract;
-using MatterHackers.DataConverters3D;
-using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.MeshVisualizer;
-using MatterHackers.PolygonMesh.Csg;
-using MatterHackers.VectorMath;
-using Newtonsoft.Json;
-using NUnit.Framework;
-using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using MatterHackers.MatterControl.Tests.Automation;
 using MatterHackers.Agg;
-using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.DataConverters3D;
+using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.MatterControl.Tests.Automation;
+using MatterHackers.MeshVisualizer;
+using MatterHackers.VectorMath;
+using Newtonsoft.Json;
+using NUnit.Framework;
 
 namespace MatterHackers.PolygonMesh.UnitTests
 {
 	[TestFixture, Category("Agg.PolygonMesh")]
 	public class SceneTests
 	{
-		static string matterControlPath = Path.GetFullPath(Path.Combine("..", "..", "..", "..", "..", "MatterControl"));
-
 		[Test]
 		public void SaveSimpleScene()
 		{
@@ -84,6 +78,8 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			string tempPath = GetSceneTempPath();
 			string filePath = Path.Combine(tempPath, "some.mcx");
 
+			Object3D.AssetsPath = Path.Combine(tempPath, "Assets");
+
 			scene.Save(filePath, tempPath);
 
 			Assert.IsTrue(File.Exists(filePath));
@@ -94,7 +90,8 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			IObject3D meshItem = loadedItem.Children.First();
 
 			Assert.IsTrue(!string.IsNullOrEmpty(meshItem.MeshPath));
-			Assert.IsTrue(File.Exists(meshItem.MeshPath));
+
+			Assert.IsTrue(File.Exists(Path.Combine(tempPath, "Assets", meshItem.MeshPath)));
 			Assert.IsNotNull(meshItem.Mesh);
 			Assert.IsTrue(meshItem.Mesh.Faces.Count > 0);
 		}
@@ -103,8 +100,6 @@ namespace MatterHackers.PolygonMesh.UnitTests
 		public async Task ResavedSceneRemainsConsistent()
 		{
 #if !__ANDROID__
-			string staticDataPathOverride = Path.Combine(matterControlPath, "StaticData");
-
 			// Set the static data to point to the directory of MatterControl
 			StaticData.Instance = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
@@ -170,8 +165,9 @@ namespace MatterHackers.PolygonMesh.UnitTests
 
 		public static string GetSceneTempPath()
 		{
-			string tempPath = Path.GetFullPath(Path.Combine(matterControlPath, "Tests", "temp", "scenetests"));
+			string tempPath = TestContext.CurrentContext.ResolveProjectPath(4, "Tests", "temp", "scenetests");
 			Directory.CreateDirectory(tempPath);
+
 			return tempPath;
 		}
 	}

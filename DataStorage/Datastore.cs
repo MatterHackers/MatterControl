@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl.DataStorage
 		private readonly string datastoreName = "MatterControl.db";
 		private string applicationPath;
 		private static string applicationUserDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), applicationDataFolderName);
-		
+
 		public ApplicationDataStorage()
 		//Constructor - validates that local storage folder exists, creates if necessary
 		{
@@ -55,6 +55,8 @@ namespace MatterHackers.MatterControl.DataStorage
 			{
 				dir.Create();
 			}
+
+			Directory.CreateDirectory(this.LibraryAssetsPath);
 		}
 
 		/// <summary>
@@ -112,6 +114,8 @@ namespace MatterHackers.MatterControl.DataStorage
 				return libraryPath;
 			}
 		}
+
+		public string LibraryAssetsPath => Path.Combine(this.ApplicationLibraryDataPath, "Assets");
 
 		/// <summary>
 		/// Overrides the AppData location.
