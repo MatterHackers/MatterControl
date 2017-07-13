@@ -63,6 +63,31 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.thumbHeight = height;
 		}
 
+		private static bool WidgetOnScreen(GuiWidget widget, RectangleDouble bounds)
+		{
+			if (!widget.Visible)
+			{
+				return false;
+			}
+			else
+			{
+				if (widget.Parent != null)
+				{
+					var boundsInParentSpace = widget.TransformToParentSpace(widget.Parent, bounds);
+					var intersects = boundsInParentSpace.IntersectRectangles(boundsInParentSpace, widget.Parent.LocalBounds);
+					if (!intersects
+						|| boundsInParentSpace.Width <= 0 
+						|| boundsInParentSpace.Height <= 0
+						|| !WidgetOnScreen(widget.Parent, boundsInParentSpace))
+					{
+						return false;
+					}
+				}
+			}
+
+			return true;
+		}
+
 		protected async Task LoadItemThumbnail()
 		{
 			var listView = listViewItem.ListView;
@@ -100,10 +125,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 					ApplicationController.Instance.QueueForGeneration(async () =>
 					{
-						// TODO: What we really want here is to determine if the control is being drawn because it's in the visible region of its parent
-						if (this.Visible)
+						// When this widget is dequeued for generation, validate before processing. Off-screen widgets should be skipped and will requeue next time they become visible
+						if (ListViewItemBase.WidgetOnScreen(this, this.LocalBounds))
 						{
-
 							SetItemThumbnail(generatingThumbnailIcon.AlphaToPrimaryAccent());
 
 							// Then try to load a content specific thumbnail
