@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.PlatformAbstract;
@@ -61,7 +62,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
 
 			Assert.IsTrue(File.Exists(filePath));
 
-			IObject3D loadedItem = Object3D.Load(filePath);
+			IObject3D loadedItem = Object3D.Load(filePath, CancellationToken.None);
 			Assert.IsTrue(loadedItem.Children.Count == 1);
 		}
 
@@ -84,7 +85,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
 
 			Assert.IsTrue(File.Exists(filePath));
 
-			IObject3D loadedItem = Object3D.Load(filePath);
+			IObject3D loadedItem = Object3D.Load(filePath, CancellationToken.None);
 			Assert.IsTrue(loadedItem.Children.Count == 1);
 
 			IObject3D meshItem = loadedItem.Children.First();
@@ -140,7 +141,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
 
 			var originalFiles = Directory.GetFiles(tempPath).ToArray(); ;
 			
-			IObject3D loadedItem = Object3D.Load(filePath);
+			IObject3D loadedItem = Object3D.Load(filePath, CancellationToken.None);
 			Assert.IsTrue(loadedItem.Children.Count == 1);
 
 			await view3DWidget.ClearBedAndLoadPrintItemWrapper(

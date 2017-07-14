@@ -139,9 +139,9 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public void LoadGCode(string filePath, ReportProgressRatio<(double,string)> progressReporter)
+		public void LoadGCode(string filePath, CancellationToken cancellationToken, ReportProgressRatio<(double,string)> progressReporter)
 		{
-			this.LoadedGCode = GCodeMemoryFile.Load(filePath, progressReporter);
+			this.LoadedGCode = GCodeMemoryFile.Load(filePath, cancellationToken, progressReporter);
 			this.GCodeRenderer = new GCodeRenderer(loadedGCode);
 
 			if (ActiveSliceSettings.Instance.PrinterSelected)

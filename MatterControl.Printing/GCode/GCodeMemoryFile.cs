@@ -61,11 +61,11 @@ namespace MatterHackers.GCodeVisualizer
 			this.gcodeHasExplicitLayerChangeInfo = gcodeHasExplicitLayerChangeInfo;
 		}
 
-		public GCodeMemoryFile(string pathAndFileName, bool gcodeHasExplicitLayerChangeInfo = false)
+		public GCodeMemoryFile(string pathAndFileName, CancellationToken cancellationToken, bool gcodeHasExplicitLayerChangeInfo = false)
 		{
 			this.gcodeHasExplicitLayerChangeInfo = gcodeHasExplicitLayerChangeInfo;
 
-			var loadedFile = GCodeMemoryFile.Load(pathAndFileName, null);
+			var loadedFile = GCodeMemoryFile.Load(pathAndFileName, cancellationToken, null);
 			if (loadedFile != null)
 			{
 				this.indexOfChangeInZ = loadedFile.indexOfChangeInZ;
@@ -108,18 +108,18 @@ namespace MatterHackers.GCodeVisualizer
 			GCodeCommandQueue.Insert(insertIndex, printerMachineInstruction);
 		}
 
-		public static GCodeFile ParseGCodeString(string gcodeContents)
+		public static GCodeFile ParseGCodeString(string gcodeContents, CancellationToken cancellationToken)
 		{
-			return ParseFileContents(gcodeContents, null);
+			return ParseFileContents(gcodeContents, cancellationToken, null);
 		}
 
-		public static GCodeMemoryFile Load(Stream fileStream, ReportProgressRatio<(double ratio, string state)> progressReporter = null)
+		public static GCodeMemoryFile Load(Stream fileStream, CancellationToken cancellationToken, ReportProgressRatio<(double ratio, string state)> progressReporter = null)
 		{
 			try
 			{
 				using (var reader = new StreamReader(fileStream))
 				{
-					return ParseFileContents(reader.ReadToEnd(), progressReporter);
+					return ParseFileContents(reader.ReadToEnd(), cancellationToken, progressReporter);
 				}
 			}
 			catch (Exception e)
@@ -130,7 +130,7 @@ namespace MatterHackers.GCodeVisualizer
 			return null;
 		}
 
-		public static GCodeMemoryFile Load(string filePath, ReportProgressRatio<(double ratio, string state)> progressReporter)
+		public static GCodeMemoryFile Load(string filePath, CancellationToken cancellationToken, ReportProgressRatio<(double ratio, string state)> progressReporter)
 		{
 			if (Path.GetExtension(filePath).ToUpper() == ".GCODE")
 			{
@@ -138,7 +138,7 @@ namespace MatterHackers.GCodeVisualizer
 				{
 					using (var stream = File.OpenRead(filePath))
 					{
-						return Load(stream, progressReporter);
+						return Load(stream, cancellationToken, progressReporter);
 					}
 				}
 				catch (Exception e)
@@ -180,7 +180,7 @@ namespace MatterHackers.GCodeVisualizer
 			return crCount + 1;
 		}
 
-		public static GCodeMemoryFile ParseFileContents(string gCodeString, ReportProgressRatio<(double ratio, string state)> progressReporter)
+		public static GCodeMemoryFile ParseFileContents(string gCodeString, CancellationToken cancellationToken, ReportProgressRatio<(double ratio, string state)> progressReporter)
 		{
 			if (gCodeString == null)
 			{
@@ -259,9 +259,9 @@ namespace MatterHackers.GCodeVisualizer
 
 				if (progressReporter != null && maxProgressReport.ElapsedMilliseconds > 200)
 				{
-					var continueProcessing = new CancellationTokenSource();
-					progressReporter(((double)lineIndex / crCount / 2, ""), continueProcessing);
-					if (continueProcessing.IsCancellationRequested)
+					progressReporter(((double)lineIndex / crCount / 2, ""));
+
+					if (cancellationToken.IsCancellationRequested)
 					{
 						return null;
 					}
@@ -272,7 +272,7 @@ namespace MatterHackers.GCodeVisualizer
 				lineIndex++;
 			}
 
-			loadedGCodeFile.AnalyzeGCodeLines(progressReporter);
+			loadedGCodeFile.AnalyzeGCodeLines(cancellationToken, progressReporter);
 
 			loadTime.Stop();
 			Console.WriteLine("Time To Load Seconds: {0:0.00}".FormatWith(loadTime.Elapsed.TotalSeconds));
@@ -280,7 +280,7 @@ namespace MatterHackers.GCodeVisualizer
 			return loadedGCodeFile;
 		}
 
-		private void AnalyzeGCodeLines(ReportProgressRatio<(double ratio, string state)> progressReporter)
+		private void AnalyzeGCodeLines(CancellationToken cancellationToken, ReportProgressRatio<(double ratio, string state)> progressReporter)
 		{
 			double feedRateMmPerMin = 0;
 			Vector3 lastPrinterPosition = new Vector3();
@@ -334,9 +334,8 @@ namespace MatterHackers.GCodeVisualizer
 
 				if (progressReporter != null && maxProgressReport.ElapsedMilliseconds > 200)
 				{
-					var continueProcessing = new CancellationTokenSource();
-					progressReporter((((double) lineIndex / GCodeCommandQueue.Count / 2) + .5, ""), continueProcessing);
-					if (continueProcessing.IsCancellationRequested)
+					progressReporter((((double) lineIndex / GCodeCommandQueue.Count / 2) + .5, ""));
+					if (cancellationToken.IsCancellationRequested)
 					{
 						return;
 					}

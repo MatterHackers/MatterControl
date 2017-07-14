@@ -62,9 +62,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						&& !selectedItem.HasChildren
 						&& selectedItem.Mesh != null)
 					{
-						var discreetMeshes = CreateDiscreteMeshes.SplitVolumesIntoMeshes(Scene.SelectedItem.Mesh, ((double progress0To1, string processingState) progress, CancellationTokenSource continueProcessing) =>
+						var discreetMeshes = CreateDiscreteMeshes.SplitVolumesIntoMeshes(Scene.SelectedItem.Mesh, CancellationToken.None, ((double progress0To1, string processingState) progress) =>
 						{
-							view3DWidget.ReportProgressChanged(progress.progress0To1 * .5, progress.processingState, continueProcessing);
+							view3DWidget.ReportProgressChanged(progress.progress0To1 * .5, progress.processingState);
 						});
 
 						if (discreetMeshes.Count == 1)

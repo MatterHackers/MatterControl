@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.PlatformAbstract;
@@ -139,7 +140,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			string arrowFile = Path.Combine("Icons", "3D Icons", "up_pointer.stl");
 			using (Stream arrowStream = StaticData.Instance.OpenSteam(arrowFile))
 			{
-				upArrowMesh = MeshFileIo.Load(arrowStream, Path.GetExtension(arrowFile)).Mesh;
+				upArrowMesh = MeshFileIo.Load(arrowStream, Path.GetExtension(arrowFile), CancellationToken.None).Mesh;
 			}
 
 			CollisionVolume = upArrowMesh.CreateTraceData();
