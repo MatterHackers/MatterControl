@@ -31,6 +31,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
@@ -269,7 +270,7 @@ namespace MatterHackers.MatterControl.Library
 				try
 				{
 					// Load mesh
-					IObject3D loadedItem = MeshFileIo.Load(stream, extension);
+					IObject3D loadedItem = MeshFileIo.Load(stream, extension, CancellationToken.None);
 
 					// Create a new PrintItemWrapper
 					if (!printItem.FileLocation.Contains(ApplicationDataStorage.Instance.ApplicationLibraryDataPath))

@@ -651,7 +651,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			boxB.Transform(transformB);
 
 			Mesh meshToAdd = meshOpperation(boxA, boxB);
-			meshToAdd.CleanAndMergMesh();
+			meshToAdd.CleanAndMergMesh(CancellationToken.None);
 
 			if (aabbOpperation != null)
 			{
@@ -872,7 +872,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 					else
 					{
-						return Object3D.Load(dragDropItem.MeshPath, progress: new DragDropLoadProgress(this, dragDropItem).ProgressReporter);
+						return Object3D.Load(dragDropItem.MeshPath, CancellationToken.None, progress: new DragDropLoadProgress(this, dragDropItem).ProgressReporter);
 					}
 				}
 				else if (DragSourceModel != null)
@@ -890,17 +890,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						sourceListItem.StartProgress();
 
-						contentResult = DragSourceModel.CreateContent(((double progress0To1, string processingState) progress, CancellationTokenSource continueProcessing) =>
+						contentResult = DragSourceModel.CreateContent(((double progress0To1, string processingState) progress) =>
 						{
-							sourceListItem.ProgressReporter(progress, continueProcessing);
-							loadProgress.ProgressReporter(progress, continueProcessing);
+							sourceListItem.ProgressReporter(progress);
+							loadProgress.ProgressReporter(progress);
 						});
 
 						await contentResult.MeshLoaded;
 
 						sourceListItem.EndProgress();
 
-						loadProgress.ProgressReporter((1, ""), new CancellationTokenSource());
+						loadProgress.ProgressReporter((1, ""));
 					}
 
 					return contentResult?.Object3D;
@@ -1587,13 +1587,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private void ReportProgressChanged(double progress0To1, string processingState)
-		{
-			var continueProcessing = new CancellationTokenSource();
-			ReportProgressChanged(progress0To1, processingState, continueProcessing);
-		}
-
-		internal void ReportProgressChanged(double progress0To1, string processingState, CancellationTokenSource continueProcessing)
+		internal void ReportProgressChanged(double progress0To1, string processingState)
 		{
 			if (!timeSinceReported.IsRunning || timeSinceReported.ElapsedMilliseconds > 100
 				|| processingState != processingProgressControl.ProgressMessage)
@@ -1848,11 +1842,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					var libraryItem = new FileSystemFileItem(filePath);
 
-					var contentResult = libraryItem.CreateContent(((double progress0To1, string processingState) progress, CancellationTokenSource continueProcessing) =>
+					var contentResult = libraryItem.CreateContent(((double progress0To1, string processingState) progress) =>
 					{
 						double ratioAvailable = (ratioPerFile * .5);
 						double currentRatio = currentRatioDone + progress.progress0To1 * ratioAvailable;
-						ReportProgressChanged(currentRatio, progressMessage, continueProcessing);
+
+						ReportProgressChanged(currentRatio, progressMessage);
 					});
 
 					contentResult?.MeshLoaded.ContinueWith((task) =>

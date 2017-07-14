@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using MatterHackers.Agg;
 using MatterHackers.DataConverters3D;
 using MatterHackers.GCodeVisualizer;
@@ -190,7 +191,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 						if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_enabled))
 						{
-							GCodeMemoryFile unleveledGCode = new GCodeMemoryFile(savedGcodeFileName);
+							GCodeMemoryFile unleveledGCode = new GCodeMemoryFile(savedGcodeFileName, CancellationToken.None);
 
 							for (int j = 0; j < unleveledGCode.LineCount; j++)
 							{

@@ -418,14 +418,18 @@ namespace MatterHackers.MeshVisualizer
 
 		public bool SuppressUiVolumes { get; set; } = false;
 
+		private CancellationTokenSource fileLoadCancellationTokenSource;
+
 		public async Task LoadItemIntoScene(string itemPath, Vector2 bedCenter = new Vector2(), string itemName = null)
 		{
 			if (File.Exists(itemPath))
 			{
 				BeginProgressReporting("Loading Mesh");
 
+				fileLoadCancellationTokenSource = new CancellationTokenSource();
+
 				// TODO: How to we handle mesh load errors? How do we report success?
-				IObject3D loadedItem = await Task.Run(() => Object3D.Load(itemPath, progress: ReportProgress0to100));
+				IObject3D loadedItem = await Task.Run(() => Object3D.Load(itemPath, fileLoadCancellationTokenSource.Token, progress: ReportProgress0to100));
 				if (loadedItem != null)
 				{
 					if (itemName != null)
@@ -463,6 +467,14 @@ namespace MatterHackers.MeshVisualizer
 			{
 				partProcessingInfo.centeredInfoText.Text = string.Format("{0}\n'{1}'", "File not found on disk.", Path.GetFileName(itemPath));
 			}
+
+			fileLoadCancellationTokenSource = null;
+		}
+
+		public override void OnClosed(ClosedEventArgs e)
+		{
+			fileLoadCancellationTokenSource?.Cancel();
+			base.OnClosed(e);
 		}
 
 		public override void OnDraw(Graphics2D graphics2D)
@@ -581,13 +593,8 @@ namespace MatterHackers.MeshVisualizer
 			partProcessingInfo.Visible = false;
 		}
 
-		public void ReportProgress0to100((double progress0To1, string processingState) progress, CancellationTokenSource continueProcessing)
+		public void ReportProgress0to100((double progress0To1, string processingState) progress)
 		{
-			if (this.HasBeenClosed)
-			{
-				continueProcessing.Cancel();
-			}
-
 			UiThread.RunOnIdle(() =>
 			{
 				int percentComplete = (int)(progress.progress0To1 * 100);

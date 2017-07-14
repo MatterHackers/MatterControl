@@ -33,6 +33,7 @@ namespace MatterHackers.MatterControl
 {
 	using System;
 	using System.IO;
+	using System.Threading;
 	using MatterHackers.Agg;
 	using MatterHackers.Agg.Image;
 	using MatterHackers.Agg.PlatformAbstract;
@@ -82,7 +83,7 @@ namespace MatterHackers.MatterControl
 								if (contentStream != null)
 								{
 									// TODO: Wire up caching
-									loadedItem = Object3D.Load(contentStream.Stream, Path.GetExtension(streamInterface.FileName), null /*itemCache*/, progressReporter);
+									loadedItem = Object3D.Load(contentStream.Stream, Path.GetExtension(streamInterface.FileName), CancellationToken.None, null /*itemCache*/, progressReporter);
 								}
 							}
 						}

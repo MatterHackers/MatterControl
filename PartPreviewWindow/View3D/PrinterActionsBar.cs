@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 using System;
+using System.Threading;
 using MatterHackers.Agg;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
@@ -50,6 +51,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private OverflowDropdown overflowDropdown;
 
 		private SliceProgressReporter sliceProgressReporter;
+
+		private CancellationTokenSource gcodeLoadCancellationTokenSource;
 
 		public class SliceProgressReporter : IProgress<string>
 		{
@@ -120,7 +123,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							
 							await SlicingQueue.SliceFileAsync(printItem, sliceProgressReporter);
 
-							ApplicationController.Instance.Printer.BedPlate.LoadGCode(printItem.GetGCodePathAndFileName(), printerTabPage.modelViewer.gcodeViewer.LoadProgress_Changed);
+							gcodeLoadCancellationTokenSource = new CancellationTokenSource();
+
+							ApplicationController.Instance.Printer.BedPlate.LoadGCode(printItem.GetGCodePathAndFileName(), gcodeLoadCancellationTokenSource.Token, printerTabPage.modelViewer.gcodeViewer.LoadProgress_Changed);
 							sliceProgressReporter.EndReporting();
 
 							printerTabPage.ViewMode = PartViewMode.Layers3D;
@@ -213,6 +218,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}; 
 
 			this.AddChild(overflowDropdown);
+		}
+
+		public override void OnClosed(ClosedEventArgs e)
+		{
+			gcodeLoadCancellationTokenSource?.Cancel();
+			base.OnClosed(e);
 		}
 
 		private GuiWidget GeneratePrinterOverflowMenu()

@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		ProgressControl processingProgressControl;
 
-		internal void ProgressReporter((double progress0To1, string processingState) progress, CancellationTokenSource continueProcessing)
+		internal void ProgressReporter((double progress0To1, string processingState) progress)
 		{
 			if (processingProgressControl == null)
 			{

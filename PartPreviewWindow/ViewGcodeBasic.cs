@@ -174,13 +174,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		internal void LoadProgress_Changed((double progress0To1, string processingState) progress, CancellationTokenSource continueProcessing)
+		internal void LoadProgress_Changed((double progress0To1, string processingState) progress)
 		{
 			SetProcessingMessage(string.Format("{0} {1:0}%...", gcodeLoading, progress.progress0To1 * 100));
-			if(this.HasBeenClosed)
-			{
-				continueProcessing.Cancel();
-			}
 		}
 
 		private void SetProcessingMessage(string message)

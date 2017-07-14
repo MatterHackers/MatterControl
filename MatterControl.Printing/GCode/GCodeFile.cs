@@ -33,6 +33,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace MatterHackers.GCodeVisualizer
 {
@@ -175,7 +176,7 @@ namespace MatterHackers.GCodeVisualizer
 			return false;
 		}
 
-		public static GCodeFile Load(string fileName)
+		public static GCodeFile Load(string fileName, CancellationToken cancellationToken)
 		{
 			if (FileTooBigToLoad(fileName))
 			{
@@ -183,7 +184,7 @@ namespace MatterHackers.GCodeVisualizer
 			}
 			else
 			{
-				return new GCodeMemoryFile(fileName);
+				return new GCodeMemoryFile(fileName, cancellationToken);
 			}
 		}
 

@@ -20,6 +20,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace MatterHackers.MatterControl
 {
@@ -339,7 +340,7 @@ namespace MatterHackers.MatterControl
 		{
 			try
 			{
-				GCodeFileStream gCodeFileStream = new GCodeFileStream(GCodeFile.Load(gcodeFilename));
+				GCodeFileStream gCodeFileStream = new GCodeFileStream(GCodeFile.Load(gcodeFilename, CancellationToken.None));
 
 				bool addLevelingStream = ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_enabled) && applyLeveling.Checked;
 				var queueStream = new QueuedCommandsStream(gCodeFileStream);
@@ -445,7 +446,7 @@ namespace MatterHackers.MatterControl
 						}
 						else
 						{
-							IObject3D item = Object3D.Load(printItemWrapper.FileLocation);
+							IObject3D item = Object3D.Load(printItemWrapper.FileLocation, CancellationToken.None);
 							MeshFileIo.Save(item, filePathToSave);
 						}
 						ShowFileIfRequested(filePathToSave);
@@ -500,7 +501,7 @@ namespace MatterHackers.MatterControl
 						}
 						else
 						{
-							IObject3D loadedItem = Object3D.Load(printItemWrapper.FileLocation);
+							IObject3D loadedItem = Object3D.Load(printItemWrapper.FileLocation, CancellationToken.None);
 							
 							if (!MeshFileIo.Save(new List<MeshGroup> { loadedItem.Flatten() }, filePathToSave))
 							{

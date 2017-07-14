@@ -2312,7 +2312,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			GCodeStream firstStream = null;
 			if (gcodeFilename != null)
 			{
-				loadedGCode = GCodeFile.Load(gcodeFilename);
+				loadedGCode = GCodeFile.Load(gcodeFilename, CancellationToken.None);
 				gCodeFileStream0 = new GCodeFileStream(loadedGCode);
 
 				if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.recover_is_enabled)

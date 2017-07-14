@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System.Threading;
 using MatterHackers.Agg.PlatformAbstract;
 #if !__ANDROID__
 using MatterHackers.MatterControl.Tests.Automation;
@@ -52,7 +53,7 @@ namespace MatterHackers.MatterControl.Slicing.Tests
 			}
 
 			string meshFileName = TestContext.CurrentContext.ResolveProjectPath(4, "Tests", "TestData", "TestMeshes", "SliceLayers", "Box20x20x10.stl");
-			Mesh cubeMesh = StlProcessing.Load(meshFileName);
+			Mesh cubeMesh = StlProcessing.Load(meshFileName, CancellationToken.None);
 
 			AxisAlignedBoundingBox bounds = cubeMesh.GetAxisAlignedBoundingBox();
 			Assert.IsTrue(bounds.ZSize == 10);
