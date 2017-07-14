@@ -436,6 +436,61 @@ namespace MatterControl.Tests.MatterControl
 		}
 
 		[Test, Category("GCodeStream")]
+		public void WriteReplaceStreamTests()
+		{
+			string[] inputLines = new string[]
+			{
+				"; the printer is moving normally",
+				"G1 X10 Y10 Z10 E0",
+				"M114",
+				"G29",
+				"G28",
+				"G28 X0",
+				"M107",
+				"M107 ; extra stuff",
+				null,
+			};
+
+			string[] expected = new string[]
+			{
+				"; the printer is moving normally",
+				"G1 X10 Y10 Z10 E0",
+				"M114",
+				"G29",
+				"G28",
+				"M115",
+				"G28 X0",
+				"M115",
+				"; none",
+				"; none ; extra stuff",
+				null,
+			};
+
+			StaticData.Instance = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+
+			PrinterSettings settings = ActiveSliceSettings.Instance;
+			settings.SetValue(SettingsKey.write_regex, "\"^(G28)\",\"G28,M115\"\\n\"^(M107)\",\"; none\"");
+
+			var inputLinesStream = new TestGCodeStream(inputLines);
+			var queueStream = new QueuedCommandsStream(inputLinesStream);
+			ProcessWriteRegexStream writeStream = new ProcessWriteRegexStream(queueStream, queueStream);
+
+			int expectedIndex = 0;
+			string actualLine = writeStream.ReadLine();
+			string expectedLine = expected[expectedIndex++];
+
+			Assert.AreEqual(expectedLine, actualLine, "Unexpected response from ProcessWriteRegexStream");
+
+			while (actualLine != null)
+			{
+				expectedLine = expected[expectedIndex++];
+				actualLine = writeStream.ReadLine();
+				Assert.AreEqual(expectedLine, actualLine, "Unexpected response from ProcessWriteRegexStream");
+			}
+		}
+
+		[Test, Category("GCodeStream")]
 		public void FeedRateRatioChangesFeedRate()
 		{
 			string line;

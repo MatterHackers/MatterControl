@@ -39,20 +39,27 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 	public class ProcessWriteRegexStream : GCodeStreamProxy
 	{
 		static Regex getQuotedParts = new Regex(@"([""'])(\\?.)*?\1", RegexOptions.Compiled);
+		QueuedCommandsStream queueStream;
 
-		public ProcessWriteRegexStream(GCodeStream internalStream)
+		public ProcessWriteRegexStream(GCodeStream internalStream, QueuedCommandsStream queueStream)
 			: base(internalStream)
 		{
+			this.queueStream = queueStream;
 		}
 
 		public override string ReadLine()
 		{
 			var baseLine = base.ReadLine();
 
+			if (baseLine == null)
+			{
+				return null;
+			}
+
 			var lines = ProcessWriteRegEx(baseLine);
 			for (int i = 1; i < lines.Count; i++)
 			{
-				PrinterConnection.Instance.SendLineToPrinterNow(lines[i]);
+				queueStream.Add(lines[i]);
 			}
 
 			return lines[0];
@@ -70,7 +77,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					WriteLineReplacements.Clear();
 					string splitString = "\\n";
 					write_regex = ActiveSliceSettings.Instance.GetValue(SettingsKey.write_regex);
-					foreach (string regExLine in write_regex.Split(splitString.ToCharArray(), StringSplitOptions.RemoveEmptyEntries))
+					foreach (string regExLine in write_regex.Split(new string[] { splitString }, StringSplitOptions.RemoveEmptyEntries))
 					{
 						var matches = getQuotedParts.Matches(regExLine);
 						if (matches.Count == 2)
@@ -91,12 +98,20 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			{
 				foreach (var item in WriteLineReplacements)
 				{
-					var replaced = item.Regex.Replace(lineToWrite, item.Replacement);
-					var replacedLines = replaced.Split(',');
-					linesToWrite[i] = replacedLines[0];
-					for (int j = 1; j < replacedLines.Length; j++)
+					var splitReplacement = item.Replacement.Split(',');
+					if (splitReplacement.Length > 0)
 					{
-						addedLines.Add(replacedLines[j]);
+						if (item.Regex.IsMatch(lineToWrite))
+						{
+							// replace on the first replacement group only
+							var replacedString = item.Regex.Replace(lineToWrite, splitReplacement[0]);
+							linesToWrite[i] = replacedString;
+							// add in the othre replacement groups
+							for (int j = 1; j < splitReplacement.Length; j++)
+							{
+								addedLines.Add(splitReplacement[j]);
+							}
+						}
 					}
 				}
 			}

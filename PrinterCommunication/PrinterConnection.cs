@@ -2348,7 +2348,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			extrusionMultiplyerStream7 = new ExtrusionMultiplyerStream(babyStepsStream6);
 			feedrateMultiplyerStream8 = new FeedRateMultiplyerStream(extrusionMultiplyerStream7);
 			requestTemperaturesStream9 = new RequestTemperaturesStream(feedrateMultiplyerStream8);
-			processWriteRegExStream10 = new ProcessWriteRegexStream(requestTemperaturesStream9);
+			processWriteRegExStream10 = new ProcessWriteRegexStream(requestTemperaturesStream9, queuedCommandStream2);
 			totalGCodeStream = processWriteRegExStream10;
 
 			// Get the current position of the printer any time we reset our streams
