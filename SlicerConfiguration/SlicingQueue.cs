@@ -165,7 +165,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							foreach (Mesh mesh in meshGroup.Meshes)
 							{
 								MeshExtruderData material = MeshExtruderData.Get(mesh);
-								int extruderIndex = Math.Max(0, material.ExtruderIndex - 1);
+								int extruderIndex = Math.Max(0, material.ExtruderIndex);
 								maxExtruderIndex = Math.Max(maxExtruderIndex, extruderIndex);
 								if (extruderIndex >= extruderCount)
 								{
@@ -201,7 +201,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								for (int meshIndex = 0; meshIndex < meshCount; meshIndex++)
 								{
 									Mesh mesh = meshGroup.Meshes[meshIndex];
-									if ((meshIndex % 2) == 0)
+									if (meshIndex == 0)
 									{
 										mergeRules += "({0}".FormatWith(savedStlCount);
 									}
@@ -224,7 +224,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 									savedStlCount++;
 								}
 
-								for (int i = 0; i < meshCount; i++)
+								int closeParentsCount = (meshCount == 1 || meshCount == 2) ? 1 : meshCount - 1;
+								for (int i = 0; i < closeParentsCount; i++)
 								{
 									mergeRules += ")";
 								}
