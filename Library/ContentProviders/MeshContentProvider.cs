@@ -101,7 +101,7 @@ namespace MatterHackers.MatterControl
 
 						sceneItem.Mesh = loadedItem.Mesh;
 						sceneItem.Children = loadedItem.Children;
-						sceneItem.Matrix *= Matrix4X4.CreateTranslation(-aabb.Center.x, -aabb.Center.y, -aabb.minXYZ.z);
+						sceneItem.Matrix *= Matrix4X4.CreateTranslation(-aabb.Center.x, -aabb.Center.y, -sceneItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity).minXYZ.z);
 
 						// Notification should force invalidate and redraw
 						progressReporter?.Invoke(1, "");
@@ -110,7 +110,7 @@ namespace MatterHackers.MatterControl
 			};
 		}
 
-		// TODO: Trying out an 8 MB mesh max for thumnbnail generation
+		// TODO: Trying out an 8 MB mesh max for thumbnail generation
 		long MaxFileSizeForTracing = 8 * 1000 * 1000;
 
 		public async Task GetThumbnail(ILibraryItem item, int width, int height, Action<ImageBuffer> imageCallback)
