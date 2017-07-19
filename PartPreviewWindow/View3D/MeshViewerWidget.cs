@@ -380,9 +380,8 @@ namespace MatterHackers.MeshVisualizer
 									faceData.Textures.Add(BedImage);
 									foreach (FaceEdge faceEdge in face.FaceEdges())
 									{
-										FaceEdgeTextureUvData edgeUV = FaceEdgeTextureUvData.Get(faceEdge);
-										edgeUV.TextureUV.Add(new Vector2((displayVolumeToBuild.x / 2 + faceEdge.firstVertex.Position.x) / displayVolumeToBuild.x,
-											(displayVolumeToBuild.y / 2 + faceEdge.firstVertex.Position.y) / displayVolumeToBuild.y));
+										faceEdge.SetUv(0, new Vector2((displayVolumeToBuild.x / 2 + faceEdge.FirstVertex.Position.x) / displayVolumeToBuild.x,
+											(displayVolumeToBuild.y / 2 + faceEdge.FirstVertex.Position.y) / displayVolumeToBuild.y));
 									}
 								}
 							}

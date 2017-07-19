@@ -71,8 +71,8 @@ namespace MatterHackers.MatterControl.Slicing
 				double maxZ = double.MinValue;
 				foreach (FaceEdge faceEdge in face.FaceEdges())
 				{
-					minZ = Math.Min(minZ, faceEdge.firstVertex.Position.z);
-					maxZ = Math.Max(maxZ, faceEdge.firstVertex.Position.z);
+					minZ = Math.Min(minZ, faceEdge.FirstVertex.Position.z);
+					maxZ = Math.Max(maxZ, faceEdge.FirstVertex.Position.z);
 				}
 
 				for (int layerIndex = 0; layerIndex < layerCount; layerIndex++)

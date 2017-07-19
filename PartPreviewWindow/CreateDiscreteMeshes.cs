@@ -107,7 +107,7 @@ namespace MatterHackers.MatterControl
 									var faceVertices = new List<IVertex>();
 									foreach (FaceEdge faceEdgeToAdd in faceAttachedToVertex.FaceEdges())
 									{
-										var newVertex = meshFromCurrentVolume.CreateVertex(faceEdgeToAdd.firstVertex.Position, CreateOption.CreateNew, SortOption.WillSortLater);
+										var newVertex = meshFromCurrentVolume.CreateVertex(faceEdgeToAdd.FirstVertex.Position, CreateOption.CreateNew, SortOption.WillSortLater);
 										faceVertices.Add(newVertex);
 									}
 
@@ -205,7 +205,7 @@ namespace MatterHackers.MatterControl
 				// figure out which area one or more of the vertices are in add the face to the right new mesh
 				foreach (FaceEdge faceEdge in face.FaceEdges())
 				{
-					Vector2 position = new Vector2(faceEdge.firstVertex.Position.x, faceEdge.firstVertex.Position.y);
+					Vector2 position = new Vector2(faceEdge.FirstVertex.Position.x, faceEdge.FirstVertex.Position.y);
 					position += renderOffset;
 					position *= scaleFactor;
 
@@ -216,7 +216,7 @@ namespace MatterHackers.MatterControl
 							var faceVertices = new List<IVertex>();
 							foreach (FaceEdge faceEdgeToAdd in face.FaceEdges())
 							{
-								var newVertex = discreteMeshes[areaIndex].CreateVertex(faceEdgeToAdd.firstVertex.Position);
+								var newVertex = discreteMeshes[areaIndex].CreateVertex(faceEdgeToAdd.FirstVertex.Position);
 								faceVertices.Add(newVertex);
 							}
 
