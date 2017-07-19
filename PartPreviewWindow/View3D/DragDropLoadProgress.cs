@@ -70,12 +70,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		public void ProgressReporter((double progress0To1, string processingState) progress)
+		public void ProgressReporter(double progress0To1, string processingState)
 		{
-			progressBar.RatioComplete = progress.progress0To1;
+			progressBar.RatioComplete = progress0To1;
 			view3DWidget?.Invalidate();
 
-			if (progress.progress0To1 == 1)
+			if (progress0To1 == 1)
 			{
 				if (view3DWidget != null)
 				{

@@ -28,7 +28,6 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Threading;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
@@ -48,18 +47,18 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		ProgressControl processingProgressControl;
 
-		internal void ProgressReporter((double progress0To1, string processingState) progress)
+		internal void ProgressReporter(double progress0To1, string processingState)
 		{
 			if (processingProgressControl == null)
 			{
 				return;
 			}
 
-			processingProgressControl.Visible = progress.progress0To1 != 0;
-			processingProgressControl.RatioComplete = progress.progress0To1;
-			processingProgressControl.ProcessType = progress.processingState;
+			processingProgressControl.Visible = progress0To1 != 0;
+			processingProgressControl.RatioComplete = progress0To1;
+			processingProgressControl.ProcessType = processingState;
 
-			if (progress.progress0To1 == 1)
+			if (progress0To1 == 1)
 			{
 				EndProgress();
 			}

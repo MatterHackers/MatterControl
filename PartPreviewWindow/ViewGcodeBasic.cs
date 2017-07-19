@@ -29,8 +29,6 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.IO;
-using System.Linq;
-using System.Threading;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.GCodeVisualizer;
@@ -174,9 +172,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		internal void LoadProgress_Changed((double progress0To1, string processingState) progress)
+		internal void LoadProgress_Changed(double progress0To1, string processingState)
 		{
-			SetProcessingMessage(string.Format("{0} {1:0}%...", gcodeLoading, progress.progress0To1 * 100));
+			SetProcessingMessage(string.Format("{0} {1:0}%...", gcodeLoading, progress0To1 * 100));
 		}
 
 		private void SetProcessingMessage(string message)

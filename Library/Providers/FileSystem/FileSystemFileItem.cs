@@ -30,7 +30,6 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using MatterHackers.Agg;
 using MatterHackers.DataConverters3D;
 
 namespace MatterHackers.MatterControl.Library
@@ -57,7 +56,7 @@ namespace MatterHackers.MatterControl.Library
 			}
 		}
 
-		public Task<StreamAndLength> GetContentStream(ReportProgressRatio<(double ratio, string state)> reportProgress)
+		public Task<StreamAndLength> GetContentStream(Action<double, string> reportProgress)
 		{
 			if (ApplicationController.Instance.IsLoadableFile(this.Path)
 				&& File.Exists(this.Path))
@@ -73,7 +72,7 @@ namespace MatterHackers.MatterControl.Library
 			return Task.FromResult<StreamAndLength>(null);
 		}
 
-		public Task<IObject3D> GetContent(ReportProgressRatio<(double ratio, string state)> reportProgress)
+		public Task<IObject3D> GetContent(Action<double, string> reportProgress)
 		{
 			throw new NotImplementedException();
 		}

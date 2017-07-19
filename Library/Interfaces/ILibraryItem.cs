@@ -27,8 +27,8 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using System.Threading.Tasks;
-using MatterHackers.Agg;
 using MatterHackers.DataConverters3D;
 
 namespace MatterHackers.MatterControl.Library
@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl.Library
 	{
 		string ContentType { get; }
 		string Category { get; }
-		Task<IObject3D> GetContent(ReportProgressRatio<(double ratio, string state)> reportProgress);
+		Task<IObject3D> GetContent(Action<double, string> reportProgress);
 		void SetContent(IObject3D item);
 	}
 
@@ -58,6 +58,6 @@ namespace MatterHackers.MatterControl.Library
 		string ContentType { get; }
 		string FileName { get; }
 		string AssetPath { get; }
-		Task<StreamAndLength> GetContentStream(ReportProgressRatio<(double ratio, string state)> reportProgress);
+		Task<StreamAndLength> GetContentStream(Action<double, string> progress);
 	}
 }

@@ -32,7 +32,6 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
@@ -62,9 +61,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						&& !selectedItem.HasChildren
 						&& selectedItem.Mesh != null)
 					{
-						var discreetMeshes = CreateDiscreteMeshes.SplitVolumesIntoMeshes(Scene.SelectedItem.Mesh, CancellationToken.None, ((double progress0To1, string processingState) progress) =>
+						var discreetMeshes = CreateDiscreteMeshes.SplitVolumesIntoMeshes(Scene.SelectedItem.Mesh, CancellationToken.None, (double progress0To1, string processingState) =>
 						{
-							view3DWidget.ReportProgressChanged(progress.progress0To1 * .5, progress.processingState);
+							view3DWidget.ReportProgressChanged(progress0To1 * .5, processingState);
 						});
 
 						if (discreetMeshes.Count == 1)

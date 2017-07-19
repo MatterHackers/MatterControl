@@ -46,7 +46,6 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.ActionBar;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.Library;
@@ -890,17 +889,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						sourceListItem.StartProgress();
 
-						contentResult = DragSourceModel.CreateContent(((double progress0To1, string processingState) progress) =>
+						contentResult = DragSourceModel.CreateContent((double ratio, string state) =>
 						{
-							sourceListItem.ProgressReporter(progress);
-							loadProgress.ProgressReporter(progress);
+							sourceListItem.ProgressReporter(ratio, state);
+							loadProgress.ProgressReporter(ratio, state);
 						});
 
 						await contentResult.MeshLoaded;
 
 						sourceListItem.EndProgress();
 
-						loadProgress.ProgressReporter((1, ""));
+						loadProgress.ProgressReporter(1, "");
 					}
 
 					return contentResult?.Object3D;
@@ -1842,10 +1841,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					var libraryItem = new FileSystemFileItem(filePath);
 
-					var contentResult = libraryItem.CreateContent(((double progress0To1, string processingState) progress) =>
+					var contentResult = libraryItem.CreateContent((double progress0To1, string processingState) =>
 					{
 						double ratioAvailable = (ratioPerFile * .5);
-						double currentRatio = currentRatioDone + progress.progress0To1 * ratioAvailable;
+						double currentRatio = currentRatioDone + progress0To1 * ratioAvailable;
 
 						ReportProgressChanged(currentRatio, progressMessage);
 					});
@@ -1886,7 +1885,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			Matrix4X4 objectToWold = objectToLayFlatGroup.Matrix;
 			IObject3D objectToLayFlat = objectToLayFlatGroup.Children[0];
 
-			Vertex lowestVertex = objectToLayFlat.Mesh.Vertices[0];
+			var lowestVertex = objectToLayFlat.Mesh.Vertices[0];
 
 			Vector3 lowestVertexPosition = Vector3.Transform(lowestVertex.Position, objectToWold);
 
@@ -1898,7 +1897,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// find the lowest point on the model
 				for (int testIndex = 1; testIndex < itemToCheck.Mesh.Vertices.Count; testIndex++)
 				{
-					Vertex vertex = itemToCheck.Mesh.Vertices[testIndex];
+					var vertex = itemToCheck.Mesh.Vertices[testIndex];
 					Vector3 vertexPosition = Vector3.Transform(vertex.Position, objectToWold);
 					if (vertexPosition.z < lowestVertexPosition.z)
 					{

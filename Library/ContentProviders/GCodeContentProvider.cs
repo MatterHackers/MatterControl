@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl
 			thumbnailImage = thumbIcon;
 		}
 
-		public ContentResult CreateItem(ILibraryItem item, ReportProgressRatio<(double ratio, string state)> reporter)
+		public ContentResult CreateItem(ILibraryItem item, Action<double, string> reporter)
 		{
 			System.Diagnostics.Debugger.Break();
 			return null;

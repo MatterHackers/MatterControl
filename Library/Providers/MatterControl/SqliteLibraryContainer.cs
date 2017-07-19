@@ -33,7 +33,6 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
@@ -343,7 +342,7 @@ namespace MatterHackers.MatterControl.Library
 
 			public bool IsVisible { get; set; } = true;
 
-			public Task<ILibraryContainer> GetContainer(ReportProgressRatio<(double ratio, string state)> reportProgress)
+			public Task<ILibraryContainer> GetContainer(Action<double, string> reportProgress)
 			{
 				return Task.FromResult<ILibraryContainer>(
 					new SqliteLibraryContainer(this.ContainerID)

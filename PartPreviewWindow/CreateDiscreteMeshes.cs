@@ -27,6 +27,10 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using ClipperLib;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
@@ -34,10 +38,6 @@ using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.MarchingSquares;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
 
 namespace MatterHackers.MatterControl
 {
@@ -47,19 +47,19 @@ namespace MatterHackers.MatterControl
 
 	public static class CreateDiscreteMeshes
 	{
-		public static List<Mesh> SplitConnectedIntoMeshes(MeshGroup meshGroupToSplit, CancellationToken cancellationToken, ReportProgressRatio<(double ratio, string state)> reportProgress)
+		public static List<Mesh> SplitConnectedIntoMeshes(MeshGroup meshGroupToSplit, CancellationToken cancellationToken, Action<double, string> reportProgress)
 		{
 			List<Mesh> discreteMeshes = new List<Mesh>();
 			double ratioPerDiscreetMesh = 1.0 / meshGroupToSplit.Meshes.Count;
 			double currentRatioDone = 0;
 			foreach (Mesh mesh in meshGroupToSplit.Meshes)
 			{
-				List<Mesh> discreteVolumes = SplitVolumesIntoMeshes(mesh, cancellationToken, ((double progress0To1, string processingState) progressIn) =>
+				List<Mesh> discreteVolumes = SplitVolumesIntoMeshes(mesh, cancellationToken, (double progress0To1, string processingState) =>
 				{
 					if (reportProgress != null)
 					{
-						double progress = (currentRatioDone + ratioPerDiscreetMesh * progressIn.progress0To1);
-						reportProgress.Invoke((progress, "Split Into Meshes"));
+						double progress = (currentRatioDone + ratioPerDiscreetMesh * progress0To1);
+						reportProgress.Invoke(progress, "Split Into Meshes");
 					}
 				});
 				discreteMeshes.AddRange(discreteVolumes);
@@ -70,7 +70,7 @@ namespace MatterHackers.MatterControl
 			return discreteMeshes;
 		}
 
-		public static List<Mesh> SplitVolumesIntoMeshes(Mesh meshToSplit, CancellationToken cancellationToken, ReportProgressRatio<(double ratio, string state)> reportProgress)
+		public static List<Mesh> SplitVolumesIntoMeshes(Mesh meshToSplit, CancellationToken cancellationToken, Action<double, string> reportProgress)
 		{
 			List<Mesh> discreetVolumes = new List<Mesh>();
 			HashSet<Face> facesThatHaveBeenAdded = new HashSet<Face>();
@@ -98,16 +98,16 @@ namespace MatterHackers.MatterControl
 							{
 								if (!facesThatHaveBeenAdded.Contains(faceAttachedToVertex))
 								{
-									// marke that this face has been taken care of
+									// mark that this face has been taken care of
 									facesThatHaveBeenAdded.Add(faceAttachedToVertex);
 									// add it to the list of faces we need to walk
 									attachedFaces.Push(faceAttachedToVertex);
 
 									// Add a new face to the new mesh we are creating.
-									List<Vertex> faceVertices = new List<Vertex>();
+									var faceVertices = new List<IVertex>();
 									foreach (FaceEdge faceEdgeToAdd in faceAttachedToVertex.FaceEdges())
 									{
-										Vertex newVertex = meshFromCurrentVolume.CreateVertex(faceEdgeToAdd.firstVertex.Position, CreateOption.CreateNew, SortOption.WillSortLater);
+										var newVertex = meshFromCurrentVolume.CreateVertex(faceEdgeToAdd.firstVertex.Position, CreateOption.CreateNew, SortOption.WillSortLater);
 										faceVertices.Add(newVertex);
 									}
 
@@ -125,14 +125,14 @@ namespace MatterHackers.MatterControl
 				if (reportProgress != null)
 				{
 					double progress = faceIndex / (double)meshToSplit.Faces.Count;
-					reportProgress((progress, "Split Into Meshes"));
+					reportProgress(progress, "Split Into Meshes");
 				}
 			}
 
 			return discreetVolumes;
 		}
 
-		public static Mesh[] SplitIntoMeshesOnOrthographicZ(Mesh meshToSplit, Vector3 buildVolume, ReportProgressRatio<(double ratio, string state)> reportProgress)
+		public static Mesh[] SplitIntoMeshesOnOrthographicZ(Mesh meshToSplit, Vector3 buildVolume, Action<double, string> reportProgress)
 		{
 			// check if the part is bigger than the build plate (if it is we need to use that as our size)
 			AxisAlignedBoundingBox partBounds = meshToSplit.GetAxisAlignedBoundingBox();
@@ -150,7 +150,7 @@ namespace MatterHackers.MatterControl
 
 			PolygonMesh.Rendering.OrthographicZProjection.DrawTo(partPlate.NewGraphics2D(), meshToSplit, renderOffset, scaleFactor, RGBA_Bytes.White);
 
-			reportProgress?.Invoke((.2, ""));
+			reportProgress?.Invoke(.2, "");
 
 			//ImageIO.SaveImageData("test part plate 0.png", partPlate);
 			// expand the bounds a bit so that we can collect all the vertices and polygons within each bound
@@ -188,7 +188,7 @@ namespace MatterHackers.MatterControl
 				graphics2D.Render(PlatingHelper.PolygonToPathStorage(polygon), new RGBA_Bytes(rand.Next(128, 255), rand.Next(128, 255), rand.Next(128, 255)));
 			}
 
-			reportProgress?.Invoke((.5, ""));
+			reportProgress?.Invoke(.5, "");
 
 			//ImageIO.SaveImageData("test part plate 2.png", partPlate);
 
@@ -213,10 +213,10 @@ namespace MatterHackers.MatterControl
 					{
 						if (PointInPolygon(discreteAreas[areaIndex], new IntPoint((int)position.x, (int)position.y)))
 						{
-							List<Vertex> faceVertices = new List<Vertex>();
+							var faceVertices = new List<IVertex>();
 							foreach (FaceEdge faceEdgeToAdd in face.FaceEdges())
 							{
-								Vertex newVertex = discreteMeshes[areaIndex].CreateVertex(faceEdgeToAdd.firstVertex.Position);
+								var newVertex = discreteMeshes[areaIndex].CreateVertex(faceEdgeToAdd.firstVertex.Position);
 								faceVertices.Add(newVertex);
 							}
 
@@ -233,7 +233,7 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
-			reportProgress?.Invoke((.8, ""));
+			reportProgress?.Invoke(.8, "");
 
 			for (int i = 0; i < discreteMeshes.Count(); i++)
 			{

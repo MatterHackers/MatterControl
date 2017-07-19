@@ -27,12 +27,10 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System.Collections.Generic;
+using System;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
-using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 
 namespace MatterHackers.MatterControl.Library
@@ -67,7 +65,7 @@ namespace MatterHackers.MatterControl.Library
 			}
 		}
 		
-		public Task<ILibraryContainer> GetContainer(ReportProgressRatio<(double ratio, string state)> reportProgress)
+		public Task<ILibraryContainer> GetContainer(Action<double, string> reportProgress)
 		{
 			return Task.FromResult<ILibraryContainer>(new ZipMemoryContainer(this.currentDirectory, this.Path));
 		}

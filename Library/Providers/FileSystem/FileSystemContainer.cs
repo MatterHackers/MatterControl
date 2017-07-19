@@ -33,7 +33,6 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using MatterHackers.Agg;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 
@@ -385,7 +384,7 @@ namespace MatterHackers.MatterControl.Library
 
 			public bool UseIncrementedNameDuringTypeChange { get; set; }
 
-			public Task<ILibraryContainer> GetContainer(ReportProgressRatio<(double ratio, string state)> reportProgress)
+			public Task<ILibraryContainer> GetContainer(Action<double, string> reportProgress)
 			{
 				return Task.FromResult<ILibraryContainer>(
 					new FileSystemContainer(this.Path)
