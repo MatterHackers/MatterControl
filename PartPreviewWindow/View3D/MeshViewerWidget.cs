@@ -376,8 +376,7 @@ namespace MatterHackers.MeshVisualizer
 							{
 								if (face.normal.z > 0)
 								{
-									FaceTextureData faceData = FaceTextureData.Get(face);
-									faceData.Textures.Add(BedImage);
+									face.SetTexture(0, BedImage);
 									foreach (FaceEdge faceEdge in face.FaceEdges())
 									{
 										faceEdge.SetUv(0, new Vector2((displayVolumeToBuild.x / 2 + faceEdge.FirstVertex.Position.x) / displayVolumeToBuild.x,
