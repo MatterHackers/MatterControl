@@ -220,7 +220,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public InteractionVolume SelectedInteractionVolume { get; set; } = null;
 		public InteractionVolume HoveredInteractionVolume { get; set; } = null;
 
-		public double SnapGridDistance { get; set; }
+		public double SnapGridDistance { get; set; } = 1;
 
 		public GuiWidget GuiSurface => this;
 	}
