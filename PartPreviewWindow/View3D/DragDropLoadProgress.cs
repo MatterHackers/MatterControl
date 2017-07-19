@@ -26,7 +26,6 @@ The views and conclusions contained in the software and documentation are those
 of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
-using System.Threading;
 using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
@@ -52,6 +51,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public IObject3D TrackingObject { get; set; }
 
+		public string State { get; set; }
+
 		private void View3DWidget_AfterDraw(object sender, DrawEventArgs e)
 		{
 			if (view3DWidget?.HasBeenClosed == false && this.TrackingObject != null)
@@ -66,6 +67,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				e.graphics2D.SetTransform(accumulatedTransform);
 
 				progressBar.OnDraw(e.graphics2D);
+
+				if (!string.IsNullOrEmpty(this.State))
+				{
+					e.graphics2D.DrawString(this.State, 0, -20, 11);
+				}
+
 				e.graphics2D.PopTransform();
 			}
 		}
@@ -73,7 +80,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public void ProgressReporter(double progress0To1, string processingState)
 		{
 			progressBar.RatioComplete = progress0To1;
-			view3DWidget?.Invalidate();
+			view3DWidget?.meshViewerWidget?.Invalidate();
+
+			this.State = processingState;
 
 			if (progress0To1 == 1)
 			{
