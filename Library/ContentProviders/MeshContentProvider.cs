@@ -104,7 +104,7 @@ namespace MatterHackers.MatterControl
 						sceneItem.Matrix *= Matrix4X4.CreateTranslation(-aabb.Center.x, -aabb.Center.y, -aabb.minXYZ.z);
 
 						// Notification should force invalidate and redraw
-						progressReporter(1, "");
+						progressReporter?.Invoke(1, "");
 					}
 				})
 			};
