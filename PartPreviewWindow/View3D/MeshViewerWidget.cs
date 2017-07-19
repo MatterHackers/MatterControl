@@ -27,29 +27,23 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.OpenGlGui;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
+using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.PolygonMesh;
-using MatterHackers.PolygonMesh.Processors;
-using MatterHackers.RayTracer;
-using MatterHackers.RayTracer.Traceable;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.RenderOpenGl.OpenGl;
 using MatterHackers.VectorMath;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Xml.Linq;
-using System.Threading;
-using MatterHackers.MatterControl.PartPreviewWindow;
 
 namespace MatterHackers.MeshVisualizer
 {
@@ -593,18 +587,18 @@ namespace MatterHackers.MeshVisualizer
 			partProcessingInfo.Visible = false;
 		}
 
-		public void ReportProgress0to100((double progress0To1, string processingState) progress)
+		public void ReportProgress0to100(double progress0To1, string processingState)
 		{
 			UiThread.RunOnIdle(() =>
 			{
-				int percentComplete = (int)(progress.progress0To1 * 100);
+				int percentComplete = (int)(progress0To1 * 100);
 				partProcessingInfo.centeredInfoText.Text =  "{0} {1}%...".FormatWith(progressReportingPrimaryTask, percentComplete);
 				partProcessingInfo.progressControl.PercentComplete = percentComplete;
 
 				// Only assign to textbox if value passed through
-				if (progress.processingState != null)
+				if (processingState != null)
 				{
-					partProcessingInfo.centeredInfoDescription.Text = progress.processingState;
+					partProcessingInfo.centeredInfoDescription.Text = processingState;
 				}
 			});
 		}

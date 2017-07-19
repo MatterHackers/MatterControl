@@ -29,7 +29,6 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Threading.Tasks;
-using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 
 namespace MatterHackers.MatterControl.Library
@@ -56,7 +55,7 @@ namespace MatterHackers.MatterControl.Library
 
 		public bool IsVisible => this.visibilityResolver();
 
-		public Task<ILibraryContainer> GetContainer(ReportProgressRatio<(double ratio, string state)> reportProgress)
+		public Task<ILibraryContainer> GetContainer(Action<double, string> reportProgress)
 		{
 			return Task.FromResult(this.containerCreator());
 		}

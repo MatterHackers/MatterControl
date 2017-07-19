@@ -326,7 +326,7 @@ namespace MatterHackers.MatterControl
 		}
 
 		/*
-		public static void CreateITraceableForMeshGroup(List<PlatingMeshGroupData> perMeshGroupInfo, List<MeshGroup> meshGroups, int meshGroupIndex, ReportProgressRatio<(double ratio, string state)> reportProgress)
+		public static void CreateITraceableForMeshGroup(List<PlatingMeshGroupData> perMeshGroupInfo, List<MeshGroup> meshGroups, int meshGroupIndex, Action<double, string> reportProgress)
 		{
 			if (meshGroups != null)
 			{
@@ -366,7 +366,7 @@ namespace MatterHackers.MatterControl
 			return BoundingVolumeHierarchy.CreateNewHierachy(allPolys);
 		}
 
-		private static List<IPrimitive> AddTraceDataForMesh(Mesh mesh, int totalActionCount, ref int currentAction, ref bool needToUpdateProgressReport, ReportProgressRatio<(double ratio, string state)> reportProgress)
+		private static List<IPrimitive> AddTraceDataForMesh(Mesh mesh, int totalActionCount, ref int currentAction, ref bool needToUpdateProgressReport, Action<double, string> reportProgress)
 		{
 			var continueProcessing = new CancellationTokenSource();
 

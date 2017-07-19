@@ -31,7 +31,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
@@ -64,7 +63,7 @@ namespace MatterHackers.MatterControl.Library
 
 		public bool IsVisible => true;
 
-		public Task<StreamAndLength> GetContentStream(ReportProgressRatio<(double ratio, string state)> reportProgress)
+		public Task<StreamAndLength> GetContentStream(Action<double, string> reportProgress)
 		{
 			throw new NotImplementedException();
 		}

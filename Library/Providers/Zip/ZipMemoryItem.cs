@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl.Library
 		/// </summary>
 		public long FileSize { get; private set; }
 
-		public async Task<StreamAndLength> GetContentStream(ReportProgressRatio<(double ratio, string state)> reportProgress)
+		public async Task<StreamAndLength> GetContentStream(Action<double, string> reportProgress)
 		{
 			var memStream = await Task.Run(() =>
 			{
@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl.Library
 		}
 
 		/*
-		public async Task<IObject3D> GetContent(ReportProgressRatio<(double ratio, string state)> reportProgress)
+		public async Task<IObject3D> GetContent(Action<double, string> reportProgress)
 		{
 			var streamAndLength = await GetContentStream(null);
 			IObject3D object3D = Object3D.Load(streamAndLength.Stream, System.IO.Path.GetExtension(Name));
