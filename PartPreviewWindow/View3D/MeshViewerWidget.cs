@@ -392,9 +392,10 @@ namespace MatterHackers.MeshVisualizer
 					throw new NotImplementedException();
 			}
 
+			var zHeight = printerBed.GetAxisAlignedBoundingBox().ZSize;
 			foreach (Vertex vertex in printerBed.Vertices)
 			{
-				vertex.Position = vertex.Position - new Vector3(-bedCenter, 2.2);
+				vertex.Position = vertex.Position - new Vector3(-bedCenter, zHeight/2);
 			}
 
 			if (buildVolume != null)
