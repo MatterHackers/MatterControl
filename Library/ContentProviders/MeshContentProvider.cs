@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl
 			var sceneItem = new Object3D()
 			{
 				// Initial 'Loading...' mesh
-				Mesh = PlatonicSolids.CreateCube(1, 3, 1),
+				Mesh = PlatonicSolids.CreateCube(20, 20, 20),
 				Name = item.Name
 			};
 
