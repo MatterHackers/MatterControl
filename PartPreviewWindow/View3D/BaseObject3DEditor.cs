@@ -55,25 +55,43 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.item = item;
 			FlowLayoutWidget mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 
-			FlowLayoutWidget tabContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				HAnchor = HAnchor.AbsolutePosition,
-				Visible = true,
-				Width = theme.WhiteButtonFactory.FixedWidth
-			};
-			mainContainer.AddChild(tabContainer);
+			FlowLayoutWidget behavior3DTypeButtons = new FlowLayoutWidget();
+			mainContainer.AddChild(behavior3DTypeButtons);
 
-			Button changeColorButton = theme.textImageButtonFactory.Generate("Color".Localize());
-			changeColorButton.Margin = new BorderDouble(5);
-			changeColorButton.HAnchor = HAnchor.ParentRight;
+			// put in the button for making the behavior solid
+			Button solidBehaviorButton = theme.textImageButtonFactory.Generate("Solid".Localize());
+			solidBehaviorButton.Margin = new BorderDouble(5);
 			Random rand = new Random();
-			changeColorButton.Click += (s, e) =>
+			solidBehaviorButton.Click += (s, e) =>
 			{
 				item.Color = new RGBA_Bytes(rand.Next(255), rand.Next(255), rand.Next(255));
+				item.BehaviorType = Behavior3DTypes.Solid;
 				view3DWidget.Invalidate();
 			};
 
-			tabContainer.AddChild(changeColorButton);
+			behavior3DTypeButtons.AddChild(solidBehaviorButton);
+
+			// put in the button for making the behavior a hole
+			Button holeBehaviorButton = theme.textImageButtonFactory.Generate("Hole".Localize());
+			holeBehaviorButton.Margin = new BorderDouble(5);
+			holeBehaviorButton.Click += (s, e) =>
+			{
+				item.BehaviorType = Behavior3DTypes.Hole;
+				view3DWidget.Invalidate();
+			};
+
+			behavior3DTypeButtons.AddChild(holeBehaviorButton);
+
+			// put in the button for making the behavior support
+			Button supportBehaviorButton = theme.textImageButtonFactory.Generate("Support".Localize());
+			supportBehaviorButton.Margin = new BorderDouble(5);
+			supportBehaviorButton.Click += (s, e) =>
+			{
+				item.BehaviorType = Behavior3DTypes.Support;
+				view3DWidget.Invalidate();
+			};
+
+			behavior3DTypeButtons.AddChild(supportBehaviorButton);
 
 			return mainContainer;
 		}
