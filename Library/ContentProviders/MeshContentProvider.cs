@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl
 			var sceneItem = new Object3D()
 			{
 				// Initial 'Loading...' mesh
-				Mesh = PlatonicSolids.CreateCube(1, 3, 1),
+				Mesh = PlatonicSolids.CreateCube(20, 20, 20),
 				Name = item.Name
 			};
 
@@ -102,6 +102,9 @@ namespace MatterHackers.MatterControl
 						sceneItem.Mesh = loadedItem.Mesh;
 						sceneItem.Children = loadedItem.Children;
 						sceneItem.Matrix *= Matrix4X4.CreateTranslation(-aabb.Center.x, -aabb.Center.y, -aabb.minXYZ.z);
+
+						// Notification should force invalidate and redraw
+						progressReporter(1, "");
 					}
 				})
 			};
