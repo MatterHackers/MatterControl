@@ -102,6 +102,9 @@ namespace MatterHackers.MatterControl
 						sceneItem.Mesh = loadedItem.Mesh;
 						sceneItem.Children = loadedItem.Children;
 						sceneItem.Matrix *= Matrix4X4.CreateTranslation(-aabb.Center.x, -aabb.Center.y, -aabb.minXYZ.z);
+
+						// Notification should force invalidate and redraw
+						progressReporter(1, "");
 					}
 				})
 			};

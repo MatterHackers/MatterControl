@@ -86,12 +86,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (progress0To1 == 1)
 			{
+				view3DWidget?.PartHasBeenChanged();
+
 				if (view3DWidget != null)
 				{
 					view3DWidget.AfterDraw -= View3DWidget_AfterDraw;
 				}
-
-				view3DWidget = null;
 			}
 		}
 	}
