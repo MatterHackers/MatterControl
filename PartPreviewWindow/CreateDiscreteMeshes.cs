@@ -92,7 +92,7 @@ namespace MatterHackers.MatterControl
 					while (attachedFaces.Count > 0)
 					{
 						Face faceToAdd = attachedFaces.Pop();
-						foreach (Vertex attachedVertex in faceToAdd.Vertices())
+						foreach (IVertex attachedVertex in faceToAdd.Vertices())
 						{
 							foreach (Face faceAttachedToVertex in attachedVertex.ConnectedFaces())
 							{

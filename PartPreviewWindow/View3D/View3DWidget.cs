@@ -1914,7 +1914,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			foreach (Face face in lowestVertex.ConnectedFaces())
 			{
 				double biggestAngleToFaceVertex = double.MinValue;
-				foreach (Vertex faceVertex in face.Vertices())
+				foreach (IVertex faceVertex in face.Vertices())
 				{
 					if (faceVertex != lowestVertex)
 					{
@@ -1938,7 +1938,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			double maxDistFromLowestZ = 0;
 			List<Vector3> faceVertexes = new List<Vector3>();
-			foreach (Vertex vertex in faceToLayFlat.Vertices())
+			foreach (IVertex vertex in faceToLayFlat.Vertices())
 			{
 				Vector3 vertexPosition = Vector3.Transform(vertex.Position, objectToWold);
 				faceVertexes.Add(vertexPosition);

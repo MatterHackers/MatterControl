@@ -4324,3 +4324,12 @@ Translated:Sign in to access your cloud printer profiles.\n\nOnce signed in you 
 English:Updating Mesh
 Translated:Updating Mesh
 
+English:Solid
+Translated:Solid
+
+English:Hole
+Translated:Hole
+
+English:Support
+Translated:Support
+
