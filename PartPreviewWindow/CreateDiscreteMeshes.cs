@@ -98,16 +98,16 @@ namespace MatterHackers.MatterControl
 							{
 								if (!facesThatHaveBeenAdded.Contains(faceAttachedToVertex))
 								{
-									// marke that this face has been taken care of
+									// mark that this face has been taken care of
 									facesThatHaveBeenAdded.Add(faceAttachedToVertex);
 									// add it to the list of faces we need to walk
 									attachedFaces.Push(faceAttachedToVertex);
 
 									// Add a new face to the new mesh we are creating.
-									List<Vertex> faceVertices = new List<Vertex>();
+									var faceVertices = new List<IVertex>();
 									foreach (FaceEdge faceEdgeToAdd in faceAttachedToVertex.FaceEdges())
 									{
-										Vertex newVertex = meshFromCurrentVolume.CreateVertex(faceEdgeToAdd.firstVertex.Position, CreateOption.CreateNew, SortOption.WillSortLater);
+										var newVertex = meshFromCurrentVolume.CreateVertex(faceEdgeToAdd.firstVertex.Position, CreateOption.CreateNew, SortOption.WillSortLater);
 										faceVertices.Add(newVertex);
 									}
 
@@ -213,10 +213,10 @@ namespace MatterHackers.MatterControl
 					{
 						if (PointInPolygon(discreteAreas[areaIndex], new IntPoint((int)position.x, (int)position.y)))
 						{
-							List<Vertex> faceVertices = new List<Vertex>();
+							var faceVertices = new List<IVertex>();
 							foreach (FaceEdge faceEdgeToAdd in face.FaceEdges())
 							{
-								Vertex newVertex = discreteMeshes[areaIndex].CreateVertex(faceEdgeToAdd.firstVertex.Position);
+								var newVertex = discreteMeshes[areaIndex].CreateVertex(faceEdgeToAdd.firstVertex.Position);
 								faceVertices.Add(newVertex);
 							}
 

@@ -1885,7 +1885,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			Matrix4X4 objectToWold = objectToLayFlatGroup.Matrix;
 			IObject3D objectToLayFlat = objectToLayFlatGroup.Children[0];
 
-			Vertex lowestVertex = objectToLayFlat.Mesh.Vertices[0];
+			var lowestVertex = objectToLayFlat.Mesh.Vertices[0];
 
 			Vector3 lowestVertexPosition = Vector3.Transform(lowestVertex.Position, objectToWold);
 
@@ -1897,7 +1897,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// find the lowest point on the model
 				for (int testIndex = 1; testIndex < itemToCheck.Mesh.Vertices.Count; testIndex++)
 				{
-					Vertex vertex = itemToCheck.Mesh.Vertices[testIndex];
+					var vertex = itemToCheck.Mesh.Vertices[testIndex];
 					Vector3 vertexPosition = Vector3.Transform(vertex.Position, objectToWold);
 					if (vertexPosition.z < lowestVertexPosition.z)
 					{
