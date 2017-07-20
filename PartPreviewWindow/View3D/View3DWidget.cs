@@ -212,7 +212,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			objectEditorsByType = new Dictionary<Type, HashSet<IObject3DEditor>>();
 
 			// TODO: Consider only loading once into a static
-			var objectEditors = new PluginFinder<IObject3DEditor>().Plugins;
+			var objectEditors = PluginFinder.CreateInstancesOf<IObject3DEditor>();
 			foreach (IObject3DEditor editor in objectEditors)
 			{
 				foreach (Type type in editor.SupportedTypes())
@@ -408,8 +408,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			interactionVolumes.Add(new SelectionShadow(this.InteractionLayer));
 			interactionVolumes.Add(new SnappingIndicators(this.InteractionLayer, this.CurrentSelectInfo));
 
-			PluginFinder<InteractionVolumePlugin> interactionVolumePlugins = new PluginFinder<InteractionVolumePlugin>();
-			foreach (InteractionVolumePlugin plugin in interactionVolumePlugins.Plugins)
+			var interactionVolumePlugins = PluginFinder.CreateInstancesOf<InteractionVolumePlugin>();
+			foreach (InteractionVolumePlugin plugin in interactionVolumePlugins)
 			{
 				interactionVolumes.Add(plugin.CreateInteractionVolume(this.InteractionLayer));
 			}

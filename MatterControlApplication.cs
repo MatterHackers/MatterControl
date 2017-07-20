@@ -853,12 +853,10 @@ namespace MatterHackers.MatterControl
 			}
 			// TODO: this should look in a plugin folder rather than just the application directory (we probably want it in the user folder).
 			PluginFinder<MatterControlPlugin> pluginFinder = new PluginFinder<MatterControlPlugin>(pluginDirectory);
-#else
-			PluginFinder<MatterControlPlugin> pluginFinder = new PluginFinder<MatterControlPlugin>();
 #endif
 
 			string oemName = ApplicationSettings.Instance.GetOEMName();
-			foreach (MatterControlPlugin plugin in pluginFinder.Plugins)
+			foreach (MatterControlPlugin plugin in PluginFinder.CreateInstancesOf<MatterControlPlugin>())
 			{
 				string pluginInfo = plugin.GetPluginInfoJSon();
 				Dictionary<string, string> nameValuePairs = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, string>>(pluginInfo);

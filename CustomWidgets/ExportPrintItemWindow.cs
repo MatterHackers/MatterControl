@@ -136,9 +136,9 @@ namespace MatterHackers.MatterControl
 				};
 				middleRowContainer.AddChild(exportGCode);
 
-				PluginFinder<ExportGcodePlugin> exportPluginFinder = new PluginFinder<ExportGcodePlugin>();
+				var gcodeExportPlugins = PluginFinder.CreateInstancesOf<ExportGcodePlugin>();
 
-				foreach (ExportGcodePlugin plugin in exportPluginFinder.Plugins)
+				foreach (ExportGcodePlugin plugin in gcodeExportPlugins)
 				{
 					if (plugin.EnabledForCurrentPart(printItemWrapper))
 					{
