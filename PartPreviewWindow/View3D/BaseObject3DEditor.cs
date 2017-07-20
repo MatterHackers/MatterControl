@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			solidBehaviorButton.Click += (s, e) =>
 			{
 				item.Color = new RGBA_Bytes(rand.Next(255), rand.Next(255), rand.Next(255));
-				item.BehaviorType = Behavior3DTypes.Solid;
+				item.OutputType = PrintOutputTypes.Solid;
 				view3DWidget.Invalidate();
 			};
 
@@ -76,7 +76,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			holeBehaviorButton.Margin = new BorderDouble(5);
 			holeBehaviorButton.Click += (s, e) =>
 			{
-				item.BehaviorType = Behavior3DTypes.Hole;
+				item.OutputType = PrintOutputTypes.Hole;
 				view3DWidget.Invalidate();
 			};
 
@@ -87,7 +87,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			supportBehaviorButton.Margin = new BorderDouble(5);
 			supportBehaviorButton.Click += (s, e) =>
 			{
-				item.BehaviorType = Behavior3DTypes.Support;
+				item.OutputType = PrintOutputTypes.Support;
 				view3DWidget.Invalidate();
 			};
 
