@@ -127,9 +127,6 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 
 	public class TestPart : MatterCadObject3D, IMappingType
 	{
-		public string TypeName { get; } = nameof(TestPart);
-		public string FullTypeName { get; } = "MatterHackers.MatterControl.SimplePartScripting.TestPart,TextCreator";
-
 		public double XOffset { get; set; } = -.4;
 
 		public TestPart()
@@ -147,9 +144,6 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 	
 	public class CardHolder : MatterCadObject3D, IMappingType
 	{
-		public string TypeName { get; } = nameof(CardHolder);
-		public string FullTypeName { get; } = "MatterHackers.MatterControl.SimplePartScripting.CardHolder,TextCreator";
-
 		// these are the public variables that would be edited
 		public string Name { get; set; } = "Name";
 
@@ -186,9 +180,6 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 
 	public class ChairFoot : MatterCadObject3D, IMappingType
 	{
-		public string TypeName { get; } = nameof(ChairFoot);
-		public string FullTypeName { get; } = "MatterHackers.MatterControl.SimplePartScripting.ChairFoot,TextCreator";
-
 		// these are the public variables that would be edited
 		public bool FinalPart { get; set; } = true;
 
