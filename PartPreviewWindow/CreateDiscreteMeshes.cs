@@ -85,10 +85,6 @@ namespace MatterHackers.MatterControl
 					attachedFaces.Push(currentFace);
 					meshFromCurrentVolume = new Mesh();
 
-					MeshExtruderData materialDataToCopy = MeshExtruderData.Get(meshToSplit);
-					MeshExtruderData newMaterialData = MeshExtruderData.Get(meshFromCurrentVolume);
-					newMaterialData.ExtruderIndex = materialDataToCopy.ExtruderIndex;
-
 					while (attachedFaces.Count > 0)
 					{
 						Face faceToAdd = attachedFaces.Pop();

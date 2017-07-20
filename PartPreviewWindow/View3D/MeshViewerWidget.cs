@@ -612,11 +612,11 @@ namespace MatterHackers.MeshVisualizer
 					Scene.HasSelection && (object3D == Scene.SelectedItem || Scene.SelectedItem.Children.Contains(object3D));
 
 				RGBA_Bytes drawColor = object3D.Color;
-				if(object3D.BehaviorType == Behavior3DTypes.Support)
+				if(object3D.OutputType == PrintOutputTypes.Support)
 				{
 					drawColor = new RGBA_Bytes(RGBA_Bytes.Yellow, 120);
 				}
-				else if(object3D.BehaviorType == Behavior3DTypes.Hole)
+				else if(object3D.OutputType == PrintOutputTypes.Hole)
 				{
 					drawColor = new RGBA_Bytes(RGBA_Bytes.Gray, 120);
 				}

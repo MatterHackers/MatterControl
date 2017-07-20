@@ -49,6 +49,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class SlicingQueue
 	{
+		static Dictionary<Mesh, MeshPrintOutputSettings> meshPrintOutputSettings = new Dictionary<Mesh, MeshPrintOutputSettings>();
 		private static Thread slicePartThread = null;
 		private static List<PrintItemWrapper> listOfSlicingItems = new List<PrintItemWrapper>();
 		private static bool haltSlicingThread = false;
@@ -151,7 +152,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				case ".AMF":
 				case ".OBJ":
 					// TODO: Once graph parsing is added to MatterSlice we can remove and avoid this flattening
-					List<MeshGroup> meshGroups = new List<MeshGroup> { Object3D.Load(fileToSlice, CancellationToken.None).Flatten() };
+					meshPrintOutputSettings.Clear();
+					List<MeshGroup> meshGroups = new List<MeshGroup> { Object3D.Load(fileToSlice, CancellationToken.None).Flatten(meshPrintOutputSettings) };
 					if (meshGroups != null)
 					{
 						List<MeshGroup> extruderMeshGroups = new List<MeshGroup>();
@@ -164,7 +166,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						{
 							foreach (Mesh mesh in meshGroup.Meshes)
 							{
-								MeshExtruderData material = MeshExtruderData.Get(mesh);
+								MeshPrintOutputSettings material = meshPrintOutputSettings[mesh];
 								int extruderIndex = Math.Max(0, material.ExtruderIndex);
 								maxExtruderIndex = Math.Max(maxExtruderIndex, extruderIndex);
 								if (extruderIndex >= extruderCount)
@@ -216,7 +218,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 											mergeRules += ",{0}".FormatWith(savedStlCount);
 										}
 									}
-									int meshExtruderIndex = MeshExtruderData.Get(mesh).ExtruderIndex;
+									int meshExtruderIndex = meshPrintOutputSettings[mesh].ExtruderIndex;
 									if (materialsToInclude.Contains(meshExtruderIndex))
 									{
 										extruderFilesToSlice.Add(SaveAndGetFilePathForMesh(mesh));
@@ -284,10 +286,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			MeshFileIo.Save(
 				extruderMeshGroup, 
 				filePath, 
-				new MeshOutputSettings()
-				{
-					ExtruderIndexesToSave = materialIndexsToSaveInThisSTL
-				});
+				new MeshOutputSettings());
 
 			return filePath;
 		}
