@@ -259,7 +259,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						if(extruderMeshGroups[extruderCount].Meshes.Count > 0)
 						{
 							// add a flag to the merge rules to let us know there was support
-							mergeRules += ":S";
+							mergeRules += "S";
 						}
 
 						return extruderFilesToSlice.ToArray();
