@@ -36,6 +36,12 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
+	public class RegReplace
+	{
+		public Regex Regex { get; set; }
+		public string Replacement { get; set; }
+	}
+
 	public class ProcessWriteRegexStream : GCodeStreamProxy
 	{
 		static Regex getQuotedParts = new Regex(@"([""'])(\\?.)*?\1", RegexOptions.Compiled);
@@ -66,7 +72,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		}
 
 		static string write_regex = "";
-		static private List<(Regex Regex, string Replacement)> WriteLineReplacements = new List<(Regex Regex, string Replacement)>();
+		static private List<RegReplace> WriteLineReplacements = new List<RegReplace>();
 
 		public static List<string> ProcessWriteRegEx(string lineToWrite)
 		{
@@ -84,7 +90,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						{
 							var search = matches[0].Value.Substring(1, matches[0].Value.Length - 2);
 							var replace = matches[1].Value.Substring(1, matches[1].Value.Length - 2);
-							WriteLineReplacements.Add((new Regex(search, RegexOptions.Compiled), replace));
+							WriteLineReplacements.Add(new RegReplace()
+							{
+								Regex = new Regex(search, RegexOptions.Compiled),
+								Replacement = replace
+							});
 						}
 					}
 				}
