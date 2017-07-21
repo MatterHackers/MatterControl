@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
 using MatterHackers.Agg.UI;
@@ -20,10 +22,7 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 	{
 		public override string ActiveEditor { get; set; } = "MatterCadEditor";
 
-		public virtual MatterHackers.PolygonMesh.Mesh Create()
-		{
-			return Mesh;
-		}
+		public abstract void RebuildMeshes();
 	}
 
 	public class MatterCadEditor : IObject3DEditor
@@ -45,53 +44,93 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 			this.view3DWidget = view3DWidget;
 			this.item = item;
 
-			var mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-
-			var tabContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			var mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				HAnchor = HAnchor.AbsolutePosition,
-				Visible = true,
-				Width = theme.WhiteButtonFactory.FixedWidth
+				HAnchor = HAnchor.ParentLeftRight
 			};
-			mainContainer.AddChild(tabContainer);
 
 			if (item is MatterCadObject3D)
 			{
-				ModifyCadObject(view3DWidget, tabContainer, theme);
+				ModifyCadObject(view3DWidget, mainContainer, theme);
 			}
+
+			mainContainer.MinimumSize = new Vector2(250, 0);
 			return mainContainer;
 		}
 
 		private void ModifyCadObject(View3DWidget view3DWidget, FlowLayoutWidget tabContainer, ThemeConfig theme)
 		{
-			var stringPropertyNamesAndValues = this.item.GetType()
-				.GetProperties()
-				.Where(pi => pi.PropertyType == typeof(Double) && pi.GetGetMethod() != null)
-				.Select(pi => new
+			var allowedTypes = new Type[] { typeof(double), typeof(string), typeof(bool) };
+
+			var ownedPropertiesOnly = System.Reflection.BindingFlags.Public
+				| System.Reflection.BindingFlags.Instance
+				| System.Reflection.BindingFlags.DeclaredOnly;
+
+			var editableProperties = this.item.GetType().GetProperties(ownedPropertiesOnly)
+				.Where(pi => allowedTypes.Contains(pi.PropertyType)
+					&& pi.GetGetMethod() != null)
+				.Select(p => new
 				{
-					Name = pi.Name,
-					Value = pi
+					Value = p.GetGetMethod().Invoke(this.item, null),
+					DisplayName = GetDisplayName(p),
+					PropertyInfo = p
 				});
 
-			foreach (var nameValue in stringPropertyNamesAndValues)
+			foreach (var property in editableProperties)
 			{
-				FlowLayoutWidget rowContainer = CreateSettingsRow(nameValue.Name.Localize());
-				var doubleEditWidget = new MHNumberEdit((double)nameValue.Value.GetGetMethod().Invoke(this.item, null), pixelWidth: 50 * GuiWidget.DeviceScale, allowNegatives: true, allowDecimals: true, increment: .05)
+				// create a double editor
+				if (property.Value is double doubleValue)
 				{
-					SelectAllOnFocus = true,
-					VAnchor = VAnchor.ParentCenter
-				};
-				doubleEditWidget.ActuallNumberEdit.EditComplete += (s, e) =>
-				{
-					double editValue;
-					if (double.TryParse(doubleEditWidget.Text, out editValue))
+					FlowLayoutWidget rowContainer = CreateSettingsRow(property.DisplayName.Localize());
+					var doubleEditWidget = new MHNumberEdit(doubleValue, pixelWidth: 50 * GuiWidget.DeviceScale, allowNegatives: true, allowDecimals: true, increment: .05)
 					{
-						nameValue.Value.GetSetMethod().Invoke(this.item, new Object[] { editValue });
-					}
-					this.item.SetAndInvalidateMesh(((MatterCadObject3D)item).Create());
-				};
-				rowContainer.AddChild(doubleEditWidget);
-				tabContainer.AddChild(rowContainer);
+						SelectAllOnFocus = true,
+						VAnchor = VAnchor.ParentCenter
+					};
+					doubleEditWidget.ActuallNumberEdit.EditComplete += (s, e) =>
+					{
+						double editValue;
+						if (double.TryParse(doubleEditWidget.Text, out editValue))
+						{
+							property.PropertyInfo.GetSetMethod().Invoke(this.item, new Object[] { editValue });
+						}
+						((MatterCadObject3D)item).RebuildMeshes();
+					};
+					rowContainer.AddChild(doubleEditWidget);
+					tabContainer.AddChild(rowContainer);
+				}
+				// create a bool editor
+				else if (property.Value is bool boolValue)
+				{
+					FlowLayoutWidget rowContainer = CreateSettingsRow(property.DisplayName.Localize());
+
+					var doubleEditWidget = new CheckBox("");
+					doubleEditWidget.Checked = boolValue;
+					doubleEditWidget.CheckedStateChanged += (s, e) =>
+					{
+						property.PropertyInfo.GetSetMethod().Invoke(this.item, new Object[] { doubleEditWidget.Checked });
+						((MatterCadObject3D)item).RebuildMeshes();
+					};
+					rowContainer.AddChild(doubleEditWidget);
+					tabContainer.AddChild(rowContainer);
+				}
+				// create a bool editor
+				else if (property.Value is string stringValue)
+				{
+					FlowLayoutWidget rowContainer = CreateSettingsRow(property.DisplayName.Localize());
+					var textEditWidget = new MHTextEditWidget(stringValue, pixelWidth: 150 * GuiWidget.DeviceScale)
+					{
+						SelectAllOnFocus = true,
+						VAnchor = VAnchor.ParentCenter
+					};
+					textEditWidget.ActualTextEditWidget.EditComplete += (s, e) =>
+					{
+						property.PropertyInfo.GetSetMethod().Invoke(this.item, new Object[] { textEditWidget.Text });
+						((MatterCadObject3D)item).RebuildMeshes();
+					};
+					rowContainer.AddChild(textEditWidget);
+					tabContainer.AddChild(rowContainer);
+				}
 			}
 
 			var updateButton = theme.textImageButtonFactory.Generate("Update".Localize());
@@ -99,9 +138,15 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 			updateButton.HAnchor = HAnchor.ParentRight;
 			updateButton.Click += (s, e) =>
 			{
-				this.item.SetAndInvalidateMesh(((MatterCadObject3D)item).Create());
+				((MatterCadObject3D)item).RebuildMeshes();
 			};
 			tabContainer.AddChild(updateButton);
+		}
+
+		private string GetDisplayName(PropertyInfo prop)
+		{
+			var nameAttribute = prop.GetCustomAttributes(true).OfType<DisplayNameAttribute>().FirstOrDefault();
+			return nameAttribute?.DisplayName ?? prop.Name;
 		}
 
 		private static FlowLayoutWidget CreateSettingsRow(string labelText)
@@ -131,32 +176,34 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 
 		public TestPart()
 		{
-			Mesh = Create();
+			RebuildMeshes();
 		}
 
-		public override PolygonMesh.Mesh Create()
+		public override void RebuildMeshes()
 		{
 			CsgObject boxCombine = new Box(10, 10, 10);
 			boxCombine -= new Translate(new Box(10, 10, 10), XOffset, -3, 2);
-			return CsgToMesh.Convert(boxCombine);
+			SetAndInvalidateMesh(CsgToMesh.Convert(boxCombine));
 		}
 	}
 	
 	public class CardHolder : MatterCadObject3D, IMappingType
 	{
-		public string NameToWrite { get; set; }
+		[DisplayName("Name")]
+		public string NameToWrite { get; set; } = "MatterHackers";
+
 		public CardHolder()
 		{
-			Mesh = Create();
+			RebuildMeshes();
 		}
 
-		public override PolygonMesh.Mesh Create()
+		public override void RebuildMeshes()
 		{
 			CsgObject plainCardHolder = new MeshContainer("PlainBusinessCardHolder.stl");
 
-			TypeFace typeFace = TypeFace.LoadSVG("Viking_n.svg");
+			//TypeFace typeFace = TypeFace.LoadSVG("Viking_n.svg");
 
-			var letterPrinter = new TypeFacePrinter(NameToWrite, new StyledTypeFace(typeFace, 12));
+			var letterPrinter = new TypeFacePrinter(NameToWrite);//, new StyledTypeFace(typeFace, 12));
 			PolygonMesh.Mesh textMesh = VertexSourceToMesh.Extrude(letterPrinter, 5);
 
 			CsgObject nameMesh = new MeshContainer(textMesh);
@@ -164,8 +211,8 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 			AxisAlignedBoundingBox textBounds = textMesh.GetAxisAlignedBoundingBox();
 			var textArea = new Vector2(85, 20);
 
-			nameMesh = new Box(textArea.x, textArea.y, 5);
-
+			// test the area that the names will go to
+			//nameMesh = new Box(textArea.x, textArea.y, 5);
 
 			double scale = Math.Min(textArea.x / textBounds.XSize, textArea.y / textBounds.YSize);
 			nameMesh = new Scale(nameMesh, scale, scale, 1);
@@ -175,32 +222,56 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 			nameMesh = new Rotate(nameMesh, MathHelper.DegreesToRadians(18));
 			nameMesh = new Translate(nameMesh, 0, 2, 16);
 
-			plainCardHolder += nameMesh;
+			// output one combined mesh
+			//plainCardHolder += nameMesh;
+			//SetAndInvalidateMesh(CsgToMesh.Convert(plainCardHolder));
 
-			return CsgToMesh.Convert(plainCardHolder);
+			// output two meshes for card holder and text
+			this.Children.Clear();
+
+			this.Children.AddRange(new[]
+			{
+				new Object3D()
+				{
+					Mesh = CsgToMesh.Convert(plainCardHolder)
+				},
+				new Object3D()
+				{
+					Mesh = CsgToMesh.Convert(nameMesh)
+				}
+			});
+
+
+			this.SetAndInvalidateMesh(null);
 		}
 	}
 
 	public class ChairFoot : MatterCadObject3D, IMappingType
 	{
 		// these are the public variables that would be edited
+		[DisplayName("Final")]
 		public bool FinalPart { get; set; } = true;
 
+		[DisplayName("Height")]
 		public double HeightFromFloorToBottomOfLeg { get; set; } = 10;
 
+		[DisplayName("Outer Size")]
 		public double OuterSize { get; set; } = 22;
 
+		[DisplayName("Inner Size")]
 		public double InnerSize { get; set; } = 20;
+		[DisplayName("Reach")]
 		public double InsideReach { get; set; } = 10;
 
+		[DisplayName("Angle")]
 		public double AngleDegrees { get; set; } = 3;
 
 		public ChairFoot()
 		{
-			Mesh = Create();
+			RebuildMeshes();
 		}
 
-		public override MatterHackers.PolygonMesh.Mesh Create()
+		public override void RebuildMeshes()
 		{
 			// This would be better expressed as the desired offset height (height from ground to bottom of chair leg).
 			double angleRadians = MathHelper.DegreesToRadians(AngleDegrees);
@@ -236,7 +307,7 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 				chairFoot -= clipBox;
 				chairFoot = new Translate(chairFoot, 0, 0, clipBox.GetAxisAlignedBoundingBox().maxXYZ.z);
 
-				return CsgToMesh.Convert(chairFoot);
+				SetAndInvalidateMesh(CsgToMesh.Convert(chairFoot));
 			}
 			else // fit part
 			{
@@ -264,7 +335,7 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 
 				chairFoot += new Align(ring, Face.Bottom, chairFoot, Face.Top, 0, 0, -.1);
 
-				return CsgToMesh.Convert(chairFoot);
+				SetAndInvalidateMesh(CsgToMesh.Convert(chairFoot));
 			}
 		}
 	}
