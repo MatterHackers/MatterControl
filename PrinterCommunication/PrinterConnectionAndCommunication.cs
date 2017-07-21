@@ -2004,7 +2004,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		#region ProcessRead
 		Regex getQuotedParts = new Regex(@"([""'])(\\?.)*?\1", RegexOptions.Compiled);
 		string read_regex = "";
-		private List<(Regex Regex, string Replacement)> ReadLineReplacements = new List<(Regex Regex, string Replacement)>();
+		private List<RegReplace> ReadLineReplacements = new List<RegReplace>();
 
 		private string ProcessReadRegEx(string lineBeingRead)
 		{
@@ -2020,7 +2020,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					{
 						var search = matches[0].Value.Substring(1, matches[0].Value.Length - 2);
 						var replace = matches[1].Value.Substring(1, matches[1].Value.Length - 2);
-						ReadLineReplacements.Add((new Regex(search, RegexOptions.Compiled), replace));
+						ReadLineReplacements.Add(new RegReplace()
+						{
+							Regex = new Regex(search, RegexOptions.Compiled),
+							Replacement = replace
+						});
 					}
 				}
 			}
