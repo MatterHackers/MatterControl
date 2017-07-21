@@ -134,7 +134,7 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 			Mesh = Create();
 		}
 
-		public override MatterHackers.PolygonMesh.Mesh Create()
+		public override PolygonMesh.Mesh Create()
 		{
 			CsgObject boxCombine = new Box(10, 10, 10);
 			boxCombine -= new Translate(new Box(10, 10, 10), XOffset, -3, 2);
@@ -144,22 +144,25 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 	
 	public class CardHolder : MatterCadObject3D, IMappingType
 	{
-		// these are the public variables that would be edited
-		public string Name { get; set; } = "Name";
+		public string NameToWrite { get; set; }
+		public CardHolder()
+		{
+			Mesh = Create();
+		}
 
-		public MatterHackers.PolygonMesh.Mesh Create()
+		public override PolygonMesh.Mesh Create()
 		{
 			CsgObject plainCardHolder = new MeshContainer("PlainBusinessCardHolder.stl");
 
 			TypeFace typeFace = TypeFace.LoadSVG("Viking_n.svg");
 
-			TypeFacePrinter letterPrinter = new TypeFacePrinter(Name, new StyledTypeFace(typeFace, 12));
-			MatterHackers.PolygonMesh.Mesh textMesh = VertexSourceToMesh.Extrude(letterPrinter, 5);
+			var letterPrinter = new TypeFacePrinter(NameToWrite, new StyledTypeFace(typeFace, 12));
+			PolygonMesh.Mesh textMesh = VertexSourceToMesh.Extrude(letterPrinter, 5);
 
 			CsgObject nameMesh = new MeshContainer(textMesh);
 
 			AxisAlignedBoundingBox textBounds = textMesh.GetAxisAlignedBoundingBox();
-			Vector2 textArea = new Vector2(85, 20);
+			var textArea = new Vector2(85, 20);
 
 			nameMesh = new Box(textArea.x, textArea.y, 5);
 

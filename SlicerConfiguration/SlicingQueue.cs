@@ -161,23 +161,37 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						{
 							extruderMeshGroups.Add(new MeshGroup());
 						}
+
+						// and add one more extruder mesh group for user generated support (if exists)
+						extruderMeshGroups.Add(new MeshGroup());
+
 						int maxExtruderIndex = 0;
 						foreach (MeshGroup meshGroup in meshGroups)
 						{
 							foreach (Mesh mesh in meshGroup.Meshes)
 							{
 								MeshPrintOutputSettings material = meshPrintOutputSettings[mesh];
-								int extruderIndex = Math.Max(0, material.ExtruderIndex);
-								maxExtruderIndex = Math.Max(maxExtruderIndex, extruderIndex);
-								if (extruderIndex >= extruderCount)
+								switch(material.PrintOutputTypes)
 								{
-									extrudersUsed[0] = true;
-									extruderMeshGroups[0].Meshes.Add(mesh);
-								}
-								else
-								{
-									extrudersUsed[extruderIndex] = true;
-									extruderMeshGroups[extruderIndex].Meshes.Add(mesh);
+									case PrintOutputTypes.Solid:
+										int extruderIndex = Math.Max(0, material.ExtruderIndex);
+										maxExtruderIndex = Math.Max(maxExtruderIndex, extruderIndex);
+										if (extruderIndex >= extruderCount)
+										{
+											extrudersUsed[0] = true;
+											extruderMeshGroups[0].Meshes.Add(mesh);
+										}
+										else
+										{
+											extrudersUsed[extruderIndex] = true;
+											extruderMeshGroups[extruderIndex].Meshes.Add(mesh);
+										}
+										break;
+
+									case PrintOutputTypes.Support:
+										// add it to the group reserved for user support
+										extruderMeshGroups[extruderCount].Meshes.Add(mesh);
+										break;
 								}
 							}
 						}
@@ -187,15 +201,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						for (int extruderIndex = 0; extruderIndex < extruderMeshGroups.Count; extruderIndex++)
 						{
 							MeshGroup meshGroup = extruderMeshGroups[extruderIndex];
-							List<int> materialsToInclude = new List<int>();
-							materialsToInclude.Add(extruderIndex);
-							if (extruderIndex == 0)
-							{
-								for (int j = extruderCount + 1; j < maxExtruderIndex + 2; j++)
-								{
-									materialsToInclude.Add(j);
-								}
-							}
 
 							int meshCount = meshGroup.Meshes.Count;
 							if (meshCount > 0)
@@ -219,10 +224,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 										}
 									}
 									int meshExtruderIndex = meshPrintOutputSettings[mesh].ExtruderIndex;
-									if (materialsToInclude.Contains(meshExtruderIndex))
-									{
-										extruderFilesToSlice.Add(SaveAndGetFilePathForMesh(mesh));
-									}
+
+									extruderFilesToSlice.Add(SaveAndGetFilePathForMesh(mesh));
+
 									savedStlCount++;
 								}
 
@@ -232,7 +236,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 									mergeRules += ")";
 								}
 							}
-							else // this extruder has no meshes
+							else if(extruderIndex <= maxExtruderIndex) // this extruder has no meshes
 							{
 								// check if there are any more meshes after this extruder that will be added
 								int otherMeshCounts = 0;
@@ -249,6 +253,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								extruderFilesToSlice.Add(SaveAndGetFilePathForMesh(PlatonicSolids.CreateCube(.001, .001, .001)));
 								savedStlCount++;
 							}
+						}
+
+						// if we added user generated support 
+						if(extruderMeshGroups[extruderCount].Meshes.Count > 0)
+						{
+							// add a flag to the merge rules to let us know there was support
+							mergeRules += "S";
 						}
 
 						return extruderFilesToSlice.ToArray();
