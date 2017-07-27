@@ -2829,6 +2829,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 								currentLineIndexToSend++;
 							}
 						}
+						else if (!string.IsNullOrEmpty(currentSentLine))
+						{
+							// Write comments to terminal/logs to aid in debugging, log replays and layer change detection
+							PrinterOutputCache.Instance.PrinterLines.Add(currentSentLine);
+						}
 					}
 					else if (this.PrintWasCanceled)
 					{
