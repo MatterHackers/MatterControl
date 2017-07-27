@@ -40,8 +40,6 @@ namespace MatterHackers.MatterControl
 {
 	public class PrinterSelector : DropDownList
 	{
-		public event EventHandler AddPrinter;
-
 		private EventHandler unregisterEvents;
 		int lastSelectedIndex = -1;
 
@@ -103,26 +101,6 @@ namespace MatterHackers.MatterControl
 				lastSelectedIndex = this.SelectedIndex;
 				this.mainControlText.Text = ActiveSliceSettings.Instance.GetValue(SettingsKey.printer_name);
 			}
-
-			var menuItem = this.AddItem(StaticData.Instance.LoadIcon("icon_plus.png", 32, 32), "Add New Printer".Localize() + "...", "new");
-			menuItem.CanHeldSelection = false;
-			menuItem.Click += (s, e) =>
-			{
-				if (AddPrinter != null)
-				{
-					if (PrinterConnection.Instance.PrinterIsPrinting
-						|| PrinterConnection.Instance.PrinterIsPaused)
-					{
-						UiThread.RunOnIdle(() =>
-							StyledMessageBox.ShowMessageBox(null, "Please wait until the print has finished and try again.".Localize(), "Can't add printers while printing".Localize())
-						);
-					}
-					else
-					{
-						UiThread.RunOnIdle(() => AddPrinter(this, null));
-					}
-				}
-			};
 		}
 
 		private void SettingChanged(object sender, EventArgs e)

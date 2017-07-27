@@ -211,6 +211,7 @@
     <Compile Include="PartPreviewWindow\GCodeDetails.cs" />
     <Compile Include="PartPreviewWindow\GCodeDetailsView.cs" />
     <Compile Include="PartPreviewWindow\OverflowDropdown.cs" />
+    <Compile Include="PartPreviewWindow\PlusTabPage.cs" />
     <Compile Include="PartPreviewWindow\PrinterTabPage.cs" />
     <Compile Include="PartPreviewWindow\View3D\BaseObject3DEditor.cs" />
     <Compile Include="PartPreviewWindow\View3D\DragDropLoadProgress.cs" />
@@ -279,7 +280,6 @@
     <Compile Include="Library\Widgets\SystemWindows\CreateFolderWindow.cs" />
     <Compile Include="Queue\OptionsMenu\ExportGcodePlugin.cs" />
     <Compile Include="SetupWizard\AndroidConnectDevicePage.cs" />
-    <Compile Include="SetupWizard\EditPrinterSettingsPage.cs" />
     <Compile Include="SetupWizard\ImportSettingsPage.cs" />
     <Compile Include="SetupWizard\ExportSettingsPage.cs" />
     <Compile Include="SetupWizard\LicenseAgreementPage.cs" />

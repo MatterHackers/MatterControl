@@ -754,37 +754,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				dataArea.AddChild(row);
 			}
 
-			// DELETE_PRINTER:
-			{
-				// This is a place holder type to allow us to put in the control that will allow the deletion of a printer profile
-				TextImageButtonFactory buttonFactory = new TextImageButtonFactory();
-				buttonFactory.borderWidth = 1;
-				if (ActiveTheme.Instance.IsDarkTheme)
-				{
-					buttonFactory.normalBorderColor = new RGBA_Bytes(99, 99, 99);
-				}
-				else
-				{
-					buttonFactory.normalBorderColor = new RGBA_Bytes(140, 140, 140);
-				}
-
-				buttonFactory.normalTextColor = RGBA_Bytes.Red;
-				var button = buttonFactory.Generate("Delete Printer".Localize());
-				button.Name = "Delete Printer Button";
-				button.HAnchor = HAnchor.ParentCenter;
-				button.Click += (s, e) =>
-				{
-					StyledMessageBox.ShowMessageBox((doDelete) =>
-					{
-						if (doDelete)
-						{
-							ActiveSliceSettings.Instance.Helpers.SetMarkedForDelete(true);
-						}
-					}, "Are you sure you want to delete your currently selected printer?".Localize(), "Delete Printer?".Localize(), StyledMessageBox.MessageType.YES_NO, "Delete Printer".Localize());
-				};
-				dataArea.AddChild(button);
-			}
-
 			return dataArea;
 		}
 

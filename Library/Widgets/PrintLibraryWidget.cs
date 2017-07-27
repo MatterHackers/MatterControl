@@ -705,8 +705,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				if (renameItemWindow == null)
 				{
 					renameItemWindow = new RenameItemWindow(
+						"Rename Item:".Localize(),
 						selectedItem.Model.Name,
-						(returnInfo) =>
+						(newName) =>
 						{
 							var model = libraryView.SelectedItems.FirstOrDefault()?.Model;
 							if (model != null)
@@ -714,7 +715,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 								var container = libraryView.ActiveContainer as ILibraryWritableContainer;
 								if (container != null)
 								{
-									container.Rename(model, returnInfo.newName);
+									container.Rename(model, newName);
 									libraryView.SelectedItems.Clear();
 								}
 							}
