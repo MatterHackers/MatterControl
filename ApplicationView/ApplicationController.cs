@@ -512,6 +512,10 @@ namespace MatterHackers.MatterControl
 
 		public ApplicationController()
 		{
+			ScrollBar.ScrollBarWidth = 4 * GuiWidget.DeviceScale;
+			ScrollBar.DefaultMargin = new BorderDouble(right: 5);
+			DefaultThumbBackground.DefaultBackgroundColor = RGBA_Bytes.Transparent;
+
 			Object3D.AssetsPath = ApplicationDataStorage.Instance.LibraryAssetsPath;
 
 			this.Library = new LibraryConfig();
