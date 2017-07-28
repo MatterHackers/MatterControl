@@ -53,7 +53,13 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		private ILibraryContext LibraryContext;
 
+		// Default constructor uses IconListView
 		public ListView(ILibraryContext context)
+			: this(context, new IconListView())
+		{
+		}
+
+		public ListView(ILibraryContext context, GuiWidget libraryView)
 		{
 			this.LibraryContext = context;
 
@@ -78,7 +84,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			AutoScroll = true;
 
-			this.ListContentView = new IconListView();
+			this.ListContentView = libraryView;
 			context.ContainerChanged += ActiveContainer_Changed;
 			context.ContainerReloaded += ActiveContainer_Reloaded;
 
@@ -93,6 +99,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				}
 			}, ref unregisterEvents);
 		}
+
+		public bool ShowContainers { get; set; } = true;
+
+		public bool ShowItems { get; set; } = true;
 
 		public ILibraryContainer ActiveContainer => this.LibraryContext.ActiveContainer;
 
@@ -170,25 +180,31 @@ if (hasID
 			int height = itemsContentView.ThumbHeight;
 
 			// Folder items
-			foreach (var childContainer in sourceContainer.ChildContainers.Where(c => c.IsVisible))
+			if (this.ShowContainers)
 			{
-				var listViewItem = new ListViewItem(childContainer, this);
-				listViewItem.DoubleClick += listViewItem_DoubleClick;
-				items.Add(listViewItem);
+				foreach (var childContainer in sourceContainer.ChildContainers.Where(c => c.IsVisible))
+				{
+					var listViewItem = new ListViewItem(childContainer, this);
+					listViewItem.DoubleClick += listViewItem_DoubleClick;
+					items.Add(listViewItem);
 
-				itemsContentView.AddItem(listViewItem);
-				listViewItem.ViewWidget.Name = childContainer.Name + " Row Item Collection";
+					itemsContentView.AddItem(listViewItem);
+					listViewItem.ViewWidget.Name = childContainer.Name + " Row Item Collection";
+				}
 			}
 
 			// List items
-			foreach (var item in sourceContainer.Items.Where(i => i.IsVisible))
+			if (this.ShowItems)
 			{
-				var listViewItem = new ListViewItem(item, this);
-				listViewItem.DoubleClick += listViewItem_DoubleClick;
-				items.Add(listViewItem);
+				foreach (var item in sourceContainer.Items.Where(i => i.IsVisible))
+				{
+					var listViewItem = new ListViewItem(item, this);
+					listViewItem.DoubleClick += listViewItem_DoubleClick;
+					items.Add(listViewItem);
 
-				itemsContentView.AddItem(listViewItem);
-				listViewItem.ViewWidget.Name = "Row Item " + item.Name;
+					itemsContentView.AddItem(listViewItem);
+					listViewItem.ViewWidget.Name = "Row Item " + item.Name;
+				}
 			}
 		}
 
