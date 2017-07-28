@@ -79,13 +79,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			MenuItem menuItem;
 
-			menuItem = overflowDropdown.CreateMenuItem("Import".Localize());
-			menuItem.Click += (s, e) => 
-			{
-				UiThread.RunOnIdle(() => WizardWindow.Show<ImportSettingsPage>("ImportSettingsPage", "Import Settings Page"));
-			};
-			popupContainer.AddChild(menuItem);
-
 			menuItem = overflowDropdown.CreateMenuItem("Export".Localize());
 			menuItem.Click += (s, e) => 
 			{

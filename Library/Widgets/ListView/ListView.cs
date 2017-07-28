@@ -89,12 +89,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			context.ContainerReloaded += ActiveContainer_Reloaded;
 
 			bool printerConnected = false;
-			PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent(async (s, e) =>
+			PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent((s, e) =>
 			{
 				bool isConnected = PrinterConnection.Instance.PrinterIsConnected;
 				if (printerConnected != isConnected)
 				{
-					await DisplayContainerContent(ActiveContainer);
+					DisplayContainerContent(ActiveContainer);
 					printerConnected = isConnected;
 				}
 			}, ref unregisterEvents);
@@ -142,24 +142,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public IEnumerable<ListViewItem> Items => items;
 
-		/*
-* bool isTraceable = listViewItem.Model is ILibraryPrintItem;
-bool hasID = !string.IsNullOrEmpty(listViewItem.Model.ID);
-List<ListViewItem> acquireItems, 
-if (hasID 
-	&& isTraceable
-	&& thumbnail == null)
-{
-	// Schedule for collection, display default thumb until then
-	acquireItems.Add(listViewItem);
-}
-*/
 		/// <summary>
 		/// Empties the list children and repopulates the list with the source container content
 		/// </summary>
 		/// <param name="sourceContainer">The container to load</param>
 		/// <returns>Async Task</returns>
-		private async Task DisplayContainerContent(ILibraryContainer sourceContainer)
+		private void DisplayContainerContent(ILibraryContainer sourceContainer)
 		{
 			if (sourceContainer == null)
 			{
