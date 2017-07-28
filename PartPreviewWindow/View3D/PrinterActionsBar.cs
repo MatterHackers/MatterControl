@@ -227,46 +227,82 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			var printerSettings = ActiveSliceSettings.Instance;
 
+
 			var widgetToPop = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.FitToChildren,
 				VAnchor = VAnchor.FitToChildren,
-				BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor
 			};
 
-			// This is a place holder type to allow us to put in the control that will allow the deletion of a printer profile
-			var buttonFactory = ApplicationController.Instance.Theme.BreadCrumbButtonFactory;
-
-			var renameButton = buttonFactory.Generate("Rename Printer".Localize());
-			renameButton.Name = "Rename Printer Button";
-			renameButton.Click += (s, e) =>
+			var menuActions = new NamedAction[]
 			{
-				var renameItemWindow = new RenameItemWindow(
-				"Rename Printer".Localize() + ":",
-				printerSettings.GetValue(SettingsKey.printer_name),
-				(newName) =>
+				new NamedAction()
 				{
-					if (!string.IsNullOrEmpty(newName))
+					Title = "Rename Printer".Localize(),
+					Action = () =>
 					{
-						printerSettings.SetValue(SettingsKey.printer_name, newName);
+						var renameItemWindow = new RenameItemWindow(
+						"Rename Printer".Localize() + ":",
+						printerSettings.GetValue(SettingsKey.printer_name),
+						(newName) =>
+						{
+							if (!string.IsNullOrEmpty(newName))
+							{
+								printerSettings.SetValue(SettingsKey.printer_name, newName);
+							}
+						});
 					}
-				});
+				},
+				new NamedAction() { Title = "----" },
+				new NamedAction()
+				{
+					Title = "Delete Printer".Localize(),
+					Action = () =>
+					{
+						StyledMessageBox.ShowMessageBox(
+							(doDelete) =>
+							{
+								if (doDelete)
+								{
+									ActiveSliceSettings.Instance.Helpers.SetMarkedForDelete(true);
+								}
+							},
+							"Are you sure you want to delete your currently selected printer?".Localize(),
+							"Delete Printer?".Localize(),
+							StyledMessageBox.MessageType.YES_NO,
+							"Delete Printer".Localize());
+					}
+				}
 			};
-			widgetToPop.AddChild(renameButton);
-
-			var deleteButton = buttonFactory.Generate("Delete Printer".Localize());
-			deleteButton.Name = "Delete Printer Button";
-			deleteButton.Click += (s, e) =>
+			
+			// Create menu items in the DropList for each element in this.menuActions
+			foreach (var menuAction in menuActions)
 			{
-				StyledMessageBox.ShowMessageBox((doDelete) =>
+				MenuItem menuItem;
+
+				if (menuAction.Title == "----")
 				{
-					if (doDelete)
+					menuItem = overflowDropdown.CreateHorizontalLine();
+				}
+				else
+				{
+					menuItem = overflowDropdown.CreateMenuItem((string)menuAction.Title);
+					menuItem.Name = $"{menuAction.Title} Menu Item";
+				}
+
+				menuItem.Enabled = menuAction.Action != null;
+				menuItem.ClearRemovedFlag();
+
+				if (menuItem.Enabled)
+				{
+					menuItem.Click += (s, e) =>
 					{
-						ActiveSliceSettings.Instance.Helpers.SetMarkedForDelete(true);
-					}
-				}, "Are you sure you want to delete your currently selected printer?".Localize(), "Delete Printer?".Localize(), StyledMessageBox.MessageType.YES_NO, "Delete Printer".Localize());
-			};
-			widgetToPop.AddChild(deleteButton);
+						menuAction.Action();
+					};
+				}
+
+				widgetToPop.AddChild(menuItem);
+			}
 
 			return widgetToPop;
 		}
