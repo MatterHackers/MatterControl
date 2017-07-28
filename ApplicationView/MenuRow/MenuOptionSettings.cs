@@ -7,7 +7,6 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
-
 	public class MenuOptionSettings : PopupButton
 	{
 		public MenuOptionSettings()
