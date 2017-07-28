@@ -32,9 +32,73 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.ConfigurationPage;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
+	public class CollorSwatchSelector : FlowLayoutWidget
+	{
+		private TextImageButtonFactory menuButtonFactory;
+
+		public CollorSwatchSelector(IObject3D item, View3DWidget view3DWidget, TextImageButtonFactory menuButtonFactory)
+			: base(FlowDirection.TopToBottom)
+		{
+			this.menuButtonFactory = menuButtonFactory;
+
+			var colorSize = 32;
+			var colorCount = 9;
+			double[] lightness = new double[] { .7, .5, .3 };
+			for (int lightnessIndex = 0; lightnessIndex < lightness.Length; lightnessIndex++)
+			{
+				var colorRow = new FlowLayoutWidget();
+				AddChild(colorRow);
+
+				for (int colorIndex = 0; colorIndex < colorCount; colorIndex++)
+				{
+					Button button;
+					GuiWidget colorWidget;
+					colorRow.AddChild(button = new Button(colorWidget = new GuiWidget()
+					{
+						BackgroundColor = RGBA_Floats.FromHSL(colorIndex / (double)colorCount, 
+							1, lightness[lightnessIndex]).GetAsRGBA_Bytes(),
+						Width = colorSize,
+						Height = colorSize,
+					}));
+
+					button.Click += (s, e) =>
+					{
+						item.Color = colorWidget.BackgroundColor;
+						item.OutputType = PrintOutputTypes.Solid;
+						view3DWidget.Invalidate();
+					};
+				}
+				// put in white and black buttons
+			}
+		}
+	}
+
+	public class PartColorSettings : PopupButton
+	{
+		public PartColorSettings(IObject3D item, View3DWidget view3DWidget)
+			: base(new TextWidget("Solid".Localize().ToUpper(), 0, 0, 10, textColor: ActiveTheme.Instance.PrimaryTextColor))
+		{
+			this.Name = "Solid Colors";
+			Margin = new BorderDouble(0);
+			Padding = new BorderDouble(4);
+			VAnchor = VAnchor.ParentCenter;
+			OpenOffset = new Vector2(-3, -5);
+			AlignToRightEdge = true;
+
+			this.PopupContent = new CollorSwatchSelector(item, view3DWidget, ApplicationController.Instance.Theme.MenuButtonFactory)
+			{
+				HAnchor = HAnchor.FitToChildren,
+				VAnchor = VAnchor.FitToChildren,
+				BackgroundColor = RGBA_Bytes.White
+			};
+		}
+	}
+
 	public class BaseObject3DEditor : IObject3DEditor
 	{
 		private IObject3D item;
@@ -59,14 +123,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			mainContainer.AddChild(behavior3DTypeButtons);
 
 			// put in the button for making the behavior solid
-			Button solidBehaviorButton = theme.textImageButtonFactory.Generate("Solid".Localize());
-			solidBehaviorButton.Margin = new BorderDouble(5);
-			Random rand = new Random();
-			solidBehaviorButton.Click += (s, e) =>
+			var solidBehaviorButton = new PartColorSettings(item, view3DWidget)
 			{
-				item.Color = new RGBA_Bytes(rand.Next(255), rand.Next(255), rand.Next(255));
-				item.OutputType = PrintOutputTypes.Solid;
-				view3DWidget.Invalidate();
+				Margin = new BorderDouble(5)
 			};
 
 			behavior3DTypeButtons.AddChild(solidBehaviorButton);
