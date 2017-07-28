@@ -164,11 +164,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			buttonFactory.Margin = defaultMargin;
 
-			Button configureEePromButton = buttonFactory.Generate("", StaticData.Instance.LoadIcon("memory_16x16.png", 16, 16));
-			configureEePromButton.ToolTipText = "EEProm";
-			configureEePromButton.Click += configureEePromButton_Click;
-			this.AddChild(configureEePromButton);
-
 			Button undoButton = buttonFactory.Generate("", StaticData.Instance.LoadIcon("Undo_grey_16x.png", 16, 16));
 			undoButton.Name = "3D View Undo";
 			undoButton.ToolTipText = "Undo";
@@ -236,6 +231,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var menuActions = new NamedAction[]
 			{
+				new NamedAction()
+				{
+					Icon = StaticData.Instance.LoadIcon("memory_16x16.png", 16, 16),
+					Title = "Configure EEProm".Localize(),
+					Action = configureEePromButton_Click
+				},
 				new NamedAction()
 				{
 					Title = "Rename Printer".Localize(),
@@ -307,7 +308,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return widgetToPop;
 		}
 
-		private void configureEePromButton_Click(object sender, EventArgs mouseEvent)
+		private void configureEePromButton_Click()
 		{
 			UiThread.RunOnIdle(() =>
 			{
