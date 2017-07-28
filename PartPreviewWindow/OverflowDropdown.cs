@@ -129,7 +129,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public IPopupLayoutEngine PopupLayoutEngine { get; set; }
 		public Direction PopDirection { get; set; } = Direction.Down;
 		public bool MakeScrollable { get; set; } = true;
-		public Vector2 OpenOffset { get; set; } = Vector2.Zero;
 
 		public GuiWidget PopupContent { get; set; }
 
@@ -162,7 +161,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (PopupLayoutEngine == null)
 			{
-				PopupLayoutEngine = new PopupLayoutEngine(this.PopupContent, this, OpenOffset, this.PopDirection, 0, this.AlignToRightEdge);
+				PopupLayoutEngine = new PopupLayoutEngine(this.PopupContent, this, this.PopDirection, 0, this.AlignToRightEdge);
 			}
 			menuVisible = true;
 

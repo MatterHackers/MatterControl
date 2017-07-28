@@ -16,7 +16,6 @@ namespace MatterHackers.MatterControl
 			Margin = new BorderDouble(0);
 			Padding = new BorderDouble(4);
 			VAnchor = VAnchor.ParentCenter;
-			OpenOffset = new Vector2(-3, -5);
 
 			this.PopupContent = new ApplicationSettingsWidget(ApplicationController.Instance.Theme.MenuButtonFactory)
 			{
