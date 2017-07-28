@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using MatterHackers.Agg.Image;
 
 namespace MatterHackers.Agg.UI
 {
@@ -37,6 +38,7 @@ namespace MatterHackers.Agg.UI
 	{
 		public string Title { get; set; }
 		public Action Action { get; set; }
+		public ImageBuffer Icon { get; set; }
 	}
 
 	public static class NamedActionExtensions
