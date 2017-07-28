@@ -89,12 +89,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			context.ContainerReloaded += ActiveContainer_Reloaded;
 
 			bool printerConnected = false;
-			PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent(async (s, e) =>
+			PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent((s, e) =>
 			{
 				bool isConnected = PrinterConnection.Instance.PrinterIsConnected;
 				if (printerConnected != isConnected)
 				{
-					await DisplayContainerContent(ActiveContainer);
+					DisplayContainerContent(ActiveContainer);
 					printerConnected = isConnected;
 				}
 			}, ref unregisterEvents);
@@ -159,7 +159,7 @@ if (hasID
 		/// </summary>
 		/// <param name="sourceContainer">The container to load</param>
 		/// <returns>Async Task</returns>
-		private async Task DisplayContainerContent(ILibraryContainer sourceContainer)
+		private void DisplayContainerContent(ILibraryContainer sourceContainer)
 		{
 			if (sourceContainer == null)
 			{
