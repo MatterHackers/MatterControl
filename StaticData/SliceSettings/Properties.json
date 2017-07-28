@@ -439,8 +439,8 @@
 	},
 	{
 		"SlicerConfigName": "first_layer_height",
-		"PresentationName": "First Layer Height",
-		"HelpText": "The height of the first layer. A first layer taller than the default layer height can ensure good adhesion to the build plate.",
+		"PresentationName": "First Layer Thickness",
+		"HelpText": "The thickness of the first layer. A first layer taller than the default layer thickness can ensure good adhesion to the build plate.",
 		"DataEditType": "DOUBLE_OR_PERCENT",
 		"ExtraSettings": "mm or %",
 		"DefaultValue": "0.3"
@@ -854,8 +854,8 @@
 			}
 		],
 		"SlicerConfigName": "layer_height",
-		"PresentationName": "Layer Height",
-		"HelpText": "The height of each layer of the print, except the first. A smaller number will create more layers and more vertical accuracy but also a slower print.",
+		"PresentationName": "Layer Thickness",
+		"HelpText": "The thickness of each layer of the print, except the first layer. A smaller number will create more layers and more vertical accuracy but also a slower print.",
 		"DataEditType": "POSITIVE_DOUBLE",
 		"ExtraSettings": "mm",
 		"DefaultValue": "0.4"
