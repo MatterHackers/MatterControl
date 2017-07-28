@@ -4333,3 +4333,9 @@ Translated:Hole
 English:Support
 Translated:Support
 
+English:The thickness of the first layer. A first layer taller than the default layer thickness can ensure good adhesion to the build plate.
+Translated:The thickness of the first layer. A first layer taller than the default layer thickness can ensure good adhesion to the build plate.
+
+English:The thickness of each layer of the print, except the first layer. A smaller number will create more layers and more vertical accuracy but also a slower print.
+Translated:The thickness of each layer of the print, except the first layer. A smaller number will create more layers and more vertical accuracy but also a slower print.
+

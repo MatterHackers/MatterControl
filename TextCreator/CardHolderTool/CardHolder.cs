@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
+using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Csg;
 using MatterHackers.Csg.Solids;
@@ -234,6 +236,65 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 				new Object3D()
 				{
 					Mesh = CsgToMesh.Convert(plainCardHolder)
+				},
+				new Object3D()
+				{
+					Mesh = CsgToMesh.Convert(nameMesh)
+				}
+			});
+
+
+			this.SetAndInvalidateMesh(null);
+		}
+	}
+
+	public class RibonWithName : MatterCadObject3D, IMappingType
+	{
+		[DisplayName("Name")]
+		public string NameToWrite { get; set; } = "MatterHackers";
+
+		static TypeFace typeFace = null;
+
+		public RibonWithName()
+		{
+			RebuildMeshes();
+		}
+
+		public override void RebuildMeshes()
+		{
+			CsgObject cancerRibonStl = new MeshContainer("Cancer_Ribbon.stl");
+
+			cancerRibonStl = new Rotate(cancerRibonStl, MathHelper.DegreesToRadians(90));
+
+			if (typeFace == null)
+			{
+				typeFace = TypeFace.LoadFrom(StaticData.Instance.ReadAllText(Path.Combine("Fonts", "TitilliumWeb-Black.svg")));
+			}
+
+			var letterPrinter = new TypeFacePrinter(NameToWrite.ToUpper(), new StyledTypeFace(typeFace, 12));
+			PolygonMesh.Mesh textMesh = VertexSourceToMesh.Extrude(letterPrinter, 5);
+
+			CsgObject nameMesh = new MeshContainer(textMesh);
+
+			AxisAlignedBoundingBox textBounds = textMesh.GetAxisAlignedBoundingBox();
+			var textArea = new Vector2(25, 6);
+
+			double scale = Math.Min(textArea.x / textBounds.XSize, textArea.y / textBounds.YSize);
+			nameMesh = new Scale(nameMesh, scale, scale, 2 / textBounds.ZSize);
+			nameMesh = new Align(nameMesh, Face.Bottom | Face.Front, cancerRibonStl, Face.Top | Face.Front, 0, 0, -1);
+			nameMesh = new SetCenter(nameMesh, cancerRibonStl.GetCenter(), true, false, false);
+
+			nameMesh = new Rotate(nameMesh, 0, 0, MathHelper.DegreesToRadians(50));
+			nameMesh = new Translate(nameMesh, -37, -14, -1);
+
+			// output two meshes 
+			this.Children.Clear();
+
+			this.Children.AddRange(new[]
+			{
+				new Object3D()
+				{
+					Mesh = CsgToMesh.Convert(cancerRibonStl)
 				},
 				new Object3D()
 				{
