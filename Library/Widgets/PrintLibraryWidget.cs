@@ -137,7 +137,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				e.graphics2D.Render(directionArrow, buttonView.LocalBounds.Right - arrowHeight * 2 - 2, buttonView.LocalBounds.Center.y + arrowHeight / 2, ActiveTheme.Instance.SecondaryTextColor);
 			};
 
-			activeContainerTitle = new TextWidget(ApplicationController.Instance.Library.ActiveContainer.Name)
+			activeContainerTitle = new TextWidget(ApplicationController.Instance.Library.ActiveContainer.Name, textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
 				Margin = new BorderDouble(left: 6)
 			};
