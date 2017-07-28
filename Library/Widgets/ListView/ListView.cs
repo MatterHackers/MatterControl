@@ -142,18 +142,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public IEnumerable<ListViewItem> Items => items;
 
-		/*
-* bool isTraceable = listViewItem.Model is ILibraryPrintItem;
-bool hasID = !string.IsNullOrEmpty(listViewItem.Model.ID);
-List<ListViewItem> acquireItems, 
-if (hasID 
-	&& isTraceable
-	&& thumbnail == null)
-{
-	// Schedule for collection, display default thumb until then
-	acquireItems.Add(listViewItem);
-}
-*/
 		/// <summary>
 		/// Empties the list children and repopulates the list with the source container content
 		/// </summary>
