@@ -62,7 +62,6 @@ namespace MatterHackers.MatterControl
 			this.Padding = new BorderDouble(0);
 			this.VAnchor = Agg.UI.VAnchor.ParentCenter;
 			this.MenuDropList.SelectionChanged += MenuDropList_SelectionChanged;
-			this.MenuDropList.OpenOffset = new Vector2(0, 0);
 		}
 
 		private void MenuDropList_SelectionChanged(object sender, EventArgs e)
