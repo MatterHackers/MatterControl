@@ -164,11 +164,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			buttonFactory.Margin = defaultMargin;
 
-			Button configureEePromButton = buttonFactory.Generate("", StaticData.Instance.LoadIcon("memory_16x16.png", 16, 16));
-			configureEePromButton.ToolTipText = "EEProm";
-			configureEePromButton.Click += configureEePromButton_Click;
-			this.AddChild(configureEePromButton);
-
 			Button undoButton = buttonFactory.Generate("", StaticData.Instance.LoadIcon("Undo_grey_16x.png", 16, 16));
 			undoButton.Name = "3D View Undo";
 			undoButton.ToolTipText = "Undo";
@@ -200,9 +195,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				redoButton.Enabled = undoBuffer.RedoCount > 0;
 			};
 
-			var editPrinterButton = PrinterSelectEditDropdown.CreatePrinterEditButton();
-			this.AddChild(editPrinterButton);
-
 			overflowDropdown = new OverflowDropdown(allowLightnessInvert: true)
 			{
 				AlignToRightEdge = true,
@@ -228,22 +220,95 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private GuiWidget GeneratePrinterOverflowMenu()
 		{
-			var widgetToPop = new FlowLayoutWidget()
+			var printerSettings = ActiveSliceSettings.Instance;
+
+
+			var widgetToPop = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.FitToChildren,
 				VAnchor = VAnchor.FitToChildren,
-				BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor
 			};
 
-			widgetToPop.AddChild(new PrinterSelectEditDropdown()
+			var menuActions = new NamedAction[]
 			{
-				Margin = 10
-			});
+				new NamedAction()
+				{
+					Icon = StaticData.Instance.LoadIcon("memory_16x16.png", 16, 16),
+					Title = "Configure EEProm".Localize(),
+					Action = configureEePromButton_Click
+				},
+				new NamedAction()
+				{
+					Title = "Rename Printer".Localize(),
+					Action = () =>
+					{
+						var renameItemWindow = new RenameItemWindow(
+						"Rename Printer".Localize() + ":",
+						printerSettings.GetValue(SettingsKey.printer_name),
+						(newName) =>
+						{
+							if (!string.IsNullOrEmpty(newName))
+							{
+								printerSettings.SetValue(SettingsKey.printer_name, newName);
+							}
+						});
+					}
+				},
+				new NamedAction() { Title = "----" },
+				new NamedAction()
+				{
+					Title = "Delete Printer".Localize(),
+					Action = () =>
+					{
+						StyledMessageBox.ShowMessageBox(
+							(doDelete) =>
+							{
+								if (doDelete)
+								{
+									ActiveSliceSettings.Instance.Helpers.SetMarkedForDelete(true);
+								}
+							},
+							"Are you sure you want to delete your currently selected printer?".Localize(),
+							"Delete Printer?".Localize(),
+							StyledMessageBox.MessageType.YES_NO,
+							"Delete Printer".Localize());
+					}
+				}
+			};
+			
+			// Create menu items in the DropList for each element in this.menuActions
+			foreach (var menuAction in menuActions)
+			{
+				MenuItem menuItem;
+
+				if (menuAction.Title == "----")
+				{
+					menuItem = overflowDropdown.CreateHorizontalLine();
+				}
+				else
+				{
+					menuItem = overflowDropdown.CreateMenuItem((string)menuAction.Title);
+					menuItem.Name = $"{menuAction.Title} Menu Item";
+				}
+
+				menuItem.Enabled = menuAction.Action != null;
+				menuItem.ClearRemovedFlag();
+
+				if (menuItem.Enabled)
+				{
+					menuItem.Click += (s, e) =>
+					{
+						menuAction.Action();
+					};
+				}
+
+				widgetToPop.AddChild(menuItem);
+			}
 
 			return widgetToPop;
 		}
 
-		private void configureEePromButton_Click(object sender, EventArgs mouseEvent)
+		private void configureEePromButton_Click()
 		{
 			UiThread.RunOnIdle(() =>
 			{

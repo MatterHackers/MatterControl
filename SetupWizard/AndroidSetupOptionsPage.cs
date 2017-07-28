@@ -97,14 +97,7 @@ namespace MatterHackers.MatterControl
 			buttonContainer.AddChild(printerSelectorAndEditButton);
 
 			var printerSelector = new PrinterSelector();
-			printerSelector.AddPrinter += (s, e) => WizardPage.WizardWindow.ChangeToSetupPrinterForm(true);
 			printerSelectorAndEditButton.AddChild(printerSelector);
-
-			var editButton = TextImageButtonFactory.GetThemedEditButton();
-			editButton.ToolTipText = "Edit Selected Setting".Localize();
-			editButton.VAnchor = VAnchor.ParentCenter;
-			editButton.Click += UiNavigation.OpenEditPrinterWizard_Click;
-			printerSelectorAndEditButton.AddChild(editButton);
 
 			disconnectButton = textImageButtonFactory.Generate("Disconnect");
 			disconnectButton.Margin = new BorderDouble(left: 12);

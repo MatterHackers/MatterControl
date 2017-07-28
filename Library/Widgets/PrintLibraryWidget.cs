@@ -34,6 +34,7 @@ using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
+using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
@@ -56,22 +57,20 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private TextImageButtonFactory textImageButtonFactory;
 		private TextImageButtonFactory editButtonFactory;
 
-		private FolderBreadCrumbWidget breadCrumbWidget;
-
 		private Button addToLibraryButton;
 		private Button createFolderButton;
 		private FlowLayoutWidget buttonPanel;
-		private MHTextEditWidget searchInput;
 		private ListView libraryView;
 		private GuiWidget providerMessageContainer;
 		private TextWidget providerMessageWidget;
 
 		private OverflowDropdown overflowDropdown;
 
+		private PopupButton activeContainerPopup;
+		private TextWidget activeContainerTitle;
+
 		//private DropDownMenu actionMenu;
 		private List<PrintItemAction> menuActions = new List<PrintItemAction>();
-
-		private ILibraryContainer searchContainer;
 
 		public PrintLibraryWidget()
 		{
@@ -105,7 +104,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			libraryView = new ListView(ApplicationController.Instance.Library)
 			{
-				BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor
+				BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor,
+				ShowContainers = false
 			};
 
 			libraryView.SelectedItems.CollectionChanged += SelectedItems_CollectionChanged;
@@ -115,69 +115,63 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			var breadCrumbBar = new FlowLayoutWidget()
 			{
 				HAnchor = HAnchor.ParentLeftRight,
-				Padding = new BorderDouble(bottom: 2),
-				Name = "Library Tab" // TODO: Short term workaround for automation tests - move name to tab once leftNav becomes dockable
+				VAnchor = VAnchor.FitToChildren,
+				Padding = 0,
 			};
 
-			breadCrumbWidget = new FolderBreadCrumbWidget(libraryView);
-			breadCrumbBar.AddChild(breadCrumbWidget);
+			int arrowHeight = 5;
 
-			var icon = StaticData.Instance.LoadIcon("icon_search_24x24.png", 16, 16);
+			var directionArrow = new PathStorage();
+			directionArrow.MoveTo(-arrowHeight, 0);
+			directionArrow.LineTo(arrowHeight, 0);
+			directionArrow.LineTo(0, -arrowHeight);
 
-			var buttonFactory = ApplicationController.Instance.Theme.BreadCrumbButtonFactory;
-			var initialMargin = buttonFactory.Margin;
-			buttonFactory.Margin = new BorderDouble(8, 0);
-
-			var searchPanel = new SearchInputBox()
+			var buttonView = new FlowLayoutWidget()
 			{
-				Visible = false,
-				Margin = new BorderDouble(10, 0, 5, 0)
+				HAnchor = HAnchor.ParentLeftRight,
+				VAnchor = VAnchor.FitToChildren,
+				Margin = 8
 			};
-			searchPanel.searchInput.ActualTextEditWidget.EnterPressed += (s, e) =>
+			buttonView.AfterDraw += (s, e) =>
 			{
-				this.PerformSearch();
-			};
-			searchPanel.resetButton.Click += (s, e) =>
-			{
-				breadCrumbWidget.Visible = true;
-				searchPanel.Visible = false;
-
-				searchPanel.searchInput.Text = "";
-
-				this.ClearSearch();
+				e.graphics2D.Render(directionArrow, buttonView.LocalBounds.Right - arrowHeight * 2 - 2, buttonView.LocalBounds.Center.y + arrowHeight / 2, ActiveTheme.Instance.SecondaryTextColor);
 			};
 
-			// Store a reference to the input field
-			this.searchInput = searchPanel.searchInput;
-
-			breadCrumbBar.AddChild(searchPanel);
-
-			Button searchButton = buttonFactory.Generate("", icon);
-			searchButton.ToolTipText = "Search".Localize();
-			searchButton.Name = "Search Library Button";
-			searchButton.Margin = 0;
-			searchButton.Click += (s, e) =>
+			activeContainerTitle = new TextWidget(ApplicationController.Instance.Library.ActiveContainer.Name, textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
-				if (searchPanel.Visible)
+				Margin = new BorderDouble(left: 6)
+			};
+			buttonView.AddChild(activeContainerTitle);
+
+			activeContainerPopup = new PopupButton(buttonView)
+			{
+				VAnchor = VAnchor.ParentCenter,
+				HAnchor = HAnchor.ParentLeftRight,
+				Margin = 0
+			};
+			activeContainerPopup.DynamicPopupContent = () =>
+			{
+				var container = new GuiWidget(400, this.Height)
 				{
-					PerformSearch();
-				}
-				else
-				{
-					searchContainer = this.libraryView.ActiveContainer;
+					BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor
+				};
 
-					breadCrumbWidget.Visible = false;
-					searchPanel.Visible = true;
-					searchInput.Focus();
-				}
+				container.AddChild(new ListContainerBrowser(this.libraryView, ApplicationController.Instance.Library)
+				{
+					HAnchor = HAnchor.ParentLeftRight,
+					VAnchor = VAnchor.ParentBottomTop
+				});
+
+				return container;
 			};
-			buttonFactory.Margin = initialMargin;
-			breadCrumbBar.AddChild(searchButton);
+
+			breadCrumbBar.AddChild(activeContainerPopup);
 
 			overflowDropdown = new OverflowDropdown(allowLightnessInvert: true)
 			{
+				VAnchor = VAnchor.ParentCenter,
 				AlignToRightEdge = true,
-				Name = "Print Library Overflow Menu"
+				Name = "Print Library Overflow Menu",
 			};
 			breadCrumbBar.AddChild(overflowDropdown);
 
@@ -247,8 +241,10 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			addToLibraryButton.Enabled = containerSupportsEdits;
 			createFolderButton.Enabled = containerSupportsEdits && writableContainer?.AllowAction(ContainerActions.AddContainers) == true;
 
-			searchInput.Text = activeContainer.KeywordFilter;
-			breadCrumbWidget.SetBreadCrumbs(activeContainer);
+			activeContainerTitle.Text = activeContainer.Name;
+
+			// searchInput.Text = activeContainer.KeywordFilter;
+			//breadCrumbWidget.SetBreadCrumbs(activeContainer);
 
 			activeContainer.Reloaded += UpdateStatus;
 
@@ -705,8 +701,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				if (renameItemWindow == null)
 				{
 					renameItemWindow = new RenameItemWindow(
+						"Rename Item:".Localize(),
 						selectedItem.Model.Name,
-						(returnInfo) =>
+						(newName) =>
 						{
 							var model = libraryView.SelectedItems.FirstOrDefault()?.Model;
 							if (model != null)
@@ -714,7 +711,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 								var container = libraryView.ActiveContainer as ILibraryWritableContainer;
 								if (container != null)
 								{
-									container.Rename(model, returnInfo.newName);
+									container.Rename(model, newName);
 									libraryView.SelectedItems.Clear();
 								}
 							}
@@ -738,30 +735,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			}
 
 			base.OnClosed(e);
-		}
-
-		private void PerformSearch()
-		{
-			UiThread.RunOnIdle(() =>
-			{
-				libraryView.ActiveContainer.KeywordFilter = searchInput.Text.Trim();
-				breadCrumbWidget.SetBreadCrumbs(libraryView.ActiveContainer);
-			});
-		}
-
-		private void ClearSearch()
-		{
-			UiThread.RunOnIdle(() =>
-			{
-				searchContainer.KeywordFilter = "";
-
-				// Restore the original ActiveContainer before search started - some containers may change context
-				ApplicationController.Instance.Library.ActiveContainer = searchContainer;
-
-				breadCrumbWidget.SetBreadCrumbs(libraryView.ActiveContainer);
-
-				searchContainer = null;
-			});
 		}
 
 		private async void addToQueueButton_Click(object sender, EventArgs e)
@@ -996,34 +969,5 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			base.OnLoad(args);
 		}
-
-		private class SearchInputBox : GuiWidget
-		{
-			internal MHTextEditWidget searchInput;
-			internal Button resetButton;
-
-			public SearchInputBox()
-			{
-				this.VAnchor = VAnchor.ParentCenter | VAnchor.FitToChildren;
-				this.HAnchor = HAnchor.ParentLeftRight;
-
-				searchInput = new MHTextEditWidget(messageWhenEmptyAndNotSelected: "Search Library".Localize())
-				{
-					Name = "Search Library Edit",
-					HAnchor = HAnchor.ParentLeftRight,
-					VAnchor = VAnchor.ParentCenter
-				};
-				this.AddChild(searchInput);
-
-				resetButton = ApplicationController.Instance.Theme.CreateSmallResetButton();
-				resetButton.HAnchor = HAnchor.ParentRight | HAnchor.FitToChildren;
-				resetButton.VAnchor = VAnchor.ParentCenter | VAnchor.FitToChildren;
-				resetButton.Name = "Close Search";
-				resetButton.ToolTipText = "Clear".Localize();
-
-				this.AddChild(resetButton);
-			}
-		}
-
 	}
 }

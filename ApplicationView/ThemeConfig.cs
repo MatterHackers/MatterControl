@@ -114,6 +114,8 @@ namespace MatterHackers.MatterControl
 		{
 			var theme = ActiveTheme.Instance;
 
+			DefaultThumbView.ThumbColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 30);
+
 			this.ImageButtonFactory = new TextImageButtonFactory()
 			{
 				normalFillColor = RGBA_Bytes.Transparent,

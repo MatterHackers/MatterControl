@@ -42,34 +42,6 @@ namespace MatterHackers.MatterControl
 {
 	public static class UiNavigation
 	{
-		public static void OpenEditPrinterWizard_Click(object sender, EventArgs e)
-		{
-			Button editButton = sender as Button;
-			editButton.ToolTipText = "Edit Current Printer Settings".Localize();
-			if (editButton != null)
-			{
-				editButton.Closed += (s, e2) =>
-				{
-					editButton.Click -= OpenEditPrinterWizard_Click;
-				};
-
-				UiNavigation.OpenEditPrinterWizard("baud_rate Edit Field,auto_connect Edit Field,com_port Edit Field");
-			}
-		}
-
-		public static void OpenEditPrinterWizard(string widgetNameToHighlight)
-		{
-			if (PrinterConnection.Instance?.ActivePrinter?.ID != null
-				&& ActiveSliceSettings.Instance.PrinterSelected
-				&& !WizardWindow.IsOpen("PrinterSetup"))
-			{
-				UiThread.RunOnIdle(() =>
-				{
-					WizardWindow.Show<EditPrinterSettingsPage>("EditSettings", "Edit Printer Settings");
-				});
-			}
-		}
-
 		private static void HighlightWidget(AutomationRunner testRunner, string widgetNameToHighlight)
 		{
 			SystemWindow containingWindow;

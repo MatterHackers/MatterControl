@@ -178,11 +178,6 @@ namespace MatterHackers.MatterControl
 			get { return printItemWrapper; }
 			set
 			{
-				if (ItemWrapper != null)
-				{
-					PrintItemWrapper.FileHasChanged.UnregisterEvent(item_FileHasChanged, ref unregisterEvents);
-				}
-				
 				printItemWrapper = value;
 
 				supportsThumbnails = false;
@@ -190,8 +185,6 @@ namespace MatterHackers.MatterControl
 				thumbNailHasBeenCreated = false;
 				if (ItemWrapper != null)
 				{
-					PrintItemWrapper.FileHasChanged.RegisterEvent(item_FileHasChanged, ref unregisterEvents);
-
 					supportsThumbnails = 
 						!string.IsNullOrEmpty(printItemWrapper.FileLocation) 
 						&& ( File.Exists(printItemWrapper.FileLocation) || printItemWrapper.FileLocation == QueueData.SdCardFileName)
@@ -344,17 +337,6 @@ namespace MatterHackers.MatterControl
 		{
 			thumbnailImage.MarkImageChanged();
 			Invalidate();
-		}
-
-		private void item_FileHasChanged(object sender, EventArgs e)
-		{
-			PrintItemWrapper senderItem = sender as PrintItemWrapper;
-			if (senderItem != null
-				&& senderItem.FileLocation == printItemWrapper.FileLocation)
-			{
-				thumbNailHasBeenCreated = false;
-				Invalidate();
-			}
 		}
 
 		private static bool MeshIsTooBigToLoad(string fileLocation)

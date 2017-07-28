@@ -38,6 +38,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class PartPreviewContent : FlowLayoutWidget
 	{
+		private EventHandler unregisterEvents;
+
 		public PartPreviewContent(PrintItemWrapper printItem)
 		{
 			this.AnchorAll();
@@ -73,7 +75,34 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			printerTab.ToolTipText = "Preview 3D Design".Localize();
 			tabControl.AddTab(printerTab);
 
+			// TODO: add in the printers and designs that are currently open (or were open last run).
+
+			// Add a tab for the current printer
+			var plusTabSelect = new SimpleTextTabWidget(
+				new TabPage(new PlusTabPage(), "+"),
+				"Create New",
+				tabControl.TextPointSize,
+				selectedTabColor,
+				new RGBA_Bytes(),
+				ActiveTheme.Instance.TabLabelUnselected,
+				new RGBA_Bytes(),
+				useUnderlineStyling: true);
+			plusTabSelect.ToolTipText = "Create New".Localize();
+			tabControl.AddTab(plusTabSelect);
+
 			this.AddChild(tabControl);
+
+	
+			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
+			{
+				if (e is StringEventArgs stringEvent 
+					&& stringEvent.Data == SettingsKey.printer_name)
+				{
+					printerTab.TabPage.Text = ActiveSliceSettings.Instance.GetValue(SettingsKey.printer_name);
+				}
+				
+			}, ref unregisterEvents);
+
 		}
 	}
 }
