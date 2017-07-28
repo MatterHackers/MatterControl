@@ -200,9 +200,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				redoButton.Enabled = undoBuffer.RedoCount > 0;
 			};
 
-			var editPrinterButton = PrinterSelectEditDropdown.CreatePrinterEditButton();
-			this.AddChild(editPrinterButton);
-
 			overflowDropdown = new OverflowDropdown(allowLightnessInvert: true)
 			{
 				AlignToRightEdge = true,
@@ -228,17 +225,48 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private GuiWidget GeneratePrinterOverflowMenu()
 		{
-			var widgetToPop = new FlowLayoutWidget()
+			var printerSettings = ActiveSliceSettings.Instance;
+
+			var widgetToPop = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.FitToChildren,
 				VAnchor = VAnchor.FitToChildren,
 				BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor
 			};
 
-			widgetToPop.AddChild(new PrinterSelectEditDropdown()
+			// This is a place holder type to allow us to put in the control that will allow the deletion of a printer profile
+			var buttonFactory = ApplicationController.Instance.Theme.BreadCrumbButtonFactory;
+
+			var renameButton = buttonFactory.Generate("Rename Printer".Localize());
+			renameButton.Name = "Rename Printer Button";
+			renameButton.Click += (s, e) =>
 			{
-				Margin = 10
-			});
+				var renameItemWindow = new RenameItemWindow(
+				"Rename Printer".Localize() + ":",
+				printerSettings.GetValue(SettingsKey.printer_name),
+				(newName) =>
+				{
+					if (!string.IsNullOrEmpty(newName))
+					{
+						printerSettings.SetValue(SettingsKey.printer_name, newName);
+					}
+				});
+			};
+			widgetToPop.AddChild(renameButton);
+
+			var deleteButton = buttonFactory.Generate("Delete Printer".Localize());
+			deleteButton.Name = "Delete Printer Button";
+			deleteButton.Click += (s, e) =>
+			{
+				StyledMessageBox.ShowMessageBox((doDelete) =>
+				{
+					if (doDelete)
+					{
+						ActiveSliceSettings.Instance.Helpers.SetMarkedForDelete(true);
+					}
+				}, "Are you sure you want to delete your currently selected printer?".Localize(), "Delete Printer?".Localize(), StyledMessageBox.MessageType.YES_NO, "Delete Printer".Localize());
+			};
+			widgetToPop.AddChild(deleteButton);
 
 			return widgetToPop;
 		}

@@ -10,7 +10,7 @@ namespace MatterHackers.MatterControl
 {
 	public class RenameItemWindow : SystemWindow
 	{
-		private Action<RenameItemReturnInfo> functionToCallToCreateNamedFolder;
+		private Action<string> functionToCallToCreateNamedFolder;
 		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 		private MHTextEditWidget saveAsNameWidget;
 		TextWidget elementHeader;
@@ -22,17 +22,7 @@ namespace MatterHackers.MatterControl
 			set { elementHeader.Text = value; }
 		}
 
-		public class RenameItemReturnInfo
-		{
-			public string newName;
-
-			public RenameItemReturnInfo(string newName)
-			{
-				this.newName = newName;
-			}
-		}
-
-		public RenameItemWindow(string currentItemName, Action<RenameItemReturnInfo> functionToCallToRenameItem, string renameButtonString = null)
+		public RenameItemWindow(string windowTitle, string currentItemName, Action<string> functionToCallToRenameItem)
 			: base(480, 180)
 		{
 			Title = "MatterControl - Rename Item";
@@ -53,8 +43,7 @@ namespace MatterHackers.MatterControl
 
 			//Creates Text and adds into header
 			{
-				string renameItemLabel = "Rename Item:".Localize();
-				elementHeader = new TextWidget(renameItemLabel, pointSize: 14);
+				elementHeader = new TextWidget(windowTitle, pointSize: 14);
 				elementHeader.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 				elementHeader.HAnchor = HAnchor.ParentLeftRight;
 				elementHeader.VAnchor = Agg.UI.VAnchor.ParentBottom;
@@ -97,11 +86,7 @@ namespace MatterHackers.MatterControl
 				buttonRow.Padding = new BorderDouble(0, 3);
 			}
 
-			if(renameButtonString == null)
-			{
-				renameButtonString = "Rename".Localize();
-            }
-			renameItemButton = textImageButtonFactory.Generate(renameButtonString, centerText: true);
+			renameItemButton = textImageButtonFactory.Generate("Rename".Localize(), centerText: true);
 			renameItemButton.Name = "Rename Button";
 			renameItemButton.Visible = true;
 			renameItemButton.Cursor = Cursors.Hand;
@@ -155,8 +140,7 @@ namespace MatterHackers.MatterControl
 				string fileName = Path.ChangeExtension(Path.GetRandomFileName(), ".amf");
 				string fileNameAndPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, fileName);
 
-				RenameItemReturnInfo returnInfo = new RenameItemReturnInfo(newName);
-				functionToCallToCreateNamedFolder(returnInfo);
+				functionToCallToCreateNamedFolder(newName);
 				CloseOnIdle();
 			}
 		}

@@ -1606,14 +1606,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			Scene.ModifyChildren(children => children.Clear());
 
-			PrintItemWrapper.FileHasChanged.UnregisterEvent(ReloadMeshIfChangeExternaly, ref unregisterEvents);
-
 			if (newPrintItem != null)
 			{
-				// remove it first to make sure we don't double add it
-				PrintItemWrapper.FileHasChanged.UnregisterEvent(ReloadMeshIfChangeExternaly, ref unregisterEvents);
-				PrintItemWrapper.FileHasChanged.RegisterEvent(ReloadMeshIfChangeExternaly, ref unregisterEvents);
-
 				// don't load the mesh until we get all the rest of the interface built
 				meshViewerWidget.LoadDone += new EventHandler(meshViewerWidget_LoadDone);
 
@@ -1997,9 +1991,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						Scene.Save(printItemWrapper.FileLocation, ApplicationDataStorage.Instance.ApplicationLibraryDataPath);
 
 						printItemWrapper.PrintItem.Commit();
-
-						// Wait for a second to report the file changed to give the OS a chance to finish closing it.
-						UiThread.RunOnIdle(printItemWrapper.ReportFileChange, 3);
 					}
 					catch (Exception ex)
 					{
@@ -2126,21 +2117,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			else
 			{
 				saveAsWindow.BringToFront();
-			}
-		}
-
-		private void ReloadMeshIfChangeExternaly(Object sender, EventArgs e)
-		{
-			PrintItemWrapper senderItem = sender as PrintItemWrapper;
-			if (senderItem != null
-				&& senderItem.FileLocation == printItemWrapper.FileLocation)
-			{
-				if (!editorThatRequestedSave)
-				{
-					ClearBedAndLoadPrintItemWrapper(printItemWrapper);
-				}
-
-				editorThatRequestedSave = false;
 			}
 		}
 

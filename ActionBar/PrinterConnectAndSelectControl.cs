@@ -43,7 +43,6 @@ namespace MatterHackers.MatterControl.ActionBar
 	{
 		private PrinterSelector printerSelector;
 		private GuiWidget printerSelectorAndEditOverlay;
-		private Button editPrinterButton;
 		private EventHandler unregisterEvents;
 
 		public PrinterSelectEditDropdown()
@@ -54,11 +53,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				Cursor = Cursors.Hand,
 				Margin = 0
 			};
-			printerSelector.AddPrinter += (s, e) => WizardWindow.ShowPrinterSetup(true);
 			this.AddChild(printerSelector);
-
-			editPrinterButton = CreatePrinterEditButton();
-			this.AddChild(editPrinterButton);
 
 			printerSelectorAndEditOverlay = new GuiWidget()
 			{
@@ -70,17 +65,6 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			PrinterConnection.Instance.EnableChanged.RegisterEvent(SetVisibleStates, ref unregisterEvents);
 			PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent(SetVisibleStates, ref unregisterEvents);
-		}
-
-
-		public static Button CreatePrinterEditButton()
-		{
-			var button = TextImageButtonFactory.GetThemedEditButton();
-			button.Name = "Edit Printer Button";
-			button.VAnchor = VAnchor.ParentCenter;
-			button.Click += UiNavigation.OpenEditPrinterWizard_Click;
-
-			return button;
 		}
 
 		public override void OnClosed(ClosedEventArgs e)
@@ -96,7 +80,6 @@ namespace MatterHackers.MatterControl.ActionBar
 				bool printerIsPrintingOrPaused = PrinterConnection.Instance.PrinterIsPrinting
 					|| PrinterConnection.Instance.PrinterIsPaused;
 
-				editPrinterButton.Enabled = ActiveSliceSettings.Instance.PrinterSelected && !printerIsPrintingOrPaused;
 				printerSelector.Enabled = !printerIsPrintingOrPaused;
 				if (printerIsPrintingOrPaused)
 				{

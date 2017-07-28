@@ -41,8 +41,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 {
 	public class PrintItemWrapper
 	{
-		public static RootedObjectEventHandler FileHasChanged = new RootedObjectEventHandler();
-
 		public event EventHandler SlicingDone;
 		public event EventHandler<StringEventArgs> SlicingOutputMessage;
 
@@ -226,11 +224,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 			{
 				this.PrintItem.Name = value;
 			}
-		}
-
-		public void ReportFileChange()
-		{
-			FileHasChanged.CallEvents(this, null);
 		}
 
 		PrintItem printItem;
