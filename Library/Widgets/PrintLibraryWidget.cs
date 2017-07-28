@@ -156,10 +156,10 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor
 				};
 
-				container.AddChild(new ListView(ApplicationController.Instance.Library)
+				container.AddChild(new ListContainerBrowser(this.libraryView, ApplicationController.Instance.Library)
 				{
 					HAnchor = HAnchor.ParentLeftRight,
-					ShowItems = false
+					VAnchor = VAnchor.ParentBottomTop
 				});
 
 				return container;

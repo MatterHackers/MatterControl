@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Kevin Pope, John Lewin
+Copyright (c) 2017, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -36,19 +36,28 @@ using MatterHackers.MatterControl.Library;
 
 namespace MatterHackers.MatterControl.PrintLibrary
 {
-	public class ListContainerBrowser : FlowLayoutWidget
+	public class ListContainerBrowser : FlowLayoutWidget, IIgnoredPopupChild
 	{
 		private FolderBreadCrumbWidget breadCrumbWidget;
 		private GuiWidget searchInput;
 		private ILibraryContainer searchContainer;
 
-		private ListView libraryView;
-		public ListContainerBrowser(ListView libraryView)
-		{
-			this.libraryView = libraryView;
-			breadCrumbWidget = new FolderBreadCrumbWidget(libraryView);
+		private ILibraryContext libraryContext;
 
-			this.AddChild(breadCrumbWidget);
+		public ListContainerBrowser(ListView libraryView, ILibraryContext libraryContext)
+			: base(FlowDirection.TopToBottom)
+		{
+			this.libraryContext = libraryContext;
+
+			var navBar = new FlowLayoutWidget()
+			{
+				HAnchor = HAnchor.ParentLeftRight
+			};
+
+			this.AddChild(navBar);
+
+			breadCrumbWidget = new FolderBreadCrumbWidget(libraryView);
+			navBar.AddChild(breadCrumbWidget);
 
 			var icon = StaticData.Instance.LoadIcon("icon_search_24x24.png", 16, 16);
 
@@ -78,7 +87,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			// Store a reference to the input field
 			this.searchInput = searchPanel.searchInput;
 
-			this.AddChild(searchPanel);
+			navBar.AddChild(searchPanel);
 
 			Button searchButton = buttonFactory.Generate("", icon);
 			searchButton.ToolTipText = "Search".Localize();
@@ -92,7 +101,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				}
 				else
 				{
-					searchContainer = this.libraryView.ActiveContainer;
+					searchContainer = libraryContext.ActiveContainer;
 
 					breadCrumbWidget.Visible = false;
 					searchPanel.Visible = true;
@@ -100,15 +109,21 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				}
 			};
 			buttonFactory.Margin = initialMargin;
-			this.AddChild(searchButton);
+			navBar.AddChild(searchButton);
+
+			var libraryContainerView = new ListView(libraryContext)
+			{
+				HAnchor = HAnchor.ParentLeftRight,
+				ShowItems = false
+			};
+			this.AddChild(libraryContainerView);
 		}
 
 		private void PerformSearch()
 		{
 			UiThread.RunOnIdle(() =>
 			{
-				libraryView.ActiveContainer.KeywordFilter = searchInput.Text.Trim();
-				//breadCrumbWidget.SetBreadCrumbs(libraryView.ActiveContainer);
+				libraryContext.ActiveContainer.KeywordFilter = searchInput.Text.Trim();
 			});
 		}
 
@@ -120,8 +135,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 				// Restore the original ActiveContainer before search started - some containers may change context
 				ApplicationController.Instance.Library.ActiveContainer = searchContainer;
-
-				//breadCrumbWidget.SetBreadCrumbs(libraryView.ActiveContainer);
 
 				searchContainer = null;
 			});
