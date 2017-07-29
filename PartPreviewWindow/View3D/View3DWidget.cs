@@ -332,6 +332,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						});
 					};
 
+					Button clearPlateButton = smallMarginButtonFactory.Generate("Clear Plate".Localize());
+					clearPlateButton.Margin = new BorderDouble(right: 10);
+					clearPlateButton.Click += (sender, e) =>
+					{
+						UiThread.RunOnIdle(ApplicationController.Instance.ClearPlate);
+					};
+					doEdittingButtonsContainer.AddChild(clearPlateButton);
+
 					// put in the save button
 					AddSaveAndSaveAs(doEdittingButtonsContainer);
 

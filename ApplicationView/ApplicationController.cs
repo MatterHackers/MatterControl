@@ -278,14 +278,15 @@ namespace MatterHackers.MatterControl
 		{
 			string now = DateTime.Now.ToString("yyyyMMdd-HHmmss");
 
-			string platingDirectory = Path.Combine(ApplicationDataStorage.Instance.ApplicationTempDataPath, "Plating");
-			Directory.CreateDirectory(platingDirectory);
-
-			string mcxPath = Path.Combine(platingDirectory, now + ".mcx");
+			string mcxPath = Path.Combine(ApplicationDataStorage.Instance.PlatingDirectory, now + ".mcx");
 
 			ApplicationController.Instance.ActivePrintItem = new PrintItemWrapper(new PrintItem(now, mcxPath));
 
 			File.WriteAllText(mcxPath, new Object3D().ToJson());
+
+			ApplicationController.Instance.ActiveView3DWidget?.Scene.Load(mcxPath);
+			ApplicationController.Instance.ActiveView3DWidget?.PartHasBeenChanged();
+
 		}
 
 		public ThemeConfig Theme { get; set; } = new ThemeConfig();

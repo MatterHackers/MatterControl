@@ -159,6 +159,17 @@ namespace MatterHackers.MatterControl.DataStorage
 			}
 		}
 
+		public string PlatingDirectory
+		{
+			get
+			{
+				string platingDirectory = Path.Combine(ApplicationTempDataPath, "Plating");
+				Directory.CreateDirectory(platingDirectory);
+
+				return platingDirectory;
+			}
+		}
+
 		public string DownloadsDirectory { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
 
 		public string CustomLibraryFoldersPath { get; } = Path.Combine(applicationUserDataPath, "LibraryFolders.conf");
