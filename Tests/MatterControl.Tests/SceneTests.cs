@@ -34,6 +34,7 @@ using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.DataConverters3D;
+using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.Tests.Automation;
 using MatterHackers.MeshVisualizer;
@@ -118,6 +119,8 @@ namespace MatterHackers.PolygonMesh.UnitTests
 
 			// because we are using it without adding it into a parent we need to initialize it
 			view3DWidget.Initialize();
+
+			ApplicationController.Instance.ClearPlate();
 
 			var scene = view3DWidget.Scene;
 			scene.Children.Add(new Object3D
