@@ -604,6 +604,7 @@ namespace MatterHackers.MeshVisualizer
 
 		public bool IsActive { get; set; } = true;
 
+		RGBA_Bytes lastDrawColor;
 		private void DrawObject(IObject3D object3D, Matrix4X4 transform, bool parentSelected)
 		{
 			foreach(MeshAndTransform meshAndTransform in object3D.VisibleMeshes(transform))
@@ -611,7 +612,7 @@ namespace MatterHackers.MeshVisualizer
 				bool isSelected = parentSelected ||
 					Scene.HasSelection && (object3D == Scene.SelectedItem || Scene.SelectedItem.Children.Contains(object3D));
 
-				RGBA_Bytes drawColor = object3D.Color;
+				RGBA_Bytes drawColor = meshAndTransform.Color;
 				if(object3D.OutputType == PrintOutputTypes.Support)
 				{
 					drawColor = new RGBA_Bytes(RGBA_Bytes.Yellow, 120);
@@ -623,8 +624,11 @@ namespace MatterHackers.MeshVisualizer
 
 				if (drawColor.Alpha0To1 == 0)
 				{
-					int extruderIndex = Math.Max(0, object3D.ExtruderIndex);
-					drawColor = isSelected ? GetSelectedExtruderColor(extruderIndex) : GetExtruderColor(extruderIndex);
+					drawColor = lastDrawColor;
+				}
+				else
+				{
+					lastDrawColor = drawColor;
 				}
 				
 				GLHelper.Render(meshAndTransform.MeshData, drawColor, meshAndTransform.Matrix, RenderType);
