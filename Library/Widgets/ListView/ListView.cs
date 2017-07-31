@@ -32,7 +32,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.PlatformAbstract;
@@ -245,7 +244,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				ImageIO.LoadImageData(cachePath, thumbnail);
 				thumbnail.SetRecieveBlender(new BlenderPreMultBGRA());
 				
-				return thumbnail.MultiplyWithPrimaryAccent();
+				return thumbnail;
 			}
 
 			return null;
