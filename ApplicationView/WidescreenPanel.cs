@@ -59,7 +59,10 @@ namespace MatterHackers.MatterControl
 				var firstFile = directoryInfo.GetFileSystemInfos("*.mcx").OrderByDescending(fl => fl.CreationTime).FirstOrDefault();
 
 				// Set as the current item - should be restored as the Active scene in the MeshViewer
-				ApplicationController.Instance.ActivePrintItem = new PrintItemWrapper(new PrintItem(firstFile.Name, firstFile.FullName));
+				if (firstFile != null)
+				{
+					ApplicationController.Instance.ActivePrintItem = new PrintItemWrapper(new PrintItem(firstFile.Name, firstFile.FullName));
+				}
 			}
 
 			var library3DViewSplitter = new Splitter()
