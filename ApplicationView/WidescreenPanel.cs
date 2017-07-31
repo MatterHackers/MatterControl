@@ -65,6 +65,12 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
+            // Clear if not assigned above
+            if (ApplicationController.Instance.ActivePrintItem == null)
+            {
+                ApplicationController.Instance.ClearPlate();
+            }
+
 			var library3DViewSplitter = new Splitter()
 			{
 				Padding = new BorderDouble(4),
