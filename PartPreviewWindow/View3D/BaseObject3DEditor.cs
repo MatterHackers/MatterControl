@@ -109,7 +109,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// put in the button for making the behavior solid
 			Button createdButton;
-			var solidBehaviorButton = new PopupButton(createdButton = theme.textImageButtonFactory.Generate("Solid".Localize()))
+			var solidBehaviorButton = new PopupButton(createdButton = theme.ButtonFactory.Generate("Solid".Localize()))
 			{
 				Name = "Solid Colors",
 				AlignToRightEdge = true,
@@ -118,7 +118,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					HAnchor = HAnchor.FitToChildren,
 					VAnchor = VAnchor.FitToChildren,
 					BackgroundColor = RGBA_Bytes.White
-				}
+				},
+				Margin = new BorderDouble(0, 5)
 			};
 			createdButton.Click += (s, e) =>
 			{
@@ -128,8 +129,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			behavior3DTypeButtons.AddChild(solidBehaviorButton);
 
 			// put in the button for making the behavior a hole
-			Button holeBehaviorButton = theme.textImageButtonFactory.Generate("Hole".Localize());
-			holeBehaviorButton.Margin = new BorderDouble(5);
+			Button holeBehaviorButton = theme.ButtonFactory.Generate("Hole".Localize());
+			holeBehaviorButton.Margin = new BorderDouble(0, 5);
 			holeBehaviorButton.Click += (s, e) =>
 			{
 				item.OutputType = PrintOutputTypes.Hole;
@@ -139,8 +140,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			behavior3DTypeButtons.AddChild(holeBehaviorButton);
 
 			// put in the button for making the behavior support
-			Button supportBehaviorButton = theme.textImageButtonFactory.Generate("Support".Localize());
-			supportBehaviorButton.Margin = new BorderDouble(5);
+			Button supportBehaviorButton = theme.ButtonFactory.Generate("Support".Localize());
+			supportBehaviorButton.Margin = new BorderDouble(0, 5);
 			supportBehaviorButton.Click += (s, e) =>
 			{
 				item.OutputType = PrintOutputTypes.Support;

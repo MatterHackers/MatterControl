@@ -92,7 +92,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 				RebuildText(textToAddWidget.Text);
 			};
 			
-			Button updateButton = theme.textImageButtonFactory.Generate("Update".Localize());
+			Button updateButton = theme.ButtonFactory.Generate("Update".Localize());
 			updateButton.Margin = new BorderDouble(5);
 			updateButton.HAnchor = HAnchor.ParentRight;
 			updateButton.Click += (s, e) => RebuildText(textToAddWidget.Text);

@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl
 		{
 			if (aboutWindow == null)
 			{
-				aboutWindow = new AboutWindow(ApplicationController.Instance.Theme.textImageButtonFactory);
+				aboutWindow = new AboutWindow(ApplicationController.Instance.Theme.ButtonFactory);
 				aboutWindow.Closed += (parentSender, e) =>
 				{
 					aboutWindow = null;

@@ -59,7 +59,6 @@ namespace MatterHackers.MatterControl
 		public LinkButtonFactory LinkButtonFactory { get; private set; }
 		public LinkButtonFactory HelpLinkFactory { get; private set; }
 
-		public TextImageButtonFactory textImageButtonFactory;
 		private TextImageButtonFactory checkboxButtonFactory;
 		public TextImageButtonFactory ExpandMenuOptionFactory;
 		public TextImageButtonFactory WhiteButtonFactory;
@@ -68,7 +67,15 @@ namespace MatterHackers.MatterControl
 
 		public TextImageButtonFactory ButtonFactory { get; internal set; }
 		public TextImageButtonFactory SmallMarginButtonFactory { get; internal set; }
+
+		/// <summary>
+		/// Used to make buttons in menu rows where the background color is consistently white
+		/// </summary>
 		public TextImageButtonFactory MenuButtonFactory { get; internal set; }
+
+		/// <summary>
+		/// Used in the Update wizard to show high contrast, primary action buttons
+		/// </summary>
 		public TextImageButtonFactory GrayButtonFactory { get; internal set; }
 
 		public TextImageButtonFactory imageConverterExpandMenuOptionFactory;
@@ -196,15 +203,6 @@ namespace MatterHackers.MatterControl
 				sideBarButtonWidth = 138;
 				shortButtonHeight = 30;
 			}
-
-			textImageButtonFactory = new TextImageButtonFactory()
-			{
-				normalTextColor = ActiveTheme.Instance.PrimaryTextColor,
-				hoverTextColor = ActiveTheme.Instance.PrimaryTextColor,
-				pressedTextColor = ActiveTheme.Instance.PrimaryTextColor,
-				disabledTextColor = ActiveTheme.Instance.TabLabelUnselected,
-				disabledFillColor = new RGBA_Bytes()
-			};
 
 			WhiteButtonFactory = new TextImageButtonFactory()
 			{
