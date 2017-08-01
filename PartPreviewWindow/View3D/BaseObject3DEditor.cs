@@ -89,7 +89,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public class PartColorSettings : PopupButton
 	{
 		public PartColorSettings(IObject3D item, View3DWidget view3DWidget)
-			: base(new TextWidget("Solid".Localize().ToUpper(), 0, 0, 10, textColor: ActiveTheme.Instance.PrimaryTextColor))
+			: base(new TextWidget("Solid".Localize(), 0, 0, 10, textColor: ActiveTheme.Instance.PrimaryTextColor))
 		{
 			this.Name = "Solid Colors";
 			Margin = new BorderDouble(0);
