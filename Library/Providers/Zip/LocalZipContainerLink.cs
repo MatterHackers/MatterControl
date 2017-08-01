@@ -44,6 +44,8 @@ namespace MatterHackers.MatterControl.Library
 			thumbnail = LibraryProviderHelpers.LoadInvertIcon("FileDialog", "folder_zip.png");
 		}
 
+		public bool IsReadOnly { get; } = false;
+
 		public Stream ZipStream { get; set; }
 
 		public override bool IsProtected { get; } = true;

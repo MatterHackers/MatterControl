@@ -41,6 +41,8 @@ namespace MatterHackers.MatterControl.Library
 		public string ThumbnailKey => thumbnail.GetHashCode().ToString();
 		public bool IsProtected => true;
 
+		public bool IsReadOnly { get; set; } = false;
+
 		private ImageBuffer thumbnail;
 		private Func<ILibraryContainer> containerCreator;
 		private Func<bool> visibilityResolver;
