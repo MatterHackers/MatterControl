@@ -66,8 +66,6 @@ namespace MatterHackers.MatterControl
 
 		private readonly int borderWidth = 1;
 
-		public TextImageButtonFactory ImageButtonFactory { get; private set; }
-		public TextImageButtonFactory PrinterConnectButtonFactory { get; private set; }
 		public TextImageButtonFactory BreadCrumbButtonFactory { get; internal set; }
 		public TextImageButtonFactory BreadCrumbButtonFactorySmallMargins { get; internal set; }
 		public TextImageButtonFactory MenuButtonFactory { get; internal set; }
@@ -115,37 +113,6 @@ namespace MatterHackers.MatterControl
 			var theme = ActiveTheme.Instance;
 
 			DefaultThumbView.ThumbColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 30);
-
-			this.ImageButtonFactory = new TextImageButtonFactory()
-			{
-				normalFillColor = RGBA_Bytes.Transparent,
-				normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200),
-				normalTextColor = theme.SecondaryTextColor,
-				pressedTextColor = theme.PrimaryTextColor,
-				hoverTextColor = theme.PrimaryTextColor,
-				hoverBorderColor = new RGBA_Bytes(theme.PrimaryTextColor, 200),
-				disabledFillColor = RGBA_Bytes.Transparent,
-				disabledBorderColor = new RGBA_Bytes(theme.PrimaryTextColor, 100),
-				disabledTextColor = new RGBA_Bytes(theme.PrimaryTextColor, 100),
-				FixedHeight = fizedHeightA,
-				fontSize = fontSize11,
-				borderWidth = borderWidth
-			};
-
-			this.PrinterConnectButtonFactory = new TextImageButtonFactory()
-			{
-				normalTextColor = theme.PrimaryTextColor,
-				normalBorderColor = (theme.IsDarkTheme) ? new RGBA_Bytes(77, 77, 77) : new RGBA_Bytes(190, 190, 190),
-				hoverTextColor = theme.PrimaryTextColor,
-				pressedTextColor = theme.PrimaryTextColor,
-				disabledTextColor = theme.TabLabelUnselected,
-				disabledFillColor = theme.PrimaryBackgroundColor,
-				disabledBorderColor = theme.SecondaryBackgroundColor,
-				hoverFillColor = theme.PrimaryBackgroundColor,
-				hoverBorderColor = new RGBA_Bytes(128, 128, 128),
-				invertImageLocation = false,
-				borderWidth = 1
-			};
 
 			this.BreadCrumbButtonFactory = new TextImageButtonFactory()
 			{
