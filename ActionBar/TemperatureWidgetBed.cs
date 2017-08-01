@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using MatterHackers.Agg;
 using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.PlatformAbstract;
@@ -44,6 +45,8 @@ namespace MatterHackers.MatterControl.ActionBar
 		private string waitingForBedToHeatMessage = "The bed is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting bed temperature in SETTINGS -> Filament -> Temperatures.\n\n{1}".Localize();
 		private string waitingForBedToHeatTitle = "Waiting For Bed To Heat".Localize();
 
+		private TextWidget settingsTemperature;
+
 		public TemperatureWidgetBed()
 			: base("150.3°")
 		{
@@ -58,7 +61,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			}
 
 			this.ImageWidget.Image = icon;
-			
+
 			this.PopupContent = this.GetPopupContent();
 
 			PrinterConnection.Instance.BedTemperatureRead.RegisterEvent((s, e) => DisplayCurrentTemperature(), ref unregisterEvents);
@@ -122,8 +125,8 @@ namespace MatterHackers.MatterControl.ActionBar
 						{
 							string sliceSettingsNote = "Note: Slice Settings are applied before the print actually starts. Changes while printing will not effect the active print.";
 							string message = string.Format(
-								"The bed is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting bed temperature in 'Slice Settings' -> 'Filament'.\n\n{1}", 
-								PrinterConnection.Instance.TargetBedTemperature, 
+								"The bed is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting bed temperature in 'Slice Settings' -> 'Filament'.\n\n{1}",
+								PrinterConnection.Instance.TargetBedTemperature,
 								sliceSettingsNote);
 
 							StyledMessageBox.ShowMessageBox(null, message, "Waiting For Bed To Heat");
@@ -146,7 +149,33 @@ namespace MatterHackers.MatterControl.ActionBar
 				},
 				enforceGutter: false));
 
+			settingsTemperature = new TextWidget(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.bed_temperature).ToString())
+			{
+				AutoExpandBoundsToText = true
+			};
+
+			container.AddChild(new SettingsItem(
+				"Temperature".Localize(),
+				settingsTemperature,
+				enforceGutter: false));
+
+			ActiveSliceSettings.MaterialPresetChanged += ActiveSliceSettings_MaterialPresetChanged;
+
 			return widget;
+		}
+
+		private void ActiveSliceSettings_MaterialPresetChanged(object sender, EventArgs e)
+		{
+			if (settingsTemperature != null && ActiveSliceSettings.Instance != null)
+			{
+				settingsTemperature.Text = ActiveSliceSettings.Instance.GetValue(SettingsKey.bed_temperature);
+			}
+		}
+
+		public override void OnClosed(ClosedEventArgs e)
+		{
+			ActiveSliceSettings.MaterialPresetChanged -= ActiveSliceSettings_MaterialPresetChanged;
+			base.OnClosed(e);
 		}
 	}
 }

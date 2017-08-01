@@ -32,17 +32,15 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.ConfigurationPage;
-using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class CollorSwatchSelector : FlowLayoutWidget
+	public class ColorSwatchSelector : FlowLayoutWidget
 	{
 		private TextImageButtonFactory menuButtonFactory;
 		int colorSize = 32;
 
-		public CollorSwatchSelector(IObject3D item, View3DWidget view3DWidget, TextImageButtonFactory menuButtonFactory)
+		public ColorSwatchSelector(IObject3D item, View3DWidget view3DWidget, TextImageButtonFactory menuButtonFactory)
 			: base(FlowDirection.TopToBottom)
 		{
 			this.menuButtonFactory = menuButtonFactory;
@@ -86,31 +84,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		}
 	}
 
-	public class PartColorSettings : PopupButton
-	{
-		public PartColorSettings(IObject3D item, View3DWidget view3DWidget)
-			: base(new TextWidget("Solid".Localize().ToUpper(), 0, 0, 10, textColor: ActiveTheme.Instance.PrimaryTextColor))
-		{
-			this.Name = "Solid Colors";
-			Margin = new BorderDouble(0);
-			Padding = new BorderDouble(4);
-			VAnchor = VAnchor.ParentCenter;
-			AlignToRightEdge = true;
-
-			this.PopupContent = new CollorSwatchSelector(item, view3DWidget, ApplicationController.Instance.Theme.MenuButtonFactory)
-			{
-				HAnchor = HAnchor.FitToChildren,
-				VAnchor = VAnchor.FitToChildren,
-				BackgroundColor = RGBA_Bytes.White
-			};
-
-			Click += (s, e) =>
-			{
-				item.OutputType = PrintOutputTypes.Solid;
-			};
-		}
-	}
-
 	public class BaseObject3DEditor : IObject3DEditor
 	{
 		private IObject3D item;
@@ -135,9 +108,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			mainContainer.AddChild(behavior3DTypeButtons);
 
 			// put in the button for making the behavior solid
-			var solidBehaviorButton = new PartColorSettings(item, view3DWidget)
+			var solidBehaviorButton = new PopupButton(theme.textImageButtonFactory.Generate("Solid".Localize()))
 			{
-				Margin = new BorderDouble(5)
+				Name = "Solid Colors",
+				AlignToRightEdge = true,
+				PopupContent = new ColorSwatchSelector(item, view3DWidget, ApplicationController.Instance.Theme.MenuButtonFactory)
+				{
+					HAnchor = HAnchor.FitToChildren,
+					VAnchor = VAnchor.FitToChildren,
+					BackgroundColor = RGBA_Bytes.White
+				}
+			};
+			solidBehaviorButton.Click += (s, e) =>
+			{
+				item.OutputType = PrintOutputTypes.Solid;
 			};
 
 			behavior3DTypeButtons.AddChild(solidBehaviorButton);

@@ -382,6 +382,8 @@ namespace MatterHackers.MatterControl.Library
 			{
 			}
 
+			public bool IsReadOnly { get; set; } = false;
+
 			public bool UseIncrementedNameDuringTypeChange { get; set; }
 
 			public Task<ILibraryContainer> GetContainer(Action<double, string> reportProgress)

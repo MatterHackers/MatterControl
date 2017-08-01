@@ -332,6 +332,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						});
 					};
 
+					Button clearPlateButton = smallMarginButtonFactory.Generate("Clear Plate".Localize());
+					clearPlateButton.Margin = new BorderDouble(right: 10);
+					clearPlateButton.Click += (sender, e) =>
+					{
+						UiThread.RunOnIdle(ApplicationController.Instance.ClearPlate);
+					};
+					doEdittingButtonsContainer.AddChild(clearPlateButton);
+
 					// put in the save button
 					AddSaveAndSaveAs(doEdittingButtonsContainer);
 
@@ -1657,6 +1665,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						mappedEditors = editor.Value;
 						break;
 					}
+				}
+			}
+
+			// Add any editor mapped to Object3D to the list
+			if (objectEditorsByType.TryGetValue(typeof(Object3D), out HashSet<IObject3DEditor> globalEditors))
+			{
+				foreach(var editor in globalEditors)
+				{
+					mappedEditors.Add(editor);
 				}
 			}
 

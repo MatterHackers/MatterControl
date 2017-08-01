@@ -116,7 +116,8 @@ namespace MatterHackers.MatterControl
 			librarySelectorWidget = new ListView(libraryNavContext)
 			{
 				BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor,
-				ShowItems = false
+				ShowItems = false,
+				ContainerFilter = (container) => !container.IsReadOnly
 			};
 
 			// put in the bread crumb widget

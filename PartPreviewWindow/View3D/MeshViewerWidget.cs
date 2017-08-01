@@ -39,6 +39,7 @@ using MatterHackers.Agg.OpenGlGui;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
+using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.PolygonMesh;
 using MatterHackers.RenderOpenGl;
@@ -83,6 +84,14 @@ namespace MatterHackers.MeshVisualizer
 		public MeshViewerWidget(Vector3 displayVolume, Vector2 bedCenter, BedShape bedShape, TrackballTumbleWidget trackballTumbleWidget, InteractionLayer interactionLayer, string startingTextMessage = "")
 		{
 			interactionLayer.Scene = Scene;
+
+			var activePrintItem = ApplicationController.Instance.ActivePrintItem;
+
+			if (activePrintItem != null 
+				&& File.Exists(activePrintItem.FileLocation))
+			{
+				Scene.Load(activePrintItem.FileLocation);
+			}
 
 			this.interactionLayer = interactionLayer;
 			this.World = interactionLayer.World;

@@ -150,12 +150,12 @@ namespace MatterHackers.MatterControl
 					string cachePath = ApplicationController.Instance.CachePath(item);
 					ImageIO.SaveImageData(cachePath, thumbnail);
 
-					imageCallback(thumbnail.MultiplyWithPrimaryAccent());
+					imageCallback(thumbnail);
 				}
 				else
 				{
 					// If thumbnail generation was aborted or failed, return the default icon for this content type
-					imageCallback(DefaultImage.MultiplyWithPrimaryAccent());
+					imageCallback(DefaultImage);
 				}
 			}
 		}

@@ -35,5 +35,6 @@ namespace MatterHackers.MatterControl.Library
 	public interface ILibraryContainerLink : ILibraryItem
 	{
 		Task<ILibraryContainer> GetContainer(Action<double, string> reportProgress);
+		bool IsReadOnly { get; }
 	}
 }

@@ -31,7 +31,6 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ActionBar;
-using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
@@ -93,9 +92,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					UiThread.RunOnIdle(() =>
 					{
-						//WizardPage.WizardWindow.ChangeToSetupPrinterForm(true);
 						WizardWindow.ShowPrinterSetup(true);
-
 					});
 				}
 			};

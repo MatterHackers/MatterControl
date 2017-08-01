@@ -27,10 +27,14 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System.IO;
+using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrintLibrary;
+using MatterHackers.MatterControl.PrintQueue;
 
 namespace MatterHackers.MatterControl
 {
@@ -50,8 +54,22 @@ namespace MatterHackers.MatterControl
 			// HACK: Long term we need a better solution which does not rely on ActivePrintItem/PrintItemWrapper
 			if (ApplicationController.Instance.ActivePrintItem == null)
 			{
-				ApplicationController.Instance.ClearPlate();
+				// Find the last used bed plate mcx
+				var directoryInfo = new DirectoryInfo(ApplicationDataStorage.Instance.PlatingDirectory);
+				var firstFile = directoryInfo.GetFileSystemInfos("*.mcx").OrderByDescending(fl => fl.CreationTime).FirstOrDefault();
+
+				// Set as the current item - should be restored as the Active scene in the MeshViewer
+				if (firstFile != null)
+				{
+					ApplicationController.Instance.ActivePrintItem = new PrintItemWrapper(new PrintItem(firstFile.Name, firstFile.FullName));
+				}
 			}
+
+            // Clear if not assigned above
+            if (ApplicationController.Instance.ActivePrintItem == null)
+            {
+                ApplicationController.Instance.ClearPlate();
+            }
 
 			var library3DViewSplitter = new Splitter()
 			{

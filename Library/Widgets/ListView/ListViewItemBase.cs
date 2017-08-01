@@ -121,14 +121,14 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					&& contentProvider is MeshContentProvider)
 				{
 					// Before we have a thumbnail set to the content specific thumbnail
-					thumbnail = contentProvider.DefaultImage.AlphaToPrimaryAccent();
+					thumbnail = contentProvider.DefaultImage;
 
 					ApplicationController.Instance.QueueForGeneration(async () =>
 					{
 						// When this widget is dequeued for generation, validate before processing. Off-screen widgets should be skipped and will requeue next time they become visible
 						if (ListViewItemBase.WidgetOnScreen(this, this.LocalBounds))
 						{
-							SetItemThumbnail(generatingThumbnailIcon.AlphaToPrimaryAccent());
+							SetItemThumbnail(generatingThumbnailIcon);
 
 							// Then try to load a content specific thumbnail
 							await contentProvider.GetThumbnail(

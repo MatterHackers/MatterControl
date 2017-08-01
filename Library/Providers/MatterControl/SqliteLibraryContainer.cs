@@ -340,6 +340,8 @@ namespace MatterHackers.MatterControl.Library
 
 			public bool IsProtected { get; set; } = false;
 
+			public bool IsReadOnly { get; set; } = false;
+			
 			public bool IsVisible { get; set; } = true;
 
 			public Task<ILibraryContainer> GetContainer(Action<double, string> reportProgress)

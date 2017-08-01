@@ -32,7 +32,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.PlatformAbstract;
@@ -104,6 +103,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public bool ShowItems { get; set; } = true;
 
+		public Predicate<ILibraryContainerLink> ContainerFilter { get; set; } = (o) => true;
+
+		public Predicate<ILibraryItem> ItemFilter { get; set; } = (o) => true;
+
 		public ILibraryContainer ActiveContainer => this.LibraryContext.ActiveContainer;
 
 		public RGBA_Bytes ThumbnailBackground { get; } = ActiveTheme.Instance.TertiaryBackgroundColor.AdjustLightness(1.05).GetAsRGBA_Bytes();
@@ -170,7 +173,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			// Folder items
 			if (this.ShowContainers)
 			{
-				foreach (var childContainer in sourceContainer.ChildContainers.Where(c => c.IsVisible))
+				foreach (var childContainer in sourceContainer.ChildContainers.Where(c => c.IsVisible && this.ContainerFilter(c)))
 				{
 					var listViewItem = new ListViewItem(childContainer, this);
 					listViewItem.DoubleClick += listViewItem_DoubleClick;
@@ -184,7 +187,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			// List items
 			if (this.ShowItems)
 			{
-				foreach (var item in sourceContainer.Items.Where(i => i.IsVisible))
+				foreach (var item in sourceContainer.Items.Where(i => i.IsVisible && this.ItemFilter(i)))
 				{
 					var listViewItem = new ListViewItem(item, this);
 					listViewItem.DoubleClick += listViewItem_DoubleClick;
@@ -245,7 +248,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				ImageIO.LoadImageData(cachePath, thumbnail);
 				thumbnail.SetRecieveBlender(new BlenderPreMultBGRA());
 				
-				return thumbnail.MultiplyWithPrimaryAccent();
+				return thumbnail;
 			}
 
 			return null;
