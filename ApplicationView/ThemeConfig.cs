@@ -66,8 +66,8 @@ namespace MatterHackers.MatterControl
 
 		private readonly int borderWidth = 1;
 
-		public TextImageButtonFactory BreadCrumbButtonFactory { get; internal set; }
-		public TextImageButtonFactory BreadCrumbButtonFactorySmallMargins { get; internal set; }
+		public TextImageButtonFactory ButtonFactory { get; internal set; }
+		public TextImageButtonFactory SmallMarginButtonFactory { get; internal set; }
 		public TextImageButtonFactory MenuButtonFactory { get; internal set; }
 		public TextImageButtonFactory GrayButtonFactory { get; internal set; }
 
@@ -114,7 +114,7 @@ namespace MatterHackers.MatterControl
 
 			DefaultThumbView.ThumbColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 30);
 
-			this.BreadCrumbButtonFactory = new TextImageButtonFactory()
+			this.ButtonFactory = new TextImageButtonFactory()
 			{
 				normalTextColor = theme.PrimaryTextColor,
 				hoverTextColor = theme.PrimaryTextColor,
@@ -125,7 +125,7 @@ namespace MatterHackers.MatterControl
 				FixedHeight = 32,
 			};
 
-			this.BreadCrumbButtonFactorySmallMargins = new TextImageButtonFactory()
+			this.SmallMarginButtonFactory = new TextImageButtonFactory()
 			{
 				normalTextColor = theme.PrimaryTextColor,
 				hoverTextColor = theme.PrimaryTextColor,

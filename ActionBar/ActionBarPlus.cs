@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl
 			}
 			else
 			{
-				this.AddChild(new PrinterConnectButton(ApplicationController.Instance.Theme.BreadCrumbButtonFactory));
+				this.AddChild(new PrinterConnectButton(ApplicationController.Instance.Theme.ButtonFactory));
 				this.AddChild(new PrintStatusRow());
 			}
 

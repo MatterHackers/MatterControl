@@ -61,7 +61,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			var icon = StaticData.Instance.LoadIcon("icon_search_24x24.png", 16, 16);
 
-			var buttonFactory = ApplicationController.Instance.Theme.BreadCrumbButtonFactory;
+			var buttonFactory = ApplicationController.Instance.Theme.ButtonFactory;
 			var initialMargin = buttonFactory.Margin;
 			buttonFactory.Margin = new BorderDouble(8, 0);
 

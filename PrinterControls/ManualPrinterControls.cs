@@ -112,7 +112,7 @@ namespace MatterHackers.MatterControl
 
 			if (!ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_hardware_leveling))
 			{
-				controlsTopToBottomLayout.AddChild(new CalibrationSettingsWidget(ApplicationController.Instance.Theme.BreadCrumbButtonFactory));
+				controlsTopToBottomLayout.AddChild(new CalibrationSettingsWidget(ApplicationController.Instance.Theme.ButtonFactory));
 			}
 
 			AddMacroControls(controlsTopToBottomLayout);
