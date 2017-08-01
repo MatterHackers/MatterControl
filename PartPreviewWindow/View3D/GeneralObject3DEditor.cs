@@ -84,7 +84,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		}
 	}
 
-	public class BaseObject3DEditor : IObject3DEditor
+	public class GeneralObject3DEditor : IObject3DEditor
 	{
 		private IObject3D item;
 		private View3DWidget view3DWidget;

@@ -214,7 +214,7 @@
     <Compile Include="PartPreviewWindow\OverflowDropdown.cs" />
     <Compile Include="PartPreviewWindow\PlusTabPage.cs" />
     <Compile Include="PartPreviewWindow\PrinterTabPage.cs" />
-    <Compile Include="PartPreviewWindow\View3D\BaseObject3DEditor.cs" />
+    <Compile Include="PartPreviewWindow\View3D\GeneralObject3DEditor.cs" />
     <Compile Include="PartPreviewWindow\View3D\DragDropLoadProgress.cs" />
     <Compile Include="PartPreviewWindow\View3D\GridOptionsPanel.cs" />
     <Compile Include="PartPreviewWindow\View3D\InteractionLayer.cs" />
