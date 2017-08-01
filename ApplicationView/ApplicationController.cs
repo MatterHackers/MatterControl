@@ -453,7 +453,10 @@ namespace MatterHackers.MatterControl
 				new DynamicContainerLink(
 					"Calibration Parts".Localize(),
 					LibraryProviderHelpers.LoadInvertIcon("FileDialog", "folder.png"),
-					() => new CalibrationPartsContainer()));
+					() => new CalibrationPartsContainer())
+				{
+					IsReadOnly = true
+				});
 
 			this.Library.RegisterRootProvider(
 				new DynamicContainerLink(
@@ -477,7 +480,10 @@ namespace MatterHackers.MatterControl
 				new DynamicContainerLink(
 					"Print History".Localize(),
 					LibraryProviderHelpers.LoadInvertIcon("FileDialog", "folder.png"),
-					() => new HistoryContainer()));
+					() => new HistoryContainer())
+				{
+					IsReadOnly = true
+				});
 
 			if (File.Exists(ApplicationDataStorage.Instance.CustomLibraryFoldersPath))
 			{
@@ -507,7 +513,10 @@ namespace MatterHackers.MatterControl
 							return ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_sd_card_reader)
 								&& printer.PrinterIsConnected
 								&& !(printer.PrinterIsPrinting || printer.PrinterIsPaused);
-						}));
+						})
+				{
+					IsReadOnly = true
+				});
 
 		}
 
