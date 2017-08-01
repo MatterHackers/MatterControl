@@ -35,12 +35,12 @@ using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class CollorSwatchSelector : FlowLayoutWidget
+	public class ColorSwatchSelector : FlowLayoutWidget
 	{
 		private TextImageButtonFactory menuButtonFactory;
 		int colorSize = 32;
 
-		public CollorSwatchSelector(IObject3D item, View3DWidget view3DWidget, TextImageButtonFactory menuButtonFactory)
+		public ColorSwatchSelector(IObject3D item, View3DWidget view3DWidget, TextImageButtonFactory menuButtonFactory)
 			: base(FlowDirection.TopToBottom)
 		{
 			this.menuButtonFactory = menuButtonFactory;
@@ -112,7 +112,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				Name = "Solid Colors",
 				AlignToRightEdge = true,
-				PopupContent = new CollorSwatchSelector(item, view3DWidget, ApplicationController.Instance.Theme.MenuButtonFactory)
+				PopupContent = new ColorSwatchSelector(item, view3DWidget, ApplicationController.Instance.Theme.MenuButtonFactory)
 				{
 					HAnchor = HAnchor.FitToChildren,
 					VAnchor = VAnchor.FitToChildren,
