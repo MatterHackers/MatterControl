@@ -2366,9 +2366,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						UserSettings.Instance.set("defaultRenderSetting", meshViewerWidget.RenderType.ToString());
 						foreach (var meshAndTransform in scene.VisibleMeshes(Matrix4X4.Identity))
 						{
-							meshAndTransform.MeshData.MarkAsChanged();
+							meshAndTransform.Mesh.MarkAsChanged();
 							// change the color to be the right thing
-							GLMeshTrianglePlugin glMeshPlugin = GLMeshTrianglePlugin.Get(meshAndTransform.MeshData, (faceEdge) =>
+							GLMeshTrianglePlugin glMeshPlugin = GLMeshTrianglePlugin.Get(meshAndTransform.Mesh, (faceEdge) =>
 							{
 								Vector3 normal = faceEdge.ContainingFace.normal;
 								normal = Vector3.TransformVector(normal, meshAndTransform.Matrix).GetNormal();

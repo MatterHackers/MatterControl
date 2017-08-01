@@ -242,7 +242,7 @@ namespace MatterHackers.MeshVisualizer
 					renderType = value;
 					foreach(var renderTransfrom in Scene.VisibleMeshes(Matrix4X4.Identity))
 					{
-						renderTransfrom.MeshData.MarkAsChanged();
+						renderTransfrom.Mesh.MarkAsChanged();
 					}
 				}
 			}
@@ -607,12 +607,12 @@ namespace MatterHackers.MeshVisualizer
 		RGBA_Bytes lastDrawColor;
 		private void DrawObject(IObject3D object3D, Matrix4X4 transform, bool parentSelected)
 		{
-			foreach(MeshAndTransform meshAndTransform in object3D.VisibleMeshes(transform))
+			foreach(MeshRenderData renderData in object3D.VisibleMeshes(transform))
 			{
 				bool isSelected = parentSelected ||
 					Scene.HasSelection && (object3D == Scene.SelectedItem || Scene.SelectedItem.Children.Contains(object3D));
 
-				RGBA_Bytes drawColor = meshAndTransform.Color;
+				RGBA_Bytes drawColor = renderData.Color;
 				if(object3D.OutputType == PrintOutputTypes.Support)
 				{
 					drawColor = new RGBA_Bytes(RGBA_Bytes.Yellow, 120);
@@ -631,7 +631,7 @@ namespace MatterHackers.MeshVisualizer
 					lastDrawColor = drawColor;
 				}
 				
-				GLHelper.Render(meshAndTransform.MeshData, drawColor, meshAndTransform.Matrix, RenderType);
+				GLHelper.Render(renderData.Mesh, drawColor, renderData.Matrix, RenderType);
 			}
 		}
 
