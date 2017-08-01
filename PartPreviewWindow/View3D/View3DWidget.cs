@@ -360,7 +360,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						var materialsButton = new PopupButton(smallMarginButtonFactory.Generate("Materials".Localize()))
 						{
 							PopDirection = Direction.Up,
-							PopupContent = this.AddMaterialControls()
+							PopupContent = this.AddMaterialControls(),
+							AlignToRightEdge = true
 						};
 						doEdittingButtonsContainer.AddChild(materialsButton);
 					}

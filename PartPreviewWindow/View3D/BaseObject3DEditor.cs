@@ -108,7 +108,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			mainContainer.AddChild(behavior3DTypeButtons);
 
 			// put in the button for making the behavior solid
-			var solidBehaviorButton = new PopupButton(theme.textImageButtonFactory.Generate("Solid".Localize()))
+			Button createdButton;
+			var solidBehaviorButton = new PopupButton(createdButton = theme.textImageButtonFactory.Generate("Solid".Localize()))
 			{
 				Name = "Solid Colors",
 				AlignToRightEdge = true,
@@ -119,7 +120,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					BackgroundColor = RGBA_Bytes.White
 				}
 			};
-			solidBehaviorButton.Click += (s, e) =>
+			createdButton.Click += (s, e) =>
 			{
 				item.OutputType = PrintOutputTypes.Solid;
 			};
