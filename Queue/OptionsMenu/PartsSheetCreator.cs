@@ -136,22 +136,14 @@ namespace MatterHackers.MatterControl
 
 					await contentResult.MeshLoaded;
 
-					List<MeshGroup> loadedMeshGroups = contentResult.Object3D?.ToMeshGroupList();
+					var loadedMeshGroups = contentResult.Object3D.VisibleMeshes(Matrix4X4.Identity).ToList();
 					if (loadedMeshGroups?.Count > 0)
 					{
-						bool firstMeshGroup = true;
-						AxisAlignedBoundingBox aabb = null;
-						foreach (MeshGroup meshGroup in loadedMeshGroups)
+						AxisAlignedBoundingBox aabb = loadedMeshGroups[0].Mesh.GetAxisAlignedBoundingBox(loadedMeshGroups[0].Matrix);
+
+						for (int i = 1; i < loadedMeshGroups.Count; i++)
 						{
-							if (firstMeshGroup)
-							{
-								aabb = meshGroup.GetAxisAlignedBoundingBox();
-								firstMeshGroup = false;
-							}
-							else
-							{
-								aabb = AxisAlignedBoundingBox.Union(aabb, meshGroup.GetAxisAlignedBoundingBox());
-							}
+							aabb = AxisAlignedBoundingBox.Union(aabb, loadedMeshGroups[i].Mesh.GetAxisAlignedBoundingBox(loadedMeshGroups[i].Matrix));
 						}
 
 						RectangleDouble bounds2D = new RectangleDouble(aabb.minXYZ.x, aabb.minXYZ.y, aabb.maxXYZ.x, aabb.maxXYZ.y);
@@ -176,12 +168,9 @@ namespace MatterHackers.MatterControl
 						Stroke rectOutline = new Stroke(rect, strokeWidth);
 						partGraphics2D.Render(rectOutline, RGBA_Bytes.DarkGray);
 
-						foreach (MeshGroup meshGroup in loadedMeshGroups)
+						foreach (var meshGroup in loadedMeshGroups)
 						{
-							foreach (Mesh loadedMesh in meshGroup.Meshes)
-							{
-								PolygonMesh.Rendering.OrthographicZProjection.DrawTo(partGraphics2D, loadedMesh, new Vector2(-bounds2D.Left + PartMarginMM, -bounds2D.Bottom + textSpaceMM + PartMarginMM), PixelPerMM, RGBA_Bytes.Black);
-							}
+							PolygonMesh.Rendering.OrthographicZProjection.DrawTo(partGraphics2D, meshGroup.Mesh, meshGroup.Matrix, new Vector2(-bounds2D.Left + PartMarginMM, -bounds2D.Bottom + textSpaceMM + PartMarginMM), PixelPerMM, RGBA_Bytes.Black);
 						}
 						partGraphics2D.Render(typeFacePrinter, RGBA_Bytes.Black);
 

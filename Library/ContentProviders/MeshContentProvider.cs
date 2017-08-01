@@ -136,20 +136,6 @@ namespace MatterHackers.MatterControl
 
 			if (object3D != null)
 			{
-				if (object3D.Mesh == null && object3D.HasChildren)
-				{
-					object3D = new Object3D()
-					{
-						ItemType = Object3DTypes.Model,
-						Mesh = MeshFileIo.DoMerge(object3D.ToMeshGroupList(), new MeshOutputSettings())
-					};
-				}
-
-				if (object3D.Mesh == null)
-				{
-					return;
-				}
-
 				bool RenderOrthographic = UserSettings.Instance.get(UserSettingsKey.ThumbnailRenderingMode) == "orthographic";
 
 				var thumbnail = ThumbnailEngine.Generate(
