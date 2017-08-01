@@ -35,55 +35,6 @@ using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class ColorSwatchSelector : FlowLayoutWidget
-	{
-		private TextImageButtonFactory menuButtonFactory;
-		int colorSize = 32;
-
-		public ColorSwatchSelector(IObject3D item, View3DWidget view3DWidget, TextImageButtonFactory menuButtonFactory)
-			: base(FlowDirection.TopToBottom)
-		{
-			this.menuButtonFactory = menuButtonFactory;
-
-			var colorCount = 9;
-			double[] lightness = new double[] { .7, .5, .3 };
-			RGBA_Bytes[] grayLevel = new RGBA_Bytes[] { RGBA_Bytes.White, new RGBA_Bytes(180, 180, 180), RGBA_Bytes.Gray };
-			for (int rowIndex = 0; rowIndex < lightness.Length; rowIndex++)
-			{
-				var colorRow = new FlowLayoutWidget();
-				AddChild(colorRow);
-
-				for (int colorIndex = 0; colorIndex < colorCount; colorIndex++)
-				{
-					var color = RGBA_Floats.FromHSL(colorIndex / (double)colorCount, 1, lightness[rowIndex]).GetAsRGBA_Bytes();
-					colorRow.AddChild(MakeColorButton(item, view3DWidget, color));
-				}
-
-				// put in white and black buttons
-				colorRow.AddChild(MakeColorButton(item, view3DWidget, grayLevel[rowIndex]));
-			}
-		}
-
-		private Button MakeColorButton(IObject3D item, View3DWidget view3DWidget, RGBA_Bytes color)
-		{
-			GuiWidget colorWidget;
-			var button = new Button(colorWidget = new GuiWidget()
-			{
-				BackgroundColor = color,
-				Width = colorSize,
-				Height = colorSize,
-			});
-
-			button.Click += (s, e) =>
-			{
-				item.Color = colorWidget.BackgroundColor;
-				item.OutputType = PrintOutputTypes.Solid;
-				view3DWidget.Invalidate();
-			};
-			return button;
-		}
-	}
-
 	public class GeneralObject3DEditor : IObject3DEditor
 	{
 		private IObject3D item;
