@@ -1668,6 +1668,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
+			// Add any editor mapped to Object3D to the list
+			if (objectEditorsByType.TryGetValue(typeof(Object3D), out HashSet<IObject3DEditor> globalEditors))
+			{
+				foreach(var editor in globalEditors)
+				{
+					mappedEditors.Add(editor);
+				}
+			}
+
 			editorPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				VAnchor = VAnchor.FitToChildren,
