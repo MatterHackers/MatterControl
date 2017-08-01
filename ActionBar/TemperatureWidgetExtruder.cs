@@ -51,6 +51,8 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		private TextImageButtonFactory buttonFactory;
 
+		private TextWidget settingsTemperature;
+
 		public TemperatureWidgetExtruder(TextImageButtonFactory buttonFactory)
 			: base("150.3°")
 		{
@@ -153,6 +155,16 @@ namespace MatterHackers.MatterControl.ActionBar
 			}
 
 			container.AddChild(new SettingsItem("Material".Localize(), presetsSelector, enforceGutter: false));
+
+			settingsTemperature = new TextWidget(ActiveSliceSettings.Instance.GetValue(SettingsKey.temperature))
+			{
+				AutoExpandBoundsToText = true
+			};
+
+			container.AddChild(new SettingsItem(
+				"Temperature".Localize(),
+				settingsTemperature,
+				enforceGutter: false));
 
 			widget.AddChild(container);
 
@@ -273,7 +285,23 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			// Extrude buttons }}
 
+			ActiveSliceSettings.MaterialPresetChanged += ActiveSliceSettings_MaterialPresetChanged;
+
 			return widget;
+		}
+
+		private void ActiveSliceSettings_MaterialPresetChanged(object sender, EventArgs e)
+		{
+			if (settingsTemperature != null && ActiveSliceSettings.Instance != null)
+			{
+				settingsTemperature.Text = ActiveSliceSettings.Instance.GetValue(SettingsKey.temperature);
+			}
+		}
+
+		public override void OnClosed(ClosedEventArgs e)
+		{
+			ActiveSliceSettings.MaterialPresetChanged -= ActiveSliceSettings_MaterialPresetChanged;
+			base.OnClosed(e);
 		}
 	}
 }
