@@ -26,12 +26,9 @@ The views and conclusions contained in the software and documentation are those
 of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
-using System;
-using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
-using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -81,75 +78,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				view3DWidget.Invalidate();
 			};
 			return button;
-		}
-	}
-
-	public class BaseObject3DEditor : IObject3DEditor
-	{
-		private IObject3D item;
-		private View3DWidget view3DWidget;
-
-		public string Name => "General";
-
-		public bool Unlocked => true;
-
-		public IEnumerable<Type> SupportedTypes()
-		{
-			return new Type[] { typeof(Object3D) };
-		}
-
-		public GuiWidget Create(IObject3D item, View3DWidget view3DWidget, ThemeConfig theme)
-		{
-			this.view3DWidget = view3DWidget;
-			this.item = item;
-			FlowLayoutWidget mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-
-			FlowLayoutWidget behavior3DTypeButtons = new FlowLayoutWidget();
-			mainContainer.AddChild(behavior3DTypeButtons);
-
-			// put in the button for making the behavior solid
-			Button createdButton;
-			var solidBehaviorButton = new PopupButton(createdButton = theme.textImageButtonFactory.Generate("Solid".Localize()))
-			{
-				Name = "Solid Colors",
-				AlignToRightEdge = true,
-				PopupContent = new ColorSwatchSelector(item, view3DWidget, ApplicationController.Instance.Theme.MenuButtonFactory)
-				{
-					HAnchor = HAnchor.FitToChildren,
-					VAnchor = VAnchor.FitToChildren,
-					BackgroundColor = RGBA_Bytes.White
-				}
-			};
-			createdButton.Click += (s, e) =>
-			{
-				item.OutputType = PrintOutputTypes.Solid;
-			};
-
-			behavior3DTypeButtons.AddChild(solidBehaviorButton);
-
-			// put in the button for making the behavior a hole
-			Button holeBehaviorButton = theme.textImageButtonFactory.Generate("Hole".Localize());
-			holeBehaviorButton.Margin = new BorderDouble(5);
-			holeBehaviorButton.Click += (s, e) =>
-			{
-				item.OutputType = PrintOutputTypes.Hole;
-				view3DWidget.Invalidate();
-			};
-
-			behavior3DTypeButtons.AddChild(holeBehaviorButton);
-
-			// put in the button for making the behavior support
-			Button supportBehaviorButton = theme.textImageButtonFactory.Generate("Support".Localize());
-			supportBehaviorButton.Margin = new BorderDouble(5);
-			supportBehaviorButton.Click += (s, e) =>
-			{
-				item.OutputType = PrintOutputTypes.Support;
-				view3DWidget.Invalidate();
-			};
-
-			behavior3DTypeButtons.AddChild(supportBehaviorButton);
-
-			return mainContainer;
 		}
 	}
 }

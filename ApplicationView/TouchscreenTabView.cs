@@ -170,7 +170,7 @@ namespace MatterHackers.MatterControl
 			this.AddTab(
 				"Options Tab",
 				"Options".Localize().ToUpper(),
-				() => new ApplicationSettingsWidget(ApplicationController.Instance.Theme.BreadCrumbButtonFactorySmallMargins));
+				() => new ApplicationSettingsWidget(ApplicationController.Instance.Theme.SmallMarginButtonFactory));
 
 			this.AddTab(
 				"About Tab",

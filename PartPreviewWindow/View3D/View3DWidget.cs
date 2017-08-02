@@ -180,7 +180,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Max_FitToChildren_ParentHeight
 			};
 
-			var smallMarginButtonFactory = ApplicationController.Instance.Theme.BreadCrumbButtonFactorySmallMargins;
+			var smallMarginButtonFactory = ApplicationController.Instance.Theme.SmallMarginButtonFactory;
 
 			PutOemImageOnBed();
 
@@ -344,7 +344,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					AddSaveAndSaveAs(doEdittingButtonsContainer);
 
 					// Normal margin factory
-					var normalMarginButtonFactory = ApplicationController.Instance.Theme.BreadCrumbButtonFactory;
+					var normalMarginButtonFactory = ApplicationController.Instance.Theme.ButtonFactory;
 
 					var mirrorButton = new PopupButton(smallMarginButtonFactory.Generate("Mirror".Localize()))
 					{
@@ -1554,7 +1554,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var splitButtonFactory = new SplitButtonFactory()
 			{
-				FixedHeight = ApplicationController.Instance.Theme.BreadCrumbButtonFactorySmallMargins.FixedHeight
+				FixedHeight = ApplicationController.Instance.Theme.SmallMarginButtonFactory.FixedHeight
 			};
 
 			saveButtons = splitButtonFactory.Generate(buttonList, Direction.Up, imageName: "icon_save_32x32.png");

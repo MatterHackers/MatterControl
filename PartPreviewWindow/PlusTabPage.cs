@@ -72,11 +72,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			createItems.AddChild(container);
 
-			var createPart = ApplicationController.Instance.Theme.BreadCrumbButtonFactory.Generate("Create Part".Localize());
+			var createPart = ApplicationController.Instance.Theme.ButtonFactory.Generate("Create Part".Localize());
 			createPart.HAnchor = HAnchor.ParentLeft;
 			container.AddChild(createPart);
 
-			var createPrinter = ApplicationController.Instance.Theme.BreadCrumbButtonFactory.Generate("Create Printer".Localize());
+			var createPrinter = ApplicationController.Instance.Theme.ButtonFactory.Generate("Create Printer".Localize());
 			createPrinter.HAnchor = HAnchor.ParentLeft;
 			container.AddChild(createPrinter);
 			createPrinter.Click += (s, e) =>
@@ -97,7 +97,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			};
 
-			var importButton = ApplicationController.Instance.Theme.BreadCrumbButtonFactory.Generate("Import".Localize());
+			var importButton = ApplicationController.Instance.Theme.ButtonFactory.Generate("Import".Localize());
 			importButton.Click += (s, e) =>
 			{
 				UiThread.RunOnIdle(() => WizardWindow.Show<ImportSettingsPage>("ImportSettingsPage", "Import Settings Page"));

@@ -94,7 +94,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 			createUnderline.CheckedStateChanged += CreateUnderline_CheckedStateChanged;
 			tabContainer.AddChild(createUnderline);
 
-			Button updateButton = theme.textImageButtonFactory.Generate("Update".Localize());
+			Button updateButton = theme.ButtonFactory.Generate("Update".Localize());
 			updateButton.Margin = new BorderDouble(5);
 			updateButton.HAnchor = HAnchor.ParentRight;
 			updateButton.Click += (s, e) => RebuildText(textToAddWidget.Text);

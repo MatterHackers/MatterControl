@@ -90,7 +90,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.HAnchor = HAnchor.ParentLeftRight;
 			this.VAnchor = VAnchor.FitToChildren;
 
-			var buttonFactory = ApplicationController.Instance.Theme.BreadCrumbButtonFactory;
+			var buttonFactory = ApplicationController.Instance.Theme.ButtonFactory;
 
 			this.AddChild(new PrinterConnectButton(buttonFactory));
 

@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public void SetBreadCrumbs(ILibraryContainer currentContainer)
 		{
-			var buttonFactory = ApplicationController.Instance.Theme.BreadCrumbButtonFactory;
+			var buttonFactory = ApplicationController.Instance.Theme.ButtonFactory;
 
 			var linkButtonFactory = ApplicationController.Instance.Theme.LinkButtonFactory;
 

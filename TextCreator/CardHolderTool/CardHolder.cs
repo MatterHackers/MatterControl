@@ -135,7 +135,7 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 				}
 			}
 
-			var updateButton = theme.textImageButtonFactory.Generate("Update".Localize());
+			var updateButton = theme.ButtonFactory.Generate("Update".Localize());
 			updateButton.Margin = new BorderDouble(5);
 			updateButton.HAnchor = HAnchor.ParentRight;
 			updateButton.Click += (s, e) =>

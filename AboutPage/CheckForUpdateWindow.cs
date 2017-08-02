@@ -119,11 +119,14 @@ namespace MatterHackers.MatterControl.AboutPage
 			alphaInfoLabel.Margin = new BorderDouble(bottom: 10);
 			additionalInfoContainer.AddChild(alphaInfoLabel);
 
-			FlowLayoutWidget buttonContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
-			buttonContainer.HAnchor = HAnchor.ParentLeftRight;
-			buttonContainer.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+			var buttonContainer = new FlowLayoutWidget(FlowDirection.LeftToRight)
+			{
+				HAnchor = HAnchor.ParentLeftRight,
+				BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor,
+				Padding = new BorderDouble(0, 6)
+			};
 
-			Button closeButton = theme.textImageButtonFactory.Generate("Close".Localize(), centerText: true);
+			Button closeButton = theme.ButtonFactory.Generate("Close".Localize(), centerText: true);
 			closeButton.Click += (sender, e) =>
 			{
 				CloseOnIdle();
