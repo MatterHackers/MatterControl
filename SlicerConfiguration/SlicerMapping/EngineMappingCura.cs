@@ -87,7 +87,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				// needs testing, not working
 				new ScaledSingleNumber("support_material_spacing", "supportLineDistance", 1000),
-				new SupportMatterial("support_material", "supportAngle"),
+				new SupportMaterial("support_material", "supportAngle"),
 				new VisibleButNotMappedToEngine("support_material_threshold"),
 				new MappedSetting("support_material_create_internal_support", "supportEverywhere"),
 				new ScaledSingleNumber("support_material_xy_distance", "supportXYDistance", 1000),
@@ -172,9 +172,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public class SupportMatterial : MappedSetting
+		public class SupportMaterial : MappedSetting
 		{
-			public SupportMatterial(string canonicalSettingsName, string exportedName)
+			public SupportMaterial(string canonicalSettingsName, string exportedName)
 				: base(canonicalSettingsName, exportedName)
 			{
 			}
