@@ -497,6 +497,29 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 	}
 
+	public class RetractionLength : MappedSetting
+	{
+		public RetractionLength(string canonicalSettingsName, string exportedName)
+			: base(canonicalSettingsName, exportedName)
+		{
+		}
+
+		public override string Value
+		{
+			get
+			{
+				if(ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.enable_retractions))
+				{
+					return base.Value;
+				}
+				else
+				{
+					return 0.ToString();
+				}
+			}
+		}
+	}
+
 	public class AsPercentOfReferenceOrDirect : MappedSetting
 	{
 		string originalReference;

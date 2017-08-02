@@ -421,7 +421,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 						foreach (SliceSettingData settingData in subGroup.SettingDataList)
 						{
-							// Note: tab sections may disappear if they when they are empty, as controlled by:
+							// Note: tab sections may disappear if / when they are empty, as controlled by:
 							// settingShouldBeShown / addedSettingToSubGroup / needToAddSubGroup
 							bool settingShouldBeShown = CheckIfShouldBeShown(settingData);
 
@@ -536,6 +536,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			return settingShouldBeShown;
+		}
+
+		private bool CheckIfEnabled(SliceSettingData settingData)
+		{
+			bool shouldBeEnabled = ActiveSliceSettings.Instance.ParseShowString(settingData.EnableIfSet, layerCascade);
+			return shouldBeEnabled;
 		}
 
 		private GuiWidget AddInHelpText(FlowLayoutWidget topToBottomSettings, SliceSettingData settingData)
@@ -1616,6 +1622,29 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			// Invoke the UpdateStyle implementation
 			settingsRow.UpdateStyle();
+
+			bool settingShouldEnabled = ActiveSliceSettings.Instance.ParseShowString(settingData.EnableIfSet, layerCascade);
+			if (!settingShouldEnabled)
+			{
+				var holder = new GuiWidget()
+				{
+					VAnchor = VAnchor.FitToChildren,
+					HAnchor = HAnchor.ParentLeftRight
+				};
+
+				holder.AddChild(settingsRow);
+
+				var disable = new GuiWidget()
+				{
+					VAnchor = VAnchor.ParentBottomTop,
+					HAnchor = HAnchor.ParentLeftRight,
+				};
+				disable.BackgroundColor = new RGBA_Bytes(ActiveTheme.Instance.TertiaryBackgroundColor, 200);
+
+				holder.AddChild(disable);
+
+				return holder;
+			}
 
 			return settingsRow;
 		}

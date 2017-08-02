@@ -120,6 +120,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string write_regex = nameof(write_regex);
 		public const string read_regex = nameof(read_regex);
 		public const string temperature = nameof(temperature);
+		public const string enable_retractions = nameof(enable_retractions);
 		public const string use_z_probe = nameof(use_z_probe);
 		public const string z_probe_samples = nameof(z_probe_samples);
 		public const string has_z_probe = nameof(has_z_probe);

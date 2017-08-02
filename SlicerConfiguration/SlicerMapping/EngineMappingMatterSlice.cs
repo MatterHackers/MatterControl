@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				new GCodeForSlicer(SettingsKey.end_gcode, "endCode"),
 				new GCodeForSlicer("toolchange_gcode", "toolChangeCode"),
 				new MapFirstValue("retract_before_travel", "minimumTravelToCauseRetraction"),
-				new MapFirstValue("retract_length", "retractionOnTravel"),
+				new RetractionLength("retract_length", "retractionOnTravel"),
 				new MapFirstValue("retract_lift", "retractionZHop"),
 				new MapFirstValue("retract_restart_extra", "unretractExtraExtrusion"),
 				new MapFirstValue("retract_restart_extra_time_to_apply", "retractRestartExtraTimeToApply"),

@@ -911,6 +911,7 @@
 		"HelpText": "The minimum length of filament that must be extruded before a retraction can occur.",
 		"DataEditType": "POSITIVE_DOUBLE",
 		"ExtraSettings": "mm",
+		"EnableIfSet": "enable_retractions",
 		"DefaultValue": ".1"
 	},
 	{
@@ -952,13 +953,6 @@
 		"DataEditType": "POSITIVE_DOUBLE",
 		"ExtraSettings": "mm",
 		"DefaultValue": "0.5"
-	},
-	{
-		"SlicerConfigName": "only_retract_when_crossing_perimeters",
-		"PresentationName": "Only Retract When Crossing Perimeters",
-		"HelpText": "Prevents retraction while within a printing perimeter.",
-		"DataEditType": "CHECK_BOX",
-		"DefaultValue": "1"
 	},
 	{
 		"SlicerConfigName": "ooze_prevention",
@@ -1105,22 +1099,25 @@
 		"HelpText": "The minimum distance of a non-print move which will trigger a retraction.",
 		"DataEditType": "POSITIVE_DOUBLE",
 		"ExtraSettings": "mm",
+		"EnableIfSet": "enable_retractions",
 		"DefaultValue": "20"
 	},
 	{
-		"SlicerConfigName": "retract_layer_change",
-		"PresentationName": "Retract on Layer Change",
-		"HelpText": "If set, a retraction will occur prior to changing the layer height.",
+		"SlicerConfigName": "enable_retractions",
+		"PresentationName": "Enable Retractions",
+		"HelpText": "Turn retractions on and off.",
 		"DataEditType": "CHECK_BOX",
-		"DefaultValue": "1"
+		"DefaultValue": "1",
+		"ReloadUiWhenChanged": true,
 	},
 	{
 		"SlicerConfigName": "retract_length",
-		"PresentationName": "Length on Move",
+		"PresentationName": "Retract Length",
 		"HelpText": "The distance filament will reverse before each qualifying non-print move",
 		"DataEditType": "POSITIVE_DOUBLE",
 		"ExtraSettings": "mm",
-		"DefaultValue": "1"
+		"DefaultValue": "1",
+		"EnableIfSet": "enable_retractions"
 	},
 	{
 		"SlicerConfigName": "retract_length_tool_change",
@@ -1135,6 +1132,7 @@
 		"PresentationName": "Retract When Changing Islands",
 		"HelpText": "Force a retraction when moving between islands (distinct parts on the layer).",
 		"DataEditType": "CHECK_BOX",
+		"EnableIfSet": "enable_retractions",
 		"DefaultValue": "1"
 	},
 	{
@@ -1143,6 +1141,7 @@
 		"HelpText": "The distance the nozzle will lift after each retraction.",
 		"DataEditType": "POSITIVE_DOUBLE",
 		"ExtraSettings": "mm",
+		"EnableIfSet": "enable_retractions",
 		"DefaultValue": "0"
 	},
 	{
@@ -1159,6 +1158,7 @@
 		"HelpText": "Length of filament to extrude after a complete retraction (in addition to the re-extrusion of the Length on Move distance).",
 		"DataEditType": "DOUBLE",
 		"ExtraSettings": "mm",
+		"EnableIfSet": "enable_retractions",
 		"DefaultValue": "0"
 	},
 	{
@@ -1167,6 +1167,7 @@
 		"HelpText": "The time over which to increase the Extra Length On Restart to its maximum value. Below this time only a portion of the extra length will be applied. Leave 0 to apply the entire amount all the time.",
 		"DataEditType": "DOUBLE",
 		"ExtraSettings": "s",
+		"EnableIfSet": "enable_retractions",
 		"DefaultValue": "0"
 	},
 	{
@@ -1175,6 +1176,7 @@
 		"HelpText": "The speed at which filament will retract and re-extrude.",
 		"DataEditType": "POSITIVE_DOUBLE",
 		"ExtraSettings": "mm/s",
+		"EnableIfSet": "enable_retractions",
 		"DefaultValue": "30"
 	},
 	{
@@ -1369,6 +1371,7 @@
 		"PresentationName": "Air Gap",
 		"HelpText": "The distance between the top of the support and the bottom of the model. A good value depends on the type of material. For ABS and PLA a value between 0.4 and 0.6 works well, respectively.",
 		"DataEditType": "POSITIVE_DOUBLE",
+		"EnableIfSet": "support_material",
 		"ExtraSettings": "mm",
 		"DefaultValue": ".3"
 	},
@@ -1399,6 +1402,7 @@
 		"PresentationName": "Support Percent",
 		"HelpText": "The percent of the extrusion width that can be overlapped and still generate.",
 		"DataEditType": "POSITIVE_DOUBLE",
+		"EnableIfSet": "support_material",
 		"ExtraSettings": "%",
 		"DefaultValue": "50"
 	},
@@ -1407,6 +1411,7 @@
 		"PresentationName": "Infill Angle",
 		"HelpText": "The angle at which the support material lines will be drawn.",
 		"DataEditType": "POSITIVE_DOUBLE",
+		"EnableIfSet": "support_material",
 		"ExtraSettings": "°",
 		"DefaultValue": "45"
 	},
@@ -1414,6 +1419,7 @@
 		"SlicerConfigName": "support_material_create_internal_support",
 		"PresentationName": "Support Everywhere",
 		"HelpText": "Generates support material starting on top of internal surfaces. If unchecked support will only generate starting on the bed.",
+		"EnableIfSet": "support_material",
 		"DataEditType": "CHECK_BOX",
 		"DefaultValue": "1"
 	},
@@ -1421,6 +1427,7 @@
 		"SlicerConfigName": "support_material_create_perimeter",
 		"PresentationName": "Create Perimeter",
 		"HelpText": "Generates an outline around the support material to improve strength and hold up interface layers.",
+		"EnableIfSet": "support_material",
 		"DataEditType": "CHECK_BOX",
 		"DefaultValue": "1"
 	},
@@ -1435,6 +1442,7 @@
 	{
 		"SlicerConfigName": "support_material_extruder",
 		"PresentationName": "Support Material Extruder",
+		"EnableIfSet": "support_material",
 		"HelpText": "The index of the extruder to use for printing support material. Applicable only when Extruder Count is set to a value more than 1.",
 		"DataEditType": "INT",
 		"DefaultValue": "1"
@@ -1458,6 +1466,7 @@
 		"SlicerConfigName": "support_material_interface_extruder",
 		"PresentationName": "Support Interface Extruder",
 		"HelpText": "The index of the extruder to use for support material interface layer(s).",
+		"EnableIfSet": "support_material",
 		"DataEditType": "INT",
 		"DefaultValue": "1"
 	},
@@ -1466,6 +1475,7 @@
 		"PresentationName": "Interface Layers",
 		"HelpText": "The number of layers or the distance to print solid material between the supports and the part. Add mm to the end of the number to specify distance.",
 		"DataEditType": "INT_OR_MM",
+		"EnableIfSet": "support_material",
 		"ExtraSettings": "layers or mm",
 		"DefaultValue": ".9mm"
 	},
@@ -1491,6 +1501,7 @@
 		"HelpText": "The distance between support material lines.",
 		"DataEditType": "POSITIVE_DOUBLE",
 		"ExtraSettings": "mm",
+		"EnableIfSet": "support_material",
 		"DefaultValue": "2.5"
 	},
 	{
@@ -1528,6 +1539,7 @@
 		"PresentationName": "X and Y Distance",
 		"HelpText": "The distance the support material will be from the object in the X and Y directions.",
 		"DataEditType": "POSITIVE_DOUBLE",
+		"EnableIfSet": "support_material",
 		"ExtraSettings": "mm",
 		"DefaultValue": "0.7"
 	},
@@ -1552,6 +1564,7 @@
 		"PresentationName": "Generate Support Material",
 		"HelpText": "Generates support material under areas of the part which may be too steep to support themselves.",
 		"DataEditType": "CHECK_BOX",
+		"ReloadUiWhenChanged": true,
 		"DefaultValue": "0"
 	},
 	{
@@ -1559,6 +1572,7 @@
 		"PresentationName": "Support Type",
 		"HelpText": "The pattern to draw for the generation of support material.",
 		"DataEditType": "LIST",
+		"EnableIfSet": "support_material",
 		"ExtraSettings": "GRID,LINES",
 		"DefaultValue": "LINES"
 	},
@@ -1724,6 +1738,7 @@
 		"PresentationName": "Wipe Before Retract",
 		"HelpText": "The extruder will wipe the nozzle over the last up to 10 mm of tool path after retracting.",
 		"DataEditType": "CHECK_BOX",
+		"EnableIfSet": "enable_retractions",
 		"DefaultValue": "0"
 	},
 	{
