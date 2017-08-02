@@ -354,17 +354,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					doEdittingButtonsContainer.AddChild(mirrorButton);
 
 					// put in the material options
-					int numberOfExtruders = ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.extruder_count);
-					if (numberOfExtruders > 1)
+					var materialsButton = new PopupButton(smallMarginButtonFactory.Generate("Materials".Localize()))
 					{
-						var materialsButton = new PopupButton(smallMarginButtonFactory.Generate("Materials".Localize()))
-						{
-							PopDirection = Direction.Up,
-							PopupContent = this.AddMaterialControls(),
-							AlignToRightEdge = true
-						};
-						doEdittingButtonsContainer.AddChild(materialsButton);
-					}
+						PopDirection = Direction.Up,
+						PopupContent = this.AddMaterialControls(),
+						AlignToRightEdge = true
+					};
+					doEdittingButtonsContainer.AddChild(materialsButton);
 				}
 
 				editToolBar.AddChild(doEdittingButtonsContainer);
@@ -1502,7 +1498,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			extruderButtons.Clear();
-			for (int extruderIndex = 0; extruderIndex < ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.extruder_count); extruderIndex++)
+			int extruderCount = 4;
+			for (int extruderIndex = 0; extruderIndex < extruderCount; extruderIndex++)
 			{
 				FlowLayoutWidget colorSelectionContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
 				colorSelectionContainer.HAnchor = HAnchor.FitToChildren;
@@ -1520,7 +1517,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					if (Scene.HasSelection)
 					{
-						Scene.SelectedItem.ExtruderIndex = extruderIndexCanPassToClick;
+						Scene.SelectedItem.MaterialIndex = extruderIndexCanPassToClick;
 						PartHasBeenChanged();
 					}
 				};
@@ -1736,7 +1733,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// Set the material selector to have the correct material button selected
 				for (int i = 0; i < extruderButtons.Count; i++)
 				{
-					if (selectedItem.ExtruderIndex == i)
+					if (selectedItem.MaterialIndex == i)
 					{
 						((RadioButton)extruderButtons[i]).Checked = true;
 						setSelection = true;
@@ -2368,6 +2365,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				container.AddChild(renderTypeCheckBox);
 			}
 
+			// Materials option
+			{
+				RadioButton materialsCheckBox = new RadioButton("Materials".Localize(), textColor: itemTextColor);
+				materialsCheckBox.Checked = (meshViewerWidget.RenderType == RenderTypes.Materials);
+
+				materialsCheckBox.CheckedStateChanged += (sender, e) =>
+				{
+					if (materialsCheckBox.Checked)
+					{
+						meshViewerWidget.RenderType = RenderTypes.Materials;
+						UserSettings.Instance.set("defaultRenderSetting", meshViewerWidget.RenderType.ToString());
+					}
+				};
+
+				container.AddChild(materialsCheckBox);
+			}
+
+
+			// overhang setting
 			{
 				RadioButton renderTypeCheckBox = new RadioButton("Overhang".Localize(), textColor: itemTextColor);
 				renderTypeCheckBox.Checked = (meshViewerWidget.RenderType == RenderTypes.Overhang);
@@ -2382,14 +2398,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						meshViewerWidget.RenderType = RenderTypes.Overhang;
 
 						UserSettings.Instance.set("defaultRenderSetting", meshViewerWidget.RenderType.ToString());
-						foreach (var meshAndTransform in scene.VisibleMeshes(Matrix4X4.Identity))
+						foreach (var meshRenderData in scene.VisibleMeshes(Matrix4X4.Identity))
 						{
-							meshAndTransform.Mesh.MarkAsChanged();
+							meshRenderData.Mesh.MarkAsChanged();
 							// change the color to be the right thing
-							GLMeshTrianglePlugin glMeshPlugin = GLMeshTrianglePlugin.Get(meshAndTransform.Mesh, (faceEdge) =>
+							GLMeshTrianglePlugin glMeshPlugin = GLMeshTrianglePlugin.Get(meshRenderData.Mesh, (faceEdge) =>
 							{
 								Vector3 normal = faceEdge.ContainingFace.normal;
-								normal = Vector3.TransformVector(normal, meshAndTransform.Matrix).GetNormal();
+								normal = Vector3.TransformVector(normal, meshRenderData.Matrix).GetNormal();
 								VertexColorData colorData = new VertexColorData();
 
 								double startColor = 223.0 / 360.0;
@@ -2409,21 +2425,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							});
 						}
 					}
-					else
-					{
-						// TODO: Implement
-						/*
-						foreach (var meshTransform in Scene.VisibleMeshes(Matrix4X4.Identity))
-						{
-							// turn off the overhang colors
-						} */
-					}
 				};
 
 				container.AddChild(renderTypeCheckBox);
-
-				return container;
 			}
+
+			return container;
 		}
 
 		protected bool autoRotating = false;

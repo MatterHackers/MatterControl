@@ -631,6 +631,12 @@ namespace MatterHackers.MeshVisualizer
 					drawColor = new RGBA_Bytes(RGBA_Bytes.Gray, 120);
 				}
 
+				// check if we should be rendering materials
+				if (this.RenderType == RenderTypes.Materials)
+				{
+					drawColor = RGBA_Floats.FromHSL(Math.Max(renderData.MaterialIndex, 0) / 4.0, .99, .49).GetAsRGBA_Bytes();
+				}
+
 				if (drawColor.Alpha0To1 == 0)
 				{
 					drawColor = lastDrawColor;
@@ -639,7 +645,7 @@ namespace MatterHackers.MeshVisualizer
 				{
 					lastDrawColor = drawColor;
 				}
-				
+
 				GLHelper.Render(renderData.Mesh, drawColor, renderData.Matrix, RenderType);
 			}
 		}
