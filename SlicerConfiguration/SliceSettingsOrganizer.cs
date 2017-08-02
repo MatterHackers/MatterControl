@@ -54,6 +54,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public string ShowIfSet { get; set; }
 
+		public string EnableIfSet { get; set; }
+
 		public string DefaultValue { get; set; }
 
 		public DataEditTypes DataEditType { get; set; }

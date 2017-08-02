@@ -64,7 +64,8 @@ Intermediate
         bed_temperature
         bed_remove_part_temperature
     Retraction
-      While Printing
+      After Move
+        enable_retractions
         retract_length
         retract_speed
         retract_lift
@@ -116,7 +117,6 @@ Advanced
         solid_infill_every_layers
         fill_angle
         solid_infill_below_area
-        only_retract_when_crossing_perimeters
         infill_first
         infill_overlap_perimeter
         fill_thin_gaps
@@ -239,7 +239,8 @@ Advanced
         bed_temperature
         bed_remove_part_temperature
     Retraction
-      While Printing
+      After Move
+        enable_retractions
         retract_length
         retract_restart_extra
         retract_restart_extra_time_to_apply
@@ -250,7 +251,7 @@ Advanced
         retract_when_changing_islands
         min_extrusion_before_retract
         wipe
-      On Tool Change
+      Before Tool Change
         retract_length_tool_change
         retract_restart_extra_toolchange
     Extrusion
