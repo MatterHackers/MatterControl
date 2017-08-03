@@ -60,16 +60,13 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public void SetBreadCrumbs(ILibraryContainer currentContainer)
 		{
-			var buttonFactory = ApplicationController.Instance.Theme.ButtonFactory;
+			var buttonFactory = ApplicationController.Instance.Theme.SmallMarginButtonFactory;
 
 			var linkButtonFactory = ApplicationController.Instance.Theme.LinkButtonFactory;
 
 			this.CloseAllChildren();
 
 			bool haveFilterRunning = !string.IsNullOrEmpty(currentContainer.KeywordFilter);
-
-			var initialMargin = buttonFactory.Margin;
-			buttonFactory.Options.Margin = new BorderDouble(8, 0);
 
 			var icon = LibraryProviderHelpers.LoadInvertIcon("FileDialog", "up_folder_20.png");
 			//icon = LibraryProviderHelpers.ResizeImage(icon, 20, 20);
@@ -84,8 +81,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					UiThread.RunOnIdle(() => listView.LoadContainer(listView.ActiveContainer.Parent));
 				}
 			};
-
-			buttonFactory.Options.Margin = initialMargin;
 
 			this.AddChild(upbutton);
 
