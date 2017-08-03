@@ -216,7 +216,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 								Directory.CreateDirectory(directoryToRemove);
 							}
 
-							ApplicationController.Instance.ReloadAll();
+							ApplicationController.Instance.Library.NotifyContainerChanged();
 						};
 
 						UiThread.RunOnIdle(() =>
