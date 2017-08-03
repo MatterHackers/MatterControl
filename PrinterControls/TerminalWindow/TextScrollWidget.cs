@@ -96,7 +96,7 @@ namespace MatterHackers.MatterControl
 			printer.DrawFromHintedCache = true;
 			this.allSourceLines = sourceLines;
 			this.visibleLines = sourceLines;
-			PrinterConnection.Instance.PrinterOutputCache.HasChanged.RegisterEvent(RecievedNewLine, ref unregisterEvents);
+			PrinterConnection.Instance.TerminalLog.HasChanged.RegisterEvent(RecievedNewLine, ref unregisterEvents);
 		}
 
 		private void ConditionalyAddToVisible(string line)

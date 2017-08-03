@@ -117,7 +117,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					Assert.IsTrue(testRunner.NameExists("Start Print Button"));
 
 					int g28Count = 0;
-					foreach(var line in PrinterConnection.Instance.PrinterOutputCache.PrinterLines)
+					foreach(var line in PrinterConnection.Instance.TerminalLog.PrinterLines)
 					{
 						if(line.Contains("G28"))
 						{

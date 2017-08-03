@@ -157,7 +157,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		public PrinterOutputCache PrinterOutputCache { get; }
+		public TerminalLog TerminalLog { get; }
 
 		public RootedObjectEventHandler AtxPowerStateChanged = new RootedObjectEventHandler();
 
@@ -279,7 +279,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public PrinterConnection()
 		{
-			PrinterOutputCache = new PrinterOutputCache(this);
+			TerminalLog = new TerminalLog(this);
 
 			MonitorPrinterTemperature = true;
 
@@ -352,14 +352,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			WriteLineStartCallBacks.AddCallbackToKey("M190", BedTemperatureWasWritenToPrinter);
 			WriteLineStartCallBacks.AddCallbackToKey("T", ExtruderIndexSet);
 
-			ActiveSliceSettings.SettingChanged.RegisterEvent((EventHandler)((s, e) =>
+			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
 			{
 				var eventArgs = e as StringEventArgs;
 				if (eventArgs?.Data == SettingsKey.feedrate_ratio)
 				{
-					feedRateRatio = this.ActivePrinterSettings.GetValue<double>(SettingsKey.feedrate_ratio);
+					feedRateRatio = this.PrinterSettings.GetValue<double>(SettingsKey.feedrate_ratio);
 				}
-			}), ref unregisterEvents);
+			}, ref unregisterEvents);
 		}
 
 		private void ExtruderIndexSet(object sender, EventArgs e)
@@ -401,13 +401,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			get
 			{
 				int baudRate = 250000;
-				if (this.ActivePrinterSettings != null)
+				if (this.PrinterSettings != null)
 				{
 					try
 					{
-						if (!string.IsNullOrEmpty(ActivePrinterSettings.GetValue(SettingsKey.baud_rate)))
+						if (!string.IsNullOrEmpty(PrinterSettings.GetValue(SettingsKey.baud_rate)))
 						{
-							baudRate = Convert.ToInt32(ActivePrinterSettings.GetValue(SettingsKey.baud_rate));
+							baudRate = Convert.ToInt32(PrinterSettings.GetValue(SettingsKey.baud_rate));
 						}
 					}
 					catch
@@ -496,6 +496,19 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 									communicationState = value;
 									timeSinceStartedPrint.Stop();
 									PrintFinished.CallEvents(this, new PrintItemWrapperEventArgs(this.activePrintItem));
+
+									// clear single use setting on print completion
+									foreach (var keyValue in PrinterSettings.BaseLayer)
+									{
+										string currentValue = PrinterSettings.GetValue(keyValue.Key);
+
+										bool valueIsClear = currentValue == "0" | currentValue == "";
+										SliceSettingData data = SliceSettingsOrganizer.Instance.GetSettingsData(keyValue.Key);
+										if (data?.ResetAtEndOfPrint == true && !valueIsClear)
+										{
+											PrinterSettings.ClearValue(keyValue.Key);
+										}
+									}
 								}
 								else
 								{
@@ -532,9 +545,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		public string ComPort => ActivePrinterSettings?.Helpers.ComPort();
+		public string ComPort => PrinterSettings?.Helpers.ComPort();
 
-		public string DriverType => (this.ComPort == "Emulator") ? "Emulator" : ActivePrinterSettings?.GetValue("driver_type");
+		public string DriverType => (this.ComPort == "Emulator") ? "Emulator" : PrinterSettings?.GetValue("driver_type");
 
 		public bool AtxPowerEnabled
 		{
@@ -905,7 +918,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		}
 
 		// TODO: Consider having callers use the source rather than this proxy? Maybe better to change after arriving on a final type and location for printer settings
-		public PrinterSettings ActivePrinterSettings => ActiveSliceSettings.Instance;
+		public PrinterSettings PrinterSettings => ActiveSliceSettings.Instance;
 
 		private int NumberOfLinesInCurrentPrint
 		{
@@ -985,17 +998,17 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public void ConnectToActivePrinter(bool showHelpIfNoPort = false)
 		{
-			if (ActivePrinterSettings != null)
+			if (PrinterSettings != null)
 			{
 				// Start the process of requesting permission and exit if permission is not currently granted
-				if (!ActivePrinterSettings.GetValue<bool>(SettingsKey.enable_network_printing)
+				if (!PrinterSettings.GetValue<bool>(SettingsKey.enable_network_printing)
 					&& !FrostedSerialPort.EnsureDeviceAccess())
 				{
 					CommunicationState = CommunicationStates.FailedToConnect;
 					return;
 				}
 
-				PrinterOutputCache.Clear();
+				TerminalLog.Clear();
 				//Attempt connecting to a specific printer
 				this.stopTryingToConnect = false;
 				this.FirmwareType = FirmwareTypes.Unknown;
@@ -1407,7 +1420,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			// TODO: Ideally we would shutdown the printer connection when this method is called and we're connected. The
 			// current approach results in unpredictable behavior if the caller fails to close the connection
-			if (serialPort == null && this.ActivePrinterSettings != null)
+			if (serialPort == null && this.PrinterSettings != null)
 			{
 				IFrostedSerialPort resetSerialPort = FrostedSerialPortFactory.GetAppropriateFactory(this.DriverType).Create(this.ComPort);
 				resetSerialPort.Open();
@@ -1518,7 +1531,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 											haveReportedError = false;
 											// now send any command that initialize this printer
 											ClearQueuedGCode();
-											string connectGCode = ActivePrinterSettings.GetValue(SettingsKey.connect_gcode);
+											string connectGCode = PrinterSettings.GetValue(SettingsKey.connect_gcode);
 											SendLineToPrinterNow(connectGCode);
 
 											// and call back anyone who would like to know we connected
@@ -1550,18 +1563,18 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				}
 				catch (IOException e2)
 				{
-					PrinterOutputCache.WriteLine("Exception:" + e2.Message);
+					TerminalLog.WriteLine("Exception:" + e2.Message);
 					OnConnectionFailed(null);
 				}
 				catch (InvalidOperationException ex)
 				{
-					PrinterOutputCache.WriteLine("Exception:" + ex.Message);
+					TerminalLog.WriteLine("Exception:" + ex.Message);
 					// this happens when the serial port closes after we check and before we read it.
 					OnConnectionFailed(null);
 				}
 				catch (UnauthorizedAccessException e3)
 				{
-					PrinterOutputCache.WriteLine("Exception:" + e3.Message);
+					TerminalLog.WriteLine("Exception:" + e3.Message);
 					OnConnectionFailed(null);
 				}
 				catch (Exception)
@@ -1673,7 +1686,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			try
 			{
-				if (ActivePrinterSettings.PrinterSelected)
+				if (PrinterSettings.PrinterSelected)
 				{
 					// first make sure we are not printing if possible (cancel slicing)
 					if (serialPort != null) // we still have a serial port
@@ -1853,11 +1866,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private string ProcessReadRegEx(string lineBeingRead)
 		{
-			if (read_regex != ActivePrinterSettings.GetValue(SettingsKey.read_regex))
+			if (read_regex != PrinterSettings.GetValue(SettingsKey.read_regex))
 			{
 				ReadLineReplacements.Clear();
 				string splitString = "\\n";
-				read_regex = ActivePrinterSettings.GetValue(SettingsKey.read_regex);
+				read_regex = PrinterSettings.GetValue(SettingsKey.read_regex);
 				foreach (string regExLine in read_regex.Split(splitString.ToCharArray(), StringSplitOptions.RemoveEmptyEntries))
 				{
 					var matches = getQuotedParts.Matches(regExLine);
@@ -2023,7 +2036,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			{
 				// get rid of all the gcode we have left to print
 				ClearQueuedGCode();
-				string cancelGCode = ActivePrinterSettings.GetValue(SettingsKey.cancel_gcode);
+				string cancelGCode = PrinterSettings.GetValue(SettingsKey.cancel_gcode);
 				if (cancelGCode.Trim() != "")
 				{
 					// add any gcode we want to print while canceling
@@ -2122,13 +2135,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					}
 					catch (System.ArgumentOutOfRangeException e)
 					{
-						PrinterOutputCache.WriteLine("Exception:" + e.Message);
+						TerminalLog.WriteLine("Exception:" + e.Message);
 						connectionFailureMessage = "Unsupported Baud Rate".Localize();
 						OnConnectionFailed(null);
 					}
 					catch (Exception ex)
 					{
-						PrinterOutputCache.WriteLine("Exception:" + ex.Message);
+						TerminalLog.WriteLine("Exception:" + ex.Message);
 						OnConnectionFailed(null);
 					}
 				}
@@ -2294,7 +2307,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				loadedGCode = GCodeFile.Load(gcodeFilename, CancellationToken.None);
 				gCodeFileStream0 = new GCodeFileStream(loadedGCode);
 
-				if (ActivePrinterSettings.GetValue<bool>(SettingsKey.recover_is_enabled)
+				if (PrinterSettings.GetValue<bool>(SettingsKey.recover_is_enabled)
 					&& activePrintTask != null) // We are resuming a failed print (do lots of interesting stuff).
 				{
 					pauseHandlingStream1 = new PauseHandlingStream(new PrintRecoveryStream(gCodeFileStream0, activePrintTask.PercentDone));
@@ -2336,7 +2349,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private void LoadGCodeToPrint(string gcodeFilename)
 		{
-			CreateStreamProcessors(gcodeFilename, ActivePrinterSettings.GetValue<bool>(SettingsKey.recover_is_enabled));
+			CreateStreamProcessors(gcodeFilename, PrinterSettings.GetValue<bool>(SettingsKey.recover_is_enabled));
 		}
 
 		internal PrintItemWrapper activePrintItem;
@@ -2360,7 +2373,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						// TODO: Fix printerItemID int requirement
 						activePrintTask = new PrintTask();
 						activePrintTask.PrintStart = DateTime.Now;
-						activePrintTask.PrinterId = this.ActivePrinterSettings.ID.GetHashCode();
+						activePrintTask.PrinterId = this.PrinterSettings.ID.GetHashCode();
 						activePrintTask.PrintName = activePrintItem.PrintItem.Name;
 						activePrintTask.PrintItemId = activePrintItem.PrintItem.Id;
 						activePrintTask.PrintingGCodeFileName = activePrintItem.GetGCodePathAndFileName();
@@ -2439,7 +2452,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private bool IsNetworkPrinting()
 		{
-			return ActivePrinterSettings.GetValue<bool>(SettingsKey.enable_network_printing);
+			return PrinterSettings.GetValue<bool>(SettingsKey.enable_network_printing);
 		}
 
 		private void OnAtxPowerStateChanged(bool enableAtxPower)
@@ -2612,7 +2625,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private void TurnOffBedAndExtruders()
 		{
-			for (int i = 0; i < ActivePrinterSettings.GetValue<int>(SettingsKey.extruder_count); i++)
+			for (int i = 0; i < PrinterSettings.GetValue<int>(SettingsKey.extruder_count); i++)
 			{
 				SetTargetExtruderTemperature(i, 0, true);
 			}
@@ -2723,7 +2736,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					}
 					catch (IOException ex)
 					{
-						PrinterOutputCache.WriteLine("Exception:" + ex.Message);
+						TerminalLog.WriteLine("Exception:" + ex.Message);
 
 						if (CommunicationState == CommunicationStates.AttemptingToConnect)
 						{
@@ -2734,11 +2747,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					catch (TimeoutException e2) // known ok
 					{
 						// This writes on the next line, and there may have been another write attempt before it is printer. Write indented to attempt to show its association.
-						PrinterOutputCache.WriteLine("        Error writing command:" + e2.Message);
+						TerminalLog.WriteLine("        Error writing command:" + e2.Message);
 					}
 					catch (UnauthorizedAccessException e3)
 					{
-						PrinterOutputCache.WriteLine("Exception:" + e3.Message);
+						TerminalLog.WriteLine("Exception:" + e3.Message);
 						AbortConnectionAttempt(e3.Message);
 					}
 					catch (Exception)

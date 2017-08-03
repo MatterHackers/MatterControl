@@ -161,7 +161,7 @@ namespace MatterHackers.MatterControl
 	{
 		public void Log(string text)
 		{
-			PrinterConnection.Instance.PrinterOutputCache.WriteLine(text);
+			PrinterConnection.Instance.TerminalLog.WriteLine(text);
 		}
 	}
 

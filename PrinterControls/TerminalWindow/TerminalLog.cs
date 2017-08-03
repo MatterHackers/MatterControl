@@ -34,7 +34,7 @@ using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl
 {
-	public class PrinterOutputCache
+	public class TerminalLog
 	{
 		private static readonly bool Is32Bit = IntPtr.Size == 4;
 
@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl
 
 		private EventHandler unregisterEvents;
 
-		public PrinterOutputCache(PrinterConnection printerConnection)
+		public TerminalLog(PrinterConnection printerConnection)
 		{
 			printerConnection.ConnectionFailed.RegisterEvent(Instance_ConnectionFailed, ref unregisterEvents);
 			printerConnection.CommunicationUnconditionalFromPrinter.RegisterEvent(FromPrinter, ref unregisterEvents);

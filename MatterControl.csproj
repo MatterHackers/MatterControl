@@ -274,7 +274,7 @@
     <Compile Include="PrinterControls\ControlWidgets\MovementControls.cs" />
     <Compile Include="PrinterControls\ControlWidgets\PowerControls.cs" />
     <Compile Include="PrinterControls\PrinterConnections\ShowAuthPanel.cs" />
-    <Compile Include="PrinterControls\TerminalWindow\PrinterOutputCache.cs" />
+    <Compile Include="PrinterControls\TerminalWindow\TerminalLog.cs" />
     <Compile Include="PrinterControls\TerminalWindow\TextScrolBar.cs" />
     <Compile Include="PrinterControls\TerminalWindow\TextScrollWidget.cs" />
     <Compile Include="PrinterControls\TerminalWindow\TerminalWidget.cs" />

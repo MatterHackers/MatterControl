@@ -981,31 +981,6 @@ namespace MatterHackers.MatterControl
 					PrinterConnection.Instance.ConnectToActivePrinter();
 				}, 2);
 			}
-
-			PrinterConnection.Instance.PrintFinished.RegisterEvent((sender, e) =>
-			{
-				bool oneOrMoreValuesReset = false;
-				if (sender is PrinterConnection printerConnection)
-				{
-					foreach (var keyValue in printerConnection.ActivePrinterSettings.BaseLayer)
-					{
-						string currentValue = printerConnection.ActivePrinterSettings.GetValue(keyValue.Key);
-
-						bool valueIsClear = currentValue == "0" | currentValue == "";
-						SliceSettingData data = SliceSettingsOrganizer.Instance.GetSettingsData(keyValue.Key);
-						if (data?.ResetAtEndOfPrint == true && !valueIsClear)
-						{
-							oneOrMoreValuesReset = true;
-							printerConnection.ActivePrinterSettings.ClearValue(keyValue.Key);
-						}
-					}
-
-					if (oneOrMoreValuesReset)
-					{
-						ApplicationController.Instance.ReloadAdvancedControlsPanel();
-					}
-				}
-			}, ref unregisterEvent);
 		}
 
 		private static void RunSetupIfRequired()
@@ -1244,7 +1219,7 @@ namespace MatterHackers.MatterControl
 						if (File.Exists(pathAndFile))
 						{
 							// clear the output cache prior to starting a print
-							PrinterConnection.Instance.PrinterOutputCache.Clear();
+							PrinterConnection.Instance.TerminalLog.Clear();
 
 							string hideGCodeWarning = ApplicationSettings.Instance.get(ApplicationSettingsKey.HideGCodeWarning);
 

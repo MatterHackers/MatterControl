@@ -117,9 +117,9 @@ namespace MatterHackers.MatterControl
 					FlowLayoutWidget leftToRight = new FlowLayoutWidget();
 					leftToRight.AnchorAll();
 
-					textScrollWidget = new TextScrollWidget(PrinterConnection.Instance.PrinterOutputCache.PrinterLines);
+					textScrollWidget = new TextScrollWidget(PrinterConnection.Instance.TerminalLog.PrinterLines);
 					//outputScrollWidget.Height = 100;
-					Debug.WriteLine(PrinterConnection.Instance.PrinterOutputCache.PrinterLines);
+					Debug.WriteLine(PrinterConnection.Instance.TerminalLog.PrinterLines);
 					textScrollWidget.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
 					textScrollWidget.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 					textScrollWidget.HAnchor = HAnchor.ParentLeftRight;
@@ -155,7 +155,7 @@ namespace MatterHackers.MatterControl
 				clearConsoleButton.Margin = new BorderDouble(0);
 				clearConsoleButton.Click += (sender, e) =>
 				{
-					PrinterConnection.Instance.PrinterOutputCache.Clear();
+					PrinterConnection.Instance.TerminalLog.Clear();
 				};
 
 				//Output Console text to screen
@@ -235,10 +235,10 @@ namespace MatterHackers.MatterControl
 					{
 						Debug.Print(e.Message);
 						GuiWidget.BreakInDebugger();
-						PrinterConnection.Instance.PrinterOutputCache.PrinterLines.Add("");
-						PrinterConnection.Instance.PrinterOutputCache.PrinterLines.Add(writeFaildeWaring);
-						PrinterConnection.Instance.PrinterOutputCache.PrinterLines.Add(cantAccessPath.FormatWith(filePathToSave));
-						PrinterConnection.Instance.PrinterOutputCache.PrinterLines.Add("");
+						PrinterConnection.Instance.TerminalLog.PrinterLines.Add("");
+						PrinterConnection.Instance.TerminalLog.PrinterLines.Add(writeFaildeWaring);
+						PrinterConnection.Instance.TerminalLog.PrinterLines.Add(cantAccessPath.FormatWith(filePathToSave));
+						PrinterConnection.Instance.TerminalLog.PrinterLines.Add("");
 
 						UiThread.RunOnIdle(() => {
 							StyledMessageBox.ShowMessageBox(null, e.Message, "Couldn't save file".Localize());

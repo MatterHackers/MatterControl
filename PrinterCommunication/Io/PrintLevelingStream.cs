@@ -58,8 +58,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 			if (lineFromChild != null
 				&& PrintLevelingStream.Enabled
-				&& PrinterConnection.Instance.ActivePrinterSettings.GetValue<bool>(SettingsKey.print_leveling_enabled)
-				&& !PrinterConnection.Instance.ActivePrinterSettings.GetValue<bool>(SettingsKey.has_hardware_leveling))
+				&& PrinterConnection.Instance.PrinterSettings.GetValue<bool>(SettingsKey.print_leveling_enabled)
+				&& !PrinterConnection.Instance.PrinterSettings.GetValue<bool>(SettingsKey.has_hardware_leveling))
 			{
 				if (LineIsMovement(lineFromChild))
 				{
