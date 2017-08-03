@@ -64,30 +64,30 @@ namespace MatterHackers.MatterControl
 
 		private readonly int borderWidth = 1;
 
-		public TextImageButtonFactory ButtonFactory { get; internal set; }
-		public TextImageButtonFactory SmallMarginButtonFactory { get; internal set; }
+		public TextImageButtonFactory ButtonFactory { get; private set; }
+		public TextImageButtonFactory SmallMarginButtonFactory { get; private set; }
 
 		/// <summary>
 		/// Used to make buttons in menu rows where the background color is consistently white
 		/// </summary>
-		public TextImageButtonFactory MenuButtonFactory { get; internal set; }
+		public TextImageButtonFactory MenuButtonFactory { get; private set; }
 
 		/// <summary>
 		/// Used in the Update wizard to show high contrast, primary action buttons
 		/// </summary>
-		public TextImageButtonFactory GrayButtonFactory { get; internal set; }
+		public TextImageButtonFactory GrayButtonFactory { get; private set; }
 
 		public TextImageButtonFactory imageConverterExpandMenuOptionFactory;
 		public TextImageButtonFactory imageConverterButtonFactory;
 
 		public RGBA_Bytes TabBodyBackground => new RGBA_Bytes(ActiveTheme.Instance.TertiaryBackgroundColor, 175);
 
-		public TextImageButtonFactory ViewControlsButtonFactory { get; internal set; }
-		public RGBA_Bytes SplitterBackground { get; internal set; } = new RGBA_Bytes(0, 0, 0, 60);
+		public TextImageButtonFactory ViewControlsButtonFactory { get; private set; }
+		public RGBA_Bytes SplitterBackground { get; private set; } = new RGBA_Bytes(0, 0, 0, 60);
 		public int SplitterWidth => (int)(7 * (GuiWidget.DeviceScale <= 1 ? GuiWidget.DeviceScale : GuiWidget.DeviceScale * 1.4));
 
 		public RGBA_Bytes SlightShade { get; } = new RGBA_Bytes(0, 0, 0, 40);
-		public TextImageButtonFactory GCodeLayerButtons { get; internal set; }
+		public TextImageButtonFactory GCodeLayerButtons { get; private set; }
 
 		private EventHandler unregisterEvents;
 
