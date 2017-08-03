@@ -162,9 +162,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.AddChild(new TemperatureWidgetBed());
 			}
 
-			buttonFactory.Options.Margin = defaultMargin;
+			var smallMarginFactory = ApplicationController.Instance.Theme.SmallMarginButtonFactory;
 
-			Button undoButton = buttonFactory.Generate("", StaticData.Instance.LoadIcon("Undo_grey_16x.png", 16, 16));
+			Button undoButton = smallMarginFactory.Generate("", StaticData.Instance.LoadIcon("Undo_grey_16x.png", 16, 16));
 			undoButton.Name = "3D View Undo";
 			undoButton.ToolTipText = "Undo";
 			undoButton.Enabled = false;
@@ -176,7 +176,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.AddChild(undoButton);
 			undoButton.VAnchor = VAnchor.ParentCenter;
 
-			Button redoButton = buttonFactory.Generate("", StaticData.Instance.LoadIcon("Redo_grey_16x.png", 16, 16));
+			Button redoButton = smallMarginFactory.Generate("", StaticData.Instance.LoadIcon("Redo_grey_16x.png", 16, 16));
 			redoButton.Name = "3D View Redo";
 			redoButton.ToolTipText = "Redo";
 			redoButton.Enabled = false;
@@ -186,8 +186,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			this.AddChild(redoButton);
 			redoButton.VAnchor = VAnchor.ParentCenter;
-
-			buttonFactory.Options.Margin = initialMargin;
 
 			undoBuffer.Changed += (sender, e) =>
 			{
