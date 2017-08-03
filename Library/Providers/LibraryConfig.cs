@@ -191,7 +191,12 @@ namespace MatterHackers.MatterControl.Library
 
 		private void ActiveContainer_Reloaded(object sender, EventArgs args)
 		{
-			ContainerReloaded?.Invoke(this, new ContainerChangedEventArgs(this.ActiveContainer, null));
+			this.OnContainerChanged(this.ActiveContainer);
+		}
+
+		private void OnContainerChanged(ILibraryContainer container)
+		{
+			ContainerReloaded?.Invoke(this, new ContainerChangedEventArgs(container, null));
 		}
 
 		public bool IsContentFileType(string fileName)
@@ -201,6 +206,14 @@ namespace MatterHackers.MatterControl.Library
 			return !string.IsNullOrEmpty(fileExtensionLower)
 				&& (ApplicationSettings.LibraryFilterFileExtensions.Contains(fileExtensionLower)
 					|| ApplicationController.Instance.Library.ContentProviders.Keys.Contains(fileExtensionLower));
+		}
+
+		/// <summary>
+		/// Notifies listeners that the ActiveContainer Changed
+		/// </summary>
+		internal void NotifyContainerChanged()
+		{
+			this.OnContainerChanged(this.ActiveContainer);
 		}
 	}
 }

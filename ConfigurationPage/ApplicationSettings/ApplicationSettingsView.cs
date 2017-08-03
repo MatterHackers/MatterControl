@@ -195,31 +195,36 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 					{
 						UserSettings.Instance.set(UserSettingsKey.ThumbnailRenderingMode, thumbnailRenderingMode);
 
-						// Ask if the user would like to rebuild all their thumbnails
-						Action<bool> removeThumbnails = (bool shouldRebuildThumbnails) =>
-						{
-							if (shouldRebuildThumbnails)
-							{
-								string directoryToRemove = PartThumbnailWidget.ThumbnailsPath;
-								try
-								{
-									if (Directory.Exists(directoryToRemove))
-									{
-										Directory.Delete(directoryToRemove, true);
-									}
-								}
-								catch (Exception)
-								{
-									GuiWidget.BreakInDebugger();
-								}
-							}
-
-							ApplicationController.Instance.ReloadAll();
-						};
-
 						UiThread.RunOnIdle(() =>
 						{
-							StyledMessageBox.ShowMessageBox(removeThumbnails, rebuildThumbnailsMessage, rebuildThumbnailsTitle, StyledMessageBox.MessageType.YES_NO, "Rebuild".Localize());
+							// Ask if the user they would like to rebuild their thumbnails
+							StyledMessageBox.ShowMessageBox(
+								(bool rebuildThumbnails) =>
+								{
+									if (rebuildThumbnails)
+									{
+										string directoryToRemove = ApplicationController.CacheablePath("ItemThumbnails", "");
+										try
+										{
+											if (Directory.Exists(directoryToRemove))
+											{
+												Directory.Delete(directoryToRemove, true);
+											}
+										}
+										catch (Exception)
+										{
+											GuiWidget.BreakInDebugger();
+										}
+
+										Directory.CreateDirectory(directoryToRemove);
+
+										ApplicationController.Instance.Library.NotifyContainerChanged();
+									}
+								}, 
+								rebuildThumbnailsMessage, 
+								rebuildThumbnailsTitle, 
+								StyledMessageBox.MessageType.YES_NO, 
+								"Rebuild".Localize());
 						});
 					}
 				};
