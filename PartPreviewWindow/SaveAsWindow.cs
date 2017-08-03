@@ -46,22 +46,17 @@ namespace MatterHackers.MatterControl
 	public class SaveAsWindow : SystemWindow
 	{
 		private Func<SaveAsReturnInfo, Task> functionToCallOnSaveAs;
-		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 		private MHTextEditWidget textToAddWidget;
 		private ListView librarySelectorWidget;
 		private Button saveAsButton;
 
 		private ILibraryContext libraryNavContext;
 
-        public SaveAsWindow(Func<SaveAsReturnInfo, Task> functionToCallOnSaveAs, ILibraryContainer providerLocator, bool showQueue, bool getNewName)
+		public SaveAsWindow(Func<SaveAsReturnInfo, Task> functionToCallOnSaveAs, ILibraryContainer providerLocator, bool showQueue, bool getNewName)
 			: base(480, 500)
 		{
-			textImageButtonFactory.Options.Normal.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			textImageButtonFactory.Options.Hover.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			textImageButtonFactory.Options.Pressed.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			textImageButtonFactory.Options.Disabled.TextColor = ActiveTheme.Instance.TabLabelUnselected;
-			textImageButtonFactory.Options.Disabled.FillColor = new RGBA_Bytes();
-
+			var buttonFactory = ApplicationController.Instance.Theme.ButtonFactory;
+			
 			AlwaysOnTopOfMain = true;
 			Title = "MatterControl - " + "Save As".Localize();
 			this.Name = "Save As Window";
@@ -167,7 +162,7 @@ namespace MatterHackers.MatterControl
 				buttonRow.Padding = new BorderDouble(0, 3);
 			}
 
-			saveAsButton = textImageButtonFactory.Generate("Save".Localize(), centerText: true);
+			saveAsButton = buttonFactory.Generate("Save".Localize(), centerText: true);
 			saveAsButton.Name = "Save As Save Button";
 			// Disable the save as button until the user actually selects a provider
 			saveAsButton.Enabled = false;
@@ -178,7 +173,7 @@ namespace MatterHackers.MatterControl
 			//Adds SaveAs and Close Button to button container
 			buttonRow.AddChild(new HorizontalSpacer());
 
-			Button cancelButton = textImageButtonFactory.Generate("Cancel".Localize(), centerText: true);
+			Button cancelButton = buttonFactory.Generate("Cancel".Localize(), centerText: true);
 			cancelButton.Visible = true;
 			cancelButton.Cursor = Cursors.Hand;
 			buttonRow.AddChild(cancelButton);
