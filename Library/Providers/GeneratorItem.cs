@@ -28,12 +28,45 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.DataConverters3D;
 
 namespace MatterHackers.MatterControl.Library
 {
+	public static class ColorRange
+	{
+		private static int currentColorIndex = 0;
+
+		private static RGBA_Bytes[] colors;
+
+		private static int totalColors = 0;
+
+		static ColorRange()
+		{
+			TotalColors = 12;
+		}
+
+		public static int TotalColors
+		{
+			get => totalColors;
+			set
+			{
+				if (totalColors != value)
+				{
+					totalColors = value;
+					colors = Enumerable.Range(0, totalColors).Select(colorIndex => RGBA_Floats.FromHSL(colorIndex / (double)totalColors, 1, .5).GetAsRGBA_Bytes()).ToArray();
+				}
+			}
+		}
+
+		public static RGBA_Bytes NextColor()
+		{
+			return colors[(currentColorIndex++) % TotalColors];
+		}
+	}
+
 	public class GeneratorItem : ILibraryContentItem
 	{
 		public GeneratorItem(string name)
@@ -47,6 +80,7 @@ namespace MatterHackers.MatterControl.Library
 			this.Name = name;
 			this.Collector = collector;
 			this.Category = category;
+			this.Color = ColorRange.NextColor();
 		}
 
 		public string ID => $"MatterHackers/ItemGenerator/{Name}".GetHashCode().ToString();
@@ -64,7 +98,20 @@ namespace MatterHackers.MatterControl.Library
 		/// </summary>
 		public Func<IObject3D> Collector { get; }
 
-		public Task<IObject3D> GetContent(Action<double, string> reportProgress) => Task.FromResult(Collector?.Invoke());
+		public RGBA_Bytes Color { get; set; }
+
+		public Task<IObject3D> GetContent(Action<double, string> reportProgress)
+		{
+			var result = Collector?.Invoke();
+
+			// If the content has not set a color, we'll assign from the running ColorRange
+			if (result.Color == RGBA_Bytes.Transparent)
+			{
+				result.Color = this.Color;
+			}
+
+			return Task.FromResult(result);
+		}
 
 		public void SetContent(IObject3D item)
 		{
