@@ -59,7 +59,6 @@ namespace MatterHackers.MatterControl
 		public LinkButtonFactory LinkButtonFactory { get; private set; }
 		public LinkButtonFactory HelpLinkFactory { get; private set; }
 
-		private TextImageButtonFactory checkboxButtonFactory;
 		public TextImageButtonFactory ExpandMenuOptionFactory;
 		public TextImageButtonFactory WhiteButtonFactory;
 
@@ -233,25 +232,6 @@ namespace MatterHackers.MatterControl
 				disabledFillColor = new RGBA_Bytes(255, 255, 255, 50)
 			};
 
-			checkboxButtonFactory = new TextImageButtonFactory()
-			{
-				fontSize = 11,
-				FixedWidth = sideBarButtonWidth,
-				borderWidth = 3,
-
-				normalTextColor = ActiveTheme.Instance.PrimaryTextColor,
-				normalBorderColor = new RGBA_Bytes(0, 0, 0, 0),
-				normalFillColor = ActiveTheme.Instance.PrimaryBackgroundColor,
-
-				hoverTextColor = ActiveTheme.Instance.PrimaryTextColor,
-				hoverBorderColor = new RGBA_Bytes(0, 0, 0, 50),
-				hoverFillColor = new RGBA_Bytes(0, 0, 0, 50),
-
-				pressedTextColor = ActiveTheme.Instance.PrimaryTextColor,
-				pressedBorderColor = new RGBA_Bytes(0, 0, 0, 50),
-
-				disabledTextColor = ActiveTheme.Instance.PrimaryTextColor
-			};
 			#endregion
 
 			#region ImageConverter
