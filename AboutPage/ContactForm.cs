@@ -40,8 +40,6 @@ namespace MatterHackers.MatterControl.ContactForm
 {
 	public class ContactFormWidget : GuiWidget
 	{
-		protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
-		protected TextImageButtonFactory whiteButtonFactory = new TextImageButtonFactory();
 		private Button submitButton;
 		private Button cancelButton;
 		private Button doneButton;
@@ -65,12 +63,13 @@ namespace MatterHackers.MatterControl.ContactForm
 
 		public ContactFormWidget(string subjectText, string bodyText)
 		{
-			SetButtonAttributes();
 			AnchorAll();
 
-			cancelButton = textImageButtonFactory.Generate("Cancel".Localize());
-			submitButton = textImageButtonFactory.Generate("Submit".Localize());
-			doneButton = textImageButtonFactory.Generate("Done".Localize());
+			var buttonFactory = ApplicationController.Instance.Theme.ButtonFactory;
+		
+			cancelButton = buttonFactory.Generate("Cancel".Localize());
+			submitButton = buttonFactory.Generate("Submit".Localize());
+			doneButton = buttonFactory.Generate("Done".Localize());
 			doneButton.Visible = false;
 
 			DoLayout(subjectText, bodyText);
@@ -275,20 +274,6 @@ namespace MatterHackers.MatterControl.ContactForm
 			buttonBottomPanel.Padding = new BorderDouble(3, 3);
 			buttonBottomPanel.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 			return buttonBottomPanel;
-		}
-
-		private void SetButtonAttributes()
-		{
-			textImageButtonFactory.Options.Normal.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			textImageButtonFactory.Options.Hover.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			textImageButtonFactory.Options.Disabled.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			textImageButtonFactory.Options.Pressed.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-
-			whiteButtonFactory.Options.FixedWidth = 138 * GuiWidget.DeviceScale;
-			whiteButtonFactory.Options.Normal.FillColor = RGBA_Bytes.White;
-			whiteButtonFactory.Options.Normal.TextColor = RGBA_Bytes.Black;
-			whiteButtonFactory.Options.Hover.TextColor = RGBA_Bytes.Black;
-			whiteButtonFactory.Options.Hover.FillColor = new RGBA_Bytes(255, 255, 255, 200);
 		}
 	}
 

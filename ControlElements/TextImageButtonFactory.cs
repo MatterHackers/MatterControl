@@ -703,5 +703,53 @@ namespace MatterHackers.MatterControl
 				BorderColor = new RGBA_Bytes(0, 0, 0, 0)
 			};
 		}
+
+		public ButtonFactoryOptions Clone(Action<ButtonFactoryOptions> callback)
+		{
+			var newItem = new ButtonFactoryOptions();
+
+			newItem.AllowThemeToAdjustImage = this.AllowThemeToAdjustImage;
+			newItem.BorderWidth = this.BorderWidth;
+			newItem.CheckedBorderColor = this.CheckedBorderColor;
+			newItem.FixedHeight = this.FixedHeight;
+			newItem.FixedWidth = this.FixedWidth;
+			newItem.FlowDirection = this.FlowDirection;
+			newItem.FontSize = this.FontSize;
+			newItem.ImageSpacing = this.ImageSpacing;
+			newItem.InvertImageLocation = this.InvertImageLocation;
+			newItem.Margin = this.Margin;
+
+			newItem.Normal = new ButtonOptionSection()
+			{
+				TextColor = this.Normal.TextColor,
+				FillColor = this.Normal.FillColor,
+				BorderColor = this.Normal.BorderColor
+			};
+
+			newItem.Hover = new ButtonOptionSection()
+			{
+				TextColor = this.Hover.TextColor,
+				FillColor = this.Hover.FillColor,
+				BorderColor = this.Hover.BorderColor
+			};
+
+			newItem.Pressed = new ButtonOptionSection()
+			{
+				TextColor = this.Pressed.TextColor,
+				FillColor = this.Pressed.FillColor,
+				BorderColor = this.Pressed.BorderColor
+			};
+
+			newItem.Disabled = new ButtonOptionSection()
+			{
+				TextColor = this.Disabled.TextColor,
+				FillColor = this.Disabled.FillColor,
+				BorderColor = this.Disabled.BorderColor
+			};
+
+			callback(newItem);
+
+			return newItem;
+		}
 	}
 }
