@@ -76,13 +76,8 @@ namespace MatterHackers.MatterControl.Library
 			bool resizeRequired = (resizeWidth) ? width != expectedSize.x : height != expectedSize.y;
 			if (resizeRequired)
 			{
-				double scaleFactor = (resizeWidth) ? expectedSize.x / width : expectedSize.y / width;
-
-				var scaledImageBuffer = new ImageBuffer((int)expectedSize.x, (int)expectedSize.y);
-				scaledImageBuffer.NewGraphics2D().RenderCentered(
-					imageBuffer, 
-					width * scaleFactor, 
-					height * scaleFactor);
+				var scaledImageBuffer = ImageBuffer.CreateScaledImage(imageBuffer, targetWidth, targetHeight);
+				scaledImageBuffer.SetRecieveBlender(new BlenderPreMultBGRA());
 
 				return scaledImageBuffer;
 			}

@@ -107,9 +107,6 @@ namespace MatterHackers.MatterControl
 			};
 			libraryNavContext.ContainerChanged += (s, e) =>
 			{
-				/* Still Needed?
-				breadCrumbWidget.SetBreadCrumbs(e.ActiveContainer); */
-
 				saveAsButton.Enabled = libraryNavContext.ActiveContainer is ILibraryWritableContainer;
 			};
 
