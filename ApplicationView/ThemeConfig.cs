@@ -139,16 +139,7 @@ namespace MatterHackers.MatterControl
 			
 			this.SmallMarginButtonFactory = new TextImageButtonFactory(smallMarginOptions);
 
-			/*
-			var menuButtonOptions = new ButtonFactoryOptions(commonOptions);
-			menuButtonOptions.Normal.TextColor = RGBA_Bytes.Black;
-			menuButtonOptions.Normal.FillColor = RGBA_Bytes.LightGray;
-			menuButtonOptions.Hover.TextColor = RGBA_Bytes.Black;
-			menuButtonOptions.Pressed.TextColor = RGBA_Bytes.Black;
-			menuButtonOptions.Pressed.FillColor = RGBA_Bytes.LightGray;
-			menuButtonOptions.Margin = new BorderDouble(8, 0); */
-
-			var menuButtonOptions = commonOptions.Clone(options =>
+			this.MenuButtonFactory = new TextImageButtonFactory(commonOptions.Clone(options =>
 			{
 				options.Normal.TextColor = RGBA_Bytes.Black;
 				options.Normal.FillColor = RGBA_Bytes.LightGray;
@@ -156,16 +147,13 @@ namespace MatterHackers.MatterControl
 				options.Pressed.TextColor = RGBA_Bytes.Black;
 				options.Pressed.FillColor = RGBA_Bytes.LightGray;
 				options.Margin = new BorderDouble(8, 0);
-			});
-			this.MenuButtonFactory = new TextImageButtonFactory(menuButtonOptions);
+			}));
 
-			var grayButtonOptions = commonOptions.Clone(options =>
+			this.GrayButtonFactory = new TextImageButtonFactory(commonOptions.Clone(options =>
 			{
 				options.Normal.TextColor = theme.PrimaryTextColor;
 				options.Normal.FillColor = RGBA_Bytes.Gray;
-			});
-
-			this.GrayButtonFactory = new TextImageButtonFactory(grayButtonOptions);
+			}));
 
 			int viewControlsButtonHeight = (UserSettings.Instance.IsTouchScreen) ? 40 : 0;
 
