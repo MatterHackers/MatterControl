@@ -279,16 +279,16 @@ namespace MatterHackers.MatterControl.ContactForm
 
 		private void SetButtonAttributes()
 		{
-			textImageButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			textImageButtonFactory.disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			textImageButtonFactory.Options.Normal.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			textImageButtonFactory.Options.Hover.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			textImageButtonFactory.Options.Disabled.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			textImageButtonFactory.Options.Pressed.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 
-			whiteButtonFactory.FixedWidth = 138 * GuiWidget.DeviceScale;
-			whiteButtonFactory.normalFillColor = RGBA_Bytes.White;
-			whiteButtonFactory.normalTextColor = RGBA_Bytes.Black;
-			whiteButtonFactory.hoverTextColor = RGBA_Bytes.Black;
-			whiteButtonFactory.hoverFillColor = new RGBA_Bytes(255, 255, 255, 200);
+			whiteButtonFactory.Options.FixedWidth = 138 * GuiWidget.DeviceScale;
+			whiteButtonFactory.Options.Normal.FillColor = RGBA_Bytes.White;
+			whiteButtonFactory.Options.Normal.TextColor = RGBA_Bytes.Black;
+			whiteButtonFactory.Options.Hover.TextColor = RGBA_Bytes.Black;
+			whiteButtonFactory.Options.Hover.FillColor = new RGBA_Bytes(255, 255, 255, 200);
 		}
 	}
 

@@ -174,8 +174,8 @@ namespace MatterHackers.MatterControl
 			flowWidget.Height = 60;
 
 			TextImageButtonFactory bringBackButtonFactory = new TextImageButtonFactory();
-			bringBackButtonFactory.normalFillColor = RGBA_Bytes.Gray;
-			bringBackButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			bringBackButtonFactory.Options.Normal.FillColor = RGBA_Bytes.Gray;
+			bringBackButtonFactory.Options.Normal.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 
 			Button bringBackToTabButton = bringBackButtonFactory.Generate("Restore".Localize());
 			bringBackToTabButton.ToolTipText = "Bring the Window back into this Tab".Localize();

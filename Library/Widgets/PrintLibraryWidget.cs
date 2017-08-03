@@ -79,26 +79,25 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			this.BackgroundColor = ApplicationController.Instance.Theme.TabBodyBackground;
 			this.AnchorAll();
 
-			textImageButtonFactory = new TextImageButtonFactory()
+			textImageButtonFactory = new TextImageButtonFactory(new ButtonFactoryOptions()
 			{
-				borderWidth = 0,
-				normalTextColor = ActiveTheme.Instance.PrimaryTextColor,
-				hoverTextColor = ActiveTheme.Instance.PrimaryTextColor,
-				pressedTextColor = ActiveTheme.Instance.PrimaryTextColor,
-				disabledTextColor = ActiveTheme.Instance.TabLabelUnselected,
-				disabledFillColor = new RGBA_Bytes()
-			};
+				BorderWidth = 0,
 
-			editButtonFactory = new TextImageButtonFactory()
+				Normal = new ButtonOptionSection() { TextColor = ActiveTheme.Instance.PrimaryTextColor },
+				Hover = new ButtonOptionSection() { TextColor = ActiveTheme.Instance.PrimaryTextColor },
+				Pressed = new ButtonOptionSection() { TextColor = ActiveTheme.Instance.PrimaryTextColor },
+				Disabled = new ButtonOptionSection() { TextColor = ActiveTheme.Instance.TabLabelUnselected, FillColor = new RGBA_Bytes() }
+			});
+
+			editButtonFactory = new TextImageButtonFactory(new ButtonFactoryOptions()
 			{
-				normalTextColor = ActiveTheme.Instance.PrimaryTextColor,
-				hoverTextColor = ActiveTheme.Instance.PrimaryTextColor,
-				disabledTextColor = ActiveTheme.Instance.TabLabelUnselected,
-				disabledFillColor = new RGBA_Bytes(),
-				pressedTextColor = ActiveTheme.Instance.PrimaryTextColor,
-				borderWidth = 0,
+				Normal = new ButtonOptionSection() { TextColor = ActiveTheme.Instance.PrimaryTextColor },
+				Hover = new ButtonOptionSection() { TextColor = ActiveTheme.Instance.PrimaryTextColor },
+				Disabled = new ButtonOptionSection() { TextColor = ActiveTheme.Instance.TabLabelUnselected, FillColor = new RGBA_Bytes() },
+				Pressed = new ButtonOptionSection() { TextColor = ActiveTheme.Instance.PrimaryTextColor },
+				BorderWidth = 0,
 				Margin = new BorderDouble(10, 0)
-			};
+			});
 
 			var allControls = new FlowLayoutWidget(FlowDirection.TopToBottom);
 

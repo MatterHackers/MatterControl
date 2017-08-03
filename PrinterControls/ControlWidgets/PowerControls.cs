@@ -87,19 +87,19 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		private void SetDisplayAttributes()
 		{
-			this.textImageButtonFactory.normalFillColor = RGBA_Bytes.Transparent;
+			this.textImageButtonFactory.Options.Normal.FillColor = RGBA_Bytes.Transparent;
 
-			this.textImageButtonFactory.FixedWidth = 38 * GuiWidget.DeviceScale;
-			this.textImageButtonFactory.FixedHeight = 20 * GuiWidget.DeviceScale;
-			this.textImageButtonFactory.fontSize = 10;
-			this.textImageButtonFactory.borderWidth = 1;
-			this.textImageButtonFactory.normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
-			this.textImageButtonFactory.hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
+			this.textImageButtonFactory.Options.FixedWidth = 38 * GuiWidget.DeviceScale;
+			this.textImageButtonFactory.Options.FixedHeight = 20 * GuiWidget.DeviceScale;
+			this.textImageButtonFactory.Options.FontSize = 10;
+			this.textImageButtonFactory.Options.BorderWidth = 1;
+			this.textImageButtonFactory.Options.Normal.BorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
+			this.textImageButtonFactory.Options.Hover.BorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
 
-			this.textImageButtonFactory.disabledTextColor = RGBA_Bytes.Gray;
-			this.textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			this.textImageButtonFactory.normalTextColor = ActiveTheme.Instance.SecondaryTextColor;
-			this.textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			this.textImageButtonFactory.Options.Disabled.TextColor = RGBA_Bytes.Gray;
+			this.textImageButtonFactory.Options.Hover.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			this.textImageButtonFactory.Options.Normal.TextColor = ActiveTheme.Instance.SecondaryTextColor;
+			this.textImageButtonFactory.Options.Pressed.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 		}
 
 		public override void OnClosed(ClosedEventArgs e)

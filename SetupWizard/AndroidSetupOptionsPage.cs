@@ -48,8 +48,8 @@ namespace MatterHackers.MatterControl
 		{
 			headerLabel.Text = "Setup Options".Localize();
 
-			textImageButtonFactory.borderWidth = 1;
-			textImageButtonFactory.normalBorderColor = RGBA_Bytes.White;
+			textImageButtonFactory.Options.BorderWidth = 1;
+			textImageButtonFactory.Options.Normal.BorderColor = RGBA_Bytes.White;
 
 			contentRow.AddChild(new SetupPrinterView(this.textImageButtonFactory) { WizardPage = this });
 			contentRow.AddChild(new SetupAccountView(this.textImageButtonFactory));
@@ -228,7 +228,7 @@ namespace MatterHackers.MatterControl
 			buttonContainer.AddChild(new HorizontalSpacer());
 
 			// the redeem design code button
-			textImageButtonFactory.disabledTextColor = new RGBA_Bytes(textImageButtonFactory.normalTextColor, 100);
+			textImageButtonFactory.Options.Disabled.TextColor = new RGBA_Bytes(textImageButtonFactory.normalTextColor, 100);
 			Button redeemPurchaseButton = textImageButtonFactory.Generate("Redeem Purchase".Localize());
 			redeemPurchaseButton.Enabled = true; // The library selector (the first library selected) is protected so we can't add to it.
 			redeemPurchaseButton.Name = "Redeem Code Button";

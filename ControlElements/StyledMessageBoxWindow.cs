@@ -39,7 +39,7 @@ namespace MatterHackers.MatterControl
 				extraTextScaling = 1.33333;
 			}
 
-			textImageButtonFactory.fontSize = extraTextScaling * textImageButtonFactory.fontSize;
+			textImageButtonFactory.Options.FontSize = extraTextScaling * textImageButtonFactory.fontSize;
 			if (yesOk == "")
 			{
 				if (messageType == MessageType.OK)

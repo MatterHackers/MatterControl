@@ -170,9 +170,9 @@ namespace MatterHackers.MatterControl.PrinterControls
 			homeButtonBar.Margin = new BorderDouble(3, 0, 3, 6);
 			homeButtonBar.Padding = new BorderDouble(0);
 
-			textImageButtonFactory.borderWidth = 1;
-			textImageButtonFactory.normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
-			textImageButtonFactory.hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
+			textImageButtonFactory.Options.BorderWidth = 1;
+			textImageButtonFactory.Options.Normal.BorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
+			textImageButtonFactory.Options.Hover.BorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
 
 			ImageBuffer helpIconImage = StaticData.Instance.LoadIcon("icon_home_white_24x24.png", 24, 24);
 			if (ActiveTheme.Instance.IsDarkTheme)
@@ -184,14 +184,14 @@ namespace MatterHackers.MatterControl.PrinterControls
 			homeIconImageWidget.Margin = new BorderDouble(0, 0, 6, 0);
 			homeIconImageWidget.OriginRelativeParent += new Vector2(0, 2) * GuiWidget.DeviceScale;
 			RGBA_Bytes oldColor = this.textImageButtonFactory.normalFillColor;
-			textImageButtonFactory.normalFillColor = new RGBA_Bytes(180, 180, 180);
+			textImageButtonFactory.Options.Normal.FillColor = new RGBA_Bytes(180, 180, 180);
 			homeAllButton = textImageButtonFactory.Generate("ALL".Localize());
-			this.textImageButtonFactory.normalFillColor = oldColor;
+			this.textImageButtonFactory.Options.Normal.FillColor = oldColor;
 			homeAllButton.ToolTipText = "Home X, Y and Z".Localize();
 			homeAllButton.Margin = new BorderDouble(0, 0, 6, 0);
 			homeAllButton.Click += homeAll_Click;
 
-			textImageButtonFactory.FixedWidth = (int)homeAllButton.Width * GuiWidget.DeviceScale;
+			textImageButtonFactory.Options.FixedWidth = (int)homeAllButton.Width * GuiWidget.DeviceScale;
 			homeXButton = textImageButtonFactory.Generate("X", centerText: true);
 			homeXButton.ToolTipText = "Home X".Localize();
 			homeXButton.Margin = new BorderDouble(0, 0, 6, 0);
@@ -207,8 +207,8 @@ namespace MatterHackers.MatterControl.PrinterControls
 			homeZButton.Margin = new BorderDouble(0, 0, 6, 0);
 			homeZButton.Click += homeZButton_Click;
 
-			textImageButtonFactory.normalFillColor = RGBA_Bytes.White;
-			textImageButtonFactory.FixedWidth = 0;
+			textImageButtonFactory.Options.Normal.FillColor = RGBA_Bytes.White;
+			textImageButtonFactory.Options.FixedWidth = 0;
 
 			disableMotors = textImageButtonFactory.Generate("Release".Localize().ToUpper());
 			disableMotors.Margin = new BorderDouble(0);

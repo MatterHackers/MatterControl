@@ -89,7 +89,7 @@ namespace MatterHackers.MatterControl
 			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
 			double oldHeight = textImageButtonFactory.FixedHeight;
-			textImageButtonFactory.FixedHeight = 30 * GuiWidget.DeviceScale;
+			textImageButtonFactory.Options.FixedHeight = 30 * GuiWidget.DeviceScale;
 
 			TextWidget tempTypeLabel = new TextWidget(windowTitle, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 10);
 			tempTypeLabel.Margin = new BorderDouble(3);
@@ -157,7 +157,7 @@ namespace MatterHackers.MatterControl
 				preset_count += 1;
 			}
 
-			textImageButtonFactory.FixedHeight = oldHeight;
+			textImageButtonFactory.Options.FixedHeight = oldHeight;
 
 			ShowAsSystemWindow();
 			MinimumSize = new Vector2(260, 300);

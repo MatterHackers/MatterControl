@@ -66,17 +66,26 @@ namespace MatterHackers.MatterControl
 
 			var primaryAction = actions[0];
 
-			var buttonFactory = new TextImageButtonFactory()
+			var buttonFactory = new TextImageButtonFactory(new ButtonFactoryOptions()
 			{
 				FixedHeight = this.FixedHeight,
-				normalFillColor = this.normalFillColor,
-				normalTextColor = this.normalTextColor,
-				hoverTextColor = this.hoverTextColor,
-				hoverFillColor = this.hoverFillColor,
-				borderWidth = 1,
-				normalBorderColor = this.normalBorderColor,
-				hoverBorderColor = this.hoverBorderColor
-			};
+
+				Normal = new ButtonOptionSection()
+				{
+
+					FillColor = this.normalFillColor,
+					TextColor = this.normalTextColor,
+					BorderColor = this.normalBorderColor,
+				},
+				Hover = new ButtonOptionSection()
+				{
+					TextColor = this.hoverTextColor,
+					FillColor = this.hoverFillColor,
+					BorderColor = this.hoverBorderColor
+				},
+
+				BorderWidth = 1,
+			});
 
 			Button button = buttonFactory.Generate(primaryAction.Title, normalImageName: imageName, centerText: true);
 			button.Name = $"{primaryAction.Title} Button";

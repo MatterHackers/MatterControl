@@ -144,10 +144,10 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 				topToBottom.AddChild(row);
 
-				textImageButtonFactory.FixedHeight = (int)feedRateValue.Height + 1;
-				textImageButtonFactory.borderWidth = 1;
-				textImageButtonFactory.normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
-				textImageButtonFactory.hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
+				textImageButtonFactory.Options.FixedHeight = (int)feedRateValue.Height + 1;
+				textImageButtonFactory.Options.BorderWidth = 1;
+				textImageButtonFactory.Options.Normal.BorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
+				textImageButtonFactory.Options.Hover.BorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
 
 				Button setButton = textImageButtonFactory.Generate("Set".Localize());
 				setButton.VAnchor = VAnchor.ParentCenter;
@@ -219,7 +219,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 				topToBottom.AddChild(row);
 				
-				textImageButtonFactory.FixedHeight = (int)extrusionValue.Height + 1;
+				textImageButtonFactory.Options.FixedHeight = (int)extrusionValue.Height + 1;
 
 				Button setButton = textImageButtonFactory.Generate("Set".Localize());
 				setButton.VAnchor = VAnchor.ParentCenter;

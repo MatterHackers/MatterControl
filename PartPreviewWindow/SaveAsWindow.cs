@@ -56,11 +56,11 @@ namespace MatterHackers.MatterControl
         public SaveAsWindow(Func<SaveAsReturnInfo, Task> functionToCallOnSaveAs, ILibraryContainer providerLocator, bool showQueue, bool getNewName)
 			: base(480, 500)
 		{
-			textImageButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			textImageButtonFactory.disabledTextColor = ActiveTheme.Instance.TabLabelUnselected;
-			textImageButtonFactory.disabledFillColor = new RGBA_Bytes();
+			textImageButtonFactory.Options.Normal.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			textImageButtonFactory.Options.Hover.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			textImageButtonFactory.Options.Pressed.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			textImageButtonFactory.Options.Disabled.TextColor = ActiveTheme.Instance.TabLabelUnselected;
+			textImageButtonFactory.Options.Disabled.FillColor = new RGBA_Bytes();
 
 			AlwaysOnTopOfMain = true;
 			Title = "MatterControl - " + "Save As".Localize();

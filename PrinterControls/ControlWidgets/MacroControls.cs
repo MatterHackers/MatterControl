@@ -68,17 +68,17 @@ namespace MatterHackers.MatterControl.PrinterControls
 		public ActionControlsWidget()
 			: base(FlowDirection.TopToBottom)
 		{
-			this.textImageButtonFactory.normalFillColor = RGBA_Bytes.White;
-			this.textImageButtonFactory.FixedHeight = 24 * GuiWidget.DeviceScale;
-			this.textImageButtonFactory.fontSize = 12;
-			this.textImageButtonFactory.borderWidth = 1;
-			this.textImageButtonFactory.normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
-			this.textImageButtonFactory.hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
+			this.textImageButtonFactory.Options.Normal.FillColor = RGBA_Bytes.White;
+			this.textImageButtonFactory.Options.FixedHeight = 24 * GuiWidget.DeviceScale;
+			this.textImageButtonFactory.Options.FontSize = 12;
+			this.textImageButtonFactory.Options.BorderWidth = 1;
+			this.textImageButtonFactory.Options.Normal.BorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
+			this.textImageButtonFactory.Options.Hover.BorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
 
-			this.textImageButtonFactory.disabledTextColor = RGBA_Bytes.Gray;
-			this.textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			this.textImageButtonFactory.normalTextColor = RGBA_Bytes.Black;
-			this.textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			this.textImageButtonFactory.Options.Disabled.TextColor = RGBA_Bytes.Gray;
+			this.textImageButtonFactory.Options.Hover.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			this.textImageButtonFactory.Options.Normal.TextColor = RGBA_Bytes.Black;
+			this.textImageButtonFactory.Options.Pressed.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 
 			this.HAnchor = HAnchor.ParentLeftRight;
 
@@ -148,17 +148,17 @@ namespace MatterHackers.MatterControl.PrinterControls
 		public MacroControlsWidget()
 					: base(FlowDirection.TopToBottom)
 		{
-			this.textImageButtonFactory.normalFillColor = RGBA_Bytes.White;
-			this.textImageButtonFactory.FixedHeight = 24 * GuiWidget.DeviceScale;
-			this.textImageButtonFactory.fontSize = 12;
-			this.textImageButtonFactory.borderWidth = 1;
-			this.textImageButtonFactory.normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
-			this.textImageButtonFactory.hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
+			this.textImageButtonFactory.Options.Normal.FillColor = RGBA_Bytes.White;
+			this.textImageButtonFactory.Options.FixedHeight = 24 * GuiWidget.DeviceScale;
+			this.textImageButtonFactory.Options.FontSize = 12;
+			this.textImageButtonFactory.Options.BorderWidth = 1;
+			this.textImageButtonFactory.Options.Normal.BorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
+			this.textImageButtonFactory.Options.Hover.BorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
 
-			this.textImageButtonFactory.disabledTextColor = RGBA_Bytes.Gray;
-			this.textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			this.textImageButtonFactory.normalTextColor = RGBA_Bytes.Black;
-			this.textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			this.textImageButtonFactory.Options.Disabled.TextColor = RGBA_Bytes.Gray;
+			this.textImageButtonFactory.Options.Hover.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			this.textImageButtonFactory.Options.Normal.TextColor = RGBA_Bytes.Black;
+			this.textImageButtonFactory.Options.Pressed.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 
 			this.HAnchor = HAnchor.ParentLeftRight;
 

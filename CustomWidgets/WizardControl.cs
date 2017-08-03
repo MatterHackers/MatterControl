@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl
 			{
 				extraTextScaling = 1.33333;
 			}
-			textImageButtonFactory.fontSize = extraTextScaling * textImageButtonFactory.fontSize;
+			textImageButtonFactory.Options.FontSize = extraTextScaling * textImageButtonFactory.fontSize;
 
 			FlowLayoutWidget topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			topToBottom.AnchorAll();
@@ -86,11 +86,11 @@ namespace MatterHackers.MatterControl
 
 			topToBottom.AddChild(headerRow);
 
-			textImageButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			textImageButtonFactory.disabledTextColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 100);
-			textImageButtonFactory.disabledFillColor = new RGBA_Bytes(0, 0, 0, 0);
-			textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			textImageButtonFactory.Options.Normal.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			textImageButtonFactory.Options.Hover.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			textImageButtonFactory.Options.Disabled.TextColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 100);
+			textImageButtonFactory.Options.Disabled.FillColor = new RGBA_Bytes(0, 0, 0, 0);
+			textImageButtonFactory.Options.Pressed.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 
 			AnchorAll();
 			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;

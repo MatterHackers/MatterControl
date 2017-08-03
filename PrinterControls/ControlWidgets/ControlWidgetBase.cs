@@ -36,24 +36,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 {
 	public class ControlWidgetBase : DisableableWidget
 	{
-		protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
-
-		private readonly double TallButtonHeight = 25 * GuiWidget.DeviceScale;
-
-		public ControlWidgetBase()
-			: base()
-		{
-			this.textImageButtonFactory.normalFillColor = RGBA_Bytes.White;
-			this.textImageButtonFactory.disabledFillColor = RGBA_Bytes.White;
-
-			this.textImageButtonFactory.FixedHeight = TallButtonHeight;
-			this.textImageButtonFactory.fontSize = 11;
-
-			this.textImageButtonFactory.disabledTextColor = RGBA_Bytes.DarkGray;
-			this.textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			this.textImageButtonFactory.normalTextColor = RGBA_Bytes.Black;
-			this.textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
-		}
+		protected TextImageButtonFactory textImageButtonFactory => ApplicationController.Instance.Theme.DisableableControlBase;
 
 		protected static GuiWidget CreateSeparatorLine()
 		{

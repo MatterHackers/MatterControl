@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			var buttonFactory = ApplicationController.Instance.Theme.ButtonFactory;
 			var initialMargin = buttonFactory.Margin;
-			buttonFactory.Margin = new BorderDouble(8, 0);
+			buttonFactory.Options.Margin = new BorderDouble(8, 0);
 
 			var searchPanel = new SearchInputBox()
 			{
@@ -108,7 +108,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					searchInput.Focus();
 				}
 			};
-			buttonFactory.Margin = initialMargin;
+			buttonFactory.Options.Margin = initialMargin;
 			navBar.AddChild(searchButton);
 
 			var libraryContainerView = new ListView(libraryContext)

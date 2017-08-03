@@ -102,22 +102,22 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			persistenceLayer = layerCascade?.First() ?? ActiveSliceSettings.Instance.UserLayer;
 
 			textImageButtonFactory = new TextImageButtonFactory();
-			textImageButtonFactory.normalFillColor = RGBA_Bytes.Transparent;
-			textImageButtonFactory.FixedHeight = 15 * GuiWidget.DeviceScale;
-			textImageButtonFactory.fontSize = 8;
-			textImageButtonFactory.borderWidth = 1;
-			textImageButtonFactory.normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
-			textImageButtonFactory.hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
+			textImageButtonFactory.Options.Normal.FillColor = RGBA_Bytes.Transparent;
+			textImageButtonFactory.Options.FixedHeight = 15 * GuiWidget.DeviceScale;
+			textImageButtonFactory.Options.FontSize = 8;
+			textImageButtonFactory.Options.BorderWidth = 1;
+			textImageButtonFactory.Options.Normal.BorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
+			textImageButtonFactory.Options.Hover.BorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
 
-			this.textImageButtonFactory.disabledTextColor = RGBA_Bytes.Gray;
-			this.textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			this.textImageButtonFactory.normalTextColor = ActiveTheme.Instance.SecondaryTextColor;
-			this.textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			this.textImageButtonFactory.Options.Disabled.TextColor = RGBA_Bytes.Gray;
+			this.textImageButtonFactory.Options.Hover.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			this.textImageButtonFactory.Options.Normal.TextColor = ActiveTheme.Instance.SecondaryTextColor;
+			this.textImageButtonFactory.Options.Pressed.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 
-			buttonFactory.FixedHeight = 20 * GuiWidget.DeviceScale;
-			buttonFactory.fontSize = 10;
-			buttonFactory.normalFillColor = RGBA_Bytes.White;
-			buttonFactory.normalTextColor = RGBA_Bytes.DarkGray;
+			buttonFactory.Options.FixedHeight = 20 * GuiWidget.DeviceScale;
+			buttonFactory.Options.FontSize = 10;
+			buttonFactory.Options.Normal.FillColor = RGBA_Bytes.White;
+			buttonFactory.Options.Normal.TextColor = RGBA_Bytes.DarkGray;
 
 			pageTopToBottomLayout = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{

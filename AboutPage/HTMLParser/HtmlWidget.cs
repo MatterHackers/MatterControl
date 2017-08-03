@@ -62,8 +62,8 @@ namespace MatterHackers.MatterControl
 			linkButtonFactory.fontSize = 12;
 			linkButtonFactory.textColor = aboutTextColor;
 
-			textImageButtonFactory.normalFillColor = RGBA_Bytes.Gray;
-			textImageButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			textImageButtonFactory.Options.Normal.FillColor = RGBA_Bytes.Gray;
+			textImageButtonFactory.Options.Normal.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 
 			htmlParser.ParseHtml(htmlContent, AddContent, CloseContent);
 

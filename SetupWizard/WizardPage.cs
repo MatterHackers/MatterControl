@@ -14,7 +14,7 @@ namespace MatterHackers.MatterControl
 		protected TextWidget headerLabel;
 		protected Button cancelButton;
 
-		protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory() { fontSize = 16 };
+		protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory(new ButtonFactoryOptions() { FontSize = 16 });
 		protected TextImageButtonFactory whiteImageButtonFactory;
 		protected LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
 
@@ -27,33 +27,44 @@ namespace MatterHackers.MatterControl
 
 		public WizardPage(string unlocalizedTextForCancelButton = "Cancel", string unlocalizedTextForTitle = "Setup Wizard")
 		{
-			whiteImageButtonFactory = new TextImageButtonFactory()
+			whiteImageButtonFactory = new TextImageButtonFactory(new ButtonFactoryOptions()
 			{
-				normalFillColor = RGBA_Bytes.White,
-				disabledFillColor = RGBA_Bytes.White,
-				fontSize = 16,
-				borderWidth = 1,
+				Normal = new ButtonOptionSection()
+				{
+					FillColor = RGBA_Bytes.White,
+					BorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200),
+					TextColor = RGBA_Bytes.Black,
+				},
+				Disabled = new ButtonOptionSection()
+				{
+					FillColor = RGBA_Bytes.White,
+					TextColor = RGBA_Bytes.DarkGray,
+				},
+				Hover = new ButtonOptionSection()
+				{
+					BorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200),
+					TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				},
+				Pressed = new ButtonOptionSection()
+				{
+					TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				},
 
-				normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200),
-				hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200),
-
-				disabledTextColor = RGBA_Bytes.DarkGray,
-				hoverTextColor = ActiveTheme.Instance.PrimaryTextColor,
-				normalTextColor = RGBA_Bytes.Black,
-				pressedTextColor = ActiveTheme.Instance.PrimaryTextColor,
+				FontSize = 16,
+				BorderWidth = 1,
 				FixedWidth = 200
-			};
+			});
 
 			if (!UserSettings.Instance.IsTouchScreen)
 			{
-				textImageButtonFactory = new TextImageButtonFactory()
+				textImageButtonFactory = new TextImageButtonFactory(new ButtonFactoryOptions()
 				{
-					normalTextColor = ActiveTheme.Instance.PrimaryTextColor,
-					hoverTextColor = ActiveTheme.Instance.PrimaryTextColor,
-					disabledTextColor = ActiveTheme.Instance.PrimaryTextColor,
-					pressedTextColor = ActiveTheme.Instance.PrimaryTextColor,
-					borderWidth = 0
-				};
+					Normal = new ButtonOptionSection() { TextColor = ActiveTheme.Instance.PrimaryTextColor },
+					Hover = new ButtonOptionSection() { TextColor = ActiveTheme.Instance.PrimaryTextColor },
+					Disabled = new ButtonOptionSection() { TextColor = ActiveTheme.Instance.PrimaryTextColor },
+					Pressed = new ButtonOptionSection() { TextColor = ActiveTheme.Instance.PrimaryTextColor },
+					BorderWidth = 0
+				});
 
 				linkButtonFactory.textColor = ActiveTheme.Instance.PrimaryTextColor;
 				linkButtonFactory.fontSize = 10;

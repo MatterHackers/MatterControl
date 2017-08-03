@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			bool haveFilterRunning = !string.IsNullOrEmpty(currentContainer.KeywordFilter);
 
 			var initialMargin = buttonFactory.Margin;
-			buttonFactory.Margin = new BorderDouble(8, 0);
+			buttonFactory.Options.Margin = new BorderDouble(8, 0);
 
 			var icon = LibraryProviderHelpers.LoadInvertIcon("FileDialog", "up_folder_20.png");
 			//icon = LibraryProviderHelpers.ResizeImage(icon, 20, 20);
@@ -85,7 +85,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				}
 			};
 
-			buttonFactory.Margin = initialMargin;
+			buttonFactory.Options.Margin = initialMargin;
 
 			this.AddChild(upbutton);
 

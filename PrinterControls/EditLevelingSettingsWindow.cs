@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl
 			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
 			double oldHeight = textImageButtonFactory.FixedHeight;
-			textImageButtonFactory.FixedHeight = 30 * GuiWidget.DeviceScale;
+			textImageButtonFactory.Options.FixedHeight = 30 * GuiWidget.DeviceScale;
 
 			// put in the movement edit controls
 			PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
@@ -140,7 +140,7 @@ namespace MatterHackers.MatterControl
 				presetsFormContainer.AddChild(new CustomWidgets.HorizontalLine());
 			}
 
-			textImageButtonFactory.FixedHeight = oldHeight;
+			textImageButtonFactory.Options.FixedHeight = oldHeight;
 
 			ShowAsSystemWindow();
 			MinimumSize = new Vector2(Width, Height);
