@@ -69,7 +69,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public UndoBuffer UndoBuffer { get; } = new UndoBuffer();
 		public readonly int EditButtonHeight = 44;
 
-		private bool editorThatRequestedSave = false;
 		private ExportPrintItemWindow exportingWindow = null;
 		private ObservableCollection<GuiWidget> extruderButtons = new ObservableCollection<GuiWidget>();
 		private bool hasDrawn = false;
@@ -664,18 +663,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				AxisAlignedBoundingBox boundsAdd = meshToAdd.GetAxisAlignedBoundingBox();
 
 				AxisAlignedBoundingBox boundsResult = aabbOpperation(boundsA, boundsB);
-
-				if (!boundsAdd.Equals(boundsResult, .0001))
-				{
-					int a = 0;
-				}
-			}
-
-			int nonManifoldEdges = meshToAdd.GetNonManifoldEdges().Count;
-			if (nonManifoldEdges > 0)
-			{
-				// shoud be manifold
-				int a = 0;
 			}
 
 			return meshToAdd;
@@ -1979,8 +1966,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private async Task SaveChanges()
 		{
-			editorThatRequestedSave = true;
-
 			if (Scene.HasChildren)
 			{
 				processingProgressControl.ProcessType = "Saving".Localize() + ":";
