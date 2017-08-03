@@ -75,8 +75,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		internal SettingsControlBar settingsControlBar;
 		private FlowLayoutWidget pageTopToBottomLayout;
 
-		private TextImageButtonFactory textImageButtonFactory;
-
 		private List<PrinterSettingsLayer> layerCascade = null;
 		private PrinterSettingsLayer persistenceLayer = null;
 
@@ -100,19 +98,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			// The last layer of the layerFilters is the target persistence layer
 			persistenceLayer = layerCascade?.First() ?? ActiveSliceSettings.Instance.UserLayer;
-
-			textImageButtonFactory = new TextImageButtonFactory();
-			textImageButtonFactory.Options.Normal.FillColor = RGBA_Bytes.Transparent;
-			textImageButtonFactory.Options.FixedHeight = 15 * GuiWidget.DeviceScale;
-			textImageButtonFactory.Options.FontSize = 8;
-			textImageButtonFactory.Options.BorderWidth = 1;
-			textImageButtonFactory.Options.Normal.BorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
-			textImageButtonFactory.Options.Hover.BorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
-
-			this.textImageButtonFactory.Options.Disabled.TextColor = RGBA_Bytes.Gray;
-			this.textImageButtonFactory.Options.Hover.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			this.textImageButtonFactory.Options.Normal.TextColor = ActiveTheme.Instance.SecondaryTextColor;
-			this.textImageButtonFactory.Options.Pressed.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 
 			buttonFactory.Options.FixedHeight = 20 * GuiWidget.DeviceScale;
 			buttonFactory.Options.FontSize = 10;
