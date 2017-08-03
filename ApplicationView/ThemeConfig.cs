@@ -121,6 +121,7 @@ namespace MatterHackers.MatterControl
 
 			this.ButtonFactory = new TextImageButtonFactory()
 			{
+				// Common
 				normalTextColor = theme.PrimaryTextColor,
 				hoverTextColor = theme.PrimaryTextColor,
 				pressedTextColor = theme.PrimaryTextColor,
@@ -132,52 +133,54 @@ namespace MatterHackers.MatterControl
 
 			this.SmallMarginButtonFactory = new TextImageButtonFactory()
 			{
+				// Common
 				normalTextColor = theme.PrimaryTextColor,
 				hoverTextColor = theme.PrimaryTextColor,
 				pressedTextColor = theme.PrimaryTextColor,
 				disabledTextColor = theme.TertiaryBackgroundColor,
-				Margin = new BorderDouble(8, 0),
 				borderWidth = 0,
 				FixedHeight = 32,
+
+				// Exceptions
+				Margin = new BorderDouble(8, 0),
 			};
 
 			this.MenuButtonFactory = new TextImageButtonFactory()
 			{
+				// Common
+				disabledTextColor = theme.TertiaryBackgroundColor,
+				borderWidth = 0,
+				FixedHeight = 32,
+
+				// Exceptions
 				normalTextColor = RGBA_Bytes.Black,
 				hoverTextColor = RGBA_Bytes.Black,
 				pressedTextColor = RGBA_Bytes.Black,
-				disabledTextColor = theme.TertiaryBackgroundColor,
 				normalFillColor = RGBA_Bytes.LightGray,
 				pressedFillColor = RGBA_Bytes.LightGray,
 				Margin = new BorderDouble(8, 0),
-				borderWidth = 0,
-				FixedHeight = 32,
 			};
 
 			this.GrayButtonFactory = new TextImageButtonFactory()
 			{
+				// Exceptions
 				normalFillColor = RGBA_Bytes.Gray,
 				normalTextColor = theme.PrimaryTextColor
 			};
 
-			int buttonHeight;
-			if (UserSettings.Instance.IsTouchScreen)
-			{
-				buttonHeight = 40;
-			}
-			else
-			{
-				buttonHeight = 0;
-			}
+			int viewControlsButtonHeight = (UserSettings.Instance.IsTouchScreen) ? 40 : 0;
 
 			this.ViewControlsButtonFactory = new TextImageButtonFactory()
 			{
+				// Common
 				normalTextColor = theme.PrimaryTextColor,
 				hoverTextColor = theme.PrimaryTextColor,
-				disabledTextColor = theme.PrimaryTextColor,
 				pressedTextColor = theme.PrimaryTextColor,
-				FixedHeight = buttonHeight,
-				FixedWidth = buttonHeight,
+
+				// Exceptions
+				disabledTextColor = theme.PrimaryTextColor,
+				FixedHeight = viewControlsButtonHeight,
+				FixedWidth = viewControlsButtonHeight,
 				AllowThemeToAdjustImage = false,
 				checkedBorderColor = RGBA_Bytes.White
 			};
@@ -196,6 +199,7 @@ namespace MatterHackers.MatterControl
 
 			WhiteButtonFactory = new TextImageButtonFactory()
 			{
+				// Exceptions
 				FixedWidth = sideBarButtonWidth,
 				FixedHeight = shortButtonHeight,
 
@@ -212,15 +216,17 @@ namespace MatterHackers.MatterControl
 
 			ExpandMenuOptionFactory = new TextImageButtonFactory()
 			{
-				FixedWidth = sideBarButtonWidth,
+				// Common
 				normalTextColor = theme.PrimaryTextColor,
 				hoverTextColor = theme.PrimaryTextColor,
-				disabledTextColor = theme.PrimaryTextColor,
 				pressedTextColor = theme.PrimaryTextColor,
 
+				// Exceptions
+				disabledTextColor = theme.PrimaryTextColor,
 				hoverFillColor = new RGBA_Bytes(255, 255, 255, 50),
 				pressedFillColor = new RGBA_Bytes(255, 255, 255, 50),
-				disabledFillColor = new RGBA_Bytes(255, 255, 255, 50)
+				disabledFillColor = new RGBA_Bytes(255, 255, 255, 50),
+				FixedWidth = sideBarButtonWidth,
 			};
 
 			#endregion
@@ -228,6 +234,7 @@ namespace MatterHackers.MatterControl
 			#region ImageConverter
 			imageConverterButtonFactory = new TextImageButtonFactory()
 			{
+				// Exceptions
 				FixedWidth = 185,
 				FixedHeight = 30,
 
