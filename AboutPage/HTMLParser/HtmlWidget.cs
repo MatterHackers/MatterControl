@@ -49,7 +49,6 @@ namespace MatterHackers.MatterControl
 	public class HtmlWidget : FlowLayoutWidget
 	{
 		private LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
-		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 
 		private Stack<GuiWidget> elementsUnderConstruction = new Stack<GuiWidget>();
 		HtmlParser htmlParser = new HtmlParser();
@@ -61,9 +60,6 @@ namespace MatterHackers.MatterControl
 			elementsUnderConstruction.Push(this);
 			linkButtonFactory.fontSize = 12;
 			linkButtonFactory.textColor = aboutTextColor;
-
-			textImageButtonFactory.Options.Normal.FillColor = RGBA_Bytes.Gray;
-			textImageButtonFactory.Options.Normal.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 
 			htmlParser.ParseHtml(htmlContent, AddContent, CloseContent);
 
@@ -233,7 +229,7 @@ namespace MatterHackers.MatterControl
 					Button createdButton = null;
 					if (elementState.Classes.Contains("centeredButton"))
 					{
-						createdButton = textImageButtonFactory.Generate(decodedHtml);
+						createdButton = ApplicationController.Instance.Theme.GrayButtonFactory.Generate(decodedHtml);
 						widgetToAdd = createdButton;
 					}
 					else if (elementState.Classes.Contains("linkButton"))
