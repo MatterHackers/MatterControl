@@ -613,7 +613,6 @@ namespace MatterHackers.MeshVisualizer
 
 		public bool IsActive { get; set; } = true;
 
-		RGBA_Bytes lastDrawColor;
 		private void DrawObject(IObject3D object3D, Matrix4X4 transform, bool parentSelected)
 		{
 			foreach(MeshRenderData renderData in object3D.VisibleMeshes(transform))
@@ -637,16 +636,66 @@ namespace MatterHackers.MeshVisualizer
 					drawColor = RGBA_Floats.FromHSL(Math.Max(renderData.MaterialIndex, 0) / 4.0, .99, .49).GetAsRGBA_Bytes();
 				}
 
-				if (drawColor.Alpha0To1 == 0)
-				{
-					drawColor = lastDrawColor;
-				}
-				else
-				{
-					lastDrawColor = drawColor;
-				}
-
 				GLHelper.Render(renderData.Mesh, drawColor, renderData.Matrix, RenderType);
+
+				if(isSelected)
+				{
+					var screenPosition = new Vector3[3];
+					var frustum = World.GetClippingFrustum();
+					GLHelper.PrepareFor3DLineRender(true);
+
+					if (renderData.Mesh.Vertices.Count < 1000)
+					{
+						foreach (MeshEdge meshEdge in renderData.Mesh.MeshEdges)
+						{
+							if (meshEdge.GetNumFacesSharingEdge() == 2)
+							{
+								FaceEdge firstFaceEdge = meshEdge.firstFaceEdge;
+								FaceEdge nextFaceEdge = meshEdge.firstFaceEdge.radialNextFaceEdge;
+								// find out if one face is facing the camera and one is facing away
+								var vertexPosition = World.GetScreenSpace(Vector3.Transform(firstFaceEdge.FirstVertex.Position, renderData.Matrix));
+								var firstNormal = World.GetScreenSpace(Vector3.Transform(firstFaceEdge.FirstVertex.Position + firstFaceEdge.ContainingFace.normal, renderData.Matrix));
+								var nextNormal = World.GetScreenSpace(Vector3.Transform(firstFaceEdge.FirstVertex.Position + nextFaceEdge.ContainingFace.normal, renderData.Matrix));
+
+								var firstTowards = (firstNormal - vertexPosition).z < 0;
+								var nextTowards = (nextNormal - vertexPosition).z < 0;
+
+								if (firstTowards != nextTowards)
+								{
+									var transformed1 = Vector3.Transform(meshEdge.VertexOnEnd[0].Position, renderData.Matrix);
+									var transformed2 = Vector3.Transform(meshEdge.VertexOnEnd[1].Position, renderData.Matrix);
+
+									for (int i = 0; i < 3; i++)
+									{
+										GLHelper.Render3DLineNoPrep(frustum, World, transformed1, transformed2, ActiveTheme.Instance.PrimaryAccentColor, 15);
+									}
+								}
+							}
+						}
+					}
+					else // just render the bounding box
+					{
+						RenderAABB(frustum, renderData.Mesh.GetAxisAlignedBoundingBox(), renderData.Matrix, ActiveTheme.Instance.PrimaryAccentColor);
+					}
+
+					// turn lighting back on after rendering selection outlines
+					GL.Enable(EnableCap.Lighting);
+				}
+			}
+		}
+
+		void RenderAABB(Frustum frustum, AxisAlignedBoundingBox bounds, Matrix4X4 matrix, RGBA_Bytes color)
+		{
+			for (int i = 0; i < 4; i++)
+			{
+				Vector3 bottomStartPosition = Vector3.Transform(bounds.GetBottomCorner(i), matrix);
+				Vector3 bottomEndPosition = Vector3.Transform(bounds.GetBottomCorner((i + 1) % 4), matrix);
+				Vector3 topStartPosition = Vector3.Transform(bounds.GetTopCorner(i), matrix);
+				Vector3 topEndPosition = Vector3.Transform(bounds.GetTopCorner((i + 1) % 4), matrix);
+
+				GLHelper.Render3DLineNoPrep(frustum, World, bottomStartPosition, bottomEndPosition, ActiveTheme.Instance.PrimaryAccentColor, 15);
+				GLHelper.Render3DLineNoPrep(frustum, World, topStartPosition, topEndPosition, ActiveTheme.Instance.PrimaryAccentColor, 15);
+				GLHelper.Render3DLineNoPrep(frustum, World, topStartPosition, bottomStartPosition, ActiveTheme.Instance.PrimaryAccentColor, 15);
 			}
 		}
 
