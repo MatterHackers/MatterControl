@@ -200,7 +200,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 						{
 							if (shouldRebuildThumbnails)
 							{
-								string directoryToRemove = PartThumbnailWidget.ThumbnailsPath;
+								string directoryToRemove = ApplicationController.CacheablePath("ItemThumbnails", "");
 								try
 								{
 									if (Directory.Exists(directoryToRemove))
@@ -212,6 +212,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 								{
 									GuiWidget.BreakInDebugger();
 								}
+
+								Directory.CreateDirectory(directoryToRemove);
 							}
 
 							ApplicationController.Instance.ReloadAll();
