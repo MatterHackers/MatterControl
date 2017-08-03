@@ -28,7 +28,6 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg;
-using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.PrinterCommunication;
 using System;
 using System.Collections.Generic;
@@ -37,21 +36,6 @@ namespace MatterHackers.MatterControl
 {
 	public class PrinterOutputCache
 	{
-		private static PrinterOutputCache instance = null;
-
-		public static PrinterOutputCache Instance
-		{
-			get
-			{
-				if (instance == null)
-				{
-					instance = new PrinterOutputCache();
-				}
-
-				return instance;
-			}
-		}
-
 		private static readonly bool Is32Bit = IntPtr.Size == 4;
 
 		public List<string> PrinterLines = new List<string>();
@@ -61,11 +45,11 @@ namespace MatterHackers.MatterControl
 
 		private EventHandler unregisterEvents;
 
-		private PrinterOutputCache()
+		public PrinterOutputCache(PrinterConnection printerConnection)
 		{
-			PrinterConnection.Instance.ConnectionFailed.RegisterEvent(Instance_ConnectionFailed, ref unregisterEvents);
-			PrinterConnection.Instance.CommunicationUnconditionalFromPrinter.RegisterEvent(FromPrinter, ref unregisterEvents);
-			PrinterConnection.Instance.CommunicationUnconditionalToPrinter.RegisterEvent(ToPrinter, ref unregisterEvents);
+			printerConnection.ConnectionFailed.RegisterEvent(Instance_ConnectionFailed, ref unregisterEvents);
+			printerConnection.CommunicationUnconditionalFromPrinter.RegisterEvent(FromPrinter, ref unregisterEvents);
+			printerConnection.CommunicationUnconditionalToPrinter.RegisterEvent(ToPrinter, ref unregisterEvents);
 			if (Is32Bit)
 			{
 				// About 10 megs worth. Average line length in gcode file is about 14 and we store strings as chars (16 bit) so 450,000 lines.
