@@ -117,7 +117,7 @@ namespace MatterHackers.MatterControl
 		{
 			var theme = ActiveTheme.Instance;
 
-			DefaultThumbView.ThumbColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 30);
+			DefaultThumbView.ThumbColor = new RGBA_Bytes(theme.PrimaryTextColor, 30);
 
 			this.ButtonFactory = new TextImageButtonFactory()
 			{
@@ -157,7 +157,7 @@ namespace MatterHackers.MatterControl
 			this.GrayButtonFactory = new TextImageButtonFactory()
 			{
 				normalFillColor = RGBA_Bytes.Gray,
-				normalTextColor = ActiveTheme.Instance.PrimaryTextColor
+				normalTextColor = theme.PrimaryTextColor
 			};
 
 			int buttonHeight;
@@ -172,10 +172,10 @@ namespace MatterHackers.MatterControl
 
 			this.ViewControlsButtonFactory = new TextImageButtonFactory()
 			{
-				normalTextColor = ActiveTheme.Instance.PrimaryTextColor,
-				hoverTextColor = ActiveTheme.Instance.PrimaryTextColor,
-				disabledTextColor = ActiveTheme.Instance.PrimaryTextColor,
-				pressedTextColor = ActiveTheme.Instance.PrimaryTextColor,
+				normalTextColor = theme.PrimaryTextColor,
+				hoverTextColor = theme.PrimaryTextColor,
+				disabledTextColor = theme.PrimaryTextColor,
+				pressedTextColor = theme.PrimaryTextColor,
 				FixedHeight = buttonHeight,
 				FixedWidth = buttonHeight,
 				AllowThemeToAdjustImage = false,
@@ -206,17 +206,17 @@ namespace MatterHackers.MatterControl
 				hoverFillColor = new RGBA_Bytes(255, 255, 255, 200),
 				borderWidth = 1,
 
-				normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200),
-				hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200)
+				normalBorderColor = new RGBA_Bytes(theme.PrimaryTextColor, 200),
+				hoverBorderColor = new RGBA_Bytes(theme.PrimaryTextColor, 200)
 			};
 
 			ExpandMenuOptionFactory = new TextImageButtonFactory()
 			{
 				FixedWidth = sideBarButtonWidth,
-				normalTextColor = ActiveTheme.Instance.PrimaryTextColor,
-				hoverTextColor = ActiveTheme.Instance.PrimaryTextColor,
-				disabledTextColor = ActiveTheme.Instance.PrimaryTextColor,
-				pressedTextColor = ActiveTheme.Instance.PrimaryTextColor,
+				normalTextColor = theme.PrimaryTextColor,
+				hoverTextColor = theme.PrimaryTextColor,
+				disabledTextColor = theme.PrimaryTextColor,
+				pressedTextColor = theme.PrimaryTextColor,
 
 				hoverFillColor = new RGBA_Bytes(255, 255, 255, 50),
 				pressedFillColor = new RGBA_Bytes(255, 255, 255, 50),
@@ -238,17 +238,17 @@ namespace MatterHackers.MatterControl
 				hoverFillColor = new RGBA_Bytes(255, 255, 255, 200),
 				borderWidth = 1,
 
-				normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200),
-				hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200)
+				normalBorderColor = new RGBA_Bytes(theme.PrimaryTextColor, 200),
+				hoverBorderColor = new RGBA_Bytes(theme.PrimaryTextColor, 200)
 			};
 
 			imageConverterExpandMenuOptionFactory = new TextImageButtonFactory()
 			{
 				FixedWidth = 200,
-				normalTextColor = ActiveTheme.Instance.PrimaryTextColor,
-				hoverTextColor = ActiveTheme.Instance.PrimaryTextColor,
-				disabledTextColor = ActiveTheme.Instance.PrimaryTextColor,
-				pressedTextColor = ActiveTheme.Instance.PrimaryTextColor,
+				normalTextColor = theme.PrimaryTextColor,
+				hoverTextColor = theme.PrimaryTextColor,
+				disabledTextColor = theme.PrimaryTextColor,
+				pressedTextColor = theme.PrimaryTextColor,
 
 				hoverFillColor = new RGBA_Bytes(255, 255, 255, 50),
 				pressedFillColor = new RGBA_Bytes(255, 255, 255, 50),
@@ -259,13 +259,13 @@ namespace MatterHackers.MatterControl
 			this.LinkButtonFactory = new LinkButtonFactory()
 			{
 				fontSize = fontSize11,
-				textColor = ActiveTheme.Instance.PrimaryTextColor
+				textColor = theme.PrimaryTextColor
 			};
 
 			this.HelpLinkFactory = new LinkButtonFactory()
 			{
 				fontSize = fontSize10,
-				textColor = ActiveTheme.Instance.SecondaryAccentColor
+				textColor = theme.SecondaryAccentColor
 			};
 		}
 
