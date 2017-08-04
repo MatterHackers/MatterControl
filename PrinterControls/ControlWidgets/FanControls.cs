@@ -64,9 +64,10 @@ namespace MatterHackers.MatterControl.PrinterControls
 			}
 
 			leftToRight.AddChild(fanControlsLayout);
-			SetDisplayAttributes();
 
-			fanSpeedDisplay = new EditableNumberDisplay(textImageButtonFactory, "{0}%".FormatWith(PrinterConnection.Instance.FanSpeed0To255.ToString()), "100%");
+			this.HAnchor = HAnchor.ParentLeftRight;
+
+			fanSpeedDisplay = new EditableNumberDisplay("{0}%".FormatWith(PrinterConnection.Instance.FanSpeed0To255.ToString()), "100%");
 			fanSpeedDisplay.EditComplete += (sender, e) =>
 			{
 				PrinterConnection.Instance.FanSpeed0To255 = (int)(fanSpeedDisplay.GetValue() * 255.5 / 100);
@@ -76,31 +77,9 @@ namespace MatterHackers.MatterControl.PrinterControls
 			fanControlsGroupBox.AddChild(leftToRight);
 		}
 
-		private void SetDisplayAttributes()
-		{
-			this.textImageButtonFactory.Options.Normal.FillColor = RGBA_Bytes.Transparent;
-
-			this.textImageButtonFactory.Options.FixedWidth = 38 * GuiWidget.DeviceScale;
-			this.textImageButtonFactory.Options.FixedHeight = 20 * GuiWidget.DeviceScale;
-			this.textImageButtonFactory.Options.FontSize = 10;
-			this.textImageButtonFactory.Options.BorderWidth = 1;
-			this.textImageButtonFactory.Options.Normal.BorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
-			this.textImageButtonFactory.Options.Hover.BorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
-
-			this.textImageButtonFactory.Options.Disabled.TextColor = RGBA_Bytes.Gray;
-			this.textImageButtonFactory.Options.Hover.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			this.textImageButtonFactory.Options.Normal.TextColor = ActiveTheme.Instance.SecondaryTextColor;
-			this.textImageButtonFactory.Options.Pressed.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-
-			this.HAnchor = HAnchor.ParentLeftRight;
-		}
-
 		public override void OnClosed(ClosedEventArgs e)
 		{
-			if (unregisterEvents != null)
-			{
-				unregisterEvents(this, null);
-			}
+			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
 		}
 
