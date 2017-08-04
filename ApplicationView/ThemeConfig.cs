@@ -134,12 +134,10 @@ namespace MatterHackers.MatterControl
 
 			this.ButtonFactory = new TextImageButtonFactory(commonOptions);
 
-			var smallMarginOptions = commonOptions.Clone(options =>
+			this.SmallMarginButtonFactory = new TextImageButtonFactory(commonOptions.Clone(options =>
 			{
 				options.Margin = new BorderDouble(8, 0);
-			});
-			
-			this.SmallMarginButtonFactory = new TextImageButtonFactory(smallMarginOptions);
+			}));
 
 			this.MenuButtonFactory = new TextImageButtonFactory(commonOptions.Clone(options =>
 			{
