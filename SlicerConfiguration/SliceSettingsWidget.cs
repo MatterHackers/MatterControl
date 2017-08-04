@@ -69,8 +69,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 	public class SliceSettingsWidget : GuiWidget
 	{
-		private TextImageButtonFactory buttonFactory = new TextImageButtonFactory();
-
 		private TabControl topCategoryTabs;
 		internal SettingsControlBar settingsControlBar;
 		private FlowLayoutWidget pageTopToBottomLayout;
@@ -98,11 +96,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			// The last layer of the layerFilters is the target persistence layer
 			persistenceLayer = layerCascade?.First() ?? ActiveSliceSettings.Instance.UserLayer;
-
-			buttonFactory.Options.FixedHeight = 20 * GuiWidget.DeviceScale;
-			buttonFactory.Options.FontSize = 10;
-			buttonFactory.Options.Normal.FillColor = RGBA_Bytes.White;
-			buttonFactory.Options.Normal.TextColor = RGBA_Bytes.DarkGray;
 
 			pageTopToBottomLayout = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
