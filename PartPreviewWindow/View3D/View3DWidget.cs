@@ -51,6 +51,7 @@ using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintQueue;
+using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
@@ -203,8 +204,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var buttonBottomPanel = new FlowLayoutWidget(FlowDirection.LeftToRight)
 			{
 				HAnchor = HAnchor.ParentLeftRight,
-				Padding = new BorderDouble(3, 3),
-				BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor
+				Padding = 3,
+				BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor,
 			};
 
 			HashSet<IObject3DEditor> mappedEditors;
@@ -230,21 +231,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// add in the plater tools
 			{
+				var editToolBar = new FlowLayoutWidget();
+				editToolBar.VAnchor |= VAnchor.ParentCenter;
+				
 				processingProgressControl = new ProgressControl("", ActiveTheme.Instance.PrimaryTextColor, ActiveTheme.Instance.PrimaryAccentColor)
 				{
 					VAnchor = VAnchor.ParentCenter,
 					Visible = false
 				};
-
-				var editToolBar = new FlowLayoutWidget();
 				editToolBar.AddChild(processingProgressControl);
-				editToolBar.VAnchor |= VAnchor.ParentCenter;
 
 				doEdittingButtonsContainer = new FlowLayoutWidget();
 				doEdittingButtonsContainer.Visible = false;
 
 				{
-					Button addButton = smallMarginButtonFactory.Generate("Insert".Localize(), "icon_insert_32x32.png");
+					Button addButton = smallMarginButtonFactory.Generate("Insert".Localize(), StaticData.Instance.LoadIcon("AddAzureResource_16x.png", 16, 16));
 					doEdittingButtonsContainer.AddChild(addButton);
 					addButton.Click += (sender, e) =>
 					{
@@ -332,7 +333,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					};
 
 					Button clearPlateButton = smallMarginButtonFactory.Generate("Clear Plate".Localize());
-					clearPlateButton.Margin = new BorderDouble(right: 10);
 					clearPlateButton.Click += (sender, e) =>
 					{
 						UiThread.RunOnIdle(ApplicationController.Instance.ClearPlate);
@@ -360,6 +360,29 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						AlignToRightEdge = true
 					};
 					doEdittingButtonsContainer.AddChild(materialsButton);
+
+					if (OemSettings.Instance.ShowShopButton)
+					{
+						var shopButton = smallMarginButtonFactory.Generate("Buy Materials".Localize(), StaticData.Instance.LoadIcon("icon_shopping_cart_32x32.png", 24, 24));
+						shopButton.ToolTipText = "Shop online for printing materials".Localize();
+						shopButton.Name = "Buy Materials Button";
+						shopButton.Margin = new BorderDouble(0, 0, 3, 0);
+						shopButton.Click += (sender, e) =>
+						{
+							double activeFilamentDiameter = 0;
+							if (ActiveSliceSettings.Instance.PrinterSelected)
+							{
+								activeFilamentDiameter = 3;
+								if (ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_diameter) < 2)
+								{
+									activeFilamentDiameter = 1.75;
+								}
+							}
+
+							MatterControlApplication.Instance.LaunchBrowser("http://www.matterhackers.com/mc/store/redirect?d={0}&clk=mcs&a={1}".FormatWith(activeFilamentDiameter, OemSettings.Instance.AffiliateCode));
+						};
+						doEdittingButtonsContainer.AddChild(shopButton);
+					}
 				}
 
 				editToolBar.AddChild(doEdittingButtonsContainer);
@@ -1548,7 +1571,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			saveButtons.Visible = false;
 			saveButtons.Margin = new BorderDouble();
 			saveButtons.VAnchor |= VAnchor.ParentCenter;
-
 			flowToAddTo.AddChild(saveButtons);
 		}
 

@@ -138,7 +138,7 @@ namespace MatterHackers.MatterControl
 
 			if (!UserSettings.Instance.IsTouchScreen)
 			{
-#if !__ANDROID__
+#if false // !__ANDROID__
 				// The application menu bar, which is suppressed on Android
 				var menuRow = new ApplicationMenuRow();
 				container.AddChild(menuRow);
