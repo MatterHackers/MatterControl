@@ -170,29 +170,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			// Extrude buttons {{
 
-			var moveButtonFactory = new TextImageButtonFactory(new ButtonFactoryOptions()
-			{
-				FixedHeight = 20 * GuiWidget.DeviceScale,
-				FixedWidth = 30 * GuiWidget.DeviceScale,
-				FontSize = 8,
-				Margin = new BorderDouble(2, 0),
-				CheckedBorderColor = buttonFactory.normalTextColor,
-
-				Normal = new ButtonOptionSection()
-				{
-					TextColor = buttonFactory.normalTextColor,
-					FillColor = buttonFactory.normalFillColor,
-				},
-				Hover = new ButtonOptionSection()
-				{
-					FillColor = buttonFactory.hoverFillColor,
-				},
-				Pressed = new ButtonOptionSection()
-				{
-					FillColor = buttonFactory.pressedFillColor,
-					TextColor = buttonFactory.pressedTextColor
-				}
-			});
+			var moveButtonFactory = ApplicationController.Instance.Theme.MicroButtonMenu;
 
 			var buttonContainer = new FlowLayoutWidget()
 			{

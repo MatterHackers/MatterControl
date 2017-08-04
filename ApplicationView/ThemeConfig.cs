@@ -90,6 +90,8 @@ namespace MatterHackers.MatterControl
 
 		public TextImageButtonFactory DisableableControlBase { get; private set; }
 		public TextImageButtonFactory HomingButtons { get; private set; }
+		public TextImageButtonFactory MicroButton { get; private set; }
+		public TextImageButtonFactory MicroButtonMenu { get; private set; }
 
 		private EventHandler unregisterEvents;
 
@@ -139,13 +141,17 @@ namespace MatterHackers.MatterControl
 				options.Margin = new BorderDouble(8, 0);
 			}));
 
-			this.MenuButtonFactory = new TextImageButtonFactory(commonOptions.Clone(options =>
+			var commonGray = commonOptions.Clone(options =>
 			{
 				options.Normal.TextColor = RGBA_Bytes.Black;
 				options.Normal.FillColor = RGBA_Bytes.LightGray;
 				options.Hover.TextColor = RGBA_Bytes.Black;
 				options.Pressed.TextColor = RGBA_Bytes.Black;
 				options.Pressed.FillColor = RGBA_Bytes.LightGray;
+			});
+
+			this.MenuButtonFactory = new TextImageButtonFactory(commonGray.Clone(options =>
+			{
 				options.Margin = new BorderDouble(8, 0);
 			}));
 
@@ -164,6 +170,25 @@ namespace MatterHackers.MatterControl
 				options.FixedWidth = viewControlsButtonHeight;
 				options.AllowThemeToAdjustImage = false;
 				options.CheckedBorderColor = RGBA_Bytes.White;
+			}));
+
+			this.MicroButton = new TextImageButtonFactory(new ButtonFactoryOptions()
+			{
+				FixedHeight = 20 * GuiWidget.DeviceScale,
+				FixedWidth = 30 * GuiWidget.DeviceScale,
+				FontSize = 8,
+				Margin = 0,
+				CheckedBorderColor = ActiveTheme.Instance.PrimaryTextColor
+			});
+
+			this.MicroButtonMenu = new TextImageButtonFactory(commonGray.Clone(options =>
+			{
+				options.FixedHeight = 20 * GuiWidget.DeviceScale;
+				options.FixedWidth = 30 * GuiWidget.DeviceScale;
+				options.FontSize = 8;
+				options.Margin = 0;
+				options.BorderWidth = 1;
+				options.CheckedBorderColor = RGBA_Bytes.Black;
 			}));
 
 			#region PartPreviewWidget

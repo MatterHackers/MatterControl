@@ -27,79 +27,42 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl
 {
 	public class SplitButton : FlowLayoutWidget
 	{
-		private DropDownMenu altChoices;
-
-		private Button DefaultButton { get; }
-
 		public SplitButton(string buttonText, Direction direction = Direction.Down)
 			: base(FlowDirection.LeftToRight)
 		{
 			HAnchor = HAnchor.FitToChildren;
 			VAnchor = VAnchor.FitToChildren;
 
-			this.DefaultButton = CreateDefaultButton(buttonText);
-			this.DefaultButton.VAnchor = VAnchor.ParentCenter;
+			var button = ApplicationController.Instance.Theme.ButtonFactory.Generate(buttonText, centerText: true);
+			button.VAnchor = VAnchor.ParentCenter;
 
-			altChoices = CreateDropDown(direction);
+			AddChild(button);
 
-			AddChild(this.DefaultButton);
-			AddChild(altChoices);
+			AddChild(new DropDownMenu("", direction)
+			{
+				VAnchor = VAnchor.ParentCenter,
+				MenuAsWideAsItems = false,
+				AlignToRightEdge = true,
+				Height = button.Height
+			});
 		}
 
-		public SplitButton(Button button, DropDownMenu menu)
+		public SplitButton(Button button, DropDownMenu altChoices)
 			: base(FlowDirection.LeftToRight)
 		{
 			HAnchor = HAnchor.FitToChildren;
 			VAnchor = VAnchor.FitToChildren;
 
-			this.DefaultButton = button;
-			this.DefaultButton.VAnchor = VAnchor.ParentCenter;
+			button.VAnchor = VAnchor.ParentCenter;
 
-			altChoices = menu;
-
-			AddChild(this.DefaultButton);
+			AddChild(button);
 			AddChild(altChoices);
-		}
-
-		private DropDownMenu CreateDropDown(Direction direction)
-		{
-			return new DropDownMenu("", direction)
-			{
-				VAnchor = VAnchor.ParentCenter,
-				MenuAsWideAsItems = false,
-				AlignToRightEdge = true,
-				Height = this.DefaultButton.Height
-			};
-		}
-
-		private Button CreateDefaultButton(string buttonText)
-		{
-			var buttonFactory = new TextImageButtonFactory(new ButtonFactoryOptions()
-			{
-				FixedHeight = 30 * GuiWidget.DeviceScale,
-				Normal = new ButtonOptionSection()
-				{
-					FillColor = RGBA_Bytes.White,
-					TextColor = RGBA_Bytes.Black,
-					BorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200),
-				},
-				Hover = new ButtonOptionSection()
-				{
-					TextColor = RGBA_Bytes.Black,
-					FillColor = new RGBA_Bytes(255, 255, 255, 200),
-					BorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200)
-				},
-				BorderWidth = 1,
-			});
-
-			return buttonFactory.Generate(buttonText, centerText: true);
 		}
 	}
 }
