@@ -35,6 +35,7 @@ using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl
 {
@@ -95,7 +96,7 @@ namespace MatterHackers.MatterControl
 			printer.DrawFromHintedCache = true;
 			this.allSourceLines = sourceLines;
 			this.visibleLines = sourceLines;
-			PrinterOutputCache.Instance.HasChanged.RegisterEvent(RecievedNewLine, ref unregisterEvents);
+			PrinterConnection.Instance.TerminalLog.HasChanged.RegisterEvent(RecievedNewLine, ref unregisterEvents);
 		}
 
 		private void ConditionalyAddToVisible(string line)

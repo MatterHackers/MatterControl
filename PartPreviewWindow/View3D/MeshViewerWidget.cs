@@ -667,7 +667,7 @@ namespace MatterHackers.MeshVisualizer
 
 									for (int i = 0; i < 3; i++)
 									{
-										GLHelper.Render3DLineNoPrep(frustum, World, transformed1, transformed2, ActiveTheme.Instance.PrimaryAccentColor, 15);
+										GLHelper.Render3DLineNoPrep(frustum, World, transformed1, transformed2, RGBA_Bytes.White, 15);
 									}
 								}
 							}
@@ -675,7 +675,7 @@ namespace MatterHackers.MeshVisualizer
 					}
 					else // just render the bounding box
 					{
-						RenderAABB(frustum, renderData.Mesh.GetAxisAlignedBoundingBox(), renderData.Matrix, ActiveTheme.Instance.PrimaryAccentColor);
+						RenderAABB(frustum, renderData.Mesh.GetAxisAlignedBoundingBox(), renderData.Matrix, RGBA_Bytes.White);
 					}
 
 					// turn lighting back on after rendering selection outlines
@@ -693,9 +693,9 @@ namespace MatterHackers.MeshVisualizer
 				Vector3 topStartPosition = Vector3.Transform(bounds.GetTopCorner(i), matrix);
 				Vector3 topEndPosition = Vector3.Transform(bounds.GetTopCorner((i + 1) % 4), matrix);
 
-				GLHelper.Render3DLineNoPrep(frustum, World, bottomStartPosition, bottomEndPosition, ActiveTheme.Instance.PrimaryAccentColor, 15);
-				GLHelper.Render3DLineNoPrep(frustum, World, topStartPosition, topEndPosition, ActiveTheme.Instance.PrimaryAccentColor, 15);
-				GLHelper.Render3DLineNoPrep(frustum, World, topStartPosition, bottomStartPosition, ActiveTheme.Instance.PrimaryAccentColor, 15);
+				GLHelper.Render3DLineNoPrep(frustum, World, bottomStartPosition, bottomEndPosition, color, 15);
+				GLHelper.Render3DLineNoPrep(frustum, World, topStartPosition, topEndPosition, color, 15);
+				GLHelper.Render3DLineNoPrep(frustum, World, topStartPosition, bottomStartPosition, color, 15);
 			}
 		}
 

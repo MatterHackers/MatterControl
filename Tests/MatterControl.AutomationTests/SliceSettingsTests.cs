@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.GuiAutomation;
+using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using NUnit.Framework;
 
@@ -116,7 +117,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					Assert.IsTrue(testRunner.NameExists("Start Print Button"));
 
 					int g28Count = 0;
-					foreach(var line in PrinterOutputCache.Instance.PrinterLines)
+					foreach(var line in PrinterConnection.Instance.TerminalLog.PrinterLines)
 					{
 						if(line.Contains("G28"))
 						{

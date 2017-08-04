@@ -983,7 +983,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-        private static void RunSetupIfRequired()
+		private static void RunSetupIfRequired()
         {
             ApplicationController.Instance.ReloadAdvancedControlsPanel();
             if (!ProfileManager.Instance.ActiveProfiles.Any())
@@ -1219,7 +1219,7 @@ namespace MatterHackers.MatterControl
 						if (File.Exists(pathAndFile))
 						{
 							// clear the output cache prior to starting a print
-							PrinterOutputCache.Instance.Clear();
+							PrinterConnection.Instance.TerminalLog.Clear();
 
 							string hideGCodeWarning = ApplicationSettings.Instance.get(ApplicationSettingsKey.HideGCodeWarning);
 

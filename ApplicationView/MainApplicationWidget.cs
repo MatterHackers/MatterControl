@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
@@ -160,7 +161,7 @@ namespace MatterHackers.MatterControl
 	{
 		public void Log(string text)
 		{
-			PrinterOutputCache.Instance.WriteLine(text);
+			PrinterConnection.Instance.TerminalLog.WriteLine(text);
 		}
 	}
 
