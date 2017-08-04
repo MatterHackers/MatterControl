@@ -159,8 +159,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			buttonPanel = new FlowLayoutWidget()
 			{
 				HAnchor = HAnchor.ParentLeftRight,
-				Padding = new BorderDouble(0, 3),
-				MinimumSize = new Vector2(0, 46),
+				Padding = 3,
 				BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor
 			};
 			AddLibraryButtonElements();
@@ -248,12 +247,17 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			buttonPanel.RemoveAllChildren();
 
+			var buttonContainer = new FlowLayoutWidget()
+			{
+				Padding = 3
+			};
+			buttonPanel.AddChild(buttonContainer);
+
 			// the add button
-			addToLibraryButton = textImageButtonFactory.Generate("Add".Localize(), "icon_circle_plus.png");
+			addToLibraryButton = textImageButtonFactory.Generate("Add".Localize(), "AddAzureResource_16x.png");
 			addToLibraryButton.Enabled = false; // The library selector (the first library selected) is protected so we can't add to it. 
 			addToLibraryButton.ToolTipText = "Add an .stl, .amf, .gcode or .zip file to the Library".Localize();
 			addToLibraryButton.Name = "Library Add Button";
-			buttonPanel.AddChild(addToLibraryButton);
 			addToLibraryButton.Margin = new BorderDouble(0, 0, 3, 0);
 			addToLibraryButton.Click += (sender, e) => UiThread.RunOnIdle(() =>
 			{
@@ -272,6 +276,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						}
 					});
 			});
+			buttonContainer.AddChild(addToLibraryButton);
 
 			// the create folder button
 			createFolderButton = textImageButtonFactory.Generate("Create Folder".Localize());
@@ -297,30 +302,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					createFolderWindow.BringToFront();
 				}
 			};
-			buttonPanel.AddChild(createFolderButton);
-
-			if (OemSettings.Instance.ShowShopButton)
-			{
-				var shopButton = textImageButtonFactory.Generate("Buy Materials".Localize(), StaticData.Instance.LoadIcon("icon_shopping_cart_32x32.png", 32, 32));
-				shopButton.ToolTipText = "Shop online for printing materials".Localize();
-				shopButton.Name = "Buy Materials Button";
-				shopButton.Margin = new BorderDouble(0, 0, 3, 0);
-				shopButton.Click += (sender, e) =>
-				{
-					double activeFilamentDiameter = 0;
-					if (ActiveSliceSettings.Instance.PrinterSelected)
-					{
-						activeFilamentDiameter = 3;
-						if (ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_diameter) < 2)
-						{
-							activeFilamentDiameter = 1.75;
-						}
-					}
-
-					MatterControlApplication.Instance.LaunchBrowser("http://www.matterhackers.com/mc/store/redirect?d={0}&clk=mcs&a={1}".FormatWith(activeFilamentDiameter, OemSettings.Instance.AffiliateCode));
-				};
-				buttonPanel.AddChild(shopButton);
-			}
+			buttonContainer.AddChild(createFolderButton);
 
 			// add in the message widget
 			providerMessageContainer = new GuiWidget()

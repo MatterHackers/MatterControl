@@ -36,6 +36,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.AboutPage;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
@@ -290,8 +291,47 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				this.AddSettingsRow(this.GetModeControl());
 			}
 
+			AddMenuItem("Forums".Localize(), () => MatterControlApplication.Instance.LaunchBrowser("https://forums.matterhackers.com/category/20/mattercontrol"));
+			AddMenuItem("Wiki".Localize(), () => MatterControlApplication.Instance.LaunchBrowser("http://wiki.mattercontrol.com"));
+			AddMenuItem("Guides and Articles".Localize(), () => MatterControlApplication.Instance.LaunchBrowser("http://www.matterhackers.com/topic/mattercontrol"));
+			AddMenuItem("Release Notes".Localize(), () => MatterControlApplication.Instance.LaunchBrowser("http://wiki.mattercontrol.com/Release_Notes"));
+			AddMenuItem("Report a Bug".Localize(), () => MatterControlApplication.Instance.LaunchBrowser("https://github.com/MatterHackers/MatterControl/issues"));
+
+			var updateMatterControl = new SettingsItem("Check For Update".Localize());
+			updateMatterControl.Click += (s, e) =>
+			{
+				UiThread.RunOnIdle(() =>
+				{
+					ApplicationMenuRow.AlwaysShowUpdateStatus = true;
+					UpdateControlData.Instance.CheckForUpdateUserRequested();
+					CheckForUpdateWindow.Show();
+				});
+			};
+			this.AddSettingsRow(updateMatterControl);
+
 			this.AddChild(new SettingsItem("Theme".Localize(), new GuiWidget()));
 			this.AddChild(this.GetThemeControl());
+
+			var aboutMatterControl = new SettingsItem("About MatterControl".Localize());
+			aboutMatterControl.Click += (s, e) =>
+			{
+				UiThread.RunOnIdle(AboutWindow.Show);
+			};
+			this.AddSettingsRow(aboutMatterControl);
+		}
+
+		private void AddMenuItem(string title, Action callback)
+		{
+			var newItem = new SettingsItem(title);
+			newItem.Click += (s, e) =>
+			{
+				UiThread.RunOnIdle(() =>
+				{
+					callback?.Invoke();
+				});
+			};
+
+			this.AddSettingsRow(newItem);
 		}
 
 		private void AddSettingsRow(GuiWidget widget)

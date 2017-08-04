@@ -3,6 +3,7 @@ using MatterHackers.Agg.UI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using MatterHackers.Agg.PlatformAbstract;
 
 namespace MatterHackers.MatterControl
 {
@@ -41,7 +42,6 @@ namespace MatterHackers.MatterControl
 			menu.HoverArrowColor = this.Options.Hover.TextColor;
 			menu.NormalArrowColor = this.Options.Normal.TextColor;
 			menu.BackgroundColor = this.Options.Normal.FillColor;
-			menu.Margin = new BorderDouble();
 
 			// TODO: Why?
 			if (actions.Count > 1)
@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl
 
 			var buttonFactory = ApplicationController.Instance.Theme.SmallMarginButtonFactory;
 
-			Button button = buttonFactory.Generate(primaryAction.Title, normalImageName: imageName, centerText: true);
+			Button button = buttonFactory.Generate(primaryAction.Title, StaticData.Instance.LoadIcon(imageName, 24, 24), centerText: true);
 			button.Name = $"{primaryAction.Title} Button";
 			button.Click += (s, e) =>
 			{

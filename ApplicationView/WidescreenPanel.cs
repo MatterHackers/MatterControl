@@ -30,7 +30,9 @@ either expressed or implied, of the FreeBSD Project.
 using System.IO;
 using System.Linq;
 using MatterHackers.Agg;
+using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
+using MatterHackers.MatterControl.ConfigurationPage;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrintLibrary;
@@ -82,8 +84,20 @@ namespace MatterHackers.MatterControl
 
 			this.AddChild(library3DViewSplitter);
 
+			var leftNav = new FlowLayoutWidget(FlowDirection.TopToBottom);
+			leftNav.AnchorAll();
+
+			leftNav.AddChild(new BrandMenuButton()
+			{
+				MinimumSize = new VectorMath.Vector2(0, 40),
+				HAnchor = HAnchor.ParentLeftRight,
+				VAnchor = VAnchor.FitToChildren
+			});
+
+			leftNav.AddChild(new PrintLibraryWidget());
+
 			// put in the left column
-			library3DViewSplitter.Panel1.AddChild(new PrintLibraryWidget());
+			library3DViewSplitter.Panel1.AddChild(leftNav);
 
 			// put in the right column
 			library3DViewSplitter.Panel2.AddChild(new PartPreviewContent(ApplicationController.Instance.ActivePrintItem)
@@ -91,6 +105,47 @@ namespace MatterHackers.MatterControl
 				VAnchor = VAnchor.ParentBottom | VAnchor.ParentTop,
 				HAnchor = HAnchor.ParentLeft | HAnchor.ParentRight
 			});
+		}
+	}
+
+	public class BrandMenuButton : GuiWidget
+	{
+		public BrandMenuButton()
+		{
+			var buttonView = new FlowLayoutWidget()
+			{
+				HAnchor = HAnchor.ParentLeftRight,
+				VAnchor = VAnchor.FitToChildren,
+				Margin = 8
+			};
+			buttonView.AfterDraw += (s, e) =>
+			{
+				//e.graphics2D.Render(directionArrow, buttonView.LocalBounds.Right - arrowHeight * 2 - 2, buttonView.LocalBounds.Center.y + arrowHeight / 2, ActiveTheme.Instance.SecondaryTextColor);
+			};
+
+			buttonView.AddChild(new ImageWidget(StaticData.Instance.LoadIcon(Path.Combine("..", "Images", "mh-logo.png"), 24, 24)));
+
+			buttonView.AddChild(new TextWidget("MatterControl 1.7", textColor: ActiveTheme.Instance.PrimaryTextColor)
+			{
+				Margin = new BorderDouble(left: 6),
+				VAnchor = VAnchor.ParentCenter
+			});
+
+			var popupButton = new PopupButton(buttonView)
+			{
+				VAnchor = VAnchor.ParentCenter,
+				HAnchor = HAnchor.ParentLeftRight,
+				Margin = 0
+			};
+			popupButton.PopupContent = new ApplicationSettingsWidget(ApplicationController.Instance.Theme.MenuButtonFactory)
+			{
+				HAnchor = HAnchor.AbsolutePosition,
+				VAnchor = VAnchor.FitToChildren,
+				Width = 500,
+				BackgroundColor = RGBA_Bytes.White
+			};
+
+			this.AddChild(popupButton);
 		}
 	}
 

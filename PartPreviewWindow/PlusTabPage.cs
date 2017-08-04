@@ -38,47 +38,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public class PlusTabPage : FlowLayoutWidget
 	{
 		public PlusTabPage()
-			: base(FlowDirection.BottomToTop)
+			: base(FlowDirection.TopToBottom)
 		{
-			Name = "+";
-
-			HAnchor = HAnchor.ParentLeftRight;
-			VAnchor = VAnchor.ParentBottomTop;
-
-			var leftRight = new FlowLayoutWidget()
-			{
-				HAnchor = HAnchor.ParentLeftRight,
-				VAnchor = VAnchor.ParentBottomTop,
-			};
-			AddChild(leftRight);
+			this.Name = "+";
+			this.HAnchor = HAnchor.ParentLeftRight;
+			this.VAnchor = VAnchor.ParentBottomTop;
+			this.Padding = 20;
 
 			// put in the add new design stuff
-			var createItems = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				HAnchor = HAnchor.ParentLeftRight,
-				VAnchor = VAnchor.ParentBottomTop,
-				Margin = 15,
-			};
-			leftRight.AddChild(createItems);
-
-			var label = new TextWidget("Create New".Localize() + ":", textColor: ActiveTheme.Instance.PrimaryTextColor);
-			createItems.AddChild(label);
-
-			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				Margin = new BorderDouble(top: 15, bottom: 15),
-				HAnchor = HAnchor.FitToChildren,
-				VAnchor = VAnchor.FitToChildren
-			};
-			createItems.AddChild(container);
+			var createItemsSection = CreateSection("Create New".Localize() + ":");
 
 			var createPart = ApplicationController.Instance.Theme.ButtonFactory.Generate("Create Part".Localize());
 			createPart.HAnchor = HAnchor.ParentLeft;
-			container.AddChild(createPart);
+			createItemsSection.AddChild(createPart);
 
 			var createPrinter = ApplicationController.Instance.Theme.ButtonFactory.Generate("Create Printer".Localize());
 			createPrinter.HAnchor = HAnchor.ParentLeft;
-			container.AddChild(createPrinter);
 			createPrinter.Click += (s, e) =>
 			{
 				if (PrinterConnection.Instance.PrinterIsPrinting
@@ -96,25 +71,59 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					});
 				}
 			};
+			createItemsSection.AddChild(createPrinter);
+
+			var existingPrinterSection = CreateSection("Open Existing".Localize() + ":");
+
+			var printerSelector = new PrinterSelectEditDropdown()
+			{
+				Margin = new BorderDouble(left: 15)
+			};
+			existingPrinterSection.AddChild(printerSelector);
+
+			var otherItemsSection = CreateSection("Other".Localize() + ":");
+
+			var redeemDesignCode = ApplicationController.Instance.Theme.ButtonFactory.Generate("Redeem Design Code".Localize());
+			redeemDesignCode.HAnchor = HAnchor.ParentLeft;
+			redeemDesignCode.Click += (s, e) =>
+			{
+				// Implementation already does RunOnIdle
+				ApplicationController.Instance.RedeemDesignCode?.Invoke();
+			};
+			otherItemsSection.AddChild(redeemDesignCode);
+
+			var redeemShareCode = ApplicationController.Instance.Theme.ButtonFactory.Generate("Enter Share Code".Localize());
+			redeemShareCode.HAnchor = HAnchor.ParentLeft;
+			redeemShareCode.Click += (s, e) =>
+			{
+				// Implementation already does RunOnIdle
+				ApplicationController.Instance.EnterShareCode?.Invoke();
+			};
+			otherItemsSection.AddChild(redeemShareCode);
 
 			var importButton = ApplicationController.Instance.Theme.ButtonFactory.Generate("Import".Localize());
 			importButton.Click += (s, e) =>
 			{
 				UiThread.RunOnIdle(() => WizardWindow.Show<ImportSettingsPage>("ImportSettingsPage", "Import Settings Page"));
 			};
-			container.AddChild(importButton);
+			otherItemsSection.AddChild(importButton);
+		}
 
-			var existingLabel = new TextWidget("Open Existing".Localize() + ":", textColor: ActiveTheme.Instance.PrimaryTextColor)
-			{
-				Margin = new BorderDouble(top: 15, bottom: 15)
-			};
-			createItems.AddChild(existingLabel);
+		private FlowLayoutWidget CreateSection(string headingText)
+		{
+			// Add heading
+			this.AddChild(new TextWidget(headingText, textColor: ActiveTheme.Instance.PrimaryTextColor));
 
-			var printerSelector = new PrinterSelectEditDropdown()
+			// Add container
+			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				Margin = new BorderDouble(left: 15)
+				HAnchor = HAnchor.ParentLeftRight,
+				VAnchor = VAnchor.FitToChildren,
+				Margin = new BorderDouble(15, 15, 15, 8),
 			};
-			createItems.AddChild(printerSelector);
+			this.AddChild(container);
+
+			return container;
 		}
 	}
 }
