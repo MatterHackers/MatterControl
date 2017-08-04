@@ -14,7 +14,7 @@ namespace MatterHackers.MatterControl
 		protected TextWidget headerLabel;
 		protected Button cancelButton;
 
-		protected TextImageButtonFactory textImageButtonFactory = ApplicationController.Instance.Theme.ButtonFactory;
+		protected TextImageButtonFactory textImageButtonFactory { get; } = ApplicationController.Instance.Theme.ButtonFactory;
 		protected TextImageButtonFactory whiteImageButtonFactory;
 		protected LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
 
@@ -57,15 +57,6 @@ namespace MatterHackers.MatterControl
 
 			if (!UserSettings.Instance.IsTouchScreen)
 			{
-				textImageButtonFactory = new TextImageButtonFactory(new ButtonFactoryOptions()
-				{
-					Normal = new ButtonOptionSection() { TextColor = ActiveTheme.Instance.PrimaryTextColor },
-					Hover = new ButtonOptionSection() { TextColor = ActiveTheme.Instance.PrimaryTextColor },
-					Disabled = new ButtonOptionSection() { TextColor = ActiveTheme.Instance.PrimaryTextColor },
-					Pressed = new ButtonOptionSection() { TextColor = ActiveTheme.Instance.PrimaryTextColor },
-					BorderWidth = 0
-				});
-
 				linkButtonFactory.textColor = ActiveTheme.Instance.PrimaryTextColor;
 				linkButtonFactory.fontSize = 10;
 
