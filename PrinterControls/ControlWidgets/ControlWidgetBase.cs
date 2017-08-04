@@ -36,8 +36,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 {
 	public class ControlWidgetBase : DisableableWidget
 	{
-		protected TextImageButtonFactory textImageButtonFactory => ApplicationController.Instance.Theme.DisableableControlBase;
-
 		protected static GuiWidget CreateSeparatorLine()
 		{
 			return new HorizontalLine(alpha: 100)

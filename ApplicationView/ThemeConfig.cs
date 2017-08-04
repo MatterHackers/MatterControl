@@ -87,7 +87,9 @@ namespace MatterHackers.MatterControl
 		public int SplitterWidth => (int)(7 * (GuiWidget.DeviceScale <= 1 ? GuiWidget.DeviceScale : GuiWidget.DeviceScale * 1.4));
 
 		public RGBA_Bytes SlightShade { get; } = new RGBA_Bytes(0, 0, 0, 40);
+
 		public TextImageButtonFactory DisableableControlBase { get; private set; }
+		public TextImageButtonFactory HomingButtons { get; private set; }
 
 		private EventHandler unregisterEvents;
 
@@ -242,8 +244,8 @@ namespace MatterHackers.MatterControl
 				options.Pressed.FillColor = new RGBA_Bytes(255, 255, 255, 50);
 			}));
 
-			// TODO: Needs to remain based default ButtonFactionOptions constructor until reviewed
-			this.DisableableControlBase = new TextImageButtonFactory(new ButtonFactoryOptions()
+			// TODO: Need to remain based default ButtonFactionOptions constructor until reviewed for styling issues
+			var disableableControlOptions = new ButtonFactoryOptions()
 			{
 				Normal = new ButtonOptionSection()
 				{
@@ -265,7 +267,16 @@ namespace MatterHackers.MatterControl
 				},
 				FixedHeight = 25 * GuiWidget.DeviceScale,
 				FontSize = 11
-			});
+			};
+
+			this.DisableableControlBase = new TextImageButtonFactory(disableableControlOptions);
+			this.HomingButtons = new TextImageButtonFactory(disableableControlOptions.Clone(options =>
+			{
+				options.BorderWidth = 1;
+				options.Normal.BorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
+				options.Hover.BorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
+				options.Normal.FillColor = new RGBA_Bytes(180, 180, 180);
+			}));
 
 			#endregion
 
