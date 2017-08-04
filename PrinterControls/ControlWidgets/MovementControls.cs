@@ -207,10 +207,8 @@ namespace MatterHackers.MatterControl.PrinterControls
 			homeZButton.Margin = new BorderDouble(0, 0, 6, 0);
 			homeZButton.Click += homeZButton_Click;
 
-			textImageButtonFactory.Options.Normal.FillColor = RGBA_Bytes.White;
-			textImageButtonFactory.Options.FixedWidth = 0;
-
-			disableMotors = textImageButtonFactory.Generate("Release".Localize().ToUpper());
+			// Create 'Release' button, clearing fixedWidth needed on sibling 'Home' controls
+			disableMotors = textImageButtonFactory.Generate("Release".Localize().ToUpper(), fixedWidth: 0);
 			disableMotors.Margin = new BorderDouble(0);
 			disableMotors.Click += (s, e) =>
 			{

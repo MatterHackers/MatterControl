@@ -335,18 +335,27 @@ namespace MatterHackers.MatterControl
 			return textImageButton;
 		}
 
-		public Button Generate(string label, string normalImageName = null, string hoverImageName = null, string pressedImageName = null, string disabledImageName = null, bool centerText = false)
+		public Button Generate(string label, string normalImageName = null, string hoverImageName = null, string pressedImageName = null, string disabledImageName = null, bool centerText = false, double fixedWidth = -1)
 		{
-			//Create button based on view container widget
+			// Create button based on view container widget
 			ButtonViewStates buttonViewWidget = getButtonView(label, normalImageName, hoverImageName, pressedImageName, disabledImageName, centerText);
 			Button textImageButton = new Button(0, 0, buttonViewWidget);
 
 			textImageButton.Margin = new BorderDouble(0);
 			textImageButton.Padding = new BorderDouble(0);
 
-			//Override the width if requested
-			if (this.FixedWidth != 0)
+			// Allow fixedWidth parameter to override local .FixedWith property
+			if (fixedWidth != -1)
 			{
+				if (fixedWidth > 0)
+				{
+					buttonViewWidget.Width = fixedWidth;
+					textImageButton.Width = fixedWidth;
+				}
+			}
+			else if (this.FixedWidth != 0)
+			{
+				//Override the width if requested
 				buttonViewWidget.Width = this.FixedWidth;
 				textImageButton.Width = this.FixedWidth;
 			}
