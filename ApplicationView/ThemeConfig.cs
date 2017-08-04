@@ -88,6 +88,11 @@ namespace MatterHackers.MatterControl
 
 		public RGBA_Bytes SlightShade { get; } = new RGBA_Bytes(0, 0, 0, 40);
 
+		public TextImageButtonFactory DisableableControlBase { get; private set; }
+		public TextImageButtonFactory HomingButtons { get; private set; }
+		public TextImageButtonFactory MicroButton { get; private set; }
+		public TextImageButtonFactory MicroButtonMenu { get; private set; }
+
 		private EventHandler unregisterEvents;
 
 		static ThemeConfig()
@@ -119,71 +124,72 @@ namespace MatterHackers.MatterControl
 
 			DefaultThumbView.ThumbColor = new RGBA_Bytes(theme.PrimaryTextColor, 30);
 
-			this.ButtonFactory = new TextImageButtonFactory()
+
+			var commonOptions = new ButtonFactoryOptions();
+			commonOptions.Normal.TextColor = theme.PrimaryTextColor;
+			commonOptions.Hover.TextColor = theme.PrimaryTextColor;
+			commonOptions.Pressed.TextColor = theme.PrimaryTextColor;
+			commonOptions.Disabled.TextColor = theme.TertiaryBackgroundColor;
+			commonOptions.Margin = new BorderDouble(16, 0);
+			commonOptions.BorderWidth = 0;
+			commonOptions.FixedHeight = 32;
+
+			this.ButtonFactory = new TextImageButtonFactory(commonOptions);
+
+			this.SmallMarginButtonFactory = new TextImageButtonFactory(commonOptions.Clone(options =>
 			{
-				// Common
-				normalTextColor = theme.PrimaryTextColor,
-				hoverTextColor = theme.PrimaryTextColor,
-				pressedTextColor = theme.PrimaryTextColor,
-				disabledTextColor = theme.TertiaryBackgroundColor,
-				Margin = new BorderDouble(16, 0),
-				borderWidth = 0,
-				FixedHeight = 32,
-			};
+				options.Margin = new BorderDouble(8, 0);
+			}));
 
-			this.SmallMarginButtonFactory = new TextImageButtonFactory()
+			var commonGray = commonOptions.Clone(options =>
 			{
-				// Common
-				normalTextColor = theme.PrimaryTextColor,
-				hoverTextColor = theme.PrimaryTextColor,
-				pressedTextColor = theme.PrimaryTextColor,
-				disabledTextColor = theme.TertiaryBackgroundColor,
-				borderWidth = 0,
-				FixedHeight = 32,
+				options.Normal.TextColor = RGBA_Bytes.Black;
+				options.Normal.FillColor = RGBA_Bytes.LightGray;
+				options.Hover.TextColor = RGBA_Bytes.Black;
+				options.Pressed.TextColor = RGBA_Bytes.Black;
+				options.Pressed.FillColor = RGBA_Bytes.LightGray;
+			});
 
-				// Exceptions
-				Margin = new BorderDouble(8, 0),
-			};
-
-			this.MenuButtonFactory = new TextImageButtonFactory()
+			this.MenuButtonFactory = new TextImageButtonFactory(commonGray.Clone(options =>
 			{
-				// Common
-				disabledTextColor = theme.TertiaryBackgroundColor,
-				borderWidth = 0,
-				FixedHeight = 32,
+				options.Margin = new BorderDouble(8, 0);
+			}));
 
-				// Exceptions
-				normalTextColor = RGBA_Bytes.Black,
-				hoverTextColor = RGBA_Bytes.Black,
-				pressedTextColor = RGBA_Bytes.Black,
-				normalFillColor = RGBA_Bytes.LightGray,
-				pressedFillColor = RGBA_Bytes.LightGray,
-				Margin = new BorderDouble(8, 0),
-			};
-
-			this.GrayButtonFactory = new TextImageButtonFactory()
+			this.GrayButtonFactory = new TextImageButtonFactory(commonOptions.Clone(options =>
 			{
-				// Exceptions
-				normalFillColor = RGBA_Bytes.Gray,
-				normalTextColor = theme.PrimaryTextColor
-			};
+				options.Normal.TextColor = theme.PrimaryTextColor;
+				options.Normal.FillColor = RGBA_Bytes.Gray;
+			}));
 
 			int viewControlsButtonHeight = (UserSettings.Instance.IsTouchScreen) ? 40 : 0;
 
-			this.ViewControlsButtonFactory = new TextImageButtonFactory()
+			this.ViewControlsButtonFactory = new TextImageButtonFactory(commonOptions.Clone(options => 
 			{
-				// Common
-				normalTextColor = theme.PrimaryTextColor,
-				hoverTextColor = theme.PrimaryTextColor,
-				pressedTextColor = theme.PrimaryTextColor,
+				options.Disabled.TextColor = theme.PrimaryTextColor;
+				options.FixedHeight = viewControlsButtonHeight;
+				options.FixedWidth = viewControlsButtonHeight;
+				options.AllowThemeToAdjustImage = false;
+				options.CheckedBorderColor = RGBA_Bytes.White;
+			}));
 
-				// Exceptions
-				disabledTextColor = theme.PrimaryTextColor,
-				FixedHeight = viewControlsButtonHeight,
-				FixedWidth = viewControlsButtonHeight,
-				AllowThemeToAdjustImage = false,
-				checkedBorderColor = RGBA_Bytes.White
-			};
+			this.MicroButton = new TextImageButtonFactory(new ButtonFactoryOptions()
+			{
+				FixedHeight = 20 * GuiWidget.DeviceScale,
+				FixedWidth = 30 * GuiWidget.DeviceScale,
+				FontSize = 8,
+				Margin = 0,
+				CheckedBorderColor = ActiveTheme.Instance.PrimaryTextColor
+			});
+
+			this.MicroButtonMenu = new TextImageButtonFactory(commonGray.Clone(options =>
+			{
+				options.FixedHeight = 20 * GuiWidget.DeviceScale;
+				options.FixedWidth = 30 * GuiWidget.DeviceScale;
+				options.FontSize = 8;
+				options.Margin = 0;
+				options.BorderWidth = 1;
+				options.CheckedBorderColor = RGBA_Bytes.Black;
+			}));
 
 			#region PartPreviewWidget
 			if (UserSettings.Instance.IsTouchScreen)
@@ -197,70 +203,104 @@ namespace MatterHackers.MatterControl
 				shortButtonHeight = 30;
 			}
 
-			WhiteButtonFactory = new TextImageButtonFactory()
+			WhiteButtonFactory = new TextImageButtonFactory(commonOptions.Clone(options =>
 			{
-				// Exceptions
-				FixedWidth = sideBarButtonWidth,
-				FixedHeight = shortButtonHeight,
+				options.FixedWidth = sideBarButtonWidth;
+				options.FixedHeight = shortButtonHeight;
 
-				normalFillColor = RGBA_Bytes.White,
-				normalTextColor = RGBA_Bytes.Black,
-				hoverTextColor = RGBA_Bytes.Black,
+				options.Normal.TextColor = RGBA_Bytes.Black;
+				options.Normal.FillColor = RGBA_Bytes.White;
+				options.Normal.BorderColor = new RGBA_Bytes(theme.PrimaryTextColor, 200);
 
-				hoverFillColor = new RGBA_Bytes(255, 255, 255, 200),
-				borderWidth = 1,
+				options.Hover.TextColor = RGBA_Bytes.Black;
+				options.Hover.FillColor = new RGBA_Bytes(255, 255, 255, 200);
+				options.Hover.BorderColor = new RGBA_Bytes(theme.PrimaryTextColor, 200);
 
-				normalBorderColor = new RGBA_Bytes(theme.PrimaryTextColor, 200),
-				hoverBorderColor = new RGBA_Bytes(theme.PrimaryTextColor, 200)
-			};
+				options.BorderWidth = 1;
+			}));
 
-			ExpandMenuOptionFactory = new TextImageButtonFactory()
+			ExpandMenuOptionFactory = new TextImageButtonFactory(commonOptions.Clone(options =>
 			{
-				// Common
-				normalTextColor = theme.PrimaryTextColor,
-				hoverTextColor = theme.PrimaryTextColor,
-				pressedTextColor = theme.PrimaryTextColor,
+				options.Hover.TextColor = theme.PrimaryTextColor;
+				options.Hover.FillColor = new RGBA_Bytes(255, 255, 255, 50);
 
-				// Exceptions
-				disabledTextColor = theme.PrimaryTextColor,
-				hoverFillColor = new RGBA_Bytes(255, 255, 255, 50),
-				pressedFillColor = new RGBA_Bytes(255, 255, 255, 50),
-				disabledFillColor = new RGBA_Bytes(255, 255, 255, 50),
-				FixedWidth = sideBarButtonWidth,
-			};
+				options.Pressed.TextColor = theme.PrimaryTextColor;
+				options.Pressed.FillColor = new RGBA_Bytes(255, 255, 255, 50);
+
+				options.Disabled.TextColor = theme.PrimaryTextColor;
+				options.Disabled.FillColor = new RGBA_Bytes(255, 255, 255, 50);
+				options.FixedWidth = sideBarButtonWidth;
+			}));
 
 			#endregion
 
 			#region ImageConverter
-			imageConverterButtonFactory = new TextImageButtonFactory()
+			imageConverterButtonFactory = new TextImageButtonFactory(commonOptions.Clone(options =>
 			{
-				// Exceptions
-				FixedWidth = 185,
-				FixedHeight = 30,
+				options.FixedWidth = 185;
+				options.FixedHeight = 30;
 
-				normalFillColor = RGBA_Bytes.White,
-				normalTextColor = RGBA_Bytes.Black,
-				hoverTextColor = RGBA_Bytes.Black,
+				options.Normal.FillColor = RGBA_Bytes.White;
+				options.Normal.TextColor = RGBA_Bytes.Black;
+				options.Normal.BorderColor = new RGBA_Bytes(theme.PrimaryTextColor, 200);
 
-				hoverFillColor = new RGBA_Bytes(255, 255, 255, 200),
-				borderWidth = 1,
+				options.Hover.FillColor = new RGBA_Bytes(255, 255, 255, 200);
+				options.Hover.TextColor = RGBA_Bytes.Black;
+				options.Hover.BorderColor = new RGBA_Bytes(theme.PrimaryTextColor, 200);
 
-				normalBorderColor = new RGBA_Bytes(theme.PrimaryTextColor, 200),
-				hoverBorderColor = new RGBA_Bytes(theme.PrimaryTextColor, 200)
+				options.BorderWidth = 1;
+			}));
+
+			imageConverterExpandMenuOptionFactory = new TextImageButtonFactory(commonOptions.Clone(options =>
+			{
+				options.FixedWidth = 200;
+
+				options.Normal.TextColor = theme.PrimaryTextColor;
+
+				options.Hover.TextColor = theme.PrimaryTextColor;
+				options.Hover.FillColor = new RGBA_Bytes(255, 255, 255, 50);
+
+				options.Disabled.TextColor = theme.PrimaryTextColor;
+				options.Disabled.FillColor = new RGBA_Bytes(255, 255, 255, 50);
+
+				options.Pressed.TextColor = theme.PrimaryTextColor;
+				options.Pressed.FillColor = new RGBA_Bytes(255, 255, 255, 50);
+			}));
+
+			// TODO: Need to remain based default ButtonFactionOptions constructor until reviewed for styling issues
+			var disableableControlOptions = new ButtonFactoryOptions()
+			{
+				Normal = new ButtonOptionSection()
+				{
+					FillColor = RGBA_Bytes.White,
+					TextColor = RGBA_Bytes.Black,
+				},
+				Hover = new ButtonOptionSection()
+				{
+					TextColor = theme.PrimaryTextColor
+				},
+				Disabled = new ButtonOptionSection()
+				{
+					FillColor = RGBA_Bytes.White,
+					TextColor = RGBA_Bytes.DarkGray
+				},
+				Pressed = new ButtonOptionSection()
+				{
+					TextColor = ActiveTheme.Instance.PrimaryTextColor
+				},
+				FixedHeight = 25 * GuiWidget.DeviceScale,
+				FontSize = 11
 			};
 
-			imageConverterExpandMenuOptionFactory = new TextImageButtonFactory()
+			this.DisableableControlBase = new TextImageButtonFactory(disableableControlOptions);
+			this.HomingButtons = new TextImageButtonFactory(disableableControlOptions.Clone(options =>
 			{
-				FixedWidth = 200,
-				normalTextColor = theme.PrimaryTextColor,
-				hoverTextColor = theme.PrimaryTextColor,
-				disabledTextColor = theme.PrimaryTextColor,
-				pressedTextColor = theme.PrimaryTextColor,
+				options.BorderWidth = 1;
+				options.Normal.BorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
+				options.Hover.BorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
+				options.Normal.FillColor = new RGBA_Bytes(180, 180, 180);
+			}));
 
-				hoverFillColor = new RGBA_Bytes(255, 255, 255, 50),
-				pressedFillColor = new RGBA_Bytes(255, 255, 255, 50),
-				disabledFillColor = new RGBA_Bytes(255, 255, 255, 50)
-			};
 			#endregion
 
 			this.LinkButtonFactory = new LinkButtonFactory()

@@ -54,8 +54,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private static CreateFolderWindow createFolderWindow = null;
 		private static RenameItemWindow renameItemWindow = null;
 		private ExportToFolderFeedbackWindow exportingWindow = null;
-		private TextImageButtonFactory textImageButtonFactory;
-		private TextImageButtonFactory editButtonFactory;
 
 		private Button addToLibraryButton;
 		private Button createFolderButton;
@@ -78,27 +76,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			this.BackgroundColor = ApplicationController.Instance.Theme.TabBodyBackground;
 			this.AnchorAll();
-
-			textImageButtonFactory = new TextImageButtonFactory()
-			{
-				borderWidth = 0,
-				normalTextColor = ActiveTheme.Instance.PrimaryTextColor,
-				hoverTextColor = ActiveTheme.Instance.PrimaryTextColor,
-				pressedTextColor = ActiveTheme.Instance.PrimaryTextColor,
-				disabledTextColor = ActiveTheme.Instance.TabLabelUnselected,
-				disabledFillColor = new RGBA_Bytes()
-			};
-
-			editButtonFactory = new TextImageButtonFactory()
-			{
-				normalTextColor = ActiveTheme.Instance.PrimaryTextColor,
-				hoverTextColor = ActiveTheme.Instance.PrimaryTextColor,
-				disabledTextColor = ActiveTheme.Instance.TabLabelUnselected,
-				disabledFillColor = new RGBA_Bytes(),
-				pressedTextColor = ActiveTheme.Instance.PrimaryTextColor,
-				borderWidth = 0,
-				Margin = new BorderDouble(10, 0)
-			};
 
 			var allControls = new FlowLayoutWidget(FlowDirection.TopToBottom);
 
@@ -267,6 +244,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		private void AddLibraryButtonElements()
 		{
+			var textImageButtonFactory = ApplicationController.Instance.Theme.SmallMarginButtonFactory;
+
 			buttonPanel.RemoveAllChildren();
 
 			// the add button

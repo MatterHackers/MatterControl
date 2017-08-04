@@ -12,8 +12,7 @@ namespace MatterHackers.MatterControl
 		private String unwrappedMessage;
 		private TextWidget messageContainer;
 		private FlowLayoutWidget middleRowContainer;
-		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
-
+		
 		private Action<bool> responseCallback;
 
 		public enum MessageType { OK, YES_NO };
@@ -39,7 +38,6 @@ namespace MatterHackers.MatterControl
 				extraTextScaling = 1.33333;
 			}
 
-			textImageButtonFactory.fontSize = extraTextScaling * textImageButtonFactory.fontSize;
 			if (yesOk == "")
 			{
 				if (messageType == MessageType.OK)
@@ -120,6 +118,7 @@ namespace MatterHackers.MatterControl
 				buttonRow.Padding = new BorderDouble(0, 3);
 			}
 
+			var textImageButtonFactory = ApplicationController.Instance.Theme.ButtonFactory;
 
 			switch (messageType)
 			{

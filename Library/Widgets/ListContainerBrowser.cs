@@ -61,9 +61,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			var icon = StaticData.Instance.LoadIcon("icon_search_24x24.png", 16, 16);
 
-			var buttonFactory = ApplicationController.Instance.Theme.ButtonFactory;
-			var initialMargin = buttonFactory.Margin;
-			buttonFactory.Margin = new BorderDouble(8, 0);
+			var buttonFactory = ApplicationController.Instance.Theme.SmallMarginButtonFactory;
 
 			var searchPanel = new SearchInputBox()
 			{
@@ -108,7 +106,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					searchInput.Focus();
 				}
 			};
-			buttonFactory.Margin = initialMargin;
 			navBar.AddChild(searchButton);
 
 			var libraryContainerView = new ListView(libraryContext)

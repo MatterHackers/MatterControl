@@ -40,8 +40,6 @@ namespace MatterHackers.MatterControl.ContactForm
 {
 	public class ContactFormWidget : GuiWidget
 	{
-		protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
-		protected TextImageButtonFactory whiteButtonFactory = new TextImageButtonFactory();
 		private Button submitButton;
 		private Button cancelButton;
 		private Button doneButton;
@@ -65,12 +63,13 @@ namespace MatterHackers.MatterControl.ContactForm
 
 		public ContactFormWidget(string subjectText, string bodyText)
 		{
-			SetButtonAttributes();
 			AnchorAll();
 
-			cancelButton = textImageButtonFactory.Generate("Cancel".Localize());
-			submitButton = textImageButtonFactory.Generate("Submit".Localize());
-			doneButton = textImageButtonFactory.Generate("Done".Localize());
+			var buttonFactory = ApplicationController.Instance.Theme.ButtonFactory;
+		
+			cancelButton = buttonFactory.Generate("Cancel".Localize());
+			submitButton = buttonFactory.Generate("Submit".Localize());
+			doneButton = buttonFactory.Generate("Done".Localize());
 			doneButton.Visible = false;
 
 			DoLayout(subjectText, bodyText);
@@ -275,20 +274,6 @@ namespace MatterHackers.MatterControl.ContactForm
 			buttonBottomPanel.Padding = new BorderDouble(3, 3);
 			buttonBottomPanel.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 			return buttonBottomPanel;
-		}
-
-		private void SetButtonAttributes()
-		{
-			textImageButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			textImageButtonFactory.disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
-
-			whiteButtonFactory.FixedWidth = 138 * GuiWidget.DeviceScale;
-			whiteButtonFactory.normalFillColor = RGBA_Bytes.White;
-			whiteButtonFactory.normalTextColor = RGBA_Bytes.Black;
-			whiteButtonFactory.hoverTextColor = RGBA_Bytes.Black;
-			whiteButtonFactory.hoverFillColor = new RGBA_Bytes(255, 255, 255, 200);
 		}
 	}
 

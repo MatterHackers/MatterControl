@@ -95,12 +95,7 @@ namespace MatterHackers.MatterControl
 					//setMoveDistanceControl.AddChild(buttonsLabel);
 
 					{
-						TextImageButtonFactory buttonFactory = new TextImageButtonFactory();
-						buttonFactory.FixedHeight = 20 * GuiWidget.DeviceScale;
-						buttonFactory.FixedWidth = 30 * GuiWidget.DeviceScale;
-						buttonFactory.fontSize = 8;
-						buttonFactory.Margin = new BorderDouble(0);
-						buttonFactory.checkedBorderColor = ActiveTheme.Instance.PrimaryTextColor;
+						var buttonFactory = ApplicationController.Instance.Theme.MicroButton;
 
 						FlowLayoutWidget moveRadioButtons = new FlowLayoutWidget();
 
@@ -499,15 +494,8 @@ namespace MatterHackers.MatterControl
 			//setMoveDistanceControl.AddChild(buttonsLabel);
 
 			{
-				var buttonFactory = new TextImageButtonFactory()
-				{
-					FixedHeight = 20 * GuiWidget.DeviceScale,
-					FixedWidth = 30 * GuiWidget.DeviceScale,
-					fontSize = 8,
-					Margin = 0
-				};
-				buttonFactory.checkedBorderColor = ActiveTheme.Instance.PrimaryTextColor;
-
+				var buttonFactory = ApplicationController.Instance.Theme.MicroButton;
+				
 				var moveRadioButtons = new FlowLayoutWidget();
 				RadioButton oneButton = buttonFactory.GenerateRadioButton("1");
 				oneButton.VAnchor = Agg.UI.VAnchor.ParentCenter;

@@ -84,14 +84,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				textColor = ActiveTheme.Instance.SecondaryAccentColor
 			};
 
-			var buttonFactory = new TextImageButtonFactory()
-			{
-				normalTextColor = ActiveTheme.Instance.PrimaryTextColor,
-				hoverTextColor = ActiveTheme.Instance.PrimaryTextColor,
-				disabledTextColor = ActiveTheme.Instance.PrimaryTextColor,
-				pressedTextColor = ActiveTheme.Instance.PrimaryTextColor,
-				borderWidth = 0
-			};
+			var buttonFactory = ApplicationController.Instance.Theme.ButtonFactory;
 
 			FlowLayoutWidget mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{

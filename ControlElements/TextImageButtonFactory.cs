@@ -140,30 +140,45 @@ namespace MatterHackers.MatterControl
 
 	public class TextImageButtonFactory
 	{
-		public BorderDouble Margin = new BorderDouble(6, 0);
-		public RGBA_Bytes normalFillColor = new RGBA_Bytes(0, 0, 0, 0);
-		public RGBA_Bytes hoverFillColor = new RGBA_Bytes(0, 0, 0, 50);
-		public RGBA_Bytes pressedFillColor = new RGBA_Bytes(0, 0, 0, 0);
-		public RGBA_Bytes disabledFillColor = new RGBA_Bytes(255, 255, 255, 50);
+		public ButtonFactoryOptions Options { get; }
 
-		public RGBA_Bytes normalBorderColor = new RGBA_Bytes(255, 255, 255, 0);
-		public RGBA_Bytes hoverBorderColor = new RGBA_Bytes(0, 0, 0, 0);
-		public RGBA_Bytes pressedBorderColor = new RGBA_Bytes(0, 0, 0, 0);
-		public RGBA_Bytes disabledBorderColor = new RGBA_Bytes(0, 0, 0, 0);
-		public RGBA_Bytes checkedBorderColor = new RGBA_Bytes(255, 255, 255, 0);
+		public TextImageButtonFactory()
+			: this(new ButtonFactoryOptions())
+		{
+		}
 
-		public RGBA_Bytes normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
-		public RGBA_Bytes hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
-		public RGBA_Bytes pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
-		public RGBA_Bytes disabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
-		public double fontSize = 12;
-		public double borderWidth = 1;
-		public bool invertImageLocation = false;
-		public bool AllowThemeToAdjustImage = true;
-		private FlowDirection flowDirection;
-		public double FixedWidth = 0;
-		public double FixedHeight = 40;
-		public double ImageSpacing = 0;
+		public TextImageButtonFactory(ButtonFactoryOptions options)
+		{
+			this.Options = options;
+		}
+
+		// Private getters act as proxies to new options class
+		public BorderDouble Margin => Options.Margin;
+		public RGBA_Bytes normalFillColor => Options.Normal.FillColor;
+		public RGBA_Bytes hoverFillColor => Options.Hover.FillColor;
+		public RGBA_Bytes pressedFillColor => Options.Pressed.FillColor;
+		public RGBA_Bytes disabledFillColor => Options.Disabled.FillColor;
+
+		public RGBA_Bytes normalBorderColor => Options.Normal.BorderColor;
+		public RGBA_Bytes hoverBorderColor => Options.Hover.BorderColor;
+		public RGBA_Bytes pressedBorderColor => Options.Pressed.BorderColor;
+		public RGBA_Bytes disabledBorderColor  => Options.Disabled.BorderColor;
+
+		public RGBA_Bytes checkedBorderColor => Options.CheckedBorderColor;
+
+		public RGBA_Bytes normalTextColor  => Options.Normal.TextColor;
+		public RGBA_Bytes hoverTextColor  => Options.Hover.TextColor;
+		public RGBA_Bytes pressedTextColor  => Options.Pressed.TextColor;
+		public RGBA_Bytes disabledTextColor  => Options.Disabled.TextColor;
+
+		public double fontSize => Options.FontSize;
+		public double borderWidth => Options.BorderWidth;
+		public bool invertImageLocation => Options.InvertImageLocation;
+		public bool AllowThemeToAdjustImage => Options.AllowThemeToAdjustImage;
+		private FlowDirection flowDirection => Options.FlowDirection;
+		public double FixedWidth => Options.FixedWidth;
+		public double FixedHeight => Options.FixedHeight;
+		public double ImageSpacing => Options.ImageSpacing;
 
 		public Button GenerateTooltipButton(string label, string normalImageName = null, string hoverImageName = null, string pressedImageName = null, string disabledImageName = null)
 		{
@@ -320,18 +335,27 @@ namespace MatterHackers.MatterControl
 			return textImageButton;
 		}
 
-		public Button Generate(string label, string normalImageName = null, string hoverImageName = null, string pressedImageName = null, string disabledImageName = null, bool centerText = false)
+		public Button Generate(string label, string normalImageName = null, string hoverImageName = null, string pressedImageName = null, string disabledImageName = null, bool centerText = false, double fixedWidth = -1)
 		{
-			//Create button based on view container widget
+			// Create button based on view container widget
 			ButtonViewStates buttonViewWidget = getButtonView(label, normalImageName, hoverImageName, pressedImageName, disabledImageName, centerText);
 			Button textImageButton = new Button(0, 0, buttonViewWidget);
 
 			textImageButton.Margin = new BorderDouble(0);
 			textImageButton.Padding = new BorderDouble(0);
 
-			//Override the width if requested
-			if (this.FixedWidth != 0)
+			// Allow fixedWidth parameter to override local .FixedWith property
+			if (fixedWidth != -1)
 			{
+				if (fixedWidth > 0)
+				{
+					buttonViewWidget.Width = fixedWidth;
+					textImageButton.Width = fixedWidth;
+				}
+			}
+			else if (this.FixedWidth != 0)
+			{
+				//Override the width if requested
 				buttonViewWidget.Width = this.FixedWidth;
 				textImageButton.Width = this.FixedWidth;
 			}
@@ -416,13 +440,14 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
+			// TODO: This overrides users settings in a way that's completely unclear
 			if (invertImageLocation)
 			{
-				flowDirection = FlowDirection.RightToLeft;
+				Options.FlowDirection = FlowDirection.RightToLeft;
 			}
 			else
 			{
-				flowDirection = FlowDirection.LeftToRight;
+				Options.FlowDirection = FlowDirection.LeftToRight;
 			}
 
 			//Create the multi-state button view
@@ -500,13 +525,14 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
+			// TODO: This overrides users settings in a way that's completely unclear
 			if (invertImageLocation)
 			{
-				flowDirection = FlowDirection.RightToLeft;
+				Options.FlowDirection = FlowDirection.RightToLeft;
 			}
 			else
 			{
-				flowDirection = FlowDirection.LeftToRight;
+				Options.FlowDirection = FlowDirection.LeftToRight;
 			}
 
 			//Create the multi-state button view
@@ -568,13 +594,14 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
+			// TODO: This overrides users settings in a way that's completely unclear
 			if (invertImageLocation)
 			{
-				flowDirection = FlowDirection.RightToLeft;
+				Options.FlowDirection = FlowDirection.RightToLeft;
 			}
 			else
 			{
-				flowDirection = FlowDirection.LeftToRight;
+				Options.FlowDirection = FlowDirection.LeftToRight;
 			}
 
 			//Create the multi-state button view
@@ -622,6 +649,116 @@ namespace MatterHackers.MatterControl
 			}
 
 			return GenerateRadioButton(label, (ImageBuffer)null);
+		}
+	}
+
+	public class ButtonOptionSection
+	{
+		public RGBA_Bytes FillColor { get; set; }
+		public RGBA_Bytes BorderColor { get; set; }
+		public RGBA_Bytes TextColor { get; set; }
+	}
+
+	public class ButtonFactoryOptions
+	{
+		public ButtonOptionSection Normal { get; set; }
+		public ButtonOptionSection Hover { get; set; }
+		public ButtonOptionSection Pressed { get; set; }
+		public ButtonOptionSection Disabled { get; set; }
+
+		public double FontSize { get; set; } = 12;
+		public double BorderWidth { get; set; } = 1;
+		public bool InvertImageLocation { get; set; } = false;
+		public bool AllowThemeToAdjustImage { get; set; } = true;
+
+		public double FixedWidth { get; set; } = 0;
+		public double FixedHeight { get; set; } = 40;
+		public double ImageSpacing { get; set; } = 0;
+
+		public BorderDouble Margin { get; set; } = new BorderDouble(6, 0);
+		public RGBA_Bytes CheckedBorderColor { get; set; } = new RGBA_Bytes(255, 255, 255, 0);
+		public FlowDirection FlowDirection { get; set; }
+
+		public ButtonFactoryOptions()
+		{
+			this.Margin = new BorderDouble(6, 0);
+
+			this.Normal = new ButtonOptionSection()
+			{
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				FillColor = new RGBA_Bytes(0, 0, 0, 0),
+				BorderColor = new RGBA_Bytes(255, 255, 255, 0)
+			};
+
+			this.Hover = new ButtonOptionSection()
+			{
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				FillColor = new RGBA_Bytes(0, 0, 0, 50),
+				BorderColor = new RGBA_Bytes(0, 0, 0, 0)
+			};
+
+			this.Pressed = new ButtonOptionSection()
+			{
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				FillColor = new RGBA_Bytes(0, 0, 0, 0),
+				BorderColor = new RGBA_Bytes(0, 0, 0, 0)
+			};
+
+			this.Disabled = new ButtonOptionSection()
+			{
+
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				FillColor = new RGBA_Bytes(255, 255, 255, 50),
+				BorderColor = new RGBA_Bytes(0, 0, 0, 0)
+			};
+		}
+
+		public ButtonFactoryOptions Clone(Action<ButtonFactoryOptions> callback)
+		{
+			var newItem = new ButtonFactoryOptions();
+
+			newItem.AllowThemeToAdjustImage = this.AllowThemeToAdjustImage;
+			newItem.BorderWidth = this.BorderWidth;
+			newItem.CheckedBorderColor = this.CheckedBorderColor;
+			newItem.FixedHeight = this.FixedHeight;
+			newItem.FixedWidth = this.FixedWidth;
+			newItem.FlowDirection = this.FlowDirection;
+			newItem.FontSize = this.FontSize;
+			newItem.ImageSpacing = this.ImageSpacing;
+			newItem.InvertImageLocation = this.InvertImageLocation;
+			newItem.Margin = this.Margin;
+
+			newItem.Normal = new ButtonOptionSection()
+			{
+				TextColor = this.Normal.TextColor,
+				FillColor = this.Normal.FillColor,
+				BorderColor = this.Normal.BorderColor
+			};
+
+			newItem.Hover = new ButtonOptionSection()
+			{
+				TextColor = this.Hover.TextColor,
+				FillColor = this.Hover.FillColor,
+				BorderColor = this.Hover.BorderColor
+			};
+
+			newItem.Pressed = new ButtonOptionSection()
+			{
+				TextColor = this.Pressed.TextColor,
+				FillColor = this.Pressed.FillColor,
+				BorderColor = this.Pressed.BorderColor
+			};
+
+			newItem.Disabled = new ButtonOptionSection()
+			{
+				TextColor = this.Disabled.TextColor,
+				FillColor = this.Disabled.FillColor,
+				BorderColor = this.Disabled.BorderColor
+			};
+
+			callback(newItem);
+
+			return newItem;
 		}
 	}
 }

@@ -30,8 +30,7 @@ namespace MatterHackers.MatterControl
 	public class WizardControl : GuiWidget
 	{
 		double extraTextScaling = 1;
-		protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
-
+		
 		private FlowLayoutWidget bottomToTopLayout;
 		private List<WizardControlPage> pages = new List<WizardControlPage>();
 		private int pageIndex = 0;
@@ -50,11 +49,7 @@ namespace MatterHackers.MatterControl
 
 		public WizardControl()
 		{
-			if (UserSettings.Instance.IsTouchScreen)
-			{
-				extraTextScaling = 1.33333;
-			}
-			textImageButtonFactory.fontSize = extraTextScaling * textImageButtonFactory.fontSize;
+			var buttonFactory = ApplicationController.Instance.Theme.ButtonFactory;
 
 			FlowLayoutWidget topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			topToBottom.AnchorAll();
@@ -86,12 +81,6 @@ namespace MatterHackers.MatterControl
 
 			topToBottom.AddChild(headerRow);
 
-			textImageButtonFactory.normalTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			textImageButtonFactory.disabledTextColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 100);
-			textImageButtonFactory.disabledFillColor = new RGBA_Bytes(0, 0, 0, 0);
-			textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
-
 			AnchorAll();
 			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
@@ -100,24 +89,25 @@ namespace MatterHackers.MatterControl
 			bottomToTopLayout.Padding = new BorderDouble(3);
 
 			topToBottom.AddChild(bottomToTopLayout);
+			topToBottom.Margin = new BorderDouble(bottom: 3);
 
 			{
 				FlowLayoutWidget buttonBar = new FlowLayoutWidget();
 				buttonBar.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
 				buttonBar.Padding = new BorderDouble(0, 3);
 
-				backButton = textImageButtonFactory.Generate("Back".Localize(), centerText: true);
+				backButton = buttonFactory.Generate("Back".Localize(), centerText: true);
 				backButton.Click += back_Click;
 
-				nextButton = textImageButtonFactory.Generate("Next".Localize(), centerText: true);
+				nextButton = buttonFactory.Generate("Next".Localize(), centerText: true);
 				nextButton.Name = "Next Button";
 				nextButton.Click += next_Click;
 
-				doneButton = textImageButtonFactory.Generate("Done".Localize(), centerText: true);
+				doneButton = buttonFactory.Generate("Done".Localize(), centerText: true);
 				doneButton.Name = "Done Button";
 				doneButton.Click += done_Click;
 
-				cancelButton = textImageButtonFactory.Generate("Cancel".Localize(), centerText: true);
+				cancelButton = buttonFactory.Generate("Cancel".Localize(), centerText: true);
 				cancelButton.Click += done_Click;
 				cancelButton.Name = "Cancel Button";
 

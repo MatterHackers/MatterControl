@@ -105,8 +105,10 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		public MovementControls()
 		{
+			var buttonFactory = ApplicationController.Instance.Theme.DisableableControlBase;
+
 			Button editButton;
-			movementControlsGroupBox = new AltGroupBox(textImageButtonFactory.GenerateGroupBoxLabelWithEdit(new TextWidget("Movement".Localize(), pointSize: 18, textColor: ActiveTheme.Instance.SecondaryAccentColor), out editButton))
+			movementControlsGroupBox = new AltGroupBox(buttonFactory.GenerateGroupBoxLabelWithEdit(new TextWidget("Movement".Localize(), pointSize: 18, textColor: ActiveTheme.Instance.SecondaryAccentColor), out editButton))
 			{
 				Margin = new BorderDouble(0),
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
@@ -170,9 +172,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			homeButtonBar.Margin = new BorderDouble(3, 0, 3, 6);
 			homeButtonBar.Padding = new BorderDouble(0);
 
-			textImageButtonFactory.borderWidth = 1;
-			textImageButtonFactory.normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
-			textImageButtonFactory.hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
+			var buttonFactory = ApplicationController.Instance.Theme.HomingButtons;
 
 			ImageBuffer helpIconImage = StaticData.Instance.LoadIcon("icon_home_white_24x24.png", 24, 24);
 			if (ActiveTheme.Instance.IsDarkTheme)
@@ -183,34 +183,32 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 			homeIconImageWidget.Margin = new BorderDouble(0, 0, 6, 0);
 			homeIconImageWidget.OriginRelativeParent += new Vector2(0, 2) * GuiWidget.DeviceScale;
-			RGBA_Bytes oldColor = this.textImageButtonFactory.normalFillColor;
-			textImageButtonFactory.normalFillColor = new RGBA_Bytes(180, 180, 180);
-			homeAllButton = textImageButtonFactory.Generate("ALL".Localize());
-			this.textImageButtonFactory.normalFillColor = oldColor;
+
+			homeAllButton = buttonFactory.Generate("ALL".Localize());
+			
 			homeAllButton.ToolTipText = "Home X, Y and Z".Localize();
 			homeAllButton.Margin = new BorderDouble(0, 0, 6, 0);
 			homeAllButton.Click += homeAll_Click;
 
-			textImageButtonFactory.FixedWidth = (int)homeAllButton.Width * GuiWidget.DeviceScale;
-			homeXButton = textImageButtonFactory.Generate("X", centerText: true);
+			double fixedWidth = (int)homeAllButton.Width * GuiWidget.DeviceScale;
+
+			homeXButton = buttonFactory.Generate("X", centerText: true, fixedWidth: fixedWidth);
 			homeXButton.ToolTipText = "Home X".Localize();
 			homeXButton.Margin = new BorderDouble(0, 0, 6, 0);
 			homeXButton.Click += homeXButton_Click;
 
-			homeYButton = textImageButtonFactory.Generate("Y", centerText: true);
+			homeYButton = buttonFactory.Generate("Y", centerText: true, fixedWidth: fixedWidth);
 			homeYButton.ToolTipText = "Home Y".Localize();
 			homeYButton.Margin = new BorderDouble(0, 0, 6, 0);
 			homeYButton.Click += homeYButton_Click;
 
-			homeZButton = textImageButtonFactory.Generate("Z", centerText: true);
+			homeZButton = buttonFactory.Generate("Z", centerText: true, fixedWidth: fixedWidth);
 			homeZButton.ToolTipText = "Home Z".Localize();
 			homeZButton.Margin = new BorderDouble(0, 0, 6, 0);
 			homeZButton.Click += homeZButton_Click;
 
-			textImageButtonFactory.normalFillColor = RGBA_Bytes.White;
-			textImageButtonFactory.FixedWidth = 0;
-
-			disableMotors = textImageButtonFactory.Generate("Release".Localize().ToUpper());
+			// Create 'Release' button, clearing fixedWidth needed on sibling 'Home' controls
+			disableMotors = buttonFactory.Generate("Release".Localize().ToUpper(), fixedWidth: 0);
 			disableMotors.Margin = new BorderDouble(0);
 			disableMotors.Click += (s, e) =>
 			{

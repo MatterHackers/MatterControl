@@ -64,9 +64,10 @@ namespace MatterHackers.MatterControl.PrinterControls
 			}
 
 			leftToRight.AddChild(fanControlsLayout);
-			SetDisplayAttributes();
 
-			fanSpeedDisplay = new EditableNumberDisplay(textImageButtonFactory, "{0}%".FormatWith(PrinterConnection.Instance.FanSpeed0To255.ToString()), "100%");
+			this.HAnchor = HAnchor.ParentLeftRight;
+
+			fanSpeedDisplay = new EditableNumberDisplay("{0}%".FormatWith(PrinterConnection.Instance.FanSpeed0To255.ToString()), "100%");
 			fanSpeedDisplay.EditComplete += (sender, e) =>
 			{
 				PrinterConnection.Instance.FanSpeed0To255 = (int)(fanSpeedDisplay.GetValue() * 255.5 / 100);
@@ -76,31 +77,9 @@ namespace MatterHackers.MatterControl.PrinterControls
 			fanControlsGroupBox.AddChild(leftToRight);
 		}
 
-		private void SetDisplayAttributes()
-		{
-			this.textImageButtonFactory.normalFillColor = RGBA_Bytes.Transparent;
-
-			this.textImageButtonFactory.FixedWidth = 38 * GuiWidget.DeviceScale;
-			this.textImageButtonFactory.FixedHeight = 20 * GuiWidget.DeviceScale;
-			this.textImageButtonFactory.fontSize = 10;
-			this.textImageButtonFactory.borderWidth = 1;
-			this.textImageButtonFactory.normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
-			this.textImageButtonFactory.hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
-
-			this.textImageButtonFactory.disabledTextColor = RGBA_Bytes.Gray;
-			this.textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			this.textImageButtonFactory.normalTextColor = ActiveTheme.Instance.SecondaryTextColor;
-			this.textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
-
-			this.HAnchor = HAnchor.ParentLeftRight;
-		}
-
 		public override void OnClosed(ClosedEventArgs e)
 		{
-			if (unregisterEvents != null)
-			{
-				unregisterEvents(this, null);
-			}
+			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
 		}
 
