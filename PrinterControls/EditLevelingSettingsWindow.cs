@@ -41,13 +41,13 @@ namespace MatterHackers.MatterControl
 {
 	public class EditLevelingSettingsWindow : SystemWindow
 	{
-		protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
-
 		private List<Vector3> positions = new List<Vector3>();
 
 		public EditLevelingSettingsWindow()
 			: base(400, 370)
 		{
+			var textImageButtonFactory = ApplicationController.Instance.Theme.ButtonFactory;
+
 			AlwaysOnTopOfMain = true;
 			Title = LocalizedString.Get("Leveling Settings".Localize());
 
@@ -84,9 +84,6 @@ namespace MatterHackers.MatterControl
 			topToBottom.AddChild(presetsFormContainer);
 
 			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-
-			double oldHeight = textImageButtonFactory.FixedHeight;
-			textImageButtonFactory.Options.FixedHeight = 30 * GuiWidget.DeviceScale;
 
 			// put in the movement edit controls
 			PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
@@ -139,8 +136,6 @@ namespace MatterHackers.MatterControl
 
 				presetsFormContainer.AddChild(new CustomWidgets.HorizontalLine());
 			}
-
-			textImageButtonFactory.Options.FixedHeight = oldHeight;
 
 			ShowAsSystemWindow();
 			MinimumSize = new Vector2(Width, Height);
