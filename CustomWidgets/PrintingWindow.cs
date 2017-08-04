@@ -171,16 +171,15 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		protected EventHandler unregisterEvents;
 		private static PrintingWindow instance;
 
-		private TextImageButtonFactory buttonFactory = new TextImageButtonFactory()
+		private TextImageButtonFactory buttonFactory = new TextImageButtonFactory(new ButtonFactoryOptions()
 		{
-			fontSize = 15,
-			invertImageLocation = false,
-			normalTextColor = ActiveTheme.Instance.PrimaryTextColor,
-			hoverTextColor = ActiveTheme.Instance.PrimaryTextColor,
-			disabledTextColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 100),
-			disabledFillColor = RGBA_Bytes.Transparent,
-			pressedTextColor = ActiveTheme.Instance.PrimaryTextColor,
-		};
+			FontSize = 15,
+			InvertImageLocation = false,
+			Normal = new ButtonOptionSection() { TextColor = ActiveTheme.Instance.PrimaryTextColor },
+			Hover = new ButtonOptionSection() { TextColor = ActiveTheme.Instance.PrimaryTextColor },
+			Disabled = new ButtonOptionSection() { TextColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 100), FillColor = RGBA_Bytes.Transparent },
+			Pressed = new ButtonOptionSection() { TextColor = ActiveTheme.Instance.PrimaryTextColor },
+		});
 
 		private AverageMillisecondTimer millisecondTimer = new AverageMillisecondTimer();
 		private Stopwatch totalDrawTime = new Stopwatch();

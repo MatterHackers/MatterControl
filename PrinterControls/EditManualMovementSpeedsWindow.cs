@@ -41,15 +41,15 @@ namespace MatterHackers.MatterControl
 {
 	public class EditManualMovementSpeedsWindow : SystemWindow
 	{
-		protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 		private Action<string> functionToCallOnSave;
 		private List<string> axisLabels = new List<string>();
 		private List<GuiWidget> valueEditors = new List<GuiWidget>();
 
-
 		public EditManualMovementSpeedsWindow(string windowTitle, string movementSpeedsString, Action<string> functionToCallOnSave)
 			: base(260, 300)
 		{
+			var buttonFactory = ApplicationController.Instance.Theme.ButtonFactory;
+
 			AlwaysOnTopOfMain = true;
 			Title = LocalizedString.Get(windowTitle);
 
@@ -87,9 +87,6 @@ namespace MatterHackers.MatterControl
 
 			this.functionToCallOnSave = functionToCallOnSave;
 			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-
-			double oldHeight = textImageButtonFactory.FixedHeight;
-			textImageButtonFactory.FixedHeight = 30 * GuiWidget.DeviceScale;
 
 			TextWidget tempTypeLabel = new TextWidget(windowTitle, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 10);
 			tempTypeLabel.Margin = new BorderDouble(3);
@@ -157,15 +154,13 @@ namespace MatterHackers.MatterControl
 				preset_count += 1;
 			}
 
-			textImageButtonFactory.FixedHeight = oldHeight;
-
 			ShowAsSystemWindow();
 			MinimumSize = new Vector2(260, 300);
 
-			Button savePresetsButton = textImageButtonFactory.Generate("Save".Localize());
+			Button savePresetsButton = buttonFactory.Generate("Save".Localize());
 			savePresetsButton.Click += save_Click;
 
-			Button cancelPresetsButton = textImageButtonFactory.Generate("Cancel".Localize());
+			Button cancelPresetsButton = buttonFactory.Generate("Cancel".Localize());
 			cancelPresetsButton.Click += (sender, e) =>
 			{
 				UiThread.RunOnIdle(Close);

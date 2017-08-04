@@ -143,15 +143,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 				row.AddChild(feedRateValue);
 
 				topToBottom.AddChild(row);
-
-				textImageButtonFactory.FixedHeight = (int)feedRateValue.Height + 1;
-				textImageButtonFactory.borderWidth = 1;
-				textImageButtonFactory.normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
-				textImageButtonFactory.hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
-
-				Button setButton = textImageButtonFactory.Generate("Set".Localize());
-				setButton.VAnchor = VAnchor.ParentCenter;
-				row.AddChild(setButton);
 			}
 
 			{
@@ -218,12 +209,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 				row.AddChild(extrusionValue);
 
 				topToBottom.AddChild(row);
-				
-				textImageButtonFactory.FixedHeight = (int)extrusionValue.Height + 1;
-
-				Button setButton = textImageButtonFactory.Generate("Set".Localize());
-				setButton.VAnchor = VAnchor.ParentCenter;
-				row.AddChild(setButton);
 			}
 
 			adjustmentControlsGroupBox.AddChild(topToBottom);

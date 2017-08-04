@@ -81,17 +81,23 @@ namespace MatterHackers.MatterControl
 
 		private Button CreateDefaultButton(string buttonText)
 		{
-			var buttonFactory = new TextImageButtonFactory()
+			var buttonFactory = new TextImageButtonFactory(new ButtonFactoryOptions()
 			{
 				FixedHeight = 30 * GuiWidget.DeviceScale,
-				normalFillColor = RGBA_Bytes.White,
-				normalTextColor = RGBA_Bytes.Black,
-				hoverTextColor = RGBA_Bytes.Black,
-				hoverFillColor = new RGBA_Bytes(255, 255, 255, 200),
-				borderWidth = 1,
-				normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200),
-				hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200)
-			};
+				Normal = new ButtonOptionSection()
+				{
+					FillColor = RGBA_Bytes.White,
+					TextColor = RGBA_Bytes.Black,
+					BorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200),
+				},
+				Hover = new ButtonOptionSection()
+				{
+					TextColor = RGBA_Bytes.Black,
+					FillColor = new RGBA_Bytes(255, 255, 255, 200),
+					BorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200)
+				},
+				BorderWidth = 1,
+			});
 
 			return buttonFactory.Generate(buttonText, centerText: true);
 		}

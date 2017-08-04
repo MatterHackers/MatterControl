@@ -60,25 +60,10 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 	public class ActionControlsWidget : FlowLayoutWidget
 	{
-		protected string editWindowLabel;
-		protected string label;
-		protected FlowLayoutWidget presetButtonsContainer;
-		protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
-
 		public ActionControlsWidget()
 			: base(FlowDirection.TopToBottom)
 		{
-			this.textImageButtonFactory.normalFillColor = RGBA_Bytes.White;
-			this.textImageButtonFactory.FixedHeight = 24 * GuiWidget.DeviceScale;
-			this.textImageButtonFactory.fontSize = 12;
-			this.textImageButtonFactory.borderWidth = 1;
-			this.textImageButtonFactory.normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
-			this.textImageButtonFactory.hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
-
-			this.textImageButtonFactory.disabledTextColor = RGBA_Bytes.Gray;
-			this.textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			this.textImageButtonFactory.normalTextColor = RGBA_Bytes.Black;
-			this.textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			var buttonFactory = ApplicationController.Instance.Theme.HomingButtons;
 
 			this.HAnchor = HAnchor.ParentLeftRight;
 
@@ -97,36 +82,27 @@ namespace MatterHackers.MatterControl.PrinterControls
 			FlowLayoutWidget controlRow = new FlowLayoutWidget(Agg.UI.FlowDirection.TopToBottom);
 			controlRow.Margin = new BorderDouble(top: 5);
 			controlRow.HAnchor |= HAnchor.ParentLeftRight;
-			{
-				this.presetButtonsContainer = GetMacroButtonContainer();
-				controlRow.AddChild(this.presetButtonsContainer);
-			}
-
-			groupBox.AddChild(controlRow);
-			this.AddChild(groupBox);
-		}
-
-		private FlowLayoutWidget GetMacroButtonContainer()
-		{
-			FlowLayoutWidget macroButtonContainer = new FlowLayoutWidget();
+			
+			var macroButtonContainer = new FlowLayoutWidget();
 			macroButtonContainer.Margin = new BorderDouble(0, 0, 3, 0);
 			macroButtonContainer.Padding = new BorderDouble(0, 3, 3, 3);
 
-			if (ActiveSliceSettings.Instance?.ActionMacros().Any() != true)
+			if (ActiveSliceSettings.Instance?.ActionMacros().Any() == true)
 			{
-				return macroButtonContainer;
+				foreach (GCodeMacro macro in ActiveSliceSettings.Instance.ActionMacros())
+				{
+					Button macroButton = buttonFactory.Generate(GCodeMacro.FixMacroName(macro.Name));
+					macroButton.Margin = new BorderDouble(right: 5);
+					macroButton.Click += (s, e) => macro.Run();
+
+					macroButtonContainer.AddChild(macroButton);
+				}
 			}
 
-			foreach (GCodeMacro macro in ActiveSliceSettings.Instance.ActionMacros())
-			{
-				Button macroButton = textImageButtonFactory.Generate(GCodeMacro.FixMacroName(macro.Name));
-				macroButton.Margin = new BorderDouble(right: 5);
-				macroButton.Click += (s, e) => macro.Run();
+			controlRow.AddChild(macroButtonContainer);
 
-				macroButtonContainer.AddChild(macroButton);
-			}
-
-			return macroButtonContainer;
+			groupBox.AddChild(controlRow);
+			this.AddChild(groupBox);
 		}
 	}
 
@@ -140,31 +116,16 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 	public class MacroControlsWidget : FlowLayoutWidget
 	{
-		protected string editWindowLabel;
-		protected string label;
-		protected FlowLayoutWidget presetButtonsContainer;
-		protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
-
 		public MacroControlsWidget()
 					: base(FlowDirection.TopToBottom)
 		{
-			this.textImageButtonFactory.normalFillColor = RGBA_Bytes.White;
-			this.textImageButtonFactory.FixedHeight = 24 * GuiWidget.DeviceScale;
-			this.textImageButtonFactory.fontSize = 12;
-			this.textImageButtonFactory.borderWidth = 1;
-			this.textImageButtonFactory.normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
-			this.textImageButtonFactory.hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
-
-			this.textImageButtonFactory.disabledTextColor = RGBA_Bytes.Gray;
-			this.textImageButtonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			this.textImageButtonFactory.normalTextColor = RGBA_Bytes.Black;
-			this.textImageButtonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			var buttonFactory = ApplicationController.Instance.Theme.HomingButtons;
 
 			this.HAnchor = HAnchor.ParentLeftRight;
 
 			// add the widgets to this window
 			Button editButton;
-			AltGroupBox groupBox = new AltGroupBox(textImageButtonFactory.GenerateGroupBoxLabelWithEdit(new TextWidget("Macros".Localize(), pointSize: 18, textColor: ActiveTheme.Instance.SecondaryAccentColor), out editButton));
+			AltGroupBox groupBox = new AltGroupBox(buttonFactory.GenerateGroupBoxLabelWithEdit(new TextWidget("Macros".Localize(), pointSize: 18, textColor: ActiveTheme.Instance.SecondaryAccentColor), out editButton));
 			editButton.Click += (sender, e) =>
 			{
 				EditMacrosWindow.Show();
@@ -179,15 +140,14 @@ namespace MatterHackers.MatterControl.PrinterControls
 			controlRow.Margin = new BorderDouble(top: 5);
 			controlRow.HAnchor = HAnchor.ParentLeftRight;
 			{
-				this.presetButtonsContainer = GetMacroButtonContainer();
-				controlRow.AddChild(this.presetButtonsContainer);
+				controlRow.AddChild(GetMacroButtonContainer(buttonFactory));
 			}
 
 			groupBox.AddChild(controlRow);
 			this.AddChild(groupBox);
 		}
 
-		private FlowLayoutWidget GetMacroButtonContainer()
+		private FlowLayoutWidget GetMacroButtonContainer(TextImageButtonFactory buttonFactory)
 		{
 			FLowLeftRightWithWrapping macroContainer = new FLowLeftRightWithWrapping();
 
@@ -204,7 +164,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 			foreach (GCodeMacro macro in ActiveSliceSettings.Instance.UserMacros())
 			{
-				Button macroButton = textImageButtonFactory.Generate(GCodeMacro.FixMacroName(macro.Name));
+				Button macroButton = buttonFactory.Generate(GCodeMacro.FixMacroName(macro.Name));
 				macroButton.Margin = new BorderDouble(right: 5);
 				macroButton.Click += (s, e) => macro.Run();
 
