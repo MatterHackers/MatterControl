@@ -116,31 +116,16 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 	public class MacroControlsWidget : FlowLayoutWidget
 	{
-		protected string editWindowLabel;
-		protected string label;
-		protected FlowLayoutWidget presetButtonsContainer;
-		protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
-
 		public MacroControlsWidget()
 					: base(FlowDirection.TopToBottom)
 		{
-			this.textImageButtonFactory.Options.Normal.FillColor = RGBA_Bytes.White;
-			this.textImageButtonFactory.Options.FixedHeight = 24 * GuiWidget.DeviceScale;
-			this.textImageButtonFactory.Options.FontSize = 12;
-			this.textImageButtonFactory.Options.BorderWidth = 1;
-			this.textImageButtonFactory.Options.Normal.BorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
-			this.textImageButtonFactory.Options.Hover.BorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
-
-			this.textImageButtonFactory.Options.Disabled.TextColor = RGBA_Bytes.Gray;
-			this.textImageButtonFactory.Options.Hover.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			this.textImageButtonFactory.Options.Normal.TextColor = RGBA_Bytes.Black;
-			this.textImageButtonFactory.Options.Pressed.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			var buttonFactory = ApplicationController.Instance.Theme.HomingButtons;
 
 			this.HAnchor = HAnchor.ParentLeftRight;
 
 			// add the widgets to this window
 			Button editButton;
-			AltGroupBox groupBox = new AltGroupBox(textImageButtonFactory.GenerateGroupBoxLabelWithEdit(new TextWidget("Macros".Localize(), pointSize: 18, textColor: ActiveTheme.Instance.SecondaryAccentColor), out editButton));
+			AltGroupBox groupBox = new AltGroupBox(buttonFactory.GenerateGroupBoxLabelWithEdit(new TextWidget("Macros".Localize(), pointSize: 18, textColor: ActiveTheme.Instance.SecondaryAccentColor), out editButton));
 			editButton.Click += (sender, e) =>
 			{
 				EditMacrosWindow.Show();
@@ -155,15 +140,14 @@ namespace MatterHackers.MatterControl.PrinterControls
 			controlRow.Margin = new BorderDouble(top: 5);
 			controlRow.HAnchor = HAnchor.ParentLeftRight;
 			{
-				this.presetButtonsContainer = GetMacroButtonContainer();
-				controlRow.AddChild(this.presetButtonsContainer);
+				controlRow.AddChild(GetMacroButtonContainer(buttonFactory));
 			}
 
 			groupBox.AddChild(controlRow);
 			this.AddChild(groupBox);
 		}
 
-		private FlowLayoutWidget GetMacroButtonContainer()
+		private FlowLayoutWidget GetMacroButtonContainer(TextImageButtonFactory buttonFactory)
 		{
 			FLowLeftRightWithWrapping macroContainer = new FLowLeftRightWithWrapping();
 
@@ -180,7 +164,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 			foreach (GCodeMacro macro in ActiveSliceSettings.Instance.UserMacros())
 			{
-				Button macroButton = textImageButtonFactory.Generate(GCodeMacro.FixMacroName(macro.Name));
+				Button macroButton = buttonFactory.Generate(GCodeMacro.FixMacroName(macro.Name));
 				macroButton.Margin = new BorderDouble(right: 5);
 				macroButton.Click += (s, e) => macro.Run();
 
