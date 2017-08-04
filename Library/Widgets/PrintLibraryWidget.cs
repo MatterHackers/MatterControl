@@ -54,8 +54,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private static CreateFolderWindow createFolderWindow = null;
 		private static RenameItemWindow renameItemWindow = null;
 		private ExportToFolderFeedbackWindow exportingWindow = null;
-		private TextImageButtonFactory textImageButtonFactory;
-		private TextImageButtonFactory editButtonFactory;
 
 		private Button addToLibraryButton;
 		private Button createFolderButton;
@@ -78,26 +76,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			this.BackgroundColor = ApplicationController.Instance.Theme.TabBodyBackground;
 			this.AnchorAll();
-
-			textImageButtonFactory = new TextImageButtonFactory(new ButtonFactoryOptions()
-			{
-				BorderWidth = 0,
-
-				Normal = new ButtonOptionSection() { TextColor = ActiveTheme.Instance.PrimaryTextColor },
-				Hover = new ButtonOptionSection() { TextColor = ActiveTheme.Instance.PrimaryTextColor },
-				Pressed = new ButtonOptionSection() { TextColor = ActiveTheme.Instance.PrimaryTextColor },
-				Disabled = new ButtonOptionSection() { TextColor = ActiveTheme.Instance.TabLabelUnselected, FillColor = new RGBA_Bytes() }
-			});
-
-			editButtonFactory = new TextImageButtonFactory(new ButtonFactoryOptions()
-			{
-				Normal = new ButtonOptionSection() { TextColor = ActiveTheme.Instance.PrimaryTextColor },
-				Hover = new ButtonOptionSection() { TextColor = ActiveTheme.Instance.PrimaryTextColor },
-				Disabled = new ButtonOptionSection() { TextColor = ActiveTheme.Instance.TabLabelUnselected, FillColor = new RGBA_Bytes() },
-				Pressed = new ButtonOptionSection() { TextColor = ActiveTheme.Instance.PrimaryTextColor },
-				BorderWidth = 0,
-				Margin = new BorderDouble(10, 0)
-			});
 
 			var allControls = new FlowLayoutWidget(FlowDirection.TopToBottom);
 
@@ -266,6 +244,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		private void AddLibraryButtonElements()
 		{
+			var textImageButtonFactory = ApplicationController.Instance.Theme.SmallMarginButtonFactory;
+
 			buttonPanel.RemoveAllChildren();
 
 			// the add button
