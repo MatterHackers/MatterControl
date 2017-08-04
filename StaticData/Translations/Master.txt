@@ -4339,3 +4339,39 @@ Translated:The thickness of the first layer. A first layer taller than the defau
 English:The thickness of each layer of the print, except the first layer. A smaller number will create more layers and more vertical accuracy but also a slower print.
 Translated:The thickness of each layer of the print, except the first layer. A smaller number will create more layers and more vertical accuracy but also a slower print.
 
+English:Turn retractions on and off.
+Translated:Turn retractions on and off.
+
+English:Clear Plate
+Translated:Clear Plate
+
+English:Layer Thickness
+Translated:Layer Thickness
+
+English:First Layer Thickness
+Translated:First Layer Thickness
+
+English:Enable Retractions
+Translated:Enable Retractions
+
+English:Retract Length
+Translated:Retract Length
+
+English:After Move
+Translated:After Move
+
+English:Before Tool Change
+Translated:Before Tool Change
+
+English:Create New
+Translated:Create New
+
+English:Create Part
+Translated:Create Part
+
+English:Create Printer
+Translated:Create Printer
+
+English:Open Existing
+Translated:Open Existing
+
