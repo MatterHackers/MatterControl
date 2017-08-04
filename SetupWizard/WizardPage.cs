@@ -14,7 +14,7 @@ namespace MatterHackers.MatterControl
 		protected TextWidget headerLabel;
 		protected Button cancelButton;
 
-		protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory(new ButtonFactoryOptions() { FontSize = 16 });
+		protected TextImageButtonFactory textImageButtonFactory = ApplicationController.Instance.Theme.ButtonFactory;
 		protected TextImageButtonFactory whiteImageButtonFactory;
 		protected LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
 
