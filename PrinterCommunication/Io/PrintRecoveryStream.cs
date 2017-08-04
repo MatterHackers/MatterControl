@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		private double percentDone;
 		double recoverFeedRate;
 		PrinterMove lastDestination;
-        QueuedCommandsStream queuedCommands;
+		QueuedCommandsStream queuedCommands;
 		RectangleDouble boundsOfSkippedLayers = RectangleDouble.ZeroIntersection;
 
 		RecoveryState recoveryState = RecoveryState.RemoveHeating;
