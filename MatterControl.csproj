@@ -226,6 +226,7 @@
     <Compile Include="PrinterCommunication\Io\NotPrintingStream.cs" />
     <Compile Include="Library\Widgets\ListView\ListView.cs" />
     <Compile Include="Library\Widgets\ListView\ListViewItem.cs" />
+    <Compile Include="PrinterCommunication\Io\MacroProcessingStream.cs" />
     <Compile Include="PrinterCommunication\Io\RequestTemperaturesStream.cs" />
     <Compile Include="SetupWizard\CopyGuestProfilesToUser.cs" />
     <Compile Include="Library\Widgets\SystemWindows\RenameItemWindow.cs" />
