@@ -379,7 +379,7 @@ namespace MatterHackers.MeshVisualizer
 							}
 						}
 						CreateCircularBedGridImage((int)(displayVolumeToBuild.x / divisor), (int)(displayVolumeToBuild.y / divisor), skip);
-						printerBed = VertexSourceToMesh.Extrude(new Ellipse(new Vector2(), displayVolumeToBuild.x / 2, displayVolumeToBuild.y / 2), 2);
+						printerBed = VertexSourceToMesh.Extrude(new Ellipse(new Vector2(), displayVolumeToBuild.x / 2, displayVolumeToBuild.y / 2), 1.8);
 						{
 							foreach (Face face in printerBed.Faces)
 							{
@@ -401,10 +401,10 @@ namespace MatterHackers.MeshVisualizer
 					throw new NotImplementedException();
 			}
 
-			var zHeight = printerBed.GetAxisAlignedBoundingBox().ZSize;
+			var zTop = printerBed.GetAxisAlignedBoundingBox().maxXYZ.z;
 			foreach (Vertex vertex in printerBed.Vertices)
 			{
-				vertex.Position = vertex.Position - new Vector3(-bedCenter, zHeight/2);
+				vertex.Position = vertex.Position - new Vector3(-bedCenter, zTop + .02);
 			}
 
 			if (buildVolume != null)
