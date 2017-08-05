@@ -686,7 +686,7 @@ namespace MatterHackers.MatterControl
 			this.Normal = new ButtonOptionSection()
 			{
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
-				FillColor = new RGBA_Bytes(0, 0, 0, 0),
+				FillColor = new RGBA_Bytes(0, 0, 0, 20),
 				BorderColor = new RGBA_Bytes(255, 255, 255, 0)
 			};
 
