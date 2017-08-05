@@ -53,10 +53,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			this.view3DWidget = view3DWidget;
 			this.item = item;
-			FlowLayoutWidget mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
+
+			FlowLayoutWidget mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				Padding = new BorderDouble(right: 3)
+			};
 
 			FlowLayoutWidget behavior3DTypeButtons = new FlowLayoutWidget();
 			mainContainer.AddChild(behavior3DTypeButtons);
+
+			var buttonMargin = new BorderDouble(2, 5);
 
 			// put in the button for making the behavior solid
 			Button solidButtonView = theme.ButtonFactory.Generate("Solid".Localize());
@@ -70,7 +76,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					VAnchor = VAnchor.FitToChildren,
 					BackgroundColor = RGBA_Bytes.White
 				},
-				Margin = new BorderDouble(0, 5)
+				Margin = buttonMargin
 			};
 			solidButtonView.Click += (s, e) =>
 			{
@@ -81,7 +87,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// put in the button for making the behavior a hole
 			Button holeBehaviorButton = theme.ButtonFactory.Generate("Hole".Localize());
-			holeBehaviorButton.Margin = new BorderDouble(0, 5);
+			holeBehaviorButton.Margin = buttonMargin;
 			holeBehaviorButton.Click += (s, e) =>
 			{
 				item.OutputType = PrintOutputTypes.Hole;
@@ -92,7 +98,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// put in the button for making the behavior support
 			Button supportBehaviorButton = theme.ButtonFactory.Generate("Support".Localize());
-			supportBehaviorButton.Margin = new BorderDouble(0, 5);
+			supportBehaviorButton.Margin = buttonMargin;
 			supportBehaviorButton.Click += (s, e) =>
 			{
 				item.OutputType = PrintOutputTypes.Support;
