@@ -96,8 +96,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.AddChild(new PrintActionRow(buttonFactory, this, defaultMargin));
 
-			this.AddChild(new HorizontalSpacer());
-
 			var initialMargin = buttonFactory.Margin;
 
 			var sliceButton = buttonFactory.Generate("Slice".Localize());
@@ -120,7 +118,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 							// Save any pending changes before starting the print
 							await ApplicationController.Instance.ActiveView3DWidget.PersistPlateIfNeeded();
-							
+
 							await SlicingQueue.SliceFileAsync(printItem, sliceProgressReporter);
 
 							gcodeLoadCancellationTokenSource = new CancellationTokenSource();
@@ -151,6 +149,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			this.AddChild(sliceButton);
+
+			this.AddChild(new HorizontalSpacer());
 
 			this.AddChild(new TemperatureWidgetExtruder(ApplicationController.Instance.Theme.MenuButtonFactory)
 			{
