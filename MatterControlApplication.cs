@@ -536,7 +536,6 @@ namespace MatterHackers.MatterControl
 		{
 			UserSettings.Instance.Fields.StartCountDurringExit = UserSettings.Instance.Fields.StartCount;
 
-			TerminalWindow.CloseIfOpen();
 			if (PrinterConnection.Instance.CommunicationState != CommunicationStates.PrintingFromSd)
 			{
 				PrinterConnection.Instance.Disable();
@@ -681,8 +680,6 @@ namespace MatterHackers.MatterControl
 					QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(Path.GetFileName(arg), Path.GetFullPath(arg))));
 				}
 			}
-
-			TerminalWindow.ShowIfLeftOpen();
 
 			ApplicationController.Instance.OnLoadActions();
 
