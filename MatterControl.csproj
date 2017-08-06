@@ -161,13 +161,11 @@
     <Compile Include="ConfigurationPage\SettingsViewBase.cs" />
     <Compile Include="ControlElements\ConditionalClickWidget.cs" />
     <Compile Include="ControlElements\AttentionGetter.cs" />
-    <Compile Include="ControlElements\PopOutManager.cs" />
     <Compile Include="CustomWidgets\AltGroupBox.cs" />
     <Compile Include="CustomWidgets\DoubleSolidSlider.cs" />
     <Compile Include="CustomWidgets\FatFlatClickWidget.cs" />
     <Compile Include="CustomWidgets\FlowSpacers.cs" />
     <Compile Include="CustomWidgets\LibrarySelector\FolderBreadCrumbWidget.cs" />
-    <Compile Include="CustomWidgets\PopOutTextTab.cs" />
     <Compile Include="CustomWidgets\PrintingWindow.cs" />
     <Compile Include="CustomWidgets\SlideWidget.cs" />
     <Compile Include="CustomWidgets\SolidSlider.cs" />

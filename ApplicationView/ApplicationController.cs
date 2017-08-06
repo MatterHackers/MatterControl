@@ -749,15 +749,11 @@ namespace MatterHackers.MatterControl
 			{
 				using (new QuickTimer($"ReloadAll_{reloadCount++}:"))
 				{
-					// give the widget a chance to hear about the close before they are actually closed.
-					PopOutManager.SaveIfClosed = false;
-
 					MainView?.CloseAllChildren();
 					using (new QuickTimer("ReloadAll_AddElements"))
 					{
 						MainView?.CreateAndAddChildren();
 					}
-					PopOutManager.SaveIfClosed = true;
 					this.DoneReloadingAll?.CallEvents(null, null);
 				}
 
