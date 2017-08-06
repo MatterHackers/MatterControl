@@ -145,9 +145,6 @@
     <Compile Include="Library\ContentProviders\GCodeContentProvider.cs" />
     <Compile Include="Library\ContentProviders\IContentProvider.cs" />
     <Compile Include="ApplicationView\MenuRow\MenuOptionAction.cs" />
-    <Compile Include="ApplicationView\MenuRow\MenuOptionHelp.cs" />
-    <Compile Include="ApplicationView\MenuRow\MenuOptionSettings.cs" />
-    <Compile Include="ApplicationView\MenuRow\MenuOptionFile.cs" />
     <Compile Include="ApplicationView\MenuRow\MenuBase.cs" />
     <Compile Include="ApplicationView\TouchscreenTabView.cs" />
     <Compile Include="ConfigurationPage\ApplicationSettings\ApplicationSettingsView.cs" />
@@ -340,7 +337,6 @@
     <Compile Include="CustomWidgets\DropDownMenuWidget.cs" />
     <Compile Include="ControlElements\ImageButtonFactory.cs" />
     <Compile Include="ControlElements\LinkButtonFactory.cs" />
-    <Compile Include="CustomWidgets\PrintProgressBarWidget.cs" />
     <Compile Include="Queue\OptionsMenu\ExportToSdCardFeedbackWindow.cs" />
     <Compile Include="CustomWidgets\SlidePanelWidget.cs" />
     <Compile Include="ControlElements\StyledMessageBoxWindow.cs" />
