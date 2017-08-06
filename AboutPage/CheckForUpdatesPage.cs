@@ -7,44 +7,26 @@ using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl.AboutPage
 {
-	public class CheckForUpdateWindow : SystemWindow
+	public class CheckForUpdatesPage : WizardPage
 	{
-		private static CheckForUpdateWindow checkUpdate = null;
-		DropDownList releaseOptionsDropList;
-		TextWidget stableInfoLabel;
-		TextWidget alphaInfoLabel;
-		TextWidget betaInfoLabel;
-		TextWidget updateChannelLabel;
-		TextWidget currentBuildInfo;
-
-		public CheckForUpdateWindow(ThemeConfig theme)
-			: base(540, 350)
+		public CheckForUpdatesPage()
+		: base("Close", "Check for Update")
 		{
+			AnchorAll();
+
+			var theme = ApplicationController.Instance.Theme;
+
 			FlowLayoutWidget topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			topToBottom.AnchorAll();
 			topToBottom.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
 			Padding = new BorderDouble(left: 5, right: 5);
-
-			FlowLayoutWidget mainLabelContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
-			mainLabelContainer.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-			mainLabelContainer.VAnchor = VAnchor.FitToChildren;
-			mainLabelContainer.HAnchor = HAnchor.ParentLeftRight;
 
 			FlowLayoutWidget currentFeedAndDropDownContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
 			currentFeedAndDropDownContainer.VAnchor = VAnchor.FitToChildren;
 			currentFeedAndDropDownContainer.HAnchor = HAnchor.ParentLeftRight;
 			currentFeedAndDropDownContainer.Margin = new BorderDouble(0, 5, 0, 0);
 			currentFeedAndDropDownContainer.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
-
-			TextWidget checkUpdateLabel = new TextWidget("Check for Update".Localize(), pointSize: 20);
-			if (UpdateControlData.Instance.UpdateRequired)
-			{
-				checkUpdateLabel = new TextWidget("Update Required".Localize(), pointSize: 20);
-			}
-
-			checkUpdateLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			checkUpdateLabel.Margin = new BorderDouble(2, 10, 10, 5);
-
+			
 			UpdateControlView updateStatusWidget = new UpdateControlView(ApplicationController.Instance.Theme);
 
 			TextWidget feedLabel = new TextWidget("Update Channel".Localize(), pointSize: 12);
@@ -52,7 +34,7 @@ namespace MatterHackers.MatterControl.AboutPage
 			feedLabel.VAnchor = VAnchor.ParentCenter;
 			feedLabel.Margin = new BorderDouble(left: 5);
 
-			releaseOptionsDropList = new DropDownList("Development", maxHeight: 200);
+			var releaseOptionsDropList = new DropDownList("Development", maxHeight: 200);
 			releaseOptionsDropList.HAnchor = HAnchor.ParentLeftRight;
 
 			releaseOptionsDropList.AddItem("Stable".Localize(), "release");
@@ -81,7 +63,8 @@ namespace MatterHackers.MatterControl.AboutPage
 
 			string currentBuildNo = VersionInfo.Instance.BuildVersion;
 			string currentBuildInfoLabel = String.Format("Current Build : {0}", currentBuildNo);
-			currentBuildInfo = new TextWidget(currentBuildInfoLabel.Localize());
+
+			var currentBuildInfo = new TextWidget(currentBuildInfoLabel.Localize());
 			currentBuildInfo.HAnchor = HAnchor.ParentLeftRight;
 			currentBuildInfo.Margin = new BorderDouble(left: 5, bottom: 15, top: 20);
 			currentBuildInfo.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -92,45 +75,32 @@ namespace MatterHackers.MatterControl.AboutPage
 			additionalInfoContainer.Padding = new BorderDouble(left: 6, top: 6);
 
 			string aboutUpdateChannel = "Changing your update channel will change the version of MatterControl \nthat you receive when updating:".Localize();
-			updateChannelLabel = new TextWidget(aboutUpdateChannel);
+			var updateChannelLabel = new TextWidget(aboutUpdateChannel);
 			updateChannelLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			updateChannelLabel.HAnchor = HAnchor.ParentLeftRight;
 			updateChannelLabel.Margin = new BorderDouble(bottom: 20);
 			additionalInfoContainer.AddChild(updateChannelLabel);
 
 			string stableFeedInfoText = "Stable: The current release version of MatterControl (recommended).".Localize();
-			stableInfoLabel = new TextWidget(stableFeedInfoText);
+			var stableInfoLabel = new TextWidget(stableFeedInfoText);
 			stableInfoLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			stableInfoLabel.HAnchor = HAnchor.ParentLeftRight;
 			stableInfoLabel.Margin = new BorderDouble(bottom: 10);
 			additionalInfoContainer.AddChild(stableInfoLabel);
 
 			string betaFeedInfoText = "Beta: The release candidate version of MatterControl.".Localize();
-			betaInfoLabel = new TextWidget(betaFeedInfoText);
+			var betaInfoLabel = new TextWidget(betaFeedInfoText);
 			betaInfoLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			betaInfoLabel.HAnchor = HAnchor.ParentLeftRight;
 			betaInfoLabel.Margin = new BorderDouble(bottom: 10);
 			additionalInfoContainer.AddChild(betaInfoLabel);
 
 			string alphaFeedInfoText = "Alpha: The in development version of MatterControl.".Localize();
-			alphaInfoLabel = new TextWidget(alphaFeedInfoText);
+			var alphaInfoLabel = new TextWidget(alphaFeedInfoText);
 			alphaInfoLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			alphaInfoLabel.HAnchor = HAnchor.ParentLeftRight;
 			alphaInfoLabel.Margin = new BorderDouble(bottom: 10);
 			additionalInfoContainer.AddChild(alphaInfoLabel);
-
-			var buttonContainer = new FlowLayoutWidget(FlowDirection.LeftToRight)
-			{
-				HAnchor = HAnchor.ParentLeftRight,
-				BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor,
-				Padding = new BorderDouble(0, 6)
-			};
-
-			Button closeButton = theme.ButtonFactory.Generate("Close".Localize(), centerText: true);
-			closeButton.Click += (sender, e) =>
-			{
-				CloseOnIdle();
-			};
 
 			Button whatsThisLink = theme.HelpLinkFactory.Generate("What's this?".Localize());
 			whatsThisLink.VAnchor = VAnchor.ParentCenter;
@@ -150,8 +120,6 @@ namespace MatterHackers.MatterControl.AboutPage
 				});
 			};
 
-			mainLabelContainer.AddChild(checkUpdateLabel);
-			topToBottom.AddChild(mainLabelContainer);
 			topToBottom.AddChild(updateStatusWidget);
 			topToBottom.AddChild(currentBuildInfo);
 			currentFeedAndDropDownContainer.AddChild(feedLabel);
@@ -161,42 +129,20 @@ namespace MatterHackers.MatterControl.AboutPage
 			topToBottom.AddChild(currentFeedAndDropDownContainer);
 
 			topToBottom.AddChild(additionalInfoContainer);
-			buttonContainer.AddChild(new HorizontalSpacer());
-			buttonContainer.AddChild(closeButton);
-			topToBottom.AddChild(new VerticalSpacer());
-			topToBottom.AddChild(buttonContainer);
-			this.AddChild(topToBottom);
+
+			contentRow.AddChild(topToBottom);
 
 			additionalInfoContainer.Visible = false;
 
-			if (UpdateControlData.Instance.UpdateRequired)
-			{
-				this.Title = "Update Required".Localize();
-			}
-			else
-			{
-				this.Title = "Check for Update".Localize();
-			}
+			//Add buttons to buttonContainer
+			//footerRow.AddChild(acceptButton);
+			footerRow.AddChild(new HorizontalSpacer());
+			footerRow.AddChild(cancelButton);
+			cancelButton.Visible = true;
+
+			footerRow.Visible = true;
 
 			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-			this.ShowAsSystemWindow();
-			this.AlwaysOnTopOfMain = true;
-		}
-
-		public static void Show()
-		{
-			if (checkUpdate == null)
-			{
-				checkUpdate = new CheckForUpdateWindow(ApplicationController.Instance.Theme);
-				checkUpdate.Closed += (parentSender, e) =>
-				{
-					checkUpdate = null;
-				};
-			}
-			else
-			{
-				checkUpdate.BringToFront();
-			}
 		}
 	}
 }

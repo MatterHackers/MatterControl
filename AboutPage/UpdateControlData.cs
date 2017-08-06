@@ -128,7 +128,7 @@ namespace MatterHackers.MatterControl
 					if (!UserSettings.Instance.IsTouchScreen)
 					{
 #if !__ANDROID__
-						UiThread.RunOnIdle(CheckForUpdateWindow.Show);
+						UiThread.RunOnIdle(() => WizardWindow.Show<CheckForUpdatesPage>("/checkforupdates", "Check for Update"));
 #endif
 					}
 				}
