@@ -149,7 +149,6 @@
     <Compile Include="ApplicationView\MenuRow\MenuOptionSettings.cs" />
     <Compile Include="ApplicationView\MenuRow\MenuOptionFile.cs" />
     <Compile Include="ApplicationView\MenuRow\MenuBase.cs" />
-    <Compile Include="ApplicationView\MenuRow\ApplicationMenuRow.cs" />
     <Compile Include="ApplicationView\TouchscreenTabView.cs" />
     <Compile Include="ConfigurationPage\ApplicationSettings\ApplicationSettingsView.cs" />
     <Compile Include="ConfigurationPage\LanguageSelector.cs" />
