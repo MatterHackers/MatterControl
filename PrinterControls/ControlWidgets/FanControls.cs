@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Kevin Pope
+Copyright (c) 2017, Kevin Pope, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,15 +27,16 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
-using System;
 
 namespace MatterHackers.MatterControl.PrinterControls
 {
-	public class FanControls : ControlWidgetBase
+	public class FanControls : DisableableWidget
 	{
 		private EventHandler unregisterEvents;
 
@@ -43,29 +44,31 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		private CheckBox toggleSwitch;
 
+		private bool doingDisplayUpdateFromPrinter = false;
+
 		public FanControls(int headingPointSize)
 		{
-			AltGroupBox fanControlsGroupBox = new AltGroupBox(new TextWidget("Fan".Localize(), pointSize: headingPointSize, textColor: ActiveTheme.Instance.SecondaryAccentColor));
+			this.HAnchor = HAnchor.ParentLeftRight;
+			this.HAnchor = HAnchor.ParentLeftRight;
 
-			fanControlsGroupBox.Margin = new BorderDouble(0);
-			fanControlsGroupBox.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
-			fanControlsGroupBox.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
-			fanControlsGroupBox.VAnchor = Agg.UI.VAnchor.FitToChildren;
-
-			this.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+			var fanControlsGroupBox = new AltGroupBox(new TextWidget("Fan".Localize(), pointSize: headingPointSize, textColor: ActiveTheme.Instance.SecondaryAccentColor))
+			{
+				Margin = new BorderDouble(0),
+				BorderColor = ActiveTheme.Instance.PrimaryTextColor,
+				HAnchor = HAnchor.ParentLeftRight,
+				VAnchor = VAnchor.FitToChildren
+			};
 			this.AddChild(fanControlsGroupBox);
 
 			FlowLayoutWidget leftToRight = new FlowLayoutWidget();
+			fanControlsGroupBox.AddChild(leftToRight);
 
 			FlowLayoutWidget fanControlsLayout = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			fanControlsLayout.Padding = new BorderDouble(3, 5, 3, 0);
 			{
 				fanControlsLayout.AddChild(CreateFanControls());
 			}
-
 			leftToRight.AddChild(fanControlsLayout);
-
-			this.HAnchor = HAnchor.ParentLeftRight;
 
 			fanSpeedDisplay = new EditableNumberDisplay("{0}%".FormatWith(PrinterConnection.Instance.FanSpeed0To255.ToString()), "100%");
 			fanSpeedDisplay.EditComplete += (sender, e) =>
@@ -73,8 +76,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 				PrinterConnection.Instance.FanSpeed0To255 = (int)(fanSpeedDisplay.GetValue() * 255.5 / 100);
 			};
 			leftToRight.AddChild(fanSpeedDisplay);
-
-			fanControlsGroupBox.AddChild(leftToRight);
 		}
 
 		public override void OnClosed(ClosedEventArgs e)
@@ -102,8 +103,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 			return leftToRight;
 		}
-
-		private bool doingDisplayUpdateFromPrinter = false;
 
 		private void FanSpeedChanged_Event(object sender, EventArgs e)
 		{
