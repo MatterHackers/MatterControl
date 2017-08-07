@@ -83,7 +83,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			UndoBuffer undoBuffer = modelViewer.UndoBuffer;
 
-			var defaultMargin = new BorderDouble(4, 0);
+			var defaultMargin = new BorderDouble(3, 0, 0, 0);
 
 			sliceProgressReporter = new SliceProgressReporter(modelViewer.meshViewerWidget);
 
