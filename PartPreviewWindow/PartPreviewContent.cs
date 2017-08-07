@@ -28,9 +28,12 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.IO;
 using MatterHackers.Agg;
+using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
@@ -75,9 +78,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			printerTab.ToolTipText = "Preview 3D Design".Localize();
 			tabControl.AddTab(printerTab);
 
+
 			// TODO: add in the printers and designs that are currently open (or were open last run).
 
 			// Add a tab for the current printer
+
 			var plusTabSelect = new SimpleTextTabWidget(
 				new TabPage(new PlusTabPage(), "+"),
 				"Create New",
@@ -90,8 +95,28 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			plusTabSelect.ToolTipText = "Create New".Localize();
 			tabControl.AddTab(plusTabSelect);
 
-			this.AddChild(tabControl);
+			tabControl.TabBar.AddChild(new HorizontalSpacer());
 
+			var rightPanelArea = new FlowLayoutWidget()
+			{
+				VAnchor = VAnchor.Stretch
+			};
+
+			var extensionArea = new FlowLayoutWidget();
+
+			rightPanelArea.AddChild(extensionArea);
+
+			rightPanelArea.AddChild(
+				new ImageWidget(
+					StaticData.Instance.LoadImage(Path.Combine("Images", "minimize.png")))
+				{
+					VAnchor = VAnchor.Top,
+					DebugShowBounds  = true
+				});
+
+			tabControl.TabBar.AddChild(rightPanelArea);
+
+			this.AddChild(tabControl);
 	
 			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
 			{
@@ -103,6 +128,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				
 			}, ref unregisterEvents);
 
+			ApplicationController.Instance.NotifyPrintersTabRightElement(extensionArea);
+
+			// When the application is first started, plugins are loaded after the MainView control has been initialized,
+			// and as such they not around when this constructor executes. In that case, we run the AddRightElement 
+			// delegate after the plugins have been initialized via the PluginsLoaded event
+			ApplicationController.Instance.PluginsLoaded.RegisterEvent((s, e) =>
+			{
+				ApplicationController.Instance.NotifyPrintersTabRightElement(extensionArea);
+			}, ref unregisterEvents);
+		}
+
+		public override void OnClosed(ClosedEventArgs e)
+		{
+			unregisterEvents?.Invoke(this, null);
+			base.OnClosed(e);
 		}
 	}
 }

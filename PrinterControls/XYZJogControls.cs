@@ -188,7 +188,7 @@ namespace MatterHackers.MatterControl
 
 			Margin = new BorderDouble(3);
 
-			// this.HAnchor |= HAnchor.ParentLeftRight;
+			// this.HAnchor |= HAnchor.Stretch;
 		}
 
 		internal void SetEnabledLevels(bool enableBabysteppingMode, bool enableEControls)

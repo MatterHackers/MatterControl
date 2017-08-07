@@ -174,7 +174,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			if (isPrimarySettingsView)
 			{
-				var sliceSettingsDetailControl = new SliceSettingsDetailControl(this);
+				var sliceSettingsDetailControl = new SliceSettingsOverflowDropdown(this);
 				topCategoryTabs.TabBar.AddChild(sliceSettingsDetailControl);
 			}
 
@@ -536,7 +536,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			GuiWidget helpWidget = new WrappedTextWidget(settingData.HelpText, pointSize: helpPointSize, textColor: RGBA_Bytes.White);
 			helpWidget.Width = textRegionWidth;
 			helpWidget.Margin = new BorderDouble(5, 0, 0, 0);
-			//helpWidget.HAnchor = HAnchor.ParentLeft;
+			//helpWidget.HAnchor = HAnchor.Left;
 			allText.AddChild(helpWidget);
 
 			allText.MinimumSize = new Vector2(0, allText.MinimumSize.y);

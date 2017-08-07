@@ -147,7 +147,7 @@ namespace MatterHackers.MatterControl
 						if (decodedHtml != null && decodedHtml != "")
 						{
 							WrappingTextWidget content = new WrappingTextWidget(decodedHtml, pointSize: elementState.PointSize, textColor: ActiveTheme.Instance.PrimaryTextColor);
-							//content.VAnchor = VAnchor.ParentTop;
+							//content.VAnchor = VAnchor.Top;
 							elementsUnderConstruction.Peek().AddChild(content);
 						}
 					}

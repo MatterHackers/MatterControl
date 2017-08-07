@@ -300,7 +300,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 				Width = 500;
 				Height = 640;
-				//VAnchor = VAnchor.ParentBottomTop;
+				//VAnchor = VAnchor.Stretch;
 				topToBottom.AddChild(child);
 
 				AddChild(topToBottom);
