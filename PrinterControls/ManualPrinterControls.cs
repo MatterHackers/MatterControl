@@ -89,7 +89,9 @@ namespace MatterHackers.MatterControl
 			HAnchor = HAnchor.Max_FitToChildren_ParentWidth;
 			VAnchor = VAnchor.ParentBottomTop;
 
-			int headingPointSize = 18;
+			var theme = ApplicationController.Instance.Theme;
+
+			int headingPointSize = theme.H1PointSize;
 
 			var controlsTopToBottomLayout = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -108,7 +110,7 @@ namespace MatterHackers.MatterControl
 
 			if (!ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_hardware_leveling))
 			{
-				calibrationControlsContainer = new CalibrationSettingsWidget(ApplicationController.Instance.Theme.ButtonFactory, headingPointSize);
+				calibrationControlsContainer = new CalibrationSettingsWidget(theme.ButtonFactory, headingPointSize);
 				controlsTopToBottomLayout.AddChild(calibrationControlsContainer);
 			}
 
