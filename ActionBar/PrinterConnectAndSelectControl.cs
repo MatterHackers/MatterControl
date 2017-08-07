@@ -229,10 +229,12 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		private EventHandler unregisterEvents;
 
-		public PrinterConnectButton(TextImageButtonFactory buttonFactory)
+		public PrinterConnectButton(TextImageButtonFactory buttonFactory, BorderDouble margin)
 		{
 			this.HAnchor = HAnchor.ParentLeft | HAnchor.FitToChildren;
 			this.VAnchor = VAnchor.FitToChildren;
+			this.Margin = 0;
+			this.Padding = 0;
 
 			connectButton = buttonFactory.Generate("Connect".Localize().ToUpper(), StaticData.Instance.LoadIcon("connect.png", 16, 16));
 			connectButton.Name = "Connect to printer button";
@@ -284,6 +286,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				child.VAnchor = VAnchor.ParentTop;
 				child.HAnchor = HAnchor.ParentLeft;
 				child.Cursor = Cursors.Hand;
+				child.Margin = margin;
 			}
 
 			// Bind connect button states to active printer state
@@ -301,8 +304,22 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		static public void UserRequestedConnectToActivePrinter()
 		{
-			PrinterConnection.Instance.HaltConnectionThread();
-			PrinterConnection.Instance.ConnectToActivePrinter(true);
+			if (ActiveSliceSettings.Instance.PrinterSelected)
+			{
+#if __ANDROID__
+				if (!ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.enable_network_printing)
+					&& !FrostedSerialPort.HasPermissionToDevice())
+				{
+					// Opens the USB device permissions dialog which will call back into our UsbDevice broadcast receiver to connect
+					FrostedSerialPort.RequestPermissionToDevice(RunTroubleShooting);
+				}
+				else
+#endif
+				{
+					PrinterConnection.Instance.HaltConnectionThread();
+					PrinterConnection.Instance.ConnectToActivePrinter(true);
+				}
+			}
 		}
 
 		private void SetVisibleStates(object sender, EventArgs e)

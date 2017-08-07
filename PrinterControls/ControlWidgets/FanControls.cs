@@ -36,7 +36,7 @@ using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl.PrinterControls
 {
-	public class FanControls : DisableableWidget
+	public class FanControls : ControlWidgetBase
 	{
 		private EventHandler unregisterEvents;
 

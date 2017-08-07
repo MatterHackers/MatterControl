@@ -83,20 +83,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			UndoBuffer undoBuffer = modelViewer.UndoBuffer;
 
-			var defaultMargin = new BorderDouble(8, 0);
+			var defaultMargin = ApplicationController.Instance.Theme.ButtonSpacing;
+			var buttonFactory = ApplicationController.Instance.Theme.ButtonFactory;
 
 			sliceProgressReporter = new SliceProgressReporter(modelViewer.meshViewerWidget);
 
 			this.HAnchor = HAnchor.ParentLeftRight;
 			this.VAnchor = VAnchor.FitToChildren;
 
-			var buttonFactory = ApplicationController.Instance.Theme.ButtonFactory;
-
-			this.AddChild(new PrinterConnectButton(buttonFactory));
+			this.AddChild(new PrinterConnectButton(buttonFactory, defaultMargin));
 
 			this.AddChild(new PrintActionRow(buttonFactory, this, defaultMargin));
-
-			var initialMargin = buttonFactory.Margin;
 
 			var sliceButton = buttonFactory.Generate("Slice".Localize().ToUpper());
 			sliceButton.ToolTipText = "Slice Parts".Localize();

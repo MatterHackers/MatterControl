@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private bool DoBooleanTest = false;
 		private bool deferEditorTillMouseUp = false;
 
-		public FlowLayoutWidget doEdittingButtonsContainer;
+		public FlowLayoutWidget selectionActionBar;
 		public UndoBuffer UndoBuffer { get; } = new UndoBuffer();
 		public readonly int EditButtonHeight = 44;
 
@@ -231,163 +231,139 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// add in the plater tools
 			{
-				var editToolBar = new FlowLayoutWidget();
-				editToolBar.VAnchor |= VAnchor.ParentCenter;
-				
+				selectionActionBar = new FlowLayoutWidget();
+				selectionActionBar.VAnchor |= VAnchor.ParentCenter;
+
 				processingProgressControl = new ProgressControl("", ActiveTheme.Instance.PrimaryTextColor, ActiveTheme.Instance.PrimaryAccentColor)
 				{
 					VAnchor = VAnchor.ParentCenter,
 					Visible = false
 				};
-				editToolBar.AddChild(processingProgressControl);
 
-				doEdittingButtonsContainer = new FlowLayoutWidget();
-				doEdittingButtonsContainer.Visible = false;
+				selectionActionBar = new FlowLayoutWidget();
+				selectionActionBar.Visible = false;
 
+				var buttonSpacing = ApplicationController.Instance.Theme.ButtonSpacing;
+
+				Button addButton = smallMarginButtonFactory.Generate("Insert".Localize(), StaticData.Instance.LoadIcon("AddAzureResource_16x.png", 16, 16));
+				addButton.Margin = buttonSpacing;
+				addButton.Click += (sender, e) =>
 				{
-					Button addButton = smallMarginButtonFactory.Generate("Insert".Localize(), StaticData.Instance.LoadIcon("AddAzureResource_16x.png", 16, 16));
-					doEdittingButtonsContainer.AddChild(addButton);
-					addButton.Click += (sender, e) =>
+					UiThread.RunOnIdle(() =>
 					{
-						UiThread.RunOnIdle(() =>
-						{
-							FileDialog.OpenFileDialog(
-								new OpenFileDialogParams(ApplicationSettings.OpenDesignFileParams, multiSelect: true),
-								(openParams) =>
-								{
-									LoadAndAddPartsToPlate(openParams.FileNames);
-								});
-						});
-					};
-
-					doEdittingButtonsContainer.AddChild(new VerticalLine(70)
-					{
-						Margin = new BorderDouble(6, 4),
-					});
-
-					Button ungroupButton = smallMarginButtonFactory.Generate("Ungroup".Localize());
-					ungroupButton.Name = "3D View Ungroup";
-					doEdittingButtonsContainer.AddChild(ungroupButton);
-					ungroupButton.Click += (sender, e) =>
-					{
-						this.Scene.UngroupSelection(this);
-					};
-
-					Button groupButton = smallMarginButtonFactory.Generate("Group".Localize());
-					groupButton.Name = "3D View Group";
-					doEdittingButtonsContainer.AddChild(groupButton);
-					groupButton.Click += (sender, e) =>
-					{
-						this.Scene.GroupSelection(this);
-					};
-
-					Button alignButton = smallMarginButtonFactory.Generate("Align".Localize());
-					doEdittingButtonsContainer.AddChild(alignButton);
-					alignButton.Click += (sender, e) =>
-					{
-						this.Scene.AlignToSelection(this);
-					};
-
-					Button arrangeButton = smallMarginButtonFactory.Generate("Arrange".Localize());
-					doEdittingButtonsContainer.AddChild(arrangeButton);
-					arrangeButton.Click += (sender, e) =>
-					{
-						this.Scene.AutoArrangeChildren(this);
-					};
-
-					doEdittingButtonsContainer.AddChild(new VerticalLine(70)
-					{
-						Margin = new BorderDouble(6, 4),
-					});
-
-					Button copyButton = smallMarginButtonFactory.Generate("Copy".Localize());
-					copyButton.Name = "3D View Copy";
-					doEdittingButtonsContainer.AddChild(copyButton);
-					copyButton.Click += (sender, e) =>
-					{
-						this.Scene.DuplicateSelection(this);
-					};
-
-					Button deleteButton = smallMarginButtonFactory.Generate("Remove".Localize());
-					deleteButton.Name = "3D View Remove";
-					doEdittingButtonsContainer.AddChild(deleteButton);
-					deleteButton.Click += (sender, e) =>
-					{
-						this.Scene.DeleteSelection(this);
-					};
-
-					doEdittingButtonsContainer.AddChild(new VerticalLine(70)
-					{
-						Margin = new BorderDouble(6, 4),
-					});
-
-					Button exportButton = smallMarginButtonFactory.Generate("Export".Localize() + "...");
-
-					exportButton.Margin = new BorderDouble(right: 10);
-					exportButton.Click += (sender, e) =>
-					{
-						UiThread.RunOnIdle(() =>
-						{
-							OpenExportWindow();
-						});
-					};
-
-					Button clearPlateButton = smallMarginButtonFactory.Generate("Clear Plate".Localize());
-					clearPlateButton.Click += (sender, e) =>
-					{
-						UiThread.RunOnIdle(ApplicationController.Instance.ClearPlate);
-					};
-					doEdittingButtonsContainer.AddChild(clearPlateButton);
-
-					// put in the save button
-					AddSaveAndSaveAs(doEdittingButtonsContainer);
-
-					// Normal margin factory
-					var normalMarginButtonFactory = ApplicationController.Instance.Theme.ButtonFactory;
-
-					var mirrorButton = new PopupButton(smallMarginButtonFactory.Generate("Mirror".Localize()))
-					{
-						PopDirection = Direction.Up,
-						PopupContent = new MirrorControls(this, normalMarginButtonFactory)
-					};
-					doEdittingButtonsContainer.AddChild(mirrorButton);
-
-					// put in the material options
-					var materialsButton = new PopupButton(smallMarginButtonFactory.Generate("Materials".Localize()))
-					{
-						PopDirection = Direction.Up,
-						PopupContent = this.AddMaterialControls(),
-						AlignToRightEdge = true
-					};
-					doEdittingButtonsContainer.AddChild(materialsButton);
-
-					if (OemSettings.Instance.ShowShopButton)
-					{
-						var shopButton = smallMarginButtonFactory.Generate("Buy Materials".Localize(), StaticData.Instance.LoadIcon("icon_shopping_cart_32x32.png", 24, 24));
-						shopButton.ToolTipText = "Shop online for printing materials".Localize();
-						shopButton.Name = "Buy Materials Button";
-						shopButton.Margin = new BorderDouble(0, 0, 3, 0);
-						shopButton.Click += (sender, e) =>
-						{
-							double activeFilamentDiameter = 0;
-							if (ActiveSliceSettings.Instance.PrinterSelected)
+						FileDialog.OpenFileDialog(
+							new OpenFileDialogParams(ApplicationSettings.OpenDesignFileParams, multiSelect: true),
+							(openParams) =>
 							{
-								activeFilamentDiameter = 3;
-								if (ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_diameter) < 2)
-								{
-									activeFilamentDiameter = 1.75;
-								}
-							}
+								LoadAndAddPartsToPlate(openParams.FileNames);
+							});
+					});
+				};
+				selectionActionBar.AddChild(addButton);
 
-							MatterControlApplication.Instance.LaunchBrowser("http://www.matterhackers.com/mc/store/redirect?d={0}&clk=mcs&a={1}".FormatWith(activeFilamentDiameter, OemSettings.Instance.AffiliateCode));
-						};
-						doEdittingButtonsContainer.AddChild(shopButton);
-					}
-				}
+				CreateActionSeparator(selectionActionBar);
 
-				editToolBar.AddChild(doEdittingButtonsContainer);
-				buttonBottomPanel.AddChild(editToolBar);
+				Button ungroupButton = smallMarginButtonFactory.Generate("Ungroup".Localize());
+				ungroupButton.Name = "3D View Ungroup";
+				ungroupButton.Margin = buttonSpacing;
+				ungroupButton.Click += (sender, e) =>
+				{
+					this.Scene.UngroupSelection(this);
+				};
+				selectionActionBar.AddChild(ungroupButton);
+
+				Button groupButton = smallMarginButtonFactory.Generate("Group".Localize());
+				groupButton.Name = "3D View Group";
+				groupButton.Margin = buttonSpacing;
+				groupButton.Click += (sender, e) =>
+				{
+					this.Scene.GroupSelection(this);
+				};
+				selectionActionBar.AddChild(groupButton);
+
+				Button alignButton = smallMarginButtonFactory.Generate("Align".Localize());
+				alignButton.Margin = buttonSpacing;
+				alignButton.Click += (sender, e) =>
+				{
+					this.Scene.AlignToSelection(this);
+				};
+				selectionActionBar.AddChild(alignButton);
+
+				Button arrangeButton = smallMarginButtonFactory.Generate("Arrange".Localize());
+				selectionActionBar.AddChild(arrangeButton);
+				arrangeButton.Margin = buttonSpacing;
+				arrangeButton.Click += (sender, e) =>
+				{
+					this.Scene.AutoArrangeChildren(this);
+				};
+
+				CreateActionSeparator(selectionActionBar);
+
+				Button copyButton = smallMarginButtonFactory.Generate("Copy".Localize());
+				copyButton.Name = "3D View Copy";
+				copyButton.Margin = buttonSpacing;
+				copyButton.Click += (sender, e) =>
+				{
+					this.Scene.DuplicateSelection(this);
+				};
+				selectionActionBar.AddChild(copyButton);
+
+				Button deleteButton = smallMarginButtonFactory.Generate("Remove".Localize());
+				deleteButton.Name = "3D View Remove";
+				deleteButton.Margin = buttonSpacing;
+				deleteButton.Click += (sender, e) =>
+				{
+					this.Scene.DeleteSelection(this);
+				};
+				selectionActionBar.AddChild(deleteButton);
+
+				CreateActionSeparator(selectionActionBar);
+
+				Button exportButton = smallMarginButtonFactory.Generate("Export".Localize() + "...");
+				exportButton.Margin = buttonSpacing;
+				exportButton.Click += (sender, e) =>
+				{
+					UiThread.RunOnIdle(() =>
+					{
+						OpenExportWindow();
+					});
+				};
+
+				Button clearPlateButton = smallMarginButtonFactory.Generate("Clear Plate".Localize());
+				clearPlateButton.Margin = buttonSpacing;
+				clearPlateButton.Click += (sender, e) =>
+				{
+					UiThread.RunOnIdle(ApplicationController.Instance.ClearPlate);
+				};
+				selectionActionBar.AddChild(clearPlateButton);
+
+				// put in the save button
+				AddSaveAndSaveAs(selectionActionBar, buttonSpacing);
+
+				var mirrorView = smallMarginButtonFactory.Generate("Mirror".Localize());
+				mirrorView.Margin = buttonSpacing;
+
+				var mirrorButton = new PopupButton(mirrorView)
+				{
+					PopDirection = Direction.Up,
+					PopupContent = new MirrorControls(this, smallMarginButtonFactory),
+					//Margin = buttonSpacing,
+				};
+				selectionActionBar.AddChild(mirrorButton);
+
+				// put in the material options
+				var materialsButton = new PopupButton(smallMarginButtonFactory.Generate("Materials".Localize()))
+				{
+					PopDirection = Direction.Up,
+					PopupContent = this.AddMaterialControls(),
+					AlignToRightEdge = true,
+					Margin = buttonSpacing
+				};
+				selectionActionBar.AddChild(materialsButton);
 			}
+
+			selectionActionBar.AddChild(processingProgressControl);
+			buttonBottomPanel.AddChild(selectionActionBar);
 
 			LockEditControls();
 
@@ -450,6 +426,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			meshViewerWidget.AfterDraw += AfterDraw3DContent;
 
 			this.TrackballTumbleWidget.DrawGlContent += TrackballTumbleWidget_DrawGlContent;
+		}
+
+		private void CreateActionSeparator(GuiWidget container)
+		{
+			container.AddChild(new VerticalLine(20)
+			{
+				Margin = new BorderDouble(3, 4, 0, 4),
+			});
 		}
 
 		private void ViewControls3D_TransformStateChanged(object sender, TransformStateChangedEventArgs e)
@@ -1538,7 +1522,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return buttonPanel;
 		}
 
-		private void AddSaveAndSaveAs(FlowLayoutWidget flowToAddTo)
+		private void AddSaveAndSaveAs(FlowLayoutWidget flowToAddTo, BorderDouble margin)
 		{
 			var buttonList = new List<NamedAction>()
 			{
@@ -1569,7 +1553,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			saveButtons = splitButtonFactory.Generate(buttonList, Direction.Up, imageName: "icon_save_32x32.png");
 			saveButtons.Visible = false;
-			saveButtons.Margin = new BorderDouble();
+			saveButtons.Margin = margin;
 			saveButtons.VAnchor |= VAnchor.ParentCenter;
 			flowToAddTo.AddChild(saveButtons);
 		}
@@ -1894,8 +1878,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void LockEditControls()
 		{
-			viewIsInEditModePreLock = doEdittingButtonsContainer.Visible;
-			doEdittingButtonsContainer.Visible = false;
+			viewIsInEditModePreLock = selectionActionBar.Visible;
+			selectionActionBar.Visible = false;
 		}
 
 		internal void MakeLowestFaceFlat(IObject3D objectToLayFlatGroup)
@@ -2232,7 +2216,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (viewIsInEditModePreLock)
 			{
 				viewControls3D.PartSelectVisible = true;
-				doEdittingButtonsContainer.Visible = true;
+				selectionActionBar.Visible = true;
 			}
 
 			if (wasInSelectMode)
