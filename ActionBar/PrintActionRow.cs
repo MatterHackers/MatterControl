@@ -157,7 +157,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			parentWidget.AddChild(resumeButton);
 			allPrintButtons.Add(resumeButton);
-			this.Margin = new BorderDouble(0, 0, 10, 0);
+			this.Margin = 0;
 			this.HAnchor = HAnchor.FitToChildren;
 
 			parentWidget.AddChild(addPrinterButton);
