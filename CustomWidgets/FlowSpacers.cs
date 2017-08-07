@@ -36,7 +36,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 	{
 		public HorizontalSpacer()
 		{
-			HAnchor = HAnchor.ParentLeftRight;
+			HAnchor = HAnchor.Stretch;
 		}
 	}
 
@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 	{
 		public VerticalSpacer()
 		{
-			VAnchor = VAnchor.ParentBottomTop;
+			VAnchor = VAnchor.Stretch;
 		}
 	}
 
@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			: base(1, 1)
 		{
 			BackgroundColor = GetBorderColor(alpha);
-			HAnchor = HAnchor.ParentLeftRight;
+			HAnchor = HAnchor.Stretch;
 		}
 
 		internal static RGBA_Bytes GetBorderColor(int alpha)
@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			: base(1, 1)
 		{
 			BackgroundColor = HorizontalLine.GetBorderColor(alpha);
-			VAnchor = VAnchor.ParentBottomTop;
+			VAnchor = VAnchor.Stretch;
 		}
 	}
 }

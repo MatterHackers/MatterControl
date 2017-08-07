@@ -109,7 +109,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			var topRow = new FlowLayoutWidget()
 			{
-				HAnchor = HAnchor.ParentLeftRight,
+				HAnchor = HAnchor.Stretch,
 				Padding = new BorderDouble(0, 3)
 			};
 
@@ -117,7 +117,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			topRow.AddChild(new TextWidget("Preset Name:".Localize(), pointSize: 14)
 			{
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
-				VAnchor = VAnchor.ParentCenter,
+				VAnchor = VAnchor.Center,
 				Margin = new BorderDouble(right: 4)
 			});
 
@@ -125,7 +125,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			initialPresetName = presetsContext.PersistenceLayer.Name;
 			presetNameInput = new MHTextEditWidget(initialPresetName)
 			{
-				HAnchor = HAnchor.ParentLeftRight
+				HAnchor = HAnchor.Stretch
 			};
 
 			presetNameInput.ActualTextEditWidget.EditComplete += (s, e) =>
@@ -179,7 +179,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			var container = new FlowLayoutWidget()
 			{
-				HAnchor = HAnchor.ParentLeftRight,
+				HAnchor = HAnchor.Stretch,
 				Margin = new BorderDouble(top: 3)
 			};
 

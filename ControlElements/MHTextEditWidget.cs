@@ -21,16 +21,16 @@ namespace MatterHackers.MatterControl
 		{
 			Padding = new BorderDouble(3);
 			actuallTextEditWidget = new TextEditWidget(text, x, y, pointSize, pixelWidth, pixelHeight, multiLine, tabIndex: tabIndex, typeFace: typeFace);
-			actuallTextEditWidget.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+			actuallTextEditWidget.HAnchor = Agg.UI.HAnchor.Stretch;
 			actuallTextEditWidget.MinimumSize = new Vector2(Math.Max(actuallTextEditWidget.MinimumSize.x, pixelWidth), Math.Max(actuallTextEditWidget.MinimumSize.y, pixelHeight));
-			actuallTextEditWidget.VAnchor = Agg.UI.VAnchor.ParentBottom;
+			actuallTextEditWidget.VAnchor = Agg.UI.VAnchor.Bottom;
 			AddChild(actuallTextEditWidget);
 			BackgroundColor = RGBA_Bytes.White;
-			HAnchor = HAnchor.FitToChildren;
-			VAnchor = VAnchor.FitToChildren;
+			HAnchor = HAnchor.Fit;
+			VAnchor = VAnchor.Fit;
 
 			noContentFieldDescription = new TextWidget(messageWhenEmptyAndNotSelected, textColor: RGBA_Bytes.Gray);
-			noContentFieldDescription.VAnchor = VAnchor.ParentBottom;
+			noContentFieldDescription.VAnchor = VAnchor.Bottom;
 			noContentFieldDescription.AutoExpandBoundsToText = true;
 			AddChild(noContentFieldDescription);
 			SetNoContentFieldDescriptionVisibility();
@@ -104,9 +104,9 @@ namespace MatterHackers.MatterControl
 
 			passwordCoverText = new TextEditWidget(text, x, y, pointSize, pixelWidth, pixelHeight, multiLine);
 			passwordCoverText.Selectable = false;
-			passwordCoverText.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+			passwordCoverText.HAnchor = Agg.UI.HAnchor.Stretch;
 			passwordCoverText.MinimumSize = new Vector2(Math.Max(passwordCoverText.MinimumSize.x, pixelWidth), Math.Max(passwordCoverText.MinimumSize.y, pixelHeight));
-			passwordCoverText.VAnchor = Agg.UI.VAnchor.ParentBottom;
+			passwordCoverText.VAnchor = Agg.UI.VAnchor.Bottom;
 			AddChild(passwordCoverText);
 
 			actuallTextEditWidget.TextChanged += (sender, e) =>
@@ -148,11 +148,11 @@ namespace MatterHackers.MatterControl
 			Padding = new BorderDouble(3);
 			ActuallNumberEdit = new NumberEdit(startingValue, x, y, pointSize, pixelWidth, pixelHeight,
 				allowNegatives, allowDecimals, minValue, maxValue, increment, tabIndex);
-			ActuallNumberEdit.VAnchor = Agg.UI.VAnchor.ParentBottom;
+			ActuallNumberEdit.VAnchor = Agg.UI.VAnchor.Bottom;
 			AddChild(ActuallNumberEdit);
 			BackgroundColor = RGBA_Bytes.White;
-			HAnchor = HAnchor.FitToChildren;
-			VAnchor = VAnchor.FitToChildren;
+			HAnchor = HAnchor.Fit;
+			VAnchor = VAnchor.Fit;
 		}
 
 		public override int TabIndex

@@ -25,10 +25,10 @@ namespace MatterHackers.MatterControl.SetupWizard
 			scrollWindow = new ScrollableWidget()
 			{
 				AutoScroll = true,
-				HAnchor = HAnchor.ParentLeftRight,
-				VAnchor = VAnchor.ParentBottomTop,
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch,
 			};
-			scrollWindow.ScrollArea.HAnchor = HAnchor.ParentLeftRight;
+			scrollWindow.ScrollArea.HAnchor = HAnchor.Stretch;
 			contentRow.FlowDirection = FlowDirection.TopToBottom;
 			contentRow.AddChild(scrollWindow);
 

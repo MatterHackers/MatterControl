@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public SliceSettingsDetailControl(SliceSettingsWidget sliceSettingsWidget)
 		{
 			this.sliceSettingsWidget = sliceSettingsWidget;
-			this.VAnchor = VAnchor.FitToChildren | VAnchor.ParentCenter;
+			this.VAnchor = VAnchor.Fit | VAnchor.Center;
 
 			this.AddChild(CreateOverflowMenu());
 		}

@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl
 			this.Height = 22 * GuiWidget.DeviceScale;
 			this.Margin = new BorderDouble(0);
 			this.Padding = new BorderDouble(0);
-			this.VAnchor = Agg.UI.VAnchor.ParentCenter;
+			this.VAnchor = Agg.UI.VAnchor.Center;
 			this.MenuDropList.SelectionChanged += MenuDropList_SelectionChanged;
 		}
 

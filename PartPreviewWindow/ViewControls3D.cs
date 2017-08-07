@@ -135,8 +135,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public ViewControls3D(TextImageButtonFactory buttonFactory)
 		{
 			this.BackgroundColor = new RGBA_Bytes(0, 0, 0, overlayAlpha);
-			this.HAnchor |= HAnchor.ParentLeft;
-			this.VAnchor = VAnchor.ParentTop;
+			this.HAnchor |= HAnchor.Left;
+			this.VAnchor = VAnchor.Top;
 
 			string iconPath;
 

@@ -33,7 +33,7 @@ namespace MatterHackers.MatterControl
 		{
 			TextWidget nextLine = new TextWidget(startText, textColor: ActiveTheme.Instance.PrimaryTextColor);
 			nextLine.Margin = new BorderDouble(0, 2);
-			nextLine.HAnchor = Agg.UI.HAnchor.ParentLeft;
+			nextLine.HAnchor = Agg.UI.HAnchor.Left;
 			nextLine.AutoExpandBoundsToText = true;
 			return nextLine;
 		}

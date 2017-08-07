@@ -96,16 +96,16 @@ namespace MatterHackers.MatterControl.ActionBar
 			var widget = new IgnoredPopupWidget()
 			{
 				Width = 300,
-				HAnchor = HAnchor.AbsolutePosition,
-				VAnchor = VAnchor.FitToChildren,
+				HAnchor = HAnchor.Absolute,
+				VAnchor = VAnchor.Fit,
 				BackgroundColor = RGBA_Bytes.White,
 				Padding = new BorderDouble(12, 0)
 			};
 
 			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				HAnchor = HAnchor.ParentLeftRight,
-				VAnchor = VAnchor.FitToChildren | VAnchor.ParentTop,
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit | VAnchor.Top,
 				BackgroundColor = RGBA_Bytes.White
 			};
 			widget.AddChild(container);

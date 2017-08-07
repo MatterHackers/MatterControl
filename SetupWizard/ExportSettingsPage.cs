@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl
 		{
 			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				HAnchor = HAnchor.ParentLeftRight,
+				HAnchor = HAnchor.Stretch,
 			};
 			contentRow.AddChild(container);
 
@@ -117,8 +117,8 @@ namespace MatterHackers.MatterControl
 
 			var container = new GuiWidget()
 			{
-				HAnchor = HAnchor.ParentLeftRight,
-				VAnchor = VAnchor.FitToChildren,
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit,
 				Margin = new BorderDouble(25, 15, 5, 5),
 			};
 

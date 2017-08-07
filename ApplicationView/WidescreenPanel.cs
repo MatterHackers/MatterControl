@@ -90,8 +90,8 @@ namespace MatterHackers.MatterControl
 			leftNav.AddChild(new BrandMenuButton()
 			{
 				MinimumSize = new VectorMath.Vector2(0, 40),
-				HAnchor = HAnchor.ParentLeftRight,
-				VAnchor = VAnchor.FitToChildren
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit
 			});
 
 			leftNav.AddChild(new PrintLibraryWidget());
@@ -102,8 +102,8 @@ namespace MatterHackers.MatterControl
 			// put in the right column
 			library3DViewSplitter.Panel2.AddChild(new PartPreviewContent(ApplicationController.Instance.ActivePrintItem)
 			{
-				VAnchor = VAnchor.ParentBottom | VAnchor.ParentTop,
-				HAnchor = HAnchor.ParentLeft | HAnchor.ParentRight
+				VAnchor = VAnchor.Bottom | VAnchor.Top,
+				HAnchor = HAnchor.Left | HAnchor.Right
 			});
 		}
 	}
@@ -114,8 +114,8 @@ namespace MatterHackers.MatterControl
 		{
 			var buttonView = new FlowLayoutWidget()
 			{
-				HAnchor = HAnchor.ParentLeftRight,
-				VAnchor = VAnchor.FitToChildren,
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit,
 				Margin = 8
 			};
 			buttonView.AfterDraw += (s, e) =>
@@ -128,19 +128,19 @@ namespace MatterHackers.MatterControl
 			buttonView.AddChild(new TextWidget("MatterControl 1.7", textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
 				Margin = new BorderDouble(left: 6),
-				VAnchor = VAnchor.ParentCenter
+				VAnchor = VAnchor.Center
 			});
 
 			var popupButton = new PopupButton(buttonView)
 			{
-				VAnchor = VAnchor.ParentCenter,
-				HAnchor = HAnchor.ParentLeftRight,
+				VAnchor = VAnchor.Center,
+				HAnchor = HAnchor.Stretch,
 				Margin = 0
 			};
 			popupButton.PopupContent = new ApplicationSettingsWidget(ApplicationController.Instance.Theme.MenuButtonFactory)
 			{
-				HAnchor = HAnchor.AbsolutePosition,
-				VAnchor = VAnchor.FitToChildren,
+				HAnchor = HAnchor.Absolute,
+				VAnchor = VAnchor.Fit,
 				Width = 500,
 				BackgroundColor = RGBA_Bytes.White
 			};

@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl
 			// Creates Header
 			FlowLayoutWidget headerRow = new FlowLayoutWidget(FlowDirection.LeftToRight)
 			{
-				HAnchor = HAnchor.ParentLeftRight,
+				HAnchor = HAnchor.Stretch,
 				Margin = new BorderDouble(0, 3, 0, 0),
 				Padding = new BorderDouble(0, 3, 0, 3)
 			};
@@ -80,8 +80,8 @@ namespace MatterHackers.MatterControl
 			TextWidget elementHeader = new TextWidget("Save New Design".Localize() + ":", pointSize: 14)
 			{
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
-				HAnchor = HAnchor.ParentLeftRight,
-				VAnchor = Agg.UI.VAnchor.ParentBottom
+				HAnchor = HAnchor.Stretch,
+				VAnchor = Agg.UI.VAnchor.Bottom
 			};
 
 			headerRow.AddChild(elementHeader);
@@ -90,8 +90,8 @@ namespace MatterHackers.MatterControl
 			//Creates container in the middle of window
 			FlowLayoutWidget middleRowContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				HAnchor = HAnchor.ParentLeftRight,
-				VAnchor = VAnchor.ParentBottomTop,
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch,
 				Padding = new BorderDouble(5),
 				BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor
 			};
@@ -120,8 +120,8 @@ namespace MatterHackers.MatterControl
 			// Adds text box and check box to the above container
 			GuiWidget chooseWindow = new GuiWidget(10, 30)
 			{
-				HAnchor = HAnchor.ParentLeftRight,
-				VAnchor = VAnchor.ParentBottomTop,
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch,
 				Margin = new BorderDouble(5),
 				BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor,
 				Padding = new BorderDouble(3),
@@ -136,13 +136,13 @@ namespace MatterHackers.MatterControl
 				{
 					TextColor = ActiveTheme.Instance.PrimaryTextColor,
 					Margin = new BorderDouble(5),
-					HAnchor = HAnchor.ParentLeft
+					HAnchor = HAnchor.Left
 				};
 
 				//Adds text box and check box to the above container
 				textToAddWidget = new MHTextEditWidget("", pixelWidth: 300, messageWhenEmptyAndNotSelected: "Enter a Design Name Here".Localize())
 				{
-					HAnchor = HAnchor.ParentLeftRight,
+					HAnchor = HAnchor.Stretch,
 					Margin = new BorderDouble(5)
 				};
 				textToAddWidget.ActualTextEditWidget.EnterPressed += new KeyEventHandler(ActualTextEditWidget_EnterPressed);
@@ -158,7 +158,7 @@ namespace MatterHackers.MatterControl
 			FlowLayoutWidget buttonRow = new FlowLayoutWidget(FlowDirection.LeftToRight);
 			{
 				BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-				buttonRow.HAnchor = HAnchor.ParentLeftRight;
+				buttonRow.HAnchor = HAnchor.Stretch;
 				buttonRow.Padding = new BorderDouble(0, 3);
 			}
 

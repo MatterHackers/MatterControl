@@ -46,19 +46,19 @@ namespace MatterHackers.MatterControl
 
 		public UpdateControlView(ThemeConfig theme)
 		{
-			this.HAnchor = HAnchor.ParentLeftRight;
+			this.HAnchor = HAnchor.Stretch;
 			this.BackgroundColor = ActiveTheme.Instance.TransparentDarkOverlay;
 			this.Padding = new BorderDouble(6, 5);
 
 			updateStatusText = new TextWidget(string.Format(""), textColor: ActiveTheme.Instance.PrimaryTextColor);
 			updateStatusText.AutoExpandBoundsToText = true;
-			updateStatusText.VAnchor = VAnchor.ParentCenter;
+			updateStatusText.VAnchor = VAnchor.Center;
 			this.AddChild(updateStatusText);
 
 			this.AddChild(new HorizontalSpacer());
 
 			checkUpdateLink = theme.GrayButtonFactory.Generate("Check for Update".Localize());
-			checkUpdateLink.VAnchor = VAnchor.ParentCenter;
+			checkUpdateLink.VAnchor = VAnchor.Center;
 			checkUpdateLink.Click += (s, e) =>
 			{
 				UpdateControlData.Instance.CheckForUpdateUserRequested();
@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl
 
 			downloadUpdateLink = theme.GrayButtonFactory.Generate("Download Update".Localize());
 			downloadUpdateLink.Visible = false;
-			downloadUpdateLink.VAnchor = VAnchor.ParentCenter;
+			downloadUpdateLink.VAnchor = VAnchor.Center;
 			downloadUpdateLink.Click += (s, e) =>
 			{
 				downloadUpdateLink.Visible = false;
@@ -80,7 +80,7 @@ namespace MatterHackers.MatterControl
 
 			installUpdateLink = theme.GrayButtonFactory.Generate("Install Update".Localize());
 			installUpdateLink.Visible = false;
-			installUpdateLink.VAnchor = VAnchor.ParentCenter;
+			installUpdateLink.VAnchor = VAnchor.Center;
 			installUpdateLink.Click += (s, e) =>
 			{
 				try

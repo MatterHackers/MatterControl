@@ -97,8 +97,8 @@ namespace MatterHackers.MatterControl.EeProm
 
 			// space filling color
 			GuiWidget spaceFiller = new GuiWidget(0, 500);
-			spaceFiller.VAnchor = VAnchor.ParentBottom;
-			spaceFiller.HAnchor = HAnchor.ParentLeftRight;
+			spaceFiller.VAnchor = VAnchor.Bottom;
+			spaceFiller.HAnchor = HAnchor.Stretch;
 			spaceFiller.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
 			spaceFiller.Padding = new BorderDouble(top: 3);
 			mainContainer.AddChild(spaceFiller);
@@ -107,8 +107,8 @@ namespace MatterHackers.MatterControl.EeProm
 			// the top button bar
 			{
 				FlowLayoutWidget topButtonBar = new FlowLayoutWidget();
-				topButtonBar.HAnchor = HAnchor.ParentLeftRight;
-				topButtonBar.VAnchor = VAnchor.FitToChildren | VAnchor.ParentTop;
+				topButtonBar.HAnchor = HAnchor.Stretch;
+				topButtonBar.VAnchor = VAnchor.Fit | VAnchor.Top;
 				topButtonBar.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
 				topButtonBar.Margin = new BorderDouble(0, 3);
@@ -129,8 +129,8 @@ namespace MatterHackers.MatterControl.EeProm
 
 			// the center content
 			FlowLayoutWidget conterContent = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			conterContent.VAnchor = VAnchor.FitToChildren | VAnchor.ParentTop;
-			conterContent.HAnchor = HAnchor.ParentLeftRight;
+			conterContent.VAnchor = VAnchor.Fit | VAnchor.Top;
+			conterContent.HAnchor = HAnchor.Stretch;
 			conterContent.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
 			conterContent.Padding = new BorderDouble(top: 3);
 			conterContent.Margin = new BorderDouble(top: topBarHeight);
@@ -173,7 +173,7 @@ namespace MatterHackers.MatterControl.EeProm
 			conterContent.AddChild(CreateField("Maximum Z jerk [mm/s]:".Localize(), ref maxZJerk));
 
 			GuiWidget topBottomSpacer = new GuiWidget(1, 1);
-			topBottomSpacer.VAnchor = VAnchor.ParentBottomTop;
+			topBottomSpacer.VAnchor = VAnchor.Stretch;
 			conterContent.AddChild(topBottomSpacer);
 
 			mainContainer.AddChild(conterContent);
@@ -181,7 +181,7 @@ namespace MatterHackers.MatterControl.EeProm
 			// the bottom button bar
 			{
 				FlowLayoutWidget bottomButtonBar = new FlowLayoutWidget();
-				bottomButtonBar.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
+				bottomButtonBar.HAnchor = Agg.UI.HAnchor.MaxFitOrStretch;
 				bottomButtonBar.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 				bottomButtonBar.Margin = new BorderDouble(0, 3);
 
@@ -283,7 +283,7 @@ namespace MatterHackers.MatterControl.EeProm
 		{
 			numberEditToCreate = new MHNumberEdit(0, pixelWidth: 80, allowNegatives: true, allowDecimals: true);
 			numberEditToCreate.SelectAllOnFocus = true;
-			numberEditToCreate.VAnchor = Agg.UI.VAnchor.ParentCenter;
+			numberEditToCreate.VAnchor = Agg.UI.VAnchor.Center;
 			numberEditToCreate.Margin = new BorderDouble(3, 0);
 			return numberEditToCreate;
 		}
@@ -316,8 +316,8 @@ namespace MatterHackers.MatterControl.EeProm
 		private GuiWidget CreateTextField(string label)
 		{
 			GuiWidget textWidget = new TextWidget(label, textColor: ActiveTheme.Instance.PrimaryTextColor);
-			textWidget.VAnchor = VAnchor.ParentCenter;
-			textWidget.HAnchor = HAnchor.ParentRight;
+			textWidget.VAnchor = VAnchor.Center;
+			textWidget.HAnchor = HAnchor.Right;
 			GuiWidget container = new GuiWidget(textWidget.Height, 24);
 			container.AddChild(textWidget);
 			return container;
@@ -331,10 +331,10 @@ namespace MatterHackers.MatterControl.EeProm
 		{
 			FlowLayoutWidget row = new FlowLayoutWidget();
 			row.Margin = new BorderDouble(3);
-			row.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+			row.HAnchor = Agg.UI.HAnchor.Stretch;
 
 			TextWidget labelWidget = new TextWidget(label, textColor: ActiveTheme.Instance.PrimaryTextColor);
-			labelWidget.VAnchor = VAnchor.ParentCenter;
+			labelWidget.VAnchor = VAnchor.Center;
 			maxWidthOfLeftStuff = Math.Max(maxWidthOfLeftStuff, labelWidget.Width);
 			GuiWidget holder = new GuiWidget(labelWidget.Width, labelWidget.Height);
 			holder.Margin = new BorderDouble(3, 0);
@@ -384,7 +384,7 @@ namespace MatterHackers.MatterControl.EeProm
 		private static void CreateSpacer(FlowLayoutWidget buttonBar)
 		{
 			GuiWidget spacer = new GuiWidget(1, 1);
-			spacer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+			spacer.HAnchor = Agg.UI.HAnchor.Stretch;
 			buttonBar.AddChild(spacer);
 		}
 

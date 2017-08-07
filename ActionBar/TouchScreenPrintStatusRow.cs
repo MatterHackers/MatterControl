@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			// ensure corner click events can be caught in this control
 			this.Padding = new BorderDouble(0, 0, 6, 6);
 			this.Margin = new BorderDouble(6, 3, 0, 0);
-			this.HAnchor = HAnchor.ParentLeftRight;
+			this.HAnchor = HAnchor.Stretch;
 
 			AddChildElements();
 
@@ -110,16 +110,16 @@ namespace MatterHackers.MatterControl.ActionBar
 		private void AddChildElements()
 		{
 			FlowLayoutWidget tempWidgets = new FlowLayoutWidget();
-			tempWidgets.VAnchor = VAnchor.ParentBottomTop;
+			tempWidgets.VAnchor = VAnchor.Stretch;
 
 			tempWidgets.Width = 120;
 
 			extruderTemperatureWidget = new TemperatureWidgetExtruder(ApplicationController.Instance.Theme.MenuButtonFactory);
 			//extruderTemperatureWidget.Margin = new BorderDouble(right: 6);
-			extruderTemperatureWidget.VAnchor = VAnchor.ParentTop;
+			extruderTemperatureWidget.VAnchor = VAnchor.Top;
 
 			bedTemperatureWidget = new TemperatureWidgetBed();
-			bedTemperatureWidget.VAnchor = VAnchor.ParentTop;
+			bedTemperatureWidget.VAnchor = VAnchor.Top;
 
 			tempWidgets.AddChild(extruderTemperatureWidget);
 			tempWidgets.AddChild(new GuiWidget(6, 6));
@@ -133,7 +133,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			var printActionRow = new PrintActionRow(ApplicationController.Instance.Theme.ButtonFactory, this, new BorderDouble(6, 6, 6, 3))
 			{
-				VAnchor = VAnchor.ParentTop
+				VAnchor = VAnchor.Top
 			};
 
 			ImageButtonFactory factory = new ImageButtonFactory();
@@ -141,7 +141,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			setupButton = factory.Generate(StaticData.Instance.LoadIcon("icon_gear_dot.png").InvertLightness(), null);
 			setupButton.Margin = new BorderDouble(left: 6);
-			setupButton.VAnchor = VAnchor.ParentCenter;
+			setupButton.VAnchor = VAnchor.Center;
 			setupButton.Click += (sender, e) =>
 			{
 				WizardWindow.Show<SetupOptionsPage>("/SetupOptions", "Setup Wizard");
@@ -162,29 +162,29 @@ namespace MatterHackers.MatterControl.ActionBar
 		{
 			FlowLayoutWidget container = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			container.Margin = new BorderDouble(6, 0, 6, 0);
-			container.HAnchor = HAnchor.ParentLeftRight;
-			container.VAnchor = VAnchor.ParentCenter;
+			container.HAnchor = HAnchor.Stretch;
+			container.VAnchor = VAnchor.Center;
 			container.Height = 80;
 
 			FlowLayoutWidget topRow = new FlowLayoutWidget();
 			topRow.Name = "PrintStatusRow.ActivePrinterInfo.TopRow";
-			topRow.HAnchor = HAnchor.ParentLeftRight;
+			topRow.HAnchor = HAnchor.Stretch;
 
 			activePrintLabel = getPrintStatusLabel("Next Print".Localize() + ":", pointSize: 11);
-			activePrintLabel.VAnchor = VAnchor.ParentTop;
+			activePrintLabel.VAnchor = VAnchor.Top;
 
 			topRow.AddChild(activePrintLabel);
 
 			FlowLayoutWidget bottomRow = new FlowLayoutWidget();
 
 			activePrintPreviewImage = new PartThumbnailWidget(null, "part_icon_transparent_100x100.png", "building_thumbnail_100x100.png", PartThumbnailWidget.ImageSizes.Size50x50);
-			activePrintPreviewImage.VAnchor = VAnchor.ParentTop;
+			activePrintPreviewImage.VAnchor = VAnchor.Top;
 			activePrintPreviewImage.Padding = new BorderDouble(0);
 			activePrintPreviewImage.HoverBackgroundColor = new RGBA_Bytes();
 			activePrintPreviewImage.BorderWidth = 3;
 
 			FlowLayoutWidget labelContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			labelContainer.VAnchor |= VAnchor.ParentTop;
+			labelContainer.VAnchor |= VAnchor.Top;
 			labelContainer.Margin = new BorderDouble(8, 0, 0, 4);
 			{
 				activePrintName = getPrintStatusLabel("this is the biggest name we will allow", pointSize: 14);

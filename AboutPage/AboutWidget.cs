@@ -42,16 +42,16 @@ namespace MatterHackers.MatterControl
 	{
 		public AboutWidget()
 		{
-			this.HAnchor = HAnchor.ParentLeftRight;
-			this.VAnchor = VAnchor.ParentTop;
+			this.HAnchor = HAnchor.Stretch;
+			this.VAnchor = VAnchor.Top;
 
 			this.Padding = new BorderDouble(5);
 			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
 			FlowLayoutWidget customInfoTopToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			customInfoTopToBottom.Name = "AboutPageCustomInfo";
-			customInfoTopToBottom.HAnchor = HAnchor.ParentLeftRight;
-			customInfoTopToBottom.VAnchor = VAnchor.Max_FitToChildren_ParentHeight;
+			customInfoTopToBottom.HAnchor = HAnchor.Stretch;
+			customInfoTopToBottom.VAnchor = VAnchor.MaxFitOrStretch;
 			customInfoTopToBottom.Padding = new BorderDouble(5, 10, 5, 0);
 
 			if (UserSettings.Instance.IsTouchScreen)

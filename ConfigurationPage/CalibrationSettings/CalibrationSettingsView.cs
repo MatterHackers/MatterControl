@@ -31,15 +31,15 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			{
 				Margin = new BorderDouble(0),
 				BorderColor = ActiveTheme.Instance.PrimaryTextColor,
-				HAnchor = HAnchor.ParentLeftRight,
-				VAnchor = VAnchor.FitToChildren
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit
 			};
 			this.AddChild(mainContainer);
 
 			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				HAnchor = HAnchor.ParentLeftRight,
-				VAnchor = VAnchor.FitToChildren,
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit,
 				Padding = new BorderDouble(3, 0)
 			};
 			mainContainer.AddChild(container);
@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			var buttonRow = new FlowLayoutWidget()
 			{
 				Name = "AutoLevelRowItem",
-				HAnchor = HAnchor.ParentLeftRight,
+				HAnchor = HAnchor.Stretch,
 				Margin = new BorderDouble(0, 8, 0, 4)
 			};
 
@@ -84,7 +84,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			{
 				AutoExpandBoundsToText = true,
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
-				VAnchor = VAnchor.ParentCenter,
+				VAnchor = VAnchor.Center,
 				Text = "Software Print Leveling".Localize()
 			};
 			buttonRow.AddChild(printLevelingStatusLabel);
@@ -92,8 +92,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			// edit button
 			Button editButton = TextImageButtonFactory.GetThemedEditButton();
 			editButton.Margin = new BorderDouble(2, 2, 2, 0);
-			editButton.VAnchor = VAnchor.ParentTop;
-			editButton.VAnchor = VAnchor.ParentCenter;
+			editButton.VAnchor = VAnchor.Top;
+			editButton.VAnchor = VAnchor.Center;
 			editButton.Click += (sender, e) =>
 			{
 				UiThread.RunOnIdle(() =>
@@ -120,7 +120,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			// configure button
 			runPrintLevelingButton = buttonFactory.Generate("Configure".Localize().ToUpper());
 			runPrintLevelingButton.Margin = new BorderDouble(left: 6);
-			runPrintLevelingButton.VAnchor = VAnchor.ParentCenter;
+			runPrintLevelingButton.VAnchor = VAnchor.Center;
 			runPrintLevelingButton.Click += (sender, e) =>
 			{
 				UiThread.RunOnIdle(() => LevelWizardBase.ShowPrintLevelWizard(LevelWizardBase.RuningState.UserRequestedCalibration));
@@ -129,7 +129,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			// put in the switch
 			CheckBox printLevelingSwitch = ImageButtonFactory.CreateToggleSwitch(ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_enabled));
-			printLevelingSwitch.VAnchor = VAnchor.ParentCenter;
+			printLevelingSwitch.VAnchor = VAnchor.Center;
 			printLevelingSwitch.Margin = new BorderDouble(left: 16);
 			printLevelingSwitch.CheckedStateChanged += (sender, e) =>
 			{

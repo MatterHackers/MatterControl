@@ -82,12 +82,12 @@ namespace MatterHackers.MatterControl
 
 		public ManualPrinterControlsDesktop()
 		{
-			ScrollArea.HAnchor |= HAnchor.ParentLeftRight;
+			ScrollArea.HAnchor |= HAnchor.Stretch;
 			AnchorAll();
 			AutoScroll = true;
 
-			HAnchor = HAnchor.Max_FitToChildren_ParentWidth;
-			VAnchor = VAnchor.ParentBottomTop;
+			HAnchor = HAnchor.MaxFitOrStretch;
+			VAnchor = VAnchor.Stretch;
 
 			var theme = ApplicationController.Instance.Theme;
 
@@ -95,8 +95,8 @@ namespace MatterHackers.MatterControl
 
 			var controlsTopToBottomLayout = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				HAnchor = HAnchor.Max_FitToChildren_ParentWidth,
-				VAnchor = VAnchor.FitToChildren,
+				HAnchor = HAnchor.MaxFitOrStretch,
+				VAnchor = VAnchor.Fit,
 				Name = "ManualPrinterControls.ControlsContainer",
 				Margin = new BorderDouble(0)
 			};
@@ -119,7 +119,7 @@ namespace MatterHackers.MatterControl
 
 			var linearPanel = new FlowLayoutWidget()
 			{
-				HAnchor = HAnchor.ParentLeftRight
+				HAnchor = HAnchor.Stretch
 			};
 			controlsTopToBottomLayout.AddChild(linearPanel);
 

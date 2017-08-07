@@ -112,7 +112,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		{
 			contentRow.AddChild(new TextWidget("• " + v1)
 			{
-				HAnchor = HAnchor.ParentLeft,
+				HAnchor = HAnchor.Left,
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
 				Margin = new Agg.BorderDouble(0, 0, 0, 10),
 			});

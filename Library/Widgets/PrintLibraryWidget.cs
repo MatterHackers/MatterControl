@@ -91,8 +91,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			var breadCrumbBar = new FlowLayoutWidget()
 			{
-				HAnchor = HAnchor.ParentLeftRight,
-				VAnchor = VAnchor.FitToChildren,
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit,
 				Padding = 0,
 			};
 
@@ -105,8 +105,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			var buttonView = new FlowLayoutWidget()
 			{
-				HAnchor = HAnchor.ParentLeftRight,
-				VAnchor = VAnchor.FitToChildren,
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit,
 				Margin = 8
 			};
 			buttonView.AfterDraw += (s, e) =>
@@ -122,8 +122,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			activeContainerPopup = new PopupButton(buttonView)
 			{
-				VAnchor = VAnchor.ParentCenter,
-				HAnchor = HAnchor.ParentLeftRight,
+				VAnchor = VAnchor.Center,
+				HAnchor = HAnchor.Stretch,
 				Margin = 0
 			};
 			activeContainerPopup.DynamicPopupContent = () =>
@@ -135,8 +135,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 				container.AddChild(new ListContainerBrowser(this.libraryView, ApplicationController.Instance.Library)
 				{
-					HAnchor = HAnchor.ParentLeftRight,
-					VAnchor = VAnchor.ParentBottomTop
+					HAnchor = HAnchor.Stretch,
+					VAnchor = VAnchor.Stretch
 				});
 
 				return container;
@@ -146,7 +146,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			overflowDropdown = new OverflowDropdown(allowLightnessInvert: true)
 			{
-				VAnchor = VAnchor.ParentCenter,
+				VAnchor = VAnchor.Center,
 				AlignToRightEdge = true,
 				Name = "Print Library Overflow Menu",
 			};
@@ -158,7 +158,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			buttonPanel = new FlowLayoutWidget()
 			{
-				HAnchor = HAnchor.ParentLeftRight,
+				HAnchor = HAnchor.Stretch,
 				Padding = 3,
 				BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor
 			};
@@ -307,8 +307,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			// add in the message widget
 			providerMessageContainer = new GuiWidget()
 			{
-				VAnchor = VAnchor.FitToChildren | VAnchor.ParentTop,
-				HAnchor = HAnchor.ParentLeftRight,
+				VAnchor = VAnchor.Fit | VAnchor.Top,
+				HAnchor = HAnchor.Stretch,
 				Visible = false,
 			};
 			buttonPanel.AddChild(providerMessageContainer, -1);
@@ -316,8 +316,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			providerMessageWidget = new TextWidget("")
 			{
 				PointSize = 8,
-				HAnchor = HAnchor.ParentRight,
-				VAnchor = VAnchor.ParentBottom,
+				HAnchor = HAnchor.Right,
+				VAnchor = VAnchor.Bottom,
 				TextColor = ActiveTheme.Instance.SecondaryTextColor,
 				Margin = new BorderDouble(6),
 				AutoExpandBoundsToText = true,

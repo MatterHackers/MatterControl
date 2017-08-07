@@ -82,14 +82,14 @@ namespace MatterHackers.MatterControl
 
 			var buttonContainer = new FlowLayoutWidget()
 			{
-				HAnchor = HAnchor.ParentLeftRight,
+				HAnchor = HAnchor.Stretch,
 				Margin = new BorderDouble (0, 14)
 			};
 			mainContainer.AddChild(buttonContainer);
 
 			var printerSelectorAndEditButton = new FlowLayoutWidget()
 			{
-				HAnchor = HAnchor.ParentLeftRight,
+				HAnchor = HAnchor.Stretch,
 			};
 			buttonContainer.AddChild(printerSelectorAndEditButton);
 
@@ -98,7 +98,7 @@ namespace MatterHackers.MatterControl
 
 			disconnectButton = textImageButtonFactory.Generate("Disconnect");
 			disconnectButton.Margin = new BorderDouble(left: 12);
-			disconnectButton.VAnchor = VAnchor.ParentCenter;
+			disconnectButton.VAnchor = VAnchor.Center;
 			disconnectButton.Click += (sender, e) =>
 			{
 				PrinterConnection.Instance.Disable();
@@ -108,7 +108,7 @@ namespace MatterHackers.MatterControl
 
 			connectionStatus = new TextWidget("Status:", pointSize: 12, textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
-				HAnchor = HAnchor.ParentLeftRight
+				HAnchor = HAnchor.Stretch
 			};
 			mainContainer.AddChild(connectionStatus);
 
@@ -190,12 +190,12 @@ namespace MatterHackers.MatterControl
 			RefreshStatus();
 
 			FlowLayoutWidget buttonContainer = new FlowLayoutWidget();
-			buttonContainer.HAnchor = HAnchor.ParentLeftRight;
+			buttonContainer.HAnchor = HAnchor.Stretch;
 			buttonContainer.Margin = new BorderDouble(0, 14);
 
 			signInButton = textImageButtonFactory.Generate("Sign In".Localize());
 			signInButton.Margin = new BorderDouble(left: 0);
-			signInButton.VAnchor = VAnchor.ParentCenter;
+			signInButton.VAnchor = VAnchor.Center;
 			signInButton.Visible = !signedIn;
 			signInButton.Click += (s, e) =>
 			{
@@ -217,7 +217,7 @@ namespace MatterHackers.MatterControl
 
 			signOutButton = textImageButtonFactory.Generate("Sign Out".Localize());
 			signOutButton.Margin = new BorderDouble(left: 0);
-			signOutButton.VAnchor = VAnchor.ParentCenter;
+			signOutButton.VAnchor = VAnchor.Center;
 			signOutButton.Visible = signedIn;
 			signOutButton.Click += (s, e) => UiThread.RunOnIdle(ApplicationController.Instance.StartSignOut);
 			buttonContainer.AddChild(signOutButton);
@@ -290,7 +290,7 @@ namespace MatterHackers.MatterControl
 
 			mainContainer = new FlowLayoutWidget(Agg.UI.FlowDirection.TopToBottom)
 			{
-				HAnchor = HAnchor.ParentLeftRight,
+				HAnchor = HAnchor.Stretch,
 				Margin = new BorderDouble(6, 0, 0, 6)
 			};
 			AddChild(mainContainer);

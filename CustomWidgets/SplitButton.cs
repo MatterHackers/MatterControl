@@ -36,17 +36,17 @@ namespace MatterHackers.MatterControl
 		public SplitButton(string buttonText, Direction direction = Direction.Down)
 			: base(FlowDirection.LeftToRight)
 		{
-			HAnchor = HAnchor.FitToChildren;
-			VAnchor = VAnchor.FitToChildren;
+			HAnchor = HAnchor.Fit;
+			VAnchor = VAnchor.Fit;
 
 			var button = ApplicationController.Instance.Theme.ButtonFactory.Generate(buttonText, centerText: true);
-			button.VAnchor = VAnchor.ParentCenter;
+			button.VAnchor = VAnchor.Center;
 
 			AddChild(button);
 
 			AddChild(new DropDownMenu("", direction)
 			{
-				VAnchor = VAnchor.ParentCenter,
+				VAnchor = VAnchor.Center,
 				MenuAsWideAsItems = false,
 				AlignToRightEdge = true,
 				Height = button.Height
@@ -56,10 +56,10 @@ namespace MatterHackers.MatterControl
 		public SplitButton(Button button, DropDownMenu altChoices)
 			: base(FlowDirection.LeftToRight)
 		{
-			HAnchor = HAnchor.FitToChildren;
-			VAnchor = VAnchor.FitToChildren;
+			HAnchor = HAnchor.Fit;
+			VAnchor = VAnchor.Fit;
 
-			button.VAnchor = VAnchor.ParentCenter;
+			button.VAnchor = VAnchor.Center;
 
 			AddChild(button);
 			AddChild(altChoices);

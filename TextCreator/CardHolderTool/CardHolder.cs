@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 
 			var mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				HAnchor = HAnchor.ParentLeftRight
+				HAnchor = HAnchor.Stretch
 			};
 
 			if (item is MatterCadObject3D)
@@ -87,7 +87,7 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 					var doubleEditWidget = new MHNumberEdit(doubleValue, pixelWidth: 50 * GuiWidget.DeviceScale, allowNegatives: true, allowDecimals: true, increment: .05)
 					{
 						SelectAllOnFocus = true,
-						VAnchor = VAnchor.ParentCenter
+						VAnchor = VAnchor.Center
 					};
 					doubleEditWidget.ActuallNumberEdit.EditComplete += (s, e) =>
 					{
@@ -123,7 +123,7 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 					var textEditWidget = new MHTextEditWidget(stringValue, pixelWidth: 150 * GuiWidget.DeviceScale)
 					{
 						SelectAllOnFocus = true,
-						VAnchor = VAnchor.ParentCenter
+						VAnchor = VAnchor.Center
 					};
 					textEditWidget.ActualTextEditWidget.EditComplete += (s, e) =>
 					{
@@ -137,7 +137,7 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 
 			var updateButton = theme.ButtonFactory.Generate("Update".Localize());
 			updateButton.Margin = new BorderDouble(5);
-			updateButton.HAnchor = HAnchor.ParentRight;
+			updateButton.HAnchor = HAnchor.Right;
 			updateButton.Click += (s, e) =>
 			{
 				((MatterCadObject3D)item).RebuildMeshes();
@@ -155,14 +155,14 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 		{
 			var rowContainer = new FlowLayoutWidget(FlowDirection.LeftToRight)
 			{
-				HAnchor = HAnchor.ParentLeftRight,
+				HAnchor = HAnchor.Stretch,
 				Padding = new BorderDouble(5)
 			};
 
 			var label = new TextWidget(labelText + ":", textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
 				Margin = new BorderDouble(0, 0, 3, 0),
-				VAnchor = VAnchor.ParentCenter
+				VAnchor = VAnchor.Center
 			};
 			rowContainer.AddChild(label);
 

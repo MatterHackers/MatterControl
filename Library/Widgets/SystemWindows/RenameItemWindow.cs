@@ -36,7 +36,7 @@ namespace MatterHackers.MatterControl
 
 			// Creates Header
 			FlowLayoutWidget headerRow = new FlowLayoutWidget(FlowDirection.LeftToRight);
-			headerRow.HAnchor = HAnchor.ParentLeftRight;
+			headerRow.HAnchor = HAnchor.Stretch;
 			headerRow.Margin = new BorderDouble(0, 3, 0, 0);
 			headerRow.Padding = new BorderDouble(0, 3, 0, 3);
 			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
@@ -45,8 +45,8 @@ namespace MatterHackers.MatterControl
 			{
 				elementHeader = new TextWidget(windowTitle, pointSize: 14);
 				elementHeader.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-				elementHeader.HAnchor = HAnchor.ParentLeftRight;
-				elementHeader.VAnchor = Agg.UI.VAnchor.ParentBottom;
+				elementHeader.HAnchor = HAnchor.Stretch;
+				elementHeader.VAnchor = Agg.UI.VAnchor.Bottom;
 
 				headerRow.AddChild(elementHeader);
 				topToBottom.AddChild(headerRow);
@@ -56,8 +56,8 @@ namespace MatterHackers.MatterControl
 			//Creates container in the middle of window
 			FlowLayoutWidget middleRowContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			{
-				middleRowContainer.HAnchor = HAnchor.ParentLeftRight;
-				middleRowContainer.VAnchor = VAnchor.ParentBottomTop;
+				middleRowContainer.HAnchor = HAnchor.Stretch;
+				middleRowContainer.VAnchor = VAnchor.Stretch;
 				middleRowContainer.Padding = new BorderDouble(5);
 				middleRowContainer.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
 			}
@@ -66,11 +66,11 @@ namespace MatterHackers.MatterControl
 			TextWidget textBoxHeader = new TextWidget(fileNameLabel, pointSize: 12);
 			textBoxHeader.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			textBoxHeader.Margin = new BorderDouble(5);
-			textBoxHeader.HAnchor = HAnchor.ParentLeft;
+			textBoxHeader.HAnchor = HAnchor.Left;
 
 			//Adds text box and check box to the above container
 			saveAsNameWidget = new MHTextEditWidget(currentItemName, pixelWidth: 300, messageWhenEmptyAndNotSelected: "Enter New Name Here".Localize());
-			saveAsNameWidget.HAnchor = HAnchor.ParentLeftRight;
+			saveAsNameWidget.HAnchor = HAnchor.Stretch;
 			saveAsNameWidget.Margin = new BorderDouble(5);
 
 			middleRowContainer.AddChild(textBoxHeader);
@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl
 			FlowLayoutWidget buttonRow = new FlowLayoutWidget(FlowDirection.LeftToRight);
 			{
 				BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-				buttonRow.HAnchor = HAnchor.ParentLeftRight;
+				buttonRow.HAnchor = HAnchor.Stretch;
 				buttonRow.Padding = new BorderDouble(0, 3);
 			}
 

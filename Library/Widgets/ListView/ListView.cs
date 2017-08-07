@@ -74,12 +74,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				this.AddChildToBackground(new ImageWidget(StaticData.Instance.LoadImage(imagePath))
 				{
-					VAnchor = VAnchor.ParentCenter,
-					HAnchor = HAnchor.ParentCenter
+					VAnchor = VAnchor.Center,
+					HAnchor = HAnchor.Center
 				});
 			}
 
-			this.ScrollArea.HAnchor = HAnchor.ParentLeftRight;
+			this.ScrollArea.HAnchor = HAnchor.Stretch;
 
 			AutoScroll = true;
 
@@ -210,7 +210,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.ScrollArea.CloseAllChildren();
 
 			this.contentView = contentView;
-			this.contentView.HAnchor = HAnchor.ParentLeftRight;
+			this.contentView.HAnchor = HAnchor.Stretch;
 			this.contentView.Name = "Library ListView";
 			this.AddChild(this.contentView);
 		}

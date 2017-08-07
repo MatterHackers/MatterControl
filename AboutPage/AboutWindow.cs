@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl
 			{
 				UiThread.RunOnIdle(aboutWindow.Close);
 			};
-			cancelButton.HAnchor = HAnchor.ParentRight;
+			cancelButton.HAnchor = HAnchor.Right;
 			this.AddChild(cancelButton);
 
 			this.Title = "About MatterControl".Localize();

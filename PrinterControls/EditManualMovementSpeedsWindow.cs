@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl
 			topToBottom.Padding = new BorderDouble(3, 0, 3, 5);
 
 			FlowLayoutWidget headerRow = new FlowLayoutWidget(FlowDirection.LeftToRight);
-			headerRow.HAnchor = HAnchor.ParentLeftRight;
+			headerRow.HAnchor = HAnchor.Stretch;
 			headerRow.Margin = new BorderDouble(0, 3, 0, 0);
 			headerRow.Padding = new BorderDouble(0, 3, 0, 3);
 
@@ -66,8 +66,8 @@ namespace MatterHackers.MatterControl
 				string movementSpeedsLabel = LocalizedString.Get("Movement Speeds Presets".Localize());
 				TextWidget elementHeader = new TextWidget(string.Format("{0}:", movementSpeedsLabel), pointSize: 14);
 				elementHeader.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-				elementHeader.HAnchor = HAnchor.ParentLeftRight;
-				elementHeader.VAnchor = Agg.UI.VAnchor.ParentBottom;
+				elementHeader.HAnchor = HAnchor.Stretch;
+				elementHeader.VAnchor = Agg.UI.VAnchor.Bottom;
 
 				headerRow.AddChild(elementHeader);
 			}
@@ -77,8 +77,8 @@ namespace MatterHackers.MatterControl
 			FlowLayoutWidget presetsFormContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			//ListBox printerListContainer = new ListBox();
 			{
-				presetsFormContainer.HAnchor = HAnchor.ParentLeftRight;
-				presetsFormContainer.VAnchor = VAnchor.ParentBottomTop;
+				presetsFormContainer.HAnchor = HAnchor.Stretch;
+				presetsFormContainer.VAnchor = VAnchor.Stretch;
 				presetsFormContainer.Padding = new BorderDouble(3);
 				presetsFormContainer.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
 			}
@@ -90,15 +90,15 @@ namespace MatterHackers.MatterControl
 
 			TextWidget tempTypeLabel = new TextWidget(windowTitle, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 10);
 			tempTypeLabel.Margin = new BorderDouble(3);
-			tempTypeLabel.HAnchor = HAnchor.ParentLeft;
+			tempTypeLabel.HAnchor = HAnchor.Left;
 			presetsFormContainer.AddChild(tempTypeLabel);
 
 			FlowLayoutWidget leftRightLabels = new FlowLayoutWidget();
 			leftRightLabels.Padding = new BorderDouble(3, 6);
-			leftRightLabels.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
+			leftRightLabels.HAnchor |= Agg.UI.HAnchor.Stretch;
 
 			GuiWidget hLabelSpacer = new GuiWidget();
-			hLabelSpacer.HAnchor = HAnchor.ParentLeftRight;
+			hLabelSpacer.HAnchor = HAnchor.Stretch;
 
 			GuiWidget tempLabelContainer = new GuiWidget();
 			tempLabelContainer.Width = 76;
@@ -106,8 +106,8 @@ namespace MatterHackers.MatterControl
 			tempLabelContainer.Margin = new BorderDouble(3, 0);
 
 			TextWidget tempLabel = new TextWidget("mm/s".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 10);
-			tempLabel.HAnchor = HAnchor.ParentLeft;
-			tempLabel.VAnchor = VAnchor.ParentCenter;
+			tempLabel.HAnchor = HAnchor.Left;
+			tempLabel.VAnchor = VAnchor.Center;
 
 			tempLabelContainer.AddChild(tempLabel);
 
@@ -124,7 +124,7 @@ namespace MatterHackers.MatterControl
 			{
 				FlowLayoutWidget leftRightEdit = new FlowLayoutWidget();
 				leftRightEdit.Padding = new BorderDouble(3);
-				leftRightEdit.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
+				leftRightEdit.HAnchor |= Agg.UI.HAnchor.Stretch;
 				TextWidget axisLabel;
 				if (settingsArray[i].StartsWith("e"))
 				{
@@ -134,7 +134,7 @@ namespace MatterHackers.MatterControl
 				{
 					axisLabel = new TextWidget(string.Format("{0} {1}", "Axis".Localize(), settingsArray[i].ToUpper()), textColor: ActiveTheme.Instance.PrimaryTextColor);
 				}
-				axisLabel.VAnchor = VAnchor.ParentCenter;
+				axisLabel.VAnchor = VAnchor.Center;
 				leftRightEdit.AddChild(axisLabel);
 
 				leftRightEdit.AddChild(new HorizontalSpacer());
@@ -167,11 +167,11 @@ namespace MatterHackers.MatterControl
 			};
 
 			FlowLayoutWidget buttonRow = new FlowLayoutWidget();
-			buttonRow.HAnchor = HAnchor.ParentLeftRight;
+			buttonRow.HAnchor = HAnchor.Stretch;
 			buttonRow.Padding = new BorderDouble(0, 3);
 
 			GuiWidget hButtonSpacer = new GuiWidget();
-			hButtonSpacer.HAnchor = HAnchor.ParentLeftRight;
+			hButtonSpacer.HAnchor = HAnchor.Stretch;
 
 			buttonRow.AddChild(savePresetsButton);
 			buttonRow.AddChild(hButtonSpacer);

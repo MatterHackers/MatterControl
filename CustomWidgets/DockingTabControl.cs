@@ -83,12 +83,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			base.Initialize();
 
 			Width = 30;
-			VAnchor = VAnchor.ParentBottomTop;
-			HAnchor = HAnchor.FitToChildren;
+			VAnchor = VAnchor.Stretch;
+			HAnchor = HAnchor.Fit;
 			topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				HAnchor = HAnchor.FitToChildren,
-				VAnchor = VAnchor.ParentBottomTop
+				HAnchor = HAnchor.Fit,
+				VAnchor = VAnchor.Stretch
 			};
 			AddChild(topToBottom);
 		}
@@ -111,7 +111,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				var resizePage = new ResizeContainer()
 				{
 					Width = 640,
-					VAnchor = VAnchor.ParentBottomTop,
+					VAnchor = VAnchor.Stretch,
 					BorderColor = ApplicationController.Instance.Theme.SplitterBackground,
 					SplitterWidth = ApplicationController.Instance.Theme.SplitterWidth
 				};
@@ -210,7 +210,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			internal ResizeContainer()
 			{
-				this.HAnchor = HAnchor.AbsolutePosition;
+				this.HAnchor = HAnchor.Absolute;
 				this.Cursor = Cursors.VSplit;
 			}
 
@@ -274,16 +274,16 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				var topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
 				{
-					VAnchor = VAnchor.ParentBottomTop,
-					HAnchor = HAnchor.ParentLeftRight
+					VAnchor = VAnchor.Stretch,
+					HAnchor = HAnchor.Stretch
 				};
 
 				if (!dockingControl.ControlIsPinned)
 				{
 					var titleBar = new FlowLayoutWidget()
 					{
-						HAnchor = HAnchor.ParentLeftRight,
-						VAnchor = VAnchor.FitToChildren,
+						HAnchor = HAnchor.Stretch,
+						VAnchor = VAnchor.Fit,
 					};
 
 					titleBar.AddChild(new TextWidget(title, textColor: ActiveTheme.Instance.PrimaryTextColor)

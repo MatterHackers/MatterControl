@@ -88,14 +88,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				TextWidget speedTextBox = new TextWidget(layerSpeed, pointSize: 12);
 				speedTextBox.TextColor = RGBA_Bytes.White;
-				speedTextBox.VAnchor = VAnchor.ParentCenter;
+				speedTextBox.VAnchor = VAnchor.Center;
 				speedTextBox.Margin = new BorderDouble(5, 0);
 
 				this.AddChild(colorWidget);
 				this.AddChild(new HorizontalSpacer());
 				this.AddChild(speedTextBox);
 
-				this.HAnchor |= HAnchor.ParentLeftRight;
+				this.HAnchor |= HAnchor.Stretch;
 			}
 		}
 	}

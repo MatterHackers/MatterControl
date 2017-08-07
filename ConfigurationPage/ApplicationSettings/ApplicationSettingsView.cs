@@ -58,8 +58,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			: base(FlowDirection.TopToBottom)
 		{
 			this.buttonFactory = buttonFactory;
-			this.HAnchor = HAnchor.ParentLeftRight;
-			this.VAnchor = VAnchor.FitToChildren;
+			this.HAnchor = HAnchor.Stretch;
+			this.VAnchor = VAnchor.Fit;
 			this.Padding = new BorderDouble(right: 4);
 
 			if (UserSettings.Instance.IsTouchScreen)
@@ -95,7 +95,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			var configureNotificationsButton = buttonFactory.Generate("Configure".Localize().ToUpper());
 			configureNotificationsButton.Name = "Configure Notification Settings Button";
 			configureNotificationsButton.Margin = new BorderDouble(left: 6);
-			configureNotificationsButton.VAnchor = VAnchor.ParentCenter;
+			configureNotificationsButton.VAnchor = VAnchor.Center;
 			configureNotificationsButton.Click += (s, e) =>
 			{
 				if (OpenPrintNotification != null)
@@ -248,7 +248,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 					Name = "Text Size Slider",
 					Margin = new BorderDouble(5, 0),
 					Value = currentTexSize,
-					HAnchor = HAnchor.ParentLeftRight,
+					HAnchor = HAnchor.Stretch,
 					TotalWidthInPixels = sliderWidth,
 				};
 
@@ -257,7 +257,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				TextWidget sectionLabel = null;
 
 				var textSizeApplyButton = buttonFactory.Generate("Apply".Localize());
-				textSizeApplyButton.VAnchor = VAnchor.ParentCenter;
+				textSizeApplyButton.VAnchor = VAnchor.Center;
 				textSizeApplyButton.Visible = false;
 				textSizeApplyButton.Margin = new BorderDouble(right: 6);
 				textSizeApplyButton.Click += (s, e) =>
@@ -371,8 +371,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			var darkPreview = new ThemePreviewButton(ActiveTheme.AvailableThemes[darkThemeIndex], !isLightTheme)
 			{
-				HAnchor = HAnchor.AbsolutePosition,
-				VAnchor = VAnchor.AbsolutePosition,
+				HAnchor = HAnchor.Absolute,
+				VAnchor = VAnchor.Absolute,
 				Width = 80,
 				Height = 65,
 				Margin = new BorderDouble(5, 15, 10, 10)
@@ -380,8 +380,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			var lightPreview = new ThemePreviewButton(ActiveTheme.AvailableThemes[lightThemeIndex], isLightTheme)
 			{
-				HAnchor = HAnchor.AbsolutePosition,
-				VAnchor = VAnchor.AbsolutePosition,
+				HAnchor = HAnchor.Absolute,
+				VAnchor = VAnchor.Absolute,
 				Width = 80,
 				Height = 65,
 				Margin = new BorderDouble(5, 15, 10, 10)
@@ -395,8 +395,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			var themePreviews = new FlowLayoutWidget()
 			{
-				HAnchor = HAnchor.ParentLeftRight,
-				VAnchor = VAnchor.FitToChildren
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit
 			};
 
 			themePreviews.AddChild(darkPreview);
@@ -410,19 +410,19 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		private FlowLayoutWidget GetModeControl()
 		{
 			FlowLayoutWidget buttonRow = new FlowLayoutWidget();
-			buttonRow.HAnchor = HAnchor.ParentLeftRight;
+			buttonRow.HAnchor = HAnchor.Stretch;
 			buttonRow.Margin = new BorderDouble(top: 4);
 
 			TextWidget settingsLabel = new TextWidget("Interface Mode".Localize());
 			settingsLabel.AutoExpandBoundsToText = true;
 			settingsLabel.TextColor = menuTextColor;
-			settingsLabel.VAnchor = VAnchor.ParentTop;
+			settingsLabel.VAnchor = VAnchor.Top;
 
 			FlowLayoutWidget optionsContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			optionsContainer.Margin = new BorderDouble(bottom: 6);
 
 			DropDownList interfaceModeDropList = new DropDownList("Standard", maxHeight: 200);
-			interfaceModeDropList.HAnchor = HAnchor.ParentLeftRight;
+			interfaceModeDropList.HAnchor = HAnchor.Stretch;
 
 			optionsContainer.AddChild(interfaceModeDropList);
 			optionsContainer.Width = 200;
@@ -454,23 +454,23 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		private FlowLayoutWidget GetUpdateControl()
 		{
 			FlowLayoutWidget buttonRow = new FlowLayoutWidget();
-			buttonRow.HAnchor = HAnchor.ParentLeftRight;
+			buttonRow.HAnchor = HAnchor.Stretch;
 			buttonRow.Margin = new BorderDouble(top: 4);
 
 			Button configureUpdateFeedButton = buttonFactory.Generate("Configure".Localize().ToUpper());
 			configureUpdateFeedButton.Margin = new BorderDouble(left: 6);
-			configureUpdateFeedButton.VAnchor = VAnchor.ParentCenter;
+			configureUpdateFeedButton.VAnchor = VAnchor.Center;
 
 			TextWidget settingsLabel = new TextWidget("Update Notification Feed".Localize());
 			settingsLabel.AutoExpandBoundsToText = true;
 			settingsLabel.TextColor = menuTextColor;
-			settingsLabel.VAnchor = VAnchor.ParentTop;
+			settingsLabel.VAnchor = VAnchor.Top;
 
 			FlowLayoutWidget optionsContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			optionsContainer.Margin = new BorderDouble(bottom: 6);
 
 			var releaseOptionsDropList = new DropDownList("Development", maxHeight: 200);
-			releaseOptionsDropList.HAnchor = HAnchor.ParentLeftRight;
+			releaseOptionsDropList.HAnchor = HAnchor.Stretch;
 
 			optionsContainer.AddChild(releaseOptionsDropList);
 			optionsContainer.Width = 200;

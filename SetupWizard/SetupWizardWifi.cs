@@ -50,7 +50,7 @@ namespace MatterHackers.MatterControl
 
 			var connectButtonContainer = new FlowLayoutWidget()
 			{
-				HAnchor = HAnchor.ParentLeftRight,
+				HAnchor = HAnchor.Stretch,
 				Margin = new BorderDouble(0, 6)
 			};
 

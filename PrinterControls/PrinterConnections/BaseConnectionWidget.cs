@@ -89,7 +89,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		{
 			this.Selectable = true;
 			this.Margin = new BorderDouble(3, 0, 3, 0);
-			this.VAnchor = VAnchor.ParentBottomTop;
+			this.VAnchor = VAnchor.Stretch;
 			this.MouseEnter += new EventHandler(onMouse_Enter);
 			this.MouseLeave += new EventHandler(onMouse_Leave);
 			this.Cursor = Cursors.Hand;
@@ -206,8 +206,8 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			this.padding = padding;
 
 			TextWidget buttonText = new TextWidget(label, textHeight);
-			buttonText.VAnchor = VAnchor.ParentCenter;
-			buttonText.HAnchor = HAnchor.ParentCenter;
+			buttonText.VAnchor = VAnchor.Center;
+			buttonText.HAnchor = HAnchor.Center;
 			buttonText.TextColor = textColor;
 
 			//this.AnchorAll();

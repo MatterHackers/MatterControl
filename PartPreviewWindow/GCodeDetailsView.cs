@@ -77,8 +77,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			conditionalCostPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				HAnchor = HAnchor.ParentLeftRight,
-				VAnchor = VAnchor.FitToChildren,
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit,
 				Visible = gcodeDetails.TotalCost > 0
 			};
 

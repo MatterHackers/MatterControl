@@ -65,23 +65,23 @@ namespace MatterHackers.MatterControl.PrinterControls
 		{
 			var buttonFactory = ApplicationController.Instance.Theme.HomingButtons;
 
-			this.HAnchor = HAnchor.ParentLeftRight;
+			this.HAnchor = HAnchor.Stretch;
 
 			// add the widgets to this window
 			FlowLayoutWidget groupBox = new FlowLayoutWidget()
 			{
 				Padding = new BorderDouble(5),
-				HAnchor = HAnchor.ParentLeftRight,
+				HAnchor = HAnchor.Stretch,
 				BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor,
 			};
 
-			groupBox.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
+			groupBox.HAnchor |= Agg.UI.HAnchor.Stretch;
 			// make sure the client area will get smaller when the contents get smaller
-			groupBox.VAnchor = Agg.UI.VAnchor.FitToChildren;
+			groupBox.VAnchor = Agg.UI.VAnchor.Fit;
 
 			FlowLayoutWidget controlRow = new FlowLayoutWidget(Agg.UI.FlowDirection.TopToBottom);
 			controlRow.Margin = new BorderDouble(top: 5);
-			controlRow.HAnchor |= HAnchor.ParentLeftRight;
+			controlRow.HAnchor |= HAnchor.Stretch;
 			
 			var macroButtonContainer = new FlowLayoutWidget();
 			macroButtonContainer.Margin = new BorderDouble(0, 0, 3, 0);
@@ -121,7 +121,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 		{
 			var buttonFactory = ApplicationController.Instance.Theme.HomingButtons;
 
-			this.HAnchor = HAnchor.ParentLeftRight;
+			this.HAnchor = HAnchor.Stretch;
 
 			// add the widgets to this window
 			Button editButton;
@@ -132,13 +132,13 @@ namespace MatterHackers.MatterControl.PrinterControls
 			};
 
 			groupBox.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
-			groupBox.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
+			groupBox.HAnchor |= Agg.UI.HAnchor.Stretch;
 			// make sure the client area will get smaller when the contents get smaller
-			groupBox.ClientArea.VAnchor = Agg.UI.VAnchor.FitToChildren;
+			groupBox.ClientArea.VAnchor = Agg.UI.VAnchor.Fit;
 
 			FlowLayoutWidget controlRow = new FlowLayoutWidget(Agg.UI.FlowDirection.TopToBottom);
 			controlRow.Margin = new BorderDouble(top: 5);
-			controlRow.HAnchor = HAnchor.ParentLeftRight;
+			controlRow.HAnchor = HAnchor.Stretch;
 			{
 				controlRow.AddChild(GetMacroButtonContainer(buttonFactory));
 			}

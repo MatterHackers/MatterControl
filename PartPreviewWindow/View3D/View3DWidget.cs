@@ -176,8 +176,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var mainContainerTopToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				HAnchor = HAnchor.Max_FitToChildren_ParentWidth,
-				VAnchor = VAnchor.Max_FitToChildren_ParentHeight
+				HAnchor = HAnchor.MaxFitOrStretch,
+				VAnchor = VAnchor.MaxFitOrStretch
 			};
 
 			var smallMarginButtonFactory = ApplicationController.Instance.Theme.SmallMarginButtonFactory;
@@ -203,7 +203,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var buttonBottomPanel = new FlowLayoutWidget(FlowDirection.LeftToRight)
 			{
-				HAnchor = HAnchor.ParentLeftRight,
+				HAnchor = HAnchor.Stretch,
 				Padding = 3,
 				BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor,
 			};
@@ -232,11 +232,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// add in the plater tools
 			{
 				selectionActionBar = new FlowLayoutWidget();
-				selectionActionBar.VAnchor |= VAnchor.ParentCenter;
+				selectionActionBar.VAnchor |= VAnchor.Center;
 
 				processingProgressControl = new ProgressControl("", ActiveTheme.Instance.PrimaryTextColor, ActiveTheme.Instance.PrimaryAccentColor)
 				{
-					VAnchor = VAnchor.ParentCenter,
+					VAnchor = VAnchor.Center,
 					Visible = false
 				};
 
@@ -1485,8 +1485,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			FlowLayoutWidget buttonPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				VAnchor = VAnchor.FitToChildren,
-				HAnchor = HAnchor.FitToChildren,
+				VAnchor = VAnchor.Fit,
+				HAnchor = HAnchor.Fit,
 				BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor,
 				Padding = 15
 			};
@@ -1496,7 +1496,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			for (int extruderIndex = 0; extruderIndex < extruderCount; extruderIndex++)
 			{
 				FlowLayoutWidget colorSelectionContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
-				colorSelectionContainer.HAnchor = HAnchor.FitToChildren;
+				colorSelectionContainer.HAnchor = HAnchor.Fit;
 				colorSelectionContainer.Padding = new BorderDouble(5);
 
 				string extruderLabelText = string.Format("{0} {1}", "Extruder".Localize(), extruderIndex + 1);
@@ -1554,7 +1554,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			saveButtons = splitButtonFactory.Generate(buttonList, Direction.Up, imageName: "icon_save_32x32.png");
 			saveButtons.Visible = false;
 			saveButtons.Margin = margin;
-			saveButtons.VAnchor |= VAnchor.ParentCenter;
+			saveButtons.VAnchor |= VAnchor.Center;
 			flowToAddTo.AddChild(saveButtons);
 		}
 
@@ -1670,7 +1670,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			editorPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				VAnchor = VAnchor.FitToChildren,
+				VAnchor = VAnchor.Fit,
 			};
 
 			if (mappedEditors != null)
@@ -2285,7 +2285,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				HAnchor = HAnchor.ParentLeftRight,
+				HAnchor = HAnchor.Stretch,
 				Margin = new BorderDouble(5, 5, 5, 0)
 			};
 

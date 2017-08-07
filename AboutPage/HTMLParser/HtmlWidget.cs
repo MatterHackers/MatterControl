@@ -63,8 +63,8 @@ namespace MatterHackers.MatterControl
 
 			htmlParser.ParseHtml(htmlContent, AddContent, CloseContent);
 
-			VAnchor = VAnchor.Max_FitToChildren_ParentHeight;
-			HAnchor = HAnchor.Max_FitToChildren_ParentWidth;
+			VAnchor = VAnchor.MaxFitOrStretch;
+			HAnchor = HAnchor.MaxFitOrStretch;
 		}
 
 		public class WrappingTextWidget : GuiWidget
@@ -78,10 +78,10 @@ namespace MatterHackers.MatterControl
 				messageContainer = new TextWidget(text, 0, 0, pointSize, justification, textColor, ellipsisIfClipped, underline);
 				this.BackgroundColor = backgroundColor;
 				messageContainer.AutoExpandBoundsToText = true;
-				messageContainer.HAnchor = HAnchor.ParentLeft;
-				messageContainer.VAnchor = VAnchor.ParentBottom;
-				this.HAnchor = HAnchor.ParentLeftRight;
-				this.VAnchor = VAnchor.FitToChildren;
+				messageContainer.HAnchor = HAnchor.Left;
+				messageContainer.VAnchor = VAnchor.Bottom;
+				this.HAnchor = HAnchor.Stretch;
+				this.VAnchor = VAnchor.Fit;
 
 				AddChild(messageContainer);
 			}
@@ -142,7 +142,7 @@ namespace MatterHackers.MatterControl
 					{
 						elementsUnderConstruction.Push(new FlowLayoutWidget());
 						elementsUnderConstruction.Peek().Name = "p";
-						elementsUnderConstruction.Peek().HAnchor = HAnchor.ParentLeftRight;
+						elementsUnderConstruction.Peek().HAnchor = HAnchor.Stretch;
 
 						if (decodedHtml != null && decodedHtml != "")
 						{
@@ -263,7 +263,7 @@ namespace MatterHackers.MatterControl
 
 					if (elementState.VerticalAlignment == ElementState.VerticalAlignType.top)
 					{
-						widgetToAdd.VAnchor = VAnchor.ParentTop;
+						widgetToAdd.VAnchor = VAnchor.Top;
 					}
 
 					elementsUnderConstruction.Peek().AddChild(widgetToAdd);
@@ -274,11 +274,11 @@ namespace MatterHackers.MatterControl
 					elementsUnderConstruction.Peek().Name = "tr";
 					if (elementState.SizePercent.y == 100)
 					{
-						elementsUnderConstruction.Peek().VAnchor = VAnchor.ParentBottomTop;
+						elementsUnderConstruction.Peek().VAnchor = VAnchor.Stretch;
 					}
 					if (elementState.Alignment == ElementState.AlignType.center)
 					{
-						elementsUnderConstruction.Peek().HAnchor |= HAnchor.ParentCenter;
+						elementsUnderConstruction.Peek().HAnchor |= HAnchor.Center;
 					}
 					break;
 

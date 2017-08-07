@@ -87,20 +87,20 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			: base(listViewItem, thumbWidth, thumbHeight)
 		{
 			// Set Display Attributes
-			this.VAnchor = VAnchor.FitToChildren;
-			this.HAnchor = HAnchor.ParentLeftRight | HAnchor.FitToChildren;
+			this.VAnchor = VAnchor.Fit;
+			this.HAnchor = HAnchor.Stretch | HAnchor.Fit;
 			this.Height = 50;
 			this.BackgroundColor = RGBA_Bytes.White;
 			this.Padding = new BorderDouble(0);
 			this.Margin = new BorderDouble(6, 0, 6, 6);
 
-			var topToBottomLayout = new FlowLayoutWidget(FlowDirection.TopToBottom) { HAnchor = HAnchor.ParentLeftRight };
+			var topToBottomLayout = new FlowLayoutWidget(FlowDirection.TopToBottom) { HAnchor = HAnchor.Stretch };
 
-			var topContentsFlowLayout = new FlowLayoutWidget(FlowDirection.LeftToRight) { HAnchor = HAnchor.ParentLeftRight };
+			var topContentsFlowLayout = new FlowLayoutWidget(FlowDirection.LeftToRight) { HAnchor = HAnchor.Stretch };
 			{
 				selectionCheckBoxContainer = new GuiWidget()
 				{
-					VAnchor = VAnchor.ParentBottomTop,
+					VAnchor = VAnchor.Stretch,
 					Width = 40,
 					Visible = false,
 					Margin = new BorderDouble(left: 6)
@@ -109,14 +109,14 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				selectionCheckBox = new CheckBox("")
 				{
 					Name = "List Item Checkbox",
-					VAnchor = VAnchor.ParentCenter,
-					HAnchor = HAnchor.ParentCenter
+					VAnchor = VAnchor.Center,
+					HAnchor = HAnchor.Center
 				};
 				selectionCheckBoxContainer.AddChild(selectionCheckBox);
 
 				var leftColumn = new FlowLayoutWidget(FlowDirection.LeftToRight)
 				{
-					VAnchor = VAnchor.ParentTop | VAnchor.FitToChildren
+					VAnchor = VAnchor.Top | VAnchor.Fit
 				};
 				topContentsFlowLayout.AddChild(leftColumn);
 
@@ -136,7 +136,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				{
 					TextColor = RGBA_Bytes.Black,
 					MinimumSize = new Vector2(1, 18),
-					VAnchor = VAnchor.ParentCenter
+					VAnchor = VAnchor.Center
 				};
 
 				/*
@@ -151,8 +151,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 				middleColumn = new GuiWidget(0.0, 0.0)
 				{
-					VAnchor = VAnchor.ParentBottomTop,
-					HAnchor = HAnchor.ParentLeftRight,
+					VAnchor = VAnchor.Stretch,
+					HAnchor = HAnchor.Stretch,
 					Padding = 0,
 					Margin = new BorderDouble(10, 3)
 				};
@@ -190,8 +190,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			// The ConditionalClickWidget supplies a user driven Enabled property based on a delegate of your choosing
 			conditionalClickContainer = new ConditionalClickWidget(() => this.EditMode)
 			{
-				HAnchor = HAnchor.ParentLeftRight,
-				VAnchor = VAnchor.ParentBottomTop
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch
 			};
 			conditionalClickContainer.Click += onQueueItemClick;
 
@@ -287,13 +287,13 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				Name = "Queue Item " + listViewItem.Model.Name + " Remove",
 				TextColor = RGBA_Bytes.White,
-				VAnchor = VAnchor.ParentCenter,
-				HAnchor = HAnchor.ParentCenter
+				VAnchor = VAnchor.Center,
+				HAnchor = HAnchor.Center
 			};
 
 			var removeButton = new FatFlatClickWidget(removeLabel)
 			{
-				VAnchor = VAnchor.ParentBottomTop,
+				VAnchor = VAnchor.Stretch,
 				BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor,
 				Width = 100
 			};
@@ -303,13 +303,13 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				Name = "Queue Item " + listViewItem.Model.Name + " View",
 				TextColor = RGBA_Bytes.White,
-				VAnchor = VAnchor.ParentCenter,
-				HAnchor = HAnchor.ParentCenter,
+				VAnchor = VAnchor.Center,
+				HAnchor = HAnchor.Center,
 			};
 
 			viewButton = new FatFlatClickWidget(viewButtonLabel)
 			{
-				VAnchor = VAnchor.ParentBottomTop,
+				VAnchor = VAnchor.Stretch,
 				BackgroundColor = ActiveTheme.Instance.SecondaryAccentColor,
 				Width = 100,
 			};
@@ -317,15 +317,15 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			var buttonFlowContainer = new FlowLayoutWidget(FlowDirection.LeftToRight)
 			{
-				VAnchor = VAnchor.ParentBottomTop
+				VAnchor = VAnchor.Stretch
 			};
 			buttonFlowContainer.AddChild(viewButton);
 			buttonFlowContainer.AddChild(removeButton);
 
 			var buttonContainer = new SlideWidget()
 			{
-				VAnchor = VAnchor.ParentBottomTop,
-				HAnchor = HAnchor.ParentRight
+				VAnchor = VAnchor.Stretch,
+				HAnchor = HAnchor.Right
 			};
 			buttonContainer.AddChild(buttonFlowContainer);
 			buttonContainer.Width = 200;

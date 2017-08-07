@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				rowButtonContainer = new FlowLayoutWidget(FlowDirection.LeftToRight)
 				{
-					HAnchor = HAnchor.ParentLeftRight,
+					HAnchor = HAnchor.Stretch,
 					Padding = new BorderDouble(itemRightMargin, 0, 0, 0)
 				};
 				rowButtonContainer.AddChild(iconView);
@@ -106,8 +106,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		public IconViewItem(ListViewItem item, int thumbWidth, int thumbHeight)
 			: base(item, thumbWidth, thumbHeight)
 		{
-			this.VAnchor = VAnchor.FitToChildren;
-			this.HAnchor = HAnchor.FitToChildren;
+			this.VAnchor = VAnchor.Fit;
+			this.HAnchor = HAnchor.Fit;
 			this.Padding = 4;
 			this.Margin = new BorderDouble(6, 0, 0, 6);
 
@@ -135,7 +135,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				AutoExpandBoundsToText = false,
 				EllipsisIfClipped = true,
-				HAnchor = HAnchor.ParentCenter,
+				HAnchor = HAnchor.Center,
 				Margin = new BorderDouble(0, 0, 0, 3),
 			};
 

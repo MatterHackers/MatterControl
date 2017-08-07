@@ -52,8 +52,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			secondaryBackground = new GuiWidget()
 			{
-				HAnchor = HAnchor.AbsolutePosition | HAnchor.ParentLeft,
-				VAnchor = VAnchor.ParentBottomTop,
+				HAnchor = HAnchor.Absolute | HAnchor.Left,
+				VAnchor = VAnchor.Stretch,
 				Margin = new BorderDouble(0),
 				Width = 20,
 				BackgroundColor = theme.SecondaryBackgroundColor,
@@ -62,8 +62,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			accentColor = new GuiWidget()
 			{
-				HAnchor = HAnchor.ParentLeftRight,
-				VAnchor = VAnchor.AbsolutePosition | VAnchor.ParentTop,
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Absolute | VAnchor.Top,
 				Height = 6,
 				Margin = new BorderDouble(left: 25),
 				BackgroundColor = theme.PrimaryAccentColor,
@@ -72,8 +72,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			icon1 = new GuiWidget()
 			{
-				HAnchor = HAnchor.AbsolutePosition | HAnchor.ParentLeft,
-				VAnchor = VAnchor.AbsolutePosition | VAnchor.ParentTop,
+				HAnchor = HAnchor.Absolute | HAnchor.Left,
+				VAnchor = VAnchor.Absolute | VAnchor.Top,
 				Height = 8,
 				Width = 8,
 				Margin = new BorderDouble(left: 6, top: 6),
@@ -83,8 +83,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			icon2 = new GuiWidget()
 			{
-				HAnchor = HAnchor.AbsolutePosition | HAnchor.ParentLeft,
-				VAnchor = VAnchor.AbsolutePosition | VAnchor.ParentTop,
+				HAnchor = HAnchor.Absolute | HAnchor.Left,
+				VAnchor = VAnchor.Absolute | VAnchor.Top,
 				Height = 8,
 				Width = 8,
 				Margin = new BorderDouble(left: 6, top: 20),
@@ -94,8 +94,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			icon3 = new GuiWidget()
 			{
-				HAnchor = HAnchor.AbsolutePosition | HAnchor.ParentLeft,
-				VAnchor = VAnchor.AbsolutePosition | VAnchor.ParentTop,
+				HAnchor = HAnchor.Absolute | HAnchor.Left,
+				VAnchor = VAnchor.Absolute | VAnchor.Top,
 				Height = 8,
 				Width = 8,
 				Margin = new BorderDouble(left: 6, top: 34),
@@ -105,8 +105,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			tertiaryBackground = new GuiWidget()
 			{
-				HAnchor = HAnchor.ParentLeftRight,
-				VAnchor = VAnchor.AbsolutePosition | VAnchor.ParentTop,
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Absolute | VAnchor.Top,
 				Height = 37,
 				Margin = new BorderDouble(left: 25, top: 12),
 				BackgroundColor = theme.TertiaryBackgroundColor,
@@ -117,8 +117,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			{
 				this.AddChild(new ImageWidget(StaticData.Instance.LoadIcon("426.png", 16, 16).InvertLightness())
 				{
-					HAnchor = HAnchor.AbsolutePosition,
-					VAnchor = VAnchor.AbsolutePosition,
+					HAnchor = HAnchor.Absolute,
+					VAnchor = VAnchor.Absolute,
 					OriginRelativeParent = new VectorMath.Vector2(45, 20)
 				});
 			}

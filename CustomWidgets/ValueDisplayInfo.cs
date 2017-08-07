@@ -45,16 +45,16 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			double pointSize = 12;
 			numberDisplay = new TextWidget(defaultSizeString, 0, 0, pointSize, justification: justification)
 			{
-				VAnchor = VAnchor.ParentBottom,
-				HAnchor = HAnchor.ParentLeft,
+				VAnchor = VAnchor.Bottom,
+				HAnchor = HAnchor.Left,
 				Text = "0",
 			};
 			AddChild(numberDisplay);
 			numberEdit = new NumberEdit(0, 50, 50, pointSize, pixelWidth: numberDisplay.Width, allowNegatives: true, allowDecimals: true)
 			{
 				Visible = false,
-				VAnchor = VAnchor.ParentBottom,
-				HAnchor = HAnchor.ParentLeft,
+				VAnchor = VAnchor.Bottom,
+				HAnchor = HAnchor.Left,
 				SelectAllOnFocus = true,
 			};
 			numberEdit.InternalNumberEdit.TextChanged += (s, e) =>
@@ -74,8 +74,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			AddChild(numberEdit);
 
-			VAnchor = VAnchor.FitToChildren;
-			HAnchor = HAnchor.FitToChildren;
+			VAnchor = VAnchor.Fit;
+			HAnchor = HAnchor.Fit;
 
 			UiThread.RunOnIdle(CheckRotationControlsVisibility, .1);
 		}

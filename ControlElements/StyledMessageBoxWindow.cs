@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl
 
 			// Creates Header
 			FlowLayoutWidget headerRow = new FlowLayoutWidget(FlowDirection.LeftToRight);
-			headerRow.HAnchor = HAnchor.ParentLeftRight;
+			headerRow.HAnchor = HAnchor.Stretch;
 			headerRow.Margin = new BorderDouble(0, 3, 0, 0);
 			headerRow.Padding = new BorderDouble(0, 3, 0, 3);
 			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
@@ -78,8 +78,8 @@ namespace MatterHackers.MatterControl
 			{
 				TextWidget elementHeader = new TextWidget(windowTitle, pointSize: 14 * extraTextScaling);
 				elementHeader.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-				elementHeader.HAnchor = HAnchor.ParentLeftRight;
-				elementHeader.VAnchor = Agg.UI.VAnchor.ParentBottom;
+				elementHeader.HAnchor = HAnchor.Stretch;
+				elementHeader.VAnchor = Agg.UI.VAnchor.Bottom;
 
 				headerRow.AddChild(elementHeader);
 				topToBottom.AddChild(headerRow);
@@ -88,8 +88,8 @@ namespace MatterHackers.MatterControl
 			// Creates container in the middle of window
 			middleRowContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			{
-				middleRowContainer.HAnchor = HAnchor.ParentLeftRight;
-				middleRowContainer.VAnchor = VAnchor.ParentBottomTop;
+				middleRowContainer.HAnchor = HAnchor.Stretch;
+				middleRowContainer.VAnchor = VAnchor.Stretch;
 				// normally the padding for the middle container should be just (5) all around. The has extra top space
 				middleRowContainer.Padding = new BorderDouble(5, 5, 5, 15);
 				middleRowContainer.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
@@ -97,7 +97,7 @@ namespace MatterHackers.MatterControl
 
 			messageContainer = new TextWidget(message, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 12 * extraTextScaling);
 			messageContainer.AutoExpandBoundsToText = true;
-			messageContainer.HAnchor = Agg.UI.HAnchor.ParentLeft;
+			messageContainer.HAnchor = Agg.UI.HAnchor.Left;
 			middleRowContainer.AddChild(messageContainer);
 
 			if (extraWidgetsToAdd != null)
@@ -114,7 +114,7 @@ namespace MatterHackers.MatterControl
 			FlowLayoutWidget buttonRow = new FlowLayoutWidget(FlowDirection.LeftToRight);
 			{
 				BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-				buttonRow.HAnchor = HAnchor.ParentLeftRight;
+				buttonRow.HAnchor = HAnchor.Stretch;
 				buttonRow.Padding = new BorderDouble(0, 3);
 			}
 

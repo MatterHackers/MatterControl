@@ -103,14 +103,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var mainContainerTopToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				HAnchor = HAnchor.Max_FitToChildren_ParentWidth,
-				VAnchor = VAnchor.Max_FitToChildren_ParentHeight
+				HAnchor = HAnchor.MaxFitOrStretch,
+				VAnchor = VAnchor.MaxFitOrStretch
 			};
 
 			gcodeDisplayWidget = new GuiWidget()
 			{
-				HAnchor = HAnchor.ParentLeftRight,
-				VAnchor = VAnchor.ParentBottomTop
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch
 			};
 
 			if (printItem != null)
@@ -150,8 +150,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				gradientWidget = new ColorGradientWidget(loadedGCode)
 				{
 					Margin = new BorderDouble(top: 55, left: 11),
-					HAnchor = HAnchor.FitToChildren | HAnchor.ParentLeft,
-					VAnchor = VAnchor.ParentTop,
+					HAnchor = HAnchor.Fit | HAnchor.Left,
+					VAnchor = VAnchor.Top,
 					Visible = printer.BedPlate.RendererOptions.RenderSpeeds
 				};
 				AddChild(gradientWidget);
@@ -165,8 +165,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Margin = new BorderDouble(0, 0, 35, 5),
 					Padding = new BorderDouble(10),
 					BackgroundColor = new RGBA_Bytes(0, 0, 0, ViewControlsBase.overlayAlpha),
-					HAnchor = HAnchor.ParentRight | HAnchor.AbsolutePosition,
-					VAnchor = VAnchor.ParentTop | VAnchor.FitToChildren,
+					HAnchor = HAnchor.Right | HAnchor.Absolute,
+					VAnchor = VAnchor.Top | VAnchor.Fit,
 					Width = 150
 				});
 			}
@@ -183,8 +183,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				gcodeProcessingStateInfoText = new TextWidget(message)
 				{
-					HAnchor = HAnchor.ParentCenter,
-					VAnchor = VAnchor.ParentCenter,
+					HAnchor = HAnchor.Center,
+					VAnchor = VAnchor.Center,
 					AutoExpandBoundsToText = true
 				};
 

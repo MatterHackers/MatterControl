@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		{
 			printerSelector = new PrinterSelector()
 			{
-				HAnchor = HAnchor.FitToChildren,
+				HAnchor = HAnchor.Fit,
 				Cursor = Cursors.Hand,
 				Margin = 0
 			};
@@ -57,8 +57,8 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			printerSelectorAndEditOverlay = new GuiWidget()
 			{
-				HAnchor = HAnchor.ParentLeftRight,
-				VAnchor = VAnchor.ParentBottomTop,
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch,
 				Selectable = false,
 			};
 			this.AddChild(printerSelectorAndEditOverlay);
@@ -100,8 +100,8 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		public ResetButton(TextImageButtonFactory buttonFactory)
 		{
-			this.HAnchor = HAnchor.ParentLeftRight | HAnchor.FitToChildren;
-			this.VAnchor = VAnchor.FitToChildren;
+			this.HAnchor = HAnchor.Stretch | HAnchor.Fit;
+			this.VAnchor = VAnchor.Fit;
 			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
 			Button resetConnectionButton = buttonFactory.Generate(resetConnectionText, "e_stop4.png");
@@ -138,8 +138,8 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		public SimpleButton(string text, ImageBuffer image = null)
 		{
-			this.HAnchor = HAnchor.ParentLeft | HAnchor.FitToChildren;
-			this.VAnchor = VAnchor.ParentTop | VAnchor.FitToChildren;
+			this.HAnchor = HAnchor.Left | HAnchor.Fit;
+			this.VAnchor = VAnchor.Top | VAnchor.Fit;
 
 			this.Text = text;
 			this.Image = image;
@@ -155,7 +155,7 @@ namespace MatterHackers.MatterControl.ActionBar
 						{
 							Margin = ImageMargin,
 							Padding = ImagePadding,
-							VAnchor = VAnchor.ParentBottomTop,
+							VAnchor = VAnchor.Stretch,
 						});
 				}
 
@@ -231,8 +231,8 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		public PrinterConnectButton(TextImageButtonFactory buttonFactory, BorderDouble margin)
 		{
-			this.HAnchor = HAnchor.ParentLeft | HAnchor.FitToChildren;
-			this.VAnchor = VAnchor.FitToChildren;
+			this.HAnchor = HAnchor.Left | HAnchor.Fit;
+			this.VAnchor = VAnchor.Fit;
 			this.Margin = 0;
 			this.Padding = 0;
 
@@ -283,8 +283,8 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			foreach (var child in Children)
 			{
-				child.VAnchor = VAnchor.ParentTop;
-				child.HAnchor = HAnchor.ParentLeft;
+				child.VAnchor = VAnchor.Top;
+				child.HAnchor = HAnchor.Left;
 				child.Cursor = Cursors.Hand;
 				child.Margin = margin;
 			}

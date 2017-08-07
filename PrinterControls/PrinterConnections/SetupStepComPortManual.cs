@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		{
 			FlowLayoutWidget container = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			container.Margin = new BorderDouble(0);
-			container.VAnchor = VAnchor.ParentBottomTop;
+			container.VAnchor = VAnchor.Stretch;
 			BorderDouble elementMargin = new BorderDouble(top: 3);
 
 			string serialPortLabel = "Serial Port".Localize();
@@ -74,14 +74,14 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			TextWidget comPortLabel = new TextWidget(serialPortLabelFull, 0, 0, 12);
 			comPortLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			comPortLabel.Margin = new BorderDouble(0, 0, 0, 10);
-			comPortLabel.HAnchor = HAnchor.ParentLeftRight;
+			comPortLabel.HAnchor = HAnchor.Stretch;
 
 			FlowLayoutWidget serialPortContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			CreateSerialPortControls(serialPortContainer, null);
 
 			FlowLayoutWidget comPortMessageContainer = new FlowLayoutWidget();
 			comPortMessageContainer.Margin = elementMargin;
-			comPortMessageContainer.HAnchor = HAnchor.ParentLeftRight;
+			comPortMessageContainer.HAnchor = HAnchor.Stretch;
 
 			printerComPortError = new TextWidget("Currently available serial ports.".Localize(), 0, 0, 10);
 			printerComPortError.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -89,7 +89,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 			printerComPortHelpLink = linkButtonFactory.Generate("What's this?".Localize());
 			printerComPortHelpLink.Margin = new BorderDouble(left: 5);
-			printerComPortHelpLink.VAnchor = VAnchor.ParentBottom;
+			printerComPortHelpLink.VAnchor = VAnchor.Bottom;
 			printerComPortHelpLink.Click += (s, e) => printerComPortHelpMessage.Visible = !printerComPortHelpMessage.Visible;
 
 			printerComPortHelpMessage = new TextWidget("The 'Serial Port' section lists all available serial\nports on your device. Changing which USB port the printer\nis connected to may change the associated serial port.\n\nTip: If you are uncertain, unplug/plug in your printer\nand hit refresh. The new port that appears should be\nyour printer.".Localize(), 0, 0, 10);
@@ -105,7 +105,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			container.AddChild(comPortMessageContainer);
 			container.AddChild(printerComPortHelpMessage);
 
-			container.HAnchor = HAnchor.ParentLeftRight;
+			container.HAnchor = HAnchor.Stretch;
 			return container;
 		}
 
@@ -204,7 +204,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		{
 			SerialPortIndexRadioButton comPortOption = new SerialPortIndexRadioButton(portName, portName)
 			{
-				HAnchor = HAnchor.ParentLeft,
+				HAnchor = HAnchor.Left,
 				Margin = new BorderDouble(3, 3, 5, 3),
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
 				Checked = isActivePrinterPort

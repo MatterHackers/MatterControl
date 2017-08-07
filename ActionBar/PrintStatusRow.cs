@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			this.Margin = 0;
 			this.Padding = 0;
-			this.HAnchor = HAnchor.ParentLeftRight;
+			this.HAnchor = HAnchor.Stretch;
 
 			AddChildElements();
 
@@ -95,15 +95,15 @@ namespace MatterHackers.MatterControl.ActionBar
 					temperatureWidgets.AddChild(bedTemperatureWidget);
 				}
 			}
-			temperatureWidgets.VAnchor |= VAnchor.ParentTop;
+			temperatureWidgets.VAnchor |= VAnchor.Top;
 			temperatureWidgets.Margin = new BorderDouble(left: 6);
 
 			FlowLayoutWidget printStatusContainer = CreateActivePrinterInfoWidget();
-			printStatusContainer.VAnchor |= VAnchor.ParentTop;
+			printStatusContainer.VAnchor |= VAnchor.Top;
 
 			var iconContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			iconContainer.Name = "PrintStatusRow.IconContainer";
-			iconContainer.VAnchor |= VAnchor.ParentTop;
+			iconContainer.VAnchor |= VAnchor.Top;
 			iconContainer.Margin = new BorderDouble(top: 3);
 			iconContainer.AddChild(GetAutoLevelIndicator());
 
@@ -120,8 +120,8 @@ namespace MatterHackers.MatterControl.ActionBar
 			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				Margin = new BorderDouble(6, 0, 6, 0),
-				HAnchor = HAnchor.ParentLeftRight,
-				VAnchor = VAnchor.ParentBottom | VAnchor.FitToChildren,
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Bottom | VAnchor.Fit,
 			};
 
 			activePrintName = getPrintStatusLabel("this is the biggest name we will allow", pointSize: 14);
