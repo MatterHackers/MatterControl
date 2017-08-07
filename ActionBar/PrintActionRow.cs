@@ -133,7 +133,6 @@ namespace MatterHackers.MatterControl.ActionBar
 				ApplicationController.Instance.ConditionalCancelPrint();
 				UiThread.RunOnIdle(SetButtonStates);
 			});
-			
 
 			cancelButton = buttonFactory.GenerateTooltipButton("Cancel".Localize().ToUpper());
 			cancelButton.ToolTipText = "Stop the current print".Localize();

@@ -229,10 +229,12 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		private EventHandler unregisterEvents;
 
-		public PrinterConnectButton(TextImageButtonFactory buttonFactory)
+		public PrinterConnectButton(TextImageButtonFactory buttonFactory, BorderDouble margin)
 		{
 			this.HAnchor = HAnchor.ParentLeft | HAnchor.FitToChildren;
 			this.VAnchor = VAnchor.FitToChildren;
+			this.Margin = 0;
+			this.Padding = 0;
 
 			connectButton = buttonFactory.Generate("Connect".Localize().ToUpper(), StaticData.Instance.LoadIcon("connect.png", 16, 16));
 			connectButton.Name = "Connect to printer button";
@@ -284,6 +286,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				child.VAnchor = VAnchor.ParentTop;
 				child.HAnchor = HAnchor.ParentLeft;
 				child.Cursor = Cursors.Hand;
+				child.Margin = margin;
 			}
 
 			// Bind connect button states to active printer state
