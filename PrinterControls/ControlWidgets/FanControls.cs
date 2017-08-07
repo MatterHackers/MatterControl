@@ -43,9 +43,9 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		private CheckBox toggleSwitch;
 
-		public FanControls()
+		public FanControls(int headingPointSize)
 		{
-			AltGroupBox fanControlsGroupBox = new AltGroupBox(new TextWidget("Fan".Localize(), pointSize: 18, textColor: ActiveTheme.Instance.SecondaryAccentColor));
+			AltGroupBox fanControlsGroupBox = new AltGroupBox(new TextWidget("Fan".Localize(), pointSize: headingPointSize, textColor: ActiveTheme.Instance.SecondaryAccentColor));
 
 			fanControlsGroupBox.Margin = new BorderDouble(0);
 			fanControlsGroupBox.BorderColor = ActiveTheme.Instance.PrimaryTextColor;

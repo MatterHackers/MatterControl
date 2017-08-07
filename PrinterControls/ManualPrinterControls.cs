@@ -72,13 +72,10 @@ namespace MatterHackers.MatterControl
 	public class ManualPrinterControlsDesktop : ScrollableWidget
 	{
 		private DisableableWidget fanControlsContainer;
-
 		private DisableableWidget macroControlsContainer;
 		private DisableableWidget actionControlsContainer;
-
-		private MovementControls movementControlsContainer;
-
 		private DisableableWidget tuningAdjustmentControlsContainer;
+		private MovementControls movementControlsContainer;
 
 		private EventHandler unregisterEvents;
 
@@ -90,6 +87,8 @@ namespace MatterHackers.MatterControl
 
 			HAnchor = HAnchor.Max_FitToChildren_ParentWidth;
 			VAnchor = VAnchor.ParentBottomTop;
+
+			int headingPointSize = 18;
 
 			var controlsTopToBottomLayout = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -103,7 +102,7 @@ namespace MatterHackers.MatterControl
 			actionControlsContainer = new ActionControls();
 			controlsTopToBottomLayout.AddChild(actionControlsContainer);
 
-			movementControlsContainer = new MovementControls();
+			movementControlsContainer = new MovementControls(headingPointSize);
 			controlsTopToBottomLayout.AddChild(movementControlsContainer);
 
 			if (!ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_hardware_leveling))
@@ -111,7 +110,7 @@ namespace MatterHackers.MatterControl
 				controlsTopToBottomLayout.AddChild(new CalibrationSettingsWidget(ApplicationController.Instance.Theme.ButtonFactory));
 			}
 
-			macroControlsContainer = new MacroControls();
+			macroControlsContainer = new MacroControls(headingPointSize);
 			controlsTopToBottomLayout.AddChild(macroControlsContainer);
 
 			var linearPanel = new FlowLayoutWidget()
@@ -120,16 +119,16 @@ namespace MatterHackers.MatterControl
 			};
 			controlsTopToBottomLayout.AddChild(linearPanel);
 
-			fanControlsContainer = new FanControls();
+			fanControlsContainer = new FanControls(headingPointSize);
 			if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_fan))
 			{
 				controlsTopToBottomLayout.AddChild(fanControlsContainer);
 			}
 
 #if !__ANDROID__
-			controlsTopToBottomLayout.AddChild(new PowerControls());
+			controlsTopToBottomLayout.AddChild(new PowerControls(headingPointSize));
 #endif
-			tuningAdjustmentControlsContainer = new AdjustmentControls();
+			tuningAdjustmentControlsContainer = new AdjustmentControls(headingPointSize);
 			controlsTopToBottomLayout.AddChild(tuningAdjustmentControlsContainer);
 
 			// HACK: this is a hack to make the layout engine fire again for this control
