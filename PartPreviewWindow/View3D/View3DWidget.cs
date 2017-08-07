@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private bool DoBooleanTest = false;
 		private bool deferEditorTillMouseUp = false;
 
-		public FlowLayoutWidget doEdittingButtonsContainer;
+		public FlowLayoutWidget selectionActionBar;
 		public UndoBuffer UndoBuffer { get; } = new UndoBuffer();
 		public readonly int EditButtonHeight = 44;
 
@@ -231,8 +231,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// add in the plater tools
 			{
-				doEdittingButtonsContainer = new FlowLayoutWidget();
-				doEdittingButtonsContainer.VAnchor |= VAnchor.ParentCenter;
+				selectionActionBar = new FlowLayoutWidget();
+				selectionActionBar.VAnchor |= VAnchor.ParentCenter;
 				
 				processingProgressControl = new ProgressControl("", ActiveTheme.Instance.PrimaryTextColor, ActiveTheme.Instance.PrimaryAccentColor)
 				{
@@ -240,13 +240,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Visible = false
 				};
 
-				doEdittingButtonsContainer = new FlowLayoutWidget();
-				doEdittingButtonsContainer.Visible = false;
-				doEdittingButtonsContainer.DebugShowBounds = true;
+				selectionActionBar = new FlowLayoutWidget();
+				selectionActionBar.Visible = false;
+				selectionActionBar.DebugShowBounds = true;
 
 				{
 					Button addButton = smallMarginButtonFactory.Generate("Insert".Localize(), StaticData.Instance.LoadIcon("AddAzureResource_16x.png", 16, 16));
-					doEdittingButtonsContainer.AddChild(addButton);
+					selectionActionBar.AddChild(addButton);
 					addButton.Click += (sender, e) =>
 					{
 						UiThread.RunOnIdle(() =>
@@ -260,14 +260,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						});
 					};
 
-					doEdittingButtonsContainer.AddChild(new VerticalLine(70)
+					selectionActionBar.AddChild(new VerticalLine(70)
 					{
 						Margin = new BorderDouble(6, 4),
 					});
 
 					Button ungroupButton = smallMarginButtonFactory.Generate("Ungroup".Localize());
 					ungroupButton.Name = "3D View Ungroup";
-					doEdittingButtonsContainer.AddChild(ungroupButton);
+					selectionActionBar.AddChild(ungroupButton);
 					ungroupButton.Click += (sender, e) =>
 					{
 						this.Scene.UngroupSelection(this);
@@ -275,34 +275,34 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					Button groupButton = smallMarginButtonFactory.Generate("Group".Localize());
 					groupButton.Name = "3D View Group";
-					doEdittingButtonsContainer.AddChild(groupButton);
+					selectionActionBar.AddChild(groupButton);
 					groupButton.Click += (sender, e) =>
 					{
 						this.Scene.GroupSelection(this);
 					};
 
 					Button alignButton = smallMarginButtonFactory.Generate("Align".Localize());
-					doEdittingButtonsContainer.AddChild(alignButton);
+					selectionActionBar.AddChild(alignButton);
 					alignButton.Click += (sender, e) =>
 					{
 						this.Scene.AlignToSelection(this);
 					};
 
 					Button arrangeButton = smallMarginButtonFactory.Generate("Arrange".Localize());
-					doEdittingButtonsContainer.AddChild(arrangeButton);
+					selectionActionBar.AddChild(arrangeButton);
 					arrangeButton.Click += (sender, e) =>
 					{
 						this.Scene.AutoArrangeChildren(this);
 					};
 
-					doEdittingButtonsContainer.AddChild(new VerticalLine(70)
+					selectionActionBar.AddChild(new VerticalLine(70)
 					{
 						Margin = new BorderDouble(6, 4),
 					});
 
 					Button copyButton = smallMarginButtonFactory.Generate("Copy".Localize());
 					copyButton.Name = "3D View Copy";
-					doEdittingButtonsContainer.AddChild(copyButton);
+					selectionActionBar.AddChild(copyButton);
 					copyButton.Click += (sender, e) =>
 					{
 						this.Scene.DuplicateSelection(this);
@@ -310,13 +310,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					Button deleteButton = smallMarginButtonFactory.Generate("Remove".Localize());
 					deleteButton.Name = "3D View Remove";
-					doEdittingButtonsContainer.AddChild(deleteButton);
+					selectionActionBar.AddChild(deleteButton);
 					deleteButton.Click += (sender, e) =>
 					{
 						this.Scene.DeleteSelection(this);
 					};
 
-					doEdittingButtonsContainer.AddChild(new VerticalLine(70)
+					selectionActionBar.AddChild(new VerticalLine(70)
 					{
 						Margin = new BorderDouble(6, 4),
 					});
@@ -337,10 +337,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						UiThread.RunOnIdle(ApplicationController.Instance.ClearPlate);
 					};
-					doEdittingButtonsContainer.AddChild(clearPlateButton);
+					selectionActionBar.AddChild(clearPlateButton);
 
 					// put in the save button
-					AddSaveAndSaveAs(doEdittingButtonsContainer);
+					AddSaveAndSaveAs(selectionActionBar);
 
 					// Normal margin factory
 					var normalMarginButtonFactory = ApplicationController.Instance.Theme.ButtonFactory;
@@ -351,7 +351,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						PopDirection = Direction.Up,
 						PopupContent = new MirrorControls(this, normalMarginButtonFactory)
 					};
-					doEdittingButtonsContainer.AddChild(mirrorButton);
+					selectionActionBar.AddChild(mirrorButton);
 
 					// put in the material options
 					var materialsButton = new PopupButton(smallMarginButtonFactory.Generate("Materials".Localize()))
@@ -360,7 +360,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						PopupContent = this.AddMaterialControls(),
 						AlignToRightEdge = true
 					};
-					doEdittingButtonsContainer.AddChild(materialsButton);
+					selectionActionBar.AddChild(materialsButton);
 
 					if (OemSettings.Instance.ShowShopButton)
 					{
@@ -382,12 +382,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 							MatterControlApplication.Instance.LaunchBrowser("http://www.matterhackers.com/mc/store/redirect?d={0}&clk=mcs&a={1}".FormatWith(activeFilamentDiameter, OemSettings.Instance.AffiliateCode));
 						};
-						doEdittingButtonsContainer.AddChild(shopButton);
+						selectionActionBar.AddChild(shopButton);
 					}
 				}
 
-				doEdittingButtonsContainer.AddChild(processingProgressControl);
-				buttonBottomPanel.AddChild(doEdittingButtonsContainer);
+				selectionActionBar.AddChild(processingProgressControl);
+				buttonBottomPanel.AddChild(selectionActionBar);
 			}
 
 			LockEditControls();
@@ -1895,8 +1895,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void LockEditControls()
 		{
-			viewIsInEditModePreLock = doEdittingButtonsContainer.Visible;
-			doEdittingButtonsContainer.Visible = false;
+			viewIsInEditModePreLock = selectionActionBar.Visible;
+			selectionActionBar.Visible = false;
 		}
 
 		internal void MakeLowestFaceFlat(IObject3D objectToLayFlatGroup)
@@ -2233,7 +2233,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (viewIsInEditModePreLock)
 			{
 				viewControls3D.PartSelectVisible = true;
-				doEdittingButtonsContainer.Visible = true;
+				selectionActionBar.Visible = true;
 			}
 
 			if (wasInSelectMode)
