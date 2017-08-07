@@ -126,7 +126,6 @@
     <Compile Include="AboutPage\UpdateControlData.cs" />
     <Compile Include="AboutPage\UpdateControlView.cs" />
     <Compile Include="AboutPage\HTMLParser\HtmlParser.cs" />
-    <Compile Include="ActionBar\ActionBarPlus.cs" />
     <Compile Include="ActionBar\PrinterSelector.cs" />
     <Compile Include="ActionBar\TouchScreenPrintStatusRow.cs" />
     <Compile Include="ActionBar\TemperatureWidgetBed.cs" />
