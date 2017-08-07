@@ -19,7 +19,7 @@ namespace MatterHackers.MatterControl.AboutPage
 			FlowLayoutWidget topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			topToBottom.AnchorAll();
 			topToBottom.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
-			Padding = new BorderDouble(left: 5, right: 5);
+			Padding = 0;
 
 			FlowLayoutWidget currentFeedAndDropDownContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
 			currentFeedAndDropDownContainer.VAnchor = VAnchor.FitToChildren;
