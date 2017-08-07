@@ -360,29 +360,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Margin = buttonSpacing
 				};
 				selectionActionBar.AddChild(materialsButton);
-
-				if (OemSettings.Instance.ShowShopButton)
-				{
-					var shopButton = smallMarginButtonFactory.Generate("Buy Materials".Localize(), StaticData.Instance.LoadIcon("icon_shopping_cart_32x32.png", 24, 24));
-					shopButton.ToolTipText = "Shop online for printing materials".Localize();
-					shopButton.Name = "Buy Materials Button";
-					shopButton.Margin = buttonSpacing;
-					shopButton.Click += (sender, e) =>
-					{
-						double activeFilamentDiameter = 0;
-						if (ActiveSliceSettings.Instance.PrinterSelected)
-						{
-							activeFilamentDiameter = 3;
-							if (ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_diameter) < 2)
-							{
-								activeFilamentDiameter = 1.75;
-							}
-						}
-
-						MatterControlApplication.Instance.LaunchBrowser("http://www.matterhackers.com/mc/store/redirect?d={0}&clk=mcs&a={1}".FormatWith(activeFilamentDiameter, OemSettings.Instance.AffiliateCode));
-					};
-					selectionActionBar.AddChild(shopButton);
-				}
 			}
 
 			selectionActionBar.AddChild(processingProgressControl);
@@ -455,7 +432,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			container.AddChild(new VerticalLine(20)
 			{
-				Margin = new BorderDouble(4, 3, 1, 3),
+				Margin = new BorderDouble(3, 4, 0, 4),
 			});
 		}
 

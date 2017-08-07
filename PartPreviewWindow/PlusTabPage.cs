@@ -28,10 +28,13 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg;
+using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ActionBar;
 using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.SettingsManagement;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -45,14 +48,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.VAnchor = VAnchor.ParentBottomTop;
 			this.Padding = 20;
 
+			var theme = ApplicationController.Instance.Theme;
+
+			BorderDouble buttonSpacing = 3;
+
 			// put in the add new design stuff
 			var createItemsSection = CreateSection("Create New".Localize() + ":");
 
-			var createPart = ApplicationController.Instance.Theme.ButtonFactory.Generate("Create Part".Localize());
+			var createPart = theme.ButtonFactory.Generate("Create Part".Localize());
+			createPart.Margin = buttonSpacing;
 			createPart.HAnchor = HAnchor.ParentLeft;
 			createItemsSection.AddChild(createPart);
 
-			var createPrinter = ApplicationController.Instance.Theme.ButtonFactory.Generate("Create Printer".Localize());
+			var createPrinter = theme.ButtonFactory.Generate("Create Printer".Localize());
+			createPrinter.Margin = buttonSpacing;
 			createPrinter.HAnchor = HAnchor.ParentLeft;
 			createPrinter.Click += (s, e) =>
 			{
@@ -83,7 +92,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var otherItemsSection = CreateSection("Other".Localize() + ":");
 
-			var redeemDesignCode = ApplicationController.Instance.Theme.ButtonFactory.Generate("Redeem Design Code".Localize());
+			var redeemDesignCode = theme.ButtonFactory.Generate("Redeem Design Code".Localize());
+			redeemDesignCode.Margin = buttonSpacing;
 			redeemDesignCode.HAnchor = HAnchor.ParentLeft;
 			redeemDesignCode.Click += (s, e) =>
 			{
@@ -92,7 +102,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			otherItemsSection.AddChild(redeemDesignCode);
 
-			var redeemShareCode = ApplicationController.Instance.Theme.ButtonFactory.Generate("Enter Share Code".Localize());
+			var redeemShareCode = theme.ButtonFactory.Generate("Enter Share Code".Localize());
+			redeemShareCode.Margin = buttonSpacing;
 			redeemShareCode.HAnchor = HAnchor.ParentLeft;
 			redeemShareCode.Click += (s, e) =>
 			{
@@ -101,12 +112,35 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			otherItemsSection.AddChild(redeemShareCode);
 
-			var importButton = ApplicationController.Instance.Theme.ButtonFactory.Generate("Import".Localize());
+			var importButton = theme.ButtonFactory.Generate("Import".Localize());
 			importButton.Click += (s, e) =>
 			{
 				UiThread.RunOnIdle(() => WizardWindow.Show<ImportSettingsPage>("ImportSettingsPage", "Import Settings Page"));
 			};
 			otherItemsSection.AddChild(importButton);
+
+			if (OemSettings.Instance.ShowShopButton)
+			{
+				var shopButton = theme.ButtonFactory.Generate("Buy Materials".Localize(), StaticData.Instance.LoadIcon("icon_shopping_cart_32x32.png", 24, 24));
+				shopButton.ToolTipText = "Shop online for printing materials".Localize();
+				shopButton.Name = "Buy Materials Button";
+				shopButton.Margin = buttonSpacing;
+				shopButton.Click += (sender, e) =>
+				{
+					double activeFilamentDiameter = 0;
+					if (ActiveSliceSettings.Instance.PrinterSelected)
+					{
+						activeFilamentDiameter = 3;
+						if (ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_diameter) < 2)
+						{
+							activeFilamentDiameter = 1.75;
+						}
+					}
+
+					MatterControlApplication.Instance.LaunchBrowser("http://www.matterhackers.com/mc/store/redirect?d={0}&clk=mcs&a={1}".FormatWith(activeFilamentDiameter, OemSettings.Instance.AffiliateCode));
+				};
+				otherItemsSection.AddChild(shopButton);
+			}
 		}
 
 		private FlowLayoutWidget CreateSection(string headingText)
@@ -119,7 +153,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				HAnchor = HAnchor.ParentLeftRight,
 				VAnchor = VAnchor.FitToChildren,
-				Margin = new BorderDouble(15, 15, 15, 8),
+				Margin = new BorderDouble(10, 10, 10, 8),
 			};
 			this.AddChild(container);
 
