@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.Name = "+";
 			this.HAnchor = HAnchor.ParentLeftRight;
 			this.VAnchor = VAnchor.ParentBottomTop;
-			this.Padding = 20;
+			this.Padding = 15;
 
 			var theme = ApplicationController.Instance.Theme;
 
@@ -113,6 +113,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			otherItemsSection.AddChild(redeemShareCode);
 
 			var importButton = theme.ButtonFactory.Generate("Import".Localize());
+			importButton.Margin = buttonSpacing;
+			importButton.HAnchor = HAnchor.ParentLeft;
 			importButton.Click += (s, e) =>
 			{
 				UiThread.RunOnIdle(() => WizardWindow.Show<ImportSettingsPage>("ImportSettingsPage", "Import Settings Page"));
@@ -124,6 +126,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				var shopButton = theme.ButtonFactory.Generate("Buy Materials".Localize(), StaticData.Instance.LoadIcon("icon_shopping_cart_32x32.png", 24, 24));
 				shopButton.ToolTipText = "Shop online for printing materials".Localize();
 				shopButton.Name = "Buy Materials Button";
+				shopButton.HAnchor = HAnchor.ParentLeft;
 				shopButton.Margin = buttonSpacing;
 				shopButton.Click += (sender, e) =>
 				{
@@ -146,7 +149,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private FlowLayoutWidget CreateSection(string headingText)
 		{
 			// Add heading
-			this.AddChild(new TextWidget(headingText, textColor: ActiveTheme.Instance.PrimaryTextColor));
+			this.AddChild(new TextWidget(headingText, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			{
+				HAnchor = HAnchor.ParentLeft
+			});
 
 			// Add container
 			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
