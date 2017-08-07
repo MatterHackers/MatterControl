@@ -231,18 +231,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// add in the plater tools
 			{
-				var editToolBar = new FlowLayoutWidget();
-				editToolBar.VAnchor |= VAnchor.ParentCenter;
+				doEdittingButtonsContainer = new FlowLayoutWidget();
+				doEdittingButtonsContainer.VAnchor |= VAnchor.ParentCenter;
 				
 				processingProgressControl = new ProgressControl("", ActiveTheme.Instance.PrimaryTextColor, ActiveTheme.Instance.PrimaryAccentColor)
 				{
 					VAnchor = VAnchor.ParentCenter,
 					Visible = false
 				};
-				editToolBar.AddChild(processingProgressControl);
 
 				doEdittingButtonsContainer = new FlowLayoutWidget();
 				doEdittingButtonsContainer.Visible = false;
+				doEdittingButtonsContainer.DebugShowBounds = true;
 
 				{
 					Button addButton = smallMarginButtonFactory.Generate("Insert".Localize(), StaticData.Instance.LoadIcon("AddAzureResource_16x.png", 16, 16));
@@ -345,7 +345,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					// Normal margin factory
 					var normalMarginButtonFactory = ApplicationController.Instance.Theme.ButtonFactory;
 
-					var mirrorButton = new PopupButton(smallMarginButtonFactory.Generate("Mirror".Localize()))
+					var mirrorButton = new PopupButton(smallMarginButtonFactory.Generate(
+						"Mirror".Localize()))
 					{
 						PopDirection = Direction.Up,
 						PopupContent = new MirrorControls(this, normalMarginButtonFactory)
@@ -385,8 +386,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 				}
 
-				editToolBar.AddChild(doEdittingButtonsContainer);
-				buttonBottomPanel.AddChild(editToolBar);
+				doEdittingButtonsContainer.AddChild(processingProgressControl);
+				buttonBottomPanel.AddChild(doEdittingButtonsContainer);
 			}
 
 			LockEditControls();
