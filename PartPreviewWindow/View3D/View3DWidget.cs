@@ -233,7 +233,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				selectionActionBar = new FlowLayoutWidget();
 				selectionActionBar.VAnchor |= VAnchor.ParentCenter;
-				
+
 				processingProgressControl = new ProgressControl("", ActiveTheme.Instance.PrimaryTextColor, ActiveTheme.Instance.PrimaryAccentColor)
 				{
 					VAnchor = VAnchor.ParentCenter,
@@ -244,151 +244,150 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				selectionActionBar.Visible = false;
 				selectionActionBar.DebugShowBounds = true;
 
+
+				Button addButton = smallMarginButtonFactory.Generate("Insert".Localize(), StaticData.Instance.LoadIcon("AddAzureResource_16x.png", 16, 16));
+				selectionActionBar.AddChild(addButton);
+				addButton.Click += (sender, e) =>
 				{
-					Button addButton = smallMarginButtonFactory.Generate("Insert".Localize(), StaticData.Instance.LoadIcon("AddAzureResource_16x.png", 16, 16));
-					selectionActionBar.AddChild(addButton);
-					addButton.Click += (sender, e) =>
+					UiThread.RunOnIdle(() =>
 					{
-						UiThread.RunOnIdle(() =>
-						{
-							FileDialog.OpenFileDialog(
-								new OpenFileDialogParams(ApplicationSettings.OpenDesignFileParams, multiSelect: true),
-								(openParams) =>
-								{
-									LoadAndAddPartsToPlate(openParams.FileNames);
-								});
-						});
-					};
-
-					selectionActionBar.AddChild(new VerticalLine(70)
-					{
-						Margin = new BorderDouble(6, 4),
-					});
-
-					Button ungroupButton = smallMarginButtonFactory.Generate("Ungroup".Localize());
-					ungroupButton.Name = "3D View Ungroup";
-					selectionActionBar.AddChild(ungroupButton);
-					ungroupButton.Click += (sender, e) =>
-					{
-						this.Scene.UngroupSelection(this);
-					};
-
-					Button groupButton = smallMarginButtonFactory.Generate("Group".Localize());
-					groupButton.Name = "3D View Group";
-					selectionActionBar.AddChild(groupButton);
-					groupButton.Click += (sender, e) =>
-					{
-						this.Scene.GroupSelection(this);
-					};
-
-					Button alignButton = smallMarginButtonFactory.Generate("Align".Localize());
-					selectionActionBar.AddChild(alignButton);
-					alignButton.Click += (sender, e) =>
-					{
-						this.Scene.AlignToSelection(this);
-					};
-
-					Button arrangeButton = smallMarginButtonFactory.Generate("Arrange".Localize());
-					selectionActionBar.AddChild(arrangeButton);
-					arrangeButton.Click += (sender, e) =>
-					{
-						this.Scene.AutoArrangeChildren(this);
-					};
-
-					selectionActionBar.AddChild(new VerticalLine(70)
-					{
-						Margin = new BorderDouble(6, 4),
-					});
-
-					Button copyButton = smallMarginButtonFactory.Generate("Copy".Localize());
-					copyButton.Name = "3D View Copy";
-					selectionActionBar.AddChild(copyButton);
-					copyButton.Click += (sender, e) =>
-					{
-						this.Scene.DuplicateSelection(this);
-					};
-
-					Button deleteButton = smallMarginButtonFactory.Generate("Remove".Localize());
-					deleteButton.Name = "3D View Remove";
-					selectionActionBar.AddChild(deleteButton);
-					deleteButton.Click += (sender, e) =>
-					{
-						this.Scene.DeleteSelection(this);
-					};
-
-					selectionActionBar.AddChild(new VerticalLine(70)
-					{
-						Margin = new BorderDouble(6, 4),
-					});
-
-					Button exportButton = smallMarginButtonFactory.Generate("Export".Localize() + "...");
-
-					exportButton.Margin = new BorderDouble(right: 10);
-					exportButton.Click += (sender, e) =>
-					{
-						UiThread.RunOnIdle(() =>
-						{
-							OpenExportWindow();
-						});
-					};
-
-					Button clearPlateButton = smallMarginButtonFactory.Generate("Clear Plate".Localize());
-					clearPlateButton.Click += (sender, e) =>
-					{
-						UiThread.RunOnIdle(ApplicationController.Instance.ClearPlate);
-					};
-					selectionActionBar.AddChild(clearPlateButton);
-
-					// put in the save button
-					AddSaveAndSaveAs(selectionActionBar);
-
-					// Normal margin factory
-					var normalMarginButtonFactory = ApplicationController.Instance.Theme.ButtonFactory;
-
-					var mirrorButton = new PopupButton(smallMarginButtonFactory.Generate(
-						"Mirror".Localize()))
-					{
-						PopDirection = Direction.Up,
-						PopupContent = new MirrorControls(this, normalMarginButtonFactory)
-					};
-					selectionActionBar.AddChild(mirrorButton);
-
-					// put in the material options
-					var materialsButton = new PopupButton(smallMarginButtonFactory.Generate("Materials".Localize()))
-					{
-						PopDirection = Direction.Up,
-						PopupContent = this.AddMaterialControls(),
-						AlignToRightEdge = true
-					};
-					selectionActionBar.AddChild(materialsButton);
-
-					if (OemSettings.Instance.ShowShopButton)
-					{
-						var shopButton = smallMarginButtonFactory.Generate("Buy Materials".Localize(), StaticData.Instance.LoadIcon("icon_shopping_cart_32x32.png", 24, 24));
-						shopButton.ToolTipText = "Shop online for printing materials".Localize();
-						shopButton.Name = "Buy Materials Button";
-						shopButton.Margin = new BorderDouble(0, 0, 3, 0);
-						shopButton.Click += (sender, e) =>
-						{
-							double activeFilamentDiameter = 0;
-							if (ActiveSliceSettings.Instance.PrinterSelected)
+						FileDialog.OpenFileDialog(
+							new OpenFileDialogParams(ApplicationSettings.OpenDesignFileParams, multiSelect: true),
+							(openParams) =>
 							{
-								activeFilamentDiameter = 3;
-								if (ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_diameter) < 2)
-								{
-									activeFilamentDiameter = 1.75;
-								}
+								LoadAndAddPartsToPlate(openParams.FileNames);
+							});
+					});
+				};
+
+				selectionActionBar.AddChild(new VerticalLine(70)
+				{
+					Margin = new BorderDouble(6, 4),
+				});
+
+				Button ungroupButton = smallMarginButtonFactory.Generate("Ungroup".Localize());
+				ungroupButton.Name = "3D View Ungroup";
+				selectionActionBar.AddChild(ungroupButton);
+				ungroupButton.Click += (sender, e) =>
+				{
+					this.Scene.UngroupSelection(this);
+				};
+
+				Button groupButton = smallMarginButtonFactory.Generate("Group".Localize());
+				groupButton.Name = "3D View Group";
+				selectionActionBar.AddChild(groupButton);
+				groupButton.Click += (sender, e) =>
+				{
+					this.Scene.GroupSelection(this);
+				};
+
+				Button alignButton = smallMarginButtonFactory.Generate("Align".Localize());
+				selectionActionBar.AddChild(alignButton);
+				alignButton.Click += (sender, e) =>
+				{
+					this.Scene.AlignToSelection(this);
+				};
+
+				Button arrangeButton = smallMarginButtonFactory.Generate("Arrange".Localize());
+				selectionActionBar.AddChild(arrangeButton);
+				arrangeButton.Click += (sender, e) =>
+				{
+					this.Scene.AutoArrangeChildren(this);
+				};
+
+				selectionActionBar.AddChild(new VerticalLine(70)
+				{
+					Margin = new BorderDouble(6, 4),
+				});
+
+				Button copyButton = smallMarginButtonFactory.Generate("Copy".Localize());
+				copyButton.Name = "3D View Copy";
+				selectionActionBar.AddChild(copyButton);
+				copyButton.Click += (sender, e) =>
+				{
+					this.Scene.DuplicateSelection(this);
+				};
+
+				Button deleteButton = smallMarginButtonFactory.Generate("Remove".Localize());
+				deleteButton.Name = "3D View Remove";
+				selectionActionBar.AddChild(deleteButton);
+				deleteButton.Click += (sender, e) =>
+				{
+					this.Scene.DeleteSelection(this);
+				};
+
+				selectionActionBar.AddChild(new VerticalLine(70)
+				{
+					Margin = new BorderDouble(6, 4),
+				});
+
+				Button exportButton = smallMarginButtonFactory.Generate("Export".Localize() + "...");
+
+				exportButton.Margin = new BorderDouble(right: 10);
+				exportButton.Click += (sender, e) =>
+				{
+					UiThread.RunOnIdle(() =>
+					{
+						OpenExportWindow();
+					});
+				};
+
+				Button clearPlateButton = smallMarginButtonFactory.Generate("Clear Plate".Localize());
+				clearPlateButton.Click += (sender, e) =>
+				{
+					UiThread.RunOnIdle(ApplicationController.Instance.ClearPlate);
+				};
+				selectionActionBar.AddChild(clearPlateButton);
+
+				// put in the save button
+				AddSaveAndSaveAs(selectionActionBar);
+
+				// Normal margin factory
+				var normalMarginButtonFactory = ApplicationController.Instance.Theme.ButtonFactory;
+
+				var mirrorButton = new PopupButton(smallMarginButtonFactory.Generate(
+					"Mirror".Localize()))
+				{
+					PopDirection = Direction.Up,
+					PopupContent = new MirrorControls(this, normalMarginButtonFactory)
+				};
+				selectionActionBar.AddChild(mirrorButton);
+
+				// put in the material options
+				var materialsButton = new PopupButton(smallMarginButtonFactory.Generate("Materials".Localize()))
+				{
+					PopDirection = Direction.Up,
+					PopupContent = this.AddMaterialControls(),
+					AlignToRightEdge = true
+				};
+				selectionActionBar.AddChild(materialsButton);
+
+				if (OemSettings.Instance.ShowShopButton)
+				{
+					var shopButton = smallMarginButtonFactory.Generate("Buy Materials".Localize(), StaticData.Instance.LoadIcon("icon_shopping_cart_32x32.png", 24, 24));
+					shopButton.ToolTipText = "Shop online for printing materials".Localize();
+					shopButton.Name = "Buy Materials Button";
+					shopButton.Margin = new BorderDouble(0, 0, 3, 0);
+					shopButton.Click += (sender, e) =>
+					{
+						double activeFilamentDiameter = 0;
+						if (ActiveSliceSettings.Instance.PrinterSelected)
+						{
+							activeFilamentDiameter = 3;
+							if (ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_diameter) < 2)
+							{
+								activeFilamentDiameter = 1.75;
 							}
+						}
 
-							MatterControlApplication.Instance.LaunchBrowser("http://www.matterhackers.com/mc/store/redirect?d={0}&clk=mcs&a={1}".FormatWith(activeFilamentDiameter, OemSettings.Instance.AffiliateCode));
-						};
-						selectionActionBar.AddChild(shopButton);
-					}
+						MatterControlApplication.Instance.LaunchBrowser("http://www.matterhackers.com/mc/store/redirect?d={0}&clk=mcs&a={1}".FormatWith(activeFilamentDiameter, OemSettings.Instance.AffiliateCode));
+					};
+					selectionActionBar.AddChild(shopButton);
 				}
-
-				selectionActionBar.AddChild(processingProgressControl);
-				buttonBottomPanel.AddChild(selectionActionBar);
 			}
+
+			selectionActionBar.AddChild(processingProgressControl);
+			buttonBottomPanel.AddChild(selectionActionBar);
 
 			LockEditControls();
 
