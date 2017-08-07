@@ -242,11 +242,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				selectionActionBar = new FlowLayoutWidget();
 				selectionActionBar.Visible = false;
-				selectionActionBar.DebugShowBounds = true;
 
+				var buttonSpacing = ApplicationController.Instance.Theme.ButtonSpacing;
 
 				Button addButton = smallMarginButtonFactory.Generate("Insert".Localize(), StaticData.Instance.LoadIcon("AddAzureResource_16x.png", 16, 16));
-				selectionActionBar.AddChild(addButton);
+				addButton.Margin = buttonSpacing;
 				addButton.Click += (sender, e) =>
 				{
 					UiThread.RunOnIdle(() =>
@@ -259,71 +259,68 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							});
 					});
 				};
+				selectionActionBar.AddChild(addButton);
 
-				selectionActionBar.AddChild(new VerticalLine(70)
-				{
-					Margin = new BorderDouble(6, 4),
-				});
+				CreateActionSeparator(selectionActionBar);
 
 				Button ungroupButton = smallMarginButtonFactory.Generate("Ungroup".Localize());
 				ungroupButton.Name = "3D View Ungroup";
-				selectionActionBar.AddChild(ungroupButton);
+				ungroupButton.Margin = buttonSpacing;
 				ungroupButton.Click += (sender, e) =>
 				{
 					this.Scene.UngroupSelection(this);
 				};
+				selectionActionBar.AddChild(ungroupButton);
 
 				Button groupButton = smallMarginButtonFactory.Generate("Group".Localize());
 				groupButton.Name = "3D View Group";
-				selectionActionBar.AddChild(groupButton);
+				groupButton.Margin = buttonSpacing;
 				groupButton.Click += (sender, e) =>
 				{
 					this.Scene.GroupSelection(this);
 				};
+				selectionActionBar.AddChild(groupButton);
 
 				Button alignButton = smallMarginButtonFactory.Generate("Align".Localize());
-				selectionActionBar.AddChild(alignButton);
+				alignButton.Margin = buttonSpacing;
 				alignButton.Click += (sender, e) =>
 				{
 					this.Scene.AlignToSelection(this);
 				};
+				selectionActionBar.AddChild(alignButton);
 
 				Button arrangeButton = smallMarginButtonFactory.Generate("Arrange".Localize());
 				selectionActionBar.AddChild(arrangeButton);
+				arrangeButton.Margin = buttonSpacing;
 				arrangeButton.Click += (sender, e) =>
 				{
 					this.Scene.AutoArrangeChildren(this);
 				};
 
-				selectionActionBar.AddChild(new VerticalLine(70)
-				{
-					Margin = new BorderDouble(6, 4),
-				});
+				CreateActionSeparator(selectionActionBar);
 
 				Button copyButton = smallMarginButtonFactory.Generate("Copy".Localize());
 				copyButton.Name = "3D View Copy";
-				selectionActionBar.AddChild(copyButton);
+				copyButton.Margin = buttonSpacing;
 				copyButton.Click += (sender, e) =>
 				{
 					this.Scene.DuplicateSelection(this);
 				};
+				selectionActionBar.AddChild(copyButton);
 
 				Button deleteButton = smallMarginButtonFactory.Generate("Remove".Localize());
 				deleteButton.Name = "3D View Remove";
-				selectionActionBar.AddChild(deleteButton);
+				deleteButton.Margin = buttonSpacing;
 				deleteButton.Click += (sender, e) =>
 				{
 					this.Scene.DeleteSelection(this);
 				};
+				selectionActionBar.AddChild(deleteButton);
 
-				selectionActionBar.AddChild(new VerticalLine(70)
-				{
-					Margin = new BorderDouble(6, 4),
-				});
+				CreateActionSeparator(selectionActionBar);
 
 				Button exportButton = smallMarginButtonFactory.Generate("Export".Localize() + "...");
-
-				exportButton.Margin = new BorderDouble(right: 10);
+				exportButton.Margin = buttonSpacing;
 				exportButton.Click += (sender, e) =>
 				{
 					UiThread.RunOnIdle(() =>
@@ -333,6 +330,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 
 				Button clearPlateButton = smallMarginButtonFactory.Generate("Clear Plate".Localize());
+				clearPlateButton.Margin = buttonSpacing;
 				clearPlateButton.Click += (sender, e) =>
 				{
 					UiThread.RunOnIdle(ApplicationController.Instance.ClearPlate);
@@ -340,16 +338,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				selectionActionBar.AddChild(clearPlateButton);
 
 				// put in the save button
-				AddSaveAndSaveAs(selectionActionBar);
+				AddSaveAndSaveAs(selectionActionBar, buttonSpacing);
 
-				// Normal margin factory
-				var normalMarginButtonFactory = ApplicationController.Instance.Theme.ButtonFactory;
+				var mirrorView = smallMarginButtonFactory.Generate("Mirror".Localize());
+				mirrorView.Margin = buttonSpacing;
 
-				var mirrorButton = new PopupButton(smallMarginButtonFactory.Generate(
-					"Mirror".Localize()))
+				var mirrorButton = new PopupButton(mirrorView)
 				{
 					PopDirection = Direction.Up,
-					PopupContent = new MirrorControls(this, normalMarginButtonFactory)
+					PopupContent = new MirrorControls(this, smallMarginButtonFactory),
+					//Margin = buttonSpacing,
 				};
 				selectionActionBar.AddChild(mirrorButton);
 
@@ -358,7 +356,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					PopDirection = Direction.Up,
 					PopupContent = this.AddMaterialControls(),
-					AlignToRightEdge = true
+					AlignToRightEdge = true,
+					Margin = buttonSpacing
 				};
 				selectionActionBar.AddChild(materialsButton);
 
@@ -367,7 +366,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					var shopButton = smallMarginButtonFactory.Generate("Buy Materials".Localize(), StaticData.Instance.LoadIcon("icon_shopping_cart_32x32.png", 24, 24));
 					shopButton.ToolTipText = "Shop online for printing materials".Localize();
 					shopButton.Name = "Buy Materials Button";
-					shopButton.Margin = new BorderDouble(0, 0, 3, 0);
+					shopButton.Margin = buttonSpacing;
 					shopButton.Click += (sender, e) =>
 					{
 						double activeFilamentDiameter = 0;
@@ -450,6 +449,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			meshViewerWidget.AfterDraw += AfterDraw3DContent;
 
 			this.TrackballTumbleWidget.DrawGlContent += TrackballTumbleWidget_DrawGlContent;
+		}
+
+		private void CreateActionSeparator(GuiWidget container)
+		{
+			container.AddChild(new VerticalLine(20)
+			{
+				Margin = new BorderDouble(4, 3, 1, 3),
+			});
 		}
 
 		private void ViewControls3D_TransformStateChanged(object sender, TransformStateChangedEventArgs e)
@@ -1538,7 +1545,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return buttonPanel;
 		}
 
-		private void AddSaveAndSaveAs(FlowLayoutWidget flowToAddTo)
+		private void AddSaveAndSaveAs(FlowLayoutWidget flowToAddTo, BorderDouble margin)
 		{
 			var buttonList = new List<NamedAction>()
 			{
@@ -1569,7 +1576,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			saveButtons = splitButtonFactory.Generate(buttonList, Direction.Up, imageName: "icon_save_32x32.png");
 			saveButtons.Visible = false;
-			saveButtons.Margin = new BorderDouble();
+			saveButtons.Margin = margin;
 			saveButtons.VAnchor |= VAnchor.ParentCenter;
 			flowToAddTo.AddChild(saveButtons);
 		}
