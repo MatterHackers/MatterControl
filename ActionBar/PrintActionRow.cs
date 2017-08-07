@@ -53,7 +53,6 @@ namespace MatterHackers.MatterControl.ActionBar
 	internal class PrintActionRow : FlowLayoutWidget
 	{
 		private List<Button> activePrintButtons = new List<Button>();
-		private Button addButton;
 		private Button addPrinterButton;
 		private Button selectPrinterButton;
 		private List<Button> allPrintButtons = new List<Button>();
@@ -84,14 +83,6 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		protected void AddChildElements(TextImageButtonFactory buttonFactory, GuiWidget parentWidget, BorderDouble defaultMargin)
 		{
-			addButton = buttonFactory.GenerateTooltipButton("Add".Localize().ToUpper());
-			addButton.ToolTipText = "Add a file to be printed".Localize();
-			addButton.Margin = defaultMargin;
-			addButton.Click += (s, e) =>
-			{
-				UiThread.RunOnIdle(AddButtonOnIdle);
-			};
-
 			startButton = buttonFactory.GenerateTooltipButton("Print".Localize().ToUpper());
 			startButton.Name = "Start Print Button";
 			startButton.ToolTipText = "Begin printing the selected item.".Localize();
@@ -175,9 +166,6 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			parentWidget.AddChild(selectPrinterButton);
 			allPrintButtons.Add(selectPrinterButton);
-
-			parentWidget.AddChild(addButton);
-			allPrintButtons.Add(addButton);
 
 			parentWidget.AddChild(startButton);
 			allPrintButtons.Add(startButton);
@@ -316,22 +304,6 @@ namespace MatterHackers.MatterControl.ActionBar
 					button.Visible = false;
 				}
 			}
-		}
-
-		private void AddButtonOnIdle()
-		{
-			FileDialog.OpenFileDialog(
-				new OpenFileDialogParams(ApplicationSettings.OpenPrintableFileParams, multiSelect: true),
-				(openParams) =>
-				{
-					if (openParams.FileNames != null)
-					{
-						foreach (string loadedFileName in openParams.FileNames)
-						{
-							QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(Path.GetFileNameWithoutExtension(loadedFileName), Path.GetFullPath(loadedFileName))));
-						}
-					}
-				});
 		}
 
 		void RunTroubleShooting()
