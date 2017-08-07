@@ -132,7 +132,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 				}
 			};
 
-
 			jogControls = new JogControls(new XYZColors());
 			jogControls.Margin = new BorderDouble(0);
 
@@ -140,7 +139,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			{
 				HAnchor = HAnchor.ParentLeftRight,
 				VAnchor = VAnchor.FitToChildren,
-				Padding = new BorderDouble(3, 5, 3, 0)
+				Padding = new BorderDouble(3, 0)
 			};
 
 			manualControlsLayout.AddChild(CreateDisableableContainer(GetHomeButtonBar()));
@@ -149,7 +148,10 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 			manualControlsLayout.AddChild(CreateSeparatorLine());
 			manualControlsLayout.AddChild(CreateDisableableContainer(GetHWDestinationBar()));
-			manualControlsLayout.AddChild(CreateSeparatorLine());
+
+			var separator = CreateSeparatorLine();
+			separator.Margin = new BorderDouble(0, 0, 0, 5);
+			manualControlsLayout.AddChild(separator);
 
 			movementControlsGroupBox.AddChild(manualControlsLayout);
 
