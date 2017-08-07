@@ -78,8 +78,6 @@ namespace MatterHackers.MatterControl
 
 		private MovementControls movementControlsContainer;
 
-		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
-
 		private DisableableWidget tuningAdjustmentControlsContainer;
 
 		private EventHandler unregisterEvents;
@@ -100,16 +98,21 @@ namespace MatterHackers.MatterControl
 				Name = "ManualPrinterControls.ControlsContainer",
 				Margin = new BorderDouble(0)
 			};
-			AddActionControls(controlsTopToBottomLayout);
+			this.AddChild(controlsTopToBottomLayout);
 
-			AddMovementControls(controlsTopToBottomLayout);
+			actionControlsContainer = new ActionControls();
+			controlsTopToBottomLayout.AddChild(actionControlsContainer);
+
+			movementControlsContainer = new MovementControls();
+			controlsTopToBottomLayout.AddChild(movementControlsContainer);
 
 			if (!ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_hardware_leveling))
 			{
 				controlsTopToBottomLayout.AddChild(new CalibrationSettingsWidget(ApplicationController.Instance.Theme.ButtonFactory));
 			}
 
-			AddMacroControls(controlsTopToBottomLayout);
+			macroControlsContainer = new MacroControls();
+			controlsTopToBottomLayout.AddChild(macroControlsContainer);
 
 			var linearPanel = new FlowLayoutWidget()
 			{
@@ -117,12 +120,20 @@ namespace MatterHackers.MatterControl
 			};
 			controlsTopToBottomLayout.AddChild(linearPanel);
 
-			AddFanControls(linearPanel);
-			AddAtxPowerControls(linearPanel);
+			fanControlsContainer = new FanControls();
+			if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_fan))
+			{
+				controlsTopToBottomLayout.AddChild(fanControlsContainer);
+			}
 
-			AddAdjustmentControls(controlsTopToBottomLayout);
+#if !__ANDROID__
+			controlsTopToBottomLayout.AddChild(new PowerControls());
+#endif
+			tuningAdjustmentControlsContainer = new AdjustmentControls();
+			controlsTopToBottomLayout.AddChild(tuningAdjustmentControlsContainer);
 
-			AddChild(controlsTopToBottomLayout);
+			// HACK: this is a hack to make the layout engine fire again for this control
+			UiThread.RunOnIdle(() => tuningAdjustmentControlsContainer.Width = tuningAdjustmentControlsContainer.Width + 1);
 
 			PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
 			PrinterConnection.Instance.EnableChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
@@ -134,49 +145,6 @@ namespace MatterHackers.MatterControl
 		{
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
-		}
-
-		private void AddAdjustmentControls(FlowLayoutWidget controlsTopToBottomLayout)
-		{
-			tuningAdjustmentControlsContainer = new AdjustmentControls();
-			controlsTopToBottomLayout.AddChild(tuningAdjustmentControlsContainer);
-
-			// this is a hack to make the layout engine fire again for this control
-			UiThread.RunOnIdle(() => tuningAdjustmentControlsContainer.Width = tuningAdjustmentControlsContainer.Width + 1);
-		}
-
-		private void AddFanControls(FlowLayoutWidget controlsTopToBottomLayout)
-		{
-			fanControlsContainer = new FanControls();
-			if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_fan))
-			{
-				controlsTopToBottomLayout.AddChild(fanControlsContainer);
-			}
-		}
-
-		private void AddAtxPowerControls(FlowLayoutWidget controlsTopToBottomLayout)
-		{
-#if !__ANDROID__
-			controlsTopToBottomLayout.AddChild(new PowerControls());
-#endif
-		}
-
-		private void AddActionControls(FlowLayoutWidget controlsTopToBottomLayout)
-		{
-			actionControlsContainer = new ActionControls();
-			controlsTopToBottomLayout.AddChild(actionControlsContainer);
-		}
-
-		private void AddMacroControls(FlowLayoutWidget controlsTopToBottomLayout)
-		{
-			macroControlsContainer = new MacroControls();
-			controlsTopToBottomLayout.AddChild(macroControlsContainer);
-		}
-
-		private void AddMovementControls(FlowLayoutWidget controlsTopToBottomLayout)
-		{
-			movementControlsContainer = new MovementControls();
-			controlsTopToBottomLayout.AddChild(movementControlsContainer);
 		}
 
 		private void onPrinterStatusChanged(object sender, EventArgs e)
