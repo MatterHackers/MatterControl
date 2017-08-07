@@ -95,6 +95,8 @@ namespace MatterHackers.MatterControl
 		public TextImageButtonFactory MicroButton { get; private set; }
 		public TextImageButtonFactory MicroButtonMenu { get; private set; }
 
+		public BorderDouble ButtonSpacing { get; set; } = new BorderDouble(3, 0, 0, 0);
+
 		private EventHandler unregisterEvents;
 
 		static ThemeConfig()
