@@ -35,30 +35,24 @@ using MatterHackers.MatterControl.SetupWizard;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class SliceSettingsDetailControl : FlowLayoutWidget
+	public class SliceSettingsOverflowDropdown : FlowLayoutWidget
 	{
 		private CheckBox showHelpBox;
 
 		string resetToDefaultsMessage = "Resetting to default values will remove your current overrides and restore your original printer settings.\nAre you sure you want to continue?".Localize();
 		string resetToDefaultsWindowTitle = "Revert Settings".Localize();
 
-		private SliceSettingsWidget sliceSettingsWidget;
-
-		public SliceSettingsDetailControl(SliceSettingsWidget sliceSettingsWidget)
+		public SliceSettingsOverflowDropdown(SliceSettingsWidget sliceSettingsWidget)
 		{
-			this.sliceSettingsWidget = sliceSettingsWidget;
 			this.VAnchor = VAnchor.FitToChildren | VAnchor.ParentCenter;
-
-			this.AddChild(CreateOverflowMenu());
-		}
-
-		private GuiWidget CreateOverflowMenu()
-		{
+		
 			var overflowDropdown = new OverflowDropdown(true)
 			{
 				AlignToRightEdge = true,
 				Name = "Slice Settings Overflow Menu"
 			};
+			this.AddChild(overflowDropdown);
+
 
 			showHelpBox = new CheckBox("Show Help".Localize());
 			showHelpBox.Checked = sliceSettingsWidget.ShowHelpControls;
@@ -155,8 +149,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			popupContainer.AddChild(modeSelector);
 
 			overflowDropdown.PopupContent = popupContainer;
-
-			return overflowDropdown;
 		}
 	}
 

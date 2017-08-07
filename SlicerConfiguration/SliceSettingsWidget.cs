@@ -174,7 +174,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			if (isPrimarySettingsView)
 			{
-				var sliceSettingsDetailControl = new SliceSettingsDetailControl(this);
+				var sliceSettingsDetailControl = new SliceSettingsOverflowDropdown(this);
 				topCategoryTabs.TabBar.AddChild(sliceSettingsDetailControl);
 			}
 
