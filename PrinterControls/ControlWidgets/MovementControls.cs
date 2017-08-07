@@ -171,10 +171,11 @@ namespace MatterHackers.MatterControl.PrinterControls
 		{
 			FlowLayoutWidget homeButtonBar = new FlowLayoutWidget();
 			homeButtonBar.HAnchor = HAnchor.ParentLeftRight;
-			homeButtonBar.Margin = new BorderDouble(3, 0, 3, 6);
+			homeButtonBar.Margin = new BorderDouble(0);
 			homeButtonBar.Padding = new BorderDouble(0);
 
-			var buttonFactory = ApplicationController.Instance.Theme.HomingButtons;
+			var homingButtonFactory = ApplicationController.Instance.Theme.HomingButtons;
+			var commonButtonFactory = ApplicationController.Instance.Theme.ButtonFactory;
 
 			ImageBuffer helpIconImage = StaticData.Instance.LoadIcon("icon_home_white_24x24.png", 24, 24);
 			if (ActiveTheme.Instance.IsDarkTheme)
@@ -186,7 +187,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			homeIconImageWidget.Margin = new BorderDouble(0, 0, 6, 0);
 			homeIconImageWidget.OriginRelativeParent += new Vector2(0, 2) * GuiWidget.DeviceScale;
 
-			homeAllButton = buttonFactory.Generate("ALL".Localize());
+			homeAllButton = homingButtonFactory.Generate("ALL".Localize());
 			
 			homeAllButton.ToolTipText = "Home X, Y and Z".Localize();
 			homeAllButton.Margin = new BorderDouble(0, 0, 6, 0);
@@ -194,30 +195,28 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 			double fixedWidth = (int)homeAllButton.Width * GuiWidget.DeviceScale;
 
-			homeXButton = buttonFactory.Generate("X", centerText: true, fixedWidth: fixedWidth);
+			homeXButton = homingButtonFactory.Generate("X", centerText: true, fixedWidth: fixedWidth);
 			homeXButton.ToolTipText = "Home X".Localize();
 			homeXButton.Margin = new BorderDouble(0, 0, 6, 0);
 			homeXButton.Click += homeXButton_Click;
 
-			homeYButton = buttonFactory.Generate("Y", centerText: true, fixedWidth: fixedWidth);
+			homeYButton = homingButtonFactory.Generate("Y", centerText: true, fixedWidth: fixedWidth);
 			homeYButton.ToolTipText = "Home Y".Localize();
 			homeYButton.Margin = new BorderDouble(0, 0, 6, 0);
 			homeYButton.Click += homeYButton_Click;
 
-			homeZButton = buttonFactory.Generate("Z", centerText: true, fixedWidth: fixedWidth);
+			homeZButton = homingButtonFactory.Generate("Z", centerText: true, fixedWidth: fixedWidth);
 			homeZButton.ToolTipText = "Home Z".Localize();
 			homeZButton.Margin = new BorderDouble(0, 0, 6, 0);
 			homeZButton.Click += homeZButton_Click;
 
 			// Create 'Release' button, clearing fixedWidth needed on sibling 'Home' controls
-			disableMotors = buttonFactory.Generate("Release".Localize().ToUpper(), fixedWidth: 0);
+			disableMotors = commonButtonFactory.Generate("Release".Localize().ToUpper(), fixedWidth: 0);
 			disableMotors.Margin = new BorderDouble(0);
 			disableMotors.Click += (s, e) =>
 			{
 				PrinterConnection.Instance.ReleaseMotors();
 			};
-
-			GuiWidget spacerReleaseShow = new GuiWidget(10 * GuiWidget.DeviceScale, 0);
 
 			homeButtonBar.AddChild(homeIconImageWidget);
 			homeButtonBar.AddChild(homeAllButton);
@@ -239,7 +238,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 			
 			homeButtonBar.AddChild(new HorizontalSpacer());
 			homeButtonBar.AddChild(disableMotors);
-			homeButtonBar.AddChild(spacerReleaseShow);
 
 			return homeButtonBar;
 		}
