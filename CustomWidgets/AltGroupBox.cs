@@ -35,8 +35,6 @@ namespace MatterHackers.MatterControl
 	public class AltGroupBox : FlowLayoutWidget
 	{
 		private GuiWidget groupBoxLabel;
-		private RGBA_Bytes borderColor = RGBA_Bytes.Black;
-		private GuiWidget clientArea;
 
 		public RGBA_Bytes TextColor
 		{
@@ -59,25 +57,9 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public RGBA_Bytes BorderColor
-		{
-			get
-			{
-				return this.borderColor;
-			}
-			set
-			{
-				this.borderColor = value;
-			}
-		}
+		public RGBA_Bytes BorderColor { get; set; } = RGBA_Bytes.Black;
 
-		public GuiWidget ClientArea
-		{
-			get
-			{
-				return clientArea;
-			}
-		}
+		public GuiWidget ClientArea { get; }
 
 		public AltGroupBox()
 			: this("")
@@ -99,12 +81,12 @@ namespace MatterHackers.MatterControl
 				base.AddChild(groupBoxLabel);
 			}
 
-			clientArea = new GuiWidget()
+			this.ClientArea = new GuiWidget()
 			{
 				HAnchor = HAnchor.ParentLeftRight,
 				VAnchor = VAnchor.FitToChildren
 			};
-			base.AddChild(clientArea);
+			base.AddChild(this.ClientArea);
 		}
 
 		public AltGroupBox(string title)
@@ -114,7 +96,7 @@ namespace MatterHackers.MatterControl
 
 		public override void AddChild(GuiWidget childToAdd, int indexInChildrenList = -1)
 		{
-			clientArea.AddChild(childToAdd, indexInChildrenList);
+			this.ClientArea.AddChild(childToAdd, indexInChildrenList);
 		}
 
 		public override string Text

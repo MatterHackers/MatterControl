@@ -12,33 +12,46 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 using System;
 using System.Diagnostics;
 using System.IO;
+using MatterHackers.MatterControl.PrinterControls;
 
 namespace MatterHackers.MatterControl.ConfigurationPage
 {
-	public class CalibrationSettingsWidget : SettingsViewBase
+	public class CalibrationSettingsWidget : ControlWidgetBase
 	{
-		private DisableableWidget printLevelingContainer;
 		private EventHandler unregisterEvents;
 		private EditLevelingSettingsWindow editLevelingSettingsWindow;
 		private TextWidget printLevelingStatusLabel;
-		Button runPrintLevelingButton;
+		private Button runPrintLevelingButton;
 
-		public CalibrationSettingsWidget(TextImageButtonFactory buttonFactory)
-			: base("Calibration".Localize(), buttonFactory)
+		private TextImageButtonFactory buttonFactory;
+
+		public CalibrationSettingsWidget(TextImageButtonFactory buttonFactory, int headingPointSize)
 		{
+			var mainContainer = new AltGroupBox(new TextWidget("Calibration".Localize(), pointSize: headingPointSize, textColor: ActiveTheme.Instance.SecondaryAccentColor))
+			{
+				Margin = new BorderDouble(0),
+				BorderColor = ActiveTheme.Instance.PrimaryTextColor,
+				HAnchor = HAnchor.ParentLeftRight,
+				VAnchor = VAnchor.FitToChildren
+			};
+			this.AddChild(mainContainer);
+
+			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.ParentLeftRight,
+				VAnchor = VAnchor.FitToChildren,
+				Padding = new BorderDouble(3, 0)
+			};
+			mainContainer.AddChild(container);
+
 			this.buttonFactory = buttonFactory;
 
-			printLevelingContainer = new DisableableWidget();
 			if (!ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_hardware_leveling))
 			{
-				printLevelingContainer.AddChild(GetAutoLevelControl());
-
-				mainContainer.AddChild(printLevelingContainer);
+				container.AddChild(GetAutoLevelControl());
 			}
 
-			mainContainer.AddChild(new HorizontalLine(50));
-
-			AddChild(mainContainer);
+			container.AddChild(CreateSeparatorLine());
 
 			PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent(PrinterStatusChanged, ref unregisterEvents);
 			PrinterConnection.Instance.EnableChanged.RegisterEvent(PrinterStatusChanged, ref unregisterEvents);
@@ -52,7 +65,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			{
 				Name = "AutoLevelRowItem",
 				HAnchor = HAnchor.ParentLeftRight,
-				Margin = new BorderDouble(0, 4),
+				Margin = new BorderDouble(0, 8, 0, 4)
 			};
 
 			ImageBuffer levelingImage = StaticData.Instance.LoadIcon("leveling_32x32.png", 24, 24).InvertLightness();
@@ -155,12 +168,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				|| PrinterConnection.Instance.CommunicationState == CommunicationStates.Printing
 				|| PrinterConnection.Instance.PrinterIsPaused)
 			{
-				printLevelingContainer.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+				this.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 				runPrintLevelingButton.Enabled = true; // setting this true when the element is disabled makes the colors stay correct
 			}
 			else
 			{
-				printLevelingContainer.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+				this.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 				runPrintLevelingButton.Enabled = PrinterConnection.Instance.PrinterIsConnected;
 			}
 		}

@@ -120,7 +120,7 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Compile Include="AboutPage\AboutWindow.cs" />
-    <Compile Include="AboutPage\CheckForUpdateWindow.cs" />
+    <Compile Include="AboutPage\CheckForUpdatesPage.cs" />
     <Compile Include="AboutPage\HTMLParser\HtmlWidget.cs" />
     <Compile Include="AboutPage\HTMLParser\ElementState.cs" />
     <Compile Include="AboutPage\UpdateControlData.cs" />
@@ -145,11 +145,7 @@
     <Compile Include="Library\ContentProviders\GCodeContentProvider.cs" />
     <Compile Include="Library\ContentProviders\IContentProvider.cs" />
     <Compile Include="ApplicationView\MenuRow\MenuOptionAction.cs" />
-    <Compile Include="ApplicationView\MenuRow\MenuOptionHelp.cs" />
-    <Compile Include="ApplicationView\MenuRow\MenuOptionSettings.cs" />
-    <Compile Include="ApplicationView\MenuRow\MenuOptionFile.cs" />
     <Compile Include="ApplicationView\MenuRow\MenuBase.cs" />
-    <Compile Include="ApplicationView\MenuRow\ApplicationMenuRow.cs" />
     <Compile Include="ApplicationView\TouchscreenTabView.cs" />
     <Compile Include="ConfigurationPage\ApplicationSettings\ApplicationSettingsView.cs" />
     <Compile Include="ConfigurationPage\LanguageSelector.cs" />
@@ -162,16 +158,13 @@
     <Compile Include="ConfigurationPage\PrintLeveling\LevelWizard3Point.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\LevelWizardBase.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\PrintLevelingData.cs" />
-    <Compile Include="ConfigurationPage\SettingsViewBase.cs" />
     <Compile Include="ControlElements\ConditionalClickWidget.cs" />
     <Compile Include="ControlElements\AttentionGetter.cs" />
-    <Compile Include="ControlElements\PopOutManager.cs" />
     <Compile Include="CustomWidgets\AltGroupBox.cs" />
     <Compile Include="CustomWidgets\DoubleSolidSlider.cs" />
     <Compile Include="CustomWidgets\FatFlatClickWidget.cs" />
     <Compile Include="CustomWidgets\FlowSpacers.cs" />
     <Compile Include="CustomWidgets\LibrarySelector\FolderBreadCrumbWidget.cs" />
-    <Compile Include="CustomWidgets\PopOutTextTab.cs" />
     <Compile Include="CustomWidgets\PrintingWindow.cs" />
     <Compile Include="CustomWidgets\SlideWidget.cs" />
     <Compile Include="CustomWidgets\SolidSlider.cs" />
@@ -341,7 +334,6 @@
     <Compile Include="CustomWidgets\DropDownMenuWidget.cs" />
     <Compile Include="ControlElements\ImageButtonFactory.cs" />
     <Compile Include="ControlElements\LinkButtonFactory.cs" />
-    <Compile Include="CustomWidgets\PrintProgressBarWidget.cs" />
     <Compile Include="Queue\OptionsMenu\ExportToSdCardFeedbackWindow.cs" />
     <Compile Include="CustomWidgets\SlidePanelWidget.cs" />
     <Compile Include="ControlElements\StyledMessageBoxWindow.cs" />
@@ -362,7 +354,6 @@
     <Compile Include="Utilities\WebUtilities\JsonResponseDictionary.cs" />
     <Compile Include="PrinterCommunication\PrinterConnection.cs" />
     <Compile Include="PrinterControls\PrintLevelingPlane.cs" />
-    <Compile Include="PrinterControls\TerminalWindow\TerminalWindow.cs" />
     <Compile Include="PrinterControls\PrinterConnections\SetupStepComPortManual.cs" />
     <Compile Include="PrinterControls\PrinterConnections\SetupStepComPortTwo.cs" />
     <Compile Include="PrinterControls\PrinterConnections\SetupStepComPortOne.cs" />

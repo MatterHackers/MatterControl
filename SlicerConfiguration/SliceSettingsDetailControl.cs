@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private GuiWidget CreateOverflowMenu()
 		{
-			var overflowDropdown = new OverflowDropdown(false)
+			var overflowDropdown = new OverflowDropdown(true)
 			{
 				AlignToRightEdge = true,
 				Name = "Slice Settings Overflow Menu"

@@ -98,7 +98,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var initialMargin = buttonFactory.Margin;
 
-			var sliceButton = buttonFactory.Generate("Slice".Localize());
+			var sliceButton = buttonFactory.Generate("Slice".Localize().ToUpper());
 			sliceButton.ToolTipText = "Slice Parts".Localize();
 			sliceButton.Name = "Generate Gcode Button";
 			sliceButton.Margin = defaultMargin;

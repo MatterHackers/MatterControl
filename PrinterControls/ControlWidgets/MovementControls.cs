@@ -103,12 +103,12 @@ namespace MatterHackers.MatterControl.PrinterControls
 			return container;
 		}
 
-		public MovementControls()
+		public MovementControls(int headingPointSize)
 		{
 			var buttonFactory = ApplicationController.Instance.Theme.DisableableControlBase;
 
 			Button editButton;
-			movementControlsGroupBox = new AltGroupBox(buttonFactory.GenerateGroupBoxLabelWithEdit(new TextWidget("Movement".Localize(), pointSize: 18, textColor: ActiveTheme.Instance.SecondaryAccentColor), out editButton))
+			movementControlsGroupBox = new AltGroupBox(buttonFactory.GenerateGroupBoxLabelWithEdit(new TextWidget("Movement".Localize(), pointSize: headingPointSize, textColor: ActiveTheme.Instance.SecondaryAccentColor), out editButton))
 			{
 				Margin = new BorderDouble(0),
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
@@ -132,7 +132,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 				}
 			};
 
-
 			jogControls = new JogControls(new XYZColors());
 			jogControls.Margin = new BorderDouble(0);
 
@@ -140,7 +139,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			{
 				HAnchor = HAnchor.ParentLeftRight,
 				VAnchor = VAnchor.FitToChildren,
-				Padding = new BorderDouble(3, 5, 3, 0)
+				Padding = new BorderDouble(3, 0)
 			};
 
 			manualControlsLayout.AddChild(CreateDisableableContainer(GetHomeButtonBar()));
@@ -149,7 +148,10 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 			manualControlsLayout.AddChild(CreateSeparatorLine());
 			manualControlsLayout.AddChild(CreateDisableableContainer(GetHWDestinationBar()));
-			manualControlsLayout.AddChild(CreateSeparatorLine());
+
+			var separator = CreateSeparatorLine();
+			separator.Margin = new BorderDouble(0, 0, 0, 5);
+			manualControlsLayout.AddChild(separator);
 
 			movementControlsGroupBox.AddChild(manualControlsLayout);
 

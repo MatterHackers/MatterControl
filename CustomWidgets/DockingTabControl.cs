@@ -139,7 +139,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						ActiveTheme.Instance.TabLabelSelected,
 						RGBA_Bytes.Transparent,
 						ActiveTheme.Instance.TabLabelUnselected,
-						RGBA_Bytes.Transparent));
+						RGBA_Bytes.Transparent,
+						useUnderlineStyling: true));
 				}
 				else // control is floating
 				{

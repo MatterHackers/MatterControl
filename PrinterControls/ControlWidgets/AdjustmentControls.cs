@@ -52,9 +52,9 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		private EventHandler unregisterEvents;
 
-		public AdjustmentControls()
+		public AdjustmentControls(int headingPointSize)
 		{
-			var adjustmentControlsGroupBox = new AltGroupBox(new TextWidget("Tuning Adjustment".Localize(), pointSize: 18, textColor: ActiveTheme.Instance.SecondaryAccentColor))
+			var adjustmentControlsGroupBox = new AltGroupBox(new TextWidget("Tuning Adjustment".Localize(), pointSize: headingPointSize, textColor: ActiveTheme.Instance.SecondaryAccentColor))
 			{
 				Margin = 0,
 				BorderColor = ActiveTheme.Instance.PrimaryTextColor,

@@ -42,9 +42,9 @@ namespace MatterHackers.MatterControl.PrinterControls
 		
 		private CheckBox atxPowertoggleSwitch;
 
-		public PowerControls()
+		public PowerControls(int headingPointSize)
 		{
-			AltGroupBox fanControlsGroupBox = new AltGroupBox(new TextWidget("ATX Power Control".Localize(), pointSize: 18, textColor: ActiveTheme.Instance.SecondaryAccentColor));
+			AltGroupBox fanControlsGroupBox = new AltGroupBox(new TextWidget("ATX Power Control".Localize(), pointSize: headingPointSize, textColor: ActiveTheme.Instance.SecondaryAccentColor));
 			fanControlsGroupBox.Margin = new BorderDouble(0);
 			fanControlsGroupBox.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
 			fanControlsGroupBox.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;

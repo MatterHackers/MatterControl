@@ -108,15 +108,15 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 	public class MacroControls : ControlWidgetBase
 	{
-		public MacroControls()
+		public MacroControls(int headingPointSize)
 		{
-			this.AddChild(new MacroControlsWidget());
+			this.AddChild(new MacroControlsWidget(headingPointSize));
 		}
 	}
 
 	public class MacroControlsWidget : FlowLayoutWidget
 	{
-		public MacroControlsWidget()
+		public MacroControlsWidget(int headingPointSize)
 					: base(FlowDirection.TopToBottom)
 		{
 			var buttonFactory = ApplicationController.Instance.Theme.HomingButtons;
@@ -125,7 +125,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 			// add the widgets to this window
 			Button editButton;
-			AltGroupBox groupBox = new AltGroupBox(buttonFactory.GenerateGroupBoxLabelWithEdit(new TextWidget("Macros".Localize(), pointSize: 18, textColor: ActiveTheme.Instance.SecondaryAccentColor), out editButton));
+			AltGroupBox groupBox = new AltGroupBox(buttonFactory.GenerateGroupBoxLabelWithEdit(new TextWidget("Macros".Localize(), pointSize: headingPointSize, textColor: ActiveTheme.Instance.SecondaryAccentColor), out editButton));
 			editButton.Click += (sender, e) =>
 			{
 				EditMacrosWindow.Show();

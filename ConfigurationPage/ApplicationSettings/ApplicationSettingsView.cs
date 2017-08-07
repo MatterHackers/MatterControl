@@ -302,9 +302,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			{
 				UiThread.RunOnIdle(() =>
 				{
-					ApplicationMenuRow.AlwaysShowUpdateStatus = true;
 					UpdateControlData.Instance.CheckForUpdateUserRequested();
-					CheckForUpdateWindow.Show();
+					WizardWindow.Show<CheckForUpdatesPage>("/checkforupdates", "Check for Update");
 				});
 			};
 			this.AddSettingsRow(updateMatterControl);

@@ -49,14 +49,8 @@ namespace MatterHackers.MatterControl
 		{
 			this.BackgroundColor = ApplicationController.Instance.Theme.TabBodyBackground;
 			AnchorAll();
-			if (UserSettings.Instance.IsTouchScreen)
-			{
-				AddChild(new ManualPrinterControlsTouchScreen());
-			}
-			else
-			{
-				AddChild(new ManualPrinterControlsDesktop());
-			}
+
+			AddChild(new ManualPrinterControlsDesktop());
 		}
 
 		public override void OnLoad(EventArgs args)
@@ -78,15 +72,11 @@ namespace MatterHackers.MatterControl
 	public class ManualPrinterControlsDesktop : ScrollableWidget
 	{
 		private DisableableWidget fanControlsContainer;
-
 		private DisableableWidget macroControlsContainer;
 		private DisableableWidget actionControlsContainer;
-
-		private MovementControls movementControlsContainer;
-
-		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
-
 		private DisableableWidget tuningAdjustmentControlsContainer;
+		private MovementControls movementControlsContainer;
+		private DisableableWidget calibrationControlsContainer;
 
 		private EventHandler unregisterEvents;
 
@@ -99,6 +89,10 @@ namespace MatterHackers.MatterControl
 			HAnchor = HAnchor.Max_FitToChildren_ParentWidth;
 			VAnchor = VAnchor.ParentBottomTop;
 
+			var theme = ApplicationController.Instance.Theme;
+
+			int headingPointSize = theme.H1PointSize;
+
 			var controlsTopToBottomLayout = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.Max_FitToChildren_ParentWidth,
@@ -106,16 +100,22 @@ namespace MatterHackers.MatterControl
 				Name = "ManualPrinterControls.ControlsContainer",
 				Margin = new BorderDouble(0)
 			};
-			AddActionControls(controlsTopToBottomLayout);
+			this.AddChild(controlsTopToBottomLayout);
 
-			AddMovementControls(controlsTopToBottomLayout);
+			actionControlsContainer = new ActionControls();
+			controlsTopToBottomLayout.AddChild(actionControlsContainer);
+
+			movementControlsContainer = new MovementControls(headingPointSize);
+			controlsTopToBottomLayout.AddChild(movementControlsContainer);
 
 			if (!ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_hardware_leveling))
 			{
-				controlsTopToBottomLayout.AddChild(new CalibrationSettingsWidget(ApplicationController.Instance.Theme.ButtonFactory));
+				calibrationControlsContainer = new CalibrationSettingsWidget(theme.ButtonFactory, headingPointSize);
+				controlsTopToBottomLayout.AddChild(calibrationControlsContainer);
 			}
 
-			AddMacroControls(controlsTopToBottomLayout);
+			macroControlsContainer = new MacroControls(headingPointSize);
+			controlsTopToBottomLayout.AddChild(macroControlsContainer);
 
 			var linearPanel = new FlowLayoutWidget()
 			{
@@ -123,12 +123,20 @@ namespace MatterHackers.MatterControl
 			};
 			controlsTopToBottomLayout.AddChild(linearPanel);
 
-			AddFanControls(linearPanel);
-			AddAtxPowerControls(linearPanel);
+			fanControlsContainer = new FanControls(headingPointSize);
+			if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_fan))
+			{
+				controlsTopToBottomLayout.AddChild(fanControlsContainer);
+			}
 
-			AddAdjustmentControls(controlsTopToBottomLayout);
+#if !__ANDROID__
+			controlsTopToBottomLayout.AddChild(new PowerControls(headingPointSize));
+#endif
+			tuningAdjustmentControlsContainer = new AdjustmentControls(headingPointSize);
+			controlsTopToBottomLayout.AddChild(tuningAdjustmentControlsContainer);
 
-			AddChild(controlsTopToBottomLayout);
+			// HACK: this is a hack to make the layout engine fire again for this control
+			UiThread.RunOnIdle(() => tuningAdjustmentControlsContainer.Width = tuningAdjustmentControlsContainer.Width + 1);
 
 			PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
 			PrinterConnection.Instance.EnableChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
@@ -140,49 +148,6 @@ namespace MatterHackers.MatterControl
 		{
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
-		}
-
-		private void AddAdjustmentControls(FlowLayoutWidget controlsTopToBottomLayout)
-		{
-			tuningAdjustmentControlsContainer = new AdjustmentControls();
-			controlsTopToBottomLayout.AddChild(tuningAdjustmentControlsContainer);
-
-			// this is a hack to make the layout engine fire again for this control
-			UiThread.RunOnIdle(() => tuningAdjustmentControlsContainer.Width = tuningAdjustmentControlsContainer.Width + 1);
-		}
-
-		private void AddFanControls(FlowLayoutWidget controlsTopToBottomLayout)
-		{
-			fanControlsContainer = new FanControls();
-			if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_fan))
-			{
-				controlsTopToBottomLayout.AddChild(fanControlsContainer);
-			}
-		}
-
-		private void AddAtxPowerControls(FlowLayoutWidget controlsTopToBottomLayout)
-		{
-#if !__ANDROID__
-			controlsTopToBottomLayout.AddChild(new PowerControls());
-#endif
-		}
-
-		private void AddActionControls(FlowLayoutWidget controlsTopToBottomLayout)
-		{
-			actionControlsContainer = new ActionControls();
-			controlsTopToBottomLayout.AddChild(actionControlsContainer);
-		}
-
-		private void AddMacroControls(FlowLayoutWidget controlsTopToBottomLayout)
-		{
-			macroControlsContainer = new MacroControls();
-			controlsTopToBottomLayout.AddChild(macroControlsContainer);
-		}
-
-		private void AddMovementControls(FlowLayoutWidget controlsTopToBottomLayout)
-		{
-			movementControlsContainer = new MovementControls();
-			controlsTopToBottomLayout.AddChild(movementControlsContainer);
 		}
 
 		private void onPrinterStatusChanged(object sender, EventArgs e)
@@ -199,6 +164,7 @@ namespace MatterHackers.MatterControl
 				fanControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 				macroControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 				actionControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+				calibrationControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 				tuningAdjustmentControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 			}
 			else // we at least have a printer selected
@@ -215,6 +181,7 @@ namespace MatterHackers.MatterControl
 						macroControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
 						actionControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 						tuningAdjustmentControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+						calibrationControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 
 						foreach (var widget in movementControlsContainer.DisableableWidgets)
 						{
@@ -231,6 +198,7 @@ namespace MatterHackers.MatterControl
 						macroControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 						actionControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 						tuningAdjustmentControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+						calibrationControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 
 						foreach (var widget in movementControlsContainer.DisableableWidgets)
 						{
@@ -245,6 +213,7 @@ namespace MatterHackers.MatterControl
 						macroControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
 						actionControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 						tuningAdjustmentControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+						calibrationControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 						break;
 
 					case CommunicationStates.PreparingToPrint:
@@ -259,259 +228,7 @@ namespace MatterHackers.MatterControl
 								macroControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
 								actionControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 								tuningAdjustmentControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-
-								foreach(var widget in movementControlsContainer.DisableableWidgets)
-								{
-									widget?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-								}
-
-								movementControlsContainer?.jogControls.SetEnabledLevels(true, false);
-								break;
-
-							default:
-								throw new NotImplementedException();
-						}
-						break;
-
-					case CommunicationStates.Paused:
-						movementControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						fanControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						macroControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						actionControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						tuningAdjustmentControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-
-						foreach (var widget in movementControlsContainer.DisableableWidgets)
-						{
-							widget?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						}
-						movementControlsContainer?.jogControls.SetEnabledLevels(false, true);
-
-						break;
-
-					default:
-						throw new NotImplementedException();
-				}
-			}
-		}
-	}
-
-	public class ManualPrinterControlsTouchScreen : TabControl
-	{
-		event EventHandler unregisterEvents;
-
-		MovementControls movementControlsContainer;
-		DisableableWidget fanControlsContainer;
-		DisableableWidget tuningAdjustmentControlsContainer;
-		DisableableWidget terminalControlsContainer;
-		DisableableWidget macroControlsContainer;
-		DisableableWidget actionControlsContainer;
-
-		int TabTextSize;
-
-		TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
-
-		public ManualPrinterControlsTouchScreen()
-			: base(Orientation.Vertical)
-		{
-			RGBA_Bytes unselectedTextColor = ActiveTheme.Instance.TabLabelUnselected;
-
-			this.TabBar.BackgroundColor = ActiveTheme.Instance.TransparentLightOverlay;
-			this.TabBar.BorderColor = RGBA_Bytes.Transparent;
-			this.TabBar.Margin = new BorderDouble(0);
-			this.TabBar.Padding = new BorderDouble(4, 4);
-
-			this.AnchorAll();
-			this.VAnchor |= VAnchor.FitToChildren;
-
-			this.Margin = new BorderDouble(0);
-			this.TabTextSize = 13;
-
-			// add action tab
-			{
-				GuiWidget actionContainerContainer = new GuiWidget();
-				actionContainerContainer.Padding = new BorderDouble(6);
-				actionContainerContainer.AnchorAll();
-
-				actionControlsContainer = new ActionControls();
-				actionControlsContainer.VAnchor = VAnchor.ParentTop;
-				if (ActiveSliceSettings.Instance.ActionMacros().Any())
-				{
-					actionContainerContainer.AddChild(actionControlsContainer);
-				}
-
-				if (ActiveSliceSettings.Instance.ActionMacros().Any())
-				{
-					TabPage actionTabPage = new TabPage(actionContainerContainer, "Actions".Localize().ToUpper());
-					this.AddTab(new SimpleTextTabWidget(actionTabPage, "Actions Tab", TabTextSize,
-						ActiveTheme.Instance.SecondaryAccentColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
-				}
-			}
-
-			// add movement tab
-			{
-				GuiWidget movementContainerContainer = new GuiWidget();
-				movementContainerContainer.Padding = new BorderDouble(6);
-				movementContainerContainer.AnchorAll();
-
-				movementControlsContainer = new MovementControls();
-				movementControlsContainer.VAnchor = VAnchor.ParentTop;
-
-				movementContainerContainer.AddChild(movementControlsContainer);
-
-				TabPage movementTabPage = new TabPage(movementContainerContainer, "Movement".Localize().ToUpper());
-				this.AddTab(new SimpleTextTabWidget(movementTabPage, "Movement Tab", TabTextSize,
-					ActiveTheme.Instance.SecondaryAccentColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
-			}
-
-			// add macro tab
-			{
-				GuiWidget macrosContainerContainer = new GuiWidget();
-				macrosContainerContainer.Padding = new BorderDouble(6);
-				macrosContainerContainer.AnchorAll();
-
-				macroControlsContainer = new MacroControls();
-				macroControlsContainer.VAnchor |= VAnchor.ParentTop;
-				macrosContainerContainer.AddChild(macroControlsContainer);
-
-
-				TabPage macrosTabPage = new TabPage(macrosContainerContainer, "Macros".Localize().ToUpper());
-				this.AddTab(new SimpleTextTabWidget(macrosTabPage, "Macros Tab", TabTextSize,
-					ActiveTheme.Instance.SecondaryAccentColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
-			}
-
-			if (ActiveSliceSettings.Instance.GetValue<bool>("has_fan"))
-			{
-				// add fan tab
-				GuiWidget fanContainerContainer = new GuiWidget();
-				fanContainerContainer.Padding = new BorderDouble(6);
-				fanContainerContainer.AnchorAll();
-
-				fanControlsContainer = new FanControls();
-				fanControlsContainer.VAnchor = VAnchor.ParentTop;
-
-				fanContainerContainer.AddChild(fanControlsContainer);
-
-				TabPage fanTabPage = new TabPage(fanContainerContainer, "Fan Controls".Localize().ToUpper());
-				this.AddTab(new SimpleTextTabWidget(fanTabPage, "Fan Controls Tab", TabTextSize,
-						ActiveTheme.Instance.SecondaryAccentColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
-			}
-
-			// add tunning tab
-			{
-				GuiWidget tuningContainerContainer = new GuiWidget();
-				tuningContainerContainer.Padding = new BorderDouble(6);
-				tuningContainerContainer.AnchorAll();
-
-				tuningAdjustmentControlsContainer = new AdjustmentControls();
-				tuningAdjustmentControlsContainer.VAnchor = VAnchor.ParentTop;
-
-				tuningContainerContainer.AddChild(tuningAdjustmentControlsContainer);
-
-				TabPage tuningTabPage = new TabPage(tuningContainerContainer, "Tuning Adjust".Localize().ToUpper());
-				this.AddTab(new SimpleTextTabWidget(tuningTabPage, "Tuning Tab", TabTextSize,
-					ActiveTheme.Instance.SecondaryAccentColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
-			}
-
-			// add terminal tab
-			{
-				GuiWidget terminalContainerContainer = new GuiWidget();
-				terminalContainerContainer.Padding = new BorderDouble(6);
-				terminalContainerContainer.AnchorAll();
-
-				terminalControlsContainer = new TerminalControls();
-				terminalControlsContainer.VAnchor |= VAnchor.ParentBottomTop;
-
-				terminalContainerContainer.AddChild(terminalControlsContainer);
-
-				TabPage terminalTabPage = new TabPage(terminalContainerContainer, "Terminal".Localize().ToUpper());
-				this.AddTab(new SimpleTextTabWidget(terminalTabPage, "Terminal Tab", TabTextSize,
-					ActiveTheme.Instance.SecondaryAccentColor, new RGBA_Bytes(), unselectedTextColor, new RGBA_Bytes()));
-			}
-
-			PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
-			PrinterConnection.Instance.EnableChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
-
-			SetVisibleControls();
-		}
-
-		public override void OnClosed(ClosedEventArgs e)
-		{
-			unregisterEvents?.Invoke(this, null);
-
-			base.OnClosed(e);
-		}
-
-		private void SetVisibleControls()
-		{
-			if (ActiveSliceSettings.Instance == null)
-			{
-				movementControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-				fanControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-				tuningAdjustmentControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-
-				macroControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-				actionControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-			}
-			else // we at least have a printer selected
-			{
-				switch (PrinterConnection.Instance.CommunicationState)
-				{
-					case CommunicationStates.Disconnecting:
-					case CommunicationStates.ConnectionLost:
-					case CommunicationStates.Disconnected:
-					case CommunicationStates.AttemptingToConnect:
-					case CommunicationStates.FailedToConnect:
-						movementControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
-						fanControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-						tuningAdjustmentControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-						macroControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
-						actionControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-
-						foreach (var widget in movementControlsContainer.DisableableWidgets)
-						{
-							widget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						}
-						movementControlsContainer.jogControls.SetEnabledLevels(false, false);
-
-						break;
-
-					case CommunicationStates.FinishedPrint:
-					case CommunicationStates.Connected:
-						movementControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						fanControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						macroControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						actionControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						tuningAdjustmentControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-
-						foreach (var widget in movementControlsContainer.DisableableWidgets)
-						{
-							widget.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						}
-						movementControlsContainer.jogControls.SetEnabledLevels(false, true);
-
-						break;
-
-					case CommunicationStates.PrintingFromSd:
-						movementControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
-						fanControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						macroControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
-						actionControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-						tuningAdjustmentControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-						break;
-
-					case CommunicationStates.PreparingToPrint:
-					case CommunicationStates.Printing:
-						switch (PrinterConnection.Instance.PrintingState)
-						{
-							case DetailedPrintingState.HomingAxis:
-							case DetailedPrintingState.HeatingBed:
-							case DetailedPrintingState.HeatingExtruder:
-							case DetailedPrintingState.Printing:
-								fanControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-								tuningAdjustmentControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-								macroControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
-								actionControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-
+								calibrationControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 
 								foreach (var widget in movementControlsContainer.DisableableWidgets)
 								{
@@ -519,7 +236,6 @@ namespace MatterHackers.MatterControl
 								}
 
 								movementControlsContainer?.jogControls.SetEnabledLevels(true, false);
-
 								break;
 
 							default:
@@ -530,10 +246,10 @@ namespace MatterHackers.MatterControl
 					case CommunicationStates.Paused:
 						movementControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 						fanControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						tuningAdjustmentControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 						macroControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 						actionControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 						tuningAdjustmentControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+						calibrationControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 
 						foreach (var widget in movementControlsContainer.DisableableWidgets)
 						{
@@ -547,12 +263,6 @@ namespace MatterHackers.MatterControl
 						throw new NotImplementedException();
 				}
 			}
-		}
-
-		private void onPrinterStatusChanged(object sender, EventArgs e)
-		{
-			SetVisibleControls();
-			UiThread.RunOnIdle(this.Invalidate);
 		}
 	}
 }

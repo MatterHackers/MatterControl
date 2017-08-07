@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2016, John Lewin
+Copyright (c) 2017, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,14 +27,12 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
+using MatterHackers.Agg;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.Agg;
-using System.Threading.Tasks;
 
 public class LicenseAgreementPage : WizardPage
 {
@@ -75,11 +73,6 @@ public class LicenseAgreementPage : WizardPage
 
 		footerRow.Visible = true;
 
-		UiThread.RunOnIdle(MakeFrontWindow, .2);
-	}
-
-	private void MakeFrontWindow()
-	{
-		this.WizardWindow.BringToFront();
+		UiThread.RunOnIdle(this.WizardWindow.BringToFront, .2);
 	}
 }
