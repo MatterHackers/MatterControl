@@ -76,6 +76,7 @@ namespace MatterHackers.MatterControl
 		private DisableableWidget actionControlsContainer;
 		private DisableableWidget tuningAdjustmentControlsContainer;
 		private MovementControls movementControlsContainer;
+		private DisableableWidget calibrationControlsContainer;
 
 		private EventHandler unregisterEvents;
 
@@ -107,7 +108,8 @@ namespace MatterHackers.MatterControl
 
 			if (!ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_hardware_leveling))
 			{
-				controlsTopToBottomLayout.AddChild(new CalibrationSettingsWidget(ApplicationController.Instance.Theme.ButtonFactory));
+				calibrationControlsContainer = new CalibrationSettingsWidget(ApplicationController.Instance.Theme.ButtonFactory, headingPointSize);
+				controlsTopToBottomLayout.AddChild(calibrationControlsContainer);
 			}
 
 			macroControlsContainer = new MacroControls(headingPointSize);
@@ -160,6 +162,7 @@ namespace MatterHackers.MatterControl
 				fanControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 				macroControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 				actionControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+				calibrationControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 				tuningAdjustmentControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 			}
 			else // we at least have a printer selected
@@ -176,6 +179,7 @@ namespace MatterHackers.MatterControl
 						macroControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
 						actionControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 						tuningAdjustmentControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+						calibrationControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 
 						foreach (var widget in movementControlsContainer.DisableableWidgets)
 						{
@@ -192,6 +196,7 @@ namespace MatterHackers.MatterControl
 						macroControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 						actionControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 						tuningAdjustmentControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+						calibrationControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 
 						foreach (var widget in movementControlsContainer.DisableableWidgets)
 						{
@@ -206,6 +211,7 @@ namespace MatterHackers.MatterControl
 						macroControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
 						actionControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 						tuningAdjustmentControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+						calibrationControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 						break;
 
 					case CommunicationStates.PreparingToPrint:
@@ -220,8 +226,9 @@ namespace MatterHackers.MatterControl
 								macroControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
 								actionControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 								tuningAdjustmentControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+								calibrationControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 
-								foreach(var widget in movementControlsContainer.DisableableWidgets)
+								foreach (var widget in movementControlsContainer.DisableableWidgets)
 								{
 									widget?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 								}
@@ -240,6 +247,7 @@ namespace MatterHackers.MatterControl
 						macroControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 						actionControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 						tuningAdjustmentControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+						calibrationControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 
 						foreach (var widget in movementControlsContainer.DisableableWidgets)
 						{

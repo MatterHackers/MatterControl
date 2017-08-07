@@ -158,7 +158,6 @@
     <Compile Include="ConfigurationPage\PrintLeveling\LevelWizard3Point.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\LevelWizardBase.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\PrintLevelingData.cs" />
-    <Compile Include="ConfigurationPage\SettingsViewBase.cs" />
     <Compile Include="ControlElements\ConditionalClickWidget.cs" />
     <Compile Include="ControlElements\AttentionGetter.cs" />
     <Compile Include="CustomWidgets\AltGroupBox.cs" />
