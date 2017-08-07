@@ -58,7 +58,6 @@ namespace MatterHackers.MatterControl.ActionBar
 		private Button selectPrinterButton;
 		private List<Button> allPrintButtons = new List<Button>();
 
-		private Button touchScreenConnectButton;
 		private Button cancelConnectButton;
 		private Button resetConnectionButton;
 		private Button resumeButton;
@@ -104,29 +103,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			finishSetupButton.ToolTipText = "Run setup configuration for printer.".Localize();
 			finishSetupButton.Margin = defaultMargin;
 			finishSetupButton.Click += onStartButton_Click;
-
-			touchScreenConnectButton = buttonFactory.GenerateTooltipButton("Connect".Localize().ToUpper(), StaticData.Instance.LoadIcon("connect.png", 16,16).InvertLightness());
-			touchScreenConnectButton.ToolTipText = "Connect to the printer".Localize();
-			touchScreenConnectButton.Margin = new BorderDouble(0, 6, 6, 3);
-			touchScreenConnectButton.Click += (s, e) =>
-			{
-				if (ActiveSliceSettings.Instance.PrinterSelected)
-				{
-#if __ANDROID__
-					if (!ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.enable_network_printing)
-					    && !FrostedSerialPort.HasPermissionToDevice())
-					{
-						// Opens the USB device permissions dialog which will call back into our UsbDevice broadcast receiver to connect
-						FrostedSerialPort.RequestPermissionToDevice(RunTroubleShooting);
-					}
-					else
-#endif
-					{
-						PrinterConnection.Instance.HaltConnectionThread();
-						PrinterConnection.Instance.ConnectToActivePrinter(true);
-					}
-				}
-			};
 
 			addPrinterButton = buttonFactory.GenerateTooltipButton("Add Printer".Localize().ToUpper());
 			addPrinterButton.ToolTipText = "Select and add a new printer.".Localize();
@@ -194,9 +170,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			this.Margin = new BorderDouble(0, 0, 10, 0);
 			this.HAnchor = HAnchor.FitToChildren;
 
-			parentWidget.AddChild(touchScreenConnectButton);
-			allPrintButtons.Add(touchScreenConnectButton);
-
 			parentWidget.AddChild(addPrinterButton);
 			allPrintButtons.Add(addPrinterButton);
 
@@ -251,19 +224,8 @@ namespace MatterHackers.MatterControl.ActionBar
 			{
 				if (!ProfileManager.Instance.ActiveProfiles.Any())
 				{
-					this.activePrintButtons.Add(addPrinterButton);
-				}
-				else if (UserSettings.Instance.IsTouchScreen)
-				{
-					// only on touch screen because desktop has a printer list and a connect button
-					if (ActiveSliceSettings.Instance.PrinterSelected)
-					{
-						this.activePrintButtons.Add(touchScreenConnectButton);
-					}
-					else // no printer selected
-					{
-						this.activePrintButtons.Add(selectPrinterButton);
-					}
+					// TODO: Possibly upsell add printer - ideally don't show printer tab, only show Plus tab
+					//this.activePrintButtons.Add(addPrinterButton);
 				}
 
 				ShowActiveButtons();

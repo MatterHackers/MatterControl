@@ -301,8 +301,22 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		static public void UserRequestedConnectToActivePrinter()
 		{
-			PrinterConnection.Instance.HaltConnectionThread();
-			PrinterConnection.Instance.ConnectToActivePrinter(true);
+			if (ActiveSliceSettings.Instance.PrinterSelected)
+			{
+#if __ANDROID__
+				if (!ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.enable_network_printing)
+					&& !FrostedSerialPort.HasPermissionToDevice())
+				{
+					// Opens the USB device permissions dialog which will call back into our UsbDevice broadcast receiver to connect
+					FrostedSerialPort.RequestPermissionToDevice(RunTroubleShooting);
+				}
+				else
+#endif
+				{
+					PrinterConnection.Instance.HaltConnectionThread();
+					PrinterConnection.Instance.ConnectToActivePrinter(true);
+				}
+			}
 		}
 
 		private void SetVisibleStates(object sender, EventArgs e)
