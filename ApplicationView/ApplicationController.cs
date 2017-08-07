@@ -1161,6 +1161,13 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
+		public event EventHandler<WidgetSourceEventArgs> AddPrintersTabRightElement;
+
+		public void NotifyPrintersTabRightElement(GuiWidget sourceExentionArea)
+		{
+			AddPrintersTabRightElement?.Invoke(this, new WidgetSourceEventArgs(sourceExentionArea));
+		}
+
 		private void OnActivePrintItemChanged(EventArgs e)
 		{
 			ActivePrintItemChanged.CallEvents(this, e);
@@ -1343,10 +1350,16 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-
-
-
 		public RootedObjectEventHandler ActivePrintItemChanged = new RootedObjectEventHandler();
+	}
 
+	public class WidgetSourceEventArgs : EventArgs
+	{
+		public GuiWidget Source { get; }
+
+		public WidgetSourceEventArgs(GuiWidget source)
+		{
+			this.Source = source;
+		}
 	}
 }
