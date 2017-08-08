@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.Library
 
 		public ILibraryContainer Parent { get; set; } = null;
 
-		public GuiWidget DefaultView { get; } = null;
+		public Type DefaultView { get; } = null;
 
 		public string ID { get; } = "rootLibraryProvider";
 
