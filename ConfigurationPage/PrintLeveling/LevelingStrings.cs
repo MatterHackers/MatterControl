@@ -36,9 +36,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	public class LevelingStrings
 	{
 		public string homingPageStepText = "Homing The Printer".Localize();
+		public string waitingForTempPageStepText = "Waiting For Bed To Heat".Localize();
 		public string initialPrinterSetupStepText = "Initial Printer Setup".Localize();
+		public string materialStepText = "Select Material".Localize();
 		public string requiredPageInstructions1 = "Congratulations on connecting to your new printer. Before starting your first print we need to run a simple calibration procedure.";
 		public string requiredPageInstructions2 = "The next few screens will walk your through the print leveling wizard.";
+		public string materialPageInstructions1 = "The temperature of the bed can have a significant effect on the quality of leveling.";
+		public string materialPageInstructions2 = "Please select the material you will be printing, so we can adjust the temperature before calibrating.";
 		public string stepTextBeg = "Step".Localize();
 		public string stepTextEnd = "of".Localize();
 		private string doneLine1 = "Congratulations!";
@@ -46,19 +50,21 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		private string doneLine2 = "Remove the paper".Localize();
 		private string doneLine3 = "To re-calibrate the printer, or to turn off Auto Print Leveling, the print leveling controls can be found under 'Options'->'Calibration'.";
 		private string doneLine3b = "Click 'Done' to close this window.".Localize();
-		private string homingLine1 = "The printer should now be 'homing'. Once it is finished homing we will move it to the first point to sample.";
+		private string homingLine1 = "The printer should now be 'homing'. Once it is finished homing we will heat the bed.";
 		private string homingLine1b = "To complete the next few steps you will need".Localize();
 		private string homingLine2 = "A standard sheet of paper".Localize();
 		private string homingLine3 = "We will use this paper to measure the distance between the extruder and the bed.";
 		private string homingLine3b = "Click 'Next' to continue.".Localize();
 		private int stepNumber = 1;
 		private string welcomeLine1 = "Welcome to the print leveling wizard. Here is a quick overview on what we are going to do.".Localize();
-		private string welcomeLine2 = "Home the printer".Localize();
-		private string welcomeLine3 = "Sample the bed at {0} points".Localize();
-		private string welcomeLine4 = "Turn auto leveling on".Localize();
-		private string welcomeLine5 = "We should be done in less than {0} minutes.".Localize();
-		private string welcomeLine6 = "Note: Be sure the tip of the extruder is clean and the bed is clear.".Localize();
-		private string welcomeLine7 = "Click 'Next' to continue.".Localize();
+		private string welcomeLine2 = "Select the material you are printing".Localize();
+		private string welcomeLine3 = "Home the printer".Localize();
+		private string welcomeLine4 = "Heat the bed".Localize();
+		private string welcomeLine5 = "Sample the bed at {0} points".Localize();
+		private string welcomeLine6 = "Turn auto leveling on".Localize();
+		private string welcomeLine7 = "We should be done in less than {0} minutes.".Localize();
+		private string welcomeLine8 = "Note: Be sure the tip of the extruder is clean and the bed is clear.".Localize();
+		private string welcomeLine9 = "Click 'Next' to continue.".Localize();
 
 		public string DoneInstructions
 		{
@@ -72,6 +78,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				{
 					return "{0}{1}\n\n\t• {2}\n\n{3}{4}".FormatWith(doneLine1, doneLine1b, doneLine2, doneLine3, doneLine3b);
 				}
+			}
+		}
+
+		public string waitingForTempPageInstructions
+		{
+			get
+			{
+				return "Waiting for the bed to heat up.\nThis will improve the accuracy of print leveling.\n\nClick 'Next' when the bed reaches temp.";
 			}
 		}
 
@@ -104,24 +118,26 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				numberOfMinutes = 2;
 			}
 
-			return "{0}\n\n\t• {1}\n\t• {2}\n\t• {3}\n\n{4}\n\n{5}\n\n{6}".FormatWith(
+			return "{0}\n\n\t• {1}\n\t• {2}\n\t• {3}\n\t• {4}\n\t• {5}\n\n{6}\n\n{7}\n\n{8}".FormatWith(
 				this.welcomeLine1,
 				this.welcomeLine2,
-				this.WelcomeLine3(numberOfSteps),
+				this.welcomeLine3,
 				this.welcomeLine4,
-				this.WelcomeLine5(numberOfMinutes),
+				this.WelcomeLine5(numberOfSteps),
 				this.welcomeLine6,
-				this.welcomeLine7);
+				this.WelcomeLine7(numberOfMinutes),
+				this.welcomeLine8,
+				this.welcomeLine9);
 		}
 
-		private string WelcomeLine3(int numberOfPoints)
+		private string WelcomeLine5(int numberOfPoints)
 		{
-			return welcomeLine3.FormatWith(numberOfPoints);
+			return welcomeLine5.FormatWith(numberOfPoints);
 		}
 
-		private string WelcomeLine5(int numberOfMinutes)
+		private string WelcomeLine7(int numberOfMinutes)
 		{
-			return welcomeLine5.FormatWith(numberOfMinutes);
+			return welcomeLine7.FormatWith(numberOfMinutes);
 		}
 	}
 }

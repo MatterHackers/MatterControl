@@ -52,9 +52,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 		public RunningMacroPage(MacroCommandData macroData)
 					: base("Cancel", macroData.title)
 		{
-			//TextWidget syncingText = new TextWidget(message, textColor: ActiveTheme.Instance.PrimaryTextColor);
-			//contentRow.AddChild(syncingText);
-
 			cancelButton.Click += (s, e) =>
 			{
 				PrinterConnectionAndCommunication.Instance.MacroCancel();
