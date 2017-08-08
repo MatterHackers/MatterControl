@@ -48,6 +48,81 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		}
 	}
 
+	public class SelectMaterialPage : InstructionsPage
+	{
+		public SelectMaterialPage(string pageDescription, string instructionsText)
+			: base(pageDescription, instructionsText)
+		{
+			int extruderIndex = 0;
+			var materialSelector = new PresetSelectorWidget(string.Format($"{"Material".Localize()} {extruderIndex + 1}"), RGBA_Bytes.Transparent, NamedSettingsLayers.Material, extruderIndex);
+			materialSelector.BackgroundColor = RGBA_Bytes.Transparent;
+			materialSelector.Margin = new BorderDouble(0, 0, 0, 15);
+			topToBottomControls.AddChild(materialSelector);
+		}
+	}
+
+	public class WaitForTempPage : InstructionsPage
+	{
+		private ProgressBar progressBar;
+		private TextWidget progressBarText;
+		double startingTemp;
+
+		public WaitForTempPage(string pageDescription, string instructionsText)
+			: base(pageDescription, instructionsText)
+		{
+			var holder = new FlowLayoutWidget();
+			progressBar = new ProgressBar((int)(150 * GuiWidget.DeviceScale), (int)(15 * GuiWidget.DeviceScale))
+			{
+				FillColor = ActiveTheme.Instance.PrimaryAccentColor,
+				BorderColor = ActiveTheme.Instance.PrimaryTextColor,
+				BackgroundColor = RGBA_Bytes.White,
+				Margin = new BorderDouble(3, 0, 0, 10),
+			};
+			progressBarText = new TextWidget("", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			{
+				AutoExpandBoundsToText = true,
+				Margin = new BorderDouble(5, 0, 0, 0),
+			};
+			holder.AddChild(progressBar);
+			holder.AddChild(progressBarText);
+			topToBottomControls.AddChild(holder);
+		}
+
+		public override void PageIsBecomingActive()
+		{
+			startingTemp = PrinterConnectionAndCommunication.Instance.GetActualExtruderTemperature(0);
+			UiThread.RunOnIdle(ShowTempChangeProgress);
+
+			// start heating the bed and show our progress
+			PrinterConnectionAndCommunication.Instance.TargetBedTemperature = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.bed_temperature);
+
+			// hook our parent so we can turn off the extruder when we are done with leveling
+			Parent.Closed += (s, e) =>
+			{
+				// Make sure when the wizard closes we turn off the bed heating
+				PrinterConnectionAndCommunication.Instance.TargetBedTemperature = 0;
+			};
+
+			base.PageIsBecomingActive();
+		}
+
+		private void ShowTempChangeProgress()
+		{
+			progressBar.Visible = true;
+			double targetTemp = PrinterConnectionAndCommunication.Instance.TargetBedTemperature;
+			double actualTemp = PrinterConnectionAndCommunication.Instance.ActualBedTemperature;
+			double totalDelta = targetTemp - startingTemp;
+			double currentDelta = actualTemp - startingTemp;
+			double ratioDone = totalDelta != 0 ? (currentDelta / totalDelta) : 1;
+			progressBar.RatioComplete = Math.Min(Math.Max(0, ratioDone), 1);
+			progressBarText.Text = $"Temperature: {actualTemp:0} / {targetTemp:0}";
+			if (!HasBeenClosed)
+			{
+				UiThread.RunOnIdle(ShowTempChangeProgress, 1);
+			}
+		}
+	}
+
 	public class LastPagelInstructions : InstructionsPage
 	{
 		protected WizardControl container;

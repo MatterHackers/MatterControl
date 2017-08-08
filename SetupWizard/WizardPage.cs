@@ -11,7 +11,7 @@ namespace MatterHackers.MatterControl
 		protected FlowLayoutWidget contentRow;
 		protected FlowLayoutWidget footerRow;
 
-		protected TextWidget headerLabel;
+		protected WrappedTextWidget headerLabel;
 		protected Button cancelButton;
 
 		protected TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory() { fontSize = 16 };
@@ -87,9 +87,9 @@ namespace MatterHackers.MatterControl
 				HAnchor = HAnchor.ParentLeftRight
 			};
 
-			headerLabel = new TextWidget(unlocalizedTextForTitle.Localize(), pointSize: 24, textColor: ActiveTheme.Instance.SecondaryAccentColor)
+			headerLabel = new WrappedTextWidget(unlocalizedTextForTitle.Localize(), pointSize: 24, textColor: ActiveTheme.Instance.SecondaryAccentColor)
 			{
-				AutoExpandBoundsToText = true
+				HAnchor = HAnchor.ParentLeftRight
 			};
 			headerRow.AddChild(headerLabel);
 
@@ -118,13 +118,21 @@ namespace MatterHackers.MatterControl
 				mainContainer.Padding = new BorderDouble(3, 5, 3, 5);
 				headerRow.Padding = new BorderDouble(0, 3, 0, 3);
 
-				headerLabel.PointSize = 14;
+				headerLabel.TextWidget.PointSize = 14;
 				headerLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 				contentRow.Padding = new BorderDouble(5);
 				footerRow.Margin = new BorderDouble(0, 3);
 			}
 
 			this.AddChild(mainContainer);
+		}
+
+		public virtual void PageIsBecomingActive()
+		{
+		}
+
+		public virtual void PageIsBecomingInactive()
+		{
 		}
 	}
 }
