@@ -257,17 +257,26 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			base.OnMouseDown(mouseEvent);
 		}
 
+
+		private bool contentLoadActive = false;
+
 		public override void OnMouseMove(MouseEventArgs mouseEvent)
 		{
 			var delta = mouseDownAt - mouseEvent.Position;
 
+			// TODO: dragActive in this case is better determined by the mouse being over the View3D control
 			bool dragActive = mouseDownInBounds && delta.Length > 40;
+
 			// If dragging and the drag threshold has been hit, start a drag operation but loading the drag items
 			if (dragActive 
 				&& (listViewItem.Model is ILibraryContentStream || listViewItem.Model is ILibraryContentItem))
 			{
-				if (view3DWidget != null && view3DWidget.DragDropSource == null)
+				if (view3DWidget != null 
+					&& !contentLoadActive
+					&& view3DWidget.DragDropSource == null)
 				{
+					contentLoadActive = true;
+
 					if (listViewItem.Model is ILibraryContentStream contentModel)
 					{
 						// Update the ListView pointer for the dragging item
@@ -279,17 +288,17 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 						progressBar.TrackingObject = contentResult.Object3D;
 
-						if (contentResult != null)
-						{
-							// Assign a new drag source
-							view3DWidget.DragDropSource = contentResult.Object3D;
-						}
+						// Assign a new drag source
+						view3DWidget.DragDropSource = contentResult?.Object3D;
+
+						contentLoadActive = false;
 					}
-					else if (listViewItem.Model is ILibraryContentItem)
+					else if (listViewItem.Model is ILibraryContentItem contentItem)
 					{
-						(listViewItem.Model as ILibraryContentItem).GetContent(null).ContinueWith((task) =>
+						contentItem.GetContent(null).ContinueWith((task) =>
 						{
 							view3DWidget.DragDropSource = task.Result;
+							contentLoadActive = false;
 						});
 					}
 				} 
