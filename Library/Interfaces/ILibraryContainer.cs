@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl.Library
 		string KeywordFilter { get; set; }
 		bool IsProtected { get; }
 
-		GuiWidget DefaultView { get; }
+		Type DefaultView { get; }
 
 		event EventHandler Reloaded;
 

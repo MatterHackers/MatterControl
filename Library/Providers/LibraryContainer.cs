@@ -78,7 +78,7 @@ namespace MatterHackers.MatterControl.Library
 		public string ID { get; set; }
 		public string Name { get; set; }
 
-		public GuiWidget DefaultView { get; protected set; }
+		public Type DefaultView { get; protected set; }
 
 		public List<ILibraryContainerLink> ChildContainers { get; set; }
 		public bool IsProtected => true;

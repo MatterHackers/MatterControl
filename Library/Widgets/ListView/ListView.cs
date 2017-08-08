@@ -118,17 +118,22 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			var activeContainer = e.ActiveContainer;
 
-			var containerDefaultView = activeContainer?.DefaultView;
-
-			if (containerDefaultView != null 
-				&& containerDefaultView != this.ListContentView)
+			Type targetType = activeContainer?.DefaultView;
+			if (targetType != null 
+				&& targetType != this.ListContentView.GetType())
 			{
 				stashedView = this.contentView;
-				// Critical that assign to the contentView backing field and not the ListContentView property that uses it
-				this.SetContentView(activeContainer.DefaultView);
+
+				// If the current view doesn't match the view requested by the container, construct and switch to the requested view
+				var targetView = Activator.CreateInstance(targetType) as GuiWidget;
+				if (targetView != null)
+				{
+					this.SetContentView(targetView);
+				}
 			}
 			else if (stashedView != null)
 			{
+				// Switch back to the original view
 				this.SetContentView(stashedView);
 				stashedView = null;
 			}
