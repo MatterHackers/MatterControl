@@ -366,18 +366,29 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 					var library = ApplicationController.Instance.Library;
 
-					foreach (var item in selectedLibraryItems.Where(o => o is ILibraryContentStream))
+					foreach (var item in selectedLibraryItems)
 					{
-						var contentProvider = library.GetContentProvider(item) as ISceneContentProvider;
-						var result = contentProvider?.CreateItem(item, null);
-
-						// TODO: Bounding box should be part of IObject3D state so we don't have this constraint
-						// We must wait for the mesh to load so we can use it's bounds below to calculate its position
-						await result.MeshLoaded;
-
-						if (result?.Object3D != null)
+						if (item is ILibraryContentStream contentModel)
 						{
-							itemsToAdd.Add(result.Object3D);
+							var contentProvider = library.GetContentProvider(item) as ISceneContentProvider;
+
+							var result = contentProvider?.CreateItem(item, null);
+
+							// Wait for the content to load
+							await result.MeshLoaded;
+
+							if (result?.Object3D != null)
+							{
+								itemsToAdd.Add(result.Object3D);
+							}
+						}
+						else if (item is ILibraryContentItem contentItem)
+						{
+							var content = await contentItem.GetContent(null);
+							if (content != null)
+							{
+								itemsToAdd.Add(content);
+							}
 						}
 					}
 
