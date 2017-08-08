@@ -118,6 +118,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			pauseButton = buttonFactory.GenerateTooltipButton("Pause".Localize().ToUpper());
 			pauseButton.ToolTipText = "Pause the current print".Localize();
+			pauseButton.Margin = defaultMargin;
 			pauseButton.Click += (s, e) =>
 			{
 				UiThread.RunOnIdle(PrinterConnection.Instance.RequestPause);
@@ -128,6 +129,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			cancelConnectButton = buttonFactory.GenerateTooltipButton("Cancel Connect".Localize().ToUpper());
 			cancelConnectButton.ToolTipText = "Stop trying to connect to the printer.".Localize();
+			cancelConnectButton.Margin = defaultMargin;
 			cancelConnectButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
 				ApplicationController.Instance.ConditionalCancelPrint();
@@ -137,6 +139,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			cancelButton = buttonFactory.GenerateTooltipButton("Cancel".Localize().ToUpper());
 			cancelButton.ToolTipText = "Stop the current print".Localize();
 			cancelButton.Name = "Cancel Print Button";
+			cancelButton.Margin = defaultMargin;
 			cancelButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
 				ApplicationController.Instance.ConditionalCancelPrint();
@@ -145,6 +148,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			resumeButton = buttonFactory.GenerateTooltipButton("Resume".Localize().ToUpper());
 			resumeButton.ToolTipText = "Resume the current print".Localize();
+			resumeButton.Margin = defaultMargin;
 			resumeButton.Name = "Resume Button";
 			resumeButton.Click += (s, e) =>
 			{
