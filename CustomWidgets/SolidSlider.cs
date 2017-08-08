@@ -283,7 +283,7 @@ namespace MatterHackers.MatterControl
 			{
 				//OriginRelativeParent = new Vector2(value.Left, value.Bottom - View.GetTotalBounds().Bottom);
 				//throw new Exception("Figure out what this should do.");
-				if (HAnchor == HAnchor.ParentLeftRight)
+				if (HAnchor == HAnchor.Stretch)
 				{
 					TotalWidthInPixels = value.Right - value.Left;
 				}

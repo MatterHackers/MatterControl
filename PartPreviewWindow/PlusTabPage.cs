@@ -44,8 +44,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			: base(FlowDirection.TopToBottom)
 		{
 			this.Name = "+";
-			this.HAnchor = HAnchor.ParentLeftRight;
-			this.VAnchor = VAnchor.ParentBottomTop;
+			this.HAnchor = HAnchor.Stretch;
+			this.VAnchor = VAnchor.Stretch;
 			this.Padding = 15;
 
 			var theme = ApplicationController.Instance.Theme;
@@ -57,12 +57,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var createPart = theme.ButtonFactory.Generate("Create Part".Localize());
 			createPart.Margin = buttonSpacing;
-			createPart.HAnchor = HAnchor.ParentLeft;
+			createPart.HAnchor = HAnchor.Left;
 			createItemsSection.AddChild(createPart);
 
 			var createPrinter = theme.ButtonFactory.Generate("Create Printer".Localize());
 			createPrinter.Margin = buttonSpacing;
-			createPrinter.HAnchor = HAnchor.ParentLeft;
+			createPrinter.HAnchor = HAnchor.Left;
 			createPrinter.Click += (s, e) =>
 			{
 				if (PrinterConnection.Instance.PrinterIsPrinting
@@ -94,7 +94,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var redeemDesignCode = theme.ButtonFactory.Generate("Redeem Design Code".Localize());
 			redeemDesignCode.Margin = buttonSpacing;
-			redeemDesignCode.HAnchor = HAnchor.ParentLeft;
+			redeemDesignCode.HAnchor = HAnchor.Left;
 			redeemDesignCode.Click += (s, e) =>
 			{
 				// Implementation already does RunOnIdle
@@ -104,7 +104,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var redeemShareCode = theme.ButtonFactory.Generate("Enter Share Code".Localize());
 			redeemShareCode.Margin = buttonSpacing;
-			redeemShareCode.HAnchor = HAnchor.ParentLeft;
+			redeemShareCode.HAnchor = HAnchor.Left;
 			redeemShareCode.Click += (s, e) =>
 			{
 				// Implementation already does RunOnIdle
@@ -114,7 +114,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var importButton = theme.ButtonFactory.Generate("Import".Localize());
 			importButton.Margin = buttonSpacing;
-			importButton.HAnchor = HAnchor.ParentLeft;
+			importButton.HAnchor = HAnchor.Left;
 			importButton.Click += (s, e) =>
 			{
 				UiThread.RunOnIdle(() => WizardWindow.Show<ImportSettingsPage>("ImportSettingsPage", "Import Settings Page"));
@@ -126,7 +126,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				var shopButton = theme.ButtonFactory.Generate("Buy Materials".Localize(), StaticData.Instance.LoadIcon("icon_shopping_cart_32x32.png", 24, 24));
 				shopButton.ToolTipText = "Shop online for printing materials".Localize();
 				shopButton.Name = "Buy Materials Button";
-				shopButton.HAnchor = HAnchor.ParentLeft;
+				shopButton.HAnchor = HAnchor.Left;
 				shopButton.Margin = buttonSpacing;
 				shopButton.Click += (sender, e) =>
 				{
@@ -151,14 +151,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Add heading
 			this.AddChild(new TextWidget(headingText, textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
-				HAnchor = HAnchor.ParentLeft
+				HAnchor = HAnchor.Left
 			});
 
 			// Add container
 			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				HAnchor = HAnchor.ParentLeftRight,
-				VAnchor = VAnchor.FitToChildren,
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit,
 				Margin = new BorderDouble(10, 10, 10, 8),
 			};
 			this.AddChild(container);

@@ -40,7 +40,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		{
 			FlowLayoutWidget container = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			container.Margin = new BorderDouble(0);
-			container.VAnchor = VAnchor.ParentBottomTop;
+			container.VAnchor = VAnchor.Stretch;
 			BorderDouble elementMargin = new BorderDouble(top: 3);
 
 			string baudRateLabelText = "Baud Rate".Localize();
@@ -49,14 +49,14 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			TextWidget baudRateLabel = new TextWidget(baudRateLabelTextFull, 0, 0, 12);
 			baudRateLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			baudRateLabel.Margin = new BorderDouble(0, 0, 0, 10);
-			baudRateLabel.HAnchor = HAnchor.ParentLeftRight;
+			baudRateLabel.HAnchor = HAnchor.Stretch;
 
 			baudRateWidget = GetBaudRateWidget();
-			baudRateWidget.HAnchor = HAnchor.ParentLeftRight;
+			baudRateWidget.HAnchor = HAnchor.Stretch;
 
 			FlowLayoutWidget baudRateMessageContainer = new FlowLayoutWidget();
 			baudRateMessageContainer.Margin = elementMargin;
-			baudRateMessageContainer.HAnchor = HAnchor.ParentLeftRight;
+			baudRateMessageContainer.HAnchor = HAnchor.Stretch;
 
 			printerBaudRateError = new TextWidget("Select the baud rate.".Localize(), 0, 0, 10);
 			printerBaudRateError.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 			printerBaudRateHelpLink = linkButtonFactory.Generate("What's this?".Localize());
 			printerBaudRateHelpLink.Margin = new BorderDouble(left: 5);
-			printerBaudRateHelpLink.VAnchor = VAnchor.ParentBottom;
+			printerBaudRateHelpLink.VAnchor = VAnchor.Bottom;
 			printerBaudRateHelpLink.Click += printerBaudRateHelp_Click;
 
 			printerBaudRateHelpMessage = new TextWidget("The term 'Baud Rate' roughly means the speed at which\ndata is transmitted.  Baud rates may differ from printer to\nprinter. Refer to your printer manual for more info.\n\nTip: If you are uncertain - try 250000.".Localize(), 0, 0, 10);
@@ -80,7 +80,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			container.AddChild(baudRateMessageContainer);
 			container.AddChild(printerBaudRateHelpMessage);
 
-			container.HAnchor = HAnchor.ParentLeftRight;
+			container.HAnchor = HAnchor.Stretch;
 			return container;
 		}
 
@@ -120,7 +120,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			//flag the 'other' option if it is not and prefill the rate.
 			otherBaudRateInput = new MHTextEditWidget("");
 			otherBaudRateInput.Visible = false;
-			otherBaudRateInput.HAnchor = HAnchor.ParentLeftRight;
+			otherBaudRateInput.HAnchor = HAnchor.Stretch;
 
 			string currentBaudRate = ActiveSliceSettings.Instance.GetValue(SettingsKey.baud_rate);
 			if (currentBaudRate != null)

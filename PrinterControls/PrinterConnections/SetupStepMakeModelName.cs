@@ -38,7 +38,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		{
 			printerManufacturerSelector = new BoundDropList(string.Format("- {0} -", "Select Make".Localize()), maxHeight: 200)
 			{
-				HAnchor = HAnchor.ParentLeftRight,
+				HAnchor = HAnchor.Stretch,
 				Margin = elementMargin,
 				Name = "Select Make",
 				ListSource = OemSettings.Instance.AllOems,
@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			printerModelSelector = new BoundDropList(string.Format("- {0} -", "Select Model".Localize()), maxHeight: 200)
 			{
 				Name = "Select Model",
-				HAnchor = HAnchor.ParentLeftRight,
+				HAnchor = HAnchor.Stretch,
 				Margin = elementMargin,
 				TabStop = true
 			};
@@ -126,20 +126,20 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			TextWidget printerNameLabel = new TextWidget("Name".Localize() + ":", 0, 0, 12)
 			{
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
-				HAnchor = HAnchor.ParentLeftRight,
+				HAnchor = HAnchor.Stretch,
 				Margin = new BorderDouble(0, 4, 0, 1)
 			};
 
 			printerNameInput = new MHTextEditWidget("")
 			{
-				HAnchor = HAnchor.ParentLeftRight,
+				HAnchor = HAnchor.Stretch,
 			};
 			printerNameInput.KeyPressed += (s, e) => this.usingDefaultName = false;
 
 			printerNameError = new TextWidget("", 0, 0, 10)
 			{
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
-				HAnchor = HAnchor.ParentLeftRight,
+				HAnchor = HAnchor.Stretch,
 				Margin = new BorderDouble(top: 3)
 			};
 
@@ -148,7 +148,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			container.AddChild(printerNameLabel);
 			container.AddChild(printerNameInput);
 			container.AddChild(printerNameError);
-			container.HAnchor = HAnchor.ParentLeftRight;
+			container.HAnchor = HAnchor.Stretch;
 
 			return container;
 		}
@@ -158,14 +158,14 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			var sectionLabel = new TextWidget(labelText, 0, 0, 12)
 			{
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
-				HAnchor = HAnchor.ParentLeftRight,
+				HAnchor = HAnchor.Stretch,
 				Margin = elementMargin
 			};
 
 			var validationTextWidget = new TextWidget(validationMessage, 0, 0, 10)
 			{
 				TextColor = ActiveTheme.Instance.SecondaryAccentColor,
-				HAnchor = HAnchor.ParentLeftRight,
+				HAnchor = HAnchor.Stretch,
 				Margin = elementMargin
 			};
 
@@ -177,7 +177,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				Margin = new BorderDouble(0, 5),
-				HAnchor = HAnchor.ParentLeftRight
+				HAnchor = HAnchor.Stretch
 			};
 
 			container.AddChild(sectionLabel);

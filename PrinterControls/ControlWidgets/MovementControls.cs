@@ -112,8 +112,8 @@ namespace MatterHackers.MatterControl.PrinterControls
 			{
 				Margin = new BorderDouble(0),
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
-				HAnchor = HAnchor.ParentLeftRight,
-				VAnchor = VAnchor.FitToChildren
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit
 			};
 
 			editButton.Click += (sender, e) =>
@@ -137,8 +137,8 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 			manualControlsLayout = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				HAnchor = HAnchor.ParentLeftRight,
-				VAnchor = VAnchor.FitToChildren,
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit,
 				Padding = new BorderDouble(3, 0)
 			};
 
@@ -170,7 +170,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 		private FlowLayoutWidget GetHomeButtonBar()
 		{
 			FlowLayoutWidget homeButtonBar = new FlowLayoutWidget();
-			homeButtonBar.HAnchor = HAnchor.ParentLeftRight;
+			homeButtonBar.HAnchor = HAnchor.Stretch;
 			homeButtonBar.Margin = new BorderDouble(0);
 			homeButtonBar.Padding = new BorderDouble(0);
 
@@ -229,7 +229,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
 				Margin = new BorderDouble(left: 10),
 				AutoExpandBoundsToText = true,
-				VAnchor = VAnchor.ParentCenter
+				VAnchor = VAnchor.Center
 			};
 			homeButtonBar.AddChild(offsetStreamLabel);
 
@@ -245,7 +245,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 		private FlowLayoutWidget GetHWDestinationBar()
 		{
 			FlowLayoutWidget hwDestinationBar = new FlowLayoutWidget();
-			hwDestinationBar.HAnchor = HAnchor.ParentLeftRight;
+			hwDestinationBar.HAnchor = HAnchor.Stretch;
 			hwDestinationBar.Margin = new BorderDouble(3, 0, 3, 6);
 			hwDestinationBar.Padding = new BorderDouble(0);
 
@@ -328,8 +328,8 @@ namespace MatterHackers.MatterControl.PrinterControls
 		public ZTuningWidget(bool allowRemoveButton = true)
 		{
 			this.allowRemoveButton = allowRemoveButton;
-			this.HAnchor = HAnchor.FitToChildren;
-			this.VAnchor = VAnchor.FitToChildren | VAnchor.ParentCenter;
+			this.HAnchor = HAnchor.Fit;
+			this.VAnchor = VAnchor.Fit | VAnchor.Center;
 
 			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
 			{
@@ -343,8 +343,8 @@ namespace MatterHackers.MatterControl.PrinterControls
 			{
 				Margin = new BorderDouble(3, 0),
 				Padding = new BorderDouble(3),
-				HAnchor = HAnchor.FitToChildren,
-				VAnchor = VAnchor.ParentCenter,
+				HAnchor = HAnchor.Fit,
+				VAnchor = VAnchor.Center,
 				BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor,
 				Height = 20
 			};
@@ -356,7 +356,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				AutoExpandBoundsToText = true,
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
 				Margin = new BorderDouble(5, 0, 8, 0),
-				VAnchor = VAnchor.ParentCenter
+				VAnchor = VAnchor.Center
 			};
 			zOffsetStreamContainer.AddChild(zOffsetStreamDisplay);
 

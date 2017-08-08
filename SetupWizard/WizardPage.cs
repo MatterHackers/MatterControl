@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl
 			{
 				Margin = new BorderDouble(0, 3, 0, 0),
 				Padding = new BorderDouble(0, 12),
-				HAnchor = HAnchor.ParentLeftRight
+				HAnchor = HAnchor.Stretch
 			};
 
 			headerLabel = new TextWidget(unlocalizedTextForTitle.Localize(), pointSize: 24, textColor: ActiveTheme.Instance.SecondaryAccentColor)
@@ -100,14 +100,14 @@ namespace MatterHackers.MatterControl
 			{
 				Padding = new BorderDouble(10),
 				BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor,
-				HAnchor = HAnchor.ParentLeftRight,
-				VAnchor = VAnchor.ParentBottomTop
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch
 			};
 
 			// Create the footer (button) container
 			footerRow = new FlowLayoutWidget(FlowDirection.LeftToRight)
 			{
-				HAnchor = HAnchor.ParentLeft | HAnchor.ParentRight,
+				HAnchor = HAnchor.Left | HAnchor.Right,
 				Margin = new BorderDouble(0, 6)
 			};
 

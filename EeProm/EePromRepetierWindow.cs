@@ -81,13 +81,13 @@ namespace MatterHackers.MatterControl.EeProm
 			currentEePromSettings = new EePromRepetierStorage();
 
 			FlowLayoutWidget topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			topToBottom.VAnchor = Agg.UI.VAnchor.ParentBottomTop;
-			topToBottom.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+			topToBottom.VAnchor = Agg.UI.VAnchor.Stretch;
+			topToBottom.HAnchor = Agg.UI.HAnchor.Stretch;
 			topToBottom.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 			topToBottom.Padding = new BorderDouble(3, 0);
 
 			FlowLayoutWidget row = new FlowLayoutWidget();
-			row.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+			row.HAnchor = Agg.UI.HAnchor.Stretch;
 			row.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 			GuiWidget descriptionWidget = AddDescription("Description".Localize());
 			descriptionWidget.Margin = new BorderDouble(left: 3);
@@ -96,26 +96,26 @@ namespace MatterHackers.MatterControl.EeProm
 			CreateSpacer(row);
 
 			GuiWidget valueText = new TextWidget("Value".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
-			valueText.VAnchor = Agg.UI.VAnchor.ParentCenter;
+			valueText.VAnchor = Agg.UI.VAnchor.Center;
 			valueText.Margin = new BorderDouble(left: 5, right: 60);
 			row.AddChild(valueText);
 			topToBottom.AddChild(row);
 
 			{
 				ScrollableWidget settingsAreaScrollBox = new ScrollableWidget(true);
-				settingsAreaScrollBox.ScrollArea.HAnchor |= HAnchor.ParentLeftRight;
+				settingsAreaScrollBox.ScrollArea.HAnchor |= HAnchor.Stretch;
 				settingsAreaScrollBox.AnchorAll();
 				settingsAreaScrollBox.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
 				topToBottom.AddChild(settingsAreaScrollBox);
 
 				settingsColmun = new FlowLayoutWidget(FlowDirection.TopToBottom);
-				settingsColmun.HAnchor = HAnchor.Max_FitToChildren_ParentWidth;
+				settingsColmun.HAnchor = HAnchor.MaxFitOrStretch;
 
 				settingsAreaScrollBox.AddChild(settingsColmun);
 			}
 
 			FlowLayoutWidget buttonBar = new FlowLayoutWidget();
-			buttonBar.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
+			buttonBar.HAnchor = Agg.UI.HAnchor.MaxFitOrStretch;
 			buttonBar.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
 			// put in the save button
@@ -243,7 +243,7 @@ namespace MatterHackers.MatterControl.EeProm
 		private static void CreateSpacer(FlowLayoutWidget buttonBar)
 		{
 			GuiWidget spacer = new GuiWidget(1, 1);
-			spacer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+			spacer.HAnchor = Agg.UI.HAnchor.Stretch;
 			buttonBar.AddChild(spacer);
 		}
 
@@ -290,7 +290,7 @@ namespace MatterHackers.MatterControl.EeProm
 				if (newSetting != null)
 				{
 					FlowLayoutWidget row = new FlowLayoutWidget();
-					row.HAnchor = Agg.UI.HAnchor.Max_FitToChildren_ParentWidth;
+					row.HAnchor = Agg.UI.HAnchor.MaxFitOrStretch;
 					row.AddChild(AddDescription(newSetting.Description));
 					row.Padding = new BorderDouble(5, 0);
 					if ((settingsColmun.Children.Count % 2) == 1)
@@ -305,7 +305,7 @@ namespace MatterHackers.MatterControl.EeProm
 					MHNumberEdit valueEdit = new MHNumberEdit(currentValue, pixelWidth: 80 * GuiWidget.DeviceScale, allowNegatives: true, allowDecimals: true);
 					valueEdit.SelectAllOnFocus = true;
 					valueEdit.TabIndex = currentTabIndex++;
-					valueEdit.VAnchor = Agg.UI.VAnchor.ParentCenter;
+					valueEdit.VAnchor = Agg.UI.VAnchor.Center;
 					valueEdit.ActuallNumberEdit.EditComplete += (sender, e) =>
 					{
 						newSetting.Value = valueEdit.ActuallNumberEdit.Value.ToString();
@@ -322,7 +322,7 @@ namespace MatterHackers.MatterControl.EeProm
 		{
 			GuiWidget holder = new GuiWidget(340, 40);
 			TextWidget textWidget = new TextWidget(description, textColor: ActiveTheme.Instance.PrimaryTextColor);
-			textWidget.VAnchor = Agg.UI.VAnchor.ParentCenter;
+			textWidget.VAnchor = Agg.UI.VAnchor.Center;
 			holder.AddChild(textWidget);
 
 			return holder;

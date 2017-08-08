@@ -39,7 +39,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	{
 		public SettingsControlBar()
 		{
-			this.HAnchor = HAnchor.ParentLeftRight;
+			this.HAnchor = HAnchor.Stretch;
 
 			int numberOfHeatedExtruders = ActiveSliceSettings.Instance.Helpers.NumberOfHotEnds();
 

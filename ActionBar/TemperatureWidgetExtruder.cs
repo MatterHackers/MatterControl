@@ -94,16 +94,16 @@ namespace MatterHackers.MatterControl.ActionBar
 			var widget = new IgnoredPopupWidget()
 			{
 				Width = 300,
-				HAnchor = HAnchor.AbsolutePosition,
-				VAnchor = VAnchor.FitToChildren,
+				HAnchor = HAnchor.Absolute,
+				VAnchor = VAnchor.Fit,
 				BackgroundColor = RGBA_Bytes.White,
 				Padding = new BorderDouble(12, 5, 12, 0)
 			};
 
 			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				HAnchor = HAnchor.ParentLeftRight,
-				VAnchor = VAnchor.FitToChildren,
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit,
 				BackgroundColor = RGBA_Bytes.White
 			};
 
@@ -132,7 +132,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			{
 				Margin = 0,
 				BackgroundColor = RGBA_Bytes.Transparent,
-				HAnchor = HAnchor.AbsolutePosition,
+				HAnchor = HAnchor.Absolute,
 				Width = 150
 			};
 
@@ -174,8 +174,8 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			var buttonContainer = new FlowLayoutWidget()
 			{
-				HAnchor = HAnchor.FitToChildren,
-				VAnchor = VAnchor.FitToChildren
+				HAnchor = HAnchor.Fit,
+				VAnchor = VAnchor.Fit
 			};
 
 			var retractButton = buttonFactory.Generate("Retract".Localize());
@@ -203,13 +203,13 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			var moveButtonsContainer = new FlowLayoutWidget()
 			{
-				VAnchor = VAnchor.FitToChildren,
-				HAnchor = HAnchor.FitToChildren,
+				VAnchor = VAnchor.Fit,
+				HAnchor = HAnchor.Fit,
 				Margin = new BorderDouble(0, 3)
 			};
 
 			RadioButton oneButton = moveButtonFactory.GenerateRadioButton("1");
-			oneButton.VAnchor = VAnchor.ParentCenter;
+			oneButton.VAnchor = VAnchor.Center;
 			oneButton.CheckedStateChanged += (s, e) =>
 			{
 				if (oneButton.Checked)
@@ -220,7 +220,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			moveButtonsContainer.AddChild(oneButton);
 
 			RadioButton tenButton = moveButtonFactory.GenerateRadioButton("10");
-			tenButton.VAnchor = VAnchor.ParentCenter;
+			tenButton.VAnchor = VAnchor.Center;
 			tenButton.CheckedStateChanged += (s, e) =>
 			{
 				if (tenButton.Checked)
@@ -231,7 +231,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			moveButtonsContainer.AddChild(tenButton);
 
 			RadioButton oneHundredButton = moveButtonFactory.GenerateRadioButton("100");
-			oneHundredButton.VAnchor = VAnchor.ParentCenter;
+			oneHundredButton.VAnchor = VAnchor.Center;
 			oneHundredButton.CheckedStateChanged += (s, e) =>
 			{
 				if (oneHundredButton.Checked)
@@ -245,7 +245,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			moveButtonsContainer.AddChild(new TextWidget("mm", textColor: buttonFactory.normalTextColor, pointSize: 8)
 			{
-				VAnchor = VAnchor.ParentCenter,
+				VAnchor = VAnchor.Center,
 				Margin = new BorderDouble(3, 0)
 			});
 

@@ -48,15 +48,15 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		public FanControls(int headingPointSize)
 		{
-			this.HAnchor = HAnchor.ParentLeftRight;
-			this.HAnchor = HAnchor.ParentLeftRight;
+			this.HAnchor = HAnchor.Stretch;
+			this.HAnchor = HAnchor.Stretch;
 
 			var fanControlsGroupBox = new AltGroupBox(new TextWidget("Fan".Localize(), pointSize: headingPointSize, textColor: ActiveTheme.Instance.SecondaryAccentColor))
 			{
 				Margin = new BorderDouble(0),
 				BorderColor = ActiveTheme.Instance.PrimaryTextColor,
-				HAnchor = HAnchor.ParentLeftRight,
-				VAnchor = VAnchor.FitToChildren
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit
 			};
 			this.AddChild(fanControlsGroupBox);
 
@@ -95,7 +95,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			bool fanActive = PrinterConnection.Instance.FanSpeed0To255 != 0;
 
 			toggleSwitch = ImageButtonFactory.CreateToggleSwitch(fanActive);
-			toggleSwitch.VAnchor = VAnchor.ParentCenter;
+			toggleSwitch.VAnchor = VAnchor.Center;
 			toggleSwitch.CheckedStateChanged += new EventHandler(ToggleSwitch_Click);
 			toggleSwitch.Margin = new BorderDouble(5, 0);
 

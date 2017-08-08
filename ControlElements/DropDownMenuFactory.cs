@@ -51,13 +51,13 @@ namespace MatterHackers.MatterControl
 			if (label != "")
 			{
 				TextWidget text = new TextWidget(label, pointSize: fontSize, textColor: textColor);
-				text.VAnchor = VAnchor.ParentCenter;
+				text.VAnchor = VAnchor.Center;
 				text.Padding = new BorderDouble(0, 0);
 				container.AddChild(text);
 			}
 
 			GuiWidget arrow = new GuiWidget(20, height);
-			arrow.VAnchor = VAnchor.ParentCenter;
+			arrow.VAnchor = VAnchor.Center;
 			container.AddChild(arrow);
 			this.AddChild(container);
 
@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl
 			this.fillColor = fillColor;
 			this.borderColor = borderColor;
 			this.borderWidth = borderWidth;
-			this.HAnchor = HAnchor.FitToChildren;
+			this.HAnchor = HAnchor.Fit;
 		}
 
 		public override void OnDraw(Graphics2D graphics2D)
@@ -130,8 +130,8 @@ namespace MatterHackers.MatterControl
 		{
 			return new DropDownMenu(CreateButtonViewStates(label), direction)
 			{
-				VAnchor = VAnchor.ParentCenter,
-				HAnchor = HAnchor.FitToChildren,
+				VAnchor = VAnchor.Center,
+				HAnchor = HAnchor.Fit,
 				MenuAsWideAsItems = false,
 				AlignToRightEdge = true,
 				//Width = this.FixedWidth,

@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			var navBar = new FlowLayoutWidget()
 			{
-				HAnchor = HAnchor.ParentLeftRight
+				HAnchor = HAnchor.Stretch
 			};
 
 			this.AddChild(navBar);
@@ -110,7 +110,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			var libraryContainerView = new ListView(libraryContext)
 			{
-				HAnchor = HAnchor.ParentLeftRight,
+				HAnchor = HAnchor.Stretch,
 				ShowItems = false
 			};
 			this.AddChild(libraryContainerView);
@@ -144,20 +144,20 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			public SearchInputBox()
 			{
-				this.VAnchor = VAnchor.ParentCenter | VAnchor.FitToChildren;
-				this.HAnchor = HAnchor.ParentLeftRight;
+				this.VAnchor = VAnchor.Center | VAnchor.Fit;
+				this.HAnchor = HAnchor.Stretch;
 
 				searchInput = new MHTextEditWidget(messageWhenEmptyAndNotSelected: "Search Library".Localize())
 				{
 					Name = "Search Library Edit",
-					HAnchor = HAnchor.ParentLeftRight,
-					VAnchor = VAnchor.ParentCenter
+					HAnchor = HAnchor.Stretch,
+					VAnchor = VAnchor.Center
 				};
 				this.AddChild(searchInput);
 
 				resetButton = ApplicationController.Instance.Theme.CreateSmallResetButton();
-				resetButton.HAnchor = HAnchor.ParentRight | HAnchor.FitToChildren;
-				resetButton.VAnchor = VAnchor.ParentCenter | VAnchor.FitToChildren;
+				resetButton.HAnchor = HAnchor.Right | HAnchor.Fit;
+				resetButton.VAnchor = VAnchor.Center | VAnchor.Fit;
 				resetButton.Name = "Close Search";
 				resetButton.ToolTipText = "Clear".Localize();
 

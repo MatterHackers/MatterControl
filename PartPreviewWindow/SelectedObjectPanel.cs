@@ -42,8 +42,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		public SelectedObjectPanel() : base(FlowDirection.TopToBottom)
 		{
-			HAnchor |= HAnchor.ParentRight;
-			VAnchor = VAnchor.ParentTop | VAnchor.FitToChildren;
+			HAnchor |= HAnchor.Right;
+			VAnchor = VAnchor.Top | VAnchor.Fit;
 		}
 	}
 }

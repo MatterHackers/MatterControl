@@ -67,28 +67,28 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.extruderIndex = extruderIndex;
 			this.layerType = layerType;
 			
-			this.HAnchor = HAnchor.ParentLeftRight;
-			this.VAnchor = Agg.UI.VAnchor.Max_FitToChildren_ParentHeight;
+			this.HAnchor = HAnchor.Stretch;
+			this.VAnchor = Agg.UI.VAnchor.MaxFitOrStretch;
 			this.BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor;
 
 			GuiWidget accentBar = new GuiWidget(7, 3)
 			{
 				BackgroundColor = accentColor,
-				HAnchor = HAnchor.ParentLeftRight
+				HAnchor = HAnchor.Stretch
 			};
 
 			// Section Label
 			this.AddChild(new TextWidget(label.Localize().ToUpper())
 			{
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
-				HAnchor = Agg.UI.HAnchor.ParentLeft,
+				HAnchor = Agg.UI.HAnchor.Left,
 				Margin = new BorderDouble(12, 3, 0, 6)
 			});
 
 			pullDownContainer = new GuiWidget()
 			{
-				HAnchor = HAnchor.ParentLeftRight,
-				VAnchor = VAnchor.FitToChildren
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit
 			};
 			pullDownContainer.AddChild(GetPulldownContainer());
 			this.AddChild(pullDownContainer);
@@ -102,7 +102,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			FlowLayoutWidget container = new FlowLayoutWidget()
 			{
-				HAnchor = HAnchor.ParentLeftRight,
+				HAnchor = HAnchor.Stretch,
 				Padding = new BorderDouble(12, 0),
 				Name = "Preset Pulldown Container"
 			};
@@ -110,7 +110,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			editButton = TextImageButtonFactory.GetThemedEditButton();
 			editButton.ToolTipText = "Edit Selected Setting".Localize();
 			editButton.Enabled = dropDownList.SelectedIndex != -1;
-			editButton.VAnchor = VAnchor.ParentCenter;
+			editButton.VAnchor = VAnchor.Center;
 			editButton.Margin = new BorderDouble(left: 6);
 			editButton.Click += (sender, e) =>
 			{
@@ -279,7 +279,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			var dropDownList = new DropDownList(defaultMenuItemText, maxHeight: 300, useLeftIcons: true)
 			{
-				HAnchor = HAnchor.ParentLeftRight,
+				HAnchor = HAnchor.Stretch,
 				MenuItemsPadding = new BorderDouble(10, 7, 7, 7),
 			};
 

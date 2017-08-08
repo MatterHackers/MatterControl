@@ -52,15 +52,15 @@ namespace MatterHackers.MatterControl
 			var scrollWindow = new ScrollableWidget()
 			{
 				AutoScroll = true,
-				HAnchor = HAnchor.ParentLeftRight,
-				VAnchor = VAnchor.ParentBottomTop,
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch,
 			};
-			scrollWindow.ScrollArea.HAnchor = HAnchor.ParentLeftRight;
+			scrollWindow.ScrollArea.HAnchor = HAnchor.Stretch;
 			contentRow.AddChild(scrollWindow);
 
 			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				HAnchor = HAnchor.ParentLeftRight,
+				HAnchor = HAnchor.Stretch,
 			};
 			scrollWindow.AddChild(container);
 
@@ -83,7 +83,7 @@ namespace MatterHackers.MatterControl
 					{
 						TextColor = ActiveTheme.Instance.PrimaryTextColor,
 						Margin = new BorderDouble(5, 0, 0, 0),
-						HAnchor = HAnchor.ParentLeft,
+						HAnchor = HAnchor.Left,
 						Checked = true,
 					};
 					checkBoxes.Add(checkBox);

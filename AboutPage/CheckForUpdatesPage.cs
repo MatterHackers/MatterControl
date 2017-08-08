@@ -22,8 +22,8 @@ namespace MatterHackers.MatterControl.AboutPage
 			Padding = 0;
 
 			FlowLayoutWidget currentFeedAndDropDownContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
-			currentFeedAndDropDownContainer.VAnchor = VAnchor.FitToChildren;
-			currentFeedAndDropDownContainer.HAnchor = HAnchor.ParentLeftRight;
+			currentFeedAndDropDownContainer.VAnchor = VAnchor.Fit;
+			currentFeedAndDropDownContainer.HAnchor = HAnchor.Stretch;
 			currentFeedAndDropDownContainer.Margin = new BorderDouble(0, 5, 0, 0);
 			currentFeedAndDropDownContainer.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
 			
@@ -31,11 +31,11 @@ namespace MatterHackers.MatterControl.AboutPage
 
 			TextWidget feedLabel = new TextWidget("Update Channel".Localize(), pointSize: 12);
 			feedLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			feedLabel.VAnchor = VAnchor.ParentCenter;
+			feedLabel.VAnchor = VAnchor.Center;
 			feedLabel.Margin = new BorderDouble(left: 5);
 
 			var releaseOptionsDropList = new DropDownList("Development", maxHeight: 200);
-			releaseOptionsDropList.HAnchor = HAnchor.ParentLeftRight;
+			releaseOptionsDropList.HAnchor = HAnchor.Stretch;
 
 			releaseOptionsDropList.AddItem("Stable".Localize(), "release");
 			releaseOptionsDropList.AddItem("Beta".Localize(), "pre-release");
@@ -65,45 +65,45 @@ namespace MatterHackers.MatterControl.AboutPage
 			string currentBuildInfoLabel = String.Format("Current Build : {0}", currentBuildNo);
 
 			var currentBuildInfo = new TextWidget(currentBuildInfoLabel.Localize());
-			currentBuildInfo.HAnchor = HAnchor.ParentLeftRight;
+			currentBuildInfo.HAnchor = HAnchor.Stretch;
 			currentBuildInfo.Margin = new BorderDouble(left: 5, bottom: 15, top: 20);
 			currentBuildInfo.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 
 			FlowLayoutWidget additionalInfoContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			additionalInfoContainer.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
-			additionalInfoContainer.HAnchor = HAnchor.ParentLeftRight;
+			additionalInfoContainer.HAnchor = HAnchor.Stretch;
 			additionalInfoContainer.Padding = new BorderDouble(left: 6, top: 6);
 
 			string aboutUpdateChannel = "Changing your update channel will change the version of MatterControl \nthat you receive when updating:".Localize();
 			var updateChannelLabel = new TextWidget(aboutUpdateChannel);
 			updateChannelLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			updateChannelLabel.HAnchor = HAnchor.ParentLeftRight;
+			updateChannelLabel.HAnchor = HAnchor.Stretch;
 			updateChannelLabel.Margin = new BorderDouble(bottom: 20);
 			additionalInfoContainer.AddChild(updateChannelLabel);
 
 			string stableFeedInfoText = "Stable: The current release version of MatterControl (recommended).".Localize();
 			var stableInfoLabel = new TextWidget(stableFeedInfoText);
 			stableInfoLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			stableInfoLabel.HAnchor = HAnchor.ParentLeftRight;
+			stableInfoLabel.HAnchor = HAnchor.Stretch;
 			stableInfoLabel.Margin = new BorderDouble(bottom: 10);
 			additionalInfoContainer.AddChild(stableInfoLabel);
 
 			string betaFeedInfoText = "Beta: The release candidate version of MatterControl.".Localize();
 			var betaInfoLabel = new TextWidget(betaFeedInfoText);
 			betaInfoLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			betaInfoLabel.HAnchor = HAnchor.ParentLeftRight;
+			betaInfoLabel.HAnchor = HAnchor.Stretch;
 			betaInfoLabel.Margin = new BorderDouble(bottom: 10);
 			additionalInfoContainer.AddChild(betaInfoLabel);
 
 			string alphaFeedInfoText = "Alpha: The in development version of MatterControl.".Localize();
 			var alphaInfoLabel = new TextWidget(alphaFeedInfoText);
 			alphaInfoLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			alphaInfoLabel.HAnchor = HAnchor.ParentLeftRight;
+			alphaInfoLabel.HAnchor = HAnchor.Stretch;
 			alphaInfoLabel.Margin = new BorderDouble(bottom: 10);
 			additionalInfoContainer.AddChild(alphaInfoLabel);
 
 			Button whatsThisLink = theme.HelpLinkFactory.Generate("What's this?".Localize());
-			whatsThisLink.VAnchor = VAnchor.ParentCenter;
+			whatsThisLink.VAnchor = VAnchor.Center;
 			whatsThisLink.Margin = new BorderDouble(left: 6);
 			whatsThisLink.Click += (sender, e) =>
 			{

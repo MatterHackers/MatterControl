@@ -83,8 +83,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			viewControls3D = new ViewControls3D(ApplicationController.Instance.Theme.ViewControlsButtonFactory)
 			{
 				PartSelectVisible = false,
-				VAnchor = VAnchor.ParentTop | VAnchor.FitToChildren | VAnchor.AbsolutePosition,
-				HAnchor = HAnchor.ParentLeft | HAnchor.FitToChildren,
+				VAnchor = VAnchor.Top | VAnchor.Fit | VAnchor.Absolute,
+				HAnchor = HAnchor.Left | HAnchor.Fit,
 				Visible = true,
 				Margin = new BorderDouble(11, 0, 0, 50)
 			};
@@ -381,7 +381,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			sideBar.AddPage("Controls".Localize(), new ManualPrinterControls());
 
 			var terminalControls = new TerminalControls();
-			terminalControls.VAnchor |= VAnchor.ParentBottomTop;
+			terminalControls.VAnchor |= VAnchor.Stretch;
 			sideBar.AddPage("Terminal".Localize(), terminalControls);
 		}
 
@@ -532,7 +532,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var popupContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				HAnchor = HAnchor.ParentLeftRight,
+				HAnchor = HAnchor.Stretch,
 				Padding = 12,
 				BackgroundColor = RGBA_Bytes.White
 			};
@@ -590,7 +590,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				Checked = gcodeOptions.TransparentExtrusion,
 				Margin = new BorderDouble(5, 0, 0, 0),
-				HAnchor = HAnchor.ParentLeft,
+				HAnchor = HAnchor.Left,
 			};
 			transparentExtrusion.CheckedStateChanged += (sender, e) =>
 			{

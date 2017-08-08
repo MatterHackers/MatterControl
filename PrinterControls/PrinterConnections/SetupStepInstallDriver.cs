@@ -61,18 +61,18 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 			printerDriverMessage = new TextWidget("This printer requires a driver for communication.".Localize(), 0, 0, 10);
 			printerDriverMessage.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			printerDriverMessage.HAnchor = HAnchor.ParentLeftRight;
+			printerDriverMessage.HAnchor = HAnchor.Stretch;
 			printerDriverMessage.Margin = elementMargin;
 
 			TextWidget printerDriverMessageTwo = new TextWidget("Driver located. Would you like to install?".Localize(), 0, 0, 10);
 			printerDriverMessageTwo.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			printerDriverMessageTwo.HAnchor = HAnchor.ParentLeftRight;
+			printerDriverMessageTwo.HAnchor = HAnchor.Stretch;
 			printerDriverMessageTwo.Margin = elementMargin;
 
 			container.AddChild(printerDriverMessage);
 			container.AddChild(printerDriverMessageTwo);
 
-			container.HAnchor = HAnchor.ParentLeftRight;
+			container.HAnchor = HAnchor.Stretch;
 			return container;
 		}
 

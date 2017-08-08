@@ -1218,7 +1218,7 @@ namespace MatterHackers.MatterControl
 								CheckBox hideGCodeWarningCheckBox = new CheckBox(doNotAskAgainMessage);
 								hideGCodeWarningCheckBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 								hideGCodeWarningCheckBox.Margin = new BorderDouble(top: 6, left: 6);
-								hideGCodeWarningCheckBox.HAnchor = Agg.UI.HAnchor.ParentLeft;
+								hideGCodeWarningCheckBox.HAnchor = Agg.UI.HAnchor.Left;
 								hideGCodeWarningCheckBox.Click += (sender, e) =>
 								{
 									if (hideGCodeWarningCheckBox.Checked)

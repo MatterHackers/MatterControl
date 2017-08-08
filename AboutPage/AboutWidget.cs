@@ -42,16 +42,16 @@ namespace MatterHackers.MatterControl
 	{
 		public AboutWidget()
 		{
-			this.HAnchor = HAnchor.ParentLeftRight;
-			this.VAnchor = VAnchor.ParentTop;
+			this.HAnchor = HAnchor.Stretch;
+			this.VAnchor = VAnchor.Top;
 
 			this.Padding = new BorderDouble(5);
 			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
 			FlowLayoutWidget customInfoTopToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			customInfoTopToBottom.Name = "AboutPageCustomInfo";
-			customInfoTopToBottom.HAnchor = HAnchor.ParentLeftRight;
-			customInfoTopToBottom.VAnchor = VAnchor.Max_FitToChildren_ParentHeight;
+			customInfoTopToBottom.HAnchor = HAnchor.Stretch;
+			customInfoTopToBottom.VAnchor = VAnchor.MaxFitOrStretch;
 			customInfoTopToBottom.Padding = new BorderDouble(5, 10, 5, 0);
 
 			if (UserSettings.Instance.IsTouchScreen)
@@ -71,8 +71,8 @@ namespace MatterHackers.MatterControl
 				string releaseNotesFile = Path.Combine("OEMSettings", "ReleaseNotes.html");
 				string releaseNotesContent = StaticData.Instance.ReadAllText(releaseNotesFile);
 				HtmlWidget content = new HtmlWidget(releaseNotesContent, RGBA_Bytes.Black);
-				content.AddChild(new GuiWidget(HAnchor.AbsolutePosition, VAnchor.ParentBottomTop));
-				content.VAnchor |= VAnchor.ParentTop;
+				content.AddChild(new GuiWidget(HAnchor.AbsolutePosition, VAnchor.Stretch));
+				content.VAnchor |= VAnchor.Top;
 				content.BackgroundColor = RGBA_Bytes.White;
 				releaseNotes.AddChild(content);
 				releaseNotes.BackgroundColor = RGBA_Bytes.Cyan;

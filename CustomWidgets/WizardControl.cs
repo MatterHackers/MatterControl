@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl
 			}
 
 			FlowLayoutWidget headerRow = new FlowLayoutWidget(FlowDirection.LeftToRight);
-			headerRow.HAnchor = HAnchor.ParentLeftRight;
+			headerRow.HAnchor = HAnchor.Stretch;
 			headerRow.Margin = new BorderDouble(0, 3, 0, 0);
 			headerRow.Padding = new BorderDouble(0, 3, 0, 3);
 
@@ -73,8 +73,8 @@ namespace MatterHackers.MatterControl
 				stepDescriptionWidget = new TextWidget(titleString, pointSize: 14 * extraTextScaling);
 				stepDescriptionWidget.AutoExpandBoundsToText = true;
 				stepDescriptionWidget.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-				stepDescriptionWidget.HAnchor = HAnchor.ParentLeftRight;
-				stepDescriptionWidget.VAnchor = Agg.UI.VAnchor.ParentBottom;
+				stepDescriptionWidget.HAnchor = HAnchor.Stretch;
+				stepDescriptionWidget.VAnchor = Agg.UI.VAnchor.Bottom;
 
 				headerRow.AddChild(stepDescriptionWidget);
 			}
@@ -93,7 +93,7 @@ namespace MatterHackers.MatterControl
 
 			{
 				FlowLayoutWidget buttonBar = new FlowLayoutWidget();
-				buttonBar.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+				buttonBar.HAnchor = Agg.UI.HAnchor.Stretch;
 				buttonBar.Padding = new BorderDouble(0, 3);
 
 				backButton = buttonFactory.Generate("Back".Localize(), centerText: true);

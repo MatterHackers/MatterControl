@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		protected ImageWidget ImageWidget = new ImageWidget(StaticData.Instance.LoadIcon("hotend.png"))
 		{
-			VAnchor = VAnchor.ParentCenter,
+			VAnchor = VAnchor.Center,
 			Margin = new BorderDouble(right: 5)
 		};
 
@@ -55,16 +55,16 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		public TemperatureWidgetBase(string textValue)
 		{
-			this.HAnchor = HAnchor.FitToChildren;
-			this.VAnchor = VAnchor.FitToChildren | VAnchor.ParentCenter;
+			this.HAnchor = HAnchor.Fit;
+			this.VAnchor = VAnchor.Fit | VAnchor.Center;
 			this.Cursor = Cursors.Hand;
 
 			this.AlignToRightEdge = true;
 
 			var container = new FlowLayoutWidget()
 			{
-				HAnchor = HAnchor.FitToChildren,
-				VAnchor = VAnchor.FitToChildren,
+				HAnchor = HAnchor.Fit,
+				VAnchor = VAnchor.Fit,
 				Padding = new BorderDouble(5)
 			};
 			this.AddChild(container);
@@ -79,7 +79,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			CurrentTempIndicator = new TextWidget(textValue, pointSize: 11)
 			{
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
-				VAnchor = VAnchor.ParentCenter,
+				VAnchor = VAnchor.Center,
 				AutoExpandBoundsToText = true
 			};
 			container.AddChild(CurrentTempIndicator);
@@ -89,7 +89,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			goalTempIndicator = new TextWidget(textValue, pointSize: 11)
 			{
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
-				VAnchor = VAnchor.ParentCenter,
+				VAnchor = VAnchor.Center,
 				AutoExpandBoundsToText = true
 			};
 			container.AddChild(goalTempIndicator);
@@ -97,7 +97,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			DirectionIndicator = new TextWidget(textValue, pointSize: 11)
 			{
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
-				VAnchor = VAnchor.ParentCenter,
+				VAnchor = VAnchor.Center,
 				AutoExpandBoundsToText = true,
 				Margin = new BorderDouble(left: 5)
 			};

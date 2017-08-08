@@ -4375,3 +4375,9 @@ Translated:Create Printer
 English:Open Existing
 Translated:Open Existing
 
+English:Configure EEProm
+Translated:Configure EEProm
+
+English:Rename Printer
+Translated:Rename Printer
+

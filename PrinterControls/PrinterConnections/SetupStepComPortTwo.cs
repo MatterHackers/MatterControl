@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		public FlowLayoutWidget createPrinterConnectionMessageContainer()
 		{
 			FlowLayoutWidget container = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			container.VAnchor = VAnchor.ParentBottomTop;
+			container.VAnchor = VAnchor.Stretch;
 			container.Margin = new BorderDouble(5);
 			BorderDouble elementMargin = new BorderDouble(top: 5);
 
@@ -60,14 +60,14 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			TextWidget printerMessageOne = new TextWidget(printerMessageOneText, 0, 0, 10);
 			printerMessageOne.Margin = new BorderDouble(0, 10, 0, 5);
 			printerMessageOne.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			printerMessageOne.HAnchor = HAnchor.ParentLeftRight;
+			printerMessageOne.HAnchor = HAnchor.Stretch;
 			printerMessageOne.Margin = elementMargin;
 
 			string printerMessageFourBeg = "Connect printer and power on".Localize();
 			string printerMessageFourFull = string.Format("1.) {0}.", printerMessageFourBeg);
 			TextWidget printerMessageFour = new TextWidget(printerMessageFourFull, 0, 0, 12);
 			printerMessageFour.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			printerMessageFour.HAnchor = HAnchor.ParentLeftRight;
+			printerMessageFour.HAnchor = HAnchor.Stretch;
 			printerMessageFour.Margin = elementMargin;
 
 			string printerMessageFiveTxtBeg = "Press".Localize();
@@ -75,11 +75,11 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			string printerMessageFiveTxtFull = string.Format("2.) {0} '{1}'.", printerMessageFiveTxtBeg, printerMessageFiveTxtEnd);
 			TextWidget printerMessageFive = new TextWidget(printerMessageFiveTxtFull, 0, 0, 12);
 			printerMessageFive.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			printerMessageFive.HAnchor = HAnchor.ParentLeftRight;
+			printerMessageFive.HAnchor = HAnchor.Stretch;
 			printerMessageFive.Margin = elementMargin;
 
 			GuiWidget vSpacer = new GuiWidget();
-			vSpacer.VAnchor = VAnchor.ParentBottomTop;
+			vSpacer.VAnchor = VAnchor.Stretch;
 
 			Button manualLink = linkButtonFactory.Generate("Manual Configuration".Localize());
 			manualLink.Margin = new BorderDouble(0, 5);
@@ -88,7 +88,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			printerErrorMessage = new TextWidget("", 0, 0, 10);
 			printerErrorMessage.AutoExpandBoundsToText = true;
 			printerErrorMessage.TextColor = RGBA_Bytes.Red;
-			printerErrorMessage.HAnchor = HAnchor.ParentLeftRight;
+			printerErrorMessage.HAnchor = HAnchor.Stretch;
 			printerErrorMessage.Margin = elementMargin;
 
 			container.AddChild(printerMessageOne);
@@ -97,7 +97,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			container.AddChild(vSpacer);
 			container.AddChild(manualLink);
 
-			container.HAnchor = HAnchor.ParentLeftRight;
+			container.HAnchor = HAnchor.Stretch;
 			return container;
 		}
 

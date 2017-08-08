@@ -99,7 +99,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var rightPanelArea = new FlowLayoutWidget()
 			{
-				VAnchor = VAnchor.ParentBottomTop
+				VAnchor = VAnchor.Stretch
 			};
 
 			var extensionArea = new FlowLayoutWidget();
@@ -110,7 +110,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				new ImageWidget(
 					StaticData.Instance.LoadImage(Path.Combine("Images", "minimize.png")))
 				{
-					VAnchor = VAnchor.ParentTop,
+					VAnchor = VAnchor.Top,
 					DebugShowBounds  = true
 				});
 

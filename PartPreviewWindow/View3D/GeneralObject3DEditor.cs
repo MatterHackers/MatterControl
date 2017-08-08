@@ -72,8 +72,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				AlignToRightEdge = true,
 				PopupContent = new ColorSwatchSelector(item, view3DWidget, ApplicationController.Instance.Theme.MenuButtonFactory)
 				{
-					HAnchor = HAnchor.FitToChildren,
-					VAnchor = VAnchor.FitToChildren,
+					HAnchor = HAnchor.Fit,
+					VAnchor = VAnchor.Fit,
 					BackgroundColor = RGBA_Bytes.White
 				},
 				Margin = buttonMargin

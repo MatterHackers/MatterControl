@@ -58,14 +58,14 @@ namespace MatterHackers.MatterControl.UI
 
 			FlowLayoutWidget topToBottomContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				HAnchor = HAnchor.ParentLeftRight,
-				VAnchor = VAnchor.ParentBottomTop,
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch,
 			};
 			outerContainer.AddChild(topToBottomContainer);
 
 			CheckBox toggleBox = new CheckBox("test");
-			toggleBox.HAnchor = HAnchor.ParentLeftRight;
-			toggleBox.VAnchor = VAnchor.ParentBottomTop;
+			toggleBox.HAnchor = HAnchor.Stretch;
+			toggleBox.VAnchor = VAnchor.Stretch;
 			toggleBox.Margin = new BorderDouble(marginSize);
 			toggleBox.BackgroundColor = RGBA_Bytes.Red;
 			toggleBox.DebugShowBounds = true;

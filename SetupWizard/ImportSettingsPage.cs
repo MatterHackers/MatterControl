@@ -69,15 +69,15 @@ namespace MatterHackers.MatterControl
 			var scrollWindow = new ScrollableWidget()
 			{
 				AutoScroll = true,
-				HAnchor = HAnchor.ParentLeftRight,
-				VAnchor = VAnchor.ParentBottomTop,
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch,
 			};
-			scrollWindow.ScrollArea.HAnchor = HAnchor.ParentLeftRight;
+			scrollWindow.ScrollArea.HAnchor = HAnchor.Stretch;
 			contentRow.AddChild(scrollWindow);
 
 			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				HAnchor = HAnchor.ParentLeftRight,
+				HAnchor = HAnchor.Stretch,
 			};
 			scrollWindow.AddChild(container);
 
@@ -97,7 +97,7 @@ namespace MatterHackers.MatterControl
 			{
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
 				Margin = new BorderDouble(5, 0),
-				HAnchor = HAnchor.ParentLeft,
+				HAnchor = HAnchor.Left,
 				Checked = true,
 			};
 			container.AddChild(mainProfileRadioButton);
@@ -117,7 +117,7 @@ namespace MatterHackers.MatterControl
 					{
 						TextColor = ActiveTheme.Instance.PrimaryTextColor,
 						Margin = new BorderDouble(5, 0, 0, 0),
-						HAnchor = HAnchor.ParentLeft,
+						HAnchor = HAnchor.Left,
 					};
 					container.AddChild(qualityButton);
 
@@ -153,7 +153,7 @@ namespace MatterHackers.MatterControl
 					{
 						TextColor = ActiveTheme.Instance.PrimaryTextColor,
 						Margin = new BorderDouble(5, 0),
-						HAnchor = HAnchor.ParentLeft,
+						HAnchor = HAnchor.Left,
 					};
 
 					container.AddChild(materialButton);
@@ -263,7 +263,7 @@ namespace MatterHackers.MatterControl
 
 			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				HAnchor = HAnchor.ParentLeftRight,
+				HAnchor = HAnchor.Stretch,
 			};
 			contentRow.AddChild(container);
 
@@ -287,7 +287,7 @@ namespace MatterHackers.MatterControl
 		{
 			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				HAnchor = HAnchor.ParentLeftRight,
+				HAnchor = HAnchor.Stretch,
 			};
 			contentRow.AddChild(container);
 
@@ -390,8 +390,8 @@ namespace MatterHackers.MatterControl
 
 			var container = new GuiWidget()
 			{
-				HAnchor = HAnchor.ParentLeftRight,
-				VAnchor = VAnchor.FitToChildren,
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit,
 				Margin = new BorderDouble(25, 15, 5, 5),
 			};
 

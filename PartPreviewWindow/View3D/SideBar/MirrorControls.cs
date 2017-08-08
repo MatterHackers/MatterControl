@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			List<GuiWidget> mirrorControls = new List<GuiWidget>();
 
 			FlowLayoutWidget buttonContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
-			buttonContainer.HAnchor = HAnchor.FitToChildren;
+			buttonContainer.HAnchor = HAnchor.Fit;
 
 			Button mirrorXButton = buttonFactory.Generate("X", centerText: true);
 			buttonContainer.AddChild(mirrorXButton);

@@ -352,7 +352,7 @@ namespace MatterHackers.MatterControl
 					new ImageWidget(restorePressed),
 					new ImageWidget(restoreNormal)))
 			{
-				VAnchor = VAnchor.ParentCenter,
+				VAnchor = VAnchor.Center,
 				Margin = new BorderDouble(0, 0, 5, 0)
 			};
 		}
@@ -368,7 +368,7 @@ namespace MatterHackers.MatterControl
 			TextWidget spacingText = new TextWidget(header, textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
 				Margin = new BorderDouble(10, 3, 3, 5),
-				HAnchor = HAnchor.ParentLeft
+				HAnchor = HAnchor.Left
 			};
 			wordOptionContainer.AddChild(spacingText);
 
@@ -378,7 +378,7 @@ namespace MatterHackers.MatterControl
 				Minimum = min,
 				Maximum = max,
 				Margin = new BorderDouble(3, 5, 3, 3),
-				HAnchor = HAnchor.ParentCenter,
+				HAnchor = HAnchor.Center,
 			};
 			namedSlider.View.BackgroundColor = new RGBA_Bytes();
 

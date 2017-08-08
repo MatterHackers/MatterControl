@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		public PrintActionRow(TextImageButtonFactory buttonFactory, GuiWidget parentWidget, BorderDouble defaultMargin)
 		{
-			this.HAnchor = HAnchor.ParentLeftRight;
+			this.HAnchor = HAnchor.Stretch;
 
 			AddChildElements(buttonFactory, parentWidget, defaultMargin);
 
@@ -158,7 +158,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			parentWidget.AddChild(resumeButton);
 			allPrintButtons.Add(resumeButton);
 			this.Margin = 0;
-			this.HAnchor = HAnchor.FitToChildren;
+			this.HAnchor = HAnchor.Fit;
 
 			parentWidget.AddChild(addPrinterButton);
 			allPrintButtons.Add(addPrinterButton);

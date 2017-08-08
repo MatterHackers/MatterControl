@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl
 			return new TextWidget(startText, textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
 				Margin = new BorderDouble(0, 2),
-				HAnchor = Agg.UI.HAnchor.ParentLeft,
+				HAnchor = Agg.UI.HAnchor.Left,
 				AutoExpandBoundsToText = true
 			};
 		}

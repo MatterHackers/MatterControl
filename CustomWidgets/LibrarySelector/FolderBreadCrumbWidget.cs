@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.listView = listView;
 			this.Name = "FolderBreadCrumbWidget";
 			UiThread.RunOnIdle(() => SetBreadCrumbs(listView.ActiveContainer));
-			HAnchor = HAnchor.ParentLeftRight;
+			HAnchor = HAnchor.Stretch;
 		}
 
 		public static IEnumerable<ILibraryContainer> ItemAndParents(ILibraryContainer item)
@@ -90,7 +90,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				Button containerButton = linkButtonFactory.Generate(listView.ActiveContainer.Name);
 				containerButton.Name = "Bread Crumb Button " + listView.ActiveContainer.Name;
-				containerButton.VAnchor = VAnchor.ParentCenter;
+				containerButton.VAnchor = VAnchor.Center;
 				containerButton.Margin = new BorderDouble(right:  5);
 
 				this.AddChild(containerButton);
@@ -104,14 +104,14 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						// Add separator
 						this.AddChild(new TextWidget(">", textColor: ActiveTheme.Instance.PrimaryTextColor)
 						{
-							VAnchor = VAnchor.ParentCenter,
+							VAnchor = VAnchor.Center,
 							Margin = new BorderDouble(right: 5)
 						});
 					}
 
 					Button gotoProviderButton =  linkButtonFactory.Generate(container.Name);
 					gotoProviderButton.Name = "Bread Crumb Button " + container.Name;
-					gotoProviderButton.VAnchor = VAnchor.ParentCenter;
+					gotoProviderButton.VAnchor = VAnchor.Center;
 					gotoProviderButton.Margin = new BorderDouble(right:  5);
 					gotoProviderButton.Click += (s, e) =>
 					{
@@ -127,7 +127,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					// Add separator ;
 					this.AddChild(new TextWidget(">", textColor: ActiveTheme.Instance.PrimaryTextColor)
 					{
-						VAnchor = VAnchor.ParentCenter,
+						VAnchor = VAnchor.Center,
 						Margin = new BorderDouble(right: 5)
 					});
 
@@ -156,7 +156,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 					var separator = new TextWidget("...", textColor: ActiveTheme.Instance.PrimaryTextColor)
 					{
-						VAnchor = VAnchor.ParentCenter,
+						VAnchor = VAnchor.Center,
 						Margin = new BorderDouble(right:  5)
 					};
 					this.AddChild(separator, 1);

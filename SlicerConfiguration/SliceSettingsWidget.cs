@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				Margin = new BorderDouble(top: 10),
 				BorderColor = ActiveTheme.Instance.PrimaryTextColor,
-				HAnchor = HAnchor.ParentLeftRight,
+				HAnchor = HAnchor.Stretch,
 				Height = 90
 			};
 			string noConnectionString = "No printer is currently selected. Please select a printer to edit slice settings.".Localize();
@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				Margin = new BorderDouble(5),
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
-				HAnchor = HAnchor.ParentLeftRight
+				HAnchor = HAnchor.Stretch
 			};
 			noConnectionMessageContainer.AddChild(noConnectionMessage);
 			this.AddChild(noConnectionMessageContainer);
@@ -99,7 +99,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			pageTopToBottomLayout = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				VAnchor = VAnchor.ParentTop
+				VAnchor = VAnchor.Top
 			};
 			pageTopToBottomLayout.AnchorAll();
 			pageTopToBottomLayout.Padding = new BorderDouble(3, 0);
@@ -107,7 +107,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			settingsControlBar = new SettingsControlBar()
 			{
-				HAnchor = HAnchor.ParentLeftRight,
+				HAnchor = HAnchor.Stretch,
 				Padding = new BorderDouble(8, 12, 8, 8)
 			};
 
@@ -119,7 +119,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				Margin = new BorderDouble(5),
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
-				HAnchor = HAnchor.ParentLeftRight
+				HAnchor = HAnchor.Stretch
 			};
 			PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
 			PrinterConnection.Instance.EnableChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
@@ -341,7 +341,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private TabControl CreateSideTabsAndPages(OrganizerCategory category, bool showHelpControls)
 		{
-			this.HAnchor = HAnchor.ParentLeftRight;
+			this.HAnchor = HAnchor.Stretch;
 
 			TabControl leftSideGroupTabs = new TabControl(Orientation.Vertical);
 			leftSideGroupTabs.Margin = new BorderDouble(0, 0, 0, 5);
@@ -353,7 +353,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				var groupTabPage = new TabPage(group.Name.Localize())
 				{
-					HAnchor = HAnchor.ParentLeftRight
+					HAnchor = HAnchor.Stretch
 				};
 
 				//Side Tabs
@@ -367,7 +367,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					new RGBA_Bytes(),
 					32);
 
-				groupTabWidget.HAnchor = HAnchor.ParentLeftRight;
+				groupTabWidget.HAnchor = HAnchor.Stretch;
 
 				var subGroupLayoutTopToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
 				subGroupLayoutTopToBottom.AnchorAll();
@@ -394,7 +394,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 						var topToBottomSettings = new FlowLayoutWidget(FlowDirection.TopToBottom)
 						{
-							HAnchor = HAnchor.ParentLeftRight
+							HAnchor = HAnchor.Stretch
 						};
 
 						foreach (SliceSettingData settingData in subGroup.SettingDataList)
@@ -431,7 +431,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							{
 								TextColor = ActiveTheme.Instance.PrimaryTextColor,
 								BorderColor = ActiveTheme.Instance.PrimaryTextColor,
-								HAnchor = HAnchor.ParentLeftRight,
+								HAnchor = HAnchor.Stretch,
 								Margin = new BorderDouble(3, 3, 3, 0)
 							};
 							groupBox.AddChild(topToBottomSettings);
@@ -445,8 +445,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					SliceSettingListControl scrollOnGroupTab = new SliceSettingListControl();
 
-					subGroupLayoutTopToBottom.VAnchor = VAnchor.FitToChildren;
-					subGroupLayoutTopToBottom.HAnchor = HAnchor.ParentLeftRight;
+					subGroupLayoutTopToBottom.VAnchor = VAnchor.Fit;
+					subGroupLayoutTopToBottom.HAnchor = HAnchor.Stretch;
 
 					scrollOnGroupTab.AddChild(subGroupLayoutTopToBottom);
 					groupTabPage.AddChild(scrollOnGroupTab);
@@ -525,7 +525,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private GuiWidget AddInHelpText(FlowLayoutWidget topToBottomSettings, SliceSettingData settingData)
 		{
 			FlowLayoutWidget allText = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			allText.HAnchor = HAnchor.ParentLeftRight;
+			allText.HAnchor = HAnchor.Stretch;
 			double textRegionWidth = 380 * GuiWidget.DeviceScale;
 			allText.Margin = new BorderDouble(0);
 			allText.Padding = new BorderDouble(5);
@@ -536,7 +536,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			GuiWidget helpWidget = new WrappedTextWidget(settingData.HelpText, pointSize: helpPointSize, textColor: RGBA_Bytes.White);
 			helpWidget.Width = textRegionWidth;
 			helpWidget.Margin = new BorderDouble(5, 0, 0, 0);
-			//helpWidget.HAnchor = HAnchor.ParentLeft;
+			//helpWidget.HAnchor = HAnchor.Left;
 			allText.AddChild(helpWidget);
 
 			allText.MinimumSize = new Vector2(0, allText.MinimumSize.y);
@@ -557,13 +557,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				leftSideGroupTabs.AddTab(groupTabWidget);
 
 				FlowLayoutWidget subGroupLayoutTopToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
-				subGroupLayoutTopToBottom.HAnchor = HAnchor.Max_FitToChildren_ParentWidth;
-				subGroupLayoutTopToBottom.VAnchor = VAnchor.FitToChildren;
+				subGroupLayoutTopToBottom.HAnchor = HAnchor.MaxFitOrStretch;
+				subGroupLayoutTopToBottom.VAnchor = VAnchor.Fit;
 
 				FlowLayoutWidget topToBottomSettings = new FlowLayoutWidget(FlowDirection.TopToBottom);
-				topToBottomSettings.HAnchor = HAnchor.Max_FitToChildren_ParentWidth;
+				topToBottomSettings.HAnchor = HAnchor.MaxFitOrStretch;
 
-				this.HAnchor = HAnchor.ParentLeftRight;
+				this.HAnchor = HAnchor.Stretch;
 
 				foreach (var keyValue in ActiveSliceSettings.Instance.BaseLayer)
 				{
@@ -591,8 +591,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				groupBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 				groupBox.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
 				groupBox.AddChild(topToBottomSettings);
-				groupBox.VAnchor = VAnchor.FitToChildren;
-				groupBox.HAnchor = HAnchor.Max_FitToChildren_ParentWidth;
+				groupBox.VAnchor = VAnchor.Fit;
+				groupBox.HAnchor = HAnchor.MaxFitOrStretch;
 
 				subGroupLayoutTopToBottom.AddChild(groupBox);
 
@@ -608,8 +608,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			var nameHolder = new GuiWidget()
 			{
-				HAnchor = HAnchor.ParentLeftRight,
-				VAnchor = VAnchor.FitToChildren | VAnchor.ParentCenter,
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit | VAnchor.Center,
 				Padding = new BorderDouble(5, 0),
 			};
 
@@ -635,7 +635,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				Margin = new BorderDouble(0, 2);
 				Padding = new BorderDouble(3);
-				HAnchor = HAnchor.ParentLeftRight;
+				HAnchor = HAnchor.Stretch;
 
 				ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
 				{
@@ -681,7 +681,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			var dataArea = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				HAnchor = HAnchor.ParentLeftRight,
+				HAnchor = HAnchor.Stretch,
 			};
 
 			if (isPrimaryView)
@@ -709,7 +709,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor,
 					Padding = new BorderDouble(5),
 					Margin = new BorderDouble(3, 20, 3, 0),
-					HAnchor = HAnchor.ParentLeftRight
+					HAnchor = HAnchor.Stretch
 				};
 
 				string make = ActiveSliceSettings.Instance.GetValue(SettingsKey.make);
@@ -764,20 +764,20 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			GuiWidget nameArea = new GuiWidget()
 			{
-				HAnchor = HAnchor.ParentLeftRight,
-				VAnchor = VAnchor.FitToChildren | VAnchor.ParentCenter
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit | VAnchor.Center
 			};
 			var dataArea = new FlowLayoutWidget();
 			GuiWidget unitsArea = new GuiWidget()
 			{
-				HAnchor = HAnchor.AbsolutePosition,
-				VAnchor = VAnchor.FitToChildren | VAnchor.ParentCenter,
+				HAnchor = HAnchor.Absolute,
+				VAnchor = VAnchor.Fit | VAnchor.Center,
 				Width = settingData.ShowAsOverride ? 50 * GuiWidget.DeviceScale : 5,
 			};
 			GuiWidget restoreArea = new GuiWidget()
 			{
-				HAnchor = HAnchor.AbsolutePosition,
-				VAnchor = VAnchor.FitToChildren | VAnchor.ParentCenter,
+				HAnchor = HAnchor.Absolute,
+				VAnchor = VAnchor.Fit | VAnchor.Center,
 				Width = settingData.ShowAsOverride ? 30 * GuiWidget.DeviceScale : 0,
 			};
 
@@ -813,8 +813,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					var nameHolder = new GuiWidget()
 					{
 						Padding = new BorderDouble(0, 0, 5, 0),
-						VAnchor = VAnchor.FitToChildren | VAnchor.ParentCenter,
-						HAnchor = HAnchor.ParentLeftRight,
+						VAnchor = VAnchor.Fit | VAnchor.Center,
+						HAnchor = HAnchor.Stretch,
 					};
 
 					nameHolder.AddChild(new WrappedTextWidget(settingData.PresentationName.Localize(), pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor));
@@ -1151,7 +1151,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							{
 								Name = settingData.PresentationName + " Checkbox",
 								ToolTipText = settingData.HelpText,
-								VAnchor = VAnchor.ParentBottom,
+								VAnchor = VAnchor.Bottom,
 								TextColor = ActiveTheme.Instance.PrimaryTextColor,
 								Checked = sliceSettingValue == "1"
 							};
@@ -1213,7 +1213,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							string convertedNewLines = sliceSettingValue.Replace("\\n", "\n");
 							var stringEdit = new MHTextEditWidget(convertedNewLines, pixelWidth: 320, pixelHeight: multiLineEditHeight, multiLine: true, tabIndex: tabIndexForItem++, typeFace: ApplicationController.MonoSpacedTypeFace)
 							{
-								HAnchor = HAnchor.ParentLeftRight,
+								HAnchor = HAnchor.Stretch,
 							};
 
 							stringEdit.DrawFromHintedCache();
@@ -1224,10 +1224,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								settingsRow.UpdateStyle();
 							};
 
-							nameArea.HAnchor = HAnchor.AbsolutePosition;
+							nameArea.HAnchor = HAnchor.Absolute;
 							nameArea.Width = 0;
 							dataArea.AddChild(stringEdit);
-							dataArea.HAnchor = HAnchor.ParentLeftRight;
+							dataArea.HAnchor = HAnchor.Stretch;
 
 							settingsRow.ValueChanged = (text) =>
 							{
@@ -1330,7 +1330,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							{
 								Name = settingData.PresentationName + " Checkbox",
 								ToolTipText = settingData.HelpText,
-								VAnchor = VAnchor.ParentBottom,
+								VAnchor = VAnchor.Bottom,
 								TextColor = ActiveTheme.Instance.PrimaryTextColor,
 								Checked = sliceSettingValue == "1"
 							};
@@ -1388,7 +1388,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							dataArea.AddChild(xEditWidget);
 							dataArea.AddChild(new TextWidget("X", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor)
 							{
-								VAnchor = VAnchor.ParentCenter,
+								VAnchor = VAnchor.Center,
 								Margin = new BorderDouble(5, 0),
 							});
 
@@ -1401,9 +1401,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							dataArea.AddChild(yEditWidget);
 							var yLabel = new GuiWidget()
 							{
-								VAnchor = VAnchor.FitToChildren | VAnchor.ParentCenter,
+								VAnchor = VAnchor.Fit | VAnchor.Center,
 								Padding = new BorderDouble(5, 0),
-								HAnchor = HAnchor.ParentLeftRight,
+								HAnchor = HAnchor.Stretch,
 							};
 							yLabel.AddChild(new WrappedTextWidget("Y", pointSize: 9, textColor: ActiveTheme.Instance.PrimaryTextColor));
 							unitsArea.AddChild(yLabel);
@@ -1454,7 +1454,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							dataArea.AddChild(xEditWidget);
 							dataArea.AddChild(new TextWidget("X", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor)
 							{
-								VAnchor = VAnchor.ParentCenter,
+								VAnchor = VAnchor.Center,
 								Margin = new BorderDouble(5, 0),
 							});
 
@@ -1469,8 +1469,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							var yLabel = new GuiWidget()
 							{
 								Padding = new BorderDouble(5, 0),
-								HAnchor = HAnchor.ParentLeftRight,
-								VAnchor = VAnchor.FitToChildren | VAnchor.ParentCenter,
+								HAnchor = HAnchor.Stretch,
+								VAnchor = VAnchor.Fit | VAnchor.Center,
 							};
 							yLabel.AddChild(new WrappedTextWidget("Y", pointSize: 9, textColor: ActiveTheme.Instance.PrimaryTextColor));
 							unitsArea.AddChild(yLabel);
@@ -1606,16 +1606,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				var holder = new GuiWidget()
 				{
-					VAnchor = VAnchor.FitToChildren,
-					HAnchor = HAnchor.ParentLeftRight
+					VAnchor = VAnchor.Fit,
+					HAnchor = HAnchor.Stretch
 				};
 
 				holder.AddChild(settingsRow);
 
 				var disable = new GuiWidget()
 				{
-					VAnchor = VAnchor.ParentBottomTop,
-					HAnchor = HAnchor.ParentLeftRight,
+					VAnchor = VAnchor.Stretch,
+					HAnchor = HAnchor.Stretch,
 				};
 				disable.BackgroundColor = new RGBA_Bytes(ActiveTheme.Instance.TertiaryBackgroundColor, 200);
 
@@ -1688,7 +1688,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			MenuItem customMenueItem = selectableOptions.AddItem("Custom");
 
 			totalContent.AddChild(selectableOptions);
-			content.VAnchor = VAnchor.ParentCenter;
+			content.VAnchor = VAnchor.Center;
 			totalContent.AddChild(content);
 
 			EventHandler localUnregisterEvents = null;
@@ -1766,10 +1766,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			this.AnchorAll();
 			this.AutoScroll = true;
-			this.ScrollArea.HAnchor |= HAnchor.ParentLeftRight;
+			this.ScrollArea.HAnchor |= HAnchor.Stretch;
 
 			topToBottomItemList = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			topToBottomItemList.HAnchor = HAnchor.Max_FitToChildren_ParentWidth;
+			topToBottomItemList.HAnchor = HAnchor.MaxFitOrStretch;
 			topToBottomItemList.Margin = new BorderDouble(top: 3);
 
 			base.AddChild(topToBottomItemList);
@@ -1779,9 +1779,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			FlowLayoutWidget itemHolder = new FlowLayoutWidget();
 			itemHolder.Margin = new BorderDouble(0, 0, 0, 0);
-			itemHolder.HAnchor = HAnchor.Max_FitToChildren_ParentWidth;
+			itemHolder.HAnchor = HAnchor.MaxFitOrStretch;
 			itemHolder.AddChild(child);
-			itemHolder.VAnchor = VAnchor.FitToChildren;
+			itemHolder.VAnchor = VAnchor.Fit;
 
 			topToBottomItemList.AddChild(itemHolder, indexInChildrenList);
 		}

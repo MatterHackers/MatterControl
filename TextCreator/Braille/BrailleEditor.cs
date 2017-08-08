@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 
 			var tabContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				HAnchor = HAnchor.AbsolutePosition,
+				HAnchor = HAnchor.Absolute,
 				Visible = true,
 				Width = theme.WhiteButtonFactory.FixedWidth
 			};
@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 
 			textToAddWidget = new MHTextEditWidget("", pixelWidth: 300, messageWhenEmptyAndNotSelected: "Enter Text Here".Localize())
 			{
-				HAnchor = HAnchor.ParentLeftRight,
+				HAnchor = HAnchor.Stretch,
 				Margin = new BorderDouble(5),
 				Text = injectedItem.Text
 			};
@@ -85,7 +85,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 			useGrade2.ToolTipText = "Experimental support for Braille grade 2 (contractions)".Localize();
 			useGrade2.Checked = false;
 			useGrade2.Margin = new BorderDouble(10, 5);
-			useGrade2.HAnchor = HAnchor.ParentLeft;
+			useGrade2.HAnchor = HAnchor.Left;
 			tabContainer.AddChild(useGrade2);
 			useGrade2.CheckedStateChanged += (sender, e) =>
 			{
@@ -94,7 +94,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 			
 			Button updateButton = theme.ButtonFactory.Generate("Update".Localize());
 			updateButton.Margin = new BorderDouble(5);
-			updateButton.HAnchor = HAnchor.ParentRight;
+			updateButton.HAnchor = HAnchor.Right;
 			updateButton.Click += (s, e) => RebuildText(textToAddWidget.Text);
 			tabContainer.AddChild(updateButton);
 
@@ -106,7 +106,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 
 				Button moreAboutBrailleLink = linkButtonFactory.Generate("About Braille".Localize());
 				moreAboutBrailleLink.Margin = new BorderDouble(10, 5);
-				moreAboutBrailleLink.HAnchor = HAnchor.ParentLeft;
+				moreAboutBrailleLink.HAnchor = HAnchor.Left;
 				moreAboutBrailleLink.Click += (sender, e) =>
 				{
 					UiThread.RunOnIdle(() =>

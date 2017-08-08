@@ -88,7 +88,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			{
 				var imageWidget = new ImageWidget(macroData.image)
 				{
-					HAnchor = HAnchor.ParentCenter,
+					HAnchor = HAnchor.Center,
 					Margin = new BorderDouble(5,15),
 				};
 

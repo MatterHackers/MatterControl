@@ -88,8 +88,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			sliceProgressReporter = new SliceProgressReporter(modelViewer.meshViewerWidget);
 
-			this.HAnchor = HAnchor.ParentLeftRight;
-			this.VAnchor = VAnchor.FitToChildren;
+			this.HAnchor = HAnchor.Stretch;
+			this.VAnchor = VAnchor.Fit;
 
 			this.AddChild(new PrinterConnectButton(buttonFactory, defaultMargin));
 
@@ -171,7 +171,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				undoBuffer.Undo();
 			};
 			this.AddChild(undoButton);
-			undoButton.VAnchor = VAnchor.ParentCenter;
+			undoButton.VAnchor = VAnchor.Center;
 
 			Button redoButton = smallMarginFactory.Generate("", StaticData.Instance.LoadIcon("Redo_grey_16x.png", 16, 16));
 			redoButton.Name = "3D View Redo";
@@ -182,7 +182,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				undoBuffer.Redo();
 			};
 			this.AddChild(redoButton);
-			redoButton.VAnchor = VAnchor.ParentCenter;
+			redoButton.VAnchor = VAnchor.Center;
 
 			undoBuffer.Changed += (sender, e) =>
 			{
@@ -220,8 +220,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var widgetToPop = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				HAnchor = HAnchor.FitToChildren,
-				VAnchor = VAnchor.FitToChildren,
+				HAnchor = HAnchor.Fit,
+				VAnchor = VAnchor.Fit,
 			};
 
 			var menuActions = new NamedAction[]

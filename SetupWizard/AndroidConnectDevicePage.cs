@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl
 
 			connectButtonContainer = new FlowLayoutWidget()
 			{
-				HAnchor = HAnchor.ParentLeftRight,
+				HAnchor = HAnchor.Stretch,
 				Margin = new BorderDouble(0, 6)
 			};
 
@@ -96,7 +96,7 @@ namespace MatterHackers.MatterControl
 			generalError = new TextWidget("", 0, 0, errorFontSize)
 			{
 				TextColor = ActiveTheme.Instance.SecondaryAccentColor,
-				HAnchor = HAnchor.ParentLeftRight,
+				HAnchor = HAnchor.Stretch,
 				Visible = false,
 				Margin = new BorderDouble(top: 20),
 			};
@@ -113,7 +113,7 @@ namespace MatterHackers.MatterControl
 
 			retryButtonContainer = new FlowLayoutWidget()
 			{
-				HAnchor = HAnchor.ParentLeftRight,
+				HAnchor = HAnchor.Stretch,
 				Margin = new BorderDouble(0, 6),
 				Visible = false
 			};
@@ -130,7 +130,7 @@ namespace MatterHackers.MatterControl
 			nextButton.Visible = false;
 
 			GuiWidget hSpacer = new GuiWidget();
-			hSpacer.HAnchor = HAnchor.ParentLeftRight;
+			hSpacer.HAnchor = HAnchor.Stretch;
 
 			//Add buttons to buttonContainer
 			footerRow.AddChild(nextButton);

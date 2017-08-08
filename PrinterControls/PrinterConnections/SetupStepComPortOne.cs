@@ -29,14 +29,14 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		public FlowLayoutWidget createPrinterConnectionMessageContainer()
 		{
 			FlowLayoutWidget container = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			container.VAnchor = VAnchor.ParentBottomTop;
+			container.VAnchor = VAnchor.Stretch;
 			container.Margin = new BorderDouble(5);
 			BorderDouble elementMargin = new BorderDouble(top: 5);
 
 			TextWidget printerMessageOne = new TextWidget("MatterControl will now attempt to auto-detect printer.".Localize(), 0, 0, 10);
 			printerMessageOne.Margin = new BorderDouble(0, 10, 0, 5);
 			printerMessageOne.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			printerMessageOne.HAnchor = HAnchor.ParentLeftRight;
+			printerMessageOne.HAnchor = HAnchor.Stretch;
 			printerMessageOne.Margin = elementMargin;
 
 			string printerMessageTwoTxt = "Disconnect printer".Localize();
@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			string printerMessageTwoTxtFull = string.Format("1.) {0} ({1}).", printerMessageTwoTxt, printerMessageTwoTxtEnd);
 			TextWidget printerMessageTwo = new TextWidget(printerMessageTwoTxtFull, 0, 0, 12);
 			printerMessageTwo.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			printerMessageTwo.HAnchor = HAnchor.ParentLeftRight;
+			printerMessageTwo.HAnchor = HAnchor.Stretch;
 			printerMessageTwo.Margin = elementMargin;
 
 			string printerMessageThreeTxt = "Press".Localize();
@@ -52,17 +52,17 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			string printerMessageThreeFull = string.Format("2.) {0} '{1}'.", printerMessageThreeTxt, printerMessageThreeTxtEnd);
 			TextWidget printerMessageThree = new TextWidget(printerMessageThreeFull, 0, 0, 12);
 			printerMessageThree.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			printerMessageThree.HAnchor = HAnchor.ParentLeftRight;
+			printerMessageThree.HAnchor = HAnchor.Stretch;
 			printerMessageThree.Margin = elementMargin;
 
 			GuiWidget vSpacer = new GuiWidget();
-			vSpacer.VAnchor = VAnchor.ParentBottomTop;
+			vSpacer.VAnchor = VAnchor.Stretch;
 
 			string setupManualConfigurationOrSkipConnectionText = LocalizedString.Get(("You can also"));
 			string setupManualConfigurationOrSkipConnectionTextFull = String.Format("{0}:", setupManualConfigurationOrSkipConnectionText);
 			TextWidget setupManualConfigurationOrSkipConnectionWidget = new TextWidget(setupManualConfigurationOrSkipConnectionTextFull, 0, 0, 10);
 			setupManualConfigurationOrSkipConnectionWidget.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			setupManualConfigurationOrSkipConnectionWidget.HAnchor = HAnchor.ParentLeftRight;
+			setupManualConfigurationOrSkipConnectionWidget.HAnchor = HAnchor.Stretch;
 			setupManualConfigurationOrSkipConnectionWidget.Margin = elementMargin;
 
 			Button manualLink = linkButtonFactory.Generate("Manually Configure Connection".Localize());
@@ -72,7 +72,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			string printerMessageFourText = "or".Localize();
 			TextWidget printerMessageFour = new TextWidget(printerMessageFourText, 0, 0, 10);
 			printerMessageFour.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			printerMessageFour.HAnchor = HAnchor.ParentLeftRight;
+			printerMessageFour.HAnchor = HAnchor.Stretch;
 			printerMessageFour.Margin = elementMargin;
 
 			Button skipConnectionLink = linkButtonFactory.Generate("Skip Connection Setup".Localize());
@@ -88,7 +88,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			container.AddChild(printerMessageFour);
 			container.AddChild(skipConnectionLink);
 
-			container.HAnchor = HAnchor.ParentLeftRight;
+			container.HAnchor = HAnchor.Stretch;
 			return container;
 		}
 

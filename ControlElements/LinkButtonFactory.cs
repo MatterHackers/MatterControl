@@ -41,14 +41,14 @@ namespace MatterHackers.MatterControl
 			this.isUnderlined = isUnderlined;
 
 			buttonText = new TextWidget(label, pointSize: textHeight);
-			buttonText.VAnchor = VAnchor.ParentCenter;
-			buttonText.HAnchor = HAnchor.ParentCenter;
+			buttonText.VAnchor = VAnchor.Center;
+			buttonText.HAnchor = HAnchor.Center;
 			buttonText.TextColor = this.TextColor;
 
 			//this.AnchorAll();
 			this.AddChild(buttonText);
-			HAnchor = HAnchor.FitToChildren;
-			VAnchor = VAnchor.FitToChildren;
+			HAnchor = HAnchor.Fit;
+			VAnchor = VAnchor.Fit;
 		}
 
 		public override void SendToChildren(object objectToRoute)

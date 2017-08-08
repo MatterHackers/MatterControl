@@ -42,7 +42,7 @@ namespace MatterHackers.MatterControl
 		{
 			this.textScrollWidget = textScrollWidget;
 			Margin = new BorderDouble(0, 5);
-			VAnchor = Agg.UI.VAnchor.ParentBottomTop;
+			VAnchor = Agg.UI.VAnchor.Stretch;
 			BackgroundColor = RGBA_Bytes.LightGray;
 		}
 

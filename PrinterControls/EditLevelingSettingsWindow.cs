@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl
 			topToBottom.Padding = new BorderDouble(3, 0, 3, 5);
 
 			FlowLayoutWidget headerRow = new FlowLayoutWidget(FlowDirection.LeftToRight);
-			headerRow.HAnchor = HAnchor.ParentLeftRight;
+			headerRow.HAnchor = HAnchor.Stretch;
 			headerRow.Margin = new BorderDouble(0, 3, 0, 0);
 			headerRow.Padding = new BorderDouble(0, 3, 0, 3);
 
@@ -64,8 +64,8 @@ namespace MatterHackers.MatterControl
 				string movementSpeedsLabel = LocalizedString.Get("Sampled Positions".Localize());
 				TextWidget elementHeader = new TextWidget(string.Format("{0}:", movementSpeedsLabel), pointSize: 14);
 				elementHeader.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-				elementHeader.HAnchor = HAnchor.ParentLeftRight;
-				elementHeader.VAnchor = Agg.UI.VAnchor.ParentBottom;
+				elementHeader.HAnchor = HAnchor.Stretch;
+				elementHeader.VAnchor = Agg.UI.VAnchor.Bottom;
 
 				headerRow.AddChild(elementHeader);
 			}
@@ -75,8 +75,8 @@ namespace MatterHackers.MatterControl
 			FlowLayoutWidget presetsFormContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			//ListBox printerListContainer = new ListBox();
 			{
-				presetsFormContainer.HAnchor = HAnchor.ParentLeftRight;
-				presetsFormContainer.VAnchor = VAnchor.ParentBottomTop;
+				presetsFormContainer.HAnchor = HAnchor.Stretch;
+				presetsFormContainer.VAnchor = VAnchor.Stretch;
 				presetsFormContainer.Padding = new BorderDouble(3);
 				presetsFormContainer.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
 			}
@@ -97,13 +97,13 @@ namespace MatterHackers.MatterControl
 			{
 				FlowLayoutWidget leftRightEdit = new FlowLayoutWidget();
 				leftRightEdit.Padding = new BorderDouble(3);
-				leftRightEdit.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
+				leftRightEdit.HAnchor |= Agg.UI.HAnchor.Stretch;
 				TextWidget positionLabel;
 
 				string whichPositionText = "Position".Localize();
 				positionLabel = new TextWidget("{0} {1,-5}".FormatWith(whichPositionText, row + 1), textColor: ActiveTheme.Instance.PrimaryTextColor);
 
-				positionLabel.VAnchor = VAnchor.ParentCenter;
+				positionLabel.VAnchor = VAnchor.Center;
 				leftRightEdit.AddChild(positionLabel);
 
 				for (int axis = 0; axis < 3; axis++)
@@ -115,7 +115,7 @@ namespace MatterHackers.MatterControl
 					else if (axis == 2) axisName = "z";
 
 					TextWidget typeEdit = new TextWidget("  {0}: ".FormatWith(axisName), textColor: ActiveTheme.Instance.PrimaryTextColor);
-					typeEdit.VAnchor = VAnchor.ParentCenter;
+					typeEdit.VAnchor = VAnchor.Center;
 					leftRightEdit.AddChild(typeEdit);
 
 					int linkCompatibleRow = row;
@@ -165,11 +165,11 @@ namespace MatterHackers.MatterControl
 			};
 
 			FlowLayoutWidget buttonRow = new FlowLayoutWidget();
-			buttonRow.HAnchor = HAnchor.ParentLeftRight;
+			buttonRow.HAnchor = HAnchor.Stretch;
 			buttonRow.Padding = new BorderDouble(0, 3);
 
 			GuiWidget hButtonSpacer = new GuiWidget();
-			hButtonSpacer.HAnchor = HAnchor.ParentLeftRight;
+			hButtonSpacer.HAnchor = HAnchor.Stretch;
 
 			buttonRow.AddChild(savePresetsButton);
 			buttonRow.AddChild(hButtonSpacer);

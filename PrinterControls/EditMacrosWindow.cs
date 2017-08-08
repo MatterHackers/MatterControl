@@ -122,7 +122,7 @@ namespace MatterHackers.MatterControl
 			topToBottom.Padding = new BorderDouble(3, 0, 3, 5);
 
 			FlowLayoutWidget headerRow = new FlowLayoutWidget(FlowDirection.LeftToRight);
-			headerRow.HAnchor = HAnchor.ParentLeftRight;
+			headerRow.HAnchor = HAnchor.Stretch;
 			headerRow.Margin = new BorderDouble(0, 3, 0, 0);
 			headerRow.Padding = new BorderDouble(0, 3, 0, 3);
 
@@ -131,8 +131,8 @@ namespace MatterHackers.MatterControl
 				string editMacroLabelFull = string.Format("{0}:", editMacroLabel);
 				TextWidget elementHeader = new TextWidget(editMacroLabelFull, pointSize: 14);
 				elementHeader.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-				elementHeader.HAnchor = HAnchor.ParentLeftRight;
-				elementHeader.VAnchor = Agg.UI.VAnchor.ParentBottom;
+				elementHeader.HAnchor = HAnchor.Stretch;
+				elementHeader.VAnchor = Agg.UI.VAnchor.Bottom;
 				headerRow.AddChild(elementHeader);
 			}
 
@@ -140,8 +140,8 @@ namespace MatterHackers.MatterControl
 
 			FlowLayoutWidget presetsFormContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			{
-				presetsFormContainer.HAnchor = HAnchor.ParentLeftRight;
-				presetsFormContainer.VAnchor = VAnchor.ParentBottomTop;
+				presetsFormContainer.HAnchor = HAnchor.Stretch;
+				presetsFormContainer.VAnchor = VAnchor.Stretch;
 				presetsFormContainer.Padding = new BorderDouble(3);
 				presetsFormContainer.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
 			}
@@ -165,11 +165,11 @@ namespace MatterHackers.MatterControl
 			};
 
 			FlowLayoutWidget buttonRow = new FlowLayoutWidget();
-			buttonRow.HAnchor = HAnchor.ParentLeftRight;
+			buttonRow.HAnchor = HAnchor.Stretch;
 			buttonRow.Padding = new BorderDouble(0, 3);
 
 			GuiWidget hButtonSpacer = new GuiWidget();
-			hButtonSpacer.HAnchor = HAnchor.ParentLeftRight;
+			hButtonSpacer.HAnchor = HAnchor.Stretch;
 
 			buttonRow.AddChild(addMacroButton);
 			buttonRow.AddChild(hButtonSpacer);
@@ -190,27 +190,27 @@ namespace MatterHackers.MatterControl
 			string macroCommandLabelTxtFull = string.Format("{0}:", macroCommandLabelTxt);
 			TextWidget macroCommandLabel = new TextWidget(macroCommandLabelTxtFull, 0, 0, 12);
 			macroCommandLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			macroCommandLabel.HAnchor = HAnchor.ParentLeftRight;
+			macroCommandLabel.HAnchor = HAnchor.Stretch;
 			macroCommandLabel.Margin = new BorderDouble(0, 0, 0, 1);
 
 			macroCommandInput = new MHTextEditWidget(windowController.ActiveMacro.GCode, pixelHeight: 120, multiLine: true, typeFace: ApplicationController.MonoSpacedTypeFace);
 			macroCommandInput.DrawFromHintedCache();
-			macroCommandInput.HAnchor = HAnchor.ParentLeftRight;
-			macroCommandInput.VAnchor = VAnchor.ParentBottomTop;
-			macroCommandInput.ActualTextEditWidget.VAnchor = VAnchor.ParentBottomTop;
+			macroCommandInput.HAnchor = HAnchor.Stretch;
+			macroCommandInput.VAnchor = VAnchor.Stretch;
+			macroCommandInput.ActualTextEditWidget.VAnchor = VAnchor.Stretch;
 
 			string shouldBeGCodeLabel = "This should be in 'G-Code'".Localize();
 			string shouldBeGCodeLabelFull = string.Format("{0}.", shouldBeGCodeLabel);
 			macroCommandError = new TextWidget(shouldBeGCodeLabelFull, 0, 0, 10);
 			macroCommandError.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			macroCommandError.HAnchor = HAnchor.ParentLeftRight;
+			macroCommandError.HAnchor = HAnchor.Stretch;
 			macroCommandError.Margin = elementMargin;
 
 			container.AddChild(macroCommandLabel);
 			container.AddChild(macroCommandInput);
 			container.AddChild(macroCommandError);
-			container.HAnchor = HAnchor.ParentLeftRight;
-			container.VAnchor = VAnchor.ParentBottomTop;
+			container.HAnchor = HAnchor.Stretch;
+			container.VAnchor = VAnchor.Stretch;
 			return container;
 		}
 
@@ -223,23 +223,23 @@ namespace MatterHackers.MatterControl
 			string macroNameLabelTxtFull = string.Format("{0}:", "Macro Name".Localize());
 			TextWidget macroNameLabel = new TextWidget(macroNameLabelTxtFull, 0, 0, 12);
 			macroNameLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			macroNameLabel.HAnchor = HAnchor.ParentLeftRight;
+			macroNameLabel.HAnchor = HAnchor.Stretch;
 			macroNameLabel.Margin = new BorderDouble(0, 0, 0, 1);
 
 			macroNameInput = new MHTextEditWidget(GCodeMacro.FixMacroName(windowController.ActiveMacro.Name));
-			macroNameInput.HAnchor = HAnchor.ParentLeftRight;
+			macroNameInput.HAnchor = HAnchor.Stretch;
 
 			string giveMacroANameLabel = "Give the macro a name".Localize();
 			string giveMacroANameLabelFull = string.Format("{0}.", giveMacroANameLabel);
 			macroNameError = new TextWidget(giveMacroANameLabelFull, 0, 0, 10);
 			macroNameError.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			macroNameError.HAnchor = HAnchor.ParentLeftRight;
+			macroNameError.HAnchor = HAnchor.Stretch;
 			macroNameError.Margin = elementMargin;
 
 			container.AddChild(macroNameLabel);
 			container.AddChild(macroNameInput);
 			container.AddChild(macroNameError);
-			container.HAnchor = HAnchor.ParentLeftRight;
+			container.HAnchor = HAnchor.Stretch;
 			return container;
 		}
 
@@ -252,13 +252,13 @@ namespace MatterHackers.MatterControl
 			showInActionMenu = new CheckBox("Show In Action Menu".Localize())
 			{
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
-				HAnchor = HAnchor.ParentLeftRight,
+				HAnchor = HAnchor.Stretch,
 				Margin = new BorderDouble(0, 0, 0, 1),
 				Checked = windowController.ActiveMacro.ActionGroup,
 			};
 
 			container.AddChild(showInActionMenu);
-			container.HAnchor = HAnchor.ParentLeftRight;
+			container.HAnchor = HAnchor.Stretch;
 			return container;
 		}
 
@@ -329,7 +329,7 @@ namespace MatterHackers.MatterControl
 			topToBottom.Padding = new BorderDouble(3, 0, 3, 5);
 
 			FlowLayoutWidget headerRow = new FlowLayoutWidget(FlowDirection.LeftToRight);
-			headerRow.HAnchor = HAnchor.ParentLeftRight;
+			headerRow.HAnchor = HAnchor.Stretch;
 			headerRow.Margin = new BorderDouble(0, 3, 0, 0);
 			headerRow.Padding = new BorderDouble(0, 3, 0, 3);
 
@@ -338,8 +338,8 @@ namespace MatterHackers.MatterControl
 				string macroPresetsLabelFull = string.Format("{0}:", macroPresetsLabel);
 				TextWidget elementHeader = new TextWidget(macroPresetsLabelFull, pointSize: 14);
 				elementHeader.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-				elementHeader.HAnchor = HAnchor.ParentLeftRight;
-				elementHeader.VAnchor = Agg.UI.VAnchor.ParentBottom;
+				elementHeader.HAnchor = HAnchor.Stretch;
+				elementHeader.VAnchor = Agg.UI.VAnchor.Bottom;
 				headerRow.AddChild(elementHeader);
 			}
 
@@ -347,8 +347,8 @@ namespace MatterHackers.MatterControl
 
 			FlowLayoutWidget presetsFormContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			{
-				presetsFormContainer.HAnchor = HAnchor.ParentLeftRight;
-				presetsFormContainer.VAnchor = VAnchor.ParentBottomTop;
+				presetsFormContainer.HAnchor = HAnchor.Stretch;
+				presetsFormContainer.VAnchor = VAnchor.Stretch;
 				presetsFormContainer.Padding = new BorderDouble(3);
 				presetsFormContainer.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
 			}
@@ -361,7 +361,7 @@ namespace MatterHackers.MatterControl
 				{
 					FlowLayoutWidget macroRow = new FlowLayoutWidget();
 					macroRow.Margin = new BorderDouble(3, 0, 3, 3);
-					macroRow.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+					macroRow.HAnchor = Agg.UI.HAnchor.Stretch;
 					macroRow.Padding = new BorderDouble(3);
 					macroRow.BackgroundColor = RGBA_Bytes.White;
 
@@ -414,11 +414,11 @@ namespace MatterHackers.MatterControl
 			};
 
 			FlowLayoutWidget buttonRow = new FlowLayoutWidget();
-			buttonRow.HAnchor = HAnchor.ParentLeftRight;
+			buttonRow.HAnchor = HAnchor.Stretch;
 			buttonRow.Padding = new BorderDouble(0, 3);
 
 			GuiWidget hButtonSpacer = new GuiWidget();
-			hButtonSpacer.HAnchor = HAnchor.ParentLeftRight;
+			hButtonSpacer.HAnchor = HAnchor.Stretch;
 
 			buttonRow.AddChild(addMacroButton);
 			buttonRow.AddChild(hButtonSpacer);

@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			AltGroupBox fanControlsGroupBox = new AltGroupBox(new TextWidget("ATX Power Control".Localize(), pointSize: headingPointSize, textColor: ActiveTheme.Instance.SecondaryAccentColor));
 			fanControlsGroupBox.Margin = new BorderDouble(0);
 			fanControlsGroupBox.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
-			fanControlsGroupBox.HAnchor |= Agg.UI.HAnchor.ParentLeftRight;
+			fanControlsGroupBox.HAnchor |= Agg.UI.HAnchor.Stretch;
 			this.AddChild(fanControlsGroupBox);
 
 			atxPowertoggleSwitch = ImageButtonFactory.CreateToggleSwitch(false);
@@ -69,9 +69,9 @@ namespace MatterHackers.MatterControl.PrinterControls
 			PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent(this.UpdateControlVisibility, ref unregisterEvents);
 			PrinterConnection.Instance.AtxPowerStateChanged.RegisterEvent(this.UpdatePowerSwitch, ref unregisterEvents);
 
-			this.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
-			this.HAnchor = HAnchor.ParentLeftRight;
-			this.VAnchor = VAnchor.ParentBottomTop;
+			this.HAnchor = Agg.UI.HAnchor.Stretch;
+			this.HAnchor = HAnchor.Stretch;
+			this.VAnchor = VAnchor.Stretch;
 		}
 
 		private void UpdateControlVisibility(object sender, EventArgs args)

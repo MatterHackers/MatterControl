@@ -66,21 +66,21 @@ namespace MatterHackers.MatterControl
 			{
 				// make sure the contents are centered
 				GuiWidget leftSpace = new GuiWidget(0, 1);
-				leftSpace.HAnchor = HAnchor.ParentLeftRight;
+				leftSpace.HAnchor = HAnchor.Stretch;
 				container.AddChild(leftSpace);
 			}
 
 			if (image != null && image.Width > 0)
 			{
 				imageWidget = new ImageWidget(image);
-				imageWidget.VAnchor = VAnchor.ParentCenter;
+				imageWidget.VAnchor = VAnchor.Center;
 				imageWidget.Margin = new BorderDouble(right: imageSpacing);
 				container.AddChild(imageWidget);
 			}
 
 			if (label != "")
 			{
-				textWidget.VAnchor = VAnchor.ParentCenter;
+				textWidget.VAnchor = VAnchor.Center;
 				textWidget.TextColor = textColor;
 				textWidget.Padding = new BorderDouble(3, 0);
 				container.AddChild(textWidget);
@@ -89,18 +89,18 @@ namespace MatterHackers.MatterControl
 			if (centerText)
 			{
 				GuiWidget rightSpace = new GuiWidget(0, 1);
-				rightSpace.HAnchor = HAnchor.ParentLeftRight;
+				rightSpace.HAnchor = HAnchor.Stretch;
 				container.AddChild(rightSpace);
 
-				container.HAnchor = HAnchor.ParentLeftRight | HAnchor.FitToChildren;
+				container.HAnchor = HAnchor.Stretch | HAnchor.Fit;
 			}
-			container.VAnchor = VAnchor.ParentCenter;
+			container.VAnchor = VAnchor.Center;
 
 			container.MinimumSize = new Vector2(width, height);
 			container.Margin = margin;
 			this.AddChild(container);
-			HAnchor = HAnchor.ParentLeftRight | HAnchor.FitToChildren;
-			VAnchor = VAnchor.ParentCenter | VAnchor.FitToChildren;
+			HAnchor = HAnchor.Stretch | HAnchor.Fit;
+			VAnchor = VAnchor.Center | VAnchor.Fit;
 		}
 
 		public override void OnDraw(Graphics2D graphics2D)
@@ -233,8 +233,8 @@ namespace MatterHackers.MatterControl
 			editButton = GetThemedEditButton();
 
 			editButton.Margin = new BorderDouble(2, 2, 2, 0);
-			editButton.VAnchor = VAnchor.ParentBottom;
-			textWidget.VAnchor = VAnchor.ParentBottom;
+			editButton.VAnchor = VAnchor.Bottom;
+			textWidget.VAnchor = VAnchor.Bottom;
 			groupLableAndEditControl.AddChild(textWidget);
 			groupLableAndEditControl.AddChild(editButton);
 
@@ -271,9 +271,9 @@ namespace MatterHackers.MatterControl
 			editButton = GetThemedEditButton();
 
 			editButton.Margin = new BorderDouble(2, 2, 2, 0);
-			editButton.VAnchor = VAnchor.ParentBottom;
+			editButton.VAnchor = VAnchor.Bottom;
 			TextWidget textLabel = new TextWidget(label, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 12);
-			textLabel.VAnchor = VAnchor.ParentBottom;
+			textLabel.VAnchor = VAnchor.Bottom;
 			groupLableAndEditControl.AddChild(textLabel);
 			groupLableAndEditControl.AddChild(editButton);
 

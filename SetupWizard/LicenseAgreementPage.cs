@@ -42,7 +42,7 @@ public class LicenseAgreementPage : WizardPage
 
 		var scrollable = new ScrollableWidget(true);
 		scrollable.AnchorAll();
-		scrollable.ScrollArea.HAnchor = HAnchor.ParentLeftRight;
+		scrollable.ScrollArea.HAnchor = HAnchor.Stretch;
 		contentRow.AddChild(scrollable);
 
 		var textBox = new WrappedTextWidget(eulaText, textColor: ActiveTheme.Instance.PrimaryTextColor, doubleBufferText: false)

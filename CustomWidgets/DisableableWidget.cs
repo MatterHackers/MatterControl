@@ -9,8 +9,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public DisableableWidget()
 		{
-			HAnchor = HAnchor.ParentLeftRight;
-			VAnchor = VAnchor.FitToChildren;
+			HAnchor = HAnchor.Stretch;
+			VAnchor = VAnchor.Fit;
 			this.Margin = new BorderDouble(3);
 			disableOverlay = new GuiWidget(0, 0);
 

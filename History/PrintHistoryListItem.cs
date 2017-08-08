@@ -96,20 +96,20 @@ namespace MatterHackers.MatterControl.PrintHistory
 			this.printTask = printTask;
 			this.showTimestamp = showTimestamp;
 
-			this.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+			this.HAnchor = Agg.UI.HAnchor.Stretch;
 			this.Height = 50;
 			this.BackgroundColor = this.WidgetBackgroundColor;
 			this.Padding = new BorderDouble(0);
 			this.Margin = new BorderDouble(6, 0, 6, 6);
 
 			var mainContainer = new GuiWidget();
-			mainContainer.HAnchor = HAnchor.ParentLeftRight;
-			mainContainer.VAnchor = VAnchor.ParentBottomTop;
+			mainContainer.HAnchor = HAnchor.Stretch;
+			mainContainer.VAnchor = VAnchor.Stretch;
 
 			TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
 			{
 				GuiWidget indicator = new GuiWidget();
-				indicator.VAnchor = Agg.UI.VAnchor.ParentBottomTop;
+				indicator.VAnchor = Agg.UI.VAnchor.Stretch;
 				indicator.Width = 15;
 				if (printTask.PrintComplete)
 				{
@@ -121,11 +121,11 @@ namespace MatterHackers.MatterControl.PrintHistory
 				}
 
 				FlowLayoutWidget middleColumn = new FlowLayoutWidget(FlowDirection.TopToBottom);
-				middleColumn.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+				middleColumn.HAnchor = Agg.UI.HAnchor.Stretch;
 				middleColumn.Padding = new BorderDouble(6, 3);
 				{
 					FlowLayoutWidget labelContainer = new FlowLayoutWidget();
-					labelContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+					labelContainer.HAnchor = Agg.UI.HAnchor.Stretch;
 
 					string labelName = textInfo.ToTitleCase(printTask.PrintName);
 					labelName = labelName.Replace('_', ' ');
@@ -141,7 +141,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 
 				FlowLayoutWidget buttonContainer = new FlowLayoutWidget();
 				buttonContainer.Margin = new BorderDouble(0);
-				buttonContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+				buttonContainer.HAnchor = Agg.UI.HAnchor.Stretch;
 				{
 					var timeLabel = new TextWidget("Time".Localize().ToUpper() + ": ", pointSize: 8 * pointSizeFactor);
 					timeLabel.TextColor = timeTextColor;
@@ -189,12 +189,12 @@ namespace MatterHackers.MatterControl.PrintHistory
 				}
 
 				GuiWidget primaryContainer = new GuiWidget();
-				primaryContainer.HAnchor = HAnchor.ParentLeftRight;
-				primaryContainer.VAnchor = VAnchor.ParentBottomTop;
+				primaryContainer.HAnchor = HAnchor.Stretch;
+				primaryContainer.VAnchor = VAnchor.Stretch;
 
 				FlowLayoutWidget primaryFlow = new FlowLayoutWidget(FlowDirection.LeftToRight);
-				primaryFlow.HAnchor = HAnchor.ParentLeftRight;
-				primaryFlow.VAnchor = VAnchor.ParentBottomTop;
+				primaryFlow.HAnchor = HAnchor.Stretch;
+				primaryFlow.VAnchor = VAnchor.Stretch;
 
 				primaryFlow.AddChild(indicator);
 				primaryFlow.AddChild(middleColumn);
@@ -202,21 +202,21 @@ namespace MatterHackers.MatterControl.PrintHistory
 				primaryContainer.AddChild(primaryFlow);
 
 				rightButtonOverlay = new SlideWidget();
-				rightButtonOverlay.VAnchor = VAnchor.ParentBottomTop;
-				rightButtonOverlay.HAnchor = Agg.UI.HAnchor.ParentRight;
+				rightButtonOverlay.VAnchor = VAnchor.Stretch;
+				rightButtonOverlay.HAnchor = Agg.UI.HAnchor.Right;
 				rightButtonOverlay.Width = rightOverlayWidth;
 				rightButtonOverlay.Visible = false;
 
 				FlowLayoutWidget rightMiddleColumnContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
-				rightMiddleColumnContainer.VAnchor = VAnchor.ParentBottomTop;
+				rightMiddleColumnContainer.VAnchor = VAnchor.Stretch;
 				{
 					TextWidget viewLabel = new TextWidget("View".Localize());
 					viewLabel.TextColor = RGBA_Bytes.White;
-					viewLabel.VAnchor = VAnchor.ParentCenter;
-					viewLabel.HAnchor = HAnchor.ParentCenter;
+					viewLabel.VAnchor = VAnchor.Center;
+					viewLabel.HAnchor = HAnchor.Center;
 
 					FatFlatClickWidget viewButton = new FatFlatClickWidget(viewLabel);
-					viewButton.VAnchor = VAnchor.ParentBottomTop;
+					viewButton.VAnchor = VAnchor.Stretch;
 					viewButton.BackgroundColor = ActiveTheme.Instance.SecondaryAccentColor;
 					viewButton.Width = actionButtonSize;
 					viewButton.Click += ViewButton_Click;
@@ -224,11 +224,11 @@ namespace MatterHackers.MatterControl.PrintHistory
 
 					TextWidget printLabel = new TextWidget("Print".Localize());
 					printLabel.TextColor = RGBA_Bytes.White;
-					printLabel.VAnchor = VAnchor.ParentCenter;
-					printLabel.HAnchor = HAnchor.ParentCenter;
+					printLabel.VAnchor = VAnchor.Center;
+					printLabel.HAnchor = HAnchor.Center;
 
 					FatFlatClickWidget printButton = new FatFlatClickWidget(printLabel);
-					printButton.VAnchor = VAnchor.ParentBottomTop;
+					printButton.VAnchor = VAnchor.Stretch;
 					printButton.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
 					printButton.Width = actionButtonSize;
 					printButton.Click += (sender, e) =>
@@ -255,12 +255,12 @@ namespace MatterHackers.MatterControl.PrintHistory
 				if (showTimestamp)
 				{
 					FlowLayoutWidget timestampColumn = new FlowLayoutWidget(FlowDirection.TopToBottom);
-					timestampColumn.VAnchor = Agg.UI.VAnchor.ParentBottomTop;
+					timestampColumn.VAnchor = Agg.UI.VAnchor.Stretch;
 					timestampColumn.BackgroundColor = RGBA_Bytes.LightGray;
 					timestampColumn.Padding = new BorderDouble(6, 0);
 
 					FlowLayoutWidget startTimeContainer = new FlowLayoutWidget();
-					startTimeContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+					startTimeContainer.HAnchor = Agg.UI.HAnchor.Stretch;
 					startTimeContainer.Padding = new BorderDouble(0, 3);
 
 					string startLabelFull = "{0}:".FormatWith("Start".Localize().ToUpper());
@@ -276,7 +276,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 					startTimeContainer.AddChild(startDate);
 
 					FlowLayoutWidget endTimeContainer = new FlowLayoutWidget();
-					endTimeContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+					endTimeContainer.HAnchor = Agg.UI.HAnchor.Stretch;
 					endTimeContainer.Padding = new BorderDouble(0, 3);
 
 					string endLabelFull = "{0}:".FormatWith("End".Localize().ToUpper());
@@ -307,7 +307,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 					timestampColumn.AddChild(horizontalLine);
 					timestampColumn.AddChild(startTimeContainer);
 
-					timestampColumn.HAnchor = HAnchor.ParentLeftRight;
+					timestampColumn.HAnchor = HAnchor.Stretch;
 					timestampColumn.Padding = new BorderDouble(5, 0, 15, 0);
 
 					primaryFlow.AddChild(timestampColumn);

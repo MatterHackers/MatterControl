@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl
 
 			// Creates Header
 			FlowLayoutWidget headerRow = new FlowLayoutWidget(FlowDirection.LeftToRight);
-			headerRow.HAnchor = HAnchor.ParentLeftRight;
+			headerRow.HAnchor = HAnchor.Stretch;
 			headerRow.Margin = new BorderDouble(0, 3, 0, 0);
 			headerRow.Padding = new BorderDouble(0, 3, 0, 3);
 			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
@@ -72,8 +72,8 @@ namespace MatterHackers.MatterControl
 			{
 				TextWidget elementHeader = new TextWidget("File export options:".Localize(), pointSize: 14);
 				elementHeader.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-				elementHeader.HAnchor = HAnchor.ParentLeftRight;
-				elementHeader.VAnchor = Agg.UI.VAnchor.ParentBottom;
+				elementHeader.HAnchor = HAnchor.Stretch;
+				elementHeader.VAnchor = Agg.UI.VAnchor.Bottom;
 
 				headerRow.AddChild(elementHeader);
 				topToBottom.AddChild(headerRow);
@@ -82,8 +82,8 @@ namespace MatterHackers.MatterControl
 			// Creates container in the middle of window
 			FlowLayoutWidget middleRowContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			{
-				middleRowContainer.HAnchor = HAnchor.ParentLeftRight;
-				middleRowContainer.VAnchor = VAnchor.ParentBottomTop;
+				middleRowContainer.HAnchor = HAnchor.Stretch;
+				middleRowContainer.VAnchor = VAnchor.Stretch;
 				middleRowContainer.Padding = new BorderDouble(5);
 				middleRowContainer.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
 			}
@@ -106,7 +106,7 @@ namespace MatterHackers.MatterControl
 
 				Button exportAsStlButton = textImageButtonFactory.Generate(exportStlTextFull);
 				exportAsStlButton.Name = "Export as STL button";
-				exportAsStlButton.HAnchor = HAnchor.ParentLeft;
+				exportAsStlButton.HAnchor = HAnchor.Left;
 				exportAsStlButton.Cursor = Cursors.Hand;
 				exportAsStlButton.Click += exportSTL_Click;
 				middleRowContainer.AddChild(exportAsStlButton);
@@ -117,7 +117,7 @@ namespace MatterHackers.MatterControl
 
 				Button exportAsAmfButton = textImageButtonFactory.Generate(exportAmfTextFull);
 				exportAsAmfButton.Name = "Export as AMF button";
-				exportAsAmfButton.HAnchor = HAnchor.ParentLeft;
+				exportAsAmfButton.HAnchor = HAnchor.Left;
 				exportAsAmfButton.Cursor = Cursors.Hand;
 				exportAsAmfButton.Click += exportAMF_Click;
 				middleRowContainer.AddChild(exportAsAmfButton);
@@ -128,7 +128,7 @@ namespace MatterHackers.MatterControl
 			{
 				Button exportGCode = textImageButtonFactory.Generate(string.Format("{0} G-Code", "Export as".Localize()));
 				exportGCode.Name = "Export as GCode Button";
-				exportGCode.HAnchor = HAnchor.ParentLeft;
+				exportGCode.HAnchor = HAnchor.Left;
 				exportGCode.Cursor = Cursors.Hand;
 				exportGCode.Click += (s, e) =>
 				{
@@ -146,7 +146,7 @@ namespace MatterHackers.MatterControl
 						string exportButtonText = plugin.GetButtonText().Localize();
 
 						Button exportButton = textImageButtonFactory.Generate(exportButtonText);
-						exportButton.HAnchor = HAnchor.ParentLeft;
+						exportButton.HAnchor = HAnchor.Left;
 						exportButton.Cursor = Cursors.Hand;
 						exportButton.Click += (s, e) =>
 						{
@@ -225,7 +225,7 @@ namespace MatterHackers.MatterControl
 			{
 				applyLeveling = new CheckBox(LocalizedString.Get(applyLevelingDuringExportString), ActiveTheme.Instance.PrimaryTextColor, 10);
 				applyLeveling.Checked = true;
-				applyLeveling.HAnchor = HAnchor.ParentLeft;
+				applyLeveling.HAnchor = HAnchor.Left;
 				applyLeveling.Cursor = Cursors.Hand;
 				//applyLeveling.Margin = new BorderDouble(top: 10);
 				middleRowContainer.AddChild(applyLeveling);
@@ -236,7 +236,7 @@ namespace MatterHackers.MatterControl
 				|| OsInformation.OperatingSystem == OSType.X11)
 			{
 				showInFolderAfterSave = new CheckBox("Show file in folder after save".Localize(), ActiveTheme.Instance.PrimaryTextColor, 10);
-				showInFolderAfterSave.HAnchor = HAnchor.ParentLeft;
+				showInFolderAfterSave.HAnchor = HAnchor.Left;
 				showInFolderAfterSave.Cursor = Cursors.Hand;
 				//showInFolderAfterSave.Margin = new BorderDouble(top: 10);
 				middleRowContainer.AddChild(showInFolderAfterSave);
@@ -248,7 +248,7 @@ namespace MatterHackers.MatterControl
 				string noGCodeMessageTextEnd = "To enable GCode export, select a printer profile.".Localize();
 				string noGCodeMessageTextFull = string.Format("{0}: {1}", noGCodeMessageTextBeg, noGCodeMessageTextEnd);
 				TextWidget noGCodeMessage = new TextWidget(noGCodeMessageTextFull, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 10);
-				noGCodeMessage.HAnchor = HAnchor.ParentLeft;
+				noGCodeMessage.HAnchor = HAnchor.Left;
 				middleRowContainer.AddChild(noGCodeMessage);
 			}
 
@@ -256,7 +256,7 @@ namespace MatterHackers.MatterControl
 			FlowLayoutWidget buttonRow = new FlowLayoutWidget(FlowDirection.LeftToRight);
 			{
 				BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-				buttonRow.HAnchor = HAnchor.ParentLeftRight;
+				buttonRow.HAnchor = HAnchor.Stretch;
 				buttonRow.Padding = new BorderDouble(0, 3);
 			}
 

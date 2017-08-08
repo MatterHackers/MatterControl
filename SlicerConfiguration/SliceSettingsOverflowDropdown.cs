@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public SliceSettingsOverflowDropdown(SliceSettingsWidget sliceSettingsWidget)
 		{
-			this.VAnchor = VAnchor.FitToChildren | VAnchor.ParentCenter;
+			this.VAnchor = VAnchor.Fit | VAnchor.Center;
 		
 			var overflowDropdown = new OverflowDropdown(true)
 			{

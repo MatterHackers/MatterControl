@@ -72,19 +72,19 @@ namespace MatterHackers.MatterControl
 			this.Padding = new BorderDouble(5);
 			this.Margin = new BorderDouble(0);
 			this.groupBoxLabel = groupBoxLabel;
-			this.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+			this.HAnchor = Agg.UI.HAnchor.Stretch;
 
 			if (groupBoxLabel != null)
 			{
 				groupBoxLabel.Margin = new BorderDouble(0);
-				groupBoxLabel.HAnchor = HAnchor.ParentLeftRight;
+				groupBoxLabel.HAnchor = HAnchor.Stretch;
 				base.AddChild(groupBoxLabel);
 			}
 
 			this.ClientArea = new GuiWidget()
 			{
-				HAnchor = HAnchor.ParentLeftRight,
-				VAnchor = VAnchor.FitToChildren
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit
 			};
 			base.AddChild(this.ClientArea);
 		}

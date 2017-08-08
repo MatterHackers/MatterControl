@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 
 			FlowLayoutWidget tabContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				HAnchor = HAnchor.AbsolutePosition,
+				HAnchor = HAnchor.Absolute,
 				Visible = true,
 				Width = theme.WhiteButtonFactory.FixedWidth
 			};
@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 
 			textToAddWidget = new MHTextEditWidget("", messageWhenEmptyAndNotSelected: "Text".Localize())
 			{
-				HAnchor = HAnchor.ParentLeftRight,
+				HAnchor = HAnchor.Stretch,
 				Margin = new BorderDouble(5),
 				Text = injectedItem.Text,
 				Width = 50
@@ -89,14 +89,14 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 			{
 				Checked = true,
 				Margin = new BorderDouble(10, 5),
-				HAnchor = HAnchor.ParentLeft
+				HAnchor = HAnchor.Left
 			};
 			createUnderline.CheckedStateChanged += CreateUnderline_CheckedStateChanged;
 			tabContainer.AddChild(createUnderline);
 
 			Button updateButton = theme.ButtonFactory.Generate("Update".Localize());
 			updateButton.Margin = new BorderDouble(5);
-			updateButton.HAnchor = HAnchor.ParentRight;
+			updateButton.HAnchor = HAnchor.Right;
 			updateButton.Click += (s, e) => RebuildText(textToAddWidget.Text);
 			tabContainer.AddChild(updateButton);
 

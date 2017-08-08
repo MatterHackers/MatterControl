@@ -144,11 +144,11 @@ namespace MatterHackers.Agg.UI
 
 			MenuItems.CollectionChanged += new NotifyCollectionChangedEventHandler(MenuItems_CollectionChanged);
 			mainControlWidget = topMenuContent;
-			mainControlWidget.VAnchor = UI.VAnchor.ParentCenter;
-			mainControlWidget.HAnchor = UI.HAnchor.ParentLeft;
+			mainControlWidget.VAnchor = UI.VAnchor.Center;
+			mainControlWidget.HAnchor = UI.HAnchor.Left;
 			AddChild(mainControlWidget);
-			HAnchor = HAnchor.FitToChildren;
-			VAnchor = VAnchor.FitToChildren;
+			HAnchor = HAnchor.Fit;
+			VAnchor = VAnchor.Fit;
 
 			//IE Don't show arrow unless color is set explicitly
 			NormalArrowColor = new RGBA_Bytes(255, 255, 255, 0);

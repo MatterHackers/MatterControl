@@ -58,13 +58,13 @@ namespace MatterHackers.MatterControl.PrinterControls
 			{
 				Margin = 0,
 				BorderColor = ActiveTheme.Instance.PrimaryTextColor,
-				HAnchor = HAnchor.ParentLeftRight
+				HAnchor = HAnchor.Stretch
 			};
 
 			var topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				Margin = new BorderDouble(0, 0, 0, 0),
-				HAnchor = HAnchor.ParentLeftRight,
+				HAnchor = HAnchor.Stretch,
 				Padding = new BorderDouble(3, 0, 3, 0)
 			};
 
@@ -82,16 +82,16 @@ namespace MatterHackers.MatterControl.PrinterControls
 			{
 				var row = new FlowLayoutWidget()
 				{
-					HAnchor = HAnchor.ParentLeftRight,
+					HAnchor = HAnchor.Stretch,
 					Margin = 0,
-					VAnchor = VAnchor.FitToChildren
+					VAnchor = VAnchor.Fit
 				};
 
 				var feedRateDescription = new TextWidget("Speed Multiplier".Localize())
 				{
 					MinimumSize = new Vector2(140, 0) * GuiWidget.DeviceScale,
 					TextColor = ActiveTheme.Instance.PrimaryTextColor,
-					VAnchor = VAnchor.ParentCenter,
+					VAnchor = VAnchor.Center,
 				};
 				row.AddChild(feedRateDescription);
 
@@ -100,7 +100,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 					Name = "Feed Rate Slider",
 					Margin = new BorderDouble(5, 0),
 					Value = FeedRateMultiplyerStream.FeedRateRatio,
-					HAnchor = HAnchor.ParentLeftRight,
+					HAnchor = HAnchor.Stretch,
 					TotalWidthInPixels = sliderWidth,
 				};
 				feedRateRatioSlider.View.BackgroundColor = new RGBA_Bytes();
@@ -125,7 +125,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 					Name = "Feed Rate NumberEdit",
 					SelectAllOnFocus = true,
 					Margin = new BorderDouble(0, 0, 5, 0),
-					VAnchor = VAnchor.ParentCenter | VAnchor.FitToChildren,
+					VAnchor = VAnchor.Center | VAnchor.Fit,
 					Padding = 0
 				};
 				feedRateValue.ActuallNumberEdit.EditComplete += (sender, e) =>
@@ -148,16 +148,16 @@ namespace MatterHackers.MatterControl.PrinterControls
 			{
 				var row = new FlowLayoutWidget()
 				{
-					HAnchor = HAnchor.ParentLeftRight,
+					HAnchor = HAnchor.Stretch,
 					Margin = new BorderDouble(top: 10),
-					VAnchor = VAnchor.FitToChildren
+					VAnchor = VAnchor.Fit
 				};
 
 				var extrusionDescription = new TextWidget("Extrusion Multiplier".Localize())
 				{
 					MinimumSize = new Vector2(140, 0) * GuiWidget.DeviceScale,
 					TextColor = ActiveTheme.Instance.PrimaryTextColor,
-					VAnchor = VAnchor.ParentCenter
+					VAnchor = VAnchor.Center
 				};
 				row.AddChild(extrusionDescription);
 
@@ -165,7 +165,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				{
 					Name = "Extrusion Multiplier Slider",
 					TotalWidthInPixels = sliderWidth,
-					HAnchor = HAnchor.ParentLeftRight,
+					HAnchor = HAnchor.Stretch,
 					Margin = new BorderDouble(5, 0),
 					Value = ExtrusionMultiplyerStream.ExtrusionRatio
 				};
@@ -190,7 +190,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 					Name = "Extrusion Multiplier NumberEdit",
 					SelectAllOnFocus = true,
 					Margin = new BorderDouble(0, 0, 5, 0),
-					VAnchor = VAnchor.ParentCenter | VAnchor.FitToChildren,
+					VAnchor = VAnchor.Center | VAnchor.Fit,
 					Padding = 0
 				};
 				extrusionValue.ActuallNumberEdit.EditComplete += (sender, e) =>

@@ -185,7 +185,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			topToBottomControls.AddChild(spacer);
 
 			FlowLayoutWidget zButtonsAndInfo = new FlowLayoutWidget();
-			zButtonsAndInfo.HAnchor |= Agg.UI.HAnchor.ParentCenter;
+			zButtonsAndInfo.HAnchor |= Agg.UI.HAnchor.Center;
 			FlowLayoutWidget zButtons = CreateZButtons();
 			zButtonsAndInfo.AddChild(zButtons);
 
@@ -194,7 +194,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			//textFields
 			TextWidget zPosition = new TextWidget("Z: 0.0      ", pointSize: 12, textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
-				VAnchor = VAnchor.ParentCenter,
+				VAnchor = VAnchor.Center,
 				Margin = new BorderDouble(10, 0),
 			};
 			Action<TextWidget> updateUntilClose = null;

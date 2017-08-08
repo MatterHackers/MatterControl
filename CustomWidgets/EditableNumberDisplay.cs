@@ -18,10 +18,10 @@ namespace MatterHackers.MatterControl
 			: base(Agg.UI.FlowDirection.LeftToRight)
 		{
 			this.Margin = new BorderDouble(3, 0);
-			this.VAnchor = VAnchor.ParentCenter;
+			this.VAnchor = VAnchor.Center;
 
 			clickableValueContainer = new ClickWidget();
-			clickableValueContainer.VAnchor = VAnchor.ParentBottomTop;
+			clickableValueContainer.VAnchor = VAnchor.Stretch;
 			clickableValueContainer.Cursor = Cursors.Hand;
 			clickableValueContainer.BorderWidth = 1;
 			clickableValueContainer.BorderColor = new RGBA_Bytes(255, 255, 255, 140);
@@ -39,8 +39,8 @@ namespace MatterHackers.MatterControl
 			};
 
 			valueDisplay = new TextWidget(largestPossibleValue, pointSize: 12);
-			valueDisplay.VAnchor = VAnchor.ParentCenter;
-			valueDisplay.HAnchor = HAnchor.ParentLeft;
+			valueDisplay.VAnchor = VAnchor.Center;
+			valueDisplay.HAnchor = HAnchor.Left;
 			valueDisplay.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			valueDisplay.Margin = new BorderDouble(6);
 
@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl
 			valueDisplay.Text = startingValue;
 
 			numberInputField = new MHNumberEdit(0, pixelWidth: 40, allowDecimals: true);
-			numberInputField.VAnchor = VAnchor.ParentCenter;
+			numberInputField.VAnchor = VAnchor.Center;
 			numberInputField.Margin = new BorderDouble(left: 6);
 			numberInputField.Visible = false;
 

@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl
 
 			//Add buttons to buttonContainer
 			footerRow.AddChild(nextButton);
-			footerRow.AddChild(new GuiWidget() { HAnchor = HAnchor.ParentLeftRight });
+			footerRow.AddChild(new GuiWidget() { HAnchor = HAnchor.Stretch });
 			footerRow.AddChild(cancelButton);
 
 			// Register for connection notifications
@@ -212,8 +212,8 @@ namespace MatterHackers.MatterControl
 			public CriteriaRow (string itemText, string fixitText, string errorText, bool succeeded, Action fixAction) 
 				: base(FlowDirection.LeftToRight)
 			{
-				HAnchor = HAnchor.ParentLeftRight;
-				VAnchor = VAnchor.AbsolutePosition;
+				HAnchor = HAnchor.Stretch;
+				VAnchor = VAnchor.Absolute;
 				TextImageButtonFactory buttonFactory = new TextImageButtonFactory();
 
 				ErrorText = errorText;
@@ -222,7 +222,7 @@ namespace MatterHackers.MatterControl
 
 				base.AddChild(new TextWidget (string.Format("  {0}. {1}", criteriaCount + 1, itemText)){
 					TextColor = stillSuccessful ? RGBA_Bytes.White : disabledTextColor,
-					VAnchor = VAnchor.ParentCenter
+					VAnchor = VAnchor.Center
 				});
 
 				if(stillSuccessful && !succeeded)
@@ -240,7 +240,7 @@ namespace MatterHackers.MatterControl
 					} else {
 						// Add Fix button
 						Button button  = buttonFactory.Generate(LocalizedString.Get(fixitText),centerText:true);
-						button.VAnchor = VAnchor.ParentCenter;
+						button.VAnchor = VAnchor.Center;
 						button.Padding = new BorderDouble(3, 8);
 						button.Click += (sender, e) => fixAction();
 						base.AddChild(button);
@@ -278,7 +278,7 @@ namespace MatterHackers.MatterControl
 			private void AddSuccessIcon()
 			{
 				base.AddChild (new ImageWidget (StaticData.Instance.LoadImage (Path.Combine ("Icons", "426.png"))) {
-					VAnchor = VAnchor.ParentCenter
+					VAnchor = VAnchor.Center
 				});
 			}
 

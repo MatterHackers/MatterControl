@@ -83,8 +83,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			this.Margin = new BorderDouble(5, 5, 200, 5);
-			this.HAnchor |= HAnchor.ParentRight;
-			this.VAnchor = VAnchor.ParentTop;
+			this.HAnchor |= HAnchor.Right;
+			this.VAnchor = VAnchor.Top;
 		}
 
 		private void SwitchModes_Click(object sender, MouseEventArgs e)

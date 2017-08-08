@@ -21,10 +21,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		public SettingsItem(string text, ToggleSwitchConfig toggleSwitchConfig = null, GuiWidget optionalControls = null, ImageBuffer iconImage = null, bool enforceGutter = true)
 			: base(FlowDirection.LeftToRight)
 		{
-			this.HAnchor = HAnchor.ParentLeftRight;
+			this.HAnchor = HAnchor.Stretch;
 			var switchContainer = new FlowLayoutWidget()
 			{
-				VAnchor = VAnchor.ParentCenter,
+				VAnchor = VAnchor.Center,
 				Margin = new BorderDouble(left: 16),
 				Width = 45
 			};
@@ -32,7 +32,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			if (toggleSwitchConfig != null)
 			{
 				CheckBox toggleSwitch = ImageButtonFactory.CreateToggleSwitch(toggleSwitchConfig.Checked, menuTextColor);
-				toggleSwitch.VAnchor = Agg.UI.VAnchor.ParentCenter;
+				toggleSwitch.VAnchor = Agg.UI.VAnchor.Center;
 				toggleSwitch.CheckedStateChanged += (sender, e) =>
 				{
 					toggleSwitchConfig.ToggleAction?.Invoke(toggleSwitch.Checked);
@@ -52,14 +52,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 		private void CreateChildControls(string text, GuiWidget settingsControls, GuiWidget optionalControls, bool enforceGutter, ImageBuffer imageBuffer = null)
 		{
-			this.HAnchor = HAnchor.ParentLeftRight;
+			this.HAnchor = HAnchor.Stretch;
 			this.MinimumSize = new Vector2(0, 40);
 
-			settingsControls.VAnchor |= VAnchor.ParentCenter;
+			settingsControls.VAnchor |= VAnchor.Center;
 
 			if (optionalControls != null)
 			{
-				optionalControls.VAnchor |= VAnchor.ParentCenter;
+				optionalControls.VAnchor |= VAnchor.Center;
 			}
 
 			if (imageBuffer != null)
@@ -72,7 +72,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				this.AddChild(new ImageWidget(imageBuffer)
 				{
 					Margin = new BorderDouble(right: 6, left: 6),
-					VAnchor = VAnchor.ParentCenter
+					VAnchor = VAnchor.Center
 				});
 			}
 			else if (enforceGutter)
@@ -90,7 +90,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			{
 				AutoExpandBoundsToText = true,
 				TextColor = menuTextColor,
-				VAnchor = VAnchor.ParentCenter,
+				VAnchor = VAnchor.Center,
 			});
 
 			this.AddChild(new HorizontalSpacer());

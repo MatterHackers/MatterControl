@@ -67,19 +67,19 @@ namespace MatterHackers.MatterControl
 
 			{
 				FlowLayoutWidget manualEntryTopToBottomLayout = new FlowLayoutWidget(FlowDirection.TopToBottom);
-				manualEntryTopToBottomLayout.VAnchor |= Agg.UI.VAnchor.ParentTop;
+				manualEntryTopToBottomLayout.VAnchor |= Agg.UI.VAnchor.Top;
 				manualEntryTopToBottomLayout.Padding = new BorderDouble(top: 8);
 
 				{
 					FlowLayoutWidget topBarControls = new FlowLayoutWidget(FlowDirection.LeftToRight);
-					topBarControls.HAnchor |= HAnchor.ParentLeft;
+					topBarControls.HAnchor |= HAnchor.Left;
 
 					{
 						filterOutput = new CheckBox("Filter Output".Localize())
 						{
 							Margin = new BorderDouble(5, 5, 5, 2),
 							TextColor = this.textColor,
-							VAnchor = Agg.UI.VAnchor.ParentBottom,
+							VAnchor = Agg.UI.VAnchor.Bottom,
 						};
 						filterOutput.CheckedStateChanged += (object sender, EventArgs e) =>
 						{
@@ -103,7 +103,7 @@ namespace MatterHackers.MatterControl
 						autoUppercase.Margin = new BorderDouble(5, 5, 5, 2);
 						autoUppercase.Checked = UserSettings.Instance.Fields.GetBool(TerminalAutoUppercaseKey, true);
 						autoUppercase.TextColor = this.textColor;
-						autoUppercase.VAnchor = Agg.UI.VAnchor.ParentBottom;
+						autoUppercase.VAnchor = Agg.UI.VAnchor.Bottom;
 						topBarControls.AddChild(autoUppercase);
 						autoUppercase.CheckedStateChanged += (sender, e) =>
 						{
@@ -122,8 +122,8 @@ namespace MatterHackers.MatterControl
 					Debug.WriteLine(PrinterConnection.Instance.TerminalLog.PrinterLines);
 					textScrollWidget.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
 					textScrollWidget.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-					textScrollWidget.HAnchor = HAnchor.ParentLeftRight;
-					textScrollWidget.VAnchor = VAnchor.ParentBottomTop;
+					textScrollWidget.HAnchor = HAnchor.Stretch;
+					textScrollWidget.VAnchor = VAnchor.Stretch;
 					textScrollWidget.Margin = new BorderDouble(0, 5);
 					textScrollWidget.Padding = new BorderDouble(3, 0);
 
@@ -137,13 +137,13 @@ namespace MatterHackers.MatterControl
 
 				FlowLayoutWidget manualEntryLayout = new FlowLayoutWidget(FlowDirection.LeftToRight);
 				manualEntryLayout.BackgroundColor = this.backgroundColor;
-				manualEntryLayout.HAnchor = HAnchor.ParentLeftRight;
+				manualEntryLayout.HAnchor = HAnchor.Stretch;
 				{
 					manualCommandTextEdit = new MHTextEditWidget("", typeFace: ApplicationController.MonoSpacedTypeFace);
 					//manualCommandTextEdit.BackgroundColor = RGBA_Bytes.White;
 					manualCommandTextEdit.Margin = new BorderDouble(right: 3);
-					manualCommandTextEdit.HAnchor = HAnchor.ParentLeftRight;
-					manualCommandTextEdit.VAnchor = VAnchor.ParentBottom;
+					manualCommandTextEdit.HAnchor = HAnchor.Stretch;
+					manualCommandTextEdit.VAnchor = VAnchor.Bottom;
 					manualCommandTextEdit.ActualTextEditWidget.EnterPressed += manualCommandTextEdit_EnterPressed;
 					manualCommandTextEdit.ActualTextEditWidget.KeyDown += manualCommandTextEdit_KeyDown;
 					manualEntryLayout.AddChild(manualCommandTextEdit);
@@ -175,7 +175,7 @@ namespace MatterHackers.MatterControl
 				sendCommand.Click += sendManualCommandToPrinter_Click;
 
 				FlowLayoutWidget bottomRowContainer = new FlowLayoutWidget();
-				bottomRowContainer.HAnchor = Agg.UI.HAnchor.ParentLeftRight;
+				bottomRowContainer.HAnchor = Agg.UI.HAnchor.Stretch;
 				bottomRowContainer.Margin = new BorderDouble(0, 3);
 
 				bottomRowContainer.AddChild(sendCommand);

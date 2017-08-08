@@ -667,7 +667,7 @@ namespace MatterHackers.MeshVisualizer
 
 									for (int i = 0; i < 3; i++)
 									{
-										GLHelper.Render3DLineNoPrep(frustum, World, transformed1, transformed2, RGBA_Bytes.White, 15);
+										GLHelper.Render3DLineNoPrep(frustum, World, transformed1, transformed2, RGBA_Bytes.White, 5);
 									}
 								}
 							}
@@ -770,7 +770,7 @@ namespace MatterHackers.MeshVisualizer
 				: base(FlowDirection.TopToBottom)
 			{
 				progressControl = new ProgressControl("", RGBA_Bytes.Black, RGBA_Bytes.Black);
-				progressControl.HAnchor = HAnchor.ParentCenter;
+				progressControl.HAnchor = HAnchor.Center;
 				AddChild(progressControl);
 				progressControl.Visible = false;
 				progressControl.ProgressChanged += (sender, e) =>
@@ -779,17 +779,17 @@ namespace MatterHackers.MeshVisualizer
 				};
 
 				centeredInfoText = new TextWidget(startingTextMessage);
-				centeredInfoText.HAnchor = HAnchor.ParentCenter;
+				centeredInfoText.HAnchor = HAnchor.Center;
 				centeredInfoText.AutoExpandBoundsToText = true;
 				AddChild(centeredInfoText);
 
 				centeredInfoDescription = new TextWidget("");
-				centeredInfoDescription.HAnchor = HAnchor.ParentCenter;
+				centeredInfoDescription.HAnchor = HAnchor.Center;
 				centeredInfoDescription.AutoExpandBoundsToText = true;
 				AddChild(centeredInfoDescription);
 
-				VAnchor |= VAnchor.ParentCenter;
-				HAnchor |= HAnchor.ParentCenter;
+				VAnchor |= VAnchor.Center;
+				HAnchor |= HAnchor.Center;
 			}
 		}
 	}

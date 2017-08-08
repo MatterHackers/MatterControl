@@ -38,7 +38,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		public GridOptionsPanel(InteractionLayer interactionLayer) : base(FlowDirection.TopToBottom)
 		{
-			this.HAnchor = HAnchor.ParentLeftRight;
+			this.HAnchor = HAnchor.Stretch;
 			this.Padding = 10;
 
 			this.AddChild(new TextWidget("Snap Grid".Localize())

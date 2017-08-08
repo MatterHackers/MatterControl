@@ -79,13 +79,13 @@ namespace MatterHackers.MatterControl.ContactForm
 		private GuiWidget LabelGenerator(string labelText, int fontSize = 12, int height = 28)
 		{
 			GuiWidget labelContainer = new GuiWidget();
-			labelContainer.HAnchor = HAnchor.ParentLeftRight;
+			labelContainer.HAnchor = HAnchor.Stretch;
 			labelContainer.Height = height * GuiWidget.DeviceScale;
 
 			TextWidget formLabel = new TextWidget(labelText, pointSize: fontSize);
 			formLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			formLabel.VAnchor = VAnchor.ParentBottom;
-			formLabel.HAnchor = HAnchor.ParentLeft;
+			formLabel.VAnchor = VAnchor.Bottom;
+			formLabel.HAnchor = HAnchor.Left;
 			formLabel.Margin = new BorderDouble(bottom: 2);
 
 			labelContainer.AddChild(formLabel);
@@ -99,7 +99,7 @@ namespace MatterHackers.MatterControl.ContactForm
 			formLabel.AutoExpandBoundsToText = true;
 			formLabel.Margin = new BorderDouble(0, 5);
 			formLabel.TextColor = RGBA_Bytes.Red;
-			formLabel.HAnchor = HAnchor.ParentLeft;
+			formLabel.HAnchor = HAnchor.Left;
 			formLabel.Visible = false;
 
 			return formLabel;
@@ -111,13 +111,13 @@ namespace MatterHackers.MatterControl.ContactForm
 			mainContainer.AnchorAll();
 
 			GuiWidget labelContainer = new GuiWidget();
-			labelContainer.HAnchor = HAnchor.ParentLeftRight;
+			labelContainer.HAnchor = HAnchor.Stretch;
 			labelContainer.Height = 30;
 
 			TextWidget formLabel = new TextWidget("How can we improve?".Localize(), pointSize: 16);
 			formLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			formLabel.VAnchor = VAnchor.ParentTop;
-			formLabel.HAnchor = HAnchor.ParentLeft;
+			formLabel.VAnchor = VAnchor.Top;
+			formLabel.HAnchor = HAnchor.Left;
 			formLabel.Margin = new BorderDouble(6, 3, 6, 6);
 			labelContainer.AddChild(formLabel);
 			mainContainer.AddChild(labelContainer);
@@ -136,7 +136,7 @@ namespace MatterHackers.MatterControl.ContactForm
 			submissionStatus.AutoExpandBoundsToText = true;
 			submissionStatus.Margin = new BorderDouble(0, 5);
 			submissionStatus.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			submissionStatus.HAnchor = HAnchor.ParentLeft;
+			submissionStatus.HAnchor = HAnchor.Left;
 
 			messageContainer.AddChild(submissionStatus);
 
@@ -148,7 +148,7 @@ namespace MatterHackers.MatterControl.ContactForm
 			formContainer.AddChild(LabelGenerator("Subject*".Localize()));
 
 			questionInput = new MHTextEditWidget(subjectText);
-			questionInput.HAnchor = HAnchor.ParentLeftRight;
+			questionInput.HAnchor = HAnchor.Stretch;
 			formContainer.AddChild(questionInput);
 
 			questionErrorMessage = ErrorMessageGenerator();
@@ -157,7 +157,7 @@ namespace MatterHackers.MatterControl.ContactForm
 			formContainer.AddChild(LabelGenerator("Message*".Localize()));
 
 			detailInput = new MHTextEditWidget(bodyText, pixelHeight: 120, multiLine: true);
-			detailInput.HAnchor = HAnchor.ParentLeftRight;
+			detailInput.HAnchor = HAnchor.Stretch;
 			formContainer.AddChild(detailInput);
 
 			detailErrorMessage = ErrorMessageGenerator();
@@ -166,7 +166,7 @@ namespace MatterHackers.MatterControl.ContactForm
 			formContainer.AddChild(LabelGenerator("Email Address*".Localize()));
 
 			emailInput = new MHTextEditWidget();
-			emailInput.HAnchor = HAnchor.ParentLeftRight;
+			emailInput.HAnchor = HAnchor.Stretch;
 			formContainer.AddChild(emailInput);
 
 			emailErrorMessage = ErrorMessageGenerator();
@@ -175,7 +175,7 @@ namespace MatterHackers.MatterControl.ContactForm
 			formContainer.AddChild(LabelGenerator("Name*".Localize()));
 
 			nameInput = new MHTextEditWidget();
-			nameInput.HAnchor = HAnchor.ParentLeftRight;
+			nameInput.HAnchor = HAnchor.Stretch;
 			formContainer.AddChild(nameInput);
 
 			nameErrorMessage = ErrorMessageGenerator();
@@ -270,7 +270,7 @@ namespace MatterHackers.MatterControl.ContactForm
 		private FlowLayoutWidget GetButtonButtonPanel()
 		{
 			FlowLayoutWidget buttonBottomPanel = new FlowLayoutWidget(FlowDirection.LeftToRight);
-			buttonBottomPanel.HAnchor = HAnchor.ParentLeftRight;
+			buttonBottomPanel.HAnchor = HAnchor.Stretch;
 			buttonBottomPanel.Padding = new BorderDouble(3, 3);
 			buttonBottomPanel.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 			return buttonBottomPanel;
