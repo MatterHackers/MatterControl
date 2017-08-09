@@ -112,7 +112,7 @@ namespace MatterHackers.MatterControl
 							},
 							(saveParams) =>
 							{
-								Task.Run(() => SaveAmf(saveParams));
+								Task.Run(() => SaveAmf(saveParams.FileName));
 							});
 					});
 				};
@@ -351,32 +351,30 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private void SaveAmf(SaveFileDialogParams saveParams)
+		private void SaveAmf(string filePathToSave)
 		{
 			try
 			{
-				if (!string.IsNullOrEmpty(saveParams.FileName))
+				if (!string.IsNullOrEmpty(filePathToSave))
 				{
-					string filePathToSave = saveParams.FileName;
-					if (filePathToSave != null && filePathToSave != "")
+					string extension = Path.GetExtension(filePathToSave);
+					if (extension == "")
 					{
-						string extension = Path.GetExtension(filePathToSave);
-						if (extension == "")
-						{
-							File.Delete(filePathToSave);
-							filePathToSave += ".amf";
-						}
-						if (Path.GetExtension(printItemWrapper.FileLocation).ToUpper() == Path.GetExtension(filePathToSave).ToUpper())
-						{
-							File.Copy(printItemWrapper.FileLocation, filePathToSave, true);
-						}
-						else
-						{
-							IObject3D item = Object3D.Load(printItemWrapper.FileLocation, CancellationToken.None);
-							MeshFileIo.Save(item, filePathToSave);
-						}
-						ShowFileIfRequested(filePathToSave);
+						File.Delete(filePathToSave);
+						filePathToSave += ".amf";
 					}
+
+					if (Path.GetExtension(printItemWrapper.FileLocation).ToUpper() == Path.GetExtension(filePathToSave).ToUpper())
+					{
+						File.Copy(printItemWrapper.FileLocation, filePathToSave, true);
+					}
+					else
+					{
+						IObject3D item = Object3D.Load(printItemWrapper.FileLocation, CancellationToken.None);
+						MeshFileIo.Save(item, filePathToSave);
+					}
+
+					ShowFileIfRequested(filePathToSave);
 				}
 			}
 			catch (Exception e)
