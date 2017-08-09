@@ -63,10 +63,17 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			printLevelWizard.AddPage(new FirstPageInstructions(levelingStrings.OverviewText, levelingStrings.WelcomeText(3, 3)));
 
 			// To make sure the bed is at the correct temp, put in a filament selection page.
-			string filamentSelectionPage = "{0}\n\n{1}".FormatWith(levelingStrings.materialPageInstructions1, levelingStrings.materialPageInstructions2);
-			printLevelWizard.AddPage(new SelectMaterialPage(levelingStrings.materialStepText, filamentSelectionPage));
+			bool hasHeatedBed = ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_heated_bed);
+			if (hasHeatedBed)
+			{
+				string filamentSelectionPage = "{0}\n\n{1}".FormatWith(levelingStrings.materialPageInstructions1, levelingStrings.materialPageInstructions2);
+				printLevelWizard.AddPage(new SelectMaterialPage(levelingStrings.materialStepText, filamentSelectionPage));
+			}
 			printLevelWizard.AddPage(new HomePrinterPage(levelingStrings.homingPageStepText, levelingStrings.homingPageInstructions));
-			printLevelWizard.AddPage(new WaitForTempPage(levelingStrings.waitingForTempPageStepText, levelingStrings.waitingForTempPageInstructions));
+			if (hasHeatedBed)
+			{
+				printLevelWizard.AddPage(new WaitForTempPage(levelingStrings.waitingForTempPageStepText, levelingStrings.waitingForTempPageInstructions));
+			}
 
 			string positionLabel = "Position".Localize();
 			string autoCalibrateLabel = "Auto Calibrate".Localize();
