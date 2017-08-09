@@ -289,30 +289,19 @@ namespace MatterHackers.MatterControl
 			footerRow.AddChild(cancelButton);
 		}
 
-		public void ExportGcodeCommandLineUtility(String nameOfFile)
+		public void ExportGcodeCommandLineUtility(string gcodePathAndFilenameToSave)
 		{
 			try
 			{
-				if (!string.IsNullOrEmpty(nameOfFile))
+				string sourceExtension = Path.GetExtension(printItemWrapper.FileLocation).ToUpper();
+				if (MeshFileIo.ValidFileExtensions().Contains(sourceExtension))
 				{
-					gcodePathAndFilenameToSave = nameOfFile;
-					string extension = Path.GetExtension(gcodePathAndFilenameToSave);
-					if (extension == "")
-					{
-						File.Delete(gcodePathAndFilenameToSave);
-						gcodePathAndFilenameToSave += ".gcode";
-					}
-
-					string sourceExtension = Path.GetExtension(printItemWrapper.FileLocation).ToUpper();
-					if (MeshFileIo.ValidFileExtensions().Contains(sourceExtension))
-					{
-						SlicingQueue.Instance.QueuePartForSlicing(printItemWrapper);
-						printItemWrapper.SlicingDone += sliceItem_Done;
-					}
-					else if (partIsGCode)
-					{
-						SaveGCodeToNewLocation(printItemWrapper.FileLocation, gcodePathAndFilenameToSave);
-					}
+					SlicingQueue.Instance.QueuePartForSlicing(printItemWrapper);
+					printItemWrapper.SlicingDone += sliceItem_Done;
+				}
+				else if (partIsGCode)
+				{
+					SaveGCodeToNewLocation(printItemWrapper.FileLocation, gcodePathAndFilenameToSave);
 				}
 			}
 			catch
