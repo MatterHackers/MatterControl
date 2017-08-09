@@ -56,26 +56,26 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public class SliceProgressReporter : IProgress<string>
 		{
-			private MeshViewerWidget meshViewer;
+			private InteractionLayer interactionLayer;
 
-			public SliceProgressReporter(MeshViewerWidget meshViewer)
+			public SliceProgressReporter(InteractionLayer interactionLayer)
 			{
-				this.meshViewer = meshViewer;
+				this.interactionLayer = interactionLayer;
 			}
 
 			public void StartReporting()
 			{
-				meshViewer.BeginProgressReporting("Slicing Part");
+				interactionLayer.BeginProgressReporting("Slicing Part");
 			}
 
 			public void EndReporting()
 			{
-				meshViewer.EndProgressReporting();
+				interactionLayer.EndProgressReporting();
 			}
 
 			public void Report(string value)
 			{
-				meshViewer.partProcessingInfo.centeredInfoDescription.Text = value;
+				interactionLayer.partProcessingInfo.centeredInfoDescription.Text = value;
 			}
 		}
 
@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var defaultMargin = ApplicationController.Instance.Theme.ButtonSpacing;
 			var buttonFactory = ApplicationController.Instance.Theme.ButtonFactory;
 
-			sliceProgressReporter = new SliceProgressReporter(modelViewer.meshViewerWidget);
+			sliceProgressReporter = new SliceProgressReporter(modelViewer.InteractionLayer);
 
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Fit;

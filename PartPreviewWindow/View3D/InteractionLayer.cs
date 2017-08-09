@@ -33,6 +33,7 @@ using MatterHackers.MeshVisualizer;
 using MatterHackers.RayTracer;
 using MatterHackers.RayTracer.Traceable;
 using MatterHackers.VectorMath;
+using static MatterHackers.MeshVisualizer.MeshViewerWidget;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -52,12 +53,55 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private Action notifyPartChanged;
 
+		public PartProcessingInfo partProcessingInfo;
+
+		private string progressReportingPrimaryTask = "";
+
 		public InteractionLayer(WorldView world, UndoBuffer undoBuffer, Action notifyPartChanged)
 		{
 			this.World = world;
 			this.InteractionVolumes = interactionVolumes;
 			this.undoBuffer = undoBuffer;
 			this.notifyPartChanged = notifyPartChanged;
+
+			var labelContainer = new GuiWidget();
+			labelContainer.Selectable = false;
+			labelContainer.AnchorAll();
+			this.AddChild(labelContainer);
+
+			partProcessingInfo = new PartProcessingInfo("");
+			labelContainer.AddChild(partProcessingInfo);
+		}
+
+		public void BeginProgressReporting(string taskDescription)
+		{
+			progressReportingPrimaryTask = taskDescription;
+
+			partProcessingInfo.Visible = true;
+			partProcessingInfo.progressControl.PercentComplete = 0;
+			partProcessingInfo.centeredInfoText.Text = taskDescription + "...";
+		}
+
+		public void EndProgressReporting()
+		{
+			progressReportingPrimaryTask = "";
+			partProcessingInfo.Visible = false;
+		}
+
+		public void ReportProgress0to100(double progress0To1, string processingState)
+		{
+			UiThread.RunOnIdle(() =>
+			{
+				int percentComplete = (int)(progress0To1 * 100);
+				partProcessingInfo.centeredInfoText.Text = $"{progressReportingPrimaryTask} {percentComplete}%...";
+				partProcessingInfo.progressControl.PercentComplete = percentComplete;
+
+				// Only assign to textbox if value passed through
+				if (processingState != null)
+				{
+					partProcessingInfo.centeredInfoDescription.Text = processingState;
+				}
+			});
 		}
 
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
