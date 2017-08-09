@@ -176,7 +176,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public Vector3 GetTopPosition(IObject3D selectedItem)
 		{
 			AxisAlignedBoundingBox originalSelectedBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
-			return new Vector3(originalSelectedBounds.Center.x, originalSelectedBounds.Center.y, originalSelectedBounds.maxXYZ.z);
+			if (originalSelectedBounds.minXYZ.x != double.PositiveInfinity)
+			{
+				return new Vector3(originalSelectedBounds.Center.x, originalSelectedBounds.Center.y, originalSelectedBounds.maxXYZ.z);
+			}
+
+			return Vector3.Zero;
 		}
 
 		public override void OnMouseDown(MouseEvent3DArgs mouseEvent3D)
