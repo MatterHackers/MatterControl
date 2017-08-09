@@ -116,6 +116,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string recover_position_before_z_home = nameof(recover_position_before_z_home);
 		public const string resume_gcode = nameof(resume_gcode);
 		public const string show_reset_connection = nameof(show_reset_connection);
+		public const string validate_layer_height = nameof(validate_layer_height);
 		public const string spiral_vase = nameof(spiral_vase);
 		public const string start_gcode = nameof(start_gcode);
 		public const string write_regex = nameof(write_regex);

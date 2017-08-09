@@ -795,6 +795,18 @@
 	{
 		"QuickMenuSettings": [ ],
 		"SetSettingsOnChange": [ ],
+		"SlicerConfigName": "validate_layer_height",
+		"PresentationName": "Validate Layer Height",
+		"HelpText": "Checks before each print that the layer height is greater than the nozzle diameter (important for filament adhesion)",
+		"DataEditType": "CHECK_BOX",
+		"ExtraSettings": "",
+		"ShowAsOverride": true,
+		"DefaultValue": "1",
+		"RebuildGCodeOnChange": false
+	},
+	{
+		"QuickMenuSettings": [ ],
+		"SetSettingsOnChange": [ ],
 		"SlicerConfigName": "z_homes_to_max",
 		"PresentationName": "Home Z Max",
 		"HelpText": "Indicates that the Z axis homes the hot end away from the bed (z-max homing)",

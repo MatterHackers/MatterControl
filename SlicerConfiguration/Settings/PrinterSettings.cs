@@ -885,7 +885,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			try
 			{
-				if (GetValue<double>(SettingsKey.layer_height) > GetValue<double>(SettingsKey.nozzle_diameter))
+				if (GetValue<bool>(SettingsKey.validate_layer_height)
+					&& GetValue<double>(SettingsKey.layer_height) > GetValue<double>(SettingsKey.nozzle_diameter))
 				{
 					string error = "'Layer Height' must be less than or equal to the 'Nozzle Diameter'.".Localize();
 					string details = string.Format("Layer Height = {0}\nNozzle Diameter = {1}".Localize(), GetValue<double>(SettingsKey.layer_height), GetValue<double>(SettingsKey.nozzle_diameter));
