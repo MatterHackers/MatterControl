@@ -1048,14 +1048,6 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public async void OpenExportWindow()
-		{
-			var exportPage = new ExportPrintItemPage(null);
-
-			string windowTitle = "MatterControl".Localize() + ": " + "Export File".Localize();
-			WizardWindow.Show("/ExportPrintItemPage", "", exportPage);
-		}
-
 		/// <summary>
 		/// Cancels prints within the first two minutes or interactively prompts the user to confirm cancellation
 		/// </summary>
