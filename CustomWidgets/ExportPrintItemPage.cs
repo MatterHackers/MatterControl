@@ -85,7 +85,7 @@ namespace MatterHackers.MatterControl
 							},
 							(saveParams) =>
 							{
-								Task.Run(() => SaveStl(saveParams));
+								Task.Run(() => SaveStl(saveParams.FileName));
 							});
 					});
 				};
@@ -387,38 +387,38 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private void SaveStl(SaveFileDialogParams saveParams)
+		private void SaveStl(string filePathToSave)
 		{
 			try
 			{
-				if (!string.IsNullOrEmpty(saveParams.FileName))
+				if (!string.IsNullOrEmpty(filePathToSave))
 				{
-					string filePathToSave = saveParams.FileName;
-					if (filePathToSave != null && filePathToSave != "")
+
+					string extension = Path.GetExtension(filePathToSave);
+					if (extension == "")
 					{
-						string extension = Path.GetExtension(filePathToSave);
-						if (extension == "")
-						{
-							File.Delete(filePathToSave);
-							filePathToSave += ".stl";
-						}
-						if (Path.GetExtension(printItemWrapper.FileLocation).ToUpper() == Path.GetExtension(filePathToSave).ToUpper())
-						{
-							File.Copy(printItemWrapper.FileLocation, filePathToSave, true);
-						}
-						else
-						{
-							IObject3D loadedItem = Object3D.Load(printItemWrapper.FileLocation, CancellationToken.None);
-							
-							if (!MeshFileIo.Save(new List<MeshGroup> { loadedItem.Flatten() }, filePathToSave))
-							{
-								UiThread.RunOnIdle (() => {
-									StyledMessageBox.ShowMessageBox(null, "AMF to STL conversion failed", "Couldn't save file".Localize());
-								});
-							}
-						}
-						ShowFileIfRequested(filePathToSave);
+						File.Delete(filePathToSave);
+						filePathToSave += ".stl";
 					}
+
+					if (Path.GetExtension(printItemWrapper.FileLocation).ToUpper() == Path.GetExtension(filePathToSave).ToUpper())
+					{
+						File.Copy(printItemWrapper.FileLocation, filePathToSave, true);
+					}
+					else
+					{
+						IObject3D loadedItem = Object3D.Load(printItemWrapper.FileLocation, CancellationToken.None);
+
+						if (!MeshFileIo.Save(new List<MeshGroup> { loadedItem.Flatten() }, filePathToSave))
+						{
+							UiThread.RunOnIdle(() =>
+							{
+								StyledMessageBox.ShowMessageBox(null, "AMF to STL conversion failed", "Couldn't save file".Localize());
+							});
+						}
+					}
+
+					ShowFileIfRequested(filePathToSave);
 				}
 			}
 			catch (Exception e)
