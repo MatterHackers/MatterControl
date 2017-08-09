@@ -70,29 +70,14 @@ namespace MatterHackers.MatterControl
 				contentRow.AddChild(exportAsStlButton);
 
 				// put in amf export
-				Button exportAsAmfButton = textImageButtonFactory.Generate("Export as".Localize() + " AMF");
+				RadioButton exportAsAmfButton = new RadioButton("Export as".Localize() + " AMF", textColor: ActiveTheme.Instance.PrimaryTextColor);
 				exportAsAmfButton.Name = "Export as AMF button";
 				exportAsAmfButton.Margin = commonMargin;
 				exportAsAmfButton.HAnchor = HAnchor.Left;
 				exportAsAmfButton.Cursor = Cursors.Hand;
 				exportAsAmfButton.Click += (s, e) =>
 				{
-					this.Parent.CloseOnIdle();
-
-					UiThread.RunOnIdle(() =>
-					{
-						FileDialog.SaveFileDialog(
-							new SaveFileDialogParams("Save as AMF|*.amf", initialDirectory: documentsPath)
-							{
-								Title = "MatterControl: Export File",
-								ActionButtonLabel = "Export",
-								FileName = printItemWrapper.Name
-							},
-							(saveParams) =>
-							{
-								Task.Run(() => SaveAmf(saveParams.FileName));
-							});
-					});
+					// Set in stl mode
 				};
 				contentRow.AddChild(exportAsAmfButton);
 			}
@@ -246,6 +231,19 @@ namespace MatterHackers.MatterControl
 			var exportButton = textImageButtonFactory.Generate("Export".Localize());
 			exportButton.Click += (s, e) =>
 			{
+
+				//FileDialog.SaveFileDialog(
+				//	new SaveFileDialogParams("Save as AMF|*.amf", initialDirectory: documentsPath)
+				//	{
+				//		Title = "MatterControl: Export File",
+				//		ActionButtonLabel = "Export",
+				//		FileName = printItemWrapper.Name
+				//	},
+				//	(saveParams) =>
+				//	{
+				//		Task.Run(() => SaveAmf(saveParams.FileName));
+				//	});
+
 				this.Parent.CloseOnIdle();
 				UiThread.RunOnIdle(() =>
 				{
