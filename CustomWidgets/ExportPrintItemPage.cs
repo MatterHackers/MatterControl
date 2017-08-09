@@ -25,7 +25,6 @@ namespace MatterHackers.MatterControl
 	{
 		private CheckBox showInFolderAfterSave;
 		private CheckBox applyLeveling;
-		private PrintItemWrapper printItemWrapper;
 		private string gcodePathAndFilenameToSave;
 		private bool partIsGCode = false;
 		private string documentsPath;
@@ -34,15 +33,14 @@ namespace MatterHackers.MatterControl
 
 		private Dictionary<RadioButton, ExportGcodePlugin> exportPluginButtons;
 
-		public ExportPrintItemPage(PrintItemWrapper printItemWrapper)
+		private ILibraryContentStream libraryContent;
+
+		public ExportPrintItemPage(ILibraryContentStream libraryContent)
 			: base(unlocalizedTextForTitle: "File export options:")
 		{
-			this.printItemWrapper = printItemWrapper;
-			if (Path.GetExtension(printItemWrapper.FileLocation).ToUpper() == ".GCODE")
-			{
-				partIsGCode = true;
-			}
+			partIsGCode = Path.GetExtension(libraryContent.FileName).ToUpper() == ".GCODE";
 
+			this.libraryContent = libraryContent;
 			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 			this.Name = "Export Item Window";
 
@@ -54,7 +52,7 @@ namespace MatterHackers.MatterControl
 
 		public void CreateWindowContent()
 		{
-			bool modelCanBeExported = !printItemWrapper.PrintItem.Protected;
+			bool modelCanBeExported = !libraryContent.IsProtected;
 
 			var commonMargin = new BorderDouble(4, 2);
 
@@ -99,7 +97,7 @@ namespace MatterHackers.MatterControl
 
 				foreach (ExportGcodePlugin plugin in PluginFinder.CreateInstancesOf<ExportGcodePlugin>())
 				{
-					if (plugin.EnabledForCurrentPart(printItemWrapper))
+					if (plugin.EnabledForCurrentPart(libraryContent))
 					{
 						// Create export button for each plugin
 						var pluginButton = new RadioButton(plugin.GetButtonText().Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor)
@@ -205,7 +203,7 @@ namespace MatterHackers.MatterControl
 						{
 							Title = title,
 							ActionButtonLabel = "Export".Localize(),
-							FileName = printItemWrapper.Name
+							FileName = libraryContent.Name
 						},
 						(saveParams) =>
 						{
@@ -221,17 +219,15 @@ namespace MatterHackers.MatterControl
 										savePath += targetExtension;
 									}
 
-									var sourceContent = new FileSystemFileItem(printItemWrapper.FileLocation);
-
 									bool succeeded = false;
 
 									if (exportAsStlButton.Checked)
 									{
-										succeeded = SaveStl(sourceContent, savePath);
+										succeeded = await SaveAmf(libraryContent, savePath);
 									}
 									else if (exportAsAmfButton.Checked)
 									{
-										succeeded = SaveAmf(sourceContent, savePath);
+										succeeded = await SaveAmf(libraryContent, savePath);
 									}
 									else if (exportGCode.Checked)
 									{
@@ -278,47 +274,29 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private bool SaveAmf(ILibraryContentStream source, string filePathToSave)
+		private async Task<bool> SaveAmf(ILibraryContentStream source, string filePathToSave)
 		{
 			try
 			{
 				if (!string.IsNullOrEmpty(filePathToSave))
 				{
-					if (Path.GetExtension(printItemWrapper.FileLocation).ToUpper() == Path.GetExtension(filePathToSave).ToUpper())
+					if (Path.GetExtension(libraryContent.FileName).ToUpper() == Path.GetExtension(filePathToSave).ToUpper())
 					{
-						File.Copy(printItemWrapper.FileLocation, filePathToSave, true);
+						using (var result = await libraryContent.GetContentStream(null))
+						using (var fileStream = File.Create(filePathToSave))
+						{
+							result.Stream.CopyTo(fileStream);
+						}
+
 						return true;
 					}
 					else
 					{
-						IObject3D item = Object3D.Load(printItemWrapper.FileLocation, CancellationToken.None);
-						return MeshFileIo.Save(item, filePathToSave);
-					}
-				}
-			}
-			catch (Exception ex)
-			{
-				Trace.WriteLine("Error exporting file: " + ex.Message);
-			}
-
-			return false;
-		}
-
-		private bool SaveStl(ILibraryContentStream source, string filePathToSave)
-		{
-			try
-			{
-				if (!string.IsNullOrEmpty(filePathToSave))
-				{
-					if (Path.GetExtension(printItemWrapper.FileLocation).ToUpper() == Path.GetExtension(filePathToSave).ToUpper())
-					{
-						File.Copy(printItemWrapper.FileLocation, filePathToSave, true);
-						return true;
-					}
-					else
-					{
-						IObject3D loadedItem = Object3D.Load(printItemWrapper.FileLocation, CancellationToken.None);
-						return MeshFileIo.Save(new List<MeshGroup> { loadedItem.Flatten() }, filePathToSave);
+						using (var result = await libraryContent.GetContentStream(null))
+						{
+							IObject3D item = Object3D.Load(result.Stream, Path.GetExtension(libraryContent.FileName), CancellationToken.None);
+							return MeshFileIo.Save(item, filePathToSave);
+						}
 					}
 				}
 			}
@@ -370,9 +348,11 @@ namespace MatterHackers.MatterControl
 
 		private async Task<string> SliceFileIfNeeded()
 		{
-			string fileToProcess = partIsGCode ? printItemWrapper.FileLocation : "";
+			// TODO: How to handle gcode files in library content?
+			//string fileToProcess = partIsGCode ?  printItemWrapper.FileLocation : "";
+			string fileToProcess = "";
 
-			string sourceExtension = Path.GetExtension(printItemWrapper.FileLocation).ToUpper();
+			string sourceExtension = Path.GetExtension(libraryContent.FileName).ToUpper();
 			if (MeshFileIo.ValidFileExtensions().Contains(sourceExtension)
 				|| sourceExtension == ".MCX")
 			{
@@ -425,17 +405,8 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private void sliceItem_Done(object sender, EventArgs e)
-		{
-			PrintItemWrapper sliceItem = (PrintItemWrapper)sender;
-
-			printItemWrapper.SlicingDone -= sliceItem_Done;
-			SaveGCodeToNewLocation(sliceItem.GetGCodePathAndFileName(), gcodePathAndFilenameToSave);
-		}
-
 		public override void OnClosed(ClosedEventArgs e)
 		{
-			printItemWrapper.SlicingDone -= sliceItem_Done;
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
 		}

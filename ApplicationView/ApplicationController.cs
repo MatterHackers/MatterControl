@@ -1050,8 +1050,7 @@ namespace MatterHackers.MatterControl
 
 		public async void OpenExportWindow()
 		{
-			PrintItemWrapper printItem = null;
-			var exportPage = new ExportPrintItemPage(printItem);
+			var exportPage = new ExportPrintItemPage(null);
 
 			string windowTitle = "MatterControl".Localize() + ": " + "Export File".Localize();
 			WizardWindow.Show("/ExportPrintItemPage", "", exportPage);

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MatterHackers.MatterControl.PrintQueue;
+using MatterHackers.MatterControl.Library;
 
 namespace MatterHackers.MatterControl.Queue.OptionsMenu
 {
@@ -29,7 +30,7 @@ namespace MatterHackers.MatterControl.Queue.OptionsMenu
 		{
 		}
 
-		public virtual bool EnabledForCurrentPart(PrintItemWrapper printItemWrapper)
+		public virtual bool EnabledForCurrentPart(ILibraryContentStream libraryContent)
 		{
 			return true;
 		}
