@@ -20,7 +20,7 @@ using MatterHackers.PolygonMesh;
 
 namespace MatterHackers.MatterControl
 {
-	public class ExportPrintItemWindow : SystemWindow
+	public class ExportPrintItemPage : WizardPage
 	{
 		private CheckBox showInFolderAfterSave;
 		private CheckBox applyLeveling;
@@ -30,8 +30,8 @@ namespace MatterHackers.MatterControl
 		private bool partIsGCode = false;
 		private string documentsPath;
 
-		public ExportPrintItemWindow(PrintItemWrapper printItemWrapper)
-			: base(400, 300)
+		public ExportPrintItemPage(PrintItemWrapper printItemWrapper)
+			: base(unlocalizedTextForTitle: "File export options:")
 		{
 			this.printItemWrapper = printItemWrapper;
 			if (Path.GetExtension(printItemWrapper.FileLocation).ToUpper() == ".GCODE")
@@ -39,11 +39,6 @@ namespace MatterHackers.MatterControl
 				partIsGCode = true;
 			}
 
-			string McExportFileTitleBeg = "MatterControl".Localize();
-			string McExportFileTitleEnd = "Export File".Localize();
-			string McExportFileTitleFull = string.Format("{0}: {1}", McExportFileTitleBeg, McExportFileTitleEnd);
-
-			this.Title = McExportFileTitleFull;
 			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 			this.Name = "Export Item Window";
 
@@ -55,39 +50,6 @@ namespace MatterHackers.MatterControl
 
 		public void CreateWindowContent()
 		{
-			this.RemoveAllChildren();
-			TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
-			FlowLayoutWidget topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			topToBottom.Padding = new BorderDouble(3, 0, 3, 5);
-			topToBottom.AnchorAll();
-
-			// Creates Header
-			FlowLayoutWidget headerRow = new FlowLayoutWidget(FlowDirection.LeftToRight);
-			headerRow.HAnchor = HAnchor.Stretch;
-			headerRow.Margin = new BorderDouble(0, 3, 0, 0);
-			headerRow.Padding = new BorderDouble(0, 3, 0, 3);
-			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-
-			//Creates Text and adds into header
-			{
-				TextWidget elementHeader = new TextWidget("File export options:".Localize(), pointSize: 14);
-				elementHeader.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-				elementHeader.HAnchor = HAnchor.Stretch;
-				elementHeader.VAnchor = Agg.UI.VAnchor.Bottom;
-
-				headerRow.AddChild(elementHeader);
-				topToBottom.AddChild(headerRow);
-			}
-
-			// Creates container in the middle of window
-			FlowLayoutWidget middleRowContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			{
-				middleRowContainer.HAnchor = HAnchor.Stretch;
-				middleRowContainer.VAnchor = VAnchor.Stretch;
-				middleRowContainer.Padding = new BorderDouble(5);
-				middleRowContainer.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
-			}
-
 			bool modelCanBeExported = !partIsGCode;
 			
 			if(modelCanBeExported
@@ -109,7 +71,7 @@ namespace MatterHackers.MatterControl
 				exportAsStlButton.HAnchor = HAnchor.Left;
 				exportAsStlButton.Cursor = Cursors.Hand;
 				exportAsStlButton.Click += exportSTL_Click;
-				middleRowContainer.AddChild(exportAsStlButton);
+				contentRow.AddChild(exportAsStlButton);
 
 				// put in amf export
 				string exportAmfText = "Export as".Localize();
@@ -120,7 +82,7 @@ namespace MatterHackers.MatterControl
 				exportAsAmfButton.HAnchor = HAnchor.Left;
 				exportAsAmfButton.Cursor = Cursors.Hand;
 				exportAsAmfButton.Click += exportAMF_Click;
-				middleRowContainer.AddChild(exportAsAmfButton);
+				contentRow.AddChild(exportAsAmfButton);
 			}
 
 			bool showExportGCodeButton = ActiveSliceSettings.Instance.PrinterSelected || partIsGCode;
@@ -134,7 +96,7 @@ namespace MatterHackers.MatterControl
 				{
 					UiThread.RunOnIdle(ExportGCode_Click);
 				};
-				middleRowContainer.AddChild(exportGCode);
+				contentRow.AddChild(exportGCode);
 
 				var gcodeExportPlugins = PluginFinder.CreateInstancesOf<ExportGcodePlugin>();
 
@@ -213,12 +175,12 @@ namespace MatterHackers.MatterControl
 							});
 						}; // End exportButton Click handler
 
-						middleRowContainer.AddChild(exportButton);
+						contentRow.AddChild(exportButton);
 					}
 				}
 			}
 
-			middleRowContainer.AddChild(new VerticalSpacer());
+			contentRow.AddChild(new VerticalSpacer());
 
 			// If print leveling is enabled then add in a check box 'Apply Leveling During Export' and default checked.
 			if (showExportGCodeButton && ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_enabled))
@@ -228,7 +190,7 @@ namespace MatterHackers.MatterControl
 				applyLeveling.HAnchor = HAnchor.Left;
 				applyLeveling.Cursor = Cursors.Hand;
 				//applyLeveling.Margin = new BorderDouble(top: 10);
-				middleRowContainer.AddChild(applyLeveling);
+				contentRow.AddChild(applyLeveling);
 			}
 
 			// TODO: make this work on the mac and then delete this if
@@ -239,7 +201,7 @@ namespace MatterHackers.MatterControl
 				showInFolderAfterSave.HAnchor = HAnchor.Left;
 				showInFolderAfterSave.Cursor = Cursors.Hand;
 				//showInFolderAfterSave.Margin = new BorderDouble(top: 10);
-				middleRowContainer.AddChild(showInFolderAfterSave);
+				contentRow.AddChild(showInFolderAfterSave);
 			}
 
 			if (!showExportGCodeButton)
@@ -249,31 +211,11 @@ namespace MatterHackers.MatterControl
 				string noGCodeMessageTextFull = string.Format("{0}: {1}", noGCodeMessageTextBeg, noGCodeMessageTextEnd);
 				TextWidget noGCodeMessage = new TextWidget(noGCodeMessageTextFull, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 10);
 				noGCodeMessage.HAnchor = HAnchor.Left;
-				middleRowContainer.AddChild(noGCodeMessage);
+				contentRow.AddChild(noGCodeMessage);
 			}
 
-			//Creates button container on the bottom of window
-			FlowLayoutWidget buttonRow = new FlowLayoutWidget(FlowDirection.LeftToRight);
-			{
-				BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-				buttonRow.HAnchor = HAnchor.Stretch;
-				buttonRow.Padding = new BorderDouble(0, 3);
-			}
-
-			Button cancelButton = textImageButtonFactory.Generate("Cancel".Localize());
-			cancelButton.Name = "Export Item Window Cancel Button";
-			cancelButton.Cursor = Cursors.Hand;
-			cancelButton.Click += (sender, e) =>
-			{
-				CloseOnIdle();
-			};
-
-			buttonRow.AddChild(new HorizontalSpacer());
-			buttonRow.AddChild(cancelButton);
-			topToBottom.AddChild(middleRowContainer);
-			topToBottom.AddChild(buttonRow);
-
-			this.AddChild(topToBottom);
+			footerRow.AddChild(new HorizontalSpacer());
+			footerRow.AddChild(cancelButton);
 		}
 
 		private string Get8Name(string longName)
