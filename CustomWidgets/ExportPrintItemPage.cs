@@ -61,7 +61,6 @@ namespace MatterHackers.MatterControl
 			exportAsStlButton.Margin = commonMargin;
 			exportAsStlButton.HAnchor = HAnchor.Left;
 			exportAsStlButton.Cursor = Cursors.Hand;
-			exportAsStlButton.DebugShowBounds = true;
 
 			// put in amf export
 			RadioButton exportAsAmfButton = new RadioButton("Export as".Localize() + " AMF", textColor: ActiveTheme.Instance.PrimaryTextColor);
@@ -263,7 +262,7 @@ namespace MatterHackers.MatterControl
 									}
 									else if (exportGCode.Checked)
 									{
-										succeeded = await ExportGcodeCommandLineUtility(savePath);
+										succeeded = await SaveGCode(savePath);
 									}
 
 									if (succeeded)
@@ -287,77 +286,6 @@ namespace MatterHackers.MatterControl
 
 			footerRow.AddChild(new HorizontalSpacer());
 			footerRow.AddChild(cancelButton);
-		}
-
-		public async Task<bool> ExportGcodeCommandLineUtility(string gcodePathAndFilenameToSave)
-		{
-			try
-			{
-				string fileToProcess = partIsGCode ? printItemWrapper.FileLocation : "";
-
-				string sourceExtension = Path.GetExtension(printItemWrapper.FileLocation).ToUpper();
-				if (MeshFileIo.ValidFileExtensions().Contains(sourceExtension)
-					|| sourceExtension == ".MCX")
-				{
-					// Save any pending changes before starting the print
-					await ApplicationController.Instance.ActiveView3DWidget.PersistPlateIfNeeded();
-
-					var printItem = ApplicationController.Instance.ActivePrintItem;
-
-					await SlicingQueue.SliceFileAsync(printItem, null);
-
-					fileToProcess = printItem.GetGCodePathAndFileName();
-				}
-
-				if (File.Exists(fileToProcess))
-				{
-					SaveGCodeToNewLocation(fileToProcess, gcodePathAndFilenameToSave);
-					return true;
-				}
-			}
-			catch
-			{
-			}
-
-			return false;
-		}
-
-		private void SaveGCodeToNewLocation(string gcodeFilename, string dest)
-		{
-			try
-			{
-				GCodeFileStream gCodeFileStream = new GCodeFileStream(GCodeFile.Load(gcodeFilename, CancellationToken.None));
-
-				bool addLevelingStream = ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_enabled) && applyLeveling.Checked;
-				var queueStream = new QueuedCommandsStream(gCodeFileStream);
-
-				// this is added to ensure we are rewriting the G0 G1 commands as needed
-				GCodeStream finalStream = addLevelingStream
-					? new ProcessWriteRegexStream(new PrintLevelingStream(queueStream, false), queueStream)
-					: new ProcessWriteRegexStream(queueStream, queueStream);
-
-				using (StreamWriter file = new StreamWriter(dest))
-				{
-					string nextLine = finalStream.ReadLine();
-					while (nextLine != null)
-					{
-						if (nextLine.Trim().Length > 0)
-						{
-							file.WriteLine(nextLine);
-						}
-						nextLine = finalStream.ReadLine();
-					}
-				}
-
-				ShowFileIfRequested(dest);
-			}
-			catch (Exception e)
-			{
-				UiThread.RunOnIdle(() =>
-				{
-					StyledMessageBox.ShowMessageBox(null, e.Message, "Couldn't save file".Localize());
-				});
-			}
 		}
 
 		private void ShowFileIfRequested(string filename)
@@ -423,6 +351,75 @@ namespace MatterHackers.MatterControl
 			}
 
 			return false;
+		}
+
+		public async Task<bool> SaveGCode(string filePathToSave)
+		{
+			try
+			{
+				string fileToProcess = partIsGCode ? printItemWrapper.FileLocation : "";
+
+				string sourceExtension = Path.GetExtension(printItemWrapper.FileLocation).ToUpper();
+				if (MeshFileIo.ValidFileExtensions().Contains(sourceExtension)
+					|| sourceExtension == ".MCX")
+				{
+					// Save any pending changes before starting the print
+					await ApplicationController.Instance.ActiveView3DWidget.PersistPlateIfNeeded();
+
+					var printItem = ApplicationController.Instance.ActivePrintItem;
+
+					await SlicingQueue.SliceFileAsync(printItem, null);
+
+					fileToProcess = printItem.GetGCodePathAndFileName();
+				}
+
+				if (File.Exists(fileToProcess))
+				{
+					SaveGCodeToNewLocation(fileToProcess, filePathToSave);
+					return true;
+				}
+			}
+			catch
+			{
+			}
+
+			return false;
+		}
+
+		private void SaveGCodeToNewLocation(string gcodeFilename, string dest)
+		{
+			try
+			{
+				GCodeFileStream gCodeFileStream = new GCodeFileStream(GCodeFile.Load(gcodeFilename, CancellationToken.None));
+
+				bool addLevelingStream = ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_enabled) && applyLeveling.Checked;
+				var queueStream = new QueuedCommandsStream(gCodeFileStream);
+
+				// this is added to ensure we are rewriting the G0 G1 commands as needed
+				GCodeStream finalStream = addLevelingStream
+					? new ProcessWriteRegexStream(new PrintLevelingStream(queueStream, false), queueStream)
+					: new ProcessWriteRegexStream(queueStream, queueStream);
+
+				using (StreamWriter file = new StreamWriter(dest))
+				{
+					string nextLine = finalStream.ReadLine();
+					while (nextLine != null)
+					{
+						if (nextLine.Trim().Length > 0)
+						{
+							file.WriteLine(nextLine);
+						}
+						nextLine = finalStream.ReadLine();
+					}
+				}
+			}
+			catch (Exception e)
+			{
+				UiThread.RunOnIdle(() =>
+				{
+					StyledMessageBox.ShowMessageBox(null, e.Message, "Couldn't save file".Localize());
+				});
+			}
 		}
 
 		private void sliceItem_Done(object sender, EventArgs e)
