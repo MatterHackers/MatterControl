@@ -871,19 +871,34 @@ namespace MatterHackers.MatterControl
 
 		private bool showNamesUnderMouse = false;
 
+		private GuiWidget inspectedWidget = null;
+
 #if DEBUG
 		Vector2 mousePosition;
 		private void ShowNamesUnderMouse(object sender, DrawEventArgs e)
 		{
 			if (showNamesUnderMouse)
 			{
+				if (inspectedWidget != null)
+				{
+					inspectedWidget.DebugShowBounds = false;
+				}
+
 				List<WidgetAndPosition> namedChildren = new List<WidgetAndPosition>();
 				this.FindNamedChildrenRecursive("", namedChildren, new RectangleDouble(mousePosition.x, mousePosition.y, mousePosition.x + 1 , mousePosition.y + 1), SearchType.Partial, allowDisabledOrHidden: false);
+
 				Vector2 start = new Vector2(10, 50);
 				int lineHeight = 20;
 				e.graphics2D.FillRectangle(start, start + new Vector2(500, namedChildren.Count * lineHeight), new RGBA_Bytes(RGBA_Bytes.Black, 120));
-				foreach(var child in namedChildren)
+
+				foreach (var child in namedChildren)
 				{
+
+					if (child.widget.FirstWidgetUnderMouse)
+					{
+						inspectedWidget = child.widget;
+					}
+
 					if (child.name != null)
 					{
 						e.graphics2D.DrawString($"{child.widget.GetType().Name} --- {child.name}", start.x, start.y, backgroundColor: RGBA_Bytes.White, drawFromHintedCach: true);
@@ -895,6 +910,12 @@ namespace MatterHackers.MatterControl
 						start.y += lineHeight;
 					}
 				}
+
+				if (inspectedWidget != null)
+				{
+					inspectedWidget.DebugShowBounds = true;
+				}
+
 			}
 		}
 
