@@ -12,6 +12,7 @@ using MatterHackers.GCodeVisualizer;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.Queue.OptionsMenu;
@@ -50,21 +51,12 @@ namespace MatterHackers.MatterControl
 
 		public void CreateWindowContent()
 		{
-			bool modelCanBeExported = !partIsGCode;
-			
-			if(modelCanBeExported
-				&& printItemWrapper != null
-				&& (printItemWrapper.PrintItem.Protected
-				|| printItemWrapper.PrintItem.ReadOnly))
-			{
-				modelCanBeExported = false;
-			}
+			bool modelCanBeExported = !printItemWrapper.PrintItem.Protected;
 
 			var commonMargin = new BorderDouble(4, 2);
 
 			if (modelCanBeExported)
 			{
-
 				// put in stl export
 				Button exportAsStlButton = textImageButtonFactory.Generate("Export as".Localize() + " STL");
 				exportAsStlButton.Name = "Export as STL button";
@@ -76,16 +68,33 @@ namespace MatterHackers.MatterControl
 					this.Parent.CloseOnIdle();
 					UiThread.RunOnIdle(() =>
 					{
+						string title = "MatterControl: " + "Export File".Localize();
 						FileDialog.SaveFileDialog(
 							new SaveFileDialogParams("Save as STL|*.stl")
 							{
-								Title = "MatterControl: Export File",
+								Title = title,
 								ActionButtonLabel = "Export",
 								FileName = printItemWrapper.Name
 							},
 							(saveParams) =>
 							{
-								Task.Run(() => SaveStl(saveParams.FileName));
+								if (saveParams.FileName != null)
+								{
+									Task.Run(() =>
+									{
+										if (SaveStl(new FileSystemFileItem(printItemWrapper.FileLocation), saveParams.FileName))
+										{
+											ShowFileIfRequested(saveParams.FileName);
+										}
+										else
+										{
+											UiThread.RunOnIdle(() =>
+											{
+												StyledMessageBox.ShowMessageBox(null, "Export failed".Localize(), title);
+											});
+										}
+									});
+								}
 							});
 					});
 				};
@@ -385,13 +394,12 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private void SaveStl(string filePathToSave)
+		private bool SaveStl(ILibraryContentStream source, string filePathToSave)
 		{
 			try
 			{
 				if (!string.IsNullOrEmpty(filePathToSave))
 				{
-
 					string extension = Path.GetExtension(filePathToSave);
 					if (extension == "")
 					{
@@ -402,30 +410,21 @@ namespace MatterHackers.MatterControl
 					if (Path.GetExtension(printItemWrapper.FileLocation).ToUpper() == Path.GetExtension(filePathToSave).ToUpper())
 					{
 						File.Copy(printItemWrapper.FileLocation, filePathToSave, true);
+						return true;
 					}
 					else
 					{
 						IObject3D loadedItem = Object3D.Load(printItemWrapper.FileLocation, CancellationToken.None);
-
-						if (!MeshFileIo.Save(new List<MeshGroup> { loadedItem.Flatten() }, filePathToSave))
-						{
-							UiThread.RunOnIdle(() =>
-							{
-								StyledMessageBox.ShowMessageBox(null, "AMF to STL conversion failed", "Couldn't save file".Localize());
-							});
-						}
+						return MeshFileIo.Save(new List<MeshGroup> { loadedItem.Flatten() }, filePathToSave);
 					}
-
-					ShowFileIfRequested(filePathToSave);
 				}
 			}
-			catch (Exception e)
+			catch (Exception ex)
 			{
-				UiThread.RunOnIdle (() => {
-					StyledMessageBox.ShowMessageBox(null, e.Message, "Couldn't save file".Localize());
-				});
-
+				Trace.WriteLine("Error exporting file: " + ex.Message);
 			}
+
+			return false;
 		}
 
 		private void sliceItem_Done(object sender, EventArgs e)
