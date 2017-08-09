@@ -225,21 +225,25 @@ namespace MatterHackers.MatterControl
 
 		private void ExportGCode_Click()
 		{
-			SaveFileDialogParams saveParams = new SaveFileDialogParams("Export GCode|*.gcode", title: "Export GCode");
-			saveParams.Title = "MatterControl: Export File";
-			saveParams.ActionButtonLabel = "Export";
-			saveParams.FileName = Path.GetFileNameWithoutExtension(printItemWrapper.Name);
+			this.Parent.CloseOnIdle();
 
-			Close();
-			FileDialog.SaveFileDialog(saveParams, onExportGcodeFileSelected);
-		}
-
-		private void onExportGcodeFileSelected(SaveFileDialogParams saveParams)
-		{
-			if (!string.IsNullOrEmpty(saveParams.FileName))
+			UiThread.RunOnIdle(() =>
 			{
-				ExportGcodeCommandLineUtility(saveParams.FileName);
-			}
+				FileDialog.SaveFileDialog(
+					new SaveFileDialogParams("Export GCode|*.gcode", title: "Export GCode")
+					{
+						Title = "MatterControl: Export File",
+						ActionButtonLabel = "Export",
+						FileName = Path.GetFileNameWithoutExtension(printItemWrapper.Name)
+					},
+					(saveParams) =>
+					{
+						if (!string.IsNullOrEmpty(saveParams.FileName))
+						{
+							ExportGcodeCommandLineUtility(saveParams.FileName);
+						}
+					});
+			});
 		}
 
 		public void ExportGcodeCommandLineUtility(String nameOfFile)
@@ -327,10 +331,7 @@ namespace MatterHackers.MatterControl
 		public override void OnClosed(ClosedEventArgs e)
 		{
 			printItemWrapper.SlicingDone -= sliceItem_Done;
-			if (unregisterEvents != null)
-			{
-				unregisterEvents(this, null);
-			}
+			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
 		}
 
@@ -343,23 +344,22 @@ namespace MatterHackers.MatterControl
 
 		private void exportAMF_Click(object sender, EventArgs mouseEvent)
 		{
+			this.Parent.CloseOnIdle();
+
 			UiThread.RunOnIdle(() =>
 			{
-				SaveFileDialogParams saveParams = new SaveFileDialogParams("Save as AMF|*.amf", initialDirectory: documentsPath)
-				{
-					Title = "MatterControl: Export File",
-					ActionButtonLabel = "Export",
-					FileName = printItemWrapper.Name
-				};
-
-				Close();
-				FileDialog.SaveFileDialog(saveParams, onExportAmfFileSelected);
+				FileDialog.SaveFileDialog(
+					new SaveFileDialogParams("Save as AMF|*.amf", initialDirectory: documentsPath)
+					{
+						Title = "MatterControl: Export File",
+						ActionButtonLabel = "Export",
+						FileName = printItemWrapper.Name
+					},
+					(saveParams) =>
+					{
+						Task.Run(() => SaveAmf(saveParams));
+					});
 			});
-		}
-
-		private async void onExportAmfFileSelected(SaveFileDialogParams saveParams)
-		{
-			await Task.Run(() => SaveAmf(saveParams));
 		}
 
 		private void SaveAmf(SaveFileDialogParams saveParams)
@@ -400,21 +400,22 @@ namespace MatterHackers.MatterControl
 
 		private void exportSTL_Click(object sender, EventArgs mouseEvent)
 		{
+			this.Parent.CloseOnIdle();
+
 			UiThread.RunOnIdle(() =>
 			{
-				SaveFileDialogParams saveParams = new SaveFileDialogParams("Save as STL|*.stl");
-				saveParams.Title = "MatterControl: Export File";
-				saveParams.ActionButtonLabel = "Export";
-				saveParams.FileName = printItemWrapper.Name;
-
-				Close();
-				FileDialog.SaveFileDialog(saveParams, onExportStlFileSelected);
+				FileDialog.SaveFileDialog(
+					new SaveFileDialogParams("Save as STL|*.stl")
+					{
+						Title = "MatterControl: Export File",
+						ActionButtonLabel = "Export",
+						FileName = printItemWrapper.Name
+					},
+					(saveParams) =>
+					{
+						Task.Run(() => SaveStl(saveParams));
+					});
 			});
-		}
-
-		private async void onExportStlFileSelected(SaveFileDialogParams saveParams)
-		{
-			await Task.Run(() => SaveStl(saveParams));
 		}
 
 		private void SaveStl(SaveFileDialogParams saveParams)
