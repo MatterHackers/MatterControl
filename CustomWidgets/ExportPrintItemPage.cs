@@ -57,11 +57,15 @@ namespace MatterHackers.MatterControl
 				modelCanBeExported = false;
 			}
 
+			var commonMargin = new BorderDouble(4, 2);
+
 			if (modelCanBeExported)
 			{
+
 				// put in stl export
 				Button exportAsStlButton = textImageButtonFactory.Generate("Export as".Localize() + " STL");
 				exportAsStlButton.Name = "Export as STL button";
+				exportAsStlButton.Margin = commonMargin;
 				exportAsStlButton.HAnchor = HAnchor.Left;
 				exportAsStlButton.Cursor = Cursors.Hand;
 				exportAsStlButton.Click += exportSTL_Click;
@@ -70,6 +74,7 @@ namespace MatterHackers.MatterControl
 				// put in amf export
 				Button exportAsAmfButton = textImageButtonFactory.Generate("Export as".Localize() + " AMF");
 				exportAsAmfButton.Name = "Export as AMF button";
+				exportAsAmfButton.Margin = commonMargin;
 				exportAsAmfButton.HAnchor = HAnchor.Left;
 				exportAsAmfButton.Cursor = Cursors.Hand;
 				exportAsAmfButton.Click += exportAMF_Click;
@@ -81,6 +86,7 @@ namespace MatterHackers.MatterControl
 			{
 				Button exportGCode = textImageButtonFactory.Generate("Export as".Localize() + " G-Code");
 				exportGCode.Name = "Export as GCode Button";
+				exportGCode.Margin = commonMargin;
 				exportGCode.HAnchor = HAnchor.Left;
 				exportGCode.Cursor = Cursors.Hand;
 				exportGCode.Click += (s, e) =>
@@ -100,6 +106,7 @@ namespace MatterHackers.MatterControl
 
 						Button exportButton = textImageButtonFactory.Generate(exportButtonText);
 						exportButton.HAnchor = HAnchor.Left;
+						exportButton.Margin = commonMargin;
 						exportButton.Cursor = Cursors.Hand;
 						exportButton.Click += (s, e) =>
 						{
