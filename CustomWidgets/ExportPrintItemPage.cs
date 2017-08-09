@@ -55,30 +55,24 @@ namespace MatterHackers.MatterControl
 
 			var commonMargin = new BorderDouble(4, 2);
 
+			// put in stl export
+			RadioButton exportAsStlButton = new RadioButton("Export as".Localize() + " STL", textColor: ActiveTheme.Instance.PrimaryTextColor);
+			exportAsStlButton.Name = "Export as STL button";
+			exportAsStlButton.Margin = commonMargin;
+			exportAsStlButton.HAnchor = HAnchor.Left;
+			exportAsStlButton.Cursor = Cursors.Hand;
+			exportAsStlButton.DebugShowBounds = true;
+
+			// put in amf export
+			RadioButton exportAsAmfButton = new RadioButton("Export as".Localize() + " AMF", textColor: ActiveTheme.Instance.PrimaryTextColor);
+			exportAsAmfButton.Name = "Export as AMF button";
+			exportAsAmfButton.Margin = commonMargin;
+			exportAsAmfButton.HAnchor = HAnchor.Left;
+			exportAsAmfButton.Cursor = Cursors.Hand;
+
 			if (modelCanBeExported)
 			{
-				// put in stl export
-				RadioButton exportAsStlButton = new RadioButton("Export as".Localize() + " STL", textColor: ActiveTheme.Instance.PrimaryTextColor);
-				exportAsStlButton.Name = "Export as STL button";
-				exportAsStlButton.Margin = commonMargin;
-				exportAsStlButton.HAnchor = HAnchor.Left;
-				exportAsStlButton.Cursor = Cursors.Hand;
-				exportAsStlButton.CheckedStateChanged += (s, e) =>
-				{
-					// Set in stl mode
-				};
 				contentRow.AddChild(exportAsStlButton);
-
-				// put in amf export
-				RadioButton exportAsAmfButton = new RadioButton("Export as".Localize() + " AMF", textColor: ActiveTheme.Instance.PrimaryTextColor);
-				exportAsAmfButton.Name = "Export as AMF button";
-				exportAsAmfButton.Margin = commonMargin;
-				exportAsAmfButton.HAnchor = HAnchor.Left;
-				exportAsAmfButton.Cursor = Cursors.Hand;
-				exportAsAmfButton.Click += (s, e) =>
-				{
-					// Set in stl mode
-				};
 				contentRow.AddChild(exportAsAmfButton);
 			}
 
@@ -231,37 +225,59 @@ namespace MatterHackers.MatterControl
 			var exportButton = textImageButtonFactory.Generate("Export".Localize());
 			exportButton.Click += (s, e) =>
 			{
+				string fileTypeFilter = "";
+				string targetExtension = "";
 
-				//FileDialog.SaveFileDialog(
-				//	new SaveFileDialogParams("Save as AMF|*.amf", initialDirectory: documentsPath)
-				//	{
-				//		Title = "MatterControl: Export File",
-				//		ActionButtonLabel = "Export",
-				//		FileName = printItemWrapper.Name
-				//	},
-				//	(saveParams) =>
-				//	{
-				//		Task.Run(() => SaveAmf(saveParams.FileName));
-				//	});
+				if (exportAsStlButton.Checked)
+				{
+					fileTypeFilter = "Save as STL|*.stl";
+					targetExtension = ".stl";
+				}
+				else if (exportAsAmfButton.Checked)
+				{
+					fileTypeFilter = "Save as AMF|*.amf";
+					targetExtension = ".amf";
+				}
 
 				this.Parent.CloseOnIdle();
 				UiThread.RunOnIdle(() =>
 				{
 					string title = "MatterControl: " + "Export File".Localize();
 					FileDialog.SaveFileDialog(
-						new SaveFileDialogParams("Save as STL|*.stl")
+						new SaveFileDialogParams(fileTypeFilter)
 						{
 							Title = title,
-							ActionButtonLabel = "Export",
+							ActionButtonLabel = "Export".Localize(),
 							FileName = printItemWrapper.Name
 						},
 						(saveParams) =>
 						{
-							if (saveParams.FileName != null)
+							string savePath = saveParams.FileName;
+
+							if (!string.IsNullOrEmpty(savePath))
 							{
 								Task.Run(() =>
 								{
-									if (SaveStl(new FileSystemFileItem(printItemWrapper.FileLocation), saveParams.FileName))
+									string extension = Path.GetExtension(savePath);
+									if (extension != targetExtension)
+									{
+										savePath += targetExtension;
+									}
+
+									var sourceContent = new FileSystemFileItem(printItemWrapper.FileLocation);
+
+									bool result = false;
+
+									if (exportAsStlButton.Checked)
+									{
+										result = SaveStl(sourceContent, savePath);
+									}
+									else if (exportAsAmfButton.Checked)
+									{
+										result = SaveAmf(sourceContent, savePath);
+									}
+
+									if (result)
 									{
 										ShowFileIfRequested(saveParams.FileName);
 									}
@@ -372,13 +388,6 @@ namespace MatterHackers.MatterControl
 			{
 				if (!string.IsNullOrEmpty(filePathToSave))
 				{
-					string extension = Path.GetExtension(filePathToSave);
-					if (extension == "")
-					{
-						File.Delete(filePathToSave);
-						filePathToSave += ".amf";
-					}
-
 					if (Path.GetExtension(printItemWrapper.FileLocation).ToUpper() == Path.GetExtension(filePathToSave).ToUpper())
 					{
 						File.Copy(printItemWrapper.FileLocation, filePathToSave, true);
@@ -405,13 +414,6 @@ namespace MatterHackers.MatterControl
 			{
 				if (!string.IsNullOrEmpty(filePathToSave))
 				{
-					string extension = Path.GetExtension(filePathToSave);
-					if (extension == "")
-					{
-						File.Delete(filePathToSave);
-						filePathToSave += ".stl";
-					}
-
 					if (Path.GetExtension(printItemWrapper.FileLocation).ToUpper() == Path.GetExtension(filePathToSave).ToUpper())
 					{
 						File.Copy(printItemWrapper.FileLocation, filePathToSave, true);
