@@ -885,22 +885,24 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			try
 			{
-				if (GetValue<bool>(SettingsKey.validate_layer_height)
-					&& GetValue<double>(SettingsKey.layer_height) > GetValue<double>(SettingsKey.nozzle_diameter))
+				if (GetValue<bool>(SettingsKey.validate_layer_height))
 				{
-					string error = "'Layer Height' must be less than or equal to the 'Nozzle Diameter'.".Localize();
-					string details = string.Format("Layer Height = {0}\nNozzle Diameter = {1}".Localize(), GetValue<double>(SettingsKey.layer_height), GetValue<double>(SettingsKey.nozzle_diameter));
-					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Layers/Surface'".Localize();
-					StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
-					return false;
-				}
-				else if (GetValue<double>(SettingsKey.first_layer_height) > GetValue<double>(SettingsKey.nozzle_diameter))
-				{
-					string error = "'First Layer Height' must be less than or equal to the 'Nozzle Diameter'.".Localize();
-					string details = string.Format("First Layer Height = {0}\nNozzle Diameter = {1}".Localize(), GetValue<double>(SettingsKey.first_layer_height), GetValue<double>(SettingsKey.nozzle_diameter));
-					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Layers/Surface'".Localize();
-					StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
-					return false;
+					if (GetValue<double>(SettingsKey.layer_height) > GetValue<double>(SettingsKey.nozzle_diameter))
+					{
+						string error = "'Layer Height' must be less than or equal to the 'Nozzle Diameter'.".Localize();
+						string details = string.Format("Layer Height = {0}\nNozzle Diameter = {1}".Localize(), GetValue<double>(SettingsKey.layer_height), GetValue<double>(SettingsKey.nozzle_diameter));
+						string location = "Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Layers/Surface'".Localize();
+						StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
+						return false;
+					}
+					else if (GetValue<double>(SettingsKey.first_layer_height) > GetValue<double>(SettingsKey.nozzle_diameter))
+					{
+						string error = "'First Layer Height' must be less than or equal to the 'Nozzle Diameter'.".Localize();
+						string details = string.Format("First Layer Height = {0}\nNozzle Diameter = {1}".Localize(), GetValue<double>(SettingsKey.first_layer_height), GetValue<double>(SettingsKey.nozzle_diameter));
+						string location = "Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Layers/Surface'".Localize();
+						StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
+						return false;
+					}
 				}
 
 				// Print recovery can only work with a manually leveled or software leveled bed. Hardware leveling does not work.
