@@ -32,6 +32,8 @@ namespace MatterHackers.MatterControl
 
 		private EventHandler unregisterEvents;
 
+		private Dictionary<RadioButton, ExportGcodePlugin> exportPluginButtons;
+
 		public ExportPrintItemPage(PrintItemWrapper printItemWrapper)
 			: base(unlocalizedTextForTitle: "File export options:")
 		{
@@ -46,6 +48,7 @@ namespace MatterHackers.MatterControl
 
 			CreateWindowContent();
 
+			// TODO: Why? ***************************************************************************************************
 			PrinterSettings.PrintLevelingEnabledChanged.RegisterEvent((s, e) => CreateWindowContent(), ref unregisterEvents);
 		}
 
@@ -55,112 +58,59 @@ namespace MatterHackers.MatterControl
 
 			var commonMargin = new BorderDouble(4, 2);
 
-			// put in stl export
-			RadioButton exportAsStlButton = new RadioButton("Export as".Localize() + " STL", textColor: ActiveTheme.Instance.PrimaryTextColor);
-			exportAsStlButton.Name = "Export as STL button";
-			exportAsStlButton.Margin = commonMargin;
-			exportAsStlButton.HAnchor = HAnchor.Left;
-			exportAsStlButton.Cursor = Cursors.Hand;
+			// stl export
+			var exportAsStlButton = new RadioButton("Export as".Localize() + " STL", textColor: ActiveTheme.Instance.PrimaryTextColor)
+			{
+				Name = "Export as STL button",
+				Margin = commonMargin,
+				HAnchor = HAnchor.Left,
+				Cursor = Cursors.Hand
+			};
 
-			// put in amf export
-			RadioButton exportAsAmfButton = new RadioButton("Export as".Localize() + " AMF", textColor: ActiveTheme.Instance.PrimaryTextColor);
-			exportAsAmfButton.Name = "Export as AMF button";
-			exportAsAmfButton.Margin = commonMargin;
-			exportAsAmfButton.HAnchor = HAnchor.Left;
-			exportAsAmfButton.Cursor = Cursors.Hand;
-
+			// amf export
+			var exportAsAmfButton = new RadioButton("Export as".Localize() + " AMF", textColor: ActiveTheme.Instance.PrimaryTextColor)
+			{
+				Name = "Export as AMF button",
+				Margin = commonMargin,
+				HAnchor = HAnchor.Left,
+				Cursor = Cursors.Hand
+			};
 			if (modelCanBeExported)
 			{
 				contentRow.AddChild(exportAsStlButton);
 				contentRow.AddChild(exportAsAmfButton);
 			}
 
-			RadioButton exportGCode = new RadioButton("Export as".Localize() + " G-Code", textColor: ActiveTheme.Instance.PrimaryTextColor);
-			exportGCode.Name = "Export as GCode Button";
-			exportGCode.Margin = commonMargin;
-			exportGCode.HAnchor = HAnchor.Left;
-			exportGCode.Cursor = Cursors.Hand;
+			// GCode export
+			var exportGCode = new RadioButton("Export as".Localize() + " G-Code", textColor: ActiveTheme.Instance.PrimaryTextColor)
+			{
+				Name = "Export as GCode Button",
+				Margin = commonMargin,
+				HAnchor = HAnchor.Left,
+				Cursor = Cursors.Hand
+			};
 
 			bool showExportGCodeButton = ActiveSliceSettings.Instance.PrinterSelected || partIsGCode;
 			if (showExportGCodeButton)
 			{
 				contentRow.AddChild(exportGCode);
 
+				exportPluginButtons = new Dictionary<RadioButton, ExportGcodePlugin>();
+
 				foreach (ExportGcodePlugin plugin in PluginFinder.CreateInstancesOf<ExportGcodePlugin>())
 				{
 					if (plugin.EnabledForCurrentPart(printItemWrapper))
 					{
-						// Create export button for each Plugin found
-						string exportButtonText = plugin.GetButtonText().Localize();
-
-						Button pluginButton = textImageButtonFactory.Generate(exportButtonText);
-						pluginButton.HAnchor = HAnchor.Left;
-						pluginButton.Margin = commonMargin;
-						pluginButton.Cursor = Cursors.Hand;
-						pluginButton.Click += (s, e) =>
+						// Create export button for each plugin
+						var pluginButton = new RadioButton(plugin.GetButtonText().Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor)
 						{
-							this.Parent.CloseOnIdle();
-							UiThread.RunOnIdle(() =>
-							{
-								// Open a SaveFileDialog. If Save is clicked, slice the part if needed and pass the plugin the 
-								// path to the gcode file and the target save path
-								FileDialog.SaveFileDialog(
-									new SaveFileDialogParams(plugin.GetExtensionFilter())
-									{
-										Title = "MatterControl: Export File",
-										FileName = printItemWrapper.Name,
-										ActionButtonLabel = "Export"
-									},
-									(saveParam) =>
-									{
-										string extension = Path.GetExtension(saveParam.FileName);
-										if (extension == "")
-										{
-											saveParam.FileName += plugin.GetFileExtension();
-										}
-
-										if (partIsGCode)
-										{
-											try
-											{
-												plugin.Generate(printItemWrapper.FileLocation, saveParam.FileName);
-											}
-											catch (Exception exception)
-											{
-												UiThread.RunOnIdle(() =>
-												{
-													StyledMessageBox.ShowMessageBox(null, exception.Message, "Couldn't save file".Localize());
-												});
-											}
-										}
-										else
-										{
-											SlicingQueue.Instance.QueuePartForSlicing(printItemWrapper);
-
-											printItemWrapper.SlicingDone += (printItem, eventArgs) =>
-											{
-												PrintItemWrapper sliceItem = (PrintItemWrapper)printItem;
-												if (File.Exists(sliceItem.GetGCodePathAndFileName()))
-												{
-													try
-													{
-														plugin.Generate(sliceItem.GetGCodePathAndFileName(), saveParam.FileName);
-													}
-													catch (Exception exception)
-													{
-														UiThread.RunOnIdle(() =>
-														{
-															StyledMessageBox.ShowMessageBox(null, exception.Message, "Couldn't save file".Localize());
-														});
-													}
-												}
-											};
-										}
-									});
-							});
-						}; // End exportButton Click handler
-
+							HAnchor = HAnchor.Left,
+							Margin = commonMargin,
+							Cursor = Cursors.Hand
+						};
 						contentRow.AddChild(pluginButton);
+
+						exportPluginButtons.Add(pluginButton, plugin);
 					}
 				}
 			}
@@ -207,6 +157,8 @@ namespace MatterHackers.MatterControl
 				string fileTypeFilter = "";
 				string targetExtension = "";
 
+				ExportGcodePlugin activePlugin = null;
+
 				if (exportAsStlButton.Checked)
 				{
 					fileTypeFilter = "Save as STL|*.stl";
@@ -221,6 +173,27 @@ namespace MatterHackers.MatterControl
 				{
 					fileTypeFilter = "Export GCode|*.gcode";
 					targetExtension = ".gcode";
+				}
+				else
+				{
+					// Loop over all plugin buttons, break on the first checked item found
+					foreach(var button in this.exportPluginButtons.Keys)
+					{
+						if (button.Checked)
+						{
+							activePlugin = exportPluginButtons[button];
+							break;
+						}
+					}
+
+					// Early exit if no plugin radio button is selected
+					if (activePlugin == null)
+					{
+						return;
+					}
+
+					fileTypeFilter = activePlugin.GetExtensionFilter();
+					targetExtension = activePlugin.GetFileExtension();
 				}
 
 				this.Parent.CloseOnIdle();
@@ -263,6 +236,10 @@ namespace MatterHackers.MatterControl
 									else if (exportGCode.Checked)
 									{
 										succeeded = await SaveGCode(savePath);
+									}
+									else if (activePlugin != null)
+									{
+										succeeded = await ExportToPlugin(activePlugin, savePath);
 									}
 
 									if (succeeded)
@@ -353,29 +330,15 @@ namespace MatterHackers.MatterControl
 			return false;
 		}
 
-		public async Task<bool> SaveGCode(string filePathToSave)
+		public async Task<bool> ExportToPlugin(ExportGcodePlugin plugin, string filePathToSave)
 		{
 			try
 			{
-				string fileToProcess = partIsGCode ? printItemWrapper.FileLocation : "";
+				string newGCodePath = await SliceFileIfNeeded();
 
-				string sourceExtension = Path.GetExtension(printItemWrapper.FileLocation).ToUpper();
-				if (MeshFileIo.ValidFileExtensions().Contains(sourceExtension)
-					|| sourceExtension == ".MCX")
+				if (File.Exists(newGCodePath))
 				{
-					// Save any pending changes before starting the print
-					await ApplicationController.Instance.ActiveView3DWidget.PersistPlateIfNeeded();
-
-					var printItem = ApplicationController.Instance.ActivePrintItem;
-
-					await SlicingQueue.SliceFileAsync(printItem, null);
-
-					fileToProcess = printItem.GetGCodePathAndFileName();
-				}
-
-				if (File.Exists(fileToProcess))
-				{
-					SaveGCodeToNewLocation(fileToProcess, filePathToSave);
+					plugin.Generate(newGCodePath, filePathToSave);
 					return true;
 				}
 			}
@@ -384,6 +347,46 @@ namespace MatterHackers.MatterControl
 			}
 
 			return false;
+		}
+
+		public async Task<bool> SaveGCode(string filePathToSave)
+		{
+			try
+			{
+				string newGCodePath = await SliceFileIfNeeded();
+
+				if (File.Exists(newGCodePath))
+				{
+					SaveGCodeToNewLocation(newGCodePath, filePathToSave);
+					return true;
+				}
+			}
+			catch
+			{
+			}
+
+			return false;
+		}
+
+		private async Task<string> SliceFileIfNeeded()
+		{
+			string fileToProcess = partIsGCode ? printItemWrapper.FileLocation : "";
+
+			string sourceExtension = Path.GetExtension(printItemWrapper.FileLocation).ToUpper();
+			if (MeshFileIo.ValidFileExtensions().Contains(sourceExtension)
+				|| sourceExtension == ".MCX")
+			{
+				// Save any pending changes before starting the print
+				await ApplicationController.Instance.ActiveView3DWidget.PersistPlateIfNeeded();
+
+				var printItem = ApplicationController.Instance.ActivePrintItem;
+
+				await SlicingQueue.SliceFileAsync(printItem, null);
+
+				fileToProcess = printItem.GetGCodePathAndFileName();
+			}
+
+			return fileToProcess;
 		}
 
 		private void SaveGCodeToNewLocation(string gcodeFilename, string dest)
