@@ -4381,3 +4381,12 @@ Translated:Configure EEProm
 English:Rename Printer
 Translated:Rename Printer
 
+English:Select Material
+Translated:Select Material
+
+English:Select the material you are printing
+Translated:Select the material you are printing
+
+English:Heat the bed
+Translated:Heat the bed
+

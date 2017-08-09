@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System.IO;
 using System.Linq;
 using MatterHackers.Agg;
+using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.ConfigurationPage;
@@ -123,9 +124,9 @@ namespace MatterHackers.MatterControl
 				//e.graphics2D.Render(directionArrow, buttonView.LocalBounds.Right - arrowHeight * 2 - 2, buttonView.LocalBounds.Center.y + arrowHeight / 2, ActiveTheme.Instance.SecondaryTextColor);
 			};
 
-			buttonView.AddChild(new ImageWidget(StaticData.Instance.LoadIcon(Path.Combine("..", "Images", "mh-logo.png"), 24, 24)));
+			buttonView.AddChild(new ImageWidget(StaticData.Instance.LoadIcon(Path.Combine("..", "Images", "mh-logo.png"), 24, 24).InvertLightness()));
 
-			buttonView.AddChild(new TextWidget("MatterControl 1.7", textColor: ActiveTheme.Instance.PrimaryTextColor)
+			buttonView.AddChild(new TextWidget("MatterControl 2.0", textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
 				Margin = new BorderDouble(left: 6),
 				VAnchor = VAnchor.Center

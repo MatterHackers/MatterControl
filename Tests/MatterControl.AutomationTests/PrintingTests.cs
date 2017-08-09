@@ -86,6 +86,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("Next Button");
 					testRunner.ClickByName("Next Button");
 					testRunner.ClickByName("Next Button");
+					testRunner.ClickByName("Next Button");
+					testRunner.ClickByName("Next Button");
 					for (int i = 0; i < 3; i++)
 					{
 						testRunner.ClickByName("Move Z positive");
