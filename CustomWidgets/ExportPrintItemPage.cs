@@ -29,6 +29,8 @@ namespace MatterHackers.MatterControl
 		private bool partIsGCode = false;
 		private string documentsPath;
 
+		private EventHandler unregisterEvents;
+
 		public ExportPrintItemPage(PrintItemWrapper printItemWrapper)
 			: base(unlocalizedTextForTitle: "File export options:")
 		{
@@ -42,7 +44,8 @@ namespace MatterHackers.MatterControl
 			this.Name = "Export Item Window";
 
 			CreateWindowContent();
-			PrinterSettings.PrintLevelingEnabledChanged.RegisterEvent(ReloadAfterPrinterProfileChanged, ref unregisterEvents);
+
+			PrinterSettings.PrintLevelingEnabledChanged.RegisterEvent((s, e) => CreateWindowContent(), ref unregisterEvents);
 		}
 
 		public void CreateWindowContent()
@@ -266,12 +269,6 @@ namespace MatterHackers.MatterControl
 			footerRow.AddChild(cancelButton);
 		}
 
-		private string Get8Name(string longName)
-		{
-			longName.Replace(' ', '_');
-			return longName.Substring(0, Math.Min(longName.Length, 8));
-		}
-
 		public void ExportGcodeCommandLineUtility(String nameOfFile)
 		{
 			try
@@ -352,20 +349,6 @@ namespace MatterHackers.MatterControl
 #endif
 				}
 			}
-		}
-
-		public override void OnClosed(ClosedEventArgs e)
-		{
-			printItemWrapper.SlicingDone -= sliceItem_Done;
-			unregisterEvents?.Invoke(this, null);
-			base.OnClosed(e);
-		}
-
-		private EventHandler unregisterEvents;
-
-		private void ReloadAfterPrinterProfileChanged(object sender, EventArgs e)
-		{
-			CreateWindowContent();
 		}
 
 		private void SaveAmf(SaveFileDialogParams saveParams)
@@ -453,6 +436,13 @@ namespace MatterHackers.MatterControl
 
 			printItemWrapper.SlicingDone -= sliceItem_Done;
 			SaveGCodeToNewLocation(sliceItem.GetGCodePathAndFileName(), gcodePathAndFilenameToSave);
+		}
+
+		public override void OnClosed(ClosedEventArgs e)
+		{
+			printItemWrapper.SlicingDone -= sliceItem_Done;
+			unregisterEvents?.Invoke(this, null);
+			base.OnClosed(e);
 		}
 	}
 }
