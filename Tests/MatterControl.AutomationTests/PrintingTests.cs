@@ -80,10 +80,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					// switch to controls so we can see the heights
 					testRunner.SwitchToControlsTab();
 
-					// run the leveling wizard
+					// run the leveling wizard (only 4 next as there is no heated bed
 					testRunner.ClickByName("Finish Setup Button");
-					testRunner.ClickByName("Next Button");
-					testRunner.ClickByName("Next Button");
 					testRunner.ClickByName("Next Button");
 					testRunner.ClickByName("Next Button");
 					testRunner.ClickByName("Next Button");
