@@ -45,8 +45,6 @@ namespace MatterHackers.MatterControl
 			PrinterSettings.PrintLevelingEnabledChanged.RegisterEvent(ReloadAfterPrinterProfileChanged, ref unregisterEvents);
 		}
 
-		private string applyLevelingDuringExportString = "Apply leveling to G-Code during export".Localize();
-
 		public void CreateWindowContent()
 		{
 			bool modelCanBeExported = !partIsGCode;
@@ -62,10 +60,7 @@ namespace MatterHackers.MatterControl
 			if (modelCanBeExported)
 			{
 				// put in stl export
-				string exportStlText = "Export as".Localize();
-				string exportStlTextFull = string.Format("{0} STL", exportStlText);
-
-				Button exportAsStlButton = textImageButtonFactory.Generate(exportStlTextFull);
+				Button exportAsStlButton = textImageButtonFactory.Generate("Export as".Localize() + " STL");
 				exportAsStlButton.Name = "Export as STL button";
 				exportAsStlButton.HAnchor = HAnchor.Left;
 				exportAsStlButton.Cursor = Cursors.Hand;
@@ -73,10 +68,7 @@ namespace MatterHackers.MatterControl
 				contentRow.AddChild(exportAsStlButton);
 
 				// put in amf export
-				string exportAmfText = "Export as".Localize();
-				string exportAmfTextFull = string.Format("{0} AMF", exportAmfText);
-
-				Button exportAsAmfButton = textImageButtonFactory.Generate(exportAmfTextFull);
+				Button exportAsAmfButton = textImageButtonFactory.Generate("Export as".Localize() + " AMF");
 				exportAsAmfButton.Name = "Export as AMF button";
 				exportAsAmfButton.HAnchor = HAnchor.Left;
 				exportAsAmfButton.Cursor = Cursors.Hand;
@@ -87,7 +79,7 @@ namespace MatterHackers.MatterControl
 			bool showExportGCodeButton = ActiveSliceSettings.Instance.PrinterSelected || partIsGCode;
 			if (showExportGCodeButton)
 			{
-				Button exportGCode = textImageButtonFactory.Generate(string.Format("{0} G-Code", "Export as".Localize()));
+				Button exportGCode = textImageButtonFactory.Generate("Export as".Localize() + " G-Code");
 				exportGCode.Name = "Export as GCode Button";
 				exportGCode.HAnchor = HAnchor.Left;
 				exportGCode.Cursor = Cursors.Hand;
@@ -184,7 +176,7 @@ namespace MatterHackers.MatterControl
 			// If print leveling is enabled then add in a check box 'Apply Leveling During Export' and default checked.
 			if (showExportGCodeButton && ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_enabled))
 			{
-				applyLeveling = new CheckBox(LocalizedString.Get(applyLevelingDuringExportString), ActiveTheme.Instance.PrimaryTextColor, 10);
+				applyLeveling = new CheckBox("Apply leveling to G-Code during export".Localize(), ActiveTheme.Instance.PrimaryTextColor, 10);
 				applyLeveling.Checked = true;
 				applyLeveling.HAnchor = HAnchor.Left;
 				applyLeveling.Cursor = Cursors.Hand;
@@ -205,10 +197,10 @@ namespace MatterHackers.MatterControl
 
 			if (!showExportGCodeButton)
 			{
-				string noGCodeMessageTextBeg = "Note".Localize();
-				string noGCodeMessageTextEnd = "To enable GCode export, select a printer profile.".Localize();
-				string noGCodeMessageTextFull = string.Format("{0}: {1}", noGCodeMessageTextBeg, noGCodeMessageTextEnd);
-				TextWidget noGCodeMessage = new TextWidget(noGCodeMessageTextFull, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 10);
+				var noGCodeMessage = new TextWidget(
+					"Note".Localize() + ": " + "To enable GCode export, select a printer profile.".Localize(), 
+					textColor: ActiveTheme.Instance.PrimaryTextColor, 
+					pointSize: 10);
 				noGCodeMessage.HAnchor = HAnchor.Left;
 				contentRow.AddChild(noGCodeMessage);
 			}
