@@ -58,45 +58,14 @@ namespace MatterHackers.MatterControl
 			if (modelCanBeExported)
 			{
 				// put in stl export
-				Button exportAsStlButton = textImageButtonFactory.Generate("Export as".Localize() + " STL");
+				RadioButton exportAsStlButton = new RadioButton("Export as".Localize() + " STL", textColor: ActiveTheme.Instance.PrimaryTextColor);
 				exportAsStlButton.Name = "Export as STL button";
 				exportAsStlButton.Margin = commonMargin;
 				exportAsStlButton.HAnchor = HAnchor.Left;
 				exportAsStlButton.Cursor = Cursors.Hand;
-				exportAsStlButton.Click += (s, e) =>
+				exportAsStlButton.CheckedStateChanged += (s, e) =>
 				{
-					this.Parent.CloseOnIdle();
-					UiThread.RunOnIdle(() =>
-					{
-						string title = "MatterControl: " + "Export File".Localize();
-						FileDialog.SaveFileDialog(
-							new SaveFileDialogParams("Save as STL|*.stl")
-							{
-								Title = title,
-								ActionButtonLabel = "Export",
-								FileName = printItemWrapper.Name
-							},
-							(saveParams) =>
-							{
-								if (saveParams.FileName != null)
-								{
-									Task.Run(() =>
-									{
-										if (SaveStl(new FileSystemFileItem(printItemWrapper.FileLocation), saveParams.FileName))
-										{
-											ShowFileIfRequested(saveParams.FileName);
-										}
-										else
-										{
-											UiThread.RunOnIdle(() =>
-											{
-												StyledMessageBox.ShowMessageBox(null, "Export failed".Localize(), title);
-											});
-										}
-									});
-								}
-							});
-					});
+					// Set in stl mode
 				};
 				contentRow.AddChild(exportAsStlButton);
 
@@ -166,11 +135,11 @@ namespace MatterHackers.MatterControl
 						// Create export button for each Plugin found
 						string exportButtonText = plugin.GetButtonText().Localize();
 
-						Button exportButton = textImageButtonFactory.Generate(exportButtonText);
-						exportButton.HAnchor = HAnchor.Left;
-						exportButton.Margin = commonMargin;
-						exportButton.Cursor = Cursors.Hand;
-						exportButton.Click += (s, e) =>
+						Button pluginButton = textImageButtonFactory.Generate(exportButtonText);
+						pluginButton.HAnchor = HAnchor.Left;
+						pluginButton.Margin = commonMargin;
+						pluginButton.Cursor = Cursors.Hand;
+						pluginButton.Click += (s, e) =>
 						{
 							this.Parent.CloseOnIdle();
 							UiThread.RunOnIdle(() =>
@@ -233,7 +202,7 @@ namespace MatterHackers.MatterControl
 							});
 						}; // End exportButton Click handler
 
-						contentRow.AddChild(exportButton);
+						contentRow.AddChild(pluginButton);
 					}
 				}
 			}
@@ -273,6 +242,45 @@ namespace MatterHackers.MatterControl
 				noGCodeMessage.HAnchor = HAnchor.Left;
 				contentRow.AddChild(noGCodeMessage);
 			}
+
+			var exportButton = textImageButtonFactory.Generate("Export".Localize());
+			exportButton.Click += (s, e) =>
+			{
+				this.Parent.CloseOnIdle();
+				UiThread.RunOnIdle(() =>
+				{
+					string title = "MatterControl: " + "Export File".Localize();
+					FileDialog.SaveFileDialog(
+						new SaveFileDialogParams("Save as STL|*.stl")
+						{
+							Title = title,
+							ActionButtonLabel = "Export",
+							FileName = printItemWrapper.Name
+						},
+						(saveParams) =>
+						{
+							if (saveParams.FileName != null)
+							{
+								Task.Run(() =>
+								{
+									if (SaveStl(new FileSystemFileItem(printItemWrapper.FileLocation), saveParams.FileName))
+									{
+										ShowFileIfRequested(saveParams.FileName);
+									}
+									else
+									{
+										UiThread.RunOnIdle(() =>
+										{
+											StyledMessageBox.ShowMessageBox(null, "Export failed".Localize(), title);
+										});
+									}
+								});
+							}
+						});
+				});
+			};
+
+			footerRow.AddChild(exportButton);
 
 			footerRow.AddChild(new HorizontalSpacer());
 			footerRow.AddChild(cancelButton);
