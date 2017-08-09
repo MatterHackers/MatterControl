@@ -366,7 +366,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private void SaveAmf(string filePathToSave)
+		private bool SaveAmf(ILibraryContentStream source, string filePathToSave)
 		{
 			try
 			{
@@ -382,22 +382,21 @@ namespace MatterHackers.MatterControl
 					if (Path.GetExtension(printItemWrapper.FileLocation).ToUpper() == Path.GetExtension(filePathToSave).ToUpper())
 					{
 						File.Copy(printItemWrapper.FileLocation, filePathToSave, true);
+						return true;
 					}
 					else
 					{
 						IObject3D item = Object3D.Load(printItemWrapper.FileLocation, CancellationToken.None);
-						MeshFileIo.Save(item, filePathToSave);
+						return MeshFileIo.Save(item, filePathToSave);
 					}
-
-					ShowFileIfRequested(filePathToSave);
 				}
 			}
-			catch (Exception e)
+			catch (Exception ex)
 			{
-				UiThread.RunOnIdle (() => {
-					StyledMessageBox.ShowMessageBox(null, e.Message, "Couldn't save file".Localize());
-				});
+				Trace.WriteLine("Error exporting file: " + ex.Message);
 			}
+
+			return false;
 		}
 
 		private bool SaveStl(ILibraryContentStream source, string filePathToSave)
