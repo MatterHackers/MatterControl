@@ -95,13 +95,12 @@ namespace MatterHackers.MatterControl
 				};
 				contentRow.AddChild(exportGCode);
 
-				var gcodeExportPlugins = PluginFinder.CreateInstancesOf<ExportGcodePlugin>();
 
-				foreach (ExportGcodePlugin plugin in gcodeExportPlugins)
+				foreach (ExportGcodePlugin plugin in PluginFinder.CreateInstancesOf<ExportGcodePlugin>())
 				{
 					if (plugin.EnabledForCurrentPart(printItemWrapper))
 					{
-						//Create export button for each Plugin found
+						// Create export button for each Plugin found
 						string exportButtonText = plugin.GetButtonText().Localize();
 
 						Button exportButton = textImageButtonFactory.Generate(exportButtonText);
@@ -183,11 +182,12 @@ namespace MatterHackers.MatterControl
 			// If print leveling is enabled then add in a check box 'Apply Leveling During Export' and default checked.
 			if (showExportGCodeButton && ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_enabled))
 			{
-				applyLeveling = new CheckBox("Apply leveling to G-Code during export".Localize(), ActiveTheme.Instance.PrimaryTextColor, 10);
-				applyLeveling.Checked = true;
-				applyLeveling.HAnchor = HAnchor.Left;
-				applyLeveling.Cursor = Cursors.Hand;
-				//applyLeveling.Margin = new BorderDouble(top: 10);
+				applyLeveling = new CheckBox("Apply leveling to G-Code during export".Localize(), ActiveTheme.Instance.PrimaryTextColor, 10)
+				{
+					Checked = true,
+					HAnchor = HAnchor.Left,
+					Cursor = Cursors.Hand
+				};
 				contentRow.AddChild(applyLeveling);
 			}
 
@@ -195,10 +195,11 @@ namespace MatterHackers.MatterControl
 			if (OsInformation.OperatingSystem == OSType.Windows
 				|| OsInformation.OperatingSystem == OSType.X11)
 			{
-				showInFolderAfterSave = new CheckBox("Show file in folder after save".Localize(), ActiveTheme.Instance.PrimaryTextColor, 10);
-				showInFolderAfterSave.HAnchor = HAnchor.Left;
-				showInFolderAfterSave.Cursor = Cursors.Hand;
-				//showInFolderAfterSave.Margin = new BorderDouble(top: 10);
+				showInFolderAfterSave = new CheckBox("Show file in folder after save".Localize(), ActiveTheme.Instance.PrimaryTextColor, 10)
+				{
+					HAnchor = HAnchor.Left,
+					Cursor = Cursors.Hand
+				};
 				contentRow.AddChild(showInFolderAfterSave);
 			}
 
