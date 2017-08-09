@@ -6199,3 +6199,12 @@ Translated:The time over which to increase the Extra Length On Restart to its ma
 English:Time For Extra Length
 Translated:Time For Extra Length
 
+English:Select Material
+Translated:Select Material
+
+English:Select the material you are printing
+Translated:Select the material you are printing
+
+English:Heat the bed
+Translated:Heat the bed
+
