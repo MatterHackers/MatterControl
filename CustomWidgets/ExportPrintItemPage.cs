@@ -241,7 +241,7 @@ namespace MatterHackers.MatterControl
 
 							if (!string.IsNullOrEmpty(savePath))
 							{
-								Task.Run(() =>
+								Task.Run(async () =>
 								{
 									string extension = Path.GetExtension(savePath);
 									if (extension != targetExtension)
@@ -251,22 +251,22 @@ namespace MatterHackers.MatterControl
 
 									var sourceContent = new FileSystemFileItem(printItemWrapper.FileLocation);
 
-									bool result = false;
+									bool succeeded = false;
 
 									if (exportAsStlButton.Checked)
 									{
-										result = SaveStl(sourceContent, savePath);
+										succeeded = SaveStl(sourceContent, savePath);
 									}
 									else if (exportAsAmfButton.Checked)
 									{
-										result = SaveAmf(sourceContent, savePath);
+										succeeded = SaveAmf(sourceContent, savePath);
 									}
 									else if (exportGCode.Checked)
 									{
-										ExportGcodeCommandLineUtility(savePath);
+										succeeded = await ExportGcodeCommandLineUtility(savePath);
 									}
 
-									if (result)
+									if (succeeded)
 									{
 										ShowFileIfRequested(saveParams.FileName);
 									}
@@ -289,24 +289,37 @@ namespace MatterHackers.MatterControl
 			footerRow.AddChild(cancelButton);
 		}
 
-		public void ExportGcodeCommandLineUtility(string gcodePathAndFilenameToSave)
+		public async Task<bool> ExportGcodeCommandLineUtility(string gcodePathAndFilenameToSave)
 		{
 			try
 			{
+				string fileToProcess = partIsGCode ? printItemWrapper.FileLocation : "";
+
 				string sourceExtension = Path.GetExtension(printItemWrapper.FileLocation).ToUpper();
-				if (MeshFileIo.ValidFileExtensions().Contains(sourceExtension))
+				if (MeshFileIo.ValidFileExtensions().Contains(sourceExtension)
+					|| sourceExtension == ".MCX")
 				{
-					SlicingQueue.Instance.QueuePartForSlicing(printItemWrapper);
-					printItemWrapper.SlicingDone += sliceItem_Done;
+					// Save any pending changes before starting the print
+					await ApplicationController.Instance.ActiveView3DWidget.PersistPlateIfNeeded();
+
+					var printItem = ApplicationController.Instance.ActivePrintItem;
+
+					await SlicingQueue.SliceFileAsync(printItem, null);
+
+					fileToProcess = printItem.GetGCodePathAndFileName();
 				}
-				else if (partIsGCode)
+
+				if (File.Exists(fileToProcess))
 				{
-					SaveGCodeToNewLocation(printItemWrapper.FileLocation, gcodePathAndFilenameToSave);
+					SaveGCodeToNewLocation(fileToProcess, gcodePathAndFilenameToSave);
+					return true;
 				}
 			}
 			catch
 			{
 			}
+
+			return false;
 		}
 
 		private void SaveGCodeToNewLocation(string gcodeFilename, string dest)
