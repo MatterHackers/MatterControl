@@ -26,7 +26,6 @@ namespace MatterHackers.MatterControl
 		private CheckBox applyLeveling;
 		private PrintItemWrapper printItemWrapper;
 		private string gcodePathAndFilenameToSave;
-		private string x3gPathAndFilenameToSave;
 		private bool partIsGCode = false;
 		private string documentsPath;
 
@@ -467,51 +466,6 @@ namespace MatterHackers.MatterControl
 
 			printItemWrapper.SlicingDone -= sliceItem_Done;
 			SaveGCodeToNewLocation(sliceItem.GetGCodePathAndFileName(), gcodePathAndFilenameToSave);
-		}
-
-		private void x3gItemSlice_Complete(object sender, EventArgs e)
-		{
-			PrintItemWrapper sliceItem = (PrintItemWrapper)sender;
-			printItemWrapper.SlicingDone -= x3gItemSlice_Complete;
-			if (File.Exists(sliceItem.GetGCodePathAndFileName()))
-			{
-				generateX3GfromGcode(sliceItem.GetGCodePathAndFileName(), x3gPathAndFilenameToSave);
-			}
-		}
-
-		private string getGpxExectutablePath()
-		{
-			switch (OsInformation.OperatingSystem)
-			{
-				case OSType.Windows:
-					string gpxRelativePath = Path.Combine("..", "gpx.exe");
-					if (!File.Exists(gpxRelativePath))
-					{
-						gpxRelativePath = Path.Combine(".", "gpx.exe");
-					}
-					return Path.GetFullPath(gpxRelativePath);
-
-				case OSType.Mac:
-					return Path.Combine(ApplicationDataStorage.Instance.ApplicationPath, "gpx");
-
-				case OSType.X11:
-					return Path.GetFullPath(Path.Combine(".", "gpx.exe"));
-
-				default:
-					throw new NotImplementedException();
-			}
-		}
-
-		private void generateX3GfromGcode(string gcodeInputPath, string x3gOutputPath, string machineType = "r2")
-		{
-			string gpxExecutablePath = getGpxExectutablePath();
-			string gpxArgs = string.Format("-p -m {2} \"{0}\" \"{1}\" ", gcodeInputPath, x3gOutputPath, machineType);
-
-			ProcessStartInfo exportX3GProcess = new ProcessStartInfo(gpxExecutablePath);
-			exportX3GProcess.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
-			exportX3GProcess.Arguments = gpxArgs;
-			Process.Start(exportX3GProcess);
-			ShowFileIfRequested(x3gOutputPath);
 		}
 	}
 }
