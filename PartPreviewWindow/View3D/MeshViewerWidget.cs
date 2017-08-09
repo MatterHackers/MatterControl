@@ -66,7 +66,6 @@ namespace MatterHackers.MeshVisualizer
 
 		public GuiWidget ParentSurface { get; set; }
 
-		public PartProcessingInfo partProcessingInfo;
 		private static ImageBuffer lastCreatedBedImage = new ImageBuffer();
 
 		private static Dictionary<int, RGBA_Bytes> extruderlColors = new Dictionary<int, RGBA_Bytes>();
@@ -108,16 +107,8 @@ namespace MatterHackers.MeshVisualizer
 
 			CreatePrintBed(displayVolume, bedCenter, bedShape);
 
-			partProcessingInfo = new PartProcessingInfo(startingTextMessage);
-
-			GuiWidget labelContainer = new GuiWidget();
-			labelContainer.AnchorAll();
-			labelContainer.AddChild(partProcessingInfo);
-			labelContainer.Selectable = false;
-
 			SetExtruderColor(0, ActiveTheme.Instance.PrimaryAccentColor);
 
-			this.AddChild(labelContainer);
 
 			this.trackballTumbleWidget = trackballTumbleWidget;
 			this.trackballTumbleWidget.DrawGlContent += this.trackballTumbleWidget_DrawGlContent;
@@ -426,12 +417,12 @@ namespace MatterHackers.MeshVisualizer
 		{
 			if (File.Exists(itemPath))
 			{
-				BeginProgressReporting("Loading Mesh");
+				interactionLayer.BeginProgressReporting("Loading Mesh");
 
 				fileLoadCancellationTokenSource = new CancellationTokenSource();
 
 				// TODO: How to we handle mesh load errors? How do we report success?
-				IObject3D loadedItem = await Task.Run(() => Object3D.Load(itemPath, fileLoadCancellationTokenSource.Token, progress: ReportProgress0to100));
+				IObject3D loadedItem = await Task.Run(() => Object3D.Load(itemPath, fileLoadCancellationTokenSource.Token, progress: interactionLayer.ReportProgress0to100));
 				if (loadedItem != null)
 				{
 					if (itemName != null)
@@ -457,17 +448,19 @@ namespace MatterHackers.MeshVisualizer
 				}
 				else
 				{
-					partProcessingInfo.centeredInfoText.Text = string.Format("Sorry! No 3D view available\nfor this file.");
+					// TODO: Error message container moved to Interaction Layer - how could we support this type of error for a loaded scene item?
+					//partProcessingInfo.centeredInfoText.Text = string.Format("Sorry! No 3D view available\nfor this file.");
 				}
 
-				EndProgressReporting();
+				interactionLayer.EndProgressReporting();
 
 				// Invoke LoadDone event
 				LoadDone?.Invoke(this, null);
 			}
 			else
 			{
-				partProcessingInfo.centeredInfoText.Text = string.Format("{0}\n'{1}'", "File not found on disk.", Path.GetFileName(itemPath));
+				// TODO: Error message container moved to Interaction Layer - how could we support this type of error for a loaded scene item?
+				//partProcessingInfo.centeredInfoText.Text = string.Format("{0}\n'{1}'", "File not found on disk.", Path.GetFileName(itemPath));
 			}
 
 			fileLoadCancellationTokenSource = null;
@@ -577,39 +570,7 @@ namespace MatterHackers.MeshVisualizer
 			}
 		}
 
-		private string progressReportingPrimaryTask = "";
 		private TrackballTumbleWidget trackballTumbleWidget;
-
-		public void BeginProgressReporting(string taskDescription)
-		{
-			progressReportingPrimaryTask = taskDescription;
-
-			partProcessingInfo.Visible = true;
-			partProcessingInfo.progressControl.PercentComplete = 0;
-			partProcessingInfo.centeredInfoText.Text = taskDescription + "...";
-		}
-
-		public void EndProgressReporting()
-		{
-			progressReportingPrimaryTask = "";
-			partProcessingInfo.Visible = false;
-		}
-
-		public void ReportProgress0to100(double progress0To1, string processingState)
-		{
-			UiThread.RunOnIdle(() =>
-			{
-				int percentComplete = (int)(progress0To1 * 100);
-				partProcessingInfo.centeredInfoText.Text =  "{0} {1}%...".FormatWith(progressReportingPrimaryTask, percentComplete);
-				partProcessingInfo.progressControl.PercentComplete = percentComplete;
-
-				// Only assign to textbox if value passed through
-				if (processingState != null)
-				{
-					partProcessingInfo.centeredInfoDescription.Text = processingState;
-				}
-			});
-		}
 
 		public bool IsActive { get; set; } = true;
 
@@ -769,23 +730,29 @@ namespace MatterHackers.MeshVisualizer
 			internal PartProcessingInfo(string startingTextMessage)
 				: base(FlowDirection.TopToBottom)
 			{
-				progressControl = new ProgressControl("", RGBA_Bytes.Black, RGBA_Bytes.Black);
-				progressControl.HAnchor = HAnchor.Center;
-				AddChild(progressControl);
-				progressControl.Visible = false;
+				progressControl = new ProgressControl("", RGBA_Bytes.Black, RGBA_Bytes.Black)
+				{
+					HAnchor = HAnchor.Center,
+					Visible = false
+				};
 				progressControl.ProgressChanged += (sender, e) =>
 				{
 					progressControl.Visible = true;
 				};
+				AddChild(progressControl);
 
-				centeredInfoText = new TextWidget(startingTextMessage);
-				centeredInfoText.HAnchor = HAnchor.Center;
-				centeredInfoText.AutoExpandBoundsToText = true;
+				centeredInfoText = new TextWidget(startingTextMessage)
+				{
+					HAnchor = HAnchor.Center,
+					AutoExpandBoundsToText = true
+				};
 				AddChild(centeredInfoText);
 
-				centeredInfoDescription = new TextWidget("");
-				centeredInfoDescription.HAnchor = HAnchor.Center;
-				centeredInfoDescription.AutoExpandBoundsToText = true;
+				centeredInfoDescription = new TextWidget("")
+				{
+					HAnchor = HAnchor.Center,
+					AutoExpandBoundsToText = true
+				};
 				AddChild(centeredInfoDescription);
 
 				VAnchor |= VAnchor.Center;

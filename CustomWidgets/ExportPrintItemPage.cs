@@ -12,6 +12,7 @@ using MatterHackers.GCodeVisualizer;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.Queue.OptionsMenu;
@@ -24,207 +25,90 @@ namespace MatterHackers.MatterControl
 	{
 		private CheckBox showInFolderAfterSave;
 		private CheckBox applyLeveling;
-		private PrintItemWrapper printItemWrapper;
 		private string gcodePathAndFilenameToSave;
 		private bool partIsGCode = false;
 		private string documentsPath;
 
 		private EventHandler unregisterEvents;
 
-		public ExportPrintItemPage(PrintItemWrapper printItemWrapper)
+		private Dictionary<RadioButton, ExportGcodePlugin> exportPluginButtons;
+
+		private ILibraryContentStream libraryContent;
+
+		public ExportPrintItemPage(ILibraryContentStream libraryContent)
 			: base(unlocalizedTextForTitle: "File export options:")
 		{
-			this.printItemWrapper = printItemWrapper;
-			if (Path.GetExtension(printItemWrapper.FileLocation).ToUpper() == ".GCODE")
-			{
-				partIsGCode = true;
-			}
+			partIsGCode = Path.GetExtension(libraryContent.FileName).ToUpper() == ".GCODE";
 
+			this.libraryContent = libraryContent;
 			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 			this.Name = "Export Item Window";
 
 			CreateWindowContent();
 
+			// TODO: Why? ***************************************************************************************************
 			PrinterSettings.PrintLevelingEnabledChanged.RegisterEvent((s, e) => CreateWindowContent(), ref unregisterEvents);
 		}
 
 		public void CreateWindowContent()
 		{
-			bool modelCanBeExported = !partIsGCode;
-			
-			if(modelCanBeExported
-				&& printItemWrapper != null
-				&& (printItemWrapper.PrintItem.Protected
-				|| printItemWrapper.PrintItem.ReadOnly))
-			{
-				modelCanBeExported = false;
-			}
+			bool modelCanBeExported = !libraryContent.IsProtected;
 
 			var commonMargin = new BorderDouble(4, 2);
 
+			// stl export
+			var exportAsStlButton = new RadioButton("Export as".Localize() + " STL", textColor: ActiveTheme.Instance.PrimaryTextColor)
+			{
+				Name = "Export as STL button",
+				Margin = commonMargin,
+				HAnchor = HAnchor.Left,
+				Cursor = Cursors.Hand
+			};
+
+			// amf export
+			var exportAsAmfButton = new RadioButton("Export as".Localize() + " AMF", textColor: ActiveTheme.Instance.PrimaryTextColor)
+			{
+				Name = "Export as AMF button",
+				Margin = commonMargin,
+				HAnchor = HAnchor.Left,
+				Cursor = Cursors.Hand
+			};
 			if (modelCanBeExported)
 			{
-
-				// put in stl export
-				Button exportAsStlButton = textImageButtonFactory.Generate("Export as".Localize() + " STL");
-				exportAsStlButton.Name = "Export as STL button";
-				exportAsStlButton.Margin = commonMargin;
-				exportAsStlButton.HAnchor = HAnchor.Left;
-				exportAsStlButton.Cursor = Cursors.Hand;
-				exportAsStlButton.Click += (s, e) =>
-				{
-					this.Parent.CloseOnIdle();
-					UiThread.RunOnIdle(() =>
-					{
-						FileDialog.SaveFileDialog(
-							new SaveFileDialogParams("Save as STL|*.stl")
-							{
-								Title = "MatterControl: Export File",
-								ActionButtonLabel = "Export",
-								FileName = printItemWrapper.Name
-							},
-							(saveParams) =>
-							{
-								Task.Run(() => SaveStl(saveParams.FileName));
-							});
-					});
-				};
 				contentRow.AddChild(exportAsStlButton);
-
-				// put in amf export
-				Button exportAsAmfButton = textImageButtonFactory.Generate("Export as".Localize() + " AMF");
-				exportAsAmfButton.Name = "Export as AMF button";
-				exportAsAmfButton.Margin = commonMargin;
-				exportAsAmfButton.HAnchor = HAnchor.Left;
-				exportAsAmfButton.Cursor = Cursors.Hand;
-				exportAsAmfButton.Click += (s, e) =>
-				{
-					this.Parent.CloseOnIdle();
-
-					UiThread.RunOnIdle(() =>
-					{
-						FileDialog.SaveFileDialog(
-							new SaveFileDialogParams("Save as AMF|*.amf", initialDirectory: documentsPath)
-							{
-								Title = "MatterControl: Export File",
-								ActionButtonLabel = "Export",
-								FileName = printItemWrapper.Name
-							},
-							(saveParams) =>
-							{
-								Task.Run(() => SaveAmf(saveParams.FileName));
-							});
-					});
-				};
 				contentRow.AddChild(exportAsAmfButton);
 			}
+
+			// GCode export
+			var exportGCode = new RadioButton("Export as".Localize() + " G-Code", textColor: ActiveTheme.Instance.PrimaryTextColor)
+			{
+				Name = "Export as GCode Button",
+				Margin = commonMargin,
+				HAnchor = HAnchor.Left,
+				Cursor = Cursors.Hand
+			};
 
 			bool showExportGCodeButton = ActiveSliceSettings.Instance.PrinterSelected || partIsGCode;
 			if (showExportGCodeButton)
 			{
-				Button exportGCode = textImageButtonFactory.Generate("Export as".Localize() + " G-Code");
-				exportGCode.Name = "Export as GCode Button";
-				exportGCode.Margin = commonMargin;
-				exportGCode.HAnchor = HAnchor.Left;
-				exportGCode.Cursor = Cursors.Hand;
-				exportGCode.Click += (s, e) =>
-				{
-					this.Parent.CloseOnIdle();
-					UiThread.RunOnIdle(() =>
-					{
-						FileDialog.SaveFileDialog(
-							new SaveFileDialogParams("Export GCode|*.gcode", title: "Export GCode")
-							{
-								Title = "MatterControl: Export File",
-								ActionButtonLabel = "Export",
-								FileName = Path.GetFileNameWithoutExtension(printItemWrapper.Name)
-							},
-							(saveParams) =>
-							{
-								if (!string.IsNullOrEmpty(saveParams.FileName))
-								{
-									ExportGcodeCommandLineUtility(saveParams.FileName);
-								}
-							});
-					});
-				};
 				contentRow.AddChild(exportGCode);
+
+				exportPluginButtons = new Dictionary<RadioButton, ExportGcodePlugin>();
 
 				foreach (ExportGcodePlugin plugin in PluginFinder.CreateInstancesOf<ExportGcodePlugin>())
 				{
-					if (plugin.EnabledForCurrentPart(printItemWrapper))
+					if (plugin.EnabledForCurrentPart(libraryContent))
 					{
-						// Create export button for each Plugin found
-						string exportButtonText = plugin.GetButtonText().Localize();
-
-						Button exportButton = textImageButtonFactory.Generate(exportButtonText);
-						exportButton.HAnchor = HAnchor.Left;
-						exportButton.Margin = commonMargin;
-						exportButton.Cursor = Cursors.Hand;
-						exportButton.Click += (s, e) =>
+						// Create export button for each plugin
+						var pluginButton = new RadioButton(plugin.GetButtonText().Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor)
 						{
-							this.Parent.CloseOnIdle();
-							UiThread.RunOnIdle(() =>
-							{
-								// Open a SaveFileDialog. If Save is clicked, slice the part if needed and pass the plugin the 
-								// path to the gcode file and the target save path
-								FileDialog.SaveFileDialog(
-									new SaveFileDialogParams(plugin.GetExtensionFilter())
-									{
-										Title = "MatterControl: Export File",
-										FileName = printItemWrapper.Name,
-										ActionButtonLabel = "Export"
-									},
-									(saveParam) =>
-									{
-										string extension = Path.GetExtension(saveParam.FileName);
-										if (extension == "")
-										{
-											saveParam.FileName += plugin.GetFileExtension();
-										}
+							HAnchor = HAnchor.Left,
+							Margin = commonMargin,
+							Cursor = Cursors.Hand
+						};
+						contentRow.AddChild(pluginButton);
 
-										if (partIsGCode)
-										{
-											try
-											{
-												plugin.Generate(printItemWrapper.FileLocation, saveParam.FileName);
-											}
-											catch (Exception exception)
-											{
-												UiThread.RunOnIdle(() =>
-												{
-													StyledMessageBox.ShowMessageBox(null, exception.Message, "Couldn't save file".Localize());
-												});
-											}
-										}
-										else
-										{
-											SlicingQueue.Instance.QueuePartForSlicing(printItemWrapper);
-
-											printItemWrapper.SlicingDone += (printItem, eventArgs) =>
-											{
-												PrintItemWrapper sliceItem = (PrintItemWrapper)printItem;
-												if (File.Exists(sliceItem.GetGCodePathAndFileName()))
-												{
-													try
-													{
-														plugin.Generate(sliceItem.GetGCodePathAndFileName(), saveParam.FileName);
-													}
-													catch (Exception exception)
-													{
-														UiThread.RunOnIdle(() =>
-														{
-															StyledMessageBox.ShowMessageBox(null, exception.Message, "Couldn't save file".Localize());
-														});
-													}
-												}
-											};
-										}
-									});
-							});
-						}; // End exportButton Click handler
-
-						contentRow.AddChild(exportButton);
+						exportPluginButtons.Add(pluginButton, plugin);
 					}
 				}
 			}
@@ -265,39 +149,224 @@ namespace MatterHackers.MatterControl
 				contentRow.AddChild(noGCodeMessage);
 			}
 
+			var exportButton = textImageButtonFactory.Generate("Export".Localize());
+			exportButton.Click += (s, e) =>
+			{
+				string fileTypeFilter = "";
+				string targetExtension = "";
+
+				ExportGcodePlugin activePlugin = null;
+
+				if (exportAsStlButton.Checked)
+				{
+					fileTypeFilter = "Save as STL|*.stl";
+					targetExtension = ".stl";
+				}
+				else if (exportAsAmfButton.Checked)
+				{
+					fileTypeFilter = "Save as AMF|*.amf";
+					targetExtension = ".amf";
+				}
+				else if (exportGCode.Checked)
+				{
+					fileTypeFilter = "Export GCode|*.gcode";
+					targetExtension = ".gcode";
+				}
+				else
+				{
+					// Loop over all plugin buttons, break on the first checked item found
+					foreach(var button in this.exportPluginButtons.Keys)
+					{
+						if (button.Checked)
+						{
+							activePlugin = exportPluginButtons[button];
+							break;
+						}
+					}
+
+					// Early exit if no plugin radio button is selected
+					if (activePlugin == null)
+					{
+						return;
+					}
+
+					fileTypeFilter = activePlugin.GetExtensionFilter();
+					targetExtension = activePlugin.GetFileExtension();
+				}
+
+				this.Parent.CloseOnIdle();
+				UiThread.RunOnIdle(() =>
+				{
+					string title = "MatterControl: " + "Export File".Localize();
+					FileDialog.SaveFileDialog(
+						new SaveFileDialogParams(fileTypeFilter)
+						{
+							Title = title,
+							ActionButtonLabel = "Export".Localize(),
+							FileName = libraryContent.Name
+						},
+						(saveParams) =>
+						{
+							string savePath = saveParams.FileName;
+
+							if (!string.IsNullOrEmpty(savePath))
+							{
+								Task.Run(async () =>
+								{
+									string extension = Path.GetExtension(savePath);
+									if (extension != targetExtension)
+									{
+										savePath += targetExtension;
+									}
+
+									bool succeeded = false;
+
+									if (exportAsStlButton.Checked)
+									{
+										succeeded = await SaveAmf(libraryContent, savePath);
+									}
+									else if (exportAsAmfButton.Checked)
+									{
+										succeeded = await SaveAmf(libraryContent, savePath);
+									}
+									else if (exportGCode.Checked)
+									{
+										succeeded = await SaveGCode(savePath);
+									}
+									else if (activePlugin != null)
+									{
+										succeeded = await ExportToPlugin(activePlugin, savePath);
+									}
+
+									if (succeeded)
+									{
+										ShowFileIfRequested(saveParams.FileName);
+									}
+									else
+									{
+										UiThread.RunOnIdle(() =>
+										{
+											StyledMessageBox.ShowMessageBox(null, "Export failed".Localize(), title);
+										});
+									}
+								});
+							}
+						});
+				});
+			};
+
+			footerRow.AddChild(exportButton);
+
 			footerRow.AddChild(new HorizontalSpacer());
 			footerRow.AddChild(cancelButton);
 		}
 
-		public void ExportGcodeCommandLineUtility(String nameOfFile)
+		private void ShowFileIfRequested(string filename)
+		{
+			if (OsInformation.OperatingSystem == OSType.Windows)
+			{
+				if (showInFolderAfterSave.Checked)
+				{
+#if IS_WINDOWS_FORMS
+					WindowsFormsAbstract.ShowFileInFolder(filename);
+#endif
+				}
+			}
+		}
+
+		private async Task<bool> SaveAmf(ILibraryContentStream source, string filePathToSave)
 		{
 			try
 			{
-				if (!string.IsNullOrEmpty(nameOfFile))
+				if (!string.IsNullOrEmpty(filePathToSave))
 				{
-					gcodePathAndFilenameToSave = nameOfFile;
-					string extension = Path.GetExtension(gcodePathAndFilenameToSave);
-					if (extension == "")
+					if (Path.GetExtension(libraryContent.FileName).ToUpper() == Path.GetExtension(filePathToSave).ToUpper())
 					{
-						File.Delete(gcodePathAndFilenameToSave);
-						gcodePathAndFilenameToSave += ".gcode";
-					}
+						using (var result = await libraryContent.GetContentStream(null))
+						using (var fileStream = File.Create(filePathToSave))
+						{
+							result.Stream.CopyTo(fileStream);
+						}
 
-					string sourceExtension = Path.GetExtension(printItemWrapper.FileLocation).ToUpper();
-					if (MeshFileIo.ValidFileExtensions().Contains(sourceExtension))
-					{
-						SlicingQueue.Instance.QueuePartForSlicing(printItemWrapper);
-						printItemWrapper.SlicingDone += sliceItem_Done;
+						return true;
 					}
-					else if (partIsGCode)
+					else
 					{
-						SaveGCodeToNewLocation(printItemWrapper.FileLocation, gcodePathAndFilenameToSave);
+						using (var result = await libraryContent.GetContentStream(null))
+						{
+							IObject3D item = Object3D.Load(result.Stream, Path.GetExtension(libraryContent.FileName), CancellationToken.None);
+							return MeshFileIo.Save(item, filePathToSave);
+						}
 					}
+				}
+			}
+			catch (Exception ex)
+			{
+				Trace.WriteLine("Error exporting file: " + ex.Message);
+			}
+
+			return false;
+		}
+
+		public async Task<bool> ExportToPlugin(ExportGcodePlugin plugin, string filePathToSave)
+		{
+			try
+			{
+				string newGCodePath = await SliceFileIfNeeded();
+
+				if (File.Exists(newGCodePath))
+				{
+					plugin.Generate(newGCodePath, filePathToSave);
+					return true;
 				}
 			}
 			catch
 			{
 			}
+
+			return false;
+		}
+
+		public async Task<bool> SaveGCode(string filePathToSave)
+		{
+			try
+			{
+				string newGCodePath = await SliceFileIfNeeded();
+
+				if (File.Exists(newGCodePath))
+				{
+					SaveGCodeToNewLocation(newGCodePath, filePathToSave);
+					return true;
+				}
+			}
+			catch
+			{
+			}
+
+			return false;
+		}
+
+		private async Task<string> SliceFileIfNeeded()
+		{
+			// TODO: How to handle gcode files in library content?
+			//string fileToProcess = partIsGCode ?  printItemWrapper.FileLocation : "";
+			string fileToProcess = "";
+
+			string sourceExtension = Path.GetExtension(libraryContent.FileName).ToUpper();
+			if (MeshFileIo.ValidFileExtensions().Contains(sourceExtension)
+				|| sourceExtension == ".MCX")
+			{
+				// Save any pending changes before starting the print
+				await ApplicationController.Instance.ActiveView3DWidget.PersistPlateIfNeeded();
+
+				var printItem = ApplicationController.Instance.ActivePrintItem;
+
+				await SlicingQueue.SliceFileAsync(printItem, null);
+
+				fileToProcess = printItem.GetGCodePathAndFileName();
+			}
+
+			return fileToProcess;
 		}
 
 		private void SaveGCodeToNewLocation(string gcodeFilename, string dest)
@@ -326,8 +395,6 @@ namespace MatterHackers.MatterControl
 						nextLine = finalStream.ReadLine();
 					}
 				}
-
-				ShowFileIfRequested(dest);
 			}
 			catch (Exception e)
 			{
@@ -338,107 +405,8 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private void ShowFileIfRequested(string filename)
-		{
-			if (OsInformation.OperatingSystem == OSType.Windows)
-			{
-				if (showInFolderAfterSave.Checked)
-				{
-#if IS_WINDOWS_FORMS
-					WindowsFormsAbstract.ShowFileInFolder(filename);
-#endif
-				}
-			}
-		}
-
-		private void SaveAmf(string filePathToSave)
-		{
-			try
-			{
-				if (!string.IsNullOrEmpty(filePathToSave))
-				{
-					string extension = Path.GetExtension(filePathToSave);
-					if (extension == "")
-					{
-						File.Delete(filePathToSave);
-						filePathToSave += ".amf";
-					}
-
-					if (Path.GetExtension(printItemWrapper.FileLocation).ToUpper() == Path.GetExtension(filePathToSave).ToUpper())
-					{
-						File.Copy(printItemWrapper.FileLocation, filePathToSave, true);
-					}
-					else
-					{
-						IObject3D item = Object3D.Load(printItemWrapper.FileLocation, CancellationToken.None);
-						MeshFileIo.Save(item, filePathToSave);
-					}
-
-					ShowFileIfRequested(filePathToSave);
-				}
-			}
-			catch (Exception e)
-			{
-				UiThread.RunOnIdle (() => {
-					StyledMessageBox.ShowMessageBox(null, e.Message, "Couldn't save file".Localize());
-				});
-			}
-		}
-
-		private void SaveStl(string filePathToSave)
-		{
-			try
-			{
-				if (!string.IsNullOrEmpty(filePathToSave))
-				{
-
-					string extension = Path.GetExtension(filePathToSave);
-					if (extension == "")
-					{
-						File.Delete(filePathToSave);
-						filePathToSave += ".stl";
-					}
-
-					if (Path.GetExtension(printItemWrapper.FileLocation).ToUpper() == Path.GetExtension(filePathToSave).ToUpper())
-					{
-						File.Copy(printItemWrapper.FileLocation, filePathToSave, true);
-					}
-					else
-					{
-						IObject3D loadedItem = Object3D.Load(printItemWrapper.FileLocation, CancellationToken.None);
-
-						if (!MeshFileIo.Save(new List<MeshGroup> { loadedItem.Flatten() }, filePathToSave))
-						{
-							UiThread.RunOnIdle(() =>
-							{
-								StyledMessageBox.ShowMessageBox(null, "AMF to STL conversion failed", "Couldn't save file".Localize());
-							});
-						}
-					}
-
-					ShowFileIfRequested(filePathToSave);
-				}
-			}
-			catch (Exception e)
-			{
-				UiThread.RunOnIdle (() => {
-					StyledMessageBox.ShowMessageBox(null, e.Message, "Couldn't save file".Localize());
-				});
-
-			}
-		}
-
-		private void sliceItem_Done(object sender, EventArgs e)
-		{
-			PrintItemWrapper sliceItem = (PrintItemWrapper)sender;
-
-			printItemWrapper.SlicingDone -= sliceItem_Done;
-			SaveGCodeToNewLocation(sliceItem.GetGCodePathAndFileName(), gcodePathAndFilenameToSave);
-		}
-
 		public override void OnClosed(ClosedEventArgs e)
 		{
-			printItemWrapper.SlicingDone -= sliceItem_Done;
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
 		}
