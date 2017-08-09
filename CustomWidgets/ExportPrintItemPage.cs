@@ -76,35 +76,15 @@ namespace MatterHackers.MatterControl
 				contentRow.AddChild(exportAsAmfButton);
 			}
 
+			RadioButton exportGCode = new RadioButton("Export as".Localize() + " G-Code", textColor: ActiveTheme.Instance.PrimaryTextColor);
+			exportGCode.Name = "Export as GCode Button";
+			exportGCode.Margin = commonMargin;
+			exportGCode.HAnchor = HAnchor.Left;
+			exportGCode.Cursor = Cursors.Hand;
+
 			bool showExportGCodeButton = ActiveSliceSettings.Instance.PrinterSelected || partIsGCode;
 			if (showExportGCodeButton)
 			{
-				Button exportGCode = textImageButtonFactory.Generate("Export as".Localize() + " G-Code");
-				exportGCode.Name = "Export as GCode Button";
-				exportGCode.Margin = commonMargin;
-				exportGCode.HAnchor = HAnchor.Left;
-				exportGCode.Cursor = Cursors.Hand;
-				exportGCode.Click += (s, e) =>
-				{
-					this.Parent.CloseOnIdle();
-					UiThread.RunOnIdle(() =>
-					{
-						FileDialog.SaveFileDialog(
-							new SaveFileDialogParams("Export GCode|*.gcode", title: "Export GCode")
-							{
-								Title = "MatterControl: Export File",
-								ActionButtonLabel = "Export",
-								FileName = Path.GetFileNameWithoutExtension(printItemWrapper.Name)
-							},
-							(saveParams) =>
-							{
-								if (!string.IsNullOrEmpty(saveParams.FileName))
-								{
-									ExportGcodeCommandLineUtility(saveParams.FileName);
-								}
-							});
-					});
-				};
 				contentRow.AddChild(exportGCode);
 
 				foreach (ExportGcodePlugin plugin in PluginFinder.CreateInstancesOf<ExportGcodePlugin>())
@@ -238,6 +218,11 @@ namespace MatterHackers.MatterControl
 					fileTypeFilter = "Save as AMF|*.amf";
 					targetExtension = ".amf";
 				}
+				else if (exportGCode.Checked)
+				{
+					fileTypeFilter = "Export GCode|*.gcode";
+					targetExtension = ".gcode";
+				}
 
 				this.Parent.CloseOnIdle();
 				UiThread.RunOnIdle(() =>
@@ -275,6 +260,10 @@ namespace MatterHackers.MatterControl
 									else if (exportAsAmfButton.Checked)
 									{
 										result = SaveAmf(sourceContent, savePath);
+									}
+									else if (exportGCode.Checked)
+									{
+										ExportGcodeCommandLineUtility(savePath);
 									}
 
 									if (result)
