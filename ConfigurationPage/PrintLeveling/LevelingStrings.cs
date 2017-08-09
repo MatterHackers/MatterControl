@@ -57,14 +57,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		private string homingLine3b = "Click 'Next' to continue.".Localize();
 		private int stepNumber = 1;
 		private string welcomeLine1 = "Welcome to the print leveling wizard. Here is a quick overview on what we are going to do.".Localize();
-		private string welcomeLine2 = "Select the material you are printing".Localize();
-		private string welcomeLine3 = "Home the printer".Localize();
-		private string welcomeLine4 = "Heat the bed".Localize();
-		private string welcomeLine5 = "Sample the bed at {0} points".Localize();
-		private string welcomeLine6 = "Turn auto leveling on".Localize();
-		private string welcomeLine7 = "We should be done in less than {0} minutes.".Localize();
-		private string welcomeLine8 = "Note: Be sure the tip of the extruder is clean and the bed is clear.".Localize();
-		private string welcomeLine9 = "Click 'Next' to continue.".Localize();
+		private string selectMaterial = "Select the material you are printing".Localize();
+		private string homeThePrinter = "Home the printer".Localize();
+		private string heatTheBed = "Heat the bed".Localize();
+		private string sampelAtPoints = "Sample the bed at {0} points".Localize();
+		private string turnOnLeveling = "Turn auto leveling on".Localize();
+		private string timeToDone = "We should be done in less than {0} minutes.".Localize();
+		private string cleanExtruder = "Note: Be sure the tip of the extruder is clean and the bed is clear.".Localize();
+		private string clickNext = "Click 'Next' to continue.".Localize();
 
 		public string DoneInstructions
 		{
@@ -118,26 +118,40 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				numberOfMinutes = 2;
 			}
 
-			return "{0}\n\n\t• {1}\n\t• {2}\n\t• {3}\n\t• {4}\n\t• {5}\n\n{6}\n\n{7}\n\n{8}".FormatWith(
-				this.welcomeLine1,
-				this.welcomeLine2,
-				this.welcomeLine3,
-				this.welcomeLine4,
-				this.WelcomeLine5(numberOfSteps),
-				this.welcomeLine6,
-				this.WelcomeLine7(numberOfMinutes),
-				this.welcomeLine8,
-				this.welcomeLine9);
+			if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_heated_bed))
+			{
+				return "{0}\n\n\t• {1}\n\t• {2}\n\t• {3}\n\t• {4}\n\t• {5}\n\n{6}\n\n{7}\n\n{8}".FormatWith(
+					this.welcomeLine1,
+					this.selectMaterial,
+					this.homeThePrinter,
+					this.heatTheBed,
+					this.WelcomeLine5(numberOfSteps),
+					this.turnOnLeveling,
+					this.WelcomeLine7(numberOfMinutes),
+					this.cleanExtruder,
+					this.clickNext);
+			}
+			else
+			{
+				return "{0}\n\n\t• {1}\n\t• {2}\n\t• {3}\n\n{4}\n\n{5}\n\n{6}".FormatWith(
+					this.welcomeLine1,
+					this.homeThePrinter,
+					this.WelcomeLine5(numberOfSteps),
+					this.turnOnLeveling,
+					this.WelcomeLine7(numberOfMinutes),
+					this.cleanExtruder,
+					this.clickNext);
+			}
 		}
 
 		private string WelcomeLine5(int numberOfPoints)
 		{
-			return welcomeLine5.FormatWith(numberOfPoints);
+			return sampelAtPoints.FormatWith(numberOfPoints);
 		}
 
 		private string WelcomeLine7(int numberOfMinutes)
 		{
-			return welcomeLine7.FormatWith(numberOfMinutes);
+			return timeToDone.FormatWith(numberOfMinutes);
 		}
 	}
 }
