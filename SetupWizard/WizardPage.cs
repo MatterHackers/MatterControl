@@ -15,8 +15,8 @@ namespace MatterHackers.MatterControl
 		protected Button cancelButton;
 
 		protected TextImageButtonFactory textImageButtonFactory { get; } = ApplicationController.Instance.Theme.ButtonFactory;
-		protected TextImageButtonFactory whiteImageButtonFactory;
-		protected LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
+		protected TextImageButtonFactory whiteImageButtonFactory { get; } = ApplicationController.Instance.Theme.WhiteButtonFactory;
+		protected LinkButtonFactory linkButtonFactory = ApplicationController.Instance.Theme.LinkButtonFactory;
 
 		protected double labelFontSize = 12 * GuiWidget.DeviceScale;
 		protected double errorFontSize = 10 * GuiWidget.DeviceScale;
@@ -27,39 +27,8 @@ namespace MatterHackers.MatterControl
 
 		public WizardPage(string unlocalizedTextForCancelButton = "Cancel", string unlocalizedTextForTitle = "Setup Wizard")
 		{
-			whiteImageButtonFactory = new TextImageButtonFactory(new ButtonFactoryOptions()
-			{
-				Normal = new ButtonOptionSection()
-				{
-					FillColor = RGBA_Bytes.White,
-					BorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200),
-					TextColor = RGBA_Bytes.Black,
-				},
-				Disabled = new ButtonOptionSection()
-				{
-					FillColor = RGBA_Bytes.White,
-					TextColor = RGBA_Bytes.DarkGray,
-				},
-				Hover = new ButtonOptionSection()
-				{
-					BorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200),
-					TextColor = ActiveTheme.Instance.PrimaryTextColor,
-				},
-				Pressed = new ButtonOptionSection()
-				{
-					TextColor = ActiveTheme.Instance.PrimaryTextColor,
-				},
-
-				FontSize = 16,
-				BorderWidth = 1,
-				FixedWidth = 200
-			});
-
 			if (!UserSettings.Instance.IsTouchScreen)
 			{
-				linkButtonFactory.textColor = ActiveTheme.Instance.PrimaryTextColor;
-				linkButtonFactory.fontSize = 10;
-
 				this.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
 				this.Padding = new BorderDouble(0); //To be re-enabled once native borders are turned off
 			}

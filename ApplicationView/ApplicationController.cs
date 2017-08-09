@@ -1048,21 +1048,13 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		ExportPrintItemWindow exportingWindow = null;
-
 		public async void OpenExportWindow()
 		{
-			/*
-			if (exportingWindow == null)
-			{
-				exportingWindow = new ExportPrintItemWindow(await this.GetPrintItemWrapperAsync());
-				exportingWindow.Closed += ExportQueueItemWindow_Closed;
-				exportingWindow.ShowAsSystemWindow();
-			}
-			else
-			{
-				exportingWindow.BringToFront();
-			} */
+			PrintItemWrapper printItem = null;
+			var exportPage = new ExportPrintItemPage(printItem);
+
+			string windowTitle = "MatterControl".Localize() + ": " + "Export File".Localize();
+			WizardWindow.Show("/ExportPrintItemPage", "", exportPage);
 		}
 
 		/// <summary>

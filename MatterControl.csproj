@@ -244,7 +244,7 @@
     <Compile Include="PartPreviewWindow\ViewControlsToggle.cs" />
     <Compile Include="PartPreviewWindow\GCode2DWidget.cs" />
     <Compile Include="CustomWidgets\DisableableWidget.cs" />
-    <Compile Include="CustomWidgets\ExportPrintItemWindow.cs" />
+    <Compile Include="CustomWidgets\ExportPrintItemPage.cs" />
     <Compile Include="PrinterCommunication\Io\FeedRateMultiplyerStream.cs" />
     <Compile Include="PrinterCommunication\Io\ExtrusionMultiplyerStream.cs" />
     <Compile Include="PrinterCommunication\Io\PauseHandlingStream.cs" />
@@ -327,7 +327,7 @@
     <Compile Include="ConfigurationPage\PrintLeveling\PrintLevelPages.cs" />
     <Compile Include="AboutPage\ContactForm.cs" />
     <Compile Include="CustomWidgets\ClickWidget.cs">
-      <DependentUpon>ExportPrintItemWindow.cs</DependentUpon>
+      <DependentUpon>ExportPrintItemPage.cs</DependentUpon>
     </Compile>
     <Compile Include="CustomWidgets\SavePartsSheetFeedbackWindow.cs" />
     <Compile Include="CustomWidgets\DropDownMenuWidget.cs" />

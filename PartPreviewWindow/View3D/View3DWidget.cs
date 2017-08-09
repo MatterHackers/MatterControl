@@ -70,7 +70,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public UndoBuffer UndoBuffer { get; } = new UndoBuffer();
 		public readonly int EditButtonHeight = 44;
 
-		private ExportPrintItemWindow exportingWindow = null;
 		private ObservableCollection<GuiWidget> extruderButtons = new ObservableCollection<GuiWidget>();
 		private bool hasDrawn = false;
 
@@ -328,6 +327,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						OpenExportWindow();
 					});
 				};
+				selectionActionBar.AddChild(exportButton);
 
 				Button clearPlateButton = smallMarginButtonFactory.Generate("Clear Plate".Localize());
 				clearPlateButton.Margin = buttonSpacing;
@@ -2061,19 +2061,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void OpenExportWindow()
 		{
-			if (exportingWindow == null)
-			{
-				exportingWindow = new ExportPrintItemWindow(this.printItemWrapper);
-				exportingWindow.Closed += (sender, e) =>
-				{
-					exportingWindow = null;
-				};
-				exportingWindow.ShowAsSystemWindow();
-			}
-			else
-			{
-				exportingWindow.BringToFront();
-			}
+			var exportPage = new ExportPrintItemPage(this.printItemWrapper);
+			string windowTitle = "MatterControl".Localize() + ": " + "Export File".Localize();
+			WizardWindow.Show("/ExportPrintItemPage", windowTitle, exportPage);
 		}
 
 		private void OpenSaveAsWindow()

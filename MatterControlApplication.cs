@@ -221,25 +221,6 @@ namespace MatterHackers.MatterControl
 							}
 						}
 						break;
-
-					case "SLICE_AND_EXPORT_GCODE":
-						if (currentCommandIndex + 1 <= commandLineArgs.Length) 
-						{
-							currentCommandIndex++;
-							string fullPath = commandLineArgs[currentCommandIndex];
-							QueueData.Instance.RemoveAll();
-							if (!string.IsNullOrEmpty(fullPath))
-							{
-								string fileName = Path.GetFileNameWithoutExtension(fullPath);
-								PrintItemWrapper printItemWrapper = new PrintItemWrapper(new PrintItem(fileName, fullPath));
-								QueueData.Instance.AddItem(printItemWrapper);
-
-								SlicingQueue.Instance.QueuePartForSlicing(printItemWrapper);
-								ExportPrintItemWindow exportForTest = new ExportPrintItemWindow(printItemWrapper);
-								exportForTest.ExportGcodeCommandLineUtility(fileName);
-							}
-						}
-						break;
 				}
 
 				if (MeshFileIo.ValidFileExtensions().Contains(Path.GetExtension(command).ToUpper()))
