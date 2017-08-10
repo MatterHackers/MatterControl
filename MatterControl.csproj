@@ -273,7 +273,7 @@
     <Compile Include="PrinterControls\TerminalWindow\TerminalWidget.cs" />
     <Compile Include="History\PrintHistoryData.cs" />
     <Compile Include="Library\Widgets\SystemWindows\CreateFolderWindow.cs" />
-    <Compile Include="Queue\OptionsMenu\ExportGcodePlugin.cs" />
+    <Compile Include="Queue\OptionsMenu\IExportGcodePlugin.cs" />
     <Compile Include="SetupWizard\AndroidConnectDevicePage.cs" />
     <Compile Include="SetupWizard\ImportSettingsPage.cs" />
     <Compile Include="SetupWizard\ExportSettingsPage.cs" />

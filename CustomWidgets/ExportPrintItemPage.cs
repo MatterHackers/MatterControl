@@ -11,13 +11,9 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.GCodeVisualizer;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
-using MatterHackers.MatterControl.PrintQueue;
-using MatterHackers.MatterControl.Queue.OptionsMenu;
 using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.PolygonMesh;
 
 namespace MatterHackers.MatterControl
 {
@@ -31,7 +27,7 @@ namespace MatterHackers.MatterControl
 
 		private EventHandler unregisterEvents;
 
-		private Dictionary<RadioButton, ExportGcodePlugin> exportPluginButtons;
+		private Dictionary<RadioButton, IExportGcodePlugin> exportPluginButtons;
 
 		private ILibraryContentStream libraryContent;
 
@@ -93,14 +89,14 @@ namespace MatterHackers.MatterControl
 			{
 				contentRow.AddChild(exportGCode);
 
-				exportPluginButtons = new Dictionary<RadioButton, ExportGcodePlugin>();
+				exportPluginButtons = new Dictionary<RadioButton, IExportGcodePlugin>();
 
-				foreach (ExportGcodePlugin plugin in PluginFinder.CreateInstancesOf<ExportGcodePlugin>())
+				foreach (IExportGcodePlugin plugin in PluginFinder.CreateInstancesOf<IExportGcodePlugin>())
 				{
 					if (plugin.EnabledForCurrentPart(libraryContent))
 					{
 						// Create export button for each plugin
-						var pluginButton = new RadioButton(plugin.GetButtonText().Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor)
+						var pluginButton = new RadioButton(plugin.ButtonText.Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor)
 						{
 							HAnchor = HAnchor.Left,
 							Margin = commonMargin,
@@ -155,7 +151,7 @@ namespace MatterHackers.MatterControl
 				string fileTypeFilter = "";
 				string targetExtension = "";
 
-				ExportGcodePlugin activePlugin = null;
+				IExportGcodePlugin activePlugin = null;
 
 				if (exportAsStlButton.Checked)
 				{
@@ -190,8 +186,8 @@ namespace MatterHackers.MatterControl
 						return;
 					}
 
-					fileTypeFilter = activePlugin.GetExtensionFilter();
-					targetExtension = activePlugin.GetFileExtension();
+					fileTypeFilter = activePlugin.ExtensionFilter;
+					targetExtension = activePlugin.FileExtension;
 				}
 
 				this.Parent.CloseOnIdle();
@@ -308,7 +304,7 @@ namespace MatterHackers.MatterControl
 			return false;
 		}
 
-		public async Task<bool> ExportToPlugin(ExportGcodePlugin plugin, string filePathToSave)
+		public async Task<bool> ExportToPlugin(IExportGcodePlugin plugin, string filePathToSave)
 		{
 			try
 			{
