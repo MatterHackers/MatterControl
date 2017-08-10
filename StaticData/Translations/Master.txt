@@ -4390,3 +4390,6 @@ Translated:Select the material you are printing
 English:Heat the bed
 Translated:Heat the bed
 
+English:Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Layers/Surface'
+Translated:Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Layers/Surface'
+
