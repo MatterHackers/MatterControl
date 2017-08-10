@@ -98,7 +98,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			Assert.IsTrue(meshItem.Mesh.Faces.Count > 0);
 		}
 
-		[Test]
+		[Test, RunInApplicationDomain, Apartment(ApartmentState.STA)]
 		public async Task ResavedSceneRemainsConsistent()
 		{
 #if !__ANDROID__
@@ -113,7 +113,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
 				MeshVisualizer.BedShape.Rectangular,
 				View3DWidget.WindowMode.Embeded,
 				View3DWidget.AutoRotate.Disabled,
-				new ViewControls3D(new MatterControl.TextImageButtonFactory()),
+				new ViewControls3D(ApplicationController.Instance.Theme),
 				new MatterControl.ThemeConfig(),
 				View3DWidget.OpenMode.Editing);
 
