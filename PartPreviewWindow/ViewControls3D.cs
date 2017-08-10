@@ -132,7 +132,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		public ViewControls3D(TextImageButtonFactory buttonFactory)
+		public ViewControls3D(ThemeConfig theme)
 		{
 			this.BackgroundColor = new RGBA_Bytes(0, 0, 0, overlayAlpha);
 			this.HAnchor |= HAnchor.Left;
@@ -140,14 +140,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			string iconPath;
 
+			var commonMargin = ApplicationController.Instance.Theme.ButtonSpacing;
+
+			var buttonFactory = theme.ButtonFactory;
+
 			iconPath = Path.Combine("ViewTransformControls", "reset.png");
-			resetViewButton = buttonFactory.Generate("", StaticData.Instance.LoadIcon(iconPath,32,32).InvertLightness());
+			resetViewButton = theme.NoMargin.Generate("", StaticData.Instance.LoadIcon(iconPath,32,32).InvertLightness());
 			resetViewButton.ToolTipText = "Reset View".Localize();
+			resetViewButton.Margin = commonMargin;
 			resetViewButton.Click += (s, e) => ResetView?.Invoke(this, null);
 			AddChild(resetViewButton);
 
 			var buttonGroupA = new ObservableCollection<GuiWidget>();
-
 
 			if (UserSettings.Instance.IsTouchScreen)
 			{
@@ -155,7 +159,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				rotateButton = buttonFactory.GenerateRadioButton("", StaticData.Instance.LoadIcon(iconPath, 32, 32));
 				rotateButton.SiblingRadioButtonList = buttonGroupA;
 				rotateButton.ToolTipText = "Rotate (Alt + Left Mouse)".Localize();
-				rotateButton.Margin = 3;
+				rotateButton.Margin = commonMargin;
 				rotateButton.Click += (s, e) => this.ActiveButton = ViewControls3DButtons.Rotate;
 				buttonGroupA.Add(rotateButton);
 				AddChild(rotateButton);
@@ -164,7 +168,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				translateButton = buttonFactory.GenerateRadioButton("", StaticData.Instance.LoadIcon(iconPath, 32, 32));
 				translateButton.SiblingRadioButtonList = buttonGroupA;
 				translateButton.ToolTipText = "Move (Shift + Left Mouse)".Localize();
-				translateButton.Margin = 3;
+				translateButton.Margin = commonMargin;
 				translateButton.Click += (s, e) => this.ActiveButton = ViewControls3DButtons.Translate;
 				buttonGroupA.Add(translateButton);
 				AddChild(translateButton);
@@ -173,7 +177,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				scaleButton = buttonFactory.GenerateRadioButton("", StaticData.Instance.LoadIcon(iconPath, 32, 32));
 				scaleButton.SiblingRadioButtonList = buttonGroupA;
 				scaleButton.ToolTipText = "Zoom (Ctrl + Left Mouse)".Localize();
-				scaleButton.Margin = 3;
+				scaleButton.Margin = commonMargin;
 				scaleButton.Click += (s, e) => this.ActiveButton = ViewControls3DButtons.Scale;
 				buttonGroupA.Add(scaleButton);
 				AddChild(scaleButton);
@@ -191,7 +195,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			partSelectButton.SiblingRadioButtonList = buttonGroupA;
 			partSelectButton.ToolTipText = "Select Part".Localize();
 			partSelectButton.Visible = false;
-			partSelectButton.Margin = 3;
+			partSelectButton.Margin = commonMargin;
 			partSelectButton.Click += (s, e) => this.ActiveButton = ViewControls3DButtons.PartSelect;
 			buttonGroupA.Add(partSelectButton);
 			AddChild(partSelectButton);
@@ -204,7 +208,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			modelViewButton.Name = "Model View Button";
 			modelViewButton.Checked = false;
 			modelViewButton.ToolTipText = "Model".Localize();
-			modelViewButton.Margin = 3;
+			modelViewButton.Margin = commonMargin;
 			modelViewButton.Click += SwitchModes_Click;
 			buttonGroupB.Add(modelViewButton);
 			AddChild(modelViewButton);
@@ -214,7 +218,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			layers3DButton.SiblingRadioButtonList = buttonGroupB;
 			layers3DButton.Name = "Layers3D Button";
 			layers3DButton.ToolTipText = "3D Layers".Localize();
-			layers3DButton.Margin = 3;
+			layers3DButton.Margin = commonMargin;
 			layers3DButton.Click += SwitchModes_Click;
 			buttonGroupB.Add(layers3DButton);
 
@@ -229,7 +233,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			Layers2DButton.Name = "Layers2D Button";
 			Layers2DButton.ToolTipText = "2D Layers".Localize();
 			Layers2DButton.Enabled = false;
-			Layers2DButton.Margin = 3;
+			Layers2DButton.Margin = commonMargin;
 			Layers2DButton.Click += SwitchModes_Click;
 			buttonGroupB.Add(Layers2DButton);
 			this.AddChild(Layers2DButton);

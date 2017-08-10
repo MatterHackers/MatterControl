@@ -80,7 +80,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			double buildHeight = activeSettings.GetValue<double>(SettingsKey.build_height);
 
-			viewControls3D = new ViewControls3D(ApplicationController.Instance.Theme.ViewControlsButtonFactory)
+			viewControls3D = new ViewControls3D(ApplicationController.Instance.Theme)
 			{
 				PartSelectVisible = false,
 				VAnchor = VAnchor.Top | VAnchor.Fit | VAnchor.Absolute,

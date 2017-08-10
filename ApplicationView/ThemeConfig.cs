@@ -96,6 +96,7 @@ namespace MatterHackers.MatterControl
 		public TextImageButtonFactory MicroButtonMenu { get; private set; }
 
 		public BorderDouble ButtonSpacing { get; set; } = new BorderDouble(3, 0, 0, 0);
+		public TextImageButtonFactory NoMargin { get; private set; }
 
 		private EventHandler unregisterEvents;
 
@@ -139,6 +140,8 @@ namespace MatterHackers.MatterControl
 			commonOptions.FixedHeight = 32;
 
 			this.ButtonFactory = new TextImageButtonFactory(commonOptions);
+
+			this.NoMargin = new TextImageButtonFactory(commonOptions.Clone(options => options.Margin = 0));
 
 			this.SmallMarginButtonFactory = new TextImageButtonFactory(commonOptions.Clone(options =>
 			{
