@@ -68,6 +68,8 @@ namespace MatterHackers.MatterControl
 
 		public TextImageButtonFactory ButtonFactory { get; private set; }
 		public TextImageButtonFactory SmallMarginButtonFactory { get; private set; }
+		public TextImageButtonFactory RadioButtons { get; private set; }
+
 
 		/// <summary>
 		/// Used to make buttons in menu rows where the background color is consistently white
@@ -96,7 +98,7 @@ namespace MatterHackers.MatterControl
 		public TextImageButtonFactory MicroButtonMenu { get; private set; }
 
 		public BorderDouble ButtonSpacing { get; set; } = new BorderDouble(3, 0, 0, 0);
-		public TextImageButtonFactory NoMargin { get; private set; }
+		public TextImageButtonFactory NoMarginWhite { get; private set; }
 
 		private EventHandler unregisterEvents;
 
@@ -141,11 +143,22 @@ namespace MatterHackers.MatterControl
 
 			this.ButtonFactory = new TextImageButtonFactory(commonOptions);
 
-			this.NoMargin = new TextImageButtonFactory(commonOptions.Clone(options => options.Margin = 0));
+			this.NoMarginWhite = new TextImageButtonFactory(commonOptions.Clone(options =>
+			{
+				options.Margin = 0;
+				options.AllowThemeToAdjustImage = false;
+			}));
 
 			this.SmallMarginButtonFactory = new TextImageButtonFactory(commonOptions.Clone(options =>
 			{
 				options.Margin = new BorderDouble(8, 0);
+			}));
+
+			this.RadioButtons = new TextImageButtonFactory(commonOptions.Clone(options =>
+			{
+				options.BorderWidth = 1;
+				options.CheckedBorderColor = RGBA_Bytes.White;
+				options.AllowThemeToAdjustImage = false;
 			}));
 
 			var commonGray = commonOptions.Clone(options =>
