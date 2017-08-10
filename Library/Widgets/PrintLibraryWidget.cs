@@ -806,12 +806,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			if (libraryView.SelectedItems.Count == 1)
 			{
 				var libraryItem = libraryView.SelectedItems.Select(i => i.Model).FirstOrDefault();
-				if (libraryItem != null)
+				if (libraryItem is ILibraryContentStream libraryContent)
 				{
-					throw new NotImplementedException("Export not implemented");
+					var exportPage = new ExportPrintItemPage(libraryContent);
 
-					// TODO: Implement
-					//ApplicationController.OpenExportWindow(await this.GetPrintItemWrapperAsync());
+					string windowTitle = "MatterControl".Localize() + ": " + "Export File".Localize();
+					WizardWindow.Show("/ExportPrintItemPage", "", exportPage);
 				}
 			}
 		}
