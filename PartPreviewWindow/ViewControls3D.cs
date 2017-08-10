@@ -142,10 +142,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var commonMargin = ApplicationController.Instance.Theme.ButtonSpacing;
 
-			var buttonFactory = theme.ButtonFactory;
+			var buttonFactory = theme.RadioButtons;
 
 			iconPath = Path.Combine("ViewTransformControls", "reset.png");
-			resetViewButton = theme.NoMargin.Generate("", StaticData.Instance.LoadIcon(iconPath,32,32).InvertLightness());
+			resetViewButton = theme.NoMarginWhite.Generate("", StaticData.Instance.LoadIcon(iconPath,32,32).InvertLightness());
 			resetViewButton.ToolTipText = "Reset View".Localize();
 			resetViewButton.Margin = commonMargin;
 			resetViewButton.Click += (s, e) => ResetView?.Invoke(this, null);
