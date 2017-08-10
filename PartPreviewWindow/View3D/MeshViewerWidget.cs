@@ -60,6 +60,19 @@ namespace MatterHackers.MeshVisualizer
 		}
 	}
 
+	public static class MatterialRendering
+	{
+		public static RGBA_Bytes Color(int materialIndex)
+		{
+			if (materialIndex == 0)
+			{
+				return ActiveTheme.Instance.PrimaryAccentColor;
+			}
+
+			return RGBA_Floats.FromHSL(Math.Max(materialIndex, 0) / 10.0, .99, .49).GetAsRGBA_Bytes();
+		}
+	}
+
 	public class MeshViewerWidget : GuiWidget
 	{
 		static public ImageBuffer BedImage = null;
@@ -68,7 +81,6 @@ namespace MatterHackers.MeshVisualizer
 
 		private static ImageBuffer lastCreatedBedImage = new ImageBuffer();
 
-		private static Dictionary<int, RGBA_Bytes> extruderlColors = new Dictionary<int, RGBA_Bytes>();
 		private RGBA_Bytes bedBaseColor = new RGBA_Bytes(245, 245, 255);
 		static public Vector2 BedCenter { get; private set; }
 		private RGBA_Bytes bedMarkingsColor = RGBA_Bytes.Black;
@@ -106,9 +118,6 @@ namespace MatterHackers.MeshVisualizer
 			BuildVolumeColor = new RGBA_Floats(.2, .8, .3, .2).GetAsRGBA_Bytes();
 
 			CreatePrintBed(displayVolume, bedCenter, bedShape);
-
-			SetExtruderColor(0, ActiveTheme.Instance.PrimaryAccentColor);
-
 
 			this.trackballTumbleWidget = trackballTumbleWidget;
 			this.trackballTumbleWidget.DrawGlContent += this.trackballTumbleWidget_DrawGlContent;
@@ -257,46 +266,7 @@ namespace MatterHackers.MeshVisualizer
 
 		public static RGBA_Bytes GetExtruderColor(int extruderIndex)
 		{
-			lock (extruderlColors)
-			{
-				if (extruderlColors.ContainsKey(extruderIndex))
-				{
-					return extruderlColors[extruderIndex];
-				}
-			}
-
-			// we currently expect at most 4 extruders
-			return RGBA_Floats.FromHSL((extruderIndex % 4) / 4.0, .5, .5).GetAsRGBA_Bytes();
-		}
-
-		public static RGBA_Bytes GetSelectedExtruderColor(int extruderIndex)
-		{
-			double hue0To1;
-			double saturation0To1;
-			double lightness0To1;
-			GetExtruderColor(extruderIndex).GetAsRGBA_Floats().GetHSL(out hue0To1, out saturation0To1, out lightness0To1);
-
-			// now make it a bit lighter and less saturated
-			saturation0To1 = Math.Min(1, saturation0To1 * 2);
-			lightness0To1 = Math.Min(1, lightness0To1 * 1.2);
-
-			// we sort of expect at most 4 extruders
-			return RGBA_Floats.FromHSL(hue0To1, saturation0To1, lightness0To1).GetAsRGBA_Bytes();
-		}
-
-		public static void SetExtruderColor(int extruderIndex, RGBA_Bytes color)
-		{
-			lock (extruderlColors)
-			{
-				if (!extruderlColors.ContainsKey(extruderIndex))
-				{
-					extruderlColors.Add(extruderIndex, color);
-				}
-				else
-				{
-					extruderlColors[extruderIndex] = color;
-				}
-			}
+			return MatterialRendering.Color(extruderIndex);
 		}
 
 		public void CreateGlDataObject(IObject3D item)
@@ -594,7 +564,7 @@ namespace MatterHackers.MeshVisualizer
 				// check if we should be rendering materials
 				if (this.RenderType == RenderTypes.Materials)
 				{
-					drawColor = RGBA_Floats.FromHSL(Math.Max(renderData.MaterialIndex, 0) / 4.0, .99, .49).GetAsRGBA_Bytes();
+					drawColor = MatterialRendering.Color(renderData.MaterialIndex);
 				}
 
 				GLHelper.Render(renderData.Mesh, drawColor, renderData.Matrix, RenderType);

@@ -403,7 +403,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			ActiveTheme.ThemeChanged.RegisterEvent((s, e) =>
 			{
 				processingProgressControl.FillColor = ActiveTheme.Instance.PrimaryAccentColor;
-				MeshViewerWidget.SetExtruderColor(1, ActiveTheme.Instance.PrimaryAccentColor);
 			}, ref unregisterEvents);
 
 			var interactionVolumes = this.InteractionLayer.InteractionVolumes;
@@ -1495,9 +1494,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			int extruderCount = 4;
 			for (int extruderIndex = 0; extruderIndex < extruderCount; extruderIndex++)
 			{
-				FlowLayoutWidget colorSelectionContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
-				colorSelectionContainer.HAnchor = HAnchor.Fit;
-				colorSelectionContainer.Padding = new BorderDouble(5);
+				FlowLayoutWidget colorSelectionContainer = new FlowLayoutWidget(FlowDirection.LeftToRight)
+				{
+					HAnchor = HAnchor.Fit,
+					Padding = new BorderDouble(5)
+				};
+				buttonPanel.AddChild(colorSelectionContainer);
 
 				string extruderLabelText = string.Format("{0} {1}", "Extruder".Localize(), extruderIndex + 1);
 
@@ -1516,7 +1518,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 				};
 
-				buttonPanel.AddChild(colorSelectionContainer);
+				colorSelectionContainer.AddChild(new GuiWidget(16, 16)
+				{
+					BackgroundColor = MatterialRendering.Color(extruderIndex)
+				});
 			}
 
 			return buttonPanel;
