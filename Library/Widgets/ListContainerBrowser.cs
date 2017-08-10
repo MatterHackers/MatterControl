@@ -111,7 +111,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			var libraryContainerView = new ListView(libraryContext)
 			{
 				HAnchor = HAnchor.Stretch,
-				ShowItems = false
 			};
 			this.AddChild(libraryContainerView);
 		}
