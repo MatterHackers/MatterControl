@@ -143,7 +143,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.TrackballTumbleWidget = new TrackballTumbleWidget(ApplicationController.Instance.Printer.BedPlate.World)
 			{
-				DrawRotationHelperCircle = false,
 				TransformState = TrackBallController.MouseDownType.Rotation
 			};
 			this.TrackballTumbleWidget.AnchorAll();
@@ -1127,14 +1126,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
 		{
-			if (this.TrackballTumbleWidget.MouseCaptured)
-			{
-				if (TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.Rotation || mouseEvent.Button == MouseButtons.Right)
-				{
-					TrackballTumbleWidget.DrawRotationHelperCircle = true;
-				}
-			}
-		
 			// Show transform override
 			if (activeButtonBeforeMouseOverride == null && mouseEvent.Button == MouseButtons.Right)
 			{
@@ -1417,8 +1408,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnMouseUp(MouseEventArgs mouseEvent)
 		{
-			this.TrackballTumbleWidget.DrawRotationHelperCircle = false;
-
 			if (mouseEvent.DragFiles?.Count > 0)
 			{
 				if (AllowDragDrop() && mouseEvent.DragFiles.Count == 1)
