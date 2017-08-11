@@ -306,6 +306,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			PrinterSettings printerSettings = Instance.LoadWithoutRecovery(profileID);
 			if (printerSettings != null)
 			{
+				if(printerSettings.GetValue(SettingsKey.printer_name) == "")
+				{
+					printerSettings.SetValue(SettingsKey.printer_name, printerInfo.Name);
+				}
 				return printerSettings;
 			}
 			else if (ApplicationController.GetPrinterProfileAsync != null)
