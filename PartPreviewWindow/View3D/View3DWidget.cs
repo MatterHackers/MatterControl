@@ -287,14 +287,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 				selectionActionBar.AddChild(alignButton);
 
-				Button arrangeButton = smallMarginButtonFactory.Generate("Arrange".Localize());
-				selectionActionBar.AddChild(arrangeButton);
-				arrangeButton.Margin = buttonSpacing;
-				arrangeButton.Click += (sender, e) =>
-				{
-					this.Scene.AutoArrangeChildren(this);
-				};
-
 				CreateActionSeparator(selectionActionBar);
 
 				Button copyButton = smallMarginButtonFactory.Generate("Copy".Localize());
@@ -317,25 +309,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				CreateActionSeparator(selectionActionBar);
 
-				Button exportButton = smallMarginButtonFactory.Generate("Export".Localize() + "...");
-				exportButton.Margin = buttonSpacing;
-				exportButton.Click += (sender, e) =>
-				{
-					UiThread.RunOnIdle(() =>
-					{
-						OpenExportWindow();
-					});
-				};
-				selectionActionBar.AddChild(exportButton);
-
-				Button clearPlateButton = smallMarginButtonFactory.Generate("Clear Plate".Localize());
-				clearPlateButton.Margin = buttonSpacing;
-				clearPlateButton.Click += (sender, e) =>
-				{
-					UiThread.RunOnIdle(ApplicationController.Instance.ClearPlate);
-				};
-				selectionActionBar.AddChild(clearPlateButton);
-
 				// put in the save button
 				AddSaveAndSaveAs(selectionActionBar, buttonSpacing);
 
@@ -349,6 +322,50 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					//Margin = buttonSpacing,
 				};
 				selectionActionBar.AddChild(mirrorButton);
+
+				var bedMenu = new FlowLayoutWidget(FlowDirection.BottomToTop)
+				{
+					VAnchor = VAnchor.Fit,
+					HAnchor = HAnchor.Fit,
+					BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor,
+					Padding = 15
+				};
+
+				Button exportButton = smallMarginButtonFactory.Generate("Export".Localize() + "...");
+				exportButton.Margin = buttonSpacing;
+				exportButton.Click += (sender, e) =>
+				{
+					UiThread.RunOnIdle(() =>
+					{
+						OpenExportWindow();
+					});
+				};
+				bedMenu.AddChild(exportButton);
+
+				Button arrangeButton = smallMarginButtonFactory.Generate("Arrange".Localize());
+				arrangeButton.Margin = buttonSpacing;
+				arrangeButton.Click += (sender, e) =>
+				{
+					this.Scene.AutoArrangeChildren(this);
+				};
+				bedMenu.AddChild(arrangeButton);
+
+				Button clearPlateButton = smallMarginButtonFactory.Generate("Clear".Localize());
+				clearPlateButton.Margin = buttonSpacing;
+				clearPlateButton.Click += (sender, e) =>
+				{
+					UiThread.RunOnIdle(ApplicationController.Instance.ClearPlate);
+				};
+				bedMenu.AddChild(clearPlateButton);
+
+				// Bed menu
+				selectionActionBar.AddChild(new PopupButton(smallMarginButtonFactory.Generate("Bed".Localize()))
+				{
+					PopDirection = Direction.Up,
+					PopupContent = bedMenu,
+					AlignToRightEdge = true,
+					Margin = buttonSpacing
+				});
 
 				// put in the material options
 				var materialsButton = new PopupButton(smallMarginButtonFactory.Generate("Materials".Localize()))

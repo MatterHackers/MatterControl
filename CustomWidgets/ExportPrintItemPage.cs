@@ -4,9 +4,11 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
+using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.GCodeVisualizer;
 using MatterHackers.Localizations;
@@ -27,7 +29,7 @@ namespace MatterHackers.MatterControl
 
 		private EventHandler unregisterEvents;
 
-		private Dictionary<RadioButton, IExportGcodePlugin> exportPluginButtons;
+		private Dictionary<RadioButton, IExportPlugin> exportPluginButtons;
 
 		private ILibraryContentStream libraryContent;
 
@@ -48,32 +50,7 @@ namespace MatterHackers.MatterControl
 
 		public void CreateWindowContent()
 		{
-			bool modelCanBeExported = !libraryContent.IsProtected;
-
 			var commonMargin = new BorderDouble(4, 2);
-
-			// stl export
-			var exportAsStlButton = new RadioButton("Export as".Localize() + " STL", textColor: ActiveTheme.Instance.PrimaryTextColor)
-			{
-				Name = "Export as STL button",
-				Margin = commonMargin,
-				HAnchor = HAnchor.Left,
-				Cursor = Cursors.Hand
-			};
-
-			// amf export
-			var exportAsAmfButton = new RadioButton("Export as".Localize() + " AMF", textColor: ActiveTheme.Instance.PrimaryTextColor)
-			{
-				Name = "Export as AMF button",
-				Margin = commonMargin,
-				HAnchor = HAnchor.Left,
-				Cursor = Cursors.Hand
-			};
-			if (modelCanBeExported)
-			{
-				contentRow.AddChild(exportAsStlButton);
-				contentRow.AddChild(exportAsAmfButton);
-			}
 
 			// GCode export
 			var exportGCode = new RadioButton("Export as".Localize() + " G-Code", textColor: ActiveTheme.Instance.PrimaryTextColor)
@@ -89,9 +66,9 @@ namespace MatterHackers.MatterControl
 			{
 				contentRow.AddChild(exportGCode);
 
-				exportPluginButtons = new Dictionary<RadioButton, IExportGcodePlugin>();
+				exportPluginButtons = new Dictionary<RadioButton, IExportPlugin>();
 
-				foreach (IExportGcodePlugin plugin in PluginFinder.CreateInstancesOf<IExportGcodePlugin>())
+				foreach (IExportPlugin plugin in PluginFinder.CreateInstancesOf<IExportPlugin>())
 				{
 					if (plugin.EnabledForCurrentPart(libraryContent))
 					{
@@ -151,19 +128,9 @@ namespace MatterHackers.MatterControl
 				string fileTypeFilter = "";
 				string targetExtension = "";
 
-				IExportGcodePlugin activePlugin = null;
+				IExportPlugin activePlugin = null;
 
-				if (exportAsStlButton.Checked)
-				{
-					fileTypeFilter = "Save as STL|*.stl";
-					targetExtension = ".stl";
-				}
-				else if (exportAsAmfButton.Checked)
-				{
-					fileTypeFilter = "Save as AMF|*.amf";
-					targetExtension = ".amf";
-				}
-				else if (exportGCode.Checked)
+				if (exportGCode.Checked)
 				{
 					fileTypeFilter = "Export GCode|*.gcode";
 					targetExtension = ".gcode";
@@ -199,7 +166,7 @@ namespace MatterHackers.MatterControl
 						{
 							Title = title,
 							ActionButtonLabel = "Export".Localize(),
-							FileName = libraryContent.Name
+							FileName = Path.GetFileNameWithoutExtension(libraryContent.Name)
 						},
 						(saveParams) =>
 						{
@@ -217,26 +184,20 @@ namespace MatterHackers.MatterControl
 
 									bool succeeded = false;
 
-									if (exportAsStlButton.Checked)
-									{
-										succeeded = await SaveAmf(libraryContent, savePath);
-									}
-									else if (exportAsAmfButton.Checked)
-									{
-										succeeded = await SaveAmf(libraryContent, savePath);
-									}
-									else if (exportGCode.Checked)
+									if (exportGCode.Checked)
 									{
 										succeeded = await SaveGCode(savePath);
 									}
 									else if (activePlugin != null)
 									{
-										succeeded = await ExportToPlugin(activePlugin, savePath);
+										succeeded = await activePlugin.Generate(libraryContent, savePath);
+										//await SaveAmf(libraryContent, savePath)
+										//succeeded = await ExportToPlugin(activePlugin, savePath);
 									}
 
 									if (succeeded)
 									{
-										ShowFileIfRequested(saveParams.FileName);
+										ShowFileIfRequested(savePath);
 									}
 									else
 									{
@@ -270,49 +231,18 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private async Task<bool> SaveAmf(ILibraryContentStream source, string filePathToSave)
+		public async Task<bool> ExportToPlugin(IExportPlugin plugin, string filePathToSave)
 		{
 			try
 			{
-				if (!string.IsNullOrEmpty(filePathToSave))
+				string generatedOrExistingFilePath = await SliceFileIfNeeded();
+
+				var gcodeFileItem = new FileSystemFileItem(generatedOrExistingFilePath);
+
+
+				if (File.Exists(generatedOrExistingFilePath))
 				{
-					if (Path.GetExtension(libraryContent.FileName).ToUpper() == Path.GetExtension(filePathToSave).ToUpper())
-					{
-						using (var result = await libraryContent.GetContentStream(null))
-						using (var fileStream = File.Create(filePathToSave))
-						{
-							result.Stream.CopyTo(fileStream);
-						}
-
-						return true;
-					}
-					else
-					{
-						using (var result = await libraryContent.GetContentStream(null))
-						{
-							IObject3D item = Object3D.Load(result.Stream, Path.GetExtension(libraryContent.FileName), CancellationToken.None);
-							return MeshFileIo.Save(item, filePathToSave);
-						}
-					}
-				}
-			}
-			catch (Exception ex)
-			{
-				Trace.WriteLine("Error exporting file: " + ex.Message);
-			}
-
-			return false;
-		}
-
-		public async Task<bool> ExportToPlugin(IExportGcodePlugin plugin, string filePathToSave)
-		{
-			try
-			{
-				string newGCodePath = await SliceFileIfNeeded();
-
-				if (File.Exists(newGCodePath))
-				{
-					plugin.Generate(newGCodePath, filePathToSave);
+					plugin.Generate(gcodeFileItem, filePathToSave);
 					return true;
 				}
 			}

@@ -26,17 +26,31 @@ The views and conclusions contained in the software and documentation are those
 of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
-using MatterHackers.MatterControl.Library;
 
-namespace MatterHackers.MatterControl
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using MatterHackers.Localizations;
+
+namespace MatterHackers.MatterControl.Library.Export
 {
-	public interface IExportGcodePlugin
+	public class StlExport : IExportPlugin
 	{
-		string ButtonText { get; }
-		string FileExtension { get; }
-		string ExtensionFilter { get; }
+		public string ButtonText => "STL File".Localize();
 
-		void Generate(string gcodeInputPath, string x3gOutputPath);
-		bool EnabledForCurrentPart(ILibraryContentStream libraryContent);
+		public string FileExtension => ".stl";
+
+		public string ExtensionFilter => "Save as STL|*.stl";
+
+		public bool EnabledForCurrentPart(ILibraryContentStream libraryContent)
+		{
+			return !libraryContent.IsProtected;
+		}
+
+		public Task<bool> Generate(ILibraryContentStream libraryContent, string outputPath)
+		{
+			return MeshExport.ExportMesh(libraryContent, outputPath);
+		}
 	}
 }
