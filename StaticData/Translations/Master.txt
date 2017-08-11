@@ -4393,3 +4393,6 @@ Translated:Heat the bed
 English:Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Layers/Surface'
 Translated:Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Layers/Surface'
 
+English:New User? 
+Translated:New User? 
+

@@ -1520,7 +1520,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				colorSelectionContainer.AddChild(new GuiWidget(16, 16)
 				{
-					BackgroundColor = MatterialRendering.Color(extruderIndex)
+					BackgroundColor = MatterialRendering.Color(extruderIndex),
+					Margin = new BorderDouble(5, 0, 0, 0)
 				});
 			}
 

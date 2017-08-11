@@ -575,6 +575,8 @@ namespace MatterHackers.MeshVisualizer
 					var frustum = World.GetClippingFrustum();
 					GLHelper.PrepareFor3DLineRender(true);
 
+					double selectionHighlightWidth = 5;
+
 					if (renderData.Mesh.Vertices.Count < 1000)
 					{
 						foreach (MeshEdge meshEdge in renderData.Mesh.MeshEdges)
@@ -598,7 +600,7 @@ namespace MatterHackers.MeshVisualizer
 
 									for (int i = 0; i < 3; i++)
 									{
-										GLHelper.Render3DLineNoPrep(frustum, World, transformed1, transformed2, RGBA_Bytes.White, 5);
+										GLHelper.Render3DLineNoPrep(frustum, World, transformed1, transformed2, RGBA_Bytes.White, selectionHighlightWidth);
 									}
 								}
 							}
@@ -606,7 +608,7 @@ namespace MatterHackers.MeshVisualizer
 					}
 					else // just render the bounding box
 					{
-						RenderAABB(frustum, renderData.Mesh.GetAxisAlignedBoundingBox(), renderData.Matrix, RGBA_Bytes.White);
+						RenderAABB(frustum, renderData.Mesh.GetAxisAlignedBoundingBox(), renderData.Matrix, RGBA_Bytes.White, selectionHighlightWidth);
 					}
 
 					// turn lighting back on after rendering selection outlines
@@ -615,7 +617,7 @@ namespace MatterHackers.MeshVisualizer
 			}
 		}
 
-		void RenderAABB(Frustum frustum, AxisAlignedBoundingBox bounds, Matrix4X4 matrix, RGBA_Bytes color)
+		void RenderAABB(Frustum frustum, AxisAlignedBoundingBox bounds, Matrix4X4 matrix, RGBA_Bytes color, double width)
 		{
 			for (int i = 0; i < 4; i++)
 			{
@@ -624,9 +626,9 @@ namespace MatterHackers.MeshVisualizer
 				Vector3 topStartPosition = Vector3.Transform(bounds.GetTopCorner(i), matrix);
 				Vector3 topEndPosition = Vector3.Transform(bounds.GetTopCorner((i + 1) % 4), matrix);
 
-				GLHelper.Render3DLineNoPrep(frustum, World, bottomStartPosition, bottomEndPosition, color, 15);
-				GLHelper.Render3DLineNoPrep(frustum, World, topStartPosition, topEndPosition, color, 15);
-				GLHelper.Render3DLineNoPrep(frustum, World, topStartPosition, bottomStartPosition, color, 15);
+				GLHelper.Render3DLineNoPrep(frustum, World, bottomStartPosition, bottomEndPosition, color, width);
+				GLHelper.Render3DLineNoPrep(frustum, World, topStartPosition, topEndPosition, color, width);
+				GLHelper.Render3DLineNoPrep(frustum, World, topStartPosition, bottomStartPosition, color, width);
 			}
 		}
 
