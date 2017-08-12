@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -22,7 +23,6 @@ namespace MatterHackers.MatterControl
 	public class ExportPrintItemPage : WizardPage
 	{
 		private CheckBox showInFolderAfterSave;
-		private CheckBox applyLeveling;
 		private string gcodePathAndFilenameToSave;
 		private bool partIsGCode = false;
 		private string documentsPath;
@@ -31,14 +31,12 @@ namespace MatterHackers.MatterControl
 
 		private Dictionary<RadioButton, IExportPlugin> exportPluginButtons;
 
-		private ILibraryContentStream libraryContent;
+		private IEnumerable<ILibraryItem> libraryItems;
 
-		public ExportPrintItemPage(ILibraryContentStream libraryContent)
+		public ExportPrintItemPage(IEnumerable<ILibraryItem> libraryItems)
 			: base(unlocalizedTextForTitle: "File export options:")
 		{
-			partIsGCode = Path.GetExtension(libraryContent.FileName).ToUpper() == ".GCODE";
-
-			this.libraryContent = libraryContent;
+			this.libraryItems = libraryItems;
 			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 			this.Name = "Export Item Window";
 
@@ -53,52 +51,38 @@ namespace MatterHackers.MatterControl
 			var commonMargin = new BorderDouble(4, 2);
 
 			// GCode export
-			var exportGCode = new RadioButton("Export as".Localize() + " G-Code", textColor: ActiveTheme.Instance.PrimaryTextColor)
-			{
-				Name = "Export as GCode Button",
-				Margin = commonMargin,
-				HAnchor = HAnchor.Left,
-				Cursor = Cursors.Hand
-			};
-
 			bool showExportGCodeButton = ActiveSliceSettings.Instance.PrinterSelected || partIsGCode;
 			if (showExportGCodeButton)
 			{
-				contentRow.AddChild(exportGCode);
-
 				exportPluginButtons = new Dictionary<RadioButton, IExportPlugin>();
 
 				foreach (IExportPlugin plugin in PluginFinder.CreateInstancesOf<IExportPlugin>())
 				{
-					if (plugin.EnabledForCurrentPart(libraryContent))
+					// Create export button for each plugin
+					var pluginButton = new RadioButton(plugin.ButtonText.Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor)
 					{
-						// Create export button for each plugin
-						var pluginButton = new RadioButton(plugin.ButtonText.Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor)
-						{
-							HAnchor = HAnchor.Left,
-							Margin = commonMargin,
-							Cursor = Cursors.Hand
-						};
-						contentRow.AddChild(pluginButton);
+						HAnchor = HAnchor.Left,
+						Margin = commonMargin,
+						Cursor = Cursors.Hand
+					};
+					contentRow.AddChild(pluginButton);
 
-						exportPluginButtons.Add(pluginButton, plugin);
+					var optionPanel = plugin.GetOptionsPanel();
+					if (optionPanel != null)
+					{
+						optionPanel.HAnchor = HAnchor.Stretch;
+						optionPanel.VAnchor = VAnchor.Fit;
+						contentRow.AddChild(optionPanel);
 					}
+
+					exportPluginButtons.Add(pluginButton, plugin);
 				}
 			}
 
-			contentRow.AddChild(new VerticalSpacer());
+			//if (plugin.EnabledForCurrentPart(libraryContent))
+			
 
-			// If print leveling is enabled then add in a check box 'Apply Leveling During Export' and default checked.
-			if (showExportGCodeButton && ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_enabled))
-			{
-				applyLeveling = new CheckBox("Apply leveling to G-Code during export".Localize(), ActiveTheme.Instance.PrimaryTextColor, 10)
-				{
-					Checked = true,
-					HAnchor = HAnchor.Left,
-					Cursor = Cursors.Hand
-				};
-				contentRow.AddChild(applyLeveling);
-			}
+			contentRow.AddChild(new VerticalSpacer());
 
 			// TODO: make this work on the mac and then delete this if
 			if (OsInformation.OperatingSystem == OSType.Windows
@@ -130,32 +114,24 @@ namespace MatterHackers.MatterControl
 
 				IExportPlugin activePlugin = null;
 
-				if (exportGCode.Checked)
+				// Loop over all plugin buttons, break on the first checked item found
+				foreach(var button in this.exportPluginButtons.Keys)
 				{
-					fileTypeFilter = "Export GCode|*.gcode";
-					targetExtension = ".gcode";
+					if (button.Checked)
+					{
+						activePlugin = exportPluginButtons[button];
+						break;
+					}
 				}
-				else
+
+				// Early exit if no plugin radio button is selected
+				if (activePlugin == null)
 				{
-					// Loop over all plugin buttons, break on the first checked item found
-					foreach(var button in this.exportPluginButtons.Keys)
-					{
-						if (button.Checked)
-						{
-							activePlugin = exportPluginButtons[button];
-							break;
-						}
-					}
-
-					// Early exit if no plugin radio button is selected
-					if (activePlugin == null)
-					{
-						return;
-					}
-
-					fileTypeFilter = activePlugin.ExtensionFilter;
-					targetExtension = activePlugin.FileExtension;
+					return;
 				}
+
+				fileTypeFilter = activePlugin.ExtensionFilter;
+				targetExtension = activePlugin.FileExtension;
 
 				this.Parent.CloseOnIdle();
 				UiThread.RunOnIdle(() =>
@@ -166,7 +142,7 @@ namespace MatterHackers.MatterControl
 						{
 							Title = title,
 							ActionButtonLabel = "Export".Localize(),
-							FileName = Path.GetFileNameWithoutExtension(libraryContent.Name)
+							FileName = Path.GetFileNameWithoutExtension(libraryItems.FirstOrDefault()?.Name ?? DateTime.Now.ToString("yyyyMMdd-HHmmss"))
 						},
 						(saveParams) =>
 						{
@@ -184,15 +160,9 @@ namespace MatterHackers.MatterControl
 
 									bool succeeded = false;
 
-									if (exportGCode.Checked)
+									if (activePlugin != null)
 									{
-										succeeded = await SaveGCode(savePath);
-									}
-									else if (activePlugin != null)
-									{
-										succeeded = await activePlugin.Generate(libraryContent, savePath);
-										//await SaveAmf(libraryContent, savePath)
-										//succeeded = await ExportToPlugin(activePlugin, savePath);
+										succeeded = await activePlugin.Generate(libraryItems, savePath);
 									}
 
 									if (succeeded)
@@ -228,106 +198,6 @@ namespace MatterHackers.MatterControl
 					WindowsFormsAbstract.ShowFileInFolder(filename);
 #endif
 				}
-			}
-		}
-
-		public async Task<bool> ExportToPlugin(IExportPlugin plugin, string filePathToSave)
-		{
-			try
-			{
-				string generatedOrExistingFilePath = await SliceFileIfNeeded();
-
-				var gcodeFileItem = new FileSystemFileItem(generatedOrExistingFilePath);
-
-
-				if (File.Exists(generatedOrExistingFilePath))
-				{
-					plugin.Generate(gcodeFileItem, filePathToSave);
-					return true;
-				}
-			}
-			catch
-			{
-			}
-
-			return false;
-		}
-
-		public async Task<bool> SaveGCode(string filePathToSave)
-		{
-			try
-			{
-				string newGCodePath = await SliceFileIfNeeded();
-
-				if (File.Exists(newGCodePath))
-				{
-					SaveGCodeToNewLocation(newGCodePath, filePathToSave);
-					return true;
-				}
-			}
-			catch
-			{
-			}
-
-			return false;
-		}
-
-		private async Task<string> SliceFileIfNeeded()
-		{
-			// TODO: How to handle gcode files in library content?
-			//string fileToProcess = partIsGCode ?  printItemWrapper.FileLocation : "";
-			string fileToProcess = "";
-
-			string sourceExtension = Path.GetExtension(libraryContent.FileName).ToUpper();
-			if (MeshFileIo.ValidFileExtensions().Contains(sourceExtension)
-				|| sourceExtension == ".MCX")
-			{
-				// Save any pending changes before starting the print
-				await ApplicationController.Instance.ActiveView3DWidget.PersistPlateIfNeeded();
-
-				var printItem = ApplicationController.Instance.ActivePrintItem;
-
-				await SlicingQueue.SliceFileAsync(printItem, null);
-
-				fileToProcess = printItem.GetGCodePathAndFileName();
-			}
-
-			return fileToProcess;
-		}
-
-		private void SaveGCodeToNewLocation(string gcodeFilename, string dest)
-		{
-			try
-			{
-				GCodeFileStream gCodeFileStream = new GCodeFileStream(GCodeFile.Load(gcodeFilename, CancellationToken.None));
-
-				bool addLevelingStream = ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_enabled) && applyLeveling.Checked;
-				var queueStream = new QueuedCommandsStream(gCodeFileStream);
-
-				// this is added to ensure we are rewriting the G0 G1 commands as needed
-				GCodeStream finalStream = addLevelingStream
-					? new ProcessWriteRegexStream(new PrintLevelingStream(queueStream, false), queueStream)
-					: new ProcessWriteRegexStream(queueStream, queueStream);
-
-				using (StreamWriter file = new StreamWriter(dest))
-				{
-					string nextLine = finalStream.ReadLine();
-					while (nextLine != null)
-					{
-						if (nextLine.Trim().Length > 0)
-						{
-							file.WriteLine(nextLine);
-						}
-						nextLine = finalStream.ReadLine();
-					}
-				}
-			}
-			catch (Exception e)
-			{
-				UiThread.RunOnIdle(() =>
-				{
-					StyledMessageBox.ShowMessageBox(null, e.Message, "Couldn't save file".Localize());
-				});
 			}
 		}
 
