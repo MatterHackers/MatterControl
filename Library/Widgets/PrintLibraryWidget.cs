@@ -466,7 +466,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			menuActions.Add(new PrintItemAction()
 			{
 				Title = "Export".Localize(),
-				AllowMultiple = false,
+				AllowMultiple = true,
 				AllowProtected = true,
 				AllowContainers = false,
 				Action = (selectedLibraryItems, listView) => exportButton_Click(selectedLibraryItems, null),
@@ -782,17 +782,10 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private void exportButton_Click(object sender, EventArgs e)
 		{
 			//Open export options
-			if (libraryView.SelectedItems.Count == 1)
-			{
-				var libraryItem = libraryView.SelectedItems.Select(i => i.Model).FirstOrDefault();
-				if (libraryItem is ILibraryContentStream libraryContent)
-				{
-					var exportPage = new ExportPrintItemPage(libraryContent);
+			var exportPage = new ExportPrintItemPage(libraryView.SelectedItems.Select(item => item.Model));
 
-					string windowTitle = "MatterControl".Localize() + ": " + "Export File".Localize();
-					WizardWindow.Show("/ExportPrintItemPage", "", exportPage);
-				}
-			}
+			string windowTitle = "MatterControl".Localize() + ": " + "Export File".Localize();
+			WizardWindow.Show("/ExportPrintItemPage", "", exportPage);
 		}
 
 		/*

@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Matt Moening, John Lewin
+Copyright (c) 2017, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,10 +27,12 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.Library.Export
@@ -48,9 +50,18 @@ namespace MatterHackers.MatterControl.Library.Export
 			return !libraryContent.IsProtected;
 		}
 
-		public Task<bool> Generate(ILibraryContentStream libraryContent, string outputPath)
+		public Task<bool> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath)
 		{
-			return MeshExport.ExportMesh(libraryContent, outputPath);
+			ILibraryContentStream libraryContent = libraryItems.OfType<ILibraryContentStream>().FirstOrDefault();
+
+			if (libraryContent != null)
+			{
+				return MeshExport.ExportMesh(libraryContent, outputPath);
+			}
+
+			return null;
 		}
+
+		public GuiWidget GetOptionsPanel() => null;
 	}
 }
