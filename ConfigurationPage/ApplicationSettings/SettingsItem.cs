@@ -23,31 +23,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		{
 		}
 
-		public SettingsItem (string text, GuiWidget settingsControls, GuiWidget optionalControls = null, ImageBuffer iconImage = null, bool enforceGutter = true)
+		public SettingsItem (string text, GuiWidget settingsControls, GuiWidget optionalControls = null, ImageBuffer imageBuffer = null, bool enforceGutter = true)
 			: base (FlowDirection.LeftToRight)
-		{
-			CreateChildControls(text, settingsControls, optionalControls, enforceGutter, iconImage);
-		}
-
-		private static CheckBox CreateToggleSwitch(ToggleSwitchConfig toggleSwitchConfig)
-		{
-			if (toggleSwitchConfig == null)
-			{
-				return null;
-			}
-
-			var toggleSwitch = ImageButtonFactory.CreateToggleSwitch(toggleSwitchConfig.Checked, menuTextColor);
-			toggleSwitch.VAnchor = VAnchor.Center;
-			toggleSwitch.Margin = new BorderDouble(left: 16);
-			toggleSwitch.CheckedStateChanged += (sender, e) =>
-			{
-				toggleSwitchConfig.ToggleAction?.Invoke(toggleSwitch.Checked);
-			};
-
-			return toggleSwitch;
-		}
-
-		private void CreateChildControls(string text, GuiWidget settingsControls, GuiWidget optionalControls, bool enforceGutter, ImageBuffer imageBuffer = null)
 		{
 			this.HAnchor = HAnchor.Stretch;
 			this.MinimumSize = new Vector2(0, 40);
@@ -100,6 +77,24 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				settingsControls.VAnchor |= VAnchor.Center;
 				this.AddChild(settingsControls);
 			}
+		}
+
+		private static CheckBox CreateToggleSwitch(ToggleSwitchConfig toggleSwitchConfig)
+		{
+			if (toggleSwitchConfig == null)
+			{
+				return null;
+			}
+
+			var toggleSwitch = ImageButtonFactory.CreateToggleSwitch(toggleSwitchConfig.Checked, menuTextColor);
+			toggleSwitch.VAnchor = VAnchor.Center;
+			toggleSwitch.Margin = new BorderDouble(left: 16);
+			toggleSwitch.CheckedStateChanged += (sender, e) =>
+			{
+				toggleSwitchConfig.ToggleAction?.Invoke(toggleSwitch.Checked);
+			};
+
+			return toggleSwitch;
 		}
 	}
 }
