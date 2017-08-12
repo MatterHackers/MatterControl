@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl
 			{
 				exportPluginButtons = new Dictionary<RadioButton, IExportPlugin>();
 
-				foreach (IExportPlugin plugin in PluginFinder.CreateInstancesOf<IExportPlugin>())
+				foreach (IExportPlugin plugin in PluginFinder.CreateInstancesOf<IExportPlugin>().OrderBy(p => p.ButtonText))
 				{
 					// Create export button for each plugin
 					var pluginButton = new RadioButton(plugin.ButtonText.Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor)
