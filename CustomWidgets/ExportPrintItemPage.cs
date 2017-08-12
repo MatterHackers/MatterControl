@@ -15,6 +15,7 @@ using MatterHackers.GCodeVisualizer;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.Library;
+using MatterHackers.MatterControl.Library.Export;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
@@ -134,6 +135,31 @@ namespace MatterHackers.MatterControl
 				targetExtension = activePlugin.FileExtension;
 
 				this.Parent.CloseOnIdle();
+
+				if (activePlugin is FolderExport)
+				{
+					UiThread.RunOnIdle(() =>
+					{
+						FileDialog.SelectFolderDialog(
+							new SelectFolderDialogParams("Select Location To Export Files")
+							{
+								ActionButtonLabel = "Export".Localize(),
+								Title = "MatterControl: Select A Folder"
+							},
+							(openParams) =>
+							{
+								string path = openParams.FolderPath;
+								if (!string.IsNullOrEmpty(path))
+								{
+									activePlugin.Generate(libraryItems, path).ConfigureAwait(false);
+								}
+							});
+					});
+
+					return;
+				}
+
+
 				UiThread.RunOnIdle(() =>
 				{
 					string title = "MatterControl: " + "Export File".Localize();

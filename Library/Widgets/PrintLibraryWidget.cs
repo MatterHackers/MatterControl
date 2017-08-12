@@ -486,33 +486,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			menuActions.AddRange(ApplicationController.Instance.RegisteredLibraryActions("StandardLibraryOperations"));
 
 #if !__ANDROID__
-			menuActions.Add(new MenuSeparator("G-Code"));
-			menuActions.Add(new PrintItemAction()
-			{
-				Title = "Export to Folder or SD Card".Localize(),
-				AllowMultiple = true,
-				AllowProtected = false,
-				AllowContainers = false,
-				Action = (selectedLibraryItems, listView) =>
-				{
-					if (!ActiveSliceSettings.Instance.PrinterSelected)
-					{
-						UiThread.RunOnIdle(() =>
-						{
-							// MustSelectPrinterMessage
-							StyledMessageBox.ShowMessageBox(
-								null,
-								"Before you can export printable files, you must select a printer.".Localize(),
-								"Please select a printer".Localize());
-						});
-					}
-					else
-					{
-						UiThread.RunOnIdle(SelectLocationToExportGCode);
-					}
-				}
-			});
-
 			menuActions.Add(new MenuSeparator("Other"));
 
 			// PDF export is limited to Windows

@@ -169,6 +169,7 @@
     <Compile Include="CustomWidgets\SolidSlider.cs" />
     <Compile Include="DataStorage\Models.cs" />
     <Compile Include="Library\ContentProviders\MeshContentProvider.cs" />
+    <Compile Include="Library\Export\FolderExport.cs" />
     <Compile Include="Library\Export\ZipExport.cs" />
     <Compile Include="Library\Export\GCodeExport.cs" />
     <Compile Include="Library\Export\StlExport.cs" />
