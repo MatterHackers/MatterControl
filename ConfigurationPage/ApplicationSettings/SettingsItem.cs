@@ -36,11 +36,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			if (imageBuffer != null)
 			{
-				if (!ActiveTheme.Instance.IsDarkTheme)
-				{
-					InvertLightness.DoInvertLightness(imageBuffer);
-				}
-
 				this.AddChild(new ImageWidget(imageBuffer)
 				{
 					Margin = new BorderDouble(right: 6, left: 6),
