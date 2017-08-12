@@ -323,46 +323,40 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 				selectionActionBar.AddChild(mirrorButton);
 
-				var bedMenu = new FlowLayoutWidget(FlowDirection.BottomToTop)
+				var menuActions = new[]
 				{
-					VAnchor = VAnchor.Fit,
-					HAnchor = HAnchor.Fit,
-					BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor,
-					Padding = 15
-				};
-
-				Button exportButton = smallMarginButtonFactory.Generate("Export".Localize() + "...");
-				exportButton.Margin = buttonSpacing;
-				exportButton.Click += (sender, e) =>
-				{
-					UiThread.RunOnIdle(() =>
+					new NamedAction()
 					{
-						OpenExportWindow();
-					});
+						Title = "Export".Localize() + "...",
+						Action = () =>
+						{
+							UiThread.RunOnIdle(OpenExportWindow);
+						}
+					},
+					new NamedAction()
+					{
+						Title = "Arrange All Parts".Localize(),
+						Action = () =>
+						{
+							this.Scene.AutoArrangeChildren(this);
+						}
+					},
+					new NamedAction() { Title = "----" },
+					new NamedAction()
+					{
+						Title = "Clear Bed".Localize(),
+						Action = () =>
+						{
+							UiThread.RunOnIdle(ApplicationController.Instance.ClearPlate);
+						}
+					}
 				};
-				bedMenu.AddChild(exportButton);
-
-				Button arrangeButton = smallMarginButtonFactory.Generate("Arrange".Localize());
-				arrangeButton.Margin = buttonSpacing;
-				arrangeButton.Click += (sender, e) =>
-				{
-					this.Scene.AutoArrangeChildren(this);
-				};
-				bedMenu.AddChild(arrangeButton);
-
-				Button clearPlateButton = smallMarginButtonFactory.Generate("Clear".Localize());
-				clearPlateButton.Margin = buttonSpacing;
-				clearPlateButton.Click += (sender, e) =>
-				{
-					UiThread.RunOnIdle(ApplicationController.Instance.ClearPlate);
-				};
-				bedMenu.AddChild(clearPlateButton);
 
 				// Bed menu
 				selectionActionBar.AddChild(new PopupButton(smallMarginButtonFactory.Generate("Bed".Localize()))
 				{
 					PopDirection = Direction.Up,
-					PopupContent = bedMenu,
+					PopupContent = ApplicationController.Instance.Theme.CreatePopupMenu(menuActions),
 					AlignToRightEdge = true,
 					Margin = buttonSpacing
 				});
