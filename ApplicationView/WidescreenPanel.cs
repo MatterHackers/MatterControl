@@ -124,8 +124,8 @@ namespace MatterHackers.MatterControl
 				//e.graphics2D.Render(directionArrow, buttonView.LocalBounds.Right - arrowHeight * 2 - 2, buttonView.LocalBounds.Center.y + arrowHeight / 2, ActiveTheme.Instance.SecondaryTextColor);
 			};
 
-			var icon = StaticData.Instance.LoadIcon(Path.Combine("..", "Images", "mh-logo.png"), 32, 32);
-			if (!ActiveTheme.Instance.IsDarkTheme)
+			var icon = StaticData.Instance.LoadIcon(Path.Combine("..", "Images", "mh-app-logo.png"));
+			if (ActiveTheme.Instance.IsDarkTheme)
 			{
 				icon = icon.InvertLightness();
 			}
