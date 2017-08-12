@@ -53,6 +53,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public static RootedObjectEventHandler SettingChanged = new RootedObjectEventHandler();
 
 		private static PrinterSettings activeInstance;
+
+		static bool showConnectionHelp = false;
+		public static void ShowComPortConnectionHelp() { showConnectionHelp = true; }
+		
 		public static PrinterSettings Instance
 		{
 			get
@@ -84,7 +88,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						{
 							UiThread.RunOnIdle(() =>
 							{
-								PrinterConnectionAndCommunication.Instance.ConnectToActivePrinter();
+								PrinterConnectionAndCommunication.Instance.ConnectToActivePrinter(showConnectionHelp);
+								showConnectionHelp = false;
 							}, 2);
 						}
 					}
