@@ -66,21 +66,21 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			popupContainer.AddChild(new MenuItem(showHelpBox, "Show Help Checkbox")
 			{
-				Padding = overflowDropdown.MenuPadding,
+				Padding = OverflowDropdown.MenuPadding,
 			});
 
-			popupContainer.AddChild(overflowDropdown.CreateHorizontalLine());
+			popupContainer.AddChild(OverflowDropdown.CreateHorizontalLine());
 
 			MenuItem menuItem;
 
-			menuItem = overflowDropdown.CreateMenuItem("Export".Localize());
+			menuItem = OverflowDropdown.CreateMenuItem("Export".Localize());
 			menuItem.Click += (s, e) => 
 			{
 				WizardWindow.Show<ExportSettingsPage>("ExportSettingsPage", "Export Settings");
 			};
 			popupContainer.AddChild(menuItem);
 
-			menuItem = overflowDropdown.CreateMenuItem("Restore Settings".Localize());
+			menuItem = OverflowDropdown.CreateMenuItem("Restore Settings".Localize());
 			menuItem.Click += (s, e) => 
 			{
 				WizardWindow.Show<PrinterProfileHistoryPage>("PrinterProfileHistory", "Restore Settings");
@@ -88,7 +88,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			menuItem.Enabled = !string.IsNullOrEmpty(AuthenticationData.Instance.ActiveSessionUsername);
 			popupContainer.AddChild(menuItem);
 
-			menuItem = overflowDropdown.CreateMenuItem("Reset to Defaults".Localize());
+			menuItem = OverflowDropdown.CreateMenuItem("Reset to Defaults".Localize());
 			menuItem.Click += (s, e) => 
 			{
 				UiThread.RunOnIdle(() =>
@@ -125,7 +125,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			};
 			popupContainer.AddChild(menuItem);
 
-			popupContainer.AddChild(overflowDropdown.CreateHorizontalLine());
+			popupContainer.AddChild(OverflowDropdown.CreateHorizontalLine());
 
 			popupContainer.AddChild(new TextWidget("Mode")
 			{

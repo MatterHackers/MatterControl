@@ -169,6 +169,12 @@
     <Compile Include="CustomWidgets\SolidSlider.cs" />
     <Compile Include="DataStorage\Models.cs" />
     <Compile Include="Library\ContentProviders\MeshContentProvider.cs" />
+    <Compile Include="Library\Export\FolderExport.cs" />
+    <Compile Include="Library\Export\ZipExport.cs" />
+    <Compile Include="Library\Export\GCodeExport.cs" />
+    <Compile Include="Library\Export\StlExport.cs" />
+    <Compile Include="Library\Export\AmfExport.cs" />
+    <Compile Include="Library\Export\MeshExport.cs" />
     <Compile Include="Library\ExtensionMethods.cs" />
     <Compile Include="Library\Interfaces\ILibraryContainer.cs" />
     <Compile Include="Library\Interfaces\ILibraryContainerLink.cs" />
@@ -273,7 +279,7 @@
     <Compile Include="PrinterControls\TerminalWindow\TerminalWidget.cs" />
     <Compile Include="History\PrintHistoryData.cs" />
     <Compile Include="Library\Widgets\SystemWindows\CreateFolderWindow.cs" />
-    <Compile Include="Queue\OptionsMenu\ExportGcodePlugin.cs" />
+    <Compile Include="Library\Export\IExportPlugin.cs" />
     <Compile Include="SetupWizard\AndroidConnectDevicePage.cs" />
     <Compile Include="SetupWizard\ImportSettingsPage.cs" />
     <Compile Include="SetupWizard\ExportSettingsPage.cs" />

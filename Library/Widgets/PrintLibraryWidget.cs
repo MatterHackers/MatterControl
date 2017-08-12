@@ -466,7 +466,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			menuActions.Add(new PrintItemAction()
 			{
 				Title = "Export".Localize(),
-				AllowMultiple = false,
+				AllowMultiple = true,
 				AllowProtected = true,
 				AllowContainers = false,
 				Action = (selectedLibraryItems, listView) => exportButton_Click(selectedLibraryItems, null),
@@ -486,54 +486,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			menuActions.AddRange(ApplicationController.Instance.RegisteredLibraryActions("StandardLibraryOperations"));
 
 #if !__ANDROID__
-			menuActions.Add(new MenuSeparator("Design"));
-			menuActions.Add(new PrintItemAction()
-			{
-				Title = "Export to Zip".Localize(),
-				AllowMultiple = true,
-				AllowProtected = true,
-				AllowContainers = false,
-				Action = (selectedLibraryItems, listView) =>
-				{
-					var streamItems = selectedLibraryItems.OfType<ILibraryContentStream>();
-					if (streamItems.Any())
-					{
-						UiThread.RunOnIdle(() =>
-						{
-							var project = new ProjectFileHandler(streamItems);
-							project.SaveAs();
-						});
-					}
-				},
-			});
-
-			menuActions.Add(new MenuSeparator("G-Code"));
-			menuActions.Add(new PrintItemAction()
-			{
-				Title = "Export to Folder or SD Card".Localize(),
-				AllowMultiple = true,
-				AllowProtected = false,
-				AllowContainers = false,
-				Action = (selectedLibraryItems, listView) =>
-				{
-					if (!ActiveSliceSettings.Instance.PrinterSelected)
-					{
-						UiThread.RunOnIdle(() =>
-						{
-							// MustSelectPrinterMessage
-							StyledMessageBox.ShowMessageBox(
-								null,
-								"Before you can export printable files, you must select a printer.".Localize(),
-								"Please select a printer".Localize());
-						});
-					}
-					else
-					{
-						UiThread.RunOnIdle(SelectLocationToExportGCode);
-					}
-				}
-			});
-
 			menuActions.Add(new MenuSeparator("Other"));
 
 			// PDF export is limited to Windows
@@ -803,17 +755,10 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private void exportButton_Click(object sender, EventArgs e)
 		{
 			//Open export options
-			if (libraryView.SelectedItems.Count == 1)
-			{
-				var libraryItem = libraryView.SelectedItems.Select(i => i.Model).FirstOrDefault();
-				if (libraryItem is ILibraryContentStream libraryContent)
-				{
-					var exportPage = new ExportPrintItemPage(libraryContent);
+			var exportPage = new ExportPrintItemPage(libraryView.SelectedItems.Select(item => item.Model));
 
-					string windowTitle = "MatterControl".Localize() + ": " + "Export File".Localize();
-					WizardWindow.Show("/ExportPrintItemPage", "", exportPage);
-				}
-			}
+			string windowTitle = "MatterControl".Localize() + ": " + "Export File".Localize();
+			WizardWindow.Show("/ExportPrintItemPage", "", exportPage);
 		}
 
 		/*
@@ -914,11 +859,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 				if (menuAction is MenuSeparator)
 				{
-					menuItem = overflowDropdown.CreateHorizontalLine();
+					menuItem = OverflowDropdown.CreateHorizontalLine();
 				}
 				else
 				{
-					menuItem = overflowDropdown.CreateMenuItem((string)menuAction.Title);
+					menuItem = OverflowDropdown.CreateMenuItem((string)menuAction.Title);
 					menuItem.Name = $"{menuAction.Title} Menu Item";
 				}
 

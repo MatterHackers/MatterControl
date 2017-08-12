@@ -229,17 +229,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// add in the plater tools
 			{
-				selectionActionBar = new FlowLayoutWidget();
-				selectionActionBar.VAnchor |= VAnchor.Center;
+				selectionActionBar = new FlowLayoutWidget()
+				{
+					VAnchor = VAnchor.Center | VAnchor.Fit,
+					HAnchor = HAnchor.Stretch
+				};
 
 				processingProgressControl = new ProgressControl("", ActiveTheme.Instance.PrimaryTextColor, ActiveTheme.Instance.PrimaryAccentColor)
 				{
 					VAnchor = VAnchor.Center,
 					Visible = false
 				};
-
-				selectionActionBar = new FlowLayoutWidget();
-				selectionActionBar.Visible = false;
 
 				var buttonSpacing = ApplicationController.Instance.Theme.ButtonSpacing;
 
@@ -287,14 +287,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 				selectionActionBar.AddChild(alignButton);
 
-				Button arrangeButton = smallMarginButtonFactory.Generate("Arrange".Localize());
-				selectionActionBar.AddChild(arrangeButton);
-				arrangeButton.Margin = buttonSpacing;
-				arrangeButton.Click += (sender, e) =>
-				{
-					this.Scene.AutoArrangeChildren(this);
-				};
-
 				CreateActionSeparator(selectionActionBar);
 
 				Button copyButton = smallMarginButtonFactory.Generate("Copy".Localize());
@@ -317,25 +309,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				CreateActionSeparator(selectionActionBar);
 
-				Button exportButton = smallMarginButtonFactory.Generate("Export".Localize() + "...");
-				exportButton.Margin = buttonSpacing;
-				exportButton.Click += (sender, e) =>
-				{
-					UiThread.RunOnIdle(() =>
-					{
-						OpenExportWindow();
-					});
-				};
-				selectionActionBar.AddChild(exportButton);
-
-				Button clearPlateButton = smallMarginButtonFactory.Generate("Clear Plate".Localize());
-				clearPlateButton.Margin = buttonSpacing;
-				clearPlateButton.Click += (sender, e) =>
-				{
-					UiThread.RunOnIdle(ApplicationController.Instance.ClearPlate);
-				};
-				selectionActionBar.AddChild(clearPlateButton);
-
 				// put in the save button
 				AddSaveAndSaveAs(selectionActionBar, buttonSpacing);
 
@@ -350,6 +323,35 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 				selectionActionBar.AddChild(mirrorButton);
 
+				var menuActions = new[]
+				{
+					new NamedAction()
+					{
+						Title = "Export".Localize() + "...",
+						Action = () =>
+						{
+							UiThread.RunOnIdle(OpenExportWindow);
+						}
+					},
+					new NamedAction()
+					{
+						Title = "Arrange All Parts".Localize(),
+						Action = () =>
+						{
+							this.Scene.AutoArrangeChildren(this);
+						}
+					},
+					new NamedAction() { Title = "----" },
+					new NamedAction()
+					{
+						Title = "Clear Bed".Localize(),
+						Action = () =>
+						{
+							UiThread.RunOnIdle(ApplicationController.Instance.ClearPlate);
+						}
+					}
+				};
+
 				// put in the material options
 				var materialsButton = new PopupButton(smallMarginButtonFactory.Generate("Materials".Localize()))
 				{
@@ -359,6 +361,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Margin = buttonSpacing
 				};
 				selectionActionBar.AddChild(materialsButton);
+
+				selectionActionBar.AddChild(new HorizontalSpacer());
+
+				// Bed menu
+				selectionActionBar.AddChild(new PopupButton(smallMarginButtonFactory.Generate("Bed".Localize()))
+				{
+					PopDirection = Direction.Up,
+					PopupContent = ApplicationController.Instance.Theme.CreatePopupMenu(menuActions),
+					AlignToRightEdge = true,
+					Margin = buttonSpacing
+				});
 			}
 
 			selectionActionBar.AddChild(processingProgressControl);
@@ -2056,7 +2069,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void OpenExportWindow()
 		{
-			var exportPage = new ExportPrintItemPage(new FileSystemFileItem(this.printItemWrapper.FileLocation));
+			var exportPage = new ExportPrintItemPage(new[] { new FileSystemFileItem(this.printItemWrapper.FileLocation) });
 			string windowTitle = "MatterControl".Localize() + ": " + "Export File".Localize();
 			WizardWindow.Show("/ExportPrintItemPage", windowTitle, exportPage);
 		}
