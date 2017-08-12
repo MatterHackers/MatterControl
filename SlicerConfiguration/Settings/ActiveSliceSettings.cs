@@ -50,6 +50,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public static event EventHandler MaterialPresetChanged;
 
+		static bool showConnectionHelp = false;
+		public static void ShowComPortConnectionHelp() { showConnectionHelp = true; }
+
 		private static PrinterSettings activeInstance;
 		public static PrinterSettings Instance
 		{
@@ -82,7 +85,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						{
 							UiThread.RunOnIdle(() =>
 							{
-								PrinterConnection.Instance.ConnectToActivePrinter();
+								PrinterConnection.Instance.ConnectToActivePrinter(showConnectionHelp);
+								showConnectionHelp = false;
 							}, 2);
 						}
 					}
