@@ -486,27 +486,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			menuActions.AddRange(ApplicationController.Instance.RegisteredLibraryActions("StandardLibraryOperations"));
 
 #if !__ANDROID__
-			menuActions.Add(new MenuSeparator("Design"));
-			menuActions.Add(new PrintItemAction()
-			{
-				Title = "Export to Zip".Localize(),
-				AllowMultiple = true,
-				AllowProtected = true,
-				AllowContainers = false,
-				Action = (selectedLibraryItems, listView) =>
-				{
-					var streamItems = selectedLibraryItems.OfType<ILibraryContentStream>();
-					if (streamItems.Any())
-					{
-						UiThread.RunOnIdle(() =>
-						{
-							var project = new ProjectFileHandler(streamItems);
-							project.SaveAs();
-						});
-					}
-				},
-			});
-
 			menuActions.Add(new MenuSeparator("G-Code"));
 			menuActions.Add(new PrintItemAction()
 			{
