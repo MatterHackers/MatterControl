@@ -229,17 +229,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// add in the plater tools
 			{
-				selectionActionBar = new FlowLayoutWidget();
-				selectionActionBar.VAnchor |= VAnchor.Center;
+				selectionActionBar = new FlowLayoutWidget()
+				{
+					VAnchor = VAnchor.Center | VAnchor.Fit,
+					HAnchor = HAnchor.Stretch
+				};
 
 				processingProgressControl = new ProgressControl("", ActiveTheme.Instance.PrimaryTextColor, ActiveTheme.Instance.PrimaryAccentColor)
 				{
 					VAnchor = VAnchor.Center,
 					Visible = false
 				};
-
-				selectionActionBar = new FlowLayoutWidget();
-				selectionActionBar.Visible = false;
 
 				var buttonSpacing = ApplicationController.Instance.Theme.ButtonSpacing;
 
@@ -352,15 +352,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 				};
 
-				// Bed menu
-				selectionActionBar.AddChild(new PopupButton(smallMarginButtonFactory.Generate("Bed".Localize()))
-				{
-					PopDirection = Direction.Up,
-					PopupContent = ApplicationController.Instance.Theme.CreatePopupMenu(menuActions),
-					AlignToRightEdge = true,
-					Margin = buttonSpacing
-				});
-
 				// put in the material options
 				var materialsButton = new PopupButton(smallMarginButtonFactory.Generate("Materials".Localize()))
 				{
@@ -370,6 +361,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Margin = buttonSpacing
 				};
 				selectionActionBar.AddChild(materialsButton);
+
+				selectionActionBar.AddChild(new HorizontalSpacer());
+
+				// Bed menu
+				selectionActionBar.AddChild(new PopupButton(smallMarginButtonFactory.Generate("Bed".Localize()))
+				{
+					PopDirection = Direction.Up,
+					PopupContent = ApplicationController.Instance.Theme.CreatePopupMenu(menuActions),
+					AlignToRightEdge = true,
+					Margin = buttonSpacing
+				});
 			}
 
 			selectionActionBar.AddChild(processingProgressControl);
