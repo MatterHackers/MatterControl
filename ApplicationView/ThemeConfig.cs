@@ -34,6 +34,7 @@ using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl
 {
+	using System.Collections.Generic;
 	using Agg.Image;
 	using CustomWidgets;
 	using MatterHackers.VectorMath;
@@ -335,6 +336,48 @@ namespace MatterHackers.MatterControl
 				textColor = theme.SecondaryAccentColor
 			};
 		}
+
+		public FlowLayoutWidget CreatePopupMenu(IEnumerable<NamedAction> menuActions)
+		{
+			var widgetToPop = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.Fit,
+				VAnchor = VAnchor.Fit,
+				BackgroundColor = RGBA_Bytes.White
+			};
+
+			// Create menu items in the DropList for each element in this.menuActions
+			foreach (var menuAction in menuActions)
+			{
+				MenuItem menuItem;
+
+				if (menuAction.Title == "----")
+				{
+					menuItem = PartPreviewWindow.OverflowDropdown.CreateHorizontalLine();
+				}
+				else
+				{
+					menuItem = PartPreviewWindow.OverflowDropdown.CreateMenuItem((string)menuAction.Title);
+					menuItem.Name = $"{menuAction.Title} Menu Item";
+				}
+
+				menuItem.Enabled = menuAction.Action != null;
+				menuItem.ClearRemovedFlag();
+
+				if (menuItem.Enabled)
+				{
+					menuItem.Click += (s, e) =>
+					{
+						menuAction.Action();
+					};
+				}
+
+				widgetToPop.AddChild(menuItem);
+			}
+
+			return widgetToPop;
+		}
+
 
 		internal TabControl CreateTabControl()
 		{

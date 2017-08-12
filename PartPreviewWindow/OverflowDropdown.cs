@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.ToolTipText = "More...".Localize();
 		}
 
-		public BorderDouble MenuPadding { get; set; } = new BorderDouble(40, 8, 20, 8);
+		public static BorderDouble MenuPadding { get; set; } = new BorderDouble(40, 8, 20, 8);
 
 		public static ImageWidget LoadThemedIcon(bool allowLightnessInvert)
 		{
@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return new ImageWidget(imageBuffer);
 		}
 
-		public MenuItem CreateHorizontalLine()
+		public static MenuItem CreateHorizontalLine()
 		{
 			return new MenuItem(new GuiWidget()
 			{
@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}, "HorizontalLine");
 		}
 
-		public MenuItem CreateMenuItem(string name, string value = null, double pointSize = 12)
+		public static MenuItem CreateMenuItem(string name, string value = null, double pointSize = 12)
 		{
 			var menuStatesView = new MenuItemColorStatesView(name)
 			{
@@ -81,7 +81,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				OverTextColor = RGBA_Bytes.Black,
 				DisabledTextColor = RGBA_Bytes.Gray,
 				PointSize = pointSize,
-				Padding = this.MenuPadding,
+				Padding = MenuPadding,
 			};
 
 			return new MenuItem(menuStatesView, value ?? name)

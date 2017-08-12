@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using MatterHackers.Agg;
 using MatterHackers.Agg.PlatformAbstract;
@@ -217,13 +218,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			var printerSettings = ActiveSliceSettings.Instance;
 
-
-			var widgetToPop = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				HAnchor = HAnchor.Fit,
-				VAnchor = VAnchor.Fit,
-			};
-
 			var menuActions = new NamedAction[]
 			{
 				new NamedAction()
@@ -270,37 +264,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 				}
 			};
-			
-			// Create menu items in the DropList for each element in this.menuActions
-			foreach (var menuAction in menuActions)
-			{
-				MenuItem menuItem;
-
-				if (menuAction.Title == "----")
-				{
-					menuItem = overflowDropdown.CreateHorizontalLine();
-				}
-				else
-				{
-					menuItem = overflowDropdown.CreateMenuItem((string)menuAction.Title);
-					menuItem.Name = $"{menuAction.Title} Menu Item";
-				}
-
-				menuItem.Enabled = menuAction.Action != null;
-				menuItem.ClearRemovedFlag();
-
-				if (menuItem.Enabled)
-				{
-					menuItem.Click += (s, e) =>
-					{
-						menuAction.Action();
-					};
-				}
-
-				widgetToPop.AddChild(menuItem);
-			}
-
-			return widgetToPop;
+			return ApplicationController.Instance.Theme.CreatePopupMenu(menuActions);
 		}
 
 		private void configureEePromButton_Click()

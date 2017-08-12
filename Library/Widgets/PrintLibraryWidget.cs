@@ -859,11 +859,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 				if (menuAction is MenuSeparator)
 				{
-					menuItem = overflowDropdown.CreateHorizontalLine();
+					menuItem = OverflowDropdown.CreateHorizontalLine();
 				}
 				else
 				{
-					menuItem = overflowDropdown.CreateMenuItem((string)menuAction.Title);
+					menuItem = OverflowDropdown.CreateMenuItem((string)menuAction.Title);
 					menuItem.Name = $"{menuAction.Title} Menu Item";
 				}
 
