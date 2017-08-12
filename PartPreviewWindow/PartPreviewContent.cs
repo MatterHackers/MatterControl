@@ -106,13 +106,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			rightPanelArea.AddChild(extensionArea);
 
-			rightPanelArea.AddChild(
-				new ImageWidget(
-					StaticData.Instance.LoadImage(Path.Combine("Images", "minimize.png")))
-				{
-					VAnchor = VAnchor.Top,
-					DebugShowBounds  = true
-				});
+			//rightPanelArea.AddChild(
+			//	new ImageWidget(
+			//		StaticData.Instance.LoadImage(Path.Combine("Images", "minimize.png")))
+			//	{
+			//		VAnchor = VAnchor.Top,
+			//		DebugShowBounds  = true
+			//	});
 
 			tabControl.TabBar.AddChild(rightPanelArea);
 
