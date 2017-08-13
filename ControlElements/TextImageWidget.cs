@@ -52,17 +52,18 @@ namespace MatterHackers.MatterControl
 			this.borderColor = borderColor;
 			this.borderWidth = borderWidth;
 
-			this.Margin = 0;
 			this.Padding = 0;
 			this.HAnchor = HAnchor.Stretch | HAnchor.Fit;
 			this.VAnchor = VAnchor.Center | VAnchor.Fit;
 			this.BackgroundColor = fillColor;
 
+			this.MinimumSize = new Vector2(width, height);
+			this.Padding = margin;
+
 			var container = new FlowLayoutWidget(flowDirection)
 			{
-				VAnchor = VAnchor.Center,
-				MinimumSize = new Vector2(width, height),
-				Margin = margin
+				VAnchor = VAnchor.Center | VAnchor.Fit,
+				HAnchor = HAnchor.Center | HAnchor.Fit
 			};
 			this.AddChild(container);
 
