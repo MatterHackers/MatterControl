@@ -311,7 +311,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				var mirrorButton = new PopupButton(mirrorView)
 				{
 					PopDirection = Direction.Up,
-					PopupContent = new MirrorControls(this, smallMarginButtonFactory),
+					PopupContent = new MirrorControls(this),
 					Margin = buttonSpacing,
 				};
 				selectionActionBar.AddChild(mirrorButton);
