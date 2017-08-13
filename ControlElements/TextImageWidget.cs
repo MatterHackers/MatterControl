@@ -27,12 +27,12 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.VectorMath;
-using System;
 
 namespace MatterHackers.MatterControl
 {
@@ -51,37 +51,37 @@ namespace MatterHackers.MatterControl
 			this.fillColor = fillColor;
 			this.borderColor = borderColor;
 			this.borderWidth = borderWidth;
-			this.Margin = new BorderDouble(0);
-			this.Padding = new BorderDouble(0);
 
-			TextWidget textWidget = new TextWidget(label, pointSize: fontSize);
-			ImageWidget imageWidget;
+			this.Margin = 0;
+			this.Padding = 0;
+			this.HAnchor = HAnchor.Stretch | HAnchor.Fit;
+			this.VAnchor = VAnchor.Center | VAnchor.Fit;
 
-			FlowLayoutWidget container = new FlowLayoutWidget(flowDirection);
+			var container = new FlowLayoutWidget(flowDirection)
+			{
+				VAnchor = VAnchor.Center,
+				MinimumSize = new Vector2(width, height),
+				Margin = margin
+			};
+			this.AddChild(container);
 
 			if (image != null && image.Width > 0)
 			{
-				imageWidget = new ImageWidget(image);
-				imageWidget.VAnchor = VAnchor.Center;
-				imageWidget.Margin = new BorderDouble(right: imageSpacing);
+				var imageWidget = new ImageWidget(image)
+				{
+					VAnchor = VAnchor.Center,
+					Margin = new BorderDouble(right: imageSpacing)
+				};
 				container.AddChild(imageWidget);
 			}
 
-			if (label != "")
+			var textWidget = new TextWidget(label, pointSize: fontSize)
 			{
-				textWidget.VAnchor = VAnchor.Center;
-				textWidget.TextColor = textColor;
-				textWidget.Padding = new BorderDouble(3, 0);
-				container.AddChild(textWidget);
-			}
-
-			container.VAnchor = VAnchor.Center;
-			container.MinimumSize = new Vector2(width, height);
-			container.Margin = margin;
-			this.AddChild(container);
-
-			HAnchor = HAnchor.Stretch | HAnchor.Fit;
-			VAnchor = VAnchor.Center | VAnchor.Fit;
+				VAnchor = VAnchor.Center,
+				TextColor = textColor,
+				Padding = new BorderDouble(3, 0)
+			};
+			container.AddChild(textWidget);
 		}
 
 		public override void OnDraw(Graphics2D graphics2D)
