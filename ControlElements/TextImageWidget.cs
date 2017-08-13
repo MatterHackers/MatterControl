@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl
 		protected double borderWidth = 1;
 		protected double borderRadius = 0;
 
-		public TextImageWidget(string label, RGBA_Bytes fillColor, RGBA_Bytes borderColor, RGBA_Bytes textColor, double borderWidth, BorderDouble margin, ImageBuffer image = null, double fontSize = 12, FlowDirection flowDirection = FlowDirection.LeftToRight, double height = 40, double width = 0, bool centerText = false, double imageSpacing = 0)
+		public TextImageWidget(string label, RGBA_Bytes fillColor, RGBA_Bytes borderColor, RGBA_Bytes textColor, double borderWidth, BorderDouble margin, ImageBuffer image = null, double fontSize = 12, FlowDirection flowDirection = FlowDirection.LeftToRight, double height = 40, double width = 0, double imageSpacing = 0)
 			: base()
 		{
 			this.image = image;
@@ -58,14 +58,6 @@ namespace MatterHackers.MatterControl
 			ImageWidget imageWidget;
 
 			FlowLayoutWidget container = new FlowLayoutWidget(flowDirection);
-
-			if (centerText)
-			{
-				// make sure the contents are centered
-				GuiWidget leftSpace = new GuiWidget(0, 1);
-				leftSpace.HAnchor = HAnchor.Stretch;
-				container.AddChild(leftSpace);
-			}
 
 			if (image != null && image.Width > 0)
 			{
@@ -83,19 +75,11 @@ namespace MatterHackers.MatterControl
 				container.AddChild(textWidget);
 			}
 
-			if (centerText)
-			{
-				GuiWidget rightSpace = new GuiWidget(0, 1);
-				rightSpace.HAnchor = HAnchor.Stretch;
-				container.AddChild(rightSpace);
-
-				container.HAnchor = HAnchor.Stretch | HAnchor.Fit;
-			}
 			container.VAnchor = VAnchor.Center;
-
 			container.MinimumSize = new Vector2(width, height);
 			container.Margin = margin;
 			this.AddChild(container);
+
 			HAnchor = HAnchor.Stretch | HAnchor.Fit;
 			VAnchor = VAnchor.Center | VAnchor.Fit;
 		}
