@@ -410,8 +410,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			}
 			else
 			{
-				button = buttonFactory.GenerateTooltipButton(localizedText, icon);
+				button = buttonFactory.Generate(localizedText, icon);
 			}
+
 			var bounds = button.LocalBounds;
 			if (smallScreen)
 			{

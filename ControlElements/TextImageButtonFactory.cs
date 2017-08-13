@@ -180,52 +180,6 @@ namespace MatterHackers.MatterControl
 		public double FixedHeight => Options.FixedHeight;
 		public double ImageSpacing => Options.ImageSpacing;
 
-		public Button GenerateTooltipButton(string label, string normalImageName = null, string hoverImageName = null, string pressedImageName = null, string disabledImageName = null)
-		{
-			//Create button based on view container widget
-			ButtonViewStates buttonViewWidget = getButtonView(label, normalImageName, hoverImageName, pressedImageName, disabledImageName);
-
-			Button textImageButton = new Button(0, 0, buttonViewWidget);
-			textImageButton.Margin = new BorderDouble(0);
-			textImageButton.Padding = new BorderDouble(0);
-
-			//Override the width if requested
-			if (this.FixedWidth != 0)
-			{
-				buttonViewWidget.Width = this.FixedWidth;
-				textImageButton.Width = this.FixedWidth;
-			}
-
-			//Override the height if requested
-			buttonViewWidget.Height = this.FixedHeight;
-			textImageButton.Height = this.FixedHeight;
-
-			return textImageButton;
-		}
-
-		public Button GenerateTooltipButton(string label, ImageBuffer normalImageName, ImageBuffer hoverImageName = null, ImageBuffer pressedImageName = null, ImageBuffer disabledImageName = null)
-		{
-			//Create button based on view container widget
-			ButtonViewStates buttonViewWidget = getButtonView(label, normalImageName, hoverImageName, pressedImageName, disabledImageName);
-
-			Button textImageButton = new Button(0, 0, buttonViewWidget);
-			textImageButton.Margin = new BorderDouble(0);
-			textImageButton.Padding = new BorderDouble(0);
-
-			//Override the width if requested
-			if (this.FixedWidth != 0)
-			{
-				buttonViewWidget.Width = this.FixedWidth;
-				textImageButton.Width = this.FixedWidth;
-			}
-
-			//Override the height if requested
-			buttonViewWidget.Height = this.FixedHeight;
-			textImageButton.Height = this.FixedHeight;
-
-			return textImageButton;
-		}
-
 		public GuiWidget GenerateGroupBoxLabelWithEdit(TextWidget textWidget, out Button editButton)
 		{
 			FlowLayoutWidget groupLableAndEditControl = new FlowLayoutWidget();
