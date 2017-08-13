@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
@@ -67,12 +68,15 @@ namespace MatterHackers.MatterControl
 			};
 			this.AddChild(container);
 
-			if (image != null && image.Width > 0)
+			ImageWidget imageWidget = null;
+
+			if (image?.Width > 0)
 			{
-				var imageWidget = new ImageWidget(image)
+				imageWidget = new ImageWidget(image)
 				{
 					VAnchor = VAnchor.Center,
-					Margin = new BorderDouble(right: imageSpacing)
+					Margin = new BorderDouble(right: imageSpacing),
+					AutoResize = false,
 				};
 				container.AddChild(imageWidget);
 			}
@@ -81,9 +85,19 @@ namespace MatterHackers.MatterControl
 			{
 				VAnchor = VAnchor.Center,
 				TextColor = textColor,
-				Padding = new BorderDouble(3, 0)
 			};
 			container.AddChild(textWidget);
+
+			// Style debugging
+			if (false)
+			{
+				container.BackgroundColor = RGBA_Bytes.Gray;
+				if (imageWidget != null)
+				{
+					imageWidget.BackgroundColor = ApplicationController.Instance.Theme.SlightShade;
+				}
+				textWidget.DebugShowBounds = true;
+			}
 		}
 
 		public override void OnDraw(Graphics2D graphics2D)
