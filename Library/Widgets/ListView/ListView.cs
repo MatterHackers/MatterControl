@@ -67,23 +67,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.AnchorAll();
 			this.AutoScroll = true;
 			this.ScrollArea.Padding = new BorderDouble(3);
-
-			// AddWatermark
-			string imagePath = Path.Combine("OEMSettings", "watermark.png");
-			if (StaticData.Instance.FileExists(imagePath))
-			{
-				this.AddChildToBackground(new ImageWidget(StaticData.Instance.LoadImage(imagePath))
-				{
-					VAnchor = VAnchor.Center,
-					HAnchor = HAnchor.Center
-				});
-			}
-
 			this.ScrollArea.HAnchor = HAnchor.Stretch;
-
-			AutoScroll = true;
-
 			this.ListContentView = libraryView;
+
 			context.ContainerChanged += ActiveContainer_Changed;
 			context.ContainerReloaded += ActiveContainer_Reloaded;
 

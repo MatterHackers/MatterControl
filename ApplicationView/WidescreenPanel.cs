@@ -119,22 +119,17 @@ namespace MatterHackers.MatterControl
 				VAnchor = VAnchor.Fit,
 				Margin = 8
 			};
-			buttonView.AfterDraw += (s, e) =>
-			{
-				//e.graphics2D.Render(directionArrow, buttonView.LocalBounds.Right - arrowHeight * 2 - 2, buttonView.LocalBounds.Center.y + arrowHeight / 2, ActiveTheme.Instance.SecondaryTextColor);
-			};
-
-			var icon = StaticData.Instance.LoadIcon(Path.Combine("..", "Images", "mh-logo.png"), 32, 32);
-			if (!ActiveTheme.Instance.IsDarkTheme)
+	
+			var icon = StaticData.Instance.LoadIcon(Path.Combine("..", "Images", "mh-app-logo.png"));
+			if (ActiveTheme.Instance.IsDarkTheme)
 			{
 				icon = icon.InvertLightness();
 			}
-
 			buttonView.AddChild(new ImageWidget(icon));
 
-			buttonView.AddChild(new TextWidget("MatterControl 2.0", textColor: ActiveTheme.Instance.PrimaryTextColor)
+			buttonView.AddChild(new TextWidget("MatterControl", textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
-				Margin = new BorderDouble(left: 6),
+				Margin = new BorderDouble(left: 8),
 				VAnchor = VAnchor.Center
 			});
 
