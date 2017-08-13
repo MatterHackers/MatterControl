@@ -56,6 +56,7 @@ namespace MatterHackers.MatterControl
 			this.Padding = 0;
 			this.HAnchor = HAnchor.Stretch | HAnchor.Fit;
 			this.VAnchor = VAnchor.Center | VAnchor.Fit;
+			this.BackgroundColor = fillColor;
 
 			var container = new FlowLayoutWidget(flowDirection)
 			{
@@ -104,15 +105,6 @@ namespace MatterHackers.MatterControl
 						graphics2D.Render(new Stroke(rectBorder, borderWidth), borderColor);
 					}
 				}
-			}
-
-			if (this.fillColor.Alpha0To255 > 0)
-			{
-				RectangleDouble insideBounds = LocalBounds;
-				insideBounds.Inflate(-this.borderWidth);
-				RoundedRect rectInside = new RoundedRect(insideBounds, Math.Max(this.borderRadius - this.borderWidth, 0));
-
-				graphics2D.Render(rectInside, this.fillColor);
 			}
 
 			base.OnDraw(graphics2D);
