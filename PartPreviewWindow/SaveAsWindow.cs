@@ -162,7 +162,7 @@ namespace MatterHackers.MatterControl
 				buttonRow.Padding = new BorderDouble(0, 3);
 			}
 
-			saveAsButton = buttonFactory.Generate("Save".Localize(), centerText: true);
+			saveAsButton = buttonFactory.Generate("Save".Localize());
 			saveAsButton.Name = "Save As Save Button";
 			// Disable the save as button until the user actually selects a provider
 			saveAsButton.Enabled = false;
@@ -173,7 +173,7 @@ namespace MatterHackers.MatterControl
 			//Adds SaveAs and Close Button to button container
 			buttonRow.AddChild(new HorizontalSpacer());
 
-			Button cancelButton = buttonFactory.Generate("Cancel".Localize(), centerText: true);
+			Button cancelButton = buttonFactory.Generate("Cancel".Localize());
 			cancelButton.Visible = true;
 			cancelButton.Cursor = Cursors.Hand;
 			buttonRow.AddChild(cancelButton);

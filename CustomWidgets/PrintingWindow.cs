@@ -406,7 +406,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			Button button = null;
 			if(icon == null)
 			{
-				button = buttonFactory.Generate(localizedText, centerText: centerText);
+				button = buttonFactory.Generate(localizedText);
 			}
 			else
 			{

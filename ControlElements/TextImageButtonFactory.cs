@@ -137,10 +137,10 @@ namespace MatterHackers.MatterControl
 			return textImageCheckBoxButton;
 		}
 
-		public Button Generate(string label, ImageBuffer normalImage, ImageBuffer hoverImage = null, ImageBuffer pressedImage = null, ImageBuffer disabledImage = null, bool centerText = false)
+		public Button Generate(string label, ImageBuffer normalImage, ImageBuffer hoverImage = null, ImageBuffer pressedImage = null, ImageBuffer disabledImage = null)
 		{
 			//Create button based on view container widget
-			ButtonViewStates buttonViewWidget = getButtonView(label, normalImage, hoverImage, pressedImage, disabledImage, centerText);
+			ButtonViewStates buttonViewWidget = getButtonView(label, normalImage, hoverImage, pressedImage, disabledImage);
 			Button textImageButton = new Button(0, 0, buttonViewWidget);
 
 			textImageButton.Margin = new BorderDouble(0);
@@ -213,10 +213,10 @@ namespace MatterHackers.MatterControl
 				StaticData.Instance.LoadIcon(disabledImageName, disabledImage);
 			}
 
-			return getButtonView(label, normalImage, hoverImage, pressedImage, disabledImage, centerText);
+			return getButtonView(label, normalImage, hoverImage, pressedImage, disabledImage);
 		}
 
-		private ButtonViewStates getButtonView(string label, ImageBuffer normalImage = null, ImageBuffer hoverImage = null, ImageBuffer pressedImage = null, ImageBuffer disabledImage = null, bool centerText = false)
+		private ButtonViewStates getButtonView(string label, ImageBuffer normalImage = null, ImageBuffer hoverImage = null, ImageBuffer pressedImage = null, ImageBuffer disabledImage = null)
 		{
 			if (hoverImage == null && normalImage != null)
 			{
@@ -272,10 +272,10 @@ namespace MatterHackers.MatterControl
 
 			//Create the multi-state button view
 			ButtonViewStates buttonViewWidget = new ButtonViewStates(
-				new TextImageWidget(label, normalFillColor, normalBorderColor, normalTextColor, borderWidth, Margin, normalImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight, centerText: centerText, imageSpacing: ImageSpacing),
-				new TextImageWidget(label, hoverFillColor, hoverBorderColor, hoverTextColor, borderWidth, Margin, hoverImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight, centerText: centerText, imageSpacing: ImageSpacing),
-				new TextImageWidget(label, pressedFillColor, pressedBorderColor, pressedTextColor, borderWidth, Margin, pressedImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight, centerText: centerText, imageSpacing: ImageSpacing),
-				new TextImageWidget(label, disabledFillColor, disabledBorderColor, disabledTextColor, borderWidth, Margin, disabledImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight, centerText: centerText, imageSpacing: ImageSpacing)
+				new TextImageWidget(label, normalFillColor, normalBorderColor, normalTextColor, borderWidth, Margin, normalImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight, imageSpacing: ImageSpacing),
+				new TextImageWidget(label, hoverFillColor, hoverBorderColor, hoverTextColor, borderWidth, Margin, hoverImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight, imageSpacing: ImageSpacing),
+				new TextImageWidget(label, pressedFillColor, pressedBorderColor, pressedTextColor, borderWidth, Margin, pressedImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight, imageSpacing: ImageSpacing),
+				new TextImageWidget(label, disabledFillColor, disabledBorderColor, disabledTextColor, borderWidth, Margin, disabledImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight, imageSpacing: ImageSpacing)
 			);
 			return buttonViewWidget;
 		}
@@ -450,11 +450,11 @@ namespace MatterHackers.MatterControl
 			}
 
 			BorderDouble internalMargin = new BorderDouble(0);
-			TextImageWidget nomalState = new TextImageWidget(label, normalFillColor, normalBorderColor, normalTextColor, borderWidth, internalMargin, iconImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight, width: this.FixedWidth, centerText: true);
-			TextImageWidget hoverState = new TextImageWidget(label, hoverFillColor, hoverBorderColor, hoverTextColor, borderWidth, internalMargin, iconImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight, width: this.FixedWidth, centerText: true);
-			TextImageWidget checkingState = new TextImageWidget(label, hoverFillColor, checkedBorderColor, hoverTextColor, borderWidth, internalMargin, iconImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight, width: this.FixedWidth, centerText: true);
-			TextImageWidget checkedState = new TextImageWidget(label, pressedFillColor, checkedBorderColor, pressedTextColor, borderWidth, internalMargin, iconImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight, width: this.FixedWidth, centerText: true);
-			TextImageWidget disabledState = new TextImageWidget(label, disabledFillColor, disabledBorderColor, disabledTextColor, borderWidth, internalMargin, iconImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight, width: this.FixedWidth, centerText: true);
+			TextImageWidget nomalState = new TextImageWidget(label, normalFillColor, normalBorderColor, normalTextColor, borderWidth, internalMargin, iconImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight, width: this.FixedWidth);
+			TextImageWidget hoverState = new TextImageWidget(label, hoverFillColor, hoverBorderColor, hoverTextColor, borderWidth, internalMargin, iconImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight, width: this.FixedWidth);
+			TextImageWidget checkingState = new TextImageWidget(label, hoverFillColor, checkedBorderColor, hoverTextColor, borderWidth, internalMargin, iconImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight, width: this.FixedWidth);
+			TextImageWidget checkedState = new TextImageWidget(label, pressedFillColor, checkedBorderColor, pressedTextColor, borderWidth, internalMargin, iconImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight, width: this.FixedWidth);
+			TextImageWidget disabledState = new TextImageWidget(label, disabledFillColor, disabledBorderColor, disabledTextColor, borderWidth, internalMargin, iconImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight, width: this.FixedWidth);
 			RadioButtonViewStates checkBoxButtonViewWidget = new RadioButtonViewStates(nomalState, hoverState, checkingState, checkedState, disabledState);
 			RadioButton radioButton = new RadioButton(checkBoxButtonViewWidget);
 			radioButton.Margin = Margin;
@@ -506,14 +506,14 @@ namespace MatterHackers.MatterControl
 			this.Normal = new ButtonOptionSection()
 			{
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
-				FillColor = new RGBA_Bytes(0, 0, 0, 20),
+				FillColor = new RGBA_Bytes(0, 0, 0, 30),
 				BorderColor = new RGBA_Bytes(255, 255, 255, 0)
 			};
 
 			this.Hover = new ButtonOptionSection()
 			{
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
-				FillColor = new RGBA_Bytes(0, 0, 0, 50),
+				FillColor = new RGBA_Bytes(0, 0, 0, 80),
 				BorderColor = new RGBA_Bytes(0, 0, 0, 0)
 			};
 

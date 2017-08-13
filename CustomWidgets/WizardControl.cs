@@ -96,18 +96,18 @@ namespace MatterHackers.MatterControl
 				buttonBar.HAnchor = Agg.UI.HAnchor.Stretch;
 				buttonBar.Padding = new BorderDouble(0, 3);
 
-				backButton = buttonFactory.Generate("Back".Localize(), centerText: true);
+				backButton = buttonFactory.Generate("Back".Localize());
 				backButton.Click += back_Click;
 
-				nextButton = buttonFactory.Generate("Next".Localize(), centerText: true);
+				nextButton = buttonFactory.Generate("Next".Localize());
 				nextButton.Name = "Next Button";
 				nextButton.Click += next_Click;
 
-				doneButton = buttonFactory.Generate("Done".Localize(), centerText: true);
+				doneButton = buttonFactory.Generate("Done".Localize());
 				doneButton.Name = "Done Button";
 				doneButton.Click += done_Click;
 
-				cancelButton = buttonFactory.Generate("Cancel".Localize(), centerText: true);
+				cancelButton = buttonFactory.Generate("Cancel".Localize());
 				cancelButton.Click += done_Click;
 				cancelButton.Name = "Cancel Button";
 

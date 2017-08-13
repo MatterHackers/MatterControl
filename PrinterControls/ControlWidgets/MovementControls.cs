@@ -195,17 +195,17 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 			double fixedWidth = (int)homeAllButton.Width * GuiWidget.DeviceScale;
 
-			homeXButton = homingButtonFactory.Generate("X", centerText: true, fixedWidth: fixedWidth);
+			homeXButton = homingButtonFactory.Generate("X", fixedWidth: fixedWidth);
 			homeXButton.ToolTipText = "Home X".Localize();
 			homeXButton.Margin = new BorderDouble(0, 0, 6, 0);
 			homeXButton.Click += homeXButton_Click;
 
-			homeYButton = homingButtonFactory.Generate("Y", centerText: true, fixedWidth: fixedWidth);
+			homeYButton = homingButtonFactory.Generate("Y", fixedWidth: fixedWidth);
 			homeYButton.ToolTipText = "Home Y".Localize();
 			homeYButton.Margin = new BorderDouble(0, 0, 6, 0);
 			homeYButton.Click += homeYButton_Click;
 
-			homeZButton = homingButtonFactory.Generate("Z", centerText: true, fixedWidth: fixedWidth);
+			homeZButton = homingButtonFactory.Generate("Z", fixedWidth: fixedWidth);
 			homeZButton.ToolTipText = "Home Z".Localize();
 			homeZButton.Margin = new BorderDouble(0, 0, 6, 0);
 			homeZButton.Click += homeZButton_Click;

@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			FlowLayoutWidget buttonContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
 			buttonContainer.HAnchor = HAnchor.Fit;
 
-			Button mirrorXButton = buttonFactory.Generate("X", centerText: true);
+			Button mirrorXButton = buttonFactory.Generate("X");
 			buttonContainer.AddChild(mirrorXButton);
 			mirrorControls.Add(mirrorXButton);
 			mirrorXButton.Click += (s, e) =>
@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			};
 
-			Button mirrorYButton = buttonFactory.Generate("Y", centerText: true);
+			Button mirrorYButton = buttonFactory.Generate("Y");
 			buttonContainer.AddChild(mirrorYButton);
 			mirrorControls.Add(mirrorYButton);
 			mirrorYButton.Click += (s, e) =>
@@ -94,7 +94,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			};
 
-			Button mirrorZButton = buttonFactory.Generate("Z", centerText: true);
+			Button mirrorZButton = buttonFactory.Generate("Z");
 			buttonContainer.AddChild(mirrorZButton);
 			mirrorControls.Add(mirrorZButton);
 			mirrorZButton.Click += (s, e) =>

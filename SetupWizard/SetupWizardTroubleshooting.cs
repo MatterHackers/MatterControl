@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl
 			RefreshStatus();
 
 			//Construct buttons
-			cancelButton = whiteImageButtonFactory.Generate("Cancel".Localize(), centerText:true);
+			cancelButton = whiteImageButtonFactory.Generate("Cancel".Localize());
 			cancelButton.Click += (s, e) => UiThread.RunOnIdle(this.WizardWindow.ChangeToPage<AndroidConnectDevicePage>);
 			
 			//Construct buttons
@@ -239,7 +239,7 @@ namespace MatterHackers.MatterControl
 						AddSuccessIcon();
 					} else {
 						// Add Fix button
-						Button button  = buttonFactory.Generate(LocalizedString.Get(fixitText),centerText:true);
+						Button button  = buttonFactory.Generate(fixitText.Localize());
 						button.VAnchor = VAnchor.Center;
 						button.Padding = new BorderDouble(3, 8);
 						button.Click += (sender, e) => fixAction();

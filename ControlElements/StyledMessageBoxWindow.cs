@@ -125,7 +125,7 @@ namespace MatterHackers.MatterControl
 				case MessageType.YES_NO:
 					{
 						Title = "MatterControl - " + "Please Confirm".Localize();
-						Button yesButton = textImageButtonFactory.Generate(yesOk, centerText: true);
+						Button yesButton = textImageButtonFactory.Generate(yesOk);
 						yesButton.Name = "Yes Button";
 						yesButton.Click += okButton_Click;
 						yesButton.Cursor = Cursors.Hand;
@@ -133,7 +133,7 @@ namespace MatterHackers.MatterControl
 
 						buttonRow.AddChild(new HorizontalSpacer());
 
-						Button noButton = textImageButtonFactory.Generate(noCancel, centerText: true);
+						Button noButton = textImageButtonFactory.Generate(noCancel);
 						noButton.Name = "No Button";
 						noButton.Click += noButton_Click;
 						noButton.Cursor = Cursors.Hand;
@@ -144,7 +144,7 @@ namespace MatterHackers.MatterControl
 				case MessageType.OK:
 					{
 						Title = "MatterControl - " + "Alert".Localize();
-						Button okButton = textImageButtonFactory.Generate(yesOk, centerText: true);
+						Button okButton = textImageButtonFactory.Generate(yesOk);
 						okButton.Name = "Ok Button";
 						okButton.Cursor = Cursors.Hand;
 						okButton.Click += okButton_Click;
