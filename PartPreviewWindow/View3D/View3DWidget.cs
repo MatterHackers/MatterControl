@@ -242,7 +242,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				var buttonSpacing = ApplicationController.Instance.Theme.ButtonSpacing;
 
-				Button addButton = smallMarginButtonFactory.Generate("Insert".Localize(), StaticData.Instance.LoadIcon("AddAzureResource_16x.png", 16, 16));
+				Button addButton = smallMarginButtonFactory.Generate("Insert".Localize(), StaticData.Instance.LoadIcon("AddAzureResource_16x.png", 14, 14));
 				addButton.Margin = buttonSpacing;
 				addButton.Click += (sender, e) =>
 				{

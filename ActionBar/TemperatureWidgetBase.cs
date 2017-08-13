@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			};
 			this.AddChild(container);
 
-			if (!ActiveTheme.Instance.IsDarkTheme)
+			if (ActiveTheme.Instance.IsDarkTheme)
 			{
 				this.ImageWidget.Image = this.ImageWidget.Image.InvertLightness();
 			}
