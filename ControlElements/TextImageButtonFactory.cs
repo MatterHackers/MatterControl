@@ -218,45 +218,12 @@ namespace MatterHackers.MatterControl
 			return editButton;
 		}
 
-		public GuiWidget GenerateGroupBoxLabelWithEdit(string label, out Button editButton)
-		{
-			FlowLayoutWidget groupLableAndEditControl = new FlowLayoutWidget();
-
-			editButton = GetThemedEditButton();
-
-			editButton.Margin = new BorderDouble(2, 2, 2, 0);
-			editButton.VAnchor = VAnchor.Bottom;
-			TextWidget textLabel = new TextWidget(label, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 12);
-			textLabel.VAnchor = VAnchor.Bottom;
-			groupLableAndEditControl.AddChild(textLabel);
-			groupLableAndEditControl.AddChild(editButton);
-
-			return groupLableAndEditControl;
-		}
-
 		public CheckBox GenerateCheckBoxButton(string label, ImageBuffer normalImage, ImageBuffer normalToPressedImage = null, ImageBuffer pressedImage = null, ImageBuffer pressedToNormalImage = null, string pressedLabel = null)
 		{
 			if (pressedImage == null) pressedImage = normalImage;
 			if (pressedToNormalImage == null) pressedToNormalImage = normalToPressedImage;
 
 			CheckBoxViewStates checkBoxButtonViewWidget = getCheckBoxButtonView(label, normalImage, normalToPressedImage, pressedImage, pressedToNormalImage, pressedLabel);
-
-			//Override the width if requested
-			if (this.FixedWidth != 0)
-			{
-				checkBoxButtonViewWidget.Width = this.FixedWidth;
-			}
-
-			CheckBox textImageCheckBoxButton = new CheckBox(0, 0, checkBoxButtonViewWidget);
-			textImageCheckBoxButton.Margin = new BorderDouble(0);
-			textImageCheckBoxButton.Padding = new BorderDouble(0);
-
-			return textImageCheckBoxButton;
-		}
-
-		public CheckBox GenerateCheckBoxButton(string label, string normalImageName = null, string normalToPressedImageName = null, string pressedImageName = null, string pressedToNormalImageName = null, string pressedLabel = null)
-		{
-			CheckBoxViewStates checkBoxButtonViewWidget = getCheckBoxButtonView(label, normalImageName, normalToPressedImageName, pressedImageName, pressedToNormalImageName, pressedLabel);
 
 			//Override the width if requested
 			if (this.FixedWidth != 0)
