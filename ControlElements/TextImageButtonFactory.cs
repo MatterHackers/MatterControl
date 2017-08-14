@@ -83,7 +83,7 @@ namespace MatterHackers.MatterControl
 		{
 			FlowLayoutWidget groupLableAndEditControl = new FlowLayoutWidget();
 
-			editButton = GetThemedEditButton();
+			editButton = GenerateIconButton(StaticData.Instance.LoadIcon("icon_edit.png", 16, 16));
 
 			editButton.Margin = new BorderDouble(2, 2, 2, 0);
 			editButton.VAnchor = VAnchor.Bottom;
@@ -94,27 +94,19 @@ namespace MatterHackers.MatterControl
 			return groupLableAndEditControl;
 		}
 
-		public static Button GetThemedEditButton()
+		public Button GenerateIconButton(ImageBuffer icon)
 		{
-			ImageBuffer normalImage = StaticData.Instance.LoadIcon("icon_edit.png", 16, 16);
-
-			Button editButton;
 			if (ActiveTheme.Instance.IsDarkTheme)
 			{
-				editButton = new Button(0, 0, new ButtonViewThreeImage(
-					SetToColor.CreateSetToColor(normalImage, RGBA_Bytes.White.AdjustLightness(.8).GetAsRGBA_Bytes()),
-					SetToColor.CreateSetToColor(normalImage, RGBA_Bytes.White.AdjustLightness(.9).GetAsRGBA_Bytes()),
-					SetToColor.CreateSetToColor(normalImage, RGBA_Bytes.White.AdjustLightness(1).GetAsRGBA_Bytes())));
-			}
-			else
-			{
-				editButton = new Button(0, 0, new ButtonViewThreeImage(
-					SetToColor.CreateSetToColor(normalImage, RGBA_Bytes.White.AdjustLightness(.4).GetAsRGBA_Bytes()),
-					SetToColor.CreateSetToColor(normalImage, RGBA_Bytes.White.AdjustLightness(.2).GetAsRGBA_Bytes()),
-					SetToColor.CreateSetToColor(normalImage, RGBA_Bytes.White.AdjustLightness(0).GetAsRGBA_Bytes())));
+				icon.InvertLightness();
 			}
 
-			return editButton;
+			return new Button(0, 0, 
+				new ButtonViewThreeImage(
+					icon.AjustAlpha(.7),
+					icon.AjustAlpha(.9),
+					icon.AjustAlpha(1),
+					icon.AjustAlpha(.2)));
 		}
 
 		public CheckBox GenerateCheckBoxButton(string label, ImageBuffer normalImage, ImageBuffer normalToPressedImage = null, ImageBuffer pressedImage = null, ImageBuffer pressedToNormalImage = null, string pressedLabel = null)
