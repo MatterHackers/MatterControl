@@ -160,41 +160,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.AddChild(new TemperatureWidgetBed());
 			}
 
-			var theme = ApplicationController.Instance.Theme;
-			double height = theme.ButtonFactory.FixedHeight;
-
-			Button undoButton = buttonFactory.GenerateIconButton(StaticData.Instance.LoadIcon("Undo_grey_16x.png", 16, 16));
-			undoButton.Name = "3D View Undo";
-			undoButton.ToolTipText = "Undo";
-			undoButton.Enabled = false;
-			undoButton.MinimumSize = new Vector2(height, height);
-			undoButton.Margin = defaultMargin;
-			undoButton.Click += (sender, e) =>
-			{
-				undoBuffer.Undo();
-			};
-			this.AddChild(undoButton);
-			undoButton.VAnchor = VAnchor.Center;
-
-			Button redoButton = buttonFactory.GenerateIconButton(StaticData.Instance.LoadIcon("Redo_grey_16x.png", 16, 16));
-			redoButton.Name = "3D View Redo";
-			redoButton.Margin = defaultMargin;
-			redoButton.MinimumSize = new Vector2(height, height);
-			redoButton.ToolTipText = "Redo";
-			redoButton.Enabled = false;
-			redoButton.VAnchor = VAnchor.Center;
-			redoButton.Click += (sender, e) =>
-			{
-				undoBuffer.Redo();
-			};
-			this.AddChild(redoButton);
-
-			undoBuffer.Changed += (sender, e) =>
-			{
-				undoButton.Enabled = undoBuffer.UndoCount > 0;
-				redoButton.Enabled = undoBuffer.RedoCount > 0;
-			};
-
 			overflowDropdown = new OverflowDropdown(allowLightnessInvert: true)
 			{
 				AlignToRightEdge = true,

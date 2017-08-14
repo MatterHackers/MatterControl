@@ -94,14 +94,14 @@ namespace MatterHackers.MatterControl
 			return groupLableAndEditControl;
 		}
 
-		public Button GenerateIconButton(ImageBuffer icon)
+		public Button GenerateIconButton(ImageBuffer icon, bool forceWhite = false)
 		{
-			if (ActiveTheme.Instance.IsDarkTheme)
+			if (ActiveTheme.Instance.IsDarkTheme || forceWhite)
 			{
 				icon.InvertLightness();
 			}
 
-			return new Button(0, 0, 
+			return new Button(0, 0,
 				new ButtonViewThreeImage(
 					icon.AjustAlpha(.7),
 					icon.AjustAlpha(.9),

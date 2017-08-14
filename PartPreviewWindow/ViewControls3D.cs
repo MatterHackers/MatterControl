@@ -36,6 +36,8 @@ using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -132,7 +134,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		public ViewControls3D(ThemeConfig theme)
+		public ViewControls3D(ThemeConfig theme, UndoBuffer undoBuffer)
 		{
 			this.BackgroundColor = new RGBA_Bytes(0, 0, 0, overlayAlpha);
 			this.HAnchor |= HAnchor.Left;
@@ -140,10 +142,48 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			string iconPath;
 
-			var commonMargin = ApplicationController.Instance.Theme.ButtonSpacing;
+			var commonMargin = theme.ButtonSpacing;
 
 			var buttonFactory = theme.RadioButtons;
 
+			double height = theme.ButtonFactory.FixedHeight;
+
+			Button undoButton = buttonFactory.GenerateIconButton(StaticData.Instance.LoadIcon("Undo_grey_16x.png", 16, 16), forceWhite: true);
+			undoButton.Name = "3D View Undo";
+			undoButton.ToolTipText = "Undo";
+			undoButton.Enabled = false;
+			undoButton.MinimumSize = new Vector2(height, height);
+			undoButton.Margin = commonMargin;
+			undoButton.Click += (sender, e) =>
+			{
+				undoBuffer.Undo();
+			};
+			this.AddChild(undoButton);
+			undoButton.VAnchor = VAnchor.Center;
+
+			Button redoButton = buttonFactory.GenerateIconButton(StaticData.Instance.LoadIcon("Redo_grey_16x.png", 16, 16), forceWhite: true);
+			redoButton.Name = "3D View Redo";
+			redoButton.Margin = commonMargin;
+			redoButton.MinimumSize = new Vector2(height, height);
+			redoButton.ToolTipText = "Redo";
+			redoButton.Enabled = false;
+			redoButton.VAnchor = VAnchor.Center;
+			redoButton.Click += (sender, e) =>
+			{
+				undoBuffer.Redo();
+			};
+			this.AddChild(redoButton);
+
+			this.AddChild(new VerticalLine(50)
+			{
+				Margin = 4
+			});
+
+			undoBuffer.Changed += (sender, e) =>
+			{
+				undoButton.Enabled = undoBuffer.UndoCount > 0;
+				redoButton.Enabled = undoBuffer.RedoCount > 0;
+			};
 			iconPath = Path.Combine("ViewTransformControls", "reset.png");
 			resetViewButton = theme.NoMarginWhite.Generate("", StaticData.Instance.LoadIcon(iconPath,32,32).InvertLightness());
 			resetViewButton.ToolTipText = "Reset View".Localize();

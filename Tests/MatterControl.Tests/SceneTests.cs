@@ -113,7 +113,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
 				MeshVisualizer.BedShape.Rectangular,
 				View3DWidget.WindowMode.Embeded,
 				View3DWidget.AutoRotate.Disabled,
-				new ViewControls3D(ApplicationController.Instance.Theme),
+				new ViewControls3D(ApplicationController.Instance.Theme, new Agg.UI.UndoBuffer()),
 				new MatterControl.ThemeConfig(),
 				View3DWidget.OpenMode.Editing);
 
