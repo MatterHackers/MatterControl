@@ -92,22 +92,22 @@ namespace MatterHackers.MeshVisualizer
 
 		private InteractionLayer interactionLayer;
 
-		public MeshViewerWidget(Vector3 displayVolume, Vector2 bedCenter, BedShape bedShape, TrackballTumbleWidget trackballTumbleWidget, InteractionLayer interactionLayer, string startingTextMessage = "")
+		public MeshViewerWidget(Vector3 displayVolume, Vector2 bedCenter, BedShape bedShape, TrackballTumbleWidget trackballTumbleWidget, InteractionLayer interactionLayer, InteractiveScene _scene, string startingTextMessage = "")
 		{
-			interactionLayer.Scene = Scene;
+			this.scene = _scene;
 
 			var activePrintItem = ApplicationController.Instance.ActivePrintItem;
 
 			if (activePrintItem != null 
 				&& File.Exists(activePrintItem.FileLocation))
 			{
-				Scene.Load(activePrintItem.FileLocation);
+				scene.Load(activePrintItem.FileLocation);
 			}
 
 			this.interactionLayer = interactionLayer;
 			this.World = interactionLayer.World;
 			
-			Scene.SelectionChanged += (sender, e) =>
+			scene.SelectionChanged += (sender, e) =>
 			{
 				Invalidate();
 			};
@@ -169,7 +169,7 @@ namespace MatterHackers.MeshVisualizer
 			{
 				AfterDraw += (sender, e) =>
 				{
-					foreach (var child in Scene.Children)
+					foreach (var child in scene.Children)
 					{
 						this.World.RenderDebugAABB(e.graphics2D, child.TraceData().GetAxisAlignedBoundingBox());
 						this.World.RenderDebugAABB(e.graphics2D, child.GetAxisAlignedBoundingBox(Matrix4X4.Identity));
@@ -182,7 +182,7 @@ namespace MatterHackers.MeshVisualizer
 
 		public override void FindNamedChildrenRecursive(string nameToSearchFor, List<WidgetAndPosition> foundChildren, RectangleDouble touchingBounds, SearchType seachType, bool allowInvalidItems = true)
 		{
-			foreach (var child in Scene.Children)
+			foreach (var child in scene.Children)
 			{
 				string object3DName = child.Name;
 				if (object3DName == null && child.MeshPath != null)
@@ -233,7 +233,7 @@ namespace MatterHackers.MeshVisualizer
 			base.FindNamedChildrenRecursive(nameToSearchFor, foundChildren, touchingBounds, seachType, allowInvalidItems);
 		}
 
-		public InteractiveScene Scene { get; } = new InteractiveScene();
+		protected InteractiveScene scene { get; }
 
 		public Mesh PrinterBed { get { return printerBed; } }
 
@@ -249,7 +249,7 @@ namespace MatterHackers.MeshVisualizer
 				if (renderType != value)
 				{
 					renderType = value;
-					foreach(var renderTransfrom in Scene.VisibleMeshes(Matrix4X4.Identity))
+					foreach(var renderTransfrom in scene.VisibleMeshes(Matrix4X4.Identity))
 					{
 						renderTransfrom.Mesh.MarkAsChanged();
 					}
@@ -401,7 +401,7 @@ namespace MatterHackers.MeshVisualizer
 					}
 
 					// SetMeshAfterLoad
-					Scene.ModifyChildren(children =>
+					scene.ModifyChildren(children =>
 					{
 						if (loadedItem.Mesh != null)
 						{
@@ -549,7 +549,7 @@ namespace MatterHackers.MeshVisualizer
 			foreach(MeshRenderData renderData in object3D.VisibleMeshes(transform))
 			{
 				bool isSelected = parentSelected ||
-					Scene.HasSelection && (object3D == Scene.SelectedItem || Scene.SelectedItem.Children.Contains(object3D));
+					scene.HasSelection && (object3D == scene.SelectedItem || scene.SelectedItem.Children.Contains(object3D));
 
 				RGBA_Bytes drawColor = renderData.Color;
 				if(object3D.OutputType == PrintOutputTypes.Support)
@@ -634,7 +634,7 @@ namespace MatterHackers.MeshVisualizer
 
 		private void trackballTumbleWidget_DrawGlContent(object sender, EventArgs e)
 		{
-			foreach(var object3D in Scene.Children)
+			foreach(var object3D in scene.Children)
 			{
 				DrawObject(object3D, Matrix4X4.Identity, false);
 			}
@@ -650,7 +650,7 @@ namespace MatterHackers.MeshVisualizer
 			}
 
 			// we don't want to render the bed or build volume before we load a model.
-			if (Scene.HasChildren || AllowBedRenderingWhenEmpty)
+			if (scene.HasChildren || AllowBedRenderingWhenEmpty)
 			{
 				if (false) // this is code to draw a small axis indicator
 				{

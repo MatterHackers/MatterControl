@@ -83,7 +83,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public PrinterActionsBar(View3DWidget modelViewer, PrinterTabPage printerTabPage)
 		{
-			UndoBuffer undoBuffer = modelViewer.UndoBuffer;
+			UndoBuffer undoBuffer = modelViewer.Scene.UndoBuffer;
 
 			var defaultMargin = ApplicationController.Instance.Theme.ButtonSpacing;
 			var buttonFactory = ApplicationController.Instance.Theme.ButtonFactory;

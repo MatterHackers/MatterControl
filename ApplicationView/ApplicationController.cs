@@ -57,6 +57,7 @@ namespace MatterHackers.MatterControl
 	using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 	using MatterHackers.MatterControl.Library;
 	using MatterHackers.MatterControl.PartPreviewWindow;
+	using MatterHackers.MeshVisualizer;
 	using MatterHackers.SerialPortCommunication;
 	using MatterHackers.VectorMath;
 	using PrintHistory;
@@ -121,6 +122,8 @@ namespace MatterHackers.MatterControl
 		}
 
 		private int activeLayerIndex;
+
+		public InteractiveScene Scene { get; } = new InteractiveScene();
 
 		public GCodeRenderInfo RenderInfo { get; set; }
 

@@ -92,7 +92,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						operation.Do();
 
 						// Store the operation for undo/redo
-						view3DWidget.UndoBuffer.Add(operation);
+						view3DWidget.Scene.UndoBuffer.Add(operation);
 					}
 				});
 
@@ -237,7 +237,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						operation.Do();
 
 						// Store the operation for undo/redo
-						view3DWidget.UndoBuffer.Add(operation);
+						view3DWidget.Scene.UndoBuffer.Add(operation);
 					}
 				});
 
@@ -322,7 +322,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			insertOperation.Do();
 
 			// Store the operation for undo/redo
-			view3DWidget.UndoBuffer.Add(insertOperation);
+			view3DWidget.Scene.UndoBuffer.Add(insertOperation);
 		}
 
 		public static void DeleteSelection(this InteractiveScene Scene, View3DWidget view3DWidget)
@@ -334,7 +334,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				deleteOperation.Do();
 
 				// Store the operation for undo/redo
-				view3DWidget.UndoBuffer.Add(deleteOperation);
+				view3DWidget.Scene.UndoBuffer.Add(deleteOperation);
 			}
 		}
 
