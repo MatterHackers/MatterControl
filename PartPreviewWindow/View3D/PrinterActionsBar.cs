@@ -212,6 +212,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.AddChild(overflowDropdown);
 		}
 
+		public override void AddChild(GuiWidget childToAdd, int indexInChildrenList = -1)
+		{
+			childToAdd.VAnchor |= VAnchor.Center;
+			base.AddChild(childToAdd, indexInChildrenList);
+		}
+
 		public override void OnClosed(ClosedEventArgs e)
 		{
 			gcodeLoadCancellationTokenSource?.Cancel();
