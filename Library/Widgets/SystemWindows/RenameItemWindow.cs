@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl
 				buttonRow.Padding = new BorderDouble(0, 3);
 			}
 
-			renameItemButton = textImageButtonFactory.Generate("Rename".Localize(), centerText: true);
+			renameItemButton = textImageButtonFactory.Generate("Rename".Localize());
 			renameItemButton.Name = "Rename Button";
 			renameItemButton.Visible = true;
 			renameItemButton.Cursor = Cursors.Hand;
@@ -98,7 +98,7 @@ namespace MatterHackers.MatterControl
 			//Adds Create and Close Button to button container
 			buttonRow.AddChild(new HorizontalSpacer());
 
-			Button cancelButton = textImageButtonFactory.Generate("Cancel".Localize(), centerText: true);
+			Button cancelButton = textImageButtonFactory.Generate("Cancel".Localize());
 			cancelButton.Visible = true;
 			cancelButton.Cursor = Cursors.Hand;
 			buttonRow.AddChild(cancelButton);

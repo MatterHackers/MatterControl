@@ -406,12 +406,13 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			Button button = null;
 			if(icon == null)
 			{
-				button = buttonFactory.Generate(localizedText, centerText: centerText);
+				button = buttonFactory.Generate(localizedText);
 			}
 			else
 			{
-				button = buttonFactory.GenerateTooltipButton(localizedText, icon);
+				button = buttonFactory.Generate(localizedText, icon);
 			}
+
 			var bounds = button.LocalBounds;
 			if (smallScreen)
 			{

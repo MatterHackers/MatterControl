@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl
 			};
 
 			//Construct buttons
-			Button skipButton = whiteImageButtonFactory.Generate("Skip".Localize(), centerText: true);
+			Button skipButton = whiteImageButtonFactory.Generate("Skip".Localize());
 			skipButton.Click += (s, e) =>
 			{
 				UiThread.RunOnIdle(() =>
@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl
 			};
 			nextButton.Visible = false;
 
-			Button configureButton = whiteImageButtonFactory.Generate("Configure".Localize(), centerText: true);
+			Button configureButton = whiteImageButtonFactory.Generate("Configure".Localize());
 			configureButton.Margin = new BorderDouble(0, 0, 10, 0);
 			configureButton.Click += (s, e) =>
 			{

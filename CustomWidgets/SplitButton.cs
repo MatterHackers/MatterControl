@@ -39,7 +39,7 @@ namespace MatterHackers.MatterControl
 			HAnchor = HAnchor.Fit;
 			VAnchor = VAnchor.Fit;
 
-			var button = ApplicationController.Instance.Theme.ButtonFactory.Generate(buttonText, centerText: true);
+			var button = ApplicationController.Instance.Theme.ButtonFactory.Generate(buttonText);
 			button.VAnchor = VAnchor.Center;
 
 			AddChild(button);

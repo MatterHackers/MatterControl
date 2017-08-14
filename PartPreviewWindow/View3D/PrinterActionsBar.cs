@@ -39,6 +39,7 @@ using MatterHackers.MatterControl.EeProm;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MeshVisualizer;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -160,12 +161,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.AddChild(new TemperatureWidgetBed());
 			}
 
-			var smallMarginFactory = ApplicationController.Instance.Theme.SmallMarginButtonFactory;
+			var theme = ApplicationController.Instance.Theme;
+			double height = theme.ButtonFactory.FixedHeight;
 
-			Button undoButton = smallMarginFactory.Generate("", StaticData.Instance.LoadIcon("Undo_grey_16x.png", 16, 16));
+			Button undoButton = buttonFactory.GenerateIconButton(StaticData.Instance.LoadIcon("Undo_grey_16x.png", 16, 16));
 			undoButton.Name = "3D View Undo";
 			undoButton.ToolTipText = "Undo";
 			undoButton.Enabled = false;
+			undoButton.MinimumSize = new Vector2(height, height);
 			undoButton.Margin = defaultMargin;
 			undoButton.Click += (sender, e) =>
 			{
@@ -174,8 +177,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.AddChild(undoButton);
 			undoButton.VAnchor = VAnchor.Center;
 
-			Button redoButton = smallMarginFactory.Generate("", StaticData.Instance.LoadIcon("Redo_grey_16x.png", 16, 16));
+			Button redoButton = buttonFactory.GenerateIconButton(StaticData.Instance.LoadIcon("Redo_grey_16x.png", 16, 16));
 			redoButton.Name = "3D View Redo";
+			redoButton.MinimumSize = new Vector2(height, height);
 			redoButton.ToolTipText = "Redo";
 			redoButton.Enabled = false;
 			redoButton.Click += (sender, e) =>

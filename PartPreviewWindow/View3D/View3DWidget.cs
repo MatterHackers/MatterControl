@@ -78,7 +78,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private PrintItemWrapper printItemWrapper { get; set; }
 		internal ProgressControl processingProgressControl;
 		private SaveAsWindow saveAsWindow = null;
-		private SplitButton saveButtons;
 		private RGBA_Bytes[] SelectionColors = new RGBA_Bytes[] { new RGBA_Bytes(131, 4, 66), new RGBA_Bytes(227, 31, 61), new RGBA_Bytes(255, 148, 1), new RGBA_Bytes(247, 224, 23), new RGBA_Bytes(143, 212, 1) };
 		private Stopwatch timeSinceLastSpin = new Stopwatch();
 		private Stopwatch timeSinceReported = new Stopwatch();
@@ -243,7 +242,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				var buttonSpacing = ApplicationController.Instance.Theme.ButtonSpacing;
 
-				Button addButton = smallMarginButtonFactory.Generate("Insert".Localize(), StaticData.Instance.LoadIcon("AddAzureResource_16x.png", 16, 16));
+				Button addButton = smallMarginButtonFactory.Generate("Insert".Localize(), StaticData.Instance.LoadIcon("AddAzureResource_16x.png", 14, 14));
 				addButton.Margin = buttonSpacing;
 				addButton.Click += (sender, e) =>
 				{
@@ -307,24 +306,38 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 				selectionActionBar.AddChild(deleteButton);
 
-				CreateActionSeparator(selectionActionBar);
-
-				// put in the save button
-				AddSaveAndSaveAs(selectionActionBar, buttonSpacing);
-
 				var mirrorView = smallMarginButtonFactory.Generate("Mirror".Localize());
-				mirrorView.Margin = buttonSpacing;
 
 				var mirrorButton = new PopupButton(mirrorView)
 				{
 					PopDirection = Direction.Up,
-					PopupContent = new MirrorControls(this, smallMarginButtonFactory),
-					//Margin = buttonSpacing,
+					PopupContent = new MirrorControls(this),
+					Margin = buttonSpacing,
 				};
 				selectionActionBar.AddChild(mirrorButton);
 
 				var menuActions = new[]
 				{
+					new NamedAction()
+					{
+						Title = "Save".Localize(),
+						Action = async () =>
+						{
+							if (printItemWrapper == null)
+							{
+								UiThread.RunOnIdle(OpenSaveAsWindow);
+							}
+							else
+							{
+								await this.SaveChanges();
+							}
+						}
+					},
+					new NamedAction()
+					{
+						Title = "Save As".Localize(),
+						Action = () => UiThread.RunOnIdle(OpenSaveAsWindow)
+					},
 					new NamedAction()
 					{
 						Title = "Export".Localize() + "...",
@@ -352,6 +365,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 				};
 
+				CreateActionSeparator(selectionActionBar);
+
 				// put in the material options
 				var materialsButton = new PopupButton(smallMarginButtonFactory.Generate("Materials".Localize()))
 				{
@@ -365,7 +380,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				selectionActionBar.AddChild(new HorizontalSpacer());
 
 				// Bed menu
-				selectionActionBar.AddChild(new PopupButton(smallMarginButtonFactory.Generate("Bed".Localize()))
+				selectionActionBar.AddChild(new PopupButton(smallMarginButtonFactory.Generate("Bed".Localize(), normalImage: StaticData.Instance.LoadIcon("bed.png")))
 				{
 					PopDirection = Direction.Up,
 					PopupContent = ApplicationController.Instance.Theme.CreatePopupMenu(menuActions),
@@ -441,9 +456,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void CreateActionSeparator(GuiWidget container)
 		{
-			container.AddChild(new VerticalLine(20)
+			container.AddChild(new VerticalLine(60)
 			{
-				Margin = new BorderDouble(3, 4, 0, 4),
+				Margin = new BorderDouble(3, 2, 0, 2),
 			});
 		}
 
@@ -1477,7 +1492,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public void PartHasBeenChanged()
 		{
 			partHasBeenEdited = true;
-			saveButtons.Visible = true;
 			SelectedTransformChanged?.Invoke(this, null);
 			Invalidate();
 		}
@@ -1528,42 +1542,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			return buttonPanel;
-		}
-
-		private void AddSaveAndSaveAs(FlowLayoutWidget flowToAddTo, BorderDouble margin)
-		{
-			var buttonList = new List<NamedAction>()
-			{
-				{
-					"Save".Localize(),
-					async () =>
-					{
-						if (printItemWrapper == null)
-						{
-							UiThread.RunOnIdle(OpenSaveAsWindow);
-						}
-						else
-						{
-							await this.SaveChanges();
-						}
-					}
-				},
-				{
-					"Save As".Localize(),
-					() => UiThread.RunOnIdle(OpenSaveAsWindow)
-				}
-			};
-
-			var splitButtonFactory = new SplitButtonFactory()
-			{
-				FixedHeight = ApplicationController.Instance.Theme.SmallMarginButtonFactory.FixedHeight
-			};
-
-			saveButtons = splitButtonFactory.Generate(buttonList, Direction.Up, imageName: "icon_save_32x32.png");
-			saveButtons.Visible = false;
-			saveButtons.Margin = margin;
-			saveButtons.VAnchor |= VAnchor.Center;
-			flowToAddTo.AddChild(saveButtons);
 		}
 
 		// Indicates if MatterControl is in a mode that allows DragDrop  - true if printItem not null and not ReadOnly
@@ -2019,7 +1997,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 
 				UnlockEditControls();
-				saveButtons.Visible = true;
 				partHasBeenEdited = false;
 			}
 		}

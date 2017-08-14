@@ -54,8 +54,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			this.ToolTipText = "Current bed temperature".Localize();
 
 			var icon = StaticData.Instance.LoadIcon("bed.png");
-
-			if (!ActiveTheme.Instance.IsDarkTheme)
+			if (ActiveTheme.Instance.IsDarkTheme)
 			{
 				icon = icon.InvertLightness();
 			}

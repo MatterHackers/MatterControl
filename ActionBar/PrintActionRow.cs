@@ -83,19 +83,19 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		protected void AddChildElements(TextImageButtonFactory buttonFactory, GuiWidget parentWidget, BorderDouble defaultMargin)
 		{
-			startButton = buttonFactory.GenerateTooltipButton("Print".Localize().ToUpper());
+			startButton = buttonFactory.Generate("Print".Localize().ToUpper());
 			startButton.Name = "Start Print Button";
 			startButton.ToolTipText = "Begin printing the selected item.".Localize();
 			startButton.Margin = defaultMargin;
 			startButton.Click += onStartButton_Click;
 
-			finishSetupButton = buttonFactory.GenerateTooltipButton("Finish Setup...".Localize());
+			finishSetupButton = buttonFactory.Generate("Finish Setup...".Localize());
 			finishSetupButton.Name = "Finish Setup Button";
 			finishSetupButton.ToolTipText = "Run setup configuration for printer.".Localize();
 			finishSetupButton.Margin = defaultMargin;
 			finishSetupButton.Click += onStartButton_Click;
 
-			addPrinterButton = buttonFactory.GenerateTooltipButton("Add Printer".Localize().ToUpper());
+			addPrinterButton = buttonFactory.Generate("Add Printer".Localize().ToUpper());
 			addPrinterButton.ToolTipText = "Select and add a new printer.".Localize();
 			addPrinterButton.Margin = defaultMargin;
 			addPrinterButton.Click += (s, e) =>
@@ -103,7 +103,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				UiThread.RunOnIdle(() => WizardWindow.ShowPrinterSetup(true));
 			};
 
-			selectPrinterButton = buttonFactory.GenerateTooltipButton("Select Printer".Localize().ToUpper());
+			selectPrinterButton = buttonFactory.Generate("Select Printer".Localize().ToUpper());
 			selectPrinterButton.ToolTipText = "Select an existing printer.".Localize();
 			selectPrinterButton.Margin = defaultMargin;
 			selectPrinterButton.Click += (s, e) =>
@@ -111,12 +111,12 @@ namespace MatterHackers.MatterControl.ActionBar
 				WizardWindow.Show<SetupOptionsPage>("/SetupOptions", "Setup Wizard");
 			};
 
-			resetConnectionButton = buttonFactory.GenerateTooltipButton("Reset".Localize().ToUpper(), StaticData.Instance.LoadIcon("e_stop4.png", 32,32).InvertLightness());
+			resetConnectionButton = buttonFactory.Generate("Reset".Localize().ToUpper(), StaticData.Instance.LoadIcon("e_stop.png", 14, 14));
 			resetConnectionButton.ToolTipText = "Reboots the firmware on the controller".Localize();
 			resetConnectionButton.Margin = defaultMargin;
 			resetConnectionButton.Click += (s, e) => UiThread.RunOnIdle(PrinterConnection.Instance.RebootBoard);
 
-			pauseButton = buttonFactory.GenerateTooltipButton("Pause".Localize().ToUpper());
+			pauseButton = buttonFactory.Generate("Pause".Localize().ToUpper());
 			pauseButton.ToolTipText = "Pause the current print".Localize();
 			pauseButton.Margin = defaultMargin;
 			pauseButton.Click += (s, e) =>
@@ -127,7 +127,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			parentWidget.AddChild(pauseButton);
 			allPrintButtons.Add(pauseButton);
 
-			cancelConnectButton = buttonFactory.GenerateTooltipButton("Cancel Connect".Localize().ToUpper());
+			cancelConnectButton = buttonFactory.Generate("Cancel Connect".Localize().ToUpper());
 			cancelConnectButton.ToolTipText = "Stop trying to connect to the printer.".Localize();
 			cancelConnectButton.Margin = defaultMargin;
 			cancelConnectButton.Click += (s, e) => UiThread.RunOnIdle(() =>
@@ -136,7 +136,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				UiThread.RunOnIdle(SetButtonStates);
 			});
 
-			cancelButton = buttonFactory.GenerateTooltipButton("Cancel".Localize().ToUpper());
+			cancelButton = buttonFactory.Generate("Cancel".Localize().ToUpper());
 			cancelButton.ToolTipText = "Stop the current print".Localize();
 			cancelButton.Name = "Cancel Print Button";
 			cancelButton.Margin = defaultMargin;
@@ -146,7 +146,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				SetButtonStates();
 			});
 
-			resumeButton = buttonFactory.GenerateTooltipButton("Resume".Localize().ToUpper());
+			resumeButton = buttonFactory.Generate("Resume".Localize().ToUpper());
 			resumeButton.ToolTipText = "Resume the current print".Localize();
 			resumeButton.Margin = defaultMargin;
 			resumeButton.Name = "Resume Button";
@@ -284,8 +284,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			}
 
 			if (PrinterConnection.Instance.PrinterIsConnected
-				&& ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.show_reset_connection)
-				&& UserSettings.Instance.IsTouchScreen)
+				&& ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.show_reset_connection))
 			{
 				this.activePrintButtons.Add(resetConnectionButton);
 				ShowActiveButtons();

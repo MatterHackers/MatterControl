@@ -80,7 +80,7 @@ namespace MatterHackers.MatterControl
 				buttonRow.Padding = new BorderDouble(0, 3);
 			}
 
-			Button createFolderButton = textImageButtonFactory.Generate("Create".Localize(), centerText: true);
+			Button createFolderButton = textImageButtonFactory.Generate("Create".Localize());
 			createFolderButton.Name = "Create Folder Button";
 			createFolderButton.Visible = true;
 			createFolderButton.Cursor = Cursors.Hand;
@@ -92,7 +92,7 @@ namespace MatterHackers.MatterControl
 			//Adds Create and Close Button to button container
 			buttonRow.AddChild(new HorizontalSpacer());
 
-			Button cancelButton = textImageButtonFactory.Generate("Cancel".Localize(), centerText: true);
+			Button cancelButton = textImageButtonFactory.Generate("Cancel".Localize());
 			cancelButton.Visible = true;
 			cancelButton.Cursor = Cursors.Hand;
 			buttonRow.AddChild(cancelButton);

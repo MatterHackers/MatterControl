@@ -45,18 +45,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		private View3DWidget view3DWidget;
 
-		public MirrorControls(View3DWidget view3DWidget, TextImageButtonFactory buttonFactory)
+		public MirrorControls(View3DWidget view3DWidget)
 		{
 			this.view3DWidget = view3DWidget;
-
-			List<GuiWidget> mirrorControls = new List<GuiWidget>();
 
 			FlowLayoutWidget buttonContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
 			buttonContainer.HAnchor = HAnchor.Fit;
 
-			Button mirrorXButton = buttonFactory.Generate("X", centerText: true);
-			buttonContainer.AddChild(mirrorXButton);
-			mirrorControls.Add(mirrorXButton);
+			var buttonFactory = ApplicationController.Instance.Theme.ButtonFactory;
+			var buttonSpacing = ApplicationController.Instance.Theme.ButtonSpacing;
+
+			Button mirrorXButton = buttonFactory.Generate("X");
+			mirrorXButton.Margin = buttonSpacing;
 			mirrorXButton.Click += (s, e) =>
 			{
 				if (view3DWidget.Scene.HasSelection)
@@ -73,10 +73,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Invalidate(); */
 				}
 			};
+			buttonContainer.AddChild(mirrorXButton);
 
-			Button mirrorYButton = buttonFactory.Generate("Y", centerText: true);
-			buttonContainer.AddChild(mirrorYButton);
-			mirrorControls.Add(mirrorYButton);
+			Button mirrorYButton = buttonFactory.Generate("Y");
+			mirrorYButton.Margin = buttonSpacing;
 			mirrorYButton.Click += (s, e) =>
 			{
 				if (view3DWidget.Scene.HasSelection)
@@ -93,10 +93,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Invalidate(); */
 				}
 			};
+			buttonContainer.AddChild(mirrorYButton);
 
-			Button mirrorZButton = buttonFactory.Generate("Z", centerText: true);
-			buttonContainer.AddChild(mirrorZButton);
-			mirrorControls.Add(mirrorZButton);
+			Button mirrorZButton = buttonFactory.Generate("Z");
+			mirrorZButton.Margin = buttonSpacing;
 			mirrorZButton.Click += (s, e) =>
 			{
 				if (view3DWidget.Scene.HasSelection)
@@ -113,6 +113,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Invalidate(); */
 				}
 			};
+			buttonContainer.AddChild(mirrorZButton);
 
 			this.AddChild(buttonContainer);
 		}

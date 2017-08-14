@@ -89,8 +89,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			};
 			buttonRow.AddChild(printLevelingStatusLabel);
 
-			// edit button
-			Button editButton = TextImageButtonFactory.GetThemedEditButton();
+			// edit 
+			Button editButton = buttonFactory.GenerateIconButton(StaticData.Instance.LoadIcon("icon_edit.png", 16, 16));
 			editButton.Margin = new BorderDouble(2, 2, 2, 0);
 			editButton.VAnchor = VAnchor.Top;
 			editButton.VAnchor = VAnchor.Center;

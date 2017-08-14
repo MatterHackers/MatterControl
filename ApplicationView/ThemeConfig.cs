@@ -132,13 +132,14 @@ namespace MatterHackers.MatterControl
 
 			DefaultThumbView.ThumbColor = new RGBA_Bytes(theme.PrimaryTextColor, 30);
 
-
 			var commonOptions = new ButtonFactoryOptions();
 			commonOptions.Normal.TextColor = theme.PrimaryTextColor;
 			commonOptions.Hover.TextColor = theme.PrimaryTextColor;
 			commonOptions.Pressed.TextColor = theme.PrimaryTextColor;
 			commonOptions.Disabled.TextColor = theme.TertiaryBackgroundColor;
-			commonOptions.Margin = new BorderDouble(16, 0);
+			commonOptions.Margin = new BorderDouble(14, 0);
+			commonOptions.FontSize = 12;
+			commonOptions.ImageSpacing = 8;
 			commonOptions.BorderWidth = 0;
 			commonOptions.FixedHeight = 32;
 
@@ -153,6 +154,7 @@ namespace MatterHackers.MatterControl
 			this.SmallMarginButtonFactory = new TextImageButtonFactory(commonOptions.Clone(options =>
 			{
 				options.Margin = new BorderDouble(8, 0);
+				options.ImageSpacing = 6;
 			}));
 
 			this.RadioButtons = new TextImageButtonFactory(commonOptions.Clone(options =>

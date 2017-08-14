@@ -78,11 +78,11 @@ namespace MatterHackers.MatterControl
 			};
 
 			//Construct buttons
-			connectButton = whiteImageButtonFactory.Generate("Connect".Localize(),centerText:true);
+			connectButton = whiteImageButtonFactory.Generate("Connect".Localize());
 			connectButton.Margin = new BorderDouble(0,0,10,0);
 			connectButton.Click += ConnectButton_Click;
 
-			skipButton = whiteImageButtonFactory.Generate("Skip".Localize(), centerText:true);
+			skipButton = whiteImageButtonFactory.Generate("Skip".Localize());
 			skipButton.Click += NextButton_Click;
 
 			connectButtonContainer.AddChild(connectButton);
@@ -103,12 +103,12 @@ namespace MatterHackers.MatterControl
 			contentRow.AddChild(generalError);
 
 			//Construct buttons
-			retryButton = whiteImageButtonFactory.Generate("Retry".Localize(), centerText:true);
+			retryButton = whiteImageButtonFactory.Generate("Retry".Localize());
 			retryButton.Click += ConnectButton_Click;
 			retryButton.Margin = new BorderDouble(0,0,10,0);
 
 			//Construct buttons
-			troubleshootButton = whiteImageButtonFactory.Generate("Troubleshoot".Localize(), centerText:true);
+			troubleshootButton = whiteImageButtonFactory.Generate("Troubleshoot".Localize());
 			troubleshootButton.Click += (s, e) => UiThread.RunOnIdle(WizardWindow.ChangeToPage<SetupWizardTroubleshooting>);
 
 			retryButtonContainer = new FlowLayoutWidget()
