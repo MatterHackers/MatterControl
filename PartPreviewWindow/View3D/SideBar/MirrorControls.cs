@@ -61,7 +61,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				if (view3DWidget.Scene.HasSelection)
 				{
-					view3DWidget.UndoBuffer.AddAndDo(new UndoRedoActions(() => MirrorOnAxis(0), () => MirrorOnAxis(0)));
+					view3DWidget.Scene.UndoBuffer.AddAndDo(new UndoRedoActions(() => MirrorOnAxis(0), () => MirrorOnAxis(0)));
 
 					throw new NotImplementedException();
 					
@@ -81,7 +81,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				if (view3DWidget.Scene.HasSelection)
 				{
-					view3DWidget.UndoBuffer.AddAndDo(new UndoRedoActions(() => MirrorOnAxis(1), () => MirrorOnAxis(1)));
+					view3DWidget.Scene.UndoBuffer.AddAndDo(new UndoRedoActions(() => MirrorOnAxis(1), () => MirrorOnAxis(1)));
 
 					throw new NotImplementedException();
 
@@ -101,7 +101,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				if (view3DWidget.Scene.HasSelection)
 				{
-					view3DWidget.UndoBuffer.AddAndDo(new UndoRedoActions(() => MirrorOnAxis(2), () => MirrorOnAxis(2)));
+					view3DWidget.Scene.UndoBuffer.AddAndDo(new UndoRedoActions(() => MirrorOnAxis(2), () => MirrorOnAxis(2)));
 
 					throw new NotImplementedException();
 

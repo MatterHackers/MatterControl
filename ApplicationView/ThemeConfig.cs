@@ -100,6 +100,7 @@ namespace MatterHackers.MatterControl
 
 		public BorderDouble ButtonSpacing { get; set; } = new BorderDouble(3, 0, 0, 0);
 		public TextImageButtonFactory NoMarginWhite { get; private set; }
+		public BorderDouble ToolbarPadding { get; set; } = 3;
 
 		private EventHandler unregisterEvents;
 

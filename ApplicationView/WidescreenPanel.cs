@@ -117,7 +117,7 @@ namespace MatterHackers.MatterControl
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit,
-				Margin = 8
+				Margin = 6
 			};
 	
 			var icon = StaticData.Instance.LoadIcon(Path.Combine("..", "Images", "mh-app-logo.png"));

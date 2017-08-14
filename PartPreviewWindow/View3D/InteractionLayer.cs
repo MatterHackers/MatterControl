@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public WorldView World { get; }
 
-		public InteractiveScene Scene { get; set; }
+		public InteractiveScene Scene { get; }
 
 		// TODO: Collapse into auto-property
 		private List<InteractionVolume> interactionVolumes = new List<InteractionVolume>();
@@ -57,8 +57,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private string progressReportingPrimaryTask = "";
 
-		public InteractionLayer(WorldView world, UndoBuffer undoBuffer, Action notifyPartChanged)
+		public InteractionLayer(WorldView world, UndoBuffer undoBuffer, Action notifyPartChanged, InteractiveScene scene)
 		{
+			this.Scene = scene;
 			this.World = world;
 			this.InteractionVolumes = interactionVolumes;
 			this.undoBuffer = undoBuffer;

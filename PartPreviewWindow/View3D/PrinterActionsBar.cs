@@ -83,7 +83,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public PrinterActionsBar(View3DWidget modelViewer, PrinterTabPage printerTabPage)
 		{
-			UndoBuffer undoBuffer = modelViewer.UndoBuffer;
+			UndoBuffer undoBuffer = modelViewer.Scene.UndoBuffer;
 
 			var defaultMargin = ApplicationController.Instance.Theme.ButtonSpacing;
 			var buttonFactory = ApplicationController.Instance.Theme.ButtonFactory;
@@ -92,8 +92,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Fit;
-
-			this.AddChild(new PrinterConnectButton(buttonFactory, defaultMargin));
+			this.AddChild(new PrinterConnectButton(buttonFactory, 0));
 
 			this.AddChild(new PrintActionRow(buttonFactory, this, defaultMargin));
 
@@ -179,15 +178,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			Button redoButton = buttonFactory.GenerateIconButton(StaticData.Instance.LoadIcon("Redo_grey_16x.png", 16, 16));
 			redoButton.Name = "3D View Redo";
+			redoButton.Margin = defaultMargin;
 			redoButton.MinimumSize = new Vector2(height, height);
 			redoButton.ToolTipText = "Redo";
 			redoButton.Enabled = false;
+			redoButton.VAnchor = VAnchor.Center;
 			redoButton.Click += (sender, e) =>
 			{
 				undoBuffer.Redo();
 			};
 			this.AddChild(redoButton);
-			redoButton.VAnchor = VAnchor.Center;
 
 			undoBuffer.Changed += (sender, e) =>
 			{
@@ -210,6 +210,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}; 
 
 			this.AddChild(overflowDropdown);
+		}
+
+		public override void AddChild(GuiWidget childToAdd, int indexInChildrenList = -1)
+		{
+			childToAdd.VAnchor |= VAnchor.Center;
+			base.AddChild(childToAdd, indexInChildrenList);
 		}
 
 		public override void OnClosed(ClosedEventArgs e)

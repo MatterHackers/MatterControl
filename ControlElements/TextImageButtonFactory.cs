@@ -105,7 +105,8 @@ namespace MatterHackers.MatterControl
 				new ButtonViewThreeImage(
 					icon.AjustAlpha(.7),
 					icon.AjustAlpha(.9),
-					icon.AjustAlpha(1)));
+					icon.AjustAlpha(1),
+					icon.AjustAlpha(.2)));
 		}
 
 		public CheckBox GenerateCheckBoxButton(string label, ImageBuffer normalImage, ImageBuffer normalToPressedImage = null, ImageBuffer pressedImage = null, ImageBuffer pressedToNormalImage = null, string pressedLabel = null)

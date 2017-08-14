@@ -67,7 +67,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private bool deferEditorTillMouseUp = false;
 
 		public FlowLayoutWidget selectionActionBar;
-		public UndoBuffer UndoBuffer { get; } = new UndoBuffer();
 		public readonly int EditButtonHeight = 44;
 
 		private ObservableCollection<GuiWidget> extruderButtons = new ObservableCollection<GuiWidget>();
@@ -138,6 +137,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public View3DWidget(PrintItemWrapper printItemWrapper, Vector3 viewerVolume, Vector2 bedCenter, BedShape bedShape, WindowMode windowType, AutoRotate autoRotate, ViewControls3D viewControls3D, ThemeConfig theme, OpenMode openMode = OpenMode.Viewing)
 		{
 			this.printer = ApplicationController.Instance.Printer;
+			this.Scene = this.printer.BedPlate.Scene;
 			this.bedCenter = bedCenter;
 
 			this.TrackballTumbleWidget = new TrackballTumbleWidget(ApplicationController.Instance.Printer.BedPlate.World)
@@ -146,7 +146,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			this.TrackballTumbleWidget.AnchorAll();
 
-			this.InteractionLayer = new InteractionLayer(this.World, this.UndoBuffer, this.PartHasBeenChanged)
+			this.InteractionLayer = new InteractionLayer(this.World, this.Scene.UndoBuffer, this.PartHasBeenChanged, this.Scene)
 			{
 				Name = "InteractionLayer",
 			};
@@ -156,7 +156,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.theme = theme;
 			this.openMode = openMode;
 			allowAutoRotate = (autoRotate == AutoRotate.Enabled);
-			meshViewerWidget = new MeshViewerWidget(viewerVolume, bedCenter, bedShape, this.TrackballTumbleWidget, this.InteractionLayer);
+			meshViewerWidget = new MeshViewerWidget(viewerVolume, bedCenter, bedShape, this.TrackballTumbleWidget, this.InteractionLayer, this.Scene);
 			this.printItemWrapper = printItemWrapper;
 
 			ActiveSliceSettings.SettingChanged.RegisterEvent(CheckSettingChanged, ref unregisterEvents);
@@ -201,7 +201,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var buttonBottomPanel = new FlowLayoutWidget(FlowDirection.LeftToRight)
 			{
 				HAnchor = HAnchor.Stretch,
-				Padding = 3,
+				Padding = ApplicationController.Instance.Theme.ToolbarPadding,
 				BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor,
 			};
 
@@ -242,8 +242,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				var buttonSpacing = ApplicationController.Instance.Theme.ButtonSpacing;
 
-				Button addButton = smallMarginButtonFactory.Generate("Insert".Localize(), StaticData.Instance.LoadIcon("AddAzureResource_16x.png", 14, 14));
-				addButton.Margin = buttonSpacing;
+				Button addButton = smallMarginButtonFactory.Generate("Insert".Localize(), StaticData.Instance.LoadIcon("cube.png", 14, 14));
+				addButton.Margin = 0;
 				addButton.Click += (sender, e) =>
 				{
 					UiThread.RunOnIdle(() =>
@@ -552,7 +552,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					case Keys.Z:
 						if (keyEvent.Control)
 						{
-							UndoBuffer.Undo();
+							this.Scene.UndoBuffer.Undo();
 							keyEvent.Handled = true;
 							keyEvent.SuppressKeyPress = true;
 						}
@@ -561,7 +561,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					case Keys.Y:
 						if (keyEvent.Control)
 						{
-							UndoBuffer.Redo();
+							this.Scene.UndoBuffer.Redo();
 							keyEvent.Handled = true;
 							keyEvent.SuppressKeyPress = true;
 						}
@@ -596,7 +596,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void AddUndoOperation(IUndoRedoCommand operation)
 		{
-			UndoBuffer.Add(operation);
+			this.Scene.UndoBuffer.Add(operation);
 		}
 
 		#region DoBooleanTest
@@ -703,9 +703,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void RemoveBooleanTestGeometry(object sender, DrawEventArgs e)
 		{
-			if (meshViewerWidget.Scene.Children.Contains(booleanGroup))
+			if (this.Scene.Children.Contains(booleanGroup))
 			{
-				meshViewerWidget.Scene.Children.Remove(booleanGroup);
+				this.Scene.Children.Remove(booleanGroup);
 				UiThread.RunOnIdle(() => Invalidate(), 1.0 / 30.0);
 			}
 		}
@@ -1250,7 +1250,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							Invalidate();
 							CurrentSelectInfo.DownOnPart = true;
 
-							AxisAlignedBoundingBox selectedBounds = meshViewerWidget.Scene.SelectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+							AxisAlignedBoundingBox selectedBounds = this.Scene.SelectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 
 							if (info.HitPosition.x < selectedBounds.Center.x)
 							{
@@ -1320,7 +1320,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (snapGridDistance > 0)
 				{
 					// snap this position to the grid
-					AxisAlignedBoundingBox selectedBounds = meshViewerWidget.Scene.SelectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+					AxisAlignedBoundingBox selectedBounds = this.Scene.SelectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 
 					double xSnapOffset = selectedBounds.minXYZ.x;
 					// snap the x position
@@ -2405,7 +2405,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public MeshViewerWidget meshViewerWidget;
 
 		// Proxy to MeshViewerWidget
-		public InteractiveScene Scene => meshViewerWidget.Scene;
+		public InteractiveScene Scene { get; }
 
 		protected ViewControls3D viewControls3D { get; }
 
