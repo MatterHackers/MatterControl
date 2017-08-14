@@ -72,7 +72,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public PrintLibraryWidget()
 		{
-			this.Padding = new BorderDouble(top: 3);
+			this.Padding = 0;
 
 			this.BackgroundColor = ApplicationController.Instance.Theme.TabBodyBackground;
 			this.AnchorAll();
@@ -93,7 +93,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit,
-				Padding = 0,
+				Padding = ApplicationController.Instance.Theme.ToolbarPadding
 			};
 
 			int arrowHeight = 5;
@@ -107,7 +107,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit,
-				Margin = 8
+				MinimumSize = new Vector2(0, ApplicationController.Instance.Theme.ButtonFactory.FixedHeight)
 			};
 			buttonView.AfterDraw += (s, e) =>
 			{
@@ -116,7 +116,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			activeContainerTitle = new TextWidget(ApplicationController.Instance.Library.ActiveContainer.Name, textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
-				Margin = new BorderDouble(left: 6)
+				Margin = new BorderDouble(left: 6),
+				VAnchor = VAnchor.Center
 			};
 			buttonView.AddChild(activeContainerTitle);
 
@@ -159,8 +160,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			buttonPanel = new FlowLayoutWidget()
 			{
 				HAnchor = HAnchor.Stretch,
-				Padding = 3,
-				BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor
+				Padding = ApplicationController.Instance.Theme.ToolbarPadding,
+				BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor,
 			};
 			AddLibraryButtonElements();
 			allControls.AddChild(buttonPanel);
@@ -247,12 +248,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			buttonPanel.RemoveAllChildren();
 
-			var buttonContainer = new FlowLayoutWidget()
-			{
-				Padding = 3
-			};
-			buttonPanel.AddChild(buttonContainer);
-
 			// the add button
 			addToLibraryButton = textImageButtonFactory.Generate("Add".Localize(), "AddAzureResource_16x.png");
 			addToLibraryButton.Enabled = false; // The library selector (the first library selected) is protected so we can't add to it. 
@@ -276,7 +271,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						}
 					});
 			});
-			buttonContainer.AddChild(addToLibraryButton);
+			buttonPanel.AddChild(addToLibraryButton);
 
 			// the create folder button
 			createFolderButton = textImageButtonFactory.Generate("Create Folder".Localize());
@@ -302,7 +297,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					createFolderWindow.BringToFront();
 				}
 			};
-			buttonContainer.AddChild(createFolderButton);
+			buttonPanel.AddChild(createFolderButton);
 
 			// add in the message widget
 			providerMessageContainer = new GuiWidget()

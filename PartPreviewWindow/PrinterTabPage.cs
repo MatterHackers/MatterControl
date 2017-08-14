@@ -76,7 +76,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			gcodeOptions = printer.BedPlate.RendererOptions;
 
 			this.BackgroundColor = ApplicationController.Instance.Theme.TabBodyBackground;
-			this.Padding = new BorderDouble(top: 3);
+			this.Padding = 0;
 
 			double buildHeight = activeSettings.GetValue<double>(SettingsKey.build_height);
 
@@ -210,7 +210,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Must come after we have an instance of View3DWidget an its undo buffer
 			topToBottom.AddChild(new PrinterActionsBar(modelViewer, this)
 			{
-				Padding = new BorderDouble(bottom: 2)
+				Padding = ApplicationController.Instance.Theme.ToolbarPadding
 			});
 
 			var leftToRight = new FlowLayoutWidget();

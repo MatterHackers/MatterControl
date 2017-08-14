@@ -201,7 +201,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var buttonBottomPanel = new FlowLayoutWidget(FlowDirection.LeftToRight)
 			{
 				HAnchor = HAnchor.Stretch,
-				Padding = 3,
+				Padding = ApplicationController.Instance.Theme.ToolbarPadding,
 				BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor,
 			};
 
@@ -243,7 +243,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				var buttonSpacing = ApplicationController.Instance.Theme.ButtonSpacing;
 
 				Button addButton = smallMarginButtonFactory.Generate("Insert".Localize(), StaticData.Instance.LoadIcon("AddAzureResource_16x.png", 14, 14));
-				addButton.Margin = buttonSpacing;
+				addButton.Margin = 0;
 				addButton.Click += (sender, e) =>
 				{
 					UiThread.RunOnIdle(() =>
