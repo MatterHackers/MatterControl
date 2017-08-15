@@ -44,7 +44,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class PrinterTabPage : GuiWidget
+	public class PrinterTabPage : TabPage
 	{
 		internal View3DWidget modelViewer;
 		internal GCode2DWidget gcode2DWidget;
@@ -69,7 +69,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private SystemWindow parentSystemWindow;
 
-		public PrinterTabPage(PrinterSettings activeSettings, PrintItemWrapper printItem)
+		public PrinterTabPage(PrinterSettings activeSettings, PrintItemWrapper printItem, string tabTitle)
+			: base (tabTitle)
 		{
 			printer = ApplicationController.Instance.Printer;
 
