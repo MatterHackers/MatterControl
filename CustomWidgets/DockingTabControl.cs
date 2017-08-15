@@ -52,12 +52,18 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		private GuiWidget topToBottom;
 
 		protected GuiWidget widgetTodockTo;
+		private Func<int> getSelectedTab;
+		private Action<int> setSelectedTab;
+
 		public DockSide DockSide { get; set; }
 
-		public DockingTabControl(GuiWidget widgetTodockTo, DockSide dockSide)
+		public DockingTabControl(GuiWidget widgetTodockTo, DockSide dockSide, Func<int> getSelectedTab, Action<int> setSelectedTab)
 		{
 			this.widgetTodockTo = widgetTodockTo;
 			this.DockSide = dockSide;
+
+			this.getSelectedTab = getSelectedTab;
+			this.setSelectedTab = setSelectedTab;
 		}
 
 		public event EventHandler PinStatusChanged;
@@ -122,6 +128,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				topToBottom.AddChild(resizePage);
 			}
 
+			int tabIndex = 0;
 			foreach (var nameWidget in allTabs)
 			{
 				string tabTitle = nameWidget.Key;
@@ -131,8 +138,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					var content = new DockWindowContent(this, nameWidget.Value, tabTitle);
 
 					var tabPage = new TabPage(content, tabTitle);
-
-					tabControl.AddTab(new TextTab(
+					var textTab = new TextTab(
 						tabPage,
 						tabTitle + " Tab",
 						12,
@@ -140,7 +146,16 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						RGBA_Bytes.Transparent,
 						ActiveTheme.Instance.TabLabelUnselected,
 						RGBA_Bytes.Transparent,
-						useUnderlineStyling: true));
+						useUnderlineStyling: true);
+
+					tabControl.AddTab(textTab);
+
+					int localTabIndex = tabIndex;
+					textTab.Click += (s, e) =>
+					{
+						setSelectedTab?.Invoke(localTabIndex);
+					};
+
 				}
 				else // control is floating
 				{
@@ -177,7 +192,15 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					};
 					settingsButton.PopupLayoutEngine = new UnpinnedLayoutEngine(settingsButton.PopupContent, widgetTodockTo, DockSide);
 					topToBottom.AddChild(settingsButton);
+
+					int localTabIndex = tabIndex;
+					settingsButton.Click += (s, e) =>
+					{
+						setSelectedTab?.Invoke(localTabIndex);
+					};
 				}
+
+				tabIndex++;
 			}
 
 			if (ControlIsPinned)
@@ -187,6 +210,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				var pinButton = this.CreatePinButton();
 				pinButton.Margin = new BorderDouble(right: 18, bottom: 7);
 				tabControl.TabBar.AddChild(pinButton);
+
+				if (getSelectedTab != null)
+				{
+					tabControl.SelectedTabIndex = getSelectedTab.Invoke();
+				}
 			}
 		}
 

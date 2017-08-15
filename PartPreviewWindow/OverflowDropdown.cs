@@ -119,6 +119,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.HAnchor = HAnchor.Fit;
 			this.VAnchor = VAnchor.Fit;
 			this.buttonView = buttonView;
+			this.buttonView.Selectable = false;
 
 			this.AddChild(buttonView);
 		}
