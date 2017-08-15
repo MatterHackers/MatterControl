@@ -1349,6 +1349,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					delta.y = snappedY - ySnapOffset;
 				}
 
+				// if the shift key is down only move on the major axis of x or y
+				if(Keyboard.IsKeyDown(Keys.ShiftKey))
+				{
+					if(Math.Abs(delta.x) < Math.Abs(delta.y))
+					{
+						delta.x = 0;
+					}
+					else
+					{
+						delta.y = 0;
+					}
+				}
+
 				// move the mesh back to the new position
 				{
 					Matrix4X4 totalTransform = Matrix4X4.CreateTranslation(new Vector3(delta));
