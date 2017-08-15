@@ -144,12 +144,15 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				}
 				else // control is floating
 				{
+					var printer = new TypeFacePrinter(tabTitle, 12 * GuiWidget.DeviceScale);
 					var rotatedLabel = new VertexSourceApplyTransform(
-						new TypeFacePrinter(tabTitle, 12),
+						printer,
 						Affine.NewRotation(MathHelper.DegreesToRadians(-90)));
 
-					var bounds = rotatedLabel.Bounds();
-					rotatedLabel.Transform = ((Affine)rotatedLabel.Transform) * Affine.NewTranslation(new Vector2(0, -bounds.Bottom + 0));
+					var textBounds = rotatedLabel.Bounds();
+					var bounds = new RectangleDouble(printer.TypeFaceStyle.DescentInPixels, textBounds.Bottom, printer.TypeFaceStyle.AscentInPixels, textBounds.Top);
+					rotatedLabel.Transform = ((Affine)rotatedLabel.Transform) 
+						* Affine.NewTranslation(new Vector2(-printer.TypeFaceStyle.DescentInPixels, -bounds.Bottom));
 
 					var optionsText = new GuiWidget(bounds.Width, bounds.Height)
 					{

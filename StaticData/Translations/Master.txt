@@ -4396,3 +4396,9 @@ Translated:Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Layers
 English:New User? 
 Translated:New User? 
 
+English:Arrange All Parts
+Translated:Arrange All Parts
+
+English:Clear Bed
+Translated:Clear Bed
+
