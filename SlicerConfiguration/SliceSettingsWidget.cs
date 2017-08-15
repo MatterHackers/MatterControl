@@ -154,7 +154,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				var categoryPage = new TabPage(category.Name.Localize());
 				categoryPage.AnchorAll();
 
-				topCategoryTabs.AddTab(new SimpleTextTabWidget(
+				topCategoryTabs.AddTab(new TextTab(
 					categoryPage,
 					category.Name + " Tab",
 					14,
@@ -357,7 +357,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				};
 
 				//Side Tabs
-				var groupTabWidget = new SimpleTextTabWidget(
+				var groupTabWidget = new TextTab(
 					groupTabPage, 
 					group.Name + " Tab", 
 					14,
@@ -552,7 +552,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			leftSideGroupTabs.TabBar.BorderColor = RGBA_Bytes.White;
 			{
 				TabPage groupTabPage = new TabPage("Extra Settings");
-				SimpleTextTabWidget groupTabWidget = new SimpleTextTabWidget(groupTabPage, "Extra Settings Tab", 14,
+				TextTab groupTabWidget = new TextTab(groupTabPage, "Extra Settings Tab", 14,
 				   ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), ActiveTheme.Instance.TabLabelUnselected, new RGBA_Bytes());
 				leftSideGroupTabs.AddTab(groupTabWidget);
 

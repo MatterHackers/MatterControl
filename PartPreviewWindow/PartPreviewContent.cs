@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			// Add a tab for the current printer
-			var printerTab = new SimpleTextTabWidget(
+			var printerTab = new TextTab(
 				new TabPage(new PrinterTabPage(ActiveSliceSettings.Instance, printItem), tabTitle.ToUpper()),
 				"3D View Tab",
 				tabControl.TextPointSize,
@@ -78,12 +78,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			printerTab.ToolTipText = "Preview 3D Design".Localize();
 			tabControl.AddTab(printerTab);
 
-
 			// TODO: add in the printers and designs that are currently open (or were open last run).
 
 			// Add a tab for the current printer
 
-			var plusTabSelect = new SimpleTextTabWidget(
+			var plusTabSelect = new TextTab(
 				new TabPage(new PlusTabPage(), "+"),
 				"Create New",
 				tabControl.TextPointSize,
