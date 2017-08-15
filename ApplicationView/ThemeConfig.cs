@@ -101,6 +101,7 @@ namespace MatterHackers.MatterControl
 		public BorderDouble ButtonSpacing { get; set; } = new BorderDouble(3, 0, 0, 0);
 		public TextImageButtonFactory NoMarginWhite { get; private set; }
 		public BorderDouble ToolbarPadding { get; set; } = 3;
+		public RGBA_Bytes PrimaryTabFillColor { get; internal set; }
 
 		private EventHandler unregisterEvents;
 
@@ -338,6 +339,7 @@ namespace MatterHackers.MatterControl
 				fontSize = fontSize10,
 				textColor = theme.SecondaryAccentColor
 			};
+			this.PrimaryTabFillColor = new RGBA_Bytes(RGBA_Bytes.White, ActiveTheme.Instance.IsDarkTheme ?  20 : 60);
 		}
 
 		public FlowLayoutWidget CreatePopupMenu(IEnumerable<NamedAction> menuActions)
@@ -382,9 +384,9 @@ namespace MatterHackers.MatterControl
 		}
 
 
-		internal TabControl CreateTabControl()
+		internal TabControl CreateTabControl(int height = 1)
 		{
-			var tabControl = new TabControl(separator: new HorizontalLine(alpha: 50));
+			var tabControl = new TabControl(separator: new HorizontalLine(alpha: 50, height: height));
 			tabControl.TabBar.BorderColor = RGBA_Bytes.Transparent; // theme.SecondaryTextColor;
 			tabControl.TabBar.Margin = 0;
 			tabControl.TabBar.Padding = 0;

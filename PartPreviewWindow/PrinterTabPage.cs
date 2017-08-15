@@ -30,7 +30,6 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Linq;
 using MatterHackers.Agg;
-using MatterHackers.Agg.OpenGlGui;
 using MatterHackers.Agg.UI;
 using MatterHackers.GCodeVisualizer;
 using MatterHackers.Localizations;

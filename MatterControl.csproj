@@ -211,6 +211,7 @@
     <Compile Include="PartPreviewWindow\GCodeDetailsView.cs" />
     <Compile Include="PartPreviewWindow\OverflowDropdown.cs" />
     <Compile Include="PartPreviewWindow\PlusTabPage.cs" />
+    <Compile Include="PartPreviewWindow\PrinterTab.cs" />
     <Compile Include="PartPreviewWindow\PrinterTabPage.cs" />
     <Compile Include="PartPreviewWindow\View3D\ColorSwatchSelector.cs" />
     <Compile Include="PartPreviewWindow\View3D\GeneralObject3DEditor.cs" />

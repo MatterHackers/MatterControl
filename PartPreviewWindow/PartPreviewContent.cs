@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.IO;
+using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
@@ -49,7 +50,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var activeSettings = ActiveSliceSettings.Instance;
 
-			var tabControl = ApplicationController.Instance.Theme.CreateTabControl();
+			var tabControl = ApplicationController.Instance.Theme.CreateTabControl(2);
+
+			var separator = tabControl.Children<HorizontalLine>().FirstOrDefault();
+			separator.BackgroundColor = ApplicationController.Instance.Theme.PrimaryTabFillColor;
 
 			string tabTitle = !activeSettings.PrinterSelected ? "Printer".Localize() : activeSettings.GetValue(SettingsKey.printer_name);
 
@@ -66,24 +70,35 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			// Add a tab for the current printer
-			var printerTab = new TextTab(
-				new PrinterTabPage(ActiveSliceSettings.Instance, printItem, tabTitle.ToUpper()),
+			var printerTab = new PrinterTab(
+				new TextWidget(tabTitle)
+				{
+					TextColor = ActiveTheme.Instance.PrimaryTextColor,
+					VAnchor = VAnchor.Center,
+					HAnchor = HAnchor.Center
+				},
+				new TextWidget(tabTitle)
+				{
+					TextColor = ActiveTheme.Instance.PrimaryTextColor,
+					VAnchor = VAnchor.Center,
+					HAnchor = HAnchor.Center
+				},
+				new TextWidget(tabTitle)
+				{
+					TextColor = ActiveTheme.Instance.PrimaryTextColor,
+					VAnchor = VAnchor.Center,
+					HAnchor = HAnchor.Center
+				},
 				"3D View Tab",
-				tabControl.TextPointSize,
-				selectedTabColor,
-				new RGBA_Bytes(),
-				ActiveTheme.Instance.TabLabelUnselected,
-				new RGBA_Bytes(),
-				useUnderlineStyling: true);
+				new PrinterTabPage(ActiveSliceSettings.Instance, printItem, tabTitle.ToUpper()));
 
+			printerTab.Margin = new BorderDouble(10, 0, 0, 5);
+			printerTab.Padding = new BorderDouble(15, 2, 15, 6);
 			printerTab.ToolTipText = "Preview 3D Design".Localize();
 
 			tabControl.AddTab(printerTab);
 
 			// TODO: add in the printers and designs that are currently open (or were open last run).
-
-			// Add a tab for the current printer
-
 			var plusTabSelect = new TextTab(
 				new TabPage(new PlusTabPage(), "+"),
 				"Create New",
@@ -92,7 +107,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				new RGBA_Bytes(),
 				ActiveTheme.Instance.TabLabelUnselected,
 				new RGBA_Bytes(),
+				fixedSize: 16,
 				useUnderlineStyling: true);
+
+			plusTabSelect.VAnchor = VAnchor.Bottom;
+
+			plusTabSelect.MinimumSize = new VectorMath.Vector2(16, 16);
+			plusTabSelect.Margin = new BorderDouble(left: 10, top: 6);
+			plusTabSelect.Padding = 0;
 			plusTabSelect.ToolTipText = "Create New".Localize();
 			tabControl.AddTab(plusTabSelect);
 

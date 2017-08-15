@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Kevin Pope
+Copyright (c) 2017, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -29,55 +29,41 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.Agg.VertexSource;
+using MatterHackers.VectorMath;
 
-namespace MatterHackers.MatterControl.CustomWidgets
+namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class HorizontalSpacer : GuiWidget
+	public class PrinterTab : Tab
 	{
-		public HorizontalSpacer()
+		public PrinterTab(GuiWidget normalWidget, GuiWidget hoverWidget, GuiWidget pressedWidget, string tabName, TabPage tabPage)
+			: base(tabName, normalWidget, hoverWidget, pressedWidget, tabPage)
 		{
-			HAnchor = HAnchor.Stretch;
-		}
-	}
-
-	public class VerticalSpacer : GuiWidget
-	{
-		public VerticalSpacer()
-		{
-			VAnchor = VAnchor.Stretch;
-		}
-	}
-
-	public class HorizontalLine : GuiWidget
-	{
-		public HorizontalLine(int alpha = 255, int height = 1)
-			: base(1, height)
-		{
-			BackgroundColor = GetBorderColor(alpha);
-			HAnchor = HAnchor.Stretch;
+			this.HAnchor = HAnchor.Fit;
+			this.VAnchor = VAnchor.Fit | VAnchor.Bottom;
 		}
 
-		internal static RGBA_Bytes GetBorderColor(int alpha)
-		{
-			RGBA_Bytes color = ActiveTheme.Instance.SecondaryTextColor;
+		public int BorderWidth { get; set; } = 1;
+		public int borderRadius { get; set; } = 4;
 
-			if (alpha != 255)
+		public RGBA_Bytes BorderColor { get; set; } = ApplicationController.Instance.Theme.PrimaryTabFillColor;
+
+		public override void OnDraw(Graphics2D graphics2D)
+		{
+			RectangleDouble borderRectangle = LocalBounds;
+			borderRectangle.ExpandToInclude(new Vector2(0, -15));
+
+			if (BorderWidth > 0)
 			{
-				color = new RGBA_Bytes(ActiveTheme.Instance.SecondaryTextColor);
-				color.alpha = (byte)alpha;
+				var r = new RoundedRect(borderRectangle, this.borderRadius);
+				r.normalize_radius();
+
+				graphics2D.Render(
+					r,
+					this.BorderColor);
 			}
 
-			return color;
-		}
-	}
-
-	public class VerticalLine : GuiWidget
-	{
-		public VerticalLine(int alpha = 255)
-			: base(1, 1)
-		{
-			BackgroundColor = HorizontalLine.GetBorderColor(alpha);
-			VAnchor = VAnchor.Stretch;
+			base.OnDraw(graphics2D);
 		}
 	}
 }
