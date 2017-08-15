@@ -357,9 +357,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return renderType;
 		}
 
+		int lastTabSelected = 0;
+		int GetSelectedTab()
+		{
+			return lastTabSelected;
+		}
+
+		void SetSelectedTab(int tabIndex)
+		{
+			lastTabSelected = tabIndex;
+		}
+
 		private void AddSettingsTabBar(GuiWidget parent, GuiWidget widgetTodockTo)
 		{
-			var sideBar = new DockingTabControl(widgetTodockTo, DockSide.Right)
+			var sideBar = new DockingTabControl(widgetTodockTo, DockSide.Right, GetSelectedTab, SetSelectedTab)
 			{
 				ControlIsPinned = ApplicationController.Instance.PrintSettingsPinned
 			};
