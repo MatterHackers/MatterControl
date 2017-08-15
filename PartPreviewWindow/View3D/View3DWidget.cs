@@ -278,13 +278,42 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 				selectionActionBar.AddChild(groupButton);
 
+				// this is closer to the old align button
+				if (false)
+				{
+					Button absoluteButton = smallMarginButtonFactory.Generate("Absolute".Localize());
+					absoluteButton.Margin = buttonSpacing;
+					absoluteButton.Click += (sender, e) =>
+					{
+						if (this.Scene.HasSelection)
+						{
+							this.Scene.SelectedItem.Matrix = Matrix4X4.Identity;
+						}
+					};
+					selectionActionBar.AddChild(absoluteButton);
+				}
+
 				Button alignButton = smallMarginButtonFactory.Generate("Align".Localize());
 				alignButton.Margin = buttonSpacing;
 				alignButton.Click += (sender, e) =>
 				{
-					this.Scene.AlignToSelection(this);
+					if (this.Scene.HasSelection)
+					{
+						//this.Scene.SelectedItem.Matrix = Matrix4X4.Identity;
+					}
 				};
 				selectionActionBar.AddChild(alignButton);
+
+				Button layFlatButton = smallMarginButtonFactory.Generate("Lay Flat".Localize());
+				layFlatButton.Margin = buttonSpacing;
+				layFlatButton.Click += (sender, e) =>
+				{
+					if (this.Scene.HasSelection)
+					{
+						MakeLowestFaceFlat(this.Scene.SelectedItem);
+					}
+				};
+				selectionActionBar.AddChild(layFlatButton);
 
 				CreateActionSeparator(selectionActionBar);
 
@@ -1883,24 +1912,36 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		internal void MakeLowestFaceFlat(IObject3D objectToLayFlatGroup)
 		{
+			bool firstVertex = true;
+
 			Matrix4X4 objectToWold = objectToLayFlatGroup.Matrix;
-			IObject3D objectToLayFlat = objectToLayFlatGroup.Children[0];
+			IObject3D objectToLayFlat = objectToLayFlatGroup;
 
-			var lowestVertex = objectToLayFlat.Mesh.Vertices[0];
-
-			Vector3 lowestVertexPosition = Vector3.Transform(lowestVertex.Position, objectToWold);
-
+			IVertex lowestVertex = null;
+			Vector3 lowestVertexPosition = Vector3.Zero;
 			IObject3D itemToLayFlat = null;
 
 			// Process each child, checking for the lowest vertex
-			foreach (IObject3D itemToCheck in objectToLayFlat.Children.Where(child => child.Mesh != null))
+			var objectsToCheck = objectToLayFlat.Children.Where(child => child.Mesh != null).ToList();
+			if(objectToLayFlat.Mesh != null)
+			{
+				objectsToCheck.Add(objectToLayFlat);
+			}
+			foreach (IObject3D itemToCheck in objectsToCheck)
 			{
 				// find the lowest point on the model
 				for (int testIndex = 1; testIndex < itemToCheck.Mesh.Vertices.Count; testIndex++)
 				{
 					var vertex = itemToCheck.Mesh.Vertices[testIndex];
 					Vector3 vertexPosition = Vector3.Transform(vertex.Position, objectToWold);
-					if (vertexPosition.z < lowestVertexPosition.z)
+					if(firstVertex)
+					{
+						lowestVertex = itemToCheck.Mesh.Vertices[testIndex];
+						lowestVertexPosition = vertexPosition;
+						itemToLayFlat = itemToCheck;
+						firstVertex = false;
+					}
+					else if (vertexPosition.z < lowestVertexPosition.z)
 					{
 						lowestVertex = itemToCheck.Mesh.Vertices[testIndex];
 						lowestVertexPosition = vertexPosition;
@@ -1962,6 +2003,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				PartHasBeenChanged();
 				Invalidate();
 			}
+
+			PlatingHelper.PlaceMeshGroupOnBed(objectToLayFlatGroup);
 		}
 
 		public static Regex fileNameNumberMatch = new Regex("\\(\\d+\\)", RegexOptions.Compiled);
