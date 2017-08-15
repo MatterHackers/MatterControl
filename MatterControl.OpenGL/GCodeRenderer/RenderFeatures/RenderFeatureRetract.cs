@@ -74,7 +74,9 @@ namespace MatterHackers.GCodeVisualizer
 					position = position + new Vector3(offset);
 				}
 
-				RGBA_Bytes color = renderInfo.GetMaterialColor(extruderIndex + 1);
+				// retract and unretract are the extruder color
+				RGBA_Bytes color = renderInfo.GetMaterialColor(extruderIndex);
+				// except for extruder 0 where they are the red and blue we are familiar with
 				if (extruderIndex == 0)
 				{
 					if (extrusionAmount > 0)
