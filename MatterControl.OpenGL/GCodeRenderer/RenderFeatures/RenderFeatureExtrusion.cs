@@ -87,14 +87,7 @@ namespace MatterHackers.GCodeVisualizer
 				}
 				else
 				{
-					if (extruderIndex == 0)
-					{
-						CreateCylinder(colorVertexData, indexData, new Vector3(start), new Vector3(end), radius, 6, GCodeRenderer.ExtrusionColor, layerHeight);
-					}
-					else
-					{
-						CreateCylinder(colorVertexData, indexData, new Vector3(start), new Vector3(end), radius, 6, renderInfo.GetMaterialColor(extruderIndex + 1), layerHeight);
-					}
+					CreateCylinder(colorVertexData, indexData, new Vector3(start), new Vector3(end), radius, 6, renderInfo.GetMaterialColor(extruderIndex), layerHeight);
 				}
 			}
 		}
@@ -108,7 +101,7 @@ namespace MatterHackers.GCodeVisualizer
 				RGBA_Bytes extrusionColor = RGBA_Bytes.Black;
 				if (extruderIndex > 0)
 				{
-					extrusionColor = renderInfo.GetMaterialColor(extruderIndex + 1);
+					extrusionColor = renderInfo.GetMaterialColor(extruderIndex);
 				}
 				if (renderInfo.CurrentRenderType.HasFlag(RenderType.SpeedColors))
 				{

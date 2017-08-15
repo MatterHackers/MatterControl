@@ -156,8 +156,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 				AddChild(gradientWidget);
 
-				GCodeRenderer.ExtrusionColor = ActiveTheme.Instance.PrimaryAccentColor;
-
 				var gcodeDetails = new GCodeDetails(this.loadedGCode);
 
 				this.AddChild(new GCodeDetailsView(gcodeDetails)

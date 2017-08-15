@@ -64,11 +64,6 @@ namespace MatterHackers.MeshVisualizer
 	{
 		public static RGBA_Bytes Color(int materialIndex)
 		{
-			if (materialIndex == 0)
-			{
-				return ActiveTheme.Instance.PrimaryAccentColor;
-			}
-
 			return RGBA_Floats.FromHSL(Math.Max(materialIndex, 0) / 10.0, .99, .49).GetAsRGBA_Bytes();
 		}
 	}
