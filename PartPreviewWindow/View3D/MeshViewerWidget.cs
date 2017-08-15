@@ -36,6 +36,7 @@ using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.OpenGlGui;
+using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
@@ -171,6 +172,22 @@ namespace MatterHackers.MeshVisualizer
 					}
 				};
 			}
+
+			UiThread.RunOnIdle(() =>
+			{
+				Task.Run(() =>
+				{
+					using (var stream = StaticData.Instance.OpenSteam(Path.Combine("OEMSettings", "printerShape.stl")))
+					{
+						var mesh = MeshFileIo.Load(stream, ".stl", CancellationToken.None).Mesh;
+						UiThread.RunOnIdle(() =>
+						{
+							printerShape = mesh;
+							this.Invalidate();
+						});
+					}
+				});
+			});
 
 			base.OnLoad(args);
 		}
@@ -627,6 +644,8 @@ namespace MatterHackers.MeshVisualizer
 			}
 		}
 
+		private Mesh printerShape;
+
 		private void trackballTumbleWidget_DrawGlContent(object sender, EventArgs e)
 		{
 			foreach(var object3D in scene.Children)
@@ -637,6 +656,10 @@ namespace MatterHackers.MeshVisualizer
 			if (RenderBed)
 			{
 				GLHelper.Render(printerBed, this.BedColor);
+				if (printerShape != null)
+				{
+					GLHelper.Render(printerShape, this.BedColor);
+				}
 			}
 
 			if (buildVolume != null && RenderBuildVolume)
