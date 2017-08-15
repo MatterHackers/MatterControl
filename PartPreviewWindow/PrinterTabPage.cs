@@ -30,7 +30,6 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Linq;
 using MatterHackers.Agg;
-using MatterHackers.Agg.OpenGlGui;
 using MatterHackers.Agg.UI;
 using MatterHackers.GCodeVisualizer;
 using MatterHackers.Localizations;
@@ -44,7 +43,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class PrinterTabPage : GuiWidget
+	public class PrinterTabPage : TabPage
 	{
 		internal View3DWidget modelViewer;
 		internal GCode2DWidget gcode2DWidget;
@@ -69,7 +68,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private SystemWindow parentSystemWindow;
 
-		public PrinterTabPage(PrinterSettings activeSettings, PrintItemWrapper printItem)
+		public PrinterTabPage(PrinterSettings activeSettings, PrintItemWrapper printItem, string tabTitle)
+			: base (tabTitle)
 		{
 			printer = ApplicationController.Instance.Printer;
 

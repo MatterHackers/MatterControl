@@ -132,7 +132,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 					var tabPage = new TabPage(content, tabTitle);
 
-					tabControl.AddTab(new SimpleTextTabWidget(
+					tabControl.AddTab(new TextTab(
 						tabPage,
 						tabTitle + " Tab",
 						12,
