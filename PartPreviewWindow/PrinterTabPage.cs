@@ -73,20 +73,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			printer = ApplicationController.Instance.Printer;
 
+			var theme = ApplicationController.Instance.Theme;
+
 			gcodeOptions = printer.BedPlate.RendererOptions;
 
-			this.BackgroundColor = ApplicationController.Instance.Theme.TabBodyBackground;
+			this.BackgroundColor = theme.TabBodyBackground;
 			this.Padding = 0;
 
 			double buildHeight = activeSettings.GetValue<double>(SettingsKey.build_height);
 
-			viewControls3D = new ViewControls3D(ApplicationController.Instance.Theme, printer.BedPlate.Scene.UndoBuffer)
+			viewControls3D = new ViewControls3D(theme, printer.BedPlate.Scene.UndoBuffer)
 			{
 				PartSelectVisible = false,
 				VAnchor = VAnchor.Top | VAnchor.Fit | VAnchor.Absolute,
 				HAnchor = HAnchor.Left | HAnchor.Fit,
 				Visible = true,
-				Margin = new BorderDouble(11, 0, 0, 50)
+				Margin = new BorderDouble(6, 0, 0, 43)
 			};
 			viewControls3D.ViewModeChanged += (s, e) =>
 			{
@@ -195,7 +197,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				View3DWidget.WindowMode.Embeded,
 				View3DWidget.AutoRotate.Disabled,
 				viewControls3D,
-				ApplicationController.Instance.Theme,
+				theme,
 				View3DWidget.OpenMode.Editing);
 
 			modelViewer.BoundsChanged += (s, e) =>
@@ -210,7 +212,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Must come after we have an instance of View3DWidget an its undo buffer
 			topToBottom.AddChild(new PrinterActionsBar(modelViewer, this)
 			{
-				Padding = ApplicationController.Instance.Theme.ToolbarPadding
+				Padding = theme.ToolbarPadding
 			});
 
 			var leftToRight = new FlowLayoutWidget();
