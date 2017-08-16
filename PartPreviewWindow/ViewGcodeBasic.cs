@@ -33,24 +33,19 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.GCodeVisualizer;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class ViewGcodeBasic : GuiWidget
 	{
 		private TextWidget gcodeProcessingStateInfoText;
-		private PrintItemWrapper printItem => ApplicationController.Instance.ActivePrintItem;
 		
 		private GuiWidget gcodeDisplayWidget;
 
 		private ColorGradientWidget gradientWidget;
 
 		private EventHandler unregisterEvents;
-
-		public delegate Vector2 GetSizeFunction();
 
 		private string gcodeLoading = "Loading G-Code".Localize();
 		private string slicingErrorMessage = "Slicing Error.\nPlease review your slice settings.".Localize();
@@ -105,17 +100,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Stretch
 			};
 
-			if (printItem != null)
-			{
-				SetProcessingMessage("Loading G-Code...".Localize());
-
-				bool isGCode = Path.GetExtension(printItem.FileLocation).ToUpper() == ".GCODE";
-
-				string gcodeFilePath = isGCode ? printItem.FileLocation : printItem.GetGCodePathAndFileName();
-				if (!File.Exists(gcodeFilePath))
-				{
-					SetProcessingMessage(string.Format("{0}\n'{1}'", fileNotFoundMessage, printItem.Name));
-				}
+			if (!File.Exists(printer.Bed.GCodePath))
+			{ 
+				SetProcessingMessage($"{fileNotFoundMessage}\n'{printer.Bed.GCodePath}'");
 			}
 
 			mainContainerTopToBottom.AddChild(gcodeDisplayWidget);
@@ -126,15 +113,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			SetProcessingMessage("");
 			if (loadedGCode == null)
 			{
-				// If we have finished loading the gcode and the source file exists but we don't have any loaded gcode it is because the loader decided to not load it.
-				if (File.Exists(printItem.FileLocation))
-				{
-					SetProcessingMessage(string.Format(fileTooBigToLoad, printItem.Name));
-				}
-				else
-				{
-					SetProcessingMessage(string.Format("{0}\n'{1}'", fileNotFoundMessage, Path.GetFileName(printItem.FileLocation)));
-				}
+				SetProcessingMessage($"{fileNotFoundMessage}\n'{printer.Bed.GCodePath}'");
 			}
 
 			if (loadedGCode?.LineCount > 0)
