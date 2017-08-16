@@ -63,9 +63,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private ValueDisplayInfo currentLayerInfo;
 
-		private Vector3 viewerVolume;
-		private Vector2 bedCenter;
-
 		private SystemWindow parentSystemWindow;
 
 		public PrinterTabPage(PrinterSettings activeSettings, PrintItemWrapper printItem, string tabTitle)
@@ -79,8 +76,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.BackgroundColor = theme.TabBodyBackground;
 			this.Padding = 0;
-
-			double buildHeight = activeSettings.GetValue<double>(SettingsKey.build_height);
 
 			viewControls3D = new ViewControls3D(theme, printer.BedPlate.Scene.UndoBuffer)
 			{
@@ -186,14 +181,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			SetSliderSizes();
 
-			this.viewerVolume = new Vector3(activeSettings.GetValue<Vector2>(SettingsKey.bed_size), buildHeight);
-			this.bedCenter = activeSettings.GetValue<Vector2>(SettingsKey.print_center);
+			
 
 			// The 3D model view
 			modelViewer = new View3DWidget(printItem,
-				this.viewerVolume,
-				this.bedCenter,
-				activeSettings.GetValue<BedShape>(SettingsKey.bed_shape),
+				printer,
 				View3DWidget.WindowMode.Embeded,
 				View3DWidget.AutoRotate.Disabled,
 				viewControls3D,
@@ -318,8 +310,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Close and remove any existing widget reference
 			gcode2DWidget?.Close();
 
+			var viewerVolume = printer.BedPlate.ViewerVolume;
+
 			// Create and append new widget
-			gcode2DWidget = new GCode2DWidget( new Vector2(viewerVolume.x, viewerVolume.y), this.bedCenter)
+			gcode2DWidget = new GCode2DWidget(new Vector2(viewerVolume.x, viewerVolume.y), printer.BedPlate.BedCenter)
 			{
 				Visible = (this.ViewMode == PartViewMode.Layers2D)
 			};

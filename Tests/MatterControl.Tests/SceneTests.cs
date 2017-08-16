@@ -106,15 +106,15 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			StaticData.Instance = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 #endif
+
+			// TODO: Entire app is spun up just to persist a scene - rewrite to reduce footprint/scope
 			var view3DWidget = new View3DWidget(
 				null,
-				new Vector3(200, 200, 100),
-				new Vector2(100, 100),
-				MeshVisualizer.BedShape.Rectangular,
+				new PrinterConfig(),
 				View3DWidget.WindowMode.Embeded,
 				View3DWidget.AutoRotate.Disabled,
 				new ViewControls3D(ApplicationController.Instance.Theme, new Agg.UI.UndoBuffer()),
-				new MatterControl.ThemeConfig(),
+				new ThemeConfig(),
 				View3DWidget.OpenMode.Editing);
 
 			// because we are using it without adding it into a parent we need to initialize it

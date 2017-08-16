@@ -204,11 +204,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Reposition first item to bed center
 			if (Scene.Children.Count == 0)
 			{
+				var printer = ApplicationController.Instance.Printer;
 				var aabb = newItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 				var center = aabb.Center;
+
 				newItem.Matrix *= Matrix4X4.CreateTranslation(
-					(MeshViewerWidget.BedCenter.x + center.x),
-					(MeshViewerWidget.BedCenter.y + center.y),
+					(printer.BedPlate.BedCenter.x + center.x),
+					(printer.BedPlate.BedCenter.y + center.y),
 					 -aabb.minXYZ.z);
 			}
 
