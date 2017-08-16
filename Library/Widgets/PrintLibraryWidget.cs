@@ -157,14 +157,14 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			allControls.AddChild(libraryView);
 
-			//buttonPanel = new FlowLayoutWidget()
-			//{
-			//	HAnchor = HAnchor.Stretch,
-			//	Padding = ApplicationController.Instance.Theme.ToolbarPadding,
-			//	BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor,
-			//};
-			//AddLibraryButtonElements();
-			//allControls.AddChild(buttonPanel);
+			buttonPanel = new FlowLayoutWidget()
+			{
+				HAnchor = HAnchor.Stretch,
+				Padding = ApplicationController.Instance.Theme.ToolbarPadding,
+				BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor,
+			};
+			AddLibraryButtonElements();
+			allControls.AddChild(buttonPanel);
 
 			allControls.AnchorAll();
 
