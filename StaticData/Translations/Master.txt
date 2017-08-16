@@ -4402,3 +4402,6 @@ Translated:Arrange All Parts
 English:Clear Bed
 Translated:Clear Bed
 
+English:Lay Flat
+Translated:Lay Flat
+

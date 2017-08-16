@@ -27,9 +27,13 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System.Threading.Tasks;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.PolygonMesh;
+using System.Linq;
+using System.Collections.Generic;
+using System.Threading;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -49,11 +53,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		public void Do()
+		public async void Do()
 		{
 			if (view3DWidget.Scene.Children.Contains(item))
 			{
-				// This is the original do() case. The selection group exists in the scene and must be flattened into a new grouped
+				// This is the original do() case. The selection group exists in the scene and must be flattened into a new group
 				var flattenedGroup = new Object3D
 				{
 					ItemType = Object3DTypes.Group
@@ -89,6 +93,52 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				view3DWidget.Scene.Select(item);
 			}
+
+			// spin up a task to remove holes from the objects in the group
+			await Task.Run(() =>
+			{
+				var holes = item.Children.Where(obj => obj.OutputType == PrintOutputTypes.Hole).ToList();
+				if (holes.Any())
+				{
+					var itemsToReplace = new List<(IObject3D object3D, Mesh newMesh)>();
+					foreach (var hole in holes)
+					{
+						var transformedHole = Mesh.Copy(hole.Mesh, CancellationToken.None);
+						transformedHole.Transform(hole.Matrix);
+
+						var stuffToModify = item.Children.Where(obj => obj.OutputType != PrintOutputTypes.Hole && obj.Mesh != null).ToList();
+						foreach (var object3D in stuffToModify)
+						{
+							var transformedObject = Mesh.Copy(object3D.Mesh, CancellationToken.None);
+							transformedObject.Transform(object3D.Matrix);
+
+							var newMesh = PolygonMesh.Csg.CsgOperations.Subtract(transformedObject, transformedHole);
+							if (newMesh != object3D.Mesh)
+							{
+								itemsToReplace.Add((object3D, newMesh));
+							}
+						}
+
+						foreach (var x in itemsToReplace)
+						{
+							item.Children.Remove(x.object3D);
+
+							var newItem = new Object3D()
+							{
+								Mesh = x.newMesh,
+
+								// Copy over child properties...
+								OutputType = x.object3D.OutputType,
+								Color = x.object3D.Color,
+								MaterialIndex = x.object3D.MaterialIndex
+							};
+							newItem.Children.Add(x.object3D);
+
+							item.Children.Add(newItem);
+						}
+					}
+				}
+			});
 
 			view3DWidget.PartHasBeenChanged();
 		}
