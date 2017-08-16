@@ -168,9 +168,16 @@ namespace MatterHackers.MatterControl
 		}
 	}
 
+	public class PrinterViewState
+	{
+		public bool SliceSettingsTabPinned { get; set; }
+		public int SliceSettingsTabIndex { get; set; }
+	}
+
 	public class PrinterConfig
 	{
 		public BedConfig BedPlate { get; } = new BedConfig();
+		public PrinterViewState ViewState { get; } = new PrinterViewState();
 	}
 
 	public class View3DConfig
