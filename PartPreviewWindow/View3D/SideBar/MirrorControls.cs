@@ -29,6 +29,8 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using MatterHackers.Agg.UI;
+using MatterHackers.VectorMath;
+using static MatterHackers.MatterControl.PrinterCommunication.PrinterConnection;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -52,65 +54,37 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			FlowLayoutWidget buttonContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
 			buttonContainer.HAnchor = HAnchor.Fit;
 
-			var buttonFactory = ApplicationController.Instance.Theme.ButtonFactory;
-			var buttonSpacing = ApplicationController.Instance.Theme.ButtonSpacing;
+			var theme = ApplicationController.Instance.Theme;
 
-			Button mirrorXButton = buttonFactory.Generate("X");
-			mirrorXButton.Margin = buttonSpacing;
+			Button mirrorXButton = theme.ButtonFactory.Generate("X");
+			mirrorXButton.Margin = theme.ButtonSpacing;
 			mirrorXButton.Click += (s, e) =>
 			{
 				if (view3DWidget.Scene.HasSelection)
 				{
-					view3DWidget.Scene.UndoBuffer.AddAndDo(new UndoRedoActions(() => MirrorOnAxis(0), () => MirrorOnAxis(0)));
-
-					throw new NotImplementedException();
-					
-					/* TODO: Revise above for scenebundle with the following...
-					var selectedItem = view3DWidget.Scene.SelectedItem;
-					selectedItem.Mesh.ReverseFaceEdges();
-					selectedItem.Matrix = PlatingHelper.ApplyAtCenter(selectedItem, Matrix4X4.CreateScale(-1, 1, 1));
-					view3DWidget.PartHasBeenChanged();
-					Invalidate(); */
+					view3DWidget.Scene.UndoBuffer.AddAndDo(new UndoRedoActions(() => MirrorOnAxis(Axis.X), () => MirrorOnAxis(Axis.X)));
 				}
 			};
 			buttonContainer.AddChild(mirrorXButton);
 
-			Button mirrorYButton = buttonFactory.Generate("Y");
-			mirrorYButton.Margin = buttonSpacing;
+			Button mirrorYButton = theme.ButtonFactory.Generate("Y");
+			mirrorYButton.Margin = theme.ButtonSpacing;
 			mirrorYButton.Click += (s, e) =>
 			{
 				if (view3DWidget.Scene.HasSelection)
 				{
-					view3DWidget.Scene.UndoBuffer.AddAndDo(new UndoRedoActions(() => MirrorOnAxis(1), () => MirrorOnAxis(1)));
-
-					throw new NotImplementedException();
-
-					/* TODO: Revise above for scenebundle with the following...
-					var selectedItem = view3DWidget.Scene.SelectedItem;
-					selectedItem.Mesh.ReverseFaceEdges();
-					selectedItem.Matrix = PlatingHelper.ApplyAtCenter(selectedItem, Matrix4X4.CreateScale(1, -1, 1));
-					view3DWidget.PartHasBeenChanged();
-					Invalidate(); */
+					view3DWidget.Scene.UndoBuffer.AddAndDo(new UndoRedoActions(() => MirrorOnAxis(Axis.Y), () => MirrorOnAxis(Axis.Y)));
 				}
 			};
 			buttonContainer.AddChild(mirrorYButton);
 
-			Button mirrorZButton = buttonFactory.Generate("Z");
-			mirrorZButton.Margin = buttonSpacing;
+			Button mirrorZButton = theme.ButtonFactory.Generate("Z");
+			mirrorZButton.Margin = theme.ButtonSpacing;
 			mirrorZButton.Click += (s, e) =>
 			{
 				if (view3DWidget.Scene.HasSelection)
 				{
-					view3DWidget.Scene.UndoBuffer.AddAndDo(new UndoRedoActions(() => MirrorOnAxis(2), () => MirrorOnAxis(2)));
-
-					throw new NotImplementedException();
-
-					/* TODO: Revise above for scenebundle with the following...
-					var selectedItem = view3DWidget.Scene.SelectedItem;
-					selectedItem.Mesh.ReverseFaceEdges();
-					selectedItem.Matrix = PlatingHelper.ApplyAtCenter(selectedItem, Matrix4X4.CreateScale(1, 1, -1));
-					view3DWidget.PartHasBeenChanged();
-					Invalidate(); */
+					view3DWidget.Scene.UndoBuffer.AddAndDo(new UndoRedoActions(() => MirrorOnAxis(Axis.Z), () => MirrorOnAxis(Axis.Z)));
 				}
 			};
 			buttonContainer.AddChild(mirrorZButton);
@@ -118,14 +92,32 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.AddChild(buttonContainer);
 		}
 
-		private void MirrorOnAxis(int axisIndex)
+		private void MirrorOnAxis(Axis axis)
 		{
-			/* TODO: Revise for scene_bundle
-			view3DWidget.SelectedMeshGroup.ReverseFaceEdges();
-			Vector3 mirorAxis = Vector3.One;
-			mirorAxis[axisIndex] = -1;
-			view3DWidget.SelectedMeshGroupTransform = PlatingHelper.ApplyAtCenter(view3DWidget.SelectedMeshGroup, view3DWidget.SelectedMeshGroupTransform, Matrix4X4.CreateScale(mirorAxis));
-			view3DWidget.PartHasBeenChanged(); */
+			if (!view3DWidget.Scene.HasSelection)
+			{
+				return;
+			}
+
+			var selectedItem = view3DWidget.Scene.SelectedItem;
+			selectedItem.Mesh.ReverseFaceEdges();
+
+			switch (axis)
+			{
+				case Axis.Z:
+					selectedItem.Matrix = PlatingHelper.ApplyAtCenter(selectedItem, Matrix4X4.CreateScale(1, 1, -1));
+
+					break;
+				case Axis.X:
+					selectedItem.Matrix = PlatingHelper.ApplyAtCenter(selectedItem, Matrix4X4.CreateScale(-1, 1, 1));
+					break;
+
+				case Axis.Y:
+					selectedItem.Matrix = PlatingHelper.ApplyAtCenter(selectedItem, Matrix4X4.CreateScale(1, -1, 1));
+					break;
+			}
+
+			view3DWidget.PartHasBeenChanged();
 			Invalidate();
 		}
 	}
