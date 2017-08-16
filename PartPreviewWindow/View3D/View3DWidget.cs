@@ -153,6 +153,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.theme = theme;
 			this.openMode = openMode;
 			allowAutoRotate = (autoRotate == AutoRotate.Enabled);
+
 			meshViewerWidget = new MeshViewerWidget(printer, this.TrackballTumbleWidget, this.InteractionLayer);
 			this.printItemWrapper = printItemWrapper;
 
@@ -182,13 +183,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.InteractionLayer.AddChild(meshViewerWidget);
 
 			// The slice layers view
-			gcodeViewer = new ViewGcodeBasic(
-				printer.Bed.ViewerVolume,
-				printer.Bed.BedCenter,
-				printer.Bed.BedShape,
-				viewControls3D);
+			gcodeViewer = new ViewGcodeBasic(printer, viewControls3D);
 			gcodeViewer.AnchorAll();
-			this.gcodeViewer.Visible = false;
+			gcodeViewer.Visible = false;
 
 			this.InteractionLayer.AddChild(gcodeViewer);
 			this.InteractionLayer.AddChild(this.TrackballTumbleWidget);
@@ -2457,7 +2454,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public MeshViewerWidget meshViewerWidget;
 
-		// Proxy to MeshViewerWidget
 		public InteractiveScene Scene { get; }
 
 		protected ViewControls3D viewControls3D { get; }

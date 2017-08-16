@@ -35,7 +35,6 @@ using MatterHackers.GCodeVisualizer;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
@@ -58,21 +57,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private string fileNotFoundMessage = "File not found on disk.".Localize();
 		private string fileTooBigToLoad = "GCode file too big to preview ({0}).".Localize();
 
-		private Vector2 bedCenter;
-		private Vector3 viewerVolume;
-
-		private PartViewMode activeViewMode = PartViewMode.Layers3D;
-
 		private PrinterConfig printer;
+
 		private ViewControls3D viewControls3D;
 
-		public ViewGcodeBasic(Vector3 viewerVolume, Vector2 bedCenter, BedShape bedShape, ViewControls3D viewControls3D)
+		public ViewGcodeBasic(PrinterConfig printer, ViewControls3D viewControls3D)
 		{
-			printer = ApplicationController.Instance.Printer;
-
+			this.printer = printer;
 			this.viewControls3D = viewControls3D;
-			this.viewerVolume = viewerVolume;
-			this.bedCenter = bedCenter;
 
 			RenderOpenGl.GLHelper.WireframeColor = ActiveTheme.Instance.PrimaryAccentColor;
 
