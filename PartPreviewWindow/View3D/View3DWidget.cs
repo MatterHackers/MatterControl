@@ -124,23 +124,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private PrinterConfig printer;
 
 		// TODO: Make dynamic
-		public WorldView World { get; } = ApplicationController.Instance.Printer.BedPlate.World;
+		public WorldView World { get; } = ApplicationController.Instance.Printer.Bed.World;
 
 		public TrackballTumbleWidget TrackballTumbleWidget { get; }
-
-		private Vector2 bedCenter;
 
 		internal ViewGcodeBasic gcodeViewer;
 
 		public InteractionLayer InteractionLayer { get; }
 
-		public View3DWidget(PrintItemWrapper printItemWrapper, Vector3 viewerVolume, Vector2 bedCenter, BedShape bedShape, WindowMode windowType, AutoRotate autoRotate, ViewControls3D viewControls3D, ThemeConfig theme, OpenMode openMode = OpenMode.Viewing)
+		public View3DWidget(PrintItemWrapper printItemWrapper, PrinterConfig printer, WindowMode windowType, AutoRotate autoRotate, ViewControls3D viewControls3D, ThemeConfig theme, OpenMode openMode = OpenMode.Viewing)
 		{
-			this.printer = ApplicationController.Instance.Printer;
-			this.Scene = this.printer.BedPlate.Scene;
-			this.bedCenter = bedCenter;
+			this.printer = printer;
+			this.Scene = this.printer.Bed.Scene;
 
-			this.TrackballTumbleWidget = new TrackballTumbleWidget(ApplicationController.Instance.Printer.BedPlate.World)
+			this.TrackballTumbleWidget = new TrackballTumbleWidget(ApplicationController.Instance.Printer.Bed.World)
 			{
 				TransformState = TrackBallController.MouseDownType.Rotation
 			};
@@ -156,7 +153,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.theme = theme;
 			this.openMode = openMode;
 			allowAutoRotate = (autoRotate == AutoRotate.Enabled);
-			meshViewerWidget = new MeshViewerWidget(viewerVolume, bedCenter, bedShape, this.TrackballTumbleWidget, this.InteractionLayer, this.Scene);
+			meshViewerWidget = new MeshViewerWidget(printer, this.TrackballTumbleWidget, this.InteractionLayer);
 			this.printItemWrapper = printItemWrapper;
 
 			ActiveSliceSettings.SettingChanged.RegisterEvent(CheckSettingChanged, ref unregisterEvents);
@@ -186,9 +183,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// The slice layers view
 			gcodeViewer = new ViewGcodeBasic(
-				viewerVolume,
-				bedCenter,
-				bedShape,
+				printer.Bed.ViewerVolume,
+				printer.Bed.BedCenter,
+				printer.Bed.BedShape,
 				viewControls3D);
 			gcodeViewer.AnchorAll();
 			this.gcodeViewer.Visible = false;
@@ -552,12 +549,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// This shows the BVH as rects around the scene items
 			//Scene?.TraceData().RenderBvhRecursive(0, 3);
 
-			if (gcodeViewer?.loadedGCode == null || printer.BedPlate.GCodeRenderer == null || !gcodeViewer.Visible)
+			if (gcodeViewer?.loadedGCode == null || printer.Bed.GCodeRenderer == null || !gcodeViewer.Visible)
 			{
 				return;
 			}
 
-			printer.BedPlate.Render3DLayerFeatures();
+			printer.Bed.Render3DLayerFeatures();
 		}
 
 		public override void OnKeyDown(KeyEventArgs keyEvent)
@@ -1471,7 +1468,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			world.Reset();
 			world.Scale = .03;
-			world.Translate(-new Vector3(bedCenter));
+			world.Translate(-new Vector3(printer.Bed.BedCenter));
 			world.Rotate(Quaternion.FromEulerAngles(new Vector3(0, 0, MathHelper.Tau / 16)));
 			world.Rotate(Quaternion.FromEulerAngles(new Vector3(-MathHelper.Tau * .19, 0, 0)));
 		}
@@ -2512,10 +2509,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			UiThread.RunOnIdle((Action)(() =>
 			{
-				meshViewerWidget.CreatePrintBed(
-					new Vector3(ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.bed_size), buildHeight),
-					ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center),
-					ActiveSliceSettings.Instance.GetValue<BedShape>(SettingsKey.bed_shape));
+				meshViewerWidget.CreatePrintBed(printer);
 				PutOemImageOnBed();
 			}));
 		}

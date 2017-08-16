@@ -71,6 +71,7 @@ namespace MatterHackers.MeshVisualizer
 
 	public class MeshViewerWidget : GuiWidget
 	{
+		// TODO: Need to be instance based for multi-printer
 		static public ImageBuffer BedImage = null;
 
 		public GuiWidget ParentSurface { get; set; }
@@ -78,19 +79,16 @@ namespace MatterHackers.MeshVisualizer
 		private static ImageBuffer lastCreatedBedImage = new ImageBuffer();
 
 		private RGBA_Bytes bedBaseColor = new RGBA_Bytes(245, 245, 255);
-		static public Vector2 BedCenter { get; private set; }
 		private RGBA_Bytes bedMarkingsColor = RGBA_Bytes.Black;
-		private static BedShape bedShape = BedShape.Rectangular;
-		private static Mesh buildVolume = null;
-		private static Vector3 displayVolume;
-		private static Mesh printerBed = null;
+		private Mesh buildVolume = null;
+		private Mesh printerBed = null;
 		private RenderTypes renderType = RenderTypes.Shaded;
 
 		private InteractionLayer interactionLayer;
 
-		public MeshViewerWidget(Vector3 displayVolume, Vector2 bedCenter, BedShape bedShape, TrackballTumbleWidget trackballTumbleWidget, InteractionLayer interactionLayer, InteractiveScene _scene, string startingTextMessage = "")
+		public MeshViewerWidget(PrinterConfig printer, TrackballTumbleWidget trackballTumbleWidget, InteractionLayer interactionLayer, string startingTextMessage = "")
 		{
-			this.scene = _scene;
+			this.scene = printer.Bed.Scene;
 
 			var activePrintItem = ApplicationController.Instance.ActivePrintItem;
 
@@ -113,7 +111,7 @@ namespace MatterHackers.MeshVisualizer
 			BedColor = new RGBA_Floats(.8, .8, .8, .7).GetAsRGBA_Bytes();
 			BuildVolumeColor = new RGBA_Floats(.2, .8, .3, .2).GetAsRGBA_Bytes();
 
-			CreatePrintBed(displayVolume, bedCenter, bedShape);
+			CreatePrintBed(printer);
 
 			this.trackballTumbleWidget = trackballTumbleWidget;
 			this.trackballTumbleWidget.DrawGlContent += this.trackballTumbleWidget_DrawGlContent;
@@ -134,8 +132,6 @@ namespace MatterHackers.MeshVisualizer
 		public RGBA_Bytes BedColor { get; set; }
 
 		public RGBA_Bytes BuildVolumeColor { get; set; }
-
-		public Vector3 DisplayVolume { get { return displayVolume; } }
 
 		public static AxisAlignedBoundingBox GetAxisAlignedBoundingBox(List<MeshGroup> meshGroups)
 		{
@@ -294,19 +290,26 @@ namespace MatterHackers.MeshVisualizer
 			}
 		}
 
-		public void CreatePrintBed(Vector3 displayVolume, Vector2 bedCenter, BedShape bedShape)
+		private BedShape bedShape;
+		private Vector3 viewerVolume;
+		private Vector2 bedCenter;
+
+		public void CreatePrintBed(PrinterConfig printer)
 		{
-			if (MeshViewerWidget.BedCenter == bedCenter
-				&& MeshViewerWidget.bedShape == bedShape
-				&& MeshViewerWidget.displayVolume == displayVolume)
+			if (bedCenter == printer.Bed.BedCenter
+				&& bedShape == printer.Bed.BedShape
+				&& viewerVolume == printer.Bed.ViewerVolume
+				&& BedImage != null
+				&& buildVolume != null)
 			{
 				return;
 			}
 
-			MeshViewerWidget.BedCenter = bedCenter;
-			MeshViewerWidget.bedShape = bedShape;
-			MeshViewerWidget.displayVolume = displayVolume;
-			Vector3 displayVolumeToBuild = Vector3.ComponentMax(displayVolume, new Vector3(1, 1, 1));
+			bedCenter = printer.Bed.BedCenter;
+			bedShape = printer.Bed.BedShape;
+			viewerVolume = printer.Bed.ViewerVolume;
+
+			Vector3 displayVolumeToBuild = Vector3.ComponentMax(viewerVolume, new Vector3(1, 1, 1));
 
 			double sizeForMarking = Math.Max(displayVolumeToBuild.x, displayVolumeToBuild.y);
 			double divisor = 10;
@@ -333,7 +336,9 @@ namespace MatterHackers.MeshVisualizer
 							vertex.Position = vertex.Position + new Vector3(0, 0, displayVolumeToBuild.z / 2);
 						}
 					}
+
 					CreateRectangularBedGridImage(displayVolumeToBuild, bedCenter, divisor, skip);
+
 					printerBed = PlatonicSolids.CreateCube(displayVolumeToBuild.x, displayVolumeToBuild.y, 1.8);
 					{
 						Face face = printerBed.Faces[0];
@@ -508,7 +513,7 @@ namespace MatterHackers.MeshVisualizer
 				{
 					double lineDist = BedImage.Width / (displayVolumeToBuild.x / divisor);
 
-					double xPositionCm = (-(displayVolume.x / 2.0) + bedCenter.x) / divisor;
+					double xPositionCm = (-(viewerVolume.x / 2.0) + bedCenter.x) / divisor;
 					int xPositionCmInt = (int)Math.Round(xPositionCm);
 					double fraction = xPositionCm - xPositionCmInt;
 					int pointSize = 20;
@@ -529,7 +534,7 @@ namespace MatterHackers.MeshVisualizer
 				{
 					double lineDist = BedImage.Height / (displayVolumeToBuild.y / divisor);
 
-					double yPositionCm = (-(displayVolume.y / 2.0) + bedCenter.y) / divisor;
+					double yPositionCm = (-(viewerVolume.y / 2.0) + bedCenter.y) / divisor;
 					int yPositionCmInt = (int)Math.Round(yPositionCm);
 					double fraction = yPositionCm - yPositionCmInt;
 					int pointSize = 20;

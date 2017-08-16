@@ -82,14 +82,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private Vector2 unscaledRenderOffset = new Vector2(0, 0);
 
-		private GCodeFile loadedGCode => printer.BedPlate.LoadedGCode;
+		private GCodeFile loadedGCode => printer.Bed.LoadedGCode;
 
 		private View3DConfig options;
 		private PrinterConfig printer;
 
 		public GCode2DWidget(Vector2 gridSizeMm, Vector2 gridCenterMm)
 		{
-			options = ApplicationController.Instance.Printer.BedPlate.RendererOptions;
+			options = ApplicationController.Instance.Printer.Bed.RendererOptions;
 			printer = ApplicationController.Instance.Printer;
 
 			this.gridSizeMm = gridSizeMm;
@@ -99,7 +99,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.LocalBounds = new RectangleDouble(0, 0, 100, 100);
 			this.AnchorAll();
 
-			printer.BedPlate.LoadedGCodeChanged += BedPlate_LoadedGCodeChanged;
+			printer.Bed.LoadedGCodeChanged += BedPlate_LoadedGCodeChanged;
 		}
 
 		private void BedPlate_LoadedGCodeChanged(object sender, EventArgs e)
@@ -141,7 +141,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						if (firstExtrusionIndex < loadedGCode.GetInstructionIndexAtLayer(layerIndex))
 						{
-							printer.BedPlate.ActiveLayerIndex = Math.Max(0, layerIndex - 1);
+							printer.Bed.ActiveLayerIndex = Math.Max(0, layerIndex - 1);
 							break;
 						}
 					}
@@ -181,11 +181,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						}
 					}
 
-					var activeOptions = printer.BedPlate.RenderInfo;
+					var activeOptions = printer.Bed.RenderInfo;
 
 					var renderInfo = new GCodeRenderInfo(
-						printer.BedPlate.ActiveLayerIndex,
-						printer.BedPlate.ActiveLayerIndex,
+						printer.Bed.ActiveLayerIndex,
+						printer.Bed.ActiveLayerIndex,
 						transform,
 						layerScale,
 						activeOptions.FeatureToStartOnRatio0To1,
@@ -194,7 +194,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						activeOptions.GetRenderType,
 						activeOptions.GetMaterialColor);
 
-					printer.BedPlate.GCodeRenderer?.Render(graphics2D, renderInfo);
+					printer.Bed.GCodeRenderer?.Render(graphics2D, renderInfo);
 				}
 			}
 
@@ -386,8 +386,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnClosed(ClosedEventArgs e)
 		{
-			printer.BedPlate.GCodeRenderer?.Dispose();
-			printer.BedPlate.LoadedGCodeChanged -= BedPlate_LoadedGCodeChanged;
+			printer.Bed.GCodeRenderer?.Dispose();
+			printer.Bed.LoadedGCodeChanged -= BedPlate_LoadedGCodeChanged;
 
 			base.OnClosed(e);
 		}
@@ -407,7 +407,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					layerScale = layerScale * (Width / oldWidth);
 				}
-				else if (printer.BedPlate.GCodeRenderer != null)
+				else if (printer.Bed.GCodeRenderer != null)
 				{
 					CenterPartInView();
 				}

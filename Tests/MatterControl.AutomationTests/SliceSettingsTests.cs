@@ -141,9 +141,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			var printer = ApplicationController.Instance.Printer;
 
-			testRunner.Delay(() => printer.BedPlate.ActiveLayerIndex + 1 == indexToWaitFor, 30, 500);
+			testRunner.Delay(() => printer.Bed.ActiveLayerIndex + 1 == indexToWaitFor, 30, 500);
 
-			Assert.AreEqual(indexToWaitFor, printer.BedPlate.ActiveLayerIndex + 1);
+			Assert.AreEqual(indexToWaitFor, printer.Bed.ActiveLayerIndex + 1);
 			testRunner.ClickByName("Resume Button");
 			testRunner.Delay(.1);
 		}

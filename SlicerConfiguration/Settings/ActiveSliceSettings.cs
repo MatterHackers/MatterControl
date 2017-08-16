@@ -76,10 +76,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					BedSettings.SetMakeAndModel(activeInstance.GetValue(SettingsKey.make), activeInstance.GetValue(SettingsKey.model));
 
 					SwitchToPrinterTheme();
+
+					OnActivePrinterChanged(null);
+
 					if (!MatterControlApplication.IsLoading)
 					{
-						OnActivePrinterChanged(null);
-
 						if (ActiveSliceSettings.Instance.PrinterSelected
 							&& Instance.GetValue<bool>(SettingsKey.auto_connect))
 						{

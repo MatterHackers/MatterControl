@@ -87,6 +87,11 @@ namespace MatterHackers.MatterControl
 
 		public WorldView World { get; } = new WorldView(0, 0);
 
+		public double BuildHeight { get; internal set; }
+		public Vector3 ViewerVolume { get; internal set; }
+		public Vector2 BedCenter { get; internal set; }
+		public BedShape BedShape { get; internal set; }
+
 		// TODO: Make assignment private, wire up post slicing initialization here
 		public GCodeRenderer GCodeRenderer { get; set; }
 
@@ -176,8 +181,25 @@ namespace MatterHackers.MatterControl
 
 	public class PrinterConfig
 	{
-		public BedConfig BedPlate { get; } = new BedConfig();
+		public BedConfig Bed { get; } = new BedConfig();
 		public PrinterViewState ViewState { get; } = new PrinterViewState();
+		public PrinterSettings Settings { get; private set; }
+
+		private EventHandler unregisterEvents;
+
+		public PrinterConfig()
+		{
+			ActiveSliceSettings.ActivePrinterChanged.RegisterEvent((s, e) =>
+			{
+				this.Settings = ActiveSliceSettings.Instance;
+
+				// Reload
+				this.Bed.BuildHeight = this.Settings.GetValue<double>(SettingsKey.build_height);
+				this.Bed.ViewerVolume = new Vector3(this.Settings.GetValue<Vector2>(SettingsKey.bed_size), this.Bed.BuildHeight);
+				this.Bed.BedCenter = this.Settings.GetValue<Vector2>(SettingsKey.print_center);
+				this.Bed.BedShape = this.Settings.GetValue<BedShape>(SettingsKey.bed_shape);
+			}, ref unregisterEvents);
+		}
 	}
 
 	public class View3DConfig
@@ -811,7 +833,13 @@ namespace MatterHackers.MatterControl
 
 						globalInstance.MainView = new DesktopView();
 
-						ActiveSliceSettings.ActivePrinterChanged.RegisterEvent((s, e) => ApplicationController.Instance.ReloadAll(), ref globalInstance.unregisterEvents);
+						ActiveSliceSettings.ActivePrinterChanged.RegisterEvent((s, e) =>
+						{
+							if (!MatterControlApplication.IsLoading)
+							{
+								ApplicationController.Instance.ReloadAll();
+							}
+						}, ref globalInstance.unregisterEvents);
 					}
 				}
 				return globalInstance;

@@ -176,6 +176,8 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 		{
 			if (group.HasChildren)
 			{
+				var bedCenter = ApplicationController.Instance.Printer.Bed.BedCenter;
+
 				int i = 0;
 				foreach (var sceneItem in group.Children)
 				{
@@ -184,7 +186,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 					sceneItem.Matrix *= Matrix4X4.CreateTranslation(-startPosition);
 
 					double newX = characterSpacing[i].x * spacing * lastSizeValue;
-					sceneItem.Matrix *= Matrix4X4.CreateTranslation(new Vector3(newX, 0, 0) + new Vector3(MeshViewerWidget.BedCenter));
+					sceneItem.Matrix *= Matrix4X4.CreateTranslation(new Vector3(newX, 0, 0) + new Vector3(bedCenter));
 					i += 1;
 				}
 
@@ -200,7 +202,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 			// take out the last scale
 			double oldSize = 1.0 / lastSizeValue;
 
-			Vector3 bedCenter = new Vector3(MeshViewerWidget.BedCenter);
+			Vector3 bedCenter = new Vector3(ApplicationController.Instance.Printer.Bed.BedCenter);
 			if (group.HasChildren)
 			{
 				foreach (var object3D in group.Children)
