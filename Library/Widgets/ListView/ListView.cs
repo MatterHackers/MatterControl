@@ -140,54 +140,58 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		/// Empties the list children and repopulates the list with the source container content
 		/// </summary>
 		/// <param name="sourceContainer">The container to load</param>
-		/// <returns>Async Task</returns>
 		private void DisplayContainerContent(ILibraryContainer sourceContainer)
 		{
-			if (sourceContainer == null)
+			UiThread.RunOnIdle(() =>
 			{
-				return;
-			}
-
-			var itemsNeedingLoad = new List<ListViewItem>();
-
-			this.items.Clear();
-
-			this.SelectedItems.Clear();
-			contentView.CloseAllChildren();
-
-			var itemsContentView = contentView as IListContentView;
-			itemsContentView.ClearItems();
-
-			int width = itemsContentView.ThumbWidth;
-			int height = itemsContentView.ThumbHeight;
-
-			// Folder items
-			if (this.ShowContainers)
-			{
-				foreach (var childContainer in sourceContainer.ChildContainers.Where(c => c.IsVisible && this.ContainerFilter(c)))
+				if (sourceContainer == null)
 				{
-					var listViewItem = new ListViewItem(childContainer, this);
-					listViewItem.DoubleClick += listViewItem_DoubleClick;
-					items.Add(listViewItem);
-
-					itemsContentView.AddItem(listViewItem);
-					listViewItem.ViewWidget.Name = childContainer.Name + " Row Item Collection";
+					return;
 				}
-			}
 
-			// List items
-			if (this.ShowItems)
-			{
-				foreach (var item in sourceContainer.Items.Where(i => i.IsVisible && this.ItemFilter(i)))
+				var itemsNeedingLoad = new List<ListViewItem>();
+
+				this.items.Clear();
+
+				this.SelectedItems.Clear();
+				contentView.CloseAllChildren();
+
+				var itemsContentView = contentView as IListContentView;
+				itemsContentView.ClearItems();
+
+				int width = itemsContentView.ThumbWidth;
+				int height = itemsContentView.ThumbHeight;
+
+				// Folder items
+				if (this.ShowContainers)
 				{
-					var listViewItem = new ListViewItem(item, this);
-					listViewItem.DoubleClick += listViewItem_DoubleClick;
-					items.Add(listViewItem);
+					foreach (var childContainer in sourceContainer.ChildContainers.Where(c => c.IsVisible && this.ContainerFilter(c)))
+					{
+						var listViewItem = new ListViewItem(childContainer, this);
+						listViewItem.DoubleClick += listViewItem_DoubleClick;
+						items.Add(listViewItem);
 
-					itemsContentView.AddItem(listViewItem);
-					listViewItem.ViewWidget.Name = "Row Item " + item.Name;
+						itemsContentView.AddItem(listViewItem);
+						listViewItem.ViewWidget.Name = childContainer.Name + " Row Item Collection";
+					}
 				}
-			}
+
+				// List items
+				if (this.ShowItems)
+				{
+					foreach (var item in sourceContainer.Items.Where(i => i.IsVisible && this.ItemFilter(i)))
+					{
+						var listViewItem = new ListViewItem(item, this);
+						listViewItem.DoubleClick += listViewItem_DoubleClick;
+						items.Add(listViewItem);
+
+						itemsContentView.AddItem(listViewItem);
+						listViewItem.ViewWidget.Name = "Row Item " + item.Name;
+					}
+				}
+
+				this.Invalidate();
+			});
 		}
 
 		public enum ViewMode
