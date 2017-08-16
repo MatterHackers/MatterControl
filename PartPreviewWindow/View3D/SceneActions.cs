@@ -209,8 +209,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				var center = aabb.Center;
 
 				newItem.Matrix *= Matrix4X4.CreateTranslation(
-					(printer.BedPlate.BedCenter.x + center.x),
-					(printer.BedPlate.BedCenter.y + center.y),
+					(printer.Bed.BedCenter.x + center.x),
+					(printer.Bed.BedCenter.y + center.y),
 					 -aabb.minXYZ.z);
 			}
 

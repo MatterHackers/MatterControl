@@ -124,7 +124,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private PrinterConfig printer;
 
 		// TODO: Make dynamic
-		public WorldView World { get; } = ApplicationController.Instance.Printer.BedPlate.World;
+		public WorldView World { get; } = ApplicationController.Instance.Printer.Bed.World;
 
 		public TrackballTumbleWidget TrackballTumbleWidget { get; }
 
@@ -135,9 +135,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public View3DWidget(PrintItemWrapper printItemWrapper, PrinterConfig printer, WindowMode windowType, AutoRotate autoRotate, ViewControls3D viewControls3D, ThemeConfig theme, OpenMode openMode = OpenMode.Viewing)
 		{
 			this.printer = printer;
-			this.Scene = this.printer.BedPlate.Scene;
+			this.Scene = this.printer.Bed.Scene;
 
-			this.TrackballTumbleWidget = new TrackballTumbleWidget(ApplicationController.Instance.Printer.BedPlate.World)
+			this.TrackballTumbleWidget = new TrackballTumbleWidget(ApplicationController.Instance.Printer.Bed.World)
 			{
 				TransformState = TrackBallController.MouseDownType.Rotation
 			};
@@ -183,9 +183,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// The slice layers view
 			gcodeViewer = new ViewGcodeBasic(
-				printer.BedPlate.ViewerVolume,
-				printer.BedPlate.BedCenter,
-				printer.BedPlate.BedShape,
+				printer.Bed.ViewerVolume,
+				printer.Bed.BedCenter,
+				printer.Bed.BedShape,
 				viewControls3D);
 			gcodeViewer.AnchorAll();
 			this.gcodeViewer.Visible = false;
@@ -549,12 +549,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// This shows the BVH as rects around the scene items
 			//Scene?.TraceData().RenderBvhRecursive(0, 3);
 
-			if (gcodeViewer?.loadedGCode == null || printer.BedPlate.GCodeRenderer == null || !gcodeViewer.Visible)
+			if (gcodeViewer?.loadedGCode == null || printer.Bed.GCodeRenderer == null || !gcodeViewer.Visible)
 			{
 				return;
 			}
 
-			printer.BedPlate.Render3DLayerFeatures();
+			printer.Bed.Render3DLayerFeatures();
 		}
 
 		public override void OnKeyDown(KeyEventArgs keyEvent)
@@ -1468,7 +1468,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			world.Reset();
 			world.Scale = .03;
-			world.Translate(-new Vector3(printer.BedPlate.BedCenter));
+			world.Translate(-new Vector3(printer.Bed.BedCenter));
 			world.Rotate(Quaternion.FromEulerAngles(new Vector3(0, 0, MathHelper.Tau / 16)));
 			world.Rotate(Quaternion.FromEulerAngles(new Vector3(-MathHelper.Tau * .19, 0, 0)));
 		}

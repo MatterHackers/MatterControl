@@ -181,7 +181,7 @@ namespace MatterHackers.MatterControl
 
 	public class PrinterConfig
 	{
-		public BedConfig BedPlate { get; } = new BedConfig();
+		public BedConfig Bed { get; } = new BedConfig();
 		public PrinterViewState ViewState { get; } = new PrinterViewState();
 		public PrinterSettings Settings { get; private set; }
 
@@ -194,10 +194,10 @@ namespace MatterHackers.MatterControl
 				this.Settings = ActiveSliceSettings.Instance;
 
 				// Reload
-				this.BedPlate.BuildHeight = this.Settings.GetValue<double>(SettingsKey.build_height);
-				this.BedPlate.ViewerVolume = new Vector3(this.Settings.GetValue<Vector2>(SettingsKey.bed_size), this.BedPlate.BuildHeight);
-				this.BedPlate.BedCenter = this.Settings.GetValue<Vector2>(SettingsKey.print_center);
-				this.BedPlate.BedShape = this.Settings.GetValue<BedShape>(SettingsKey.bed_shape);
+				this.Bed.BuildHeight = this.Settings.GetValue<double>(SettingsKey.build_height);
+				this.Bed.ViewerVolume = new Vector3(this.Settings.GetValue<Vector2>(SettingsKey.bed_size), this.Bed.BuildHeight);
+				this.Bed.BedCenter = this.Settings.GetValue<Vector2>(SettingsKey.print_center);
+				this.Bed.BedShape = this.Settings.GetValue<BedShape>(SettingsKey.bed_shape);
 			}, ref unregisterEvents);
 		}
 	}

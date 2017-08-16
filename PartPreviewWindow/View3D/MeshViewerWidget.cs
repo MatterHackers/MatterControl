@@ -88,7 +88,7 @@ namespace MatterHackers.MeshVisualizer
 
 		public MeshViewerWidget(PrinterConfig printer, TrackballTumbleWidget trackballTumbleWidget, InteractionLayer interactionLayer, string startingTextMessage = "")
 		{
-			this.scene = printer.BedPlate.Scene;
+			this.scene = printer.Bed.Scene;
 
 			var activePrintItem = ApplicationController.Instance.ActivePrintItem;
 
@@ -296,18 +296,18 @@ namespace MatterHackers.MeshVisualizer
 
 		public void CreatePrintBed(PrinterConfig printer)
 		{
-			if (bedCenter == printer.BedPlate.BedCenter
-				&& bedShape == printer.BedPlate.BedShape
-				&& viewerVolume == printer.BedPlate.ViewerVolume
+			if (bedCenter == printer.Bed.BedCenter
+				&& bedShape == printer.Bed.BedShape
+				&& viewerVolume == printer.Bed.ViewerVolume
 				&& BedImage != null
 				&& buildVolume != null)
 			{
 				return;
 			}
 
-			bedCenter = printer.BedPlate.BedCenter;
-			bedShape = printer.BedPlate.BedShape;
-			viewerVolume = printer.BedPlate.ViewerVolume;
+			bedCenter = printer.Bed.BedCenter;
+			bedShape = printer.Bed.BedShape;
+			viewerVolume = printer.Bed.ViewerVolume;
 
 			Vector3 displayVolumeToBuild = Vector3.ComponentMax(viewerVolume, new Vector3(1, 1, 1));
 
