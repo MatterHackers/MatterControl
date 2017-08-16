@@ -69,6 +69,8 @@ namespace MatterHackers.MatterControl
 
 		public event EventHandler LoadedGCodeChanged;
 
+		private PrintItemWrapper printItem => ApplicationController.Instance.ActivePrintItem;
+
 		public View3DConfig RendererOptions { get; } = new View3DConfig();
 
 		private GCodeFile loadedGCode;
@@ -131,6 +133,15 @@ namespace MatterHackers.MatterControl
 		public InteractiveScene Scene { get; } = new InteractiveScene();
 
 		public GCodeRenderInfo RenderInfo { get; set; }
+
+		public string GCodePath
+		{
+			get
+			{
+				bool isGCode = Path.GetExtension(printItem.FileLocation).ToUpper() == ".GCODE";
+				return isGCode ? printItem.FileLocation : printItem.GetGCodePathAndFileName();
+			}
+		}
 
 		internal void Render3DLayerFeatures()
 		{
