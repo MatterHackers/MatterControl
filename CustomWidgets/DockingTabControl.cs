@@ -46,35 +46,33 @@ namespace MatterHackers.MatterControl.CustomWidgets
 	{
 		private Dictionary<string, GuiWidget> allTabs = new Dictionary<string, GuiWidget>();
 
-		// TODO: Pinned state should preferably come from MCWS, default to local data if guest and be per user not printer
-		private bool isPinned;
+		private PrinterConfig printer;
 
 		private GuiWidget topToBottom;
 
 		protected GuiWidget widgetTodockTo;
-		private Func<int> getSelectedTab;
-		private Action<int> setSelectedTab;
-
+		
 		public DockSide DockSide { get; set; }
 
-		public DockingTabControl(GuiWidget widgetTodockTo, DockSide dockSide, Func<int> getSelectedTab, Action<int> setSelectedTab)
+		public DockingTabControl(GuiWidget widgetTodockTo, DockSide dockSide, PrinterConfig printer)
 		{
+			this.printer = printer;
 			this.widgetTodockTo = widgetTodockTo;
 			this.DockSide = dockSide;
-
-			this.getSelectedTab = getSelectedTab;
-			this.setSelectedTab = setSelectedTab;
 		}
 
 		public event EventHandler PinStatusChanged;
 
 		public bool ControlIsPinned
 		{
-			get => isPinned;
+			get => printer.ViewState.SliceSettingsTabPinned;
 			set
 			{
-				isPinned = value;
-				PinStatusChanged?.Invoke(this, null);
+				if (this.ControlIsPinned != value)
+				{
+					printer.ViewState.SliceSettingsTabPinned = value;
+					PinStatusChanged?.Invoke(this, null);
+				}
 			}
 		}
 
@@ -112,7 +110,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			var tabControl = new TabControl();
 
-			if (ControlIsPinned)
+			if (this.ControlIsPinned)
 			{
 				var resizePage = new ResizeContainer()
 				{
@@ -133,7 +131,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				string tabTitle = nameWidget.Key;
 
-				if (ControlIsPinned)
+				if (this.ControlIsPinned)
 				{
 					var content = new DockWindowContent(this, nameWidget.Value, tabTitle);
 
@@ -153,7 +151,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					int localTabIndex = tabIndex;
 					textTab.Click += (s, e) =>
 					{
-						setSelectedTab?.Invoke(localTabIndex);
+						printer.ViewState.SliceSettingsTabIndex = localTabIndex;
 					};
 
 				}
@@ -196,14 +194,14 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					int localTabIndex = tabIndex;
 					settingsButton.Click += (s, e) =>
 					{
-						setSelectedTab?.Invoke(localTabIndex);
+						this.printer.ViewState.SliceSettingsTabIndex = localTabIndex;
 					};
 				}
 
 				tabIndex++;
 			}
 
-			if (ControlIsPinned)
+			if (this.ControlIsPinned)
 			{
 				tabControl.TabBar.AddChild(new HorizontalSpacer());
 
@@ -211,9 +209,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				pinButton.Margin = new BorderDouble(right: 18, bottom: 7);
 				tabControl.TabBar.AddChild(pinButton);
 
-				if (getSelectedTab != null)
+				if (printer.ViewState.SliceSettingsTabIndex < tabControl.TabCount)
 				{
-					tabControl.SelectedTabIndex = getSelectedTab.Invoke();
+					tabControl.SelectedTabIndex = printer.ViewState.SliceSettingsTabIndex;
 				}
 			}
 		}
@@ -283,7 +281,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		private ImageWidget CreatePinButton()
 		{
-			var icon = StaticData.Instance.LoadIcon(this.isPinned ? "Pushpin_16x.png" : "PushpinUnpin_16x.png", 16, 16).InvertLightness();
+			var icon = StaticData.Instance.LoadIcon(this.ControlIsPinned ? "Pushpin_16x.png" : "PushpinUnpin_16x.png", 16, 16).InvertLightness();
 			var imageWidget = new ImageWidget(icon)
 			{
 				Name = "Pin Settings Button",
