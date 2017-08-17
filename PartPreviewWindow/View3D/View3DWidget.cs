@@ -156,10 +156,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			meshViewerWidget = new MeshViewerWidget(printer, this.TrackballTumbleWidget, this.InteractionLayer);
 			this.printItemWrapper = printItemWrapper;
-
-			ActiveSliceSettings.SettingChanged.RegisterEvent(CheckSettingChanged, ref unregisterEvents);
-			ApplicationController.Instance.AdvancedControlsPanelReloading.RegisterEvent(CheckSettingChanged, ref unregisterEvents);
-
 			this.windowType = windowType;
 			autoRotating = allowAutoRotate;
 
@@ -176,8 +172,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			var smallMarginButtonFactory = ApplicationController.Instance.Theme.SmallMarginButtonFactory;
-
-			PutOemImageOnBed();
 
 			meshViewerWidget.AnchorAll();
 			this.InteractionLayer.AddChild(meshViewerWidget);
@@ -1009,12 +1003,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{
-			if (needToRecreateBed)
-			{
-				needToRecreateBed = false;
-				RecreateBed();
-			}
-
 			if (Scene.HasSelection)
 			{
 				var selectedItem = Scene.SelectedItem;
@@ -2363,7 +2351,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			SelectedTransformChanged?.Invoke(this, null);
 		}
 
-		// ViewControls3D {{
 		internal GuiWidget ShowOverflowMenu()
 		{
 			var popupContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
@@ -2568,8 +2555,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		protected ViewControls3D viewControls3D { get; }
 
-		private bool needToRecreateBed = false;
-
 		public MeshSelectInfo CurrentSelectInfo { get; } = new MeshSelectInfo();
 
 		protected IObject3D FindHitObject3D(Vector2 screenPosition, ref IntersectInfo intersectionInfo)
@@ -2593,52 +2578,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			return null;
 		}
-
-		private void CheckSettingChanged(object sender, EventArgs e)
-		{
-			StringEventArgs stringEvent = e as StringEventArgs;
-			if (stringEvent != null)
-			{
-				if (stringEvent.Data == SettingsKey.bed_size
-					|| stringEvent.Data == SettingsKey.print_center
-					|| stringEvent.Data == SettingsKey.build_height
-					|| stringEvent.Data == SettingsKey.bed_shape)
-				{
-					needToRecreateBed = true;
-				}
-			}
-		}
-
-		private void RecreateBed()
-		{
-			double buildHeight = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.build_height);
-
-			UiThread.RunOnIdle((Action)(() =>
-			{
-				meshViewerWidget.CreatePrintBed(printer);
-				PutOemImageOnBed();
-			}));
-		}
-
-		static ImageBuffer wattermarkImage = null;
-		protected void PutOemImageOnBed()
-		{
-			// this is to add an image to the bed
-			string imagePathAndFile = Path.Combine("OEMSettings", "bedimage.png");
-			if (StaticData.Instance.FileExists(imagePathAndFile))
-			{
-				if (wattermarkImage == null)
-				{
-					wattermarkImage = StaticData.Instance.LoadImage(imagePathAndFile);
-				}
-
-				ImageBuffer bedImage = MeshViewerWidget.BedImage;
-				Graphics2D bedGraphics = bedImage.NewGraphics2D();
-				bedGraphics.Render(wattermarkImage, new Vector2((bedImage.Width - wattermarkImage.Width) / 2, (bedImage.Height - wattermarkImage.Height) / 2));
-			}
-		}
-
-		// ViewControls3D }}
 	}
 
 	public enum HitQuadrant { LB, LT, RB, RT }

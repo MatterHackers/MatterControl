@@ -38,7 +38,6 @@ using MatterHackers.Agg.Image;
 using MatterHackers.Agg.OpenGlGui;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
-using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.PartPreviewWindow;
@@ -69,26 +68,21 @@ namespace MatterHackers.MeshVisualizer
 		}
 	}
 
-	public class MeshViewerWidget : GuiWidget
+	public partial class MeshViewerWidget : GuiWidget
 	{
 		// TODO: Need to be instance based for multi-printer
-		static public ImageBuffer BedImage = null;
-
 		public GuiWidget ParentSurface { get; set; }
 
-		private static ImageBuffer lastCreatedBedImage = new ImageBuffer();
-
-		private RGBA_Bytes bedBaseColor = new RGBA_Bytes(245, 245, 255);
-		private RGBA_Bytes bedMarkingsColor = RGBA_Bytes.Black;
-		private Mesh buildVolume = null;
-		private Mesh printerBed = null;
 		private RenderTypes renderType = RenderTypes.Shaded;
 
 		private InteractionLayer interactionLayer;
 
+		private PrinterConfig printer;
+
 		public MeshViewerWidget(PrinterConfig printer, TrackballTumbleWidget trackballTumbleWidget, InteractionLayer interactionLayer, string startingTextMessage = "")
 		{
 			this.scene = printer.Bed.Scene;
+			this.printer = printer;
 
 			var activePrintItem = ApplicationController.Instance.ActivePrintItem;
 
@@ -110,8 +104,6 @@ namespace MatterHackers.MeshVisualizer
 			RenderBuildVolume = false;
 			BedColor = new RGBA_Floats(.8, .8, .8, .7).GetAsRGBA_Bytes();
 			BuildVolumeColor = new RGBA_Floats(.2, .8, .3, .2).GetAsRGBA_Bytes();
-
-			CreatePrintBed(printer);
 
 			this.trackballTumbleWidget = trackballTumbleWidget;
 			this.trackballTumbleWidget.DrawGlContent += this.trackballTumbleWidget_DrawGlContent;
@@ -243,8 +235,6 @@ namespace MatterHackers.MeshVisualizer
 
 		protected InteractiveScene scene { get; }
 
-		public Mesh PrinterBed { get { return printerBed; } }
-
 		public bool RenderBed { get; set; }
 
 		public bool RenderBuildVolume { get; set; }
@@ -288,112 +278,6 @@ namespace MatterHackers.MeshVisualizer
 			{
 				GLMeshTrianglePlugin.Get(child.Mesh);
 			}
-		}
-
-		private BedShape bedShape;
-		private Vector3 viewerVolume;
-		private Vector2 bedCenter;
-
-		public void CreatePrintBed(PrinterConfig printer)
-		{
-			if (bedCenter == printer.Bed.BedCenter
-				&& bedShape == printer.Bed.BedShape
-				&& viewerVolume == printer.Bed.ViewerVolume
-				&& BedImage != null
-				&& buildVolume != null)
-			{
-				return;
-			}
-
-			bedCenter = printer.Bed.BedCenter;
-			bedShape = printer.Bed.BedShape;
-			viewerVolume = printer.Bed.ViewerVolume;
-
-			Vector3 displayVolumeToBuild = Vector3.ComponentMax(viewerVolume, new Vector3(1, 1, 1));
-
-			double sizeForMarking = Math.Max(displayVolumeToBuild.x, displayVolumeToBuild.y);
-			double divisor = 10;
-			int skip = 1;
-			if (sizeForMarking > 1000)
-			{
-				divisor = 100;
-				skip = 10;
-			}
-			else if (sizeForMarking > 300)
-			{
-				divisor = 50;
-				skip = 5;
-			}
-
-			switch (bedShape)
-			{
-				case BedShape.Rectangular:
-					if (displayVolumeToBuild.z > 0)
-					{
-						buildVolume = PlatonicSolids.CreateCube(displayVolumeToBuild);
-						foreach (Vertex vertex in buildVolume.Vertices)
-						{
-							vertex.Position = vertex.Position + new Vector3(0, 0, displayVolumeToBuild.z / 2);
-						}
-					}
-
-					CreateRectangularBedGridImage(displayVolumeToBuild, bedCenter, divisor, skip);
-
-					printerBed = PlatonicSolids.CreateCube(displayVolumeToBuild.x, displayVolumeToBuild.y, 1.8);
-					{
-						Face face = printerBed.Faces[0];
-						MeshHelper.PlaceTextureOnFace(face, BedImage);
-					}
-					break;
-
-				case BedShape.Circular:
-					{
-						if (displayVolumeToBuild.z > 0)
-						{
-							buildVolume = VertexSourceToMesh.Extrude(new Ellipse(new Vector2(), displayVolumeToBuild.x / 2, displayVolumeToBuild.y / 2), displayVolumeToBuild.z);
-							foreach (Vertex vertex in buildVolume.Vertices)
-							{
-								vertex.Position = vertex.Position + new Vector3(0, 0, .2);
-							}
-						}
-						CreateCircularBedGridImage((int)(displayVolumeToBuild.x / divisor), (int)(displayVolumeToBuild.y / divisor), skip);
-						printerBed = VertexSourceToMesh.Extrude(new Ellipse(new Vector2(), displayVolumeToBuild.x / 2, displayVolumeToBuild.y / 2), 1.8);
-						{
-							foreach (Face face in printerBed.Faces)
-							{
-								if (face.normal.z > 0)
-								{
-									face.SetTexture(0, BedImage);
-									foreach (FaceEdge faceEdge in face.FaceEdges())
-									{
-										faceEdge.SetUv(0, new Vector2((displayVolumeToBuild.x / 2 + faceEdge.FirstVertex.Position.x) / displayVolumeToBuild.x,
-											(displayVolumeToBuild.y / 2 + faceEdge.FirstVertex.Position.y) / displayVolumeToBuild.y));
-									}
-								}
-							}
-						}
-					}
-					break;
-
-				default:
-					throw new NotImplementedException();
-			}
-
-			var zTop = printerBed.GetAxisAlignedBoundingBox().maxXYZ.z;
-			foreach (Vertex vertex in printerBed.Vertices)
-			{
-				vertex.Position = vertex.Position - new Vector3(-bedCenter, zTop + .02);
-			}
-
-			if (buildVolume != null)
-			{
-				foreach (Vertex vertex in buildVolume.Vertices)
-				{
-					vertex.Position = vertex.Position - new Vector3(-bedCenter, 2.2);
-				}
-			}
-
-			Invalidate();
 		}
 
 		public bool SuppressUiVolumes { get; set; } = false;
@@ -472,90 +356,6 @@ namespace MatterHackers.MeshVisualizer
 			}
 		}
 
-		private void CreateCircularBedGridImage(int linesInX, int linesInY, int increment = 1)
-		{
-			Vector2 bedImageCentimeters = new Vector2(linesInX, linesInY);
-			BedImage = new ImageBuffer(1024, 1024);
-			Graphics2D graphics2D = BedImage.NewGraphics2D();
-			graphics2D.Clear(bedBaseColor);
-			{
-				double lineDist = BedImage.Width / (double)linesInX;
-
-				int count = 1;
-				int pointSize = 16;
-				graphics2D.DrawString(count.ToString(), 4, 4, pointSize, color: bedMarkingsColor);
-				double currentRadius = lineDist;
-				Vector2 bedCenter = new Vector2(BedImage.Width / 2, BedImage.Height / 2);
-				for (double linePos = lineDist + BedImage.Width / 2; linePos < BedImage.Width; linePos += lineDist)
-				{
-					int linePosInt = (int)linePos;
-					graphics2D.DrawString((count * increment).ToString(), linePos + 2, BedImage.Height / 2, pointSize, color: bedMarkingsColor);
-
-					Ellipse circle = new Ellipse(bedCenter, currentRadius);
-					Stroke outline = new Stroke(circle);
-					graphics2D.Render(outline, bedMarkingsColor);
-					currentRadius += lineDist;
-					count++;
-				}
-
-				graphics2D.Line(0, BedImage.Height / 2, BedImage.Width, BedImage.Height / 2, bedMarkingsColor);
-				graphics2D.Line(BedImage.Width / 2, 0, BedImage.Width / 2, BedImage.Height, bedMarkingsColor);
-			}
-		}
-
-		private void CreateRectangularBedGridImage(Vector3 displayVolumeToBuild, Vector2 bedCenter, double divisor, double skip)
-		{
-			lock (lastCreatedBedImage)
-			{
-				BedImage = new ImageBuffer(1024, 1024);
-				Graphics2D graphics2D = BedImage.NewGraphics2D();
-				graphics2D.Clear(bedBaseColor);
-				{
-					double lineDist = BedImage.Width / (displayVolumeToBuild.x / divisor);
-
-					double xPositionCm = (-(viewerVolume.x / 2.0) + bedCenter.x) / divisor;
-					int xPositionCmInt = (int)Math.Round(xPositionCm);
-					double fraction = xPositionCm - xPositionCmInt;
-					int pointSize = 20;
-					graphics2D.DrawString((xPositionCmInt * skip).ToString(), 4, 4, pointSize, color: bedMarkingsColor);
-					for (double linePos = lineDist * (1 - fraction); linePos < BedImage.Width; linePos += lineDist)
-					{
-						xPositionCmInt++;
-						int linePosInt = (int)linePos;
-						int lineWidth = 1;
-						if (xPositionCmInt == 0)
-						{
-							lineWidth = 2;
-						}
-						graphics2D.Line(linePosInt, 0, linePosInt, BedImage.Height, bedMarkingsColor, lineWidth);
-						graphics2D.DrawString((xPositionCmInt * skip).ToString(), linePos + 4, 4, pointSize, color: bedMarkingsColor);
-					}
-				}
-				{
-					double lineDist = BedImage.Height / (displayVolumeToBuild.y / divisor);
-
-					double yPositionCm = (-(viewerVolume.y / 2.0) + bedCenter.y) / divisor;
-					int yPositionCmInt = (int)Math.Round(yPositionCm);
-					double fraction = yPositionCm - yPositionCmInt;
-					int pointSize = 20;
-					for (double linePos = lineDist * (1 - fraction); linePos < BedImage.Height; linePos += lineDist)
-					{
-						yPositionCmInt++;
-						int linePosInt = (int)linePos;
-						int lineWidth = 1;
-						if (yPositionCmInt == 0)
-						{
-							lineWidth = 2;
-						}
-						graphics2D.Line(0, linePosInt, BedImage.Height, linePosInt, bedMarkingsColor, lineWidth);
-
-						graphics2D.DrawString((yPositionCmInt * skip).ToString(), 4, linePos + 4, pointSize, color: bedMarkingsColor);
-					}
-				}
-
-				lastCreatedBedImage = BedImage;
-			}
-		}
 
 		private TrackballTumbleWidget trackballTumbleWidget;
 
@@ -651,6 +451,8 @@ namespace MatterHackers.MeshVisualizer
 
 		private Mesh printerShape;
 
+		private bool printerMode = true;
+
 		private void trackballTumbleWidget_DrawGlContent(object sender, EventArgs e)
 		{
 			foreach(var object3D in scene.Children)
@@ -658,18 +460,53 @@ namespace MatterHackers.MeshVisualizer
 				DrawObject(object3D, Matrix4X4.Identity, false);
 			}
 
-			if (RenderBed)
+			if (printerMode)
 			{
-				GLHelper.Render(printerBed, this.BedColor);
-				if (printerShape != null)
+				if (RenderBed)
 				{
-					GLHelper.Render(printerShape, this.BedColor);
+					GLHelper.Render(printer.Bed.Mesh, this.BedColor);
+					if (printerShape != null)
+					{
+						GLHelper.Render(printerShape, this.BedColor);
+					}
+				}
+
+				if (printer.Bed.BuildVolumeMesh != null && RenderBuildVolume)
+				{
+					GLHelper.Render(printer.Bed.BuildVolumeMesh, this.BuildVolumeColor);
 				}
 			}
-
-			if (buildVolume != null && RenderBuildVolume)
+			else
 			{
-				GLHelper.Render(buildVolume, this.BuildVolumeColor);
+				GL.Disable(EnableCap.Texture2D);
+				GL.Disable(EnableCap.Blend);
+
+				GL.Begin(BeginMode.Lines);
+				{
+					for (int i = -500; i <= 500; i += 50)
+					{
+						GL.Color4(240, 240, 240, 255);
+						GL.Vertex3(i, 500, 0);
+						GL.Vertex3(i, -500, 0);
+
+						GL.Vertex3(500, i, 0);
+						GL.Vertex3(-500, i, 0);
+
+					}
+
+					GL.Color4(255, 0, 0, 255);
+					GL.Vertex3(500, 0, 0);
+					GL.Vertex3(-500, 0, 0);
+
+					GL.Color4(0, 255, 0, 255);
+					GL.Vertex3(0, 500, 0);
+					GL.Vertex3(0, -500, 0);
+
+					GL.Color4(0, 0, 255, 255);
+					GL.Vertex3(0, 0, 10);
+					GL.Vertex3(0, 0, -10);
+				}
+				GL.End();
 			}
 
 			// we don't want to render the bed or build volume before we load a model.
