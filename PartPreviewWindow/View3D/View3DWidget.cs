@@ -279,7 +279,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// this is closer to the old align button
 				if (false)
 				{
-					Button absoluteButton = smallMarginButtonFactory.Generate("Absolute".Localize());
+					var absoluteButton = smallMarginButtonFactory.Generate("Absolute".Localize());
 					absoluteButton.Margin = buttonSpacing;
 					absoluteButton.Click += (sender, e) =>
 					{
@@ -307,7 +307,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 				selectionActionBar.AddChild(alignButton);
 
-				Button layFlatButton = smallMarginButtonFactory.Generate("Lay Flat".Localize());
+				var layFlatButton = smallMarginButtonFactory.Generate("Lay Flat".Localize());
 				layFlatButton.Margin = buttonSpacing;
 				layFlatButton.Click += (sender, e) =>
 				{
@@ -324,7 +324,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				CreateActionSeparator(selectionActionBar);
 
-				Button copyButton = smallMarginButtonFactory.Generate("Copy".Localize());
+				var copyButton = smallMarginButtonFactory.Generate("Copy".Localize());
 				copyButton.Name = "3D View Copy";
 				copyButton.Margin = buttonSpacing;
 				copyButton.Click += (sender, e) =>
@@ -337,7 +337,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 				selectionActionBar.AddChild(copyButton);
 
-				Button deleteButton = smallMarginButtonFactory.Generate("Remove".Localize());
+				var deleteButton = smallMarginButtonFactory.Generate("Remove".Localize());
 				deleteButton.Name = "3D View Remove";
 				deleteButton.Margin = buttonSpacing;
 				deleteButton.Click += (sender, e) =>
@@ -1560,7 +1560,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				HAnchor = HAnchor.Fit,
 				VAnchor = VAnchor.Fit,
 				BackgroundColor = RGBA_Bytes.White,
-				Padding = new BorderDouble(12, 5, 12, 0)
+				Padding = new BorderDouble(5, 5, 5, 0)
 			};
 
 			FlowLayoutWidget buttonPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
@@ -1580,28 +1580,59 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 				buttonPanel.AddChild(alignButtons);
 
-				alignButtons.AddChild(new TextWidget(axisNames[axisIndex], textColor: ActiveTheme.Instance.PrimaryTextColor));
+				alignButtons.AddChild(new TextWidget(axisNames[axisIndex], textColor: ActiveTheme.Instance.PrimaryTextColor)
+				{
+					VAnchor = VAnchor.Center,
+					Margin = new BorderDouble(0, 0, 3, 0)
+				});
 
-				alignButtons.AddChild(CreateAlignButton(axisIndex, "Min"));
+				alignButtons.AddChild(CreateAlignButton(axisIndex, AxisAlignment.Min, "Min"));
 				alignButtons.AddChild(new HorizontalSpacer());
-				alignButtons.AddChild(CreateAlignButton(axisIndex, "Center"));
+				alignButtons.AddChild(CreateAlignButton(axisIndex, AxisAlignment.Center, "Center"));
 				alignButtons.AddChild(new HorizontalSpacer());
-				alignButtons.AddChild(CreateAlignButton(axisIndex, "Max"));
+				alignButtons.AddChild(CreateAlignButton(axisIndex, AxisAlignment.Max, "Max"));
 				alignButtons.AddChild(new HorizontalSpacer());
 			}
 
 			return widget;
 		}
 
-		private GuiWidget CreateAlignButton(int axisIndex, string words)
+		internal enum AxisAlignment { Min, Center, Max };
+		private GuiWidget CreateAlignButton(int axisIndex, AxisAlignment alignment, string lable)
 		{
-			RadioButton alignButton = new RadioButton(words, textColor: ActiveTheme.Instance.PrimaryTextColor);
+			var smallMarginButtonFactory = ApplicationController.Instance.Theme.SmallMarginButtonFactory;
+			var alignButton = smallMarginButtonFactory.Generate(lable);
+			alignButton.Margin = new BorderDouble(3, 0);
+
 			int extruderIndexCanPassToClick = axisIndex;
 			alignButton.Click += (sender, e) =>
 			{
 				if (Scene.HasSelection)
 				{
+					var totalAABB = Scene.SelectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 					// move the objects to the right place
+					foreach(var child in Scene.SelectedItem.Children)
+					{
+						var childAABB = child.GetAxisAlignedBoundingBox(Scene.SelectedItem.Matrix);
+						var offset = new Vector3();
+						switch (alignment)
+						{
+							case AxisAlignment.Min:
+								offset[axisIndex] = totalAABB.minXYZ[axisIndex] - childAABB.minXYZ[axisIndex];
+								break;
+
+							case AxisAlignment.Center:
+								offset[axisIndex] = totalAABB.Center[axisIndex] - childAABB.Center[axisIndex];
+								break;
+
+							case AxisAlignment.Max:
+								{
+									offset[axisIndex] = totalAABB.maxXYZ[axisIndex] - childAABB.maxXYZ[axisIndex];
+								}
+								break;
+						}
+						child.Matrix *= Matrix4X4.CreateTranslation(offset);
+					}
 					//Scene.SelectedItem.MaterialIndex = extruderIndexCanPassToClick;
 					PartHasBeenChanged();
 				}
