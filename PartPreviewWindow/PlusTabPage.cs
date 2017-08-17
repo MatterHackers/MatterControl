@@ -33,6 +33,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ActionBar;
 using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
@@ -40,7 +41,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class PlusTabPage : FlowLayoutWidget
 	{
-		public PlusTabPage()
+		private TabControl tabControl;
+
+		public PlusTabPage(TabControl tabControl, PrinterConfig printer, ThemeConfig theme, PrintItemWrapper printItem)
 			: base(FlowDirection.TopToBottom)
 		{
 			this.Name = "+";
@@ -48,7 +51,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.VAnchor = VAnchor.Stretch;
 			this.Padding = 15;
 
-			var theme = ApplicationController.Instance.Theme;
+			this.tabControl = tabControl;
 
 			BorderDouble buttonSpacing = 3;
 
@@ -59,6 +62,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			createPart.Margin = buttonSpacing;
 			createPart.HAnchor = HAnchor.Left;
 			createItemsSection.AddChild(createPart);
+			createPart.Click += (s, e) =>
+			{
+				var partTab = new PrinterTab(
+						"New Part",
+						"newPart" + tabControl.TabCount,
+						new PrinterTabBase(printer, theme, printItem, "xxxxx"));
+				partTab.Margin = new BorderDouble(1, 0, 0, 5);
+				partTab.Padding = new BorderDouble(15, 2, 15, 6);
+
+				tabControl.AddTab(partTab, tabPosition: 1);
+				tabControl.SelectedTabIndex = 1;
+			};
 
 			var createPrinter = theme.ButtonFactory.Generate("Create Printer".Localize());
 			createPrinter.Margin = buttonSpacing;

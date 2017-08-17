@@ -43,52 +43,23 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class PrinterTabPage : TabPage
+	public class PrinterTabPage : PrinterTabBase
 	{
-		internal View3DWidget modelViewer;
 		internal GCode2DWidget gcode2DWidget;
-
-		private PrintItemWrapper printItem;
-		private ViewControls3D viewControls3D;
-
+		private View3DConfig gcodeOptions;
 		private DoubleSolidSlider layerRenderRatioSlider;
 		private SolidSlider selectLayerSlider;
-
-		private PrinterConfig printer;
-		private View3DConfig gcodeOptions;
-		private GuiWidget view3DContainer;
-
 		private TextWidget layerCountText;
 		private TextWidget layerStartText;
-
 		private ValueDisplayInfo currentLayerInfo;
-
 		private SystemWindow parentSystemWindow;
 
-		public PrinterTabPage(PrinterSettings activeSettings, PrintItemWrapper printItem, string tabTitle)
-			: base (tabTitle)
+		public PrinterTabPage(PrinterConfig printer, ThemeConfig theme, PrintItemWrapper printItem, string tabTitle)
+			: base(printer, theme, printItem, tabTitle)
 		{
-			printer = ApplicationController.Instance.Printer;
-
-			var theme = ApplicationController.Instance.Theme;
+			modelViewer.meshViewerWidget.EditorMode = MeshViewerWidget.EditorType.Printer;
 
 			gcodeOptions = printer.Bed.RendererOptions;
-
-			this.BackgroundColor = theme.TabBodyBackground;
-			this.Padding = 0;
-
-			viewControls3D = new ViewControls3D(theme, printer.Bed.Scene.UndoBuffer)
-			{
-				PartSelectVisible = false,
-				VAnchor = VAnchor.Top | VAnchor.Fit | VAnchor.Absolute,
-				HAnchor = HAnchor.Left | HAnchor.Fit,
-				Visible = true,
-				Margin = new BorderDouble(6, 0, 0, 43)
-			};
-			viewControls3D.ViewModeChanged += (s, e) =>
-			{
-				this.ViewMode = e.ViewMode;
-			};
 
 			viewControls3D.TransformStateChanged += (s, e) =>
 			{
@@ -116,21 +87,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					gcode2DWidget.CenterPartInView();
 				}
-				else if (modelViewer.Visible)
-				{
-					this.modelViewer.ResetView();
-				}
 			};
-			viewControls3D.OverflowButton.DynamicPopupContent = () =>
+			viewControls3D.ViewModeChanged += (s, e) =>
 			{
-				if (modelViewer.gcodeViewer.Visible)
-				{
-					return this.ShowGCodeOverflowMenu();
-				}
-				else
-				{
-					return modelViewer.ShowOverflowMenu();
-				}
+				this.ViewMode = e.ViewMode;
 			};
 
 			int sliderWidth = (UserSettings.Instance.IsTouchScreen) ? 20 : 10;
@@ -178,51 +138,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				this.Invalidate();
 			};
-
-			SetSliderSizes();
-
 			
-
-			// The 3D model view
-			modelViewer = new View3DWidget(printItem,
-				printer,
-				View3DWidget.WindowMode.Embeded,
-				View3DWidget.AutoRotate.Disabled,
-				viewControls3D,
-				theme,
-				View3DWidget.OpenMode.Editing);
-
-			modelViewer.BoundsChanged += (s, e) =>
-			{
-				SetSliderSizes();
-			};
-
-			var topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			topToBottom.AnchorAll();
-			this.AddChild(topToBottom);
-
-			// Must come after we have an instance of View3DWidget an its undo buffer
-			topToBottom.AddChild(new PrinterActionsBar(modelViewer, this)
-			{
-				Padding = theme.ToolbarPadding
-			});
-
-			var leftToRight = new FlowLayoutWidget();
-			leftToRight.AnchorAll();
-			topToBottom.AddChild(leftToRight);
-
-			view3DContainer = new GuiWidget();
-			view3DContainer.AnchorAll();
-			view3DContainer.AddChild(modelViewer);
-
-			leftToRight.AddChild(view3DContainer);
-
-			view3DContainer.AddChild(layerRenderRatioSlider);
-			view3DContainer.AddChild(selectLayerSlider);
-			view3DContainer.AddChild(layerCountText);
-			view3DContainer.AddChild(layerStartText);
-
-			//currentLayerInfo = new ValueDisplayInfo("1000", Agg.Font.Justification.Right)
 			currentLayerInfo = new ValueDisplayInfo("1000")
 			{
 				GetDisplayString = (value) => $"{value + 1}"
@@ -233,53 +149,107 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				printer.Bed.ActiveLayerIndex = (int)currentLayerInfo.Value - 1;
 			};
 
+			AddSettingsTabBar(leftToRight, modelViewer);
+
+			view3DContainer.AddChild(layerRenderRatioSlider);
+			view3DContainer.AddChild(selectLayerSlider);
+			view3DContainer.AddChild(layerCountText);
+			view3DContainer.AddChild(layerStartText);
+
 			printer.Bed.ActiveLayerChanged += SetPositionAndValue;
 			selectLayerSlider.MouseEnter += SetPositionAndValue;
+
+			printer.Bed.LoadedGCodeChanged += BedPlate_LoadedGCodeChanged;
+
+			this.ShowSliceLayers = false;
 
 			currentLayerInfo.Visible = false;
 
 			view3DContainer.AddChild(currentLayerInfo);
 
+			modelViewer.BoundsChanged += (s, e) =>
+			{
+				SetSliderSizes();
+			};
+
+			// Must come after we have an instance of View3DWidget an its undo buffer
+			topToBottom.AddChild(new PrinterActionsBar(modelViewer, this)
+			{
+				Padding = theme.ToolbarPadding
+			}, 0);
 			printer.Bed.ActiveLayerChanged += ActiveLayer_Changed;
 
-			AddSettingsTabBar(leftToRight, modelViewer);
-
-			modelViewer.BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor;
-
-			if (ApplicationController.Instance.PartPreviewState.RotationMatrix == Matrix4X4.Identity)
-			{
-				this.modelViewer.ResetView();
-
-				ApplicationController.Instance.PartPreviewState.RotationMatrix = modelViewer.World.RotationMatrix;
-				ApplicationController.Instance.PartPreviewState.TranslationMatrix = modelViewer.World.TranslationMatrix;
-			}
-			else
-			{
-				modelViewer.World.RotationMatrix = ApplicationController.Instance.PartPreviewState.RotationMatrix;
-				modelViewer.World.TranslationMatrix = ApplicationController.Instance.PartPreviewState.TranslationMatrix;
-			}
-
-			printer.Bed.LoadedGCodeChanged += BedPlate_LoadedGCodeChanged;
-			
-			this.ShowSliceLayers = false;
-
-			this.printItem = printItem;
-
-			this.AddChild(viewControls3D);
-
-			this.AnchorAll();
+			SetSliderSizes();
 		}
 
-		private void SetPositionAndValue(object sender, EventArgs e)
+		private GCodeFile loadedGCode => printer.Bed.LoadedGCode;
+
+		private bool showSliceLayers;
+		private bool ShowSliceLayers
 		{
-			UiThread.RunOnIdle(() =>
+			get => showSliceLayers;
+			set
 			{
-				currentLayerInfo.Value = printer.Bed.ActiveLayerIndex;
-				//currentLayerInfo.DebugShowBounds = true;
-				currentLayerInfo.OriginRelativeParent = selectLayerSlider.OriginRelativeParent
-					+ new Vector2(-currentLayerInfo.Width - 10, selectLayerSlider.PositionPixelsFromFirstValue - currentLayerInfo.Height / 2);
-				currentLayerInfo.Visible = true;
-			});
+				showSliceLayers = value;
+				modelViewer.gcodeViewer.Visible = value;
+
+				modelViewer.meshViewerWidget.IsActive = !value;
+
+				if (showSliceLayers)
+				{
+					modelViewer.Scene.ClearSelection();
+				}
+
+				var slidersVisible = printer.Bed.RenderInfo != null && value;
+
+				selectLayerSlider.Visible = slidersVisible;
+				layerRenderRatioSlider.Visible = slidersVisible;
+
+				modelViewer.selectedObjectPanel.Visible = !showSliceLayers;
+			}
+		}
+
+		private PartViewMode viewMode;
+		public PartViewMode ViewMode
+		{
+			get => viewMode;
+			set
+			{
+				if (viewMode != value)
+				{
+					viewMode = value;
+
+					viewControls3D.ViewMode = viewMode;
+
+					switch (viewMode)
+					{
+						case PartViewMode.Layers2D:
+							UserSettings.Instance.set("LayerViewDefault", "2D Layer");
+							if (gcode2DWidget != null)
+							{
+								gcode2DWidget.Visible = true;
+
+								// HACK: Getting the Layer2D view to show content only works if CenterPartInView is called after the control is visible and after some cycles have passed
+								UiThread.RunOnIdle(gcode2DWidget.CenterPartInView);
+							}
+							this.ShowSliceLayers = true;
+							break;
+
+						case PartViewMode.Layers3D:
+							UserSettings.Instance.set("LayerViewDefault", "3D Layer");
+							if (gcode2DWidget != null)
+							{
+								gcode2DWidget.Visible = false;
+							}
+							this.ShowSliceLayers = true;
+							break;
+
+						case PartViewMode.Model:
+							this.ShowSliceLayers = false;
+							break;
+					}
+				}
+			}
 		}
 
 		private void BedPlate_LoadedGCodeChanged(object sender, EventArgs e)
@@ -353,173 +323,81 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return renderType;
 		}
 
-		private void AddSettingsTabBar(GuiWidget parent, GuiWidget widgetTodockTo)
+		private void SetSyncToPrintVisibility()
 		{
-			var sideBar = new DockingTabControl(widgetTodockTo, DockSide.Right, ApplicationController.Instance.Printer)
-			{
-				ControlIsPinned = ApplicationController.Instance.PrintSettingsPinned
-			};
-			sideBar.PinStatusChanged += (s, e) =>
-			{
-				ApplicationController.Instance.PrintSettingsPinned = sideBar.ControlIsPinned;
-			};
-			parent.AddChild(sideBar);
+			bool printerIsRunningPrint = PrinterConnection.Instance.PrinterIsPaused || PrinterConnection.Instance.PrinterIsPrinting;
 
-			if (ActiveSliceSettings.Instance.PrinterSelected)
+			if (gcodeOptions.SyncToPrint && printerIsRunningPrint)
 			{
-				sideBar.AddPage("Slice Settings".Localize(), new SliceSettingsWidget());
+				SetAnimationPosition();
+				layerRenderRatioSlider.Visible = false;
+				selectLayerSlider.Visible = false;
 			}
 			else
 			{
-				sideBar.AddPage("Slice Settings".Localize(), new NoSettingsWidget());
-			}
-
-			sideBar.AddPage("Controls".Localize(), new ManualPrinterControls());
-
-			var terminalControls = new TerminalControls();
-			terminalControls.VAnchor |= VAnchor.Stretch;
-			sideBar.AddPage("Terminal".Localize(), terminalControls);
-		}
-
-		private GCodeFile loadedGCode => printer.Bed.LoadedGCode;
-
-		private bool showSliceLayers;
-		private bool ShowSliceLayers
-		{
-			get => showSliceLayers;
-			set
-			{
-				showSliceLayers = value;
-				modelViewer.gcodeViewer.Visible = value;
-
-				modelViewer.meshViewerWidget.IsActive = !value;
-
-				if (showSliceLayers)
+				if (layerRenderRatioSlider != null)
 				{
-					modelViewer.Scene.ClearSelection();
+					layerRenderRatioSlider.FirstValue = 0;
+					layerRenderRatioSlider.SecondValue = 1;
 				}
 
-				var slidersVisible = printer.Bed.RenderInfo != null && value;
-
-				selectLayerSlider.Visible = slidersVisible;
-				layerRenderRatioSlider.Visible = slidersVisible;
-
-				modelViewer.selectedObjectPanel.Visible = !showSliceLayers;
+				layerRenderRatioSlider.Visible = true;
+				selectLayerSlider.Visible = true;
 			}
 		}
 
-		private PartViewMode viewMode;
-		public PartViewMode ViewMode
+		private void SetSliderSizes()
 		{
-			get => viewMode;
-			set
+			if (selectLayerSlider == null || modelViewer == null)
 			{
-				if (viewMode != value)
-				{
-					viewMode = value;
-
-					viewControls3D.ViewMode = viewMode;
-
-					switch (viewMode)
-					{
-						case PartViewMode.Layers2D:
-							UserSettings.Instance.set("LayerViewDefault", "2D Layer");
-							if (gcode2DWidget != null)
-							{
-								gcode2DWidget.Visible = true;
-
-								// HACK: Getting the Layer2D view to show content only works if CenterPartInView is called after the control is visible and after some cycles have passed
-								UiThread.RunOnIdle(gcode2DWidget.CenterPartInView);
-							}
-							this.ShowSliceLayers = true;
-							break;
-
-						case PartViewMode.Layers3D:
-							UserSettings.Instance.set("LayerViewDefault", "3D Layer");
-							if (gcode2DWidget != null)
-							{
-								gcode2DWidget.Visible = false;
-							}
-							this.ShowSliceLayers = true;
-							break;
-
-						case PartViewMode.Model:
-							this.ShowSliceLayers = false;
-							break;
-					}
-				}
+				return;
 			}
+
+			selectLayerSlider.OriginRelativeParent = new Vector2(modelViewer.Width - 20, 78);
+			selectLayerSlider.TotalWidthInPixels = modelViewer.Height - 100;
+
+			layerRenderRatioSlider.OriginRelativeParent = new Vector2(11, 65);
+			layerRenderRatioSlider.TotalWidthInPixels = modelViewer.Width - 45;
+
+			layerCountText.OriginRelativeParent = new Vector2(modelViewer.Width - 26 + (layerCountText.Width / 2), modelViewer.Height - 15);
+			layerStartText.OriginRelativeParent = new Vector2(modelViewer.Width - 26 + (layerStartText.Width / 2), 63);
 		}
-
-		private async void LoadActivePrintItem()
+		private void SetAnimationPosition()
 		{
-			await modelViewer.ClearBedAndLoadPrintItemWrapper(printItem);
-		}
-
-		public override void OnLoad(EventArgs args)
-		{
-			ApplicationController.Instance.ActiveView3DWidget = modelViewer;
-			LoadActivePrintItem();
-
-			// Find and hook the parent system window KeyDown event
-			if (this.Parents<SystemWindow>().FirstOrDefault() is SystemWindow systemWindow)
+			int currentLayer = PrinterConnection.Instance.CurrentlyPrintingLayer;
+			if (currentLayer <= 0)
 			{
-				systemWindow.KeyDown += Parent_KeyDown;
-				parentSystemWindow = systemWindow;
+				selectLayerSlider.Value = 0;
+				layerRenderRatioSlider.SecondValue = 0;
+				layerRenderRatioSlider.FirstValue = 0;
 			}
-
-			base.OnLoad(args);
-		}
-
-		private void Parent_KeyDown(object sender, KeyEventArgs keyEvent)
-		{
-			if (modelViewer.gcodeViewer.Visible)
+			else
 			{
-				switch (keyEvent.KeyCode)
-				{
-					case Keys.Up:
-						printer.Bed.ActiveLayerIndex += 1;
-						break;
-					case Keys.Down:
-						printer.Bed.ActiveLayerIndex -= 1;
-						break;
-				}
+				selectLayerSlider.Value = currentLayer - 1;
+				layerRenderRatioSlider.SecondValue = PrinterConnection.Instance.RatioIntoCurrentLayer;
+				layerRenderRatioSlider.FirstValue = 0;
 			}
 		}
 
-		public override void OnDraw(Graphics2D graphics2D)
+		private void ActiveLayer_Changed(object sender, EventArgs e)
 		{
-			bool printerIsRunningPrint = PrinterConnection.Instance.PrinterIsPaused || PrinterConnection.Instance.PrinterIsPrinting;
-			if (gcodeOptions.SyncToPrint
-				&& printerIsRunningPrint
-				&& modelViewer.gcodeViewer.Visible)
+			if (selectLayerSlider != null
+				&& printer.Bed.ActiveLayerIndex != (int)(selectLayerSlider.Value + .5))
 			{
-				SetAnimationPosition();
-				this.Invalidate();
+				selectLayerSlider.Value = printer.Bed.ActiveLayerIndex;
 			}
-
-			base.OnDraw(graphics2D);
 		}
 
-		public override void OnClosed(ClosedEventArgs e)
+		private void SetPositionAndValue(object sender, EventArgs e)
 		{
-			// Store active transforms on close
-			ApplicationController.Instance.PartPreviewState.RotationMatrix = modelViewer.World.RotationMatrix;
-			ApplicationController.Instance.PartPreviewState.TranslationMatrix = modelViewer.World.TranslationMatrix;
-
-			// Find and unhook the parent system window KeyDown event
-			if (parentSystemWindow != null)
+			UiThread.RunOnIdle(() =>
 			{
-				parentSystemWindow.KeyDown -= Parent_KeyDown;
-			}
-
-			printer.Bed.ActiveLayerChanged -= ActiveLayer_Changed;
-			printer.Bed.LoadedGCodeChanged -= BedPlate_LoadedGCodeChanged;
-
-			printer.Bed.ActiveLayerChanged -= SetPositionAndValue;
-			selectLayerSlider.MouseEnter -= SetPositionAndValue;
-
-			base.OnClosed(e);
+				currentLayerInfo.Value = printer.Bed.ActiveLayerIndex;
+				//currentLayerInfo.DebugShowBounds = true;
+				currentLayerInfo.OriginRelativeParent = selectLayerSlider.OriginRelativeParent
+					+ new Vector2(-currentLayerInfo.Width - 10, selectLayerSlider.PositionPixelsFromFirstValue - currentLayerInfo.Height / 2);
+				currentLayerInfo.Visible = true;
+			});
 		}
 
 		internal GuiWidget ShowGCodeOverflowMenu()
@@ -622,71 +500,221 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return popupContainer;
 		}
 
-
-		private void SetSyncToPrintVisibility()
+		public override void OnDraw(Graphics2D graphics2D)
 		{
 			bool printerIsRunningPrint = PrinterConnection.Instance.PrinterIsPaused || PrinterConnection.Instance.PrinterIsPrinting;
-
-			if (gcodeOptions.SyncToPrint && printerIsRunningPrint)
+			if (gcodeOptions.SyncToPrint
+				&& printerIsRunningPrint
+				&& modelViewer.gcodeViewer.Visible)
 			{
 				SetAnimationPosition();
-				layerRenderRatioSlider.Visible = false;
-				selectLayerSlider.Visible = false;
+				this.Invalidate();
+			}
+
+			base.OnDraw(graphics2D);
+		}
+
+		protected override GuiWidget GetViewControls3DOverflowMenu()
+		{
+			if (modelViewer.gcodeViewer.Visible)
+			{
+				return this.ShowGCodeOverflowMenu();
 			}
 			else
 			{
-				if (layerRenderRatioSlider != null)
+				return modelViewer.ShowOverflowMenu();
+			}
+		}
+
+		public override void OnLoad(EventArgs args)
+		{
+			// Find and hook the parent system window KeyDown event
+			if (this.Parents<SystemWindow>().FirstOrDefault() is SystemWindow systemWindow)
+			{
+				systemWindow.KeyDown += Parent_KeyDown;
+				parentSystemWindow = systemWindow;
+			}
+
+			base.OnLoad(args);
+		}
+
+		public override void OnClosed(ClosedEventArgs e)
+		{
+			// Find and unhook the parent system window KeyDown event
+			if (parentSystemWindow != null)
+			{
+				parentSystemWindow.KeyDown -= Parent_KeyDown;
+			}
+
+			printer.Bed.ActiveLayerChanged -= ActiveLayer_Changed;
+			printer.Bed.LoadedGCodeChanged -= BedPlate_LoadedGCodeChanged;
+
+			printer.Bed.ActiveLayerChanged -= SetPositionAndValue;
+			selectLayerSlider.MouseEnter -= SetPositionAndValue;
+
+			base.OnClosed(e);
+		}
+
+		private void Parent_KeyDown(object sender, KeyEventArgs keyEvent)
+		{
+			if (modelViewer.gcodeViewer.Visible)
+			{
+				switch (keyEvent.KeyCode)
 				{
-					layerRenderRatioSlider.FirstValue = 0;
-					layerRenderRatioSlider.SecondValue = 1;
+					case Keys.Up:
+						printer.Bed.ActiveLayerIndex += 1;
+						break;
+					case Keys.Down:
+						printer.Bed.ActiveLayerIndex -= 1;
+						break;
 				}
-
-				layerRenderRatioSlider.Visible = true;
-				selectLayerSlider.Visible = true;
 			}
 		}
 
-		private void SetSliderSizes()
+		private void AddSettingsTabBar(GuiWidget parent, GuiWidget widgetTodockTo)
 		{
-			if (selectLayerSlider == null || modelViewer == null)
+			var sideBar = new DockingTabControl(widgetTodockTo, DockSide.Right, ApplicationController.Instance.Printer)
 			{
-				return;
-			}
-
-			selectLayerSlider.OriginRelativeParent = new Vector2(modelViewer.Width - 20, 78);
-			selectLayerSlider.TotalWidthInPixels = modelViewer.Height - 100;
-
-			layerRenderRatioSlider.OriginRelativeParent = new Vector2(11, 65);
-			layerRenderRatioSlider.TotalWidthInPixels = modelViewer.Width - 45;
-
-			layerCountText.OriginRelativeParent = new Vector2(modelViewer.Width - 26 + (layerCountText.Width / 2), modelViewer.Height - 15);
-			layerStartText.OriginRelativeParent = new Vector2(modelViewer.Width - 26 + (layerStartText.Width / 2), 63);
-		}
-		private void SetAnimationPosition()
-		{
-			int currentLayer = PrinterConnection.Instance.CurrentlyPrintingLayer;
-			if (currentLayer <= 0)
+				ControlIsPinned = ApplicationController.Instance.PrintSettingsPinned
+			};
+			sideBar.PinStatusChanged += (s, e) =>
 			{
-				selectLayerSlider.Value = 0;
-				layerRenderRatioSlider.SecondValue = 0;
-				layerRenderRatioSlider.FirstValue = 0;
+				ApplicationController.Instance.PrintSettingsPinned = sideBar.ControlIsPinned;
+			};
+			parent.AddChild(sideBar);
+
+			if (ActiveSliceSettings.Instance.PrinterSelected)
+			{
+				sideBar.AddPage("Slice Settings".Localize(), new SliceSettingsWidget());
 			}
 			else
 			{
-				selectLayerSlider.Value = currentLayer - 1;
-				layerRenderRatioSlider.SecondValue = PrinterConnection.Instance.RatioIntoCurrentLayer;
-				layerRenderRatioSlider.FirstValue = 0;
+				sideBar.AddPage("Slice Settings".Localize(), new NoSettingsWidget());
 			}
-		}
 
-		private void ActiveLayer_Changed(object sender, EventArgs e)
+			sideBar.AddPage("Controls".Localize(), new ManualPrinterControls());
+
+			var terminalControls = new TerminalControls();
+			terminalControls.VAnchor |= VAnchor.Stretch;
+			sideBar.AddPage("Terminal".Localize(), terminalControls);
+		}
+	}
+
+	public class PrinterTabBase : TabPage
+	{
+		internal View3DWidget modelViewer;
+
+		private PrintItemWrapper printItem;
+		protected ViewControls3D viewControls3D;
+
+		protected PrinterConfig printer;
+		protected ThemeConfig theme;
+
+		protected GuiWidget view3DContainer;
+		protected FlowLayoutWidget topToBottom;
+		protected FlowLayoutWidget leftToRight;
+
+		public PrinterTabBase(PrinterConfig printer, ThemeConfig theme, PrintItemWrapper printItem, string tabTitle)
+			: base (tabTitle)
 		{
-			if (selectLayerSlider != null
-				&& printer.Bed.ActiveLayerIndex != (int)(selectLayerSlider.Value + .5))
+			this.printer = printer;
+			this.theme = theme;
+			this.BackgroundColor = theme.TabBodyBackground;
+			this.Padding = 0;
+
+			viewControls3D = new ViewControls3D(theme, printer.Bed.Scene.UndoBuffer)
 			{
-				selectLayerSlider.Value = printer.Bed.ActiveLayerIndex;
+				PartSelectVisible = false,
+				VAnchor = VAnchor.Top | VAnchor.Fit | VAnchor.Absolute,
+				HAnchor = HAnchor.Left | HAnchor.Fit,
+				Visible = true,
+				Margin = new BorderDouble(6, 0, 0, 43)
+			};
+			viewControls3D.ResetView += (sender, e) =>
+			{
+				if (modelViewer.Visible)
+				{
+					this.modelViewer.ResetView();
+				}
+			};
+			viewControls3D.OverflowButton.DynamicPopupContent = () =>
+			{
+				return this.GetViewControls3DOverflowMenu();
+			};
+
+			bool isPrinterType = this.GetType() == typeof(PrinterTabPage);
+
+			// The 3D model view
+			modelViewer = new View3DWidget(printItem,
+				printer,
+				View3DWidget.AutoRotate.Disabled,
+				viewControls3D,
+				theme,
+				View3DWidget.OpenMode.Editing,
+				editorType: (isPrinterType) ? MeshViewerWidget.EditorType.Printer : MeshViewerWidget.EditorType.Part);
+
+			topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
+			topToBottom.AnchorAll();
+			this.AddChild(topToBottom);
+
+			leftToRight = new FlowLayoutWidget();
+			leftToRight.Name = "View3DContainerParent";
+			leftToRight.AnchorAll();
+			topToBottom.AddChild(leftToRight);
+
+			view3DContainer = new GuiWidget();
+			view3DContainer.AnchorAll();
+			view3DContainer.AddChild(modelViewer);
+
+			leftToRight.AddChild(view3DContainer);
+
+			modelViewer.BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor;
+
+			if (ApplicationController.Instance.PartPreviewState.RotationMatrix == Matrix4X4.Identity)
+			{
+				this.modelViewer.ResetView();
+
+				ApplicationController.Instance.PartPreviewState.RotationMatrix = modelViewer.World.RotationMatrix;
+				ApplicationController.Instance.PartPreviewState.TranslationMatrix = modelViewer.World.TranslationMatrix;
 			}
+			else
+			{
+				modelViewer.World.RotationMatrix = ApplicationController.Instance.PartPreviewState.RotationMatrix;
+				modelViewer.World.TranslationMatrix = ApplicationController.Instance.PartPreviewState.TranslationMatrix;
+			}
+
+			this.printItem = printItem;
+
+			this.AddChild(viewControls3D);
+
+			this.AnchorAll();
 		}
 
+		protected virtual GuiWidget GetViewControls3DOverflowMenu()
+		{
+			return modelViewer.ShowOverflowMenu();
+		}
+
+		private async void LoadActivePrintItem()
+		{
+			await modelViewer.ClearBedAndLoadPrintItemWrapper(printItem);
+		}
+
+		public override void OnLoad(EventArgs args)
+		{
+			ApplicationController.Instance.ActiveView3DWidget = modelViewer;
+			LoadActivePrintItem();
+
+			base.OnLoad(args);
+		}
+
+		public override void OnClosed(ClosedEventArgs e)
+		{
+			// Store active transforms on close
+			ApplicationController.Instance.PartPreviewState.RotationMatrix = modelViewer.World.RotationMatrix;
+			ApplicationController.Instance.PartPreviewState.TranslationMatrix = modelViewer.World.TranslationMatrix;
+
+			base.OnClosed(e);
+		}
 	}
 }

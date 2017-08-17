@@ -36,6 +36,32 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class PrinterTab : Tab
 	{
+		public PrinterTab(string tabTitle, string tabName, TabPage tabPage)
+		: this(
+			new TextWidget(tabTitle)
+			{
+				TextColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 140),
+				VAnchor = VAnchor.Center,
+				HAnchor = HAnchor.Center
+			},
+			new TextWidget(tabTitle)
+			{
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				VAnchor = VAnchor.Center,
+				HAnchor = HAnchor.Center
+			},
+			new TextWidget(tabTitle)
+			{
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				VAnchor = VAnchor.Center,
+				HAnchor = HAnchor.Center
+			},
+			tabName,
+			tabPage)
+		{
+
+		}
+
 		public PrinterTab(GuiWidget normalWidget, GuiWidget hoverWidget, GuiWidget pressedWidget, string tabName, TabPage tabPage)
 			: base(tabName, normalWidget, hoverWidget, pressedWidget, tabPage)
 		{
@@ -45,8 +71,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public int BorderWidth { get; set; } = 1;
 		public int borderRadius { get; set; } = 4;
-
-		public RGBA_Bytes BorderColor { get; set; } = ApplicationController.Instance.Theme.PrimaryTabFillColor;
+		
+		private RGBA_Bytes activeTabColor =  ApplicationController.Instance.Theme.PrimaryTabFillColor;
+		private RGBA_Bytes inactiveTabColor = ApplicationController.Instance.Theme.SlightShade;
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{
@@ -60,7 +87,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				graphics2D.Render(
 					r,
-					this.BorderColor);
+					selectedWidget.Visible ? activeTabColor : inactiveTabColor);
 			}
 
 			base.OnDraw(graphics2D);

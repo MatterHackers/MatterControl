@@ -58,6 +58,7 @@ namespace MatterHackers.MatterControl
 	using MatterHackers.MatterControl.Library;
 	using MatterHackers.MatterControl.PartPreviewWindow;
 	using MatterHackers.MeshVisualizer;
+	using MatterHackers.PolygonMesh;
 	using MatterHackers.SerialPortCommunication;
 	using MatterHackers.VectorMath;
 	using PrintHistory;
@@ -69,9 +70,16 @@ namespace MatterHackers.MatterControl
 
 		public event EventHandler LoadedGCodeChanged;
 
+		public View3DConfig RendererOptions { get; } = new View3DConfig();
+
 		private PrintItemWrapper printItem => ApplicationController.Instance.ActivePrintItem;
 
-		public View3DConfig RendererOptions { get; } = new View3DConfig();
+		private PrinterConfig printer;
+
+		public BedConfig(PrinterConfig printer)
+		{
+			this.printer = printer;
+		}
 
 		private GCodeFile loadedGCode;
 		public GCodeFile LoadedGCode
@@ -143,6 +151,41 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
+		BedMeshGenerator bedGenerator;
+
+		private Mesh _bedMesh;
+		public Mesh Mesh
+		{
+			get
+			{
+				if (_bedMesh == null)
+				{
+					bedGenerator = new BedMeshGenerator();
+
+					//Construct the thing
+					_bedMesh = bedGenerator.CreatePrintBed(printer);
+				}
+
+				return _bedMesh;
+			}
+		}
+
+		private Mesh _buildVolumeMesh;
+
+		public Mesh BuildVolumeMesh
+		{
+			get
+			{
+				if (_buildVolumeMesh == null)
+				{
+					//Construct the thing
+					//_buildVolumeMesh = CreatePrintBed(printer);
+				}
+
+				return _buildVolumeMesh;
+			}
+		}
+
 		internal void Render3DLayerFeatures()
 		{
 			if (this.RenderInfo != null)
@@ -158,7 +201,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public void LoadGCode(string filePath, CancellationToken cancellationToken, Action<double,string> progressReporter)
+		public void LoadGCode(string filePath, CancellationToken cancellationToken, Action<double, string> progressReporter)
 		{
 			this.LoadedGCode = GCodeMemoryFile.Load(filePath, cancellationToken, progressReporter);
 			this.GCodeRenderer = new GCodeRenderer(loadedGCode);
@@ -182,7 +225,16 @@ namespace MatterHackers.MatterControl
 				Debug.Print(ex.Message);
 			}
 		}
+
+		public void RecreateBed()
+		{
+			if (bedGenerator != null)
+			{
+				_bedMesh = bedGenerator.CreatePrintBed(printer);
+			}
+		}
 	}
+	
 
 	public class PrinterViewState
 	{
@@ -192,7 +244,7 @@ namespace MatterHackers.MatterControl
 
 	public class PrinterConfig
 	{
-		public BedConfig Bed { get; } = new BedConfig();
+		public BedConfig Bed { get; }
 		public PrinterViewState ViewState { get; } = new PrinterViewState();
 		public PrinterSettings Settings { get; private set; }
 
@@ -200,16 +252,41 @@ namespace MatterHackers.MatterControl
 
 		public PrinterConfig()
 		{
+			this.Bed = new BedConfig(this);
+			
+			ActiveSliceSettings.SettingChanged.RegisterEvent(Printer_SettingChanged, ref unregisterEvents);
+
+			// TODO: Needed?
+			//ApplicationController.Instance.AdvancedControlsPanelReloading.RegisterEvent(CheckSettingChanged, ref unregisterEvents);
+
 			ActiveSliceSettings.ActivePrinterChanged.RegisterEvent((s, e) =>
 			{
 				this.Settings = ActiveSliceSettings.Instance;
-
-				// Reload
-				this.Bed.BuildHeight = this.Settings.GetValue<double>(SettingsKey.build_height);
-				this.Bed.ViewerVolume = new Vector3(this.Settings.GetValue<Vector2>(SettingsKey.bed_size), this.Bed.BuildHeight);
-				this.Bed.BedCenter = this.Settings.GetValue<Vector2>(SettingsKey.print_center);
-				this.Bed.BedShape = this.Settings.GetValue<BedShape>(SettingsKey.bed_shape);
+				ReloadSettings();
 			}, ref unregisterEvents);
+		}
+
+		private void ReloadSettings()
+		{
+			this.Bed.BuildHeight = this.Settings.GetValue<double>(SettingsKey.build_height);
+			this.Bed.ViewerVolume = new Vector3(this.Settings.GetValue<Vector2>(SettingsKey.bed_size), this.Bed.BuildHeight);
+			this.Bed.BedCenter = this.Settings.GetValue<Vector2>(SettingsKey.print_center);
+			this.Bed.BedShape = this.Settings.GetValue<BedShape>(SettingsKey.bed_shape);
+		}
+
+		private void Printer_SettingChanged(object sender, EventArgs e)
+		{
+			if (e is StringEventArgs stringEvent)
+			{
+				if (stringEvent.Data == SettingsKey.bed_size
+					|| stringEvent.Data == SettingsKey.print_center
+					|| stringEvent.Data == SettingsKey.build_height
+					|| stringEvent.Data == SettingsKey.bed_shape)
+				{
+					this.ReloadSettings();
+					this.Bed.RecreateBed();
+				}
+			}
 		}
 	}
 

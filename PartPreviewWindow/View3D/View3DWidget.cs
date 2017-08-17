@@ -132,7 +132,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public InteractionLayer InteractionLayer { get; }
 
-		public View3DWidget(PrintItemWrapper printItemWrapper, PrinterConfig printer, WindowMode windowType, AutoRotate autoRotate, ViewControls3D viewControls3D, ThemeConfig theme, OpenMode openMode = OpenMode.Viewing)
+		public View3DWidget(PrintItemWrapper printItemWrapper, PrinterConfig printer, AutoRotate autoRotate, ViewControls3D viewControls3D, ThemeConfig theme, OpenMode openMode = OpenMode.Viewing, MeshViewerWidget.EditorType editorType = MeshViewerWidget.EditorType.Part)
 		{
 			this.printer = printer;
 			this.Scene = this.printer.Bed.Scene;
@@ -154,13 +154,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.openMode = openMode;
 			allowAutoRotate = (autoRotate == AutoRotate.Enabled);
 
-			meshViewerWidget = new MeshViewerWidget(printer, this.TrackballTumbleWidget, this.InteractionLayer);
+			meshViewerWidget = new MeshViewerWidget(printer, this.TrackballTumbleWidget, this.InteractionLayer, editorType: editorType);
 			this.printItemWrapper = printItemWrapper;
-
-			ActiveSliceSettings.SettingChanged.RegisterEvent(CheckSettingChanged, ref unregisterEvents);
-			ApplicationController.Instance.AdvancedControlsPanelReloading.RegisterEvent(CheckSettingChanged, ref unregisterEvents);
-
-			this.windowType = windowType;
 			autoRotating = allowAutoRotate;
 
 			this.Name = "View3DWidget";
@@ -176,8 +171,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			var smallMarginButtonFactory = ApplicationController.Instance.Theme.SmallMarginButtonFactory;
-
-			PutOemImageOnBed();
 
 			meshViewerWidget.AnchorAll();
 			this.InteractionLayer.AddChild(meshViewerWidget);
@@ -371,7 +364,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 				selectionActionBar.AddChild(mirrorButton);
 
-				var menuActions = new[]
+				// put in the material options
+				var materialsButton = new PopupButton(smallMarginButtonFactory.Generate("Materials".Localize()))
+				{
+					PopDirection = Direction.Up,
+					PopupContent = this.AddMaterialControls(),
+					AlignToRightEdge = true,
+					Margin = buttonSpacing
+				};
+				this.Scene.SelectionChanged += (s, e) =>
+				{
+					materialsButton.Enabled = this.Scene.HasSelection;
+				};
+				selectionActionBar.AddChild(materialsButton);
+
+				selectionActionBar.AddChild(new HorizontalSpacer());
+
+				// Bed menu
+				var bedMenuActions = new[]
 				{
 					new NamedAction()
 					{
@@ -420,29 +430,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 				};
 
-				CreateActionSeparator(selectionActionBar);
+				bool isPrinterMode = meshViewerWidget.EditorMode == MeshViewerWidget.EditorType.Printer;
 
-				// put in the material options
-				var materialsButton = new PopupButton(smallMarginButtonFactory.Generate("Materials".Localize()))
+				string title =  isPrinterMode ? "Bed".Localize() : "Part".Localize();
+
+				var icon = isPrinterMode ? StaticData.Instance.LoadIcon("bed.png") : StaticData.Instance.LoadIcon("cube.png");
+
+				selectionActionBar.AddChild(new PopupButton(smallMarginButtonFactory.Generate(title, normalImage: icon))
 				{
 					PopDirection = Direction.Up,
-					PopupContent = this.AddMaterialControls(),
-					AlignToRightEdge = true,
-					Margin = buttonSpacing
-				};
-				this.Scene.SelectionChanged += (s, e) =>
-				{
-					materialsButton.Enabled = this.Scene.HasSelection;
-				};
-				selectionActionBar.AddChild(materialsButton);
-
-				selectionActionBar.AddChild(new HorizontalSpacer());
-
-				// Bed menu
-				selectionActionBar.AddChild(new PopupButton(smallMarginButtonFactory.Generate("Bed".Localize(), normalImage: StaticData.Instance.LoadIcon("bed.png")))
-				{
-					PopDirection = Direction.Up,
-					PopupContent = ApplicationController.Instance.Theme.CreatePopupMenu(menuActions),
+					PopupContent = ApplicationController.Instance.Theme.CreatePopupMenu(bedMenuActions),
 					AlignToRightEdge = true,
 					Margin = buttonSpacing
 				});
@@ -470,19 +467,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			UiThread.RunOnIdle(AutoSpin);
 
-			if (windowType == WindowMode.Embeded)
+			if (printer.Bed.RendererOptions.SyncToPrint)
 			{
 				PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent(SetEditControlsBasedOnPrinterState, ref unregisterEvents);
-				if (windowType == WindowMode.Embeded)
+
+				// make sure we lock the controls if we are printing or paused
+				switch (PrinterConnection.Instance.CommunicationState)
 				{
-					// make sure we lock the controls if we are printing or paused
-					switch (PrinterConnection.Instance.CommunicationState)
-					{
-						case CommunicationStates.Printing:
-						case CommunicationStates.Paused:
-							LockEditControls();
-							break;
-					}
+					case CommunicationStates.Printing:
+					case CommunicationStates.Paused:
+						LockEditControls();
+						break;
 				}
 			}
 
@@ -774,11 +769,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public enum OpenMode { Viewing, Editing }
 
-		public enum WindowMode { Embeded, StandAlone };
-
 		public bool DisplayAllValueData { get; set; }
-
-		public WindowMode windowType { get; set; }
 
 		public override void OnClosed(ClosedEventArgs e)
 		{
@@ -1009,12 +1000,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{
-			if (needToRecreateBed)
-			{
-				needToRecreateBed = false;
-				RecreateBed();
-			}
-
 			if (Scene.HasSelection)
 			{
 				var selectedItem = Scene.SelectedItem;
@@ -2163,7 +2148,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void meshViewerWidget_LoadDone(object sender, EventArgs e)
 		{
-			if (windowType == WindowMode.Embeded)
+			if (printer.Bed.RendererOptions.SyncToPrint)
 			{
 				switch (PrinterConnection.Instance.CommunicationState)
 				{
@@ -2273,7 +2258,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void SetEditControlsBasedOnPrinterState(object sender, EventArgs e)
 		{
-			if (windowType == WindowMode.Embeded)
+			if (printer.Bed.RendererOptions.SyncToPrint)
 			{
 				switch (PrinterConnection.Instance.CommunicationState)
 				{
@@ -2363,7 +2348,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			SelectedTransformChanged?.Invoke(this, null);
 		}
 
-		// ViewControls3D {{
 		internal GuiWidget ShowOverflowMenu()
 		{
 			var popupContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
@@ -2568,8 +2552,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		protected ViewControls3D viewControls3D { get; }
 
-		private bool needToRecreateBed = false;
-
 		public MeshSelectInfo CurrentSelectInfo { get; } = new MeshSelectInfo();
 
 		protected IObject3D FindHitObject3D(Vector2 screenPosition, ref IntersectInfo intersectionInfo)
@@ -2593,52 +2575,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			return null;
 		}
-
-		private void CheckSettingChanged(object sender, EventArgs e)
-		{
-			StringEventArgs stringEvent = e as StringEventArgs;
-			if (stringEvent != null)
-			{
-				if (stringEvent.Data == SettingsKey.bed_size
-					|| stringEvent.Data == SettingsKey.print_center
-					|| stringEvent.Data == SettingsKey.build_height
-					|| stringEvent.Data == SettingsKey.bed_shape)
-				{
-					needToRecreateBed = true;
-				}
-			}
-		}
-
-		private void RecreateBed()
-		{
-			double buildHeight = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.build_height);
-
-			UiThread.RunOnIdle((Action)(() =>
-			{
-				meshViewerWidget.CreatePrintBed(printer);
-				PutOemImageOnBed();
-			}));
-		}
-
-		static ImageBuffer wattermarkImage = null;
-		protected void PutOemImageOnBed()
-		{
-			// this is to add an image to the bed
-			string imagePathAndFile = Path.Combine("OEMSettings", "bedimage.png");
-			if (StaticData.Instance.FileExists(imagePathAndFile))
-			{
-				if (wattermarkImage == null)
-				{
-					wattermarkImage = StaticData.Instance.LoadImage(imagePathAndFile);
-				}
-
-				ImageBuffer bedImage = MeshViewerWidget.BedImage;
-				Graphics2D bedGraphics = bedImage.NewGraphics2D();
-				bedGraphics.Render(wattermarkImage, new Vector2((bedImage.Width - wattermarkImage.Width) / 2, (bedImage.Height - wattermarkImage.Height) / 2));
-			}
-		}
-
-		// ViewControls3D }}
 	}
 
 	public enum HitQuadrant { LB, LT, RB, RT }

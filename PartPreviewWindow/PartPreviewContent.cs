@@ -46,6 +46,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public PartPreviewContent(PrintItemWrapper printItem)
 		{
+			var printer = ApplicationController.Instance.Printer;
+			var theme = ApplicationController.Instance.Theme;
+
 			this.AnchorAll();
 
 			var activeSettings = ActiveSliceSettings.Instance;
@@ -69,28 +72,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				selectedTabColor = ActiveTheme.Instance.SecondaryAccentColor;
 			}
 
+			// TODO: Switch this to load a tab for each 'open' printer
+			//
 			// Add a tab for the current printer
 			var printerTab = new PrinterTab(
-				new TextWidget(tabTitle)
-				{
-					TextColor = ActiveTheme.Instance.PrimaryTextColor,
-					VAnchor = VAnchor.Center,
-					HAnchor = HAnchor.Center
-				},
-				new TextWidget(tabTitle)
-				{
-					TextColor = ActiveTheme.Instance.PrimaryTextColor,
-					VAnchor = VAnchor.Center,
-					HAnchor = HAnchor.Center
-				},
-				new TextWidget(tabTitle)
-				{
-					TextColor = ActiveTheme.Instance.PrimaryTextColor,
-					VAnchor = VAnchor.Center,
-					HAnchor = HAnchor.Center
-				},
+				tabTitle, 
 				"3D View Tab",
-				new PrinterTabPage(ActiveSliceSettings.Instance, printItem, tabTitle.ToUpper()));
+				new PrinterTabPage(printer, theme, printItem, tabTitle.ToUpper()));
 
 			printerTab.Margin = new BorderDouble(10, 0, 0, 5);
 			printerTab.Padding = new BorderDouble(15, 2, 15, 6);
@@ -100,7 +88,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// TODO: add in the printers and designs that are currently open (or were open last run).
 			var plusTabSelect = new TextTab(
-				new TabPage(new PlusTabPage(), "+"),
+				new TabPage(new PlusTabPage(tabControl, printer, theme, printItem), "+"),
 				"Create New",
 				tabControl.TextPointSize,
 				selectedTabColor,
