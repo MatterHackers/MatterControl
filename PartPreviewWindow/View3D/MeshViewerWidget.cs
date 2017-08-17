@@ -68,7 +68,7 @@ namespace MatterHackers.MeshVisualizer
 		}
 	}
 
-	public partial class MeshViewerWidget : GuiWidget
+	public class MeshViewerWidget : GuiWidget
 	{
 		// TODO: Need to be instance based for multi-printer
 		public GuiWidget ParentSurface { get; set; }
