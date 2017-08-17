@@ -365,7 +365,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 				selectionActionBar.AddChild(mirrorButton);
 
-				var menuActions = new[]
+				// put in the material options
+				var materialsButton = new PopupButton(smallMarginButtonFactory.Generate("Materials".Localize()))
+				{
+					PopDirection = Direction.Up,
+					PopupContent = this.AddMaterialControls(),
+					AlignToRightEdge = true,
+					Margin = buttonSpacing
+				};
+				this.Scene.SelectionChanged += (s, e) =>
+				{
+					materialsButton.Enabled = this.Scene.HasSelection;
+				};
+				selectionActionBar.AddChild(materialsButton);
+
+				selectionActionBar.AddChild(new HorizontalSpacer());
+
+				// Bed menu
+				var bedMenuActions = new[]
 				{
 					new NamedAction()
 					{
@@ -414,29 +431,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 				};
 
-				CreateActionSeparator(selectionActionBar);
-
-				// put in the material options
-				var materialsButton = new PopupButton(smallMarginButtonFactory.Generate("Materials".Localize()))
-				{
-					PopDirection = Direction.Up,
-					PopupContent = this.AddMaterialControls(),
-					AlignToRightEdge = true,
-					Margin = buttonSpacing
-				};
-				this.Scene.SelectionChanged += (s, e) =>
-				{
-					materialsButton.Enabled = this.Scene.HasSelection;
-				};
-				selectionActionBar.AddChild(materialsButton);
-
-				selectionActionBar.AddChild(new HorizontalSpacer());
-
-				// Bed menu
 				selectionActionBar.AddChild(new PopupButton(smallMarginButtonFactory.Generate("Bed".Localize(), normalImage: StaticData.Instance.LoadIcon("bed.png")))
 				{
 					PopDirection = Direction.Up,
-					PopupContent = ApplicationController.Instance.Theme.CreatePopupMenu(menuActions),
+					PopupContent = ApplicationController.Instance.Theme.CreatePopupMenu(bedMenuActions),
 					AlignToRightEdge = true,
 					Margin = buttonSpacing
 				});
