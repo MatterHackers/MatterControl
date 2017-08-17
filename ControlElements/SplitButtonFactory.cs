@@ -1,9 +1,8 @@
-﻿using MatterHackers.Agg;
-using MatterHackers.Agg.UI;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl
 {
@@ -22,26 +21,26 @@ namespace MatterHackers.MatterControl
 		{
 			var menuFactory = new DropDownMenuFactory()
 			{
-				normalFillColor = this.Options.Normal.FillColor,
-				hoverFillColor = this.Options.Hover.FillColor,
-				pressedFillColor = this.Options.Pressed.FillColor,
-				normalBorderColor = this.Options.Normal.BorderColor,
-				hoverBorderColor = this.Options.Hover.BorderColor,
-				pressedBorderColor = this.Options.Pressed.BorderColor,
-				disabledBorderColor = this.Options.Disabled.BorderColor,
-				normalTextColor = this.Options.Normal.TextColor,
-				hoverTextColor = this.Options.Hover.TextColor,
-				pressedTextColor = this.Options.Pressed.TextColor,
-				disabledTextColor = this.Options.Disabled.TextColor,
+				normalFillColor = this.Options.NormalFillColor,
+				hoverFillColor = this.Options.HoverFillColor,
+				pressedFillColor = this.Options.PressedFillColor,
+				normalBorderColor = this.Options.NormalBorderColor,
+				hoverBorderColor = this.Options.HoverBorderColor,
+				pressedBorderColor = this.Options.PressedBorderColor,
+				disabledBorderColor = this.Options.DisabledBorderColor,
+				normalTextColor = this.Options.NormalTextColor,
+				hoverTextColor = this.Options.HoverTextColor,
+				pressedTextColor = this.Options.PressedTextColor,
+				disabledTextColor = this.Options.DisabledTextColor,
 				FixedWidth = 20,
 			};
 
 			DropDownMenu menu = menuFactory.Generate(actions: actions.Skip(1).ToList(), direction: direction);
 			menu.Height = FixedHeight;
-			menu.BorderColor = this.Options.Normal.BorderColor;
-			menu.HoverArrowColor = this.Options.Hover.TextColor;
-			menu.NormalArrowColor = this.Options.Normal.TextColor;
-			menu.BackgroundColor = this.Options.Normal.FillColor;
+			menu.BorderColor = this.Options.NormalBorderColor;
+			menu.HoverArrowColor = this.Options.HoverTextColor;
+			menu.NormalArrowColor = this.Options.NormalTextColor;
+			menu.BackgroundColor = this.Options.NormalFillColor;
 
 			// TODO: Why?
 			if (actions.Count > 1)
