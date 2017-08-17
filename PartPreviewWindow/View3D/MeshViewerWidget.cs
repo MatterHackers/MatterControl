@@ -451,7 +451,9 @@ namespace MatterHackers.MeshVisualizer
 
 		private Mesh printerShape;
 
-		private bool printerMode = true;
+		public enum EditorType { Printer, Part }
+
+		public EditorType EditorMode { get; set; } = EditorType.Part;
 
 		private void trackballTumbleWidget_DrawGlContent(object sender, EventArgs e)
 		{
@@ -460,7 +462,7 @@ namespace MatterHackers.MeshVisualizer
 				DrawObject(object3D, Matrix4X4.Identity, false);
 			}
 
-			if (printerMode)
+			if (this.EditorMode == EditorType.Printer)
 			{
 				if (RenderBed)
 				{

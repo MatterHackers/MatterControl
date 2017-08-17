@@ -57,6 +57,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public PrinterTabPage(PrinterConfig printer, ThemeConfig theme, PrintItemWrapper printItem, string tabTitle)
 			: base(printer, theme, printItem, tabTitle)
 		{
+			modelViewer.meshViewerWidget.EditorMode = MeshViewerWidget.EditorType.Printer;
+
 			gcodeOptions = printer.Bed.RendererOptions;
 
 			viewControls3D.TransformStateChanged += (s, e) =>
