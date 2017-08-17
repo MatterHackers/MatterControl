@@ -484,26 +484,28 @@ namespace MatterHackers.MeshVisualizer
 				GL.Disable(EnableCap.Texture2D);
 				GL.Disable(EnableCap.Blend);
 
+				int width = 600;
+
 				GL.Begin(BeginMode.Lines);
 				{
-					for (int i = -500; i <= 500; i += 50)
+					for (int i = -width; i <= width; i += 50)
 					{
 						GL.Color4(240, 240, 240, 255);
-						GL.Vertex3(i, 500, 0);
-						GL.Vertex3(i, -500, 0);
+						GL.Vertex3(i, width, 0);
+						GL.Vertex3(i, -width, 0);
 
-						GL.Vertex3(500, i, 0);
-						GL.Vertex3(-500, i, 0);
+						GL.Vertex3(width, i, 0);
+						GL.Vertex3(-width, i, 0);
 
 					}
 
 					GL.Color4(255, 0, 0, 255);
-					GL.Vertex3(500, 0, 0);
-					GL.Vertex3(-500, 0, 0);
+					GL.Vertex3(width, 0, 0);
+					GL.Vertex3(-width, 0, 0);
 
 					GL.Color4(0, 255, 0, 255);
-					GL.Vertex3(0, 500, 0);
-					GL.Vertex3(0, -500, 0);
+					GL.Vertex3(0, width, 0);
+					GL.Vertex3(0, -width, 0);
 
 					GL.Color4(0, 0, 255, 255);
 					GL.Vertex3(0, 0, 10);
