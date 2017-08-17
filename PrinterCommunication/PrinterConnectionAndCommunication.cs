@@ -310,7 +310,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			ReadLineContainsCallBacks.AddCallbackToKey("cold extrusion prevented", PrinterReportsError);
 			ReadLineContainsCallBacks.AddCallbackToKey("Error:Thermal Runaway, system stopped!", PrinterReportsError);
 			ReadLineContainsCallBacks.AddCallbackToKey("Error:Heating failed", PrinterReportsError);
-			ReadLineContainsCallBacks.AddCallbackToKey("Error:Printer halted. kill() called!", PrinterReportsError);
+			ReadLineContainsCallBacks.AddCallbackToKey("Error:Printer halted", PrinterReportsError);
 
 			// repetier temperature failures
 			ReadLineContainsCallBacks.AddCallbackToKey("dry run mode", PrinterReportsError);
