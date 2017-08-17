@@ -46,6 +46,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public PartPreviewContent(PrintItemWrapper printItem)
 		{
+			var printer = ApplicationController.Instance.Printer;
+			var theme = ApplicationController.Instance.Theme;
+
 			this.AnchorAll();
 
 			var activeSettings = ActiveSliceSettings.Instance;
@@ -90,7 +93,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					HAnchor = HAnchor.Center
 				},
 				"3D View Tab",
-				new PrinterTabPage(ActiveSliceSettings.Instance, printItem, tabTitle.ToUpper()));
+				new PrinterTabPage(printer, theme, printItem, tabTitle.ToUpper()));
 
 			printerTab.Margin = new BorderDouble(10, 0, 0, 5);
 			printerTab.Padding = new BorderDouble(15, 2, 15, 6);
