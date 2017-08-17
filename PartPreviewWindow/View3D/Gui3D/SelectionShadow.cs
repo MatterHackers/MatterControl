@@ -123,7 +123,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				var withScale = Matrix4X4.CreateScale(selectedBounds.XSize, selectedBounds.YSize, 1) * TotalTransform;
 
-				bool authorized = ApplicationController.Instance.ActiveView3DWidget?.ActiveSelectionEditor.Unlocked == true;
+				bool authorized = ApplicationController.Instance.ActiveView3DWidget?.ActiveSelectionEditor?.Unlocked == true;
 				if (authorized)
 				{
 					GLHelper.Render(GetNormalShadowMesh(), new RGBA_Bytes(shadowColor, shadowAlpha), withScale, RenderTypes.Shaded);

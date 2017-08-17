@@ -72,26 +72,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				selectedTabColor = ActiveTheme.Instance.SecondaryAccentColor;
 			}
 
+			// TODO: Switch this to load a tab for each 'open' printer
+			//
 			// Add a tab for the current printer
 			var printerTab = new PrinterTab(
-				new TextWidget(tabTitle)
-				{
-					TextColor = ActiveTheme.Instance.PrimaryTextColor,
-					VAnchor = VAnchor.Center,
-					HAnchor = HAnchor.Center
-				},
-				new TextWidget(tabTitle)
-				{
-					TextColor = ActiveTheme.Instance.PrimaryTextColor,
-					VAnchor = VAnchor.Center,
-					HAnchor = HAnchor.Center
-				},
-				new TextWidget(tabTitle)
-				{
-					TextColor = ActiveTheme.Instance.PrimaryTextColor,
-					VAnchor = VAnchor.Center,
-					HAnchor = HAnchor.Center
-				},
+				tabTitle, 
 				"3D View Tab",
 				new PrinterTabPage(printer, theme, printItem, tabTitle.ToUpper()));
 
@@ -103,7 +88,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// TODO: add in the printers and designs that are currently open (or were open last run).
 			var plusTabSelect = new TextTab(
-				new TabPage(new PlusTabPage(), "+"),
+				new TabPage(new PlusTabPage(tabControl, printer, theme, printItem), "+"),
 				"Create New",
 				tabControl.TextPointSize,
 				selectedTabColor,

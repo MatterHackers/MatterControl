@@ -36,6 +36,32 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class PrinterTab : Tab
 	{
+		public PrinterTab(string tabTitle, string tabName, TabPage tabPage)
+		: this(
+			new TextWidget(tabTitle)
+			{
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				VAnchor = VAnchor.Center,
+				HAnchor = HAnchor.Center
+			},
+			new TextWidget(tabTitle)
+			{
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				VAnchor = VAnchor.Center,
+				HAnchor = HAnchor.Center
+			},
+			new TextWidget(tabTitle)
+			{
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				VAnchor = VAnchor.Center,
+				HAnchor = HAnchor.Center
+			},
+			tabName,
+			tabPage)
+		{
+
+		}
+
 		public PrinterTab(GuiWidget normalWidget, GuiWidget hoverWidget, GuiWidget pressedWidget, string tabName, TabPage tabPage)
 			: base(tabName, normalWidget, hoverWidget, pressedWidget, tabPage)
 		{
