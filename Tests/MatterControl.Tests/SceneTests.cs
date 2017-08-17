@@ -111,7 +111,6 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			var view3DWidget = new View3DWidget(
 				null,
 				new PrinterConfig(),
-				View3DWidget.WindowMode.Embeded,
 				View3DWidget.AutoRotate.Disabled,
 				new ViewControls3D(ApplicationController.Instance.Theme, new Agg.UI.UndoBuffer()),
 				new ThemeConfig(),

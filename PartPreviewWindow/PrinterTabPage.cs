@@ -186,7 +186,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// The 3D model view
 			modelViewer = new View3DWidget(printItem,
 				printer,
-				View3DWidget.WindowMode.Embeded,
 				View3DWidget.AutoRotate.Disabled,
 				viewControls3D,
 				theme,

@@ -132,7 +132,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public InteractionLayer InteractionLayer { get; }
 
-		public View3DWidget(PrintItemWrapper printItemWrapper, PrinterConfig printer, WindowMode windowType, AutoRotate autoRotate, ViewControls3D viewControls3D, ThemeConfig theme, OpenMode openMode = OpenMode.Viewing)
+		public View3DWidget(PrintItemWrapper printItemWrapper, PrinterConfig printer, AutoRotate autoRotate, ViewControls3D viewControls3D, ThemeConfig theme, OpenMode openMode = OpenMode.Viewing)
 		{
 			this.printer = printer;
 			this.Scene = this.printer.Bed.Scene;
@@ -156,7 +156,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			meshViewerWidget = new MeshViewerWidget(printer, this.TrackballTumbleWidget, this.InteractionLayer);
 			this.printItemWrapper = printItemWrapper;
-			this.windowType = windowType;
 			autoRotating = allowAutoRotate;
 
 			this.Name = "View3DWidget";
@@ -462,19 +461,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			UiThread.RunOnIdle(AutoSpin);
 
-			if (windowType == WindowMode.Embeded)
+			if (printer.Bed.RendererOptions.SyncToPrint)
 			{
 				PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent(SetEditControlsBasedOnPrinterState, ref unregisterEvents);
-				if (windowType == WindowMode.Embeded)
+
+				// make sure we lock the controls if we are printing or paused
+				switch (PrinterConnection.Instance.CommunicationState)
 				{
-					// make sure we lock the controls if we are printing or paused
-					switch (PrinterConnection.Instance.CommunicationState)
-					{
-						case CommunicationStates.Printing:
-						case CommunicationStates.Paused:
-							LockEditControls();
-							break;
-					}
+					case CommunicationStates.Printing:
+					case CommunicationStates.Paused:
+						LockEditControls();
+						break;
 				}
 			}
 
@@ -766,11 +763,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public enum OpenMode { Viewing, Editing }
 
-		public enum WindowMode { Embeded, StandAlone };
-
 		public bool DisplayAllValueData { get; set; }
-
-		public WindowMode windowType { get; set; }
 
 		public override void OnClosed(ClosedEventArgs e)
 		{
@@ -2149,7 +2142,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void meshViewerWidget_LoadDone(object sender, EventArgs e)
 		{
-			if (windowType == WindowMode.Embeded)
+			if (printer.Bed.RendererOptions.SyncToPrint)
 			{
 				switch (PrinterConnection.Instance.CommunicationState)
 				{
@@ -2259,7 +2252,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void SetEditControlsBasedOnPrinterState(object sender, EventArgs e)
 		{
-			if (windowType == WindowMode.Embeded)
+			if (printer.Bed.RendererOptions.SyncToPrint)
 			{
 				switch (PrinterConnection.Instance.CommunicationState)
 				{
