@@ -70,7 +70,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						new PrinterTabBase(printer, theme, printItem, "xxxxx"));
 				partTab.Margin = new BorderDouble(1, 0, 0, 5);
 				partTab.Padding = new BorderDouble(15, 2, 15, 6);
-				this.tabControl.AddTab(partTab, tabPosition: 1);
+
+				tabControl.AddTab(partTab, tabPosition: 1);
+				tabControl.SelectedTabIndex = 1;
 			};
 
 			var createPrinter = theme.ButtonFactory.Generate("Create Printer".Localize());
