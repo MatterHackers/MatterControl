@@ -261,6 +261,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					this.Scene.UngroupSelection(this);
 				};
+				this.Scene.SelectionChanged += (s, e) =>
+				{
+					ungroupButton.Enabled = this.Scene.HasSelection
+						&& this.Scene.SelectedItem.ItemType == Object3DTypes.Group;
+				};
 				selectionActionBar.AddChild(ungroupButton);
 
 				Button groupButton = smallMarginButtonFactory.Generate("Group".Localize());
@@ -269,6 +274,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				groupButton.Click += (sender, e) =>
 				{
 					this.Scene.GroupSelection(this);
+				};
+				this.Scene.SelectionChanged += (s, e) =>
+				{
+					groupButton.Enabled = this.Scene.HasSelection
+						&& this.Scene.SelectedItem.ItemType != Object3DTypes.Group
+						&& this.Scene.SelectedItem.Children.Count > 1;
 				};
 				selectionActionBar.AddChild(groupButton);
 
@@ -287,14 +298,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					selectionActionBar.AddChild(absoluteButton);
 				}
 
-				Button alignButton = smallMarginButtonFactory.Generate("Align".Localize());
-				alignButton.Margin = buttonSpacing;
-				alignButton.Click += (sender, e) =>
+				// put in the material options
+				var alignButton = new PopupButton(smallMarginButtonFactory.Generate("Align".Localize()))
 				{
-					if (this.Scene.HasSelection)
-					{
-						//this.Scene.SelectedItem.Matrix = Matrix4X4.Identity;
-					}
+					PopDirection = Direction.Up,
+					PopupContent = this.AddAlignControls(),
+					AlignToRightEdge = true,
+					Margin = buttonSpacing
+				};
+				this.Scene.SelectionChanged += (s, e) =>
+				{
+					alignButton.Enabled = this.Scene.HasSelection
+						&& this.Scene.SelectedItem.ItemType != Object3DTypes.Group
+						&& this.Scene.SelectedItem.Children.Count > 1;
 				};
 				selectionActionBar.AddChild(alignButton);
 
@@ -307,6 +323,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						MakeLowestFaceFlat(this.Scene.SelectedItem);
 					}
 				};
+				this.Scene.SelectionChanged += (s, e) =>
+				{
+					layFlatButton.Enabled = this.Scene.HasSelection;
+				};
 				selectionActionBar.AddChild(layFlatButton);
 
 				CreateActionSeparator(selectionActionBar);
@@ -318,6 +338,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					this.Scene.DuplicateSelection(this);
 				};
+				this.Scene.SelectionChanged += (s, e) =>
+				{
+					copyButton.Enabled = this.Scene.HasSelection;
+				};
 				selectionActionBar.AddChild(copyButton);
 
 				Button deleteButton = smallMarginButtonFactory.Generate("Remove".Localize());
@@ -326,6 +350,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				deleteButton.Click += (sender, e) =>
 				{
 					this.Scene.DeleteSelection(this);
+				};
+				this.Scene.SelectionChanged += (s, e) =>
+				{
+					deleteButton.Enabled = this.Scene.HasSelection;
 				};
 				selectionActionBar.AddChild(deleteButton);
 
@@ -336,6 +364,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					PopDirection = Direction.Up,
 					PopupContent = new MirrorControls(this),
 					Margin = buttonSpacing,
+				};
+				this.Scene.SelectionChanged += (s, e) =>
+				{
+					mirrorButton.Enabled = this.Scene.HasSelection;
 				};
 				selectionActionBar.AddChild(mirrorButton);
 
@@ -397,6 +429,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					PopupContent = this.AddMaterialControls(),
 					AlignToRightEdge = true,
 					Margin = buttonSpacing
+				};
+				this.Scene.SelectionChanged += (s, e) =>
+				{
+					materialsButton.Enabled = this.Scene.HasSelection;
 				};
 				selectionActionBar.AddChild(materialsButton);
 
@@ -1532,15 +1568,89 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			Invalidate();
 		}
 
-		internal GuiWidget AddMaterialControls()
+		internal GuiWidget AddAlignControls()
 		{
+			var widget = new IgnoredPopupWidget()
+			{
+				HAnchor = HAnchor.Fit,
+				VAnchor = VAnchor.Fit,
+				BackgroundColor = RGBA_Bytes.White,
+				Padding = new BorderDouble(12, 5, 12, 0)
+			};
+
 			FlowLayoutWidget buttonPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				VAnchor = VAnchor.Fit,
 				HAnchor = HAnchor.Fit,
-				BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor,
-				Padding = 15
 			};
+			widget.AddChild(buttonPanel);
+
+			string[] axisNames = new string[] { "X", "Y", "Z" };
+			for (int axisIndex = 0; axisIndex < 3; axisIndex++)
+			{
+				FlowLayoutWidget alignButtons = new FlowLayoutWidget(FlowDirection.LeftToRight)
+				{
+					HAnchor = HAnchor.Fit,
+					Padding = new BorderDouble(5)
+				};
+				buttonPanel.AddChild(alignButtons);
+
+				alignButtons.AddChild(new TextWidget(axisNames[axisIndex], textColor: ActiveTheme.Instance.PrimaryTextColor));
+
+				alignButtons.AddChild(CreateAlignButton(axisIndex, "Min"));
+				alignButtons.AddChild(new HorizontalSpacer());
+				alignButtons.AddChild(CreateAlignButton(axisIndex, "Center"));
+				alignButtons.AddChild(new HorizontalSpacer());
+				alignButtons.AddChild(CreateAlignButton(axisIndex, "Max"));
+				alignButtons.AddChild(new HorizontalSpacer());
+			}
+
+			return widget;
+		}
+
+		private GuiWidget CreateAlignButton(int axisIndex, string words)
+		{
+			RadioButton alignButton = new RadioButton(words, textColor: ActiveTheme.Instance.PrimaryTextColor);
+			int extruderIndexCanPassToClick = axisIndex;
+			alignButton.Click += (sender, e) =>
+			{
+				if (Scene.HasSelection)
+				{
+					// move the objects to the right place
+					//Scene.SelectedItem.MaterialIndex = extruderIndexCanPassToClick;
+					PartHasBeenChanged();
+				}
+			};
+
+			alignButton.MouseEnter += (s2, e2) =>
+			{
+				// TODO: make a preview of the new positions
+			};
+
+			alignButton.MouseLeave += (s3, e3) =>
+			{
+				// TODO: clear the preview of the new positions
+			};
+
+			return alignButton;
+		}
+
+		internal GuiWidget AddMaterialControls()
+		{
+			var widget = new IgnoredPopupWidget()
+			{
+				HAnchor = HAnchor.Fit,
+				VAnchor = VAnchor.Fit,
+				BackgroundColor = RGBA_Bytes.White,
+				Padding = new BorderDouble(0, 5, 5, 0)
+			};
+
+			FlowLayoutWidget buttonPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				VAnchor = VAnchor.Fit,
+				HAnchor = HAnchor.Fit,
+			};
+			widget.AddChild(buttonPanel);
 
 			extruderButtons.Clear();
 			int extruderCount = 4;
@@ -1577,7 +1687,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				});
 			}
 
-			return buttonPanel;
+			return widget;
 		}
 
 		// Indicates if MatterControl is in a mode that allows DragDrop  - true if printItem not null and not ReadOnly
