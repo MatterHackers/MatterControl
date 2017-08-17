@@ -132,7 +132,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public InteractionLayer InteractionLayer { get; }
 
-		public View3DWidget(PrintItemWrapper printItemWrapper, PrinterConfig printer, AutoRotate autoRotate, ViewControls3D viewControls3D, ThemeConfig theme, OpenMode openMode = OpenMode.Viewing)
+		public View3DWidget(PrintItemWrapper printItemWrapper, PrinterConfig printer, AutoRotate autoRotate, ViewControls3D viewControls3D, ThemeConfig theme, OpenMode openMode = OpenMode.Viewing, MeshViewerWidget.EditorType editorType = MeshViewerWidget.EditorType.Part)
 		{
 			this.printer = printer;
 			this.Scene = this.printer.Bed.Scene;
@@ -154,7 +154,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.openMode = openMode;
 			allowAutoRotate = (autoRotate == AutoRotate.Enabled);
 
-			meshViewerWidget = new MeshViewerWidget(printer, this.TrackballTumbleWidget, this.InteractionLayer);
+			meshViewerWidget = new MeshViewerWidget(printer, this.TrackballTumbleWidget, this.InteractionLayer, editorType: editorType);
 			this.printItemWrapper = printItemWrapper;
 			autoRotating = allowAutoRotate;
 
@@ -430,7 +430,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 				};
 
-				selectionActionBar.AddChild(new PopupButton(smallMarginButtonFactory.Generate("Bed".Localize(), normalImage: StaticData.Instance.LoadIcon("bed.png")))
+				bool isPrinterMode = meshViewerWidget.EditorMode == MeshViewerWidget.EditorType.Printer;
+
+				string title =  isPrinterMode ? "Bed".Localize() : "Part".Localize();
+
+				var icon = isPrinterMode ? StaticData.Instance.LoadIcon("bed.png") : StaticData.Instance.LoadIcon("cube.png");
+
+				selectionActionBar.AddChild(new PopupButton(smallMarginButtonFactory.Generate(title, normalImage: icon))
 				{
 					PopDirection = Direction.Up,
 					PopupContent = ApplicationController.Instance.Theme.CreatePopupMenu(bedMenuActions),

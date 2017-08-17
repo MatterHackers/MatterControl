@@ -642,13 +642,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				return this.GetViewControls3DOverflowMenu();
 			};
 
+			bool isPrinterType = this.GetType() == typeof(PrinterTabPage);
+
 			// The 3D model view
 			modelViewer = new View3DWidget(printItem,
 				printer,
 				View3DWidget.AutoRotate.Disabled,
 				viewControls3D,
 				theme,
-				View3DWidget.OpenMode.Editing);
+				View3DWidget.OpenMode.Editing,
+				editorType: (isPrinterType) ? MeshViewerWidget.EditorType.Printer : MeshViewerWidget.EditorType.Part);
 
 			topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			topToBottom.AnchorAll();

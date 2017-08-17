@@ -79,8 +79,9 @@ namespace MatterHackers.MeshVisualizer
 
 		private PrinterConfig printer;
 
-		public MeshViewerWidget(PrinterConfig printer, TrackballTumbleWidget trackballTumbleWidget, InteractionLayer interactionLayer, string startingTextMessage = "")
+		public MeshViewerWidget(PrinterConfig printer, TrackballTumbleWidget trackballTumbleWidget, InteractionLayer interactionLayer, string startingTextMessage = "", EditorType editorType = EditorType.Part)
 		{
+			this.EditorMode = editorType;
 			this.scene = printer.Bed.Scene;
 			this.printer = printer;
 
