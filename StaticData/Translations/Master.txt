@@ -4405,3 +4405,6 @@ Translated:Clear Bed
 English:Lay Flat
 Translated:Lay Flat
 
+English:Part
+Translated:Part
+
