@@ -79,7 +79,7 @@ namespace MatterHackers.MeshVisualizer
 
 		private PrinterConfig printer;
 
-		public MeshViewerWidget(PrinterConfig printer, TrackballTumbleWidget trackballTumbleWidget, InteractionLayer interactionLayer, string startingTextMessage = "", EditorType editorType = EditorType.Part)
+		public MeshViewerWidget(PrinterConfig printer, InteractionLayer interactionLayer, string startingTextMessage = "", EditorType editorType = EditorType.Part)
 		{
 			this.EditorMode = editorType;
 			this.scene = printer.Bed.Scene;
@@ -106,8 +106,7 @@ namespace MatterHackers.MeshVisualizer
 			BedColor = new RGBA_Floats(.8, .8, .8, .7).GetAsRGBA_Bytes();
 			BuildVolumeColor = new RGBA_Floats(.2, .8, .3, .2).GetAsRGBA_Bytes();
 
-			this.trackballTumbleWidget = trackballTumbleWidget;
-			this.trackballTumbleWidget.DrawGlContent += this.trackballTumbleWidget_DrawGlContent;
+			this.interactionLayer.DrawGlContent += this.trackballTumbleWidget_DrawGlContent;
 		}
 
 		public override void OnParentChanged(EventArgs e)
@@ -364,9 +363,6 @@ namespace MatterHackers.MeshVisualizer
 				}
 			}
 		}
-
-
-		private TrackballTumbleWidget trackballTumbleWidget;
 
 		public bool IsActive { get; set; } = true;
 
