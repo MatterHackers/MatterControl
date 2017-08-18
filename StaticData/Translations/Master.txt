@@ -4408,3 +4408,21 @@ Translated:Lay Flat
 English:Part
 Translated:Part
 
+English:File export options:
+Translated:File export options:
+
+English:To Folder
+Translated:To Folder
+
+English:ZIP File
+Translated:ZIP File
+
+English:G-Code File
+Translated:G-Code File
+
+English:STL File
+Translated:STL File
+
+English:AMF File
+Translated:AMF File
+
