@@ -256,8 +256,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 				this.Scene.SelectionChanged += (s, e) =>
 				{
-					ungroupButton.Enabled = this.Scene.HasSelection
-						&& this.Scene.SelectedItem.ItemType == Object3DTypes.Group;
+					ungroupButton.Enabled = this.Scene.HasSelection;
 				};
 				selectionActionBar.AddChild(ungroupButton);
 
@@ -1580,7 +1579,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 				buttonPanel.AddChild(alignButtons);
 
-				alignButtons.AddChild(new TextWidget(axisNames[axisIndex], textColor: ActiveTheme.Instance.PrimaryTextColor)
+				alignButtons.AddChild(new TextWidget(axisNames[axisIndex])
 				{
 					VAnchor = VAnchor.Center,
 					Margin = new BorderDouble(0, 0, 3, 0)
@@ -1600,7 +1599,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		internal enum AxisAlignment { Min, Center, Max };
 		private GuiWidget CreateAlignButton(int axisIndex, AxisAlignment alignment, string lable)
 		{
-			var smallMarginButtonFactory = ApplicationController.Instance.Theme.SmallMarginButtonFactory;
+			var smallMarginButtonFactory = ApplicationController.Instance.Theme.MenuButtonFactory;
 			var alignButton = smallMarginButtonFactory.Generate(lable);
 			alignButton.Margin = new BorderDouble(3, 0);
 
