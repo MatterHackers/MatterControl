@@ -134,6 +134,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public View3DWidget(PrintItemWrapper printItemWrapper, PrinterConfig printer, AutoRotate autoRotate, ViewControls3D viewControls3D, ThemeConfig theme, OpenMode openMode = OpenMode.Viewing, MeshViewerWidget.EditorType editorType = MeshViewerWidget.EditorType.Part)
 		{
+			var smallMarginButtonFactory = theme.SmallMarginButtonFactory;
+
 			this.printer = printer;
 			this.Scene = this.printer.Bed.Scene;
 
@@ -152,15 +154,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.viewControls3D = viewControls3D;
 			this.theme = theme;
 			this.openMode = openMode;
-			allowAutoRotate = (autoRotate == AutoRotate.Enabled);
-
-			meshViewerWidget = new MeshViewerWidget(printer, this.TrackballTumbleWidget, this.InteractionLayer, editorType: editorType);
 			this.printItemWrapper = printItemWrapper;
-			autoRotating = allowAutoRotate;
-
 			this.Name = "View3DWidget";
-
 			this.BackgroundColor = ApplicationController.Instance.Theme.TabBodyBackground;
+
+			autoRotating = allowAutoRotate;
+			allowAutoRotate = (autoRotate == AutoRotate.Enabled);
 
 			viewControls3D.TransformStateChanged += ViewControls3D_TransformStateChanged;
 
@@ -170,8 +169,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.MaxFitOrStretch
 			};
 
-			var smallMarginButtonFactory = ApplicationController.Instance.Theme.SmallMarginButtonFactory;
-
+			// MeshViewer
+			meshViewerWidget = new MeshViewerWidget(printer, this.InteractionLayer, editorType: editorType);
 			meshViewerWidget.AnchorAll();
 			this.InteractionLayer.AddChild(meshViewerWidget);
 
@@ -179,9 +178,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			gcodeViewer = new ViewGcodeBasic(printer, viewControls3D);
 			gcodeViewer.AnchorAll();
 			gcodeViewer.Visible = false;
-
 			this.InteractionLayer.AddChild(gcodeViewer);
+
+			// TumbleWidget
 			this.InteractionLayer.AddChild(this.TrackballTumbleWidget);
+
+			this.InteractionLayer.SetRenderTarget(this.meshViewerWidget);
 
 			mainContainerTopToBottom.AddChild(this.InteractionLayer);
 
@@ -504,7 +506,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			meshViewerWidget.AfterDraw += AfterDraw3DContent;
 
-			this.TrackballTumbleWidget.DrawGlContent += TrackballTumbleWidget_DrawGlContent;
+			this.InteractionLayer.DrawGlContent += TrackballTumbleWidget_DrawGlContent;
 		}
 
 		private void CreateActionSeparator(GuiWidget container)
@@ -780,7 +782,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				meshViewerWidget.AfterDraw -= AfterDraw3DContent;
 			}
 
-			this.TrackballTumbleWidget.DrawGlContent -= TrackballTumbleWidget_DrawGlContent;
+			this.InteractionLayer.DrawGlContent -= TrackballTumbleWidget_DrawGlContent;
 			
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);

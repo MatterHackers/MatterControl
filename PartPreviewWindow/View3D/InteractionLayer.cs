@@ -26,12 +26,17 @@ The views and conclusions contained in the software and documentation are those
 of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
+
+#define DO_LIGHTING
+
 using System;
 using System.Collections.Generic;
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.RayTracer;
 using MatterHackers.RayTracer.Traceable;
+using MatterHackers.RenderOpenGl.OpenGl;
 using MatterHackers.VectorMath;
 using static MatterHackers.MeshVisualizer.MeshViewerWidget;
 
@@ -45,6 +50,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public InteractiveScene Scene { get; }
 
+		public event EventHandler DrawGlContent;
+
+		public bool DoOpenGlDrawing { get; set; } = true;
+
 		// TODO: Collapse into auto-property
 		private List<InteractionVolume> interactionVolumes = new List<InteractionVolume>();
 		public List<InteractionVolume> InteractionVolumes { get; }
@@ -56,6 +65,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public PartProcessingInfo partProcessingInfo;
 
 		private string progressReportingPrimaryTask = "";
+
+		private float[] ambientLight = { 0.2f, 0.2f, 0.2f, 1.0f };
+
+		private float[] diffuseLight0 = { 0.7f, 0.7f, 0.7f, 1.0f };
+		private float[] specularLight0 = { 0.5f, 0.5f, 0.5f, 1.0f };
+		private float[] lightDirection0 = { -1, -1, 1, 0.0f };
+
+		private float[] diffuseLight1 = { 0.5f, 0.5f, 0.5f, 1.0f };
+		private float[] specularLight1 = { 0.3f, 0.3f, 0.3f, 1.0f };
+		private float[] lightDirection1 = { 1, 1, 1, 0.0f };
 
 		public InteractionLayer(WorldView world, UndoBuffer undoBuffer, Action notifyPartChanged, InteractiveScene scene)
 		{
@@ -103,6 +122,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					partProcessingInfo.centeredInfoDescription.Text = processingState;
 				}
 			});
+		}
+
+		internal void SetRenderTarget(GuiWidget renderSource)
+		{
+			renderSource.AfterDraw += RenderSource_DrawExtra;
+		}
+
+		private void RenderSource_DrawExtra(object sender, DrawEventArgs e)
+		{
+			if (DoOpenGlDrawing)
+			{
+				SetGlContext();
+				OnDrawGlContent();
+				UnsetGlContext();
+			}
 		}
 
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
@@ -268,5 +302,90 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public double SnapGridDistance { get; set; } = 1;
 
 		public GuiWidget GuiSurface => this;
+
+		private void OnDrawGlContent()
+		{
+			DrawGlContent?.Invoke(this, null);
+		}
+
+		private void SetGlContext()
+		{
+			GL.ClearDepth(1.0);
+			GL.Clear(ClearBufferMask.DepthBufferBit);   // Clear the Depth Buffer
+
+			GL.PushAttrib(AttribMask.ViewportBit);
+			RectangleDouble screenRect = this.TransformToScreenSpace(LocalBounds);
+			GL.Viewport((int)screenRect.Left, (int)screenRect.Bottom, (int)screenRect.Width, (int)screenRect.Height);
+
+			GL.ShadeModel(ShadingModel.Smooth);
+
+			GL.FrontFace(FrontFaceDirection.Ccw);
+			GL.CullFace(CullFaceMode.Back);
+
+			GL.DepthFunc(DepthFunction.Lequal);
+
+			GL.Disable(EnableCap.DepthTest);
+			//ClearToGradient();
+
+#if DO_LIGHTING
+			GL.Light(LightName.Light0, LightParameter.Ambient, ambientLight);
+
+			GL.Light(LightName.Light0, LightParameter.Diffuse, diffuseLight0);
+			GL.Light(LightName.Light0, LightParameter.Specular, specularLight0);
+
+			GL.Light(LightName.Light0, LightParameter.Ambient, new float[] { 0, 0, 0, 0 });
+			GL.Light(LightName.Light1, LightParameter.Diffuse, diffuseLight1);
+			GL.Light(LightName.Light1, LightParameter.Specular, specularLight1);
+
+			GL.ColorMaterial(MaterialFace.FrontAndBack, ColorMaterialParameter.AmbientAndDiffuse);
+
+			GL.Enable(EnableCap.Light0);
+			GL.Enable(EnableCap.Light1);
+			GL.Enable(EnableCap.DepthTest);
+			GL.Enable(EnableCap.Blend);
+			GL.Enable(EnableCap.Normalize);
+			GL.Enable(EnableCap.Lighting);
+			GL.Enable(EnableCap.ColorMaterial);
+
+			Vector3 lightDirectionVector = new Vector3(lightDirection0[0], lightDirection0[1], lightDirection0[2]);
+			lightDirectionVector.Normalize();
+			lightDirection0[0] = (float)lightDirectionVector.x;
+			lightDirection0[1] = (float)lightDirectionVector.y;
+			lightDirection0[2] = (float)lightDirectionVector.z;
+			GL.Light(LightName.Light0, LightParameter.Position, lightDirection0);
+			GL.Light(LightName.Light1, LightParameter.Position, lightDirection1);
+#endif
+
+			// set the projection matrix
+			GL.MatrixMode(MatrixMode.Projection);
+			GL.PushMatrix();
+			GL.LoadMatrix(this.World.ProjectionMatrix.GetAsDoubleArray());
+
+			// set the modelview matrix
+			GL.MatrixMode(MatrixMode.Modelview);
+			GL.PushMatrix();
+			GL.LoadMatrix(this.World.ModelviewMatrix.GetAsDoubleArray());
+		}
+
+		private void UnsetGlContext()
+		{
+			GL.MatrixMode(MatrixMode.Projection);
+			GL.PopMatrix();
+
+			GL.MatrixMode(MatrixMode.Modelview);
+			GL.PopMatrix();
+
+#if DO_LIGHTING
+			GL.Disable(EnableCap.ColorMaterial);
+			GL.Disable(EnableCap.Lighting);
+			GL.Disable(EnableCap.Light0);
+			GL.Disable(EnableCap.Light1);
+#endif
+			GL.Disable(EnableCap.Normalize);
+			GL.Disable(EnableCap.Blend);
+			GL.Disable(EnableCap.DepthTest);
+
+			GL.PopAttrib();
+		}
 	}
 }
