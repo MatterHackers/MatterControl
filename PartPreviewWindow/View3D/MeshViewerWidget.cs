@@ -166,15 +166,23 @@ namespace MatterHackers.MeshVisualizer
 			{
 				Task.Run(() =>
 				{
-					using (var stream = StaticData.Instance.OpenSteam(Path.Combine("OEMSettings", "printerShape.stl")))
+					try
 					{
-						var mesh = MeshFileIo.Load(stream, ".stl", CancellationToken.None).Mesh;
-						UiThread.RunOnIdle(() =>
+						string url = printer.Settings.GetValue("PrinterShapeUrl");
+						string extension = printer.Settings.GetValue("PrinterShapeExtension");
+
+						using (var stream = ApplicationController.Instance.LoadHttpAsset(url))
 						{
-							printerShape = mesh;
-							this.Invalidate();
-						});
+							var mesh = MeshFileIo.Load(stream, extension, CancellationToken.None).Mesh;
+							UiThread.RunOnIdle(() =>
+							{
+								printerShape = mesh;
+								this.Invalidate();
+							});
+						}
 					}
+					catch { }
+
 				});
 			});
 

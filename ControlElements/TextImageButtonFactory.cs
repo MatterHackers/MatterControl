@@ -53,22 +53,22 @@ namespace MatterHackers.MatterControl
 
 		// Private getters act as proxies to new options class
 		public BorderDouble Margin => Options.Margin;
-		public RGBA_Bytes normalFillColor => Options.Normal.FillColor;
-		public RGBA_Bytes hoverFillColor => Options.Hover.FillColor;
-		public RGBA_Bytes pressedFillColor => Options.Pressed.FillColor;
-		public RGBA_Bytes disabledFillColor => Options.Disabled.FillColor;
+		public RGBA_Bytes normalFillColor => Options.NormalFillColor;
+		public RGBA_Bytes hoverFillColor => Options.HoverFillColor;
+		public RGBA_Bytes pressedFillColor => Options.PressedFillColor;
+		public RGBA_Bytes disabledFillColor => Options.DisabledFillColor;
 
-		public RGBA_Bytes normalBorderColor => Options.Normal.BorderColor;
-		public RGBA_Bytes hoverBorderColor => Options.Hover.BorderColor;
-		public RGBA_Bytes pressedBorderColor => Options.Pressed.BorderColor;
-		public RGBA_Bytes disabledBorderColor  => Options.Disabled.BorderColor;
+		public RGBA_Bytes normalBorderColor => Options.NormalBorderColor;
+		public RGBA_Bytes hoverBorderColor => Options.HoverBorderColor;
+		public RGBA_Bytes pressedBorderColor => Options.PressedBorderColor;
+		public RGBA_Bytes disabledBorderColor  => Options.DisabledBorderColor;
 
 		public RGBA_Bytes checkedBorderColor => Options.CheckedBorderColor;
 
-		public RGBA_Bytes normalTextColor  => Options.Normal.TextColor;
-		public RGBA_Bytes hoverTextColor  => Options.Hover.TextColor;
-		public RGBA_Bytes pressedTextColor  => Options.Pressed.TextColor;
-		public RGBA_Bytes disabledTextColor  => Options.Disabled.TextColor;
+		public RGBA_Bytes normalTextColor  => Options.NormalTextColor;
+		public RGBA_Bytes hoverTextColor  => Options.HoverTextColor;
+		public RGBA_Bytes pressedTextColor  => Options.PressedTextColor;
+		public RGBA_Bytes disabledTextColor  => Options.DisabledTextColor;
 
 		public double fontSize => Options.FontSize;
 		public double borderWidth => Options.BorderWidth;
@@ -473,10 +473,21 @@ namespace MatterHackers.MatterControl
 
 	public class ButtonFactoryOptions
 	{
-		public ButtonOptionSection Normal { get; set; }
-		public ButtonOptionSection Hover { get; set; }
-		public ButtonOptionSection Pressed { get; set; }
-		public ButtonOptionSection Disabled { get; set; }
+		public RGBA_Bytes NormalFillColor { get; set; }
+		public RGBA_Bytes NormalBorderColor { get; set; }
+		public RGBA_Bytes NormalTextColor { get; set; }
+
+		public RGBA_Bytes HoverFillColor { get; set; }
+		public RGBA_Bytes HoverBorderColor { get; set; }
+		public RGBA_Bytes HoverTextColor { get; set; }
+
+		public RGBA_Bytes PressedFillColor { get; set; }
+		public RGBA_Bytes PressedBorderColor { get; set; }
+		public RGBA_Bytes PressedTextColor { get; set; }
+
+		public RGBA_Bytes DisabledFillColor { get; set; }
+		public RGBA_Bytes DisabledBorderColor { get; set; }
+		public RGBA_Bytes DisabledTextColor { get; set; }
 
 		public double FontSize { get; set; } = 12;
 		public double BorderWidth { get; set; } = 1;
@@ -495,82 +506,51 @@ namespace MatterHackers.MatterControl
 		{
 			this.Margin = new BorderDouble(6, 0);
 
-			this.Normal = new ButtonOptionSection()
-			{
-				TextColor = ActiveTheme.Instance.PrimaryTextColor,
-				FillColor = new RGBA_Bytes(0, 0, 0, 30),
-				BorderColor = new RGBA_Bytes(255, 255, 255, 0)
-			};
+			this.NormalTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			this.NormalFillColor = new RGBA_Bytes(0, 0, 0, 30);
+			this.NormalBorderColor = new RGBA_Bytes(255, 255, 255, 0);
 
-			this.Hover = new ButtonOptionSection()
-			{
-				TextColor = ActiveTheme.Instance.PrimaryTextColor,
-				FillColor = new RGBA_Bytes(0, 0, 0, 80),
-				BorderColor = new RGBA_Bytes(0, 0, 0, 0)
-			};
+			this.HoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			this.HoverFillColor = new RGBA_Bytes(0, 0, 0, 80);
+			this.HoverBorderColor = new RGBA_Bytes(0, 0, 0, 0);
 
-			this.Pressed = new ButtonOptionSection()
-			{
-				TextColor = ActiveTheme.Instance.PrimaryTextColor,
-				FillColor = new RGBA_Bytes(0, 0, 0, 0),
-				BorderColor = new RGBA_Bytes(0, 0, 0, 0)
-			};
+			this.PressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			this.PressedFillColor = new RGBA_Bytes(0, 0, 0, 0);
+			this.PressedBorderColor = new RGBA_Bytes(0, 0, 0, 0);
 
-			this.Disabled = new ButtonOptionSection()
-			{
-
-				TextColor = ActiveTheme.Instance.PrimaryTextColor,
-				FillColor = new RGBA_Bytes(255, 255, 255, 50),
-				BorderColor = new RGBA_Bytes(0, 0, 0, 0)
-			};
+			this.DisabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
+			this.DisabledFillColor = new RGBA_Bytes(255, 255, 255, 50);
+			this.DisabledBorderColor = new RGBA_Bytes(0, 0, 0, 0);
 		}
 
-		public ButtonFactoryOptions Clone(Action<ButtonFactoryOptions> callback)
+		public ButtonFactoryOptions(ButtonFactoryOptions cloneSource)
 		{
-			var newItem = new ButtonFactoryOptions();
+			this.AllowThemeToAdjustImage = cloneSource.AllowThemeToAdjustImage;
+			this.BorderWidth = cloneSource.BorderWidth;
+			this.CheckedBorderColor = cloneSource.CheckedBorderColor;
+			this.FixedHeight = cloneSource.FixedHeight;
+			this.FixedWidth = cloneSource.FixedWidth;
+			this.FlowDirection = cloneSource.FlowDirection;
+			this.FontSize = cloneSource.FontSize;
+			this.ImageSpacing = cloneSource.ImageSpacing;
+			this.InvertImageLocation = cloneSource.InvertImageLocation;
+			this.Margin = cloneSource.Margin;
 
-			newItem.AllowThemeToAdjustImage = this.AllowThemeToAdjustImage;
-			newItem.BorderWidth = this.BorderWidth;
-			newItem.CheckedBorderColor = this.CheckedBorderColor;
-			newItem.FixedHeight = this.FixedHeight;
-			newItem.FixedWidth = this.FixedWidth;
-			newItem.FlowDirection = this.FlowDirection;
-			newItem.FontSize = this.FontSize;
-			newItem.ImageSpacing = this.ImageSpacing;
-			newItem.InvertImageLocation = this.InvertImageLocation;
-			newItem.Margin = this.Margin;
+			this.NormalTextColor = cloneSource.NormalTextColor;
+			this.NormalFillColor = cloneSource.NormalFillColor;
+			this.NormalBorderColor = cloneSource.NormalBorderColor;
+			
+			this.HoverTextColor = cloneSource.HoverTextColor;
+			this.HoverFillColor = cloneSource.HoverFillColor;
+			this.HoverBorderColor = cloneSource.HoverBorderColor;
 
-			newItem.Normal = new ButtonOptionSection()
-			{
-				TextColor = this.Normal.TextColor,
-				FillColor = this.Normal.FillColor,
-				BorderColor = this.Normal.BorderColor
-			};
+			this.PressedTextColor = cloneSource.PressedTextColor;
+			this.PressedFillColor = cloneSource.PressedFillColor;
+			this.PressedBorderColor = cloneSource.PressedBorderColor;
 
-			newItem.Hover = new ButtonOptionSection()
-			{
-				TextColor = this.Hover.TextColor,
-				FillColor = this.Hover.FillColor,
-				BorderColor = this.Hover.BorderColor
-			};
-
-			newItem.Pressed = new ButtonOptionSection()
-			{
-				TextColor = this.Pressed.TextColor,
-				FillColor = this.Pressed.FillColor,
-				BorderColor = this.Pressed.BorderColor
-			};
-
-			newItem.Disabled = new ButtonOptionSection()
-			{
-				TextColor = this.Disabled.TextColor,
-				FillColor = this.Disabled.FillColor,
-				BorderColor = this.Disabled.BorderColor
-			};
-
-			callback(newItem);
-
-			return newItem;
+			this.DisabledTextColor = cloneSource.DisabledTextColor;
+			this.DisabledFillColor = cloneSource.DisabledFillColor;
+			this.DisabledBorderColor = cloneSource.DisabledBorderColor;
 		}
 	}
 }

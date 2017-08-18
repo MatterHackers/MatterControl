@@ -175,10 +175,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			FontSize = 15,
 			InvertImageLocation = false,
-			Normal = new ButtonOptionSection() { TextColor = ActiveTheme.Instance.PrimaryTextColor },
-			Hover = new ButtonOptionSection() { TextColor = ActiveTheme.Instance.PrimaryTextColor },
-			Disabled = new ButtonOptionSection() { TextColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 100), FillColor = RGBA_Bytes.Transparent },
-			Pressed = new ButtonOptionSection() { TextColor = ActiveTheme.Instance.PrimaryTextColor },
+			NormalTextColor = ActiveTheme.Instance.PrimaryTextColor,
+			HoverTextColor = ActiveTheme.Instance.PrimaryTextColor,
+			DisabledTextColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 100),
+			DisabledFillColor = RGBA_Bytes.Transparent,
+			PressedTextColor = ActiveTheme.Instance.PrimaryTextColor
 		});
 
 		private AverageMillisecondTimer millisecondTimer = new AverageMillisecondTimer();

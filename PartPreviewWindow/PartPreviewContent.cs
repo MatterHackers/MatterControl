@@ -79,10 +79,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				tabTitle, 
 				"3D View Tab",
 				new PrinterTabPage(printer, theme, printItem, tabTitle.ToUpper()));
-
-			printerTab.Margin = new BorderDouble(10, 0, 0, 5);
-			printerTab.Padding = new BorderDouble(15, 2, 15, 6);
 			printerTab.ToolTipText = "Preview 3D Design".Localize();
+
+			theme.SetPrinterTabStyles(printerTab);
 
 			tabControl.AddTab(printerTab);
 

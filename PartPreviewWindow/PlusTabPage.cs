@@ -68,8 +68,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						"New Part",
 						"newPart" + tabControl.TabCount,
 						new PrinterTabBase(printer, theme, printItem, "xxxxx"));
-				partTab.Margin = new BorderDouble(1, 0, 0, 5);
-				partTab.Padding = new BorderDouble(15, 2, 15, 6);
+
+				theme.SetPrinterTabStyles(partTab);
+
+				var margin = partTab.Margin;
+				partTab.Margin = new BorderDouble(1, margin.Bottom, 1, margin.Top);
 
 				tabControl.AddTab(partTab, tabPosition: 1);
 				tabControl.SelectedTabIndex = 1;
