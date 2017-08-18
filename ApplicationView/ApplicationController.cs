@@ -48,6 +48,8 @@ namespace MatterHackers.MatterControl
 	using System.IO.Compression;
 	using System.Net;
 	using System.Reflection;
+	using System.Security.Cryptography;
+	using System.Text;
 	using System.Threading;
 	using Agg.Font;
 	using Agg.Image;
@@ -246,7 +248,7 @@ namespace MatterHackers.MatterControl
 	{
 		public BedConfig Bed { get; }
 		public PrinterViewState ViewState { get; } = new PrinterViewState();
-		public PrinterSettings Settings { get; private set; }
+		public PrinterSettings Settings { get; private set; } = ActiveSliceSettings.Instance;
 
 		private EventHandler unregisterEvents;
 
@@ -943,7 +945,6 @@ namespace MatterHackers.MatterControl
 		public MeshViewState PartPreviewState { get; set; } = new MeshViewState();
 
 		public View3DWidget ActiveView3DWidget { get; internal set; }
-		public int ActiveAdvancedControlsTab { get; internal set; }
 
 		public bool PrintSettingsPinned { get; internal set; }
 
@@ -1115,6 +1116,47 @@ namespace MatterHackers.MatterControl
 				}
 			}, ref unregisterEvent);
 		}
+
+
+		public Stream LoadHttpAsset(string url)
+		{
+			string fingerPrint = ToSHA1(url);
+			string cachePath = ApplicationController.CacheablePath("HttpAssets", fingerPrint);
+
+			if (File.Exists(cachePath))
+			{
+				return File.Open(cachePath, FileMode.Open);
+			}
+			else
+			{
+				var client = new WebClient();
+				var bytes = client.DownloadData(url);
+
+				File.WriteAllBytes(cachePath, bytes);
+
+				return new MemoryStream(bytes);
+			}
+		}
+
+		/// <summary>
+		/// Compute hash for string encoded as UTF8
+		/// </summary>
+		/// <param name="s">String to be hashed</param>
+		public static string ToSHA1(string s)
+		{
+			byte[] bytes = Encoding.UTF8.GetBytes(s);
+
+			// var timer = Stopwatch.StartNew();
+			using (var sha1 = System.Security.Cryptography.SHA1.Create())
+			{
+				byte[] hash = sha1.ComputeHash(bytes);
+				string SHA1 = BitConverter.ToString(hash).Replace("-", string.Empty);
+
+				// Console.WriteLine("{0} {1} {2}", SHA1, timer.ElapsedMilliseconds, filePath);
+				return SHA1;
+			}
+		}
+
 
 		/// <summary>
 		/// Download an image from the web into the specified ImageBuffer

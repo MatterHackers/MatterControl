@@ -37,6 +37,7 @@ namespace MatterHackers.MatterControl
 	using System.Collections.Generic;
 	using Agg.Image;
 	using CustomWidgets;
+	using MatterHackers.MatterControl.PartPreviewWindow;
 	using MatterHackers.VectorMath;
 
 	public class ThemeConfig
@@ -83,6 +84,13 @@ namespace MatterHackers.MatterControl
 		public TextImageButtonFactory GrayButtonFactory { get; private set; }
 
 		public TextImageButtonFactory imageConverterExpandMenuOptionFactory;
+
+		internal void SetPrinterTabStyles(PrinterTab printerTab)
+		{
+			printerTab.Margin = new BorderDouble(10, 0, 0, 5);
+			printerTab.Padding = new BorderDouble(8, 4, 12, 6);
+		}
+
 		public TextImageButtonFactory imageConverterButtonFactory;
 
 		public RGBA_Bytes TabBodyBackground => new RGBA_Bytes(ActiveTheme.Instance.TertiaryBackgroundColor, 175);
@@ -140,7 +148,7 @@ namespace MatterHackers.MatterControl
 			commonOptions.PressedTextColor = theme.PrimaryTextColor;
 			commonOptions.DisabledTextColor = theme.TertiaryBackgroundColor;
 			commonOptions.Margin = new BorderDouble(14, 0);
-			commonOptions.FontSize = 12;
+			commonOptions.FontSize = 11;
 			commonOptions.ImageSpacing = 8;
 			commonOptions.BorderWidth = 0;
 			commonOptions.FixedHeight = 32;

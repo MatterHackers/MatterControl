@@ -27,7 +27,10 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.VectorMath;
@@ -36,30 +39,53 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class PrinterTab : Tab
 	{
+		private class TabPill : FlowLayoutWidget
+		{
+			private TextWidget label;
+
+			public TabPill(string tabTitle, RGBA_Bytes textColor, string imageUrl = null)
+			{
+				var imageWidget = new ImageWidget(new ImageBuffer(16, 16))
+				{
+					Margin = new BorderDouble(right: 6),
+					VAnchor = VAnchor.Center
+				};
+				this.AddChild(imageWidget);
+
+				label = new TextWidget(tabTitle)
+				{
+					TextColor = textColor,
+					VAnchor = VAnchor.Center
+				};
+				this.AddChild(label);
+
+				if (imageUrl != null)
+				{
+					ApplicationController.Instance.DownloadToImageAsync(imageWidget.Image, imageUrl, false);
+				}
+			}
+
+			public RGBA_Bytes TextColor
+			{
+				get =>  label.TextColor;
+				set => label.TextColor = value;
+			}
+
+			public override string Text
+			{
+				get => label.Text;
+				set => label.Text = value;
+			}
+		}
+
 		public PrinterTab(string tabTitle, string tabName, TabPage tabPage)
 		: this(
-			new TextWidget(tabTitle)
-			{
-				TextColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 140),
-				VAnchor = VAnchor.Center,
-				HAnchor = HAnchor.Center
-			},
-			new TextWidget(tabTitle)
-			{
-				TextColor = ActiveTheme.Instance.PrimaryTextColor,
-				VAnchor = VAnchor.Center,
-				HAnchor = HAnchor.Center
-			},
-			new TextWidget(tabTitle)
-			{
-				TextColor = ActiveTheme.Instance.PrimaryTextColor,
-				VAnchor = VAnchor.Center,
-				HAnchor = HAnchor.Center
-			},
+			new TabPill(tabTitle, new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 140), "https://www.google.com/s2/favicons?domain=www.printrbot.com"),
+			new TabPill(tabTitle, ActiveTheme.Instance.PrimaryTextColor, "https://www.google.com/s2/favicons?domain=www.printrbot.com"),
+			new TabPill(tabTitle, ActiveTheme.Instance.PrimaryTextColor, "https://www.google.com/s2/favicons?domain=www.lulzbot.com"),
 			tabName,
 			tabPage)
 		{
-
 		}
 
 		public PrinterTab(GuiWidget normalWidget, GuiWidget hoverWidget, GuiWidget pressedWidget, string tabName, TabPage tabPage)
