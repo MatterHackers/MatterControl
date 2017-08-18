@@ -170,6 +170,11 @@ namespace MatterHackers.MeshVisualizer
 						string url = printer.Settings.GetValue("PrinterShapeUrl");
 						string extension = printer.Settings.GetValue("PrinterShapeExtension");
 
+						if (string.IsNullOrEmpty(url) || string.IsNullOrEmpty(extension))
+						{
+							return;
+						}
+
 						using (var stream = ApplicationController.Instance.LoadHttpAsset(url))
 						{
 							var mesh = MeshFileIo.Load(stream, extension, CancellationToken.None).Mesh;

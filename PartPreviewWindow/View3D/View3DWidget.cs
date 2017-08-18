@@ -182,7 +182,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// TumbleWidget
 			this.InteractionLayer.AddChild(this.TrackballTumbleWidget);
-			this.InteractionLayer.SetRenderTarget(this.TrackballTumbleWidget);
+
+			this.InteractionLayer.SetRenderTarget(this.meshViewerWidget);
 
 			mainContainerTopToBottom.AddChild(this.InteractionLayer);
 

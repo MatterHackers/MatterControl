@@ -126,10 +126,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		internal void SetRenderTarget(GuiWidget renderSource)
 		{
-			renderSource.BeforeDraw += RenderSource_BeforeDraw;
+			renderSource.AfterDraw += RenderSource_DrawExtra;
 		}
 
-		private void RenderSource_BeforeDraw(object sender, DrawEventArgs e)
+		private void RenderSource_DrawExtra(object sender, DrawEventArgs e)
 		{
 			if (DoOpenGlDrawing)
 			{
