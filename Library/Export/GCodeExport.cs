@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl.Library.Export
 {
 	public class GCodeExport : IExportPlugin
 	{
-		public string ButtonText => "G-Code File".Localize();
+		public string ButtonText => "Machine File (G-Code)".Localize();
 
 		public string FileExtension => ".gcode";
 
@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl.Library.Export
 				{
 					this.ApplyLeveling = checkbox.Checked;
 				};
-				container.AddChild(checkbox);
+				//container.AddChild(checkbox);
 
 				return container;
 			}
