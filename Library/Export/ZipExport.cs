@@ -32,8 +32,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using MatterHackers.Agg.Image;
+using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 
@@ -47,6 +48,8 @@ namespace MatterHackers.MatterControl.Library.Export
 
 		public string ExtensionFilter => "Save as ZIP|*.zip";
 
+		public ImageBuffer Icon { get; } = StaticData.Instance.LoadIcon(Path.Combine("filetypes", "zip.png"));
+		
 		public bool EnabledForCurrentPart(ILibraryContentStream libraryContent)
 		{
 			return !libraryContent.IsProtected;

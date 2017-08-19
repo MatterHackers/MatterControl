@@ -30,10 +30,10 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using MatterHackers.Agg.Image;
+using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 
@@ -46,6 +46,8 @@ namespace MatterHackers.MatterControl.Library.Export
 		public string FileExtension => "";
 
 		public string ExtensionFilter => "";
+
+		public ImageBuffer Icon { get; } = StaticData.Instance.LoadIcon(Path.Combine("FileDialog", "folder.png"), 25, 25);
 
 		public bool EnabledForCurrentPart(ILibraryContentStream libraryContent)
 		{

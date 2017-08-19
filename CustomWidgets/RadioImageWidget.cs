@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Matt Moening, John Lewin
+Copyright (c) 2017, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -26,24 +26,27 @@ The views and conclusions contained in the software and documentation are those
 of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
-using System.Collections.Generic;
-using System.Threading.Tasks;
+
+using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
-using MatterHackers.MatterControl.Library;
 
 namespace MatterHackers.MatterControl
 {
-	public interface IExportPlugin
+	public class RadioImageWidget : RadioButtonViewText
 	{
-		string ButtonText { get; }
-		string FileExtension { get; }
-		string ExtensionFilter { get; }
-		ImageBuffer Icon { get; }
+		public RadioImageWidget(string label, ImageBuffer image)
+			: base(label)
+		{
+			var imageWidget = new ImageWidget(image);
+			this.AddChild(imageWidget, this.Children.IndexOf(labelTextWidget));
+			imageWidget.Margin = new BorderDouble(8, 5);
 
-		Task<bool> Generate(IEnumerable<ILibraryItem> libraryItems, string x3gOutputPath);
-		bool EnabledForCurrentPart(ILibraryContentStream libraryContent);
+			labelTextWidget.Margin = new BorderDouble(8, 0);
+			labelTextWidget.VAnchor = VAnchor.Center;
 
-		GuiWidget GetOptionsPanel();
+			radioCircle.Margin = new BorderDouble(8, 0);
+			radioCircle.VAnchor = VAnchor.Center;
+		}
 	}
 }
