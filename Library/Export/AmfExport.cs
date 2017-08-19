@@ -28,9 +28,11 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using MatterHackers.Agg.Image;
+using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 
@@ -43,6 +45,8 @@ namespace MatterHackers.MatterControl.Library.Export
 		public string FileExtension => ".amf";
 
 		public string ExtensionFilter => "Save as AMF|*.amf";
+
+		public ImageBuffer Icon { get; } = StaticData.Instance.LoadIcon(Path.Combine("filetypes", "amf.png"));
 
 		public bool EnabledForCurrentPart(ILibraryContentStream libraryContent)
 		{
