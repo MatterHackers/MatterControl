@@ -165,7 +165,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			base.OnMouseMove(mouseEvent);
 
-			if (SuppressUiVolumes)
+			if (SuppressUiVolumes 
+				|| !this.PositionWithinLocalBounds(mouseEvent.X, mouseEvent.Y))
 			{
 				return;
 			}
