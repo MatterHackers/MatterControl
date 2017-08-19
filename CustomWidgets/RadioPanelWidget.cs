@@ -38,15 +38,36 @@ namespace MatterHackers.MatterControl
 		public RadioPanelWidget(string label, string info, ImageBuffer image)
 			: base(label)
 		{
-			var imageWidget = new ImageWidget(image);
-			this.AddChild(imageWidget, this.Children.IndexOf(labelTextWidget));
-			imageWidget.Margin = new BorderDouble(8, 5);
+			radioCircle.Margin = new BorderDouble(4);
+			radioCircle.VAnchor = VAnchor.Top;
+
+			var column = new FlowLayoutWidget(FlowDirection.TopToBottom);
+			this.ReplaceChild(labelTextWidget, column);
+
+			labelTextWidget.ClearRemovedFlag();
 
 			labelTextWidget.Margin = new BorderDouble(8, 0);
-			labelTextWidget.VAnchor = VAnchor.Center;
+			labelTextWidget.HAnchor = HAnchor.Left;
+			column.AddChild(labelTextWidget);
 
-			radioCircle.Margin = new BorderDouble(8, 0);
-			radioCircle.VAnchor = VAnchor.Center;
+			var imageWidget = new ImageWidget(image);
+			imageWidget.HAnchor = HAnchor.Left;
+
+			imageWidget.Margin = new BorderDouble(8, 5);
+			column.AddChild(imageWidget);
+		}
+	}
+
+	public static class RadioExentionMethods
+	{
+		public static void ReplaceChild(this GuiWidget widget, GuiWidget existingChild, GuiWidget replacement)
+		{
+			int index = widget.GetChildIndex(existingChild);
+			if (index >= 0)
+			{
+				widget.RemoveChild(existingChild);
+				widget.AddChild(replacement, index);
+			}
 		}
 	}
 }
