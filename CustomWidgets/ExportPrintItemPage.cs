@@ -69,6 +69,9 @@ namespace MatterHackers.MatterControl
 		{
 			var commonMargin = new BorderDouble(4, 2);
 
+			bool isFirstItem = true;
+				
+
 			// GCode export
 			bool showExportGCodeButton = ActiveSliceSettings.Instance.PrinterSelected;
 			if (showExportGCodeButton)
@@ -85,6 +88,12 @@ namespace MatterHackers.MatterControl
 						Cursor = Cursors.Hand
 					};
 					contentRow.AddChild(pluginButton);
+
+					if (isFirstItem)
+					{
+						pluginButton.Checked = true;
+						isFirstItem = false;
+					}
 
 					var optionPanel = plugin.GetOptionsPanel();
 					if (optionPanel != null)
