@@ -308,11 +308,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			}
 		}
 
-		void RunTroubleShooting()
-		{
-			WizardWindow.Show<SetupWizardTroubleshooting>("TroubleShooting", "Trouble Shooting");
-		}
-
 		private void onStartButton_Click(object sender, EventArgs mouseEvent)
 		{
 			UiThread.RunOnIdle(() =>
