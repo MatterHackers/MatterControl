@@ -32,7 +32,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using MatterHackers.Agg;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.CustomWidgets;
@@ -135,7 +135,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			DrawOnTop = true;
 
 			string arrowFile = Path.Combine("Icons", "3D Icons", "up_pointer.stl");
-			using (Stream arrowStream = StaticData.Instance.OpenSteam(arrowFile))
+			using (Stream arrowStream = AggContext.StaticData.OpenSteam(arrowFile))
 			{
 				upArrowMesh = MeshFileIo.Load(arrowStream, Path.GetExtension(arrowFile), CancellationToken.None).Mesh;
 			}

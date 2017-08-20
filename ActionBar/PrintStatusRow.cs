@@ -31,7 +31,7 @@ using System;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.ImageProcessing;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
@@ -140,7 +140,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		{
 			ImageButtonFactory imageButtonFactory = new ImageButtonFactory();
 			imageButtonFactory.InvertImageColor = false;
-			ImageBuffer levelingImage = StaticData.Instance.LoadIcon("leveling_32x32.png", 16, 16).InvertLightness();
+			ImageBuffer levelingImage = AggContext.StaticData.LoadIcon("leveling_32x32.png", 16, 16).InvertLightness();
 
 			Button autoLevelButton = imageButtonFactory.Generate(levelingImage, levelingImage);
 			autoLevelButton.Margin = new Agg.BorderDouble(top: 3);

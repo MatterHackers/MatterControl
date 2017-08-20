@@ -37,7 +37,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ContactForm;
@@ -1129,7 +1129,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private static HashSet<string> LoadSettingsNamesFromPropertiesJson()
 		{
-			string propertiesJson = StaticData.Instance.ReadAllText(Path.Combine("SliceSettings", "Properties.json"));
+			string propertiesJson = AggContext.StaticData.ReadAllText(Path.Combine("SliceSettings", "Properties.json"));
 			var settingsData = JArray.Parse(propertiesJson);
 
 			return new HashSet<string>(settingsData.Select(s => s["SlicerConfigName"].Value<string>()));

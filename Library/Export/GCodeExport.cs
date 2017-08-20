@@ -34,7 +34,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg.Image;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.GCodeVisualizer;
@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl.Library.Export
 
 		public string ExtensionFilter => "Export GCode|*.gcode";
 
-		public ImageBuffer Icon { get; } = StaticData.Instance.LoadIcon(Path.Combine("filetypes", "gcode.png"));
+		public ImageBuffer Icon { get; } = AggContext.StaticData.LoadIcon(Path.Combine("filetypes", "gcode.png"));
 
 		public bool EnabledForCurrentPart(ILibraryContentStream libraryContent)
 		{

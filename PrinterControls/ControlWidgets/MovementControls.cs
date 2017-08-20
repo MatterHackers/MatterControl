@@ -32,7 +32,7 @@ using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.ImageProcessing;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
@@ -177,7 +177,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			var homingButtonFactory = ApplicationController.Instance.Theme.HomingButtons;
 			var commonButtonFactory = ApplicationController.Instance.Theme.ButtonFactory;
 
-			ImageBuffer helpIconImage = StaticData.Instance.LoadIcon("icon_home_white_24x24.png", 24, 24);
+			ImageBuffer helpIconImage = AggContext.StaticData.LoadIcon("icon_home_white_24x24.png", 24, 24);
 			if (ActiveTheme.Instance.IsDarkTheme)
 			{
 				helpIconImage.InvertLightness();

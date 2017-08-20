@@ -32,7 +32,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using MatterHackers.Agg;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
@@ -107,7 +107,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				Name = "Preset Pulldown Container"
 			};
 
-			editButton = ApplicationController.Instance.Theme.ButtonFactory.GenerateIconButton(StaticData.Instance.LoadIcon("icon_edit.png", 16, 16));
+			editButton = ApplicationController.Instance.Theme.ButtonFactory.GenerateIconButton(AggContext.StaticData.LoadIcon("icon_edit.png", 16, 16));
 			editButton.ToolTipText = "Edit Selected Setting".Localize();
 			editButton.Enabled = dropDownList.SelectedIndex != -1;
 			editButton.VAnchor = VAnchor.Center;
@@ -298,7 +298,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				menuItem.Selected += MenuItem_Selected;
 			}
 
-			MenuItem addNewPreset = dropDownList.AddItem(StaticData.Instance.LoadIcon("icon_plus.png", 32, 32), "Add New Setting".Localize() + "...", "new");
+			MenuItem addNewPreset = dropDownList.AddItem(AggContext.StaticData.LoadIcon("icon_plus.png", 32, 32), "Add New Setting".Localize() + "...", "new");
 			addNewPreset.Selected += (s, e) =>
 			{
 				var newLayer = new PrinterSettingsLayer();

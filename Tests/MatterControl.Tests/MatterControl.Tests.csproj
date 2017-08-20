@@ -114,10 +114,6 @@
       <Project>{C958F745-156E-4BDC-A24A-3721C7BE7B8A}</Project>
       <Name>OpenGlGui</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Submodules\agg-sharp\PlatformAbstract\PlatformAbstract.csproj">
-      <Project>{3E4AABA8-D85F-4922-88C6-5C1B2D2308FB}</Project>
-      <Name>PlatformAbstract</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Submodules\agg-sharp\PlatformWin32\PlatformWin32.csproj">
       <Project>{670BDDFF-927B-425D-9DD1-22ACB14356EB}</Project>
       <Name>PlatformWin32</Name>

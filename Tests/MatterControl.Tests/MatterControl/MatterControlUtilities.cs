@@ -37,7 +37,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl.DataStorage;
@@ -470,7 +470,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 #if !__ANDROID__
 			// Set the static data to point to the directory of MatterControl
-			StaticData.Instance = new FileSystemStaticData(staticDataPathOverride);
+			AggContext.StaticData = new FileSystemStaticData(staticDataPathOverride);
 #endif
 			// Popping one directory above MatterControl, then back down into MatterControl ensures this works in MCCentral as well and MatterControl
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(5, "MatterControl"));

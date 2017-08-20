@@ -6,7 +6,7 @@ using System.Linq;
 using System.Reflection;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Csg;
 using MatterHackers.Csg.Solids;
@@ -268,7 +268,7 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 
 			if (typeFace == null)
 			{
-				typeFace = TypeFace.LoadFrom(StaticData.Instance.ReadAllText(Path.Combine("Fonts", "TitilliumWeb-Black.svg")));
+				typeFace = TypeFace.LoadFrom(AggContext.StaticData.ReadAllText(Path.Combine("Fonts", "TitilliumWeb-Black.svg")));
 			}
 
 			var letterPrinter = new TypeFacePrinter(NameToWrite.ToUpper(), new StyledTypeFace(typeFace, 12));

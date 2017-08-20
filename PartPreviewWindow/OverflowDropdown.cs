@@ -31,7 +31,7 @@ using System;
 using System.IO;
 using MatterHackers.Agg;
 using MatterHackers.Agg.ImageProcessing;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.VectorMath;
@@ -50,7 +50,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public static ImageWidget LoadThemedIcon(bool allowLightnessInvert)
 		{
-			var imageBuffer = StaticData.Instance.LoadIcon(Path.Combine("ViewTransformControls", "overflow.png"), 32, 32);
+			var imageBuffer = AggContext.StaticData.LoadIcon(Path.Combine("ViewTransformControls", "overflow.png"), 32, 32);
 			if (!ActiveTheme.Instance.IsDarkTheme && allowLightnessInvert)
 			{
 				imageBuffer.InvertLightness();

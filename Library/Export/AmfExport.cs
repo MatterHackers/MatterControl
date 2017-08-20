@@ -32,7 +32,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using MatterHackers.Agg.Image;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 
@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl.Library.Export
 
 		public string ExtensionFilter => "Save as AMF|*.amf";
 
-		public ImageBuffer Icon { get; } = StaticData.Instance.LoadIcon(Path.Combine("filetypes", "amf.png"));
+		public ImageBuffer Icon { get; } = AggContext.StaticData.LoadIcon(Path.Combine("filetypes", "amf.png"));
 
 		public bool EnabledForCurrentPart(ILibraryContentStream libraryContent)
 		{

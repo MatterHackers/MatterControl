@@ -33,7 +33,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using MatterHackers.Agg;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
@@ -238,7 +238,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 				{
 					estimatedMemoryUse = MeshFileIo.GetEstimatedMemoryUse(item.FileLocation);
 
-					if (OsInformation.OperatingSystem == OSType.Android)
+					if (AggContext.OperatingSystem == OSType.Android)
 					{
 						if (estimatedMemoryUse > 100000000)
 						{

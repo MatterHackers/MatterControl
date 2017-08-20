@@ -32,7 +32,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using MatterHackers.Agg;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
@@ -41,10 +41,7 @@ using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintQueue;
-using MatterHackers.MatterControl.SettingsManagement;
-using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PrintLibrary
@@ -256,7 +253,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			addToLibraryButton.Margin = new BorderDouble(0, 0, 3, 0);
 			addToLibraryButton.Click += (sender, e) => UiThread.RunOnIdle(() =>
 			{
-				FileDialog.OpenFileDialog(
+				AggContext.FileDialogs.OpenFileDialog(
 					new OpenFileDialogParams(ApplicationSettings.OpenPrintableFileParams, multiSelect: true),
 					(openParams) =>
 					{
@@ -484,7 +481,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			menuActions.Add(new MenuSeparator("Other"));
 
 			// PDF export is limited to Windows
-			if (OsInformation.OperatingSystem == OSType.Windows)
+			if (AggContext.OperatingSystem == OSType.Windows)
 			{
 				menuActions.Add(new PrintItemAction()
 				{
@@ -499,7 +496,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 							var printItems = selectedLibraryItems.OfType<ILibraryContentStream>();
 							if (printItems.Any())
 							{
-								FileDialog.SaveFileDialog(
+								AggContext.FileDialogs.SaveFileDialog(
 									new SaveFileDialogParams("Save Parts Sheet|*.pdf")
 									{
 										ActionButtonLabel = "Save Parts Sheet".Localize(),

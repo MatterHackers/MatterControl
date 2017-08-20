@@ -30,7 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.Font;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
@@ -205,7 +205,7 @@ namespace MatterHackers.MatterControl
 			saveParams.ActionButtonLabel = "Export";
 			saveParams.FileName = "print_log.txt";
 
-			FileDialog.SaveFileDialog(saveParams, onExportLogFileSelected);
+			AggContext.FileDialogs.SaveFileDialog(saveParams, onExportLogFileSelected);
 		}
 
 #if !__ANDROID__

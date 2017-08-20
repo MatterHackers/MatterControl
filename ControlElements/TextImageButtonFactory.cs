@@ -30,7 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.ImageProcessing;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.ImageProcessing;
 using System;
@@ -83,7 +83,7 @@ namespace MatterHackers.MatterControl
 		{
 			FlowLayoutWidget groupLableAndEditControl = new FlowLayoutWidget();
 
-			editButton = GenerateIconButton(StaticData.Instance.LoadIcon("icon_edit.png", 16, 16));
+			editButton = GenerateIconButton(AggContext.StaticData.LoadIcon("icon_edit.png", 16, 16));
 
 			editButton.Margin = new BorderDouble(2, 2, 2, 0);
 			editButton.VAnchor = VAnchor.Bottom;
@@ -184,25 +184,25 @@ namespace MatterHackers.MatterControl
 			if (normalImageName != null)
 			{
 				normalImage = new ImageBuffer();
-				StaticData.Instance.LoadIcon(normalImageName, normalImage);
+				AggContext.StaticData.LoadIcon(normalImageName, normalImage);
 			}
 
 			if (hoverImageName != null)
 			{
 				hoverImage = new ImageBuffer();
-				StaticData.Instance.LoadIcon(hoverImageName, hoverImage);
+				AggContext.StaticData.LoadIcon(hoverImageName, hoverImage);
 			}
 
 			if (pressedImageName != null)
 			{
 				pressedImage = new ImageBuffer();
-				StaticData.Instance.LoadIcon(pressedImageName, pressedImage);
+				AggContext.StaticData.LoadIcon(pressedImageName, pressedImage);
 			}
 
 			if (disabledImageName != null)
 			{
 				disabledImage = new ImageBuffer();
-				StaticData.Instance.LoadIcon(disabledImageName, disabledImage);
+				AggContext.StaticData.LoadIcon(disabledImageName, disabledImage);
 			}
 
 			return getButtonView(label, normalImage, hoverImage, pressedImage, disabledImage);
@@ -302,7 +302,7 @@ namespace MatterHackers.MatterControl
 
 			if (normalImageName != null)
 			{
-				StaticData.Instance.LoadIcon(normalImageName, normalImage);
+				AggContext.StaticData.LoadIcon(normalImageName, normalImage);
 
 				if (!ActiveTheme.Instance.IsDarkTheme && AllowThemeToAdjustImage)
 				{
@@ -312,7 +312,7 @@ namespace MatterHackers.MatterControl
 
 			if (pressedImageName != null)
 			{
-				StaticData.Instance.LoadIcon(pressedImageName, pressedImage);
+				AggContext.StaticData.LoadIcon(pressedImageName, pressedImage);
 				if (!ActiveTheme.Instance.IsDarkTheme && AllowThemeToAdjustImage)
 				{
 					pressedImage.InvertLightness();
@@ -321,7 +321,7 @@ namespace MatterHackers.MatterControl
 
 			if (normalToPressedImageName != null)
 			{
-				StaticData.Instance.LoadIcon(normalToPressedImageName, normalToPressedImage);
+				AggContext.StaticData.LoadIcon(normalToPressedImageName, normalToPressedImage);
 				if (!ActiveTheme.Instance.IsDarkTheme && AllowThemeToAdjustImage)
 				{
 					normalToPressedImage.InvertLightness();
@@ -330,7 +330,7 @@ namespace MatterHackers.MatterControl
 
 			if (pressedToNormalImageName != null)
 			{
-				StaticData.Instance.LoadIcon(pressedToNormalImageName, pressedToNormalImage);
+				AggContext.StaticData.LoadIcon(pressedToNormalImageName, pressedToNormalImage);
 				if (!ActiveTheme.Instance.IsDarkTheme && AllowThemeToAdjustImage)
 				{
 					pressedToNormalImage.InvertLightness();
@@ -457,7 +457,7 @@ namespace MatterHackers.MatterControl
 		{
 			if (iconImageName != null)
 			{
-				return GenerateRadioButton(label, StaticData.Instance.LoadIcon(iconImageName));
+				return GenerateRadioButton(label, AggContext.StaticData.LoadIcon(iconImageName));
 			}
 
 			return GenerateRadioButton(label, (ImageBuffer)null);

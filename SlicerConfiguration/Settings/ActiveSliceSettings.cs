@@ -32,7 +32,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SettingsManagement;
@@ -100,7 +100,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		static ActiveSliceSettings()
 		{
-			string propertiesFileContents = StaticData.Instance.ReadAllText(Path.Combine("SliceSettings", "Properties.json"));
+			string propertiesFileContents = AggContext.StaticData.ReadAllText(Path.Combine("SliceSettings", "Properties.json"));
 			SettingsData = JsonConvert.DeserializeObject<List<SliceSettingData>>(propertiesFileContents);
 
 			activeInstance = PrinterSettings.Empty;

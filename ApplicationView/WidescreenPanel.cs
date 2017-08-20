@@ -31,7 +31,7 @@ using System.IO;
 using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.ImageProcessing;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.ConfigurationPage;
 using MatterHackers.MatterControl.DataStorage;
@@ -120,7 +120,7 @@ namespace MatterHackers.MatterControl
 				Margin = 6
 			};
 	
-			var icon = StaticData.Instance.LoadImage(Path.Combine("Images", "mh-app-logo.png"));
+			var icon = AggContext.StaticData.LoadImage(Path.Combine("Images", "mh-app-logo.png"));
 			if (ActiveTheme.Instance.IsDarkTheme)
 			{
 				icon = icon.InvertLightness();

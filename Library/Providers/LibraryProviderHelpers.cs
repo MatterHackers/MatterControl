@@ -31,7 +31,7 @@ using System.IO;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.ImageProcessing;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.VectorMath;
 
@@ -42,7 +42,7 @@ namespace MatterHackers.MatterControl.Library
 		
 		public static ImageBuffer LoadInvertIcon(params string[] pathSegments)
 		{
-			return StaticData.Instance.LoadIcon(Path.Combine(pathSegments)); //.InvertLightness();
+			return AggContext.StaticData.LoadIcon(Path.Combine(pathSegments)); //.InvertLightness();
 		}
 
 		public static void RenderCentered(this Graphics2D graphics2D, ImageBuffer imageBuffer, double width, double height)

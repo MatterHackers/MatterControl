@@ -33,7 +33,7 @@ using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
 using MatterHackers.Agg.ImageProcessing;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
@@ -281,7 +281,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		private ImageWidget CreatePinButton()
 		{
-			var icon = StaticData.Instance.LoadIcon(this.ControlIsPinned ? "Pushpin_16x.png" : "PushpinUnpin_16x.png", 16, 16).InvertLightness();
+			var icon = AggContext.StaticData.LoadIcon(this.ControlIsPinned ? "Pushpin_16x.png" : "PushpinUnpin_16x.png", 16, 16).InvertLightness();
 			var imageWidget = new ImageWidget(icon)
 			{
 				Name = "Pin Settings Button",

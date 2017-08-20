@@ -34,7 +34,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
-using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
@@ -48,12 +47,12 @@ namespace MatterHackers.MatterControl
 	using System.IO.Compression;
 	using System.Net;
 	using System.Reflection;
-	using System.Security.Cryptography;
 	using System.Text;
 	using System.Threading;
 	using Agg.Font;
 	using Agg.Image;
 	using CustomWidgets;
+	using MatterHackers.Agg.Platform;
 	using MatterHackers.DataConverters3D;
 	using MatterHackers.GCodeVisualizer;
 	using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
@@ -63,7 +62,6 @@ namespace MatterHackers.MatterControl
 	using MatterHackers.PolygonMesh;
 	using MatterHackers.SerialPortCommunication;
 	using MatterHackers.VectorMath;
-	using PrintHistory;
 	using SettingsManagement;
 
 	public class BedConfig
@@ -733,7 +731,7 @@ namespace MatterHackers.MatterControl
 			{
 				if (monoSpacedTypeFace == null)
 				{
-					monoSpacedTypeFace = TypeFace.LoadFrom(StaticData.Instance.ReadAllText(Path.Combine("Fonts", "LiberationMono.svg")));
+					monoSpacedTypeFace = TypeFace.LoadFrom(AggContext.StaticData.ReadAllText(Path.Combine("Fonts", "LiberationMono.svg")));
 				}
 
 				return monoSpacedTypeFace;
@@ -761,10 +759,10 @@ namespace MatterHackers.MatterControl
 			try
 			{
 				if (staticDataFallbackPath != null
-					&& StaticData.Instance.FileExists(staticDataFallbackPath))
+					&& AggContext.StaticData.FileExists(staticDataFallbackPath))
 				{
 					return Task.FromResult(
-						JsonConvert.DeserializeObject<T>(StaticData.Instance.ReadAllText(staticDataFallbackPath)));
+						JsonConvert.DeserializeObject<T>(AggContext.StaticData.ReadAllText(staticDataFallbackPath)));
 				}
 			}
 			catch
@@ -1066,7 +1064,7 @@ namespace MatterHackers.MatterControl
                     }
                 }
 
-				if (OsInformation.OperatingSystem == OSType.Android)
+				if (AggContext.OperatingSystem == OSType.Android)
 				{
 					// show this last so it is on top
 					if (UserSettings.Instance.get("SoftwareLicenseAccepted") != "true")
@@ -1180,7 +1178,7 @@ namespace MatterHackers.MatterControl
 					ImageBuffer unScaledImage = new ImageBuffer(10, 10);
 					if (scaleToImageX)
 					{
-						StaticData.Instance.LoadImageData(stream, unScaledImage);
+						AggContext.StaticData.LoadImageData(stream, unScaledImage);
 						// If the source image (the one we downloaded) is more than twice as big as our dest image.
 						while (unScaledImage.Width > imageToLoadInto.Width * 2)
 						{
@@ -1198,7 +1196,7 @@ namespace MatterHackers.MatterControl
 					}
 					else
 					{
-						StaticData.Instance.LoadImageData(stream, imageToLoadInto);
+						AggContext.StaticData.LoadImageData(stream, imageToLoadInto);
 					}
 					imageToLoadInto.MarkImageChanged();
 				}

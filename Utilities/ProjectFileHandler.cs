@@ -33,6 +33,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using MatterHackers.Agg.UI;
+using MatterHackers.Agg.Platform;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.Library;
@@ -109,7 +110,7 @@ namespace MatterHackers.MatterControl
 		//Opens Save file dialog and outputs current queue as a project
 		public void SaveAs()
 		{
-			FileDialog.SaveFileDialog(
+			AggContext.FileDialogs.SaveFileDialog(
 				new SaveFileDialogParams("Save Project|*.zip"), 
 				(saveParams) =>
 				{

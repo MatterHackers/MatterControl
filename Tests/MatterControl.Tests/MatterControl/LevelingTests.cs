@@ -29,7 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System.Collections.Generic;
 using MatterHackers.Agg;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.GCodeVisualizer;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.SlicerConfiguration;
@@ -45,7 +45,7 @@ namespace MatterControl.Tests.MatterControl
 		[Test, Category("Leveling")]
 		public void Leveling7PointsNeverGetsTooHigh()
 		{
-			StaticData.Instance = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			var levelingData = new PrintLevelingData(ActiveSliceSettings.Instance);
@@ -86,7 +86,7 @@ namespace MatterControl.Tests.MatterControl
 		[Test, Category("Leveling")]
 		public void Leveling7PointsCorectInterpolation()
 		{
-			StaticData.Instance = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			var levelingData = new PrintLevelingData(ActiveSliceSettings.Instance);
@@ -189,7 +189,7 @@ namespace MatterControl.Tests.MatterControl
 		[Test, Category("Leveling")]
 		public void LevelingMesh3x3CorectInterpolation()
 		{
-			StaticData.Instance = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			// a 2 x 2 mesh that goes form 0 on the left to 10 on the right

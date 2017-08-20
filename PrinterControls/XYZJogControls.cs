@@ -33,7 +33,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.ImageProcessing;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.Localizations;
@@ -263,7 +263,7 @@ namespace MatterHackers.MatterControl
 			keyFocusedContainer.ToolTipText = "Enable cursor keys for movement".Localize();
 			keyFocusedContainer.Margin = new BorderDouble(left: 10);
 
-			var image = StaticData.Instance.LoadIcon("hot_key_small_white.png", 19, 12);
+			var image = AggContext.StaticData.LoadIcon("hot_key_small_white.png", 19, 12);
 			if(ActiveTheme.Instance.IsDarkTheme)
 			{
 				image = image.InvertLightness();
@@ -324,7 +324,7 @@ namespace MatterHackers.MatterControl
 
 			// if we are not printing and on mac or PC
 			if (PrinterConnection.Instance.CommunicationState != CommunicationStates.Printing
-				&& (OsInformation.OperatingSystem == OSType.Windows || OsInformation.OperatingSystem == OSType.Mac))
+				&& (AggContext.OperatingSystem == OSType.Windows || AggContext.OperatingSystem == OSType.Mac))
 			{
 				if (e.KeyCode == Keys.Z)
 				{
@@ -371,8 +371,8 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
-			if ((OsInformation.OperatingSystem == OSType.Windows && e.KeyCode == Keys.PageUp)
-				|| (OsInformation.OperatingSystem == OSType.Mac && e.KeyCode == (Keys.Back | Keys.Cancel)))
+			if ((AggContext.OperatingSystem == OSType.Windows && e.KeyCode == Keys.PageUp)
+				|| (AggContext.OperatingSystem == OSType.Mac && e.KeyCode == (Keys.Back | Keys.Cancel)))
 			{
 				if (PrinterConnection.Instance.CommunicationState == CommunicationStates.Printing)
 				{
@@ -385,8 +385,8 @@ namespace MatterHackers.MatterControl
 					PrinterConnection.Instance.MoveRelative(PrinterConnection.Axis.Z, moveAmountPositive, MovementControls.ZSpeed);
 				}
 			}
-			else if ((OsInformation.OperatingSystem == OSType.Windows && e.KeyCode == Keys.PageDown)
-				|| (OsInformation.OperatingSystem == OSType.Mac && e.KeyCode == Keys.Clear))
+			else if ((AggContext.OperatingSystem == OSType.Windows && e.KeyCode == Keys.PageDown)
+				|| (AggContext.OperatingSystem == OSType.Mac && e.KeyCode == Keys.Clear))
 			{
 				if (PrinterConnection.Instance.CommunicationState == CommunicationStates.Printing)
 				{

@@ -34,7 +34,7 @@ using System.IO;
 using System.Net;
 using System.Threading;
 using MatterHackers.Agg;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.AboutPage;
@@ -137,15 +137,15 @@ namespace MatterHackers.MatterControl
 		{
 			get
 			{
-				if (OsInformation.OperatingSystem == OSType.Mac)
+				if (AggContext.OperatingSystem == OSType.Mac)
 				{
 					return "pkg";
 				}
-				else if (OsInformation.OperatingSystem == OSType.X11)
+				else if (AggContext.OperatingSystem == OSType.X11)
 				{
 					return "tar.gz";
 				}
-				else if (OsInformation.OperatingSystem == OSType.Android)
+				else if (AggContext.OperatingSystem == OSType.Android)
 				{
 					return "apk";
 				}

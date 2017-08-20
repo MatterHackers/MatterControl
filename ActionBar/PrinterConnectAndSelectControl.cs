@@ -30,7 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.Localizations;
@@ -237,7 +237,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			this.Margin = 0;
 			this.Padding = 0;
 
-			connectButton = buttonFactory.Generate("Connect".Localize().ToUpper(), StaticData.Instance.LoadIcon("connect.png", 14, 14));
+			connectButton = buttonFactory.Generate("Connect".Localize().ToUpper(), AggContext.StaticData.LoadIcon("connect.png", 14, 14));
 			connectButton.Name = "Connect to printer button";
 			connectButton.ToolTipText = "Connect to the currently selected printer".Localize();
 			connectButton.Click += (s, e) =>
@@ -252,7 +252,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			};
 			this.AddChild(connectButton);
 
-			disconnectButton = buttonFactory.Generate("Disconnect".Localize().ToUpper(), StaticData.Instance.LoadIcon("connect.png", 14, 14));
+			disconnectButton = buttonFactory.Generate("Disconnect".Localize().ToUpper(), AggContext.StaticData.LoadIcon("connect.png", 14, 14));
 			disconnectButton.Name = "Disconnect from printer button";
 			disconnectButton.Visible = false;
 			disconnectButton.ToolTipText = "Disconnect from current printer".Localize();

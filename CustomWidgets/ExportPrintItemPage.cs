@@ -33,7 +33,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
@@ -113,8 +113,8 @@ namespace MatterHackers.MatterControl
 			contentRow.AddChild(new VerticalSpacer());
 
 			// TODO: make this work on the mac and then delete this if
-			if (OsInformation.OperatingSystem == OSType.Windows
-				|| OsInformation.OperatingSystem == OSType.X11)
+			if (AggContext.OperatingSystem == OSType.Windows
+				|| AggContext.OperatingSystem == OSType.X11)
 			{
 				showInFolderAfterSave = new CheckBox("Show file in folder after save".Localize(), ActiveTheme.Instance.PrimaryTextColor, 10)
 				{
@@ -167,7 +167,7 @@ namespace MatterHackers.MatterControl
 				{
 					UiThread.RunOnIdle(() =>
 					{
-						FileDialog.SelectFolderDialog(
+						AggContext.FileDialogs.SelectFolderDialog(
 							new SelectFolderDialogParams("Select Location To Export Files")
 							{
 								ActionButtonLabel = "Export".Localize(),
@@ -190,7 +190,7 @@ namespace MatterHackers.MatterControl
 				UiThread.RunOnIdle(() =>
 				{
 					string title = "MatterControl: " + "Export File".Localize();
-					FileDialog.SaveFileDialog(
+					AggContext.FileDialogs.SaveFileDialog(
 						new SaveFileDialogParams(fileTypeFilter)
 						{
 							Title = title,
@@ -243,7 +243,7 @@ namespace MatterHackers.MatterControl
 
 		private void ShowFileIfRequested(string filename)
 		{
-			if (OsInformation.OperatingSystem == OSType.Windows)
+			if (AggContext.OperatingSystem == OSType.Windows)
 			{
 				if (showInFolderAfterSave.Checked)
 				{

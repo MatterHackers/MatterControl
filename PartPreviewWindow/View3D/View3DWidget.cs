@@ -40,7 +40,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.OpenGlGui;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
@@ -94,11 +94,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				if (ActiveTheme.Instance.IsDarkTheme)
 				{
-					return StaticData.Instance.LoadIcon("icon_arrow_right_no_border_32x32.png", 32, 32).InvertLightness();
+					return AggContext.StaticData.LoadIcon("icon_arrow_right_no_border_32x32.png", 32, 32).InvertLightness();
 				}
 				else
 				{
-					return StaticData.Instance.LoadIcon("icon_arrow_right_no_border_32x32.png", 32, 32);
+					return AggContext.StaticData.LoadIcon("icon_arrow_right_no_border_32x32.png", 32, 32);
 				}
 			}
 		}
@@ -109,11 +109,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				if (ActiveTheme.Instance.IsDarkTheme)
 				{
-					return StaticData.Instance.LoadIcon("icon_arrow_down_no_border_32x32.png", 32, 32).InvertLightness();
+					return AggContext.StaticData.LoadIcon("icon_arrow_down_no_border_32x32.png", 32, 32).InvertLightness();
 				}
 				else
 				{
-					return StaticData.Instance.LoadIcon("icon_arrow_down_no_border_32x32.png", 32, 32);
+					return AggContext.StaticData.LoadIcon("icon_arrow_down_no_border_32x32.png", 32, 32);
 				}
 			}
 		}
@@ -230,13 +230,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				var buttonSpacing = ApplicationController.Instance.Theme.ButtonSpacing;
 
-				Button addButton = smallMarginButtonFactory.Generate("Insert".Localize(), StaticData.Instance.LoadIcon("cube.png", 14, 14));
+				Button addButton = smallMarginButtonFactory.Generate("Insert".Localize(), AggContext.StaticData.LoadIcon("cube.png", 14, 14));
 				addButton.Margin = 0;
 				addButton.Click += (sender, e) =>
 				{
 					UiThread.RunOnIdle(() =>
 					{
-						FileDialog.OpenFileDialog(
+						AggContext.FileDialogs.OpenFileDialog(
 							new OpenFileDialogParams(ApplicationSettings.OpenDesignFileParams, multiSelect: true),
 							(openParams) =>
 							{
@@ -434,7 +434,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				string title =  isPrinterMode ? "Bed".Localize() : "Part".Localize();
 
-				var icon = isPrinterMode ? StaticData.Instance.LoadIcon("bed.png") : StaticData.Instance.LoadIcon("cube.png");
+				var icon = isPrinterMode ? AggContext.StaticData.LoadIcon("bed.png") : AggContext.StaticData.LoadIcon("cube.png");
 
 				selectionActionBar.AddChild(new PopupButton(smallMarginButtonFactory.Generate(title, normalImage: icon))
 				{

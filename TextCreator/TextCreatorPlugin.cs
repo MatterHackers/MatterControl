@@ -28,7 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.IO;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl;
@@ -78,7 +78,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 			// TODO: Filepath won't work on Android. Needs to load from/to stream via custom type
 			library.RegisterCreator(
-				new FileSystemFileItem(StaticData.Instance.MapPath(Path.Combine("Images", "mh-logo.png")))
+				new FileSystemFileItem(AggContext.StaticData.MapPath(Path.Combine("Images", "mh-logo.png")))
 				{
 					Name = "Image Converter".Localize(),
 					Category = category

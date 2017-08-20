@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl
@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl
 
 			var buttonFactory = ApplicationController.Instance.Theme.SmallMarginButtonFactory;
 
-			Button button = buttonFactory.Generate(primaryAction.Title, StaticData.Instance.LoadIcon(imageName, 24, 24));
+			Button button = buttonFactory.Generate(primaryAction.Title, AggContext.StaticData.LoadIcon(imageName, 24, 24));
 			button.Name = $"{primaryAction.Title} Button";
 			button.Click += (s, e) =>
 			{

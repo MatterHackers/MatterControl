@@ -33,7 +33,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using MatterHackers.Agg;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.AboutPage;
@@ -88,7 +88,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 						}
 					},
 					previewButton,
-					StaticData.Instance.LoadIcon("camera-24x24.png", 24, 24))
+					AggContext.StaticData.LoadIcon("camera-24x24.png", 24, 24))
 			);
 
 			// Print Notifications
@@ -116,7 +116,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 						}
 					},
 					configureNotificationsButton,
-					StaticData.Instance.LoadIcon("notify-24x24.png")));
+					AggContext.StaticData.LoadIcon("notify-24x24.png")));
 
 			// Touch Screen Mode
 			this.AddSettingsRow(
@@ -542,14 +542,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		{
 			char currentChar = 'A';
 
-			string outputPath = StaticData.Instance.MapPath(Path.Combine("Translations", "L10N", "Translation.txt"));
+			string outputPath = AggContext.StaticData.MapPath(Path.Combine("Translations", "L10N", "Translation.txt"));
 
 			// Ensure the output directory exists
 			Directory.CreateDirectory(Path.GetDirectoryName(outputPath));
 
 			using (var outstream = new StreamWriter(outputPath))
 			{
-				foreach (var line in File.ReadAllLines(StaticData.Instance.MapPath(Path.Combine("Translations", "Master.txt"))))
+				foreach (var line in File.ReadAllLines(AggContext.StaticData.MapPath(Path.Combine("Translations", "Master.txt"))))
 				{
 					if (line.StartsWith("Translated:"))
 					{

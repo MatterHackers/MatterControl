@@ -37,7 +37,7 @@ using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using System.Runtime.Serialization;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
@@ -348,7 +348,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public void ExportAsMatterControlConfig()
 		{
-			FileDialog.SaveFileDialog(
+			AggContext.FileDialogs.SaveFileDialog(
 			new SaveFileDialogParams("MatterControl Printer Export|*.printer", title: "Export Printer Settings")
 			{
 				FileName = printerSettings.GetValue(SettingsKey.printer_name)
@@ -373,7 +373,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public void ExportAsSlic3rConfig()
 		{
-			FileDialog.SaveFileDialog(
+			AggContext.FileDialogs.SaveFileDialog(
 				new SaveFileDialogParams("Save Slice Configuration".Localize() + "|*.ini")
 				{
 					FileName = printerSettings.GetValue(SettingsKey.printer_name)

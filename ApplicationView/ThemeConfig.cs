@@ -29,7 +29,6 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using MatterHackers.Agg;
-using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl
@@ -37,6 +36,7 @@ namespace MatterHackers.MatterControl
 	using System.Collections.Generic;
 	using Agg.Image;
 	using CustomWidgets;
+	using MatterHackers.Agg.Platform;
 	using MatterHackers.MatterControl.PartPreviewWindow;
 	using MatterHackers.VectorMath;
 
@@ -119,7 +119,7 @@ namespace MatterHackers.MatterControl
 			// EnsureRestoreButtonImages
 			int size = (int)(16 * GuiWidget.DeviceScale);
 
-			if (OsInformation.OperatingSystem == OSType.Android)
+			if (AggContext.OperatingSystem == OSType.Android)
 			{
 				restoreNormal = ColorCircle(size, new RGBA_Bytes(200, 0, 0));
 			}

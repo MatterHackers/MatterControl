@@ -182,10 +182,6 @@
       <Project>{C958F745-156E-4BDC-A24A-3721C7BE7B8A}</Project>
       <Name>OpenGlGui</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Submodules\agg-sharp\PlatformAbstract\PlatformAbstract.csproj">
-      <Project>{3E4AABA8-D85F-4922-88C6-5C1B2D2308FB}</Project>
-      <Name>PlatformAbstract</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Submodules\agg-sharp\PolygonMesh\PolygonMesh.csproj">
       <Project>{86F6AAF2-9B50-40B8-A427-1897D76471C5}</Project>
       <Name>PolygonMesh</Name>

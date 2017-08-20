@@ -37,7 +37,7 @@ using System.Net;
 using System.Threading;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.ImageProcessing;
@@ -92,7 +92,7 @@ namespace MatterHackers.MatterControl
 
 		private static RaygunClient GetCorrectClient()
 		{
-			if (OsInformation.OperatingSystem == OSType.Mac)
+			if (AggContext.OperatingSystem == OSType.Mac)
 			{
 				return new RaygunClient("qmMBpKy3OSTJj83+tkO7BQ=="); // this is the Mac key
 			}
@@ -111,7 +111,7 @@ namespace MatterHackers.MatterControl
 
 		static MatterControlApplication()
 		{
-			if (OsInformation.OperatingSystem == OSType.Mac && StaticData.Instance == null)
+			if (AggContext.OperatingSystem == OSType.Mac && AggContext.StaticData == null)
 			{
 				// Set working directory - this duplicates functionality in Main but is necessary on OSX as Main fires much later (after the constructor in this case)
 				// resulting in invalid paths due to path tests running before the working directory has been overridden. Setting the value before initializing StaticData
@@ -123,9 +123,9 @@ namespace MatterHackers.MatterControl
 			// initializers run before the class constructor, we need to init the platform specific provider in the static constructor (or write a custom initializer method)
 			//
 			// Initialize a standard file system backed StaticData provider
-			if (StaticData.Instance == null) // it may already be initialized by tests
+			if (AggContext.StaticData == null) // it may already be initialized by tests
 			{
-				StaticData.Instance = new MatterHackers.Agg.FileSystemStaticData();
+				AggContext.StaticData = new MatterHackers.Agg.FileSystemStaticData();
 			}
 		}
 
@@ -325,7 +325,7 @@ namespace MatterHackers.MatterControl
 			graphics.Clear(RGBA_Bytes.White);
 			graphics.DrawString("No Camera Detected", 320, 240, pointSize: 24, justification: Agg.Font.Justification.Center);
 			graphics.DrawString(DateTime.Now.ToString(), 320, 200, pointSize: 12, justification: Agg.Font.Justification.Center);
-			ImageIO.SaveImageData(imageFileName, noCameraImage);
+			AggContext.ImageIO.SaveImageData(imageFileName, noCameraImage);
 
 			PictureTaken?.Invoke(null, null);
 		}
@@ -391,7 +391,7 @@ namespace MatterHackers.MatterControl
 			}
 			else // try to set it to a big size or the min size
 			{
-				Point2D desktopSize = OsInformation.DesktopSize;
+				Point2D desktopSize = AggContext.DesktopSize;
 
 				if (overrideWidth != -1)
 				{
@@ -425,52 +425,6 @@ namespace MatterHackers.MatterControl
 			}
 
 			return instance;
-		}
-
-		[STAThread]
-		public static void Main()
-		{
-			PerformanceTimer.GetParentWindowFunction = () => { return MatterControlApplication.instance; };
-
-			CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
-			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-
-			// Make sure we have the right working directory as we assume everything relative to the executable.
-			Directory.SetCurrentDirectory(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location));
-
-			Datastore.Instance.Initialize();
-
-#if !DEBUG
-			// Conditionally spin up error reporting if not on the Stable channel
-			string channel = UserSettings.Instance.get(UserSettingsKey.UpdateFeedType);
-			if (string.IsNullOrEmpty(channel) || channel != "release" || OemSettings.Instance.WindowTitleExtra == "Experimental")
-#endif
-			{
-				System.Windows.Forms.Application.ThreadException += new ThreadExceptionEventHandler(Application_ThreadException);
-				AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
-			}
-
-			MatterControlApplication app = MatterControlApplication.Instance;
-		}
-
-		private static void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
-		{
-#if !DEBUG
-			if(raygunNotificationCount++ < RaygunMaxNotifications)
-			{
-				_raygunClient.Send(e.Exception);
-			}
-#endif
-		}
-
-		private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
-		{
-#if !DEBUG
-			if(raygunNotificationCount++ < RaygunMaxNotifications)
-			{
-				_raygunClient.Send(e.ExceptionObject as Exception);
-			}
-#endif
 		}
 
 		public static void WriteTestGCodeFile()
@@ -784,9 +738,9 @@ namespace MatterHackers.MatterControl
 
 		public void PlaySound(string fileName)
 		{
-			if (OsInformation.OperatingSystem == OSType.Windows)
+			if (AggContext.OperatingSystem == OSType.Windows)
 			{
-				using (var mediaStream = StaticData.Instance.OpenSteam(Path.Combine("Sounds", fileName)))
+				using (var mediaStream = AggContext.StaticData.OpenSteam(Path.Combine("Sounds", fileName)))
 				{
 					(new System.Media.SoundPlayer(mediaStream)).Play();
 				}

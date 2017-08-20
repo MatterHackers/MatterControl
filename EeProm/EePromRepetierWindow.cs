@@ -31,6 +31,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
@@ -146,7 +147,7 @@ namespace MatterHackers.MatterControl.EeProm
 				{
 					UiThread.RunOnIdle(() =>
 					{
-						FileDialog.OpenFileDialog(
+						AggContext.FileDialogs.OpenFileDialog(
 							new OpenFileDialogParams("EEPROM Settings|*.ini")
 							{
 								ActionButtonLabel = "Import EEPROM Settings".Localize(),
@@ -173,7 +174,7 @@ namespace MatterHackers.MatterControl.EeProm
 				{
 					UiThread.RunOnIdle(() =>
 					{
-						FileDialog.SaveFileDialog(
+						AggContext.FileDialogs.SaveFileDialog(
 							new SaveFileDialogParams("EEPROM Settings|*.ini")
 							{
 								ActionButtonLabel = "Export EEPROM Settings".Localize(),

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.MatterControl.DataStorage;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
@@ -11,7 +11,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public static string GetEnginePath()
 		{
-			switch (OsInformation.OperatingSystem)
+			switch (AggContext.OperatingSystem)
 			{
 				case OSType.Windows:
 					return getWindowsPath();

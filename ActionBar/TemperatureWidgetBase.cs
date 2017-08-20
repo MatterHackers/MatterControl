@@ -30,7 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using MatterHackers.Agg;
 using MatterHackers.Agg.ImageProcessing;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.PartPreviewWindow;
 
@@ -42,7 +42,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		private TextWidget goalTempIndicator;
 		protected TextWidget DirectionIndicator;
 
-		protected ImageWidget ImageWidget = new ImageWidget(StaticData.Instance.LoadIcon("hotend.png"))
+		protected ImageWidget ImageWidget = new ImageWidget(AggContext.StaticData.LoadIcon("hotend.png"))
 		{
 			VAnchor = VAnchor.Center,
 			Margin = new BorderDouble(right: 5)

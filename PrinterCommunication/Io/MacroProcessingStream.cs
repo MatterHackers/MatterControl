@@ -33,7 +33,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading;
 using MatterHackers.Agg.Image;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.PrinterControls;
 using MatterHackers.MatterControl.SlicerConfiguration;
@@ -83,7 +83,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			{
 				try
 				{
-					imageOnDisk = StaticData.Instance.FileExists(filePath);
+					imageOnDisk = AggContext.StaticData.FileExists(filePath);
 				}
 				catch
 				{
@@ -93,7 +93,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 			if (imageOnDisk)
 			{
-				return StaticData.Instance.LoadImage(filePath);
+				return AggContext.StaticData.LoadImage(filePath);
 			}
 			else
 			{
