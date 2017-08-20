@@ -36,6 +36,7 @@ using MatterHackers.Agg.VertexSource;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.SerialPortCommunication.FrostedSerial;
 
 namespace MatterHackers.MatterControl.ActionBar
 {
@@ -320,6 +321,11 @@ namespace MatterHackers.MatterControl.ActionBar
 					PrinterConnection.Instance.ConnectToActivePrinter(true);
 				}
 			}
+		}
+
+		private static void RunTroubleShooting()
+		{
+			WizardWindow.Show<SetupWizardTroubleshooting>("TroubleShooting", "Trouble Shooting");
 		}
 
 		private void SetVisibleStates(object sender, EventArgs e)

@@ -72,7 +72,5 @@ public class LicenseAgreementPage : WizardPage
 		footerRow.AddChild(cancelButton);
 
 		footerRow.Visible = true;
-
-		UiThread.RunOnIdle(this.WizardWindow.BringToFront, .2);
 	}
 }

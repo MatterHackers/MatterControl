@@ -120,7 +120,7 @@ namespace MatterHackers.MatterControl
 				Margin = 6
 			};
 	
-			var icon = StaticData.Instance.LoadIcon(Path.Combine("..", "Images", "mh-app-logo.png"));
+			var icon = StaticData.Instance.LoadImage(Path.Combine("Images", "mh-app-logo.png"));
 			if (ActiveTheme.Instance.IsDarkTheme)
 			{
 				icon = icon.InvertLightness();

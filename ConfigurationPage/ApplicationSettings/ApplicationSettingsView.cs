@@ -530,8 +530,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 #else
                 // Re-initialize and load
                 LocalizedString.ResetTranslationMap();
-                ApplicationController.Instance.MainView = new TouchscreenView();
-                app.RemoveAllChildren();
+                ApplicationController.Instance.MainView = new DesktopView();
+				app.RemoveAllChildren();
                 app.AnchorAll();
 #endif
 			});

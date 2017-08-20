@@ -169,6 +169,7 @@ namespace MatterHackers.MatterControl
 		internal void ChangeToPage<PanelType>() where PanelType : WizardPage, new()
 		{
 			PanelType panel = new PanelType();
+			panel.WizardWindow = this;
 			ChangeToPage(panel);
 
 			// in the event of a reload all make sure we rebuild the contents correctly
