@@ -1022,7 +1022,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				if (!string.IsNullOrEmpty(currentPortName))
 				{
 					// TODO: Ensure that this does *not* cause a write to the settings file and should be an in memory update only
-					printerSettings?.Helpers.SetComPort(currentPortName);
+					PrinterSettings?.Helpers.SetComPort(currentPortName);
 				}
 #endif
 
@@ -1269,7 +1269,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				{
 					Task.Run(() =>
 					{
-						File.WriteAllLines(pathToPrintOutputFile, PrinterOutputCache.Instance.PrinterLines);
+						File.WriteAllLines(pathToPrintOutputFile, PrinterConnection.Instance.TerminalLog.PrinterLines);
 					});
 				}
 			}
