@@ -49,11 +49,12 @@ namespace MatterHackers.MatterControl
 		private static ImageBuffer restorePressed;
 
 		private readonly int fizedHeightA = (int)(25 * GuiWidget.DeviceScale + .5);
-		private readonly double fizedHeightB = 52 * GuiWidget.DeviceScale;
+		private readonly double fizedHeightB = 34 * GuiWidget.DeviceScale;
 
 		private readonly int fontSize10 = 10;
 		private readonly int fontSize11 = 11;
 		private readonly int fontSize12 = 12;
+		private readonly int fontSize14 = 14;
 
 		private int shortButtonHeight = 25;
 		private int sideBarButtonWidth;
@@ -71,7 +72,7 @@ namespace MatterHackers.MatterControl
 		public TextImageButtonFactory ButtonFactory { get; private set; }
 		public TextImageButtonFactory SmallMarginButtonFactory { get; private set; }
 		public TextImageButtonFactory RadioButtons { get; private set; }
-
+		public TextImageButtonFactory WizardButtons { get; private set; }
 
 		/// <summary>
 		/// Used to make buttons in menu rows where the background color is consistently white
@@ -167,6 +168,15 @@ namespace MatterHackers.MatterControl
 				ImageSpacing = 6
 			});
 
+			this.WizardButtons = new TextImageButtonFactory(new ButtonFactoryOptions(commonOptions)
+			{
+#if __ANDROID__
+				FontSize = fontSize14,
+				FixedHeight = fizedHeightB,
+				Margin = commonOptions.Margin * 1.2
+#endif
+			});
+
 			this.RadioButtons = new TextImageButtonFactory(new ButtonFactoryOptions(commonOptions)
 			{
 				BorderWidth = 1,
@@ -224,7 +234,7 @@ namespace MatterHackers.MatterControl
 				CheckedBorderColor = RGBA_Bytes.Black
 			});
 
-			#region PartPreviewWidget
+#region PartPreviewWidget
 			if (UserSettings.Instance.IsTouchScreen)
 			{
 				sideBarButtonWidth = 180;
@@ -265,9 +275,9 @@ namespace MatterHackers.MatterControl
 				FixedWidth = sideBarButtonWidth,
 			});
 
-			#endregion
+#endregion
 
-			#region ImageConverter
+#region ImageConverter
 			imageConverterButtonFactory = new TextImageButtonFactory(new ButtonFactoryOptions(commonOptions)
 			{
 				FixedWidth = 185,
@@ -322,7 +332,7 @@ namespace MatterHackers.MatterControl
 				NormalFillColor = new RGBA_Bytes(180, 180, 180),
 			});
 
-			#endregion
+#endregion
 
 			this.LinkButtonFactory = new LinkButtonFactory()
 			{
