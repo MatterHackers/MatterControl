@@ -27,15 +27,13 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System.IO;
+using System.Linq;
 using MatterHackers.Agg.Font;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.DataConverters3D;
-using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
-using System.IO;
-using System.Linq;
-using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl.Plugins.TextCreator
 {

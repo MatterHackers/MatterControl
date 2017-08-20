@@ -1,8 +1,4 @@
-﻿using MatterHackers.Agg.PlatformAbstract;
-using MatterHackers.Agg.UI.Tests;
-using MatterHackers.GuiAutomation;
-using MatterHackers.MatterControl;
-#if !__ANDROID__
+﻿#if !__ANDROID__
 using MatterHackers.MatterControl.Tests.Automation;
 #endif
 using NUnit.Framework;
@@ -12,7 +8,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Xml.Linq;
 using System.Threading.Tasks;
 using System.Threading;

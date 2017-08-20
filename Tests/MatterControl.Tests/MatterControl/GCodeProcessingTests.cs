@@ -29,16 +29,10 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.PlatformAbstract;
-using MatterHackers.GCodeVisualizer;
-using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
+using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.Tests.Automation;
-using MatterHackers.VectorMath;
 using NUnit.Framework;
-using System.Collections.Generic;
-using System.IO;
-using System;
-using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterControl.Tests.MatterControl
 {

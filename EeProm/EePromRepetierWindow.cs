@@ -28,12 +28,12 @@ either expressed or implied, of the FreeBSD Project.
 */
 //#define SIMULATE_CONNECTION
 
+using System;
+using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
-using System;
-using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl.EeProm
 {

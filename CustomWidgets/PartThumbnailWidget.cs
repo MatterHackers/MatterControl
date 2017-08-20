@@ -27,29 +27,20 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.IO;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
+using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
+using MatterHackers.DataConverters3D;
+using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.MatterControl.PrintLibrary;
 using MatterHackers.MatterControl.PrintQueue;
-using MatterHackers.PolygonMesh;
-using MatterHackers.PolygonMesh.Processors;
-using MatterHackers.RayTracer;
 using MatterHackers.VectorMath;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
-using MatterHackers.Localizations;
-using MatterHackers.Agg.ImageProcessing;
-using MatterHackers.DataConverters3D;
-using MatterHackers.ImageProcessing;
-using MatterHackers.MatterControl.Library;
-using MatterHackers.Agg.Font;
 
 namespace MatterHackers.MatterControl
 {

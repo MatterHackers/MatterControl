@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.PlatformAbstract;
@@ -40,7 +41,6 @@ using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrinterControls;
 using MatterHackers.MatterControl.SlicerConfiguration;
-using System.Linq;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl

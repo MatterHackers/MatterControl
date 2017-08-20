@@ -27,19 +27,16 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg.UI;
-using MatterHackers.DataConverters3D;
-using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.PrintQueue;
-using MatterHackers.PolygonMesh.Processors;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using System.Collections;
+using MatterHackers.Agg.UI;
+using MatterHackers.DataConverters3D;
+using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.Library;
+using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl
 {

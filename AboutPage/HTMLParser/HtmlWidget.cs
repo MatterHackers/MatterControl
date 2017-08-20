@@ -27,6 +27,9 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
 using MatterHackers.Agg.Image;
@@ -34,15 +37,7 @@ using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ContactForm;
-using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.HtmlParsing;
-using MatterHackers.MatterControl.PrintLibrary;
-using MatterHackers.MatterControl.PrintQueue;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Net;
-using System.Text.RegularExpressions;
 
 namespace MatterHackers.MatterControl
 {
