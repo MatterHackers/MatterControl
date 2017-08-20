@@ -46,9 +46,6 @@ namespace MatterHackers.MatterControl
 	public class ExportPrintItemPage : WizardPage
 	{
 		private CheckBox showInFolderAfterSave;
-		private string gcodePathAndFilenameToSave;
-		private bool partIsGCode = false;
-		private string documentsPath;
 
 		private EventHandler unregisterEvents;
 
@@ -57,10 +54,9 @@ namespace MatterHackers.MatterControl
 		private IEnumerable<ILibraryItem> libraryItems;
 
 		public ExportPrintItemPage(IEnumerable<ILibraryItem> libraryItems)
-			: base(unlocalizedTextForTitle: "File export options:")
+			: base(unlocalizedTextForTitle: "Export selection to:")
 		{
 			this.libraryItems = libraryItems;
-			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 			this.Name = "Export Item Window";
 
 			CreateWindowContent();
@@ -73,8 +69,11 @@ namespace MatterHackers.MatterControl
 		{
 			var commonMargin = new BorderDouble(4, 2);
 
+			bool isFirstItem = true;
+				
+
 			// GCode export
-			bool showExportGCodeButton = ActiveSliceSettings.Instance.PrinterSelected || partIsGCode;
+			bool showExportGCodeButton = ActiveSliceSettings.Instance.PrinterSelected;
 			if (showExportGCodeButton)
 			{
 				exportPluginButtons = new Dictionary<RadioButton, IExportPlugin>();
@@ -89,6 +88,12 @@ namespace MatterHackers.MatterControl
 						Cursor = Cursors.Hand
 					};
 					contentRow.AddChild(pluginButton);
+
+					if (isFirstItem)
+					{
+						pluginButton.Checked = true;
+						isFirstItem = false;
+					}
 
 					var optionPanel = plugin.GetOptionsPanel();
 					if (optionPanel != null)
