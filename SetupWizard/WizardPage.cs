@@ -14,7 +14,7 @@ namespace MatterHackers.MatterControl
 		protected WrappedTextWidget headerLabel;
 		protected Button cancelButton;
 
-		protected TextImageButtonFactory textImageButtonFactory { get; } = ApplicationController.Instance.Theme.ButtonFactory;
+		protected TextImageButtonFactory textImageButtonFactory { get; } = ApplicationController.Instance.Theme.WizardButtons;
 		protected TextImageButtonFactory whiteImageButtonFactory { get; } = ApplicationController.Instance.Theme.WhiteButtonFactory;
 		protected LinkButtonFactory linkButtonFactory = ApplicationController.Instance.Theme.LinkButtonFactory;
 
