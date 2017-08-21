@@ -11,6 +11,7 @@ using System.Reflection;
 using System.Xml.Linq;
 using System.Threading.Tasks;
 using System.Threading;
+using MatterHackers.MatterControl;
 
 namespace MatterControl.Tests
 {
