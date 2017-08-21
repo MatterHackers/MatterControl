@@ -4426,3 +4426,9 @@ Translated:STL File
 English:AMF File
 Translated:AMF File
 
+English:Checks before each print that the layer height is greater than the nozzle diameter (important for filament adhesion)
+Translated:Checks before each print that the layer height is greater than the nozzle diameter (important for filament adhesion)
+
+English:Validate Layer Height
+Translated:Validate Layer Height
+

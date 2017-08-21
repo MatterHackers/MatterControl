@@ -88,6 +88,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			"include_firmware_updater",
 			"layer_to_pause",
 			SettingsKey.show_reset_connection,
+			SettingsKey.validate_layer_height,
 			SettingsKey.make,
 			SettingsKey.model,
 			SettingsKey.enable_network_printing,
