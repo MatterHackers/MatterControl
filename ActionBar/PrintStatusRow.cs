@@ -35,7 +35,6 @@ using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 

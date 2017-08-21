@@ -27,22 +27,20 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg;
-using MatterHackers.Agg.PlatformAbstract;
-using MatterHackers.Agg.UI;
-using MatterHackers.Localizations;
-#if !__ANDROID__
-using MatterHackers.MatterControl.AboutPage;
-#endif
-using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.SettingsManagement;
-using MatterHackers.MatterControl.VersionManagement;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Threading;
+using MatterHackers.Agg;
+using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
+using MatterHackers.MatterControl.AboutPage;
+using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.SettingsManagement;
+using MatterHackers.MatterControl.VersionManagement;
 
 namespace MatterHackers.MatterControl
 {

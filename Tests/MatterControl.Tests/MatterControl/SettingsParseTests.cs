@@ -1,19 +1,11 @@
-﻿using MatterHackers.MatterControl;
-using NUnit.Framework;
-using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Globalization;
-using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.Agg.PlatformAbstract;
+﻿using System.Collections.Generic;
 using MatterHackers.Agg;
-using MatterHackers.MatterControl.Tests.Automation;
+using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
+using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.MatterControl.Tests.Automation;
 using MatterHackers.VectorMath;
+using NUnit.Framework;
 
 namespace MatterControl.Tests.MatterControl
 {

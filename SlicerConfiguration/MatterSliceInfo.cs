@@ -1,7 +1,7 @@
-﻿using MatterHackers.Agg.PlatformAbstract;
-using MatterHackers.MatterControl.DataStorage;
+﻿using System;
 using System.IO;
-using System;
+using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.MatterControl.DataStorage;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {

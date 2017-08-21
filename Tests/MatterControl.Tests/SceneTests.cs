@@ -38,7 +38,6 @@ using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.Tests.Automation;
 using MatterHackers.MeshVisualizer;
-using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 using NUnit.Framework;
 

@@ -41,7 +41,6 @@ namespace MatterHackers.MatterControl
 	using MatterHackers.MatterControl.Library;
 	using MatterHackers.MatterControl.PrinterCommunication;
 	using MatterHackers.PolygonMesh;
-	using MatterHackers.PolygonMesh.Processors;
 	using MatterHackers.RayTracer;
 	using MatterHackers.VectorMath;
 

@@ -30,7 +30,6 @@ either expressed or implied, of the FreeBSD Project.
 using System.IO;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
-using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.Library;
