@@ -165,8 +165,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
 		{
-			if (UnderMouseState == UnderMouseState.UnderMouseNotFirst
-				|| UnderMouseState == UnderMouseState.FirstUnderMouse)
+			if (mouseEvent.Button == MouseButtons.Left
+				&& (UnderMouseState == UnderMouseState.UnderMouseNotFirst
+				|| UnderMouseState == UnderMouseState.FirstUnderMouse))
 			{
 				numberEdit.Visible = true;
 				numberDisplay.Visible = false;
