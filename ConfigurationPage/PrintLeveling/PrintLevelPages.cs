@@ -90,13 +90,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public override void PageIsBecomingActive()
 		{
-			startingTemp = PrinterConnection.Instance.GetActualExtruderTemperature(0);
+			startingTemp = PrinterConnection.Instance.ActualBedTemperature;
 			UiThread.RunOnIdle(ShowTempChangeProgress);
 
 			// start heating the bed and show our progress
 			PrinterConnection.Instance.TargetBedTemperature = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.bed_temperature);
 
-			// hook our parent so we can turn off the extruder when we are done with leveling
+			// hook our parent so we can turn off the bed when we are done with leveling
 			Parent.Closed += (s, e) =>
 			{
 				// Make sure when the wizard closes we turn off the bed heating

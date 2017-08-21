@@ -141,8 +141,11 @@ namespace MatterHackers.MeshVisualizer
 
 		public virtual void OnMouseDown(MouseEvent3DArgs mouseEvent3D)
 		{
-			MouseDownOnControl = true;
-			InteractionContext.GuiSurface.Invalidate();
+			if (mouseEvent3D.MouseEvent2D.Button == MouseButtons.Left)
+			{
+				MouseDownOnControl = true;
+				InteractionContext.GuiSurface.Invalidate();
+			}
 		}
 
 		public virtual void OnMouseMove(MouseEvent3DArgs mouseEvent3D)

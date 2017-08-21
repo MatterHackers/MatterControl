@@ -42,6 +42,7 @@
 		"nrefresh",
 		"nprinter",
 		"STL",
+		"AMF",
 		"Marlin",
 		"EEPROM",
 		"per mm",

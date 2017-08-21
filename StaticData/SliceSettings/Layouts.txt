@@ -319,6 +319,7 @@ Advanced
         z_homes_to_max
         heat_extruder_before_homing
         extruders_share_temperature
+        validate_layer_height
       Firmware
         gcode_flavor
         use_relative_e_distances
