@@ -151,10 +151,6 @@
       <Project>{657DBC6D-C3EA-4398-A3FA-DDB73C14F71B}</Project>
       <Name>Agg</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Submodules\agg-sharp\PlatformAbstract\PlatformAbstract.csproj">
-      <Project>{3E4AABA8-D85F-4922-88C6-5C1B2D2308FB}</Project>
-      <Name>PlatformAbstract</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

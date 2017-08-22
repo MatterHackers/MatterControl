@@ -28,7 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ActionBar;
@@ -141,7 +141,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (OemSettings.Instance.ShowShopButton)
 			{
-				var shopButton = theme.ButtonFactory.Generate("Buy Materials".Localize(), StaticData.Instance.LoadIcon("icon_shopping_cart_32x32.png", 24, 24));
+				var shopButton = theme.ButtonFactory.Generate("Buy Materials".Localize(), AggContext.StaticData.LoadIcon("icon_shopping_cart_32x32.png", 24, 24));
 				shopButton.ToolTipText = "Shop online for printing materials".Localize();
 				shopButton.Name = "Buy Materials Button";
 				shopButton.HAnchor = HAnchor.Left;

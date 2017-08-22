@@ -33,7 +33,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.Library
@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl.Library
 			this.ChildContainers = new List<ILibraryContainerLink>();
 			this.Items = new List<ILibraryItem>();
 #if !__ANDROID__
-			if (OsInformation.OperatingSystem == OSType.Windows)
+			if (AggContext.OperatingSystem == OSType.Windows)
 			{
 				directoryWatcher = new FileSystemWatcher(path);
 

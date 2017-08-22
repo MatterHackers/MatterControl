@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
@@ -361,7 +362,7 @@ namespace MatterHackers.MatterControl
 			var importButton = textImageButtonFactory.Generate("Choose File".Localize());
 			importButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
-				FileDialog.OpenFileDialog(
+				AggContext.FileDialogs.OpenFileDialog(
 						new OpenFileDialogParams("settings files|*.ini;*.printer;*.slice"),
 						(dialogParams) =>
 						{

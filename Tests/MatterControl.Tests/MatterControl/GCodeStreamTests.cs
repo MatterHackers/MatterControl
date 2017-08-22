@@ -30,7 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System.Collections.Generic;
 using System.Diagnostics;
 using MatterHackers.Agg;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.GCodeVisualizer;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.MatterControl.SlicerConfiguration;
@@ -72,7 +72,7 @@ namespace MatterControl.Tests.MatterControl
 				null,
 			};
 
-			StaticData.Instance = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			MaxLengthStream maxLengthStream = new MaxLengthStream(new TestGCodeStream(lines), 6);
@@ -176,7 +176,7 @@ namespace MatterControl.Tests.MatterControl
 			 null,
 			};
 
-			StaticData.Instance = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			List<GCodeStream> streamList;
@@ -232,7 +232,7 @@ namespace MatterControl.Tests.MatterControl
 				null,
 			};
 
-			StaticData.Instance = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			List<GCodeStream> streamList;
@@ -321,7 +321,7 @@ namespace MatterControl.Tests.MatterControl
 				null,
 			};
 
-			StaticData.Instance = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			List<GCodeStream> streamList;
@@ -395,7 +395,7 @@ namespace MatterControl.Tests.MatterControl
 				null,
 			};
 
-			StaticData.Instance = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			// this is the pause and resume from the Eris
@@ -466,7 +466,7 @@ namespace MatterControl.Tests.MatterControl
 				null,
 			};
 
-			StaticData.Instance = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			PrinterSettings settings = ActiveSliceSettings.Instance;
@@ -494,7 +494,7 @@ namespace MatterControl.Tests.MatterControl
 		public void FeedRateRatioChangesFeedRate()
 		{
 			string line;
-			StaticData.Instance = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			Assert.AreEqual(1, FeedRateMultiplyerStream.FeedRateRatio, "FeedRateRatio should default to 1");
@@ -515,7 +515,7 @@ namespace MatterControl.Tests.MatterControl
 		public void ExtrusionRatioChangesExtrusionAmount()
 		{
 			string line;
-			StaticData.Instance = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			Assert.AreEqual(1, ExtrusionMultiplyerStream.ExtrusionRatio, "ExtrusionRatio should default to 1");

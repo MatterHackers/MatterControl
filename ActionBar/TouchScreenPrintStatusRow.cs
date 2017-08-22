@@ -31,11 +31,10 @@ using System;
 using System.IO;
 using MatterHackers.Agg;
 using MatterHackers.Agg.ImageProcessing;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
@@ -139,7 +138,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			ImageButtonFactory factory = new ImageButtonFactory();
 			factory.InvertImageColor = false;
 
-			setupButton = factory.Generate(StaticData.Instance.LoadIcon("icon_gear_dot.png").InvertLightness(), null);
+			setupButton = factory.Generate(AggContext.StaticData.LoadIcon("icon_gear_dot.png").InvertLightness(), null);
 			setupButton.Margin = new BorderDouble(left: 6);
 			setupButton.VAnchor = VAnchor.Center;
 			setupButton.Click += (sender, e) =>

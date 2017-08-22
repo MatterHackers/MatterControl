@@ -36,7 +36,7 @@ namespace MatterHackers.MatterControl
 	using System.Threading;
 	using MatterHackers.Agg;
 	using MatterHackers.Agg.Image;
-	using MatterHackers.Agg.PlatformAbstract;
+	using MatterHackers.Agg.Platform;
 	using MatterHackers.DataConverters3D;
 	using MatterHackers.MatterControl.Library;
 	using MatterHackers.MatterControl.PrinterCommunication;
@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl
 		private const int tooBigDesktop = 250000000;
 
 		private static readonly bool Is32Bit = IntPtr.Size == 4;
-		private static readonly int MaxFileSize = (OsInformation.OperatingSystem == OSType.Android) ? tooBigAndroid : tooBigDesktop;
+		private static readonly int MaxFileSize = (AggContext.OperatingSystem == OSType.Android) ? tooBigAndroid : tooBigDesktop;
 		private static readonly Point2D BigRenderSize = new Point2D(460, 460);
 
 		public ContentResult CreateItem(ILibraryItem item, Action<double, string> progressReporter)
@@ -147,7 +147,7 @@ namespace MatterHackers.MatterControl
 				if (thumbnail != null)
 				{
 					string cachePath = ApplicationController.Instance.CachePath(item);
-					ImageIO.SaveImageData(cachePath, thumbnail);
+					AggContext.ImageIO.SaveImageData(cachePath, thumbnail);
 
 					imageCallback(thumbnail);
 				}
@@ -175,7 +175,7 @@ namespace MatterHackers.MatterControl
 
 	/*
  		// stlHashCode = itemWrapper.FileHashCode.ToString();
-		// defaultImage = StaticData.Instance.LoadIcon("part_icon_transparent_100x100.png")  --- for the BigRender PrintingWindow case
+		// defaultImage = AggContext.StaticData.LoadIcon("part_icon_transparent_100x100.png")  --- for the BigRender PrintingWindow case
 	 */
 
 	// TODO - How to handle g-code

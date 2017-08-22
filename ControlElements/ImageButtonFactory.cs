@@ -30,7 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.ImageProcessing;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.Localizations;
@@ -50,7 +50,7 @@ namespace MatterHackers.MatterControl
 		{
 			string on = "On";
 			string off = "Off";
-			if (StaticData.Instance != null)
+			if (AggContext.StaticData != null)
 			{
 				on = on.Localize();
 				off = off.Localize();
@@ -83,10 +83,10 @@ namespace MatterHackers.MatterControl
 				disabledImageName = normalImageName;
 			}
 
-			ImageBuffer normalImage = StaticData.Instance.LoadIcon(normalImageName);
-			ImageBuffer pressedImage = StaticData.Instance.LoadIcon(pressedImageName);
-			ImageBuffer hoverImage = StaticData.Instance.LoadIcon(hoverImageName);
-			ImageBuffer disabledImage = StaticData.Instance.LoadIcon(disabledImageName);
+			ImageBuffer normalImage = AggContext.StaticData.LoadIcon(normalImageName);
+			ImageBuffer pressedImage = AggContext.StaticData.LoadIcon(pressedImageName);
+			ImageBuffer hoverImage = AggContext.StaticData.LoadIcon(hoverImageName);
+			ImageBuffer disabledImage = AggContext.StaticData.LoadIcon(disabledImageName);
 
 			return Generate(normalImage, pressedImage, hoverImage, disabledImage);
 		}

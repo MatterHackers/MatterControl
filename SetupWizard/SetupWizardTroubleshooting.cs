@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 
 using MatterHackers.Agg;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
@@ -19,7 +19,7 @@ using Android.Content;
 #endif
 
 namespace MatterHackers.MatterControl
-{   
+{
 	public class SetupWizardTroubleshooting : WizardPage
 	{
 		private Button nextButton;
@@ -277,7 +277,7 @@ namespace MatterHackers.MatterControl
 
 			private void AddSuccessIcon()
 			{
-				base.AddChild (new ImageWidget (StaticData.Instance.LoadImage (Path.Combine ("Icons", "426.png"))) {
+				base.AddChild (new ImageWidget (AggContext.StaticData.LoadImage (Path.Combine ("Icons", "426.png"))) {
 					VAnchor = VAnchor.Center
 				});
 			}

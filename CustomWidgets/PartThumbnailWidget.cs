@@ -32,7 +32,7 @@ using System.IO;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.ImageProcessing;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl
 	public class PartThumbnailWidget : ClickWidget
 	{
 		private static readonly bool Is32Bit = IntPtr.Size == 4;
-		private static readonly int MaxFileSize = (OsInformation.OperatingSystem == OSType.Android) ? tooBigAndroid : tooBigDesktop;
+		private static readonly int MaxFileSize = (AggContext.OperatingSystem == OSType.Android) ? tooBigAndroid : tooBigDesktop;
 		private static readonly Point2D BigRenderSize = new Point2D(460, 460);
 
 		internal static readonly string ThumbnailsPath = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "thumbnails");
@@ -126,9 +126,9 @@ namespace MatterHackers.MatterControl
 			// set background images
 			if (noThumbnailImage.Width == 0)
 			{
-				StaticData.Instance.LoadIcon(noThumbnailFileName, noThumbnailImage);
+				AggContext.StaticData.LoadIcon(noThumbnailFileName, noThumbnailImage);
 				noThumbnailImage.InvertLightness();
-				StaticData.Instance.LoadIcon(buildingThumbnailFileName, buildingThumbnailImage);
+				AggContext.StaticData.LoadIcon(buildingThumbnailFileName, buildingThumbnailImage);
 				buildingThumbnailImage.InvertLightness();
 			}
 			this.thumbnailImage = new ImageBuffer(buildingThumbnailImage);
@@ -271,7 +271,7 @@ namespace MatterHackers.MatterControl
 					{
 						estimatedMemoryUse = MeshFileIo.GetEstimatedMemoryUse(fileLocation);
 
-						if (OsInformation.OperatingSystem == OSType.Android)
+						if (AggContext.OperatingSystem == OSType.Android)
 						{
 							if (estimatedMemoryUse > renderOrthoAndroid)
 							{
@@ -302,7 +302,7 @@ namespace MatterHackers.MatterControl
 				if (File.Exists(imageFileName))
 				{
 					var tempImage = new ImageBuffer(BigRenderSize.x, BigRenderSize.y);
-					if (ImageIO.LoadImageData(imageFileName, tempImage))
+					if (AggContext.ImageIO.LoadImageData(imageFileName, tempImage))
 					{
 						return tempImage;
 					}

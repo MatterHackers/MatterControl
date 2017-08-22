@@ -31,7 +31,7 @@ using System.IO;
 using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.PolygonMesh;
@@ -54,8 +54,8 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 
 		public BrailleGenerator()
 		{
-			boldTypeFace = TypeFace.LoadFrom(StaticData.Instance.ReadAllText(Path.Combine("Fonts", "LiberationMono.svg")));
-			brailTypeFace = TypeFace.LoadFrom(StaticData.Instance.ReadAllText(Path.Combine("Fonts", "Braille.svg")));
+			boldTypeFace = TypeFace.LoadFrom(AggContext.StaticData.ReadAllText(Path.Combine("Fonts", "LiberationMono.svg")));
+			brailTypeFace = TypeFace.LoadFrom(AggContext.StaticData.ReadAllText(Path.Combine("Fonts", "Braille.svg")));
 		}
 
 		public IObject3D CreateText(string brailleText, double wordSize, double wordHeight, string wordText = null)

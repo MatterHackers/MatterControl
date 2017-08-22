@@ -31,7 +31,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 
@@ -72,11 +72,11 @@ namespace MatterHackers.MatterControl.Library
 					printerFiles = calibrationPrintFileNames;
 				} */
 
-				var oemParts = StaticData.Instance.GetFiles(Path.Combine("OEMSettings", "SampleParts"));
+				var oemParts = AggContext.StaticData.GetFiles(Path.Combine("OEMSettings", "SampleParts"));
 				Items = oemParts.Select(s =>
 				{
 					// TODO: Won't work on Android - make stream based
-					return new FileSystemFileItem(StaticData.Instance.MapPath(s));
+					return new FileSystemFileItem(AggContext.StaticData.MapPath(s));
 				}).ToList<ILibraryItem>();
 
 				UiThread.RunOnIdle(this.OnReloaded);

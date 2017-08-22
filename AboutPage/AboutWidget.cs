@@ -31,7 +31,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using MatterHackers.Agg;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
@@ -63,13 +63,13 @@ namespace MatterHackers.MatterControl
 			customInfoTopToBottom.AddChild(new GuiWidget(1, 10));
 
 			string aboutHtmlFile = Path.Combine("OEMSettings", "AboutPage.html");
-			string htmlContent = StaticData.Instance.ReadAllText(aboutHtmlFile);
+			string htmlContent = AggContext.StaticData.ReadAllText(aboutHtmlFile);
 
 #if false // test
 			{
 				SystemWindow releaseNotes = new SystemWindow(640, 480);
 				string releaseNotesFile = Path.Combine("OEMSettings", "ReleaseNotes.html");
-				string releaseNotesContent = StaticData.Instance.ReadAllText(releaseNotesFile);
+				string releaseNotesContent = AggContext.StaticData.ReadAllText(releaseNotesFile);
 				HtmlWidget content = new HtmlWidget(releaseNotesContent, RGBA_Bytes.Black);
 				content.AddChild(new GuiWidget(HAnchor.AbsolutePosition, VAnchor.Stretch));
 				content.VAnchor |= VAnchor.Top;

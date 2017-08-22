@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using MatterHackers.Agg;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
@@ -89,7 +89,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 #if __ANDROID__
 					UiThread.RunOnIdle(WizardWindow.ChangeToPage<AndroidConnectDevicePage>);
 #else
-					if (OsInformation.OperatingSystem == OSType.Windows)
+					if (AggContext.OperatingSystem == OSType.Windows)
 					{
 						UiThread.RunOnIdle(WizardWindow.ChangeToPage<SetupStepInstallDriver>);
 					}

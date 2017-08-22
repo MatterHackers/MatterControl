@@ -34,7 +34,7 @@ using System.IO;
 using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PrinterCommunication;
@@ -240,7 +240,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			if (isCached)
 			{
 				ImageBuffer thumbnail = new ImageBuffer();
-				ImageIO.LoadImageData(cachePath, thumbnail);
+				AggContext.ImageIO.LoadImageData(cachePath, thumbnail);
 				thumbnail.SetRecieveBlender(new BlenderPreMultBGRA());
 				
 				return thumbnail;

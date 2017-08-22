@@ -1,5 +1,5 @@
 ﻿using MatterHackers.Agg;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
@@ -78,7 +78,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 		private void InstallDriver(string fileName)
 		{
-			switch (OsInformation.OperatingSystem)
+			switch (AggContext.OperatingSystem)
 			{
 				case OSType.Windows:
 					if (File.Exists(fileName))
@@ -180,7 +180,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				string[] fileNames = infFileNames.Split(',');
 				foreach (string fileName in fileNames)
 				{
-					switch (OsInformation.OperatingSystem)
+					switch (AggContext.OperatingSystem)
 					{
 						case OSType.Windows:
 
@@ -192,7 +192,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 							string infPath = Path.Combine("Drivers", pathForInf);
 							string infPathAndFileToInstall = Path.Combine(infPath, fileName);
 
-							if (StaticData.Instance.FileExists(infPathAndFileToInstall))
+							if (AggContext.StaticData.FileExists(infPathAndFileToInstall))
 							{
 								// Ensure the output directory exists
 								string destTempPath = Path.GetFullPath(Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "inf", pathForInf));
@@ -204,10 +204,10 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 								string destTempInf = Path.GetFullPath(Path.Combine(destTempPath, fileName));
 
 								// Sync each file from StaticData to the location on disk for serial drivers
-								foreach (string file in StaticData.Instance.GetFiles(infPath))
+								foreach (string file in AggContext.StaticData.GetFiles(infPath))
 								{
 									using (Stream outstream = File.OpenWrite(Path.Combine(destTempPath, Path.GetFileName(file))))
-									using (Stream instream = StaticData.Instance.OpenSteam(file))
+									using (Stream instream = AggContext.StaticData.OpenSteam(file))
 									{
 										instream.CopyTo(outstream);
 									}

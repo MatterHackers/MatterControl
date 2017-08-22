@@ -31,7 +31,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 
 namespace MatterHackers.MatterControl.Library
 {
@@ -85,7 +85,7 @@ namespace MatterHackers.MatterControl.Library
 				/*
 				new DynamicContainerLink(
 					registeredCreators.Name,
-					StaticData.Instance.LoadIcon("icon_creator.png"),
+					AggContext.StaticData.LoadIcon("icon_creator.png"),
 					() => registeredCreators), */
 			};
 

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using MatterHackers.Agg;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.Tests.Automation;
 using NUnit.Framework;
@@ -18,7 +18,7 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public void CheckImportPrinterSettingsToPrinter()
 		{
-			StaticData.Instance = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			var printerSettings = new PrinterSettings();

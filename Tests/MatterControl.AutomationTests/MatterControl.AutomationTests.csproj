@@ -106,10 +106,6 @@
       <Project>{74f6bb6c-9d02-4512-a59a-21940e35c532}</Project>
       <Name>Gui</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Submodules\agg-sharp\PlatformAbstract\PlatformAbstract.csproj">
-      <Project>{3e4aaba8-d85f-4922-88c6-5c1b2d2308fb}</Project>
-      <Name>PlatformAbstract</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Submodules\agg-sharp\PlatformWin32\PlatformWin32.csproj">
       <Project>{670bddff-927b-425d-9dd1-22acb14356eb}</Project>
       <Name>PlatformWin32</Name>

@@ -4,7 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using MatterHackers.Agg;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.Tests.Automation;
 using NUnit.Framework;
@@ -19,7 +19,7 @@ namespace MatterControl.Tests.MatterControl
 		{
 			string staticDataPath = TestContext.CurrentContext.ResolveProjectPath(5, "MatterControl", "StaticData");
 
-			StaticData.Instance = new FileSystemStaticData(staticDataPath);
+			AggContext.StaticData = new FileSystemStaticData(staticDataPath);
 
 			var profilesDirectory = new DirectoryInfo(Path.Combine(staticDataPath, "Profiles"));
 

@@ -36,7 +36,7 @@ using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
 using MatterHackers.Agg.Image;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.MatterControl.DataStorage;
@@ -290,7 +290,8 @@ namespace MatterHackers.MatterControl
 			{
 				Directory.CreateDirectory(folderToSavePrintsTo);
 			}
-			ImageIO.SaveImageData(jpegFileName, plateInventoryImage);
+
+			AggContext.ImageIO.SaveImageData(jpegFileName, plateInventoryImage);
 
 			XGraphics gfx = XGraphics.FromPdfPage(pdfPage);
 			XImage jpegImage = XImage.FromFile(jpegFileName);
@@ -308,9 +309,9 @@ namespace MatterHackers.MatterControl
 
 			// TODO: Application should not save data back to StaticDataPath - use application data dir instead
 			string logoPathAndFile = "PartSheetLogo.png";
-			if (StaticData.Instance.FileExists(logoPathAndFile))
+			if (AggContext.StaticData.FileExists(logoPathAndFile))
 			{
-				ImageBuffer logoImage = StaticData.Instance.LoadImage(logoPathAndFile);
+				ImageBuffer logoImage = AggContext.StaticData.LoadImage(logoPathAndFile);
 				currentlyPrintingHeightPixels -= logoImage.Height;
 				plateGraphics.Render(logoImage, (plateInventoryImage.Width - logoImage.Width) / 2, currentlyPrintingHeightPixels);
 			}

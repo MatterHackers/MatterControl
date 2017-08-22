@@ -35,7 +35,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
@@ -350,8 +350,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 						var reporter = new SliceMessageReporter(itemToSlice);
 
-						if (OsInformation.OperatingSystem == OSType.Android
-							|| OsInformation.OperatingSystem == OSType.Mac
+						if (AggContext.OperatingSystem == OSType.Android
+							|| AggContext.OperatingSystem == OSType.Mac
 							|| runInProcess)
 						{
 
@@ -432,8 +432,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						commandArgs += $" \"{filename}\"";
 					}
 
-					if (OsInformation.OperatingSystem == OSType.Android
-						|| OsInformation.OperatingSystem == OSType.Mac
+					if (AggContext.OperatingSystem == OSType.Android
+						|| AggContext.OperatingSystem == OSType.Mac
 						|| runInProcess)
 					{
 						MatterSlice.MatterSlice.ProcessArgs(commandArgs);

@@ -30,7 +30,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using MatterHackers.Agg;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ActionBar;
@@ -197,7 +197,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				new NamedAction()
 				{
-					Icon = StaticData.Instance.LoadIcon("memory_16x16.png", 16, 16),
+					Icon = AggContext.StaticData.LoadIcon("memory_16x16.png", 16, 16),
 					Title = "Configure EEProm".Localize(),
 					Action = configureEePromButton_Click
 				},

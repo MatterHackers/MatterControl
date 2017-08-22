@@ -30,7 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System.IO;
 using System.Linq;
 using MatterHackers.Agg.Font;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.DataConverters3D;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 
 		public TextGenerator()
 		{
-			boldTypeFace = TypeFace.LoadFrom(StaticData.Instance.ReadAllText(Path.Combine("Fonts", "LiberationSans-Bold.svg")));
+			boldTypeFace = TypeFace.LoadFrom(AggContext.StaticData.ReadAllText(Path.Combine("Fonts", "LiberationSans-Bold.svg")));
 		}
 
 		public IObject3D CreateText(string wordText, double wordSize, double wordHeight, double spacing, bool createUnderline)

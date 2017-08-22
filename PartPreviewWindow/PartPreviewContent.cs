@@ -116,7 +116,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			//rightPanelArea.AddChild(
 			//	new ImageWidget(
-			//		StaticData.Instance.LoadImage(Path.Combine("Images", "minimize.png")))
+			//		AggContext.StaticData.LoadImage(Path.Combine("Images", "minimize.png")))
 			//	{
 			//		VAnchor = VAnchor.Top,
 			//		DebugShowBounds  = true

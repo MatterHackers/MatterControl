@@ -28,7 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Threading;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 #if !__ANDROID__
 using MatterHackers.MatterControl.Tests.Automation;
 #endif
@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl.Slicing.Tests
 		public void SliceLayersGeneratingCorrectSegments()
 		{
 			// TODO: Make tests work on Mac as well as Windows
-			if (OsInformation.OperatingSystem == OSType.Mac)
+			if (AggContext.OperatingSystem == OSType.Mac)
 			{
 				return;
 			}

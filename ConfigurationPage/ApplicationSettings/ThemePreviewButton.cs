@@ -29,7 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.ImageProcessing;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.ConfigurationPage
@@ -115,7 +115,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			if (isActive)
 			{
-				this.AddChild(new ImageWidget(StaticData.Instance.LoadIcon("426.png", 16, 16).InvertLightness())
+				this.AddChild(new ImageWidget(AggContext.StaticData.LoadIcon("426.png", 16, 16).InvertLightness())
 				{
 					HAnchor = HAnchor.Absolute,
 					VAnchor = VAnchor.Absolute,

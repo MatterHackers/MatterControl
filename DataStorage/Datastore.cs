@@ -31,7 +31,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.DataStorage
@@ -252,7 +252,7 @@ namespace MatterHackers.MatterControl.DataStorage
 				ApplicationDataStorage.Instance.FirstRun = true;
 			}
 
-			OSType osType = OsInformation.OperatingSystem;
+			OSType osType = AggContext.OperatingSystem;
 			switch (osType)
 			{
 				case OSType.Windows:

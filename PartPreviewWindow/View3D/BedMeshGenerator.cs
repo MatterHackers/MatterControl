@@ -31,7 +31,7 @@ using System;
 using System.IO;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl;
@@ -248,11 +248,11 @@ namespace MatterHackers.MatterControl
 		{
 			// Add an oem/watermark image to the bedplate grid
 			string imagePathAndFile = Path.Combine("OEMSettings", "bedimage.png");
-			if (StaticData.Instance.FileExists(imagePathAndFile))
+			if (AggContext.StaticData.FileExists(imagePathAndFile))
 			{
 				if (watermarkImage == null)
 				{
-					watermarkImage = StaticData.Instance.LoadImage(imagePathAndFile);
+					watermarkImage = AggContext.StaticData.LoadImage(imagePathAndFile);
 				}
 
 				Graphics2D bedGraphics = bedImage.NewGraphics2D();

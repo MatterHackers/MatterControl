@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using MatterHackers.Agg;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.Tests.Automation;
@@ -15,7 +15,7 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public void Check3PointLevelingPositions()
 		{
-			StaticData.Instance = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			{
@@ -83,7 +83,7 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public void CheckIfShouldBeShownParseTests()
 		{
-			StaticData.Instance = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			{
@@ -162,7 +162,7 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public void SupportInterfaceMaterialAssignedToExtruderOne()
 		{
-			StaticData.Instance = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 
 			// first_layer_extrusion_width
 			{

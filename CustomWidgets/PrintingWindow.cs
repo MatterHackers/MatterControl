@@ -35,7 +35,7 @@ using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.ImageProcessing;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.ImageProcessing;
@@ -235,7 +235,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor,
 			};
 
-			var mcLogo = StaticData.Instance.LoadImage(Path.Combine("Images", "Screensaver", "logo.png"));
+			var mcLogo = AggContext.StaticData.LoadImage(Path.Combine("Images", "Screensaver", "logo.png"));
 			if (!ActiveTheme.Instance.IsDarkTheme)
 			{
 				mcLogo.InvertLightness();
@@ -291,7 +291,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			actionBar.AddChild(CreateVerticalLine());
 
 			// put in the reset button
-			var resetButton = CreateButton("Reset".Localize().ToUpper(), smallScreen, true, StaticData.Instance.LoadIcon("e_stop4.png", 32, 32));
+			var resetButton = CreateButton("Reset".Localize().ToUpper(), smallScreen, true, AggContext.StaticData.LoadIcon("e_stop4.png", 32, 32));
 
 			resetButton.Visible = ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.show_reset_connection);
 			resetButton.Click += (s, e) =>
@@ -560,7 +560,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 				if (imageBuffer == null)
 				{
-					imageBuffer = StaticData.Instance.LoadImage(Path.Combine("Images", "Screensaver", "part_thumbnail.png"));
+					imageBuffer = AggContext.StaticData.LoadImage(Path.Combine("Images", "Screensaver", "part_thumbnail.png"));
 				}
 
 				WhiteToColor.DoWhiteToColor(imageBuffer, ActiveTheme.Instance.PrimaryAccentColor);
@@ -606,7 +606,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				};
 				progressContainer.AddChild(timeContainer);
 
-				var timeImage = StaticData.Instance.LoadImage(Path.Combine("Images", "Screensaver", "time.png"));
+				var timeImage = AggContext.StaticData.LoadImage(Path.Combine("Images", "Screensaver", "time.png"));
 				if (!ActiveTheme.Instance.IsDarkTheme)
 				{
 					timeImage.InvertLightness();

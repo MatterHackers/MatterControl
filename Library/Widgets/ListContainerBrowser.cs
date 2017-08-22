@@ -28,7 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			breadCrumbWidget = new FolderBreadCrumbWidget(libraryView);
 			navBar.AddChild(breadCrumbWidget);
 
-			var icon = StaticData.Instance.LoadIcon("icon_search_24x24.png", 16, 16);
+			var icon = AggContext.StaticData.LoadIcon("icon_search_24x24.png", 16, 16);
 
 			var buttonFactory = ApplicationController.Instance.Theme.SmallMarginButtonFactory;
 

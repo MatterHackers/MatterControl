@@ -230,6 +230,7 @@
     <Compile Include="Library\Widgets\ListView\ListViewItem.cs" />
     <Compile Include="PrinterCommunication\Io\MacroProcessingStream.cs" />
     <Compile Include="PrinterCommunication\Io\RequestTemperaturesStream.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="SetupWizard\CopyGuestProfilesToUser.cs" />
     <Compile Include="Library\Widgets\SystemWindows\RenameItemWindow.cs" />
     <Compile Include="LocalizedString.cs" />
@@ -470,6 +471,9 @@
     <Content Include="StaticData\SliceSettings\Layouts.txt" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="config.json">
+	<LogicalName>config.json</LogicalName>
+	</EmbeddedResource>
     <None Include="App.config" />
     <None Include="Library\LibraryProviders.cd" />
     <None Include="Library\Widgets\ListView\ListView.cd" />
@@ -526,10 +530,6 @@
       <Project>{1a901129-c885-425f-8d4b-86698f98a2b4}</Project>
       <Name>MeshThumbnails</Name>
     </ProjectReference>
-    <ProjectReference Include="Submodules\agg-sharp\PlatformAbstract\PlatformAbstract.csproj">
-      <Project>{3E4AABA8-D85F-4922-88C6-5C1B2D2308FB}</Project>
-      <Name>PlatformAbstract</Name>
-    </ProjectReference>
     <ProjectReference Include="Submodules\agg-sharp\RayTracer\RayTracer.csproj">
       <Project>{1E01ABE0-B494-4FE4-B0D6-540133286887}</Project>
       <Name>RayTracer</Name>
@@ -541,10 +541,6 @@
     <ProjectReference Include="Submodules\agg-sharp\SerialPortCommunication\SerialPortCommunication.csproj">
       <Project>{D3ABF72C-64C2-4E51-A119-E077210FA990}</Project>
       <Name>SerialPortCommunication</Name>
-    </ProjectReference>
-    <ProjectReference Include="Submodules\agg-sharp\WindowsFileDialogs\WindowsFileDialogs.csproj">
-      <Project>{A526DC5D-65F3-461B-805F-D3AC9665F5C9}</Project>
-      <Name>WindowsFileDialogs</Name>
     </ProjectReference>
     <ProjectReference Include="Submodules\MatterSlice\MatterSlice.csproj">
       <Project>{C46CA728-DD2F-4DD1-971A-AAA89D9DFF95}</Project>

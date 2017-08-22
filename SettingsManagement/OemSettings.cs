@@ -33,7 +33,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using Newtonsoft.Json;
 
@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl.SettingsManagement
 			{
 				if (instance == null)
 				{
-					string oemSettings = StaticData.Instance.ReadAllText(Path.Combine("OEMSettings", "Settings.json"));
+					string oemSettings = AggContext.StaticData.ReadAllText(Path.Combine("OEMSettings", "Settings.json"));
 					instance = JsonConvert.DeserializeObject<OemSettings>(oemSettings) as OemSettings;
 				}
 
@@ -152,7 +152,7 @@ namespace MatterHackers.MatterControl.SettingsManagement
 			string cachePath = ApplicationController.CacheablePath("public-profiles", "oemprofiles.json");
 
 			// Load data from cache or fall back to stale StaticData content
-			string json = File.Exists(cachePath) ? File.ReadAllText(cachePath) : StaticData.Instance.ReadAllText(Path.Combine("Profiles", "oemprofiles.json"));
+			string json = File.Exists(cachePath) ? File.ReadAllText(cachePath) : AggContext.StaticData.ReadAllText(Path.Combine("Profiles", "oemprofiles.json"));
 
 			return JsonConvert.DeserializeObject<OemProfileDictionary>(json);
 		}

@@ -31,7 +31,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MatterHackers.Agg.Image;
-using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.Library
 {

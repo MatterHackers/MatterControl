@@ -33,7 +33,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using MatterHackers.Agg.Image;
-using MatterHackers.Agg.PlatformAbstract;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 
@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl.Library.Export
 
 		public string ExtensionFilter => "";
 
-		public ImageBuffer Icon { get; } = StaticData.Instance.LoadIcon(Path.Combine("FileDialog", "folder.png"), 25, 25);
+		public ImageBuffer Icon { get; } = AggContext.StaticData.LoadIcon(Path.Combine("FileDialog", "folder.png"), 25, 25);
 
 		public bool EnabledForCurrentPart(ILibraryContentStream libraryContent)
 		{
