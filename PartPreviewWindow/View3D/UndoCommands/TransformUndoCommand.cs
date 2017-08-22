@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System.Collections.Generic;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.PolygonMesh;
@@ -36,25 +37,61 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	internal class TransformUndoCommand : IUndoRedoCommand
 	{
-		private IObject3D transformedObject;
-		private Matrix4X4 redoTransform;
-		private Matrix4X4 undoTransform;
+		internal class TransformData
+		{
+			internal IObject3D transformedObject;
+			internal Matrix4X4 redoTransform;
+			internal Matrix4X4 undoTransform;
+		}
+
+		private List<TransformData> transformDatas = new List<TransformData>();
 
 		public TransformUndoCommand(IObject3D transformedObject, Matrix4X4 undoTransform, Matrix4X4 redoTransform)
 		{
-			this.transformedObject = transformedObject;
-			this.undoTransform = undoTransform;
-			this.redoTransform = redoTransform;
+			if (transformedObject.ItemType == Object3DTypes.SelectionGroup)
+			{
+				// move the group transform into the items
+				foreach (var child in transformedObject.Children)
+				{
+					var itemUndo = new TransformData()
+					{
+						transformedObject = child,
+						undoTransform = child.Matrix,
+						redoTransform = child.Matrix * transformedObject.Matrix
+					};
+					this.transformDatas.Add(itemUndo);
+
+					child.Matrix = itemUndo.redoTransform;
+				}
+
+				// clear the group transform
+				transformedObject.Matrix = Matrix4X4.Identity;
+			}
+			else
+			{
+				this.transformDatas.Add(new TransformData()
+				{
+					transformedObject = transformedObject,
+					undoTransform = undoTransform,
+					redoTransform = redoTransform
+				});
+			}
 		}
 
 		public void Do()
 		{
-			transformedObject.Matrix = redoTransform;
+			foreach(var transformData in transformDatas)
+			{
+				transformData.transformedObject.Matrix = transformData.redoTransform;
+			}
 		}
 
 		public void Undo()
 		{
-			transformedObject.Matrix = undoTransform;
+			foreach (var transformData in transformDatas)
+			{
+				transformData.transformedObject.Matrix = transformData.undoTransform;
+			}
 		}
 	}
 }
