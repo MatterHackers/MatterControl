@@ -84,24 +84,6 @@ namespace MatterHackers.MatterControl
 
 		private Stopwatch totalDrawTime = new Stopwatch();
 
-		private const int RaygunMaxNotifications = 15;
-
-		private static int raygunNotificationCount = 0;
-
-		private static RaygunClient _raygunClient = GetCorrectClient();
-
-		private static RaygunClient GetCorrectClient()
-		{
-			if (AggContext.OperatingSystem == OSType.Mac)
-			{
-				return new RaygunClient("qmMBpKy3OSTJj83+tkO7BQ=="); // this is the Mac key
-			}
-			else
-			{
-				return new RaygunClient("hQIlyUUZRGPyXVXbI6l1dA=="); // this is the PC key
-			}
-		}
-
 		public static bool IsLoading { get; private set; } = true;
 
 		public static void RequestPowerShutDown()
@@ -331,23 +313,6 @@ namespace MatterHackers.MatterControl
 		}
 
 		private bool dropWasOnChild = true;
-
-		public enum ReportSeverity2 { Warning, Error }
-
-		public void ReportException(Exception e, string key = "", string value = "", ReportSeverity2 warningLevel = ReportSeverity2.Warning)
-		{
-			// Conditionally spin up error reporting if not on the Stable channel
-			string channel = UserSettings.Instance.get(UserSettingsKey.UpdateFeedType);
-			if (string.IsNullOrEmpty(channel) || channel != "release" || OemSettings.Instance.WindowTitleExtra == "Experimental")
-			{
-#if !DEBUG
-				if (raygunNotificationCount++ < RaygunMaxNotifications)
-				{
-					_raygunClient.Send(e);
-				}
-#endif
-			}
-		}
 
 		private EventHandler unregisterEvent;
 
