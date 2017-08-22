@@ -879,7 +879,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						children.Add(DragDropSource);
 					});
-					Scene.Select(DragDropSource);
+					Scene.SelectedItem = DragDropSource;
 
 					itemAddedToScene = true;
 				}
@@ -1050,7 +1050,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					Scene.ClearSelection();
 
-					foreach (var sceneItem in matchingSceneChildren)
+					foreach (var sceneItem in matchingSceneChildren.ToList())
 					{
 						Scene.AddToSelection(sceneItem);
 					}
@@ -1240,14 +1240,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						{
 							if (Scene.HasSelection)
 							{
-								if (Scene.SelectedItem.ItemType == Object3DTypes.SelectionGroup)
-								{
-									Scene.ModifyChildren(ClearSelectionApplyChanges);
-								}
-								else
-								{
-									Scene.ClearSelection();
-								}
+								Scene.ClearSelection();
 								SelectedTransformChanged?.Invoke(this, null);
 							}
 
@@ -1265,7 +1258,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								if (Scene.SelectedItem == null)
 								{
 									// No selection exists
-									Scene.Select(hitObject);
+									Scene.SelectedItem = hitObject;
 								}
 								else if ((ModifierKeys == Keys.Shift || ModifierKeys == Keys.Control)
 									&& !Scene.SelectedItem.Children.Contains(hitObject))
@@ -1278,12 +1271,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								}
 								else if (ModifierKeys != Keys.Shift)
 								{
-									Scene.ModifyChildren(children =>
-									{
-										ClearSelectionApplyChanges(children);
-									});
-
-									Scene.Select(hitObject);
+									Scene.SelectedItem = hitObject;
 								}
 
 								PartHasBeenChanged();
@@ -1324,12 +1312,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 				}
 			}
-		}
-
-		public void ClearSelectionApplyChanges(List<IObject3D> target)
-		{
-			Scene.SelectedItem.CollapseInto(target);
-			Scene.ClearSelection();
 		}
 
 		public IntersectInfo GetIntersectPosition(Vector2 screenSpacePosition)
@@ -1609,30 +1591,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				if (Scene.HasSelection)
 				{
-					var totalAABB = Scene.SelectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
-					// move the objects to the right place
-					foreach(var child in Scene.SelectedItem.Children)
-					{
-						var childAABB = child.GetAxisAlignedBoundingBox(Scene.SelectedItem.Matrix);
-						var offset = new Vector3();
-						switch (alignment)
-						{
-							case AxisAlignment.Min:
-								offset[axisIndex] = totalAABB.minXYZ[axisIndex] - childAABB.minXYZ[axisIndex];
-								break;
+					var transformDatas = GetTransforms(axisIndex, alignment);
 
-							case AxisAlignment.Center:
-								offset[axisIndex] = totalAABB.Center[axisIndex] - childAABB.Center[axisIndex];
-								break;
+					this.Scene.UndoBuffer.AddAndDo(new TransformUndoCommand(transformDatas));
 
-							case AxisAlignment.Max:
-								{
-									offset[axisIndex] = totalAABB.maxXYZ[axisIndex] - childAABB.maxXYZ[axisIndex];
-								}
-								break;
-						}
-						child.Matrix *= Matrix4X4.CreateTranslation(offset);
-					}
 					//Scene.SelectedItem.MaterialIndex = extruderIndexCanPassToClick;
 					PartHasBeenChanged();
 				}
@@ -1640,15 +1602,66 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			alignButton.MouseEnter += (s2, e2) =>
 			{
-				// TODO: make a preview of the new positions
+				// make a preview of the new positions
+				var transformDatas = GetTransforms(axisIndex, alignment);
+				foreach (var transform in transformDatas)
+				{
+					var copy = transform.TransformedObject.Clone();
+					copy.Matrix = transform.RedoTransform;
+					copy.Color = new RGBA_Bytes(copy.Color, 126);
+					Scene.Children.Add(copy);
+				}
 			};
 
 			alignButton.MouseLeave += (s3, e3) =>
 			{
-				// TODO: clear the preview of the new positions
+				// clear the preview of the new positions
+				foreach(var child in Scene.Children.ToArray())
+				{
+					if(child.Color.Alpha0To255 == 126)
+					{
+						Scene.Children.Remove(child);
+					}
+				}
 			};
 
 			return alignButton;
+		}
+
+		private List<TransformData> GetTransforms(int axisIndex, AxisAlignment alignment)
+		{
+			var transformDatas = new List<TransformData>();
+			var totalAABB = Scene.SelectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+			// move the objects to the right place
+			foreach (var child in Scene.SelectedItem.Children)
+			{
+				var childAABB = child.GetAxisAlignedBoundingBox(Scene.SelectedItem.Matrix);
+				var offset = new Vector3();
+				switch (alignment)
+				{
+					case AxisAlignment.Min:
+						offset[axisIndex] = totalAABB.minXYZ[axisIndex] - childAABB.minXYZ[axisIndex];
+						break;
+
+					case AxisAlignment.Center:
+						offset[axisIndex] = totalAABB.Center[axisIndex] - childAABB.Center[axisIndex];
+						break;
+
+					case AxisAlignment.Max:
+						{
+							offset[axisIndex] = totalAABB.maxXYZ[axisIndex] - childAABB.maxXYZ[axisIndex];
+						}
+						break;
+				}
+				transformDatas.Add(new TransformData()
+				{
+					TransformedObject = child,
+					RedoTransform = child.Matrix * Matrix4X4.CreateTranslation(offset),
+					UndoTransform = child.Matrix,
+				});
+			}
+
+			return transformDatas;
 		}
 
 		internal GuiWidget AddMaterialControls()

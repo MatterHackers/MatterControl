@@ -35,16 +35,21 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
+	internal class TransformData
+	{
+		public IObject3D TransformedObject { get; set; }
+		public Matrix4X4 RedoTransform { get; set; }
+		public Matrix4X4 UndoTransform { get; set; }
+	}
+
 	internal class TransformUndoCommand : IUndoRedoCommand
 	{
-		internal class TransformData
-		{
-			internal IObject3D transformedObject;
-			internal Matrix4X4 redoTransform;
-			internal Matrix4X4 undoTransform;
-		}
-
 		private List<TransformData> transformDatas = new List<TransformData>();
+
+		public TransformUndoCommand(List<TransformData> transformDatas)
+		{
+			this.transformDatas = transformDatas;
+		}
 
 		public TransformUndoCommand(IObject3D transformedObject, Matrix4X4 undoTransform, Matrix4X4 redoTransform)
 		{
@@ -55,13 +60,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					var itemUndo = new TransformData()
 					{
-						transformedObject = child,
-						undoTransform = child.Matrix,
-						redoTransform = child.Matrix * transformedObject.Matrix
+						TransformedObject = child,
+						UndoTransform = child.Matrix,
+						RedoTransform = child.Matrix * transformedObject.Matrix
 					};
 					this.transformDatas.Add(itemUndo);
 
-					child.Matrix = itemUndo.redoTransform;
+					child.Matrix = itemUndo.RedoTransform;
 				}
 
 				// clear the group transform
@@ -71,9 +76,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				this.transformDatas.Add(new TransformData()
 				{
-					transformedObject = transformedObject,
-					undoTransform = undoTransform,
-					redoTransform = redoTransform
+					TransformedObject = transformedObject,
+					UndoTransform = undoTransform,
+					RedoTransform = redoTransform
 				});
 			}
 		}
@@ -82,7 +87,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			foreach(var transformData in transformDatas)
 			{
-				transformData.transformedObject.Matrix = transformData.redoTransform;
+				transformData.TransformedObject.Matrix = transformData.RedoTransform;
 			}
 		}
 
@@ -90,7 +95,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			foreach (var transformData in transformDatas)
 			{
-				transformData.transformedObject.Matrix = transformData.undoTransform;
+				transformData.TransformedObject.Matrix = transformData.UndoTransform;
 			}
 		}
 	}
