@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// Update the local reference after flattening to make the redo pattern work
 				item = flattenedGroup;
 
-				view3DWidget.Scene.Select(flattenedGroup);
+				view3DWidget.Scene.SelectedItem = flattenedGroup;
 			}
 			else
 			{
@@ -91,7 +91,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					children.Add(item);
 				});
 
-				view3DWidget.Scene.Select(item);
+				view3DWidget.Scene.SelectedItem = item;
 			}
 
 			// spin up a task to remove holes from the objects in the group

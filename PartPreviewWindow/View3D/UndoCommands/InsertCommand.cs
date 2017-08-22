@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				children.Add(item);
 			});
 
-			view3DWidget.Scene.Select(item);
+			view3DWidget.Scene.SelectedItem = item;
 
 			view3DWidget.PartHasBeenChanged();
 		}

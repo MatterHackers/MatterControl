@@ -181,7 +181,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 
 			// Update the injected item and the scene selection
 			injectedItem = workItem as TextObject;
-			view3DWidget.Scene.Select(injectedItem);
+			view3DWidget.Scene.SelectedItem = injectedItem;
 		}
 
 		internal void SetInitialFocus()
