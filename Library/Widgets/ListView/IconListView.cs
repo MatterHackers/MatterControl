@@ -28,6 +28,8 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.Library;
@@ -44,7 +46,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		private int cellIndex = 0;
 		private int columnCount = 1;
-		private int itemRightMargin;
+		private int leftRightMargin;
+
+		private List<IconViewItem> allIconViews = new List<IconViewItem>();
 
 		public IconListView()
 			: base(FlowDirection.TopToBottom)
@@ -56,42 +60,75 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			int padding = 4;
 			int itemWidth = ThumbWidth + (padding * 2);
 
-			columnCount = (int)Math.Floor(this.LocalBounds.Width / itemWidth);
+			int newColumnCount = (int)Math.Floor(this.LocalBounds.Width / itemWidth);
+			int remainingSpace = (int)this.LocalBounds.Width - columnCount * itemWidth;
 
-			int remainingSpace = (int) this.LocalBounds.Width - columnCount * itemWidth;
+			leftRightMargin = (columnCount <= 0) ? 0 : remainingSpace / (columnCount * 2);
 
-			itemRightMargin = (columnCount <= 0) ? 0 : remainingSpace / (columnCount + 1);
+			if (newColumnCount != columnCount)
+			{
+				columnCount = newColumnCount;
+				this.HeavyReflowChildren();
+			}
+			else
+			{
+				foreach (var iconView in allIconViews)
+				{
+					iconView.Margin = new BorderDouble(leftRightMargin, 0);
+				}
+			}
 
-			this.Padding = new BorderDouble(0, itemRightMargin);
+			this.Padding = new BorderDouble(0);
 
 			base.OnBoundsChanged(e);
+		}
+
+		private void HeavyReflowChildren()
+		{
+			foreach(var iconView in allIconViews)
+			{
+				iconView.Parent.RemoveChild(iconView);
+				iconView.Margin = new BorderDouble(leftRightMargin, 0);
+			}
+
+			this.CloseAllChildren();
+
+			foreach(var iconView in allIconViews)
+			{
+				iconView.ClearRemovedFlag();
+				AddColumnAndChild(iconView);
+			}
 		}
 
 		public void AddItem(ListViewItem item)
 		{
 			var iconView = new IconViewItem(item, this.ThumbWidth, this.ThumbHeight);
-			iconView.Margin = new BorderDouble(0, 0, itemRightMargin, 0);
+			iconView.Margin = new BorderDouble(leftRightMargin, 0);
 			item.ViewWidget = iconView;
 
+			allIconViews.Add(iconView);
+
+			AddColumnAndChild(iconView);
+		}
+
+		private void AddColumnAndChild(IconViewItem iconView)
+		{
 			if (rowButtonContainer == null)
 			{
 				rowButtonContainer = new FlowLayoutWidget(FlowDirection.LeftToRight)
 				{
 					HAnchor = HAnchor.Stretch,
-					Padding = new BorderDouble(itemRightMargin, 0, 0, 0)
+					Padding = 0
 				};
-				rowButtonContainer.AddChild(iconView);
 				this.AddChild(rowButtonContainer);
-				cellIndex = 1;
 			}
-			else
-			{
-				rowButtonContainer.AddChild(iconView);
 
-				if (cellIndex++ >= columnCount - 1)
-				{
-					rowButtonContainer = null;
-				}
+			rowButtonContainer.AddChild(iconView);
+
+			if (cellIndex++ >= columnCount - 1)
+			{
+				rowButtonContainer = null;
+				cellIndex = 0;
 			}
 		}
 
