@@ -49,8 +49,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 	public class PrintLibraryWidget : GuiWidget
 	{
 		private static CreateFolderWindow createFolderWindow = null;
-		private static RenameItemWindow renameItemWindow = null;
-		private ExportToFolderFeedbackWindow exportingWindow = null;
 
 		private Button addToLibraryButton;
 		private Button createFolderButton;
@@ -614,9 +612,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					return;
 				}
 
-				if (renameItemWindow == null)
-				{
-					renameItemWindow = new RenameItemWindow(
+				var renameItemPage = new RenameItemPage(
 						"Rename Item:".Localize(),
 						selectedItem.Model.Name,
 						(newName) =>
@@ -633,12 +629,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 							}
 						});
 
-					renameItemWindow.Closed += (s, e) => renameItemWindow = null;
-				}
-				else
-				{
-					renameItemWindow.BringToFront();
-				}
+				WizardWindow.Show("RenameItemPage", renameItemPage.Text, renameItemPage);
 			}
 		}
 

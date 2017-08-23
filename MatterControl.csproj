@@ -232,7 +232,7 @@
     <Compile Include="PrinterCommunication\Io\RequestTemperaturesStream.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="SetupWizard\CopyGuestProfilesToUser.cs" />
-    <Compile Include="Library\Widgets\SystemWindows\RenameItemWindow.cs" />
+    <Compile Include="Library\Widgets\SystemWindows\RenameItemPage.cs" />
     <Compile Include="LocalizedString.cs" />
     <Compile Include="PartPreviewWindow\BedSettings.cs" />
     <Compile Include="PartPreviewWindow\ColorGradientWidget.cs" />
@@ -472,8 +472,8 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="config.json">
-	<LogicalName>config.json</LogicalName>
-	</EmbeddedResource>
+      <LogicalName>config.json</LogicalName>
+    </EmbeddedResource>
     <None Include="App.config" />
     <None Include="Library\LibraryProviders.cd" />
     <None Include="Library\Widgets\ListView\ListView.cd" />
