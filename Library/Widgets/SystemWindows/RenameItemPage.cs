@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl
 		{
 			this.renameCallback = functionToCallToRenameItem;
 
-			this.Text = windowTitle;
+			this.WindowTitle = windowTitle;
 
 			var textBoxHeader = new TextWidget("Name".Localize(), pointSize: 12)
 			{

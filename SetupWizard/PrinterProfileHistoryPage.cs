@@ -22,6 +22,8 @@ namespace MatterHackers.MatterControl.SetupWizard
 		public PrinterProfileHistoryPage()
 			: base(unlocalizedTextForTitle: "Restore Settings")
 		{
+			this.WindowTitle = "Restore Settings".Localize();
+
 			scrollWindow = new ScrollableWidget()
 			{
 				AutoScroll = true,

@@ -49,6 +49,8 @@ namespace MatterHackers.MatterControl
 		public CopyGuestProfilesToUser()
 		: base("Close", "Copy Printers to Account")
 		{
+			this.WindowTitle = "Copy Printers".Localize();
+
 			var scrollWindow = new ScrollableWidget()
 			{
 				AutoScroll = true,

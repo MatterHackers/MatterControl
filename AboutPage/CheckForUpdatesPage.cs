@@ -14,6 +14,8 @@ namespace MatterHackers.MatterControl.AboutPage
 		{
 			AnchorAll();
 
+			this.WindowTitle = "Check for Update".Localize();
+
 			var theme = ApplicationController.Instance.Theme;
 
 			FlowLayoutWidget topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);

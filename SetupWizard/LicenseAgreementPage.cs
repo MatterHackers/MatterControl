@@ -38,6 +38,8 @@ public class LicenseAgreementPage : WizardPage
 {
 	public LicenseAgreementPage()
 	{
+		this.WindowTitle = "Software License Agreement".Localize();
+
 		string eulaText = AggContext.StaticData.ReadAllText("MatterControl EULA.txt").Replace("\r\n", "\n");
 
 		var scrollable = new ScrollableWidget(true);

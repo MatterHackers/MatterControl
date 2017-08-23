@@ -47,6 +47,8 @@ namespace MatterHackers.MatterControl
 		public ExportSettingsPage() :
 			base("Cancel", "Export As")
 		{
+			this.WindowTitle = "Export Settings".Localize();
+
 			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.Stretch,

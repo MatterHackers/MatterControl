@@ -109,7 +109,10 @@ namespace MatterHackers.MatterControl
 
 			//Construct buttons
 			troubleshootButton = whiteImageButtonFactory.Generate("Troubleshoot".Localize());
-			troubleshootButton.Click += (s, e) => UiThread.RunOnIdle(WizardWindow.ChangeToPage<SetupWizardTroubleshooting>);
+			troubleshootButton.Click += (s, e) => UiThread.RunOnIdle(() =>
+			{
+				WizardWindow.ChangeToPage<SetupWizardTroubleshooting>();
+			});
 
 			retryButtonContainer = new FlowLayoutWidget()
 			{

@@ -135,7 +135,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			importButton.HAnchor = HAnchor.Left;
 			importButton.Click += (s, e) =>
 			{
-				UiThread.RunOnIdle(() => WizardWindow.Show<ImportSettingsPage>("ImportSettingsPage", "Import Settings Page"));
+				UiThread.RunOnIdle(() => WizardWindow.Show<ImportSettingsPage>());
 			};
 			otherItemsSection.AddChild(importButton);
 

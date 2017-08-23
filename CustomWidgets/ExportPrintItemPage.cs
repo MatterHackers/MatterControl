@@ -56,6 +56,8 @@ namespace MatterHackers.MatterControl
 		public ExportPrintItemPage(IEnumerable<ILibraryItem> libraryItems)
 			: base(unlocalizedTextForTitle: "Export selection to:")
 		{
+			this.WindowTitle = "Export File".Localize();
+
 			this.libraryItems = libraryItems;
 			this.Name = "Export Item Window";
 

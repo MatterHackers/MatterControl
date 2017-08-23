@@ -98,6 +98,8 @@ namespace MatterHackers.MatterControl
 			this.AddChild(mainContainer);
 		}
 
+		public string WindowTitle { get; set; }
+
 		public virtual void PageIsBecomingActive()
 		{
 		}

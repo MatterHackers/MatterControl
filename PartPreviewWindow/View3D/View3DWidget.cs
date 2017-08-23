@@ -2236,8 +2236,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private void OpenExportWindow()
 		{
 			var exportPage = new ExportPrintItemPage(new[] { new FileSystemFileItem(this.printItemWrapper.FileLocation) });
-			string windowTitle = "MatterControl".Localize() + ": " + "Export File".Localize();
-			WizardWindow.Show("/ExportPrintItemPage", windowTitle, exportPage);
+			WizardWindow.Show(exportPage);
 		}
 
 		private void OpenSaveAsWindow()

@@ -286,6 +286,8 @@ namespace MatterHackers.MatterControl
 		public ImportSettingsPage() :
 			base("Cancel", "Import Wizard")
 		{
+			this.WindowTitle = "Import Settings Page".Localize();
+
 			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.Stretch,

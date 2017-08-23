@@ -99,7 +99,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			selectPrinterButton.Margin = defaultMargin;
 			selectPrinterButton.Click += (s, e) =>
 			{
-				WizardWindow.Show<SetupOptionsPage>("/SetupOptions", "Setup Wizard");
+				WizardWindow.Show<SetupOptionsPage>();
 			};
 
 			resetConnectionButton = buttonFactory.Generate("Reset".Localize().ToUpper(), AggContext.StaticData.LoadIcon("e_stop.png", 14, 14));

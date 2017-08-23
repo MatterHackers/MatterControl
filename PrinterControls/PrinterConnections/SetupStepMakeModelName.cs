@@ -91,11 +91,17 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 #else
 					if (AggContext.OperatingSystem == OSType.Windows)
 					{
-						UiThread.RunOnIdle(WizardWindow.ChangeToPage<SetupStepInstallDriver>);
+						UiThread.RunOnIdle(() =>
+						{
+							WizardWindow.ChangeToPage<SetupStepInstallDriver>();
+						});
 					}
 					else
 					{
-						UiThread.RunOnIdle(WizardWindow.ChangeToPage<SetupStepComPortOne>);
+						UiThread.RunOnIdle(() =>
+						{
+							WizardWindow.ChangeToPage<SetupStepComPortOne>();
+						});
 					}
 #endif
 				}

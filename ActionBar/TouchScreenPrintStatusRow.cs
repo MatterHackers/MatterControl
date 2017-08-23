@@ -143,7 +143,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			setupButton.VAnchor = VAnchor.Center;
 			setupButton.Click += (sender, e) =>
 			{
-				WizardWindow.Show<SetupOptionsPage>("/SetupOptions", "Setup Wizard");
+				WizardWindow.Show<SetupOptionsPage>();
 				//WizardWindow.Show(true);
 			};
 

@@ -217,7 +217,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							}
 						});
 
-						WizardWindow.Show("Rename Printer".Localize(), renameItemPage.Text, renameItemPage);
+						WizardWindow.Show(renameItemPage);
 					}
 				},
 				new NamedAction() { Title = "----" },

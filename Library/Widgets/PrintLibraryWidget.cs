@@ -629,7 +629,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 							}
 						});
 
-				WizardWindow.Show("RenameItemPage", renameItemPage.Text, renameItemPage);
+				WizardWindow.Show(renameItemPage);
 			}
 		}
 
@@ -740,8 +740,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			//Open export options
 			var exportPage = new ExportPrintItemPage(libraryView.SelectedItems.Select(item => item.Model));
 
-			string windowTitle = "MatterControl".Localize() + ": " + "Export File".Localize();
-			WizardWindow.Show("/ExportPrintItemPage", "", exportPage);
+			WizardWindow.Show(exportPage);
 		}
 
 		/*

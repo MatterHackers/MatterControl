@@ -52,6 +52,8 @@ namespace MatterHackers.MatterControl.PrinterControls
 		public RunningMacroPage(MacroCommandData macroData)
 					: base("Cancel", macroData.title)
 		{
+			this.WindowTitle = "Running Macro".Localize();
+
 			cancelButton.Click += (s, e) =>
 			{
 				PrinterConnection.Instance.MacroCancel();
@@ -132,11 +134,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 			public double expireTime = 0;
 			public double expectedTemperature = 0;
 			public ImageBuffer image = null;
-		}
-
-		public static void Show(MacroCommandData macroData)
-		{
-			WizardWindow.Show("Macro", "Running Macro", new RunningMacroPage(macroData));
 		}
 
 		public override void OnClosed(ClosedEventArgs e)
