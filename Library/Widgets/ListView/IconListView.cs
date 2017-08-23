@@ -135,6 +135,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		public void ClearItems()
 		{
 			rowButtonContainer = null;
+			allIconViews.Clear();
 		}
 	}
 
