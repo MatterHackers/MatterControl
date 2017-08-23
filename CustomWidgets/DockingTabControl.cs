@@ -185,7 +185,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						MakeScrollable = false,
 					};
 
-					var spliterColor = ActiveTheme.Instance.SecondaryBackgroundColor;
+					var spliterColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 					var alpha = ApplicationController.Instance.Theme.SplitterBackground.Alpha0To1;
 					spliterColor.Red0To1 *= (1 - alpha);
 					spliterColor.Green0To1 *= (1 - alpha);
