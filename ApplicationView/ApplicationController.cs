@@ -234,12 +234,12 @@ namespace MatterHackers.MatterControl
 			}
 		}
 	}
-	
 
 	public class PrinterViewState
 	{
 		public bool SliceSettingsTabPinned { get; set; }
 		public int SliceSettingsTabIndex { get; set; }
+		public double SliceSettingsWidth { get; set; } =  640;
 	}
 
 	public class PrinterConfig

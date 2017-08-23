@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
@@ -114,10 +115,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				var resizePage = new ResizeContainer()
 				{
-					Width = 640,
+					Width = ApplicationController.Instance.Printer.ViewState.SliceSettingsWidth,
 					VAnchor = VAnchor.Stretch,
-					BorderColor = ApplicationController.Instance.Theme.SplitterBackground,
-					SplitterWidth = ApplicationController.Instance.Theme.SplitterWidth
+					SpliterBarColor = ApplicationController.Instance.Theme.SplitterBackground,
+					SplitterWidth = ApplicationController.Instance.Theme.SplitterWidth,
 				};
 
 				tabControl = ApplicationController.Instance.Theme.CreateTabControl();
@@ -133,7 +134,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 				if (this.ControlIsPinned)
 				{
-					var content = new DockWindowContent(this, nameWidget.Value, tabTitle);
+					var content = new DockingWindowContent(this, nameWidget.Value, tabTitle);
 
 					var tabPage = new TabPage(content, tabTitle);
 					var textTab = new TextTab(
@@ -184,10 +185,33 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						MakeScrollable = false,
 					};
 
-					settingsButton.PopupContent = new DockWindowContent(this, nameWidget.Value, tabTitle)
+					var spliterColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+					var alpha = ApplicationController.Instance.Theme.SplitterBackground.Alpha0To1;
+					spliterColor.Red0To1 *= (1 - alpha);
+					spliterColor.Green0To1 *= (1 - alpha);
+					spliterColor.Blue0To1 *= (1 - alpha);
+
+					var resizeContainer = new ResizeContainer()
 					{
-						BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor
+						Width = ApplicationController.Instance.Printer.ViewState.SliceSettingsWidth,
+						VAnchor = VAnchor.Stretch,
+						HAnchor = HAnchor.Right,
+						SpliterBarColor = spliterColor,
+						SplitterWidth = ApplicationController.Instance.Theme.SplitterWidth,
 					};
+					resizeContainer.AddChild(new DockingWindowContent(this, nameWidget.Value, tabTitle)
+					{
+						BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor,
+						Width = ApplicationController.Instance.Printer.ViewState.SliceSettingsWidth
+					});
+
+					settingsButton.PopupContent = resizeContainer;
+
+					settingsButton.Click += (s, e) =>
+					{
+						resizeContainer.Width = ApplicationController.Instance.Printer.ViewState.SliceSettingsWidth;
+					};
+
 					settingsButton.PopupLayoutEngine = new UnpinnedLayoutEngine(settingsButton.PopupContent, widgetTodockTo, DockSide);
 					topToBottom.AddChild(settingsButton);
 
@@ -243,11 +267,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				this.Cursor = Cursors.VSplit;
 			}
 
-			public RGBA_Bytes BorderColor { get; set; } = ActiveTheme.Instance.TertiaryBackgroundColor;
+			public RGBA_Bytes SpliterBarColor { get; set; } = ActiveTheme.Instance.TertiaryBackgroundColor;
 
 			public override void OnDraw(Graphics2D graphics2D)
 			{
-				graphics2D.FillRectangle(LocalBounds.Left, LocalBounds.Bottom, LocalBounds.Left + this.SplitterWidth, LocalBounds.Top, this.BorderColor);
+				graphics2D.FillRectangle(LocalBounds.Left, LocalBounds.Bottom, LocalBounds.Left + this.SplitterWidth, LocalBounds.Top, this.SpliterBarColor);
 				base.OnDraw(graphics2D);
 			}
 
@@ -267,7 +291,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				if (mouseDownOnBar)
 				{
 					int currentMouseX = (int)TransformToScreenSpace(mouseEvent.Position).x;
-					UiThread.RunOnIdle(() => Width = downWidth + mouseDownX - currentMouseX);
+					UiThread.RunOnIdle(() =>
+					{
+						Width = downWidth + mouseDownX - currentMouseX;
+						ApplicationController.Instance.Printer.ViewState.SliceSettingsWidth = Width;
+					});
 				}
 				base.OnMouseMove(mouseEvent);
 			}
@@ -297,9 +325,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			return imageWidget;
 		}
 
-		private class DockWindowContent : GuiWidget, IIgnoredPopupChild
+		private class DockingWindowContent : GuiWidget, IIgnoredPopupChild
 		{
-			internal DockWindowContent(DockingTabControl dockingControl, GuiWidget child, string title)
+			internal DockingWindowContent(DockingTabControl dockingControl, GuiWidget child, string title)
 			{
 				var topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
 				{
@@ -327,10 +355,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					topToBottom.AddChild(titleBar);
 				}
 
-				Width = 500;
-				Height = 640;
-				//VAnchor = VAnchor.Stretch;
 				topToBottom.AddChild(child);
+
+				HAnchor = HAnchor.Stretch;
+				VAnchor = VAnchor.Stretch;
 
 				AddChild(topToBottom);
 			}
@@ -353,6 +381,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.contentWidget = contentWidget;
 			this.widgetTodockTo = widgetTodockTo;
 			DockSide = dockSide;
+			contentWidget.BoundsChanged += widgetRelativeTo_PositionChanged;
 		}
 
 		public double MaxHeight { get; private set; }
@@ -365,6 +394,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				widget.PositionChanged -= widgetRelativeTo_PositionChanged;
 				widget.BoundsChanged -= widgetRelativeTo_PositionChanged;
 			}
+
+			hookedParents.Clear();
 
 			// Long lived originating item must be unregistered
 			widgetTodockTo.Closed -= widgetRelativeTo_Closed;
@@ -435,6 +466,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					case DockSide.Bottom:
 						throw new NotImplementedException();
 					case DockSide.Right:
+						popupWidget.HAnchor = HAnchor.Absolute;
 						popupWidget.LocalBounds = new RectangleDouble(bounds.Right - contentWidget.Width, bounds.Bottom, bounds.Right, bounds.Top);
 						break;
 					case DockSide.Top:
