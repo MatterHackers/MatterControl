@@ -12,7 +12,7 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
 	//Normally step one of the setup process
-	public class SetupStepMakeModelName : ConnectionWizardPage
+	public class SetupStepMakeModelName : WizardPage
 	{
 		private FlowLayoutWidget printerModelContainer;
 		private FlowLayoutWidget printerMakeContainer;

@@ -14,7 +14,7 @@ using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
-	public class SetupStepComPortManual : ConnectionWizardPage
+	public class SetupStepComPortManual : WizardPage
 	{
 		private Button nextButton;
 		private Button connectButton;
@@ -34,13 +34,37 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			FlowLayoutWidget printerComPortContainer = createComPortContainer();
 			contentRow.AddChild(printerComPortContainer);
 
+			cancelButton.Click += (s, e) => PrinterConnection.Instance.HaltConnectionThread();
+			
 			//Construct buttons
 			nextButton = textImageButtonFactory.Generate("Done".Localize());
 			nextButton.Click += (s, e) => UiThread.RunOnIdle(Parent.Close);
 			nextButton.Visible = false;
 
 			connectButton = textImageButtonFactory.Generate("Connect".Localize());
-			connectButton.Click += ConnectButton_Click;
+			connectButton.Click += (s, e) =>
+			{
+				try
+				{
+					printerComPortHelpLink.Visible = false;
+					printerComPortError.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+
+					printerComPortError.Text = "Attempting to connect".Localize() + "...";
+					printerComPortError.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+
+					ActiveSliceSettings.Instance.Helpers.SetComPort(GetSelectedSerialPort());
+					PrinterConnection.Instance.ConnectToActivePrinter();
+
+					connectButton.Visible = false;
+					refreshButton.Visible = false;
+				}
+				catch
+				{
+					printerComPortHelpLink.Visible = false;
+					printerComPortError.TextColor = RGBA_Bytes.Red;
+					printerComPortError.Text = "Oops! Please select a serial port.".Localize();
+				}
+			};
 
 			refreshButton = textImageButtonFactory.Generate("Refresh".Localize());
 			refreshButton.Click += (s, e) => UiThread.RunOnIdle(() =>
@@ -133,30 +157,6 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		private void MoveToNextWidget(object state)
 		{
 			WizardWindow.ChangeToInstallDriverOrComPortOne();
-		}
-
-		private void ConnectButton_Click(object sender, EventArgs mouseEvent)
-		{
-			try
-			{
-				printerComPortHelpLink.Visible = false;
-				printerComPortError.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-
-				printerComPortError.Text = "Attempting to connect".Localize() + "...";
-				printerComPortError.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-
-				ActiveSliceSettings.Instance.Helpers.SetComPort(GetSelectedSerialPort());
-				PrinterConnection.Instance.ConnectToActivePrinter();
-
-				connectButton.Visible = false;
-				refreshButton.Visible = false;
-			}
-			catch
-			{
-				printerComPortHelpLink.Visible = false;
-				printerComPortError.TextColor = RGBA_Bytes.Red;
-				printerComPortError.Text = "Oops! Please select a serial port.".Localize();
-			}
 		}
 
 		protected void CreateSerialPortControls(FlowLayoutWidget comPortContainer, string activePrinterSerialPort)

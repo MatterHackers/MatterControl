@@ -12,7 +12,7 @@ using System.IO;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
-	public class SetupStepInstallDriver : ConnectionWizardPage
+	public class SetupStepInstallDriver : WizardPage
 	{
 		private static List<string> printerDrivers = null;
 

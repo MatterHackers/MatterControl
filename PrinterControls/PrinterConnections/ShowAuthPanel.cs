@@ -36,7 +36,7 @@ using System.Linq;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
-	public class ShowAuthPanel : ConnectionWizardPage
+	public class ShowAuthPanel : WizardPage
 	{
 		public ShowAuthPanel()
 			: base ("Skip")

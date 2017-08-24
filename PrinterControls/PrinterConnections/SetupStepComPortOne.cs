@@ -7,7 +7,7 @@ using System;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
-	public class SetupStepComPortOne : ConnectionWizardPage
+	public class SetupStepComPortOne : WizardPage
 	{
 		private Button nextButton;
 

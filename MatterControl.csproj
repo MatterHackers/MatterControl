@@ -371,7 +371,6 @@
     <Compile Include="PrinterControls\ManualPrinterControls.cs" />
     <Compile Include="PrinterControls\PrinterConnections\BaseConnectionWidget.cs" />
     <Compile Include="PrinterControls\PrinterConnections\PrinterChooser.cs" />
-    <Compile Include="PrinterControls\PrinterConnections\ConnectionWizardPage.cs" />
     <Compile Include="PrinterControls\XYZJogControls.cs" />
     <Compile Include="Library\Widgets\PrintLibraryWidget.cs" />
     <Compile Include="Queue\OptionsMenu\ExportToFolderProcess.cs" />
