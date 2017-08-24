@@ -51,8 +51,9 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		private Button skipButton;
 
 		public SetupStepInstallDriver()
-			: base (unlocalizedTextForTitle: "Install Communication Driver")
 		{
+			this.HeaderText = "Install Communication Driver";
+
 			printerDriverContainer = createPrinterDriverContainer();
 			contentRow.AddChild(printerDriverContainer);
 			{

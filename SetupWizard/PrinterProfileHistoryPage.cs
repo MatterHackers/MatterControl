@@ -20,9 +20,9 @@ namespace MatterHackers.MatterControl.SetupWizard
 		ScrollableWidget scrollWindow;
 
 		public PrinterProfileHistoryPage()
-			: base(unlocalizedTextForTitle: "Restore Settings")
 		{
 			this.WindowTitle = "Restore Settings".Localize();
+			this.HeaderText = "Restore Settings".Localize();
 
 			scrollWindow = new ScrollableWidget()
 			{

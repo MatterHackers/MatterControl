@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl
 
 		protected bool abortCancel = false;
 
-		public WizardPage(string unlocalizedTextForCancelButton = "Cancel", string unlocalizedTextForTitle = "Setup Wizard")
+		public WizardPage(string unlocalizedTextForCancelButton = "Cancel")
 		{
 			if (!UserSettings.Instance.IsTouchScreen)
 			{
@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl
 				HAnchor = HAnchor.Stretch
 			};
 
-			headerLabel = new WrappedTextWidget(unlocalizedTextForTitle.Localize(), pointSize: 24, textColor: ActiveTheme.Instance.SecondaryAccentColor)
+			headerLabel = new WrappedTextWidget("Setup Wizard".Localize(), pointSize: 24, textColor: ActiveTheme.Instance.SecondaryAccentColor)
 			{
 				HAnchor = HAnchor.Stretch
 			};
@@ -127,6 +127,12 @@ namespace MatterHackers.MatterControl
 		}
 
 		public string WindowTitle { get; set; }
+
+		public string HeaderText
+		{
+			get => headerLabel.Text;
+			set => headerLabel.Text = value;
+		}
 
 		public void AddPageAction(Button button)
 		{
