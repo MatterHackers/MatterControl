@@ -413,23 +413,46 @@ namespace MatterHackers.MeshVisualizer
 								FaceEdge firstFaceEdge = meshEdge.firstFaceEdge;
 								FaceEdge nextFaceEdge = meshEdge.firstFaceEdge.radialNextFaceEdge;
 								// find out if one face is facing the camera and one is facing away
-								var vertexPosition = World.GetScreenSpace(Vector3.Transform(firstFaceEdge.FirstVertex.Position, renderData.Matrix));
-								var firstNormal = World.GetScreenSpace(Vector3.Transform(firstFaceEdge.FirstVertex.Position + firstFaceEdge.ContainingFace.normal, renderData.Matrix));
-								var nextNormal = World.GetScreenSpace(Vector3.Transform(firstFaceEdge.FirstVertex.Position + nextFaceEdge.ContainingFace.normal, renderData.Matrix));
+								var worldVertexPosition = Vector3.Transform(firstFaceEdge.FirstVertex.Position, renderData.Matrix);
+								var worldFirstNormal = Vector3.TransformNormal(firstFaceEdge.ContainingFace.Normal, renderData.Matrix).GetNormal();
+								var worldNextNormal = Vector3.TransformNormal(nextFaceEdge.ContainingFace.Normal, renderData.Matrix).GetNormal();
 
-								var firstTowards = (firstNormal - vertexPosition).z < 0;
-								var nextTowards = (nextNormal - vertexPosition).z < 0;
+								var screenVertexPosition = World.GetScreenSpace(worldVertexPosition);
+								var screenFirstNormalEnd = World.GetScreenSpace(worldVertexPosition + worldFirstNormal);
+								var screenNextNormalEnd = World.GetScreenSpace(worldVertexPosition + worldNextNormal);
+
+								var firstTowards = (screenFirstNormalEnd - screenVertexPosition).z < 0;
+								var nextTowards = (screenNextNormalEnd - screenVertexPosition).z < 0;
 
 								if (firstTowards != nextTowards)
 								{
 									var transformed1 = Vector3.Transform(meshEdge.VertexOnEnd[0].Position, renderData.Matrix);
 									var transformed2 = Vector3.Transform(meshEdge.VertexOnEnd[1].Position, renderData.Matrix);
 
-									for (int i = 0; i < 3; i++)
-									{
-										GLHelper.Render3DLineNoPrep(frustum, World, transformed1, transformed2, RGBA_Bytes.White, selectionHighlightWidth);
-									}
+									GLHelper.Render3DLineNoPrep(frustum, World, transformed1, transformed2, RGBA_Bytes.White, selectionHighlightWidth);
 								}
+							}
+						}
+
+						// render debug normals
+						bool renderNormal = false;
+						if (renderNormal)
+						{
+							foreach (var face in renderData.Mesh.Faces)
+							{
+								int vertexCount = 0;
+								Vector3 faceCenter = Vector3.Zero;
+								foreach (var vertex in face.Vertices())
+								{
+									faceCenter += vertex.Position;
+									vertexCount++;
+								}
+								faceCenter /= vertexCount;
+
+								var transformed1 = Vector3.Transform(faceCenter, renderData.Matrix);
+								var normal = Vector3.TransformNormal(face.Normal, renderData.Matrix).GetNormal();
+
+								GLHelper.Render3DLineNoPrep(frustum, World, transformed1, transformed1 + normal, RGBA_Bytes.Red, selectionHighlightWidth);
 							}
 						}
 					}

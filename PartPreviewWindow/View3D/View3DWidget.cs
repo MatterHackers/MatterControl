@@ -2557,7 +2557,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							// change the color to be the right thing
 							GLMeshTrianglePlugin glMeshPlugin = GLMeshTrianglePlugin.Get(meshRenderData.Mesh, (faceEdge) =>
 							{
-								Vector3 normal = faceEdge.ContainingFace.normal;
+								Vector3 normal = faceEdge.ContainingFace.Normal;
 								normal = Vector3.TransformVector(normal, meshRenderData.Matrix).GetNormal();
 								VertexColorData colorData = new VertexColorData();
 

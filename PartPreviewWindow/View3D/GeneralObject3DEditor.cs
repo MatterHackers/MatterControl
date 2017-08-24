@@ -32,6 +32,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.PolygonMesh;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -91,6 +92,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			holeBehaviorButton.Click += (s, e) =>
 			{
 				item.OutputType = PrintOutputTypes.Hole;
+				if(item.Mesh != null)
+				{
+					item.Mesh.FaceBspTree = FaceBspTree.Create(item.Mesh);
+				}
+
 				view3DWidget.Invalidate();
 			};
 
