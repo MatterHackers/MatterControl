@@ -595,7 +595,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			sideBar.AddPage("Controls".Localize(), new ManualPrinterControls());
 
 			var terminalControls = new TerminalControls();
-			terminalControls.VAnchor |= VAnchor.Stretch;
+			terminalControls.VAnchor = VAnchor.Stretch;
 			sideBar.AddPage("Terminal".Localize(), terminalControls);
 		}
 	}

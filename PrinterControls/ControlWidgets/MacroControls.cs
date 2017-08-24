@@ -75,7 +75,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 				BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor,
 			};
 
-			groupBox.HAnchor |= Agg.UI.HAnchor.Stretch;
 			// make sure the client area will get smaller when the contents get smaller
 			groupBox.VAnchor = Agg.UI.VAnchor.Fit;
 

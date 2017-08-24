@@ -788,6 +788,7 @@ namespace MatterHackers.MatterControl
 #endif
 		}
 
+		private int extraInfoOffsetFromLast = 0;
 		private bool showNamesUnderMouse = false;
 
 		private GuiWidget inspectedWidget = null;
@@ -810,31 +811,40 @@ namespace MatterHackers.MatterControl
 				int lineHeight = 20;
 				e.graphics2D.FillRectangle(start, start + new Vector2(500, namedChildren.Count * lineHeight), new RGBA_Bytes(RGBA_Bytes.Black, 120));
 
-				foreach (var child in namedChildren)
-				{
+				// Make sure we are in range of the current list
+				extraInfoOffsetFromLast = Math.Max(0, Math.Min(namedChildren.Count - 1, extraInfoOffsetFromLast));
 
-					if (child.widget.FirstWidgetUnderMouse)
+				for(int i=0; i< namedChildren.Count; i++)
+				{
+					var child = namedChildren[i];
+					if (i == (namedChildren.Count-1) - extraInfoOffsetFromLast)
 					{
 						inspectedWidget = child.widget;
 					}
 
+					string nameToWrite = inspectedWidget == child.widget ? "* " : "";
 					if (child.name != null)
 					{
-						e.graphics2D.DrawString($"{child.widget.GetType().Name} --- {child.name}", start.x, start.y, backgroundColor: RGBA_Bytes.White, drawFromHintedCach: true);
-						start.y += lineHeight;
+						nameToWrite += $"{child.widget.GetType().Name} --- {child.name}";
 					}
 					else
 					{
-						e.graphics2D.DrawString($"{child.widget.GetType().Name} -- -", start.x, start.y, backgroundColor: RGBA_Bytes.White, drawFromHintedCach: true);
-						start.y += lineHeight;
+						nameToWrite += $"{child.widget.GetType().Name} -- -";
 					}
+
+					if (inspectedWidget == child.widget)
+					{
+						nameToWrite += $" | H:{child.widget.HAnchor}, V:{child.widget.VAnchor}";
+					}
+
+					e.graphics2D.DrawString(nameToWrite, start.x, start.y, backgroundColor: RGBA_Bytes.White, drawFromHintedCach: true);
+					start.y += lineHeight;
 				}
 
 				if (inspectedWidget != null)
 				{
 					inspectedWidget.DebugShowBounds = true;
 				}
-
 			}
 		}
 
@@ -848,6 +858,14 @@ namespace MatterHackers.MatterControl
 				if (keyEvent.KeyCode == Keys.F1)
 				{
 					showNamesUnderMouse = !showNamesUnderMouse;
+				}
+				else if (keyEvent.KeyCode == Keys.F2)
+				{
+					extraInfoOffsetFromLast++;
+				}
+				else if (keyEvent.KeyCode == Keys.F3)
+				{
+					extraInfoOffsetFromLast--;
 				}
 			}
 		}
