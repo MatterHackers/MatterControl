@@ -418,8 +418,6 @@ namespace MatterHackers.MeshVisualizer
 									var transformed2 = Vector3.Transform(meshEdge.VertexOnEnd[1].Position, renderData.Matrix);
 
 									GLHelper.Render3DLineNoPrep(frustum, World, transformed1, transformed2, RGBA_Bytes.White, selectionHighlightWidth);
-
-									e.graphics2D.Circle(transformed1.x, transformed1.y, 5, RGBA_Bytes.Red);
 								}
 							}
 						}
