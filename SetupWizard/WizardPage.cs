@@ -9,12 +9,12 @@ namespace MatterHackers.MatterControl
 {
 	public class WizardPage : GuiWidget
 	{
-		protected FlowLayoutWidget headerRow;
+		private FlowLayoutWidget headerRow;
 		protected FlowLayoutWidget contentRow;
 		private FlowLayoutWidget footerRow;
 
 		protected WrappedTextWidget headerLabel;
-		protected Button cancelButton;
+		protected Button cancelButton { get; }
 
 		protected TextImageButtonFactory textImageButtonFactory { get; } = ApplicationController.Instance.Theme.WizardButtons;
 		protected TextImageButtonFactory whiteImageButtonFactory { get; } = ApplicationController.Instance.Theme.WhiteButtonFactory;

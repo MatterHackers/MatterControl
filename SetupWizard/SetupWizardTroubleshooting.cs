@@ -44,14 +44,12 @@ namespace MatterHackers.MatterControl
 
 			RefreshStatus();
 
-			//Construct buttons
-			cancelButton = whiteImageButtonFactory.Generate("Cancel".Localize());
 			cancelButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
+				abortCancel = true;
 				this.WizardWindow.ChangeToPage<AndroidConnectDevicePage>();
 			});
 			
-			//Construct buttons
 			nextButton = textImageButtonFactory.Generate("Continue".Localize());
 			nextButton.Click += (sender, e) => UiThread.RunOnIdle(this.WizardWindow.Close);
 			nextButton.Visible = false;
