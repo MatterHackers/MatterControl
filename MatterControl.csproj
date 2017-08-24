@@ -127,7 +127,6 @@
     <Compile Include="AboutPage\UpdateControlView.cs" />
     <Compile Include="AboutPage\HTMLParser\HtmlParser.cs" />
     <Compile Include="ActionBar\PrinterSelector.cs" />
-    <Compile Include="ActionBar\TouchScreenPrintStatusRow.cs" />
     <Compile Include="ActionBar\TemperatureWidgetBed.cs" />
     <Compile Include="ActionBar\PrintActionRow.cs" />
     <Compile Include="ActionBar\PrinterConnectAndSelectControl.cs" />
@@ -293,7 +292,6 @@
     <Compile Include="ConfigurationPage\RunningMacroPage.cs" />
     <Compile Include="SetupWizard\SyncingPrintersPage.cs" />
     <Compile Include="SetupWizard\WizardPage.cs" />
-    <Compile Include="SetupWizard\AndroidSetupOptionsPage.cs" />
     <Compile Include="SetupWizard\SetupWizardTroubleshooting.cs" />
     <Compile Include="SetupWizard\SetupWizardWifi.cs" />
     <Compile Include="SetupWizard\WizardWindow.cs" />
