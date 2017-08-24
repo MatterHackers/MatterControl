@@ -126,11 +126,7 @@ namespace MatterHackers.MeshVisualizer
 			return cornerPosition;
 		}
 
-		public virtual void Draw2DContent(Agg.Graphics2D graphics2D)
-		{
-		}
-
-		public virtual void DrawGlContent(EventArgs e)
+		public virtual void DrawGlContent(DrawGlContentEventArgs e)
 		{
 		}
 

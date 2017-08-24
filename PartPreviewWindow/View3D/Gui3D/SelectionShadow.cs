@@ -113,7 +113,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return demoShadowMesh;
 		}
 
-		public override void DrawGlContent(EventArgs e)
+		public override void DrawGlContent(DrawGlContentEventArgs e)
 		{
 			if (InteractionContext.Scene.HasSelection
 				&& InteractionContext.Scene.ShowSelectionShadow)

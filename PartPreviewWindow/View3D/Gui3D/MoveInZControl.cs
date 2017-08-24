@@ -145,7 +145,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			InteractionContext.GuiSurface.AfterDraw += InteractionLayer_AfterDraw;
 		}
 
-		public override void DrawGlContent(EventArgs e)
+		public override void DrawGlContent(DrawGlContentEventArgs e)
 		{
 			bool shouldDrawScaleControls = true;
 			if (InteractionContext.SelectedInteractionVolume != null

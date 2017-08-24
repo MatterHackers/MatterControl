@@ -50,7 +50,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public InteractiveScene Scene { get; }
 
-		public event EventHandler DrawGlContent;
+		public event EventHandler<DrawEventArgs> DrawGlContent;
 
 		public bool DoOpenGlDrawing { get; set; } = true;
 
@@ -134,7 +134,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (DoOpenGlDrawing)
 			{
 				SetGlContext();
-				OnDrawGlContent();
+				OnDrawGlContent(e);
 				UnsetGlContext();
 			}
 		}
@@ -304,9 +304,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public GuiWidget GuiSurface => this;
 
-		private void OnDrawGlContent()
+		private void OnDrawGlContent(DrawEventArgs e)
 		{
-			DrawGlContent?.Invoke(this, null);
+			DrawGlContent?.Invoke(this, e);
 		}
 
 		private void SetGlContext()

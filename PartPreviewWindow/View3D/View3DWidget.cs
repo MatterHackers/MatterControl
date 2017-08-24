@@ -572,7 +572,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private void TrackballTumbleWidget_DrawGlContent(object sender, EventArgs e)
+		private void TrackballTumbleWidget_DrawGlContent(object sender, DrawEventArgs e)
 		{
 			// This shows the BVH as rects around the scene items
 			//Scene?.TraceData().RenderBvhRecursive(0, 3);
@@ -582,7 +582,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				return;
 			}
 
-			printer.Bed.Render3DLayerFeatures();
+			printer.Bed.Render3DLayerFeatures(e);
 		}
 
 		public override void OnKeyDown(KeyEventArgs keyEvent)

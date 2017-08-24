@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using MatterHackers.Agg;
+using MatterHackers.Agg.UI;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.RenderOpenGl.OpenGl;
 
@@ -272,7 +273,7 @@ namespace MatterHackers.GCodeVisualizer
 
 		private static readonly bool Is32Bit = IntPtr.Size == 4;
 
-		public void Render3D(GCodeRenderInfo renderInfo)
+		public void Render3D(GCodeRenderInfo renderInfo, DrawEventArgs e)
 		{
 			if (renderInfo == null)
 			{
