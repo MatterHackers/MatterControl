@@ -4432,3 +4432,6 @@ Translated:Checks before each print that the layer height is greater than the no
 English:Validate Layer Height
 Translated:Validate Layer Height
 
+English:Rename Printer:
+Translated:Rename Printer:
+

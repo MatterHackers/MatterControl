@@ -63,7 +63,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			int newColumnCount = (int)Math.Floor(this.LocalBounds.Width / itemWidth);
 			int remainingSpace = (int)this.LocalBounds.Width - columnCount * itemWidth;
 
-			leftRightMargin = (columnCount <= 0) ? 0 : remainingSpace / (columnCount * 2);
+			// we find the space we want between each column and the sides
+			double spacePerColumn = remainingSpace / (newColumnCount + 1);
+			// set the margin to be 1/2 the space (it will happen on each side of each icon)
+			double marginAndPading = spacePerColumn / 2;
+
+			leftRightMargin = (int)marginAndPading;
 
 			if (newColumnCount != columnCount)
 			{
@@ -78,7 +83,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				}
 			}
 
-			this.Padding = new BorderDouble(0);
+			// put in padding to get the "other" side of the outside icons
+			this.Padding = new BorderDouble(marginAndPading, 0);
 
 			base.OnBoundsChanged(e);
 		}

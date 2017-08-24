@@ -239,7 +239,7 @@ namespace MatterHackers.MatterControl
 	{
 		public bool SliceSettingsTabPinned { get; set; }
 		public int SliceSettingsTabIndex { get; set; }
-		public double SliceSettingsWidth { get; set; } =  640;
+		public double SliceSettingsWidth { get; set; } = 540 * GuiWidget.DeviceScale;
 	}
 
 	public class PrinterConfig

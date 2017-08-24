@@ -29,7 +29,6 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
@@ -43,17 +42,18 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.CustomWidgets
 {
+	public enum DockSide { Left, Bottom, Right, Top };
+
 	public class DockingTabControl : GuiWidget
 	{
+		public int MinDockingWidth = 400 * (int)GuiWidget.DeviceScale;
+		protected GuiWidget widgetTodockTo;
 		private Dictionary<string, GuiWidget> allTabs = new Dictionary<string, GuiWidget>();
+		private List<PopupButton> settingsButtons = new List<PopupButton>();
 
 		private PrinterConfig printer;
 
 		private GuiWidget topToBottom;
-
-		protected GuiWidget widgetTodockTo;
-		
-		public DockSide DockSide { get; set; }
 
 		public DockingTabControl(GuiWidget widgetTodockTo, DockSide dockSide, PrinterConfig printer)
 		{
@@ -77,6 +77,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			}
 		}
 
+		public DockSide DockSide { get; set; }
+
 		public void AddPage(string name, GuiWidget widget)
 		{
 			allTabs.Add(name, widget);
@@ -98,8 +100,48 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			AddChild(topToBottom);
 		}
 
+		private ImageWidget CreatePinButton()
+		{
+			var icon = AggContext.StaticData.LoadIcon(this.ControlIsPinned ? "Pushpin_16x.png" : "PushpinUnpin_16x.png", 16, 16).InvertLightness();
+			var imageWidget = new ImageWidget(icon)
+			{
+				Name = "Pin Settings Button",
+				Margin = new BorderDouble(right: 25, top: 6),
+				MinimumSize = new Vector2(16, 16)
+			};
+			imageWidget.Click += (s, e) =>
+			{
+				this.ControlIsPinned = !this.ControlIsPinned;
+				UiThread.RunOnIdle(() =>
+				{
+					this.Rebuild();
+					if (!this.ControlIsPinned)
+					{
+						// if we changed to floating open the tab we were just looking at
+						settingsButtons[printer.ViewState.SliceSettingsTabIndex].ShowPopup();
+					}
+				});
+			};
+
+			return imageWidget;
+		}
+
+		double PageWidth
+		{
+			get
+			{
+				return Math.Max(MinDockingWidth, ApplicationController.Instance.Printer.ViewState.SliceSettingsWidth);
+			}
+			set
+			{
+				var clampedWidth = Math.Max(MinDockingWidth, value);
+				ApplicationController.Instance.Printer.ViewState.SliceSettingsWidth = clampedWidth;
+			}
+		}
+
 		private void Rebuild()
 		{
+			settingsButtons.Clear();
 			Focus();
 			foreach (var nameWidget in allTabs)
 			{
@@ -113,9 +155,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			if (this.ControlIsPinned)
 			{
-				var resizePage = new ResizeContainer()
+				var resizePage = new ResizeContainer(this)
 				{
-					Width = ApplicationController.Instance.Printer.ViewState.SliceSettingsWidth,
+					Width = PageWidth,
 					VAnchor = VAnchor.Stretch,
 					SpliterBarColor = ApplicationController.Instance.Theme.SplitterBackground,
 					SplitterWidth = ApplicationController.Instance.Theme.SplitterWidth,
@@ -154,7 +196,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					{
 						printer.ViewState.SliceSettingsTabIndex = localTabIndex;
 					};
-
 				}
 				else // control is floating
 				{
@@ -165,7 +206,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 					var textBounds = rotatedLabel.Bounds();
 					var bounds = new RectangleDouble(printer.TypeFaceStyle.DescentInPixels, textBounds.Bottom, printer.TypeFaceStyle.AscentInPixels, textBounds.Top);
-					rotatedLabel.Transform = ((Affine)rotatedLabel.Transform) 
+					rotatedLabel.Transform = ((Affine)rotatedLabel.Transform)
 						* Affine.NewTranslation(new Vector2(-printer.TypeFaceStyle.DescentInPixels, -bounds.Bottom));
 
 					var optionsText = new GuiWidget(bounds.Width, bounds.Height)
@@ -191,9 +232,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					spliterColor.Green0To1 *= (1 - alpha);
 					spliterColor.Blue0To1 *= (1 - alpha);
 
-					var resizeContainer = new ResizeContainer()
+					var resizeContainer = new ResizeContainer(this)
 					{
-						Width = ApplicationController.Instance.Printer.ViewState.SliceSettingsWidth,
+						Width = PageWidth,
 						VAnchor = VAnchor.Stretch,
 						HAnchor = HAnchor.Right,
 						SpliterBarColor = spliterColor,
@@ -202,14 +243,15 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					resizeContainer.AddChild(new DockingWindowContent(this, nameWidget.Value, tabTitle)
 					{
 						BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor,
-						Width = ApplicationController.Instance.Printer.ViewState.SliceSettingsWidth
+						Width = PageWidth
 					});
 
+					settingsButtons.Add(settingsButton);
 					settingsButton.PopupContent = resizeContainer;
 
 					settingsButton.Click += (s, e) =>
 					{
-						resizeContainer.Width = ApplicationController.Instance.Printer.ViewState.SliceSettingsWidth;
+						resizeContainer.Width = PageWidth;
 					};
 
 					settingsButton.PopupLayoutEngine = new UnpinnedLayoutEngine(settingsButton.PopupContent, widgetTodockTo, DockSide);
@@ -242,12 +284,22 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		internal class ResizeContainer : FlowLayoutWidget
 		{
+			private DockingTabControl dockingTabControl;
 			private double downWidth = 0;
 			private bool mouseDownOnBar = false;
 			private double mouseDownX;
 
+			private int splitterWidth = 10;
 
-			int splitterWidth = 10;
+			internal ResizeContainer(DockingTabControl dockingTabControl)
+			{
+				this.dockingTabControl = dockingTabControl;
+				this.HAnchor = HAnchor.Absolute;
+				this.Cursor = Cursors.VSplit;
+			}
+
+			public RGBA_Bytes SpliterBarColor { get; set; } = ActiveTheme.Instance.TertiaryBackgroundColor;
+
 			public int SplitterWidth
 			{
 				get => splitterWidth;
@@ -260,14 +312,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					}
 				}
 			}
-
-			internal ResizeContainer()
-			{
-				this.HAnchor = HAnchor.Absolute;
-				this.Cursor = Cursors.VSplit;
-			}
-
-			public RGBA_Bytes SpliterBarColor { get; set; } = ActiveTheme.Instance.TertiaryBackgroundColor;
 
 			public override void OnDraw(Graphics2D graphics2D)
 			{
@@ -293,8 +337,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					int currentMouseX = (int)TransformToScreenSpace(mouseEvent.Position).x;
 					UiThread.RunOnIdle(() =>
 					{
-						Width = downWidth + mouseDownX - currentMouseX;
-						ApplicationController.Instance.Printer.ViewState.SliceSettingsWidth = Width;
+						dockingTabControl.PageWidth = downWidth + mouseDownX - currentMouseX;
+						Width = dockingTabControl.PageWidth;
 					});
 				}
 				base.OnMouseMove(mouseEvent);
@@ -305,24 +349,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				mouseDownOnBar = false;
 				base.OnMouseUp(mouseEvent);
 			}
-		}
-
-		private ImageWidget CreatePinButton()
-		{
-			var icon = AggContext.StaticData.LoadIcon(this.ControlIsPinned ? "Pushpin_16x.png" : "PushpinUnpin_16x.png", 16, 16).InvertLightness();
-			var imageWidget = new ImageWidget(icon)
-			{
-				Name = "Pin Settings Button",
-				Margin = new BorderDouble(right: 25, top: 6),
-				MinimumSize = new Vector2(16, 16)
-			};
-			imageWidget.Click += (s, e) =>
-			{
-				this.ControlIsPinned = !this.ControlIsPinned;
-				UiThread.RunOnIdle(() => this.Rebuild());
-			};
-
-			return imageWidget;
 		}
 
 		private class DockingWindowContent : GuiWidget, IIgnoredPopupChild
@@ -365,16 +391,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		}
 	}
 
-	public enum DockSide { Left, Bottom, Right, Top };
-
 	public class UnpinnedLayoutEngine : IPopupLayoutEngine
 	{
 		protected GuiWidget widgetTodockTo;
 		private GuiWidget contentWidget;
 		private HashSet<GuiWidget> hookedParents = new HashSet<GuiWidget>();
 		private PopupWidget popupWidget;
-
-		public DockSide DockSide { get; set; }
 
 		public UnpinnedLayoutEngine(GuiWidget contentWidget, GuiWidget widgetTodockTo, DockSide dockSide)
 		{
@@ -384,6 +406,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			contentWidget.BoundsChanged += widgetRelativeTo_PositionChanged;
 		}
 
+		public DockSide DockSide { get; set; }
 		public double MaxHeight { get; private set; }
 
 		public void Closed()
@@ -463,12 +486,14 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					case DockSide.Left:
 						popupWidget.LocalBounds = new RectangleDouble(bounds.Left, bounds.Bottom, bounds.Left - contentWidget.Width, bounds.Top);
 						break;
+
 					case DockSide.Bottom:
 						throw new NotImplementedException();
 					case DockSide.Right:
 						popupWidget.HAnchor = HAnchor.Absolute;
 						popupWidget.LocalBounds = new RectangleDouble(bounds.Right - contentWidget.Width, bounds.Bottom, bounds.Right, bounds.Top);
 						break;
+
 					case DockSide.Top:
 						throw new NotImplementedException();
 					default:

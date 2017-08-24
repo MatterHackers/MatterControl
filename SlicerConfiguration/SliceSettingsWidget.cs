@@ -764,8 +764,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			GuiWidget nameArea = new GuiWidget()
 			{
+				MinimumSize = new Vector2(50, 0),
 				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit | VAnchor.Center
+				VAnchor = VAnchor.Fit // | VAnchor.Center
 			};
 			var dataArea = new FlowLayoutWidget();
 			GuiWidget unitsArea = new GuiWidget()
@@ -810,16 +811,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				if (settingData.DataEditType != SliceSettingData.DataEditTypes.MULTI_LINE_TEXT)
 				{
-					var nameHolder = new GuiWidget()
-					{
-						Padding = new BorderDouble(0, 0, 5, 0),
-						VAnchor = VAnchor.Fit | VAnchor.Center,
-						HAnchor = HAnchor.Stretch,
-					};
-
-					nameHolder.AddChild(new WrappedTextWidget(settingData.PresentationName.Localize(), pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor));
-
-					nameArea.AddChild(nameHolder);
+					nameArea.AddChild(new WrappedTextWidget(settingData.PresentationName.Localize(), pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor));
+					//nameArea.AddChild(new TextWidget(settingData.PresentationName.Localize(), pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor));
 				}
 
 				switch (settingData.DataEditType)
