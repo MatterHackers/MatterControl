@@ -39,6 +39,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 	public class ShowAuthPanel : ConnectionWizardPage
 	{
 		public ShowAuthPanel()
+			: base ("Skip")
 		{
 			WrappedTextWidget userSignInPromptLabel = new WrappedTextWidget("Sign in to access your cloud printer profiles.\n\nOnce signed in you will be able to access:".Localize())
 			{
@@ -65,20 +66,17 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				ApplicationSettings.Instance.set(ApplicationSettingsKey.SuppressAuthPanel, rememberChoice.Checked.ToString());
 			};
 
-			var skipButton = textImageButtonFactory.Generate("Skip".Localize());
-			skipButton.Name = "Connection Wizard Skip Sign In Button";
-			skipButton.Click += (sender, e) =>
+			this.cancelButton.Name = "Connection Wizard Skip Sign In Button";
+			this.cancelButton.Click += (s, e) =>
 			{
 				if (!ProfileManager.Instance.ActiveProfiles.Any())
 				{
+					abortCancel = true;
+
 					UiThread.RunOnIdle(() =>
 					{
 						WizardWindow.ChangeToPage<SetupStepMakeModelName>();
 					});
-				}
-				else
-				{
-					UiThread.RunOnIdle(WizardWindow.Close);
 				}
 			};
 
@@ -105,10 +103,8 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				});
 			};
 
-			footerRow.AddChild(skipButton);
-			footerRow.AddChild(new HorizontalSpacer());
-			footerRow.AddChild(createAccountButton);
-			footerRow.AddChild(signInButton);
+			this.AddPageAction(createAccountButton);
+			this.AddPageAction(signInButton);
 		}
 
 		private void AddBulletPointAndDescription(FlowLayoutWidget contentRow, string v1, string v2)

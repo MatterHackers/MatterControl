@@ -35,9 +35,6 @@ namespace MatterHackers.MatterControl.SetupWizard
 			contentRow.AddChild(scrollWindow);
 
 			var revertButton = textImageButtonFactory.Generate("Restore".Localize());
-			footerRow.AddChild(revertButton);
-			footerRow.AddChild(new HorizontalSpacer());
-			footerRow.AddChild(cancelButton);
 			revertButton.Click += async (s, e) =>
 			{
 				int index = radioButtonList.IndexOf(radioButtonList.Where(r => r.Checked).FirstOrDefault());
@@ -62,6 +59,7 @@ namespace MatterHackers.MatterControl.SetupWizard
 					UiThread.RunOnIdle(WizardWindow.Close);
 				}
 			};
+			this.AddPageAction(revertButton);
 
 			LoadHistoryItems();
 		}

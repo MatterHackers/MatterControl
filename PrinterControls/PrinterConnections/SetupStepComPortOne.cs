@@ -22,10 +22,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 					WizardWindow.ChangeToPage<SetupStepComPortTwo>();
 				});
 
-				//Add buttons to buttonContainer
-				footerRow.AddChild(nextButton);
-				footerRow.AddChild(new HorizontalSpacer());
-				footerRow.AddChild(cancelButton);
+				this.AddPageAction(nextButton);
 			}
 		}
 

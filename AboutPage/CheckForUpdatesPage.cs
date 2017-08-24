@@ -136,13 +136,7 @@ namespace MatterHackers.MatterControl.AboutPage
 
 			additionalInfoContainer.Visible = false;
 
-			//Add buttons to buttonContainer
-			//footerRow.AddChild(acceptButton);
-			footerRow.AddChild(new HorizontalSpacer());
-			footerRow.AddChild(cancelButton);
 			cancelButton.Visible = true;
-
-			footerRow.Visible = true;
 
 			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 		}

@@ -45,11 +45,8 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				skipButton = textImageButtonFactory.Generate("Skip".Localize());
 				skipButton.Click += (s, e) => WizardWindow.ChangeToSetupBaudOrComPortOne();
 
-				//Add buttons to buttonContainer
-				footerRow.AddChild(installButton);
-				footerRow.AddChild(skipButton);
-				footerRow.AddChild(new HorizontalSpacer());
-				footerRow.AddChild(cancelButton);
+				this.AddPageAction(installButton);
+				this.AddPageAction(skipButton);
 			}
 		}
 

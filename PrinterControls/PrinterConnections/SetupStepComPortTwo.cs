@@ -35,11 +35,8 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 				PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
 
-				//Add buttons to buttonContainer
-				footerRow.AddChild(nextButton);
-				footerRow.AddChild(connectButton);
-				footerRow.AddChild(new HorizontalSpacer());
-				footerRow.AddChild(cancelButton);
+				this.AddPageAction(nextButton);
+				this.AddPageAction(connectButton);
 			}
 		}
 

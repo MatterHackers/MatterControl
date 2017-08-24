@@ -26,12 +26,16 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			contentRow.AddChild(printerBaudRateContainer);
 			{
 				nextButton = textImageButtonFactory.Generate("Continue".Localize());
-				nextButton.Click += NextButton_Click;
+				nextButton.Click += (s, e) =>
+				{
+					bool canContinue = this.OnSave();
+					if (canContinue)
+					{
+						UiThread.RunOnIdle(MoveToNextWidget);
+					}
+				};
 
-				//Add buttons to buttonContainer
-				footerRow.AddChild(nextButton);
-				footerRow.AddChild(new HorizontalSpacer());
-				footerRow.AddChild(cancelButton);
+				this.AddPageAction(nextButton);
 			}
 			BindBaudRateHandlers();
 		}
@@ -162,15 +166,6 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		private void MoveToNextWidget()
 		{
 			WizardWindow.ChangeToInstallDriverOrComPortOne();
-		}
-
-		private void NextButton_Click(object sender, EventArgs mouseEvent)
-		{
-			bool canContinue = this.OnSave();
-			if (canContinue)
-			{
-				UiThread.RunOnIdle(MoveToNextWidget);
-			}
 		}
 
 		private bool OnSave()

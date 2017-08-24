@@ -73,14 +73,13 @@ namespace MatterHackers.MatterControl.PrinterControls
 			if (macroData.waitOk | macroData.expireTime > 0)
 			{
 				Button okButton = textImageButtonFactory.Generate("Continue".Localize());
-
 				okButton.Click += (s, e) =>
 				{
 					PrinterConnection.Instance.MacroContinue();
 					UiThread.RunOnIdle(() => WizardWindow?.Close());
 				};
 
-				footerRow.AddChild(okButton);
+				this.AddPageAction(okButton);
 			}
 
 			if (macroData.image != null)
@@ -118,9 +117,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 				startTimeMs = UiThread.CurrentTimerMs;
 				UiThread.RunOnIdle(CountDownTime);
 			}
-
-			footerRow.AddChild(new HorizontalSpacer());
-			footerRow.AddChild(cancelButton);
 		}
 
 		private EventHandler unregisterEvents;

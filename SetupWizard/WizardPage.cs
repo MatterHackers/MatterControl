@@ -1,7 +1,9 @@
 ﻿
+using System;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl
 {
@@ -9,7 +11,7 @@ namespace MatterHackers.MatterControl
 	{
 		protected FlowLayoutWidget headerRow;
 		protected FlowLayoutWidget contentRow;
-		protected FlowLayoutWidget footerRow;
+		private FlowLayoutWidget footerRow;
 
 		protected WrappedTextWidget headerLabel;
 		protected Button cancelButton;
@@ -25,6 +27,8 @@ namespace MatterHackers.MatterControl
 
 		protected GuiWidget mainContainer;
 
+		protected bool abortCancel = false;
+
 		public WizardPage(string unlocalizedTextForCancelButton = "Cancel", string unlocalizedTextForTitle = "Setup Wizard")
 		{
 			if (!UserSettings.Instance.IsTouchScreen)
@@ -37,10 +41,6 @@ namespace MatterHackers.MatterControl
 
 			cancelButton = textImageButtonFactory.Generate(unlocalizedTextForCancelButton.Localize());
 			cancelButton.Name = "Cancel Wizard Button";
-			cancelButton.Click += (s, e) =>
-			{
-				UiThread.RunOnIdle(() => WizardWindow?.Close());
-			};
 
 			// Create the main container
 			mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
@@ -99,6 +99,28 @@ namespace MatterHackers.MatterControl
 		}
 
 		public string WindowTitle { get; set; }
+
+		public void AddPageAction(Button button)
+		{
+			footerRow.AddChild(button);
+		}
+
+		public override void OnLoad(EventArgs args)
+		{
+			// Add 'Close' event listener after derived types have had a chance to register event listeners
+			cancelButton.Click += (s, e) =>
+			{
+				if (!abortCancel)
+				{
+					UiThread.RunOnIdle(() => WizardWindow?.Close());
+				}
+			};
+
+			footerRow.AddChild(new HorizontalSpacer());
+			footerRow.AddChild(cancelButton);
+
+			base.OnLoad(args);
+		}
 
 		public virtual void PageIsBecomingActive()
 		{

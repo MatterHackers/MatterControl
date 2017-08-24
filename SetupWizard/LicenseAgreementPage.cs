@@ -68,11 +68,6 @@ public class LicenseAgreementPage : WizardPage
 		// Exit if EULA is not accepted
 		cancelButton.Click += (s, e) => UiThread.RunOnIdle(MatterControlApplication.Instance.Close);
 
-		//Add buttons to buttonContainer
-		footerRow.AddChild(acceptButton);
-		footerRow.AddChild(new HorizontalSpacer());
-		footerRow.AddChild(cancelButton);
-
-		footerRow.Visible = true;
+		this.AddPageAction(acceptButton);
 	}
 }

@@ -56,10 +56,7 @@ namespace MatterHackers.MatterControl
 			nextButton.Click += (sender, e) => UiThread.RunOnIdle(this.WizardWindow.Close);
 			nextButton.Visible = false;
 
-			//Add buttons to buttonContainer
-			footerRow.AddChild(nextButton);
-			footerRow.AddChild(new GuiWidget() { HAnchor = HAnchor.Stretch });
-			footerRow.AddChild(cancelButton);
+			this.AddPageAction(nextButton);
 
 			// Register for connection notifications
 			PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent(ConnectionStatusChanged, ref unregisterEvents);

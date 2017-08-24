@@ -135,10 +135,7 @@ namespace MatterHackers.MatterControl
 			GuiWidget hSpacer = new GuiWidget();
 			hSpacer.HAnchor = HAnchor.Stretch;
 
-			//Add buttons to buttonContainer
-			footerRow.AddChild(nextButton);
-			footerRow.AddChild(hSpacer);
-			footerRow.AddChild(cancelButton);
+			this.AddPageAction(nextButton);
 
 			updateControls(true);
 		}

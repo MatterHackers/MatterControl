@@ -74,12 +74,7 @@ namespace MatterHackers.MatterControl
 			{
 				SubmitForm();
 			};
-			footerRow.AddChild(renameItemButton);
-
-			//Adds Create and Close Button to button container
-			footerRow.AddChild(new HorizontalSpacer());
-
-			footerRow.AddChild(cancelButton);
+			this.AddPageAction(renameItemButton);
 		}
 
 		public override void OnLoad(EventArgs args)

@@ -104,10 +104,7 @@ namespace MatterHackers.MatterControl
 			exportButton.Visible = true;
 			cancelButton.Visible = true;
 
-			//Add buttons to buttonContainer
-			footerRow.AddChild(exportButton);
-			footerRow.AddChild(new HorizontalSpacer());
-			footerRow.AddChild(cancelButton);
+			this.AddPageAction(exportButton);
 		}
 
 		private GuiWidget CreateDetailInfo(string detailText)

@@ -53,9 +53,6 @@ namespace MatterHackers.MatterControl
 			contentRow.AddChild(new SetupPrinterView(this.textImageButtonFactory) { WizardPage = this });
 			contentRow.AddChild(new SetupAccountView(this.textImageButtonFactory));
 
-			footerRow.AddChild(new HorizontalSpacer());
-			footerRow.AddChild(cancelButton);
-
 			cancelButton.Text = "Back".Localize();
 
 #if ANDROID_T7X

@@ -237,10 +237,7 @@ namespace MatterHackers.MatterControl
 				});
 			};
 
-			footerRow.AddChild(exportButton);
-
-			footerRow.AddChild(new HorizontalSpacer());
-			footerRow.AddChild(cancelButton);
+			this.AddPageAction(exportButton);
 		}
 
 		private void ShowFileIfRequested(string filename)

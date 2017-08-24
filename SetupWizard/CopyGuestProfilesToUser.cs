@@ -149,12 +149,7 @@ namespace MatterHackers.MatterControl
 				}
 			});
 
-			//Add buttons to buttonContainer
-			footerRow.AddChild(syncButton);
-			footerRow.AddChild(new HorizontalSpacer());
-			footerRow.AddChild(cancelButton);
-
-			footerRow.Visible = true;
+			this.AddPageAction(syncButton);
 		}
 	}
 }
