@@ -27,16 +27,15 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using MatterHackers.Agg.UI;
-using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.SlicerConfiguration;
 using System.Linq;
+using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
-	public class ShowAuthPanel : ConnectionWizardPage
+	public class ShowAuthPanel : WizardPage
 	{
 		public ShowAuthPanel()
 			: base ("Skip")

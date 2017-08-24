@@ -50,9 +50,10 @@ namespace MatterHackers.MatterControl.PrinterControls
 		private long timeToWaitMs;
 
 		public RunningMacroPage(MacroCommandData macroData)
-					: base("Cancel", macroData.title)
+			: base("Cancel")
 		{
 			this.WindowTitle = "Running Macro".Localize();
+			this.HeaderText = macroData.title;
 
 			cancelButton.Click += (s, e) =>
 			{

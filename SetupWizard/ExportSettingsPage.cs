@@ -44,10 +44,10 @@ namespace MatterHackers.MatterControl
 		RadioButton slic3rButton;
 		RadioButton curaButton;
 
-		public ExportSettingsPage() :
-			base("Cancel", "Export As")
+		public ExportSettingsPage()
 		{
 			this.WindowTitle = "Export Settings".Localize();
+			this.HeaderText = "Export As".Localize();
 
 			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{

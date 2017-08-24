@@ -42,11 +42,11 @@ namespace MatterHackers.MatterControl
 		private MHTextEditWidget saveAsNameWidget;
 
 		public RenameItemPage(string windowTitle, string currentItemName, Action<string> functionToCallToRenameItem)
-			: base(unlocalizedTextForTitle: windowTitle)
 		{
 			this.renameCallback = functionToCallToRenameItem;
 
 			this.WindowTitle = windowTitle;
+			this.HeaderText = windowTitle;
 
 			var textBoxHeader = new TextWidget("Name".Localize(), pointSize: 12)
 			{

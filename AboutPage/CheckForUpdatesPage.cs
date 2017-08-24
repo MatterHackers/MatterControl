@@ -10,11 +10,12 @@ namespace MatterHackers.MatterControl.AboutPage
 	public class CheckForUpdatesPage : WizardPage
 	{
 		public CheckForUpdatesPage()
-		: base("Close", "Check for Update")
+		: base("Close")
 		{
 			AnchorAll();
 
 			this.WindowTitle = "Check for Update".Localize();
+			this.HeaderText = "Check for Update".Localize();
 
 			var theme = ApplicationController.Instance.Theme;
 

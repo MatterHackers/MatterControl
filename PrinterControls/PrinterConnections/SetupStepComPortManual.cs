@@ -1,20 +1,44 @@
-﻿using MatterHackers.Agg;
-using MatterHackers.Agg.Platform;
+﻿/*
+Copyright (c) 2017, Lars Brubaker, John Lewin
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+The views and conclusions contained in the software and documentation are those
+of the authors and should not be interpreted as representing official policies,
+either expressed or implied, of the FreeBSD Project.
+*/
+
+using System;
+using System.Collections.Generic;
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.SerialPortCommunication.FrostedSerial;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
-using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
-	public class SetupStepComPortManual : ConnectionWizardPage
+	public class SetupStepComPortManual : WizardPage
 	{
 		private Button nextButton;
 		private Button connectButton;
@@ -34,13 +58,37 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			FlowLayoutWidget printerComPortContainer = createComPortContainer();
 			contentRow.AddChild(printerComPortContainer);
 
+			cancelButton.Click += (s, e) => PrinterConnection.Instance.HaltConnectionThread();
+			
 			//Construct buttons
 			nextButton = textImageButtonFactory.Generate("Done".Localize());
 			nextButton.Click += (s, e) => UiThread.RunOnIdle(Parent.Close);
 			nextButton.Visible = false;
 
 			connectButton = textImageButtonFactory.Generate("Connect".Localize());
-			connectButton.Click += ConnectButton_Click;
+			connectButton.Click += (s, e) =>
+			{
+				try
+				{
+					printerComPortHelpLink.Visible = false;
+					printerComPortError.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+
+					printerComPortError.Text = "Attempting to connect".Localize() + "...";
+					printerComPortError.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+
+					ActiveSliceSettings.Instance.Helpers.SetComPort(GetSelectedSerialPort());
+					PrinterConnection.Instance.ConnectToActivePrinter();
+
+					connectButton.Visible = false;
+					refreshButton.Visible = false;
+				}
+				catch
+				{
+					printerComPortHelpLink.Visible = false;
+					printerComPortError.TextColor = RGBA_Bytes.Red;
+					printerComPortError.Text = "Oops! Please select a serial port.".Localize();
+				}
+			};
 
 			refreshButton = textImageButtonFactory.Generate("Refresh".Localize());
 			refreshButton.Click += (s, e) => UiThread.RunOnIdle(() =>
@@ -133,30 +181,6 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		private void MoveToNextWidget(object state)
 		{
 			WizardWindow.ChangeToInstallDriverOrComPortOne();
-		}
-
-		private void ConnectButton_Click(object sender, EventArgs mouseEvent)
-		{
-			try
-			{
-				printerComPortHelpLink.Visible = false;
-				printerComPortError.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-
-				printerComPortError.Text = "Attempting to connect".Localize() + "...";
-				printerComPortError.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-
-				ActiveSliceSettings.Instance.Helpers.SetComPort(GetSelectedSerialPort());
-				PrinterConnection.Instance.ConnectToActivePrinter();
-
-				connectButton.Visible = false;
-				refreshButton.Visible = false;
-			}
-			catch
-			{
-				printerComPortHelpLink.Visible = false;
-				printerComPortError.TextColor = RGBA_Bytes.Red;
-				printerComPortError.Text = "Oops! Please select a serial port.".Localize();
-			}
 		}
 
 		protected void CreateSerialPortControls(FlowLayoutWidget comPortContainer, string activePrinterSerialPort)

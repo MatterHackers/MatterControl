@@ -45,7 +45,6 @@ namespace MatterHackers.MatterControl.ActionBar
 	{
 		private List<Button> activePrintButtons = new List<Button>();
 		private Button addPrinterButton;
-		private Button selectPrinterButton;
 		private List<Button> allPrintButtons = new List<Button>();
 
 		private Button cancelConnectButton;
@@ -92,14 +91,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			addPrinterButton.Click += (s, e) =>
 			{
 				UiThread.RunOnIdle(() => WizardWindow.ShowPrinterSetup(true));
-			};
-
-			selectPrinterButton = buttonFactory.Generate("Select Printer".Localize().ToUpper());
-			selectPrinterButton.ToolTipText = "Select an existing printer.".Localize();
-			selectPrinterButton.Margin = defaultMargin;
-			selectPrinterButton.Click += (s, e) =>
-			{
-				WizardWindow.Show<SetupOptionsPage>();
 			};
 
 			resetConnectionButton = buttonFactory.Generate("Reset".Localize().ToUpper(), AggContext.StaticData.LoadIcon("e_stop.png", 14, 14));
@@ -157,9 +148,6 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			parentWidget.AddChild(addPrinterButton);
 			allPrintButtons.Add(addPrinterButton);
-
-			parentWidget.AddChild(selectPrinterButton);
-			allPrintButtons.Add(selectPrinterButton);
 
 			parentWidget.AddChild(startButton);
 			allPrintButtons.Add(startButton);

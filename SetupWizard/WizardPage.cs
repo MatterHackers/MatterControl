@@ -1,4 +1,32 @@
-﻿
+﻿/*
+Copyright (c) 2017, Lars Brubaker, John Lewin
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+The views and conclusions contained in the software and documentation are those
+of the authors and should not be interpreted as representing official policies,
+either expressed or implied, of the FreeBSD Project.
+*/
+
 using System;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
@@ -13,7 +41,7 @@ namespace MatterHackers.MatterControl
 		protected FlowLayoutWidget contentRow;
 		private FlowLayoutWidget footerRow;
 
-		protected WrappedTextWidget headerLabel;
+		private WrappedTextWidget headerLabel;
 		protected Button cancelButton { get; }
 
 		protected TextImageButtonFactory textImageButtonFactory { get; } = ApplicationController.Instance.Theme.WizardButtons;
@@ -25,11 +53,11 @@ namespace MatterHackers.MatterControl
 
 		public WizardWindow WizardWindow;
 
-		protected GuiWidget mainContainer;
+		private GuiWidget mainContainer;
 
 		protected bool abortCancel = false;
 
-		public WizardPage(string unlocalizedTextForCancelButton = "Cancel", string unlocalizedTextForTitle = "Setup Wizard")
+		public WizardPage(string unlocalizedTextForCancelButton = "Cancel")
 		{
 			if (!UserSettings.Instance.IsTouchScreen)
 			{
@@ -58,7 +86,7 @@ namespace MatterHackers.MatterControl
 				HAnchor = HAnchor.Stretch
 			};
 
-			headerLabel = new WrappedTextWidget(unlocalizedTextForTitle.Localize(), pointSize: 24, textColor: ActiveTheme.Instance.SecondaryAccentColor)
+			headerLabel = new WrappedTextWidget("Setup Wizard".Localize(), pointSize: 24, textColor: ActiveTheme.Instance.SecondaryAccentColor)
 			{
 				HAnchor = HAnchor.Stretch
 			};
@@ -77,7 +105,8 @@ namespace MatterHackers.MatterControl
 			footerRow = new FlowLayoutWidget(FlowDirection.LeftToRight)
 			{
 				HAnchor = HAnchor.Left | HAnchor.Right,
-				Margin = new BorderDouble(0, 6)
+				Margin = new BorderDouble(0, 6),
+				Padding = new BorderDouble(top: 4, bottom: 2)
 			};
 
 			mainContainer.AddChild(headerRow);
@@ -99,6 +128,12 @@ namespace MatterHackers.MatterControl
 		}
 
 		public string WindowTitle { get; set; }
+
+		public string HeaderText
+		{
+			get => headerLabel.Text;
+			set => headerLabel.Text = value;
+		}
 
 		public void AddPageAction(Button button)
 		{

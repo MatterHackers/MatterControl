@@ -53,17 +53,17 @@ namespace MatterHackers.MatterControl
 
 		private bool isMergeIntoUserLayer = false;
 
-		public SelectPartsOfPrinterToImport(string settingsFilePath, PrinterSettingsLayer destinationLayer, string sectionName = null) :
-			base(unlocalizedTextForTitle: "Import Wizard")
+		public SelectPartsOfPrinterToImport(string settingsFilePath, PrinterSettingsLayer destinationLayer, string sectionName = null)
 		{
+			this.WindowTitle = "Import Wizard";
+			this.HeaderText = "Select What to Import".Localize();
+
 			this.isMergeIntoUserLayer = destinationLayer == ActiveSliceSettings.Instance.UserLayer;
 			this.destinationLayer = destinationLayer;
 			this.sectionName = sectionName;
 
 			// TODO: Need to handle load failures for import attempts
 			settingsToImport = PrinterSettings.LoadFile(settingsFilePath);
-
-			this.headerLabel.Text = "Select What to Import".Localize();
 
 			this.settingsFilePath = settingsFilePath;
 
@@ -255,9 +255,10 @@ namespace MatterHackers.MatterControl
 	public class ImportSucceeded : WizardPage
 	{
 		public ImportSucceeded(string successMessage) :
-			base("Done", "Import Wizard")
+			base("Done")
 		{
-			this.headerLabel.Text = "Import Successful".Localize();
+			this.WindowTitle = "Import Wizard".Localize();
+			this.HeaderText = "Import Successful".Localize();
 
 			contentRow.AddChild(new WrappedTextWidget(successMessage, textColor: ActiveTheme.Instance.PrimaryTextColor));
 		}
@@ -270,10 +271,10 @@ namespace MatterHackers.MatterControl
 		private RadioButton newQualityPresetButton;
 		private RadioButton newMaterialPresetButton;
 
-		public ImportSettingsPage() :
-			base("Cancel", "Import Wizard")
+		public ImportSettingsPage()
 		{
-			this.WindowTitle = "Import Settings Page".Localize();
+			this.WindowTitle = "Import Settings".Localize();
+			this.HeaderText = "Import Wizard".Localize();
 
 			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
