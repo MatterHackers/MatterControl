@@ -35,11 +35,8 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 				PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
 
-				//Add buttons to buttonContainer
-				footerRow.AddChild(nextButton);
-				footerRow.AddChild(connectButton);
-				footerRow.AddChild(new HorizontalSpacer());
-				footerRow.AddChild(cancelButton);
+				this.AddPageAction(nextButton);
+				this.AddPageAction(connectButton);
 			}
 		}
 
@@ -83,7 +80,10 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 			Button manualLink = linkButtonFactory.Generate("Manual Configuration".Localize());
 			manualLink.Margin = new BorderDouble(0, 5);
-			manualLink.Click += (s, e) => UiThread.RunOnIdle(WizardWindow.ChangeToPage<SetupStepComPortManual>);
+			manualLink.Click += (s, e) => UiThread.RunOnIdle(() =>
+			{
+				WizardWindow.ChangeToPage<SetupStepComPortManual>();
+			});
 
 			printerErrorMessage = new TextWidget("", 0, 0, 10);
 			printerErrorMessage.AutoExpandBoundsToText = true;

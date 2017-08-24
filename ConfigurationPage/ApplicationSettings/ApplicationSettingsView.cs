@@ -303,7 +303,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				UiThread.RunOnIdle(() =>
 				{
 					UpdateControlData.Instance.CheckForUpdateUserRequested();
-					WizardWindow.Show<CheckForUpdatesPage>("/checkforupdates", "Check for Update");
+					WizardWindow.Show<CheckForUpdatesPage>();
 				});
 			};
 			this.AddSettingsRow(updateMatterControl);

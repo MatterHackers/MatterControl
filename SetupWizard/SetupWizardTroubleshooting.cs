@@ -40,21 +40,21 @@ namespace MatterHackers.MatterControl
 
 		public SetupWizardTroubleshooting()
 		{
+			this.WindowTitle = "Troubleshooting".Localize();
+
 			RefreshStatus();
 
-			//Construct buttons
-			cancelButton = whiteImageButtonFactory.Generate("Cancel".Localize());
-			cancelButton.Click += (s, e) => UiThread.RunOnIdle(this.WizardWindow.ChangeToPage<AndroidConnectDevicePage>);
+			cancelButton.Click += (s, e) => UiThread.RunOnIdle(() =>
+			{
+				abortCancel = true;
+				this.WizardWindow.ChangeToPage<AndroidConnectDevicePage>();
+			});
 			
-			//Construct buttons
 			nextButton = textImageButtonFactory.Generate("Continue".Localize());
 			nextButton.Click += (sender, e) => UiThread.RunOnIdle(this.WizardWindow.Close);
 			nextButton.Visible = false;
 
-			//Add buttons to buttonContainer
-			footerRow.AddChild(nextButton);
-			footerRow.AddChild(new GuiWidget() { HAnchor = HAnchor.Stretch });
-			footerRow.AddChild(cancelButton);
+			this.AddPageAction(nextButton);
 
 			// Register for connection notifications
 			PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent(ConnectionStatusChanged, ref unregisterEvents);

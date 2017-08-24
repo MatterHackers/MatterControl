@@ -91,20 +91,23 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 #else
 					if (AggContext.OperatingSystem == OSType.Windows)
 					{
-						UiThread.RunOnIdle(WizardWindow.ChangeToPage<SetupStepInstallDriver>);
+						UiThread.RunOnIdle(() =>
+						{
+							WizardWindow.ChangeToPage<SetupStepInstallDriver>();
+						});
 					}
 					else
 					{
-						UiThread.RunOnIdle(WizardWindow.ChangeToPage<SetupStepComPortOne>);
+						UiThread.RunOnIdle(() =>
+						{
+							WizardWindow.ChangeToPage<SetupStepComPortOne>();
+						});
 					}
 #endif
 				}
 			};
 
-			//Add buttons to buttonContainer
-			footerRow.AddChild(nextButton);
-			footerRow.AddChild(new HorizontalSpacer());
-			footerRow.AddChild(cancelButton);
+			this.AddPageAction(nextButton);
 
 			usingDefaultName = true;
 

@@ -10,7 +10,9 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
 	public class ConnectionWizardPage : WizardPage
 	{
-		public ConnectionWizardPage()
+		// TODO: It would seem that only one of these pages that derives from ConnectionWizardPage needs to abort a connect attempt... *************************************
+		public ConnectionWizardPage(string unlocalizedTextForCancelButton = "Cancel")
+			: base (unlocalizedTextForCancelButton: unlocalizedTextForCancelButton)
 		{
 			cancelButton.Click += (s, e) => PrinterConnection.Instance.HaltConnectionThread();
 		}

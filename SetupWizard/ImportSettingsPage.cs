@@ -217,11 +217,8 @@ namespace MatterHackers.MatterControl
 				this.Parents<SystemWindow>().FirstOrDefault()?.CloseOnIdle();
 			});
 
-			footerRow.AddChild(mergeButton);
-
-			footerRow.AddChild(new HorizontalSpacer());
-			footerRow.AddChild(cancelButton);
-
+			this.AddPageAction(mergeButton);
+			
 			if (settingsToImport.QualityLayers.Count == 0 && settingsToImport.MaterialLayers.Count == 0)
 			{
 				// Only main setting so don't ask what to merge just do it.
@@ -262,17 +259,7 @@ namespace MatterHackers.MatterControl
 		{
 			this.headerLabel.Text = "Import Successful".Localize();
 
-			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				HAnchor = HAnchor.Stretch,
-			};
-			contentRow.AddChild(container);
-
-			var successMessageWidget = new WrappedTextWidget(successMessage, textColor: ActiveTheme.Instance.PrimaryTextColor);
-			container.AddChild(successMessageWidget);
-
-			footerRow.AddChild(new HorizontalSpacer());
-			footerRow.AddChild(cancelButton);
+			contentRow.AddChild(new WrappedTextWidget(successMessage, textColor: ActiveTheme.Instance.PrimaryTextColor));
 		}
 	}
 
@@ -286,6 +273,8 @@ namespace MatterHackers.MatterControl
 		public ImportSettingsPage() :
 			base("Cancel", "Import Wizard")
 		{
+			this.WindowTitle = "Import Settings Page".Localize();
+
 			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.Stretch,
@@ -376,10 +365,7 @@ namespace MatterHackers.MatterControl
 			importButton.Visible = true;
 			cancelButton.Visible = true;
 
-			//Add buttons to buttonContainer
-			footerRow.AddChild(importButton);
-			footerRow.AddChild(new HorizontalSpacer());
-			footerRow.AddChild(cancelButton);
+			this.AddPageAction(importButton);
 		}
 
 		private GuiWidget CreateDetailInfo(string detailText)

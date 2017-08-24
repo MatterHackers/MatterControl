@@ -93,10 +93,7 @@ namespace MatterHackers.MatterControl
 
 			contentRow.AddChild(connectButtonContainer);
 
-			//Add buttons to buttonContainer
-			footerRow.AddChild(nextButton);
-			footerRow.AddChild(new HorizontalSpacer());
-			footerRow.AddChild(cancelButton);
+			this.AddPageAction(nextButton);
 		}
 	}
 }

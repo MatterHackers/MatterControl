@@ -52,6 +52,8 @@ namespace MatterHackers.MatterControl.PrinterControls
 		public RunningMacroPage(MacroCommandData macroData)
 					: base("Cancel", macroData.title)
 		{
+			this.WindowTitle = "Running Macro".Localize();
+
 			cancelButton.Click += (s, e) =>
 			{
 				PrinterConnection.Instance.MacroCancel();
@@ -71,14 +73,13 @@ namespace MatterHackers.MatterControl.PrinterControls
 			if (macroData.waitOk | macroData.expireTime > 0)
 			{
 				Button okButton = textImageButtonFactory.Generate("Continue".Localize());
-
 				okButton.Click += (s, e) =>
 				{
 					PrinterConnection.Instance.MacroContinue();
 					UiThread.RunOnIdle(() => WizardWindow?.Close());
 				};
 
-				footerRow.AddChild(okButton);
+				this.AddPageAction(okButton);
 			}
 
 			if (macroData.image != null)
@@ -116,9 +117,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 				startTimeMs = UiThread.CurrentTimerMs;
 				UiThread.RunOnIdle(CountDownTime);
 			}
-
-			footerRow.AddChild(new HorizontalSpacer());
-			footerRow.AddChild(cancelButton);
 		}
 
 		private EventHandler unregisterEvents;
@@ -132,11 +130,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 			public double expireTime = 0;
 			public double expectedTemperature = 0;
 			public ImageBuffer image = null;
-		}
-
-		public static void Show(MacroCommandData macroData)
-		{
-			WizardWindow.Show("Macro", "Running Macro", new RunningMacroPage(macroData));
 		}
 
 		public override void OnClosed(ClosedEventArgs e)

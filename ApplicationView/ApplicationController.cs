@@ -1021,7 +1021,7 @@ namespace MatterHackers.MatterControl
 				&& !ProfileManager.Instance.PrintersImported)
 			{
 				// Show the import printers wizard
-				WizardWindow.Show<CopyGuestProfilesToUser>("/CopyGuestProfiles", "Copy Printers");
+				WizardWindow.Show<CopyGuestProfilesToUser>();
 			}
 		}
 
@@ -1069,7 +1069,7 @@ namespace MatterHackers.MatterControl
 					// show this last so it is on top
 					if (UserSettings.Instance.get("SoftwareLicenseAccepted") != "true")
 					{
-						UiThread.RunOnIdle(() => WizardWindow.Show<LicenseAgreementPage>("SoftwareLicense", "Software License Agreement"));
+						UiThread.RunOnIdle(() => WizardWindow.Show<LicenseAgreementPage>());
 					}
 				}
 			}

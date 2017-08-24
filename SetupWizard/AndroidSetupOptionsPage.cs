@@ -46,13 +46,12 @@ namespace MatterHackers.MatterControl
 		public SetupOptionsPage()
 			: base("Done")
 		{
+			this.WindowTitle = "Setup Wizard".Localize();
+
 			headerLabel.Text = "Setup Options".Localize();
 
 			contentRow.AddChild(new SetupPrinterView(this.textImageButtonFactory) { WizardPage = this });
 			contentRow.AddChild(new SetupAccountView(this.textImageButtonFactory));
-
-			footerRow.AddChild(new HorizontalSpacer());
-			footerRow.AddChild(cancelButton);
 
 			cancelButton.Text = "Back".Localize();
 
@@ -102,7 +101,10 @@ namespace MatterHackers.MatterControl
 			disconnectButton.Click += (sender, e) =>
 			{
 				PrinterConnection.Instance.Disable();
-				UiThread.RunOnIdle(WizardPage.WizardWindow.ChangeToPage<SetupOptionsPage>);
+				UiThread.RunOnIdle(() =>
+				{
+					WizardPage.WizardWindow.ChangeToPage<SetupOptionsPage>();
+				});
 			};
 			buttonContainer.AddChild(disconnectButton);
 

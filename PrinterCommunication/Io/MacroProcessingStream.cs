@@ -204,12 +204,16 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 								waitingForUserInput = true;
 								macroData.showMaterialSelector = true;
 								macroData.waitOk = true;
-								UiThread.RunOnIdle(() => RunningMacroPage.Show(macroData));
+
+								UiThread.RunOnIdle(() =>
+								{
+									WizardWindow.Show(new RunningMacroPage(macroData));
+								});
 								break;
 
 							case "close":
 								runningMacro = false;
-								UiThread.RunOnIdle(() => WizardWindow.Close("Macro"));
+								UiThread.RunOnIdle(() => WizardWindow.Close(typeof(RunningMacroPage)));
 								break;
 
 							case "ding":
@@ -218,7 +222,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 							case "show_message":
 								waitingForUserInput = macroData.waitOk | macroData.expireTime > 0;
-								UiThread.RunOnIdle(() => RunningMacroPage.Show(macroData));
+
+								UiThread.RunOnIdle(() =>
+								{
+									WizardWindow.Show(new RunningMacroPage(macroData));
+								});
+
 								break;
 
 							default:
@@ -250,7 +259,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			waitingForUserInput = false;
 			timeHaveBeenWaiting.Reset();
 			maxTimeToWaitForOk = 0;
-			UiThread.RunOnIdle(() => WizardWindow.Close("Macro"));
+			UiThread.RunOnIdle(() => WizardWindow.Close(typeof(RunningMacroPage)));
 		}
 
 		private bool TryGetAfterString(string macroLine, string variableName, out string value)

@@ -206,7 +206,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Title = "Rename Printer".Localize(),
 					Action = () =>
 					{
-						var renameItemWindow = new RenameItemWindow(
+						var renameItemPage = new RenameItemPage(
 						"Rename Printer".Localize() + ":",
 						printerSettings.GetValue(SettingsKey.printer_name),
 						(newName) =>
@@ -216,6 +216,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								printerSettings.SetValue(SettingsKey.printer_name, newName);
 							}
 						});
+
+						WizardWindow.Show(renameItemPage);
 					}
 				},
 				new NamedAction() { Title = "----" },

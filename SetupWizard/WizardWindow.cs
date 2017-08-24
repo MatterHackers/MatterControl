@@ -19,7 +19,7 @@ namespace MatterHackers.MatterControl
 		public static Action ShowAuthDialog;
 		public static Action ChangeToAccountCreate;
 
-		private static Dictionary<string, WizardWindow> allWindows = new Dictionary<string, WizardWindow>();
+		private static Dictionary<Type, WizardWindow> allWindows = new Dictionary<Type, WizardWindow>();
 
 		private WizardWindow()
 			: base(500 * GuiWidget.DeviceScale, 500 * GuiWidget.DeviceScale)
@@ -33,33 +33,33 @@ namespace MatterHackers.MatterControl
 			this.ShowAsSystemWindow();
 		}
 
-		public static void Close(string uri)
+		public static void Close(Type type)
 		{
 			WizardWindow existingWindow;
 
-			if (allWindows.TryGetValue(uri, out existingWindow))
+			if (allWindows.TryGetValue(type, out existingWindow))
 			{
 				existingWindow.Close();
 			}
 		}
 
-		public static void Show<PanelType>(string uri, string title) where PanelType : WizardPage, new()
+		public static void Show<PanelType>() where PanelType : WizardPage, new()
 		{
-			WizardWindow wizardWindow = GetWindow(uri);
-			wizardWindow.Title = title;
-			wizardWindow.ChangeToPage<PanelType>();
+			WizardWindow wizardWindow = GetWindow(typeof(PanelType));
+			var newPanel = wizardWindow.ChangeToPage<PanelType>();
+			wizardWindow.Title = newPanel.WindowTitle; 
 		}
 
-		public static void Show(string uri, string title, WizardPage wizardPage)
+		public static void Show(WizardPage wizardPage)
 		{
-			WizardWindow wizardWindow = GetWindow(uri);
-			wizardWindow.Title = title;
+			WizardWindow wizardWindow = GetWindow(wizardPage.GetType());
+			wizardWindow.Title = wizardPage.WindowTitle;
 			wizardWindow.ChangeToPage(wizardPage);
 		}
 
 		public static void ShowPrinterSetup(bool userRequestedNewPrinter = false)
 		{
-			WizardWindow wizardWindow = GetWindow("PrinterSetup");
+			WizardWindow wizardWindow = GetWindow(typeof(SetupStepComPortOne));
 			wizardWindow.Title = "Setup Wizard".Localize();
 
 			// Do the printer setup logic
@@ -77,17 +77,17 @@ namespace MatterHackers.MatterControl
 
 		public static void ShowComPortSetup()
 		{
-			WizardWindow wizardWindow = GetWindow("PrinterSetup");
+			WizardWindow wizardWindow = GetWindow(typeof(SetupStepComPortOne));
 			wizardWindow.Title = "Setup Wizard".Localize();
 
 			wizardWindow.ChangeToPage<SetupStepComPortOne>();
 		}
 
-		public static bool IsOpen(string uri)
+		public static bool IsOpen(Type type)
 		{
 			WizardWindow wizardWindow;
 
-			if (allWindows.TryGetValue(uri, out wizardWindow))
+			if (allWindows.TryGetValue(type, out wizardWindow))
 			{
 				return true;
 			}
@@ -95,19 +95,19 @@ namespace MatterHackers.MatterControl
 			return false;
 		}
 
-		private static WizardWindow GetWindow(string uri)
+		private static WizardWindow GetWindow(Type type)
 		{
 			WizardWindow wizardWindow;
 
-			if (allWindows.TryGetValue(uri, out wizardWindow))
+			if (allWindows.TryGetValue(type, out wizardWindow))
 			{
 				wizardWindow.BringToFront();
 			}
 			else
 			{
 				wizardWindow = new WizardWindow();
-				wizardWindow.Closed += (s, e) => allWindows.Remove(uri);
-				allWindows[uri] = wizardWindow;
+				wizardWindow.Closed += (s, e) => allWindows.Remove(type);
+				allWindows[type] = wizardWindow;
 			}
 
 			return wizardWindow;
@@ -166,7 +166,7 @@ namespace MatterHackers.MatterControl
 			this.Invalidate();
 		}
 
-		internal void ChangeToPage<PanelType>() where PanelType : WizardPage, new()
+		internal WizardPage ChangeToPage<PanelType>() where PanelType : WizardPage, new()
 		{
 			PanelType panel = new PanelType();
 			panel.WizardWindow = this;
@@ -189,6 +189,8 @@ namespace MatterHackers.MatterControl
 				// remember the new content
 				panel = newPanel;
 			}, ref unregisterEvents);
+
+			return panel;
 		}
 	}
 }

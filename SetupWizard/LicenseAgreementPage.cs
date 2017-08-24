@@ -38,6 +38,8 @@ public class LicenseAgreementPage : WizardPage
 {
 	public LicenseAgreementPage()
 	{
+		this.WindowTitle = "Software License Agreement".Localize();
+
 		string eulaText = AggContext.StaticData.ReadAllText("MatterControl EULA.txt").Replace("\r\n", "\n");
 
 		var scrollable = new ScrollableWidget(true);
@@ -66,11 +68,6 @@ public class LicenseAgreementPage : WizardPage
 		// Exit if EULA is not accepted
 		cancelButton.Click += (s, e) => UiThread.RunOnIdle(MatterControlApplication.Instance.Close);
 
-		//Add buttons to buttonContainer
-		footerRow.AddChild(acceptButton);
-		footerRow.AddChild(new HorizontalSpacer());
-		footerRow.AddChild(cancelButton);
-
-		footerRow.Visible = true;
+		this.AddPageAction(acceptButton);
 	}
 }
