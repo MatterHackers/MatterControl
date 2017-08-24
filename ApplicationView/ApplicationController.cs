@@ -186,7 +186,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		internal void Render3DLayerFeatures()
+		internal void Render3DLayerFeatures(DrawEventArgs e)
 		{
 			if (this.RenderInfo != null)
 			{
@@ -197,7 +197,7 @@ namespace MatterHackers.MatterControl
 					RendererOptions.IsDirty = false;
 				}
 
-				this.GCodeRenderer.Render3D(this.RenderInfo);
+				this.GCodeRenderer.Render3D(this.RenderInfo, e);
 			}
 		}
 

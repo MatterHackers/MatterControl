@@ -4435,3 +4435,12 @@ Translated:Validate Layer Height
 English:Rename Printer:
 Translated:Rename Printer:
 
+English:Copy Printers
+Translated:Copy Printers
+
+English:Printers to Copy:
+Translated:Printers to Copy:
+
+English:Sync Printer Profiles Page
+Translated:Sync Printer Profiles Page
+

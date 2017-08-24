@@ -50,11 +50,12 @@ namespace MatterHackers.MeshVisualizer
 {
 	public enum BedShape { Rectangular, Circular };
 
-	public class DrawGlContentEventArgs : EventArgs
+	public class DrawGlContentEventArgs : DrawEventArgs
 	{
 		public bool ZBuffered { get; }
 
-		public DrawGlContentEventArgs(bool zBuffered)
+		public DrawGlContentEventArgs(bool zBuffered, DrawEventArgs e)
+			: base(e.graphics2D)
 		{
 			ZBuffered = zBuffered;
 		}
@@ -356,22 +357,9 @@ namespace MatterHackers.MeshVisualizer
 			base.OnClosed(e);
 		}
 
-		public override void OnDraw(Graphics2D graphics2D)
-		{
-			base.OnDraw(graphics2D);
-
-			//if (!SuppressUiVolumes)
-			{
-				foreach (InteractionVolume interactionVolume in interactionLayer.InteractionVolumes)
-				{
-					interactionVolume.Draw2DContent(graphics2D);
-				}
-			}
-		}
-
 		public bool IsActive { get; set; } = true;
 
-		private void DrawObject(IObject3D object3D, Matrix4X4 transform, bool parentSelected)
+		private void DrawObject(IObject3D object3D, Matrix4X4 transform, bool parentSelected, DrawEventArgs e)
 		{
 			foreach(MeshRenderData renderData in object3D.VisibleMeshes(transform))
 			{
@@ -488,11 +476,11 @@ namespace MatterHackers.MeshVisualizer
 
 		public EditorType EditorMode { get; set; } = EditorType.Part;
 
-		private void trackballTumbleWidget_DrawGlContent(object sender, EventArgs e)
+		private void trackballTumbleWidget_DrawGlContent(object sender, DrawEventArgs e)
 		{
 			foreach(var object3D in scene.Children)
 			{
-				DrawObject(object3D, Matrix4X4.Identity, false);
+				DrawObject(object3D, Matrix4X4.Identity, false, e);
 			}
 
 			if (this.EditorMode == EditorType.Printer)
@@ -565,7 +553,7 @@ namespace MatterHackers.MeshVisualizer
 			DrawInteractionVolumes(e);
 		}
 
-		private void DrawInteractionVolumes(EventArgs e)
+		private void DrawInteractionVolumes(DrawEventArgs e)
 		{
 			if(SuppressUiVolumes)
 			{
@@ -578,7 +566,7 @@ namespace MatterHackers.MeshVisualizer
 				if (interactionVolume.DrawOnTop)
 				{
 					GL.Disable(EnableCap.DepthTest);
-					interactionVolume.DrawGlContent(new DrawGlContentEventArgs(false));
+					interactionVolume.DrawGlContent(new DrawGlContentEventArgs(false, e));
 					GL.Enable(EnableCap.DepthTest);
 				}
 			}
@@ -586,7 +574,7 @@ namespace MatterHackers.MeshVisualizer
 			// Draw again setting the depth buffer and ensuring that all the interaction objects are sorted as well as we can
 			foreach (InteractionVolume interactionVolume in interactionLayer.InteractionVolumes)
 			{
-				interactionVolume.DrawGlContent(new DrawGlContentEventArgs(true));
+				interactionVolume.DrawGlContent(new DrawGlContentEventArgs(true, e));
 			}
 		}
 
