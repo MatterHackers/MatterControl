@@ -23,8 +23,8 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		private Button skipButton;
 
 		public SetupStepInstallDriver()
+			: base (unlocalizedTextForTitle: "Install Communication Driver")
 		{
-			headerLabel.Text = string.Format("Install Communication Driver".Localize());
 			printerDriverContainer = createPrinterDriverContainer();
 			contentRow.AddChild(printerDriverContainer);
 			{

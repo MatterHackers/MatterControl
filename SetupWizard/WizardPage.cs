@@ -13,7 +13,7 @@ namespace MatterHackers.MatterControl
 		protected FlowLayoutWidget contentRow;
 		private FlowLayoutWidget footerRow;
 
-		protected WrappedTextWidget headerLabel;
+		private WrappedTextWidget headerLabel;
 		protected Button cancelButton { get; }
 
 		protected TextImageButtonFactory textImageButtonFactory { get; } = ApplicationController.Instance.Theme.WizardButtons;
