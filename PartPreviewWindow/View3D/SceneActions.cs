@@ -129,10 +129,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						// Create and perform the delete operation
 						var operation = new GroupCommand(view3DWidget, Scene.SelectedItem);
-						operation.Do();
 
 						// Store the operation for undo/redo
-						view3DWidget.Scene.UndoBuffer.Add(operation);
+						view3DWidget.Scene.UndoBuffer.AddAndDo(operation);
 					}
 				});
 

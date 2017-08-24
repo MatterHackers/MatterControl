@@ -46,35 +46,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			this.view3DWidget = view3DWidget;
 			this.item = selectedItem;
-
-			if(view3DWidget.Scene.SelectedItem == selectedItem)
-			{
-				view3DWidget.Scene.ClearSelection();
-			}
 		}
 
 		public async void Do()
 		{
-			if (view3DWidget.Scene.Children.Contains(item))
+			if (view3DWidget.Scene.SelectedItem == item)
 			{
-				// This is the original do() case. The selection group exists in the scene and must be flattened into a new group
-				var flattenedGroup = new Object3D
-				{
-					ItemType = Object3DTypes.Group
-				};
-
-				item.CollapseInto(flattenedGroup.Children, Object3DTypes.SelectionGroup);
-
-				view3DWidget.Scene.ModifyChildren(children =>
-				{
-					children.Remove(item);
-					children.Add(flattenedGroup);
-				});
-
-				// Update the local reference after flattening to make the redo pattern work
-				item = flattenedGroup;
-
-				view3DWidget.Scene.SelectedItem = flattenedGroup;
+				// This is the original do() case. The selection needs to be changed into a group and selected
+				// change it to a standard group
+				view3DWidget.Scene.SelectedItem.ItemType = Object3DTypes.Group;
 			}
 			else
 			{
