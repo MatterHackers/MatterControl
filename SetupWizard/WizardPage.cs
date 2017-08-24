@@ -105,7 +105,8 @@ namespace MatterHackers.MatterControl
 			footerRow = new FlowLayoutWidget(FlowDirection.LeftToRight)
 			{
 				HAnchor = HAnchor.Left | HAnchor.Right,
-				Margin = new BorderDouble(0, 6)
+				Margin = new BorderDouble(0, 6),
+				Padding = new BorderDouble(top: 4, bottom: 2)
 			};
 
 			mainContainer.AddChild(headerRow);
