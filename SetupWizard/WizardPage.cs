@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl
 
 		public WizardWindow WizardWindow;
 
-		protected GuiWidget mainContainer;
+		private GuiWidget mainContainer;
 
 		protected bool abortCancel = false;
 
