@@ -359,99 +359,116 @@ namespace MatterHackers.MeshVisualizer
 
 		public bool IsActive { get; set; } = true;
 
-		private void DrawObject(IObject3D object3D, Matrix4X4 transform, bool parentSelected, DrawEventArgs e)
+		private void DrawObject(IObject3D object3D, Matrix4X4 transform, List<MeshRenderData> transparentMeshes, bool parentSelected, DrawEventArgs e)
 		{
-			foreach(MeshRenderData renderData in object3D.VisibleMeshes(transform))
+			foreach (var renderData in object3D.VisibleMeshes(transform))
 			{
 				bool isSelected = parentSelected ||
 					scene.HasSelection && (object3D == scene.SelectedItem || scene.SelectedItem.Children.Contains(object3D));
 
 				RGBA_Bytes drawColor = renderData.Color;
-				if(renderData.OutputType == PrintOutputTypes.Support)
+				if (renderData.OutputType == PrintOutputTypes.Support)
 				{
 					drawColor = new RGBA_Bytes(RGBA_Bytes.Yellow, 120);
 				}
-				else if(renderData.OutputType == PrintOutputTypes.Hole)
+				else if (renderData.OutputType == PrintOutputTypes.Hole)
 				{
 					drawColor = new RGBA_Bytes(RGBA_Bytes.Gray, 120);
 				}
 
-				// check if we should be rendering materials
+				// check if we should be rendering materials (this overrides the other colors)
 				if (this.RenderType == RenderTypes.Materials)
 				{
 					drawColor = MatterialRendering.Color(renderData.MaterialIndex);
 				}
 
-				GLHelper.Render(renderData.Mesh, drawColor, renderData.Matrix, RenderType);
-
-				if(isSelected)
+				if (drawColor.alpha == 255)
 				{
-					var screenPosition = new Vector3[3];
-					var frustum = World.GetClippingFrustum();
-					GLHelper.PrepareFor3DLineRender(true);
-
-					double selectionHighlightWidth = 5;
-
-					if (renderData.Mesh.Vertices.Count < 1000)
-					{
-						foreach (MeshEdge meshEdge in renderData.Mesh.MeshEdges)
-						{
-							if (meshEdge.GetNumFacesSharingEdge() == 2)
-							{
-								FaceEdge firstFaceEdge = meshEdge.firstFaceEdge;
-								FaceEdge nextFaceEdge = meshEdge.firstFaceEdge.radialNextFaceEdge;
-								// find out if one face is facing the camera and one is facing away
-								var worldVertexPosition = Vector3.Transform(firstFaceEdge.FirstVertex.Position, renderData.Matrix);
-								var worldFirstNormal = Vector3.TransformNormal(firstFaceEdge.ContainingFace.Normal, renderData.Matrix).GetNormal();
-								var worldNextNormal = Vector3.TransformNormal(nextFaceEdge.ContainingFace.Normal, renderData.Matrix).GetNormal();
-
-								var screenVertexPosition = World.GetScreenSpace(worldVertexPosition);
-								var screenFirstNormalEnd = World.GetScreenSpace(worldVertexPosition + worldFirstNormal);
-								var screenNextNormalEnd = World.GetScreenSpace(worldVertexPosition + worldNextNormal);
-
-								var firstTowards = (screenFirstNormalEnd - screenVertexPosition).z < 0;
-								var nextTowards = (screenNextNormalEnd - screenVertexPosition).z < 0;
-
-								if (firstTowards != nextTowards)
-								{
-									var transformed1 = Vector3.Transform(meshEdge.VertexOnEnd[0].Position, renderData.Matrix);
-									var transformed2 = Vector3.Transform(meshEdge.VertexOnEnd[1].Position, renderData.Matrix);
-
-									GLHelper.Render3DLineNoPrep(frustum, World, transformed1, transformed2, RGBA_Bytes.White, selectionHighlightWidth);
-								}
-							}
-						}
-
-						// render debug normals
-						bool renderNormal = false;
-						if (renderNormal)
-						{
-							foreach (var face in renderData.Mesh.Faces)
-							{
-								int vertexCount = 0;
-								Vector3 faceCenter = Vector3.Zero;
-								foreach (var vertex in face.Vertices())
-								{
-									faceCenter += vertex.Position;
-									vertexCount++;
-								}
-								faceCenter /= vertexCount;
-
-								var transformed1 = Vector3.Transform(faceCenter, renderData.Matrix);
-								var normal = Vector3.TransformNormal(face.Normal, renderData.Matrix).GetNormal();
-
-								GLHelper.Render3DLineNoPrep(frustum, World, transformed1, transformed1 + normal, RGBA_Bytes.Red, selectionHighlightWidth);
-							}
-						}
-					}
-					else // just render the bounding box
-					{
-						RenderAABB(frustum, renderData.Mesh.GetAxisAlignedBoundingBox(), renderData.Matrix, RGBA_Bytes.White, selectionHighlightWidth);
-					}
-
-					// turn lighting back on after rendering selection outlines
-					GL.Enable(EnableCap.Lighting);
+					GLHelper.Render(renderData.Mesh, drawColor, renderData.Matrix, RenderType);
 				}
+				else
+				{
+					transparentMeshes.Add(new MeshRenderData(renderData.Mesh,
+						renderData.Matrix,
+						drawColor,
+						renderData.MaterialIndex,
+						renderData.OutputType));
+				}
+
+				if (isSelected)
+				{
+					RenderSelection(renderData);
+				}
+
+				// RenderNormals(renderData);
+
+				// turn lighting back on after rendering selection outlines
+				GL.Enable(EnableCap.Lighting);
+			}
+		}
+
+		private void RenderNormals(MeshRenderData renderData)
+		{
+			var frustum = World.GetClippingFrustum();
+
+			foreach (var face in renderData.Mesh.Faces)
+			{
+				int vertexCount = 0;
+				Vector3 faceCenter = Vector3.Zero;
+				foreach (var vertex in face.Vertices())
+				{
+					faceCenter += vertex.Position;
+					vertexCount++;
+				}
+				faceCenter /= vertexCount;
+
+				var transformed1 = Vector3.Transform(faceCenter, renderData.Matrix);
+				var normal = Vector3.TransformNormal(face.Normal, renderData.Matrix).GetNormal();
+
+				GLHelper.Render3DLineNoPrep(frustum, World, transformed1, transformed1 + normal, RGBA_Bytes.Red, 2);
+			}
+		}
+
+		private void RenderSelection(MeshRenderData renderData)
+		{
+			var screenPosition = new Vector3[3];
+			var frustum = World.GetClippingFrustum();
+			GLHelper.PrepareFor3DLineRender(true);
+
+			double selectionHighlightWidth = 5;
+
+			if (renderData.Mesh.Vertices.Count < 1000)
+			{
+				foreach (MeshEdge meshEdge in renderData.Mesh.MeshEdges)
+				{
+					if (meshEdge.GetNumFacesSharingEdge() == 2)
+					{
+						var meshToView = renderData.Matrix * World.ModelviewMatrix;
+
+						FaceEdge firstFaceEdge = meshEdge.firstFaceEdge;
+						FaceEdge nextFaceEdge = meshEdge.firstFaceEdge.radialNextFaceEdge;
+						// find out if one face is facing the camera and one is facing away
+						var viewVertexPosition = Vector3.Transform(firstFaceEdge.FirstVertex.Position, meshToView);
+						var viewFirstNormal = Vector3.TransformNormal(firstFaceEdge.ContainingFace.Normal, meshToView).GetNormal();
+						var viewNextNormal = Vector3.TransformNormal(nextFaceEdge.ContainingFace.Normal, meshToView).GetNormal();
+
+						// Is the plane facing the camera (0, 0, 0). Finding the distance from the orign to the plane along the normal.
+						var firstTowards = Vector3.Dot(viewFirstNormal, viewVertexPosition) < 0;
+						var nextTowards = Vector3.Dot(viewNextNormal, viewVertexPosition) < 0;
+
+						if (firstTowards != nextTowards)
+						{
+							var transformed1 = Vector3.Transform(meshEdge.VertexOnEnd[0].Position, renderData.Matrix);
+							var transformed2 = Vector3.Transform(meshEdge.VertexOnEnd[1].Position, renderData.Matrix);
+
+							GLHelper.Render3DLineNoPrep(frustum, World, transformed1, transformed2, RGBA_Bytes.White, selectionHighlightWidth);
+						}
+					}
+				}
+			}
+			else // just render the bounding box
+			{
+				RenderAABB(frustum, renderData.Mesh.GetAxisAlignedBoundingBox(), renderData.Matrix, RGBA_Bytes.White, selectionHighlightWidth);
 			}
 		}
 
@@ -476,21 +493,92 @@ namespace MatterHackers.MeshVisualizer
 
 		public EditorType EditorMode { get; set; } = EditorType.Part;
 
+		private int BackToFrontXY(MeshRenderData a, MeshRenderData b)
+		{
+			var aCenterWorld = Vector3.Transform(a.Mesh.GetAxisAlignedBoundingBox().Center, a.Matrix);
+			aCenterWorld.z = 0; // we only want to look at the distance on xy in world space
+			var aCenterInViewSpace = Vector3.Transform(aCenterWorld, World.ModelviewMatrix);
+
+			var bCenterWorld = Vector3.Transform(b.Mesh.GetAxisAlignedBoundingBox().Center, b.Matrix);
+			bCenterWorld.z = 0; // we only want to look at the distance on xy in world space
+			var bCenterInViewSpace = Vector3.Transform(bCenterWorld, World.ModelviewMatrix);
+
+			return bCenterInViewSpace.LengthSquared.CompareTo(aCenterInViewSpace.LengthSquared);
+		}
+
 		private void trackballTumbleWidget_DrawGlContent(object sender, DrawEventArgs e)
 		{
-			foreach(var object3D in scene.Children)
+			List<MeshRenderData> transparentMeshes = new List<MeshRenderData>();
+			foreach (var object3D in scene.Children)
 			{
-				DrawObject(object3D, Matrix4X4.Identity, false, e);
+				DrawObject(object3D, Matrix4X4.Identity, transparentMeshes, false, e);
 			}
 
+			transparentMeshes.Sort(BackToFrontXY);
+
+			var bedNormalInViewSpace = Vector3.TransformNormal(Vector3.UnitZ, World.ModelviewMatrix).GetNormal();
+			var pointOnBedInViewSpace = Vector3.Transform(new Vector3(10, 10, 0), World.ModelviewMatrix);
+			var lookingDownOnBed = Vector3.Dot(bedNormalInViewSpace, pointOnBedInViewSpace) < 0;
+
+			if (lookingDownOnBed)
+			{
+				// render the bed 
+				RenderBedMesh(lookingDownOnBed);
+				// than the transparent stuff
+				//int colorIndex = 0; // helps debug the sorting order
+				foreach (var transparentRenderData in transparentMeshes)
+				{
+					var color = transparentRenderData.Color;
+					//color = RGBA_Floats.FromHSL(Math.Max(colorIndex++, 0) / 10.0, .99, .49).GetAsRGBA_Bytes();
+					GLHelper.Render(transparentRenderData.Mesh, color, transparentRenderData.Matrix, RenderType);
+				}
+			}
+			else
+			{
+				// render the transparent stuff
+				foreach (var transparentRenderData in transparentMeshes)
+				{
+					GLHelper.Render(transparentRenderData.Mesh, transparentRenderData.Color, transparentRenderData.Matrix, RenderType);
+				}
+				// than render the bed 
+				RenderBedMesh(lookingDownOnBed);
+			}
+
+			// we don't want to render the bed or build volume before we load a model.
+			if (scene.HasChildren || AllowBedRenderingWhenEmpty)
+			{
+				if (false) // this is code to draw a small axis indicator
+				{
+					double big = 10;
+					double small = 1;
+					Mesh xAxis = PlatonicSolids.CreateCube(big, small, small);
+					GLHelper.Render(xAxis, RGBA_Bytes.Red);
+					Mesh yAxis = PlatonicSolids.CreateCube(small, big, small);
+					GLHelper.Render(yAxis, RGBA_Bytes.Green);
+					Mesh zAxis = PlatonicSolids.CreateCube(small, small, big);
+					GLHelper.Render(zAxis, RGBA_Bytes.Blue);
+				}
+			}
+
+			DrawInteractionVolumes(e);
+		}
+
+		private void RenderBedMesh(bool lookingDownOnBed)
+		{
 			if (this.EditorMode == EditorType.Printer)
 			{
+				// only render if we are above the bed
 				if (RenderBed)
 				{
-					GLHelper.Render(printer.Bed.Mesh, this.BedColor);
+					var bedColor = this.BedColor;
+					if (!lookingDownOnBed)
+					{
+						bedColor = new RGBA_Bytes(this.BedColor, this.BedColor.alpha / 4);
+					}
+					GLHelper.Render(printer.Bed.Mesh, bedColor);
 					if (printerShape != null)
 					{
-						GLHelper.Render(printerShape, this.BedColor);
+						GLHelper.Render(printerShape, bedColor);
 					}
 				}
 
@@ -533,24 +621,6 @@ namespace MatterHackers.MeshVisualizer
 				}
 				GL.End();
 			}
-
-			// we don't want to render the bed or build volume before we load a model.
-			if (scene.HasChildren || AllowBedRenderingWhenEmpty)
-			{
-				if (false) // this is code to draw a small axis indicator
-				{
-					double big = 10;
-					double small = 1;
-					Mesh xAxis = PlatonicSolids.CreateCube(big, small, small);
-					GLHelper.Render(xAxis, RGBA_Bytes.Red);
-					Mesh yAxis = PlatonicSolids.CreateCube(small, big, small);
-					GLHelper.Render(yAxis, RGBA_Bytes.Green);
-					Mesh zAxis = PlatonicSolids.CreateCube(small, small, big);
-					GLHelper.Render(zAxis, RGBA_Bytes.Blue);
-				}
-			}
-
-			DrawInteractionVolumes(e);
 		}
 
 		private void DrawInteractionVolumes(DrawEventArgs e)

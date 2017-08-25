@@ -4444,3 +4444,18 @@ Translated:Printers to Copy:
 English:Sync Printer Profiles Page
 Translated:Sync Printer Profiles Page
 
+English:Final
+Translated:Final
+
+English:Outer Size
+Translated:Outer Size
+
+English:Inner Size
+Translated:Inner Size
+
+English:Reach
+Translated:Reach
+
+English:Angle
+Translated:Angle
+
