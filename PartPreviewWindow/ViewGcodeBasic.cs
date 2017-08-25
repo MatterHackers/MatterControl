@@ -61,8 +61,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.printer = printer;
 			this.viewControls3D = viewControls3D;
 
-			RenderOpenGl.GLHelper.WireframeColor = ActiveTheme.Instance.PrimaryAccentColor;
-
 			CreateAndAddChildren();
 
 			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>

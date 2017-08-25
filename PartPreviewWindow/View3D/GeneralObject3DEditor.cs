@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var buttonMargin = new BorderDouble(2, 5);
 
 			// put in the button for making the behavior solid
-			Button solidButtonView = theme.ButtonFactory.Generate("Solid".Localize());
+			var solidButtonView = theme.ButtonFactory.Generate("Solid".Localize());
 			var solidBehaviorButton = new PopupButton(solidButtonView)
 			{
 				Name = "Solid Colors",
@@ -79,7 +79,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				},
 				Margin = buttonMargin
 			};
-			solidButtonView.Click += (s, e) =>
+			solidBehaviorButton.Click += (s, e) =>
 			{
 				item.OutputType = PrintOutputTypes.Solid;
 			};
@@ -92,11 +92,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			holeBehaviorButton.Click += (s, e) =>
 			{
 				item.OutputType = PrintOutputTypes.Hole;
-				if(item.Mesh != null)
-				{
-					item.Mesh.FaceBspTree = FaceBspTree.Create(item.Mesh);
-				}
-
 				view3DWidget.Invalidate();
 			};
 
