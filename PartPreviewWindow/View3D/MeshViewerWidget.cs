@@ -384,7 +384,7 @@ namespace MatterHackers.MeshVisualizer
 
 				if (drawColor.alpha == 255)
 				{
-					GLHelper.Render(renderData.Mesh, drawColor, renderData.Matrix, RenderType);
+					GLHelper.Render(renderData.Mesh, drawColor, renderData.Matrix, RenderType, renderData.Matrix * World.ModelviewMatrix);
 				}
 				else
 				{
@@ -530,7 +530,7 @@ namespace MatterHackers.MeshVisualizer
 				{
 					var color = transparentRenderData.Color;
 					//color = RGBA_Floats.FromHSL(Math.Max(colorIndex++, 0) / 10.0, .99, .49).GetAsRGBA_Bytes();
-					GLHelper.Render(transparentRenderData.Mesh, color, transparentRenderData.Matrix, RenderType);
+					GLHelper.Render(transparentRenderData.Mesh, color, transparentRenderData.Matrix, RenderTypes.Outlines, transparentRenderData.Matrix * World.ModelviewMatrix);
 				}
 			}
 			else
@@ -538,7 +538,7 @@ namespace MatterHackers.MeshVisualizer
 				// render the transparent stuff
 				foreach (var transparentRenderData in transparentMeshes)
 				{
-					GLHelper.Render(transparentRenderData.Mesh, transparentRenderData.Color, transparentRenderData.Matrix, RenderType);
+					GLHelper.Render(transparentRenderData.Mesh, transparentRenderData.Color, transparentRenderData.Matrix, RenderTypes.Outlines, transparentRenderData.Matrix * World.ModelviewMatrix);
 				}
 				// than render the bed 
 				RenderBedMesh(lookingDownOnBed);
@@ -575,16 +575,16 @@ namespace MatterHackers.MeshVisualizer
 					{
 						bedColor = new RGBA_Bytes(this.BedColor, this.BedColor.alpha / 4);
 					}
-					GLHelper.Render(printer.Bed.Mesh, bedColor);
+					GLHelper.Render(printer.Bed.Mesh, bedColor, RenderTypes.Shaded, World.ModelviewMatrix);
 					if (printerShape != null)
 					{
-						GLHelper.Render(printerShape, bedColor);
+						GLHelper.Render(printerShape, bedColor, RenderTypes.Shaded, World.ModelviewMatrix);
 					}
 				}
 
 				if (printer.Bed.BuildVolumeMesh != null && RenderBuildVolume)
 				{
-					GLHelper.Render(printer.Bed.BuildVolumeMesh, this.BuildVolumeColor);
+					GLHelper.Render(printer.Bed.BuildVolumeMesh, this.BuildVolumeColor, RenderTypes.Shaded, World.ModelviewMatrix);
 				}
 			}
 			else
