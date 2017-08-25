@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl
 		private static readonly string TerminalFilterOutputKey = "TerminalFilterOutput";
 		private static readonly string TerminalAutoUppercaseKey = "TerminalAutoUppercase";
 
-		public TerminalWidget(bool showInWindow)
+		public TerminalWidget()
 		{
 			this.Name = "TerminalWidget";
 			this.BackgroundColor = backgroundColor;
@@ -165,12 +165,6 @@ namespace MatterHackers.MatterControl
 					UiThread.RunOnIdle(DoExportExportLog_Click);
 				};
 
-				Button closeButton = controlButtonFactory.Generate("Close".Localize());
-				closeButton.Click += (sender, e) =>
-				{
-					UiThread.RunOnIdle(CloseWindow);
-				};
-
 				sendCommand = controlButtonFactory.Generate("Send".Localize());
 				sendCommand.Click += sendManualCommandToPrinter_Click;
 
@@ -182,11 +176,6 @@ namespace MatterHackers.MatterControl
 				bottomRowContainer.AddChild(clearConsoleButton);
 				bottomRowContainer.AddChild(exportConsoleTextButton);
 				bottomRowContainer.AddChild(new HorizontalSpacer());
-
-				if (showInWindow)
-				{
-					bottomRowContainer.AddChild(closeButton);
-				}
 
 				manualEntryTopToBottomLayout.AddChild(bottomRowContainer);
 				manualEntryTopToBottomLayout.AnchorAll();
@@ -246,11 +235,6 @@ namespace MatterHackers.MatterControl
 					}
 				}
 			}
-		}
-
-		private void CloseWindow()
-		{
-			this.Parents<SystemWindow>().FirstOrDefault()?.Close();
 		}
 
 		private List<string> commandHistory = new List<string>();
