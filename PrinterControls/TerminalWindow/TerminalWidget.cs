@@ -27,32 +27,24 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg;
-using MatterHackers.Agg.UI;
-using MatterHackers.Agg.Font;
-using MatterHackers.Agg.Platform;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.MatterControl.DataStorage;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
+using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
+using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl
 {
 	public class TerminalWidget : GuiWidget
 	{
-		private Button sendCommand;
 		private CheckBox filterOutput;
 		private CheckBox autoUppercase;
 		private MHTextEditWidget manualCommandTextEdit;
 		private TextScrollWidget textScrollWidget;
-		private RGBA_Bytes backgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-		private RGBA_Bytes textColor = ActiveTheme.Instance.PrimaryTextColor;
-		private TextImageButtonFactory controlButtonFactory = new TextImageButtonFactory();
 
 		private static readonly string TerminalFilterOutputKey = "TerminalFilterOutput";
 		private static readonly string TerminalAutoUppercaseKey = "TerminalAutoUppercase";
@@ -60,7 +52,7 @@ namespace MatterHackers.MatterControl
 		public TerminalWidget()
 		{
 			this.Name = "TerminalWidget";
-			this.BackgroundColor = backgroundColor;
+			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 			this.Padding = new BorderDouble(5, 0);
 			FlowLayoutWidget topLeftToRightLayout = new FlowLayoutWidget();
 			topLeftToRightLayout.AnchorAll();
@@ -78,7 +70,7 @@ namespace MatterHackers.MatterControl
 						filterOutput = new CheckBox("Filter Output".Localize())
 						{
 							Margin = new BorderDouble(5, 5, 5, 2),
-							TextColor = this.textColor,
+							TextColor = ActiveTheme.Instance.PrimaryTextColor,
 							VAnchor = Agg.UI.VAnchor.Bottom,
 						};
 						filterOutput.CheckedStateChanged += (object sender, EventArgs e) =>
@@ -102,7 +94,7 @@ namespace MatterHackers.MatterControl
 						autoUppercase = new CheckBox("Auto Uppercase".Localize());
 						autoUppercase.Margin = new BorderDouble(5, 5, 5, 2);
 						autoUppercase.Checked = UserSettings.Instance.Fields.GetBool(TerminalAutoUppercaseKey, true);
-						autoUppercase.TextColor = this.textColor;
+						autoUppercase.TextColor = ActiveTheme.Instance.PrimaryTextColor; ;
 						autoUppercase.VAnchor = Agg.UI.VAnchor.Bottom;
 						topBarControls.AddChild(autoUppercase);
 						autoUppercase.CheckedStateChanged += (sender, e) =>
@@ -136,7 +128,7 @@ namespace MatterHackers.MatterControl
 				}
 
 				FlowLayoutWidget manualEntryLayout = new FlowLayoutWidget(FlowDirection.LeftToRight);
-				manualEntryLayout.BackgroundColor = this.backgroundColor;
+				manualEntryLayout.BackgroundColor = this.BackgroundColor;
 				manualEntryLayout.HAnchor = HAnchor.Stretch;
 				{
 					manualCommandTextEdit = new MHTextEditWidget("", typeFace: ApplicationController.MonoSpacedTypeFace);
@@ -148,6 +140,8 @@ namespace MatterHackers.MatterControl
 					manualCommandTextEdit.ActualTextEditWidget.KeyDown += manualCommandTextEdit_KeyDown;
 					manualEntryLayout.AddChild(manualCommandTextEdit);
 				}
+
+				var controlButtonFactory = ApplicationController.Instance.Theme.ButtonFactory;
 
 				manualEntryTopToBottomLayout.AddChild(manualEntryLayout);
 
@@ -165,7 +159,7 @@ namespace MatterHackers.MatterControl
 					UiThread.RunOnIdle(DoExportExportLog_Click);
 				};
 
-				sendCommand = controlButtonFactory.Generate("Send".Localize());
+				var sendCommand = controlButtonFactory.Generate("Send".Localize());
 				sendCommand.Click += sendManualCommandToPrinter_Click;
 
 				FlowLayoutWidget bottomRowContainer = new FlowLayoutWidget();
