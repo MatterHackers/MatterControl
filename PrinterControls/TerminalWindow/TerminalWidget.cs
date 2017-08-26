@@ -58,95 +58,99 @@ namespace MatterHackers.MatterControl
 			topLeftToRightLayout.AnchorAll();
 
 			{
-				FlowLayoutWidget manualEntryTopToBottomLayout = new FlowLayoutWidget(FlowDirection.TopToBottom);
-				manualEntryTopToBottomLayout.VAnchor |= Agg.UI.VAnchor.Top;
-				manualEntryTopToBottomLayout.Padding = new BorderDouble(top: 8);
+				var manualEntryTopToBottomLayout = new FlowLayoutWidget(FlowDirection.TopToBottom)
+				{
+					VAnchor = VAnchor.Fit | VAnchor.Top,
+					Padding = new BorderDouble(top: 8)
+				};
 
 				{
-					FlowLayoutWidget topBarControls = new FlowLayoutWidget(FlowDirection.LeftToRight);
+					var topBarControls = new FlowLayoutWidget(FlowDirection.LeftToRight);
 					topBarControls.HAnchor |= HAnchor.Left;
 
+					filterOutput = new CheckBox("Filter Output".Localize())
 					{
-						filterOutput = new CheckBox("Filter Output".Localize())
-						{
-							Margin = new BorderDouble(5, 5, 5, 2),
-							TextColor = ActiveTheme.Instance.PrimaryTextColor,
-							VAnchor = Agg.UI.VAnchor.Bottom,
-						};
-						filterOutput.CheckedStateChanged += (object sender, EventArgs e) =>
-						{
-							if (filterOutput.Checked)
-							{
-								textScrollWidget.SetLineStartFilter(new string[] { "<-wait", "<-ok", "<-T" });
-							}
-							else
-							{
-								textScrollWidget.SetLineStartFilter(null);
-							}
-
-							UserSettings.Instance.Fields.SetBool(TerminalFilterOutputKey, filterOutput.Checked);
-						};
-
-						topBarControls.AddChild(filterOutput);
-					}
-
+						Margin = new BorderDouble(5, 5, 5, 2),
+						TextColor = ActiveTheme.Instance.PrimaryTextColor,
+						VAnchor = VAnchor.Bottom,
+					};
+					filterOutput.CheckedStateChanged += (s, e) =>
 					{
-						autoUppercase = new CheckBox("Auto Uppercase".Localize());
-						autoUppercase.Margin = new BorderDouble(5, 5, 5, 2);
-						autoUppercase.Checked = UserSettings.Instance.Fields.GetBool(TerminalAutoUppercaseKey, true);
-						autoUppercase.TextColor = ActiveTheme.Instance.PrimaryTextColor; ;
-						autoUppercase.VAnchor = Agg.UI.VAnchor.Bottom;
-						topBarControls.AddChild(autoUppercase);
-						autoUppercase.CheckedStateChanged += (sender, e) =>
+						if (filterOutput.Checked)
 						{
-							UserSettings.Instance.Fields.SetBool(TerminalAutoUppercaseKey, autoUppercase.Checked);
-						};
-						manualEntryTopToBottomLayout.AddChild(topBarControls);
-					}
+							textScrollWidget.SetLineStartFilter(new string[] { "<-wait", "<-ok", "<-T" });
+						}
+						else
+						{
+							textScrollWidget.SetLineStartFilter(null);
+						}
+
+						UserSettings.Instance.Fields.SetBool(TerminalFilterOutputKey, filterOutput.Checked);
+					};
+					topBarControls.AddChild(filterOutput);
+
+					autoUppercase = new CheckBox("Auto Uppercase".Localize())
+					{
+						Margin = new BorderDouble(5, 5, 5, 2),
+						Checked = UserSettings.Instance.Fields.GetBool(TerminalAutoUppercaseKey, true),
+						TextColor = ActiveTheme.Instance.PrimaryTextColor,
+						VAnchor = VAnchor.Bottom
+					};
+					autoUppercase.CheckedStateChanged += (sender, e) =>
+					{
+						UserSettings.Instance.Fields.SetBool(TerminalAutoUppercaseKey, autoUppercase.Checked);
+					};
+					topBarControls.AddChild(autoUppercase);
+					manualEntryTopToBottomLayout.AddChild(topBarControls);
 				}
 
 				{
 					FlowLayoutWidget leftToRight = new FlowLayoutWidget();
 					leftToRight.AnchorAll();
 
-					textScrollWidget = new TextScrollWidget(PrinterConnection.Instance.TerminalLog.PrinterLines);
-					//outputScrollWidget.Height = 100;
-					Debug.WriteLine(PrinterConnection.Instance.TerminalLog.PrinterLines);
-					textScrollWidget.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
-					textScrollWidget.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-					textScrollWidget.HAnchor = HAnchor.Stretch;
-					textScrollWidget.VAnchor = VAnchor.Stretch;
-					textScrollWidget.Margin = new BorderDouble(0, 5);
-					textScrollWidget.Padding = new BorderDouble(3, 0);
-
+					textScrollWidget = new TextScrollWidget(PrinterConnection.Instance.TerminalLog.PrinterLines)
+					{
+						BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor,
+						TextColor = ActiveTheme.Instance.PrimaryTextColor,
+						HAnchor = HAnchor.Stretch,
+						VAnchor = VAnchor.Stretch,
+						Margin = new BorderDouble(0, 5),
+						Padding = new BorderDouble(3, 0)
+					};
 					leftToRight.AddChild(textScrollWidget);
-
-					TextScrollBar textScrollBar = new TextScrollBar(textScrollWidget, 15);
-					leftToRight.AddChild(textScrollBar);
+					leftToRight.AddChild(new TextScrollBar(textScrollWidget, 15));
 
 					manualEntryTopToBottomLayout.AddChild(leftToRight);
 				}
 
-				FlowLayoutWidget manualEntryLayout = new FlowLayoutWidget(FlowDirection.LeftToRight);
-				manualEntryLayout.BackgroundColor = this.BackgroundColor;
-				manualEntryLayout.HAnchor = HAnchor.Stretch;
+				var manualEntryLayout = new FlowLayoutWidget(FlowDirection.LeftToRight)
 				{
-					manualCommandTextEdit = new MHTextEditWidget("", typeFace: ApplicationController.MonoSpacedTypeFace);
-					manualCommandTextEdit.Margin = new BorderDouble(right: 3);
-					manualCommandTextEdit.HAnchor = HAnchor.Stretch;
-					manualCommandTextEdit.VAnchor = VAnchor.Bottom;
-					manualCommandTextEdit.ActualTextEditWidget.EnterPressed += (s, e) =>
-					{
-						SendManualCommand();
-					};
+					BackgroundColor = this.BackgroundColor,
+					HAnchor = HAnchor.Stretch
+				};
 
-					manualCommandTextEdit.ActualTextEditWidget.KeyDown += manualCommandTextEdit_KeyDown;
-					manualEntryLayout.AddChild(manualCommandTextEdit);
-				}
+				manualCommandTextEdit = new MHTextEditWidget("", typeFace: ApplicationController.MonoSpacedTypeFace)
+				{
+					Margin = new BorderDouble(right: 3),
+					HAnchor = HAnchor.Stretch,
+					VAnchor = VAnchor.Bottom
+				};
+				manualCommandTextEdit.ActualTextEditWidget.EnterPressed += (s, e) =>
+				{
+					SendManualCommand();
+				};
+
+				manualCommandTextEdit.ActualTextEditWidget.KeyDown += manualCommandTextEdit_KeyDown;
+				manualEntryLayout.AddChild(manualCommandTextEdit);
+				manualEntryTopToBottomLayout.AddChild(manualEntryLayout);
 
 				var controlButtonFactory = ApplicationController.Instance.Theme.ButtonFactory;
 
-				manualEntryTopToBottomLayout.AddChild(manualEntryLayout);
+				var bottomRowContainer = new FlowLayoutWidget
+				{
+					HAnchor = HAnchor.Stretch,
+					Margin = new BorderDouble(0, 3)
+				};
 
 				Button clearConsoleButton = controlButtonFactory.Generate("Clear".Localize());
 				clearConsoleButton.Margin = new BorderDouble(0);
@@ -205,10 +209,7 @@ namespace MatterHackers.MatterControl
 					SendManualCommand();
 				};
 
-				FlowLayoutWidget bottomRowContainer = new FlowLayoutWidget();
-				bottomRowContainer.HAnchor = Agg.UI.HAnchor.Stretch;
-				bottomRowContainer.Margin = new BorderDouble(0, 3);
-
+				
 				bottomRowContainer.AddChild(sendCommand);
 				bottomRowContainer.AddChild(clearConsoleButton);
 				bottomRowContainer.AddChild(exportConsoleTextButton);
