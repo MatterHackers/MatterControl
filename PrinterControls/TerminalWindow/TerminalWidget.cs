@@ -136,7 +136,7 @@ namespace MatterHackers.MatterControl
 			manualCommandTextEdit.ActualTextEditWidget.KeyDown += manualCommandTextEdit_KeyDown;
 			inputRow.AddChild(manualCommandTextEdit);
 
-			var controlButtonFactory = ApplicationController.Instance.Theme.ButtonFactory;
+			var theme = ApplicationController.Instance.Theme;
 
 			// Footer
 			var footerRow = new FlowLayoutWidget
@@ -146,22 +146,24 @@ namespace MatterHackers.MatterControl
 			};
 			this.AddChild(footerRow);
 
-			var sendCommand = controlButtonFactory.Generate("Send".Localize());
+			var sendCommand = theme.ButtonFactory.Generate("Send".Localize());
+			sendCommand.Margin = theme.ButtonSpacing;
 			sendCommand.Click += (s, e) =>
 			{
 				SendManualCommand();
 			};
 			footerRow.AddChild(sendCommand);
 
-			Button clearConsoleButton = controlButtonFactory.Generate("Clear".Localize());
-			clearConsoleButton.Margin = new BorderDouble(0);
+			Button clearConsoleButton = theme.ButtonFactory.Generate("Clear".Localize());
+			clearConsoleButton.Margin = theme.ButtonSpacing;
 			clearConsoleButton.Click += (sender, e) =>
 			{
 				PrinterConnection.Instance.TerminalLog.Clear();
 			};
 			footerRow.AddChild(clearConsoleButton);
 
-			Button exportConsoleTextButton = controlButtonFactory.Generate("Export".Localize() + "...");
+			Button exportConsoleTextButton = theme.ButtonFactory.Generate("Export".Localize() + "...");
+			exportConsoleTextButton.Margin = theme.ButtonSpacing;
 			exportConsoleTextButton.Click += (sender, mouseEvent) =>
 			{
 				UiThread.RunOnIdle(() =>
