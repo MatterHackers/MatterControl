@@ -156,7 +156,44 @@ namespace MatterHackers.MatterControl
 				Button exportConsoleTextButton = controlButtonFactory.Generate("Export".Localize() + "...");
 				exportConsoleTextButton.Click += (sender, mouseEvent) =>
 				{
-					UiThread.RunOnIdle(DoExportExportLog_Click);
+					UiThread.RunOnIdle(() =>
+					{
+						AggContext.FileDialogs.SaveFileDialog(
+							new SaveFileDialogParams("Save as Text|*.txt")
+							{
+								Title = "MatterControl: Terminal Log",
+								ActionButtonLabel = "Export",
+								FileName = "print_log.txt"
+							},
+							(saveParams) =>
+							{
+								if (!string.IsNullOrEmpty(saveParams.FileName))
+								{
+									string filePathToSave = saveParams.FileName;
+									if (filePathToSave != null && filePathToSave != "")
+									{
+										try
+										{
+											textScrollWidget.WriteToFile(filePathToSave);
+										}
+										catch (UnauthorizedAccessException e)
+										{
+											Debug.Print(e.Message);
+
+											PrinterConnection.Instance.TerminalLog.PrinterLines.Add("");
+											PrinterConnection.Instance.TerminalLog.PrinterLines.Add(writeFaildeWaring);
+											PrinterConnection.Instance.TerminalLog.PrinterLines.Add(cantAccessPath.FormatWith(filePathToSave));
+											PrinterConnection.Instance.TerminalLog.PrinterLines.Add("");
+
+											UiThread.RunOnIdle(() =>
+											{
+												StyledMessageBox.ShowMessageBox(null, e.Message, "Couldn't save file".Localize());
+											});
+										}
+									}
+								}
+							});
+					});
 				};
 
 				var sendCommand = controlButtonFactory.Generate("Send".Localize());
@@ -181,16 +218,6 @@ namespace MatterHackers.MatterControl
 			this.AnchorAll();
 		}
 
-		private void DoExportExportLog_Click()
-		{
-			SaveFileDialogParams saveParams = new SaveFileDialogParams("Save as Text|*.txt");
-			saveParams.Title = "MatterControl: Terminal Log";
-			saveParams.ActionButtonLabel = "Export";
-			saveParams.FileName = "print_log.txt";
-
-			AggContext.FileDialogs.SaveFileDialog(saveParams, onExportLogFileSelected);
-		}
-
 #if !__ANDROID__
 		public override void OnLoad(EventArgs args)
 		{
@@ -202,34 +229,6 @@ namespace MatterHackers.MatterControl
 
 		string writeFaildeWaring = "WARNING: Write Failed!".Localize();
 		string cantAccessPath = "Can't access '{0}'.".Localize();
-
-		private void onExportLogFileSelected(SaveFileDialogParams saveParams)
-		{
-			if (!string.IsNullOrEmpty(saveParams.FileName))
-			{
-				string filePathToSave = saveParams.FileName;
-				if (filePathToSave != null && filePathToSave != "")
-				{
-					try
-					{
-						textScrollWidget.WriteToFile(filePathToSave);
-					}
-					catch(UnauthorizedAccessException e)
-					{
-						Debug.Print(e.Message);
-						GuiWidget.BreakInDebugger();
-						PrinterConnection.Instance.TerminalLog.PrinterLines.Add("");
-						PrinterConnection.Instance.TerminalLog.PrinterLines.Add(writeFaildeWaring);
-						PrinterConnection.Instance.TerminalLog.PrinterLines.Add(cantAccessPath.FormatWith(filePathToSave));
-						PrinterConnection.Instance.TerminalLog.PrinterLines.Add("");
-
-						UiThread.RunOnIdle(() => {
-							StyledMessageBox.ShowMessageBox(null, e.Message, "Couldn't save file".Localize());
-						});
-					}
-				}
-			}
-		}
 
 		private List<string> commandHistory = new List<string>();
 		private int commandHistoryIndex = 0;
