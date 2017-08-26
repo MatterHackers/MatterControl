@@ -45,10 +45,7 @@ namespace MatterHackers.MatterControl
 		private CheckBox autoUppercase;
 		private MHTextEditWidget manualCommandTextEdit;
 		private TextScrollWidget textScrollWidget;
-
-		private static readonly string TerminalFilterOutputKey = "TerminalFilterOutput";
-		private static readonly string TerminalAutoUppercaseKey = "TerminalAutoUppercase";
-
+		
 		public TerminalWidget()
 			: base(FlowDirection.TopToBottom)
 		{
@@ -82,20 +79,20 @@ namespace MatterHackers.MatterControl
 					textScrollWidget.SetLineStartFilter(null);
 				}
 
-				UserSettings.Instance.Fields.SetBool(TerminalFilterOutputKey, filterOutput.Checked);
+				UserSettings.Instance.Fields.SetBool(UserSettingsKey.TerminalFilterOutput, filterOutput.Checked);
 			};
 			headerRow.AddChild(filterOutput);
 
 			autoUppercase = new CheckBox("Auto Uppercase".Localize())
 			{
 				Margin = new BorderDouble(left: 25),
-				Checked = UserSettings.Instance.Fields.GetBool(TerminalAutoUppercaseKey, true),
+				Checked = UserSettings.Instance.Fields.GetBool(UserSettingsKey.TerminalAutoUppercase, true),
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
 				VAnchor = VAnchor.Bottom
 			};
 			autoUppercase.CheckedStateChanged += (s, e) =>
 			{
-				UserSettings.Instance.Fields.SetBool(TerminalAutoUppercaseKey, autoUppercase.Checked);
+				UserSettings.Instance.Fields.SetBool(UserSettingsKey.TerminalAutoUppercase, autoUppercase.Checked);
 			};
 			headerRow.AddChild(autoUppercase);
 
@@ -249,7 +246,7 @@ namespace MatterHackers.MatterControl
 #if !__ANDROID__
 		public override void OnLoad(EventArgs args)
 		{
-			filterOutput.Checked = UserSettings.Instance.Fields.GetBool(TerminalFilterOutputKey, false);
+			filterOutput.Checked = UserSettings.Instance.Fields.GetBool(UserSettingsKey.TerminalFilterOutput, false);
 			UiThread.RunOnIdle(manualCommandTextEdit.Focus);
 			base.OnLoad(args);
 		}

@@ -1,7 +1,6 @@
-﻿using MatterHackers.MatterControl.DataStorage;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using MatterHackers.Agg.UI;
+using MatterHackers.MatterControl.DataStorage;
 
 namespace MatterHackers.MatterControl
 {
@@ -16,6 +15,8 @@ namespace MatterHackers.MatterControl
 		public const string CredentialsInvalidReason = nameof(CredentialsInvalidReason);
 		public const string SliceSettingsLevel = nameof(SliceSettingsLevel);
 		public const string SliceSettingsShowHelp = nameof(SliceSettingsShowHelp);
+		public const string TerminalFilterOutput = nameof(TerminalFilterOutput);
+		public const string TerminalAutoUppercase = nameof(TerminalAutoUppercase);
 	}
 
 	public class UserSettings
