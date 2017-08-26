@@ -118,7 +118,8 @@ namespace MatterHackers.MatterControl
 			var inputRow = new FlowLayoutWidget(FlowDirection.LeftToRight)
 			{
 				BackgroundColor = this.BackgroundColor,
-				HAnchor = HAnchor.Stretch
+				HAnchor = HAnchor.Stretch,
+				Margin = new BorderDouble(bottom: 2)
 			};
 			this.AddChild(inputRow);
 
@@ -170,16 +171,18 @@ namespace MatterHackers.MatterControl
 
 			var theme = ApplicationController.Instance.Theme;
 
+			var toolbarPadding = ApplicationController.Instance.Theme.ToolbarPadding;
+
 			// Footer
 			var footerRow = new FlowLayoutWidget
 			{
 				HAnchor = HAnchor.Stretch,
-				Margin = new BorderDouble(0, 3)
+				Padding = new BorderDouble(0, toolbarPadding.Bottom, toolbarPadding.Right, toolbarPadding.Top)
 			};
 			this.AddChild(footerRow);
 
 			var sendButton = theme.ButtonFactory.Generate("Send".Localize());
-			sendButton.Margin = theme.ButtonSpacing;
+			sendButton.Margin = 0;
 			sendButton.Click += (s, e) =>
 			{
 				SendManualCommand();
