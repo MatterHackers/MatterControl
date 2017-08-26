@@ -162,7 +162,7 @@ namespace MatterHackers.MatterControl
 			};
 			footerRow.AddChild(clearButton);
 
-			Button exportButton = theme.ButtonFactory.Generate("Export".Localize() + "...");
+			Button exportButton = theme.ButtonFactory.Generate("Export".Localize());
 			exportButton.Margin = theme.ButtonSpacing;
 			exportButton.Click += (s, e) =>
 			{
