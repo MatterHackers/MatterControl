@@ -50,166 +50,161 @@ namespace MatterHackers.MatterControl
 		private static readonly string TerminalAutoUppercaseKey = "TerminalAutoUppercase";
 
 		public TerminalWidget()
-			: base (FlowDirection.TopToBottom)
+			: base(FlowDirection.TopToBottom)
 		{
 			this.Name = "TerminalWidget";
 			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 			this.Padding = new BorderDouble(5, 0);
 
+			var topBarControls = new FlowLayoutWidget(FlowDirection.LeftToRight);
+			topBarControls.HAnchor |= HAnchor.Left;
+
+			filterOutput = new CheckBox("Filter Output".Localize())
 			{
+				Margin = new BorderDouble(5, 5, 5, 2),
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				VAnchor = VAnchor.Bottom,
+			};
+			filterOutput.CheckedStateChanged += (s, e) =>
+			{
+				if (filterOutput.Checked)
 				{
-					var topBarControls = new FlowLayoutWidget(FlowDirection.LeftToRight);
-					topBarControls.HAnchor |= HAnchor.Left;
-
-					filterOutput = new CheckBox("Filter Output".Localize())
-					{
-						Margin = new BorderDouble(5, 5, 5, 2),
-						TextColor = ActiveTheme.Instance.PrimaryTextColor,
-						VAnchor = VAnchor.Bottom,
-					};
-					filterOutput.CheckedStateChanged += (s, e) =>
-					{
-						if (filterOutput.Checked)
-						{
-							textScrollWidget.SetLineStartFilter(new string[] { "<-wait", "<-ok", "<-T" });
-						}
-						else
-						{
-							textScrollWidget.SetLineStartFilter(null);
-						}
-
-						UserSettings.Instance.Fields.SetBool(TerminalFilterOutputKey, filterOutput.Checked);
-					};
-					topBarControls.AddChild(filterOutput);
-
-					autoUppercase = new CheckBox("Auto Uppercase".Localize())
-					{
-						Margin = new BorderDouble(5, 5, 5, 2),
-						Checked = UserSettings.Instance.Fields.GetBool(TerminalAutoUppercaseKey, true),
-						TextColor = ActiveTheme.Instance.PrimaryTextColor,
-						VAnchor = VAnchor.Bottom
-					};
-					autoUppercase.CheckedStateChanged += (sender, e) =>
-					{
-						UserSettings.Instance.Fields.SetBool(TerminalAutoUppercaseKey, autoUppercase.Checked);
-					};
-					topBarControls.AddChild(autoUppercase);
-					
-					this.AddChild(topBarControls);
+					textScrollWidget.SetLineStartFilter(new string[] { "<-wait", "<-ok", "<-T" });
+				}
+				else
+				{
+					textScrollWidget.SetLineStartFilter(null);
 				}
 
+				UserSettings.Instance.Fields.SetBool(TerminalFilterOutputKey, filterOutput.Checked);
+			};
+			topBarControls.AddChild(filterOutput);
+
+			autoUppercase = new CheckBox("Auto Uppercase".Localize())
+			{
+				Margin = new BorderDouble(5, 5, 5, 2),
+				Checked = UserSettings.Instance.Fields.GetBool(TerminalAutoUppercaseKey, true),
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				VAnchor = VAnchor.Bottom
+			};
+			autoUppercase.CheckedStateChanged += (sender, e) =>
+			{
+				UserSettings.Instance.Fields.SetBool(TerminalAutoUppercaseKey, autoUppercase.Checked);
+			};
+			topBarControls.AddChild(autoUppercase);
+
+			this.AddChild(topBarControls);
+
+			FlowLayoutWidget leftToRight = new FlowLayoutWidget();
+			leftToRight.AnchorAll();
+
+			textScrollWidget = new TextScrollWidget(PrinterConnection.Instance.TerminalLog.PrinterLines)
+			{
+				BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor,
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch,
+				Margin = new BorderDouble(0, 5),
+				Padding = new BorderDouble(3, 0)
+			};
+			leftToRight.AddChild(textScrollWidget);
+			leftToRight.AddChild(new TextScrollBar(textScrollWidget, 15));
+
+			this.AddChild(leftToRight);
+
+
+			var manualEntryLayout = new FlowLayoutWidget(FlowDirection.LeftToRight)
+			{
+				BackgroundColor = this.BackgroundColor,
+				HAnchor = HAnchor.Stretch
+			};
+
+			manualCommandTextEdit = new MHTextEditWidget("", typeFace: ApplicationController.MonoSpacedTypeFace)
+			{
+				Margin = new BorderDouble(right: 3),
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Bottom
+			};
+			manualCommandTextEdit.ActualTextEditWidget.EnterPressed += (s, e) =>
+			{
+				SendManualCommand();
+			};
+
+			manualCommandTextEdit.ActualTextEditWidget.KeyDown += manualCommandTextEdit_KeyDown;
+			manualEntryLayout.AddChild(manualCommandTextEdit);
+			this.AddChild(manualEntryLayout);
+
+			var controlButtonFactory = ApplicationController.Instance.Theme.ButtonFactory;
+
+			var bottomRowContainer = new FlowLayoutWidget
+			{
+				HAnchor = HAnchor.Stretch,
+				Margin = new BorderDouble(0, 3)
+			};
+
+			Button clearConsoleButton = controlButtonFactory.Generate("Clear".Localize());
+			clearConsoleButton.Margin = new BorderDouble(0);
+			clearConsoleButton.Click += (sender, e) =>
+			{
+				PrinterConnection.Instance.TerminalLog.Clear();
+			};
+
+			//Output Console text to screen
+			Button exportConsoleTextButton = controlButtonFactory.Generate("Export".Localize() + "...");
+			exportConsoleTextButton.Click += (sender, mouseEvent) =>
+			{
+				UiThread.RunOnIdle(() =>
 				{
-					FlowLayoutWidget leftToRight = new FlowLayoutWidget();
-					leftToRight.AnchorAll();
-
-					textScrollWidget = new TextScrollWidget(PrinterConnection.Instance.TerminalLog.PrinterLines)
-					{
-						BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor,
-						TextColor = ActiveTheme.Instance.PrimaryTextColor,
-						HAnchor = HAnchor.Stretch,
-						VAnchor = VAnchor.Stretch,
-						Margin = new BorderDouble(0, 5),
-						Padding = new BorderDouble(3, 0)
-					};
-					leftToRight.AddChild(textScrollWidget);
-					leftToRight.AddChild(new TextScrollBar(textScrollWidget, 15));
-
-					this.AddChild(leftToRight);
-				}
-
-				var manualEntryLayout = new FlowLayoutWidget(FlowDirection.LeftToRight)
-				{
-					BackgroundColor = this.BackgroundColor,
-					HAnchor = HAnchor.Stretch
-				};
-
-				manualCommandTextEdit = new MHTextEditWidget("", typeFace: ApplicationController.MonoSpacedTypeFace)
-				{
-					Margin = new BorderDouble(right: 3),
-					HAnchor = HAnchor.Stretch,
-					VAnchor = VAnchor.Bottom
-				};
-				manualCommandTextEdit.ActualTextEditWidget.EnterPressed += (s, e) =>
-				{
-					SendManualCommand();
-				};
-
-				manualCommandTextEdit.ActualTextEditWidget.KeyDown += manualCommandTextEdit_KeyDown;
-				manualEntryLayout.AddChild(manualCommandTextEdit);
-				this.AddChild(manualEntryLayout);
-
-				var controlButtonFactory = ApplicationController.Instance.Theme.ButtonFactory;
-
-				var bottomRowContainer = new FlowLayoutWidget
-				{
-					HAnchor = HAnchor.Stretch,
-					Margin = new BorderDouble(0, 3)
-				};
-
-				Button clearConsoleButton = controlButtonFactory.Generate("Clear".Localize());
-				clearConsoleButton.Margin = new BorderDouble(0);
-				clearConsoleButton.Click += (sender, e) =>
-				{
-					PrinterConnection.Instance.TerminalLog.Clear();
-				};
-
-				//Output Console text to screen
-				Button exportConsoleTextButton = controlButtonFactory.Generate("Export".Localize() + "...");
-				exportConsoleTextButton.Click += (sender, mouseEvent) =>
-				{
-					UiThread.RunOnIdle(() =>
-					{
-						AggContext.FileDialogs.SaveFileDialog(
-							new SaveFileDialogParams("Save as Text|*.txt")
+					AggContext.FileDialogs.SaveFileDialog(
+						new SaveFileDialogParams("Save as Text|*.txt")
+						{
+							Title = "MatterControl: Terminal Log",
+							ActionButtonLabel = "Export",
+							FileName = "print_log.txt"
+						},
+						(saveParams) =>
+						{
+							if (!string.IsNullOrEmpty(saveParams.FileName))
 							{
-								Title = "MatterControl: Terminal Log",
-								ActionButtonLabel = "Export",
-								FileName = "print_log.txt"
-							},
-							(saveParams) =>
-							{
-								if (!string.IsNullOrEmpty(saveParams.FileName))
+								string filePathToSave = saveParams.FileName;
+								if (filePathToSave != null && filePathToSave != "")
 								{
-									string filePathToSave = saveParams.FileName;
-									if (filePathToSave != null && filePathToSave != "")
+									try
 									{
-										try
-										{
-											textScrollWidget.WriteToFile(filePathToSave);
-										}
-										catch (UnauthorizedAccessException e)
-										{
-											Debug.Print(e.Message);
+										textScrollWidget.WriteToFile(filePathToSave);
+									}
+									catch (UnauthorizedAccessException e)
+									{
+										Debug.Print(e.Message);
 
-											PrinterConnection.Instance.TerminalLog.PrinterLines.Add("");
-											PrinterConnection.Instance.TerminalLog.PrinterLines.Add(writeFaildeWaring);
-											PrinterConnection.Instance.TerminalLog.PrinterLines.Add(cantAccessPath.FormatWith(filePathToSave));
-											PrinterConnection.Instance.TerminalLog.PrinterLines.Add("");
+										PrinterConnection.Instance.TerminalLog.PrinterLines.Add("");
+										PrinterConnection.Instance.TerminalLog.PrinterLines.Add(writeFaildeWaring);
+										PrinterConnection.Instance.TerminalLog.PrinterLines.Add(cantAccessPath.FormatWith(filePathToSave));
+										PrinterConnection.Instance.TerminalLog.PrinterLines.Add("");
 
-											UiThread.RunOnIdle(() =>
-											{
-												StyledMessageBox.ShowMessageBox(null, e.Message, "Couldn't save file".Localize());
-											});
-										}
+										UiThread.RunOnIdle(() =>
+										{
+											StyledMessageBox.ShowMessageBox(null, e.Message, "Couldn't save file".Localize());
+										});
 									}
 								}
-							});
-					});
-				};
+							}
+						});
+				});
+			};
 
-				var sendCommand = controlButtonFactory.Generate("Send".Localize());
-				sendCommand.Click += (s, e) =>
-				{
-					SendManualCommand();
-				};
-				
-				bottomRowContainer.AddChild(sendCommand);
-				bottomRowContainer.AddChild(clearConsoleButton);
-				bottomRowContainer.AddChild(exportConsoleTextButton);
-				bottomRowContainer.AddChild(new HorizontalSpacer());
+			var sendCommand = controlButtonFactory.Generate("Send".Localize());
+			sendCommand.Click += (s, e) =>
+			{
+				SendManualCommand();
+			};
 
-				this.AddChild(bottomRowContainer);
-			}
+			bottomRowContainer.AddChild(sendCommand);
+			bottomRowContainer.AddChild(clearConsoleButton);
+			bottomRowContainer.AddChild(exportConsoleTextButton);
+			bottomRowContainer.AddChild(new HorizontalSpacer());
+
+			this.AddChild(bottomRowContainer);
 
 			this.AnchorAll();
 		}
