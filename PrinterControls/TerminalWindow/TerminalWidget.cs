@@ -52,8 +52,10 @@ namespace MatterHackers.MatterControl
 		public TerminalWidget()
 			: base(FlowDirection.TopToBottom)
 		{
+			var theme = ApplicationController.Instance.Theme;
+
 			this.Name = "TerminalWidget";
-			this.BackgroundColor = ApplicationController.Instance.Theme.TabBodyBackground;
+			this.BackgroundColor = theme.TabBodyBackground;
 			this.Padding = new BorderDouble(5, 0);
 
 			// Header
@@ -169,11 +171,8 @@ namespace MatterHackers.MatterControl
 			};
 			inputRow.AddChild(manualCommandTextEdit);
 
-			var theme = ApplicationController.Instance.Theme;
-
-			var toolbarPadding = ApplicationController.Instance.Theme.ToolbarPadding;
-
 			// Footer
+			var toolbarPadding = theme.ToolbarPadding;
 			var footerRow = new FlowLayoutWidget
 			{
 				HAnchor = HAnchor.Stretch,
