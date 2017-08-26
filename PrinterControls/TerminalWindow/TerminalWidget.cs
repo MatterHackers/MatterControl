@@ -60,12 +60,12 @@ namespace MatterHackers.MatterControl
 			var headerRow = new FlowLayoutWidget(FlowDirection.LeftToRight)
 			{
 				HAnchor = HAnchor.Left | HAnchor.Stretch,
+				Padding = new BorderDouble(0, 8)
 			};
 			this.AddChild(headerRow);
 
 			filterOutput = new CheckBox("Filter Output".Localize())
 			{
-				Margin = new BorderDouble(5, 5, 5, 2),
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
 				VAnchor = VAnchor.Bottom,
 			};
@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl
 
 			autoUppercase = new CheckBox("Auto Uppercase".Localize())
 			{
-				Margin = new BorderDouble(5, 5, 5, 2),
+				Margin = new BorderDouble(left: 25),
 				Checked = UserSettings.Instance.Fields.GetBool(TerminalAutoUppercaseKey, true),
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
 				VAnchor = VAnchor.Bottom
@@ -108,7 +108,7 @@ namespace MatterHackers.MatterControl
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Stretch,
-				Margin = new BorderDouble(0, 5),
+				Margin = 0,
 				Padding = new BorderDouble(3, 0)
 			};
 			bodyRow.AddChild(textScrollWidget);
