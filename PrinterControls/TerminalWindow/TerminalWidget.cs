@@ -91,7 +91,7 @@ namespace MatterHackers.MatterControl
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
 				VAnchor = VAnchor.Bottom
 			};
-			autoUppercase.CheckedStateChanged += (sender, e) =>
+			autoUppercase.CheckedStateChanged += (s, e) =>
 			{
 				UserSettings.Instance.Fields.SetBool(TerminalAutoUppercaseKey, autoUppercase.Checked);
 			};
@@ -156,7 +156,7 @@ namespace MatterHackers.MatterControl
 
 			Button clearButton = theme.ButtonFactory.Generate("Clear".Localize());
 			clearButton.Margin = theme.ButtonSpacing;
-			clearButton.Click += (sender, e) =>
+			clearButton.Click += (s, e) =>
 			{
 				PrinterConnection.Instance.TerminalLog.Clear();
 			};
@@ -164,7 +164,7 @@ namespace MatterHackers.MatterControl
 
 			Button exportButton = theme.ButtonFactory.Generate("Export".Localize() + "...");
 			exportButton.Margin = theme.ButtonSpacing;
-			exportButton.Click += (sender, mouseEvent) =>
+			exportButton.Click += (s, e) =>
 			{
 				UiThread.RunOnIdle(() =>
 				{
