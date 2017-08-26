@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl
 			: base(FlowDirection.TopToBottom)
 		{
 			this.Name = "TerminalWidget";
-			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+			this.BackgroundColor = ApplicationController.Instance.Theme.TabBodyBackground;
 			this.Padding = new BorderDouble(5, 0);
 
 			// Header
