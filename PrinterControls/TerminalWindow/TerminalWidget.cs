@@ -56,8 +56,12 @@ namespace MatterHackers.MatterControl
 			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 			this.Padding = new BorderDouble(5, 0);
 
-			var topBarControls = new FlowLayoutWidget(FlowDirection.LeftToRight);
-			topBarControls.HAnchor |= HAnchor.Left;
+			// Header
+			var headerRow = new FlowLayoutWidget(FlowDirection.LeftToRight)
+			{
+				HAnchor = HAnchor.Left | HAnchor.Stretch,
+			};
+			this.AddChild(headerRow);
 
 			filterOutput = new CheckBox("Filter Output".Localize())
 			{
@@ -78,7 +82,7 @@ namespace MatterHackers.MatterControl
 
 				UserSettings.Instance.Fields.SetBool(TerminalFilterOutputKey, filterOutput.Checked);
 			};
-			topBarControls.AddChild(filterOutput);
+			headerRow.AddChild(filterOutput);
 
 			autoUppercase = new CheckBox("Auto Uppercase".Localize())
 			{
@@ -91,12 +95,12 @@ namespace MatterHackers.MatterControl
 			{
 				UserSettings.Instance.Fields.SetBool(TerminalAutoUppercaseKey, autoUppercase.Checked);
 			};
-			topBarControls.AddChild(autoUppercase);
+			headerRow.AddChild(autoUppercase);
 
-			this.AddChild(topBarControls);
-
-			FlowLayoutWidget leftToRight = new FlowLayoutWidget();
-			leftToRight.AnchorAll();
+			// Body
+			var bodyRow = new FlowLayoutWidget();
+			bodyRow.AnchorAll();
+			this.AddChild(bodyRow);
 
 			textScrollWidget = new TextScrollWidget(PrinterConnection.Instance.TerminalLog.PrinterLines)
 			{
@@ -107,17 +111,16 @@ namespace MatterHackers.MatterControl
 				Margin = new BorderDouble(0, 5),
 				Padding = new BorderDouble(3, 0)
 			};
-			leftToRight.AddChild(textScrollWidget);
-			leftToRight.AddChild(new TextScrollBar(textScrollWidget, 15));
+			bodyRow.AddChild(textScrollWidget);
+			bodyRow.AddChild(new TextScrollBar(textScrollWidget, 15));
 
-			this.AddChild(leftToRight);
-
-
-			var manualEntryLayout = new FlowLayoutWidget(FlowDirection.LeftToRight)
+			// Input Row
+			var inputRow = new FlowLayoutWidget(FlowDirection.LeftToRight)
 			{
 				BackgroundColor = this.BackgroundColor,
 				HAnchor = HAnchor.Stretch
 			};
+			this.AddChild(inputRow);
 
 			manualCommandTextEdit = new MHTextEditWidget("", typeFace: ApplicationController.MonoSpacedTypeFace)
 			{
@@ -131,16 +134,24 @@ namespace MatterHackers.MatterControl
 			};
 
 			manualCommandTextEdit.ActualTextEditWidget.KeyDown += manualCommandTextEdit_KeyDown;
-			manualEntryLayout.AddChild(manualCommandTextEdit);
-			this.AddChild(manualEntryLayout);
+			inputRow.AddChild(manualCommandTextEdit);
 
 			var controlButtonFactory = ApplicationController.Instance.Theme.ButtonFactory;
 
-			var bottomRowContainer = new FlowLayoutWidget
+			// Footer
+			var footerRow = new FlowLayoutWidget
 			{
 				HAnchor = HAnchor.Stretch,
 				Margin = new BorderDouble(0, 3)
 			};
+			this.AddChild(footerRow);
+
+			var sendCommand = controlButtonFactory.Generate("Send".Localize());
+			sendCommand.Click += (s, e) =>
+			{
+				SendManualCommand();
+			};
+			footerRow.AddChild(sendCommand);
 
 			Button clearConsoleButton = controlButtonFactory.Generate("Clear".Localize());
 			clearConsoleButton.Margin = new BorderDouble(0);
@@ -148,8 +159,8 @@ namespace MatterHackers.MatterControl
 			{
 				PrinterConnection.Instance.TerminalLog.Clear();
 			};
+			footerRow.AddChild(clearConsoleButton);
 
-			//Output Console text to screen
 			Button exportConsoleTextButton = controlButtonFactory.Generate("Export".Localize() + "...");
 			exportConsoleTextButton.Click += (sender, mouseEvent) =>
 			{
@@ -192,19 +203,9 @@ namespace MatterHackers.MatterControl
 						});
 				});
 			};
+			footerRow.AddChild(exportConsoleTextButton);
 
-			var sendCommand = controlButtonFactory.Generate("Send".Localize());
-			sendCommand.Click += (s, e) =>
-			{
-				SendManualCommand();
-			};
-
-			bottomRowContainer.AddChild(sendCommand);
-			bottomRowContainer.AddChild(clearConsoleButton);
-			bottomRowContainer.AddChild(exportConsoleTextButton);
-			bottomRowContainer.AddChild(new HorizontalSpacer());
-
-			this.AddChild(bottomRowContainer);
+			footerRow.AddChild(new HorizontalSpacer());
 
 			this.AnchorAll();
 		}
