@@ -132,11 +132,14 @@ namespace MatterHackers.MatterControl
 				manualEntryLayout.HAnchor = HAnchor.Stretch;
 				{
 					manualCommandTextEdit = new MHTextEditWidget("", typeFace: ApplicationController.MonoSpacedTypeFace);
-					//manualCommandTextEdit.BackgroundColor = RGBA_Bytes.White;
 					manualCommandTextEdit.Margin = new BorderDouble(right: 3);
 					manualCommandTextEdit.HAnchor = HAnchor.Stretch;
 					manualCommandTextEdit.VAnchor = VAnchor.Bottom;
-					manualCommandTextEdit.ActualTextEditWidget.EnterPressed += manualCommandTextEdit_EnterPressed;
+					manualCommandTextEdit.ActualTextEditWidget.EnterPressed += (s, e) =>
+					{
+						SendManualCommand();
+					};
+
 					manualCommandTextEdit.ActualTextEditWidget.KeyDown += manualCommandTextEdit_KeyDown;
 					manualEntryLayout.AddChild(manualCommandTextEdit);
 				}
@@ -197,7 +200,10 @@ namespace MatterHackers.MatterControl
 				};
 
 				var sendCommand = controlButtonFactory.Generate("Send".Localize());
-				sendCommand.Click += sendManualCommandToPrinter_Click;
+				sendCommand.Click += (s, e) =>
+				{
+					SendManualCommand();
+				};
 
 				FlowLayoutWidget bottomRowContainer = new FlowLayoutWidget();
 				bottomRowContainer.HAnchor = Agg.UI.HAnchor.Stretch;
@@ -268,12 +274,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private void manualCommandTextEdit_EnterPressed(object sender, KeyEventArgs keyEvent)
-		{
-			sendManualCommandToPrinter_Click(null, null);
-		}
-
-		private void sendManualCommandToPrinter_Click(object sender, EventArgs mouseEvent)
+		private void SendManualCommand()
 		{
 			string textToSend = manualCommandTextEdit.Text.Trim();
 			if (autoUppercase.Checked)
