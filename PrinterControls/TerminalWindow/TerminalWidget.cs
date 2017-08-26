@@ -39,7 +39,7 @@ using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl
 {
-	public class TerminalWidget : GuiWidget
+	public class TerminalWidget : FlowLayoutWidget
 	{
 		private CheckBox filterOutput;
 		private CheckBox autoUppercase;
@@ -50,20 +50,13 @@ namespace MatterHackers.MatterControl
 		private static readonly string TerminalAutoUppercaseKey = "TerminalAutoUppercase";
 
 		public TerminalWidget()
+			: base (FlowDirection.TopToBottom)
 		{
 			this.Name = "TerminalWidget";
 			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 			this.Padding = new BorderDouble(5, 0);
-			FlowLayoutWidget topLeftToRightLayout = new FlowLayoutWidget();
-			topLeftToRightLayout.AnchorAll();
 
 			{
-				var manualEntryTopToBottomLayout = new FlowLayoutWidget(FlowDirection.TopToBottom)
-				{
-					VAnchor = VAnchor.Fit | VAnchor.Top,
-					Padding = new BorderDouble(top: 8)
-				};
-
 				{
 					var topBarControls = new FlowLayoutWidget(FlowDirection.LeftToRight);
 					topBarControls.HAnchor |= HAnchor.Left;
@@ -101,7 +94,8 @@ namespace MatterHackers.MatterControl
 						UserSettings.Instance.Fields.SetBool(TerminalAutoUppercaseKey, autoUppercase.Checked);
 					};
 					topBarControls.AddChild(autoUppercase);
-					manualEntryTopToBottomLayout.AddChild(topBarControls);
+					
+					this.AddChild(topBarControls);
 				}
 
 				{
@@ -120,7 +114,7 @@ namespace MatterHackers.MatterControl
 					leftToRight.AddChild(textScrollWidget);
 					leftToRight.AddChild(new TextScrollBar(textScrollWidget, 15));
 
-					manualEntryTopToBottomLayout.AddChild(leftToRight);
+					this.AddChild(leftToRight);
 				}
 
 				var manualEntryLayout = new FlowLayoutWidget(FlowDirection.LeftToRight)
@@ -142,7 +136,7 @@ namespace MatterHackers.MatterControl
 
 				manualCommandTextEdit.ActualTextEditWidget.KeyDown += manualCommandTextEdit_KeyDown;
 				manualEntryLayout.AddChild(manualCommandTextEdit);
-				manualEntryTopToBottomLayout.AddChild(manualEntryLayout);
+				this.AddChild(manualEntryLayout);
 
 				var controlButtonFactory = ApplicationController.Instance.Theme.ButtonFactory;
 
@@ -208,20 +202,15 @@ namespace MatterHackers.MatterControl
 				{
 					SendManualCommand();
 				};
-
 				
 				bottomRowContainer.AddChild(sendCommand);
 				bottomRowContainer.AddChild(clearConsoleButton);
 				bottomRowContainer.AddChild(exportConsoleTextButton);
 				bottomRowContainer.AddChild(new HorizontalSpacer());
 
-				manualEntryTopToBottomLayout.AddChild(bottomRowContainer);
-				manualEntryTopToBottomLayout.AnchorAll();
-
-				topLeftToRightLayout.AddChild(manualEntryTopToBottomLayout);
+				this.AddChild(bottomRowContainer);
 			}
 
-			AddChild(topLeftToRightLayout);
 			this.AnchorAll();
 		}
 
