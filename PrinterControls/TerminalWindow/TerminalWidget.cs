@@ -146,25 +146,25 @@ namespace MatterHackers.MatterControl
 			};
 			this.AddChild(footerRow);
 
-			var sendCommand = theme.ButtonFactory.Generate("Send".Localize());
-			sendCommand.Margin = theme.ButtonSpacing;
-			sendCommand.Click += (s, e) =>
+			var sendButton = theme.ButtonFactory.Generate("Send".Localize());
+			sendButton.Margin = theme.ButtonSpacing;
+			sendButton.Click += (s, e) =>
 			{
 				SendManualCommand();
 			};
-			footerRow.AddChild(sendCommand);
+			footerRow.AddChild(sendButton);
 
-			Button clearConsoleButton = theme.ButtonFactory.Generate("Clear".Localize());
-			clearConsoleButton.Margin = theme.ButtonSpacing;
-			clearConsoleButton.Click += (sender, e) =>
+			Button clearButton = theme.ButtonFactory.Generate("Clear".Localize());
+			clearButton.Margin = theme.ButtonSpacing;
+			clearButton.Click += (sender, e) =>
 			{
 				PrinterConnection.Instance.TerminalLog.Clear();
 			};
-			footerRow.AddChild(clearConsoleButton);
+			footerRow.AddChild(clearButton);
 
-			Button exportConsoleTextButton = theme.ButtonFactory.Generate("Export".Localize() + "...");
-			exportConsoleTextButton.Margin = theme.ButtonSpacing;
-			exportConsoleTextButton.Click += (sender, mouseEvent) =>
+			Button exportButton = theme.ButtonFactory.Generate("Export".Localize() + "...");
+			exportButton.Margin = theme.ButtonSpacing;
+			exportButton.Click += (sender, mouseEvent) =>
 			{
 				UiThread.RunOnIdle(() =>
 				{
@@ -205,7 +205,7 @@ namespace MatterHackers.MatterControl
 						});
 				});
 			};
-			footerRow.AddChild(exportConsoleTextButton);
+			footerRow.AddChild(exportButton);
 
 			footerRow.AddChild(new HorizontalSpacer());
 
