@@ -132,8 +132,40 @@ namespace MatterHackers.MatterControl
 			{
 				SendManualCommand();
 			};
+			manualCommandTextEdit.ActualTextEditWidget.KeyDown += (s, keyEvent) =>
+			{
+				bool changeToHistory = false;
+				if (keyEvent.KeyCode == Keys.Up)
+				{
+					commandHistoryIndex--;
+					if (commandHistoryIndex < 0)
+					{
+						commandHistoryIndex = 0;
+					}
+					changeToHistory = true;
+				}
+				else if (keyEvent.KeyCode == Keys.Down)
+				{
+					commandHistoryIndex++;
+					if (commandHistoryIndex > commandHistory.Count - 1)
+					{
+						commandHistoryIndex = commandHistory.Count - 1;
+					}
+					else
+					{
+						changeToHistory = true;
+					}
+				}
+				else if (keyEvent.KeyCode == Keys.Escape)
+				{
+					manualCommandTextEdit.Text = "";
+				}
 
-			manualCommandTextEdit.ActualTextEditWidget.KeyDown += manualCommandTextEdit_KeyDown;
+				if (changeToHistory && commandHistory.Count > 0)
+				{
+					manualCommandTextEdit.Text = commandHistory[commandHistoryIndex];
+				}
+			};
 			inputRow.AddChild(manualCommandTextEdit);
 
 			var theme = ApplicationController.Instance.Theme;
@@ -186,9 +218,9 @@ namespace MatterHackers.MatterControl
 									{
 										textScrollWidget.WriteToFile(filePathToSave);
 									}
-									catch (UnauthorizedAccessException e)
+									catch (UnauthorizedAccessException ex)
 									{
-										Debug.Print(e.Message);
+										Debug.Print(ex.Message);
 
 										PrinterConnection.Instance.TerminalLog.PrinterLines.Add("");
 										PrinterConnection.Instance.TerminalLog.PrinterLines.Add(writeFaildeWaring);
@@ -197,7 +229,7 @@ namespace MatterHackers.MatterControl
 
 										UiThread.RunOnIdle(() =>
 										{
-											StyledMessageBox.ShowMessageBox(null, e.Message, "Couldn't save file".Localize());
+											StyledMessageBox.ShowMessageBox(null, ex.Message, "Couldn't save file".Localize());
 										});
 									}
 								}
@@ -226,41 +258,6 @@ namespace MatterHackers.MatterControl
 
 		private List<string> commandHistory = new List<string>();
 		private int commandHistoryIndex = 0;
-
-		private void manualCommandTextEdit_KeyDown(object sender, KeyEventArgs keyEvent)
-		{
-			bool changeToHistory = false;
-			if (keyEvent.KeyCode == Keys.Up)
-			{
-				commandHistoryIndex--;
-				if (commandHistoryIndex < 0)
-				{
-					commandHistoryIndex = 0;
-				}
-				changeToHistory = true;
-			}
-			else if (keyEvent.KeyCode == Keys.Down)
-			{
-				commandHistoryIndex++;
-				if (commandHistoryIndex > commandHistory.Count - 1)
-				{
-					commandHistoryIndex = commandHistory.Count - 1;
-				}
-				else
-				{
-					changeToHistory = true;
-				}
-			}
-			else if (keyEvent.KeyCode == Keys.Escape)
-			{
-				manualCommandTextEdit.Text = "";
-			}
-
-			if (changeToHistory && commandHistory.Count > 0)
-			{
-				manualCommandTextEdit.Text = commandHistory[commandHistoryIndex];
-			}
-		}
 
 		private void SendManualCommand()
 		{
