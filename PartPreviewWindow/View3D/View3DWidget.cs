@@ -2112,18 +2112,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			double maxDistFromLowestZ = 0;
-			List<Vector3> faceVertexes = new List<Vector3>();
+			List<Vector3> faceVertices = new List<Vector3>();
 			foreach (IVertex vertex in faceToLayFlat.Vertices())
 			{
 				Vector3 vertexPosition = Vector3.Transform(vertex.Position, objectToWold);
-				faceVertexes.Add(vertexPosition);
+				faceVertices.Add(vertexPosition);
 				maxDistFromLowestZ = Math.Max(maxDistFromLowestZ, vertexPosition.z - lowestVertexPosition.z);
 			}
 
 			if (maxDistFromLowestZ > .001)
 			{
-				Vector3 xPositive = (faceVertexes[1] - faceVertexes[0]).GetNormal();
-				Vector3 yPositive = (faceVertexes[2] - faceVertexes[0]).GetNormal();
+				Vector3 xPositive = (faceVertices[1] - faceVertices[0]).GetNormal();
+				Vector3 yPositive = (faceVertices[2] - faceVertices[0]).GetNormal();
 				Vector3 planeNormal = Vector3.Cross(xPositive, yPositive).GetNormal();
 
 				// this code takes the minimum rotation required and looks much better.
