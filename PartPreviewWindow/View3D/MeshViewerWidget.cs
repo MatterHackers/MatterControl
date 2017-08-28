@@ -423,7 +423,7 @@ namespace MatterHackers.MeshVisualizer
 				faceCenter /= vertexCount;
 
 				var transformed1 = Vector3.Transform(faceCenter, renderData.Matrix);
-				var normal = Vector3.TransformNormal(face.Normal, face.firstFaceEdge.FirstVertex.Position, renderData.Matrix).GetNormal();
+				var normal = Vector3.TransformNormal(face.Normal, renderData.Matrix).GetNormal();
 
 				GLHelper.Render3DLineNoPrep(frustum, World, transformed1, transformed1 + normal, RGBA_Bytes.Red, 2);
 			}
@@ -449,8 +449,8 @@ namespace MatterHackers.MeshVisualizer
 						FaceEdge nextFaceEdge = meshEdge.firstFaceEdge.radialNextFaceEdge;
 						// find out if one face is facing the camera and one is facing away
 						var viewVertexPosition = Vector3.Transform(firstFaceEdge.FirstVertex.Position, meshToView);
-						var viewFirstNormal = Vector3.TransformNormal(firstFaceEdge.ContainingFace.Normal, firstFaceEdge.FirstVertex.Position, meshToView).GetNormal();
-						var viewNextNormal = Vector3.TransformNormal(nextFaceEdge.ContainingFace.Normal, firstFaceEdge.FirstVertex.Position, meshToView).GetNormal();
+						var viewFirstNormal = Vector3.TransformNormal(firstFaceEdge.ContainingFace.Normal, meshToView).GetNormal();
+						var viewNextNormal = Vector3.TransformNormal(nextFaceEdge.ContainingFace.Normal, meshToView).GetNormal();
 
 						// Is the plane facing the camera (0, 0, 0). Finding the distance from the orign to the plane along the normal.
 						var firstTowards = Vector3.Dot(viewFirstNormal, viewVertexPosition) < 0;
@@ -516,7 +516,7 @@ namespace MatterHackers.MeshVisualizer
 
 			transparentMeshes.Sort(BackToFrontXY);
 
-			var bedNormalInViewSpace = Vector3.TransformNormal(Vector3.UnitZ, Vector3.Zero, World.ModelviewMatrix).GetNormal();
+			var bedNormalInViewSpace = Vector3.TransformNormal(Vector3.UnitZ, World.ModelviewMatrix).GetNormal();
 			var pointOnBedInViewSpace = Vector3.Transform(new Vector3(10, 10, 0), World.ModelviewMatrix);
 			var lookingDownOnBed = Vector3.Dot(bedNormalInViewSpace, pointOnBedInViewSpace) < 0;
 
