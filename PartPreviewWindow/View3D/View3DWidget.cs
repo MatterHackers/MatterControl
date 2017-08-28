@@ -541,7 +541,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public void SelectAll()
 		{
 			Scene.ClearSelection();
-			foreach (var child in Scene.Children)
+			foreach (var child in Scene.Children.ToList())
 			{
 				Scene.AddToSelection(child);
 			}

@@ -179,7 +179,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// Copy selected item
 				IObject3D newItem = await Task.Run(() =>
 				{
-					var clonedItem = Scene.SelectedItem.Clone();
+					// new item can be null by the time this task kicks off
+					var clonedItem = Scene.SelectedItem?.Clone();
 					PlatingHelper.MoveToOpenPosition(clonedItem, Scene.Children);
 
 					return clonedItem;
@@ -190,7 +191,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					return;
 				}
 
-				Scene.InsertNewItem(view3DWidget, newItem);
+				// it might come back null due to threading
+				if (newItem != null)
+				{
+					Scene.InsertNewItem(view3DWidget, newItem);
+				}
 
 				view3DWidget.UnlockEditControls();
 				view3DWidget.PartHasBeenChanged();
