@@ -133,12 +133,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 
 		/// <summary>
-		/// Order of precidence &, |, !, =
+		/// Order of precedence &, |, !, =
 		/// </summary>
 		/// <param name="unsplitSettings"></param>
 		/// <param name="layerCascade"></param>
 		/// <returns></returns>
-		public bool ParseShowString(string unsplitSettings, List<PrinterSettingsLayer> layerCascade)
+		public bool ParseShowString(string unsplitSettings, IEnumerable<PrinterSettingsLayer> layerCascade)
 		{
 			PrinterSettings printerSettings = this;
 			if (!string.IsNullOrEmpty(unsplitSettings))
