@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System.Collections.Generic;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 
@@ -34,21 +35,40 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class DeleteCommand : IUndoRedoCommand
 	{
-		private IObject3D item;
+		private List<IObject3D> items = new List<IObject3D>();
 
 		private View3DWidget view3DWidget;
 
 		public DeleteCommand(View3DWidget view3DWidget, IObject3D deletingItem)
 		{
 			this.view3DWidget = view3DWidget;
-			this.item = deletingItem;
+			if (deletingItem.ItemType == Object3DTypes.SelectionGroup)
+			{
+				var childrenToAdd = deletingItem.Children;
+				// push whatever happend to the selection into the objects before saving them
+				view3DWidget.Scene.ClearSelection();
+				// save them in our list
+				foreach (var item in childrenToAdd)
+				{
+					items.Add(item);
+				}
+			}
+			else
+			{
+				this.items.Add(deletingItem);
+			}
 		}
 
 		public void Do()
 		{
+			view3DWidget.Scene.ClearSelection();
+
 			view3DWidget.Scene.ModifyChildren(children =>
 			{
-				children.Remove(item);
+				foreach (var item in items)
+				{
+					children.Remove(item);
+				}
 			});
 
 			view3DWidget.Scene.SelectLastChild();
@@ -60,10 +80,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			view3DWidget.Scene.ModifyChildren(children =>
 			{
-				children.Add(item);
+				foreach (var item in items)
+				{
+					children.Add(item);
+				}
 			});
 
-			view3DWidget.Scene.SelectedItem = item;
+			view3DWidget.Scene.ClearSelection();
+			foreach (var item in items)
+			{
+				view3DWidget.Scene.AddToSelection(item);
+			}
 
 			view3DWidget.PartHasBeenChanged();
 		}
