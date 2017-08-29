@@ -232,10 +232,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				// Create and perform the delete operation 
 				var deleteOperation = new DeleteCommand(view3DWidget, Scene.SelectedItem);
-				deleteOperation.Do();
 
 				// Store the operation for undo/redo
-				view3DWidget.Scene.UndoBuffer.Add(deleteOperation);
+				view3DWidget.Scene.UndoBuffer.AddAndDo(deleteOperation);
+
+				Scene.ClearSelection();
 			}
 		}
 
