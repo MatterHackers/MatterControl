@@ -108,7 +108,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			};
 
 			container.AddChild(new SettingsItem(
-				string.Format("{0} {1}", "HotEnd".Localize(), extruderIndex + 1),
+				string.Format("{0} {1}", "Hot End".Localize(), extruderIndex + 1),
 				new SettingsItem.ToggleSwitchConfig()
 				{
 					Checked = false,

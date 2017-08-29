@@ -361,7 +361,7 @@ namespace MatterHackers.MeshVisualizer
 
 		private void DrawObject(IObject3D object3D, Matrix4X4 transform, List<MeshRenderData> transparentMeshes, bool parentSelected, DrawEventArgs e)
 		{
-			foreach (var renderData in object3D.VisibleMeshes(transform))
+			foreach (var renderData in object3D.VisibleMeshes(transform, object3D.Color, object3D.MaterialIndex, object3D.OutputType))
 			{
 				bool isSelected = parentSelected ||
 					scene.HasSelection && (object3D == scene.SelectedItem || scene.SelectedItem.Children.Contains(object3D));
