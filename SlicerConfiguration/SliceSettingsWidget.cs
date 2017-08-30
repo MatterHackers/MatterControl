@@ -142,6 +142,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								field.UpdateStyle();
 							}
 						}
+
+						if (allUiFields.TryGetValue(settingsKey, out IUIField field2))
+						{
+							string currentValue = settingsContext.GetValue(settingsKey);
+							if (field2.Value != currentValue
+								|| settingsKey == "com_port")
+							{
+								field2.Value = currentValue;
+							}
+						}
 					}
 				},
 				ref unregisterEvents);
@@ -730,6 +740,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 
 		Dictionary<string, ISettingsField> allFields = new Dictionary<string, ISettingsField>();
+		Dictionary<string, IUIField> allUiFields = new Dictionary<string, IUIField>();
 
 		private GuiWidget CreateSettingInfoUIControls(
 			PrinterConnection printerConnection,
@@ -776,6 +787,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			settingsRow.Name = settingData.SlicerConfigName + " Edit Field";
 
 			ISettingsField field = null;
+			IUIField uiField = null;
 
 			if (!PrinterSettings.KnownSettings.Contains(settingData.SlicerConfigName))
 			{
@@ -798,7 +810,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				switch (settingData.DataEditType)
 				{
 					case SliceSettingData.DataEditTypes.INT:
-						field = new IntField();
+
+						uiField = new NumberField();
 						break;
 
 					case SliceSettingData.DataEditTypes.DOUBLE:
@@ -968,7 +981,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				field.Value = sliceSettingValue;
 
 				this.PrepareRow(
-					field,
 					field.Create(settingsContext, settingData, tabIndexForItem++),
 					dataArea,
 					unitsArea,
@@ -976,6 +988,36 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				field.UpdateStyle = settingsRow.UpdateStyle;
 			}
+
+			if (uiField != null)
+			{
+				allUiFields.Add(settingData.SlicerConfigName, uiField);
+
+				uiField.Initialize(tabIndexForItem++);
+
+				uiField.Value = sliceSettingValue;
+
+				// After initializing the field, wrap with dropmenu if applicable
+				if (settingData.QuickMenuSettings.Count > 0)
+				{
+					uiField = new DropMenuWrappedField(uiField, settingData);
+					uiField.Initialize(tabIndexForItem);
+				}
+
+				this.PrepareRow(
+					uiField.Content,
+					dataArea,
+					unitsArea,
+					settingData);
+
+				uiField.ValueChanged += (s, e) =>
+				{
+					settingsContext.SetValue(settingData.SlicerConfigName, uiField.Value);
+					settingsRow.UpdateStyle();
+				};
+			}
+
+
 
 			// Invoke the UpdateStyle implementation
 			settingsRow.UpdateStyle();
@@ -1006,7 +1048,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return settingsRow;
 		}
 
-		private void PrepareRow(ISettingsField field, GuiWidget content, GuiWidget dataArea, GuiWidget unitsArea, SliceSettingData settingData)
+		private void PrepareRow(GuiWidget content, GuiWidget dataArea, GuiWidget unitsArea, SliceSettingData settingData)
 		{
 			dataArea.AddChild(content);
 

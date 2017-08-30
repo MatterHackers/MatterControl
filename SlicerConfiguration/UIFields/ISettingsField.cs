@@ -32,6 +32,17 @@ using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
+	public interface IUIField
+	{
+		event EventHandler ValueChanged;
+
+		string Value { get; set; }
+
+		void Initialize(int tabIndex);
+
+		GuiWidget Content { get; }
+	}
+
 	public interface ISettingsField
 	{
 		void OnValueChanged(string text);
