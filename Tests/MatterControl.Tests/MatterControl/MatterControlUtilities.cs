@@ -255,11 +255,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public static void DeleteSelectedPrinter(AutomationRunner testRunner)
 		{
 			// delete printer
-			testRunner.ClickByName("Edit Printer Button");
-			testRunner.Delay(.5);
-
-			testRunner.ClickByName("Delete Printer Button");
-			testRunner.Delay(.5);
+			testRunner.ClickByName("Printer Overflow Menu");
+			testRunner.ClickByName("Delete Printer Menu Item");
 
 			testRunner.WaitForReloadAll(() => testRunner.ClickByName("Yes Button"));
 		}
@@ -295,19 +292,13 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void OpenPrintersDropdown(this AutomationRunner testRunner)
 		{
-			testRunner.ClickByName("Printer Overflow Menu");
+			testRunner.ClickByName("Create New");
 			testRunner.ClickByName("Printers... Menu");
 		}
 
 		public static void ClosePrintersDropdown(this AutomationRunner testRunner)
 		{
-			testRunner.ClickByName("Printer Overflow Menu");
-
-			// If a sub menu is open the first click will close it but not the main menu. Second click as needed
-			if (testRunner.WaitForName("Printers... Menu", 0.5))
-			{
-				testRunner.ClickByName("Printer Overflow Menu");
-			}
+			testRunner.ClickByName("Printers... Menu");
 		}
 
 		private static void OutputImage(ImageBuffer imageToOutput, string fileName)
@@ -384,15 +375,20 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void NavigateToFolder(this AutomationRunner testRunner, string libraryRowItemName)
 		{
-			var checkBox = (CheckBox)testRunner.GetWidgetByName("Show Folders Toggle", out SystemWindow containingWindow);
-			if(!checkBox.Checked)
-			{
-				testRunner.ClickByName("Show Folders Toggle");
-			}
+			OpenFolderView(testRunner);
 			testRunner.ClickByName(libraryRowItemName);
 			testRunner.Delay(.5);
 			testRunner.DoubleClickByName(libraryRowItemName);
 			testRunner.Delay(.5);
+		}
+
+		public static void OpenFolderView(this AutomationRunner testRunner)
+		{
+			var checkBox = (CheckBox)testRunner.GetWidgetByName("Show Folders Toggle", out SystemWindow containingWindow, 3);
+			if (!checkBox.Checked)
+			{
+				testRunner.ClickByName("Show Folders Toggle");
+			}
 		}
 
 		public static void NavigateToLibraryHome(this AutomationRunner testRunner)
@@ -417,7 +413,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void SaveBedplateToFolder(this AutomationRunner testRunner, string newFileName, string folderName)
 		{
-			testRunner.ClickByName("Save As Menu");
+			testRunner.ClickByName("Bed Options Menu");
 			testRunner.ClickByName("Save As Menu Item");
 
 			testRunner.Delay(1);

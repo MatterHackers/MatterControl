@@ -61,7 +61,6 @@
     <Compile Include="MatterControlTests.cs" />
     <Compile Include="CreateLibraryFolder.cs" />
     <Compile Include="ExportItemWindowTests.cs" />
-    <Compile Include="FileMenuTest.cs" />
     <Compile Include="HardwareLevelingUITests.cs" />
     <Compile Include="LibraryActionTests.cs" />
     <Compile Include="LibraryDownloadsTest.cs" />

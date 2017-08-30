@@ -214,6 +214,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
+				testRunner.CloseSignInAndPrinterSelect();
+
 				// assert no profiles
 				Assert.AreEqual(0, ProfileManager.Instance.ActiveProfiles.Count());
 
@@ -296,11 +298,13 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
+				testRunner.CloseSignInAndPrinterSelect();
+
 				// Add Guest printers
 				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
 				testRunner.SwitchToAdvancedSliceSettings();
 
-				testRunner.ClickByName("Layer Height Textbox");
+				testRunner.ClickByName("Layer Thickness Textbox");
 				testRunner.Type(".5\n");
 				testRunner.Delay(.5);
 				Assert.AreEqual(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.layer_height), .5, "Layer height is what we set it to");
