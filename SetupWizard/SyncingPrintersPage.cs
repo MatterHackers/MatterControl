@@ -30,7 +30,7 @@ namespace MatterHackers.MatterControl.SetupWizard
 				if (!ProfileManager.Instance.ActiveProfiles.Any())
 				{
 					// Switch to setup wizard if no profiles exist
-					WizardWindow.ChangeToSetupPrinterForm();
+					UiThread.RunOnIdle(() => WizardWindow.ChangeToSetupPrinterForm());
 				}
 				else if (ProfileManager.Instance.ActiveProfiles.Count() == 1)
 				{

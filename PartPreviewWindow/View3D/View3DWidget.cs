@@ -441,7 +441,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					PopDirection = Direction.Up,
 					PopupContent = ApplicationController.Instance.Theme.CreatePopupMenu(bedMenuActions),
 					AlignToRightEdge = true,
-					Margin = buttonSpacing
+					Margin = buttonSpacing,
+					Name = "Bed Options Menu",
 				});
 			}
 

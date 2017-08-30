@@ -46,7 +46,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public PlusTabPage(TabControl tabControl, PrinterConfig printer, ThemeConfig theme, PrintItemWrapper printItem)
 			: base(FlowDirection.TopToBottom)
 		{
-			this.Name = "+ Tab Page";
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Stretch;
 			this.Padding = 15;
@@ -112,6 +111,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var otherItemsSection = CreateSection("Other".Localize() + ":");
 
 			var redeemDesignCode = theme.ButtonFactory.Generate("Redeem Design Code".Localize());
+			redeemDesignCode.Name = "Redeem Design Code Button";
 			redeemDesignCode.Margin = buttonSpacing;
 			redeemDesignCode.HAnchor = HAnchor.Left;
 			redeemDesignCode.Click += (s, e) =>
@@ -122,6 +122,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			otherItemsSection.AddChild(redeemDesignCode);
 
 			var redeemShareCode = theme.ButtonFactory.Generate("Enter Share Code".Localize());
+			redeemShareCode.Name = "Enter Share Code Button";
 			redeemShareCode.Margin = buttonSpacing;
 			redeemShareCode.HAnchor = HAnchor.Left;
 			redeemShareCode.Click += (s, e) =>
