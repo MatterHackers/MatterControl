@@ -21,10 +21,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
 
-				string firstItemName = "Queue Item Batman";
 				//Navigate to Downloads Library Provider
-				testRunner.ClickByName("Queue Tab");
-				testRunner.ClickByName("Queue Add Button");
+				testRunner.NavigateToFolder("Print Queue Row Item Collection");
+				testRunner.ClickByName("Library Add Button");
 
 				//Get parts to add
 				string rowItemPath = MatterControlUtilities.GetTestItemPath("Batman.stl");
@@ -36,13 +35,15 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Type("{Enter}");
 
 				//Get test results 
-				Assert.IsTrue(testRunner.WaitForName(firstItemName));
+				testRunner.ClickByName("Row Item Batman.stl");
 
-				testRunner.ClickByName("Queue Export Button");
+				testRunner.ClickByName("Print Library Overflow Menu");
+				testRunner.ClickByName("Export Menu Item");
 				testRunner.Delay(2);
 
 				testRunner.WaitForName("Export Item Window");
-				testRunner.ClickByName("Export as GCode Button");
+				testRunner.ClickByName("Machine File (G-Code) Button");
+				testRunner.ClickByName("Export Button");
 				testRunner.Delay(2);
 
 				string gcodeOutputPath = MatterControlUtilities.PathToExportGcodeFolder;

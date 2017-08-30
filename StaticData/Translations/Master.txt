@@ -4477,3 +4477,18 @@ Translated:Build:
 English:Status: 
 Translated:Status: 
 
+English:Export selection to:
+Translated:Export selection to:
+
+English:Machine File (G-Code)
+Translated:Machine File (G-Code)
+
+English:Machine File (X3G)
+Translated:Machine File (X3G)
+
+English:Print Notification Settings:
+Translated:Print Notification Settings:
+
+English:NOTE: Standard messaging rates may apply.
+Translated:NOTE: Standard messaging rates may apply.
+

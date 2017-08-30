@@ -113,6 +113,7 @@ namespace MatterHackers.MatterControl
 	{
 		public BrandMenuButton()
 		{
+			Name = "MatterControl BrandMenuButton";
 			var buttonView = new FlowLayoutWidget()
 			{
 				HAnchor = HAnchor.Stretch,

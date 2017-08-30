@@ -119,7 +119,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.IsTrue(File.Exists(exportZipPath), "Queue was exported to zip file, file exists on disk at expected path");
 
 				// Import the exported zip file and confirm the Queue Count increases by 3 
-				testRunner.ClickByName("Queue Add Button");
+				testRunner.ClickByName("Library Add Button");
 				testRunner.Delay(1);
 				testRunner.Type(exportZipPath);
 				testRunner.Delay(1);
@@ -187,14 +187,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.CloseSignInAndPrinterSelect();
 
-				testRunner.ClickByName("Queue Item Batman");
+				testRunner.ClickByName("Row Item Batman.stl");
 				testRunner.Delay(.2);
 
 				testRunner.ClickByName("Queue Copy Button");
 				testRunner.Delay(() => QueueData.Instance.ItemCount == expectedQueueCount, 3);
 
 				Assert.AreEqual(expectedQueueCount, QueueData.Instance.ItemCount, "Copy button increases queue count by one");
-				Assert.IsTrue(testRunner.WaitForName("Queue Item Batman - copy"), "Copied Batman item exists with expected name");
+				Assert.IsTrue(testRunner.WaitForName("Row Item Batman - copy"), "Copied Batman item exists with expected name");
 				testRunner.Delay(.3);
 
 				return Task.CompletedTask;

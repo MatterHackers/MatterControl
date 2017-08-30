@@ -115,7 +115,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 					LoadCalibrationPrints();
 
 #if __ANDROID__
-					UiThread.RunOnIdle(WizardWindow.ChangeToPage<AndroidConnectDevicePage>);
+					UiThread.RunOnIdle(() => WizardWindow.ChangeToPage<AndroidConnectDevicePage>());
 #else
 					if (AggContext.OperatingSystem == OSType.Windows)
 					{

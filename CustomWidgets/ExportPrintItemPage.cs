@@ -87,7 +87,8 @@ namespace MatterHackers.MatterControl
 					{
 						HAnchor = HAnchor.Left,
 						Margin = commonMargin,
-						Cursor = Cursors.Hand
+						Cursor = Cursors.Hand,
+						Name = plugin.ButtonText + " Button"
 					};
 					contentRow.AddChild(pluginButton);
 
@@ -137,6 +138,7 @@ namespace MatterHackers.MatterControl
 			}
 
 			var exportButton = textImageButtonFactory.Generate("Export".Localize());
+			exportButton.Name = "Export Button";
 			exportButton.Click += (s, e) =>
 			{
 				string fileTypeFilter = "";

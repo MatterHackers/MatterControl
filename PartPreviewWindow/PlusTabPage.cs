@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public PlusTabPage(TabControl tabControl, PrinterConfig printer, ThemeConfig theme, PrintItemWrapper printItem)
 			: base(FlowDirection.TopToBottom)
 		{
-			this.Name = "+";
+			this.Name = "+ Tab Page";
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Stretch;
 			this.Padding = 15;
@@ -79,6 +79,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			var createPrinter = theme.ButtonFactory.Generate("Create Printer".Localize());
+			createPrinter.Name = "Create Printer";
 			createPrinter.Margin = buttonSpacing;
 			createPrinter.HAnchor = HAnchor.Left;
 			createPrinter.Click += (s, e) =>
