@@ -15,8 +15,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
-				testRunner.ClickByName("Library Tab");
-
 				testRunner.AddDefaultFileToBedplate();
 
 				var view3D = testRunner.GetWidgetByName("View3DWidget", out _) as View3DWidget;

@@ -53,7 +53,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.CloseSignInAndPrinterSelect();
 
 				// Navigate to Local Library 
-				testRunner.ClickByName("Library Tab");
 				testRunner.NavigateToFolder("Local Library Row Item Collection");
 
 				// Make sure that Item does not exist before the test begins
@@ -111,9 +110,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.CloseSignInAndPrinterSelect();
 
 				// Navigate to Local Library
-				testRunner.ClickByName("Library Tab");
-				testRunner.Delay(.2);
-
 				testRunner.NavigateToFolder("Local Library Row Item Collection");
 
 				// Create New Folder

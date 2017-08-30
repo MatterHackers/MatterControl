@@ -127,6 +127,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			DisplayContainerContent(activeContainer);
 		}
 
+		public void Reload()
+		{
+			DisplayContainerContent(ActiveContainer);
+		}
+
 		private void ActiveContainer_Reloaded(object sender, EventArgs e)
 		{
 			DisplayContainerContent(ActiveContainer);

@@ -19,7 +19,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				MatterControlUtilities.CreateDownloadsSubFolder();
 
 				//Navigate to Downloads Library Provider
-				testRunner.ClickByName("Library Tab");
 				testRunner.NavigateToFolder("Downloads Row Item Collection");
 				testRunner.NavigateToFolder("-Temporary Row Item Collection");
 				testRunner.ClickByName("Library Add Button");
@@ -66,7 +65,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				MatterControlUtilities.CreateDownloadsSubFolder();
 
 				//Navigate to Downloads Library Provider
-				testRunner.ClickByName("Library Tab");
 				testRunner.NavigateToFolder("Downloads Row Item Collection");
 				testRunner.NavigateToFolder("-Temporary Row Item Collection");
 				testRunner.ClickByName("Library Add Button");
@@ -105,7 +103,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				MatterControlUtilities.CreateDownloadsSubFolder();
 
 				// Navigate to Downloads Library Provider
-				testRunner.ClickByName("Library Tab");
 				testRunner.NavigateToFolder("Downloads Row Item Collection");
 				testRunner.NavigateToFolder("-Temporary Row Item Collection");
 				testRunner.ClickByName("Library Add Button");
@@ -151,7 +148,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				MatterControlUtilities.CreateDownloadsSubFolder();
 
 				//Navigate to Downloads Library Provider
-				testRunner.ClickByName("Library Tab");
 				testRunner.NavigateToFolder("Downloads Row Item Collection");
 				testRunner.NavigateToFolder("-Temporary Row Item Collection");
 				testRunner.ClickByName("Library Add Button");
@@ -196,7 +192,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				MatterControlUtilities.CreateDownloadsSubFolder();
 
 				//Navigate to Downloads Library Provider
-				testRunner.ClickByName("Library Tab");
 				testRunner.NavigateToFolder("Downloads Row Item Collection");
 				testRunner.NavigateToFolder("-Temporary Row Item Collection");
 
