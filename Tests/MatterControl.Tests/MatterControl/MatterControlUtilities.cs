@@ -200,16 +200,15 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			ActiveSliceSettings.Instance.SetValue("driver_type", "Emulator");
 
 			// edit the com port
-			var editButton = testRunner.GetWidgetByName("Edit Printer Button", out _);
+			testRunner.ClickByName("Slice Settings Sidebar");
+			testRunner.ClickByName("Printer Tab");
+			var serialPortDropDown = testRunner.GetWidgetByName("com_port Edit Field", out _, 1);
 
-			testRunner.Delay(() => editButton.Enabled, 5); // Wait until the edit button is ready to click it. Ensures the printer is loaded.
-			testRunner.ClickByName("Edit Printer Button");
+			testRunner.Delay(() => serialPortDropDown.Enabled, 5); // Wait until the serialPortDropDown is ready to click it. Ensures the printer is loaded.
 
 			testRunner.ClickByName("Serial Port Dropdown");
 
 			testRunner.ClickByName("Emulator Menu Item");
-
-			testRunner.ClickByName("Cancel Wizard Button");
 
 			// connect to the created printer
 			testRunner.ClickByName("Connect to printer button");
