@@ -386,6 +386,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void NavigateToFolder(this AutomationRunner testRunner, string libraryRowItemName)
 		{
+			var checkBox = (CheckBox)testRunner.GetWidgetByName("Show Folders Toggle", out SystemWindow containingWindow);
+			if(!checkBox.Checked)
+			{
+				testRunner.ClickByName("Show Folders Toggle");
+			}
 			testRunner.ClickByName(libraryRowItemName);
 			testRunner.Delay(.5);
 			testRunner.DoubleClickByName(libraryRowItemName);
@@ -405,7 +410,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void AddDefaultFileToBedplate(this AutomationRunner testRunner, string containerName = "Calibration Parts Row Item Collection", string partName = "Row Item Calibration - Box.stl")
 		{
-			testRunner.ClickByName("Library Tab");
 			testRunner.NavigateToFolder(containerName);
 			testRunner.ClickByName(partName);
 
@@ -594,7 +598,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public static void AddTestAssetsToLibrary(this AutomationRunner testRunner, params string[] assetNames)
 		{
 			// Switch to the Local Library tab
-			testRunner.ClickByName("Library Tab");
 			testRunner.NavigateToFolder("Local Library Row Item Collection");
 
 			// Assert that the requested items are not currently in the list

@@ -4459,3 +4459,6 @@ Translated:Reach
 English:Angle
 Translated:Angle
 
+English:Hot End
+Translated:Hot End
+

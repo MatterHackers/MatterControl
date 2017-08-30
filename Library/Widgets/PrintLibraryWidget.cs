@@ -59,11 +59,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		private OverflowDropdown overflowDropdown;
 
-		private PopupButton activeContainerPopup;
-		private TextWidget activeContainerTitle;
-
 		//private DropDownMenu actionMenu;
 		private List<PrintItemAction> menuActions = new List<PrintItemAction>();
+
+		private FolderBreadCrumbWidget breadCrumbWidget;
+		private GuiWidget searchInput;
+		private ILibraryContainer searchContainer;
 
 		public PrintLibraryWidget()
 		{
@@ -84,61 +85,75 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			ApplicationController.Instance.Library.ContainerChanged += Library_ContainerChanged;
 
-			var breadCrumbBar = new FlowLayoutWidget()
+			var navBar = new FlowLayoutWidget()
 			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit,
-				Padding = ApplicationController.Instance.Theme.ToolbarPadding
+				HAnchor = HAnchor.Stretch
+			};
+			allControls.AddChild(navBar);
+
+			CheckBox showFolders = new CheckBox("Folders")
+			{
+				Name = "Show Folders Toggle",
+				Checked = libraryView.ShowContainers
+			};
+			showFolders.CheckedStateChanged += (s, e) =>
+			{
+				libraryView.ShowContainers = showFolders.Checked;
+				libraryView.Reload();
+			};
+			allControls.AddChild(showFolders);
+
+			breadCrumbWidget = new FolderBreadCrumbWidget(libraryView);
+			navBar.AddChild(breadCrumbWidget);
+
+			var icon = AggContext.StaticData.LoadIcon("icon_search_24x24.png", 16, 16);
+
+			var buttonFactory = ApplicationController.Instance.Theme.SmallMarginButtonFactory;
+
+			var searchPanel = new SearchInputBox()
+			{
+				Visible = false,
+				Margin = new BorderDouble(10, 0, 5, 0)
+			};
+			searchPanel.searchInput.ActualTextEditWidget.EnterPressed += (s, e) =>
+			{
+				this.PerformSearch();
+			};
+			searchPanel.resetButton.Click += (s, e) =>
+			{
+				breadCrumbWidget.Visible = true;
+				searchPanel.Visible = false;
+
+				searchPanel.searchInput.Text = "";
+
+				this.ClearSearch();
 			};
 
-			int arrowHeight = 5;
+			// Store a reference to the input field
+			this.searchInput = searchPanel.searchInput;
 
-			var directionArrow = new PathStorage();
-			directionArrow.MoveTo(-arrowHeight, 0);
-			directionArrow.LineTo(arrowHeight, 0);
-			directionArrow.LineTo(0, -arrowHeight);
+			navBar.AddChild(searchPanel);
 
-			var buttonView = new FlowLayoutWidget()
+			Button searchButton = buttonFactory.Generate("", icon);
+			searchButton.ToolTipText = "Search".Localize();
+			searchButton.Name = "Search Library Button";
+			searchButton.Margin = 0;
+			searchButton.Click += (s, e) =>
 			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit,
-				MinimumSize = new Vector2(0, ApplicationController.Instance.Theme.ButtonFactory.FixedHeight)
-			};
-			buttonView.AfterDraw += (s, e) =>
-			{
-				e.graphics2D.Render(directionArrow, buttonView.LocalBounds.Right - arrowHeight * 2 - 2, buttonView.LocalBounds.Center.y + arrowHeight / 2, ActiveTheme.Instance.SecondaryTextColor);
-			};
-
-			activeContainerTitle = new TextWidget(ApplicationController.Instance.Library.ActiveContainer.Name, textColor: ActiveTheme.Instance.PrimaryTextColor)
-			{
-				Margin = new BorderDouble(left: 6),
-				VAnchor = VAnchor.Center
-			};
-			buttonView.AddChild(activeContainerTitle);
-
-			activeContainerPopup = new PopupButton(buttonView)
-			{
-				VAnchor = VAnchor.Center,
-				HAnchor = HAnchor.Stretch,
-				Margin = 0
-			};
-			activeContainerPopup.DynamicPopupContent = () =>
-			{
-				var container = new GuiWidget(400, this.Height)
+				if (searchPanel.Visible)
 				{
-					BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor
-				};
-
-				container.AddChild(new ListContainerBrowser(this.libraryView, ApplicationController.Instance.Library)
+					PerformSearch();
+				}
+				else
 				{
-					HAnchor = HAnchor.Stretch,
-					VAnchor = VAnchor.Stretch
-				});
+					searchContainer = ApplicationController.Instance.Library.ActiveContainer;
 
-				return container;
+					breadCrumbWidget.Visible = false;
+					searchPanel.Visible = true;
+					searchInput.Focus();
+				}
 			};
-
-			breadCrumbBar.AddChild(activeContainerPopup);
+			navBar.AddChild(searchButton);
 
 			overflowDropdown = new OverflowDropdown(allowLightnessInvert: true)
 			{
@@ -146,9 +161,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				AlignToRightEdge = true,
 				Name = "Print Library Overflow Menu",
 			};
-			breadCrumbBar.AddChild(overflowDropdown);
-
-			allControls.AddChild(breadCrumbBar);
+			navBar.AddChild(overflowDropdown);
 
 			allControls.AddChild(libraryView);
 
@@ -165,6 +178,28 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			this.AddChild(allControls);
 		}
+
+		private void PerformSearch()
+		{
+			UiThread.RunOnIdle(() =>
+			{
+				ApplicationController.Instance.Library.ActiveContainer.KeywordFilter = searchInput.Text.Trim();
+			});
+		}
+
+		private void ClearSearch()
+		{
+			UiThread.RunOnIdle(() =>
+			{
+				searchContainer.KeywordFilter = "";
+
+				// Restore the original ActiveContainer before search started - some containers may change context
+				ApplicationController.Instance.Library.ActiveContainer = searchContainer;
+
+				searchContainer = null;
+			});
+		}
+
 
 		private void SelectedItems_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
 		{
@@ -213,10 +248,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			addToLibraryButton.Enabled = containerSupportsEdits;
 			createFolderButton.Enabled = containerSupportsEdits && writableContainer?.AllowAction(ContainerActions.AddContainers) == true;
 
-			activeContainerTitle.Text = activeContainer.Name;
-
-			// searchInput.Text = activeContainer.KeywordFilter;
-			//breadCrumbWidget.SetBreadCrumbs(activeContainer);
+			searchInput.Text = activeContainer.KeywordFilter;
+			breadCrumbWidget.SetBreadCrumbs(activeContainer);
 
 			activeContainer.Reloaded += UpdateStatus;
 
@@ -867,6 +900,33 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			overflowDropdown.PopupContent = popupContainer;
 
 			base.OnLoad(args);
+		}
+		private class SearchInputBox : GuiWidget
+		{
+			internal MHTextEditWidget searchInput;
+			internal Button resetButton;
+
+			public SearchInputBox()
+			{
+				this.VAnchor = VAnchor.Center | VAnchor.Fit;
+				this.HAnchor = HAnchor.Stretch;
+
+				searchInput = new MHTextEditWidget(messageWhenEmptyAndNotSelected: "Search Library".Localize())
+				{
+					Name = "Search Library Edit",
+					HAnchor = HAnchor.Stretch,
+					VAnchor = VAnchor.Center
+				};
+				this.AddChild(searchInput);
+
+				resetButton = ApplicationController.Instance.Theme.CreateSmallResetButton();
+				resetButton.HAnchor = HAnchor.Right | HAnchor.Fit;
+				resetButton.VAnchor = VAnchor.Center | VAnchor.Fit;
+				resetButton.Name = "Close Search";
+				resetButton.ToolTipText = "Clear".Localize();
+
+				this.AddChild(resetButton);
+			}
 		}
 	}
 }

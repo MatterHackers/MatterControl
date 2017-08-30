@@ -47,7 +47,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
-				testRunner.ClickByName("Library Tab");
 				testRunner.NavigateToFolder("Local Library Row Item Collection");
 
 				SystemWindow systemWindow;
@@ -66,11 +65,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.IsTrue(checkBoxWidget.Checked == false, "currently not checked");
 
 				testRunner.ClickByName("Row Item Select Checkbox", searchRegion: rowItemRegion);
-				testRunner.ClickByName("Library Tab");
 				Assert.IsTrue(checkBoxWidget.Checked == true, "currently checked");
 
 				testRunner.ClickByName(itemName);
-				testRunner.ClickByName("Library Tab");
 				Assert.IsTrue(checkBoxWidget.Checked == false, "currently not checked");
 
 				return Task.CompletedTask;

@@ -152,7 +152,6 @@ namespace MatterHackers.MatterControl
 				testRunner = new AutomationRunner();
 				Task.Run(() =>
 				{
-					testRunner.ClickByName("Library Tab");
 					testRunner.NavigateToFolder("Local Library Row Item Collection");
 					
 					testRunner.ClickByName("Library Edit Button");
@@ -175,7 +174,6 @@ namespace MatterHackers.MatterControl
 				testRunner = new AutomationRunner();
 				Task.Run(() =>
 				{
-					testRunner.ClickByName("Library Tab");
 					testRunner.NavigateToFolder("Local Library Row Item Collection");
 
 					testRunner.ClickByName("Library Edit Button");
@@ -204,7 +202,6 @@ namespace MatterHackers.MatterControl
 				testRunner = new AutomationRunner();
 				Task.Run(() =>
 				{
-					testRunner.ClickByName("Library Tab");
 					testRunner.NavigateToFolder("Local Library Row Item Collection");
 					testRunner.ClickByName("Create Folder From Library Button");
 					testRunner.Delay(2);

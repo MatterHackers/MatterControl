@@ -185,7 +185,6 @@
     <Compile Include="Library\Providers\CreatorsContainer.cs" />
     <Compile Include="Library\Providers\LibraryConfig.cs" />
     <Compile Include="Library\Providers\MatterControl\CalibrationPartsContainer.cs" />
-    <Compile Include="Library\Widgets\ListContainerBrowser.cs" />
     <Compile Include="Library\Widgets\ListView\IconListView.cs" />
     <Compile Include="Library\Widgets\ListView\IListContentView.cs" />
     <Compile Include="Library\Widgets\ListView\ListViewItemBase.cs" />
