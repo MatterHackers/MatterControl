@@ -42,7 +42,6 @@ namespace MatterHackers.MatterControl
 	public class NetworkTroubleshooting : WizardPage
 	{
 		public NetworkTroubleshooting()
-			: base(unlocalizedTextForTitle: "Network Troubleshooting".Localize())
 		{
 			string matterhackersStatusString = "MatterControl was unable to connect to the Internet. Please check your Wifi connection and try again".Localize();
 			contentRow.AddChild(new TextWidget(matterhackersStatusString + "...", 0, 0, 12, textColor: ActiveTheme.Instance.PrimaryTextColor));
@@ -59,9 +58,9 @@ namespace MatterHackers.MatterControl
 			};
 
 			//Add buttons to buttonContainer
-			footerRow.AddChild(configureButton);
-			footerRow.AddChild(new HorizontalSpacer());
-			footerRow.AddChild(cancelButton);
+			AddPageAction(configureButton);
+
+			cancelButton.Visible = true;
 		}
 	}
 }

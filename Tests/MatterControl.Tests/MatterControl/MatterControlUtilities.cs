@@ -125,11 +125,13 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			return TestContext.CurrentContext.ResolveProjectPath(4, "Tests", "TestData", "QueueItems", queueItemToLoad);
 		}
 
-		public static void CloseMatterControlViaMenu(this AutomationRunner testRunner)
+		public static void CloseMatterControlViaUi(this AutomationRunner testRunner)
 		{
 			SystemWindow mcWindowLocal = MatterControlApplication.Instance;
-			testRunner.ClickByName("File Menu");
-			testRunner.ClickByName("Exit Menu Item");
+
+			var mainWindow = testRunner.GetWidgetByName("MatterControl", out _);
+			var windowCenter = new Point2D(mainWindow.LocalBounds.Center.x, mainWindow.LocalBounds.Center.y);
+			testRunner.ClickByName("MatterControl", offset: windowCenter + new Point2D(-5, 10));
 
 			testRunner.Delay(.2);
 			if (mcWindowLocal.Parent != null)
@@ -271,12 +273,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Connection Wizard Skip Sign In Button");
 			}
 
-			if (!testRunner.WaitForName("Select Make", 1))
-			{
-				// TODO: The overflow menu needs to always be on screen and when there's not enough room siblings should be removed from the actions bar and pushed into the overflow menu, rather than the menu clipping from the screen
-				testRunner.OpenPrintersDropdown();
-				testRunner.ClickByName("Add New Printer... Menu Item", delayBeforeReturn: .5);
-			}
+			// Go to the new tab screen
+			testRunner.ClickByName("Create New");
+			testRunner.ClickByName("Create Printer");
 
 			testRunner.ClickByName("Select Make");
 			testRunner.Type(make);

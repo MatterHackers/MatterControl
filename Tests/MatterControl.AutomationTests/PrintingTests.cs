@@ -463,7 +463,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 						fanChangedCount++;
 					};
 
-					testRunner.CloseMatterControlViaMenu();
+					testRunner.CloseMatterControlViaUi();
 
 					testRunner.ClickByName("Yes Button");
 
@@ -496,7 +496,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					{
 						fanChangedCount++;
 					};
-					testRunner.CloseMatterControlViaMenu();
+					testRunner.CloseMatterControlViaUi();
 
 					testRunner.ClickByName("Yes Button");
 

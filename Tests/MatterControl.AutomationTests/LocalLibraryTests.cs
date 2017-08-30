@@ -206,7 +206,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Delay(2);
 
 				// Make sure that the Queue Count increases by one
-				Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue item count should increase by one after add");
+				Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Row item count should increase by one after add");
 
 				// Navigate to the PrintQueueContainer
 				testRunner.NavigateToLibraryHome();
