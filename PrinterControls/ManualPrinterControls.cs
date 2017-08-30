@@ -218,7 +218,7 @@ namespace MatterHackers.MatterControl
 
 					case CommunicationStates.PreparingToPrint:
 					case CommunicationStates.Printing:
-						switch (PrinterConnection.Instance.PrintingState)
+						switch (PrinterConnection.Instance.DetailedPrintingState)
 						{
 							case DetailedPrintingState.HomingAxis:
 							case DetailedPrintingState.HeatingBed:

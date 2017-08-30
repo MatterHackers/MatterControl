@@ -155,7 +155,7 @@ namespace MatterHackers.MatterControl.DataStorage
 		{
 			get
 			{
-				return Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData), applicationDataFolderName, "data", "temp");
+				return Path.Combine(applicationUserDataPath, "data", "temp");
 			}
 		}
 

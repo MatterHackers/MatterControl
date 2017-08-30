@@ -4462,3 +4462,18 @@ Translated:Angle
 English:Hot End
 Translated:Hot End
 
+English:Are you sure you want exit while a print is running from SD Card?\n\nNote: If you exit, it is recommended you wait until the print is completed before running MatterControl again.
+Translated:Are you sure you want exit while a print is running from SD Card?\n\nNote: If you exit, it is recommended you wait until the print is completed before running MatterControl again.
+
+English:Version 
+Translated:Version 
+
+English:Developed by:
+Translated:Developed by:
+
+English:Build: 
+Translated:Build: 
+
+English:Status: 
+Translated:Status: 
+

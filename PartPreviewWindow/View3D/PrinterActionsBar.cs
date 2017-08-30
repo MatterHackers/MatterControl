@@ -45,6 +45,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class PrinterActionsBar : FlowLayoutWidget
 	{
+		private EventHandler unregisterEvents;
 		private static EePromMarlinWindow openEePromMarlinWidget = null;
 		private static EePromRepetierWindow openEePromRepetierWidget = null;
 		private string noEepromMappingMessage = "Oops! There is no eeprom mapping for your printer's firmware.".Localize() + "\n\n" + "You may need to wait a minute for your printer to finish initializing.".Localize();
@@ -148,6 +149,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.AddChild(sliceButton);
 
+			// put in the detail message
+			var printerConnectionDetail = new TextWidget("")
+			{
+				Margin = new BorderDouble(5, 0),
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				AutoExpandBoundsToText = true,
+				PointSize = 8
+			};
+			PrinterConnection.Instance.PrintingStateChanged.RegisterEvent((e, s) =>
+			{
+				printerConnectionDetail.Text = PrinterConnection.Instance.PrinterConnectionStatus;
+			}, ref unregisterEvents);
+			this.AddChild(printerConnectionDetail);
+
 			this.AddChild(new HorizontalSpacer());
 
 			this.AddChild(new TemperatureWidgetExtruder(ApplicationController.Instance.Theme.MenuButtonFactory)
@@ -185,6 +200,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnClosed(ClosedEventArgs e)
 		{
+			unregisterEvents?.Invoke(this, null);
 			gcodeLoadCancellationTokenSource?.Cancel();
 			base.OnClosed(e);
 		}

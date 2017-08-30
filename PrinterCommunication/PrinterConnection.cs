@@ -651,7 +651,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		public string PrinterConnectionStatusVerbose
+		public string PrinterConnectionStatus
 		{
 			get
 			{
@@ -679,7 +679,21 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						return "Preparing To Print".Localize();
 
 					case CommunicationStates.Printing:
-						return "Printing".Localize();
+						switch (DetailedPrintingState)
+						{
+							case DetailedPrintingState.HomingAxis:
+								return "Homing".Localize();
+
+							case DetailedPrintingState.HeatingBed:
+								return "Waiting for Bed to Heat to".Localize() + $" {TargetBedTemperature}°";
+
+							case DetailedPrintingState.HeatingExtruder:
+								return "Waiting for Extruder to Heat to".Localize() + $" {GetTargetExtruderTemperature(0)}°";
+
+							case DetailedPrintingState.Printing:
+							default:
+								return "Printing".Localize();
+						}
 
 					case CommunicationStates.PrintingFromSd:
 						return "Printing From SD Card".Localize();
@@ -758,7 +772,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		public DetailedPrintingState PrintingState
+		public DetailedPrintingState DetailedPrintingState
 		{
 			get
 			{
@@ -771,30 +785,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				{
 					printingStatePrivate = value;
 					PrintingStateChanged.CallEvents(this, null);
-				}
-			}
-		}
-
-		public string PrintingStateString
-		{
-			get
-			{
-				switch (PrintingState)
-				{
-					case DetailedPrintingState.HomingAxis:
-						return "Homing Axis".Localize();
-
-					case DetailedPrintingState.HeatingBed:
-						return "Waiting for Bed to Heat to".Localize() + $" {TargetBedTemperature}°";
-
-					case DetailedPrintingState.HeatingExtruder:
-						return "Waiting for Extruder to Heat to".Localize() + $" {GetTargetExtruderTemperature(0)}°";
-
-					case DetailedPrintingState.Printing:
-						return "Currently Printing".Localize() + ":";
-
-					default:
-						return "";
 				}
 			}
 		}
@@ -1257,6 +1247,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		public void OnCommunicationStateChanged(EventArgs e)
 		{
 			CommunicationStateChanged.CallEvents(this, e);
+			PrintingStateChanged.CallEvents(this, null);
 #if __ANDROID__
 
 			//Path to the printer output file
@@ -2467,19 +2458,19 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			if (lineBeingSetToPrinter.StartsWith("G28"))
 			{
-				PrintingState = DetailedPrintingState.HomingAxis;
+				DetailedPrintingState = DetailedPrintingState.HomingAxis;
 			}
 			else if (waitForTempStream6?.HeatingBed ?? false)
 			{
-				PrintingState = DetailedPrintingState.HeatingBed;
+				DetailedPrintingState = DetailedPrintingState.HeatingBed;
 			}
 			else if (waitForTempStream6?.HeatingExtruder ?? false)
 			{
-				PrintingState = DetailedPrintingState.HeatingExtruder;
+				DetailedPrintingState = DetailedPrintingState.HeatingExtruder;
 			}
 			else
 			{
-				PrintingState = DetailedPrintingState.Printing;
+				DetailedPrintingState = DetailedPrintingState.Printing;
 			}
 		}
 
