@@ -316,6 +316,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			ReadLineContainsCallBacks.AddCallbackToKey("dry run mode", PrinterReportsError);
 			ReadLineStartCallBacks.AddCallbackToKey("accelerometer send i2c error", PrinterReportsError);
 			ReadLineStartCallBacks.AddCallbackToKey("accelerometer i2c recv error", PrinterReportsError);
+			ReadLineStartCallBacks.AddCallbackToKey("temp sensor defect", PrinterReportsError);
 
 			// s3g temperature failures
 			ReadLineContainsCallBacks.AddCallbackToKey("Bot is Shutdown due to Overheat", PrinterReportsError);
