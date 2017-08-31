@@ -30,7 +30,7 @@ namespace MatterHackers.MatterControl
 			VAnchor = VAnchor.Fit;
 
 			noContentFieldDescription = new TextWidget(messageWhenEmptyAndNotSelected, textColor: RGBA_Bytes.Gray);
-			noContentFieldDescription.VAnchor = VAnchor.Bottom;
+			noContentFieldDescription.VAnchor = VAnchor.Top;
 			noContentFieldDescription.AutoExpandBoundsToText = true;
 			AddChild(noContentFieldDescription);
 			SetNoContentFieldDescriptionVisibility();

@@ -288,6 +288,7 @@
     <Compile Include="SetupWizard\LicenseAgreementPage.cs" />
     <Compile Include="SetupWizard\PrinterProfileHistoryPage.cs" />
     <Compile Include="ConfigurationPage\RunningMacroPage.cs" />
+    <Compile Include="SetupWizard\PublishPartToMatterHackers.cs" />
     <Compile Include="SetupWizard\SyncingPrintersPage.cs" />
     <Compile Include="SetupWizard\WizardPage.cs" />
     <Compile Include="SetupWizard\SetupWizardTroubleshooting.cs" />

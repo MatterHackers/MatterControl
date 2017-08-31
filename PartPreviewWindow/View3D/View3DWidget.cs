@@ -413,6 +413,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					},
 					new NamedAction()
 					{
+						Title = "Publish".Localize() + "...",
+						Action = () =>
+						{
+							UiThread.RunOnIdle(() => WizardWindow.Show<PublishPartToMatterHackers>());
+						}
+					},
+				new NamedAction()
+					{
 						Title = "Arrange All Parts".Localize(),
 						Action = () =>
 						{
