@@ -55,10 +55,12 @@ namespace MatterHackers.MatterControl
 			linkButtonFactory.fontSize = 12;
 			linkButtonFactory.textColor = aboutTextColor;
 
-			htmlParser.ParseHtml(htmlContent, AddContent, CloseContent);
+			VAnchor = VAnchor.Fit;
+			HAnchor = HAnchor.Stretch;
 
-			VAnchor = VAnchor.MaxFitOrStretch;
-			HAnchor = HAnchor.MaxFitOrStretch;
+			htmlContent = htmlContent.Replace("\r", "");
+			htmlContent = htmlContent.Replace("\n", "");
+			htmlParser.ParseHtml(htmlContent, AddContent, CloseContent);
 		}
 
 		public class WrappingTextWidget : GuiWidget
@@ -101,6 +103,19 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
+		public override void OnChildAdded(EventArgs e)
+		{
+			foreach (var child in Children)
+			{
+				if (child.VAnchor == VAnchor.Stretch)
+				{
+					this.VAnchor = VAnchor.Stretch;
+				}
+			}
+			base.OnChildAdded(e);
+		}
+
+
 		// Replace multiple white spaces with single whitespace
 		private static readonly Regex replaceMultipleWhiteSpacesWithSingleWhitespaceRegex = new Regex(@"\s+", RegexOptions.Compiled);
 
@@ -141,7 +156,6 @@ namespace MatterHackers.MatterControl
 						if (decodedHtml != null && decodedHtml != "")
 						{
 							WrappingTextWidget content = new WrappingTextWidget(decodedHtml, pointSize: elementState.PointSize, textColor: ActiveTheme.Instance.PrimaryTextColor);
-							//content.VAnchor = VAnchor.Top;
 							elementsUnderConstruction.Peek().AddChild(content);
 						}
 					}
@@ -247,7 +261,7 @@ namespace MatterHackers.MatterControl
 					{
 						if (elementState.Id == "sendFeedback")
 						{
-							createdButton.Click += (s, e) =>  ContactFormWindow.Open();
+							createdButton.Click += (s, e) => ContactFormWindow.Open();
 						}
 						else if (elementState.Id == "clearCache")
 						{
@@ -269,6 +283,7 @@ namespace MatterHackers.MatterControl
 					if (elementState.SizePercent.y == 100)
 					{
 						elementsUnderConstruction.Peek().VAnchor = VAnchor.Stretch;
+						this.VAnchor = VAnchor.Stretch;
 					}
 					if (elementState.Alignment == ElementState.AlignType.center)
 					{

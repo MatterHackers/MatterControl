@@ -262,7 +262,8 @@ namespace MatterHackers.MatterControl
 			ActiveSliceSettings.ActivePrinterChanged.RegisterEvent((s, e) =>
 			{
 				this.Settings = ActiveSliceSettings.Instance;
-				ReloadSettings();
+				this.ReloadSettings();
+				this.Bed.RecreateBed();
 			}, ref unregisterEvents);
 		}
 
