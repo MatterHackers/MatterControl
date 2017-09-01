@@ -36,7 +36,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	public class LevelingStrings
 	{
 		public string homingPageStepText = "Homing The Printer".Localize();
-		public string waitingForTempPageStepText = "Waiting For Bed To Heat".Localize();
+		public string WaitingForTempPageStepText = "Waiting For Bed To Heat".Localize();
 		public string initialPrinterSetupStepText = "Initial Printer Setup".Localize();
 		public string materialStepText = "Select Material".Localize();
 		public string requiredPageInstructions1 = "Congratulations on connecting to your new printer. Before starting your first print we need to run a simple calibration procedure.";
@@ -54,7 +54,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		private string homingLine1b = "To complete the next few steps you will need".Localize();
 		private string homingLine2 = "A standard sheet of paper".Localize();
 		private string homingLine3 = "We will use this paper to measure the distance between the extruder and the bed.";
-		private string homingLine3b = "Click 'Next' to continue.".Localize();
 		private int stepNumber = 1;
 		private string welcomeLine1 = "Welcome to the print leveling wizard. Here is a quick overview on what we are going to do.".Localize();
 		private string selectMaterial = "Select the material you are printing".Localize();
@@ -81,11 +80,21 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 		}
 
-		public string waitingForTempPageInstructions
+		public string WaitingForTempPageInstructions
 		{
 			get
 			{
-				return "Waiting for the bed to heat up.\nThis will improve the accuracy of print leveling.\n\nClick 'Next' when the bed reaches temp.";
+				if (ActiveSliceSettings.Instance.Helpers.UseZProbe())
+				{
+					return "Waiting for the bed to heat up.".Localize() + "\n"
+						+ "This will improve the accuracy of print leveling.".Localize();
+				}
+				else
+				{
+					return "Waiting for the bed to heat up.".Localize() + "\n"
+						+ "This will improve the accuracy of print leveling.".Localize() + "\n" + "\n"
+						+ "Click 'Next' when the bed reaches temp.";
+				}
 			}
 		}
 
@@ -95,11 +104,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			{
 				if (ActiveSliceSettings.Instance.Helpers.UseZProbe())
 				{
-					return "{0}\n\n{1}".FormatWith(homingLine1, homingLine3b);
+					return homingLine1;
 				}
 				else
 				{
-					return "{0}\n\n{1}:\n\n\t• {2}\n\n{3}\n\n{4}".FormatWith(homingLine1, homingLine1b, homingLine2, homingLine3, homingLine3b);
+					return "{0}\n\n{1}:\n\n\t• {2}\n\n{3}\n\n{4}".FormatWith(homingLine1, homingLine1b, homingLine2, homingLine3, clickNext);
 				}
 			}
 		}

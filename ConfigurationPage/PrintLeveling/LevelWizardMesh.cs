@@ -183,10 +183,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				string filamentSelectionPage = "{0}\n\n{1}".FormatWith(levelingStrings.materialPageInstructions1, levelingStrings.materialPageInstructions2);
 				printLevelWizard.AddPage(new SelectMaterialPage(levelingStrings.materialStepText, filamentSelectionPage));
 			}
-			printLevelWizard.AddPage(new HomePrinterPage(levelingStrings.homingPageStepText, levelingStrings.homingPageInstructions));
+			printLevelWizard.AddPage(new HomePrinterPage(printLevelWizard, levelingStrings.homingPageStepText, levelingStrings.homingPageInstructions));
 			if (hasHeatedBed)
 			{
-				printLevelWizard.AddPage(new WaitForTempPage(levelingStrings.waitingForTempPageStepText, levelingStrings.waitingForTempPageInstructions));
+				printLevelWizard.AddPage(new WaitForTempPage(printLevelWizard, levelingStrings));
 			}
 
 			string positionLabel = "Position".Localize();
