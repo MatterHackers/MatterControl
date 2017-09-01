@@ -32,68 +32,26 @@ using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class DoubleOrPercentField : ISettingsField
+	public class DoubleOrPercentField : ValueOrUnitsField
 	{
-		public Action UpdateStyle { get; set; }
-
-		private MHTextEditWidget editWidget;
-
-		public string Value { get; set; }
-
-		public GuiWidget Create(SettingsContext settingsContext, SliceSettingData settingData, int tabIndex)
+		public DoubleOrPercentField()
 		{
-			editWidget = new MHTextEditWidget(this.Value, pixelWidth: DoubleField.DoubleEditWidth - 2, tabIndex: tabIndex)
-			{
-				ToolTipText = settingData.HelpText,
-				SelectAllOnFocus = true
-			};
-			editWidget.ActualTextEditWidget.EditComplete += (sender, e) =>
-			{
-				var textEditWidget = (TextEditWidget)sender;
-				string text = textEditWidget.Text.Trim();
-
-				bool isPercent = text.Contains("%");
-				if (isPercent)
-				{
-					text = text.Substring(0, text.IndexOf("%"));
-				}
-				double result;
-				double.TryParse(text, out result);
-				text = result.ToString();
-				if (isPercent)
-				{
-					text += "%";
-				}
-				textEditWidget.Text = text;
-				settingsContext.SetValue(settingData.SlicerConfigName, textEditWidget.Text);
-
-				this.UpdateStyle();
-			};
-
-			editWidget.ActualTextEditWidget.InternalTextEditWidget.AllSelected += (sender, e) =>
-			{
-				// select everything up to the % (if present)
-				InternalTextEditWidget textEditWidget = (InternalTextEditWidget)sender;
-				int percentIndex = textEditWidget.Text.IndexOf("%");
-				if (percentIndex != -1)
-				{
-					textEditWidget.SetSelection(0, percentIndex - 1);
-				}
-			};
-
-			if (settingData.QuickMenuSettings.Count > 0)
-			{
-				return SliceSettingsWidget.CreateQuickMenu(settingData, settingsContext, editWidget, editWidget.ActualTextEditWidget.InternalTextEditWidget);
-			}
-			else
-			{
-				return editWidget;
-			}
+			unitsToken = "%";
 		}
 
-		public void OnValueChanged(string text)
+		protected override string ConvertValue(string newValue)
 		{
-			editWidget.Text = text;
+			string text = newValue.Trim();
+
+			int tokenIndex = text.IndexOf(unitsToken);
+			bool hasUnitsToken = tokenIndex != -1;
+			if (hasUnitsToken)
+			{
+				text = text.Substring(0, tokenIndex);
+			}
+
+			double.TryParse(text, out double currentValue);
+			return currentValue + (hasUnitsToken ? unitsToken : "");
 		}
 	}
 }

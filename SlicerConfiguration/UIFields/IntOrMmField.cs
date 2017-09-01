@@ -32,7 +32,44 @@ using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class IntOrMmField : ISettingsField
+	//IntOrMmField
+
+	public class ValueOrUnitsField : TextField
+	{
+		protected string unitsToken = "mm";
+
+		public override void Initialize(int tabIndex)
+		{
+			base.Initialize(tabIndex);
+
+			textEditWidget.ActualTextEditWidget.InternalTextEditWidget.AllSelected += (s, e) =>
+			{
+				// select everything up to the token (if present)
+				int tokenIndex = textEditWidget.ActualTextEditWidget.Text.IndexOf(unitsToken);
+				if (tokenIndex != -1)
+				{
+					textEditWidget.ActualTextEditWidget.InternalTextEditWidget.SetSelection(0, tokenIndex - 1);
+				}
+			};
+		}
+
+		protected override string ConvertValue(string newValue)
+		{
+			string text = newValue.Trim();
+
+			int tokenIndex = text.IndexOf(unitsToken);
+			bool hasUnitsToken = tokenIndex != -1;
+			if (hasUnitsToken)
+			{
+				text = text.Substring(0, tokenIndex);
+			}
+
+			double.TryParse(text, out double currentValue);
+			return currentValue + (hasUnitsToken ? unitsToken : "");
+		}
+	}
+
+	public class IntOrMmField2 : ISettingsField
 	{
 		private MHTextEditWidget editWidget;
 

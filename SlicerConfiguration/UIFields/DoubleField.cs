@@ -32,38 +32,14 @@ using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class DoubleField : ISettingsField
+	public class DoubleField : NumberField
 	{
 		public static int DoubleEditWidth = (int)(60 * GuiWidget.DeviceScale + .5);
-
-		public Action UpdateStyle { get; set; }
-
-		public string Value { get; set; }
-
-		private MHNumberEdit doubleEditWidget;
-
-		public GuiWidget Create(SettingsContext settingsContext, SliceSettingData settingData, int tabIndex)
-		{
-			double.TryParse(this.Value, out double currentValue);
-
-			doubleEditWidget = new MHNumberEdit(currentValue, allowNegatives: true, allowDecimals: true, pixelWidth: DoubleEditWidth, tabIndex: tabIndex)
-			{
-				ToolTipText = settingData.HelpText,
-				SelectAllOnFocus = true
-			};
-			doubleEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
-			{
-				settingsContext.SetValue(settingData.SlicerConfigName, ((NumberEdit)sender).Value.ToString());
-				this.UpdateStyle();
-			};
-
-			return doubleEditWidget;
-		}
 
 		public void OnValueChanged(string text)
 		{
 			double.TryParse(text, out double currentValue);
-			doubleEditWidget.ActuallNumberEdit.Value = currentValue;
+			numberEdit.ActuallNumberEdit.Value = currentValue;
 		}
 	}
 }

@@ -32,7 +32,35 @@ using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class CheckboxField : ISettingsField
+	public class CheckboxField : BasicField, IUIField
+	{
+		private CheckBox checkBoxWidget;
+
+		public virtual void Initialize(int tabIndex)
+		{
+			checkBoxWidget = new CheckBox("")
+			{
+				//Name = settingData.PresentationName + " Checkbox",
+				//ToolTipText = settingData.HelpText,
+				VAnchor = VAnchor.Bottom,
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				Checked = this.Value == "1"
+			};
+			checkBoxWidget.CheckedStateChanged += (s, e) =>
+			{
+				this.Value = checkBoxWidget.Checked ? "1" : "0";
+			};
+
+			this.Content = checkBoxWidget;
+		}
+
+		public void OnValueChanged(string text)
+		{
+			checkBoxWidget.Checked = text == "1";
+		}
+	}
+
+	public class CheckboxField2 : ISettingsField
 	{
 		private CheckBox checkBoxWidget;
 

@@ -100,7 +100,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				settingsContext.SetValue(settingData.SlicerConfigName, numberEdit.Value.ToString());
 				this.UpdateStyle();
 			};
-			
+
 			if (settingData.QuickMenuSettings.Count > 0)
 			{
 				return SliceSettingsWidget.CreateQuickMenu(settingData, settingsContext, doubleEditWidget, doubleEditWidget.ActuallNumberEdit.InternalTextEditWidget);

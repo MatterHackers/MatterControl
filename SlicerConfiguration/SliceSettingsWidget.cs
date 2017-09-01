@@ -786,7 +786,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			settingsRow.AddChild(restoreArea);
 			settingsRow.Name = settingData.SlicerConfigName + " Edit Field";
 
-			ISettingsField field = null;
+			ISettingsField OLDFIELDXXXXX = null;
 			IUIField uiField = null;
 
 			if (!PrinterSettings.KnownSettings.Contains(settingData.SlicerConfigName))
@@ -810,60 +810,73 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				switch (settingData.DataEditType)
 				{
 					case SliceSettingData.DataEditTypes.INT:
-
 						uiField = new NumberField();
 						break;
 
 					case SliceSettingData.DataEditTypes.DOUBLE:
-						field = new DoubleField();
+					case SliceSettingData.DataEditTypes.OFFSET:
+						uiField = new DoubleField();
 						break;
 
 					case SliceSettingData.DataEditTypes.POSITIVE_DOUBLE:
-						field = new PositiveDoubleField();
-						break;
-
-					case SliceSettingData.DataEditTypes.OFFSET:
-						field = new OffsetField();
+						OLDFIELDXXXXX = new PositiveDoubleField();
 						break;
 
 					case SliceSettingData.DataEditTypes.DOUBLE_OR_PERCENT:
-						field = new DoubleOrPercentField();
+						uiField = new DoubleOrPercentField();
 						break;
 
 					case SliceSettingData.DataEditTypes.INT_OR_MM:
-						field = new IntOrMmField();
+						uiField = new ValueOrUnitsField();
 						break;
 
 					case SliceSettingData.DataEditTypes.CHECK_BOX:
-						field = new CheckboxField();
+						uiField = new CheckboxField();
+						uiField.ValueChanged += (s, e) =>
+						{
+							// Linked settings should be updated in all cases (user clicked checkbox, user clicked clear)
+							foreach (var setSettingsData in settingData.SetSettingsOnChange)
+							{
+								string targetValue;
+
+								if (uiField.Content is CheckBox checkbox)
+								{
+									if (setSettingsData.TryGetValue(checkbox.Checked ? "OnValue" : "OffValue", out targetValue))
+									{
+										settingsContext.SetValue(setSettingsData["TargetSetting"], targetValue);
+									}
+								}
+							}
+						};
+
 						break;
 
 					case SliceSettingData.DataEditTypes.STRING:
-						field = new StringField();
+						uiField = new TextField();
 						break;
 
 					case SliceSettingData.DataEditTypes.MULTI_LINE_TEXT:
-						field = new MultilineStringField();
+						OLDFIELDXXXXX = new MultilineStringField();
 						break;
 					case SliceSettingData.DataEditTypes.COM_PORT:
-						field = new ComPortField();
+						OLDFIELDXXXXX = new ComPortField();
 						break;
 
 					case SliceSettingData.DataEditTypes.LIST:
-						field = new ListField();
+						OLDFIELDXXXXX = new ListField();
 						break;
 
 					case SliceSettingData.DataEditTypes.HARDWARE_PRESENT:
-						field = new HardwarePresetField();
+						OLDFIELDXXXXX = new HardwarePresetField();
 						break;
 
 					case SliceSettingData.DataEditTypes.VECTOR2:
-						field = new Vector2Field();
+						OLDFIELDXXXXX = new Vector2Field();
 						break;
 
 					case SliceSettingData.DataEditTypes.OFFSET2:
-						field = new Offset2Field();
-						if (field is Offset2Field offset2)
+						OLDFIELDXXXXX = new Offset2Field();
+						if (OLDFIELDXXXXX is Offset2Field offset2)
 						{
 							offset2.ExtruderIndex = extruderIndex;
 						}
@@ -974,19 +987,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 			};
 
-			if (field != null)
+			if (OLDFIELDXXXXX != null)
 			{
-				allFields.Add(settingData.SlicerConfigName, field);
+				allFields.Add(settingData.SlicerConfigName, OLDFIELDXXXXX);
 
-				field.Value = sliceSettingValue;
+				OLDFIELDXXXXX.Value = sliceSettingValue;
 
 				this.PrepareRow(
-					field.Create(settingsContext, settingData, tabIndexForItem++),
+					OLDFIELDXXXXX.Create(settingsContext, settingData, tabIndexForItem++),
 					dataArea,
 					unitsArea,
 					settingData);
 
-				field.UpdateStyle = settingsRow.UpdateStyle;
+				OLDFIELDXXXXX.UpdateStyle = settingsRow.UpdateStyle;
 			}
 
 			if (uiField != null)
@@ -996,6 +1009,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				uiField.Initialize(tabIndexForItem++);
 
 				uiField.Value = sliceSettingValue;
+
+				uiField.ValueChanged += (s, e) =>
+				{
+					settingsContext.SetValue(settingData.SlicerConfigName, uiField.Value);
+					settingsRow.UpdateStyle();
+				};
 
 				// After initializing the field, wrap with dropmenu if applicable
 				if (settingData.QuickMenuSettings.Count > 0)
@@ -1010,11 +1029,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					unitsArea,
 					settingData);
 
-				uiField.ValueChanged += (s, e) =>
-				{
-					settingsContext.SetValue(settingData.SlicerConfigName, uiField.Value);
-					settingsRow.UpdateStyle();
-				};
 			}
 
 

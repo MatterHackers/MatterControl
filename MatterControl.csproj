@@ -292,6 +292,7 @@
     <Compile Include="SetupWizard\SetupWizardTroubleshooting.cs" />
     <Compile Include="SetupWizard\SetupWizardWifi.cs" />
     <Compile Include="SetupWizard\WizardWindow.cs" />
+    <Compile Include="SlicerConfiguration\UIFields\BasicField.cs" />
     <Compile Include="SlicerConfiguration\UIFields\DoubleField.cs" />
     <Compile Include="SlicerConfiguration\UIFields\DoubleOrPercentField.cs" />
     <Compile Include="SlicerConfiguration\UIFields\IntOrMmField.cs" />
@@ -303,7 +304,6 @@
     <Compile Include="SlicerConfiguration\UIFields\Offset2Field.cs" />
     <Compile Include="SlicerConfiguration\UIFields\Vector2Field.cs" />
     <Compile Include="SlicerConfiguration\UIFields\StringField.cs" />
-    <Compile Include="SlicerConfiguration\UIFields\OffsetField.cs" />
     <Compile Include="SlicerConfiguration\UIFields\IntField.cs" />
     <Compile Include="SlicerConfiguration\UIFields\PositiveDoubleField.cs" />
     <Compile Include="SlicerConfiguration\SettingsContext.cs" />
