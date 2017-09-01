@@ -17,6 +17,9 @@ namespace MatterHackers.MatterControl
 		public const string SliceSettingsShowHelp = nameof(SliceSettingsShowHelp);
 		public const string TerminalFilterOutput = nameof(TerminalFilterOutput);
 		public const string TerminalAutoUppercase = nameof(TerminalAutoUppercase);
+		public const string SliceSettingsTabPinned = nameof(SliceSettingsTabPinned);
+		public const string SliceSettingsTabIndex = nameof(SliceSettingsTabIndex);
+		public const string SliceSettingsWidth = nameof(SliceSettingsWidth);
 	}
 
 	public class UserSettings
@@ -33,7 +36,7 @@ namespace MatterHackers.MatterControl
 			settingsDictionary = new Dictionary<string, UserSetting>();
 			foreach(var userSetting in Datastore.Instance.dbSQLite.Query<UserSetting>("SELECT * FROM UserSetting;"))
 			{
-				// Allow for duplicate entries in the database with the same .Name value
+				// LastValueWins - allow for duplicate entries in the database with the same .Name value 
 				settingsDictionary[userSetting.Name] = userSetting;
 			}
 

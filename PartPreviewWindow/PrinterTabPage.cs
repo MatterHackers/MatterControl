@@ -578,11 +578,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			var sideBar = new DockingTabControl(widgetTodockTo, DockSide.Right, ApplicationController.Instance.Printer)
 			{
-				ControlIsPinned = ApplicationController.Instance.PrintSettingsPinned
+				ControlIsPinned = ApplicationController.Instance.Printer.ViewState.SliceSettingsTabPinned
 			};
 			sideBar.PinStatusChanged += (s, e) =>
 			{
-				ApplicationController.Instance.PrintSettingsPinned = sideBar.ControlIsPinned;
+				ApplicationController.Instance.Printer.ViewState.SliceSettingsTabPinned = sideBar.ControlIsPinned;
 			};
 			parent.AddChild(sideBar);
 
