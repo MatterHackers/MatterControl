@@ -63,29 +63,44 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 	public class WaitForTempPage : InstructionsPage
 	{
+		protected WizardControl container;
 		private ProgressBar progressBar;
 		private TextWidget progressBarText;
+		private TextWidget doneText;
 		double startingTemp;
 
-		public WaitForTempPage(string pageDescription, string instructionsText)
-			: base(pageDescription, instructionsText)
+		public WaitForTempPage(WizardControl container, LevelingStrings levelingStrings)
+			: base(levelingStrings.WaitingForTempPageStepText, levelingStrings.WaitingForTempPageInstructions)
 		{
-			var holder = new FlowLayoutWidget();
+			this.container = container;
+			var holder = new FlowLayoutWidget()
+			{
+				Margin = new BorderDouble(0, 5)
+			};
 			progressBar = new ProgressBar((int)(150 * GuiWidget.DeviceScale), (int)(15 * GuiWidget.DeviceScale))
 			{
 				FillColor = ActiveTheme.Instance.PrimaryAccentColor,
 				BorderColor = ActiveTheme.Instance.PrimaryTextColor,
 				BackgroundColor = RGBA_Bytes.White,
-				Margin = new BorderDouble(3, 0, 0, 10),
+				Margin = new BorderDouble(3, 0, 0, 0),
+				VAnchor = VAnchor.Center
 			};
 			progressBarText = new TextWidget("", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
 				AutoExpandBoundsToText = true,
 				Margin = new BorderDouble(5, 0, 0, 0),
+				VAnchor = VAnchor.Center
 			};
 			holder.AddChild(progressBar);
 			holder.AddChild(progressBarText);
 			topToBottomControls.AddChild(holder);
+
+			doneText = new TextWidget("Done!", textColor: ActiveTheme.Instance.PrimaryTextColor)
+			{
+				AutoExpandBoundsToText = true,
+				Visible = false,
+			};
+			topToBottomControls.AddChild(doneText);
 		}
 
 		public override void PageIsBecomingActive()
@@ -103,7 +118,21 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				PrinterConnection.Instance.TargetBedTemperature = 0;
 			};
 
+			if (ActiveSliceSettings.Instance.Helpers.UseZProbe())
+			{
+				container.backButton.Enabled = false;
+				container.nextButton.Enabled = false;
+			}
+
 			base.PageIsBecomingActive();
+		}
+
+		public override void PageIsBecomingInactive()
+		{
+			container.nextButton.Enabled = true;
+			container.backButton.Enabled = true;
+
+			base.PageIsBecomingInactive();
 		}
 
 		private void ShowTempChangeProgress()
@@ -119,6 +148,21 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			if (!HasBeenClosed)
 			{
 				UiThread.RunOnIdle(ShowTempChangeProgress, 1);
+			}
+
+			// if we are within 1 degree of our target
+			if (Math.Abs(targetTemp - actualTemp) < 1
+				&& doneText.Visible == false)
+			{
+				doneText.Visible = true;
+				container.backButton.Enabled = true;
+				container.nextButton.Enabled = true;
+
+				if (ActiveSliceSettings.Instance.Helpers.UseZProbe())
+				{
+					// advance to the next page
+					UiThread.RunOnIdle(() => container.nextButton.ClickButton(null));
+				}
 			}
 		}
 	}
@@ -216,7 +260,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					PrinterConnection.Instance.MoveAbsolute(probeStartPosition, ActiveSliceSettings.Instance.Helpers.ManualMovementSpeeds().z);
 					PrinterConnection.Instance.ReadPosition();
 
-					container.nextButton.ClickButton(new MouseEventArgs(MouseButtons.Left, 1, 0, 0, 0));
+					UiThread.RunOnIdle(() => container.nextButton.ClickButton(null));
 				}
 			}
 		}
@@ -224,15 +268,61 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 	public class HomePrinterPage : InstructionsPage
 	{
-		public HomePrinterPage(string pageDescription, string instructionsText)
+		protected WizardControl container;
+		private EventHandler unregisterEvents;
+
+		public HomePrinterPage(WizardControl container, string pageDescription, string instructionsText)
 			: base(pageDescription, instructionsText)
 		{
+			this.container = container;
+		}
+
+		public override void OnClosed(ClosedEventArgs e)
+		{
+			unregisterEvents?.Invoke(this, null);
+			base.OnClosed(e);
 		}
 
 		public override void PageIsBecomingActive()
 		{
+			// make sure we don't have anything left over
+			unregisterEvents?.Invoke(this, null);
+
+			PrinterConnection.Instance.PrintingStateChanged.RegisterEvent(CheckHomeFinished, ref unregisterEvents);
+
 			PrinterConnection.Instance.HomeAxis(PrinterConnection.Axis.XYZ);
+
+			if (ActiveSliceSettings.Instance.Helpers.UseZProbe())
+			{
+				container.backButton.Enabled = true;
+				container.nextButton.Enabled = false;
+			}
+
 			base.PageIsBecomingActive();
+		}
+
+		private void CheckHomeFinished(object sender, EventArgs e)
+		{
+			if(PrinterConnection.Instance.DetailedPrintingState != DetailedPrintingState.HomingAxis)
+			{
+				unregisterEvents?.Invoke(this, null);
+				container.nextButton.Enabled = true;
+				container.backButton.Enabled = true;
+
+				if (ActiveSliceSettings.Instance.Helpers.UseZProbe())
+				{
+					UiThread.RunOnIdle(() => container.nextButton.ClickButton(null));
+				}
+			}
+		}
+
+		public override void PageIsBecomingInactive()
+		{
+			unregisterEvents?.Invoke(this, null);
+			container.nextButton.Enabled = true;
+			container.backButton.Enabled = true;
+
+			base.PageIsBecomingInactive();
 		}
 	}
 
@@ -436,10 +526,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public override void OnClosed(ClosedEventArgs e)
 		{
-			if (unregisterEvents != null)
-			{
-				unregisterEvents(this, null);
-			}
+			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
 		}
 

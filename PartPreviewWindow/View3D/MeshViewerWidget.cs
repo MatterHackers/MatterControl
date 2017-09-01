@@ -45,6 +45,7 @@ using MatterHackers.PolygonMesh;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.RenderOpenGl.OpenGl;
 using MatterHackers.VectorMath;
+using Newtonsoft.Json;
 
 namespace MatterHackers.MeshVisualizer
 {
@@ -183,6 +184,27 @@ namespace MatterHackers.MeshVisualizer
 							{
 								printerShape = mesh;
 								this.Invalidate();
+								Task.Run(() =>
+								{
+									BspNode bspTree = null;
+									// if there is a chached bsp tree load it
+									var meshHashCode = mesh.GetLongHashCode();
+									string cachePath = ApplicationController.CacheablePath("MeshBspData", $"{meshHashCode}.bsp");
+									if (File.Exists(cachePath))
+									{
+										JsonConvert.DeserializeObject<BspNode>(File.ReadAllText(cachePath));
+									}
+									else
+									{
+										// else calculate it
+										bspTree = FaceBspTree.Create(mesh, 20, true);
+										// and save it
+										File.WriteAllText(cachePath, JsonConvert.SerializeObject(bspTree));
+									}
+
+									// set the mesh to use the new tree
+									UiThread.RunOnIdle(() => mesh.FaceBspTree = bspTree);
+								});
 							});
 						}
 					}
