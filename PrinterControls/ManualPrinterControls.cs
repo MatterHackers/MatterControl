@@ -44,13 +44,14 @@ namespace MatterHackers.MatterControl
 	{
 		static public RootedObjectEventHandler AddPluginControls = new RootedObjectEventHandler();
 		private static bool pluginsQueuedToAdd = false;
+		PrinterConnection printerConnection;
 
-		public ManualPrinterControls()
+		public ManualPrinterControls(PrinterConnection printerConnection)
 		{
 			this.BackgroundColor = ApplicationController.Instance.Theme.TabBodyBackground;
 			AnchorAll();
 
-			AddChild(new ManualPrinterControlsDesktop());
+			AddChild(new ManualPrinterControlsDesktop(printerConnection));
 		}
 
 		public override void OnLoad(EventArgs args)
@@ -79,9 +80,11 @@ namespace MatterHackers.MatterControl
 		private DisableableWidget calibrationControlsContainer;
 
 		private EventHandler unregisterEvents;
+		PrinterConnection printerConnection;
 
-		public ManualPrinterControlsDesktop()
+		public ManualPrinterControlsDesktop(PrinterConnection printerConnection)
 		{
+			this.printerConnection = printerConnection;
 			ScrollArea.HAnchor |= HAnchor.Stretch;
 			AnchorAll();
 			AutoScroll = true;
@@ -123,7 +126,7 @@ namespace MatterHackers.MatterControl
 			};
 			controlsTopToBottomLayout.AddChild(linearPanel);
 
-			fanControlsContainer = new FanControls(headingPointSize);
+			fanControlsContainer = new FanControls(printerConnection, headingPointSize);
 			if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_fan))
 			{
 				controlsTopToBottomLayout.AddChild(fanControlsContainer);
@@ -138,8 +141,8 @@ namespace MatterHackers.MatterControl
 			// HACK: this is a hack to make the layout engine fire again for this control
 			UiThread.RunOnIdle(() => tuningAdjustmentControlsContainer.Width = tuningAdjustmentControlsContainer.Width + 1);
 
-			PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
-			PrinterConnection.Instance.EnableChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
+			printerConnection.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
+			printerConnection.EnableChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
 
 			SetVisibleControls();
 		}
@@ -169,7 +172,7 @@ namespace MatterHackers.MatterControl
 			}
 			else // we at least have a printer selected
 			{
-				switch (PrinterConnection.Instance.CommunicationState)
+				switch (printerConnection.CommunicationState)
 				{
 					case CommunicationStates.Disconnecting:
 					case CommunicationStates.ConnectionLost:
@@ -218,7 +221,7 @@ namespace MatterHackers.MatterControl
 
 					case CommunicationStates.PreparingToPrint:
 					case CommunicationStates.Printing:
-						switch (PrinterConnection.Instance.DetailedPrintingState)
+						switch (printerConnection.DetailedPrintingState)
 						{
 							case DetailedPrintingState.HomingAxis:
 							case DetailedPrintingState.HeatingBed:

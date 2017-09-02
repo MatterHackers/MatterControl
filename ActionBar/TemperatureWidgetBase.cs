@@ -33,6 +33,7 @@ using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl.ActionBar
 {
@@ -49,12 +50,14 @@ namespace MatterHackers.MatterControl.ActionBar
 		};
 
 		protected EventHandler unregisterEvents;
+		protected PrinterConnection printerConnection;
 
 		protected virtual int ActualTemperature { get; }
 		protected virtual int TargetTemperature { get; }
 
-		public TemperatureWidgetBase(string textValue)
+		public TemperatureWidgetBase(PrinterConnection printerConnection, string textValue)
 		{
+			this.printerConnection = printerConnection;
 			this.HAnchor = HAnchor.Fit;
 			this.VAnchor = VAnchor.Fit | VAnchor.Center;
 			this.Cursor = Cursors.Hand;

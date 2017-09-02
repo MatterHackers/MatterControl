@@ -69,6 +69,12 @@ namespace MatterHackers.MatterControl.EeProm
 		public bool hasPID = false;
 
 		private bool changed = false;
+		private PrinterConnection printerConnection;
+
+		public EePromMarlinSettings(PrinterConnection printerConnection)
+		{
+			this.printerConnection = printerConnection;
+		}
 
 		public bool update(string line)
 		{
@@ -243,15 +249,15 @@ namespace MatterHackers.MatterControl.EeProm
 			string cmdho = "M206 X" + hox + " Y" + hoy + " Z" + hoz;
 			string cmdpid = "M301 P" + ppid + " I" + ipid + " D" + dpid;
 
-			PrinterConnection.Instance.SendLineToPrinterNow(cmdsteps);
-			PrinterConnection.Instance.SendLineToPrinterNow(cmdfeed);
-			PrinterConnection.Instance.SendLineToPrinterNow(cmdmacc);
-			PrinterConnection.Instance.SendLineToPrinterNow(cmdacc);
-			PrinterConnection.Instance.SendLineToPrinterNow(cmdav);
-			PrinterConnection.Instance.SendLineToPrinterNow(cmdho);
+			printerConnection.SendLineToPrinterNow(cmdsteps);
+			printerConnection.SendLineToPrinterNow(cmdfeed);
+			printerConnection.SendLineToPrinterNow(cmdmacc);
+			printerConnection.SendLineToPrinterNow(cmdacc);
+			printerConnection.SendLineToPrinterNow(cmdav);
+			printerConnection.SendLineToPrinterNow(cmdho);
 			if (hasPID)
 			{
-				PrinterConnection.Instance.SendLineToPrinterNow(cmdpid);
+				printerConnection.SendLineToPrinterNow(cmdpid);
 			}
 
 			changed = false;
@@ -502,14 +508,14 @@ namespace MatterHackers.MatterControl.EeProm
 
 		public void SaveToEeProm()
 		{
-			PrinterConnection.Instance.SendLineToPrinterNow("M500");
+			printerConnection.SendLineToPrinterNow("M500");
 		}
 
 		// this does not save them to eeprom
 		public void SetPrinterToFactorySettings()
 		{
 			hasPID = false;
-			PrinterConnection.Instance.SendLineToPrinterNow("M502");
+			printerConnection.SendLineToPrinterNow("M502");
 		}
 
 		public void Add(object sender, EventArgs e)
@@ -542,7 +548,7 @@ namespace MatterHackers.MatterControl.EeProm
 		public void Update()
 		{
 			hasPID = false;
-			PrinterConnection.Instance.SendLineToPrinterNow("M503");
+			printerConnection.SendLineToPrinterNow("M503");
 		}
 	}
 }

@@ -129,7 +129,7 @@ namespace MatterHackers.MatterControl
 					}
 
 					// When the active layer changes we update the selected range accordingly - constrain to applicable values
-					this.RenderInfo.EndLayerIndex = Math.Min(this.LoadedGCode.LayerCount - 1, Math.Max(activeLayerIndex, 1));
+					this.RenderInfo.EndLayerIndex = Math.Min(this.LoadedGCode == null ? 0 : this.LoadedGCode.LayerCount - 1, Math.Max(activeLayerIndex, 1));
 
 					ActiveLayerChanged?.Invoke(this, null);
 				}
@@ -679,12 +679,13 @@ namespace MatterHackers.MatterControl
 
 			PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent((s, e) =>
 			{
-				switch (PrinterConnection.Instance.CommunicationState)
+				PrinterConnection printerConnection = s as PrinterConnection;
+				switch (printerConnection.CommunicationState)
 				{
 					case CommunicationStates.Printing:
 						if (UserSettings.Instance.IsTouchScreen)
 						{
-							UiThread.RunOnIdle(PrintingWindow.Show);
+							UiThread.RunOnIdle(() => PrintingWindow.Show(printerConnection));
 						}
 
 						break;
