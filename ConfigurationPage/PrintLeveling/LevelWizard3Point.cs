@@ -33,6 +33,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 using System.Collections.Generic;
+using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
@@ -40,7 +41,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	{
 		private LevelingStrings levelingStrings = new LevelingStrings();
 
-		public LevelWizard3Point(LevelWizardBase.RuningState runningState)
+		public LevelWizard3Point(PrinterConnection printerConnection, LevelWizardBase.RuningState runningState)
 			: base(500, 370, 9)
 		{
 			string printLevelWizardTitle = "MatterControl".Localize();
@@ -69,10 +70,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				string filamentSelectionPage = "{0}\n\n{1}".FormatWith(levelingStrings.materialPageInstructions1, levelingStrings.materialPageInstructions2);
 				printLevelWizard.AddPage(new SelectMaterialPage(levelingStrings.materialStepText, filamentSelectionPage));
 			}
-			printLevelWizard.AddPage(new HomePrinterPage(printLevelWizard, levelingStrings.homingPageStepText, levelingStrings.homingPageInstructions));
+			printLevelWizard.AddPage(new HomePrinterPage(printerConnection, printLevelWizard, levelingStrings.homingPageStepText, levelingStrings.homingPageInstructions));
 			if (hasHeatedBed)
 			{
-				printLevelWizard.AddPage(new WaitForTempPage(printLevelWizard, levelingStrings));
+				printLevelWizard.AddPage(new WaitForTempPage(printerConnection, printLevelWizard, levelingStrings));
 			}
 
 			string positionLabel = "Position".Localize();
@@ -90,17 +91,17 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				if (ActiveSliceSettings.Instance.Helpers.UseZProbe())
 				{
 					var stepString = string.Format("{0} {1} {2} {3}:", levelingStrings.stepTextBeg, i + 1, levelingStrings.stepTextEnd, 3);
-					printLevelWizard.AddPage(new AutoProbeFeedback(printLevelWizard, new Vector3(probePosition, startProbeHeight), string.Format("{0} {1} {2} - {3}", stepString, positionLabel, i + 1, autoCalibrateLabel), probePositions, i));
+					printLevelWizard.AddPage(new AutoProbeFeedback(printerConnection, printLevelWizard, new Vector3(probePosition, startProbeHeight), string.Format("{0} {1} {2} - {3}", stepString, positionLabel, i + 1, autoCalibrateLabel), probePositions, i));
 				}
 				else
 				{
-					printLevelWizard.AddPage(new GetCoarseBedHeight(printLevelWizard, new Vector3(probePosition, startProbeHeight), string.Format("{0} {1} {2} - {3}", levelingStrings.GetStepString(totalSteps), positionLabel, i + 1, lowPrecisionLabel), probePositions, i));
-					printLevelWizard.AddPage(new GetFineBedHeight(printLevelWizard, string.Format("{0} {1} {2} - {3}", levelingStrings.GetStepString(totalSteps), positionLabel, i + 1, medPrecisionLabel), probePositions, i));
-					printLevelWizard.AddPage(new GetUltraFineBedHeight(printLevelWizard, string.Format("{0} {1} {2} - {3}", levelingStrings.GetStepString(totalSteps), positionLabel, i + 1, highPrecisionLabel), probePositions, i));
+					printLevelWizard.AddPage(new GetCoarseBedHeight(printerConnection, printLevelWizard, new Vector3(probePosition, startProbeHeight), string.Format("{0} {1} {2} - {3}", levelingStrings.GetStepString(totalSteps), positionLabel, i + 1, lowPrecisionLabel), probePositions, i));
+					printLevelWizard.AddPage(new GetFineBedHeight(printerConnection, printLevelWizard, string.Format("{0} {1} {2} - {3}", levelingStrings.GetStepString(totalSteps), positionLabel, i + 1, medPrecisionLabel), probePositions, i));
+					printLevelWizard.AddPage(new GetUltraFineBedHeight(printerConnection, printLevelWizard, string.Format("{0} {1} {2} - {3}", levelingStrings.GetStepString(totalSteps), positionLabel, i + 1, highPrecisionLabel), probePositions, i));
 				}
 			}
 
-			printLevelWizard.AddPage(new LastPagelInstructions(printLevelWizard, "Done".Localize(), levelingStrings.DoneInstructions, probePositions));
+			printLevelWizard.AddPage(new LastPagelInstructions(printerConnection, printLevelWizard, "Done".Localize(), levelingStrings.DoneInstructions, probePositions));
 		}
 
 		public static string ApplyLeveling(string lineBeingSent, Vector3 currentDestination, PrinterMachineInstruction.MovementTypes movementMode)

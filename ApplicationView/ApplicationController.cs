@@ -703,7 +703,7 @@ namespace MatterHackers.MatterControl
 					PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
 					if (levelingData?.HasBeenRunAndEnabled() != true)
 					{
-						UiThread.RunOnIdle(LevelWizardBase.ShowPrintLevelWizard);
+						UiThread.RunOnIdle(() => LevelWizardBase.ShowPrintLevelWizard(PrinterConnection.Instance));
 					}
 				}
 			}, ref unregisterEvents);
@@ -1337,7 +1337,7 @@ namespace MatterHackers.MatterControl
 					PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
 					if (levelingData?.HasBeenRunAndEnabled() != true)
 					{
-						LevelWizardBase.ShowPrintLevelWizard();
+						LevelWizardBase.ShowPrintLevelWizard(PrinterConnection.Instance);
 						return;
 					}
 				}

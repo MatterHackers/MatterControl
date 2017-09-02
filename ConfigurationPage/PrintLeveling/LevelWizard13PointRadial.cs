@@ -44,8 +44,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
     {
 		static readonly int numberOfRadialSamples = 12;
 
-		public LevelWizard13PointRadial(LevelWizardBase.RuningState runningState)
-			: base(runningState, 500, 370, (numberOfRadialSamples + 1)*3, numberOfRadialSamples)
+		public LevelWizard13PointRadial(PrinterConnection printerConnection, LevelWizardBase.RuningState runningState)
+			: base(printerConnection, runningState, 500, 370, (numberOfRadialSamples + 1)*3, numberOfRadialSamples)
 		{
 		}
 

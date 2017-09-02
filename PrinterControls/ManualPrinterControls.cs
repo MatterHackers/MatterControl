@@ -108,12 +108,12 @@ namespace MatterHackers.MatterControl
 			actionControlsContainer = new ActionControls();
 			controlsTopToBottomLayout.AddChild(actionControlsContainer);
 
-			movementControlsContainer = new MovementControls(headingPointSize);
+			movementControlsContainer = new MovementControls(printerConnection, headingPointSize);
 			controlsTopToBottomLayout.AddChild(movementControlsContainer);
 
 			if (!ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_hardware_leveling))
 			{
-				calibrationControlsContainer = new CalibrationSettingsWidget(theme.ButtonFactory, headingPointSize);
+				calibrationControlsContainer = new CalibrationSettingsWidget(printerConnection, theme.ButtonFactory, headingPointSize);
 				controlsTopToBottomLayout.AddChild(calibrationControlsContainer);
 			}
 

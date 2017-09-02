@@ -24,9 +24,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		private Button runPrintLevelingButton;
 
 		private TextImageButtonFactory buttonFactory;
+		PrinterConnection printerConnection;
 
-		public CalibrationSettingsWidget(TextImageButtonFactory buttonFactory, int headingPointSize)
+		public CalibrationSettingsWidget(PrinterConnection printerConnection, TextImageButtonFactory buttonFactory, int headingPointSize)
 		{
+			this.printerConnection = printerConnection;
 			var mainContainer = new AltGroupBox(new TextWidget("Calibration".Localize(), pointSize: headingPointSize, textColor: ActiveTheme.Instance.SecondaryAccentColor))
 			{
 				Margin = new BorderDouble(0),
@@ -53,8 +55,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			container.AddChild(CreateSeparatorLine());
 
-			PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent(PrinterStatusChanged, ref unregisterEvents);
-			PrinterConnection.Instance.EnableChanged.RegisterEvent(PrinterStatusChanged, ref unregisterEvents);
+			printerConnection.CommunicationStateChanged.RegisterEvent(PrinterStatusChanged, ref unregisterEvents);
+			printerConnection.EnableChanged.RegisterEvent(PrinterStatusChanged, ref unregisterEvents);
 
 			SetVisibleControls();
 		}
@@ -123,7 +125,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			runPrintLevelingButton.VAnchor = VAnchor.Center;
 			runPrintLevelingButton.Click += (sender, e) =>
 			{
-				UiThread.RunOnIdle(() => LevelWizardBase.ShowPrintLevelWizard(LevelWizardBase.RuningState.UserRequestedCalibration));
+				UiThread.RunOnIdle(() => LevelWizardBase.ShowPrintLevelWizard(printerConnection, LevelWizardBase.RuningState.UserRequestedCalibration));
 			};
 			buttonRow.AddChild(runPrintLevelingButton);
 
@@ -165,8 +167,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		private void SetVisibleControls()
 		{
 			if (!ActiveSliceSettings.Instance.PrinterSelected
-				|| PrinterConnection.Instance.CommunicationState == CommunicationStates.Printing
-				|| PrinterConnection.Instance.PrinterIsPaused)
+				|| printerConnection.CommunicationState == CommunicationStates.Printing
+				|| printerConnection.PrinterIsPaused)
 			{
 				this.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 				runPrintLevelingButton.Enabled = true; // setting this true when the element is disabled makes the colors stay correct
@@ -174,7 +176,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			else
 			{
 				this.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-				runPrintLevelingButton.Enabled = PrinterConnection.Instance.PrinterIsConnected;
+				runPrintLevelingButton.Enabled = printerConnection.PrinterIsConnected;
 			}
 		}
 	}
