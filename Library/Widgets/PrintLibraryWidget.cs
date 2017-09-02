@@ -78,7 +78,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			libraryView = new ListView(ApplicationController.Instance.Library)
 			{
 				BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor,
-				ShowContainers = false
 			};
 
 			libraryView.SelectedItems.CollectionChanged += SelectedItems_CollectionChanged;
@@ -94,11 +93,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			CheckBox showFolders = new CheckBox("Folders")
 			{
 				Name = "Show Folders Toggle",
-				Checked = libraryView.ShowContainers
+				Checked = UserSettings.Instance.get("ShowContainers") == "1"
 			};
 			showFolders.CheckedStateChanged += (s, e) =>
 			{
-				libraryView.ShowContainers = showFolders.Checked;
+				UserSettings.Instance.set("ShowContainers", showFolders.Checked ? "1" : "0");
 				libraryView.Reload();
 			};
 			allControls.AddChild(showFolders);

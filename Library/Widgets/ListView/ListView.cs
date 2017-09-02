@@ -85,8 +85,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			}, ref unregisterEvents);
 		}
 
-		public bool ShowContainers { get; set; } = true;
-
 		public bool ShowItems { get; set; } = true;
 
 		public Predicate<ILibraryContainerLink> ContainerFilter { get; set; } = (o) => true;
@@ -168,7 +166,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				int height = itemsContentView.ThumbHeight;
 
 				// Folder items
-				if (this.ShowContainers)
+				if (UserSettings.Instance.get("ShowContainers") == "1")
 				{
 					foreach (var childContainer in sourceContainer.ChildContainers.Where(c => c.IsVisible && this.ContainerFilter(c)))
 					{
