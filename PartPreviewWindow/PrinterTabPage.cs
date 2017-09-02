@@ -110,14 +110,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			selectLayerSlider = new SolidSlider(new Vector2(), sliderWidth, 0, 1, Orientation.Vertical);
 			selectLayerSlider.ValueChanged += (s, e) =>
 			{
-				// TODO: Why would these need to be updated here as well as in the horizontal slider?
-				printer.Bed.RenderInfo.FeatureToStartOnRatio0To1 = layerRenderRatioSlider.FirstValue;
-				printer.Bed.RenderInfo.FeatureToEndOnRatio0To1 = layerRenderRatioSlider.SecondValue;
-
-				printer.Bed.ActiveLayerIndex = (int)(selectLayerSlider.Value + .5);
+				if (printer?.Bed?.RenderInfo != null)
+				{
+					printer.Bed.ActiveLayerIndex = (int)(selectLayerSlider.Value + .5);
+				}
 
 				// show the layer info next to the slider
-
 				this.Invalidate();
 			};
 
@@ -133,8 +131,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			layerRenderRatioSlider.SecondValue = 1;
 			layerRenderRatioSlider.SecondValueChanged += (s, e) =>
 			{
-				printer.Bed.RenderInfo.FeatureToStartOnRatio0To1 = layerRenderRatioSlider.FirstValue;
-				printer.Bed.RenderInfo.FeatureToEndOnRatio0To1 = layerRenderRatioSlider.SecondValue;
+				if (printer?.Bed?.RenderInfo != null)
+				{
+					printer.Bed.RenderInfo.FeatureToStartOnRatio0To1 = layerRenderRatioSlider.FirstValue;
+					printer.Bed.RenderInfo.FeatureToEndOnRatio0To1 = layerRenderRatioSlider.SecondValue;
+				}
 
 				this.Invalidate();
 			};
