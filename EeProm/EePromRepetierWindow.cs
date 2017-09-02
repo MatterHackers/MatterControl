@@ -42,12 +42,12 @@ namespace MatterHackers.MatterControl.EeProm
 	{
 		private EventHandler unregisterEvents;
 
-		public CloseOnDisconnectWindow(double width, double height)
+		public CloseOnDisconnectWindow(PrinterConnection printerConnection, double width, double height)
 			: base(width, height)
 		{
-			PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent((s, e) =>
+			printerConnection.CommunicationStateChanged.RegisterEvent((s, e) =>
 			{
-				if(!PrinterConnection.Instance.PrinterIsConnected)
+				if(!printerConnection.PrinterIsConnected)
 				{
 					this.CloseOnIdle();
 				}
@@ -73,8 +73,8 @@ namespace MatterHackers.MatterControl.EeProm
 
 		private EventHandler unregisterEvents;
 
-		public EePromRepetierWindow()
-			: base(650 * GuiWidget.DeviceScale, 480 * GuiWidget.DeviceScale)
+		public EePromRepetierWindow(PrinterConnection printerConnection)
+			: base(printerConnection, 650 * GuiWidget.DeviceScale, 480 * GuiWidget.DeviceScale)
 		{
 			AlwaysOnTopOfMain = true;
 			BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
@@ -218,7 +218,7 @@ namespace MatterHackers.MatterControl.EeProm
 			ShowAsSystemWindow();
 
 			currentEePromSettings.Clear();
-			PrinterConnection.Instance.CommunicationUnconditionalFromPrinter.RegisterEvent(currentEePromSettings.Add, ref unregisterEvents);
+			printerConnection.CommunicationUnconditionalFromPrinter.RegisterEvent(currentEePromSettings.Add, ref unregisterEvents);
 			currentEePromSettings.eventAdded += NewSettingReadFromPrinter;
 			currentEePromSettings.AskPrinterForSettings();
 

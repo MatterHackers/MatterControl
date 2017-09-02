@@ -82,13 +82,13 @@ namespace MatterHackers.MatterControl.EeProm
 
 		private int currentTabIndex = 0;
 
-		public EePromMarlinWindow()
-			: base(650 * GuiWidget.DeviceScale, 480 * GuiWidget.DeviceScale)
+		public EePromMarlinWindow(PrinterConnection printerConnection)
+			: base(printerConnection, 650 * GuiWidget.DeviceScale, 480 * GuiWidget.DeviceScale)
 		{
 			AlwaysOnTopOfMain = true;
 			Title = "Marlin Firmware EEPROM Settings".Localize();
 
-			currentEePromSettings = new EePromMarlinSettings();
+			currentEePromSettings = new EePromMarlinSettings(printerConnection);
 			currentEePromSettings.eventAdded += SetUiToPrinterSettings;
 
 			GuiWidget mainContainer = new GuiWidget();

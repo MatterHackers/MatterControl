@@ -53,8 +53,8 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		private TextWidget settingsTemperature;
 
-		public TemperatureWidgetExtruder(TextImageButtonFactory buttonFactory)
-			: base("150.3°")
+		public TemperatureWidgetExtruder(PrinterConnection printerConnection, TextImageButtonFactory buttonFactory)
+			: base(printerConnection, "150.3°")
 		{
 			this.buttonFactory = buttonFactory;
 			this.DisplayCurrentTemperature();
@@ -62,12 +62,12 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			this.PopupContent = this.GetPopupContent();
 
-			PrinterConnection.Instance.ExtruderTemperatureRead.RegisterEvent((s, e) => DisplayCurrentTemperature(), ref unregisterEvents);
+			printerConnection.ExtruderTemperatureRead.RegisterEvent((s, e) => DisplayCurrentTemperature(), ref unregisterEvents);
 		}
 
-		protected override int TargetTemperature => (int)PrinterConnection.Instance.GetTargetExtruderTemperature(extruderIndex);
+		protected override int TargetTemperature => (int)printerConnection.GetTargetExtruderTemperature(extruderIndex);
 
-		protected override int ActualTemperature => (int)PrinterConnection.Instance.GetActualExtruderTemperature(extruderIndex);
+		protected override int ActualTemperature => (int)printerConnection.GetActualExtruderTemperature(extruderIndex);
 
 		protected override void SetTargetTemperature()
 		{
@@ -75,16 +75,16 @@ namespace MatterHackers.MatterControl.ActionBar
 			if (double.TryParse(ActiveSliceSettings.Instance.GetValue(SettingsKey.temperature), out targetTemp))
 			{
 				double goalTemp = (int)(targetTemp + .5);
-				if (PrinterConnection.Instance.PrinterIsPrinting
-					&& PrinterConnection.Instance.DetailedPrintingState == DetailedPrintingState.HeatingExtruder
-					&& goalTemp != PrinterConnection.Instance.GetTargetExtruderTemperature(extruderIndex))
+				if (printerConnection.PrinterIsPrinting
+					&& printerConnection.DetailedPrintingState == DetailedPrintingState.HeatingExtruder
+					&& goalTemp != printerConnection.GetTargetExtruderTemperature(extruderIndex))
 				{
-					string message = string.Format(waitingForExtruderToHeatMessage, PrinterConnection.Instance.GetTargetExtruderTemperature(extruderIndex), sliceSettingsNote);
+					string message = string.Format(waitingForExtruderToHeatMessage, printerConnection.GetTargetExtruderTemperature(extruderIndex), sliceSettingsNote);
 					StyledMessageBox.ShowMessageBox(null, message, "Waiting For Extruder To Heat".Localize());
 				}
 				else
 				{
-					PrinterConnection.Instance.SetTargetExtruderTemperature(extruderIndex, (int)(targetTemp + .5));
+					printerConnection.SetTargetExtruderTemperature(extruderIndex, (int)(targetTemp + .5));
 				}
 			}
 		}
@@ -122,7 +122,7 @@ namespace MatterHackers.MatterControl.ActionBar
 						else
 						{
 							// Turn off extruder
-							PrinterConnection.Instance.SetTargetExtruderTemperature(extruderIndex, 0);
+							printerConnection.SetTargetExtruderTemperature(extruderIndex, 0);
 						}
 					}
 				}, 
@@ -183,7 +183,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			retractButton.Margin = new BorderDouble(8, 0);
 			retractButton.Click += (s, e) =>
 			{
-				PrinterConnection.Instance.MoveExtruderRelative(moveAmount * -1, MovementControls.EFeedRate(extruderIndex), extruderIndex);
+				printerConnection.MoveExtruderRelative(moveAmount * -1, MovementControls.EFeedRate(extruderIndex), extruderIndex);
 			};
 			buttonContainer.AddChild(retractButton);
 
@@ -192,7 +192,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			extrudeButton.Margin = 0;
 			extrudeButton.Click += (s, e) =>
 			{
-				PrinterConnection.Instance.MoveExtruderRelative(moveAmount, MovementControls.EFeedRate(extruderIndex), extruderIndex);
+				printerConnection.MoveExtruderRelative(moveAmount, MovementControls.EFeedRate(extruderIndex), extruderIndex);
 			};
 			buttonContainer.AddChild(extrudeButton);
 

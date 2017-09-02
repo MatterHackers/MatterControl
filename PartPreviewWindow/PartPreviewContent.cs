@@ -33,6 +33,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
@@ -44,7 +45,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public PartPreviewContent(PrintItemWrapper printItem)
 		{
-			var printer = ApplicationController.Instance.Printer;
+			var printerConfig = ApplicationController.Instance.Printer;
 			var theme = ApplicationController.Instance.Theme;
 
 			this.AnchorAll();
@@ -76,7 +77,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var printerTab = new PrinterTab(
 				tabTitle, 
 				"3D View Tab",
-				new PrinterTabPage(printer, theme, printItem, tabTitle.ToUpper()));
+				new PrinterTabPage(PrinterConnection.Instance, printerConfig, theme, printItem, tabTitle.ToUpper()));
 			printerTab.ToolTipText = "Preview 3D Design".Localize();
 
 			theme.SetPrinterTabStyles(printerTab);
@@ -85,7 +86,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// TODO: add in the printers and designs that are currently open (or were open last run).
 			var plusTabSelect = new TextTab(
-				new TabPage(new PlusTabPage(tabControl, printer, theme, printItem), "+"),
+				new TabPage(new PlusTabPage(tabControl, printerConfig, theme, printItem), "+"),
 				"Create New",
 				tabControl.TextPointSize,
 				selectedTabColor,

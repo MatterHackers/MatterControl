@@ -45,6 +45,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class PrinterActionsBar : FlowLayoutWidget
 	{
+		PrinterConnection printerConnection;
 		private EventHandler unregisterEvents;
 		private static EePromMarlinWindow openEePromMarlinWidget = null;
 		private static EePromRepetierWindow openEePromRepetierWidget = null;
@@ -82,8 +83,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		public PrinterActionsBar(View3DWidget modelViewer, PrinterTabPage printerTabPage)
+		public PrinterActionsBar(PrinterConnection printerConnection, View3DWidget modelViewer, PrinterTabPage printerTabPage)
 		{
+			this.printerConnection = printerConnection;
 			UndoBuffer undoBuffer = modelViewer.Scene.UndoBuffer;
 
 			var defaultMargin = ApplicationController.Instance.Theme.ButtonSpacing;
@@ -95,7 +97,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.VAnchor = VAnchor.Fit;
 			this.AddChild(new PrinterConnectButton(buttonFactory, 0));
 
-			this.AddChild(new PrintActionRow(buttonFactory, this, defaultMargin));
+			this.AddChild(new PrintActionRow(printerConnection, buttonFactory, this, defaultMargin));
 
 			var sliceButton = buttonFactory.Generate("Slice".Localize().ToUpper());
 			sliceButton.ToolTipText = "Slice Parts".Localize();
@@ -157,22 +159,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				AutoExpandBoundsToText = true,
 				PointSize = 8
 			};
-			PrinterConnection.Instance.PrintingStateChanged.RegisterEvent((e, s) =>
+			printerConnection.PrintingStateChanged.RegisterEvent((e, s) =>
 			{
-				printerConnectionDetail.Text = PrinterConnection.Instance.PrinterConnectionStatus;
+				printerConnectionDetail.Text = printerConnection.PrinterConnectionStatus;
 			}, ref unregisterEvents);
 			this.AddChild(printerConnectionDetail);
 
 			this.AddChild(new HorizontalSpacer());
 
-			this.AddChild(new TemperatureWidgetExtruder(ApplicationController.Instance.Theme.MenuButtonFactory)
+			this.AddChild(new TemperatureWidgetExtruder(printerConnection, ApplicationController.Instance.Theme.MenuButtonFactory)
 			{
 				Margin = new BorderDouble(right: 10)
 			});
 
 			if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_heated_bed))
 			{
-				this.AddChild(new TemperatureWidgetBed());
+				this.AddChild(new TemperatureWidgetBed(printerConnection));
 			}
 
 			overflowDropdown = new OverflowDropdown(allowLightnessInvert: true)
@@ -187,7 +189,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.Closed += (s, e) =>
 			{
 				overflowDropdown.DynamicPopupContent = GeneratePrinterOverflowMenu;
-			}; 
+			};
 
 			this.AddChild(overflowDropdown);
 		}
@@ -267,7 +269,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 #if false // This is to force the creation of the repetier window for testing when we don't have repetier firmware.
                         new MatterHackers.MatterControl.EeProm.EePromRepetierWidget();
 #else
-					switch (PrinterConnection.Instance.FirmwareType)
+				switch (printerConnection.FirmwareType)
 				{
 					case FirmwareTypes.Repetier:
 						if (openEePromRepetierWidget != null)
@@ -276,7 +278,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						}
 						else
 						{
-							openEePromRepetierWidget = new EePromRepetierWindow();
+							openEePromRepetierWidget = new EePromRepetierWindow(printerConnection);
 							openEePromRepetierWidget.Closed += (RepetierWidget, RepetierEvent) =>
 							{
 								openEePromRepetierWidget = null;
@@ -291,7 +293,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						}
 						else
 						{
-							openEePromMarlinWidget = new EePromMarlinWindow();
+							openEePromMarlinWidget = new EePromMarlinWindow(printerConnection);
 							openEePromMarlinWidget.Closed += (marlinWidget, marlinEvent) =>
 							{
 								openEePromMarlinWidget = null;
@@ -300,12 +302,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						break;
 
 					default:
-						PrinterConnection.Instance.SendLineToPrinterNow("M115");
+						printerConnection.SendLineToPrinterNow("M115");
 						StyledMessageBox.ShowMessageBox(null, noEepromMappingMessage, noEepromMappingTitle, StyledMessageBox.MessageType.OK);
 						break;
 				}
 #endif
-				});
+			});
 		}
 	}
 }

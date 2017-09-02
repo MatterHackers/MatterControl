@@ -46,6 +46,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public class PrinterTabPage : PrinterTabBase
 	{
 		internal GCode2DWidget gcode2DWidget;
+		PrinterConnection printerConnection;
 		private View3DConfig gcodeOptions;
 		private DoubleSolidSlider layerRenderRatioSlider;
 		private SolidSlider selectLayerSlider;
@@ -54,9 +55,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private ValueDisplayInfo currentLayerInfo;
 		private SystemWindow parentSystemWindow;
 
-		public PrinterTabPage(PrinterConfig printer, ThemeConfig theme, PrintItemWrapper printItem, string tabTitle)
+		public PrinterTabPage(PrinterConnection printerConnection, PrinterConfig printer, ThemeConfig theme, PrintItemWrapper printItem, string tabTitle)
 			: base(printer, theme, printItem, tabTitle)
 		{
+			this.printerConnection = printerConnection;
 			modelViewer.meshViewerWidget.EditorMode = MeshViewerWidget.EditorType.Printer;
 
 			gcodeOptions = printer.Bed.RendererOptions;
@@ -174,7 +176,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			// Must come after we have an instance of View3DWidget an its undo buffer
-			topToBottom.AddChild(new PrinterActionsBar(modelViewer, this)
+			topToBottom.AddChild(new PrinterActionsBar(printerConnection, modelViewer, this)
 			{
 				Padding = theme.ToolbarPadding
 			}, 0);
@@ -326,7 +328,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void SetSyncToPrintVisibility()
 		{
-			bool printerIsRunningPrint = PrinterConnection.Instance.PrinterIsPaused || PrinterConnection.Instance.PrinterIsPrinting;
+			bool printerIsRunningPrint = printerConnection.PrinterIsPaused || printerConnection.PrinterIsPrinting;
 
 			if (gcodeOptions.SyncToPrint && printerIsRunningPrint)
 			{
@@ -365,7 +367,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		}
 		private void SetAnimationPosition()
 		{
-			int currentLayer = PrinterConnection.Instance.CurrentlyPrintingLayer;
+			int currentLayer = printerConnection.CurrentlyPrintingLayer;
 			if (currentLayer <= 0)
 			{
 				selectLayerSlider.Value = 0;
@@ -375,7 +377,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			else
 			{
 				selectLayerSlider.Value = currentLayer - 1;
-				layerRenderRatioSlider.SecondValue = PrinterConnection.Instance.RatioIntoCurrentLayer;
+				layerRenderRatioSlider.SecondValue = printerConnection.RatioIntoCurrentLayer;
 				layerRenderRatioSlider.FirstValue = 0;
 			}
 		}
@@ -503,7 +505,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{
-			bool printerIsRunningPrint = PrinterConnection.Instance.PrinterIsPaused || PrinterConnection.Instance.PrinterIsPrinting;
+			bool printerIsRunningPrint = printerConnection.PrinterIsPaused || printerConnection.PrinterIsPrinting;
 			if (gcodeOptions.SyncToPrint
 				&& printerIsRunningPrint
 				&& modelViewer.gcodeViewer.Visible)
@@ -593,7 +595,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				sideBar.AddPage("Slice Settings".Localize(), new NoSettingsWidget());
 			}
 
-			sideBar.AddPage("Controls".Localize(), new ManualPrinterControls());
+			sideBar.AddPage("Controls".Localize(), new ManualPrinterControls(printerConnection));
 
 			sideBar.AddPage("Terminal".Localize(), new TerminalWidget()
 			{

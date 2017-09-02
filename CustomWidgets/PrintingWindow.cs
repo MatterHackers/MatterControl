@@ -52,10 +52,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 	public class BedStatusWidget : TemperatureStatusWidget
 	{
-		public BedStatusWidget(bool smallScreen)
-			: base(smallScreen ? "Bed".Localize() : "Bed Temperature".Localize())
+		public BedStatusWidget(PrinterConnection printerConnection, bool smallScreen)
+			: base(printerConnection, smallScreen ? "Bed".Localize() : "Bed Temperature".Localize())
 		{
-			PrinterConnection.Instance.BedTemperatureRead.RegisterEvent((s, e) =>
+			printerConnection.BedTemperatureRead.RegisterEvent((s, e) =>
 			{
 				UpdateTemperatures();
 			}, ref unregisterEvents);
@@ -63,8 +63,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public override void UpdateTemperatures()
 		{
-			double targetValue = PrinterConnection.Instance.TargetBedTemperature;
-			double actualValue = Math.Max(0, PrinterConnection.Instance.ActualBedTemperature);
+			double targetValue = printerConnection.TargetBedTemperature;
+			double actualValue = Math.Max(0, printerConnection.ActualBedTemperature);
 
 			progressBar.RatioComplete = targetValue != 0 ? actualValue / targetValue : 1;
 
@@ -77,12 +77,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 	{
 		private int extruderIndex;
 
-		public ExtruderStatusWidget(int extruderIndex)
-			: base($"{"Extruder".Localize()} {extruderIndex + 1}")
+		public ExtruderStatusWidget(PrinterConnection printerConnection, int extruderIndex)
+			: base(printerConnection, $"{"Extruder".Localize()} {extruderIndex + 1}")
 		{
 			this.extruderIndex = extruderIndex;
 
-			PrinterConnection.Instance.ExtruderTemperatureRead.RegisterEvent((s, e) =>
+			printerConnection.ExtruderTemperatureRead.RegisterEvent((s, e) =>
 			{
 				UpdateTemperatures();
 			}, ref unregisterEvents);
@@ -90,8 +90,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public override void UpdateTemperatures()
 		{
-			double targetValue = PrinterConnection.Instance.GetTargetExtruderTemperature(extruderIndex);
-			double actualValue = Math.Max(0, PrinterConnection.Instance.GetActualExtruderTemperature(extruderIndex));
+			double targetValue = printerConnection.GetTargetExtruderTemperature(extruderIndex);
+			double actualValue = Math.Max(0, printerConnection.GetActualExtruderTemperature(extruderIndex));
 
 			progressBar.RatioComplete = targetValue != 0 ? actualValue / targetValue : 1;
 
@@ -107,9 +107,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		protected TextWidget targetTemp;
 		protected EventHandler unregisterEvents;
 		private int fontSize = 14;
+		protected PrinterConnection printerConnection;
 
-		public TemperatureStatusWidget(string dispalyName)
+		public TemperatureStatusWidget(PrinterConnection printerConnection, string dispalyName)
 		{
+			this.printerConnection = printerConnection;
 			var extruderName = new TextWidget(dispalyName, pointSize: fontSize, textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
 				AutoExpandBoundsToText = true,
@@ -187,10 +189,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		GuiWidget bodyContainer;
 
 		private BasicBody basicBody;
+		PrinterConnection printerConnection;
 
-		public PrintingWindow()
+		public PrintingWindow(PrinterConnection printerConnection)
 			: base(1280, 750)
 		{
+			this.printerConnection = printerConnection;
 		}
 
 		public override void OnLoad(EventArgs args)
@@ -214,7 +218,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			topToBottom.AddChild(CreateDropShadow());
 
-			basicBody = new BasicBody();
+			basicBody = new BasicBody(printerConnection);
 			bodyContainer = new GuiWidget()
 			{
 				VAnchor = VAnchor.Stretch,
@@ -250,11 +254,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				UiThread.RunOnIdle(() =>
 				{
-					PrinterConnection.Instance.RequestPause();
+					printerConnection.RequestPause();
 				});
 			};
-			pauseButton.Enabled = PrinterConnection.Instance.PrinterIsPrinting
-				&& !PrinterConnection.Instance.PrinterIsPaused;
+			pauseButton.Enabled = printerConnection.PrinterIsPrinting
+				&& !printerConnection.PrinterIsPaused;
 
 			actionBar.AddChild(pauseButton);
 
@@ -265,9 +269,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				UiThread.RunOnIdle(() =>
 				{
-					if (PrinterConnection.Instance.PrinterIsPaused)
+					if (printerConnection.PrinterIsPaused)
 					{
-						PrinterConnection.Instance.Resume();
+						printerConnection.Resume();
 					}
 				});
 			};
@@ -285,7 +289,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					this.Close();
 				}
 			};
-			cancelButton.Enabled = PrinterConnection.Instance.PrinterIsPrinting || PrinterConnection.Instance.PrinterIsPaused;
+			cancelButton.Enabled = printerConnection.PrinterIsPrinting || printerConnection.PrinterIsPaused;
 			actionBar.AddChild(cancelButton);
 
 			actionBar.AddChild(CreateVerticalLine());
@@ -296,7 +300,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			resetButton.Visible = ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.show_reset_connection);
 			resetButton.Click += (s, e) =>
 			{
-				UiThread.RunOnIdle(PrinterConnection.Instance.RebootBoard);
+				UiThread.RunOnIdle(printerConnection.RebootBoard);
 			};
 			actionBar.AddChild(resetButton);
 
@@ -311,7 +315,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				{
 					bodyContainer.RemoveChild(basicBody);
 
-					bodyContainer.AddChild(new ManualPrinterControls()
+					bodyContainer.AddChild(new ManualPrinterControls(printerConnection)
 					{
 						VAnchor = VAnchor.Stretch,
 						HAnchor = HAnchor.Stretch
@@ -330,12 +334,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				}
 			};
 
-			PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent((s, e) =>
+			printerConnection.CommunicationStateChanged.RegisterEvent((s, e) =>
 			{
-				pauseButton.Enabled = PrinterConnection.Instance.PrinterIsPrinting
-					&& !PrinterConnection.Instance.PrinterIsPaused;
+				pauseButton.Enabled = printerConnection.PrinterIsPrinting
+					&& !printerConnection.PrinterIsPaused;
 
-				if(PrinterConnection.Instance.PrinterIsPaused)
+				if(printerConnection.PrinterIsPaused)
 				{
 					resumeButton.Visible = true;
 					pauseButton.Visible = false;
@@ -347,7 +351,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				}
 
 				// Close if not Preparing, Printing or Paused
-				switch (PrinterConnection.Instance.CommunicationState)
+				switch (printerConnection.CommunicationState)
 				{
 					case CommunicationStates.PreparingToPrint:
 					case CommunicationStates.Printing:
@@ -360,9 +364,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				}
 			}, ref unregisterEvents);
 
-			PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent((s, e) =>
+			printerConnection.CommunicationStateChanged.RegisterEvent((s, e) =>
 			{
-				cancelButton.Enabled = PrinterConnection.Instance.PrinterIsPrinting || PrinterConnection.Instance.PrinterIsPaused;
+				cancelButton.Enabled = printerConnection.PrinterIsPrinting || printerConnection.PrinterIsPaused;
 			}, ref unregisterEvents);
 
 			return actionBar;
@@ -381,11 +385,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			}
 		}
 
-		public static void Show()
+		public static void Show(PrinterConnection printerConnection)
 		{
 			if (instance == null)
 			{
-				instance = new PrintingWindow();
+				instance = new PrintingWindow(printerConnection);
 				instance.ShowAsSystemWindow();
 			}
 			else
@@ -488,6 +492,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		private ProgressDial progressDial;
 		private TextWidget timeWidget;
 		private List<ExtruderStatusWidget> extruderStatusWidgets;
+		PrinterConnection printerConnection;
 
 		private void CheckOnPrinter()
 		{
@@ -496,7 +501,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				GetProgressInfo();
 
 				// Here for safety
-				switch (PrinterConnection.Instance.CommunicationState)
+				switch (printerConnection.CommunicationState)
 				{
 					case CommunicationStates.PreparingToPrint:
 					case CommunicationStates.Printing:
@@ -514,7 +519,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		private void GetProgressInfo()
 		{
-			int secondsPrinted = PrinterConnection.Instance.SecondsPrinted;
+			int secondsPrinted = printerConnection.SecondsPrinted;
 			int hoursPrinted = (int)(secondsPrinted / (60 * 60));
 			int minutesPrinted = (secondsPrinted / 60 - hoursPrinted * 60);
 			secondsPrinted = secondsPrinted % 60;
@@ -522,9 +527,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			// TODO: Consider if the consistency of a common time format would look and feel better than changing formats based on elapsed duration
 			timeWidget.Text = (hoursPrinted <= 0) ? $"{minutesPrinted}:{secondsPrinted:00}" : $"{hoursPrinted}:{minutesPrinted:00}:{secondsPrinted:00}";
 
-			progressDial.LayerCount = PrinterConnection.Instance.CurrentlyPrintingLayer;
-			progressDial.LayerCompletedRatio = PrinterConnection.Instance.RatioIntoCurrentLayer;
-			progressDial.CompletedRatio = PrinterConnection.Instance.PercentComplete / 100;
+			progressDial.LayerCount = printerConnection.CurrentlyPrintingLayer;
+			progressDial.LayerCompletedRatio = printerConnection.RatioIntoCurrentLayer;
+			progressDial.CompletedRatio = printerConnection.PercentComplete / 100;
 		}
 
 		public override void OnLoad(EventArgs args)
@@ -667,7 +672,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			int extruderCount = ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.extruder_count);
 
-			extruderStatusWidgets = Enumerable.Range(0, extruderCount).Select((i) => new ExtruderStatusWidget(i)).ToList();
+			extruderStatusWidgets = Enumerable.Range(0, extruderCount).Select((i) => new ExtruderStatusWidget(printerConnection, i)).ToList();
 
 			bool hasHeatedBed = ActiveSliceSettings.Instance.GetValue<bool>("has_heated_bed");
 			if (hasHeatedBed)
@@ -683,7 +688,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					extruderColumn.AddChild(widget);
 				}
 
-				footerBar.AddChild(new BedStatusWidget(smallScreen)
+				footerBar.AddChild(new BedStatusWidget(printerConnection, smallScreen)
 				{
 					VAnchor = VAnchor.Center,
 				});
@@ -725,7 +730,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			});
 		}
 
-		public BasicBody()
+		public BasicBody(PrinterConnection printerConnection)
 		{
 			VAnchor = VAnchor.Stretch;
 			HAnchor = HAnchor.Stretch;
