@@ -37,7 +37,7 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl
 {
-	public class PrinterSelector : DropDownList
+	public class PrinterSelector : DropDownList, IIgnoredPopupChild
 	{
 		private EventHandler unregisterEvents;
 		int lastSelectedIndex = -1;
@@ -82,6 +82,10 @@ namespace MatterHackers.MatterControl
 
 			// Rebuild the droplist any time the Profiles list changes
 			ProfileManager.ProfilesListChanged.RegisterEvent((s, e) => Rebuild(), ref unregisterEvents);
+
+			HAnchor = HAnchor.Fit;
+			Cursor = Cursors.Hand;
+			Margin = 0;
 		}
 
 		public void Rebuild()

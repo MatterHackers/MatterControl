@@ -43,8 +43,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	{
 		private static readonly int numberOfRadialSamples = 6;
 
-		public LevelWizard7PointRadial(LevelWizardBase.RuningState runningState)
-			: base(runningState, 500, 370, 21, numberOfRadialSamples)
+		public LevelWizard7PointRadial(PrinterConnection printerConnection, LevelWizardBase.RuningState runningState)
+			: base(printerConnection, runningState, 500, 370, 21, numberOfRadialSamples)
 		{
 		}
 
@@ -95,7 +95,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		private static RadialLevlingFunctions currentLevelingFunctions = null;
 		private LevelingStrings levelingStrings = new LevelingStrings();
 
-		public LevelWizardRadialBase(LevelWizardBase.RuningState runningState, int width, int height, int totalSteps, int numberOfRadialSamples)
+		public LevelWizardRadialBase(PrinterConnection printerConnection, LevelWizardBase.RuningState runningState, int width, int height, int totalSteps, int numberOfRadialSamples)
 			: base(width, height, totalSteps)
 		{
 			string printLevelWizardTitle = "MatterControl";
@@ -125,10 +125,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				string filamentSelectionPage = "{0}\n\n{1}".FormatWith(levelingStrings.materialPageInstructions1, levelingStrings.materialPageInstructions2);
 				printLevelWizard.AddPage(new SelectMaterialPage(levelingStrings.materialStepText, filamentSelectionPage));
 			}
-			printLevelWizard.AddPage(new HomePrinterPage(printLevelWizard, levelingStrings.homingPageStepText, levelingStrings.homingPageInstructions));
+			printLevelWizard.AddPage(new HomePrinterPage(printerConnection, printLevelWizard, levelingStrings.homingPageStepText, levelingStrings.homingPageInstructions));
 			if (hasHeatedBed)
 			{
-				printLevelWizard.AddPage(new WaitForTempPage(printLevelWizard, levelingStrings));
+				printLevelWizard.AddPage(new WaitForTempPage(printerConnection, printLevelWizard, levelingStrings));
 			}
 
 			string positionLabel = "Position".Localize();
@@ -147,17 +147,17 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				if (ActiveSliceSettings.Instance.Helpers.UseZProbe())
 				{
 					var stepString = string.Format("{0} {1} {2} {3}:", levelingStrings.stepTextBeg, i + 1, levelingStrings.stepTextEnd, numberOfRadialSamples + 1);
-					printLevelWizard.AddPage(new AutoProbeFeedback(printLevelWizard, new Vector3(probePosition, startProbeHeight), string.Format("{0} {1} {2} - {3}", stepString, positionLabel, i + 1, autoCalibrateLabel), probePositions, i));
+					printLevelWizard.AddPage(new AutoProbeFeedback(printerConnection, printLevelWizard, new Vector3(probePosition, startProbeHeight), string.Format("{0} {1} {2} - {3}", stepString, positionLabel, i + 1, autoCalibrateLabel), probePositions, i));
 				}
 				else
 				{
-					printLevelWizard.AddPage(new GetCoarseBedHeight(printLevelWizard, new Vector3(probePosition, startProbeHeight), string.Format("{0} {1} {2} - {3}", levelingStrings.GetStepString(totalSteps), positionLabel, i + 1, lowPrecisionLabel), probePositions, i));
-					printLevelWizard.AddPage(new GetFineBedHeight(printLevelWizard, string.Format("{0} {1} {2} - {3}", levelingStrings.GetStepString(totalSteps), positionLabel, i + 1, medPrecisionLabel), probePositions, i));
-					printLevelWizard.AddPage(new GetUltraFineBedHeight(printLevelWizard, string.Format("{0} {1} {2} - {3}", levelingStrings.GetStepString(totalSteps), positionLabel, i + 1, highPrecisionLabel), probePositions, i));
+					printLevelWizard.AddPage(new GetCoarseBedHeight(printerConnection, printLevelWizard, new Vector3(probePosition, startProbeHeight), string.Format("{0} {1} {2} - {3}", levelingStrings.GetStepString(totalSteps), positionLabel, i + 1, lowPrecisionLabel), probePositions, i));
+					printLevelWizard.AddPage(new GetFineBedHeight(printerConnection, printLevelWizard, string.Format("{0} {1} {2} - {3}", levelingStrings.GetStepString(totalSteps), positionLabel, i + 1, medPrecisionLabel), probePositions, i));
+					printLevelWizard.AddPage(new GetUltraFineBedHeight(printerConnection, printLevelWizard, string.Format("{0} {1} {2} - {3}", levelingStrings.GetStepString(totalSteps), positionLabel, i + 1, highPrecisionLabel), probePositions, i));
 				}
 			}
 
-			printLevelWizard.AddPage(new LastPagelInstructions(printLevelWizard, "Done".Localize(), levelingStrings.DoneInstructions, probePositions));
+			printLevelWizard.AddPage(new LastPagelInstructions(printerConnection, printLevelWizard, "Done".Localize(), levelingStrings.DoneInstructions, probePositions));
 		}
 
 		public static RadialLevlingFunctions GetLevelingFunctions(int numberOfRadialSamples, PrintLevelingData levelingData, Vector2 bedCenter)

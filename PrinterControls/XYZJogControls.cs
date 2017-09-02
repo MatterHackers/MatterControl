@@ -60,9 +60,11 @@ namespace MatterHackers.MatterControl
 		private MoveButton zMinusControl;
 		
 		private MoveButtonFactory moveButtonFactory = new MoveButtonFactory();
+		PrinterConnection printerConnection;
 
-		public JogControls(XYZColors colors)
+		public JogControls(PrinterConnection printerConnection, XYZColors colors)
 		{
+			this.printerConnection = printerConnection;
 			moveButtonFactory.Colors.Text.Normal = RGBA_Bytes.Black;
 
 			double distanceBetweenControls = 12;
@@ -82,7 +84,7 @@ namespace MatterHackers.MatterControl
 						GuiWidget xyGrid = CreateXYGridControl(colors, distanceBetweenControls, buttonSeparationDistance);
 						xYZControls.AddChild(xyGrid);
 
-						FlowLayoutWidget zButtons = CreateZButtons(XYZColors.zColor, buttonSeparationDistance, out zPlusControl, out zMinusControl);
+						FlowLayoutWidget zButtons = CreateZButtons(printerConnection, XYZColors.zColor, buttonSeparationDistance, out zPlusControl, out zMinusControl);
 						zButtons.VAnchor = Agg.UI.VAnchor.Bottom;
 						xYZControls.AddChild(zButtons);
 						xYZWithDistance.AddChild(xYZControls);
@@ -323,58 +325,58 @@ namespace MatterHackers.MatterControl
 			int eMoveAmountNegative = -EAxisMoveAmount;
 
 			// if we are not printing and on mac or PC
-			if (PrinterConnection.Instance.CommunicationState != CommunicationStates.Printing
+			if (printerConnection.CommunicationState != CommunicationStates.Printing
 				&& (AggContext.OperatingSystem == OSType.Windows || AggContext.OperatingSystem == OSType.Mac))
 			{
 				if (e.KeyCode == Keys.Z)
 				{
-					if (PrinterConnection.Instance.CommunicationState != CommunicationStates.Printing)
+					if (printerConnection.CommunicationState != CommunicationStates.Printing)
 					{
-						PrinterConnection.Instance.HomeAxis(PrinterConnection.Axis.Z);
+						printerConnection.HomeAxis(PrinterConnection.Axis.Z);
 					}
 				}
 				else if (e.KeyCode == Keys.Y)
 				{
-					PrinterConnection.Instance.HomeAxis(PrinterConnection.Axis.Y);
+					printerConnection.HomeAxis(PrinterConnection.Axis.Y);
 				}
 				else if (e.KeyCode == Keys.X)
 				{
-					PrinterConnection.Instance.HomeAxis(PrinterConnection.Axis.X);
+					printerConnection.HomeAxis(PrinterConnection.Axis.X);
 				}
 				if (e.KeyCode == Keys.Home)
 				{
-					PrinterConnection.Instance.HomeAxis(PrinterConnection.Axis.XYZ);
+					printerConnection.HomeAxis(PrinterConnection.Axis.XYZ);
 				}
 				else if (e.KeyCode == Keys.Left)
 				{
-					PrinterConnection.Instance.MoveRelative(PrinterConnection.Axis.X, moveAmountNegative, MovementControls.XSpeed);
+					printerConnection.MoveRelative(PrinterConnection.Axis.X, moveAmountNegative, MovementControls.XSpeed);
 				}
 				else if (e.KeyCode == Keys.Right)
 				{
-					PrinterConnection.Instance.MoveRelative(PrinterConnection.Axis.X, moveAmountPositive, MovementControls.XSpeed);
+					printerConnection.MoveRelative(PrinterConnection.Axis.X, moveAmountPositive, MovementControls.XSpeed);
 				}
 				else if (e.KeyCode == Keys.Up)
 				{
-					PrinterConnection.Instance.MoveRelative(PrinterConnection.Axis.Y, moveAmountPositive, MovementControls.YSpeed);
+					printerConnection.MoveRelative(PrinterConnection.Axis.Y, moveAmountPositive, MovementControls.YSpeed);
 				}
 				else if (e.KeyCode == Keys.Down)
 				{
-					PrinterConnection.Instance.MoveRelative(PrinterConnection.Axis.Y, moveAmountNegative, MovementControls.YSpeed);
+					printerConnection.MoveRelative(PrinterConnection.Axis.Y, moveAmountNegative, MovementControls.YSpeed);
 				}
 				else if (e.KeyCode == Keys.E)
 				{
-					PrinterConnection.Instance.MoveRelative(PrinterConnection.Axis.E, eMoveAmountPositive, MovementControls.EFeedRate(0));
+					printerConnection.MoveRelative(PrinterConnection.Axis.E, eMoveAmountPositive, MovementControls.EFeedRate(0));
 				}
 				else if (e.KeyCode == Keys.R)
 				{
-					PrinterConnection.Instance.MoveRelative(PrinterConnection.Axis.E, eMoveAmountNegative, MovementControls.EFeedRate(0));
+					printerConnection.MoveRelative(PrinterConnection.Axis.E, eMoveAmountNegative, MovementControls.EFeedRate(0));
 				}
 			}
 
 			if ((AggContext.OperatingSystem == OSType.Windows && e.KeyCode == Keys.PageUp)
 				|| (AggContext.OperatingSystem == OSType.Mac && e.KeyCode == (Keys.Back | Keys.Cancel)))
 			{
-				if (PrinterConnection.Instance.CommunicationState == CommunicationStates.Printing)
+				if (printerConnection.CommunicationState == CommunicationStates.Printing)
 				{
 					var currentZ = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.baby_step_z_offset);
 					currentZ += moveAmountPositive;
@@ -382,13 +384,13 @@ namespace MatterHackers.MatterControl
 				}
 				else
 				{
-					PrinterConnection.Instance.MoveRelative(PrinterConnection.Axis.Z, moveAmountPositive, MovementControls.ZSpeed);
+					printerConnection.MoveRelative(PrinterConnection.Axis.Z, moveAmountPositive, MovementControls.ZSpeed);
 				}
 			}
 			else if ((AggContext.OperatingSystem == OSType.Windows && e.KeyCode == Keys.PageDown)
 				|| (AggContext.OperatingSystem == OSType.Mac && e.KeyCode == Keys.Clear))
 			{
-				if (PrinterConnection.Instance.CommunicationState == CommunicationStates.Printing)
+				if (printerConnection.CommunicationState == CommunicationStates.Printing)
 				{
 					var currentZ = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.baby_step_z_offset);
 					currentZ += moveAmountNegative;
@@ -396,7 +398,7 @@ namespace MatterHackers.MatterControl
 				}
 				else
 				{
-					PrinterConnection.Instance.MoveRelative(PrinterConnection.Axis.Z, moveAmountNegative, MovementControls.ZSpeed);
+					printerConnection.MoveRelative(PrinterConnection.Axis.Z, moveAmountNegative, MovementControls.ZSpeed);
 				}
 			}
 		}
@@ -412,7 +414,7 @@ namespace MatterHackers.MatterControl
 
 				if (extruderCount == 1)
 				{
-					ExtrudeButton eMinusControl = CreateExtrudeButton("E-", MovementControls.EFeedRate(0), 0, moveButtonFactory);
+					ExtrudeButton eMinusControl = CreateExtrudeButton(printerConnection, "E-", MovementControls.EFeedRate(0), 0, moveButtonFactory);
 					eMinusControl.Margin = extrusionMargin;
 					eMinusControl.ToolTipText = "Retract filament".Localize();
 					eMinusButtonAndText.AddChild(eMinusControl);
@@ -422,7 +424,7 @@ namespace MatterHackers.MatterControl
 				{
 					for (int i = 0; i < extruderCount; i++)
 					{
-						ExtrudeButton eMinusControl = CreateExtrudeButton($"E{i + 1}-", MovementControls.EFeedRate(0), i, moveButtonFactory);
+						ExtrudeButton eMinusControl = CreateExtrudeButton(printerConnection, $"E{i + 1}-", MovementControls.EFeedRate(0), i, moveButtonFactory);
 						eMinusControl.ToolTipText = "Retract filament".Localize();
 						eMinusControl.Margin = extrusionMargin;
 						eMinusButtonAndText.AddChild(eMinusControl);
@@ -458,7 +460,7 @@ namespace MatterHackers.MatterControl
 				FlowLayoutWidget ePlusButtonAndText = new FlowLayoutWidget();
 				if (extruderCount == 1)
 				{
-					ExtrudeButton ePlusControl = CreateExtrudeButton("E+", MovementControls.EFeedRate(0), 0, moveButtonFactory);
+					ExtrudeButton ePlusControl = CreateExtrudeButton(printerConnection, "E+", MovementControls.EFeedRate(0), 0, moveButtonFactory);
 					ePlusControl.Margin = extrusionMargin;
 					ePlusControl.ToolTipText = "Extrude filament".Localize();
 					ePlusButtonAndText.AddChild(ePlusControl);
@@ -468,7 +470,7 @@ namespace MatterHackers.MatterControl
 				{
 					for (int i = 0; i < extruderCount; i++)
 					{
-						ExtrudeButton ePlusControl = CreateExtrudeButton($"E{i + 1}+", MovementControls.EFeedRate(0), i, moveButtonFactory);
+						ExtrudeButton ePlusControl = CreateExtrudeButton(printerConnection, $"E{i + 1}+", MovementControls.EFeedRate(0), i, moveButtonFactory);
 						ePlusControl.Margin = extrusionMargin;
 						ePlusControl.ToolTipText = "Extrude filament".Localize();
 						ePlusButtonAndText.AddChild(ePlusControl);
@@ -527,9 +529,9 @@ namespace MatterHackers.MatterControl
 			return eButtons;
 		}
 
-		private static MoveButton CreateMoveButton(string label, PrinterConnection.Axis axis, double moveSpeed, bool levelingButtons, MoveButtonFactory buttonFactory)
+		private static MoveButton CreateMoveButton(PrinterConnection printerConnection, string label, PrinterConnection.Axis axis, double moveSpeed, bool levelingButtons, MoveButtonFactory buttonFactory)
 		{
-			var button = buttonFactory.GenerateMoveButton(label, axis, moveSpeed);
+			var button = buttonFactory.GenerateMoveButton(printerConnection, label, axis, moveSpeed);
 			button.VAnchor = VAnchor.Absolute;
 			button.HAnchor = HAnchor.Absolute;
 			button.Height = (levelingButtons ? 45 : 40) * GuiWidget.DeviceScale;
@@ -538,16 +540,16 @@ namespace MatterHackers.MatterControl
 			return button;
 		}
 
-		private static ExtrudeButton CreateExtrudeButton(string label, double moveSpeed, int extruderNumber, MoveButtonFactory buttonFactory = null)
+		private static ExtrudeButton CreateExtrudeButton(PrinterConnection printerConnection, string label, double moveSpeed, int extruderNumber, MoveButtonFactory buttonFactory = null)
 		{
-			var button = buttonFactory.GenerateExtrudeButton(label, moveSpeed, extruderNumber);
+			var button = buttonFactory.GenerateExtrudeButton(printerConnection, label, moveSpeed, extruderNumber);
 			button.Height = 40 * GuiWidget.DeviceScale;
 			button.Width = 40 * GuiWidget.DeviceScale;
 
 			return button;
 		}
 
-		public static FlowLayoutWidget CreateZButtons(RGBA_Bytes color, double buttonSeparationDistance,
+		public static FlowLayoutWidget CreateZButtons(PrinterConnection printerConnection, RGBA_Bytes color, double buttonSeparationDistance,
 			out MoveButton zPlusControl, out MoveButton zMinusControl, bool levelingButtons = false)
 		{
 			FlowLayoutWidget zButtons = new FlowLayoutWidget(FlowDirection.TopToBottom);
@@ -555,7 +557,7 @@ namespace MatterHackers.MatterControl
 				MoveButtonFactory moveButtonFactory = new MoveButtonFactory();
 				moveButtonFactory.Colors.Fill.Normal = color;
 
-				zPlusControl = CreateMoveButton("Z+", PrinterConnection.Axis.Z, MovementControls.ZSpeed, levelingButtons, moveButtonFactory);
+				zPlusControl = CreateMoveButton(printerConnection, "Z+", PrinterConnection.Axis.Z, MovementControls.ZSpeed, levelingButtons, moveButtonFactory);
 				zPlusControl.Name = "Move Z positive".Localize();
 				zPlusControl.ToolTipText = "Move Z positive".Localize();
 				zButtons.AddChild(zPlusControl);
@@ -565,7 +567,7 @@ namespace MatterHackers.MatterControl
 				spacer.BackgroundColor = XYZColors.zColor;
 				zButtons.AddChild(spacer);
 
-				zMinusControl = CreateMoveButton("Z-", PrinterConnection.Axis.Z, MovementControls.ZSpeed, levelingButtons, moveButtonFactory);
+				zMinusControl = CreateMoveButton(printerConnection, "Z-", PrinterConnection.Axis.Z, MovementControls.ZSpeed, levelingButtons, moveButtonFactory);
 				zMinusControl.ToolTipText = "Move Z negative".Localize();
 				zButtons.AddChild(zMinusControl);
 			}
@@ -583,7 +585,7 @@ namespace MatterHackers.MatterControl
 					xButtons.HAnchor |= Agg.UI.HAnchor.Center;
 					xButtons.VAnchor |= Agg.UI.VAnchor.Center;
 
-					xMinusControl = CreateMoveButton("X-", PrinterConnection.Axis.X, MovementControls.XSpeed, false, moveButtonFactory);
+					xMinusControl = CreateMoveButton(printerConnection, "X-", PrinterConnection.Axis.X, MovementControls.XSpeed, false, moveButtonFactory);
 					xMinusControl.ToolTipText = "Move X negative".Localize();
 					xButtons.AddChild(xMinusControl);
 
@@ -592,7 +594,7 @@ namespace MatterHackers.MatterControl
 					spacer.BackgroundColor = XYZColors.xColor;
 					xButtons.AddChild(spacer);
 
-					xPlusControl = CreateMoveButton("X+", PrinterConnection.Axis.X, MovementControls.XSpeed, false, moveButtonFactory);
+					xPlusControl = CreateMoveButton(printerConnection, "X+", PrinterConnection.Axis.X, MovementControls.XSpeed, false, moveButtonFactory);
 					xPlusControl.ToolTipText = "Move X positive".Localize();
 					xButtons.AddChild(xPlusControl);
 				}
@@ -603,7 +605,7 @@ namespace MatterHackers.MatterControl
 					moveButtonFactory.Colors.Fill.Normal = XYZColors.yColor;
 					yButtons.HAnchor |= Agg.UI.HAnchor.Center;
 					yButtons.VAnchor |= Agg.UI.VAnchor.Center;
-					yPlusControl = CreateMoveButton("Y+", PrinterConnection.Axis.Y, MovementControls.YSpeed, false, moveButtonFactory);
+					yPlusControl = CreateMoveButton(printerConnection, "Y+", PrinterConnection.Axis.Y, MovementControls.YSpeed, false, moveButtonFactory);
 					yPlusControl.ToolTipText = "Move Y positive".Localize();
 					yButtons.AddChild(yPlusControl);
 
@@ -612,7 +614,7 @@ namespace MatterHackers.MatterControl
 					spacer.BackgroundColor = XYZColors.yColor;
 					yButtons.AddChild(spacer);
 
-					yMinusControl = CreateMoveButton("Y-", PrinterConnection.Axis.Y, MovementControls.YSpeed, false, moveButtonFactory);
+					yMinusControl = CreateMoveButton(printerConnection, "Y-", PrinterConnection.Axis.Y, MovementControls.YSpeed, false, moveButtonFactory);
 					yMinusControl.ToolTipText = "Move Y negative".Localize();
 					yButtons.AddChild(yMinusControl);
 				}
@@ -633,10 +635,12 @@ namespace MatterHackers.MatterControl
 			public double MoveAmount = 10;
 
 			private double movementFeedRate;
+			PrinterConnection printerConnection;
 
-			public MoveButton(double x, double y, GuiWidget buttonView, PrinterConnection.Axis axis, double movementFeedRate)
+			public MoveButton(PrinterConnection printerConnection, double x, double y, GuiWidget buttonView, PrinterConnection.Axis axis, double movementFeedRate)
 				: base(x, y, buttonView)
 			{
+				this.printerConnection = printerConnection;
 				this.moveAxis = axis;
 				this.movementFeedRate = movementFeedRate;
 
@@ -644,7 +648,7 @@ namespace MatterHackers.MatterControl
 				{
 					MoveButton moveButton = (MoveButton)s;
 
-					if (PrinterConnection.Instance.CommunicationState == CommunicationStates.Printing)
+					if (printerConnection.CommunicationState == CommunicationStates.Printing)
 					{
 						if (moveAxis == PrinterConnection.Axis.Z) // only works on z
 						{
@@ -655,7 +659,7 @@ namespace MatterHackers.MatterControl
 					}
 					else
 					{
-						PrinterConnection.Instance.MoveRelative(this.moveAxis, this.MoveAmount, movementFeedRate);
+						printerConnection.MoveRelative(this.moveAxis, this.MoveAmount, movementFeedRate);
 					}
 				};
 			}
@@ -668,10 +672,12 @@ namespace MatterHackers.MatterControl
 
 			private double movementFeedRate;
 			public int ExtruderNumber;
+			PrinterConnection printerConnection;
 
-			public ExtrudeButton(double x, double y, GuiWidget buttonView, double movementFeedRate, int extruderNumber)
+			public ExtrudeButton(PrinterConnection printerConnection, double x, double y, GuiWidget buttonView, double movementFeedRate, int extruderNumber)
 				: base(x, y, buttonView)
 			{
+				this.printerConnection = printerConnection;
 				this.ExtruderNumber = extruderNumber;
 				this.movementFeedRate = movementFeedRate;
 			}
@@ -681,7 +687,7 @@ namespace MatterHackers.MatterControl
 				base.OnClick(mouseEvent);
 
 				//Add more fancy movement here
-				PrinterConnection.Instance.MoveExtruderRelative(MoveAmount, movementFeedRate, ExtruderNumber);
+				printerConnection.MoveExtruderRelative(MoveAmount, movementFeedRate, ExtruderNumber);
 			}
 		}
 
@@ -774,20 +780,20 @@ namespace MatterHackers.MatterControl
 
 			public double BorderWidth { get; set; } = 1;
 
-			public MoveButton GenerateMoveButton(string label, PrinterConnection.Axis axis, double movementFeedRate)
+			public MoveButton GenerateMoveButton(PrinterConnection printerConnection, string label, PrinterConnection.Axis axis, double movementFeedRate)
 			{
 				//Create button based on view container widget
-				return new MoveButton(0, 0, GetButtonView(label), axis, movementFeedRate)
+				return new MoveButton(printerConnection, 0, 0, GetButtonView(label), axis, movementFeedRate)
 				{
 					Margin = 0,
 					Padding = 0
 				};
 			}
 
-			public ExtrudeButton GenerateExtrudeButton(string label, double movementFeedRate, int extruderNumber)
+			public ExtrudeButton GenerateExtrudeButton(PrinterConnection printerConnection, string label, double movementFeedRate, int extruderNumber)
 			{
 				//Create button based on view container widget
-				return new ExtrudeButton(0, 0, GetButtonView(label), movementFeedRate, extruderNumber)
+				return new ExtrudeButton(printerConnection, 0, 0, GetButtonView(label), movementFeedRate, extruderNumber)
 				{
 					Margin = 0,
 					Padding = 0

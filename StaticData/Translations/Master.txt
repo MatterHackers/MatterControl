@@ -4504,3 +4504,6 @@ Translated:Waiting for the bed to heat up.
 English:This will improve the accuracy of print leveling.
 Translated:This will improve the accuracy of print leveling.
 
+English:Running Macro
+Translated:Running Macro
+

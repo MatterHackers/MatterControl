@@ -95,7 +95,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Fit;
-			this.AddChild(new PrinterConnectButton(buttonFactory, 0));
+			this.AddChild(new PrinterConnectButton(printerConnection, buttonFactory, 0));
 
 			this.AddChild(new PrintActionRow(printerConnection, buttonFactory, this, defaultMargin));
 

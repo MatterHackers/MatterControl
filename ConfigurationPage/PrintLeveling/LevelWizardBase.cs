@@ -152,7 +152,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		private static SystemWindow printLevelWizardWindow;
 
-		public static void ShowPrintLevelWizard()
+		public static void ShowPrintLevelWizard(PrinterConnection printerConnection)
 		{
 			LevelWizardBase.RuningState runningState = LevelWizardBase.RuningState.UserRequestedCalibration;
 
@@ -162,14 +162,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				runningState = LevelWizardBase.RuningState.InitialStartupCalibration;
 			}
 
-			ShowPrintLevelWizard(runningState);
+			ShowPrintLevelWizard(printerConnection, runningState);
 		}
 
-		public static void ShowPrintLevelWizard(LevelWizardBase.RuningState runningState)
+		public static void ShowPrintLevelWizard(PrinterConnection printerConnection, LevelWizardBase.RuningState runningState)
 		{
 			if (printLevelWizardWindow == null)
 			{
-				printLevelWizardWindow = LevelWizardBase.CreateAndShowWizard(runningState);
+				printLevelWizardWindow = LevelWizardBase.CreateAndShowWizard(printerConnection, runningState);
 				printLevelWizardWindow.Closed += (sender, e) =>
 				{
 					printLevelWizardWindow = null;
@@ -191,7 +191,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 		}
 
-		private static LevelWizardBase CreateAndShowWizard(LevelWizardBase.RuningState runningState)
+		private static LevelWizardBase CreateAndShowWizard(PrinterConnection printerConnection, LevelWizardBase.RuningState runningState)
 		{
 			// turn off print leveling
 			ActiveSliceSettings.Instance.Helpers.DoPrintLeveling(false);
@@ -206,19 +206,19 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			switch (levelingData.CurrentPrinterLevelingSystem)
 			{
 				case PrintLevelingData.LevelingSystem.Probe3Points:
-					printLevelWizardWindow = new LevelWizard3Point(runningState);
+					printLevelWizardWindow = new LevelWizard3Point(printerConnection, runningState);
 					break;
 
 				case PrintLevelingData.LevelingSystem.Probe7PointRadial:
-					printLevelWizardWindow = new LevelWizard7PointRadial(runningState);
+					printLevelWizardWindow = new LevelWizard7PointRadial(printerConnection, runningState);
 					break;
 
 				case PrintLevelingData.LevelingSystem.Probe13PointRadial:
-					printLevelWizardWindow = new LevelWizard13PointRadial(runningState);
+					printLevelWizardWindow = new LevelWizard13PointRadial(printerConnection, runningState);
 					break;
 
 				case PrintLevelingData.LevelingSystem.Probe3x3Mesh:
-					printLevelWizardWindow = new LevelWizard3x3Mesh(runningState);
+					printLevelWizardWindow = new LevelWizard3x3Mesh(printerConnection, runningState);
 					break;
 
 				default:

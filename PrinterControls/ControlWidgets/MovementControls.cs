@@ -45,6 +45,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 {
 	public class MovementControls : ControlWidgetBase
 	{
+		PrinterConnection printerConnection;
 		public FlowLayoutWidget manualControlsLayout;
 		private Button disableMotors;
 		private EditManualMovementSpeedsWindow editManualMovementSettingsWindow;
@@ -103,8 +104,9 @@ namespace MatterHackers.MatterControl.PrinterControls
 			return container;
 		}
 
-		public MovementControls(int headingPointSize)
+		public MovementControls(PrinterConnection printerConnection, int headingPointSize)
 		{
+			this.printerConnection = printerConnection;
 			var buttonFactory = ApplicationController.Instance.Theme.DisableableControlBase;
 
 			Button editButton;
@@ -132,7 +134,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				}
 			};
 
-			jogControls = new JogControls(new XYZColors());
+			jogControls = new JogControls(printerConnection, new XYZColors());
 			jogControls.Margin = new BorderDouble(0);
 
 			manualControlsLayout = new FlowLayoutWidget(FlowDirection.TopToBottom)
@@ -215,7 +217,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			disableMotors.Margin = new BorderDouble(0);
 			disableMotors.Click += (s, e) =>
 			{
-				PrinterConnection.Instance.ReleaseMotors();
+				printerConnection.ReleaseMotors();
 			};
 
 			homeButtonBar.AddChild(homeIconImageWidget);
@@ -267,7 +269,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				});
 			});
 
-			PrinterConnection.Instance.DestinationChanged.RegisterEvent((object sender, EventArgs e) =>
+			printerConnection.DestinationChanged.RegisterEvent((object sender, EventArgs e) =>
 			{
 				reportDestinationChanged.CallEvent();
 			}, ref unregisterEvents);
@@ -275,9 +277,9 @@ namespace MatterHackers.MatterControl.PrinterControls
 			return hwDestinationBar;
 		}
 
-		private static void SetDestinationPositionText(TextWidget xPosition, TextWidget yPosition, TextWidget zPosition)
+		private void SetDestinationPositionText(TextWidget xPosition, TextWidget yPosition, TextWidget zPosition)
 		{
-			Vector3 destinationPosition = PrinterConnection.Instance.CurrentDestination;
+			Vector3 destinationPosition = printerConnection.CurrentDestination;
 			xPosition.Text = "X: {0:0.00}".FormatWith(destinationPosition.x);
 			yPosition.Text = "Y: {0:0.00}".FormatWith(destinationPosition.y);
 			zPosition.Text = "Z: {0:0.00}".FormatWith(destinationPosition.z);
@@ -285,22 +287,22 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		private void homeAll_Click(object sender, EventArgs mouseEvent)
 		{
-			PrinterConnection.Instance.HomeAxis(PrinterConnection.Axis.XYZ);
+			printerConnection.HomeAxis(PrinterConnection.Axis.XYZ);
 		}
 
 		private void homeXButton_Click(object sender, EventArgs mouseEvent)
 		{
-			PrinterConnection.Instance.HomeAxis(PrinterConnection.Axis.X);
+			printerConnection.HomeAxis(PrinterConnection.Axis.X);
 		}
 
 		private void homeYButton_Click(object sender, EventArgs mouseEvent)
 		{
-			PrinterConnection.Instance.HomeAxis(PrinterConnection.Axis.Y);
+			printerConnection.HomeAxis(PrinterConnection.Axis.Y);
 		}
 
 		private void homeZButton_Click(object sender, EventArgs mouseEvent)
 		{
-			PrinterConnection.Instance.HomeAxis(PrinterConnection.Axis.Z);
+			printerConnection.HomeAxis(PrinterConnection.Axis.Z);
 		}
 	}
 

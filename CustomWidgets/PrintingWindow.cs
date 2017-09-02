@@ -653,7 +653,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			// ZControls
 			{
-				var widget = new ZAxisControls(smallScreen)
+				var widget = new ZAxisControls(printerConnection, smallScreen)
 				{
 					Margin = new BorderDouble(left: 50),
 					VAnchor = VAnchor.Center,
@@ -910,7 +910,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			FontSize = 13,
 		};
 
-		public ZAxisControls(bool smallScreen) :
+		public ZAxisControls(PrinterConnection printerConnection, bool smallScreen) :
 			base(FlowDirection.TopToBottom)
 		{
 			buttonFactory.Colors.Fill.Normal = ActiveTheme.Instance.PrimaryAccentColor;
@@ -925,9 +925,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				Margin = new BorderDouble(bottom: 8)
 			});
 
-			this.AddChild(CreateZMoveButton(.1, smallScreen));
+			this.AddChild(CreateZMoveButton(printerConnection, .1, smallScreen));
 
-			this.AddChild(CreateZMoveButton(.02, smallScreen));
+			this.AddChild(CreateZMoveButton(printerConnection, .02, smallScreen));
 
 			this.AddChild(new ZTuningWidget(false)
 			{
@@ -935,9 +935,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				Margin = 10
 			});
 
-			this.AddChild(CreateZMoveButton(-.02, smallScreen));
+			this.AddChild(CreateZMoveButton(printerConnection, -.02, smallScreen));
 
-			this.AddChild(CreateZMoveButton(-.1, smallScreen));
+			this.AddChild(CreateZMoveButton(printerConnection, -.1, smallScreen));
 
 			this.AddChild(new TextWidget("Z-", pointSize: smallScreen ? 12 : 15, textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
@@ -954,9 +954,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.VAnchor = VAnchor.Fit | VAnchor.Top;
 		}
 
-		private Button CreateZMoveButton(double moveAmount, bool smallScreen)
+		private Button CreateZMoveButton(PrinterConnection printerConnection, double moveAmount, bool smallScreen)
 		{
-			var button = buttonFactory.GenerateMoveButton($"{Math.Abs(moveAmount):0.00} mm", PrinterConnection.Axis.Z, MovementControls.ZSpeed);
+			var button = buttonFactory.GenerateMoveButton(printerConnection, $"{Math.Abs(moveAmount):0.00} mm", PrinterConnection.Axis.Z, MovementControls.ZSpeed);
 			button.MoveAmount = moveAmount;
 			button.HAnchor = HAnchor.MaxFitOrStretch;
 			button.VAnchor = VAnchor.Fit;
