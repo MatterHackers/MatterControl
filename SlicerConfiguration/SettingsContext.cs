@@ -44,11 +44,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.layerCascade = layerCascade;
 			this.ViewFilter = viewFilter;
 
+			// When editing presets, LayerCascade contains a filtered list of settings layers. If the list is null we're in the primarySettingsView
+			this.IsPrimarySettingsView = layerCascade == null;
+
 			// The last layer of the layerFilters is the target persistence 
 			this.persistenceLayer = layerCascade?.First() ?? ActiveSliceSettings.Instance.UserLayer;
 		}
 
 		public NamedSettingsLayers ViewFilter { get; set; }
+
+		public bool IsPrimarySettingsView { get; }
 
 		public string GetValue(string slicerConfigName)
 		{

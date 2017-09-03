@@ -75,7 +75,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private SettingsContext settingsContext;
 
-		private bool isPrimarySettingsView { get; set; }
 		PrinterConnection printerConnection;
 
 		private EventHandler unregisterEvents;
@@ -83,9 +82,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public SliceSettingsWidget(PrinterConnection printerConnection, List<PrinterSettingsLayer> layerCascade = null, NamedSettingsLayers viewFilter = NamedSettingsLayers.All)
 		{
 			this.printerConnection = printerConnection;
-			// When editing presets, LayerCascade contains a filtered list of settings layers. If the list is null we're in the primarySettingsView
-			isPrimarySettingsView = layerCascade == null;
-
 			this.BackgroundColor = ApplicationController.Instance.Theme.TabBodyBackground;
 
 			this.settingsContext = new SettingsContext(layerCascade, viewFilter);
@@ -196,7 +192,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			topCategoryTabs.TabBar.AddChild(new HorizontalSpacer());
 
-			if (isPrimarySettingsView)
+			if (settingsContext.IsPrimarySettingsView)
 			{
 				var sliceSettingsDetailControl = new SliceSettingsOverflowDropdown(this);
 				topCategoryTabs.TabBar.AddChild(sliceSettingsDetailControl);
@@ -237,7 +233,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					string selectedTabName = topCategoryTabs.TabBar.SelectedTabName;
 					if (!string.IsNullOrEmpty(selectedTabName))
 					{
-						if (isPrimarySettingsView)
+						if (settingsContext.IsPrimarySettingsView)
 						{
 							UserSettings.Instance.set(settingsName, selectedTabName);
 						}
@@ -251,7 +247,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			get
 			{
 				// Preset windows that are not the primary view should be in Advanced mode
-				if (!isPrimarySettingsView)
+				if (!settingsContext.IsPrimarySettingsView)
 				{
 					return "Advanced";
 				}
@@ -435,7 +431,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 										settingData,
 										settingsContext,
 										copyIndex,
-										isPrimarySettingsView,
 										ref tabIndexForItem));
 
 								if (showHelpControls)
@@ -515,7 +510,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				string selectedTabName = leftSideGroupTabs.TabBar.SelectedTabName;
 				if (!string.IsNullOrEmpty(selectedTabName)
-					&& isPrimarySettingsView)
+					&& settingsContext.IsPrimarySettingsView)
 				{
 					UserSettings.Instance.set(settingsTypeName, selectedTabName);
 				}
@@ -598,7 +593,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								settingData,
 								settingsContext,
 								0,
-								isPrimarySettingsView,
 								ref tabIndexForItem);
 
 							topToBottomSettings.AddChild(controlsForThisSetting);
@@ -726,7 +720,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				SliceSettingsOrganizer.Instance.GetSettingsData(sliceSettingsKey),
 				new SettingsContext(null, NamedSettingsLayers.All),
 				0,
-				isPrimarySettingsView,
 				ref tabIndex);
 		}
 
@@ -738,7 +731,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			SliceSettingData settingData,
 			SettingsContext settingsContext,
 			int extruderIndex,
-			bool isPrimaryView,
 			ref int tabIndexForItem)
 		{
 			string sliceSettingValue = settingsContext.GetValue(settingData.SlicerConfigName);
@@ -953,7 +945,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							break;
 					}
 				}
-				else if (isPrimaryView)
+				else if (settingsContext.IsPrimarySettingsView)
 				{
 					if (ActiveSliceSettings.Instance.SettingExistsInLayer(settingData.SlicerConfigName, NamedSettingsLayers.Material))
 					{
