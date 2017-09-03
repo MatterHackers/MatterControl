@@ -59,6 +59,7 @@ namespace MatterHackers.MatterControl
 				}
 				else
 				{
+					// TODO: when this oppens a new tab we will not need to check any printer
 					if (PrinterConnection.Instance.PrinterIsPrinting
 						|| PrinterConnection.Instance.PrinterIsPaused)
 					{

@@ -127,7 +127,7 @@ namespace MatterHackers.MatterControl.EeProm
 				{
 					UiThread.RunOnIdle(() =>
 					{
-						currentEePromSettings.Save();
+						currentEePromSettings.Save(printerConnection);
 						currentEePromSettings.Clear();
 						currentEePromSettings.eventAdded -= NewSettingReadFromPrinter;
 						Close();
@@ -220,7 +220,7 @@ namespace MatterHackers.MatterControl.EeProm
 			currentEePromSettings.Clear();
 			printerConnection.CommunicationUnconditionalFromPrinter.RegisterEvent(currentEePromSettings.Add, ref unregisterEvents);
 			currentEePromSettings.eventAdded += NewSettingReadFromPrinter;
-			currentEePromSettings.AskPrinterForSettings();
+			currentEePromSettings.AskPrinterForSettings(printerConnection);
 
 #if SIMULATE_CONNECTION
             UiThread.RunOnIdle(AddSimulatedItems);

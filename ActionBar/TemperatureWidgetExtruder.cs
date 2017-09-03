@@ -128,7 +128,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				}, 
 				enforceGutter: false));
 
-			var presetsSelector = new PresetSelectorWidget(string.Format($"{"Material".Localize()} {extruderIndex + 1}"), RGBA_Bytes.Transparent, NamedSettingsLayers.Material, extruderIndex)
+			var presetsSelector = new PresetSelectorWidget(printerConnection, string.Format($"{"Material".Localize()} {extruderIndex + 1}"), RGBA_Bytes.Transparent, NamedSettingsLayers.Material, extruderIndex)
 			{
 				Margin = 0,
 				BackgroundColor = RGBA_Bytes.Transparent,

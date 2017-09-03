@@ -105,7 +105,7 @@ namespace MatterHackers.MatterControl
 			};
 			this.AddChild(controlsTopToBottomLayout);
 
-			actionControlsContainer = new ActionControls();
+			actionControlsContainer = new ActionControls(printerConnection);
 			controlsTopToBottomLayout.AddChild(actionControlsContainer);
 
 			movementControlsContainer = new MovementControls(printerConnection, headingPointSize);
@@ -117,7 +117,7 @@ namespace MatterHackers.MatterControl
 				controlsTopToBottomLayout.AddChild(calibrationControlsContainer);
 			}
 
-			macroControlsContainer = new MacroControls(headingPointSize);
+			macroControlsContainer = new MacroControls(printerConnection, headingPointSize);
 			controlsTopToBottomLayout.AddChild(macroControlsContainer);
 
 			var linearPanel = new FlowLayoutWidget()
@@ -133,7 +133,7 @@ namespace MatterHackers.MatterControl
 			}
 
 #if !__ANDROID__
-			controlsTopToBottomLayout.AddChild(new PowerControls(headingPointSize));
+			controlsTopToBottomLayout.AddChild(new PowerControls(printerConnection, headingPointSize));
 #endif
 			tuningAdjustmentControlsContainer = new AdjustmentControls(headingPointSize);
 			controlsTopToBottomLayout.AddChild(tuningAdjustmentControlsContainer);

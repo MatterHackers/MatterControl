@@ -196,6 +196,12 @@ namespace MatterHackers.MatterControl.PrintQueue
 							for (int j = 0; j < unleveledGCode.LineCount; j++)
 							{
 								PrinterMachineInstruction instruction = unleveledGCode.Instruction(j);
+#if DEBUG
+								if (instruction.movementType != PrinterMachineInstruction.MovementTypes.Absolute)
+								{
+									throw new Exception("radial funcitons can only execute absolute moves.");
+								}
+#endif
 								Vector3 currentDestination = instruction.Position;
 
 								switch (levelingData.CurrentPrinterLevelingSystem)
@@ -205,11 +211,11 @@ namespace MatterHackers.MatterControl.PrintQueue
 										break;
 
 									case PrintLevelingData.LevelingSystem.Probe7PointRadial:
-										instruction.Line = LevelWizard7PointRadial.ApplyLeveling(instruction.Line, currentDestination, instruction.movementType);
+										instruction.Line = LevelWizard7PointRadial.ApplyLeveling(instruction.Line, currentDestination);
 										break;
 
 									case PrintLevelingData.LevelingSystem.Probe13PointRadial:
-										instruction.Line = LevelWizard13PointRadial.ApplyLeveling(instruction.Line, currentDestination, instruction.movementType);
+										instruction.Line = LevelWizard13PointRadial.ApplyLeveling(instruction.Line, currentDestination);
 										break;
 
 									default:

@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			if (hasHeatedBed)
 			{
 				string filamentSelectionPage = "{0}\n\n{1}".FormatWith(levelingStrings.materialPageInstructions1, levelingStrings.materialPageInstructions2);
-				printLevelWizard.AddPage(new SelectMaterialPage(levelingStrings.materialStepText, filamentSelectionPage));
+				printLevelWizard.AddPage(new SelectMaterialPage(printerConnection, levelingStrings.materialStepText, filamentSelectionPage));
 			}
 			printLevelWizard.AddPage(new HomePrinterPage(printerConnection, printLevelWizard, levelingStrings.homingPageStepText, levelingStrings.homingPageInstructions));
 			if (hasHeatedBed)
@@ -110,7 +110,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			if (settings?.GetValue<bool>(SettingsKey.print_leveling_enabled) == true
 				&& (lineBeingSent.StartsWith("G0 ") || lineBeingSent.StartsWith("G1 ")))
 			{
-				lineBeingSent = PrintLevelingPlane.Instance.ApplyLeveling(currentDestination, movementMode, lineBeingSent);
+				lineBeingSent = PrintLevelingPlane.Instance.ApplyLeveling(currentDestination, lineBeingSent);
 			}
 
 			return lineBeingSent;

@@ -67,7 +67,7 @@ namespace MatterHackers.MatterControl.EeProm
 			}
 		}
 
-		public void Save()
+		public void Save(PrinterConnection printerConnection)
 		{
 			if (!changed)
 			{
@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl.EeProm
 			string cmd = "M206 T" + type + " P" + position + " ";
 			if (type == 3) cmd += "X" + value;
 			else cmd += "S" + value;
-			PrinterConnection.Instance.SendLineToPrinterNow(cmd);
+			printerConnection.SendLineToPrinterNow(cmd);
 			changed = false;
 		}
 

@@ -130,9 +130,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		internal ViewGcodeBasic gcodeViewer;
 
 		public InteractionLayer InteractionLayer { get; }
+		PrinterConnection printerConnection;
 
-		public View3DWidget(PrintItemWrapper printItemWrapper, PrinterConfig printer, AutoRotate autoRotate, ViewControls3D viewControls3D, ThemeConfig theme, OpenMode openMode = OpenMode.Viewing, MeshViewerWidget.EditorType editorType = MeshViewerWidget.EditorType.Part)
+		public View3DWidget(PrinterConnection printerConnection, PrintItemWrapper printItemWrapper, PrinterConfig printer, AutoRotate autoRotate, ViewControls3D viewControls3D, ThemeConfig theme, OpenMode openMode = OpenMode.Viewing, MeshViewerWidget.EditorType editorType = MeshViewerWidget.EditorType.Part)
 		{
+			this.printerConnection = printerConnection;
 			var smallMarginButtonFactory = theme.SmallMarginButtonFactory;
 
 			this.printer = printer;
@@ -478,10 +480,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (printer.Bed.RendererOptions.SyncToPrint)
 			{
-				PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent(SetEditControlsBasedOnPrinterState, ref unregisterEvents);
+				printerConnection.CommunicationStateChanged.RegisterEvent(SetEditControlsBasedOnPrinterState, ref unregisterEvents);
 
 				// make sure we lock the controls if we are printing or paused
-				switch (PrinterConnection.Instance.CommunicationState)
+				switch (printerConnection.CommunicationState)
 				{
 					case CommunicationStates.Printing:
 					case CommunicationStates.Paused:
@@ -2203,7 +2205,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (printer.Bed.RendererOptions.SyncToPrint)
 			{
-				switch (PrinterConnection.Instance.CommunicationState)
+				switch (printerConnection.CommunicationState)
 				{
 					case CommunicationStates.Printing:
 					case CommunicationStates.Paused:
@@ -2312,7 +2314,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (printer.Bed.RendererOptions.SyncToPrint)
 			{
-				switch (PrinterConnection.Instance.CommunicationState)
+				switch (printerConnection.CommunicationState)
 				{
 					case CommunicationStates.Printing:
 					case CommunicationStates.Paused:

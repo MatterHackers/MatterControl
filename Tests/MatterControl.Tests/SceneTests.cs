@@ -36,6 +36,7 @@ using MatterHackers.Agg.Platform;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.Tests.Automation;
 using MatterHackers.MeshVisualizer;
 using Newtonsoft.Json;
@@ -108,6 +109,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
 
 			// TODO: Entire app is spun up just to persist a scene - rewrite to reduce footprint/scope
 			var view3DWidget = new View3DWidget(
+				PrinterConnection.Instance,
 				null,
 				new PrinterConfig(),
 				View3DWidget.AutoRotate.Disabled,
