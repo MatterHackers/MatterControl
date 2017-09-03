@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl
 			return Vector3.TransformVector(inPosition, bedLevelMatrix);
 		}
 
-		public string ApplyLeveling(Vector3 currentDestination, PrinterMachineInstruction.MovementTypes movementMode, string lineBeingSent)
+		public string ApplyLeveling(Vector3 currentDestination, string lineBeingSent)
 		{
 			if ((lineBeingSent.StartsWith("G0") || lineBeingSent.StartsWith("G1"))
 				&& lineBeingSent.Length > 2
@@ -75,14 +75,6 @@ namespace MatterHackers.MatterControl
 				if (lineBeingSent.Contains("X") || lineBeingSent.Contains("Y") || lineBeingSent.Contains("Z"))
 				{
 					Vector3 outPosition = PrintLevelingPlane.Instance.ApplyLeveling(currentDestination);
-					if (movementMode == PrinterMachineInstruction.MovementTypes.Relative)
-					{
-						Vector3 relativeMove = Vector3.Zero;
-						GCodeFile.GetFirstNumberAfter("X", lineBeingSent, ref relativeMove.x);
-						GCodeFile.GetFirstNumberAfter("Y", lineBeingSent, ref relativeMove.y);
-						GCodeFile.GetFirstNumberAfter("Z", lineBeingSent, ref relativeMove.z);
-						outPosition = PrintLevelingPlane.Instance.ApplyLevelingRotation(relativeMove);
-					}
 
 					newLine = newLine + String.Format("X{0:0.##} Y{1:0.##} Z{2:0.###}", outPosition.x, outPosition.y, outPosition.z);
 				}

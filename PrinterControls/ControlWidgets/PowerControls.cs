@@ -41,9 +41,11 @@ namespace MatterHackers.MatterControl.PrinterControls
 		private EventHandler unregisterEvents;
 		
 		private CheckBox atxPowertoggleSwitch;
+		PrinterConnection printerConnection;
 
-		public PowerControls(int headingPointSize)
+		public PowerControls(PrinterConnection printerConnection, int headingPointSize)
 		{
+			this.printerConnection = printerConnection;
 			AltGroupBox fanControlsGroupBox = new AltGroupBox(new TextWidget("ATX Power Control".Localize(), pointSize: headingPointSize, textColor: ActiveTheme.Instance.SecondaryAccentColor));
 			fanControlsGroupBox.Margin = new BorderDouble(0);
 			fanControlsGroupBox.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -54,7 +56,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			atxPowertoggleSwitch.Margin = new BorderDouble(6, 0, 6, 6);
 			atxPowertoggleSwitch.CheckedStateChanged += (sender, e) =>
 			{
-				PrinterConnection.Instance.AtxPowerEnabled = atxPowertoggleSwitch.Checked;
+				printerConnection.AtxPowerEnabled = atxPowertoggleSwitch.Checked;
 			};
 
 			FlowLayoutWidget paddingContainer = new FlowLayoutWidget();
@@ -66,8 +68,8 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 			UpdateControlVisibility(null, null);
 
-			PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent(this.UpdateControlVisibility, ref unregisterEvents);
-			PrinterConnection.Instance.AtxPowerStateChanged.RegisterEvent(this.UpdatePowerSwitch, ref unregisterEvents);
+			printerConnection.CommunicationStateChanged.RegisterEvent(this.UpdateControlVisibility, ref unregisterEvents);
+			printerConnection.AtxPowerStateChanged.RegisterEvent(this.UpdatePowerSwitch, ref unregisterEvents);
 
 			this.HAnchor = Agg.UI.HAnchor.Stretch;
 			this.HAnchor = HAnchor.Stretch;
@@ -77,12 +79,12 @@ namespace MatterHackers.MatterControl.PrinterControls
 		private void UpdateControlVisibility(object sender, EventArgs args)
 		{
 			this.Visible = ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_power_control);
-			this.SetEnableLevel(PrinterConnection.Instance.PrinterIsConnected ? EnableLevel.Enabled : EnableLevel.Disabled);
+			this.SetEnableLevel(printerConnection.PrinterIsConnected ? EnableLevel.Enabled : EnableLevel.Disabled);
 		}
 
 		private void UpdatePowerSwitch(object sender, EventArgs args)
 		{
-			this.atxPowertoggleSwitch.Checked = PrinterConnection.Instance.AtxPowerEnabled;
+			this.atxPowertoggleSwitch.Checked = printerConnection.AtxPowerEnabled;
 		}
 
 		public override void OnClosed(ClosedEventArgs e)

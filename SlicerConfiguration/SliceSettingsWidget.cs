@@ -79,13 +79,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private NamedSettingsLayers viewFilter;
 
 		private bool isPrimarySettingsView { get; set; }
+		PrinterConnection printerConnection;
 
 		static SliceSettingsWidget()
 		{
 		}
 
-		public SliceSettingsWidget(List<PrinterSettingsLayer> layerCascade = null, NamedSettingsLayers viewFilter = NamedSettingsLayers.All)
+		public SliceSettingsWidget(PrinterConnection printerConnection, List<PrinterSettingsLayer> layerCascade = null, NamedSettingsLayers viewFilter = NamedSettingsLayers.All)
 		{
+			this.printerConnection = printerConnection;
 			// When editing presets, LayerCascade contains a filtered list of settings layers. If the list is null we're in the primarySettingsView
 			isPrimarySettingsView = layerCascade == null;
 
@@ -105,7 +107,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			pageTopToBottomLayout.Padding = new BorderDouble(3, 0);
 			this.AddChild(pageTopToBottomLayout);
 
-			settingsControlBar = new SettingsControlBar()
+			settingsControlBar = new SettingsControlBar(printerConnection)
 			{
 				HAnchor = HAnchor.Stretch,
 				Padding = new BorderDouble(8, 12, 8, 8)
@@ -121,8 +123,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
 				HAnchor = HAnchor.Stretch
 			};
-			PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
-			PrinterConnection.Instance.EnableChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
+			printerConnection.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
+			printerConnection.EnableChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
 
 			RebuildSliceSettingsTabs();
 
@@ -409,6 +411,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								addedSettingToSubGroup = true;
 								topToBottomSettings.AddChild(
 									CreateSettingInfoUIControls(
+									printerConnection,
 									settingData,
 									layerCascade,
 									persistenceLayer,
@@ -573,6 +576,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						if (EngineMappingsMatterSlice.Instance.MapContains(settingData.SlicerConfigName))
 						{
 							GuiWidget controlsForThisSetting = CreateSettingInfoUIControls(
+								printerConnection,
 								settingData,
 								layerCascade,
 								persistenceLayer,
@@ -741,9 +745,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return dataArea;
 		}
 
-		public static GuiWidget CreateSettingControl(string sliceSettingsKey, ref int tabIndex)
+		public static GuiWidget CreateSettingControl(PrinterConnection printerConnection, string sliceSettingsKey, ref int tabIndex)
 		{
 			return CreateSettingInfoUIControls(
+				printerConnection,
 				SliceSettingsOrganizer.Instance.GetSettingsData(sliceSettingsKey),
 				null,
 				ActiveSliceSettings.Instance.UserLayer,
@@ -753,6 +758,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 
 		private static GuiWidget CreateSettingInfoUIControls(
+			PrinterConnection printerConnection,
 			SliceSettingData settingData,
 			List<PrinterSettingsLayer> layerCascade,
 			PrinterSettingsLayer persistenceLayer,
@@ -1235,7 +1241,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 							EventHandler localUnregisterEvents = null;
 
-							bool canChangeComPort = !PrinterConnection.Instance.PrinterIsConnected && PrinterConnection.Instance.CommunicationState != CommunicationStates.AttemptingToConnect;
+							bool canChangeComPort = !printerConnection.PrinterIsConnected && printerConnection.CommunicationState != CommunicationStates.AttemptingToConnect;
 							// The COM_PORT control is unique in its approach to the SlicerConfigName. It uses "com_port" settings name to
 							// bind to a context that will place it in the SliceSetting view but it binds its values to a machine
 							// specific dictionary key that is not exposed in the UI. At runtime we lookup and store to '<machinename>_com_port'
@@ -1267,9 +1273,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							};
 
 							// Prevent droplist interaction when connected
-							PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent((s, e) =>
+							printerConnection.CommunicationStateChanged.RegisterEvent((s, e) =>
 							{
-								canChangeComPort = !PrinterConnection.Instance.PrinterIsConnected && PrinterConnection.Instance.CommunicationState != CommunicationStates.AttemptingToConnect;
+								canChangeComPort = !printerConnection.PrinterIsConnected && printerConnection.CommunicationState != CommunicationStates.AttemptingToConnect;
 								selectableOptions.Enabled = canChangeComPort;
 								selectableOptions.TextColor = canChangeComPort ? ActiveTheme.Instance.PrimaryTextColor : new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 150);
 								selectableOptions.BorderColor = canChangeComPort ? ActiveTheme.Instance.SecondaryTextColor : new RGBA_Bytes(ActiveTheme.Instance.SecondaryTextColor, 150);

@@ -62,22 +62,22 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return result;
 		}
 
-		public void Run()
+		public void Run(PrinterConnection printerConnection)
 		{
-			if (PrinterConnection.Instance.PrinterIsConnected)
+			if (printerConnection.PrinterIsConnected)
 			{
-				PrinterConnection.Instance.MacroStart();
-				SendCommandToPrinter(GCode);
+				printerConnection.MacroStart();
+				SendCommandToPrinter(printerConnection, GCode);
 				if (GCode.Contains(MacroProcessingStream.MacroPrefix))
 				{
-					SendCommandToPrinter("\n" + MacroProcessingStream.MacroPrefix + "close()");
+					SendCommandToPrinter(printerConnection, "\n" + MacroProcessingStream.MacroPrefix + "close()");
 				}
 			}
 		}
 
-		protected void SendCommandToPrinter(string command)
+		protected void SendCommandToPrinter(PrinterConnection printerConnection, string command)
 		{
-			PrinterConnection.Instance.SendLineToPrinterNow(command);
+			printerConnection.SendLineToPrinterNow(command);
 		}
 	}
 }

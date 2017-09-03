@@ -39,6 +39,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text.RegularExpressions;
+using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -68,8 +69,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private string initialPresetName = null;
 
 		private GuiWidget middleRow;
+		PrinterConnection printerConnection;
 
-		public SlicePresetsWindow(PresetsContext presetsContext)
+		public SlicePresetsWindow(PrinterConnection printerConnection, PresetsContext presetsContext)
 				: base(641, 481)
 		{
 			this.presetsContext = presetsContext;
@@ -149,7 +151,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				ActiveSliceSettings.Instance.BaseLayer
 			};
 
-			return new SliceSettingsWidget(layerCascade, presetsContext.LayerType)
+			return new SliceSettingsWidget(printerConnection, layerCascade, presetsContext.LayerType)
 			{
 				ShowControlBar = false
 			};

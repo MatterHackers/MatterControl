@@ -588,7 +588,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (ActiveSliceSettings.Instance.PrinterSelected)
 			{
-				sideBar.AddPage("Slice Settings".Localize(), new SliceSettingsWidget());
+				sideBar.AddPage("Slice Settings".Localize(), new SliceSettingsWidget(printerConnection));
 			}
 			else
 			{
@@ -597,7 +597,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			sideBar.AddPage("Controls".Localize(), new ManualPrinterControls(printerConnection));
 
-			sideBar.AddPage("Terminal".Localize(), new TerminalWidget()
+			sideBar.AddPage("Terminal".Localize(), new TerminalWidget(printerConnection)
 			{
 				VAnchor = VAnchor.Stretch,
 				HAnchor = HAnchor.Stretch
@@ -650,7 +650,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			bool isPrinterType = this.GetType() == typeof(PrinterTabPage);
 
 			// The 3D model view
-			modelViewer = new View3DWidget(printItem,
+			modelViewer = new View3DWidget(PrinterConnection.Instance, printItem,
 				printer,
 				View3DWidget.AutoRotate.Disabled,
 				viewControls3D,

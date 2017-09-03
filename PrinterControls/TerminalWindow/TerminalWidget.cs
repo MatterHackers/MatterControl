@@ -45,10 +45,13 @@ namespace MatterHackers.MatterControl
 		private CheckBox autoUppercase;
 		private MHTextEditWidget manualCommandTextEdit;
 		private TextScrollWidget textScrollWidget;
-		
-		public TerminalWidget()
+		PrinterConnection printerConnection;
+
+		public TerminalWidget(PrinterConnection printerConnection)
 			: base(FlowDirection.TopToBottom)
 		{
+			this.printerConnection = printerConnection;
+
 			var theme = ApplicationController.Instance.Theme;
 
 			this.Name = "TerminalWidget";
@@ -101,7 +104,7 @@ namespace MatterHackers.MatterControl
 			bodyRow.AnchorAll();
 			this.AddChild(bodyRow);
 
-			textScrollWidget = new TextScrollWidget(PrinterConnection.Instance.TerminalLog.PrinterLines)
+			textScrollWidget = new TextScrollWidget(printerConnection.TerminalLog.PrinterLines)
 			{
 				BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor,
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
@@ -189,7 +192,7 @@ namespace MatterHackers.MatterControl
 			clearButton.Margin = theme.ButtonSpacing;
 			clearButton.Click += (s, e) =>
 			{
-				PrinterConnection.Instance.TerminalLog.Clear();
+				printerConnection.TerminalLog.Clear();
 			};
 			footerRow.AddChild(clearButton);
 
@@ -221,10 +224,10 @@ namespace MatterHackers.MatterControl
 									{
 										Debug.Print(ex.Message);
 
-										PrinterConnection.Instance.TerminalLog.PrinterLines.Add("");
-										PrinterConnection.Instance.TerminalLog.PrinterLines.Add(writeFaildeWaring);
-										PrinterConnection.Instance.TerminalLog.PrinterLines.Add(cantAccessPath.FormatWith(filePathToSave));
-										PrinterConnection.Instance.TerminalLog.PrinterLines.Add("");
+										printerConnection.TerminalLog.PrinterLines.Add("");
+										printerConnection.TerminalLog.PrinterLines.Add(writeFaildeWaring);
+										printerConnection.TerminalLog.PrinterLines.Add(cantAccessPath.FormatWith(filePathToSave));
+										printerConnection.TerminalLog.PrinterLines.Add("");
 
 										UiThread.RunOnIdle(() =>
 										{
@@ -267,7 +270,7 @@ namespace MatterHackers.MatterControl
 			}
 			commandHistory.Add(textToSend);
 			commandHistoryIndex = commandHistory.Count;
-			PrinterConnection.Instance.SendLineToPrinterNow(textToSend);
+			printerConnection.SendLineToPrinterNow(textToSend);
 			manualCommandTextEdit.Text = "";
 		}
 	}

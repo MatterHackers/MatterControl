@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 		}
 
-        public static string ApplyLeveling(string lineBeingSent, Vector3 currentDestination, PrinterMachineInstruction.MovementTypes movementMode)
+        public static string ApplyLeveling(string lineBeingSent, Vector3 currentDestination)
         {
 			var settings = ActiveSliceSettings.Instance;
             if (settings?.GetValue<bool>(SettingsKey.print_leveling_enabled) == true
@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
                 && lineBeingSent[2] == ' ')
             {
                 return GetLevelingFunctions(numberOfRadialSamples, settings.Helpers.GetPrintLevelingData(), ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center))
-                    .DoApplyLeveling(lineBeingSent, currentDestination, movementMode);
+                    .DoApplyLeveling(lineBeingSent, currentDestination);
             }
 
             return lineBeingSent;

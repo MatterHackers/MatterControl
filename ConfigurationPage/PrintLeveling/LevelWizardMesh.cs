@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 		}
 
-		public static string ApplyLeveling(string lineBeingSent, Vector3 currentDestination, PrinterMachineInstruction.MovementTypes movementMode)
+		public static string ApplyLeveling(string lineBeingSent, Vector3 currentDestination)
 		{
 			var settings = ActiveSliceSettings.Instance;
 			if (settings?.GetValue<bool>(SettingsKey.print_leveling_enabled) == true
@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			{
 				PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
 				return GetLevelingFunctions(3, 3, levelingData)
-					.DoApplyLeveling(lineBeingSent, currentDestination, movementMode);
+					.DoApplyLeveling(lineBeingSent, currentDestination);
 			}
 
 			return lineBeingSent;
@@ -181,7 +181,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			if (hasHeatedBed)
 			{
 				string filamentSelectionPage = "{0}\n\n{1}".FormatWith(levelingStrings.materialPageInstructions1, levelingStrings.materialPageInstructions2);
-				printLevelWizard.AddPage(new SelectMaterialPage(levelingStrings.materialStepText, filamentSelectionPage));
+				printLevelWizard.AddPage(new SelectMaterialPage(printerConnection, levelingStrings.materialStepText, filamentSelectionPage));
 			}
 			printLevelWizard.AddPage(new HomePrinterPage(printerConnection, printLevelWizard, levelingStrings.homingPageStepText, levelingStrings.homingPageInstructions));
 			if (hasHeatedBed)
@@ -247,8 +247,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 			this.SampledPositions = new List<Vector3>(levelingData.SampledPositions);
 
-			PrinterConnection.Instance.PositionRead.RegisterEvent(PrinterReportedPosition, ref unregisterEvents);
-
 			for (int y = 0; y < gridHeight - 1; y++)
 			{
 				for (int x = 0; x < gridWidth - 1; x++)
@@ -275,8 +273,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			unregisterEvents?.Invoke(this, null);
 		}
 
-		public string DoApplyLeveling(string lineBeingSent, Vector3 currentDestination,
-			PrinterMachineInstruction.MovementTypes movementMode)
+		public string DoApplyLeveling(string lineBeingSent, Vector3 currentDestination)
 		{
 			double extruderDelta = 0;
 			GCodeFile.GetFirstNumberAfter("E", lineBeingSent, ref extruderDelta);
@@ -289,16 +286,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			{
 				Vector3 outPosition = GetPositionWithZOffset(currentDestination);
 
-				if (movementMode == PrinterMachineInstruction.MovementTypes.Relative)
-				{
-					Vector3 delta = outPosition - lastDestinationWithLevelingApplied;
-					lastDestinationWithLevelingApplied = outPosition;
-					outPosition = delta;
-				}
-				else
-				{
-					lastDestinationWithLevelingApplied = outPosition;
-				}
+				lastDestinationWithLevelingApplied = outPosition;
 
 				newLine = newLine.Append(String.Format("X{0:0.##} Y{1:0.##} Z{2:0.###}", outPosition.x, outPosition.y, outPosition.z));
 			}
@@ -391,11 +379,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 
 			return Regions[bestIndex];
-		}
-
-		private void PrinterReportedPosition(object sender, EventArgs e)
-		{
-			lastDestinationWithLevelingApplied = GetPositionWithZOffset(PrinterConnection.Instance.LastReportedPosition);
 		}
 
 		public class Region

@@ -33,26 +33,27 @@ using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PrinterControls
 {
 	public class ActionControls : ControlWidgetBase
 	{
-		public ActionControls()
+		public ActionControls(PrinterConnection printerConnection)
 		{
 			if (!ActiveSliceSettings.Instance.ActionMacros().Any())
 			{
 				Margin = new BorderDouble();
 				return;
 			}
-			this.AddChild(new ActionControlsWidget());
+			this.AddChild(new ActionControlsWidget(printerConnection));
 		}
 	}
 
 	public class ActionControlsWidget : FlowLayoutWidget
 	{
-		public ActionControlsWidget()
+		public ActionControlsWidget(PrinterConnection printerConnection)
 			: base(FlowDirection.TopToBottom)
 		{
 			var buttonFactory = ApplicationController.Instance.Theme.HomingButtons;
@@ -84,7 +85,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				{
 					Button macroButton = buttonFactory.Generate(GCodeMacro.FixMacroName(macro.Name));
 					macroButton.Margin = new BorderDouble(right: 5);
-					macroButton.Click += (s, e) => macro.Run();
+					macroButton.Click += (s, e) => macro.Run(printerConnection);
 
 					macroButtonContainer.AddChild(macroButton);
 				}
@@ -99,17 +100,19 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 	public class MacroControls : ControlWidgetBase
 	{
-		public MacroControls(int headingPointSize)
+		public MacroControls(PrinterConnection printerConnection, int headingPointSize)
 		{
-			this.AddChild(new MacroControlsWidget(headingPointSize));
+			this.AddChild(new MacroControlsWidget(printerConnection, headingPointSize));
 		}
 	}
 
 	public class MacroControlsWidget : FlowLayoutWidget
 	{
-		public MacroControlsWidget(int headingPointSize)
+		PrinterConnection printerConnection;
+		public MacroControlsWidget(PrinterConnection printerConnection, int headingPointSize)
 					: base(FlowDirection.TopToBottom)
 		{
+			this.printerConnection = printerConnection;
 			var buttonFactory = ApplicationController.Instance.Theme.HomingButtons;
 
 			this.HAnchor = HAnchor.Stretch;
@@ -157,7 +160,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			{
 				Button macroButton = buttonFactory.Generate(GCodeMacro.FixMacroName(macro.Name));
 				macroButton.Margin = new BorderDouble(right: 5);
-				macroButton.Click += (s, e) => macro.Run();
+				macroButton.Click += (s, e) => macro.Run(printerConnection);
 
 				macroContainer.AddChild(macroButton);
 			}
