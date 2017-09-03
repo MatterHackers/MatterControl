@@ -47,13 +47,14 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		private TextWidget printerErrorMessage;
 
 		private EventHandler unregisterEvents;
+		PrinterConnection printerConnection = PrinterConnection.Instance;
 
 		public SetupStepComPortTwo()
 		{
 			startingPortNames = FrostedSerialPort.GetPortNames();
 			contentRow.AddChild(createPrinterConnectionMessageContainer());
 			{
-				cancelButton.Click += (s, e) => PrinterConnection.Instance.HaltConnectionThread();
+				cancelButton.Click += (s, e) => printerConnection.HaltConnectionThread();
 
 				//Construct buttons
 				nextButton = textImageButtonFactory.Generate("Done".Localize());
@@ -76,12 +77,12 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 						printerErrorMessage.Text = "Attempting to connect".Localize() + "...";
 
 						ActiveSliceSettings.Instance.Helpers.SetComPort(candidatePort);
-						PrinterConnection.Instance.ConnectToActivePrinter();
+						printerConnection.ConnectToActivePrinter();
 						connectButton.Visible = false;
 					}
 				};
 
-				PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
+				printerConnection.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
 
 				this.AddPageAction(nextButton);
 				this.AddPageAction(connectButton);
@@ -151,7 +152,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 		private void onPrinterStatusChanged(object sender, EventArgs e)
 		{
-			if (PrinterConnection.Instance.PrinterIsConnected)
+			if (printerConnection.PrinterIsConnected)
 			{
 				printerErrorMessage.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 				printerErrorMessage.Text = "Connection succeeded".Localize() + "!";
@@ -159,7 +160,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				connectButton.Visible = false;
 				UiThread.RunOnIdle(() => this?.Parent?.Close());
 			}
-			else if (PrinterConnection.Instance.CommunicationState != CommunicationStates.AttemptingToConnect)
+			else if (printerConnection.CommunicationState != CommunicationStates.AttemptingToConnect)
 			{
 				printerErrorMessage.TextColor = RGBA_Bytes.Red;
 				printerErrorMessage.Text = "Uh-oh! Could not connect to printer.".Localize();

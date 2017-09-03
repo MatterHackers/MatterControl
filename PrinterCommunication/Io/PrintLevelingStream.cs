@@ -40,11 +40,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
 	public class PrintLevelingStream : GCodeStreamProxy
 	{
+		PrinterSettings printerSettings;
 		bool activePrinting;
 		protected PrinterMove lastDestination = new PrinterMove();
-		public PrintLevelingStream(GCodeStream internalStream, bool activePrinting)
+		public PrintLevelingStream(PrinterSettings printerSettings, GCodeStream internalStream, bool activePrinting)
 			: base(internalStream)
 		{
+			this.printerSettings = printerSettings;
 			this.activePrinting = activePrinting;
 		}
 
@@ -58,8 +60,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 			if (lineFromChild != null
 				&& PrintLevelingStream.Enabled
-				&& PrinterConnection.Instance.PrinterSettings.GetValue<bool>(SettingsKey.print_leveling_enabled)
-				&& !PrinterConnection.Instance.PrinterSettings.GetValue<bool>(SettingsKey.has_hardware_leveling))
+				&& printerSettings.GetValue<bool>(SettingsKey.print_leveling_enabled)
+				&& !printerSettings.GetValue<bool>(SettingsKey.has_hardware_leveling))
 			{
 				if (LineIsMovement(lineFromChild))
 				{

@@ -44,10 +44,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		private Stopwatch timeHaveBeenAtTemp = new Stopwatch();
 		private double waitAfterReachTempTime = 3;
 		private bool waitWhenCooling = false;
+		PrinterConnection printerConnection;
 
-		public WaitForTempStream(GCodeStream internalStream)
+		public WaitForTempStream(PrinterConnection printerConnection, GCodeStream internalStream)
 			: base(internalStream)
 		{
+			this.printerConnection = printerConnection;
 			state = State.passthrough;
 		}
 
@@ -133,7 +135,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 				case State.waitingForExtruderTemp:
 					{
-						double extruderTemp = PrinterConnection.Instance.GetActualExtruderTemperature((int)extruderIndex);
+						double extruderTemp = printerConnection.GetActualExtruderTemperature((int)extruderIndex);
 						bool tempWithinRange = extruderTemp >= targetTemp - sameTempRange && extruderTemp <= targetTemp + sameTempRange;
 						if (tempWithinRange && !timeHaveBeenAtTemp.IsRunning)
 						{
@@ -141,7 +143,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						}
 
 						if (timeHaveBeenAtTemp.Elapsed.TotalSeconds > waitAfterReachTempTime
-							|| PrinterConnection.Instance.PrintWasCanceled)
+							|| printerConnection.PrintWasCanceled)
 						{
 							// switch to pass through and continue
 							state = State.passthrough;
@@ -157,7 +159,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 				case State.waitingForBedTemp:
 					{
-						double bedTemp = PrinterConnection.Instance.ActualBedTemperature;
+						double bedTemp = printerConnection.ActualBedTemperature;
 						bool tempWithinRange;
 						if (waitWhenCooling)
 						{
@@ -175,7 +177,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						}
 
 						if (timeHaveBeenAtTemp.Elapsed.TotalSeconds > waitAfterReachTempTime
-							|| PrinterConnection.Instance.PrintWasCanceled)
+							|| printerConnection.PrintWasCanceled)
 						{
 							// switch to pass through and continue
 							state = State.passthrough;

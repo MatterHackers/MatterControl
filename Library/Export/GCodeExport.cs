@@ -143,12 +143,13 @@ namespace MatterHackers.MatterControl.Library.Export
 			{
 				GCodeFileStream gCodeFileStream = new GCodeFileStream(GCodeFile.Load(gcodeFilename, CancellationToken.None));
 
-				bool addLevelingStream = ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_enabled) && this.ApplyLeveling;
+				var printerSettings = ActiveSliceSettings.Instance;
+				bool addLevelingStream = printerSettings.GetValue<bool>(SettingsKey.print_leveling_enabled) && this.ApplyLeveling;
 				var queueStream = new QueuedCommandsStream(gCodeFileStream);
 
 				// this is added to ensure we are rewriting the G0 G1 commands as needed
 				GCodeStream finalStream = addLevelingStream
-					? new ProcessWriteRegexStream(new PrintLevelingStream(queueStream, false), queueStream)
+					? new ProcessWriteRegexStream(new PrintLevelingStream(printerSettings, queueStream, false), queueStream)
 					: new ProcessWriteRegexStream(queueStream, queueStream);
 
 				using (StreamWriter file = new StreamWriter(dest))

@@ -32,6 +32,7 @@ using System.Diagnostics;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.GCodeVisualizer;
+using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.Tests.Automation;
@@ -94,12 +95,14 @@ namespace MatterControl.Tests.MatterControl
 
 		public static GCodeStream CreateTestGCodeStream(string[] inputLines, out List<GCodeStream> streamList)
 		{
+			var printerConnection = PrinterConnection.Instance;
+
 			streamList = new List<GCodeStream>();
 			streamList.Add(new TestGCodeStream(inputLines));
-			streamList.Add(new PauseHandlingStream(streamList[streamList.Count - 1]));
+			streamList.Add(new PauseHandlingStream(printerConnection, streamList[streamList.Count - 1]));
 			streamList.Add(new QueuedCommandsStream(streamList[streamList.Count - 1]));
 			streamList.Add(new RelativeToAbsoluteStream(streamList[streamList.Count - 1]));
-			streamList.Add(new WaitForTempStream(streamList[streamList.Count - 1]));
+			streamList.Add(new WaitForTempStream(printerConnection, streamList[streamList.Count - 1]));
 			streamList.Add(new BabyStepsStream(streamList[streamList.Count - 1]));
 			streamList.Add(new ExtrusionMultiplyerStream(streamList[streamList.Count - 1]));
 			streamList.Add(new FeedRateMultiplyerStream(streamList[streamList.Count - 1]));

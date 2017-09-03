@@ -173,36 +173,6 @@ namespace MatterHackers.MatterControl
 					//	}
 
 					//	break;
-
-					case "CONNECT_TO_PRINTER":
-						if (currentCommandIndex + 1 <= commandLineArgs.Length)
-						{
-							PrinterConnection.Instance.ConnectToActivePrinter();
-						}
-						break;
-
-					case "START_PRINT":
-						if (currentCommandIndex + 1 <= commandLineArgs.Length)
-						{
-							bool hasBeenRun = false;
-							currentCommandIndex++;
-							string fullPath = commandLineArgs[currentCommandIndex];
-							QueueData.Instance.RemoveAll();
-							if (!string.IsNullOrEmpty(fullPath))
-							{
-								string fileName = Path.GetFileNameWithoutExtension(fullPath);
-								QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(fileName, fullPath)));
-								PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent((sender, e) =>
-								{
-									if (!hasBeenRun && PrinterConnection.Instance.CommunicationState == CommunicationStates.Connected)
-									{
-										hasBeenRun = true;
-										ApplicationController.Instance.PrintActivePartIfPossible();
-									}
-								}, ref unregisterEvent);
-							}
-						}
-						break;
 				}
 
 				if (MeshFileIo.ValidFileExtensions().Contains(Path.GetExtension(command).ToUpper()))
