@@ -74,7 +74,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private FlowLayoutWidget pageTopToBottomLayout;
 
 		private SettingsContext settingsContext;
-		private NamedSettingsLayers viewFilter;
 
 		private bool isPrimarySettingsView { get; set; }
 		PrinterConnection printerConnection;
@@ -89,12 +88,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			this.BackgroundColor = ApplicationController.Instance.Theme.TabBodyBackground;
 
-			// The last layer of the layerFilters is the target persistence layer
-			var persistenceLayer = layerCascade?.First() ?? ActiveSliceSettings.Instance.UserLayer;
-
-			this.settingsContext = new SettingsContext(layerCascade, persistenceLayer);
-
-			this.viewFilter = viewFilter;
+			this.settingsContext = new SettingsContext(layerCascade, viewFilter);
 
 			pageTopToBottomLayout = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -440,7 +434,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 									printerConnection,
 										settingData,
 										settingsContext,
-										viewFilter,
 										copyIndex,
 										isPrimarySettingsView,
 										ref tabIndexForItem));
@@ -534,7 +527,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private bool CheckIfShouldBeShown(SliceSettingData settingData)
 		{
 			bool settingShouldBeShown = settingsContext.ParseShowString(settingData.ShowIfSet);
-			if (viewFilter == NamedSettingsLayers.Material || viewFilter == NamedSettingsLayers.Quality)
+			if (settingsContext.ViewFilter == NamedSettingsLayers.Material || settingsContext.ViewFilter == NamedSettingsLayers.Quality)
 			{
 				if (!settingData.ShowAsOverride)
 				{
@@ -604,7 +597,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								printerConnection,
 								settingData,
 								settingsContext,
-								viewFilter,
 								0,
 								isPrimarySettingsView,
 								ref tabIndexForItem);
@@ -732,8 +724,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return CreateSettingInfoUIControls(
 				printerConnection,
 				SliceSettingsOrganizer.Instance.GetSettingsData(sliceSettingsKey),
-				new SettingsContext(null, ActiveSliceSettings.Instance.UserLayer),
-				NamedSettingsLayers.All,
+				new SettingsContext(null, NamedSettingsLayers.All),
 				0,
 				isPrimarySettingsView,
 				ref tabIndex);
@@ -746,7 +737,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			PrinterConnection printerConnection,
 			SliceSettingData settingData,
 			SettingsContext settingsContext,
-			NamedSettingsLayers viewFilter,
 			int extruderIndex,
 			bool isPrimaryView,
 			ref int tabIndexForItem)
@@ -914,7 +904,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				if (settingsContext.ContainsKey(settingData.SlicerConfigName))
 				{
-					switch (viewFilter)
+					switch (settingsContext.ViewFilter)
 					{
 						case NamedSettingsLayers.All:
 							if (settingData.ShowAsOverride)

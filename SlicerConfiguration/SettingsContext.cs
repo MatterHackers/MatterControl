@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -38,11 +39,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private IEnumerable<PrinterSettingsLayer> layerCascade;
 		private PrinterSettingsLayer persistenceLayer;
 
-		public SettingsContext(IEnumerable<PrinterSettingsLayer> layerCascade, PrinterSettingsLayer persistenceLayer)
+		public SettingsContext(IEnumerable<PrinterSettingsLayer> layerCascade, NamedSettingsLayers viewFilter)
 		{
 			this.layerCascade = layerCascade;
-			this.persistenceLayer = persistenceLayer;
+			this.ViewFilter = viewFilter;
+
+			// The last layer of the layerFilters is the target persistence 
+			this.persistenceLayer = layerCascade?.First() ?? ActiveSliceSettings.Instance.UserLayer;
 		}
+
+		public NamedSettingsLayers ViewFilter { get; set; }
 
 		public string GetValue(string slicerConfigName)
 		{
