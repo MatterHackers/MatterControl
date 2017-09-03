@@ -2303,14 +2303,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				if (PrinterSettings.GetValue<bool>(SettingsKey.recover_is_enabled)
 					&& activePrintTask != null) // We are resuming a failed print (do lots of interesting stuff).
 				{
-					pauseHandlingStream1 = new PauseHandlingStream(new PrintRecoveryStream(gCodeFileStream0, activePrintTask.PercentDone));
+					pauseHandlingStream1 = new PauseHandlingStream(this, new PrintRecoveryStream(gCodeFileStream0, activePrintTask.PercentDone));
 					// And increment the recovery count
 					activePrintTask.RecoveryCount++;
 					activePrintTask.Commit();
 				}
 				else
 				{
-					pauseHandlingStream1 = new PauseHandlingStream(gCodeFileStream0);
+					pauseHandlingStream1 = new PauseHandlingStream(this, gCodeFileStream0);
 				}
 
 				firstStream = pauseHandlingStream1;
@@ -2323,8 +2323,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			queuedCommandStream2 = new QueuedCommandsStream(firstStream);
 			macroProcessingStream3 = new MacroProcessingStream(queuedCommandStream2, this);
 			relativeToAbsoluteStream4 = new RelativeToAbsoluteStream(macroProcessingStream3);
-			printLevelingStream5 = new PrintLevelingStream(relativeToAbsoluteStream4, true);
-			waitForTempStream6 = new WaitForTempStream(printLevelingStream5);
+			printLevelingStream5 = new PrintLevelingStream(ActiveSliceSettings.Instance, relativeToAbsoluteStream4, true);
+			waitForTempStream6 = new WaitForTempStream(this, printLevelingStream5);
 			babyStepsStream7 = new BabyStepsStream(waitForTempStream6, gcodeFilename == null ? 2000 : 1);
 			if (activePrintTask != null)
 			{
@@ -2333,7 +2333,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 			extrusionMultiplyerStream8 = new ExtrusionMultiplyerStream(babyStepsStream7);
 			feedrateMultiplyerStream9 = new FeedRateMultiplyerStream(extrusionMultiplyerStream8);
-			requestTemperaturesStream10 = new RequestTemperaturesStream(feedrateMultiplyerStream9);
+			requestTemperaturesStream10 = new RequestTemperaturesStream(this, feedrateMultiplyerStream9);
 			processWriteRegExStream11 = new ProcessWriteRegexStream(requestTemperaturesStream10, queuedCommandStream2);
 			totalGCodeStream = processWriteRegExStream11;
 
