@@ -145,14 +145,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private GuiWidget CreateSliceSettingsWidget(PrinterSettingsLayer persistenceLayer)
 		{
-			var layerCascade = new List<PrinterSettingsLayer>
-			{
-				persistenceLayer,
-				ActiveSliceSettings.Instance.OemLayer,
-				ActiveSliceSettings.Instance.BaseLayer
-			};
+			var settingsContext = new SettingsContext(
+				new List<PrinterSettingsLayer>
+				{
+					persistenceLayer,
+					ActiveSliceSettings.Instance.OemLayer,
+					ActiveSliceSettings.Instance.BaseLayer
+				},
+				presetsContext.LayerType);
 
-			return new SliceSettingsWidget(printerConnection, layerCascade, presetsContext.LayerType)
+			return new SliceSettingsWidget(printerConnection, settingsContext)
 			{
 				ShowControlBar = false
 			};

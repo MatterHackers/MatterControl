@@ -79,12 +79,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private EventHandler unregisterEvents;
 
-		public SliceSettingsWidget(PrinterConnection printerConnection, List<PrinterSettingsLayer> layerCascade = null, NamedSettingsLayers viewFilter = NamedSettingsLayers.All)
+		public SliceSettingsWidget(PrinterConnection printerConnection, SettingsContext settingsContext)
 		{
 			this.printerConnection = printerConnection;
 			this.BackgroundColor = ApplicationController.Instance.Theme.TabBodyBackground;
 
-			this.settingsContext = new SettingsContext(layerCascade, viewFilter);
+			this.settingsContext = settingsContext;
 
 			pageTopToBottomLayout = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
