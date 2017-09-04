@@ -32,37 +32,36 @@ using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class MultilineStringField : ISettingsField
+	public class MultilineStringField : BasicField, IUIField
 	{
 		private readonly int multiLineEditHeight = (int)(120 * GuiWidget.DeviceScale + .5);
 
 		private MHTextEditWidget editWidget;
 
-		public Action UpdateStyle { get; set; }
-
-		public string Value { get; set; }
-
-		public GuiWidget Create(SettingsContext settingsContext, SliceSettingData settingData, int tabIndex)
+		public void Initialize(int tabIndex)
 		{
-			string convertedNewLines = this.Value.Replace("\\n", "\n");
-
-			editWidget = new MHTextEditWidget(convertedNewLines, pixelWidth: 320, pixelHeight: multiLineEditHeight, multiLine: true, tabIndex: tabIndex, typeFace: ApplicationController.MonoSpacedTypeFace)
+			editWidget = new MHTextEditWidget("", pixelWidth: 320, pixelHeight: multiLineEditHeight, multiLine: true, tabIndex: tabIndex, typeFace: ApplicationController.MonoSpacedTypeFace)
 			{
 				HAnchor = HAnchor.Stretch,
 			};
 			editWidget.DrawFromHintedCache();
 			editWidget.ActualTextEditWidget.EditComplete += (sender, e) =>
 			{
-				settingsContext.SetValue(settingData.SlicerConfigName, ((TextEditWidget)sender).Text.Replace("\n", "\\n"));
-				this.UpdateStyle();
+				if (sender is TextEditWidget textEditWidget)
+				{
+					this.SetValue(
+						textEditWidget.Text.Replace("\n", "\\n"),
+						userInitiated: true);
+				}
 			};
 
-			return editWidget;
+			this.Content = editWidget;
 		}
 
-		public void OnValueChanged(string text)
+		protected override void OnValueChanged(FieldChangedEventArgs fieldChangedEventArgs)
 		{
-			editWidget.Text = text.Replace("\\n", "\n");
+			editWidget.Text = this.Value.Replace("\\n", "\n");
+			base.OnValueChanged(fieldChangedEventArgs);
 		}
 	}
 }
