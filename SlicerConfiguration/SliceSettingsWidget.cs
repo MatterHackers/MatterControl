@@ -985,7 +985,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						break;
 
 					case SliceSettingData.DataEditTypes.VECTOR2:
-						OLDFIELDXXXXX = new Vector2Field();
+						uiField = new Vector2Field();
+						uiField.ValueChanged += (s, e) =>
+						{
+							settingsContext.SetValue(settingData.SlicerConfigName, uiField.Value);
+						};
+
 						break;
 
 					case SliceSettingData.DataEditTypes.OFFSET2:

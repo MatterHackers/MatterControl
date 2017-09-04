@@ -27,13 +27,12 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class Vector2Field : ISettingsField
+	public class Vector2Field : BasicField, IUIField
 	{
 		public static readonly int VectorXYEditWidth = (int)(60 * GuiWidget.DeviceScale + .5);
 
@@ -41,16 +40,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private MHNumberEdit xEditWidget;
 
-		public Action UpdateStyle { get; set; }
-
-		public string Value { get; set; }
-
-		public GuiWidget Create(SettingsContext settingsContext, SliceSettingData settingData, int tabIndex)
+		public void Initialize(int tabIndex)
 		{
 			var container = new FlowLayoutWidget();
 
-			string[] xyValueStrings = this.Value.Split(',');
-			if (xyValueStrings.Length != 2)
+			string[] xyValueStrings = this.Value?.Split(',');
+			if (xyValueStrings == null 
+				|| xyValueStrings.Length != 2)
 			{
 				xyValueStrings = new string[] { "0", "0" };
 			}
@@ -59,13 +55,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			xEditWidget = new MHNumberEdit(currentXValue, allowDecimals: true, pixelWidth: VectorXYEditWidth, tabIndex: tabIndex)
 			{
-				ToolTipText = settingData.HelpText,
+				ToolTipText = this.HelpText,
+				TabIndex = tabIndex,
 				SelectAllOnFocus = true
 			};
 			xEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
 			{
-				settingsContext.SetValue(settingData.SlicerConfigName, xEditWidget.ActuallNumberEdit.Value.ToString() + "," + yEditWidget.ActuallNumberEdit.Value.ToString());
-				this.UpdateStyle();
+				this.Value = string.Format("{0},{1}", xEditWidget.ActuallNumberEdit.Value.ToString(), yEditWidget.ActuallNumberEdit.Value.ToString());
 			};
 
 			container.AddChild(new TextWidget("X:", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor)
@@ -79,14 +75,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			yEditWidget = new MHNumberEdit(currentYValue, allowDecimals: true, pixelWidth: VectorXYEditWidth, tabIndex: tabIndex)
 			{
-				ToolTipText = settingData.HelpText,
+				ToolTipText = this.HelpText,
+				TabIndex = tabIndex + 1,
 				SelectAllOnFocus = true,
 			};
 			yEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
 			{
-				settingsContext.SetValue(settingData.SlicerConfigName, xEditWidget.ActuallNumberEdit.Value.ToString() + "," + yEditWidget.ActuallNumberEdit.Value.ToString());
-
-				this.UpdateStyle();
+				this.Value = string.Format("{0},{1}", xEditWidget.ActuallNumberEdit.Value.ToString(), yEditWidget.ActuallNumberEdit.Value.ToString());
 			};
 
 			container.AddChild(new TextWidget("Y:", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor)
@@ -96,12 +91,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			});
 			container.AddChild(yEditWidget);
 
-			return container;
+			this.Content = container;
 		}
 
-		public void OnValueChanged(string text)
+		protected override void OnValueChanged()
 		{
-			string[] xyValueStrings2 = text.Split(',');
+			string[] xyValueStrings2 = this.Value.Split(',');
 			if (xyValueStrings2.Length != 2)
 			{
 				xyValueStrings2 = new string[] { "0", "0" };
@@ -112,6 +107,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			double.TryParse(xyValueStrings2[1], out currentValue);
 			yEditWidget.ActuallNumberEdit.Value = currentValue;
+
+			base.OnValueChanged();
 		}
 	}
 }
