@@ -38,7 +38,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class ComPortField : ISettingsField
 	{
-		private DropDownList selectableOptions;
+		private DropDownList dropdownList;
 
 		private SettingsContext settingsContext;
 		public Action UpdateStyle { get; set; }
@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			// bind to a context that will place it in the SliceSetting view but it binds its values to a machine
 			// specific dictionary key that is not exposed in the UI. At runtime we lookup and store to '<machinename>_com_port'
 			// ensuring that a single printer can be shared across different devices and we'll select the correct com port in each case
-			selectableOptions = new DropDownList("None".Localize(), maxHeight: 200)
+			dropdownList = new DropDownList("None".Localize(), maxHeight: 200)
 			{
 				ToolTipText = settingData.HelpText,
 				Margin = new BorderDouble(),
@@ -68,49 +68,56 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				BorderColor = canChangeComPort ? ActiveTheme.Instance.SecondaryTextColor : new RGBA_Bytes(ActiveTheme.Instance.SecondaryTextColor, 150),
 			};
 
-			selectableOptions.Click += (s, e) =>
+			dropdownList.Click += (s, e) =>
 			{
-				RebuildMenuItems(selectableOptions);
+				// TODO: why doesn't this blow up without runonidle?
+				RebuildMenuItems();
 			};
 
-			RebuildMenuItems(selectableOptions);
+			RebuildMenuItems();
 
 			// Prevent droplist interaction when connected
 			PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent((s, e) =>
 			{
 				canChangeComPort = !PrinterConnection.Instance.PrinterIsConnected && PrinterConnection.Instance.CommunicationState != CommunicationStates.AttemptingToConnect;
-				selectableOptions.Enabled = canChangeComPort;
-				selectableOptions.TextColor = canChangeComPort ? ActiveTheme.Instance.PrimaryTextColor : new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 150);
-				selectableOptions.BorderColor = canChangeComPort ? ActiveTheme.Instance.SecondaryTextColor : new RGBA_Bytes(ActiveTheme.Instance.SecondaryTextColor, 150);
+				dropdownList.Enabled = canChangeComPort;
+				dropdownList.TextColor = canChangeComPort ? ActiveTheme.Instance.PrimaryTextColor : new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 150);
+				dropdownList.BorderColor = canChangeComPort ? ActiveTheme.Instance.SecondaryTextColor : new RGBA_Bytes(ActiveTheme.Instance.SecondaryTextColor, 150);
 			}, ref unregisterEvents);
 
 			// Release event listener on close
-			selectableOptions.Closed += (s, e) =>
+			dropdownList.Closed += (s, e) =>
 			{
 				unregisterEvents?.Invoke(null, null);
 			};
 
-			return selectableOptions;
+			return dropdownList;
 		}
 
 		public void OnValueChanged(string text)
 		{
 			// Lookup the machine specific comport value rather than the passed in text value
-			selectableOptions.SelectedLabel = ActiveSliceSettings.Instance.Helpers.ComPort();
+			dropdownList.SelectedLabel = ActiveSliceSettings.Instance.Helpers.ComPort();
 		}
 
-		private void RebuildMenuItems(DropDownList selectableOptions)
+		private void RebuildMenuItems()
 		{
-			selectableOptions.MenuItems.Clear();
+			dropdownList.MenuItems.Clear();
+
 			string machineSpecificComPortValue = ActiveSliceSettings.Instance.Helpers.ComPort();
+
 			foreach (string listItem in FrostedSerialPort.GetPortNames())
 			{
-				MenuItem newItem = selectableOptions.AddItem(listItem);
+				// Add each serial port to the dropdown list 
+				MenuItem newItem = dropdownList.AddItem(listItem);
+
+				// TODO: review what this is doing and explain
 				if (newItem.Text == machineSpecificComPortValue)
 				{
-					selectableOptions.SelectedLabel = machineSpecificComPortValue;
+					dropdownList.SelectedLabel = machineSpecificComPortValue;
 				}
 
+				// When the given menu item is selected, save its value back into settings
 				newItem.Selected += (sender, e) =>
 				{
 					MenuItem menuItem = ((MenuItem)sender);
@@ -119,6 +126,5 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				};
 			}
 		}
-
 	}
 }
