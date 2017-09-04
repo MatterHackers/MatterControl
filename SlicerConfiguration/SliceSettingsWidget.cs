@@ -299,17 +299,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		internal class ExtraSettingTextWidget : MHTextEditWidget
-		{
-			internal string itemKey { get; set; }
-
-			internal ExtraSettingTextWidget(string itemKey, string itemValue)
-				: base(itemValue)
-			{
-				this.itemKey = itemKey;
-			}
-		}
-
 		public override void OnClosed(ClosedEventArgs e)
 		{
 			unregisterEvents?.Invoke(this, null);
@@ -317,12 +306,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 
 		private void onPrinterStatusChanged(object sender, EventArgs e)
-		{
-			SetVisibleControls();
-			this.Invalidate();
-		}
-
-		private void APP_onPrinterStatusChanged(object sender, EventArgs e)
 		{
 			SetVisibleControls();
 			this.Invalidate();
