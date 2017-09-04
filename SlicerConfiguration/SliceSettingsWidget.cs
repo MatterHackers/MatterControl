@@ -973,7 +973,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						break;
 
 					case SliceSettingData.DataEditTypes.HARDWARE_PRESENT:
-						OLDFIELDXXXXX = new HardwarePresetField();
+						uiField = new CheckboxField();
 						break;
 
 					case SliceSettingData.DataEditTypes.VECTOR2:

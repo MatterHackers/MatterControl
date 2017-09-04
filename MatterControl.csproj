@@ -300,7 +300,6 @@
     <Compile Include="SlicerConfiguration\UIFields\MultilineStringField.cs" />
     <Compile Include="SlicerConfiguration\UIFields\ComPortField.cs" />
     <Compile Include="SlicerConfiguration\UIFields\ListField.cs" />
-    <Compile Include="SlicerConfiguration\UIFields\HardwarePresetField.cs" />
     <Compile Include="SlicerConfiguration\UIFields\ExtruderOffsetField.cs" />
     <Compile Include="SlicerConfiguration\UIFields\Vector2Field.cs" />
     <Compile Include="SlicerConfiguration\UIFields\StringField.cs" />
