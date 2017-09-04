@@ -97,8 +97,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 			};
 
-			numberEdit.ActuallNumberEdit.BackgroundColor = RGBA_Bytes.Blue;
-
 			this.Content = numberEdit;
 		}
 
@@ -132,8 +130,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					this.Value = textEditWidget.Text;
 				}
 			};
-
-			textEditWidget.ActualTextEditWidget.BackgroundColor = RGBA_Bytes.Yellow;
 
 			this.Content = textEditWidget;
 		}

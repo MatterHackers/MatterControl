@@ -970,7 +970,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						break;
 
 					case SliceSettingData.DataEditTypes.LIST:
-						OLDFIELDXXXXX = new ListField();
+						uiField = new ListField()
+						{
+							ListItems = settingData.ExtraSettings.Split(',').ToList()
+						};
+						uiField.ValueChanged += (s, e) =>
+						{
+							settingsContext.SetValue(settingData.SlicerConfigName, uiField.Value);
+						};
 						break;
 
 					case SliceSettingData.DataEditTypes.HARDWARE_PRESENT:

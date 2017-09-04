@@ -28,51 +28,52 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class ListField : ISettingsField
+	public class ListField : BasicField, IUIField
 	{
-		private DropDownList selectableOptions;
+		private DropDownList dropdownList;
 
-		public Action UpdateStyle { get; set; }
+		public List<string> ListItems { get; set; }
 
-		public string Value { get; set; }
-
-		public GuiWidget Create(SettingsContext settingsContext, SliceSettingData settingData, int tabIndex)
+		public void Initialize(int tabIndex)
 		{
-			selectableOptions = new DropDownList("None".Localize(), maxHeight: 200)
+			dropdownList = new DropDownList("None".Localize(), maxHeight: 200)
 			{
-				ToolTipText = settingData.HelpText,
-				Margin = new BorderDouble()
+				ToolTipText = this.HelpText,
+				TabIndex = tabIndex,
+				Margin = new BorderDouble(),
 			};
 
-			foreach (string listItem in settingData.ExtraSettings.Split(','))
+			foreach (string listItem in this.ListItems)
 			{
-				MenuItem newItem = selectableOptions.AddItem(listItem);
+				MenuItem newItem = dropdownList.AddItem(listItem);
 				if (newItem.Text == this.Value)
 				{
-					selectableOptions.SelectedLabel = this.Value;
+					dropdownList.SelectedLabel = this.Value;
 				}
 
 				newItem.Selected += (sender, e) =>
 				{
-					MenuItem menuItem = ((MenuItem)sender);
-					settingsContext.SetValue(settingData.SlicerConfigName, menuItem.Text);
-
-					this.UpdateStyle();
+					if (sender is MenuItem menuItem)
+					{
+						this.Value = menuItem.Text;
+					}
 				};
 			}
 
-			return selectableOptions;
+			this.Content = dropdownList;
 		}
 
-		public void OnValueChanged(string text)
+		protected override void OnValueChanged()
 		{
-			selectableOptions.SelectedLabel = text;
+			dropdownList.SelectedLabel = this.Value;
+			base.OnValueChanged();
 		}
 	}
 }
