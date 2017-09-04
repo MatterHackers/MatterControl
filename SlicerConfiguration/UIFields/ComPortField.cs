@@ -40,6 +40,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	{
 		private DropDownList selectableOptions;
 
+		private SettingsContext settingsContext;
 		public Action UpdateStyle { get; set; }
 
 		public string Value { get; set; }
@@ -48,7 +49,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			EventHandler unregisterEvents = null;
 
+			this.settingsContext = settingsContext;
+
 			bool canChangeComPort = !PrinterConnection.Instance.PrinterIsConnected && PrinterConnection.Instance.CommunicationState != CommunicationStates.AttemptingToConnect;
+			
 			// The COM_PORT control is unique in its approach to the SlicerConfigName. It uses "com_port" settings name to
 			// bind to a context that will place it in the SliceSetting view but it binds its values to a machine
 			// specific dictionary key that is not exposed in the UI. At runtime we lookup and store to '<machinename>_com_port'
@@ -66,10 +70,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			selectableOptions.Click += (s, e) =>
 			{
-				AddComMenuItems(settingsContext, selectableOptions);
+				AddComMenuItems(selectableOptions);
 			};
 
-			AddComMenuItems(settingsContext, selectableOptions);
+			AddComMenuItems(selectableOptions);
 
 			// Prevent droplist interaction when connected
 			PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent((s, e) =>
@@ -95,7 +99,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			selectableOptions.SelectedLabel = ActiveSliceSettings.Instance.Helpers.ComPort();
 		}
 
-		private void AddComMenuItems(SettingsContext settingsContext, DropDownList selectableOptions)
+		private void AddComMenuItems(DropDownList selectableOptions)
 		{
 			selectableOptions.MenuItems.Clear();
 			string machineSpecificComPortValue = ActiveSliceSettings.Instance.Helpers.ComPort();
