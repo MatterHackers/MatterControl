@@ -40,8 +40,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	{
 		private DropDownList dropdownList;
 
-		public string HelpText { get; set; }
-
 		public void Initialize(int tabIndex)
 		{
 			EventHandler unregisterEvents = null;
@@ -90,12 +88,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.Content = dropdownList;
 		}
 
-		protected override void OnValueChanged()
+		protected override void OnValueChanged(FieldChangedEventArgs fieldChangedEventArgs)
 		{
-			// Lookup the machine specific comport value rather than the passed in text value
 			dropdownList.SelectedLabel = ActiveSliceSettings.Instance.Helpers.ComPort();
-
-			base.OnValueChanged();
+			base.OnValueChanged(fieldChangedEventArgs);
 		}
 
 		private void RebuildMenuItems()
@@ -120,7 +116,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					if (sender is MenuItem menuItem)
 					{
-						this.Value = menuItem.Text;
+						this.SetValue(
+							menuItem.Text,
+							userInitiated: true);
 					}
 				};
 			}

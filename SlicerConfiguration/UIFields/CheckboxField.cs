@@ -48,7 +48,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			};
 			checkBoxWidget.CheckedStateChanged += (s, e) =>
 			{
-				this.Value = checkBoxWidget.Checked ? "1" : "0";
+				this.SetValue(
+					checkBoxWidget.Checked ? "1" : "0",
+					userInitiated: true);
 			};
 
 			this.Content = checkBoxWidget;

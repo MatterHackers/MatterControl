@@ -35,28 +35,25 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class BasicField
 	{
-		public event EventHandler ValueChanged;
+		public event EventHandler<FieldChangedEventArgs> ValueChanged;
 
-		private string fieldValue;
-		public string Value
+		public void SetValue(string newValue, bool userInitiated)
 		{
-			get => fieldValue;
-			set
-			{
-				string convertedValue = this.ConvertValue(value);
+			string convertedValue = this.ConvertValue(newValue);
 
-				if (fieldValue != convertedValue)
-				{
-					fieldValue = convertedValue;
-					this.OnValueChanged();
-				}
-				else if (value != convertedValue)
-				{
-					// If the validated value matches the current value, then UI element values were rejected and must be discarded
-					this.OnValueChanged();
-				}
+			if (this.Value != convertedValue)
+			{
+				this.Value = convertedValue;
+				this.OnValueChanged(new FieldChangedEventArgs(userInitiated));
+			}
+			else if (newValue != convertedValue)
+			{
+				// If the validated value matches the current value, then UI element values were rejected and must be discarded
+				this.OnValueChanged(new FieldChangedEventArgs(userInitiated));
 			}
 		}
+
+		public string Value { get; private set; }
 
 		public GuiWidget Content { get; protected set; }
 
@@ -69,9 +66,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return newValue;
 		}
 
-		protected virtual void OnValueChanged()
+		protected virtual void OnValueChanged(FieldChangedEventArgs fieldChangedEventArgs)
 		{
-			ValueChanged?.Invoke(this, new EventArgs());
+			ValueChanged?.Invoke(this, fieldChangedEventArgs);
 		}
 	}
 
@@ -93,19 +90,21 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				if (this.Value != numberEdit.Value.ToString())
 				{
-					this.Value = numberEdit.Value.ToString();
+					this.SetValue(
+						numberEdit.Value.ToString(),
+						userInitiated: true);
 				}
 			};
 
 			this.Content = numberEdit;
 		}
 
-		protected override void OnValueChanged()
+		protected override void OnValueChanged(FieldChangedEventArgs fieldChangedEventArgs)
 		{
 			int.TryParse(this.Value, out int currentValue);
 			numberEdit.ActuallNumberEdit.Value = currentValue;
 
-			base.OnValueChanged();
+			base.OnValueChanged(fieldChangedEventArgs);
 		}
 	}
 
@@ -127,21 +126,24 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				if (this.Value != textEditWidget.Text)
 				{
-					this.Value = textEditWidget.Text;
+					this.SetValue(
+						textEditWidget.Text, 
+						userInitiated: true);
 				}
 			};
 
 			this.Content = textEditWidget;
 		}
 
-		protected override void OnValueChanged()
+
+		protected override void OnValueChanged(FieldChangedEventArgs fieldChangedEventArgs)
 		{
 			if (this.Value != textEditWidget.Text)
 			{
 				textEditWidget.Text = this.Value;
 			}
 
-			base.OnValueChanged();
+			base.OnValueChanged(fieldChangedEventArgs);
 		}
 	}
 
@@ -156,11 +158,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.uiField = uiField;
 		}
 
-		public string Value { get => uiField.Value; set => uiField.Value = value; }
+		public void SetValue(string newValue, bool userInitiated)
+		{
+			uiField.SetValue(newValue, userInitiated);
+		}
+
+		public string Value { get => uiField.Value; }
 
 		public GuiWidget Content { get; private set; }
 
-		public event EventHandler ValueChanged;
+		public event EventHandler<FieldChangedEventArgs> ValueChanged;
 
 		public void Initialize(int tabIndex)
 		{
@@ -181,7 +188,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				newItem.Selected += (s, e) =>
 				{
-					uiField.Value = valueLocal;
+					uiField.SetValue(valueLocal, userInitiated: true);
 				};
 			}
 

@@ -61,7 +61,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			};
 			xEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
 			{
-				this.Value = string.Format("{0},{1}", xEditWidget.ActuallNumberEdit.Value.ToString(), yEditWidget.ActuallNumberEdit.Value.ToString());
+				this.SetValue(
+					string.Format("{0},{1}", xEditWidget.ActuallNumberEdit.Value.ToString(), yEditWidget.ActuallNumberEdit.Value.ToString()),
+					userInitiated: true);
 			};
 
 			container.AddChild(new TextWidget("X:", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor)
@@ -81,7 +83,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			};
 			yEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
 			{
-				this.Value = string.Format("{0},{1}", xEditWidget.ActuallNumberEdit.Value.ToString(), yEditWidget.ActuallNumberEdit.Value.ToString());
+				this.SetValue(
+					string.Format("{0},{1}", xEditWidget.ActuallNumberEdit.Value.ToString(), yEditWidget.ActuallNumberEdit.Value.ToString()),
+					userInitiated: true);
 			};
 
 			container.AddChild(new TextWidget("Y:", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor)
@@ -94,7 +98,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.Content = container;
 		}
 
-		protected override void OnValueChanged()
+		protected override void OnValueChanged(FieldChangedEventArgs fieldChangedEventArgs)
 		{
 			string[] xyValueStrings2 = this.Value.Split(',');
 			if (xyValueStrings2.Length != 2)
@@ -108,7 +112,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			double.TryParse(xyValueStrings2[1], out currentValue);
 			yEditWidget.ActuallNumberEdit.Value = currentValue;
 
-			base.OnValueChanged();
+			base.OnValueChanged(fieldChangedEventArgs);
 		}
 	}
 }

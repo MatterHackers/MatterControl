@@ -139,7 +139,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							if (field2.Value != currentValue
 								|| settingsKey == "com_port")
 							{
-								field2.Value = currentValue;
+								field2.SetValue(
+									currentValue,
+									userInitiated: false);
 							}
 						}
 					}
@@ -263,6 +265,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
+		// TODO: This should just proxy to settingsControlBar.Visible. Having local state and pushing values on event listeners seems off
 		private bool showControlBar = true;
 		public bool ShowControlBar
 		{
@@ -867,6 +870,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			ISettingsField OLDFIELDXXXXX = null;
 			IUIField uiField = null;
 
+			bool useDefaultSavePattern = true;
+
 			var settingsRow = new SettingsRow(settingsContext, settingData)
 			{
 				Margin = new BorderDouble(0, 2),
@@ -917,18 +922,22 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 					case SliceSettingData.DataEditTypes.CHECK_BOX:
 						uiField = new CheckboxField();
+						useDefaultSavePattern = false;
 						uiField.ValueChanged += (s, e) =>
 						{
-							// Linked settings should be updated in all cases (user clicked checkbox, user clicked clear)
-							foreach (var setSettingsData in settingData.SetSettingsOnChange)
+							if (e.UserInitiated)
 							{
-								string targetValue;
-
-								if (uiField.Content is CheckBox checkbox)
+								// Linked settings should be updated in all cases (user clicked checkbox, user clicked clear)
+								foreach (var setSettingsData in settingData.SetSettingsOnChange)
 								{
-									if (setSettingsData.TryGetValue(checkbox.Checked ? "OnValue" : "OffValue", out targetValue))
+									string targetValue;
+
+									if (uiField.Content is CheckBox checkbox)
 									{
-										settingsContext.SetValue(setSettingsData["TargetSetting"], targetValue);
+										if (setSettingsData.TryGetValue(checkbox.Checked ? "OnValue" : "OffValue", out targetValue))
+										{
+											settingsContext.SetValue(setSettingsData["TargetSetting"], targetValue);
+										}
 									}
 								}
 							}
@@ -941,13 +950,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						break;
 
 					case SliceSettingData.DataEditTypes.MULTI_LINE_TEXT:
-						OLDFIELDXXXXX = new MultilineStringField();
+						uiField = new MultilineStringField();
 						break;
 					case SliceSettingData.DataEditTypes.COM_PORT:
 						uiField = new ComPortField();
+						useDefaultSavePattern = false;
 						uiField.ValueChanged += (s, e) =>
 						{
-							settingsContext.SetComPort(uiField.Value);
+							if (e.UserInitiated)
+							{
+								settingsContext.SetComPort(uiField.Value);
+							}
 						};
 
 						break;
@@ -957,10 +970,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						{
 							ListItems = settingData.ExtraSettings.Split(',').ToList()
 						};
-						uiField.ValueChanged += (s, e) =>
-						{
-							settingsContext.SetValue(settingData.SlicerConfigName, uiField.Value);
-						};
 						break;
 
 					case SliceSettingData.DataEditTypes.HARDWARE_PRESENT:
@@ -969,19 +978,23 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 					case SliceSettingData.DataEditTypes.VECTOR2:
 						uiField = new Vector2Field();
-						uiField.ValueChanged += (s, e) =>
-						{
-							settingsContext.SetValue(settingData.SlicerConfigName, uiField.Value);
-						};
-
 						break;
 
 					case SliceSettingData.DataEditTypes.OFFSET2:
-						OLDFIELDXXXXX = new Offset2Field();
-						if (OLDFIELDXXXXX is Offset2Field offset2)
+						uiField = new ExtruderOffsetField()
 						{
-							offset2.ExtruderIndex = extruderIndex;
-						}
+							ExtruderIndex = extruderIndex
+						};
+						useDefaultSavePattern = false;
+						uiField.ValueChanged += (s, e) =>
+						{
+							if (e.UserInitiated
+								&& s is ExtruderOffsetField extruderOffset)
+							{
+								SaveCommaSeparatedIndexSetting(extruderOffset.ExtruderIndex, settingsContext, settingData.SlicerConfigName, extruderOffset.Value.Replace(",", "x"));
+							}
+						};
+
 						break;
 
 					default:
@@ -997,7 +1010,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			if (OLDFIELDXXXXX != null)
 			{
-				allFields.Add(settingData.SlicerConfigName, OLDFIELDXXXXX);
+				allFields[settingData.SlicerConfigName] = OLDFIELDXXXXX;
 
 				OLDFIELDXXXXX.Value = sliceSettingValue;
 
@@ -1009,14 +1022,20 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			if (uiField != null)
 			{
-				allUiFields.Add(settingData.SlicerConfigName, uiField);
+				allUiFields[settingData.SlicerConfigName] = uiField;
 
 				uiField.Initialize(tabIndexForItem++);
 
-				uiField.Value = sliceSettingValue;
+				uiField.SetValue(sliceSettingValue, userInitiated: false);
 
 				uiField.ValueChanged += (s, e) =>
 				{
+					if (useDefaultSavePattern
+						&& e.UserInitiated)
+					{
+						settingsContext.SetValue(settingData.SlicerConfigName, uiField.Value);
+					}
+
 					settingsContext.SetValue(settingData.SlicerConfigName, uiField.Value);
 					settingsRow.UpdateStyle();
 				};

@@ -32,11 +32,23 @@ using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
+	public class FieldChangedEventArgs
+	{
+		public FieldChangedEventArgs(bool userInitiated)
+		{
+			this.UserInitiated = userInitiated;
+		}
+
+		public bool UserInitiated { get; }
+	}
+
 	public interface IUIField
 	{
-		event EventHandler ValueChanged;
+		event EventHandler<FieldChangedEventArgs> ValueChanged;
 
-		string Value { get; set; }
+		string Value { get; }
+
+		void SetValue(string newValue, bool userInitiated);
 
 		void Initialize(int tabIndex);
 

@@ -62,7 +62,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					if (sender is MenuItem menuItem)
 					{
-						this.Value = menuItem.Text;
+						this.SetValue(
+							menuItem.Text,
+							userInitiated: true);
 					}
 				};
 			}
@@ -70,10 +72,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.Content = dropdownList;
 		}
 
-		protected override void OnValueChanged()
+		protected override void OnValueChanged(FieldChangedEventArgs fieldChangedEventArgs)
 		{
 			dropdownList.SelectedLabel = this.Value;
-			base.OnValueChanged();
+			base.OnValueChanged(fieldChangedEventArgs);
 		}
 	}
 }
