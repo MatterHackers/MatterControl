@@ -633,7 +633,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				VAnchor = VAnchor.Fit | VAnchor.Center,
 				Padding = new BorderDouble(5, 0),
 			};
-
 			nameHolder.AddChild(new WrappedTextWidget(settingData.ExtraSettings.Localize(), pointSize: 8, textColor: ActiveTheme.Instance.PrimaryTextColor));
 
 			return nameHolder;

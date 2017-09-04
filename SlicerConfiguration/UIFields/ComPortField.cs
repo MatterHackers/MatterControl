@@ -66,10 +66,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			selectableOptions.Click += (s, e) =>
 			{
-				AddComMenuItems(settingData, settingsContext, selectableOptions);
+				AddComMenuItems(settingsContext, selectableOptions);
 			};
 
-			AddComMenuItems(settingData, settingsContext, selectableOptions);
+			AddComMenuItems(settingsContext, selectableOptions);
 
 			// Prevent droplist interaction when connected
 			PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent((s, e) =>
@@ -95,7 +95,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			selectableOptions.SelectedLabel = ActiveSliceSettings.Instance.Helpers.ComPort();
 		}
 
-		private void AddComMenuItems(SliceSettingData settingData, SettingsContext settingsContext, DropDownList selectableOptions)
+		private void AddComMenuItems(SettingsContext settingsContext, DropDownList selectableOptions)
 		{
 			selectableOptions.MenuItems.Clear();
 			string machineSpecificComPortValue = ActiveSliceSettings.Instance.Helpers.ComPort();
