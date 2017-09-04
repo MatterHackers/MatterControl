@@ -641,7 +641,154 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private class SettingsRow : FlowLayoutWidget
 		{
-			public Action UpdateStyle { get; set; }
+			private SettingsContext settingsContext;
+
+			private SliceSettingData settingData;
+
+			private GuiWidget dataArea;
+			private GuiWidget unitsArea;
+			private GuiWidget restoreArea;
+			private Button restoreButton = null;
+
+			public SettingsRow(SettingsContext settingsContext, SliceSettingData settingData)
+			{
+				this.settingData = settingData;
+				this.settingsContext = settingsContext;
+
+				this.NameArea = new GuiWidget()
+				{
+					MinimumSize = new Vector2(50, 0),
+					HAnchor = HAnchor.Stretch,
+					VAnchor = VAnchor.Fit // | VAnchor.Center
+				};
+				this.AddChild(this.NameArea);
+
+				dataArea = new FlowLayoutWidget();
+				this.AddChild(dataArea);
+
+				unitsArea = new GuiWidget()
+				{
+					HAnchor = HAnchor.Absolute,
+					VAnchor = VAnchor.Fit | VAnchor.Center,
+					Width = settingData.ShowAsOverride ? 50 * GuiWidget.DeviceScale : 5,
+				};
+				this.AddChild(unitsArea);
+
+				restoreArea = new GuiWidget()
+				{
+					HAnchor = HAnchor.Absolute,
+					VAnchor = VAnchor.Fit | VAnchor.Center,
+					Width = settingData.ShowAsOverride ? 30 * GuiWidget.DeviceScale : 0,
+				};
+				this.AddChild(restoreArea);
+
+				this.Name = settingData.SlicerConfigName + " Edit Field";
+
+				if (settingData.ShowAsOverride)
+				{
+					restoreButton = ApplicationController.Instance.Theme.CreateSmallResetButton();
+					restoreButton.Name = "Restore " + settingData.SlicerConfigName;
+					restoreButton.ToolTipText = "Restore Default".Localize();
+
+					restoreButton.Click += (sender, e) =>
+					{
+						// Revert the user override 
+						settingsContext.ClearValue(settingData.SlicerConfigName);
+					};
+
+					restoreArea.AddChild(restoreButton);
+				}
+
+				var extraInfo = GetExtraSettingsWidget(settingData);
+				if (extraInfo != null)
+				{
+					unitsArea.AddChild(extraInfo);
+				}
+			}
+
+			public GuiWidget NameArea { get; }
+
+			public void UpdateStyle()
+			{
+				if (settingsContext.ContainsKey(settingData.SlicerConfigName))
+				{
+					switch (settingsContext.ViewFilter)
+					{
+						case NamedSettingsLayers.All:
+							if (settingData.ShowAsOverride)
+							{
+								var defaultCascade = ActiveSliceSettings.Instance.defaultLayerCascade;
+								var firstParentValue = ActiveSliceSettings.Instance.GetValueAndLayerName(settingData.SlicerConfigName, defaultCascade.Skip(1));
+								var currentValueAndLayerName = ActiveSliceSettings.Instance.GetValueAndLayerName(settingData.SlicerConfigName, defaultCascade);
+
+								var currentValue = currentValueAndLayerName.Item1;
+								var layerName = currentValueAndLayerName.Item2;
+
+								if (firstParentValue.Item1 == currentValue)
+								{
+									if (layerName.StartsWith("Material"))
+									{
+										this.BackgroundColor = materialSettingBackgroundColor;
+									}
+									else if (layerName.StartsWith("Quality"))
+									{
+										this.BackgroundColor = qualitySettingBackgroundColor;
+									}
+									else
+									{
+										this.BackgroundColor = RGBA_Bytes.Transparent;
+									}
+
+									if (restoreButton != null)
+									{
+										restoreButton.Visible = false;
+									}
+								}
+								else
+								{
+									this.BackgroundColor = userSettingBackgroundColor;
+									if (restoreButton != null) restoreButton.Visible = true;
+								}
+							}
+							break;
+						case NamedSettingsLayers.Material:
+							this.BackgroundColor = materialSettingBackgroundColor;
+							if (restoreButton != null) restoreButton.Visible = true;
+							break;
+						case NamedSettingsLayers.Quality:
+							this.BackgroundColor = qualitySettingBackgroundColor;
+							if (restoreButton != null) restoreButton.Visible = true;
+							break;
+					}
+				}
+				else if (settingsContext.IsPrimarySettingsView)
+				{
+					if (ActiveSliceSettings.Instance.SettingExistsInLayer(settingData.SlicerConfigName, NamedSettingsLayers.Material))
+					{
+						this.BackgroundColor = materialSettingBackgroundColor;
+					}
+					else if (ActiveSliceSettings.Instance.SettingExistsInLayer(settingData.SlicerConfigName, NamedSettingsLayers.Quality))
+					{
+						this.BackgroundColor = qualitySettingBackgroundColor;
+					}
+					else
+					{
+						this.BackgroundColor = RGBA_Bytes.Transparent;
+					}
+
+					if (restoreButton != null) restoreButton.Visible = false;
+				}
+				else
+				{
+					if (restoreButton != null) restoreButton.Visible = false;
+					this.BackgroundColor = RGBA_Bytes.Transparent;
+				}
+			}
+
+			public void AddContent(GuiWidget content)
+			{
+				dataArea.AddChild(content);
+			}
 		}
 
 		private static readonly RGBA_Bytes materialSettingBackgroundColor = new RGBA_Bytes(255, 127, 0, 108);
@@ -735,49 +882,23 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			string sliceSettingValue = settingsContext.GetValue(settingData.SlicerConfigName);
 
-			GuiWidget nameArea = new GuiWidget()
-			{
-				MinimumSize = new Vector2(50, 0),
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit // | VAnchor.Center
-			};
-			var dataArea = new FlowLayoutWidget();
-			GuiWidget unitsArea = new GuiWidget()
-			{
-				HAnchor = HAnchor.Absolute,
-				VAnchor = VAnchor.Fit | VAnchor.Center,
-				Width = settingData.ShowAsOverride ? 50 * GuiWidget.DeviceScale : 5,
-			};
-			GuiWidget restoreArea = new GuiWidget()
-			{
-				HAnchor = HAnchor.Absolute,
-				VAnchor = VAnchor.Fit | VAnchor.Center,
-				Width = settingData.ShowAsOverride ? 30 * GuiWidget.DeviceScale : 0,
-			};
+			ISettingsField OLDFIELDXXXXX = null;
+			IUIField uiField = null;
 
-			var settingsRow = new SettingsRow()
+			var settingsRow = new SettingsRow(settingsContext, settingData)
 			{
 				Margin = new BorderDouble(0, 2),
 				Padding = new BorderDouble(3),
 				HAnchor = HAnchor.Stretch
 			};
 
-			settingsRow.AddChild(nameArea);
-			settingsRow.AddChild(dataArea);
-			settingsRow.AddChild(unitsArea);
-			settingsRow.AddChild(restoreArea);
-			settingsRow.Name = settingData.SlicerConfigName + " Edit Field";
-
-			ISettingsField OLDFIELDXXXXX = null;
-			IUIField uiField = null;
-
 			if (!PrinterSettings.KnownSettings.Contains(settingData.SlicerConfigName))
 			{
 				// the setting we think we are adding is not in the known settings it may have been deprecated
 				TextWidget settingName = new TextWidget(String.Format("Setting '{0}' not found in known settings", settingData.SlicerConfigName));
 				settingName.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-				nameArea.AddChild(settingName);
-				nameArea.BackgroundColor = RGBA_Bytes.Red;
+				settingsRow.NameArea.AddChild(settingName);
+				settingsRow.NameArea.BackgroundColor = RGBA_Bytes.Red;
 			}
 			else
 			{
@@ -786,7 +907,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				if (settingData.DataEditType != SliceSettingData.DataEditTypes.MULTI_LINE_TEXT)
 				{
-					nameArea.AddChild(new WrappedTextWidget(settingData.PresentationName.Localize(), pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor));
+					settingsRow.NameArea.AddChild(new WrappedTextWidget(settingData.PresentationName.Localize(), pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor));
 				}
 
 				switch (settingData.DataEditType)
@@ -865,109 +986,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						break;
 
 					default:
-						var missingSetting = new TextWidget(String.Format("Missing the setting for '{0}'.", settingData.DataEditType.ToString()))
+						// Missing Setting
+						settingsRow.AddContent(new TextWidget(String.Format("Missing the setting for '{0}'.", settingData.DataEditType.ToString()))
 						{
 							TextColor = ActiveTheme.Instance.PrimaryTextColor,
 							BackgroundColor = RGBA_Bytes.Red
-						};
-						dataArea.AddChild(missingSetting);
+						});
 						break;
 				}
 			}
-
-			Button restoreButton = null;
-			if (settingData.ShowAsOverride)
-			{
-				restoreButton = ApplicationController.Instance.Theme.CreateSmallResetButton();
-				restoreButton.Name = "Restore " + settingData.SlicerConfigName;
-				restoreButton.ToolTipText = "Restore Default".Localize();
-
-				restoreButton.Click += (sender, e) =>
-				{
-					// Revert the user override 
-					settingsContext.ClearValue(settingData.SlicerConfigName);
-				};
-
-				restoreArea.AddChild(restoreButton);
-			}
-
-			// Define the UpdateStyle implementation
-			settingsRow.UpdateStyle = () =>
-			{
-				if (settingsContext.ContainsKey(settingData.SlicerConfigName))
-				{
-					switch (settingsContext.ViewFilter)
-					{
-						case NamedSettingsLayers.All:
-							if (settingData.ShowAsOverride)
-							{
-								var defaultCascade = ActiveSliceSettings.Instance.defaultLayerCascade;
-								var firstParentValue = ActiveSliceSettings.Instance.GetValueAndLayerName(settingData.SlicerConfigName, defaultCascade.Skip(1));
-								var currentValueAndLayerName = ActiveSliceSettings.Instance.GetValueAndLayerName(settingData.SlicerConfigName, defaultCascade);
-
-								var currentValue = currentValueAndLayerName.Item1;
-								var layerName = currentValueAndLayerName.Item2;
-
-								if (firstParentValue.Item1 == currentValue)
-								{
-									if (layerName.StartsWith("Material"))
-									{
-										settingsRow.BackgroundColor = materialSettingBackgroundColor;
-									}
-									else if (layerName.StartsWith("Quality"))
-									{
-										settingsRow.BackgroundColor = qualitySettingBackgroundColor;
-									}
-									else
-									{
-										settingsRow.BackgroundColor = RGBA_Bytes.Transparent;
-									}
-
-									if (restoreButton != null)
-									{
-										restoreButton.Visible = false;
-									}
-								}
-								else
-								{
-									settingsRow.BackgroundColor = userSettingBackgroundColor;
-									if (restoreButton != null) restoreButton.Visible = true;
-								}
-							}
-							break;
-						case NamedSettingsLayers.Material:
-							settingsRow.BackgroundColor = materialSettingBackgroundColor;
-							if (restoreButton != null) restoreButton.Visible = true;
-							break;
-						case NamedSettingsLayers.Quality:
-							settingsRow.BackgroundColor = qualitySettingBackgroundColor;
-							if (restoreButton != null) restoreButton.Visible = true;
-							break;
-					}
-				}
-				else if (settingsContext.IsPrimarySettingsView)
-				{
-					if (ActiveSliceSettings.Instance.SettingExistsInLayer(settingData.SlicerConfigName, NamedSettingsLayers.Material))
-					{
-						settingsRow.BackgroundColor = materialSettingBackgroundColor;
-					}
-					else if (ActiveSliceSettings.Instance.SettingExistsInLayer(settingData.SlicerConfigName, NamedSettingsLayers.Quality))
-					{
-						settingsRow.BackgroundColor = qualitySettingBackgroundColor;
-					}
-					else
-					{
-						settingsRow.BackgroundColor = RGBA_Bytes.Transparent;
-					}
-
-					if (restoreButton != null) restoreButton.Visible = false;
-				}
-				else
-				{
-					if (restoreButton != null) restoreButton.Visible = false;
-					settingsRow.BackgroundColor = RGBA_Bytes.Transparent;
-				}
-			};
 
 			if (OLDFIELDXXXXX != null)
 			{
@@ -975,11 +1002,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				OLDFIELDXXXXX.Value = sliceSettingValue;
 
-				this.PrepareRow(
-					OLDFIELDXXXXX.Create(settingsContext, settingData, tabIndexForItem++),
-					dataArea,
-					unitsArea,
-					settingData);
+				settingsRow.AddContent(
+					OLDFIELDXXXXX.Create(settingsContext, settingData, tabIndexForItem++));
 
 				OLDFIELDXXXXX.UpdateStyle = settingsRow.UpdateStyle;
 			}
@@ -1005,53 +1029,35 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					uiField.Initialize(tabIndexForItem);
 				}
 
-				this.PrepareRow(
-					uiField.Content,
-					dataArea,
-					unitsArea,
-					settingData);
-
+				settingsRow.AddContent(uiField.Content);
 			}
-
-
 
 			// Invoke the UpdateStyle implementation
 			settingsRow.UpdateStyle();
 
 			bool settingShouldEnabled = settingsContext.ParseShowString(settingData.EnableIfSet);
-			if (!settingShouldEnabled)
+			if (settingShouldEnabled)
+			{
+				return settingsRow;
+			}
+			else
 			{
 				var holder = new GuiWidget()
 				{
 					VAnchor = VAnchor.Fit,
 					HAnchor = HAnchor.Stretch
 				};
-
 				holder.AddChild(settingsRow);
 
 				var disable = new GuiWidget()
 				{
 					VAnchor = VAnchor.Stretch,
 					HAnchor = HAnchor.Stretch,
+					BackgroundColor = new RGBA_Bytes(ActiveTheme.Instance.TertiaryBackgroundColor, 200)
 				};
-				disable.BackgroundColor = new RGBA_Bytes(ActiveTheme.Instance.TertiaryBackgroundColor, 200);
-
 				holder.AddChild(disable);
 
 				return holder;
-			}
-
-			return settingsRow;
-		}
-
-		private void PrepareRow(GuiWidget content, GuiWidget dataArea, GuiWidget unitsArea, SliceSettingData settingData)
-		{
-			dataArea.AddChild(content);
-
-			var extraInfo = GetExtraSettingsWidget(settingData);
-			if (extraInfo != null)
-			{
-				unitsArea.AddChild(extraInfo);
 			}
 		}
 
