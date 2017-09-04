@@ -36,31 +36,27 @@ using MatterHackers.SerialPortCommunication.FrostedSerial;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class ComPortField : ISettingsField
+	public class ComPortField : BasicField, IUIField
 	{
 		private DropDownList dropdownList;
 
-		private SettingsContext settingsContext;
-		public Action UpdateStyle { get; set; }
+		public string HelpText { get; set; }
 
-		public string Value { get; set; }
-
-		public GuiWidget Create(SettingsContext settingsContext, SliceSettingData settingData, int tabIndex)
+		public void Initialize(int tabIndex)
 		{
 			EventHandler unregisterEvents = null;
 
-			this.settingsContext = settingsContext;
-
 			bool canChangeComPort = !PrinterConnection.Instance.PrinterIsConnected && PrinterConnection.Instance.CommunicationState != CommunicationStates.AttemptingToConnect;
-			
+
 			// The COM_PORT control is unique in its approach to the SlicerConfigName. It uses "com_port" settings name to
 			// bind to a context that will place it in the SliceSetting view but it binds its values to a machine
 			// specific dictionary key that is not exposed in the UI. At runtime we lookup and store to '<machinename>_com_port'
 			// ensuring that a single printer can be shared across different devices and we'll select the correct com port in each case
 			dropdownList = new DropDownList("None".Localize(), maxHeight: 200)
 			{
-				ToolTipText = settingData.HelpText,
+				ToolTipText = this.HelpText,
 				Margin = new BorderDouble(),
+				TabIndex = tabIndex,
 				Name = "Serial Port Dropdown",
 				// Prevent droplist interaction when connected
 				Enabled = canChangeComPort,
@@ -91,38 +87,41 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				unregisterEvents?.Invoke(null, null);
 			};
 
-			return dropdownList;
+			this.Content = dropdownList;
 		}
 
-		public void OnValueChanged(string text)
+		protected override void OnValueChanged()
 		{
 			// Lookup the machine specific comport value rather than the passed in text value
 			dropdownList.SelectedLabel = ActiveSliceSettings.Instance.Helpers.ComPort();
+
+			base.OnValueChanged();
 		}
 
 		private void RebuildMenuItems()
 		{
 			dropdownList.MenuItems.Clear();
 
-			string machineSpecificComPortValue = ActiveSliceSettings.Instance.Helpers.ComPort();
+			string currentValue = ActiveSliceSettings.Instance.Helpers.ComPort();
 
 			foreach (string listItem in FrostedSerialPort.GetPortNames())
 			{
 				// Add each serial port to the dropdown list 
 				MenuItem newItem = dropdownList.AddItem(listItem);
 
-				// TODO: review what this is doing and explain
-				if (newItem.Text == machineSpecificComPortValue)
+				// Set control text
+				if (newItem.Text == currentValue)
 				{
-					dropdownList.SelectedLabel = machineSpecificComPortValue;
+					dropdownList.SelectedLabel = currentValue;
 				}
 
 				// When the given menu item is selected, save its value back into settings
 				newItem.Selected += (sender, e) =>
 				{
-					MenuItem menuItem = ((MenuItem)sender);
-					settingsContext.SetComPort(menuItem.Text);
-					this.UpdateStyle();
+					if (sender is MenuItem menuItem)
+					{
+						this.Value = menuItem.Text;
+					}
 				};
 			}
 		}

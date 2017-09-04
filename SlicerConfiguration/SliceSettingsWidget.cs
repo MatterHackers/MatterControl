@@ -961,7 +961,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						OLDFIELDXXXXX = new MultilineStringField();
 						break;
 					case SliceSettingData.DataEditTypes.COM_PORT:
-						OLDFIELDXXXXX = new ComPortField();
+						uiField = new ComPortField();
+						uiField.ValueChanged += (s, e) =>
+						{
+							settingsContext.SetComPort(uiField.Value);
+						};
+
 						break;
 
 					case SliceSettingData.DataEditTypes.LIST:
