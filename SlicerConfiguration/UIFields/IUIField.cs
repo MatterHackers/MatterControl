@@ -55,14 +55,4 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		GuiWidget Content { get; }
 	}
 
-	public interface ISettingsField
-	{
-		void OnValueChanged(string text);
-
-		Action UpdateStyle { get; set; }
-
-		string Value { get; set; }
-
-		GuiWidget Create(SettingsContext settingsContext, SliceSettingData settingData, int tabIndex);
-	}
 }

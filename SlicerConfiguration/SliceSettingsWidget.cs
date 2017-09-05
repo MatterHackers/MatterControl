@@ -75,7 +75,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private SettingsContext settingsContext;
 
-		PrinterConnection printerConnection;
+		private PrinterConnection printerConnection;
+
+		private Dictionary<string, IUIField> allUiFields = new Dictionary<string, IUIField>();
 
 		private EventHandler unregisterEvents;
 
@@ -121,18 +123,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					if (e is StringEventArgs stringEvent)
 					{
 						string settingsKey = stringEvent.Data;
-						if (allFields.TryGetValue(settingsKey, out ISettingsField field))
-						{
-							string currentValue = settingsContext.GetValue(settingsKey);
-							if (field.Value != currentValue
-								|| settingsKey == "com_port")
-							{
-								field.Value = currentValue;
-								field.OnValueChanged(currentValue);
-								field.UpdateStyle();
-							}
-						}
-
 						if (allUiFields.TryGetValue(settingsKey, out IUIField field2))
 						{
 							string currentValue = settingsContext.GetValue(settingsKey);
@@ -855,9 +845,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				ref tabIndex);
 		}
 
-		Dictionary<string, ISettingsField> allFields = new Dictionary<string, ISettingsField>();
-		Dictionary<string, IUIField> allUiFields = new Dictionary<string, IUIField>();
-
 		private GuiWidget CreateSettingInfoUIControls(
 			PrinterConnection printerConnection,
 			SliceSettingData settingData,
@@ -867,7 +854,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			string sliceSettingValue = settingsContext.GetValue(settingData.SlicerConfigName);
 
-			ISettingsField OLDFIELDXXXXX = null;
 			IUIField uiField = null;
 
 			bool useDefaultSavePattern = true;
@@ -1015,18 +1001,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						});
 						break;
 				}
-			}
-
-			if (OLDFIELDXXXXX != null)
-			{
-				allFields[settingData.SlicerConfigName] = OLDFIELDXXXXX;
-
-				OLDFIELDXXXXX.Value = sliceSettingValue;
-
-				settingsRow.AddContent(
-					OLDFIELDXXXXX.Create(settingsContext, settingData, tabIndexForItem++));
-
-				OLDFIELDXXXXX.UpdateStyle = settingsRow.UpdateStyle;
 			}
 
 			if (uiField != null)

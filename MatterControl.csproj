@@ -302,11 +302,10 @@
     <Compile Include="SlicerConfiguration\UIFields\ListField.cs" />
     <Compile Include="SlicerConfiguration\UIFields\ExtruderOffsetField.cs" />
     <Compile Include="SlicerConfiguration\UIFields\Vector2Field.cs" />
-    <Compile Include="SlicerConfiguration\UIFields\StringField.cs" />
     <Compile Include="SlicerConfiguration\UIFields\IntField.cs" />
     <Compile Include="SlicerConfiguration\UIFields\PositiveDoubleField.cs" />
     <Compile Include="SlicerConfiguration\SettingsContext.cs" />
-    <Compile Include="SlicerConfiguration\UIFields\ISettingsField.cs" />
+    <Compile Include="SlicerConfiguration\UIFields\IUIField.cs" />
     <Compile Include="SlicerConfiguration\Settings\GCodeMacro.cs" />
     <Compile Include="SlicerConfiguration\Settings\ProfileMigrations.cs" />
     <Compile Include="SlicerConfiguration\Settings\ProfileManager.cs" />
