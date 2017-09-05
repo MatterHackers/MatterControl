@@ -28,31 +28,88 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class PositiveDoubleField : ISettingsField
+
+	public class DoubleOrMmField : ValueOrUnitsField
 	{
-		private MHNumberEdit doubleEditWidget;
-
-		public Action UpdateStyle { get; set; }
-
-		public string Value { get; set; }
-
-		public GuiWidget Create(SettingsContext settingsContext, SliceSettingData settingData, int tabIndex)
+		protected override string ConvertValue(string newValue)
 		{
-			const string multiValuesAreDiffernt = "-";
+			string text = newValue.Trim();
 
-			doubleEditWidget = new MHNumberEdit(0, allowDecimals: true, pixelWidth: DoubleField.DoubleEditWidth, tabIndex: tabIndex)
+			int tokenIndex = text.IndexOf(unitsToken);
+			bool hasUnitsToken = tokenIndex != -1;
+			if (hasUnitsToken)
 			{
-				ToolTipText = settingData.HelpText,
-				Name = settingData.PresentationName + " Textbox",
-				SelectAllOnFocus = true
-			};
+				text = text.Substring(0, tokenIndex);
+			}
 
-			double currentValue;
-			bool ChangesMultipleOtherSettings = settingData.SetSettingsOnChange.Count > 0;
+			double.TryParse(text, out double currentValue);
+			return currentValue + (hasUnitsToken ? unitsToken : "");
+		}
+	}
+
+	public class BoundDoubleField : TextField
+	{
+		private const string ValuesDifferToken = "-";
+
+		private bool ChangesMultipleOtherSettings;
+
+		private SliceSettingData settingData;
+
+		private SettingsContext settingsContext;
+
+		public BoundDoubleField(SettingsContext settingsContext, SliceSettingData settingData)
+		{
+			this.settingsContext = settingsContext;
+			this.settingData = settingData;
+		}
+
+		public override void Initialize(int tabIndex)
+		{
+			base.Initialize(tabIndex);
+			this.textEditWidget.BackgroundColor = RGBA_Bytes.Pink;
+			ChangesMultipleOtherSettings = settingData.SetSettingsOnChange.Count > 0;
+		}
+
+		protected override void OnValueChanged(FieldChangedEventArgs fieldChangedEventArgs)
+		{
+			if (fieldChangedEventArgs.UserInitiated)
+			{
+				// If this setting sets other settings, then do that.
+				if (ChangesMultipleOtherSettings)
+				{
+					for (int i = 0; i < settingData.SetSettingsOnChange.Count; i++)
+					{
+						string slicerConfigName = settingData.SetSettingsOnChange[i]["TargetSetting"];
+						settingsContext.SetValue(slicerConfigName, this.Value);
+					}
+				}
+
+				// also always save to the local setting
+				settingsContext.SetValue(settingData.SlicerConfigName, this.Value);
+			}
+			else
+			{
+				// Otherwise simply show the new value
+				textEditWidget.ActualTextEditWidget.Text = FilterValue(this.Value);
+			}
+
+			base.OnValueChanged(fieldChangedEventArgs);
+		}
+
+		/// <summary>
+		/// Overrides the current value to display the ValuesDifferToken if they are not all equal
+		/// </summary>
+		/// <param name="currentValue"></param>
+		/// <returns>The current value cast to double or the ValuesDifferToken (-)</returns>
+		private string FilterValue(string currentValue)
+		{
+			string text = currentValue.Trim();
+
 			if (ChangesMultipleOtherSettings)
 			{
 				bool allTheSame = true;
@@ -69,52 +126,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				if (allTheSame && setting.EndsWith("mm"))
 				{
-					double.TryParse(setting.Substring(0, setting.Length - 2), out currentValue);
-					doubleEditWidget.ActuallNumberEdit.Value = currentValue;
+					double.TryParse(setting.Substring(0, setting.Length - 2), out double castValue);
+					return castValue.ToString();
 				}
 				else
 				{
-					doubleEditWidget.ActuallNumberEdit.InternalNumberEdit.Text = multiValuesAreDiffernt;
+					return ValuesDifferToken;
 				}
 			}
 			else // just set the setting normally
 			{
-				double.TryParse(this.Value, out currentValue);
-				doubleEditWidget.ActuallNumberEdit.Value = currentValue;
+				double.TryParse(this.Value, out double castValue);
+				return castValue.ToString();
 			}
-			doubleEditWidget.ActuallNumberEdit.InternalTextEditWidget.MarkAsStartingState();
-
-			doubleEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
-			{
-				NumberEdit numberEdit = (NumberEdit)sender;
-				// If this setting sets other settings, then do that.
-				if (ChangesMultipleOtherSettings
-					&& numberEdit.Text != multiValuesAreDiffernt)
-				{
-					{
-						settingsContext.SetValue(settingData.SetSettingsOnChange[0]["TargetSetting"], numberEdit.Value.ToString() + "mm");
-					}
-				}
-
-				// also always save to the local setting
-				settingsContext.SetValue(settingData.SlicerConfigName, numberEdit.Value.ToString());
-				this.UpdateStyle();
-			};
-
-			if (settingData.QuickMenuSettings.Count > 0)
-			{
-				return SliceSettingsWidget.CreateQuickMenu(settingData, settingsContext, doubleEditWidget, doubleEditWidget.ActuallNumberEdit.InternalTextEditWidget);
-			}
-			else
-			{
-				return doubleEditWidget;
-			}
-		}
-
-		public void OnValueChanged(string text)
-		{
-			double.TryParse(text, out double currentValue);
-			doubleEditWidget.ActuallNumberEdit.Value = currentValue;
 		}
 	}
 }

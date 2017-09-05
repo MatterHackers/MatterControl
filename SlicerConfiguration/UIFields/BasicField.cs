@@ -229,8 +229,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				localUnregisterEvents?.Invoke(s, null);
 			};
 
-			totalContent.DebugShowBounds = true;
-
 			this.Content = totalContent;
 		}
 	}

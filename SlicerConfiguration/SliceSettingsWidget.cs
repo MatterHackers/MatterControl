@@ -909,7 +909,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						break;
 
 					case SliceSettingData.DataEditTypes.POSITIVE_DOUBLE:
-						OLDFIELDXXXXX = new PositiveDoubleField();
+						if (settingData.SetSettingsOnChange.Count > 0)
+						{
+							uiField = new BoundDoubleField(settingsContext, settingData);
+						}
+						else
+						{
+							uiField = new DoubleField();
+						}
 						break;
 
 					case SliceSettingData.DataEditTypes.DOUBLE_OR_PERCENT:
@@ -953,8 +960,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						uiField = new MultilineStringField();
 						break;
 					case SliceSettingData.DataEditTypes.COM_PORT:
-						uiField = new ComPortField();
 						useDefaultSavePattern = false;
+
+						uiField = new ComPortField();
 						uiField.ValueChanged += (s, e) =>
 						{
 							if (e.UserInitiated)
@@ -981,11 +989,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						break;
 
 					case SliceSettingData.DataEditTypes.OFFSET2:
+						useDefaultSavePattern = false;
+
 						uiField = new ExtruderOffsetField()
 						{
 							ExtruderIndex = extruderIndex
 						};
-						useDefaultSavePattern = false;
 						uiField.ValueChanged += (s, e) =>
 						{
 							if (e.UserInitiated
