@@ -72,7 +72,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		protected override void SetTargetTemperature()
 		{
-			double targetTemp = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.bed_temperature);
+			double targetTemp = printerConnection.PrinterSettings.GetValue<double>(SettingsKey.bed_temperature);
 			if (targetTemp != 0)
 			{
 				double goalTemp = (int)(targetTemp + .5);
@@ -116,7 +116,7 @@ namespace MatterHackers.MatterControl.ActionBar
 					Checked = false,
 					ToggleAction = (itemChecked) =>
 					{
-						var goalTemp = itemChecked ? ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.bed_temperature) : 0;
+						var goalTemp = itemChecked ? printerConnection.PrinterSettings.GetValue<double>(SettingsKey.bed_temperature) : 0;
 
 						if (printerConnection.PrinterIsPrinting
 							&& printerConnection.DetailedPrintingState == DetailedPrintingState.HeatingBed
@@ -148,7 +148,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				},
 				enforceGutter: false));
 
-			settingsTemperature = new TextWidget(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.bed_temperature).ToString())
+			settingsTemperature = new TextWidget(printerConnection.PrinterSettings.GetValue<double>(SettingsKey.bed_temperature).ToString())
 			{
 				AutoExpandBoundsToText = true
 			};
@@ -165,9 +165,9 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		private void ActiveSliceSettings_MaterialPresetChanged(object sender, EventArgs e)
 		{
-			if (settingsTemperature != null && ActiveSliceSettings.Instance != null)
+			if (settingsTemperature != null && printerConnection.PrinterSettings != null)
 			{
-				settingsTemperature.Text = ActiveSliceSettings.Instance.GetValue(SettingsKey.bed_temperature);
+				settingsTemperature.Text = printerConnection.PrinterSettings.GetValue(SettingsKey.bed_temperature);
 			}
 		}
 

@@ -39,11 +39,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class LevelWizard3Point : LevelWizardBase
 	{
-		private LevelingStrings levelingStrings = new LevelingStrings();
+		private LevelingStrings levelingStrings;
 
 		public LevelWizard3Point(PrinterConnection printerConnection, LevelWizardBase.RuningState runningState)
-			: base(500, 370, 9)
+			: base(printerConnection, 500, 370, 9)
 		{
+			levelingStrings = new LevelingStrings(printerConnection.PrinterSettings);
 			string printLevelWizardTitle = "MatterControl".Localize();
 			string printLevelWizardTitleFull = "Print Leveling Wizard".Localize();
 			Title = string.Format("{0} - {1}", printLevelWizardTitle, printLevelWizardTitleFull);
@@ -64,7 +65,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			printLevelWizard.AddPage(new FirstPageInstructions(levelingStrings.OverviewText, levelingStrings.WelcomeText(3, 3)));
 
 			// To make sure the bed is at the correct temp, put in a filament selection page.
-			bool hasHeatedBed = ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_heated_bed);
+			bool hasHeatedBed = printerConnection.PrinterSettings.GetValue<bool>(SettingsKey.has_heated_bed);
 			if (hasHeatedBed)
 			{
 				string filamentSelectionPage = "{0}\n\n{1}".FormatWith(levelingStrings.materialPageInstructions1, levelingStrings.materialPageInstructions2);
@@ -82,13 +83,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			string medPrecisionLabel = "Medium Precision".Localize();
 			string highPrecisionLabel = "High Precision".Localize();
 
-			double startProbeHeight = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.print_leveling_probe_start);
+			double startProbeHeight = printerConnection.PrinterSettings.GetValue<double>(SettingsKey.print_leveling_probe_start);
 
 			for (int i = 0; i < 3; i++)
 			{
-				Vector2 probePosition = LevelWizardBase.GetPrintLevelPositionToSample(i);
+				Vector2 probePosition = LevelWizardBase.GetPrintLevelPositionToSample(printerConnection.PrinterSettings, i);
 
-				if (ActiveSliceSettings.Instance.Helpers.UseZProbe())
+				if (printerConnection.PrinterSettings.Helpers.UseZProbe())
 				{
 					var stepString = string.Format("{0} {1} {2} {3}:", levelingStrings.stepTextBeg, i + 1, levelingStrings.stepTextEnd, 3);
 					printLevelWizard.AddPage(new AutoProbeFeedback(printerConnection, printLevelWizard, new Vector3(probePosition, startProbeHeight), string.Format("{0} {1} {2} - {3}", stepString, positionLabel, i + 1, autoCalibrateLabel), probePositions, i));
@@ -104,10 +105,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			printLevelWizard.AddPage(new LastPagelInstructions(printerConnection, printLevelWizard, "Done".Localize(), levelingStrings.DoneInstructions, probePositions));
 		}
 
-		public static string ApplyLeveling(string lineBeingSent, Vector3 currentDestination, PrinterMachineInstruction.MovementTypes movementMode)
+		public static string ApplyLeveling(PrinterSettings printerSettings, string lineBeingSent, Vector3 currentDestination, PrinterMachineInstruction.MovementTypes movementMode)
 		{
-			var settings = ActiveSliceSettings.Instance;
-			if (settings?.GetValue<bool>(SettingsKey.print_leveling_enabled) == true
+			if (printerSettings?.GetValue<bool>(SettingsKey.print_leveling_enabled) == true
 				&& (lineBeingSent.StartsWith("G0 ") || lineBeingSent.StartsWith("G1 ")))
 			{
 				lineBeingSent = PrintLevelingPlane.Instance.ApplyLeveling(currentDestination, lineBeingSent);

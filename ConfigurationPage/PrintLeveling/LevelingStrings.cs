@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
@@ -65,11 +66,17 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		private string cleanExtruder = "Note: Be sure the tip of the extruder is clean and the bed is clear.".Localize();
 		private string clickNext = "Click 'Next' to continue.".Localize();
 
+		PrinterSettings printerSettings;
+		public LevelingStrings(PrinterSettings printerSettings)
+		{
+			this.printerSettings = printerSettings;
+		}
+
 		public string DoneInstructions
 		{
 			get
 			{
-				if (ActiveSliceSettings.Instance.Helpers.UseZProbe())
+				if (printerSettings.Helpers.UseZProbe())
 				{
 					return "{0}{1}\n\n{2}{3}".FormatWith(doneLine1, doneLine1b, doneLine3, doneLine3b);
 				}
@@ -84,7 +91,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 			get
 			{
-				if (ActiveSliceSettings.Instance.Helpers.UseZProbe())
+				if (printerSettings.Helpers.UseZProbe())
 				{
 					return "Waiting for the bed to heat up.".Localize() + "\n"
 						+ "This will improve the accuracy of print leveling.".Localize();
@@ -102,7 +109,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 			get
 			{
-				if (ActiveSliceSettings.Instance.Helpers.UseZProbe())
+				if (printerSettings.Helpers.UseZProbe())
 				{
 					return homingLine1;
 				}
@@ -122,12 +129,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public string WelcomeText(int numberOfSteps, int numberOfMinutes)
 		{
-			if (ActiveSliceSettings.Instance.Helpers.UseZProbe())
+			if (printerSettings.Helpers.UseZProbe())
 			{
 				numberOfMinutes = 2;
 			}
 
-			if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_heated_bed))
+			if (printerSettings.GetValue<bool>(SettingsKey.has_heated_bed))
 			{
 				return "{0}\n\n\t• {1}\n\t• {2}\n\t• {3}\n\t• {4}\n\t• {5}\n\n{6}\n\n{7}\n\n{8}".FormatWith(
 					this.welcomeLine1,

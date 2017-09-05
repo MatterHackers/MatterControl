@@ -42,10 +42,12 @@ namespace MatterHackers.MatterControl
 	public class EditLevelingSettingsWindow : SystemWindow
 	{
 		private List<Vector3> positions = new List<Vector3>();
+		PrinterSettings printerSettings;
 
-		public EditLevelingSettingsWindow()
+		public EditLevelingSettingsWindow(PrinterSettings printerSettings)
 			: base(400, 370)
 		{
+			this.printerSettings = printerSettings;
 			var textImageButtonFactory = ApplicationController.Instance.Theme.ButtonFactory;
 
 			AlwaysOnTopOfMain = true;
@@ -86,7 +88,7 @@ namespace MatterHackers.MatterControl
 			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
 			// put in the movement edit controls
-			PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
+			PrintLevelingData levelingData = printerSettings.Helpers.GetPrintLevelingData();
 			for (int i = 0; i < levelingData.SampledPositions.Count; i++)
 			{
 				positions.Add(levelingData.SampledPositions[i]);
@@ -145,15 +147,15 @@ namespace MatterHackers.MatterControl
 			{
 				UiThread.RunOnIdle(() =>
 				{
-					PrintLevelingData newLevelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
+					PrintLevelingData newLevelingData = printerSettings.Helpers.GetPrintLevelingData();
 
 					for (int i = 0; i < newLevelingData.SampledPositions.Count; i++)
 					{
 						newLevelingData.SampledPositions[i] = positions[i];
 					}
 
-					ActiveSliceSettings.Instance.Helpers.SetPrintLevelingData(newLevelingData, false);
-					ActiveSliceSettings.Instance.Helpers.UpdateLevelSettings();
+					printerSettings.Helpers.SetPrintLevelingData(newLevelingData, false);
+					printerSettings.Helpers.UpdateLevelSettings();
 					Close();
 				});
 			};

@@ -105,11 +105,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			sliceButton.Margin = defaultMargin;
 			sliceButton.Click += async (s, e) =>
 			{
-				if (ActiveSliceSettings.Instance.PrinterSelected)
+				if (printerConnection.PrinterSettings.PrinterSelected)
 				{
 					var printItem = ApplicationController.Instance.ActivePrintItem;
 
-					if (ActiveSliceSettings.Instance.IsValid() && printItem != null)
+					if (printerConnection.PrinterSettings.IsValid() && printItem != null)
 					{
 						sliceButton.Enabled = false;
 
@@ -172,7 +172,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Margin = new BorderDouble(right: 10)
 			});
 
-			if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_heated_bed))
+			if (printerConnection.PrinterSettings.GetValue<bool>(SettingsKey.has_heated_bed))
 			{
 				this.AddChild(new TemperatureWidgetBed(printerConnection));
 			}
@@ -209,7 +209,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private GuiWidget GeneratePrinterOverflowMenu()
 		{
-			var printerSettings = ActiveSliceSettings.Instance;
+			var printerSettings = printerConnection.PrinterSettings;
 
 			var menuActions = new NamedAction[]
 			{
@@ -249,7 +249,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							{
 								if (doDelete)
 								{
-									ActiveSliceSettings.Instance.Helpers.SetMarkedForDelete(true);
+									printerConnection.PrinterSettings.Helpers.SetMarkedForDelete(true);
 								}
 							},
 							"Are you sure you want to delete your currently selected printer?".Localize(),

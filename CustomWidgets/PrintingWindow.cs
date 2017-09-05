@@ -297,7 +297,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			// put in the reset button
 			var resetButton = CreateButton("Reset".Localize().ToUpper(), smallScreen, true, AggContext.StaticData.LoadIcon("e_stop4.png", 32, 32));
 
-			resetButton.Visible = ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.show_reset_connection);
+			resetButton.Visible = printerConnection.PrinterSettings.GetValue<bool>(SettingsKey.show_reset_connection);
 			resetButton.Click += (s, e) =>
 			{
 				UiThread.RunOnIdle(printerConnection.RebootBoard);
@@ -629,7 +629,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				timeContainer.AddChild(timeWidget);
 
 				int maxTextWidth = 350;
-				printerName = new TextWidget(ActiveSliceSettings.Instance.GetValue(SettingsKey.printer_name), pointSize: 16, textColor: ActiveTheme.Instance.PrimaryTextColor)
+				printerName = new TextWidget(printerConnection.PrinterSettings.GetValue(SettingsKey.printer_name), pointSize: 16, textColor: ActiveTheme.Instance.PrimaryTextColor)
 				{
 					HAnchor = HAnchor.Center,
 					MinimumSize = new Vector2(maxTextWidth, MinimumSize.y),
@@ -670,11 +670,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			};
 			topToBottom.AddChild(footerBar);
 
-			int extruderCount = ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.extruder_count);
+			int extruderCount = printerConnection.PrinterSettings.GetValue<int>(SettingsKey.extruder_count);
 
 			extruderStatusWidgets = Enumerable.Range(0, extruderCount).Select((i) => new ExtruderStatusWidget(printerConnection, i)).ToList();
 
-			bool hasHeatedBed = ActiveSliceSettings.Instance.GetValue<bool>("has_heated_bed");
+			bool hasHeatedBed = printerConnection.PrinterSettings.GetValue<bool>("has_heated_bed");
 			if (hasHeatedBed)
 			{
 				var extruderColumn = new FlowLayoutWidget(FlowDirection.TopToBottom);
@@ -929,7 +929,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			this.AddChild(CreateZMoveButton(printerConnection, .02, smallScreen));
 
-			this.AddChild(new ZTuningWidget(false)
+			this.AddChild(new ZTuningWidget(printerConnection.PrinterSettings, false)
 			{
 				HAnchor = HAnchor.Center | HAnchor.Fit,
 				Margin = 10
@@ -956,7 +956,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		private Button CreateZMoveButton(PrinterConnection printerConnection, double moveAmount, bool smallScreen)
 		{
-			var button = buttonFactory.GenerateMoveButton(printerConnection, $"{Math.Abs(moveAmount):0.00} mm", PrinterConnection.Axis.Z, MovementControls.ZSpeed);
+			var button = buttonFactory.GenerateMoveButton(printerConnection, $"{Math.Abs(moveAmount):0.00} mm", PrinterConnection.Axis.Z, printerConnection.PrinterSettings.ZSpeed());
 			button.MoveAmount = moveAmount;
 			button.HAnchor = HAnchor.MaxFitOrStretch;
 			button.VAnchor = VAnchor.Fit;

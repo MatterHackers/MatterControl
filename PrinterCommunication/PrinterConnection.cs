@@ -2303,7 +2303,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				if (PrinterSettings.GetValue<bool>(SettingsKey.recover_is_enabled)
 					&& activePrintTask != null) // We are resuming a failed print (do lots of interesting stuff).
 				{
-					pauseHandlingStream1 = new PauseHandlingStream(this, new PrintRecoveryStream(gCodeFileStream0, activePrintTask.PercentDone));
+					pauseHandlingStream1 = new PauseHandlingStream(this, new PrintRecoveryStream(this, gCodeFileStream0, activePrintTask.PercentDone));
 					// And increment the recovery count
 					activePrintTask.RecoveryCount++;
 					activePrintTask.Commit();
@@ -2323,9 +2323,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			queuedCommandStream2 = new QueuedCommandsStream(firstStream);
 			macroProcessingStream3 = new MacroProcessingStream(queuedCommandStream2, this);
 			relativeToAbsoluteStream4 = new RelativeToAbsoluteStream(macroProcessingStream3);
-			printLevelingStream5 = new PrintLevelingStream(ActiveSliceSettings.Instance, relativeToAbsoluteStream4, true);
+			printLevelingStream5 = new PrintLevelingStream(PrinterSettings, relativeToAbsoluteStream4, true);
 			waitForTempStream6 = new WaitForTempStream(this, printLevelingStream5);
-			babyStepsStream7 = new BabyStepsStream(waitForTempStream6, gcodeFilename == null ? 2000 : 1);
+			babyStepsStream7 = new BabyStepsStream(PrinterSettings, waitForTempStream6, gcodeFilename == null ? 2000 : 1);
 			if (activePrintTask != null)
 			{
 				// make sure we are in the position we were when we stopped printing
@@ -2334,7 +2334,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			extrusionMultiplyerStream8 = new ExtrusionMultiplyerStream(babyStepsStream7);
 			feedrateMultiplyerStream9 = new FeedRateMultiplyerStream(extrusionMultiplyerStream8);
 			requestTemperaturesStream10 = new RequestTemperaturesStream(this, feedrateMultiplyerStream9);
-			processWriteRegExStream11 = new ProcessWriteRegexStream(requestTemperaturesStream10, queuedCommandStream2);
+			processWriteRegExStream11 = new ProcessWriteRegexStream(this.PrinterSettings, requestTemperaturesStream10, queuedCommandStream2);
 			totalGCodeStream = processWriteRegExStream11;
 
 			// Get the current position of the printer any time we reset our streams
@@ -2630,8 +2630,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		//int checkSumCount = 1;
 		private void WriteChecksumLineToPrinter(string lineToWrite)
 		{
-			SetDetailedPrintingState(lineToWrite);
-
 			// remove the comment if any
 			lineToWrite = RemoveCommentIfAny(lineToWrite);
 
@@ -2662,6 +2660,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			//lineWithChecksum = lineWithCount + "*" + (GCodeFile.CalculateChecksum(lineWithCount) + checkSumCount).ToString();
 
 			WriteRawToPrinter(lineWithChecksum + "\n", lineToWrite);
+
+			SetDetailedPrintingState(lineToWrite);
 		}
 
 		private static string RemoveCommentIfAny(string lineToWrite)

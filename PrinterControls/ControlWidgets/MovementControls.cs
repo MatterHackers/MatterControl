@@ -66,25 +66,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		private EventHandler unregisterEvents;
 
-		public static double XSpeed => ActiveSliceSettings.Instance.Helpers.GetMovementSpeeds()["x"];
-
-		public static double YSpeed => ActiveSliceSettings.Instance.Helpers.GetMovementSpeeds()["y"];
-
-		public static double ZSpeed => ActiveSliceSettings.Instance.Helpers.GetMovementSpeeds()["z"];
-
-		public static double EFeedRate(int extruderIndex)
-		{
-			var movementSpeeds = ActiveSliceSettings.Instance.Helpers.GetMovementSpeeds();
-
-			string extruderIndexKey = "e" + extruderIndex.ToString();
-			if (movementSpeeds.ContainsKey(extruderIndexKey))
-			{
-				return movementSpeeds[extruderIndexKey];
-			}
-
-			return movementSpeeds["e0"];
-		}
-
 		public override void OnClosed(ClosedEventArgs e)
 		{
 			unregisterEvents?.Invoke(this, null);
@@ -122,7 +103,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			{
 				if (editManualMovementSettingsWindow == null)
 				{
-					editManualMovementSettingsWindow = new EditManualMovementSpeedsWindow("Movement Speeds".Localize(), ActiveSliceSettings.Instance.Helpers.GetMovementSpeedsString(), SetMovementSpeeds);
+					editManualMovementSettingsWindow = new EditManualMovementSpeedsWindow("Movement Speeds".Localize(), printerConnection.PrinterSettings.Helpers.GetMovementSpeedsString(), SetMovementSpeeds);
 					editManualMovementSettingsWindow.Closed += (s, e2) =>
 					{
 						editManualMovementSettingsWindow = null;
@@ -160,11 +141,11 @@ namespace MatterHackers.MatterControl.PrinterControls
 			this.AddChild(movementControlsGroupBox);
 		}
 
-		private static void SetMovementSpeeds(string speedString)
+		private void SetMovementSpeeds(string speedString)
 		{
 			if (!string.IsNullOrEmpty(speedString))
 			{
-				ActiveSliceSettings.Instance.SetValue(SettingsKey.manual_movement_speeds, speedString);
+				printerConnection.PrinterSettings.SetValue(SettingsKey.manual_movement_speeds, speedString);
 				ApplicationController.Instance.ReloadAdvancedControlsPanel();
 			}
 		}
@@ -235,7 +216,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			};
 			homeButtonBar.AddChild(offsetStreamLabel);
 
-			var ztuningWidget = new ZTuningWidget();
+			var ztuningWidget = new ZTuningWidget(printerConnection.PrinterSettings);
 			homeButtonBar.AddChild(ztuningWidget);
 			
 			homeButtonBar.AddChild(new HorizontalSpacer());
@@ -326,9 +307,11 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		private EventHandler unregisterEvents;
 		private bool allowRemoveButton;
+		PrinterSettings printerSettings;
 
-		public ZTuningWidget(bool allowRemoveButton = true)
+		public ZTuningWidget(PrinterSettings printerSettings, bool allowRemoveButton = true)
 		{
+			this.printerSettings = printerSettings;
 			this.allowRemoveButton = allowRemoveButton;
 			this.HAnchor = HAnchor.Fit;
 			this.VAnchor = VAnchor.Fit | VAnchor.Center;
@@ -352,7 +335,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			};
 			this.AddChild(zOffsetStreamContainer);
 
-			double zoffset = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.baby_step_z_offset);
+			double zoffset = printerSettings.GetValue<double>(SettingsKey.baby_step_z_offset);
 			zOffsetStreamDisplay = new TextWidget(zoffset.ToString("0.##"))
 			{
 				AutoExpandBoundsToText = true,
@@ -368,14 +351,14 @@ namespace MatterHackers.MatterControl.PrinterControls
 			clearZOffsetButton.Visible = allowRemoveButton && zoffset != 0;
 			clearZOffsetButton.Click += (sender, e) =>
 			{
-				ActiveSliceSettings.Instance.SetValue(SettingsKey.baby_step_z_offset, "0");
+				printerSettings.SetValue(SettingsKey.baby_step_z_offset, "0");
 			};
 			zOffsetStreamContainer.AddChild(clearZOffsetButton);
 		}
 
 		internal void OffsetStreamChanged(object sender, EventArgs e)
 		{
-			double zoffset = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.baby_step_z_offset);
+			double zoffset = printerSettings.GetValue<double>(SettingsKey.baby_step_z_offset);
 			bool hasOverriddenZOffset = (zoffset != 0);
 
 			zOffsetStreamContainer.BackgroundColor = (allowRemoveButton && hasOverriddenZOffset) ? SliceSettingsWidget.userSettingBackgroundColor : ActiveTheme.Instance.SecondaryBackgroundColor;

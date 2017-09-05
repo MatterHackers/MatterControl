@@ -135,6 +135,37 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string calibration_files = nameof(calibration_files);
 	}
 
+	public static class PrinterSettigsExtensions
+	{
+		public static double XSpeed(this PrinterSettings printerSettings)
+		{
+			return printerSettings.Helpers.GetMovementSpeeds()["x"];
+		}
+
+		public static double YSpeed(this PrinterSettings printerSettings)
+		{
+			return printerSettings.Helpers.GetMovementSpeeds()["y"];
+		}
+
+		public static double ZSpeed(this PrinterSettings printerSettings)
+		{
+			return printerSettings.Helpers.GetMovementSpeeds()["z"];
+		}
+
+		public static double EFeedRate(this PrinterSettings printerSettings, int extruderIndex)
+		{
+			var movementSpeeds = printerSettings.Helpers.GetMovementSpeeds();
+
+			string extruderIndexKey = "e" + extruderIndex.ToString();
+			if (movementSpeeds.ContainsKey(extruderIndexKey))
+			{
+				return movementSpeeds[extruderIndexKey];
+			}
+
+			return movementSpeeds["e0"];
+		}
+	}
+
 	public class SettingsHelpers
 	{
 		private PrinterSettings printerSettings;
@@ -312,7 +343,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				UpdateLevelSettings();
 			}
 
-			PrinterSettings.PrintLevelingEnabledChanged?.CallEvents(this, null);
+			printerSettings.PrintLevelingEnabledChanged?.CallEvents(this, null);
 		}
 
 		public void UpdateLevelSettings()

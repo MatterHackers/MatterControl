@@ -43,10 +43,12 @@ namespace MatterHackers.MatterControl
 	{
 		public GCodeMacro ActiveMacro;
 		private static EditMacrosWindow editMacrosWindow = null;
+		PrinterSettings printerSettings;
 
-		public EditMacrosWindow()
+		public EditMacrosWindow(PrinterSettings printerSettings)
 			: base(560, 420)
 		{
+			this.printerSettings = printerSettings;
 			AlwaysOnTopOfMain = true;
 			Title = "Macro Editor".Localize();
 			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
@@ -59,7 +61,7 @@ namespace MatterHackers.MatterControl
 		{
 			if (editMacrosWindow == null)
 			{
-				editMacrosWindow = new EditMacrosWindow();
+				editMacrosWindow = new EditMacrosWindow(ActiveSliceSettings.Instance);
 				editMacrosWindow.Closed += (popupWindowSender, popupWindowSenderE) => { editMacrosWindow = null; };
 			}
 			else
@@ -74,7 +76,7 @@ namespace MatterHackers.MatterControl
 			UiThread.RunOnIdle(() =>
 			{
 				this.RemoveAllChildren();
-				this.AddChild(new MacroDetailWidget(this));
+				this.AddChild(new MacroDetailWidget(printerSettings, this));
 				this.Invalidate();
 			});
 		}
@@ -87,13 +89,13 @@ namespace MatterHackers.MatterControl
 
 		public void RefreshMacros()
 		{
-			ActiveSliceSettings.Instance.Save();
+			printerSettings.Save();
 			ApplicationController.Instance.ReloadAll();
 		}
 
 		private void DoChangeToMacroList()
 		{
-			GuiWidget macroListWidget = new MacroListWidget(this);
+			GuiWidget macroListWidget = new MacroListWidget(printerSettings, this);
 			this.RemoveAllChildren();
 			this.AddChild(macroListWidget);
 			this.Invalidate();
@@ -110,9 +112,11 @@ namespace MatterHackers.MatterControl
 		private CheckBox showInActionMenu;
 		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 		private EditMacrosWindow windowController;
+		PrinterSettings printerSettings;
 
-		public MacroDetailWidget(EditMacrosWindow windowController)
+		public MacroDetailWidget(PrinterSettings printerSettings, EditMacrosWindow windowController)
 		{
+			this.printerSettings = printerSettings;
 			this.windowController = windowController;
 
 			linkButtonFactory.fontSize = 10;
@@ -268,9 +272,9 @@ namespace MatterHackers.MatterControl
 			windowController.ActiveMacro.GCode = macroCommandInput.Text;
 			windowController.ActiveMacro.ActionGroup = showInActionMenu.Checked;
 
-			if (!ActiveSliceSettings.Instance.Macros.Contains(windowController.ActiveMacro))
+			if (!printerSettings.Macros.Contains(windowController.ActiveMacro))
 			{
-				ActiveSliceSettings.Instance.Macros.Add(windowController.ActiveMacro);
+				printerSettings.Macros.Add(windowController.ActiveMacro);
 			}
 		}
 
@@ -318,8 +322,9 @@ namespace MatterHackers.MatterControl
 		private LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
 		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 		private EditMacrosWindow windowController;
+		PrinterSettings printerSettings;
 
-		public MacroListWidget(EditMacrosWindow windowController)
+		public MacroListWidget(PrinterSettings printerSettings, EditMacrosWindow windowController)
 		{
 			this.windowController = windowController;
 
@@ -355,9 +360,9 @@ namespace MatterHackers.MatterControl
 
 			topToBottom.AddChild(presetsFormContainer);
 
-			if (ActiveSliceSettings.Instance?.Macros != null)
+			if (printerSettings?.Macros != null)
 			{
-				foreach (GCodeMacro macro in ActiveSliceSettings.Instance.Macros)
+				foreach (GCodeMacro macro in printerSettings.Macros)
 				{
 					FlowLayoutWidget macroRow = new FlowLayoutWidget();
 					macroRow.Margin = new BorderDouble(3, 0, 3, 3);
@@ -385,7 +390,7 @@ namespace MatterHackers.MatterControl
 					Button removeLink = linkButtonFactory.Generate("remove".Localize());
 					removeLink.Click += (sender, e) =>
 					{
-						ActiveSliceSettings.Instance.Macros.Remove(localMacroReference);
+						printerSettings.Macros.Remove(localMacroReference);
 
 						windowController.RefreshMacros();
 						windowController.ChangeToMacroList();

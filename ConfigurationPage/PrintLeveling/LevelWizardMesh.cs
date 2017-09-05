@@ -48,16 +48,15 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 		}
 
-		public static string ApplyLeveling(string lineBeingSent, Vector3 currentDestination)
+		public static string ApplyLeveling(PrinterSettings printerSettings, string lineBeingSent, Vector3 currentDestination)
 		{
-			var settings = ActiveSliceSettings.Instance;
-			if (settings?.GetValue<bool>(SettingsKey.print_leveling_enabled) == true
+			if (printerSettings?.GetValue<bool>(SettingsKey.print_leveling_enabled) == true
 				&& (lineBeingSent.StartsWith("G0 ") || lineBeingSent.StartsWith("G1 "))
 				&& lineBeingSent.Length > 2
 				&& lineBeingSent[2] == ' ')
 			{
-				PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
-				return GetLevelingFunctions(3, 3, levelingData)
+				PrintLevelingData levelingData = printerSettings.Helpers.GetPrintLevelingData();
+				return GetLevelingFunctions(printerSettings, 3, 3, levelingData)
 					.DoApplyLeveling(lineBeingSent, currentDestination);
 			}
 
@@ -84,16 +83,16 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public override Vector2 GetPrintLevelPositionToSample(int index)
 		{
-			var manualPositions = GetManualPositions(ActiveSliceSettings.Instance.GetValue(SettingsKey.leveling_manual_positions), 9);
+			var manualPositions = GetManualPositions(printerConnection.PrinterSettings.GetValue(SettingsKey.leveling_manual_positions), 9);
 			if (manualPositions != null)
 			{
 				return manualPositions[index];
 			}
 
-			Vector2 bedSize = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.bed_size);
-			Vector2 printCenter = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center);
+			Vector2 bedSize = printerConnection.PrinterSettings.GetValue<Vector2>(SettingsKey.bed_size);
+			Vector2 printCenter = printerConnection.PrinterSettings.GetValue<Vector2>(SettingsKey.print_center);
 
-			if (ActiveSliceSettings.Instance.GetValue<BedShape>(SettingsKey.bed_shape) == BedShape.Circular)
+			if (printerConnection.PrinterSettings.GetValue<BedShape>(SettingsKey.bed_shape) == BedShape.Circular)
 			{
 				// reduce the bed size by the ratio of the radius (square root of 2) so that the sample positions will fit on a ciclular bed
 				bedSize *= 1.0 / Math.Sqrt(2);
@@ -150,11 +149,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	public abstract class LevelWizardMeshBase : LevelWizardBase
 	{
 		private static MeshLevlingFunctions currentLevelingFunctions = null;
-		private LevelingStrings levelingStrings = new LevelingStrings();
+		protected LevelingStrings levelingStrings;
 
 		public LevelWizardMeshBase(PrinterConnection printerConnection, LevelWizardBase.RuningState runningState, int width, int height, int totalSteps, int gridWidth, int gridHeight)
-			: base(width, height, totalSteps)
+			: base(printerConnection, width, height, totalSteps)
 		{
+			levelingStrings = new LevelingStrings(printerConnection.PrinterSettings);
 			string printLevelWizardTitle = "MatterControl";
 			string printLevelWizardTitleFull = "Print Leveling Wizard".Localize();
 			Title = string.Format("{0} - {1}", printLevelWizardTitle, printLevelWizardTitleFull);
@@ -176,8 +176,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			printLevelWizard.AddPage(new FirstPageInstructions(levelingStrings.OverviewText, levelingStrings.WelcomeText(probeCount, 5)));
 
+			var printerSettings = printerConnection.PrinterSettings;
+
 			// To make sure the bed is at the correct temp, put in a filament selection page.
-			bool hasHeatedBed = ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_heated_bed);
+			bool hasHeatedBed = printerSettings.GetValue<bool>(SettingsKey.has_heated_bed);
 			if (hasHeatedBed)
 			{
 				string filamentSelectionPage = "{0}\n\n{1}".FormatWith(levelingStrings.materialPageInstructions1, levelingStrings.materialPageInstructions2);
@@ -195,14 +197,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			string medPrecisionLabel = "Medium Precision".Localize();
 			string highPrecisionLabel = "High Precision".Localize();
 
-			double bedRadius = Math.Min(ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.bed_size).x, ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.bed_size).y) / 2;
+			double bedRadius = Math.Min(printerSettings.GetValue<Vector2>(SettingsKey.bed_size).x, printerSettings.GetValue<Vector2>(SettingsKey.bed_size).y) / 2;
 
-			double startProbeHeight = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.print_leveling_probe_start);
+			double startProbeHeight = printerSettings.GetValue<double>(SettingsKey.print_leveling_probe_start);
 			for (int i = 0; i < probeCount; i++)
 			{
 				Vector2 probePosition = GetPrintLevelPositionToSample(i);
 
-				if (ActiveSliceSettings.Instance.Helpers.UseZProbe())
+				if (printerSettings.Helpers.UseZProbe())
 				{
 					var stepString = string.Format("{0} {1} {2} {3}:", levelingStrings.stepTextBeg, i + 1, levelingStrings.stepTextEnd, probeCount);
 					printLevelWizard.AddPage(new AutoProbeFeedback(printerConnection, printLevelWizard, new Vector3(probePosition, startProbeHeight), string.Format("{0} {1} {2} - {3}", stepString, positionLabel, i + 1, autoCalibrateLabel), probePositions, i));
@@ -218,7 +220,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			printLevelWizard.AddPage(new LastPagelInstructions(printerConnection, printLevelWizard, "Done".Localize(), levelingStrings.DoneInstructions, probePositions));
 		}
 
-		public static MeshLevlingFunctions GetLevelingFunctions(int gridWidth, int gridHeight, PrintLevelingData levelingData)
+		public static MeshLevlingFunctions GetLevelingFunctions(PrinterSettings printerSettings, int gridWidth, int gridHeight, PrintLevelingData levelingData)
 		{
 			if (currentLevelingFunctions == null
 				|| !levelingData.SamplesAreSame(currentLevelingFunctions.SampledPositions))
@@ -228,7 +230,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					currentLevelingFunctions.Dispose();
 				}
 
-				currentLevelingFunctions = new MeshLevlingFunctions(gridWidth, gridHeight, levelingData);
+				currentLevelingFunctions = new MeshLevlingFunctions(printerSettings, gridWidth, gridHeight, levelingData);
 			}
 
 			return currentLevelingFunctions;
@@ -242,9 +244,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		private Vector3 lastDestinationWithLevelingApplied = new Vector3();
 
 		private EventHandler unregisterEvents;
+		PrinterSettings printerSettings;
 
-		public MeshLevlingFunctions(int gridWidth, int gridHeight, PrintLevelingData levelingData)
+		public MeshLevlingFunctions(PrinterSettings printerSettings, int gridWidth, int gridHeight, PrintLevelingData levelingData)
 		{
+			this.printerSettings = printerSettings;
 			this.SampledPositions = new List<Vector3>(levelingData.SampledPositions);
 
 			for (int y = 0; y < gridHeight - 1; y++)
@@ -315,16 +319,16 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public Vector2 GetPrintLevelPositionToSample(int index, int gridWidth, int gridHeight)
 		{
-			var manualPositions = LevelWizardBase.GetManualPositions(ActiveSliceSettings.Instance.GetValue(SettingsKey.leveling_manual_positions), gridWidth * gridHeight);
+			var manualPositions = LevelWizardBase.GetManualPositions(printerSettings.GetValue(SettingsKey.leveling_manual_positions), gridWidth * gridHeight);
 			if (manualPositions != null)
 			{
 				return manualPositions[index];
 			}
 
-			Vector2 bedSize = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.bed_size);
-			Vector2 printCenter = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center);
+			Vector2 bedSize = printerSettings.GetValue<Vector2>(SettingsKey.bed_size);
+			Vector2 printCenter = printerSettings.GetValue<Vector2>(SettingsKey.print_center);
 
-			switch (ActiveSliceSettings.Instance.GetValue<BedShape>(SettingsKey.bed_shape))
+			switch (printerSettings.GetValue<BedShape>(SettingsKey.bed_shape))
 			{
 				case BedShape.Circular:
 					Vector2 firstPosition = new Vector2(printCenter.x, printCenter.y + (bedSize.y / 2) * .5);

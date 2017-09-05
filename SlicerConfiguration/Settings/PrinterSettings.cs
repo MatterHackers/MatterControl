@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		// Year|month|day|versionForDay (to support multiple revisions on a given day)
 		public static int LatestVersion { get; } = 201606271;
 
-		public static RootedObjectEventHandler PrintLevelingEnabledChanged = new RootedObjectEventHandler();
+		public RootedObjectEventHandler PrintLevelingEnabledChanged = new RootedObjectEventHandler();
 
 		public static PrinterSettings Empty { get; }
 

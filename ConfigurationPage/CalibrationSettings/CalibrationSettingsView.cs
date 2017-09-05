@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			this.buttonFactory = buttonFactory;
 
-			if (!ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_hardware_leveling))
+			if (!printerConnection.PrinterSettings.GetValue<bool>(SettingsKey.has_hardware_leveling))
 			{
 				container.AddChild(GetAutoLevelControl());
 			}
@@ -102,7 +102,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				{
 					if (editLevelingSettingsWindow == null)
 					{
-						editLevelingSettingsWindow = new EditLevelingSettingsWindow();
+						editLevelingSettingsWindow = new EditLevelingSettingsWindow(printerConnection.PrinterSettings);
 						editLevelingSettingsWindow.Closed += (sender2, e2) =>
 						{
 							editLevelingSettingsWindow = null;
@@ -130,21 +130,21 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			buttonRow.AddChild(runPrintLevelingButton);
 
 			// put in the switch
-			CheckBox printLevelingSwitch = ImageButtonFactory.CreateToggleSwitch(ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_enabled));
+			CheckBox printLevelingSwitch = ImageButtonFactory.CreateToggleSwitch(printerConnection.PrinterSettings.GetValue<bool>(SettingsKey.print_leveling_enabled));
 			printLevelingSwitch.VAnchor = VAnchor.Center;
 			printLevelingSwitch.Margin = new BorderDouble(left: 16);
 			printLevelingSwitch.CheckedStateChanged += (sender, e) =>
 			{
-				ActiveSliceSettings.Instance.Helpers.DoPrintLeveling(printLevelingSwitch.Checked);
+				printerConnection.PrinterSettings.Helpers.DoPrintLeveling(printLevelingSwitch.Checked);
 			};
 
-			PrinterSettings.PrintLevelingEnabledChanged.RegisterEvent((sender, e) =>
+			printerConnection.PrinterSettings.PrintLevelingEnabledChanged.RegisterEvent((sender, e) =>
 			{
-				printLevelingSwitch.Checked = ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_enabled);
+				printLevelingSwitch.Checked = printerConnection.PrinterSettings.GetValue<bool>(SettingsKey.print_leveling_enabled);
 			}, ref unregisterEvents);
 
 			// only show the switch if leveling can be turned off (it can't if it is required).
-			if (!ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_required_to_print))
+			if (!printerConnection.PrinterSettings.GetValue<bool>(SettingsKey.print_leveling_required_to_print))
 			{
 				buttonRow.AddChild(printLevelingSwitch);
 			}
@@ -166,7 +166,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 		private void SetVisibleControls()
 		{
-			if (!ActiveSliceSettings.Instance.PrinterSelected
+			if (!printerConnection.PrinterSettings.PrinterSelected
 				|| printerConnection.CommunicationState == CommunicationStates.Printing
 				|| printerConnection.PrinterIsPaused)
 			{

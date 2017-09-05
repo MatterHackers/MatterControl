@@ -46,17 +46,20 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 	public class LevelWizardBase : SystemWindow
 	{
-		private LevelingStrings levelingStrings = new LevelingStrings();
+		private LevelingStrings levelingStrings;
 
 		public enum RuningState { InitialStartupCalibration, UserRequestedCalibration }
 
 		protected WizardControl printLevelWizard;
 
 		protected int totalSteps { get; private set; }
+		protected PrinterConnection printerConnection;
 
-		public LevelWizardBase(int width, int height, int totalSteps)
+		public LevelWizardBase(PrinterConnection printerConnection, int width, int height, int totalSteps)
 			: base(width, height)
 		{
+			levelingStrings = new LevelingStrings(printerConnection.PrinterSettings);
+			this.printerConnection = printerConnection;
 			AlwaysOnTopOfMain = true;
 			this.totalSteps = totalSteps;
 		}
@@ -101,18 +104,18 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			return null;
 		}
 
-		public static Vector2 GetPrintLevelPositionToSample(int index)
+		public static Vector2 GetPrintLevelPositionToSample(PrinterSettings printerSettings, int index)
 		{
-			var manualPositions = GetManualPositions(ActiveSliceSettings.Instance.GetValue(SettingsKey.leveling_manual_positions), 3);
+			var manualPositions = GetManualPositions(printerSettings.GetValue(SettingsKey.leveling_manual_positions), 3);
 			if(manualPositions != null)
 			{
 				return manualPositions[index];
 			}
 
-			Vector2 bedSize = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.bed_size);
-			Vector2 printCenter = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center);
+			Vector2 bedSize = printerSettings.GetValue<Vector2>(SettingsKey.bed_size);
+			Vector2 printCenter = printerSettings.GetValue<Vector2>(SettingsKey.print_center);
 
-			switch (ActiveSliceSettings.Instance.GetValue<BedShape>(SettingsKey.bed_shape))
+			switch (printerSettings.GetValue<BedShape>(SettingsKey.bed_shape))
 			{
 				case BedShape.Circular:
 					Vector2 firstPosition = new Vector2(printCenter.x, printCenter.y + (bedSize.y / 2) * .5);
@@ -156,7 +159,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 			LevelWizardBase.RuningState runningState = LevelWizardBase.RuningState.UserRequestedCalibration;
 
-			if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_required_to_print))
+			if (printerConnection.PrinterSettings.GetValue<bool>(SettingsKey.print_leveling_required_to_print))
 			{
 				// run in the first run state
 				runningState = LevelWizardBase.RuningState.InitialStartupCalibration;
@@ -175,12 +178,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					printLevelWizardWindow = null;
 
 					// make sure we raise the probe on close 
-					if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_z_probe)
-						&& ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.use_z_probe)
-						&& ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_z_servo))
+					if (printerConnection.PrinterSettings.GetValue<bool>(SettingsKey.has_z_probe)
+						&& printerConnection.PrinterSettings.GetValue<bool>(SettingsKey.use_z_probe)
+						&& printerConnection.PrinterSettings.GetValue<bool>(SettingsKey.has_z_servo))
 					{
 						// make sure the servo is retracted
-						var servoRetract = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.z_servo_retracted_angle);
+						var servoRetract = printerConnection.PrinterSettings.GetValue<double>(SettingsKey.z_servo_retracted_angle);
 						printerConnection.SendLineToPrinterNow($"M280 P0 S{servoRetract}");
 					}
 				};
@@ -194,11 +197,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		private static LevelWizardBase CreateAndShowWizard(PrinterConnection printerConnection, LevelWizardBase.RuningState runningState)
 		{
 			// turn off print leveling
-			ActiveSliceSettings.Instance.Helpers.DoPrintLeveling(false);
+			printerConnection.PrinterSettings.Helpers.DoPrintLeveling(false);
 			// clear any data that we are going to be acquiring (sampled positions, after z home offset)
-			PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
+			PrintLevelingData levelingData = printerConnection.PrinterSettings.Helpers.GetPrintLevelingData();
 			levelingData.SampledPositions.Clear();
-			ActiveSliceSettings.Instance.SetValue(SettingsKey.baby_step_z_offset, "0");
+			printerConnection.PrinterSettings.SetValue(SettingsKey.baby_step_z_offset, "0");
 
 			ApplicationController.Instance.ReloadAdvancedControlsPanel();
 

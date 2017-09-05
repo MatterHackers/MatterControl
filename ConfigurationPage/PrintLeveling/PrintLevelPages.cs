@@ -111,7 +111,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			UiThread.RunOnIdle(ShowTempChangeProgress);
 
 			// start heating the bed and show our progress
-			printerConnection.TargetBedTemperature = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.bed_temperature);
+			printerConnection.TargetBedTemperature = printerConnection.PrinterSettings.GetValue<double>(SettingsKey.bed_temperature);
 
 			// hook our parent so we can turn off the bed when we are done with leveling
 			Parent.Closed += (s, e) =>
@@ -120,7 +120,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				printerConnection.TargetBedTemperature = 0;
 			};
 
-			if (ActiveSliceSettings.Instance.Helpers.UseZProbe())
+			if (printerConnection.PrinterSettings.Helpers.UseZProbe())
 			{
 				container.backButton.Enabled = false;
 				container.nextButton.Enabled = false;
@@ -160,7 +160,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				container.backButton.Enabled = true;
 				container.nextButton.Enabled = true;
 
-				if (ActiveSliceSettings.Instance.Helpers.UseZProbe())
+				if (printerConnection.PrinterSettings.Helpers.UseZProbe())
 				{
 					// advance to the next page
 					UiThread.RunOnIdle(() => container.nextButton.ClickButton(null));
@@ -185,20 +185,20 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public override void PageIsBecomingActive()
 		{
-			PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
+			PrintLevelingData levelingData = printerConnection.PrinterSettings.Helpers.GetPrintLevelingData();
 			levelingData.SampledPositions.Clear();
 
-			Vector3 zProbeOffset = new Vector3(0, 0, ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.z_probe_z_offset));
+			Vector3 zProbeOffset = new Vector3(0, 0, printerConnection.PrinterSettings.GetValue<double>(SettingsKey.z_probe_z_offset));
 			for (int i = 0; i < probePositions.Count; i++)
 			{
 				levelingData.SampledPositions.Add(probePositions[i].position - zProbeOffset);
 			}
 
 			// Invoke setter forcing persistence of leveling data
-			ActiveSliceSettings.Instance.Helpers.SetPrintLevelingData(levelingData, true);
-			ActiveSliceSettings.Instance.Helpers.DoPrintLeveling ( true);
+			printerConnection.PrinterSettings.Helpers.SetPrintLevelingData(levelingData, true);
+			printerConnection.PrinterSettings.Helpers.DoPrintLeveling ( true);
 
-			if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.z_homes_to_max))
+			if (printerConnection.PrinterSettings.GetValue<bool>(SettingsKey.z_homes_to_max))
 			{
 				printerConnection.HomeAxis(PrinterConnection.Axis.XYZ);
 			}
@@ -239,7 +239,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			// first make sure there is no leftover FinishedProbe event
 			printerConnection.ReadLine.UnregisterEvent(FinishedProbe, ref unregisterEvents);
 
-			var feedRates = ActiveSliceSettings.Instance.Helpers.ManualMovementSpeeds();
+			var feedRates = printerConnection.PrinterSettings.Helpers.ManualMovementSpeeds();
 
 			printerConnection.MoveAbsolute(PrinterConnection.Axis.Z, probeStartPosition.z, feedRates.z);
 			printerConnection.MoveAbsolute(probeStartPosition, feedRates.x);
@@ -263,7 +263,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					int zStringPos = currentEvent.Data.LastIndexOf("Z:");
 					string zProbeHeight = currentEvent.Data.Substring(zStringPos + 2);
 					probePosition.position = new Vector3(probeStartPosition.x, probeStartPosition.y, double.Parse(zProbeHeight));
-					printerConnection.MoveAbsolute(probeStartPosition, ActiveSliceSettings.Instance.Helpers.ManualMovementSpeeds().z);
+					printerConnection.MoveAbsolute(probeStartPosition, printerConnection.PrinterSettings.Helpers.ManualMovementSpeeds().z);
 					printerConnection.ReadPosition();
 
 					UiThread.RunOnIdle(() => container.nextButton.ClickButton(null));
@@ -300,7 +300,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			printerConnection.HomeAxis(PrinterConnection.Axis.XYZ);
 
-			if (ActiveSliceSettings.Instance.Helpers.UseZProbe())
+			if (printerConnection.PrinterSettings.Helpers.UseZProbe())
 			{
 				container.backButton.Enabled = true;
 				container.nextButton.Enabled = false;
@@ -317,7 +317,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				container.nextButton.Enabled = true;
 				container.backButton.Enabled = true;
 
-				if (ActiveSliceSettings.Instance.Helpers.UseZProbe())
+				if (printerConnection.PrinterSettings.Helpers.UseZProbe())
 				{
 					UiThread.RunOnIdle(() => container.nextButton.ClickButton(null));
 				}
@@ -391,7 +391,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public override void PageIsBecomingActive()
 		{
 			// always make sure we don't have print leveling turned on
-			ActiveSliceSettings.Instance.Helpers.DoPrintLeveling(false);
+			printerConnection.PrinterSettings.Helpers.DoPrintLeveling(false);
 
 			base.PageIsBecomingActive();
 			this.Parents<SystemWindow>().First().KeyDown += TopWindowKeyDown;
@@ -452,13 +452,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		private void zMinusControl_Click(object sender, EventArgs mouseEvent)
 		{
-			printerConnection.MoveRelative(PrinterConnection.Axis.Z, -moveAmount, ActiveSliceSettings.Instance.Helpers.ManualMovementSpeeds().z);
+			printerConnection.MoveRelative(PrinterConnection.Axis.Z, -moveAmount, printerConnection.PrinterSettings.Helpers.ManualMovementSpeeds().z);
 			printerConnection.ReadPosition();
 		}
 
 		private void zPlusControl_Click(object sender, EventArgs mouseEvent)
 		{
-			printerConnection.MoveRelative(PrinterConnection.Axis.Z, moveAmount, ActiveSliceSettings.Instance.Helpers.ManualMovementSpeeds().z);
+			printerConnection.MoveRelative(PrinterConnection.Axis.Z, moveAmount, printerConnection.PrinterSettings.Helpers.ManualMovementSpeeds().z);
 			printerConnection.ReadPosition();
 		}
 	}
@@ -518,7 +518,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				{
 					samples.Add(sampleRead);
 
-					int numberOfSamples = ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.z_probe_samples);
+					int numberOfSamples = printerConnection.PrinterSettings.GetValue<int>(SettingsKey.z_probe_samples);
 					if (samples.Count == numberOfSamples)
 					{
 						samples.Sort();
@@ -547,30 +547,30 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public override void PageIsBecomingActive()
 		{
 			// always make sure we don't have print leveling turned on
-			ActiveSliceSettings.Instance.Helpers.DoPrintLeveling(false);
+			printerConnection.PrinterSettings.Helpers.DoPrintLeveling(false);
 
 			base.PageIsBecomingActive();
 
-			if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_z_probe)
-				&& ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.use_z_probe)
-				&& ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_z_servo))
+			if (printerConnection.PrinterSettings.GetValue<bool>(SettingsKey.has_z_probe)
+				&& printerConnection.PrinterSettings.GetValue<bool>(SettingsKey.use_z_probe)
+				&& printerConnection.PrinterSettings.GetValue<bool>(SettingsKey.has_z_servo))
 			{
 				// make sure the servo is deployed
-				var servoDeploy = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.z_servo_depolyed_angle);
+				var servoDeploy = printerConnection.PrinterSettings.GetValue<double>(SettingsKey.z_servo_depolyed_angle);
 				printerConnection.SendLineToPrinterNow($"M280 P0 S{servoDeploy}");
 			}
 
-			var feedRates = ActiveSliceSettings.Instance.Helpers.ManualMovementSpeeds();
+			var feedRates = printerConnection.PrinterSettings.Helpers.ManualMovementSpeeds();
 
 			var adjustedProbePosition = probeStartPosition;
 			// subtract out the probe offset
-			var probeOffset = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.z_probe_xy_offset);
+			var probeOffset = printerConnection.PrinterSettings.GetValue<Vector2>(SettingsKey.z_probe_xy_offset);
 			adjustedProbePosition -= new Vector3(probeOffset);
 
 			printerConnection.MoveAbsolute(PrinterConnection.Axis.Z, probeStartPosition.z, feedRates.z);
 			printerConnection.MoveAbsolute(adjustedProbePosition, feedRates.x);
 
-			int numberOfSamples = ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.z_probe_samples);
+			int numberOfSamples = printerConnection.PrinterSettings.GetValue<int>(SettingsKey.z_probe_samples);
 			for (int i = 0; i < numberOfSamples; i++)
 			{
 				// probe the current position
@@ -620,7 +620,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 			base.PageIsBecomingActive();
 
-			var feedRates = ActiveSliceSettings.Instance.Helpers.ManualMovementSpeeds();
+			var feedRates = printerConnection.PrinterSettings.Helpers.ManualMovementSpeeds();
 
 			printerConnection.MoveAbsolute(PrinterConnection.Axis.Z, probeStartPosition.z, feedRates.z);
 			printerConnection.MoveAbsolute(probeStartPosition, feedRates.x);
@@ -685,7 +685,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 			if (haveDrawn)
 			{
-				printerConnection.MoveRelative(PrinterConnection.Axis.Z, 2, ActiveSliceSettings.Instance.Helpers.ManualMovementSpeeds().z);
+				printerConnection.MoveRelative(PrinterConnection.Axis.Z, 2, printerConnection.PrinterSettings.Helpers.ManualMovementSpeeds().z);
 			}
 			base.PageIsBecomingInactive();
 		}

@@ -41,52 +41,51 @@ using System.Text;
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class LevelWizard13PointRadial : LevelWizardRadialBase
-    {
+	{
 		static readonly int numberOfRadialSamples = 12;
 
 		public LevelWizard13PointRadial(PrinterConnection printerConnection, LevelWizardBase.RuningState runningState)
-			: base(printerConnection, runningState, 500, 370, (numberOfRadialSamples + 1)*3, numberOfRadialSamples)
+			: base(printerConnection, runningState, 500, 370, (numberOfRadialSamples + 1) * 3, numberOfRadialSamples)
 		{
 		}
 
-        public static string ApplyLeveling(string lineBeingSent, Vector3 currentDestination)
-        {
-			var settings = ActiveSliceSettings.Instance;
-            if (settings?.GetValue<bool>(SettingsKey.print_leveling_enabled) == true
-                && (lineBeingSent.StartsWith("G0 ") || lineBeingSent.StartsWith("G1 "))
-                && lineBeingSent.Length > 2
-                && lineBeingSent[2] == ' ')
-            {
-                return GetLevelingFunctions(numberOfRadialSamples, settings.Helpers.GetPrintLevelingData(), ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center))
-                    .DoApplyLeveling(lineBeingSent, currentDestination);
-            }
+		public static string ApplyLeveling(PrinterSettings printerSettings, string lineBeingSent, Vector3 currentDestination)
+		{
+			if (printerSettings?.GetValue<bool>(SettingsKey.print_leveling_enabled) == true
+				&& (lineBeingSent.StartsWith("G0 ") || lineBeingSent.StartsWith("G1 "))
+				&& lineBeingSent.Length > 2
+				&& lineBeingSent[2] == ' ')
+			{
+				return GetLevelingFunctions(printerSettings, numberOfRadialSamples, printerSettings.Helpers.GetPrintLevelingData(), printerSettings.GetValue<Vector2>(SettingsKey.print_center))
+					.DoApplyLeveling(lineBeingSent, currentDestination);
+			}
 
-            return lineBeingSent;
-        }
+			return lineBeingSent;
+		}
 
-        public override Vector2 GetPrintLevelPositionToSample(int index, double radius)
-        {
-            PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
-            return GetLevelingFunctions(numberOfRadialSamples, levelingData, ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center))
-                .GetPrintLevelPositionToSample(index, radius);
-        }
+		public override Vector2 GetPrintLevelPositionToSample(int index, double radius)
+		{
+			PrintLevelingData levelingData = printerConnection.PrinterSettings.Helpers.GetPrintLevelingData();
+			return GetLevelingFunctions(printerConnection.PrinterSettings, numberOfRadialSamples, levelingData, printerConnection.PrinterSettings.GetValue<Vector2>(SettingsKey.print_center))
+				.GetPrintLevelPositionToSample(index, radius);
+		}
 
-        public static List<string> ProcessCommand(string lineBeingSent)
-        {
-            int commentIndex = lineBeingSent.IndexOf(';');
-            if (commentIndex > 0) // there is content in front of the ;
-            {
-                lineBeingSent = lineBeingSent.Substring(0, commentIndex).Trim();
-            }
-            List<string> lines = new List<string>();
-            lines.Add(lineBeingSent);
-            if (lineBeingSent.StartsWith("G28")
+		public static List<string> ProcessCommand(string lineBeingSent)
+		{
+			int commentIndex = lineBeingSent.IndexOf(';');
+			if (commentIndex > 0) // there is content in front of the ;
+			{
+				lineBeingSent = lineBeingSent.Substring(0, commentIndex).Trim();
+			}
+			List<string> lines = new List<string>();
+			lines.Add(lineBeingSent);
+			if (lineBeingSent.StartsWith("G28")
 				|| lineBeingSent.StartsWith("G29"))
 			{
-                lines.Add("M114");
-            }
+				lines.Add("M114");
+			}
 
-            return lines;
-        }
-    }
+			return lines;
+		}
+	}
 }

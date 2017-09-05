@@ -116,7 +116,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			}
 
 			// Add the pause_gcode to the loadedGCode.GCodeCommandQueue
-			string pauseGCode = ActiveSliceSettings.Instance.GetValue(SettingsKey.pause_gcode);
+			string pauseGCode = printerConnection.PrinterSettings.GetValue(SettingsKey.pause_gcode);
 
 			// put in the gcode for pausing (if any)
 			InjectPauseGCode(pauseGCode);
@@ -160,7 +160,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					}
 
 					// We got a line from the gcode we are sending check if we should queue a request for filament runout
-					if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.filament_runout_sensor))
+					if (printerConnection.PrinterSettings.GetValue<bool>(SettingsKey.filament_runout_sensor))
 					{
 						// request to read the endstop state
 						if (!timeSinceLastEndstopRead.IsRunning || timeSinceLastEndstopRead.ElapsedMilliseconds > 5000)
@@ -225,11 +225,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			Vector3 positionBeforeActualPause = moveLocationAtEndOfPauseCode.position;
 			InjectPauseGCode("G92 E{0:0.###}".FormatWith(moveLocationAtEndOfPauseCode.extrusion));
 			Vector3 ensureAllAxisAreSent = positionBeforeActualPause + new Vector3(.01, .01, .01);
-			var feedRates = ActiveSliceSettings.Instance.Helpers.ManualMovementSpeeds();
+			var feedRates = printerConnection.PrinterSettings.Helpers.ManualMovementSpeeds();
 			InjectPauseGCode("G1 X{0:0.###} Y{1:0.###} Z{2:0.###} F{3}".FormatWith(ensureAllAxisAreSent.x, ensureAllAxisAreSent.y, ensureAllAxisAreSent.z, feedRates.x + 1));
 			InjectPauseGCode("G1 X{0:0.###} Y{1:0.###} Z{2:0.###} F{3}".FormatWith(positionBeforeActualPause.x, positionBeforeActualPause.y, positionBeforeActualPause.z, feedRates));
 
-			string resumeGCode = ActiveSliceSettings.Instance.GetValue(SettingsKey.resume_gcode);
+			string resumeGCode = printerConnection.PrinterSettings.GetValue(SettingsKey.resume_gcode);
 			InjectPauseGCode(resumeGCode);
 			InjectPauseGCode("M114"); // make sure we know where we are after this resume code
 		}
@@ -262,7 +262,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		{
 			int layerNumber;
 
-			if (int.TryParse(layer, out layerNumber) && ActiveSliceSettings.Instance.Helpers.LayerToPauseOn().Contains(layerNumber))
+			if (int.TryParse(layer, out layerNumber) && printerConnection.PrinterSettings.Helpers.LayerToPauseOn().Contains(layerNumber))
 			{
 				return true;
 			}

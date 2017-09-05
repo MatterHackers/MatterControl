@@ -274,8 +274,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				1,
 				new Vector2[]
 				{
-					ActiveSliceSettings.Instance.Helpers.ExtruderOffset(0),
-					ActiveSliceSettings.Instance.Helpers.ExtruderOffset(1)
+					printerConnection.PrinterSettings.Helpers.ExtruderOffset(0),
+					printerConnection.PrinterSettings.Helpers.ExtruderOffset(1)
 				},
 				this.GetRenderType,
 				MeshViewerWidget.GetExtruderColor);
@@ -476,7 +476,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			popupContainer.AddChild(transparentExtrusion);
 
 			// Extrusion checkbox
-			if (ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.extruder_count) > 1)
+			if (printerConnection.PrinterSettings.GetValue<int>(SettingsKey.extruder_count) > 1)
 			{
 				CheckBox hideExtruderOffsets = new CheckBox("Hide Offsets", textColor: textColor);
 				hideExtruderOffsets.Checked = gcodeOptions.HideExtruderOffsets;
@@ -586,7 +586,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			parent.AddChild(sideBar);
 
-			if (ActiveSliceSettings.Instance.PrinterSelected)
+			if (printerConnection.PrinterSettings.PrinterSelected)
 			{
 				sideBar.AddPage("Slice Settings".Localize(), new SliceSettingsWidget(printerConnection));
 			}
