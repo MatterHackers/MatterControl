@@ -403,9 +403,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								addedSettingToSubGroup = true;
 								topToBottomSettings.AddChild(
 									CreateSettingInfoUIControls(
-									printerConnection,
 										settingData,
-										settingsContext,
 										copyIndex,
 										ref tabIndexForItem));
 
@@ -565,9 +563,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						if (EngineMappingsMatterSlice.Instance.MapContains(settingData.SlicerConfigName))
 						{
 							GuiWidget controlsForThisSetting = CreateSettingInfoUIControls(
-								printerConnection,
 								settingData,
-								settingsContext,
 								0,
 								ref tabIndexForItem);
 
@@ -835,20 +831,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return dataArea;
 		}
 
-		public GuiWidget CreateSettingControl(PrinterConnection printerConnection, string sliceSettingsKey, bool isPrimarySettingsView, ref int tabIndex)
-		{
-			return CreateSettingInfoUIControls(
-				printerConnection,
-				SliceSettingsOrganizer.Instance.GetSettingsData(sliceSettingsKey),
-				new SettingsContext(null, NamedSettingsLayers.All),
-				0,
-				ref tabIndex);
-		}
-
 		private GuiWidget CreateSettingInfoUIControls(
-			PrinterConnection printerConnection,
 			SliceSettingData settingData,
-			SettingsContext settingsContext,
 			int extruderIndex,
 			ref int tabIndexForItem)
 		{
