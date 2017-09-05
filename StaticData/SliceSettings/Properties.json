@@ -887,7 +887,7 @@
 		],
 		"SetSettingsOnChange": [
 			{
-				"TargetSetting": "bottum_solid_layers",
+				"TargetSetting": "bottom_solid_layers",
 				"Value": "[current_value]"
 			},
 			{
