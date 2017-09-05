@@ -169,7 +169,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			SetButtonStates();
 
-			PrinterSettings.PrintLevelingEnabledChanged.RegisterEvent((s, e) => SetButtonStates(), ref unregisterEvents);
+			printerConnection.PrinterSettings.PrintLevelingEnabledChanged.RegisterEvent((s, e) => SetButtonStates(), ref unregisterEvents);
 		}
 
 		protected void DisableActiveButtons()
@@ -214,8 +214,8 @@ namespace MatterHackers.MatterControl.ActionBar
 						break;
 
 					case CommunicationStates.Connected:
-						PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
-						if (levelingData != null && ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_required_to_print)
+						PrintLevelingData levelingData = printerConnection.PrinterSettings.Helpers.GetPrintLevelingData();
+						if (levelingData != null && printerConnection.PrinterSettings.GetValue<bool>(SettingsKey.print_leveling_required_to_print)
 							&& !levelingData.HasBeenRunAndEnabled())
 						{
 							this.activePrintButtons.Add(finishSetupButton);
@@ -266,7 +266,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			}
 
 			if (printerConnection.PrinterIsConnected
-				&& ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.show_reset_connection))
+				&& printerConnection.PrinterSettings.GetValue<bool>(SettingsKey.show_reset_connection))
 			{
 				this.activePrintButtons.Add(resetConnectionButton);
 				ShowActiveButtons();

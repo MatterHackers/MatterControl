@@ -106,19 +106,19 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				switch (levelingData.CurrentPrinterLevelingSystem)
 				{
 					case PrintLevelingData.LevelingSystem.Probe3Points:
-						lineBeingSent = LevelWizard3Point.ApplyLeveling(lineBeingSent, currentDestination.position, PrinterMachineInstruction.MovementTypes.Absolute);
+						lineBeingSent = LevelWizard3Point.ApplyLeveling(printerSettings, lineBeingSent, currentDestination.position, PrinterMachineInstruction.MovementTypes.Absolute);
 						break;
 
 					case PrintLevelingData.LevelingSystem.Probe7PointRadial:
-						lineBeingSent = LevelWizard7PointRadial.ApplyLeveling(lineBeingSent, currentDestination.position);
+						lineBeingSent = LevelWizard7PointRadial.ApplyLeveling(printerSettings, lineBeingSent, currentDestination.position);
 						break;
 
 					case PrintLevelingData.LevelingSystem.Probe13PointRadial:
-						lineBeingSent = LevelWizard13PointRadial.ApplyLeveling(lineBeingSent, currentDestination.position);
+						lineBeingSent = LevelWizard13PointRadial.ApplyLeveling(printerSettings, lineBeingSent, currentDestination.position);
 						break;
 
 					case PrintLevelingData.LevelingSystem.Probe3x3Mesh:
-						lineBeingSent = LevelWizard3x3Mesh.ApplyLeveling(lineBeingSent, currentDestination.position);
+						lineBeingSent = LevelWizard3x3Mesh.ApplyLeveling(printerSettings, lineBeingSent, currentDestination.position);
 						break;
 
 					default:

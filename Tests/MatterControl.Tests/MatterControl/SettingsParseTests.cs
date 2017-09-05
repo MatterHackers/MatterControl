@@ -17,11 +17,11 @@ namespace MatterControl.Tests.MatterControl
 		{
 			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
-
+			var printerSettings = ActiveSliceSettings.Instance;
 			{
-				var sample0 = LevelWizardBase.GetPrintLevelPositionToSample(0);
-				var sample1 = LevelWizardBase.GetPrintLevelPositionToSample(1);
-				var sample2 = LevelWizardBase.GetPrintLevelPositionToSample(2);
+				var sample0 = LevelWizardBase.GetPrintLevelPositionToSample(printerSettings, 0);
+				var sample1 = LevelWizardBase.GetPrintLevelPositionToSample(printerSettings, 1);
+				var sample2 = LevelWizardBase.GetPrintLevelPositionToSample(printerSettings, 2);
 				Assert.AreEqual("200,200", ActiveSliceSettings.Instance.GetValue(SettingsKey.bed_size));
 				Assert.AreEqual("100,100", ActiveSliceSettings.Instance.GetValue(SettingsKey.print_center));
 				Assert.AreEqual("rectangular", ActiveSliceSettings.Instance.GetValue(SettingsKey.bed_shape));
@@ -71,9 +71,9 @@ namespace MatterControl.Tests.MatterControl
 
 			{
 				ActiveSliceSettings.Instance.SetValue(SettingsKey.leveling_manual_positions, "1,2:211,3:113,104");
-				var sample0 = LevelWizardBase.GetPrintLevelPositionToSample(0);
-				var sample1 = LevelWizardBase.GetPrintLevelPositionToSample(1);
-				var sample2 = LevelWizardBase.GetPrintLevelPositionToSample(2);
+				var sample0 = LevelWizardBase.GetPrintLevelPositionToSample(printerSettings, 0);
+				var sample1 = LevelWizardBase.GetPrintLevelPositionToSample(printerSettings, 1);
+				var sample2 = LevelWizardBase.GetPrintLevelPositionToSample(printerSettings, 2);
 				Assert.IsTrue(sample0 == new Vector2(1, 2));
 				Assert.IsTrue(sample1 == new Vector2(211, 3));
 				Assert.IsTrue(sample2 == new Vector2(113, 104));

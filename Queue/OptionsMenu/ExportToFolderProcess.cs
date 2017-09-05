@@ -204,18 +204,20 @@ namespace MatterHackers.MatterControl.PrintQueue
 #endif
 								Vector3 currentDestination = instruction.Position;
 
+								var printerSettings = ActiveSliceSettings.Instance;
+
 								switch (levelingData.CurrentPrinterLevelingSystem)
 								{
 									case PrintLevelingData.LevelingSystem.Probe3Points:
-										instruction.Line = LevelWizard3Point.ApplyLeveling(instruction.Line, currentDestination, instruction.movementType);
+										instruction.Line = LevelWizard3Point.ApplyLeveling(printerSettings, instruction.Line, currentDestination, instruction.movementType);
 										break;
 
 									case PrintLevelingData.LevelingSystem.Probe7PointRadial:
-										instruction.Line = LevelWizard7PointRadial.ApplyLeveling(instruction.Line, currentDestination);
+										instruction.Line = LevelWizard7PointRadial.ApplyLeveling(printerSettings, instruction.Line, currentDestination);
 										break;
 
 									case PrintLevelingData.LevelingSystem.Probe13PointRadial:
-										instruction.Line = LevelWizard13PointRadial.ApplyLeveling(instruction.Line, currentDestination);
+										instruction.Line = LevelWizard13PointRadial.ApplyLeveling(printerSettings, instruction.Line, currentDestination);
 										break;
 
 									default:

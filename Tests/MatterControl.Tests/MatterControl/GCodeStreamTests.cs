@@ -103,7 +103,7 @@ namespace MatterControl.Tests.MatterControl
 			streamList.Add(new QueuedCommandsStream(streamList[streamList.Count - 1]));
 			streamList.Add(new RelativeToAbsoluteStream(streamList[streamList.Count - 1]));
 			streamList.Add(new WaitForTempStream(printerConnection, streamList[streamList.Count - 1]));
-			streamList.Add(new BabyStepsStream(streamList[streamList.Count - 1]));
+			streamList.Add(new BabyStepsStream(printerConnection.PrinterSettings, streamList[streamList.Count - 1]));
 			streamList.Add(new ExtrusionMultiplyerStream(streamList[streamList.Count - 1]));
 			streamList.Add(new FeedRateMultiplyerStream(streamList[streamList.Count - 1]));
 			GCodeStream totalGCodeStream = streamList[streamList.Count - 1];
@@ -472,12 +472,12 @@ namespace MatterControl.Tests.MatterControl
 			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
-			PrinterSettings settings = ActiveSliceSettings.Instance;
-			settings.SetValue(SettingsKey.write_regex, "\"^(G28)\",\"G28,M115\"\\n\"^(M107)\",\"; none\"");
+			PrinterSettings printerSettings = ActiveSliceSettings.Instance;
+			printerSettings.SetValue(SettingsKey.write_regex, "\"^(G28)\",\"G28,M115\"\\n\"^(M107)\",\"; none\"");
 
 			var inputLinesStream = new TestGCodeStream(inputLines);
 			var queueStream = new QueuedCommandsStream(inputLinesStream);
-			ProcessWriteRegexStream writeStream = new ProcessWriteRegexStream(queueStream, queueStream);
+			ProcessWriteRegexStream writeStream = new ProcessWriteRegexStream(printerSettings, queueStream, queueStream);
 
 			int expectedIndex = 0;
 			string actualLine = writeStream.ReadLine();

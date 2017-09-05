@@ -42,7 +42,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 	{
 		public ActionControls(PrinterConnection printerConnection)
 		{
-			if (!ActiveSliceSettings.Instance.ActionMacros().Any())
+			if (!printerConnection.PrinterSettings.ActionMacros().Any())
 			{
 				Margin = new BorderDouble();
 				return;
@@ -79,9 +79,9 @@ namespace MatterHackers.MatterControl.PrinterControls
 			macroButtonContainer.Margin = new BorderDouble(0, 0, 3, 0);
 			macroButtonContainer.Padding = new BorderDouble(0, 3, 3, 3);
 
-			if (ActiveSliceSettings.Instance?.ActionMacros().Any() == true)
+			if (printerConnection.PrinterSettings?.ActionMacros().Any() == true)
 			{
-				foreach (GCodeMacro macro in ActiveSliceSettings.Instance.ActionMacros())
+				foreach (GCodeMacro macro in printerConnection.PrinterSettings.ActionMacros())
 				{
 					Button macroButton = buttonFactory.Generate(GCodeMacro.FixMacroName(macro.Name));
 					macroButton.Margin = new BorderDouble(right: 5);
@@ -150,13 +150,13 @@ namespace MatterHackers.MatterControl.PrinterControls
 			macroContainer.AddChild(noMacrosFound);
 			noMacrosFound.Visible = false;
 
-			if (ActiveSliceSettings.Instance?.UserMacros().Any() != true)
+			if (printerConnection.PrinterSettings?.UserMacros().Any() != true)
 			{
 				noMacrosFound.Visible = true;
 				return macroContainer;
 			}
 
-			foreach (GCodeMacro macro in ActiveSliceSettings.Instance.UserMacros())
+			foreach (GCodeMacro macro in printerConnection.PrinterSettings.UserMacros())
 			{
 				Button macroButton = buttonFactory.Generate(GCodeMacro.FixMacroName(macro.Name));
 				macroButton.Margin = new BorderDouble(right: 5);

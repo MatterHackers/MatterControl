@@ -47,13 +47,15 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		RectangleDouble boundsOfSkippedLayers = RectangleDouble.ZeroIntersection;
 
 		RecoveryState recoveryState = RecoveryState.RemoveHeating;
+		PrinterConnection printerConnection;
 
-		public PrintRecoveryStream(GCodeFileStream internalStream, double percentDone)
+		public PrintRecoveryStream(PrinterConnection printerConnection, GCodeFileStream internalStream, double percentDone)
 		{
+			this.printerConnection = printerConnection;
 			this.internalStream = internalStream;
 			this.percentDone = percentDone;
 
-			recoverFeedRate = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.recover_first_layer_speed);
+			recoverFeedRate = printerConnection.PrinterSettings.GetValue<double>(SettingsKey.recover_first_layer_speed);
 			if (recoverFeedRate == 0)
 			{
 				recoverFeedRate = 10;
@@ -94,8 +96,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					queuedCommands.Add("G92 E0; reset the expected extruder position");
 					queuedCommands.Add("M82; use absolute distance for extrusion");
 					
-					bool hasHeatedBed = ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_heated_bed);
-					double bedTemp = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.bed_temperature);
+					bool hasHeatedBed = printerConnection.PrinterSettings.GetValue<bool>(SettingsKey.has_heated_bed);
+					double bedTemp = printerConnection.PrinterSettings.GetValue<double>(SettingsKey.bed_temperature);
 					if (hasHeatedBed && bedTemp > 0)
 					{
 						// start heating the bed
@@ -103,7 +105,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					}
 
 					// heat up the extruder
-					queuedCommands.Add("M109 S{0}".FormatWith(ActiveSliceSettings.Instance.Helpers.ExtruderTemperature(0)));
+					queuedCommands.Add("M109 S{0}".FormatWith(printerConnection.PrinterSettings.Helpers.ExtruderTemperature(0)));
 
 					if (hasHeatedBed && bedTemp > 0)
 					{
@@ -120,14 +122,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					PrintLevelingStream.Enabled = false;
 					queuedCommands.Add("M114 ; get current position");
 					queuedCommands.Add("G91 ; move relative");
-					queuedCommands.Add("G1 Z10 F{0}".FormatWith(MovementControls.ZSpeed));
+					queuedCommands.Add("G1 Z10 F{0}".FormatWith(printerConnection.PrinterSettings.ZSpeed()));
 					queuedCommands.Add("G90 ; move absolute");
 					recoveryState = RecoveryState.Homing;
 					return "";
 
 				// if top homing, home the extruder
 				case RecoveryState.Homing:
-					if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.z_homes_to_max))
+					if (printerConnection.PrinterSettings.GetValue<bool>(SettingsKey.z_homes_to_max))
 					{
 						queuedCommands.Add("G28");
 					}
@@ -138,8 +140,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						// home y
 						queuedCommands.Add("G28 Y0");
 						// move to the place we can home z from
-						Vector2 recoveryPositionXy = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.recover_position_before_z_home);
-						queuedCommands.Add("G1 X{0:0.###}Y{1:0.###}F{2}".FormatWith(recoveryPositionXy.x, recoveryPositionXy.y, MovementControls.XSpeed));
+						Vector2 recoveryPositionXy = printerConnection.PrinterSettings.GetValue<Vector2>(SettingsKey.recover_position_before_z_home);
+						queuedCommands.Add("G1 X{0:0.###}Y{1:0.###}F{2}".FormatWith(recoveryPositionXy.x, recoveryPositionXy.y, printerConnection.PrinterSettings.XSpeed()));
 						// home z
 						queuedCommands.Add("G28 Z0");
 					}
@@ -217,25 +219,25 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				case RecoveryState.PrimingAndMovingToStart:
 					{
 
-						if (ActiveSliceSettings.Instance.GetValue("z_homes_to_max") == "0") // we are homed to the bed
+						if (printerConnection.PrinterSettings.GetValue("z_homes_to_max") == "0") // we are homed to the bed
 						{
 							// move to the height we can recover printing from
-							Vector2 recoverPositionXy = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.recover_position_before_z_home);
-							queuedCommands.Add(CreateMovementLine(new PrinterMove(new VectorMath.Vector3(recoverPositionXy.x, recoverPositionXy.y, lastDestination.position.z), 0, MovementControls.ZSpeed)));
+							Vector2 recoverPositionXy = printerConnection.PrinterSettings.GetValue<Vector2>(SettingsKey.recover_position_before_z_home);
+							queuedCommands.Add(CreateMovementLine(new PrinterMove(new VectorMath.Vector3(recoverPositionXy.x, recoverPositionXy.y, lastDestination.position.z), 0, printerConnection.PrinterSettings.ZSpeed())));
 						}
 
-						double extruderWidth = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.nozzle_diameter);
+						double extruderWidth = printerConnection.PrinterSettings.GetValue<double>(SettingsKey.nozzle_diameter);
 						// move to a position outside the printed bounds
 						queuedCommands.Add(CreateMovementLine(new PrinterMove(
 							new Vector3(boundsOfSkippedLayers.Left - extruderWidth*2, boundsOfSkippedLayers.Bottom + boundsOfSkippedLayers.Height / 2, lastDestination.position.z),
-							0, MovementControls.XSpeed)));
+							0, printerConnection.PrinterSettings.XSpeed())));
 						
 						// let's prime the extruder
-						queuedCommands.Add("G1 E10 F{0}".FormatWith(MovementControls.EFeedRate(0))); // extrude 10
+						queuedCommands.Add("G1 E10 F{0}".FormatWith(printerConnection.PrinterSettings.EFeedRate(0))); // extrude 10
 						queuedCommands.Add("G1 E9"); // and retract a bit
 
 						// move to the actual print position
-						queuedCommands.Add(CreateMovementLine(new PrinterMove(lastDestination.position, 0, MovementControls.XSpeed)));
+						queuedCommands.Add(CreateMovementLine(new PrinterMove(lastDestination.position, 0, printerConnection.PrinterSettings.XSpeed())));
 
 						/// reset the printer to know where the filament should be
 						queuedCommands.Add("G92 E{0}".FormatWith(lastDestination.extrusion));

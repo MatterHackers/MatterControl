@@ -48,7 +48,8 @@ namespace MatterControl.Tests.MatterControl
 			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
-			var levelingData = new PrintLevelingData(ActiveSliceSettings.Instance);
+			var printerSettings = ActiveSliceSettings.Instance;
+			var levelingData = new PrintLevelingData(printerSettings);
 
 			double radius = 100;
 			levelingData.SampledPositions = new List<Vector3>();
@@ -65,7 +66,7 @@ namespace MatterControl.Tests.MatterControl
 
 			Vector2 bedCenter = Vector2.Zero;
 
-			RadialLevlingFunctions levelingFunctions7Point = new RadialLevlingFunctions(6, levelingData, bedCenter);
+			RadialLevlingFunctions levelingFunctions7Point = new RadialLevlingFunctions(printerSettings, 6, levelingData, bedCenter);
 			int totalPoints = 2000;
 			for (int curPoint = 0; curPoint < totalPoints; curPoint++)
 			{
@@ -89,7 +90,8 @@ namespace MatterControl.Tests.MatterControl
 			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
-			var levelingData = new PrintLevelingData(ActiveSliceSettings.Instance);
+			var printerSettings = ActiveSliceSettings.Instance;
+			var levelingData = new PrintLevelingData(printerSettings);
 
 			double radius = 100;
 			levelingData.SampledPositions = new List<Vector3>();
@@ -104,7 +106,7 @@ namespace MatterControl.Tests.MatterControl
 
 			Vector2 bedCenter = Vector2.Zero;
 
-			RadialLevlingFunctions levelingFunctions7Point = new RadialLevlingFunctions(6, levelingData, bedCenter);
+			RadialLevlingFunctions levelingFunctions7Point = new RadialLevlingFunctions(printerSettings, 6, levelingData, bedCenter);
 			for (int curPoint = 0; curPoint < 6; curPoint++)
 			{
 				int nextPoint = curPoint < 5 ? curPoint + 1 : 0;
@@ -167,9 +169,10 @@ namespace MatterControl.Tests.MatterControl
 			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
+			var printerSettings = ActiveSliceSettings.Instance;
 			// a 2 x 2 mesh that goes form 0 on the left to 10 on the right
 			{
-				var levelingData = new PrintLevelingData(ActiveSliceSettings.Instance);
+				var levelingData = new PrintLevelingData(printerSettings);
 
 				// put them in left to right - bottom to top
 				levelingData.SampledPositions = new List<Vector3>();
@@ -178,7 +181,7 @@ namespace MatterControl.Tests.MatterControl
 				levelingData.SampledPositions.Add(new Vector3(0, 10, 0));
 				levelingData.SampledPositions.Add(new Vector3(10, 10, 10));
 
-				MeshLevlingFunctions levelingFunctionsMesh2x2 = new MeshLevlingFunctions(2, 2, levelingData);
+				MeshLevlingFunctions levelingFunctionsMesh2x2 = new MeshLevlingFunctions(printerSettings, 2, 2, levelingData);
 
 				// check on points
 				AssertMeshLevelPoint(new Vector3(0, 0, 0), new Vector3(0, 0, 0), levelingFunctionsMesh2x2);
@@ -205,7 +208,7 @@ namespace MatterControl.Tests.MatterControl
 
 			// a 3 x 3 mesh that goes form 0 on the left to 10 on the right
 			{
-				var levelingData = new PrintLevelingData(ActiveSliceSettings.Instance);
+				var levelingData = new PrintLevelingData(printerSettings);
 
 				// put them in left to right - bottom to top
 				levelingData.SampledPositions = new List<Vector3>();
@@ -219,7 +222,7 @@ namespace MatterControl.Tests.MatterControl
 				levelingData.SampledPositions.Add(new Vector3(5, 10, 5));
 				levelingData.SampledPositions.Add(new Vector3(10, 10, 10));
 
-				MeshLevlingFunctions levelingFunctionsMesh2x2 = new MeshLevlingFunctions(3, 3, levelingData);
+				MeshLevlingFunctions levelingFunctionsMesh2x2 = new MeshLevlingFunctions(printerSettings, 3, 3, levelingData);
 
 				// check on points
 				AssertMeshLevelPoint(new Vector3(0, 0, 0), new Vector3(0, 0, 0), levelingFunctionsMesh2x2);

@@ -40,10 +40,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 	{
 		static Regex getQuotedParts = new Regex(@"([""'])(\\?.)*?\1", RegexOptions.Compiled);
 		QueuedCommandsStream queueStream;
+		PrinterSettings printerSettings;
 
-		public ProcessWriteRegexStream(GCodeStream internalStream, QueuedCommandsStream queueStream)
+		public ProcessWriteRegexStream(PrinterSettings printerSettings, GCodeStream internalStream, QueuedCommandsStream queueStream)
 			: base(internalStream)
 		{
+			this.printerSettings = printerSettings;
 			this.queueStream = queueStream;
 		}
 
@@ -56,7 +58,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				return null;
 			}
 
-			var lines = ProcessWriteRegEx(baseLine);
+			var lines = ProcessWriteRegEx(printerSettings, baseLine);
 			for (int i = 1; i < lines.Count; i++)
 			{
 				queueStream.Add(lines[i]);
@@ -68,15 +70,15 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		static string write_regex = "";
 		static private List<(Regex Regex, string Replacement)> WriteLineReplacements = new List<(Regex Regex, string Replacement)>();
 
-		public static List<string> ProcessWriteRegEx(string lineToWrite)
+		public static List<string> ProcessWriteRegEx(PrinterSettings printerSettings, string lineToWrite)
 		{
 			lock (WriteLineReplacements)
 			{
-				if (write_regex != ActiveSliceSettings.Instance.GetValue(SettingsKey.write_regex))
+				if (write_regex != printerSettings.GetValue(SettingsKey.write_regex))
 				{
 					WriteLineReplacements.Clear();
 					string splitString = "\\n";
-					write_regex = ActiveSliceSettings.Instance.GetValue(SettingsKey.write_regex);
+					write_regex = printerSettings.GetValue(SettingsKey.write_regex);
 					foreach (string regExLine in write_regex.Split(new string[] { splitString }, StringSplitOptions.RemoveEmptyEntries))
 					{
 						var matches = getQuotedParts.Matches(regExLine);

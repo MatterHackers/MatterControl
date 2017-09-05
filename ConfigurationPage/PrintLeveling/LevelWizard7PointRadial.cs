@@ -48,16 +48,15 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 		}
 
-		public static string ApplyLeveling(string lineBeingSent, Vector3 currentDestination)
+		public static string ApplyLeveling(PrinterSettings printerSettings, string lineBeingSent, Vector3 currentDestination)
 		{
-			var settings = ActiveSliceSettings.Instance;
-			if (settings?.GetValue<bool>(SettingsKey.print_leveling_enabled) == true
+			if (printerSettings?.GetValue<bool>(SettingsKey.print_leveling_enabled) == true
 				&& (lineBeingSent.StartsWith("G0 ") || lineBeingSent.StartsWith("G1 "))
 				&& lineBeingSent.Length > 2
 				&& lineBeingSent[2] == ' ')
 			{
-				PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
-				return GetLevelingFunctions(numberOfRadialSamples, levelingData, ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center))
+				PrintLevelingData levelingData = printerSettings.Helpers.GetPrintLevelingData();
+				return GetLevelingFunctions(printerSettings, numberOfRadialSamples, levelingData, printerSettings.GetValue<Vector2>(SettingsKey.print_center))
 					.DoApplyLeveling(lineBeingSent, currentDestination);
 			}
 
@@ -84,8 +83,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public override Vector2 GetPrintLevelPositionToSample(int index, double radius)
 		{
-			PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
-			return GetLevelingFunctions(numberOfRadialSamples, levelingData, ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center))
+			PrintLevelingData levelingData = printerConnection.PrinterSettings.Helpers.GetPrintLevelingData();
+			return GetLevelingFunctions(printerConnection.PrinterSettings, numberOfRadialSamples, levelingData, printerConnection.PrinterSettings.GetValue<Vector2>(SettingsKey.print_center))
 				.GetPrintLevelPositionToSample(index, radius);
 		}
 	}
@@ -93,12 +92,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	public abstract class LevelWizardRadialBase : LevelWizardBase
 	{
 		private static RadialLevlingFunctions currentLevelingFunctions = null;
-		private LevelingStrings levelingStrings = new LevelingStrings();
-		protected PrinterConnection printerConnection;
+		private LevelingStrings levelingStrings;
 
 		public LevelWizardRadialBase(PrinterConnection printerConnection, LevelWizardBase.RuningState runningState, int width, int height, int totalSteps, int numberOfRadialSamples)
-			: base(width, height, totalSteps)
+			: base(printerConnection, width, height, totalSteps)
 		{
+			levelingStrings = new LevelingStrings(printerConnection.PrinterSettings);
 			this.printerConnection = printerConnection;
 			string printLevelWizardTitle = "MatterControl";
 			string printLevelWizardTitleFull = "Print Leveling Wizard".Localize();
@@ -121,7 +120,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			printLevelWizard.AddPage(new FirstPageInstructions(levelingStrings.OverviewText, levelingStrings.WelcomeText(numberOfRadialSamples + 1, 5)));
 
 			// To make sure the bed is at the correct temp, put in a filament selection page.
-			bool hasHeatedBed = ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_heated_bed);
+			bool hasHeatedBed = printerConnection.PrinterSettings.GetValue<bool>(SettingsKey.has_heated_bed);
 			if (hasHeatedBed)
 			{
 				string filamentSelectionPage = "{0}\n\n{1}".FormatWith(levelingStrings.materialPageInstructions1, levelingStrings.materialPageInstructions2);
@@ -139,14 +138,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			string medPrecisionLabel = "Medium Precision".Localize();
 			string highPrecisionLabel = "High Precision".Localize();
 
-			double bedRadius = Math.Min(ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.bed_size).x, ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.bed_size).y) / 2;
+			double bedRadius = Math.Min(printerConnection.PrinterSettings.GetValue<Vector2>(SettingsKey.bed_size).x, printerConnection.PrinterSettings.GetValue<Vector2>(SettingsKey.bed_size).y) / 2;
 
-			double startProbeHeight = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.print_leveling_probe_start);
+			double startProbeHeight = printerConnection.PrinterSettings.GetValue<double>(SettingsKey.print_leveling_probe_start);
 			for (int i = 0; i < numberOfRadialSamples + 1; i++)
 			{
 				Vector2 probePosition = GetPrintLevelPositionToSample(i, bedRadius);
 
-				if (ActiveSliceSettings.Instance.Helpers.UseZProbe())
+				if (printerConnection.PrinterSettings.Helpers.UseZProbe())
 				{
 					var stepString = string.Format("{0} {1} {2} {3}:", levelingStrings.stepTextBeg, i + 1, levelingStrings.stepTextEnd, numberOfRadialSamples + 1);
 					printLevelWizard.AddPage(new AutoProbeFeedback(printerConnection, printLevelWizard, new Vector3(probePosition, startProbeHeight), string.Format("{0} {1} {2} - {3}", stepString, positionLabel, i + 1, autoCalibrateLabel), probePositions, i));
@@ -162,7 +161,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			printLevelWizard.AddPage(new LastPagelInstructions(printerConnection, printLevelWizard, "Done".Localize(), levelingStrings.DoneInstructions, probePositions));
 		}
 
-		public static RadialLevlingFunctions GetLevelingFunctions(int numberOfRadialSamples, PrintLevelingData levelingData, Vector2 bedCenter)
+		public static RadialLevlingFunctions GetLevelingFunctions(PrinterSettings printerSettings, int numberOfRadialSamples, PrintLevelingData levelingData, Vector2 bedCenter)
 		{
 			if (currentLevelingFunctions == null
 				|| currentLevelingFunctions.NumberOfRadialSamples != numberOfRadialSamples
@@ -174,7 +173,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					currentLevelingFunctions.Dispose();
 				}
 
-				currentLevelingFunctions = new RadialLevlingFunctions(numberOfRadialSamples, levelingData, bedCenter);
+				currentLevelingFunctions = new RadialLevlingFunctions(printerSettings, numberOfRadialSamples, levelingData, bedCenter);
 			}
 
 			return currentLevelingFunctions;
@@ -186,9 +185,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	public class RadialLevlingFunctions : IDisposable
 	{
 		private EventHandler unregisterEvents;
+		PrinterSettings printerSettings;
 
-		public RadialLevlingFunctions(int numberOfRadialSamples, PrintLevelingData levelingData, Vector2 bedCenter)
+		public RadialLevlingFunctions(PrinterSettings printerSettings, int numberOfRadialSamples, PrintLevelingData levelingData, Vector2 bedCenter)
 		{
+			this.printerSettings = printerSettings;
 			this.SampledPositions = new List<Vector3>(levelingData.SampledPositions);
 			this.BedCenter = bedCenter;
 			this.NumberOfRadialSamples = numberOfRadialSamples;
@@ -272,7 +273,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public Vector2 GetPrintLevelPositionToSample(int index, double radius)
 		{
-			Vector2 bedCenter = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center);
+			Vector2 bedCenter = printerSettings.GetValue<Vector2>(SettingsKey.print_center);
 			if (index < NumberOfRadialSamples)
 			{
 				Vector2 position = new Vector2(radius, 0);

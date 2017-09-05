@@ -62,9 +62,6 @@ namespace MatterHackers.MatterControl
 			this.Name = "Export Item Window";
 
 			CreateWindowContent();
-
-			// TODO: Why? ***************************************************************************************************
-			PrinterSettings.PrintLevelingEnabledChanged.RegisterEvent((s, e) => CreateWindowContent(), ref unregisterEvents);
 		}
 
 		public void CreateWindowContent()

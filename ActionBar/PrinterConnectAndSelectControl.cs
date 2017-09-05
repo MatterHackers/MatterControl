@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
 			Button resetConnectionButton = buttonFactory.Generate(resetConnectionText, "e_stop4.png");
-			resetConnectionButton.Visible = ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.show_reset_connection);
+			resetConnectionButton.Visible = printerConnection.PrinterSettings.GetValue<bool>(SettingsKey.show_reset_connection);
 			resetConnectionButton.Click += (s, e) =>
 			{
 				UiThread.RunOnIdle(printerConnection.RebootBoard);
@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				var stringEvent = e as StringEventArgs;
 				if (stringEvent?.Data == SettingsKey.show_reset_connection)
 				{
-					resetConnectionButton.Visible = ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.show_reset_connection);
+					resetConnectionButton.Visible = printerConnection.PrinterSettings.GetValue<bool>(SettingsKey.show_reset_connection);
 				}
 			}, ref unregisterEvents);
 		}
@@ -192,7 +192,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			{
 				if (connectButton.Enabled)
 				{
-					if (ActiveSliceSettings.Instance.PrinterSelected)
+					if (printerConnection.PrinterSettings.PrinterSelected)
 					{
 						UserRequestedConnectToActivePrinter();
 					}
@@ -253,10 +253,10 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		public void UserRequestedConnectToActivePrinter()
 		{
-			if (ActiveSliceSettings.Instance.PrinterSelected)
+			if (printerConnection.PrinterSettings.PrinterSelected)
 			{
 #if __ANDROID__
-				if (!ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.enable_network_printing)
+				if (!printerConnection.PrinterSettings.GetValue<bool>(SettingsKey.enable_network_printing)
 					&& !FrostedSerialPort.HasPermissionToDevice())
 				{
 					// Opens the USB device permissions dialog which will call back into our UsbDevice broadcast receiver to connect
@@ -294,7 +294,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				var communicationState = printerConnection.CommunicationState;
 
 				// Ensure connect buttons are locked while long running processes are executing to prevent duplicate calls into said actions
-				connectButton.Enabled = ActiveSliceSettings.Instance.PrinterSelected
+				connectButton.Enabled = printerConnection.PrinterSettings.PrinterSelected
 					&& communicationState != CommunicationStates.AttemptingToConnect;
 
 				disconnectButton.Enabled = communicationState != CommunicationStates.Disconnecting;

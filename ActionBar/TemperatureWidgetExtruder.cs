@@ -72,7 +72,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		protected override void SetTargetTemperature()
 		{
 			double targetTemp;
-			if (double.TryParse(ActiveSliceSettings.Instance.GetValue(SettingsKey.temperature), out targetTemp))
+			if (double.TryParse(printerConnection.PrinterSettings.GetValue(SettingsKey.temperature), out targetTemp))
 			{
 				double goalTemp = (int)(targetTemp + .5);
 				if (printerConnection.PrinterIsPrinting
@@ -156,7 +156,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			container.AddChild(new SettingsItem("Material".Localize(), presetsSelector, enforceGutter: false));
 
-			settingsTemperature = new TextWidget(ActiveSliceSettings.Instance.GetValue(SettingsKey.temperature))
+			settingsTemperature = new TextWidget(printerConnection.PrinterSettings.GetValue(SettingsKey.temperature))
 			{
 				AutoExpandBoundsToText = true
 			};
@@ -183,7 +183,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			retractButton.Margin = new BorderDouble(8, 0);
 			retractButton.Click += (s, e) =>
 			{
-				printerConnection.MoveExtruderRelative(moveAmount * -1, MovementControls.EFeedRate(extruderIndex), extruderIndex);
+				printerConnection.MoveExtruderRelative(moveAmount * -1, printerConnection.PrinterSettings.EFeedRate(extruderIndex), extruderIndex);
 			};
 			buttonContainer.AddChild(retractButton);
 
@@ -192,7 +192,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			extrudeButton.Margin = 0;
 			extrudeButton.Click += (s, e) =>
 			{
-				printerConnection.MoveExtruderRelative(moveAmount, MovementControls.EFeedRate(extruderIndex), extruderIndex);
+				printerConnection.MoveExtruderRelative(moveAmount, printerConnection.PrinterSettings.EFeedRate(extruderIndex), extruderIndex);
 			};
 			buttonContainer.AddChild(extrudeButton);
 
@@ -280,9 +280,9 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		private void ActiveSliceSettings_MaterialPresetChanged(object sender, EventArgs e)
 		{
-			if (settingsTemperature != null && ActiveSliceSettings.Instance != null)
+			if (settingsTemperature != null && printerConnection.PrinterSettings != null)
 			{
-				settingsTemperature.Text = ActiveSliceSettings.Instance.GetValue(SettingsKey.temperature);
+				settingsTemperature.Text = printerConnection.PrinterSettings.GetValue(SettingsKey.temperature);
 			}
 		}
 
