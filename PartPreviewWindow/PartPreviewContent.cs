@@ -32,6 +32,7 @@ using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.AboutPage;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintQueue;
@@ -75,7 +76,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			//
 			// Add a tab for the current printer
 			var printerTab = new PrinterTab(
-				tabTitle, 
+				tabTitle,
 				"3D View Tab",
 				new PrinterTabPage(PrinterConnection.Instance, printerConfig, theme, printItem, tabTitle.ToUpper()));
 			printerTab.ToolTipText = "Preview 3D Design".Localize();
@@ -106,6 +107,38 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			tabControl.TabBar.AddChild(new HorizontalSpacer());
 
+			// add in the update available button
+			LinkButtonFactory linkButtonFactory = new LinkButtonFactory()
+			{
+				textColor = ActiveTheme.Instance.PrimaryAccentColor,
+				fontSize = 12,
+			};
+
+			Button updateAvailableButton = linkButtonFactory.Generate("Update Available");
+			updateAvailableButton.Name = "Update Available Link";
+			updateAvailableButton.Visible = UpdateControlData.Instance.UpdateStatus == UpdateControlData.UpdateStatusStates.UpdateAvailable;
+			updateAvailableButton.ToolTipText = "There is a new update available for download".Localize();
+			updateAvailableButton.VAnchor = VAnchor.Center;
+			updateAvailableButton.Margin = new Agg.BorderDouble(10, 0);
+			updateAvailableButton.Click += (s, e) => UiThread.RunOnIdle(() =>
+			{
+				UiThread.RunOnIdle(() =>
+				{
+					UpdateControlData.Instance.CheckForUpdateUserRequested();
+					WizardWindow.Show<CheckForUpdatesPage>();
+				});
+			});
+			tabControl.TabBar.AddChild(updateAvailableButton);
+
+			UpdateControlData.Instance.UpdateStatusChanged.RegisterEvent((s, e) =>
+			{
+				updateAvailableButton.Visible = UpdateControlData.Instance.UpdateStatus == UpdateControlData.UpdateStatusStates.UpdateAvailable;
+			}, ref unregisterEvents);
+
+			// this causes the update button to be centered
+			tabControl.TabBar.AddChild(new HorizontalSpacer());
+
+			// put in the login logout control
 			var rightPanelArea = new FlowLayoutWidget()
 			{
 				VAnchor = VAnchor.Stretch

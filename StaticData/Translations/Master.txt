@@ -4507,3 +4507,21 @@ Translated:This will improve the accuracy of print leveling.
 English:Running Macro
 Translated:Running Macro
 
+English:There is a new update available for download
+Translated:There is a new update available for download
+
+English:Current Build : Test Build
+Translated:Current Build : Test Build
+
+English:Stable: The current release version of MatterControl (recommended).
+Translated:Stable: The current release version of MatterControl (recommended).
+
+English:Beta: The release candidate version of MatterControl.
+Translated:Beta: The release candidate version of MatterControl.
+
+English:Alpha: The in development version of MatterControl.
+Translated:Alpha: The in development version of MatterControl.
+
+English:Changing your update channel will change the version of MatterControl that you receive when updating:
+Translated:Changing your update channel will change the version of MatterControl that you receive when updating:
+
