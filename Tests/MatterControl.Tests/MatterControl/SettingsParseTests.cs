@@ -1,10 +1,13 @@
 ﻿using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.Tests.Automation;
 using MatterHackers.VectorMath;
+using Newtonsoft.Json;
 using NUnit.Framework;
 
 namespace MatterControl.Tests.MatterControl
@@ -203,6 +206,35 @@ namespace MatterControl.Tests.MatterControl
 				{
 					string[] settings = new string[] { SettingsKey.extruder_count, "2", SettingsKey.extruders_share_temperature, "1" };
 					Assert.AreEqual(GetProfile(settings).Helpers.NumberOfHotEnds(), 1);
+				}
+			}
+		}
+
+		[Test]
+		// Validates that all SetSettingsOnChange linked fields exist and have their required TargetSetting and Value definitions
+		public void LinkedSettingsExist()
+		{
+			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+
+			string propertiesFileContents = AggContext.StaticData.ReadAllText(Path.Combine("SliceSettings", "Properties.json"));
+			var allSettings = JsonConvert.DeserializeObject<List<SliceSettingData>>(propertiesFileContents);
+
+			var settingsByName = new Dictionary<string, SliceSettingData>();
+			foreach (var settingsData in allSettings)
+			{
+				settingsByName.Add(settingsData.SlicerConfigName, settingsData);
+			}
+
+			foreach(var boundSetting in allSettings.Where(s => s.SetSettingsOnChange.Count > 0))
+			{
+				foreach(var linkedSetting in boundSetting.SetSettingsOnChange)
+				{
+					// TargetSetting definition must exist
+					Assert.IsTrue(linkedSetting.TryGetValue("TargetSetting", out string targetSettingSource), "TargetSetting field should exist");
+
+					// TargetSetting source field must be defined/known
+					Assert.IsTrue(settingsByName.ContainsKey(targetSettingSource), "Linked field should exist: " + targetSettingSource);
 				}
 			}
 		}
