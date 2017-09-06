@@ -77,29 +77,29 @@ namespace MatterHackers.MatterControl.AboutPage
 			additionalInfoContainer.HAnchor = HAnchor.Stretch;
 			additionalInfoContainer.Padding = new BorderDouble(left: 6, top: 6);
 
-			string aboutUpdateChannel = "Changing your update channel will change the version of MatterControl \nthat you receive when updating:".Localize();
-			var updateChannelLabel = new TextWidget(aboutUpdateChannel);
+			string aboutUpdateChannel = "Changing your update channel will change the version of MatterControl that you receive when updating:".Localize();
+			var updateChannelLabel = new WrappedTextWidget(aboutUpdateChannel);
 			updateChannelLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			updateChannelLabel.HAnchor = HAnchor.Stretch;
 			updateChannelLabel.Margin = new BorderDouble(bottom: 20);
 			additionalInfoContainer.AddChild(updateChannelLabel);
 
 			string stableFeedInfoText = "Stable: The current release version of MatterControl (recommended).".Localize();
-			var stableInfoLabel = new TextWidget(stableFeedInfoText);
+			var stableInfoLabel = new WrappedTextWidget(stableFeedInfoText);
 			stableInfoLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			stableInfoLabel.HAnchor = HAnchor.Stretch;
 			stableInfoLabel.Margin = new BorderDouble(bottom: 10);
 			additionalInfoContainer.AddChild(stableInfoLabel);
 
 			string betaFeedInfoText = "Beta: The release candidate version of MatterControl.".Localize();
-			var betaInfoLabel = new TextWidget(betaFeedInfoText);
+			var betaInfoLabel = new WrappedTextWidget(betaFeedInfoText);
 			betaInfoLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			betaInfoLabel.HAnchor = HAnchor.Stretch;
 			betaInfoLabel.Margin = new BorderDouble(bottom: 10);
 			additionalInfoContainer.AddChild(betaInfoLabel);
 
 			string alphaFeedInfoText = "Alpha: The in development version of MatterControl.".Localize();
-			var alphaInfoLabel = new TextWidget(alphaFeedInfoText);
+			var alphaInfoLabel = new WrappedTextWidget(alphaFeedInfoText);
 			alphaInfoLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			alphaInfoLabel.HAnchor = HAnchor.Stretch;
 			alphaInfoLabel.Margin = new BorderDouble(bottom: 10);
