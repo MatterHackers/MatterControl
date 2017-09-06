@@ -122,6 +122,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private PrinterConfig printer;
 
+		public Vector3 BedCenter
+		{
+			get
+			{
+				return new Vector3(printer.Bed.BedCenter);
+			}
+		}
+
 		// TODO: Make dynamic
 		public WorldView World { get; } = ApplicationController.Instance.Printer.Bed.World;
 
@@ -2148,7 +2156,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Invalidate();
 			}
 
-			PlatingHelper.PlaceMeshGroupOnBed(objectToLayFlatGroup);
+			PlatingHelper.PlaceOnBed(objectToLayFlatGroup);
 		}
 
 		public static Regex fileNameNumberMatch = new Regex("\\(\\d+\\)", RegexOptions.Compiled);
