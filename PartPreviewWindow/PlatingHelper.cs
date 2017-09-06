@@ -101,96 +101,58 @@ namespace MatterHackers.MatterControl
 			return output;
 		}
 
-		public static void ArrangeMeshGroups(List<IObject3D> object3DList, List<Matrix4X4> asyncMeshGroupTransforms, Action<double, string> reportProgressChanged)
+		public static void ArrangeOnBed(List<IObject3D> object3DList, IObject3D scene, Vector3 bedCenter)
 		{
-			// TODO: ******************** !!!!!!!!!!!!!!! ********************
-		}
-
-		/*
-		public static void ArrangeMeshGroups(List<IObject3D> object3DList, List<Matrix4X4> asyncMeshGroupTransforms, List<PlatingMeshGroupData> MeshGroupExtraData,
-			Action<double, string> reportProgressChanged)
-		{
-
-
 			// move them all out of the way
-			for (int i = 0; i < MeshGroups.Count; i++)
+			for (int i = 0; i < object3DList.Count; i++)
 			{
-				asyncMeshGroupTransforms[i] *= Matrix4X4.CreateTranslation(10000, 10000, 0);
+				object3DList[i].Matrix *= Matrix4X4.CreateTranslation(10000, 10000, 0);
 			}
 
 			// sort them by size
-			for (int i = 0; i < MeshGroups.Count; i++)
-			{
-				AxisAlignedBoundingBox iAABB = MeshGroups[i].GetAxisAlignedBoundingBox(asyncMeshGroupTransforms[i]);
-				for (int j = i + 1; j < MeshGroups.Count; j++)
-				{
-					AxisAlignedBoundingBox jAABB = MeshGroups[j].GetAxisAlignedBoundingBox(asyncMeshGroupTransforms[j]);
-					if (Math.Max(iAABB.XSize, iAABB.YSize) < Math.Max(jAABB.XSize, jAABB.YSize))
-					{
-						PlatingMeshGroupData tempData = MeshGroupExtraData[i];
-						MeshGroupExtraData[i] = MeshGroupExtraData[j];
-						MeshGroupExtraData[j] = tempData;
+			object3DList.Sort(SortOnSize);
 
-						MeshGroup tempMeshGroup = MeshGroups[i];
-						MeshGroups[i] = MeshGroups[j];
-						MeshGroups[j] = tempMeshGroup;
-
-						Matrix4X4 iTransform = asyncMeshGroupTransforms[i];
-						Matrix4X4 jTransform = asyncMeshGroupTransforms[j];
-						Matrix4X4 tempTransform = iTransform;
-						iTransform = jTransform;
-						jTransform = tempTransform;
-
-						asyncMeshGroupTransforms[i] = jTransform;
-						asyncMeshGroupTransforms[j] = iTransform;
-
-						iAABB = jAABB;
-					}
-				}
-			}
-
-			double ratioPerMeshGroup = 1.0 / MeshGroups.Count;
+			double ratioPerMeshGroup = 1.0 / object3DList.Count;
 			double currentRatioDone = 0;
 			// put them onto the plate (try the center) starting with the biggest and moving down
-			for (int meshGroupIndex = 0; meshGroupIndex < MeshGroups.Count; meshGroupIndex++)
+			for (int meshGroupIndex = 0; meshGroupIndex < object3DList.Count; meshGroupIndex++)
 			{
-				reportProgressChanged(currentRatioDone, "Calculating Positions...".Localize());
+				var object3D = object3DList[meshGroupIndex];
+				Vector3 meshLowerLeft = object3D.GetAxisAlignedBoundingBox(Matrix4X4.Identity).minXYZ;
+				object3D.Matrix *= Matrix4X4.CreateTranslation(-meshLowerLeft);
 
-				MeshGroup meshGroup = MeshGroups[meshGroupIndex];
-				Vector3 meshLowerLeft = meshGroup.GetAxisAlignedBoundingBox(asyncMeshGroupTransforms[meshGroupIndex]).minXYZ;
-				asyncMeshGroupTransforms[meshGroupIndex] *= Matrix4X4.CreateTranslation(-meshLowerLeft);
-
-				PlatingHelper.MoveMeshGroupToOpenPosition(meshGroupIndex, MeshGroupExtraData, MeshGroups, asyncMeshGroupTransforms);
-
-				// and create the trace info so we can select it
-				if (MeshGroupExtraData[meshGroupIndex].meshTraceableData.Count == 0)
-				{
-					PlatingHelper.CreateITraceableForMeshGroup(MeshGroupExtraData, MeshGroups, meshGroupIndex, null);
-				}
+				PlatingHelper.MoveToOpenPosition(object3D, scene.Children);
 
 				currentRatioDone += ratioPerMeshGroup;
 
 				// and put it on the bed
-				PlatingHelper.PlaceMeshGroupOnBed(MeshGroups, asyncMeshGroupTransforms, meshGroupIndex);
+				PlatingHelper.PlaceOnBed(object3D);
 			}
 
 			// and finally center whatever we have as a group
 			{
-				AxisAlignedBoundingBox bounds = MeshGroups[0].GetAxisAlignedBoundingBox(asyncMeshGroupTransforms[0]);
-				for (int i = 1; i < MeshGroups.Count; i++)
+				AxisAlignedBoundingBox bounds = object3DList[0].GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+				for (int i = 1; i < object3DList.Count; i++)
 				{
-					bounds = AxisAlignedBoundingBox.Union(bounds, MeshGroups[i].GetAxisAlignedBoundingBox(asyncMeshGroupTransforms[i]));
+					bounds = AxisAlignedBoundingBox.Union(bounds, object3DList[i].GetAxisAlignedBoundingBox(Matrix4X4.Identity));
 				}
 
 				Vector3 boundsCenter = (bounds.maxXYZ + bounds.minXYZ) / 2;
-				for (int i = 0; i < MeshGroups.Count; i++)
+				for (int i = 0; i < object3DList.Count; i++)
 				{
-					asyncMeshGroupTransforms[i] *= Matrix4X4.CreateTranslation(-boundsCenter + new Vector3(0, 0, bounds.ZSize / 2));
+					object3DList[i].Matrix *= Matrix4X4.CreateTranslation(-boundsCenter + new Vector3(0, 0, bounds.ZSize / 2) + bedCenter);
 				}
 			}
 		}
-		*/
-		public static void PlaceMeshGroupOnBed(IObject3D object3D)
+
+		private static int SortOnSize(IObject3D x, IObject3D y)
+		{
+			AxisAlignedBoundingBox xAABB = x.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+			AxisAlignedBoundingBox yAABB = y.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+			return Math.Max(xAABB.XSize, xAABB.YSize).CompareTo(Math.Max(yAABB.XSize, yAABB.YSize));
+		}
+
+		public static void PlaceOnBed(IObject3D object3D)
 		{
 			AxisAlignedBoundingBox bounds = object3D.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 			Vector3 boundsCenter = (bounds.maxXYZ + bounds.minXYZ) / 2;

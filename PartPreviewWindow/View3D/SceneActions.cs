@@ -148,22 +148,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public static async void AutoArrangeChildren(this InteractiveScene Scene, View3DWidget view3DWidget)
 		{
-			// TODO: ******************** !!!!!!!!!!!!!!! ********************
-			var arrangedScene = new Object3D();
 			await Task.Run(() =>
 			{
-				foreach (var sceneItem in Scene.Children)
-				{
-					PlatingHelper.MoveToOpenPosition(sceneItem, Scene.Children);
-
-					arrangedScene.Children.Add(sceneItem);
-				}
-			});
-
-			Scene.ModifyChildren(children =>
-			{
-				children.Clear();
-				children.AddRange(arrangedScene.Children);
+				PlatingHelper.ArrangeOnBed(Scene.Children.ToList(), Scene, view3DWidget.BedCenter);
 			});
 		}
 
@@ -270,46 +257,3 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		}
 	}
 }
-
-/*
-private async void AutoArrangePartsInBackground()
-{
-	if (MeshGroups.Count > 0)
-	{
-		string progressArrangeParts = LocalizedString.Get("Arranging Parts");
-		string progressArrangePartsFull = string.Format("{0}:", progressArrangeParts);
-		processingProgressControl.ProcessType = progressArrangePartsFull;
-		processingProgressControl.Visible = true;
-		processingProgressControl.PercentComplete = 0;
-		LockEditControls();
-
-		List<Matrix4X4> preArrangeTarnsforms = new List<Matrix4X4>(MeshGroupTransforms);
-
-		await Task.Run(() =>
-		{
-			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-			PushMeshGroupDataToAsynchLists(TraceInfoOpperation.DONT_COPY);
-			PlatingHelper.ArrangeMeshGroups(asyncMeshGroups, asyncMeshGroupTransforms, asyncPlatingDatas, ReportProgressChanged);
-		});
-
-		if (WidgetHasBeenClosed)
-		{
-			return;
-		}
-
-		// offset them to the center of the bed
-		for (int i = 0; i < asyncMeshGroups.Count; i++)
-		{
-			asyncMeshGroupTransforms[i] *= Matrix4X4.CreateTranslation(new Vector3(ActiveSliceSettings.Instance.BedCenter, 0));
-		}
-
-		PartHasBeenChanged();
-
-		PullMeshGroupDataFromAsynchLists();
-		List<Matrix4X4> postArrangeTarnsforms = new List<Matrix4X4>(MeshGroupTransforms);
-
-		undoBuffer.Add(new ArangeUndoCommand(this, preArrangeTarnsforms, postArrangeTarnsforms));
-
-		UnlockEditControls();
-	}
-} */
