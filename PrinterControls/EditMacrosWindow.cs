@@ -39,6 +39,8 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
+	public enum MacroUiLocation { Controls, Extruder_1, Extruder_2, Extruder_3, Extruder_4 }
+
 	public class EditMacrosWindow : SystemWindow
 	{
 		public GCodeMacro ActiveMacro;
@@ -104,12 +106,12 @@ namespace MatterHackers.MatterControl
 
 	public class MacroDetailWidget : GuiWidget
 	{
+		DropDownList macroUiLocation;
 		private LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
 		private TextWidget macroCommandError;
 		private MHTextEditWidget macroCommandInput;
 		private TextWidget macroNameError;
 		private MHTextEditWidget macroNameInput;
-		private CheckBox showInActionMenu;
 		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
 		private EditMacrosWindow windowController;
 		PrinterSettings printerSettings;
@@ -249,19 +251,29 @@ namespace MatterHackers.MatterControl
 
 		FlowLayoutWidget CreateMacroActionEdit()
 		{
-			FlowLayoutWidget container = new FlowLayoutWidget(FlowDirection.TopToBottom);
+			FlowLayoutWidget container = new FlowLayoutWidget();
 			container.Margin = new BorderDouble(0, 5);
-			BorderDouble elementMargin = new BorderDouble(top: 3);
 
-			showInActionMenu = new CheckBox("Show In Action Menu".Localize())
+			container.AddChild(new TextWidget("Where to show this macro:")
 			{
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
-				HAnchor = HAnchor.Stretch,
-				Margin = new BorderDouble(0, 0, 0, 1),
-				Checked = windowController.ActiveMacro.ActionGroup,
-			};
+				VAnchor = VAnchor.Center
+			});
 
-			container.AddChild(showInActionMenu);
+			macroUiLocation = new DropDownList("Default", Direction.Up)
+			{
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				Margin = new BorderDouble(5, 0),
+				VAnchor = VAnchor.Center
+			};
+			foreach (var location in Enum.GetValues(typeof(MacroUiLocation)))
+			{
+				macroUiLocation.AddItem(location.ToString().Replace("_", " ").Localize(), location.ToString());
+			}
+
+			macroUiLocation.SelectedValue = windowController.ActiveMacro.MacroUiLocation.ToString();
+
+			container.AddChild(macroUiLocation);
 			container.HAnchor = HAnchor.Stretch;
 			return container;
 		}
@@ -270,7 +282,12 @@ namespace MatterHackers.MatterControl
 		{
 			windowController.ActiveMacro.Name = macroNameInput.Text;
 			windowController.ActiveMacro.GCode = macroCommandInput.Text;
-			windowController.ActiveMacro.ActionGroup = showInActionMenu.Checked;
+			MacroUiLocation result;
+			if (!Enum.TryParse(macroUiLocation.SelectedValue, out result))
+			{
+				result = MacroUiLocation.Controls;
+			}
+			windowController.ActiveMacro.MacroUiLocation = result;
 
 			if (!printerSettings.Macros.Contains(windowController.ActiveMacro))
 			{

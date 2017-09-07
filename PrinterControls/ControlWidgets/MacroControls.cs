@@ -38,66 +38,6 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PrinterControls
 {
-	public class ActionControls : ControlWidgetBase
-	{
-		public ActionControls(PrinterConnection printerConnection)
-		{
-			if (!printerConnection.PrinterSettings.ActionMacros().Any())
-			{
-				Margin = new BorderDouble();
-				return;
-			}
-			this.AddChild(new ActionControlsWidget(printerConnection));
-		}
-	}
-
-	public class ActionControlsWidget : FlowLayoutWidget
-	{
-		public ActionControlsWidget(PrinterConnection printerConnection)
-			: base(FlowDirection.TopToBottom)
-		{
-			var buttonFactory = ApplicationController.Instance.Theme.HomingButtons;
-
-			this.HAnchor = HAnchor.Stretch;
-
-			// add the widgets to this window
-			FlowLayoutWidget groupBox = new FlowLayoutWidget()
-			{
-				Padding = new BorderDouble(5),
-				HAnchor = HAnchor.Stretch,
-				BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor,
-			};
-
-			// make sure the client area will get smaller when the contents get smaller
-			groupBox.VAnchor = Agg.UI.VAnchor.Fit;
-
-			FlowLayoutWidget controlRow = new FlowLayoutWidget(Agg.UI.FlowDirection.TopToBottom);
-			controlRow.Margin = new BorderDouble(top: 5);
-			controlRow.HAnchor |= HAnchor.Stretch;
-			
-			var macroButtonContainer = new FlowLayoutWidget();
-			macroButtonContainer.Margin = new BorderDouble(0, 0, 3, 0);
-			macroButtonContainer.Padding = new BorderDouble(0, 3, 3, 3);
-
-			if (printerConnection.PrinterSettings?.ActionMacros().Any() == true)
-			{
-				foreach (GCodeMacro macro in printerConnection.PrinterSettings.ActionMacros())
-				{
-					Button macroButton = buttonFactory.Generate(GCodeMacro.FixMacroName(macro.Name));
-					macroButton.Margin = new BorderDouble(right: 5);
-					macroButton.Click += (s, e) => macro.Run(printerConnection);
-
-					macroButtonContainer.AddChild(macroButton);
-				}
-			}
-
-			controlRow.AddChild(macroButtonContainer);
-
-			groupBox.AddChild(controlRow);
-			this.AddChild(groupBox);
-		}
-	}
-
 	public class MacroControls : ControlWidgetBase
 	{
 		public MacroControls(PrinterConnection printerConnection, int headingPointSize)
@@ -143,20 +83,20 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		private FlowLayoutWidget GetMacroButtonContainer(TextImageButtonFactory buttonFactory)
 		{
-			FLowLeftRightWithWrapping macroContainer = new FLowLeftRightWithWrapping();
+			FlowLeftRightWithWrapping macroContainer = new FlowLeftRightWithWrapping();
 
 			TextWidget noMacrosFound = new TextWidget("No macros are currently set up for this printer.".Localize(), pointSize: 10);
 			noMacrosFound.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			macroContainer.AddChild(noMacrosFound);
 			noMacrosFound.Visible = false;
 
-			if (printerConnection.PrinterSettings?.UserMacros().Any() != true)
+			if (printerConnection.PrinterSettings?.GetMacros(MacroUiLocation.Controls).Any() != true)
 			{
 				noMacrosFound.Visible = true;
 				return macroContainer;
 			}
 
-			foreach (GCodeMacro macro in printerConnection.PrinterSettings.UserMacros())
+			foreach (GCodeMacro macro in printerConnection.PrinterSettings.GetMacros(MacroUiLocation.Controls))
 			{
 				Button macroButton = buttonFactory.Generate(GCodeMacro.FixMacroName(macro.Name));
 				macroButton.Margin = new BorderDouble(right: 5);

@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			};
 			numberEdit.InternalNumberEdit.TextChanged += (s, e) =>
 			{
-				numberDisplay.Text = GetDisplayString?.Invoke(Value);
+				numberDisplay.Text = GetDisplayString == null ? "None" : GetDisplayString.Invoke(Value);
 				base.OnTextChanged(e);
 			};
 			numberEdit.InternalNumberEdit.MaxDecimalsPlaces = 2;
@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			VAnchor = VAnchor.Fit;
 			HAnchor = HAnchor.Fit;
 
-			UiThread.RunOnIdle(CheckRotationControlsVisibility, .1);
+			UiThread.RunOnIdle(CheckControlsVisibility, .1);
 		}
 
 		public event EventHandler EditComplete;
@@ -92,7 +92,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public Func<bool> ForceHide { get; set; }
 
-		Func<double, string> _GetDisplayString;
+		Func<double, string> _GetDisplayString = (value) => "{0:0.0}".FormatWith(value);
 		public Func<double, string> GetDisplayString
 		{
 			get { return _GetDisplayString; }
@@ -177,7 +177,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			base.OnMouseDown(mouseEvent);
 		}
 
-		private void CheckRotationControlsVisibility()
+		private void CheckControlsVisibility()
 		{
 			if (!this.Editing)
 			{
@@ -202,7 +202,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				Visible = false;
 			}
 
-			UiThread.RunOnIdle(CheckRotationControlsVisibility, .1);
+			UiThread.RunOnIdle(CheckControlsVisibility, .1);
 		}
 	}
 }
