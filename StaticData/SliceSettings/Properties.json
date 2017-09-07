@@ -642,6 +642,7 @@
 		"PresentationName": "Show Reset Connection",
 		"HelpText": "Shows a button at the right side of the Printer Connection Bar used to reset the USB connection to the printer. This can be used on printers that support it as an emergency stop.",
 		"DataEditType": "HARDWARE_PRESENT",
+		"ReloadUiWhenChanged": true,
 		"DefaultValue": "0",
 	},
 	{

@@ -56,9 +56,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.Content = checkBoxWidget;
 		}
 
-		public void OnValueChanged(string text)
+		protected override void OnValueChanged(FieldChangedEventArgs fieldChangedEventArgs)
 		{
-			checkBoxWidget.Checked = text == "1";
+			checkBoxWidget.Checked = this.Value == "1";
+			base.OnValueChanged(fieldChangedEventArgs);
 		}
 	}
 }

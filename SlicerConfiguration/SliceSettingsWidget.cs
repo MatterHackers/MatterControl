@@ -917,6 +917,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 										}
 									}
 								}
+
+								// Store actual field value
+								settingsContext.SetValue(settingData.SlicerConfigName, uiField.Value);
 							}
 						};
 
