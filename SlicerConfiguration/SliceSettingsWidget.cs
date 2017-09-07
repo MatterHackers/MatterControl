@@ -594,7 +594,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private static GuiWidget GetExtraSettingsWidget(SliceSettingData settingData)
 		{
 			// List elements contain list values in the field which normally contains label details, skip generation of invalid labels
-			if (settingData.DataEditType == SliceSettingData.DataEditTypes.LIST)
+			if (settingData.DataEditType == SliceSettingData.DataEditTypes.LIST
+				|| settingData.DataEditType == SliceSettingData.DataEditTypes.HARDWARE_PRESENT)
 			{
 				return null;
 			}
