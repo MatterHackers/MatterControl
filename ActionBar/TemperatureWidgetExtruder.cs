@@ -40,10 +40,14 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.ActionBar
 {
-	internal class TemperatureWidgetExtruder : TemperatureWidgetBase
+	internal class TemperatureWidgetExtruder : GuiWidget
 	{
-		// Extruder widget is hard-wired to extruder 0
-		private const int extruderIndex = 0;
+
+	}
+
+	internal class TemperatureWidgetHotend : TemperatureWidgetBase
+	{
+		private int extruderIndex = -1;
 		private int moveAmount = 1;
 
 		private string sliceSettingsNote = "Note: Slice Settings are applied before the print actually starts. Changes while printing will not effect the active print.".Localize();
@@ -51,11 +55,12 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		private TextImageButtonFactory buttonFactory;
 
-		private TextWidget settingsTemperature;
+		private EditableNumberDisplay settingsTemperature;
 
-		public TemperatureWidgetExtruder(PrinterConnection printerConnection, TextImageButtonFactory buttonFactory)
+		public TemperatureWidgetHotend(PrinterConnection printerConnection, int extruderIndex, TextImageButtonFactory buttonFactory)
 			: base(printerConnection, "150.3°")
 		{
+			this.extruderIndex = extruderIndex;
 			this.buttonFactory = buttonFactory;
 			this.DisplayCurrentTemperature();
 			this.ToolTipText = "Current extruder temperature".Localize();
@@ -106,6 +111,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				VAnchor = VAnchor.Fit,
 				BackgroundColor = RGBA_Bytes.White
 			};
+			widget.AddChild(container);
 
 			container.AddChild(new SettingsItem(
 				string.Format("{0} {1}", "Hot End".Localize(), extruderIndex + 1),
@@ -125,9 +131,36 @@ namespace MatterHackers.MatterControl.ActionBar
 							printerConnection.SetTargetExtruderTemperature(extruderIndex, 0);
 						}
 					}
-				}, 
+				},
 				enforceGutter: false));
 
+			// put in the temp control
+			settingsTemperature = new EditableNumberDisplay(printerConnection.PrinterSettings.GetValue(SettingsKey.temperature), "000");
+			container.AddChild(new SettingsItem(
+				"Temperature".Localize(),
+				settingsTemperature, enforceGutter: false));
+
+			// add in the temp graph
+			Action fillGraph = null;
+			var graph = new DataViewGraph()
+			{
+				Width = widget.Width - 20,
+				Height = 20,
+			};
+			fillGraph = () =>
+			{
+				graph.AddData(this.ActualTemperature);
+				if (!graph.HasBeenClosed)
+				{
+					UiThread.RunOnIdle(fillGraph, 1);
+				}
+			};
+
+			UiThread.RunOnIdle(fillGraph);
+
+			container.AddChild(graph);
+
+			// put in the material selector
 			var presetsSelector = new PresetSelectorWidget(printerConnection, string.Format($"{"Material".Localize()} {extruderIndex + 1}"), RGBA_Bytes.Transparent, NamedSettingsLayers.Material, extruderIndex)
 			{
 				Margin = 0,
@@ -156,20 +189,10 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			container.AddChild(new SettingsItem("Material".Localize(), presetsSelector, enforceGutter: false));
 
-			settingsTemperature = new TextWidget(printerConnection.PrinterSettings.GetValue(SettingsKey.temperature))
-			{
-				AutoExpandBoundsToText = true
-			};
+			// add in any macros for this extruder
+			container.AddChild(new SettingsItem("Change".Localize(), AddExtruderMacros(extruderIndex), enforceGutter: false));
 
-			container.AddChild(new SettingsItem(
-				"Temperature".Localize(),
-				settingsTemperature,
-				enforceGutter: false));
-
-			widget.AddChild(container);
-
-			// Extrude buttons {{
-
+			// Add the Extrude buttons
 			var moveButtonFactory = ApplicationController.Instance.Theme.MicroButtonMenu;
 
 			var buttonContainer = new FlowLayoutWidget()
@@ -197,7 +220,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			buttonContainer.AddChild(extrudeButton);
 
 			container.AddChild(new SettingsItem(
-				string.Format("{0} {1}", "Extruder".Localize(), extruderIndex + 1),
+				"Extrude".Localize(),
 				buttonContainer, 
 				enforceGutter: false));
 
@@ -251,31 +274,29 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			container.AddChild(new SettingsItem("Distance".Localize(), moveButtonsContainer, enforceGutter: false));
 
-			var graph = new DataViewGraph()
-			{
-				Width = widget.Width - 20,
-				Height = 20,
-			};
-
-			Action fillGraph = null;
-			fillGraph = () =>
-			{
-				graph.AddData(this.ActualTemperature);
-				if (!graph.HasBeenClosed)
-				{
-					UiThread.RunOnIdle(fillGraph, 1);
-				}
-			};
-
-			UiThread.RunOnIdle(fillGraph);
-
-			container.AddChild(graph);
-
-			// Extrude buttons }}
-
 			ActiveSliceSettings.MaterialPresetChanged += ActiveSliceSettings_MaterialPresetChanged;
 
 			return widget;
+		}
+
+		private GuiWidget AddExtruderMacros(int extruderIndex)
+		{
+			var row = new FlowLayoutWidget();
+
+			MacroUiLocation extruderUiMacros;
+			if (Enum.TryParse($"Extruder_{extruderIndex+1}", out extruderUiMacros))
+			{
+				foreach (GCodeMacro macro in printerConnection.PrinterSettings.GetMacros(extruderUiMacros))
+				{
+					Button macroButton = buttonFactory.Generate(GCodeMacro.FixMacroName(macro.Name));
+					macroButton.Margin = new BorderDouble(left: 5);
+					macroButton.Click += (s, e) => macro.Run(printerConnection);
+
+					row.AddChild(macroButton);
+				}
+			}
+
+			return row;
 		}
 
 		private void ActiveSliceSettings_MaterialPresetChanged(object sender, EventArgs e)

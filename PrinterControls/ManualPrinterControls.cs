@@ -74,7 +74,6 @@ namespace MatterHackers.MatterControl
 	{
 		private DisableableWidget fanControlsContainer;
 		private DisableableWidget macroControlsContainer;
-		private DisableableWidget actionControlsContainer;
 		private DisableableWidget tuningAdjustmentControlsContainer;
 		private MovementControls movementControlsContainer;
 		private DisableableWidget calibrationControlsContainer;
@@ -104,9 +103,6 @@ namespace MatterHackers.MatterControl
 				Margin = new BorderDouble(0)
 			};
 			this.AddChild(controlsTopToBottomLayout);
-
-			actionControlsContainer = new ActionControls(printerConnection);
-			controlsTopToBottomLayout.AddChild(actionControlsContainer);
 
 			movementControlsContainer = new MovementControls(printerConnection, headingPointSize);
 			controlsTopToBottomLayout.AddChild(movementControlsContainer);
@@ -166,7 +162,6 @@ namespace MatterHackers.MatterControl
 				movementControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 				fanControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 				macroControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-				actionControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 				calibrationControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 				tuningAdjustmentControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 			}
@@ -182,7 +177,6 @@ namespace MatterHackers.MatterControl
 						movementControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
 						fanControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 						macroControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
-						actionControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 						tuningAdjustmentControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 						calibrationControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 
@@ -199,7 +193,6 @@ namespace MatterHackers.MatterControl
 						movementControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 						fanControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 						macroControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						actionControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 						tuningAdjustmentControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 						calibrationControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 
@@ -214,7 +207,6 @@ namespace MatterHackers.MatterControl
 						movementControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
 						fanControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 						macroControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
-						actionControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 						tuningAdjustmentControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 						calibrationControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 						break;
@@ -229,7 +221,6 @@ namespace MatterHackers.MatterControl
 							case DetailedPrintingState.Printing:
 								fanControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 								macroControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
-								actionControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 								tuningAdjustmentControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 								calibrationControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 
@@ -250,7 +241,6 @@ namespace MatterHackers.MatterControl
 						movementControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 						fanControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 						macroControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						actionControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 						tuningAdjustmentControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 						calibrationControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
 

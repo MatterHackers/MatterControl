@@ -167,10 +167,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.AddChild(new HorizontalSpacer());
 
-			this.AddChild(new TemperatureWidgetExtruder(printerConnection, ApplicationController.Instance.Theme.MenuButtonFactory)
+			bool shareTemp = printerConnection.PrinterSettings.GetValue<bool>(SettingsKey.extruders_share_temperature);
+			int extruderCount = shareTemp ? 1 : printerConnection.PrinterSettings.GetValue<int>(SettingsKey.extruder_count);
+
+			for (int extruderIndex = 0; extruderIndex < extruderCount; extruderIndex++)
 			{
-				Margin = new BorderDouble(right: 10)
-			});
+				this.AddChild(new TemperatureWidgetHotend(printerConnection, extruderIndex, ApplicationController.Instance.Theme.MenuButtonFactory)
+				{
+					Margin = new BorderDouble(right: 10)
+				});
+			}
 
 			if (printerConnection.PrinterSettings.GetValue<bool>(SettingsKey.has_heated_bed))
 			{

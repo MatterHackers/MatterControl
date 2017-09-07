@@ -88,8 +88,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public List<GCodeMacro> Macros { get; set; } = new List<GCodeMacro>();
 
-		public IEnumerable<GCodeMacro> UserMacros() => Macros.Where(m => !m.ActionGroup);
-		public IEnumerable<GCodeMacro> ActionMacros() => Macros.Where(m => m.ActionGroup);
+		public IEnumerable<GCodeMacro> GetMacros(MacroUiLocation macroLocation) => Macros.Where(m => m.MacroUiLocation == macroLocation).OrderBy(p => p.Name);
 
 		/// <summary>
 		/// Restore deactivated user overrides by iterating the active preset and removing/restoring matching items
@@ -762,7 +761,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 #if DEBUG
 			ValidateType<T>(settingsKey);
 #endif
-			if (typeof(T) == typeof(bool))
+			if (typeof(T) == typeof(string))
+			{
+				// this way we can use the common pattern without errer
+				return (T)(object)this.GetValue(settingsKey);
+			}
+			else if (typeof(T) == typeof(bool))
 			{
 				return (T)(object)(this.GetValue(settingsKey) == "1");
 			}
