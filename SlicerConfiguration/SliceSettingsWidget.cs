@@ -423,7 +423,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								TextColor = ActiveTheme.Instance.PrimaryTextColor,
 								BorderColor = ActiveTheme.Instance.PrimaryTextColor,
 								HAnchor = HAnchor.Stretch,
-								Margin = new BorderDouble(3, 3, 3, 0)
+								Margin = new BorderDouble(bottom: 3),
+								Padding = new BorderDouble(left: 4),
 							};
 							groupBox.AddChild(topToBottomSettings);
 
@@ -621,12 +622,22 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			private GuiWidget unitsArea;
 			private GuiWidget restoreArea;
 			private Button restoreButton = null;
+			private VerticalLine vline;
 
 			public SettingsRow(SettingsContext settingsContext, SliceSettingData settingData)
 			{
 				this.settingData = settingData;
 				this.settingsContext = settingsContext;
 
+				vline = new VerticalLine()
+				{
+					BackgroundColor = RGBA_Bytes.Transparent,
+					Margin = new BorderDouble(right: 6),
+					Width = 5,
+					VAnchor = VAnchor.Stretch | VAnchor.Center
+ 				};
+				this.AddChild(vline);
+				
 				this.NameArea = new GuiWidget()
 				{
 					MinimumSize = new Vector2(50, 0),
@@ -648,8 +659,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				restoreArea = new GuiWidget()
 				{
-					HAnchor = HAnchor.Fit,
+					HAnchor = HAnchor.Absolute,
 					VAnchor = VAnchor.Fit | VAnchor.Center,
+					Width = settingData.ShowAsOverride ? 20 * GuiWidget.DeviceScale : 5,
 				};
 				this.AddChild(restoreArea);
 
@@ -658,6 +670,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (settingData.ShowAsOverride)
 				{
 					restoreButton = ApplicationController.Instance.Theme.CreateSmallResetButton();
+					restoreButton.HAnchor = HAnchor.Right;
 					restoreButton.Margin = 0;
 					restoreButton.Name = "Restore " + settingData.SlicerConfigName;
 					restoreButton.ToolTipText = "Restore Default".Localize();
@@ -699,15 +712,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								{
 									if (layerName.StartsWith("Material"))
 									{
-										this.BackgroundColor = materialSettingBackgroundColor;
+										this.vline.BackgroundColor= materialSettingBackgroundColor;
 									}
 									else if (layerName.StartsWith("Quality"))
 									{
-										this.BackgroundColor = qualitySettingBackgroundColor;
+										this.vline.BackgroundColor= qualitySettingBackgroundColor;
 									}
 									else
 									{
-										this.BackgroundColor = RGBA_Bytes.Transparent;
+										this.vline.BackgroundColor= RGBA_Bytes.Transparent;
 									}
 
 									if (restoreButton != null)
@@ -717,17 +730,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								}
 								else
 								{
-									this.BackgroundColor = userSettingBackgroundColor;
+									this.vline.BackgroundColor= userSettingBackgroundColor;
 									if (restoreButton != null) restoreButton.Visible = true;
 								}
 							}
 							break;
 						case NamedSettingsLayers.Material:
-							this.BackgroundColor = materialSettingBackgroundColor;
+							this.vline.BackgroundColor= materialSettingBackgroundColor;
 							if (restoreButton != null) restoreButton.Visible = true;
 							break;
 						case NamedSettingsLayers.Quality:
-							this.BackgroundColor = qualitySettingBackgroundColor;
+							this.vline.BackgroundColor= qualitySettingBackgroundColor;
 							if (restoreButton != null) restoreButton.Visible = true;
 							break;
 					}
@@ -736,15 +749,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					if (ActiveSliceSettings.Instance.SettingExistsInLayer(settingData.SlicerConfigName, NamedSettingsLayers.Material))
 					{
-						this.BackgroundColor = materialSettingBackgroundColor;
+						this.vline.BackgroundColor= materialSettingBackgroundColor;
 					}
 					else if (ActiveSliceSettings.Instance.SettingExistsInLayer(settingData.SlicerConfigName, NamedSettingsLayers.Quality))
 					{
-						this.BackgroundColor = qualitySettingBackgroundColor;
+						this.vline.BackgroundColor= qualitySettingBackgroundColor;
 					}
 					else
 					{
-						this.BackgroundColor = RGBA_Bytes.Transparent;
+						this.vline.BackgroundColor= RGBA_Bytes.Transparent;
 					}
 
 					if (restoreButton != null) restoreButton.Visible = false;
@@ -752,7 +765,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				else
 				{
 					if (restoreButton != null) restoreButton.Visible = false;
-					this.BackgroundColor = RGBA_Bytes.Transparent;
+					this.vline.BackgroundColor= RGBA_Bytes.Transparent;
 				}
 			}
 
@@ -845,8 +858,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			var settingsRow = new SettingsRow(settingsContext, settingData)
 			{
 				Margin = new BorderDouble(0, 2),
-				Padding = new BorderDouble(3),
-				HAnchor = HAnchor.Stretch
+				Padding = new BorderDouble(0, 0, 10, 0),
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit
 			};
 
 			if (!PrinterSettings.KnownSettings.Contains(settingData.SlicerConfigName))
