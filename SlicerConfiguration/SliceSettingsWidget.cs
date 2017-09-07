@@ -870,7 +870,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				switch (settingData.DataEditType)
 				{
 					case SliceSettingData.DataEditTypes.INT:
-						uiField = new NumberField();
+						uiField = new IntField();
 						break;
 
 					case SliceSettingData.DataEditTypes.DOUBLE:
@@ -886,7 +886,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						else
 						{
 							uiField = new DoubleField();
-						}
+						};
 						break;
 
 					case SliceSettingData.DataEditTypes.DOUBLE_OR_PERCENT:
@@ -1003,7 +1003,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						settingsContext.SetValue(settingData.SlicerConfigName, uiField.Value);
 					}
 
-					settingsContext.SetValue(settingData.SlicerConfigName, uiField.Value);
 					settingsRow.UpdateStyle();
 				};
 

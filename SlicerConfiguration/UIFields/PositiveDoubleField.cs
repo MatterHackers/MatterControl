@@ -33,25 +33,6 @@ using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-
-	public class DoubleOrMmField : ValueOrUnitsField
-	{
-		protected override string ConvertValue(string newValue)
-		{
-			string text = newValue.Trim();
-
-			int tokenIndex = text.IndexOf(unitsToken);
-			bool hasUnitsToken = tokenIndex != -1;
-			if (hasUnitsToken)
-			{
-				text = text.Substring(0, tokenIndex);
-			}
-
-			double.TryParse(text, out double currentValue);
-			return currentValue + (hasUnitsToken ? unitsToken : "");
-		}
-	}
-
 	public class BoundDoubleField : TextField
 	{
 		private const string ValuesDifferToken = "-";
@@ -82,6 +63,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				// If this setting sets other settings, then do that.
 				if (ChangesMultipleOtherSettings)
 				{
+					// Iterate over each bound setting pushing the current value into each
 					for (int i = 0; i < settingData.SetSettingsOnChange.Count; i++)
 					{
 						string slicerConfigName = settingData.SetSettingsOnChange[i]["TargetSetting"];

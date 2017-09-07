@@ -72,7 +72,26 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 	}
 
-	public class NumberField : BasicField, IUIField
+	public class IntField : NumberField
+	{
+		private int intValue;
+
+		protected override string ConvertValue(string newValue)
+		{
+			decimal.TryParse(this.Value, out decimal currentValue);
+			intValue = (int)currentValue;
+
+			return intValue.ToString();
+		}
+
+		protected override void OnValueChanged(FieldChangedEventArgs fieldChangedEventArgs)
+		{
+			numberEdit.ActuallNumberEdit.Value = intValue;
+			base.OnValueChanged(fieldChangedEventArgs);
+		}
+	}
+
+	public abstract class NumberField : BasicField, IUIField
 	{
 		protected MHNumberEdit numberEdit;
 
@@ -97,14 +116,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			};
 
 			this.Content = numberEdit;
-		}
-
-		protected override void OnValueChanged(FieldChangedEventArgs fieldChangedEventArgs)
-		{
-			int.TryParse(this.Value, out int currentValue);
-			numberEdit.ActuallNumberEdit.Value = currentValue;
-
-			base.OnValueChanged(fieldChangedEventArgs);
 		}
 	}
 

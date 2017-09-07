@@ -28,18 +28,27 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class DoubleField : NumberField
 	{
-		public static int DoubleEditWidth = (int)(60 * GuiWidget.DeviceScale + .5);
+		private double doubleValue;
 
-		public void OnValueChanged(string text)
+		protected override string ConvertValue(string newValue)
 		{
-			double.TryParse(text, out double currentValue);
-			numberEdit.ActuallNumberEdit.Value = currentValue;
+			double.TryParse(newValue, out double currentValue);
+			doubleValue  = (int)currentValue;
+
+			return doubleValue.ToString();
+		}
+
+		protected override void OnValueChanged(FieldChangedEventArgs fieldChangedEventArgs)
+		{
+			numberEdit.ActuallNumberEdit.Value = doubleValue;
+			base.OnValueChanged(fieldChangedEventArgs);
 		}
 	}
 }
