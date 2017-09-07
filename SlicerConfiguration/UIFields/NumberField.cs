@@ -27,47 +27,35 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
 using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class BasicField
+	public abstract class NumberField : BasicField, IUIField
 	{
-		public event EventHandler<FieldChangedEventArgs> ValueChanged;
+		protected MHNumberEdit numberEdit;
 
-		public void SetValue(string newValue, bool userInitiated)
+		private readonly int ControlWidth = (int)(60 * GuiWidget.DeviceScale + .5);
+
+		public virtual void Initialize(int tabIndex)
 		{
-			string convertedValue = this.ConvertValue(newValue);
-
-			if (this.Value != convertedValue)
+			numberEdit = new MHNumberEdit(0, pixelWidth: ControlWidth, tabIndex: tabIndex)
 			{
-				this.Value = convertedValue;
-				this.OnValueChanged(new FieldChangedEventArgs(userInitiated));
-			}
-			else if (newValue != convertedValue)
+				ToolTipText = this.HelpText,
+				SelectAllOnFocus = true,
+				Name = this.Name,
+			};
+			numberEdit.ActuallNumberEdit.EditComplete += (s, e) =>
 			{
-				// If the validated value matches the current value, then UI element values were rejected and must be discarded
-				this.OnValueChanged(new FieldChangedEventArgs(userInitiated));
-			}
-		}
+				if (this.Value != numberEdit.Value.ToString())
+				{
+					this.SetValue(
+						numberEdit.Value.ToString(),
+						userInitiated: true);
+				}
+			};
 
-		public string Value { get; private set; }
-
-		public GuiWidget Content { get; protected set; }
-
-		public string HelpText { get; set; }
-
-		public string Name { get; set; }
-
-		protected virtual string ConvertValue(string newValue)
-		{
-			return newValue;
-		}
-
-		protected virtual void OnValueChanged(FieldChangedEventArgs fieldChangedEventArgs)
-		{
-			ValueChanged?.Invoke(this, fieldChangedEventArgs);
+			this.Content = numberEdit;
 		}
 	}
 }

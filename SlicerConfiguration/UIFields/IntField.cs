@@ -27,47 +27,25 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class BasicField
+	public class IntField : NumberField
 	{
-		public event EventHandler<FieldChangedEventArgs> ValueChanged;
+		private int intValue;
 
-		public void SetValue(string newValue, bool userInitiated)
+		protected override string ConvertValue(string newValue)
 		{
-			string convertedValue = this.ConvertValue(newValue);
+			decimal.TryParse(this.Value, out decimal currentValue);
+			intValue = (int)currentValue;
 
-			if (this.Value != convertedValue)
-			{
-				this.Value = convertedValue;
-				this.OnValueChanged(new FieldChangedEventArgs(userInitiated));
-			}
-			else if (newValue != convertedValue)
-			{
-				// If the validated value matches the current value, then UI element values were rejected and must be discarded
-				this.OnValueChanged(new FieldChangedEventArgs(userInitiated));
-			}
+			return intValue.ToString();
 		}
 
-		public string Value { get; private set; }
-
-		public GuiWidget Content { get; protected set; }
-
-		public string HelpText { get; set; }
-
-		public string Name { get; set; }
-
-		protected virtual string ConvertValue(string newValue)
+		protected override void OnValueChanged(FieldChangedEventArgs fieldChangedEventArgs)
 		{
-			return newValue;
-		}
-
-		protected virtual void OnValueChanged(FieldChangedEventArgs fieldChangedEventArgs)
-		{
-			ValueChanged?.Invoke(this, fieldChangedEventArgs);
+			numberEdit.ActuallNumberEdit.Value = intValue;
+			base.OnValueChanged(fieldChangedEventArgs);
 		}
 	}
 }

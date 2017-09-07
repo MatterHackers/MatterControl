@@ -27,47 +27,46 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
 using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class BasicField
+	public class TextField : BasicField, IUIField
 	{
-		public event EventHandler<FieldChangedEventArgs> ValueChanged;
+		protected MHTextEditWidget textEditWidget;
 
-		public void SetValue(string newValue, bool userInitiated)
+		private readonly int ControlWidth = (int)(60 * GuiWidget.DeviceScale + .5);
+
+		public virtual void Initialize(int tabIndex)
 		{
-			string convertedValue = this.ConvertValue(newValue);
+			textEditWidget = new MHTextEditWidget("", pixelWidth: ControlWidth, tabIndex: tabIndex)
+			{
+				ToolTipText = this.HelpText,
+				SelectAllOnFocus = true,
+				Name = this.Name,
+			};
+			textEditWidget.ActualTextEditWidget.EditComplete += (s, e) =>
+			{
+				if (this.Value != textEditWidget.Text)
+				{
+					this.SetValue(
+						textEditWidget.Text, 
+						userInitiated: true);
+				}
+			};
 
-			if (this.Value != convertedValue)
-			{
-				this.Value = convertedValue;
-				this.OnValueChanged(new FieldChangedEventArgs(userInitiated));
-			}
-			else if (newValue != convertedValue)
-			{
-				// If the validated value matches the current value, then UI element values were rejected and must be discarded
-				this.OnValueChanged(new FieldChangedEventArgs(userInitiated));
-			}
+			this.Content = textEditWidget;
 		}
 
-		public string Value { get; private set; }
 
-		public GuiWidget Content { get; protected set; }
-
-		public string HelpText { get; set; }
-
-		public string Name { get; set; }
-
-		protected virtual string ConvertValue(string newValue)
+		protected override void OnValueChanged(FieldChangedEventArgs fieldChangedEventArgs)
 		{
-			return newValue;
-		}
+			if (this.Value != textEditWidget.Text)
+			{
+				textEditWidget.Text = this.Value;
+			}
 
-		protected virtual void OnValueChanged(FieldChangedEventArgs fieldChangedEventArgs)
-		{
-			ValueChanged?.Invoke(this, fieldChangedEventArgs);
+			base.OnValueChanged(fieldChangedEventArgs);
 		}
 	}
 }
