@@ -648,9 +648,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				restoreArea = new GuiWidget()
 				{
-					HAnchor = HAnchor.Absolute,
+					HAnchor = HAnchor.Fit,
 					VAnchor = VAnchor.Fit | VAnchor.Center,
-					Width = settingData.ShowAsOverride ? 30 * GuiWidget.DeviceScale : 0,
 				};
 				this.AddChild(restoreArea);
 
@@ -659,9 +658,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (settingData.ShowAsOverride)
 				{
 					restoreButton = ApplicationController.Instance.Theme.CreateSmallResetButton();
+					restoreButton.Margin = 0;
 					restoreButton.Name = "Restore " + settingData.SlicerConfigName;
 					restoreButton.ToolTipText = "Restore Default".Localize();
-
 					restoreButton.Click += (sender, e) =>
 					{
 						// Revert the user override 
