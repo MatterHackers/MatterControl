@@ -73,10 +73,10 @@ namespace MatterHackers.MatterControl.PrinterControls
 			}
 			leftToRight.AddChild(fanControlsLayout);
 
-			fanSpeedDisplay = new EditableNumberDisplay("{0}%".FormatWith(printerConnection.FanSpeed0To255.ToString()), "100%");
-			fanSpeedDisplay.EditComplete += (sender, e) =>
+			fanSpeedDisplay = new EditableNumberDisplay(printerConnection.FanSpeed0To255, "255");
+			fanSpeedDisplay.ValueChanged += (sender, e) =>
 			{
-				printerConnection.FanSpeed0To255 = (int)(fanSpeedDisplay.GetValue() * 255.5 / 100);
+				printerConnection.FanSpeed0To255 = (int)fanSpeedDisplay.Value;
 			};
 			leftToRight.AddChild(fanSpeedDisplay);
 		}
@@ -111,8 +111,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 		{
 			int printerFanSpeed = printerConnection.FanSpeed0To255;
 
-			fanSpeedDisplay.SetDisplayString("{0}%".FormatWith((int)(printerFanSpeed * 100.5 / 255)));
-
 			doingDisplayUpdateFromPrinter = true;
 
 			if (printerFanSpeed > 0)
@@ -123,6 +121,8 @@ namespace MatterHackers.MatterControl.PrinterControls
 			{
 				toggleSwitch.Checked = false;
 			}
+
+			fanSpeedDisplay.Value = printerConnection.FanSpeed0To255;
 
 			doingDisplayUpdateFromPrinter = false;
 		}

@@ -129,7 +129,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			this.goalTempIndicator.Text = $"{targetTemperature:0.#}";
 		}
 
-		protected virtual void SetTargetTemperature() { }
+		protected virtual void SetTargetTemperature(double targetTemp) { }
 
 		protected virtual GuiWidget GetPopupContent() { return null; }
 

@@ -48,6 +48,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private NamedSettingsLayers layerType;
 		GuiWidget pullDownContainer;
 
+		public DropDownList DropDownList;
+
 		private int extruderIndex; //For multiple materials
 		PrinterConnection printerConnection;
 
@@ -101,7 +103,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public FlowLayoutWidget GetPulldownContainer()
 		{
-			var dropDownList = CreateDropdown();
+			DropDownList = CreateDropdown();
 
 			FlowLayoutWidget container = new FlowLayoutWidget()
 			{
@@ -112,7 +114,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			editButton = ApplicationController.Instance.Theme.ButtonFactory.GenerateIconButton(AggContext.StaticData.LoadIcon("icon_edit.png", 16, 16));
 			editButton.ToolTipText = "Edit Selected Setting".Localize();
-			editButton.Enabled = dropDownList.SelectedIndex != -1;
+			editButton.Enabled = DropDownList.SelectedIndex != -1;
 			editButton.VAnchor = VAnchor.Center;
 			editButton.Margin = new BorderDouble(left: 6);
 			editButton.Click += (sender, e) =>
@@ -210,7 +212,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 			};
 
-			container.AddChild(dropDownList);
+			container.AddChild(DropDownList);
 			container.AddChild(editButton);
 
 			return container;
@@ -286,7 +288,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				MenuItemsPadding = new BorderDouble(10, 7, 7, 7),
 			};
 
-			dropDownList.Name = layerType.ToString();
+			dropDownList.Name = layerType.ToString() + " DropDown List";
 			dropDownList.Margin = new BorderDouble(0, 3);
 			dropDownList.MinimumSize = new Vector2(dropDownList.LocalBounds.Width, dropDownList.LocalBounds.Height);
 

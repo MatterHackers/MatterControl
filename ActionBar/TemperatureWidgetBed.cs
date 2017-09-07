@@ -70,23 +70,19 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		protected override int ActualTemperature => (int)printerConnection.ActualBedTemperature;
 
-		protected override void SetTargetTemperature()
+		protected override void SetTargetTemperature(double targetTemp)
 		{
-			double targetTemp = printerConnection.PrinterSettings.GetValue<double>(SettingsKey.bed_temperature);
-			if (targetTemp != 0)
+			double goalTemp = (int)(targetTemp + .5);
+			if (printerConnection.PrinterIsPrinting
+				&& printerConnection.DetailedPrintingState == DetailedPrintingState.HeatingBed
+				&& goalTemp != printerConnection.TargetBedTemperature)
 			{
-				double goalTemp = (int)(targetTemp + .5);
-				if (printerConnection.PrinterIsPrinting
-					&& printerConnection.DetailedPrintingState == DetailedPrintingState.HeatingBed
-					&& goalTemp != printerConnection.TargetBedTemperature)
-				{
-					string message = string.Format(waitingForBedToHeatMessage, printerConnection.TargetBedTemperature, sliceSettingsNote);
-					StyledMessageBox.ShowMessageBox(null, message, waitingForBedToHeatTitle);
-				}
-				else
-				{
-					printerConnection.TargetBedTemperature = (int)(targetTemp + .5);
-				}
+				string message = string.Format(waitingForBedToHeatMessage, printerConnection.TargetBedTemperature, sliceSettingsNote);
+				StyledMessageBox.ShowMessageBox(null, message, waitingForBedToHeatTitle);
+			}
+			else
+			{
+				printerConnection.TargetBedTemperature = (int)(targetTemp + .5);
 			}
 		}
 
@@ -134,14 +130,11 @@ namespace MatterHackers.MatterControl.ActionBar
 						{
 							if (itemChecked)
 							{
-								SetTargetTemperature();
+								SetTargetTemperature(printerConnection.PrinterSettings.GetValue<double>(SettingsKey.bed_temperature));
 							}
 							else
 							{
-								printerConnection.TargetBedTemperature = 0;
-
-								//string displayString = string.Format("{0:0.0}°C", PrinterConnectionAndCommunication.Instance.TargetBedTemperature);
-								//targetTemperatureDisplay.SetDisplayString(displayString);
+								SetTargetTemperature(0);
 							}
 						}
 					}

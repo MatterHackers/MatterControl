@@ -121,6 +121,7 @@
 		"ComPort",
 		"ms",
 		"HotEnd",
-		"2D"
+		"2D",
+		"Hotend"
 	]
 }

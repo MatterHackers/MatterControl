@@ -9,12 +9,20 @@ namespace MatterHackers.MatterControl
 		protected ClickWidget clickableValueContainer;
 		protected MHNumberEdit numberInputField;
 		protected TextWidget valueDisplay;
+		public string DisplayFormat { get; set; } = "{0}";
+		public event EventHandler ValueChanged;
+		RGBA_Bytes _borderColor = RGBA_Bytes.White;
+		public RGBA_Bytes BorderColor
+		{
+			get { return _borderColor; }
+			set
+			{
+				_borderColor = value;
+				clickableValueContainer.BorderColor = new RGBA_Bytes(BorderColor, 140);
+			}
+		}
 
-		public event EventHandler EditComplete;
-
-		public event EventHandler EditEnabled;
-
-		public EditableNumberDisplay(string startingValue, string largestPossibleValue)
+		public EditableNumberDisplay(double startingValue, string largestPossibleValue)
 			: base(Agg.UI.FlowDirection.LeftToRight)
 		{
 			this.Margin = new BorderDouble(3, 0);
@@ -24,18 +32,18 @@ namespace MatterHackers.MatterControl
 			clickableValueContainer.VAnchor = VAnchor.Stretch;
 			clickableValueContainer.Cursor = Cursors.Hand;
 			clickableValueContainer.BorderWidth = 1;
-			clickableValueContainer.BorderColor = new RGBA_Bytes(255, 255, 255, 140);
+			clickableValueContainer.BorderColor = BorderColor;
 
 			clickableValueContainer.MouseEnterBounds += (sender, e) =>
 			{
 				clickableValueContainer.BorderWidth = 2;
-				clickableValueContainer.BorderColor = new RGBA_Bytes(255, 255, 255, 255);
+				clickableValueContainer.BorderColor = new RGBA_Bytes(BorderColor, 255);
 			};
 
 			clickableValueContainer.MouseLeaveBounds += (sender, e) =>
 			{
 				clickableValueContainer.BorderWidth = 1;
-				clickableValueContainer.BorderColor = new RGBA_Bytes(255, 255, 255, 140);
+				clickableValueContainer.BorderColor = new RGBA_Bytes(BorderColor, 140);
 			};
 
 			valueDisplay = new TextWidget(largestPossibleValue, pointSize: 12);
@@ -48,7 +56,6 @@ namespace MatterHackers.MatterControl
 
 			clickableValueContainer.AddChild(valueDisplay);
 			clickableValueContainer.SetBoundsToEncloseChildren();
-			valueDisplay.Text = startingValue;
 
 			numberInputField = new MHNumberEdit(0, pixelWidth: 40, allowDecimals: true);
 			numberInputField.VAnchor = VAnchor.Center;
@@ -59,7 +66,14 @@ namespace MatterHackers.MatterControl
 			// TODO: This hack needs a unit test and then pass and then remove this line.
 			this.MinimumSize = new VectorMath.Vector2(0, numberInputField.Height);
 
-			numberInputField.ActuallNumberEdit.EnterPressed += new KeyEventHandler(ActuallNumberEdit_EnterPressed);
+			numberInputField.ActuallNumberEdit.EnterPressed += (s, e) => UpdateDisplayString();
+			numberInputField.ContainsFocusChanged += (s1, e1) =>
+			{
+				if (!numberInputField.ContainsFocus)
+				{
+					UpdateDisplayString();
+				}
+			};
 
 			numberInputField.KeyDown += (sender, e) =>
 			{
@@ -72,6 +86,9 @@ namespace MatterHackers.MatterControl
 
 			this.AddChild(clickableValueContainer);
 			this.AddChild(numberInputField);
+
+			Value = startingValue;
+			BorderColor = ActiveTheme.Instance.PrimaryTextColor;
 		}
 
 		private void editField_Click(object sender, EventArgs mouseEvent)
@@ -91,39 +108,31 @@ namespace MatterHackers.MatterControl
 
 			numberInputField.ActuallNumberEdit.InternalNumberEdit.Focus();
 			numberInputField.ActuallNumberEdit.InternalNumberEdit.SelectAll();
-			OnEditEnabled();
 		}
 
-		public void OnEditEnabled()
+		private void UpdateDisplayString()
 		{
-			EditEnabled?.Invoke(this, null);
-		}
-
-		public void OnEditComplete()
-		{
-			EditComplete?.Invoke(this, null);
-		}
-
-		private void setButton_Click(object sender, EventArgs mouseEvent)
-		{
-			OnEditComplete();
-		}
-
-		private void ActuallNumberEdit_EnterPressed(object sender, KeyEventArgs keyEvent)
-		{
-			OnEditComplete();
-		}
-
-		public void SetDisplayString(string displayString)
-		{
-			valueDisplay.Text = displayString;
 			clickableValueContainer.Visible = true;
 			numberInputField.Visible = false;
+			valueDisplay.Text = string.Format(DisplayFormat, numberInputField.Value);
+			ValueChanged?.Invoke(this, null);
 		}
 
-		public double GetValue()
+		public double Value
 		{
-			return numberInputField.ActuallNumberEdit.Value;
+			get
+			{
+				return numberInputField.ActuallNumberEdit.Value;
+			}
+
+			set
+			{
+				if (value != numberInputField.Value)
+				{
+					numberInputField.Value = value;
+					UpdateDisplayString();
+				}
+			}
 		}
 	}
 }
