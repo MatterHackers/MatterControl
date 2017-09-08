@@ -624,6 +624,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			private Button restoreButton = null;
 			private VerticalLine vline;
 
+			private const bool debugLayout = false;
+
 			public SettingsRow(SettingsContext settingsContext, SliceSettingData settingData)
 			{
 				this.settingData = settingData;
@@ -632,21 +634,29 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				vline = new VerticalLine()
 				{
 					BackgroundColor = RGBA_Bytes.Transparent,
-					Margin = new BorderDouble(right: 6),
-					Width = 5,
-					VAnchor = VAnchor.Stretch | VAnchor.Center
- 				};
+					Margin = new BorderDouble(right: 6, left: 2),
+					Width = 6,
+					VAnchor = VAnchor.Stretch | VAnchor.Center,
+					// TODO: Without minimumsize vline collapses to some value that's 50-60% of the expected VAnchor.Stretch value
+					MinimumSize = new Vector2(0, 25),
+					DebugShowBounds = debugLayout
+				};
 				this.AddChild(vline);
 				
 				this.NameArea = new GuiWidget()
 				{
 					MinimumSize = new Vector2(50, 0),
 					HAnchor = HAnchor.Stretch,
-					VAnchor = VAnchor.Fit // | VAnchor.Center
+					VAnchor = VAnchor.Fit | VAnchor.Center,
+					DebugShowBounds = debugLayout
 				};
 				this.AddChild(this.NameArea);
 
-				dataArea = new FlowLayoutWidget();
+				dataArea = new FlowLayoutWidget
+				{
+					VAnchor = VAnchor.Fit | VAnchor.Center,
+					DebugShowBounds = debugLayout
+				};
 				this.AddChild(dataArea);
 
 				unitsArea = new GuiWidget()
@@ -654,6 +664,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HAnchor = HAnchor.Absolute,
 					VAnchor = VAnchor.Fit | VAnchor.Center,
 					Width = settingData.ShowAsOverride ? 50 * GuiWidget.DeviceScale : 5,
+					DebugShowBounds = debugLayout
+
+
 				};
 				this.AddChild(unitsArea);
 
@@ -662,6 +675,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HAnchor = HAnchor.Absolute,
 					VAnchor = VAnchor.Fit | VAnchor.Center,
 					Width = settingData.ShowAsOverride ? 20 * GuiWidget.DeviceScale : 5,
+					DebugShowBounds = debugLayout
 				};
 				this.AddChild(restoreArea);
 
@@ -812,7 +826,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor,
 					Padding = new BorderDouble(5),
 					Margin = new BorderDouble(3, 20, 3, 0),
-					HAnchor = HAnchor.Stretch
+					HAnchor = HAnchor.Stretch,
 				};
 
 				string make = ActiveSliceSettings.Instance.GetValue(SettingsKey.make);
@@ -873,12 +887,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 			else
 			{
-				int intEditWidth = (int)(60 * GuiWidget.DeviceScale + .5);
-				int doubleEditWidth = (int)(60 * GuiWidget.DeviceScale + .5);
-
 				if (settingData.DataEditType != SliceSettingData.DataEditTypes.MULTI_LINE_TEXT)
 				{
-					settingsRow.NameArea.AddChild(new WrappedTextWidget(settingData.PresentationName.Localize(), pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor));
+					settingsRow.NameArea.AddChild(
+						// TODO: Layout stops working when WrappedText is used...
+						//new WrappedTex/tWidget(settingData.PresentationName.Localize(), pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor)
+						new TextWidget(settingData.PresentationName.Localize(), pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor)
+						{
+							// TODO: Fit fails to work on standard TextWidget controls and clips descenders
+							// VAnchor = VAnchor.Fit | VAnchor.Center
+							VAnchor = VAnchor.Center
+						});
 				}
 
 				switch (settingData.DataEditType)
