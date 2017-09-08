@@ -166,7 +166,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			if(stringEvent != null
 				&& stringEvent.Data.Contains("M104"))
 			{
-				startingTemp = printerConnection.GetActualExtruderTemperature(0);
+				startingTemp = printerConnection.GetActualHotendTemperature(0);
 				UiThread.RunOnIdle(ShowTempChangeProgress);
 			}
 		}
@@ -174,8 +174,8 @@ namespace MatterHackers.MatterControl.PrinterControls
 		private void ShowTempChangeProgress()
 		{
 			progressBar.Visible = true;
-			double targetTemp = printerConnection.GetTargetExtruderTemperature(0);
-			double actualTemp = printerConnection.GetActualExtruderTemperature(0);
+			double targetTemp = printerConnection.GetTargetHotendTemperature(0);
+			double actualTemp = printerConnection.GetActualHotendTemperature(0);
 			double totalDelta = targetTemp - startingTemp;
 			double currentDelta = actualTemp - startingTemp;
 			double ratioDone = totalDelta != 0 ? (currentDelta / totalDelta) : 1;

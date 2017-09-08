@@ -44,8 +44,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.WaitForPrintFinished();
 
 					// Wait for expected temp
-					testRunner.Delay(() => PrinterConnection.Instance.GetActualExtruderTemperature(0) <= 0, 5);
-					Assert.Less(PrinterConnection.Instance.GetActualExtruderTemperature(0), 30);
+					testRunner.Delay(() => PrinterConnection.Instance.GetActualHotendTemperature(0) <= 0, 5);
+					Assert.Less(PrinterConnection.Instance.GetActualHotendTemperature(0), 30);
 
 					// Wait for expected temp
 					testRunner.Delay(() => PrinterConnection.Instance.ActualBedTemperature <= 10, 5);

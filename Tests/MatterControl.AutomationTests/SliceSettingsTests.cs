@@ -176,6 +176,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
+				AutomationRunner.TimeToMoveMouse = 0;
+
 				testRunner.CloseSignInAndPrinterSelect();
 
 				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
@@ -204,6 +206,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					// BUG: the offest should not be required
 					testRunner.ClickByName("Material DropDown List", offset: new Point2D(-10, -10));
 					testRunner.ClickByName("HIPS Menu");
+
+					// check the extruder count
+					var extrudeButtons = testRunner.GetWidgetsByName("Extrude Button");
+					Assert.AreEqual(1, extrudeButtons.Count, "There should be just one.");
 
 					int hipsGoalTemp = 220;
 					// assert the temp changed to a new temp
@@ -276,8 +282,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.ClickByName("Hotend 0");
 
-					dropDownLists = testRunner.GetWidgetsByName("Material DropDown List");
-					//Assert.AreEqual(3, dropDownLists.Count, "There are three. The slice settings and the 2 on the pop out.");
+					extrudeButtons = testRunner.GetWidgetsByName("Extrude Button");
+					Assert.AreEqual(2, extrudeButtons.Count, "Now there should be two.");
 				}
 
 				return Task.CompletedTask;

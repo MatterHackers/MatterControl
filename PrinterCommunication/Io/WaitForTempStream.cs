@@ -135,7 +135,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 				case State.waitingForExtruderTemp:
 					{
-						double extruderTemp = printerConnection.GetActualExtruderTemperature((int)extruderIndex);
+						double extruderTemp = printerConnection.GetActualHotendTemperature((int)extruderIndex);
 						bool tempWithinRange = extruderTemp >= targetTemp - sameTempRange && extruderTemp <= targetTemp + sameTempRange;
 						if (tempWithinRange && !timeHaveBeenAtTemp.IsRunning)
 						{
