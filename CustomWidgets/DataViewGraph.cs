@@ -95,7 +95,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			for (int i = 0; i < Width / pixelSkip; i++)
 			{
 				double xPos = Width - ((i * pixelSkip + TotalAdds) % Width);
-				graphics2D.Line(xPos, 0, xPos, Height, new RGBA_Bytes(backgroundGridColor, 64));
+				int inset = (int)((i % 2) == 0 ? Height / 6 : Height / 3);
+				graphics2D.Line(xPos, inset, xPos, Height - inset, new RGBA_Bytes(backgroundGridColor, 64));
 			}
 
 			for (int i = 0; i < Width - 1; i++)

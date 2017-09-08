@@ -79,13 +79,13 @@ namespace MatterHackers.MeshVisualizer
 
 		private InteractionLayer interactionLayer;
 
-		private PrinterConfig printer;
+		private PrinterConfig printerConfig;
 
-		public MeshViewerWidget(PrinterConfig printer, InteractionLayer interactionLayer, string startingTextMessage = "", EditorType editorType = EditorType.Part)
+		public MeshViewerWidget(PrinterConfig printerConfig, InteractionLayer interactionLayer, string startingTextMessage = "", EditorType editorType = EditorType.Part)
 		{
 			this.EditorMode = editorType;
-			this.scene = printer.Bed.Scene;
-			this.printer = printer;
+			this.scene = printerConfig.Bed.Scene;
+			this.printerConfig = printerConfig;
 
 			var activePrintItem = ApplicationController.Instance.ActivePrintItem;
 
@@ -169,8 +169,8 @@ namespace MatterHackers.MeshVisualizer
 				{
 					try
 					{
-						string url = printer.Settings.GetValue("PrinterShapeUrl");
-						string extension = printer.Settings.GetValue("PrinterShapeExtension");
+						string url = printerConfig.Settings.GetValue("PrinterShapeUrl");
+						string extension = printerConfig.Settings.GetValue("PrinterShapeExtension");
 
 						if (string.IsNullOrEmpty(url) || string.IsNullOrEmpty(extension))
 						{
@@ -597,16 +597,16 @@ namespace MatterHackers.MeshVisualizer
 					{
 						bedColor = new RGBA_Bytes(this.BedColor, this.BedColor.alpha / 4);
 					}
-					GLHelper.Render(printer.Bed.Mesh, bedColor, RenderTypes.Shaded, World.ModelviewMatrix);
+					GLHelper.Render(printerConfig.Bed.Mesh, bedColor, RenderTypes.Shaded, World.ModelviewMatrix);
 					if (printerShape != null)
 					{
 						GLHelper.Render(printerShape, bedColor, RenderTypes.Shaded, World.ModelviewMatrix);
 					}
 				}
 
-				if (printer.Bed.BuildVolumeMesh != null && RenderBuildVolume)
+				if (printerConfig.Bed.BuildVolumeMesh != null && RenderBuildVolume)
 				{
-					GLHelper.Render(printer.Bed.BuildVolumeMesh, this.BuildVolumeColor, RenderTypes.Shaded, World.ModelviewMatrix);
+					GLHelper.Render(printerConfig.Bed.BuildVolumeMesh, this.BuildVolumeColor, RenderTypes.Shaded, World.ModelviewMatrix);
 				}
 			}
 			else
