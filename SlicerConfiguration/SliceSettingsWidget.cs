@@ -90,10 +90,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			pageTopToBottomLayout = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				VAnchor = VAnchor.Top
+				VAnchor = VAnchor.Top,
+				Padding = 0
 			};
 			pageTopToBottomLayout.AnchorAll();
-			pageTopToBottomLayout.Padding = new BorderDouble(3, 0);
 			this.AddChild(pageTopToBottomLayout);
 
 			settingsControlBar = new SettingsControlBar(printerConnection)
