@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			this.extruderIndex = extruderIndex;
 
-			printerConnection.ExtruderTemperatureRead.RegisterEvent((s, e) =>
+			printerConnection.HotendTemperatureRead.RegisterEvent((s, e) =>
 			{
 				UpdateTemperatures();
 			}, ref unregisterEvents);
@@ -90,8 +90,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public override void UpdateTemperatures()
 		{
-			double targetValue = printerConnection.GetTargetExtruderTemperature(extruderIndex);
-			double actualValue = Math.Max(0, printerConnection.GetActualExtruderTemperature(extruderIndex));
+			double targetValue = printerConnection.GetTargetHotendTemperature(extruderIndex);
+			double actualValue = Math.Max(0, printerConnection.GetActualHotendTemperature(extruderIndex));
 
 			progressBar.RatioComplete = targetValue != 0 ? actualValue / targetValue : 1;
 

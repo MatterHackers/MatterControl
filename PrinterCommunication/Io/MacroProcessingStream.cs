@@ -151,7 +151,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 							int extruderCount = printerConnection.PrinterSettings.GetValue<int>(SettingsKey.extruder_count);
 							for (int i = 0; i < extruderCount; i++)
 							{
-								startingExtruderTemps.Add(printerConnection.GetTargetExtruderTemperature(i));
+								startingExtruderTemps.Add(printerConnection.GetTargetHotendTemperature(i));
 							}
 
 							if (printerConnection.PrinterSettings.GetValue<bool>(SettingsKey.has_heated_bed))
@@ -248,7 +248,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				runningMacro = false;
 				for (int i = 0; i < startingExtruderTemps.Count; i++)
 				{
-					printerConnection.SetTargetExtruderTemperature(i, startingExtruderTemps[i]);
+					printerConnection.SetTargetHotendTemperature(i, startingExtruderTemps[i]);
 				}
 
 				if (printerConnection.PrinterSettings.GetValue<bool>(SettingsKey.has_heated_bed))

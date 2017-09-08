@@ -40,182 +40,24 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.ActionBar
 {
-	internal class ControlContentExtruder : GuiWidget
+	internal class ControlContentExtruder : FlowLayoutWidget
 	{
-
-	}
-
-	internal class TemperatureWidgetHotend : TemperatureWidgetBase
-	{
-		private int extruderIndex = -1;
 		private int moveAmount = 1;
+		PrinterConnection printerConnection;
 
-		private string sliceSettingsNote = "Note: Slice Settings are applied before the print actually starts. Changes while printing will not effect the active print.".Localize();
-		private string waitingForExtruderToHeatMessage = "The extruder is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting extruder temperature in 'Slice Settings' -> 'Filament'.\n\n{1}".Localize();
-
-		private TextImageButtonFactory buttonFactory;
-
-		private EditableNumberDisplay settingsTemperature;
-
-		public TemperatureWidgetHotend(PrinterConnection printerConnection, int hotendIndex, TextImageButtonFactory buttonFactory)
-			: base(printerConnection, "150.3°")
+		internal ControlContentExtruder(PrinterConnection printerConnection, int extruderIndex, TextImageButtonFactory buttonFactory)
+			: base(FlowDirection.TopToBottom)
 		{
-			this.Name = $"Hotend {hotendIndex}";
-			this.extruderIndex = hotendIndex;
-			this.buttonFactory = buttonFactory;
-			this.DisplayCurrentTemperature();
-			this.ToolTipText = "Current extruder temperature".Localize();
+			HAnchor = HAnchor.Stretch;
 
-			this.PopupContent = this.GetPopupContent();
-
-			printerConnection.ExtruderTemperatureRead.RegisterEvent((s, e) => DisplayCurrentTemperature(), ref unregisterEvents);
-		}
-
-		protected override int TargetTemperature => (int)printerConnection.GetTargetExtruderTemperature(extruderIndex);
-
-		protected override int ActualTemperature => (int)printerConnection.GetActualExtruderTemperature(extruderIndex);
-
-		protected override void SetTargetTemperature(double targetTemp)
-		{
-			double goalTemp = (int)(targetTemp + .5);
-			if (printerConnection.PrinterIsPrinting
-				&& printerConnection.DetailedPrintingState == DetailedPrintingState.HeatingExtruder
-				&& goalTemp != printerConnection.GetTargetExtruderTemperature(extruderIndex))
-			{
-				string message = string.Format(waitingForExtruderToHeatMessage, printerConnection.GetTargetExtruderTemperature(extruderIndex), sliceSettingsNote);
-				StyledMessageBox.ShowMessageBox(null, message, "Waiting For Extruder To Heat".Localize());
-			}
-			else
-			{
-				printerConnection.SetTargetExtruderTemperature(extruderIndex, (int)(targetTemp + .5));
-			}
-		}
-
-		protected override GuiWidget GetPopupContent()
-		{
-			var widget = new IgnoredPopupWidget()
-			{
-				Width = 300,
-				HAnchor = HAnchor.Absolute,
-				VAnchor = VAnchor.Fit,
-				BackgroundColor = RGBA_Bytes.White,
-				Padding = new BorderDouble(12, 5, 12, 0)
-			};
-
-			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit,
-				BackgroundColor = RGBA_Bytes.White
-			};
-			widget.AddChild(container);
-
-			GuiWidget hotendRow;
-			container.AddChild(hotendRow = new SettingsItem(
-				string.Format("{0} {1}", "Hotend".Localize(), extruderIndex + 1),
-				new SettingsItem.ToggleSwitchConfig()
-				{
-					Checked = false,
-					ToggleAction = (itemChecked) =>
-					{
-						if (itemChecked)
-						{
-							// Set to goal temp
-							SetTargetTemperature(settingsTemperature.Value);
-						}
-						else
-						{
-							// Turn off extruder
-							printerConnection.SetTargetExtruderTemperature(extruderIndex, 0);
-						}
-					}
-				},
-				enforceGutter: false));
-
-			CheckBox heatToggle = hotendRow.ChildrenRecursive<CheckBox>().FirstOrDefault();
-			heatToggle.Name = "Toggle Heater";
-
-			// put in the temp control
-			settingsTemperature = new EditableNumberDisplay(printerConnection.PrinterSettings.GetValue<double>(SettingsKey.temperature), "000")
-			{
-				BorderColor = RGBA_Bytes.Black,
-				Name = "Temperature Input"
-			};
-			settingsTemperature.ValueChanged += (s, e) =>
-			{
-				if (heatToggle.Checked)
-				{
-					SetTargetTemperature(settingsTemperature.Value);
-					if(settingsTemperature.Value == 0)
-					{
-						heatToggle.Checked = false;
-					}
-				}
-			};
-			container.AddChild(new SettingsItem(
-				"Temperature".Localize(),
-				settingsTemperature, enforceGutter: false));
-
-			// add in the temp graph
-			Action fillGraph = null;
-			var graph = new DataViewGraph()
-			{
-				Width = widget.Width - 20,
-				Height = 20,
-			};
-			fillGraph = () =>
-			{
-				graph.AddData(this.ActualTemperature);
-				if (!graph.HasBeenClosed)
-				{
-					UiThread.RunOnIdle(fillGraph, 1);
-				}
-			};
-
-			UiThread.RunOnIdle(fillGraph);
-
-			container.AddChild(graph);
-
-			// put in the material selector
-			var presetsSelector = new PresetSelectorWidget(printerConnection, string.Format($"{"Material".Localize()} {extruderIndex + 1}"), RGBA_Bytes.Transparent, NamedSettingsLayers.Material, extruderIndex)
-			{
-				Margin = 0,
-				BackgroundColor = RGBA_Bytes.Transparent,
-				HAnchor = HAnchor.Absolute,
-				Width = 150
-			};
-
-			presetsSelector.DropDownList.SelectionChanged += (s, e) =>
-			{
-				// delay this for an update so the slice setting can get updated first
-				UiThread.RunOnIdle(() =>
-				{
-					settingsTemperature.Value = printerConnection.PrinterSettings.GetValue<double>(SettingsKey.temperature);
-				});
-			};
-
-			this.Width = 150;
-
-			// HACK: remove undesired item
-			var label = presetsSelector.Children<TextWidget>().FirstOrDefault();
-			label.Close();
-
-			var pulldownContainer = presetsSelector.FindNamedChildRecursive("Preset Pulldown Container");
-			if (pulldownContainer != null)
-			{
-				pulldownContainer.Padding = 0;
-			}
-
-			var dropList = presetsSelector.FindNamedChildRecursive("Material") as DropDownList;
-			if (dropList != null)
-			{
-				dropList.TextColor = buttonFactory.normalTextColor;
-			}
-
-			container.AddChild(new SettingsItem("Material".Localize(), presetsSelector, enforceGutter: false));
+			this.printerConnection = printerConnection;
 
 			// add in any macros for this extruder
-			container.AddChild(new SettingsItem("Change".Localize(), AddExtruderMacros(extruderIndex), enforceGutter: false));
+			var macroButtons = GetExtruderMacros(extruderIndex, buttonFactory);
+			if (macroButtons != null)
+			{
+				this.AddChild(new SettingsItem("Change".Localize(), macroButtons, enforceGutter: false));
+			}
 
 			// Add the Extrude buttons
 			var moveButtonFactory = ApplicationController.Instance.Theme.MicroButtonMenu;
@@ -236,6 +78,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			buttonContainer.AddChild(retractButton);
 
 			var extrudeButton = buttonFactory.Generate("Extrude".Localize());
+			extrudeButton.Name = "Extrude Button";
 			extrudeButton.ToolTipText = "Extrude filament".Localize();
 			extrudeButton.Margin = 0;
 			extrudeButton.Click += (s, e) =>
@@ -244,9 +87,9 @@ namespace MatterHackers.MatterControl.ActionBar
 			};
 			buttonContainer.AddChild(extrudeButton);
 
-			container.AddChild(new SettingsItem(
+			this.AddChild(new SettingsItem(
 				"Extrude".Localize(),
-				buttonContainer, 
+				buttonContainer,
 				enforceGutter: false));
 
 			var moveButtonsContainer = new FlowLayoutWidget()
@@ -297,31 +140,231 @@ namespace MatterHackers.MatterControl.ActionBar
 				Margin = new BorderDouble(3, 0)
 			});
 
-			container.AddChild(new SettingsItem("Distance".Localize(), moveButtonsContainer, enforceGutter: false));
+			this.AddChild(new SettingsItem("Distance".Localize(), moveButtonsContainer, enforceGutter: false));
+		}
+
+		private GuiWidget GetExtruderMacros(int extruderIndex, TextImageButtonFactory buttonFactory)
+		{
+			MacroUiLocation extruderUiMacros;
+			if (Enum.TryParse($"Extruder_{extruderIndex + 1}", out extruderUiMacros))
+			{
+				var macros = printerConnection.PrinterSettings.GetMacros(extruderUiMacros);
+				if (macros.Any())
+				{
+					var row = new FlowLayoutWidget();
+					foreach (GCodeMacro macro in macros)
+					{
+						Button macroButton = buttonFactory.Generate(GCodeMacro.FixMacroName(macro.Name));
+						macroButton.Margin = new BorderDouble(left: 5);
+						macroButton.Click += (s, e) => macro.Run(printerConnection);
+
+						row.AddChild(macroButton);
+					}
+					return row;
+				}
+			}
+
+			return null;
+		}
+	}
+
+	internal class TemperatureWidgetHotend : TemperatureWidgetBase
+	{
+		private int hotendIndex = -1;
+
+		private string sliceSettingsNote = "Note: Slice Settings are applied before the print actually starts. Changes while printing will not effect the active print.".Localize();
+		private string waitingForExtruderToHeatMessage = "The extruder is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting extruder temperature in 'Slice Settings' -> 'Filament'.\n\n{1}".Localize();
+
+		private TextImageButtonFactory buttonFactory;
+
+		private EditableNumberDisplay settingsTemperature;
+
+		public TemperatureWidgetHotend(PrinterConnection printerConnection, int hotendIndex, TextImageButtonFactory buttonFactory)
+			: base(printerConnection, "150.3°")
+		{
+			this.Name = $"Hotend {hotendIndex}";
+			this.hotendIndex = hotendIndex;
+			this.buttonFactory = buttonFactory;
+			this.DisplayCurrentTemperature();
+			this.ToolTipText = "Current extruder temperature".Localize();
+
+			this.PopupContent = this.GetPopupContent();
+
+			printerConnection.HotendTemperatureRead.RegisterEvent((s, e) => DisplayCurrentTemperature(), ref unregisterEvents);
+		}
+
+		protected override int TargetTemperature => (int)printerConnection.GetTargetHotendTemperature(hotendIndex);
+
+		protected override int ActualTemperature => (int)printerConnection.GetActualHotendTemperature(hotendIndex);
+
+		protected override void SetTargetTemperature(double targetTemp)
+		{
+			double goalTemp = (int)(targetTemp + .5);
+			if (printerConnection.PrinterIsPrinting
+				&& printerConnection.DetailedPrintingState == DetailedPrintingState.HeatingExtruder
+				&& goalTemp != printerConnection.GetTargetHotendTemperature(hotendIndex))
+			{
+				string message = string.Format(waitingForExtruderToHeatMessage, printerConnection.GetTargetHotendTemperature(hotendIndex), sliceSettingsNote);
+				StyledMessageBox.ShowMessageBox(null, message, "Waiting For Extruder To Heat".Localize());
+			}
+			else
+			{
+				printerConnection.SetTargetHotendTemperature(hotendIndex, (int)(targetTemp + .5));
+			}
+		}
+
+		protected override GuiWidget GetPopupContent()
+		{
+			var widget = new IgnoredPopupWidget()
+			{
+				Width = 300,
+				HAnchor = HAnchor.Absolute,
+				VAnchor = VAnchor.Fit,
+				BackgroundColor = RGBA_Bytes.White,
+				Padding = new BorderDouble(12, 5, 12, 0)
+			};
+
+			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit,
+				BackgroundColor = RGBA_Bytes.White
+			};
+			widget.AddChild(container);
+
+			GuiWidget hotendRow;
+			container.AddChild(hotendRow = new SettingsItem(
+				string.Format("{0} {1}", "Hotend".Localize(), hotendIndex + 1),
+				new SettingsItem.ToggleSwitchConfig()
+				{
+					Checked = false,
+					ToggleAction = (itemChecked) =>
+					{
+						if (itemChecked)
+						{
+							// Set to goal temp
+							SetTargetTemperature(settingsTemperature.Value);
+						}
+						else
+						{
+							// Turn off extruder
+							printerConnection.SetTargetHotendTemperature(hotendIndex, 0);
+						}
+					}
+				},
+				enforceGutter: false));
+
+			CheckBox heatToggle = hotendRow.ChildrenRecursive<CheckBox>().FirstOrDefault();
+			heatToggle.Name = "Toggle Heater";
+
+			// put in the temp control
+			settingsTemperature = new EditableNumberDisplay(printerConnection.PrinterSettings.GetValue<double>(SettingsKey.temperature), "000")
+			{
+				BorderColor = RGBA_Bytes.Black,
+				Name = "Temperature Input"
+			};
+			settingsTemperature.ValueChanged += (s, e) =>
+			{
+				if (heatToggle.Checked)
+				{
+					SetTargetTemperature(settingsTemperature.Value);
+					if(settingsTemperature.Value == 0)
+					{
+						heatToggle.Checked = false;
+					}
+				}
+			};
+			container.AddChild(new SettingsItem(
+				"Temperature".Localize(),
+				settingsTemperature, enforceGutter: false));
+
+			// add in the temp graph
+			Action fillGraph = null;
+			var graph = new DataViewGraph()
+			{
+				Width = widget.Width - 20,
+				Height = 20,
+			};
+			fillGraph = () =>
+			{
+				graph.AddData(this.ActualTemperature);
+				if (!this.HasBeenClosed)
+				{
+					UiThread.RunOnIdle(fillGraph, 1);
+				}
+			};
+
+			UiThread.RunOnIdle(fillGraph);
+
+			container.AddChild(graph);
+
+			// put in the material selector
+			var presetsSelector = new PresetSelectorWidget(printerConnection, string.Format($"{"Material".Localize()} {hotendIndex + 1}"), RGBA_Bytes.Transparent, NamedSettingsLayers.Material, hotendIndex)
+			{
+				Margin = 0,
+				BackgroundColor = RGBA_Bytes.Transparent,
+				HAnchor = HAnchor.Absolute,
+				Width = 150
+			};
+
+			presetsSelector.DropDownList.SelectionChanged += (s, e) =>
+			{
+				// delay this for an update so the slice setting can get updated first
+				UiThread.RunOnIdle(() =>
+				{
+					settingsTemperature.Value = printerConnection.PrinterSettings.GetValue<double>(SettingsKey.temperature);
+				});
+			};
+
+			this.Width = 150;
+
+			// HACK: remove undesired item
+			var label = presetsSelector.Children<TextWidget>().FirstOrDefault();
+			label.Close();
+
+			var pulldownContainer = presetsSelector.FindNamedChildRecursive("Preset Pulldown Container");
+			if (pulldownContainer != null)
+			{
+				pulldownContainer.Padding = 0;
+			}
+
+			var dropList = presetsSelector.FindNamedChildRecursive("Material") as DropDownList;
+			if (dropList != null)
+			{
+				dropList.TextColor = buttonFactory.normalTextColor;
+			}
+
+			container.AddChild(new SettingsItem("Material".Localize(), presetsSelector, enforceGutter: false));
+
+			// put in the actual extruder controls
+			bool shareTemp = printerConnection.PrinterSettings.GetValue<bool>(SettingsKey.extruders_share_temperature);
+			if (shareTemp)
+			{
+				int extruderCount = printerConnection.PrinterSettings.GetValue<int>(SettingsKey.extruder_count);
+				for (int extruderIndex = 0; extruderIndex < extruderCount; extruderIndex++)
+				{
+					container.AddChild(new HorizontalLine()
+					{
+						Margin = new BorderDouble(0, 5, 0, 0)
+					});
+
+					container.AddChild(new TextWidget("Extruder".Localize() + " " + (extruderIndex + 1).ToString())
+					{
+						AutoExpandBoundsToText = true,
+						TextColor = RGBA_Bytes.Black,
+						HAnchor =  HAnchor.Left,
+					});
+					container.AddChild(new ControlContentExtruder(printerConnection, extruderIndex, buttonFactory));
+				}
+			}
+			else
+			{
+				container.AddChild(new ControlContentExtruder(printerConnection, hotendIndex, buttonFactory));
+			}
 
 			ActiveSliceSettings.MaterialPresetChanged += ActiveSliceSettings_MaterialPresetChanged;
 
 			return widget;
-		}
-
-		private GuiWidget AddExtruderMacros(int extruderIndex)
-		{
-			var row = new FlowLayoutWidget();
-
-			MacroUiLocation extruderUiMacros;
-			if (Enum.TryParse($"Extruder_{extruderIndex+1}", out extruderUiMacros))
-			{
-				foreach (GCodeMacro macro in printerConnection.PrinterSettings.GetMacros(extruderUiMacros))
-				{
-					Button macroButton = buttonFactory.Generate(GCodeMacro.FixMacroName(macro.Name));
-					macroButton.Margin = new BorderDouble(left: 5);
-					macroButton.Click += (s, e) => macro.Run(printerConnection);
-
-					row.AddChild(macroButton);
-				}
-			}
-
-			return row;
 		}
 
 		private void ActiveSliceSettings_MaterialPresetChanged(object sender, EventArgs e)
