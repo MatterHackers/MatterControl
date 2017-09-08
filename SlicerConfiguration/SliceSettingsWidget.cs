@@ -626,7 +626,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			private const bool debugLayout = false;
 
-			public SettingsRow(SettingsContext settingsContext, SliceSettingData settingData)
+			public SettingsRow(SettingsContext settingsContext, SliceSettingData settingData, bool fullRow = false)
 			{
 				this.settingData = settingData;
 				this.settingsContext = settingsContext;
@@ -635,10 +635,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					BackgroundColor = RGBA_Bytes.Transparent,
 					Margin = new BorderDouble(right: 6, left: 2),
-					Width = 6,
+					Width = 3,
 					VAnchor = VAnchor.Stretch | VAnchor.Center,
 					// TODO: Without minimumsize vline collapses to some value that's 50-60% of the expected VAnchor.Stretch value
-					MinimumSize = new Vector2(0, 25),
+					MinimumSize = new Vector2(0, 28),
 					DebugShowBounds = debugLayout
 				};
 				this.AddChild(vline);
@@ -665,8 +665,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					VAnchor = VAnchor.Fit | VAnchor.Center,
 					Width = settingData.ShowAsOverride ? 50 * GuiWidget.DeviceScale : 5,
 					DebugShowBounds = debugLayout
-
-
 				};
 				this.AddChild(unitsArea);
 
@@ -789,9 +787,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		private static readonly RGBA_Bytes materialSettingBackgroundColor = new RGBA_Bytes(255, 127, 0, 108);
-		private static readonly RGBA_Bytes qualitySettingBackgroundColor = new RGBA_Bytes(255, 255, 0, 108);
-		public static readonly RGBA_Bytes userSettingBackgroundColor = new RGBA_Bytes(68, 95, 220, 108);
+		private static readonly RGBA_Bytes materialSettingBackgroundColor = RGBA_Bytes.Orange; // new RGBA_Bytes(255, 127, 0, 108);
+		private static readonly RGBA_Bytes qualitySettingBackgroundColor = RGBA_Bytes.YellowGreen; // new RGBA_Bytes(255, 255, 0, 108);
+		public static readonly RGBA_Bytes userSettingBackgroundColor = new RGBA_Bytes(68, 95, 220, 150);
 
 		// Creates an information row showing the base OEM profile and its create_date value
 		public static GuiWidget CreatePrinterExtraControls(bool isPrimarySettingsView = false)
