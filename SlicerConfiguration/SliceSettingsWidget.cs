@@ -934,7 +934,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						break;
 
 					case SliceSettingData.DataEditTypes.CHECK_BOX:
-						uiField = new CheckboxField();
+						uiField = new ToggleboxField();
 						settingsRow.SetFullRow();
 						useDefaultSavePattern = false;
 						uiField.ValueChanged += (s, e) =>
@@ -991,7 +991,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						break;
 
 					case SliceSettingData.DataEditTypes.HARDWARE_PRESENT:
-						uiField = new CheckboxField();
+						uiField = new ToggleboxField();
 						settingsRow.SetFullRow();
 						break;
 

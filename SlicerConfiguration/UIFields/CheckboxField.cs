@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
@@ -54,6 +55,33 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			};
 
 			this.Content = checkBoxWidget;
+		}
+
+		protected override void OnValueChanged(FieldChangedEventArgs fieldChangedEventArgs)
+		{
+			checkBoxWidget.Checked = this.Value == "1";
+			base.OnValueChanged(fieldChangedEventArgs);
+		}
+	}
+
+
+	public class ToggleboxField : BasicField, IUIField
+	{
+		private CheckBox checkBoxWidget;
+
+		public virtual void Initialize(int tabIndex)
+		{
+			checkBoxWidget = ImageButtonFactory.CreateToggleSwitch(false, ActiveTheme.Instance.PrimaryTextColor);
+			checkBoxWidget.VAnchor = VAnchor.Center;
+			checkBoxWidget.Margin = new BorderDouble(0);
+			checkBoxWidget.CheckedStateChanged += (s, e) =>
+			{
+				this.SetValue(
+					this.checkBoxWidget.Checked ? "1" : "0",
+					userInitiated: true);
+			};
+
+			this.Content = this.checkBoxWidget;
 		}
 
 		protected override void OnValueChanged(FieldChangedEventArgs fieldChangedEventArgs)
