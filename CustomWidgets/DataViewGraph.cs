@@ -17,6 +17,30 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			DoubleBuffer = true;
 		}
 
+		public bool DynamiclyScaleRange { get; set; } = true;
+
+		RGBA_Bytes _goalColor = RGBA_Bytes.Yellow;
+		public RGBA_Bytes GoalColor
+		{
+			get { return _goalColor; }
+			set
+			{
+				_goalColor = value;
+				Invalidate();
+			}
+		}
+
+		double _goalValue;
+		public double GoalValue
+		{
+			get { return _goalValue; }
+			set
+			{
+				_goalValue = value;
+				Invalidate();
+			}
+		}
+
 		public override RectangleDouble LocalBounds
 		{
 			get => base.LocalBounds; set
@@ -26,9 +50,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			}
 		}
 
-		public bool DynamiclyScaleRange { get; set; } = true;
 		public double MaxValue { get; set; } = double.MinValue;
 		public double MinValue { get; set; } = double.MaxValue;
+		public bool ShowGoal { get; set; }
+		public int TotalAdds { get; private set; }
 
 		public void AddData(double NewData)
 		{
@@ -39,6 +64,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			}
 
 			dataHistoryArray.Add(NewData);
+
+			TotalAdds++;
 
 			Invalidate();
 		}
@@ -52,6 +79,24 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			var linesToDrawStorage = new PathStorage();
 			double Range = (MaxValue - MinValue);
+
+			if (ShowGoal)
+			{
+				var yPos = (GoalValue - MinValue) * Height / Range;
+				graphics2D.Line(0, yPos, Width, yPos, GoalColor);
+			}
+
+			RGBA_Bytes backgroundGridColor = RGBA_Bytes.Gray;
+
+			graphics2D.Line(0, 0, Width, 0, backgroundGridColor);
+			graphics2D.Line(0, Height, Width, Height, backgroundGridColor);
+
+			double pixelSkip = Height;
+			for (int i = 0; i < Width / pixelSkip; i++)
+			{
+				double xPos = Width - ((i * pixelSkip + TotalAdds) % Width);
+				graphics2D.Line(xPos, 0, xPos, Height, new RGBA_Bytes(backgroundGridColor, 64));
+			}
 
 			for (int i = 0; i < Width - 1; i++)
 			{

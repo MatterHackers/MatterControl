@@ -176,8 +176,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				AutomationRunner.TimeToMoveMouse = 0;
-
 				testRunner.CloseSignInAndPrinterSelect();
 
 				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
@@ -204,7 +202,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					DropDownList materialSelector = dropDownLists[0].widget as DropDownList;
 					Assert.AreEqual("", materialSelector.SelectedValue);
 					// BUG: the offest should not be required
-					testRunner.ClickByName("Material DropDown List", offset: new Point2D(-10, -10));
+					testRunner.ClickByName("Material DropDown List", offset: new Point2D(-20, -25));
 					testRunner.ClickByName("HIPS Menu");
 
 					// check the extruder count
