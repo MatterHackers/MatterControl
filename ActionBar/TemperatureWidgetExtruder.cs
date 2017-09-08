@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			var macroButtons = GetExtruderMacros(extruderIndex, buttonFactory);
 			if (macroButtons != null)
 			{
-				this.AddChild(new SettingsItem("Change".Localize(), macroButtons, enforceGutter: false));
+				this.AddChild(new SettingsItem("Fillament".Localize(), macroButtons, enforceGutter: false));
 			}
 
 			// Add the Extrude buttons
@@ -88,7 +88,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			buttonContainer.AddChild(extrudeButton);
 
 			this.AddChild(new SettingsItem(
-				"Extrude".Localize(),
+				macroButtons == null ? "Filament".Localize() : "", // Don't put the name if we put in a macro button (it hase the name)
 				buttonContainer,
 				enforceGutter: false));
 
@@ -282,8 +282,19 @@ namespace MatterHackers.MatterControl.ActionBar
 			Action fillGraph = null;
 			var graph = new DataViewGraph()
 			{
+				DynamiclyScaleRange = false,
+				MinValue = 0,
+				ShowGoal = true,
+				GoalColor = ActiveTheme.Instance.PrimaryAccentColor,
+				GoalValue = settingsTemperature.Value,
+				MaxValue = 280, // could come from some profile value in the future
 				Width = widget.Width - 20,
-				Height = 20,
+				Height = 35, // this works better if it is a common multiple of the Width
+			
+			};
+			settingsTemperature.ValueChanged += (s, e) =>
+			{
+				graph.GoalValue = settingsTemperature.Value;
 			};
 			fillGraph = () =>
 			{
@@ -338,9 +349,9 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			// put in the actual extruder controls
 			bool shareTemp = printerConnection.PrinterSettings.GetValue<bool>(SettingsKey.extruders_share_temperature);
-			if (shareTemp)
+			int extruderCount = printerConnection.PrinterSettings.GetValue<int>(SettingsKey.extruder_count);
+			if (shareTemp && extruderCount > 1)
 			{
-				int extruderCount = printerConnection.PrinterSettings.GetValue<int>(SettingsKey.extruder_count);
 				for (int extruderIndex = 0; extruderIndex < extruderCount; extruderIndex++)
 				{
 					container.AddChild(new HorizontalLine()
