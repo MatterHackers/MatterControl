@@ -668,6 +668,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				};
 				this.AddChild(unitsArea);
 
+				var extraInfo = GetExtraSettingsWidget(settingData);
+				if (extraInfo != null)
+				{
+					unitsArea.AddChild(extraInfo);
+				}
+
 				restoreArea = new GuiWidget()
 				{
 					HAnchor = HAnchor.Absolute,
@@ -694,12 +700,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 					restoreArea.AddChild(restoreButton);
 				}
+			}
 
-				var extraInfo = GetExtraSettingsWidget(settingData);
-				if (extraInfo != null)
-				{
-					unitsArea.AddChild(extraInfo);
-				}
+			public void SetFullRow()
+			{
+				this.unitsArea.Close();
 			}
 
 			public GuiWidget NameArea { get; }
@@ -930,6 +935,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 					case SliceSettingData.DataEditTypes.CHECK_BOX:
 						uiField = new CheckboxField();
+						settingsRow.SetFullRow();
 						useDefaultSavePattern = false;
 						uiField.ValueChanged += (s, e) =>
 						{
@@ -986,6 +992,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 					case SliceSettingData.DataEditTypes.HARDWARE_PRESENT:
 						uiField = new CheckboxField();
+						settingsRow.SetFullRow();
 						break;
 
 					case SliceSettingData.DataEditTypes.VECTOR2:
