@@ -4525,3 +4525,12 @@ Translated:Alpha: The in development version of MatterControl.
 English:Changing your update channel will change the version of MatterControl that you receive when updating:
 Translated:Changing your update channel will change the version of MatterControl that you receive when updating:
 
+English:Change
+Translated:Change
+
+English:Hotend
+Translated:Hotend
+
+English:Preset Name:
+Translated:Preset Name:
+

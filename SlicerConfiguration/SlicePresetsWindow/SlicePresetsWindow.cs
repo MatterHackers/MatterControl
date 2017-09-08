@@ -74,6 +74,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public SlicePresetsWindow(PrinterConnection printerConnection, PresetsContext presetsContext)
 				: base(641, 481)
 		{
+			this.printerConnection = printerConnection;
 			this.presetsContext = presetsContext;
 			this.AlwaysOnTopOfMain = true;
 			this.Title = "Slice Presets Editor".Localize();

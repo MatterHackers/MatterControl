@@ -153,6 +153,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
+				testRunner.CloseSignInAndPrinterSelect();
+
 				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
 
 				// Navigate to Local Library 
@@ -161,12 +163,125 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Printer Tab");
 				testRunner.ClickByName("Features Tab");
 
-				CheckAndUncheckSetting(testRunner, SettingsKey.heat_extruder_before_homing, "Heat Before Homing Checkbox", false);
+				CheckAndUncheckSetting(testRunner, SettingsKey.heat_extruder_before_homing, false);
 
-				CheckAndUncheckSetting(testRunner, SettingsKey.has_fan, "Has Fan Checkbox", true);
+				CheckAndUncheckSetting(testRunner, SettingsKey.has_fan, true);
 
 				return Task.CompletedTask;
 			}, overrideWidth: 1224, overrideHeight: 900);
+		}
+
+		[Test]
+		public async Task DualExtrusionShowsCorrectHotEndData()
+		{
+			await MatterControlUtilities.RunTest((testRunner) =>
+			{
+				testRunner.CloseSignInAndPrinterSelect();
+
+				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
+				{
+					// Navigate to Local Library 
+					testRunner.SwitchToAdvancedSliceSettings();
+
+					testRunner.ClickByName("Printer Tab");
+					testRunner.ClickByName("Features Tab");
+
+					// only 1 hotend and 1 extruder
+					Assert.IsTrue(testRunner.NameExists("Hotend 0"));
+					Assert.IsFalse(testRunner.NameExists("Hotend 1", .1));
+
+					testRunner.ClickByName("Hotend 0");
+
+					// assert the temp is set when we first open (it comes from the material)
+					EditableNumberDisplay tempWidget = testRunner.GetWidgetByName("Temperature Input", out _) as EditableNumberDisplay;
+					Assert.AreEqual(240, tempWidget.Value);
+
+					// change material
+					var dropDownLists = testRunner.GetWidgetsByName("Material DropDown List");
+					Assert.AreEqual(2, dropDownLists.Count, "There are two. The slice settings and the pop out.");
+					DropDownList materialSelector = dropDownLists[0].widget as DropDownList;
+					Assert.AreEqual("", materialSelector.SelectedValue);
+					// BUG: the offest should not be required
+					testRunner.ClickByName("Material DropDown List", offset: new Point2D(-10, -10));
+					testRunner.ClickByName("HIPS Menu");
+
+					int hipsGoalTemp = 220;
+					// assert the temp changed to a new temp
+					Assert.AreEqual(hipsGoalTemp, tempWidget.Value, "The temp should have changed to ABS");
+					// and the printer heat is off
+					Assert.AreEqual(0, emulator.ExtruderGoalTemperature);
+
+					// turn on the heater
+					testRunner.ClickByName("Toggle Heater");
+					testRunner.Delay();
+
+					// assert the printer is heating
+					Assert.AreEqual(hipsGoalTemp, emulator.ExtruderGoalTemperature);
+
+					// turn off the heater
+					testRunner.ClickByName("Toggle Heater");
+					testRunner.Delay();
+
+					// assert the printer is off
+					Assert.AreEqual(0, emulator.ExtruderGoalTemperature);
+
+					// type in a temp when the heating is off
+					testRunner.ClickByName("Temperature Input");
+					testRunner.Type("110");
+					testRunner.Type("{Enter}");
+					testRunner.Delay();
+
+					// assert the printer is off
+					Assert.AreEqual(0, emulator.ExtruderGoalTemperature);
+
+					// and the heat toggle is showing on
+					CheckBox heatToggle = testRunner.GetWidgetByName("Toggle Heater", out _) as CheckBox;
+					Assert.IsFalse(heatToggle.Checked);
+
+					// turn it on
+					testRunner.ClickByName("Toggle Heater");
+					Assert.AreEqual(110, emulator.ExtruderGoalTemperature);
+
+					// adjust when on
+					testRunner.ClickByName("Temperature Input");
+					testRunner.Type("104");
+					testRunner.Type("{Enter}");
+					testRunner.Delay();
+					Assert.AreEqual(104, emulator.ExtruderGoalTemperature);
+
+					// type in 0 and have the heater turn off
+					testRunner.ClickByName("Temperature Input");
+					testRunner.Type("0");
+					testRunner.Type("{Enter}");
+					testRunner.Delay();
+
+					// assert the printer is not heating
+					Assert.AreEqual(0, emulator.ExtruderGoalTemperature);
+					// and the on toggle is showing off
+					Assert.IsFalse(heatToggle.Checked);
+
+					testRunner.ClickByName(SliceSettingsOrganizer.Instance.GetSettingsData(SettingsKey.extruder_count).PresentationName + " Edit");
+					testRunner.Type("2");
+					testRunner.Type("{Enter}");
+
+					// there are now 2 hotends and 2 extruders
+					Assert.IsTrue(testRunner.NameExists("Hotend 0"));
+					Assert.IsTrue(testRunner.NameExists("Hotend 1"));
+
+					SetCheckBoxSetting(testRunner, SettingsKey.extruders_share_temperature, true);
+
+					// there is one hotend and 2 extruders
+					Assert.IsTrue(testRunner.NameExists("Hotend 0"));
+					Assert.IsFalse(testRunner.NameExists("Hotend 1", .1));
+
+					testRunner.ClickByName("Hotend 0");
+
+					dropDownLists = testRunner.GetWidgetsByName("Material DropDown List");
+					//Assert.AreEqual(3, dropDownLists.Count, "There are three. The slice settings and the 2 on the pop out.");
+				}
+
+				return Task.CompletedTask;
+			}, maxTimeToRun: 200, overrideWidth: 1224, overrideHeight: 900);
 		}
 
 		[Test /* Test will fail if screen size is and "HeatBeforeHoming" falls below the fold */]
@@ -174,6 +289,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
+				testRunner.CloseSignInAndPrinterSelect();
+
 				EventHandler unregisterEvents = null;
 				int layerHeightChangedCount = 0;
 
@@ -233,18 +350,29 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideWidth: 1224, overrideHeight: 900);
 		}
 
-		private static void CheckAndUncheckSetting(AutomationRunner testRunner, string settingToChange, string checkBoxName, bool expected)
+		private static void SetCheckBoxSetting(AutomationRunner testRunner, string settingToChange, bool valueToSet)
+		{
+			var settingsData = SliceSettingsOrganizer.Instance.GetSettingsData(settingToChange);
+			string checkBoxName = $"{settingsData.PresentationName} Checkbox";
+
+			Assert.IsTrue(ActiveSliceSettings.Instance.GetValue<bool>(settingToChange) != valueToSet);
+
+			testRunner.ClickByName(checkBoxName);
+			// give some time for the ui to update if necessary
+			testRunner.Delay(2);
+
+			Assert.IsTrue(ActiveSliceSettings.Instance.GetValue<bool>(settingToChange) == valueToSet);
+		}
+
+		private static void CheckAndUncheckSetting(AutomationRunner testRunner, string settingToChange, bool expected)
 		{
 			// Assert that the checkbox is currently unchecked, and there is no user override
-			Assert.IsTrue(ActiveSliceSettings.Instance.GetValue<bool>(settingToChange) == expected);
 			Assert.IsTrue(ActiveSliceSettings.Instance.UserLayer.ContainsKey(settingToChange) == false);
 
 			// Click the checkbox
-			testRunner.ClickByName(checkBoxName);
-			testRunner.Delay(2);
+			SetCheckBoxSetting(testRunner, settingToChange, !expected);
 
 			// Assert the checkbox is checked and the user override is set
-			Assert.IsTrue(ActiveSliceSettings.Instance.GetValue<bool>(settingToChange) != expected);
 			Assert.IsTrue(ActiveSliceSettings.Instance.UserLayer.ContainsKey(settingToChange) == true);
 
 			// Click the cancel user override button
@@ -261,6 +389,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
+				testRunner.CloseSignInAndPrinterSelect();
+
 				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
 
 				// Navigate to Settings Tab and make sure Bed Temp Text box is visible 

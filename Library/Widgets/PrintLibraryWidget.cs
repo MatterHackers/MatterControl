@@ -90,7 +90,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			};
 			allControls.AddChild(navBar);
 
-			CheckBox showFolders = new CheckBox("Folders")
+			CheckBox showFolders = new CheckBox("Folders", ActiveTheme.Instance.PrimaryTextColor)
 			{
 				Name = "Show Folders Toggle",
 				Checked = UserSettings.Instance.get("ShowContainers") == "1"
