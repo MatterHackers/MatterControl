@@ -1711,20 +1711,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 				buttonPanel.AddChild(colorSelectionContainer);
 
-				string extruderLabelText = string.Format("{0} {1}", "Extruder".Localize(), extruderIndex + 1);
+				string materialLabelText = string.Format("{0} {1}", "Material".Localize(), extruderIndex + 1);
 
-				RadioButton extruderSelection = new RadioButton(extruderLabelText, textColor: ActiveTheme.Instance.PrimaryTextColor);
-				extruderButtons.Add(extruderSelection);
-				extruderSelection.SiblingRadioButtonList = extruderButtons;
-				colorSelectionContainer.AddChild(extruderSelection);
+				RadioButton materialSelection = new RadioButton(materialLabelText, textColor: RGBA_Bytes.Black);
+				extruderButtons.Add(materialSelection);
+				materialSelection.SiblingRadioButtonList = extruderButtons;
+				colorSelectionContainer.AddChild(materialSelection);
 				colorSelectionContainer.AddChild(new HorizontalSpacer());
 				int extruderIndexCanPassToClick = extruderIndex;
-				extruderSelection.Click += (sender, e) =>
+				materialSelection.Click += (sender, e) =>
 				{
 					if (Scene.HasSelection)
 					{
 						Scene.SelectedItem.MaterialIndex = extruderIndexCanPassToClick;
 						PartHasBeenChanged();
+
+						// "View 3D Overflow Menu" // the menu to click on
+						// "Materials Option" // the item to highlight
+						//HelpSystem.
 					}
 				};
 
@@ -2540,6 +2544,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Materials option
 			{
 				RadioButton materialsCheckBox = new RadioButton("Materials".Localize(), textColor: itemTextColor);
+				materialsCheckBox.Name = "Materials Option";
 				materialsCheckBox.Checked = (meshViewerWidget.RenderType == RenderTypes.Materials);
 
 				materialsCheckBox.CheckedStateChanged += (sender, e) =>
@@ -2553,7 +2558,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				container.AddChild(materialsCheckBox);
 			}
-
 
 			// overhang setting
 			{
