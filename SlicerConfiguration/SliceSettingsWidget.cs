@@ -391,6 +391,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							HAnchor = HAnchor.Stretch
 						};
 
+						GuiWidget hline = new HorizontalLine(20)
+						{
+							Margin = new BorderDouble(top: 5)
+						};
+						topToBottomSettings.AddChild(hline);
+
 						foreach (SliceSettingData settingData in subGroup.SettingDataList)
 						{
 							// Note: tab sections may disappear if / when they are empty, as controlled by:
@@ -407,12 +413,21 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 										copyIndex,
 										ref tabIndexForItem));
 
+								hline = new HorizontalLine(20)
+								{
+									Margin = 0
+								};
+								topToBottomSettings.AddChild(hline);
+
 								if (showHelpControls)
 								{
 									topToBottomSettings.AddChild(AddInHelpText(topToBottomSettings, settingData));
 								}
 							}
 						}
+
+						// Remove the last line from each section
+						hline?.Close();
 
 						if (addedSettingToSubGroup)
 						{
@@ -874,7 +889,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			var settingsRow = new SettingsRow(settingsContext, settingData)
 			{
-				Margin = new BorderDouble(0, 2),
+				Margin = new BorderDouble(0, 0),
 				Padding = new BorderDouble(0, 0, 10, 0),
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit

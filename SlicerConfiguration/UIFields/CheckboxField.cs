@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public virtual void Initialize(int tabIndex)
 		{
-			checkBoxWidget = ImageButtonFactory.CreateToggleSwitch(false, ActiveTheme.Instance.PrimaryTextColor);
+			checkBoxWidget = ImageButtonFactory.CreateToggleSwitch(false, ActiveTheme.Instance.PrimaryTextColor, useStandardLabels: false);
 			checkBoxWidget.VAnchor = VAnchor.Center;
 			checkBoxWidget.Margin = new BorderDouble(0);
 			checkBoxWidget.CheckedStateChanged += (s, e) =>
