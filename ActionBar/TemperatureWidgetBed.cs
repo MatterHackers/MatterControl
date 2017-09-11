@@ -28,12 +28,14 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
@@ -41,11 +43,10 @@ namespace MatterHackers.MatterControl.ActionBar
 {
 	internal class TemperatureWidgetBed : TemperatureWidgetBase
 	{
+		private EditableNumberDisplay settingsTemperature;
 		private string sliceSettingsNote = "Note: Slice Settings are applied before the print actually starts. Changes while printing will not effect the active print.".Localize();
 		private string waitingForBedToHeatMessage = "The bed is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting bed temperature in SETTINGS -> Filament -> Temperatures.\n\n{1}".Localize();
 		private string waitingForBedToHeatTitle = "Waiting For Bed To Heat".Localize();
-
-		private TextWidget settingsTemperature;
 
 		public TemperatureWidgetBed(PrinterConnection printerConnection)
 			: base(printerConnection, "150.3°")
@@ -66,24 +67,13 @@ namespace MatterHackers.MatterControl.ActionBar
 			printerConnection.BedTemperatureRead.RegisterEvent((s, e) => DisplayCurrentTemperature(), ref unregisterEvents);
 		}
 
+		protected override int ActualTemperature => (int)printerConnection.ActualBedTemperature;
 		protected override int TargetTemperature => (int)printerConnection.TargetBedTemperature;
 
-		protected override int ActualTemperature => (int)printerConnection.ActualBedTemperature;
-
-		protected override void SetTargetTemperature(double targetTemp)
+		public override void OnClosed(ClosedEventArgs e)
 		{
-			double goalTemp = (int)(targetTemp + .5);
-			if (printerConnection.PrinterIsPrinting
-				&& printerConnection.DetailedPrintingState == DetailedPrintingState.HeatingBed
-				&& goalTemp != printerConnection.TargetBedTemperature)
-			{
-				string message = string.Format(waitingForBedToHeatMessage, printerConnection.TargetBedTemperature, sliceSettingsNote);
-				StyledMessageBox.ShowMessageBox(null, message, waitingForBedToHeatTitle);
-			}
-			else
-			{
-				printerConnection.TargetBedTemperature = (int)(targetTemp + .5);
-			}
+			ActiveSliceSettings.MaterialPresetChanged -= ActiveSliceSettings_MaterialPresetChanged;
+			base.OnClosed(e);
 		}
 
 		protected override GuiWidget GetPopupContent()
@@ -105,7 +95,10 @@ namespace MatterHackers.MatterControl.ActionBar
 			};
 			widget.AddChild(container);
 
-			container.AddChild(new SettingsItem(
+
+			GuiWidget hotendRow;
+
+			container.AddChild(hotendRow = new SettingsItem(
 				"Heated Bed".Localize(),
 				new SettingsItem.ToggleSwitchConfig()
 				{
@@ -114,36 +107,37 @@ namespace MatterHackers.MatterControl.ActionBar
 					{
 						var goalTemp = itemChecked ? printerConnection.PrinterSettings.GetValue<double>(SettingsKey.bed_temperature) : 0;
 
-						if (printerConnection.PrinterIsPrinting
-							&& printerConnection.DetailedPrintingState == DetailedPrintingState.HeatingBed
-							&& goalTemp != printerConnection.TargetBedTemperature)
+						if (itemChecked)
 						{
-							string sliceSettingsNote = "Note: Slice Settings are applied before the print actually starts. Changes while printing will not effect the active print.";
-							string message = string.Format(
-								"The bed is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting bed temperature in 'Slice Settings' -> 'Filament'.\n\n{1}",
-								printerConnection.TargetBedTemperature,
-								sliceSettingsNote);
-
-							StyledMessageBox.ShowMessageBox(null, message, "Waiting For Bed To Heat");
+							SetTargetTemperature(settingsTemperature.Value);
 						}
 						else
 						{
-							if (itemChecked)
-							{
-								SetTargetTemperature(printerConnection.PrinterSettings.GetValue<double>(SettingsKey.bed_temperature));
-							}
-							else
-							{
-								SetTargetTemperature(0);
-							}
+							SetTargetTemperature(0);
 						}
 					}
 				},
 				enforceGutter: false));
 
-			settingsTemperature = new TextWidget(printerConnection.PrinterSettings.GetValue<double>(SettingsKey.bed_temperature).ToString())
+			CheckBox heatToggle = hotendRow.ChildrenRecursive<CheckBox>().FirstOrDefault();
+			heatToggle.Name = "Toggle Heater";
+
+			// put in the temp control
+			settingsTemperature = new EditableNumberDisplay(printerConnection.PrinterSettings.GetValue<double>(SettingsKey.bed_temperature), "000")
 			{
-				AutoExpandBoundsToText = true
+				BorderColor = RGBA_Bytes.Black,
+				Name = "Temperature Input"
+			};
+			settingsTemperature.ValueChanged += (s, e) =>
+			{
+				if (heatToggle.Checked)
+				{
+					SetTargetTemperature(settingsTemperature.Value);
+					if (settingsTemperature.Value == 0)
+					{
+						heatToggle.Checked = false;
+					}
+				}
 			};
 
 			container.AddChild(new SettingsItem(
@@ -151,9 +145,55 @@ namespace MatterHackers.MatterControl.ActionBar
 				settingsTemperature,
 				enforceGutter: false));
 
+			// add in the temp graph
+			Action fillGraph = null;
+			var graph = new DataViewGraph()
+			{
+				DynamiclyScaleRange = false,
+				MinValue = 0,
+				ShowGoal = true,
+				GoalColor = ActiveTheme.Instance.PrimaryAccentColor,
+				GoalValue = settingsTemperature.Value,
+				MaxValue = 150, // could come from some profile value in the future
+				Width = widget.Width - 20,
+				Height = 35, // this works better if it is a common multiple of the Width
+				Margin = new BorderDouble(0, 5, 0, 0),
+			};
+			settingsTemperature.ValueChanged += (s, e) =>
+			{
+				graph.GoalValue = settingsTemperature.Value;
+			};
+			fillGraph = () =>
+			{
+				graph.AddData(this.ActualTemperature);
+				if (!this.HasBeenClosed)
+				{
+					UiThread.RunOnIdle(fillGraph, 1);
+				}
+			};
+
+			UiThread.RunOnIdle(fillGraph);
+			container.AddChild(graph);
+
 			ActiveSliceSettings.MaterialPresetChanged += ActiveSliceSettings_MaterialPresetChanged;
 
 			return widget;
+		}
+
+		protected override void SetTargetTemperature(double targetTemp)
+		{
+			double goalTemp = (int)(targetTemp + .5);
+			if (printerConnection.PrinterIsPrinting
+				&& printerConnection.DetailedPrintingState == DetailedPrintingState.HeatingBed
+				&& goalTemp != printerConnection.TargetBedTemperature)
+			{
+				string message = string.Format(waitingForBedToHeatMessage, printerConnection.TargetBedTemperature, sliceSettingsNote);
+				StyledMessageBox.ShowMessageBox(null, message, waitingForBedToHeatTitle);
+			}
+			else
+			{
+				printerConnection.TargetBedTemperature = (int)(targetTemp + .5);
+			}
 		}
 
 		private void ActiveSliceSettings_MaterialPresetChanged(object sender, EventArgs e)
@@ -162,12 +202,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			{
 				settingsTemperature.Text = printerConnection.PrinterSettings.GetValue(SettingsKey.bed_temperature);
 			}
-		}
-
-		public override void OnClosed(ClosedEventArgs e)
-		{
-			ActiveSliceSettings.MaterialPresetChanged -= ActiveSliceSettings_MaterialPresetChanged;
-			base.OnClosed(e);
 		}
 	}
 }
