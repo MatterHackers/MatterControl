@@ -125,6 +125,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			// put in the temp control
 			settingsTemperature = new EditableNumberDisplay(printerConnection.PrinterSettings.GetValue<double>(SettingsKey.bed_temperature), "000")
 			{
+				TextColor = RGBA_Bytes.Black,
 				BorderColor = RGBA_Bytes.Black,
 				Name = "Temperature Input"
 			};
