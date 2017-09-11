@@ -47,15 +47,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private Button editButton;
 		private NamedSettingsLayers layerType;
 		GuiWidget pullDownContainer;
+		bool whiteBackground;
 
 		public DropDownList DropDownList;
 
 		private int extruderIndex; //For multiple materials
 		PrinterConnection printerConnection;
 
-		public PresetSelectorWidget(PrinterConnection printerConnection, string label, RGBA_Bytes accentColor, NamedSettingsLayers layerType, int extruderIndex)
+		public PresetSelectorWidget(PrinterConnection printerConnection, string label, RGBA_Bytes accentColor, NamedSettingsLayers layerType, int extruderIndex, bool whiteBackground = false)
 			: base(FlowDirection.TopToBottom)
 		{
+			this.whiteBackground = whiteBackground;
 			this.printerConnection = printerConnection;
 			Name = label;
 
@@ -85,7 +87,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			// Section Label
 			this.AddChild(new TextWidget(label.Localize().ToUpper())
 			{
-				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				TextColor = whiteBackground ? RGBA_Bytes.Black : ActiveTheme.Instance.PrimaryTextColor,
 				HAnchor = Agg.UI.HAnchor.Left,
 				Margin = new BorderDouble(12, 3, 0, 6)
 			});
@@ -286,6 +288,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				HAnchor = HAnchor.Stretch,
 				MenuItemsPadding = new BorderDouble(10, 7, 7, 7),
+				TextColor = whiteBackground ? RGBA_Bytes.Black : ActiveTheme.Instance.PrimaryTextColor,
 			};
 
 			dropDownList.Name = layerType.ToString() + " DropDown List";

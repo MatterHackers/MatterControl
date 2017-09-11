@@ -11,6 +11,18 @@ namespace MatterHackers.MatterControl
 		protected TextWidget valueDisplay;
 		public string DisplayFormat { get; set; } = "{0}";
 		public event EventHandler ValueChanged;
+		public RGBA_Bytes TextColor
+		{
+			get
+			{
+				return valueDisplay.TextColor;
+			}
+			set
+			{
+				valueDisplay.TextColor = value;
+			}
+		}
+
 		RGBA_Bytes _borderColor = RGBA_Bytes.White;
 		public RGBA_Bytes BorderColor
 		{
@@ -46,11 +58,13 @@ namespace MatterHackers.MatterControl
 				clickableValueContainer.BorderColor = new RGBA_Bytes(BorderColor, 140);
 			};
 
-			valueDisplay = new TextWidget(largestPossibleValue, pointSize: 12);
-			valueDisplay.VAnchor = VAnchor.Center;
-			valueDisplay.HAnchor = HAnchor.Left;
-			valueDisplay.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			valueDisplay.Margin = new BorderDouble(6);
+			valueDisplay = new TextWidget(largestPossibleValue, pointSize: 12)
+			{
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				VAnchor = VAnchor.Center,
+				HAnchor = HAnchor.Left,
+				Margin = new BorderDouble(6),
+			};
 
 			clickableValueContainer.Click += editField_Click;
 
@@ -88,7 +102,7 @@ namespace MatterHackers.MatterControl
 			this.AddChild(numberInputField);
 
 			Value = startingValue;
-			BorderColor = ActiveTheme.Instance.PrimaryTextColor;
+			BorderColor = TextColor;
 		}
 
 		private void editField_Click(object sender, EventArgs mouseEvent)

@@ -246,6 +246,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			// put in the temp control
 			settingsTemperature = new EditableNumberDisplay(printerConnection.PrinterSettings.GetValue<double>(SettingsKey.temperature), "000")
 			{
+				TextColor = RGBA_Bytes.Black,
 				BorderColor = RGBA_Bytes.Black,
 				Name = "Temperature Input"
 			};
@@ -294,7 +295,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			container.AddChild(graph);
 
 			// put in the material selector
-			var presetsSelector = new PresetSelectorWidget(printerConnection, string.Format($"{"Material".Localize()} {hotendIndex + 1}"), RGBA_Bytes.Transparent, NamedSettingsLayers.Material, hotendIndex)
+			var presetsSelector = new PresetSelectorWidget(printerConnection, string.Format($"{"Material".Localize()} {hotendIndex + 1}"), RGBA_Bytes.Transparent, NamedSettingsLayers.Material, hotendIndex, true)
 			{
 				Margin = 0,
 				BackgroundColor = RGBA_Bytes.Transparent,
@@ -326,7 +327,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			var dropList = presetsSelector.FindNamedChildRecursive("Material") as DropDownList;
 			if (dropList != null)
 			{
-				dropList.TextColor = buttonFactory.normalTextColor;
+				dropList.TextColor = RGBA_Bytes.Black;
 			}
 
 			container.AddChild(new SettingsItem("Material".Localize(), presetsSelector, enforceGutter: false));
