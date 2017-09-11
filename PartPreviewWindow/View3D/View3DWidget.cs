@@ -593,6 +593,34 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void TrackballTumbleWidget_DrawGlContent(object sender, DrawEventArgs e)
 		{
+			if (CurrentSelectInfo.DownOnPart
+				&& TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None
+				&& Keyboard.IsKeyDown(Keys.ShiftKey))
+			{
+				// draw marks on the bed to show that the part is constrained to x and y
+				AxisAlignedBoundingBox selectedBounds = this.Scene.SelectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+
+				var drawCenter = CurrentSelectInfo.PlaneDownHitPos;
+				var drawColor = new RGBA_Bytes(RGBA_Bytes.Red, 20);
+				bool zBuffer = false;
+
+				for (int i = 0; i < 2; i++)
+				{
+					GLHelper.Render3DLine(World,
+						drawCenter - new Vector3(-50, 0, 0),
+						drawCenter - new Vector3(50, 0, 0), drawColor, zBuffer, 2);
+
+					GLHelper.Render3DLine(World,
+						drawCenter - new Vector3(0, -50, 0),
+						drawCenter - new Vector3(0, 50, 0), drawColor, zBuffer, 2);
+
+					drawColor = RGBA_Bytes.Black;
+					drawCenter.z = 0;
+					zBuffer = true;
+				}
+			}
+
+
 			// This shows the BVH as rects around the scene items
 			//Scene?.TraceData().RenderBvhRecursive(0, 3);
 
