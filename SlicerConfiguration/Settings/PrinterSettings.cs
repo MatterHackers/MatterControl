@@ -140,7 +140,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		/// <returns></returns>
 		public bool ParseShowString(string unsplitSettings, IEnumerable<PrinterSettingsLayer> layerCascade)
 		{
-			PrinterSettings printerSettings = this;
 			if (!string.IsNullOrEmpty(unsplitSettings))
 			{
 				string[] splitOnAnd = unsplitSettings.Split('&');
@@ -163,12 +162,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						{
 							string[] splitOnEquals = orItem.Split('=');
 
-							sliceSettingValue = printerSettings.GetValue(splitOnEquals[0], layerCascade);
+							sliceSettingValue = this.GetValue(splitOnEquals[0], layerCascade);
 							matchString = splitOnEquals[1];
 						}
 						else
 						{
-							sliceSettingValue = printerSettings.GetValue(orItem, layerCascade);
+							sliceSettingValue = this.GetValue(orItem, layerCascade);
 						}
 
 						if ((!negate && sliceSettingValue == matchString)
