@@ -426,9 +426,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							}
 						}
 
-						// Remove the last line from each section
-						hline?.Close();
-
 						if (addedSettingToSubGroup)
 						{
 							needToAddSubGroup = true;
@@ -438,7 +435,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								TextColor = ActiveTheme.Instance.PrimaryTextColor,
 								BorderColor = ActiveTheme.Instance.PrimaryTextColor,
 								HAnchor = HAnchor.Stretch,
-								Margin = new BorderDouble(bottom: 3),
+								Margin = new BorderDouble(bottom: 16),
 								Padding = new BorderDouble(left: 4),
 							};
 							groupBox.AddChild(topToBottomSettings);
@@ -649,7 +646,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				vline = new VerticalLine()
 				{
 					BackgroundColor = RGBA_Bytes.Transparent,
-					Margin = new BorderDouble(right: 6, left: 2),
+					Margin = new BorderDouble(right: 6),
 					Width = 3,
 					VAnchor = VAnchor.Stretch | VAnchor.Center,
 					// TODO: Without minimumsize vline collapses to some value that's 50-60% of the expected VAnchor.Stretch value
@@ -799,6 +796,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					if (restoreButton != null) restoreButton.Visible = false;
 					this.vline.BackgroundColor= RGBA_Bytes.Transparent;
 				}
+
+				this.BackgroundColor = (vline.BackgroundColor == RGBA_Bytes.Transparent) ? RGBA_Bytes.Transparent : ApplicationController.Instance.Theme.MinimalShade;
 			}
 
 			public void AddContent(GuiWidget content)
