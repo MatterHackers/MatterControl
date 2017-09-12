@@ -713,11 +713,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 			}
 
-			public void SetFullRow()
-			{
-				this.unitsArea.Close();
-			}
-
 			public GuiWidget NameArea { get; }
 
 			public void UpdateStyle()
@@ -948,7 +943,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 					case SliceSettingData.DataEditTypes.CHECK_BOX:
 						uiField = new ToggleboxField();
-						settingsRow.SetFullRow();
 						useDefaultSavePattern = false;
 						uiField.ValueChanged += (s, e) =>
 						{
@@ -982,6 +976,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					case SliceSettingData.DataEditTypes.MULTI_LINE_TEXT:
 						uiField = new MultilineStringField();
 						break;
+
 					case SliceSettingData.DataEditTypes.COM_PORT:
 						useDefaultSavePattern = false;
 
@@ -1005,7 +1000,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 					case SliceSettingData.DataEditTypes.HARDWARE_PRESENT:
 						uiField = new ToggleboxField();
-						settingsRow.SetFullRow();
 						break;
 
 					case SliceSettingData.DataEditTypes.VECTOR2:
