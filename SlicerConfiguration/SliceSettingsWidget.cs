@@ -648,8 +648,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					BackgroundColor = RGBA_Bytes.Transparent,
 					Margin = new BorderDouble(right: 6),
 					Width = 3,
-					VAnchor = VAnchor.Stretch | VAnchor.Center,
-					// TODO: Without minimumsize vline collapses to some value that's 50-60% of the expected VAnchor.Stretch value
+					VAnchor = VAnchor.Stretch,
 					MinimumSize = new Vector2(0, 28),
 					DebugShowBounds = debugLayout
 				};
