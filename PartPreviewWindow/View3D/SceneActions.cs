@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					// If not a Group ItemType, look for mesh volumes and split into distinct objects if found
 					if (!isGroupItemType 
-						&& !selectedItem.HasChildren
+						&& !selectedItem.HasChildren()
 						&& selectedItem.Mesh != null)
 					{
 						var discreetMeshes = CreateDiscreteMeshes.SplitVolumesIntoMeshes(Scene.SelectedItem.Mesh, CancellationToken.None, (double progress0To1, string processingState) =>
@@ -114,7 +114,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public static async void GroupSelection(this InteractiveScene Scene, View3DWidget view3DWidget)
 		{
-			if (Scene.HasChildren)
+			if (Scene.HasChildren())
 			{
 				view3DWidget.processingProgressControl.PercentComplete = 0;
 				view3DWidget.processingProgressControl.Visible = true;

@@ -171,7 +171,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 
 		private void RebuildBase()
 		{
-			if (view3DWidget.Scene.HasChildren && injectedItem != null)
+			if (view3DWidget.Scene.HasChildren() && injectedItem != null)
 			{
 				var newBaseplate = brailleGenerator.CreateBaseplate(injectedItem);
 				if(newBaseplate == null)

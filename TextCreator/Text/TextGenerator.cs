@@ -121,7 +121,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 
 		private IObject3D CreateUnderline(IObject3D group)
 		{
-			if (group.HasChildren)
+			if (group.HasChildren())
 			{
 				AxisAlignedBoundingBox bounds = group.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 
@@ -146,12 +146,12 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 		{
 			hasUnderline = enableUnderline;
 
-			if (enableUnderline && group.HasChildren)
+			if (enableUnderline && group.HasChildren())
 			{
 				// we need to add the underline
 				group.Children.Add(CreateUnderline(group));
 			}
-			else if (group.HasChildren)
+			else if (group.HasChildren())
 			{
 				// we need to remove the underline
 				group.Children.Remove(group.Children.Last());
@@ -160,7 +160,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 
 		public void RebuildUnderline(IObject3D group)
 		{
-			if (hasUnderline && group.HasChildren)
+			if (hasUnderline && group.HasChildren())
 			{
 				// Remove the underline object
 				group.Children.Remove(group.Children.Last());
@@ -172,7 +172,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 
 		public void SetWordSpacing(IObject3D group, double spacing, bool rebuildUnderline = false)
 		{
-			if (group.HasChildren)
+			if (group.HasChildren())
 			{
 				var bedCenter = ApplicationController.Instance.Printer.Bed.BedCenter;
 
@@ -201,7 +201,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 			double oldSize = 1.0 / lastSizeValue;
 
 			Vector3 bedCenter = new Vector3(ApplicationController.Instance.Printer.Bed.BedCenter);
-			if (group.HasChildren)
+			if (group.HasChildren())
 			{
 				foreach (var object3D in group.Children)
 				{
@@ -220,7 +220,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 
 		public void SetWordHeight(IObject3D group, double newHeight, bool rebuildUnderline = false)
 		{
-			if (group.HasChildren)
+			if (group.HasChildren())
 			{
 				foreach (var sceneItem in group.Children)
 				{

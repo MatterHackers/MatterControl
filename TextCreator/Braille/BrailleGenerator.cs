@@ -148,7 +148,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 
 		private void SetCharacterPositions(IObject3D group)
 		{
-			if (group.HasChildren)
+			if (group.HasChildren())
 			{
 				for (int i = 0; i < characterSpacing.Length; i++)
 				{
@@ -168,7 +168,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 
 		public void SetWordHeight(IObject3D group, double newHeight)
 		{
-			if (group.HasChildren)
+			if (group.HasChildren())
 			{
 				AxisAlignedBoundingBox baseBounds = group.Children.Last().GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 
@@ -193,7 +193,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 
 		public void SetWordSize(IObject3D group, double newSize)
 		{
-			if (group.HasChildren)
+			if (group.HasChildren())
 			{
 				foreach (var object3D in group.Children)
 				{
@@ -225,7 +225,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 
 		public IObject3D CreateBaseplate(IObject3D group)
 		{
-			if (group.HasChildren)
+			if (group.HasChildren())
 			{
 				AxisAlignedBoundingBox bounds = group.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 

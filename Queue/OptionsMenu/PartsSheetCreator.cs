@@ -39,6 +39,7 @@ using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
+using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.PolygonMesh;
@@ -136,7 +137,7 @@ namespace MatterHackers.MatterControl
 
 					await contentResult.MeshLoaded;
 
-					var loadedMeshGroups = contentResult.Object3D.VisibleMeshes(Matrix4X4.Identity).ToList();
+					var loadedMeshGroups = contentResult.Object3D.VisibleMeshes().ToList();
 					if (loadedMeshGroups?.Count > 0)
 					{
 						AxisAlignedBoundingBox aabb = loadedMeshGroups[0].Mesh.GetAxisAlignedBoundingBox(loadedMeshGroups[0].Matrix);
