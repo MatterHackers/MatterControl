@@ -253,8 +253,8 @@ namespace MatterHackers.MatterControl
 			Maximum = maximum;
 			ThumbWidth = thumbWidth;
 			ThumbHeight = thumbWidth * 1.4;
-			VAnchor = VAnchor.Stretch;
-			HAnchor = HAnchor.Stretch;
+			//VAnchor = VAnchor.Stretch;
+			//HAnchor = HAnchor.Stretch;
 
 			MinimumSize = new Vector2(ThumbHeight, ThumbHeight);
 		}
