@@ -123,7 +123,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					if (e is StringEventArgs stringEvent)
 					{
 						string settingsKey = stringEvent.Data;
-						if (allUiFields.TryGetValue(settingsKey, out IUIField field2))
+						if (allUiFields.TryGetValue(settingsKey, out BasicField field2))
 						{
 							string currentValue = settingsContext.GetValue(settingsKey);
 							if (field2.Value != currentValue
@@ -626,6 +626,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private class SettingsRow : FlowLayoutWidget
 		{
+			public event EventHandler StyleChanged;
 			private SettingsContext settingsContext;
 
 			private SliceSettingData settingData;
@@ -715,6 +716,21 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			public GuiWidget NameArea { get; }
 
+			public RGBA_Bytes HighlightColor
+			{
+				get => vline.BackgroundColor;
+				set
+				{
+					if (vline.BackgroundColor != value)
+					{
+						vline.BackgroundColor = value;
+						this.BackgroundColor = (value == RGBA_Bytes.Transparent) ? RGBA_Bytes.Transparent : ApplicationController.Instance.Theme.MinimalShade;
+
+						this.StyleChanged?.Invoke(null, null);
+					}
+				}
+			}
+
 			public void UpdateStyle()
 			{
 				if (settingsContext.ContainsKey(settingData.SlicerConfigName))
@@ -735,15 +751,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								{
 									if (layerName.StartsWith("Material"))
 									{
-										this.vline.BackgroundColor= materialSettingBackgroundColor;
+										this.HighlightColor = materialSettingBackgroundColor;
 									}
 									else if (layerName.StartsWith("Quality"))
 									{
-										this.vline.BackgroundColor= qualitySettingBackgroundColor;
+										this.HighlightColor = qualitySettingBackgroundColor;
 									}
 									else
 									{
-										this.vline.BackgroundColor= RGBA_Bytes.Transparent;
+										this.HighlightColor = RGBA_Bytes.Transparent;
 									}
 
 									if (restoreButton != null)
@@ -753,17 +769,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								}
 								else
 								{
-									this.vline.BackgroundColor= userSettingBackgroundColor;
+									this.HighlightColor = userSettingBackgroundColor;
 									if (restoreButton != null) restoreButton.Visible = true;
 								}
 							}
 							break;
 						case NamedSettingsLayers.Material:
-							this.vline.BackgroundColor= materialSettingBackgroundColor;
+							this.HighlightColor = materialSettingBackgroundColor;
 							if (restoreButton != null) restoreButton.Visible = true;
 							break;
 						case NamedSettingsLayers.Quality:
-							this.vline.BackgroundColor= qualitySettingBackgroundColor;
+							this.HighlightColor = qualitySettingBackgroundColor;
 							if (restoreButton != null) restoreButton.Visible = true;
 							break;
 					}
@@ -772,15 +788,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					if (ActiveSliceSettings.Instance.SettingExistsInLayer(settingData.SlicerConfigName, NamedSettingsLayers.Material))
 					{
-						this.vline.BackgroundColor= materialSettingBackgroundColor;
+						this.HighlightColor = materialSettingBackgroundColor;
 					}
 					else if (ActiveSliceSettings.Instance.SettingExistsInLayer(settingData.SlicerConfigName, NamedSettingsLayers.Quality))
 					{
-						this.vline.BackgroundColor= qualitySettingBackgroundColor;
+						this.HighlightColor = qualitySettingBackgroundColor;
 					}
 					else
 					{
-						this.vline.BackgroundColor= RGBA_Bytes.Transparent;
+						this.HighlightColor = RGBA_Bytes.Transparent;
 					}
 
 					if (restoreButton != null) restoreButton.Visible = false;
@@ -788,10 +804,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				else
 				{
 					if (restoreButton != null) restoreButton.Visible = false;
-					this.vline.BackgroundColor= RGBA_Bytes.Transparent;
+					this.HighlightColor = RGBA_Bytes.Transparent;
 				}
 
-				this.BackgroundColor = (vline.BackgroundColor == RGBA_Bytes.Transparent) ? RGBA_Bytes.Transparent : ApplicationController.Instance.Theme.MinimalShade;
 			}
 
 			public void AddContent(GuiWidget content)
@@ -879,6 +894,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			BasicField uiField = null;
 
 			bool useDefaultSavePattern = true;
+			bool placeFieldInDedicatedRow = false;
 
 			var settingsRow = new SettingsRow(settingsContext, settingData)
 			{
@@ -898,18 +914,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 			else
 			{
-				if (settingData.DataEditType != SliceSettingData.DataEditTypes.MULTI_LINE_TEXT)
-				{
-					settingsRow.NameArea.AddChild(
-						// TODO: Layout stops working when WrappedText is used...
-						//new WrappedTex/tWidget(settingData.PresentationName.Localize(), pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor)
-						new TextWidget(settingData.PresentationName.Localize(), pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor)
-						{
-							// TODO: Fit fails to work on standard TextWidget controls and clips descenders
-							// VAnchor = VAnchor.Fit | VAnchor.Center
-							VAnchor = VAnchor.Center
-						});
-				}
+				settingsRow.NameArea.AddChild(
+					new TextWidget(settingData.PresentationName.Localize(), pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor)
+					{
+						VAnchor = VAnchor.Center,
+						EllipsisIfClipped = true,
+						AutoExpandBoundsToText = false,
+						HAnchor = HAnchor.Stretch
+					});
 
 				switch (settingData.DataEditType)
 				{
@@ -975,6 +987,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 					case SliceSettingData.DataEditTypes.MULTI_LINE_TEXT:
 						uiField = new MultilineStringField();
+						placeFieldInDedicatedRow = true;
 						break;
 
 					case SliceSettingData.DataEditTypes.COM_PORT:
@@ -1060,7 +1073,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					var dropMenu = new DropMenuWrappedField(uiField, settingData);
 					dropMenu.Initialize(tabIndexForItem);
 
-				settingsRow.AddContent(uiField.Content);
+					settingsRow.AddContent(dropMenu.Content);
+				}
+				else
+				{
+					if (!placeFieldInDedicatedRow)
+					{
+						settingsRow.AddContent(uiField.Content);
+					}
+				}
 			}
 
 			// Invoke the UpdateStyle implementation
@@ -1069,7 +1090,56 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			bool settingShouldEnabled = settingsContext.ParseShowString(settingData.EnableIfSet);
 			if (settingShouldEnabled)
 			{
-				return settingsRow;
+				if (placeFieldInDedicatedRow)
+				{
+					var wrapper = new FlowLayoutWidget(FlowDirection.TopToBottom)
+					{
+						HAnchor = HAnchor.Stretch,
+						VAnchor = VAnchor.Fit
+					};
+					wrapper.AddChild(settingsRow);
+
+					var dedicatedFieldRow = new FlowLayoutWidget()
+					{
+						VAnchor = VAnchor.Fit,
+						HAnchor = HAnchor.Stretch,
+						BackgroundColor = settingsRow.BackgroundColor
+					};
+					wrapper.AddChild(dedicatedFieldRow);
+
+					var vline = new VerticalLine()
+					{
+						BackgroundColor = settingsRow.HighlightColor,
+						Margin = new BorderDouble(right: 6),
+						Width = 3,
+						VAnchor = VAnchor.Stretch,
+						MinimumSize = new Vector2(0, 28),
+					};
+					dedicatedFieldRow.AddChild(vline);
+
+					var contentContainer = new GuiWidget
+					{
+						HAnchor = HAnchor.Stretch,
+						VAnchor = VAnchor.Fit,
+						Padding = new BorderDouble(right: 16, bottom: 10),
+
+					};
+					contentContainer.AddChild(uiField.Content);
+
+					dedicatedFieldRow.AddChild(contentContainer);
+
+					settingsRow.StyleChanged += (s, e) =>
+					{
+						dedicatedFieldRow.BackgroundColor = settingsRow.BackgroundColor;
+						vline.BackgroundColor = settingsRow.HighlightColor;
+					};
+
+					return wrapper;
+				}
+				else
+				{
+					return settingsRow;
+				}
 			}
 			else
 			{
