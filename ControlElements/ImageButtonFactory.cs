@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl
 			return CreateToggleSwitch(initialState, ActiveTheme.Instance.PrimaryTextColor);
 		}
 
-		public static CheckBox CreateToggleSwitch(bool initialState, RGBA_Bytes textColor)
+		public static CheckBox CreateToggleSwitch(bool initialState, RGBA_Bytes textColor, bool useStandardLabels = true)
 		{
 			string on = "On";
 			string off = "Off";
@@ -55,6 +55,13 @@ namespace MatterHackers.MatterControl
 				on = on.Localize();
 				off = off.Localize();
 			}
+
+			if (!useStandardLabels)
+			{
+				on = "";
+				off = "";
+			}
+
 			ToggleSwitchView toggleView = new ToggleSwitchView(on, off,
 				60 * GuiWidget.DeviceScale, 24 * GuiWidget.DeviceScale,
 				ActiveTheme.Instance.PrimaryBackgroundColor,

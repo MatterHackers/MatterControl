@@ -228,6 +228,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private void MenuItem_Selected(object sender, EventArgs e)
 		{
+			// When a preset is selected store the current values of all known settings to compare against after applying the preset
 			Dictionary<string, string> settingBeforeChange = new Dictionary<string, string>();
 			foreach (var keyName in PrinterSettings.KnownSettings)
 			{

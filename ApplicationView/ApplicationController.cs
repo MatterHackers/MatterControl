@@ -237,9 +237,40 @@ namespace MatterHackers.MatterControl
 
 	public class PrinterViewState
 	{
-		public bool SliceSettingsTabPinned { get; set; }
-		public int SliceSettingsTabIndex { get; set; }
-		public double SliceSettingsWidth { get; set; } = 540 * GuiWidget.DeviceScale;
+		public bool SliceSettingsTabPinned
+		{
+			get => UserSettings.Instance.get(UserSettingsKey.SliceSettingsTabPinned) == "true";
+			set
+			{
+				UserSettings.Instance.set(UserSettingsKey.SliceSettingsTabPinned, value ? "true" : "false");
+			}
+		}
+
+		public int SliceSettingsTabIndex
+		{
+			get
+			{
+				int.TryParse(UserSettings.Instance.get(UserSettingsKey.SliceSettingsTabIndex), out int tabIndex);
+				return tabIndex;
+			}
+			set
+			{
+				UserSettings.Instance.set(UserSettingsKey.SliceSettingsTabIndex, value.ToString());
+			}
+		}
+
+		public double SliceSettingsWidth
+		{
+			get
+			{
+				double.TryParse(UserSettings.Instance.get(UserSettingsKey.SliceSettingsWidth), out double controlWidth);
+				return controlWidth;
+			}
+			set
+			{
+				UserSettings.Instance.set(UserSettingsKey.SliceSettingsWidth, value.ToString());
+			}
+		}
 	}
 
 	public class PrinterConfig
@@ -945,8 +976,6 @@ namespace MatterHackers.MatterControl
 		public MeshViewState PartPreviewState { get; set; } = new MeshViewState();
 
 		public View3DWidget ActiveView3DWidget { get; internal set; }
-
-		public bool PrintSettingsPinned { get; internal set; }
 
 		public string CachePath(ILibraryItem libraryItem)
 		{

@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					if (stringEvent.Data == "extruder_offset")
 					{
-						printer.Bed.GCodeRenderer.Clear3DGCode();
+						printer.Bed.GCodeRenderer?.Clear3DGCode();
 					}
 				}
 			}, ref unregisterEvents);

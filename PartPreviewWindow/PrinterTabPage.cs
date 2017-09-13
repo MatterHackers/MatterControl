@@ -578,17 +578,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			var sideBar = new DockingTabControl(widgetTodockTo, DockSide.Right, ApplicationController.Instance.Printer)
 			{
-				ControlIsPinned = ApplicationController.Instance.PrintSettingsPinned
+				ControlIsPinned = ApplicationController.Instance.Printer.ViewState.SliceSettingsTabPinned
 			};
 			sideBar.PinStatusChanged += (s, e) =>
 			{
-				ApplicationController.Instance.PrintSettingsPinned = sideBar.ControlIsPinned;
+				ApplicationController.Instance.Printer.ViewState.SliceSettingsTabPinned = sideBar.ControlIsPinned;
 			};
 			parent.AddChild(sideBar);
 
 			if (printerConnection.PrinterSettings.PrinterSelected)
 			{
-				sideBar.AddPage("Slice Settings".Localize(), new SliceSettingsWidget(printerConnection));
+				sideBar.AddPage(
+					"Slice Settings".Localize(), 
+					new SliceSettingsWidget(
+						printerConnection,
+						new SettingsContext(
+							null, 
+							SlicerConfiguration.NamedSettingsLayers.All)));
 			}
 			else
 			{
