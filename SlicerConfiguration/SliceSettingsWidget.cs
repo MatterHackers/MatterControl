@@ -455,31 +455,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					scrollOnGroupTab.AddChild(subGroupLayoutTopToBottom);
 					groupTabPage.AddChild(scrollOnGroupTab);
 					leftSideGroupTabs.AddTab(groupTabWidget);
-
-					// Make sure we have the right scroll position when we create this view
-					// This code is not working yet. Scroll widgets get a scroll event when the tab becomes visible that is always reseting them.
-					// So it is not useful to enable this and in fact makes the tabs inconsistently scrolled. It is just here for reference. // 2015 04 16, LBB
-					if (false)
-					{
-						string settingsScrollPosition = "SliceSettingsWidget_{0}_{1}_ScrollPosition".FormatWith(category.Name, group.Name);
-
-						UiThread.RunOnIdle(() =>
-						{
-							int scrollPosition = UserSettings.Instance.Fields.GetInt(settingsScrollPosition, -100000);
-							if (scrollPosition != -100000)
-							{
-								scrollOnGroupTab.ScrollPosition = new Vector2(0, scrollPosition);
-							}
-						});
-
-						scrollOnGroupTab.ScrollPositionChanged += (object sender, EventArgs e) =>
-						{
-							if (scrollOnGroupTab.CanSelect)
-							{
-								UserSettings.Instance.Fields.SetInt(settingsScrollPosition, (int)scrollOnGroupTab.ScrollPosition.y);
-							}
-						};
-					}
 				}
 
 				if (group.Name == "Connection")
