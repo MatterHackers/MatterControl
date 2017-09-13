@@ -1987,7 +1987,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private async void LoadAndAddPartsToPlate(string[] filesToLoad)
 		{
-			if (Scene.HasChildren && filesToLoad != null && filesToLoad.Length > 0)
+			if (Scene.HasChildren() && filesToLoad != null && filesToLoad.Length > 0)
 			{
 				processingProgressControl.ProcessType = "Loading Parts".Localize() + ":";
 				processingProgressControl.Visible = true;
@@ -2006,7 +2006,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				bool addingOnlyOneItem = Scene.Children.Count == Scene.Children.Count + 1;
 
-				if (Scene.HasChildren)
+				if (Scene.HasChildren())
 				{
 					if (addingOnlyOneItem)
 					{
@@ -2198,7 +2198,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private async Task SaveChanges()
 		{
-			if (Scene.HasChildren)
+			if (Scene.HasChildren())
 			{
 				processingProgressControl.ProcessType = "Saving".Localize() + ":";
 				processingProgressControl.Visible = true;
@@ -2380,7 +2380,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			LockEditControls();
 			viewIsInEditModePreLock = true;
 
-			if (Scene.HasChildren)
+			if (Scene.HasChildren())
 			{
 				// CreateSelectionData()
 				await Task.Run(() =>
@@ -2602,7 +2602,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						meshViewerWidget.RenderType = RenderTypes.Overhang;
 
 						UserSettings.Instance.set("defaultRenderSetting", meshViewerWidget.RenderType.ToString());
-						foreach (var meshRenderData in scene.VisibleMeshes(Matrix4X4.Identity))
+						foreach (var meshRenderData in scene.VisibleMeshes())
 						{
 							meshRenderData.Mesh.MarkAsChanged();
 							// change the color to be the right thing

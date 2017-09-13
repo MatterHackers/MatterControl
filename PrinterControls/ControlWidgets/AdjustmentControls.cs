@@ -103,7 +103,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 					HAnchor = HAnchor.Stretch,
 					TotalWidthInPixels = sliderWidth,
 				};
-				feedRateRatioSlider.View.BackgroundColor = new RGBA_Bytes();
 				feedRateRatioSlider.ValueChanged += (sender, e) =>
 				{
 					feedRateValue.ActuallNumberEdit.Value = Math.Round(feedRateRatioSlider.Value, 2);
@@ -169,7 +168,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 					Margin = new BorderDouble(5, 0),
 					Value = ExtrusionMultiplyerStream.ExtrusionRatio
 				};
-				extrusionRatioSlider.View.BackgroundColor = new RGBA_Bytes();
+				extrusionRatioSlider.BackgroundColor = new RGBA_Bytes();
 				extrusionRatioSlider.ValueChanged += (sender, e) =>
 				{
 					extrusionValue.ActuallNumberEdit.Value = Math.Round(extrusionRatioSlider.Value, 2);
