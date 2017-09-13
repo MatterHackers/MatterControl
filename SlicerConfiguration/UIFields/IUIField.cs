@@ -41,18 +41,4 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public bool UserInitiated { get; }
 	}
-
-	public interface IUIField
-	{
-		event EventHandler<FieldChangedEventArgs> ValueChanged;
-
-		string Value { get; }
-
-		void SetValue(string newValue, bool userInitiated);
-
-		void Initialize(int tabIndex);
-
-		GuiWidget Content { get; }
-	}
-
 }

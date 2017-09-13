@@ -33,11 +33,11 @@ using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class CheckboxField : BasicField, IUIField
+	public class CheckboxField : BasicField
 	{
 		private CheckBox checkBoxWidget;
 
-		public virtual void Initialize(int tabIndex)
+		public override void Initialize(int tabIndex)
 		{
 			checkBoxWidget = new CheckBox("")
 			{
@@ -65,17 +65,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	}
 
 
-	public class ToggleboxField : BasicField, IUIField
+	public class ToggleboxField : BasicField
 	{
 		private CheckBox checkBoxWidget;
 
-		public virtual void Initialize(int tabIndex)
+		public override void Initialize(int tabIndex)
 		{
 			checkBoxWidget = ImageButtonFactory.CreateToggleSwitch(false, ActiveTheme.Instance.PrimaryTextColor, useStandardLabels: false);
 			checkBoxWidget.VAnchor = VAnchor.Center;
 			checkBoxWidget.Margin = new BorderDouble(0);
-			checkBoxWidget.CheckedStateChanged += (s, e) =>
+			checkBoxWidget.Click += (s, e) =>
 			{
+				Console.WriteLine("Checkbox Click Event: " + this.checkBoxWidget.Checked);
+
 				this.SetValue(
 					this.checkBoxWidget.Checked ? "1" : "0",
 					userInitiated: true);

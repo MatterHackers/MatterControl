@@ -32,13 +32,15 @@ using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class BasicField
+	public abstract class BasicField
 	{
 		public event EventHandler<FieldChangedEventArgs> ValueChanged;
 
 		public void SetValue(string newValue, bool userInitiated)
 		{
 			string convertedValue = this.ConvertValue(newValue);
+
+			Console.WriteLine($"SetValue: {newValue}/{convertedValue}/{userInitiated}");
 
 			if (this.Value != convertedValue)
 			{
@@ -63,6 +65,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		protected virtual string ConvertValue(string newValue)
 		{
 			return newValue;
+		}
+
+		public virtual void Initialize(int tabIndex)
+		{
 		}
 
 		protected virtual void OnValueChanged(FieldChangedEventArgs fieldChangedEventArgs)

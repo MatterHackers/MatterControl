@@ -33,12 +33,12 @@ using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class DropMenuWrappedField : IUIField
+	public class DropMenuWrappedField
 	{
-		private IUIField uiField;
+		private BasicField uiField;
 		private SliceSettingData settingData;
 
-		public DropMenuWrappedField(IUIField uiField, SliceSettingData settingData)
+		public DropMenuWrappedField(BasicField uiField, SliceSettingData settingData)
 		{
 			this.settingData = settingData;
 			this.uiField = uiField;

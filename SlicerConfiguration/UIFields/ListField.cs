@@ -35,13 +35,13 @@ using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class ListField : BasicField, IUIField
+	public class ListField : BasicField
 	{
 		private DropDownList dropdownList;
 
 		public List<string> ListItems { get; set; }
 
-		public void Initialize(int tabIndex)
+		public override void Initialize(int tabIndex)
 		{
 			dropdownList = new DropDownList("None".Localize(), maxHeight: 200)
 			{

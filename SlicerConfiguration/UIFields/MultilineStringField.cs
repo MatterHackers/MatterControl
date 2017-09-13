@@ -32,13 +32,13 @@ using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class MultilineStringField : BasicField, IUIField
+	public class MultilineStringField : BasicField
 	{
 		private readonly int multiLineEditHeight = (int)(120 * GuiWidget.DeviceScale + .5);
 
 		private MHTextEditWidget editWidget;
 
-		public void Initialize(int tabIndex)
+		public override void Initialize(int tabIndex)
 		{
 			editWidget = new MHTextEditWidget("", pixelWidth: 320, pixelHeight: multiLineEditHeight, multiLine: true, tabIndex: tabIndex, typeFace: ApplicationController.MonoSpacedTypeFace)
 			{

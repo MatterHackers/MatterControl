@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private PrinterConnection printerConnection;
 
-		private Dictionary<string, IUIField> allUiFields = new Dictionary<string, IUIField>();
+		private Dictionary<string, BasicField> allUiFields = new Dictionary<string, BasicField>();
 
 		private EventHandler unregisterEvents;
 
@@ -876,7 +876,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			string sliceSettingValue = settingsContext.GetValue(settingData.SlicerConfigName);
 
-			IUIField uiField = null;
+			BasicField uiField = null;
 
 			bool useDefaultSavePattern = true;
 
@@ -1057,9 +1057,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				// After initializing the field, wrap with dropmenu if applicable
 				if (settingData.QuickMenuSettings.Count > 0)
 				{
-					uiField = new DropMenuWrappedField(uiField, settingData);
-					uiField.Initialize(tabIndexForItem);
-				}
+					var dropMenu = new DropMenuWrappedField(uiField, settingData);
+					dropMenu.Initialize(tabIndexForItem);
 
 				settingsRow.AddContent(uiField.Content);
 			}

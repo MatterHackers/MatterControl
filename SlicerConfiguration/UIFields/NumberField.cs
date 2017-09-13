@@ -31,13 +31,13 @@ using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public abstract class NumberField : BasicField, IUIField
+	public abstract class NumberField : BasicField
 	{
 		protected MHNumberEdit numberEdit;
 
 		private readonly int ControlWidth = (int)(60 * GuiWidget.DeviceScale + .5);
 
-		public virtual void Initialize(int tabIndex)
+		public override void Initialize(int tabIndex)
 		{
 			numberEdit = new MHNumberEdit(0, pixelWidth: ControlWidth, tabIndex: tabIndex)
 			{

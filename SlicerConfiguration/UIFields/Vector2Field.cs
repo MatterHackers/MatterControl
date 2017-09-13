@@ -32,7 +32,7 @@ using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class Vector2Field : BasicField, IUIField
+	public class Vector2Field : BasicField
 	{
 		public static readonly int VectorXYEditWidth = (int)(60 * GuiWidget.DeviceScale + .5);
 
@@ -40,7 +40,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private MHNumberEdit xEditWidget;
 
-		public void Initialize(int tabIndex)
+		public override void Initialize(int tabIndex)
 		{
 			var container = new FlowLayoutWidget();
 
