@@ -40,7 +40,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		protected override string ConvertValue(string newValue)
 		{
 			double.TryParse(newValue, out double currentValue);
-			doubleValue  = (int)currentValue;
+			doubleValue  = currentValue;
 
 			return doubleValue.ToString();
 		}
