@@ -287,7 +287,7 @@
 		"PresentationName": "Expand Thin Walls",
 		"HelpText": "Detects sections of the model that would be too thin to print and expands them to make them printable.",
 		"DataEditType": "CHECK_BOX",
-		"DefaultValue": "1",
+		"DefaultValue": "1"
 	},
 	{
 		"SlicerConfigName": "extrusion_axis",
@@ -410,7 +410,7 @@
 		"PresentationName": "Fill Thin Gaps",
 		"HelpText": "Detect gaps between perimeters that are too thin to fill with normal infill and attempt to fill them.",
 		"DataEditType": "CHECK_BOX",
-		"DefaultValue": "1",
+		"DefaultValue": "1"
 	},
 	{
 		"SlicerConfigName": "first_layer_acceleration",
@@ -577,8 +577,8 @@
 		"RebuildGCodeOnChange": false
 	},
 	{
-		"QuickMenuSettings": [ ],
-		"SetSettingsOnChange": [ ],
+		"QuickMenuSettings": [],
+		"SetSettingsOnChange": [],
 		"SlicerConfigName": "has_z_servo",
 		"PresentationName": "Has Z Servo",
 		"HelpText": "The printer has a servo for lowering and rasing the z probe.",
@@ -591,8 +591,8 @@
 		"RebuildGCodeOnChange": false
 	},
 	{
-		"QuickMenuSettings": [ ],
-		"SetSettingsOnChange": [ ],
+		"QuickMenuSettings": [],
+		"SetSettingsOnChange": [],
 		"SlicerConfigName": "has_hardware_leveling",
 		"PresentationName": "Has Hardware Leveling",
 		"HelpText": "The printer has its own auto bed leveling probe and procedure which can be called using a G29 command during Start G-Code.",
@@ -643,7 +643,7 @@
 		"HelpText": "Shows a button at the right side of the Printer Connection Bar used to reset the USB connection to the printer. This can be used on printers that support it as an emergency stop.",
 		"DataEditType": "HARDWARE_PRESENT",
 		"ReloadUiWhenChanged": true,
-		"DefaultValue": "0",
+		"DefaultValue": "0"
 	},
 	{
 		"SlicerConfigName": "infill_acceleration",
@@ -727,8 +727,8 @@
 		"RebuildGCodeOnChange": false
 	},
 	{
-		"QuickMenuSettings": [ ],
-		"SetSettingsOnChange": [ ],
+		"QuickMenuSettings": [],
+		"SetSettingsOnChange": [],
 		"SlicerConfigName": "leveling_manual_positions",
 		"PresentationName": "Leveling Positions",
 		"HelpText": "If set, these positions will be used when running the leveling solution. Leave empty for defaults. Data Format:'X1,Y1:...:Xn,Yn'",
@@ -741,8 +741,8 @@
 		"RebuildGCodeOnChange": false
 	},
 	{
-		"QuickMenuSettings": [ ],
-		"SetSettingsOnChange": [ ],
+		"QuickMenuSettings": [],
+		"SetSettingsOnChange": [],
 		"SlicerConfigName": "filament_runout_sensor",
 		"PresentationName": "Has Filament Runout Sensor",
 		"HelpText": "Specifies that the firmware has support for ros_0 endstop reporting on M119. TRIGGERED state defines filament has runout. If runout is detected the printers pause G-Code is run.",
@@ -785,8 +785,8 @@
 		"DefaultValue": "0"
 	},
 	{
-		"QuickMenuSettings": [ ],
-		"SetSettingsOnChange": [ ],
+		"QuickMenuSettings": [],
+		"SetSettingsOnChange": [],
 		"SlicerConfigName": "z_probe_xy_offset",
 		"PresentationName": "XY Offset",
 		"HelpText": "The distance the z probe is from the extruder in x and y.",
@@ -799,8 +799,8 @@
 		"DefaultValue": "0,0"
 	},
 	{
-		"QuickMenuSettings": [ ],
-		"SetSettingsOnChange": [ ],
+		"QuickMenuSettings": [],
+		"SetSettingsOnChange": [],
 		"SlicerConfigName": "z_probe_samples",
 		"PresentationName": "Number of Samples",
 		"HelpText": "The number of times to sample each probe position (results will be averaged).",
@@ -813,8 +813,8 @@
 		"DefaultValue": "1"
 	},
 	{
-		"QuickMenuSettings": [ ],
-		"SetSettingsOnChange": [ ],
+		"QuickMenuSettings": [],
+		"SetSettingsOnChange": [],
 		"SlicerConfigName": "z_servo_depolyed_angle",
 		"PresentationName": "Lower / Deploy",
 		"HelpText": "This is the angle that lowers or deploys the z probe.",
@@ -827,8 +827,8 @@
 		"DefaultValue": "0"
 	},
 	{
-		"QuickMenuSettings": [ ],
-		"SetSettingsOnChange": [ ],
+		"QuickMenuSettings": [],
+		"SetSettingsOnChange": [],
 		"SlicerConfigName": "z_servo_retracted_angle",
 		"PresentationName": "Raise / Stow",
 		"HelpText": "This is the angle that raises or stows the z probe.",
@@ -841,8 +841,8 @@
 		"DefaultValue": "0"
 	},
 	{
-		"QuickMenuSettings": [ ],
-		"SetSettingsOnChange": [ ],
+		"QuickMenuSettings": [],
+		"SetSettingsOnChange": [],
 		"SlicerConfigName": "layer_gcode",
 		"PresentationName": "Layer Change G-Code",
 		"HelpText": "G-Code to be run after the change in Z height for the next layer.",
@@ -1119,7 +1119,7 @@
 		"HelpText": "Turn retractions on and off.",
 		"DataEditType": "CHECK_BOX",
 		"DefaultValue": "1",
-		"ReloadUiWhenChanged": true,
+		"ReloadUiWhenChanged": true
 	},
 	{
 		"SlicerConfigName": "retract_length",
@@ -1338,8 +1338,8 @@
 		"DefaultValue": "G28 ; home all axes\\nG1 Z5 F5000 ; lift nozzle"
 	},
 	{
-		"QuickMenuSettings": [ ],
-		"SetSettingsOnChange": [ ],
+		"QuickMenuSettings": [],
+		"SetSettingsOnChange": [],
 		"SlicerConfigName": "write_regex",
 		"PresentationName": "Write Filter",
 		"HelpText": "This is a set of regular expressions to apply to lines prior to sending to a printer. They will be applied in the order listed before sending. To return more than one instruction separate them with comma.",
@@ -1351,8 +1351,8 @@
 		"DefaultValue": ""
 	},
 	{
-		"QuickMenuSettings": [ ],
-		"SetSettingsOnChange": [ ],
+		"QuickMenuSettings": [],
+		"SetSettingsOnChange": [],
 		"SlicerConfigName": "read_regex",
 		"PresentationName": "Read Filter",
 		"HelpText": "This is a set of regular expressions to apply to lines after they are received from the printer. They will be applied in order to each line received.",
@@ -1767,6 +1767,11 @@
 		"DataEditType": "POSITIVE_DOUBLE",
 		"ExtraSettings": "mm",
 		"DefaultValue": "0"
+	},
+	{
+		"SlicerConfigName": "driver_type",
+		"PresentationName": "The serial driver to use",
+		"HelpText": ""
 	},
 	{
 		"SlicerConfigName": "enable_network_printing",
