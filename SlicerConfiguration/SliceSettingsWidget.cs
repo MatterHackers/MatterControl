@@ -435,7 +435,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								TextColor = ActiveTheme.Instance.PrimaryTextColor,
 								BorderColor = ActiveTheme.Instance.PrimaryTextColor,
 								HAnchor = HAnchor.Stretch,
-								Margin = new BorderDouble(bottom: 16),
+								Margin = new BorderDouble(bottom: 8, top: 8),
 								Padding = new BorderDouble(left: 4),
 							};
 							groupBox.AddChild(topToBottomSettings);
