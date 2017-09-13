@@ -1771,6 +1771,7 @@
 	{
 		"SlicerConfigName": "driver_type",
 		"PresentationName": "The serial driver to use",
+		"DefaultValue": "RepRap",
 		"HelpText": ""
 	},
 	{
