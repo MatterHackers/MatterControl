@@ -36,7 +36,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		protected override string ConvertValue(string newValue)
 		{
-			decimal.TryParse(this.Value, out decimal currentValue);
+			decimal.TryParse(newValue, out decimal currentValue);
 			intValue = (int)currentValue;
 
 			return intValue.ToString();
