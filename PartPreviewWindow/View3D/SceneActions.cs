@@ -128,7 +128,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					if (Scene.IsSelected(Object3DTypes.SelectionGroup))
 					{
 						// Create and perform the delete operation
-						var operation = new GroupCommand(view3DWidget, Scene.SelectedItem);
+						var operation = new GroupCommand(view3DWidget.Scene, Scene.SelectedItem);
 
 						// Store the operation for undo/redo
 						view3DWidget.Scene.UndoBuffer.AddAndDo(operation);

@@ -37,6 +37,8 @@ using System;
 
 namespace MatterHackers.MatterControl
 {
+	public enum IconColor { Theme, White, Black };
+
 	public class TextImageButtonFactory
 	{
 		public ButtonFactoryOptions Options { get; }
@@ -94,9 +96,10 @@ namespace MatterHackers.MatterControl
 			return groupLableAndEditControl;
 		}
 
-		public Button GenerateIconButton(ImageBuffer icon, bool forceWhite = false)
+		public Button GenerateIconButton(ImageBuffer icon, IconColor iconColor = IconColor.Theme)
 		{
-			if (ActiveTheme.Instance.IsDarkTheme || forceWhite)
+			if ((iconColor == IconColor.Theme && ActiveTheme.Instance.IsDarkTheme)
+				|| iconColor == IconColor.White)
 			{
 				icon.InvertLightness();
 			}

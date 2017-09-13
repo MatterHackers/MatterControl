@@ -27,72 +27,24 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System.Threading.Tasks;
-using MatterHackers.Agg.UI;
-using MatterHackers.DataConverters3D;
-using MatterHackers.PolygonMesh;
-using System.Linq;
 using System.Collections.Generic;
-using System.Threading;
-using MatterHackers.MeshVisualizer;
+using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
+using MatterHackers.GCodeVisualizer;
+using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
+using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.MatterControl.Tests.Automation;
+using MatterHackers.VectorMath;
+using NUnit.Framework;
 
-namespace MatterHackers.MatterControl.PartPreviewWindow
+namespace MatterControl.Tests.MatterControl
 {
-	public class GroupCommand : IUndoRedoCommand
+	[TestFixture]
+	public class InteractiveSceneTests
 	{
-		private IObject3D item;
-		private InteractiveScene interactiveScene;
-
-		public GroupCommand(InteractiveScene interactiveScene, IObject3D selectedItem)
+		[Test, Category("InteractiveScene")]
+		public void GroupAndUngroupHandleHoles()
 		{
-			this.interactiveScene = interactiveScene;
-			this.item = selectedItem;
-		}
-
-		public async void Do()
-		{
-			if (interactiveScene.SelectedItem == item)
-			{
-				// This is the original do() case. The selection needs to be changed into a group and selected
-				// change it to a standard group
-				interactiveScene.SelectedItem.ItemType = Object3DTypes.Group;
-			}
-			else
-			{
-				// This the undo -> redo() case. The original Selection group has been collapsed and we need to rebuild it
-				interactiveScene.ModifyChildren(children =>
-				{
-					// Remove all children from the scene
-					foreach (var child in item.Children)
-					{
-						children.Remove(child);
-					}
-
-					// Add the item
-					children.Add(item);
-				});
-
-				interactiveScene.SelectedItem = item;
-			}
-		}
-
-		public void Undo()
-		{
-			if (!interactiveScene.Children.Contains(item))
-			{
-				return;
-			}
-
-			interactiveScene.ModifyChildren(children =>
-			{
-				// Remove the group
-				children.Remove(item);
-
-				// Add all children from the group
-				children.AddRange(item.Children);
-			});
-
-			interactiveScene.SelectLastChild();
 		}
 	}
 }

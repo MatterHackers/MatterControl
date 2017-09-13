@@ -55,6 +55,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MatterControl\BrailleGrade2Tests.cs" />
+    <Compile Include="MatterControl\InteractiveSceneTests.cs" />
     <Compile Include="MatterControl\PerformanceTests.cs" />
     <Compile Include="MatterControl\ImportSettingsTests.cs" />
     <Compile Include="MatterControl\SettingsParseTests.cs" />
