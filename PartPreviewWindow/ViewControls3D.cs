@@ -148,7 +148,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			double height = theme.ButtonFactory.FixedHeight;
 
-			Button undoButton = buttonFactory.GenerateIconButton(AggContext.StaticData.LoadIcon("Undo_grey_16x.png", 16, 16), forceWhite: true);
+			Button undoButton = buttonFactory.GenerateIconButton(AggContext.StaticData.LoadIcon("Undo_grey_16x.png", 16, 16), IconColor.White);
 			undoButton.Name = "3D View Undo";
 			undoButton.ToolTipText = "Undo";
 			undoButton.Enabled = false;
@@ -161,7 +161,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.AddChild(undoButton);
 			undoButton.VAnchor = VAnchor.Center;
 
-			Button redoButton = buttonFactory.GenerateIconButton(AggContext.StaticData.LoadIcon("Redo_grey_16x.png", 16, 16), forceWhite: true);
+			Button redoButton = buttonFactory.GenerateIconButton(AggContext.StaticData.LoadIcon("Redo_grey_16x.png", 16, 16), IconColor.White);
 			redoButton.Name = "3D View Redo";
 			redoButton.Margin = commonMargin;
 			redoButton.MinimumSize = new Vector2(height, height);
