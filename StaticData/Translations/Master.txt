@@ -4537,3 +4537,12 @@ Translated:Preset Name:
 English:Fillament
 Translated:Fillament
 
+English:Write Filter
+Translated:Write Filter
+
+English:Read Filter
+Translated:Read Filter
+
+English:Filters
+Translated:Filters
+

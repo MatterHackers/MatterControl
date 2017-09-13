@@ -31,7 +31,7 @@ using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public abstract class NumberField : BasicField
+	public abstract class NumberField : UIField
 	{
 		protected MHNumberEdit numberEdit;
 

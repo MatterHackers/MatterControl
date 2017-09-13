@@ -36,7 +36,7 @@ using MatterHackers.SerialPortCommunication.FrostedSerial;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class ComPortField : BasicField
+	public class ComPortField : UIField
 	{
 		private DropDownList dropdownList;
 

@@ -35,10 +35,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class DropMenuWrappedField
 	{
-		private BasicField uiField;
+		private UIField uiField;
 		private SliceSettingData settingData;
 
-		public DropMenuWrappedField(BasicField uiField, SliceSettingData settingData)
+		public DropMenuWrappedField(UIField uiField, SliceSettingData settingData)
 		{
 			this.settingData = settingData;
 			this.uiField = uiField;

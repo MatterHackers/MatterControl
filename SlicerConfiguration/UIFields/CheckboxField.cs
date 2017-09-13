@@ -33,7 +33,7 @@ using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class CheckboxField : BasicField
+	public class CheckboxField : UIField
 	{
 		private CheckBox checkBoxWidget;
 
@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	}
 
 
-	public class ToggleboxField : BasicField
+	public class ToggleboxField : UIField
 	{
 		private CheckBox checkBoxWidget;
 

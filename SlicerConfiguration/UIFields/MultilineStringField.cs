@@ -32,7 +32,7 @@ using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class MultilineStringField : BasicField
+	public class MultilineStringField : UIField
 	{
 		private readonly int multiLineEditHeight = (int)(120 * GuiWidget.DeviceScale + .5);
 

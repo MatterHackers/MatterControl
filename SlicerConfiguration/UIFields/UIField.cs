@@ -32,7 +32,7 @@ using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public abstract class BasicField
+	public abstract class UIField
 	{
 		public event EventHandler<FieldChangedEventArgs> ValueChanged;
 

@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private PrinterConnection printerConnection;
 
-		private Dictionary<string, BasicField> allUiFields = new Dictionary<string, BasicField>();
+		private Dictionary<string, UIField> allUiFields = new Dictionary<string, UIField>();
 
 		private EventHandler unregisterEvents;
 
@@ -123,7 +123,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					if (e is StringEventArgs stringEvent)
 					{
 						string settingsKey = stringEvent.Data;
-						if (allUiFields.TryGetValue(settingsKey, out BasicField field2))
+						if (allUiFields.TryGetValue(settingsKey, out UIField field2))
 						{
 							string currentValue = settingsContext.GetValue(settingsKey);
 							if (field2.Value != currentValue
@@ -891,7 +891,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			string sliceSettingValue = settingsContext.GetValue(settingData.SlicerConfigName);
 
-			BasicField uiField = null;
+			UIField uiField = null;
 
 			bool useDefaultSavePattern = true;
 			bool placeFieldInDedicatedRow = false;

@@ -35,7 +35,7 @@ using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class ListField : BasicField
+	public class ListField : UIField
 	{
 		private DropDownList dropdownList;
 

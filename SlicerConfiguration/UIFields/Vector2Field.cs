@@ -32,7 +32,7 @@ using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class Vector2Field : BasicField
+	public class Vector2Field : UIField
 	{
 		public static readonly int VectorXYEditWidth = (int)(60 * GuiWidget.DeviceScale + .5);
 
