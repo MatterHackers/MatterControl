@@ -40,8 +40,6 @@ namespace MatterHackers.MatterControl
 	{
 		private SolidSlider sliderAttachedTo;
 
-		public RGBA_Bytes BackgroundColor { get; set; }
-
 		public RGBA_Bytes FillColor { get; set; }
 
 		public RGBA_Bytes TrackColor { get; set; }
@@ -74,13 +72,16 @@ namespace MatterHackers.MatterControl
 		private RectangleDouble GetTrackBounds()
 		{
 			RectangleDouble trackBounds;
+			var sliderBounds = sliderAttachedTo.LocalBounds;
 			if (sliderAttachedTo.Orientation == Orientation.Horizontal)
 			{
-				trackBounds = new RectangleDouble(0, -TrackHeight / 2, sliderAttachedTo.TotalWidthInPixels, TrackHeight / 2);
+				var yCenter = sliderBounds.YCenter;
+				trackBounds = new RectangleDouble(sliderBounds.Left, (int)(yCenter - TrackHeight / 2 + .5), sliderBounds.Right, (int)(yCenter + TrackHeight / 2 + .5));
 			}
 			else
 			{
-				trackBounds = new RectangleDouble(-TrackHeight / 2, 0, TrackHeight / 2, sliderAttachedTo.TotalWidthInPixels);
+				var xCenter = sliderBounds.XCenter;
+				trackBounds = new RectangleDouble((int)(xCenter - TrackHeight / 2 + .5), sliderBounds.Bottom, (int)(xCenter + TrackHeight / 2 + .5), sliderBounds.Top);
 			}
 			return trackBounds;
 		}
@@ -98,13 +99,7 @@ namespace MatterHackers.MatterControl
 			return totalBounds;
 		}
 
-		public void DoDrawBeforeChildren(Graphics2D graphics2D)
-		{
-			// erase to the background color
-			graphics2D.FillRectangle(GetTotalBounds(), BackgroundColor);
-		}
-
-		public void DoDrawAfterChildren(Graphics2D graphics2D)
+		public void DrawTrackAndThumb(Graphics2D graphics2D)
 		{
 			RoundedRect track = new RoundedRect(GetTrackBounds(), 0);
 			Vector2 ValuePrintPosition;
@@ -253,14 +248,15 @@ namespace MatterHackers.MatterControl
 			View = new SolidSlideView(this);
 			View.TrackHeight = thumbWidth;
 			OriginRelativeParent = positionOfTrackFirstValue;
-			//TotalWidthInPixels = widthInPixels;
 			Orientation = orientation;
 			Minimum = minimum;
 			Maximum = maximum;
 			ThumbWidth = thumbWidth;
 			ThumbHeight = thumbWidth * 1.4;
+			VAnchor = VAnchor.Stretch;
+			HAnchor = HAnchor.Stretch;
 
-			MinimumSize = new Vector2(Width, Height);
+			MinimumSize = new Vector2(ThumbHeight, ThumbHeight);
 		}
 
 		public SolidSlider(Vector2 lowerLeft, Vector2 upperRight)
@@ -277,16 +273,16 @@ namespace MatterHackers.MatterControl
 		{
 			get
 			{
-				return View.GetTotalBounds();
+				return base.LocalBounds;
 			}
 			set
 			{
-				//OriginRelativeParent = new Vector2(value.Left, value.Bottom - View.GetTotalBounds().Bottom);
-				//throw new Exception("Figure out what this should do.");
 				if (HAnchor == HAnchor.Stretch)
 				{
 					TotalWidthInPixels = value.Right - value.Left;
 				}
+
+				base.LocalBounds = value;
 			}
 		}
 
@@ -298,22 +294,25 @@ namespace MatterHackers.MatterControl
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{
-			View.DoDrawBeforeChildren(graphics2D);
+			View.DrawTrackAndThumb(graphics2D);
 			base.OnDraw(graphics2D);
-			View.DoDrawAfterChildren(graphics2D);
 		}
 
 		public RectangleDouble GetThumbHitBounds()
 		{
 			if (Orientation == Orientation.Horizontal)
 			{
-				return new RectangleDouble(-ThumbWidth / 2 + PositionPixelsFromFirstValue, -ThumbHeight / 2,
-					ThumbWidth / 2 + PositionPixelsFromFirstValue, ThumbHeight / 2);
+				return new RectangleDouble(LocalBounds.Left - ThumbWidth / 2 + PositionPixelsFromFirstValue,
+					(int)(LocalBounds.YCenter - ThumbHeight / 2 + .5),
+					LocalBounds.Left + ThumbWidth / 2 + PositionPixelsFromFirstValue,
+					(int)(LocalBounds.YCenter + ThumbHeight / 2 + .5));
 			}
 			else
 			{
-				return new RectangleDouble(-ThumbHeight / 2, -ThumbWidth / 2 + PositionPixelsFromFirstValue,
-					ThumbHeight / 2, ThumbWidth / 2 + PositionPixelsFromFirstValue);
+				return new RectangleDouble((int)(LocalBounds.XCenter - ThumbHeight / 2 + .5),
+					LocalBounds.Bottom - ThumbWidth / 2 + PositionPixelsFromFirstValue,
+					(int)(LocalBounds.XCenter + ThumbHeight / 2 + .5),
+					LocalBounds.Bottom + ThumbWidth / 2 + PositionPixelsFromFirstValue);
 			}
 		}
 

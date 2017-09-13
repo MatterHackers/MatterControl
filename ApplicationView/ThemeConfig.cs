@@ -451,7 +451,6 @@ namespace MatterHackers.MatterControl
 				Margin = new BorderDouble(3, 5, 3, 3),
 				HAnchor = HAnchor.Center,
 			};
-			namedSlider.View.BackgroundColor = new RGBA_Bytes();
 
 			wordOptionContainer.AddChild(namedSlider);
 

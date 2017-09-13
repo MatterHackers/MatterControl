@@ -109,7 +109,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				AutoExpandBoundsToText = true
 			};
 
-			selectLayerSlider = new SolidSlider(new Vector2(), sliderWidth, 0, 1, Orientation.Vertical);
+			selectLayerSlider = new SolidSlider(new Vector2(), sliderWidth, 0, 1, Orientation.Vertical)
+			{
+				VAnchor = VAnchor.Stretch,
+				Margin = new BorderDouble(0, 20, 0, 10);
+			};
 			selectLayerSlider.ValueChanged += (s, e) =>
 			{
 				if (printer?.Bed?.RenderInfo != null)
