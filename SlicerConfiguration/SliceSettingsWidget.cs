@@ -1110,7 +1110,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					var vline = new VerticalLine()
 					{
 						BackgroundColor = settingsRow.HighlightColor,
-						Margin = new BorderDouble(right: 6),
+						Margin = new BorderDouble(right: 6, bottom: 2),
 						Width = 3,
 						VAnchor = VAnchor.Stretch,
 						MinimumSize = new Vector2(0, 28),
@@ -1122,7 +1122,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						HAnchor = HAnchor.Stretch,
 						VAnchor = VAnchor.Fit,
 						Padding = new BorderDouble(right: 16, bottom: 10),
-
 					};
 					contentContainer.AddChild(uiField.Content);
 

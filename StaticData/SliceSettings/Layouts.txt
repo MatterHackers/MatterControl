@@ -345,27 +345,18 @@ Advanced
         recover_first_layer_speed
         recover_position_before_z_home
     Custom G-Code
-      Start G-Code
+      Custom G-Code
         start_gcode
-      End G-Code
         end_gcode
-      Layer Change G-Code
         layer_gcode
-      Before Tool Change G-Code
         before_toolchange_gcode
-      After Tool Change G-Code
         toolchange_gcode
-      Pause G-Code
         pause_gcode
-      Resume G-Code
         resume_gcode
-      Cancel G-Code
         cancel_gcode
-      On Connect G-Code
         connect_gcode
-      Write Filters
+      Filters
         write_regex
-      Read Filters
         read_regex
     Extruder
       Extruder X
