@@ -104,14 +104,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			pageTopToBottomLayout.AddChild(settingsControlBar);
 
-			string noConnectionString = "No printer is currently selected. Please select a printer to edit slice settings.".Localize();
-			noConnectionString += "\n\n" + "NOTE: You need to select a printer, but do not need to connect to it.".Localize();
-			var noConnectionMessage = new WrappedTextWidget(noConnectionString, pointSize: 10)
-			{
-				Margin = new BorderDouble(5),
-				TextColor = ActiveTheme.Instance.PrimaryTextColor,
-				HAnchor = HAnchor.Stretch
-			};
 			printerConnection.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
 			printerConnection.EnableChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
 
