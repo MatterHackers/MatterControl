@@ -40,11 +40,10 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class SliceSettingsWidget : GuiWidget
+	public class SliceSettingsWidget : FlowLayoutWidget
 	{
 		private TabControl topCategoryTabs;
 		internal PresetsToolbar settingsControlBar;
-		private FlowLayoutWidget pageTopToBottomLayout;
 
 		private SettingsContext settingsContext;
 
@@ -53,18 +52,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private EventHandler unregisterEvents;
 
 		public SliceSettingsWidget(SettingsContext settingsContext)
+			: base (FlowDirection.TopToBottom)
 		{
 			this.BackgroundColor = ApplicationController.Instance.Theme.TabBodyBackground;
 
 			this.settingsContext = settingsContext;
-
-			pageTopToBottomLayout = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				VAnchor = VAnchor.Top,
-				Padding = 0
-			};
-			pageTopToBottomLayout.AnchorAll();
-			this.AddChild(pageTopToBottomLayout);
 
 			settingsControlBar = new PresetsToolbar()
 			{
@@ -72,7 +64,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				Padding = new BorderDouble(8, 12, 8, 8)
 			};
 
-			pageTopToBottomLayout.AddChild(settingsControlBar);
+			this.AddChild(settingsControlBar);
 
 			RebuildSliceSettingsTabs();
 
@@ -181,7 +173,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 			}
 
-			pageTopToBottomLayout.AddChild(topCategoryTabs);
+			this.AddChild(topCategoryTabs);
 
 			// Make sure we are on the right tab when we create this view
 			{
@@ -304,6 +296,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 					if (subGroup.Name == "Extruder X")
 					{
+
 						numberOfCopies = ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.extruder_count);
 					}
 
