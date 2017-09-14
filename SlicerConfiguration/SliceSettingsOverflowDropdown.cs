@@ -53,7 +53,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			};
 			this.AddChild(overflowDropdown);
 
-
 			showHelpBox = new CheckBox("Show Help".Localize());
 			showHelpBox.Checked = sliceSettingsWidget.ShowHelpControls;
 			showHelpBox.CheckedStateChanged += (s, e) =>

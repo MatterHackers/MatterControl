@@ -107,9 +107,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			var sideTabBarsListForLayout = new List<TabBar>();
 
-			// Cache results from database read for the duration of this function
-			bool showHelpControls = this.ShowHelpControls;
-
 			for (int topCategoryIndex = 0; topCategoryIndex < SliceSettingsOrganizer.Instance.UserLevels[UserLevel].CategoriesList.Count; topCategoryIndex++)
 			{
 				OrganizerCategory category = SliceSettingsOrganizer.Instance.UserLevels[UserLevel].CategoriesList[topCategoryIndex];
@@ -138,7 +135,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				};
 				column.AddChild(hline);
 
-				TabControl sideTabs = CreateSideTabsAndPages(category, showHelpControls);
+				TabControl sideTabs = CreateSideTabsAndPages(category, this.ShowHelpControls);
 				sideTabBarsListForLayout.Add(sideTabs.TabBar);
 				column.AddChild(sideTabs);
 
