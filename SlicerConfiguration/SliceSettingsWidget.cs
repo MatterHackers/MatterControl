@@ -104,9 +104,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			pageTopToBottomLayout.AddChild(settingsControlBar);
 
-			printerConnection.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
-			printerConnection.EnableChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
-
 			RebuildSliceSettingsTabs();
 
 			ActiveSliceSettings.SettingChanged.RegisterEvent(
@@ -216,8 +213,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			pageTopToBottomLayout.AddChild(topCategoryTabs);
 
-			SetVisibleControls();
-
 			// Make sure we are on the right tab when we create this view
 			{
 				string settingsName = "SliceSettingsWidget_CurrentTab";
@@ -275,26 +270,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
-		}
-
-		private void onPrinterStatusChanged(object sender, EventArgs e)
-		{
-			SetVisibleControls();
-			this.Invalidate();
-		}
-
-		private void SetVisibleControls()
-		{
-			if (ActiveSliceSettings.Instance.PrinterSelected)
-			{
-				topCategoryTabs.Visible = true;
-				settingsControlBar.Visible = showControlBar;
-			}
-			else
-			{
-				topCategoryTabs.Visible = false;
-				settingsControlBar.Visible = showControlBar;
-			}
 		}
 
 		private int tabIndexForItem = 0;
