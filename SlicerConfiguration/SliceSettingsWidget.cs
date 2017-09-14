@@ -420,7 +420,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							{
 								addedSettingToSubGroup = true;
 								topToBottomSettings.AddChild(
-									CreateSettingInfoUIControls(
+									CreateItemRow(
 										settingData,
 										copyIndex,
 										ref tabIndexForItem));
@@ -562,12 +562,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						SliceSettingData settingData = new SliceSettingData(keyValue.Key, keyValue.Key, SliceSettingData.DataEditTypes.STRING);
 						if (EngineMappingsMatterSlice.Instance.MapContains(settingData.SlicerConfigName))
 						{
-							GuiWidget controlsForThisSetting = CreateSettingInfoUIControls(
-								settingData,
-								0,
-								ref tabIndexForItem);
-
-							topToBottomSettings.AddChild(controlsForThisSetting);
+							topToBottomSettings.AddChild(
+								CreateItemRow(settingData, 0, ref tabIndexForItem));
 
 							count++;
 						}
@@ -871,7 +867,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return dataArea;
 		}
 
-		private GuiWidget CreateSettingInfoUIControls(
+		private GuiWidget CreateItemRow(
 			SliceSettingData settingData,
 			int extruderIndex,
 			ref int tabIndexForItem)
