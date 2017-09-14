@@ -164,21 +164,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			this.AddChild(topCategoryTabs);
 
-			// Make sure we are on the right tab when we create this view
-			{
-				// Restore the last selected tab
-				topCategoryTabs.SelectTab(UserSettings.Instance.get(UserSettingsKey.SliceSettingsWidget_CurrentTab));
+			// Restore the last selected tab
+			topCategoryTabs.SelectTab(UserSettings.Instance.get(UserSettingsKey.SliceSettingsWidget_CurrentTab));
 
-				topCategoryTabs.TabBar.TabIndexChanged += (s, e) =>
+			// Store the last selected tab on change
+			topCategoryTabs.TabBar.TabIndexChanged += (s, e) =>
+			{
+				if (!string.IsNullOrEmpty(topCategoryTabs.TabBar.SelectedTabName)
+					&& settingsContext.IsPrimarySettingsView)
 				{
-					if (!string.IsNullOrEmpty(topCategoryTabs.TabBar.SelectedTabName)
-						&& settingsContext.IsPrimarySettingsView)
-					{
-						// Store the last selected tab
-						UserSettings.Instance.set(UserSettingsKey.SliceSettingsWidget_CurrentTab, topCategoryTabs.TabBar.SelectedTabName);
-					}
-				};
-			}
+					UserSettings.Instance.set(UserSettingsKey.SliceSettingsWidget_CurrentTab, topCategoryTabs.TabBar.SelectedTabName);
+				}
+			};
 		}
 
 		private static void FindWidestTabAndSetAllMinimumSize(List<TabBar> sideTabBarsListForLayout)
