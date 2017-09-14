@@ -263,7 +263,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					ActiveTheme.Instance.TabLabelUnselected,
 					RGBA_Bytes.Transparent,
 					32);
-				groupTabWidget.HAnchor = HAnchor.Stretch;
+				groupTabWidget.HAnchor = HAnchor.MaxFitOrStretch;
 
 				foreach(var child in groupTabWidget.Children)
 				{
