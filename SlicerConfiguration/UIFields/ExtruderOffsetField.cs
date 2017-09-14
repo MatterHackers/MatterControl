@@ -27,8 +27,11 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System.Collections.Generic;
+using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -36,6 +39,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	{
 		private SettingsContext settingsContext;
 		private string slicerConfigName;
+
+		private List<Vector2Field> childFields;
 
 		public ExtruderOffsetField(SettingsContext settingsContext, string slicerConfigName)
 		{
@@ -47,14 +52,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public override void Initialize(int tabIndex)
 		{
+			childFields = new List<Vector2Field>();
+
 			var column = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				Margin = new BorderDouble(20, 0, 0, 0),
 				HAnchor = HAnchor.Fit,
 				VAnchor = VAnchor.Fit,
-				BackgroundColor = RGBA_Bytes.Pink
 			};
-			column.AnchorAll();
 
 			this.Content = column;
 
@@ -66,49 +71,47 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					HAnchor = HAnchor.Fit,
 					VAnchor = VAnchor.Fit,
-					MinimumSize = new VectorMath.Vector2(100, 20),
-					DebugShowBounds = true,
-					BackgroundColor = RGBA_Bytes.Blue
+					MinimumSize = new Vector2(0, 28)
 				};
 				column.AddChild(row);
 
-				row.AddChild(new TextWidget($"Extruder {i + 1}"));
-				row.AddChild(new MHTextEditWidget("something"));
-				row.AddChild(new GuiWidget(50, 50) { BackgroundColor = RGBA_Bytes.Red });
-			}
+				var labelWidget = SliceSettingsWidget.CreateSettingsLabel($"Nozzle {i + 1}", "");
+				labelWidget.AutoExpandBoundsToText = true;
+				labelWidget.Margin = new BorderDouble(right: 60, left: 20);
+				row.AddChild(labelWidget);
 
+				var field = new Vector2Field();
+				field.Initialize(tabIndex++);
+				field.Content.VAnchor = VAnchor.Center;
+				field.ValueChanged += (s, e) =>
+				{
+					if (e.UserInitiated)
+					{
+						// Stuff multiple CSV values into single text field
+						this.SetValue(
+							string.Join(",", this.childFields.Select(f => f.Value.Replace(",", "x")).ToArray()), 
+							true);
+					}
+				};
+				row.AddChild(field.Content);
+
+				childFields.Add(field);
+			}
 
 			base.Initialize(tabIndex);
 		}
 
-		private void SaveCommaSeparatedIndexSetting(int extruderIndexLocal, string slicerConfigName, string newSingleValue)
+		protected override void OnValueChanged(FieldChangedEventArgs fieldChangedEventArgs)
 		{
-			string[] settings = settingsContext.GetValue(slicerConfigName).Split(',');
-			if (settings.Length > extruderIndexLocal)
-			{
-				settings[extruderIndexLocal] = newSingleValue;
-			}
-			else
-			{
-				string[] newSettings = new string[extruderIndexLocal + 1];
-				for (int i = 0; i < extruderIndexLocal + 1; i++)
-				{
-					newSettings[i] = "";
-					if (i < settings.Length)
-					{
-						newSettings[i] = settings[i];
-					}
-					else if (i == extruderIndexLocal)
-					{
-						newSettings[i] = newSingleValue;
-					}
-				}
+			var segments = this.Value.Split(',');
 
-				settings = newSettings;
+			for (int i = 0; i < childFields.Count; i++)
+			{
+				string fieldValue = (i < segments.Length) ? segments[i]?.Replace('x', ',') : null;
+				childFields[i].SetValue(fieldValue ?? "0,0", userInitiated: false);
 			}
 
-			string newValue = string.Join(",", settings);
-			settingsContext.SetValue(slicerConfigName, newValue);
+			base.OnValueChanged(fieldChangedEventArgs);
 		}
 	}
 }
