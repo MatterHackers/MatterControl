@@ -28,7 +28,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.SwitchToAdvancedSliceSettings();
 				testRunner.ClickByName("Raft / Priming Tab");
-				testRunner.ClickByName("Create Raft Checkbox");
+				testRunner.ClickByName("Create Raft Field");
 
 				testRunner.ClickByName("Generate Gcode Button");
 				testRunner.Delay(() => MatterControlUtilities.CompareExpectedSliceSettingValueWithActualVaue("enableRaft", "True"), 10);
@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.ClickByName("General Tab");
 					testRunner.ClickByName("Single Print Tab");
-					testRunner.ClickByName("Layer(s) To Pause: Edit");
+					testRunner.ClickByName("Layer(s) To Pause Field");
 					testRunner.Type("4;2;a;not;6");
 
 					testRunner.AddDefaultFileToBedplate();
@@ -95,7 +95,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.ClickByName("General Tab");
 					testRunner.ClickByName("Single Print Tab");
-					testRunner.ClickByName("Layer(s) To Pause: Edit");
+					testRunner.ClickByName("Layer(s) To Pause Field");
 					testRunner.Type("2");
 
 					testRunner.AddDefaultFileToBedplate();
@@ -357,7 +357,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		private static void SetCheckBoxSetting(AutomationRunner testRunner, string settingToChange, bool valueToSet)
 		{
 			var settingsData = SliceSettingsOrganizer.Instance.GetSettingsData(settingToChange);
-			string checkBoxName = $"{settingsData.PresentationName} Checkbox";
+			string checkBoxName = $"{settingsData.PresentationName} Field";
 
 			Assert.IsTrue(ActiveSliceSettings.Instance.GetValue<bool>(settingToChange) != valueToSet);
 
@@ -403,16 +403,20 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Filament Tab");
 				testRunner.ClickByName("Temperatures Tab");
 
-				Assert.IsTrue(testRunner.WaitForName("Extruder Temperature Textbox")); 
-				Assert.IsTrue(testRunner.WaitForName("Bed Temperature Textbox"));
+				testRunner.ClickByName("Extruder Temperature Field"); 
+				testRunner.ClickByName("Bed Temperature Field");
 
 				// Uncheck Has Heated Bed checkbox and make sure Bed Temp Textbox is not visible
 				testRunner.ClickByName("Printer Tab");
 				testRunner.ClickByName("Features Tab");
+
+				// TODO: What is this doing and why? {{
 				testRunner.DragByName("Show Reset Connection Checkbox", 1, offset: new Agg.Point2D(-40, 0));
 				testRunner.MoveToByName("Show Reset Connection Checkbox", 1, offset: new Agg.Point2D(0, 120));
 				testRunner.Drop();
-				testRunner.ClickByName("Has Heated Bed Checkbox");
+				// TODO: What is this doing and why? }}
+
+				testRunner.ClickByName("Has Heated Bed Field");
 				testRunner.Delay(.5);
 
 				testRunner.ClickByName("Filament Tab");
@@ -438,7 +442,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
 				testRunner.SwitchToAdvancedSliceSettings();
 
-				testRunner.ClickByName("Layer Thickness Textbox");
+				testRunner.ClickByName("Layer Thickness Field");
 				testRunner.Type(".5\n");
 				testRunner.Delay(.5);
 				Assert.AreEqual(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.layer_height), .5, "Layer height is what we set it to");

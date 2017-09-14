@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.ClickByName("General Tab");
 					testRunner.ClickByName("Single Print Tab");
-					testRunner.ClickByName("Layer(s) To Pause: Edit");
+					testRunner.ClickByName("Layer(s) To Pause Field");
 					testRunner.Type("2");
 
 					// switch to controls so we can see the heights
@@ -223,7 +223,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.ClickByName("General Tab");
 					testRunner.ClickByName("Single Print Tab");
-					testRunner.ClickByName("Layer(s) To Pause: Edit");
+					testRunner.ClickByName("Layer(s) To Pause Field");
 					testRunner.Type("2;6");
 
 					testRunner.ClickByName("Pin Settings Button");

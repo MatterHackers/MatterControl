@@ -25,9 +25,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.ClickByName("Printer Tab");
 
-				testRunner.ClickByName("Printer Name Edit");
+				testRunner.ClickByName("Printer Name Field");
 
-				var textWidget = testRunner.GetWidgetByName("Printer Name Edit", out _);
+				var textWidget = testRunner.GetWidgetByName("Printer Name Field", out _);
 				string newName = "Updated name";
 				textWidget.Text = newName;
 				testRunner.ClickByName("Printer Tab");

@@ -41,9 +41,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			checkBoxWidget = new CheckBox("")
 			{
-				//Name = settingData.PresentationName + " Checkbox",
-				//ToolTipText = settingData.HelpText,
 				VAnchor = VAnchor.Bottom,
+				Name = this.Name,
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
 				Checked = this.Value == "1"
 			};
@@ -73,6 +72,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			checkBoxWidget = ImageButtonFactory.CreateToggleSwitch(false, ActiveTheme.Instance.PrimaryTextColor, useStandardLabels: false);
 			checkBoxWidget.VAnchor = VAnchor.Center;
+			checkBoxWidget.Name = this.Name;
 			checkBoxWidget.Margin = new BorderDouble(0);
 			checkBoxWidget.Click += (s, e) =>
 			{

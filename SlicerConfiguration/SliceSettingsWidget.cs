@@ -626,6 +626,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				allUiFields[settingData.SlicerConfigName] = uiField;
 
+				uiField.Name = $"{settingData.PresentationName} Field";
 				uiField.Initialize(tabIndexForItem++);
 
 				uiField.SetValue(sliceSettingValue, userInitiated: false);
