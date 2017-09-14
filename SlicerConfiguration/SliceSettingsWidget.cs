@@ -278,79 +278,62 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				foreach (OrganizerSubGroup subGroup in group.SubGroupsList)
 				{
 					string subGroupTitle = subGroup.Name;
-					int numberOfCopies = 1;
 
-					if (subGroup.Name == "Extruder X")
+					bool addedSettingToSubGroup = false;
+
+					var topToBottomSettings = new FlowLayoutWidget(FlowDirection.TopToBottom)
 					{
+						HAnchor = HAnchor.Stretch
+					};
 
-						numberOfCopies = ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.extruder_count);
-					}
-
-					for (int copyIndex = 0; copyIndex < numberOfCopies; copyIndex++)
+					GuiWidget hline = new HorizontalLine(20)
 					{
-						if (subGroup.Name == "Extruder X")
+						Margin = new BorderDouble(top: 5)
+					};
+					topToBottomSettings.AddChild(hline);
+
+					foreach (SliceSettingData settingData in subGroup.SettingDataList)
+					{
+						// Note: tab sections may disappear if / when they are empty, as controlled by:
+						// settingShouldBeShown / addedSettingToSubGroup / needToAddSubGroup
+						bool settingShouldBeShown = CheckIfShouldBeShown(settingData);
+
+						if (EngineMappingsMatterSlice.Instance.MapContains(settingData.SlicerConfigName)
+							&& settingShouldBeShown)
 						{
-							subGroupTitle = "{0} {1}".FormatWith("Extruder".Localize(), copyIndex + 1);
-						}
+							addedSettingToSubGroup = true;
 
-						bool addedSettingToSubGroup = false;
+							topToBottomSettings.AddChild(
+								CreateItemRow(settingData, ref tabIndexForItem));
 
-						var topToBottomSettings = new FlowLayoutWidget(FlowDirection.TopToBottom)
-						{
-							HAnchor = HAnchor.Stretch
-						};
-
-						GuiWidget hline = new HorizontalLine(20)
-						{
-							Margin = new BorderDouble(top: 5)
-						};
-						topToBottomSettings.AddChild(hline);
-
-						foreach (SliceSettingData settingData in subGroup.SettingDataList)
-						{
-							// Note: tab sections may disappear if / when they are empty, as controlled by:
-							// settingShouldBeShown / addedSettingToSubGroup / needToAddSubGroup
-							bool settingShouldBeShown = CheckIfShouldBeShown(settingData);
-
-							if (EngineMappingsMatterSlice.Instance.MapContains(settingData.SlicerConfigName)
-								&& settingShouldBeShown)
+							hline = new HorizontalLine(20)
 							{
-								addedSettingToSubGroup = true;
-								topToBottomSettings.AddChild(
-									CreateItemRow(
-										settingData,
-										copyIndex,
-										ref tabIndexForItem));
+								Margin = 0
+							};
+							topToBottomSettings.AddChild(hline);
 
-								hline = new HorizontalLine(20)
-								{
-									Margin = 0
-								};
-								topToBottomSettings.AddChild(hline);
-
-								if (showHelpControls)
-								{
-									topToBottomSettings.AddChild(AddInHelpText(topToBottomSettings, settingData));
-								}
+							if (showHelpControls)
+							{
+								topToBottomSettings.AddChild(AddInHelpText(topToBottomSettings, settingData));
 							}
 						}
+					}
 
-						if (addedSettingToSubGroup)
+					if (addedSettingToSubGroup)
+					{
+						needToAddSubGroup = true;
+
+						var groupBox = new AltGroupBox(subGroupTitle.Localize())
 						{
-							needToAddSubGroup = true;
+							TextColor = ActiveTheme.Instance.PrimaryTextColor,
+							BorderColor = ActiveTheme.Instance.PrimaryTextColor,
+							HAnchor = HAnchor.Stretch,
+							Margin = new BorderDouble(bottom: 8, top: 8),
+							Padding = new BorderDouble(left: 4),
+						};
+						groupBox.AddChild(topToBottomSettings);
 
-							var groupBox = new AltGroupBox(subGroupTitle.Localize())
-							{
-								TextColor = ActiveTheme.Instance.PrimaryTextColor,
-								BorderColor = ActiveTheme.Instance.PrimaryTextColor,
-								HAnchor = HAnchor.Stretch,
-								Margin = new BorderDouble(bottom: 8, top: 8),
-								Padding = new BorderDouble(left: 4),
-							};
-							groupBox.AddChild(topToBottomSettings);
-
-							subGroupLayoutTopToBottom.AddChild(groupBox);
-						}
+						subGroupLayoutTopToBottom.AddChild(groupBox);
 					}
 				}
 
@@ -495,10 +478,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return dataArea;
 		}
 
-		private GuiWidget CreateItemRow(
-			SliceSettingData settingData,
-			int extruderIndex,
-			ref int tabIndexForItem)
+		private GuiWidget CreateItemRow(SliceSettingData settingData, ref int tabIndexForItem)
 		{
 			string sliceSettingValue = settingsContext.GetValue(settingData.SlicerConfigName);
 
@@ -631,20 +611,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						break;
 
 					case SliceSettingData.DataEditTypes.OFFSET2:
-						useDefaultSavePattern = false;
-
-						uiField = new ExtruderOffsetField()
-						{
-							ExtruderIndex = extruderIndex
-						};
-						uiField.ValueChanged += (s, e) =>
-						{
-							if (e.UserInitiated
-								&& s is ExtruderOffsetField extruderOffset)
-							{
-								SaveCommaSeparatedIndexSetting(extruderOffset.ExtruderIndex, settingsContext, settingData.SlicerConfigName, extruderOffset.Value.Replace(",", "x"));
-							}
-						};
+						// Anonymous scope to constrain int result
+						placeFieldInDedicatedRow = true;
+						uiField = new ExtruderOffsetField(settingsContext, settingData.SlicerConfigName);
 
 						break;
 
@@ -837,36 +806,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			};
 
 			return totalContent;
-		}
-
-		public static void SaveCommaSeparatedIndexSetting(int extruderIndexLocal, SettingsContext settingsContext, string slicerConfigName, string newSingleValue)
-		{
-			string[] settings = settingsContext.GetValue(slicerConfigName).Split(',');
-			if (settings.Length > extruderIndexLocal)
-			{
-				settings[extruderIndexLocal] = newSingleValue;
-			}
-			else
-			{
-				string[] newSettings = new string[extruderIndexLocal + 1];
-				for (int i = 0; i < extruderIndexLocal + 1; i++)
-				{
-					newSettings[i] = "";
-					if (i < settings.Length)
-					{
-						newSettings[i] = settings[i];
-					}
-					else if (i == extruderIndexLocal)
-					{
-						newSettings[i] = newSingleValue;
-					}
-				}
-
-				settings = newSettings;
-			}
-
-			string newValue = string.Join(",", settings);
-			settingsContext.SetValue(slicerConfigName, newValue);
 		}
 	}
 }

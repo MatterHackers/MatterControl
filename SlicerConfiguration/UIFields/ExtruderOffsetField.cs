@@ -27,15 +27,88 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
-using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class ExtruderOffsetField : Vector2Field
+	public class ExtruderOffsetField : UIField
 	{
-		public int ExtruderIndex { get; set; } = 0;
+		private SettingsContext settingsContext;
+		private string slicerConfigName;
+
+		public ExtruderOffsetField(SettingsContext settingsContext, string slicerConfigName)
+		{
+			this.slicerConfigName = slicerConfigName;
+			this.settingsContext = settingsContext;
+
+			//SaveCommaSeparatedIndexSetting(extruderOffset.ExtruderIndex, settingsContext, slicerConfigName, extruderOffset.Value.Replace(",", "x"));
+		}
+
+		public override void Initialize(int tabIndex)
+		{
+			var column = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				Margin = new BorderDouble(20, 0, 0, 0),
+				HAnchor = HAnchor.Fit,
+				VAnchor = VAnchor.Fit,
+				BackgroundColor = RGBA_Bytes.Pink
+			};
+			column.AnchorAll();
+
+			this.Content = column;
+
+			int.TryParse(settingsContext.GetValue(SettingsKey.extruder_count), out int extruderCount);
+
+			for (int i = 0; i < extruderCount; i++)
+			{
+				var row = new FlowLayoutWidget()
+				{
+					HAnchor = HAnchor.Fit,
+					VAnchor = VAnchor.Fit,
+					MinimumSize = new VectorMath.Vector2(100, 20),
+					DebugShowBounds = true,
+					BackgroundColor = RGBA_Bytes.Blue
+				};
+				column.AddChild(row);
+
+				row.AddChild(new TextWidget($"Extruder {i + 1}"));
+				row.AddChild(new MHTextEditWidget("something"));
+				row.AddChild(new GuiWidget(50, 50) { BackgroundColor = RGBA_Bytes.Red });
+			}
+
+
+			base.Initialize(tabIndex);
+		}
+
+		private void SaveCommaSeparatedIndexSetting(int extruderIndexLocal, string slicerConfigName, string newSingleValue)
+		{
+			string[] settings = settingsContext.GetValue(slicerConfigName).Split(',');
+			if (settings.Length > extruderIndexLocal)
+			{
+				settings[extruderIndexLocal] = newSingleValue;
+			}
+			else
+			{
+				string[] newSettings = new string[extruderIndexLocal + 1];
+				for (int i = 0; i < extruderIndexLocal + 1; i++)
+				{
+					newSettings[i] = "";
+					if (i < settings.Length)
+					{
+						newSettings[i] = settings[i];
+					}
+					else if (i == extruderIndexLocal)
+					{
+						newSettings[i] = newSingleValue;
+					}
+				}
+
+				settings = newSettings;
+			}
+
+			string newValue = string.Join(",", settings);
+			settingsContext.SetValue(slicerConfigName, newValue);
+		}
 	}
 }
