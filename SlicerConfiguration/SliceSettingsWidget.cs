@@ -587,21 +587,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return leftSideGroupTabs;
 		}
 
-		private static GuiWidget GetExtraSettingsWidget(SliceSettingData settingData)
-		{
-			// List elements contain list values in the field which normally contains label details, skip generation of invalid labels
-			if (settingData.DataEditType == SliceSettingData.DataEditTypes.LIST
-				|| settingData.DataEditType == SliceSettingData.DataEditTypes.HARDWARE_PRESENT)
-			{
-				return null;
-			}
-
-			return new WrappedTextWidget(settingData.ExtraSettings.Localize(), pointSize: 8, textColor: ActiveTheme.Instance.PrimaryTextColor)
-			{
-				Margin = new BorderDouble(5, 0),
-			};
-		}
-
 		private class SettingsRow : FlowLayoutWidget
 		{
 			public event EventHandler StyleChanged;
@@ -658,12 +643,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				};
 				this.AddChild(unitsArea);
 
-				var extraInfo = GetExtraSettingsWidget(settingData);
-				if (extraInfo != null)
+				// Populate unitsArea as appropriate
+				// List elements contain list values in the field which normally contains label details, skip generation of invalid labels
+				if (settingData.DataEditType != SliceSettingData.DataEditTypes.LIST
+					&& settingData.DataEditType != SliceSettingData.DataEditTypes.HARDWARE_PRESENT)
 				{
-					unitsArea.AddChild(extraInfo);
+					unitsArea.AddChild(
+					new WrappedTextWidget(settingData.ExtraSettings.Localize(), pointSize: 8, textColor: ActiveTheme.Instance.PrimaryTextColor)
+					{
+						Margin = new BorderDouble(5, 0),
+					});
 				}
-
+				
 				restoreArea = new GuiWidget()
 				{
 					HAnchor = HAnchor.Absolute,
