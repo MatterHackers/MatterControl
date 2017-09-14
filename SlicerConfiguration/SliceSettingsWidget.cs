@@ -150,15 +150,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				topCategoryTabs.TabBar.AddChild(sliceSettingsDetailControl);
 			}
 
-			double sideTabBarsMinimumWidth = 0;
-			foreach (TabBar tabBar in sideTabBarsListForLayout)
-			{
-				sideTabBarsMinimumWidth = Math.Max(sideTabBarsMinimumWidth, tabBar.Width);
-			}
-			foreach (TabBar tabBar in sideTabBarsListForLayout)
-			{
-				tabBar.MinimumSize = new Vector2(sideTabBarsMinimumWidth, tabBar.MinimumSize.y);
-			}
+			FindWidestTabAndSetAllMinimumSize(sideTabBarsListForLayout);
 
 			// check if there is only one left side tab. If so hide the left tabs and expand the content.
 			foreach (var tabList in sideTabBarsListForLayout)
@@ -189,6 +181,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						}
 					}
 				};
+			}
+		}
+
+		private static void FindWidestTabAndSetAllMinimumSize(List<TabBar> sideTabBarsListForLayout)
+		{
+			double sideTabBarsMinimumWidth = 0;
+			foreach (TabBar tabBar in sideTabBarsListForLayout)
+			{
+				sideTabBarsMinimumWidth = Math.Max(sideTabBarsMinimumWidth, tabBar.Width);
+			}
+			foreach (TabBar tabBar in sideTabBarsListForLayout)
+			{
+				tabBar.MinimumSize = new Vector2(sideTabBarsMinimumWidth, tabBar.MinimumSize.y);
 			}
 		}
 
