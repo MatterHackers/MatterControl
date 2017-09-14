@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Kevin Pope
+Copyright (c) 2017, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -30,47 +30,33 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
-using System;
-using System.Collections.Generic;
-using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class SettingsControlBar : FlowLayoutWidget
+	public class SliceSettingsMissingWidget : FlowLayoutWidget
 	{
-		PrinterConnection printerConnection;
-		public SettingsControlBar(PrinterConnection printerConnection)
+		public SliceSettingsMissingWidget() : base(FlowDirection.TopToBottom)
 		{
-			this.printerConnection = printerConnection;
-			this.HAnchor = HAnchor.Stretch;
+			this.AnchorAll();
+			this.Padding = new BorderDouble(3, 0);
 
-			int numberOfHeatedExtruders = ActiveSliceSettings.Instance.Helpers.NumberOfHotEnds();
-
-			this.AddChild(new PresetSelectorWidget(printerConnection, "Quality".Localize(), RGBA_Bytes.Yellow, NamedSettingsLayers.Quality, 0));
-			this.AddChild(new GuiWidget(8, 0));
-
-			if (numberOfHeatedExtruders > 1)
+			var noConnectionMessageContainer = new AltGroupBox(new WrappedTextWidget("No Printer Selected".Localize(), pointSize: 18, textColor: ActiveTheme.Instance.SecondaryAccentColor))
 			{
-				List<RGBA_Bytes> colorList = new List<RGBA_Bytes>() { RGBA_Bytes.Orange, RGBA_Bytes.Violet, RGBA_Bytes.YellowGreen };
-
-				for (int i = 0; i < numberOfHeatedExtruders; i++)
-				{
-					if (i > 0)
-					{
-						this.AddChild(new GuiWidget(8, 0));
-					}
-					int colorIndex = i % colorList.Count;
-					RGBA_Bytes color = colorList[colorIndex];
-					this.AddChild(new PresetSelectorWidget(printerConnection, string.Format("{0} {1}", "Material".Localize(), i + 1), color, NamedSettingsLayers.Material, i));
-				}
-			}
-			else
+				Margin = new BorderDouble(top: 10),
+				BorderColor = ActiveTheme.Instance.PrimaryTextColor,
+				HAnchor = HAnchor.Stretch,
+				Height = 90
+			};
+			string noConnectionString = "No printer is currently selected. Please select a printer to edit slice settings.".Localize();
+			noConnectionString += "\n\n" + "NOTE: You need to select a printer, but do not need to connect to it.".Localize();
+			var noConnectionMessage = new WrappedTextWidget(noConnectionString, pointSize: 10)
 			{
-				this.AddChild(new PresetSelectorWidget(printerConnection, "Material".Localize(), RGBA_Bytes.Orange, NamedSettingsLayers.Material, 0));
-			}
-
-			this.Height = 60 * GuiWidget.DeviceScale;
+				Margin = new BorderDouble(5),
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				HAnchor = HAnchor.Stretch
+			};
+			noConnectionMessageContainer.AddChild(noConnectionMessage);
+			this.AddChild(noConnectionMessageContainer);
 		}
 	}
 }
-	

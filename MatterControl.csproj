@@ -292,6 +292,9 @@
     <Compile Include="SetupWizard\SetupWizardTroubleshooting.cs" />
     <Compile Include="SetupWizard\SetupWizardWifi.cs" />
     <Compile Include="SetupWizard\WizardWindow.cs" />
+    <Compile Include="SlicerConfiguration\SliceSettingsMissingWidget.cs" />
+    <Compile Include="SlicerConfiguration\SliceSettingListControl.cs" />
+    <Compile Include="SlicerConfiguration\SliceSettingsRow.cs" />
     <Compile Include="SlicerConfiguration\UIFields\UIField.cs" />
     <Compile Include="SlicerConfiguration\UIFields\DoubleField.cs" />
     <Compile Include="SlicerConfiguration\UIFields\DoubleOrPercentField.cs" />
@@ -329,7 +332,7 @@
     <Compile Include="SettingsManagement\OemSettings.cs" />
     <Compile Include="SettingsManagement\UserSettingsFields.cs" />
     <Compile Include="SlicerConfiguration\MatterSliceInfo.cs" />
-    <Compile Include="SlicerConfiguration\SettingsControlSelectors.cs" />
+    <Compile Include="SlicerConfiguration\PresetSelectorWidget.cs" />
     <Compile Include="SlicerConfiguration\SlicePresetsWindow\SlicePresetsWindow.cs" />
     <Compile Include="SlicerConfiguration\SlicerMapping\EngineMappingMatterSlice.cs" />
     <Compile Include="SlicerConfiguration\Slicing\SliceLayer.cs" />
@@ -396,7 +399,7 @@
     <Compile Include="Utilities\WebUtilities\RequestManager.cs" />
     <Compile Include="SettingsManagement\ApplicationSettings.cs" />
     <Compile Include="SettingsManagement\UserSettings.cs" />
-    <Compile Include="SlicerConfiguration\SettingsControlBar.cs" />
+    <Compile Include="SlicerConfiguration\PresetsToolbar.cs" />
     <Compile Include="SlicerConfiguration\SliceSettingsWidget.cs" />
     <Compile Include="SlicerConfiguration\SliceSettingsOrganizer.cs" />
     <Compile Include="SlicerConfiguration\SlicingQueue.cs" />

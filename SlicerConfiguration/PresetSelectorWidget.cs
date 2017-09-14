@@ -36,7 +36,6 @@ using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
@@ -52,13 +51,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public DropDownList DropDownList;
 
 		private int extruderIndex; //For multiple materials
-		PrinterConnection printerConnection;
 
-		public PresetSelectorWidget(PrinterConnection printerConnection, string label, RGBA_Bytes accentColor, NamedSettingsLayers layerType, int extruderIndex, bool whiteBackground = false)
+		public PresetSelectorWidget(string label, RGBA_Bytes accentColor, NamedSettingsLayers layerType, int extruderIndex, bool whiteBackground = false)
 			: base(FlowDirection.TopToBottom)
 		{
 			this.whiteBackground = whiteBackground;
-			this.printerConnection = printerConnection;
 			Name = label;
 
 			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
@@ -159,7 +156,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							}
 						};
 
-						ApplicationController.Instance.EditMaterialPresetsWindow = new SlicePresetsWindow(printerConnection, presetsContext);
+						ApplicationController.Instance.EditMaterialPresetsWindow = new SlicePresetsWindow(presetsContext);
 						ApplicationController.Instance.EditMaterialPresetsWindow.Closed += (s, e2) => 
 						{
 							ApplicationController.Instance.EditMaterialPresetsWindow = null;
@@ -199,7 +196,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							}
 						};
 
-						ApplicationController.Instance.EditQualityPresetsWindow = new SlicePresetsWindow(printerConnection, presetsContext);
+						ApplicationController.Instance.EditQualityPresetsWindow = new SlicePresetsWindow(presetsContext);
 						ApplicationController.Instance.EditQualityPresetsWindow.Closed += (s, e2) => 
 						{
 							ApplicationController.Instance.EditQualityPresetsWindow = null;

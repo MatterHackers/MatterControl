@@ -69,12 +69,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private string initialPresetName = null;
 
 		private GuiWidget middleRow;
-		PrinterConnection printerConnection;
 
-		public SlicePresetsWindow(PrinterConnection printerConnection, PresetsContext presetsContext)
+		public SlicePresetsWindow(PresetsContext presetsContext)
 				: base(641, 481)
 		{
-			this.printerConnection = printerConnection;
 			this.presetsContext = presetsContext;
 			this.AlwaysOnTopOfMain = true;
 			this.Title = "Slice Presets Editor".Localize();
@@ -154,7 +152,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				},
 				presetsContext.LayerType);
 
-			return new SliceSettingsWidget(printerConnection, settingsContext)
+			return new SliceSettingsWidget(settingsContext)
 			{
 				ShowControlBar = false
 			};

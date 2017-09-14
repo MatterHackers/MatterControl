@@ -595,14 +595,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				sideBar.AddPage(
 					"Slice Settings".Localize(), 
 					new SliceSettingsWidget(
-						printerConnection,
 						new SettingsContext(
 							null, 
 							SlicerConfiguration.NamedSettingsLayers.All)));
 			}
 			else
 			{
-				sideBar.AddPage("Slice Settings".Localize(), new NoSettingsWidget());
+				sideBar.AddPage("Slice Settings".Localize(), new SliceSettingsMissingWidget());
 			}
 
 			sideBar.AddPage("Controls".Localize(), new ManualPrinterControls(printerConnection));
