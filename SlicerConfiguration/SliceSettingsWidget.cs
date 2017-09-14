@@ -725,23 +725,31 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 			else
 			{
-				var holder = new GuiWidget()
-				{
-					VAnchor = VAnchor.Fit,
-					HAnchor = HAnchor.Stretch
-				};
-				holder.AddChild(settingsRow);
+				return new DisabledOverlay(settingsRow);
+			}
+		}
 
-				var disable = new GuiWidget()
+		private class DisabledOverlay : GuiWidget
+		{
+			private GuiWidget disableOverlay;
+
+			public DisabledOverlay(GuiWidget widgetToWrap)
+			{
+				this.VAnchor = VAnchor.Fit;
+				this.HAnchor = HAnchor.Stretch;
+
+				this.AddChild(widgetToWrap);
+
+				disableOverlay = new GuiWidget()
 				{
 					VAnchor = VAnchor.Stretch,
 					HAnchor = HAnchor.Stretch,
 					BackgroundColor = new RGBA_Bytes(ActiveTheme.Instance.TertiaryBackgroundColor, 200)
 				};
-				holder.AddChild(disable);
-
-				return holder;
+				this.AddChild(disableOverlay);
 			}
+
+			public override bool Enabled { get => !disableOverlay.Visible; set => disableOverlay.Visible = value; }
 		}
 
 		public static GuiWidget CreateQuickMenu(SliceSettingData settingData, SettingsContext settingsContext, GuiWidget content, InternalTextEditWidget internalTextWidget)
