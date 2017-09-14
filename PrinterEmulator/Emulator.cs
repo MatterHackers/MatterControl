@@ -296,7 +296,7 @@ namespace MatterHackers.PrinterEmulator
 				command = "N-1 nthoeuc 654*";
 			}
 
-			if (command[0] == 'N')
+			if (!string.IsNullOrEmpty(command) && command[0] == 'N')
 			{
 				double lineNumber = 0;
 				GetFirstNumberAfter("N", command, ref lineNumber);

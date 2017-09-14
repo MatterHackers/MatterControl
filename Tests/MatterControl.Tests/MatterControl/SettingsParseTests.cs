@@ -239,6 +239,22 @@ namespace MatterControl.Tests.MatterControl
 			}
 		}
 
+		[Test]
+		public void PresentationNamesLackColon()
+		{
+			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+
+			string propertiesFileContents = AggContext.StaticData.ReadAllText(Path.Combine("SliceSettings", "Properties.json"));
+			var allSettings = JsonConvert.DeserializeObject<List<SliceSettingData>>(propertiesFileContents);
+
+			foreach (var setting in allSettings)
+			{
+				// TargetSetting source field must be defined/known
+				Assert.IsFalse(setting.PresentationName.Trim().EndsWith(":"), $"Presentation name should not end with trailing colon: '{setting.PresentationName}'");
+			}
+		}
+
 		PrinterSettings GetProfile(string[] settings)
 		{
 			Dictionary<string, string> dictionary = new Dictionary<string, string>();

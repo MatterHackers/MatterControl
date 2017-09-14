@@ -42,7 +42,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class SliceSettingsWidget : FlowLayoutWidget
 	{
-		private TabControl topCategoryTabs;
+		private TabControl primaryTabControl;
 		internal PresetsToolbar settingsControlBar;
 
 		private SettingsContext settingsContext;
@@ -95,12 +95,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		internal void RebuildSliceSettingsTabs()
 		{
 			// Close and remove children
-			topCategoryTabs?.Close();
+			primaryTabControl?.Close();
 
-			topCategoryTabs = new TabControl();
-			topCategoryTabs.TabBar.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
-			topCategoryTabs.Margin = new BorderDouble(top: 8);
-			topCategoryTabs.AnchorAll();
+			primaryTabControl = new TabControl();
+			primaryTabControl.TabBar.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
+			primaryTabControl.Margin = new BorderDouble(top: 8);
+			primaryTabControl.AnchorAll();
 
 			var sideTabBarsListForLayout = new List<TabBar>();
 
@@ -111,7 +111,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				var categoryPage = new TabPage(category.Name.Localize());
 				categoryPage.AnchorAll();
 
-				topCategoryTabs.AddTab(new TextTab(
+				primaryTabControl.AddTab(new TextTab(
 					categoryPage,
 					category.Name + " Tab",
 					14,
@@ -139,12 +139,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				categoryPage.AddChild(column);
 			}
 
-			topCategoryTabs.TabBar.AddChild(new HorizontalSpacer());
+			primaryTabControl.TabBar.AddChild(new HorizontalSpacer());
 
 			if (settingsContext.IsPrimarySettingsView)
 			{
 				var sliceSettingsDetailControl = new SliceSettingsOverflowDropdown(this);
-				topCategoryTabs.TabBar.AddChild(sliceSettingsDetailControl);
+				primaryTabControl.TabBar.AddChild(sliceSettingsDetailControl);
 			}
 
 			FindWidestTabAndSetAllMinimumSize(sideTabBarsListForLayout);
@@ -159,18 +159,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 			}
 
-			this.AddChild(topCategoryTabs);
+			this.AddChild(primaryTabControl);
 
 			// Restore the last selected tab
-			topCategoryTabs.SelectTab(UserSettings.Instance.get(UserSettingsKey.SliceSettingsWidget_CurrentTab));
+			primaryTabControl.SelectTab(UserSettings.Instance.get(UserSettingsKey.SliceSettingsWidget_CurrentTab));
 
 			// Store the last selected tab on change
-			topCategoryTabs.TabBar.TabIndexChanged += (s, e) =>
+			primaryTabControl.TabBar.TabIndexChanged += (s, e) =>
 			{
-				if (!string.IsNullOrEmpty(topCategoryTabs.TabBar.SelectedTabName)
+				if (!string.IsNullOrEmpty(primaryTabControl.TabBar.SelectedTabName)
 					&& settingsContext.IsPrimarySettingsView)
 				{
-					UserSettings.Instance.set(UserSettingsKey.SliceSettingsWidget_CurrentTab, topCategoryTabs.TabBar.SelectedTabName);
+					UserSettings.Instance.set(UserSettingsKey.SliceSettingsWidget_CurrentTab, primaryTabControl.TabBar.SelectedTabName);
 				}
 			};
 		}
@@ -220,7 +220,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				showControlBar = value;
 			}
 		}
-		
+
 		public override void OnClosed(ClosedEventArgs e)
 		{
 			unregisterEvents?.Invoke(this, null);
@@ -239,10 +239,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			this.HAnchor = HAnchor.Stretch;
 
-			var leftSideGroupTabs = new TabControl(Orientation.Vertical);
-			leftSideGroupTabs.TabBar.HAnchor = HAnchor.Fit;
-			leftSideGroupTabs.TabBar.BorderColor = RGBA_Bytes.Transparent;
-			leftSideGroupTabs.TabBar.BackgroundColor = ApplicationController.Instance.Theme.SlightShade;
+			var secondaryTabControl = new TabControl(Orientation.Vertical);
+			secondaryTabControl.TabBar.HAnchor = HAnchor.Fit;
+			secondaryTabControl.TabBar.BorderColor = RGBA_Bytes.Transparent;
+			secondaryTabControl.TabBar.BackgroundColor = ApplicationController.Instance.Theme.SlightShade;
 
 			foreach (OrganizerGroup group in category.GroupsList)
 			{
@@ -278,79 +278,62 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				foreach (OrganizerSubGroup subGroup in group.SubGroupsList)
 				{
 					string subGroupTitle = subGroup.Name;
-					int numberOfCopies = 1;
 
-					if (subGroup.Name == "Extruder X")
+					bool addedSettingToSubGroup = false;
+
+					var topToBottomSettings = new FlowLayoutWidget(FlowDirection.TopToBottom)
 					{
+						HAnchor = HAnchor.Stretch
+					};
 
-						numberOfCopies = ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.extruder_count);
-					}
-
-					for (int copyIndex = 0; copyIndex < numberOfCopies; copyIndex++)
+					GuiWidget hline = new HorizontalLine(20)
 					{
-						if (subGroup.Name == "Extruder X")
+						Margin = new BorderDouble(top: 5)
+					};
+					topToBottomSettings.AddChild(hline);
+
+					foreach (SliceSettingData settingData in subGroup.SettingDataList)
+					{
+						// Note: tab sections may disappear if / when they are empty, as controlled by:
+						// settingShouldBeShown / addedSettingToSubGroup / needToAddSubGroup
+						bool settingShouldBeShown = CheckIfShouldBeShown(settingData);
+
+						if (EngineMappingsMatterSlice.Instance.MapContains(settingData.SlicerConfigName)
+							&& settingShouldBeShown)
 						{
-							subGroupTitle = "{0} {1}".FormatWith("Extruder".Localize(), copyIndex + 1);
-						}
+							addedSettingToSubGroup = true;
 
-						bool addedSettingToSubGroup = false;
+							topToBottomSettings.AddChild(
+								CreateItemRow(settingData, ref tabIndexForItem));
 
-						var topToBottomSettings = new FlowLayoutWidget(FlowDirection.TopToBottom)
-						{
-							HAnchor = HAnchor.Stretch
-						};
-
-						GuiWidget hline = new HorizontalLine(20)
-						{
-							Margin = new BorderDouble(top: 5)
-						};
-						topToBottomSettings.AddChild(hline);
-
-						foreach (SliceSettingData settingData in subGroup.SettingDataList)
-						{
-							// Note: tab sections may disappear if / when they are empty, as controlled by:
-							// settingShouldBeShown / addedSettingToSubGroup / needToAddSubGroup
-							bool settingShouldBeShown = CheckIfShouldBeShown(settingData);
-
-							if (EngineMappingsMatterSlice.Instance.MapContains(settingData.SlicerConfigName)
-								&& settingShouldBeShown)
+							hline = new HorizontalLine(20)
 							{
-								addedSettingToSubGroup = true;
-								topToBottomSettings.AddChild(
-									CreateItemRow(
-										settingData,
-										copyIndex,
-										ref tabIndexForItem));
+								Margin = 0
+							};
+							topToBottomSettings.AddChild(hline);
 
-								hline = new HorizontalLine(20)
-								{
-									Margin = 0
-								};
-								topToBottomSettings.AddChild(hline);
-
-								if (showHelpControls)
-								{
-									topToBottomSettings.AddChild(AddInHelpText(topToBottomSettings, settingData));
-								}
+							if (showHelpControls)
+							{
+								topToBottomSettings.AddChild(AddInHelpText(topToBottomSettings, settingData));
 							}
 						}
+					}
 
-						if (addedSettingToSubGroup)
+					if (addedSettingToSubGroup)
+					{
+						needToAddSubGroup = true;
+
+						var groupBox = new AltGroupBox(subGroupTitle.Localize())
 						{
-							needToAddSubGroup = true;
+							TextColor = ActiveTheme.Instance.PrimaryTextColor,
+							BorderColor = ActiveTheme.Instance.PrimaryTextColor,
+							HAnchor = HAnchor.Stretch,
+							Margin = new BorderDouble(bottom: 8, top: 8),
+							Padding = new BorderDouble(left: 4),
+						};
+						groupBox.AddChild(topToBottomSettings);
 
-							var groupBox = new AltGroupBox(subGroupTitle.Localize())
-							{
-								TextColor = ActiveTheme.Instance.PrimaryTextColor,
-								BorderColor = ActiveTheme.Instance.PrimaryTextColor,
-								HAnchor = HAnchor.Stretch,
-								Margin = new BorderDouble(bottom: 8, top: 8),
-								Padding = new BorderDouble(left: 4),
-							};
-							groupBox.AddChild(topToBottomSettings);
-
-							subGroupLayoutTopToBottom.AddChild(groupBox);
-						}
+						subGroupLayoutTopToBottom.AddChild(groupBox);
 					}
 				}
 
@@ -363,7 +346,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 					scrollOnGroupTab.AddChild(subGroupLayoutTopToBottom);
 					groupTabPage.AddChild(scrollOnGroupTab);
-					leftSideGroupTabs.AddTab(groupTabWidget);
+					secondaryTabControl.AddTab(groupTabWidget);
 				}
 
 				if (group.Name == "Connection")
@@ -375,11 +358,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			// Make sure we are on the right tab when we create this view
 			string settingsTypeName = $"SliceSettingsWidget_{category.Name}_CurrentTab";
 			string selectedTab = UserSettings.Instance.get(settingsTypeName);
-			leftSideGroupTabs.SelectTab(selectedTab);
+			secondaryTabControl.SelectTab(selectedTab);
 
-			leftSideGroupTabs.TabBar.TabIndexChanged += (object sender, EventArgs e) =>
+			secondaryTabControl.TabBar.TabIndexChanged += (object sender, EventArgs e) =>
 			{
-				string selectedTabName = leftSideGroupTabs.TabBar.SelectedTabName;
+				string selectedTabName = secondaryTabControl.TabBar.SelectedTabName;
 				if (!string.IsNullOrEmpty(selectedTabName)
 					&& settingsContext.IsPrimarySettingsView)
 				{
@@ -387,7 +370,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 			};
 
-			return leftSideGroupTabs;
+			return secondaryTabControl;
 		}
 
 		private bool CheckIfShouldBeShown(SliceSettingData settingData)
@@ -495,10 +478,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return dataArea;
 		}
 
-		private GuiWidget CreateItemRow(
-			SliceSettingData settingData,
-			int extruderIndex,
-			ref int tabIndexForItem)
+		private GuiWidget CreateItemRow(SliceSettingData settingData, ref int tabIndexForItem)
 		{
 			string sliceSettingValue = settingsContext.GetValue(settingData.SlicerConfigName);
 
@@ -526,13 +506,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			else
 			{
 				settingsRow.NameArea.AddChild(
-					new TextWidget(settingData.PresentationName.Localize(), pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor)
-					{
-						VAnchor = VAnchor.Center,
-						EllipsisIfClipped = true,
-						AutoExpandBoundsToText = false,
-						HAnchor = HAnchor.Stretch
-					});
+					CreateSettingsLabel(settingData.PresentationName.Localize(), settingData.HelpText));
 
 				switch (settingData.DataEditType)
 				{
@@ -631,21 +605,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						break;
 
 					case SliceSettingData.DataEditTypes.OFFSET2:
-						useDefaultSavePattern = false;
-
-						uiField = new ExtruderOffsetField()
-						{
-							ExtruderIndex = extruderIndex
-						};
-						uiField.ValueChanged += (s, e) =>
-						{
-							if (e.UserInitiated
-								&& s is ExtruderOffsetField extruderOffset)
-							{
-								SaveCommaSeparatedIndexSetting(extruderOffset.ExtruderIndex, settingsContext, settingData.SlicerConfigName, extruderOffset.Value.Replace(",", "x"));
-							}
-						};
-
+						placeFieldInDedicatedRow = true;
+						uiField = new ExtruderOffsetField(settingsContext, settingData.SlicerConfigName);
 						break;
 
 					default:
@@ -663,6 +624,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				allUiFields[settingData.SlicerConfigName] = uiField;
 
+				uiField.Name = $"{settingData.PresentationName} Field";
 				uiField.Initialize(tabIndexForItem++);
 
 				uiField.SetValue(sliceSettingValue, userInitiated: false);
@@ -756,23 +718,42 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 			else
 			{
-				var holder = new GuiWidget()
-				{
-					VAnchor = VAnchor.Fit,
-					HAnchor = HAnchor.Stretch
-				};
-				holder.AddChild(settingsRow);
+				return new DisabledOverlay(settingsRow);
+			}
+		}
 
-				var disable = new GuiWidget()
+		public static TextWidget CreateSettingsLabel(string label, string helpText)
+		{
+			return new TextWidget(label, pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			{
+				VAnchor = VAnchor.Center,
+				EllipsisIfClipped = true,
+				AutoExpandBoundsToText = false,
+				ToolTipText = helpText,
+			};
+		}
+
+		private class DisabledOverlay : GuiWidget
+		{
+			private GuiWidget disableOverlay;
+
+			public DisabledOverlay(GuiWidget widgetToWrap)
+			{
+				this.VAnchor = VAnchor.Fit;
+				this.HAnchor = HAnchor.Stretch;
+
+				this.AddChild(widgetToWrap);
+
+				disableOverlay = new GuiWidget()
 				{
 					VAnchor = VAnchor.Stretch,
 					HAnchor = HAnchor.Stretch,
 					BackgroundColor = new RGBA_Bytes(ActiveTheme.Instance.TertiaryBackgroundColor, 200)
 				};
-				holder.AddChild(disable);
-
-				return holder;
+				this.AddChild(disableOverlay);
 			}
+
+			public override bool Enabled { get => !disableOverlay.Visible; set => disableOverlay.Visible = value; }
 		}
 
 		public static GuiWidget CreateQuickMenu(SliceSettingData settingData, SettingsContext settingsContext, GuiWidget content, InternalTextEditWidget internalTextWidget)
@@ -837,36 +818,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			};
 
 			return totalContent;
-		}
-
-		public static void SaveCommaSeparatedIndexSetting(int extruderIndexLocal, SettingsContext settingsContext, string slicerConfigName, string newSingleValue)
-		{
-			string[] settings = settingsContext.GetValue(slicerConfigName).Split(',');
-			if (settings.Length > extruderIndexLocal)
-			{
-				settings[extruderIndexLocal] = newSingleValue;
-			}
-			else
-			{
-				string[] newSettings = new string[extruderIndexLocal + 1];
-				for (int i = 0; i < extruderIndexLocal + 1; i++)
-				{
-					newSettings[i] = "";
-					if (i < settings.Length)
-					{
-						newSettings[i] = settings[i];
-					}
-					else if (i == extruderIndexLocal)
-					{
-						newSettings[i] = newSingleValue;
-					}
-				}
-
-				settings = newSettings;
-			}
-
-			string newValue = string.Join(",", settings);
-			settingsContext.SetValue(slicerConfigName, newValue);
 		}
 	}
 }

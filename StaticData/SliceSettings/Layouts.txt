@@ -304,7 +304,6 @@ Advanced
         show_reset_connection
         include_firmware_updater
       Hardware
-        extruder_count
         has_fan
         has_hardware_leveling
         has_heated_bed
@@ -318,7 +317,6 @@ Advanced
       Behavior
         z_homes_to_max
         heat_extruder_before_homing
-        extruders_share_temperature
         validate_layer_height
       Firmware
         gcode_flavor
@@ -359,6 +357,8 @@ Advanced
         write_regex
         read_regex
     Extruder
-      Extruder X
+      Extruders
+        extruder_count
         nozzle_diameter
+        extruders_share_temperature
         extruder_offset
