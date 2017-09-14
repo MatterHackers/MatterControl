@@ -605,10 +605,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						break;
 
 					case SliceSettingData.DataEditTypes.OFFSET2:
-						// Anonymous scope to constrain int result
 						placeFieldInDedicatedRow = true;
 						uiField = new ExtruderOffsetField(settingsContext, settingData.SlicerConfigName);
-
 						break;
 
 					default:
