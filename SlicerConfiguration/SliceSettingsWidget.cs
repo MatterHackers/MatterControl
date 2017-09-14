@@ -42,7 +42,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class SliceSettingsWidget : FlowLayoutWidget
 	{
-		private TabControl topCategoryTabs;
+		private TabControl primaryTabControl;
 		internal PresetsToolbar settingsControlBar;
 
 		private SettingsContext settingsContext;
@@ -95,12 +95,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		internal void RebuildSliceSettingsTabs()
 		{
 			// Close and remove children
-			topCategoryTabs?.Close();
+			primaryTabControl?.Close();
 
-			topCategoryTabs = new TabControl();
-			topCategoryTabs.TabBar.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
-			topCategoryTabs.Margin = new BorderDouble(top: 8);
-			topCategoryTabs.AnchorAll();
+			primaryTabControl = new TabControl();
+			primaryTabControl.TabBar.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
+			primaryTabControl.Margin = new BorderDouble(top: 8);
+			primaryTabControl.AnchorAll();
 
 			var sideTabBarsListForLayout = new List<TabBar>();
 
@@ -111,7 +111,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				var categoryPage = new TabPage(category.Name.Localize());
 				categoryPage.AnchorAll();
 
-				topCategoryTabs.AddTab(new TextTab(
+				primaryTabControl.AddTab(new TextTab(
 					categoryPage,
 					category.Name + " Tab",
 					14,
@@ -139,12 +139,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				categoryPage.AddChild(column);
 			}
 
-			topCategoryTabs.TabBar.AddChild(new HorizontalSpacer());
+			primaryTabControl.TabBar.AddChild(new HorizontalSpacer());
 
 			if (settingsContext.IsPrimarySettingsView)
 			{
 				var sliceSettingsDetailControl = new SliceSettingsOverflowDropdown(this);
-				topCategoryTabs.TabBar.AddChild(sliceSettingsDetailControl);
+				primaryTabControl.TabBar.AddChild(sliceSettingsDetailControl);
 			}
 
 			FindWidestTabAndSetAllMinimumSize(sideTabBarsListForLayout);
@@ -159,18 +159,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 			}
 
-			this.AddChild(topCategoryTabs);
+			this.AddChild(primaryTabControl);
 
 			// Restore the last selected tab
-			topCategoryTabs.SelectTab(UserSettings.Instance.get(UserSettingsKey.SliceSettingsWidget_CurrentTab));
+			primaryTabControl.SelectTab(UserSettings.Instance.get(UserSettingsKey.SliceSettingsWidget_CurrentTab));
 
 			// Store the last selected tab on change
-			topCategoryTabs.TabBar.TabIndexChanged += (s, e) =>
+			primaryTabControl.TabBar.TabIndexChanged += (s, e) =>
 			{
-				if (!string.IsNullOrEmpty(topCategoryTabs.TabBar.SelectedTabName)
+				if (!string.IsNullOrEmpty(primaryTabControl.TabBar.SelectedTabName)
 					&& settingsContext.IsPrimarySettingsView)
 				{
-					UserSettings.Instance.set(UserSettingsKey.SliceSettingsWidget_CurrentTab, topCategoryTabs.TabBar.SelectedTabName);
+					UserSettings.Instance.set(UserSettingsKey.SliceSettingsWidget_CurrentTab, primaryTabControl.TabBar.SelectedTabName);
 				}
 			};
 		}
@@ -220,7 +220,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				showControlBar = value;
 			}
 		}
-		
+
 		public override void OnClosed(ClosedEventArgs e)
 		{
 			unregisterEvents?.Invoke(this, null);
@@ -239,10 +239,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			this.HAnchor = HAnchor.Stretch;
 
-			var leftSideGroupTabs = new TabControl(Orientation.Vertical);
-			leftSideGroupTabs.TabBar.HAnchor = HAnchor.Fit;
-			leftSideGroupTabs.TabBar.BorderColor = RGBA_Bytes.Transparent;
-			leftSideGroupTabs.TabBar.BackgroundColor = ApplicationController.Instance.Theme.SlightShade;
+			var secondaryTabControl = new TabControl(Orientation.Vertical);
+			secondaryTabControl.TabBar.HAnchor = HAnchor.Fit;
+			secondaryTabControl.TabBar.BorderColor = RGBA_Bytes.Transparent;
+			secondaryTabControl.TabBar.BackgroundColor = ApplicationController.Instance.Theme.SlightShade;
 
 			foreach (OrganizerGroup group in category.GroupsList)
 			{
@@ -363,7 +363,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 					scrollOnGroupTab.AddChild(subGroupLayoutTopToBottom);
 					groupTabPage.AddChild(scrollOnGroupTab);
-					leftSideGroupTabs.AddTab(groupTabWidget);
+					secondaryTabControl.AddTab(groupTabWidget);
 				}
 
 				if (group.Name == "Connection")
@@ -375,11 +375,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			// Make sure we are on the right tab when we create this view
 			string settingsTypeName = $"SliceSettingsWidget_{category.Name}_CurrentTab";
 			string selectedTab = UserSettings.Instance.get(settingsTypeName);
-			leftSideGroupTabs.SelectTab(selectedTab);
+			secondaryTabControl.SelectTab(selectedTab);
 
-			leftSideGroupTabs.TabBar.TabIndexChanged += (object sender, EventArgs e) =>
+			secondaryTabControl.TabBar.TabIndexChanged += (object sender, EventArgs e) =>
 			{
-				string selectedTabName = leftSideGroupTabs.TabBar.SelectedTabName;
+				string selectedTabName = secondaryTabControl.TabBar.SelectedTabName;
 				if (!string.IsNullOrEmpty(selectedTabName)
 					&& settingsContext.IsPrimarySettingsView)
 				{
@@ -387,7 +387,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 			};
 
-			return leftSideGroupTabs;
+			return secondaryTabControl;
 		}
 
 		private bool CheckIfShouldBeShown(SliceSettingData settingData)
