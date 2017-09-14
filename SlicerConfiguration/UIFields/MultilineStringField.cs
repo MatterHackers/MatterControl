@@ -40,9 +40,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public override void Initialize(int tabIndex)
 		{
-			editWidget = new MHTextEditWidget("", pixelWidth: 320, pixelHeight: multiLineEditHeight, multiLine: true, tabIndex: tabIndex, typeFace: ApplicationController.MonoSpacedTypeFace)
+			editWidget = new MHTextEditWidget("", pixelWidth: 320, multiLine: true, tabIndex: tabIndex, typeFace: ApplicationController.MonoSpacedTypeFace)
 			{
 				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit,
 			};
 			editWidget.DrawFromHintedCache();
 			editWidget.ActualTextEditWidget.EditComplete += (sender, e) =>
@@ -61,6 +62,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		protected override void OnValueChanged(FieldChangedEventArgs fieldChangedEventArgs)
 		{
 			editWidget.Text = this.Value.Replace("\\n", "\n");
+			editWidget.ActualTextEditWidget.Height = Math.Min(editWidget.ActualTextEditWidget.Printer.LocalBounds.Height, 500);
+
 			base.OnValueChanged(fieldChangedEventArgs);
 		}
 	}
