@@ -451,60 +451,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return allText;
 		}
 
-		private TabControl CreateExtraSettingsSideTabsAndPages(TabControl categoryTabs, out int count)
-		{
-			int rightContentWidth = (int)(280 * GuiWidget.DeviceScale + .5);
-			count = 0;
-			TabControl leftSideGroupTabs = new TabControl(Orientation.Vertical);
-			leftSideGroupTabs.Margin = new BorderDouble(0, 0, 0, 5);
-			leftSideGroupTabs.TabBar.BorderColor = RGBA_Bytes.White;
-			{
-				TabPage groupTabPage = new TabPage("Extra Settings");
-				TextTab groupTabWidget = new TextTab(groupTabPage, "Extra Settings Tab", 14,
-				   ActiveTheme.Instance.TabLabelSelected, new RGBA_Bytes(), ActiveTheme.Instance.TabLabelUnselected, new RGBA_Bytes());
-				leftSideGroupTabs.AddTab(groupTabWidget);
-
-				FlowLayoutWidget subGroupLayoutTopToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
-				subGroupLayoutTopToBottom.HAnchor = HAnchor.MaxFitOrStretch;
-				subGroupLayoutTopToBottom.VAnchor = VAnchor.Fit;
-
-				FlowLayoutWidget topToBottomSettings = new FlowLayoutWidget(FlowDirection.TopToBottom);
-				topToBottomSettings.HAnchor = HAnchor.MaxFitOrStretch;
-
-				this.HAnchor = HAnchor.Stretch;
-
-				foreach (var keyValue in ActiveSliceSettings.Instance.BaseLayer)
-				{
-					if (!SliceSettingsOrganizer.Instance.Contains(UserLevel, keyValue.Key))
-					{
-						SliceSettingData settingData = new SliceSettingData(keyValue.Key, keyValue.Key, SliceSettingData.DataEditTypes.STRING);
-						if (EngineMappingsMatterSlice.Instance.MapContains(settingData.SlicerConfigName))
-						{
-							topToBottomSettings.AddChild(
-								CreateItemRow(settingData, 0, ref tabIndexForItem));
-
-							count++;
-						}
-					}
-				}
-
-				AltGroupBox groupBox = new AltGroupBox("Extra".Localize());
-				groupBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-				groupBox.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
-				groupBox.AddChild(topToBottomSettings);
-				groupBox.VAnchor = VAnchor.Fit;
-				groupBox.HAnchor = HAnchor.MaxFitOrStretch;
-
-				subGroupLayoutTopToBottom.AddChild(groupBox);
-
-				SliceSettingListControl scrollOnGroupTab = new SliceSettingListControl();
-				scrollOnGroupTab.AnchorAll();
-				scrollOnGroupTab.AddChild(subGroupLayoutTopToBottom);
-				groupTabPage.AddChild(scrollOnGroupTab);
-			}
-			return leftSideGroupTabs;
-		}
-
 		// Creates an information row showing the base OEM profile and its create_date value
 		public static GuiWidget CreateOemProfileInfoRow(bool isPrimarySettingsView = false)
 		{
