@@ -94,11 +94,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		internal void RebuildSliceSettingsTabs()
 		{
-			if (topCategoryTabs != null)
-			{
-				// Close and remove children
-				topCategoryTabs.Close();
-			}
+			// Close and remove children
+			topCategoryTabs?.Close();
 
 			topCategoryTabs = new TabControl();
 			topCategoryTabs.TabBar.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
