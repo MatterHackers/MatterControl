@@ -166,19 +166,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			// Make sure we are on the right tab when we create this view
 			{
-				string settingsName = "SliceSettingsWidget_CurrentTab";
-				string selectedTab = UserSettings.Instance.get(settingsName);
-				topCategoryTabs.SelectTab(selectedTab);
+				// Restore the last selected tab
+				topCategoryTabs.SelectTab(UserSettings.Instance.get(UserSettingsKey.SliceSettingsWidget_CurrentTab));
 
-				topCategoryTabs.TabBar.TabIndexChanged += (object sender, EventArgs e) =>
+				topCategoryTabs.TabBar.TabIndexChanged += (s, e) =>
 				{
-					string selectedTabName = topCategoryTabs.TabBar.SelectedTabName;
-					if (!string.IsNullOrEmpty(selectedTabName))
+					if (!string.IsNullOrEmpty(topCategoryTabs.TabBar.SelectedTabName)
+						&& settingsContext.IsPrimarySettingsView)
 					{
-						if (settingsContext.IsPrimarySettingsView)
-						{
-							UserSettings.Instance.set(settingsName, selectedTabName);
-						}
+						// Store the last selected tab
+						UserSettings.Instance.set(UserSettingsKey.SliceSettingsWidget_CurrentTab, topCategoryTabs.TabBar.SelectedTabName);
 					}
 				};
 			}
