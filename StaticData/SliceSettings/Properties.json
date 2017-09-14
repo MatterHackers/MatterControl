@@ -245,8 +245,8 @@
 	},
 	{
 		"SlicerConfigName": "extruder_offset",
-		"PresentationName": "Extruder Offset",
-		"HelpText": "The offset of each extruder relative to the first extruder. Only useful for multiple extruder machines.",
+		"PresentationName": "Nozzle Offsets",
+		"HelpText": "The offset of each nozzle relative to the first nozzle. Only useful for multiple extruder machines.",
 		"DataEditType": "OFFSET2",
 		"ExtraSettings": "mm",
 		"DefaultValue": "0x0,0x0,0x0,0x0"
