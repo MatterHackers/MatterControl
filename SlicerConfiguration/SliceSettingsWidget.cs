@@ -506,13 +506,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			else
 			{
 				settingsRow.NameArea.AddChild(
-					new TextWidget(settingData.PresentationName.Localize(), pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor)
-					{
-						VAnchor = VAnchor.Center,
-						EllipsisIfClipped = true,
-						AutoExpandBoundsToText = false,
-						HAnchor = HAnchor.Stretch
-					});
+					CreateSettingsLabel(settingData.PresentationName.Localize(), settingData.HelpText));
 
 				switch (settingData.DataEditType)
 				{
@@ -727,6 +721,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				return new DisabledOverlay(settingsRow);
 			}
+		}
+
+		public static TextWidget CreateSettingsLabel(string label, string helpText)
+		{
+			return new TextWidget(label, pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			{
+				VAnchor = VAnchor.Center,
+				EllipsisIfClipped = true,
+				AutoExpandBoundsToText = false,
+				ToolTipText = helpText,
+			};
 		}
 
 		private class DisabledOverlay : GuiWidget
