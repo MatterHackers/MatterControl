@@ -98,6 +98,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.Content = container;
 		}
 
+		protected override string ConvertValue(string newValue)
+		{
+			// Ensure we have a two value CSV or force to '0,0'
+			return (newValue?.Split(',').Length == 2) ? newValue.Trim() : "0,0";
+		}
+
 		protected override void OnValueChanged(FieldChangedEventArgs fieldChangedEventArgs)
 		{
 			string[] xyValueStrings2 = this.Value.Split(',');
