@@ -471,7 +471,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				if (group.Name == "Connection")
 				{
-					subGroupLayoutTopToBottom.AddChild(SliceSettingsWidget.CreatePrinterExtraControls(isPrimarySettingsView: true));
+					subGroupLayoutTopToBottom.AddChild(SliceSettingsWidget.CreateOemProfileInfoRow(isPrimarySettingsView: true));
 				}
 			}
 
@@ -789,7 +789,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public static readonly RGBA_Bytes userSettingBackgroundColor = new RGBA_Bytes(68, 95, 220, 150);
 
 		// Creates an information row showing the base OEM profile and its create_date value
-		public static GuiWidget CreatePrinterExtraControls(bool isPrimarySettingsView = false)
+		public static GuiWidget CreateOemProfileInfoRow(bool isPrimarySettingsView = false)
 		{
 			var dataArea = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
