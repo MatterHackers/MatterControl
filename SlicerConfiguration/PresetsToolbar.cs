@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Kevin Pope
+Copyright (c) 2017, Kevin Pope, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,19 +27,19 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
-using System;
-using System.Collections.Generic;
 using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class SettingsControlBar : FlowLayoutWidget
+	public class PresetsToolbar : FlowLayoutWidget
 	{
 		PrinterConnection printerConnection;
-		public SettingsControlBar(PrinterConnection printerConnection)
+
+		public PresetsToolbar(PrinterConnection printerConnection)
 		{
 			this.printerConnection = printerConnection;
 			this.HAnchor = HAnchor.Stretch;

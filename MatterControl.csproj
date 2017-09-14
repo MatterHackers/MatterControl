@@ -396,7 +396,7 @@
     <Compile Include="Utilities\WebUtilities\RequestManager.cs" />
     <Compile Include="SettingsManagement\ApplicationSettings.cs" />
     <Compile Include="SettingsManagement\UserSettings.cs" />
-    <Compile Include="SlicerConfiguration\SettingsControlBar.cs" />
+    <Compile Include="SlicerConfiguration\PresetsToolbar.cs" />
     <Compile Include="SlicerConfiguration\SliceSettingsWidget.cs" />
     <Compile Include="SlicerConfiguration\SliceSettingsOrganizer.cs" />
     <Compile Include="SlicerConfiguration\SlicingQueue.cs" />

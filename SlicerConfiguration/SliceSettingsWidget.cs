@@ -70,7 +70,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	public class SliceSettingsWidget : GuiWidget
 	{
 		private TabControl topCategoryTabs;
-		internal SettingsControlBar settingsControlBar;
+		internal PresetsToolbar settingsControlBar;
 		private FlowLayoutWidget pageTopToBottomLayout;
 
 		private SettingsContext settingsContext;
@@ -96,7 +96,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			pageTopToBottomLayout.AnchorAll();
 			this.AddChild(pageTopToBottomLayout);
 
-			settingsControlBar = new SettingsControlBar(printerConnection)
+			settingsControlBar = new PresetsToolbar(printerConnection)
 			{
 				HAnchor = HAnchor.Stretch,
 				Padding = new BorderDouble(8, 12, 8, 8)
