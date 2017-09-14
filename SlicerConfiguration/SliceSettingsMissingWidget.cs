@@ -33,9 +33,9 @@ using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class NoSettingsWidget : FlowLayoutWidget
+	public class SliceSettingsMissingWidget : FlowLayoutWidget
 	{
-		public NoSettingsWidget() : base(FlowDirection.TopToBottom)
+		public SliceSettingsMissingWidget() : base(FlowDirection.TopToBottom)
 		{
 			this.AnchorAll();
 			this.Padding = new BorderDouble(3, 0);

@@ -37,7 +37,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class SettingsRow : FlowLayoutWidget
+	public class SliceSettingsRow : FlowLayoutWidget
 	{
 		private static readonly RGBA_Bytes materialSettingBackgroundColor = RGBA_Bytes.Orange; // new RGBA_Bytes(255, 127, 0, 108);
 		private static readonly RGBA_Bytes qualitySettingBackgroundColor = RGBA_Bytes.YellowGreen; // new RGBA_Bytes(255, 255, 0, 108);
@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private const bool debugLayout = false;
 
-		public SettingsRow(SettingsContext settingsContext, SliceSettingData settingData, bool fullRow = false)
+		public SliceSettingsRow(SettingsContext settingsContext, SliceSettingData settingData, bool fullRow = false)
 		{
 			this.settingData = settingData;
 			this.settingsContext = settingsContext;

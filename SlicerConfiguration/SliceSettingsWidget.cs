@@ -582,7 +582,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			bool useDefaultSavePattern = true;
 			bool placeFieldInDedicatedRow = false;
 
-			var settingsRow = new SettingsRow(settingsContext, settingData)
+			var settingsRow = new SliceSettingsRow(settingsContext, settingData)
 			{
 				Margin = new BorderDouble(0, 0),
 				Padding = new BorderDouble(0, 0, 10, 0),

@@ -601,7 +601,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 			else
 			{
-				sideBar.AddPage("Slice Settings".Localize(), new NoSettingsWidget());
+				sideBar.AddPage("Slice Settings".Localize(), new SliceSettingsMissingWidget());
 			}
 
 			sideBar.AddPage("Controls".Localize(), new ManualPrinterControls(printerConnection));
