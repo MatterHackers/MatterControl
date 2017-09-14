@@ -270,26 +270,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				showControlBar = value;
 			}
 		}
-
-		public void CurrentlyActiveCategory(out int index, out string name)
-		{
-			index = topCategoryTabs.SelectedTabIndex;
-			name = topCategoryTabs.SelectedTabName;
-		}
-
-		public void CurrentlyActiveGroup(out int index, out string name)
-		{
-			index = 0;
-			name = "";
-
-			TabPage currentPage = topCategoryTabs.GetActivePage();
-			if (currentPage.Children.FirstOrDefault() is TabControl currentGroup)
-			{
-				index = currentGroup.SelectedTabIndex;
-				name = currentGroup.SelectedTabName;
-			}
-		}
-
+		
 		public override void OnClosed(ClosedEventArgs e)
 		{
 			unregisterEvents?.Invoke(this, null);
