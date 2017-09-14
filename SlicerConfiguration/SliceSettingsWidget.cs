@@ -176,10 +176,22 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					new RGBA_Bytes(),
 					useUnderlineStyling: true));
 
+
+				var column = new FlowLayoutWidget(FlowDirection.TopToBottom);
+				column.AnchorAll();
+
+				var hline = new HorizontalLine()
+				{
+					BackgroundColor = ApplicationController.Instance.Theme.SlightShade,
+					Height = 4
+				};
+				column.AddChild(hline);
+
 				TabControl sideTabs = CreateSideTabsAndPages(category, showHelpControls);
 				sideTabBarsListForLayout.Add(sideTabs.TabBar);
+				column.AddChild(sideTabs);
 
-				categoryPage.AddChild(sideTabs);
+				categoryPage.AddChild(column);
 			}
 
 			topCategoryTabs.TabBar.AddChild(new HorizontalSpacer());
@@ -279,13 +291,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			name = "";
 
 			TabPage currentPage = topCategoryTabs.GetActivePage();
-			TabControl currentGroup = null;
-
-			if (currentPage.Children.Count > 0)
-			{
-				currentGroup = currentPage.Children[0] as TabControl;
-			}
-			if (currentGroup != null)
+			if (currentPage.Children.FirstOrDefault() is TabControl currentGroup)
 			{
 				index = currentGroup.SelectedTabIndex;
 				name = currentGroup.SelectedTabName;
@@ -337,9 +343,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			this.HAnchor = HAnchor.Stretch;
 
-			TabControl leftSideGroupTabs = new TabControl(Orientation.Vertical);
-			leftSideGroupTabs.Margin = new BorderDouble(0, 0, 0, 5);
-			leftSideGroupTabs.TabBar.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
+			var leftSideGroupTabs = new TabControl(Orientation.Vertical);
+			leftSideGroupTabs.TabBar.HAnchor = HAnchor.Fit;
+			leftSideGroupTabs.TabBar.BorderColor = RGBA_Bytes.Transparent;
+			leftSideGroupTabs.TabBar.BackgroundColor = ApplicationController.Instance.Theme.SlightShade;
 
 			foreach (OrganizerGroup group in category.GroupsList)
 			{
@@ -355,13 +362,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					groupTabPage, 
 					group.Name + " Tab", 
 					14,
-					ActiveTheme.Instance.TabLabelSelected, 
-					new RGBA_Bytes(), 
+					ActiveTheme.Instance.TabLabelSelected,
+					ActiveTheme.Instance.TertiaryBackgroundColor, 
 					ActiveTheme.Instance.TabLabelUnselected,
-					new RGBA_Bytes(),
+					RGBA_Bytes.Transparent,
 					32);
-
 				groupTabWidget.HAnchor = HAnchor.Stretch;
+
+				foreach(var child in groupTabWidget.Children)
+				{
+					child.HAnchor = HAnchor.MaxFitOrStretch;
+					child.Padding = new BorderDouble(10);
+				}
 
 				var subGroupLayoutTopToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
 				subGroupLayoutTopToBottom.AnchorAll();
@@ -1067,20 +1079,22 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				if (placeFieldInDedicatedRow)
 				{
-					var wrapper = new FlowLayoutWidget(FlowDirection.TopToBottom)
+					var column = new FlowLayoutWidget(FlowDirection.TopToBottom)
 					{
+						Name = "column",
 						HAnchor = HAnchor.Stretch,
 						VAnchor = VAnchor.Fit
 					};
-					wrapper.AddChild(settingsRow);
+					column.AddChild(settingsRow);
 
-					var dedicatedFieldRow = new FlowLayoutWidget()
+					var row = new FlowLayoutWidget()
 					{
+						Name = "row",
 						VAnchor = VAnchor.Fit,
 						HAnchor = HAnchor.Stretch,
 						BackgroundColor = settingsRow.BackgroundColor
 					};
-					wrapper.AddChild(dedicatedFieldRow);
+					column.AddChild(row);
 
 					var vline = new VerticalLine()
 					{
@@ -1090,25 +1104,26 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						VAnchor = VAnchor.Stretch,
 						MinimumSize = new Vector2(0, 28),
 					};
-					dedicatedFieldRow.AddChild(vline);
+					row.AddChild(vline);
 
-					var contentContainer = new GuiWidget
+					var contentWrapper = new GuiWidget
 					{
+						Name = "contentWrapper",
 						HAnchor = HAnchor.Stretch,
 						VAnchor = VAnchor.Fit,
 						Padding = new BorderDouble(right: 16, bottom: 10),
 					};
-					contentContainer.AddChild(uiField.Content);
+					contentWrapper.AddChild(uiField.Content);
 
-					dedicatedFieldRow.AddChild(contentContainer);
+					row.AddChild(contentWrapper);
 
 					settingsRow.StyleChanged += (s, e) =>
 					{
-						dedicatedFieldRow.BackgroundColor = settingsRow.BackgroundColor;
+						row.BackgroundColor = settingsRow.BackgroundColor;
 						vline.BackgroundColor = settingsRow.HighlightColor;
 					};
 
-					return wrapper;
+					return column;
 				}
 				else
 				{
@@ -1239,24 +1254,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			this.AnchorAll();
 			this.AutoScroll = true;
-			this.ScrollArea.HAnchor |= HAnchor.Stretch;
+			this.ScrollArea.HAnchor = HAnchor.Stretch;
+			this.Padding = new BorderDouble(left: 8);
 
-			topToBottomItemList = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			topToBottomItemList.HAnchor = HAnchor.MaxFitOrStretch;
-			topToBottomItemList.Margin = new BorderDouble(top: 3);
-
+			topToBottomItemList = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.Stretch,
+			};
 			base.AddChild(topToBottomItemList);
 		}
 
 		public override void AddChild(GuiWidget child, int indexInChildrenList = -1)
 		{
-			FlowLayoutWidget itemHolder = new FlowLayoutWidget();
-			itemHolder.Margin = new BorderDouble(0, 0, 0, 0);
-			itemHolder.HAnchor = HAnchor.MaxFitOrStretch;
-			itemHolder.AddChild(child);
-			itemHolder.VAnchor = VAnchor.Fit;
-
-			topToBottomItemList.AddChild(itemHolder, indexInChildrenList);
+			topToBottomItemList.AddChild(child, indexInChildrenList);
 		}
 	}
 }
