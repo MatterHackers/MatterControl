@@ -292,6 +292,9 @@
     <Compile Include="SetupWizard\SetupWizardTroubleshooting.cs" />
     <Compile Include="SetupWizard\SetupWizardWifi.cs" />
     <Compile Include="SetupWizard\WizardWindow.cs" />
+    <Compile Include="SlicerConfiguration\NoSettingsWidget.cs" />
+    <Compile Include="SlicerConfiguration\SliceSettingListControl.cs" />
+    <Compile Include="SlicerConfiguration\SettingsRow.cs" />
     <Compile Include="SlicerConfiguration\UIFields\UIField.cs" />
     <Compile Include="SlicerConfiguration\UIFields\DoubleField.cs" />
     <Compile Include="SlicerConfiguration\UIFields\DoubleOrPercentField.cs" />

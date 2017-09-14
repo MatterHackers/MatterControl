@@ -361,7 +361,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			double zoffset = printerSettings.GetValue<double>(SettingsKey.baby_step_z_offset);
 			bool hasOverriddenZOffset = (zoffset != 0);
 
-			zOffsetStreamContainer.BackgroundColor = (allowRemoveButton && hasOverriddenZOffset) ? SliceSettingsWidget.userSettingBackgroundColor : ActiveTheme.Instance.SecondaryBackgroundColor;
+			zOffsetStreamContainer.BackgroundColor = (allowRemoveButton && hasOverriddenZOffset) ? SliceSettingsRow.userSettingBackgroundColor : ActiveTheme.Instance.SecondaryBackgroundColor;
 			clearZOffsetButton.Visible = allowRemoveButton && hasOverriddenZOffset;
 
 			zOffsetStreamDisplay.Text = zoffset.ToString("0.##");
