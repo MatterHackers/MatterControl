@@ -34,7 +34,7 @@
 	},
 	{
 		"SlicerConfigName": "bottom_solid_layers",
-		"PresentationName": "Bottom Solid Layers:",
+		"PresentationName": "Bottom Solid Layers",
 		"HelpText": "The number of layers or the distance in millimeters to solid fill on the bottom surface(s) of the object. Add mm to the end of the number to specify distance in millimeters.",
 		"DataEditType": "INT_OR_MM",
 		"ExtraSettings": "count or mm",
@@ -42,7 +42,7 @@
 	},
 	{
 		"SlicerConfigName": "layer_to_pause",
-		"PresentationName": "Layer(s) To Pause:",
+		"PresentationName": "Layer(s) To Pause",
 		"HelpText": "The layer(s) at which the print will pause, allowing for a change in filament. Leave blank to disable. To pause on multiple layers, separate the layer numbers with semicolons. For example: \"16; 37\".",
 		"DataEditType": "STRING",
 		"ResetAtEndOfPrint": true,
@@ -214,7 +214,7 @@
 	},
 	{
 		"SlicerConfigName": "extra_perimeters",
-		"PresentationName": "Generate Extra Perimeters When Needed:",
+		"PresentationName": "Generate Extra Perimeters When Needed",
 		"HelpText": "Allow slicer to generate extra perimeters when needed for sloping walls.",
 		"DataEditType": "CHECK_BOX",
 		"DefaultValue": "1"
@@ -1659,7 +1659,7 @@
 	},
 	{
 		"SlicerConfigName": "top_solid_layers",
-		"PresentationName": "Top Solid Layers:",
+		"PresentationName": "Top Solid Layers",
 		"HelpText": "The number of layers, or the distance in millimeters, to solid fill on the top surface(s) of the object. Add mm to the end of the number to specify distance in millimeters.",
 		"DataEditType": "INT_OR_MM",
 		"ExtraSettings": "count or mm",
