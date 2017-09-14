@@ -229,17 +229,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private int tabIndexForItem = 0;
 
-		// Cache show help at construction time - rebuild SliceSettingsWidget on value changed
 		internal bool ShowHelpControls
 		{
-			get
-			{
-				return UserSettings.Instance.get(UserSettingsKey.SliceSettingsShowHelp) == "true";
-			}
-			set
-			{
-				UserSettings.Instance.set(UserSettingsKey.SliceSettingsShowHelp, value.ToString().ToLower());
-			}
+			get => UserSettings.Instance.get(UserSettingsKey.SliceSettingsShowHelp) == "true";
+			set => UserSettings.Instance.set(UserSettingsKey.SliceSettingsShowHelp, value.ToString().ToLower());
 		}
 
 		private TabControl CreateSideTabsAndPages(OrganizerCategory category, bool showHelpControls)
