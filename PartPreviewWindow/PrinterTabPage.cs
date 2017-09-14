@@ -595,7 +595,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				sideBar.AddPage(
 					"Slice Settings".Localize(), 
 					new SliceSettingsWidget(
-						printerConnection,
 						new SettingsContext(
 							null, 
 							SlicerConfiguration.NamedSettingsLayers.All)));

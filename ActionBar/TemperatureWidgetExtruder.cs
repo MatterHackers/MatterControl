@@ -295,7 +295,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			container.AddChild(graph);
 
 			// put in the material selector
-			var presetsSelector = new PresetSelectorWidget(printerConnection, string.Format($"{"Material".Localize()} {hotendIndex + 1}"), RGBA_Bytes.Transparent, NamedSettingsLayers.Material, hotendIndex, true)
+			var presetsSelector = new PresetSelectorWidget(string.Format($"{"Material".Localize()} {hotendIndex + 1}"), RGBA_Bytes.Transparent, NamedSettingsLayers.Material, hotendIndex, true)
 			{
 				Margin = 0,
 				BackgroundColor = RGBA_Bytes.Transparent,

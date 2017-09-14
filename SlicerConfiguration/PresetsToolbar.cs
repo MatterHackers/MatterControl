@@ -37,16 +37,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class PresetsToolbar : FlowLayoutWidget
 	{
-		PrinterConnection printerConnection;
-
-		public PresetsToolbar(PrinterConnection printerConnection)
+		public PresetsToolbar()
 		{
-			this.printerConnection = printerConnection;
 			this.HAnchor = HAnchor.Stretch;
 
 			int numberOfHeatedExtruders = ActiveSliceSettings.Instance.Helpers.NumberOfHotEnds();
 
-			this.AddChild(new PresetSelectorWidget(printerConnection, "Quality".Localize(), RGBA_Bytes.Yellow, NamedSettingsLayers.Quality, 0));
+			this.AddChild(new PresetSelectorWidget("Quality".Localize(), RGBA_Bytes.Yellow, NamedSettingsLayers.Quality, 0));
 			this.AddChild(new GuiWidget(8, 0));
 
 			if (numberOfHeatedExtruders > 1)
@@ -61,12 +58,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					}
 					int colorIndex = i % colorList.Count;
 					RGBA_Bytes color = colorList[colorIndex];
-					this.AddChild(new PresetSelectorWidget(printerConnection, string.Format("{0} {1}", "Material".Localize(), i + 1), color, NamedSettingsLayers.Material, i));
+					this.AddChild(new PresetSelectorWidget(string.Format("{0} {1}", "Material".Localize(), i + 1), color, NamedSettingsLayers.Material, i));
 				}
 			}
 			else
 			{
-				this.AddChild(new PresetSelectorWidget(printerConnection, "Material".Localize(), RGBA_Bytes.Orange, NamedSettingsLayers.Material, 0));
+				this.AddChild(new PresetSelectorWidget("Material".Localize(), RGBA_Bytes.Orange, NamedSettingsLayers.Material, 0));
 			}
 
 			this.Height = 60 * GuiWidget.DeviceScale;

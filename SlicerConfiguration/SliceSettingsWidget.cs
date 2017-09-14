@@ -75,15 +75,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private SettingsContext settingsContext;
 
-		private PrinterConnection printerConnection;
-
 		private Dictionary<string, UIField> allUiFields = new Dictionary<string, UIField>();
 
 		private EventHandler unregisterEvents;
 
-		public SliceSettingsWidget(PrinterConnection printerConnection, SettingsContext settingsContext)
+		public SliceSettingsWidget(SettingsContext settingsContext)
 		{
-			this.printerConnection = printerConnection;
 			this.BackgroundColor = ApplicationController.Instance.Theme.TabBodyBackground;
 
 			this.settingsContext = settingsContext;
@@ -96,7 +93,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			pageTopToBottomLayout.AnchorAll();
 			this.AddChild(pageTopToBottomLayout);
 
-			settingsControlBar = new PresetsToolbar(printerConnection)
+			settingsControlBar = new PresetsToolbar()
 			{
 				HAnchor = HAnchor.Stretch,
 				Padding = new BorderDouble(8, 12, 8, 8)
