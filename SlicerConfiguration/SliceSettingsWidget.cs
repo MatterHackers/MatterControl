@@ -596,15 +596,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				return null;
 			}
 
-			var nameHolder = new GuiWidget()
+			return new WrappedTextWidget(settingData.ExtraSettings.Localize(), pointSize: 8, textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit | VAnchor.Center,
-				Padding = new BorderDouble(5, 0),
+				Margin = new BorderDouble(5, 0),
 			};
-			nameHolder.AddChild(new WrappedTextWidget(settingData.ExtraSettings.Localize(), pointSize: 8, textColor: ActiveTheme.Instance.PrimaryTextColor));
-
-			return nameHolder;
 		}
 
 		private class SettingsRow : FlowLayoutWidget
