@@ -295,12 +295,6 @@ namespace MatterControl.Tests.MatterControl
 		}
 
 		[Test, Ignore("Not Implemented")]
-		public void NumberFieldTest()
-		{
-			Assert.Fail();
-		}
-
-		[Test, Ignore("Not Implemented")]
 		public void TextFieldTest()
 		{
 			Assert.Fail();
