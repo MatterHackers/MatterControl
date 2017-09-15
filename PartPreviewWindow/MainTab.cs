@@ -37,7 +37,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class PrinterTab : Tab
+	public class MainTab : Tab
 	{
 		private class TabPill : FlowLayoutWidget
 		{
@@ -84,7 +84,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		public PrinterTab(string tabTitle, string tabName, TabPage tabPage, string tabImageUrl = null)
+		public MainTab(string tabTitle, string tabName, TabPage tabPage, string tabImageUrl = null)
 		: this(
 			new TabPill(tabTitle, new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 140), tabImageUrl),
 			new TabPill(tabTitle, ActiveTheme.Instance.PrimaryTextColor, tabImageUrl),
@@ -94,7 +94,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 		}
 
-		public PrinterTab(GuiWidget normalWidget, GuiWidget hoverWidget, GuiWidget pressedWidget, string tabName, TabPage tabPage)
+		public MainTab(GuiWidget normalWidget, GuiWidget hoverWidget, GuiWidget pressedWidget, string tabName, TabPage tabPage)
 			: base(tabName, normalWidget, hoverWidget, pressedWidget, tabPage)
 		{
 			this.HAnchor = HAnchor.Fit;

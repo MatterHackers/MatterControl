@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public class PartPreviewContent : FlowLayoutWidget
 	{
 		private EventHandler unregisterEvents;
-		private PrinterTab printerTab = null;
+		private MainTab printerTab = null;
 
 		public PartPreviewContent(PrintItemWrapper printItem)
 		{
@@ -181,9 +181,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}, ref unregisterEvents);
 		}
 
-		private static PrinterTab CreatePrinterTab(PrintItemWrapper printItem, PrinterConfig printerConfig, ThemeConfig theme, string tabTitle)
+		private static MainTab CreatePrinterTab(PrintItemWrapper printItem, PrinterConfig printerConfig, ThemeConfig theme, string tabTitle)
 		{
-			var printerTab = new PrinterTab(
+			var printerTab = new MainTab(
 				tabTitle,
 				"3D View Tab",
 				new PrinterTabPage(PrinterConnection.Instance, printerConfig, theme, printItem, tabTitle.ToUpper()),

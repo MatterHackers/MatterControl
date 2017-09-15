@@ -157,7 +157,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		internal static void CreatePartTab(TabControl tabControl, PrinterConfig printer, ThemeConfig theme, PrintItemWrapper printItem, int tabIndex = 1)
 		{
-			var partTab = new PrinterTab(
+			var partTab = new MainTab(
 				"New Part",
 				"newPart" + tabControl.TabCount,
 				new PrinterTabBase(printer, theme, printItem, "xxxxx"),
