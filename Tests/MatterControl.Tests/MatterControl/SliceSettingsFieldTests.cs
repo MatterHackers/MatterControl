@@ -169,10 +169,45 @@ namespace MatterControl.Tests.MatterControl
 				});
 		}
 
-		[Test, Ignore("Not Implemented")]
-		public void DoubleOrPercentFieldTest()
+		[Test]
+		public async Task DoubleOrPercentFieldTest()
 		{
-			Assert.Fail();
+			await ValidateAgainstValueMap<DoubleOrPercentField>(
+				(field) => (field.Content as MHTextEditWidget).ActualTextEditWidget.Text,
+				new List<ValueMap>()
+				{
+					{"0.12345", "0.12345"},
+					{"0.12345%", "0.12345%"},
+					{"1.2345", "1.2345"},
+					{"1.2345%", "1.2345%"},
+					{"12.345", "12.345"},
+					{"12.345%", "12.345%"},
+					{"12.7", "12.7"},
+					{"12.7%", "12.7%"},
+					{"+0.12345", "0.12345"},
+					{"+0.12345%", "0.12345%"},
+					{"+1.2345", "1.2345"},
+					{"+1.2345%", "1.2345%"},
+					{"+12.345", "12.345"},
+					{"+12.345%", "12.345%"},
+					{"-0.12345", "-0.12345"},
+					{"-0.12345%", "-0.12345%"},
+					{"-1.2345", "-1.2345"},
+					{"-1.2345%", "-1.2345%"},
+					{"-12.345", "-12.345"},
+					{"-12.345%", "-12.345%"},
+					{"12.7", "12.7"},
+					{"12.7%", "12.7%"},
+					{"22", "22" },
+					{"22%", "22%" },
+					// Invalid values revert to expected
+					{"abc", "0"},
+					{"abc%", "0%"},
+					{"+abc", "0"},
+					{"+abc%", "0%"},
+					{"-abc", "0"},
+					{"-abc%", "0%"},
+				});
 		}
 
 		[Test, Ignore("Not Implemented")]
