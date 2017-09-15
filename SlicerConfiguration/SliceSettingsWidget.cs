@@ -535,7 +535,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						break;
 
 					case SliceSettingData.DataEditTypes.INT_OR_MM:
-						uiField = new ValueOrUnitsField();
+						uiField = new IntOrMmField();
 						break;
 
 					case SliceSettingData.DataEditTypes.CHECK_BOX:

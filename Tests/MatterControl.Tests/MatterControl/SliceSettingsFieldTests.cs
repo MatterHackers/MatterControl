@@ -211,10 +211,45 @@ namespace MatterControl.Tests.MatterControl
 				});
 		}
 
-		[Test, Ignore("Not Implemented")]
-		public void ValueOrUnitsFieldTest()
+		[Test]
+		public async Task IntOrMmFieldTest()
 		{
-			Assert.Fail();
+			await ValidateAgainstValueMap<IntOrMmField>(
+				(field) => (field.Content as MHTextEditWidget).ActualTextEditWidget.Text,
+				new List<ValueMap>()
+				{
+					{"0.12345", "0"},
+					{"0.12345mm", "0mm"},
+					{"1.2345", "1"},
+					{"1.2345mm", "1mm"},
+					{"12.345", "12"},
+					{"12.345mm", "12mm"},
+					{"12.7", "12"},
+					{"12.7mm", "12mm"},
+					{"+0.12345", "0"},
+					{"+0.12345mm", "0mm"},
+					{"+1.2345", "1"},
+					{"+1.2345mm", "1mm"},
+					{"+12.345", "12"},
+					{"+12.345mm", "12mm"},
+					{"-0.12345", "0"},
+					{"-0.12345mm", "0mm"},
+					{"-1.2345", "-1"},
+					{"-1.2345mm", "-1mm"},
+					{"-12.345", "-12"},
+					{"-12.345mm", "-12mm"},
+					{"12.7", "12"},
+					{"12.7mm", "12mm"},
+					{"22", "22" },
+					{"22mm", "22mm" },
+					// Invalid values revert to expected
+					{"abc", "0"},
+					{"abcmm", "0mm"},
+					{"+abc", "0"},
+					{"+abcmm", "0mm"},
+					{"-abc", "0"},
+					{"-abcmm", "0mm"},
+				});
 		}
 
 		[Test, Ignore("Not Implemented")]
@@ -320,7 +355,7 @@ namespace MatterControl.Tests.MatterControl
 				}
 
 				return Task.CompletedTask;
-			}, 30);
+			}, 530);
 
 		}
 	}
