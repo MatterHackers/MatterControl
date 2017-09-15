@@ -1386,8 +1386,6 @@ namespace MatterHackers.MatterControl
 					}
 
 					PrinterConnection.Instance.activePrintItem = value;
-
-					OnActivePrintItemChanged(null);
 				}
 			}
 		}
@@ -1397,11 +1395,6 @@ namespace MatterHackers.MatterControl
 		public void NotifyPrintersTabRightElement(GuiWidget sourceExentionArea)
 		{
 			AddPrintersTabRightElement?.Invoke(this, new WidgetSourceEventArgs(sourceExentionArea));
-		}
-
-		private void OnActivePrintItemChanged(EventArgs e)
-		{
-			ActivePrintItemChanged.CallEvents(this, e);
 		}
 
 		private string doNotAskAgainMessage = "Don't remind me again".Localize();
@@ -1580,8 +1573,6 @@ namespace MatterHackers.MatterControl
 				);
 			}
 		}
-
-		public RootedObjectEventHandler ActivePrintItemChanged = new RootedObjectEventHandler();
 	}
 
 	public class WidgetSourceEventArgs : EventArgs

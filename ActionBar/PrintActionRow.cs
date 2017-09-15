@@ -70,7 +70,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			AddChildElements(buttonFactory, parentWidget, defaultMargin);
 
 			// Add Handlers
-			ApplicationController.Instance.ActivePrintItemChanged.RegisterEvent(onStateChanged, ref unregisterEvents);
 			printer.Connection.CommunicationStateChanged.RegisterEvent(onStateChanged, ref unregisterEvents);
 			ProfileManager.ProfilesListChanged.RegisterEvent(onStateChanged, ref unregisterEvents);
 		}
