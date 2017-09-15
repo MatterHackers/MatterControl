@@ -27,28 +27,41 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using MatterHackers.Agg;
-using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class DoubleField : NumberField
+	public abstract class ValueOrUnitsField : TextField
 	{
-		protected double doubleValue;
+		protected string unitsToken = "units-token";
+
+		public override void Initialize(int tabIndex)
+		{
+			base.Initialize(tabIndex);
+
+			textEditWidget.ActualTextEditWidget.InternalTextEditWidget.AllSelected += (s, e) =>
+			{
+				// select everything up to the token (if present)
+				int tokenIndex = textEditWidget.ActualTextEditWidget.Text.IndexOf(unitsToken);
+				if (tokenIndex != -1)
+				{
+					textEditWidget.ActualTextEditWidget.InternalTextEditWidget.SetSelection(0, tokenIndex - 1);
+				}
+			};
+		}
 
 		protected override string ConvertValue(string newValue)
 		{
-			double.TryParse(newValue, out double currentValue);
-			doubleValue  = currentValue;
+			string text = newValue.Trim();
 
-			return doubleValue.ToString();
-		}
+			int tokenIndex = text.IndexOf(unitsToken);
+			bool hasUnitsToken = tokenIndex != -1;
+			if (hasUnitsToken)
+			{
+				text = text.Substring(0, tokenIndex);
+			}
 
-		protected override void OnValueChanged(FieldChangedEventArgs fieldChangedEventArgs)
-		{
-			numberEdit.ActuallNumberEdit.Value = doubleValue;
-			base.OnValueChanged(fieldChangedEventArgs);
+			double.TryParse(text, out double currentValue);
+			return currentValue + (hasUnitsToken ? unitsToken : "");
 		}
 	}
 }

@@ -28,6 +28,8 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 
+using System;
+
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class PositiveDoubleField : DoubleField
@@ -35,6 +37,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public PositiveDoubleField()
 		{
 			this.AllowNegatives = false;
+		}
+
+		protected override string ConvertValue(string newValue)
+		{
+			base.ConvertValue(newValue);
+			doubleValue = doubleValue < 0 ? 0 : Math.Abs(doubleValue);
+
+			return doubleValue.ToString();
 		}
 	}
 }
