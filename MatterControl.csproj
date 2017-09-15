@@ -209,6 +209,7 @@
     <Compile Include="PartPreviewWindow\OverflowDropdown.cs" />
     <Compile Include="PartPreviewWindow\PlusTabPage.cs" />
     <Compile Include="PartPreviewWindow\PrinterTab.cs" />
+    <Compile Include="PartPreviewWindow\PrinterTabBase.cs" />
     <Compile Include="PartPreviewWindow\PrinterTabPage.cs" />
     <Compile Include="PartPreviewWindow\View3D\BedMeshGenerator.cs" />
     <Compile Include="PartPreviewWindow\View3D\ColorSwatchSelector.cs" />
