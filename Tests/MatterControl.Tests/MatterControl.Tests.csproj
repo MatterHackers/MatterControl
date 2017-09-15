@@ -58,6 +58,7 @@
     <Compile Include="MatterControl\InteractiveSceneTests.cs" />
     <Compile Include="MatterControl\PerformanceTests.cs" />
     <Compile Include="MatterControl\ImportSettingsTests.cs" />
+    <Compile Include="MatterControl\SliceSettingsFieldTests.cs" />
     <Compile Include="MatterControl\SettingsParseTests.cs" />
     <Compile Include="MatterControl\GCodeProcessingTests.cs" />
     <Compile Include="MatterControl\MatterControlUiFeatures.cs" />
