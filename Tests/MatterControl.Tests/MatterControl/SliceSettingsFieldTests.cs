@@ -128,14 +128,14 @@ namespace MatterControl.Tests.MatterControl
 					{"0.12345", "0.12345"},
 					{"1.2345", "1.2345"},
 					{"12.345", "12.345"},
-					{"12.7", "12"}, // Floor not round?
+					{"12.7", "12.7"},
 					{"+0.12345", "0.12345"},
 					{"+1.2345", "1.2345"},
 					{"+12.345", "12.345"},
-					{"-0.12345", "0"}, // TODO: Classic behavior but... shouldn't we just drop the negative sign rather than force to 0?
+					{"-0.12345", "0"},
 					{"-1.2345", "0"},
 					{"-12.345", "0"},
-					{"-12.7", "12"}, // Floor not round?
+					{"-12.7", "0"},
 					{"22", "22" },
 					// Invalid values revert to expected
 					{"abc", "0"},

@@ -35,7 +35,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class DoubleField : NumberField
 	{
-		private double doubleValue;
+		protected double doubleValue;
 
 		protected override string ConvertValue(string newValue)
 		{
