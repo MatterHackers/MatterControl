@@ -310,6 +310,7 @@
     <Compile Include="SlicerConfiguration\UIFields\ExtruderOffsetField.cs" />
     <Compile Include="SlicerConfiguration\UIFields\NumberField.cs" />
     <Compile Include="SlicerConfiguration\UIFields\TextField.cs" />
+    <Compile Include="SlicerConfiguration\UIFields\ValueOrUnitsField.cs" />
     <Compile Include="SlicerConfiguration\UIFields\Vector2Field.cs" />
     <Compile Include="SlicerConfiguration\UIFields\PositiveDoubleField.cs" />
     <Compile Include="SlicerConfiguration\SettingsContext.cs" />

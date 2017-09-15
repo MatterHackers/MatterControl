@@ -27,16 +27,26 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class IntOrMmField : ValueOrUnitsField
+	public abstract class ValueOrUnitsField : TextField
 	{
-		public IntOrMmField()
+		protected string unitsToken = "units-token";
+
+		public override void Initialize(int tabIndex)
 		{
-			this.unitsToken = "mm";
+			base.Initialize(tabIndex);
+
+			textEditWidget.ActualTextEditWidget.InternalTextEditWidget.AllSelected += (s, e) =>
+			{
+				// select everything up to the token (if present)
+				int tokenIndex = textEditWidget.ActualTextEditWidget.Text.IndexOf(unitsToken);
+				if (tokenIndex != -1)
+				{
+					textEditWidget.ActualTextEditWidget.InternalTextEditWidget.SetSelection(0, tokenIndex - 1);
+				}
+			};
 		}
 
 		protected override string ConvertValue(string newValue)
@@ -51,7 +61,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			double.TryParse(text, out double currentValue);
-			return (int) currentValue + (hasUnitsToken ? unitsToken : "");
+			return currentValue + (hasUnitsToken ? unitsToken : "");
 		}
 	}
 }
