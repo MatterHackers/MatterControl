@@ -264,7 +264,7 @@ namespace MatterControl.Tests.MatterControl
 		[Test, Category("GCodeStream")]
 		public void PauseHandlingStreamTests()
 		{
-			double readX = 50;
+			int readX = 50;
 			// Validate that the number parsing code is working as expected, specifically ignoring data that appears in comments
 			// This is a regression that we saw in the Lulzbot Mini profile after adding macro processing.
 			GCodeFile.GetFirstNumberAfter("X", "G1 Z10 E - 10 F12000 ; suck up XXmm of filament", ref readX);
@@ -500,7 +500,7 @@ namespace MatterControl.Tests.MatterControl
 			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
-			Assert.AreEqual(1, FeedRateMultiplyerStream.FeedRateRatio, "FeedRateRatio should default to 1");
+			Assert.AreEqual(1, (int) FeedRateMultiplyerStream.FeedRateRatio, "FeedRateRatio should default to 1");
 
 			var gcodeStream = new FeedRateMultiplyerStream(new TestGCodeStream(new string[] { "G1 X10 F1000", "G1 Y5 F1000" }));
 
@@ -521,7 +521,7 @@ namespace MatterControl.Tests.MatterControl
 			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
-			Assert.AreEqual(1, ExtrusionMultiplyerStream.ExtrusionRatio, "ExtrusionRatio should default to 1");
+			Assert.AreEqual(1, (int) ExtrusionMultiplyerStream.ExtrusionRatio, "ExtrusionRatio should default to 1");
 
 			var gcodeStream = new ExtrusionMultiplyerStream(new TestGCodeStream(new string[] { "G1 E10", "G1 E0 ; Move back to 0", "G1 E12" }));
 
