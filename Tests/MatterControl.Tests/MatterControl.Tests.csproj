@@ -74,6 +74,7 @@
     <Compile Include="MatterControl\LevelingTests.cs" />
     <Compile Include="MatterControl\GCodeStreamTests.cs" />
     <Compile Include="MatterControl\TranslationsTests.cs" />
+    <Compile Include="MatterControl\UIFieldTestWindow.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SceneTests.cs" />
   </ItemGroup>
