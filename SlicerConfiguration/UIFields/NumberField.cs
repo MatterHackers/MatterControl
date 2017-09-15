@@ -35,11 +35,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	{
 		protected MHNumberEdit numberEdit;
 
-		private readonly int ControlWidth = (int)(60 * GuiWidget.DeviceScale + .5);
+		public static readonly int ControlWidth = (int)(60 * GuiWidget.DeviceScale + .5);
+
+		protected bool AllowNegatives { get; set; } = true;
+		protected bool AllowDecimals { get; set; } = true;
 
 		public override void Initialize(int tabIndex)
 		{
-			numberEdit = new MHNumberEdit(0, pixelWidth: ControlWidth, tabIndex: tabIndex)
+			numberEdit = new MHNumberEdit(0, pixelWidth: ControlWidth, allowDecimals: this.AllowDecimals, allowNegatives: this.AllowNegatives, tabIndex: tabIndex)
 			{
 				ToolTipText = this.HelpText,
 				SelectAllOnFocus = true,
