@@ -278,6 +278,7 @@ namespace MatterHackers.MatterControl
 		public BedConfig Bed { get; }
 		public PrinterViewState ViewState { get; } = new PrinterViewState();
 		public PrinterSettings Settings { get; private set; } = ActiveSliceSettings.Instance;
+		public PrinterConnection Connection { get; private set; } = PrinterConnection.Instance;
 
 		private EventHandler unregisterEvents;
 
@@ -710,13 +711,15 @@ namespace MatterHackers.MatterControl
 
 			PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent((s, e) =>
 			{
-				PrinterConnection printerConnection = s as PrinterConnection;
+				var printerConnection = s as PrinterConnection;
+
 				switch (printerConnection.CommunicationState)
 				{
 					case CommunicationStates.Printing:
 						if (UserSettings.Instance.IsTouchScreen)
 						{
-							UiThread.RunOnIdle(() => PrintingWindow.Show(printerConnection));
+							// TODO: In general this basic hook won't work with multi-tenancy
+							UiThread.RunOnIdle(() => PrintingWindow.Show(ApplicationController.Instance.Printer)); // HACK: We need to show the instance that's printing not the static instance
 						}
 
 						break;
@@ -734,7 +737,7 @@ namespace MatterHackers.MatterControl
 					PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
 					if (levelingData?.HasBeenRunAndEnabled() != true)
 					{
-						UiThread.RunOnIdle(() => LevelWizardBase.ShowPrintLevelWizard(PrinterConnection.Instance));
+						UiThread.RunOnIdle(() => LevelWizardBase.ShowPrintLevelWizard(ApplicationController.Instance.Printer));// HACK: We need to show the instance that's printing not the static instance
 					}
 				}
 			}, ref unregisterEvents);
@@ -1366,7 +1369,7 @@ namespace MatterHackers.MatterControl
 					PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
 					if (levelingData?.HasBeenRunAndEnabled() != true)
 					{
-						LevelWizardBase.ShowPrintLevelWizard(PrinterConnection.Instance);
+						LevelWizardBase.ShowPrintLevelWizard(ApplicationController.Instance.Printer);// HACK: We need to show the instance that's printing not the static instance
 						return;
 					}
 				}

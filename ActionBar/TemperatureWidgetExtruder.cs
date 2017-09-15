@@ -42,14 +42,14 @@ namespace MatterHackers.MatterControl.ActionBar
 	internal class ControlContentExtruder : FlowLayoutWidget
 	{
 		private int moveAmount = 1;
-		private PrinterConnection printerConnection;
+		private PrinterConfig printer;
 
-		internal ControlContentExtruder(PrinterConnection printerConnection, int extruderIndex, TextImageButtonFactory buttonFactory)
+		internal ControlContentExtruder(PrinterConfig printer, int extruderIndex, TextImageButtonFactory buttonFactory)
 			: base(FlowDirection.TopToBottom)
 		{
 			HAnchor = HAnchor.Stretch;
 
-			this.printerConnection = printerConnection;
+			this.printer = printer;
 
 			// add in any macros for this extruder
 			var macroButtons = GetExtruderMacros(extruderIndex, buttonFactory);
@@ -72,7 +72,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			retractButton.Margin = new BorderDouble(8, 0);
 			retractButton.Click += (s, e) =>
 			{
-				printerConnection.MoveExtruderRelative(moveAmount * -1, printerConnection.PrinterSettings.EFeedRate(extruderIndex), extruderIndex);
+				printer.Connection.MoveExtruderRelative(moveAmount * -1, printer.Settings.EFeedRate(extruderIndex), extruderIndex);
 			};
 			buttonContainer.AddChild(retractButton);
 
@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			extrudeButton.Margin = 0;
 			extrudeButton.Click += (s, e) =>
 			{
-				printerConnection.MoveExtruderRelative(moveAmount, printerConnection.PrinterSettings.EFeedRate(extruderIndex), extruderIndex);
+				printer.Connection.MoveExtruderRelative(moveAmount, printer.Settings.EFeedRate(extruderIndex), extruderIndex);
 			};
 			buttonContainer.AddChild(extrudeButton);
 
@@ -147,7 +147,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			MacroUiLocation extruderUiMacros;
 			if (Enum.TryParse($"Extruder_{extruderIndex + 1}", out extruderUiMacros))
 			{
-				var macros = printerConnection.PrinterSettings.GetMacros(extruderUiMacros);
+				var macros = printer.Settings.GetMacros(extruderUiMacros);
 				if (macros.Any())
 				{
 					var row = new FlowLayoutWidget();
@@ -155,7 +155,7 @@ namespace MatterHackers.MatterControl.ActionBar
 					{
 						Button macroButton = buttonFactory.Generate(GCodeMacro.FixMacroName(macro.Name));
 						macroButton.Margin = new BorderDouble(left: 5);
-						macroButton.Click += (s, e) => macro.Run(printerConnection);
+						macroButton.Click += (s, e) => macro.Run(printer.Connection);
 
 						row.AddChild(macroButton);
 					}
@@ -176,8 +176,8 @@ namespace MatterHackers.MatterControl.ActionBar
 		private string sliceSettingsNote = "Note: Slice Settings are applied before the print actually starts. Changes while printing will not effect the active print.".Localize();
 		private string waitingForExtruderToHeatMessage = "The extruder is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting extruder temperature in 'Slice Settings' -> 'Filament'.\n\n{1}".Localize();
 
-		public TemperatureWidgetHotend(PrinterConnection printerConnection, int hotendIndex, TextImageButtonFactory buttonFactory)
-			: base(printerConnection, "150.3°")
+		public TemperatureWidgetHotend(PrinterConfig printer, int hotendIndex, TextImageButtonFactory buttonFactory)
+			: base(printer, "150.3°")
 		{
 			this.Name = $"Hotend {hotendIndex}";
 			this.hotendIndex = hotendIndex;
@@ -187,11 +187,11 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			this.PopupContent = this.GetPopupContent();
 
-			printerConnection.HotendTemperatureRead.RegisterEvent((s, e) => DisplayCurrentTemperature(), ref unregisterEvents);
+			printer.Connection.HotendTemperatureRead.RegisterEvent((s, e) => DisplayCurrentTemperature(), ref unregisterEvents);
 		}
 
-		protected override int ActualTemperature => (int)printerConnection.GetActualHotendTemperature(hotendIndex);
-		protected override int TargetTemperature => (int)printerConnection.GetTargetHotendTemperature(hotendIndex);
+		protected override int ActualTemperature => (int)printer.Connection.GetActualHotendTemperature(hotendIndex);
+		protected override int TargetTemperature => (int)printer.Connection.GetTargetHotendTemperature(hotendIndex);
 
 		public override void OnClosed(ClosedEventArgs e)
 		{
@@ -234,7 +234,7 @@ namespace MatterHackers.MatterControl.ActionBar
 						else
 						{
 							// Turn off extruder
-							printerConnection.SetTargetHotendTemperature(hotendIndex, 0);
+							printer.Connection.SetTargetHotendTemperature(hotendIndex, 0);
 						}
 					}
 				},
@@ -244,7 +244,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			heatToggle.Name = "Toggle Heater";
 
 			// put in the temp control
-			settingsTemperature = new EditableNumberDisplay(printerConnection.PrinterSettings.GetValue<double>(SettingsKey.temperature), "000")
+			settingsTemperature = new EditableNumberDisplay(printer.Settings.GetValue<double>(SettingsKey.temperature), "000")
 			{
 				TextColor = RGBA_Bytes.Black,
 				BorderColor = RGBA_Bytes.Black,
@@ -308,7 +308,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				// delay this for an update so the slice setting can get updated first
 				UiThread.RunOnIdle(() =>
 				{
-					settingsTemperature.Value = printerConnection.PrinterSettings.GetValue<double>(SettingsKey.temperature);
+					settingsTemperature.Value = printer.Settings.GetValue<double>(SettingsKey.temperature);
 				});
 			};
 
@@ -333,8 +333,8 @@ namespace MatterHackers.MatterControl.ActionBar
 			container.AddChild(new SettingsItem("Material".Localize(), presetsSelector, enforceGutter: false));
 
 			// put in the actual extruder controls
-			bool shareTemp = printerConnection.PrinterSettings.GetValue<bool>(SettingsKey.extruders_share_temperature);
-			int extruderCount = printerConnection.PrinterSettings.GetValue<int>(SettingsKey.extruder_count);
+			bool shareTemp = printer.Settings.GetValue<bool>(SettingsKey.extruders_share_temperature);
+			int extruderCount = printer.Settings.GetValue<int>(SettingsKey.extruder_count);
 			if (shareTemp && extruderCount > 1)
 			{
 				for (int extruderIndex = 0; extruderIndex < extruderCount; extruderIndex++)
@@ -350,12 +350,12 @@ namespace MatterHackers.MatterControl.ActionBar
 						TextColor = RGBA_Bytes.Black,
 						HAnchor = HAnchor.Left,
 					});
-					container.AddChild(new ControlContentExtruder(printerConnection, extruderIndex, buttonFactory));
+					container.AddChild(new ControlContentExtruder(printer, extruderIndex, buttonFactory));
 				}
 			}
 			else
 			{
-				container.AddChild(new ControlContentExtruder(printerConnection, hotendIndex, buttonFactory));
+				container.AddChild(new ControlContentExtruder(printer, hotendIndex, buttonFactory));
 			}
 
 			ActiveSliceSettings.MaterialPresetChanged += ActiveSliceSettings_MaterialPresetChanged;
@@ -366,24 +366,24 @@ namespace MatterHackers.MatterControl.ActionBar
 		protected override void SetTargetTemperature(double targetTemp)
 		{
 			double goalTemp = (int)(targetTemp + .5);
-			if (printerConnection.PrinterIsPrinting
-				&& printerConnection.DetailedPrintingState == DetailedPrintingState.HeatingExtruder
-				&& goalTemp != printerConnection.GetTargetHotendTemperature(hotendIndex))
+			if (printer.Connection.PrinterIsPrinting
+				&& printer.Connection.DetailedPrintingState == DetailedPrintingState.HeatingExtruder
+				&& goalTemp != printer.Connection.GetTargetHotendTemperature(hotendIndex))
 			{
-				string message = string.Format(waitingForExtruderToHeatMessage, printerConnection.GetTargetHotendTemperature(hotendIndex), sliceSettingsNote);
+				string message = string.Format(waitingForExtruderToHeatMessage, printer.Connection.GetTargetHotendTemperature(hotendIndex), sliceSettingsNote);
 				StyledMessageBox.ShowMessageBox(null, message, "Waiting For Extruder To Heat".Localize());
 			}
 			else
 			{
-				printerConnection.SetTargetHotendTemperature(hotendIndex, (int)(targetTemp + .5));
+				printer.Connection.SetTargetHotendTemperature(hotendIndex, (int)(targetTemp + .5));
 			}
 		}
 
 		private void ActiveSliceSettings_MaterialPresetChanged(object sender, EventArgs e)
 		{
-			if (settingsTemperature != null && printerConnection.PrinterSettings != null)
+			if (settingsTemperature != null && printer.Settings != null)
 			{
-				settingsTemperature.Text = printerConnection.PrinterSettings.GetValue(SettingsKey.temperature);
+				settingsTemperature.Text = printer.Settings.GetValue(SettingsKey.temperature);
 			}
 		}
 	}

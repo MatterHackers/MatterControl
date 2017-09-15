@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 {
 	public class MovementControls : ControlWidgetBase
 	{
-		PrinterConnection printerConnection;
+		private PrinterConfig printer;
 		public FlowLayoutWidget manualControlsLayout;
 		private Button disableMotors;
 		private EditManualMovementSpeedsWindow editManualMovementSettingsWindow;
@@ -85,9 +85,9 @@ namespace MatterHackers.MatterControl.PrinterControls
 			return container;
 		}
 
-		public MovementControls(PrinterConnection printerConnection, int headingPointSize)
+		public MovementControls(PrinterConfig printer, int headingPointSize)
 		{
-			this.printerConnection = printerConnection;
+			this.printer = printer;
 			var buttonFactory = ApplicationController.Instance.Theme.DisableableControlBase;
 
 			Button editButton;
@@ -103,7 +103,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			{
 				if (editManualMovementSettingsWindow == null)
 				{
-					editManualMovementSettingsWindow = new EditManualMovementSpeedsWindow("Movement Speeds".Localize(), printerConnection.PrinterSettings.Helpers.GetMovementSpeedsString(), SetMovementSpeeds);
+					editManualMovementSettingsWindow = new EditManualMovementSpeedsWindow("Movement Speeds".Localize(), printer.Settings.Helpers.GetMovementSpeedsString(), SetMovementSpeeds);
 					editManualMovementSettingsWindow.Closed += (s, e2) =>
 					{
 						editManualMovementSettingsWindow = null;
@@ -115,7 +115,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				}
 			};
 
-			jogControls = new JogControls(printerConnection, new XYZColors());
+			jogControls = new JogControls(printer, new XYZColors());
 			jogControls.Margin = new BorderDouble(0);
 
 			manualControlsLayout = new FlowLayoutWidget(FlowDirection.TopToBottom)
@@ -145,7 +145,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 		{
 			if (!string.IsNullOrEmpty(speedString))
 			{
-				printerConnection.PrinterSettings.SetValue(SettingsKey.manual_movement_speeds, speedString);
+				printer.Settings.SetValue(SettingsKey.manual_movement_speeds, speedString);
 				ApplicationController.Instance.ReloadAdvancedControlsPanel();
 			}
 		}
@@ -198,7 +198,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			disableMotors.Margin = new BorderDouble(0);
 			disableMotors.Click += (s, e) =>
 			{
-				printerConnection.ReleaseMotors();
+				printer.Connection.ReleaseMotors();
 			};
 
 			homeButtonBar.AddChild(homeIconImageWidget);
@@ -216,7 +216,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			};
 			homeButtonBar.AddChild(offsetStreamLabel);
 
-			var ztuningWidget = new ZTuningWidget(printerConnection.PrinterSettings);
+			var ztuningWidget = new ZTuningWidget(printer.Settings);
 			homeButtonBar.AddChild(ztuningWidget);
 			
 			homeButtonBar.AddChild(new HorizontalSpacer());
@@ -250,7 +250,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				});
 			});
 
-			printerConnection.DestinationChanged.RegisterEvent((object sender, EventArgs e) =>
+			printer.Connection.DestinationChanged.RegisterEvent((object sender, EventArgs e) =>
 			{
 				reportDestinationChanged.CallEvent();
 			}, ref unregisterEvents);
@@ -260,7 +260,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		private void SetDestinationPositionText(TextWidget xPosition, TextWidget yPosition, TextWidget zPosition)
 		{
-			Vector3 destinationPosition = printerConnection.CurrentDestination;
+			Vector3 destinationPosition = printer.Connection.CurrentDestination;
 			xPosition.Text = "X: {0:0.00}".FormatWith(destinationPosition.x);
 			yPosition.Text = "Y: {0:0.00}".FormatWith(destinationPosition.y);
 			zPosition.Text = "Z: {0:0.00}".FormatWith(destinationPosition.z);
@@ -268,22 +268,22 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		private void homeAll_Click(object sender, EventArgs mouseEvent)
 		{
-			printerConnection.HomeAxis(PrinterConnection.Axis.XYZ);
+			printer.Connection.HomeAxis(PrinterConnection.Axis.XYZ);
 		}
 
 		private void homeXButton_Click(object sender, EventArgs mouseEvent)
 		{
-			printerConnection.HomeAxis(PrinterConnection.Axis.X);
+			printer.Connection.HomeAxis(PrinterConnection.Axis.X);
 		}
 
 		private void homeYButton_Click(object sender, EventArgs mouseEvent)
 		{
-			printerConnection.HomeAxis(PrinterConnection.Axis.Y);
+			printer.Connection.HomeAxis(PrinterConnection.Axis.Y);
 		}
 
 		private void homeZButton_Click(object sender, EventArgs mouseEvent)
 		{
-			printerConnection.HomeAxis(PrinterConnection.Axis.Z);
+			printer.Connection.HomeAxis(PrinterConnection.Axis.Z);
 		}
 	}
 

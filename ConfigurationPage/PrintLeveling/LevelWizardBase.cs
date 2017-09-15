@@ -53,13 +53,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		protected WizardControl printLevelWizard;
 
 		protected int totalSteps { get; private set; }
-		protected PrinterConnection printerConnection;
+		protected PrinterConfig printer;
 
-		public LevelWizardBase(PrinterConnection printerConnection, int width, int height, int totalSteps)
+		public LevelWizardBase(PrinterConfig printer, int width, int height, int totalSteps)
 			: base(width, height)
 		{
-			levelingStrings = new LevelingStrings(printerConnection.PrinterSettings);
-			this.printerConnection = printerConnection;
+			levelingStrings = new LevelingStrings(printer.Settings);
+			this.printer = printer;
 			AlwaysOnTopOfMain = true;
 			this.totalSteps = totalSteps;
 		}
@@ -155,36 +155,36 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		private static SystemWindow printLevelWizardWindow;
 
-		public static void ShowPrintLevelWizard(PrinterConnection printerConnection)
+		public static void ShowPrintLevelWizard(PrinterConfig printer)
 		{
 			LevelWizardBase.RuningState runningState = LevelWizardBase.RuningState.UserRequestedCalibration;
 
-			if (printerConnection.PrinterSettings.GetValue<bool>(SettingsKey.print_leveling_required_to_print))
+			if (printer.Settings.GetValue<bool>(SettingsKey.print_leveling_required_to_print))
 			{
 				// run in the first run state
 				runningState = LevelWizardBase.RuningState.InitialStartupCalibration;
 			}
 
-			ShowPrintLevelWizard(printerConnection, runningState);
+			ShowPrintLevelWizard(printer, runningState);
 		}
 
-		public static void ShowPrintLevelWizard(PrinterConnection printerConnection, LevelWizardBase.RuningState runningState)
+		public static void ShowPrintLevelWizard(PrinterConfig printer, LevelWizardBase.RuningState runningState)
 		{
 			if (printLevelWizardWindow == null)
 			{
-				printLevelWizardWindow = LevelWizardBase.CreateAndShowWizard(printerConnection, runningState);
+				printLevelWizardWindow = LevelWizardBase.CreateAndShowWizard(printer, runningState);
 				printLevelWizardWindow.Closed += (sender, e) =>
 				{
 					printLevelWizardWindow = null;
 
 					// make sure we raise the probe on close 
-					if (printerConnection.PrinterSettings.GetValue<bool>(SettingsKey.has_z_probe)
-						&& printerConnection.PrinterSettings.GetValue<bool>(SettingsKey.use_z_probe)
-						&& printerConnection.PrinterSettings.GetValue<bool>(SettingsKey.has_z_servo))
+					if (printer.Settings.GetValue<bool>(SettingsKey.has_z_probe)
+						&& printer.Settings.GetValue<bool>(SettingsKey.use_z_probe)
+						&& printer.Settings.GetValue<bool>(SettingsKey.has_z_servo))
 					{
 						// make sure the servo is retracted
-						var servoRetract = printerConnection.PrinterSettings.GetValue<double>(SettingsKey.z_servo_retracted_angle);
-						printerConnection.SendLineToPrinterNow($"M280 P0 S{servoRetract}");
+						var servoRetract = printer.Settings.GetValue<double>(SettingsKey.z_servo_retracted_angle);
+						printer.Connection.SendLineToPrinterNow($"M280 P0 S{servoRetract}");
 					}
 				};
 			}
@@ -194,14 +194,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 		}
 
-		private static LevelWizardBase CreateAndShowWizard(PrinterConnection printerConnection, LevelWizardBase.RuningState runningState)
+		private static LevelWizardBase CreateAndShowWizard(PrinterConfig printer, LevelWizardBase.RuningState runningState)
 		{
 			// turn off print leveling
-			printerConnection.PrinterSettings.Helpers.DoPrintLeveling(false);
+			printer.Settings.Helpers.DoPrintLeveling(false);
 			// clear any data that we are going to be acquiring (sampled positions, after z home offset)
-			PrintLevelingData levelingData = printerConnection.PrinterSettings.Helpers.GetPrintLevelingData();
+			PrintLevelingData levelingData = printer.Settings.Helpers.GetPrintLevelingData();
 			levelingData.SampledPositions.Clear();
-			printerConnection.PrinterSettings.SetValue(SettingsKey.baby_step_z_offset, "0");
+			printer.Settings.SetValue(SettingsKey.baby_step_z_offset, "0");
 
 			ApplicationController.Instance.ReloadAdvancedControlsPanel();
 
@@ -209,19 +209,19 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			switch (levelingData.CurrentPrinterLevelingSystem)
 			{
 				case PrintLevelingData.LevelingSystem.Probe3Points:
-					printLevelWizardWindow = new LevelWizard3Point(printerConnection, runningState);
+					printLevelWizardWindow = new LevelWizard3Point(printer, runningState);
 					break;
 
 				case PrintLevelingData.LevelingSystem.Probe7PointRadial:
-					printLevelWizardWindow = new LevelWizard7PointRadial(printerConnection, runningState);
+					printLevelWizardWindow = new LevelWizard7PointRadial(printer, runningState);
 					break;
 
 				case PrintLevelingData.LevelingSystem.Probe13PointRadial:
-					printLevelWizardWindow = new LevelWizard13PointRadial(printerConnection, runningState);
+					printLevelWizardWindow = new LevelWizard13PointRadial(printer, runningState);
 					break;
 
 				case PrintLevelingData.LevelingSystem.Probe3x3Mesh:
-					printLevelWizardWindow = new LevelWizard3x3Mesh(printerConnection, runningState);
+					printLevelWizardWindow = new LevelWizard3x3Mesh(printer, runningState);
 					break;
 
 				default:

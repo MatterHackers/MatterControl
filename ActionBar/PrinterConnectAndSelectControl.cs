@@ -45,17 +45,17 @@ namespace MatterHackers.MatterControl.ActionBar
 		private readonly string resetConnectionText = "Reset\nConnection".Localize().ToUpper();
 		private EventHandler unregisterEvents;
 
-		public ResetButton(PrinterConnection printerConnection, TextImageButtonFactory buttonFactory)
+		public ResetButton(PrinterConfig printer, TextImageButtonFactory buttonFactory)
 		{
 			this.HAnchor = HAnchor.Stretch | HAnchor.Fit;
 			this.VAnchor = VAnchor.Fit;
 			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
 			Button resetConnectionButton = buttonFactory.Generate(resetConnectionText, "e_stop4.png");
-			resetConnectionButton.Visible = printerConnection.PrinterSettings.GetValue<bool>(SettingsKey.show_reset_connection);
+			resetConnectionButton.Visible = printer.Settings.GetValue<bool>(SettingsKey.show_reset_connection);
 			resetConnectionButton.Click += (s, e) =>
 			{
-				UiThread.RunOnIdle(printerConnection.RebootBoard);
+				UiThread.RunOnIdle(printer.Connection.RebootBoard);
 			};
 			this.AddChild(resetConnectionButton);
 
@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				var stringEvent = e as StringEventArgs;
 				if (stringEvent?.Data == SettingsKey.show_reset_connection)
 				{
-					resetConnectionButton.Visible = printerConnection.PrinterSettings.GetValue<bool>(SettingsKey.show_reset_connection);
+					resetConnectionButton.Visible = printer.Settings.GetValue<bool>(SettingsKey.show_reset_connection);
 				}
 			}, ref unregisterEvents);
 		}
@@ -175,11 +175,11 @@ namespace MatterHackers.MatterControl.ActionBar
 		private Button disconnectButton;
 
 		private EventHandler unregisterEvents;
-		PrinterConnection printerConnection;
+		private PrinterConfig printer;
 
-		public PrinterConnectButton(PrinterConnection printerConnection, TextImageButtonFactory buttonFactory, BorderDouble margin)
+		public PrinterConnectButton(PrinterConfig printer, TextImageButtonFactory buttonFactory, BorderDouble margin)
 		{
-			this.printerConnection = printerConnection;
+			this.printer = printer;
 			this.HAnchor = HAnchor.Left | HAnchor.Fit;
 			this.VAnchor = VAnchor.Fit;
 			this.Margin = 0;
@@ -192,7 +192,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			{
 				if (connectButton.Enabled)
 				{
-					if (printerConnection.PrinterSettings.PrinterSelected)
+					if (printer.Settings.PrinterSelected)
 					{
 						UserRequestedConnectToActivePrinter();
 					}
@@ -206,15 +206,15 @@ namespace MatterHackers.MatterControl.ActionBar
 			disconnectButton.ToolTipText = "Disconnect from current printer".Localize();
 			disconnectButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
-				if (printerConnection.PrinterIsPrinting)
+				if (printer.Connection.PrinterIsPrinting)
 				{
 					StyledMessageBox.ShowMessageBox(
 						(bool disconnectCancel) =>
 						{
 							if (disconnectCancel)
 							{
-								printerConnection.Stop(false);
-								printerConnection.Disable();
+								printer.Connection.Stop(false);
+								printer.Connection.Disable();
 							}
 						},
 						disconnectAndCancelMessage,
@@ -225,7 +225,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				}
 				else
 				{
-					printerConnection.Disable();
+					printer.Connection.Disable();
 				}
 			});
 			this.AddChild(disconnectButton);
@@ -241,8 +241,8 @@ namespace MatterHackers.MatterControl.ActionBar
 			// Bind connect button states to active printer state
 			this.SetVisibleStates(null, null);
 
-			printerConnection.EnableChanged.RegisterEvent(SetVisibleStates, ref unregisterEvents);
-			printerConnection.CommunicationStateChanged.RegisterEvent(SetVisibleStates, ref unregisterEvents);
+			printer.Connection.EnableChanged.RegisterEvent(SetVisibleStates, ref unregisterEvents);
+			printer.Connection.CommunicationStateChanged.RegisterEvent(SetVisibleStates, ref unregisterEvents);
 		}
 
 		public override void OnClosed(ClosedEventArgs e)
@@ -253,10 +253,10 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		public void UserRequestedConnectToActivePrinter()
 		{
-			if (printerConnection.PrinterSettings.PrinterSelected)
+			if (printer.Settings.PrinterSelected)
 			{
 #if __ANDROID__
-				if (!printerConnection.PrinterSettings.GetValue<bool>(SettingsKey.enable_network_printing)
+				if (!printer.Settings.GetValue<bool>(SettingsKey.enable_network_printing)
 					&& !FrostedSerialPort.HasPermissionToDevice())
 				{
 					// Opens the USB device permissions dialog which will call back into our UsbDevice broadcast receiver to connect
@@ -265,8 +265,8 @@ namespace MatterHackers.MatterControl.ActionBar
 				else
 #endif
 				{
-					printerConnection.HaltConnectionThread();
-					printerConnection.ConnectToActivePrinter(true);
+					printer.Connection.HaltConnectionThread();
+					printer.Connection.ConnectToActivePrinter(true);
 				}
 			}
 		}
@@ -280,7 +280,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		{
 			UiThread.RunOnIdle(() =>
 			{
-				if (printerConnection.PrinterIsConnected)
+				if (printer.Connection.PrinterIsConnected)
 				{
 					disconnectButton.Visible = true;
 					connectButton.Visible = false;
@@ -291,10 +291,10 @@ namespace MatterHackers.MatterControl.ActionBar
 					connectButton.Visible = true;
 				}
 
-				var communicationState = printerConnection.CommunicationState;
+				var communicationState = printer.Connection.CommunicationState;
 
 				// Ensure connect buttons are locked while long running processes are executing to prevent duplicate calls into said actions
-				connectButton.Enabled = printerConnection.PrinterSettings.PrinterSelected
+				connectButton.Enabled = printer.Settings.PrinterSelected
 					&& communicationState != CommunicationStates.AttemptingToConnect;
 
 				disconnectButton.Enabled = communicationState != CommunicationStates.Disconnecting;

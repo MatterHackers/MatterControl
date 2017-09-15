@@ -359,7 +359,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				var eventArgs = e as StringEventArgs;
 				if (eventArgs?.Data == SettingsKey.feedrate_ratio)
 				{
-					feedRateRatio = this.PrinterSettings.GetValue<double>(SettingsKey.feedrate_ratio);
+					feedRateRatio = this.printer.Settings.GetValue<double>(SettingsKey.feedrate_ratio);
 				}
 			}, ref unregisterEvents);
 		}
@@ -403,13 +403,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			get
 			{
 				int baudRate = 250000;
-				if (this.PrinterSettings != null)
+				if (this.printer.Settings != null)
 				{
 					try
 					{
-						if (!string.IsNullOrEmpty(PrinterSettings.GetValue(SettingsKey.baud_rate)))
+						if (!string.IsNullOrEmpty(printer.Settings.GetValue(SettingsKey.baud_rate)))
 						{
-							baudRate = Convert.ToInt32(PrinterSettings.GetValue(SettingsKey.baud_rate));
+							baudRate = Convert.ToInt32(printer.Settings.GetValue(SettingsKey.baud_rate));
 						}
 					}
 					catch
@@ -500,15 +500,15 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 									PrintFinished.CallEvents(this, new PrintItemWrapperEventArgs(this.activePrintItem));
 
 									// clear single use setting on print completion
-									foreach (var keyValue in PrinterSettings.BaseLayer)
+									foreach (var keyValue in printer.Settings.BaseLayer)
 									{
-										string currentValue = PrinterSettings.GetValue(keyValue.Key);
+										string currentValue = printer.Settings.GetValue(keyValue.Key);
 
 										bool valueIsClear = currentValue == "0" | currentValue == "";
 										SliceSettingData data = SliceSettingsOrganizer.Instance.GetSettingsData(keyValue.Key);
 										if (data?.ResetAtEndOfPrint == true && !valueIsClear)
 										{
-											PrinterSettings.ClearValue(keyValue.Key);
+											printer.Settings.ClearValue(keyValue.Key);
 										}
 									}
 								}
@@ -547,9 +547,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		public string ComPort => PrinterSettings?.Helpers.ComPort();
+		public string ComPort => printer.Settings?.Helpers.ComPort();
 
-		public string DriverType => (this.ComPort == "Emulator") ? "Emulator" : PrinterSettings?.GetValue("driver_type");
+		public string DriverType => (this.ComPort == "Emulator") ? "Emulator" : printer.Settings?.GetValue("driver_type");
 
 		public bool AtxPowerEnabled
 		{
@@ -909,16 +909,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		// TODO: Consider having callers use the source rather than this proxy? Maybe better to change after arriving on a final type and location for printer settings
-		public PrinterSettings PrinterSettings => ActiveSliceSettings.Instance;
+		// HACK: PrinterConnection must be revised to take a constructor that receives and stores a reference to its parent PrinterConfig - this 
+		private PrinterConfig printer => ApplicationController.Instance.Printer;
 
-		private int NumberOfLinesInCurrentPrint
-		{
-			get
-			{
-				return loadedGCode.LineCount;
-			}
-		}
+		private int NumberOfLinesInCurrentPrint => loadedGCode.LineCount;
 
 		/// <summary>
 		/// Abort an ongoing attempt to establish communication with a printer due to the specified problem. This is a specialized
@@ -990,10 +984,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public void ConnectToActivePrinter(bool showHelpIfNoPort = false)
 		{
-			if (PrinterSettings != null)
+			if (printer.Settings != null)
 			{
 				// Start the process of requesting permission and exit if permission is not currently granted
-				if (!PrinterSettings.GetValue<bool>(SettingsKey.enable_network_printing)
+				if (!printer.Settings.GetValue<bool>(SettingsKey.enable_network_printing)
 					&& !FrostedSerialPort.EnsureDeviceAccess())
 				{
 					CommunicationState = CommunicationStates.FailedToConnect;
@@ -1013,7 +1007,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				if (!string.IsNullOrEmpty(currentPortName))
 				{
 					// TODO: Ensure that this does *not* cause a write to the settings file and should be an in memory update only
-					PrinterSettings?.Helpers.SetComPort(currentPortName);
+					printer.Settings?.Helpers.SetComPort(currentPortName);
 				}
 #endif
 
@@ -1413,7 +1407,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			// TODO: Ideally we would shutdown the printer connection when this method is called and we're connected. The
 			// current approach results in unpredictable behavior if the caller fails to close the connection
-			if (serialPort == null && this.PrinterSettings != null)
+			if (serialPort == null && this.printer.Settings != null)
 			{
 				IFrostedSerialPort resetSerialPort = FrostedSerialPortFactory.GetAppropriateFactory(this.DriverType).Create(this.ComPort);
 				resetSerialPort.Open();
@@ -1524,7 +1518,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 											haveReportedError = false;
 											// now send any command that initialize this printer
 											ClearQueuedGCode();
-											string connectGCode = PrinterSettings.GetValue(SettingsKey.connect_gcode);
+											string connectGCode = printer.Settings.GetValue(SettingsKey.connect_gcode);
 											SendLineToPrinterNow(connectGCode);
 
 											// and call back anyone who would like to know we connected
@@ -1679,7 +1673,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			try
 			{
-				if (PrinterSettings.PrinterSelected)
+				if (printer.Settings.PrinterSelected)
 				{
 					// first make sure we are not printing if possible (cancel slicing)
 					if (serialPort != null) // we still have a serial port
@@ -1859,11 +1853,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private string ProcessReadRegEx(string lineBeingRead)
 		{
-			if (read_regex != PrinterSettings.GetValue(SettingsKey.read_regex))
+			if (read_regex != printer.Settings.GetValue(SettingsKey.read_regex))
 			{
 				ReadLineReplacements.Clear();
 				string splitString = "\\n";
-				read_regex = PrinterSettings.GetValue(SettingsKey.read_regex);
+				read_regex = printer.Settings.GetValue(SettingsKey.read_regex);
 				foreach (string regExLine in read_regex.Split(splitString.ToCharArray(), StringSplitOptions.RemoveEmptyEntries))
 				{
 					var matches = getQuotedParts.Matches(regExLine);
@@ -2029,7 +2023,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			{
 				// get rid of all the gcode we have left to print
 				ClearQueuedGCode();
-				string cancelGCode = PrinterSettings.GetValue(SettingsKey.cancel_gcode);
+				string cancelGCode = printer.Settings.GetValue(SettingsKey.cancel_gcode);
 				if (cancelGCode.Trim() != "")
 				{
 					// add any gcode we want to print while canceling
@@ -2300,17 +2294,17 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				loadedGCode = GCodeFile.Load(gcodeFilename, CancellationToken.None);
 				gCodeFileStream0 = new GCodeFileStream(loadedGCode);
 
-				if (PrinterSettings.GetValue<bool>(SettingsKey.recover_is_enabled)
+				if (printer.Settings.GetValue<bool>(SettingsKey.recover_is_enabled)
 					&& activePrintTask != null) // We are resuming a failed print (do lots of interesting stuff).
 				{
-					pauseHandlingStream1 = new PauseHandlingStream(this, new PrintRecoveryStream(this, gCodeFileStream0, activePrintTask.PercentDone));
+					pauseHandlingStream1 = new PauseHandlingStream(printer, new PrintRecoveryStream(printer, gCodeFileStream0, activePrintTask.PercentDone));
 					// And increment the recovery count
 					activePrintTask.RecoveryCount++;
 					activePrintTask.Commit();
 				}
 				else
 				{
-					pauseHandlingStream1 = new PauseHandlingStream(this, gCodeFileStream0);
+					pauseHandlingStream1 = new PauseHandlingStream(printer, gCodeFileStream0);
 				}
 
 				firstStream = pauseHandlingStream1;
@@ -2321,11 +2315,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 
 			queuedCommandStream2 = new QueuedCommandsStream(firstStream);
-			macroProcessingStream3 = new MacroProcessingStream(queuedCommandStream2, this);
+			macroProcessingStream3 = new MacroProcessingStream(queuedCommandStream2, printer);
 			relativeToAbsoluteStream4 = new RelativeToAbsoluteStream(macroProcessingStream3);
-			printLevelingStream5 = new PrintLevelingStream(PrinterSettings, relativeToAbsoluteStream4, true);
+			printLevelingStream5 = new PrintLevelingStream(printer.Settings, relativeToAbsoluteStream4, true);
 			waitForTempStream6 = new WaitForTempStream(this, printLevelingStream5);
-			babyStepsStream7 = new BabyStepsStream(PrinterSettings, waitForTempStream6, gcodeFilename == null ? 2000 : 1);
+			babyStepsStream7 = new BabyStepsStream(printer.Settings, waitForTempStream6, gcodeFilename == null ? 2000 : 1);
 			if (activePrintTask != null)
 			{
 				// make sure we are in the position we were when we stopped printing
@@ -2334,7 +2328,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			extrusionMultiplyerStream8 = new ExtrusionMultiplyerStream(babyStepsStream7);
 			feedrateMultiplyerStream9 = new FeedRateMultiplyerStream(extrusionMultiplyerStream8);
 			requestTemperaturesStream10 = new RequestTemperaturesStream(this, feedrateMultiplyerStream9);
-			processWriteRegExStream11 = new ProcessWriteRegexStream(this.PrinterSettings, requestTemperaturesStream10, queuedCommandStream2);
+			processWriteRegExStream11 = new ProcessWriteRegexStream(this.printer.Settings, requestTemperaturesStream10, queuedCommandStream2);
 			totalGCodeStream = processWriteRegExStream11;
 
 			// Get the current position of the printer any time we reset our streams
@@ -2343,7 +2337,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private void LoadGCodeToPrint(string gcodeFilename)
 		{
-			CreateStreamProcessors(gcodeFilename, PrinterSettings.GetValue<bool>(SettingsKey.recover_is_enabled));
+			CreateStreamProcessors(gcodeFilename, printer.Settings.GetValue<bool>(SettingsKey.recover_is_enabled));
 		}
 
 		internal PrintItemWrapper activePrintItem;
@@ -2367,7 +2361,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						// TODO: Fix printerItemID int requirement
 						activePrintTask = new PrintTask();
 						activePrintTask.PrintStart = DateTime.Now;
-						activePrintTask.PrinterId = this.PrinterSettings.ID.GetHashCode();
+						activePrintTask.PrinterId = this.printer.Settings.ID.GetHashCode();
 						activePrintTask.PrintName = activePrintItem.PrintItem.Name;
 						activePrintTask.PrintItemId = activePrintItem.PrintItem.Id;
 						activePrintTask.PrintingGCodeFileName = activePrintItem.GetGCodePathAndFileName();
@@ -2446,7 +2440,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private bool IsNetworkPrinting()
 		{
-			return PrinterSettings.GetValue<bool>(SettingsKey.enable_network_printing);
+			return printer.Settings.GetValue<bool>(SettingsKey.enable_network_printing);
 		}
 
 		private void OnAtxPowerStateChanged(bool enableAtxPower)
@@ -2619,7 +2613,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private void TurnOffBedAndExtruders()
 		{
-			for (int i = 0; i < PrinterSettings.GetValue<int>(SettingsKey.extruder_count); i++)
+			for (int i = 0; i < printer.Settings.GetValue<int>(SettingsKey.extruder_count); i++)
 			{
 				SetTargetHotendTemperature(i, 0, true);
 			}

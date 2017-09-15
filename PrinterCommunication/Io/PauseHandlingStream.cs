@@ -48,15 +48,15 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		private PrinterMove moveLocationAtEndOfPauseCode;
 		private Stopwatch timeSinceLastEndstopRead = new Stopwatch();
 		bool readOutOfFilament = false;
-		PrinterConnection printerConnection;
+		private PrinterConfig printer;
 
 		private EventHandler unregisterEvents;
 
-		public PauseHandlingStream(PrinterConnection printerConnection, GCodeStream internalStream)
+		public PauseHandlingStream(PrinterConfig printer, GCodeStream internalStream)
 			: base(internalStream)
 		{
-			this.printerConnection = printerConnection;
-			printerConnection.ReadLine.RegisterEvent((s, e) =>
+			this.printer = printer;
+			printer.Connection.ReadLine.RegisterEvent((s, e) =>
 			{
 				StringEventArgs currentEvent = e as StringEventArgs;
 				if (currentEvent != null)
@@ -105,18 +105,18 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 				case PauseReason.PauseLayerReached:
 				case PauseReason.GCodeRequest:
-					printerConnection.PauseOnLayer.CallEvents(printerConnection, new PrintItemWrapperEventArgs(printerConnection.activePrintItem));
+					printer.Connection.PauseOnLayer.CallEvents(printer.Connection, new PrintItemWrapperEventArgs(printer.Connection.activePrintItem));
 					UiThread.RunOnIdle(() => StyledMessageBox.ShowMessageBox(ResumePrint, layerPauseMessage.FormatWith(layerNumber), pauseCaption, StyledMessageBox.MessageType.YES_NO, "Ok".Localize(), "Resume".Localize()));
 					break;
 
 				case PauseReason.FilamentRunout:
-					printerConnection.FilamentRunout.CallEvents(printerConnection, new PrintItemWrapperEventArgs(printerConnection.activePrintItem));
+					printer.Connection.FilamentRunout.CallEvents(printer.Connection, new PrintItemWrapperEventArgs(printer.Connection.activePrintItem));
 					UiThread.RunOnIdle(() => StyledMessageBox.ShowMessageBox(ResumePrint, filamentPauseMessage, pauseCaption, StyledMessageBox.MessageType.YES_NO, "Ok".Localize(), "Resume".Localize()));
 					break;
 			}
 
 			// Add the pause_gcode to the loadedGCode.GCodeCommandQueue
-			string pauseGCode = printerConnection.PrinterSettings.GetValue(SettingsKey.pause_gcode);
+			string pauseGCode = printer.Settings.GetValue(SettingsKey.pause_gcode);
 
 			// put in the gcode for pausing (if any)
 			InjectPauseGCode(pauseGCode);
@@ -130,9 +130,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		private void ResumePrint(bool clickedOk)
 		{
 			// They clicked either Resume or Ok
-			if (!clickedOk && printerConnection.PrinterIsPaused)
+			if (!clickedOk && printer.Connection.PrinterIsPaused)
 			{
-				printerConnection.Resume();
+				printer.Connection.Resume();
 			}
 		}
 
@@ -151,7 +151,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 			if (lineToSend == null)
 			{
-				if (!printerConnection.PrinterIsPaused)
+				if (!printer.Connection.PrinterIsPaused)
 				{
 					lineToSend = base.ReadLine();
 					if (lineToSend == null)
@@ -160,12 +160,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					}
 
 					// We got a line from the gcode we are sending check if we should queue a request for filament runout
-					if (printerConnection.PrinterSettings.GetValue<bool>(SettingsKey.filament_runout_sensor))
+					if (printer.Settings.GetValue<bool>(SettingsKey.filament_runout_sensor))
 					{
 						// request to read the endstop state
 						if (!timeSinceLastEndstopRead.IsRunning || timeSinceLastEndstopRead.ElapsedMilliseconds > 5000)
 						{
-							printerConnection.SendLineToPrinterNow("M119");
+							printer.Connection.SendLineToPrinterNow("M119");
 							timeSinceLastEndstopRead.Restart();
 						}
 					}
@@ -194,10 +194,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			{
 				moveLocationAtEndOfPauseCode = LastDestination;
 
-				if (printerConnection.PrinterIsPrinting)
+				if (printer.Connection.PrinterIsPrinting)
 				{
 					// remember where we were after we ran the pause gcode
-					printerConnection.CommunicationState = CommunicationStates.Paused;
+					printer.Connection.CommunicationState = CommunicationStates.Paused;
 				}
 
 				lineToSend = "";
@@ -225,11 +225,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			Vector3 positionBeforeActualPause = moveLocationAtEndOfPauseCode.position;
 			InjectPauseGCode("G92 E{0:0.###}".FormatWith(moveLocationAtEndOfPauseCode.extrusion));
 			Vector3 ensureAllAxisAreSent = positionBeforeActualPause + new Vector3(.01, .01, .01);
-			var feedRates = printerConnection.PrinterSettings.Helpers.ManualMovementSpeeds();
+			var feedRates = printer.Settings.Helpers.ManualMovementSpeeds();
 			InjectPauseGCode("G1 X{0:0.###} Y{1:0.###} Z{2:0.###} F{3}".FormatWith(ensureAllAxisAreSent.x, ensureAllAxisAreSent.y, ensureAllAxisAreSent.z, feedRates.x + 1));
 			InjectPauseGCode("G1 X{0:0.###} Y{1:0.###} Z{2:0.###} F{3}".FormatWith(positionBeforeActualPause.x, positionBeforeActualPause.y, positionBeforeActualPause.z, feedRates));
 
-			string resumeGCode = printerConnection.PrinterSettings.GetValue(SettingsKey.resume_gcode);
+			string resumeGCode = printer.Settings.GetValue(SettingsKey.resume_gcode);
 			InjectPauseGCode(resumeGCode);
 			InjectPauseGCode("M114"); // make sure we know where we are after this resume code
 		}
@@ -262,7 +262,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		{
 			int layerNumber;
 
-			if (int.TryParse(layer, out layerNumber) && printerConnection.PrinterSettings.Helpers.LayerToPauseOn().Contains(layerNumber))
+			if (int.TryParse(layer, out layerNumber) && printer.Settings.Helpers.LayerToPauseOn().Contains(layerNumber))
 			{
 				return true;
 			}

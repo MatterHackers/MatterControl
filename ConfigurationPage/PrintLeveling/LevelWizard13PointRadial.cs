@@ -44,8 +44,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	{
 		static readonly int numberOfRadialSamples = 12;
 
-		public LevelWizard13PointRadial(PrinterConnection printerConnection, LevelWizardBase.RuningState runningState)
-			: base(printerConnection, runningState, 500, 370, (numberOfRadialSamples + 1) * 3, numberOfRadialSamples)
+		public LevelWizard13PointRadial(PrinterConfig printer, LevelWizardBase.RuningState runningState)
+			: base(printer, runningState, 500, 370, (numberOfRadialSamples + 1) * 3, numberOfRadialSamples)
 		{
 		}
 
@@ -65,8 +65,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public override Vector2 GetPrintLevelPositionToSample(int index, double radius)
 		{
-			PrintLevelingData levelingData = printerConnection.PrinterSettings.Helpers.GetPrintLevelingData();
-			return GetLevelingFunctions(printerConnection.PrinterSettings, numberOfRadialSamples, levelingData, printerConnection.PrinterSettings.GetValue<Vector2>(SettingsKey.print_center))
+			PrintLevelingData levelingData = printer.Settings.Helpers.GetPrintLevelingData();
+			return GetLevelingFunctions(printer.Settings, numberOfRadialSamples, levelingData, printer.Settings.GetValue<Vector2>(SettingsKey.print_center))
 				.GetPrintLevelPositionToSample(index, radius);
 		}
 

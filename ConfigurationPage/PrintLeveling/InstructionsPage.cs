@@ -30,8 +30,6 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
 using MatterHackers.Agg.UI;
-using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
@@ -40,9 +38,13 @@ namespace MatterHackers.MatterControl
 		double extraTextScaling = 1;
 		protected FlowLayoutWidget topToBottomControls;
 
-		public InstructionsPage(string pageDescription, string instructionsText)
+		protected PrinterConfig printer { get; }
+
+		public InstructionsPage(PrinterConfig printer, string pageDescription, string instructionsText)
 			: base(pageDescription)
 		{
+			this.printer = printer;
+
 			if (UserSettings.Instance.IsTouchScreen)
 			{
 				extraTextScaling = 1.33333;

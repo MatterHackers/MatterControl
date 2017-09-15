@@ -44,14 +44,14 @@ namespace MatterHackers.MatterControl
 	{
 		static public RootedObjectEventHandler AddPluginControls = new RootedObjectEventHandler();
 		private static bool pluginsQueuedToAdd = false;
-		PrinterConnection printerConnection;
+		PrinterConfig printer;
 
-		public ManualPrinterControls(PrinterConnection printerConnection)
+		public ManualPrinterControls(PrinterConfig printer)
 		{
 			this.BackgroundColor = ApplicationController.Instance.Theme.TabBodyBackground;
 			AnchorAll();
 
-			AddChild(new ManualPrinterControlsDesktop(printerConnection));
+			AddChild(new ManualPrinterControlsDesktop(printer));
 		}
 
 		public override void OnLoad(EventArgs args)
@@ -79,11 +79,11 @@ namespace MatterHackers.MatterControl
 		private DisableableWidget calibrationControlsContainer;
 
 		private EventHandler unregisterEvents;
-		PrinterConnection printerConnection;
+		private PrinterConfig printer;
 
-		public ManualPrinterControlsDesktop(PrinterConnection printerConnection)
+		public ManualPrinterControlsDesktop(PrinterConfig printer)
 		{
-			this.printerConnection = printerConnection;
+			this.printer = printer;
 			ScrollArea.HAnchor |= HAnchor.Stretch;
 			AnchorAll();
 			AutoScroll = true;
@@ -104,16 +104,16 @@ namespace MatterHackers.MatterControl
 			};
 			this.AddChild(controlsTopToBottomLayout);
 
-			movementControlsContainer = new MovementControls(printerConnection, headingPointSize);
+			movementControlsContainer = new MovementControls(printer, headingPointSize);
 			controlsTopToBottomLayout.AddChild(movementControlsContainer);
 
 			if (!ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_hardware_leveling))
 			{
-				calibrationControlsContainer = new CalibrationSettingsWidget(printerConnection, theme.ButtonFactory, headingPointSize);
+				calibrationControlsContainer = new CalibrationSettingsWidget(printer, theme.ButtonFactory, headingPointSize);
 				controlsTopToBottomLayout.AddChild(calibrationControlsContainer);
 			}
 
-			macroControlsContainer = new MacroControls(printerConnection, headingPointSize);
+			macroControlsContainer = new MacroControls(printer, headingPointSize);
 			controlsTopToBottomLayout.AddChild(macroControlsContainer);
 
 			var linearPanel = new FlowLayoutWidget()
@@ -122,14 +122,14 @@ namespace MatterHackers.MatterControl
 			};
 			controlsTopToBottomLayout.AddChild(linearPanel);
 
-			fanControlsContainer = new FanControls(printerConnection, headingPointSize);
+			fanControlsContainer = new FanControls(printer.Connection, headingPointSize);
 			if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_fan))
 			{
 				controlsTopToBottomLayout.AddChild(fanControlsContainer);
 			}
 
 #if !__ANDROID__
-			controlsTopToBottomLayout.AddChild(new PowerControls(printerConnection, headingPointSize));
+			controlsTopToBottomLayout.AddChild(new PowerControls(printer.Connection, headingPointSize));
 #endif
 			tuningAdjustmentControlsContainer = new AdjustmentControls(headingPointSize);
 			controlsTopToBottomLayout.AddChild(tuningAdjustmentControlsContainer);
@@ -137,8 +137,8 @@ namespace MatterHackers.MatterControl
 			// HACK: this is a hack to make the layout engine fire again for this control
 			UiThread.RunOnIdle(() => tuningAdjustmentControlsContainer.Width = tuningAdjustmentControlsContainer.Width + 1);
 
-			printerConnection.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
-			printerConnection.EnableChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
+			printer.Connection.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
+			printer.Connection.EnableChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
 
 			SetVisibleControls();
 		}
@@ -167,7 +167,7 @@ namespace MatterHackers.MatterControl
 			}
 			else // we at least have a printer selected
 			{
-				switch (printerConnection.CommunicationState)
+				switch (printer.Connection.CommunicationState)
 				{
 					case CommunicationStates.Disconnecting:
 					case CommunicationStates.ConnectionLost:
@@ -213,7 +213,7 @@ namespace MatterHackers.MatterControl
 
 					case CommunicationStates.PreparingToPrint:
 					case CommunicationStates.Printing:
-						switch (printerConnection.DetailedPrintingState)
+						switch (printer.Connection.DetailedPrintingState)
 						{
 							case DetailedPrintingState.HomingAxis:
 							case DetailedPrintingState.HeatingBed:

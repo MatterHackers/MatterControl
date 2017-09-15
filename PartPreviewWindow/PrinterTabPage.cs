@@ -180,7 +180,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			// Must come after we have an instance of View3DWidget an its undo buffer
-			topToBottom.AddChild(new PrinterActionsBar(printerConnection, modelViewer, this)
+			topToBottom.AddChild(new PrinterActionsBar(printer, modelViewer, this)
 			{
 				Padding = theme.ToolbarPadding
 			}, 0);
@@ -278,8 +278,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				1,
 				new Vector2[]
 				{
-					printerConnection.PrinterSettings.Helpers.ExtruderOffset(0),
-					printerConnection.PrinterSettings.Helpers.ExtruderOffset(1)
+					printer.Settings.Helpers.ExtruderOffset(0),
+					printer.Settings.Helpers.ExtruderOffset(1)
 				},
 				this.GetRenderType,
 				MeshViewerWidget.GetExtruderColor);
@@ -480,7 +480,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			popupContainer.AddChild(transparentExtrusion);
 
 			// Extrusion checkbox
-			if (printerConnection.PrinterSettings.GetValue<int>(SettingsKey.extruder_count) > 1)
+			if (printer.Settings.GetValue<int>(SettingsKey.extruder_count) > 1)
 			{
 				CheckBox hideExtruderOffsets = new CheckBox("Hide Offsets", textColor: textColor);
 				hideExtruderOffsets.Checked = gcodeOptions.HideExtruderOffsets;
@@ -590,7 +590,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			parent.AddChild(sideBar);
 
-			if (printerConnection.PrinterSettings.PrinterSelected)
+			if (printer.Settings.PrinterSelected)
 			{
 				sideBar.AddPage(
 					"Slice Settings".Localize(), 
@@ -604,9 +604,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				sideBar.AddPage("Slice Settings".Localize(), new SliceSettingsMissingWidget());
 			}
 
-			sideBar.AddPage("Controls".Localize(), new ManualPrinterControls(printerConnection));
+			sideBar.AddPage("Controls".Localize(), new ManualPrinterControls(printer));
 
-			sideBar.AddPage("Terminal".Localize(), new TerminalWidget(printerConnection)
+			sideBar.AddPage("Terminal".Localize(), new TerminalWidget(printer.Connection)
 			{
 				VAnchor = VAnchor.Stretch,
 				HAnchor = HAnchor.Stretch
