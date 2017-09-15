@@ -59,9 +59,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 				this.AddChild(label);
 
-				if (imageUrl != null)
+				if (!string.IsNullOrEmpty(imageUrl))
 				{
-					ApplicationController.Instance.DownloadToImageAsync(imageWidget.Image, imageUrl, false);
+					// Attempt to load image
+					try
+					{
+						// TODO: Must use caching
+						ApplicationController.Instance.DownloadToImageAsync(imageWidget.Image, imageUrl, false);
+					}
+					catch { }
 				}
 			}
 
@@ -78,11 +84,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		public PrinterTab(string tabTitle, string tabName, TabPage tabPage)
+		public PrinterTab(string tabTitle, string tabName, TabPage tabPage, string tabImageUrl = null)
 		: this(
-			new TabPill(tabTitle, new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 140), "https://www.google.com/s2/favicons?domain=www.printrbot.com"),
-			new TabPill(tabTitle, ActiveTheme.Instance.PrimaryTextColor, "https://www.google.com/s2/favicons?domain=www.printrbot.com"),
-			new TabPill(tabTitle, ActiveTheme.Instance.PrimaryTextColor, "https://www.google.com/s2/favicons?domain=www.lulzbot.com"),
+			new TabPill(tabTitle, new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 140), tabImageUrl),
+			new TabPill(tabTitle, ActiveTheme.Instance.PrimaryTextColor, tabImageUrl),
+			new TabPill(tabTitle, ActiveTheme.Instance.PrimaryTextColor, tabImageUrl),
 			tabName,
 			tabPage)
 		{

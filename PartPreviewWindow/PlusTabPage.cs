@@ -63,18 +63,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			createItemsSection.AddChild(createPart);
 			createPart.Click += (s, e) =>
 			{
-				var partTab = new PrinterTab(
-						"New Part",
-						"newPart" + tabControl.TabCount,
-						new PrinterTabBase(printer, theme, printItem, "xxxxx"));
-
-				theme.SetPrinterTabStyles(partTab);
-
-				var margin = partTab.Margin;
-				partTab.Margin = new BorderDouble(1, margin.Bottom, 1, margin.Top);
-
-				tabControl.AddTab(partTab, tabPosition: 1);
-				tabControl.SelectedTabIndex = 1;
+				CreatePartTab(tabControl, printer, theme, printItem);
 			};
 
 			var createPrinter = theme.ButtonFactory.Generate("Create Printer".Localize());
@@ -164,6 +153,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 				otherItemsSection.AddChild(shopButton);
 			}
+		}
+
+		internal static void CreatePartTab(TabControl tabControl, PrinterConfig printer, ThemeConfig theme, PrintItemWrapper printItem, int tabIndex = 1)
+		{
+			var partTab = new PrinterTab(
+				"New Part",
+				"newPart" + tabControl.TabCount,
+				new PrinterTabBase(printer, theme, printItem, "xxxxx"),
+				"https://i.imgur.com/nkeYgfU.png");
+
+			theme.SetPrinterTabStyles(partTab);
+
+			var margin = partTab.Margin;
+			partTab.Margin = new BorderDouble(1, margin.Bottom, 1, margin.Top);
+
+			tabControl.AddTab(partTab, tabPosition: tabIndex);
+			tabControl.SelectedTabIndex = tabIndex;
 		}
 
 		private FlowLayoutWidget CreateSection(string headingText)

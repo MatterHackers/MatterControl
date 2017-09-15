@@ -43,6 +43,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public class PartPreviewContent : FlowLayoutWidget
 	{
 		private EventHandler unregisterEvents;
+		private PrinterTab printerTab = null;
 
 		public PartPreviewContent(PrintItemWrapper printItem)
 		{
@@ -72,18 +73,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				selectedTabColor = ActiveTheme.Instance.SecondaryAccentColor;
 			}
 
-			// TODO: Switch this to load a tab for each 'open' printer
-			//
 			// Add a tab for the current printer
-			var printerTab = new PrinterTab(
-				tabTitle,
-				"3D View Tab",
-				new PrinterTabPage(PrinterConnection.Instance, printerConfig, theme, printItem, tabTitle.ToUpper()));
-			printerTab.ToolTipText = "Preview 3D Design".Localize();
-
-			theme.SetPrinterTabStyles(printerTab);
-
-			tabControl.AddTab(printerTab);
+			if (ActiveSliceSettings.Instance.PrinterSelected)
+			{
+				printerTab = CreatePrinterTab(printItem, printerConfig, theme, tabTitle);
+				tabControl.AddTab(printerTab);
+			}
+			else
+			{
+				PlusTabPage.CreatePartTab(tabControl, printerConfig, theme, printItem, 0);
+			}
 
 			// TODO: add in the printers and designs that are currently open (or were open last run).
 			var plusTabSelect = new TextTab(
@@ -159,15 +158,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			tabControl.TabBar.AddChild(rightPanelArea);
 
 			this.AddChild(tabControl);
-	
+
 			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
 			{
-				if (e is StringEventArgs stringEvent 
-					&& stringEvent.Data == SettingsKey.printer_name)
+				if (e is StringEventArgs stringEvent
+					&& stringEvent.Data == SettingsKey.printer_name
+					&& printerTab != null)
 				{
 					printerTab.TabPage.Text = ActiveSliceSettings.Instance.GetValue(SettingsKey.printer_name);
 				}
-				
+
 			}, ref unregisterEvents);
 
 			ApplicationController.Instance.NotifyPrintersTabRightElement(extensionArea);
@@ -179,6 +179,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				ApplicationController.Instance.NotifyPrintersTabRightElement(extensionArea);
 			}, ref unregisterEvents);
+		}
+
+		private static PrinterTab CreatePrinterTab(PrintItemWrapper printItem, PrinterConfig printerConfig, ThemeConfig theme, string tabTitle)
+		{
+			var printerTab = new PrinterTab(
+				tabTitle,
+				"3D View Tab",
+				new PrinterTabPage(PrinterConnection.Instance, printerConfig, theme, printItem, tabTitle.ToUpper()),
+				"https://www.google.com/s2/favicons?domain=www.printrbot.com" // "https://www.google.com/s2/favicons?domain=www.lulzbot.com"
+				);
+			printerTab.ToolTipText = "Preview 3D Design".Localize();
+
+			theme.SetPrinterTabStyles(printerTab);
+			return printerTab;
 		}
 
 		public override void OnClosed(ClosedEventArgs e)
