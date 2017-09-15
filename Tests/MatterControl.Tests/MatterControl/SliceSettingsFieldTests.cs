@@ -73,15 +73,16 @@ namespace MatterControl.Tests.MatterControl
 			var testClass = this.GetType();
 			var thisClassMethods = testClass.GetMethods(BindingFlags.Public | BindingFlags.Instance);
 
-			foreach (var uiFieldType in PluginFinder.FindTypes<UIField>())
+			// Find and validate all UIField types, skipping abstract classes
+			foreach (var fieldType in PluginFinder.FindTypes<UIField>().Where(fieldType => !fieldType.IsAbstract))
 			{
-				// Skip abstract class
-				if (uiFieldType.Name == "UIField")
+				
+				if (fieldType.Name == "UIField")
 				{
 					continue;
 				}
 
-				string expectedTestName = $"{uiFieldType.Name}Test";
+				string expectedTestName = $"{fieldType.Name}Test";
 				Assert.AreEqual(
 					1,
 					thisClassMethods.Where(m => m.Name == expectedTestName).Count(),
