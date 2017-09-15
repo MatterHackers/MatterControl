@@ -295,6 +295,7 @@
     <Compile Include="SlicerConfiguration\SliceSettingsMissingWidget.cs" />
     <Compile Include="SlicerConfiguration\SliceSettingListControl.cs" />
     <Compile Include="SlicerConfiguration\SliceSettingsRow.cs" />
+    <Compile Include="SlicerConfiguration\UIFields\BoundDoubleField.cs" />
     <Compile Include="SlicerConfiguration\UIFields\UIField.cs" />
     <Compile Include="SlicerConfiguration\UIFields\DoubleField.cs" />
     <Compile Include="SlicerConfiguration\UIFields\DoubleOrPercentField.cs" />

@@ -526,7 +526,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						}
 						else
 						{
-							uiField = new DoubleField();
+							uiField = new PositiveDoubleField();
 						};
 						break;
 
