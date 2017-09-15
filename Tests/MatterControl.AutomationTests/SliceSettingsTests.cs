@@ -410,7 +410,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Printer Tab");
 				testRunner.ClickByName("Features Tab");
 
-				// Scroll into view the hasHeatedBed field
+				// Scroll the 'Has Heated Bed' field into view
 				testRunner.DragByName("Show Reset Connection Field", 1, offset: new Agg.Point2D(-40, 0));
 				testRunner.MoveToByName("Show Reset Connection Field", 1, offset: new Agg.Point2D(0, 120));
 				testRunner.Drop();
