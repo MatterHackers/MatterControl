@@ -78,7 +78,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var printerTab = new PrinterTab(
 				tabTitle,
 				"3D View Tab",
-				new PrinterTabPage(PrinterConnection.Instance, printerConfig, theme, printItem, tabTitle.ToUpper()));
+				new PrinterTabPage(PrinterConnection.Instance, printerConfig, theme, printItem, tabTitle.ToUpper()),
+				"https://www.google.com/s2/favicons?domain=www.printrbot.com" // "https://www.google.com/s2/favicons?domain=www.printrbot.com", "https://www.google.com/s2/favicons?domain=www.lulzbot.com"
+				);
 			printerTab.ToolTipText = "Preview 3D Design".Localize();
 
 			theme.SetPrinterTabStyles(printerTab);

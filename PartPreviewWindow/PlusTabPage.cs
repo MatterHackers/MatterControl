@@ -66,7 +66,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				var partTab = new PrinterTab(
 						"New Part",
 						"newPart" + tabControl.TabCount,
-						new PrinterTabBase(printer, theme, printItem, "xxxxx"));
+						new PrinterTabBase(printer, theme, printItem, "xxxxx"),
+						"https://i.imgur.com/nkeYgfU.png");
 
 				theme.SetPrinterTabStyles(partTab);
 
