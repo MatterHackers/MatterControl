@@ -29,8 +29,10 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using MatterHackers.Agg;
@@ -49,20 +51,21 @@ namespace MatterControl.Tests.MatterControl
 	{
 		public static Task RunTest(this SystemWindow systemWindow, AutomationTest automationTest, int timeout)
 		{
-			return AutomationRunner.ShowWindowAndExecuteTests(systemWindow, automationTest, timeout, closeWindow: () => Application.Exit());
+			return AutomationRunner.ShowWindowAndExecuteTests(systemWindow, automationTest, timeout);
 		}
 
+		[DebuggerStepThrough]
 		public static void Add(this List<ValueMap> valueMap, string input, string expected)
 		{
 			valueMap.Add(new ValueMap(input, expected));
 		}
 	}
 
-	[TestFixture, Category("SliceSettingsTests"), RunInApplicationDomain]
+	[TestFixture, Category("SliceSettingsTests"), RunInApplicationDomain, Apartment(ApartmentState.STA)]
 	public class SliceSettingsFieldTests
 	{
 		[Test]
-		public void TestExistsForEachUIFieldType()
+		public Task TestExistsForEachUIFieldType()
 		{
 			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
@@ -84,9 +87,11 @@ namespace MatterControl.Tests.MatterControl
 					thisClassMethods.Where(m => m.Name == expectedTestName).Count(),
 					"Test for UIField missing - not yet created or typo'd - Expected: " + expectedTestName);
 			}
+
+			return Task.CompletedTask;
 		}
 
-		[Test, Apartment(System.Threading.ApartmentState.STA)]
+		[Test]
 		public async Task DoubleFieldTest()
 		{
 			await ValidateAgainstValueMap<DoubleField>(
@@ -96,11 +101,15 @@ namespace MatterControl.Tests.MatterControl
 					{"0.12345", "0.12345"},
 					{"1.2345", "1.2345"},
 					{"12.345", "12.345"},
+					{"12.7", "12.7"},
 					{"+0.12345", "0.12345"},
 					{"+1.2345", "1.2345"},
 					{"+12.345", "12.345"},
 					{"-0.12345", "-0.12345"},
 					{"-1.2345", "-1.2345"},
+					{"-12.345", "-12.345"},
+					{"12.7", "12.7"},
+					{"22", "22" },
 					// Invalid values revert to expected
 					{"abc", "0"},
 					{"+abc", "0"},
@@ -108,7 +117,7 @@ namespace MatterControl.Tests.MatterControl
 				});
 		}
 
-		[Test, Apartment(System.Threading.ApartmentState.STA)]
+		[Test]
 		public async Task PositiveDoubleFieldTest()
 		{
 			await ValidateAgainstValueMap<PositiveDoubleField>(
@@ -118,11 +127,15 @@ namespace MatterControl.Tests.MatterControl
 					{"0.12345", "0.12345"},
 					{"1.2345", "1.2345"},
 					{"12.345", "12.345"},
+					{"12.7", "12"}, // Floor not round?
 					{"+0.12345", "0.12345"},
 					{"+1.2345", "1.2345"},
 					{"+12.345", "12.345"},
 					{"-0.12345", "0"}, // TODO: Classic behavior but... shouldn't we just drop the negative sign rather than force to 0?
 					{"-1.2345", "0"},
+					{"-12.345", "0"},
+					{"-12.7", "12"}, // Floor not round?
+					{"22", "22" },
 					// Invalid values revert to expected
 					{"abc", "0"},
 					{"+abc", "0"},
@@ -130,10 +143,30 @@ namespace MatterControl.Tests.MatterControl
 				});
 		}
 
-		[Test, Ignore("Not Implemented")]
-		public void IntFieldTest()
+		[Test]
+		public async Task IntFieldTest()
 		{
-			Assert.Fail();
+			await ValidateAgainstValueMap<IntField>(
+				(field) => (field.Content as MHNumberEdit).ActuallNumberEdit.Text,
+				new List<ValueMap>()
+				{
+					{"0.12345", "0"},
+					{"1.2345", "1"},
+					{"12.345", "12"},
+					{"12.7", "12"}, // Floor not round?
+					{"+0.12345", "0"},
+					{"+1.2345", "1"},
+					{"+12.345", "12"},
+					{"-0.12345", "0"},
+					{"-1.2345", "-1"},
+					{"-12.345", "-12"},
+					{"-12.7", "-12"}, // Floor not round?
+					{"22", "22" },
+					// Invalid values revert to expected
+					{"abc", "0"},
+					{"+abc", "0"},
+					{"-abc", "0"},
+				});
 		}
 
 		[Test, Ignore("Not Implemented")]
@@ -217,6 +250,7 @@ namespace MatterControl.Tests.MatterControl
 
 		public class ValueMap
 		{
+			[DebuggerStepThrough]
 			public ValueMap(string input, string expected)
 			{
 				this.InputValue = input;
@@ -246,7 +280,7 @@ namespace MatterControl.Tests.MatterControl
 
 				foreach (var item in valuesMap)
 				{
-					testsWindow.SetAndValidateValues(item.ExpectedValue, item.ExpectedValue, collectValueFromWidget);
+					testsWindow.SetAndValidateValues(item.ExpectedValue, item.InputValue, collectValueFromWidget);
 				}
 
 				return Task.CompletedTask;
