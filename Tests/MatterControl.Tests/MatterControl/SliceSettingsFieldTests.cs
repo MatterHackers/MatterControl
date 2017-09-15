@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -9,17 +10,21 @@ using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.Tests.Automation;
-using MatterHackers.VectorMath;
 using NUnit.Framework;
+using static MatterControl.Tests.MatterControl.SliceSettingsFieldTests;
 
 namespace MatterControl.Tests.MatterControl
 {
-
 	public static class RunnerX
 	{
 		public static Task RunTest(this SystemWindow systemWindow, AutomationTest automationTest, int timeout)
 		{
 			return AutomationRunner.ShowWindowAndExecuteTests(systemWindow, automationTest, timeout);
+		}
+
+		public static void Add(this List<ValueMap> valueMap, string input, string expected)
+		{
+			valueMap.Add(new ValueMap(input, expected));
 		}
 	}
 
@@ -128,7 +133,7 @@ namespace MatterControl.Tests.MatterControl
 				column.AddChild(widgetUnderTest);
 			}
 
-			public void SetAndValidateValues(string expectedValue, string inputValue, Func<string> collectValueFromWidget, int delay = 500)
+			public void SetAndValidateValues(string expectedValue, string inputValue, Func<UIField, string> collectValueFromWidget, int delay = 500)
 			{
 				// Set expected and source
 				this.ExpectedText.Text = expectedValue;
@@ -141,7 +146,7 @@ namespace MatterControl.Tests.MatterControl
 				Assert.AreEqual(expectedValue, field.Value);
 
 				// Assert expected widget value
-				Assert.AreEqual(expectedValue, collectValueFromWidget());
+				Assert.AreEqual(expectedValue, collectValueFromWidget(field));
 
 				// Sleep
 				System.Threading.Thread.Sleep(delay);
@@ -151,41 +156,47 @@ namespace MatterControl.Tests.MatterControl
 		[Test, Apartment(System.Threading.ApartmentState.STA)]
 		public async Task DoubleFieldTest()
 		{
-			var valuesMap = new(string inputValue, string expected)[]
-			{
-				("0.12345", "0.12345"),
-				("1.2345", "1.2345"),
-				("12.345", "12.345"),
-				("+0.12345", "0.12345"),
-				("+1.2345", "1.2345"),
-				("+12.345", "12.345"),
-				("-0.12345", "-0.12345"),
-				("-1.2345", "-1.2345"),
-				// Invalid values revert to expected
-				("abc", "0"),
-				("+abc", "0"),
-				("-abc", "0"),
-			};
-
-			var field = new DoubleField();
-
-			var testsWindow = new UIFieldTestWindow(400, 200, field);
-
-			await testsWindow.RunTest((testRunner) =>
-			{
-				var primaryFieldWidget = field.Content as MHNumberEdit;
-
-				foreach (var item in valuesMap)
+			await ValidateAgainstValueMap<PositiveDoubleField>(
+				(field) => (field.Content as MHNumberEdit).ActuallNumberEdit.Text,
+				new List<ValueMap>()
 				{
-					testsWindow.SetAndValidateValues(
-						item.expected, 
-						item.inputValue, 
-						() => primaryFieldWidget.ActuallNumberEdit.Text);
-				}
-
-				return Task.CompletedTask;
-			}, 30);
+					{"0.12345", "0.12345"},
+					{"1.2345", "1.2345"},
+					{"12.345", "12.345"},
+					{"+0.12345", "0.12345"},
+					{"+1.2345", "1.2345"},
+					{"+12.345", "12.345"},
+					{"-0.12345", "-0.12345"},
+					{"-1.2345", "-1.2345"},
+					// Invalid values revert to expected
+					{"abc", "0"},
+					{"+abc", "0"},
+					{"-abc", "0"},
+				});
 		}
+
+		[Test, Apartment(System.Threading.ApartmentState.STA)]
+		public async Task PositiveDoubleFieldTest()
+		{
+			await ValidateAgainstValueMap<PositiveDoubleField>(
+				(field) => (field.Content as MHNumberEdit).ActuallNumberEdit.Text,
+				new List<ValueMap>()
+				{
+					{"0.12345", "0.12345"},
+					{"1.2345", "1.2345"},
+					{"12.345", "12.345"},
+					{"+0.12345", "0.12345"},
+					{"+1.2345", "1.2345"},
+					{"+12.345", "12.345"},
+					{"-0.12345", "0"}, // TODO: Classic behavior but... shouldn't we just drop the negative sign rather than force to 0?
+					{"-1.2345", "0"},
+					// Invalid values revert to expected
+					{"abc", "0"},
+					{"+abc", "0"},
+					{"-abc", "0"},
+				});
+		}
+
 
 		[Test]
 		public void IntFieldTest()
@@ -268,8 +279,50 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public void BoundDoubleFieldTest()
 		{
+			//var field = new BoundDoubleField();
 			Assert.Fail();
 		}
+
+
+		public class ValueMap
+		{
+			public ValueMap(string input, string expected)
+			{
+				this.InputValue = input;
+				this.ExpectedValue = expected;
+			}
+
+			public string InputValue { get; }
+			public string ExpectedValue { get; }
+		}
+
+		/// <summary>
+		/// Take a Type, a delegate to resolve the UI widget value and a map of input->expected values and validates the results for a given field
+		/// </summary>
+		/// <typeparam name="T">The UIField to validate</typeparam>
+		/// <param name="collectValueFromWidget">A delegate to resolve the currently displayed widget value</param>
+		/// <param name="valuesMap">A map of input to expected values</param>
+		/// <returns></returns>
+		public static Task ValidateAgainstValueMap<T>(Func<UIField, string> collectValueFromWidget, IEnumerable<ValueMap> valuesMap) where T : UIField, new()
+		{
+			var field = new T();
+
+			var testsWindow = new UIFieldTestWindow(400, 200, field);
+
+			return testsWindow.RunTest((testRunner) =>
+			{
+				var primaryFieldWidget = field.Content as MHNumberEdit;
+
+				foreach (var item in valuesMap)
+				{
+					testsWindow.SetAndValidateValues(item.ExpectedValue, item.ExpectedValue, collectValueFromWidget);
+				}
+
+				return Task.CompletedTask;
+			}, 30);
+
+		}
+
 	}
 
 
