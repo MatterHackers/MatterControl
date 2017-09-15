@@ -34,9 +34,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
-using MatterHackers.Agg.Image;
 using MatterHackers.Agg.OpenGlGui;
-using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl;
@@ -45,7 +43,6 @@ using MatterHackers.PolygonMesh;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.RenderOpenGl.OpenGl;
 using MatterHackers.VectorMath;
-using Newtonsoft.Json;
 
 namespace MatterHackers.MeshVisualizer
 {
@@ -79,13 +76,13 @@ namespace MatterHackers.MeshVisualizer
 
 		private InteractionLayer interactionLayer;
 
-		private PrinterConfig printerConfig;
+		private BedConfig sceneContext;
 
-		public MeshViewerWidget(PrinterConfig printerConfig, InteractionLayer interactionLayer, string startingTextMessage = "", EditorType editorType = EditorType.Part)
+		public MeshViewerWidget(BedConfig sceneContext, InteractionLayer interactionLayer, string startingTextMessage = "", EditorType editorType = EditorType.Part)
 		{
 			this.EditorMode = editorType;
-			this.scene = printerConfig.Bed.Scene;
-			this.printerConfig = printerConfig;
+			this.scene = sceneContext.Scene;
+			this.sceneContext = sceneContext;
 
 			var activePrintItem = ApplicationController.Instance.ActivePrintItem;
 
@@ -162,56 +159,6 @@ namespace MatterHackers.MeshVisualizer
 					}
 				};
 			}
-
-			UiThread.RunOnIdle(() =>
-			{
-				Task.Run(() =>
-				{
-					try
-					{
-						string url = printerConfig.Settings.GetValue("PrinterShapeUrl");
-						string extension = printerConfig.Settings.GetValue("PrinterShapeExtension");
-
-						if (string.IsNullOrEmpty(url) || string.IsNullOrEmpty(extension))
-						{
-							return;
-						}
-
-						using (var stream = ApplicationController.Instance.LoadHttpAsset(url))
-						{
-							var mesh = MeshFileIo.Load(stream, extension, CancellationToken.None).Mesh;
-							UiThread.RunOnIdle(() =>
-							{
-								printerShape = mesh;
-								this.Invalidate();
-								Task.Run(() =>
-								{
-									BspNode bspTree = null;
-									// if there is a chached bsp tree load it
-									var meshHashCode = mesh.GetLongHashCode();
-									string cachePath = ApplicationController.CacheablePath("MeshBspData", $"{meshHashCode}.bsp");
-									if (File.Exists(cachePath))
-									{
-										JsonConvert.DeserializeObject<BspNode>(File.ReadAllText(cachePath));
-									}
-									else
-									{
-										// else calculate it
-										bspTree = FaceBspTree.Create(mesh, 20, true);
-										// and save it
-										File.WriteAllText(cachePath, JsonConvert.SerializeObject(bspTree));
-									}
-
-									// set the mesh to use the new tree
-									UiThread.RunOnIdle(() => mesh.FaceBspTree = bspTree);
-								});
-							});
-						}
-					}
-					catch { }
-
-				});
-			});
 
 			base.OnLoad(args);
 		}
@@ -509,8 +456,6 @@ namespace MatterHackers.MeshVisualizer
 			}
 		}
 
-		private Mesh printerShape;
-
 		public enum EditorType { Printer, Part }
 
 		public EditorType EditorMode { get; set; } = EditorType.Part;
@@ -597,16 +542,16 @@ namespace MatterHackers.MeshVisualizer
 					{
 						bedColor = new RGBA_Bytes(this.BedColor, this.BedColor.alpha / 4);
 					}
-					GLHelper.Render(printerConfig.Bed.Mesh, bedColor, RenderTypes.Shaded, World.ModelviewMatrix);
-					if (printerShape != null)
+					GLHelper.Render(sceneContext.Mesh, bedColor, RenderTypes.Shaded, World.ModelviewMatrix);
+					if (sceneContext.PrinterShape != null)
 					{
-						GLHelper.Render(printerShape, bedColor, RenderTypes.Shaded, World.ModelviewMatrix);
+						GLHelper.Render(sceneContext.PrinterShape, bedColor, RenderTypes.Shaded, World.ModelviewMatrix);
 					}
 				}
 
-				if (printerConfig.Bed.BuildVolumeMesh != null && RenderBuildVolume)
+				if (sceneContext.BuildVolumeMesh != null && RenderBuildVolume)
 				{
-					GLHelper.Render(printerConfig.Bed.BuildVolumeMesh, this.BuildVolumeColor, RenderTypes.Shaded, World.ModelviewMatrix);
+					GLHelper.Render(sceneContext.BuildVolumeMesh, this.BuildVolumeColor, RenderTypes.Shaded, World.ModelviewMatrix);
 				}
 			}
 			else
@@ -626,7 +571,6 @@ namespace MatterHackers.MeshVisualizer
 
 						GL.Vertex3(width, i, 0);
 						GL.Vertex3(-width, i, 0);
-
 					}
 
 					GL.Color4(255, 0, 0, 255);

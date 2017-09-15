@@ -74,11 +74,13 @@ namespace MatterHackers.MatterControl
 
 		private PrintItemWrapper printItem => ApplicationController.Instance.ActivePrintItem;
 
-		private PrinterConfig printer;
+		public PrinterConfig Printer { get; set; }
+
+		public Mesh PrinterShape { get; private set; }
 
 		public BedConfig(PrinterConfig printer)
 		{
-			this.printer = printer;
+			this.Printer = printer;
 		}
 
 		private GCodeFile loadedGCode;
@@ -163,7 +165,53 @@ namespace MatterHackers.MatterControl
 					bedGenerator = new BedMeshGenerator();
 
 					//Construct the thing
-					_bedMesh = bedGenerator.CreatePrintBed(printer);
+					_bedMesh = bedGenerator.CreatePrintBed(Printer);
+
+					Task.Run(() =>
+					{
+						try
+						{
+							string url = Printer.Settings.GetValue("PrinterShapeUrl");
+							string extension = Printer.Settings.GetValue("PrinterShapeExtension");
+
+							if (string.IsNullOrEmpty(url) || string.IsNullOrEmpty(extension))
+							{
+								return;
+							}
+
+							using (var stream = ApplicationController.Instance.LoadHttpAsset(url))
+							{
+								var mesh = MeshFileIo.Load(stream, extension, CancellationToken.None).Mesh;
+
+								BspNode bspTree = null;
+
+								// if there is a chached bsp tree load it
+								var meshHashCode = mesh.GetLongHashCode();
+								string cachePath = ApplicationController.CacheablePath("MeshBspData", $"{meshHashCode}.bsp");
+								if (File.Exists(cachePath))
+								{
+									JsonConvert.DeserializeObject<BspNode>(File.ReadAllText(cachePath));
+								}
+								else
+								{
+									// else calculate it
+									bspTree = FaceBspTree.Create(mesh, 20, true);
+									// and save it
+									File.WriteAllText(cachePath, JsonConvert.SerializeObject(bspTree));
+								}
+
+								// set the mesh to use the new tree
+								UiThread.RunOnIdle(() =>
+								{
+									mesh.FaceBspTree = bspTree;
+									this.PrinterShape = mesh;
+
+									// TODO: Need to send a notification that the mesh changed so the UI can pickup and render
+								});
+							}
+						}
+						catch { }
+					});
 				}
 
 				return _bedMesh;
@@ -230,7 +278,7 @@ namespace MatterHackers.MatterControl
 		{
 			if (bedGenerator != null)
 			{
-				_bedMesh = bedGenerator.CreatePrintBed(printer);
+				_bedMesh = bedGenerator.CreatePrintBed(Printer);
 			}
 		}
 	}

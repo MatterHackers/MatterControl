@@ -46,7 +46,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public class PrinterTabPage : PrinterTabBase
 	{
 		internal GCode2DWidget gcode2DWidget;
+
+		// TODO: REMOVE *****************************************************************
 		PrinterConnection printerConnection;
+
 		private View3DConfig gcodeOptions;
 		private DoubleSolidSlider layerRenderRatioSlider;
 		private SolidSlider selectLayerSlider;
@@ -55,13 +58,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private ValueDisplayInfo currentLayerInfo;
 		private SystemWindow parentSystemWindow;
 
-		public PrinterTabPage(PrinterConnection printerConnection, PrinterConfig printer, ThemeConfig theme, PrintItemWrapper printItem, string tabTitle)
-			: base(printer, theme, printItem, tabTitle)
+		private PrinterConfig printer;
+
+		public PrinterTabPage(PrinterConfig printer, ThemeConfig theme, PrintItemWrapper printItem, string tabTitle)
+			: base(printer.Bed, theme, printItem, tabTitle)
 		{
-			this.printerConnection = printerConnection;
+			this.printerConnection = printer.Connection;
+			this.printer = printer;
 			modelViewer.meshViewerWidget.EditorMode = MeshViewerWidget.EditorType.Printer;
 
-			gcodeOptions = printer.Bed.RendererOptions;
+			gcodeOptions = sceneContext.RendererOptions;
 
 			viewControls3D.TransformStateChanged += (s, e) =>
 			{
@@ -118,7 +124,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				if (printer?.Bed?.RenderInfo != null)
 				{
-					printer.Bed.ActiveLayerIndex = (int)(selectLayerSlider.Value + .5);
+					sceneContext.ActiveLayerIndex = (int)(selectLayerSlider.Value + .5);
 				}
 
 				// show the layer info next to the slider
@@ -129,8 +135,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			layerRenderRatioSlider.FirstValue = 0;
 			layerRenderRatioSlider.FirstValueChanged += (s, e) =>
 			{
-				printer.Bed.RenderInfo.FeatureToStartOnRatio0To1 = layerRenderRatioSlider.FirstValue;
-				printer.Bed.RenderInfo.FeatureToEndOnRatio0To1 = layerRenderRatioSlider.SecondValue;
+				sceneContext.RenderInfo.FeatureToStartOnRatio0To1 = layerRenderRatioSlider.FirstValue;
+				sceneContext.RenderInfo.FeatureToEndOnRatio0To1 = layerRenderRatioSlider.SecondValue;
 
 				this.Invalidate();
 			};
@@ -139,8 +145,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				if (printer?.Bed?.RenderInfo != null)
 				{
-					printer.Bed.RenderInfo.FeatureToStartOnRatio0To1 = layerRenderRatioSlider.FirstValue;
-					printer.Bed.RenderInfo.FeatureToEndOnRatio0To1 = layerRenderRatioSlider.SecondValue;
+					sceneContext.RenderInfo.FeatureToStartOnRatio0To1 = layerRenderRatioSlider.FirstValue;
+					sceneContext.RenderInfo.FeatureToEndOnRatio0To1 = layerRenderRatioSlider.SecondValue;
 				}
 
 				this.Invalidate();
@@ -153,7 +159,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			currentLayerInfo.EditComplete += (s, e) =>
 			{
-				printer.Bed.ActiveLayerIndex = (int)currentLayerInfo.Value - 1;
+				sceneContext.ActiveLayerIndex = (int)currentLayerInfo.Value - 1;
 			};
 
 			AddSettingsTabBar(leftToRight, modelViewer);
@@ -163,10 +169,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			view3DContainer.AddChild(layerCountText);
 			view3DContainer.AddChild(layerStartText);
 
-			printer.Bed.ActiveLayerChanged += SetPositionAndValue;
+			sceneContext.ActiveLayerChanged += SetPositionAndValue;
 			selectLayerSlider.MouseEnter += SetPositionAndValue;
 
-			printer.Bed.LoadedGCodeChanged += BedPlate_LoadedGCodeChanged;
+			sceneContext.LoadedGCodeChanged += BedPlate_LoadedGCodeChanged;
 
 			this.ShowSliceLayers = false;
 
@@ -184,12 +190,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				Padding = theme.ToolbarPadding
 			}, 0);
-			printer.Bed.ActiveLayerChanged += ActiveLayer_Changed;
+			sceneContext.ActiveLayerChanged += ActiveLayer_Changed;
 
 			SetSliderSizes();
 		}
 
-		private GCodeFile loadedGCode => printer.Bed.LoadedGCode;
+		private GCodeFile loadedGCode => sceneContext.LoadedGCode;
 
 		private bool showSliceLayers;
 		private bool ShowSliceLayers
@@ -207,7 +213,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					modelViewer.Scene.ClearSelection();
 				}
 
-				var slidersVisible = printer.Bed.RenderInfo != null && value;
+				var slidersVisible = sceneContext.RenderInfo != null && value;
 
 				selectLayerSlider.Visible = slidersVisible;
 				layerRenderRatioSlider.Visible = slidersVisible;
@@ -261,7 +267,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void BedPlate_LoadedGCodeChanged(object sender, EventArgs e)
 		{
-			var layerCount = printer.Bed.LoadedGCode.LayerCount;
+			var layerCount = sceneContext.LoadedGCode.LayerCount;
 			selectLayerSlider.Maximum = layerCount - 1;
 
 			layerCountText.Text = layerCount.ToString();
@@ -269,7 +275,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			layerStartText.Visible = true;
 
 			// ResetRenderInfo
-			printer.Bed.RenderInfo = new GCodeRenderInfo(
+			sceneContext.RenderInfo = new GCodeRenderInfo(
 				0,
 				1,
 				Agg.Transform.Affine.NewIdentity(),
@@ -287,10 +293,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Close and remove any existing widget reference
 			gcode2DWidget?.Close();
 
-			var viewerVolume = printer.Bed.ViewerVolume;
+			var viewerVolume = sceneContext.ViewerVolume;
 
 			// Create and append new widget
-			gcode2DWidget = new GCode2DWidget(new Vector2(viewerVolume.x, viewerVolume.y), printer.Bed.BedCenter)
+			gcode2DWidget = new GCode2DWidget(new Vector2(viewerVolume.x, viewerVolume.y), sceneContext.BedCenter)
 			{
 				Visible = (this.ViewMode == PartViewMode.Layers2D)
 			};
@@ -389,9 +395,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private void ActiveLayer_Changed(object sender, EventArgs e)
 		{
 			if (selectLayerSlider != null
-				&& printer.Bed.ActiveLayerIndex != (int)(selectLayerSlider.Value + .5))
+				&& sceneContext.ActiveLayerIndex != (int)(selectLayerSlider.Value + .5))
 			{
-				selectLayerSlider.Value = printer.Bed.ActiveLayerIndex;
+				selectLayerSlider.Value = sceneContext.ActiveLayerIndex;
 			}
 		}
 
@@ -399,7 +405,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			UiThread.RunOnIdle(() =>
 			{
-				currentLayerInfo.Value = printer.Bed.ActiveLayerIndex;
+				currentLayerInfo.Value = sceneContext.ActiveLayerIndex;
 				//currentLayerInfo.DebugShowBounds = true;
 				currentLayerInfo.OriginRelativeParent = selectLayerSlider.OriginRelativeParent
 					+ new Vector2(-currentLayerInfo.Width - 10, selectLayerSlider.PositionPixelsFromFirstValue - currentLayerInfo.Height / 2);
@@ -553,10 +559,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				parentSystemWindow.KeyDown -= Parent_KeyDown;
 			}
 
-			printer.Bed.ActiveLayerChanged -= ActiveLayer_Changed;
-			printer.Bed.LoadedGCodeChanged -= BedPlate_LoadedGCodeChanged;
+			sceneContext.ActiveLayerChanged -= ActiveLayer_Changed;
+			sceneContext.LoadedGCodeChanged -= BedPlate_LoadedGCodeChanged;
 
-			printer.Bed.ActiveLayerChanged -= SetPositionAndValue;
+			sceneContext.ActiveLayerChanged -= SetPositionAndValue;
 			selectLayerSlider.MouseEnter -= SetPositionAndValue;
 
 			base.OnClosed(e);
@@ -569,10 +575,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				switch (keyEvent.KeyCode)
 				{
 					case Keys.Up:
-						printer.Bed.ActiveLayerIndex += 1;
+						sceneContext.ActiveLayerIndex += 1;
 						break;
 					case Keys.Down:
-						printer.Bed.ActiveLayerIndex -= 1;
+						sceneContext.ActiveLayerIndex -= 1;
 						break;
 				}
 			}

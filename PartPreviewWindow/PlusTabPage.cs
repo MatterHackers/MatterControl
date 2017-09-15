@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			createItemsSection.AddChild(createPart);
 			createPart.Click += (s, e) =>
 			{
-				CreatePartTab(tabControl, printer, theme, printItem);
+				CreatePartTab(tabControl, new BedConfig(null), theme, printItem);
 			};
 
 			var createPrinter = theme.ButtonFactory.Generate("Create Printer".Localize());
@@ -155,12 +155,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		internal static void CreatePartTab(TabControl tabControl, PrinterConfig printer, ThemeConfig theme, PrintItemWrapper printItem, int tabIndex = 1)
+		internal static void CreatePartTab(TabControl tabControl, BedConfig sceneContext, ThemeConfig theme, PrintItemWrapper printItem, int tabIndex = 1)
 		{
 			var partTab = new MainTab(
 				"New Part",
 				"newPart" + tabControl.TabCount,
-				new PrinterTabBase(printer, theme, printItem, "xxxxx"),
+				new PrinterTabBase(sceneContext, theme, printItem, "xxxxx"),
 				"https://i.imgur.com/nkeYgfU.png");
 
 			theme.SetPrinterTabStyles(partTab);

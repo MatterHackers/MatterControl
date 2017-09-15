@@ -81,7 +81,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 			else
 			{
-				PlusTabPage.CreatePartTab(tabControl, printerConfig, theme, printItem, 0);
+				PlusTabPage.CreatePartTab(tabControl, printerConfig.Bed, theme, printItem, 0);
 			}
 
 			// TODO: add in the printers and designs that are currently open (or were open last run).
@@ -186,7 +186,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var printerTab = new MainTab(
 				tabTitle,
 				"3D View Tab",
-				new PrinterTabPage(PrinterConnection.Instance, printerConfig, theme, printItem, tabTitle.ToUpper()),
+				new PrinterTabPage(printerConfig, theme, printItem, tabTitle.ToUpper()),
 				"https://www.google.com/s2/favicons?domain=www.printrbot.com" // "https://www.google.com/s2/favicons?domain=www.lulzbot.com"
 				);
 			printerTab.ToolTipText = "Preview 3D Design".Localize();

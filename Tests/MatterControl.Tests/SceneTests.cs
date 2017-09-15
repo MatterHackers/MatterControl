@@ -109,9 +109,8 @@ namespace MatterHackers.PolygonMesh.UnitTests
 
 			// TODO: Entire app is spun up just to persist a scene - rewrite to reduce footprint/scope
 			var view3DWidget = new View3DWidget(
-				PrinterConnection.Instance,
 				null,
-				new PrinterConfig(),
+				new BedConfig(null),
 				View3DWidget.AutoRotate.Disabled,
 				new ViewControls3D(ApplicationController.Instance.Theme, new Agg.UI.UndoBuffer()),
 				new ThemeConfig(),

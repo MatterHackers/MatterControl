@@ -120,13 +120,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private ThemeConfig theme;
 
-		private PrinterConfig printer;
-
 		public Vector3 BedCenter
 		{
 			get
 			{
-				return new Vector3(printer.Bed.BedCenter);
+				return new Vector3(sceneContext.BedCenter);
 			}
 		}
 
@@ -138,15 +136,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		internal ViewGcodeBasic gcodeViewer;
 
 		public InteractionLayer InteractionLayer { get; }
-		PrinterConnection printerConnection;
 
-		public View3DWidget(PrinterConnection printerConnection, PrintItemWrapper printItemWrapper, PrinterConfig printer, AutoRotate autoRotate, ViewControls3D viewControls3D, ThemeConfig theme, OpenMode openMode = OpenMode.Viewing, MeshViewerWidget.EditorType editorType = MeshViewerWidget.EditorType.Part)
+		private BedConfig sceneContext;
+
+		public View3DWidget(PrintItemWrapper printItemWrapper, BedConfig sceneContext, AutoRotate autoRotate, ViewControls3D viewControls3D, ThemeConfig theme, OpenMode openMode = OpenMode.Viewing, MeshViewerWidget.EditorType editorType = MeshViewerWidget.EditorType.Part)
 		{
-			this.printerConnection = printerConnection;
 			var smallMarginButtonFactory = theme.SmallMarginButtonFactory;
 
-			this.printer = printer;
-			this.Scene = this.printer.Bed.Scene;
+			this.sceneContext = sceneContext;
+			this.Scene = sceneContext.Scene;
 
 			this.TrackballTumbleWidget = new TrackballTumbleWidget(ApplicationController.Instance.Printer.Bed.World)
 			{
@@ -179,12 +177,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			// MeshViewer
-			meshViewerWidget = new MeshViewerWidget(printer, this.InteractionLayer, editorType: editorType);
+			meshViewerWidget = new MeshViewerWidget(sceneContext, this.InteractionLayer, editorType: editorType);
 			meshViewerWidget.AnchorAll();
 			this.InteractionLayer.AddChild(meshViewerWidget);
 
 			// The slice layers view
-			gcodeViewer = new ViewGcodeBasic(printer, viewControls3D);
+			gcodeViewer = new ViewGcodeBasic(sceneContext, viewControls3D);
 			gcodeViewer.AnchorAll();
 			gcodeViewer.Visible = false;
 			this.InteractionLayer.AddChild(gcodeViewer);
@@ -486,17 +484,39 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			UiThread.RunOnIdle(AutoSpin);
 
-			if (printer.Bed.RendererOptions.SyncToPrint)
+			if (sceneContext.RendererOptions.SyncToPrint)
 			{
-				printerConnection.CommunicationStateChanged.RegisterEvent(SetEditControlsBasedOnPrinterState, ref unregisterEvents);
-
-				// make sure we lock the controls if we are printing or paused
-				switch (printerConnection.CommunicationState)
+				if (sceneContext.Printer != null)
 				{
-					case CommunicationStates.Printing:
-					case CommunicationStates.Paused:
-						LockEditControls();
-						break;
+					sceneContext.Printer.Connection.CommunicationStateChanged.RegisterEvent(
+						(s, e) =>
+						{
+							if (sceneContext.RendererOptions.SyncToPrint
+								&& sceneContext.Printer != null)
+							{
+								switch (sceneContext.Printer.Connection.CommunicationState)
+								{
+									case CommunicationStates.Printing:
+									case CommunicationStates.Paused:
+										LockEditControls();
+										break;
+
+									default:
+										UnlockEditControls();
+										break;
+								}
+							}
+						}, 
+						ref unregisterEvents);
+
+					// make sure we lock the controls if we are printing or paused
+					switch (sceneContext.Printer.Connection.CommunicationState)
+					{
+						case CommunicationStates.Printing:
+						case CommunicationStates.Paused:
+							LockEditControls();
+							break;
+					}
 				}
 			}
 
@@ -624,12 +644,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// This shows the BVH as rects around the scene items
 			//Scene?.TraceData().RenderBvhRecursive(0, 3);
 
-			if (gcodeViewer?.loadedGCode == null || printer.Bed.GCodeRenderer == null || !gcodeViewer.Visible)
+			if (sceneContext.LoadedGCode == null || sceneContext.GCodeRenderer == null || !gcodeViewer.Visible)
 			{
 				return;
 			}
 
-			printer.Bed.Render3DLayerFeatures(e);
+			sceneContext.Render3DLayerFeatures(e);
 		}
 
 		public override void OnKeyDown(KeyEventArgs keyEvent)
@@ -1515,7 +1535,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			world.Reset();
 			world.Scale = .03;
-			world.Translate(-new Vector3(printer.Bed.BedCenter));
+			world.Translate(-new Vector3(sceneContext.BedCenter));
 			world.Rotate(Quaternion.FromEulerAngles(new Vector3(0, 0, MathHelper.Tau / 16)));
 			world.Rotate(Quaternion.FromEulerAngles(new Vector3(-MathHelper.Tau * .19, 0, 0)));
 		}
@@ -2243,9 +2263,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void meshViewerWidget_LoadDone(object sender, EventArgs e)
 		{
-			if (printer.Bed.RendererOptions.SyncToPrint)
+			if (sceneContext.RendererOptions.SyncToPrint)
 			{
-				switch (printerConnection.CommunicationState)
+				switch (sceneContext.Printer?.Connection.CommunicationState)
 				{
 					case CommunicationStates.Printing:
 					case CommunicationStates.Paused:
@@ -2348,24 +2368,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private void SaveAsWindow_Closed(object sender, ClosedEventArgs e)
 		{
 			this.saveAsWindow = null;
-		}
-
-		private void SetEditControlsBasedOnPrinterState(object sender, EventArgs e)
-		{
-			if (printer.Bed.RendererOptions.SyncToPrint)
-			{
-				switch (printerConnection.CommunicationState)
-				{
-					case CommunicationStates.Printing:
-					case CommunicationStates.Paused:
-						LockEditControls();
-						break;
-
-					default:
-						UnlockEditControls();
-						break;
-				}
-			}
 		}
 
 		public Vector2 DragSelectionStartPosition { get; private set; }

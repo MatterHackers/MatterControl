@@ -44,22 +44,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private PrintItemWrapper printItem;
 		protected ViewControls3D viewControls3D;
 
-		protected PrinterConfig printer;
+		protected BedConfig sceneContext;
 		protected ThemeConfig theme;
 
 		protected GuiWidget view3DContainer;
 		protected FlowLayoutWidget topToBottom;
 		protected FlowLayoutWidget leftToRight;
 
-		public PrinterTabBase(PrinterConfig printer, ThemeConfig theme, PrintItemWrapper printItem, string tabTitle)
+		public PrinterTabBase(BedConfig sceneContext, ThemeConfig theme, PrintItemWrapper printItem, string tabTitle)
 			: base (tabTitle)
 		{
-			this.printer = printer;
+			this.sceneContext = sceneContext;
 			this.theme = theme;
 			this.BackgroundColor = theme.TabBodyBackground;
 			this.Padding = 0;
 
-			viewControls3D = new ViewControls3D(theme, printer.Bed.Scene.UndoBuffer)
+			viewControls3D = new ViewControls3D(theme, sceneContext.Scene.UndoBuffer)
 			{
 				PartSelectVisible = false,
 				VAnchor = VAnchor.Top | VAnchor.Fit | VAnchor.Absolute,
@@ -82,8 +82,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			bool isPrinterType = this.GetType() == typeof(PrinterTabPage);
 
 			// The 3D model view
-			modelViewer = new View3DWidget(PrinterConnection.Instance, printItem,
-				printer,
+			modelViewer = new View3DWidget(
+				printItem,
+				sceneContext,
 				View3DWidget.AutoRotate.Disabled,
 				viewControls3D,
 				theme,
