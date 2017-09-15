@@ -59,18 +59,19 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		private EventHandler unregisterEvents;
 
-		PrinterConnection printerConnection;
+		private PrinterConfig printer;
 
-		public PrintActionRow(PrinterConnection printerConnection, TextImageButtonFactory buttonFactory, GuiWidget parentWidget, BorderDouble defaultMargin)
+		public PrintActionRow(PrinterConfig printer, TextImageButtonFactory buttonFactory, GuiWidget parentWidget, BorderDouble defaultMargin)
 		{
-			this.printerConnection = printerConnection;
+			this.printer = printer;
+
 			this.HAnchor = HAnchor.Stretch;
 
 			AddChildElements(buttonFactory, parentWidget, defaultMargin);
 
 			// Add Handlers
 			ApplicationController.Instance.ActivePrintItemChanged.RegisterEvent(onStateChanged, ref unregisterEvents);
-			printerConnection.CommunicationStateChanged.RegisterEvent(onStateChanged, ref unregisterEvents);
+			printer.Connection.CommunicationStateChanged.RegisterEvent(onStateChanged, ref unregisterEvents);
 			ProfileManager.ProfilesListChanged.RegisterEvent(onStateChanged, ref unregisterEvents);
 		}
 
@@ -99,14 +100,14 @@ namespace MatterHackers.MatterControl.ActionBar
 			resetConnectionButton = buttonFactory.Generate("Reset".Localize().ToUpper(), AggContext.StaticData.LoadIcon("e_stop.png", 14, 14));
 			resetConnectionButton.ToolTipText = "Reboots the firmware on the controller".Localize();
 			resetConnectionButton.Margin = defaultMargin;
-			resetConnectionButton.Click += (s, e) => UiThread.RunOnIdle(printerConnection.RebootBoard);
+			resetConnectionButton.Click += (s, e) => UiThread.RunOnIdle(printer.Connection.RebootBoard);
 
 			pauseButton = buttonFactory.Generate("Pause".Localize().ToUpper());
 			pauseButton.ToolTipText = "Pause the current print".Localize();
 			pauseButton.Margin = defaultMargin;
 			pauseButton.Click += (s, e) =>
 			{
-				UiThread.RunOnIdle(printerConnection.RequestPause);
+				UiThread.RunOnIdle(printer.Connection.RequestPause);
 				pauseButton.Enabled = false;
 			};
 			parentWidget.AddChild(pauseButton);
@@ -137,9 +138,9 @@ namespace MatterHackers.MatterControl.ActionBar
 			resumeButton.Name = "Resume Button";
 			resumeButton.Click += (s, e) =>
 			{
-				if (printerConnection.PrinterIsPaused)
+				if (printer.Connection.PrinterIsPaused)
 				{
-					printerConnection.Resume();
+					printer.Connection.Resume();
 				}
 				pauseButton.Enabled = true;
 			};
@@ -169,7 +170,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			SetButtonStates();
 
-			printerConnection.PrinterSettings.PrintLevelingEnabledChanged.RegisterEvent((s, e) => SetButtonStates(), ref unregisterEvents);
+			printer.Settings.PrintLevelingEnabledChanged.RegisterEvent((s, e) => SetButtonStates(), ref unregisterEvents);
 		}
 
 		protected void DisableActiveButtons()
@@ -192,8 +193,8 @@ namespace MatterHackers.MatterControl.ActionBar
 		protected void SetButtonStates()
 		{
 			this.activePrintButtons.Clear();
-			if (!printerConnection.PrinterIsConnected
-				&& printerConnection.CommunicationState != CommunicationStates.AttemptingToConnect)
+			if (!printer.Connection.PrinterIsConnected
+				&& printer.Connection.CommunicationState != CommunicationStates.AttemptingToConnect)
 			{
 				if (!ProfileManager.Instance.ActiveProfiles.Any())
 				{
@@ -206,7 +207,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			}
 			else
 			{
-				switch (printerConnection.CommunicationState)
+				switch (printer.Connection.CommunicationState)
 				{
 					case CommunicationStates.AttemptingToConnect:
 						this.activePrintButtons.Add(cancelConnectButton);
@@ -214,8 +215,8 @@ namespace MatterHackers.MatterControl.ActionBar
 						break;
 
 					case CommunicationStates.Connected:
-						PrintLevelingData levelingData = printerConnection.PrinterSettings.Helpers.GetPrintLevelingData();
-						if (levelingData != null && printerConnection.PrinterSettings.GetValue<bool>(SettingsKey.print_leveling_required_to_print)
+						PrintLevelingData levelingData = printer.Settings.Helpers.GetPrintLevelingData();
+						if (levelingData != null && printer.Settings.GetValue<bool>(SettingsKey.print_leveling_required_to_print)
 							&& !levelingData.HasBeenRunAndEnabled())
 						{
 							this.activePrintButtons.Add(finishSetupButton);
@@ -235,7 +236,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 					case CommunicationStates.PrintingFromSd:
 					case CommunicationStates.Printing:
-						if (!printerConnection.PrintWasCanceled)
+						if (!printer.Connection.PrintWasCanceled)
 						{
 							this.activePrintButtons.Add(pauseButton);
 							this.activePrintButtons.Add(cancelButton);
@@ -265,8 +266,8 @@ namespace MatterHackers.MatterControl.ActionBar
 				}
 			}
 
-			if (printerConnection.PrinterIsConnected
-				&& printerConnection.PrinterSettings.GetValue<bool>(SettingsKey.show_reset_connection))
+			if (printer.Connection.PrinterIsConnected
+				&& printer.Settings.GetValue<bool>(SettingsKey.show_reset_connection))
 			{
 				this.activePrintButtons.Add(resetConnectionButton);
 				ShowActiveButtons();

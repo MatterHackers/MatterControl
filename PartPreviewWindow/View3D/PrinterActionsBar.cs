@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class PrinterActionsBar : FlowLayoutWidget
 	{
-		PrinterConnection printerConnection;
+		private PrinterConfig printer;
 		private EventHandler unregisterEvents;
 		private static EePromMarlinWindow openEePromMarlinWidget = null;
 		private static EePromRepetierWindow openEePromRepetierWidget = null;
@@ -83,9 +83,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		public PrinterActionsBar(PrinterConnection printerConnection, View3DWidget modelViewer, PrinterTabPage printerTabPage)
+		public PrinterActionsBar(PrinterConfig printer, View3DWidget modelViewer, PrinterTabPage printerTabPage)
 		{
-			this.printerConnection = printerConnection;
+			this.printer = printer;
 			UndoBuffer undoBuffer = modelViewer.Scene.UndoBuffer;
 
 			var defaultMargin = ApplicationController.Instance.Theme.ButtonSpacing;
@@ -95,9 +95,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Fit;
-			this.AddChild(new PrinterConnectButton(printerConnection, buttonFactory, 0));
+			this.AddChild(new PrinterConnectButton(printer, buttonFactory, 0));
 
-			this.AddChild(new PrintActionRow(printerConnection, buttonFactory, this, defaultMargin));
+			this.AddChild(new PrintActionRow(printer, buttonFactory, this, defaultMargin));
 
 			var sliceButton = buttonFactory.Generate("Slice".Localize().ToUpper());
 			sliceButton.ToolTipText = "Slice Parts".Localize();
@@ -105,11 +105,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			sliceButton.Margin = defaultMargin;
 			sliceButton.Click += async (s, e) =>
 			{
-				if (printerConnection.PrinterSettings.PrinterSelected)
+				if (printer.Settings.PrinterSelected)
 				{
 					var printItem = ApplicationController.Instance.ActivePrintItem;
 
-					if (printerConnection.PrinterSettings.IsValid() && printItem != null)
+					if (printer.Settings.IsValid() && printItem != null)
 					{
 						sliceButton.Enabled = false;
 
@@ -159,28 +159,28 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				AutoExpandBoundsToText = true,
 				PointSize = 8
 			};
-			printerConnection.PrintingStateChanged.RegisterEvent((e, s) =>
+			printer.Connection.PrintingStateChanged.RegisterEvent((e, s) =>
 			{
-				printerConnectionDetail.Text = printerConnection.PrinterConnectionStatus;
+				printerConnectionDetail.Text = printer.Connection.PrinterConnectionStatus;
 			}, ref unregisterEvents);
 			this.AddChild(printerConnectionDetail);
 
 			this.AddChild(new HorizontalSpacer());
 
-			bool shareTemp = printerConnection.PrinterSettings.GetValue<bool>(SettingsKey.extruders_share_temperature);
-			int extruderCount = shareTemp ? 1 : printerConnection.PrinterSettings.GetValue<int>(SettingsKey.extruder_count);
+			bool shareTemp = printer.Settings.GetValue<bool>(SettingsKey.extruders_share_temperature);
+			int extruderCount = shareTemp ? 1 : printer.Settings.GetValue<int>(SettingsKey.extruder_count);
 
 			for (int extruderIndex = 0; extruderIndex < extruderCount; extruderIndex++)
 			{
-				this.AddChild(new TemperatureWidgetHotend(printerConnection, extruderIndex, ApplicationController.Instance.Theme.MenuButtonFactory)
+				this.AddChild(new TemperatureWidgetHotend(printer, extruderIndex, ApplicationController.Instance.Theme.MenuButtonFactory)
 				{
 					Margin = new BorderDouble(right: 10)
 				});
 			}
 
-			if (printerConnection.PrinterSettings.GetValue<bool>(SettingsKey.has_heated_bed))
+			if (printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed))
 			{
-				this.AddChild(new TemperatureWidgetBed(printerConnection));
+				this.AddChild(new TemperatureWidgetBed(printer));
 			}
 
 			overflowDropdown = new OverflowDropdown(allowLightnessInvert: true)
@@ -215,8 +215,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private GuiWidget GeneratePrinterOverflowMenu()
 		{
-			var printerSettings = printerConnection.PrinterSettings;
-
 			var menuActions = new NamedAction[]
 			{
 				new NamedAction()
@@ -232,12 +230,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						var renameItemPage = new RenameItemPage(
 						"Rename Printer".Localize() + ":",
-						printerSettings.GetValue(SettingsKey.printer_name),
+						printer.Settings.GetValue(SettingsKey.printer_name),
 						(newName) =>
 						{
 							if (!string.IsNullOrEmpty(newName))
 							{
-								printerSettings.SetValue(SettingsKey.printer_name, newName);
+								printer.Settings.SetValue(SettingsKey.printer_name, newName);
 							}
 						});
 
@@ -255,7 +253,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							{
 								if (doDelete)
 								{
-									printerConnection.PrinterSettings.Helpers.SetMarkedForDelete(true);
+									printer.Settings.Helpers.SetMarkedForDelete(true);
 								}
 							},
 							"Are you sure you want to delete your currently selected printer?".Localize(),
@@ -275,7 +273,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 #if false // This is to force the creation of the repetier window for testing when we don't have repetier firmware.
                         new MatterHackers.MatterControl.EeProm.EePromRepetierWidget();
 #else
-				switch (printerConnection.FirmwareType)
+				switch (printer.Connection.FirmwareType)
 				{
 					case FirmwareTypes.Repetier:
 						if (openEePromRepetierWidget != null)
@@ -284,7 +282,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						}
 						else
 						{
-							openEePromRepetierWidget = new EePromRepetierWindow(printerConnection);
+							openEePromRepetierWidget = new EePromRepetierWindow(printer.Connection);
 							openEePromRepetierWidget.Closed += (RepetierWidget, RepetierEvent) =>
 							{
 								openEePromRepetierWidget = null;
@@ -299,7 +297,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						}
 						else
 						{
-							openEePromMarlinWidget = new EePromMarlinWindow(printerConnection);
+							openEePromMarlinWidget = new EePromMarlinWindow(printer.Connection);
 							openEePromMarlinWidget.Closed += (marlinWidget, marlinEvent) =>
 							{
 								openEePromMarlinWidget = null;
@@ -308,7 +306,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						break;
 
 					default:
-						printerConnection.SendLineToPrinterNow("M115");
+						printer.Connection.SendLineToPrinterNow("M115");
 						StyledMessageBox.ShowMessageBox(null, noEepromMappingMessage, noEepromMappingTitle, StyledMessageBox.MessageType.OK);
 						break;
 				}

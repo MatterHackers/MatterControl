@@ -50,14 +50,14 @@ namespace MatterHackers.MatterControl.ActionBar
 		};
 
 		protected EventHandler unregisterEvents;
-		protected PrinterConnection printerConnection;
+		protected PrinterConfig printer;
 
 		protected virtual int ActualTemperature { get; }
 		protected virtual int TargetTemperature { get; }
 
-		public TemperatureWidgetBase(PrinterConnection printerConnection, string textValue)
+		public TemperatureWidgetBase(PrinterConfig printer, string textValue)
 		{
-			this.printerConnection = printerConnection;
+			this.printer = printer;
 			this.HAnchor = HAnchor.Fit;
 			this.VAnchor = VAnchor.Fit | VAnchor.Center;
 			this.Cursor = Cursors.Hand;

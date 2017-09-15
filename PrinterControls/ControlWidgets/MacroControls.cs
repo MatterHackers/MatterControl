@@ -40,19 +40,19 @@ namespace MatterHackers.MatterControl.PrinterControls
 {
 	public class MacroControls : ControlWidgetBase
 	{
-		public MacroControls(PrinterConnection printerConnection, int headingPointSize)
+		public MacroControls(PrinterConfig printer, int headingPointSize)
 		{
-			this.AddChild(new MacroControlsWidget(printerConnection, headingPointSize));
+			this.AddChild(new MacroControlsWidget(printer, headingPointSize));
 		}
 	}
 
 	public class MacroControlsWidget : FlowLayoutWidget
 	{
-		PrinterConnection printerConnection;
-		public MacroControlsWidget(PrinterConnection printerConnection, int headingPointSize)
+		private PrinterConfig printer;
+		public MacroControlsWidget(PrinterConfig printer, int headingPointSize)
 					: base(FlowDirection.TopToBottom)
 		{
-			this.printerConnection = printerConnection;
+			this.printer = printer;
 			var buttonFactory = ApplicationController.Instance.Theme.HomingButtons;
 
 			this.HAnchor = HAnchor.Stretch;
@@ -90,17 +90,17 @@ namespace MatterHackers.MatterControl.PrinterControls
 			macroContainer.AddChild(noMacrosFound);
 			noMacrosFound.Visible = false;
 
-			if (printerConnection.PrinterSettings?.GetMacros(MacroUiLocation.Controls).Any() != true)
+			if (printer.Settings?.GetMacros(MacroUiLocation.Controls).Any() != true)
 			{
 				noMacrosFound.Visible = true;
 				return macroContainer;
 			}
 
-			foreach (GCodeMacro macro in printerConnection.PrinterSettings.GetMacros(MacroUiLocation.Controls))
+			foreach (GCodeMacro macro in printer.Settings.GetMacros(MacroUiLocation.Controls))
 			{
 				Button macroButton = buttonFactory.Generate(GCodeMacro.FixMacroName(macro.Name));
 				macroButton.Margin = new BorderDouble(right: 5);
-				macroButton.Click += (s, e) => macro.Run(printerConnection);
+				macroButton.Click += (s, e) => macro.Run(printer.Connection);
 
 				macroContainer.AddChild(macroButton);
 			}

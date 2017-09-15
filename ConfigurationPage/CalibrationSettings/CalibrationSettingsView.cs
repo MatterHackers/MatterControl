@@ -24,11 +24,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		private Button runPrintLevelingButton;
 
 		private TextImageButtonFactory buttonFactory;
-		PrinterConnection printerConnection;
+		private PrinterConfig printer;
 
-		public CalibrationSettingsWidget(PrinterConnection printerConnection, TextImageButtonFactory buttonFactory, int headingPointSize)
+		public CalibrationSettingsWidget(PrinterConfig printer, TextImageButtonFactory buttonFactory, int headingPointSize)
 		{
-			this.printerConnection = printerConnection;
+			this.printer = printer;
+
 			var mainContainer = new AltGroupBox(new TextWidget("Calibration".Localize(), pointSize: headingPointSize, textColor: ActiveTheme.Instance.SecondaryAccentColor))
 			{
 				Margin = new BorderDouble(0),
@@ -48,15 +49,15 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			this.buttonFactory = buttonFactory;
 
-			if (!printerConnection.PrinterSettings.GetValue<bool>(SettingsKey.has_hardware_leveling))
+			if (!printer.Settings.GetValue<bool>(SettingsKey.has_hardware_leveling))
 			{
 				container.AddChild(GetAutoLevelControl());
 			}
 
 			container.AddChild(CreateSeparatorLine());
 
-			printerConnection.CommunicationStateChanged.RegisterEvent(PrinterStatusChanged, ref unregisterEvents);
-			printerConnection.EnableChanged.RegisterEvent(PrinterStatusChanged, ref unregisterEvents);
+			printer.Connection.CommunicationStateChanged.RegisterEvent(PrinterStatusChanged, ref unregisterEvents);
+			printer.Connection.EnableChanged.RegisterEvent(PrinterStatusChanged, ref unregisterEvents);
 
 			SetVisibleControls();
 		}
@@ -102,7 +103,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				{
 					if (editLevelingSettingsWindow == null)
 					{
-						editLevelingSettingsWindow = new EditLevelingSettingsWindow(printerConnection.PrinterSettings);
+						editLevelingSettingsWindow = new EditLevelingSettingsWindow(printer.Settings);
 						editLevelingSettingsWindow.Closed += (sender2, e2) =>
 						{
 							editLevelingSettingsWindow = null;
@@ -125,26 +126,26 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			runPrintLevelingButton.VAnchor = VAnchor.Center;
 			runPrintLevelingButton.Click += (sender, e) =>
 			{
-				UiThread.RunOnIdle(() => LevelWizardBase.ShowPrintLevelWizard(printerConnection, LevelWizardBase.RuningState.UserRequestedCalibration));
+				UiThread.RunOnIdle(() => LevelWizardBase.ShowPrintLevelWizard(printer, LevelWizardBase.RuningState.UserRequestedCalibration));
 			};
 			buttonRow.AddChild(runPrintLevelingButton);
 
 			// put in the switch
-			CheckBox printLevelingSwitch = ImageButtonFactory.CreateToggleSwitch(printerConnection.PrinterSettings.GetValue<bool>(SettingsKey.print_leveling_enabled));
+			CheckBox printLevelingSwitch = ImageButtonFactory.CreateToggleSwitch(printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled));
 			printLevelingSwitch.VAnchor = VAnchor.Center;
 			printLevelingSwitch.Margin = new BorderDouble(left: 16);
 			printLevelingSwitch.CheckedStateChanged += (sender, e) =>
 			{
-				printerConnection.PrinterSettings.Helpers.DoPrintLeveling(printLevelingSwitch.Checked);
+				printer.Settings.Helpers.DoPrintLeveling(printLevelingSwitch.Checked);
 			};
 
-			printerConnection.PrinterSettings.PrintLevelingEnabledChanged.RegisterEvent((sender, e) =>
+			printer.Settings.PrintLevelingEnabledChanged.RegisterEvent((sender, e) =>
 			{
-				printLevelingSwitch.Checked = printerConnection.PrinterSettings.GetValue<bool>(SettingsKey.print_leveling_enabled);
+				printLevelingSwitch.Checked = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled);
 			}, ref unregisterEvents);
 
 			// only show the switch if leveling can be turned off (it can't if it is required).
-			if (!printerConnection.PrinterSettings.GetValue<bool>(SettingsKey.print_leveling_required_to_print))
+			if (!printer.Settings.GetValue<bool>(SettingsKey.print_leveling_required_to_print))
 			{
 				buttonRow.AddChild(printLevelingSwitch);
 			}
@@ -166,9 +167,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 		private void SetVisibleControls()
 		{
-			if (!printerConnection.PrinterSettings.PrinterSelected
-				|| printerConnection.CommunicationState == CommunicationStates.Printing
-				|| printerConnection.PrinterIsPaused)
+			if (!printer.Settings.PrinterSelected
+				|| printer.Connection.CommunicationState == CommunicationStates.Printing
+				|| printer.Connection.PrinterIsPaused)
 			{
 				this.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 				runPrintLevelingButton.Enabled = true; // setting this true when the element is disabled makes the colors stay correct
@@ -176,7 +177,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			else
 			{
 				this.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-				runPrintLevelingButton.Enabled = printerConnection.PrinterIsConnected;
+				runPrintLevelingButton.Enabled = printer.Connection.PrinterIsConnected;
 			}
 		}
 	}

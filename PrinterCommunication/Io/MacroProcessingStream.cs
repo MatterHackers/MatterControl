@@ -52,14 +52,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		private List<double> startingExtruderTemps = new List<double>();
 		private Stopwatch timeHaveBeenWaiting = new Stopwatch();
 		private bool waitingForUserInput = false;
-		private PrinterConnection printerConnection;
+		private PrinterConfig printer;
 		QueuedCommandsStream queuedCommandsStream;
 
-		public MacroProcessingStream(QueuedCommandsStream queuedCommandsStream, PrinterConnection printerConnection)
+		public MacroProcessingStream(QueuedCommandsStream queuedCommandsStream, PrinterConfig printer)
 			: base(queuedCommandsStream)
 		{
 			this.queuedCommandsStream = queuedCommandsStream;
-			this.printerConnection = printerConnection;
+			this.printer = printer;
 		}
 
 		public void Cancel()
@@ -148,15 +148,15 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						if (!runningMacro)
 						{
 							runningMacro = true;
-							int extruderCount = printerConnection.PrinterSettings.GetValue<int>(SettingsKey.extruder_count);
+							int extruderCount = printer.Settings.GetValue<int>(SettingsKey.extruder_count);
 							for (int i = 0; i < extruderCount; i++)
 							{
-								startingExtruderTemps.Add(printerConnection.GetTargetHotendTemperature(i));
+								startingExtruderTemps.Add(printer.Connection.GetTargetHotendTemperature(i));
 							}
 
-							if (printerConnection.PrinterSettings.GetValue<bool>(SettingsKey.has_heated_bed))
+							if (printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed))
 							{
-								startingBedTemp = printerConnection.TargetBedTemperature;
+								startingBedTemp = printer.Connection.TargetBedTemperature;
 							}
 						}
 						int parensAfterCommand = lineToSend.IndexOf('(', MacroPrefix.Length);
@@ -207,7 +207,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 								UiThread.RunOnIdle(() =>
 								{
-									WizardWindow.Show(new RunningMacroPage(printerConnection, macroData));
+									WizardWindow.Show(new RunningMacroPage(printer.Connection, macroData));
 								});
 								break;
 
@@ -225,7 +225,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 								UiThread.RunOnIdle(() =>
 								{
-									WizardWindow.Show(new RunningMacroPage(printerConnection, macroData));
+									WizardWindow.Show(new RunningMacroPage(printer.Connection, macroData));
 								});
 
 								break;
@@ -248,12 +248,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				runningMacro = false;
 				for (int i = 0; i < startingExtruderTemps.Count; i++)
 				{
-					printerConnection.SetTargetHotendTemperature(i, startingExtruderTemps[i]);
+					printer.Connection.SetTargetHotendTemperature(i, startingExtruderTemps[i]);
 				}
 
-				if (printerConnection.PrinterSettings.GetValue<bool>(SettingsKey.has_heated_bed))
+				if (printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed))
 				{
-					printerConnection.TargetBedTemperature = startingBedTemp;
+					printer.Connection.TargetBedTemperature = startingBedTemp;
 				}
 			}
 			waitingForUserInput = false;
