@@ -156,7 +156,7 @@ namespace MatterControl.Tests.MatterControl
 		[Test, Apartment(System.Threading.ApartmentState.STA)]
 		public async Task DoubleFieldTest()
 		{
-			await ValidateAgainstValueMap<PositiveDoubleField>(
+			await ValidateAgainstValueMap<DoubleField>(
 				(field) => (field.Content as MHNumberEdit).ActuallNumberEdit.Text,
 				new List<ValueMap>()
 				{
@@ -198,91 +198,90 @@ namespace MatterControl.Tests.MatterControl
 		}
 
 
-		[Test]
+		[Test, Ignore("Not Implemented")]
 		public void IntFieldTest()
 		{
 			Assert.Fail();
 		}
 
-		[Test]
+		[Test, Ignore("Not Implemented")]
 		public void DoubleOrPercentFieldTest()
 		{
 			Assert.Fail();
 		}
 
-		[Test]
+		[Test, Ignore("Not Implemented")]
 		public void ValueOrUnitsFieldTest()
 		{
 			Assert.Fail();
 		}
 
-		[Test]
+		[Test, Ignore("Not Implemented")]
 		public void CheckboxFieldTest()
 		{
 			Assert.Fail();
 		}
 
-		[Test]
+		[Test, Ignore("Not Implemented")]
 		public void ToggleboxFieldTest()
 		{
 			Assert.Fail();
 		}
 
-		[Test]
+		[Test, Ignore("Not Implemented")]
 		public void MultilineStringFieldTest()
 		{
 			Assert.Fail();
 		}
 
-		[Test]
+		[Test, Ignore("Not Implemented")]
 		public void ComPortFieldTest()
 		{
 			Assert.Fail();
 		}
 
-		[Test]
+		[Test, Ignore("Not Implemented")]
 		public void Test()
 		{
 			Assert.Fail();
 		}
 
-		[Test]
+		[Test, Ignore("Not Implemented")]
 		public void ListFieldTest()
 		{
 			Assert.Fail();
 		}
 
-		[Test]
+		[Test, Ignore("Not Implemented")]
 		public void ExtruderOffsetFieldTest()
 		{
 			Assert.Fail();
 		}
 
-		[Test]
+		[Test, Ignore("Not Implemented")]
 		public void NumberFieldTest()
 		{
 			Assert.Fail();
 		}
 
-		[Test]
+		[Test, Ignore("Not Implemented")]
 		public void TextFieldTest()
 		{
 			Assert.Fail();
 		}
 
-		[Test]
+		[Test, Ignore("Not Implemented")]
 		public void Vector2FieldTest()
 		{
 			Assert.Fail();
 		}
 
-		[Test]
+		[Test, Ignore("Not Implemented")]
 		public void BoundDoubleFieldTest()
 		{
 			//var field = new BoundDoubleField();
 			Assert.Fail();
 		}
-
 
 		public class ValueMap
 		{
