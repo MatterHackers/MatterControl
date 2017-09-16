@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
+using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
@@ -37,21 +38,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		private IObject3D originalItem;
 		private View3DWidget view3DWidget;
-		
-		public UngroupCommand(View3DWidget view3DWidget, IObject3D ungroupingItem)
+		private InteractiveScene scene;
+
+		public UngroupCommand(View3DWidget view3DWidget, InteractiveScene scene, IObject3D ungroupingItem)
 		{
 			this.originalItem = ungroupingItem;
 			this.view3DWidget = view3DWidget;
+			this.scene = scene;
 		}
 
 		public void Do()
 		{
-			if (!view3DWidget.Scene.Children.Contains(originalItem))
+			if (!scene.Children.Contains(originalItem))
 			{
 				return;
 			}
 
-			view3DWidget.Scene.ModifyChildren(children =>
+			scene.ModifyChildren(children =>
 			{
 				// Remove the group
 				children.Remove(originalItem);
@@ -66,14 +69,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				children.AddRange(originalItem.Children);
 			});
 
-			view3DWidget.Scene.SelectLastChild();
+			scene.SelectLastChild();
 			view3DWidget.PartHasBeenChanged();
 		}
 
 		public void Undo()
 		{
 			// Remove the children from the Scene root, add the original item back into the root
-			view3DWidget.Scene.ModifyChildren(children =>
+			scene.ModifyChildren(children =>
 			{
 				foreach(var child in originalItem.Children)
 				{
@@ -91,7 +94,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				children.Add(originalItem);
 			});
 
-			view3DWidget.Scene.SelectLastChild();
+			scene.SelectLastChild();
 			view3DWidget.PartHasBeenChanged();
 		}
 	}

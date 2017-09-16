@@ -107,11 +107,10 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 #endif
 
+			var sceneContext = new BedConfig();
 			// TODO: Entire app is spun up just to persist a scene - rewrite to reduce footprint/scope
 			var view3DWidget = new View3DWidget(
-				PrinterConnection.Instance,
-				null,
-				new PrinterConfig(),
+				sceneContext,
 				View3DWidget.AutoRotate.Disabled,
 				new ViewControls3D(ApplicationController.Instance.Theme, new Agg.UI.UndoBuffer()),
 				new ThemeConfig(),
@@ -120,9 +119,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			// because we are using it without adding it into a parent we need to initialize it
 			view3DWidget.Initialize();
 
-			ApplicationController.Instance.ClearPlate();
-
-			var scene = view3DWidget.Scene;
+			var scene = sceneContext.Scene;
 			scene.Children.Add(new Object3D
 			{
 				ItemType = Object3DTypes.Model,
@@ -143,21 +140,23 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			Assert.AreEqual(1, Directory.GetFiles(Path.Combine(tempPath, "Assets")).Length, "Only 1 asset should exist");
 
 			var originalFiles = Directory.GetFiles(tempPath).ToArray(); ;
-			
+
 			IObject3D loadedItem = Object3D.Load(filePath, CancellationToken.None);
 			Assert.IsTrue(loadedItem.Children.Count == 1);
 
-			await view3DWidget.ClearBedAndLoadPrintItemWrapper(
-				new MatterControl.PrintQueue.PrintItemWrapper(
-					new MatterControl.DataStorage.PrintItem("test", filePath)), true);
+			// Ensure the UI scene is cleared
+			scene.ModifyChildren((children) => children.Clear());
 
+			// Reload the model
+			await Task.Run(() => sceneContext.Scene.Load(filePath));
+
+			// Serialize and compare the two trees
 			string onDiskData = JsonConvert.SerializeObject(loadedItem, Formatting.Indented);
-			string inMemoryData = JsonConvert.SerializeObject(view3DWidget.Scene, Formatting.Indented);
-
+			string inMemoryData = JsonConvert.SerializeObject(scene, Formatting.Indented);
 			Assert.IsTrue(inMemoryData == onDiskData);
 
 			// Save the scene a second time, validate that things remain the same
-			view3DWidget.Scene.Save(filePath, tempPath);
+			scene.Save(filePath, tempPath);
 			onDiskData = JsonConvert.SerializeObject(loadedItem, Formatting.Indented);
 
 			Assert.IsTrue(inMemoryData == onDiskData);

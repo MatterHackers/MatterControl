@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using MatterHackers.Agg.UI;
+using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
 using static MatterHackers.MatterControl.PrinterCommunication.PrinterConnection;
 
@@ -47,9 +48,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		private View3DWidget view3DWidget;
 
-		public MirrorControls(View3DWidget view3DWidget)
+		private InteractiveScene scene;
+
+		public MirrorControls(View3DWidget view3DWidget, InteractiveScene scene)
 		{
 			this.view3DWidget = view3DWidget;
+			this.scene = scene;
 
 			FlowLayoutWidget buttonContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
 			buttonContainer.HAnchor = HAnchor.Fit;
@@ -60,9 +64,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			mirrorXButton.Margin = theme.ButtonSpacing;
 			mirrorXButton.Click += (s, e) =>
 			{
-				if (view3DWidget.Scene.HasSelection)
+				if (scene.HasSelection)
 				{
-					view3DWidget.Scene.UndoBuffer.AddAndDo(new UndoRedoActions(() => MirrorOnAxis(Axis.X), () => MirrorOnAxis(Axis.X)));
+					scene.UndoBuffer.AddAndDo(new UndoRedoActions(() => MirrorOnAxis(Axis.X), () => MirrorOnAxis(Axis.X)));
 				}
 			};
 			buttonContainer.AddChild(mirrorXButton);
@@ -71,9 +75,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			mirrorYButton.Margin = theme.ButtonSpacing;
 			mirrorYButton.Click += (s, e) =>
 			{
-				if (view3DWidget.Scene.HasSelection)
+				if (scene.HasSelection)
 				{
-					view3DWidget.Scene.UndoBuffer.AddAndDo(new UndoRedoActions(() => MirrorOnAxis(Axis.Y), () => MirrorOnAxis(Axis.Y)));
+					scene.UndoBuffer.AddAndDo(new UndoRedoActions(() => MirrorOnAxis(Axis.Y), () => MirrorOnAxis(Axis.Y)));
 				}
 			};
 			buttonContainer.AddChild(mirrorYButton);
@@ -82,9 +86,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			mirrorZButton.Margin = theme.ButtonSpacing;
 			mirrorZButton.Click += (s, e) =>
 			{
-				if (view3DWidget.Scene.HasSelection)
+				if (scene.HasSelection)
 				{
-					view3DWidget.Scene.UndoBuffer.AddAndDo(new UndoRedoActions(() => MirrorOnAxis(Axis.Z), () => MirrorOnAxis(Axis.Z)));
+					scene.UndoBuffer.AddAndDo(new UndoRedoActions(() => MirrorOnAxis(Axis.Z), () => MirrorOnAxis(Axis.Z)));
 				}
 			};
 			buttonContainer.AddChild(mirrorZButton);
@@ -94,12 +98,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void MirrorOnAxis(Axis axis)
 		{
-			if (!view3DWidget.Scene.HasSelection)
+			if (!scene.HasSelection)
 			{
 				return;
 			}
 
-			var selectedItem = view3DWidget.Scene.SelectedItem;
+			var selectedItem = scene.SelectedItem;
 			selectedItem.Mesh.ReverseFaceEdges();
 
 			switch (axis)

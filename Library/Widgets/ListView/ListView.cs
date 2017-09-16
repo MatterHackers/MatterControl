@@ -46,8 +46,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 	{
 		private EventHandler unregisterEvents;
 
-		private bool editMode = false;
-
 		internal GuiWidget contentView;
 
 		private ILibraryContext LibraryContext;
@@ -245,7 +243,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				ImageBuffer thumbnail = new ImageBuffer();
 				AggContext.ImageIO.LoadImageData(cachePath, thumbnail);
 				thumbnail.SetRecieveBlender(new BlenderPreMultBGRA());
-				
+
 				return thumbnail;
 			}
 
@@ -284,9 +282,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				var listViewItem = sender as ListViewItem;
 				var itemModel = listViewItem.Model;
 
+				// TODO: No longer applicable... ***********************************
 				if (listViewItem?.Text == "..")
 				{
-					// Up folder tiem
+					// Up folder item
 					if (ActiveContainer?.Parent != null)
 					{
 						LoadContainer(ActiveContainer.Parent);
@@ -315,10 +314,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						listViewItem.StartProgress();
 
 						var result = contentModel.CreateContent(listViewItem.ProgressReporter);
-						if (result.Object3D != null)
+						if (result.Object3D != null && ApplicationController.Instance.DragDropData.View3DWidget != null)
 						{
-							var scene = ApplicationController.Instance.ActiveView3DWidget.Scene;
-
+							var scene = ApplicationController.Instance.DragDropData.View3DWidget.InteractionLayer.Scene;
 							scene.ModifyChildren(children =>
 							{
 								children.Add(result.Object3D);

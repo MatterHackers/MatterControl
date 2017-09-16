@@ -88,11 +88,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					if (isGroupItemType)
 					{
 						// Create and perform the delete operation
-						var operation = new UngroupCommand(view3DWidget, Scene.SelectedItem);
+						var operation = new UngroupCommand(view3DWidget, Scene, Scene.SelectedItem);
 						operation.Do();
 
 						// Store the operation for undo/redo
-						view3DWidget.Scene.UndoBuffer.Add(operation);
+						Scene.UndoBuffer.Add(operation);
 					}
 				});
 
@@ -128,10 +128,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					if (Scene.IsSelected(Object3DTypes.SelectionGroup))
 					{
 						// Create and perform the delete operation
-						var operation = new GroupCommand(view3DWidget.Scene, Scene.SelectedItem);
+						var operation = new GroupCommand(Scene, Scene.SelectedItem);
 
 						// Store the operation for undo/redo
-						view3DWidget.Scene.UndoBuffer.AddAndDo(operation);
+						Scene.UndoBuffer.AddAndDo(operation);
 					}
 				});
 
@@ -206,11 +206,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			// Create and perform a new insert operation
-			var insertOperation = new InsertCommand(view3DWidget, newItem);
+			var insertOperation = new InsertCommand(view3DWidget, Scene, newItem);
 			insertOperation.Do();
 
 			// Store the operation for undo/redo
-			view3DWidget.Scene.UndoBuffer.Add(insertOperation);
+			Scene.UndoBuffer.Add(insertOperation);
 		}
 
 		public static void DeleteSelection(this InteractiveScene Scene, View3DWidget view3DWidget)
@@ -218,10 +218,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (Scene.HasSelection)
 			{
 				// Create and perform the delete operation 
-				var deleteOperation = new DeleteCommand(view3DWidget, Scene.SelectedItem);
+				var deleteOperation = new DeleteCommand(view3DWidget, Scene, Scene.SelectedItem);
 
 				// Store the operation for undo/redo
-				view3DWidget.Scene.UndoBuffer.AddAndDo(deleteOperation);
+				Scene.UndoBuffer.AddAndDo(deleteOperation);
 
 				Scene.ClearSelection();
 			}

@@ -52,13 +52,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private string fileNotFoundMessage = "File not found on disk.".Localize();
 		private string fileTooBigToLoad = "GCode file too big to preview ({0}).".Localize();
 
-		private PrinterConfig printer;
+		private BedConfig sceneContext;
 
 		private ViewControls3D viewControls3D;
 
-		public ViewGcodeBasic(PrinterConfig printer, ViewControls3D viewControls3D)
+		public ViewGcodeBasic(BedConfig sceneContext, ViewControls3D viewControls3D)
 		{
-			this.printer = printer;
+			this.sceneContext = sceneContext;
 			this.viewControls3D = viewControls3D;
 
 			CreateAndAddChildren();
@@ -69,16 +69,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					if (stringEvent.Data == "extruder_offset")
 					{
-						printer.Bed.GCodeRenderer?.Clear3DGCode();
+						sceneContext.GCodeRenderer?.Clear3DGCode();
 					}
 				}
 			}, ref unregisterEvents);
 
 			// TODO: Why do we clear GCode on AdvancedControlsPanelReloading - assume some slice settings should invalidate. If so, code should be more specific and bound to slice settings changed
-			ApplicationController.Instance.AdvancedControlsPanelReloading.RegisterEvent((s, e) => printer.Bed.GCodeRenderer?.Clear3DGCode(), ref unregisterEvents);
+			ApplicationController.Instance.AdvancedControlsPanelReloading.RegisterEvent((s, e) => sceneContext.GCodeRenderer?.Clear3DGCode(), ref unregisterEvents);
 		}
-
-		internal GCodeFile loadedGCode => printer.Bed.LoadedGCode;
 
 		internal void CreateAndAddChildren()
 		{
@@ -98,9 +96,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Stretch
 			};
 
-			if (!File.Exists(printer.Bed.GCodePath))
+			if (!File.Exists(sceneContext.GCodePath))
 			{ 
-				SetProcessingMessage($"{fileNotFoundMessage}\n'{printer.Bed.GCodePath}'");
+				SetProcessingMessage($"{fileNotFoundMessage}\n'{sceneContext.GCodePath}'");
 			}
 
 			mainContainerTopToBottom.AddChild(gcodeDisplayWidget);
@@ -109,23 +107,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// *************** AddGCodeFileControls ***************
 			SetProcessingMessage("");
-			if (loadedGCode == null)
+			if (sceneContext.LoadedGCode == null)
 			{
-				SetProcessingMessage($"{fileNotFoundMessage}\n'{printer.Bed.GCodePath}'");
+				SetProcessingMessage($"{fileNotFoundMessage}\n'{sceneContext.GCodePath}'");
 			}
 
-			if (loadedGCode?.LineCount > 0)
+			if (sceneContext.LoadedGCode?.LineCount > 0)
 			{
-				gradientWidget = new ColorGradientWidget(loadedGCode)
+				gradientWidget = new ColorGradientWidget(sceneContext.LoadedGCode)
 				{
 					Margin = new BorderDouble(top: 55, left: 11),
 					HAnchor = HAnchor.Fit | HAnchor.Left,
 					VAnchor = VAnchor.Top,
-					Visible = printer.Bed.RendererOptions.RenderSpeeds
+					Visible = sceneContext.RendererOptions.RenderSpeeds
 				};
 				AddChild(gradientWidget);
 
-				var gcodeDetails = new GCodeDetails(this.loadedGCode);
+				var gcodeDetails = new GCodeDetails(sceneContext.LoadedGCode);
 
 				this.AddChild(new GCodeDetailsView(gcodeDetails)
 				{

@@ -52,11 +52,11 @@ namespace MatterHackers.MatterControl
 
 		private ILibraryContext libraryNavContext;
 
-		public SaveAsWindow(Func<SaveAsReturnInfo, Task> functionToCallOnSaveAs, ILibraryContainer providerLocator, bool showQueue, bool getNewName)
+		public SaveAsWindow(BedConfig sceneContext, Func<SaveAsReturnInfo, Task> functionToCallOnSaveAs, bool showQueue, bool getNewName)
 			: base(480, 500)
 		{
 			var buttonFactory = ApplicationController.Instance.Theme.ButtonFactory;
-			
+
 			AlwaysOnTopOfMain = true;
 			Title = "MatterControl - " + "Save As".Localize();
 			this.Name = "Save As Window";

@@ -40,6 +40,7 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.GCodeVisualizer;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
+using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.Library.Export
@@ -109,9 +110,6 @@ namespace MatterHackers.MatterControl.Library.Export
 
 		}
 
-		// partIsGCode = Path.GetExtension(libraryContent.FileName).ToUpper() == ".GCODE";
-
-
 		private async Task<string> SliceFileIfNeeded(ILibraryContentStream libraryContent)
 		{
 			// TODO: How to handle gcode files in library content?
@@ -122,13 +120,17 @@ namespace MatterHackers.MatterControl.Library.Export
 			if (MeshFileIo.ValidFileExtensions().Contains(sourceExtension)
 				|| sourceExtension == ".MCX")
 			{
-				// Save any pending changes before starting the print
+				// Conceptually we need to:
+				//  - Check to see if the libraryContent is the bed plate, load into a scene if not or reference loaded scene
+				//  - If bedplate, save any pending changes before starting the print
 				await ApplicationController.Instance.ActiveView3DWidget.PersistPlateIfNeeded();
 
-				var printItem = ApplicationController.Instance.ActivePrintItem;
+				PrintItemWrapper printItem = null;// ApplicationController.Instance.ActivePrintItem;
 
+				//  - Slice
 				await SlicingQueue.SliceFileAsync(printItem, null);
 
+				//  - Return
 				fileToProcess = printItem.GetGCodePathAndFileName();
 			}
 

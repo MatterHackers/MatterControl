@@ -72,13 +72,59 @@ namespace MatterHackers.MatterControl
 
 		public View3DConfig RendererOptions { get; } = new View3DConfig();
 
-		private PrintItemWrapper printItem => ApplicationController.Instance.ActivePrintItem;
+		public PrintItemWrapper printItem = null;
 
-		private PrinterConfig printer;
+		public PrinterConfig Printer { get; set; }
 
-		public BedConfig(PrinterConfig printer)
+		public Mesh PrinterShape { get; private set; }
+
+		public BedConfig(PrinterConfig printer = null, bool loadLastBedplate = false)
 		{
-			this.printer = printer;
+			this.Printer = printer;
+
+			if (loadLastBedplate)
+			{
+				// Find the last used bed plate mcx
+				var directoryInfo = new DirectoryInfo(ApplicationDataStorage.Instance.PlatingDirectory);
+				var firstFile = directoryInfo.GetFileSystemInfos("*.mcx").OrderByDescending(fl => fl.CreationTime).FirstOrDefault();
+
+				// Set as the current item - should be restored as the Active scene in the MeshViewer
+				if (firstFile != null)
+				{
+					try
+					{
+						var loadedItem = new PrintItemWrapper(new PrintItem(firstFile.Name, firstFile.FullName));
+						if (loadedItem != null)
+						{
+							this.printItem = loadedItem;
+						}
+
+						this.Scene.Load(firstFile.FullName);
+					}
+					catch { }
+				}
+			}
+
+			// Clear if not assigned above
+			if (this.printItem == null)
+			{
+				this.ClearPlate();
+			}
+		}
+
+		internal void ClearPlate()
+		{
+			string now = DateTime.Now.ToString("yyyyMMdd-HHmmss");
+
+			string mcxPath = Path.Combine(ApplicationDataStorage.Instance.PlatingDirectory, now + ".mcx");
+
+			this.printItem = new PrintItemWrapper(new PrintItem(now, mcxPath));
+
+			File.WriteAllText(mcxPath, new Object3D().ToJson());
+
+			this.Scene.Load(mcxPath);
+
+			ApplicationController.Instance.ActiveView3DWidget?.PartHasBeenChanged();
 		}
 
 		private GCodeFile loadedGCode;
@@ -163,7 +209,53 @@ namespace MatterHackers.MatterControl
 					bedGenerator = new BedMeshGenerator();
 
 					//Construct the thing
-					_bedMesh = bedGenerator.CreatePrintBed(printer);
+					_bedMesh = bedGenerator.CreatePrintBed(Printer);
+
+					Task.Run(() =>
+					{
+						try
+						{
+							string url = Printer.Settings.GetValue("PrinterShapeUrl");
+							string extension = Printer.Settings.GetValue("PrinterShapeExtension");
+
+							if (string.IsNullOrEmpty(url) || string.IsNullOrEmpty(extension))
+							{
+								return;
+							}
+
+							using (var stream = ApplicationController.Instance.LoadHttpAsset(url))
+							{
+								var mesh = MeshFileIo.Load(stream, extension, CancellationToken.None).Mesh;
+
+								BspNode bspTree = null;
+
+								// if there is a chached bsp tree load it
+								var meshHashCode = mesh.GetLongHashCode();
+								string cachePath = ApplicationController.CacheablePath("MeshBspData", $"{meshHashCode}.bsp");
+								if (File.Exists(cachePath))
+								{
+									JsonConvert.DeserializeObject<BspNode>(File.ReadAllText(cachePath));
+								}
+								else
+								{
+									// else calculate it
+									bspTree = FaceBspTree.Create(mesh, 20, true);
+									// and save it
+									File.WriteAllText(cachePath, JsonConvert.SerializeObject(bspTree));
+								}
+
+								// set the mesh to use the new tree
+								UiThread.RunOnIdle(() =>
+								{
+									mesh.FaceBspTree = bspTree;
+									this.PrinterShape = mesh;
+
+									// TODO: Need to send a notification that the mesh changed so the UI can pickup and render
+								});
+							}
+						}
+						catch { }
+					});
 				}
 
 				return _bedMesh;
@@ -230,7 +322,7 @@ namespace MatterHackers.MatterControl
 		{
 			if (bedGenerator != null)
 			{
-				_bedMesh = bedGenerator.CreatePrintBed(printer);
+				_bedMesh = bedGenerator.CreatePrintBed(Printer);
 			}
 		}
 	}
@@ -282,10 +374,10 @@ namespace MatterHackers.MatterControl
 
 		private EventHandler unregisterEvents;
 
-		public PrinterConfig()
+		public PrinterConfig(bool loadLastBedplate)
 		{
-			this.Bed = new BedConfig(this);
-			
+			this.Bed = new BedConfig(this, loadLastBedplate);
+
 			ActiveSliceSettings.SettingChanged.RegisterEvent(Printer_SettingChanged, ref unregisterEvents);
 
 			// TODO: Needed?
@@ -427,24 +519,9 @@ namespace MatterHackers.MatterControl
 
 	public class ApplicationController
 	{
-		internal void ClearPlate()
-		{
-			string now = DateTime.Now.ToString("yyyyMMdd-HHmmss");
-
-			string mcxPath = Path.Combine(ApplicationDataStorage.Instance.PlatingDirectory, now + ".mcx");
-
-			ApplicationController.Instance.ActivePrintItem = new PrintItemWrapper(new PrintItem(now, mcxPath));
-
-			File.WriteAllText(mcxPath, new Object3D().ToJson());
-
-			ApplicationController.Instance.ActiveView3DWidget?.Scene.Load(mcxPath);
-			ApplicationController.Instance.ActiveView3DWidget?.PartHasBeenChanged();
-
-		}
-
 		public ThemeConfig Theme { get; set; } = new ThemeConfig();
 
-		public PrinterConfig Printer { get; } = new PrinterConfig();
+		public PrinterConfig Printer { get; }
 
 		public Action RedeemDesignCode;
 		public Action EnterShareCode;
@@ -457,7 +534,7 @@ namespace MatterHackers.MatterControl
 
 		public static Action SignInAction;
 		public static Action SignOutAction;
-		
+
 		public static Action WebRequestFailed;
 		public static Action WebRequestSucceeded;
 
@@ -680,6 +757,8 @@ namespace MatterHackers.MatterControl
 			DefaultThumbBackground.DefaultBackgroundColor = RGBA_Bytes.Transparent;
 
 			Object3D.AssetsPath = ApplicationDataStorage.Instance.LibraryAssetsPath;
+
+			this.Printer = new PrinterConfig(loadLastBedplate: true);
 
 			this.Library = new LibraryConfig();
 			this.Library.ContentProviders.Add(new[] { "stl", "amf", "mcx" }, new MeshContentProvider());
@@ -970,15 +1049,11 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public class MeshViewState
-		{
-			public Matrix4X4 RotationMatrix { get; internal set; } = Matrix4X4.Identity;
-			public Matrix4X4 TranslationMatrix { get; internal set; } = Matrix4X4.Identity;
-		}
-
-		public MeshViewState PartPreviewState { get; set; } = new MeshViewState();
+		public DragDropData DragDropData { get; set; } = new DragDropData();
 
 		public View3DWidget ActiveView3DWidget { get; internal set; }
+
+		public string PrintingItemName { get; set; }
 
 		public string CachePath(ILibraryItem libraryItem)
 		{
@@ -986,19 +1061,10 @@ namespace MatterHackers.MatterControl
 			return string.IsNullOrEmpty(libraryItem.ID) ? null : ApplicationController.CacheablePath("ItemThumbnails", $"{libraryItem.ID}.png");
 		}
 
-		/*
-		private static string CachePath(ILibraryItem libraryItem, int width, int height)
-		{
-			// TODO: Use content SHA
-			return string.IsNullOrEmpty(libraryItem.ID) ? null : ApplicationController.CacheablePath("ItemThumbnails", $"{libraryItem.ID}_{width}x{height}.png");
-		}*/
-
 		public void ReloadAdvancedControlsPanel()
 		{
 			AdvancedControlsPanelReloading.CallEvents(this, null);
 		}
-
-		// public LibraryDataView CurrentLibraryDataView = null;
 
 		public void SwitchToPurchasedLibrary()
 		{
@@ -1059,11 +1125,6 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public class CloudSyncEventArgs : EventArgs
-		{
-			public bool IsAuthenticated { get; set; }
-		}
-
 		public void OnLoadActions()
 		{
 			Load?.Invoke(this, null);
@@ -1071,46 +1132,40 @@ namespace MatterHackers.MatterControl
 			// Pushing this after load fixes that empty printer list
 			ApplicationController.Instance.UserChanged();
 
-			if (!System.IO.File.Exists(@"/storage/sdcard0/Download/LaunchTestPrint.stl"))
+			bool showAuthWindow = WizardWindow.ShouldShowAuthPanel?.Invoke() ?? false;
+			if (showAuthWindow)
 			{
-				bool showAuthWindow = WizardWindow.ShouldShowAuthPanel?.Invoke() ?? false;
-                if (showAuthWindow)
-                {
-					if (ApplicationSettings.Instance.get(ApplicationSettingsKey.SuppressAuthPanel) != "True")
-					{
-						//Launch window to prompt user to sign in
-						UiThread.RunOnIdle(() => WizardWindow.ShowPrinterSetup());
-					}
-                }
-                else
-                {
-                    //If user in logged in sync before checking to prompt to create printer
-                    if (ApplicationController.SyncPrinterProfiles == null)
-                    {
-                        RunSetupIfRequired();
-                    }
-                    else
-                    {
-                        ApplicationController.SyncPrinterProfiles.Invoke("ApplicationController.OnLoadActions()", null).ContinueWith((task) =>
-                        {
-                            RunSetupIfRequired();
-                        });
-                    }
-                }
-
-				if (AggContext.OperatingSystem == OSType.Android)
+				if (ApplicationSettings.Instance.get(ApplicationSettingsKey.SuppressAuthPanel) != "True")
 				{
-					// show this last so it is on top
-					if (UserSettings.Instance.get("SoftwareLicenseAccepted") != "true")
-					{
-						UiThread.RunOnIdle(() => WizardWindow.Show<LicenseAgreementPage>());
-					}
+					//Launch window to prompt user to sign in
+					UiThread.RunOnIdle(() => WizardWindow.ShowPrinterSetup());
 				}
 			}
 			else
 			{
-				StartPrintingTest();
+				//If user in logged in sync before checking to prompt to create printer
+				if (ApplicationController.SyncPrinterProfiles == null)
+				{
+					RunSetupIfRequired();
+				}
+				else
+				{
+					ApplicationController.SyncPrinterProfiles.Invoke("ApplicationController.OnLoadActions()", null).ContinueWith((task) =>
+					{
+						RunSetupIfRequired();
+					});
+				}
 			}
+
+			if (AggContext.OperatingSystem == OSType.Android)
+			{
+				// show this last so it is on top
+				if (UserSettings.Instance.get("SoftwareLicenseAccepted") != "true")
+				{
+					UiThread.RunOnIdle(() => WizardWindow.Show<LicenseAgreementPage>());
+				}
+			}
+
 
 			if (ActiveSliceSettings.Instance.PrinterSelected
 				&& ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.auto_connect))
@@ -1134,21 +1189,6 @@ namespace MatterHackers.MatterControl
         }
 
 		private EventHandler unregisterEvent;
-		public void StartPrintingTest()
-		{
-			QueueData.Instance.RemoveAll();
-			QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem("LaunchTestPrint", @"/storage/sdcard0/Download/LaunchTestPrint.stl")));
-			PrinterConnection.Instance.ConnectToActivePrinter();
-
-			PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent((sender, e) =>
-			{
-				if (PrinterConnection.Instance.CommunicationState == CommunicationStates.Connected)
-				{
-					ApplicationController.Instance.PrintActivePartIfPossible();
-				}
-			}, ref unregisterEvent);
-		}
-
 
 		public Stream LoadHttpAsset(string url)
 		{
@@ -1223,7 +1263,7 @@ namespace MatterHackers.MatterControl
 							halfImage.NewGraphics2D().Render(unScaledImage, 0, 0, 0, halfImage.Width / (double)unScaledImage.Width, halfImage.Height / (double)unScaledImage.Height);
 							unScaledImage = halfImage;
 						}
-						
+
 						double finalScale = imageToLoadInto.Width / (double)unScaledImage.Width;
 						imageToLoadInto.Allocate(imageToLoadInto.Width, (int)(unScaledImage.Height * finalScale), imageToLoadInto.Width * (imageToLoadInto.BitDepth / 8), imageToLoadInto.BitDepth);
 						imageToLoadInto.NewGraphics2D().Render(unScaledImage, 0, 0, 0, finalScale, finalScale);
@@ -1317,33 +1357,6 @@ namespace MatterHackers.MatterControl
 			return Enumerable.Empty<PrintItemAction>();
 		}
 
-		private PrintItemWrapper activePrintItem;
-
-		public PrintItemWrapper ActivePrintItem
-		{
-			get
-			{
-				return this.activePrintItem;
-			}
-			set
-			{
-				if (!PrinterConnection.Instance.PrinterIsPrinting
-					&& !PrinterConnection.Instance.PrinterIsPaused
-					&& this.activePrintItem != value)
-				{
-					this.activePrintItem = value;
-					if (PrinterConnection.Instance.CommunicationState == CommunicationStates.FinishedPrint)
-					{
-						PrinterConnection.Instance.CommunicationState = CommunicationStates.Connected;
-					}
-
-					PrinterConnection.Instance.activePrintItem = value;
-
-					OnActivePrintItemChanged(null);
-				}
-			}
-		}
-
 		public event EventHandler<WidgetSourceEventArgs> AddPrintersTabRightElement;
 
 		public void NotifyPrintersTabRightElement(GuiWidget sourceExentionArea)
@@ -1351,14 +1364,9 @@ namespace MatterHackers.MatterControl
 			AddPrintersTabRightElement?.Invoke(this, new WidgetSourceEventArgs(sourceExentionArea));
 		}
 
-		private void OnActivePrintItemChanged(EventArgs e)
-		{
-			ActivePrintItemChanged.CallEvents(this, e);
-		}
-
 		private string doNotAskAgainMessage = "Don't remind me again".Localize();
 
-		public async void PrintActivePart(bool overrideAllowGCode = false)
+		public async void PrintPart(PrintItemWrapper printItem, bool overrideAllowGCode = false)
 		{
 			try
 			{
@@ -1374,12 +1382,14 @@ namespace MatterHackers.MatterControl
 					}
 				}
 
+
 				// Save any pending changes before starting the print
 				await ApplicationController.Instance.ActiveView3DWidget.PersistPlateIfNeeded();
 
-				if (activePrintItem != null)
+				if (printItem != null)
 				{
-					string pathAndFile = activePrintItem.FileLocation;
+					this.PrintingItemName = printItem.Name;
+					string pathAndFile = printItem.FileLocation;
 					if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_sd_card_reader)
 						&& pathAndFile == QueueData.SdCardFileName)
 					{
@@ -1414,12 +1424,34 @@ namespace MatterHackers.MatterControl
 									}
 								};
 
-								UiThread.RunOnIdle(() => StyledMessageBox.ShowMessageBox(onConfirmPrint, gcodeWarningMessage, "Warning - GCode file".Localize(), new GuiWidget[] { new VerticalSpacer(), hideGCodeWarningCheckBox }, StyledMessageBox.MessageType.YES_NO));
+								UiThread.RunOnIdle(() =>
+								{
+									StyledMessageBox.ShowMessageBox(
+										(bool messageBoxResponse) =>
+										{
+											if (messageBoxResponse)
+											{
+												PrinterConnection.Instance.CommunicationState = CommunicationStates.PreparingToPrint;
+												PrintItemWrapper partToPrint = printItem;
+												SlicingQueue.Instance.QueuePartForSlicing(partToPrint);
+												partToPrint.SlicingDone += partToPrint_SliceDone;
+											}
+										},
+										gcodeWarningMessage,
+										"Warning - GCode file".Localize(),
+										new GuiWidget[]
+										{
+											new VerticalSpacer(),
+											hideGCodeWarningCheckBox
+										},
+										StyledMessageBox.MessageType.YES_NO);
+
+								});
 							}
 							else
 							{
 								PrinterConnection.Instance.CommunicationState = CommunicationStates.PreparingToPrint;
-								PrintItemWrapper partToPrint = activePrintItem;
+								PrintItemWrapper partToPrint = printItem;
 								SlicingQueue.Instance.QueuePartForSlicing(partToPrint);
 								partToPrint.SlicingDone += partToPrint_SliceDone;
 							}
@@ -1434,23 +1466,12 @@ namespace MatterHackers.MatterControl
 
 		private string gcodeWarningMessage = "The file you are attempting to print is a GCode file.\n\nIt is recommended that you only print Gcode files known to match your printer's configuration.\n\nAre you sure you want to print this GCode file?".Localize();
 
-		private void onConfirmPrint(bool messageBoxResponse)
+		public void PrintActivePartIfPossible(PrintItemWrapper printItem, bool overrideAllowGCode = false)
 		{
-			if (messageBoxResponse)
+			if (PrinterConnection.Instance.CommunicationState == CommunicationStates.Connected 
+				|| PrinterConnection.Instance.CommunicationState == CommunicationStates.FinishedPrint)
 			{
-				PrinterConnection.Instance.CommunicationState = CommunicationStates.PreparingToPrint;
-				PrintItemWrapper partToPrint = activePrintItem;
-				SlicingQueue.Instance.QueuePartForSlicing(partToPrint);
-				partToPrint.SlicingDone += partToPrint_SliceDone;
-			}
-		}
-
-
-		public void PrintActivePartIfPossible(bool overrideAllowGCode = false)
-		{
-			if (PrinterConnection.Instance.CommunicationState == CommunicationStates.Connected || PrinterConnection.Instance.CommunicationState == CommunicationStates.FinishedPrint)
-			{
-				PrintActivePart(overrideAllowGCode);
+				PrintPart(printItem, overrideAllowGCode);
 			}
 		}
 
@@ -1528,12 +1549,15 @@ namespace MatterHackers.MatterControl
 					+ "Error Reported".Localize() + ":"
 					+ $" \"{foundStringEventArgs.LineToCheck}\".";
 				UiThread.RunOnIdle(() =>
-				StyledMessageBox.ShowMessageBox(null, message, "Printer Hardware Error".Localize())
+					StyledMessageBox.ShowMessageBox(null, message, "Printer Hardware Error".Localize())
 				);
 			}
 		}
 
-		public RootedObjectEventHandler ActivePrintItemChanged = new RootedObjectEventHandler();
+		public class CloudSyncEventArgs : EventArgs
+		{
+			public bool IsAuthenticated { get; set; }
+		}
 	}
 
 	public class WidgetSourceEventArgs : EventArgs
@@ -1543,6 +1567,18 @@ namespace MatterHackers.MatterControl
 		public WidgetSourceEventArgs(GuiWidget source)
 		{
 			this.Source = source;
+		}
+	}
+
+	public class DragDropData
+	{
+		public View3DWidget View3DWidget { get; set; }
+		public InteractiveScene Scene { get; set; }
+
+		public void Reset()
+		{
+			this.View3DWidget = null;
+			this.Scene = null;
 		}
 	}
 }

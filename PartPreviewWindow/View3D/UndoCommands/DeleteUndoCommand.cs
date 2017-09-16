@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System.Collections.Generic;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
+using MatterHackers.MeshVisualizer;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -38,15 +39,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private List<IObject3D> items = new List<IObject3D>();
 
 		private View3DWidget view3DWidget;
+		private InteractiveScene scene;
 
-		public DeleteCommand(View3DWidget view3DWidget, IObject3D deletingItem)
+		public DeleteCommand(View3DWidget view3DWidget, InteractiveScene scene, IObject3D deletingItem)
 		{
 			this.view3DWidget = view3DWidget;
+			this.scene = scene;
+
 			if (deletingItem.ItemType == Object3DTypes.SelectionGroup)
 			{
 				var childrenToAdd = deletingItem.Children;
-				// push whatever happend to the selection into the objects before saving them
-				view3DWidget.Scene.ClearSelection();
+				// push whatever happened to the selection into the objects before saving them
+				scene.ClearSelection();
 				// save them in our list
 				foreach (var item in childrenToAdd)
 				{
@@ -61,9 +65,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void Do()
 		{
-			view3DWidget.Scene.ClearSelection();
+			scene.ClearSelection();
 
-			view3DWidget.Scene.ModifyChildren(children =>
+			scene.ModifyChildren(children =>
 			{
 				foreach (var item in items)
 				{
@@ -71,14 +75,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			});
 
-			view3DWidget.Scene.SelectLastChild();
+			scene.SelectLastChild();
 
 			view3DWidget.PartHasBeenChanged();
 		}
 
 		public void Undo()
 		{
-			view3DWidget.Scene.ModifyChildren(children =>
+			scene.ModifyChildren(children =>
 			{
 				foreach (var item in items)
 				{
@@ -86,10 +90,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			});
 
-			view3DWidget.Scene.ClearSelection();
+			scene.ClearSelection();
 			foreach (var item in items)
 			{
-				view3DWidget.Scene.AddToSelection(item);
+				scene.AddToSelection(item);
 			}
 
 			view3DWidget.PartHasBeenChanged();

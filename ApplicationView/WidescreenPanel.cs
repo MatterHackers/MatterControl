@@ -54,26 +54,6 @@ namespace MatterHackers.MatterControl
 			this.AnchorAll();
 			this.Name = "WidescreenPanel";
 
-			// HACK: Long term we need a better solution which does not rely on ActivePrintItem/PrintItemWrapper
-			if (ApplicationController.Instance.ActivePrintItem == null)
-			{
-				// Find the last used bed plate mcx
-				var directoryInfo = new DirectoryInfo(ApplicationDataStorage.Instance.PlatingDirectory);
-				var firstFile = directoryInfo.GetFileSystemInfos("*.mcx").OrderByDescending(fl => fl.CreationTime).FirstOrDefault();
-
-				// Set as the current item - should be restored as the Active scene in the MeshViewer
-				if (firstFile != null)
-				{
-					ApplicationController.Instance.ActivePrintItem = new PrintItemWrapper(new PrintItem(firstFile.Name, firstFile.FullName));
-				}
-			}
-
-            // Clear if not assigned above
-            if (ApplicationController.Instance.ActivePrintItem == null)
-            {
-                ApplicationController.Instance.ClearPlate();
-            }
-
 			var library3DViewSplitter = new Splitter()
 			{
 				Padding = new BorderDouble(4),
@@ -101,7 +81,7 @@ namespace MatterHackers.MatterControl
 			library3DViewSplitter.Panel1.AddChild(leftNav);
 
 			// put in the right column
-			library3DViewSplitter.Panel2.AddChild(new PartPreviewContent(ApplicationController.Instance.ActivePrintItem)
+			library3DViewSplitter.Panel2.AddChild(new PartPreviewContent()
 			{
 				VAnchor = VAnchor.Bottom | VAnchor.Top,
 				HAnchor = HAnchor.Left | HAnchor.Right

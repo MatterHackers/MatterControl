@@ -29,7 +29,6 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Globalization;
-using System.IO;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
@@ -37,7 +36,6 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.Library;
-using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrintQueue;
 
 namespace MatterHackers.MatterControl.PrintHistory
@@ -48,7 +46,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 		public int ThumbWidth { get; } = 50;
 		public int ThumbHeight { get; } = 50;
 
-		public HistoryListView()
+		public HistoryListView(BedConfig sceneContext)
 			: base(FlowDirection.TopToBottom)
 		{
 		}
@@ -215,13 +213,6 @@ namespace MatterHackers.MatterControl.PrintHistory
 					viewLabel.VAnchor = VAnchor.Center;
 					viewLabel.HAnchor = HAnchor.Center;
 
-					FatFlatClickWidget viewButton = new FatFlatClickWidget(viewLabel);
-					viewButton.VAnchor = VAnchor.Stretch;
-					viewButton.BackgroundColor = ActiveTheme.Instance.SecondaryAccentColor;
-					viewButton.Width = actionButtonSize;
-					viewButton.Click += ViewButton_Click;
-					rightMiddleColumnContainer.AddChild(viewButton);
-
 					TextWidget printLabel = new TextWidget("Print".Localize());
 					printLabel.TextColor = RGBA_Bytes.White;
 					printLabel.VAnchor = VAnchor.Center;
@@ -237,12 +228,11 @@ namespace MatterHackers.MatterControl.PrintHistory
 						{
 							if (!PrinterCommunication.PrinterConnection.Instance.PrintIsActive)
 							{
-								QueueData.Instance.AddItem(new PrintItemWrapper(printTask.PrintItemId), 0);
-
-								ApplicationController.Instance.PrintActivePartIfPossible();
+								ApplicationController.Instance.PrintActivePartIfPossible(new PrintItemWrapper(printTask.PrintItemId));
 							}
 							else
 							{
+								// TODO: Queue is somewhat deprecated. Consider disabling this feature/button while printing
 								QueueData.Instance.AddItem(new PrintItemWrapper(printTask.PrintItemId));
 							}
 							rightButtonOverlay.SlideOut();
@@ -322,34 +312,6 @@ namespace MatterHackers.MatterControl.PrintHistory
 
 		private EventHandler unregisterEvents;
 
-		private void ViewButton_Click(object sender, EventArgs e)
-		{
-			this.rightButtonOverlay.SlideOut();
-			PrintItem printItem = Datastore.Instance.dbSQLite.Table<PrintItem>().Where(v => v.Id == this.printTask.PrintItemId).Take(1).FirstOrDefault();
-
-			if (printItem != null)
-			{
-				string pathAndFile = printItem.FileLocation;
-				if (File.Exists(pathAndFile))
-				{
-					bool shiftKeyDown = Keyboard.IsKeyDown(Keys.ShiftKey);
-					if (shiftKeyDown)
-					{
-						OpenPartPreviewWindow(printItem, View3DWidget.AutoRotate.Disabled);
-					}
-					else
-					{
-						OpenPartPreviewWindow(printItem, View3DWidget.AutoRotate.Enabled);
-					}
-				}
-				else
-				{
-					PrintItemWrapper itemWrapper = new PrintItemWrapper(printItem);
-					ShowCantFindFileMessage(itemWrapper);
-				}
-			}
-		}
-
 		public void ShowCantFindFileMessage(PrintItemWrapper printItemWrapper)
 		{
 			itemToRemove = printItemWrapper;
@@ -380,27 +342,6 @@ namespace MatterHackers.MatterControl.PrintHistory
 				int index = QueueData.Instance.GetIndex(itemToRemove);
 				UiThread.RunOnIdle(() => QueueData.Instance.RemoveAt(index));
 			}
-		}
-
-		private PartPreviewMainWindow partPreviewWindow;
-
-		private void OpenPartPreviewWindow(PrintItem printItem, View3DWidget.AutoRotate autoRotate)
-		{
-			PrintItemWrapper itemWrapper = new PrintItemWrapper(printItem.Id);
-			if (partPreviewWindow == null)
-			{
-				partPreviewWindow = new PartPreviewMainWindow(itemWrapper, autoRotate);
-				partPreviewWindow.Closed += PartPreviewWindow_Closed;
-			}
-			else
-			{
-				partPreviewWindow.BringToFront();
-			}
-		}
-
-		private void PartPreviewWindow_Closed(object sender, ClosedEventArgs e)
-		{
-			this.partPreviewWindow = null;
 		}
 
 		public override void OnClosed(ClosedEventArgs e)

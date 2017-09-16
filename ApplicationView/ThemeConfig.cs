@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl
 
 		public TextImageButtonFactory imageConverterExpandMenuOptionFactory;
 
-		internal void SetPrinterTabStyles(PrinterTab printerTab)
+		internal void SetPrinterTabStyles(MainTab printerTab)
 		{
 			printerTab.Margin = new BorderDouble(10, 0, 0, 5);
 			printerTab.Padding = new BorderDouble(8, 4, 12, 6);

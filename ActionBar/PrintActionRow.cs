@@ -70,7 +70,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			AddChildElements(buttonFactory, parentWidget, defaultMargin);
 
 			// Add Handlers
-			ApplicationController.Instance.ActivePrintItemChanged.RegisterEvent(onStateChanged, ref unregisterEvents);
 			printer.Connection.CommunicationStateChanged.RegisterEvent(onStateChanged, ref unregisterEvents);
 			ProfileManager.ProfilesListChanged.RegisterEvent(onStateChanged, ref unregisterEvents);
 		}
@@ -295,7 +294,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		{
 			UiThread.RunOnIdle(() =>
 			{
-				ApplicationController.Instance.PrintActivePartIfPossible();
+				ApplicationController.Instance.PrintActivePartIfPossible(printer.Bed.printItem);
 			});
 		}
 

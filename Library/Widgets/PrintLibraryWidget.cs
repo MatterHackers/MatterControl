@@ -357,21 +357,21 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				AllowProtected = true,
 				Action = (selectedLibraryItems, listView) =>
 				{
-					var firstItem = selectedLibraryItems.FirstOrDefault();
-					if (firstItem is SDCardFileItem sdcardItem)
+					switch (selectedLibraryItems.FirstOrDefault())
 					{
-						ApplicationController.Instance.ActivePrintItem = new PrintItemWrapper(new PrintItem(sdcardItem.Name, QueueData.SdCardFileName));
-					}
-					else if (firstItem is FileSystemFileItem fileItem && Path.GetExtension(fileItem.FileName).ToUpper() == ".GCODE")
-					{
-						ApplicationController.Instance.ActivePrintItem = new PrintItemWrapper(new PrintItem(fileItem.Name, fileItem.Path));
-					}
-					else
-					{
-						//TODO: Otherwise add the selected items to the plate
+						case SDCardFileItem sdcardItem:
+							// TODO: How to wire up SD printing?
+							//ApplicationController.Instance.ActivePrintItem = new PrintItemWrapper(new PrintItem(sdcardItem.Name, QueueData.SdCardFileName));
+							break;
+						case FileSystemFileItem fileItem when Path.GetExtension(fileItem.FileName).ToUpper() == ".GCODE":
+							//ApplicationController.Instance.ActivePrintItem = new PrintItemWrapper(new PrintItem(fileItem.Name, fileItem.Path));
+							break;
+						default:
+							//TODO: Otherwise add the selected items to the plate and print the plate?
+							//ApplicationController.Instance.PrintActivePart();
+							break;
 					}
 
-					ApplicationController.Instance.PrintActivePart();
 				}
 			});
 
@@ -416,7 +416,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 					ApplicationController.Instance.ActiveView3DWidget.partHasBeenEdited = true;
 
-					var scene = ApplicationController.Instance.ActiveView3DWidget.Scene;
+					var scene = ApplicationController.Instance.DragDropData.Scene;
 					scene.ModifyChildren(children =>
 					{
 						foreach (var sceneItem in itemsToAdd)
@@ -593,47 +593,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			});
 		}
 
-		private void SelectLocationToExportGCode()
-		{
-			/*
-			FileDialog.SelectFolderDialog(
-				new SelectFolderDialogParams("Select Location To Save Files")
-				{
-					ActionButtonLabel = "Export".Localize(),
-					Title = "MatterControl: Select A Folder"
-				},
-				(openParams) =>
-				{
-					string path = openParams.FolderPath;
-					if (path != null && path != "")
-					{
-						List<PrintItem> parts = QueueData.Instance.CreateReadOnlyPartList(true);
-						if (parts.Count > 0)
-						{
-							if (exportingWindow == null)
-							{
-								exportingWindow = new ExportToFolderFeedbackWindow(parts.Count, parts[0].Name, ActiveTheme.Instance.PrimaryBackgroundColor);
-								exportingWindow.Closed += (s, e) =>
-								{
-									this.exportingWindow = null;
-								};
-								exportingWindow.ShowAsSystemWindow();
-							}
-							else
-							{
-								exportingWindow.BringToFront();
-							}
-
-							var exportToFolderProcess = new ExportToFolderProcess(parts, path);
-							exportToFolderProcess.StartingNextPart += exportingWindow.StartingNextPart;
-							exportToFolderProcess.UpdatePartStatus += exportingWindow.UpdatePartStatus;
-							exportToFolderProcess.DoneSaving += exportingWindow.DoneSaving;
-							exportToFolderProcess.Start();
-						}
-					}
-				}); */
-		}
-		
 		private void renameFromLibraryButton_Click(IEnumerable<ILibraryItem> items, object p)
 		{
 			if (libraryView.SelectedItems.Count == 1)

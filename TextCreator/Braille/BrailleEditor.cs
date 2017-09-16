@@ -37,6 +37,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
 
 namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
@@ -57,7 +58,9 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 
 		public GuiWidget Create(IObject3D item, View3DWidget parentView3D, ThemeConfig theme)
 		{
-			injectedItem = parentView3D.Scene?.SelectedItem as TextObject;
+			var scene = parentView3D.InteractionLayer.Scene;
+
+			injectedItem = scene?.SelectedItem as TextObject;
 
 			brailleGenerator = new BrailleGenerator();
 			this.view3DWidget = parentView3D;
@@ -152,7 +155,8 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 					injectedItem.Text);
 			});
 
-			view3DWidget.Scene.ModifyChildren(children =>
+			var scene = view3DWidget.InteractionLayer.Scene;
+			scene.ModifyChildren(children =>
 			{
 				// Find the injected item
 				var item = children.Find(child => child == injectedItem);
@@ -171,7 +175,9 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 
 		private void RebuildBase()
 		{
-			if (view3DWidget.Scene.HasChildren() && injectedItem != null)
+			var scene = view3DWidget.InteractionLayer.Scene;
+
+			if (scene.HasChildren() && injectedItem != null)
 			{
 				var newBaseplate = brailleGenerator.CreateBaseplate(injectedItem);
 				if(newBaseplate == null)
@@ -180,7 +186,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 				}
 
 				// Remove the old base and create and add a new one
-				view3DWidget.Scene.ModifyChildren(children =>
+				scene.ModifyChildren(children =>
 				{
 					children.RemoveAll(child => child is BraileBasePlate);
 					children.Add(newBaseplate);
