@@ -106,17 +106,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			modelViewer.BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor;
 
-			if (ApplicationController.Instance.PartPreviewState.RotationMatrix == Matrix4X4.Identity)
+			if (sceneContext.World.RotationMatrix == Matrix4X4.Identity)
 			{
 				this.modelViewer.ResetView();
-
-				ApplicationController.Instance.PartPreviewState.RotationMatrix = modelViewer.World.RotationMatrix;
-				ApplicationController.Instance.PartPreviewState.TranslationMatrix = modelViewer.World.TranslationMatrix;
-			}
-			else
-			{
-				modelViewer.World.RotationMatrix = ApplicationController.Instance.PartPreviewState.RotationMatrix;
-				modelViewer.World.TranslationMatrix = ApplicationController.Instance.PartPreviewState.TranslationMatrix;
 			}
 
 			this.AddChild(viewControls3D);
@@ -134,15 +126,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			ApplicationController.Instance.ActiveView3DWidget = modelViewer;
 
 			base.OnLoad(args);
-		}
-
-		public override void OnClosed(ClosedEventArgs e)
-		{
-			// Store active transforms on close
-			ApplicationController.Instance.PartPreviewState.RotationMatrix = modelViewer.World.RotationMatrix;
-			ApplicationController.Instance.PartPreviewState.TranslationMatrix = modelViewer.World.TranslationMatrix;
-
-			base.OnClosed(e);
 		}
 	}
 }

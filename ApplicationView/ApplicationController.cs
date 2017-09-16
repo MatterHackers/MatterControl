@@ -1049,14 +1049,6 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public class MeshViewState
-		{
-			public Matrix4X4 RotationMatrix { get; internal set; } = Matrix4X4.Identity;
-			public Matrix4X4 TranslationMatrix { get; internal set; } = Matrix4X4.Identity;
-		}
-
-		public MeshViewState PartPreviewState { get; set; } = new MeshViewState();
-
 		public DragDropData DragDropData { get; set; } = new DragDropData();
 
 		public View3DWidget ActiveView3DWidget { get; internal set; }

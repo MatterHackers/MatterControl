@@ -125,7 +125,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		public WorldView World => sceneContext.World;
+		private WorldView World => sceneContext.World;
 
 		public TrackballTumbleWidget TrackballTumbleWidget { get; }
 
