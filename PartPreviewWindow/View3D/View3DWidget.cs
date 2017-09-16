@@ -2314,16 +2314,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					sceneContext,
 					async (returnInfo) =>
 					{
-						// TODO: The PrintItemWrapper seems unnecessary in the new LibraryContainer model. Couldn't we just pass the scene to the LibraryContainer via it's add function, no need to perist to disk?
-						// Create a new PrintItemWrapper
-						var printItemWrapper = new PrintItemWrapper(
-						new PrintItem()
-						{
-							Name = returnInfo.newName,
-							FileLocation = Path.ChangeExtension(returnInfo.fileNameAndPath, ".mcx")
-						},
-						returnInfo.DestinationContainer);
-
 						// Save the scene to disk
 						await this.SaveChanges();
 
@@ -2335,7 +2325,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							{
 								writableContainer.Add(new[]
 								{
-									new FileSystemFileItem(printItemWrapper.FileLocation)
+									new FileSystemFileItem(sceneContext.printItem.FileLocation)
 									{
 										Name = returnInfo.newName
 									}
