@@ -86,8 +86,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private bool wasInSelectMode = false;
 
-		public event EventHandler SelectedTransformChanged;
-
 		public static ImageBuffer ArrowRight
 		{
 			get
@@ -1308,7 +1306,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							if (Scene.HasSelection)
 							{
 								Scene.ClearSelection();
-								SelectedTransformChanged?.Invoke(this, null);
 							}
 
 							// start a selection rect
@@ -1373,8 +1370,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 									CurrentSelectInfo.HitQuadrant = HitQuadrant.RT;
 								}
 							}
-
-							SelectedTransformChanged?.Invoke(this, null);
 						}
 					}
 				}
@@ -1598,7 +1593,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public void PartHasBeenChanged()
 		{
 			partHasBeenEdited = true;
-			SelectedTransformChanged?.Invoke(this, null);
 			Invalidate();
 		}
 
@@ -2440,8 +2434,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				viewControls3D.ActiveButton = ViewControls3DButtons.PartSelect;
 				wasInSelectMode = false;
 			}
-
-			SelectedTransformChanged?.Invoke(this, null);
 		}
 
 		internal GuiWidget ShowOverflowMenu()
