@@ -13,7 +13,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				testRunner.CloseSignInAndPrinterSelect();
+				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
 
 				Assert.IsFalse(testRunner.WaitForName("TerminalWidget", 0.5), "Terminal Window should not exist");
 
