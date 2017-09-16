@@ -125,8 +125,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		// TODO: Make dynamic
-		public WorldView World { get; } = ApplicationController.Instance.Printer.Bed.World;
+		public WorldView World => sceneContext.World;
 
 		public TrackballTumbleWidget TrackballTumbleWidget { get; }
 
@@ -143,7 +142,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.sceneContext = sceneContext;
 			this.Scene = sceneContext.Scene;
 
-			this.TrackballTumbleWidget = new TrackballTumbleWidget(ApplicationController.Instance.Printer.Bed.World)
+			this.TrackballTumbleWidget = new TrackballTumbleWidget(sceneContext.World)
 			{
 				TransformState = TrackBallController.MouseDownType.Rotation
 			};
