@@ -98,6 +98,8 @@ namespace MatterHackers.MatterControl
 						{
 							this.printItem = loadedItem;
 						}
+
+						this.Scene.Load(firstFile.FullName);
 					}
 					catch { }
 				}
@@ -124,7 +126,6 @@ namespace MatterHackers.MatterControl
 
 			ApplicationController.Instance.ActiveView3DWidget?.PartHasBeenChanged();
 		}
-
 
 		private GCodeFile loadedGCode;
 		public GCodeFile LoadedGCode
@@ -520,7 +521,7 @@ namespace MatterHackers.MatterControl
 	{
 		public ThemeConfig Theme { get; set; } = new ThemeConfig();
 
-		public PrinterConfig Printer { get; } = new PrinterConfig(loadLastBedplate: true);
+		public PrinterConfig Printer { get; }
 
 		public Action RedeemDesignCode;
 		public Action EnterShareCode;
@@ -533,7 +534,7 @@ namespace MatterHackers.MatterControl
 
 		public static Action SignInAction;
 		public static Action SignOutAction;
-		
+
 		public static Action WebRequestFailed;
 		public static Action WebRequestSucceeded;
 
@@ -756,6 +757,8 @@ namespace MatterHackers.MatterControl
 			DefaultThumbBackground.DefaultBackgroundColor = RGBA_Bytes.Transparent;
 
 			Object3D.AssetsPath = ApplicationDataStorage.Instance.LibraryAssetsPath;
+
+			this.Printer = new PrinterConfig(loadLastBedplate: true);
 
 			this.Library = new LibraryConfig();
 			this.Library.ContentProviders.Add(new[] { "stl", "amf", "mcx" }, new MeshContentProvider());
