@@ -264,15 +264,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public static void AddAndSelectPrinter(this AutomationRunner testRunner, string make, string model)
 		{
 			// If SelectMake is not visible and the ConnectionWizard is, click Skip
-			if (!testRunner.NameExists("Select Make", .2) 
-				&& testRunner.WaitForName("Connection Wizard Skip Sign In Button", 1))
+			if (!testRunner.NameExists("Select Make", 1.5))
 			{
-				testRunner.ClickByName("Connection Wizard Skip Sign In Button");
+				// Go to the new tab screen
+				testRunner.ClickByName("Create New");
+				testRunner.ClickByName("Create Printer");
 			}
-
-			// Go to the new tab screen
-			testRunner.ClickByName("Create New");
-			testRunner.ClickByName("Create Printer");
 
 			testRunner.ClickByName("Select Make");
 			testRunner.Type(make);
