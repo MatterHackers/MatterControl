@@ -72,15 +72,42 @@ namespace MatterHackers.MatterControl
 
 		public View3DConfig RendererOptions { get; } = new View3DConfig();
 
-		public PrintItemWrapper printItem = new PrintItemWrapper(new PrintItem("Some Name", "Some unique path"));
+		public PrintItemWrapper printItem = null;
 
 		public PrinterConfig Printer { get; set; }
 
 		public Mesh PrinterShape { get; private set; }
 
-		public BedConfig(PrinterConfig printer)
+		public BedConfig(PrinterConfig printer = null, bool loadLastBedplate = false)
 		{
 			this.Printer = printer;
+
+			if (loadLastBedplate)
+			{
+				// Find the last used bed plate mcx
+				var directoryInfo = new DirectoryInfo(ApplicationDataStorage.Instance.PlatingDirectory);
+				var firstFile = directoryInfo.GetFileSystemInfos("*.mcx").OrderByDescending(fl => fl.CreationTime).FirstOrDefault();
+
+				// Set as the current item - should be restored as the Active scene in the MeshViewer
+				if (firstFile != null)
+				{
+					try
+					{
+						var loadedItem = new PrintItemWrapper(new PrintItem(firstFile.Name, firstFile.FullName));
+						if (loadedItem != null)
+						{
+							this.printItem = loadedItem;
+						}
+					}
+					catch { }
+				}
+			}
+
+			// Clear if not assigned above
+			if (this.printItem == null)
+			{
+				this.ClearPlate();
+			}
 		}
 
 		internal void ClearPlate()
@@ -346,10 +373,10 @@ namespace MatterHackers.MatterControl
 
 		private EventHandler unregisterEvents;
 
-		public PrinterConfig()
+		public PrinterConfig(bool loadLastBedplate)
 		{
-			this.Bed = new BedConfig(this);
-			
+			this.Bed = new BedConfig(this, loadLastBedplate);
+
 			ActiveSliceSettings.SettingChanged.RegisterEvent(Printer_SettingChanged, ref unregisterEvents);
 
 			// TODO: Needed?
@@ -493,7 +520,7 @@ namespace MatterHackers.MatterControl
 	{
 		public ThemeConfig Theme { get; set; } = new ThemeConfig();
 
-		public PrinterConfig Printer { get; } = new PrinterConfig();
+		public PrinterConfig Printer { get; } = new PrinterConfig(loadLastBedplate: true);
 
 		public Action RedeemDesignCode;
 		public Action EnterShareCode;

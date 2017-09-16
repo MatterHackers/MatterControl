@@ -40,6 +40,9 @@ namespace MatterHackers.MatterControl
 {
 	public class AboutWidget : GuiWidget
 	{
+		private static readonly string ThumbnailsPath = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "thumbnails");
+		private static readonly Point2D BigRenderSize = new Point2D(460, 460);
+
 		public AboutWidget()
 		{
 			this.HAnchor = HAnchor.Stretch;
@@ -123,9 +126,7 @@ namespace MatterHackers.MatterControl
 				if (!referencedFilePaths.Contains(fileLocation))
 				{
 					referencedFilePaths.Add(fileLocation);
-
-					// TODO: Use standard caching mechanism on both ends for fingerprint based caching
-					//referencedFilePaths.Add(PartThumbnailWidget.GetImageFileName(printItem));
+					referencedFilePaths.Add(GetImageFileName(printItem));
 				}
 			}
 
@@ -139,8 +140,7 @@ namespace MatterHackers.MatterControl
 				if (!referencedFilePaths.Contains(printItem.FileLocation))
 				{
 					referencedFilePaths.Add(printItem.FileLocation);
-					// TODO: Use standard caching mechanism on both ends for fingerprint based caching
-					//referencedFilePaths.Add(PartThumbnailWidget.GetImageFileName(printItemWrapper));
+					referencedFilePaths.Add(GetImageFileName(printItemWrapper));
 				}
 			}
 
@@ -149,6 +149,25 @@ namespace MatterHackers.MatterControl
 			{
 				CleanDirectory(userDataPath, referencedFilePaths, daysOldToDelete);
 			}
+		}
+
+		public static string GetImageFileName(PrintItemWrapper item)
+		{
+			return GetImageFileName(item.FileHashCode.ToString());
+		}
+
+		private static string GetImageFileName(string stlHashCode)
+		{
+			string imageFileName = Path.Combine(ThumbnailsPath, "{0}_{1}x{2}.png".FormatWith(stlHashCode, BigRenderSize.x, BigRenderSize.y));
+
+			string folderToSavePrintsTo = Path.GetDirectoryName(imageFileName);
+
+			if (!Directory.Exists(folderToSavePrintsTo))
+			{
+				Directory.CreateDirectory(folderToSavePrintsTo);
+			}
+
+			return imageFileName;
 		}
 
 		public string CreateCenteredButton(string content)

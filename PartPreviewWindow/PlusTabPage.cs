@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			createItemsSection.AddChild(createPart);
 			createPart.Click += (s, e) =>
 			{
-				CreatePartTab(tabControl, new BedConfig(null), theme);
+				CreatePartTab(tabControl, new BedConfig(), theme);
 			};
 
 			var createPrinter = theme.ButtonFactory.Generate("Create Printer".Localize());
