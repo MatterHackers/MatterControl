@@ -1810,7 +1810,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return widget;
 		}
 
-		// TODO: **************** REMOVE - No longer applicable *********************************
+		// TODO: Consider if we should always allow DragDrop or if we should prevent during printer or other scenarios
 		private bool AllowDragDrop() => true;
 
 		private void AutoSpin()

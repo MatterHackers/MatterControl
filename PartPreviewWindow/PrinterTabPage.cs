@@ -47,9 +47,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		internal GCode2DWidget gcode2DWidget;
 
-		// TODO: REMOVE *****************************************************************
-		PrinterConnection printerConnection;
-
 		private View3DConfig gcodeOptions;
 		private DoubleSolidSlider layerRenderRatioSlider;
 		private SolidSlider selectLayerSlider;
@@ -63,7 +60,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public PrinterTabPage(PrinterConfig printer, ThemeConfig theme, string tabTitle)
 			: base(printer.Bed, theme, tabTitle)
 		{
-			this.printerConnection = printer.Connection;
 			this.printer = printer;
 			modelViewer.meshViewerWidget.EditorMode = MeshViewerWidget.EditorType.Printer;
 
@@ -338,7 +334,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void SetSyncToPrintVisibility()
 		{
-			bool printerIsRunningPrint = printerConnection.PrinterIsPaused || printerConnection.PrinterIsPrinting;
+			bool printerIsRunningPrint = printer.Connection.PrinterIsPaused || printer.Connection.PrinterIsPrinting;
 
 			if (gcodeOptions.SyncToPrint && printerIsRunningPrint)
 			{
@@ -377,7 +373,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		}
 		private void SetAnimationPosition()
 		{
-			int currentLayer = printerConnection.CurrentlyPrintingLayer;
+			int currentLayer = printer.Connection.CurrentlyPrintingLayer;
 			if (currentLayer <= 0)
 			{
 				selectLayerSlider.Value = 0;
@@ -387,7 +383,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			else
 			{
 				selectLayerSlider.Value = currentLayer - 1;
-				layerRenderRatioSlider.SecondValue = printerConnection.RatioIntoCurrentLayer;
+				layerRenderRatioSlider.SecondValue = printer.Connection.RatioIntoCurrentLayer;
 				layerRenderRatioSlider.FirstValue = 0;
 			}
 		}
@@ -515,7 +511,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{
-			bool printerIsRunningPrint = printerConnection.PrinterIsPaused || printerConnection.PrinterIsPrinting;
+			bool printerIsRunningPrint = printer.Connection.PrinterIsPaused || printer.Connection.PrinterIsPrinting;
 			if (gcodeOptions.SyncToPrint
 				&& printerIsRunningPrint
 				&& modelViewer.gcodeViewer.Visible)
