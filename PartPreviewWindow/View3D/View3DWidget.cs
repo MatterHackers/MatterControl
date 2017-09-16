@@ -540,6 +540,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			meshViewerWidget.AfterDraw += AfterDraw3DContent;
 
+			this.SwitchStateToEditing();
+
 			this.InteractionLayer.DrawGlContent += TrackballTumbleWidget_DrawGlContent;
 		}
 
