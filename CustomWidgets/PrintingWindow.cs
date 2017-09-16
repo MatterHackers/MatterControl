@@ -496,6 +496,13 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		private PrinterConfig printer;
 
+		public BasicBody(PrinterConfig printer)
+		{
+			this.printer = printer;
+			VAnchor = VAnchor.Stretch;
+			HAnchor = HAnchor.Stretch;
+		}
+
 		private void CheckOnPrinter()
 		{
 			if (!HasBeenClosed)
@@ -641,7 +648,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 				progressContainer.AddChild(printerName);
 
-				partName = new TextWidget(ApplicationController.Instance.ActivePrintItem.GetFriendlyName(), pointSize: 16, textColor: ActiveTheme.Instance.PrimaryTextColor)
+				partName = new TextWidget(printer.Bed.printItem.GetFriendlyName(), pointSize: 16, textColor: ActiveTheme.Instance.PrimaryTextColor)
 				{
 					HAnchor = HAnchor.Center,
 					MinimumSize = new Vector2(maxTextWidth, MinimumSize.y),
@@ -730,13 +737,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				CheckOnPrinter();
 			});
-		}
-
-		public BasicBody(PrinterConfig printer)
-		{
-			this.printer = printer;
-			VAnchor = VAnchor.Stretch;
-			HAnchor = HAnchor.Stretch;
 		}
 	}
 

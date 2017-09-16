@@ -109,7 +109,6 @@ namespace MatterHackers.PolygonMesh.UnitTests
 
 			// TODO: Entire app is spun up just to persist a scene - rewrite to reduce footprint/scope
 			var view3DWidget = new View3DWidget(
-				null,
 				new BedConfig(null),
 				View3DWidget.AutoRotate.Disabled,
 				new ViewControls3D(ApplicationController.Instance.Theme, new Agg.UI.UndoBuffer()),
@@ -118,8 +117,6 @@ namespace MatterHackers.PolygonMesh.UnitTests
 
 			// because we are using it without adding it into a parent we need to initialize it
 			view3DWidget.Initialize();
-
-			ApplicationController.Instance.ClearPlate();
 
 			var scene = view3DWidget.Scene;
 			scene.Children.Add(new Object3D

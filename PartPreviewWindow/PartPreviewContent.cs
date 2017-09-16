@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private EventHandler unregisterEvents;
 		private MainTab printerTab = null;
 
-		public PartPreviewContent(PrintItemWrapper printItem)
+		public PartPreviewContent()
 		{
 			var printerConfig = ApplicationController.Instance.Printer;
 			var theme = ApplicationController.Instance.Theme;
@@ -76,17 +76,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Add a tab for the current printer
 			if (ActiveSliceSettings.Instance.PrinterSelected)
 			{
-				printerTab = CreatePrinterTab(printItem, printerConfig, theme, tabTitle);
+				printerTab = CreatePrinterTab(printerConfig, theme, tabTitle);
 				tabControl.AddTab(printerTab);
 			}
 			else
 			{
-				PlusTabPage.CreatePartTab(tabControl, printerConfig.Bed, theme, printItem, 0);
+				PlusTabPage.CreatePartTab(tabControl, printerConfig.Bed, theme, 0);
 			}
 
 			// TODO: add in the printers and designs that are currently open (or were open last run).
 			var plusTabSelect = new TextTab(
-				new TabPage(new PlusTabPage(tabControl, printerConfig, theme, printItem), "+"),
+				new TabPage(new PlusTabPage(tabControl, printerConfig, theme), "+"),
 				"Create New",
 				tabControl.TextPointSize,
 				selectedTabColor,
@@ -181,12 +181,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}, ref unregisterEvents);
 		}
 
-		private static MainTab CreatePrinterTab(PrintItemWrapper printItem, PrinterConfig printerConfig, ThemeConfig theme, string tabTitle)
+		private static MainTab CreatePrinterTab(PrinterConfig printerConfig, ThemeConfig theme, string tabTitle)
 		{
 			var printerTab = new MainTab(
 				tabTitle,
 				"3D View Tab",
-				new PrinterTabPage(printerConfig, theme, printItem, tabTitle.ToUpper()),
+				new PrinterTabPage(printerConfig, theme, tabTitle.ToUpper()),
 				"https://www.google.com/s2/favicons?domain=www.printrbot.com" // "https://www.google.com/s2/favicons?domain=www.lulzbot.com"
 				);
 			printerTab.ToolTipText = "Preview 3D Design".Localize();

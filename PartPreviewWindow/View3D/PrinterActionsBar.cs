@@ -107,7 +107,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				if (printer.Settings.PrinterSelected)
 				{
-					var printItem = ApplicationController.Instance.ActivePrintItem;
+					var printItem = printer.Bed.printItem;
 
 					if (printer.Settings.IsValid() && printItem != null)
 					{

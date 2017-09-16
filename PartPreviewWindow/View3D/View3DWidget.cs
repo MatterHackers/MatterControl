@@ -137,7 +137,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private BedConfig sceneContext;
 
-		public View3DWidget(PrintItemWrapper printItemWrapper, BedConfig sceneContext, AutoRotate autoRotate, ViewControls3D viewControls3D, ThemeConfig theme, OpenMode openMode = OpenMode.Viewing, MeshViewerWidget.EditorType editorType = MeshViewerWidget.EditorType.Part)
+		public View3DWidget(BedConfig sceneContext, AutoRotate autoRotate, ViewControls3D viewControls3D, ThemeConfig theme, OpenMode openMode = OpenMode.Viewing, MeshViewerWidget.EditorType editorType = MeshViewerWidget.EditorType.Part)
 		{
 			var smallMarginButtonFactory = theme.SmallMarginButtonFactory;
 
@@ -439,7 +439,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						Title = "Clear Bed".Localize(),
 						Action = () =>
 						{
-							UiThread.RunOnIdle(ApplicationController.Instance.ClearPlate);
+							UiThread.RunOnIdle(sceneContext.ClearPlate);
 						}
 					}
 				};

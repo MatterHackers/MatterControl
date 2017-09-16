@@ -294,7 +294,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		{
 			UiThread.RunOnIdle(() =>
 			{
-				ApplicationController.Instance.PrintActivePartIfPossible();
+				ApplicationController.Instance.PrintActivePartIfPossible(printer.Bed.printItem);
 			});
 		}
 

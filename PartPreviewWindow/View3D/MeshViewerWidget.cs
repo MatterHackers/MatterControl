@@ -83,15 +83,6 @@ namespace MatterHackers.MeshVisualizer
 			this.EditorMode = editorType;
 			this.scene = sceneContext.Scene;
 			this.sceneContext = sceneContext;
-
-			var activePrintItem = ApplicationController.Instance.ActivePrintItem;
-
-			if (activePrintItem != null 
-				&& File.Exists(activePrintItem.FileLocation))
-			{
-				scene.Load(activePrintItem.FileLocation);
-			}
-
 			this.interactionLayer = interactionLayer;
 			this.World = interactionLayer.World;
 			

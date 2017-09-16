@@ -41,7 +41,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		internal View3DWidget modelViewer;
 
-		private PrintItemWrapper printItem;
 		protected ViewControls3D viewControls3D;
 
 		protected BedConfig sceneContext;
@@ -51,7 +50,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		protected FlowLayoutWidget topToBottom;
 		protected FlowLayoutWidget leftToRight;
 
-		public PrinterTabBase(BedConfig sceneContext, ThemeConfig theme, PrintItemWrapper printItem, string tabTitle)
+		public PrinterTabBase(BedConfig sceneContext, ThemeConfig theme, string tabTitle)
 			: base (tabTitle)
 		{
 			this.sceneContext = sceneContext;
@@ -83,7 +82,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// The 3D model view
 			modelViewer = new View3DWidget(
-				printItem,
 				sceneContext,
 				View3DWidget.AutoRotate.Disabled,
 				viewControls3D,
@@ -121,8 +119,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				modelViewer.World.TranslationMatrix = ApplicationController.Instance.PartPreviewState.TranslationMatrix;
 			}
 
-			this.printItem = printItem;
-
 			this.AddChild(viewControls3D);
 
 			this.AnchorAll();
@@ -133,15 +129,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return modelViewer.ShowOverflowMenu();
 		}
 
-		private async void LoadActivePrintItem()
-		{
-			await modelViewer.ClearBedAndLoadPrintItemWrapper(printItem);
-		}
-
 		public override void OnLoad(EventArgs args)
 		{
 			ApplicationController.Instance.ActiveView3DWidget = modelViewer;
-			LoadActivePrintItem();
 
 			base.OnLoad(args);
 		}

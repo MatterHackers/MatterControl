@@ -357,21 +357,21 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				AllowProtected = true,
 				Action = (selectedLibraryItems, listView) =>
 				{
-					var firstItem = selectedLibraryItems.FirstOrDefault();
-					if (firstItem is SDCardFileItem sdcardItem)
+					switch (selectedLibraryItems.FirstOrDefault())
 					{
-						ApplicationController.Instance.ActivePrintItem = new PrintItemWrapper(new PrintItem(sdcardItem.Name, QueueData.SdCardFileName));
-					}
-					else if (firstItem is FileSystemFileItem fileItem && Path.GetExtension(fileItem.FileName).ToUpper() == ".GCODE")
-					{
-						ApplicationController.Instance.ActivePrintItem = new PrintItemWrapper(new PrintItem(fileItem.Name, fileItem.Path));
-					}
-					else
-					{
-						//TODO: Otherwise add the selected items to the plate
+						case SDCardFileItem sdcardItem:
+							// TODO: How to wire up SD printing?
+							//ApplicationController.Instance.ActivePrintItem = new PrintItemWrapper(new PrintItem(sdcardItem.Name, QueueData.SdCardFileName));
+							break;
+						case FileSystemFileItem fileItem when Path.GetExtension(fileItem.FileName).ToUpper() == ".GCODE":
+							//ApplicationController.Instance.ActivePrintItem = new PrintItemWrapper(new PrintItem(fileItem.Name, fileItem.Path));
+							break;
+						default:
+							//TODO: Otherwise add the selected items to the plate and print the plate?
+							//ApplicationController.Instance.PrintActivePart();
+							break;
 					}
 
-					ApplicationController.Instance.PrintActivePart();
 				}
 			});
 

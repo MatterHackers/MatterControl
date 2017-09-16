@@ -123,7 +123,9 @@ namespace MatterHackers.MatterControl
 				if (!referencedFilePaths.Contains(fileLocation))
 				{
 					referencedFilePaths.Add(fileLocation);
-					referencedFilePaths.Add(PartThumbnailWidget.GetImageFileName(printItem));
+
+					// TODO: Use standard caching mechanism on both ends for fingerprint based caching
+					//referencedFilePaths.Add(PartThumbnailWidget.GetImageFileName(printItem));
 				}
 			}
 
@@ -137,7 +139,8 @@ namespace MatterHackers.MatterControl
 				if (!referencedFilePaths.Contains(printItem.FileLocation))
 				{
 					referencedFilePaths.Add(printItem.FileLocation);
-					referencedFilePaths.Add(PartThumbnailWidget.GetImageFileName(printItemWrapper));
+					// TODO: Use standard caching mechanism on both ends for fingerprint based caching
+					//referencedFilePaths.Add(PartThumbnailWidget.GetImageFileName(printItemWrapper));
 				}
 			}
 

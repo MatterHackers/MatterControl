@@ -443,6 +443,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					case CommunicationStates.Connected:
 						SendLineToPrinterNow("M115");
 						ReadPosition();
+						ApplicationController.Instance.PrintingItemName = "";
 						break;
 
 					case CommunicationStates.ConnectionLost:
@@ -492,6 +493,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 										activePrintTask.PercentDone = 100;
 										activePrintTask.PrintComplete = true;
 										activePrintTask.Commit();
+
+										ApplicationController.Instance.PrintingItemName = "";
 									}
 
 									// Set this early as we always want our functions to know the state we are in.

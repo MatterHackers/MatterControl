@@ -60,8 +60,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private PrinterConfig printer;
 
-		public PrinterTabPage(PrinterConfig printer, ThemeConfig theme, PrintItemWrapper printItem, string tabTitle)
-			: base(printer.Bed, theme, printItem, tabTitle)
+		public PrinterTabPage(PrinterConfig printer, ThemeConfig theme, string tabTitle)
+			: base(printer.Bed, theme, tabTitle)
 		{
 			this.printerConnection = printer.Connection;
 			this.printer = printer;
