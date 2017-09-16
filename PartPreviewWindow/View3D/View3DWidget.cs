@@ -73,7 +73,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private OpenMode openMode;
 		internal bool partHasBeenEdited = false;
-		private PrintItemWrapper printItemWrapper { get; set; }
 		internal ProgressControl processingProgressControl;
 		private SaveAsWindow saveAsWindow = null;
 		private RGBA_Bytes[] SelectionColors = new RGBA_Bytes[] { new RGBA_Bytes(131, 4, 66), new RGBA_Bytes(227, 31, 61), new RGBA_Bytes(255, 148, 1), new RGBA_Bytes(247, 224, 23), new RGBA_Bytes(143, 212, 1) };
@@ -159,7 +158,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.viewControls3D = viewControls3D;
 			this.theme = theme;
 			this.openMode = openMode;
-			this.printItemWrapper = printItemWrapper;
 			this.Name = "View3DWidget";
 			this.BackgroundColor = ApplicationController.Instance.Theme.TabBodyBackground;
 
@@ -394,7 +392,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						Title = "Save".Localize(),
 						Action = async () =>
 						{
-							if (printItemWrapper == null)
+							if (sceneContext.printItem == null)
 							{
 								UiThread.RunOnIdle(OpenSaveAsWindow);
 							}
@@ -1784,8 +1782,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return widget;
 		}
 
-		// Indicates if MatterControl is in a mode that allows DragDrop  - true if printItem not null and not ReadOnly
-		private bool AllowDragDrop() => !printItemWrapper?.PrintItem.ReadOnly ?? false;
+		// TODO: **************** REMOVE - No longer applicable *********************************
+		private bool AllowDragDrop() => true;
 
 		private void AutoSpin()
 		{
@@ -1823,30 +1821,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				});
 				timeSinceReported.Restart();
 			}
-		}
-
-		public async Task ClearBedAndLoadPrintItemWrapper(PrintItemWrapper newPrintItem, bool switchToEditingMode = false)
-		{
-			SwitchStateToEditing();
-
-			Scene.ModifyChildren(children => children.Clear());
-
-			if (newPrintItem != null)
-			{
-				// don't load the mesh until we get all the rest of the interface built
-				meshViewerWidget.LoadDone += new EventHandler(meshViewerWidget_LoadDone);
-
-				Vector2 bedCenter = new Vector2();
-
-				await meshViewerWidget.LoadItemIntoScene(newPrintItem.FileLocation, bedCenter, newPrintItem.Name);
-
-				Invalidate();
-			}
-
-			this.printItemWrapper = newPrintItem;
-
-			PartHasBeenChanged();
-			partHasBeenEdited = false;
 		}
 
 		public List<IObject3DEditor> objectEditors = new List<IObject3DEditor>();
@@ -2228,15 +2202,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					try
 					{
 						// Force to .mcx
-						if (Path.GetExtension(printItemWrapper.FileLocation) != ".mcx")
+						if (Path.GetExtension(sceneContext.printItem.FileLocation) != ".mcx")
 						{
-							printItemWrapper.FileLocation = Path.ChangeExtension(printItemWrapper.FileLocation, ".mcx");
+							sceneContext.printItem.FileLocation = Path.ChangeExtension(sceneContext.printItem.FileLocation, ".mcx");
 						}
 
 						// TODO: Hook up progress reporting
-						Scene.Save(printItemWrapper.FileLocation, ApplicationDataStorage.Instance.ApplicationLibraryDataPath);
+						Scene.Save(sceneContext.printItem.FileLocation, ApplicationDataStorage.Instance.ApplicationLibraryDataPath);
 
-						printItemWrapper.PrintItem.Commit();
+						sceneContext.printItem.PrintItem.Commit();
 					}
 					catch (Exception ex)
 					{
@@ -2300,7 +2274,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void OpenExportWindow()
 		{
-			var exportPage = new ExportPrintItemPage(new[] { new FileSystemFileItem(this.printItemWrapper.FileLocation) });
+			var exportPage = new ExportPrintItemPage(new[] { new FileSystemFileItem(sceneContext.printItem.FileLocation) });
 			WizardWindow.Show(exportPage);
 		}
 
@@ -2313,7 +2287,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						// TODO: The PrintItemWrapper seems unnecessary in the new LibraryContainer model. Couldn't we just pass the scene to the LibraryContainer via it's add function, no need to perist to disk?
 						// Create a new PrintItemWrapper
-						printItemWrapper = new PrintItemWrapper(
+						var printItemWrapper = new PrintItemWrapper(
 						new PrintItem()
 						{
 							Name = returnInfo.newName,
@@ -2342,7 +2316,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							}
 						}
 					}, 
-					printItemWrapper?.SourceLibraryProviderLocator, 
 					true, 
 					true);
 

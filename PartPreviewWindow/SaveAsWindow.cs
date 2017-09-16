@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl
 
 		private ILibraryContext libraryNavContext;
 
-		public SaveAsWindow(Func<SaveAsReturnInfo, Task> functionToCallOnSaveAs, ILibraryContainer providerLocator, bool showQueue, bool getNewName)
+		public SaveAsWindow(Func<SaveAsReturnInfo, Task> functionToCallOnSaveAs, bool showQueue, bool getNewName)
 			: base(480, 500)
 		{
 			var buttonFactory = ApplicationController.Instance.Theme.ButtonFactory;
