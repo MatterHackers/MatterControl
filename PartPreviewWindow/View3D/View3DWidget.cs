@@ -359,7 +359,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				var mirrorButton = new PopupButton(mirrorView)
 				{
 					PopDirection = Direction.Up,
-					PopupContent = new MirrorControls(this),
+					PopupContent = new MirrorControls(this, Scene),
 					Margin = buttonSpacing,
 				};
 				this.Scene.SelectionChanged += (s, e) =>
@@ -847,7 +847,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			this.InteractionLayer.DrawGlContent -= TrackballTumbleWidget_DrawGlContent;
-			
+
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
 		}
@@ -886,6 +886,27 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			base.OnMouseEnterBounds(mouseEvent);
+		}
+
+		public override void OnVisibleChanged(EventArgs e)
+		{
+			var dragDropData = ApplicationController.Instance.DragDropData;
+			if (this.Visible)
+			{
+				// Set reference on show
+				dragDropData.View3DWidget = this;
+				dragDropData.Scene = sceneContext.Scene;
+			}
+			else
+			{
+				// Clear state on hide
+				if (dragDropData.View3DWidget == this)
+				{
+					dragDropData.Reset();
+				}
+			}
+
+			base.OnVisibleChanged(e);
 		}
 
 		private GuiWidget topMostParent;
@@ -980,6 +1001,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public override void OnLoad(EventArgs args)
 		{
 			topMostParent = this.TopmostParent();
+
+			// Set reference on show
+			var dragDropData = ApplicationController.Instance.DragDropData;
+			dragDropData.View3DWidget = this;
+			dragDropData.Scene = sceneContext.Scene;
+
 			base.OnLoad(args);
 		}
 
@@ -2285,6 +2312,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (saveAsWindow == null)
 			{
 				saveAsWindow = new SaveAsWindow(
+					sceneContext,
 					async (returnInfo) =>
 					{
 						// TODO: The PrintItemWrapper seems unnecessary in the new LibraryContainer model. Couldn't we just pass the scene to the LibraryContainer via it's add function, no need to perist to disk?
@@ -2611,7 +2639,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public MeshViewerWidget meshViewerWidget;
 
-		public InteractiveScene Scene { get; }
+		private InteractiveScene Scene { get; }
 
 		protected ViewControls3D viewControls3D { get; }
 

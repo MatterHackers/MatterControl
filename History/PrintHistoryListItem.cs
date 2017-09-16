@@ -29,7 +29,6 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Globalization;
-using System.IO;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
@@ -37,7 +36,6 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.Library;
-using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrintQueue;
 
 namespace MatterHackers.MatterControl.PrintHistory
@@ -48,7 +46,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 		public int ThumbWidth { get; } = 50;
 		public int ThumbHeight { get; } = 50;
 
-		public HistoryListView()
+		public HistoryListView(BedConfig sceneContext)
 			: base(FlowDirection.TopToBottom)
 		{
 		}

@@ -18,10 +18,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.AddDefaultFileToBedplate();
 
 				var view3D = testRunner.GetWidgetByName("View3DWidget", out _) as View3DWidget;
-				Assert.IsFalse(view3D.Scene.HasSelection);
+				var scene = view3D.InteractionLayer.Scene;
+
+				Assert.IsFalse(scene.HasSelection);
 
 				testRunner.Select3DPart("Calibration - Box.stl");
-				Assert.IsTrue(view3D.Scene.HasSelection);
+				Assert.IsTrue(scene.HasSelection);
 
 				testRunner.ClickByName("3D View Copy");
 

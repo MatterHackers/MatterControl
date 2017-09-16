@@ -1057,6 +1057,8 @@ namespace MatterHackers.MatterControl
 
 		public MeshViewState PartPreviewState { get; set; } = new MeshViewState();
 
+		public DragDropData DragDropData { get; set; } = new DragDropData();
+
 		public View3DWidget ActiveView3DWidget { get; internal set; }
 
 		public string PrintingItemName { get; set; }
@@ -1067,19 +1069,10 @@ namespace MatterHackers.MatterControl
 			return string.IsNullOrEmpty(libraryItem.ID) ? null : ApplicationController.CacheablePath("ItemThumbnails", $"{libraryItem.ID}.png");
 		}
 
-		/*
-		private static string CachePath(ILibraryItem libraryItem, int width, int height)
-		{
-			// TODO: Use content SHA
-			return string.IsNullOrEmpty(libraryItem.ID) ? null : ApplicationController.CacheablePath("ItemThumbnails", $"{libraryItem.ID}_{width}x{height}.png");
-		}*/
-
 		public void ReloadAdvancedControlsPanel()
 		{
 			AdvancedControlsPanelReloading.CallEvents(this, null);
 		}
-
-		// public LibraryDataView CurrentLibraryDataView = null;
 
 		public void SwitchToPurchasedLibrary()
 		{
@@ -1138,11 +1131,6 @@ namespace MatterHackers.MatterControl
 				// Show the import printers wizard
 				WizardWindow.Show<CopyGuestProfilesToUser>();
 			}
-		}
-
-		public class CloudSyncEventArgs : EventArgs
-		{
-			public bool IsAuthenticated { get; set; }
 		}
 
 		public void OnLoadActions()
@@ -1283,7 +1271,7 @@ namespace MatterHackers.MatterControl
 							halfImage.NewGraphics2D().Render(unScaledImage, 0, 0, 0, halfImage.Width / (double)unScaledImage.Width, halfImage.Height / (double)unScaledImage.Height);
 							unScaledImage = halfImage;
 						}
-						
+
 						double finalScale = imageToLoadInto.Width / (double)unScaledImage.Width;
 						imageToLoadInto.Allocate(imageToLoadInto.Width, (int)(unScaledImage.Height * finalScale), imageToLoadInto.Width * (imageToLoadInto.BitDepth / 8), imageToLoadInto.BitDepth);
 						imageToLoadInto.NewGraphics2D().Render(unScaledImage, 0, 0, 0, finalScale, finalScale);
@@ -1485,7 +1473,7 @@ namespace MatterHackers.MatterControl
 		}
 
 		private string gcodeWarningMessage = "The file you are attempting to print is a GCode file.\n\nIt is recommended that you only print Gcode files known to match your printer's configuration.\n\nAre you sure you want to print this GCode file?".Localize();
-		
+
 		public void PrintActivePartIfPossible(PrintItemWrapper printItem, bool overrideAllowGCode = false)
 		{
 			if (PrinterConnection.Instance.CommunicationState == CommunicationStates.Connected 
@@ -1573,6 +1561,11 @@ namespace MatterHackers.MatterControl
 				);
 			}
 		}
+
+		public class CloudSyncEventArgs : EventArgs
+		{
+			public bool IsAuthenticated { get; set; }
+		}
 	}
 
 	public class WidgetSourceEventArgs : EventArgs
@@ -1582,6 +1575,18 @@ namespace MatterHackers.MatterControl
 		public WidgetSourceEventArgs(GuiWidget source)
 		{
 			this.Source = source;
+		}
+	}
+
+	public class DragDropData
+	{
+		public View3DWidget View3DWidget { get; set; }
+		public InteractiveScene Scene { get; set; }
+
+		public void Reset()
+		{
+			this.View3DWidget = null;
+			this.Scene = null;
 		}
 	}
 }

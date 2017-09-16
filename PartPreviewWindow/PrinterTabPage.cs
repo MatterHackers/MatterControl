@@ -210,7 +210,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				if (showSliceLayers)
 				{
-					modelViewer.Scene.ClearSelection();
+					printer.Bed.Scene.ClearSelection();
 				}
 
 				var slidersVisible = sceneContext.RenderInfo != null && value;

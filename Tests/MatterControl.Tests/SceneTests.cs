@@ -119,7 +119,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			// because we are using it without adding it into a parent we need to initialize it
 			view3DWidget.Initialize();
 
-			var scene = view3DWidget.Scene;
+			var scene = sceneContext.Scene;
 			scene.Children.Add(new Object3D
 			{
 				ItemType = Object3DTypes.Model,
@@ -145,18 +145,18 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			Assert.IsTrue(loadedItem.Children.Count == 1);
 
 			// Ensure the UI scene is cleared
-			view3DWidget.Scene.ModifyChildren((children) => children.Clear());
+			scene.ModifyChildren((children) => children.Clear());
 
 			// Reload the model
 			await Task.Run(() => sceneContext.Scene.Load(filePath));
 
 			// Serialize and compare the two trees
 			string onDiskData = JsonConvert.SerializeObject(loadedItem, Formatting.Indented);
-			string inMemoryData = JsonConvert.SerializeObject(view3DWidget.Scene, Formatting.Indented);
+			string inMemoryData = JsonConvert.SerializeObject(scene, Formatting.Indented);
 			Assert.IsTrue(inMemoryData == onDiskData);
 
 			// Save the scene a second time, validate that things remain the same
-			view3DWidget.Scene.Save(filePath, tempPath);
+			scene.Save(filePath, tempPath);
 			onDiskData = JsonConvert.SerializeObject(loadedItem, Formatting.Indented);
 
 			Assert.IsTrue(inMemoryData == onDiskData);

@@ -313,7 +313,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public override void OnMouseUp(MouseEventArgs mouseEvent)
 		{
-			if (view3DWidget?.DragDropSource != null && view3DWidget.Scene.Children.Contains(view3DWidget.DragDropSource))
+			var dropData = ApplicationController.Instance.DragDropData;
+
+			if (dropData.View3DWidget?.DragDropSource != null && dropData.Scene.Children.Contains(view3DWidget.DragDropSource))
 			{
 				// Mouse and widget positions
 				var screenSpaceMousePosition = this.TransformToScreenSpace(mouseEvent.Position);
@@ -322,14 +324,14 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				// If the mouse is not within the meshViewer, remove the inserted drag item
 				if (!meshViewerPosition.Contains(screenSpaceMousePosition))
 				{
-					view3DWidget.Scene.ModifyChildren(children => children.Remove(view3DWidget.DragDropSource));
-					view3DWidget.Scene.ClearSelection();
+					dropData.Scene.ModifyChildren(children => children.Remove(view3DWidget.DragDropSource));
+					dropData.Scene.ClearSelection();
 				}
 				else
 				{
 					// Create and push the undo operation
 					view3DWidget.AddUndoOperation(
-						new InsertCommand(view3DWidget, view3DWidget.DragDropSource));
+						new InsertCommand(view3DWidget, dropData.Scene, view3DWidget.DragDropSource));
 				}
 
 				view3DWidget.FinishDrop();

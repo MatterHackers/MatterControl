@@ -416,7 +416,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 					ApplicationController.Instance.ActiveView3DWidget.partHasBeenEdited = true;
 
-					var scene = ApplicationController.Instance.ActiveView3DWidget.Scene;
+					var scene = ApplicationController.Instance.DragDropData.Scene;
 					scene.ModifyChildren(children =>
 					{
 						foreach (var sceneItem in itemsToAdd)
@@ -593,47 +593,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			});
 		}
 
-		private void SelectLocationToExportGCode()
-		{
-			/*
-			FileDialog.SelectFolderDialog(
-				new SelectFolderDialogParams("Select Location To Save Files")
-				{
-					ActionButtonLabel = "Export".Localize(),
-					Title = "MatterControl: Select A Folder"
-				},
-				(openParams) =>
-				{
-					string path = openParams.FolderPath;
-					if (path != null && path != "")
-					{
-						List<PrintItem> parts = QueueData.Instance.CreateReadOnlyPartList(true);
-						if (parts.Count > 0)
-						{
-							if (exportingWindow == null)
-							{
-								exportingWindow = new ExportToFolderFeedbackWindow(parts.Count, parts[0].Name, ActiveTheme.Instance.PrimaryBackgroundColor);
-								exportingWindow.Closed += (s, e) =>
-								{
-									this.exportingWindow = null;
-								};
-								exportingWindow.ShowAsSystemWindow();
-							}
-							else
-							{
-								exportingWindow.BringToFront();
-							}
-
-							var exportToFolderProcess = new ExportToFolderProcess(parts, path);
-							exportToFolderProcess.StartingNextPart += exportingWindow.StartingNextPart;
-							exportToFolderProcess.UpdatePartStatus += exportingWindow.UpdatePartStatus;
-							exportToFolderProcess.DoneSaving += exportingWindow.DoneSaving;
-							exportToFolderProcess.Start();
-						}
-					}
-				}); */
-		}
-		
 		private void renameFromLibraryButton_Click(IEnumerable<ILibraryItem> items, object p)
 		{
 			if (libraryView.SelectedItems.Count == 1)

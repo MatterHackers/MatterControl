@@ -37,6 +37,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
 
 namespace MatterHackers.MatterControl.Plugins.TextCreator
@@ -60,7 +61,9 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 
 		public GuiWidget Create(IObject3D item, View3DWidget parentView3D, ThemeConfig theme)
 		{
-			injectedItem = parentView3D.Scene?.SelectedItem as TextObject;
+			var scene = parentView3D.InteractionLayer.Scene;
+
+			injectedItem = scene?.SelectedItem as TextObject;
 
 			textGenerator = new TextGenerator();
 			this.view3DWidget = parentView3D;
@@ -141,7 +144,8 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 					createUnderline.Checked);
 			});
 
-			view3DWidget.Scene.ModifyChildren(children =>
+			var scene = view3DWidget.InteractionLayer.Scene;
+			scene.ModifyChildren(children =>
 			{
 				var item = children.Find(child => child == injectedItem);
 				item.Children.Clear();
@@ -173,7 +177,9 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 			modifier(workItem);
 
 			// Modify the scene graph, swapping in the modified item
-			view3DWidget.Scene.ModifyChildren(children =>
+			var scene = view3DWidget.InteractionLayer.Scene;
+
+			scene.ModifyChildren(children =>
 			{
 				children.Remove(injectedItem);
 				children.Add(workItem);
@@ -181,7 +187,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 
 			// Update the injected item and the scene selection
 			injectedItem = workItem as TextObject;
-			view3DWidget.Scene.SelectedItem = injectedItem;
+			scene.SelectedItem = injectedItem;
 		}
 
 		internal void SetInitialFocus()
