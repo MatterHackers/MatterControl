@@ -35,8 +35,6 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl;
-using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.Tests.Automation;
 using MatterHackers.MeshVisualizer;
 using Newtonsoft.Json;
@@ -44,7 +42,7 @@ using NUnit.Framework;
 
 namespace MatterHackers.PolygonMesh.UnitTests
 {
-	[TestFixture, Category("Agg.PolygonMesh"), RunInApplicationDomain, Apartment(ApartmentState.STA)]
+	[TestFixture, Category("Agg.PolygonMesh"), RunInApplicationDomain]
 	public class SceneTests
 	{
 		[Test]
@@ -108,17 +106,6 @@ namespace MatterHackers.PolygonMesh.UnitTests
 #endif
 
 			var sceneContext = new BedConfig();
-			// TODO: Entire app is spun up just to persist a scene - rewrite to reduce footprint/scope
-			var view3DWidget = new View3DWidget(
-				null,
-				sceneContext,
-				View3DWidget.AutoRotate.Disabled,
-				new ViewControls3D(ApplicationController.Instance.Theme, new Agg.UI.UndoBuffer()),
-				new ThemeConfig(),
-				View3DWidget.OpenMode.Editing);
-
-			// because we are using it without adding it into a parent we need to initialize it
-			view3DWidget.Initialize();
 
 			var scene = sceneContext.Scene;
 			scene.Children.Add(new Object3D
