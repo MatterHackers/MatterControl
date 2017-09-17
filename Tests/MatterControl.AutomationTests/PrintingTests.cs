@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -485,25 +486,48 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
+					var resetEvent = new AutoResetEvent(false);
+
 					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
 
 					testRunner.AddDefaultFileToBedplate();
 					testRunner.ClickByName("Start Print Button");
-					testRunner.Delay(5);
 
 					int fanChangedCount = 0;
 					emulator.FanSpeedChanged += (s, e) =>
 					{
 						fanChangedCount++;
 					};
-					testRunner.CloseMatterControlViaUi();
 
+					var layerTwoZHeight = ApplicationController.Instance.Printer.Settings.GetValue<double>(SettingsKey.layer_height) * 2;
+
+					// Wait for layer 2
+					emulator.ZPositionChanged += (s, e) =>
+					{
+						// Wait for print to start, then slow down the emulator and continue. Failing to slow down frequently causes a timing issue where the print
+						// finishes before we make it down to 'CloseMatterControlViaUi' and thus no prompt to close appears and the test fails when clicking 'Yes Button'
+						if (emulator.ZPosition >= layerTwoZHeight)
+						{
+							emulator.RunSlow = true;
+							resetEvent.Set();
+						}
+					};
+					resetEvent.WaitOne();
+
+					// Close MatterControl and cancel print
+					testRunner.CloseMatterControlViaUi();
 					testRunner.ClickByName("Yes Button");
 
-					testRunner.Delay(5);
-					Assert.AreEqual(0, emulator.ExtruderGoalTemperature, "We need to set the temp to 0.");
-					// TODO: change this to checking that the fan speed is 0 - when the emulator tracks fan speed.
-					Assert.AreEqual(1, fanChangedCount, "We expected to see fan change on quiting.");
+					// Wait for Disconnected CommunicationState which occurs after PrinterConnection.Disable()
+					testRunner.WaitForCommunicationStateDisconnected(maxSeconds: 30);
+
+					// Wait for M106 change
+					testRunner.Delay(() => fanChangedCount > 0, 15, 500);
+
+					// Assert expected temp targets and fan transitions
+					Assert.AreEqual(0, (int) emulator.Hotend.TargetTemperature, "Unexpected target temperature - MC close should call Connection.Disable->TurnOffBedAndExtruders to shutdown heaters");
+					Assert.AreEqual(0, (int) emulator.HeatedBed.TargetTemperature, "Unexpected target temperature - MC close should call Connection.Disable->TurnOffBedAndExtruders to shutdown heaters");
+					Assert.AreEqual(1, fanChangedCount, "Unexpected fan speed change count - MC close should call Connection.Disable which shuts down fans via M106");
 				}
 
 				return Task.CompletedTask;
