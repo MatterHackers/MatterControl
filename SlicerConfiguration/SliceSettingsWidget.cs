@@ -46,19 +46,21 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		internal PresetsToolbar settingsControlBar;
 
 		private SettingsContext settingsContext;
+		private PrinterConfig printer;
 
 		private Dictionary<string, UIField> allUiFields = new Dictionary<string, UIField>();
 
 		private EventHandler unregisterEvents;
 
-		public SliceSettingsWidget(SettingsContext settingsContext)
+		public SliceSettingsWidget(PrinterConfig printer, SettingsContext settingsContext)
 			: base (FlowDirection.TopToBottom)
 		{
+			this.printer = printer;
 			this.BackgroundColor = ApplicationController.Instance.Theme.TabBodyBackground;
 
 			this.settingsContext = settingsContext;
 
-			settingsControlBar = new PresetsToolbar()
+			settingsControlBar = new PresetsToolbar(printer)
 			{
 				HAnchor = HAnchor.Stretch,
 				Padding = new BorderDouble(8, 12, 8, 8)
@@ -143,7 +145,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			if (settingsContext.IsPrimarySettingsView)
 			{
-				var sliceSettingsDetailControl = new SliceSettingsOverflowDropdown(this);
+				var sliceSettingsDetailControl = new SliceSettingsOverflowDropdown(printer, this);
 				primaryTabControl.TabBar.AddChild(sliceSettingsDetailControl);
 			}
 
@@ -351,7 +353,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				if (group.Name == "Connection")
 				{
-					subGroupLayoutTopToBottom.AddChild(SliceSettingsWidget.CreateOemProfileInfoRow(isPrimarySettingsView: true));
+					subGroupLayoutTopToBottom.AddChild(SliceSettingsWidget.CreateOemProfileInfoRow(settingsContext, isPrimarySettingsView: true));
 				}
 			}
 
@@ -414,7 +416,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 
 		// Creates an information row showing the base OEM profile and its create_date value
-		public static GuiWidget CreateOemProfileInfoRow(bool isPrimarySettingsView = false)
+		public static GuiWidget CreateOemProfileInfoRow(SettingsContext settingsContext, bool isPrimarySettingsView = false)
 		{
 			var dataArea = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -449,8 +451,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HAnchor = HAnchor.Stretch,
 				};
 
-				string make = ActiveSliceSettings.Instance.GetValue(SettingsKey.make);
-				string model = ActiveSliceSettings.Instance.GetValue(SettingsKey.model);
+				string make = settingsContext.GetValue(SettingsKey.make);
+				string model = settingsContext.GetValue(SettingsKey.model);
 
 				string title = $"{make} {model}";
 				if (title == "Other Other")
@@ -487,7 +489,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			bool useDefaultSavePattern = true;
 			bool placeFieldInDedicatedRow = false;
 
-			var settingsRow = new SliceSettingsRow(settingsContext, settingData)
+			var settingsRow = new SliceSettingsRow(printer, settingsContext, settingData)
 			{
 				Margin = new BorderDouble(0, 0),
 				Padding = new BorderDouble(0, 0, 10, 0),

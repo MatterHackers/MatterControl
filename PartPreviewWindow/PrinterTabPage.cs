@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private PrinterConfig printer;
 
 		public PrinterTabPage(PrinterConfig printer, ThemeConfig theme, string tabTitle)
-			: base(printer.Bed, theme, tabTitle)
+			: base(printer, printer.Bed, theme, tabTitle)
 		{
 			this.printer = printer;
 			modelViewer.meshViewerWidget.EditorMode = MeshViewerWidget.EditorType.Printer;
@@ -147,7 +147,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				this.Invalidate();
 			};
-			
+
 			currentLayerInfo = new ValueDisplayInfo("1000")
 			{
 				GetDisplayString = (value) => $"{value + 1}"
@@ -353,6 +353,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				layerRenderRatioSlider.Visible = true;
 				selectLayerSlider.Visible = true;
 			}
+		}
+
+		// TODO: Moved from View3DWidget as printer specialized logic can't be in the generic base. Consider moving to model
+		private bool PartsAreInPrintVolume()
+		{
+			AxisAlignedBoundingBox allBounds = AxisAlignedBoundingBox.Empty;
+			foreach (var aabb in printer.Bed.Scene.Children.Select(item => item.GetAxisAlignedBoundingBox(Matrix4X4.Identity)))
+			{
+				allBounds += aabb;
+			}
+
+			bool onBed = allBounds.minXYZ.z > -.001 && allBounds.minXYZ.z < .001; // really close to the bed
+			RectangleDouble bedRect = new RectangleDouble(0, 0, printer.Settings.GetValue<Vector2>(SettingsKey.bed_size).x, printer.Settings.GetValue<Vector2>(SettingsKey.bed_size).y);
+			bedRect.Offset(printer.Settings.GetValue<Vector2>(SettingsKey.print_center) - printer.Settings.GetValue<Vector2>(SettingsKey.bed_size) / 2);
+
+			bool inBounds = bedRect.Contains(new Vector2(allBounds.minXYZ)) && bedRect.Contains(new Vector2(allBounds.maxXYZ));
+
+			return onBed && inBounds;
 		}
 
 		private void SetSliderSizes()
@@ -597,7 +615,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				sideBar.AddPage(
 					"Slice Settings".Localize(), 
 					new SliceSettingsWidget(
+						printer, 
 						new SettingsContext(
+							printer,
 							null, 
 							SlicerConfiguration.NamedSettingsLayers.All)));
 			}

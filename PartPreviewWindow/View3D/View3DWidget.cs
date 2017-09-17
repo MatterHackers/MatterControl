@@ -135,7 +135,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private BedConfig sceneContext;
 
-		public View3DWidget(BedConfig sceneContext, AutoRotate autoRotate, ViewControls3D viewControls3D, ThemeConfig theme, OpenMode openMode = OpenMode.Viewing, MeshViewerWidget.EditorType editorType = MeshViewerWidget.EditorType.Part)
+		public View3DWidget(PrinterConfig printer, BedConfig sceneContext, AutoRotate autoRotate, ViewControls3D viewControls3D, ThemeConfig theme, OpenMode openMode = OpenMode.Viewing, MeshViewerWidget.EditorType editorType = MeshViewerWidget.EditorType.Part)
 		{
 			var smallMarginButtonFactory = theme.SmallMarginButtonFactory;
 
@@ -177,7 +177,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.InteractionLayer.AddChild(meshViewerWidget);
 
 			// The slice layers view
-			gcodeViewer = new ViewGcodeBasic(sceneContext, viewControls3D);
+			gcodeViewer = new ViewGcodeBasic(printer, sceneContext, viewControls3D);
 			gcodeViewer.AnchorAll();
 			gcodeViewer.Visible = false;
 			this.InteractionLayer.AddChild(gcodeViewer);
@@ -2283,23 +2283,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private bool PartsAreInPrintVolume()
-		{
-			AxisAlignedBoundingBox allBounds = AxisAlignedBoundingBox.Empty;
-			foreach (var aabb in Scene.Children.Select(item => item.GetAxisAlignedBoundingBox(Matrix4X4.Identity)))
-			{
-				allBounds += aabb;
-			}
-
-			bool onBed = allBounds.minXYZ.z > -.001 && allBounds.minXYZ.z < .001; // really close to the bed
-			RectangleDouble bedRect = new RectangleDouble(0, 0, ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.bed_size).x, ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.bed_size).y);
-			bedRect.Offset(ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center) - ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.bed_size) / 2);
-
-			bool inBounds = bedRect.Contains(new Vector2(allBounds.minXYZ)) && bedRect.Contains(new Vector2(allBounds.maxXYZ));
-
-			return onBed && inBounds;
-		}
-
 		private void OpenExportWindow()
 		{
 			var exportPage = new ExportPrintItemPage(new[] { new FileSystemFileItem(sceneContext.printItem.FileLocation) });
@@ -2452,8 +2435,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						}
 					}));
 
-			double buildHeight = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.build_height);
-			if (buildHeight > 0)
+			if (sceneContext.BuildHeight > 0)
 			{
 				popupContainer.AddChild(
 					this.theme.CreateCheckboxMenuItem(
@@ -2469,7 +2451,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							}
 						}));
 			}
-		
+
 			popupContainer.AddChild(new HorizontalLine());
 
 			var renderOptions = CreateRenderTypeRadioButtons();

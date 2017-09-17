@@ -36,8 +36,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		private GCodeFile loadedGCode;
 
-		public GCodeDetails(GCodeFile loadedGCode)
+		private PrinterConfig printer;
+		public GCodeDetails(PrinterConfig printer, GCodeFile loadedGCode)
 		{
+			this.printer = printer;
 			this.loadedGCode = loadedGCode;
 		}
 
@@ -67,9 +69,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		public string FilamentUsed => string.Format("{0:0.0} mm", loadedGCode.GetFilamentUsedMm(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_diameter)));
+		public string FilamentUsed => string.Format("{0:0.0} mm", loadedGCode.GetFilamentUsedMm(printer.Settings.GetValue<double>(SettingsKey.filament_diameter)));
 
-		public string FilamentVolume => string.Format("{0:0.00} cm³", loadedGCode.GetFilamentCubicMm(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_diameter)) / 1000);
+		public string FilamentVolume => string.Format("{0:0.00} cm³", loadedGCode.GetFilamentCubicMm(printer.Settings.GetValue<double>(SettingsKey.filament_diameter)) / 1000);
 
 		public string EstimatedMass => this.TotalMass <= 0 ? "Unknown" : string.Format("{0:0.00} g", this.TotalMass);
 
@@ -79,8 +81,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			get
 			{
-				double filamentDiameter = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_diameter);
-				double filamentDensity = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_density);
+				double filamentDiameter = printer.Settings.GetValue<double>(SettingsKey.filament_diameter);
+				double filamentDensity = printer.Settings.GetValue<double>(SettingsKey.filament_density);
 
 				return loadedGCode.GetFilamentWeightGrams(filamentDiameter, filamentDensity);
 			}
@@ -90,7 +92,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			get
 			{
-				double filamentCost = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_cost);
+				double filamentCost = printer.Settings.GetValue<double>(SettingsKey.filament_cost);
 				return this.TotalMass / 1000 * filamentCost;
 			}
 		}

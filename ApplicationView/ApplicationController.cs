@@ -124,7 +124,11 @@ namespace MatterHackers.MatterControl
 
 			this.Scene.Load(mcxPath);
 
-			ApplicationController.Instance.ActiveView3DWidget?.PartHasBeenChanged();
+			// TODO: Define and fire event and eliminate ActiveView3DWidget - model objects need to be dependency free. For the time being prevent application spin up in ClearPlate due to the call below - if MC isn't loaded, don't notify
+			if (!MatterControlApplication.IsLoading)
+			{
+				ApplicationController.Instance.ActiveView3DWidget?.PartHasBeenChanged();
+			}
 		}
 
 		private GCodeFile loadedGCode;

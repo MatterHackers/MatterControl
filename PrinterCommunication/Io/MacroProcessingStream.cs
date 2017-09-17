@@ -207,7 +207,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 								UiThread.RunOnIdle(() =>
 								{
-									WizardWindow.Show(new RunningMacroPage(printer.Connection, macroData));
+									WizardWindow.Show(new RunningMacroPage(printer, macroData));
 								});
 								break;
 
@@ -225,7 +225,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 								UiThread.RunOnIdle(() =>
 								{
-									WizardWindow.Show(new RunningMacroPage(printer.Connection, macroData));
+									WizardWindow.Show(new RunningMacroPage(printer, macroData));
 								});
 
 								break;

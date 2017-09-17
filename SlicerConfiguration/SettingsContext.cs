@@ -38,9 +38,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	{
 		private IEnumerable<PrinterSettingsLayer> layerCascade;
 		private PrinterSettingsLayer persistenceLayer;
+		private PrinterConfig printer;
 
-		public SettingsContext(IEnumerable<PrinterSettingsLayer> layerCascade, NamedSettingsLayers viewFilter)
+		public SettingsContext(PrinterConfig printer, IEnumerable<PrinterSettingsLayer> layerCascade, NamedSettingsLayers viewFilter)
 		{
+			this.printer = printer;
 			this.layerCascade = layerCascade;
 			this.ViewFilter = viewFilter;
 
@@ -48,7 +50,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.IsPrimarySettingsView = layerCascade == null;
 
 			// The last layer of the layerFilters is the target persistence 
-			this.persistenceLayer = layerCascade?.First() ?? ActiveSliceSettings.Instance.UserLayer;
+			this.persistenceLayer = layerCascade?.First() ?? printer.Settings.UserLayer;
 		}
 
 		public NamedSettingsLayers ViewFilter { get; set; }
@@ -57,22 +59,22 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public string GetValue(string slicerConfigName)
 		{
-			return ActiveSliceSettings.Instance.GetValue(slicerConfigName, layerCascade);
+			return printer.Settings.GetValue(slicerConfigName, layerCascade);
 		}
 
 		public void SetValue(string slicerConfigName, string settingsValue)
 		{
-			ActiveSliceSettings.Instance.SetValue(slicerConfigName, settingsValue, persistenceLayer);
+			printer.Settings.SetValue(slicerConfigName, settingsValue, persistenceLayer);
 		}
 
 		public void SetComPort(string settingsValue)
 		{
-			ActiveSliceSettings.Instance.Helpers.SetComPort(settingsValue, persistenceLayer);
+			printer.Settings.Helpers.SetComPort(settingsValue, persistenceLayer);
 		}
 
 		public void ClearValue(string slicerConfigName)
 		{
-			ActiveSliceSettings.Instance.ClearValue(slicerConfigName, persistenceLayer);
+			printer.Settings.ClearValue(slicerConfigName, persistenceLayer);
 		}
 
 		public bool ContainsKey(string slicerConfigName)
@@ -82,7 +84,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		internal bool ParseShowString(string enableIfSet)
 		{
-			return ActiveSliceSettings.Instance.ParseShowString(enableIfSet, layerCascade);
+			return printer.Settings.ParseShowString(enableIfSet, layerCascade);
 		}
 	}
 }

@@ -53,15 +53,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private string fileTooBigToLoad = "GCode file too big to preview ({0}).".Localize();
 
 		private BedConfig sceneContext;
+		private PrinterConfig printer;
 
 		private ViewControls3D viewControls3D;
 
-		public ViewGcodeBasic(BedConfig sceneContext, ViewControls3D viewControls3D)
+		public ViewGcodeBasic(PrinterConfig printer, BedConfig sceneContext, ViewControls3D viewControls3D)
 		{
+			this.printer = printer;
 			this.sceneContext = sceneContext;
 			this.viewControls3D = viewControls3D;
 
-			CreateAndAddChildren();
+			CreateAndAddChildren(printer);
 
 			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
 			{
@@ -69,16 +71,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					if (stringEvent.Data == "extruder_offset")
 					{
-						sceneContext.GCodeRenderer?.Clear3DGCode();
+						printer.Bed.GCodeRenderer?.Clear3DGCode();
 					}
 				}
 			}, ref unregisterEvents);
 
 			// TODO: Why do we clear GCode on AdvancedControlsPanelReloading - assume some slice settings should invalidate. If so, code should be more specific and bound to slice settings changed
-			ApplicationController.Instance.AdvancedControlsPanelReloading.RegisterEvent((s, e) => sceneContext.GCodeRenderer?.Clear3DGCode(), ref unregisterEvents);
+			ApplicationController.Instance.AdvancedControlsPanelReloading.RegisterEvent((s, e) => printer?.Bed.GCodeRenderer?.Clear3DGCode(), ref unregisterEvents);
 		}
 
-		internal void CreateAndAddChildren()
+		internal void CreateAndAddChildren(PrinterConfig printer)
 		{
 			CloseAllChildren();
 
@@ -123,7 +125,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 				AddChild(gradientWidget);
 
-				var gcodeDetails = new GCodeDetails(sceneContext.LoadedGCode);
+				var gcodeDetails = new GCodeDetails(printer, printer.Bed.LoadedGCode);
 
 				this.AddChild(new GCodeDetailsView(gcodeDetails)
 				{

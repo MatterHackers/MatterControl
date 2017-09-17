@@ -42,10 +42,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		string resetToDefaultsMessage = "Resetting to default values will remove your current overrides and restore your original printer settings.\nAre you sure you want to continue?".Localize();
 		string resetToDefaultsWindowTitle = "Revert Settings".Localize();
 
-		public SliceSettingsOverflowDropdown(SliceSettingsWidget sliceSettingsWidget)
+		public SliceSettingsOverflowDropdown(PrinterConfig printer, SliceSettingsWidget sliceSettingsWidget)
 		{
 			this.VAnchor = VAnchor.Fit | VAnchor.Center;
-		
+
 			var overflowDropdown = new OverflowDropdown(true)
 			{
 				AlignToRightEdge = true,
@@ -98,14 +98,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							if (revertSettings)
 							{
 								bool onlyReloadSliceSettings = true;
-								if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_required_to_print)
-								&& ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_enabled))
+								if (printer.Settings.GetValue<bool>(SettingsKey.print_leveling_required_to_print)
+								&& printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled))
 								{
 									onlyReloadSliceSettings = false;
 								}
 
-								ActiveSliceSettings.Instance.ClearUserOverrides();
-								ActiveSliceSettings.Instance.Save();
+								printer.Settings.ClearUserOverrides();
+								printer.Settings.Save();
 
 								if (onlyReloadSliceSettings)
 								{

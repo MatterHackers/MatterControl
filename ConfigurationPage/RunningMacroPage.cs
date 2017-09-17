@@ -48,37 +48,37 @@ namespace MatterHackers.MatterControl.PrinterControls
 		private TextWidget progressBarText;
 
 		private long timeToWaitMs;
-		PrinterConnection printerConnection;
+		private PrinterConfig printer;
 
-		public RunningMacroPage(PrinterConnection printerConnection, MacroCommandData macroData)
+		public RunningMacroPage(PrinterConfig printer, MacroCommandData macroData)
 			: base("Cancel")
 		{
-			this.printerConnection = printerConnection;
+			this.printer = printer;
 			this.WindowTitle = "Running Macro".Localize();
 			this.HeaderText = macroData.title;
 
 			cancelButton.Click += (s, e) =>
 			{
-				printerConnection.MacroCancel();
+				printer.Connection.MacroCancel();
 			};
 
 			if (macroData.showMaterialSelector)
 			{
 				int extruderIndex = 0;
-				var materialSelector = new PresetSelectorWidget(string.Format($"{"Material".Localize()} {extruderIndex + 1}"), RGBA_Bytes.Transparent, NamedSettingsLayers.Material, extruderIndex);
+				var materialSelector = new PresetSelectorWidget(printer, string.Format($"{"Material".Localize()} {extruderIndex + 1}"), RGBA_Bytes.Transparent, NamedSettingsLayers.Material, extruderIndex);
 				materialSelector.BackgroundColor = RGBA_Bytes.Transparent;
 				materialSelector.Margin = new BorderDouble(0, 0, 0, 15);
 				contentRow.AddChild(materialSelector);
 			}
 
-			printerConnection.WroteLine.RegisterEvent(LookForTempRequest, ref unregisterEvents);
+			printer.Connection.WroteLine.RegisterEvent(LookForTempRequest, ref unregisterEvents);
 
 			if (macroData.waitOk | macroData.expireTime > 0)
 			{
 				Button okButton = textImageButtonFactory.Generate("Continue".Localize());
 				okButton.Click += (s, e) =>
 				{
-					printerConnection.MacroContinue();
+					printer.Connection.MacroContinue();
 					UiThread.RunOnIdle(() => WizardWindow?.Close());
 				};
 
@@ -139,7 +139,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 		{
 			if(e.OsEvent)
 			{
-				printerConnection.MacroCancel();
+				printer.Connection.MacroCancel();
 			}
 			unregisterEvents?.Invoke(this, null);
 
@@ -166,7 +166,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			if(stringEvent != null
 				&& stringEvent.Data.Contains("M104"))
 			{
-				startingTemp = printerConnection.GetActualHotendTemperature(0);
+				startingTemp = printer.Connection.GetActualHotendTemperature(0);
 				UiThread.RunOnIdle(ShowTempChangeProgress);
 			}
 		}
@@ -174,8 +174,8 @@ namespace MatterHackers.MatterControl.PrinterControls
 		private void ShowTempChangeProgress()
 		{
 			progressBar.Visible = true;
-			double targetTemp = printerConnection.GetTargetHotendTemperature(0);
-			double actualTemp = printerConnection.GetActualHotendTemperature(0);
+			double targetTemp = printer.Connection.GetTargetHotendTemperature(0);
+			double actualTemp = printer.Connection.GetActualHotendTemperature(0);
 			double totalDelta = targetTemp - startingTemp;
 			double currentDelta = actualTemp - startingTemp;
 			double ratioDone = totalDelta != 0 ? (currentDelta / totalDelta) : 1;

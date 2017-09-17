@@ -130,7 +130,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							printerTabPage.ViewMode = PartViewMode.Layers3D;
 
 							// HACK: directly fire method which previously ran on SlicingDone event on PrintItemWrapper
-							UiThread.RunOnIdle(printerTabPage.modelViewer.gcodeViewer.CreateAndAddChildren);
+							UiThread.RunOnIdle(() => printerTabPage.modelViewer.gcodeViewer.CreateAndAddChildren(printer));
 						}
 						catch (Exception ex)
 						{

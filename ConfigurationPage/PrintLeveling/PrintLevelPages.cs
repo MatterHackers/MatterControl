@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			: base(printer, pageDescription, instructionsText)
 		{
 			int extruderIndex = 0;
-			var materialSelector = new PresetSelectorWidget(string.Format($"{"Material".Localize()} {extruderIndex + 1}"), RGBA_Bytes.Transparent, NamedSettingsLayers.Material, extruderIndex);
+			var materialSelector = new PresetSelectorWidget(printer, string.Format($"{"Material".Localize()} {extruderIndex + 1}"), RGBA_Bytes.Transparent, NamedSettingsLayers.Material, extruderIndex);
 			materialSelector.BackgroundColor = RGBA_Bytes.Transparent;
 			materialSelector.Margin = new BorderDouble(0, 0, 0, 15);
 			topToBottomControls.AddChild(materialSelector);
