@@ -44,7 +44,7 @@ using NUnit.Framework;
 
 namespace MatterHackers.PolygonMesh.UnitTests
 {
-	[TestFixture, Category("Agg.PolygonMesh")]
+	[TestFixture, Category("Agg.PolygonMesh"), RunInApplicationDomain, Apartment(ApartmentState.STA)]
 	public class SceneTests
 	{
 		[Test]
@@ -98,7 +98,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			Assert.IsTrue(meshItem.Mesh.Faces.Count > 0);
 		}
 
-		[Test, RunInApplicationDomain, Apartment(ApartmentState.STA)]
+		[Test]
 		public async Task ResavedSceneRemainsConsistent()
 		{
 #if !__ANDROID__
