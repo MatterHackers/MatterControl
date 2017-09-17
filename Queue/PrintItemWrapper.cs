@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
@@ -39,6 +40,31 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PrintQueue
 {
+	public static class PrintItemWrapperExtensionMethods
+	{
+		private static TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+
+		public static string GetFriendlyName(this PrintItemWrapper printItemWrapper)
+		{
+			if (printItemWrapper?.Name == null)
+			{
+				return "";
+			}
+
+			return textInfo?.ToTitleCase(printItemWrapper.Name.Replace('_', ' '));
+		}
+
+		public static string GetFriendlyName(string fileName)
+		{
+			if (fileName == null)
+			{
+				return "";
+			}
+
+			return textInfo?.ToTitleCase(fileName.Replace('_', ' '));
+		}
+	}
+
 	public class PrintItemWrapper
 	{
 		public event EventHandler SlicingDone;
