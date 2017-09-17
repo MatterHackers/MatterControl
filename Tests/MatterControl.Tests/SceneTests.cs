@@ -110,6 +110,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			var sceneContext = new BedConfig();
 			// TODO: Entire app is spun up just to persist a scene - rewrite to reduce footprint/scope
 			var view3DWidget = new View3DWidget(
+				null,
 				sceneContext,
 				View3DWidget.AutoRotate.Disabled,
 				new ViewControls3D(ApplicationController.Instance.Theme, new Agg.UI.UndoBuffer()),

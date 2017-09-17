@@ -52,14 +52,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.AnchorAll();
 
-			var activeSettings = ActiveSliceSettings.Instance;
-
 			var tabControl = ApplicationController.Instance.Theme.CreateTabControl(2);
 
 			var separator = tabControl.Children<HorizontalLine>().FirstOrDefault();
 			separator.BackgroundColor = ApplicationController.Instance.Theme.PrimaryTabFillColor;
-
-			string tabTitle = !activeSettings.PrinterSelected ? "Printer".Localize() : activeSettings.GetValue(SettingsKey.printer_name);
 
 			RGBA_Bytes selectedTabColor;
 			if (!UserSettings.Instance.IsTouchScreen)
@@ -76,6 +72,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Add a tab for the current printer
 			if (ActiveSliceSettings.Instance.PrinterSelected)
 			{
+				string tabTitle = ActiveSliceSettings.Instance.GetValue(SettingsKey.printer_name);
 				printerTab = CreatePrinterTab(printerConfig, theme, tabTitle);
 				tabControl.AddTab(printerTab);
 			}

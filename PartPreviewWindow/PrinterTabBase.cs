@@ -30,8 +30,6 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
-using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
 
@@ -50,7 +48,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		protected FlowLayoutWidget topToBottom;
 		protected FlowLayoutWidget leftToRight;
 
-		public PrinterTabBase(BedConfig sceneContext, ThemeConfig theme, string tabTitle)
+		public PrinterTabBase(PrinterConfig printer, BedConfig sceneContext, ThemeConfig theme, string tabTitle)
 			: base (tabTitle)
 		{
 			this.sceneContext = sceneContext;
@@ -82,6 +80,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// The 3D model view
 			modelViewer = new View3DWidget(
+				printer,
 				sceneContext,
 				View3DWidget.AutoRotate.Disabled,
 				viewControls3D,

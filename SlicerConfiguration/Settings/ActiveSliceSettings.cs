@@ -42,7 +42,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public enum NamedSettingsLayers { MHBaseSettings, OEMSettings, Quality, Material, User, All }
 
-	public class ActiveSliceSettings
+	public static class ActiveSliceSettings
 	{
 		public static RootedObjectEventHandler ActivePrinterChanged = new RootedObjectEventHandler();
 		public static RootedObjectEventHandler ActiveProfileModified = new RootedObjectEventHandler();
@@ -81,8 +81,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 					if (!MatterControlApplication.IsLoading)
 					{
-						if (ActiveSliceSettings.Instance.PrinterSelected
-							&& Instance.GetValue<bool>(SettingsKey.auto_connect))
+						if (activeInstance.PrinterSelected
+							&& activeInstance.GetValue<bool>(SettingsKey.auto_connect))
 						{
 							UiThread.RunOnIdle(() =>
 							{

@@ -302,7 +302,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			if (printLevelingData == null)
 			{
 				printLevelingData = PrintLevelingData.Create(
-					ActiveSliceSettings.Instance,
+					printerSettings,
 					printerSettings.GetValue(SettingsKey.print_leveling_data));
 
 				if (printLevelingData.SampledPositions.Count == 3)
@@ -311,7 +311,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						printLevelingData.SampledPositions[0],
 						printLevelingData.SampledPositions[1],
 						printLevelingData.SampledPositions[2],
-						ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center));
+						printerSettings.GetValue<Vector2>(SettingsKey.print_center));
 				}
 			}
 
@@ -322,7 +322,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			if (clearUserZOffset)
 			{
-				ActiveSliceSettings.Instance.SetValue(SettingsKey.baby_step_z_offset, "0");
+				printerSettings.SetValue(SettingsKey.baby_step_z_offset, "0");
 			}
 			printLevelingData = data;
 			printerSettings.SetValue(SettingsKey.print_leveling_data, JsonConvert.SerializeObject(data));
@@ -348,14 +348,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public void UpdateLevelSettings()
 		{
-			PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
+			PrintLevelingData levelingData = this.GetPrintLevelingData();
 			if (levelingData.SampledPositions.Count > 2)
 			{
 				PrintLevelingPlane.Instance.SetPrintLevelingEquation(
 					levelingData.SampledPositions[0],
 					levelingData.SampledPositions[1],
 					levelingData.SampledPositions[2],
-					ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center));
+					printerSettings.GetValue<Vector2>(SettingsKey.print_center));
 			}
 		}
 
@@ -436,7 +436,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			Vector3 feedRate = new Vector3(3000, 3000, 315);
 
-			string savedSettings = ActiveSliceSettings.Instance.GetValue(SettingsKey.manual_movement_speeds);
+			string savedSettings = printerSettings.GetValue(SettingsKey.manual_movement_speeds);
 			if (!string.IsNullOrEmpty(savedSettings))
 			{
 				var segments = savedSettings.Split(',');
@@ -478,17 +478,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public int NumberOfHotEnds()
 		{
-			if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.extruders_share_temperature))
+			if (printerSettings.GetValue<bool>(SettingsKey.extruders_share_temperature))
 			{
 				return 1;
 			}
 
-			return ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.extruder_count);
+			return printerSettings.GetValue<int>(SettingsKey.extruder_count);
 		}
 
 		public bool UseZProbe()
 		{
-			return ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_z_probe) && ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.use_z_probe);
+			return printerSettings.GetValue<bool>(SettingsKey.has_z_probe) && printerSettings.GetValue<bool>(SettingsKey.use_z_probe);
 		}
 	}
 

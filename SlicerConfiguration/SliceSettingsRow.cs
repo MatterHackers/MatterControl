@@ -44,8 +44,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public static readonly RGBA_Bytes userSettingBackgroundColor = new RGBA_Bytes(68, 95, 220, 150);
 
 		public event EventHandler StyleChanged;
-		private SettingsContext settingsContext;
 
+		private SettingsContext settingsContext;
+		private PrinterConfig printer;
 		private SliceSettingData settingData;
 
 		private GuiWidget dataArea;
@@ -56,8 +57,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private const bool debugLayout = false;
 
-		public SliceSettingsRow(SettingsContext settingsContext, SliceSettingData settingData, bool fullRow = false)
+		public SliceSettingsRow(PrinterConfig printer, SettingsContext settingsContext, SliceSettingData settingData, bool fullRow = false)
 		{
+			this.printer = printer;
 			this.settingData = settingData;
 			this.settingsContext = settingsContext;
 
@@ -163,9 +165,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					case NamedSettingsLayers.All:
 						if (settingData.ShowAsOverride)
 						{
-							var defaultCascade = ActiveSliceSettings.Instance.defaultLayerCascade;
-							var firstParentValue = ActiveSliceSettings.Instance.GetValueAndLayerName(settingData.SlicerConfigName, defaultCascade.Skip(1));
-							var currentValueAndLayerName = ActiveSliceSettings.Instance.GetValueAndLayerName(settingData.SlicerConfigName, defaultCascade);
+							var defaultCascade = printer.Settings.defaultLayerCascade;
+							var firstParentValue = printer.Settings.GetValueAndLayerName(settingData.SlicerConfigName, defaultCascade.Skip(1));
+							var currentValueAndLayerName = printer.Settings.GetValueAndLayerName(settingData.SlicerConfigName, defaultCascade);
 
 							var currentValue = currentValueAndLayerName.Item1;
 							var layerName = currentValueAndLayerName.Item2;
@@ -209,11 +211,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 			else if (settingsContext.IsPrimarySettingsView)
 			{
-				if (ActiveSliceSettings.Instance.SettingExistsInLayer(settingData.SlicerConfigName, NamedSettingsLayers.Material))
+				if (printer.Settings.SettingExistsInLayer(settingData.SlicerConfigName, NamedSettingsLayers.Material))
 				{
 					this.HighlightColor = materialSettingBackgroundColor;
 				}
-				else if (ActiveSliceSettings.Instance.SettingExistsInLayer(settingData.SlicerConfigName, NamedSettingsLayers.Quality))
+				else if (printer.Settings.SettingExistsInLayer(settingData.SlicerConfigName, NamedSettingsLayers.Quality))
 				{
 					this.HighlightColor = qualitySettingBackgroundColor;
 				}

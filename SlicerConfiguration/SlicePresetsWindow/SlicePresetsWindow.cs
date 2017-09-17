@@ -64,16 +64,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private static Regex numberMatch = new Regex("\\s*\\(\\d+\\)", RegexOptions.Compiled);
 
 		private PresetsContext presetsContext;
+		private PrinterConfig printer;
 		private MHTextEditWidget presetNameInput;
 
 		private string initialPresetName = null;
 
 		private GuiWidget middleRow;
 
-		public SlicePresetsWindow(PresetsContext presetsContext)
+		public SlicePresetsWindow(PrinterConfig printer, PresetsContext presetsContext)
 				: base(641, 481)
 		{
 			this.presetsContext = presetsContext;
+			this.printer = printer;
 			this.AlwaysOnTopOfMain = true;
 			this.Title = "Slice Presets Editor".Localize();
 			this.MinimumSize = new Vector2(640, 480);
@@ -95,7 +97,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			middleRow = new GuiWidget();
 			middleRow.AnchorAll();
-			middleRow.AddChild(CreateSliceSettingsWidget(presetsContext.PersistenceLayer));
+			middleRow.AddChild(CreateSliceSettingsWidget(printer, presetsContext.PersistenceLayer));
 
 			mainContainer.AddChild(GetTopRow());
 			mainContainer.AddChild(middleRow);
@@ -141,9 +143,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return topRow;
 		}
 
-		private GuiWidget CreateSliceSettingsWidget(PrinterSettingsLayer persistenceLayer)
+		private GuiWidget CreateSliceSettingsWidget(PrinterConfig printer, PrinterSettingsLayer persistenceLayer)
 		{
 			var settingsContext = new SettingsContext(
+				printer,
 				new List<PrinterSettingsLayer>
 				{
 					persistenceLayer,
@@ -152,7 +155,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				},
 				presetsContext.LayerType);
 
-			return new SliceSettingsWidget(settingsContext)
+			return new SliceSettingsWidget(printer, settingsContext)
 			{
 				ShowControlBar = false
 			};
@@ -202,7 +205,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					presetsContext.PersistenceLayer = clonedLayer;
 
 					middleRow.CloseAllChildren();
-					middleRow.AddChild(CreateSliceSettingsWidget(clonedLayer));
+					middleRow.AddChild(CreateSliceSettingsWidget(printer, clonedLayer));
 
 					presetNameInput.Text = newProfileName;
 				});

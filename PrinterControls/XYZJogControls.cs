@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl
 
 		private MoveButton zPlusControl;
 		private MoveButton zMinusControl;
-		
+
 		private MoveButtonFactory moveButtonFactory = new MoveButtonFactory();
 		private PrinterConfig printer;
 
@@ -378,9 +378,9 @@ namespace MatterHackers.MatterControl
 			{
 				if (printer.Connection.CommunicationState == CommunicationStates.Printing)
 				{
-					var currentZ = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.baby_step_z_offset);
+					var currentZ = printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset);
 					currentZ += moveAmountPositive;
-					ActiveSliceSettings.Instance.SetValue(SettingsKey.baby_step_z_offset, currentZ.ToString("0.##"));
+					printer.Settings.SetValue(SettingsKey.baby_step_z_offset, currentZ.ToString("0.##"));
 				}
 				else
 				{
@@ -392,9 +392,9 @@ namespace MatterHackers.MatterControl
 			{
 				if (printer.Connection.CommunicationState == CommunicationStates.Printing)
 				{
-					var currentZ = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.baby_step_z_offset);
+					var currentZ = printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset);
 					currentZ += moveAmountNegative;
-					ActiveSliceSettings.Instance.SetValue(SettingsKey.baby_step_z_offset, currentZ.ToString("0.##"));
+					printer.Settings.SetValue(SettingsKey.baby_step_z_offset, currentZ.ToString("0.##"));
 				}
 				else
 				{
@@ -405,7 +405,7 @@ namespace MatterHackers.MatterControl
 
 		private FlowLayoutWidget CreateEButtons(double buttonSeparationDistance)
 		{
-			int extruderCount = ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.extruder_count);
+			int extruderCount = printer.Settings.GetValue<int>(SettingsKey.extruder_count);
 
 			FlowLayoutWidget eButtons = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			{
@@ -652,9 +652,9 @@ namespace MatterHackers.MatterControl
 					{
 						if (moveAxis == PrinterConnection.Axis.Z) // only works on z
 						{
-							var currentZ = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.baby_step_z_offset);
+							var currentZ = printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset);
 							currentZ += this.MoveAmount;
-							ActiveSliceSettings.Instance.SetValue(SettingsKey.baby_step_z_offset, currentZ.ToString("0.##"));
+							printer.Settings.SetValue(SettingsKey.baby_step_z_offset, currentZ.ToString("0.##"));
 						}
 					}
 					else

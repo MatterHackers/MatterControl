@@ -49,12 +49,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		bool whiteBackground;
 
 		public DropDownList DropDownList;
+		private PrinterConfig printer;
 
 		private int extruderIndex; //For multiple materials
 
-		public PresetSelectorWidget(string label, RGBA_Bytes accentColor, NamedSettingsLayers layerType, int extruderIndex, bool whiteBackground = false)
+		public PresetSelectorWidget(PrinterConfig printer, string label, RGBA_Bytes accentColor, NamedSettingsLayers layerType, int extruderIndex, bool whiteBackground = false)
 			: base(FlowDirection.TopToBottom)
 		{
+			this.printer = printer;
 			this.whiteBackground = whiteBackground;
 			Name = label;
 
@@ -122,24 +124,24 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					if (ApplicationController.Instance.EditMaterialPresetsWindow == null)
 					{
-						string presetsID = ActiveSliceSettings.Instance.GetMaterialPresetKey(extruderIndex);
+						string presetsID = printer.Settings.GetMaterialPresetKey(extruderIndex);
 						if (string.IsNullOrEmpty(presetsID))
 						{
 							return;
 						}
 
-						var layerToEdit = ActiveSliceSettings.Instance.MaterialLayers.Where(layer => layer.LayerID == presetsID).FirstOrDefault();
+						var layerToEdit = printer.Settings.MaterialLayers.Where(layer => layer.LayerID == presetsID).FirstOrDefault();
 
-						var presetsContext = new PresetsContext(ActiveSliceSettings.Instance.MaterialLayers, layerToEdit)
+						var presetsContext = new PresetsContext(printer.Settings.MaterialLayers, layerToEdit)
 						{
 							LayerType = NamedSettingsLayers.Material,
 							SetAsActive = (materialKey) =>
 							{
-								ActiveSliceSettings.Instance.SetMaterialPreset(this.extruderIndex, materialKey);
+								printer.Settings.SetMaterialPreset(this.extruderIndex, materialKey);
 							},
 							DeleteLayer = () => 
 							{
-								var materialKeys = ActiveSliceSettings.Instance.MaterialSettingsKeys;
+								var materialKeys = printer.Settings.MaterialSettingsKeys;
 								for (var i = 0; i < materialKeys.Count; i++)
 								{
 									if (materialKeys[i] == presetsID)
@@ -148,15 +150,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 									}
 								}
 
-								ActiveSliceSettings.Instance.SetMaterialPreset(extruderIndex, "");
-								ActiveSliceSettings.Instance.MaterialLayers.Remove(layerToEdit);
-								ActiveSliceSettings.Instance.Save();
+								printer.Settings.SetMaterialPreset(extruderIndex, "");
+								printer.Settings.MaterialLayers.Remove(layerToEdit);
+								printer.Settings.Save();
 
 								UiThread.RunOnIdle(() => ApplicationController.Instance.ReloadAdvancedControlsPanel());
 							}
 						};
 
-						ApplicationController.Instance.EditMaterialPresetsWindow = new SlicePresetsWindow(presetsContext);
+						ApplicationController.Instance.EditMaterialPresetsWindow = new SlicePresetsWindow(printer, presetsContext);
 						ApplicationController.Instance.EditMaterialPresetsWindow.Closed += (s, e2) => 
 						{
 							ApplicationController.Instance.EditMaterialPresetsWindow = null;
@@ -174,29 +176,29 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					if (ApplicationController.Instance.EditQualityPresetsWindow == null)
 					{
-						string presetsID = ActiveSliceSettings.Instance.ActiveQualityKey;
+						string presetsID = printer.Settings.ActiveQualityKey;
 						if (string.IsNullOrEmpty(presetsID))
 						{
 							return;
 						}
 
-						var layerToEdit = ActiveSliceSettings.Instance.QualityLayers.Where(layer => layer.LayerID == presetsID).FirstOrDefault();
+						var layerToEdit = printer.Settings.QualityLayers.Where(layer => layer.LayerID == presetsID).FirstOrDefault();
 
-						var presetsContext = new PresetsContext(ActiveSliceSettings.Instance.QualityLayers, layerToEdit)
+						var presetsContext = new PresetsContext(printer.Settings.QualityLayers, layerToEdit)
 						{
 							LayerType = NamedSettingsLayers.Quality,
-							SetAsActive = (qualityKey) => ActiveSliceSettings.Instance.ActiveQualityKey = qualityKey,
+							SetAsActive = (qualityKey) => printer.Settings.ActiveQualityKey = qualityKey,
 							DeleteLayer = () =>
 							{
-								ActiveSliceSettings.Instance.ActiveQualityKey = "";
-								ActiveSliceSettings.Instance.QualityLayers.Remove(layerToEdit);
-								ActiveSliceSettings.Instance.Save();
+								printer.Settings.ActiveQualityKey = "";
+								printer.Settings.QualityLayers.Remove(layerToEdit);
+								printer.Settings.Save();
 
 								UiThread.RunOnIdle(() => ApplicationController.Instance.ReloadAdvancedControlsPanel());
 							}
 						};
 
-						ApplicationController.Instance.EditQualityPresetsWindow = new SlicePresetsWindow(presetsContext);
+						ApplicationController.Instance.EditQualityPresetsWindow = new SlicePresetsWindow(printer, presetsContext);
 						ApplicationController.Instance.EditQualityPresetsWindow.Closed += (s, e2) => 
 						{
 							ApplicationController.Instance.EditQualityPresetsWindow = null;
@@ -229,10 +231,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			Dictionary<string, string> settingBeforeChange = new Dictionary<string, string>();
 			foreach (var keyName in PrinterSettings.KnownSettings)
 			{
-				settingBeforeChange.Add(keyName, ActiveSliceSettings.Instance.GetValue(keyName));
+				settingBeforeChange.Add(keyName, printer.Settings.GetValue(keyName));
 			}
 
-			var activeSettings = ActiveSliceSettings.Instance;
+			var activeSettings = printer.Settings;
 			MenuItem item = (MenuItem)sender;
 
 			if (layerType == NamedSettingsLayers.Material)
@@ -270,7 +272,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				ApplicationController.Instance.ReloadAdvancedControlsPanel();
 				foreach (var keyName in PrinterSettings.KnownSettings)
 				{
-					if (settingBeforeChange[keyName] != ActiveSliceSettings.Instance.GetValue(keyName))
+					if (settingBeforeChange[keyName] != printer.Settings.GetValue(keyName))
 					{
 						ActiveSliceSettings.OnSettingChanged(keyName);
 					}
@@ -296,7 +298,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			MenuItem defaultMenuItem = dropDownList.AddItem(defaultMenuItemText, "");
 			defaultMenuItem.Selected += MenuItem_Selected;
 
-			var listSource = (layerType == NamedSettingsLayers.Material) ? ActiveSliceSettings.Instance.MaterialLayers : ActiveSliceSettings.Instance.QualityLayers;
+			var listSource = (layerType == NamedSettingsLayers.Material) ? printer.Settings.MaterialLayers : printer.Settings.QualityLayers;
 			foreach (var layer in listSource)
 			{
 				MenuItem menuItem = dropDownList.AddItem(layer.Name, layer.LayerID);
@@ -310,15 +312,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				var newLayer = new PrinterSettingsLayer();
 				if (layerType == NamedSettingsLayers.Quality)
 				{
-					newLayer.Name = "Quality" + ActiveSliceSettings.Instance.QualityLayers.Count;
-					ActiveSliceSettings.Instance.QualityLayers.Add(newLayer);
-					ActiveSliceSettings.Instance.ActiveQualityKey = newLayer.LayerID;
+					newLayer.Name = "Quality" + printer.Settings.QualityLayers.Count;
+					printer.Settings.QualityLayers.Add(newLayer);
+					printer.Settings.ActiveQualityKey = newLayer.LayerID;
 				}
 				else
 				{
-					newLayer.Name = "Material" + ActiveSliceSettings.Instance.MaterialLayers.Count;
-					ActiveSliceSettings.Instance.MaterialLayers.Add(newLayer);
-					ActiveSliceSettings.Instance.SetMaterialPreset(this.extruderIndex, newLayer.LayerID);
+					newLayer.Name = "Material" + printer.Settings.MaterialLayers.Count;
+					printer.Settings.MaterialLayers.Add(newLayer);
+					printer.Settings.SetMaterialPreset(this.extruderIndex, newLayer.LayerID);
 				}
 
 				RebuildDropDownList();
@@ -332,22 +334,22 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				if (layerType == NamedSettingsLayers.Material)
 				{
-					settingsKey = ActiveSliceSettings.Instance.GetMaterialPresetKey(extruderIndex);
+					settingsKey = printer.Settings.GetMaterialPresetKey(extruderIndex);
 
-					ActiveSliceSettings.Instance.MaterialLayers.CollectionChanged += SettingsLayers_CollectionChanged;
+					printer.Settings.MaterialLayers.CollectionChanged += SettingsLayers_CollectionChanged;
 					dropDownList.Closed += (s1, e1) =>
 					{
-						ActiveSliceSettings.Instance.MaterialLayers.CollectionChanged -= SettingsLayers_CollectionChanged;
+						printer.Settings.MaterialLayers.CollectionChanged -= SettingsLayers_CollectionChanged;
 					};
 				}
 				else
 				{
-					settingsKey = ActiveSliceSettings.Instance.ActiveQualityKey;
+					settingsKey = printer.Settings.ActiveQualityKey;
 
-					ActiveSliceSettings.Instance.QualityLayers.CollectionChanged += SettingsLayers_CollectionChanged;
+					printer.Settings.QualityLayers.CollectionChanged += SettingsLayers_CollectionChanged;
 					dropDownList.Closed += (s1, e1) =>
 					{
-						ActiveSliceSettings.Instance.QualityLayers.CollectionChanged -= SettingsLayers_CollectionChanged;
+						printer.Settings.QualityLayers.CollectionChanged -= SettingsLayers_CollectionChanged;
 					};
 				}
 

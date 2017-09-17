@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		private EventHandler unregisterEvents;
 
-		public AdjustmentControls(int headingPointSize)
+		public AdjustmentControls(PrinterConfig printer, int headingPointSize)
 		{
 			var adjustmentControlsGroupBox = new AltGroupBox(new TextWidget("Tuning Adjustment".Localize(), pointSize: headingPointSize, textColor: ActiveTheme.Instance.SecondaryAccentColor))
 			{
@@ -113,7 +113,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 					FeedRateMultiplyerStream.FeedRateRatio = Math.Round(feedRateRatioSlider.Value, 2);
 
 					// Persist data for future use
-					ActiveSliceSettings.Instance.SetValue(
+					printer.Settings.SetValue(
 						SettingsKey.feedrate_ratio,
 						FeedRateMultiplyerStream.FeedRateRatio.ToString());
 				};
@@ -135,7 +135,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 					FeedRateMultiplyerStream.FeedRateRatio = Math.Round(feedRateRatioSlider.Value, 2);
 
 					// Persist data for future use
-					ActiveSliceSettings.Instance.SetValue(
+					printer.Settings.SetValue(
 						SettingsKey.feedrate_ratio,
 						FeedRateMultiplyerStream.FeedRateRatio.ToString());
 				};
@@ -179,7 +179,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 					ExtrusionMultiplyerStream.ExtrusionRatio = Math.Round(extrusionRatioSlider.Value, 2);
 
 					// Persist data for future use
-					ActiveSliceSettings.Instance.SetValue(
+					printer.Settings.SetValue(
 						SettingsKey.extrusion_ratio,
 						ExtrusionMultiplyerStream.ExtrusionRatio.ToString());
 				};
@@ -200,7 +200,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 					ExtrusionMultiplyerStream.ExtrusionRatio = Math.Round(extrusionRatioSlider.Value, 2);
 
 					// Persist data for future use
-					ActiveSliceSettings.Instance.SetValue(
+					printer.Settings.SetValue(
 						SettingsKey.extrusion_ratio,
 						ExtrusionMultiplyerStream.ExtrusionRatio.ToString());
 				};
@@ -219,13 +219,13 @@ namespace MatterHackers.MatterControl.PrinterControls
 				var eventArgs = e as StringEventArgs;
 				if (eventArgs?.Data == SettingsKey.extrusion_ratio)
 				{
-					double extrusionRatio = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.extrusion_ratio);
+					double extrusionRatio = printer.Settings.GetValue<double>(SettingsKey.extrusion_ratio);
 					extrusionRatioSlider.Value = extrusionRatio;
 					extrusionValue.ActuallNumberEdit.Value = Math.Round(extrusionRatio, 2);
 				}
 				else if (eventArgs?.Data == SettingsKey.feedrate_ratio)
 				{
-					double feedrateRatio = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.feedrate_ratio);
+					double feedrateRatio = printer.Settings.GetValue<double>(SettingsKey.feedrate_ratio);
 					feedRateRatioSlider.Value = feedrateRatio;
 					feedRateValue.ActuallNumberEdit.Value = Math.Round(feedrateRatio, 2);
 				}

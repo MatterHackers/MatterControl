@@ -69,7 +69,6 @@ namespace MatterHackers.MatterControl
 			var commonMargin = new BorderDouble(4, 2);
 
 			bool isFirstItem = true;
-				
 
 			// GCode export
 			bool showExportGCodeButton = ActiveSliceSettings.Instance.PrinterSelected;

@@ -28,10 +28,8 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
-using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
@@ -43,20 +41,21 @@ namespace MatterHackers.MatterControl
 	public class ManualPrinterControls : GuiWidget
 	{
 		static public RootedObjectEventHandler AddPluginControls = new RootedObjectEventHandler();
+
 		private static bool pluginsQueuedToAdd = false;
-		PrinterConfig printer;
+		private PrinterConfig printer;
 
 		public ManualPrinterControls(PrinterConfig printer)
 		{
+			this.printer = printer;
 			this.BackgroundColor = ApplicationController.Instance.Theme.TabBodyBackground;
-			AnchorAll();
-
-			AddChild(new ManualPrinterControlsDesktop(printer));
+			this.AnchorAll();
+			this.AddChild(new ManualPrinterControlsDesktop(printer));
 		}
 
 		public override void OnLoad(EventArgs args)
 		{
-			if (!pluginsQueuedToAdd && ActiveSliceSettings.Instance.GetValue("include_firmware_updater") == "Simple Arduino")
+			if (!pluginsQueuedToAdd && printer.Settings.GetValue("include_firmware_updater") == "Simple Arduino")
 			{
 				UiThread.RunOnIdle(() =>
 				{
@@ -107,7 +106,7 @@ namespace MatterHackers.MatterControl
 			movementControlsContainer = new MovementControls(printer, headingPointSize);
 			controlsTopToBottomLayout.AddChild(movementControlsContainer);
 
-			if (!ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_hardware_leveling))
+			if (!printer.Settings.GetValue<bool>(SettingsKey.has_hardware_leveling))
 			{
 				calibrationControlsContainer = new CalibrationSettingsWidget(printer, theme.ButtonFactory, headingPointSize);
 				controlsTopToBottomLayout.AddChild(calibrationControlsContainer);
@@ -123,15 +122,15 @@ namespace MatterHackers.MatterControl
 			controlsTopToBottomLayout.AddChild(linearPanel);
 
 			fanControlsContainer = new FanControls(printer.Connection, headingPointSize);
-			if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_fan))
+			if (printer.Settings.GetValue<bool>(SettingsKey.has_fan))
 			{
 				controlsTopToBottomLayout.AddChild(fanControlsContainer);
 			}
 
 #if !__ANDROID__
-			controlsTopToBottomLayout.AddChild(new PowerControls(printer.Connection, headingPointSize));
+			controlsTopToBottomLayout.AddChild(new PowerControls(printer, headingPointSize));
 #endif
-			tuningAdjustmentControlsContainer = new AdjustmentControls(headingPointSize);
+			tuningAdjustmentControlsContainer = new AdjustmentControls(printer, headingPointSize);
 			controlsTopToBottomLayout.AddChild(tuningAdjustmentControlsContainer);
 
 			// HACK: this is a hack to make the layout engine fire again for this control
@@ -157,7 +156,7 @@ namespace MatterHackers.MatterControl
 
 		private void SetVisibleControls()
 		{
-			if (!ActiveSliceSettings.Instance.PrinterSelected)
+			if (!printer.Settings.PrinterSelected)
 			{
 				movementControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
 				fanControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
