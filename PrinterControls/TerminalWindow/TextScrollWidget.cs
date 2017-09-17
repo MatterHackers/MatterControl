@@ -27,15 +27,12 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg;
-using MatterHackers.Agg.Font;
-using MatterHackers.Agg.Platform;
-using MatterHackers.Agg.UI;
-using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.Agg;
+using MatterHackers.Agg.Font;
+using MatterHackers.Agg.UI;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
@@ -90,13 +87,13 @@ namespace MatterHackers.MatterControl
 			get { return (int)Math.Ceiling(Height / printer.TypeFaceStyle.EmSizeInPixels); }
 		}
 
-		public TextScrollWidget(List<string> sourceLines)
+		public TextScrollWidget(PrinterConfig printerConfig, List<string> sourceLines)
 		{
 			printer = new TypeFacePrinter("", new StyledTypeFace(ApplicationController.MonoSpacedTypeFace, 12));
 			printer.DrawFromHintedCache = true;
 			this.allSourceLines = sourceLines;
 			this.visibleLines = sourceLines;
-			PrinterConnection.Instance.TerminalLog.HasChanged.RegisterEvent(RecievedNewLine, ref unregisterEvents);
+			printerConfig.Connection.TerminalLog.HasChanged.RegisterEvent(RecievedNewLine, ref unregisterEvents);
 		}
 
 		private void ConditionalyAddToVisible(string line)

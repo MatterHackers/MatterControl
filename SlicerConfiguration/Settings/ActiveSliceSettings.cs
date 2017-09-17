@@ -34,7 +34,6 @@ using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
-using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SettingsManagement;
 using Newtonsoft.Json;
 
@@ -68,7 +67,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					// If we have an active printer, run Disable
 					if (activeInstance != PrinterSettings.Empty)
 					{
-						PrinterConnection.Instance.Disable();
+						activeInstance.printer.Connection.Disable();
 					}
 
 					activeInstance = value;
@@ -86,7 +85,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						{
 							UiThread.RunOnIdle(() =>
 							{
-								PrinterConnection.Instance.ConnectToActivePrinter(showConnectionHelp);
+								activeInstance.printer.Connection.ConnectToActivePrinter(showConnectionHelp);
 								showConnectionHelp = false;
 							}, 2);
 						}

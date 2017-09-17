@@ -888,7 +888,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		}
 
 		// HACK: PrinterConnection must be revised to take a constructor that receives and stores a reference to its parent PrinterConfig - this 
-		private PrinterConfig printer => ApplicationController.Instance.Printer;
+		internal PrinterConfig printer { private get; set; }
 
 		private int NumberOfLinesInCurrentPrint => loadedGCode.LineCount;
 

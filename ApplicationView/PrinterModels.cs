@@ -358,23 +358,28 @@ namespace MatterHackers.MatterControl
 	{
 		public BedConfig Bed { get; }
 		public PrinterViewState ViewState { get; } = new PrinterViewState();
-		public PrinterSettings Settings { get; private set; } = ActiveSliceSettings.Instance;
-		public PrinterConnection Connection { get; private set; } = PrinterConnection.Instance;
+		public PrinterSettings Settings { get; private set; }
+		public PrinterConnection Connection { get; private set; }
 
 		private EventHandler unregisterEvents;
 
 		public PrinterConfig(bool loadLastBedplate)
 		{
+			// TODO: Not quite there yet. Need to have a system that loads settings, creates a connection and assigns it all to a printer instance. Hopefully soon...
+			this.Connection = PrinterConnection.Instance;
+			this.Settings = ActiveSliceSettings.Instance;
+			this.Settings.printer = this;
+			this.Connection.printer = this;
+
 			this.Bed = new BedConfig(this, loadLastBedplate);
 
 			ActiveSliceSettings.SettingChanged.RegisterEvent(Printer_SettingChanged, ref unregisterEvents);
 
-			// TODO: Needed?
-			//ApplicationController.Instance.AdvancedControlsPanelReloading.RegisterEvent(CheckSettingChanged, ref unregisterEvents);
-
 			ActiveSliceSettings.ActivePrinterChanged.RegisterEvent((s, e) =>
 			{
 				this.Settings = ActiveSliceSettings.Instance;
+				this.Settings.printer = this;
+
 				this.ReloadSettings();
 				this.Bed.RecreateBed();
 			}, ref unregisterEvents);

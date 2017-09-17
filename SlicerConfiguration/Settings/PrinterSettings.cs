@@ -75,6 +75,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public PrinterSettingsLayer StagedUserSettings { get; set; } = new PrinterSettingsLayer();
 
+		internal PrinterConfig printer { get; set; }
+
 		static PrinterSettings()
 		{
 			Empty = new PrinterSettings() { ID = "EmptyProfile" };
