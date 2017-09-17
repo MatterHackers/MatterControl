@@ -70,17 +70,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			context.ContainerChanged += ActiveContainer_Changed;
 			context.ContainerReloaded += ActiveContainer_Reloaded;
-
-			bool printerConnected = false;
-			PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent((s, e) =>
-			{
-				bool isConnected = PrinterConnection.Instance.PrinterIsConnected;
-				if (printerConnected != isConnected)
-				{
-					DisplayContainerContent(ActiveContainer);
-					printerConnected = isConnected;
-				}
-			}, ref unregisterEvents);
 		}
 
 		public bool ShowItems { get; set; } = true;
