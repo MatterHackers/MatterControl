@@ -586,7 +586,7 @@ namespace MatterHackers.PrinterEmulator
 
 			Task.Run(() =>
 			{
-				while (!shutDown)
+				while (!shutDown || receiveQueue.Count > 0)
 				{
 					if (receiveQueue.Count == 0)
 					{
