@@ -500,7 +500,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 									// Set this early as we always want our functions to know the state we are in.
 									communicationState = value;
 									timeSinceStartedPrint.Stop();
-									PrintFinished.CallEvents(this, new PrintItemWrapperEventArgs(this.activePrintItem));
+									PrintFinished.CallEvents(this, new PrintItemWrapperEventArgs(printer.Bed.printItem));
 
 									// clear single use setting on print completion
 									foreach (var keyValue in printer.Settings.BaseLayer)
@@ -1953,7 +1953,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			if (!PrinterIsConnected
 				|| PrinterIsPrinting
-				|| activePrintItem.PrintItem.FileLocation != QueueData.SdCardFileName)
+				|| printer.Bed.printItem.PrintItem.FileLocation != QueueData.SdCardFileName)
 			{
 				return false;
 			}
@@ -1963,7 +1963,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			ClearQueuedGCode();
 			CommunicationState = CommunicationStates.PrintingFromSd;
 
-			SendLineToPrinterNow("M23 {0}".FormatWith(activePrintItem.PrintItem.Name.ToLower())); // Select SD File
+			SendLineToPrinterNow("M23 {0}".FormatWith(printer.Bed.printItem.PrintItem.Name.ToLower())); // Select SD File
 			SendLineToPrinterNow("M24"); // Start/resume SD print
 
 			ReadLineStartCallBacks.AddCallbackToKey("Done printing file", DonePrintingSdFile);
@@ -1984,18 +1984,16 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					break;
 
 				case CommunicationStates.Paused:
+					if (PrePauseCommunicationState == CommunicationStates.PrintingFromSd)
 					{
-						if (PrePauseCommunicationState == CommunicationStates.PrintingFromSd)
-						{
-							CancelSDCardPrint();
-							CommunicationState = CommunicationStates.Connected;
-						}
-						else
-						{
-							CancelPrint(markPrintCanceled);
-							// We have to continue printing the end gcode, so we set this to Printing.
-							CommunicationState = CommunicationStates.Printing;
-						}
+						CancelSDCardPrint();
+						CommunicationState = CommunicationStates.Connected;
+					}
+					else
+					{
+						CancelPrint(markPrintCanceled);
+						// We have to continue printing the end gcode, so we set this to Printing.
+						CommunicationState = CommunicationStates.Printing;
 					}
 					break;
 
@@ -2343,8 +2341,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			CreateStreamProcessors(gcodeFilename, printer.Settings.GetValue<bool>(SettingsKey.recover_is_enabled));
 		}
 
-		internal PrintItemWrapper activePrintItem;
-
 		private void DoneLoadingGCodeToPrint()
 		{
 			switch (communicationState)
@@ -2354,23 +2350,28 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					break;
 
 				case CommunicationStates.PreparingToPrint:
-					if (activePrintItem.PrintItem.Id == 0)
 					{
-						activePrintItem.PrintItem.Commit();
-					}
+						var activePrintItem = printer.Bed.printItem;
+						if (activePrintItem.PrintItem.Id == 0)
+						{
+							activePrintItem.PrintItem.Commit();
+						}
 
-					if (activePrintTask == null)
-					{
-						// TODO: Fix printerItemID int requirement
-						activePrintTask = new PrintTask();
-						activePrintTask.PrintStart = DateTime.Now;
-						activePrintTask.PrinterId = this.printer.Settings.ID.GetHashCode();
-						activePrintTask.PrintName = activePrintItem.PrintItem.Name;
-						activePrintTask.PrintItemId = activePrintItem.PrintItem.Id;
-						activePrintTask.PrintingGCodeFileName = activePrintItem.GetGCodePathAndFileName();
-						activePrintTask.PrintComplete = false;
+						if (activePrintTask == null)
+						{
+							// TODO: Fix printerItemID int requirement
+							activePrintTask = new PrintTask
+							{
+								PrintStart = DateTime.Now,
+								PrinterId = this.printer.Settings.ID.GetHashCode(),
+								PrintName = activePrintItem.PrintItem.Name,
+								PrintItemId = activePrintItem.PrintItem.Id,
+								PrintingGCodeFileName = activePrintItem.GetGCodePathAndFileName(),
+								PrintComplete = false
+							};
 
-						activePrintTask.Commit();
+							activePrintTask.Commit();
+						}
 					}
 
 					CommunicationState = CommunicationStates.Printing;

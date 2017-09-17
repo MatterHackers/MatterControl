@@ -24,7 +24,6 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO.Ports;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -54,6 +53,10 @@ namespace MatterHackers.PrinterEmulator
 
 		private bool shutDown = false;
 
+		public Heater HeatedBed { get; } = new Heater("HeatedBed");
+
+		public Heater Hotend { get; } = new Heater("Hotend1");
+
 		public Emulator()
 		{
 			Emulator.Instance = this;
@@ -81,16 +84,15 @@ namespace MatterHackers.PrinterEmulator
 			};
 		}
 
+		public event EventHandler ZPositionChanged;
+
 		public event EventHandler ExtruderTemperatureChanged;
 
 		public event EventHandler FanSpeedChanged;
 
-		public double BedCurrentTemperature { get; private set; } = 26;
-		public double BedGoalTemperature { get; private set; } = -1;
 		public double EPosition { get; private set; }
 
-		public double ExtruderCurrentTemperature { get; private set; } = 27;
-		public double ExtruderGoalTemperature { get; private set; } = 0;
+		public double ExtruderGoalTemperature => this.Hotend.TargetTemperature;
 		public double FanSpeed { get; private set; }
 
 		public string PortName { get; set; }
@@ -175,6 +177,14 @@ namespace MatterHackers.PrinterEmulator
 					return command + "ok\n";
 				}
 
+				if (!command.StartsWith("G0")
+					&& !command.StartsWith("G1")
+					&& !command.StartsWith("M105"))
+				{
+					// Log non-busy commands
+					Console.WriteLine(command);
+				}
+
 				var commandKey = GetCommandKey(command);
 				if (responses.ContainsKey(commandKey))
 				{
@@ -188,7 +198,8 @@ namespace MatterHackers.PrinterEmulator
 				}
 				else
 				{
-					Console.WriteLine($"Command {command} not found");
+					// Too noisy... restore if needed when debugging emulator
+					//Console.WriteLine($"Command {command} not found");
 				}
 			}
 			catch (Exception e)
@@ -214,20 +225,9 @@ namespace MatterHackers.PrinterEmulator
 		public string ReturnTemp(string command)
 		{
 			// temp commands look like this: ok T:19.4 /0.0 B:0.0 /0.0 @:0 B@:0
-			if (BedGoalTemperature == -1)
-			{
-				if (ExtruderGoalTemperature != 0)
-				{
-					ExtruderCurrentTemperature = ExtruderCurrentTemperature + (ExtruderGoalTemperature - ExtruderCurrentTemperature) * .8;
-				}
-				return $"ok T:{ExtruderCurrentTemperature:0.0} / {ExtruderGoalTemperature:0.0}\n";
-			}
-			else
-			{
-				ExtruderCurrentTemperature = ExtruderCurrentTemperature + (ExtruderGoalTemperature - ExtruderCurrentTemperature) * .8;
-				BedCurrentTemperature = BedCurrentTemperature + (BedGoalTemperature - BedCurrentTemperature) * .8;
-				return $"ok T:{ExtruderCurrentTemperature:0.0} / {ExtruderGoalTemperature:0.0} B: {BedCurrentTemperature:0.0} / {BedGoalTemperature:0.0}\n";
-			}
+			return $"ok T:{Hotend.CurrentTemperature:0.0} / {Hotend.TargetTemperature:0.0}"
+				// Newline if HeatedBed is disabled otherwise HeatedBed stats
+				+ ((!this.HeatedBed.Enabled) ? "\n" : $" B: {HeatedBed.CurrentTemperature:0.0} / {HeatedBed.TargetTemperature:0.0}\n");
 		}
 
 		public string SetFan(string command)
@@ -248,6 +248,8 @@ namespace MatterHackers.PrinterEmulator
 
 		public void ShutDown()
 		{
+			HeatedBed.Stop();
+			Hotend.Stop();
 			shutDown = true;
 		}
 
@@ -340,7 +342,7 @@ namespace MatterHackers.PrinterEmulator
 			{
 				// M140 S210 or M190 S[temp]
 				var sIndex = command.IndexOf('S') + 1;
-				BedGoalTemperature = int.Parse(command.Substring(sIndex));
+				HeatedBed.TargetTemperature = int.Parse(command.Substring(sIndex));
 			}
 			catch (Exception e)
 			{
@@ -356,7 +358,7 @@ namespace MatterHackers.PrinterEmulator
 			{
 				// M104 S210 or M109 S[temp]
 				var sIndex = command.IndexOf('S') + 1;
-				ExtruderGoalTemperature = int.Parse(command.Substring(sIndex));
+				Hotend.TargetTemperature = int.Parse(command.Substring(sIndex));
 				ExtruderTemperatureChanged?.Invoke(this, null);
 			}
 			catch (Exception e)
@@ -392,6 +394,7 @@ namespace MatterHackers.PrinterEmulator
 			if (GetFirstNumberAfter("Z", command, ref value))
 			{
 				ZPosition = value;
+				ZPositionChanged?.Invoke(null, null);
 			}
 			if (GetFirstNumberAfter("E", command, ref value))
 			{
@@ -424,6 +427,92 @@ namespace MatterHackers.PrinterEmulator
 
 			return "ok\n";
 		}
+
+		public class Heater
+		{
+			public static double IncrementAmount = 5.3;
+
+			public static int BounceAmount = (int)IncrementAmount / 2;
+
+			private bool shutdown = false;
+			private double targetTemp;
+
+			public Heater(string identifier)
+			{
+				this.ID = identifier;
+
+				// Maintain temperatures
+				Task.Run(() =>
+				{
+					var random = new Random();
+
+					while (!shutdown)
+					{
+						if (this.Enabled)
+						{
+							var delta = TargetTemperature - CurrentTemperature;
+							var abs = Math.Abs(delta);
+
+							double power = (abs > 5 || abs == 0) ? 1 : abs / 5d;
+
+							double increment = (abs == 0) ? 0 : power * IncrementAmount;
+							if (delta != 0)
+							{
+								increment *= Math.Sign(delta);
+							}
+
+							// Bounce if close to target
+							int extra = abs < 10 ? random.Next(-BounceAmount, BounceAmount) : 0;
+
+							// Add the increment plus random
+							if (this.enabled)
+							{
+								CurrentTemperature += increment + extra;
+							}
+						}
+
+						Thread.Sleep(100);
+					}
+				});
+			}
+
+			public double CurrentTemperature { get; set; }
+
+			private bool enabled;
+			public bool Enabled
+			{
+				get => enabled;
+				set
+				{
+					if (enabled != value)
+					{
+						enabled = value;
+						CurrentTemperature = 0;
+					}
+				}
+			}
+
+			public string ID { get; }
+
+			public double TargetTemperature
+			{
+				get => targetTemp;
+				set
+				{
+					if (targetTemp != value)
+					{
+						targetTemp = value;
+						this.Enabled = this.targetTemp > 0;
+					}
+				}
+			}
+
+			public void Stop()
+			{
+				shutdown = true;
+			}
+		}
+
 	}
 
 	public class EmulatorPortFactory : FrostedSerialPortFactory
@@ -497,7 +586,7 @@ namespace MatterHackers.PrinterEmulator
 
 			Task.Run(() =>
 			{
-				while (!shutDown)
+				while (!shutDown || receiveQueue.Count > 0)
 				{
 					if (receiveQueue.Count == 0)
 					{
@@ -558,7 +647,6 @@ namespace MatterHackers.PrinterEmulator
 			{
 				receiveQueue.Enqueue(receivedLine);
 			}
-
 
 			// Release the main loop to process the received command
 			receiveResetEvent.Set();

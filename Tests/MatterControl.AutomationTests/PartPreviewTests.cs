@@ -250,9 +250,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.NavigateToLibraryHome();
 				testRunner.NavigateToFolder("Print Queue Row Item Collection");
 
-				view3D.CloseOnIdle();
-				testRunner.Delay(.5);
-
 				Assert.IsTrue(testRunner.WaitForName("Row Item Test PartA", 5), "The part we added should be in the library");
 				Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should increase by one after Save operation");
 
