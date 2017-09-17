@@ -124,7 +124,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 							gcodeLoadCancellationTokenSource = new CancellationTokenSource();
 
-							ApplicationController.Instance.Printer.Bed.LoadGCode(printItem.GetGCodePathAndFileName(), gcodeLoadCancellationTokenSource.Token, printerTabPage.modelViewer.gcodeViewer.LoadProgress_Changed);
+							ApplicationController.Instance.ActivePrinter.Bed.LoadGCode(printItem.GetGCodePathAndFileName(), gcodeLoadCancellationTokenSource.Token, printerTabPage.modelViewer.gcodeViewer.LoadProgress_Changed);
 							sliceProgressReporter.EndReporting();
 
 							printerTabPage.ViewMode = PartViewMode.Layers3D;

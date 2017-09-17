@@ -499,7 +499,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 						fanChangedCount++;
 					};
 
-					var layerTwoZHeight = ApplicationController.Instance.Printer.Settings.GetValue<double>(SettingsKey.layer_height) * 2;
+					var layerTwoZHeight = ApplicationController.Instance.ActivePrinter.Settings.GetValue<double>(SettingsKey.layer_height) * 2;
 
 					// Wait for layer 2
 					emulator.ZPositionChanged += (s, e) =>

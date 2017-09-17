@@ -195,7 +195,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Reposition first item to bed center
 			if (Scene.Children.Count == 0)
 			{
-				var printer = ApplicationController.Instance.Printer;
+				var printer = ApplicationController.Instance.ActivePrinter;
 				var aabb = newItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 				var center = aabb.Center;
 

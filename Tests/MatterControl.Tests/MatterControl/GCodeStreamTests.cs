@@ -96,7 +96,7 @@ namespace MatterControl.Tests.MatterControl
 
 		public static GCodeStream CreateTestGCodeStream(string[] inputLines, out List<GCodeStream> streamList)
 		{
-			var printer = ApplicationController.Instance.Printer;
+			var printer = ApplicationController.Instance.ActivePrinter;
 
 			streamList = new List<GCodeStream>();
 			streamList.Add(new TestGCodeStream(inputLines));

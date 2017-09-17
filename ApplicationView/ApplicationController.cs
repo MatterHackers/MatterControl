@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl
 	{
 		public ThemeConfig Theme { get; set; } = new ThemeConfig();
 
-		public PrinterConfig Printer { get; }
+		public PrinterConfig ActivePrinter { get; }
 
 		public Action RedeemDesignCode;
 		public Action EnterShareCode;
@@ -301,7 +301,7 @@ namespace MatterHackers.MatterControl
 
 			Object3D.AssetsPath = ApplicationDataStorage.Instance.LibraryAssetsPath;
 
-			this.Printer = new PrinterConfig(loadLastBedplate: true);
+			this.ActivePrinter = new PrinterConfig(loadLastBedplate: true);
 
 			this.Library = new LibraryConfig();
 			this.Library.ContentProviders.Add(new[] { "stl", "amf", "mcx" }, new MeshContentProvider());
@@ -341,7 +341,7 @@ namespace MatterHackers.MatterControl
 						if (UserSettings.Instance.IsTouchScreen)
 						{
 							// TODO: In general this basic hook won't work with multi-tenancy
-							UiThread.RunOnIdle(() => PrintingWindow.Show(ApplicationController.Instance.Printer)); // HACK: We need to show the instance that's printing not the static instance
+							UiThread.RunOnIdle(() => PrintingWindow.Show(ApplicationController.Instance.ActivePrinter)); // HACK: We need to show the instance that's printing not the static instance
 						}
 
 						break;
@@ -359,7 +359,7 @@ namespace MatterHackers.MatterControl
 					PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
 					if (levelingData?.HasBeenRunAndEnabled() != true)
 					{
-						UiThread.RunOnIdle(() => LevelWizardBase.ShowPrintLevelWizard(ApplicationController.Instance.Printer));// HACK: We need to show the instance that's printing not the static instance
+						UiThread.RunOnIdle(() => LevelWizardBase.ShowPrintLevelWizard(ApplicationController.Instance.ActivePrinter));// HACK: We need to show the instance that's printing not the static instance
 					}
 				}
 			}, ref unregisterEvents);
@@ -920,7 +920,7 @@ namespace MatterHackers.MatterControl
 					PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
 					if (levelingData?.HasBeenRunAndEnabled() != true)
 					{
-						LevelWizardBase.ShowPrintLevelWizard(ApplicationController.Instance.Printer);// HACK: We need to show the instance that's printing not the static instance
+						LevelWizardBase.ShowPrintLevelWizard(ApplicationController.Instance.ActivePrinter);// HACK: We need to show the instance that's printing not the static instance
 						return;
 					}
 				}

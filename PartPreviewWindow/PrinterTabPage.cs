@@ -597,13 +597,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void AddSettingsTabBar(GuiWidget parent, GuiWidget widgetTodockTo)
 		{
-			var sideBar = new DockingTabControl(widgetTodockTo, DockSide.Right, ApplicationController.Instance.Printer)
+			var sideBar = new DockingTabControl(widgetTodockTo, DockSide.Right, ApplicationController.Instance.ActivePrinter)
 			{
-				ControlIsPinned = ApplicationController.Instance.Printer.ViewState.SliceSettingsTabPinned
+				ControlIsPinned = ApplicationController.Instance.ActivePrinter.ViewState.SliceSettingsTabPinned
 			};
 			sideBar.PinStatusChanged += (s, e) =>
 			{
-				ApplicationController.Instance.Printer.ViewState.SliceSettingsTabPinned = sideBar.ControlIsPinned;
+				ApplicationController.Instance.ActivePrinter.ViewState.SliceSettingsTabPinned = sideBar.ControlIsPinned;
 			};
 			parent.AddChild(sideBar);
 

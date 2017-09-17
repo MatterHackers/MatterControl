@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public PartPreviewContent()
 		{
-			var printerConfig = ApplicationController.Instance.Printer;
+			var printerConfig = ApplicationController.Instance.ActivePrinter;
 			var theme = ApplicationController.Instance.Theme;
 
 			this.AnchorAll();
