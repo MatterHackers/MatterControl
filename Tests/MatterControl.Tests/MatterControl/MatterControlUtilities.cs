@@ -431,9 +431,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.ClickByName("Add to Plate Menu Item");
 		}
 
-		public static void WaitForPrintFinished(this AutomationRunner testRunner)
+		public static void WaitForPrintFinished(this AutomationRunner testRunner, int maxSeconds = 500)
 		{
-			testRunner.Delay(() => PrinterConnection.Instance.CommunicationState == CommunicationStates.FinishedPrint, 500);
+			testRunner.Delay(() => PrinterConnection.Instance.CommunicationState == CommunicationStates.FinishedPrint, maxSeconds);
+		}
+
+		public static void WaitForCommunicationStateDisconnected(this AutomationRunner testRunner, int maxSeconds = 500)
+		{
+			testRunner.Delay(() => PrinterConnection.Instance.CommunicationState == CommunicationStates.Disconnected, maxSeconds);
 		}
 
 		public static async Task RunTest(
