@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}, ref unregisterEvents);
 
 			// TODO: Why do we clear GCode on AdvancedControlsPanelReloading - assume some slice settings should invalidate. If so, code should be more specific and bound to slice settings changed
-			ApplicationController.Instance.AdvancedControlsPanelReloading.RegisterEvent((s, e) => printer.Bed.GCodeRenderer?.Clear3DGCode(), ref unregisterEvents);
+			ApplicationController.Instance.AdvancedControlsPanelReloading.RegisterEvent((s, e) => printer?.Bed.GCodeRenderer?.Clear3DGCode(), ref unregisterEvents);
 		}
 
 		internal void CreateAndAddChildren(PrinterConfig printer)
