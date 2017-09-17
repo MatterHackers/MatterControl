@@ -117,8 +117,12 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			string tempPath = GetSceneTempPath();
 			string filePath = Path.Combine(tempPath, "some.mcx");
 
+			// Set directory for asset resolution
+			Object3D.AssetsPath = Path.Combine(tempPath, "assets");
+			Directory.CreateDirectory(Object3D.AssetsPath);
+
 			// Empty temp folder
-			foreach(string tempFile in Directory.GetFiles(tempPath).ToList())
+			foreach (string tempFile in Directory.GetFiles(tempPath).ToList())
 			{
 				File.Delete(tempFile);
 			}
