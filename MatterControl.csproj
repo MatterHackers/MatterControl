@@ -133,6 +133,7 @@
     <Compile Include="ActionBar\TemperatureWidgetBase.cs" />
     <Compile Include="ActionBar\TemperatureWidgetExtruder.cs" />
     <Compile Include="ApplicationView\ApplicationController.cs" />
+    <Compile Include="ApplicationView\PrinterModels.cs" />
     <Compile Include="ApplicationView\ThemeConfig.cs" />
     <Compile Include="ConfigurationPage\ApplicationSettings\SettingsItem.cs" />
     <Compile Include="ConfigurationPage\ApplicationSettings\ThemePreviewButton.cs" />

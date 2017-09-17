@@ -35,6 +35,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl.Library
 {
@@ -293,7 +294,7 @@ namespace MatterHackers.MatterControl.Library
 					{
 						UiThread.RunOnIdle(() =>
 						{
-							ApplicationController.Instance.Terminal.Log($"Error adding file: {filePath}\r\n{ex.Message}");
+							PrinterConnection.Instance.TerminalLog.WriteLine($"Error adding file: {filePath}\r\n{ex.Message}");
 						});
 					}
 				}

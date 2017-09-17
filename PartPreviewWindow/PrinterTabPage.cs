@@ -34,9 +34,6 @@ using MatterHackers.Agg.UI;
 using MatterHackers.GCodeVisualizer;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.MatterControl.PrinterControls;
-using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
@@ -628,7 +625,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			sideBar.AddPage("Controls".Localize(), new ManualPrinterControls(printer));
 
-			sideBar.AddPage("Terminal".Localize(), new TerminalWidget(printer.Connection)
+			sideBar.AddPage("Terminal".Localize(), new TerminalWidget(printer)
 			{
 				VAnchor = VAnchor.Stretch,
 				HAnchor = HAnchor.Stretch

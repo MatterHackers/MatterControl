@@ -92,14 +92,6 @@ namespace MatterHackers.MatterControl
 		}
 	}
 
-	public class TerminalRedirector
-	{
-		public void Log(string text)
-		{
-			PrinterConnection.Instance.TerminalLog.WriteLine(text);
-		}
-	}
-
 	public class SyncReportType
 	{
 		public string actionLabel;

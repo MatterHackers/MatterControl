@@ -35,7 +35,6 @@ using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl
 {
@@ -45,12 +44,12 @@ namespace MatterHackers.MatterControl
 		private CheckBox autoUppercase;
 		private MHTextEditWidget manualCommandTextEdit;
 		private TextScrollWidget textScrollWidget;
-		PrinterConnection printerConnection;
+		private PrinterConfig printer;
 
-		public TerminalWidget(PrinterConnection printerConnection)
+		public TerminalWidget(PrinterConfig printer)
 			: base(FlowDirection.TopToBottom)
 		{
-			this.printerConnection = printerConnection;
+			this.printer = printer;
 
 			var theme = ApplicationController.Instance.Theme;
 
@@ -104,7 +103,7 @@ namespace MatterHackers.MatterControl
 			bodyRow.AnchorAll();
 			this.AddChild(bodyRow);
 
-			textScrollWidget = new TextScrollWidget(printerConnection.TerminalLog.PrinterLines)
+			textScrollWidget = new TextScrollWidget(printer, printer.Connection.TerminalLog.PrinterLines)
 			{
 				BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor,
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
@@ -192,7 +191,7 @@ namespace MatterHackers.MatterControl
 			clearButton.Margin = theme.ButtonSpacing;
 			clearButton.Click += (s, e) =>
 			{
-				printerConnection.TerminalLog.Clear();
+				printer.Connection.TerminalLog.Clear();
 			};
 			footerRow.AddChild(clearButton);
 
@@ -224,10 +223,10 @@ namespace MatterHackers.MatterControl
 									{
 										Debug.Print(ex.Message);
 
-										printerConnection.TerminalLog.PrinterLines.Add("");
-										printerConnection.TerminalLog.PrinterLines.Add(writeFaildeWaring);
-										printerConnection.TerminalLog.PrinterLines.Add(cantAccessPath.FormatWith(filePathToSave));
-										printerConnection.TerminalLog.PrinterLines.Add("");
+										printer.Connection.TerminalLog.PrinterLines.Add("");
+										printer.Connection.TerminalLog.PrinterLines.Add(writeFaildeWaring);
+										printer.Connection.TerminalLog.PrinterLines.Add(cantAccessPath.FormatWith(filePathToSave));
+										printer.Connection.TerminalLog.PrinterLines.Add("");
 
 										UiThread.RunOnIdle(() =>
 										{
@@ -270,7 +269,7 @@ namespace MatterHackers.MatterControl
 			}
 			commandHistory.Add(textToSend);
 			commandHistoryIndex = commandHistory.Count;
-			printerConnection.SendLineToPrinterNow(textToSend);
+			printer.Connection.SendLineToPrinterNow(textToSend);
 			manualCommandTextEdit.Text = "";
 		}
 	}

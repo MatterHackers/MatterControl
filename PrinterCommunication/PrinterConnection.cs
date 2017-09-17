@@ -70,31 +70,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 	public enum FirmwareTypes { Unknown, Repetier, Marlin, Sprinter };
 
-	public static class PrintItemWrapperExtensionMethods
-	{
-		private static TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
-
-		public static string GetFriendlyName(this PrintItemWrapper printItemWrapper)
-		{
-			if (printItemWrapper?.Name == null)
-			{
-				return "";
-			}
-
-			return textInfo?.ToTitleCase(printItemWrapper.Name.Replace('_', ' '));
-		}
-
-		public static string GetFriendlyName(string fileName)
-		{
-			if (fileName == null)
-			{
-				return "";
-			}
-
-			return textInfo?.ToTitleCase(fileName.Replace('_', ' '));
-		}
-	}
-
 	/// <summary>
 	/// This is the class that communicates with a RepRap printer over the serial port.
 	/// It handles opening and closing the serial port and does quite a bit of gcode parsing.
@@ -913,7 +888,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		}
 
 		// HACK: PrinterConnection must be revised to take a constructor that receives and stores a reference to its parent PrinterConfig - this 
-		private PrinterConfig printer => ApplicationController.Instance.Printer;
+		internal PrinterConfig printer { private get; set; }
 
 		private int NumberOfLinesInCurrentPrint => loadedGCode.LineCount;
 

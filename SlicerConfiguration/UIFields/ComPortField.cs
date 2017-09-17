@@ -40,11 +40,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	{
 		private DropDownList dropdownList;
 
+		private PrinterConfig printer;
+
+		public ComPortField(PrinterConfig printer)
+		{
+			this.printer = printer;
+		}
+
 		public override void Initialize(int tabIndex)
 		{
 			EventHandler unregisterEvents = null;
 
-			bool canChangeComPort = !PrinterConnection.Instance.PrinterIsConnected && PrinterConnection.Instance.CommunicationState != CommunicationStates.AttemptingToConnect;
+			bool canChangeComPort = !printer.Connection.PrinterIsConnected && printer.Connection.CommunicationState != CommunicationStates.AttemptingToConnect;
 
 			// The COM_PORT control is unique in its approach to the SlicerConfigName. It uses "com_port" settings name to
 			// bind to a context that will place it in the SliceSetting view but it binds its values to a machine
@@ -71,9 +78,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			RebuildMenuItems();
 
 			// Prevent droplist interaction when connected
-			PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent((s, e) =>
+			printer.Connection.CommunicationStateChanged.RegisterEvent((s, e) =>
 			{
-				canChangeComPort = !PrinterConnection.Instance.PrinterIsConnected && PrinterConnection.Instance.CommunicationState != CommunicationStates.AttemptingToConnect;
+				canChangeComPort = !printer.Connection.PrinterIsConnected && printer.Connection.CommunicationState != CommunicationStates.AttemptingToConnect;
 				dropdownList.Enabled = canChangeComPort;
 				dropdownList.TextColor = canChangeComPort ? ActiveTheme.Instance.PrimaryTextColor : new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 150);
 				dropdownList.BorderColor = canChangeComPort ? ActiveTheme.Instance.SecondaryTextColor : new RGBA_Bytes(ActiveTheme.Instance.SecondaryTextColor, 150);
