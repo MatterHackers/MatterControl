@@ -66,7 +66,17 @@ namespace MatterHackers.MatterControl
 	{
 		public ThemeConfig Theme { get; set; } = new ThemeConfig();
 
-		public PrinterConfig ActivePrinter { get; }
+		// A list of printers which are open (i.e. displaying a tab) on this instance of MatterControl
+		public List<PrinterConfig> ActivePrinters { get; } = new List<PrinterConfig>();
+
+		private PrinterConfig emptyPrinter = new PrinterConfig(false, PrinterSettings.Empty);
+
+		// TODO: Any references to this property almost certainly need to be reconsidered. ActiveSliceSettings and PrinterConnection static references
+		// that assume a single printer selection are being redirected here. This allows us to break the dependency to the original statics and consolidates
+		// use down to a single point where code is making assumptions about the presence of a printer, printer counts, etc. If we previously checked for
+		// PrinterConnection.IsPrinterConnected, that could should be updated to iterate ActiverPrinters, checking each one and acting on each as it would
+		// have for the single case
+		public PrinterConfig ActivePrinter => ActivePrinters.FirstOrDefault() ?? emptyPrinter;
 
 		public Action RedeemDesignCode;
 		public Action EnterShareCode;
@@ -281,11 +291,11 @@ namespace MatterHackers.MatterControl
 						() => new SDCardContainer(),
 						() =>
 						{
-							var printer = PrinterConnection.Instance;
+							var printer = this.ActivePrinter;
 
-							return ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_sd_card_reader)
-								&& printer.PrinterIsConnected
-								&& !(printer.PrinterIsPrinting || printer.PrinterIsPaused);
+							return printer.Settings.GetValue<bool>(SettingsKey.has_sd_card_reader)
+								&& printer.Connection.PrinterIsConnected
+								&& !(printer.Connection.PrinterIsPrinting || printer.Connection.PrinterIsPaused);
 						})
 				{
 					IsReadOnly = true
@@ -300,8 +310,6 @@ namespace MatterHackers.MatterControl
 			DefaultThumbBackground.DefaultBackgroundColor = RGBA_Bytes.Transparent;
 
 			Object3D.AssetsPath = ApplicationDataStorage.Instance.LibraryAssetsPath;
-
-			this.ActivePrinter = new PrinterConfig(loadLastBedplate: true);
 
 			this.Library = new LibraryConfig();
 			this.Library.ContentProviders.Add(new[] { "stl", "amf", "mcx" }, new MeshContentProvider());
@@ -368,8 +376,8 @@ namespace MatterHackers.MatterControl
 
 		public void StartSignIn()
 		{
-			if (PrinterConnection.Instance.PrinterIsPrinting
-				|| PrinterConnection.Instance.PrinterIsPaused)
+			if (this.ActivePrinter.Connection.PrinterIsPrinting
+				|| this.ActivePrinter.Connection.PrinterIsPaused)
 			{
 				// can't sign in while printing
 				UiThread.RunOnIdle(() =>
@@ -484,8 +492,8 @@ namespace MatterHackers.MatterControl
 
 		public void StartSignOut()
 		{
-			if (PrinterConnection.Instance.PrinterIsPrinting
-				|| PrinterConnection.Instance.PrinterIsPaused)
+			if (this.ActivePrinter.Connection.PrinterIsPrinting
+				|| this.ActivePrinter.Connection.PrinterIsPaused)
 			{
 				// can't log out while printing
 				UiThread.RunOnIdle(() =>

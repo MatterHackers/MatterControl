@@ -363,11 +363,11 @@ namespace MatterHackers.MatterControl
 
 		private EventHandler unregisterEvents;
 
-		public PrinterConfig(bool loadLastBedplate)
+		public PrinterConfig(bool loadLastBedplate, PrinterSettings settings = null)
 		{
 			// TODO: Not quite there yet. Need to have a system that loads settings, creates a connection and assigns it all to a printer instance. Hopefully soon...
 			this.Connection = PrinterConnection.Instance;
-			this.Settings = ActiveSliceSettings.Instance;
+			this.Settings = settings ?? ActiveSliceSettings.Instance;
 			this.Settings.printer = this;
 			this.Connection.printer = this;
 
