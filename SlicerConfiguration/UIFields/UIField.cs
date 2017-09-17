@@ -40,8 +40,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			string convertedValue = this.ConvertValue(newValue);
 
-			Console.WriteLine($"SetValue: {newValue}/{convertedValue}/{userInitiated}");
-
 			if (this.Value != convertedValue)
 			{
 				this.Value = convertedValue;
