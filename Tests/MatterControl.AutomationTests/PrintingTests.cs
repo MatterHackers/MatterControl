@@ -273,7 +273,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
 
 					testRunner.AddDefaultFileToBedplate();
-					
+
 					testRunner.SwitchToControlsTab();
 
 					// Wait for printing to complete
@@ -541,16 +541,16 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			// Assert the UI has the expected values
 			slider = testRunner.GetWidgetByName("Extrusion Multiplier Slider", out systemWindow, 5) as SolidSlider;
-			Assert.AreEqual(targetExtrusionRate, slider.Value);
+			Assert.IsTrue(targetExtrusionRate == slider.Value);
 
 			slider = testRunner.GetWidgetByName("Feed Rate Slider", out systemWindow, 5) as SolidSlider;
-			Assert.AreEqual(targetFeedRate, slider.Value);
+			Assert.IsTrue(targetFeedRate == slider.Value);
 
 			testRunner.Delay(.2);
 
 			// Assert the changes took effect on the model
-			Assert.AreEqual(targetExtrusionRate, ExtrusionMultiplyerStream.ExtrusionRatio);
-			Assert.AreEqual(targetFeedRate, FeedRateMultiplyerStream.FeedRateRatio);
+			Assert.IsTrue(targetExtrusionRate == ExtrusionMultiplyerStream.ExtrusionRatio);
+			Assert.IsTrue(targetFeedRate == FeedRateMultiplyerStream.FeedRateRatio);
 		}
 	}
 }
