@@ -83,8 +83,6 @@ namespace MatterHackers.MatterControl
 		public static Action WebRequestFailed;
 		public static Action WebRequestSucceeded;
 
-		public TerminalRedirector Terminal { get; } = new TerminalRedirector();
-
 #if DEBUG
 		public const string EnvironmentName = "TestEnv_";
 #else
