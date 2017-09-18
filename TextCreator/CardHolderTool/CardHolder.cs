@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
 using MatterHackers.Agg.Platform;
@@ -304,6 +305,115 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 
 
 			this.SetAndInvalidateMesh(null);
+		}
+	}
+
+	public class PinchTest : MatterCadObject3D, IMappingType
+	{
+		[DisplayName("Back Ratio")]
+		public double PinchRatio { get; set; } = 1;
+		PolygonMesh.Mesh inputMesh;
+		PolygonMesh.Mesh transformedMesh;
+
+		public PinchTest()
+		{
+			var letterPrinter = new TypeFacePrinter("xForge");
+			inputMesh = VertexSourceToMesh.Extrude(letterPrinter, 5);
+			transformedMesh = PolygonMesh.Mesh.Copy(inputMesh, CancellationToken.None);
+
+			RebuildMeshes();
+		}
+
+		public override void RebuildMeshes()
+		{
+			var aabb = inputMesh.GetAxisAlignedBoundingBox();
+			for(int i=0; i< transformedMesh.Vertices.Count; i++)
+			{
+				var pos = inputMesh.Vertices[i].Position;
+
+				var ratioToApply = PinchRatio;
+
+				var distFromCenter = pos.x - aabb.Center.x;
+				var distanceToPinch = distFromCenter * (1-PinchRatio);
+				var delta = (aabb.Center.x + distFromCenter * ratioToApply) - pos.x;
+
+				// find out how much to pinch based on y position
+				var amountOfRatio = (pos.y - aabb.minXYZ.y) /  aabb.YSize;
+				transformedMesh.Vertices[i].Position = new Vector3(pos.x + delta * amountOfRatio, pos.y, pos.z);
+			}
+
+			transformedMesh.MarkAsChanged();
+			transformedMesh.CalculateNormals();
+			
+			SetAndInvalidateMesh(transformedMesh);
+		}
+	}
+
+	public class CurveTest : MatterCadObject3D, IMappingType
+	{
+		[DisplayName("Bend Up")]
+		public bool BendCW { get; set; } = true;
+
+		[DisplayName("Angle")]
+		public double AngleDegrees { get; set; } = 0;
+		PolygonMesh.Mesh inputMesh;
+		PolygonMesh.Mesh transformedMesh;
+
+		public CurveTest()
+		{
+			var letterPrinter = new TypeFacePrinter("xForge");
+			inputMesh = VertexSourceToMesh.Extrude(letterPrinter, 5);
+			transformedMesh = PolygonMesh.Mesh.Copy(inputMesh, CancellationToken.None);
+
+			RebuildMeshes();
+		}
+
+		public override void RebuildMeshes()
+		{
+			if(AngleDegrees > 0)
+			{
+				var aabb = inputMesh.GetAxisAlignedBoundingBox();
+
+				// find the radius that will make the x-size sweep out the requested angle
+				// c = Tr ; r = c/T
+				var angleRadians = MathHelper.DegreesToRadians(AngleDegrees);
+				var circumference = aabb.XSize * MathHelper.Tau / angleRadians;
+				var radius = circumference / MathHelper.Tau;
+
+				var rotateXyPos = new Vector2(aabb.minXYZ.x, BendCW ? aabb.maxXYZ.y : aabb.minXYZ.y);
+				if(!BendCW)
+				{
+					angleRadians = -angleRadians;
+				}
+
+				for (int i = 0; i < transformedMesh.Vertices.Count; i++)
+				{
+					var pos = inputMesh.Vertices[i].Position;
+					var pos2D = new Vector2(pos);
+					Vector2 rotateSpace = pos2D - rotateXyPos;
+					var rotateRatio = rotateSpace.x / aabb.XSize;
+
+					rotateSpace.x = 0;
+					rotateSpace.y += BendCW ? -radius : radius;
+					rotateSpace.Rotate(angleRadians * rotateRatio);
+					rotateSpace.y += BendCW ? radius : -radius; ;
+					rotateSpace += rotateXyPos;
+
+					transformedMesh.Vertices[i].Position = new Vector3(rotateSpace.x, rotateSpace.y, pos.z);
+				}
+			}
+			else
+			{
+				for (int i = 0; i < transformedMesh.Vertices.Count; i++)
+				{
+					transformedMesh.Vertices[i].Position = inputMesh.Vertices[i].Position;
+				}
+			}
+
+			transformedMesh.MarkAsChanged();
+			transformedMesh.CalculateNormals();
+
+			SetAndInvalidateMesh(transformedMesh);
 		}
 	}
 

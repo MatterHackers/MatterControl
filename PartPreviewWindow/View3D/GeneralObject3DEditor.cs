@@ -108,6 +108,31 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			behavior3DTypeButtons.AddChild(supportBehaviorButton);
 
+			// add in a test for the actions list
+
+			var objecActionList = new DropDownList("Actions", maxHeight: 200);
+			objecActionList.HAnchor = HAnchor.Stretch;
+
+			objecActionList.AddItem("Pinch".Localize(), "pinch");
+			objecActionList.AddItem("Curve".Localize(), "curve");
+			objecActionList.AddItem("Cut Out".Localize(), "cutOut");
+
+			objecActionList.SelectionChanged += (s, e) =>
+			{
+				var scene = view3DWidget.InteractionLayer.Scene;
+
+				switch(objecActionList.SelectedValue)
+				{
+					case "pinch":
+						// Sholud be a pinch command that makes a pinch object with the correct controls
+						var operation = new GroupCommand(scene, scene.SelectedItem);
+						scene.UndoBuffer.AddAndDo(operation);
+						break;
+				}
+			};
+
+			mainContainer.AddChild(objecActionList);
+
 			return mainContainer;
 		}
 	}
