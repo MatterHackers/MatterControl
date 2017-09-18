@@ -952,7 +952,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		public void ConnectToActivePrinter(bool showHelpIfNoPort = false)
+		public void Connect(bool showHelpIfNoPort = false)
 		{
 			if (printer.Settings != null)
 			{
@@ -1672,7 +1672,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						CommunicationState = CommunicationStates.Disconnected;
 
 						// We were connected to a printer so try to reconnect
-						ConnectToActivePrinter();
+						Connect();
 					}
 					else
 					{

@@ -725,7 +725,7 @@ namespace MatterHackers.MatterControl
 				UiThread.RunOnIdle(() =>
 				{
 					//PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
-					this.ActivePrinter.Connection.ConnectToActivePrinter();
+					this.ActivePrinter.Connection.Connect();
 				}, 2);
 			}
 		}

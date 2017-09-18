@@ -80,7 +80,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 					printerComPortError.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 
 					ActiveSliceSettings.Instance.Helpers.SetComPort(GetSelectedSerialPort());
-					printer.Connection.ConnectToActivePrinter();
+					printer.Connection.Connect();
 
 					connectButton.Visible = false;
 					refreshButton.Visible = false;
