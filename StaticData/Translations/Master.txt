@@ -4549,3 +4549,6 @@ Translated:Filters
 English:empty for default
 Translated:empty for default
 
+English:The offset of each nozzle relative to the first nozzle. Only useful for multiple extruder machines.
+Translated:The offset of each nozzle relative to the first nozzle. Only useful for multiple extruder machines.
+
