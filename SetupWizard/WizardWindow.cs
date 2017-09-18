@@ -75,12 +75,12 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public static void ShowComPortSetup()
+		public static void ShowComPortSetup(PrinterConfig printer)
 		{
 			WizardWindow wizardWindow = GetWindow(typeof(SetupStepComPortOne));
 			wizardWindow.Title = "Setup Wizard".Localize();
 
-			wizardWindow.ChangeToPage<SetupStepComPortOne>();
+			wizardWindow.ChangeToPage(new SetupStepComPortOne(printer));
 		}
 
 		public static bool IsOpen(Type type)
@@ -133,28 +133,28 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		internal void ChangeToInstallDriverOrComPortOne()
+		internal void ChangeToInstallDriverOrComPortOne(PrinterConfig printer)
 		{
-			if (SetupStepInstallDriver.PrinterDrivers().Count > 0
+			if (SetupStepInstallDriver.PrinterDrivers(printer).Count > 0
 				&& AggContext.OperatingSystem == OSType.Windows)
 			{
-				ChangeToPage<SetupStepInstallDriver>();
+				ChangeToPage(new SetupStepInstallDriver(printer));
 			}
 			else
 			{
-				ChangeToPage<SetupStepComPortOne>();
+				ChangeToPage(new SetupStepComPortOne(printer));
 			}
 		}
 
-		internal void ChangeToSetupBaudOrComPortOne()
+		internal void ChangeToSetupBaudOrComPortOne(PrinterConfig printer)
 		{
-			if (string.IsNullOrEmpty(ActiveSliceSettings.Instance?.GetValue(SettingsKey.baud_rate)))
+			if (string.IsNullOrEmpty(printer.Settings.GetValue(SettingsKey.baud_rate)))
 			{
-				ChangeToPage<SetupStepBaudRate>();
+				ChangeToPage(new SetupStepBaudRate(printer));
 			}
 			else
 			{
-				ChangeToPage<SetupStepComPortOne>();
+				ChangeToPage(new SetupStepComPortOne(printer));
 			}
 		}
 

@@ -436,20 +436,20 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return importSuccessful;
 		}
 
-		internal static async Task<bool> CreateProfileAsync(string make, string model, string printerName)
+		internal static async Task<PrinterConfig> CreateProfileAsync(string make, string model, string printerName)
 		{
 			string guid = Guid.NewGuid().ToString();
 
 			var publicDevice = OemSettings.Instance.OemProfiles[make][model];
 			if (publicDevice == null)
 			{
-				return false;
+				return null;
 			}
 
 			var printerSettings = await LoadOemProfileAsync(publicDevice, make, model);
 			if (printerSettings == null)
 			{
-				return false;
+				return null;
 			}
 
 			printerSettings.ID = guid;
@@ -475,9 +475,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			// Set as active profile
 			ProfileManager.Instance.LastProfileID = guid;
 
+			var printer = new PrinterConfig(false, printerSettings);
+			ApplicationController.Instance.ActivePrinters.Add(printer);
+
 			ActiveSliceSettings.Instance = printerSettings;
 
-			return true;
+			return printer;
 		}
 
 		public static List<string> ThemeIndexNameMapping = new List<string>()

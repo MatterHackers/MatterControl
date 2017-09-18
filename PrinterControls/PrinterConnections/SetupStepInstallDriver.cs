@@ -44,62 +44,62 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 	{
 		private static List<string> printerDrivers = null;
 
-		private FlowLayoutWidget printerDriverContainer;
 		private TextWidget printerDriverMessage;
 
 		private Button installButton;
 		private Button skipButton;
 
-		public SetupStepInstallDriver()
+		private PrinterConfig printer;
+
+		public SetupStepInstallDriver(PrinterConfig printer)
 		{
+			this.printer = printer;
 			this.HeaderText = "Install Communication Driver";
 
-			printerDriverContainer = createPrinterDriverContainer();
-			contentRow.AddChild(printerDriverContainer);
+			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				//Construct buttons
-				installButton = textImageButtonFactory.Generate("Install Driver".Localize());
-				installButton.Click += (sender, e) =>
-				{
-					UiThread.RunOnIdle(() =>
-					{
-						bool canContinue = this.InstallDriver();
-						if (canContinue)
-						{
-							WizardWindow.ChangeToSetupBaudOrComPortOne();
-						}
-					});
-				};
+				Margin = new BorderDouble(0, 5),
+				HAnchor = HAnchor.Stretch
+			};
 
-				skipButton = textImageButtonFactory.Generate("Skip".Localize());
-				skipButton.Click += (s, e) => WizardWindow.ChangeToSetupBaudOrComPortOne();
+			printerDriverMessage = new TextWidget("This printer requires a driver for communication.".Localize(), 0, 0, 10)
+			{
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				HAnchor = HAnchor.Stretch,
+				Margin = new BorderDouble(top: 3)
+			};
 
-				this.AddPageAction(installButton);
-				this.AddPageAction(skipButton);
-			}
-		}
-
-		private FlowLayoutWidget createPrinterDriverContainer()
-		{
-			FlowLayoutWidget container = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			container.Margin = new BorderDouble(0, 5);
-			BorderDouble elementMargin = new BorderDouble(top: 3);
-
-			printerDriverMessage = new TextWidget("This printer requires a driver for communication.".Localize(), 0, 0, 10);
-			printerDriverMessage.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			printerDriverMessage.HAnchor = HAnchor.Stretch;
-			printerDriverMessage.Margin = elementMargin;
-
-			TextWidget printerDriverMessageTwo = new TextWidget("Driver located. Would you like to install?".Localize(), 0, 0, 10);
-			printerDriverMessageTwo.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			printerDriverMessageTwo.HAnchor = HAnchor.Stretch;
-			printerDriverMessageTwo.Margin = elementMargin;
+			var printerDriverMessageTwo = new TextWidget("Driver located. Would you like to install?".Localize(), 0, 0, 10)
+			{
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				HAnchor = HAnchor.Stretch,
+				Margin = new BorderDouble(top: 3)
+			};
 
 			container.AddChild(printerDriverMessage);
 			container.AddChild(printerDriverMessageTwo);
 
-			container.HAnchor = HAnchor.Stretch;
-			return container;
+			contentRow.AddChild(container);
+
+			//Construct buttons
+			installButton = textImageButtonFactory.Generate("Install Driver".Localize());
+			installButton.Click += (sender, e) =>
+			{
+				UiThread.RunOnIdle(() =>
+				{
+					bool canContinue = this.InstallDriver();
+					if (canContinue)
+					{
+						WizardWindow.ChangeToSetupBaudOrComPortOne(printer);
+					}
+				});
+			};
+
+			skipButton = textImageButtonFactory.Generate("Skip".Localize());
+			skipButton.Click += (s, e) => WizardWindow.ChangeToSetupBaudOrComPortOne(printer);
+
+			this.AddPageAction(installButton);
+			this.AddPageAction(skipButton);
 		}
 
 		private void InstallDriver(string fileName)
@@ -113,10 +113,10 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 						{
 							Process driverInstallerProcess = new Process();
 							// Prepare the process to run
-							
+
 							// Enter in the command line arguments, everything you would enter after the executable name itself
 							driverInstallerProcess.StartInfo.Arguments = Path.GetFullPath(fileName);
-							
+
 							// Enter the executable to run, including the complete path
 							string printerDriverInstallerExePathAndFileName = Path.GetFullPath(Path.Combine(".", "InfInstaller.exe"));
 
@@ -151,7 +151,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 						{
 							var driverInstallerProcess = new Process();
 							// Prepare the process to run
-							
+
 							// Enter in the command line arguments, everything you would enter after the executable name itself
 							driverInstallerProcess.StartInfo.Arguments = Path.GetFullPath(fileName);
 
@@ -185,26 +185,25 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			}
 		}
 
-		public static List<string> PrinterDrivers()
+		public static List<string> PrinterDrivers(PrinterConfig printer)
 		{
 			if (printerDrivers == null)
 			{
-				printerDrivers = GetPrintDrivers();
+				printerDrivers = GetPrintDrivers(printer);
 			}
 
 			return printerDrivers;
 		}
 
-		private static List<string> GetPrintDrivers()
+		private static List<string> GetPrintDrivers(PrinterConfig printer)
 		{
 			var drivers = new List<string>();
 
 			//Determine what if any drivers are needed
-			string infFileNames = ActiveSliceSettings.Instance.GetValue(SettingsKey.windows_driver);
+			string infFileNames = printer.Settings.GetValue(SettingsKey.windows_driver);
 			if (!string.IsNullOrEmpty(infFileNames))
 			{
-				string[] fileNames = infFileNames.Split(',');
-				foreach (string fileName in fileNames)
+				foreach (string fileName in infFileNames.Split(','))
 				{
 					switch (AggContext.OperatingSystem)
 					{
@@ -258,7 +257,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			{
 				printerDriverMessage.Text = "Installing".Localize() + "...";
 
-				foreach (string driverPath in PrinterDrivers())
+				foreach (string driverPath in PrinterDrivers(printer))
 				{
 					InstallDriver(driverPath);
 				}

@@ -226,7 +226,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 					{
 						UiThread.RunOnIdle(() =>
 						{
-							if (!PrinterCommunication.PrinterConnection.Instance.PrintIsActive)
+							if (!ApplicationController.Instance.ActivePrinter.Connection.PrintIsActive)
 							{
 								ApplicationController.Instance.PrintActivePartIfPossible(new PrintItemWrapper(printTask.PrintItemId));
 							}

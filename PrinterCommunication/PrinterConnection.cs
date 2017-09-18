@@ -77,6 +77,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 	/// </summary>
 	public class PrinterConnection
 	{
+		public static RootedObjectEventHandler AnyCommunicationStateChanged = new RootedObjectEventHandler();
+
+		public static RootedObjectEventHandler AnyConnectionSucceeded = new RootedObjectEventHandler();
+
 		public RootedObjectEventHandler BedTemperatureRead = new RootedObjectEventHandler();
 
 		public RootedObjectEventHandler BedTemperatureSet = new RootedObjectEventHandler();
@@ -352,18 +356,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		[Flags]
 		public enum Axis { X = 1, Y = 2, Z = 4, E = 8, XYZ = (X | Y | Z) }
-
-		public static PrinterConnection Instance
-		{
-			get
-			{
-				if (globalInstance == null)
-				{
-					globalInstance = new PrinterConnection();
-				}
-				return globalInstance;
-			}
-		}
 
 		public double ActualBedTemperature
 		{
@@ -1015,7 +1007,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					// Only pop up the com port helper if the USER actually CLICKED the connect button.
 					if (showHelpIfNoPort)
 					{
-						WizardWindow.ShowComPortSetup();
+						WizardWindow.ShowComPortSetup(printer);
 					}
 #endif
 				}
@@ -1219,6 +1211,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public void OnCommunicationStateChanged(EventArgs e)
 		{
+			// Call global even
+			AnyCommunicationStateChanged.CallEvents(this, e);
+
+			// Call instance event
 			CommunicationStateChanged.CallEvents(this, e);
 			PrintingStateChanged.CallEvents(this, null);
 #if __ANDROID__
@@ -1233,7 +1229,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				{
 					Task.Run(() =>
 					{
-						File.WriteAllLines(pathToPrintOutputFile, PrinterConnection.Instance.TerminalLog.PrinterLines);
+						File.WriteAllLines(pathToPrintOutputFile, ApplicationController.Instance.ActivePrinter.Connection.TerminalLog.PrinterLines);
 					});
 				}
 			}
@@ -1499,7 +1495,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 											string connectGCode = printer.Settings.GetValue(SettingsKey.connect_gcode);
 											SendLineToPrinterNow(connectGCode);
 
-											// and call back anyone who would like to know we connected
+											// Call global event
+											AnyConnectionSucceeded.CallEvents(this, null);
+
+											// Call instance event
 											ConnectionSucceeded.CallEvents(this, null);
 										}
 										else

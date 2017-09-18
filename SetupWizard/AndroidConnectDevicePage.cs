@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl
 			contentRow.AddChild(new TextWidget("3. Press 'Connect'.".Localize(), 0, 0, 12,textColor:ActiveTheme.Instance.PrimaryTextColor));
 
 			//Add inputs to main container
-			PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent(communicationStateChanged, ref unregisterEvents);
+			ApplicationController.Instance.ActivePrinter.Connection.CommunicationStateChanged.RegisterEvent(communicationStateChanged, ref unregisterEvents);
 
 			connectButtonContainer = new FlowLayoutWidget()
 			{
@@ -139,10 +139,10 @@ namespace MatterHackers.MatterControl
 
 			updateControls(true);
 		}
-			
+
 		void ConnectButton_Click(object sender, EventArgs mouseEvent)
 		{
-			PrinterConnection.Instance.ConnectToActivePrinter(true);
+			ApplicationController.Instance.ActivePrinter.Connection.ConnectToActivePrinter(true);
 		}
 
 		void NextButton_Click(object sender, EventArgs mouseEvent)
@@ -168,19 +168,19 @@ namespace MatterHackers.MatterControl
 			connectButtonContainer.Visible = false;
 			retryButtonContainer.Visible = false;
 
-			if (PrinterConnection.Instance.PrinterIsConnected)
+			if (ApplicationController.Instance.ActivePrinter.Connection.PrinterIsConnected)
 			{
 				generalError.Text = "{0}!".FormatWith ("Connection succeeded".Localize ());
 				generalError.Visible = true;
 				nextButton.Visible = true;
 			}
-			else if (firstLoad || PrinterConnection.Instance.CommunicationState == CommunicationStates.Disconnected)
+			else if (firstLoad || ApplicationController.Instance.ActivePrinter.Connection.CommunicationState == CommunicationStates.Disconnected)
 			{
 				generalError.Text = "";
 				connectButton.Visible = true;
 				connectButtonContainer.Visible = true;
 			}
-			else if (PrinterConnection.Instance.CommunicationState == CommunicationStates.AttemptingToConnect)
+			else if (ApplicationController.Instance.ActivePrinter.Connection.CommunicationState == CommunicationStates.AttemptingToConnect)
 			{
 				generalError.Text = "{0}...".FormatWith("Attempting to connect".Localize());
 				generalError.Visible = true;
