@@ -27,7 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
@@ -37,98 +36,88 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
 	public class SetupStepComPortOne : WizardPage
 	{
-		private Button nextButton;
-
-		public SetupStepComPortOne()
+		public SetupStepComPortOne(PrinterConfig printer)
 		{
-			contentRow.AddChild(createPrinterConnectionMessageContainer());
+			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				//Construct buttons
-				nextButton = textImageButtonFactory.Generate("Continue".Localize());
-				nextButton.Click += (s, e) => UiThread.RunOnIdle(() =>
-				{
-					WizardWindow.ChangeToPage<SetupStepComPortTwo>();
-				});
+				VAnchor = VAnchor.Stretch,
+				Margin = new BorderDouble(5),
+				HAnchor = HAnchor.Stretch
+			};
 
-				this.AddPageAction(nextButton);
-			}
-		}
-
-		public FlowLayoutWidget createPrinterConnectionMessageContainer()
-		{
-			FlowLayoutWidget container = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			container.VAnchor = VAnchor.Stretch;
-			container.Margin = new BorderDouble(5);
 			BorderDouble elementMargin = new BorderDouble(top: 5);
 
-			TextWidget printerMessageOne = new TextWidget("MatterControl will now attempt to auto-detect printer.".Localize(), 0, 0, 10);
-			printerMessageOne.Margin = new BorderDouble(0, 10, 0, 5);
-			printerMessageOne.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			printerMessageOne.HAnchor = HAnchor.Stretch;
-			printerMessageOne.Margin = elementMargin;
+			var printerMessageOne = new TextWidget("MatterControl will now attempt to auto-detect printer.".Localize(), 0, 0, 10)
+			{
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				HAnchor = HAnchor.Stretch,
+				Margin = elementMargin
+			};
+			container.AddChild(printerMessageOne);
 
-			string printerMessageTwoTxt = "Disconnect printer".Localize();
-			string printerMessageTwoTxtEnd = "if currently connected".Localize();
-			string printerMessageTwoTxtFull = string.Format("1.) {0} ({1}).", printerMessageTwoTxt, printerMessageTwoTxtEnd);
-			TextWidget printerMessageTwo = new TextWidget(printerMessageTwoTxtFull, 0, 0, 12);
-			printerMessageTwo.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			printerMessageTwo.HAnchor = HAnchor.Stretch;
-			printerMessageTwo.Margin = elementMargin;
+			var printerMessageTwo = new TextWidget(string.Format("1.) {0} ({1}).", "Disconnect printer".Localize(), "if currently connected".Localize()), 0, 0, 12)
+			{
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				HAnchor = HAnchor.Stretch,
+				Margin = elementMargin
+			};
+			container.AddChild(printerMessageTwo);
 
-			string printerMessageThreeTxt = "Press".Localize();
-			string printerMessageThreeTxtEnd = "Continue".Localize();
-			string printerMessageThreeFull = string.Format("2.) {0} '{1}'.", printerMessageThreeTxt, printerMessageThreeTxtEnd);
-			TextWidget printerMessageThree = new TextWidget(printerMessageThreeFull, 0, 0, 12);
-			printerMessageThree.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			printerMessageThree.HAnchor = HAnchor.Stretch;
-			printerMessageThree.Margin = elementMargin;
+			var printerMessageThree = new TextWidget(string.Format("2.) {0} '{1}'.", "Press".Localize(), "Continue".Localize()), 0, 0, 12)
+			{
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				HAnchor = HAnchor.Stretch,
+				Margin = elementMargin
+			};
+			container.AddChild(printerMessageThree);
 
 			GuiWidget vSpacer = new GuiWidget();
 			vSpacer.VAnchor = VAnchor.Stretch;
+			container.AddChild(vSpacer);
 
-			string setupManualConfigurationOrSkipConnectionText = LocalizedString.Get(("You can also"));
-			string setupManualConfigurationOrSkipConnectionTextFull = String.Format("{0}:", setupManualConfigurationOrSkipConnectionText);
-			TextWidget setupManualConfigurationOrSkipConnectionWidget = new TextWidget(setupManualConfigurationOrSkipConnectionTextFull, 0, 0, 10);
-			setupManualConfigurationOrSkipConnectionWidget.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			setupManualConfigurationOrSkipConnectionWidget.HAnchor = HAnchor.Stretch;
-			setupManualConfigurationOrSkipConnectionWidget.Margin = elementMargin;
+			var setupManualConfigurationOrSkipConnectionWidget = new TextWidget("You can also".Localize() + ":", 0, 0, 10)
+			{
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				HAnchor = HAnchor.Stretch,
+				Margin = elementMargin
+			};
+			container.AddChild(setupManualConfigurationOrSkipConnectionWidget);
 
 			Button manualLink = linkButtonFactory.Generate("Manually Configure Connection".Localize());
 			manualLink.Margin = new BorderDouble(0, 5);
 			manualLink.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
-				WizardWindow.ChangeToPage<SetupStepComPortManual>();
+				WizardWindow.ChangeToPage(new SetupStepComPortManual(printer));
 			});
+			container.AddChild(manualLink);
 
-			string printerMessageFourText = "or".Localize();
-			TextWidget printerMessageFour = new TextWidget(printerMessageFourText, 0, 0, 10);
-			printerMessageFour.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			printerMessageFour.HAnchor = HAnchor.Stretch;
-			printerMessageFour.Margin = elementMargin;
+			var printerMessageFour = new TextWidget("or".Localize(), 0, 0, 10)
+			{
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				HAnchor = HAnchor.Stretch,
+				Margin = elementMargin
+			};
+			container.AddChild(printerMessageFour);
 
 			Button skipConnectionLink = linkButtonFactory.Generate("Skip Connection Setup".Localize());
 			skipConnectionLink.Margin = new BorderDouble(0, 8);
-			skipConnectionLink.Click += SkipConnectionLink_Click;
-
-			container.AddChild(printerMessageOne);
-			container.AddChild(printerMessageTwo);
-			container.AddChild(printerMessageThree);
-			container.AddChild(vSpacer);
-			container.AddChild(setupManualConfigurationOrSkipConnectionWidget);
-			container.AddChild(manualLink);
-			container.AddChild(printerMessageFour);
-			container.AddChild(skipConnectionLink);
-
-			container.HAnchor = HAnchor.Stretch;
-			return container;
-		}
-
-		private void SkipConnectionLink_Click(object sender, EventArgs mouseEvent)
-		{
-			UiThread.RunOnIdle(() => {
-				PrinterConnection.Instance.HaltConnectionThread();
+			skipConnectionLink.Click += (s, e) => UiThread.RunOnIdle(() =>
+			{
+				printer.Connection.HaltConnectionThread();
 				Parent.Close();
 			});
+			container.AddChild(skipConnectionLink);
+
+			contentRow.AddChild(container);
+
+			//Construct buttons
+			var nextButton = textImageButtonFactory.Generate("Continue".Localize());
+			nextButton.Click += (s, e) => UiThread.RunOnIdle(() =>
+			{
+				WizardWindow.ChangeToPage(new SetupStepComPortTwo(printer));
+			});
+
+			this.AddPageAction(nextButton);
 		}
 	}
 }

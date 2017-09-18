@@ -89,8 +89,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public GCode2DWidget(Vector2 gridSizeMm, Vector2 gridCenterMm)
 		{
-			options = ApplicationController.Instance.Printer.Bed.RendererOptions;
-			printer = ApplicationController.Instance.Printer;
+			options = ApplicationController.Instance.ActivePrinter.Bed.RendererOptions;
+			printer = ApplicationController.Instance.ActivePrinter;
 
 			this.gridSizeMm = gridSizeMm;
 			this.gridCenterMm = gridCenterMm;

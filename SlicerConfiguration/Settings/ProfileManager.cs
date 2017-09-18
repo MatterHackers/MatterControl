@@ -56,24 +56,26 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				activeInstance = value;
 
-				// If the loaded slice settings do not match the last active settings for this profile, change to the last active
-				if (ActiveSliceSettings.Instance?.ID != activeInstance.LastProfileID)
+				// If profile is not loaded, load itthe loaded slice settings do not match the last active settings for this profile, change to the last active
+				if (!ApplicationController.Instance.ActivePrinters.Where(p => p.Settings.ID == activeInstance.LastProfileID).Any())
 				{
-					// Load or download on a background thread
-					var lastProfile = LoadProfileAsync(activeInstance.LastProfileID).Result;
+					// Load or download on a background thread the last loaded settings
+					var printerSettings = LoadProfileAsync(activeInstance.LastProfileID).Result;
 
 					if (MatterControlApplication.IsLoading)
 					{
-						ActiveSliceSettings.Instance = lastProfile ?? PrinterSettings.Empty;
+						ActiveSliceSettings.Instance = printerSettings ?? PrinterSettings.Empty;
 					}
 					else
 					{
 						UiThread.RunOnIdle(() =>
 						{
 							// Assign on the UI thread
-							ActiveSliceSettings.Instance = lastProfile ?? PrinterSettings.Empty;
+							ActiveSliceSettings.Instance = printerSettings ?? PrinterSettings.Empty;
 						});
 					}
+
+					ApplicationController.Instance.ActivePrinters.Add(new PrinterConfig(true, printerSettings));
 				}
 			}
 		}
@@ -434,20 +436,20 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return importSuccessful;
 		}
 
-		internal static async Task<bool> CreateProfileAsync(string make, string model, string printerName)
+		internal static async Task<PrinterConfig> CreateProfileAsync(string make, string model, string printerName)
 		{
 			string guid = Guid.NewGuid().ToString();
 
 			var publicDevice = OemSettings.Instance.OemProfiles[make][model];
 			if (publicDevice == null)
 			{
-				return false;
+				return null;
 			}
 
 			var printerSettings = await LoadOemProfileAsync(publicDevice, make, model);
 			if (printerSettings == null)
 			{
-				return false;
+				return null;
 			}
 
 			printerSettings.ID = guid;
@@ -473,9 +475,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			// Set as active profile
 			ProfileManager.Instance.LastProfileID = guid;
 
+			var printer = new PrinterConfig(false, printerSettings);
+			ApplicationController.Instance.ActivePrinters.Add(printer);
+
 			ActiveSliceSettings.Instance = printerSettings;
 
-			return true;
+			return printer;
 		}
 
 		public static List<string> ThemeIndexNameMapping = new List<string>()

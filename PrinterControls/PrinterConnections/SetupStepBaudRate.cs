@@ -48,8 +48,11 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		private Button printerBaudRateHelpLink;
 		private TextWidget printerBaudRateHelpMessage;
 
-		public SetupStepBaudRate()
+		private PrinterConfig printer;
+
+		public SetupStepBaudRate(PrinterConfig printer)
 		{
+			this.printer = printer;
 			printerBaudRateContainer = createPrinterBaudRateContainer();
 			contentRow.AddChild(printerBaudRateContainer);
 			{
@@ -59,7 +62,10 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 					bool canContinue = this.OnSave();
 					if (canContinue)
 					{
-						UiThread.RunOnIdle(MoveToNextWidget);
+						UiThread.RunOnIdle(() =>
+						{
+							WizardWindow.ChangeToInstallDriverOrComPortOne(printer);
+						});
 					}
 				};
 
@@ -189,11 +195,6 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			{
 				otherBaudRateInput.Visible = false;
 			}
-		}
-
-		private void MoveToNextWidget()
-		{
-			WizardWindow.ChangeToInstallDriverOrComPortOne();
 		}
 
 		private bool OnSave()

@@ -52,15 +52,17 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 		private EventHandler unregisterEvents;
 		protected List<SerialPortIndexRadioButton> SerialPortButtonsList = new List<SerialPortIndexRadioButton>();
-		PrinterConnection printerConnection = PrinterConnection.Instance;
+		private PrinterConfig printer;
 
-		public SetupStepComPortManual()
+		public SetupStepComPortManual(PrinterConfig printer)
 		{
+			this.printer = printer;
+
 			FlowLayoutWidget printerComPortContainer = createComPortContainer();
 			contentRow.AddChild(printerComPortContainer);
 
-			cancelButton.Click += (s, e) => printerConnection.HaltConnectionThread();
-			
+			cancelButton.Click += (s, e) => printer.Connection.HaltConnectionThread();
+
 			//Construct buttons
 			nextButton = textImageButtonFactory.Generate("Done".Localize());
 			nextButton.Click += (s, e) => UiThread.RunOnIdle(Parent.Close);
@@ -78,7 +80,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 					printerComPortError.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 
 					ActiveSliceSettings.Instance.Helpers.SetComPort(GetSelectedSerialPort());
-					printerConnection.ConnectToActivePrinter();
+					printer.Connection.ConnectToActivePrinter();
 
 					connectButton.Visible = false;
 					refreshButton.Visible = false;
@@ -94,14 +96,14 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			refreshButton = textImageButtonFactory.Generate("Refresh".Localize());
 			refreshButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
-				WizardWindow.ChangeToPage<SetupStepComPortManual>();
+				WizardWindow.ChangeToPage(new SetupStepComPortManual(printer));
 			});
 
 			this.AddPageAction(nextButton);
 			this.AddPageAction(connectButton);
 			this.AddPageAction(refreshButton);
 
-			printerConnection.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
+			printer.Connection.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
 		}
 
 		public override void OnClosed(ClosedEventArgs e)
@@ -155,12 +157,13 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			container.AddChild(printerComPortHelpMessage);
 
 			container.HAnchor = HAnchor.Stretch;
+
 			return container;
 		}
 
 		private void onPrinterStatusChanged(object sender, EventArgs e)
 		{
-			if (printerConnection.PrinterIsConnected)
+			if (printer.Connection.PrinterIsConnected)
 			{
 				printerComPortHelpLink.Visible = false;
 				printerComPortError.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -169,7 +172,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				connectButton.Visible = false;
 				UiThread.RunOnIdle(() => this?.Parent?.Close());
 			}
-			else if (printerConnection.CommunicationState != CommunicationStates.AttemptingToConnect)
+			else if (printer.Connection.CommunicationState != CommunicationStates.AttemptingToConnect)
 			{
 				printerComPortHelpLink.Visible = false;
 				printerComPortError.TextColor = RGBA_Bytes.Red;
@@ -177,11 +180,6 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				connectButton.Visible = true;
 				nextButton.Visible = false;
 			}
-		}
-
-		private void MoveToNextWidget(object state)
-		{
-			WizardWindow.ChangeToInstallDriverOrComPortOne();
 		}
 
 		protected void CreateSerialPortControls(FlowLayoutWidget comPortContainer, string activePrinterSerialPort)

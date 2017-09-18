@@ -53,16 +53,16 @@ namespace MatterHackers.MatterControl.Library
 
 		public void LoadFilesFromSD()
 		{
-			var printer = PrinterConnection.Instance;
+			var printer = ApplicationController.Instance.ActivePrinter;
 
-			if (printer.PrinterIsConnected
-				&& !(printer.PrinterIsPrinting || printer.PrinterIsPaused))
+			if (printer.Connection.PrinterIsConnected
+				&& !(printer.Connection.PrinterIsPrinting || printer.Connection.PrinterIsPaused))
 			{
 
-				printer.ReadLine.RegisterEvent(Printer_LineRead, ref unregisterEvents);
+				printer.Connection.ReadLine.RegisterEvent(Printer_LineRead, ref unregisterEvents);
 
 				gotBeginFileList = false;
-				printer.SendLineToPrinterNow("M21\r\nM20");
+				printer.Connection.SendLineToPrinterNow("M21\r\nM20");
 			}
 		}
 
@@ -106,7 +106,7 @@ namespace MatterHackers.MatterControl.Library
 							break;
 
 						case "End file list":
-							PrinterConnection.Instance.ReadLine.UnregisterEvent(Printer_LineRead, ref unregisterEvents);
+							ApplicationController.Instance.ActivePrinter.Connection.ReadLine.UnregisterEvent(Printer_LineRead, ref unregisterEvents);
 							this.OnReloaded();
 							break;
 					}
@@ -117,7 +117,7 @@ namespace MatterHackers.MatterControl.Library
 		public override void Dispose()
 		{
 			// In case "End file list" is never received
-			PrinterConnection.Instance.ReadLine.UnregisterEvent(Printer_LineRead, ref unregisterEvents);
+			ApplicationController.Instance.ActivePrinter.Connection.ReadLine.UnregisterEvent(Printer_LineRead, ref unregisterEvents);
 		}
 	}
 }

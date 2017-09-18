@@ -67,7 +67,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					// If we have an active printer, run Disable
 					if (activeInstance != PrinterSettings.Empty)
 					{
-						activeInstance.printer.Connection.Disable();
+						activeInstance?.printer.Connection.Disable();
 					}
 
 					activeInstance = value;

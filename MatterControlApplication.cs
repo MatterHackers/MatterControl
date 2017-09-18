@@ -406,12 +406,12 @@ namespace MatterHackers.MatterControl
 		{
 			UserSettings.Instance.Fields.StartCountDurringExit = UserSettings.Instance.Fields.StartCount;
 
-			if (PrinterConnection.Instance.CommunicationState != CommunicationStates.PrintingFromSd)
+			if (ApplicationController.Instance.ActivePrinter.Connection.CommunicationState != CommunicationStates.PrintingFromSd)
 			{
-				PrinterConnection.Instance.Disable();
+				ApplicationController.Instance.ActivePrinter.Connection.Disable();
 			}
 			//Close connection to the local datastore
-			PrinterConnection.Instance.HaltConnectionThread();
+			ApplicationController.Instance.ActivePrinter.Connection.HaltConnectionThread();
 			SlicingQueue.Instance.ShutDownSlicingThread();
 			ApplicationController.Instance.OnApplicationClosed();
 
@@ -456,13 +456,13 @@ namespace MatterHackers.MatterControl
 
 			if (!closeHasBeenConfirmed 
 				&& !closeMessageBoxIsOpen
-				&& PrinterConnection.Instance.PrinterIsPrinting)
+				&& ApplicationController.Instance.ActivePrinter.Connection.PrinterIsPrinting)
 			{
 				cancelClose = true;
 				// Record that we are waiting for a response to the request to close
 				closeMessageBoxIsOpen = true;
 
-				if (PrinterConnection.Instance.CommunicationState != CommunicationStates.PrintingFromSd)
+				if (ApplicationController.Instance.ActivePrinter.Connection.CommunicationState != CommunicationStates.PrintingFromSd)
 				{
 					// Needed as we can't assign to CancelClose inside of the lambda below
 					StyledMessageBox.ShowMessageBox(ConditionalyCloseNow,
@@ -499,12 +499,12 @@ namespace MatterHackers.MatterControl
 			if (continueWithShutdown)
 			{
 				closeHasBeenConfirmed = true;
-				bool printingFromSdCard = PrinterConnection.Instance.CommunicationState == CommunicationStates.PrintingFromSd
-					|| (PrinterConnection.Instance.CommunicationState == CommunicationStates.Paused
-					&& PrinterConnection.Instance.PrePauseCommunicationState == CommunicationStates.PrintingFromSd);
+				bool printingFromSdCard = ApplicationController.Instance.ActivePrinter.Connection.CommunicationState == CommunicationStates.PrintingFromSd
+					|| (ApplicationController.Instance.ActivePrinter.Connection.CommunicationState == CommunicationStates.Paused
+					&& ApplicationController.Instance.ActivePrinter.Connection.PrePauseCommunicationState == CommunicationStates.PrintingFromSd);
 				if (!printingFromSdCard)
 				{
-					PrinterConnection.Instance.Disable();
+					ApplicationController.Instance.ActivePrinter.Connection.Disable();
 				}
 
 				MatterControlApplication app = MatterControlApplication.Instance;
@@ -691,7 +691,7 @@ namespace MatterHackers.MatterControl
 		{
 			try
 			{
-				PrinterConnection.Instance.OnIdle();
+				ApplicationController.Instance.ActivePrinter.Connection.OnIdle();
 			}
 			catch (Exception e)
 			{

@@ -464,7 +464,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public string GetMovementSpeedsString()
 		{
 			string presets = "x,3000,y,3000,z,315,e0,150"; // stored x,value,y,value,z,value,e1,value,e2,value,e3,value,...
-			if (PrinterConnection.Instance != null)
+
+			// TODO: How does PrinterConnection null affect movement speeds?
+			if (printerSettings.printer.Connection != null)
 			{
 				string savedSettings = printerSettings.GetValue(SettingsKey.manual_movement_speeds);
 				if (!string.IsNullOrEmpty(savedSettings))

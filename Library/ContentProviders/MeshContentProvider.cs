@@ -142,7 +142,7 @@ namespace MatterHackers.MatterControl
 					RenderOrthographic ? RenderType.ORTHOGROPHIC : RenderType.RAY_TRACE,
 					BigRenderSize.x, 
 					BigRenderSize.y, 
-					allowMultiThreading: !PrinterConnection.Instance.PrinterIsPrinting);
+					allowMultiThreading: !ApplicationController.Instance.ActivePrinter.Connection.PrinterIsPrinting);
 
 				if (thumbnail != null)
 				{

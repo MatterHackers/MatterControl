@@ -104,8 +104,8 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				bool controlsValid = this.ValidateControls();
 				if (controlsValid)
 				{
-					bool profileCreated = await ProfileManager.CreateProfileAsync(activeMake, activeModel, activeName);
-					if(!profileCreated)
+					var printer = await ProfileManager.CreateProfileAsync(activeMake, activeModel, activeName);
+					if(printer == null)
 					{
 						this.printerNameError.Text = "Error creating profile".Localize();
 						this.printerNameError.Visible = true;
@@ -121,14 +121,14 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 					{
 						UiThread.RunOnIdle(() =>
 						{
-							WizardWindow.ChangeToPage<SetupStepInstallDriver>();
+							WizardWindow.ChangeToPage(new SetupStepInstallDriver(printer));
 						});
 					}
 					else
 					{
 						UiThread.RunOnIdle(() =>
 						{
-							WizardWindow.ChangeToPage<SetupStepComPortOne>();
+							WizardWindow.ChangeToPage(new SetupStepComPortOne(printer));
 						});
 					}
 #endif

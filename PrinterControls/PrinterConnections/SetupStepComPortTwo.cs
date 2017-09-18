@@ -47,14 +47,16 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		private TextWidget printerErrorMessage;
 
 		private EventHandler unregisterEvents;
-		PrinterConnection printerConnection = PrinterConnection.Instance;
+		private PrinterConfig printer;
 
-		public SetupStepComPortTwo()
+		public SetupStepComPortTwo(PrinterConfig printer)
 		{
+			this.printer = printer;
+
 			startingPortNames = FrostedSerialPort.GetPortNames();
 			contentRow.AddChild(createPrinterConnectionMessageContainer());
 			{
-				cancelButton.Click += (s, e) => printerConnection.HaltConnectionThread();
+				cancelButton.Click += (s, e) => printer.Connection.HaltConnectionThread();
 
 				//Construct buttons
 				nextButton = textImageButtonFactory.Generate("Done".Localize());
@@ -77,12 +79,12 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 						printerErrorMessage.Text = "Attempting to connect".Localize() + "...";
 
 						ActiveSliceSettings.Instance.Helpers.SetComPort(candidatePort);
-						printerConnection.ConnectToActivePrinter();
+						printer.Connection.ConnectToActivePrinter();
 						connectButton.Visible = false;
 					}
 				};
 
-				printerConnection.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
+				printer.Connection.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
 
 				this.AddPageAction(nextButton);
 				this.AddPageAction(connectButton);
@@ -131,14 +133,16 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			manualLink.Margin = new BorderDouble(0, 5);
 			manualLink.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
-				WizardWindow.ChangeToPage<SetupStepComPortManual>();
+				WizardWindow.ChangeToPage(new SetupStepComPortManual(printer));
 			});
 
-			printerErrorMessage = new TextWidget("", 0, 0, 10);
-			printerErrorMessage.AutoExpandBoundsToText = true;
-			printerErrorMessage.TextColor = RGBA_Bytes.Red;
-			printerErrorMessage.HAnchor = HAnchor.Stretch;
-			printerErrorMessage.Margin = elementMargin;
+			printerErrorMessage = new TextWidget("", 0, 0, 10)
+			{
+				AutoExpandBoundsToText = true,
+				TextColor = RGBA_Bytes.Red,
+				HAnchor = HAnchor.Stretch,
+				Margin = elementMargin
+			};
 
 			container.AddChild(printerMessageOne);
 			container.AddChild(printerMessageFour);
@@ -152,7 +156,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 		private void onPrinterStatusChanged(object sender, EventArgs e)
 		{
-			if (printerConnection.PrinterIsConnected)
+			if (printer.Connection.PrinterIsConnected)
 			{
 				printerErrorMessage.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 				printerErrorMessage.Text = "Connection succeeded".Localize() + "!";
@@ -160,7 +164,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				connectButton.Visible = false;
 				UiThread.RunOnIdle(() => this?.Parent?.Close());
 			}
-			else if (printerConnection.CommunicationState != CommunicationStates.AttemptingToConnect)
+			else if (printer.Connection.CommunicationState != CommunicationStates.AttemptingToConnect)
 			{
 				printerErrorMessage.TextColor = RGBA_Bytes.Red;
 				printerErrorMessage.Text = "Uh-oh! Could not connect to printer.".Localize();

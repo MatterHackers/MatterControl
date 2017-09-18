@@ -72,8 +72,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			createPrinter.HAnchor = HAnchor.Left;
 			createPrinter.Click += (s, e) =>
 			{
-				if (PrinterConnection.Instance.PrinterIsPrinting
-					|| PrinterConnection.Instance.PrinterIsPaused)
+				if (ApplicationController.Instance.ActivePrinter.Connection.PrinterIsPrinting
+					|| ApplicationController.Instance.ActivePrinter.Connection.PrinterIsPaused)
 				{
 					UiThread.RunOnIdle(() =>
 						StyledMessageBox.ShowMessageBox(null, "Please wait until the print has finished and try again.".Localize(), "Can't add printers while printing".Localize())

@@ -174,7 +174,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 		{
 			if (group.HasChildren())
 			{
-				var bedCenter = ApplicationController.Instance.Printer.Bed.BedCenter;
+				var bedCenter = ApplicationController.Instance.ActivePrinter.Bed.BedCenter;
 
 				int i = 0;
 				foreach (var sceneItem in group.Children)
@@ -200,7 +200,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 			// take out the last scale
 			double oldSize = 1.0 / lastSizeValue;
 
-			Vector3 bedCenter = new Vector3(ApplicationController.Instance.Printer.Bed.BedCenter);
+			Vector3 bedCenter = new Vector3(ApplicationController.Instance.ActivePrinter.Bed.BedCenter);
 			if (group.HasChildren())
 			{
 				foreach (var object3D in group.Children)

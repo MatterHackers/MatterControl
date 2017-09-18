@@ -66,7 +66,17 @@ namespace MatterHackers.MatterControl
 	{
 		public ThemeConfig Theme { get; set; } = new ThemeConfig();
 
-		public PrinterConfig Printer { get; }
+		// A list of printers which are open (i.e. displaying a tab) on this instance of MatterControl
+		public List<PrinterConfig> ActivePrinters { get; } = new List<PrinterConfig>();
+
+		private PrinterConfig emptyPrinter = new PrinterConfig(false, PrinterSettings.Empty);
+
+		// TODO: Any references to this property almost certainly need to be reconsidered. ActiveSliceSettings and PrinterConnection static references
+		// that assume a single printer selection are being redirected here. This allows us to break the dependency to the original statics and consolidates
+		// use down to a single point where code is making assumptions about the presence of a printer, printer counts, etc. If we previously checked for
+		// PrinterConnection.IsPrinterConnected, that could should be updated to iterate ActiverPrinters, checking each one and acting on each as it would
+		// have for the single case
+		public PrinterConfig ActivePrinter => ActivePrinters.FirstOrDefault() ?? emptyPrinter;
 
 		public Action RedeemDesignCode;
 		public Action EnterShareCode;
@@ -281,11 +291,11 @@ namespace MatterHackers.MatterControl
 						() => new SDCardContainer(),
 						() =>
 						{
-							var printer = PrinterConnection.Instance;
+							var printer = this.ActivePrinter;
 
-							return ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_sd_card_reader)
-								&& printer.PrinterIsConnected
-								&& !(printer.PrinterIsPrinting || printer.PrinterIsPaused);
+							return printer.Settings.GetValue<bool>(SettingsKey.has_sd_card_reader)
+								&& printer.Connection.PrinterIsConnected
+								&& !(printer.Connection.PrinterIsPrinting || printer.Connection.PrinterIsPaused);
 						})
 				{
 					IsReadOnly = true
@@ -300,8 +310,6 @@ namespace MatterHackers.MatterControl
 			DefaultThumbBackground.DefaultBackgroundColor = RGBA_Bytes.Transparent;
 
 			Object3D.AssetsPath = ApplicationDataStorage.Instance.LibraryAssetsPath;
-
-			this.Printer = new PrinterConfig(loadLastBedplate: true);
 
 			this.Library = new LibraryConfig();
 			this.Library.ContentProviders.Add(new[] { "stl", "amf", "mcx" }, new MeshContentProvider());
@@ -331,7 +339,7 @@ namespace MatterHackers.MatterControl
 				thumbGenResetEvent?.Set();
 			};
 
-			PrinterConnection.Instance.CommunicationStateChanged.RegisterEvent((s, e) =>
+			PrinterConnection.AnyCommunicationStateChanged.RegisterEvent((s, e) =>
 			{
 				var printerConnection = s as PrinterConnection;
 
@@ -340,8 +348,8 @@ namespace MatterHackers.MatterControl
 					case CommunicationStates.Printing:
 						if (UserSettings.Instance.IsTouchScreen)
 						{
-							// TODO: In general this basic hook won't work with multi-tenancy
-							UiThread.RunOnIdle(() => PrintingWindow.Show(ApplicationController.Instance.Printer)); // HACK: We need to show the instance that's printing not the static instance
+							// TODO: This basic hook won't work with multi-tenancy. Need to lookup the passed in sender from ActivePrinters use the found instance instead of the .ActivePrinter below
+							UiThread.RunOnIdle(() => PrintingWindow.Show(ApplicationController.Instance.ActivePrinter)); // HACK: We need to show the instance that's printing not the static instance
 						}
 
 						break;
@@ -350,26 +358,27 @@ namespace MatterHackers.MatterControl
 
 			this.InitializeLibrary();
 
-			PrinterConnection.Instance.ConnectionSucceeded.RegisterEvent((s, e) =>
+			PrinterConnection.AnyConnectionSucceeded.RegisterEvent((s, e) =>
 			{
 				// run the print leveling wizard if we need to for this printer
-				if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_required_to_print)
-					|| ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_enabled))
+				var printer = ApplicationController.Instance.ActivePrinters.Where(p => p.Connection == s).FirstOrDefault();
+				if (printer != null
+					&& (printer.Settings.GetValue<bool>(SettingsKey.print_leveling_required_to_print)
+					|| printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled)))
 				{
-					PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
+					PrintLevelingData levelingData = printer.Settings.Helpers.GetPrintLevelingData();
 					if (levelingData?.HasBeenRunAndEnabled() != true)
 					{
-						UiThread.RunOnIdle(() => LevelWizardBase.ShowPrintLevelWizard(ApplicationController.Instance.Printer));// HACK: We need to show the instance that's printing not the static instance
+						UiThread.RunOnIdle(() => LevelWizardBase.ShowPrintLevelWizard(printer));
 					}
 				}
 			}, ref unregisterEvents);
-
 		}
 
 		public void StartSignIn()
 		{
-			if (PrinterConnection.Instance.PrinterIsPrinting
-				|| PrinterConnection.Instance.PrinterIsPaused)
+			if (this.ActivePrinter.Connection.PrinterIsPrinting
+				|| this.ActivePrinter.Connection.PrinterIsPaused)
 			{
 				// can't sign in while printing
 				UiThread.RunOnIdle(() =>
@@ -484,8 +493,8 @@ namespace MatterHackers.MatterControl
 
 		public void StartSignOut()
 		{
-			if (PrinterConnection.Instance.PrinterIsPrinting
-				|| PrinterConnection.Instance.PrinterIsPaused)
+			if (this.ActivePrinter.Connection.PrinterIsPrinting
+				|| this.ActivePrinter.Connection.PrinterIsPaused)
 			{
 				// can't log out while printing
 				UiThread.RunOnIdle(() =>
@@ -710,13 +719,13 @@ namespace MatterHackers.MatterControl
 			}
 
 
-			if (ActiveSliceSettings.Instance.PrinterSelected
-				&& ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.auto_connect))
+			if (this.ActivePrinter.Settings.PrinterSelected
+				&& this.ActivePrinter.Settings.GetValue<bool>(SettingsKey.auto_connect))
 			{
 				UiThread.RunOnIdle(() =>
 				{
 					//PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
-					PrinterConnection.Instance.ConnectToActivePrinter();
+					this.ActivePrinter.Connection.ConnectToActivePrinter();
 				}, 2);
 			}
 		}
@@ -839,14 +848,14 @@ namespace MatterHackers.MatterControl
 		{
 			bool canceled = false;
 
-			if (PrinterConnection.Instance.SecondsPrinted > 120)
+			if (this.ActivePrinter.Connection.SecondsPrinted > 120)
 			{
 				StyledMessageBox.ShowMessageBox(
 					(bool response) =>
 					{
 						if (response)
 						{
-							UiThread.RunOnIdle(() => PrinterConnection.Instance.Stop());
+							UiThread.RunOnIdle(() => this.ActivePrinter.Connection.Stop());
 							canceled = true;
 						}
 
@@ -860,7 +869,7 @@ namespace MatterHackers.MatterControl
 			}
 			else
 			{
-				PrinterConnection.Instance.Stop();
+				this.ActivePrinter.Connection.Stop();
 				canceled = false;
 			}
 
@@ -920,7 +929,7 @@ namespace MatterHackers.MatterControl
 					PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
 					if (levelingData?.HasBeenRunAndEnabled() != true)
 					{
-						LevelWizardBase.ShowPrintLevelWizard(ApplicationController.Instance.Printer);// HACK: We need to show the instance that's printing not the static instance
+						LevelWizardBase.ShowPrintLevelWizard(ApplicationController.Instance.ActivePrinter);// HACK: We need to show the instance that's printing not the static instance
 						return;
 					}
 				}
@@ -936,14 +945,14 @@ namespace MatterHackers.MatterControl
 					if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_sd_card_reader)
 						&& pathAndFile == QueueData.SdCardFileName)
 					{
-						PrinterConnection.Instance.StartSdCardPrint();
+						this.ActivePrinter.Connection.StartSdCardPrint();
 					}
 					else if (ActiveSliceSettings.Instance.IsValid())
 					{
 						if (File.Exists(pathAndFile))
 						{
 							// clear the output cache prior to starting a print
-							PrinterConnection.Instance.TerminalLog.Clear();
+							this.ActivePrinter.Connection.TerminalLog.Clear();
 
 							string hideGCodeWarning = ApplicationSettings.Instance.get(ApplicationSettingsKey.HideGCodeWarning);
 
@@ -974,7 +983,7 @@ namespace MatterHackers.MatterControl
 										{
 											if (messageBoxResponse)
 											{
-												PrinterConnection.Instance.CommunicationState = CommunicationStates.PreparingToPrint;
+												this.ActivePrinter.Connection.CommunicationState = CommunicationStates.PreparingToPrint;
 												PrintItemWrapper partToPrint = printItem;
 												SlicingQueue.Instance.QueuePartForSlicing(partToPrint);
 												partToPrint.SlicingDone += partToPrint_SliceDone;
@@ -993,7 +1002,7 @@ namespace MatterHackers.MatterControl
 							}
 							else
 							{
-								PrinterConnection.Instance.CommunicationState = CommunicationStates.PreparingToPrint;
+								this.ActivePrinter.Connection.CommunicationState = CommunicationStates.PreparingToPrint;
 								PrintItemWrapper partToPrint = printItem;
 								SlicingQueue.Instance.QueuePartForSlicing(partToPrint);
 								partToPrint.SlicingDone += partToPrint_SliceDone;
@@ -1011,8 +1020,8 @@ namespace MatterHackers.MatterControl
 
 		public void PrintActivePartIfPossible(PrintItemWrapper printItem, bool overrideAllowGCode = false)
 		{
-			if (PrinterConnection.Instance.CommunicationState == CommunicationStates.Connected 
-				|| PrinterConnection.Instance.CommunicationState == CommunicationStates.FinishedPrint)
+			if (this.ActivePrinter.Connection.CommunicationState == CommunicationStates.Connected 
+				|| this.ActivePrinter.Connection.CommunicationState == CommunicationStates.FinishedPrint)
 			{
 				PrintPart(printItem, overrideAllowGCode);
 			}
@@ -1052,7 +1061,7 @@ namespace MatterHackers.MatterControl
 						// read the last few k of the file and see if it says "filament used". We use this marker to tell if the file finished writing
 						if (originalIsGCode)
 						{
-							PrinterConnection.Instance.StartPrint(gcodePathAndFileName);
+							this.ActivePrinter.Connection.StartPrint(gcodePathAndFileName);
 							return;
 						}
 						else
@@ -1068,14 +1077,14 @@ namespace MatterHackers.MatterControl
 								string fileEnd = System.Text.Encoding.UTF8.GetString(buffer);
 								if (fileEnd.Contains("filament used"))
 								{
-									PrinterConnection.Instance.StartPrint(gcodePathAndFileName);
+									this.ActivePrinter.Connection.StartPrint(gcodePathAndFileName);
 									return;
 								}
 							}
 						}
 					}
 
-					PrinterConnection.Instance.CommunicationState = CommunicationStates.Connected;
+					this.ActivePrinter.Connection.CommunicationState = CommunicationStates.Connected;
 				}
 			}
 		}

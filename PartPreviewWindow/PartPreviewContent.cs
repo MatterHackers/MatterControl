@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public PartPreviewContent()
 		{
-			var printerConfig = ApplicationController.Instance.Printer;
+			var printer = ApplicationController.Instance.ActivePrinter;
 			var theme = ApplicationController.Instance.Theme;
 
 			this.AnchorAll();
@@ -73,17 +73,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (ActiveSliceSettings.Instance.PrinterSelected)
 			{
 				string tabTitle = ActiveSliceSettings.Instance.GetValue(SettingsKey.printer_name);
-				printerTab = CreatePrinterTab(printerConfig, theme, tabTitle);
+				printerTab = CreatePrinterTab(printer, theme, tabTitle);
 				tabControl.AddTab(printerTab);
 			}
 			else
 			{
-				PlusTabPage.CreatePartTab(tabControl, printerConfig.Bed, theme, 0);
+				PlusTabPage.CreatePartTab(tabControl, printer.Bed, theme, 0);
 			}
 
 			// TODO: add in the printers and designs that are currently open (or were open last run).
 			var plusTabSelect = new TextTab(
-				new TabPage(new PlusTabPage(tabControl, printerConfig, theme), "+"),
+				new TabPage(new PlusTabPage(tabControl, printer, theme), "+"),
 				"Create New",
 				tabControl.TextPointSize,
 				selectedTabColor,
