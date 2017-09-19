@@ -266,7 +266,7 @@ namespace MatterHackers.MatterControl.ActionBar
 #endif
 				{
 					printer.Connection.HaltConnectionThread();
-					printer.Connection.ConnectToActivePrinter(true);
+					printer.Connection.Connect(true);
 				}
 			}
 		}

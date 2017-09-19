@@ -557,9 +557,6 @@ namespace MatterHackers.MatterControl
 
 			IsLoading = false;
 
-#if DEBUG
-			AfterDraw += ShowNamesUnderMouse;
-#endif
 			base.OnLoad(args);
 		}
 
@@ -625,14 +622,6 @@ namespace MatterHackers.MatterControl
 			{
 				dropWasOnChild = true;
 			}
-
-#if DEBUG
-			if (showNamesUnderMouse)
-			{
-				mousePosition = mouseEvent.Position;
-				Invalidate();
-			}
-#endif
 
 			if (GuiWidget.DebugBoundsUnderMouse)
 			{
@@ -758,65 +747,8 @@ namespace MatterHackers.MatterControl
 #endif
 		}
 
-		private int extraInfoOffsetFromLast = 0;
-		private bool showNamesUnderMouse = false;
-
-		private GuiWidget inspectedWidget = null;
-
 #if DEBUG
-		Vector2 mousePosition;
-		private void ShowNamesUnderMouse(object sender, DrawEventArgs e)
-		{
-			if (showNamesUnderMouse)
-			{
-				if (inspectedWidget != null)
-				{
-					inspectedWidget.DebugShowBounds = false;
-				}
-
-				List<WidgetAndPosition> namedChildren = new List<WidgetAndPosition>();
-				this.FindNamedChildrenRecursive("", namedChildren, new RectangleDouble(mousePosition.x, mousePosition.y, mousePosition.x + 1 , mousePosition.y + 1), SearchType.Partial, allowDisabledOrHidden: false);
-
-				Vector2 start = new Vector2(10, 50);
-				int lineHeight = 20;
-				e.graphics2D.FillRectangle(start, start + new Vector2(500, namedChildren.Count * lineHeight), new RGBA_Bytes(RGBA_Bytes.Black, 120));
-
-				// Make sure we are in range of the current list
-				extraInfoOffsetFromLast = Math.Max(0, Math.Min(namedChildren.Count - 1, extraInfoOffsetFromLast));
-
-				for(int i=0; i< namedChildren.Count; i++)
-				{
-					var child = namedChildren[i];
-					if (i == (namedChildren.Count-1) - extraInfoOffsetFromLast)
-					{
-						inspectedWidget = child.widget;
-					}
-
-					string nameToWrite = inspectedWidget == child.widget ? "* " : "";
-					if (child.name != null)
-					{
-						nameToWrite += $"{child.widget.GetType().Name} --- {child.name}";
-					}
-					else
-					{
-						nameToWrite += $"{child.widget.GetType().Name} -- -";
-					}
-
-					if (inspectedWidget == child.widget)
-					{
-						nameToWrite += $" | H:{child.widget.HAnchor}, V:{child.widget.VAnchor}";
-					}
-
-					e.graphics2D.DrawString(nameToWrite, start.x, start.y, backgroundColor: RGBA_Bytes.White, drawFromHintedCach: true);
-					start.y += lineHeight;
-				}
-
-				if (inspectedWidget != null)
-				{
-					inspectedWidget.DebugShowBounds = true;
-				}
-			}
-		}
+		InspectForm inspectForm = null;
 
 		public override void OnKeyDown(KeyEventArgs keyEvent)
 		{
@@ -827,18 +759,20 @@ namespace MatterHackers.MatterControl
 			{
 				if (keyEvent.KeyCode == Keys.F1)
 				{
-					showNamesUnderMouse = !showNamesUnderMouse;
-				}
-				else if (keyEvent.KeyCode == Keys.F2)
-				{
-					extraInfoOffsetFromLast++;
-				}
-				else if (keyEvent.KeyCode == Keys.F3)
-				{
-					extraInfoOffsetFromLast--;
+					//showNamesUnderMouse = !showNamesUnderMouse;
+					if (inspectForm == null)
+					{
+						inspectForm = new InspectForm(this);
+						inspectForm.FormClosed += (s, e2) =>
+						{
+							inspectForm = null;
+						};
+						inspectForm.Show();
+					}
 				}
 			}
 		}
+
 #endif
 		public static void CheckKnownAssemblyConditionalCompSymbols()
 		{

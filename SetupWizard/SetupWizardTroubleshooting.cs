@@ -177,7 +177,7 @@ namespace MatterHackers.MatterControl
 				"Connect",
 				"Click the 'Connect' button to retry the original connection attempt",
 				false,
-				() => ApplicationController.Instance.ActivePrinter.Connection.ConnectToActivePrinter());
+				() => ApplicationController.Instance.ActivePrinter.Connection.Connect());
 
 			contentRow.AddChild(connectToPrinterRow);
 

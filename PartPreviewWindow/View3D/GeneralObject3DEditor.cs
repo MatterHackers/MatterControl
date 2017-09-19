@@ -32,6 +32,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.SimplePartScripting;
 using MatterHackers.PolygonMesh;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
@@ -108,30 +109,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			behavior3DTypeButtons.AddChild(supportBehaviorButton);
 
-			// add in a test for the actions list
-
-			var objecActionList = new DropDownList("Actions", maxHeight: 200);
-			objecActionList.HAnchor = HAnchor.Stretch;
-
-			objecActionList.AddItem("Pinch".Localize(), "pinch");
-			objecActionList.AddItem("Curve".Localize(), "curve");
-			objecActionList.AddItem("Cut Out".Localize(), "cutOut");
-
-			objecActionList.SelectionChanged += (s, e) =>
+			foreach (var namedAction in ApplicationController.Instance.RegisteredSceneOperations())
 			{
-				var scene = view3DWidget.InteractionLayer.Scene;
-
-				switch(objecActionList.SelectedValue)
+				var button = ApplicationController.Instance.Theme.ButtonFactory.Generate(namedAction.Title, fixedWidth: 130);
+				button.Margin = 1;
+				button.Click += (s, e) =>
 				{
-					case "pinch":
-						// Sholud be a pinch command that makes a pinch object with the correct controls
-						var operation = new GroupCommand(scene, scene.SelectedItem);
-						scene.UndoBuffer.AddAndDo(operation);
-						break;
-				}
-			};
+					namedAction.Action(ApplicationController.Instance.ActivePrinter.Bed.Scene);
+				};
+				mainContainer.AddChild(button);
+			}
 
-			mainContainer.AddChild(objecActionList);
+			var objectActionList = new DropDownList("More...", maxHeight: 200)
+			{
+				HAnchor = HAnchor.Stretch,
+				Margin = new BorderDouble(top: 3)
+			};
+			mainContainer.AddChild(objectActionList);
 
 			return mainContainer;
 		}

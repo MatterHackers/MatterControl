@@ -85,7 +85,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						{
 							UiThread.RunOnIdle(() =>
 							{
-								activeInstance.printer.Connection.ConnectToActivePrinter(showConnectionHelp);
+								activeInstance.printer.Connection.Connect(showConnectionHelp);
 								showConnectionHelp = false;
 							}, 2);
 						}

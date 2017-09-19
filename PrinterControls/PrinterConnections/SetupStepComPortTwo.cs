@@ -79,7 +79,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 						printerErrorMessage.Text = "Attempting to connect".Localize() + "...";
 
 						ActiveSliceSettings.Instance.Helpers.SetComPort(candidatePort);
-						printer.Connection.ConnectToActivePrinter();
+						printer.Connection.Connect();
 						connectButton.Visible = false;
 					}
 				};
