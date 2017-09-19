@@ -34,10 +34,11 @@ using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.ActionBar
 {
-	internal class TemperatureWidgetBase : PopupButton
+	internal abstract class TemperatureWidgetBase : PopupButton
 	{
 		protected TextWidget CurrentTempIndicator;
 		private TextWidget goalTempIndicator;
@@ -54,6 +55,8 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		protected virtual int ActualTemperature { get; }
 		protected virtual int TargetTemperature { get; }
+
+		private DisableablePanel disableablePanel;
 
 		public TemperatureWidgetBase(PrinterConfig printer, string textValue)
 		{
@@ -105,6 +108,12 @@ namespace MatterHackers.MatterControl.ActionBar
 				Margin = new BorderDouble(left: 5)
 			};
 			container.AddChild(DirectionIndicator);
+
+			printer.Connection.CommunicationStateChanged.RegisterEvent((s, e) =>
+			{
+				disableablePanel.Enabled = printer.Connection.PrinterIsConnected;
+
+			}, ref unregisterEvents);
 		}
 
 		protected void DisplayCurrentTemperature()
@@ -131,7 +140,18 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		protected virtual void SetTargetTemperature(double targetTemp) { }
 
-		protected virtual GuiWidget GetPopupContent() { return null; }
+		protected abstract GuiWidget GetPopupContent();
+
+		public override void OnLoad(EventArgs args)
+		{
+			// Wrap popup content in a DisableablePanel
+			disableablePanel = new DisableablePanel(this.GetPopupContent(), printer.Connection.PrinterIsConnected, alpha: 140);
+
+			// Set as popup
+			this.PopupContent = disableablePanel;
+
+			base.OnLoad(args);
+		}
 
 		public override void OnClosed(ClosedEventArgs e)
 		{

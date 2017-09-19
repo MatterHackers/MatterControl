@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 
@@ -36,7 +37,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	{
 		private GuiWidget disableOverlay;
 
-		public DisableablePanel(GuiWidget widgetToWrap, bool enabled = false)
+		public DisableablePanel(GuiWidget widgetToWrap, bool enabled = false, int alpha = 200)
 		{
 			this.VAnchor = VAnchor.Fit;
 			this.HAnchor = HAnchor.Stretch;
@@ -48,11 +49,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				VAnchor = VAnchor.Stretch,
 				HAnchor = HAnchor.Stretch,
 				Visible = !enabled,
-				BackgroundColor = new RGBA_Bytes(ActiveTheme.Instance.TertiaryBackgroundColor, 200)
+				BackgroundColor = new RGBA_Bytes(ActiveTheme.Instance.TertiaryBackgroundColor, alpha)
 			};
 			this.AddChild(disableOverlay);
 		}
 
-		public override bool Enabled { get => !disableOverlay.Visible; set => disableOverlay.Visible = value; }
+		public override bool Enabled
+		{
+			get => !disableOverlay.Visible;
+			set => disableOverlay.Visible = !value;
+		}
 	}
 }
