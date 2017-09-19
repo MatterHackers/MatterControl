@@ -57,6 +57,7 @@ namespace MatterHackers.MatterControl
 	using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 	using MatterHackers.MatterControl.Library;
 	using MatterHackers.MatterControl.PartPreviewWindow;
+	using MatterHackers.MatterControl.SimplePartScripting;
 	using MatterHackers.MeshVisualizer;
 	using MatterHackers.SerialPortCommunication;
 	using MatterHackers.VectorMath;
@@ -182,6 +183,21 @@ namespace MatterHackers.MatterControl
 		private EventHandler unregisterEvents;
 
 		private Dictionary<string, List<PrintItemAction>> registeredLibraryActions = new Dictionary<string, List<PrintItemAction>>();
+
+		private List<SceneSelectionOperation> registeredSceneOperations = new List<SceneSelectionOperation>()
+		{
+			{
+				"Bend".Localize(),
+				(scene) => new BendOperation(scene.SelectedItem)
+			},
+			{
+				"Cut Out".Localize(), (scene) => Console.WriteLine("Cut out")
+			},
+			{
+				// Should be a pinch command that makes a pinch object with the correct controls
+				"Pinch".Localize(), (scene) => scene.UndoBuffer.AddAndDo(new GroupCommand(scene, scene.SelectedItem))
+			}
+		};
 
 		static int applicationInstanceCount = 0;
 		public static int ApplicationInstanceCount
@@ -907,6 +923,11 @@ namespace MatterHackers.MatterControl
 			}
 
 			return Enumerable.Empty<PrintItemAction>();
+		}
+
+		public IEnumerable<SceneSelectionOperation> RegisteredSceneOperations()
+		{
+			return registeredSceneOperations;
 		}
 
 		public event EventHandler<WidgetSourceEventArgs> AddPrintersTabRightElement;

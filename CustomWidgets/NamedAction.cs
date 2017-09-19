@@ -31,6 +31,8 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using MatterHackers.Agg.Image;
+using MatterHackers.DataConverters3D;
+using MatterHackers.MeshVisualizer;
 
 namespace MatterHackers.Agg.UI
 {
@@ -41,11 +43,30 @@ namespace MatterHackers.Agg.UI
 		public ImageBuffer Icon { get; set; }
 	}
 
+	public class SceneSelectionOperation
+	{
+		public string Title { get; set; }
+		public Action<InteractiveScene> Action { get; set; }
+
+		//public bool AllowXXX { get; set; } = false;
+		//public bool AllowYYY { get; set; } = false;
+		//internal MenuItem MenuItem { get; set; }
+	}
+
 	public static class NamedActionExtensions
 	{
 		public static void Add(this List<NamedAction> list, string title, Action action)
 		{
 			list.Add(new NamedAction()
+			{
+				Title = title,
+				Action = action
+			});
+		}
+
+		public static void Add(this List<SceneSelectionOperation> list, string title, Action<InteractiveScene> action)
+		{
+			list.Add(new SceneSelectionOperation()
 			{
 				Title = title,
 				Action = action
