@@ -60,7 +60,9 @@ namespace MatterHackers.MatterControl
 			inspectionSource.Invalidate();
 		}
 
-		public bool Inspecting { get; set; }
+		public bool Inspecting { get; set; } = true;
+
+		private GuiWidget mouseUpWidget;
 
 		private GuiWidget _inspectedWidget;
 		private GuiWidget InspectedWidget
@@ -68,11 +70,19 @@ namespace MatterHackers.MatterControl
 			get => _inspectedWidget;
 			set
 			{
+				if (_inspectedWidget == value)
+				{
+					return;
+				}
+
 				if (_inspectedWidget != null)
 				{
 					_inspectedWidget.DebugShowBounds = false;
-					_inspectedWidget.MouseUp -= InspectedWidget_MouseUp;
-					_inspectedWidget.MouseDown -= InspectedWidget_MouseUp;
+				}
+
+				if (mouseUpWidget != null)
+				{
+					mouseUpWidget.MouseUp -= InspectedWidget_MouseUp;
 				}
 
 				_inspectedWidget = value;
@@ -83,9 +93,18 @@ namespace MatterHackers.MatterControl
 
 					_inspectedWidget.DebugShowBounds = true;
 
-					// Hook to stop listing on click
-					_inspectedWidget.MouseUp += InspectedWidget_MouseUp;
-					_inspectedWidget.MouseDown += InspectedWidget_MouseUp;
+					var context = _inspectedWidget;
+					while(!context.CanSelect && context.Parent != null)
+					{
+						context = context.Parent;
+					}
+
+					if (context.CanSelect)
+					{
+						// Hook to stop listing on click
+						mouseUpWidget = context;
+						mouseUpWidget.MouseUp += InspectedWidget_MouseUp;
+					}
 				}
 
 				if (activeTreeNode != null)
