@@ -145,6 +145,20 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private static SliceSettingsOrganizer instance = null;
 
+		public static Dictionary<string, SliceSettingData> SettingsData { get; }
+
+		static SliceSettingsOrganizer()
+		{
+			string propertiesFileContents = AggContext.StaticData.ReadAllText(Path.Combine("SliceSettings", "Properties.json"));
+			var propertiesJsonData = JsonConvert.DeserializeObject<List<SliceSettingData>>(propertiesFileContents);
+
+			SettingsData = new Dictionary<string, SliceSettingData>();
+			foreach (var settingsData in propertiesJsonData)
+			{
+				SettingsData.Add(settingsData.SlicerConfigName, settingsData);
+			}
+		}
+
 		public static SliceSettingsOrganizer Instance
 		{
 			get
@@ -197,16 +211,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public SliceSettingData GetSettingsData(string slicerConfigName)
 		{
-			foreach (SliceSettingData settingData in ActiveSliceSettings.SettingsData)
+			if (SliceSettingsOrganizer.SettingsData.TryGetValue(slicerConfigName, out SliceSettingData settingsData))
 			{
-				if (settingData.SlicerConfigName == slicerConfigName)
-				{
-					return settingData;
-				}
+				return settingsData;
 			}
+
 			return null;
-			//GD-Turning into non-fatal exception 12/12/14
-			//throw new Exception("You must not have a layout for a setting that is not in the Properties.txt");
 		}
 
 		private void LoadAndParseSettingsFiles()
@@ -267,22 +277,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				numSpaces++;
 			}
 			return numSpaces;
-		}
-
-		public PrinterSettingsLayer GetDefaultSettings()
-		{
-			if (defaultSettings == null)
-			{
-				var settingsDictionary = new Dictionary<string, string>();
-				foreach (var sliceSettingsData in ActiveSliceSettings.SettingsData)
-				{
-					settingsDictionary[sliceSettingsData.SlicerConfigName] = sliceSettingsData.DefaultValue;
-				}
-
-				defaultSettings = settingsDictionary;
-			}
-
-			return new PrinterSettingsLayer(defaultSettings);
 		}
 	}
 }

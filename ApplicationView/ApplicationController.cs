@@ -346,6 +346,16 @@ namespace MatterHackers.MatterControl
 				ApplicationController.Instance.ReloadAdvancedControlsPanel();
 			};
 
+			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
+			{
+				if (e is StringEventArgs stringArg
+					&& SliceSettingsOrganizer.SettingsData.TryGetValue(stringArg.Data, out SliceSettingData settingsData)
+					&& settingsData.ReloadUiWhenChanged)
+				{
+					UiThread.RunOnIdle(ReloadAll);
+				}
+			}, ref unregisterEvents);
+
 			// Remove consumed ClientToken from running list on shutdown
 			ApplicationClosed += (s, e) =>
 			{
