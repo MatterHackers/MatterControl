@@ -11,49 +11,6 @@ namespace MatterHackers.MatterControl
 	public partial class InspectForm : Form
 	{
 		private TreeNode activeTreeNode;
-
-		private GuiWidget inspectedWidget;
-		private GuiWidget InspectedWidget
-		{
-			get => inspectedWidget;
-			set
-			{
-				if (inspectedWidget != null)
-				{
-					inspectedWidget.DebugShowBounds = false;
-					inspectedWidget.MouseUp -= InspectedWidget_MouseUp;
-					inspectedWidget.MouseDown -= InspectedWidget_MouseUp;
-				}
-
-				inspectedWidget = value;
-
-				if (inspectedWidget != null)
-				{
-					propertyGrid1.SelectedObject = inspectedWidget;
-
-					inspectedWidget.DebugShowBounds = true;
-
-					// Hook to stop listing on click
-					inspectedWidget.MouseUp += InspectedWidget_MouseUp;
-					inspectedWidget.MouseDown += InspectedWidget_MouseUp;
-				}
-
-				if (activeTreeNode != null)
-				{
-					activeTreeNode.Checked = false;
-				}
-
-				if (treeNodes.TryGetValue(inspectedWidget, out TreeNode treeNode))
-				{
-					treeView1.SelectedNode = treeNode;
-					activeTreeNode = treeNode;
-					activeTreeNode.Checked = true;
-				}
-
-				inspectedWidget.Invalidate();
-			}
-		}
-
 		private GuiWidget inspectedSystemWindow;
 
 		private Vector2 mousePosition;
@@ -69,7 +26,7 @@ namespace MatterHackers.MatterControl
 			{
 				mousePosition = e.Position;
 
-				if (this.inspectedWidget?.FirstWidgetUnderMouse == false)
+				if (this.InspectedWidget?.FirstWidgetUnderMouse == false)
 				{
 					this.inspectedSystemWindow.Invalidate();
 				}
@@ -104,6 +61,48 @@ namespace MatterHackers.MatterControl
 		}
 
 		public bool Inspecting { get; set; }
+
+		private GuiWidget _inspectedWidget;
+		private GuiWidget InspectedWidget
+		{
+			get => _inspectedWidget;
+			set
+			{
+				if (_inspectedWidget != null)
+				{
+					_inspectedWidget.DebugShowBounds = false;
+					_inspectedWidget.MouseUp -= InspectedWidget_MouseUp;
+					_inspectedWidget.MouseDown -= InspectedWidget_MouseUp;
+				}
+
+				_inspectedWidget = value;
+
+				if (_inspectedWidget != null)
+				{
+					propertyGrid1.SelectedObject = _inspectedWidget;
+
+					_inspectedWidget.DebugShowBounds = true;
+
+					// Hook to stop listing on click
+					_inspectedWidget.MouseUp += InspectedWidget_MouseUp;
+					_inspectedWidget.MouseDown += InspectedWidget_MouseUp;
+				}
+
+				if (activeTreeNode != null)
+				{
+					activeTreeNode.Checked = false;
+				}
+
+				if (treeNodes.TryGetValue(_inspectedWidget, out TreeNode treeNode))
+				{
+					treeView1.SelectedNode = treeNode;
+					activeTreeNode = treeNode;
+					activeTreeNode.Checked = true;
+				}
+
+				_inspectedWidget.Invalidate();
+			}
+		}
 
 		private void InspectedWidget_MouseUp(object sender, Agg.UI.MouseEventArgs e)
 		{
@@ -162,7 +161,7 @@ namespace MatterHackers.MatterControl
 
 		private string BuildName(GuiWidget widget)
 		{
-			string nameToWrite = inspectedWidget == widget ? "* " : "";
+			string nameToWrite = _inspectedWidget == widget ? "* " : "";
 			if (!string.IsNullOrEmpty(widget.Name))
 			{
 				nameToWrite += $"{widget.GetType().Name} --- {widget.Name}";
@@ -173,22 +172,6 @@ namespace MatterHackers.MatterControl
 			}
 
 			return nameToWrite;
-		}
-
-		int selectionIndex;
-
-		protected override void OnKeyDown(System.Windows.Forms.KeyEventArgs e)
-		{
-			if (e.KeyCode ==  System.Windows.Forms.Keys.F2)
-			{
-				selectionIndex++;
-			}
-			else if (e.KeyCode == System.Windows.Forms.Keys.F2)
-			{
-				selectionIndex--;
-			}
-
-			base.OnKeyDown(e);
 		}
 
 		private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
