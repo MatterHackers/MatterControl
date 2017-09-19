@@ -175,5 +175,10 @@ namespace MatterHackers.MatterControl
 		{
 			this.InspectedWidget = e.Node.Tag as GuiWidget;
 		}
+
+		private void propertyGrid1_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
+		{
+			this.InspectedWidget.Invalidate();
+		}
 	}
 }
