@@ -648,7 +648,27 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 
 		[JsonIgnore]
-		public PrinterSettingsLayer BaseLayer { get; set; } = SliceSettingsOrganizer.Instance.GetDefaultSettings();
+		PrinterSettingsLayer _baseLayer;
+		public PrinterSettingsLayer BaseLayer
+		{
+			get
+			{
+				if (_baseLayer == null)
+				{
+					string propertiesFileContents = AggContext.StaticData.ReadAllText(Path.Combine("SliceSettings", "Properties.json"));
+
+					var settingsLayer = new PrinterSettingsLayer();
+					foreach (var settingsData in JsonConvert.DeserializeObject<List<SliceSettingData>>(propertiesFileContents))
+					{
+						settingsLayer[settingsData.SlicerConfigName] = settingsData.DefaultValue;
+					}
+
+					_baseLayer = settingsLayer;
+				}
+
+				return _baseLayer;
+			}
+		}
 
 		internal IEnumerable<PrinterSettingsLayer> defaultLayerCascade
 		{
@@ -703,7 +723,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			keysToRetain.Remove(SettingsKey.print_leveling_enabled);
 
 			// Iterate all items that have .ShowAsOverride = false and conditionally add to the retention list
-			foreach (var item in ActiveSliceSettings.SettingsData.Where(settingsItem => settingsItem.ShowAsOverride == false))
+			foreach (var item in SliceSettingsOrganizer.SettingsData.Values.Where(settingsItem => settingsItem.ShowAsOverride == false))
 			{
 				switch (item.SlicerConfigName)
 				{

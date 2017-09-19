@@ -94,33 +94,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public static List<SliceSettingData> SettingsData { get; private set; } = new List<SliceSettingData>();
-		private static Dictionary<string, SliceSettingData> settingsByName;
-
 		static ActiveSliceSettings()
 		{
-			string propertiesFileContents = AggContext.StaticData.ReadAllText(Path.Combine("SliceSettings", "Properties.json"));
-			SettingsData = JsonConvert.DeserializeObject<List<SliceSettingData>>(propertiesFileContents);
-
-			activeInstance = PrinterSettings.Empty;
-
-			settingsByName = new Dictionary<string, SliceSettingData>();
-			foreach (var settingsData in ActiveSliceSettings.SettingsData)
-			{
-				settingsByName.Add(settingsData.SlicerConfigName, settingsData);
-			}
 			activeInstance = PrinterSettings.Empty;
 		}
 
 		public static void OnSettingChanged(string slicerConfigName)
 		{
 			SettingChanged.CallEvents(null, new StringEventArgs(slicerConfigName));
-
-			SliceSettingData settingsData;
-			if (settingsByName.TryGetValue(slicerConfigName, out settingsData) && settingsData.ReloadUiWhenChanged)
-			{
-				UiThread.RunOnIdle(ApplicationController.Instance.ReloadAll);
-			}
 		}
 
 		public static void RefreshActiveInstance(PrinterSettings updatedProfile)
