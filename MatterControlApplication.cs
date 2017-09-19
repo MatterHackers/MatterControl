@@ -757,18 +757,32 @@ namespace MatterHackers.MatterControl
 
 			if (!keyEvent.Handled)
 			{
-				if (keyEvent.KeyCode == Keys.F1)
+				switch (keyEvent.KeyCode)
 				{
-					//showNamesUnderMouse = !showNamesUnderMouse;
-					if (inspectForm == null)
-					{
-						inspectForm = new InspectForm(this);
-						inspectForm.FormClosed += (s, e2) =>
+					case Keys.F1:
+						if (inspectForm != null)
 						{
-							inspectForm = null;
-						};
-						inspectForm.Show();
-					}
+							// Toggle mode if window is open
+							inspectForm.Inspecting = !inspectForm.Inspecting;
+						}
+						else
+						{
+							// Otherwise open
+							inspectForm = new InspectForm(this);
+							inspectForm.FormClosed += (s, e2) =>
+							{
+								inspectForm = null;
+							};
+							inspectForm.Show();
+						}
+						break;
+					case Keys.F2:
+						inspectForm?.MoveUpTree();
+						break;
+
+					case Keys.F3:
+						inspectForm?.MoveDownTree();
+						break;
 				}
 			}
 		}

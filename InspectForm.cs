@@ -11,6 +11,7 @@ namespace MatterHackers.MatterControl
 	public partial class InspectForm : Form
 	{
 		private TreeNode activeTreeNode;
+
 		private GuiWidget inspectedWidget;
 		private GuiWidget InspectedWidget
 		{
@@ -20,14 +21,21 @@ namespace MatterHackers.MatterControl
 				if (inspectedWidget != null)
 				{
 					inspectedWidget.DebugShowBounds = false;
+					inspectedWidget.MouseUp -= InspectedWidget_MouseUp;
+					inspectedWidget.MouseDown -= InspectedWidget_MouseUp;
 				}
 
 				inspectedWidget = value;
-				inspectedWidget.DebugShowBounds = true;
 
 				if (inspectedWidget != null)
 				{
 					propertyGrid1.SelectedObject = inspectedWidget;
+
+					inspectedWidget.DebugShowBounds = true;
+
+					// Hook to stop listing on click
+					inspectedWidget.MouseUp += InspectedWidget_MouseUp;
+					inspectedWidget.MouseDown += InspectedWidget_MouseUp;
 				}
 
 				if (activeTreeNode != null)
@@ -46,26 +54,30 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		bool showNamesUnderMouse = true;
-
 		private GuiWidget inspectedSystemWindow;
 
 		private Vector2 mousePosition;
 
-		Dictionary<GuiWidget, TreeNode> treeNodes = new Dictionary<GuiWidget, TreeNode>();
+		private Dictionary<GuiWidget, TreeNode> treeNodes = new Dictionary<GuiWidget, TreeNode>();
 
 		public InspectForm(GuiWidget inspectionSource)
 		{
 			InitializeComponent();
 
+			// Store position on move, invalidate in needed
 			inspectionSource.MouseMove += (s, e) =>
 			{
 				mousePosition = e.Position;
+
+				if (this.inspectedWidget?.FirstWidgetUnderMouse == false)
+				{
+					this.inspectedSystemWindow.Invalidate();
+				}
 			};
 
 			inspectionSource.AfterDraw += (s, e) =>
 			{
-				if (showNamesUnderMouse && !inspectionSource.HasBeenClosed)
+				if (this.Inspecting && !inspectionSource.HasBeenClosed)
 				{
 					var namedChildren = new List<GuiWidget.WidgetAndPosition>();
 					inspectedSystemWindow.FindNamedChildrenRecursive(
@@ -89,6 +101,14 @@ namespace MatterHackers.MatterControl
 			this.inspectedSystemWindow = inspectionSource;
 
 			inspectionSource.Invalidate();
+		}
+
+		public bool Inspecting { get; set; }
+
+		private void InspectedWidget_MouseUp(object sender, Agg.UI.MouseEventArgs e)
+		{
+			// Stop listing on click
+			this.Inspecting = false;
 		}
 
 		private void AddItem(GuiWidget widget, string text, TreeNode childNode = null)
@@ -179,6 +199,22 @@ namespace MatterHackers.MatterControl
 		private void propertyGrid1_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
 		{
 			this.InspectedWidget.Invalidate();
+		}
+
+		public void MoveUpTree()
+		{
+			if (activeTreeNode?.Parent is TreeNode parent)
+			{
+				this.InspectedWidget = parent.Tag as GuiWidget;
+			}
+		}
+
+		public void MoveDownTree()
+		{
+			if (activeTreeNode?.Nodes.Cast<TreeNode>().FirstOrDefault() is TreeNode firstChild)
+			{
+				this.InspectedWidget = firstChild.Tag as GuiWidget;
+			}
 		}
 	}
 }
