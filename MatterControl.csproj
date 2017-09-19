@@ -331,6 +331,7 @@
     <Compile Include="SlicerConfiguration\Settings\ActiveSliceSettings.cs" />
     <Compile Include="SlicerConfiguration\Settings\PrinterSettings.cs" />
     <Compile Include="DataStorage\Classic\ClassicSqlitePrinterProfiles.cs" />
+    <Compile Include="TextCreator\CardHolderTool\BendOperation.cs" />
     <Compile Include="Utilities\AuthenticationData.cs" />
     <Compile Include="Utilities\LimitCallFrequency.cs" />
     <Compile Include="Utilities\SelectedListItems.cs" />
