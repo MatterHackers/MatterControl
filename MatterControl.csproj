@@ -143,10 +143,10 @@
     <Compile Include="CustomWidgets\RadioImageWidget.cs" />
     <Compile Include="CustomWidgets\RadioPanelWidget.cs" />
     <Compile Include="CustomWidgets\ValueDisplayInfo.cs" />
-    <Compile Include="InspectForm.cs">
+    <Compile Include="Utilities\InspectForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="InspectForm.Designer.cs">
+    <Compile Include="Utilities\InspectForm.Designer.cs">
       <DependentUpon>InspectForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Library\ContentProviders\GCodeContentProvider.cs" />
@@ -497,7 +497,7 @@
     <EmbeddedResource Include="config.json">
       <LogicalName>config.json</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="InspectForm.resx">
+    <EmbeddedResource Include="Utilities\InspectForm.resx">
       <DependentUpon>InspectForm.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="App.config" />
