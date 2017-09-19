@@ -185,8 +185,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			this.DisplayCurrentTemperature();
 			this.ToolTipText = "Current extruder temperature".Localize();
 
-			this.PopupContent = this.GetPopupContent();
-
 			printer.Connection.HotendTemperatureRead.RegisterEvent((s, e) => DisplayCurrentTemperature(), ref unregisterEvents);
 		}
 

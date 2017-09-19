@@ -62,8 +62,6 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			this.ImageWidget.Image = icon;
 
-			this.PopupContent = this.GetPopupContent();
-
 			printer.Connection.BedTemperatureRead.RegisterEvent((s, e) => DisplayCurrentTemperature(), ref unregisterEvents);
 		}
 
