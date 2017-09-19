@@ -4552,3 +4552,21 @@ Translated:empty for default
 English:The offset of each nozzle relative to the first nozzle. Only useful for multiple extruder machines.
 Translated:The offset of each nozzle relative to the first nozzle. Only useful for multiple extruder machines.
 
+English:Nozzle Offsets
+Translated:Nozzle Offsets
+
+English:Bend
+Translated:Bend
+
+English:Cut Out
+Translated:Cut Out
+
+English:Pinch
+Translated:Pinch
+
+English:Bend Up
+Translated:Bend Up
+
+English:Align for Dual Extrusion
+Translated:Align for Dual Extrusion
+

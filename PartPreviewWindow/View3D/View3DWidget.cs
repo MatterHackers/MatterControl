@@ -1663,23 +1663,35 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				alignButtons.AddChild(new HorizontalSpacer());
 			}
 
+			var dualExtrusionAlignButton = ApplicationController.Instance.Theme.MenuButtonFactory.Generate("Align for Dual Extrusion".Localize());
+			dualExtrusionAlignButton.Margin = new BorderDouble(21, 0);
+			dualExtrusionAlignButton.HAnchor = HAnchor.Left;
+			buttonPanel.AddChild(dualExtrusionAlignButton);
+
+			AddAlignDelegates(0, AxisAlignment.SourceCoordinateSystem, dualExtrusionAlignButton);
+
 			return widget;
 		}
 
-		internal enum AxisAlignment { Min, Center, Max };
+		internal enum AxisAlignment { Min, Center, Max, SourceCoordinateSystem };
 		private GuiWidget CreateAlignButton(int axisIndex, AxisAlignment alignment, string lable)
 		{
 			var smallMarginButtonFactory = ApplicationController.Instance.Theme.MenuButtonFactory;
 			var alignButton = smallMarginButtonFactory.Generate(lable);
 			alignButton.Margin = new BorderDouble(3, 0);
 
-			int extruderIndexCanPassToClick = axisIndex;
+			AddAlignDelegates(axisIndex, alignment, alignButton);
+
+			return alignButton;
+		}
+
+		private void AddAlignDelegates(int axisIndex, AxisAlignment alignment, Button alignButton)
+		{
 			alignButton.Click += (sender, e) =>
 			{
 				if (Scene.HasSelection)
 				{
 					var transformDatas = GetTransforms(axisIndex, alignment);
-
 					this.Scene.UndoBuffer.AddAndDo(new TransformUndoCommand(transformDatas));
 
 					//Scene.SelectedItem.MaterialIndex = extruderIndexCanPassToClick;
@@ -1689,36 +1701,43 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			alignButton.MouseEnter += (s2, e2) =>
 			{
-				// make a preview of the new positions
-				var transformDatas = GetTransforms(axisIndex, alignment);
-				foreach (var transform in transformDatas)
+				if (Scene.HasSelection)
 				{
-					var copy = transform.TransformedObject.Clone();
-					copy.Matrix = transform.RedoTransform;
-					copy.Color = new RGBA_Bytes(copy.Color, 126);
-					Scene.Children.Add(copy);
+					// make a preview of the new positions
+					var transformDatas = GetTransforms(axisIndex, alignment);
+					foreach (var transform in transformDatas)
+					{
+						var copy = transform.TransformedObject.Clone();
+						copy.Matrix = transform.RedoTransform;
+						copy.Color = new RGBA_Bytes(RGBA_Bytes.Gray, 126);
+						Scene.Children.Add(copy);
+					}
 				}
 			};
 
 			alignButton.MouseLeave += (s3, e3) =>
 			{
-				// clear the preview of the new positions
-				foreach(var child in Scene.Children.ToArray())
+				if (Scene.HasSelection)
 				{
-					if(child.Color.Alpha0To255 == 126)
+					// clear the preview of the new positions
+					foreach (var child in Scene.Children.ToArray())
 					{
-						Scene.Children.Remove(child);
+						if (child.Color.Alpha0To255 == 126)
+						{
+							Scene.Children.Remove(child);
+						}
 					}
 				}
 			};
-
-			return alignButton;
 		}
 
 		private List<TransformData> GetTransforms(int axisIndex, AxisAlignment alignment)
 		{
 			var transformDatas = new List<TransformData>();
 			var totalAABB = Scene.SelectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+
+			Vector3 firstSourceOrigin = new Vector3(double.MaxValue, double.MaxValue, double.MaxValue);
+
 			// move the objects to the right place
 			foreach (var child in Scene.SelectedItem.Children)
 			{
@@ -1735,8 +1754,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						break;
 
 					case AxisAlignment.Max:
+						offset[axisIndex] = totalAABB.maxXYZ[axisIndex] - childAABB.maxXYZ[axisIndex];
+						break;
+
+					case AxisAlignment.SourceCoordinateSystem:
 						{
-							offset[axisIndex] = totalAABB.maxXYZ[axisIndex] - childAABB.maxXYZ[axisIndex];
+							// move the object back to the origin
+							offset = -Vector3.Transform(Vector3.Zero, child.Matrix);
+
+							// figure out how to move it back to the start center
+							if(firstSourceOrigin.x == double.MaxValue)
+							{
+								firstSourceOrigin = -offset;
+							}
+
+							offset += firstSourceOrigin;
 						}
 						break;
 				}
