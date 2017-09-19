@@ -40,7 +40,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class SliceSettingsWidget : FlowLayoutWidget
+	public partial class SliceSettingsWidget : FlowLayoutWidget
 	{
 		private TabControl primaryTabControl;
 		internal PresetsToolbar settingsControlBar;
@@ -720,7 +720,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 			else
 			{
-				return new DisabledOverlay(settingsRow);
+				return new DisableablePanel(settingsRow);
 			}
 		}
 
@@ -733,29 +733,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				AutoExpandBoundsToText = false,
 				ToolTipText = helpText,
 			};
-		}
-
-		private class DisabledOverlay : GuiWidget
-		{
-			private GuiWidget disableOverlay;
-
-			public DisabledOverlay(GuiWidget widgetToWrap)
-			{
-				this.VAnchor = VAnchor.Fit;
-				this.HAnchor = HAnchor.Stretch;
-
-				this.AddChild(widgetToWrap);
-
-				disableOverlay = new GuiWidget()
-				{
-					VAnchor = VAnchor.Stretch,
-					HAnchor = HAnchor.Stretch,
-					BackgroundColor = new RGBA_Bytes(ActiveTheme.Instance.TertiaryBackgroundColor, 200)
-				};
-				this.AddChild(disableOverlay);
-			}
-
-			public override bool Enabled { get => !disableOverlay.Visible; set => disableOverlay.Visible = value; }
 		}
 
 		public static GuiWidget CreateQuickMenu(SliceSettingData settingData, SettingsContext settingsContext, GuiWidget content, InternalTextEditWidget internalTextWidget)

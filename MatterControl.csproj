@@ -143,6 +143,7 @@
     <Compile Include="CustomWidgets\RadioImageWidget.cs" />
     <Compile Include="CustomWidgets\RadioPanelWidget.cs" />
     <Compile Include="CustomWidgets\ValueDisplayInfo.cs" />
+    <Compile Include="CustomWidgets\DisableablePanel.cs" />
     <Compile Include="Utilities\InspectForm.cs" Condition="'$(Configuration)' == 'Debug'">
       <SubType>Form</SubType>
     </Compile>
