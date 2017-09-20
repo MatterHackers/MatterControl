@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl
 			var library3DViewSplitter = new Splitter()
 			{
 				Padding = new BorderDouble(4),
-				SplitterDistance = 254,
+				SplitterDistance = 254 * GuiWidget.DeviceScale,
 				SplitterWidth = ApplicationController.Instance.Theme.SplitterWidth,
 				SplitterBackground = ApplicationController.Instance.Theme.SplitterBackground
 			};
@@ -108,7 +108,7 @@ namespace MatterHackers.MatterControl
 			}
 			buttonView.AddChild(new ImageWidget(icon));
 
-			buttonView.AddChild(new TextWidget("MatterControl", textColor: ActiveTheme.Instance.PrimaryTextColor)
+			buttonView.AddChild(new TextWidget(ApplicationController.Instance.ProductName, textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
 				Margin = new BorderDouble(left: 8),
 				VAnchor = VAnchor.Center

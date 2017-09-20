@@ -311,7 +311,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			this.AddChild(new SettingsItem("Theme".Localize(), new GuiWidget()));
 			this.AddChild(this.GetThemeControl());
 
-			var aboutMatterControl = new SettingsItem("About MatterControl".Localize());
+			var aboutMatterControl = new SettingsItem("About".Localize() + " " + ApplicationController.Instance.ProductName);
 			aboutMatterControl.Click += (s, e) =>
 			{
 				UiThread.RunOnIdle(AboutWindow.Show);

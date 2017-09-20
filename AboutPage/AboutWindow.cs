@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl
 			cancelButton.HAnchor = HAnchor.Right;
 			this.AddChild(cancelButton);
 
-			this.Title = "About MatterControl".Localize();
+			this.Title = "About".Localize() + " " + ApplicationController.Instance.ProductName;
 			this.AlwaysOnTopOfMain = true;
 			this.ShowAsSystemWindow();
 		}
