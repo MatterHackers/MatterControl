@@ -42,16 +42,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class PresetSelectorWidget : FlowLayoutWidget
 	{
+		public DropDownList DropDownList;
 		private string defaultMenuItemText = "- none -".Localize();
 		private Button editButton;
+		private int extruderIndex;
 		private NamedSettingsLayers layerType;
-		GuiWidget pullDownContainer;
-		bool whiteBackground;
-
-		public DropDownList DropDownList;
 		private PrinterConfig printer;
-
-		private int extruderIndex; //For multiple materials
+		private GuiWidget pullDownContainer;
+		private EventHandler unregisterEvents;
+		private bool whiteBackground;
+		//For multiple materials
 
 		public PresetSelectorWidget(PrinterConfig printer, string label, RGBA_Bytes accentColor, NamedSettingsLayers layerType, int extruderIndex, bool whiteBackground = false)
 			: base(FlowDirection.TopToBottom)
@@ -60,11 +60,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.whiteBackground = whiteBackground;
 			Name = label;
 
+			ActiveSliceSettings.MaterialPresetChanged += ActiveSliceSettings_MaterialPresetChanged;
+
 			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
 			{
 				StringEventArgs stringEvent = e as StringEventArgs;
 				if (stringEvent != null
-				&& stringEvent.Data == SettingsKey.layer_name)
+					&& stringEvent.Data == SettingsKey.default_material_presets)
 				{
 					RebuildDropDownList();
 				}
@@ -72,9 +74,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			this.extruderIndex = extruderIndex;
 			this.layerType = layerType;
-			
-			this.HAnchor = HAnchor.Stretch;
-			this.VAnchor = Agg.UI.VAnchor.MaxFitOrStretch;
+
+			this.HAnchor = HAnchor.MaxFitOrStretch;
+			this.VAnchor = VAnchor.MaxFitOrStretch;
 			this.BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor;
 
 			GuiWidget accentBar = new GuiWidget(7, 3)
@@ -87,17 +89,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.AddChild(new TextWidget(label.Localize().ToUpper())
 			{
 				TextColor = whiteBackground ? RGBA_Bytes.Black : ActiveTheme.Instance.PrimaryTextColor,
-				HAnchor = Agg.UI.HAnchor.Left,
+				HAnchor = HAnchor.Left,
 				Margin = new BorderDouble(12, 3, 0, 6)
 			});
 
-			pullDownContainer = new GuiWidget()
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit
-			};
-			pullDownContainer.AddChild(GetPulldownContainer());
-			this.AddChild(pullDownContainer);
+			this.AddChild(GetPulldownContainer());
 			this.AddChild(new VerticalSpacer());
 			this.AddChild(accentBar);
 		}
@@ -108,7 +104,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			FlowLayoutWidget container = new FlowLayoutWidget()
 			{
-				HAnchor = HAnchor.Stretch,
+				HAnchor = HAnchor.MaxFitOrStretch,
 				Padding = new BorderDouble(12, 0),
 				Name = "Preset Pulldown Container"
 			};
@@ -139,7 +135,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							{
 								printer.Settings.SetMaterialPreset(this.extruderIndex, materialKey);
 							},
-							DeleteLayer = () => 
+							DeleteLayer = () =>
 							{
 								var materialKeys = printer.Settings.MaterialSettingsKeys;
 								for (var i = 0; i < materialKeys.Count; i++)
@@ -159,7 +155,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						};
 
 						ApplicationController.Instance.EditMaterialPresetsWindow = new SlicePresetsWindow(printer, presetsContext);
-						ApplicationController.Instance.EditMaterialPresetsWindow.Closed += (s, e2) => 
+						ApplicationController.Instance.EditMaterialPresetsWindow.Closed += (s, e2) =>
 						{
 							ApplicationController.Instance.EditMaterialPresetsWindow = null;
 							ApplicationController.Instance.ReloadAdvancedControlsPanel();
@@ -199,7 +195,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						};
 
 						ApplicationController.Instance.EditQualityPresetsWindow = new SlicePresetsWindow(printer, presetsContext);
-						ApplicationController.Instance.EditQualityPresetsWindow.Closed += (s, e2) => 
+						ApplicationController.Instance.EditQualityPresetsWindow.Closed += (s, e2) =>
 						{
 							ApplicationController.Instance.EditQualityPresetsWindow = null;
 							ApplicationController.Instance.ReloadAdvancedControlsPanel();
@@ -219,67 +215,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return container;
 		}
 
-		private void RebuildDropDownList()
+		public override void OnClosed(ClosedEventArgs e)
 		{
-			pullDownContainer.CloseAllChildren();
-			pullDownContainer.AddChild(GetPulldownContainer());
+			ActiveSliceSettings.MaterialPresetChanged -= ActiveSliceSettings_MaterialPresetChanged;
+			if (unregisterEvents != null)
+			{
+				unregisterEvents(this, null);
+			}
+			base.OnClosed(e);
 		}
 
-		private void MenuItem_Selected(object sender, EventArgs e)
+		private void ActiveSliceSettings_MaterialPresetChanged(object sender, EventArgs e)
 		{
-			// When a preset is selected store the current values of all known settings to compare against after applying the preset
-			Dictionary<string, string> settingBeforeChange = new Dictionary<string, string>();
-			foreach (var keyName in PrinterSettings.KnownSettings)
-			{
-				settingBeforeChange.Add(keyName, printer.Settings.GetValue(keyName));
-			}
-
-			var activeSettings = printer.Settings;
-			MenuItem item = (MenuItem)sender;
-
-			if (layerType == NamedSettingsLayers.Material)
-			{
-				if (activeSettings.GetMaterialPresetKey(extruderIndex) != item.Value)
-				{
-					// Restore deactivated user overrides by iterating the Material preset we're coming off of
-					activeSettings.RestoreConflictingUserOverrides(activeSettings.MaterialLayer);
-
-					activeSettings.SetMaterialPreset(extruderIndex, item.Value);
-
-					// Deactivate conflicting user overrides by iterating the Material preset we've just switched to
-					activeSettings.DeactivateConflictingUserOverrides(activeSettings.MaterialLayer);
-				}
-			}
-			else if (layerType == NamedSettingsLayers.Quality)
-			{
-				if (activeSettings.ActiveQualityKey != item.Value)
-				{
-					// Restore deactivated user overrides by iterating the Quality preset we're coming off of
-					activeSettings.RestoreConflictingUserOverrides(activeSettings.QualityLayer);
-
-					activeSettings.ActiveQualityKey = item.Value;
-
-					// Deactivate conflicting user overrides by iterating the Quality preset we've just switched to
-					activeSettings.DeactivateConflictingUserOverrides(activeSettings.QualityLayer);
-				}
-			}
-
-			// Ensure that activated or deactivated user overrides are always persisted to disk
-			activeSettings.Save();
-
-			UiThread.RunOnIdle(() =>
-			{
-				ApplicationController.Instance.ReloadAdvancedControlsPanel();
-				foreach (var keyName in PrinterSettings.KnownSettings)
-				{
-					if (settingBeforeChange[keyName] != printer.Settings.GetValue(keyName))
-					{
-						ActiveSliceSettings.OnSettingChanged(keyName);
-					}
-				}
-			});
-
-			editButton.Enabled = item.Text != defaultMenuItemText;
+			RebuildDropDownList();
 		}
 
 		private DropDownList CreateDropdown()
@@ -362,19 +310,71 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				GuiWidget.BreakInDebugger(ex.Message);
 			}
-		
+
 			return dropDownList;
 		}
 
-		private EventHandler unregisterEvents;
-
-		public override void OnClosed(ClosedEventArgs e)
+		private void MenuItem_Selected(object sender, EventArgs e)
 		{
-			if (unregisterEvents != null)
+			// When a preset is selected store the current values of all known settings to compare against after applying the preset
+			Dictionary<string, string> settingBeforeChange = new Dictionary<string, string>();
+			foreach (var keyName in PrinterSettings.KnownSettings)
 			{
-				unregisterEvents(this, null);
+				settingBeforeChange.Add(keyName, printer.Settings.GetValue(keyName));
 			}
-			base.OnClosed(e);
+
+			var activeSettings = printer.Settings;
+			MenuItem item = (MenuItem)sender;
+
+			if (layerType == NamedSettingsLayers.Material)
+			{
+				if (activeSettings.GetMaterialPresetKey(extruderIndex) != item.Value)
+				{
+					// Restore deactivated user overrides by iterating the Material preset we're coming off of
+					activeSettings.RestoreConflictingUserOverrides(activeSettings.MaterialLayer);
+
+					activeSettings.SetMaterialPreset(extruderIndex, item.Value);
+
+					// Deactivate conflicting user overrides by iterating the Material preset we've just switched to
+					activeSettings.DeactivateConflictingUserOverrides(activeSettings.MaterialLayer);
+				}
+			}
+			else if (layerType == NamedSettingsLayers.Quality)
+			{
+				if (activeSettings.ActiveQualityKey != item.Value)
+				{
+					// Restore deactivated user overrides by iterating the Quality preset we're coming off of
+					activeSettings.RestoreConflictingUserOverrides(activeSettings.QualityLayer);
+
+					activeSettings.ActiveQualityKey = item.Value;
+
+					// Deactivate conflicting user overrides by iterating the Quality preset we've just switched to
+					activeSettings.DeactivateConflictingUserOverrides(activeSettings.QualityLayer);
+				}
+			}
+
+			// Ensure that activated or deactivated user overrides are always persisted to disk
+			activeSettings.Save();
+
+			UiThread.RunOnIdle(() =>
+			{
+				ApplicationController.Instance.ReloadAdvancedControlsPanel();
+				foreach (var keyName in PrinterSettings.KnownSettings)
+				{
+					if (settingBeforeChange[keyName] != printer.Settings.GetValue(keyName))
+					{
+						ActiveSliceSettings.OnSettingChanged(keyName);
+					}
+				}
+			});
+
+			editButton.Enabled = item.Text != defaultMenuItemText;
+		}
+
+		private void RebuildDropDownList()
+		{
+			pullDownContainer.CloseAllChildren();
+			pullDownContainer.AddChild(GetPulldownContainer());
 		}
 
 		private void SettingsLayers_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
