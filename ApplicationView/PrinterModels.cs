@@ -307,9 +307,9 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public void RecreateBed()
+		public void InvalidateBedMesh()
 		{
-			// Invalidate bed mesh
+			// Invalidate bed mesh cache
 			_bedMesh = null;
 		}
 	}
@@ -367,7 +367,7 @@ namespace MatterHackers.MatterControl
 				{
 					_settings = value;
 					this.ReloadSettings();
-					this.Bed.RecreateBed();
+					this.Bed.InvalidateBedMesh();
 				}
 			}
 		}
@@ -407,7 +407,7 @@ namespace MatterHackers.MatterControl
 					|| stringEvent.Data == SettingsKey.bed_shape)
 				{
 					this.ReloadSettings();
-					this.Bed.RecreateBed();
+					this.Bed.InvalidateBedMesh();
 				}
 			}
 		}
