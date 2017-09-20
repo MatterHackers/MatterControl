@@ -96,7 +96,8 @@ namespace MatterHackers.MeshVisualizer
 			BedColor = new RGBA_Floats(.8, .8, .8, .7).GetAsRGBA_Bytes();
 			BuildVolumeColor = new RGBA_Floats(.2, .8, .3, .2).GetAsRGBA_Bytes();
 
-			this.interactionLayer.DrawGlContent += this.trackballTumbleWidget_DrawGlContent;
+			this.interactionLayer.DrawGlOpaqueContent += this.DrawOpaqueGlContent;
+			this.interactionLayer.DrawGlTransparentContent += this.DrawTransparentGlContent;
 		}
 
 		public override void OnParentChanged(EventArgs e)
@@ -464,7 +465,16 @@ namespace MatterHackers.MeshVisualizer
 			return bCenterInViewSpace.LengthSquared.CompareTo(aCenterInViewSpace.LengthSquared);
 		}
 
-		private void trackballTumbleWidget_DrawGlContent(object sender, DrawEventArgs e)
+		private void DrawOpaqueGlContent(object sender, DrawEventArgs e)
+		{
+			List<MeshRenderData> transparentMeshes = new List<MeshRenderData>();
+			foreach (var object3D in scene.Children)
+			{
+				DrawObject(object3D, transparentMeshes, false, e);
+			}
+		}
+
+		private void DrawTransparentGlContent(object sender, DrawEventArgs e)
 		{
 			List<MeshRenderData> transparentMeshes = new List<MeshRenderData>();
 			foreach (var object3D in scene.Children)
