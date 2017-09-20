@@ -34,7 +34,6 @@ using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
-using MatterHackers.MatterControl;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
@@ -45,24 +44,15 @@ namespace MatterHackers.MatterControl
 	{
 		private static ImageBuffer watermarkImage = null;
 
-		private BedShape bedShape;
-		private Vector3 viewerVolume;
-		private Vector2 bedCenter;
-		private Mesh buildVolume = null;
-
 		private RGBA_Bytes bedBaseColor = new RGBA_Bytes(245, 245, 255);
 		private RGBA_Bytes bedMarkingsColor = RGBA_Bytes.Black;
 		private Mesh printerBed = null;
 
 		public Mesh CreatePrintBed(PrinterConfig printer)
 		{
-			ImageBuffer BedImage;
+			Mesh buildVolume = null;
 
-			bedCenter = printer.Bed.BedCenter;
-			bedShape = printer.Bed.BedShape;
-			viewerVolume = printer.Bed.ViewerVolume;
-
-			Vector3 displayVolumeToBuild = Vector3.ComponentMax(viewerVolume, new Vector3(1, 1, 1));
+			Vector3 displayVolumeToBuild = Vector3.ComponentMax(printer.Bed.ViewerVolume, new Vector3(1, 1, 1));
 
 			double sizeForMarking = Math.Max(displayVolumeToBuild.x, displayVolumeToBuild.y);
 			double divisor = 10;
@@ -80,7 +70,7 @@ namespace MatterHackers.MatterControl
 
 			ImageBuffer bedplateImage;
 
-			switch (bedShape)
+			switch (printer.Bed.BedShape)
 			{
 				case BedShape.Rectangular:
 					if (displayVolumeToBuild.z > 0)
@@ -92,7 +82,7 @@ namespace MatterHackers.MatterControl
 						}
 					}
 
-					bedplateImage = CreateRectangularBedGridImage(displayVolumeToBuild, bedCenter, divisor, skip);
+					bedplateImage = CreateRectangularBedGridImage(printer, displayVolumeToBuild, divisor, skip);
 
 					ApplyOemBedImage(bedplateImage);
 
@@ -143,14 +133,14 @@ namespace MatterHackers.MatterControl
 			var zTop = printerBed.GetAxisAlignedBoundingBox().maxXYZ.z;
 			foreach (Vertex vertex in printerBed.Vertices)
 			{
-				vertex.Position = vertex.Position - new Vector3(-bedCenter, zTop + .02);
+				vertex.Position = vertex.Position - new Vector3(-printer.Bed.BedCenter, zTop + .02);
 			}
 
 			if (buildVolume != null)
 			{
 				foreach (Vertex vertex in buildVolume.Vertices)
 				{
-					vertex.Position = vertex.Position - new Vector3(-bedCenter, 2.2);
+					vertex.Position = vertex.Position - new Vector3(-printer.Bed.BedCenter, 2.2);
 				}
 			}
 			
@@ -191,7 +181,7 @@ namespace MatterHackers.MatterControl
 			return bedplateImage;
 		}
 
-		private ImageBuffer CreateRectangularBedGridImage(Vector3 displayVolumeToBuild, Vector2 bedCenter, double divisor, double skip)
+		private ImageBuffer CreateRectangularBedGridImage(PrinterConfig printer, Vector3 displayVolumeToBuild, double divisor, double skip)
 		{
 			var bedplateImage = new ImageBuffer(1024, 1024);
 			Graphics2D graphics2D = bedplateImage.NewGraphics2D();
@@ -200,7 +190,7 @@ namespace MatterHackers.MatterControl
 			{
 				double lineDist = bedplateImage.Width / (displayVolumeToBuild.x / divisor);
 
-				double xPositionCm = (-(viewerVolume.x / 2.0) + bedCenter.x) / divisor;
+				double xPositionCm = (-(printer.Bed.ViewerVolume.x / 2.0) + printer.Bed.BedCenter.x) / divisor;
 				int xPositionCmInt = (int)Math.Round(xPositionCm);
 				double fraction = xPositionCm - xPositionCmInt;
 				int pointSize = 20;
@@ -222,7 +212,7 @@ namespace MatterHackers.MatterControl
 			{
 				double lineDist = bedplateImage.Height / (displayVolumeToBuild.y / divisor);
 
-				double yPositionCm = (-(viewerVolume.y / 2.0) + bedCenter.y) / divisor;
+				double yPositionCm = (-(printer.Bed.ViewerVolume.y / 2.0) + printer.Bed.BedCenter.y) / divisor;
 				int yPositionCmInt = (int)Math.Round(yPositionCm);
 				double fraction = yPositionCm - yPositionCmInt;
 				int pointSize = 20;
