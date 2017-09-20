@@ -172,11 +172,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				Margin = 0,
 			};
 
-			imageWidget.Click += (sender, e) =>
-			{
-				this.OnItemSelect();
-			};
-
 			container.AddChild(imageWidget);
 
 			int maxWidth = thumbWidth - 4;

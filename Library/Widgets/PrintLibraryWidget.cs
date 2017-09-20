@@ -77,6 +77,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor,
 			};
 
+			ApplicationController.Instance.Library.ActiveViewWidget = libraryView;
+
 			libraryView.SelectedItems.CollectionChanged += SelectedItems_CollectionChanged;
 
 			ApplicationController.Instance.Library.ContainerChanged += Library_ContainerChanged;
@@ -381,22 +383,10 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				AllowContainers = false,
 				Action = async (selectedLibraryItems, listView) =>
 				{
-					var itemsToAdd = new List<IObject3D>();
-
-					var library = ApplicationController.Instance.Library;
-
-					ApplicationController.Instance.ActiveView3DWidget.partHasBeenEdited = true;
-
 					var scene = ApplicationController.Instance.DragDropData.Scene;
 					scene.ModifyChildren(children =>
 					{
 						children.Add(new InsertionGroup(selectedLibraryItems));
-
-						//foreach (var sceneItem in itemsToAdd)
-						//{
-						//	PlatingHelper.MoveToOpenPosition(sceneItem, children);
-						//	children.Add(sceneItem);
-						//}
 					});
 				}
 			});

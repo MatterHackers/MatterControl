@@ -246,66 +246,29 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			mouseDownInBounds = true;
 			mouseDownAt = mouseEvent.Position;
 
+			// Force selection in mousedown to ensure DragDropOperations see the item in ListView.SelectedItems - no worse than common tab behavior that apply on mousedown
+			this.OnItemSelect();
+
 			if (IsDoubleClick(mouseEvent))
 			{
 				listViewItem.OnDoubleClick();
 			}
 
 			// On mouse down update the view3DWidget reference that will be used in MouseMove and MouseUp
-			view3DWidget = ApplicationController.Instance.ActiveView3DWidget;
+			view3DWidget = ApplicationController.Instance.DragDropData.View3DWidget;
 
 			base.OnMouseDown(mouseEvent);
 		}
-
-
-		private bool contentLoadActive = false;
 
 		public override void OnMouseMove(MouseEventArgs mouseEvent)
 		{
 			var delta = mouseDownAt - mouseEvent.Position;
 
-			// TODO: dragActive in this case is better determined by the mouse being over the View3D control
-			bool dragActive = mouseDownInBounds && delta.Length > 40;
-
-			// If dragging and the drag threshold has been hit, start a drag operation but loading the drag items
-			if (dragActive 
-				&& (listViewItem.Model is ILibraryContentStream || listViewItem.Model is ILibraryContentItem))
+			// If mouseDown on us and we've moved past are drag determination threshold, notify view3DWidget
+			if (mouseDownInBounds && delta.Length > 40)
 			{
-				if (view3DWidget != null 
-					&& !contentLoadActive
-					&& view3DWidget.DragDropSource == null)
-				{
-					contentLoadActive = true;
-
-					if (listViewItem.Model is ILibraryContentStream contentModel)
-					{
-						// Update the ListView pointer for the dragging item
-						listViewItem.ListView.DragSourceRowItem = listViewItem;
-
-						var progressBar = new DragDropLoadProgress(this.view3DWidget, null);
-
-						var contentResult = contentModel.CreateContent(progressBar.ProgressReporter);
-
-						progressBar.TrackingObject = contentResult.Object3D;
-
-						// Assign a new drag source
-						view3DWidget.DragDropSource = contentResult?.Object3D;
-
-						contentLoadActive = false;
-					}
-					else if (listViewItem.Model is ILibraryContentItem contentItem)
-					{
-						contentItem.GetContent(null).ContinueWith((task) =>
-						{
-							view3DWidget.DragDropSource = task.Result;
-							contentLoadActive = false;
-						});
-					}
-				} 
-
-				// Performs move in View3DWidget and indicates if add occurred
-				var screenSpaceMousePosition = this.TransformToScreenSpace(mouseEvent.Position);
-				view3DWidget.AltDragOver(screenSpaceMousePosition);
+				// Performs move and possible Scene add in View3DWidget
+				view3DWidget.ExternalDragOver(screenSpaceMousePosition: this.TransformToScreenSpace(mouseEvent.Position));
 			}
 
 			base.OnMouseMove(mouseEvent);
@@ -314,27 +277,14 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		public override void OnMouseUp(MouseEventArgs mouseEvent)
 		{
 			var dropData = ApplicationController.Instance.DragDropData;
-
-			if (dropData.View3DWidget?.DragDropSource != null && dropData.Scene.Children.Contains(view3DWidget.DragDropSource))
+			if (dropData.View3DWidget?.DragOperationActive == true)
 			{
 				// Mouse and widget positions
 				var screenSpaceMousePosition = this.TransformToScreenSpace(mouseEvent.Position);
 				var meshViewerPosition = this.view3DWidget.meshViewerWidget.TransformToScreenSpace(view3DWidget.meshViewerWidget.LocalBounds);
 
-				// If the mouse is not within the meshViewer, remove the inserted drag item
-				if (!meshViewerPosition.Contains(screenSpaceMousePosition))
-				{
-					dropData.Scene.ModifyChildren(children => children.Remove(view3DWidget.DragDropSource));
-					dropData.Scene.ClearSelection();
-				}
-				else
-				{
-					// Create and push the undo operation
-					view3DWidget.AddUndoOperation(
-						new InsertCommand(view3DWidget, dropData.Scene, view3DWidget.DragDropSource));
-				}
-
-				view3DWidget.FinishDrop();
+				// Notify of drag operation complete
+				view3DWidget.FinishDrop(mouseUpInBounds: meshViewerPosition.Contains(screenSpaceMousePosition));
 			}
 
 			mouseDownInBounds = false;

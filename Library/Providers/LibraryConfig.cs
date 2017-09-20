@@ -31,7 +31,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using MatterHackers.Agg.Platform;
+using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl.Library
 {
@@ -62,37 +62,20 @@ namespace MatterHackers.MatterControl.Library
 		// TODO: Needed?
 		public event EventHandler LibraryItemsChanged;
 
-		/// <summary>
-		/// Storage for plugin 'Creators' added via RegisterCreator
-		/// </summary>
-		//private CreatorsContainer registeredCreators;
-
 		private List<ILibraryContainerLink> libraryProviders;
 
 		private ILibraryContainer activeContainer;
 		
 		public LibraryConfig()
 		{
-			//registeredCreators = new CreatorsContainer()
-			//{
-			//	Name = "Creators",
-			//	ChildContainers = new List<ILibraryContainerLink>(),
-			//	Items = new List<ILibraryItem>()
-			//};
-
-			libraryProviders = new List<ILibraryContainerLink>()
-			{
-				/*
-				new DynamicContainerLink(
-					registeredCreators.Name,
-					AggContext.StaticData.LoadIcon("icon_creator.png"),
-					() => registeredCreators), */
-			};
+			libraryProviders = new List<ILibraryContainerLink>();
 
 			this.RootLibaryContainer = new RootLibraryContainer(libraryProviders);
 
 			this.ActiveContainer = this.RootLibaryContainer;
 		}
+
+		public ListView ActiveViewWidget { get; internal set; }
 
 		public ILibraryContainer RootLibaryContainer { get; }
 
