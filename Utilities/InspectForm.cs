@@ -32,6 +32,8 @@ namespace MatterHackers.MatterControl
 			treeView1.SuspendLayout();
 			this.AddTree(inspectedSystemWindow, null, "SystemWindow");
 			treeView1.ResumeLayout();
+
+			this.TopMost = true;
 		}
 
 		public bool Inspecting { get; set; } = true;
@@ -48,7 +50,7 @@ namespace MatterHackers.MatterControl
 
 				const int WS_EX_NOACTIVATE = 0x08000000;
 				const int WS_EX_TOOLWINDOW = 0x00000080;
-				baseParams.ExStyle |= (int)(WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW);
+				baseParams.ExStyle |= (int)(WS_EX_NOACTIVATE); // | WS_EX_TOOLWINDOW);
 
 				return baseParams;
 			}
@@ -314,12 +316,13 @@ namespace MatterHackers.MatterControl
 
 			if (node.IsVisible)
 			{
+				var widget = node.Tag as GuiWidget;
 				Brush brush;
 				if (node == activeTreeNode)
 				{
 					brush = SystemBrushes.Highlight;
 				}
-				else if (ancestryTree.Contains(node.Tag as GuiWidget))
+				else if (ancestryTree.Contains(widget))
 				{
 					brush = Brushes.LightBlue;
 				}
@@ -335,7 +338,7 @@ namespace MatterHackers.MatterControl
 					node.Text,
 					node == activeTreeNode ? boldFont : node.NodeFont,
 					new Point(node.Bounds.Left, node.Bounds.Top),
-					Color.Black,
+					widget.ActuallyVisibleOnScreen() ? SystemColors.ControlText : SystemColors.GrayText,
 					Color.Transparent);
 			}
 		}
