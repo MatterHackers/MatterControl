@@ -284,16 +284,6 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private void btnAddSiblings_Click(object sender, EventArgs e)
-		{
-			AddAllItems(this.InspectedWidget?.Parent?.Children);
-		}
-
-		private void btnAddChildren_Click(object sender, EventArgs e)
-		{
-			AddAllItems(this.InspectedWidget?.Children);
-		}
-
 		private void AddAllItems(IEnumerable<GuiWidget> items)
 		{
 			if (items != null)
