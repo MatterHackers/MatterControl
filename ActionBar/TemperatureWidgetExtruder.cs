@@ -201,7 +201,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		{
 			var widget = new IgnoredPopupWidget()
 			{
-				Width = 300,
+				Width = 350,
 				HAnchor = HAnchor.Absolute,
 				VAnchor = VAnchor.Fit,
 				BackgroundColor = RGBA_Bytes.White,

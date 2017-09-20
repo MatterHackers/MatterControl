@@ -29,11 +29,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			this.HAnchor = HAnchor.Stretch;
 			this.MinimumSize = new Vector2(0, 40);
 
-			if (optionalControls != null)
-			{
-				optionalControls.VAnchor |= VAnchor.Center;
-			}
-
 			if (imageBuffer != null)
 			{
 				this.AddChild(new ImageWidget(imageBuffer)
@@ -69,7 +64,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			if (settingsControls != null)
 			{
-				settingsControls.VAnchor |= VAnchor.Center;
 				this.AddChild(settingsControls);
 			}
 		}
