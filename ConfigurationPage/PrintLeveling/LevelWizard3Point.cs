@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			: base(printer, 500, 370, 9)
 		{
 			levelingStrings = new LevelingStrings(printer.Settings);
-			string printLevelWizardTitle = "MatterControl".Localize();
+			string printLevelWizardTitle = ApplicationController.Instance.ProductName;
 			string printLevelWizardTitleFull = "Print Leveling Wizard".Localize();
 			Title = string.Format("{0} - {1}", printLevelWizardTitle, printLevelWizardTitleFull);
 			List<ProbePosition> probePositions = new List<ProbePosition>(3);

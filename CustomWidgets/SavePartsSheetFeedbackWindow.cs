@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl
 			: base(300, 500)
 		{
 			this.BackgroundColor = backgroundColor;
-			this.Title = "MatterControl".Localize() + " - " + "Saving to Parts Sheet".Localize();
+			this.Title = ApplicationController.Instance.ProductName + " - " + "Saving to Parts Sheet".Localize();
 			this.totalParts = totalParts;
 
 			feedback = new FlowLayoutWidget(FlowDirection.TopToBottom);

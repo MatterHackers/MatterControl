@@ -155,7 +155,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			: base(printer, width, height, totalSteps)
 		{
 			levelingStrings = new LevelingStrings(printer.Settings);
-			string printLevelWizardTitle = "MatterControl";
+			string printLevelWizardTitle = ApplicationController.Instance.ProductName;
 			string printLevelWizardTitleFull = "Print Leveling Wizard".Localize();
 			Title = string.Format("{0} - {1}", printLevelWizardTitle, printLevelWizardTitleFull);
 			int probeCount = gridWidth * gridHeight;

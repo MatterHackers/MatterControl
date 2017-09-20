@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl
 			if (true)
 			{
 				// export as matter control
-				matterControlButton = new RadioButton("MatterControl".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
+				matterControlButton = new RadioButton(ApplicationController.Instance.ProductName, textColor: ActiveTheme.Instance.PrimaryTextColor);
 				matterControlButton.Checked = true;
 				container.AddChild(matterControlButton);
 

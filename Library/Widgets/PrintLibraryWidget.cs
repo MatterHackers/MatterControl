@@ -493,7 +493,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 									new SaveFileDialogParams("Save Parts Sheet|*.pdf")
 									{
 										ActionButtonLabel = "Save Parts Sheet".Localize(),
-										Title = "MatterControl".Localize() + ": " + "Save".Localize()
+										Title = ApplicationController.Instance.ProductName + " - " + "Save".Localize()
 									},
 									(saveParams) =>
 									{
