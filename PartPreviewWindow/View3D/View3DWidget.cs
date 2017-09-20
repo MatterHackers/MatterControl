@@ -542,7 +542,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.SwitchStateToEditing();
 
-			this.InteractionLayer.DrawGlContent += TrackballTumbleWidget_DrawGlContent;
+			this.InteractionLayer.DrawGlOpaqueContent += TrackballTumbleWidget_DrawGlContent;
 		}
 
 		private void CreateActionSeparator(GuiWidget container)
@@ -821,7 +821,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				meshViewerWidget.AfterDraw -= AfterDraw3DContent;
 			}
 
-			this.InteractionLayer.DrawGlContent -= TrackballTumbleWidget_DrawGlContent;
+			this.InteractionLayer.DrawGlOpaqueContent -= TrackballTumbleWidget_DrawGlContent;
 
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
