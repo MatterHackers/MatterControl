@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 		public int ThumbWidth { get; } = 50;
 		public int ThumbHeight { get; } = 50;
 
-		public HistoryListView(BedConfig sceneContext)
+		public HistoryListView()
 			: base(FlowDirection.TopToBottom)
 		{
 		}
