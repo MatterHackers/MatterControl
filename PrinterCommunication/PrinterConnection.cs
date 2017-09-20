@@ -257,8 +257,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private double feedRateRatio = 1;
 
-		public PrinterConnection()
+		public PrinterConnection(PrinterConfig printer)
 		{
+			this.printer = printer;
+
 			TerminalLog = new TerminalLog(this);
 
 			MonitorPrinterTemperature = true;
@@ -880,7 +882,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		}
 
 		// HACK: PrinterConnection must be revised to take a constructor that receives and stores a reference to its parent PrinterConfig - this 
-		internal PrinterConfig printer { private get; set; }
+		private PrinterConfig printer {  get; set; }
 
 		private int NumberOfLinesInCurrentPrint => loadedGCode.LineCount;
 
