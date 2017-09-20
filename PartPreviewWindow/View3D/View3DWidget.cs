@@ -50,6 +50,7 @@ using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.PrintLibrary;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MeshVisualizer;
@@ -583,31 +584,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		public ILibraryContentStream DragSourceModel { get; set; }
-
-		// TODO: Rename to DragDropItem
-
-		private IObject3D dragDropSource;
-		public IObject3D DragDropSource
-		{
-			get
-			{
-				return dragDropSource;
-			}
-
-			set
-			{
-				// <IObject3D>
-				dragDropSource = value;
-
-				// Clear the DragSourceModel - <ILibraryItem>
-				DragSourceModel = null;
-
-				// Suppress ui volumes when dragDropSource is not null
-				meshViewerWidget.SuppressUiVolumes = (dragDropSource != null);
-			}
-		}
-
 		private void TrackballTumbleWidget_DrawGlContent(object sender, DrawEventArgs e)
 		{
 			if (CurrentSelectInfo.DownOnPart
@@ -851,42 +827,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnClosed(e);
 		}
 
-		public override void OnMouseEnterBounds(MouseEventArgs mouseEvent)
-		{
-			if (mouseEvent.DragFiles?.Count > 0)
-			{
-				if (AllowDragDrop())
-				{
-					mouseEvent.AcceptDrop = mouseEvent.DragFiles.TrueForAll(filePath => ApplicationController.Instance.IsLoadableFile(filePath));
-
-					if (mouseEvent.AcceptDrop)
-					{
-						string filePath = mouseEvent.DragFiles.FirstOrDefault();
-						string extensionWithoutPeriod = Path.GetExtension(filePath).Trim('.');
-
-						IContentProvider contentProvider;
-						if (!string.IsNullOrEmpty(filePath)
-							&& ApplicationController.Instance.Library.ContentProviders.TryGetValue(extensionWithoutPeriod, out contentProvider)
-							&& contentProvider is ISceneContentProvider)
-						{
-							var sceneProvider = contentProvider as ISceneContentProvider;
-							this.DragDropSource = sceneProvider.CreateItem(new FileSystemFileItem(filePath), null).Object3D;
-						}
-						else
-						{
-							this.DragDropSource = new Object3D
-							{
-								ItemType = Object3DTypes.Model,
-								Mesh = PlatonicSolids.CreateCube(10, 10, 10)
-							};
-						}
-					}
-				}
-			}
-
-			base.OnMouseEnterBounds(mouseEvent);
-		}
-
 		public override void OnVisibleChanged(EventArgs e)
 		{
 			var dragDropData = ApplicationController.Instance.DragDropData;
@@ -912,89 +852,119 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private PlaneShape bedPlane = new PlaneShape(Vector3.UnitZ, 0, null);
 
+		public bool DragOperationActive { get; private set; }
+
+		public IObject3D DragDropObject { get; private set; }
+
 		/// <summary>
 		/// Provides a View3DWidget specific drag implementation
 		/// </summary>
 		/// <param name="screenSpaceMousePosition">The screen space mouse position.</param>
-		/// <returns>A value indicating if a new item was generated for the DragDropSource and added to the scene</returns>
-		public bool AltDragOver(Vector2 screenSpaceMousePosition)
+		public void ExternalDragOver(Vector2 screenSpaceMousePosition)
 		{
-			if (this.HasBeenClosed || this.DragDropSource == null)
+			if (this.HasBeenClosed)
 			{
-				return false;
+				return;
 			}
 
-			bool itemAddedToScene = false;
-
+			// If the mouse is within the MeshViewer process the Drag move
 			var meshViewerPosition = this.meshViewerWidget.TransformToScreenSpace(meshViewerWidget.LocalBounds);
-
-			// If the mouse is within this control
-			if (meshViewerPosition.Contains(screenSpaceMousePosition)
-				&& this.DragDropSource != null)
+			if (meshViewerPosition.Contains(screenSpaceMousePosition))
 			{
-				var localPosition = this.TransformFromParentSpace(topMostParent, screenSpaceMousePosition);
-
-				// Inject the DragDropSource if it's missing from the scene, using the default "loading" mesh
-				if (!Scene.Children.Contains(DragDropSource))
+				// If already started, process drag move
+				if (this.DragOperationActive)
 				{
-					// Set the hitplane to the bed plane
-					CurrentSelectInfo.HitPlane = bedPlane;
+					this.DragOver(screenSpaceMousePosition);
+				}
+				else
+				{
+					// Otherwise begin an externally started DragDropOperation hard-coded to use LibraryView->SelectedItems
 
-					// Find intersection position of the mouse with the bed plane
-					var intersectInfo = GetIntersectPosition(screenSpaceMousePosition);
-					if (intersectInfo == null)
-					{
-						return false;
-					}
-
-					// Set the initial transform on the inject part to the current transform mouse position
-					var sourceItemBounds = DragDropSource.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
-					var center = sourceItemBounds.Center;
-
-					DragDropSource.Matrix *= Matrix4X4.CreateTranslation(-center.x, -center.y, -sourceItemBounds.minXYZ.z);
-					DragDropSource.Matrix *= Matrix4X4.CreateTranslation(new Vector3(intersectInfo.HitPosition));
-
-					CurrentSelectInfo.PlaneDownHitPos = intersectInfo.HitPosition;
-					CurrentSelectInfo.LastMoveDelta = Vector3.Zero;
-
-					this.deferEditorTillMouseUp = true;
-
-					// Add item to scene and select it
-					Scene.ModifyChildren(children =>
-					{
-						children.Add(DragDropSource);
-					});
-					Scene.SelectedItem = DragDropSource;
-
-					itemAddedToScene = true;
+					this.StartDragDrop(
+						// Project from ListViewItem to ILibraryItem
+						ApplicationController.Instance.Library.ActiveViewWidget.SelectedItems.Select(l => l.Model),
+						screenSpaceMousePosition);
 				}
 
-				// Move the object being dragged
-				if (Scene.HasSelection)
-				{
-					// Pass the mouse position, transformed to local cords, through to the view3D widget to move the target item
-					localPosition = meshViewerWidget.TransformFromScreenSpace(screenSpaceMousePosition);
-					DragSelectedObject(localPosition);
-				}
-
-				return itemAddedToScene;
+				
 			}
-
-			return false;
 		}
 
-		internal void FinishDrop()
+		private void DragOver(Vector2 screenSpaceMousePosition)
 		{
-			this.DragDropSource = null;
-			this.DragSourceModel = null;
+			// Move the object being dragged
+			if (this.DragOperationActive
+				&& this.DragDropObject != null)
+			{
+				// Move the DropDropObject the target item
+				DragSelectedObject(localMousePostion: this.TransformFromParentSpace(topMostParent, screenSpaceMousePosition));
+			}
+		}
 
-			this.deferEditorTillMouseUp = false;
-			Scene_SelectionChanged(null, null);
+		private void StartDragDrop(IEnumerable<ILibraryItem> items, Vector2 screenSpaceMousePosition)
+		{
+			this.DragOperationActive = true;
 
-			this.PartHasBeenChanged();
+			// Set the hitplane to the bed plane
+			CurrentSelectInfo.HitPlane = bedPlane;
 
-			// Set focus to View3DWidget after drag-drop
-			UiThread.RunOnIdle(this.Focus);
+			DragDropObject = new InsertionGroup(items);
+
+			// Find intersection position of the mouse with the bed plane
+			var intersectInfo = GetIntersectPosition(screenSpaceMousePosition);
+			if (intersectInfo != null)
+			{
+				// Set the initial transform on the inject part to the current transform mouse position
+				var sourceItemBounds = DragDropObject.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+				var center = sourceItemBounds.Center;
+
+				this.DragDropObject.Matrix *= Matrix4X4.CreateTranslation(-center.x, -center.y, -sourceItemBounds.minXYZ.z);
+				this.DragDropObject.Matrix *= Matrix4X4.CreateTranslation(new Vector3(intersectInfo.HitPosition));
+
+				CurrentSelectInfo.PlaneDownHitPos = intersectInfo.HitPosition;
+				CurrentSelectInfo.LastMoveDelta = Vector3.Zero;
+			}
+
+			this.deferEditorTillMouseUp = true;
+
+			// Add item to scene and select it
+			this.Scene.ModifyChildren(children =>
+			{
+				children.Add(this.DragDropObject);
+			});
+			Scene.SelectedItem = this.DragDropObject;
+
+		}
+
+		internal void FinishDrop(bool mouseUpInBounds)
+		{
+			if (this.DragOperationActive)
+			{
+				this.DragOperationActive = false;
+
+				if (mouseUpInBounds)
+				{
+					// Create and push the undo operation
+					this.AddUndoOperation(
+						new InsertCommand(this, this.Scene, this.DragDropObject));
+				}
+				else
+				{
+					Scene.ModifyChildren(children => children.Remove(this.DragDropObject));
+					Scene.ClearSelection();
+				}
+
+				this.DragDropObject = null;
+
+				this.deferEditorTillMouseUp = false;
+				Scene_SelectionChanged(null, null);
+
+				this.PartHasBeenChanged();
+
+				// Set focus to View3DWidget after drag-drop
+				UiThread.RunOnIdle(this.Focus);
+
+			}
 		}
 
 		public override void OnLoad(EventArgs args)
@@ -1007,86 +977,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			dragDropData.Scene = sceneContext.Scene;
 
 			base.OnLoad(args);
-		}
-
-		/// <summary>
-		/// Loads the referenced DragDropSource object.
-		/// </summary>
-		/// <param name="dragSource">The drag source at the original time of invocation.</param>
-		/// <returns></returns>
-		public async Task LoadDragSource(ListViewItem sourceListItem)
-		{
-			// Hold initial reference
-			IObject3D dragDropItem = DragDropSource;
-			if (dragDropItem == null)
-			{
-				return;
-			}
-
-			this.DragSourceModel = sourceListItem?.Model as ILibraryContentStream;
-
-			IObject3D loadedItem = await Task.Run(async () =>
-			{
-				if (File.Exists(dragDropItem.MeshPath))
-				{
-					string extensionWithoutPeriod = Path.GetExtension(dragDropItem.MeshPath).Trim('.');
-
-					if (ApplicationController.Instance.Library.ContentProviders.ContainsKey(extensionWithoutPeriod))
-					{
-						return null;
-					}
-					else
-					{
-						return Object3D.Load(dragDropItem.MeshPath, CancellationToken.None, progress: new DragDropLoadProgress(this, dragDropItem).ProgressReporter);
-					}
-				}
-				else if (DragSourceModel != null)
-				{
-					var loadProgress = new DragDropLoadProgress(this, dragDropItem);
-
-					ContentResult contentResult;
-
-					if (sourceListItem == null)
-					{
-						contentResult = DragSourceModel.CreateContent(loadProgress.ProgressReporter);
-						await contentResult.MeshLoaded;
-					}
-					else
-					{
-						sourceListItem.StartProgress();
-
-						contentResult = DragSourceModel.CreateContent((double ratio, string state) =>
-						{
-							sourceListItem.ProgressReporter(ratio, state);
-							loadProgress.ProgressReporter(ratio, state);
-						});
-
-						await contentResult.MeshLoaded;
-
-						sourceListItem.EndProgress();
-
-						loadProgress.ProgressReporter(1, "");
-					}
-
-					return contentResult?.Object3D;
-				}
-
-				return null;
-			});
-
-			if (loadedItem != null)
-			{
-				Vector3 meshGroupCenter = loadedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity).Center;
-
-				dragDropItem.Mesh = loadedItem.Mesh;
-				dragDropItem.Children = loadedItem.Children;
-
-				// TODO: jlewin - also need to apply the translation to the scale/rotation from the source (loadedItem.Matrix)
-				dragDropItem.Matrix = loadedItem.Matrix * dragDropItem.Matrix;
-				dragDropItem.Matrix *= Matrix4X4.CreateTranslation(-meshGroupCenter.x, -meshGroupCenter.y, -dragDropItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity).minXYZ.z);
-			}
-
-			this.PartHasBeenChanged();
 		}
 
 		public override void OnDraw(Graphics2D graphics2D)
@@ -1491,28 +1381,27 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnMouseMove(MouseEventArgs mouseEvent)
 		{
-			if (AllowDragDrop() && mouseEvent.DragFiles?.Count == 1)
+			// File system Drop validation
+			mouseEvent.AcceptDrop = this.AllowDragDrop()
+					&& mouseEvent.DragFiles?.Count > 0
+					&& mouseEvent.DragFiles.TrueForAll(filePath => ApplicationController.Instance.IsLoadableFile(filePath));
+
+			// View3DWidgets Filesystem DropDrop handler
+			if (mouseEvent.AcceptDrop
+				&& this.PositionWithinLocalBounds(mouseEvent.X, mouseEvent.Y))
 			{
-				var screenSpaceMousePosition = this.TransformToScreenSpace(new Vector2(mouseEvent.X, mouseEvent.Y));
-
-				// If the DragDropSource was added to the scene on this DragOver call, we start a task to replace 
-				// the "loading" mesh with the actual file contents
-				if (AltDragOver(screenSpaceMousePosition))
+				if (this.DragOperationActive)
 				{
-					this.DragDropSource.MeshPath = mouseEvent.DragFiles.FirstOrDefault();
-
-					// Run the rest of the OnDragOver pipeline since we're starting a new thread and won't finish for an unknown time
-					base.OnMouseMove(mouseEvent);
-
-					LoadDragSource(null);
-
-					// Don't fall through to the base.OnDragOver because we preemptively invoked it above
-					return;
+					DragOver(screenSpaceMousePosition: this.TransformToScreenSpace(mouseEvent.Position));
+				}
+				else
+				{ 
+					// Project DragFiles to IEnumerable<FileSystemFileItem>
+					this.StartDragDrop(
+					mouseEvent.DragFiles.Select(path => new FileSystemFileItem(path)),
+					screenSpaceMousePosition: this.TransformToScreenSpace(mouseEvent.Position));
 				}
 			}
-
-			// AcceptDrop anytime a DropSource has been queued
-			mouseEvent.AcceptDrop = this.DragDropSource != null;
 
 			if (CurrentSelectInfo.DownOnPart && this.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None)
 			{
@@ -1563,23 +1452,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnMouseUp(MouseEventArgs mouseEvent)
 		{
-			if (mouseEvent.DragFiles?.Count > 0)
+			if (this.DragOperationActive)
 			{
-				if (AllowDragDrop() && mouseEvent.DragFiles.Count == 1)
-				{
-					// Item is already in the scene
-					this.DragDropSource = null;
-				}
-				else if (AllowDragDrop())
-				{
-					// Items need to be added to the scene
-					var partsToAdd = mouseEvent.DragFiles.Where(filePath => ApplicationController.Instance.IsLoadableFile(filePath)).ToArray();
-
-					if (partsToAdd.Length > 0)
-					{
-						loadAndAddPartsToPlate(partsToAdd);
-					}
-				}
+				this.FinishDrop(mouseUpInBounds: true);
 			}
 
 			if (this.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None)

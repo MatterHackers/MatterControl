@@ -632,7 +632,7 @@ namespace MatterHackers.MatterControl
 		public View3DWidget ActiveView3DWidget { get; internal set; }
 
 		public string PrintingItemName { get; set; }
-
+		
 		public string CachePath(ILibraryItem libraryItem)
 		{
 			// TODO: Use content SHA

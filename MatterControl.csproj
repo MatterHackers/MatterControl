@@ -144,6 +144,8 @@
     <Compile Include="CustomWidgets\RadioPanelWidget.cs" />
     <Compile Include="CustomWidgets\ValueDisplayInfo.cs" />
     <Compile Include="CustomWidgets\DisableablePanel.cs" />
+    <Compile Include="Library\Interfaces\LibraryExtensionMethods.cs" />
+    <Compile Include="Library\Widgets\InsertionGroup.cs" />
     <Compile Include="Utilities\InspectForm.cs" Condition="'$(Configuration)' == 'Debug'">
       <SubType>Form</SubType>
     </Compile>

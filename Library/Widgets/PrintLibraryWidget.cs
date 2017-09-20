@@ -34,15 +34,12 @@ using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
-using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrintQueue;
-using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PrintLibrary
 {
@@ -79,6 +76,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			{
 				BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor,
 			};
+
+			ApplicationController.Instance.Library.ActiveViewWidget = libraryView;
 
 			libraryView.SelectedItems.CollectionChanged += SelectedItems_CollectionChanged;
 
@@ -384,46 +383,10 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				AllowContainers = false,
 				Action = async (selectedLibraryItems, listView) =>
 				{
-					var itemsToAdd = new List<IObject3D>();
-
-					var library = ApplicationController.Instance.Library;
-
-					foreach (var item in selectedLibraryItems)
-					{
-						if (item is ILibraryContentStream contentModel)
-						{
-							var contentProvider = library.GetContentProvider(item) as ISceneContentProvider;
-
-							var result = contentProvider?.CreateItem(item, null);
-
-							// Wait for the content to load
-							await result.MeshLoaded;
-
-							if (result?.Object3D != null)
-							{
-								itemsToAdd.Add(result.Object3D);
-							}
-						}
-						else if (item is ILibraryContentItem contentItem)
-						{
-							var content = await contentItem.GetContent(null);
-							if (content != null)
-							{
-								itemsToAdd.Add(content);
-							}
-						}
-					}
-
-					ApplicationController.Instance.ActiveView3DWidget.partHasBeenEdited = true;
-
 					var scene = ApplicationController.Instance.DragDropData.Scene;
 					scene.ModifyChildren(children =>
 					{
-						foreach (var sceneItem in itemsToAdd)
-						{
-							PlatingHelper.MoveToOpenPosition(sceneItem, children);
-							children.Add(sceneItem);
-						}
+						children.Add(new InsertionGroup(selectedLibraryItems));
 					});
 				}
 			});
