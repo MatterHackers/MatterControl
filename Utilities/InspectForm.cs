@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using MatterHackers.Agg;
@@ -27,6 +28,10 @@ namespace MatterHackers.MatterControl
 			inspectedSystemWindow.MouseMove += systemWindow_MouseMove;
 			inspectedSystemWindow.AfterDraw += systemWindow_AfterDraw;
 			inspectedSystemWindow.Invalidate();
+
+			treeView1.SuspendLayout();
+			this.AddTree(inspectedSystemWindow, null, "SystemWindow");
+			treeView1.ResumeLayout();
 		}
 
 		public bool Inspecting { get; set; } = true;
@@ -48,6 +53,8 @@ namespace MatterHackers.MatterControl
 				return baseParams;
 			}
 		}
+
+		private HashSet<GuiWidget> ancestryTree = new HashSet<GuiWidget>();
 
 		private GuiWidget _inspectedWidget;
 		private GuiWidget InspectedWidget
@@ -74,6 +81,9 @@ namespace MatterHackers.MatterControl
 
 				if (_inspectedWidget != null)
 				{
+					ancestryTree = new HashSet<GuiWidget>(_inspectedWidget.Parents<GuiWidget>());
+					ancestryTree.Add(_inspectedWidget);
+
 					propertyGrid1.SelectedObject = _inspectedWidget;
 
 					_inspectedWidget.DebugShowBounds = true;
@@ -100,14 +110,18 @@ namespace MatterHackers.MatterControl
 				if (treeNodes.TryGetValue(_inspectedWidget, out TreeNode treeNode))
 				{
 					treeView1.SelectedNode = treeNode;
+					
 					treeNode.EnsureVisible();
 					activeTreeNode = treeNode;
-					activeTreeNode.Checked = true;
+					treeView1.Invalidate();
 				}
 
 				_inspectedWidget.Invalidate();
 			}
+
 		}
+
+		private Font boldFont;
 
 		private void inspectedWidget_MouseUp(object sender, Agg.UI.MouseEventArgs e)
 		{
@@ -115,12 +129,11 @@ namespace MatterHackers.MatterControl
 			this.Inspecting = false;
 		}
 
-		private void AddItem(GuiWidget widget, string text = null, TreeNode childNode = null)
+		private void AddItem(GuiWidget widget, string text = null, TreeNode childNode = null, bool showAllParents = true)
 		{
-
 			if (text == null)
 			{
-				text = BuildName(widget);
+				text = BuildDefaultName(widget);
 			}
 
 			if (treeNodes.TryGetValue(widget, out TreeNode existingNode))
@@ -138,6 +151,11 @@ namespace MatterHackers.MatterControl
 					Tag = widget
 				};
 
+				if (boldFont == null)
+				{
+					boldFont = new Font(node.NodeFont, FontStyle.Bold);
+				}
+
 				if (childNode != null)
 				{
 					node.Nodes.Add(childNode);
@@ -145,35 +163,56 @@ namespace MatterHackers.MatterControl
 				}
 				treeNodes.Add(widget, node);
 
-				var parent = widget.Parent;
-				if (parent == null)
+				if (showAllParents)
 				{
-					treeView1.Nodes.Add(node);
+					var parent = widget.Parent;
+					if (parent == null)
+					{
+						treeView1.Nodes.Add(node);
+					}
+					else
+					{
+						AddItem(parent, parent.Text, node);
+					}
 				}
 				else
 				{
-					AddItem(parent, parent.Text, node);
+					treeView1.Nodes.Add(node);
 				}
 			}
 		}
 
-		public void RebuildUI(List<GuiWidget.WidgetAndPosition> namedChildren)
+		private TreeNode AddItem(GuiWidget widget, TreeNode parentNode, string overrideText = null)
 		{
-			treeView1.Nodes.Clear();
-			treeNodes.Clear();
-
-			treeView1.SuspendLayout();
-
-			for (int i = 0; i < namedChildren.Count; i++)
+			var node = new TreeNode(overrideText ?? BuildDefaultName(widget))
 			{
-				var child = namedChildren[i];
-				AddItem(child.widget);
+				Tag = widget
+			};
+			treeNodes.Add(widget, node);
+
+			if (parentNode == null)
+			{
+				treeView1.Nodes.Add(node);
+			}
+			else
+			{
+				parentNode.Nodes.Add(node);
 			}
 
-			treeView1.ResumeLayout();
+			return node;
 		}
 
-		private string BuildName(GuiWidget widget)
+		private void AddTree(GuiWidget widget, TreeNode parent, string text = null, TreeNode childNode = null)
+		{
+			var node = AddItem(widget, parent);
+
+			foreach(var child in widget.Children)
+			{
+				AddTree(child, node);
+			}
+		}
+
+		private string BuildDefaultName(GuiWidget widget)
 		{
 			string nameToWrite = _inspectedWidget == widget ? "* " : "";
 			if (!string.IsNullOrEmpty(widget.Name))
@@ -240,8 +279,6 @@ namespace MatterHackers.MatterControl
 				if (namedChildren.LastOrDefault()?.widget is GuiWidget firstUnderMouse
 					&& firstUnderMouse != this.InspectedWidget)
 				{
-					RebuildUI(namedChildren);
-
 					this.InspectedWidget = firstUnderMouse;
 				}
 			}
@@ -283,7 +320,34 @@ namespace MatterHackers.MatterControl
 
 		private void treeView1_DrawNode(object sender, DrawTreeNodeEventArgs e)
 		{
-			e.DrawDefault = true;
+			var node = e.Node;
+
+			if (node.IsVisible)
+			{
+				Brush brush;
+				if (node == activeTreeNode)
+				{
+					brush = SystemBrushes.Highlight;
+				}
+				else if (ancestryTree.Contains(node.Tag as GuiWidget))
+				{
+					brush = Brushes.LightBlue;
+				}
+				else
+				{
+					brush = Brushes.Transparent;
+				}
+				
+				e.Graphics.FillRectangle(brush, e.Node.Bounds);
+
+				TextRenderer.DrawText(
+					e.Graphics,
+					node.Text,
+					node == activeTreeNode ? boldFont : node.NodeFont,
+					new Point(node.Bounds.Left, node.Bounds.Top),
+					Color.Black,
+					Color.Transparent);
+			}
 		}
 	}
 }

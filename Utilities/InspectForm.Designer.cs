@@ -58,8 +58,8 @@
 			this.splitContainer1.Panel2.Controls.Add(this.toolStrip1);
 			this.splitContainer1.Panel2.Controls.Add(this.propertyGrid1);
 			this.splitContainer1.Panel2.Padding = new System.Windows.Forms.Padding(0, 27, 0, 0);
-			this.splitContainer1.Size = new System.Drawing.Size(951, 632);
-			this.splitContainer1.SplitterDistance = 589;
+			this.splitContainer1.Size = new System.Drawing.Size(440, 632);
+			this.splitContainer1.SplitterDistance = 169;
 			this.splitContainer1.SplitterWidth = 3;
 			this.splitContainer1.TabIndex = 0;
 			// 
@@ -72,7 +72,7 @@
 			this.treeView1.Location = new System.Drawing.Point(0, 0);
 			this.treeView1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
 			this.treeView1.Name = "treeView1";
-			this.treeView1.Size = new System.Drawing.Size(589, 632);
+			this.treeView1.Size = new System.Drawing.Size(169, 632);
 			this.treeView1.TabIndex = 0;
 			this.treeView1.DrawNode += new System.Windows.Forms.DrawTreeNodeEventHandler(this.treeView1_DrawNode);
 			this.treeView1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
@@ -119,7 +119,7 @@
 			this.propertyGrid1.Location = new System.Drawing.Point(0, 27);
 			this.propertyGrid1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
 			this.propertyGrid1.Name = "propertyGrid1";
-			this.propertyGrid1.Size = new System.Drawing.Size(359, 605);
+			this.propertyGrid1.Size = new System.Drawing.Size(268, 605);
 			this.propertyGrid1.TabIndex = 0;
 			this.propertyGrid1.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGrid1_PropertyValueChanged);
 			// 
@@ -127,7 +127,7 @@
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(951, 632);
+			this.ClientSize = new System.Drawing.Size(440, 632);
 			this.Controls.Add(this.splitContainer1);
 			this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
 			this.Name = "InspectForm";
