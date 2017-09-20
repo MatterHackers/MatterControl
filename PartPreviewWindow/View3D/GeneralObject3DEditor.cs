@@ -109,22 +109,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			behavior3DTypeButtons.AddChild(supportBehaviorButton);
 
-			foreach (var namedAction in ApplicationController.Instance.RegisteredSceneOperations())
-			{
-				var button = ApplicationController.Instance.Theme.ButtonFactory.Generate(namedAction.Title, fixedWidth: 130);
-				button.Margin = 1;
-				button.Click += (s, e) =>
-				{
-					namedAction.Action(ApplicationController.Instance.ActivePrinter.Bed.Scene);
-				};
-				mainContainer.AddChild(button);
-			}
-
-			var objectActionList = new DropDownList("More...", maxHeight: 200)
+			var objectActionList = new DropDownList("Actions", maxHeight: 200)
 			{
 				HAnchor = HAnchor.Stretch,
 				Margin = new BorderDouble(top: 3)
 			};
+
+			foreach (var namedAction in ApplicationController.Instance.RegisteredSceneOperations())
+			{
+				var menuItem = objectActionList.AddItem(namedAction.Title.Localize());
+				menuItem.Click += (s, e) =>
+				{
+					namedAction.Action.Invoke(ApplicationController.Instance.ActivePrinter.Bed.Scene);
+				};
+			}
+
 			mainContainer.AddChild(objectActionList);
 
 			return mainContainer;
