@@ -129,11 +129,20 @@ namespace MatterHackers.MatterControl
 			this.Inspecting = false;
 		}
 
-		private void AddItem(GuiWidget widget, string text, TreeNode childNode = null)
+		private void AddItem(GuiWidget widget, string text = null, TreeNode childNode = null)
 		{
+
+			if (text == null)
+			{
+				text = BuildName(widget);
+			}
+
 			if (treeNodes.TryGetValue(widget, out TreeNode existingNode))
 			{
-				existingNode.Nodes.Add(childNode);
+				if (childNode != null)
+				{
+					existingNode.Nodes.Add(childNode);
+				}
 				existingNode.Expand();
 			}
 			else
@@ -172,7 +181,7 @@ namespace MatterHackers.MatterControl
 			for (int i = 0; i < namedChildren.Count; i++)
 			{
 				var child = namedChildren[i];
-				AddItem(child.widget, BuildName(child.widget));
+				AddItem(child.widget);
 			}
 
 			treeView1.ResumeLayout();
@@ -216,6 +225,27 @@ namespace MatterHackers.MatterControl
 			if (activeTreeNode?.Nodes.Cast<TreeNode>().FirstOrDefault() is TreeNode firstChild)
 			{
 				this.InspectedWidget = firstChild.Tag as GuiWidget;
+			}
+		}
+
+		private void btnAddSiblings_Click(object sender, EventArgs e)
+		{
+			AddAllItems(this.InspectedWidget?.Parent?.Children);
+		}
+
+		private void btnAddChildren_Click(object sender, EventArgs e)
+		{
+			AddAllItems(this.InspectedWidget?.Children);
+		}
+
+		private void AddAllItems(IEnumerable<GuiWidget> items)
+		{
+			if (items != null)
+			{
+				foreach (var item in items)
+				{
+					this.AddItem(item);
+				}
 			}
 		}
 	}
