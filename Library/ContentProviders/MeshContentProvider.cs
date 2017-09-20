@@ -39,7 +39,6 @@ namespace MatterHackers.MatterControl
 	using MatterHackers.Agg.Platform;
 	using MatterHackers.DataConverters3D;
 	using MatterHackers.MatterControl.Library;
-	using MatterHackers.MatterControl.PrinterCommunication;
 	using MatterHackers.PolygonMesh;
 	using MatterHackers.RayTracer;
 	using MatterHackers.VectorMath;
