@@ -100,7 +100,7 @@ namespace MatterHackers.MatterControl.Library.Export
 						return true;
 					}
 				}
-				catch
+				catch(Exception e)
 				{
 				}
 

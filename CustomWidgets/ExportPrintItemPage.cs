@@ -171,7 +171,7 @@ namespace MatterHackers.MatterControl
 							new SelectFolderDialogParams("Select Location To Export Files")
 							{
 								ActionButtonLabel = "Export".Localize(),
-								Title = "MatterControl: Select A Folder"
+								Title = ApplicationController.Instance.ProductName + " - " + "Select A Folder".Localize()
 							},
 							(openParams) =>
 							{
@@ -189,7 +189,7 @@ namespace MatterHackers.MatterControl
 
 				UiThread.RunOnIdle(() =>
 				{
-					string title = "MatterControl: " + "Export File".Localize();
+					string title = ApplicationController.Instance.ProductName + " - " + "Export File".Localize();
 					AggContext.FileDialogs.SaveFileDialog(
 						new SaveFileDialogParams(fileTypeFilter)
 						{
