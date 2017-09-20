@@ -17,52 +17,37 @@ namespace MatterHackers.MatterControl
 
 		private Dictionary<GuiWidget, TreeNode> treeNodes = new Dictionary<GuiWidget, TreeNode>();
 
-		public InspectForm(GuiWidget inspectionSource)
+		public InspectForm(GuiWidget inspectedSystemWindow)
 		{
 			InitializeComponent();
 
+			this.inspectedSystemWindow = inspectedSystemWindow;
+
 			// Store position on move, invalidate in needed
-			inspectionSource.MouseMove += (s, e) =>
-			{
-				mousePosition = e.Position;
-
-				if (this.InspectedWidget?.FirstWidgetUnderMouse == false)
-				{
-					this.inspectedSystemWindow.Invalidate();
-				}
-			};
-
-			inspectionSource.AfterDraw += (s, e) =>
-			{
-				if (this.Inspecting && !inspectionSource.HasBeenClosed)
-				{
-					var namedChildren = new List<GuiWidget.WidgetAndPosition>();
-					inspectedSystemWindow.FindNamedChildrenRecursive(
-						"",
-						namedChildren,
-						new RectangleDouble(mousePosition.x, mousePosition.y, mousePosition.x + 1, mousePosition.y + 1),
-						GuiWidget.SearchType.Partial,
-						allowDisabledOrHidden: false);
-
-					// If the context changed, update the UI
-					if (namedChildren.LastOrDefault()?.widget is GuiWidget firstUnderMouse
-						&& firstUnderMouse != this.InspectedWidget)
-					{
-						RebuildUI(namedChildren);
-
-						this.InspectedWidget = firstUnderMouse;
-					}
-				}
-			};
-
-			this.inspectedSystemWindow = inspectionSource;
-
-			inspectionSource.Invalidate();
+			inspectedSystemWindow.MouseMove += systemWindow_MouseMove;
+			inspectedSystemWindow.AfterDraw += systemWindow_AfterDraw;
+			inspectedSystemWindow.Invalidate();
 		}
 
 		public bool Inspecting { get; set; } = true;
 
 		private GuiWidget mouseUpWidget;
+
+		protected override bool ShowWithoutActivation => true;
+
+		protected override CreateParams CreateParams
+		{
+			get
+			{
+				CreateParams baseParams = base.CreateParams;
+
+				const int WS_EX_NOACTIVATE = 0x08000000;
+				const int WS_EX_TOOLWINDOW = 0x00000080;
+				baseParams.ExStyle |= (int)(WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW);
+
+				return baseParams;
+			}
+		}
 
 		private GuiWidget _inspectedWidget;
 		private GuiWidget InspectedWidget
@@ -82,7 +67,7 @@ namespace MatterHackers.MatterControl
 
 				if (mouseUpWidget != null)
 				{
-					mouseUpWidget.MouseUp -= InspectedWidget_MouseUp;
+					mouseUpWidget.MouseUp -= inspectedWidget_MouseUp;
 				}
 
 				_inspectedWidget = value;
@@ -103,7 +88,7 @@ namespace MatterHackers.MatterControl
 					{
 						// Hook to stop listing on click
 						mouseUpWidget = context;
-						mouseUpWidget.MouseUp += InspectedWidget_MouseUp;
+						mouseUpWidget.MouseUp += inspectedWidget_MouseUp;
 					}
 				}
 
@@ -115,6 +100,7 @@ namespace MatterHackers.MatterControl
 				if (treeNodes.TryGetValue(_inspectedWidget, out TreeNode treeNode))
 				{
 					treeView1.SelectedNode = treeNode;
+					treeNode.EnsureVisible();
 					activeTreeNode = treeNode;
 					activeTreeNode.Checked = true;
 				}
@@ -123,7 +109,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private void InspectedWidget_MouseUp(object sender, Agg.UI.MouseEventArgs e)
+		private void inspectedWidget_MouseUp(object sender, Agg.UI.MouseEventArgs e)
 		{
 			// Stop listing on click
 			this.Inspecting = false;
@@ -228,6 +214,39 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
+		private void systemWindow_MouseMove(object sender, Agg.UI.MouseEventArgs e)
+		{
+			mousePosition = e.Position;
+
+			if (this.InspectedWidget?.FirstWidgetUnderMouse == false)
+			{
+				this.inspectedSystemWindow.Invalidate();
+			}
+		}
+
+		private void systemWindow_AfterDraw(object sender, EventArgs e)
+		{
+			if (this.Inspecting && !inspectedSystemWindow.HasBeenClosed)
+			{
+				var namedChildren = new List<GuiWidget.WidgetAndPosition>();
+				inspectedSystemWindow.FindNamedChildrenRecursive(
+					"",
+					namedChildren,
+					new RectangleDouble(mousePosition.x, mousePosition.y, mousePosition.x + 1, mousePosition.y + 1),
+					GuiWidget.SearchType.Partial,
+					allowDisabledOrHidden: false);
+
+				// If the context changed, update the UI
+				if (namedChildren.LastOrDefault()?.widget is GuiWidget firstUnderMouse
+					&& firstUnderMouse != this.InspectedWidget)
+				{
+					RebuildUI(namedChildren);
+
+					this.InspectedWidget = firstUnderMouse;
+				}
+			}
+		}
+
 		private void btnAddSiblings_Click(object sender, EventArgs e)
 		{
 			AddAllItems(this.InspectedWidget?.Parent?.Children);
@@ -247,6 +266,24 @@ namespace MatterHackers.MatterControl
 					this.AddItem(item);
 				}
 			}
+		}
+
+		protected override void OnFormClosing(FormClosingEventArgs e)
+		{
+			inspectedSystemWindow.AfterDraw -= systemWindow_AfterDraw;
+			inspectedSystemWindow.MouseMove -= systemWindow_MouseMove;
+
+			if (mouseUpWidget != null)
+			{
+				mouseUpWidget.MouseUp -= inspectedWidget_MouseUp;
+			}
+
+			base.OnFormClosing(e);
+		}
+
+		private void treeView1_DrawNode(object sender, DrawTreeNodeEventArgs e)
+		{
+			e.DrawDefault = true;
 		}
 	}
 }
