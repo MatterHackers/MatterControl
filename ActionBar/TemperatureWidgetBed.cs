@@ -117,7 +117,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				},
 				enforceGutter: false));
 
-			CheckBox heatToggle = hotendRow.ChildrenRecursive<CheckBox>().FirstOrDefault();
+			heatToggle = hotendRow.ChildrenRecursive<CheckBox>().FirstOrDefault();
 			heatToggle.Name = "Toggle Heater";
 
 			// put in the temp control
@@ -132,10 +132,6 @@ namespace MatterHackers.MatterControl.ActionBar
 				if (heatToggle.Checked)
 				{
 					SetTargetTemperature(settingsTemperature.Value);
-					if (settingsTemperature.Value == 0)
-					{
-						heatToggle.Checked = false;
-					}
 				}
 			};
 
@@ -177,6 +173,16 @@ namespace MatterHackers.MatterControl.ActionBar
 			ActiveSliceSettings.MaterialPresetChanged += ActiveSliceSettings_MaterialPresetChanged;
 
 			return widget;
+		}
+
+		public override void OnDraw(Graphics2D graphics2D)
+		{
+			if (heatToggle != null)
+			{
+				heatToggle.Checked = printer.Connection.TargetBedTemperature != 0;
+			}
+
+			base.OnDraw(graphics2D);
 		}
 
 		protected override void SetTargetTemperature(double targetTemp)
