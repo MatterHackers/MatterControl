@@ -56,26 +56,26 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				activeInstance = value;
 
-				// If profile is not loaded, load itthe loaded slice settings do not match the last active settings for this profile, change to the last active
+				// If profile is not loaded, load the loaded slice settings do not match the last active settings for this profile, change to the last active
 				if (!ApplicationController.Instance.ActivePrinters.Where(p => p.Settings.ID == activeInstance.LastProfileID).Any())
 				{
 					// Load or download on a background thread the last loaded settings
-					var printerSettings = LoadProfileAsync(activeInstance.LastProfileID).Result;
+					var printerSettings = LoadProfileAsync(activeInstance.LastProfileID).Result ?? PrinterSettings.Empty;
 
 					if (MatterControlApplication.IsLoading)
 					{
-						ActiveSliceSettings.Instance = printerSettings ?? PrinterSettings.Empty;
+						ActiveSliceSettings.Instance = printerSettings;
 					}
 					else
 					{
 						UiThread.RunOnIdle(() =>
 						{
 							// Assign on the UI thread
-							ActiveSliceSettings.Instance = printerSettings ?? PrinterSettings.Empty;
+							ActiveSliceSettings.Instance = printerSettings ;
 						});
 					}
 
-					ApplicationController.Instance.ActivePrinters.Add(new PrinterConfig(true, printerSettings));
+					ApplicationController.Instance.SetActivePrinter(new PrinterConfig(true, printerSettings));
 				}
 			}
 		}
@@ -476,7 +476,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			ProfileManager.Instance.LastProfileID = guid;
 
 			var printer = new PrinterConfig(false, printerSettings);
-			ApplicationController.Instance.ActivePrinters.Add(printer);
+
+			ApplicationController.Instance.SetActivePrinter(printer);
 
 			ActiveSliceSettings.Instance = printerSettings;
 
