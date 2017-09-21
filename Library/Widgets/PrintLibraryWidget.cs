@@ -381,12 +381,16 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				AllowMultiple = true,
 				AllowProtected = true,
 				AllowContainers = false,
-				Action = async (selectedLibraryItems, listView) =>
+				Action = (selectedLibraryItems, listView) =>
 				{
 					var scene = ApplicationController.Instance.DragDropData.Scene;
 					scene.ModifyChildren(children =>
 					{
-						children.Add(new InsertionGroup(selectedLibraryItems));
+						children.Add(
+							new InsertionGroup(
+								selectedLibraryItems,
+								ApplicationController.Instance.DragDropData.Scene,
+								dragOperationActive: () => false));
 					});
 				}
 			});

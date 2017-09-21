@@ -27,19 +27,23 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.Library;
+using MatterHackers.MeshVisualizer;
+using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PrintLibrary
 {
 	public class InsertionGroup : Object3D
 	{
+	
 		// TODO: Figure out how to collapse the InsertionGroup after the load task completes
-		public InsertionGroup(IEnumerable<ILibraryItem> items)
+		public InsertionGroup(IEnumerable<ILibraryItem> items, InteractiveScene scene, Func<bool> dragOperationActive)
 		{
 			Task.Run(async () =>
 			{
@@ -65,6 +69,33 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						// Adjust next item position
 						// TODO: do something more interesting than increment in x
 						newItemOffset.x += contentResult.Object3D.GetAxisAlignedBoundingBox(Matrix4X4.Identity).XSize;
+					}
+				}
+
+				if (dragOperationActive())
+				{
+					// Setting the selection group ensures that on lose focus this object will be collapsed
+					this.ItemType = Object3DTypes.SelectionGroup;
+				}
+				else
+				{
+					// Drag operation has finished, we need to perform the collapse
+					var loadedItems = this.Children;
+
+					// Collapse our contents into the root of the scen
+					// of the scene when it loses focus
+					scene.ModifyChildren(children =>
+					{
+						this.CollapseInto(children, Object3DTypes.Any);
+					});
+
+					if (scene.SelectedItem == this
+						&& loadedItems.Count > 0)
+					{
+						foreach (var item in loadedItems)
+						{
+							scene.AddToSelection(item);
+						}
 					}
 				}
 			});
