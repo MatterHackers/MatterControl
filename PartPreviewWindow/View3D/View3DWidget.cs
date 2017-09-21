@@ -908,7 +908,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Set the hitplane to the bed plane
 			CurrentSelectInfo.HitPlane = bedPlane;
 
-			DragDropObject = new InsertionGroup(items);
+			DragDropObject = new InsertionGroup(
+				items, 
+				this.Scene, 
+				() => this.DragOperationActive);
 
 			// Find intersection position of the mouse with the bed plane
 			var intersectInfo = GetIntersectPosition(screenSpaceMousePosition);
