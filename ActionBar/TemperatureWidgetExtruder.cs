@@ -297,6 +297,8 @@ namespace MatterHackers.MatterControl.ActionBar
 				Width = 150
 			};
 
+			presetsSelector.DropDownList.Name = "Hotend Preset Selector";
+
 			presetsSelector.DropDownList.SelectionChanged += (s, e) =>
 			{
 				// delay this for an update so the slice setting can get updated first

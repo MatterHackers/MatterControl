@@ -195,13 +195,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					Assert.AreEqual(240, (int)tempWidget.Value);
 
 					// change material
-					var dropDownLists = testRunner.GetWidgetsByName("Material DropDown List");
-					Assert.AreEqual(2, dropDownLists.Count, "There are two. The slice settings and the pop out.");
+					var dropDownLists = testRunner.GetWidgetsByName("Hotend Preset Selector");
+					Assert.AreEqual(1, dropDownLists.Count, "There is one. The slice settings and the pop out.");
 					DropDownList materialSelector = dropDownLists[0].widget as DropDownList;
 					Assert.AreEqual("", materialSelector.SelectedValue);
 
-					// BUG: the offest should not be required
-					testRunner.ClickByName("Material DropDown List", offset: new Point2D(-30, -25));
+					testRunner.ClickByName("Hotend Preset Selector");
 					testRunner.ClickByName("HIPS Menu");
 
 					// check the extruder count
