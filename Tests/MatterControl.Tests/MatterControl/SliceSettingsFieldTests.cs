@@ -42,6 +42,7 @@ using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.Tests.Automation;
+using MatterHackers.SerialPortCommunication.FrostedSerial;
 using NUnit.Framework;
 using static MatterControl.Tests.MatterControl.SliceSettingsFieldTests;
 
@@ -270,16 +271,33 @@ namespace MatterControl.Tests.MatterControl
 			Assert.Fail();
 		}
 
-		[Test, Ignore("Not Implemented")]
-		public void ComPortFieldTest()
+		[Test, RunInApplicationDomain]
+		public async Task ComPortFieldTest()
 		{
-			Assert.Fail();
+			FrostedSerialPort.MockPortsForTest = true;
+			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+
+			var field = new ComPortField(new PrinterConfig(false, PrinterSettings.Empty));
+
+			await ValidateAgainstValueMap(
+				field,
+				(f) => (f.Content as DropDownList).SelectedLabel,
+				new List<ValueMap>()
+				{
+					{"COM-TestA", "COM-TestA"},
+					{"COM-TestB", "COM-TestB"},
+					{"COM-TestC", "COM-TestC"},
+					{"COM-Test0", "COM-Test0"},
+					{"COM-Test1", "COM-Test1"},
+					{"Emulator", "Emulator"},
+				});
 		}
 
-		[Test, Ignore("Not Implemented")]
-		public void Test()
+		[TearDown]
+		public void TearDown()
 		{
-			Assert.Fail();
+			FrostedSerialPort.MockPortsForTest = false;
 		}
 
 		[Test, Ignore("Not Implemented")]
@@ -329,14 +347,24 @@ namespace MatterControl.Tests.MatterControl
 		/// <summary>
 		/// Take a Type, a delegate to resolve the UI widget value and a map of input->expected values and validates the results for a given field
 		/// </summary>
-		/// <typeparam name="T">The UIField to validate</typeparam>
 		/// <param name="collectValueFromWidget">A delegate to resolve the currently displayed widget value</param>
 		/// <param name="valuesMap">A map of input to expected values</param>
 		/// <returns></returns>
 		public static Task ValidateAgainstValueMap<T>(Func<UIField, string> collectValueFromWidget, IEnumerable<ValueMap> valuesMap) where T : UIField, new()
 		{
 			var field = new T();
+			return ValidateAgainstValueMap(new T(), collectValueFromWidget, valuesMap);
+		}
 
+		/// <summary>
+		/// Take a UIField, a delegate to resolve the UI widget value and a map of input->expected values and validates the results for a given field
+		/// </summary>
+		/// <param name="field"></param>
+		/// <param name="collectValueFromWidget">A delegate to resolve the currently displayed widget value</param>
+		/// <param name="valuesMap">A map of input to expected values</param>
+		/// <returns></returns>
+		public static Task ValidateAgainstValueMap(UIField field, Func<UIField, string> collectValueFromWidget, IEnumerable<ValueMap> valuesMap)
+		{
 			var testsWindow = new UIFieldTestWindow(400, 200, field);
 
 			return testsWindow.RunTest((testRunner) =>
@@ -349,7 +377,7 @@ namespace MatterControl.Tests.MatterControl
 				}
 
 				return Task.CompletedTask;
-			}, 530);
+			}, 330);
 
 		}
 	}
