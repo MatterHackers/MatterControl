@@ -93,7 +93,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				Margin = new BorderDouble(12, 3, 0, 6)
 			});
 
-			this.AddChild(GetPulldownContainer());
+			pullDownContainer = new GuiWidget()
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit
+			};
+			pullDownContainer.AddChild(GetPulldownContainer());
+			this.AddChild(pullDownContainer);
+
 			this.AddChild(new VerticalSpacer());
 			this.AddChild(accentBar);
 		}

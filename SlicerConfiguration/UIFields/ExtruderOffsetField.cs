@@ -65,6 +65,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			int.TryParse(settingsContext.GetValue(SettingsKey.extruder_count), out int extruderCount);
 
+			// If extruders_share_temperature is enabled, override the extruder count
+			if (settingsContext.GetValue(SettingsKey.extruders_share_temperature) == "1")
+			{
+				extruderCount = 1;
+			}
+
 			for (int i = 0; i < extruderCount; i++)
 			{
 				var row = new FlowLayoutWidget()
@@ -76,6 +82,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				column.AddChild(row);
 
 				var labelWidget = SliceSettingsWidget.CreateSettingsLabel($"Nozzle {i + 1}", "");
+				labelWidget.Name = $"Nozzle {i}";
 				labelWidget.AutoExpandBoundsToText = true;
 				labelWidget.Margin = new BorderDouble(right: 60, left: 20);
 				row.AddChild(labelWidget);

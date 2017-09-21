@@ -132,7 +132,7 @@ namespace MatterHackers.MatterControl
 
 		public WorldView World { get; } = new WorldView(0, 0);
 
-		public double BuildHeight { get; internal set; }
+		public double BuildHeight  { get; internal set; }
 		public Vector3 ViewerVolume { get; internal set; }
 		public Vector2 BedCenter { get; internal set; }
 		public BedShape BedShape { get; internal set; }
@@ -307,12 +307,10 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public void RecreateBed()
+		public void InvalidateBedMesh()
 		{
-			if (bedGenerator != null)
-			{
-				_bedMesh = bedGenerator.CreatePrintBed(Printer);
-			}
+			// Invalidate bed mesh cache
+			_bedMesh = null;
 		}
 	}
 
@@ -358,30 +356,37 @@ namespace MatterHackers.MatterControl
 	{
 		public BedConfig Bed { get; }
 		public PrinterViewState ViewState { get; } = new PrinterViewState();
-		public PrinterSettings Settings { get; private set; }
+
+		private PrinterSettings _settings;
+		public PrinterSettings Settings
+		{
+			get => _settings;
+			private set
+			{
+				if (_settings != value)
+				{
+					_settings = value;
+					this.ReloadSettings();
+					this.Bed.InvalidateBedMesh();
+				}
+			}
+		}
+
 		public PrinterConnection Connection { get; private set; }
 
 		private EventHandler unregisterEvents;
 
-		public PrinterConfig(bool loadLastBedplate, PrinterSettings settings = null)
+		public PrinterConfig(bool loadLastBedplate, PrinterSettings settings)
 		{
-			this.Connection = new PrinterConnection();
-			this.Settings = settings ?? ActiveSliceSettings.Instance;
-			this.Settings.printer = this;
-			this.Connection.printer = this;
-
 			this.Bed = new BedConfig(this, loadLastBedplate);
 
+			this.Settings = settings;
+			this.Settings.printer = this;
+
+			this.Connection = new PrinterConnection(printer: this);
+
+
 			ActiveSliceSettings.SettingChanged.RegisterEvent(Printer_SettingChanged, ref unregisterEvents);
-
-			ActiveSliceSettings.ActivePrinterChanged.RegisterEvent((s, e) =>
-			{
-				this.Settings = ActiveSliceSettings.Instance;
-				this.Settings.printer = this;
-
-				this.ReloadSettings();
-				this.Bed.RecreateBed();
-			}, ref unregisterEvents);
 		}
 
 		private void ReloadSettings()
@@ -402,7 +407,7 @@ namespace MatterHackers.MatterControl
 					|| stringEvent.Data == SettingsKey.bed_shape)
 				{
 					this.ReloadSettings();
-					this.Bed.RecreateBed();
+					this.Bed.InvalidateBedMesh();
 				}
 			}
 		}

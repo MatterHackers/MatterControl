@@ -176,8 +176,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				testRunner.CloseSignInAndPrinterSelect();
-
 				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
 					// Navigate to Local Library 
@@ -194,15 +192,16 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					// assert the temp is set when we first open (it comes from the material)
 					EditableNumberDisplay tempWidget = testRunner.GetWidgetByName("Temperature Input", out _) as EditableNumberDisplay;
-					Assert.AreEqual(240, tempWidget.Value);
+					Assert.AreEqual(240, (int)tempWidget.Value);
 
 					// change material
 					var dropDownLists = testRunner.GetWidgetsByName("Material DropDown List");
 					Assert.AreEqual(2, dropDownLists.Count, "There are two. The slice settings and the pop out.");
 					DropDownList materialSelector = dropDownLists[0].widget as DropDownList;
 					Assert.AreEqual("", materialSelector.SelectedValue);
+
 					// BUG: the offest should not be required
-					testRunner.ClickByName("Material DropDown List", offset: new Point2D(-20, -25));
+					testRunner.ClickByName("Material DropDown List", offset: new Point2D(-30, -25));
 					testRunner.ClickByName("HIPS Menu");
 
 					// check the extruder count
@@ -210,24 +209,25 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					Assert.AreEqual(1, extrudeButtons.Count, "There should be just one.");
 
 					int hipsGoalTemp = 220;
+
 					// assert the temp changed to a new temp
-					Assert.AreEqual(hipsGoalTemp, tempWidget.Value, "The temp should have changed to ABS");
+					Assert.AreEqual(hipsGoalTemp,(int) tempWidget.Value, "The goal temp should match the material temp");
 					// and the printer heat is off
-					Assert.AreEqual(0, emulator.ExtruderGoalTemperature);
+					Assert.AreEqual(0, (int) emulator.ExtruderGoalTemperature, "The printer should report the heaters are off");
 
 					// turn on the heater
 					testRunner.ClickByName("Toggle Heater");
-					testRunner.Delay();
+					testRunner.Delay(2);
 
 					// assert the printer is heating
-					Assert.AreEqual(hipsGoalTemp, emulator.ExtruderGoalTemperature);
+					Assert.AreEqual(hipsGoalTemp, (int)emulator.ExtruderGoalTemperature, "The printer should report the expected goal temp");
 
 					// turn off the heater
 					testRunner.ClickByName("Toggle Heater");
-					testRunner.Delay();
+					testRunner.Delay(2);
 
 					// assert the printer is off
-					Assert.AreEqual(0, emulator.ExtruderGoalTemperature);
+					Assert.AreEqual(0, (int)emulator.ExtruderGoalTemperature, "The printer should report the heaters are off");
 
 					// type in a temp when the heating is off
 					testRunner.ClickByName("Temperature Input");
@@ -236,7 +236,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.Delay();
 
 					// assert the printer is off
-					Assert.AreEqual(0, emulator.ExtruderGoalTemperature);
+					Assert.AreEqual(0, (int)emulator.ExtruderGoalTemperature);
 
 					// and the heat toggle is showing on
 					CheckBox heatToggle = testRunner.GetWidgetByName("Toggle Heater", out _) as CheckBox;
@@ -244,14 +244,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					// turn it on
 					testRunner.ClickByName("Toggle Heater");
-					Assert.AreEqual(110, emulator.ExtruderGoalTemperature);
+					Assert.AreEqual(110, (int)emulator.ExtruderGoalTemperature);
 
 					// adjust when on
 					testRunner.ClickByName("Temperature Input");
 					testRunner.Type("104");
 					testRunner.Type("{Enter}");
 					testRunner.Delay();
-					Assert.AreEqual(104, emulator.ExtruderGoalTemperature);
+					Assert.AreEqual(104, (int)emulator.ExtruderGoalTemperature);
 
 					// type in 0 and have the heater turn off
 					testRunner.ClickByName("Temperature Input");
@@ -260,11 +260,13 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.Delay();
 
 					// assert the printer is not heating
-					Assert.AreEqual(0, emulator.ExtruderGoalTemperature);
+					Assert.AreEqual(0, (int)emulator.ExtruderGoalTemperature);
 					// and the on toggle is showing off
 					Assert.IsFalse(heatToggle.Checked);
 
-					testRunner.ClickByName(SliceSettingsOrganizer.Instance.GetSettingsData(SettingsKey.extruder_count).PresentationName + " Edit");
+					testRunner.ClickByName("Extruder Tab");
+
+					testRunner.ClickByName(SliceSettingsOrganizer.Instance.GetSettingsData(SettingsKey.extruder_count).PresentationName + " Field");
 					testRunner.Type("2");
 					testRunner.Type("{Enter}");
 
@@ -285,7 +287,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				}
 
 				return Task.CompletedTask;
-			}, maxTimeToRun: 200, overrideWidth: 1224, overrideHeight: 900);
+			}, maxTimeToRun: 666, overrideWidth: 1224, overrideHeight: 900);
 		}
 
 		[Test /* Test will fail if screen size is and "HeatBeforeHoming" falls below the fold */]
