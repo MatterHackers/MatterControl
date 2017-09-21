@@ -125,7 +125,7 @@ namespace MatterHackers.MatterControl.Library.Export
 				//  - If bedplate, save any pending changes before starting the print
 				await ApplicationController.Instance.ActiveView3DWidget.PersistPlateIfNeeded();
 
-				PrintItemWrapper printItem = null;// ApplicationController.Instance.ActivePrintItem;
+				var printItem = ApplicationController.Instance.ActivePrinter.Bed.printItem;
 
 				//  - Slice
 				await SlicingQueue.SliceFileAsync(printItem, null);
