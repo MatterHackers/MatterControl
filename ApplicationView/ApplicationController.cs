@@ -68,16 +68,16 @@ namespace MatterHackers.MatterControl
 		public ThemeConfig Theme { get; set; } = new ThemeConfig();
 
 		// A list of printers which are open (i.e. displaying a tab) on this instance of MatterControl
-		public List<PrinterConfig> ActivePrinters { get; } = new List<PrinterConfig>();
+		public IEnumerable<PrinterConfig> ActivePrinters { get; } = new List<PrinterConfig>();
 
-		private PrinterConfig emptyPrinter = new PrinterConfig(false, PrinterSettings.Empty);
+		private static PrinterConfig emptyPrinter = new PrinterConfig(false, PrinterSettings.Empty);
 
-		// TODO: Any references to this property almost certainly need to be reconsidered. ActiveSliceSettings and PrinterConnection static references
-		// that assume a single printer selection are being redirected here. This allows us to break the dependency to the original statics and consolidates
-		// use down to a single point where code is making assumptions about the presence of a printer, printer counts, etc. If we previously checked for
+		// TODO: Any references to this property almost certainly need to be reconsidered. ActiveSliceSettings static references that assume a single printer 
+		// selection are being redirected here. This allows us to break the dependency to the original statics and consolidates
+		// us down to a single point where code is making assumptions about the presence of a printer, printer counts, etc. If we previously checked for
 		// PrinterConnection.IsPrinterConnected, that could should be updated to iterate ActiverPrinters, checking each one and acting on each as it would
 		// have for the single case
-		public PrinterConfig ActivePrinter => ActivePrinters.FirstOrDefault() ?? emptyPrinter;
+		public PrinterConfig ActivePrinter { get; private set; } = emptyPrinter;
 
 		public Action RedeemDesignCode;
 		public Action EnterShareCode;
@@ -110,6 +110,12 @@ namespace MatterHackers.MatterControl
 		private readonly static object thumbsLock = new object();
 
 		private Queue<Func<Task>> queuedThumbCallbacks = new Queue<Func<Task>>();
+
+		public void SetActivePrinter(PrinterConfig printer)
+		{
+			(this.ActivePrinters as List<PrinterConfig>).Add(printer);
+			this.ActivePrinter = printer;
+		}
 
 		private AutoResetEvent thumbGenResetEvent = new AutoResetEvent(false);
 
