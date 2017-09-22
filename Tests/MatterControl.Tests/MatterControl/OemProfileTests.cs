@@ -13,7 +13,7 @@ namespace MatterControl.Tests.MatterControl
 	[TestFixture, Category("OemProfiles")]
 	public class OemProfileTests
 	{
-		private static List<PrinterConfig> allPrinters;
+		private static List<PrinterTestDetails> allPrinters;
 		private static string printerSettingsDirectory = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData", "Profiles");
 
 		static OemProfileTests()
@@ -22,7 +22,7 @@ namespace MatterControl.Tests.MatterControl
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			allPrinters = (from printerFile in new DirectoryInfo(printerSettingsDirectory).GetFiles("*.printer", SearchOption.AllDirectories)
-						   select new PrinterConfig
+						   select new PrinterTestDetails
 						   {
 							   PrinterName = printerFile.Name,
 							   Oem = printerFile.Directory.Name,
@@ -453,7 +453,7 @@ namespace MatterControl.Tests.MatterControl
 		/// printer settings loaded into a SettingsLayer as well as state about the printer
 		/// </summary>
 		/// <param name="action">The action to invoke for each printer</param>
-		private void ValidateOnAllPrinters(Action<PrinterConfig, PrinterSettings> action)
+		private void ValidateOnAllPrinters(Action<PrinterTestDetails, PrinterSettings> action)
 		{
 			var ruleViolations = new List<string>();
 
@@ -516,7 +516,7 @@ namespace MatterControl.Tests.MatterControl
 				string.Format("One or more printers violate this rule: \r\n\r\n{0}\r\n", string.Join("\r\n", ruleViolations.ToArray())));
 		}
 
-		private class PrinterConfig
+		private class PrinterTestDetails
 		{
 			public string PrinterName { get; set; }
 			public string Oem { get; set; }
