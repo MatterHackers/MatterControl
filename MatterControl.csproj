@@ -146,6 +146,7 @@
     <Compile Include="CustomWidgets\DisableablePanel.cs" />
     <Compile Include="Library\Interfaces\LibraryExtensionMethods.cs" />
     <Compile Include="Library\Widgets\InsertionGroup.cs" />
+    <Compile Include="PartPreviewWindow\View3D\SlicePopupMenu.cs" />
     <Compile Include="Utilities\InspectForm.cs" Condition="'$(Configuration)' == 'Debug'">
       <SubType>Form</SubType>
     </Compile>

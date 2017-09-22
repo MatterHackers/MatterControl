@@ -263,12 +263,10 @@ namespace MatterHackers.MeshVisualizer
 		{
 			if (File.Exists(itemPath))
 			{
-				interactionLayer.BeginProgressReporting("Loading Mesh");
-
 				fileLoadCancellationTokenSource = new CancellationTokenSource();
 
 				// TODO: How to we handle mesh load errors? How do we report success?
-				IObject3D loadedItem = await Task.Run(() => Object3D.Load(itemPath, fileLoadCancellationTokenSource.Token, progress: interactionLayer.ReportProgress0to100));
+				IObject3D loadedItem = await Task.Run(() => Object3D.Load(itemPath, fileLoadCancellationTokenSource.Token));
 				if (loadedItem != null)
 				{
 					if (itemName != null)
@@ -297,8 +295,6 @@ namespace MatterHackers.MeshVisualizer
 					// TODO: Error message container moved to Interaction Layer - how could we support this type of error for a loaded scene item?
 					//partProcessingInfo.centeredInfoText.Text = string.Format("Sorry! No 3D view available\nfor this file.");
 				}
-
-				interactionLayer.EndProgressReporting();
 
 				// Invoke LoadDone event
 				LoadDone?.Invoke(this, null);
@@ -612,45 +608,6 @@ namespace MatterHackers.MeshVisualizer
 			foreach (InteractionVolume interactionVolume in interactionLayer.InteractionVolumes)
 			{
 				interactionVolume.DrawGlContent(new DrawGlContentEventArgs(true, e));
-			}
-		}
-
-		public class PartProcessingInfo : FlowLayoutWidget
-		{
-			internal TextWidget centeredInfoDescription;
-			internal TextWidget centeredInfoText;
-			internal ProgressControl progressControl;
-
-			internal PartProcessingInfo(string startingTextMessage)
-				: base(FlowDirection.TopToBottom)
-			{
-				progressControl = new ProgressControl("", RGBA_Bytes.Black, RGBA_Bytes.Black)
-				{
-					HAnchor = HAnchor.Center,
-					Visible = false
-				};
-				progressControl.ProgressChanged += (sender, e) =>
-				{
-					progressControl.Visible = true;
-				};
-				AddChild(progressControl);
-
-				centeredInfoText = new TextWidget(startingTextMessage)
-				{
-					HAnchor = HAnchor.Center,
-					AutoExpandBoundsToText = true
-				};
-				AddChild(centeredInfoText);
-
-				centeredInfoDescription = new TextWidget("")
-				{
-					HAnchor = HAnchor.Center,
-					AutoExpandBoundsToText = true
-				};
-				AddChild(centeredInfoDescription);
-
-				VAnchor |= VAnchor.Center;
-				HAnchor |= HAnchor.Center;
 			}
 		}
 	}

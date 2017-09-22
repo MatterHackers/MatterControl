@@ -54,34 +54,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private OverflowDropdown overflowDropdown;
 
-		private SliceProgressReporter sliceProgressReporter;
-
 		private CancellationTokenSource gcodeLoadCancellationTokenSource;
-
-		public class SliceProgressReporter : IProgress<string>
-		{
-			private InteractionLayer interactionLayer;
-
-			public SliceProgressReporter(InteractionLayer interactionLayer)
-			{
-				this.interactionLayer = interactionLayer;
-			}
-
-			public void StartReporting()
-			{
-				interactionLayer.BeginProgressReporting("Slicing Part");
-			}
-
-			public void EndReporting()
-			{
-				interactionLayer.EndProgressReporting();
-			}
-
-			public void Report(string value)
-			{
-				interactionLayer.partProcessingInfo.centeredInfoDescription.Text = value;
-			}
-		}
 
 		public PrinterActionsBar(PrinterConfig printer, View3DWidget modelViewer, PrinterTabPage printerTabPage)
 		{
@@ -91,64 +64,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var defaultMargin = ApplicationController.Instance.Theme.ButtonSpacing;
 			var buttonFactory = ApplicationController.Instance.Theme.ButtonFactory;
 
-			sliceProgressReporter = new SliceProgressReporter(modelViewer.InteractionLayer);
-
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Fit;
 			this.AddChild(new PrinterConnectButton(printer, buttonFactory, 0));
 
 			this.AddChild(new PrintActionRow(printer, buttonFactory, this, defaultMargin));
 
-			var sliceButton = buttonFactory.Generate("Slice".Localize().ToUpper());
-			sliceButton.ToolTipText = "Slice Parts".Localize();
-			sliceButton.Name = "Generate Gcode Button";
-			sliceButton.Margin = defaultMargin;
-			sliceButton.Click += async (s, e) =>
-			{
-				if (printer.Settings.PrinterSelected)
-				{
-					var printItem = printer.Bed.printItem;
-
-					if (printer.Settings.IsValid() && printItem != null)
-					{
-						sliceButton.Enabled = false;
-
-						try
-						{
-							sliceProgressReporter.StartReporting();
-
-							// Save any pending changes before starting the print
-							await ApplicationController.Instance.ActiveView3DWidget.PersistPlateIfNeeded();
-
-							await SlicingQueue.SliceFileAsync(printItem, sliceProgressReporter);
-
-							gcodeLoadCancellationTokenSource = new CancellationTokenSource();
-
-							ApplicationController.Instance.ActivePrinter.Bed.LoadGCode(printItem.GetGCodePathAndFileName(), gcodeLoadCancellationTokenSource.Token, printerTabPage.modelViewer.gcodeViewer.LoadProgress_Changed);
-							sliceProgressReporter.EndReporting();
-
-							printerTabPage.ViewMode = PartViewMode.Layers3D;
-
-							// HACK: directly fire method which previously ran on SlicingDone event on PrintItemWrapper
-							UiThread.RunOnIdle(() => printerTabPage.modelViewer.gcodeViewer.CreateAndAddChildren(printer));
-						}
-						catch (Exception ex)
-						{
-							Console.WriteLine("Error slicing file: " + ex.Message);
-						}
-
-						sliceButton.Enabled = true;
-					};
-				}
-				else
-				{
-					UiThread.RunOnIdle(() =>
-					{
-						StyledMessageBox.ShowMessageBox(null, "Oops! Please select a printer in order to continue slicing.", "Select Printer", StyledMessageBox.MessageType.OK);
-					});
-				}
-			};
-
+			var sliceButton = new SlicePopupMenu(printer, printerTabPage);
+				
 			this.AddChild(sliceButton);
 
 			// put in the detail message
