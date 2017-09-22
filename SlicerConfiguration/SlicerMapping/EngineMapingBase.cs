@@ -74,6 +74,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			SettingsKey.print_leveling_required_to_print,
 			SettingsKey.print_leveling_solution,
 			SettingsKey.recover_first_layer_speed,
+			SettingsKey.number_of_first_layers,
 			SettingsKey.recover_is_enabled,
 			SettingsKey.recover_position_before_z_home,
 			SettingsKey.resume_gcode,

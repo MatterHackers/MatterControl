@@ -4573,3 +4573,12 @@ Translated:Align for Dual Extrusion
 English:Export failed
 Translated:Export failed
 
+English:The speed at which the nozzle will move when printing the first layers. If expressed as a percentage the Infill speed is modified.
+Translated:The speed at which the nozzle will move when printing the first layers. If expressed as a percentage the Infill speed is modified.
+
+English:The number of layers to consider as the begining of the print. These will print at first layer speed.
+Translated:The number of layers to consider as the begining of the print. These will print at first layer speed.
+
+English:Number of First Layers
+Translated:Number of First Layers
+

@@ -59,6 +59,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				new AsPercentOfReferenceOrDirect(SettingsKey.external_perimeter_extrusion_width, "outsidePerimeterExtrusionWidth", SettingsKey.nozzle_diameter),
 				new AsPercentOfReferenceOrDirect("external_perimeter_speed", "outsidePerimeterSpeed", "perimeter_speed"),
 				new AsPercentOfReferenceOrDirect(SettingsKey.first_layer_speed, "firstLayerSpeed", "infill_speed"),
+				new AsCountOrDistance(SettingsKey.number_of_first_layers, "numberOfFirstLayers", SettingsKey.layer_height),
 				new AsPercentOfReferenceOrDirect("raft_print_speed", "raftPrintSpeed", "infill_speed"),
 				new AsPercentOfReferenceOrDirect("top_solid_infill_speed", "topInfillSpeed", "infill_speed"),
 				new AsPercentOfReferenceOrDirect(SettingsKey.first_layer_extrusion_width, "firstLayerExtrusionWidth", SettingsKey.nozzle_diameter),
