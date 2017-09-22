@@ -578,12 +578,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					case SliceSettingData.DataEditTypes.COM_PORT:
 						useDefaultSavePattern = false;
 
+						sliceSettingValue = printer.Settings.Helpers.ComPort();
+
 						uiField = new ComPortField(printer);
 						uiField.ValueChanged += (s, e) =>
 						{
 							if (e.UserInitiated)
 							{
-								settingsContext.SetComPort(uiField.Value);
+								printer.Settings.Helpers.SetComPort(uiField.Value);
 							}
 						};
 

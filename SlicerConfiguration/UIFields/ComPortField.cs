@@ -97,7 +97,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		protected override void OnValueChanged(FieldChangedEventArgs fieldChangedEventArgs)
 		{
-			dropdownList.SelectedLabel = ActiveSliceSettings.Instance.Helpers.ComPort();
+			dropdownList.SelectedLabel = this.Value;
 			base.OnValueChanged(fieldChangedEventArgs);
 		}
 
@@ -105,18 +105,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			dropdownList.MenuItems.Clear();
 
-			string currentValue = ActiveSliceSettings.Instance.Helpers.ComPort();
-
 			foreach (string listItem in FrostedSerialPort.GetPortNames())
 			{
 				// Add each serial port to the dropdown list 
 				MenuItem newItem = dropdownList.AddItem(listItem);
-
-				// Set control text
-				if (newItem.Text == currentValue)
-				{
-					dropdownList.SelectedLabel = currentValue;
-				}
 
 				// When the given menu item is selected, save its value back into settings
 				newItem.Selected += (sender, e) =>
@@ -129,6 +121,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					}
 				};
 			}
+
+			// Set control text
+			dropdownList.SelectedLabel = this.Value;
 		}
 	}
 }
