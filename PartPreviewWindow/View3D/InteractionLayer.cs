@@ -63,10 +63,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private Action notifyPartChanged;
 
-		public PartProcessingInfo partProcessingInfo;
-
-		private string progressReportingPrimaryTask = "";
-
 		private float[] ambientLight = { 0.2f, 0.2f, 0.2f, 1.0f };
 
 		private float[] diffuseLight0 = { 0.7f, 0.7f, 0.7f, 1.0f };
@@ -89,40 +85,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			labelContainer.Selectable = false;
 			labelContainer.AnchorAll();
 			this.AddChild(labelContainer);
-
-			partProcessingInfo = new PartProcessingInfo("");
-			labelContainer.AddChild(partProcessingInfo);
-		}
-
-		public void BeginProgressReporting(string taskDescription)
-		{
-			progressReportingPrimaryTask = taskDescription;
-
-			partProcessingInfo.Visible = true;
-			partProcessingInfo.progressControl.PercentComplete = 0;
-			partProcessingInfo.centeredInfoText.Text = taskDescription + "...";
-		}
-
-		public void EndProgressReporting()
-		{
-			progressReportingPrimaryTask = "";
-			partProcessingInfo.Visible = false;
-		}
-
-		public void ReportProgress0to100(double progress0To1, string processingState)
-		{
-			UiThread.RunOnIdle(() =>
-			{
-				int percentComplete = (int)(progress0To1 * 100);
-				partProcessingInfo.centeredInfoText.Text = $"{progressReportingPrimaryTask} {percentComplete}%...";
-				partProcessingInfo.progressControl.PercentComplete = percentComplete;
-
-				// Only assign to textbox if value passed through
-				if (processingState != null)
-				{
-					partProcessingInfo.centeredInfoDescription.Text = processingState;
-				}
-			});
 		}
 
 		internal void SetRenderTarget(GuiWidget renderSource)
