@@ -898,12 +898,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			foreach (var keyValue in this.BaseLayer)
 			{
-				SliceSettingData data = SliceSettingsOrganizer.Instance.GetSettingsData(keyValue.Key);
-				if (data.RebuildGCodeOnChange)
+				try
 				{
-					string activeValue = GetValue(keyValue.Key);
-					bigStringForHashCode.Append(keyValue.Key);
-					bigStringForHashCode.Append(activeValue);
+					SliceSettingData data = SliceSettingsOrganizer.Instance.GetSettingsData(keyValue.Key);
+					if (data.RebuildGCodeOnChange)
+					{
+						string activeValue = GetValue(keyValue.Key);
+						bigStringForHashCode.Append(keyValue.Key);
+						bigStringForHashCode.Append(activeValue);
+					}
+				}
+				catch // no need to die if we find a setting we don't know
+				{
+
 				}
 			}
 

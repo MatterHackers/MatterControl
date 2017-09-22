@@ -110,6 +110,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string printer_name = nameof(printer_name);
 		public const string publish_bed_image = nameof(publish_bed_image);
 		public const string recover_first_layer_speed = nameof(recover_first_layer_speed);
+		public const string number_of_first_layers = nameof(number_of_first_layers);
 		public const string recover_is_enabled = nameof(recover_is_enabled);
 		public const string recover_position_before_z_home = nameof(recover_position_before_z_home);
 		public const string resume_gcode = nameof(resume_gcode);
