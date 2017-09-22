@@ -107,18 +107,22 @@ namespace MatterHackers.MatterControl
 						movePointZeroTwoMmButton.VAnchor = Agg.UI.VAnchor.Center;
 						movePointZeroTwoMmButton.CheckedStateChanged += (sender, e) => { if (((RadioButton)sender).Checked) SetXYZMoveAmount(.02); };
 						movePointZeroTwoMmButton.SiblingRadioButtonList = radioList;
+						radioList.Add(movePointZeroTwoMmButton);
 						moveRadioButtons.AddChild(movePointZeroTwoMmButton);
 
 						RadioButton pointOneButton = buttonFactory.GenerateRadioButton("0.1");
 						pointOneButton.VAnchor = Agg.UI.VAnchor.Center;
 						pointOneButton.CheckedStateChanged += (sender, e) => { if (((RadioButton)sender).Checked) SetXYZMoveAmount(.1); };
 						pointOneButton.SiblingRadioButtonList = radioList;
+						radioList.Add(pointOneButton);
 						moveRadioButtons.AddChild(pointOneButton);
 
 						moveOneMmButton = buttonFactory.GenerateRadioButton("1");
 						moveOneMmButton.VAnchor = Agg.UI.VAnchor.Center;
 						moveOneMmButton.CheckedStateChanged += (sender, e) => { if (((RadioButton)sender).Checked) SetXYZMoveAmount(1); };
 						moveOneMmButton.SiblingRadioButtonList = radioList;
+						radioList.Add(moveOneMmButton);
+
 						moveRadioButtons.AddChild(moveOneMmButton);
 
 						tooBigForBabyStepping = new DisableableWidget()
@@ -134,12 +138,16 @@ namespace MatterHackers.MatterControl
 						tenButton.VAnchor = Agg.UI.VAnchor.Center;
 						tenButton.CheckedStateChanged += (sender, e) => { if (((RadioButton)sender).Checked) SetXYZMoveAmount(10); };
 						tenButton.SiblingRadioButtonList = radioList;
+						radioList.Add(tenButton);
+
 						tooBigFlowLayout.AddChild(tenButton);
 
 						oneHundredButton = buttonFactory.GenerateRadioButton("100");
 						oneHundredButton.VAnchor = Agg.UI.VAnchor.Center;
 						oneHundredButton.CheckedStateChanged += (sender, e) => { if (((RadioButton)sender).Checked) SetXYZMoveAmount(100); };
 						oneHundredButton.SiblingRadioButtonList = radioList;
+						radioList.Add(oneHundredButton);
+
 						tooBigFlowLayout.AddChild(oneHundredButton);
 
 						moveRadioButtons.AddChild(tooBigForBabyStepping);
@@ -149,11 +157,11 @@ namespace MatterHackers.MatterControl
 
 						setMoveDistanceControl.AddChild(moveRadioButtons);
 
-						TextWidget mmLabel = new TextWidget("mm", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 8);
-						mmLabel.Margin = new BorderDouble(left: 10);
-						mmLabel.VAnchor = Agg.UI.VAnchor.Center;
-
-						tooBigFlowLayout.AddChild(mmLabel);
+						tooBigFlowLayout.AddChild(new TextWidget("mm", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 8)
+						{
+							Margin = new BorderDouble(left: 10),
+							VAnchor = Agg.UI.VAnchor.Center
+						});
 					}
 
 					setMoveDistanceControl.HAnchor = Agg.UI.HAnchor.Left;

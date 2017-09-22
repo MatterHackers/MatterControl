@@ -280,7 +280,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				RebuildDropDownList();
 
-				editButton.ClickButton(new MouseEventArgs(MouseButtons.Left, 1, 0, 0, 0));
+				editButton.OnClick(new MouseEventArgs(MouseButtons.Left, 1, 0, 0, 0));
 			};
 
 			try

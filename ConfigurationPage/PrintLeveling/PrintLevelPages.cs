@@ -161,7 +161,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				if (printer.Settings.Helpers.UseZProbe())
 				{
 					// advance to the next page
-					UiThread.RunOnIdle(() => container.nextButton.ClickButton(null));
+					UiThread.RunOnIdle(() => container.nextButton.OnClick(null));
 				}
 			}
 		}
@@ -260,7 +260,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					printer.Connection.MoveAbsolute(probeStartPosition, printer.Settings.Helpers.ManualMovementSpeeds().z);
 					printer.Connection.ReadPosition();
 
-					UiThread.RunOnIdle(() => container.nextButton.ClickButton(null));
+					UiThread.RunOnIdle(() => container.nextButton.OnClick(null));
 				}
 			}
 		}
@@ -310,7 +310,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 				if (printer.Settings.Helpers.UseZProbe())
 				{
-					UiThread.RunOnIdle(() => container.nextButton.ClickButton(null));
+					UiThread.RunOnIdle(() => container.nextButton.OnClick(null));
 				}
 			}
 		}
@@ -421,14 +421,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				case Keys.Right:
 					if (container.nextButton.Enabled)
 					{
-						UiThread.RunOnIdle(() => container.nextButton.ClickButton(null));
+						UiThread.RunOnIdle(() => container.nextButton.OnClick(null));
 					}
 					break;
 
 				case Keys.Left:
 					if (container.backButton.Enabled)
 					{
-						UiThread.RunOnIdle(() => container.backButton.ClickButton(null));
+						UiThread.RunOnIdle(() => container.backButton.OnClick(null));
 					}
 					break;
 			}
@@ -517,7 +517,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						}
 
 						probePositions[probePositionsBeingEditedIndex].position.z = Math.Round(samples.Average(), 2);
-						UiThread.RunOnIdle(() => container.nextButton.ClickButton(null));
+						UiThread.RunOnIdle(() => container.nextButton.OnClick(null));
 					}
 				}
 			}
