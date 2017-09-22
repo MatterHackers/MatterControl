@@ -290,7 +290,6 @@ namespace MatterControl.Tests.MatterControl
 					{"COM-TestC", "COM-TestC"},
 					{"COM-Test0", "COM-Test0"},
 					{"COM-Test1", "COM-Test1"},
-					{"Emulator", "Emulator"},
 				});
 		}
 
@@ -377,7 +376,7 @@ namespace MatterControl.Tests.MatterControl
 				}
 
 				return Task.CompletedTask;
-			}, 330);
+			}, 30);
 
 		}
 	}
