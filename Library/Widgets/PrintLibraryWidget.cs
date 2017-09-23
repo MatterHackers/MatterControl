@@ -31,6 +31,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -356,18 +357,31 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				AllowProtected = true,
 				Action = (selectedLibraryItems, listView) =>
 				{
+					var printer = ApplicationController.Instance.DragDropData.Printer;
 					switch (selectedLibraryItems.FirstOrDefault())
 					{
 						case SDCardFileItem sdcardItem:
-							// TODO: How to wire up SD printing?
-							//ApplicationController.Instance.ActivePrintItem = new PrintItemWrapper(new PrintItem(sdcardItem.Name, QueueData.SdCardFileName));
+							// TODO: Confirm SD printing?
+							// TODO: Need to rewrite library menu item validation can write one off validations like below so we don't end up here
+							//  - ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_sd_card_reader)
+							printer.Connection.StartSdCardPrint(sdcardItem.Name.ToLower());
 							break;
 						case FileSystemFileItem fileItem when Path.GetExtension(fileItem.FileName).ToUpper() == ".GCODE":
 							//ApplicationController.Instance.ActivePrintItem = new PrintItemWrapper(new PrintItem(fileItem.Name, fileItem.Path));
 							break;
 						default:
 							//TODO: Otherwise add the selected items to the plate and print the plate?
-							//ApplicationController.Instance.PrintActivePart();
+							if (printer != null)
+							{
+								printer.Bed.ClearPlate();
+
+								AddToPlate(selectedLibraryItems);
+
+								UiThread.RunOnIdle(() =>
+								{
+									ApplicationController.Instance.PrintActivePartIfPossible(printer.Bed.printItem);
+								});
+							}
 							break;
 					}
 
@@ -383,15 +397,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				AllowContainers = false,
 				Action = (selectedLibraryItems, listView) =>
 				{
-					var scene = ApplicationController.Instance.DragDropData.Scene;
-					scene.ModifyChildren(children =>
-					{
-						children.Add(
-							new InsertionGroup(
-								selectedLibraryItems,
-								ApplicationController.Instance.DragDropData.Scene,
-								dragOperationActive: () => false));
-					});
+					AddToPlate(selectedLibraryItems);
 				}
 			});
 
@@ -557,6 +563,19 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						ThumbHeight = 256,
 					};
 				},
+			});
+		}
+
+		private static void AddToPlate(IEnumerable<ILibraryItem> selectedLibraryItems)
+		{
+			var scene = ApplicationController.Instance.DragDropData.Scene;
+			scene.ModifyChildren(children =>
+			{
+				children.Add(
+					new InsertionGroup(
+						selectedLibraryItems,
+						scene,
+						dragOperationActive: () => false));
 			});
 		}
 

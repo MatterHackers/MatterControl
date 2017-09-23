@@ -1925,11 +1925,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			DoneLoadingGCodeToPrint();
 		}
 
-		public bool StartSdCardPrint()
+		public bool StartSdCardPrint(string m23FileName)
 		{
 			if (!PrinterIsConnected
 				|| PrinterIsPrinting
-				|| printer.Bed.printItem.PrintItem.FileLocation != QueueData.SdCardFileName)
+				|| string.IsNullOrEmpty(m23FileName))
 			{
 				return false;
 			}
@@ -1939,7 +1939,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			ClearQueuedGCode();
 			CommunicationState = CommunicationStates.PrintingFromSd;
 
-			SendLineToPrinterNow("M23 {0}".FormatWith(printer.Bed.printItem.PrintItem.Name.ToLower())); // Select SD File
+			SendLineToPrinterNow($"M23 {m23FileName.ToLower()}"); // Select SD File
 			SendLineToPrinterNow("M24"); // Start/resume SD print
 
 			ReadLineStartCallBacks.AddCallbackToKey("Done printing file", DonePrintingSdFile);

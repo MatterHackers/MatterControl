@@ -115,6 +115,10 @@ namespace MatterHackers.MatterControl
 		{
 			(this.ActivePrinters as List<PrinterConfig>).Add(printer);
 			this.ActivePrinter = printer;
+
+			// TODO: Decide if non-printer contexts should prompt for a printer, if we should have a default printer, or get "ActiveTab printer" working
+			// HACK: short term solution to resolve printer reference for non-printer related contexts
+			DragDropData.Printer = printer;
 		}
 
 		private AutoResetEvent thumbGenResetEvent = new AutoResetEvent(false);
@@ -972,7 +976,6 @@ namespace MatterHackers.MatterControl
 					}
 				}
 
-
 				// Save any pending changes before starting the print
 				await ApplicationController.Instance.ActiveView3DWidget.PersistPlateIfNeeded();
 
@@ -980,12 +983,8 @@ namespace MatterHackers.MatterControl
 				{
 					this.PrintingItemName = printItem.Name;
 					string pathAndFile = printItem.FileLocation;
-					if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_sd_card_reader)
-						&& pathAndFile == QueueData.SdCardFileName)
-					{
-						this.ActivePrinter.Connection.StartSdCardPrint();
-					}
-					else if (ActiveSliceSettings.Instance.IsValid())
+
+					if (ActiveSliceSettings.Instance.IsValid())
 					{
 						if (File.Exists(pathAndFile))
 						{
@@ -1164,6 +1163,7 @@ namespace MatterHackers.MatterControl
 	{
 		public View3DWidget View3DWidget { get; set; }
 		public InteractiveScene Scene { get; set; }
+		public PrinterConfig Printer { get; internal set; }
 
 		public void Reset()
 		{
