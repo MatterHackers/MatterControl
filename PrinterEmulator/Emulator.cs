@@ -102,6 +102,8 @@ namespace MatterHackers.PrinterEmulator
 		public bool SimulateLineErrors { get; set; } = false;
 		public double XPosition { get; private set; }
 
+		public bool HasHeatedBed { get; set; } = true;
+
 		public double YPosition { get; private set; }
 
 		public double ZPosition { get; private set; }
@@ -227,7 +229,7 @@ namespace MatterHackers.PrinterEmulator
 			// temp commands look like this: ok T:19.4 /0.0 B:0.0 /0.0 @:0 B@:0
 			return $"ok T:{Hotend.CurrentTemperature:0.0} / {Hotend.TargetTemperature:0.0}"
 				// Newline if HeatedBed is disabled otherwise HeatedBed stats
-				+ ((!this.HeatedBed.Enabled) ? "\n" : $" B: {HeatedBed.CurrentTemperature:0.0} / {HeatedBed.TargetTemperature:0.0}\n");
+				+ ((!this.HasHeatedBed) ? "\n" : $" B: {HeatedBed.CurrentTemperature:0.0} / {HeatedBed.TargetTemperature:0.0}\n");
 		}
 
 		public string SetFan(string command)
@@ -304,7 +306,7 @@ namespace MatterHackers.PrinterEmulator
 				GetFirstNumberAfter("N", command, ref lineNumber);
 				var checksumStart = command.LastIndexOf('*');
 				var commandToChecksum = command.Substring(0, checksumStart);
-				if(commandToChecksum[commandToChecksum.Length-1] == ' ')
+				if (commandToChecksum[commandToChecksum.Length - 1] == ' ')
 				{
 					commandToChecksum = commandToChecksum.Substring(0, commandToChecksum.Length - 1);
 				}
@@ -437,6 +439,9 @@ namespace MatterHackers.PrinterEmulator
 			private bool shutdown = false;
 			private double targetTemp;
 
+			private static int loopTimeInMs = 100;
+
+			private bool isDirty = true;
 			public Heater(string identifier)
 			{
 				this.ID = identifier;
@@ -446,47 +451,70 @@ namespace MatterHackers.PrinterEmulator
 				{
 					var random = new Random();
 
+					double requiredLoops = 0;
+					double incrementPerLoop = 0;
+
 					while (!shutdown)
 					{
-						if (this.Enabled)
+						if (this.Enabled
+							&& targetTemp > 0)
 						{
-							var delta = TargetTemperature - CurrentTemperature;
-							var abs = Math.Abs(delta);
-
-							double power = (abs > 5 || abs == 0) ? 1 : abs / 5d;
-
-							double increment = (abs == 0) ? 0 : power * IncrementAmount;
-							if (delta != 0)
+							if (this.isDirty)
 							{
-								increment *= Math.Sign(delta);
+								requiredLoops = this.HeatUpTimeInSeconds * 1000 / loopTimeInMs;
+								incrementPerLoop = TargetTemperature / requiredLoops;
 							}
 
-							// Bounce if close to target
-							int extra = abs < 10 ? random.Next(-BounceAmount, BounceAmount) : 0;
-
-							// Add the increment plus random
-							if (this.enabled)
+							if (CurrentTemperature < targetTemp)
 							{
-								CurrentTemperature += increment + extra;
+								CurrentTemperature += incrementPerLoop;
+							}
+							else if (CurrentTemperature != targetTemp)
+							{
+								CurrentTemperature = targetTemp;
 							}
 						}
+						else
+						{
+							CurrentTemperature = 0;
+						}
 
-						Thread.Sleep(100);
+						Thread.Sleep(loopTimeInMs);
 					}
 				});
 			}
 
-			public double CurrentTemperature { get; set; }
-
-			private bool enabled;
-			public bool Enabled
+			private double _currentTemperature;
+			public double CurrentTemperature
 			{
-				get => enabled;
+				get => _currentTemperature;
 				set
 				{
-					if (enabled != value)
+					_currentTemperature = value;
+					isDirty = true;
+				}
+			}
+
+			private double _heatupTimeInSeconds = 3;
+			public double HeatUpTimeInSeconds
+			{
+				get => _heatupTimeInSeconds;
+				set
+				{
+					_heatupTimeInSeconds = value;
+					isDirty = true;
+				}
+			}
+
+			private bool _enabled;
+			public bool Enabled
+			{
+				get => _enabled;
+				set
+				{
+					if (_enabled != value)
 					{
-						enabled = value;
+						_enabled = value;
 						CurrentTemperature = 0;
 					}
 				}
