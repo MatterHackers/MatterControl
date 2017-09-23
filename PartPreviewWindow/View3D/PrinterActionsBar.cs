@@ -27,7 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 using System;
-using System.Collections.Generic;
 using System.Threading;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
@@ -38,8 +37,6 @@ using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.EeProm;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.MeshVisualizer;
-using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {

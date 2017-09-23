@@ -2296,7 +2296,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		// Before printing persist any changes to disk
 		internal async Task PersistPlateIfNeeded()
 		{
-			if (partHasBeenEdited)
+			// TODO: Clean up caching, restore conditional save once Dirty state is trustworthy
+			//if (partHasBeenEdited)
 			{
 				await this.SaveChanges();
 			}
