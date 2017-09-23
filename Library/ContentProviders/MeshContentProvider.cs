@@ -99,12 +99,8 @@ namespace MatterHackers.MatterControl
 
 						sceneItem.Mesh = loadedItem.Mesh;
 						sceneItem.Children = loadedItem.Children;
-
-						// Copy scale/rotation/translation from the source
-						sceneItem.Matrix *= loadedItem.Matrix;
-
-						// Center
-						sceneItem.Matrix *= Matrix4X4.CreateTranslation(-aabb.Center.x, -aabb.Center.y, -sceneItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity).minXYZ.z);
+						sceneItem.Matrix = loadedItem.Matrix * Matrix4X4.CreateTranslation(-aabb.Center.x, -aabb.Center.y, -sceneItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity).minXYZ.z);
+						sceneItem.Color = loadedItem.Color;
 
 						// Notification should force invalidate and redraw
 						progressReporter?.Invoke(1, "");
