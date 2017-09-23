@@ -99,6 +99,11 @@ namespace MatterHackers.MatterControl
 
 						sceneItem.Mesh = loadedItem.Mesh;
 						sceneItem.Children = loadedItem.Children;
+
+						// Copy scale/rotation/translation from the source
+						sceneItem.Matrix *= loadedItem.Matrix;
+
+						// Center
 						sceneItem.Matrix *= Matrix4X4.CreateTranslation(-aabb.Center.x, -aabb.Center.y, -sceneItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity).minXYZ.z);
 
 						// Notification should force invalidate and redraw
