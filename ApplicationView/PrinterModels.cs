@@ -380,13 +380,18 @@ namespace MatterHackers.MatterControl
 		{
 			this.Bed = new BedConfig(this, loadLastBedplate);
 
+			this.Connection = new PrinterConnection(printer: this);
+
 			this.Settings = settings;
 			this.Settings.printer = this;
 
-			this.Connection = new PrinterConnection(printer: this);
-
-
 			ActiveSliceSettings.SettingChanged.RegisterEvent(Printer_SettingChanged, ref unregisterEvents);
+		}
+
+		internal void SwapToSettings(PrinterSettings printerSettings)
+		{
+			_settings = printerSettings;
+			ApplicationController.Instance.ReloadAll();
 		}
 
 		private void ReloadSettings()

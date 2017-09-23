@@ -74,7 +74,10 @@ namespace MatterHackers.MatterControl
 					else
 					{
 						lastSelectedIndex = this.SelectedIndex;
-						UiThread.RunOnIdle(() => ActiveSliceSettings.SwitchToProfile(printerID));
+						UiThread.RunOnIdle(() =>
+						{
+							ProfileManager.SwitchToProfile(printerID).ConfigureAwait(false);
+						});
 					}
 				}
 			};

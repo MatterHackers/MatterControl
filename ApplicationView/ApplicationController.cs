@@ -111,14 +111,80 @@ namespace MatterHackers.MatterControl
 
 		private Queue<Func<Task>> queuedThumbCallbacks = new Queue<Func<Task>>();
 
-		public void SetActivePrinter(PrinterConfig printer)
+		public void SetActivePrinter(PrinterConfig printer, bool allowChangedEvent = true)
 		{
-			(this.ActivePrinters as List<PrinterConfig>).Add(printer);
-			this.ActivePrinter = printer;
+			var initialPrinter = this.ActivePrinter;
+			if (initialPrinter?.Settings.ID != printer.Settings.ID)
+			{
+				// If we have an active printer, run Disable
+				if (initialPrinter.Settings != PrinterSettings.Empty)
+				{
+					initialPrinter?.Connection?.Disable();
+				}
+
+				// ActivePrinters is IEnumerable to force us to use SetActivePrinter until it's ingrained in our pattern - cast to list since it is and we need to add
+				(this.ActivePrinters as List<PrinterConfig>).Add(printer);
+				this.ActivePrinter = printer;
+
+				// TODO: Decide if non-printer contexts should prompt for a printer, if we should have a default printer, or get "ActiveTab printer" working
+				// HACK: short term solution to resolve printer reference for non-printer related contexts
+				DragDropData.Printer = printer;
+
+				if (!MatterControlApplication.IsLoading)
+				{
+					// Fire printer changed event
+				}
+
+				BedSettings.SetMakeAndModel(
+					printer.Settings.GetValue(SettingsKey.make), 
+					printer.Settings.GetValue(SettingsKey.model));
+
+				ActiveSliceSettings.SwitchToPrinterTheme();
+
+				if (allowChangedEvent)
+				{
+					ActiveSliceSettings.OnActivePrinterChanged(null);
+				}
+
+				if (!MatterControlApplication.IsLoading
+					&& printer.Settings.PrinterSelected
+					&& printer.Settings.GetValue<bool>(SettingsKey.auto_connect))
+				{
+					UiThread.RunOnIdle(() =>
+					{
+						printer.Settings.printer.Connection.Connect(false);
+					}, 2);
+				}
+
+			}
+		}
+
+		internal void ClearActivePrinter()
+		{
+			this.ActivePrinter = emptyPrinter;
+
+		}
+
+		public void RefreshActiveInstance(PrinterSettings updatedPrinterSettings)
+		{
+			ActivePrinter.SwapToSettings(updatedPrinterSettings);
+
+			/*
+			// TODO: Should we rebroadcast settings changed events for each settings?
+			bool themeChanged = ActivePrinter.Settings.GetValue(SettingsKey.active_theme_name) != updatedProfile.GetValue(SettingsKey.active_theme_name);
+			ActiveSliceSettings.SettingChanged.CallEvents(null, new StringEventArgs(SettingsKey.printer_name));
 
 			// TODO: Decide if non-printer contexts should prompt for a printer, if we should have a default printer, or get "ActiveTab printer" working
 			// HACK: short term solution to resolve printer reference for non-printer related contexts
 			DragDropData.Printer = printer;
+			if (themeChanged)
+			{
+				UiThread.RunOnIdle(ActiveSliceSettings.SwitchToPrinterTheme);
+			}
+			else
+			{
+				UiThread.RunOnIdle(ApplicationController.Instance.ReloadAdvancedControlsPanel);
+			}*/
 		}
 
 		private AutoResetEvent thumbGenResetEvent = new AutoResetEvent(false);

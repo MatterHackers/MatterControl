@@ -436,7 +436,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				return Task.CompletedTask;
 			}, overrideWidth: 1300);
 		}
-	
+
 		[Test]
 		public async Task QualitySettingsStayAsOverrides()
 		{
@@ -451,12 +451,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Layer Thickness Field");
 				testRunner.Type(".5\n");
 				testRunner.Delay(.5);
-				Assert.AreEqual(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.layer_height), .5, "Layer height is what we set it to");
+				Assert.AreEqual(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.layer_height).ToString(), "0.5", "Layer height is what we set it to");
 				testRunner.ClickByName("Quality");
 				testRunner.ClickByName("Fine Menu");
 
 				testRunner.Delay(.5);
-				Assert.AreEqual(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.layer_height), .1, "Layer height is the fine override");
+				Assert.AreEqual(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.layer_height).ToString(), "0.1", "Layer height is the fine override");
 
 				testRunner.AddAndSelectPrinter("BCN", "Sigma");
 
@@ -468,14 +468,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Airwolf 3D HD Menu Item");
 
 				testRunner.Delay(1);
-				Assert.AreEqual(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.layer_height), .1, "Layer height is the fine override");
+				Assert.AreEqual(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.layer_height).ToString(), "0.1", "Layer height is the fine override");
 
 				// Switch to Slice Settings Tab
 				testRunner.ClickByName("Slice Settings Tab");
 
 				testRunner.ClickByName("Quality");
 				testRunner.ClickByName("- none - Menu Item", delayBeforeReturn: .5);
-				Assert.AreEqual(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.layer_height), .5, "Layer height is what we set it to");
+				Assert.AreEqual(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.layer_height).ToString(), "0.5", "Layer height is what we set it to");
 
 				return Task.CompletedTask;
 			}, maxTimeToRun: 120);

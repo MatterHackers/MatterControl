@@ -249,7 +249,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			UiThread.RunOnIdle(() =>
 			{
-				ActiveSliceSettings.Instance = PrinterSettings.Empty;
+				ApplicationController.Instance.ClearActivePrinter();
 
 				// Notify listeners of a ProfileListChange event due to this printers removal
 				ProfileManager.ProfilesListChanged.CallEvents(this, null);

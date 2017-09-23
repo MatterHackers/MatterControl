@@ -48,34 +48,21 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private static ProfileManager activeInstance = null;
 		public static ProfileManager Instance
 		{
-			get
-			{
-				return activeInstance;
-			}
+			get => activeInstance;
 			private set
 			{
 				activeInstance = value;
 
-				// If profile is not loaded, load the loaded slice settings do not match the last active settings for this profile, change to the last active
-				if (!ApplicationController.Instance.ActivePrinters.Where(p => p.Settings.ID == activeInstance.LastProfileID).Any())
+				// Select a 'LastProfile' exists and it is missing from ActivePrinters, load it
+				var lastProfile = activeInstance[activeInstance.LastProfileID];
+				if (lastProfile != null
+					&& !ApplicationController.Instance.ActivePrinters.Where(p => p.Settings.ID == lastProfile.ID).Any())
 				{
 					// Load or download on a background thread the last loaded settings
-					var printerSettings = LoadProfileAsync(activeInstance.LastProfileID).Result ?? PrinterSettings.Empty;
-
-					if (MatterControlApplication.IsLoading)
-					{
-						ActiveSliceSettings.Instance = printerSettings;
-					}
-					else
-					{
-						UiThread.RunOnIdle(() =>
-						{
-							// Assign on the UI thread
-							ActiveSliceSettings.Instance = printerSettings ;
-						});
-					}
-
-					ApplicationController.Instance.SetActivePrinter(new PrinterConfig(true, printerSettings));
+					ApplicationController.Instance.SetActivePrinter(
+						new PrinterConfig(
+							true,
+							LoadProfileAsync(activeInstance.LastProfileID).Result));
 				}
 			}
 		}
@@ -149,6 +136,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			// Wire up the CollectionChanged event
 			Instance.Profiles.CollectionChanged += Profiles_CollectionChanged;
+		}
+
+		public static async Task SwitchToProfile(string printerID)
+		{
+			ProfileManager.Instance.LastProfileID = printerID;
+
+			ApplicationController.Instance.SetActivePrinter(
+				new PrinterConfig(
+					false,
+					await ProfileManager.LoadProfileAsync(printerID)));
 		}
 
 		/// <summary>
@@ -478,8 +475,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			var printer = new PrinterConfig(false, printerSettings);
 
 			ApplicationController.Instance.SetActivePrinter(printer);
-
-			ActiveSliceSettings.Instance = printerSettings;
 
 			return printer;
 		}
