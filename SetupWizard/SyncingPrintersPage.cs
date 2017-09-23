@@ -34,9 +34,12 @@ namespace MatterHackers.MatterControl.SetupWizard
 				}
 				else if (ProfileManager.Instance.ActiveProfiles.Count() == 1)
 				{
-					ActiveSliceSettings.ShowComPortConnectionHelp();
+					// TODO: Investigate what this was doing and re-implement
+					//ActiveSliceSettings.ShowComPortConnectionHelp();
+
 					//Set as active printer
-					ActiveSliceSettings.SwitchToProfile(ProfileManager.Instance.ActiveProfiles.First().ID);
+					ProfileManager.SwitchToProfile(ProfileManager.Instance.ActiveProfiles.First().ID).ConfigureAwait(false);
+
 					// only close the window if we are not switching to the setup printer form
 					UiThread.RunOnIdle(WizardWindow.Close);
 				}

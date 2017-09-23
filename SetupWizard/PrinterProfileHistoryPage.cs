@@ -46,14 +46,14 @@ namespace MatterHackers.MatterControl.SetupWizard
 					var activeProfile = ProfileManager.Instance.ActiveProfile;
 
 					// Download the specified json profile
-					var jsonProfile = await ApplicationController.GetPrinterProfileAsync(activeProfile, profileToken);
-					if (jsonProfile != null)
+					var printerSettings = await ApplicationController.GetPrinterProfileAsync(activeProfile, profileToken);
+					if (printerSettings != null)
 					{
 						// Persist downloaded profile
-						jsonProfile.Save();
+						printerSettings.Save();
 
 						// Update active instance without calling ReloadAll
-						ActiveSliceSettings.RefreshActiveInstance(jsonProfile);
+						ApplicationController.Instance.RefreshActiveInstance(printerSettings);
 					}
 					
 					UiThread.RunOnIdle(WizardWindow.Close);

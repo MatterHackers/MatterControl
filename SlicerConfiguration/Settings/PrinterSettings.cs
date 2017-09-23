@@ -483,9 +483,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					// Persist any profile recovered above as the current
 					printerSettings.Save();
 
-					// Update active instance without calling ReloadAll
-					ActiveSliceSettings.RefreshActiveInstance(printerSettings);
-
 					WarnAboutRevert(printerInfo);
 				}
 
