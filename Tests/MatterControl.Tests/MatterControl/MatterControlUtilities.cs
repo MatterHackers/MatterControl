@@ -204,11 +204,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			// edit the com port
 			testRunner.ClickByName("Slice Settings Sidebar");
 			testRunner.ClickByName("Printer Tab");
-			var serialPortDropDown = testRunner.GetWidgetByName("com_port Edit Field", out _, 1);
+			var serialPortDropDown = testRunner.GetWidgetByName("com_port Field", out _, 1);
 
 			testRunner.Delay(() => serialPortDropDown.Enabled, 5); // Wait until the serialPortDropDown is ready to click it. Ensures the printer is loaded.
 
-			testRunner.ClickByName("Serial Port Dropdown");
+			testRunner.ClickByName("com_port Field");
 
 			testRunner.ClickByName("Emulator Menu Item");
 

@@ -44,6 +44,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit,
+				Name = this.Name
 			};
 			editWidget.DrawFromHintedCache();
 			editWidget.ActualTextEditWidget.EditComplete += (sender, e) =>

@@ -32,7 +32,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.ClickByName("Printer Tab");
 					testRunner.ClickByName("Custom G-Code Tab");
-					testRunner.ClickByName("end_gcode Edit Field");
+					testRunner.ClickByName("End G-Code Field");
 					testRunner.Type("^a");
 					testRunner.Type("{BACKSPACE}");
 					testRunner.Type("G28");
