@@ -53,9 +53,9 @@ namespace MatterHackers.PrinterEmulator
 
 		private bool shutDown = false;
 
-		public Heater HeatedBed { get; } = new Heater("HeatedBed");
+		public Heater HeatedBed { get; } = new Heater("HeatedBed") { CurrentTemperature = 26 };
 
-		public Heater Hotend { get; } = new Heater("Hotend1");
+		public Heater Hotend { get; } = new Heater("Hotend1") { CurrentTemperature = 27 };
 
 		public Emulator()
 		{
@@ -473,10 +473,6 @@ namespace MatterHackers.PrinterEmulator
 							{
 								CurrentTemperature = targetTemp;
 							}
-						}
-						else
-						{
-							CurrentTemperature = 0;
 						}
 
 						Thread.Sleep(loopTimeInMs);

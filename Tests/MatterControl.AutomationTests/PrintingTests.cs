@@ -191,6 +191,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			using (var emulator = new Emulator())
 			{
+				emulator.HasHeatedBed = false;
+
 				int lineIndex = 0;
 				while (lineIndex < sendRecieveLog.Length)
 				{
