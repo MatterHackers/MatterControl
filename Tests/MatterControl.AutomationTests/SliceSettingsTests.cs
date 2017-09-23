@@ -59,9 +59,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.AddDefaultFileToBedplate();
 
-					testRunner.ClickByName("Generate Gcode Button");
+					testRunner.StartSlicing();
 
-					testRunner.WaitForName("Current GCode Layer Edit");
+					testRunner.WaitForName("ViewGcodeBasic", 8);
+
+					// Force lose focus to drop Slice popup window to expose OverFlow menu
+					testRunner.ClickByName("Library Up Button");
 
 					testRunner.ClickByName("View3D Overflow Menu");
 					testRunner.ClickByName("Sync To Print Checkbox");
