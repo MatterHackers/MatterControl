@@ -465,7 +465,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								}
 								message += "...";
 
-								progressReporter.Report(message);
+								progressReporter?.Report(message);
 							}
 						};
 
