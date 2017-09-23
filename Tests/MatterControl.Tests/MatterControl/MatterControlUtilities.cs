@@ -602,7 +602,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			// Switch to the Local Library tab
 			testRunner.NavigateToFolder("Local Library Row Item Collection");
 
-			// Assert that the requested items are not currently in the list
+			// Assert that the requested items are *not* in the list
 			foreach (string assetName in assetNames)
 			{
 				string friendlyName = Path.GetFileNameWithoutExtension(assetName);
@@ -619,11 +619,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.Delay(1);
 			testRunner.Type("{Enter}");
 
-			// Assert that the requested items are not currently in the list
+			// Assert that the added items *are* in the list
 			foreach (string assetName in assetNames)
 			{
 				string friendlyName = Path.GetFileNameWithoutExtension(assetName);
-				Assert.IsTrue(testRunner.WaitForName($"Row Item {friendlyName}", 0.5), $"{friendlyName} part should exist after adding");
+				Assert.IsTrue(testRunner.WaitForName($"Row Item {friendlyName}"), $"{friendlyName} part should exist after adding");
 			}
 		}
 
