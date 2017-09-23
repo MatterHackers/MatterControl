@@ -81,6 +81,8 @@ namespace MatterHackers.MatterControl
 
 				_inspectedWidget = value;
 
+				this.Text = "Inspector" + (string.IsNullOrEmpty(_inspectedWidget?.Name) ? "" : " - " + _inspectedWidget.Name);
+
 				if (_inspectedWidget != null)
 				{
 					ancestryTree = new HashSet<GuiWidget>(_inspectedWidget.Parents<GuiWidget>());
