@@ -112,7 +112,10 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			printer.Connection.CommunicationStateChanged.RegisterEvent((s, e) =>
 			{
-				disableablePanel.Enabled = printer.Connection.PrinterIsConnected;
+				if (disableablePanel != null)
+				{
+					disableablePanel.Enabled = printer.Connection.PrinterIsConnected;
+				}
 
 			}, ref unregisterEvents);
 		}
