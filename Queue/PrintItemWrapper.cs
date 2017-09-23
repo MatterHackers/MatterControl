@@ -78,9 +78,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		private long fileHashCode;
 
-		private String fileType;
-
-		private bool slicingHadError = false;
+		private string fileType;
 
 		private long writeTime = 0;
 
@@ -128,7 +126,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 					if (doneSlicing)
 					{
 						string message = slicingError;
-						slicingHadError = true;
+						this.SlicingHadError = true;
 						if (File.Exists(FileLocation))
 						{
 							string gcodePathAndFileName = GetGCodePathAndFileName();
@@ -139,7 +137,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 								if (info.Length > 10)
 								{
 									message = readyToPrint;
-									slicingHadError = false;
+									this.SlicingHadError = false;
 								}
 							}
 						}
@@ -150,10 +148,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 						OnSlicingOutputMessage(new StringEventArgs(message));
 
-						if (SlicingDone != null)
-						{
-							SlicingDone(this, null);
-						}
+						SlicingDone?.Invoke(this, null);
 					}
 				}
 			}
@@ -226,45 +221,22 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		public string FileLocation
 		{
-			get { return this.PrintItem.FileLocation; }
-			set
-			{
-				this.PrintItem.FileLocation = value;
-			}
-		}
-
-		public string GetFileExtension()
-		{
-			return Path.GetExtension(this.PrintItem.FileLocation);
-		}
-
-		public string GetFileNameWithoutExtension()
-		{
-			return Path.GetFileNameWithoutExtension(this.PrintItem.FileLocation);
+			get  => this.PrintItem.FileLocation;
+			set => this.PrintItem.FileLocation = value;
 		}
 
 		public string Name
 		{
-			get { return this.PrintItem.Name; }
-			set
-			{
-				this.PrintItem.Name = value;
-			}
+			get => this.PrintItem.Name;
+			set => this.PrintItem.Name = value;
 		}
 
-		PrintItem printItem;
-		public PrintItem PrintItem 
-		{
-			get { return printItem; }
-			set
-			{
-				printItem = value;
-			}
-		}
+		public PrintItem PrintItem { get; set; }
 
-		public bool SlicingHadError { get { return slicingHadError; } }
+		public bool SlicingHadError { get; private set; } = false;
 
 		public ILibraryContainer SourceLibraryProviderLocator { get; private set; }
+
 		public bool UseIncrementedNameDuringTypeChange { get; internal set; }
 
 		public void Delete()
