@@ -120,7 +120,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			};
 			this.AddChild(restoreArea);
 
-			this.Name = settingData.SlicerConfigName + " Edit Field";
+			this.Name = settingData.SlicerConfigName + " Row";
 
 			if (settingData.ShowAsOverride)
 			{

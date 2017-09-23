@@ -177,6 +177,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// The slice layers view
 			gcodeViewer = new ViewGcodeBasic(printer, sceneContext, viewControls3D);
+			gcodeViewer.Name = "ViewGcodeBasic";
 			gcodeViewer.AnchorAll();
 			gcodeViewer.Visible = false;
 			this.InteractionLayer.AddChild(gcodeViewer);

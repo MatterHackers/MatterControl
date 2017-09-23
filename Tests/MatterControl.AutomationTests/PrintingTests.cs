@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -32,7 +31,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.ClickByName("Printer Tab");
 					testRunner.ClickByName("Custom G-Code Tab");
-					testRunner.ClickByName("end_gcode Edit Field");
+					testRunner.ClickByName("End G-Code Field");
 					testRunner.Type("^a");
 					testRunner.Type("{BACKSPACE}");
 					testRunner.Type("G28");
@@ -54,7 +53,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				}
 
 				return Task.CompletedTask;
-			}, maxTimeToRun: 200);
+			}, maxTimeToRun: 70);
 		}
 
 		[Test, Category("Emulator")]
@@ -192,6 +191,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			using (var emulator = new Emulator())
 			{
+				emulator.HasHeatedBed = false;
+
 				int lineIndex = 0;
 				while (lineIndex < sendRecieveLog.Length)
 				{

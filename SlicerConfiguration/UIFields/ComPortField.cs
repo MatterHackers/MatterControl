@@ -47,6 +47,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.printer = printer;
 		}
 
+		public new string Name { get; set; }
+
 		public override void Initialize(int tabIndex)
 		{
 			EventHandler unregisterEvents = null;
@@ -62,7 +64,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				ToolTipText = this.HelpText,
 				Margin = new BorderDouble(),
 				TabIndex = tabIndex,
-				Name = "Serial Port Dropdown",
+				Name = "com_port Field",
 				// Prevent droplist interaction when connected
 				Enabled = canChangeComPort,
 				TextColor = canChangeComPort ? ActiveTheme.Instance.PrimaryTextColor : new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 150),
