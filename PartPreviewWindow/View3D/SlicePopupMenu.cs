@@ -74,7 +74,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			Name = "SlicePopupMenu";
 			HAnchor = HAnchor.Fit;
 			VAnchor = VAnchor.Fit;
-			var sliceButton = buttonFactory.Generate("Slice".Localize().ToUpper());
+
+			var sliceButton =  buttonFactory.Generate("Slice".Localize().ToUpper());
+			sliceButton.Name = "Slice Dropdown Button";
 			this.AddChild(sliceButton);
 		}
 

@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.GuiAutomation;
-using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using NUnit.Framework;
 
@@ -30,7 +29,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Raft / Priming Tab");
 				testRunner.ClickByName("Create Raft Field");
 
-				testRunner.ClickByName("Generate Gcode Button");
+				testRunner.StartSlicing();
 				testRunner.Delay(() => MatterControlUtilities.CompareExpectedSliceSettingValueWithActualVaue("enableRaft", "True"), 10);
 
 				// Call compare slice settings method here
@@ -100,7 +99,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.AddDefaultFileToBedplate();
 
-					testRunner.ClickByName("Generate Gcode Button");
+					testRunner.StartSlicing();
+
 					testRunner.ClickByName("View3D Overflow Menu");
 					testRunner.ClickByName("Sync To Print Checkbox");
 

@@ -555,6 +555,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			Environment.CurrentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 		}
 
+		public static void StartSlicing(this AutomationRunner testRunner)
+		{
+			testRunner.ClickByName("Slice Dropdown Button");
+			testRunner.ClickByName("Generate Gcode Button");
+		}
+
 		public static void SwitchToAdvancedSliceSettings(this AutomationRunner testRunner)
 		{
 			testRunner.ClickByName("Slice Settings Sidebar");
