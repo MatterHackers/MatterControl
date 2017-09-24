@@ -5,6 +5,8 @@ using System.Linq;
 using System.Windows.Forms;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.DataConverters3D;
+using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
@@ -16,7 +18,20 @@ namespace MatterHackers.MatterControl
 
 		private Vector2 mousePosition;
 
-		private Dictionary<GuiWidget, TreeNode> treeNodes = new Dictionary<GuiWidget, TreeNode>();
+		private Dictionary<GuiWidget, TreeNode> aggTreeNodes = new Dictionary<GuiWidget, TreeNode>();
+		private Dictionary<IObject3D, TreeNode> sceneTreeNodes = new Dictionary<IObject3D, TreeNode>();
+
+		private InteractiveScene scene;
+
+		public InspectForm(GuiWidget inspectedSystemWindow, InteractiveScene scene)
+			: this(inspectedSystemWindow)
+		{
+			this.scene = scene;
+
+			sceneTreeView.SuspendLayout();
+			this.AddTree(scene, null, "Scene");
+			sceneTreeView.ResumeLayout();
+		}
 
 		public InspectForm(GuiWidget inspectedSystemWindow)
 		{
@@ -29,9 +44,9 @@ namespace MatterHackers.MatterControl
 			inspectedSystemWindow.AfterDraw += systemWindow_AfterDraw;
 			inspectedSystemWindow.Invalidate();
 
-			treeView1.SuspendLayout();
+			aggTreeView.SuspendLayout();
 			this.AddTree(inspectedSystemWindow, null, "SystemWindow");
-			treeView1.ResumeLayout();
+			aggTreeView.ResumeLayout();
 
 			this.TopMost = true;
 		}
@@ -56,7 +71,8 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private HashSet<GuiWidget> ancestryTree = new HashSet<GuiWidget>();
+		private HashSet<GuiWidget> aggAncestryTree = new HashSet<GuiWidget>();
+		//private HashSet<IObject3D> sceneAncestryTree = new HashSet<IObject3D>();
 
 		private GuiWidget _inspectedWidget;
 		private GuiWidget InspectedWidget
@@ -85,8 +101,8 @@ namespace MatterHackers.MatterControl
 
 				if (_inspectedWidget != null)
 				{
-					ancestryTree = new HashSet<GuiWidget>(_inspectedWidget.Parents<GuiWidget>());
-					ancestryTree.Add(_inspectedWidget);
+					aggAncestryTree = new HashSet<GuiWidget>(_inspectedWidget.Parents<GuiWidget>());
+					aggAncestryTree.Add(_inspectedWidget);
 
 					propertyGrid1.SelectedObject = _inspectedWidget;
 
@@ -111,18 +127,37 @@ namespace MatterHackers.MatterControl
 					activeTreeNode.Checked = false;
 				}
 
-				if (treeNodes.TryGetValue(_inspectedWidget, out TreeNode treeNode))
+				if (aggTreeNodes.TryGetValue(_inspectedWidget, out TreeNode treeNode))
 				{
-					treeView1.SelectedNode = treeNode;
-					
+					aggTreeView.SelectedNode = treeNode;
+
 					treeNode.EnsureVisible();
 					activeTreeNode = treeNode;
-					treeView1.Invalidate();
+					aggTreeView.Invalidate();
 				}
 
 				_inspectedWidget.Invalidate();
 			}
 
+		}
+		private IObject3D _inspectedObject3D = null;
+		public IObject3D InspectedObject3D
+		{
+			get => _inspectedObject3D;
+			set
+			{
+				if (_inspectedObject3D != value)
+				{
+					_inspectedObject3D = value;
+
+					if (_inspectedObject3D != null)
+					{
+						propertyGrid1.SelectedObject = _inspectedObject3D;
+
+						//sceneAncestryTree = new HashSet<IObject3D>();
+					}
+				}
+			}
 		}
 
 		private Font boldFont;
@@ -140,7 +175,7 @@ namespace MatterHackers.MatterControl
 				text = BuildDefaultName(widget);
 			}
 
-			if (treeNodes.TryGetValue(widget, out TreeNode existingNode))
+			if (aggTreeNodes.TryGetValue(widget, out TreeNode existingNode))
 			{
 				if (childNode != null)
 				{
@@ -165,14 +200,14 @@ namespace MatterHackers.MatterControl
 					node.Nodes.Add(childNode);
 					node.Expand();
 				}
-				treeNodes.Add(widget, node);
+				aggTreeNodes.Add(widget, node);
 
 				if (showAllParents)
 				{
 					var parent = widget.Parent;
 					if (parent == null)
 					{
-						treeView1.Nodes.Add(node);
+						aggTreeView.Nodes.Add(node);
 					}
 					else
 					{
@@ -181,7 +216,7 @@ namespace MatterHackers.MatterControl
 				}
 				else
 				{
-					treeView1.Nodes.Add(node);
+					aggTreeView.Nodes.Add(node);
 				}
 			}
 		}
@@ -192,11 +227,31 @@ namespace MatterHackers.MatterControl
 			{
 				Tag = widget
 			};
-			treeNodes.Add(widget, node);
+			aggTreeNodes.Add(widget, node);
 
 			if (parentNode == null)
 			{
-				treeView1.Nodes.Add(node);
+				aggTreeView.Nodes.Add(node);
+			}
+			else
+			{
+				parentNode.Nodes.Add(node);
+			}
+
+			return node;
+		}
+
+		private TreeNode AddItem(IObject3D item, TreeNode parentNode, string overrideText = null)
+		{
+			var node = new TreeNode(overrideText ?? BuildDefaultName(item))
+			{
+				Tag = item
+			};
+			sceneTreeNodes.Add(item, node);
+
+			if (parentNode == null)
+			{
+				sceneTreeView.Nodes.Add(node);
 			}
 			else
 			{
@@ -216,12 +271,22 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
+		private void AddTree(IObject3D item, TreeNode parent, string text = null, TreeNode childNode = null)
+		{
+			var node = AddItem(item, parent);
+
+			foreach (var child in item.Children)
+			{
+				AddTree(child, node);
+			}
+		}
+
 		private string BuildDefaultName(GuiWidget widget)
 		{
-			string nameToWrite = _inspectedWidget == widget ? "* " : "";
+			string nameToWrite = "";
 			if (!string.IsNullOrEmpty(widget.Name))
 			{
-				nameToWrite += $"{widget.GetType().Name} --- {widget.Name}";
+				nameToWrite += $"{widget.GetType().Name} - {widget.Name}";
 			}
 			else
 			{
@@ -231,9 +296,29 @@ namespace MatterHackers.MatterControl
 			return nameToWrite;
 		}
 
-		private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
+		private string BuildDefaultName(IObject3D item)
+		{
+			string nameToWrite = "";
+			if (!string.IsNullOrEmpty(item.Name))
+			{
+				nameToWrite += $"{item.GetType().Name} - {item.Name}";
+			}
+			else
+			{
+				nameToWrite += $"{item.GetType().Name}";
+			}
+
+			return nameToWrite;
+		}
+
+		private void AggTreeView_AfterSelect(object sender, TreeViewEventArgs e)
 		{
 			this.InspectedWidget = e.Node.Tag as GuiWidget;
+		}
+
+		private void SceneTreeView_AfterSelect(object sender, TreeViewEventArgs e)
+		{
+			this.InspectedObject3D = e.Node.Tag as IObject3D;
 		}
 
 		private void propertyGrid1_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
@@ -312,7 +397,7 @@ namespace MatterHackers.MatterControl
 			base.OnFormClosing(e);
 		}
 
-		private void treeView1_DrawNode(object sender, DrawTreeNodeEventArgs e)
+		private void AggTreeView_DrawNode(object sender, DrawTreeNodeEventArgs e)
 		{
 			var node = e.Node;
 
@@ -324,7 +409,7 @@ namespace MatterHackers.MatterControl
 				{
 					brush = SystemBrushes.Highlight;
 				}
-				else if (ancestryTree.Contains(widget))
+				else if (aggAncestryTree.Contains(widget))
 				{
 					brush = Brushes.LightBlue;
 				}
@@ -341,6 +426,40 @@ namespace MatterHackers.MatterControl
 					node == activeTreeNode ? boldFont : node.NodeFont,
 					new Point(node.Bounds.Left, node.Bounds.Top),
 					widget.ActuallyVisibleOnScreen() ? SystemColors.ControlText : SystemColors.GrayText,
+					Color.Transparent);
+			}
+		}
+
+		private void SceneTreeView_DrawNode(object sender, DrawTreeNodeEventArgs e)
+		{
+			var node = e.Node;
+
+			if (node.IsVisible)
+			{
+				var item = node.Tag as IObject3D;
+				Brush brush;
+				//if (node == activeTreeNode)
+				//{
+				//	brush = SystemBrushes.Highlight;
+				//}
+				//else if (aggAncestryTree.Contains(item))
+				//{
+				//	brush = Brushes.LightBlue;
+				//}
+				//else
+				{
+					brush = Brushes.Transparent;
+				}
+
+				e.Graphics.FillRectangle(brush, e.Node.Bounds);
+
+				TextRenderer.DrawText(
+					e.Graphics,
+					node.Text,
+					node == activeTreeNode ? boldFont : node.NodeFont,
+					new Point(node.Bounds.Left, node.Bounds.Top),
+					SystemColors.ControlText,
+					//item.ActuallyVisibleOnScreen() ? SystemColors.ControlText : SystemColors.GrayText,
 					Color.Transparent);
 			}
 		}
