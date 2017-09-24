@@ -1,16 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using MatterHackers.Agg.UI;
+using MatterHackers.Agg.Platform;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.SettingsManagement;
 using Mindscape.Raygun4Net;
-using MatterHackers.Agg.Platform;
 
 namespace MatterHackers.MatterControl
 {
