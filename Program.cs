@@ -4,6 +4,7 @@ using System.IO;
 using System.Threading;
 using MatterHackers.Agg.Platform;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.SettingsManagement;
 using Mindscape.Raygun4Net;
 
 namespace MatterHackers.MatterControl
