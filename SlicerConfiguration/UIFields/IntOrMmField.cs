@@ -51,7 +51,21 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			double.TryParse(text, out double currentValue);
-			return (int) currentValue + (hasUnitsToken ? unitsToken : "");
+
+
+			if (currentValue < 0)
+			{
+				currentValue = 0;
+			}
+
+			if (newValue.Contains(unitsToken))
+			{
+				return currentValue + (hasUnitsToken ? unitsToken : "");
+			}
+			else
+			{
+				return (int) currentValue + (hasUnitsToken ? unitsToken : "");
+			}
 		}
 	}
 }
