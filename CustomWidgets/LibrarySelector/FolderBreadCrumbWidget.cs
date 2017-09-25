@@ -28,9 +28,13 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.Library;
 
@@ -45,7 +49,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.listView = listView;
 			this.Name = "FolderBreadCrumbWidget";
 			UiThread.RunOnIdle(() => SetBreadCrumbs(listView.ActiveContainer));
-			HAnchor = HAnchor.Stretch;
+
+			this.HAnchor = HAnchor.Stretch;
+			this.VAnchor = VAnchor.Fit | VAnchor.Center;
+			this.Padding = new BorderDouble(left: 2);
 		}
 
 		public static IEnumerable<ILibraryContainer> ItemAndParents(ILibraryContainer item)
@@ -68,12 +75,13 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			bool haveFilterRunning = !string.IsNullOrEmpty(currentContainer.KeywordFilter);
 
-			var icon = LibraryProviderHelpers.LoadInvertIcon("FileDialog", "up_folder_20.png");
-			//icon = LibraryProviderHelpers.ResizeImage(icon, 20, 20);
+			var theme = ApplicationController.Instance.Theme;
 
-			Button upbutton = buttonFactory.Generate("", icon);
-			upbutton.Name = "Library Up Button";
-			upbutton.Margin = 0;
+			var upbutton = new IconButton(AggContext.StaticData.LoadIcon(Path.Combine("FileDialog", "up_folder_20.png")))
+			{
+				Name = "Library Up Button",
+				Margin = new BorderDouble(right: 2)
+			};
 			upbutton.Click += (s, e) =>
 			{
 				if (listView.ActiveContainer.Parent != null)

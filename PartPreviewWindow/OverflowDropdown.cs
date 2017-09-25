@@ -34,7 +34,6 @@ using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
-using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -112,7 +111,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public PopupButton()
 		{
 		}
-		
+
 		public PopupButton(GuiWidget buttonView)
 		{
 			this.Margin = 3;
@@ -144,7 +143,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			// HACK: Child controls seem to be interfering with this.MouseCaptured - this short term workaround ensure we get clicks but likely mean mouse down outside of the control will fire the popup
 			bool mouseUpInBounds = this.PositionWithinLocalBounds(mouseEvent.X, mouseEvent.Y);
-			
+
 			// Only show the popup if the menu was hidden as the mouse events started
 			if ((mouseUpInBounds || buttonView?.MouseCaptured == true)
 				&& !menuVisibileAtMouseDown)

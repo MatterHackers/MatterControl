@@ -139,6 +139,7 @@
     <Compile Include="ConfigurationPage\ApplicationSettings\ThemePreviewButton.cs" />
     <Compile Include="ControlElements\TextImageWidget.cs" />
     <Compile Include="CustomWidgets\DockingTabControl.cs" />
+    <Compile Include="CustomWidgets\SimpleButton.cs" />
     <Compile Include="CustomWidgets\NamedAction.cs" />
     <Compile Include="CustomWidgets\RadioImageWidget.cs" />
     <Compile Include="CustomWidgets\RadioPanelWidget.cs" />
