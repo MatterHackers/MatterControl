@@ -100,15 +100,13 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			AddChild(topToBottom);
 		}
 
-		private ImageWidget CreatePinButton()
+		private GuiWidget CreatePinButton()
 		{
-			var icon = AggContext.StaticData.LoadIcon(this.ControlIsPinned ? "Pushpin_16x.png" : "PushpinUnpin_16x.png", 16, 16).InvertLightness();
-			var imageWidget = new ImageWidget(icon)
-			{
-				Name = "Pin Settings Button",
-				Margin = new BorderDouble(right: 25, top: 6),
-				MinimumSize = new Vector2(16, 16)
-			};
+			var icon = AggContext.StaticData.LoadIcon(this.ControlIsPinned ? "Pushpin_16x.png" : "PushpinUnpin_16x.png", 16, 16);
+
+			var imageWidget = ApplicationController.Instance.Theme.ButtonFactory.GenerateIconButton(icon);
+			imageWidget.Name = "Pin Settings Button";
+			imageWidget.Margin = new BorderDouble(right: 2);
 			imageWidget.Click += (s, e) =>
 			{
 				this.ControlIsPinned = !this.ControlIsPinned;
@@ -272,7 +270,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				tabControl.TabBar.AddChild(new HorizontalSpacer());
 
 				var pinButton = this.CreatePinButton();
-				pinButton.Margin = new BorderDouble(right: 18, bottom: 7);
+				//pinButton.Margin = new BorderDouble(right: 18, bottom: 7);
 				tabControl.TabBar.AddChild(pinButton);
 
 				if (printer.ViewState.SliceSettingsTabIndex < tabControl.TabCount)

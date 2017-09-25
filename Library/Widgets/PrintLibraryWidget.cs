@@ -105,9 +105,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			breadCrumbWidget = new FolderBreadCrumbWidget(libraryView);
 			navBar.AddChild(breadCrumbWidget);
 
-			var icon = AggContext.StaticData.LoadIcon("icon_search_24x24.png", 16, 16);
-
-			var buttonFactory = ApplicationController.Instance.Theme.SmallMarginButtonFactory;
+			var theme = ApplicationController.Instance.Theme;
+			var buttonFactory = theme.SmallMarginButtonFactory;
 
 			var searchPanel = new SearchInputBox()
 			{
@@ -133,10 +132,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			navBar.AddChild(searchPanel);
 
-			Button searchButton = buttonFactory.Generate("", icon);
-			searchButton.ToolTipText = "Search".Localize();
+			var searchButton = theme.ButtonFactory.GenerateIconButton(AggContext.StaticData.LoadIcon("icon_search_24x24.png", 16, 16));
 			searchButton.Name = "Search Library Button";
-			searchButton.Margin = 0;
+			searchButton.ToolTipText = "Search".Localize();
 			searchButton.Click += (s, e) =>
 			{
 				if (searchPanel.Visible)

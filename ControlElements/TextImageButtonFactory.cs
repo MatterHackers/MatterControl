@@ -34,6 +34,7 @@ using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.ImageProcessing;
 using System;
+using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl
 {
@@ -104,12 +105,7 @@ namespace MatterHackers.MatterControl
 				icon.InvertLightness();
 			}
 
-			return new Button(0, 0,
-				new ButtonViewThreeImage(
-					icon.AjustAlpha(.7),
-					icon.AjustAlpha(.9),
-					icon.AjustAlpha(1),
-					icon.AjustAlpha(.2)));
+			return new IconButton(icon);
 		}
 
 		public CheckBox GenerateCheckBoxButton(string label, ImageBuffer normalImage, ImageBuffer normalToPressedImage = null, ImageBuffer pressedImage = null, ImageBuffer pressedToNormalImage = null, string pressedLabel = null)
