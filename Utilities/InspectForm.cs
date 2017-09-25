@@ -27,8 +27,18 @@ namespace MatterHackers.MatterControl
 			: this(inspectedSystemWindow)
 		{
 			this.scene = scene;
-
+			this.scene.ChildrenModified += Scene_ChildrenModified;
 			sceneTreeView.SuspendLayout();
+			this.AddTree(scene, null, "Scene");
+			sceneTreeView.ResumeLayout();
+		}
+
+		private void Scene_ChildrenModified(object sender, EventArgs e)
+		{
+			sceneTreeView.SuspendLayout();
+			sceneTreeView.Nodes.Clear();
+			sceneTreeNodes.Clear();
+
 			this.AddTree(scene, null, "Scene");
 			sceneTreeView.ResumeLayout();
 		}
@@ -238,6 +248,8 @@ namespace MatterHackers.MatterControl
 				parentNode.Nodes.Add(node);
 			}
 
+			node.Expand();
+
 			return node;
 		}
 
@@ -249,14 +261,20 @@ namespace MatterHackers.MatterControl
 			};
 			sceneTreeNodes.Add(item, node);
 
+
 			if (parentNode == null)
 			{
 				sceneTreeView.Nodes.Add(node);
+				node.Expand();
+
 			}
 			else
 			{
 				parentNode.Nodes.Add(node);
+				parentNode.Expand();
 			}
+
+
 
 			return node;
 		}
@@ -388,6 +406,11 @@ namespace MatterHackers.MatterControl
 		{
 			inspectedSystemWindow.AfterDraw -= systemWindow_AfterDraw;
 			inspectedSystemWindow.MouseMove -= systemWindow_MouseMove;
+
+			if (scene != null)
+			{
+				scene.ChildrenModified -= Scene_ChildrenModified;
+			}
 
 			if (mouseUpWidget != null)
 			{
