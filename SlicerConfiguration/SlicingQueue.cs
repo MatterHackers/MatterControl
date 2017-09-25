@@ -436,7 +436,21 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						|| AggContext.OperatingSystem == OSType.Mac
 						|| runInProcess)
 					{
+						EventHandler WriteOutput = (object s, EventArgs e) =>
+						{
+							string data = s as string;
+							if (data != null)
+							{
+								progressReporter?.Report(data);
+							}
+						};
+
+						MatterHackers.MatterSlice.LogOutput.GetLogWrites += WriteOutput;
+
 						MatterSlice.MatterSlice.ProcessArgs(commandArgs);
+
+						MatterHackers.MatterSlice.LogOutput.GetLogWrites -= WriteOutput;
+
 					}
 					else
 					{
