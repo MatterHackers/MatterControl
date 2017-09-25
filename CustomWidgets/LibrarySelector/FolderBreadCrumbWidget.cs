@@ -77,11 +77,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			var theme = ApplicationController.Instance.Theme;
 
-			var upbutton = new IconButton(AggContext.StaticData.LoadIcon(Path.Combine("FileDialog", "up_folder_20.png")))
-			{
-				Name = "Library Up Button",
-				Margin = new BorderDouble(right: 2)
-			};
+			var upbutton = theme.ButtonFactory.GenerateIconButton(AggContext.StaticData.LoadIcon(Path.Combine("FileDialog", "up_folder_20.png")));
+			upbutton.Name = "Library Up Button";
+			upbutton.Margin = new BorderDouble(right: 2);
 			upbutton.Click += (s, e) =>
 			{
 				if (listView.ActiveContainer.Parent != null)

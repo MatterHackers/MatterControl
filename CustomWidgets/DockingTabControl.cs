@@ -102,13 +102,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		private GuiWidget CreatePinButton()
 		{
-			var icon = AggContext.StaticData.LoadIcon(this.ControlIsPinned ? "Pushpin_16x.png" : "PushpinUnpin_16x.png", 16, 16).InvertLightness();
+			var icon = AggContext.StaticData.LoadIcon(this.ControlIsPinned ? "Pushpin_16x.png" : "PushpinUnpin_16x.png", 16, 16);
 
-			var imageWidget = new IconButton(icon)
-			{
-				Name = "Pin Settings Button",
-				Margin = new BorderDouble(right: 2),
-			};
+			var imageWidget = ApplicationController.Instance.Theme.ButtonFactory.GenerateIconButton(icon);
+			imageWidget.Name = "Pin Settings Button";
+			imageWidget.Margin = new BorderDouble(right: 2);
 			imageWidget.Click += (s, e) =>
 			{
 				this.ControlIsPinned = !this.ControlIsPinned;
