@@ -164,7 +164,10 @@ namespace MatterHackers.MatterControl
 					}
 
 					// When the active layer changes we update the selected range accordingly - constrain to applicable values
-					this.RenderInfo.EndLayerIndex = Math.Min(this.LoadedGCode == null ? 0 : this.LoadedGCode.LayerCount - 1, Math.Max(activeLayerIndex, 1));
+					if (this.RenderInfo != null)
+					{
+						this.RenderInfo.EndLayerIndex = Math.Min(this.LoadedGCode == null ? 0 : this.LoadedGCode.LayerCount - 1, Math.Max(activeLayerIndex, 1));
+					}
 
 					ActiveLayerChanged?.Invoke(this, null);
 				}
