@@ -768,7 +768,7 @@ namespace MatterHackers.MatterControl
 						else
 						{
 							// Otherwise open
-							inspectForm = new InspectForm(this);
+							inspectForm = new InspectForm(this, ApplicationController.Instance.DragDropData.Scene);
 							inspectForm.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
 							inspectForm.Location = new System.Drawing.Point(0, 0);
 							inspectForm.FormClosed += (s, e2) =>
