@@ -187,7 +187,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void EndReporting()
 		{
-			partProcessingInfo.progressControl.PercentComplete = 100;
+			if (partProcessingInfo != null)
+			{
+				partProcessingInfo.progressControl.PercentComplete = 100;
+			}
 
 			progressReportContainer.AddChild(new TextWidget("Done!"));
 		}
