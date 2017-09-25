@@ -456,20 +456,19 @@ namespace MatterHackers.MatterControl
 		private void SceneTreeView_DrawNode(object sender, DrawTreeNodeEventArgs e)
 		{
 			var node = e.Node;
-
 			if (node.IsVisible)
 			{
 				var item = node.Tag as IObject3D;
 				Brush brush;
-				//if (node == activeTreeNode)
-				//{
-				//	brush = SystemBrushes.Highlight;
-				//}
-				//else if (aggAncestryTree.Contains(item))
-				//{
-				//	brush = Brushes.LightBlue;
-				//}
-				//else
+
+				if (scene.HasSelection 
+					&& (scene.SelectedItem == item
+					|| scene.SelectedItem.Children.Contains(item)))
+				{
+
+					brush = SystemBrushes.Highlight;
+				}
+				else
 				{
 					brush = Brushes.Transparent;
 				}
@@ -482,7 +481,6 @@ namespace MatterHackers.MatterControl
 					node == activeTreeNode ? boldFont : node.NodeFont,
 					new Point(node.Bounds.Left, node.Bounds.Top),
 					SystemColors.ControlText,
-					//item.ActuallyVisibleOnScreen() ? SystemColors.ControlText : SystemColors.GrayText,
 					Color.Transparent);
 			}
 		}
