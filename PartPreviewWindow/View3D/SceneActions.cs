@@ -72,11 +72,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							return;
 						}
 
-						selectedItem.Children = discreetMeshes.Select(mesh => new Object3D()
+						selectedItem.Children.Modify(list =>
 						{
-							ItemType = Object3DTypes.Model,
-							Mesh = mesh
-						}).ToList<IObject3D>();
+							list.Clear();
+							list.AddRange(
+								discreetMeshes.Select(mesh => new Object3D()
+								{
+									ItemType = Object3DTypes.Model,
+									Mesh = mesh
+								}));
+						});
 
 						selectedItem.Mesh = null;
 						selectedItem.MeshPath = null;

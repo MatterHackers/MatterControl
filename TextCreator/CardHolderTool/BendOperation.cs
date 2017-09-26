@@ -64,8 +64,9 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 			{
 				foreach (var meshChild in operationContainer.Descendants().Where(x => x.OwnerID == operationContainer.ID))
 				{
+					var firstChild = meshChild.Children.First();
 
-					var aabb = meshChild.Children[0].Mesh.GetAxisAlignedBoundingBox();
+					var aabb = firstChild.Mesh.GetAxisAlignedBoundingBox();
 
 					// find the radius that will make the x-size sweep out the requested angle
 					// c = Tr ; r = c/T
@@ -81,7 +82,7 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 
 					for (int i = 0; i < meshChild.Mesh.Vertices.Count; i++)
 					{
-						var pos = meshChild.Children[0].Mesh.Vertices[i].Position;
+						var pos = firstChild.Mesh.Vertices[i].Position;
 						var pos2D = new Vector2(pos);
 						Vector2 rotateSpace = pos2D - rotateXyPos;
 						var rotateRatio = rotateSpace.x / aabb.XSize;

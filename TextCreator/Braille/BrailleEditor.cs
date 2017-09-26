@@ -162,8 +162,11 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 				var item = children.Find(child => child == injectedItem);
 
 				// Clear and refresh its children
-				item.Children.Clear();
-				item.Children.AddRange(generatedItem.Children);
+				item.Children.Modify(list =>
+				{
+					list.Clear();
+					list.AddRange(generatedItem.Children);
+				});
 			});
 
 			//PlatingHelper.MoveToOpenPosition(injectedItem, view3DWidget.Scene);

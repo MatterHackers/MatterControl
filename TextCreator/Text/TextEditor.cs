@@ -148,8 +148,12 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 			scene.ModifyChildren(children =>
 			{
 				var item = children.Find(child => child == injectedItem);
-				item.Children.Clear();
-				item.Children.AddRange(generatedItem.Children);
+
+				item.Children.Modify(list =>
+				{
+					list.Clear();
+					list.AddRange(generatedItem.Children);
+				});
 			});
 
 			//PlatingHelper.MoveToOpenPosition(injectedItem, view3DWidget.Scene);

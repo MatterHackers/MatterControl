@@ -80,18 +80,21 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 			}
 
 			IObject3D basePlate = CreateBaseplate(group);
-			group.Children.Add(basePlate);
+			group.Children.Modify(list =>
+			{
+				list.Add(basePlate);
 
-			SetCharacterPositions(group);
-			SetWordSize(group, wordSize);
-			SetWordHeight(group, wordHeight);
+				SetCharacterPositions(group);
+				SetWordSize(group, wordSize);
+				SetWordHeight(group, wordHeight);
 
-			// Remove the temporary baseplate added above and required by SetPositions/SetSize
-			group.Children.Remove(basePlate);
+				// Remove the temporary baseplate added above and required by SetPositions/SetSize
+				list.Remove(basePlate);
 
-			// Add the actual baseplate that can be correctly sized to its siblings bounds
-			basePlate = CreateBaseplate(group);
-			group.Children.Add(basePlate);
+				// Add the actual baseplate that can be correctly sized to its siblings bounds
+				basePlate = CreateBaseplate(group);
+				list.Add(basePlate);
+			});
 
 			return group;
 		}
@@ -150,13 +153,14 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 		{
 			if (group.HasChildren())
 			{
-				for (int i = 0; i < characterSpacing.Length; i++)
-				{
-					IObject3D child = group.Children[i];
 
+				int i = 0;
+
+				foreach(var child in group.Children)
+				{
 					Vector3 startPosition = Vector3.Transform(Vector3.Zero, child.Matrix);
 
-					var spacing = characterSpacing[i];
+					var spacing = characterSpacing[i++];
 
 					double newX = spacing.x * lastSizeValue;
 					double newY = spacing.y * lastSizeValue;
