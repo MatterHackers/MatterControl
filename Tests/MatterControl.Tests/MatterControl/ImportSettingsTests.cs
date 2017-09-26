@@ -11,11 +11,6 @@ namespace MatterControl.Tests.MatterControl
 	public class ImportSettingsTests
 	{
 		[Test]
-		public void CheckImportIniToPrinter()
-		{
-		}
-
-		[Test]
 		public void CheckImportPrinterSettingsToPrinter()
 		{
 			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));

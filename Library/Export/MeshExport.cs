@@ -38,28 +38,39 @@ namespace MatterHackers.MatterControl.Library.Export
 {
 	public static class MeshExport
 	{
-		public static async Task<bool> ExportMesh(ILibraryContentStream source, string filePathToSave)
+		public static async Task<bool> ExportMesh(ILibraryItem source, string filePathToSave)
 		{
 			try
 			{
-				if (!string.IsNullOrEmpty(filePathToSave))
+				if (source is ILibraryContentItem contentItem)
 				{
-					if (Path.GetExtension(source.FileName).ToUpper() == Path.GetExtension(filePathToSave).ToUpper())
+					// If the content is an IObject3D, the we need to load it and MeshFileIO save to the target path
+					var content = await contentItem.GetContent(null);
+					return MeshFileIo.Save(content, filePathToSave);
+				}
+				else if (source is ILibraryContentStream streamContent)
+				{
+					if (!string.IsNullOrEmpty(filePathToSave))
 					{
-						using (var result = await source.GetContentStream(null))
-						using (var fileStream = File.Create(filePathToSave))
+						// If the file is already AMF, it just needs copied to the target path
+						if (Path.GetExtension(streamContent.FileName).ToUpper() == Path.GetExtension(filePathToSave).ToUpper())
 						{
-							result.Stream.CopyTo(fileStream);
-						}
+							using (var result = await streamContent.GetContentStream(null))
+							using (var fileStream = File.Create(filePathToSave))
+							{
+								result.Stream.CopyTo(fileStream);
+							}
 
-						return true;
-					}
-					else
-					{
-						using (var result = await source.GetContentStream(null))
+							return true;
+						}
+						else
 						{
-							IObject3D item = Object3D.Load(result.Stream, Path.GetExtension(source.FileName), CancellationToken.None);
-							return MeshFileIo.Save(item, filePathToSave);
+							// Otherwise we need to load the content and MeshFileIO save to the target path
+							using (var result = await streamContent.GetContentStream(null))
+							{
+								IObject3D item = Object3D.Load(result.Stream, Path.GetExtension(streamContent.FileName), CancellationToken.None);
+								return MeshFileIo.Save(item, filePathToSave);
+							}
 						}
 					}
 				}

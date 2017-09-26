@@ -34,6 +34,7 @@ using System.Threading.Tasks;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.Library.Export
@@ -55,14 +56,7 @@ namespace MatterHackers.MatterControl.Library.Export
 
 		public Task<bool> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath)
 		{
-			ILibraryContentStream libraryContent = libraryItems.OfType<ILibraryContentStream>().FirstOrDefault();
-
-			if (libraryContent != null)
-			{
-				return MeshExport.ExportMesh(libraryContent, outputPath);
-			}
-
-			return null;
+			return MeshExport.ExportMesh(libraryItems.FirstOrDefault(), outputPath);
 		}
 
 		public GuiWidget GetOptionsPanel() => null;
