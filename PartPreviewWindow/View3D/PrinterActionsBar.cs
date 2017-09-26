@@ -53,23 +53,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private CancellationTokenSource gcodeLoadCancellationTokenSource;
 
-		public PrinterActionsBar(PrinterConfig printer, View3DWidget modelViewer, PrinterTabPage printerTabPage)
+		public PrinterActionsBar(PrinterConfig printer, PrinterTabPage printerTabPage, ThemeConfig theme)
 		{
 			this.printer = printer;
 			UndoBuffer undoBuffer = printer.Bed.Scene.UndoBuffer;
 
-			var defaultMargin = ApplicationController.Instance.Theme.ButtonSpacing;
-			var buttonFactory = ApplicationController.Instance.Theme.ButtonFactory;
-
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Fit;
-			this.AddChild(new PrinterConnectButton(printer, buttonFactory, 0));
+			this.AddChild(new PrinterConnectButton(printer, theme));
 
-			this.AddChild(new PrintActionRow(printer, buttonFactory, this, defaultMargin));
+			this.AddChild(new PrintActionRow(printer, theme, this));
 
-			var sliceButton = new SlicePopupMenu(printer, printerTabPage);
-				
-			this.AddChild(sliceButton);
+			this.AddChild(new SlicePopupMenu(printer, theme, printerTabPage));
 
 			// put in the detail message
 			var printerConnectionDetail = new TextWidget("")
@@ -79,7 +74,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				AutoExpandBoundsToText = true,
 				PointSize = 8
 			};
-			printer.Connection.PrintingStateChanged.RegisterEvent((e, s) =>
+			printer.Connection.PrintingStateChanged.RegisterEvent((s, e) =>
 			{
 				printerConnectionDetail.Text = printer.Connection.PrinterConnectionStatus;
 			}, ref unregisterEvents);
@@ -92,7 +87,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			for (int extruderIndex = 0; extruderIndex < extruderCount; extruderIndex++)
 			{
-				this.AddChild(new TemperatureWidgetHotend(printer, extruderIndex, ApplicationController.Instance.Theme.MenuButtonFactory)
+				this.AddChild(new TemperatureWidgetHotend(printer, extruderIndex, theme.MenuButtonFactory)
 				{
 					Margin = new BorderDouble(right: 10)
 				});
@@ -107,7 +102,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				AlignToRightEdge = true,
 				Name = "Printer Overflow Menu",
-				Margin = defaultMargin
+				Margin = theme.ButtonSpacing
 			};
 			overflowDropdown.DynamicPopupContent = GeneratePrinterOverflowMenu;
 

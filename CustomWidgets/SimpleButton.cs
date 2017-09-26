@@ -38,6 +38,13 @@ namespace MatterHackers.MatterControl.CustomWidgets
 	{
 		private bool mouseInBounds = false;
 
+		public SimpleButton(ThemeConfig theme)
+		{
+			this.HoverColor = theme.SlightShade;
+			this.MouseDownColor = theme.MinimalShade;
+			this.Margin = 0;
+		}
+
 		public RGBA_Bytes HoverColor { get; set; } = RGBA_Bytes.Transparent;
 
 		public RGBA_Bytes MouseDownColor { get; set; } = RGBA_Bytes.Transparent;
@@ -98,18 +105,14 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		private ImageBuffer image;
 
-		public IconButton(ImageBuffer icon)
+		public IconButton(ImageBuffer icon, ThemeConfig theme)
+			: base(theme)
 		{
-			var theme = ApplicationController.Instance.Theme;
-
 			this.image = icon;
-			this.HoverColor = theme.SlightShade;
-			this.MouseDownColor = theme.MinimalShade;
 			this.HAnchor = HAnchor.Absolute;
 			this.VAnchor = VAnchor.Absolute | VAnchor.Center;
 			this.Height = theme.ButtonHeight;
 			this.Width = theme.ButtonHeight;
-			this.Margin = 0;
 
 			imageWidget = new ImageWidget(icon)
 			{
@@ -151,9 +154,19 @@ namespace MatterHackers.MatterControl.CustomWidgets
 	{
 		private TextWidget textWidget;
 
-		public TextButton(ThemeConfig theme)
+		public TextButton(string text, ThemeConfig theme)
+			: base(theme)
 		{
-			this.textWidget = new TextWidget("", pointSize: theme.ButtonFactory.fontSize);
+			this.HAnchor = HAnchor.Fit;
+			this.VAnchor = VAnchor.Absolute | VAnchor.Center;
+			this.Height = theme.ButtonFactory.FixedHeight;
+			this.Padding = theme.ButtonFactory.Margin;
+
+			this.AddChild(textWidget = new TextWidget(text, pointSize: theme.ButtonFactory.fontSize, textColor: theme.ButtonFactory.normalTextColor)
+			{
+				HAnchor = HAnchor.Center,
+				VAnchor = VAnchor.Center
+			});
 		}
 
 		public override string Text
@@ -172,6 +185,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			set
 			{
 				base.Enabled = value;
+				textWidget.Enabled = value;
 			}
 		}
 	}

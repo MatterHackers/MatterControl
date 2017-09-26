@@ -29,47 +29,13 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using MatterHackers.Agg;
-using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
-using MatterHackers.Agg.VertexSource;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.SerialPortCommunication.FrostedSerial;
 
 namespace MatterHackers.MatterControl.ActionBar
 {
-	public class ResetButton : GuiWidget
-	{
-		private readonly string resetConnectionText = "Reset\nConnection".Localize().ToUpper();
-		private EventHandler unregisterEvents;
-
-		public ResetButton(PrinterConfig printer, TextImageButtonFactory buttonFactory)
-		{
-			this.HAnchor = HAnchor.Stretch | HAnchor.Fit;
-			this.VAnchor = VAnchor.Fit;
-			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-
-			Button resetConnectionButton = buttonFactory.Generate(resetConnectionText, "e_stop4.png");
-			resetConnectionButton.Visible = printer.Settings.GetValue<bool>(SettingsKey.show_reset_connection);
-			resetConnectionButton.Click += (s, e) =>
-			{
-				UiThread.RunOnIdle(printer.Connection.RebootBoard);
-			};
-			this.AddChild(resetConnectionButton);
-
-			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
-			{
-				var stringEvent = e as StringEventArgs;
-				if (stringEvent?.Data == SettingsKey.show_reset_connection)
-				{
-					resetConnectionButton.Visible = printer.Settings.GetValue<bool>(SettingsKey.show_reset_connection);
-				}
-			}, ref unregisterEvents);
-		}
-	}
-
 	public class PrinterConnectButton : GuiWidget
 	{
 		private readonly string disconnectAndCancelTitle = "Disconnect and stop the current print?".Localize();
@@ -81,7 +47,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		private EventHandler unregisterEvents;
 		private PrinterConfig printer;
 
-		public PrinterConnectButton(PrinterConfig printer, TextImageButtonFactory buttonFactory, BorderDouble margin)
+		public PrinterConnectButton(PrinterConfig printer, ThemeConfig theme)
 		{
 			this.printer = printer;
 			this.HAnchor = HAnchor.Left | HAnchor.Fit;
@@ -89,7 +55,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			this.Margin = 0;
 			this.Padding = 0;
 
-			connectButton = buttonFactory.Generate("Connect".Localize().ToUpper(), AggContext.StaticData.LoadIcon("connect.png", 14, 14));
+			connectButton = theme.ButtonFactory.Generate("Connect".Localize().ToUpper(), AggContext.StaticData.LoadIcon("connect.png", 14, 14));
 			connectButton.Name = "Connect to printer button";
 			connectButton.ToolTipText = "Connect to the currently selected printer".Localize();
 			connectButton.Click += (s, e) =>
@@ -104,7 +70,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			};
 			this.AddChild(connectButton);
 
-			disconnectButton = buttonFactory.Generate("Disconnect".Localize().ToUpper(), AggContext.StaticData.LoadIcon("connect.png", 14, 14));
+			disconnectButton = theme.ButtonFactory.Generate("Disconnect".Localize().ToUpper(), AggContext.StaticData.LoadIcon("connect.png", 14, 14));
 			disconnectButton.Name = "Disconnect from printer button";
 			disconnectButton.Visible = false;
 			disconnectButton.ToolTipText = "Disconnect from current printer".Localize();
@@ -139,7 +105,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				child.VAnchor = VAnchor.Top;
 				child.HAnchor = HAnchor.Left;
 				child.Cursor = Cursors.Hand;
-				child.Margin = margin;
+				child.Margin = theme.ButtonSpacing;
 			}
 
 			// Bind connect button states to active printer state
