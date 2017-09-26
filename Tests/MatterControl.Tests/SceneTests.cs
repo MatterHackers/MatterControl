@@ -137,7 +137,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			Assert.IsTrue(loadedItem.Children.Count == 1);
 
 			// Ensure the UI scene is cleared
-			scene.ModifyChildren((children) => children.Clear());
+			scene.Children.Modify(list => list.Clear());
 
 			// Reload the model
 			await Task.Run(() => sceneContext.Scene.Load(filePath));

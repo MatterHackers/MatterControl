@@ -306,9 +306,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						if (result.Object3D != null && ApplicationController.Instance.DragDropData.View3DWidget != null)
 						{
 							var scene = ApplicationController.Instance.DragDropData.View3DWidget.InteractionLayer.Scene;
-							scene.ModifyChildren(children =>
+							scene.Children.Modify(list =>
 							{
-								children.Add(result.Object3D);
+								list.Add(result.Object3D);
 							});
 						}
 					}

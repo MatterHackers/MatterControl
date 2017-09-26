@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			else
 			{
 				// This the undo -> redo() case. The original Selection group has been collapsed and we need to rebuild it
-				interactiveScene.ModifyChildren(children =>
+				interactiveScene.Children.Modify(children =>
 				{
 					// Remove all children from the scene
 					foreach (var child in item.Children)
@@ -83,13 +83,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				return;
 			}
 
-			interactiveScene.ModifyChildren(children =>
+			interactiveScene.Children.Modify(list =>
 			{
 				// Remove the group
-				children.Remove(item);
+				list.Remove(item);
 
 				// Add all children from the group
-				children.AddRange(item.Children);
+				list.AddRange(item.Children);
 			});
 
 			interactiveScene.SelectLastChild();

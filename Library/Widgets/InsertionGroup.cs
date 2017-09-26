@@ -82,11 +82,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					// Drag operation has finished, we need to perform the collapse
 					var loadedItems = this.Children;
 
-					// Collapse our contents into the root of the scen
+					// Collapse our contents into the root of the scene
 					// of the scene when it loses focus
-					scene.ModifyChildren(children =>
+					scene.Children.Modify(list =>
 					{
-						this.CollapseInto(children, Object3DTypes.Any);
+						this.CollapseInto(list, Object3DTypes.Any);
 					});
 
 					if (scene.SelectedItem == this
