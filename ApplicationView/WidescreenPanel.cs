@@ -70,7 +70,7 @@ namespace MatterHackers.MatterControl
 
 			leftNav.AddChild(new BrandMenuButton()
 			{
-				MinimumSize = new VectorMath.Vector2(0, 32),
+				MinimumSize = new VectorMath.Vector2(0, 34),
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit
 			});
@@ -100,7 +100,7 @@ namespace MatterHackers.MatterControl
 				VAnchor = VAnchor.Fit,
 				Margin = new BorderDouble(6, 0)
 			};
-	
+
 			var icon = AggContext.StaticData.LoadImage(Path.Combine("Images", "mh-app-logo.png"));
 			if (ActiveTheme.Instance.IsDarkTheme)
 			{

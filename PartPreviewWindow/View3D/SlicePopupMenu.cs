@@ -104,7 +104,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		protected GuiWidget GetPopupContent()
 		{
-			var widget = new IgnoredPopupWidget()
+			var popupContainer = new IgnoredPopupWidget()
 			{
 				HAnchor = HAnchor.Fit,
 				VAnchor = VAnchor.Fit,
@@ -117,14 +117,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				MinimumSize = new VectorMath.Vector2(400, 500)
 			};
 
-			widget.AddChild(progressContainer);
+			popupContainer.AddChild(progressContainer);
 
 			var sliceButton = buttonFactory.Generate("Slice".Localize().ToUpper());
-			widget.AddChild(sliceButton);
+			popupContainer.AddChild(sliceButton);
 
 			sliceButton.ToolTipText = "Slice Parts".Localize();
 			sliceButton.Name = "Generate Gcode Button";
-			//sliceButton.Margin = defaultMargin;
 			sliceButton.Click += async (s, e) =>
 			{
 				if (printer.Settings.PrinterSelected)
@@ -142,14 +141,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							sliceProgressReporter.StartReporting();
 
 							// Save any pending changes before starting the print
-							await ApplicationController.Instance.ActiveView3DWidget.PersistPlateIfNeeded();
+							await printerTabPage.modelViewer.PersistPlateIfNeeded();
 
 							await SlicingQueue.SliceFileAsync(printItem, sliceProgressReporter);
 							sliceProgressReporter.EndReporting();
 
 							var gcodeLoadCancellationTokenSource = new CancellationTokenSource();
 
-							ApplicationController.Instance.ActivePrinter.Bed.LoadGCode(printItem.GetGCodePathAndFileName(), gcodeLoadCancellationTokenSource.Token, printerTabPage.modelViewer.gcodeViewer.LoadProgress_Changed);
+							this.printer.Bed.LoadGCode(printItem.GetGCodePathAndFileName(), gcodeLoadCancellationTokenSource.Token, printerTabPage.modelViewer.gcodeViewer.LoadProgress_Changed);
 
 							printerTabPage.ViewMode = PartViewMode.Layers3D;
 
@@ -173,7 +172,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			};
 
-			return widget;
+			return popupContainer;
 		}
 	}
 
