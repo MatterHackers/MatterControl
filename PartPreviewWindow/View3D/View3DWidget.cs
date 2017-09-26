@@ -952,8 +952,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 				else
 				{
-					Scene.Children.Modify(list => list.Remove(this.DragDropObject));
-					Scene.ClearSelection();
+					this.Scene.Children.Modify(list => list.Remove(this.DragDropObject));
+					this.Scene.ClearSelection();
 				}
 
 				this.DragDropObject = null;
