@@ -2744,6 +2744,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			babyStepsStream7?.CancelMoves();
 			waitForTempStream6?.Cancel();
 			queuedCommandStream2?.Cancel();
+			macroProcessingStream3?.Cancel();
 		}
 
 		public void MacroContinue()
