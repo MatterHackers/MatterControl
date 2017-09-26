@@ -61,13 +61,13 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		private PrinterConfig printer;
 
-		public PrintActionRow(PrinterConfig printer, TextImageButtonFactory buttonFactory, GuiWidget parentWidget, BorderDouble defaultMargin)
+		public PrintActionRow(PrinterConfig printer, ThemeConfig theme, GuiWidget parentWidget)
 		{
 			this.printer = printer;
 
 			this.HAnchor = HAnchor.Stretch;
 
-			AddChildElements(buttonFactory, parentWidget, defaultMargin);
+			AddChildElements(theme.ButtonFactory, parentWidget, theme.ButtonSpacing);
 
 			// Add Handlers
 			printer.Connection.CommunicationStateChanged.RegisterEvent(onStateChanged, ref unregisterEvents);

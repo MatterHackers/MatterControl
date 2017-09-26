@@ -105,7 +105,7 @@ namespace MatterHackers.MatterControl
 				icon.InvertLightness();
 			}
 
-			return new IconButton(icon);
+			return new IconButton(icon, ApplicationController.Instance.Theme);
 		}
 
 		public CheckBox GenerateCheckBoxButton(string label, ImageBuffer normalImage, ImageBuffer normalToPressedImage = null, ImageBuffer pressedImage = null, ImageBuffer pressedToNormalImage = null, string pressedLabel = null)

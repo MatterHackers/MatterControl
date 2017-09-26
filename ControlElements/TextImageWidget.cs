@@ -27,8 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
@@ -68,11 +66,9 @@ namespace MatterHackers.MatterControl
 			};
 			this.AddChild(container);
 
-			ImageWidget imageWidget = null;
-
 			if (image?.Width > 0)
 			{
-				imageWidget = new ImageWidget(image)
+				var imageWidget = new ImageWidget(image)
 				{
 					VAnchor = VAnchor.Center,
 					Margin = new BorderDouble(right: imageSpacing),
@@ -81,43 +77,30 @@ namespace MatterHackers.MatterControl
 				container.AddChild(imageWidget);
 			}
 
-			var textWidget = new TextWidget(label, pointSize: fontSize)
+			container.AddChild(new TextWidget(label, pointSize: fontSize)
 			{
 				VAnchor = VAnchor.Center,
 				TextColor = textColor,
-			};
-			container.AddChild(textWidget);
-
-			// Style debugging
-			if (false)
-			{
-				container.BackgroundColor = RGBA_Bytes.Gray;
-				if (imageWidget != null)
-				{
-					imageWidget.BackgroundColor = ApplicationController.Instance.Theme.SlightShade;
-				}
-				textWidget.DebugShowBounds = true;
-			}
+			});
 		}
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{
 			if (borderColor.Alpha0To255 > 0)
 			{
-				RectangleDouble borderRectangle = LocalBounds;
-
 				if (borderWidth > 0)
 				{
 					if (borderWidth == 1)
 					{
-						graphics2D.Rectangle(borderRectangle, borderColor);
+						graphics2D.Rectangle(LocalBounds, borderColor);
 					}
 					else
 					{
-						//boarderRectangle.Inflate(-borderWidth / 2);
-						RoundedRect rectBorder = new RoundedRect(borderRectangle, this.borderRadius);
-
-						graphics2D.Render(new Stroke(rectBorder, borderWidth), borderColor);
+						graphics2D.Render(
+							new Stroke(
+								new RoundedRect(LocalBounds, this.borderRadius),
+								borderWidth),
+							borderColor);
 					}
 				}
 			}

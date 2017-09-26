@@ -33,6 +33,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.GCodeVisualizer;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
@@ -67,7 +68,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private PrinterConfig printer;
 		private PrinterTabPage printerTabPage;
 
-		public SlicePopupMenu(PrinterConfig printer, PrinterTabPage printerTabPage)
+		public SlicePopupMenu(PrinterConfig printer, ThemeConfig theme, PrinterTabPage printerTabPage)
 		{
 			this.printerTabPage = printerTabPage;
 			this.printer = printer;
@@ -75,7 +76,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			HAnchor = HAnchor.Fit;
 			VAnchor = VAnchor.Fit;
 
-			var sliceButton =  buttonFactory.Generate("Slice".Localize().ToUpper());
+			var sliceButton = new TextButton("Slice".Localize().ToUpper(), theme)
+			{
+				BackgroundColor = theme.ButtonFactory.normalFillColor,
+				HoverColor = theme.ButtonFactory.hoverFillColor
+			};
+			sliceButton.Margin = theme.ButtonSpacing;
 			sliceButton.Name = "Slice Dropdown Button";
 			this.AddChild(sliceButton);
 		}

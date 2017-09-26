@@ -179,7 +179,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			// Must come after we have an instance of View3DWidget an its undo buffer
-			topToBottom.AddChild(new PrinterActionsBar(printer, modelViewer, this)
+			topToBottom.AddChild(new PrinterActionsBar(printer, this, theme)
 			{
 				Padding = theme.ToolbarPadding
 			}, 0);
