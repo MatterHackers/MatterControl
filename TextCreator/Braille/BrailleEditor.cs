@@ -156,14 +156,17 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 			});
 
 			var scene = view3DWidget.InteractionLayer.Scene;
-			scene.ModifyChildren(children =>
+			scene.Children.Modify(list =>
 			{
 				// Find the injected item
-				var item = children.Find(child => child == injectedItem);
+				var item = list.Find(child => child == injectedItem);
 
 				// Clear and refresh its children
-				item.Children.Clear();
-				item.Children.AddRange(generatedItem.Children);
+				item.Children.Modify(childList =>
+				{
+					childList.Clear();
+					childList.AddRange(generatedItem.Children);
+				});
 			});
 
 			//PlatingHelper.MoveToOpenPosition(injectedItem, view3DWidget.Scene);
@@ -186,10 +189,10 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 				}
 
 				// Remove the old base and create and add a new one
-				scene.ModifyChildren(children =>
+				scene.Children.Modify(list =>
 				{
-					children.RemoveAll(child => child is BraileBasePlate);
-					children.Add(newBaseplate);
+					list.RemoveAll(child => child is BraileBasePlate);
+					list.Add(newBaseplate);
 				});
 			}
 		}

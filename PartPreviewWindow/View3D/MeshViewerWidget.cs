@@ -275,16 +275,16 @@ namespace MatterHackers.MeshVisualizer
 					}
 
 					// SetMeshAfterLoad
-					scene.ModifyChildren(children =>
+					scene.Children.Modify(list =>
 					{
 						if (loadedItem.Mesh != null)
 						{
 							// STLs currently load directly into the mesh rather than as a group like AMF
-							children.Add(loadedItem);
+							list.Add(loadedItem);
 						}
 						else
 						{
-							children.AddRange(loadedItem.Children);
+							list.AddRange(loadedItem.Children);
 						}
 					});
 

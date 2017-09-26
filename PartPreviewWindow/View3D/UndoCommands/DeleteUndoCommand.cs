@@ -67,11 +67,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			scene.ClearSelection();
 
-			scene.ModifyChildren(children =>
+			scene.Children.Modify(list =>
 			{
 				foreach (var item in items)
 				{
-					children.Remove(item);
+					list.Remove(item);
 				}
 			});
 
@@ -82,15 +82,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void Undo()
 		{
-			scene.ModifyChildren(children =>
+			scene.Children.Modify(list =>
 			{
 				foreach (var item in items)
 				{
-					children.Add(item);
+					list.Add(item);
 				}
 			});
 
 			scene.ClearSelection();
+
 			foreach (var item in items)
 			{
 				scene.AddToSelection(item);

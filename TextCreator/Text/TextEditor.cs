@@ -145,11 +145,15 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 			});
 
 			var scene = view3DWidget.InteractionLayer.Scene;
-			scene.ModifyChildren(children =>
+			scene.Children.Modify(list =>
 			{
-				var item = children.Find(child => child == injectedItem);
-				item.Children.Clear();
-				item.Children.AddRange(generatedItem.Children);
+				var item = list.Find(child => child == injectedItem);
+
+				item.Children.Modify(childList =>
+				{
+					childList.Clear();
+					childList.AddRange(generatedItem.Children);
+				});
 			});
 
 			//PlatingHelper.MoveToOpenPosition(injectedItem, view3DWidget.Scene);
@@ -179,10 +183,10 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 			// Modify the scene graph, swapping in the modified item
 			var scene = view3DWidget.InteractionLayer.Scene;
 
-			scene.ModifyChildren(children =>
+			scene.Children.Modify(childList =>
 			{
-				children.Remove(injectedItem);
-				children.Add(workItem);
+				childList.Remove(injectedItem);
+				childList.Add(workItem);
 			});
 
 			// Update the injected item and the scene selection

@@ -230,20 +230,21 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 			//SetAndInvalidateMesh(CsgToMesh.Convert(plainCardHolder));
 
 			// output two meshes for card holder and text
-			this.Children.Clear();
-
-			this.Children.AddRange(new[]
+			this.Children.Modify(list =>
 			{
-				new Object3D()
+				list.Clear();
+				list.AddRange(new[]
 				{
-					Mesh = CsgToMesh.Convert(plainCardHolder)
-				},
-				new Object3D()
-				{
-					Mesh = CsgToMesh.Convert(nameMesh)
-				}
+					new Object3D()
+					{
+						Mesh = CsgToMesh.Convert(plainCardHolder)
+					},
+					new Object3D()
+					{
+						Mesh = CsgToMesh.Convert(nameMesh)
+					}
+				});
 			});
-
 
 			this.SetAndInvalidateMesh(null);
 		}
@@ -289,10 +290,12 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 			nameMesh = new Translate(nameMesh, -37, -14, -1);
 
 			// output two meshes 
-			this.Children.Clear();
 
-			this.Children.AddRange(new[]
+			this.Children.Modify(list =>
 			{
+				list.Clear();
+				list.AddRange(new[]
+				{
 				new Object3D()
 				{
 					Mesh = CsgToMesh.Convert(cancerRibonStl)
@@ -301,8 +304,8 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 				{
 					Mesh = CsgToMesh.Convert(nameMesh)
 				}
+				});
 			});
-
 
 			this.SetAndInvalidateMesh(null);
 		}

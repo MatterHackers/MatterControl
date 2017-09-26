@@ -59,10 +59,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				firstPass = false;
 			}
 
-			scene.ModifyChildren(children =>
-			{
-				children.Add(item);
-			});
+			scene.Children.Modify(list => list.Add(item));
 
 			scene.SelectedItem = item;
 
@@ -71,10 +68,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void Undo()
 		{
-			scene.ModifyChildren(children =>
-			{
-				children.Remove(item);
-			});
+			scene.Children.Modify(list => list.Remove(item));
 
 			scene.SelectLastChild();
 

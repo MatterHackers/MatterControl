@@ -54,10 +54,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				return;
 			}
 
-			scene.ModifyChildren(children =>
+			scene.Children.Modify(list =>
 			{
 				// Remove the group
-				children.Remove(originalItem);
+				list.Remove(originalItem);
 
 				// Apply transform
 				foreach(var child in originalItem.Children)
@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 
 				// Add all children from the group
-				children.AddRange(originalItem.Children);
+				list.AddRange(originalItem.Children);
 			});
 
 			scene.SelectLastChild();
@@ -76,13 +76,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public void Undo()
 		{
 			// Remove the children from the Scene root, add the original item back into the root
-			scene.ModifyChildren(children =>
+			scene.Children.Modify(list =>
 			{
 				foreach(var child in originalItem.Children)
 				{
-					if (children.Contains(child))
+					if (list.Contains(child))
 					{
-						children.Remove(child);
+						list.Remove(child);
 					}
 
 					Matrix4X4 inverseMatrix = originalItem.Matrix;
@@ -91,7 +91,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					child.Matrix = inverseMatrix * child.Matrix;
 				}
 
-				children.Add(originalItem);
+				list.Add(originalItem);
 			});
 
 			scene.SelectLastChild();

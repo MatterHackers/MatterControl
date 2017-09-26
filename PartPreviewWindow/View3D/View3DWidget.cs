@@ -726,9 +726,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				rotCurrent += rotChange;
 				scaleCurrent += scaleChange;
 
-				Scene.ModifyChildren(children =>
+				this.Scene.Children.Modify(list =>
 				{
-					children.Add(booleanGroup);
+					list.Add(booleanGroup);
 				});
 			}
 			catch (Exception e2)
@@ -930,9 +930,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.deferEditorTillMouseUp = true;
 
 			// Add item to scene and select it
-			this.Scene.ModifyChildren(children =>
+			this.Scene.Children.Modify(list =>
 			{
-				children.Add(this.DragDropObject);
+				list.Add(this.DragDropObject);
 			});
 			Scene.SelectedItem = this.DragDropObject;
 
@@ -952,8 +952,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 				else
 				{
-					Scene.ModifyChildren(children => children.Remove(this.DragDropObject));
-					Scene.ClearSelection();
+					this.Scene.Children.Modify(list => list.Remove(this.DragDropObject));
+					this.Scene.ClearSelection();
 				}
 
 				this.DragDropObject = null;
@@ -1992,7 +1992,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						if (contentResult != null && contentResult.Object3D != null)
 						{
-							Scene.ModifyChildren(children => children.Add(contentResult.Object3D));
+							Scene.Children.Modify(list => list.Add(contentResult.Object3D));
 
 							PlatingHelper.MoveToOpenPosition(contentResult.Object3D, this.Scene.Children);
 

@@ -27,13 +27,8 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System.Threading.Tasks;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
-using MatterHackers.PolygonMesh;
-using System.Linq;
-using System.Collections.Generic;
-using System.Threading;
 using MatterHackers.MeshVisualizer;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
@@ -41,26 +36,26 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public class GroupCommand : IUndoRedoCommand
 	{
 		private IObject3D item;
-		private InteractiveScene interactiveScene;
+		private InteractiveScene scene;
 
 		public GroupCommand(InteractiveScene interactiveScene, IObject3D selectedItem)
 		{
-			this.interactiveScene = interactiveScene;
+			this.scene = interactiveScene;
 			this.item = selectedItem;
 		}
 
 		public async void Do()
 		{
-			if (interactiveScene.SelectedItem == item)
+			if (scene.SelectedItem == item)
 			{
 				// This is the original do() case. The selection needs to be changed into a group and selected
 				// change it to a standard group
-				interactiveScene.SelectedItem.ItemType = Object3DTypes.Group;
+				scene.SelectedItem.ItemType = Object3DTypes.Group;
 			}
 			else
 			{
 				// This the undo -> redo() case. The original Selection group has been collapsed and we need to rebuild it
-				interactiveScene.ModifyChildren(children =>
+				scene.Children.Modify(children =>
 				{
 					// Remove all children from the scene
 					foreach (var child in item.Children)
@@ -72,27 +67,27 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					children.Add(item);
 				});
 
-				interactiveScene.SelectedItem = item;
+				scene.SelectedItem = item;
 			}
 		}
 
 		public void Undo()
 		{
-			if (!interactiveScene.Children.Contains(item))
+			if (!scene.Children.Contains(item))
 			{
 				return;
 			}
 
-			interactiveScene.ModifyChildren(children =>
+			scene.Children.Modify(list =>
 			{
 				// Remove the group
-				children.Remove(item);
+				list.Remove(item);
 
 				// Add all children from the group
-				children.AddRange(item.Children);
+				list.AddRange(item.Children);
 			});
 
-			interactiveScene.SelectLastChild();
+			scene.SelectLastChild();
 		}
 	}
 }

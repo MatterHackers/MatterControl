@@ -567,9 +567,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private static void AddToPlate(IEnumerable<ILibraryItem> selectedLibraryItems)
 		{
 			var scene = ApplicationController.Instance.DragDropData.Scene;
-			scene.ModifyChildren(children =>
+			scene.Children.Modify(list =>
 			{
-				children.Add(
+				list.Add(
 					new InsertionGroup(
 						selectedLibraryItems,
 						scene,
