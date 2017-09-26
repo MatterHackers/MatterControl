@@ -28,7 +28,10 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Diagnostics;
+using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.GCodeVisualizer;
@@ -46,133 +49,115 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		internal SliceStageProgressControl(string startingTextMessage)
 			: base(FlowDirection.TopToBottom)
 		{
+			this.HAnchor = HAnchor.Fit;
+			this.VAnchor = VAnchor.Fit;
+
 			operationText = new TextWidget(startingTextMessage)
 			{
 				HAnchor = HAnchor.Left,
 				AutoExpandBoundsToText = true
 			};
-			AddChild(operationText);
+			this.AddChild(operationText);
 
 			progressControl = new ProgressControl("", RGBA_Bytes.Black, RGBA_Bytes.Black)
 			{
 				HAnchor = HAnchor.Left
 			};
-			AddChild(progressControl);
+			this.AddChild(progressControl);
 		}
 	}
 
 	public class SlicePopupMenu : PopupButton
 	{
 		private TextImageButtonFactory buttonFactory = ApplicationController.Instance.Theme.ButtonFactory;
-		private DisableablePanel disableablePanel;
 		private PrinterConfig printer;
 		private PrinterTabPage printerTabPage;
+		private bool activelySlicing = false;
 
 		public SlicePopupMenu(PrinterConfig printer, ThemeConfig theme, PrinterTabPage printerTabPage)
 		{
 			this.printerTabPage = printerTabPage;
 			this.printer = printer;
-			Name = "SlicePopupMenu";
-			HAnchor = HAnchor.Fit;
-			VAnchor = VAnchor.Fit;
-
-			var sliceButton = new TextButton("Slice".Localize().ToUpper(), theme)
-			{
-				BackgroundColor = theme.ButtonFactory.normalFillColor,
-				HoverColor = theme.ButtonFactory.hoverFillColor
-			};
-			sliceButton.Margin = theme.ButtonSpacing;
-			sliceButton.Name = "Slice Dropdown Button";
-			this.AddChild(sliceButton);
-		}
-
-		public override void OnLoad(EventArgs args)
-		{
-			// Wrap popup content in a DisableablePanel
-			disableablePanel = new DisableablePanel(this.GetPopupContent(), printer.Connection.PrinterIsConnected, alpha: 140)
-			{
-				HAnchor = HAnchor.Fit,
-				VAnchor = VAnchor.Fit
-			};
-			disableablePanel.Enabled = true;
-
-			// Set as popup
-			this.PopupContent = disableablePanel;
-
-			base.OnLoad(args);
-		}
-
-		protected GuiWidget GetPopupContent()
-		{
-			var popupContainer = new IgnoredPopupWidget()
+			this.Name = "SlicePopupMenu";
+			this.HAnchor = HAnchor.Fit;
+			this.VAnchor = VAnchor.Fit;
+			this.PopupContent = new IgnoredPopupWidget()
 			{
 				HAnchor = HAnchor.Fit,
 				VAnchor = VAnchor.Fit,
-				BackgroundColor = RGBA_Bytes.White,
-				Padding = new BorderDouble(12, 5, 12, 0)
+				BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor,
+				Padding = 15,
+				MinimumSize = new VectorMath.Vector2(300, 65),
 			};
 
-			var progressContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			this.AddChild(new TextButton("Slice".Localize().ToUpper(), theme)
 			{
-				MinimumSize = new VectorMath.Vector2(400, 500)
-			};
+				//Name = "Slice Dropdown Button",
+				Name = "Generate Gcode Button",
+				BackgroundColor = theme.ButtonFactory.normalFillColor,
+				HoverColor = theme.ButtonFactory.hoverFillColor,
+				Margin = theme.ButtonSpacing,
+			});
+		}
 
-			popupContainer.AddChild(progressContainer);
+		protected override void BeforeShowPopup()
+		{
+			this.PopupContent.CloseAllChildren();
+			this.SliceBedplate().ConfigureAwait(false);
+			base.BeforeShowPopup();
+		}
 
-			var sliceButton = buttonFactory.Generate("Slice".Localize().ToUpper());
-			popupContainer.AddChild(sliceButton);
-
-			sliceButton.ToolTipText = "Slice Parts".Localize();
-			sliceButton.Name = "Generate Gcode Button";
-			sliceButton.Click += async (s, e) =>
+		private async Task SliceBedplate()
+		{
+			if (activelySlicing)
 			{
-				if (printer.Settings.PrinterSelected)
+				return;
+			}
+
+			if (printer.Settings.PrinterSelected)
+			{
+				var printItem = printer.Bed.printItem;
+
+				if (printer.Settings.IsValid() && printItem != null)
 				{
-					var printItem = printer.Bed.printItem;
+					activelySlicing = true;
 
-					if (printer.Settings.IsValid() && printItem != null)
+					try
 					{
-						sliceButton.Enabled = false;
+						var sliceProgressReporter = new SliceProgressReporter(this.PopupContent, printer);
 
-						try
-						{
-							var sliceProgressReporter = new SliceProgressReporter(progressContainer);
+						sliceProgressReporter.StartReporting();
 
-							sliceProgressReporter.StartReporting();
+						// Save any pending changes before starting the print
+						await printerTabPage.modelViewer.PersistPlateIfNeeded();
 
-							// Save any pending changes before starting the print
-							await printerTabPage.modelViewer.PersistPlateIfNeeded();
+						await SlicingQueue.SliceFileAsync(printItem, sliceProgressReporter);
+						sliceProgressReporter.EndReporting();
 
-							await SlicingQueue.SliceFileAsync(printItem, sliceProgressReporter);
-							sliceProgressReporter.EndReporting();
+						var gcodeLoadCancellationTokenSource = new CancellationTokenSource();
 
-							var gcodeLoadCancellationTokenSource = new CancellationTokenSource();
+						this.printer.Bed.LoadGCode(printItem.GetGCodePathAndFileName(), gcodeLoadCancellationTokenSource.Token, printerTabPage.modelViewer.gcodeViewer.LoadProgress_Changed);
 
-							this.printer.Bed.LoadGCode(printItem.GetGCodePathAndFileName(), gcodeLoadCancellationTokenSource.Token, printerTabPage.modelViewer.gcodeViewer.LoadProgress_Changed);
+						printerTabPage.ViewMode = PartViewMode.Layers3D;
 
-							printerTabPage.ViewMode = PartViewMode.Layers3D;
+						// HACK: directly fire method which previously ran on SlicingDone event on PrintItemWrapper
+						UiThread.RunOnIdle(() => printerTabPage.modelViewer.gcodeViewer.CreateAndAddChildren(printer));
+					}
+					catch (Exception ex)
+					{
+						Console.WriteLine("Error slicing file: " + ex.Message);
+					}
 
-							// HACK: directly fire method which previously ran on SlicingDone event on PrintItemWrapper
-							UiThread.RunOnIdle(() => printerTabPage.modelViewer.gcodeViewer.CreateAndAddChildren(printer));
-						}
-						catch (Exception ex)
-						{
-							Console.WriteLine("Error slicing file: " + ex.Message);
-						}
-
-						sliceButton.Enabled = true;
-					};
-				}
-				else
+					activelySlicing = false;
+				};
+			}
+			else
+			{
+				UiThread.RunOnIdle(() =>
 				{
-					UiThread.RunOnIdle(() =>
-					{
-						StyledMessageBox.ShowMessageBox(null, "Oops! Please select a printer in order to continue slicing.", "Select Printer", StyledMessageBox.MessageType.OK);
-					});
-				}
-			};
-
-			return popupContainer;
+					StyledMessageBox.ShowMessageBox(null, "Oops! Please select a printer in order to continue slicing.", "Select Printer", StyledMessageBox.MessageType.OK);
+				});
+			}
 		}
 	}
 
@@ -182,72 +167,102 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private double currentValue = 0;
 		private double destValue = 10;
 		private GuiWidget progressReportContainer;
-		string lastOutputLine = "";
+		private string lastOutputLine = "";
 
-		public SliceProgressReporter(GuiWidget progressReportContainer)
+		private PrinterConfig printer;
+
+		public SliceProgressReporter(GuiWidget progressReportContainer, PrinterConfig printer)
 		{
-			progressReportContainer.CloseAllChildren();
 			this.progressReportContainer = progressReportContainer;
+			this.printer = printer;
+
+			partProcessingInfo = new SliceStageProgressControl("start");
+			partProcessingInfo.VAnchor = VAnchor.Center;
+			partProcessingInfo.operationText.TextColor = ApplicationController.Instance.Theme.ButtonFactory.normalTextColor;
+
+			progressReportContainer.AddChild(partProcessingInfo);
 		}
 
-		public void EndReporting()
-		{
-			if (partProcessingInfo != null)
-			{
-				partProcessingInfo.progressControl.PercentComplete = 100;
-			}
+		private Stopwatch timer = Stopwatch.StartNew();
 
-			progressReportContainer.AddChild(new TextWidget("Done!"));
-		}
+		private string progressSection = "";
 
 		public void Report(string value)
 		{
-			UiThread.RunOnIdle(() =>
-			{
-				bool foundProgressNumbers = false;
+			bool foundProgressNumbers = false;
 
-				if (GCodeFile.GetFirstNumberAfter("", value, ref currentValue))
+
+			if (GCodeFile.GetFirstNumberAfter("", value, ref currentValue)
+				&& GCodeFile.GetFirstNumberAfter("/", value, ref destValue))
+			{
+				if (destValue == 0)
 				{
-					if (GCodeFile.GetFirstNumberAfter("/", value, ref destValue))
-					{
-						if (destValue == 0)
-						{
-							destValue = 1;
-						}
-						foundProgressNumbers = true;
-					}
+					destValue = 1;
 				}
 
-				int lengthBeforeNumber = value.IndexOfAny("0123456789".ToCharArray()) - 1;
-				lengthBeforeNumber = lengthBeforeNumber < 0 ? lengthBeforeNumber = value.Length : lengthBeforeNumber;
-				if (lastOutputLine != value.Substring(0, lengthBeforeNumber))
-				{
-					lastOutputLine = value.Substring(0, lengthBeforeNumber);
+				foundProgressNumbers = true;
 
-					if (foundProgressNumbers)
+				if (!partProcessingInfo.progressControl.Visible)
+				{
+					int pos = value.IndexOf(currentValue.ToString());
+					if (pos != -1)
 					{
-						partProcessingInfo = new SliceStageProgressControl("start");
-						progressReportContainer.AddChild(partProcessingInfo);
+						progressSection = value.Substring(0, pos);
 					}
 					else
 					{
-						progressReportContainer.AddChild(new TextWidget(value));
+						progressSection = value;
 					}
-				}
 
-				if (partProcessingInfo != null
-					&& foundProgressNumbers)
-				{
-					int percentComplete = Math.Min(100, Math.Max(0, (int)(100 * currentValue / destValue + .5)));
-					partProcessingInfo.progressControl.PercentComplete = percentComplete;
-					partProcessingInfo.operationText.Text = value;
+					timer.Restart();
+					partProcessingInfo.progressControl.PercentComplete = 0;
+					partProcessingInfo.progressControl.Visible = true;
 				}
-			});
+			}
+			else
+			{
+				if (partProcessingInfo.progressControl.Visible)
+				{
+					printer.Connection.TerminalLog.WriteLine(string.Format("{0}: {1:#.##}s", progressSection.Trim(), timer.Elapsed.TotalSeconds));
+					partProcessingInfo.progressControl.Visible = false;
+				}
+				else
+				{
+					printer.Connection.TerminalLog.WriteLine(value);
+				}
+			}
+
+			int lengthBeforeNumber = value.IndexOfAny("0123456789".ToCharArray()) - 1;
+			lengthBeforeNumber = lengthBeforeNumber < 0 ? lengthBeforeNumber = value.Length : lengthBeforeNumber;
+			if (lastOutputLine != value.Substring(0, lengthBeforeNumber))
+			{
+				lastOutputLine = value.Substring(0, lengthBeforeNumber);
+				partProcessingInfo.progressControl.Visible = foundProgressNumbers;
+			}
+
+			if (foundProgressNumbers)
+			{
+				int percentComplete = Math.Min(100, Math.Max(0, (int)(100 * currentValue / destValue + .5)));
+				partProcessingInfo.progressControl.PercentComplete = percentComplete;
+			}
+
+			partProcessingInfo.operationText.Text = value;
 		}
 
 		public void StartReporting()
 		{
-			progressReportContainer.AddChild(new TextWidget("Loading File..."));
+			partProcessingInfo.operationText.Text = "Loading File...";
+		}
+
+		public void EndReporting()
+		{
+			partProcessingInfo.progressControl.PercentComplete = 100;
+			partProcessingInfo.operationText.Text = "Done!";
+
+			UiThread.RunOnIdle(() =>
+			{
+				progressReportContainer.Parents<PopupWidget>().FirstOrDefault()?.Close();
+			}, 1);
 		}
 	}
 }
