@@ -29,47 +29,13 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using MatterHackers.Agg;
-using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
-using MatterHackers.Agg.VertexSource;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.SerialPortCommunication.FrostedSerial;
 
 namespace MatterHackers.MatterControl.ActionBar
 {
-	public class ResetButton : GuiWidget
-	{
-		private readonly string resetConnectionText = "Reset\nConnection".Localize().ToUpper();
-		private EventHandler unregisterEvents;
-
-		public ResetButton(PrinterConfig printer, TextImageButtonFactory buttonFactory)
-		{
-			this.HAnchor = HAnchor.Stretch | HAnchor.Fit;
-			this.VAnchor = VAnchor.Fit;
-			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-
-			Button resetConnectionButton = buttonFactory.Generate(resetConnectionText, "e_stop4.png");
-			resetConnectionButton.Visible = printer.Settings.GetValue<bool>(SettingsKey.show_reset_connection);
-			resetConnectionButton.Click += (s, e) =>
-			{
-				UiThread.RunOnIdle(printer.Connection.RebootBoard);
-			};
-			this.AddChild(resetConnectionButton);
-
-			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
-			{
-				var stringEvent = e as StringEventArgs;
-				if (stringEvent?.Data == SettingsKey.show_reset_connection)
-				{
-					resetConnectionButton.Visible = printer.Settings.GetValue<bool>(SettingsKey.show_reset_connection);
-				}
-			}, ref unregisterEvents);
-		}
-	}
-
 	public class PrinterConnectButton : GuiWidget
 	{
 		private readonly string disconnectAndCancelTitle = "Disconnect and stop the current print?".Localize();
