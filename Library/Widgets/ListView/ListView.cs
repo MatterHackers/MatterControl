@@ -300,9 +300,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					var contentModel = itemModel as ILibraryContentStream;
 					if (contentModel != null)
 					{
-						listViewItem.StartProgress();
-
-						var result = contentModel.CreateContent(listViewItem.ProgressReporter);
+						var result = contentModel.CreateContent();
 						if (result.Object3D != null && ApplicationController.Instance.DragDropData.View3DWidget != null)
 						{
 							var scene = ApplicationController.Instance.DragDropData.View3DWidget.InteractionLayer.Scene;
@@ -312,8 +310,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 							});
 						}
 					}
-
-					listViewItem.EndProgress();
 				}
 			});
 		}
