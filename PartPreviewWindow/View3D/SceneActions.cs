@@ -48,8 +48,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				view3DWidget.StartProgress("Ungroup");
 
-				view3DWidget.viewIsInEditModePreLock = true;
-
 				await Task.Run(() =>
 				{
 					var selectedItem = Scene.SelectedItem;
@@ -117,7 +115,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (Scene.HasChildren())
 			{
 				view3DWidget.StartProgress("Group Selection");
-				view3DWidget.viewIsInEditModePreLock = true;
 
 				var item = Scene.SelectedItem;
 
