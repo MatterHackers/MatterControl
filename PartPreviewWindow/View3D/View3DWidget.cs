@@ -241,15 +241,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				addButton.Margin = 0;
 				addButton.Click += (sender, e) =>
 				{
-					UiThread.RunOnIdle((Action)(() =>
+					UiThread.RunOnIdle(() =>
 					{
 						AggContext.FileDialogs.OpenFileDialog(
 							new OpenFileDialogParams(ApplicationSettings.OpenDesignFileParams, multiSelect: true),
-(Action<OpenFileDialogParams>)((openParams) =>
+							(openParams) =>
 							{
-								this.LoadAndAddPartsToPlate((string[])openParams.FileNames);
-							}));
-					}));
+								this.LoadAndAddPartsToPlate(openParams.FileNames);
+							});
+					});
 				};
 				selectionActionBar.AddChild(addButton);
 
@@ -426,7 +426,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							UiThread.RunOnIdle(() => WizardWindow.Show<PublishPartToMatterHackers>());
 						}
 					},
-				new NamedAction()
+					new NamedAction()
 					{
 						Title = "Arrange All Parts".Localize(),
 						Action = () =>
