@@ -102,7 +102,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		protected override void BeforeShowPopup()
 		{
-			this.PopupContent.CloseAllChildren();
 			this.SliceBedplate().ConfigureAwait(false);
 			base.BeforeShowPopup();
 		}
@@ -113,6 +112,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				return;
 			}
+
+			this.PopupContent.CloseAllChildren();
 
 			if (printer.Settings.PrinterSelected)
 			{
@@ -190,7 +191,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public void Report(string value)
 		{
 			bool foundProgressNumbers = false;
-
 
 			if (GCodeFile.GetFirstNumberAfter("", value, ref currentValue)
 				&& GCodeFile.GetFirstNumberAfter("/", value, ref destValue))
