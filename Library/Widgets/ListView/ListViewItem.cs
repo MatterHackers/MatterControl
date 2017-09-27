@@ -28,29 +28,26 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
-using MatterHackers.Localizations;
 using MatterHackers.MatterControl.Library;
 
 namespace MatterHackers.MatterControl.CustomWidgets
 {
 	public class ListViewItem
 	{
-		public ILibraryItem Model { get; }
-		public ListView ListView { get; }
+		public event EventHandler<MouseEventArgs> DoubleClick;
 
-		public string Text { get; internal set; }
+		public ILibraryItem Model { get; }
+
+		public ListView ListView { get; }
 
 		public ListViewItemBase ViewWidget { get; set; }
 
-		public ListViewItem(ILibraryItem listItemData, ListView dragConsumer)
+		public ListViewItem(ILibraryItem libraryItem, ListView listView)
 		{
-			this.ListView = dragConsumer;
-			this.Model = listItemData;
+			this.ListView = listView;
+			this.Model = libraryItem;
 		}
-
-		public event EventHandler<MouseEventArgs> DoubleClick;
 
 		internal void OnDoubleClick()
 		{

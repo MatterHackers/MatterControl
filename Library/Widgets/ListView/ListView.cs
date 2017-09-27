@@ -271,16 +271,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				var listViewItem = sender as ListViewItem;
 				var itemModel = listViewItem.Model;
 
-				// TODO: No longer applicable... ***********************************
-				if (listViewItem?.Text == "..")
-				{
-					// Up folder item
-					if (ActiveContainer?.Parent != null)
-					{
-						LoadContainer(ActiveContainer.Parent);
-					}
-				}
-				else if (itemModel is ILibraryContainerLink)
+				if (itemModel is ILibraryContainerLink)
 				{
 					// Container items
 					var containerLink = itemModel as ILibraryContainerLink;
