@@ -110,8 +110,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			selectLayerSlider = new SolidSlider(new Vector2(), sliderWidth, 0, 1, Orientation.Vertical)
 			{
+				HAnchor = HAnchor.Right,
 				VAnchor = VAnchor.Stretch,
-				Margin = new BorderDouble(0, 20, 0, 10)
+				Margin = new BorderDouble(0, 80, 12, 20),
 			};
 			selectLayerSlider.ValueChanged += (s, e) =>
 			{
