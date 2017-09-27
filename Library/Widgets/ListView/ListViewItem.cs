@@ -39,30 +39,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 	{
 		public ILibraryItem Model { get; }
 		public ListView ListView { get; }
+
 		public string Text { get; internal set; }
 
-		public GuiWidget ProgressTarget { get; internal set; }
-
 		public ListViewItemBase ViewWidget { get; set; }
-
-		ProgressControl processingProgressControl;
-
-		internal void ProgressReporter(double progress0To1, string processingState)
-		{
-			if (processingProgressControl == null)
-			{
-				return;
-			}
-
-			processingProgressControl.Visible = progress0To1 != 0;
-			processingProgressControl.RatioComplete = progress0To1;
-			processingProgressControl.ProcessType = processingState;
-
-			if (progress0To1 == 1)
-			{
-				EndProgress();
-			}
-		}
 
 		public ListViewItem(ILibraryItem listItemData, ListView dragConsumer)
 		{
@@ -75,32 +55,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		internal void OnDoubleClick()
 		{
 			DoubleClick?.Invoke(this, null);
-		}
-
-		public void StartProgress()
-		{
-			processingProgressControl = new ProgressControl("Loading...".Localize(), RGBA_Bytes.Black, ActiveTheme.Instance.SecondaryAccentColor, (int)(100 * GuiWidget.DeviceScale), 5, 0)
-			{
-				PointSize = 8,
-				Margin = 0,
-				Visible = true
-			};
-			
-			ProgressTarget?.AddChild(processingProgressControl);
-		}
-
-		public void EndProgress()
-		{
-			UiThread.RunOnIdle(() =>
-			{
-				if (processingProgressControl == null)
-				{
-					return;
-				}
-
-				processingProgressControl.Close();
-				processingProgressControl = null;
-			}, 1);
 		}
 	}
 }

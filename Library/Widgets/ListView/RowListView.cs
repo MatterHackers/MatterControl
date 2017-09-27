@@ -128,26 +128,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				};
 				leftColumn.AddChild(imageWidget);
 
-				// TODO: Move to caller
-				// TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
-				// textInfo.ToTitleCase(PrintItemWrapper.Name).Replace('_', ' ')
-
 				partLabel = new TextWidget(listViewItem.Model.Name, pointSize: 14)
 				{
 					TextColor = RGBA_Bytes.Black,
 					MinimumSize = new Vector2(1, 18),
 					VAnchor = VAnchor.Center
 				};
-
-				/*
-				partStatus = new TextWidget("{0}: {1}".FormatWith("Status".Localize().ToUpper(), "Queued to Print".Localize()), pointSize: 10)
-				{
-					AutoExpandBoundsToText = true,
-					TextColor = RGBA_Bytes.Black,
-					MinimumSize = new Vector2(50, 12)
-					middleColumn.AddChild(partStatus);
-
-				}; */
 
 				middleColumn = new GuiWidget(0.0, 0.0)
 				{
@@ -157,17 +143,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					Margin = new BorderDouble(10, 3)
 				};
 
-				listViewItem.ProgressTarget = middleColumn;
-
 				bool mouseDownOnMiddle = false;
 				middleColumn.MouseDown += (sender, e) =>
 				{
-					// TODO: Need custom model type for non-content items
-					// Abort normal processing for view helpers
-					/* if (this.IsViewHelperItem)
-					{
-						return;
-					}*/
 					mouseDownOnMiddle = true;
 				};
 
