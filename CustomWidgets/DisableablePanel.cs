@@ -31,7 +31,7 @@ using System;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 
-namespace MatterHackers.MatterControl.SlicerConfiguration
+namespace MatterHackers.MatterControl.CustomWidgets
 {
 	public class DisableablePanel : GuiWidget
 	{
