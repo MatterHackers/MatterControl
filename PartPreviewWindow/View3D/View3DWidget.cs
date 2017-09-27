@@ -72,7 +72,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private OpenMode openMode;
 		internal bool partHasBeenEdited = false;
-		internal ProgressControl processingProgressControl;
+		private ProgressControl processingProgressControl;
 		private SaveAsWindow saveAsWindow = null;
 		private RGBA_Bytes[] SelectionColors = new RGBA_Bytes[] { new RGBA_Bytes(131, 4, 66), new RGBA_Bytes(227, 31, 61), new RGBA_Bytes(255, 148, 1), new RGBA_Bytes(247, 224, 23), new RGBA_Bytes(143, 212, 1) };
 		private Stopwatch timeSinceLastSpin = new Stopwatch();
@@ -227,9 +227,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				processingProgressControl = new ProgressControl("", ActiveTheme.Instance.PrimaryTextColor, ActiveTheme.Instance.PrimaryAccentColor)
 				{
-					VAnchor = VAnchor.Center,
-					Visible = false
+					VAnchor = VAnchor.Top,
+					HAnchor = HAnchor.Center,
+					MinimumSize = new Vector2(400, 40),
+					BackgroundColor = theme.SlightShade,
+					Padding = 10
 				};
+				this.InteractionLayer.AddChild(processingProgressControl);
 
 				var buttonSpacing = ApplicationController.Instance.Theme.ButtonSpacing;
 
@@ -237,15 +241,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				addButton.Margin = 0;
 				addButton.Click += (sender, e) =>
 				{
-					UiThread.RunOnIdle(() =>
+					UiThread.RunOnIdle((Action)(() =>
 					{
 						AggContext.FileDialogs.OpenFileDialog(
 							new OpenFileDialogParams(ApplicationSettings.OpenDesignFileParams, multiSelect: true),
-							(openParams) =>
+(Action<OpenFileDialogParams>)((openParams) =>
 							{
-								LoadAndAddPartsToPlate(openParams.FileNames);
-							});
-					});
+								this.LoadAndAddPartsToPlate((string[])openParams.FileNames);
+							}));
+					}));
 				};
 				selectionActionBar.AddChild(addButton);
 
@@ -457,7 +461,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				});
 			}
 
-			selectionActionBar.AddChild(processingProgressControl);
+			//selectionActionBar.AddChild(processingProgressControl);
 			buttonBottomPanel.AddChild(selectionActionBar);
 
 			LockEditControls();
@@ -514,11 +518,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 				}
 			}
-
-			ActiveTheme.ThemeChanged.RegisterEvent((s, e) =>
-			{
-				processingProgressControl.FillColor = ActiveTheme.Instance.PrimaryAccentColor;
-			}, ref unregisterEvents);
 
 			var interactionVolumes = this.InteractionLayer.InteractionVolumes;
 			interactionVolumes.Add(new MoveInZControl(this.InteractionLayer));
@@ -1748,12 +1747,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		internal void ReportProgressChanged(double progress0To1, string processingState)
 		{
-			if (!timeSinceReported.IsRunning || timeSinceReported.ElapsedMilliseconds > 100
-				|| processingState != processingProgressControl.ProgressMessage)
+			if (!timeSinceReported.IsRunning || timeSinceReported.ElapsedMilliseconds > 100)
 			{
 				UiThread.RunOnIdle(() =>
 				{
 					processingProgressControl.RatioComplete = progress0To1;
+					// TODO: filter needed?  processingState != processingProgressControl.ProgressMessage
 					processingProgressControl.ProgressMessage = processingState;
 				});
 				timeSinceReported.Restart();
@@ -1910,14 +1909,30 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
+		public void StartProgress(string rootTask)
+		{
+			processingProgressControl.ProcessType = rootTask;
+			processingProgressControl.Visible = true;
+			processingProgressControl.PercentComplete = 0;
+
+			this.LockEditControls();
+		}
+
+		public void EndProgress()
+		{
+			// TODO: Leave on screen for a few seconds to aid in troubleshooting - remove after done investigating
+			UiThread.RunOnIdle(() => processingProgressControl.Visible = false, 1.2);
+
+			this.UnlockEditControls();
+			this.PartHasBeenChanged();
+			this.Invalidate();
+		}
+
 		private async void LoadAndAddPartsToPlate(string[] filesToLoad)
 		{
-			if (Scene.HasChildren() && filesToLoad != null && filesToLoad.Length > 0)
+			if (filesToLoad != null && filesToLoad.Length > 0)
 			{
-				processingProgressControl.ProcessType = "Loading Parts".Localize() + ":";
-				processingProgressControl.Visible = true;
-				processingProgressControl.PercentComplete = 0;
-				LockEditControls();
+				this.StartProgress("Loading Parts".Localize() + ":");
 
 				await Task.Run(() => loadAndAddPartsToPlate(filesToLoad));
 
@@ -1925,9 +1940,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					return;
 				}
-
-				UnlockEditControls();
-				PartHasBeenChanged();
 
 				bool addingOnlyOneItem = Scene.Children.Count == Scene.Children.Count + 1;
 
@@ -1939,10 +1951,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						Scene.SelectLastChild();
 					}
 				}
+
+				this.EndProgress();
 			}
 		}
 
-		private void loadAndAddPartsToPlate(string[] filesToLoadIncludingZips)
+		private async Task loadAndAddPartsToPlate(string[] filesToLoadIncludingZips)
 		{
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
@@ -1988,29 +2002,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						ReportProgressChanged(currentRatio, progressMessage);
 					});
 
-					contentResult?.MeshLoaded.ContinueWith((task) =>
+					await contentResult?.MeshLoaded;
+
+					if (contentResult != null && contentResult.Object3D != null)
 					{
-						if (contentResult != null && contentResult.Object3D != null)
-						{
-							Scene.Children.Modify(list => list.Add(contentResult.Object3D));
+						Scene.Children.Modify(list => list.Add(contentResult.Object3D));
 
-							PlatingHelper.MoveToOpenPosition(contentResult.Object3D, this.Scene.Children);
+						PlatingHelper.MoveToOpenPosition(contentResult.Object3D, this.Scene.Children);
 
-							// TODO: There should be a batch insert so you can undo large 'add to scene' operations in one go
-							//this.InsertNewItem(tempScene);
-						}
-					});
-
-					if (HasBeenClosed)
-					{
-						return;
+						// TODO: There should be a batch insert so you can undo large 'add to scene' operations in one go
+						//this.InsertNewItem(tempScene);
 					}
 
 					currentRatioDone += ratioPerFile;
 				}
 			}
-
-			this.PartHasBeenChanged();
 		}
 
 		public void LockEditControls()
@@ -2125,11 +2131,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (Scene.HasChildren())
 			{
-				processingProgressControl.ProcessType = "Saving".Localize() + ":";
-				processingProgressControl.Visible = true;
-				processingProgressControl.PercentComplete = 0;
-
-				LockEditControls();
+				this.StartProgress("Saving".Localize() + ":");
 
 				// Perform the actual save operation
 				await Task.Run(() =>
@@ -2161,8 +2163,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					return;
 				}
 
-				UnlockEditControls();
-				partHasBeenEdited = false;
+				this.EndProgress();
 			}
 		}
 
@@ -2256,28 +2257,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			viewControls3D.ActiveButton = ViewControls3DButtons.PartSelect;
 
-			processingProgressControl.Visible = true;
-			LockEditControls();
+			this.StartProgress("Preparing Meshes".Localize() + ":");
 			viewIsInEditModePreLock = true;
 
 			if (Scene.HasChildren())
 			{
+				// TODO: Why is this in widget land? When we load content we should queue trace generation, not when we rebuild ui controls
 				// CreateSelectionData()
 				await Task.Run(() =>
 				{
 					Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-					processingProgressControl.ProcessType = "Preparing Meshes".Localize() + ":";
 
 					// Force trace data generation
 					foreach (var object3D in Scene.Children)
 					{
 						object3D.TraceData();
 					}
-
-					// TODO: Why were we recreating GLData on edit? 
-					//bool continueProcessing2;
-					//ReportProgressChanged(1, "Creating GL Data", continueProcessing2);
-					//meshViewerWidget.CreateGlDataForMeshes(Scene.Children);
 				});
 
 				if (this.HasBeenClosed)
@@ -2288,10 +2283,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Scene.SelectFirstChild();
 			}
 
-			UnlockEditControls();
-			viewControls3D.ActiveButton = ViewControls3DButtons.PartSelect;
+			this.EndProgress();
 
-			Invalidate();
+			viewControls3D.ActiveButton = ViewControls3DButtons.PartSelect;
 		}
 
 		// Before printing persist any changes to disk
@@ -2306,8 +2300,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void UnlockEditControls()
 		{
-			processingProgressControl.Visible = false;
-
 			if (viewIsInEditModePreLock)
 			{
 				viewControls3D.PartSelectVisible = true;

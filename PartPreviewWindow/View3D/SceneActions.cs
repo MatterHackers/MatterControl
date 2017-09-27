@@ -46,9 +46,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (Scene.HasSelection)
 			{
-				view3DWidget.processingProgressControl.PercentComplete = 0;
-				view3DWidget.processingProgressControl.Visible = true;
-				view3DWidget.LockEditControls();
+				view3DWidget.StartProgress("Ungroup");
+
 				view3DWidget.viewIsInEditModePreLock = true;
 
 				await Task.Run(() =>
@@ -109,11 +108,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// our selection changed to the mesh we just added which is at the end
 				Scene.SelectLastChild();
 
-				view3DWidget.UnlockEditControls();
-
-				view3DWidget.PartHasBeenChanged();
-
-				view3DWidget.Invalidate();
+				view3DWidget.EndProgress();
 			}
 		}
 
@@ -121,9 +116,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (Scene.HasChildren())
 			{
-				view3DWidget.processingProgressControl.PercentComplete = 0;
-				view3DWidget.processingProgressControl.Visible = true;
-				view3DWidget.LockEditControls();
+				view3DWidget.StartProgress("Group Selection");
 				view3DWidget.viewIsInEditModePreLock = true;
 
 				var item = Scene.SelectedItem;
@@ -145,9 +138,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					return;
 				}
 
-				view3DWidget.UnlockEditControls();
-
-				view3DWidget.Invalidate();
+				view3DWidget.EndProgress();
 			}
 		}
 
@@ -163,10 +154,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (Scene.HasSelection)
 			{
-				view3DWidget.processingProgressControl.ProcessType = "Making Copy".Localize() + ":";
-				view3DWidget.processingProgressControl.Visible = true;
-				view3DWidget.processingProgressControl.PercentComplete = 0;
-				view3DWidget.LockEditControls();
+				view3DWidget.StartProgress("Making Copy".Localize() + ":");
 
 				// Copy selected item
 				IObject3D newItem = await Task.Run(() =>
@@ -189,9 +177,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Scene.InsertNewItem(view3DWidget, newItem);
 				}
 
-				view3DWidget.UnlockEditControls();
-				view3DWidget.PartHasBeenChanged();
-
+				view3DWidget.EndProgress();
 			}
 		}
 
