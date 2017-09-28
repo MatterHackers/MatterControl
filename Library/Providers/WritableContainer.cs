@@ -27,53 +27,36 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using MatterHackers.Agg.Image;
 
 namespace MatterHackers.MatterControl.Library
 {
-	public abstract class LibraryContainer : ILibraryContainer
+	public abstract class WritableContainer : LibraryContainer, ILibraryWritableContainer
 	{
-		public event EventHandler Reloaded;
-
-		public string ID { get; set; }
-		public string Name { get; set; }
-
-		public Type DefaultView { get; protected set; }
-
-		public List<ILibraryContainerLink> ChildContainers { get; set; }
-		public bool IsProtected => true;
-
-		public virtual Task<ImageBuffer> GetThumbnail(ILibraryItem item, int width, int height)
-		{
-			return Task.FromResult<ImageBuffer>(null);
-		}
-
-		public List<ILibraryItem> Items { get; set; }
-
-		public ILibraryContainer Parent { get; set; }
-
-		public string StatusMessage { get; set; } = "";
-
-		public virtual string KeywordFilter { get; set; } = "";
-
-		protected void OnReloaded()
-		{
-			this.Reloaded?.Invoke(this, null);
-		}
-
-		public virtual void Dispose()
+		public virtual void Add(IEnumerable<ILibraryItem> items)
 		{
 		}
 
-		public virtual void Activate()
+		public virtual void Remove(IEnumerable<ILibraryItem> items)
 		{
 		}
 
-		public virtual void Deactivate()
+		public virtual void Rename(ILibraryItem item, string revisedName)
 		{
+		}
+
+		public virtual void Move(IEnumerable<ILibraryItem> items, ILibraryContainer targetContainer)
+		{
+		}
+
+		public virtual void SetThumbnail(ILibraryItem item, int width, int height, ImageBuffer imageBuffer)
+		{
+		}
+
+		public virtual bool AllowAction(ContainerActions containerActions)
+		{
+			return true;
 		}
 	}
 }

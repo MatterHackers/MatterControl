@@ -74,35 +74,40 @@ namespace MatterHackers.MatterControl.Library
 		{
 			await Task.Run(async () =>
 			{
-				foreach (var item in items.OfType<ILibraryContentStream>())
+				foreach (var item in items)
 				{
-					string itemPath;
-
-					if (item is FileSystemFileItem)
+					switch (item)
 					{
-						// Get existing file path
-						var fileItem = item as FileSystemFileItem;
-						itemPath = fileItem.Path;
-					}
-					else
-					{
-						// Copy stream to library path
-						itemPath = ApplicationDataStorage.Instance.GetNewLibraryFilePath("." + item.ContentType);
+						case ILibraryContentStream streamItem:
+							string itemPath;
 
-						using (var outputStream = File.OpenWrite(itemPath))
-						using (var streamInteface = await item.GetContentStream(null))
-						{
-							streamInteface.Stream.CopyTo(outputStream);
-						}
-					}
+							if (streamItem is FileSystemFileItem)
+							{
+								// Get existing file path
+								var fileItem = streamItem as FileSystemFileItem;
+								itemPath = fileItem.Path;
+							}
+							else
+							{
+								// Copy stream to library path
+								itemPath = ApplicationDataStorage.Instance.GetNewLibraryFilePath("." + streamItem.ContentType);
 
-					// Add to Queue
-					if (File.Exists(itemPath))
-					{
-						QueueData.Instance.AddItem(
-							new PrintItemWrapper(
-								new PrintItem(item.Name, itemPath)),
-							0);
+								using (var outputStream = File.OpenWrite(itemPath))
+								using (var streamInteface = await streamItem.GetContentStream(null))
+								{
+									streamInteface.Stream.CopyTo(outputStream);
+								}
+							}
+
+							// Add to Queue
+							if (File.Exists(itemPath))
+							{
+								QueueData.Instance.AddItem(
+									new PrintItemWrapper(
+										new PrintItem(streamItem.Name, itemPath)),
+									0);
+							}
+							break;
 					}
 				}
 			});

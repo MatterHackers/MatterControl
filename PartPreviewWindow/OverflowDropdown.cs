@@ -27,7 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
 using System.IO;
 using MatterHackers.Agg;
 using MatterHackers.Agg.ImageProcessing;
@@ -96,107 +95,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				this.PopupContent.BackgroundColor = RGBA_Bytes.White;
 			}
-		}
-	}
-
-	public class PopupButton : GuiWidget, IIgnoredPopupChild
-	{
-		private static readonly RGBA_Bytes slightShade = new RGBA_Bytes(0, 0, 0, 40);
-
-		private GuiWidget buttonView;
-		private bool menuVisibileAtMouseDown = false;
-		private bool menuVisible = false;
-		private PopupWidget popupWidget;
-
-		public PopupButton()
-		{
-		}
-
-		public PopupButton(GuiWidget buttonView)
-		{
-			this.Margin = 3;
-			this.HAnchor = HAnchor.Fit;
-			this.VAnchor = VAnchor.Fit;
-			this.buttonView = buttonView;
-			this.buttonView.Selectable = false;
-
-			this.AddChild(buttonView);
-		}
-
-		public bool AlignToRightEdge { get; set; }
-		public RGBA_Bytes BorderColor { get; set; } = RGBA_Bytes.Gray;
-		public Func<GuiWidget> DynamicPopupContent { get; set; }
-		public IPopupLayoutEngine PopupLayoutEngine { get; set; }
-		public Direction PopDirection { get; set; } = Direction.Down;
-		public bool MakeScrollable { get; set; } = true;
-
-		public GuiWidget PopupContent { get; set; }
-
-		public override void OnMouseDown(MouseEventArgs mouseEvent)
-		{
-			// Store the menu state at the time of mousedown
-			menuVisibileAtMouseDown = menuVisible;
-			base.OnMouseDown(mouseEvent);
-		}
-
-		public override void OnMouseUp(MouseEventArgs mouseEvent)
-		{
-			// HACK: Child controls seem to be interfering with this.MouseCaptured - this short term workaround ensure we get clicks but likely mean mouse down outside of the control will fire the popup
-			bool mouseUpInBounds = this.PositionWithinLocalBounds(mouseEvent.X, mouseEvent.Y);
-
-			// Only show the popup if the menu was hidden as the mouse events started
-			if ((mouseUpInBounds || buttonView?.MouseCaptured == true)
-				&& !menuVisibileAtMouseDown)
-			{
-				ShowPopup();
-
-				// Set a background color while the menu is active
-				this.BackgroundColor = slightShade;
-			}
-
-			base.OnMouseUp(mouseEvent);
-		}
-
-		public void ShowPopup()
-		{
-			if (PopupLayoutEngine == null)
-			{
-				PopupLayoutEngine = new PopupLayoutEngine(this.PopupContent, this, this.PopDirection, 0, this.AlignToRightEdge);
-			}
-			menuVisible = true;
-
-			this.PopupContent?.ClearRemovedFlag();
-
-			if (this.DynamicPopupContent != null)
-			{
-				this.PopupContent = this.DynamicPopupContent();
-			}
-
-			if (this.PopupContent == null)
-			{
-				return;
-			}
-
-			this.BeforeShowPopup();
-
-			popupWidget = new PopupWidget(this.PopupContent, PopupLayoutEngine, MakeScrollable)
-			{
-				BorderWidth = 1,
-				BorderColor = this.BorderColor,
-			};
-
-			popupWidget.Closed += (s, e) =>
-			{
-				// Clear the temp background color
-				this.BackgroundColor = RGBA_Bytes.Transparent;
-				menuVisible = false;
-				popupWidget = null;
-			};
-			popupWidget.Focus();
-		}
-
-		protected virtual void BeforeShowPopup()
-		{
 		}
 	}
 }

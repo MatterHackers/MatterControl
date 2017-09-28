@@ -28,52 +28,17 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using MatterHackers.Agg.Image;
 
 namespace MatterHackers.MatterControl.Library
 {
-	public abstract class LibraryContainer : ILibraryContainer
+	public class CreateFolderItem : ILibraryItem
 	{
-		public event EventHandler Reloaded;
+		public string ID { get; } = Guid.NewGuid().ToString();
 
-		public string ID { get; set; }
 		public string Name { get; set; }
 
-		public Type DefaultView { get; protected set; }
+		public bool IsProtected => false;
 
-		public List<ILibraryContainerLink> ChildContainers { get; set; }
-		public bool IsProtected => true;
-
-		public virtual Task<ImageBuffer> GetThumbnail(ILibraryItem item, int width, int height)
-		{
-			return Task.FromResult<ImageBuffer>(null);
-		}
-
-		public List<ILibraryItem> Items { get; set; }
-
-		public ILibraryContainer Parent { get; set; }
-
-		public string StatusMessage { get; set; } = "";
-
-		public virtual string KeywordFilter { get; set; } = "";
-
-		protected void OnReloaded()
-		{
-			this.Reloaded?.Invoke(this, null);
-		}
-
-		public virtual void Dispose()
-		{
-		}
-
-		public virtual void Activate()
-		{
-		}
-
-		public virtual void Deactivate()
-		{
-		}
+		public bool IsVisible => true;
 	}
 }

@@ -31,7 +31,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MatterHackers.Agg.Image;
-using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.Library
 {
@@ -67,5 +66,13 @@ namespace MatterHackers.MatterControl.Library
 
 		void SetThumbnail(ILibraryItem item, int width, int height, ImageBuffer imageBuffer);
 		bool AllowAction(ContainerActions containerActions);
+	}
+
+	public enum ContainerActions
+	{
+		AddItems,
+		AddContainers,
+		RenameItems,
+		RemoveItems
 	}
 }
