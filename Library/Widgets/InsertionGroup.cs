@@ -101,6 +101,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					if (scene.SelectedItem == this
 						&& loadedItems.Count > 0)
 					{
+						scene.ClearSelection();
+
 						foreach (var item in loadedItems)
 						{
 							scene.AddToSelection(item);
