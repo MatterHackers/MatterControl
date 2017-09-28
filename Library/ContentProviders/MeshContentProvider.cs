@@ -55,12 +55,21 @@ namespace MatterHackers.MatterControl
 		private static readonly int MaxFileSize = (AggContext.OperatingSystem == OSType.Android) ? tooBigAndroid : tooBigDesktop;
 		private static readonly Point2D BigRenderSize = new Point2D(460, 460);
 
+		private static Mesh placeHolderMesh;
+
+		static MeshContentProvider()
+		{
+			// Create the placeholder mesh and position it at z0
+			placeHolderMesh = PlatonicSolids.CreateCube(20, 20, 20);
+			placeHolderMesh.Translate(new Vector3(0, 0, 10));
+		}
+
 		public ContentResult CreateItem(ILibraryItem item, Action<double, string> progressReporter)
 		{
 			var sceneItem = new Object3D()
 			{
 				// Initial 'Loading...' mesh
-				Mesh = PlatonicSolids.CreateCube(20, 20, 20),
+				Mesh = placeHolderMesh,
 				Name = item.Name
 			};
 
