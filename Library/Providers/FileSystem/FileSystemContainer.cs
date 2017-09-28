@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -258,59 +259,73 @@ namespace MatterHackers.MatterControl.Library
 			}
 
 			directoryWatcher.EnableRaisingEvents = false;
-			this.isDirty = true;
 
 			Directory.CreateDirectory(this.fullPath);
 
 			await Task.Run(async () =>
 			{
-				/*			string directoryPath = Path.Combine(this.fullPath, container.Name);
-			if (!Directory.Exists(directoryPath))
-			{
-				Directory.CreateDirectory(directoryPath);
-				//GetFilesAndCollectionsInCurrentDirectory();
-			}*/
-
-				foreach (var item in items.OfType<ILibraryContentStream>())
+				foreach (var item in items)
 				{
-					string filePath = Path.Combine(this.fullPath, item.FileName);
-
-					try
+					switch (item)
 					{
-						if (File.Exists(filePath))
-						{
-							filePath = GetNonCollidingName(Path.GetFileName(filePath));
-						}
+						case CreateFolderItem newFolder:
+							string targetFolderPath = Path.Combine(this.fullPath, newFolder.Name);
 
-						using (var outputStream = File.OpenWrite(filePath))
-						using (var contentStream = await item.GetContentStream(null))
-						{
-							contentStream.Stream.CopyTo(outputStream);
-						}
+							// TODO: write adaption of GetNonCollidingName for directories
+							Directory.CreateDirectory(targetFolderPath);
+							this.isDirty = true;
 
-						this.Items.Add(new FileSystemFileItem(filePath));
-					}
-					catch (Exception ex)
-					{
-						UiThread.RunOnIdle(() =>
-						{
-							ApplicationController.Instance.ActivePrinter.Connection.TerminalLog.WriteLine($"Error adding file: {filePath}\r\n{ex.Message}");
-						});
+							break;
+
+						case ILibraryContentStream streamItem:
+							string targetPath = Path.Combine(this.fullPath, streamItem.FileName);
+
+							try
+							{
+								if (File.Exists(targetPath))
+								{
+									targetPath = GetNonCollidingName(Path.GetFileName(targetPath));
+								}
+
+								using (var outputStream = File.OpenWrite(targetPath))
+								using (var contentStream = await streamItem.GetContentStream(null))
+								{
+									contentStream.Stream.CopyTo(outputStream);
+								}
+
+								this.Items.Add(new FileSystemFileItem(targetPath));
+								this.isDirty = true;
+							}
+							catch (Exception ex)
+							{
+								UiThread.RunOnIdle(() =>
+								{
+									ApplicationController.Instance.ActivePrinter.Connection.TerminalLog.WriteLine($"Error adding file: {targetPath}\r\n{ex.Message}");
+								});
+							}
+							break;
 					}
 				}
 			});
 
 			directoryWatcher.EnableRaisingEvents = false;
 
-			this.OnReloaded();
+			if (this.isDirty)
+			{
+				this.GetFilesAndCollectionsInCurrentDirectory();
+			}
 		}
+			
 
 		public override void Remove(IEnumerable<ILibraryItem> items)
 		{
 			directoryWatcher.EnableRaisingEvents = false;
-			this.isDirty = true;
 
-			/*// TODO: Do we really want to be doing this in App? Seems too risky to take on. Imagine the Desktop being is added as a library folder?
+			Process.Start(this.fullPath);
+
+			// TODO: Do we really want to be doing this in App? Seems way too risky to take on. Imagine the Desktop being is added as a library folder?
+			//
+			/*
 			var fileSystemContainer = container as FileSystemContainer;
 			if (fileSystemContainer != null
 				&& Directory.Exists(fileSystemContainer.fullPath))
@@ -322,7 +337,13 @@ namespace MatterHackers.MatterControl.Library
 				GetFilesAndCollectionsInCurrentDirectory();
 			}*/
 
-			foreach(var item in items.OfType<ILibraryContentStream>())
+			// TODO: Disabling pending decision in https://github.com/MatterHackers/MCCentral/issues/2005
+
+			/*
+			
+			this.isDirty = true;
+			 
+			foreach (var item in items.OfType<ILibraryContentStream>())
 			{
 				string filePath = Path.Combine(this.fullPath, item.FileName);
 
@@ -336,7 +357,7 @@ namespace MatterHackers.MatterControl.Library
 
 				// TODO: Platform specific delete with undo? Recycle Bin/Trash/etc...
 				File.Delete(filePath);
-			}
+			} */
 
 			directoryWatcher.EnableRaisingEvents = true;
 			this.OnReloaded();

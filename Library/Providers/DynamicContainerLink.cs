@@ -33,7 +33,7 @@ using MatterHackers.Agg.Image;
 
 namespace MatterHackers.MatterControl.Library
 {
-	public class NewFolderItem : ILibraryItem
+	public class CreateFolderItem : ILibraryItem
 	{
 		public string ID { get; } = Guid.NewGuid().ToString();
 

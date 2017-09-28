@@ -315,7 +315,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 							writableContainer.Add(
 								new[]
 								{
-									new NewFolderItem() { Name = result.newName }
+									new CreateFolderItem() { Name = result.newName }
 								});
 						}
 					});
