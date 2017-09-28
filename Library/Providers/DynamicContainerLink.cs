@@ -33,13 +33,24 @@ using MatterHackers.Agg.Image;
 
 namespace MatterHackers.MatterControl.Library
 {
+	public class NewFolderItem : ILibraryItem
+	{
+		public string ID { get; } = Guid.NewGuid().ToString();
+
+		public string Name { get; set; }
+
+		public bool IsProtected => false;
+
+		public bool IsVisible => true;
+	}
+
 	public class DynamicContainerLink : ILibraryContainerLink, IThumbnail
 	{
 		public string ID { get; set; }
 		public string Name { get; }
 		public string Category { get; set; }
 		public string ThumbnailKey => thumbnail.GetHashCode().ToString();
-		public bool IsProtected => true;
+		public bool IsProtected { get; set; } = true;
 
 		public bool IsReadOnly { get; set; } = false;
 
