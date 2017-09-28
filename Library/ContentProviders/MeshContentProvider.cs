@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl
 	using MatterHackers.VectorMath;
 
 	/// <summary>
-	/// Loads IObject3D and thumbnails for mesh based ILibraryItem objects
+	/// Loads IObject3D objects for mesh based ILibraryItems
 	/// </summary>
 	public class MeshContentProvider : ISceneContentProvider
 	{

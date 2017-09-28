@@ -907,7 +907,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			CurrentSelectInfo.HitPlane = bedPlane;
 
 			DragDropObject = new InsertionGroup(
-				items, 
+				items,
+				this,
 				this.Scene, 
 				() => this.DragOperationActive);
 
