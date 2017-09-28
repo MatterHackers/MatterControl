@@ -83,6 +83,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.VAnchor = VAnchor.Fit;
 			this.PopupContent = new IgnoredPopupWidget()
 			{
+				Name = "SlicePopupMenu Panel",
 				HAnchor = HAnchor.Fit,
 				VAnchor = VAnchor.Fit,
 				BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor,
@@ -100,10 +101,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			});
 		}
 
-		protected override void BeforeShowPopup()
+		protected async override void BeforeShowPopup()
 		{
-			this.SliceBedplate().ConfigureAwait(false);
 			base.BeforeShowPopup();
+			await this.SliceBedplate();
 		}
 
 		private async Task SliceBedplate()
