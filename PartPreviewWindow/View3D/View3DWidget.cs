@@ -2003,7 +2003,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						ReportProgressChanged(currentRatio, progressMessage);
 					});
 
-					await contentResult?.MeshLoaded;
+					await contentResult?.ContentLoaded;
 
 					if (contentResult != null && contentResult.Object3D != null)
 					{

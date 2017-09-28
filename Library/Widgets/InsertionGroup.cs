@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						progressControl.TrackingObject = object3D;
 
 						// Wait for content to load
-						await contentResult.MeshLoaded;
+						await contentResult.ContentLoaded;
 
 						// Adjust next item position
 						// TODO: do something more interesting than increment in x

@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl.Library
 	public class ContentResult
 	{
 		public IObject3D Object3D { get; set; }
-		public Task MeshLoaded { get; set; }
+		public Task ContentLoaded { get; set; }
 	}
 	
 	/*

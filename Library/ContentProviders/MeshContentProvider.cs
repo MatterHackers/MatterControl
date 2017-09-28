@@ -76,7 +76,7 @@ namespace MatterHackers.MatterControl
 			return new ContentResult()
 			{
 				Object3D = sceneItem,
-				MeshLoaded = Task.Run(async () =>
+				ContentLoaded = Task.Run(async () =>
 				{
 					IObject3D loadedItem = null;
 
@@ -134,7 +134,7 @@ namespace MatterHackers.MatterControl
 				var contentResult = contentModel.CreateContent();
 				if (contentModel != null)
 				{
-					await contentResult.MeshLoaded;
+					await contentResult.ContentLoaded;
 					object3D = contentResult.Object3D;
 				}
 			}
