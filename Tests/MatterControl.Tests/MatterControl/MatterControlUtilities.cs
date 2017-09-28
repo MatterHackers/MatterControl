@@ -557,8 +557,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void StartSlicing(this AutomationRunner testRunner)
 		{
-			testRunner.ClickByName("Slice Dropdown Button");
 			testRunner.ClickByName("Generate Gcode Button");
+			testRunner.WaitForName("SlicePopupMenu Panel");
 		}
 
 		public static void SwitchToAdvancedSliceSettings(this AutomationRunner testRunner)
