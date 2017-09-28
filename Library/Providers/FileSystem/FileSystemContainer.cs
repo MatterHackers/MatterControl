@@ -36,7 +36,6 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
-using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl.Library
 {
@@ -62,16 +61,12 @@ namespace MatterHackers.MatterControl.Library
 			if (AggContext.OperatingSystem == OSType.Windows)
 			{
 				directoryWatcher = new FileSystemWatcher(path);
-
-				directoryWatcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite
-					   | NotifyFilters.FileName | NotifyFilters.DirectoryName;
+				directoryWatcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName;
 				directoryWatcher.Changed += DirectoryContentsChanged;
 				directoryWatcher.Created += DirectoryContentsChanged;
 				directoryWatcher.Deleted += DirectoryContentsChanged;
 				directoryWatcher.Renamed += DirectoryContentsChanged;
-
-				// TODO: Needed? Observed events firing for file create in subfolders
-				//directoryWatcher.IncludeSubdirectories = false;
+				directoryWatcher.IncludeSubdirectories = false;
 
 				// Begin watching.
 				directoryWatcher.EnableRaisingEvents = true;
