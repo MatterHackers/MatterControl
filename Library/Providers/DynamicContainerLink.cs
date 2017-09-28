@@ -33,17 +33,6 @@ using MatterHackers.Agg.Image;
 
 namespace MatterHackers.MatterControl.Library
 {
-	public class CreateFolderItem : ILibraryItem
-	{
-		public string ID { get; } = Guid.NewGuid().ToString();
-
-		public string Name { get; set; }
-
-		public bool IsProtected => false;
-
-		public bool IsVisible => true;
-	}
-
 	public class DynamicContainerLink : ILibraryContainerLink, IThumbnail
 	{
 		public string ID { get; set; }
