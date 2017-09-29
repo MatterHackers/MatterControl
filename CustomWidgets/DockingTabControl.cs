@@ -110,31 +110,17 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			imageWidget.Click += (s, e) =>
 			{
 				this.ControlIsPinned = !this.ControlIsPinned;
-				UiThread.RunOnIdle(() =>
-				{
-					this.Rebuild();
-					if (!this.ControlIsPinned)
-					{
-						// if we changed to floating open the tab we were just looking at
-						settingsButtons[printer.ViewState.SliceSettingsTabIndex].ShowPopup();
-					}
-				});
+				UiThread.RunOnIdle(this.Rebuild);
 			};
 
 			return imageWidget;
 		}
 
+		// Clamped to MinDockingWidth or value
 		double PageWidth
 		{
-			get
-			{
-				return Math.Max(MinDockingWidth, ApplicationController.Instance.ActivePrinter.ViewState.SliceSettingsWidth);
-			}
-			set
-			{
-				var clampedWidth = Math.Max(MinDockingWidth, value);
-				ApplicationController.Instance.ActivePrinter.ViewState.SliceSettingsWidth = clampedWidth;
-			}
+			get => Math.Max(MinDockingWidth, printer.ViewState.SliceSettingsWidth);
+			set => printer.ViewState.SliceSettingsWidth = Math.Max(MinDockingWidth, value);
 		}
 
 		private void Rebuild()
