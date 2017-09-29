@@ -168,6 +168,11 @@ namespace MatterHackers.MatterControl
 					imageCallback(DefaultImage);
 				}
 			}
+			else
+			{
+				// If thumbnail generation was skipped, return the default icon for this content type
+				imageCallback(DefaultImage);
+			}
 		}
 
 		public ImageBuffer DefaultImage => LibraryProviderHelpers.LoadInvertIcon("mesh.png");
