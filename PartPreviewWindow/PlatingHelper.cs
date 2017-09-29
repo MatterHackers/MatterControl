@@ -27,24 +27,19 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Collections.Generic;
 using ClipperLib;
 using MatterHackers.Agg;
 using MatterHackers.Agg.VertexSource;
-using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
-using MatterHackers.RayTracer;
 using MatterHackers.VectorMath;
-using System;
-using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl
 {
-	using DataConverters3D;
-	using Localizations;
-	using System.Collections;
 	using System.Linq;
+	using DataConverters3D;
 	using Polygon = List<IntPoint>;
-
 	using Polygons = List<List<IntPoint>>;
 
 	public static class PlatingHelper
@@ -121,7 +116,7 @@ namespace MatterHackers.MatterControl
 				Vector3 meshLowerLeft = object3D.GetAxisAlignedBoundingBox(Matrix4X4.Identity).minXYZ;
 				object3D.Matrix *= Matrix4X4.CreateTranslation(-meshLowerLeft);
 
-				PlatingHelper.MoveToOpenPosition(object3D, scene.Children);
+				PlatingHelper.MoveToOpenPositionRelativeGroup(object3D, scene.Children);
 
 				currentRatioDone += ratioPerMeshGroup;
 
@@ -175,7 +170,12 @@ namespace MatterHackers.MatterControl
 			meshTransforms[index] *= Matrix4X4.CreateTranslation(new Vector3(-boundsCenter.x + bounds.XSize / 2, -boundsCenter.y + bounds.YSize / 2, 0));
 		}
 
-		public static void MoveToOpenPosition(IObject3D objectToAdd, IEnumerable<IObject3D> sceneItems)
+		/// <summary>
+		/// Moves the target object to the first non-colliding position, starting from the lower left corner of the bounding box containing all sceneItems
+		/// </summary>
+		/// <param name="objectToAdd">The object to position</param>
+		/// <param name="sceneItems">The objects to hit test against</param>
+		public static void MoveToOpenPositionRelativeGroup(IObject3D objectToAdd, IEnumerable<IObject3D> sceneItems)
 		{
 			if (objectToAdd == null || !sceneItems.Any())
 			{
@@ -184,22 +184,22 @@ namespace MatterHackers.MatterControl
 
 			// find the bounds of all items in the scene
 			AxisAlignedBoundingBox allPlacedMeshBounds = sceneItems.GetUnionedAxisAlignedBoundingBox();
-			
+
 			// move the part to the total bounds lower left side
 			Vector3 meshLowerLeft = objectToAdd.GetAxisAlignedBoundingBox(Matrix4X4.Identity).minXYZ;
 			objectToAdd.Matrix *= Matrix4X4.CreateTranslation(-meshLowerLeft + allPlacedMeshBounds.minXYZ);
 
 			// keep moving the item until its in an open slot 
-			MoveToOpenPosition(objectToAdd, sceneItems, allPlacedMeshBounds);
-
-			//PlaceMeshGroupOnBed(objectToAdd);
+			MoveToOpenPosition(objectToAdd, sceneItems);
 		}
 
-		public static void MoveToOpenPosition(IObject3D itemToMove, IEnumerable<IObject3D> sceneItems, AxisAlignedBoundingBox allPlacedMeshBounds)
+		/// <summary>
+		/// Moves the target object to the first non-colliding position, starting at the initial position of the target object
+		/// </summary>
+		/// <param name="objectToAdd">The object to position</param>
+		/// <param name="sceneItems">The objects to hit test against</param>
+		public static void MoveToOpenPosition(IObject3D itemToMove, IEnumerable<IObject3D> sceneItems)
 		{
-			double xStart = allPlacedMeshBounds.minXYZ.x;
-			double yStart = allPlacedMeshBounds.minXYZ.y;
-
 			// find a place to put it that doesn't hit anything
 			AxisAlignedBoundingBox itemToMoveBounds = itemToMove.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 
@@ -286,95 +286,7 @@ namespace MatterHackers.MatterControl
 		{
 			return meshGroup.GetAxisAlignedBoundingBox(transform);
 		}
-
-		/*
-		public static void CreateITraceableForMeshGroup(List<PlatingMeshGroupData> perMeshGroupInfo, List<MeshGroup> meshGroups, int meshGroupIndex, Action<double, string> reportProgress)
-		{
-			if (meshGroups != null)
-			{
-				MeshGroup meshGroup = meshGroups[meshGroupIndex];
-				perMeshGroupInfo[meshGroupIndex].meshTraceableData.Clear();
-				int totalActionCount = 0;
-				foreach (Mesh mesh in meshGroup.Meshes)
-				{
-					totalActionCount += mesh.Faces.Count;
-				}
-				int currentAction = 0;
-				bool needUpdateTitle = true;
-				for (int i = 0; i < meshGroup.Meshes.Count; i++)
-				{
-					Mesh mesh = meshGroup.Meshes[i];
-					List<IPrimitive> allPolys = AddTraceDataForMesh(mesh, totalActionCount, ref currentAction, ref needUpdateTitle, reportProgress);
-
-					needUpdateTitle = true;
-					if (reportProgress != null)
-					{
-						var continueProcessing = new CancellationTokenSource();
-						reportProgress(currentAction / (double)totalActionCount, "Creating Trace Group", continueProcessing);
-					}
-
-					// only allow limited recursion to speed this up building this data
-					IPrimitive traceData = BoundingVolumeHierarchy.CreateNewHierachy(allPolys, 0);
-					perMeshGroupInfo[meshGroupIndex].meshTraceableData.Add(traceData);
-				}
-			}
-		}
-
-		public static IPrimitive CreateTraceDataForMesh(Mesh mesh)
-		{
-			int unusedInt = 0;
-			bool unusedBool = false;
-			List<IPrimitive> allPolys = AddTraceDataForMesh(mesh, 0, ref unusedInt, ref unusedBool, null);
-			return BoundingVolumeHierarchy.CreateNewHierachy(allPolys);
-		}
-
-		private static List<IPrimitive> AddTraceDataForMesh(Mesh mesh, int totalActionCount, ref int currentAction, ref bool needToUpdateProgressReport, Action<double, string> reportProgress)
-		{
-			var continueProcessing = new CancellationTokenSource();
-
-			List<IPrimitive> allPolys = new List<IPrimitive>();
-			List<Vector3> positions = new List<Vector3>();
-
-			foreach (Face face in mesh.Faces)
-			{
-				if (false)
-				{
-					MeshFaceTraceable triangle = new MeshFaceTraceable(face);
-					allPolys.Add(triangle);
-				}
-				else
-				{
-					positions.Clear();
-					foreach (Vertex vertex in face.Vertices())
-					{
-						positions.Add(vertex.Position);
-					}
-
-					// We should use the tessellator for this if it is greater than 3.
-					Vector3 next = positions[1];
-					for (int positionIndex = 2; positionIndex < positions.Count; positionIndex++)
-					{
-						TriangleShape triangle = new TriangleShape(positions[0], next, positions[positionIndex], null);
-						allPolys.Add(triangle);
-						next = positions[positionIndex];
-					}
-				}
-
-				if (reportProgress != null)
-				{
-					if ((currentAction % 256) == 0 || needToUpdateProgressReport)
-					{
-						reportProgress(currentAction / (double)totalActionCount, "Creating Trace Polygons", continueProcessing);
-						needToUpdateProgressReport = false;
-					}
-					currentAction++;
-				}
-			}
-
-			return allPolys;
-		}
-		*/
-
+		
 		public static Matrix4X4 ApplyAtCenter(IObject3D object3DToApplayTo, Matrix4X4 transformToApply)
 		{
 			return ApplyAtCenter(object3DToApplayTo.GetAxisAlignedBoundingBox(Matrix4X4.Identity), object3DToApplayTo.Matrix, transformToApply);

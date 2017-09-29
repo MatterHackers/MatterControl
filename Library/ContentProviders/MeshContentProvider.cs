@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl
 		private static readonly int MaxFileSize = (AggContext.OperatingSystem == OSType.Android) ? tooBigAndroid : tooBigDesktop;
 		private static readonly Point2D BigRenderSize = new Point2D(460, 460);
 
-		private static Mesh placeHolderMesh;
+		internal static Mesh placeHolderMesh;
 
 		static MeshContentProvider()
 		{

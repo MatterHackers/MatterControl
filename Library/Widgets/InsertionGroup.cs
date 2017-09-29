@@ -44,9 +44,14 @@ namespace MatterHackers.MatterControl.PrintLibrary
 	{
 		private View3DWidget view3DWidget;
 
+		public event EventHandler ContentLoaded;
+
 		// TODO: Figure out how best to collapse the InsertionGroup after the load task completes
 		public InsertionGroup(IEnumerable<ILibraryItem> items, View3DWidget view3DWidget, InteractiveScene scene, Func<bool> dragOperationActive)
 		{
+			// Add a temporary placeholder to give us some bounds
+			this.Mesh = MeshContentProvider.placeHolderMesh;
+
 			Task.Run(async () =>
 			{
 				var newItemOffset = Vector2.Zero;
@@ -67,6 +72,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						object3D.Parent = this;
 						this.Children.Add(object3D);
 
+						// Dump the temporary placeholder
+						if (this.Mesh != null)
+						{
+							this.Mesh = null;
+						}
+
 						// Position at accumulating offset
 						object3D.Matrix *= Matrix4X4.CreateTranslation(newItemOffset.x, newItemOffset.y, 0);
 
@@ -80,6 +91,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						newItemOffset.x += contentResult.Object3D.GetAxisAlignedBoundingBox(Matrix4X4.Identity).XSize;
 					}
 				}
+
+				ContentLoaded?.Invoke(this, null);
 
 				if (dragOperationActive())
 				{

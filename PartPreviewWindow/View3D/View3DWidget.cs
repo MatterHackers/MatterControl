@@ -2009,7 +2009,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						Scene.Children.Modify(list => list.Add(contentResult.Object3D));
 
-						PlatingHelper.MoveToOpenPosition(contentResult.Object3D, this.Scene.Children);
+						PlatingHelper.MoveToOpenPositionRelativeGroup(contentResult.Object3D, this.Scene.Children);
 
 						// TODO: There should be a batch insert so you can undo large 'add to scene' operations in one go
 						//this.InsertNewItem(tempScene);

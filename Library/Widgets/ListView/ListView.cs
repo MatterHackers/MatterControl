@@ -38,6 +38,7 @@ using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.PrintLibrary;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.CustomWidgets
@@ -291,14 +292,38 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					var contentModel = itemModel as ILibraryContentStream;
 					if (contentModel != null)
 					{
-						var result = contentModel.CreateContent();
-						if (result.Object3D != null && ApplicationController.Instance.DragDropData.View3DWidget != null)
+						var activeContext = ApplicationController.Instance.DragDropData;
+						if (activeContext.View3DWidget != null)
 						{
-							var scene = ApplicationController.Instance.DragDropData.View3DWidget.InteractionLayer.Scene;
+							var scene = activeContext.Scene;
+							var bedCenter = activeContext.Printer.Bed.BedCenter;
+
+							var sceneChildren = scene.Children.ToList();
+
+							var injector = new InsertionGroup(new[] { itemModel }, activeContext.View3DWidget, scene, () => false);
+							injector.ContentLoaded += (s, args) =>
+							{
+								var aabb = injector.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+
+								// Remove position
+								injector.Matrix *= Matrix4X4.CreateTranslation(new Vector3(-aabb.minXYZ.x, -aabb.minXYZ.y, 0));
+
+								// Recenter
+								injector.Matrix *= Matrix4X4.CreateTranslation(new Vector3(bedCenter.x - aabb.XSize / 2, bedCenter.y - aabb.YSize / 2, 0));
+
+								// Move again after content loaded
+								PlatingHelper.MoveToOpenPosition(injector, sceneChildren);
+							};
+
+							// Move to bed center - (before we know the bounds of the content to load)
+							injector.Matrix *= Matrix4X4.CreateTranslation(new Vector3(bedCenter.x, bedCenter.y, 0));
+
 							scene.Children.Modify(list =>
 							{
-								list.Add(result.Object3D);
+								list.Add(injector);
 							});
+
+							PlatingHelper.MoveToOpenPosition(injector, sceneChildren);
 						}
 					}
 				}
