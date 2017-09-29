@@ -157,8 +157,13 @@ namespace MatterHackers.MatterControl
 
 				if (thumbnail != null)
 				{
-					string cachePath = ApplicationController.Instance.CachePath(item);
+					string cachePath = ApplicationController.Instance.ThumbnailCachePath(item);
 					AggContext.ImageIO.SaveImageData(cachePath, thumbnail);
+
+					if(ApplicationController.Instance.Library.ActiveContainer is ILibraryWritableContainer writableContainer)
+					{
+						writableContainer.SetThumbnail(item, thumbnail.Width, thumbnail.Height, thumbnail);
+					}
 
 					imageCallback(thumbnail);
 				}
@@ -188,97 +193,4 @@ namespace MatterHackers.MatterControl
 			return false;
 		}
 	}
-
-	/*
- 		// stlHashCode = itemWrapper.FileHashCode.ToString();
-		// defaultImage = AggContext.StaticData.LoadIcon("part_icon_transparent_100x100.png")  --- for the BigRender PrintingWindow case
-	 */
-
-	// TODO - How to handle g-code
-	// - Seems like a content provider could supply the icon below
-	// - GCode content is invalid for the scene though and shouldn't support drag or double click
-	// - GCode supports the 'Printable' action
-	/*
-	 *
-	 *
-	 * if (Path.GetExtension(item.FileName).ToUpper() == ".GCODE")
-		{
-			var center = new Vector2(width / 2.0, height / 2.0);
-
-			var thumbnailImage = new ImageBuffer(width, height);
-
-			var graphics2D = thumbnailImage.NewGraphics2D();
-			graphics2D.DrawString("GCode", center.x, center.y, 8 * width / 50, Justification.Center, Baseline.BoundsCenter, color: RGBA_Bytes.White);
-
-			graphics2D.Render(
-				new Stroke(
-					new Ellipse(center, width / 2 - width / 12),
-					width / 12),
-				RGBA_Bytes.White);
-
-			return thumbnailImage;
-		}
-	 */
-
-
-	/*
-
-	// TODO: Only load items from cache. If the parent container does not have an image and we don't have the asset in our cache, we should show the container default image
-	if (itemsNeedingLoad.Any())
-	{
-		Task.Run(async () =>
-		{
-			var itemsNeedingGenerate = new List<ListViewItem>();
-
-			foreach (var listItem in itemsNeedingLoad.Where(i => i.Model is ILibraryContentItem))
-			{
-				string cachePath = CachePath(listItem.Model, width, height);
-
-				// Check the source container for an existing/override image
-				var image = await sourceContainer.GetThumbnail(listItem.Model, width, height);
-
-				if (image == null && listItem.Model is IThumbnail)
-				{
-					image = await (listItem.Model as IThumbnail).GetThumbnail(width, height);
-				}
-
-				if (image != null)
-				{
-					// Persist generated image
-					ImageIO.SaveImageData(cachePath, image);
-					listItem.ThumbnailTarget.Image = image;
-				}
-				else
-				{
-					itemsNeedingGenerate.Add(listItem);
-				}
-			}
-
-			/*
-			foreach (var listItem in itemsNeedingGenerate.Where(i => i.Model is ILibraryContentItem))
-			{
-				// If not found, do the 
-				var model = listItem.Model as ILibraryContentItem;
-				var object3D = await model.GetContent(null);
-				if (object3D != null)
-				{
-					var image = ApplicationController.Instance.GenerateThumbnail(model, object3D, width, height);
-					if (image != null)
-					{
-						string cachePath = CachePath(listItem.Model, width, height);
-						// Persist generated image
-						ImageIO.SaveImageData(cachePath, image);
-
-						listItem.ThumbnailTarget.Image = image;
-					}
-
-					// Notify container
-					sourceContainer.SetThumbnail(model, width, height, image);
-				}
-
-				// Wait one second between thumbnail RayTracings
-				await Task.Delay(1000);
-			} 
-		});
-	} */
 }

@@ -224,7 +224,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		internal ImageBuffer LoadCachedImage(ListViewItem listViewItem)
 		{
-			string cachePath = ApplicationController.Instance.CachePath(listViewItem.Model);
+			string cachePath = ApplicationController.Instance.ThumbnailCachePath(listViewItem.Model);
 
 			bool isCached = !string.IsNullOrEmpty(cachePath) && File.Exists(cachePath);
 			if (isCached)
