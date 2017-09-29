@@ -31,6 +31,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.VectorMath;
@@ -154,6 +156,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 	public class IconViewItem : ListViewItemBase
 	{
+		private static ImageBuffer loadingImage = AggContext.StaticData.LoadIcon("IC_32x32.png");
+
 		public IconViewItem(ListViewItem item, int thumbWidth, int thumbHeight)
 			: base(item, thumbWidth, thumbHeight)
 		{
@@ -172,8 +176,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				BackgroundColor = item.ListView.ThumbnailBackground,
 				Margin = 0,
 			};
-
 			container.AddChild(imageWidget);
+
+			this.SetItemThumbnail(loadingImage);
 
 			int maxWidth = thumbWidth - 4;
 
