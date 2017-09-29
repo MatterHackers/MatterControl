@@ -185,14 +185,11 @@ namespace MatterHackers.MatterControl
 			objectToAdd.Matrix *= Matrix4X4.CreateTranslation(-meshLowerLeft + allPlacedMeshBounds.minXYZ);
 
 			// keep moving the item until its in an open slot 
-			MoveToOpenPosition(objectToAdd, sceneItems, allPlacedMeshBounds);
+			MoveToOpenPosition2(objectToAdd, sceneItems);
 		}
 
-		public static void MoveToOpenPosition(IObject3D itemToMove, IEnumerable<IObject3D> sceneItems, AxisAlignedBoundingBox allPlacedMeshBounds)
+		public static void MoveToOpenPosition2(IObject3D itemToMove, IEnumerable<IObject3D> sceneItems)
 		{
-			double xStart = allPlacedMeshBounds.minXYZ.x;
-			double yStart = allPlacedMeshBounds.minXYZ.y;
-
 			// find a place to put it that doesn't hit anything
 			AxisAlignedBoundingBox itemToMoveBounds = itemToMove.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 
