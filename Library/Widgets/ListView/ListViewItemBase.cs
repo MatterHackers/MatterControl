@@ -117,8 +117,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				// Ask content provider - allows type specific thumbnail creation
 				var contentProvider = ApplicationController.Instance.Library.GetContentProvider(itemModel);
-				if (contentProvider != null 
-					&& contentProvider is MeshContentProvider)
+				if (contentProvider is MeshContentProvider)
 				{
 					// Before we have a thumbnail set to the content specific thumbnail
 					thumbnail = contentProvider.DefaultImage;
