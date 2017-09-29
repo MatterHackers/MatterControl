@@ -711,7 +711,7 @@ namespace MatterHackers.MatterControl
 
 		public string ProductName => "MatterHackers: XForge";
 
-		public string CachePath(ILibraryItem libraryItem)
+		public string ThumbnailCachePath(ILibraryItem libraryItem)
 		{
 			// TODO: Use content SHA
 			return string.IsNullOrEmpty(libraryItem.ID) ? null : ApplicationController.CacheablePath("ItemThumbnails", $"{libraryItem.ID}.png");

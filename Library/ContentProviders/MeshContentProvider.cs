@@ -157,7 +157,7 @@ namespace MatterHackers.MatterControl
 
 				if (thumbnail != null)
 				{
-					string cachePath = ApplicationController.Instance.CachePath(item);
+					string cachePath = ApplicationController.Instance.ThumbnailCachePath(item);
 					AggContext.ImageIO.SaveImageData(cachePath, thumbnail);
 
 					imageCallback(thumbnail);
