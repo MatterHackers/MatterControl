@@ -116,17 +116,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			return imageWidget;
 		}
 
+		// Clamped to MinDockingWidth or value
 		double PageWidth
 		{
-			get
-			{
-				return Math.Max(MinDockingWidth, printer.ViewState.SliceSettingsWidth);
-			}
-			set
-			{
-				var clampedWidth = Math.Max(MinDockingWidth, value);
-				printer.ViewState.SliceSettingsWidth = clampedWidth;
-			}
+			get => Math.Max(MinDockingWidth, printer.ViewState.SliceSettingsWidth);
+			set => printer.ViewState.SliceSettingsWidth = Math.Max(MinDockingWidth, value);
 		}
 
 		private void Rebuild()
