@@ -120,12 +120,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			get
 			{
-				return Math.Max(MinDockingWidth, ApplicationController.Instance.ActivePrinter.ViewState.SliceSettingsWidth);
+				return Math.Max(MinDockingWidth, printer.ViewState.SliceSettingsWidth);
 			}
 			set
 			{
 				var clampedWidth = Math.Max(MinDockingWidth, value);
-				ApplicationController.Instance.ActivePrinter.ViewState.SliceSettingsWidth = clampedWidth;
+				printer.ViewState.SliceSettingsWidth = clampedWidth;
 			}
 		}
 
