@@ -116,7 +116,7 @@ namespace MatterHackers.MatterControl
 				Vector3 meshLowerLeft = object3D.GetAxisAlignedBoundingBox(Matrix4X4.Identity).minXYZ;
 				object3D.Matrix *= Matrix4X4.CreateTranslation(-meshLowerLeft);
 
-				PlatingHelper.MoveToOpenPosition(object3D, scene.Children);
+				PlatingHelper.MoveToOpenPositionRelativeGroup(object3D, scene.Children);
 
 				currentRatioDone += ratioPerMeshGroup;
 
@@ -170,7 +170,12 @@ namespace MatterHackers.MatterControl
 			meshTransforms[index] *= Matrix4X4.CreateTranslation(new Vector3(-boundsCenter.x + bounds.XSize / 2, -boundsCenter.y + bounds.YSize / 2, 0));
 		}
 
-		public static void MoveToOpenPosition(IObject3D objectToAdd, IEnumerable<IObject3D> sceneItems)
+		/// <summary>
+		/// Moves the target object to the first non-colliding position, starting from the lower left corner of the bounding box containing all sceneItems
+		/// </summary>
+		/// <param name="objectToAdd">The object to position</param>
+		/// <param name="sceneItems">The objects to hit test against</param>
+		public static void MoveToOpenPositionRelativeGroup(IObject3D objectToAdd, IEnumerable<IObject3D> sceneItems)
 		{
 			if (objectToAdd == null || !sceneItems.Any())
 			{
@@ -185,10 +190,15 @@ namespace MatterHackers.MatterControl
 			objectToAdd.Matrix *= Matrix4X4.CreateTranslation(-meshLowerLeft + allPlacedMeshBounds.minXYZ);
 
 			// keep moving the item until its in an open slot 
-			MoveToOpenPosition2(objectToAdd, sceneItems);
+			MoveToOpenPosition(objectToAdd, sceneItems);
 		}
 
-		public static void MoveToOpenPosition2(IObject3D itemToMove, IEnumerable<IObject3D> sceneItems)
+		/// <summary>
+		/// Moves the target object to the first non-colliding position, starting at the initial position of the target object
+		/// </summary>
+		/// <param name="objectToAdd">The object to position</param>
+		/// <param name="sceneItems">The objects to hit test against</param>
+		public static void MoveToOpenPosition(IObject3D itemToMove, IEnumerable<IObject3D> sceneItems)
 		{
 			// find a place to put it that doesn't hit anything
 			AxisAlignedBoundingBox itemToMoveBounds = itemToMove.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
