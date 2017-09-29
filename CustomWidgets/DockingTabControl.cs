@@ -110,15 +110,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			imageWidget.Click += (s, e) =>
 			{
 				this.ControlIsPinned = !this.ControlIsPinned;
-				UiThread.RunOnIdle(() =>
-				{
-					this.Rebuild();
-					if (!this.ControlIsPinned)
-					{
-						// if we changed to floating open the tab we were just looking at
-						settingsButtons[printer.ViewState.SliceSettingsTabIndex].ShowPopup();
-					}
-				});
+				UiThread.RunOnIdle(this.Rebuild);
 			};
 
 			return imageWidget;
