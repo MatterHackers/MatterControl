@@ -907,7 +907,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			CurrentSelectInfo.HitPlane = bedPlane;
 
 			DragDropObject = new InsertionGroup(
-				items, 
+				items,
+				this,
 				this.Scene, 
 				() => this.DragOperationActive);
 
@@ -2002,7 +2003,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						ReportProgressChanged(currentRatio, progressMessage);
 					});
 
-					await contentResult?.MeshLoaded;
+					await contentResult?.ContentLoaded;
 
 					if (contentResult != null && contentResult.Object3D != null)
 					{

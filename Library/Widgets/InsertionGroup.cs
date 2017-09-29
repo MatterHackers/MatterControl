@@ -33,6 +33,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.Library;
+using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
@@ -41,30 +42,38 @@ namespace MatterHackers.MatterControl.PrintLibrary
 {
 	public class InsertionGroup : Object3D
 	{
-	
-		// TODO: Figure out how to collapse the InsertionGroup after the load task completes
-		public InsertionGroup(IEnumerable<ILibraryItem> items, InteractiveScene scene, Func<bool> dragOperationActive)
+		private View3DWidget view3DWidget;
+
+		// TODO: Figure out how best to collapse the InsertionGroup after the load task completes
+		public InsertionGroup(IEnumerable<ILibraryItem> items, View3DWidget view3DWidget, InteractiveScene scene, Func<bool> dragOperationActive)
 		{
 			Task.Run(async () =>
 			{
 				var newItemOffset = Vector2.Zero;
 
 				// Filter to content file types only
-				foreach (var item in items.Where(item => item.IsContentFileType()))
+				foreach (var item in items.Where(item => item.IsContentFileType()).ToList())
 				{
 					// Acquire
-					var contentResult = item.CreateContent(null);
+					var progressControl = new DragDropLoadProgress(view3DWidget, null);
+
+					var contentResult = item.CreateContent(progressControl.ProgressReporter);
 					if (contentResult != null)
 					{
 						// Add the placeholder
 						var object3D = contentResult.Object3D;
+
+						// HACK: set Parent ourselves so it can be used in the progress control
+						object3D.Parent = this;
 						this.Children.Add(object3D);
 
 						// Position at accumulating offset
 						object3D.Matrix *= Matrix4X4.CreateTranslation(newItemOffset.x, newItemOffset.y, 0);
 
+						progressControl.TrackingObject = object3D;
+
 						// Wait for content to load
-						await contentResult.MeshLoaded;
+						await contentResult.ContentLoaded;
 
 						// Adjust next item position
 						// TODO: do something more interesting than increment in x
@@ -92,12 +101,16 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					if (scene.SelectedItem == this
 						&& loadedItems.Count > 0)
 					{
+						scene.ClearSelection();
+
 						foreach (var item in loadedItems)
 						{
 							scene.AddToSelection(item);
 						}
 					}
 				}
+
+				view3DWidget.PartHasBeenChanged();
 			});
 		}
 	}

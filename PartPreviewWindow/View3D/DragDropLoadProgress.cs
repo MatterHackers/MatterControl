@@ -57,9 +57,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (view3DWidget?.HasBeenClosed == false && this.TrackingObject != null)
 			{
-				AxisAlignedBoundingBox bounds = TrackingObject.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
-				Vector3 renderPosition = bounds.Center;
-				Vector2 cornerScreenSpace = view3DWidget.InteractionLayer.World.GetScreenPosition(renderPosition) - new Vector2(40, 20);
+				// Account for loading items in InsertionGroups - inherit parent transform
+				var offset = TrackingObject.Parent?.Matrix ?? Matrix4X4.Identity;
+
+				AxisAlignedBoundingBox bounds = TrackingObject.GetAxisAlignedBoundingBox(offset);
+
+				Vector3 renderPosition = bounds.GetBottomCorner(2);
+				Vector2 cornerScreenSpace = view3DWidget.InteractionLayer.World.GetScreenPosition(renderPosition) - new Vector2(20, 0);
 
 				e.graphics2D.PushTransform();
 				Affine currentGraphics2DTransform = e.graphics2D.GetTransform();
@@ -87,7 +91,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (progress0To1 == 1)
 			{
 				view3DWidget?.PartHasBeenChanged();
-
+				progressBar.Close();
 				if (view3DWidget != null)
 				{
 					view3DWidget.AfterDraw -= View3DWidget_AfterDraw;

@@ -58,6 +58,8 @@ namespace MatterHackers.MatterControl.Library
 		string ContentType { get; }
 		string FileName { get; }
 		string AssetPath { get; }
+		bool LocalContentExists { get; }
+
 		Task<StreamAndLength> GetContentStream(Action<double, string> progress);
 	}
 }

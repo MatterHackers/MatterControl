@@ -79,7 +79,7 @@ namespace MatterHackers.MatterControl.Library
 					return new FileSystemFileItem(AggContext.StaticData.MapPath(s));
 				}).ToList<ILibraryItem>();
 
-				UiThread.RunOnIdle(this.OnReloaded);
+				UiThread.RunOnIdle(this.OnReloaded); 
 			});
 		}
 
