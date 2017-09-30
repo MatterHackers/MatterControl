@@ -195,7 +195,8 @@ namespace MatterHackers.MatterControl
 		{
 			lock(thumbsLock)
 			{
-				if (thumbnailGenerator == null)
+				if (thumbnailGenerator == null
+					|| thumbnailGenerator.IsCompleted)
 				{
 					// Spin up a new thread once needed
 					thumbnailGenerator = Task.Run((Action)ThumbGeneration);
