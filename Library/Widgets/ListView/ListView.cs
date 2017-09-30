@@ -174,7 +174,13 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				// List items
 				if (this.ShowItems)
 				{
-					foreach (var item in sourceContainer.Items.Where(i => i.IsVisible && this.ItemFilter(i)))
+					var filteredResults = from item in sourceContainer.Items
+										  where item.IsVisible
+												&& item.IsContentFileType()
+												&& this.ItemFilter(item)
+										  select item;
+
+					foreach (var item in filteredResults)
 					{
 						var listViewItem = new ListViewItem(item, this);
 						listViewItem.DoubleClick += listViewItem_DoubleClick;
