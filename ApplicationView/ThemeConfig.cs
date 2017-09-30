@@ -112,7 +112,7 @@ namespace MatterHackers.MatterControl
 		public TextImageButtonFactory NoMarginWhite { get; private set; }
 		public BorderDouble ToolbarPadding { get; set; } = 3;
 		public RGBA_Bytes PrimaryTabFillColor { get; internal set; }
-		public double ButtonHeight { get; internal set; } = 28;
+		public double ButtonHeight { get; internal set; } = 32;
 
 		private EventHandler unregisterEvents;
 
