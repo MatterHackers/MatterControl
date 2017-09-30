@@ -64,10 +64,15 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private GuiWidget searchInput;
 		private ILibraryContainer searchContainer;
 
-		public PrintLibraryWidget()
-		{
-			this.Padding = 0;
+		private PartPreviewContent partPreviewContent;
 
+		private ThemeConfig theme;
+
+		public PrintLibraryWidget(PartPreviewContent partPreviewContent, ThemeConfig theme)
+		{
+			this.theme = theme;
+			this.partPreviewContent = partPreviewContent;
+			this.Padding = 0;
 			this.BackgroundColor = ApplicationController.Instance.Theme.TabBodyBackground;
 			this.AnchorAll();
 
@@ -105,7 +110,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			breadCrumbWidget = new FolderBreadCrumbWidget(libraryView);
 			navBar.AddChild(breadCrumbWidget);
 
-			var theme = ApplicationController.Instance.Theme;
 			var buttonFactory = theme.SmallMarginButtonFactory;
 
 			var searchPanel = new SearchInputBox()
@@ -412,8 +416,25 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				AllowContainers = false,
 				Action = (selectedLibraryItems, listView) =>
 				{
-					throw new NotImplementedException();
-					/* editButton_Click(s, null) */
+					var firstItem = selectedLibraryItems.FirstOrDefault();
+					if (firstItem != null)
+					{
+						var bedConfig = new BedConfig();
+
+						var newTab = partPreviewContent.CreatePartTab(firstItem.Name, bedConfig, theme);
+						if (newTab.TabPage is PrinterTabBase printerTab)
+						{
+							bedConfig.Scene.Children.Modify(list =>
+							{
+								list.Add(
+									new InsertionGroup(
+										selectedLibraryItems.Take(1),
+										printerTab.modelViewer,
+										bedConfig.Scene,
+										() => false));
+							});
+						}
+					}
 				}
 			});
 
