@@ -88,7 +88,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.State = processingState;
 
-			if (progress0To1 == 1)
+			if (progress0To1 > 1.1)
 			{
 				view3DWidget?.PartHasBeenChanged();
 				progressBar.Close();

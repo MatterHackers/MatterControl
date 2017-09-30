@@ -90,6 +90,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						// TODO: do something more interesting than increment in x
 						newItemOffset.x += contentResult.Object3D.GetAxisAlignedBoundingBox(Matrix4X4.Identity).XSize;
 					}
+
+					progressControl.ProgressReporter(1.3, "");
 				}
 
 				ContentLoaded?.Invoke(this, null);
