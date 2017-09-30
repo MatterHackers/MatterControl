@@ -88,7 +88,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			return true;
 		}
 
-		protected async Task LoadItemThumbnail()
+		public async Task LoadItemThumbnail()
 		{
 			var listView = listViewItem.ListView;
 

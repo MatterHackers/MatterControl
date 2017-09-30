@@ -132,6 +132,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		/// <param name="sourceContainer">The container to load</param>
 		private void DisplayContainerContent(ILibraryContainer sourceContainer)
 		{
+			if (this.ActiveContainer is ILibraryWritableContainer activeWritable)
+			{
+				activeWritable.ItemContentChanged -= WritableContainer_ItemContentChanged;
+			}
+
 			UiThread.RunOnIdle(() =>
 			{
 				if (sourceContainer == null)
@@ -180,8 +185,23 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					}
 				}
 
+				if (sourceContainer is ILibraryWritableContainer writableContainer)
+				{
+					writableContainer.ItemContentChanged += WritableContainer_ItemContentChanged;
+				}
+
 				this.Invalidate();
 			});
+		}
+
+		private void WritableContainer_ItemContentChanged(object sender, ItemChangedEventArgs e)
+		{
+			var firstItem = items.Where(i => i.Model.ID == e.LibraryItem.ID).FirstOrDefault();
+			if (firstItem != null)
+			{
+				firstItem.ViewWidget.LoadItemThumbnail().ConfigureAwait(false);
+				firstItem.ViewWidget.Invalidate();
+			}
 		}
 
 		public enum ViewMode
