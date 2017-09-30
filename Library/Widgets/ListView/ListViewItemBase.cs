@@ -162,19 +162,32 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			SetItemThumbnail(thumbnail);
 		}
 
+		internal void EnsureSelection()
+		{
+			if (this.IsSelectableContent)
+			{
+				// Existing selection only survives with ctrl->click
+				if (!Keyboard.IsKeyDown(Keys.ControlKey))
+				{
+					listViewItem.ListView.SelectedItems.Clear();
+				}
+
+				// Any mouse down ensures selection - mouse up will evaluate if DragDrop occurred and toggle selection if not
+				if (!listViewItem.ListView.SelectedItems.Contains(listViewItem))
+				{
+					listViewItem.ListView.SelectedItems.Add(listViewItem);
+				}
+
+				Invalidate();
+			}
+		}
+
 		internal void OnItemSelect()
 		{
-			bool isContentItem = listViewItem.Model is ILibraryContentItem;
-			bool isValidStream = (listViewItem.Model is ILibraryContentStream stream
-				&& ApplicationController.Instance.Library.IsContentFileType(stream.FileName));
-			bool isContainerLink = listViewItem.Model is ILibraryContainerLink;
-
-			bool isGCode = listViewItem.Model is FileSystemFileItem item && Path.GetExtension(item.FileName.ToUpper()) == ".GCODE"
-				|| listViewItem.Model is SDCardFileItem sdItem && Path.GetExtension(sdItem.Name.ToUpper()) == ".GCODE";
-
-			if (isContentItem || isValidStream || isContainerLink || isGCode)
+			if (this.IsSelectableContent
+				&& !hitDragThreshold)
 			{
-				if (this.IsSelected)
+				if (wasSelected)
 				{
 					listViewItem.ListView.SelectedItems.Remove(listViewItem);
 				}
@@ -189,6 +202,22 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				}
 
 				Invalidate();
+			}
+		}
+
+		private bool IsSelectableContent
+		{
+			get
+			{
+				bool isContentItem = listViewItem.Model is ILibraryContentItem;
+				bool isValidStream = (listViewItem.Model is ILibraryContentStream stream
+					&& ApplicationController.Instance.Library.IsContentFileType(stream.FileName));
+				bool isContainerLink = listViewItem.Model is ILibraryContainerLink;
+
+				bool isGCode = listViewItem.Model is FileSystemFileItem item && Path.GetExtension(item.FileName.ToUpper()) == ".GCODE"
+					|| listViewItem.Model is SDCardFileItem sdItem && Path.GetExtension(sdItem.Name.ToUpper()) == ".GCODE";
+
+				return isContentItem || isValidStream || isContainerLink || isGCode;
 			}
 		}
 
@@ -240,13 +269,19 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			}
 		}
 
+		private bool hitDragThreshold = false;
+
+		private bool wasSelected = false;
+
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
 		{
 			mouseDownInBounds = true;
 			mouseDownAt = mouseEvent.Position;
+			hitDragThreshold = false;
 
-			// Force selection in mousedown to ensure DragDropOperations see the item in ListView.SelectedItems - no worse than common tab behavior that apply on mousedown
-			this.OnItemSelect();
+			wasSelected = this.IsSelected;
+
+			this.EnsureSelection();
 
 			if (IsDoubleClick(mouseEvent))
 			{
@@ -266,6 +301,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			// If mouseDown on us and we've moved past are drag determination threshold, notify view3DWidget
 			if (mouseDownInBounds && delta.Length > 40)
 			{
+				hitDragThreshold = true;
+
 				// Performs move and possible Scene add in View3DWidget
 				view3DWidget.ExternalDragOver(screenSpaceMousePosition: this.TransformToScreenSpace(mouseEvent.Position));
 			}
@@ -275,6 +312,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public override void OnMouseUp(MouseEventArgs mouseEvent)
 		{
+			this.OnItemSelect();
+
 			var dropData = ApplicationController.Instance.DragDropData;
 			if (dropData.View3DWidget?.DragOperationActive == true)
 			{
