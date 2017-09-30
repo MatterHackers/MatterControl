@@ -48,12 +48,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 		}
 
-		public void AddItem(ListViewItem item)
+		public ListViewItemBase AddItem(ListViewItem item)
 		{
 			var detailsView = new RowViewItem(item, this.ThumbWidth, this.ThumbHeight);
 			this.AddChild(detailsView);
 
-			item.ViewWidget = detailsView;
+			return detailsView;
 		}
 
 		public void ClearItems()

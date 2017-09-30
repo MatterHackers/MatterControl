@@ -59,6 +59,8 @@ namespace MatterHackers.MatterControl.Library
 
 	public interface ILibraryWritableContainer : ILibraryContainer
 	{
+		event EventHandler<ItemChangedEventArgs> ItemContentChanged;
+
 		void Add(IEnumerable<ILibraryItem> items);
 		void Remove(IEnumerable<ILibraryItem> items);
 		void Rename(ILibraryItem item, string revisedName);
@@ -74,5 +76,15 @@ namespace MatterHackers.MatterControl.Library
 		AddContainers,
 		RenameItems,
 		RemoveItems
+	}
+
+	public class ItemChangedEventArgs : EventArgs
+	{
+		public ILibraryItem LibraryItem { get; }
+
+		public ItemChangedEventArgs(ILibraryItem libraryItem)
+		{
+			this.LibraryItem = libraryItem;
+		}
 	}
 }

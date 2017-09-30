@@ -37,7 +37,6 @@ using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.Library;
-using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintLibrary;
 using MatterHackers.VectorMath;
 
@@ -133,6 +132,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		/// <param name="sourceContainer">The container to load</param>
 		private void DisplayContainerContent(ILibraryContainer sourceContainer)
 		{
+			if (this.ActiveContainer is ILibraryWritableContainer activeWritable)
+			{
+				activeWritable.ItemContentChanged -= WritableContainer_ItemContentChanged;
+			}
+
 			UiThread.RunOnIdle(() =>
 			{
 				if (sourceContainer == null)
@@ -162,7 +166,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						listViewItem.DoubleClick += listViewItem_DoubleClick;
 						items.Add(listViewItem);
 
-						itemsContentView.AddItem(listViewItem);
+						listViewItem.ViewWidget = itemsContentView.AddItem(listViewItem);
 						listViewItem.ViewWidget.Name = childContainer.Name + " Row Item Collection";
 					}
 				}
@@ -176,13 +180,28 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						listViewItem.DoubleClick += listViewItem_DoubleClick;
 						items.Add(listViewItem);
 
-						itemsContentView.AddItem(listViewItem);
+						listViewItem.ViewWidget = itemsContentView.AddItem(listViewItem);
 						listViewItem.ViewWidget.Name = "Row Item " + item.Name;
 					}
 				}
 
+				if (sourceContainer is ILibraryWritableContainer writableContainer)
+				{
+					writableContainer.ItemContentChanged += WritableContainer_ItemContentChanged;
+				}
+
 				this.Invalidate();
 			});
+		}
+
+		private void WritableContainer_ItemContentChanged(object sender, ItemChangedEventArgs e)
+		{
+			var firstItem = items.Where(i => i.Model.ID == e.LibraryItem.ID).FirstOrDefault();
+			if (firstItem != null)
+			{
+				firstItem.ViewWidget.LoadItemThumbnail().ConfigureAwait(false);
+				firstItem.ViewWidget.Invalidate();
+			}
 		}
 
 		public enum ViewMode

@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using System.Collections.Generic;
 using MatterHackers.Agg.Image;
 
@@ -34,6 +35,13 @@ namespace MatterHackers.MatterControl.Library
 {
 	public abstract class WritableContainer : LibraryContainer, ILibraryWritableContainer
 	{
+		public event EventHandler<ItemChangedEventArgs> ItemContentChanged;
+
+		public virtual void OnItemContentChanged(ItemChangedEventArgs args)
+		{
+			ItemContentChanged?.Invoke(this, args);
+		}
+
 		public virtual void Add(IEnumerable<ILibraryItem> items)
 		{
 		}

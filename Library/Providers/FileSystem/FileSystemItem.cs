@@ -69,4 +69,15 @@ namespace MatterHackers.MatterControl.Library
 			}
 		}
 	}
+
+	public class MockLibraryItem : ILibraryItem
+	{
+		public string ID { get; set; }
+
+		public string Name { get; set; }
+
+		public bool IsProtected => true;
+
+		public bool IsVisible => true;
+	}
 }
