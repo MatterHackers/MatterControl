@@ -87,13 +87,13 @@ namespace MatterHackers.MatterControl
 			get { return (int)Math.Ceiling(Height / printer.TypeFaceStyle.EmSizeInPixels); }
 		}
 
-		public TextScrollWidget(PrinterConfig printerConfig, List<string> sourceLines)
+		public TextScrollWidget(PrinterConfig printer, List<string> sourceLines)
 		{
-			printer = new TypeFacePrinter("", new StyledTypeFace(ApplicationController.MonoSpacedTypeFace, 12));
-			printer.DrawFromHintedCache = true;
+			this.printer = new TypeFacePrinter("", new StyledTypeFace(ApplicationController.MonoSpacedTypeFace, 12));
+			this.printer.DrawFromHintedCache = true;
 			this.allSourceLines = sourceLines;
 			this.visibleLines = sourceLines;
-			printerConfig.Connection.TerminalLog.HasChanged.RegisterEvent(RecievedNewLine, ref unregisterEvents);
+			printer.Connection.TerminalLog.HasChanged.RegisterEvent(RecievedNewLine, ref unregisterEvents);
 		}
 
 		private void ConditionalyAddToVisible(string line)
