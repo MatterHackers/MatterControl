@@ -314,48 +314,8 @@ namespace MatterHackers.MatterControl.Library
 
 		public override void Remove(IEnumerable<ILibraryItem> items)
 		{
-			directoryWatcher.EnableRaisingEvents = false;
-
+			// Removing content from the filesystem can have devastating effects - open a shell window allowing the customer make changes as they seem fit
 			Process.Start(this.fullPath);
-
-			// TODO: Do we really want to be doing this in App? Seems way too risky to take on. Imagine the Desktop being is added as a library folder?
-			//
-			/*
-			var fileSystemContainer = container as FileSystemContainer;
-			if (fileSystemContainer != null
-				&& Directory.Exists(fileSystemContainer.fullPath))
-			{
-				Directory.Delete(fileSystemContainer.fullPath, true);
-
-				await Task.Delay(150);
-
-				GetFilesAndCollectionsInCurrentDirectory();
-			}*/
-
-			// TODO: Disabling pending decision in https://github.com/MatterHackers/MCCentral/issues/2005
-
-			/*
-			
-			this.isDirty = true;
-			 
-			foreach (var item in items.OfType<ILibraryContentStream>())
-			{
-				string filePath = Path.Combine(this.fullPath, item.FileName);
-
-				this.Items.RemoveAll(i => 
-				{
-					// Return true (and thus Remove) any item that is FileSystemFileItem and has the given path
-					var fileItem = i as FileSystemFileItem;
-					return fileItem != null
-						&& fileItem.Path == filePath;
-				});
-
-				// TODO: Platform specific delete with undo? Recycle Bin/Trash/etc...
-				File.Delete(filePath);
-			} */
-
-			directoryWatcher.EnableRaisingEvents = true;
-			this.OnReloaded();
 		}
 
 		public override void Rename(ILibraryItem item, string revisedName)
