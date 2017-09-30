@@ -31,9 +31,6 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.ActionBar;
-using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
@@ -41,16 +38,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class PlusTabPage : FlowLayoutWidget
 	{
-		private TabControl tabControl;
-
-		public PlusTabPage(TabControl tabControl, PrinterConfig printer, ThemeConfig theme)
+		public PlusTabPage(PartPreviewContent partPreviewContent, PrinterConfig printer, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
 		{
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Stretch;
 			this.Padding = 15;
-
-			this.tabControl = tabControl;
 
 			BorderDouble buttonSpacing = 3;
 
@@ -63,7 +56,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			createItemsSection.AddChild(createPart);
 			createPart.Click += (s, e) =>
 			{
-				CreatePartTab(tabControl, new BedConfig(), theme);
+				partPreviewContent.CreatePartTab("New Part", new BedConfig(), theme);
 			};
 
 			var createPrinter = theme.ButtonFactory.Generate("Create Printer".Localize());
@@ -153,23 +146,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 				otherItemsSection.AddChild(shopButton);
 			}
-		}
-
-		internal static void CreatePartTab(TabControl tabControl, BedConfig sceneContext, ThemeConfig theme, int tabIndex = 1)
-		{
-			var partTab = new MainTab(
-				"New Part",
-				"newPart" + tabControl.TabCount,
-				new PrinterTabBase(null, sceneContext, theme, "xxxxx"),
-				"https://i.imgur.com/nkeYgfU.png");
-
-			theme.SetPrinterTabStyles(partTab);
-
-			var margin = partTab.Margin;
-			partTab.Margin = new BorderDouble(1, margin.Bottom, 1, margin.Top);
-
-			tabControl.AddTab(partTab, tabPosition: tabIndex);
-			tabControl.SelectedTabIndex = tabIndex;
 		}
 
 		private FlowLayoutWidget CreateSection(string headingText)

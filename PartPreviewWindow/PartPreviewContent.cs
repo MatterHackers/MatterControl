@@ -34,8 +34,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.AboutPage;
 using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.MatterControl.PrintQueue;
+using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
@@ -45,6 +44,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private EventHandler unregisterEvents;
 		private MainTab printerTab = null;
 
+		private TabControl tabControl;
+
 		public PartPreviewContent()
 		{
 			var printer = ApplicationController.Instance.ActivePrinter;
@@ -52,7 +53,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.AnchorAll();
 
-			var tabControl = ApplicationController.Instance.Theme.CreateTabControl(2);
+			tabControl = ApplicationController.Instance.Theme.CreateTabControl(2);
 
 			var separator = tabControl.Children<HorizontalLine>().FirstOrDefault();
 			separator.BackgroundColor = ApplicationController.Instance.Theme.PrimaryTabFillColor;
@@ -78,12 +79,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 			else
 			{
-				PlusTabPage.CreatePartTab(tabControl, printer.Bed, theme, 0);
+				this.CreatePartTab("New Part", printer.Bed, theme, 0);
 			}
 
 			// TODO: add in the printers and designs that are currently open (or were open last run).
 			var plusTabSelect = new TextTab(
-				new TabPage(new PlusTabPage(tabControl, printer, theme), "+"),
+				new TabPage(new PlusTabPage(this, printer, theme), "+"),
 				"Create New",
 				tabControl.TextPointSize,
 				selectedTabColor,
@@ -178,18 +179,40 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}, ref unregisterEvents);
 		}
 
-		private static MainTab CreatePrinterTab(PrinterConfig printerConfig, ThemeConfig theme, string tabTitle)
+		private static MainTab CreatePrinterTab(PrinterConfig printer, ThemeConfig theme, string tabTitle)
 		{
+			string oemName = printer.Settings.GetValue(SettingsKey.make);
+
+			OemSettings.Instance.OemUrls.TryGetValue(oemName, out string oemUrl);
+
 			var printerTab = new MainTab(
 				tabTitle,
 				"3D View Tab",
-				new PrinterTabPage(printerConfig, theme, tabTitle.ToUpper()),
-				"https://www.google.com/s2/favicons?domain=www.printrbot.com" // "https://www.google.com/s2/favicons?domain=www.lulzbot.com"
-				);
+				new PrinterTabPage(printer, theme, tabTitle.ToUpper()),
+				"https://www.google.com/s2/favicons?domain=" + oemUrl ?? "www.matterhackers.com");
 			printerTab.ToolTipText = "Preview 3D Design".Localize();
 
 			theme.SetPrinterTabStyles(printerTab);
 			return printerTab;
+		}
+
+		internal MainTab CreatePartTab(string tabTitle, BedConfig sceneContext, ThemeConfig theme, int tabIndex = 1)
+		{
+			var partTab = new MainTab(
+				tabTitle,
+				"newPart" + tabControl.TabCount,
+				new PrinterTabBase(null, sceneContext, theme, "xxxxx"),
+				"https://i.imgur.com/nkeYgfU.png");
+
+			theme.SetPrinterTabStyles(partTab);
+
+			var margin = partTab.Margin;
+			partTab.Margin = new BorderDouble(1, margin.Bottom, 1, margin.Top);
+
+			tabControl.AddTab(partTab, tabPosition: tabIndex);
+			tabControl.SelectedTabIndex = tabIndex;
+
+			return partTab;
 		}
 
 		public override void OnClosed(ClosedEventArgs e)

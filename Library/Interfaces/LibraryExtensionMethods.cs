@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl.Library
 
 		public static bool IsContentFileType(this ILibraryItem item)
 		{
-			return item is ILibraryItem
+			return item is ILibraryContentItem
 				|| (item is ILibraryContentStream contentStream
 					&& ApplicationController.Instance.Library.IsContentFileType(contentStream.FileName));
 		}

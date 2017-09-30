@@ -75,17 +75,19 @@ namespace MatterHackers.MatterControl
 				VAnchor = VAnchor.Fit
 			});
 
-			leftNav.AddChild(new PrintLibraryWidget());
+			var partPreviewContent = new PartPreviewContent()
+			{
+				VAnchor = VAnchor.Bottom | VAnchor.Top,
+				HAnchor = HAnchor.Left | HAnchor.Right
+			};
+
+			leftNav.AddChild(new PrintLibraryWidget(partPreviewContent, ApplicationController.Instance.Theme));
 
 			// put in the left column
 			library3DViewSplitter.Panel1.AddChild(leftNav);
 
 			// put in the right column
-			library3DViewSplitter.Panel2.AddChild(new PartPreviewContent()
-			{
-				VAnchor = VAnchor.Bottom | VAnchor.Top,
-				HAnchor = HAnchor.Left | HAnchor.Right
-			});
+			library3DViewSplitter.Panel2.AddChild(partPreviewContent);
 		}
 	}
 
