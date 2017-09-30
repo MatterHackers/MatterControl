@@ -34,7 +34,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 	{
 		int ThumbWidth { get; }
 		int ThumbHeight { get; }
-		void AddItem(ListViewItem item);
+		ListViewItemBase AddItem(ListViewItem item);
 		void ClearItems();
 	}
 }

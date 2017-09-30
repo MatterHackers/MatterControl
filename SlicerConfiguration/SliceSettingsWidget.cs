@@ -563,7 +563,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								settingsContext.SetValue(settingData.SlicerConfigName, uiField.Value);
 							}
 						};
-
 						break;
 
 					case SliceSettingData.DataEditTypes.STRING:

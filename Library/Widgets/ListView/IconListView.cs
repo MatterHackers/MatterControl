@@ -29,12 +29,10 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
-using MatterHackers.MatterControl.Library;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.CustomWidgets
@@ -114,15 +112,16 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			}
 		}
 
-		public void AddItem(ListViewItem item)
+		public ListViewItemBase AddItem(ListViewItem item)
 		{
 			var iconView = new IconViewItem(item, this.ThumbWidth, this.ThumbHeight);
 			iconView.Margin = new BorderDouble(leftRightMargin, 0);
-			item.ViewWidget = iconView;
 
 			allIconViews.Add(iconView);
 
 			AddColumnAndChild(iconView);
+
+			return iconView;
 		}
 
 		private void AddColumnAndChild(IconViewItem iconView)
