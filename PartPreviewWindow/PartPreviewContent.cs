@@ -34,6 +34,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.AboutPage;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
@@ -178,14 +179,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}, ref unregisterEvents);
 		}
 
-		private static MainTab CreatePrinterTab(PrinterConfig printerConfig, ThemeConfig theme, string tabTitle)
+		private static MainTab CreatePrinterTab(PrinterConfig printer, ThemeConfig theme, string tabTitle)
 		{
+			string oemName = printer.Settings.GetValue(SettingsKey.make);
+
+			OemSettings.Instance.OemUrls.TryGetValue(oemName, out string oemUrl);
+
 			var printerTab = new MainTab(
 				tabTitle,
 				"3D View Tab",
-				new PrinterTabPage(printerConfig, theme, tabTitle.ToUpper()),
-				"https://www.google.com/s2/favicons?domain=www.printrbot.com" // "https://www.google.com/s2/favicons?domain=www.lulzbot.com"
-				);
+				new PrinterTabPage(printer, theme, tabTitle.ToUpper()),
+				"https://www.google.com/s2/favicons?domain=" + oemUrl ?? "www.matterhackers.com");
 			printerTab.ToolTipText = "Preview 3D Design".Localize();
 
 			theme.SetPrinterTabStyles(printerTab);

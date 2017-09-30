@@ -137,6 +137,8 @@ namespace MatterHackers.MatterControl.SettingsManagement
 
 		public OemProfileDictionary OemProfiles { get; set; }
 
+		public Dictionary<string, string> OemUrls { get; }
+
 		[OnDeserialized]
 		private void Deserialized(StreamingContext context)
 		{
@@ -217,6 +219,7 @@ namespace MatterHackers.MatterControl.SettingsManagement
 		private OemSettings()
 		{
 			this.ManufacturerNameMappings = new List<ManufacturerNameMapping>();
+			this.OemUrls = JsonConvert.DeserializeObject<Dictionary<string, string>>(AggContext.StaticData.ReadAllText(Path.Combine("OEMSettings", "OEMUrls.json")));
 		}
 	}
 
