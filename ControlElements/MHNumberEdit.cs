@@ -34,39 +34,27 @@ namespace MatterHackers.MatterControl
 {
 	public class MHNumberEdit : GuiWidget
 	{
-		public NumberEdit ActuallNumberEdit { get; private set; }
-
-		public double Value
-		{
-			get { return ActuallNumberEdit.Value; }
-			set { ActuallNumberEdit.Value = value; }
-		}
+		public NumberEdit ActuallNumberEdit { get; }
 
 		public MHNumberEdit(double startingValue, double x = 0, double y = 0, double pointSize = 12, double pixelWidth = 0, double pixelHeight = 0, bool allowNegatives = false, bool allowDecimals = false, double minValue = int.MinValue, double maxValue = int.MaxValue, double increment = 1, int tabIndex = 0)
 		{
-			Padding = new BorderDouble(3);
+			this.Padding = new BorderDouble(3);
+			this.BackgroundColor = RGBA_Bytes.White;
+			this.HAnchor = HAnchor.Fit;
+			this.VAnchor = VAnchor.Fit;
 
-			ActuallNumberEdit = new NumberEdit(startingValue, x, y, pointSize, pixelWidth, pixelHeight,
-				allowNegatives, allowDecimals, minValue, maxValue, increment, tabIndex);
-			ActuallNumberEdit.VAnchor = Agg.UI.VAnchor.Bottom;
-
-			AddChild(ActuallNumberEdit);
-
-			BackgroundColor = RGBA_Bytes.White;
-			HAnchor = HAnchor.Fit;
-			VAnchor = VAnchor.Fit;
+			this.ActuallNumberEdit = new NumberEdit(startingValue, x, y, pointSize, pixelWidth, pixelHeight, allowNegatives, allowDecimals, minValue, maxValue, increment, tabIndex)
+			{
+				VAnchor = VAnchor.Bottom
+			};
+			this.AddChild(this.ActuallNumberEdit);
 		}
 
 		public override int TabIndex
 		{
-			get
-			{
-				return base.TabIndex;
-			}
-			set
-			{
-				ActuallNumberEdit.TabIndex = value;
-			}
+			// TODO: This looks invalid - setter and getter should use same context
+			get => base.TabIndex;
+			set => this.ActuallNumberEdit.TabIndex = value;
 		}
 
 		public override void OnDraw(Graphics2D graphics2D)
@@ -78,22 +66,22 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
+		public double Value
+		{
+			get => this.ActuallNumberEdit.Value;
+			set => this.ActuallNumberEdit.Value = value;
+		}
+
 		public override string Text
 		{
-			get
-			{
-				return ActuallNumberEdit.Text;
-			}
-			set
-			{
-				ActuallNumberEdit.Text = value;
-			}
+			get => this.ActuallNumberEdit.Text;
+			set => this.ActuallNumberEdit.Text = value;
 		}
 
 		public bool SelectAllOnFocus
 		{
-			get { return ActuallNumberEdit.InternalNumberEdit.SelectAllOnFocus; }
-			set { ActuallNumberEdit.InternalNumberEdit.SelectAllOnFocus = value; }
+			get => this.ActuallNumberEdit.InternalNumberEdit.SelectAllOnFocus;
+			set => this.ActuallNumberEdit.InternalNumberEdit.SelectAllOnFocus = value;
 		}
 	}
 }

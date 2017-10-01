@@ -40,30 +40,32 @@ namespace MatterHackers.MatterControl
 		public MHPasswordTextEditWidget(string text = "", double x = 0, double y = 0, double pointSize = 12, double pixelWidth = 0, double pixelHeight = 0, bool multiLine = false, int tabIndex = 0, string messageWhenEmptyAndNotSelected = "")
 			: base(text, x, y, pointSize, pixelWidth, pixelHeight, multiLine, tabIndex, messageWhenEmptyAndNotSelected)
 		{
-			// remove this so that we can have other content first (the hiden letters)
-			RemoveChild(noContentFieldDescription);
+			// remove this so that we can have other content first (the hidden letters)
+			this.RemoveChild(noContentFieldDescription);
 
-			passwordCoverText = new TextEditWidget(text, x, y, pointSize, pixelWidth, pixelHeight, multiLine);
-			passwordCoverText.Selectable = false;
-			passwordCoverText.HAnchor = Agg.UI.HAnchor.Stretch;
-			passwordCoverText.MinimumSize = new Vector2(Math.Max(passwordCoverText.MinimumSize.x, pixelWidth), Math.Max(passwordCoverText.MinimumSize.y, pixelHeight));
-			passwordCoverText.VAnchor = Agg.UI.VAnchor.Bottom;
-			AddChild(passwordCoverText);
-
-			actuallTextEditWidget.TextChanged += (sender, e) =>
+			passwordCoverText = new TextEditWidget(text, x, y, pointSize, pixelWidth, pixelHeight, multiLine)
 			{
-				passwordCoverText.Text = new string('●', actuallTextEditWidget.Text.Length);
+				Selectable = false,
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Bottom
+			};
+			passwordCoverText.MinimumSize = new Vector2(Math.Max(passwordCoverText.MinimumSize.x, pixelWidth), Math.Max(passwordCoverText.MinimumSize.y, pixelHeight));
+			this.AddChild(passwordCoverText);
+
+			this.ActualTextEditWidget.TextChanged += (sender, e) =>
+			{
+				passwordCoverText.Text = new string('●', this.ActualTextEditWidget.Text.Length);
 			};
 
 			// put in back in after the hidden text
 			noContentFieldDescription.ClearRemovedFlag();
-			AddChild(noContentFieldDescription);
+			this.AddChild(noContentFieldDescription);
 		}
 
 		public bool Hidden
 		{
-			get { return !passwordCoverText.Visible; }
-			set { passwordCoverText.Visible = !value; }
+			get => !passwordCoverText.Visible;
+			set => passwordCoverText.Visible = !value;
 		}
 	}
 }

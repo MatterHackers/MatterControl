@@ -37,32 +37,31 @@ namespace MatterHackers.MatterControl
 {
 	public class MHTextEditWidget : GuiWidget
 	{
-		protected TextEditWidget actuallTextEditWidget;
 		protected TextWidget noContentFieldDescription = null;
 
-		public TextEditWidget ActualTextEditWidget
-		{
-			get { return actuallTextEditWidget; }
-		}
+		public TextEditWidget ActualTextEditWidget { get; }
 
 		public MHTextEditWidget(string text = "", double x = 0, double y = 0, double pointSize = 12, double pixelWidth = 0, double pixelHeight = 0, bool multiLine = false, int tabIndex = 0, string messageWhenEmptyAndNotSelected = "", TypeFace typeFace = null)
 		{
-			Padding = new BorderDouble(3);
+			this.Padding = new BorderDouble(3);
+			this.BackgroundColor = RGBA_Bytes.White;
+			this.HAnchor = HAnchor.Fit;
+			this.VAnchor = VAnchor.Fit;
 
-			actuallTextEditWidget = new TextEditWidget(text, x, y, pointSize, pixelWidth, pixelHeight, multiLine, tabIndex: tabIndex, typeFace: typeFace);
-			actuallTextEditWidget.HAnchor = HAnchor.Stretch;
-			actuallTextEditWidget.MinimumSize = new Vector2(Math.Max(actuallTextEditWidget.MinimumSize.x, pixelWidth), Math.Max(actuallTextEditWidget.MinimumSize.y, pixelHeight));
-			actuallTextEditWidget.VAnchor = VAnchor.Bottom;
+			this.ActualTextEditWidget = new TextEditWidget(text, x, y, pointSize, pixelWidth, pixelHeight, multiLine, tabIndex: tabIndex, typeFace: typeFace)
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Bottom
+			};
+			this.ActualTextEditWidget.MinimumSize = new Vector2(Math.Max(ActualTextEditWidget.MinimumSize.x, pixelWidth), Math.Max(ActualTextEditWidget.MinimumSize.y, pixelHeight));
+			this.AddChild(this.ActualTextEditWidget);
 
-			AddChild(actuallTextEditWidget);
-			BackgroundColor = RGBA_Bytes.White;
-			HAnchor = HAnchor.Fit;
-			VAnchor = VAnchor.Fit;
+			this.AddChild(noContentFieldDescription = new TextWidget(messageWhenEmptyAndNotSelected, textColor: RGBA_Bytes.Gray)
+			{
+				VAnchor = VAnchor.Top,
+				AutoExpandBoundsToText = true
+			});
 
-			noContentFieldDescription = new TextWidget(messageWhenEmptyAndNotSelected, textColor: RGBA_Bytes.Gray);
-			noContentFieldDescription.VAnchor = VAnchor.Top;
-			noContentFieldDescription.AutoExpandBoundsToText = true;
-			AddChild(noContentFieldDescription);
 			SetNoContentFieldDescriptionVisibility();
 		}
 
@@ -70,14 +69,7 @@ namespace MatterHackers.MatterControl
 		{
 			if (noContentFieldDescription != null)
 			{
-				if (Text == "")
-				{
-					noContentFieldDescription.Visible = true;
-				}
-				else
-				{
-					noContentFieldDescription.Visible = false;
-				}
+				noContentFieldDescription.Visible = (Text == "");
 			}
 		}
 
@@ -94,31 +86,25 @@ namespace MatterHackers.MatterControl
 
 		public override string Text
 		{
-			get
-			{
-				return actuallTextEditWidget.Text;
-			}
-			set
-			{
-				actuallTextEditWidget.Text = value;
-			}
-		}
-
-		public override void Focus()
-		{
-			actuallTextEditWidget.Focus();
+			get => ActualTextEditWidget.Text;
+			set => ActualTextEditWidget.Text = value;
 		}
 
 		public bool SelectAllOnFocus
 		{
-			get { return actuallTextEditWidget.InternalTextEditWidget.SelectAllOnFocus; }
-			set { actuallTextEditWidget.InternalTextEditWidget.SelectAllOnFocus = value; }
+			get => ActualTextEditWidget.InternalTextEditWidget.SelectAllOnFocus;
+			set => ActualTextEditWidget.InternalTextEditWidget.SelectAllOnFocus = value;
 		}
 
 		public void DrawFromHintedCache()
 		{
 			ActualTextEditWidget.Printer.DrawFromHintedCache = true;
 			ActualTextEditWidget.DoubleBuffer = false;
+		}
+
+		public override void Focus()
+		{
+			ActualTextEditWidget.Focus();
 		}
 	}
 }
