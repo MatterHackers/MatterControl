@@ -138,6 +138,8 @@
     <Compile Include="ApplicationView\ThemeConfig.cs" />
     <Compile Include="ConfigurationPage\ApplicationSettings\SettingsItem.cs" />
     <Compile Include="ConfigurationPage\ApplicationSettings\ThemePreviewButton.cs" />
+    <Compile Include="ControlElements\MHNumberEdit.cs" />
+    <Compile Include="ControlElements\MHPasswordTextEditWidget.cs" />
     <Compile Include="ControlElements\TextImageWidget.cs" />
     <Compile Include="CustomWidgets\DockingTabControl.cs" />
     <Compile Include="CustomWidgets\SimpleButton.cs" />
