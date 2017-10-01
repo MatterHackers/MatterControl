@@ -35,8 +35,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	{
 		protected MHTextEditWidget textEditWidget;
 
-		private readonly int ControlWidth = (int)(60 * GuiWidget.DeviceScale + .5);
-
 		public override void Initialize(int tabIndex)
 		{
 			textEditWidget = new MHTextEditWidget("", pixelWidth: ControlWidth, tabIndex: tabIndex)
