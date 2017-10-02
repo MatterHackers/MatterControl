@@ -110,6 +110,7 @@ namespace MatterHackers.MatterControl
 				AggContext.StaticData = new MatterHackers.Agg.FileSystemStaticData();
 			}
 
+#if DEBUG
 			WindowsFormsAbstract.InspectorCreator = (systemWindow) =>
 			{
 				if (systemWindow == Instance)
@@ -123,6 +124,7 @@ namespace MatterHackers.MatterControl
 					return new InspectForm(systemWindow);
 				}
 			};
+#endif
 		}
 
 		private MatterControlApplication(double width, double height)
