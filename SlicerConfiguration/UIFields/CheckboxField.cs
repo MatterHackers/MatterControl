@@ -70,10 +70,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public override void Initialize(int tabIndex)
 		{
-			checkBoxWidget = ImageButtonFactory.CreateToggleSwitch(false, ActiveTheme.Instance.PrimaryTextColor, useStandardLabels: false);
+			var pixelWidth = this.ControlWidth + 6; // HACK: work around agg-bug where text fields are padding*2 bigger than ControlWidth
+
+			checkBoxWidget = ImageButtonFactory.CreateToggleSwitch(false, ActiveTheme.Instance.PrimaryTextColor, pixelWidth, pixelHeight: 24 * GuiWidget.DeviceScale, useStandardLabels: false);
 			checkBoxWidget.VAnchor = VAnchor.Center;
 			checkBoxWidget.Name = this.Name;
-			checkBoxWidget.Margin = new BorderDouble(0);
+			checkBoxWidget.Margin = 0;
 			checkBoxWidget.Click += (s, e) =>
 			{
 				Console.WriteLine("Checkbox Click Event: " + this.checkBoxWidget.Checked);
