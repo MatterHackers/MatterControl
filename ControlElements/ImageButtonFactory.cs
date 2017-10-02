@@ -48,6 +48,11 @@ namespace MatterHackers.MatterControl
 
 		public static CheckBox CreateToggleSwitch(bool initialState, RGBA_Bytes textColor, bool useStandardLabels = true)
 		{
+			return CreateToggleSwitch(initialState, textColor, 60 * GuiWidget.DeviceScale, 24 * GuiWidget.DeviceScale, useStandardLabels);
+		}
+
+		public static CheckBox CreateToggleSwitch(bool initialState, RGBA_Bytes textColor, double pixelWidth, double pixelHeight, bool useStandardLabels = true)
+		{
 			string on = "On";
 			string off = "Off";
 			if (AggContext.StaticData != null)
@@ -62,15 +67,19 @@ namespace MatterHackers.MatterControl
 				off = "";
 			}
 
-			ToggleSwitchView toggleView = new ToggleSwitchView(on, off,
-				60 * GuiWidget.DeviceScale, 24 * GuiWidget.DeviceScale,
-				ActiveTheme.Instance.PrimaryBackgroundColor,
-				new RGBA_Bytes(220, 220, 220),
-				ActiveTheme.Instance.PrimaryAccentColor,
-				textColor);
-			CheckBox toggleBox = new CheckBox(toggleView);
-			toggleBox.Checked = initialState;
-			return toggleBox;
+			return new CheckBox(
+				new ToggleSwitchView(
+					on, 
+					off,
+					pixelWidth,
+					pixelHeight,
+					ActiveTheme.Instance.PrimaryBackgroundColor,
+					new RGBA_Bytes(220, 220, 220),
+					ActiveTheme.Instance.PrimaryAccentColor,
+					textColor))
+			{
+				Checked = initialState
+			};
 		}
 
 		public Button Generate(string normalImageName, string hoverImageName, string pressedImageName = null, string disabledImageName = null)

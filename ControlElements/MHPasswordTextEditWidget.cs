@@ -27,44 +27,45 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using MatterHackers.Agg.UI;
+using MatterHackers.VectorMath;
 
-namespace MatterHackers.MatterControl.SlicerConfiguration
+namespace MatterHackers.MatterControl
 {
-	public class TextField : UIField
+	public class MHPasswordTextEditWidget : MHTextEditWidget
 	{
-		protected MHTextEditWidget textEditWidget;
+		private TextEditWidget passwordCoverText;
 
-		public override void Initialize(int tabIndex)
+		public MHPasswordTextEditWidget(string text = "", double x = 0, double y = 0, double pointSize = 12, double pixelWidth = 0, double pixelHeight = 0, bool multiLine = false, int tabIndex = 0, string messageWhenEmptyAndNotSelected = "")
+			: base(text, x, y, pointSize, pixelWidth, pixelHeight, multiLine, tabIndex, messageWhenEmptyAndNotSelected)
 		{
-			textEditWidget = new MHTextEditWidget("", pixelWidth: ControlWidth, tabIndex: tabIndex)
+			// remove this so that we can have other content first (the hidden letters)
+			this.RemoveChild(noContentFieldDescription);
+
+			passwordCoverText = new TextEditWidget(text, x, y, pointSize, pixelWidth, pixelHeight, multiLine)
 			{
-				ToolTipText = this.HelpText,
-				SelectAllOnFocus = true,
-				Name = this.Name,
+				Selectable = false,
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Bottom
 			};
-			textEditWidget.ActualTextEditWidget.EditComplete += (s, e) =>
+			passwordCoverText.MinimumSize = new Vector2(Math.Max(passwordCoverText.MinimumSize.x, pixelWidth), Math.Max(passwordCoverText.MinimumSize.y, pixelHeight));
+			this.AddChild(passwordCoverText);
+
+			this.ActualTextEditWidget.TextChanged += (sender, e) =>
 			{
-				if (this.Value != textEditWidget.Text)
-				{
-					this.SetValue(
-						textEditWidget.Text, 
-						userInitiated: true);
-				}
+				passwordCoverText.Text = new string('●', this.ActualTextEditWidget.Text.Length);
 			};
 
-			this.Content = textEditWidget;
+			// put in back in after the hidden text
+			noContentFieldDescription.ClearRemovedFlag();
+			this.AddChild(noContentFieldDescription);
 		}
 
-
-		protected override void OnValueChanged(FieldChangedEventArgs fieldChangedEventArgs)
+		public bool Hidden
 		{
-			if (this.Value != textEditWidget.Text)
-			{
-				textEditWidget.Text = this.Value;
-			}
-
-			base.OnValueChanged(fieldChangedEventArgs);
+			get => !passwordCoverText.Visible;
+			set => passwordCoverText.Visible = !value;
 		}
 	}
 }

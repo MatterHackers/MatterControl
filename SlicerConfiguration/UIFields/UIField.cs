@@ -36,6 +36,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	{
 		public event EventHandler<FieldChangedEventArgs> ValueChanged;
 
+		protected readonly int ControlWidth = (int)(60 * GuiWidget.DeviceScale + .5);
+
 		public void SetValue(string newValue, bool userInitiated)
 		{
 			string convertedValue = this.ConvertValue(newValue);

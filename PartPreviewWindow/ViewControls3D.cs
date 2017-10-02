@@ -184,8 +184,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				undoButton.Enabled = undoBuffer.UndoCount > 0;
 				redoButton.Enabled = undoBuffer.RedoCount > 0;
 			};
+
 			iconPath = Path.Combine("ViewTransformControls", "reset.png");
-			resetViewButton = theme.NoMarginWhite.Generate("", AggContext.StaticData.LoadIcon(iconPath,32,32).InvertLightness());
+			resetViewButton = theme.ButtonFactory.GenerateIconButton(AggContext.StaticData.LoadIcon(iconPath,32,32), IconColor.White);
 			resetViewButton.ToolTipText = "Reset View".Localize();
 			resetViewButton.Margin = commonMargin;
 			resetViewButton.Click += (s, e) => ResetView?.Invoke(this, null);

@@ -55,8 +55,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		private GuiWidget topToBottom;
 
+		private ThemeConfig theme;
 		public DockingTabControl(GuiWidget widgetTodockTo, DockSide dockSide, PrinterConfig printer)
 		{
+			this.theme = ApplicationController.Instance.Theme;
 			this.printer = printer;
 			this.widgetTodockTo = widgetTodockTo;
 			this.DockSide = dockSide;
@@ -106,7 +108,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			var imageWidget = ApplicationController.Instance.Theme.ButtonFactory.GenerateIconButton(icon);
 			imageWidget.Name = "Pin Settings Button";
-			imageWidget.Margin = new BorderDouble(right: 2);
 			imageWidget.Click += (s, e) =>
 			{
 				this.ControlIsPinned = !this.ControlIsPinned;
@@ -254,10 +255,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			if (this.ControlIsPinned)
 			{
 				tabControl.TabBar.AddChild(new HorizontalSpacer());
+				tabControl.TabBar.AddChild(this.CreatePinButton());
 
-				var pinButton = this.CreatePinButton();
-				//pinButton.Margin = new BorderDouble(right: 18, bottom: 7);
-				tabControl.TabBar.AddChild(pinButton);
+				tabControl.TabBar.Padding = new BorderDouble(right: theme.ToolbarPadding.Right);
 
 				if (printer.ViewState.SliceSettingsTabIndex < tabControl.TabCount)
 				{

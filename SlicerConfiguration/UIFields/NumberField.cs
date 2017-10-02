@@ -35,8 +35,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	{
 		protected MHNumberEdit numberEdit;
 
-		public static readonly int ControlWidth = (int)(60 * GuiWidget.DeviceScale + .5);
-
 		protected bool AllowNegatives { get; set; } = true;
 		protected bool AllowDecimals { get; set; } = true;
 

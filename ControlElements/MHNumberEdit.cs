@@ -27,84 +27,61 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
 using MatterHackers.Agg;
-using MatterHackers.Agg.Font;
 using MatterHackers.Agg.UI;
-using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
-	public class MHTextEditWidget : GuiWidget
+	public class MHNumberEdit : GuiWidget
 	{
-		protected TextWidget noContentFieldDescription = null;
+		public NumberEdit ActuallNumberEdit { get; }
 
-		public TextEditWidget ActualTextEditWidget { get; }
-
-		public MHTextEditWidget(string text = "", double x = 0, double y = 0, double pointSize = 12, double pixelWidth = 0, double pixelHeight = 0, bool multiLine = false, int tabIndex = 0, string messageWhenEmptyAndNotSelected = "", TypeFace typeFace = null)
+		public MHNumberEdit(double startingValue, double x = 0, double y = 0, double pointSize = 12, double pixelWidth = 0, double pixelHeight = 0, bool allowNegatives = false, bool allowDecimals = false, double minValue = int.MinValue, double maxValue = int.MaxValue, double increment = 1, int tabIndex = 0)
 		{
 			this.Padding = new BorderDouble(3);
 			this.BackgroundColor = RGBA_Bytes.White;
 			this.HAnchor = HAnchor.Fit;
 			this.VAnchor = VAnchor.Fit;
 
-			this.ActualTextEditWidget = new TextEditWidget(text, x, y, pointSize, pixelWidth, pixelHeight, multiLine, tabIndex: tabIndex, typeFace: typeFace)
+			this.ActuallNumberEdit = new NumberEdit(startingValue, x, y, pointSize, pixelWidth, pixelHeight, allowNegatives, allowDecimals, minValue, maxValue, increment, tabIndex)
 			{
-				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Bottom
 			};
-			this.ActualTextEditWidget.MinimumSize = new Vector2(Math.Max(ActualTextEditWidget.MinimumSize.x, pixelWidth), Math.Max(ActualTextEditWidget.MinimumSize.y, pixelHeight));
-			this.AddChild(this.ActualTextEditWidget);
-
-			this.AddChild(noContentFieldDescription = new TextWidget(messageWhenEmptyAndNotSelected, textColor: RGBA_Bytes.Gray)
-			{
-				VAnchor = VAnchor.Top,
-				AutoExpandBoundsToText = true
-			});
-
-			SetNoContentFieldDescriptionVisibility();
+			this.AddChild(this.ActuallNumberEdit);
 		}
 
-		private void SetNoContentFieldDescriptionVisibility()
+		public override int TabIndex
 		{
-			if (noContentFieldDescription != null)
-			{
-				noContentFieldDescription.Visible = (Text == "");
-			}
+			// TODO: This looks invalid - setter and getter should use same context
+			get => base.TabIndex;
+			set => this.ActuallNumberEdit.TabIndex = value;
 		}
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{
-			SetNoContentFieldDescriptionVisibility();
 			base.OnDraw(graphics2D);
-
 			if (ContainsFocus)
 			{
 				graphics2D.Rectangle(LocalBounds, RGBA_Bytes.Orange);
 			}
 		}
 
+		public double Value
+		{
+			get => this.ActuallNumberEdit.Value;
+			set => this.ActuallNumberEdit.Value = value;
+		}
+
 		public override string Text
 		{
-			get => ActualTextEditWidget.Text;
-			set => ActualTextEditWidget.Text = value;
+			get => this.ActuallNumberEdit.Text;
+			set => this.ActuallNumberEdit.Text = value;
 		}
 
 		public bool SelectAllOnFocus
 		{
-			get => ActualTextEditWidget.InternalTextEditWidget.SelectAllOnFocus;
-			set => ActualTextEditWidget.InternalTextEditWidget.SelectAllOnFocus = value;
-		}
-
-		public void DrawFromHintedCache()
-		{
-			ActualTextEditWidget.Printer.DrawFromHintedCache = true;
-			ActualTextEditWidget.DoubleBuffer = false;
-		}
-
-		public override void Focus()
-		{
-			ActualTextEditWidget.Focus();
+			get => this.ActuallNumberEdit.InternalNumberEdit.SelectAllOnFocus;
+			set => this.ActuallNumberEdit.InternalNumberEdit.SelectAllOnFocus = value;
 		}
 	}
 }

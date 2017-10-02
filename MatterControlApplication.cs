@@ -109,6 +109,22 @@ namespace MatterHackers.MatterControl
 			{
 				AggContext.StaticData = new MatterHackers.Agg.FileSystemStaticData();
 			}
+
+#if DEBUG
+			WindowsFormsAbstract.InspectorCreator = (systemWindow) =>
+			{
+				if (systemWindow == Instance)
+				{
+					// If systemWindow is MatterControlApplication, include Scene
+					return new InspectForm(systemWindow, ApplicationController.Instance.DragDropData.Scene);
+				}
+				else
+				{
+					// Otherwise, exclude Scene
+					return new InspectForm(systemWindow);
+				}
+			};
+#endif
 		}
 
 		private MatterControlApplication(double width, double height)
@@ -747,49 +763,6 @@ namespace MatterHackers.MatterControl
 #endif
 		}
 
-#if DEBUG
-		InspectForm inspectForm = null;
-
-		public override void OnKeyDown(KeyEventArgs keyEvent)
-		{
-			// this must be called first to ensure we get the correct Handled state
-			base.OnKeyDown(keyEvent);
-
-			if (!keyEvent.Handled)
-			{
-				switch (keyEvent.KeyCode)
-				{
-					case Keys.F1:
-						if (inspectForm != null)
-						{
-							// Toggle mode if window is open
-							inspectForm.Inspecting = !inspectForm.Inspecting;
-						}
-						else
-						{
-							// Otherwise open
-							inspectForm = new InspectForm(this, ApplicationController.Instance.DragDropData.Scene);
-							inspectForm.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
-							inspectForm.Location = new System.Drawing.Point(0, 0);
-							inspectForm.FormClosed += (s, e2) =>
-							{
-								inspectForm = null;
-							};
-							inspectForm.Show();
-						}
-						break;
-					case Keys.F2:
-						inspectForm?.MoveUpTree();
-						break;
-
-					case Keys.F3:
-						inspectForm?.MoveDownTree();
-						break;
-				}
-			}
-		}
-
-#endif
 		public static void CheckKnownAssemblyConditionalCompSymbols()
 		{
 			MatterControlApplication.AssertDebugNotDefined();

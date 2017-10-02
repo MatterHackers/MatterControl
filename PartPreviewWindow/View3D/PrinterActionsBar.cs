@@ -56,14 +56,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public PrinterActionsBar(PrinterConfig printer, PrinterTabPage printerTabPage, ThemeConfig theme)
 		{
 			this.printer = printer;
-			UndoBuffer undoBuffer = printer.Bed.Scene.UndoBuffer;
-
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Fit;
+
 			this.AddChild(new PrinterConnectButton(printer, theme));
-
 			this.AddChild(new PrintActionRow(printer, theme, this));
-
 			this.AddChild(new SlicePopupMenu(printer, theme, printerTabPage));
 
 			// put in the detail message
