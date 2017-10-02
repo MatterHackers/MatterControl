@@ -27,7 +27,7 @@ namespace MatterHackers.MatterControl
 			: this(inspectedSystemWindow)
 		{
 			this.scene = scene;
-			this.scene.ChildrenModified += Scene_ChildrenModified;
+			this.scene.Children.ItemsModified += Scene_ChildrenModified;
 			sceneTreeView.SuspendLayout();
 			this.AddTree(scene, null, "Scene");
 			sceneTreeView.ResumeLayout();
@@ -409,7 +409,7 @@ namespace MatterHackers.MatterControl
 
 			if (scene != null)
 			{
-				scene.ChildrenModified -= Scene_ChildrenModified;
+				scene.Children.ItemsModified -= Scene_ChildrenModified;
 			}
 
 			if (mouseUpWidget != null)

@@ -83,7 +83,6 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 					var characterObject = new Object3D()
 					{
 						Mesh = textMesh,
-						ItemType = Object3DTypes.Model
 					};
 
 					characterSpacing[i] = new Vector2( printer.GetOffsetLeftOfCharacterIndex(i).x + centerOffset, 0);
@@ -132,7 +131,6 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 				var lineObject = new Object3D()
 				{
 					Mesh = PlatonicSolids.CreateCube(xSize, ySize, zSize),
-					ItemType = Object3DTypes.Model,
 					Matrix = Matrix4X4.CreateTranslation((bounds.maxXYZ.x + bounds.minXYZ.x) / 2, bounds.minXYZ.y + ySize / 2 - ySize * 1 / 3, zSize / 2)
 				};
 

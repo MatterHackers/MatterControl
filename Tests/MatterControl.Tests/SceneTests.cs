@@ -49,10 +49,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
 		public void SaveSimpleScene()
 		{
 			var scene = new InteractiveScene();
-			scene.Children.Add(new Object3D
-			{
-				ItemType = Object3DTypes.Model
-			});
+			scene.Children.Add(new Object3D());
 
 			string tempPath = GetSceneTempPath();
 			string filePath = Path.Combine(tempPath, "some.mcx");
@@ -71,7 +68,6 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			var scene = new InteractiveScene();
 			scene.Children.Add(new Object3D
 			{
-				ItemType = Object3DTypes.Model,
 				Mesh = PlatonicSolids.CreateCube(20, 20, 20)
 			});
 
@@ -110,7 +106,6 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			var scene = sceneContext.Scene;
 			scene.Children.Add(new Object3D
 			{
-				ItemType = Object3DTypes.Model,
 				Mesh = PlatonicSolids.CreateCube(20, 20, 20)
 			});
 
