@@ -191,15 +191,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				{
 					listViewItem.ListView.SelectedItems.Remove(listViewItem);
 				}
-				else
-				{
-					if (!Keyboard.IsKeyDown(Keys.ControlKey))
-					{
-						listViewItem.ListView.SelectedItems.Clear();
-					}
-
-					listViewItem.ListView.SelectedItems.Add(listViewItem);
-				}
 
 				Invalidate();
 			}

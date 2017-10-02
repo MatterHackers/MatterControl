@@ -81,10 +81,9 @@ namespace MatterHackers.MatterControl.Library
 						case ILibraryContentStream streamItem:
 							string itemPath;
 
-							if (streamItem is FileSystemFileItem)
+							if (streamItem is FileSystemFileItem fileItem)
 							{
 								// Get existing file path
-								var fileItem = streamItem as FileSystemFileItem;
 								itemPath = fileItem.Path;
 							}
 							else

@@ -229,7 +229,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.CloseSignInAndPrinterSelect();
 
 				testRunner.AddTestAssetsToLibrary("Rook.amf", "Batman.stl");
-				
+
 				// Select both items
 				testRunner.ClickByName("Row Item Rook");
 				Keyboard.SetKeyDownState(Keys.ControlKey, down: true);
