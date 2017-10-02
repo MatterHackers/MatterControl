@@ -135,8 +135,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 #endif
 					var characterObject = new Object3D()
 					{
-						Mesh = textMesh,
-						ItemType = Object3DTypes.Model
+						Mesh = textMesh
 					};
 
 					characterSpacing[i] = printer.GetOffsetLeftOfCharacterIndex(i);
@@ -244,8 +243,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 
 				var basePlateObject = new BraileBasePlate()
 				{
-					Mesh = baseMeshResult,
-					ItemType = Object3DTypes.Model
+					Mesh = baseMeshResult
 				};
 
 				basePlateObject.Matrix *= Matrix4X4.CreateTranslation(new Vector3(0, 0, 0));

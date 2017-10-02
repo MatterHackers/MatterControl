@@ -75,7 +75,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							list.AddRange(
 								discreetMeshes.Select(mesh => new Object3D()
 								{
-									ItemType = Object3DTypes.Model,
 									Mesh = mesh
 								}));
 						});
