@@ -1582,13 +1582,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					// make a preview of the new positions
 					var transformDatas = GetTransforms(axisIndex, alignment);
-					foreach (var transform in transformDatas)
+					Scene.Children.Modify((list) =>
 					{
-						var copy = transform.TransformedObject.Clone();
-						copy.Matrix = transform.RedoTransform;
-						copy.Color = new RGBA_Bytes(RGBA_Bytes.Gray, 126);
-						Scene.Children.Add(copy);
-					}
+						foreach (var transform in transformDatas)
+						{
+							var copy = transform.TransformedObject.Clone();
+							copy.Matrix = transform.RedoTransform;
+							copy.Color = new RGBA_Bytes(RGBA_Bytes.Gray, 126);
+							list.Add(copy);
+						}
+					});
 				}
 			};
 
@@ -1597,13 +1600,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (Scene.HasSelection)
 				{
 					// clear the preview of the new positions
-					foreach (var child in Scene.Children.ToArray())
+					Scene.Children.Modify((list) =>
 					{
-						if (child.Color.Alpha0To255 == 126)
+						for(int i=list.Count-1; i>=0; i--)
 						{
-							Scene.Children.Remove(child);
+							if (list[i].Color.Alpha0To255 == 126)
+							{
+								list.RemoveAt(i);
+							}
 						}
-					}
+					});
 				}
 			};
 		}
