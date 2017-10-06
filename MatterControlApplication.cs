@@ -116,7 +116,7 @@ namespace MatterHackers.MatterControl
 				if (systemWindow == Instance)
 				{
 					// If systemWindow is MatterControlApplication, include Scene
-					return new InspectForm(systemWindow, ApplicationController.Instance.DragDropData.Scene);
+					return new InspectForm(systemWindow, ApplicationController.Instance.DragDropData.SceneContext.Scene);
 				}
 				else
 				{

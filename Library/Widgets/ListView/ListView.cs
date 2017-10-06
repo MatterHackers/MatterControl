@@ -320,8 +320,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						var activeContext = ApplicationController.Instance.DragDropData;
 						if (activeContext.View3DWidget != null)
 						{
-							var scene = activeContext.Scene;
-							var bedCenter = activeContext.Printer.Bed.BedCenter;
+							var scene = activeContext.SceneContext.Scene;
+							var bedCenter = activeContext.SceneContext.BedCenter;
 
 							var sceneChildren = scene.Children.ToList();
 

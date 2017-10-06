@@ -1230,13 +1230,13 @@ namespace MatterHackers.MatterControl
 	public class DragDropData
 	{
 		public View3DWidget View3DWidget { get; set; }
-		public InteractiveScene Scene { get; set; }
 		public PrinterConfig Printer { get; internal set; }
+		public BedConfig SceneContext { get; set; }
 
 		public void Reset()
 		{
 			this.View3DWidget = null;
-			this.Scene = null;
+			this.SceneContext = null;
 		}
 	}
 }

@@ -832,7 +832,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				// Set reference on show
 				dragDropData.View3DWidget = this;
-				dragDropData.Scene = sceneContext.Scene;
+				dragDropData.SceneContext = sceneContext;
 			}
 			else
 			{
@@ -976,7 +976,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Set reference on show
 			var dragDropData = ApplicationController.Instance.DragDropData;
 			dragDropData.View3DWidget = this;
-			dragDropData.Scene = sceneContext.Scene;
+			dragDropData.SceneContext = sceneContext;
 
 			base.OnLoad(args);
 		}
