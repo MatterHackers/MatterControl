@@ -71,7 +71,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private ObservableCollection<GuiWidget> extruderButtons = new ObservableCollection<GuiWidget>();
 		private bool hasDrawn = false;
 
-		private OpenMode openMode;
 		internal bool partHasBeenEdited = false;
 		private ProgressControl processingProgressControl;
 		private SaveAsWindow saveAsWindow = null;
@@ -133,7 +132,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private BedConfig sceneContext;
 
-		public View3DWidget(PrinterConfig printer, BedConfig sceneContext, AutoRotate autoRotate, ViewControls3D viewControls3D, ThemeConfig theme, OpenMode openMode = OpenMode.Viewing, MeshViewerWidget.EditorType editorType = MeshViewerWidget.EditorType.Part)
+		public View3DWidget(PrinterConfig printer, BedConfig sceneContext, AutoRotate autoRotate, ViewControls3D viewControls3D, ThemeConfig theme, MeshViewerWidget.EditorType editorType = MeshViewerWidget.EditorType.Part)
 		{
 			var smallMarginButtonFactory = theme.SmallMarginButtonFactory;
 
@@ -154,7 +153,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.viewControls3D = viewControls3D;
 			this.theme = theme;
-			this.openMode = openMode;
 			this.Name = "View3DWidget";
 			this.BackgroundColor = ApplicationController.Instance.Theme.TabBodyBackground;
 
@@ -804,8 +802,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		#endregion DoBooleanTest
 
 		public enum AutoRotate { Enabled, Disabled };
-
-		public enum OpenMode { Viewing, Editing }
 
 		public bool DisplayAllValueData { get; set; }
 
@@ -2188,10 +2184,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				UnlockEditControls();
 			}
 
-			if (openMode == OpenMode.Editing)
-			{
-				UiThread.RunOnIdle(SwitchStateToEditing);
-			}
+			UiThread.RunOnIdle(SwitchStateToEditing);
 		}
 
 		private void OpenExportWindow()
