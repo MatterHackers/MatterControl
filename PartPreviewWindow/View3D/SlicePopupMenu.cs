@@ -131,19 +131,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						sliceProgressReporter.StartReporting();
 
 						// Save any pending changes before starting the print
-						await printerTabPage.modelViewer.PersistPlateIfNeeded();
+						await printerTabPage.view3DWidget.PersistPlateIfNeeded();
 
 						await SlicingQueue.SliceFileAsync(printItem, sliceProgressReporter);
 						sliceProgressReporter.EndReporting();
 
 						var gcodeLoadCancellationTokenSource = new CancellationTokenSource();
 
-						this.printer.Bed.LoadGCode(printItem.GetGCodePathAndFileName(), gcodeLoadCancellationTokenSource.Token, printerTabPage.modelViewer.gcodeViewer.LoadProgress_Changed);
+						this.printer.Bed.LoadGCode(printItem.GetGCodePathAndFileName(), gcodeLoadCancellationTokenSource.Token, printerTabPage.view3DWidget.gcodeViewer.LoadProgress_Changed);
 
 						printerTabPage.ViewMode = PartViewMode.Layers3D;
 
 						// HACK: directly fire method which previously ran on SlicingDone event on PrintItemWrapper
-						UiThread.RunOnIdle(() => printerTabPage.modelViewer.gcodeViewer.CreateAndAddChildren(printer));
+						UiThread.RunOnIdle(() => printerTabPage.view3DWidget.gcodeViewer.CreateAndAddChildren(printer));
 					}
 					catch (Exception ex)
 					{

@@ -37,7 +37,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class PrinterTabBase : TabPage
 	{
-		internal View3DWidget modelViewer;
+		internal View3DWidget view3DWidget;
 
 		protected ViewControls3D viewControls3D;
 
@@ -66,9 +66,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			viewControls3D.ResetView += (sender, e) =>
 			{
-				if (modelViewer.Visible)
+				if (view3DWidget.Visible)
 				{
-					this.modelViewer.ResetView();
+					this.view3DWidget.ResetView();
 				}
 			};
 			viewControls3D.OverflowButton.DynamicPopupContent = () =>
@@ -79,13 +79,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			bool isPrinterType = this.GetType() == typeof(PrinterTabPage);
 
 			// The 3D model view
-			modelViewer = new View3DWidget(
+			view3DWidget = new View3DWidget(
 				printer,
 				sceneContext,
 				View3DWidget.AutoRotate.Disabled,
 				viewControls3D,
 				theme,
-				View3DWidget.OpenMode.Editing,
 				editorType: (isPrinterType) ? MeshViewerWidget.EditorType.Printer : MeshViewerWidget.EditorType.Part);
 
 			topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
@@ -99,15 +98,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			view3DContainer = new GuiWidget();
 			view3DContainer.AnchorAll();
-			view3DContainer.AddChild(modelViewer);
+			view3DContainer.AddChild(view3DWidget);
 
 			leftToRight.AddChild(view3DContainer);
 
-			modelViewer.BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor;
+			view3DWidget.BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor;
 
 			if (sceneContext.World.RotationMatrix == Matrix4X4.Identity)
 			{
-				this.modelViewer.ResetView();
+				this.view3DWidget.ResetView();
 			}
 
 			this.AddChild(viewControls3D);
@@ -117,12 +116,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		protected virtual GuiWidget GetViewControls3DOverflowMenu()
 		{
-			return modelViewer.ShowOverflowMenu();
+			return view3DWidget.ShowOverflowMenu();
 		}
 
 		public override void OnLoad(EventArgs args)
 		{
-			ApplicationController.Instance.ActiveView3DWidget = modelViewer;
+			ApplicationController.Instance.ActiveView3DWidget = view3DWidget;
 
 			base.OnLoad(args);
 		}

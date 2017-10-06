@@ -429,7 +429,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 								list.Add(
 									new InsertionGroup(
 										selectedLibraryItems.Take(1),
-										printerTab.modelViewer,
+										printerTab.view3DWidget,
 										bedConfig.Scene,
 										() => false));
 							});

@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			: base(printer, printer.Bed, theme, tabTitle)
 		{
 			this.printer = printer;
-			modelViewer.meshViewerWidget.EditorMode = MeshViewerWidget.EditorType.Printer;
+			view3DWidget.meshViewerWidget.EditorMode = MeshViewerWidget.EditorType.Printer;
 
 			gcodeOptions = sceneContext.RendererOptions;
 
@@ -156,7 +156,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				sceneContext.ActiveLayerIndex = (int)currentLayerInfo.Value - 1;
 			};
 
-			AddSettingsTabBar(leftToRight, modelViewer);
+			AddSettingsTabBar(leftToRight, view3DWidget);
 
 			view3DContainer.AddChild(layerRenderRatioSlider);
 			view3DContainer.AddChild(selectLayerSlider);
@@ -174,7 +174,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			view3DContainer.AddChild(currentLayerInfo);
 
-			modelViewer.BoundsChanged += (s, e) =>
+			view3DWidget.BoundsChanged += (s, e) =>
 			{
 				SetSliderSizes();
 			};
@@ -198,9 +198,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			set
 			{
 				showSliceLayers = value;
-				modelViewer.gcodeViewer.Visible = value;
+				view3DWidget.gcodeViewer.Visible = value;
 
-				modelViewer.meshViewerWidget.IsActive = !value;
+				view3DWidget.meshViewerWidget.IsActive = !value;
 
 				if (showSliceLayers)
 				{
@@ -212,7 +212,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				selectLayerSlider.Visible = slidersVisible;
 				layerRenderRatioSlider.Visible = slidersVisible;
 
-				modelViewer.selectedObjectPanel.Visible = !showSliceLayers;
+				view3DWidget.selectedObjectPanel.Visible = !showSliceLayers;
 			}
 		}
 
@@ -373,19 +373,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void SetSliderSizes()
 		{
-			if (selectLayerSlider == null || modelViewer == null)
+			if (selectLayerSlider == null || view3DWidget == null)
 			{
 				return;
 			}
 
-			selectLayerSlider.OriginRelativeParent = new Vector2(modelViewer.Width - 20, 78);
-			selectLayerSlider.TotalWidthInPixels = modelViewer.Height - 100;
+			selectLayerSlider.OriginRelativeParent = new Vector2(view3DWidget.Width - 20, 78);
+			selectLayerSlider.TotalWidthInPixels = view3DWidget.Height - 100;
 
 			layerRenderRatioSlider.OriginRelativeParent = new Vector2(11, 65);
-			layerRenderRatioSlider.TotalWidthInPixels = modelViewer.Width - 45;
+			layerRenderRatioSlider.TotalWidthInPixels = view3DWidget.Width - 45;
 
-			layerCountText.OriginRelativeParent = new Vector2(modelViewer.Width - 26 + (layerCountText.Width / 2), modelViewer.Height - 15);
-			layerStartText.OriginRelativeParent = new Vector2(modelViewer.Width - 26 + (layerStartText.Width / 2), 63);
+			layerCountText.OriginRelativeParent = new Vector2(view3DWidget.Width - 26 + (layerCountText.Width / 2), view3DWidget.Height - 15);
+			layerStartText.OriginRelativeParent = new Vector2(view3DWidget.Width - 26 + (layerStartText.Width / 2), 63);
 		}
 		private void SetAnimationPosition()
 		{
@@ -530,7 +530,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			bool printerIsRunningPrint = printer.Connection.PrinterIsPaused || printer.Connection.PrinterIsPrinting;
 			if (gcodeOptions.SyncToPrint
 				&& printerIsRunningPrint
-				&& modelViewer.gcodeViewer.Visible)
+				&& view3DWidget.gcodeViewer.Visible)
 			{
 				SetAnimationPosition();
 				this.Invalidate();
@@ -541,13 +541,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		protected override GuiWidget GetViewControls3DOverflowMenu()
 		{
-			if (modelViewer.gcodeViewer.Visible)
+			if (view3DWidget.gcodeViewer.Visible)
 			{
 				return this.ShowGCodeOverflowMenu();
 			}
 			else
 			{
-				return modelViewer.ShowOverflowMenu();
+				return view3DWidget.ShowOverflowMenu();
 			}
 		}
 
@@ -582,7 +582,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void Parent_KeyDown(object sender, KeyEventArgs keyEvent)
 		{
-			if (modelViewer.gcodeViewer.Visible)
+			if (view3DWidget.gcodeViewer.Visible)
 			{
 				switch (keyEvent.KeyCode)
 				{
