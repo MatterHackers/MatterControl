@@ -497,7 +497,17 @@ namespace MatterHackers.MatterControl
 			}
 			else if (PartsSheet.IsSaving())
 			{
-				StyledMessageBox.ShowMessageBox(onConfirmExit, savePartsSheetExitAnywayMessage, confirmExit, StyledMessageBox.MessageType.YES_NO);
+				StyledMessageBox.ShowMessageBox(
+					(exitAnyway) =>
+					{
+						if (exitAnyway)
+						{
+							base.OnClosing(out _);
+						}
+					},
+					savePartsSheetExitAnywayMessage, 
+					confirmExit, 
+					StyledMessageBox.MessageType.YES_NO);
 				cancelClose = true;
 			}
 			else if(!cancelClose) // only check if we have not already canceled
@@ -747,14 +757,6 @@ namespace MatterHackers.MatterControl
 				{
 					plugin.Initialize(this);
 				}
-			}
-		}
-
-		private void onConfirmExit(bool messageBoxResponse)
-		{
-			if (messageBoxResponse)
-			{
-				base.OnClosing(out _);
 			}
 		}
 
