@@ -752,10 +752,9 @@ namespace MatterHackers.MatterControl
 
 		private void onConfirmExit(bool messageBoxResponse)
 		{
-			bool CancelClose;
 			if (messageBoxResponse)
 			{
-				base.OnClosing(out CancelClose);
+				base.OnClosing(out _);
 			}
 		}
 
