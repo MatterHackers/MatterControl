@@ -433,23 +433,23 @@ namespace MatterHackers.MatterControl
 			QueueData.Instance.SaveDefaultQueue();
 
 			// If we are waiting for a response and get another request, just cancel the close until we get a response.
-			if(closeMessageBoxIsOpen)
+			if(exitDialogOpen)
 			{
 				cancelClose = true;
 			}
 
-			if (!closeHasBeenConfirmed 
-				&& !closeMessageBoxIsOpen
+			if (!ApplicationExiting 
+				&& !exitDialogOpen
 				&& ApplicationController.Instance.ActivePrinter.Connection.PrinterIsPrinting)
 			{
 				cancelClose = true;
 				// Record that we are waiting for a response to the request to close
-				closeMessageBoxIsOpen = true;
+				exitDialogOpen = true;
 
 				if (ApplicationController.Instance.ActivePrinter.Connection.CommunicationState != CommunicationStates.PrintingFromSd)
 				{
 					// Needed as we can't assign to CancelClose inside of the lambda below
-					StyledMessageBox.ShowMessageBox(ConditionalyCloseNow,
+					StyledMessageBox.ShowMessageBox(ConditionalExit,
 						"Are you sure you want to abort the current print and close MatterControl?".Localize(),
 						"Abort Print".Localize(),
 						StyledMessageBox.MessageType.YES_NO);
@@ -457,7 +457,7 @@ namespace MatterHackers.MatterControl
 				else
 				{
 					StyledMessageBox.ShowMessageBox(
-						ConditionalyCloseNow,
+						ConditionalExit,
 						"Are you sure you want exit while a print is running from SD Card?\n\nNote: If you exit, it is recommended you wait until the print is completed before running MatterControl again.".Localize(),
 						"Exit while printing".Localize(),
 						StyledMessageBox.MessageType.YES_NO);
@@ -484,18 +484,19 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		bool closeHasBeenConfirmed = false;
-		internal bool closeMessageBoxIsOpen = false;
+		public bool ApplicationExiting { get; private set; } = false;
 
-		private void ConditionalyCloseNow(bool continueWithShutdown)
+		private bool exitDialogOpen = false;
+
+		private void ConditionalExit(bool exitConfirmed)
 		{
-			// Response received, record that we are not waiting anymore.
-			closeMessageBoxIsOpen = false;
+			// Record that the exitDialog has closed
+			exitDialogOpen = false;
 
-			// Exit if confirmed
-			if (continueWithShutdown)
+			// Continue with shutdown if exit confirmed by user
+			if (exitConfirmed)
 			{
-				closeHasBeenConfirmed = true;
+				this.ApplicationExiting = true;
 
 				// Always call PrinterConnection.Disable on exit unless PrintingFromSd
 				PrinterConnection printerConnection = ApplicationController.Instance.ActivePrinter.Connection;
