@@ -510,17 +510,25 @@ namespace MatterHackers.MatterControl
 		bool closeMessageBoxIsOpen = false;
 		private void ConditionalyCloseNow(bool continueWithShutdown)
 		{
-			// Response received, cecord that we are not waiting anymore.
+			// Response received, record that we are not waiting anymore.
 			closeMessageBoxIsOpen = false;
+
+			// Exit if confirmed
 			if (continueWithShutdown)
 			{
 				closeHasBeenConfirmed = true;
-				bool printingFromSdCard = ApplicationController.Instance.ActivePrinter.Connection.CommunicationState == CommunicationStates.PrintingFromSd
-					|| (ApplicationController.Instance.ActivePrinter.Connection.CommunicationState == CommunicationStates.Paused
-					&& ApplicationController.Instance.ActivePrinter.Connection.PrePauseCommunicationState == CommunicationStates.PrintingFromSd);
-				if (!printingFromSdCard)
+
+				// Always call PrinterConnection.Disable on exit unless PrintingFromSd
+				PrinterConnection printerConnection = ApplicationController.Instance.ActivePrinter.Connection;
+				switch(printerConnection.CommunicationState)
 				{
-					ApplicationController.Instance.ActivePrinter.Connection.Disable();
+					case CommunicationStates.PrintingFromSd:
+					case CommunicationStates.Paused when printerConnection.PrePauseCommunicationState == CommunicationStates.PrintingFromSd:
+						break;
+
+					default:
+						printerConnection.Disable();
+						break;
 				}
 
 				this.RestartOnClose = false;
