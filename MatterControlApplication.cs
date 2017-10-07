@@ -523,9 +523,8 @@ namespace MatterHackers.MatterControl
 					ApplicationController.Instance.ActivePrinter.Connection.Disable();
 				}
 
-				MatterControlApplication app = MatterControlApplication.Instance;
-				app.RestartOnClose = false;
-				app.Close();
+				this.RestartOnClose = false;
+				this.Close();
 			}
 		}
 
