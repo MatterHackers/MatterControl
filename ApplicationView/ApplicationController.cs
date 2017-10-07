@@ -718,7 +718,7 @@ namespace MatterHackers.MatterControl
 
 		public string PrintingItemName { get; set; }
 
-		public string ProductName => "MatterHackers: XForge";
+		public string ProductName => "MatterHackers: MatterControl";
 
 		public string ThumbnailCachePath(ILibraryItem libraryItem)
 		{

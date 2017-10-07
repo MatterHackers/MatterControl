@@ -320,7 +320,7 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 
 		public PinchTest()
 		{
-			var letterPrinter = new TypeFacePrinter("xForge");
+			var letterPrinter = new TypeFacePrinter("MatterHackers");
 			inputMesh = VertexSourceToMesh.Extrude(letterPrinter, 5);
 			transformedMesh = PolygonMesh.Mesh.Copy(inputMesh, CancellationToken.None);
 
@@ -364,7 +364,7 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 
 		public CurveTest()
 		{
-			var letterPrinter = new TypeFacePrinter("xForge");
+			var letterPrinter = new TypeFacePrinter("MatterHackers");
 			inputMesh = VertexSourceToMesh.Extrude(letterPrinter, 5);
 			transformedMesh = PolygonMesh.Mesh.Copy(inputMesh, CancellationToken.None);
 
