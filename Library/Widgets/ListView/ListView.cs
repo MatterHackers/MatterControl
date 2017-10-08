@@ -48,6 +48,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		internal GuiWidget contentView;
 
+		/// <summary>
+		/// The GuiWidget responsible for rendering ListViewItems
+		/// </summary>
+		private GuiWidget previousContentView = null;
+
 		private ILibraryContext LibraryContext;
 
 		// Default constructor uses IconListView
@@ -83,8 +88,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		public RGBA_Bytes ThumbnailBackground { get; } = ActiveTheme.Instance.TertiaryBackgroundColor.AdjustLightness(1.05).GetAsRGBA_Bytes();
 		public RGBA_Bytes ThumbnailForeground { get; set; } = ActiveTheme.Instance.PrimaryAccentColor;
 
-		private GuiWidget stashedView = null;
-
 		private void ActiveContainer_Changed(object sender, ContainerChangedEventArgs e)
 		{
 			var activeContainer = e.ActiveContainer;
@@ -93,7 +96,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			if (targetType != null 
 				&& targetType != this.ListContentView.GetType())
 			{
-				stashedView = this.contentView;
+				previousContentView = this.contentView;
 
 				// If the current view doesn't match the view requested by the container, construct and switch to the requested view
 				var targetView = Activator.CreateInstance(targetType) as GuiWidget;
@@ -102,11 +105,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					this.SetContentView(targetView);
 				}
 			}
-			else if (stashedView != null)
+			else if (previousContentView != null)
 			{
 				// Switch back to the original view
-				this.SetContentView(stashedView);
-				stashedView = null;
+				this.SetContentView(previousContentView);
+				previousContentView = null;
 			}
 
 			DisplayContainerContent(activeContainer);
