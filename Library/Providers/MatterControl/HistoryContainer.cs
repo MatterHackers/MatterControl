@@ -38,9 +38,9 @@ using MatterHackers.MatterControl.PrintHistory;
 
 namespace MatterHackers.MatterControl.Library
 {
-	public class HistoryRowItem : ILibraryContentStream
+	public class PrintHistoryItem : ILibraryContentStream
 	{
-		public HistoryRowItem(PrintTask printTask)
+		public PrintHistoryItem(PrintTask printTask)
 		{
 			this.PrintTask = printTask;
 		}
@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl.Library
 		public bool IsVisible => true;
 
 		public bool LocalContentExists => true;
-		
+
 		public Task<StreamAndLength> GetContentStream(Action<double, string> reportProgress)
 		{
 			throw new NotImplementedException();
@@ -81,7 +81,7 @@ namespace MatterHackers.MatterControl.Library
 			this.DefaultView = typeof(HistoryListView);
 
 			//PrintHistoryData.Instance.ItemAdded.RegisterEvent((sender, e) => OnDataReloaded(null), ref unregisterEvent);
-			
+
 			this.ReloadContainer();
 		}
 
@@ -92,7 +92,7 @@ namespace MatterHackers.MatterControl.Library
 				var printHistory = PrintHistoryData.Instance.GetHistoryItems(25);
 
 				// PrintItems projected onto FileSystemFileItem
-				Items = printHistory.Select(f => new HistoryRowItem(f)).ToList<ILibraryItem>();
+				Items = printHistory.Select(f => new PrintHistoryItem(f)).ToList<ILibraryItem>();
 
 				UiThread.RunOnIdle(this.OnReloaded);
 			});

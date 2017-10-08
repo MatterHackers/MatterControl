@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 
 		public ListViewItemBase AddItem(ListViewItem item)
 		{
-			var historyRowItem = item.Model as HistoryRowItem;
+			var historyRowItem = item.Model as PrintHistoryItem;
 			var detailsView = new PrintHistoryListItem(item, this.ThumbWidth, this.ThumbHeight, historyRowItem?.PrintTask, true);
 			this.AddChild(detailsView);
 
