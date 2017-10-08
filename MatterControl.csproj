@@ -197,7 +197,6 @@
     <Compile Include="Library\Interfaces\IThumbnail.cs" />
     <Compile Include="Library\Interfaces\ILibraryItem.cs" />
     <Compile Include="Library\Interfaces\KnownLengthStream.cs" />
-    <Compile Include="Library\Providers\CreatorsContainer.cs" />
     <Compile Include="Library\Providers\LibraryConfig.cs" />
     <Compile Include="Library\Providers\MatterControl\CalibrationPartsContainer.cs" />
     <Compile Include="Library\Widgets\ListView\IconListView.cs" />
