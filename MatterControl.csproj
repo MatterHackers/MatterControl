@@ -150,6 +150,7 @@
     <Compile Include="CustomWidgets\DisableablePanel.cs" />
     <Compile Include="Library\Interfaces\LibraryExtensionMethods.cs" />
     <Compile Include="Library\Providers\CreateFolderItem.cs" />
+    <Compile Include="Library\Providers\MatterControl\PrintHistoryContainer.cs" />
     <Compile Include="Library\Providers\MatterControl\PrintHistoryItem.cs" />
     <Compile Include="Library\Providers\WritableContainer.cs" />
     <Compile Include="Library\Widgets\InsertionGroup.cs" />
@@ -206,7 +207,6 @@
     <Compile Include="Library\Providers\MessageItem.cs" />
     <Compile Include="Library\Providers\GeneratorItem.cs" />
     <Compile Include="Library\Widgets\ListView\RowListView.cs" />
-    <Compile Include="Library\Providers\MatterControl\HistoryContainer.cs" />
     <Compile Include="Library\Providers\MatterControl\SqliteLibraryContainer.cs" />
     <Compile Include="Library\Providers\MatterControl\PrintQueueContainer.cs" />
     <Compile Include="Library\Providers\SDCard\SDCardContainer.cs" />

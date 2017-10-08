@@ -36,9 +36,9 @@ using MatterHackers.MatterControl.PrintHistory;
 
 namespace MatterHackers.MatterControl.Library
 {
-	public class HistoryContainer : LibraryContainer
+	public class PrintHistoryContainer : LibraryContainer
 	{
-		public HistoryContainer()
+		public PrintHistoryContainer()
 		{
 			this.ChildContainers = new List<ILibraryContainerLink>();
 			this.Items = new List<ILibraryItem>();
