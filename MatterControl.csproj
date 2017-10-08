@@ -150,6 +150,7 @@
     <Compile Include="CustomWidgets\DisableablePanel.cs" />
     <Compile Include="Library\Interfaces\LibraryExtensionMethods.cs" />
     <Compile Include="Library\Providers\CreateFolderItem.cs" />
+    <Compile Include="Library\Providers\MatterControl\PrintHistoryItem.cs" />
     <Compile Include="Library\Providers\WritableContainer.cs" />
     <Compile Include="Library\Widgets\InsertionGroup.cs" />
     <Compile Include="PartPreviewWindow\PopupButton.cs" />
