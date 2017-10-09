@@ -343,20 +343,18 @@ namespace MatterHackers.MatterControl
 			var rootLibraryCollection = Datastore.Instance.dbSQLite.Table<PrintItemCollection>().Where(v => v.Name == "_library").Take(1).FirstOrDefault();
 			if (rootLibraryCollection != null)
 			{
-				int rooteLibraryID = rootLibraryCollection.Id;
-
 				this.Library.RegisterRootProvider(
 					new DynamicContainerLink(
 						"Local Library".Localize(),
 						LibraryProviderHelpers.LoadInvertIcon("FileDialog", "library_folder.png"),
-						() => new SqliteLibraryContainer(rooteLibraryID)));
+						() => new SqliteLibraryContainer(rootLibraryCollection.Id)));
 			}
 
 			this.Library.RegisterRootProvider(
 				new DynamicContainerLink(
 					"Print History".Localize(),
 					LibraryProviderHelpers.LoadInvertIcon("FileDialog", "folder.png"),
-					() => new HistoryContainer())
+					() => new PrintHistoryContainer())
 				{
 					IsReadOnly = true
 				});
