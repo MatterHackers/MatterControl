@@ -150,6 +150,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			cellIndex = 0;
 			rowButtonContainer = null;
 			allIconViews.Clear();
+
+			this.CloseAllChildren();
 		}
 	}
 
