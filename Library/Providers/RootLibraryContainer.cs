@@ -36,7 +36,7 @@ namespace MatterHackers.MatterControl.Library
 {
 	public class RootLibraryContainer : ILibraryContainer
 	{
-		public event EventHandler Reloaded;
+		public event EventHandler ContentChanged;
 
 		public RootLibraryContainer(List<ILibraryContainerLink> items)
 		{
@@ -66,6 +66,8 @@ namespace MatterHackers.MatterControl.Library
 		{
 			return Task.FromResult<ImageBuffer>(null);
 		}
+
+		public void Load() { }
 
 		public void Dispose()
 		{

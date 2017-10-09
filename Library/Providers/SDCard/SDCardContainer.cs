@@ -29,9 +29,11 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
+using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.Library
@@ -42,26 +44,33 @@ namespace MatterHackers.MatterControl.Library
 
 		private EventHandler unregisterEvents;
 
+		private PrinterConfig printer;
+
+		private AutoResetEvent autoResetEvent;
+
 		public SDCardContainer()
 		{
 			this.ChildContainers = new List<ILibraryContainerLink>();
 			this.Items = new List<ILibraryItem>();
 			this.Name = "SD Card".Localize();
-			LoadFilesFromSD();
+
+			printer = ApplicationController.Instance.ActivePrinter;
 		}
 
-		public void LoadFilesFromSD()
+		public override void Load()
 		{
-			var printer = ApplicationController.Instance.ActivePrinter;
-
 			if (printer.Connection.PrinterIsConnected
 				&& !(printer.Connection.PrinterIsPrinting || printer.Connection.PrinterIsPaused))
 			{
+				autoResetEvent = new AutoResetEvent(false);
 
 				printer.Connection.ReadLine.RegisterEvent(Printer_LineRead, ref unregisterEvents);
 
 				gotBeginFileList = false;
 				printer.Connection.SendLineToPrinterNow("M21\r\nM20");
+
+				// Ask for files and wait for response
+				autoResetEvent.WaitOne();
 			}
 		}
 
@@ -76,8 +85,7 @@ namespace MatterHackers.MatterControl.Library
 
 		private void Printer_LineRead(object sender, EventArgs e)
 		{
-			var currentEvent = e as StringEventArgs;
-			if (currentEvent != null)
+			if (e is StringEventArgs currentEvent)
 			{
 				if (!currentEvent.Data.StartsWith("echo:"))
 				{
@@ -86,6 +94,13 @@ namespace MatterHackers.MatterControl.Library
 						case "Begin file list":
 							gotBeginFileList = true;
 							this.Items.Clear();
+							break;
+
+						case "End file list":
+							printer.Connection.ReadLine.UnregisterEvent(Printer_LineRead, ref unregisterEvents);
+
+							// Release the Load WaitOne
+							autoResetEvent.Set();
 							break;
 
 						default:
@@ -103,11 +118,6 @@ namespace MatterHackers.MatterControl.Library
 								}
 							}
 							break;
-
-						case "End file list":
-							ApplicationController.Instance.ActivePrinter.Connection.ReadLine.UnregisterEvent(Printer_LineRead, ref unregisterEvents);
-							this.OnReloaded();
-							break;
 					}
 				}
 			}
@@ -116,7 +126,10 @@ namespace MatterHackers.MatterControl.Library
 		public override void Dispose()
 		{
 			// In case "End file list" is never received
-			ApplicationController.Instance.ActivePrinter.Connection.ReadLine.UnregisterEvent(Printer_LineRead, ref unregisterEvents);
+			printer.Connection.ReadLine.UnregisterEvent(Printer_LineRead, ref unregisterEvents);
+
+			// Release the Load WaitOne
+			autoResetEvent?.Set();
 		}
 	}
 }

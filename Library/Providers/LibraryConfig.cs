@@ -39,7 +39,7 @@ namespace MatterHackers.MatterControl.Library
 	{
 		ILibraryContainer ActiveContainer { get; set; }
 		event EventHandler<ContainerChangedEventArgs> ContainerChanged;
-		event EventHandler<ContainerChangedEventArgs> ContainerReloaded;
+		event EventHandler<ContainerChangedEventArgs> ContentChanged;
 	}
 
 	public class ContainerChangedEventArgs : EventArgs
@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl.Library
 	public class LibraryConfig : ILibraryContext
 	{
 		public event EventHandler<ContainerChangedEventArgs> ContainerChanged;
-		public event EventHandler<ContainerChangedEventArgs> ContainerReloaded;
+		public event EventHandler<ContainerChangedEventArgs> ContentChanged;
 
 		// TODO: Needed?
 		public event EventHandler LibraryItemsChanged;
@@ -101,7 +101,7 @@ namespace MatterHackers.MatterControl.Library
 				if (activeContainer != null)
 				{
 					activeContainer.Deactivate();
-					activeContainer.Reloaded -= ActiveContainer_Reloaded;
+					activeContainer.ContentChanged -= ActiveContainer_ContentChanged;
 					activeContainer.KeywordFilter = "";
 
 					// If the new container is an ancestor of the active container we need to Dispose everyone up to that point
@@ -118,7 +118,7 @@ namespace MatterHackers.MatterControl.Library
 
 				activeContainer = newContainer;
 				activeContainer.Activate();
-				activeContainer.Reloaded += ActiveContainer_Reloaded;
+				activeContainer.ContentChanged += ActiveContainer_ContentChanged;
 
 				ContainerChanged?.Invoke(this, eventArgs);
 			}
@@ -166,14 +166,14 @@ namespace MatterHackers.MatterControl.Library
 			LibraryItemsChanged?.Invoke(this, null);
 		}
 
-		private void ActiveContainer_Reloaded(object sender, EventArgs args)
+		private void ActiveContainer_ContentChanged(object sender, EventArgs args)
 		{
 			this.OnContainerChanged(this.ActiveContainer);
 		}
 
 		private void OnContainerChanged(ILibraryContainer container)
 		{
-			ContainerReloaded?.Invoke(this, new ContainerChangedEventArgs(container, null));
+			ContentChanged?.Invoke(this, new ContainerChangedEventArgs(container, null));
 		}
 
 		public bool IsContentFileType(string fileName)

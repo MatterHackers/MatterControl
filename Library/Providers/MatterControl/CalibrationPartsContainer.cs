@@ -43,11 +43,9 @@ namespace MatterHackers.MatterControl.Library
 			this.ChildContainers = new List<ILibraryContainerLink>();
 			this.Items = new List<ILibraryItem>();
 			this.Name = "Calibration Parts".Localize();
-
-			this.ReloadContainer();
 		}
 
-		private void ReloadContainer()
+		public override void Load()
 		{
 			// TODO: Long term do we want to have multiple categories in the view - OEM parts and printer specific calibration parts? Easy to do if so
 			/*
@@ -75,8 +73,6 @@ namespace MatterHackers.MatterControl.Library
 				// TODO: Won't work on Android - make stream based
 				return new FileSystemFileItem(AggContext.StaticData.MapPath(s));
 			}).ToList<ILibraryItem>();
-
-			UiThread.RunOnIdle(this.OnReloaded); 
 		}
 
 		public override void Dispose()

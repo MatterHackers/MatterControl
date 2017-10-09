@@ -29,7 +29,6 @@ either expressed or implied, of the FreeBSD Project.
 
 using System.Collections.Generic;
 using System.Linq;
-using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrintHistory;
 
@@ -43,20 +42,12 @@ namespace MatterHackers.MatterControl.Library
 			this.Items = new List<ILibraryItem>();
 			this.Name = "Print History".Localize();
 			this.DefaultView = typeof(HistoryListView);
-
-			//PrintHistoryData.Instance.ItemAdded.RegisterEvent((sender, e) => OnDataReloaded(null), ref unregisterEvent);
-
-			this.ReloadContainer();
 		}
 
-		private void ReloadContainer()
+		public override void Load()
 		{
-			var printHistory = PrintHistoryData.Instance.GetHistoryItems(25);
-
 			// PrintItems projected onto FileSystemFileItem
-			Items = printHistory.Select(f => new PrintHistoryItem(f)).ToList<ILibraryItem>();
-
-			UiThread.RunOnIdle(this.OnReloaded);
+			Items = PrintHistoryData.Instance.GetHistoryItems(25).Select(f => new PrintHistoryItem(f)).ToList<ILibraryItem>();
 		}
 	}
 }

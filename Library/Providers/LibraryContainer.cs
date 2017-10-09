@@ -36,7 +36,7 @@ namespace MatterHackers.MatterControl.Library
 {
 	public abstract class LibraryContainer : ILibraryContainer
 	{
-		public event EventHandler Reloaded;
+		public event EventHandler ContentChanged;
 
 		public string ID { get; set; }
 		public string Name { get; set; }
@@ -59,10 +59,12 @@ namespace MatterHackers.MatterControl.Library
 
 		public virtual string KeywordFilter { get; set; } = "";
 
-		protected void OnReloaded()
+		protected void OnContentChanged()
 		{
-			this.Reloaded?.Invoke(this, null);
+			this.ContentChanged?.Invoke(this, null);
 		}
+
+		public abstract void Load();
 
 		public virtual void Dispose()
 		{

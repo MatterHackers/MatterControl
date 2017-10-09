@@ -100,7 +100,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				Name = "Show Folders Toggle",
 				Checked = UserSettings.Instance.get("ShowContainers") == "1"
 			};
-			showFolders.CheckedStateChanged += (s, e) =>
+			showFolders.CheckedStateChanged += async (s, e) =>
 			{
 				UserSettings.Instance.set("ShowContainers", showFolders.Checked ? "1" : "0");
 				libraryView.Reload();
@@ -236,7 +236,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			// Release
 			if (e.PreviousContainer != null)
 			{
-				e.PreviousContainer.Reloaded -= UpdateStatus;
+				e.PreviousContainer.ContentChanged -= UpdateStatus;
 			}
 
 			var activeContainer = this.libraryView.ActiveContainer;
@@ -251,7 +251,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			searchInput.Text = activeContainer.KeywordFilter;
 			breadCrumbWidget.SetBreadCrumbs(activeContainer);
 
-			activeContainer.Reloaded += UpdateStatus;
+			activeContainer.ContentChanged += UpdateStatus;
 
 			UpdateStatus(null, null);
 		}
@@ -638,7 +638,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			if (libraryView?.ActiveContainer != null)
 			{
-				libraryView.ActiveContainer.Reloaded -= UpdateStatus;
+				libraryView.ActiveContainer.ContentChanged -= UpdateStatus;
 				ApplicationController.Instance.Library.ContainerChanged -= Library_ContainerChanged;
 			}
 
