@@ -224,7 +224,7 @@ namespace MatterHackers.MatterControl.Library
 				incrementedFilePath = Path.Combine(this.fullPath, $"{fileName} ({foundCount++}){fileExtension}");
 
 				// Continue incrementing while any matching file exists
-			} while (Directory.GetFiles(incrementedFilePath).Any());
+			} while (File.Exists(incrementedFilePath));
 
 			return incrementedFilePath;
 		}
