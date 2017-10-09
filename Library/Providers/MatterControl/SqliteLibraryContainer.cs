@@ -37,13 +37,9 @@ using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.PolygonMesh;
 using MatterHackers.PolygonMesh.Processors;
-
-
-
 
 namespace MatterHackers.MatterControl.Library
 {
@@ -96,30 +92,27 @@ namespace MatterHackers.MatterControl.Library
 
 		private void ReloadContainer()
 		{
-			Task.Run(() =>
+			childCollections = GetChildCollections();
+
+			this.ChildContainers = childCollections.Select(c => new SqliteLibraryContainerLink()
 			{
-				childCollections = GetChildCollections();
+				ContainerID = c.Id, Name = c.Name }).ToList<ILibraryContainerLink>(); //
 
-				this.ChildContainers = childCollections.Select(c => new SqliteLibraryContainerLink()
+			// PrintItems projected onto FileSystemFileItem
+			Items = GetLibraryItems(KeywordFilter).Select<PrintItem, ILibraryItem>(printItem =>
+			{
+				if (File.Exists(printItem.FileLocation))
 				{
-					ContainerID = c.Id, Name = c.Name }).ToList<ILibraryContainerLink>(); //
-
-				// PrintItems projected onto FileSystemFileItem
-				Items = GetLibraryItems(KeywordFilter).Select<PrintItem, ILibraryItem>(printItem =>
+					return new SqliteFileItem(printItem);
+				}
+				else
 				{
-					if (File.Exists(printItem.FileLocation))
-					{
-						return new SqliteFileItem(printItem);
-					}
-					else
-					{
-						return new MessageItem($"{printItem.Name} (Missing)");
-						//return new MissingFileItem() // Needs to return a content specific icon with a missing overlay - needs to lack all print operations
-					}
-				}).ToList();
+					return new MessageItem($"{printItem.Name} (Missing)");
+					//return new MissingFileItem() // Needs to return a content specific icon with a missing overlay - needs to lack all print operations
+				}
+			}).ToList();
 
-				UiThread.RunOnIdle(this.OnReloaded);
-			});
+			UiThread.RunOnIdle(this.OnReloaded);
 		}
 
 		public override async void Add(IEnumerable<ILibraryItem> items)

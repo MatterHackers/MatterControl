@@ -147,58 +147,55 @@ namespace MatterHackers.MatterControl.Library
 		{
 			SearchOption searchDepth = recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
 
-			await Task.Run(() =>
+			try
 			{
-				try
+				string filter = this.KeywordFilter.Trim();
+
+				var allFiles = Directory.GetFiles(fullPath, "*.*", searchDepth);
+
+				var zipFiles = allFiles.Where(f => Path.GetExtension(f).IndexOf(".zip", StringComparison.OrdinalIgnoreCase) != -1);
+
+				var nonZipFiles = allFiles.Except(zipFiles);
+
+				List<ILibraryContainerLink> containers;
+				if (filter == "")
 				{
-					string filter = this.KeywordFilter.Trim();
-
-					var allFiles = Directory.GetFiles(fullPath, "*.*", searchDepth);
-
-					var zipFiles = allFiles.Where(f => Path.GetExtension(f).IndexOf(".zip", StringComparison.OrdinalIgnoreCase) != -1);
-
-					var nonZipFiles = allFiles.Except(zipFiles);
-
-					List<ILibraryContainerLink> containers;
-					if (filter == "")
-					{
-						var directories = Directory.GetDirectories(fullPath, "*.*", searchDepth).Select(p => new DirectoryContainerLink(p)).ToList<ILibraryContainerLink>();
-						containers = directories.Concat(zipFiles.Select(f => new LocalZipContainerLink(f))).OrderBy(d => d.Name).ToList();
-					}
-					else
-					{
-						containers = new List<ILibraryContainerLink>();
-					}
-
-					var matchedFiles = (filter == "") ? nonZipFiles : nonZipFiles.Where(filePath =>
-					{
-						string fileName = Path.GetFileName(filePath);
-						return FileNameContainsFilter(filePath, filter)
-							&& ApplicationController.Instance.Library.IsContentFileType(fileName);
-					});
-
-					UiThread.RunOnIdle(() =>
-					{
-						// Matched containers
-						this.ChildContainers = containers;
-
-						// Matched files projected onto FileSystemFileItem
-						this.Items = matchedFiles.OrderBy(f => f).Select(f => new FileSystemFileItem(f)).ToList<ILibraryItem>();
-
-						this.isDirty = false;
-
-						this.OnReloaded();
-					});
+					var directories = Directory.GetDirectories(fullPath, "*.*", searchDepth).Select(p => new DirectoryContainerLink(p)).ToList<ILibraryContainerLink>();
+					containers = directories.Concat(zipFiles.Select(f => new LocalZipContainerLink(f))).OrderBy(d => d.Name).ToList();
 				}
-				catch (Exception ex)
+				else
 				{
-					this.ChildContainers = new List<ILibraryContainerLink>();
-					this.Items = new List<ILibraryItem>()
-					{
-						new MessageItem("Error loading container - " + ex.Message)
-					};
+					containers = new List<ILibraryContainerLink>();
 				}
-			});
+
+				var matchedFiles = (filter == "") ? nonZipFiles : nonZipFiles.Where(filePath =>
+				{
+					string fileName = Path.GetFileName(filePath);
+					return FileNameContainsFilter(filePath, filter)
+						&& ApplicationController.Instance.Library.IsContentFileType(fileName);
+				});
+
+				UiThread.RunOnIdle(() =>
+				{
+					// Matched containers
+					this.ChildContainers = containers;
+
+					// Matched files projected onto FileSystemFileItem
+					this.Items = matchedFiles.OrderBy(f => f).Select(f => new FileSystemFileItem(f)).ToList<ILibraryItem>();
+
+					this.isDirty = false;
+
+					this.OnReloaded();
+				});
+			}
+			catch (Exception ex)
+			{
+				this.ChildContainers = new List<ILibraryContainerLink>();
+				this.Items = new List<ILibraryItem>()
+				{
+					new MessageItem("Error loading container - " + ex.Message)
+				};
+			}
 		}
 
 		private bool FileNameContainsFilter(string filename, string filter)
@@ -310,7 +307,6 @@ namespace MatterHackers.MatterControl.Library
 				this.GetFilesAndCollectionsInCurrentDirectory();
 			}
 		}
-			
 
 		public override void Remove(IEnumerable<ILibraryItem> items)
 		{

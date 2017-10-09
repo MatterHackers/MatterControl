@@ -30,7 +30,6 @@ either expressed or implied, of the FreeBSD Project.
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
@@ -50,37 +49,34 @@ namespace MatterHackers.MatterControl.Library
 
 		private void ReloadContainer()
 		{
-			Task.Run(() =>
+			// TODO: Long term do we want to have multiple categories in the view - OEM parts and printer specific calibration parts? Easy to do if so
+			/*
+			IEnumerable<string> printerFiles;
+
+			string printerCalibrationFiles = ActiveSliceSettings.Instance.GetValue("calibration_files");
+			if (string.IsNullOrEmpty(printerCalibrationFiles))
 			{
-				// TODO: Long term do we want to have multiple categories in the view - OEM parts and printer specific calibration parts? Easy to do if so
-				/*
-				IEnumerable<string> printerFiles;
+				return;
+			}
 
-				string printerCalibrationFiles = ActiveSliceSettings.Instance.GetValue("calibration_files");
-				if (string.IsNullOrEmpty(printerCalibrationFiles))
-				{
-					return;
-				}
+			string[] calibrationPrintFileNames = printerCalibrationFiles.Split(';');
+			if (calibrationPrintFileNames.Length < 0)
+			{
+				printerFiles = Enumerable.Empty<string>();
+			}
+			else
+			{
+				printerFiles = calibrationPrintFileNames;
+			} */
 
-				string[] calibrationPrintFileNames = printerCalibrationFiles.Split(';');
-				if (calibrationPrintFileNames.Length < 0)
-				{
-					printerFiles = Enumerable.Empty<string>();
-				}
-				else
-				{
-					printerFiles = calibrationPrintFileNames;
-				} */
+			var oemParts = AggContext.StaticData.GetFiles(Path.Combine("OEMSettings", "SampleParts"));
+			Items = oemParts.Select(s =>
+			{
+				// TODO: Won't work on Android - make stream based
+				return new FileSystemFileItem(AggContext.StaticData.MapPath(s));
+			}).ToList<ILibraryItem>();
 
-				var oemParts = AggContext.StaticData.GetFiles(Path.Combine("OEMSettings", "SampleParts"));
-				Items = oemParts.Select(s =>
-				{
-					// TODO: Won't work on Android - make stream based
-					return new FileSystemFileItem(AggContext.StaticData.MapPath(s));
-				}).ToList<ILibraryItem>();
-
-				UiThread.RunOnIdle(this.OnReloaded); 
-			});
+			UiThread.RunOnIdle(this.OnReloaded); 
 		}
 
 		public override void Dispose()

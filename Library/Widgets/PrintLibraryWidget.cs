@@ -744,27 +744,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			WizardWindow.Show(exportPage);
 		}
 
-		/*
-		public async Task<PrintItemWrapper> GetPrintItemWrapperAsync()
-		{
-			return await libraryProvider.GetPrintItemWrapperAsync(this.ItemIndex);
-		} */
-
-		// TODO: We've discussed not doing popup edit in a new window. That's what this did, not worth porting yet...
-		/*
-		private void editButton_Click(object sender, EventArgs e)
-		{
-			//Open export options
-			if (libraryDataView.SelectedItems.Count == 1)
-			{
-
-				OpenPartViewWindow(PartPreviewWindow.View3DWidget.OpenMode.Editing);
-
-				LibraryRowItem libraryItem = libraryDataView.SelectedItems[0];
-				libraryItem.Edit();
-			}
-		} */
-
 		public override void OnMouseEnterBounds(MouseEventArgs mouseEvent)
 		{
 			if (mouseEvent.DragFiles?.Count > 0)

@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl.Library
 				}
 			}
 
-			this.Name = System.IO.Path.GetFileNameWithoutExtension(path);
+			this.Name = Path.GetFileNameWithoutExtension(path);
 
 			this.ChildContainers = directories.Where(d => !string.IsNullOrEmpty(d)).Select(d => 
 				new LocalZipContainerLink(path)

@@ -47,10 +47,7 @@ namespace MatterHackers.MatterControl.Library
 			this.Items = new List<ILibraryItem>();
 			this.Name = "Print Queue".Localize();
 
-			Task.Run(() =>
-			{
-				this.ReloadContainer();
-			});
+			this.ReloadContainer();
 		}
 
 		private void ReloadContainer()
