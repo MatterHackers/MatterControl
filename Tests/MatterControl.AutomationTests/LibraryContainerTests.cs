@@ -37,6 +37,7 @@ using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.Tests.Automation;
 using NUnit.Framework;
@@ -162,7 +163,8 @@ namespace MatterControl.Tests.MatterControl
 
 				if (containerType == typeof(FileSystemContainer))
 				{
-					args.Add(TestContext.CurrentContext.ResolveProjectPath(4));
+					Directory.CreateDirectory(ApplicationDataStorage.Instance.ApplicationTempDataPath);
+					args.Add(ApplicationDataStorage.Instance.ApplicationTempDataPath);
 				}
 				else if (containerType == typeof(RootLibraryContainer)
 					|| !writable.IsAssignableFrom(containerType))
