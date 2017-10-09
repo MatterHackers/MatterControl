@@ -498,6 +498,8 @@ namespace MatterHackers.MatterControl
 			{
 				this.ApplicationExiting = true;
 
+				ApplicationController.Instance.Shutdown();
+
 				// Always call PrinterConnection.Disable on exit unless PrintingFromSd
 				PrinterConnection printerConnection = ApplicationController.Instance.ActivePrinter.Connection;
 				switch(printerConnection.CommunicationState)
