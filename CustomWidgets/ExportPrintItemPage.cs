@@ -241,7 +241,7 @@ namespace MatterHackers.MatterControl
 
 		private void ShowFileIfRequested(string filename)
 		{
-			if (AggContext.OperatingSystem == OSType.Windows)
+			if (AggContext.OperatingSystem == OSType.Windows || AggContext.OperatingSystem == OSType.X11)
 			{
 				if (showInFolderAfterSave.Checked)
 				{
