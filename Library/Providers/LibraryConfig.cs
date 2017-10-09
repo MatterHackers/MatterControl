@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl.Library
 		private List<ILibraryContainerLink> libraryProviders;
 
 		private ILibraryContainer activeContainer;
-		
+
 		public LibraryConfig()
 		{
 			libraryProviders = new List<ILibraryContainerLink>();
@@ -146,12 +146,6 @@ namespace MatterHackers.MatterControl.Library
 		public void RegisterRootProvider(ILibraryContainerLink containerItem)
 		{
 			libraryProviders.Add(containerItem);
-			OnLibraryItemsChanged();
-		}
-
-		public void RegisterCreator(ILibraryContainerLink containerItem)
-		{
-			this.RootLibaryContainer.ChildContainers.Add(containerItem);
 			OnLibraryItemsChanged();
 		}
 

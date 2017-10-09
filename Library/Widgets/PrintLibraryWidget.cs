@@ -241,7 +241,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			var activeContainer = this.libraryView.ActiveContainer;
 
-
 			var writableContainer = activeContainer as ILibraryWritableContainer;
 
 			bool containerSupportsEdits = activeContainer is ILibraryWritableContainer;

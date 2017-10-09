@@ -380,4 +380,3 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		}
 	}
 }
- 

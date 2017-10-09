@@ -176,7 +176,7 @@ namespace MatterHackers.MatterControl.Library
 						return FileNameContainsFilter(filePath, filter)
 							&& ApplicationController.Instance.Library.IsContentFileType(fileName);
 					});
-					
+
 					UiThread.RunOnIdle(() =>
 					{
 						// Matched containers
