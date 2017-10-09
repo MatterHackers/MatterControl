@@ -77,7 +77,6 @@ namespace MatterControl.Tests.MatterControl
 			// Find and validate all UIField types, skipping abstract classes
 			foreach (var fieldType in PluginFinder.FindTypes<UIField>().Where(fieldType => !fieldType.IsAbstract))
 			{
-				
 				if (fieldType.Name == "UIField")
 				{
 					continue;

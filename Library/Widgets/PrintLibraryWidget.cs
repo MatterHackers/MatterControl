@@ -100,7 +100,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				Name = "Show Folders Toggle",
 				Checked = UserSettings.Instance.get("ShowContainers") == "1"
 			};
-			showFolders.CheckedStateChanged += (s, e) =>
+			showFolders.CheckedStateChanged += async (s, e) =>
 			{
 				UserSettings.Instance.set("ShowContainers", showFolders.Checked ? "1" : "0");
 				libraryView.Reload();
@@ -236,11 +236,10 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			// Release
 			if (e.PreviousContainer != null)
 			{
-				e.PreviousContainer.Reloaded -= UpdateStatus;
+				e.PreviousContainer.ContentChanged -= UpdateStatus;
 			}
 
 			var activeContainer = this.libraryView.ActiveContainer;
-
 
 			var writableContainer = activeContainer as ILibraryWritableContainer;
 
@@ -252,7 +251,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			searchInput.Text = activeContainer.KeywordFilter;
 			breadCrumbWidget.SetBreadCrumbs(activeContainer);
 
-			activeContainer.Reloaded += UpdateStatus;
+			activeContainer.ContentChanged += UpdateStatus;
 
 			UpdateStatus(null, null);
 		}
@@ -639,7 +638,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			if (libraryView?.ActiveContainer != null)
 			{
-				libraryView.ActiveContainer.Reloaded -= UpdateStatus;
+				libraryView.ActiveContainer.ContentChanged -= UpdateStatus;
 				ApplicationController.Instance.Library.ContainerChanged -= Library_ContainerChanged;
 			}
 
@@ -744,27 +743,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			WizardWindow.Show(exportPage);
 		}
-
-		/*
-		public async Task<PrintItemWrapper> GetPrintItemWrapperAsync()
-		{
-			return await libraryProvider.GetPrintItemWrapperAsync(this.ItemIndex);
-		} */
-
-		// TODO: We've discussed not doing popup edit in a new window. That's what this did, not worth porting yet...
-		/*
-		private void editButton_Click(object sender, EventArgs e)
-		{
-			//Open export options
-			if (libraryDataView.SelectedItems.Count == 1)
-			{
-
-				OpenPartViewWindow(PartPreviewWindow.View3DWidget.OpenMode.Editing);
-
-				LibraryRowItem libraryItem = libraryDataView.SelectedItems[0];
-				libraryItem.Edit();
-			}
-		} */
 
 		public override void OnMouseEnterBounds(MouseEventArgs mouseEvent)
 		{

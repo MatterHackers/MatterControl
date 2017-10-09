@@ -49,11 +49,6 @@ namespace MatterHackers.MatterControl.Library
 			}
 		}
 
-		public static void AddItem(this ILibraryContainer container, PrintItemWrapper printeItemWrapper)
-		{
-			throw new NotImplementedException("container.AddItem(PrintItemWrapper)");
-		}
-
 		public static void Add(this Dictionary<string, IContentProvider> list, IEnumerable<string> extensions, IContentProvider provider)
 		{
 			foreach (var extension in extensions)

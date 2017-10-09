@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
@@ -46,9 +47,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 	{
 		private EventHandler unregisterEvents;
 
-		internal GuiWidget contentView;
-
 		private ILibraryContext LibraryContext;
+
+		/// <summary>
+		/// The original content view before it was replaced by a container default view
+		/// </summary>
+		private GuiWidget stashedContentView = new IconListView();
 
 		// Default constructor uses IconListView
 		public ListView(ILibraryContext context)
@@ -69,7 +73,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.ListContentView = libraryView;
 
 			context.ContainerChanged += ActiveContainer_Changed;
-			context.ContainerReloaded += ActiveContainer_Reloaded;
+			context.ContentChanged += ActiveContainer_ContentChanged;
 		}
 
 		public bool ShowItems { get; set; } = true;
@@ -83,43 +87,46 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		public RGBA_Bytes ThumbnailBackground { get; } = ActiveTheme.Instance.TertiaryBackgroundColor.AdjustLightness(1.05).GetAsRGBA_Bytes();
 		public RGBA_Bytes ThumbnailForeground { get; set; } = ActiveTheme.Instance.PrimaryAccentColor;
 
-		private GuiWidget stashedView = null;
-
-		private void ActiveContainer_Changed(object sender, ContainerChangedEventArgs e)
+		private async void ActiveContainer_Changed(object sender, ContainerChangedEventArgs e)
 		{
 			var activeContainer = e.ActiveContainer;
 
+			// Anytime the container changes, 
 			Type targetType = activeContainer?.DefaultView;
-			if (targetType != null 
+			if (targetType != null
 				&& targetType != this.ListContentView.GetType())
 			{
-				stashedView = this.contentView;
+				// If no original view is stored in stashedContentView then store a reference before the switch
+				if (stashedContentView == null)
+				{
+					stashedContentView = this.ListContentView;
+				}
 
 				// If the current view doesn't match the view requested by the container, construct and switch to the requested view
 				var targetView = Activator.CreateInstance(targetType) as GuiWidget;
 				if (targetView != null)
 				{
-					this.SetContentView(targetView);
+					this.ListContentView = targetView;
 				}
 			}
-			else if (stashedView != null)
+			else if (stashedContentView != null)
 			{
 				// Switch back to the original view
-				this.SetContentView(stashedView);
-				stashedView = null;
+				this.ListContentView = stashedContentView;
+				stashedContentView = null;
 			}
 
-			DisplayContainerContent(activeContainer);
+			await DisplayContainerContent(activeContainer);
 		}
 
-		public void Reload()
+		public async Task Reload()
 		{
-			DisplayContainerContent(ActiveContainer);
+			await DisplayContainerContent(ActiveContainer);
 		}
 
-		private void ActiveContainer_Reloaded(object sender, EventArgs e)
+		private async void ActiveContainer_ContentChanged(object sender, EventArgs e)
 		{
-			DisplayContainerContent(ActiveContainer);
+			await DisplayContainerContent(ActiveContainer);
 		}
 
 		private List<ListViewItem> items = new List<ListViewItem>();
@@ -130,14 +137,13 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		/// Empties the list children and repopulates the list with the source container content
 		/// </summary>
 		/// <param name="sourceContainer">The container to load</param>
-		private void DisplayContainerContent(ILibraryContainer sourceContainer)
+		private async Task DisplayContainerContent(ILibraryContainer sourceContainer)
 		{
 			if (this.ActiveContainer is ILibraryWritableContainer activeWritable)
 			{
 				activeWritable.ItemContentChanged -= WritableContainer_ItemContentChanged;
 			}
 
-			UiThread.RunOnIdle(() =>
 			{
 				if (sourceContainer == null)
 				{
@@ -153,6 +159,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 				var itemsContentView = contentView as IListContentView;
 				itemsContentView.ClearItems();
+
+				// Wait for the container to load
+				await Task.Run(() =>
+				{
+					sourceContainer.Load();
+				});
 
 				int width = itemsContentView.ThumbWidth;
 				int height = itemsContentView.ThumbHeight;
@@ -197,7 +209,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				}
 
 				this.Invalidate();
-			});
+			}
 		}
 
 		private void WritableContainer_ItemContentChanged(object sender, ItemChangedEventArgs e)
@@ -216,16 +228,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			List
 		}
 
-		private void SetContentView(GuiWidget contentView)
-		{
-			this.ScrollArea.CloseAllChildren();
+		// Default to IconListView
+		private GuiWidget contentView = new IconListView();
 
-			this.contentView = contentView;
-			this.contentView.HAnchor = HAnchor.Stretch;
-			this.contentView.Name = "Library ListView";
-			this.AddChild(this.contentView);
-		}
-
+		/// <summary>
+		/// The GuiWidget responsible for rendering ListViewItems
+		/// </summary>
 		public GuiWidget ListContentView
 		{
 			get { return contentView; }
@@ -233,13 +241,15 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				if (value is IListContentView)
 				{
-					SetContentView(value);
-
-					// Allow some time for layout to occur and contentView to become sized before loading content
-					UiThread.RunOnIdle(() =>
+					if (contentView != null)
 					{
-						DisplayContainerContent(ActiveContainer);
-					});
+						this.ScrollArea.CloseAllChildren();
+
+						this.contentView = value;
+						this.contentView.HAnchor = HAnchor.Stretch;
+						this.contentView.Name = "Library ListView";
+						this.AddChild(this.contentView);
+					}
 				}
 				else
 				{
@@ -364,12 +374,22 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public ListViewItem DragSourceRowItem { get; set; }
 
+		public override void OnLoad(EventArgs args)
+		{
+			if (this.ListContentView.Children.Count <= 0)
+			{
+				this.Reload();
+			}
+
+			base.OnLoad(args);
+		}
+
 		public override void OnClosed(ClosedEventArgs e)
 		{
 			if (this.LibraryContext != null)
 			{
 				this.LibraryContext.ContainerChanged -= this.ActiveContainer_Changed;
-				this.LibraryContext.ContainerReloaded -= this.ActiveContainer_Reloaded;
+				this.LibraryContext.ContentChanged -= this.ActiveContainer_ContentChanged;
 			}
 
 			unregisterEvents?.Invoke(this, null);
@@ -377,4 +397,3 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		}
 	}
 }
- 

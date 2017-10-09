@@ -72,7 +72,6 @@ namespace MatterHackers.MatterControl.Library
 				directoryWatcher.EnableRaisingEvents = true;
 			}
 #endif
-			GetFilesAndCollectionsInCurrentDirectory();
 		}
 
 		// Indicates if the new AMF file should use the original file name incremented until no name collision occurs
@@ -81,12 +80,6 @@ namespace MatterHackers.MatterControl.Library
 		public override void Activate()
 		{
 			this.isActiveContainer = true;
-
-			if (isDirty)
-			{
-				// Requires reload
-				GetFilesAndCollectionsInCurrentDirectory();
-			}
 			base.Activate();
 		}
 
@@ -109,11 +102,6 @@ namespace MatterHackers.MatterControl.Library
 				if (keywordFilter != value)
 				{
 					keywordFilter = value;
-
-					if (isActiveContainer)
-					{
-						GetFilesAndCollectionsInCurrentDirectory(true);
-					}
 				}
 			}
 		}
@@ -139,66 +127,63 @@ namespace MatterHackers.MatterControl.Library
 			// Only refresh content if we're the active container
 			if (isActiveContainer)
 			{
-				GetFilesAndCollectionsInCurrentDirectory();
+				this.Load(false);
 			}
 		}
 
-		private async void GetFilesAndCollectionsInCurrentDirectory(bool recursive = false)
+		public override void Load()
+		{
+			this.Load(false);
+		}
+
+		public void Load(bool recursive)
 		{
 			SearchOption searchDepth = recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
 
-			await Task.Run(() =>
+			try
 			{
-				try
+				string filter = this.KeywordFilter.Trim();
+
+				var allFiles = Directory.GetFiles(fullPath, "*.*", searchDepth);
+
+				var zipFiles = allFiles.Where(f => Path.GetExtension(f).IndexOf(".zip", StringComparison.OrdinalIgnoreCase) != -1);
+
+				var nonZipFiles = allFiles.Except(zipFiles);
+
+				List<ILibraryContainerLink> containers;
+				if (filter == "")
 				{
-					string filter = this.KeywordFilter.Trim();
-
-					var allFiles = Directory.GetFiles(fullPath, "*.*", searchDepth);
-
-					var zipFiles = allFiles.Where(f => Path.GetExtension(f).IndexOf(".zip", StringComparison.OrdinalIgnoreCase) != -1);
-
-					var nonZipFiles = allFiles.Except(zipFiles);
-
-					List<ILibraryContainerLink> containers;
-					if (filter == "")
-					{
-						var directories = Directory.GetDirectories(fullPath, "*.*", searchDepth).Select(p => new DirectoryContainerLink(p)).ToList<ILibraryContainerLink>();
-						containers = directories.Concat(zipFiles.Select(f => new LocalZipContainerLink(f))).OrderBy(d => d.Name).ToList();
-					}
-					else
-					{
-						containers = new List<ILibraryContainerLink>();
-					}
-
-					var matchedFiles = (filter == "") ? nonZipFiles : nonZipFiles.Where(filePath =>
-					{
-						string fileName = Path.GetFileName(filePath);
-						return FileNameContainsFilter(filePath, filter)
-							&& ApplicationController.Instance.Library.IsContentFileType(fileName);
-					});
-					
-					UiThread.RunOnIdle(() =>
-					{
-						// Matched containers
-						this.ChildContainers = containers;
-
-						// Matched files projected onto FileSystemFileItem
-						this.Items = matchedFiles.OrderBy(f => f).Select(f => new FileSystemFileItem(f)).ToList<ILibraryItem>();
-
-						this.isDirty = false;
-
-						this.OnReloaded();
-					});
+					var directories = Directory.GetDirectories(fullPath, "*.*", searchDepth).Select(p => new DirectoryContainerLink(p)).ToList<ILibraryContainerLink>();
+					containers = directories.Concat(zipFiles.Select(f => new LocalZipContainerLink(f))).OrderBy(d => d.Name).ToList();
 				}
-				catch (Exception ex)
+				else
 				{
-					this.ChildContainers = new List<ILibraryContainerLink>();
-					this.Items = new List<ILibraryItem>()
-					{
-						new MessageItem("Error loading container - " + ex.Message)
-					};
+					containers = new List<ILibraryContainerLink>();
 				}
-			});
+
+				var matchedFiles = (filter == "") ? nonZipFiles : nonZipFiles.Where(filePath =>
+				{
+					string fileName = Path.GetFileName(filePath);
+					return FileNameContainsFilter(filePath, filter)
+						&& ApplicationController.Instance.Library.IsContentFileType(fileName);
+				});
+
+				// Matched containers
+				this.ChildContainers = containers;
+
+				// Matched files projected onto FileSystemFileItem
+				this.Items = matchedFiles.OrderBy(f => f).Select(f => new FileSystemFileItem(f)).ToList<ILibraryItem>();
+
+				this.isDirty = false;
+			}
+			catch (Exception ex)
+			{
+				this.ChildContainers = new List<ILibraryContainerLink>();
+				this.Items = new List<ILibraryItem>()
+				{
+					new MessageItem("Error loading container - " + ex.Message)
+				};
+			}
 		}
 
 		private bool FileNameContainsFilter(string filename, string filter)
@@ -216,8 +201,6 @@ namespace MatterHackers.MatterControl.Library
 
 			return true;
 		}
-
-		#region Container Actions
 
 		private string GetNonCollidingName(string fileName)
 		{
@@ -241,7 +224,7 @@ namespace MatterHackers.MatterControl.Library
 				incrementedFilePath = Path.Combine(this.fullPath, $"{fileName} ({foundCount++}){fileExtension}");
 
 				// Continue incrementing while any matching file exists
-			} while (Directory.GetFiles(incrementedFilePath).Any());
+			} while (File.Exists(incrementedFilePath));
 
 			return incrementedFilePath;
 		}
@@ -307,10 +290,9 @@ namespace MatterHackers.MatterControl.Library
 
 			if (this.isDirty)
 			{
-				this.GetFilesAndCollectionsInCurrentDirectory();
+				this.OnContentChanged();
 			}
 		}
-			
 
 		public override void Remove(IEnumerable<ILibraryItem> items)
 		{
@@ -324,12 +306,7 @@ namespace MatterHackers.MatterControl.Library
 			{
 				if (Directory.Exists(directoryLink.Path))
 				{
-					//string destPath = Path.Combine(Path.GetDirectoryName(fileSystemContainer.fullPath), revisedName);
-					//Directory.Move(fileSystemContainer.fullPath, destPath);
-
-					//await Task.Delay(150);
-
-					//GetFilesAndCollectionsInCurrentDirectory();
+					Process.Start(this.fullPath);
 				}
 			}
 			else if (item is FileSystemFileItem fileItem)
@@ -345,12 +322,10 @@ namespace MatterHackers.MatterControl.Library
 
 					fileItem.Path = destFile;
 
-					this.OnReloaded();
+					this.OnContentChanged();
 				}
 			}
 		}
-
-		#endregion
 
 		public class DirectoryContainerLink : FileSystemItem, ILibraryContainerLink
 		{

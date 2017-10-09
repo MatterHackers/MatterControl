@@ -32,25 +32,35 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Threading.Tasks;
+using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.Library
 {
 	public class ZipMemoryContainer : LibraryContainer
 	{
-		public ZipMemoryContainer(string relativeDirectory, string path)
+		public ZipMemoryContainer()
+		{
+		}
+
+		public string RelativeDirectory { get; set; }
+
+		public string Path { get; set; }
+
+		public override void Load()
 		{
 			//string hashCode = this.Url.GetHashCode().ToString();
 			var items = new Dictionary<string, long>();
 			var directories = new HashSet<string>();
 
-			using (var file = File.OpenRead(path))
+			using (var file = File.OpenRead(this.Path))
 			using (var zip = new ZipArchive(file, ZipArchiveMode.Read))
 			{
 				foreach (var entry in zip.Entries)
 				{
-					if (entry.FullName.StartsWith(relativeDirectory))
+					if (entry.FullName.StartsWith(RelativeDirectory))
 					{
-						string remainingPath = entry.FullName.Substring(relativeDirectory.Length)?.Trim().TrimStart('/');
+						string remainingPath = entry.FullName.Substring(RelativeDirectory.Length)?.Trim().TrimStart('/');
 
 						var segments = remainingPath.Split('/');
 						var firstDirectory = segments.First();
@@ -68,15 +78,15 @@ namespace MatterHackers.MatterControl.Library
 				}
 			}
 
-			this.Name = System.IO.Path.GetFileNameWithoutExtension(path);
+			this.Name = System.IO.Path.GetFileNameWithoutExtension(this.Path);
 
-			this.ChildContainers = directories.Where(d => !string.IsNullOrEmpty(d)).Select(d => 
-				new LocalZipContainerLink(path)
+			this.ChildContainers = directories.Where(d => !string.IsNullOrEmpty(d)).Select(d =>
+				new LocalZipContainerLink(this.Path)
 				{
-					CurrentDirectory = relativeDirectory.Length == 0 ? d : $"{relativeDirectory}/{d}"
+					CurrentDirectory = RelativeDirectory.Length == 0 ? d : $"{RelativeDirectory}/{d}"
 				}).ToList<ILibraryContainerLink>();
 
-			this.Items = items.Select(kvp => new ZipMemoryItem(path, relativeDirectory.Length == 0 ? kvp.Key : $"{relativeDirectory}/{kvp.Key}", kvp.Value)).ToList<ILibraryItem>();
+			this.Items = items.Select(kvp => new ZipMemoryItem(this.Path, RelativeDirectory.Length == 0 ? kvp.Key : $"{RelativeDirectory}/{kvp.Key}", kvp.Value)).ToList<ILibraryItem>();
 		}
 
 		public override void Dispose()

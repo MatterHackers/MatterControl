@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl.Library
 
 		Type DefaultView { get; }
 
-		event EventHandler Reloaded;
+		event EventHandler ContentChanged;
 
 		List<ILibraryContainerLink> ChildContainers { get; }
 		List<ILibraryItem> Items { get; }
@@ -55,6 +55,7 @@ namespace MatterHackers.MatterControl.Library
 
 		void Deactivate();
 		void Activate();
+		void Load();
 	}
 
 	public interface ILibraryWritableContainer : ILibraryContainer

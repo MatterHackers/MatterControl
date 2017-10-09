@@ -46,28 +46,20 @@ namespace MatterHackers.MatterControl.Library
 			this.ChildContainers = new List<ILibraryContainerLink>();
 			this.Items = new List<ILibraryItem>();
 			this.Name = "Print Queue".Localize();
-
-			Task.Run(() =>
-			{
-				this.ReloadContainer();
-			});
 		}
 
-		private void ReloadContainer()
+		public override void Load()
 		{
 			this.Items = QueueData.Instance.PrintItems.Select(p => new FileSystemFileItem(p.FileLocation)
 			{
 				Name = p.Name
 			}).ToList<ILibraryItem>();
-
-			UiThread.RunOnIdle(this.OnReloaded);
 		}
 
 		public override async void Add(IEnumerable<ILibraryItem> items)
 		{
 			await AddAllItems(items);
-
-			this.ReloadContainer();
+			this.OnContentChanged();
 		}
 
 		public static async Task AddAllItems(IEnumerable<ILibraryItem> items)
@@ -131,7 +123,7 @@ namespace MatterHackers.MatterControl.Library
 				}
 			}
 
-			this.ReloadContainer();
+			this.OnContentChanged();
 		}
 
 		public override bool AllowAction(ContainerActions containerActions)

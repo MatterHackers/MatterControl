@@ -66,10 +66,15 @@ namespace MatterHackers.MatterControl.Library
 				this.Name = currentDirectory.Split('/').Last();
 			}
 		}
-		
+
 		public Task<ILibraryContainer> GetContainer(Action<double, string> reportProgress)
 		{
-			return Task.FromResult<ILibraryContainer>(new ZipMemoryContainer(this.currentDirectory, this.Path));
+			return Task.FromResult<ILibraryContainer>(
+				new ZipMemoryContainer()
+				{
+					RelativeDirectory = this.currentDirectory,
+					Path = this.Path
+				});
 		}
 	}
 }
