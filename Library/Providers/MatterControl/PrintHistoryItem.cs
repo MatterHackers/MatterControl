@@ -27,17 +27,42 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Threading.Tasks;
+using MatterHackers.MatterControl.DataStorage;
 
 namespace MatterHackers.MatterControl.Library
 {
-	public class CreatorsContainer : LibraryContainer
+	public class PrintHistoryItem : ILibraryContentStream
 	{
-		public CreatorsContainer()
+		public PrintHistoryItem(PrintTask printTask)
 		{
+			this.PrintTask = printTask;
 		}
 
-		public override void Dispose()
+		public PrintTask PrintTask { get; }
+
+		public long FileSize => 0;
+
+		public string ContentType => "";
+
+		public string FileName => "";
+
+		public string AssetPath => "";
+
+		public string ID { get; } = Guid.NewGuid().ToString();
+
+		public string Name => this.PrintTask.PrintName;
+
+		public bool IsProtected => true;
+
+		public bool IsVisible => true;
+
+		public bool LocalContentExists => true;
+
+		public Task<StreamAndLength> GetContentStream(Action<double, string> reportProgress)
 		{
+			throw new NotImplementedException();
 		}
 	}
 }

@@ -27,75 +27,27 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintHistory;
 
 namespace MatterHackers.MatterControl.Library
 {
-	public class HistoryRowItem : ILibraryContentStream
+	public class PrintHistoryContainer : LibraryContainer
 	{
-		public HistoryRowItem(PrintTask printTask)
-		{
-			this.PrintTask = printTask;
-		}
-
-		public PrintTask PrintTask { get; }
-
-		public long FileSize => 0;
-
-		public string ContentType => "";
-
-		public string FileName => "";
-
-		public string AssetPath => "";
-
-		public string ID { get; } = Guid.NewGuid().ToString();
-
-		public string Name => this.PrintTask.PrintName;
-
-		public bool IsProtected => true;
-
-		public bool IsVisible => true;
-
-		public bool LocalContentExists => true;
-		
-		public Task<StreamAndLength> GetContentStream(Action<double, string> reportProgress)
-		{
-			throw new NotImplementedException();
-		}
-	}
-
-	public class HistoryContainer : LibraryContainer
-	{
-		public HistoryContainer()
+		public PrintHistoryContainer()
 		{
 			this.ChildContainers = new List<ILibraryContainerLink>();
 			this.Items = new List<ILibraryItem>();
 			this.Name = "Print History".Localize();
 			this.DefaultView = typeof(HistoryListView);
-
-			//PrintHistoryData.Instance.ItemAdded.RegisterEvent((sender, e) => OnDataReloaded(null), ref unregisterEvent);
-			
-			this.ReloadContainer();
 		}
 
-		private void ReloadContainer()
+		public override void Load()
 		{
-			Task.Run(() =>
-			{
-				var printHistory = PrintHistoryData.Instance.GetHistoryItems(25);
-
-				// PrintItems projected onto FileSystemFileItem
-				Items = printHistory.Select(f => new HistoryRowItem(f)).ToList<ILibraryItem>();
-
-				UiThread.RunOnIdle(this.OnReloaded);
-			});
+			// PrintItems projected onto FileSystemFileItem
+			Items = PrintHistoryData.Instance.GetHistoryItems(25).Select(f => new PrintHistoryItem(f)).ToList<ILibraryItem>();
 		}
 	}
 }

@@ -195,8 +195,7 @@ namespace MatterHackers.MatterControl
 		{
 			lock(thumbsLock)
 			{
-				if (thumbnailGenerator == null
-					|| thumbnailGenerator.IsCompleted)
+				if (thumbnailGenerator == null)
 				{
 					// Spin up a new thread once needed
 					thumbnailGenerator = Task.Run((Action)ThumbGeneration);
@@ -211,7 +210,7 @@ namespace MatterHackers.MatterControl
 		{
 			Thread.CurrentThread.Name = $"ThumbnailGeneration";
 
-			while(!MatterControlApplication.Instance.HasBeenClosed)
+			while(!MatterControlApplication.Instance.ApplicationExiting)
 			{
 				Thread.Sleep(100);
 
@@ -235,13 +234,16 @@ namespace MatterHackers.MatterControl
 				}
 				catch (ThreadAbortException e)
 				{
-					return;
+					Console.WriteLine("ThumbGeneration Thread abort");
 				}
 				catch (Exception ex)
 				{
 					Console.WriteLine("Error generating thumbnail: " + ex.Message);
 				}
 			}
+
+			// Null task reference on exit
+			thumbnailGenerator = null;
 		}
 
 		public static Func<PrinterInfo,string, Task<PrinterSettings>> GetPrinterProfileAsync;
@@ -343,20 +345,18 @@ namespace MatterHackers.MatterControl
 			var rootLibraryCollection = Datastore.Instance.dbSQLite.Table<PrintItemCollection>().Where(v => v.Name == "_library").Take(1).FirstOrDefault();
 			if (rootLibraryCollection != null)
 			{
-				int rooteLibraryID = rootLibraryCollection.Id;
-
 				this.Library.RegisterRootProvider(
 					new DynamicContainerLink(
 						"Local Library".Localize(),
 						LibraryProviderHelpers.LoadInvertIcon("FileDialog", "library_folder.png"),
-						() => new SqliteLibraryContainer(rooteLibraryID)));
+						() => new SqliteLibraryContainer(rootLibraryCollection.Id)));
 			}
 
 			this.Library.RegisterRootProvider(
 				new DynamicContainerLink(
 					"Print History".Localize(),
 					LibraryProviderHelpers.LoadInvertIcon("FileDialog", "folder.png"),
-					() => new HistoryContainer())
+					() => new PrintHistoryContainer())
 				{
 					IsReadOnly = true
 				});
@@ -476,6 +476,14 @@ namespace MatterHackers.MatterControl
 					}
 				}
 			}, ref unregisterEvents);
+		}
+
+		internal void Shutdown()
+		{
+			// Ensure all threads shutdown gracefully on close
+
+			// Release any waiting generator threads
+			thumbGenResetEvent?.Set();
 		}
 
 		public void StartSignIn()
@@ -619,7 +627,7 @@ namespace MatterHackers.MatterControl
 					}, "Are you sure you want to sign out? You will not have access to your printer profiles or cloud library.".Localize(), "Sign Out?".Localize(), StyledMessageBox.MessageType.YES_NO, "Sign Out".Localize(), "Cancel".Localize());
 				}
 				else // just run the sign out event
-				{					
+				{
 					SignOutAction?.Invoke();
 				}
 			}
@@ -822,7 +830,6 @@ namespace MatterHackers.MatterControl
 					UiThread.RunOnIdle(() => WizardWindow.Show<LicenseAgreementPage>());
 				}
 			}
-
 
 			if (this.ActivePrinter.Settings.PrinterSelected
 				&& this.ActivePrinter.Settings.GetValue<bool>(SettingsKey.auto_connect))

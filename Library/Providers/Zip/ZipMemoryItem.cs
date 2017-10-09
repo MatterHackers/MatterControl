@@ -50,7 +50,7 @@ namespace MatterHackers.MatterControl.Library
 		public string RelativePath { get; set; }
 
 		public string ContentType => System.IO.Path.GetExtension(this.Name).ToLower().Trim('.');
-		
+
 		public string AssetPath { get; } = null;
 
 		public string FileName => System.IO.Path.GetFileName(this.Name);

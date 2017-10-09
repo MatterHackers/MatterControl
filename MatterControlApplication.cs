@@ -378,38 +378,6 @@ namespace MatterHackers.MatterControl
 			return instance;
 		}
 
-		public static void WriteTestGCodeFile()
-		{
-			using (StreamWriter file = new StreamWriter("PerformanceTest.gcode"))
-			{
-				//int loops = 150000;
-				int loops = 150;
-				int steps = 200;
-				double radius = 50;
-				Vector2 center = new Vector2(150, 100);
-
-				file.WriteLine("G28 ; home all axes");
-				file.WriteLine("G90 ; use absolute coordinates");
-				file.WriteLine("G21 ; set units to millimeters");
-				file.WriteLine("G92 E0");
-				file.WriteLine("G1 F7800");
-				file.WriteLine("G1 Z" + (5).ToString());
-				WriteMove(file, center);
-
-				for (int loop = 0; loop < loops; loop++)
-				{
-					for (int step = 0; step < steps; step++)
-					{
-						Vector2 nextPosition = new Vector2(radius, 0);
-						nextPosition.Rotate(MathHelper.Tau / steps * step);
-						WriteMove(file, center + nextPosition);
-					}
-				}
-
-				file.WriteLine("M84     ; disable motors");
-			}
-		}
-
 		public void LaunchBrowser(string targetUri)
 		{
 			UiThread.RunOnIdle(() =>
@@ -465,23 +433,23 @@ namespace MatterHackers.MatterControl
 			QueueData.Instance.SaveDefaultQueue();
 
 			// If we are waiting for a response and get another request, just cancel the close until we get a response.
-			if(closeMessageBoxIsOpen)
+			if(exitDialogOpen)
 			{
 				cancelClose = true;
 			}
 
-			if (!closeHasBeenConfirmed 
-				&& !closeMessageBoxIsOpen
+			if (!ApplicationExiting 
+				&& !exitDialogOpen
 				&& ApplicationController.Instance.ActivePrinter.Connection.PrinterIsPrinting)
 			{
 				cancelClose = true;
 				// Record that we are waiting for a response to the request to close
-				closeMessageBoxIsOpen = true;
+				exitDialogOpen = true;
 
 				if (ApplicationController.Instance.ActivePrinter.Connection.CommunicationState != CommunicationStates.PrintingFromSd)
 				{
 					// Needed as we can't assign to CancelClose inside of the lambda below
-					StyledMessageBox.ShowMessageBox(ConditionalyCloseNow,
+					StyledMessageBox.ShowMessageBox(ConditionalExit,
 						"Are you sure you want to abort the current print and close MatterControl?".Localize(),
 						"Abort Print".Localize(),
 						StyledMessageBox.MessageType.YES_NO);
@@ -489,7 +457,7 @@ namespace MatterHackers.MatterControl
 				else
 				{
 					StyledMessageBox.ShowMessageBox(
-						ConditionalyCloseNow,
+						ConditionalExit,
 						"Are you sure you want exit while a print is running from SD Card?\n\nNote: If you exit, it is recommended you wait until the print is completed before running MatterControl again.".Localize(),
 						"Exit while printing".Localize(),
 						StyledMessageBox.MessageType.YES_NO);
@@ -497,7 +465,17 @@ namespace MatterHackers.MatterControl
 			}
 			else if (PartsSheet.IsSaving())
 			{
-				StyledMessageBox.ShowMessageBox(onConfirmExit, savePartsSheetExitAnywayMessage, confirmExit, StyledMessageBox.MessageType.YES_NO);
+				StyledMessageBox.ShowMessageBox(
+					(exitAnyway) =>
+					{
+						if (exitAnyway)
+						{
+							base.OnClosing(out _);
+						}
+					},
+					savePartsSheetExitAnywayMessage, 
+					confirmExit, 
+					StyledMessageBox.MessageType.YES_NO);
 				cancelClose = true;
 			}
 			else if(!cancelClose) // only check if we have not already canceled
@@ -506,26 +484,37 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		bool closeHasBeenConfirmed = false;
-		bool closeMessageBoxIsOpen = false;
-		private void ConditionalyCloseNow(bool continueWithShutdown)
+		public bool ApplicationExiting { get; private set; } = false;
+
+		private bool exitDialogOpen = false;
+
+		private void ConditionalExit(bool exitConfirmed)
 		{
-			// Response received, cecord that we are not waiting anymore.
-			closeMessageBoxIsOpen = false;
-			if (continueWithShutdown)
+			// Record that the exitDialog has closed
+			exitDialogOpen = false;
+
+			// Continue with shutdown if exit confirmed by user
+			if (exitConfirmed)
 			{
-				closeHasBeenConfirmed = true;
-				bool printingFromSdCard = ApplicationController.Instance.ActivePrinter.Connection.CommunicationState == CommunicationStates.PrintingFromSd
-					|| (ApplicationController.Instance.ActivePrinter.Connection.CommunicationState == CommunicationStates.Paused
-					&& ApplicationController.Instance.ActivePrinter.Connection.PrePauseCommunicationState == CommunicationStates.PrintingFromSd);
-				if (!printingFromSdCard)
+				this.ApplicationExiting = true;
+
+				ApplicationController.Instance.Shutdown();
+
+				// Always call PrinterConnection.Disable on exit unless PrintingFromSd
+				PrinterConnection printerConnection = ApplicationController.Instance.ActivePrinter.Connection;
+				switch(printerConnection.CommunicationState)
 				{
-					ApplicationController.Instance.ActivePrinter.Connection.Disable();
+					case CommunicationStates.PrintingFromSd:
+					case CommunicationStates.Paused when printerConnection.PrePauseCommunicationState == CommunicationStates.PrintingFromSd:
+						break;
+
+					default:
+						printerConnection.Disable();
+						break;
 				}
 
-				MatterControlApplication app = MatterControlApplication.Instance;
-				app.RestartOnClose = false;
-				app.Close();
+				this.RestartOnClose = false;
+				this.Close();
 			}
 		}
 
@@ -590,44 +579,6 @@ namespace MatterHackers.MatterControl
 			base.OnLoad(args);
 		}
 
-		private static void HtmlWindowTest()
-		{
-			try
-			{
-				SystemWindow htmlTestWindow = new SystemWindow(640, 480);
-				string htmlContent = "";
-				if (true)
-				{
-					string releaseNotesFile = Path.Combine("C:\\Users\\lbrubaker\\Downloads", "test1.html");
-					htmlContent = File.ReadAllText(releaseNotesFile);
-				}
-				else
-				{
-					WebClient webClient = new WebClient();
-					htmlContent = webClient.DownloadString("http://www.matterhackers.com/s/store?q=pla");
-				}
-
-				HtmlWidget content = new HtmlWidget(htmlContent, RGBA_Bytes.Black);
-				content.AddChild(new GuiWidget()
-				{
-					HAnchor = HAnchor.Absolute,
-					VAnchor = VAnchor.Stretch
-				});
-				content.VAnchor |= VAnchor.Top;
-				content.BackgroundColor = RGBA_Bytes.White;
-				htmlTestWindow.AddChild(content);
-				htmlTestWindow.BackgroundColor = RGBA_Bytes.Cyan;
-				UiThread.RunOnIdle((state) =>
-				{
-					htmlTestWindow.ShowAsSystemWindow();
-				}, 1);
-			}
-			catch
-			{
-				int stop = 1;
-			}
-		}
-
 		public override void OnMouseMove(MouseEventArgs mouseEvent)
 		{
 			// run this first to make sure a child has the chance to take the drag drop event
@@ -681,11 +632,6 @@ namespace MatterHackers.MatterControl
 					(new System.Media.SoundPlayer(mediaStream)).Play();
 				}
 			}
-		}
-
-		private static void WriteMove(StreamWriter file, Vector2 center)
-		{
-			file.WriteLine("G1 X" + center.x.ToString() + " Y" + center.y.ToString());
 		}
 
 		private void CheckOnPrinter()
@@ -743,15 +689,6 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private void onConfirmExit(bool messageBoxResponse)
-		{
-			bool CancelClose;
-			if (messageBoxResponse)
-			{
-				base.OnClosing(out CancelClose);
-			}
-		}
-
 		private static void AssertDebugNotDefined()
 		{
 #if DEBUG
@@ -780,4 +717,3 @@ namespace MatterHackers.MatterControl
 		}
 	}
 }
- 

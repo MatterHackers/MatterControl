@@ -37,13 +37,9 @@ using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.PolygonMesh;
 using MatterHackers.PolygonMesh.Processors;
-
-
-
 
 namespace MatterHackers.MatterControl.Library
 {
@@ -63,17 +59,24 @@ namespace MatterHackers.MatterControl.Library
 	{
 		protected List<PrintItemCollection> childCollections = new List<PrintItemCollection>();
 
+		public SqliteLibraryContainer()
+		{
+			var rootCollection = Datastore.Instance.dbSQLite.Table<PrintItemCollection>().Where(v => v.Name == "_library").Take(1).FirstOrDefault();
+
+			this.Initialize(rootCollection?.Id ?? 0);
+		}
+
 		public SqliteLibraryContainer(int collectionID)
+		{
+			this.Initialize(collectionID);
+		}
+
+		private void Initialize(int collectionID)
 		{
 			this.ChildContainers = new List<ILibraryContainerLink>();
 			this.Items = new List<ILibraryItem>();
 			this.Name = "Local Library".Localize();
 			this.CollectionID = collectionID;
-
-			//PrintHistoryData.Instance.ItemAdded.RegisterEvent((sender, e) => OnDataReloaded(null), ref unregisterEvent);
-			// 	ItemAdded.RegisterEvent(DatabaseFileChange, ref unregisterEvents);
-
-			this.ReloadContainer();
 		}
 
 		public int CollectionID { get; private set; }
@@ -89,44 +92,38 @@ namespace MatterHackers.MatterControl.Library
 				if (base.KeywordFilter != value)
 				{
 					base.KeywordFilter = value;
-					this.ReloadContainer();
+					this.OnContentChanged();
 				}
 			}
 		}
 
-		private void ReloadContainer()
+		public override void Load()
 		{
-			Task.Run(() =>
+			childCollections = GetChildCollections();
+
+			this.ChildContainers = childCollections.Select(c => new SqliteLibraryContainerLink()
 			{
-				childCollections = GetChildCollections();
+				ContainerID = c.Id, Name = c.Name }).ToList<ILibraryContainerLink>(); //
 
-				this.ChildContainers = childCollections.Select(c => new SqliteLibraryContainerLink()
+			// PrintItems projected onto FileSystemFileItem
+			Items = GetLibraryItems(KeywordFilter).Select<PrintItem, ILibraryItem>(printItem =>
+			{
+				if (File.Exists(printItem.FileLocation))
 				{
-					ContainerID = c.Id, Name = c.Name }).ToList<ILibraryContainerLink>(); //
-
-				// PrintItems projected onto FileSystemFileItem
-				Items = GetLibraryItems(KeywordFilter).Select<PrintItem, ILibraryItem>(printItem =>
+					return new SqliteFileItem(printItem);
+				}
+				else
 				{
-					if (File.Exists(printItem.FileLocation))
-					{
-						return new SqliteFileItem(printItem);
-					}
-					else
-					{
-						return new MessageItem($"{printItem.Name} (Missing)");
-						//return new MissingFileItem() // Needs to return a content specific icon with a missing overlay - needs to lack all print operations
-					}
-				}).ToList();
-
-				UiThread.RunOnIdle(this.OnReloaded);
-			});
+					return new MessageItem($"{printItem.Name} (Missing)");
+					//return new MissingFileItem() // Needs to return a content specific icon with a missing overlay - needs to lack all print operations
+				}
+			}).ToList();
 		}
 
 		public override async void Add(IEnumerable<ILibraryItem> items)
 		{
 			await Task.Run(async () =>
 			{
-
 				foreach (var item in items)
 				{
 					switch (item)
@@ -203,8 +200,7 @@ namespace MatterHackers.MatterControl.Library
 					}
 				}
 
-				this.ReloadContainer();
-				this.OnReloaded();
+				this.OnContentChanged();
 			});
 		}
 
@@ -237,7 +233,7 @@ namespace MatterHackers.MatterControl.Library
 				this.Items.Remove(item);
 			}
 
-			this.OnReloaded();
+			this.OnContentChanged();
 		}
 
 		public override void Rename(ILibraryItem selectedItem, string revisedName)
@@ -259,7 +255,7 @@ namespace MatterHackers.MatterControl.Library
 				}
 			}
 
-			this.ReloadContainer();
+			this.OnContentChanged();
 		}
 
 		/// <summary>
@@ -354,7 +350,7 @@ namespace MatterHackers.MatterControl.Library
 			public bool IsProtected { get; set; } = false;
 
 			public bool IsReadOnly { get; set; } = false;
-			
+
 			public bool IsVisible { get; set; } = true;
 
 			public Task<ILibraryContainer> GetContainer(Action<double, string> reportProgress)
