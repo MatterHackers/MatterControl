@@ -60,9 +60,9 @@ namespace MatterHackers.MatterControl.Slicing
 
 		public List<Segment> UnorderedSegments { get { return unorderedSegments; } }
 
-		private List<PathStorage> perimeters;
+		private List<VertexStorage> perimeters;
 
-		public List<PathStorage> Perimeters { get { return perimeters; } }
+		public List<VertexStorage> Perimeters { get { return perimeters; } }
 
 		public SliceLayer(double zHeight)
 		{

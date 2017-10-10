@@ -88,7 +88,7 @@ namespace MatterHackers.MeshVisualizer
 			if (direction.LengthSquared > 0
 				&& (arrows.HasFlag(LineArrows.Start) || arrows.HasFlag(LineArrows.End)))
 			{
-				PathStorage arrow = new PathStorage();
+				VertexStorage arrow = new VertexStorage();
 				arrow.MoveTo(-3, -5);
 				arrow.LineTo(0, 0);
 				arrow.LineTo(3, -5);

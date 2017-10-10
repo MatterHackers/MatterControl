@@ -261,7 +261,7 @@ namespace MatterHackers.Agg.UI
 
 		protected virtual void DoDrawDirectionalArrow(Graphics2D graphics2D)
 		{
-			PathStorage littleArrow = new PathStorage();
+			VertexStorage littleArrow = new VertexStorage();
 			if (this.MenuDirection == Direction.Down)
 			{
 				littleArrow.MoveTo(-4, 0);

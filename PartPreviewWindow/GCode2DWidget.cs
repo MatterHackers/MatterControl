@@ -149,7 +149,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private PathStorage grid = new PathStorage();
+		private VertexStorage grid = new VertexStorage();
 		static RGBA_Bytes gridColor = new RGBA_Bytes(190, 190, 190, 255);
 
 		public override void OnDraw(Graphics2D graphics2D)

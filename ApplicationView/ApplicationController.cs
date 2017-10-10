@@ -162,7 +162,6 @@ namespace MatterHackers.MatterControl
 		internal void ClearActivePrinter()
 		{
 			this.ActivePrinter = emptyPrinter;
-
 		}
 
 		public void RefreshActiveInstance(PrinterSettings updatedPrinterSettings)
@@ -441,6 +440,22 @@ namespace MatterHackers.MatterControl
 				// Release the waiting ThumbnailGeneration task so it can shutdown gracefully
 				thumbGenResetEvent?.Set();
 			};
+
+			PrinterConnection.ErrorReported.RegisterEvent((s, e) =>
+			{
+				var foundStringEventArgs = e as FoundStringEventArgs;
+				if (foundStringEventArgs != null)
+				{
+					string message = "Your printer is reporting a hardware Error. This may prevent your printer from functioning properly.".Localize()
+						+ "\n"
+						+ "\n"
+						+ "Error Reported".Localize() + ":"
+						+ $" \"{foundStringEventArgs.LineToCheck}\".";
+					UiThread.RunOnIdle(() =>
+						StyledMessageBox.ShowMessageBox(null, message, "Printer Hardware Error".Localize())
+					);
+				}
+			}, ref unregisterEvent);
 
 			PrinterConnection.AnyCommunicationStateChanged.RegisterEvent((s, e) =>
 			{
@@ -1198,23 +1213,6 @@ namespace MatterHackers.MatterControl
 
 					this.ActivePrinter.Connection.CommunicationState = CommunicationStates.Connected;
 				}
-			}
-		}
-
-		// TODO: this must be wired up to PrinterConnection.ErrorReported
-		public void PrinterReportsError(object sender, EventArgs e)
-		{
-			var foundStringEventArgs = e as FoundStringEventArgs;
-			if (foundStringEventArgs != null)
-			{
-				string message = "Your printer is reporting a hardware Error. This may prevent your printer from functioning properly.".Localize()
-					+ "\n"
-					+ "\n"
-					+ "Error Reported".Localize() + ":"
-					+ $" \"{foundStringEventArgs.LineToCheck}\".";
-				UiThread.RunOnIdle(() =>
-					StyledMessageBox.ShowMessageBox(null, message, "Printer Hardware Error".Localize())
-				);
 			}
 		}
 
