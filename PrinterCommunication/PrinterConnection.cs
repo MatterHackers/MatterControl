@@ -1308,7 +1308,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				FoundStringEventArgs foundStringEventArgs = e as FoundStringEventArgs;
 				if (foundStringEventArgs != null)
 				{
-					ErrorReported?.Invoke(null, foundStringEventArgs); 
+					ErrorReported.CallEvents(null, foundStringEventArgs); 
 				}
 			}
 		}
