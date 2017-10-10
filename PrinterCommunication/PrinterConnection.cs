@@ -77,6 +77,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 	/// </summary>
 	public class PrinterConnection
 	{
+		public static RootedObjectEventHandler ErrorReported = new RootedObjectEventHandler();
+
 		public static RootedObjectEventHandler AnyCommunicationStateChanged = new RootedObjectEventHandler();
 
 		public static RootedObjectEventHandler AnyConnectionSucceeded = new RootedObjectEventHandler();
@@ -1297,8 +1299,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private bool haveReportedError = false;
 
-		public event EventHandler ErrorReported;
-
 		public void PrinterReportsError(object sender, EventArgs e)
 		{
 			if (!haveReportedError)
@@ -1308,7 +1308,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				FoundStringEventArgs foundStringEventArgs = e as FoundStringEventArgs;
 				if (foundStringEventArgs != null)
 				{
-					ErrorReported?.Invoke(null, foundStringEventArgs);
+					ErrorReported?.Invoke(null, foundStringEventArgs); 
 				}
 			}
 		}
