@@ -276,11 +276,11 @@ namespace MatterHackers.MatterControl
 				int xpos = Math.Max(int.Parse(sizes[0]), -10);
 				int ypos = Math.Max(int.Parse(sizes[1]), -10);
 
-				DesktopPosition = new Point2D(xpos, ypos);
+				this.InitialDesktopPosition = new Point2D(xpos, ypos);
 			}
 			else
 			{
-				DesktopPosition = new Point2D(-1, -1);
+				this.InitialDesktopPosition = new Point2D(-1, -1);
 			}
 
 			this.Maximized = ApplicationSettings.Instance.get(ApplicationSettingsKey.MainWindowMaximized) == "true";
