@@ -110,7 +110,7 @@ namespace MatterHackers.GCodeVisualizer
 				}
 				else
 				{
-					PathStorage pathStorage = new PathStorage();
+					VertexStorage pathStorage = new VertexStorage();
 					VertexSourceApplyTransform transformedPathStorage = new VertexSourceApplyTransform(pathStorage, renderInfo.Transform);
 					Stroke stroke = new Stroke(transformedPathStorage, movementLineWidth);
 

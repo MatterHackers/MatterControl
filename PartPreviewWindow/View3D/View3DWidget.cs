@@ -1899,7 +1899,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				centerTopScreenPosition = meshViewerWidget.TransformToParentSpace(this, centerTopScreenPosition);
 				//graphics2D.Circle(screenPosition.x, screenPosition.y, 5, RGBA_Bytes.Cyan);
 
-				PathStorage zArrow = new PathStorage();
+				VertexStorage zArrow = new VertexStorage();
 				zArrow.MoveTo(-6, -2);
 				zArrow.curve3(0, -4);
 				zArrow.LineTo(6, -2);

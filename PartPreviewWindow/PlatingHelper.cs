@@ -44,9 +44,9 @@ namespace MatterHackers.MatterControl
 
 	public static class PlatingHelper
 	{
-		public static PathStorage PolygonToPathStorage(Polygon polygon)
+		public static VertexStorage PolygonToPathStorage(Polygon polygon)
 		{
-			PathStorage output = new PathStorage();
+			VertexStorage output = new VertexStorage();
 
 			bool first = true;
 			foreach (IntPoint point in polygon)
@@ -69,9 +69,9 @@ namespace MatterHackers.MatterControl
 			return output;
 		}
 
-		public static PathStorage PolygonToPathStorage(Polygons polygons)
+		public static VertexStorage PolygonToPathStorage(Polygons polygons)
 		{
-			PathStorage output = new PathStorage();
+			VertexStorage output = new VertexStorage();
 
 			foreach (Polygon polygon in polygons)
 			{

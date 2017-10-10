@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{
-			var linesToDrawStorage = new PathStorage();
+			var linesToDrawStorage = new VertexStorage();
 			double Range = (MaxValue - MinValue);
 
 			if (ShowGoal)
