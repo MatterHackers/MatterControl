@@ -4582,3 +4582,39 @@ Translated:The number of layers to consider as the begining of the print. These 
 English:Number of First Layers
 Translated:Number of First Layers
 
+English:Steps per mm:
+Translated:Steps per mm:
+
+English:Maximum feedrates [mm/s]:
+Translated:Maximum feedrates [mm/s]:
+
+English:Maximum Acceleration [mm/s²]:
+Translated:Maximum Acceleration [mm/s²]:
+
+English:Acceleration:
+Translated:Acceleration:
+
+English:Retract Acceleration:
+Translated:Retract Acceleration:
+
+English:PID settings:
+Translated:PID settings:
+
+English:Homing Offset:
+Translated:Homing Offset:
+
+English:Min feedrate [mm/s]:
+Translated:Min feedrate [mm/s]:
+
+English:Min travel feedrate [mm/s]:
+Translated:Min travel feedrate [mm/s]:
+
+English:Minimum segment time [ms]:
+Translated:Minimum segment time [ms]:
+
+English:Maximum X-Y jerk [mm/s]:
+Translated:Maximum X-Y jerk [mm/s]:
+
+English:Maximum Z jerk [mm/s]:
+Translated:Maximum Z jerk [mm/s]:
+
