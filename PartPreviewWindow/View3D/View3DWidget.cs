@@ -2026,26 +2026,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			bool firstVertex = true;
 
-			Matrix4X4 objectToWold = objectToLayFlatGroup.Matrix;
 			IObject3D objectToLayFlat = objectToLayFlatGroup;
 
 			IVertex lowestVertex = null;
 			Vector3 lowestVertexPosition = Vector3.Zero;
-			IObject3D itemToLayFlat = null;
+			MeshRenderData itemToLayFlat = null;
 
 			// Process each child, checking for the lowest vertex
-			var objectsToCheck = objectToLayFlat.Children.Where(child => child.Mesh != null).ToList();
-			if(objectToLayFlat.Mesh != null)
-			{
-				objectsToCheck.Add(objectToLayFlat);
-			}
-			foreach (IObject3D itemToCheck in objectsToCheck)
+			var objectsToCheck = objectToLayFlat.VisibleMeshes();
+			foreach (var itemToCheck in objectsToCheck)
 			{
 				// find the lowest point on the model
-				for (int testIndex = 1; testIndex < itemToCheck.Mesh.Vertices.Count; testIndex++)
+				for (int testIndex = 0; testIndex < itemToCheck.Mesh.Vertices.Count; testIndex++)
 				{
 					var vertex = itemToCheck.Mesh.Vertices[testIndex];
-					Vector3 vertexPosition = Vector3.Transform(vertex.Position, objectToWold);
+					Vector3 vertexPosition = Vector3.Transform(vertex.Position, itemToCheck.Matrix);
 					if(firstVertex)
 					{
 						lowestVertex = itemToCheck.Mesh.Vertices[testIndex];
@@ -2072,7 +2067,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					if (faceVertex != lowestVertex)
 					{
-						Vector3 faceVertexPosition = Vector3.Transform(faceVertex.Position, objectToWold);
+						Vector3 faceVertexPosition = Vector3.Transform(faceVertex.Position, itemToLayFlat.Matrix);
 						Vector3 pointRelLowest = faceVertexPosition - lowestVertexPosition;
 						double xLeg = new Vector2(pointRelLowest.x, pointRelLowest.y).Length;
 						double yLeg = pointRelLowest.z;
@@ -2094,7 +2089,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			List<Vector3> faceVertices = new List<Vector3>();
 			foreach (IVertex vertex in faceToLayFlat.Vertices())
 			{
-				Vector3 vertexPosition = Vector3.Transform(vertex.Position, objectToWold);
+				Vector3 vertexPosition = Vector3.Transform(vertex.Position, itemToLayFlat.Matrix);
 				faceVertices.Add(vertexPosition);
 				maxDistFromLowestZ = Math.Max(maxDistFromLowestZ, vertexPosition.z - lowestVertexPosition.z);
 			}

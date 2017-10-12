@@ -67,7 +67,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var buttonMargin = new BorderDouble(2, 5);
 
 			// put in the button for making the behavior solid
-			var solidButtonView = theme.ButtonFactory.Generate("Solid".Localize());
+			var solidButtonView = theme.ButtonFactory.Generate("Color".Localize());
 			var solidBehaviorButton = new PopupButton(solidButtonView)
 			{
 				Name = "Solid Colors",
@@ -86,28 +86,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			behavior3DTypeButtons.AddChild(solidBehaviorButton);
-
-			// put in the button for making the behavior a hole
-			Button holeBehaviorButton = theme.ButtonFactory.Generate("Hole".Localize());
-			holeBehaviorButton.Margin = buttonMargin;
-			holeBehaviorButton.Click += (s, e) =>
-			{
-				item.OutputType = PrintOutputTypes.Hole;
-				view3DWidget.Invalidate();
-			};
-
-			behavior3DTypeButtons.AddChild(holeBehaviorButton);
-
-			// put in the button for making the behavior support
-			Button supportBehaviorButton = theme.ButtonFactory.Generate("Support".Localize());
-			supportBehaviorButton.Margin = buttonMargin;
-			supportBehaviorButton.Click += (s, e) =>
-			{
-				item.OutputType = PrintOutputTypes.Support;
-				view3DWidget.Invalidate();
-			};
-
-			behavior3DTypeButtons.AddChild(supportBehaviorButton);
 
 			var objectActionList = new DropDownList("Actions", maxHeight: 200)
 			{
