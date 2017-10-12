@@ -460,6 +460,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				staticDataPathOverride = TestContext.CurrentContext.ResolveProjectPath(5, "MatterControl", "StaticData");
 			}
 
+			// Override the default SystemWindow type without config.json
+			AggContext.Config.ProviderTypes.SystemWindow = "MatterHackers.Agg.UI.OpenGLSystemWindow, agg_platform_win32";
+
 #if DEBUG
 			string outputDirectory = "Debug";
 #else
