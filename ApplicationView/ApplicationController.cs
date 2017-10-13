@@ -265,6 +265,10 @@ namespace MatterHackers.MatterControl
 		private List<SceneSelectionOperation> registeredSceneOperations = new List<SceneSelectionOperation>()
 		{
 			{
+				"Make Support".Localize(),
+				(scene) => scene.SelectedItem.OutputType = PrintOutputTypes.Support
+			},
+			{
 				"Bend".Localize(),
 				(scene) => new BendOperation(scene.SelectedItem)
 			},
