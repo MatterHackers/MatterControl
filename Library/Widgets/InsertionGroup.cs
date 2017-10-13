@@ -42,8 +42,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 {
 	public class InsertionGroup : Object3D
 	{
+		private View3DWidget view3DWidget;
+
 		public event EventHandler ContentLoaded;
 
+		// TODO: Figure out how best to collapse the InsertionGroup after the load task completes
 		public InsertionGroup(IEnumerable<ILibraryItem> items, View3DWidget view3DWidget, InteractiveScene scene, Func<bool> dragOperationActive)
 		{
 			// Add a temporary placeholder to give us some bounds
@@ -93,13 +96,33 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 				ContentLoaded?.Invoke(this, null);
 
-				if (!dragOperationActive())
+				if (dragOperationActive())
+				{
+					// Setting the selection group ensures that on lose focus this object will be collapsed
+					this.ItemType = Object3DTypes.SelectionGroup;
+				}
+				else
 				{
 					// Drag operation has finished, we need to perform the collapse
-					scene.SelectedItem.Children.Modify(list =>
+					var loadedItems = this.Children;
+
+					// Collapse our contents into the root of the scene
+					// of the scene when it loses focus
+					scene.Children.Modify(list =>
 					{
-						this.CollapseInto(list, Object3DTypes.Default);
+						this.CollapseInto(list, Object3DTypes.Any);
 					});
+
+					if (scene.SelectedItem == this
+						&& loadedItems.Count > 0)
+					{
+						scene.ClearSelection();
+
+						foreach (var item in loadedItems)
+						{
+							scene.AddToSelection(item);
+						}
+					}
 				}
 
 				view3DWidget.PartHasBeenChanged();

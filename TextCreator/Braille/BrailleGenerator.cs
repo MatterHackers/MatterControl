@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 		{
 			var group = new TextObject
 			{
-				ItemType = Object3DTypes.Default,
+				ItemType = Object3DTypes.Group,
 				Text = wordText,
 				ActiveEditor = "BrailleEditor"
 			};

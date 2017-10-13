@@ -35,18 +35,6 @@ namespace MatterHackers.MatterControl
 
 		private void Scene_ChildrenModified(object sender, EventArgs e)
 		{
-			if (InvokeRequired)
-			{
-				UiThread.RunOnIdle(UpdateChildren);
-			}
-			else
-			{
-				UpdateChildren();
-			}
-		}
-
-		private void UpdateChildren()
-		{ 
 			sceneTreeView.SuspendLayout();
 			sceneTreeView.Nodes.Clear();
 			sceneTreeNodes.Clear();

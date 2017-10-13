@@ -50,15 +50,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				await Task.Run(() =>
 				{
-					var selectedItemOrGroup = Scene.SelectedItem.Children.First();
-					bool isGroupItemType = Scene.HasSelection && selectedItemOrGroup.Children.Count > 0;
+					var selectedItem = Scene.SelectedItem;
+					bool isGroupItemType = Scene.HasSelection && selectedItem.Children.Count > 0;
 
 					// If not a Group ItemType, look for mesh volumes and split into distinct objects if found
 					if (!isGroupItemType 
-						&& !selectedItemOrGroup.HasChildren()
-						&& selectedItemOrGroup.Mesh != null)
+						&& !selectedItem.HasChildren()
+						&& selectedItem.Mesh != null)
 					{
-						var discreetMeshes = CreateDiscreteMeshes.SplitVolumesIntoMeshes(selectedItemOrGroup.Mesh, CancellationToken.None, (double progress0To1, string processingState) =>
+						var discreetMeshes = CreateDiscreteMeshes.SplitVolumesIntoMeshes(Scene.SelectedItem.Mesh, CancellationToken.None, (double progress0To1, string processingState) =>
 						{
 							view3DWidget.ReportProgressChanged(progress0To1 * .5, processingState);
 						});
@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							return;
 						}
 
-						selectedItemOrGroup.Children.Modify(list =>
+						selectedItem.Children.Modify(list =>
 						{
 							list.Clear();
 							list.AddRange(
@@ -79,18 +79,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								}));
 						});
 
-						selectedItemOrGroup.Mesh = null;
-						selectedItemOrGroup.MeshPath = null;
-						selectedItemOrGroup.ItemType = Object3DTypes.Default;
+						selectedItem.Mesh = null;
+						selectedItem.MeshPath = null;
+						selectedItem.ItemType = Object3DTypes.Group;
 
 						isGroupItemType = true;
 					}
 
 					if (isGroupItemType)
 					{
-						// Create and perform the group operation
+						// Create and perform the delete operation
+						var operation = new UngroupCommand(view3DWidget, Scene, Scene.SelectedItem);
+						operation.Do();
+
 						// Store the operation for undo/redo
-						Scene.UndoBuffer.AddAndDo(new UngroupCommand(Scene, selectedItemOrGroup));
+						Scene.UndoBuffer.Add(operation);
 					}
 				});
 
@@ -116,11 +119,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				await Task.Run(() =>
 				{
-					if (Scene.HasSelection)
+					if (Scene.IsSelected(Object3DTypes.SelectionGroup))
 					{
-						// Create and perform the group operation
+						// Create and perform the delete operation
+						var operation = new GroupCommand(Scene, Scene.SelectedItem);
+
 						// Store the operation for undo/redo
-						Scene.UndoBuffer.AddAndDo(new GroupCommand(Scene, Scene.SelectedItem));
+						Scene.UndoBuffer.AddAndDo(operation);
 					}
 				});
 
