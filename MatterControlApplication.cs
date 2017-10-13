@@ -71,11 +71,9 @@ namespace MatterHackers.MatterControl
 		public bool RestartOnClose = false;
 		private static MatterControlApplication instance;
 		private string[] commandLineArgs = null;
-		private string confirmExit = "Confirm Exit".Localize();
 		private bool DoCGCollectEveryDraw = false;
 		private int drawCount = 0;
 		private AverageMillisecondTimer millisecondTimer = new AverageMillisecondTimer();
-		private string savePartsSheetExitAnywayMessage = "You are currently saving a parts sheet, are you sure you want to exit?".Localize();
 		private bool ShowMemoryUsed = false;
 
 		public void ConfigureWifi()
@@ -417,9 +415,8 @@ namespace MatterHackers.MatterControl
 			base.OnClosed(e);
 		}
 
-		public override void OnClosing(out bool cancelClose)
+		public override void OnClosing(ClosingEventArgs eventArgs)
 		{
-			cancelClose = false;
 			// save the last size of the window so we can restore it next time.
 			ApplicationSettings.Instance.set(ApplicationSettingsKey.MainWindowMaximized, this.Maximized.ToString().ToLower());
 
@@ -435,88 +432,81 @@ namespace MatterHackers.MatterControl
 			// If we are waiting for a response and get another request, just cancel the close until we get a response.
 			if(exitDialogOpen)
 			{
-				cancelClose = true;
+				eventArgs.Cancel = true;
 			}
+
+			string caption = null;
+			string message = null;
 
 			if (!ApplicationExiting 
 				&& !exitDialogOpen
 				&& ApplicationController.Instance.ActivePrinter.Connection.PrinterIsPrinting)
 			{
-				cancelClose = true;
-				// Record that we are waiting for a response to the request to close
-				exitDialogOpen = true;
-
 				if (ApplicationController.Instance.ActivePrinter.Connection.CommunicationState != CommunicationStates.PrintingFromSd)
 				{
-					// Needed as we can't assign to CancelClose inside of the lambda below
-					StyledMessageBox.ShowMessageBox(ConditionalExit,
-						"Are you sure you want to abort the current print and close MatterControl?".Localize(),
-						"Abort Print".Localize(),
-						StyledMessageBox.MessageType.YES_NO);
+					caption = "Abort Print".Localize();
+					message = "Are you sure you want to abort the current print and close MatterControl?".Localize();
 				}
 				else
 				{
-					StyledMessageBox.ShowMessageBox(
-						ConditionalExit,
-						"Are you sure you want exit while a print is running from SD Card?\n\nNote: If you exit, it is recommended you wait until the print is completed before running MatterControl again.".Localize(),
-						"Exit while printing".Localize(),
-						StyledMessageBox.MessageType.YES_NO);
+					caption = "Exit while printing".Localize();
+					message = "Are you sure you want exit while a print is running from SD Card?\n\nNote: If you exit, it is recommended you wait until the print is completed before running MatterControl again.".Localize();
 				}
 			}
 			else if (PartsSheet.IsSaving())
 			{
-				StyledMessageBox.ShowMessageBox(
-					(exitAnyway) =>
-					{
-						if (exitAnyway)
-						{
-							base.OnClosing(out _);
-						}
-					},
-					savePartsSheetExitAnywayMessage, 
-					confirmExit, 
-					StyledMessageBox.MessageType.YES_NO);
-				cancelClose = true;
+				caption = "Confirm Exit".Localize();
+				message = "You are currently saving a parts sheet, are you sure you want to exit?".Localize();
 			}
-			else if(!cancelClose) // only check if we have not already canceled
+
+			if (caption != null)
 			{
-				base.OnClosing(out cancelClose);
+				// Record that we are waiting for a response to the request to close
+				exitDialogOpen = true;
+
+				StyledMessageBox.ShowMessageBox(
+					(exitConfirmed) =>
+					{
+						// Record that the exitDialog has closed
+						exitDialogOpen = false;
+
+						// Continue with shutdown if exit confirmed by user
+						if (exitConfirmed)
+						{
+							this.ApplicationExiting = true;
+
+							ApplicationController.Instance.Shutdown();
+
+							// Always call PrinterConnection.Disable on exit unless PrintingFromSd
+							PrinterConnection printerConnection = ApplicationController.Instance.ActivePrinter.Connection;
+							switch (printerConnection.CommunicationState)
+							{
+								case CommunicationStates.PrintingFromSd:
+								case CommunicationStates.Paused when printerConnection.PrePauseCommunicationState == CommunicationStates.PrintingFromSd:
+									break;
+
+								default:
+									printerConnection.Disable();
+									break;
+							}
+
+							this.RestartOnClose = false;
+						}
+
+						// If the user allowed the exit, don't cancel the OnClosing event
+						eventArgs.Cancel = !exitConfirmed;
+					},
+					message,
+					caption,
+					StyledMessageBox.MessageType.YES_NO);
+
+				exitDialogOpen = false;
 			}
 		}
 
 		public bool ApplicationExiting { get; private set; } = false;
 
 		private bool exitDialogOpen = false;
-
-		private void ConditionalExit(bool exitConfirmed)
-		{
-			// Record that the exitDialog has closed
-			exitDialogOpen = false;
-
-			// Continue with shutdown if exit confirmed by user
-			if (exitConfirmed)
-			{
-				this.ApplicationExiting = true;
-
-				ApplicationController.Instance.Shutdown();
-
-				// Always call PrinterConnection.Disable on exit unless PrintingFromSd
-				PrinterConnection printerConnection = ApplicationController.Instance.ActivePrinter.Connection;
-				switch(printerConnection.CommunicationState)
-				{
-					case CommunicationStates.PrintingFromSd:
-					case CommunicationStates.Paused when printerConnection.PrePauseCommunicationState == CommunicationStates.PrintingFromSd:
-						break;
-
-					default:
-						printerConnection.Disable();
-						break;
-				}
-
-				this.RestartOnClose = false;
-				this.Close();
-			}
-		}
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{
