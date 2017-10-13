@@ -149,7 +149,7 @@ namespace MatterHackers.MatterControl
 
 		public static void PlaceOnBed(IObject3D object3D)
 		{
-			AxisAlignedBoundingBox bounds = object3D.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+			AxisAlignedBoundingBox bounds = object3D.GetAxisAlignedBoundingBox(Matrix4X4.Identity, true);
 			Vector3 boundsCenter = (bounds.maxXYZ + bounds.minXYZ) / 2;
 
 			object3D.Matrix *= Matrix4X4.CreateTranslation(new Vector3(0, 0, -boundsCenter.z + bounds.ZSize / 2));

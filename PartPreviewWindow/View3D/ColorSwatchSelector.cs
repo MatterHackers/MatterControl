@@ -74,7 +74,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			button.Click += (s, e) =>
 			{
 				item.Color = colorWidget.BackgroundColor;
-				item.OutputType = PrintOutputTypes.Solid;
 				view3DWidget.Invalidate();
 			};
 			return button;
