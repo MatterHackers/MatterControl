@@ -27,68 +27,75 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System.Linq;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MeshVisualizer;
-using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class UngroupCommand : IUndoRedoCommand
 	{
-		private IObject3D item;
+		private IObject3D originalItem;
+		private View3DWidget view3DWidget;
 		private InteractiveScene scene;
 
-		public UngroupCommand(InteractiveScene scene, IObject3D item)
+		public UngroupCommand(View3DWidget view3DWidget, InteractiveScene scene, IObject3D ungroupingItem)
 		{
-			this.item = item;
-			if(scene.SelectedItem?.Children.FirstOrDefault() == item)
-			{
-				// If we have a group selected drill in and take the group
-				this.item = scene.SelectedItem?.Children.FirstOrDefault();
-			}
+			this.originalItem = ungroupingItem;
+			this.view3DWidget = view3DWidget;
 			this.scene = scene;
 		}
 
-		public static void UngroupItems(InteractiveScene scene, IObject3D item)
+		public void Do()
 		{
-			bool isSelected = scene.SelectedItem?.Children.FirstOrDefault() == item;
-
-			if (isSelected)
-			{
-				// remove the selection
-				scene.SelectedItem = null;
-			}
-
-			if (!scene.Children.Contains(item))
+			if (!scene.Children.Contains(originalItem))
 			{
 				return;
 			}
 
 			scene.Children.Modify(list =>
 			{
-				item.CollapseInto(list, Object3DTypes.Default);
+				// Remove the group
+				list.Remove(originalItem);
+
+				// Apply transform
+				foreach(var child in originalItem.Children)
+				{
+					child.Matrix *= originalItem.Matrix;
+				}
+
+				// Add all children from the group
+				list.AddRange(originalItem.Children);
 			});
 
-			if (isSelected)
-			{
-				foreach (var child in item.Children)
-				{
-					scene.AddToSelection(child);
-				}
-			}
-		}
-
-		public void Do()
-		{
-			UngroupCommand.UngroupItems(scene, item);
+			scene.SelectLastChild();
+			view3DWidget.PartHasBeenChanged();
 		}
 
 		public void Undo()
 		{
-			GroupCommand.GroupItems(scene, item);
+			// Remove the children from the Scene root, add the original item back into the root
+			scene.Children.Modify(list =>
+			{
+				foreach(var child in originalItem.Children)
+				{
+					if (list.Contains(child))
+					{
+						list.Remove(child);
+					}
+
+					Matrix4X4 inverseMatrix = originalItem.Matrix;
+					inverseMatrix.Invert();
+
+					child.Matrix = inverseMatrix * child.Matrix;
+				}
+
+				list.Add(originalItem);
+			});
+
+			scene.SelectLastChild();
+			view3DWidget.PartHasBeenChanged();
 		}
 	}
 }

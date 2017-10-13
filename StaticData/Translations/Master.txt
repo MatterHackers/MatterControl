@@ -4618,6 +4618,3 @@ Translated:Maximum X-Y jerk [mm/s]:
 English:Maximum Z jerk [mm/s]:
 Translated:Maximum Z jerk [mm/s]:
 
-English:Make Support
-Translated:Make Support
-
