@@ -262,6 +262,11 @@ namespace MatterHackers.MatterControl
 
 		private Dictionary<string, List<PrintItemAction>> registeredLibraryActions = new Dictionary<string, List<PrintItemAction>>();
 
+		public class SupportObject3D : Object3D, IMappingType
+		{
+			public override PrintOutputTypes OutputType { get => PrintOutputTypes.Support; }
+		}
+
 		private List<SceneSelectionOperation> registeredSceneOperations = new List<SceneSelectionOperation>()
 		{
 			{
@@ -272,10 +277,52 @@ namespace MatterHackers.MatterControl
 				"Cut Out".Localize(), (scene) => Console.WriteLine("Cut out")
 			},
 			{
+				"Make Support".Localize(), (scene) =>
+				{
+					if (scene.SelectedItem as SupportObject3D == null)
+					{
+						// wrap each object in the selection with a support object
+						if(scene.SelectedItem.Children.Count > 0)
+						{
+							scene.SelectedItem.Children.Modify((list) =>
+							{
+								for(int i= list.Count-1; i >= 0; i--)
+								{
+									WrapInSupport(list, list[i]);
+								}
+							});
+						}
+						else
+						{
+							var item = scene.SelectedItem;
+							scene.SelectedItem = null;
+							scene.Children.Modify((list) =>
+							{
+								WrapInSupport(list, item);
+							});
+						}
+					}
+				}
+			},
+			{
 				// Should be a pinch command that makes a pinch object with the correct controls
 				"Pinch".Localize(), (scene) => scene.UndoBuffer.AddAndDo(new GroupCommand(scene, scene.SelectedItem))
 			}
 		};
+
+		private static void WrapInSupport(List<IObject3D> list, IObject3D item)
+		{
+			if (item as SupportObject3D == null)
+			{
+				// remove it from the list
+				list.Remove(item);
+				// wrap it in support
+				var supportItem = new SupportObject3D();
+				supportItem.Children.Add(item);
+				// add it to the list
+				list.Add(supportItem);
+			}
+		}
 
 		static int applicationInstanceCount = 0;
 		public static int ApplicationInstanceCount

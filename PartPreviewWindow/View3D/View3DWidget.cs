@@ -277,7 +277,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.Scene.SelectionChanged += (s, e) =>
 				{
 					groupButton.Enabled = this.Scene.HasSelection
-						&& this.Scene.SelectedItem.ItemType != Object3DTypes.Group
+						&& this.Scene.SelectedItem.ItemType != Object3DTypes.Default
 						&& this.Scene.SelectedItem.Children.Count > 1;
 				};
 				selectionActionBar.AddChild(groupButton);
@@ -308,7 +308,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.Scene.SelectionChanged += (s, e) =>
 				{
 					alignButton.Enabled = this.Scene.HasSelection
-						&& this.Scene.SelectedItem.ItemType != Object3DTypes.Group
+						&& this.Scene.SelectedItem.ItemType != Object3DTypes.Default
 						&& this.Scene.SelectedItem.Children.Count > 1;
 				};
 				selectionActionBar.AddChild(alignButton);
@@ -702,7 +702,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			try
 			{
-				booleanGroup = new Object3D { ItemType = Object3DTypes.Group };
+				booleanGroup = new Object3D { ItemType = Object3DTypes.Default };
 
 				booleanGroup.Children.Add(new Object3D()
 				{
@@ -942,9 +942,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				if (mouseUpInBounds)
 				{
+					var insertionGroup = Scene.SelectedItem.Children.First();
+					// Drag operation has finished, we need to perform the collapse of the insertion group
+					Scene.SelectedItem.Children.Modify(list =>
+					{
+						insertionGroup.CollapseInto(list, Object3DTypes.Default);
+					});
 					// Create and push the undo operation
 					this.AddUndoOperation(
-						new InsertCommand(this, this.Scene, this.DragDropObject));
+						new InsertCommand(this, this.Scene, this.Scene.SelectedItem));
 				}
 				else
 				{

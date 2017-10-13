@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 		{
 			var groupItem = new TextObject()
 			{
-				ItemType = Object3DTypes.Group,
+				ItemType = Object3DTypes.Default,
 				Text = wordText,
 				Spacing = spacing,
 				ActiveEditor = "TextEditor"

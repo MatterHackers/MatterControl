@@ -44,20 +44,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.item = selectedItem;
 		}
 
-		public async void Do()
+		public static void GroupItems(InteractiveScene scene, IObject3D item)
 		{
 			if (scene.SelectedItem == item)
 			{
-				// This is the original do() case. The selection needs to be changed into a group and selected
-				// change it to a standard group
-				scene.SelectedItem.ItemType = Object3DTypes.Group;
+				// This is the original do() case. The selection needs to be changed into a group and be selected
+				item.ItemType = Object3DTypes.Default;
+				scene.SelectedItem = item;
 			}
 			else
 			{
+				// make sure there is no selection (or it might contain one of our items needing to group)
+				scene.SelectedItem = null;
+
 				// This the undo -> redo() case. The original Selection group has been collapsed and we need to rebuild it
 				scene.Children.Modify(children =>
 				{
-					// Remove all children from the scene
+					// Remove all children from the list
 					foreach (var child in item.Children)
 					{
 						children.Remove(child);
@@ -71,23 +74,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
+		public void Do()
+		{
+			GroupCommand.GroupItems(scene, item);
+		}
+
 		public void Undo()
 		{
-			if (!scene.Children.Contains(item))
-			{
-				return;
-			}
-
-			scene.Children.Modify(list =>
-			{
-				// Remove the group
-				list.Remove(item);
-
-				// Add all children from the group
-				list.AddRange(item.Children);
-			});
-
-			scene.SelectLastChild();
+			UngroupCommand.UngroupItems(scene, item);
 		}
 	}
 }

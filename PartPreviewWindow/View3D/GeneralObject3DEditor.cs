@@ -80,10 +80,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				},
 				Margin = buttonMargin
 			};
-			solidBehaviorButton.Click += (s, e) =>
-			{
-				item.OutputType = PrintOutputTypes.Solid;
-			};
 
 			behavior3DTypeButtons.AddChild(solidBehaviorButton);
 
