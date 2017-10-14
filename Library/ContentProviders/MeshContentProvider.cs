@@ -39,9 +39,7 @@ namespace MatterHackers.MatterControl
 	using MatterHackers.Agg.Platform;
 	using MatterHackers.DataConverters3D;
 	using MatterHackers.MatterControl.Library;
-	using MatterHackers.PolygonMesh;
 	using MatterHackers.RayTracer;
-	using MatterHackers.VectorMath;
 
 	/// <summary>
 	/// Loads IObject3D objects for mesh based ILibraryItems
@@ -82,6 +80,12 @@ namespace MatterHackers.MatterControl
 					}
 				}
 				catch { }
+
+				if (loadedItem != null)
+				{
+					// Push the original Library item name through to the IObject3D
+					loadedItem.Name = item.Name;
+				}
 
 				// Notification should force invalidate and redraw
 				progressReporter?.Invoke(1, "");

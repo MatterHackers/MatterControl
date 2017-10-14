@@ -69,7 +69,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				var placeholderItem = new Object3D()
 				{
 					Mesh = placeHolderMesh,
-					Matrix = Matrix4X4.Identity // Center to placeholder bounds
+					Matrix = Matrix4X4.Identity,
+					Parent = this
 				};
 
 				this.Children.Add(placeholderItem);
@@ -85,6 +86,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					// Position at accumulating offset
 					placeholderItem.Matrix *= Matrix4X4.CreateTranslation(newItemOffset.x, newItemOffset.y, 0);
 					placeholderItem.Visible = true;
+					progressControl.TrackingObject = placeholderItem;
 
 					var loadedItem = await item.CreateContent(progressControl.ProgressReporter);
 					if (loadedItem != null)
@@ -107,8 +109,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						//progressReporter?.Invoke(1, "");
 
 						this.Children.Add((IObject3D)loadedItem);
-
-						progressControl.TrackingObject = loadedItem;
 
 						// Wait for content to load
 
