@@ -31,7 +31,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -95,10 +94,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			};
 			allControls.AddChild(navBar);
 
-			CheckBox showFolders = new CheckBox("Folders", ActiveTheme.Instance.PrimaryTextColor)
+			var showFolders = new ExpandCheckboxButton("Folders")
 			{
 				Name = "Show Folders Toggle",
-				Checked = UserSettings.Instance.get("ShowContainers") == "1"
+				Checked = UserSettings.Instance.get("ShowContainers") == "1",
+				BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor
 			};
 			showFolders.CheckedStateChanged += async (s, e) =>
 			{
