@@ -173,7 +173,7 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 		}
 	}
 
-	public class TestPart : MatterCadObject3D, IMappingType
+	public class TestPart : MatterCadObject3D
 	{
 		public double XOffset { get; set; } = -.4;
 
@@ -190,7 +190,7 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 		}
 	}
 	
-	public class CardHolder : MatterCadObject3D, IMappingType
+	public class CardHolder : MatterCadObject3D
 	{
 		[DisplayName("Name")]
 		public string NameToWrite { get; set; } = "MatterHackers";
@@ -250,7 +250,7 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 		}
 	}
 
-	public class RibonWithName : MatterCadObject3D, IMappingType
+	public class RibonWithName : MatterCadObject3D
 	{
 		[DisplayName("Name")]
 		public string NameToWrite { get; set; } = "MatterHackers";
@@ -311,7 +311,7 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 		}
 	}
 
-	public class PinchTest : MatterCadObject3D, IMappingType
+	public class PinchTest : MatterCadObject3D
 	{
 		[DisplayName("Back Ratio")]
 		public double PinchRatio { get; set; } = 1;
@@ -352,7 +352,7 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 		}
 	}
 
-	public class CurveTest : MatterCadObject3D, IMappingType
+	public class CurveTest : MatterCadObject3D
 	{
 		[DisplayName("Bend Up")]
 		public bool BendCW { get; set; } = true;
@@ -420,7 +420,7 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 		}
 	}
 
-	public class ChairFoot : MatterCadObject3D, IMappingType
+	public class ChairFoot : MatterCadObject3D
 	{
 		// these are the public variables that would be edited
 		[DisplayName("Final")]
