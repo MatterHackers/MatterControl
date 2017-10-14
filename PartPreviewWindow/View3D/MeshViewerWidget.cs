@@ -332,13 +332,15 @@ namespace MatterHackers.MeshVisualizer
 				}
 			}
 
+			var frustum = World.GetClippingFrustum();
+
 			bool tooBigForComplexSelection = totalVertices > 1000;
 			if (tooBigForComplexSelection
 				&& scene.HasSelection
 				&& (object3D == scene.SelectedItem || scene.SelectedItem.Children.Contains(object3D)))
 			{
 				GLHelper.PrepareFor3DLineRender(true);
-				RenderAABB(World.GetClippingFrustum(), object3D.GetAxisAlignedBoundingBox(Matrix4X4.Identity), Matrix4X4.Identity, RGBA_Bytes.White, selectionHighlightWidth);
+				RenderAABB(frustum, object3D.GetAxisAlignedBoundingBox(Matrix4X4.Identity), Matrix4X4.Identity, RGBA_Bytes.White, selectionHighlightWidth);
 				GL.Enable(EnableCap.Lighting);
 			}
 
@@ -378,7 +380,7 @@ namespace MatterHackers.MeshVisualizer
 
 				if (isSelected && !tooBigForComplexSelection)
 				{
-					RenderSelection(renderData);
+					RenderSelection(renderData, frustum);
 				}
 
 				// RenderNormals(renderData);
@@ -410,10 +412,9 @@ namespace MatterHackers.MeshVisualizer
 			}
 		}
 
-		private void RenderSelection(MeshRenderData renderData)
+		private void RenderSelection(MeshRenderData renderData, Frustum frustum)
 		{
 			var screenPosition = new Vector3[3];
-			var frustum = World.GetClippingFrustum();
 			GLHelper.PrepareFor3DLineRender(true);
 
 			if (renderData.Mesh.Vertices.Count < 1000)
