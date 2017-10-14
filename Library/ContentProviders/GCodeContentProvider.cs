@@ -36,6 +36,7 @@ namespace MatterHackers.MatterControl
 	using MatterHackers.Agg.Font;
 	using MatterHackers.Agg.Image;
 	using MatterHackers.Agg.VertexSource;
+	using MatterHackers.DataConverters3D;
 	using MatterHackers.MatterControl.Library;
 	using MatterHackers.VectorMath;
 
@@ -63,7 +64,7 @@ namespace MatterHackers.MatterControl
 			thumbnailImage = thumbIcon;
 		}
 
-		public ContentResult CreateItem(ILibraryItem item, Action<double, string> reporter)
+		public Task<IObject3D> CreateItem(ILibraryItem item, Action<double, string> reporter)
 		{
 			System.Diagnostics.Debugger.Break();
 			return null;

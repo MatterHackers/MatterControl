@@ -42,57 +42,85 @@ namespace MatterHackers.MatterControl.PrintLibrary
 {
 	public class InsertionGroup : Object3D
 	{
-		private View3DWidget view3DWidget;
-
 		public event EventHandler ContentLoaded;
+
+		internal static Mesh placeHolderMesh;
+
+		static InsertionGroup()
+		{
+			// Create the placeholder mesh and position it at z0
+			placeHolderMesh = PlatonicSolids.CreateCube(20, 20, 20);
+			placeHolderMesh.Translate(new Vector3(0, 0, 10));
+		}
 
 		// TODO: Figure out how best to collapse the InsertionGroup after the load task completes
 		public InsertionGroup(IEnumerable<ILibraryItem> items, View3DWidget view3DWidget, InteractiveScene scene, Func<bool> dragOperationActive)
 		{
 			// Add a temporary placeholder to give us some bounds
-			this.Mesh = MeshContentProvider.placeHolderMesh;
+			this.Mesh = InsertionGroup.placeHolderMesh;
 
 			Task.Run(async () =>
 			{
 				var newItemOffset = Vector2.Zero;
 
+				var offset = Matrix4X4.Identity;
+
+				// Add the placeholder 'Loading...' object
+				var placeholderItem = new Object3D()
+				{
+					Mesh = placeHolderMesh,
+					Matrix = Matrix4X4.Identity // Center to placeholder bounds
+				};
+
+				this.Children.Add(placeholderItem);
+
 				// Filter to content file types only
 				foreach (var item in items.Where(item => item.IsContentFileType()).ToList())
 				{
+					this.Mesh = null;
+
 					// Acquire
 					var progressControl = new DragDropLoadProgress(view3DWidget, null);
 
-					var contentResult = item.CreateContent(progressControl.ProgressReporter);
-					if (contentResult != null)
+					// Position at accumulating offset
+					placeholderItem.Matrix *= Matrix4X4.CreateTranslation(newItemOffset.x, newItemOffset.y, 0);
+					placeholderItem.Visible = true;
+
+					var loadedItem = await item.CreateContent(progressControl.ProgressReporter);
+					if (loadedItem != null)
 					{
-						// Add the placeholder
-						var object3D = contentResult.Object3D;
+						var aabb = loadedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+
+						// lets move the cube to the center of the loaded thing
+						placeholderItem.Matrix *= Matrix4X4.CreateTranslation(-10 + aabb.XSize/2, 0, 0);
 
 						// HACK: set Parent ourselves so it can be used in the progress control
-						object3D.Parent = this;
-						this.Children.Add(object3D);
+						loadedItem.Parent = this;
 
-						// Dump the temporary placeholder
-						if (this.Mesh != null)
-						{
-							this.Mesh = null;
-						}
+						placeholderItem.Visible = false;
 
-						// Position at accumulating offset
-						object3D.Matrix *= Matrix4X4.CreateTranslation(newItemOffset.x, newItemOffset.y, 0);
+						// Copy scale/rotation/translation from the source and Center
+						loadedItem.Matrix = loadedItem.Matrix * Matrix4X4.CreateTranslation((double)-aabb.Center.x, (double)-aabb.Center.y, (double)-aabb.minXYZ.z) * placeholderItem.Matrix;
+						loadedItem.Color = loadedItem.Color;
 
-						progressControl.TrackingObject = object3D;
+						// Notification should force invalidate and redraw
+						//progressReporter?.Invoke(1, "");
+
+						this.Children.Add((IObject3D)loadedItem);
+
+						progressControl.TrackingObject = loadedItem;
 
 						// Wait for content to load
-						await contentResult.ContentLoaded;
 
 						// Adjust next item position
 						// TODO: do something more interesting than increment in x
-						newItemOffset.x += contentResult.Object3D.GetAxisAlignedBoundingBox(Matrix4X4.Identity).XSize;
+						newItemOffset.x = loadedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity).XSize/2 + 10;
 					}
 
 					progressControl.ProgressReporter(1.3, "");
 				}
+
+				this.Children.Remove(placeholderItem);
 
 				ContentLoaded?.Invoke(this, null);
 

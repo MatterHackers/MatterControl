@@ -1997,7 +1997,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					var libraryItem = new FileSystemFileItem(filePath);
 
-					var contentResult = libraryItem.CreateContent((double progress0To1, string processingState) =>
+					var object3D = await libraryItem.CreateContent((double progress0To1, string processingState) =>
 					{
 						double ratioAvailable = (ratioPerFile * .5);
 						double currentRatio = currentRatioDone + progress0To1 * ratioAvailable;
@@ -2005,13 +2005,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						ReportProgressChanged(currentRatio, progressMessage);
 					});
 
-					await contentResult?.ContentLoaded;
-
-					if (contentResult != null && contentResult.Object3D != null)
+					if (object3D != null)
 					{
-						Scene.Children.Modify(list => list.Add(contentResult.Object3D));
+						Scene.Children.Modify(list => list.Add(object3D));
 
-						PlatingHelper.MoveToOpenPositionRelativeGroup(contentResult.Object3D, this.Scene.Children);
+						PlatingHelper.MoveToOpenPositionRelativeGroup(object3D, this.Scene.Children);
 
 						// TODO: There should be a batch insert so you can undo large 'add to scene' operations in one go
 						//this.InsertNewItem(tempScene);
