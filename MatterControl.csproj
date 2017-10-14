@@ -153,6 +153,7 @@
     <Compile Include="Library\Providers\MatterControl\PrintHistoryContainer.cs" />
     <Compile Include="Library\Providers\MatterControl\PrintHistoryItem.cs" />
     <Compile Include="Library\Providers\WritableContainer.cs" />
+    <Compile Include="Library\Widgets\ExpandCheckboxButton.cs" />
     <Compile Include="Library\Widgets\InsertionGroup.cs" />
     <Compile Include="PartPreviewWindow\PopupButton.cs" />
     <Compile Include="PartPreviewWindow\View3D\SlicePopupMenu.cs" />
