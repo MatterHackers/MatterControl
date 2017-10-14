@@ -28,12 +28,14 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Threading.Tasks;
+using MatterHackers.DataConverters3D;
 
 namespace MatterHackers.MatterControl.Library
 {
 	public static class LibraryExtensionMethods
 	{
-		public static ContentResult CreateContent(this ILibraryItem libraryItem, Action<double, string> progressReporter)
+		public static Task<IObject3D> CreateContent(this ILibraryItem libraryItem, Action<double, string> progressReporter)
 		{
 			if (ApplicationController.Instance.Library.GetContentProvider(libraryItem) is ISceneContentProvider contentProvider)
 			{

@@ -46,28 +46,10 @@ namespace MatterHackers.MatterControl.Library
 
 	public interface ISceneContentProvider : IContentProvider
 	{
-		// TODO: Needs to take a progress reporter that is used in the background task which creates the actual IObject3D mesh and children
-		ContentResult CreateItem(ILibraryItem item, Action<double, string> reporter);
+		Task<IObject3D> CreateItem(ILibraryItem item, Action<double, string> reporter);
 	}
 
 	public interface IPrintableContentProvider : IContentProvider
 	{
 	}
-
-	public class ContentResult
-	{
-		public IObject3D Object3D { get; set; }
-		public Task ContentLoaded { get; set; }
-	}
-	
-	/*
-	public class SimpleContentProvider : IContentProvider
-	{
-		public Func<string, ContentResult> Generator { get; set; }
-
-		public ContentResult CreateItem(string filePath)
-		{
-			return this.Generator(filePath);
-		}
-	} */
 }

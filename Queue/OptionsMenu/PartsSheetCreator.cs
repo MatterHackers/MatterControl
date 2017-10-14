@@ -133,11 +133,9 @@ namespace MatterHackers.MatterControl
 				// first create images for all the parts
 				foreach (var item in itemSource)
 				{
-					var contentResult = item.CreateContent();
+					var object3D = await item.CreateContent();
 
-					await contentResult.ContentLoaded;
-
-					var loadedMeshGroups = contentResult.Object3D.VisibleMeshes().ToList();
+					var loadedMeshGroups = object3D.VisibleMeshes().ToList();
 					if (loadedMeshGroups?.Count > 0)
 					{
 						AxisAlignedBoundingBox aabb = loadedMeshGroups[0].Mesh.GetAxisAlignedBoundingBox(loadedMeshGroups[0].Matrix);

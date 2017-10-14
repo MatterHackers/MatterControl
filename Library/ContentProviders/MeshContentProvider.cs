@@ -55,68 +55,39 @@ namespace MatterHackers.MatterControl
 		private static readonly int MaxFileSize = (AggContext.OperatingSystem == OSType.Android) ? tooBigAndroid : tooBigDesktop;
 		private static readonly Point2D BigRenderSize = new Point2D(460, 460);
 
-		internal static Mesh placeHolderMesh;
-
-		static MeshContentProvider()
+		public Task<IObject3D> CreateItem(ILibraryItem item, Action<double, string> progressReporter)
 		{
-			// Create the placeholder mesh and position it at z0
-			placeHolderMesh = PlatonicSolids.CreateCube(20, 20, 20);
-			placeHolderMesh.Translate(new Vector3(0, 0, 10));
-		}
-
-		public ContentResult CreateItem(ILibraryItem item, Action<double, string> progressReporter)
-		{
-			var sceneItem = new Object3D()
+			return Task.Run(async () =>
 			{
-				// Initial 'Loading...' mesh
-				Mesh = placeHolderMesh,
-				Name = item.Name
-			};
+				IObject3D loadedItem = null;
 
-			return new ContentResult()
-			{
-				Object3D = sceneItem,
-				ContentLoaded = Task.Run(async () =>
+				try
 				{
-					IObject3D loadedItem = null;
-
-					try
+					var streamInterface = item as ILibraryContentStream;
+					if (streamInterface != null)
 					{
-						var streamInterface = item as ILibraryContentStream;
-						if (streamInterface != null)
+						using (var contentStream = await streamInterface.GetContentStream(progressReporter))
 						{
-							using (var contentStream = await streamInterface.GetContentStream(progressReporter))
+							if (contentStream != null)
 							{
-								if (contentStream != null)
-								{
-									// TODO: Wire up caching
-									loadedItem = Object3D.Load(contentStream.Stream, Path.GetExtension(streamInterface.FileName), CancellationToken.None, null /*itemCache*/, progressReporter);
-								}
+								// TODO: Wire up caching
+								loadedItem = Object3D.Load(contentStream.Stream, Path.GetExtension(streamInterface.FileName), CancellationToken.None, null /*itemCache*/, progressReporter);
 							}
 						}
-						else
-						{
-							var contentInterface = item as ILibraryContentItem;
-							loadedItem = await contentInterface?.GetContent(progressReporter);
-						}
 					}
-					catch { }
-
-					if (loadedItem != null)
+					else
 					{
-						var aabb = loadedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
-
-						sceneItem.Mesh = loadedItem.Mesh;
-						sceneItem.Children = loadedItem.Children;
-						// Copy scale/rotation/translation from the source and Center
-						sceneItem.Matrix = loadedItem.Matrix * Matrix4X4.CreateTranslation(-aabb.Center.x, -aabb.Center.y, -aabb.minXYZ.z) * sceneItem.Matrix;
-						sceneItem.Color = loadedItem.Color;
-
-						// Notification should force invalidate and redraw
-						progressReporter?.Invoke(1, "");
+						var contentInterface = item as ILibraryContentItem;
+						loadedItem = await contentInterface?.GetContent(progressReporter);
 					}
-				})
-			};
+				}
+				catch { }
+
+				// Notification should force invalidate and redraw
+				progressReporter?.Invoke(1, "");
+
+				return loadedItem;
+			});
 		}
 
 		// TODO: Trying out an 8 MB mesh max for thumbnail generation
@@ -132,12 +103,7 @@ namespace MatterHackers.MatterControl
 				&& contentModel.FileSize < MaxFileSizeForTracing)
 			{
 				// TODO: Wire up limits for thumbnail generation. If content is too big, return null allowing the thumbnail to fall back to content default
-				var contentResult = contentModel.CreateContent();
-				if (contentModel != null)
-				{
-					await contentResult.ContentLoaded;
-					object3D = contentResult.Object3D;
-				}
+				object3D = await contentModel.CreateContent();
 			}
 			else if (item is ILibraryContentItem)
 			{

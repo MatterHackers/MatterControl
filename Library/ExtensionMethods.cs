@@ -29,8 +29,10 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
+using MatterHackers.DataConverters3D;
 using MatterHackers.ImageProcessing;
 using MatterHackers.MatterControl.PrintQueue;
 
@@ -57,7 +59,7 @@ namespace MatterHackers.MatterControl.Library
 			}
 		}
 
-		public static ContentResult CreateContent(this ILibraryContentStream item, Action<double, string> reporter = null)
+		public static Task<IObject3D> CreateContent(this ILibraryContentStream item, Action<double, string> reporter = null)
 		{
 			var contentProvider = ApplicationController.Instance.Library.GetContentProvider(item) as ISceneContentProvider;
 			return contentProvider?.CreateItem(item, reporter);
