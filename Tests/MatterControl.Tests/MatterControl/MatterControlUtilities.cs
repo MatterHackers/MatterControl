@@ -42,6 +42,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.PrintLibrary;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.PrinterEmulator;
 using Newtonsoft.Json;
@@ -372,16 +373,17 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void NavigateToFolder(this AutomationRunner testRunner, string libraryRowItemName)
 		{
-			OpenFolderView(testRunner);
+			EnsureFoldersVisible(testRunner);
+
 			testRunner.ClickByName(libraryRowItemName);
 			testRunner.Delay(.5);
 			testRunner.DoubleClickByName(libraryRowItemName);
 			testRunner.Delay(.5);
 		}
 
-		public static void OpenFolderView(this AutomationRunner testRunner)
+		public static void EnsureFoldersVisible(this AutomationRunner testRunner)
 		{
-			var checkBox = (CheckBox)testRunner.GetWidgetByName("Show Folders Toggle", out SystemWindow containingWindow, 3);
+			var checkBox = (ExpandCheckboxButton)testRunner.GetWidgetByName("Show Folders Toggle", out SystemWindow _, 3);
 			if (!checkBox.Checked)
 			{
 				testRunner.ClickByName("Show Folders Toggle");
