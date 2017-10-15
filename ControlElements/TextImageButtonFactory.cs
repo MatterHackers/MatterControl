@@ -80,10 +80,11 @@ namespace MatterHackers.MatterControl
 		public GuiWidget GenerateGroupBoxLabelWithEdit(TextWidget textWidget, out Button editButton)
 		{
 			editButton = GenerateIconButton(AggContext.StaticData.LoadIcon("icon_edit.png", 16, 16, IconColor.Theme));
-			editButton.Margin = new BorderDouble(2, 2, 2, 0);
+			editButton.Margin = 0;
 			editButton.VAnchor = VAnchor.Bottom;
 
 			textWidget.VAnchor = VAnchor.Bottom;
+			textWidget.Margin = new BorderDouble(right: 4);
 
 			var groupLableAndEditControl = new FlowLayoutWidget();
 			groupLableAndEditControl.AddChild(textWidget);
