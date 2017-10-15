@@ -87,7 +87,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var plusTabSelect = new IconTab(
 				"Create New",
 				new TabPage(new PlusTabPage(this, printer, theme),  "+"),
-				AggContext.StaticData.LoadIcon("fa-plus_12.png"),
+				AggContext.StaticData.LoadIcon("fa-plus_12.png", IconColor.Theme),
 				theme);
 
 			plusTabSelect.VAnchor = VAnchor.Bottom;
