@@ -156,7 +156,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			};
 			navBar.AddChild(searchButton);
 
-			overflowDropdown = new OverflowDropdown(allowLightnessInvert: true)
+			overflowDropdown = new OverflowDropdown(IconColor.Theme)
 			{
 				VAnchor = VAnchor.Center,
 				AlignToRightEdge = true,

@@ -279,7 +279,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			buttonGroupB.Add(Layers2DButton);
 			this.AddChild(Layers2DButton);
 
-			OverflowButton = new OverflowDropdown(allowLightnessInvert: false)
+			OverflowButton = new OverflowDropdown(IconColor.White)
 			{
 				Name = "View3D Overflow Menu",
 				ToolTipText = "More...".Localize(),

@@ -28,6 +28,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
@@ -46,7 +47,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			this.VAnchor = VAnchor.Fit | VAnchor.Center;
 
-			var overflowDropdown = new OverflowDropdown(true)
+			var overflowDropdown = new OverflowDropdown(IconColor.Theme)
 			{
 				AlignToRightEdge = true,
 				Name = "Slice Settings Overflow Menu"

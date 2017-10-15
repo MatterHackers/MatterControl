@@ -95,7 +95,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.AddChild(new TemperatureWidgetBed(printer));
 			}
 
-			overflowDropdown = new OverflowDropdown(allowLightnessInvert: true)
+			overflowDropdown = new OverflowDropdown(IconColor.Theme)
 			{
 				AlignToRightEdge = true,
 				Name = "Printer Overflow Menu",

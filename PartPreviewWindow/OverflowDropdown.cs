@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2017, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -28,68 +28,18 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.IO;
-using MatterHackers.Agg;
-using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class OverflowDropdown : PopupButton
+	public class OverflowDropdown : PopupMenuButton
 	{
-		public OverflowDropdown(bool allowLightnessInvert)
-			: base(LoadThemedIcon(allowLightnessInvert))
+		public OverflowDropdown(IconColor iconColor)
+			: base(new ImageWidget(AggContext.StaticData.LoadIcon(Path.Combine("ViewTransformControls", "overflow.png"), 32, 32, iconColor)))
 		{
 			this.ToolTipText = "More...".Localize();
-		}
-
-		public static BorderDouble MenuPadding { get; set; } = new BorderDouble(40, 8, 20, 8);
-
-		public static ImageWidget LoadThemedIcon(bool allowLightnessInvert)
-		{
-			var imageBuffer = AggContext.StaticData.LoadIcon(Path.Combine("ViewTransformControls", "overflow.png"), 32, 32, (allowLightnessInvert) ? IconColor.Theme : IconColor.White);
-			return new ImageWidget(imageBuffer);
-		}
-
-		public static MenuItem CreateHorizontalLine()
-		{
-			return new MenuItem(new GuiWidget()
-			{
-				HAnchor = HAnchor.Stretch,
-				Height = 1,
-				BackgroundColor = RGBA_Bytes.LightGray,
-				Margin = new BorderDouble(10, 1),
-				VAnchor = VAnchor.Center,
-			}, "HorizontalLine");
-		}
-
-		public static MenuItem CreateMenuItem(string name, string value = null, double pointSize = 12)
-		{
-			var menuStatesView = new MenuItemColorStatesView(name)
-			{
-				NormalBackgroundColor = RGBA_Bytes.White,
-				OverBackgroundColor = RGBA_Bytes.Gray,
-				NormalTextColor = RGBA_Bytes.Black,
-				OverTextColor = RGBA_Bytes.Black,
-				DisabledTextColor = RGBA_Bytes.Gray,
-				PointSize = pointSize,
-				Padding = MenuPadding,
-			};
-
-			return new MenuItem(menuStatesView, value ?? name)
-			{
-				Text = name,
-				Name = name + " Menu Item"
-			};
-		}
-
-		protected override void BeforeShowPopup()
-		{
-			if (this.PopupContent.BackgroundColor == RGBA_Bytes.Transparent)
-			{
-				this.PopupContent.BackgroundColor = RGBA_Bytes.White;
-			}
 		}
 	}
 }
