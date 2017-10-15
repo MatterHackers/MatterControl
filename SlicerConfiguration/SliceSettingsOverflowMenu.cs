@@ -28,7 +28,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 using MatterHackers.Agg;
-using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
@@ -36,25 +35,22 @@ using MatterHackers.MatterControl.SetupWizard;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class SliceSettingsOverflowDropdown : FlowLayoutWidget
+	public class SliceSettingsOverflowMenu : OverflowMenu
 	{
-		private CheckBox showHelpBox;
-
-		string resetToDefaultsMessage = "Resetting to default values will remove your current overrides and restore your original printer settings.\nAre you sure you want to continue?".Localize();
-		string resetToDefaultsWindowTitle = "Revert Settings".Localize();
-
-		public SliceSettingsOverflowDropdown(PrinterConfig printer, SliceSettingsWidget sliceSettingsWidget)
+		public SliceSettingsOverflowMenu(PrinterConfig printer, SliceSettingsWidget sliceSettingsWidget)
 		{
 			this.VAnchor = VAnchor.Fit | VAnchor.Center;
+			this.AlignToRightEdge = true;
+			this.Name = "Slice Settings Overflow Menu";
 
-			var overflowDropdown = new OverflowMenu(IconColor.Theme)
-			{
-				AlignToRightEdge = true,
-				Name = "Slice Settings Overflow Menu"
-			};
-			this.AddChild(overflowDropdown);
+			this.PopupContent = GenerateMenuContents(printer, sliceSettingsWidget);
+		}
 
-			showHelpBox = new CheckBox("Show Help".Localize());
+		private FlowLayoutWidget GenerateMenuContents(PrinterConfig printer, SliceSettingsWidget sliceSettingsWidget)
+		{
+			var popupContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
+
+			var showHelpBox = new CheckBox("Show Help".Localize());
 			showHelpBox.Checked = sliceSettingsWidget.ShowHelpControls;
 			showHelpBox.CheckedStateChanged += (s, e) =>
 			{
@@ -62,7 +58,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				sliceSettingsWidget.RebuildSliceSettingsTabs();
 			};
 
-			var popupContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 
 			popupContainer.AddChild(new MenuItem(showHelpBox, "Show Help Checkbox")
 			{
@@ -74,14 +69,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			MenuItem menuItem;
 
 			menuItem = OverflowMenu.CreateMenuItem("Export".Localize());
-			menuItem.Click += (s, e) => 
+			menuItem.Click += (s, e) =>
 			{
 				WizardWindow.Show<ExportSettingsPage>();
 			};
 			popupContainer.AddChild(menuItem);
 
 			menuItem = OverflowMenu.CreateMenuItem("Restore Settings".Localize());
-			menuItem.Click += (s, e) => 
+			menuItem.Click += (s, e) =>
 			{
 				WizardWindow.Show<PrinterProfileHistoryPage>();
 			};
@@ -89,7 +84,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			popupContainer.AddChild(menuItem);
 
 			menuItem = OverflowMenu.CreateMenuItem("Reset to Defaults".Localize());
-			menuItem.Click += (s, e) => 
+			menuItem.Click += (s, e) =>
 			{
 				UiThread.RunOnIdle(() =>
 				{
@@ -118,8 +113,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								}
 							}
 						},
-						resetToDefaultsMessage,
-						resetToDefaultsWindowTitle,
+						"Resetting to default values will remove your current overrides and restore your original printer settings.\nAre you sure you want to continue?".Localize(),
+						"Revert Settings".Localize(),
 						StyledMessageBox.MessageType.YES_NO);
 				});
 			};
@@ -147,8 +142,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			};
 
 			popupContainer.AddChild(modeSelector);
-
-			overflowDropdown.PopupContent = popupContainer;
+			return popupContainer;
 		}
 	}
 

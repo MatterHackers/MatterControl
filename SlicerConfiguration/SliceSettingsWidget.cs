@@ -38,7 +38,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public partial class SliceSettingsWidget : FlowLayoutWidget
+	public class SliceSettingsWidget : FlowLayoutWidget
 	{
 		private TabControl primaryTabControl;
 		internal PresetsToolbar settingsControlBar;
@@ -143,8 +143,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			if (settingsContext.IsPrimarySettingsView)
 			{
-				var sliceSettingsDetailControl = new SliceSettingsOverflowDropdown(printer, this);
-				primaryTabControl.TabBar.AddChild(sliceSettingsDetailControl);
+				// Add the Overflow menu
+				primaryTabControl.TabBar.AddChild(new SliceSettingsOverflowMenu(printer, this));
 			}
 
 			FindWidestTabAndSetAllMinimumSize(sideTabBarsListForLayout);

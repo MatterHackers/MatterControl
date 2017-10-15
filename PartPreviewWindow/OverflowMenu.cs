@@ -36,7 +36,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class OverflowMenu : PopupMenuButton
 	{
-		public OverflowMenu(IconColor iconColor)
+		public OverflowMenu(IconColor iconColor = IconColor.Theme)
 			: base(new ImageWidget(AggContext.StaticData.LoadIcon(Path.Combine("ViewTransformControls", "overflow.png"), 32, 32, iconColor)))
 		{
 			this.ToolTipText = "More...".Localize();
