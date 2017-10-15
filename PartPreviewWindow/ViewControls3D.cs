@@ -197,7 +197,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (UserSettings.Instance.IsTouchScreen)
 			{
 				iconPath = Path.Combine("ViewTransformControls", "rotate.png");
-				rotateButton = buttonFactory.GenerateRadioButton("", AggContext.StaticData.LoadIcon(iconPath, 32, 32));
+				rotateButton = buttonFactory.GenerateRadioButton("", AggContext.StaticData.LoadIcon(iconPath, 32, 32, IconColor.White));
 				rotateButton.SiblingRadioButtonList = buttonGroupA;
 				rotateButton.ToolTipText = "Rotate (Alt + Left Mouse)".Localize();
 				rotateButton.Margin = commonMargin;
@@ -206,7 +206,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				AddChild(rotateButton);
 
 				iconPath = Path.Combine("ViewTransformControls", "translate.png");
-				translateButton = buttonFactory.GenerateRadioButton("", AggContext.StaticData.LoadIcon(iconPath, 32, 32));
+				translateButton = buttonFactory.GenerateRadioButton("", AggContext.StaticData.LoadIcon(iconPath, 32, 32, IconColor.White));
 				translateButton.SiblingRadioButtonList = buttonGroupA;
 				translateButton.ToolTipText = "Move (Shift + Left Mouse)".Localize();
 				translateButton.Margin = commonMargin;
@@ -215,7 +215,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				AddChild(translateButton);
 
 				iconPath = Path.Combine("ViewTransformControls", "scale.png");
-				scaleButton = buttonFactory.GenerateRadioButton("", AggContext.StaticData.LoadIcon(iconPath, 32, 32));
+				scaleButton = buttonFactory.GenerateRadioButton("", AggContext.StaticData.LoadIcon(iconPath, 32, 32, IconColor.White));
 				scaleButton.SiblingRadioButtonList = buttonGroupA;
 				scaleButton.ToolTipText = "Zoom (Ctrl + Left Mouse)".Localize();
 				scaleButton.Margin = commonMargin;

@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl.Library.Export
 
 		public string ExtensionFilter => "";
 
-		public ImageBuffer Icon { get; } = AggContext.StaticData.LoadIcon(Path.Combine("FileDialog", "folder.png"), 25, 25);
+		public ImageBuffer Icon { get; } = AggContext.StaticData.LoadIcon(Path.Combine("FileDialog", "folder.png"), 25, 25, IconColor.Theme);
 
 		public bool EnabledForCurrentPart(ILibraryContentStream libraryContent)
 		{
