@@ -27,8 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
@@ -37,7 +35,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class MainTab : Tab
+	public class MainTab : ThreeViewTab
 	{
 		private class TabPill : FlowLayoutWidget
 		{
@@ -103,7 +101,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public int BorderWidth { get; set; } = 1;
 		public int borderRadius { get; set; } = 4;
-		
+
 		private RGBA_Bytes activeTabColor =  ApplicationController.Instance.Theme.PrimaryTabFillColor;
 		private RGBA_Bytes inactiveTabColor = ApplicationController.Instance.Theme.SlightShade;
 

@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Linq;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.AboutPage;
@@ -83,16 +84,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			// TODO: add in the printers and designs that are currently open (or were open last run).
-			var plusTabSelect = new TextTab(
-				new TabPage(new PlusTabPage(this, printer, theme), "+"),
+			var plusTabSelect = new IconTab(
 				"Create New",
-				tabControl.TextPointSize,
-				selectedTabColor,
-				new RGBA_Bytes(),
-				ActiveTheme.Instance.TabLabelUnselected,
-				new RGBA_Bytes(),
-				fixedSize: 16,
-				useUnderlineStyling: true);
+				new TabPage(new PlusTabPage(this, printer, theme),  "+"),
+				AggContext.StaticData.LoadIcon("fa-plus_12.png"),
+				theme);
 
 			plusTabSelect.VAnchor = VAnchor.Bottom;
 
