@@ -136,7 +136,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			navBar.AddChild(searchPanel);
 
-			var searchButton = theme.ButtonFactory.GenerateIconButton(AggContext.StaticData.LoadIcon("icon_search_24x24.png", 16, 16));
+			var searchButton = theme.ButtonFactory.GenerateIconButton(AggContext.StaticData.LoadIcon("icon_search_24x24.png", 16, 16, IconColor.Theme));
 			searchButton.Name = "Search Library Button";
 			searchButton.ToolTipText = "Search".Localize();
 			searchButton.Click += (s, e) =>

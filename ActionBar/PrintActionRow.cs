@@ -96,7 +96,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				UiThread.RunOnIdle(() => WizardWindow.ShowPrinterSetup(true));
 			};
 
-			resetConnectionButton = buttonFactory.Generate("Reset".Localize().ToUpper(), AggContext.StaticData.LoadIcon("e_stop.png", 14, 14));
+			resetConnectionButton = buttonFactory.Generate("Reset".Localize().ToUpper(), AggContext.StaticData.LoadIcon("e_stop.png", 14, 14, IconColor.Theme));
 			resetConnectionButton.ToolTipText = "Reboots the firmware on the controller".Localize();
 			resetConnectionButton.Margin = defaultMargin;
 			resetConnectionButton.Click += (s, e) => UiThread.RunOnIdle(printer.Connection.RebootBoard);

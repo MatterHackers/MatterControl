@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				return null;
 			}
 
-			var toggleSwitch = ImageButtonFactory.CreateToggleSwitch(toggleSwitchConfig.Checked, menuTextColor, backgroundType: IconColor.White);
+			var toggleSwitch = ImageButtonFactory.CreateToggleSwitch(toggleSwitchConfig.Checked, menuTextColor);
 			toggleSwitch.VAnchor = VAnchor.Center;
 			toggleSwitch.Margin = new BorderDouble(left: 16);
 			toggleSwitch.CheckedStateChanged += (sender, e) =>

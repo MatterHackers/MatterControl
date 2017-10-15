@@ -29,17 +29,13 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
-using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.ImageProcessing;
-using System;
 using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl
 {
-	public enum IconColor { Theme, White, Black };
-
 	public class TextImageButtonFactory
 	{
 		public ButtonFactoryOptions Options { get; }
@@ -84,27 +80,21 @@ namespace MatterHackers.MatterControl
 
 		public GuiWidget GenerateGroupBoxLabelWithEdit(TextWidget textWidget, out Button editButton)
 		{
-			FlowLayoutWidget groupLableAndEditControl = new FlowLayoutWidget();
-
-			editButton = GenerateIconButton(AggContext.StaticData.LoadIcon("icon_edit.png", 16, 16));
-
+			editButton = GenerateIconButton(AggContext.StaticData.LoadIcon("icon_edit.png", 16, 16, (AllowThemeToAdjustImage) ? IconColor.Theme : IconColor.Raw));
 			editButton.Margin = new BorderDouble(2, 2, 2, 0);
 			editButton.VAnchor = VAnchor.Bottom;
+
 			textWidget.VAnchor = VAnchor.Bottom;
+
+			var groupLableAndEditControl = new FlowLayoutWidget();
 			groupLableAndEditControl.AddChild(textWidget);
 			groupLableAndEditControl.AddChild(editButton);
 
 			return groupLableAndEditControl;
 		}
 
-		public Button GenerateIconButton(ImageBuffer icon, IconColor iconColor = IconColor.Theme)
+		public Button GenerateIconButton(ImageBuffer icon)
 		{
-			if ((iconColor == IconColor.Theme && ActiveTheme.Instance.IsDarkTheme)
-				|| iconColor == IconColor.White)
-			{
-				icon.InvertLightness();
-			}
-
 			return new IconButton(icon, ApplicationController.Instance.Theme);
 		}
 
@@ -182,26 +172,22 @@ namespace MatterHackers.MatterControl
 
 			if (normalImageName != null)
 			{
-				normalImage = new ImageBuffer();
-				AggContext.StaticData.LoadIcon(normalImageName, normalImage);
+				normalImage = AggContext.StaticData.LoadIcon(normalImageName, (AllowThemeToAdjustImage) ? IconColor.Theme : IconColor.Raw);
 			}
 
 			if (hoverImageName != null)
 			{
-				hoverImage = new ImageBuffer();
-				AggContext.StaticData.LoadIcon(hoverImageName, hoverImage);
+				hoverImage = AggContext.StaticData.LoadIcon(hoverImageName, (AllowThemeToAdjustImage) ? IconColor.Theme : IconColor.Raw);
 			}
 
 			if (pressedImageName != null)
 			{
-				pressedImage = new ImageBuffer();
-				AggContext.StaticData.LoadIcon(pressedImageName, pressedImage);
+				pressedImage = AggContext.StaticData.LoadIcon(pressedImageName, (AllowThemeToAdjustImage) ? IconColor.Theme : IconColor.Raw);
 			}
 
 			if (disabledImageName != null)
 			{
-				disabledImage = new ImageBuffer();
-				AggContext.StaticData.LoadIcon(disabledImageName, disabledImage);
+				disabledImage = AggContext.StaticData.LoadIcon(disabledImageName, (AllowThemeToAdjustImage) ? IconColor.Theme : IconColor.Raw);
 			}
 
 			return getButtonView(label, normalImage, hoverImage, pressedImage, disabledImage);
@@ -223,32 +209,6 @@ namespace MatterHackers.MatterControl
 			{
 				// Generate the disabled image by lowering the alpha
 				disabledImage = normalImage.Multiply(new RGBA_Bytes(255, 255, 255, 150));
-			}
-
-			if (ActiveTheme.Instance.IsDarkTheme
-				&& AllowThemeToAdjustImage)
-			{
-				if (normalImage != null)
-				{
-					// make copies so we don't change source data
-					normalImage = new ImageBuffer(normalImage);
-					normalImage.InvertLightness();
-				}
-				if (pressedImage != null)
-				{
-					pressedImage.InvertLightness();
-					pressedImage = new ImageBuffer(pressedImage);
-				}
-				if (hoverImage != null)
-				{
-					hoverImage = new ImageBuffer(hoverImage);
-					hoverImage.InvertLightness();
-				}
-				if (disabledImage != null)
-				{
-					disabledImage = new ImageBuffer(disabledImage);
-					disabledImage.InvertLightness();
-				}
 			}
 
 			// TODO: This overrides users settings in a way that's completely unclear
@@ -301,39 +261,22 @@ namespace MatterHackers.MatterControl
 
 			if (normalImageName != null)
 			{
-				AggContext.StaticData.LoadIcon(normalImageName, normalImage);
-
-				if (!ActiveTheme.Instance.IsDarkTheme && AllowThemeToAdjustImage)
-				{
-					normalImage.InvertLightness();
-				}
+				normalImage = AggContext.StaticData.LoadIcon(normalImageName, (AllowThemeToAdjustImage) ? IconColor.Theme : IconColor.Raw);
 			}
 
 			if (pressedImageName != null)
 			{
-				AggContext.StaticData.LoadIcon(pressedImageName, pressedImage);
-				if (!ActiveTheme.Instance.IsDarkTheme && AllowThemeToAdjustImage)
-				{
-					pressedImage.InvertLightness();
-				}
+				pressedImage = AggContext.StaticData.LoadIcon(pressedImageName, (AllowThemeToAdjustImage) ? IconColor.Theme : IconColor.Raw);
 			}
 
 			if (normalToPressedImageName != null)
 			{
-				AggContext.StaticData.LoadIcon(normalToPressedImageName, normalToPressedImage);
-				if (!ActiveTheme.Instance.IsDarkTheme && AllowThemeToAdjustImage)
-				{
-					normalToPressedImage.InvertLightness();
-				}
+				normalToPressedImage = AggContext.StaticData.LoadIcon(normalToPressedImageName, (AllowThemeToAdjustImage) ? IconColor.Theme : IconColor.Raw);
 			}
 
 			if (pressedToNormalImageName != null)
 			{
-				AggContext.StaticData.LoadIcon(pressedToNormalImageName, pressedToNormalImage);
-				if (!ActiveTheme.Instance.IsDarkTheme && AllowThemeToAdjustImage)
-				{
-					pressedToNormalImage.InvertLightness();
-				}
+				pressedToNormalImage = AggContext.StaticData.LoadIcon(pressedToNormalImageName, (AllowThemeToAdjustImage) ? IconColor.Theme : IconColor.Raw);
 			}
 
 			// TODO: This overrides users settings in a way that's completely unclear
@@ -365,44 +308,12 @@ namespace MatterHackers.MatterControl
 			ImageBuffer pressedToNormalImage = null,
 			string pressedLabel = null)
 		{
-			
+
 			string pressedText = pressedLabel;
 
 			if (pressedLabel == null)
 			{
 				pressedText = label;
-			}
-
-			if (normalImage != null)
-			{
-				if (!ActiveTheme.Instance.IsDarkTheme && AllowThemeToAdjustImage)
-				{
-					normalImage.InvertLightness();
-				}
-			}
-
-			if (pressedImage != null)
-			{
-				if (!ActiveTheme.Instance.IsDarkTheme && AllowThemeToAdjustImage)
-				{
-					pressedImage.InvertLightness();
-				}
-			}
-
-			if (normalToPressedImage != null)
-			{
-				if (!ActiveTheme.Instance.IsDarkTheme && AllowThemeToAdjustImage)
-				{
-					normalToPressedImage.InvertLightness();
-				}
-			}
-
-			if (pressedToNormalImage != null)
-			{
-				if (!ActiveTheme.Instance.IsDarkTheme && AllowThemeToAdjustImage)
-				{
-					pressedToNormalImage.InvertLightness();
-				}
 			}
 
 			// TODO: This overrides users settings in a way that's completely unclear
@@ -430,16 +341,6 @@ namespace MatterHackers.MatterControl
 
 		public RadioButton GenerateRadioButton(string label, ImageBuffer iconImage)
 		{
-			if (iconImage != null )
-			{
-				iconImage.InvertLightness();
-				if (ActiveTheme.Instance.IsDarkTheme
-					&& AllowThemeToAdjustImage)
-				{
-					iconImage.InvertLightness();
-				}
-			}
-
 			BorderDouble internalMargin = new BorderDouble(0);
 			TextImageWidget nomalState = new TextImageWidget(label, normalFillColor, normalBorderColor, normalTextColor, borderWidth, internalMargin, iconImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight, width: this.FixedWidth);
 			TextImageWidget hoverState = new TextImageWidget(label, hoverFillColor, hoverBorderColor, hoverTextColor, borderWidth, internalMargin, iconImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight, width: this.FixedWidth);

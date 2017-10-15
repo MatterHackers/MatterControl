@@ -46,12 +46,12 @@ namespace MatterHackers.MatterControl
 			return CreateToggleSwitch(initialState, ActiveTheme.Instance.PrimaryTextColor);
 		}
 
-		public static CheckBox CreateToggleSwitch(bool initialState, RGBA_Bytes textColor, bool useStandardLabels = true, IconColor backgroundType = IconColor.Theme)
+		public static CheckBox CreateToggleSwitch(bool initialState, RGBA_Bytes textColor, bool useStandardLabels = true)
 		{
-			return CreateToggleSwitch(initialState, textColor, 60 * GuiWidget.DeviceScale, 24 * GuiWidget.DeviceScale, useStandardLabels, backgroundType);
+			return CreateToggleSwitch(initialState, textColor, 60 * GuiWidget.DeviceScale, 24 * GuiWidget.DeviceScale, useStandardLabels);
 		}
 
-		public static CheckBox CreateToggleSwitch(bool initialState, RGBA_Bytes textColor, double pixelWidth, double pixelHeight, bool useStandardLabels = true, IconColor backgroundType = IconColor.Theme)
+		public static CheckBox CreateToggleSwitch(bool initialState, RGBA_Bytes textColor, double pixelWidth, double pixelHeight, bool useStandardLabels = true)
 		{
 			string on = "On";
 			string off = "Off";
@@ -77,35 +77,10 @@ namespace MatterHackers.MatterControl
 					new RGBA_Bytes(220, 220, 220),
 					ActiveTheme.Instance.PrimaryAccentColor,
 					textColor,
-					(backgroundType == IconColor.White) ? ActiveTheme.Instance.SecondaryTextColor : new RGBA_Bytes(ActiveTheme.Instance.SecondaryTextColor, 120)))
+					new RGBA_Bytes(textColor, 70)))
 			{
 				Checked = initialState,
 			};
-		}
-
-		public Button Generate(string normalImageName, string hoverImageName, string pressedImageName = null, string disabledImageName = null)
-		{
-			if (hoverImageName == null)
-			{
-				hoverImageName = normalImageName;
-			}
-
-			if (pressedImageName == null)
-			{
-				pressedImageName = hoverImageName;
-			}
-
-			if (disabledImageName == null)
-			{
-				disabledImageName = normalImageName;
-			}
-
-			ImageBuffer normalImage = AggContext.StaticData.LoadIcon(normalImageName);
-			ImageBuffer pressedImage = AggContext.StaticData.LoadIcon(pressedImageName);
-			ImageBuffer hoverImage = AggContext.StaticData.LoadIcon(hoverImageName);
-			ImageBuffer disabledImage = AggContext.StaticData.LoadIcon(disabledImageName);
-
-			return Generate(normalImage, pressedImage, hoverImage, disabledImage);
 		}
 
 		public Button Generate(ImageBuffer normalImage, ImageBuffer hoverImage, ImageBuffer pressedImage = null, ImageBuffer disabledImage = null)
@@ -125,15 +100,7 @@ namespace MatterHackers.MatterControl
 				disabledImage = normalImage;
 			}
 
-			if (!ActiveTheme.Instance.IsDarkTheme && InvertImageColor)
-			{
-				normalImage.InvertLightness();
-				pressedImage.InvertLightness();
-				hoverImage.InvertLightness();
-				disabledImage.InvertLightness();
-			}
-
-			ButtonViewStates buttonViewWidget = new ButtonViewStates(
+			var buttonViewWidget = new ButtonViewStates(
 				new ImageWidget(normalImage),
 				new ImageWidget(hoverImage),
 				new ImageWidget(pressedImage),
@@ -141,10 +108,11 @@ namespace MatterHackers.MatterControl
 			);
 
 			//Create button based on view container widget
-			Button imageButton = new Button(0, 0, buttonViewWidget);
-			imageButton.Margin = new BorderDouble(0);
-			imageButton.Padding = new BorderDouble(0);
-			return imageButton;
+			return new Button(0, 0, buttonViewWidget)
+			{
+				Margin = new BorderDouble(0),
+				Padding = new BorderDouble(0)
+			};
 		}
 	}
 }

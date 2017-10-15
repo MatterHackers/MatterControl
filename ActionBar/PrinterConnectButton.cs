@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			this.Margin = 0;
 			this.Padding = 0;
 
-			connectButton = theme.ButtonFactory.Generate("Connect".Localize().ToUpper(), AggContext.StaticData.LoadIcon("connect.png", 14, 14));
+			connectButton = theme.ButtonFactory.Generate("Connect".Localize().ToUpper(), AggContext.StaticData.LoadIcon("connect.png", 14, 14, IconColor.Theme));
 			connectButton.Name = "Connect to printer button";
 			connectButton.ToolTipText = "Connect to the currently selected printer".Localize();
 			connectButton.Click += (s, e) =>
@@ -72,7 +72,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			};
 			this.AddChild(connectButton);
 
-			disconnectButton = theme.ButtonFactory.Generate("Disconnect".Localize().ToUpper(), AggContext.StaticData.LoadIcon("connect.png", 14, 14));
+			disconnectButton = theme.ButtonFactory.Generate("Disconnect".Localize().ToUpper(), AggContext.StaticData.LoadIcon("connect.png", 14, 14, IconColor.Theme));
 			disconnectButton.Name = "Disconnect from printer button";
 			disconnectButton.Visible = false;
 			disconnectButton.ToolTipText = "Disconnect from current printer".Localize();

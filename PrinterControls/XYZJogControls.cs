@@ -273,13 +273,7 @@ namespace MatterHackers.MatterControl
 			keyFocusedContainer.ToolTipText = "Enable cursor keys for movement".Localize();
 			keyFocusedContainer.Margin = new BorderDouble(left: 10);
 
-			var image = AggContext.StaticData.LoadIcon("hot_key_small_white.png", 19, 12);
-			if(ActiveTheme.Instance.IsDarkTheme)
-			{
-				image = image.InvertLightness();
-			}
-
-			keyboardImage = new ImageWidget(image)
+			keyboardImage = new ImageWidget(AggContext.StaticData.LoadIcon("hot_key_small_white.png", 19, 12, IconColor.Theme))
 			{
 				BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor,
 				VAnchor = VAnchor.Center,

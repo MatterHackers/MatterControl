@@ -103,11 +103,7 @@ namespace MatterHackers.MatterControl
 				Margin = new BorderDouble(6, 0)
 			};
 
-			var icon = AggContext.StaticData.LoadImage(Path.Combine("Images", "mh-app-logo.png"));
-			if (ActiveTheme.Instance.IsDarkTheme)
-			{
-				icon = icon.InvertLightness();
-			}
+			var icon = AggContext.StaticData.LoadIcon("mh-app-logo.png", IconColor.Theme);
 			buttonView.AddChild(new ImageWidget(icon));
 
 			buttonView.AddChild(new TextWidget(ApplicationController.Instance.ProductName, textColor: ActiveTheme.Instance.PrimaryTextColor)
