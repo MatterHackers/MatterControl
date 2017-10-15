@@ -138,11 +138,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					Button searchResultsButton = null;
 					if (UserSettings.Instance.IsTouchScreen)
 					{
-						searchResultsButton = buttonFactory.Generate("Search Results".Localize(), "icon_search_32x32.png");
+						searchResultsButton = buttonFactory.Generate("Search Results".Localize(), AggContext.StaticData.LoadIcon("icon_search_32x32.png", IconColor.Theme));
 					}
 					else
 					{
-						searchResultsButton = buttonFactory.Generate("Search Results".Localize(), "icon_search_24x24.png");
+						searchResultsButton = buttonFactory.Generate("Search Results".Localize(), AggContext.StaticData.LoadIcon("icon_search_24x24.png", IconColor.Theme));
 					}
 					searchResultsButton.Name = "Bread Crumb Button " + "Search Results";
 					searchResultsButton.Margin = new BorderDouble(right:  5);

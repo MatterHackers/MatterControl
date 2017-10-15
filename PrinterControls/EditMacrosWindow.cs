@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
@@ -418,7 +419,7 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
-			Button addMacroButton = textImageButtonFactory.Generate("Add".Localize(), "icon_circle_plus.png");
+			Button addMacroButton = textImageButtonFactory.Generate("Add".Localize(), AggContext.StaticData.LoadIcon("icon_circle_plus.png", IconColor.Theme));
 			addMacroButton.ToolTipText = "Add a new Macro".Localize();
 			addMacroButton.Click += (s, e) =>
 			{

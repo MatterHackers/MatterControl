@@ -72,7 +72,6 @@ namespace MatterHackers.MatterControl
 		public double fontSize => Options.FontSize;
 		public double borderWidth => Options.BorderWidth;
 		public bool invertImageLocation => Options.InvertImageLocation;
-		public bool AllowThemeToAdjustImage => Options.AllowThemeToAdjustImage;
 		private FlowDirection flowDirection => Options.FlowDirection;
 		public double FixedWidth => Options.FixedWidth;
 		public double FixedHeight => Options.FixedHeight;
@@ -80,7 +79,7 @@ namespace MatterHackers.MatterControl
 
 		public GuiWidget GenerateGroupBoxLabelWithEdit(TextWidget textWidget, out Button editButton)
 		{
-			editButton = GenerateIconButton(AggContext.StaticData.LoadIcon("icon_edit.png", 16, 16, (AllowThemeToAdjustImage) ? IconColor.Theme : IconColor.Raw));
+			editButton = GenerateIconButton(AggContext.StaticData.LoadIcon("icon_edit.png", 16, 16, IconColor.Theme));
 			editButton.Margin = new BorderDouble(2, 2, 2, 0);
 			editButton.VAnchor = VAnchor.Bottom;
 
@@ -136,10 +135,16 @@ namespace MatterHackers.MatterControl
 			return textImageButton;
 		}
 
-		public Button Generate(string label, string normalImageName = null, string hoverImageName = null, string pressedImageName = null, string disabledImageName = null, bool centerText = false, double fixedWidth = -1)
+		public Button Generate(string label, double fixedWidth = -1)
 		{
 			// Create button based on view container widget
-			ButtonViewStates buttonViewWidget = getButtonView(label, normalImageName, hoverImageName, pressedImageName, disabledImageName, centerText);
+			var buttonViewWidget = new ButtonViewStates(
+				new TextImageWidget(label, normalFillColor, normalBorderColor, normalTextColor, borderWidth, Margin, null, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight, imageSpacing: ImageSpacing),
+				new TextImageWidget(label, hoverFillColor, hoverBorderColor, hoverTextColor, borderWidth, Margin, null, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight, imageSpacing: ImageSpacing),
+				new TextImageWidget(label, pressedFillColor, pressedBorderColor, pressedTextColor, borderWidth, Margin, null, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight, imageSpacing: ImageSpacing),
+				new TextImageWidget(label, disabledFillColor, disabledBorderColor, disabledTextColor, borderWidth, Margin, null, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight, imageSpacing: ImageSpacing)
+			);
+
 			Button textImageButton = new Button(0, 0, buttonViewWidget);
 
 			textImageButton.Margin = new BorderDouble(0);
@@ -161,36 +166,6 @@ namespace MatterHackers.MatterControl
 				textImageButton.Width = this.FixedWidth;
 			}
 			return textImageButton;
-		}
-
-		private ButtonViewStates getButtonView(string label, string normalImageName = null, string hoverImageName = null, string pressedImageName = null, string disabledImageName = null, bool centerText = false)
-		{
-			ImageBuffer normalImage = null;
-			ImageBuffer pressedImage = null;
-			ImageBuffer hoverImage = null;
-			ImageBuffer disabledImage = null;
-
-			if (normalImageName != null)
-			{
-				normalImage = AggContext.StaticData.LoadIcon(normalImageName, (AllowThemeToAdjustImage) ? IconColor.Theme : IconColor.Raw);
-			}
-
-			if (hoverImageName != null)
-			{
-				hoverImage = AggContext.StaticData.LoadIcon(hoverImageName, (AllowThemeToAdjustImage) ? IconColor.Theme : IconColor.Raw);
-			}
-
-			if (pressedImageName != null)
-			{
-				pressedImage = AggContext.StaticData.LoadIcon(pressedImageName, (AllowThemeToAdjustImage) ? IconColor.Theme : IconColor.Raw);
-			}
-
-			if (disabledImageName != null)
-			{
-				disabledImage = AggContext.StaticData.LoadIcon(disabledImageName, (AllowThemeToAdjustImage) ? IconColor.Theme : IconColor.Raw);
-			}
-
-			return getButtonView(label, normalImage, hoverImage, pressedImage, disabledImage);
 		}
 
 		private ButtonViewStates getButtonView(string label, ImageBuffer normalImage = null, ImageBuffer hoverImage = null, ImageBuffer pressedImage = null, ImageBuffer disabledImage = null)
@@ -222,84 +197,12 @@ namespace MatterHackers.MatterControl
 			}
 
 			//Create the multi-state button view
-			ButtonViewStates buttonViewWidget = new ButtonViewStates(
+			return new ButtonViewStates(
 				new TextImageWidget(label, normalFillColor, normalBorderColor, normalTextColor, borderWidth, Margin, normalImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight, imageSpacing: ImageSpacing),
 				new TextImageWidget(label, hoverFillColor, hoverBorderColor, hoverTextColor, borderWidth, Margin, hoverImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight, imageSpacing: ImageSpacing),
 				new TextImageWidget(label, pressedFillColor, pressedBorderColor, pressedTextColor, borderWidth, Margin, pressedImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight, imageSpacing: ImageSpacing),
 				new TextImageWidget(label, disabledFillColor, disabledBorderColor, disabledTextColor, borderWidth, Margin, disabledImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight, imageSpacing: ImageSpacing)
 			);
-			return buttonViewWidget;
-		}
-
-		private CheckBoxViewStates getCheckBoxButtonView(string label, string normalImageName = null, string normalToPressedImageName = null, string pressedImageName = null, string pressedToNormalImageName = null, string pressedLabel = null)
-		{
-			ImageBuffer normalImage = new ImageBuffer();
-			ImageBuffer pressedImage = new ImageBuffer();
-			ImageBuffer normalToPressedImage = new ImageBuffer();
-			ImageBuffer pressedToNormalImage = new ImageBuffer();
-			string pressedText = pressedLabel;
-
-			if (pressedLabel == null)
-			{
-				pressedText = label;
-			}
-
-			if (normalToPressedImageName == null)
-			{
-				normalToPressedImageName = pressedImageName;
-			}
-
-			if (pressedImageName == null)
-			{
-				pressedImageName = normalToPressedImageName;
-			}
-
-			if (pressedToNormalImageName == null)
-			{
-				pressedToNormalImageName = normalImageName;
-			}
-
-			if (normalImageName != null)
-			{
-				normalImage = AggContext.StaticData.LoadIcon(normalImageName, (AllowThemeToAdjustImage) ? IconColor.Theme : IconColor.Raw);
-			}
-
-			if (pressedImageName != null)
-			{
-				pressedImage = AggContext.StaticData.LoadIcon(pressedImageName, (AllowThemeToAdjustImage) ? IconColor.Theme : IconColor.Raw);
-			}
-
-			if (normalToPressedImageName != null)
-			{
-				normalToPressedImage = AggContext.StaticData.LoadIcon(normalToPressedImageName, (AllowThemeToAdjustImage) ? IconColor.Theme : IconColor.Raw);
-			}
-
-			if (pressedToNormalImageName != null)
-			{
-				pressedToNormalImage = AggContext.StaticData.LoadIcon(pressedToNormalImageName, (AllowThemeToAdjustImage) ? IconColor.Theme : IconColor.Raw);
-			}
-
-			// TODO: This overrides users settings in a way that's completely unclear
-			if (invertImageLocation)
-			{
-				Options.FlowDirection = FlowDirection.RightToLeft;
-			}
-			else
-			{
-				Options.FlowDirection = FlowDirection.LeftToRight;
-			}
-
-			//Create the multi-state button view
-			GuiWidget normal = new TextImageWidget(label, normalFillColor, normalBorderColor, normalTextColor, borderWidth, Margin, normalImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight);
-			GuiWidget normalHover = new TextImageWidget(label, hoverFillColor, normalBorderColor, hoverTextColor, borderWidth, Margin, normalImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight);
-			GuiWidget switchNormalToPressed = new TextImageWidget(label, pressedFillColor, normalBorderColor, pressedTextColor, borderWidth, Margin, normalToPressedImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight);
-			GuiWidget pressed = new TextImageWidget(pressedText, pressedFillColor, pressedBorderColor, pressedTextColor, borderWidth, Margin, pressedImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight);
-			GuiWidget pressedHover = new TextImageWidget(label, hoverFillColor, pressedBorderColor, hoverTextColor, borderWidth, Margin, pressedImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight);
-			GuiWidget switchPressedToNormal = new TextImageWidget(label, normalFillColor, pressedBorderColor, normalTextColor, borderWidth, Margin, pressedToNormalImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight);
-			GuiWidget disabled = new TextImageWidget(label, disabledFillColor, disabledBorderColor, disabledTextColor, borderWidth, Margin, normalImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight);
-
-			CheckBoxViewStates checkBoxButtonViewWidget = new CheckBoxViewStates(normal, normalHover, switchNormalToPressed, pressed, pressedHover, switchPressedToNormal, disabled);
-			return checkBoxButtonViewWidget;
 		}
 
 		private CheckBoxViewStates getCheckBoxButtonView(string label, ImageBuffer normalImage = null,
@@ -335,8 +238,7 @@ namespace MatterHackers.MatterControl
 			GuiWidget switchPressedToNormal = new TextImageWidget(label, normalFillColor, pressedBorderColor, normalTextColor, borderWidth, Margin, pressedToNormalImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight);
 			GuiWidget disabled = new TextImageWidget(label, disabledFillColor, disabledBorderColor, disabledTextColor, borderWidth, Margin, normalImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight);
 
-			CheckBoxViewStates checkBoxButtonViewWidget = new CheckBoxViewStates(normal, normalHover, switchNormalToPressed, pressed, pressedHover, switchPressedToNormal, disabled);
-			return checkBoxButtonViewWidget;
+			return new CheckBoxViewStates(normal, normalHover, switchNormalToPressed, pressed, pressedHover, switchPressedToNormal, disabled);
 		}
 
 		public RadioButton GenerateRadioButton(string label, ImageBuffer iconImage)
@@ -348,9 +250,11 @@ namespace MatterHackers.MatterControl
 			TextImageWidget checkedState = new TextImageWidget(label, pressedFillColor, checkedBorderColor, pressedTextColor, borderWidth, internalMargin, iconImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight, width: this.FixedWidth);
 			TextImageWidget disabledState = new TextImageWidget(label, disabledFillColor, disabledBorderColor, disabledTextColor, borderWidth, internalMargin, iconImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight, width: this.FixedWidth);
 			RadioButtonViewStates checkBoxButtonViewWidget = new RadioButtonViewStates(nomalState, hoverState, checkingState, checkedState, disabledState);
-			RadioButton radioButton = new RadioButton(checkBoxButtonViewWidget);
-			radioButton.Margin = Margin;
-			return radioButton;
+
+			return new RadioButton(checkBoxButtonViewWidget)
+			{
+				Margin = Margin
+			};
 		}
 
 		public RadioButton GenerateRadioButton(string label, string iconImageName = null)
@@ -362,13 +266,6 @@ namespace MatterHackers.MatterControl
 
 			return GenerateRadioButton(label, (ImageBuffer)null);
 		}
-	}
-
-	public class ButtonOptionSection
-	{
-		public RGBA_Bytes FillColor { get; set; }
-		public RGBA_Bytes BorderColor { get; set; }
-		public RGBA_Bytes TextColor { get; set; }
 	}
 
 	public class ButtonFactoryOptions
@@ -439,7 +336,7 @@ namespace MatterHackers.MatterControl
 			this.NormalTextColor = cloneSource.NormalTextColor;
 			this.NormalFillColor = cloneSource.NormalFillColor;
 			this.NormalBorderColor = cloneSource.NormalBorderColor;
-			
+
 			this.HoverTextColor = cloneSource.HoverTextColor;
 			this.HoverFillColor = cloneSource.HoverFillColor;
 			this.HoverBorderColor = cloneSource.HoverBorderColor;

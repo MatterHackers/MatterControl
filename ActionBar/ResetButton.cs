@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.SlicerConfiguration;
@@ -46,7 +47,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			this.VAnchor = VAnchor.Fit;
 			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
-			Button resetConnectionButton = buttonFactory.Generate(resetConnectionText, "e_stop4.png");
+			Button resetConnectionButton = buttonFactory.Generate(resetConnectionText, AggContext.StaticData.LoadIcon("e_stop4.png", IconColor.Theme));
 			resetConnectionButton.Visible = printer.Settings.GetValue<bool>(SettingsKey.show_reset_connection);
 			resetConnectionButton.Click += (s, e) =>
 			{
