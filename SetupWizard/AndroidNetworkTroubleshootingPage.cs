@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl
 			string matterhackersStatusString = "MatterControl was unable to connect to the Internet. Please check your Wifi connection and try again".Localize();
 			contentRow.AddChild(new TextWidget(matterhackersStatusString + "...", 0, 0, 12, textColor: ActiveTheme.Instance.PrimaryTextColor));
 
-			Button configureButton = whiteImageButtonFactory.Generate("Configure Wifi".Localize(), centerText: true);
+			Button configureButton = whiteImageButtonFactory.Generate("Configure Wifi".Localize());
 			configureButton.Margin = new BorderDouble(0, 0, 10, 0);
 			configureButton.Click += (s, e) =>
 			{
