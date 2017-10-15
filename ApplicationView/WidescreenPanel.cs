@@ -27,17 +27,12 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System.IO;
-using System.Linq;
 using MatterHackers.Agg;
-using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.ConfigurationPage;
-using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrintLibrary;
-using MatterHackers.MatterControl.PrintQueue;
 
 namespace MatterHackers.MatterControl
 {
@@ -95,20 +90,34 @@ namespace MatterHackers.MatterControl
 	{
 		public BrandMenuButton()
 		{
+			this.Padding = new BorderDouble(left: 2);
+
 			Name = "MatterControl BrandMenuButton";
 			var buttonView = new FlowLayoutWidget()
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit,
-				Margin = new BorderDouble(6, 0)
+				Margin = 0
 			};
 
-			var icon = AggContext.StaticData.LoadIcon("mh-app-logo.png", IconColor.Theme);
-			buttonView.AddChild(new ImageWidget(icon));
+			var buttonHeight = ApplicationController.Instance.Theme.ButtonHeight;
+
+			var iconContainer = new GuiWidget()
+			{
+				Width = buttonHeight,
+				Height = buttonHeight
+			};
+			iconContainer.AddChild(new ImageWidget(AggContext.StaticData.LoadIcon("mh-app-logo.png", IconColor.Theme))
+			{
+				VAnchor = VAnchor.Center,
+				HAnchor = HAnchor.Center
+			});
+
+			buttonView.AddChild(iconContainer);
 
 			buttonView.AddChild(new TextWidget(ApplicationController.Instance.ProductName, textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
-				Margin = new BorderDouble(left: 8),
+				Margin = 0,
 				VAnchor = VAnchor.Center
 			});
 
