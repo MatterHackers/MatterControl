@@ -62,11 +62,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			this.VAnchor = VAnchor.Fit;
 			this.Padding = new BorderDouble(right: 4);
 
-			if (UserSettings.Instance.IsTouchScreen)
-			{
-				this.AddSettingsRow(this.GetUpdateControl());
-			}
-
 			// Camera Monitoring
 			bool hasCamera = true || ApplicationSettings.Instance.get(ApplicationSettingsKey.HardwareHasCamera) == "true";
 
@@ -286,11 +281,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			}
 #endif
 
-			if (UserSettings.Instance.IsTouchScreen)
-			{
-				this.AddSettingsRow(this.GetModeControl());
-			}
-
 			AddMenuItem("Forums".Localize(), () => MatterControlApplication.Instance.LaunchBrowser("https://forums.matterhackers.com/category/20/mattercontrol"));
 			AddMenuItem("Wiki".Localize(), () => MatterControlApplication.Instance.LaunchBrowser("http://wiki.mattercontrol.com"));
 			AddMenuItem("Guides and Articles".Localize(), () => MatterControlApplication.Instance.LaunchBrowser("http://www.matterhackers.com/topic/mattercontrol"));
@@ -407,107 +397,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			return container;
 		}
 
-		private FlowLayoutWidget GetModeControl()
-		{
-			FlowLayoutWidget buttonRow = new FlowLayoutWidget();
-			buttonRow.HAnchor = HAnchor.Stretch;
-			buttonRow.Margin = new BorderDouble(top: 4);
-
-			TextWidget settingsLabel = new TextWidget("Interface Mode".Localize());
-			settingsLabel.AutoExpandBoundsToText = true;
-			settingsLabel.TextColor = menuTextColor;
-			settingsLabel.VAnchor = VAnchor.Top;
-
-			FlowLayoutWidget optionsContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			optionsContainer.Margin = new BorderDouble(bottom: 6);
-
-			DropDownList interfaceModeDropList = new DropDownList("Standard", maxHeight: 200);
-			interfaceModeDropList.HAnchor = HAnchor.Stretch;
-
-			optionsContainer.AddChild(interfaceModeDropList);
-			optionsContainer.Width = 200;
-
-			MenuItem standardModeDropDownItem = interfaceModeDropList.AddItem("Standard".Localize(), "True");
-			MenuItem advancedModeDropDownItem = interfaceModeDropList.AddItem("Advanced".Localize(), "False");
-
-			interfaceModeDropList.SelectedValue = UserSettings.Instance.Fields.IsSimpleMode.ToString();
-			interfaceModeDropList.SelectionChanged += (sender, e) =>
-			{
-				string isSimpleMode = ((DropDownList)sender).SelectedValue;
-				if (isSimpleMode == "True")
-				{
-					UserSettings.Instance.Fields.IsSimpleMode = true;
-				}
-				else
-				{
-					UserSettings.Instance.Fields.IsSimpleMode = false;
-				}
-				ApplicationController.Instance.ReloadAll();
-			};
-
-			buttonRow.AddChild(settingsLabel);
-			buttonRow.AddChild(new HorizontalSpacer());
-			buttonRow.AddChild(optionsContainer);
-			return buttonRow;
-		}
-
-		private FlowLayoutWidget GetUpdateControl()
-		{
-			FlowLayoutWidget buttonRow = new FlowLayoutWidget();
-			buttonRow.HAnchor = HAnchor.Stretch;
-			buttonRow.Margin = new BorderDouble(top: 4);
-
-			Button configureUpdateFeedButton = buttonFactory.Generate("Configure".Localize().ToUpper());
-			configureUpdateFeedButton.Margin = new BorderDouble(left: 6);
-			configureUpdateFeedButton.VAnchor = VAnchor.Center;
-
-			TextWidget settingsLabel = new TextWidget("Update Notification Feed".Localize());
-			settingsLabel.AutoExpandBoundsToText = true;
-			settingsLabel.TextColor = menuTextColor;
-			settingsLabel.VAnchor = VAnchor.Top;
-
-			FlowLayoutWidget optionsContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			optionsContainer.Margin = new BorderDouble(bottom: 6);
-
-			var releaseOptionsDropList = new DropDownList("Development", maxHeight: 200);
-			releaseOptionsDropList.HAnchor = HAnchor.Stretch;
-
-			optionsContainer.AddChild(releaseOptionsDropList);
-			optionsContainer.Width = 200;
-
-			MenuItem releaseOptionsDropDownItem = releaseOptionsDropList.AddItem("Stable".Localize(), "release");
-			releaseOptionsDropDownItem.Selected += (s, e) => UpdateControlData.Instance.CheckForUpdateUserRequested();
-
-			MenuItem preReleaseDropDownItem = releaseOptionsDropList.AddItem("Beta".Localize(), "pre-release");
-			preReleaseDropDownItem.Selected += (s, e) => UpdateControlData.Instance.CheckForUpdateUserRequested();
-
-			MenuItem developmentDropDownItem = releaseOptionsDropList.AddItem("Alpha".Localize(), "development");
-			developmentDropDownItem.Selected += (s, e) => UpdateControlData.Instance.CheckForUpdateUserRequested();
-
-			List<string> acceptableUpdateFeedTypeValues = new List<string>() { "release", "pre-release", "development" };
-			string currentUpdateFeedType = UserSettings.Instance.get(UserSettingsKey.UpdateFeedType);
-
-			if (acceptableUpdateFeedTypeValues.IndexOf(currentUpdateFeedType) == -1)
-			{
-				UserSettings.Instance.set(UserSettingsKey.UpdateFeedType, "release");
-			}
-
-			releaseOptionsDropList.SelectedValue = UserSettings.Instance.get(UserSettingsKey.UpdateFeedType);
-			releaseOptionsDropList.SelectionChanged += (sender, e) =>
-			{
-				string releaseCode = releaseOptionsDropList.SelectedValue;
-				if (releaseCode != UserSettings.Instance.get(UserSettingsKey.UpdateFeedType))
-				{
-					UserSettings.Instance.set(UserSettingsKey.UpdateFeedType, releaseCode);
-				}
-			};
-
-			buttonRow.AddChild(settingsLabel);
-			buttonRow.AddChild(new HorizontalSpacer());
-			buttonRow.AddChild(optionsContainer);
-			return buttonRow;
-		}
-		
 		private string rebuildThumbnailsMessage = "You are switching to a different thumbnail rendering mode. If you want, your current thumbnails can be removed and recreated in the new style. You can switch back and forth at any time. There will be some processing overhead while the new thumbnails are created.\n\nDo you want to rebuild your existing thumbnails now?".Localize();
 		private string rebuildThumbnailsTitle = "Rebuild Thumbnails Now".Localize();
 
