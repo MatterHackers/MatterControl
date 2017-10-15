@@ -159,10 +159,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			this.HAnchor = HAnchor.Fit;
 			this.VAnchor = VAnchor.Absolute | VAnchor.Center;
-			this.Height = theme.ButtonFactory.FixedHeight;
-			this.Padding = theme.ButtonFactory.Margin;
+			this.Height = theme.ButtonFactory.Options.FixedHeight;
+			this.Padding = theme.ButtonFactory.Options.Margin;
 
-			this.AddChild(textWidget = new TextWidget(text, pointSize: theme.ButtonFactory.fontSize, textColor: theme.ButtonFactory.normalTextColor)
+			this.AddChild(textWidget = new TextWidget(text, pointSize: theme.ButtonFactory.Options.FontSize, textColor: theme.ButtonFactory.Options.NormalTextColor)
 			{
 				HAnchor = HAnchor.Center,
 				VAnchor = VAnchor.Center

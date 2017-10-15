@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 			{
 				HAnchor = HAnchor.Absolute,
 				Visible = true,
-				Width = theme.WhiteButtonFactory.FixedWidth
+				Width = theme.WhiteButtonFactory.Options.FixedWidth
 			};
 			mainContainer.AddChild(tabContainer);
 

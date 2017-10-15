@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		private TextWidget goalTempIndicator;
 		protected TextWidget DirectionIndicator;
 
-		protected ImageWidget ImageWidget = new ImageWidget(AggContext.StaticData.LoadIcon("hotend.png"))
+		protected ImageWidget ImageWidget = new ImageWidget(AggContext.StaticData.LoadIcon("hotend.png", IconColor.Theme))
 		{
 			VAnchor = VAnchor.Center,
 			Margin = new BorderDouble(right: 5)
@@ -74,11 +74,6 @@ namespace MatterHackers.MatterControl.ActionBar
 				Padding = new BorderDouble(5)
 			};
 			this.AddChild(container);
-
-			if (ActiveTheme.Instance.IsDarkTheme)
-			{
-				this.ImageWidget.Image = this.ImageWidget.Image.InvertLightness();
-			}
 
 			container.AddChild(this.ImageWidget);
 

@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl
 		public AltGroupBox(GuiWidget groupBoxLabel)
 			: base(FlowDirection.TopToBottom)
 		{
-			this.Padding = new BorderDouble(5);
+			this.Padding = new BorderDouble(5, 5, 5, 0);
 			this.Margin = new BorderDouble(0);
 			this.groupBoxLabel = groupBoxLabel;
 			this.HAnchor = Agg.UI.HAnchor.Stretch;

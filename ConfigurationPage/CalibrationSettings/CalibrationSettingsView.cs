@@ -1,18 +1,13 @@
-﻿using MatterHackers.Agg;
-using MatterHackers.Agg.Image;
-using MatterHackers.Agg.ImageProcessing;
+﻿using System;
+using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.EeProm;
 using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.MatterControl.SlicerConfiguration;
-using System;
-using System.Diagnostics;
-using System.IO;
 using MatterHackers.MatterControl.PrinterControls;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.ConfigurationPage
 {
@@ -71,15 +66,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				Margin = new BorderDouble(0, 8, 0, 4)
 			};
 
-			ImageBuffer levelingImage = AggContext.StaticData.LoadIcon("leveling_32x32.png", 24, 24).InvertLightness();
-			if (!ActiveTheme.Instance.IsDarkTheme)
-			{
-				levelingImage.InvertLightness();
-			}
-
-			ImageWidget levelingIcon = new ImageWidget(levelingImage);
+			var levelingIcon = new ImageWidget(AggContext.StaticData.LoadIcon("leveling_32x32.png", 24, 24, IconColor.Theme));
 			levelingIcon.Margin = new BorderDouble(right: 6);
-
 			buttonRow.AddChild(levelingIcon);
 
 			// label
@@ -93,7 +81,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			buttonRow.AddChild(printLevelingStatusLabel);
 
 			// edit 
-			Button editButton = buttonFactory.GenerateIconButton(AggContext.StaticData.LoadIcon("icon_edit.png", 16, 16));
+			Button editButton = buttonFactory.GenerateIconButton(AggContext.StaticData.LoadIcon("icon_edit.png", 16, 16, IconColor.Theme));
 			editButton.Margin = new BorderDouble(2, 2, 2, 0);
 			editButton.VAnchor = VAnchor.Top;
 			editButton.VAnchor = VAnchor.Center;

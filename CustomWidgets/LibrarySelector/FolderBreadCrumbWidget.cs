@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			var theme = ApplicationController.Instance.Theme;
 
-			var upbutton = theme.ButtonFactory.GenerateIconButton(AggContext.StaticData.LoadIcon(Path.Combine("FileDialog", "up_folder_20.png")));
+			var upbutton = theme.ButtonFactory.GenerateIconButton(AggContext.StaticData.LoadIcon(Path.Combine("FileDialog", "up_folder_20.png"), IconColor.Theme));
 			upbutton.Name = "Library Up Button";
 			upbutton.Margin = new BorderDouble(right: 2);
 			upbutton.Click += (s, e) =>
@@ -138,11 +138,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					Button searchResultsButton = null;
 					if (UserSettings.Instance.IsTouchScreen)
 					{
-						searchResultsButton = buttonFactory.Generate("Search Results".Localize(), "icon_search_32x32.png");
+						searchResultsButton = buttonFactory.Generate("Search Results".Localize(), AggContext.StaticData.LoadIcon("icon_search_32x32.png", IconColor.Theme));
 					}
 					else
 					{
-						searchResultsButton = buttonFactory.Generate("Search Results".Localize(), "icon_search_24x24.png");
+						searchResultsButton = buttonFactory.Generate("Search Results".Localize(), AggContext.StaticData.LoadIcon("icon_search_24x24.png", IconColor.Theme));
 					}
 					searchResultsButton.Name = "Bread Crumb Button " + "Search Results";
 					searchResultsButton.Margin = new BorderDouble(right:  5);

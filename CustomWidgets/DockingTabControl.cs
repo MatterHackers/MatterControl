@@ -104,7 +104,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		private GuiWidget CreatePinButton()
 		{
-			var icon = AggContext.StaticData.LoadIcon(this.ControlIsPinned ? "Pushpin_16x.png" : "PushpinUnpin_16x.png", 16, 16);
+			string imageFile = this.ControlIsPinned ? "Pushpin_16x.png" : "PushpinUnpin_16x.png";
+			var icon = AggContext.StaticData.LoadIcon(imageFile, 16, 16, IconColor.Theme);
 
 			var imageWidget = ApplicationController.Instance.Theme.ButtonFactory.GenerateIconButton(icon);
 			imageWidget.Name = "Pin Settings Button";

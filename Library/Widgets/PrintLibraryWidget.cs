@@ -136,7 +136,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			navBar.AddChild(searchPanel);
 
-			var searchButton = theme.ButtonFactory.GenerateIconButton(AggContext.StaticData.LoadIcon("icon_search_24x24.png", 16, 16));
+			var searchButton = theme.ButtonFactory.GenerateIconButton(AggContext.StaticData.LoadIcon("icon_search_24x24.png", 16, 16, IconColor.Theme));
 			searchButton.Name = "Search Library Button";
 			searchButton.ToolTipText = "Search".Localize();
 			searchButton.Click += (s, e) =>
@@ -277,7 +277,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			buttonPanel.RemoveAllChildren();
 
 			// the add button
-			addToLibraryButton = textImageButtonFactory.Generate("Add".Localize(), "cube.png");
+			addToLibraryButton = textImageButtonFactory.Generate("Add".Localize(), AggContext.StaticData.LoadIcon("cube.png", IconColor.Theme));
 			addToLibraryButton.Enabled = false; // The library selector (the first library selected) is protected so we can't add to it. 
 			addToLibraryButton.ToolTipText = "Add an .stl, .amf, .gcode or .zip file to the Library".Localize();
 			addToLibraryButton.Name = "Library Add Button";

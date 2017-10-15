@@ -76,7 +76,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private EventHandler unregisterEvents;
 
 		private ViewControls3DButtons activeTransformState = ViewControls3DButtons.Rotate;
-		
+
 		public bool PartSelectVisible
 		{
 			get { return partSelectSeparator.Visible; }
@@ -146,9 +146,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var buttonFactory = theme.RadioButtons;
 
-			double height = theme.ButtonFactory.FixedHeight;
+			double height = theme.ButtonFactory.Options.FixedHeight;
 
-			Button undoButton = buttonFactory.GenerateIconButton(AggContext.StaticData.LoadIcon("Undo_grey_16x.png", 16, 16), IconColor.White);
+			Button undoButton = buttonFactory.GenerateIconButton(AggContext.StaticData.LoadIcon("Undo_grey_16x.png", 16, 16, IconColor.White));
 			undoButton.Name = "3D View Undo";
 			undoButton.ToolTipText = "Undo";
 			undoButton.Enabled = false;
@@ -161,7 +161,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.AddChild(undoButton);
 			undoButton.VAnchor = VAnchor.Center;
 
-			Button redoButton = buttonFactory.GenerateIconButton(AggContext.StaticData.LoadIcon("Redo_grey_16x.png", 16, 16), IconColor.White);
+			Button redoButton = buttonFactory.GenerateIconButton(AggContext.StaticData.LoadIcon("Redo_grey_16x.png", 16, 16, IconColor.White));
 			redoButton.Name = "3D View Redo";
 			redoButton.Margin = commonMargin;
 			redoButton.MinimumSize = new Vector2(height, height);
@@ -186,7 +186,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			iconPath = Path.Combine("ViewTransformControls", "reset.png");
-			resetViewButton = theme.ButtonFactory.GenerateIconButton(AggContext.StaticData.LoadIcon(iconPath,32,32), IconColor.White);
+			resetViewButton = theme.ButtonFactory.GenerateIconButton(AggContext.StaticData.LoadIcon(iconPath, 32, 32, IconColor.White));
 			resetViewButton.ToolTipText = "Reset View".Localize();
 			resetViewButton.Margin = commonMargin;
 			resetViewButton.Click += (s, e) => ResetView?.Invoke(this, null);
@@ -197,7 +197,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (UserSettings.Instance.IsTouchScreen)
 			{
 				iconPath = Path.Combine("ViewTransformControls", "rotate.png");
-				rotateButton = buttonFactory.GenerateRadioButton("", AggContext.StaticData.LoadIcon(iconPath, 32, 32));
+				rotateButton = buttonFactory.GenerateRadioButton("", AggContext.StaticData.LoadIcon(iconPath, 32, 32, IconColor.White));
 				rotateButton.SiblingRadioButtonList = buttonGroupA;
 				rotateButton.ToolTipText = "Rotate (Alt + Left Mouse)".Localize();
 				rotateButton.Margin = commonMargin;
@@ -206,7 +206,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				AddChild(rotateButton);
 
 				iconPath = Path.Combine("ViewTransformControls", "translate.png");
-				translateButton = buttonFactory.GenerateRadioButton("", AggContext.StaticData.LoadIcon(iconPath, 32, 32));
+				translateButton = buttonFactory.GenerateRadioButton("", AggContext.StaticData.LoadIcon(iconPath, 32, 32, IconColor.White));
 				translateButton.SiblingRadioButtonList = buttonGroupA;
 				translateButton.ToolTipText = "Move (Shift + Left Mouse)".Localize();
 				translateButton.Margin = commonMargin;
@@ -215,7 +215,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				AddChild(translateButton);
 
 				iconPath = Path.Combine("ViewTransformControls", "scale.png");
-				scaleButton = buttonFactory.GenerateRadioButton("", AggContext.StaticData.LoadIcon(iconPath, 32, 32));
+				scaleButton = buttonFactory.GenerateRadioButton("", AggContext.StaticData.LoadIcon(iconPath, 32, 32, IconColor.White));
 				scaleButton.SiblingRadioButtonList = buttonGroupA;
 				scaleButton.ToolTipText = "Zoom (Ctrl + Left Mouse)".Localize();
 				scaleButton.Margin = commonMargin;
@@ -232,7 +232,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			AddChild(partSelectSeparator);
 
 			iconPath = Path.Combine("ViewTransformControls", "partSelect.png");
-			partSelectButton = buttonFactory.GenerateRadioButton("", AggContext.StaticData.LoadIcon(iconPath,32,32));
+			partSelectButton = buttonFactory.GenerateRadioButton("", AggContext.StaticData.LoadIcon(iconPath, 32, 32, IconColor.White));
 			partSelectButton.SiblingRadioButtonList = buttonGroupA;
 			partSelectButton.ToolTipText = "Select Part".Localize();
 			partSelectButton.Visible = false;
@@ -244,7 +244,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var buttonGroupB = new ObservableCollection<GuiWidget>();
 
 			iconPath = Path.Combine("ViewTransformControls", "model.png");
-			var modelViewButton = buttonFactory.GenerateRadioButton("", AggContext.StaticData.LoadIcon(iconPath, 32, 32));
+			var modelViewButton = buttonFactory.GenerateRadioButton("", AggContext.StaticData.LoadIcon(iconPath, 32, 32, IconColor.White));
 			modelViewButton.SiblingRadioButtonList = buttonGroupB;
 			modelViewButton.Name = "Model View Button";
 			modelViewButton.Checked = false;
@@ -255,7 +255,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			AddChild(modelViewButton);
 
 			iconPath = Path.Combine("ViewTransformControls", "3d.png");
-			var layers3DButton = buttonFactory.GenerateRadioButton("",  AggContext.StaticData.LoadIcon(iconPath, 32, 32));
+			var layers3DButton = buttonFactory.GenerateRadioButton("", AggContext.StaticData.LoadIcon(iconPath, 32, 32, IconColor.White));
 			layers3DButton.SiblingRadioButtonList = buttonGroupB;
 			layers3DButton.Name = "Layers3D Button";
 			layers3DButton.ToolTipText = "3D Layers".Localize();
@@ -269,7 +269,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			iconPath = Path.Combine("ViewTransformControls", "2d.png");
-			Layers2DButton = buttonFactory.GenerateRadioButton("",  AggContext.StaticData.LoadIcon(iconPath, 32, 32));
+			Layers2DButton = buttonFactory.GenerateRadioButton("", AggContext.StaticData.LoadIcon(iconPath, 32, 32, IconColor.White));
 			Layers2DButton.SiblingRadioButtonList = buttonGroupB;
 			Layers2DButton.Name = "Layers2D Button";
 			Layers2DButton.ToolTipText = "2D Layers".Localize();

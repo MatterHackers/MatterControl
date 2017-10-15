@@ -82,36 +82,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private bool wasInSelectMode = false;
 
-		public static ImageBuffer ArrowRight
-		{
-			get
-			{
-				if (ActiveTheme.Instance.IsDarkTheme)
-				{
-					return AggContext.StaticData.LoadIcon("icon_arrow_right_no_border_32x32.png", 32, 32).InvertLightness();
-				}
-				else
-				{
-					return AggContext.StaticData.LoadIcon("icon_arrow_right_no_border_32x32.png", 32, 32);
-				}
-			}
-		}
-
-		public static ImageBuffer ArrowDown
-		{
-			get
-			{
-				if (ActiveTheme.Instance.IsDarkTheme)
-				{
-					return AggContext.StaticData.LoadIcon("icon_arrow_down_no_border_32x32.png", 32, 32).InvertLightness();
-				}
-				else
-				{
-					return AggContext.StaticData.LoadIcon("icon_arrow_down_no_border_32x32.png", 32, 32);
-				}
-			}
-		}
-
 		private ThemeConfig theme;
 
 		public Vector3 BedCenter
@@ -236,7 +206,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				var buttonSpacing = ApplicationController.Instance.Theme.ButtonSpacing;
 
-				Button addButton = smallMarginButtonFactory.Generate("Insert".Localize(), AggContext.StaticData.LoadIcon("cube.png", 14, 14));
+				Button addButton = smallMarginButtonFactory.Generate("Insert".Localize(), AggContext.StaticData.LoadIcon("cube.png", 14, 14, IconColor.Theme));
 				addButton.Margin = 0;
 				addButton.Click += (sender, e) =>
 				{
@@ -446,18 +416,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				bool isPrinterMode = meshViewerWidget.EditorMode == MeshViewerWidget.EditorType.Printer;
 
-				string title =  isPrinterMode ? "Bed".Localize() : "Part".Localize();
+				var buttonView = smallMarginButtonFactory.Generate(
+					label: (isPrinterMode) ? "Bed".Localize() : "Part".Localize(),
+					normalImage: AggContext.StaticData.LoadIcon((isPrinterMode) ? "bed.png" : "cube.png", IconColor.Theme));
 
-				var icon = isPrinterMode ? AggContext.StaticData.LoadIcon("bed.png") : AggContext.StaticData.LoadIcon("cube.png");
-
-				selectionActionBar.AddChild(new PopupButton(smallMarginButtonFactory.Generate(title, normalImage: icon))
-				{
-					PopDirection = Direction.Up,
-					PopupContent = ApplicationController.Instance.Theme.CreatePopupMenu(bedMenuActions),
-					AlignToRightEdge = true,
-					Margin = buttonSpacing,
-					Name = "Bed Options Menu",
-				});
+				selectionActionBar.AddChild(
+					new PopupButton(buttonView)
+					{
+						PopDirection = Direction.Up,
+						PopupContent = ApplicationController.Instance.Theme.CreatePopupMenu(bedMenuActions),
+						AlignToRightEdge = true,
+						Margin = buttonSpacing,
+						Name = "Bed Options Menu",
+					});
 			}
 
 			buttonBottomPanel.AddChild(bottomActionPanel);

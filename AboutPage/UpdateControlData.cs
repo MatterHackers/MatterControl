@@ -240,8 +240,8 @@ namespace MatterHackers.MatterControl
 				InitiateUpdateDownload();
 				// Switch to the about page so we can see the download progress.
 				GuiWidget aboutTabWidget = FindNamedWidgetRecursive(ApplicationController.Instance.MainView, "About Tab");
-				Tab aboutTab = aboutTabWidget as Tab;
-				if (aboutTab != null)
+
+				if (aboutTabWidget is Tab aboutTab)
 				{
 					aboutTab.TabBarContaningTab.SelectTab(aboutTab);
 				}

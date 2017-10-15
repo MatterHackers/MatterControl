@@ -54,13 +54,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			this.DisplayCurrentTemperature();
 			this.ToolTipText = "Current bed temperature".Localize();
 
-			var icon = AggContext.StaticData.LoadIcon("bed.png");
-			if (ActiveTheme.Instance.IsDarkTheme)
-			{
-				icon = icon.InvertLightness();
-			}
-
-			this.ImageWidget.Image = icon;
+			this.ImageWidget.Image = AggContext.StaticData.LoadIcon("bed.png", IconColor.Theme);
 
 			printer.Connection.BedTemperatureRead.RegisterEvent((s, e) => DisplayCurrentTemperature(), ref unregisterEvents);
 		}

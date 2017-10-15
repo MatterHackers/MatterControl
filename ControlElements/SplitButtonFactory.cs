@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl
 
 			var buttonFactory = ApplicationController.Instance.Theme.SmallMarginButtonFactory;
 
-			Button button = buttonFactory.Generate(primaryAction.Title, AggContext.StaticData.LoadIcon(imageName, 24, 24));
+			Button button = buttonFactory.Generate(primaryAction.Title, AggContext.StaticData.LoadIcon(imageName, 24, 24, IconColor.Theme));
 			button.Name = $"{primaryAction.Title} Button";
 			button.Click += (s, e) =>
 			{

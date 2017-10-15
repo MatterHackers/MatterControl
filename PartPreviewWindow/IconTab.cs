@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2017, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,42 +27,34 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
 using MatterHackers.Agg;
-using MatterHackers.Agg.Platform;
+using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.MatterControl.CustomWidgets;
 
-namespace MatterHackers.MatterControl.ActionBar
+namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class ResetButton : GuiWidget
+	public class IconTab : Tab
 	{
-		private readonly string resetConnectionText = "Reset\nConnection".Localize().ToUpper();
-		private EventHandler unregisterEvents;
+		private IconButton iconButton;
 
-		public ResetButton(PrinterConfig printer, TextImageButtonFactory buttonFactory)
+		public IconTab(string tabName, TabPage tabPage, ImageBuffer imageBuffer, ThemeConfig theme)
+			: base(tabName, tabPage)
 		{
-			this.HAnchor = HAnchor.Stretch | HAnchor.Fit;
-			this.VAnchor = VAnchor.Fit;
-			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-
-			Button resetConnectionButton = buttonFactory.Generate(resetConnectionText, AggContext.StaticData.LoadIcon("e_stop4.png", IconColor.Theme));
-			resetConnectionButton.Visible = printer.Settings.GetValue<bool>(SettingsKey.show_reset_connection);
-			resetConnectionButton.Click += (s, e) =>
+			iconButton = new IconButton(imageBuffer, theme)
 			{
-				UiThread.RunOnIdle(printer.Connection.RebootBoard);
+				Height = theme.MicroButton.Options.FixedHeight,
+				Width = theme.MicroButton.Options.FixedHeight,
+				Selectable = false
 			};
-			this.AddChild(resetConnectionButton);
 
-			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
-			{
-				var stringEvent = e as StringEventArgs;
-				if (stringEvent?.Data == SettingsKey.show_reset_connection)
-				{
-					resetConnectionButton.Visible = printer.Settings.GetValue<bool>(SettingsKey.show_reset_connection);
-				}
-			}, ref unregisterEvents);
+			this.AddChild(iconButton);
+		}
+
+		protected override void OnTabIndexChanged()
+		{
+			iconButton.BackgroundColor = (this.TabPage == TabBarContaningTab.GetActivePage()) ? ActiveTheme.Instance.TertiaryBackgroundColor : RGBA_Bytes.Transparent;
+			base.OnTabIndexChanged();
 		}
 	}
 }

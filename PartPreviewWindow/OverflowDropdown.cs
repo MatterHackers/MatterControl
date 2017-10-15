@@ -48,12 +48,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public static ImageWidget LoadThemedIcon(bool allowLightnessInvert)
 		{
-			var imageBuffer = AggContext.StaticData.LoadIcon(Path.Combine("ViewTransformControls", "overflow.png"), 32, 32);
-			if (!ActiveTheme.Instance.IsDarkTheme && allowLightnessInvert)
-			{
-				imageBuffer.InvertLightness();
-			}
-
+			var imageBuffer = AggContext.StaticData.LoadIcon(Path.Combine("ViewTransformControls", "overflow.png"), 32, 32, (allowLightnessInvert) ? IconColor.Theme : IconColor.White);
 			return new ImageWidget(imageBuffer);
 		}
 

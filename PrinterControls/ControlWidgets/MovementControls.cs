@@ -160,18 +160,11 @@ namespace MatterHackers.MatterControl.PrinterControls
 			var homingButtonFactory = ApplicationController.Instance.Theme.HomingButtons;
 			var commonButtonFactory = ApplicationController.Instance.Theme.ButtonFactory;
 
-			ImageBuffer helpIconImage = AggContext.StaticData.LoadIcon("icon_home_white_24x24.png", 24, 24);
-			if (ActiveTheme.Instance.IsDarkTheme)
-			{
-				helpIconImage.InvertLightness();
-			}
-			ImageWidget homeIconImageWidget = new ImageWidget(helpIconImage);
-
+			var homeIconImageWidget = new ImageWidget(AggContext.StaticData.LoadIcon("icon_home_white_24x24.png", 24, 24, IconColor.Theme));
 			homeIconImageWidget.Margin = new BorderDouble(0, 0, 6, 0);
 			homeIconImageWidget.OriginRelativeParent += new Vector2(0, 2) * GuiWidget.DeviceScale;
 
 			homeAllButton = homingButtonFactory.Generate("ALL".Localize());
-			
 			homeAllButton.ToolTipText = "Home X, Y and Z".Localize();
 			homeAllButton.Margin = new BorderDouble(0, 0, 6, 0);
 			homeAllButton.Click += homeAll_Click;

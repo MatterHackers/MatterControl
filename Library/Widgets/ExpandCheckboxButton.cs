@@ -52,14 +52,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			this.VAnchor = VAnchor.Fit;
 			this.Padding = new BorderDouble(left: 2, bottom: 2, top: 6); // Same padding as toolbar above
 
-			arrowRight = AggContext.StaticData.LoadIcon("fa-angle-right_12.png");
-			arrowDown = AggContext.StaticData.LoadIcon("fa-angle-down_12.png");
-
-			if (ActiveTheme.Instance.IsDarkTheme)
-			{
-				arrowRight = arrowRight.InvertLightness();
-				arrowDown = arrowDown.InvertLightness();
-			}
+			arrowRight = AggContext.StaticData.LoadIcon("fa-angle-right_12.png", IconColor.Theme);
+			arrowDown = AggContext.StaticData.LoadIcon("fa-angle-down_12.png", IconColor.Theme);
 
 			var theme = ApplicationController.Instance.Theme;
 
