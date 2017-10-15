@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 			{
 				HAnchor = HAnchor.Absolute,
 				Visible = true,
-				Width = theme.WhiteButtonFactory.FixedWidth
+				Width = theme.WhiteButtonFactory.Options.FixedWidth
 			};
 			mainContainer.AddChild(tabContainer);
 

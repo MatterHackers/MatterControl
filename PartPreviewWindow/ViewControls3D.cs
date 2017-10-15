@@ -146,7 +146,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var buttonFactory = theme.RadioButtons;
 
-			double height = theme.ButtonFactory.FixedHeight;
+			double height = theme.ButtonFactory.Options.FixedHeight;
 
 			Button undoButton = buttonFactory.GenerateIconButton(AggContext.StaticData.LoadIcon("Undo_grey_16x.png", 16, 16, IconColor.White));
 			undoButton.Name = "3D View Undo";

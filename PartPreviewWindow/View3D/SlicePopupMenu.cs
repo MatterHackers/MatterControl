@@ -95,8 +95,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				//Name = "Slice Dropdown Button",
 				Name = "Generate Gcode Button",
-				BackgroundColor = theme.ButtonFactory.normalFillColor,
-				HoverColor = theme.ButtonFactory.hoverFillColor,
+				BackgroundColor = theme.ButtonFactory.Options.NormalFillColor,
+				HoverColor = theme.ButtonFactory.Options.HoverFillColor,
 				Margin = theme.ButtonSpacing,
 			});
 		}
@@ -180,7 +180,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			partProcessingInfo = new SliceStageProgressControl("start");
 			partProcessingInfo.VAnchor = VAnchor.Center;
-			partProcessingInfo.operationText.TextColor = ApplicationController.Instance.Theme.ButtonFactory.normalTextColor;
+			partProcessingInfo.operationText.TextColor = ApplicationController.Instance.Theme.ButtonFactory.Options.NormalTextColor;
 
 			progressReportContainer.AddChild(partProcessingInfo);
 		}

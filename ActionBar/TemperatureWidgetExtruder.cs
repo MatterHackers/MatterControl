@@ -133,7 +133,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			tenButton.Checked = true;
 
-			moveButtonsContainer.AddChild(new TextWidget("mm", textColor: buttonFactory.normalTextColor, pointSize: 8)
+			moveButtonsContainer.AddChild(new TextWidget("mm", textColor: buttonFactory.Options.NormalTextColor, pointSize: 8)
 			{
 				VAnchor = VAnchor.Center,
 				Margin = new BorderDouble(3, 0)

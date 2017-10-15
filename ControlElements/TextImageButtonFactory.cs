@@ -51,31 +51,31 @@ namespace MatterHackers.MatterControl
 		}
 
 		// Private getters act as proxies to new options class
-		public BorderDouble Margin => Options.Margin;
-		public RGBA_Bytes normalFillColor => Options.NormalFillColor;
-		public RGBA_Bytes hoverFillColor => Options.HoverFillColor;
-		public RGBA_Bytes pressedFillColor => Options.PressedFillColor;
-		public RGBA_Bytes disabledFillColor => Options.DisabledFillColor;
+		private BorderDouble Margin => Options.Margin;
+		private RGBA_Bytes normalFillColor => Options.NormalFillColor;
+		private RGBA_Bytes hoverFillColor => Options.HoverFillColor;
+		private RGBA_Bytes pressedFillColor => Options.PressedFillColor;
+		private RGBA_Bytes disabledFillColor => Options.DisabledFillColor;
 
-		public RGBA_Bytes normalBorderColor => Options.NormalBorderColor;
-		public RGBA_Bytes hoverBorderColor => Options.HoverBorderColor;
-		public RGBA_Bytes pressedBorderColor => Options.PressedBorderColor;
-		public RGBA_Bytes disabledBorderColor  => Options.DisabledBorderColor;
+		private RGBA_Bytes normalBorderColor => Options.NormalBorderColor;
+		private RGBA_Bytes hoverBorderColor => Options.HoverBorderColor;
+		private RGBA_Bytes pressedBorderColor => Options.PressedBorderColor;
+		private RGBA_Bytes disabledBorderColor  => Options.DisabledBorderColor;
 
-		public RGBA_Bytes checkedBorderColor => Options.CheckedBorderColor;
+		private RGBA_Bytes checkedBorderColor => Options.CheckedBorderColor;
 
-		public RGBA_Bytes normalTextColor  => Options.NormalTextColor;
-		public RGBA_Bytes hoverTextColor  => Options.HoverTextColor;
-		public RGBA_Bytes pressedTextColor  => Options.PressedTextColor;
-		public RGBA_Bytes disabledTextColor  => Options.DisabledTextColor;
+		private RGBA_Bytes normalTextColor  => Options.NormalTextColor;
+		private RGBA_Bytes hoverTextColor  => Options.HoverTextColor;
+		private RGBA_Bytes pressedTextColor  => Options.PressedTextColor;
+		private RGBA_Bytes disabledTextColor  => Options.DisabledTextColor;
 
-		public double fontSize => Options.FontSize;
-		public double borderWidth => Options.BorderWidth;
-		public bool invertImageLocation => Options.InvertImageLocation;
+		private double fontSize => Options.FontSize;
+		private double borderWidth => Options.BorderWidth;
+		private bool invertImageLocation => Options.InvertImageLocation;
 		private FlowDirection flowDirection => Options.FlowDirection;
-		public double FixedWidth => Options.FixedWidth;
-		public double FixedHeight => Options.FixedHeight;
-		public double ImageSpacing => Options.ImageSpacing;
+		private double FixedWidth => Options.FixedWidth;
+		private double FixedHeight => Options.FixedHeight;
+		private double ImageSpacing => Options.ImageSpacing;
 
 		public GuiWidget GenerateGroupBoxLabelWithEdit(TextWidget textWidget, out Button editButton)
 		{

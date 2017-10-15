@@ -43,8 +43,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			iconButton = new IconButton(imageBuffer, theme)
 			{
-				Height = theme.MicroButton.FixedHeight,
-				Width = theme.MicroButton.FixedHeight,
+				Height = theme.MicroButton.Options.FixedHeight,
+				Width = theme.MicroButton.Options.FixedHeight,
 				Selectable = false
 			};
 
