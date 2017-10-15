@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			this.VAnchor = VAnchor.Fit | VAnchor.Center;
 
-			var overflowDropdown = new OverflowDropdown(IconColor.Theme)
+			var overflowDropdown = new OverflowMenu(IconColor.Theme)
 			{
 				AlignToRightEdge = true,
 				Name = "Slice Settings Overflow Menu"
@@ -66,21 +66,21 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			popupContainer.AddChild(new MenuItem(showHelpBox, "Show Help Checkbox")
 			{
-				Padding = OverflowDropdown.MenuPadding,
+				Padding = OverflowMenu.MenuPadding,
 			});
 
-			popupContainer.AddChild(OverflowDropdown.CreateHorizontalLine());
+			popupContainer.AddChild(OverflowMenu.CreateHorizontalLine());
 
 			MenuItem menuItem;
 
-			menuItem = OverflowDropdown.CreateMenuItem("Export".Localize());
+			menuItem = OverflowMenu.CreateMenuItem("Export".Localize());
 			menuItem.Click += (s, e) => 
 			{
 				WizardWindow.Show<ExportSettingsPage>();
 			};
 			popupContainer.AddChild(menuItem);
 
-			menuItem = OverflowDropdown.CreateMenuItem("Restore Settings".Localize());
+			menuItem = OverflowMenu.CreateMenuItem("Restore Settings".Localize());
 			menuItem.Click += (s, e) => 
 			{
 				WizardWindow.Show<PrinterProfileHistoryPage>();
@@ -88,7 +88,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			menuItem.Enabled = !string.IsNullOrEmpty(AuthenticationData.Instance.ActiveSessionUsername);
 			popupContainer.AddChild(menuItem);
 
-			menuItem = OverflowDropdown.CreateMenuItem("Reset to Defaults".Localize());
+			menuItem = OverflowMenu.CreateMenuItem("Reset to Defaults".Localize());
 			menuItem.Click += (s, e) => 
 			{
 				UiThread.RunOnIdle(() =>
@@ -125,7 +125,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			};
 			popupContainer.AddChild(menuItem);
 
-			popupContainer.AddChild(OverflowDropdown.CreateHorizontalLine());
+			popupContainer.AddChild(OverflowMenu.CreateHorizontalLine());
 
 			popupContainer.AddChild(new TextWidget("Mode")
 			{

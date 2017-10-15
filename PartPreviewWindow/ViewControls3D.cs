@@ -61,7 +61,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public event EventHandler<TransformStateChangedEventArgs> TransformStateChanged;
 
-		internal OverflowDropdown OverflowButton;
+		internal OverflowMenu OverflowButton;
 
 		private GuiWidget partSelectSeparator;
 		private Button resetViewButton;
@@ -279,7 +279,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			buttonGroupB.Add(Layers2DButton);
 			this.AddChild(Layers2DButton);
 
-			OverflowButton = new OverflowDropdown(IconColor.White)
+			OverflowButton = new OverflowMenu(IconColor.White)
 			{
 				Name = "View3D Overflow Menu",
 				ToolTipText = "More...".Localize(),

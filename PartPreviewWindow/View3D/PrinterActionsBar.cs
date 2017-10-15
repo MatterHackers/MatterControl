@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private string noEepromMappingMessage = "Oops! There is no eeprom mapping for your printer's firmware.".Localize() + "\n\n" + "You may need to wait a minute for your printer to finish initializing.".Localize();
 		private string noEepromMappingTitle = "Warning - No EEProm Mapping".Localize();
 
-		private OverflowDropdown overflowDropdown;
+		private OverflowMenu overflowDropdown;
 
 		private CancellationTokenSource gcodeLoadCancellationTokenSource;
 
@@ -95,7 +95,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.AddChild(new TemperatureWidgetBed(printer));
 			}
 
-			overflowDropdown = new OverflowDropdown(IconColor.Theme)
+			overflowDropdown = new OverflowMenu(IconColor.Theme)
 			{
 				AlignToRightEdge = true,
 				Name = "Printer Overflow Menu",

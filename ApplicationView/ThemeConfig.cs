@@ -366,11 +366,11 @@ namespace MatterHackers.MatterControl
 
 				if (menuAction.Title == "----")
 				{
-					menuItem = PartPreviewWindow.OverflowDropdown.CreateHorizontalLine();
+					menuItem = PartPreviewWindow.OverflowMenu.CreateHorizontalLine();
 				}
 				else
 				{
-					menuItem = PartPreviewWindow.OverflowDropdown.CreateMenuItem((string)menuAction.Title);
+					menuItem = PartPreviewWindow.OverflowMenu.CreateMenuItem((string)menuAction.Title);
 					menuItem.Name = $"{menuAction.Title} Menu Item";
 				}
 

@@ -34,9 +34,9 @@ using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class OverflowDropdown : PopupMenuButton
+	public class OverflowMenu : PopupMenuButton
 	{
-		public OverflowDropdown(IconColor iconColor)
+		public OverflowMenu(IconColor iconColor)
 			: base(new ImageWidget(AggContext.StaticData.LoadIcon(Path.Combine("ViewTransformControls", "overflow.png"), 32, 32, iconColor)))
 		{
 			this.ToolTipText = "More...".Localize();
