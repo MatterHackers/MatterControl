@@ -244,10 +244,15 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 					Margin = new BorderDouble(5, 0),
 					Value = currentTexSize,
 					HAnchor = HAnchor.Stretch,
+					VAnchor = VAnchor.Center,
 					TotalWidthInPixels = sliderWidth,
 				};
 
-				var optionalContainer = new FlowLayoutWidget();
+				var optionalContainer = new FlowLayoutWidget()
+				{
+					VAnchor = VAnchor.Center | VAnchor.Fit,
+					HAnchor = HAnchor.Fit
+				};
 
 				TextWidget sectionLabel = null;
 
