@@ -129,7 +129,6 @@
     <Compile Include="ActionBar\PrinterSelector.cs" />
     <Compile Include="ActionBar\ResetButton.cs" />
     <Compile Include="ActionBar\TemperatureWidgetBed.cs" />
-    <Compile Include="ActionBar\PrintActionRow.cs" />
     <Compile Include="ActionBar\PrinterConnectButton.cs" />
     <Compile Include="ActionBar\TemperatureWidgetBase.cs" />
     <Compile Include="ActionBar\TemperatureWidgetExtruder.cs" />
