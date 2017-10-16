@@ -48,11 +48,11 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		private Button cancelConnectButton;
 		private Button resetConnectionButton;
-		private Button resumeButton;
+		private Button resumeResumeButton;
 
-		private Button startButton;
-		private Button pauseButton;
-		private Button cancelButton;
+		private Button startPrintButton;
+		private Button pausePrintButton;
+		private Button cancelPrintButton;
 
 		private Button finishSetupButton;
 
@@ -75,11 +75,11 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		protected void AddChildElements(TextImageButtonFactory buttonFactory, GuiWidget parentWidget, BorderDouble defaultMargin)
 		{
-			startButton = buttonFactory.Generate("Print".Localize().ToUpper());
-			startButton.Name = "Start Print Button";
-			startButton.ToolTipText = "Begin printing the selected item.".Localize();
-			startButton.Margin = defaultMargin;
-			startButton.Click += onStartButton_Click;
+			startPrintButton = buttonFactory.Generate("Print".Localize().ToUpper());
+			startPrintButton.Name = "Start Print Button";
+			startPrintButton.ToolTipText = "Begin printing the selected item.".Localize();
+			startPrintButton.Margin = defaultMargin;
+			startPrintButton.Click += onStartButton_Click;
 
 			finishSetupButton = buttonFactory.Generate("Finish Setup...".Localize());
 			finishSetupButton.Name = "Finish Setup Button";
@@ -92,16 +92,16 @@ namespace MatterHackers.MatterControl.ActionBar
 			resetConnectionButton.Margin = defaultMargin;
 			resetConnectionButton.Click += (s, e) => UiThread.RunOnIdle(printer.Connection.RebootBoard);
 
-			pauseButton = buttonFactory.Generate("Pause".Localize().ToUpper());
-			pauseButton.ToolTipText = "Pause the current print".Localize();
-			pauseButton.Margin = defaultMargin;
-			pauseButton.Click += (s, e) =>
+			pausePrintButton = buttonFactory.Generate("Pause".Localize().ToUpper());
+			pausePrintButton.ToolTipText = "Pause the current print".Localize();
+			pausePrintButton.Margin = defaultMargin;
+			pausePrintButton.Click += (s, e) =>
 			{
 				UiThread.RunOnIdle(printer.Connection.RequestPause);
-				pauseButton.Enabled = false;
+				pausePrintButton.Enabled = false;
 			};
-			parentWidget.AddChild(pauseButton);
-			allPrintButtons.Add(pauseButton);
+			parentWidget.AddChild(pausePrintButton);
+			allPrintButtons.Add(pausePrintButton);
 
 			cancelConnectButton = buttonFactory.Generate("Cancel Connect".Localize().ToUpper());
 			cancelConnectButton.ToolTipText = "Stop trying to connect to the printer.".Localize();
@@ -112,42 +112,42 @@ namespace MatterHackers.MatterControl.ActionBar
 				UiThread.RunOnIdle(SetButtonStates);
 			});
 
-			cancelButton = buttonFactory.Generate("Cancel".Localize().ToUpper());
-			cancelButton.ToolTipText = "Stop the current print".Localize();
-			cancelButton.Name = "Cancel Print Button";
-			cancelButton.Margin = defaultMargin;
-			cancelButton.Click += (s, e) => UiThread.RunOnIdle(() =>
+			cancelPrintButton = buttonFactory.Generate("Cancel".Localize().ToUpper());
+			cancelPrintButton.ToolTipText = "Stop the current print".Localize();
+			cancelPrintButton.Name = "Cancel Print Button";
+			cancelPrintButton.Margin = defaultMargin;
+			cancelPrintButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
 				ApplicationController.Instance.ConditionalCancelPrint();
 				SetButtonStates();
 			});
 
-			resumeButton = buttonFactory.Generate("Resume".Localize().ToUpper());
-			resumeButton.ToolTipText = "Resume the current print".Localize();
-			resumeButton.Margin = defaultMargin;
-			resumeButton.Name = "Resume Button";
-			resumeButton.Click += (s, e) =>
+			resumeResumeButton = buttonFactory.Generate("Resume".Localize().ToUpper());
+			resumeResumeButton.ToolTipText = "Resume the current print".Localize();
+			resumeResumeButton.Margin = defaultMargin;
+			resumeResumeButton.Name = "Resume Button";
+			resumeResumeButton.Click += (s, e) =>
 			{
 				if (printer.Connection.PrinterIsPaused)
 				{
 					printer.Connection.Resume();
 				}
-				pauseButton.Enabled = true;
+				pausePrintButton.Enabled = true;
 			};
 
-			parentWidget.AddChild(resumeButton);
-			allPrintButtons.Add(resumeButton);
+			parentWidget.AddChild(resumeResumeButton);
+			allPrintButtons.Add(resumeResumeButton);
 			this.Margin = 0;
 			this.HAnchor = HAnchor.Fit;
 
-			parentWidget.AddChild(startButton);
-			allPrintButtons.Add(startButton);
+			parentWidget.AddChild(startPrintButton);
+			allPrintButtons.Add(startPrintButton);
 
 			parentWidget.AddChild(finishSetupButton);
 			allPrintButtons.Add(finishSetupButton);
 
-			parentWidget.AddChild(cancelButton);
-			allPrintButtons.Add(cancelButton);
+			parentWidget.AddChild(cancelPrintButton);
+			allPrintButtons.Add(cancelPrintButton);
 
 			parentWidget.AddChild(cancelConnectButton);
 			allPrintButtons.Add(cancelConnectButton);
@@ -210,14 +210,14 @@ namespace MatterHackers.MatterControl.ActionBar
 						}
 						else
 						{
-							this.activePrintButtons.Add(startButton);
+							this.activePrintButtons.Add(startPrintButton);
 						}
 
 						EnableActiveButtons();
 						break;
 
 					case CommunicationStates.PreparingToPrint:
-						this.activePrintButtons.Add(cancelButton);
+						this.activePrintButtons.Add(cancelPrintButton);
 						EnableActiveButtons();
 						break;
 
@@ -225,8 +225,8 @@ namespace MatterHackers.MatterControl.ActionBar
 					case CommunicationStates.Printing:
 						if (!printer.Connection.PrintWasCanceled)
 						{
-							this.activePrintButtons.Add(pauseButton);
-							this.activePrintButtons.Add(cancelButton);
+							this.activePrintButtons.Add(pausePrintButton);
+							this.activePrintButtons.Add(cancelPrintButton);
 						}
 						else if (UserSettings.Instance.IsTouchScreen)
 						{
@@ -237,13 +237,13 @@ namespace MatterHackers.MatterControl.ActionBar
 						break;
 
 					case CommunicationStates.Paused:
-						this.activePrintButtons.Add(resumeButton);
-						this.activePrintButtons.Add(cancelButton);
+						this.activePrintButtons.Add(resumeResumeButton);
+						this.activePrintButtons.Add(cancelPrintButton);
 						EnableActiveButtons();
 						break;
 
 					case CommunicationStates.FinishedPrint:
-						this.activePrintButtons.Add(startButton);
+						this.activePrintButtons.Add(startPrintButton);
 						EnableActiveButtons();
 						break;
 
