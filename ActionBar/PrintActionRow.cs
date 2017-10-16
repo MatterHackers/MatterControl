@@ -44,7 +44,6 @@ namespace MatterHackers.MatterControl.ActionBar
 	internal class PrintActionRow : FlowLayoutWidget
 	{
 		private List<Button> activePrintButtons = new List<Button>();
-		private Button addPrinterButton;
 		private List<Button> allPrintButtons = new List<Button>();
 
 		private Button cancelConnectButton;
@@ -87,14 +86,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			finishSetupButton.ToolTipText = "Run setup configuration for printer.".Localize();
 			finishSetupButton.Margin = defaultMargin;
 			finishSetupButton.Click += onStartButton_Click;
-
-			addPrinterButton = buttonFactory.Generate("Add Printer".Localize().ToUpper());
-			addPrinterButton.ToolTipText = "Select and add a new printer.".Localize();
-			addPrinterButton.Margin = defaultMargin;
-			addPrinterButton.Click += (s, e) =>
-			{
-				UiThread.RunOnIdle(() => WizardWindow.ShowPrinterSetup(true));
-			};
 
 			resetConnectionButton = buttonFactory.Generate("Reset".Localize().ToUpper(), AggContext.StaticData.LoadIcon("e_stop.png", 14, 14, IconColor.Theme));
 			resetConnectionButton.ToolTipText = "Reboots the firmware on the controller".Localize();
@@ -148,9 +139,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			allPrintButtons.Add(resumeButton);
 			this.Margin = 0;
 			this.HAnchor = HAnchor.Fit;
-
-			parentWidget.AddChild(addPrinterButton);
-			allPrintButtons.Add(addPrinterButton);
 
 			parentWidget.AddChild(startButton);
 			allPrintButtons.Add(startButton);
