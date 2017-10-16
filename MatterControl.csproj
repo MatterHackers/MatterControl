@@ -155,6 +155,7 @@
     <Compile Include="Library\Providers\WritableContainer.cs" />
     <Compile Include="Library\Widgets\ExpandCheckboxButton.cs" />
     <Compile Include="Library\Widgets\InsertionGroup.cs" />
+    <Compile Include="PartPreviewWindow\PopupMenuButton.cs" />
     <Compile Include="PartPreviewWindow\IconTab.cs" />
     <Compile Include="PartPreviewWindow\PopupButton.cs" />
     <Compile Include="PartPreviewWindow\View3D\SlicePopupMenu.cs" />
@@ -226,7 +227,7 @@
     <Compile Include="Library\Providers\Zip\ZipMemoryContainer.cs" />
     <Compile Include="PartPreviewWindow\GCodeDetails.cs" />
     <Compile Include="PartPreviewWindow\GCodeDetailsView.cs" />
-    <Compile Include="PartPreviewWindow\OverflowDropdown.cs" />
+    <Compile Include="PartPreviewWindow\OverflowMenu.cs" />
     <Compile Include="PartPreviewWindow\PlusTabPage.cs" />
     <Compile Include="PartPreviewWindow\MainTab.cs" />
     <Compile Include="PartPreviewWindow\PrinterTabBase.cs" />
@@ -340,7 +341,7 @@
     <Compile Include="SlicerConfiguration\Settings\ProfileManager.cs" />
     <Compile Include="SlicerConfiguration\Settings\PrinterSettingsLayer.cs" />
     <Compile Include="SlicerConfiguration\Settings\SettingsHelpers.cs" />
-    <Compile Include="SlicerConfiguration\SliceSettingsOverflowDropdown.cs" />
+    <Compile Include="SlicerConfiguration\SliceSettingsOverflowMenu.cs" />
     <Compile Include="SlicerConfiguration\Settings\ActiveSliceSettings.cs" />
     <Compile Include="SlicerConfiguration\Settings\PrinterSettings.cs" />
     <Compile Include="DataStorage\Classic\ClassicSqlitePrinterProfiles.cs" />

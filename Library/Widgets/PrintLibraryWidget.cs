@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private GuiWidget providerMessageContainer;
 		private TextWidget providerMessageWidget;
 
-		private OverflowDropdown overflowDropdown;
+		private OverflowMenu overflowMenu;
 
 		//private DropDownMenu actionMenu;
 		private List<PrintItemAction> menuActions = new List<PrintItemAction>();
@@ -156,13 +156,13 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			};
 			navBar.AddChild(searchButton);
 
-			overflowDropdown = new OverflowDropdown(allowLightnessInvert: true)
+			overflowMenu = new OverflowMenu(IconColor.Theme)
 			{
 				VAnchor = VAnchor.Center,
 				AlignToRightEdge = true,
 				Name = "Print Library Overflow Menu",
 			};
-			navBar.AddChild(overflowDropdown);
+			navBar.AddChild(overflowMenu);
 
 			allControls.AddChild(libraryView);
 
@@ -821,11 +821,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 				if (menuAction is MenuSeparator)
 				{
-					menuItem = OverflowDropdown.CreateHorizontalLine();
+					menuItem = OverflowMenu.CreateHorizontalLine();
 				}
 				else
 				{
-					menuItem = OverflowDropdown.CreateMenuItem((string)menuAction.Title);
+					menuItem = OverflowMenu.CreateMenuItem((string)menuAction.Title);
 					menuItem.Name = $"{menuAction.Title} Menu Item";
 				}
 
@@ -844,7 +844,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			EnableMenus();
 
-			overflowDropdown.PopupContent = popupContainer;
+			overflowMenu.PopupContent = popupContainer;
 
 			base.OnLoad(args);
 		}

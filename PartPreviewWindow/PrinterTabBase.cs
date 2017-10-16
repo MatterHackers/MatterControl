@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					this.view3DWidget.ResetView();
 				}
 			};
-			viewControls3D.OverflowButton.DynamicPopupContent = () =>
+			viewControls3D.OverflowMenu.DynamicPopupContent = () =>
 			{
 				return this.GetViewControls3DOverflowMenu();
 			};

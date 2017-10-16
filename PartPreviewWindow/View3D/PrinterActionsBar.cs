@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private string noEepromMappingMessage = "Oops! There is no eeprom mapping for your printer's firmware.".Localize() + "\n\n" + "You may need to wait a minute for your printer to finish initializing.".Localize();
 		private string noEepromMappingTitle = "Warning - No EEProm Mapping".Localize();
 
-		private OverflowDropdown overflowDropdown;
+		private OverflowMenu overflowMenu;
 
 		private CancellationTokenSource gcodeLoadCancellationTokenSource;
 
@@ -95,21 +95,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.AddChild(new TemperatureWidgetBed(printer));
 			}
 
-			overflowDropdown = new OverflowDropdown(allowLightnessInvert: true)
+			overflowMenu = new OverflowMenu(IconColor.Theme)
 			{
 				AlignToRightEdge = true,
 				Name = "Printer Overflow Menu",
 				Margin = theme.ButtonSpacing
 			};
-			overflowDropdown.DynamicPopupContent = GeneratePrinterOverflowMenu;
+			overflowMenu.DynamicPopupContent = GeneratePrinterOverflowMenu;
 
 			// Deregister on close
 			this.Closed += (s, e) =>
 			{
-				overflowDropdown.DynamicPopupContent = GeneratePrinterOverflowMenu;
+				overflowMenu.DynamicPopupContent = GeneratePrinterOverflowMenu;
 			};
 
-			this.AddChild(overflowDropdown);
+			this.AddChild(overflowMenu);
 		}
 
 		public override void AddChild(GuiWidget childToAdd, int indexInChildrenList = -1)
@@ -175,6 +175,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 				}
 			};
+
 			return ApplicationController.Instance.Theme.CreatePopupMenu(menuActions);
 		}
 
