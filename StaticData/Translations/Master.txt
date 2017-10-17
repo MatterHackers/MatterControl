@@ -4621,3 +4621,6 @@ Translated:Maximum Z jerk [mm/s]:
 English:Make Support
 Translated:Make Support
 
+English:Difference
+Translated:Difference
+

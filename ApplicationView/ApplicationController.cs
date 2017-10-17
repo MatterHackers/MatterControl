@@ -57,6 +57,7 @@ namespace MatterHackers.MatterControl
 	using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 	using MatterHackers.MatterControl.Library;
 	using MatterHackers.MatterControl.PartPreviewWindow;
+	using MatterHackers.MatterControl.PartPreviewWindow.View3D;
 	using MatterHackers.MatterControl.SimplePartScripting;
 	using MatterHackers.MeshVisualizer;
 	using MatterHackers.SerialPortCommunication;
@@ -267,6 +268,19 @@ namespace MatterHackers.MatterControl
 			{
 				"Make Support".Localize(),
 				(scene) => scene.SelectedItem.OutputType = PrintOutputTypes.Support
+			},
+			{
+				"Difference".Localize(),
+				(scene) =>
+				{
+					var difference = new DifferenceGroup(scene.SelectedItem.Children);
+					scene.SelectedItem.Children.Modify((list) =>
+					{
+						list.Clear();
+					});
+					scene.Children.Add(difference);
+					scene.SelectedItem = difference;
+				}
 			},
 			{
 				"Bend".Localize(),
