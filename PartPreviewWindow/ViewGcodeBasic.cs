@@ -28,10 +28,8 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.IO;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
-using MatterHackers.GCodeVisualizer;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
@@ -39,22 +37,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class ViewGcodeBasic : GuiWidget
 	{
-		private TextWidget gcodeProcessingStateInfoText;
-		
-		private GuiWidget gcodeDisplayWidget;
-
-		private ColorGradientWidget gradientWidget;
-
 		private EventHandler unregisterEvents;
 
-		private string gcodeLoading = "Loading G-Code".Localize();
-		private string slicingErrorMessage = "Slicing Error.\nPlease review your slice settings.".Localize();
-		private string fileNotFoundMessage = "File not found on disk.".Localize();
-		private string fileTooBigToLoad = "GCode file too big to preview ({0}).".Localize();
-
 		private BedConfig sceneContext;
+		private TextWidget gcodeProcessingStateInfoText;
 		private PrinterConfig printer;
-
 		private ViewControls3D viewControls3D;
 
 		public ViewGcodeBasic(PrinterConfig printer, BedConfig sceneContext, ViewControls3D viewControls3D)
@@ -77,101 +64,55 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}, ref unregisterEvents);
 
 			// TODO: Why do we clear GCode on AdvancedControlsPanelReloading - assume some slice settings should invalidate. If so, code should be more specific and bound to slice settings changed
-			ApplicationController.Instance.AdvancedControlsPanelReloading.RegisterEvent((s, e) => printer?.Bed.GCodeRenderer?.Clear3DGCode(), ref unregisterEvents);
+			ApplicationController.Instance.AdvancedControlsPanelReloading.RegisterEvent((s, e) =>
+			{
+				printer?.Bed.GCodeRenderer?.Clear3DGCode();
+			}, ref unregisterEvents);
 		}
 
 		internal void CreateAndAddChildren(PrinterConfig printer)
 		{
-			CloseAllChildren();
+			this.CloseAllChildren();
 
-			gcodeProcessingStateInfoText = null;
-
-			var mainContainerTopToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			this.AddChild(gcodeProcessingStateInfoText = new TextWidget("")
 			{
-				HAnchor = HAnchor.MaxFitOrStretch,
-				VAnchor = VAnchor.MaxFitOrStretch
-			};
-
-			gcodeDisplayWidget = new GuiWidget()
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Stretch
-			};
-
-			//if (!File.Exists(sceneContext.GCodePath))
-			//{ 
-			//	SetProcessingMessage($"{fileNotFoundMessage}\n'{sceneContext.GCodePath}'");
-			//}
-
-			mainContainerTopToBottom.AddChild(gcodeDisplayWidget);
-
-			this.AddChild(mainContainerTopToBottom);
-
-			// *************** AddGCodeFileControls ***************
-			SetProcessingMessage("");
-			//if (sceneContext.LoadedGCode == null)
-			//{
-			//	SetProcessingMessage($"{fileNotFoundMessage}\n'{sceneContext.GCodePath}'");
-			//}
+				HAnchor = HAnchor.Center,
+				VAnchor = VAnchor.Center,
+				AutoExpandBoundsToText = true
+			});
 
 			if (sceneContext.LoadedGCode?.LineCount > 0)
 			{
-				gradientWidget = new ColorGradientWidget(sceneContext.LoadedGCode)
-				{
-					Margin = new BorderDouble(top: 55, left: 11),
-					HAnchor = HAnchor.Fit | HAnchor.Left,
-					VAnchor = VAnchor.Top,
-					Visible = sceneContext.RendererOptions.RenderSpeeds
-				};
-				AddChild(gradientWidget);
+				this.AddChild(
+					new ColorGradientWidget(sceneContext.LoadedGCode)
+					{
+						Margin = new BorderDouble(top: 55, left: 11),
+						HAnchor = HAnchor.Fit | HAnchor.Left,
+						VAnchor = VAnchor.Top,
+						Visible = sceneContext.RendererOptions.RenderSpeeds
+					});
 
-				var gcodeDetails = new GCodeDetails(printer, printer.Bed.LoadedGCode);
-
-				this.AddChild(new GCodeDetailsView(gcodeDetails)
-				{
-					Margin = new BorderDouble(0, 0, 35, 5),
-					Padding = new BorderDouble(10),
-					BackgroundColor = new RGBA_Bytes(0, 0, 0, ViewControlsBase.overlayAlpha),
-					HAnchor = HAnchor.Right | HAnchor.Absolute,
-					VAnchor = VAnchor.Top | VAnchor.Fit,
-					Width = 150
-				});
+				this.AddChild(
+					new GCodeDetailsView(new GCodeDetails(printer, printer.Bed.LoadedGCode))
+					{
+						Margin = new BorderDouble(0, 0, 35, 5),
+						Padding = new BorderDouble(10),
+						BackgroundColor = new RGBA_Bytes(0, 0, 0, ViewControlsBase.overlayAlpha),
+						HAnchor = HAnchor.Right | HAnchor.Absolute,
+						VAnchor = VAnchor.Top | VAnchor.Fit,
+						Width = 150
+					});
 			}
 		}
 
 		internal void LoadProgress_Changed(double progress0To1, string processingState)
 		{
-			SetProcessingMessage(string.Format("{0} {1:0}%...", gcodeLoading, progress0To1 * 100));
+			SetProcessingMessage(string.Format("{0} {1:0}%...", "Loading G-Code".Localize(), progress0To1 * 100));
 		}
 
 		private void SetProcessingMessage(string message)
 		{
-			if (gcodeProcessingStateInfoText == null)
-			{
-				gcodeProcessingStateInfoText = new TextWidget(message)
-				{
-					HAnchor = HAnchor.Center,
-					VAnchor = VAnchor.Center,
-					AutoExpandBoundsToText = true
-				};
-
-				var labelContainer = new GuiWidget();
-				labelContainer.Selectable = false;
-				labelContainer.AnchorAll();
-				labelContainer.AddChild(gcodeProcessingStateInfoText);
-
-				gcodeDisplayWidget.AddChild(labelContainer);
-			}
-
-			if (message == "")
-			{
-				gcodeProcessingStateInfoText.BackgroundColor = RGBA_Bytes.Transparent;
-			}
-			else
-			{
-				gcodeProcessingStateInfoText.BackgroundColor = RGBA_Bytes.White;
-			}
-
+			gcodeProcessingStateInfoText.BackgroundColor = (message == "") ? RGBA_Bytes.Transparent : RGBA_Bytes.White;
 			gcodeProcessingStateInfoText.Text = message;
 		}
 
