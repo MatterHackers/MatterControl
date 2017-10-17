@@ -35,15 +35,43 @@ using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.DataConverters3D;
 using MatterHackers.PolygonMesh;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
-	public class DifferenceItem : Object3D
+	public class MeshObjectWrapper : Object3D
 	{
-		public DifferenceItem(IObject3D child, bool keep)
+		public MeshObjectWrapper()
+		{
+		}
+
+		public MeshObjectWrapper(IObject3D child, string ownerId)
+		{
+			Children.Add(child);
+
+			this.OwnerID = ownerId;
+			this.MaterialIndex = child.MaterialIndex;
+			this.ItemType = child.ItemType;
+			this.OutputType = child.OutputType;
+			this.Color = child.Color;
+			this.Mesh = child.Mesh;
+
+			this.Matrix = child.Matrix;
+			child.Matrix = Matrix4X4.Identity;
+		}
+	}
+
+
+	public class DifferenceItem : MeshObjectWrapper
+	{
+		public DifferenceItem()
+		{
+		}
+
+		public DifferenceItem(IObject3D child, string ownerId, bool keep)
+			: base(child, ownerId)
 		{
 			this.Keep = keep;
-			Children.Add(child);
 			if (!keep)
 			{
 				OutputType = PrintOutputTypes.Hole;
@@ -73,10 +101,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				child.Parent.Children.Modify((list) =>
 				{
 					list.Remove(child);
-					list.Add(new DifferenceItem(child, first));
+					list.Add(new DifferenceItem(child, this.ID, first));
 					first = false;
 				});
 			}
+
+			ProcessBooleans();
 		}
 
 		async void ProcessBooleans()
@@ -84,48 +114,46 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			// spin up a task to remove holes from the objects in the group
 			await Task.Run(() =>
 			{
-				var holes = this.Children.Where(obj => obj.OutputType == PrintOutputTypes.Hole).ToList();
-				if (holes.Any())
+				var container = this;
+				var participants = this.Descendants().Where((obj) => obj.OwnerID == this.ID);
+				var removeObjects = participants.Where((obj) => ((DifferenceItem)obj).Keep == false);
+				var keepObjects = participants.Where((obj) => ((DifferenceItem)obj).Keep == true);
+
+				if (removeObjects.Any()
+					&& keepObjects.Any())
 				{
-					var itemsToReplace = new List<(IObject3D object3D, Mesh newMesh)>();
-					foreach (var hole in holes)
+					foreach (var keep in keepObjects)
 					{
-						var transformedHole = Mesh.Copy(hole.Mesh, CancellationToken.None);
-						transformedHole.Transform(hole.Matrix);
-
-						var stuffToModify = this.Children.Where(obj => obj.OutputType != PrintOutputTypes.Hole && obj.Mesh != null).ToList();
-						foreach (var object3D in stuffToModify)
+						foreach (var remove in removeObjects)
 						{
-							var transformedObject = Mesh.Copy(object3D.Mesh, CancellationToken.None);
-							transformedObject.Transform(object3D.Matrix);
+							var transformedRemove = Mesh.Copy(remove.Mesh, CancellationToken.None);
+							transformedRemove.Transform(GetMatrixToWrapper(remove));
 
-							var newMesh = PolygonMesh.Csg.CsgOperations.Subtract(transformedObject, transformedHole);
-							if (newMesh != object3D.Mesh)
-							{
-								itemsToReplace.Add((object3D, newMesh));
-							}
-						}
+							var transformedKeep = Mesh.Copy(keep.Mesh, CancellationToken.None);
+							transformedKeep.Transform(GetMatrixToWrapper(keep));
 
-						foreach (var x in itemsToReplace)
-						{
-							this.Children.Remove(x.object3D);
-
-							var newItem = new Object3D()
-							{
-								Mesh = x.newMesh,
-
-								// Copy over child properties...
-								OutputType = x.object3D.OutputType,
-								Color = x.object3D.Color,
-								MaterialIndex = x.object3D.MaterialIndex
-							};
-							newItem.Children.Add(x.object3D);
-
-							this.Children.Add(newItem);
+							transformedKeep = PolygonMesh.Csg.CsgOperations.Subtract(transformedKeep, transformedRemove);
+							var inverse = GetMatrixToWrapper(keep);
+							inverse.Invert();
+							transformedKeep.Transform(inverse);
+							keep.Mesh = transformedKeep;
 						}
 					}
 				}
 			});
+		}
+
+		private Matrix4X4 GetMatrixToWrapper(IObject3D child)
+		{
+			var matrix = child.Matrix;
+			var parent = child.Parent;
+			while(parent.ID != child.OwnerID)
+			{
+				matrix *= parent.Matrix;
+				parent = parent.Parent;
+			}
+
+			return matrix;
 		}
 	}
 }
