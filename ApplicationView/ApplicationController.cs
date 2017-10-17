@@ -1054,8 +1054,15 @@ namespace MatterHackers.MatterControl
 
 		private string doNotAskAgainMessage = "Don't remind me again".Localize();
 
-		public async void PrintPart(PrintItemWrapper printItem, bool overrideAllowGCode = false)
+		public async Task PrintPart(PrintItemWrapper printItem, PrinterConfig printer, View3DWidget view3DWidget, SliceProgressReporter reporter, bool overrideAllowGCode = false)
 		{
+			// Exit if called in a non-applicable state
+			if (this.ActivePrinter.Connection.CommunicationState != CommunicationStates.Connected
+				&& this.ActivePrinter.Connection.CommunicationState != CommunicationStates.FinishedPrint)
+			{
+				return;
+			}
+
 			try
 			{
 				// If leveling is required or is currently on
@@ -1091,10 +1098,12 @@ namespace MatterHackers.MatterControl
 								&& hideGCodeWarning == null
 								&& !overrideAllowGCode)
 							{
-								CheckBox hideGCodeWarningCheckBox = new CheckBox(doNotAskAgainMessage);
-								hideGCodeWarningCheckBox.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-								hideGCodeWarningCheckBox.Margin = new BorderDouble(top: 6, left: 6);
-								hideGCodeWarningCheckBox.HAnchor = Agg.UI.HAnchor.Left;
+								var hideGCodeWarningCheckBox = new CheckBox(doNotAskAgainMessage)
+								{
+									TextColor = ActiveTheme.Instance.PrimaryTextColor,
+									Margin = new BorderDouble(top: 6, left: 6),
+									HAnchor = Agg.UI.HAnchor.Left
+								};
 								hideGCodeWarningCheckBox.Click += (sender, e) =>
 								{
 									if (hideGCodeWarningCheckBox.Checked)
@@ -1110,17 +1119,15 @@ namespace MatterHackers.MatterControl
 								UiThread.RunOnIdle(() =>
 								{
 									StyledMessageBox.ShowMessageBox(
-										(bool messageBoxResponse) =>
+										async (messageBoxResponse) =>
 										{
 											if (messageBoxResponse)
 											{
 												this.ActivePrinter.Connection.CommunicationState = CommunicationStates.PreparingToPrint;
-												PrintItemWrapper partToPrint = printItem;
-												SlicingQueue.Instance.QueuePartForSlicing(partToPrint);
-												partToPrint.SlicingDone += partToPrint_SliceDone;
+												partToPrint_SliceDone(printItem);
 											}
 										},
-										gcodeWarningMessage,
+										"The file you are attempting to print is a GCode file.\n\nIt is recommended that you only print Gcode files known to match your printer's configuration.\n\nAre you sure you want to print this GCode file?".Localize(),
 										"Warning - GCode file".Localize(),
 										new GuiWidget[]
 										{
@@ -1134,9 +1141,14 @@ namespace MatterHackers.MatterControl
 							else
 							{
 								this.ActivePrinter.Connection.CommunicationState = CommunicationStates.PreparingToPrint;
-								PrintItemWrapper partToPrint = printItem;
-								SlicingQueue.Instance.QueuePartForSlicing(partToPrint);
-								partToPrint.SlicingDone += partToPrint_SliceDone;
+
+								await ApplicationController.Instance.SliceFileLoadOutput(
+									printer,
+									printItem,
+									view3DWidget,
+									reporter);
+
+								partToPrint_SliceDone(printItem);
 							}
 						}
 					}
@@ -1147,23 +1159,10 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private string gcodeWarningMessage = "The file you are attempting to print is a GCode file.\n\nIt is recommended that you only print Gcode files known to match your printer's configuration.\n\nAre you sure you want to print this GCode file?".Localize();
-
-		public void PrintActivePartIfPossible(PrintItemWrapper printItem, bool overrideAllowGCode = false)
+		private void partToPrint_SliceDone(PrintItemWrapper partToPrint)
 		{
-			if (this.ActivePrinter.Connection.CommunicationState == CommunicationStates.Connected 
-				|| this.ActivePrinter.Connection.CommunicationState == CommunicationStates.FinishedPrint)
-			{
-				PrintPart(printItem, overrideAllowGCode);
-			}
-		}
-
-		private void partToPrint_SliceDone(object sender, EventArgs e)
-		{
-			PrintItemWrapper partToPrint = sender as PrintItemWrapper;
 			if (partToPrint != null)
 			{
-				partToPrint.SlicingDone -= partToPrint_SliceDone;
 				string gcodePathAndFileName = partToPrint.GetGCodePathAndFileName();
 				if (gcodePathAndFileName != "")
 				{
@@ -1218,6 +1217,25 @@ namespace MatterHackers.MatterControl
 					this.ActivePrinter.Connection.CommunicationState = CommunicationStates.Connected;
 				}
 			}
+		}
+
+		public async Task SliceFileLoadOutput(PrinterConfig printer, PrintItemWrapper printItem, View3DWidget view3DWidget, SliceProgressReporter reporter)
+		{
+			var gcodeLoadCancellationTokenSource = new CancellationTokenSource();
+
+			// Save any pending changes
+			await view3DWidget.PersistPlateIfNeeded();
+
+			// Slice
+			reporter?.StartReporting();
+			await Slicer.SliceFileAsync(printItem, reporter);
+			reporter?.EndReporting();
+
+			// Load
+			printer.Bed.LoadGCode(
+				printItem.GetGCodePathAndFileName(),
+				gcodeLoadCancellationTokenSource.Token,
+				view3DWidget.gcodeViewer.LoadProgress_Changed);
 		}
 
 		public class CloudSyncEventArgs : EventArgs

@@ -394,7 +394,6 @@ namespace MatterHackers.MatterControl
 			}
 			//Close connection to the local datastore
 			ApplicationController.Instance.ActivePrinter.Connection.HaltConnectionThread();
-			SlicingQueue.Instance.ShutDownSlicingThread();
 			ApplicationController.Instance.OnApplicationClosed();
 
 			Datastore.Instance.Exit();

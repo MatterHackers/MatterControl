@@ -30,7 +30,6 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -38,78 +37,21 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
-using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.PolygonMesh;
-using MatterHackers.PolygonMesh.Processors;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class SlicingQueue
+	public class Slicer
 	{
 		static Dictionary<Mesh, MeshPrintOutputSettings> meshPrintOutputSettings = new Dictionary<Mesh, MeshPrintOutputSettings>();
-		private static Thread slicePartThread = null;
-		private static List<PrintItemWrapper> listOfSlicingItems = new List<PrintItemWrapper>();
-		private static bool haltSlicingThread = false;
-
-		private SlicingQueue()
-		{
-			if (slicePartThread == null)
-			{
-				slicePartThread = new Thread(CreateSlicedPartsThread);
-				slicePartThread.Name = "slicePartThread";
-				slicePartThread.IsBackground = true;
-				slicePartThread.Start();
-			}
-		}
-
-		private static SlicingQueue instance;
-
-		static public SlicingQueue Instance
-		{
-			get
-			{
-				if (instance == null)
-				{
-					instance = new SlicingQueue();
-				}
-				return instance;
-			}
-		}
-
-		public void QueuePartForSlicing(PrintItemWrapper itemToQueue)
-		{
-			itemToQueue.DoneSlicing = false;
-			string preparingToSliceModelTxt = "Preparing to slice model".Localize();
-			string peparingToSliceModelFull = string.Format("{0}...", preparingToSliceModelTxt);
-			itemToQueue.OnSlicingOutputMessage(new StringEventArgs(peparingToSliceModelFull));
-			lock(listOfSlicingItems)
-			{
-				//Add to thumbnail generation queue
-				listOfSlicingItems.Add(itemToQueue);
-			}
-		}
-
-		public void ShutDownSlicingThread()
-		{
-			haltSlicingThread = true;
-		}
-
-		private static string macQuotes(string textLine)
-		{
-			if (textLine.StartsWith("\"") && textLine.EndsWith("\""))
-			{
-				return textLine;
-			}
-			else
-			{
-				return "\"" + textLine.Replace("\"", "\\\"") + "\"";
-			}
-		}
 
 		public static List<bool> extrudersUsed = new List<bool>();
+		public static bool runInProcess = true;
+
+		private static Process slicerProcess = null;
 
 		public static string[] GetStlFileLocations(string fileToSlice, ref string mergeRules)
 		{
@@ -285,106 +227,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return filePath;
 		}
 
-		private static string SaveAndGetFilePathForMaterial(MeshGroup extruderMeshGroup, List<int> materialIndexsToSaveInThisSTL)
-		{
-			string folderToSaveStlsTo = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "amf_to_stl");
-
-			// Create directory if needed
-			Directory.CreateDirectory(folderToSaveStlsTo);
-
-			string filePath = Path.Combine(folderToSaveStlsTo, Path.ChangeExtension(Path.GetRandomFileName(), ".stl"));
-
-			MeshFileIo.Save(
-				extruderMeshGroup, 
-				filePath, 
-				new MeshOutputSettings());
-
-			return filePath;
-		}
-
-		public static bool runInProcess = false;
-		private static Process slicerProcess = null;
-
-		private class SliceMessageReporter : IProgress<string>
-		{
-			private PrintItemWrapper printItem;
-			public SliceMessageReporter(PrintItemWrapper printItem)
-			{
-				this.printItem = printItem;
-			}
-
-			public void Report(string message)
-			{
-				UiThread.RunOnIdle(() =>
-				{
-					printItem.OnSlicingOutputMessage(new StringEventArgs(message));
-				});
-			}
-		}
-
-		private static void CreateSlicedPartsThread()
-		{
-			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-
-			while (!haltSlicingThread)
-			{
-				if (listOfSlicingItems.Count > 0)
-				{
-					PrintItemWrapper itemToSlice = listOfSlicingItems[0];
-
-					/* 
-					 * 
-			#if false
-									Mesh loadedMesh = StlProcessing.Load(fileToSlice);
-									SliceLayers layers = new SliceLayers();
-									layers.GetPerimetersForAllLayers(loadedMesh, .2, .2);
-									layers.DumpSegmentsToGcode("test.gcode");
-			#endif
-					 * */
-
-					if (File.Exists(itemToSlice.FileLocation))
-					{
-						itemToSlice.CurrentlySlicing = true;
-
-						string gcodeFilePath = itemToSlice.GetGCodePathAndFileName();
-
-						var reporter = new SliceMessageReporter(itemToSlice);
-
-						if (AggContext.OperatingSystem == OSType.Android
-							|| AggContext.OperatingSystem == OSType.Mac
-							|| runInProcess)
-						{
-
-							itemCurrentlySlicing = itemToSlice;
-							MatterHackers.MatterSlice.LogOutput.GetLogWrites += SendProgressToItem;
-
-							SliceFile(itemToSlice.FileLocation, gcodeFilePath, reporter);
-
-							MatterHackers.MatterSlice.LogOutput.GetLogWrites -= SendProgressToItem;
-							itemCurrentlySlicing = null;
-						}
-						else
-						{
-							SliceFile(itemToSlice.FileLocation, gcodeFilePath, reporter);
-						}
-					}
-
-					UiThread.RunOnIdle(() =>
-					{
-						itemToSlice.CurrentlySlicing = false;
-						itemToSlice.DoneSlicing = true;
-					});
-
-					lock (listOfSlicingItems)
-					{
-						listOfSlicingItems.RemoveAt(0);
-					}
-				}
-
-				Thread.Sleep(100);
-			}
-		}
-
 		public static async Task SliceFileAsync(PrintItemWrapper printItem, IProgress<string> progressReporter)
 		{
 			string gcodeFilePath = printItem.GetGCodePathAndFileName();
@@ -393,11 +235,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				printItem.FileLocation, 
 				gcodeFilePath, 
 				progressReporter));
-		}
-
-		public static async Task SliceFileAsync(string sourceFile, string gcodeFilePath, IProgress<string> progressReporter)
-		{
-			await Task.Run(() => SliceFile(sourceFile, gcodeFilePath, progressReporter));
 		}
 
 		private static void SliceFile(string sourceFile, string gcodeFilePath, IProgress<string> progressReporter)
@@ -541,29 +378,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				catch (Exception)
 				{
 				}
-			}
-		}
-
-		private static PrintItemWrapper itemCurrentlySlicing;
-
-		private static void SendProgressToItem(object sender, EventArgs args)
-		{
-			string message = sender as string;
-			if (message != null)
-			{
-				message = message.Replace("=>", "").Trim();
-				if (message.Contains(".gcode"))
-				{
-					message = "Saving intermediate file";
-				}
-				message += "...";
-				UiThread.RunOnIdle(() =>
-				{
-					if (itemCurrentlySlicing != null)
-					{
-						itemCurrentlySlicing.OnSlicingOutputMessage(new StringEventArgs(message));
-					}
-				});
 			}
 		}
 

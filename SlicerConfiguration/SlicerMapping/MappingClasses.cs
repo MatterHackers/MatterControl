@@ -244,14 +244,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			get
 			{
 				StringBuilder newStartGCode = new StringBuilder();
-				foreach (string line in PreStartGCode(SlicingQueue.extrudersUsed))
+				foreach (string line in PreStartGCode(Slicer.extrudersUsed))
 				{
 					newStartGCode.Append(line + "\n");
 				}
 
 				newStartGCode.Append(GCodeProcessing.ReplaceMacroValues(base.Value));
 
-				foreach (string line in PostStartGCode(SlicingQueue.extrudersUsed))
+				foreach (string line in PostStartGCode(Slicer.extrudersUsed))
 				{
 					newStartGCode.Append("\n");
 					newStartGCode.Append(line);

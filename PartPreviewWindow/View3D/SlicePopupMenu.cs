@@ -37,6 +37,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.GCodeVisualizer;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
@@ -118,32 +119,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (printer.Settings.PrinterSelected)
 			{
-				var printItem = printer.Bed.printItem;
-
-				if (printer.Settings.IsValid() && printItem != null)
+				if (printer.Settings.IsValid() && printer.Bed.printItem != null)
 				{
 					activelySlicing = true;
 
 					try
 					{
-						var sliceProgressReporter = new SliceProgressReporter(this.PopupContent, printer);
-
-						sliceProgressReporter.StartReporting();
-
-						// Save any pending changes before starting the print
-						await printerTabPage.view3DWidget.PersistPlateIfNeeded();
-
-						await SlicingQueue.SliceFileAsync(printItem, sliceProgressReporter);
-						sliceProgressReporter.EndReporting();
-
-						var gcodeLoadCancellationTokenSource = new CancellationTokenSource();
-
-						this.printer.Bed.LoadGCode(printItem.GetGCodePathAndFileName(), gcodeLoadCancellationTokenSource.Token, printerTabPage.view3DWidget.gcodeViewer.LoadProgress_Changed);
-
-						printerTabPage.ViewMode = PartViewMode.Layers3D;
-
-						// HACK: directly fire method which previously ran on SlicingDone event on PrintItemWrapper
-						UiThread.RunOnIdle(() => printerTabPage.view3DWidget.gcodeViewer.CreateAndAddChildren(printer));
+						await ApplicationController.Instance.SliceFileLoadOutput(
+							printer,
+							printer.Bed.printItem,
+							printerTabPage.view3DWidget,
+							new SliceProgressReporter(this.PopupContent, printer));
 					}
 					catch (Exception ex)
 					{

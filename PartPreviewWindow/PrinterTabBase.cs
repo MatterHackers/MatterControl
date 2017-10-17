@@ -85,6 +85,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				View3DWidget.AutoRotate.Disabled,
 				viewControls3D,
 				theme,
+				this,
 				editorType: (isPrinterType) ? MeshViewerWidget.EditorType.Printer : MeshViewerWidget.EditorType.Part);
 
 			topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);

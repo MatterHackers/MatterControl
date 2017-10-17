@@ -68,7 +68,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 	public class PrintItemWrapper
 	{
 		public event EventHandler SlicingDone;
-		public event EventHandler<StringEventArgs> SlicingOutputMessage;
 
 		private string fileNotFound = "File Not Found\n'{0}'".Localize();
 		private string readyToPrint = "Ready to Print".Localize();
@@ -271,7 +270,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		public void OnSlicingOutputMessage(EventArgs e)
 		{
-			SlicingOutputMessage?.Invoke(this, e as StringEventArgs);
 		}
 	}
 }

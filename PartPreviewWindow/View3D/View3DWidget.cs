@@ -102,12 +102,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private BedConfig sceneContext;
 
-		public View3DWidget(PrinterConfig printer, BedConfig sceneContext, AutoRotate autoRotate, ViewControls3D viewControls3D, ThemeConfig theme, MeshViewerWidget.EditorType editorType = MeshViewerWidget.EditorType.Part)
+		private PrinterConfig printer;
+
+		private PrinterTabBase printerTabBase;
+
+		public View3DWidget(PrinterConfig printer, BedConfig sceneContext, AutoRotate autoRotate, ViewControls3D viewControls3D, ThemeConfig theme, PrinterTabBase printerTabBase, MeshViewerWidget.EditorType editorType = MeshViewerWidget.EditorType.Part)
 		{
 			var smallMarginButtonFactory = theme.SmallMarginButtonFactory;
 
 			this.sceneContext = sceneContext;
+			this.printerTabBase = printerTabBase;
 			this.Scene = sceneContext.Scene;
+			this.printer = printer;
 
 			this.TrackballTumbleWidget = new TrackballTumbleWidget(sceneContext.World)
 			{
@@ -507,9 +513,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			meshViewerWidget.AfterDraw += AfterDraw3DContent;
 
+			sceneContext.LoadedGCodeChanged += SceneContext_LoadedGCodeChanged;
+
 			this.SwitchStateToEditing();
 
 			this.InteractionLayer.DrawGlOpaqueContent += Draw_GlOpaqueContent;
+		}
+
+		private void SceneContext_LoadedGCodeChanged(object sender, EventArgs e)
+		{
+			if (printerTabBase is PrinterTabPage printerTabPage)
+			{
+				// When GCode changes, switch to the 3D layer view
+				printerTabPage.ViewMode = PartViewMode.Layers3D;
+
+				// HACK: directly fire method which previously ran on SlicingDone event on PrintItemWrapper
+				UiThread.RunOnIdle(() => printerTabPage.view3DWidget.gcodeViewer.CreateAndAddChildren(printer));
+			}
 		}
 
 		private GuiWidget CreateActionSeparator()
@@ -780,6 +800,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			// Not needed but safer than without
 			viewControls3D.TransformStateChanged -= ViewControls3D_TransformStateChanged;
+
+			sceneContext.LoadedGCodeChanged -= SceneContext_LoadedGCodeChanged;
 
 			if (meshViewerWidget != null)
 			{
