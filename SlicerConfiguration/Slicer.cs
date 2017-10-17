@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2017, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -35,7 +35,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
-using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
@@ -44,9 +43,9 @@ using MatterHackers.PolygonMesh;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class Slicer
+	public static class Slicer
 	{
-		static Dictionary<Mesh, MeshPrintOutputSettings> meshPrintOutputSettings = new Dictionary<Mesh, MeshPrintOutputSettings>();
+		private static Dictionary<Mesh, MeshPrintOutputSettings> meshPrintOutputSettings = new Dictionary<Mesh, MeshPrintOutputSettings>();
 
 		public static List<bool> extrudersUsed = new List<bool>();
 		public static bool runInProcess = true;
@@ -381,7 +380,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		internal void CancelCurrentSlicing()
+		internal static void CancelCurrentSlicing()
 		{
 			if (slicerProcess != null)
 			{

@@ -249,7 +249,7 @@
     <Compile Include="PrinterCommunication\Io\RequestTemperaturesStream.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="SetupWizard\CopyGuestProfilesToUser.cs" />
-    <Compile Include="Library\Widgets\SystemWindows\RenameItemPage.cs" />
+    <Compile Include="SetupWizard\InputBoxPage.cs" />
     <Compile Include="LocalizedString.cs" />
     <Compile Include="PartPreviewWindow\BedSettings.cs" />
     <Compile Include="PartPreviewWindow\ColorGradientWidget.cs" />
@@ -300,7 +300,6 @@
     <Compile Include="PrinterControls\TerminalWindow\TextScrollWidget.cs" />
     <Compile Include="PrinterControls\TerminalWindow\TerminalWidget.cs" />
     <Compile Include="History\PrintHistoryData.cs" />
-    <Compile Include="Library\Widgets\SystemWindows\CreateFolderWindow.cs" />
     <Compile Include="Library\Export\IExportPlugin.cs" />
     <Compile Include="SetupWizard\AndroidConnectDevicePage.cs" />
     <Compile Include="SetupWizard\ImportSettingsPage.cs" />
@@ -425,7 +424,7 @@
     <Compile Include="SlicerConfiguration\PresetsToolbar.cs" />
     <Compile Include="SlicerConfiguration\SliceSettingsWidget.cs" />
     <Compile Include="SlicerConfiguration\SliceSettingsOrganizer.cs" />
-    <Compile Include="SlicerConfiguration\SlicingQueue.cs" />
+    <Compile Include="SlicerConfiguration\Slicer.cs" />
     <Compile Include="VersionManagement\ContactFormRequest.cs" />
     <Compile Include="VersionManagement\LatestVersionRequest.cs" />
     <Compile Include="VersionManagement\ClientTokenRequest.cs" />

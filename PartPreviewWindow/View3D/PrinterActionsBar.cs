@@ -178,18 +178,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Title = "Rename Printer".Localize(),
 					Action = () =>
 					{
-						var renameItemPage = new RenameItemPage(
-						"Rename Printer".Localize() + ":",
-						printer.Settings.GetValue(SettingsKey.printer_name),
-						(newName) =>
-						{
-							if (!string.IsNullOrEmpty(newName))
-							{
-								printer.Settings.SetValue(SettingsKey.printer_name, newName);
-							}
-						});
-
-						WizardWindow.Show(renameItemPage);
+						WizardWindow.Show(
+							new InputBoxPage(
+								"Rename Printer".Localize(),
+								"Name".Localize(),
+								printer.Settings.GetValue(SettingsKey.printer_name),
+								"Enter New Name Here".Localize(),
+								"Rename".Localize(),
+								(newName) =>
+								{
+									if (!string.IsNullOrEmpty(newName))
+									{
+										printer.Settings.SetValue(SettingsKey.printer_name, newName);
+									}
+								}));
 					}
 				},
 				new NamedAction() { Title = "----" },

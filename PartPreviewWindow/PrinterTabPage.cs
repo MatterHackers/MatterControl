@@ -261,6 +261,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void BedPlate_LoadedGCodeChanged(object sender, EventArgs e)
 		{
+			bool gcodeLoaded = sceneContext.LoadedGCode != null;
+
+			layerCountText.Visible = gcodeLoaded;
+			layerStartText.Visible = gcodeLoaded;
+			selectLayerSlider.Visible = gcodeLoaded;
+			layerRenderRatioSlider.Visible = gcodeLoaded;
+
+			if (!gcodeLoaded)
+			{
+				return;
+			}
+
 			var layerCount = sceneContext.LoadedGCode.LayerCount;
 			selectLayerSlider.Maximum = layerCount - 1;
 

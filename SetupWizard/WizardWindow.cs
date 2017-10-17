@@ -1,14 +1,12 @@
-﻿using MatterHackers.Agg;
+﻿using System;
+using System.Collections.Generic;
+using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
-using System;
-using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl
 {
@@ -25,12 +23,9 @@ namespace MatterHackers.MatterControl
 			: base(500 * GuiWidget.DeviceScale, 500 * GuiWidget.DeviceScale)
 		{
 			this.AlwaysOnTopOfMain = true;
-
+			this.MinimumSize = new Vector2(200, 200);
 			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 			this.Padding = new BorderDouble(8);
-			this.MinimumSize = new Vector2(350 * GuiWidget.DeviceScale, 400 * GuiWidget.DeviceScale);
-
-			this.ShowAsSystemWindow();
 		}
 
 		public static void Close(Type type)
@@ -47,14 +42,38 @@ namespace MatterHackers.MatterControl
 		{
 			WizardWindow wizardWindow = GetWindow(typeof(PanelType));
 			var newPanel = wizardWindow.ChangeToPage<PanelType>();
-			wizardWindow.Title = newPanel.WindowTitle; 
+			wizardWindow.Title = newPanel.WindowTitle;
+
+			SetSizeAndShow(wizardWindow, newPanel);
 		}
 
 		public static void Show(WizardPage wizardPage)
 		{
 			WizardWindow wizardWindow = GetWindow(wizardPage.GetType());
 			wizardWindow.Title = wizardPage.WindowTitle;
+
+			SetSizeAndShow(wizardWindow, wizardPage);
+
 			wizardWindow.ChangeToPage(wizardPage);
+		}
+
+		WizardPage activePage;
+
+		// Allow the WizardPage MinimumSize to override our MinimumSize
+		public override Vector2 MinimumSize
+		{
+			get => activePage?.MinimumSize ?? base.MinimumSize;
+			set => base.MinimumSize = value;
+		}
+
+		public static void SetSizeAndShow(WizardWindow wizardWindow, WizardPage wizardPage)
+		{
+			if (wizardPage.WindowSize != Vector2.Zero)
+			{
+				wizardWindow.Size = wizardPage.WindowSize;
+			}
+
+			wizardWindow.ShowAsSystemWindow();
 		}
 
 		public static void ShowPrinterSetup(bool userRequestedNewPrinter = false)
@@ -160,6 +179,8 @@ namespace MatterHackers.MatterControl
 
 		internal void ChangeToPage(WizardPage pageToChangeTo)
 		{
+			activePage = pageToChangeTo;
+
 			pageToChangeTo.WizardWindow = this;
 			this.CloseAllChildren();
 			this.AddChild(pageToChangeTo);
