@@ -45,8 +45,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 {
 	public class PrintLibraryWidget : GuiWidget
 	{
-		private static CreateFolderWindow createFolderWindow = null;
-
 		private Button addToLibraryButton;
 		private Button createFolderButton;
 		private FlowLayoutWidget buttonPanel;
@@ -303,31 +301,30 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			// the create folder button
 			createFolderButton = textImageButtonFactory.Generate("Create Folder".Localize());
-			createFolderButton.Enabled = false; // The library selector (the first library selected) is protected so we can't add to it.
+			createFolderButton.Enabled = false; // Disabled until changed by the ActiveContainer
 			createFolderButton.Name = "Create Folder From Library Button";
 			createFolderButton.Margin = new BorderDouble(0, 0, 3, 0);
 			createFolderButton.Click += (sender, e) =>
 			{
-				if (createFolderWindow == null)
-				{
-					createFolderWindow = new CreateFolderWindow((result) =>
-					{
-						if (!string.IsNullOrEmpty(result.newName)
-							&& this.libraryView.ActiveContainer is ILibraryWritableContainer writableContainer)
+				WizardWindow.Show(
+					new InputBoxPage(
+						"Create Folder".Localize(),
+						"Folder Name".Localize(),
+						"",
+						"Enter New Name Here".Localize(),
+						"Create".Localize(),
+						(newName) =>
 						{
-							writableContainer.Add(
-								new[]
+							if (!string.IsNullOrEmpty(newName)
+								&& this.libraryView.ActiveContainer is ILibraryWritableContainer writableContainer)
+							{
+								writableContainer.Add(new[]
 								{
-									new CreateFolderItem() { Name = result.newName }
+									new CreateFolderItem() { Name = newName }
 								});
-						}
-					});
-					createFolderWindow.Closed += (sender2, e2) => { createFolderWindow = null; };
-				}
-				else
-				{
-					createFolderWindow.BringToFront();
-				}
+							}
+						}));
+
 			};
 			buttonPanel.AddChild(createFolderButton);
 
@@ -452,7 +449,38 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				AllowMultiple = false,
 				AllowProtected = false,
 				AllowContainers = true,
-				Action = (selectedLibraryItems, listView) => renameFromLibraryButton_Click(selectedLibraryItems, null),
+				Action = (selectedLibraryItems, listView) =>
+				{
+					if (libraryView.SelectedItems.Count == 1)
+					{
+						var selectedItem = libraryView.SelectedItems.FirstOrDefault();
+						if (selectedItem == null)
+						{
+							return;
+						}
+
+						WizardWindow.Show(
+							new InputBoxPage(
+								"Rename Item".Localize(),
+								"Name".Localize(),
+								selectedItem.Model.Name,
+								"Enter New Name Here".Localize(),
+								"Rename".Localize(),
+								(newName) =>
+								{
+									var model = libraryView.SelectedItems.FirstOrDefault()?.Model;
+									if (model != null)
+									{
+										var container = libraryView.ActiveContainer as ILibraryWritableContainer;
+										if (container != null)
+										{
+											container.Rename(model, newName);
+											libraryView.SelectedItems.Clear();
+										}
+									}
+								}));
+					}
+				},
 			});
 
 			// move menu item
@@ -609,37 +637,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						scene,
 						dragOperationActive: () => false));
 			});
-		}
-
-		private void renameFromLibraryButton_Click(IEnumerable<ILibraryItem> items, object p)
-		{
-			if (libraryView.SelectedItems.Count == 1)
-			{
-				var selectedItem = libraryView.SelectedItems.FirstOrDefault();
-				if (selectedItem == null)
-				{
-					return;
-				}
-
-				var renameItemPage = new RenameItemPage(
-						"Rename Item:".Localize(),
-						selectedItem.Model.Name,
-						(newName) =>
-						{
-							var model = libraryView.SelectedItems.FirstOrDefault()?.Model;
-							if (model != null)
-							{
-								var container = libraryView.ActiveContainer as ILibraryWritableContainer;
-								if (container != null)
-								{
-									container.Rename(model, newName);
-									libraryView.SelectedItems.Clear();
-								}
-							}
-						});
-
-				WizardWindow.Show(renameItemPage);
-			}
 		}
 
 		public override void OnClosed(ClosedEventArgs e)

@@ -119,7 +119,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Type("New Folder");
 				testRunner.Delay(.5);
 
-				testRunner.ClickByName("Create Folder Button");
+				testRunner.ClickByName("InputBoxPage Action Button");
 				testRunner.Delay(.2);
 
 				// Confirm newly created folder exists
@@ -133,7 +133,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Delay(.5);
 				testRunner.Type("Renamed Library Folder");
 
-				testRunner.ClickByName("Rename Button");
+				testRunner.ClickByName("InputBoxPage Action Button");
 				testRunner.Delay(.2);
 
 				// Make sure the renamed Library Folder exists

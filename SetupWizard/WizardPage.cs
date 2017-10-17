@@ -32,6 +32,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
@@ -43,6 +44,8 @@ namespace MatterHackers.MatterControl
 
 		private WrappedTextWidget headerLabel;
 		protected Button cancelButton { get; }
+
+		public Vector2 WindowSize { get; set; }
 
 		protected TextImageButtonFactory textImageButtonFactory { get; } = ApplicationController.Instance.Theme.WizardButtons;
 		protected TextImageButtonFactory whiteImageButtonFactory { get; } = ApplicationController.Instance.Theme.WhiteButtonFactory;

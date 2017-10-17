@@ -206,7 +206,7 @@ namespace MatterHackers.MatterControl
 					testRunner.ClickByName("Create Folder From Library Button");
 					testRunner.Delay(2);
 					testRunner.Type("New Folder");
-					testRunner.ClickByName("Create Folder Button");
+					testRunner.ClickByName("InputBoxPage Action Button");
 					testRunner.ClickByName("Library Edit Button");
 					testRunner.ClickByName("Row Item New Folder");
 

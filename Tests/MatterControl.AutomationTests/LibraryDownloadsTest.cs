@@ -200,7 +200,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Create Folder From Library Button");
 				testRunner.Delay(2);
 				testRunner.Type(newFolderName);
-				testRunner.ClickByName("Create Folder Button");
+				testRunner.ClickByName("InputBoxPage Action Button");
 
 				testRunner.Delay(2);
 				Assert.IsTrue(testRunner.WaitForName(newFolderName + " Row Item Collection", 2), $"{newFolderName} exists");

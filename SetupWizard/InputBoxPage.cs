@@ -30,71 +30,62 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
-	public class RenameItemPage : WizardPage
+	public class InputBoxPage : WizardPage
 	{
-		private Action<string> renameCallback;
+		private MHTextEditWidget textEditWidget;
 
-		private MHTextEditWidget saveAsNameWidget;
-
-		public RenameItemPage(string windowTitle, string currentItemName, Action<string> functionToCallToRenameItem)
+		public InputBoxPage(string windowTitle, string label, string initialValue, string emptyText, string actionButtonTitle, Action<string> action)
 		{
-			this.renameCallback = functionToCallToRenameItem;
-
 			this.WindowTitle = windowTitle;
 			this.HeaderText = windowTitle;
+			this.WindowSize = new Vector2(500, 200);
 
-			var textBoxHeader = new TextWidget("Name".Localize(), pointSize: 12)
+			Button actionButton = null;
+
+			contentRow.AddChild(new TextWidget(label, pointSize: 12)
 			{
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
 				Margin = new BorderDouble(5),
 				HAnchor = HAnchor.Left
-			};
-			contentRow.AddChild(textBoxHeader);
+			});
 
 			//Adds text box and check box to the above container
-			saveAsNameWidget = new MHTextEditWidget(currentItemName, pixelWidth: 300, messageWhenEmptyAndNotSelected: "Enter New Name Here".Localize());
-			saveAsNameWidget.HAnchor = HAnchor.Stretch;
-			saveAsNameWidget.Margin = new BorderDouble(5);
-			saveAsNameWidget.ActualTextEditWidget.EnterPressed += (s, e) =>
+			textEditWidget = new MHTextEditWidget(initialValue, pixelWidth: 300, messageWhenEmptyAndNotSelected: emptyText);
+			textEditWidget.HAnchor = HAnchor.Stretch;
+			textEditWidget.Margin = new BorderDouble(5);
+			textEditWidget.ActualTextEditWidget.EnterPressed += (s, e) =>
 			{
-				SubmitForm();
+				actionButton.OnClick(null);
 			};
-			contentRow.AddChild(saveAsNameWidget);
+			contentRow.AddChild(textEditWidget);
 
-			var renameItemButton = textImageButtonFactory.Generate("Rename".Localize());
-			renameItemButton.Name = "Rename Button";
-			renameItemButton.Visible = true;
-			renameItemButton.Cursor = Cursors.Hand;
-			renameItemButton.Click += (s, e) =>
+			actionButton = textImageButtonFactory.Generate(actionButtonTitle);
+			actionButton.Name = "InputBoxPage Action Button";
+			actionButton.Cursor = Cursors.Hand;
+			actionButton.Click += (s, e) =>
 			{
-				SubmitForm();
+				string newName = textEditWidget.ActualTextEditWidget.Text;
+				if (!string.IsNullOrEmpty(newName))
+				{
+					action.Invoke(newName);
+					this.WizardWindow.CloseOnIdle();
+				}
 			};
-			this.AddPageAction(renameItemButton);
+			this.AddPageAction(actionButton);
 		}
 
 		public override void OnLoad(EventArgs args)
 		{
 			UiThread.RunOnIdle(() =>
 			{
-				saveAsNameWidget.Focus();
-				saveAsNameWidget.ActualTextEditWidget.InternalTextEditWidget.SelectAll();
+				textEditWidget.Focus();
+				textEditWidget.ActualTextEditWidget.InternalTextEditWidget.SelectAll();
 			});
 			base.OnLoad(args);
-		}
-
-		private void SubmitForm()
-		{
-			string newName = saveAsNameWidget.ActualTextEditWidget.Text;
-			if (newName != "")
-			{
-				renameCallback(newName);
-				this.WizardWindow.CloseOnIdle();
-			}
 		}
 	}
 }
