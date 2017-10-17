@@ -1988,7 +1988,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					break;
 
 				case CommunicationStates.PreparingToPrint:
-					SlicingQueue.Instance.CancelCurrentSlicing();
 					CommunicationState = CommunicationStates.Connected;
 					break;
 			}

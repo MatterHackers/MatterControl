@@ -46,8 +46,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 		private List<PrintItem> allFilesToExport;
 		private List<string> savedGCodeFileNames;
 
-		public event EventHandler UpdatePartStatus;
-
 		public event EventHandler<StringEventArgs> StartingNextPart;
 
 		public event EventHandler DoneSaving;
@@ -105,9 +103,11 @@ namespace MatterHackers.MatterControl.PrintQueue
 					string extension = Path.GetExtension(printItemWrapper.FileLocation).ToUpper();
 					if ((extension != "" && MeshFileIo.ValidFileExtensions().Contains(extension)))
 					{
-						SlicingQueue.Instance.QueuePartForSlicing(printItemWrapper);
-						printItemWrapper.SlicingDone += sliceItem_Done;
-						printItemWrapper.SlicingOutputMessage += printItemWrapper_SlicingOutputMessage;
+						Slicer.SliceFileAsync(printItemWrapper, null).ContinueWith((task) =>
+						{
+							Console.WriteLine("Part Slicing Completed");
+						});
+
 					}
 					else if (Path.GetExtension(printItemWrapper.FileLocation).ToUpper() == ".GCODE")
 					{
@@ -117,21 +117,11 @@ namespace MatterHackers.MatterControl.PrintQueue
 			}
 		}
 
-		private void printItemWrapper_SlicingOutputMessage(object sender, EventArgs e)
-		{
-			StringEventArgs message = (StringEventArgs)e;
-			if (UpdatePartStatus != null)
-			{
-				UpdatePartStatus(this, message);
-			}
-		}
-
 		private void sliceItem_Done(object sender, EventArgs e)
 		{
 			PrintItemWrapper sliceItem = (PrintItemWrapper)sender;
 
 			sliceItem.SlicingDone -= sliceItem_Done;
-			sliceItem.SlicingOutputMessage -= printItemWrapper_SlicingOutputMessage;
 
 			if (File.Exists(sliceItem.FileLocation))
 			{
@@ -141,17 +131,11 @@ namespace MatterHackers.MatterControl.PrintQueue
 			itemCountBeingWorkedOn++;
 			if (itemCountBeingWorkedOn < allFilesToExport.Count)
 			{
-				if (StartingNextPart != null)
-				{
-					StartingNextPart(this, new StringEventArgs(ItemNameBeingWorkedOn));
-				}
+				StartingNextPart?.Invoke(this, new StringEventArgs(ItemNameBeingWorkedOn));
 			}
 			else
 			{
-				if (UpdatePartStatus != null)
-				{
-					UpdatePartStatus(this, new StringEventArgs("Calculating Total filament mm..."));
-				}
+				//UpdatePartStatus(this, new StringEventArgs("Calculating Total filament mm..."));
 
 				if (savedGCodeFileNames.Count > 0)
 				{

@@ -69,11 +69,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private CancellationTokenSource gcodeLoadCancellationTokenSource;
 
-		private FlowLayoutWidget dynamicPanel;
+		private PrinterTabPage printerTabPage;
 
 		public PrinterActionsBar(PrinterConfig printer, PrinterTabPage printerTabPage, ThemeConfig theme)
 		{
 			this.printer = printer;
+			this.printerTabPage = printerTabPage;
+
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Fit;
 
@@ -274,8 +276,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			startPrintButton.Margin = defaultMargin;
 			startPrintButton.Click += (s, e) =>
 			{
-				UiThread.RunOnIdle(() =>
+				UiThread.RunOnIdle(async () =>
 				{
+					await ApplicationController.Instance.SliceFileLoadOutput(
+						printer,
+						printer.Bed.printItem,
+						printerTabPage.view3DWidget,
+						null);
+
 					ApplicationController.Instance.PrintActivePartIfPossible(printer.Bed.printItem);
 				});
 			};

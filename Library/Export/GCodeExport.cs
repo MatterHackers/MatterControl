@@ -128,7 +128,7 @@ namespace MatterHackers.MatterControl.Library.Export
 				var printItem = ApplicationController.Instance.ActivePrinter.Bed.printItem;
 
 				//  - Slice
-				await SlicingQueue.SliceFileAsync(printItem, null);
+				await Slicer.SliceFileAsync(printItem, null);
 
 				//  - Return
 				fileToProcess = printItem.GetGCodePathAndFileName();
