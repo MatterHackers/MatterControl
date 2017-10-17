@@ -35,12 +35,15 @@ namespace MatterHackers.MatterControl
 
 		private void Scene_ChildrenModified(object sender, EventArgs e)
 		{
-			sceneTreeView.SuspendLayout();
-			sceneTreeView.Nodes.Clear();
-			sceneTreeNodes.Clear();
+			UiThread.RunOnIdle(() =>
+			{
+				sceneTreeView.SuspendLayout();
+				sceneTreeView.Nodes.Clear();
+				sceneTreeNodes.Clear();
 
-			this.AddTree(scene, null, "Scene");
-			sceneTreeView.ResumeLayout();
+				this.AddTree(scene, null, "Scene");
+				sceneTreeView.ResumeLayout();
+			});
 		}
 
 		public InspectForm(GuiWidget inspectedSystemWindow)
