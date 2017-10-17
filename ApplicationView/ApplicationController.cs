@@ -1054,8 +1054,15 @@ namespace MatterHackers.MatterControl
 
 		private string doNotAskAgainMessage = "Don't remind me again".Localize();
 
-		public async void PrintPart(PrintItemWrapper printItem, PrinterConfig printer, View3DWidget view3DWidget, SliceProgressReporter reporter, bool overrideAllowGCode = false)
+		public async Task PrintPart(PrintItemWrapper printItem, PrinterConfig printer, View3DWidget view3DWidget, SliceProgressReporter reporter, bool overrideAllowGCode = false)
 		{
+			// Exit if called in a non-applicable state
+			if (this.ActivePrinter.Connection.CommunicationState != CommunicationStates.Connected
+				&& this.ActivePrinter.Connection.CommunicationState != CommunicationStates.FinishedPrint)
+			{
+				return;
+			}
+
 			try
 			{
 				// If leveling is required or is currently on
@@ -1149,15 +1156,6 @@ namespace MatterHackers.MatterControl
 			}
 			catch (Exception)
 			{
-			}
-		}
-
-		public void PrintActivePartIfPossible(PrintItemWrapper printItem, bool overrideAllowGCode = false)
-		{
-			if (this.ActivePrinter.Connection.CommunicationState == CommunicationStates.Connected 
-				|| this.ActivePrinter.Connection.CommunicationState == CommunicationStates.FinishedPrint)
-			{
-				//PrintPart(printItem, overrideAllowGCode);
 			}
 		}
 

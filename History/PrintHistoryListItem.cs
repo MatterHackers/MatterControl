@@ -228,7 +228,8 @@ namespace MatterHackers.MatterControl.PrintHistory
 						{
 							if (!ApplicationController.Instance.ActivePrinter.Connection.PrintIsActive)
 							{
-								ApplicationController.Instance.PrintActivePartIfPossible(new PrintItemWrapper(printTask.PrintItemId));
+								// TODO: More work needed here. We need to stash the bedplate, switch to a new context, then invoke print as normal
+								//ApplicationController.Instance.PrintActivePartIfPossible(new PrintItemWrapper(printTask.PrintItemId));
 							}
 							else
 							{

@@ -362,7 +362,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				AllowProtected = true,
 				Action = (selectedLibraryItems, listView) =>
 				{
-					var printer = ApplicationController.Instance.DragDropData.Printer;
+					// TODO: Sort out the right way to have an ActivePrinter context that looks and behaves correctly
+					var activeContext = ApplicationController.Instance.DragDropData;
+					var printer = activeContext.Printer;
+					//var printerTabPage = activeContext.View3DWidget.Parents<PrinterTabPage>().FirstOrDefault();
+
 					switch (selectedLibraryItems.FirstOrDefault())
 					{
 						case SDCardFileItem sdcardItem:
@@ -378,13 +382,17 @@ namespace MatterHackers.MatterControl.PrintLibrary
 							//TODO: Otherwise add the selected items to the plate and print the plate?
 							if (printer != null)
 							{
-								printer.Bed.ClearPlate();
-
-								AddToPlate(selectedLibraryItems);
-
-								UiThread.RunOnIdle(() =>
+								UiThread.RunOnIdle(async () =>
 								{
-									ApplicationController.Instance.PrintActivePartIfPossible(printer.Bed.printItem);
+									printer.Bed.ClearPlate();
+
+									AddToPlate(selectedLibraryItems);
+
+									await ApplicationController.Instance.PrintPart(
+										printer.Bed.printItem,
+										printer,
+										activeContext.View3DWidget,
+										null);
 								});
 							}
 							break;

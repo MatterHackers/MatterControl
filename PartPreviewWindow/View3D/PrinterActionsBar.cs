@@ -278,13 +278,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				UiThread.RunOnIdle(async () =>
 				{
-					await ApplicationController.Instance.SliceFileLoadOutput(
-						printer,
+					await ApplicationController.Instance.PrintPart(
 						printer.Bed.printItem,
+						printer,
 						printerTabPage.view3DWidget,
 						null);
-
-					ApplicationController.Instance.PrintActivePartIfPossible(printer.Bed.printItem);
 				});
 			};
 			this.AddChild(startPrintButton);
@@ -296,9 +294,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			finishSetupButton.Margin = defaultMargin;
 			finishSetupButton.Click += (s, e) =>
 			{
-				UiThread.RunOnIdle(() =>
+				UiThread.RunOnIdle(async () =>
 				{
-					ApplicationController.Instance.PrintActivePartIfPossible(printer.Bed.printItem);
+					await ApplicationController.Instance.PrintPart(
+						printer.Bed.printItem,
+						printer,
+						printerTabPage.view3DWidget,
+						null);
 				});
 			};
 			this.AddChild(finishSetupButton);
