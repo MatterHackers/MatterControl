@@ -424,7 +424,7 @@
     <Compile Include="SlicerConfiguration\PresetsToolbar.cs" />
     <Compile Include="SlicerConfiguration\SliceSettingsWidget.cs" />
     <Compile Include="SlicerConfiguration\SliceSettingsOrganizer.cs" />
-    <Compile Include="SlicerConfiguration\SlicingQueue.cs" />
+    <Compile Include="SlicerConfiguration\Slicer.cs" />
     <Compile Include="VersionManagement\ContactFormRequest.cs" />
     <Compile Include="VersionManagement\LatestVersionRequest.cs" />
     <Compile Include="VersionManagement\ClientTokenRequest.cs" />
