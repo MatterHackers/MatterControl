@@ -37,8 +37,6 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
-using MatterHackers.Agg.Image;
-using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.OpenGlGui;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.Transform;
@@ -458,39 +456,40 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			UiThread.RunOnIdle(AutoSpin);
 
-			if (sceneContext.RendererOptions.SyncToPrint)
+			// Wire up CommunicationStateChanged to lock footer bar when SyncToPrint is enabled
+			if (sceneContext.Printer != null)
 			{
-				if (sceneContext.Printer != null)
+				sceneContext.Printer.Connection.CommunicationStateChanged.RegisterEvent((s, e) =>
 				{
-					sceneContext.Printer.Connection.CommunicationStateChanged.RegisterEvent(
-						(s, e) =>
-						{
-							if (sceneContext.RendererOptions.SyncToPrint
-								&& sceneContext.Printer != null)
-							{
-								switch (sceneContext.Printer.Connection.CommunicationState)
-								{
-									case CommunicationStates.Printing:
-									case CommunicationStates.Paused:
-										LockEditControls();
-										break;
-
-									default:
-										UnlockEditControls();
-										break;
-								}
-							}
-						}, 
-						ref unregisterEvents);
-
-					// make sure we lock the controls if we are printing or paused
-					switch (sceneContext.Printer.Connection.CommunicationState)
+					if (sceneContext.RendererOptions.SyncToPrint
+						&& sceneContext.Printer != null)
 					{
-						case CommunicationStates.Printing:
-						case CommunicationStates.Paused:
-							LockEditControls();
-							break;
+						switch (sceneContext.Printer.Connection.CommunicationState)
+						{
+							case CommunicationStates.Printing:
+							case CommunicationStates.Paused:
+								LockEditControls();
+								break;
+
+							default:
+								UnlockEditControls();
+								break;
+						}
 					}
+				},
+				ref unregisterEvents);
+
+				// make sure we lock the controls if we are printing or paused
+				switch (sceneContext.Printer.Connection.CommunicationState)
+				{
+					case CommunicationStates.Printing:
+					case CommunicationStates.Paused:
+						if (sceneContext.RendererOptions.SyncToPrint)
+						{
+							LockEditControls();
+						}
+
+						break;
 				}
 			}
 
