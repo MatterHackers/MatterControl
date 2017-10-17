@@ -98,10 +98,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Stretch
 			};
 
-			if (!File.Exists(sceneContext.GCodePath))
-			{ 
-				SetProcessingMessage($"{fileNotFoundMessage}\n'{sceneContext.GCodePath}'");
-			}
+			//if (!File.Exists(sceneContext.GCodePath))
+			//{ 
+			//	SetProcessingMessage($"{fileNotFoundMessage}\n'{sceneContext.GCodePath}'");
+			//}
 
 			mainContainerTopToBottom.AddChild(gcodeDisplayWidget);
 
@@ -109,10 +109,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// *************** AddGCodeFileControls ***************
 			SetProcessingMessage("");
-			if (sceneContext.LoadedGCode == null)
-			{
-				SetProcessingMessage($"{fileNotFoundMessage}\n'{sceneContext.GCodePath}'");
-			}
+			//if (sceneContext.LoadedGCode == null)
+			//{
+			//	SetProcessingMessage($"{fileNotFoundMessage}\n'{sceneContext.GCodePath}'");
+			//}
 
 			if (sceneContext.LoadedGCode?.LineCount > 0)
 			{

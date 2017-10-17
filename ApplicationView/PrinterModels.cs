@@ -103,6 +103,10 @@ namespace MatterHackers.MatterControl
 
 			string mcxPath = Path.Combine(ApplicationDataStorage.Instance.PlatingDirectory, now + ".mcx");
 
+			// Clear existing
+			this.LoadedGCode = null;
+			this.GCodeRenderer = null;
+
 			this.printItem = new PrintItemWrapper(new PrintItem(now, mcxPath));
 
 			File.WriteAllText(mcxPath, new Object3D().ToJson());
