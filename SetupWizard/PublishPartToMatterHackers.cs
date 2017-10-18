@@ -135,7 +135,6 @@ namespace MatterHackers.MatterControl
 			contentRow.AddChild(CreateRequiredCheckBox("", new HtmlWidget(html, textColor)));
 
 			publishButton.Visible = true;
-			cancelButton.Visible = true;
 
 			this.AddPageAction(publishButton);
 		}

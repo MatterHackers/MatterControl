@@ -41,7 +41,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 	public class SetupStepComPortTwo : WizardPage
 	{
 		private string[] startingPortNames;
-		private string[] currentPortNames;
+
 		private Button nextButton;
 		private Button connectButton;
 		private TextWidget printerErrorMessage;
@@ -55,40 +55,43 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 			startingPortNames = FrostedSerialPort.GetPortNames();
 			contentRow.AddChild(createPrinterConnectionMessageContainer());
+
+			//Construct buttons
+			nextButton = textImageButtonFactory.Generate("Done".Localize());
+			nextButton.Click += (s, e) => UiThread.RunOnIdle(Parent.Close);
+			nextButton.Visible = false;
+
+			connectButton = textImageButtonFactory.Generate("Connect".Localize());
+			connectButton.Click += (s, e) =>
 			{
-				cancelButton.Click += (s, e) => printer.Connection.HaltConnectionThread();
-
-				//Construct buttons
-				nextButton = textImageButtonFactory.Generate("Done".Localize());
-				nextButton.Click += (s, e) => UiThread.RunOnIdle(Parent.Close);
-				nextButton.Visible = false;
-
-				connectButton = textImageButtonFactory.Generate("Connect".Localize());
-				connectButton.Click += (s, e) =>
+				// Select the first port that's in GetPortNames() but not in startingPortNames
+				string candidatePort = FrostedSerialPort.GetPortNames().Except(startingPortNames).FirstOrDefault();
+				if (candidatePort == null)
 				{
-					// Select the first port that's in GetPortNames() but not in startingPortNames
-					string candidatePort = FrostedSerialPort.GetPortNames().Except(startingPortNames).FirstOrDefault();
-					if (candidatePort == null)
-					{
-						printerErrorMessage.TextColor = RGBA_Bytes.Red;
-						printerErrorMessage.Text = "Oops! Printer could not be detected ".Localize();
-					}
-					else
-					{
-						printerErrorMessage.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-						printerErrorMessage.Text = "Attempting to connect".Localize() + "...";
+					printerErrorMessage.TextColor = RGBA_Bytes.Red;
+					printerErrorMessage.Text = "Oops! Printer could not be detected ".Localize();
+				}
+				else
+				{
+					printerErrorMessage.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+					printerErrorMessage.Text = "Attempting to connect".Localize() + "...";
 
-						ActiveSliceSettings.Instance.Helpers.SetComPort(candidatePort);
-						printer.Connection.Connect();
-						connectButton.Visible = false;
-					}
-				};
+					ActiveSliceSettings.Instance.Helpers.SetComPort(candidatePort);
+					printer.Connection.Connect();
+					connectButton.Visible = false;
+				}
+			};
 
-				printer.Connection.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
+			printer.Connection.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
 
-				this.AddPageAction(nextButton);
-				this.AddPageAction(connectButton);
-			}
+			this.AddPageAction(nextButton);
+			this.AddPageAction(connectButton);
+		}
+
+		protected override void OnCancel(out bool abortCancel)
+		{
+			printer.Connection.HaltConnectionThread();
+			abortCancel = false;
 		}
 
 		public override void OnClosed(ClosedEventArgs e)

@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl
 		private FlowLayoutWidget footerRow;
 
 		private WrappedTextWidget headerLabel;
-		protected Button cancelButton { get; }
+		private Button cancelButton;
 
 		public Vector2 WindowSize { get; set; }
 
@@ -57,8 +57,6 @@ namespace MatterHackers.MatterControl
 		public WizardWindow WizardWindow;
 
 		private GuiWidget mainContainer;
-
-		protected bool abortCancel = false;
 
 		public WizardPage(string unlocalizedTextForCancelButton = "Cancel")
 		{
@@ -143,11 +141,23 @@ namespace MatterHackers.MatterControl
 			footerRow.AddChild(button);
 		}
 
+		protected void SetCancelButtonName(string newName)
+		{
+			cancelButton.Name = newName;
+		}
+
+		protected void HideCancelButton()
+		{
+			cancelButton.Visible = false;
+		}
+
 		public override void OnLoad(EventArgs args)
 		{
 			// Add 'Close' event listener after derived types have had a chance to register event listeners
 			cancelButton.Click += (s, e) =>
 			{
+				this.OnCancel(out bool abortCancel);
+
 				if (!abortCancel)
 				{
 					UiThread.RunOnIdle(() => WizardWindow?.Close());
@@ -158,6 +168,11 @@ namespace MatterHackers.MatterControl
 			footerRow.AddChild(cancelButton);
 
 			base.OnLoad(args);
+		}
+
+		protected virtual void OnCancel(out bool abortCancel)
+		{
+			abortCancel = false;
 		}
 
 		public virtual void PageIsBecomingActive()

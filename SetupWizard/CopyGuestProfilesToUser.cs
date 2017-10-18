@@ -27,23 +27,22 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using MatterHackers.Agg.Platform;
+using System.Collections.Generic;
+using System.IO;
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl;
-using MatterHackers.Agg;
-using System.Collections.Generic;
 using MatterHackers.MatterControl.SlicerConfiguration;
-using System.IO;
 
 namespace MatterHackers.MatterControl
 {
 	public class CopyGuestProfilesToUser : WizardPage
 	{
-		string importMessage = "It's time to copy your existing printer settings to your MatterHackers account. Once copied, these printers will be available whenever you sign in to MatterControl. Printers that are not copied will only be available when not signed in.".Localize();
+		private string importMessage = "It's time to copy your existing printer settings to your MatterHackers account. Once copied, these printers will be available whenever you sign in to MatterControl. Printers that are not copied will only be available when not signed in.".Localize();
 
-		List<CheckBox> checkBoxes = new List<CheckBox>();
+		private CheckBox rememberChoice;
+
+		private List<CheckBox> checkBoxes = new List<CheckBox>();
 
 		public CopyGuestProfilesToUser()
 		: base("Close")
@@ -132,24 +131,24 @@ namespace MatterHackers.MatterControl
 				});
 			};
 
-			CheckBox rememberChoice = new CheckBox("Don't remind me again".Localize(), ActiveTheme.Instance.PrimaryTextColor);
+			rememberChoice = new CheckBox("Don't remind me again".Localize(), ActiveTheme.Instance.PrimaryTextColor);
 			contentRow.AddChild(rememberChoice);
 
 			syncButton.Visible = true;
-			cancelButton.Visible = true;
-
-			// Close the window and update the PrintersImported flag
-			cancelButton.Click += (s, e) => UiThread.RunOnIdle(() =>
-			{
-				WizardWindow.Close();
-				if (rememberChoice.Checked)
-				{
-					ProfileManager.Instance.PrintersImported = true;
-					ProfileManager.Instance.Save();
-				}
-			});
 
 			this.AddPageAction(syncButton);
+		}
+
+		protected override void OnCancel(out bool abortCancel)
+		{
+			// If "Don't remind me" checked, update the PrintersImported flag on close
+			if (rememberChoice.Checked)
+			{
+				ProfileManager.Instance.PrintersImported = true;
+				ProfileManager.Instance.Save();
+			}
+
+			abortCancel = false;
 		}
 	}
 }
