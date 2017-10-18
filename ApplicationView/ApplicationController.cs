@@ -519,22 +519,6 @@ namespace MatterHackers.MatterControl
 			thumbGenResetEvent?.Set();
 		}
 
-		public void StartSignIn()
-		{
-			if (this.ActivePrinter.Connection.PrinterIsPrinting
-				|| this.ActivePrinter.Connection.PrinterIsPaused)
-			{
-				// can't sign in while printing
-				UiThread.RunOnIdle(() =>
-					StyledMessageBox.ShowMessageBox(null, "Please wait until the print has finished and try again.".Localize(), "Can't sign in while printing".Localize())
-				);
-			}
-			else // do the regular sign in
-			{
-				SignInAction?.Invoke();
-			}
-		}
-
 		private static TypeFace monoSpacedTypeFace = null;
 		public static TypeFace MonoSpacedTypeFace
 		{
@@ -633,37 +617,6 @@ namespace MatterHackers.MatterControl
 			return !string.IsNullOrEmpty(extension)
 				&& (ApplicationSettings.OpenDesignFileParams.Contains(extension) 
 					|| ApplicationController.Instance.Library.ContentProviders.Keys.Contains(extensionWithoutPeriod));
-		}
-
-		public void StartSignOut()
-		{
-			if (this.ActivePrinter.Connection.PrinterIsPrinting
-				|| this.ActivePrinter.Connection.PrinterIsPaused)
-			{
-				// can't log out while printing
-				UiThread.RunOnIdle(() =>
-					StyledMessageBox.ShowMessageBox(null, "Please wait until the print has finished and try again.".Localize(), "Can't log out while printing".Localize())
-				);
-			}
-			else // do the regular log out
-			{
-				bool allowShowingSignOutWarning = true;
-				if (allowShowingSignOutWarning)
-				{
-					// Warn on sign out that no access to user printers and cloud library put a 'Don't remind me again' check box
-					StyledMessageBox.ShowMessageBox((clickedSignOut) =>
-					{
-						if (clickedSignOut)
-						{
-							SignOutAction?.Invoke();
-						}
-					}, "Are you sure you want to sign out? You will not have access to your printer profiles or cloud library.".Localize(), "Sign Out?".Localize(), StyledMessageBox.MessageType.YES_NO, "Sign Out".Localize(), "Cancel".Localize());
-				}
-				else // just run the sign out event
-				{
-					SignOutAction?.Invoke();
-				}
-			}
 		}
 
 		bool pendingReloadRequest = false;
