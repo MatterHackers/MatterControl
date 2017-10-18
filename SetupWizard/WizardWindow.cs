@@ -13,9 +13,6 @@ namespace MatterHackers.MatterControl
 	public class WizardWindow : SystemWindow
 	{
 		private EventHandler unregisterEvents;
-		public static Func<bool> ShouldShowAuthPanel { get; set; }
-		public static Action ShowAuthDialog;
-		public static Action ChangeToAccountCreate;
 
 		private static Dictionary<Type, WizardWindow> allWindows = new Dictionary<Type, WizardWindow>();
 
@@ -26,8 +23,6 @@ namespace MatterHackers.MatterControl
 			this.MinimumSize = new Vector2(200, 200);
 			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 			this.Padding = new BorderDouble(8);
-
-			this.ShowAsSystemWindow();
 		}
 
 		public static void Close(Type type)
@@ -78,32 +73,6 @@ namespace MatterHackers.MatterControl
 			wizardWindow.ShowAsSystemWindow();
 		}
 
-		public static void ShowPrinterSetup(bool userRequestedNewPrinter = false)
-		{
-			WizardWindow wizardWindow = GetWindow(typeof(SetupStepComPortOne));
-			wizardWindow.Title = "Setup Wizard".Localize();
-
-			// Do the printer setup logic
-			// Todo - detect wifi connectivity
-			bool WifiDetected = MatterControlApplication.Instance.IsNetworkConnected();
-			if (!WifiDetected)
-			{
-				wizardWindow.ChangeToPage<SetupWizardWifi>();
-			}
-			else
-			{
-				wizardWindow.ChangeToSetupPrinterForm(userRequestedNewPrinter);
-			}
-		}
-
-		public static void ShowComPortSetup(PrinterConfig printer)
-		{
-			WizardWindow wizardWindow = GetWindow(typeof(SetupStepComPortOne));
-			wizardWindow.Title = "Setup Wizard".Localize();
-
-			wizardWindow.ChangeToPage(new SetupStepComPortOne(printer));
-		}
-
 		public static bool IsOpen(Type type)
 		{
 			WizardWindow wizardWindow;
@@ -138,45 +107,6 @@ namespace MatterHackers.MatterControl
 		{
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
-		}
-
-		public void ChangeToSetupPrinterForm(bool userRequestedNewPrinter = false)
-		{
-			bool showAuthPanel = ShouldShowAuthPanel?.Invoke() ?? false;
-			if (showAuthPanel
-				&& !userRequestedNewPrinter)
-			{
-				ChangeToPage<ShowAuthPanel>();
-			}
-			else
-			{
-				ChangeToPage<SetupStepMakeModelName>();
-			}
-		}
-
-		internal void ChangeToInstallDriverOrComPortOne(PrinterConfig printer)
-		{
-			if (SetupStepInstallDriver.PrinterDrivers(printer).Count > 0
-				&& AggContext.OperatingSystem == OSType.Windows)
-			{
-				ChangeToPage(new SetupStepInstallDriver(printer));
-			}
-			else
-			{
-				ChangeToPage(new SetupStepComPortOne(printer));
-			}
-		}
-
-		internal void ChangeToSetupBaudOrComPortOne(PrinterConfig printer)
-		{
-			if (string.IsNullOrEmpty(printer.Settings.GetValue(SettingsKey.baud_rate)))
-			{
-				ChangeToPage(new SetupStepBaudRate(printer));
-			}
-			else
-			{
-				ChangeToPage(new SetupStepComPortOne(printer));
-			}
 		}
 
 		public void ChangeToPage(WizardPage pageToChangeTo)

@@ -42,6 +42,7 @@ using MatterHackers.GCodeVisualizer;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
+using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.SerialPortCommunication;
@@ -1011,7 +1012,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					// Only pop up the com port helper if the USER actually CLICKED the connect button.
 					if (showHelpIfNoPort)
 					{
-						WizardWindow.ShowComPortSetup(printer);
+						WizardWindow.Show(new SetupStepComPortOne(printer));
 					}
 #endif
 				}

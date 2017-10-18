@@ -31,6 +31,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 
 namespace MatterHackers.MatterControl
 {
@@ -39,6 +40,8 @@ namespace MatterHackers.MatterControl
 	{
 		public SetupWizardWifi()
 		{
+			this.WindowTitle = "Setup Wizard".Localize();
+
 			contentRow.AddChild(new TextWidget("Wifi Setup".Localize() + ":", 0, 0, labelFontSize)
 			{
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
@@ -56,22 +59,10 @@ namespace MatterHackers.MatterControl
 
 			//Construct buttons
 			Button skipButton = whiteImageButtonFactory.Generate("Skip".Localize());
-			skipButton.Click += (s, e) =>
-			{
-				UiThread.RunOnIdle(() =>
-				{
-					this.WizardWindow.ChangeToSetupPrinterForm();
-				});
-			};
+			skipButton.Click += Continue_Click;
 
 			Button nextButton = textImageButtonFactory.Generate("Continue".Localize());
-			nextButton.Click += (s, e) =>
-			{
-				UiThread.RunOnIdle(() =>
-				{
-					this.WizardWindow.ChangeToSetupPrinterForm();
-				});
-			};
+			nextButton.Click += Continue_Click;
 			nextButton.Visible = false;
 
 			Button configureButton = whiteImageButtonFactory.Generate("Configure".Localize());
@@ -94,6 +85,14 @@ namespace MatterHackers.MatterControl
 			contentRow.AddChild(connectButtonContainer);
 
 			this.AddPageAction(nextButton);
+		}
+
+		private void Continue_Click(object sender, MouseEventArgs e)
+		{
+			UiThread.RunOnIdle(() =>
+			{
+				this.WizardWindow.ChangeToPage(PrinterSetup.GetBestStartPage());
+			});
 		}
 	}
 }

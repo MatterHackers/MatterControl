@@ -58,6 +58,7 @@ namespace MatterHackers.MatterControl
 	using MatterHackers.MatterControl.Library;
 	using MatterHackers.MatterControl.PartPreviewWindow;
 	using MatterHackers.MatterControl.PartPreviewWindow.View3D;
+	using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 	using MatterHackers.MatterControl.SimplePartScripting;
 	using MatterHackers.MeshVisualizer;
 	using MatterHackers.SerialPortCommunication;
@@ -783,13 +784,13 @@ namespace MatterHackers.MatterControl
 			// Pushing this after load fixes that empty printer list
 			ApplicationController.Instance.UserChanged();
 
-			bool showAuthWindow = WizardWindow.ShouldShowAuthPanel?.Invoke() ?? false;
+			bool showAuthWindow = PrinterSetup.ShouldShowAuthPanel?.Invoke() ?? false;
 			if (showAuthWindow)
 			{
 				if (ApplicationSettings.Instance.get(ApplicationSettingsKey.SuppressAuthPanel) != "True")
 				{
 					//Launch window to prompt user to sign in
-					UiThread.RunOnIdle(() => WizardWindow.ShowPrinterSetup());
+					UiThread.RunOnIdle(() => WizardWindow.Show(PrinterSetup.GetBestStartPage()));
 				}
 			}
 			else
@@ -834,7 +835,7 @@ namespace MatterHackers.MatterControl
             if (!ProfileManager.Instance.ActiveProfiles.Any())
             {
                 // Start the setup wizard if no profiles exist
-                UiThread.RunOnIdle(() => WizardWindow.ShowPrinterSetup());
+                UiThread.RunOnIdle(() => WizardWindow.Show(PrinterSetup.GetBestStartPage()));
             }
         }
 

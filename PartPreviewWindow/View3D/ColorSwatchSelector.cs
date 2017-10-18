@@ -34,14 +34,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class ColorSwatchSelector : FlowLayoutWidget
 	{
-		private TextImageButtonFactory menuButtonFactory;
-		int colorSize = 32;
+		private const int colorSize = 32;
 
-		public ColorSwatchSelector(IObject3D item, View3DWidget view3DWidget, TextImageButtonFactory menuButtonFactory)
+		public ColorSwatchSelector(IObject3D item, View3DWidget view3DWidget)
 			: base(FlowDirection.TopToBottom)
 		{
-			this.menuButtonFactory = menuButtonFactory;
-
 			var colorCount = 9;
 			double[] lightness = new double[] { .7, .5, .3 };
 			RGBA_Bytes[] grayLevel = new RGBA_Bytes[] { RGBA_Bytes.White, new RGBA_Bytes(180, 180, 180), RGBA_Bytes.Gray };

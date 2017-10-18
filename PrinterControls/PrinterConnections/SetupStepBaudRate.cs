@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.SlicerConfiguration;
@@ -64,7 +65,15 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 					{
 						UiThread.RunOnIdle(() =>
 						{
-							WizardWindow.ChangeToInstallDriverOrComPortOne(printer);
+							if (SetupStepInstallDriver.PrinterDrivers(printer).Count > 0
+								&& AggContext.OperatingSystem == OSType.Windows)
+							{
+								this.WizardWindow.ChangeToPage(new SetupStepInstallDriver(printer));
+							}
+							else
+							{
+								this.WizardWindow.ChangeToPage(new SetupStepComPortOne(printer));
+							}
 						});
 					}
 				};
