@@ -39,13 +39,13 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
-	public class MeshObjectWrapper : Object3D
+	public class MeshWrapper : Object3D
 	{
-		public MeshObjectWrapper()
+		public MeshWrapper()
 		{
 		}
 
-		public MeshObjectWrapper(IObject3D child, string ownerId)
+		public MeshWrapper(IObject3D child, string ownerId)
 		{
 			Children.Add(child);
 
@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 	}
 
 
-	public class DifferenceItem : MeshObjectWrapper
+	public class DifferenceItem : MeshWrapper
 	{
 		public DifferenceItem()
 		{
@@ -127,13 +127,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 						foreach (var remove in removeObjects)
 						{
 							var transformedRemove = Mesh.Copy(remove.Mesh, CancellationToken.None);
-							transformedRemove.Transform(GetMatrixToWrapper(remove));
+							transformedRemove.Transform(remove.WorldMatrix());
 
 							var transformedKeep = Mesh.Copy(keep.Mesh, CancellationToken.None);
-							transformedKeep.Transform(GetMatrixToWrapper(keep));
+							transformedKeep.Transform(keep.WorldMatrix());
 
 							transformedKeep = PolygonMesh.Csg.CsgOperations.Subtract(transformedKeep, transformedRemove);
-							var inverse = GetMatrixToWrapper(keep);
+							var inverse = keep.WorldMatrix();
 							inverse.Invert();
 							transformedKeep.Transform(inverse);
 							keep.Mesh = transformedKeep;
@@ -141,19 +141,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					}
 				}
 			});
-		}
-
-		private Matrix4X4 GetMatrixToWrapper(IObject3D child)
-		{
-			var matrix = child.Matrix;
-			var parent = child.Parent;
-			while(parent.ID != child.OwnerID)
-			{
-				matrix *= parent.Matrix;
-				parent = parent.Parent;
-			}
-
-			return matrix;
 		}
 	}
 }
