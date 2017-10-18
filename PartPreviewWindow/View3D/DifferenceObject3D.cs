@@ -92,13 +92,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 			bool first = true;
 			// now wrap every first decendant that has a mesh
-			foreach (var child in this.Descendants().Where((o) => o.Mesh != null))
+			foreach (var child in this.VisibleMeshes().Where((o) => o.Mesh != null))
 			{
 				// wrap the child in a DifferenceItem
 				child.Parent.Children.Modify((list) =>
 				{
 					list.Remove(child);
 					list.Add(new DifferenceItem(child, this.ID, !first));
+					first = false;
 				});
 			}
 
@@ -111,7 +112,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			await Task.Run(() =>
 			{
 				var container = this;
-				var participants = this.Descendants().Where((obj) => obj.OwnerID == this.ID);
+				var participants = this.VisibleMeshes().Where((obj) => obj.OwnerID == this.ID);
 				var removeObjects = participants.Where((obj) => ((DifferenceItem)obj).OutputType == PrintOutputTypes.Hole);
 				var keepObjects = participants.Where((obj) => ((DifferenceItem)obj).OutputType != PrintOutputTypes.Hole);
 
