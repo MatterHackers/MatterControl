@@ -68,17 +68,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		{
 		}
 
-		public DifferenceItem(IObject3D child, string ownerId, bool keep)
+		public DifferenceItem(IObject3D child, string ownerId, bool makeHole)
 			: base(child, ownerId)
 		{
-			this.Keep = keep;
-			if (!keep)
+			if (makeHole)
 			{
 				OutputType = PrintOutputTypes.Hole;
 			}
 		}
-
-		public bool Keep { get; set; } = true;
 	}
 
 	public class DifferenceGroup : Object3D
@@ -94,15 +91,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			});
 
 			bool first = true;
-			// now wrap every decendant that has a mesh
+			// now wrap every first decendant that has a mesh
 			foreach (var child in this.Descendants().Where((o) => o.Mesh != null))
 			{
 				// wrap the child in a DifferenceItem
 				child.Parent.Children.Modify((list) =>
 				{
 					list.Remove(child);
-					list.Add(new DifferenceItem(child, this.ID, first));
-					first = false;
+					list.Add(new DifferenceItem(child, this.ID, !first));
 				});
 			}
 
@@ -116,8 +112,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			{
 				var container = this;
 				var participants = this.Descendants().Where((obj) => obj.OwnerID == this.ID);
-				var removeObjects = participants.Where((obj) => ((DifferenceItem)obj).Keep == false);
-				var keepObjects = participants.Where((obj) => ((DifferenceItem)obj).Keep == true);
+				var removeObjects = participants.Where((obj) => ((DifferenceItem)obj).OutputType == PrintOutputTypes.Hole);
+				var keepObjects = participants.Where((obj) => ((DifferenceItem)obj).OutputType != PrintOutputTypes.Hole);
 
 				if (removeObjects.Any()
 					&& keepObjects.Any())

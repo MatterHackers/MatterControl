@@ -318,7 +318,7 @@ namespace MatterHackers.MeshVisualizer
 
 		public bool IsActive { get; set; } = true;
 
-		private void DrawObject(IObject3D object3D, List<MeshRenderData> transparentMeshes, bool parentSelected, DrawEventArgs e)
+		private void DrawObject(IObject3D object3D, List<IObject3D> transparentMeshes, bool parentSelected, DrawEventArgs e)
 		{
 			var totalVertices = 0;
 
@@ -349,12 +349,12 @@ namespace MatterHackers.MeshVisualizer
 				bool isSelected = parentSelected ||
 					scene.HasSelection && (object3D == scene.SelectedItem || scene.SelectedItem.Children.Contains(object3D));
 
-				RGBA_Bytes drawColor = renderData.Color;
-				if (renderData.OutputType == PrintOutputTypes.Support)
+				RGBA_Bytes drawColor = renderData.WorldColor();
+				if (renderData.WorldOutputType() == PrintOutputTypes.Support)
 				{
 					drawColor = new RGBA_Bytes(RGBA_Bytes.Yellow, 120);
 				}
-				else if (renderData.OutputType == PrintOutputTypes.Hole)
+				else if (renderData.WorldOutputType() == PrintOutputTypes.Hole)
 				{
 					drawColor = new RGBA_Bytes(RGBA_Bytes.Gray, 120);
 				}
@@ -362,20 +362,23 @@ namespace MatterHackers.MeshVisualizer
 				// check if we should be rendering materials (this overrides the other colors)
 				if (this.RenderType == RenderTypes.Materials)
 				{
-					drawColor = MatterialRendering.Color(renderData.MaterialIndex);
+					drawColor = MatterialRendering.Color(renderData.WorldMaterialIndex());
 				}
 
 				if (drawColor.alpha == 255)
 				{
-					GLHelper.Render(renderData.Mesh, drawColor, renderData.Matrix, RenderType, renderData.Matrix * World.ModelviewMatrix);
+					GLHelper.Render(renderData.Mesh, drawColor, renderData.WorldMatrix(), RenderType, renderData.WorldMatrix() * World.ModelviewMatrix);
 				}
 				else
 				{
-					transparentMeshes.Add(new MeshRenderData(renderData.Mesh,
-						renderData.Matrix,
-						drawColor,
-						renderData.MaterialIndex,
-						renderData.OutputType));
+					transparentMeshes.Add(new Object3D()
+					{
+						Mesh = renderData.Mesh,
+						Matrix = renderData.WorldMatrix(),
+						Color = drawColor,
+						MaterialIndex = renderData.WorldMaterialIndex(),
+						OutputType = renderData.WorldOutputType()
+					});
 				}
 
 				if (isSelected && !tooBigForComplexSelection)
@@ -390,7 +393,7 @@ namespace MatterHackers.MeshVisualizer
 			}
 		}
 
-		private void RenderNormals(MeshRenderData renderData)
+		private void RenderNormals(IObject3D renderData)
 		{
 			var frustum = World.GetClippingFrustum();
 
@@ -412,7 +415,7 @@ namespace MatterHackers.MeshVisualizer
 			}
 		}
 
-		private void RenderSelection(MeshRenderData renderData, Frustum frustum)
+		private void RenderSelection(IObject3D renderData, Frustum frustum)
 		{
 			var screenPosition = new Vector3[3];
 			GLHelper.PrepareFor3DLineRender(true);
@@ -423,7 +426,7 @@ namespace MatterHackers.MeshVisualizer
 				{
 					if (meshEdge.GetNumFacesSharingEdge() == 2)
 					{
-						var meshToView = renderData.Matrix * World.ModelviewMatrix;
+						var meshToView = renderData.WorldMatrix() * World.ModelviewMatrix;
 
 						FaceEdge firstFaceEdge = meshEdge.firstFaceEdge;
 						FaceEdge nextFaceEdge = meshEdge.firstFaceEdge.radialNextFaceEdge;
@@ -438,8 +441,8 @@ namespace MatterHackers.MeshVisualizer
 
 						if (firstTowards != nextTowards)
 						{
-							var transformed1 = Vector3.Transform(meshEdge.VertexOnEnd[0].Position, renderData.Matrix);
-							var transformed2 = Vector3.Transform(meshEdge.VertexOnEnd[1].Position, renderData.Matrix);
+							var transformed1 = Vector3.Transform(meshEdge.VertexOnEnd[0].Position, renderData.WorldMatrix());
+							var transformed2 = Vector3.Transform(meshEdge.VertexOnEnd[1].Position, renderData.WorldMatrix());
 
 							GLHelper.Render3DLineNoPrep(frustum, World, transformed1, transformed2, RGBA_Bytes.White, selectionHighlightWidth);
 						}
@@ -448,7 +451,7 @@ namespace MatterHackers.MeshVisualizer
 			}
 			else // just render the bounding box
 			{
-				RenderAABB(frustum, renderData.Mesh.GetAxisAlignedBoundingBox(), renderData.Matrix, RGBA_Bytes.White, selectionHighlightWidth);
+				RenderAABB(frustum, renderData.Mesh.GetAxisAlignedBoundingBox(), renderData.WorldMatrix(), RGBA_Bytes.White, selectionHighlightWidth);
 			}
 		}
 
@@ -471,7 +474,7 @@ namespace MatterHackers.MeshVisualizer
 
 		public EditorType EditorMode { get; set; } = EditorType.Part;
 
-		private int BackToFrontXY(MeshRenderData a, MeshRenderData b)
+		private int BackToFrontXY(IObject3D a, IObject3D b)
 		{
 			var aCenterWorld = Vector3.Transform(a.Mesh.GetAxisAlignedBoundingBox().Center, a.Matrix);
 			aCenterWorld.z = 0; // we only want to look at the distance on xy in world space
@@ -486,7 +489,7 @@ namespace MatterHackers.MeshVisualizer
 
 		private void Draw_GlOpaqueContent(object sender, DrawEventArgs e)
 		{
-			List<MeshRenderData> transparentMeshes = new List<MeshRenderData>();
+			List<IObject3D> transparentMeshes = new List<IObject3D>();
 			foreach (var object3D in scene.Children)
 			{
 				DrawObject(object3D, transparentMeshes, false, e);
@@ -495,7 +498,7 @@ namespace MatterHackers.MeshVisualizer
 
 		private void Draw_GlTransparentContent(object sender, DrawEventArgs e)
 		{
-			List<MeshRenderData> transparentMeshes = new List<MeshRenderData>();
+			List<IObject3D> transparentMeshes = new List<IObject3D>();
 			foreach (var object3D in scene.Children)
 			{
 				if (object3D.Visible)
