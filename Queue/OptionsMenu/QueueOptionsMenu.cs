@@ -186,6 +186,10 @@ namespace MatterHackers.MatterControl.PrintQueue
 			{
 				UiThread.RunOnIdle(MustSelectPrinterMessage);
 			}
+			else if (!ActiveSliceSettings.Instance.IsValid())
+			{
+				return false;
+			}
 			else
 			{
 				UiThread.RunOnIdle(SelectLocationToExportGCode);
@@ -251,7 +255,19 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		private bool exportQueueToZipMenu_Click()
 		{
-			UiThread.RunOnIdle(ExportQueueToZipOnIdle);
+			if (!ActiveSliceSettings.Instance.PrinterSelected)
+			{
+				UiThread.RunOnIdle(MustSelectPrinterMessage);
+			}
+			else if (!ActiveSliceSettings.Instance.IsValid())
+			{
+				return false;
+			}
+			else
+			{
+				UiThread.RunOnIdle(ExportQueueToZipOnIdle);
+			}
+
 			return true;
 		}
 
