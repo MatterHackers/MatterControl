@@ -177,7 +177,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		internal void ChangeToPage(WizardPage pageToChangeTo)
+		public void ChangeToPage(WizardPage pageToChangeTo)
 		{
 			activePage = pageToChangeTo;
 
@@ -187,7 +187,7 @@ namespace MatterHackers.MatterControl
 			this.Invalidate();
 		}
 
-		internal WizardPage ChangeToPage<PanelType>() where PanelType : WizardPage, new()
+		public WizardPage ChangeToPage<PanelType>() where PanelType : WizardPage, new()
 		{
 			PanelType panel = new PanelType();
 			panel.WizardWindow = this;
