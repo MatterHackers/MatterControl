@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using System.Linq;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
@@ -65,19 +66,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				ApplicationSettings.Instance.set(ApplicationSettingsKey.SuppressAuthPanel, rememberChoice.Checked.ToString());
 			};
 
-			this.cancelButton.Name = "Connection Wizard Skip Sign In Button";
-			this.cancelButton.Click += (s, e) =>
-			{
-				if (!ProfileManager.Instance.ActiveProfiles.Any())
-				{
-					abortCancel = true;
-
-					UiThread.RunOnIdle(() =>
-					{
-						WizardWindow.ChangeToPage<SetupStepMakeModelName>();
-					});
-				}
-			};
+			this.SetCancelButtonName("Connection Wizard Skip Sign In Button");
 
 			var createAccountButton = textImageButtonFactory.Generate("Create Account".Localize());
 			createAccountButton.Name = "Create Account From Connection Wizard Button";
@@ -106,6 +95,21 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			this.AddPageAction(signInButton);
 		}
 
+		protected override void OnCancel(out bool abortCancel)
+		{
+			if (!ProfileManager.Instance.ActiveProfiles.Any())
+			{
+				abortCancel = true;
+
+				UiThread.RunOnIdle(() =>
+				{
+					WizardWindow.ChangeToPage<SetupStepMakeModelName>();
+				});
+			}
+
+			abortCancel = false;
+		}
+
 		private void AddBulletPointAndDescription(FlowLayoutWidget contentRow, string v1, string v2)
 		{
 			contentRow.AddChild(new TextWidget("• " + v1)
@@ -122,3 +126,4 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		}
 	}
 }
+ 

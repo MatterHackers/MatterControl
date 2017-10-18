@@ -44,12 +44,6 @@ namespace MatterHackers.MatterControl
 
 			RefreshStatus();
 
-			cancelButton.Click += (s, e) => UiThread.RunOnIdle(() =>
-			{
-				abortCancel = true;
-				this.WizardWindow.ChangeToPage<AndroidConnectDevicePage>();
-			});
-			
 			nextButton = textImageButtonFactory.Generate("Continue".Localize());
 			nextButton.Click += (sender, e) => UiThread.RunOnIdle(this.WizardWindow.Close);
 			nextButton.Visible = false;
@@ -67,6 +61,16 @@ namespace MatterHackers.MatterControl
 				connectToPrinterRow.SetSuccessful();
 				nextButton.Visible = true;
 			}
+		}
+
+		protected override void OnCancel(out bool abortCancel)
+		{
+			abortCancel = true;
+
+			UiThread.RunOnIdle(() =>
+			{
+				this.WizardWindow.ChangeToPage<AndroidConnectDevicePage>();
+			});
 		}
 
 		public override void OnClosed(ClosedEventArgs e)

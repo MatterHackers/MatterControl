@@ -364,7 +364,6 @@ namespace MatterHackers.MatterControl
 			});
 
 			importButton.Visible = true;
-			cancelButton.Visible = true;
 
 			this.AddPageAction(importButton);
 		}

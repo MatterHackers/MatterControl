@@ -59,8 +59,6 @@ namespace MatterHackers.MatterControl
 
 			//Add buttons to buttonContainer
 			AddPageAction(configureButton);
-
-			cancelButton.Visible = true;
 		}
 	}
 }

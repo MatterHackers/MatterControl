@@ -61,8 +61,6 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			FlowLayoutWidget printerComPortContainer = createComPortContainer();
 			contentRow.AddChild(printerComPortContainer);
 
-			cancelButton.Click += (s, e) => printer.Connection.HaltConnectionThread();
-
 			//Construct buttons
 			nextButton = textImageButtonFactory.Generate("Done".Localize());
 			nextButton.Click += (s, e) => UiThread.RunOnIdle(Parent.Close);
@@ -104,6 +102,12 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			this.AddPageAction(refreshButton);
 
 			printer.Connection.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
+		}
+
+		protected override void OnCancel(out bool abortCancel)
+		{
+			printer.Connection.HaltConnectionThread();
+			abortCancel = false;
 		}
 
 		public override void OnClosed(ClosedEventArgs e)
