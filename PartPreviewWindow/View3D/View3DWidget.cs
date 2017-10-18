@@ -2020,7 +2020,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			IVertex lowestVertex = null;
 			Vector3 lowestVertexPosition = Vector3.Zero;
-			MeshRenderData itemToLayFlat = null;
+			IObject3D itemToLayFlat = null;
 
 			// Process each child, checking for the lowest vertex
 			var objectsToCheck = objectToLayFlat.VisibleMeshes();
@@ -2030,7 +2030,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				for (int testIndex = 0; testIndex < itemToCheck.Mesh.Vertices.Count; testIndex++)
 				{
 					var vertex = itemToCheck.Mesh.Vertices[testIndex];
-					Vector3 vertexPosition = Vector3.Transform(vertex.Position, itemToCheck.Matrix);
+					Vector3 vertexPosition = Vector3.Transform(vertex.Position, itemToCheck.WorldMatrix());
 					if(firstVertex)
 					{
 						lowestVertex = itemToCheck.Mesh.Vertices[testIndex];
@@ -2459,7 +2459,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							GLMeshTrianglePlugin glMeshPlugin = GLMeshTrianglePlugin.Get(meshRenderData.Mesh, (faceEdge) =>
 							{
 								Vector3 normal = faceEdge.ContainingFace.Normal;
-								normal = Vector3.TransformVector(normal, meshRenderData.Matrix).GetNormal();
+								normal = Vector3.TransformVector(normal, meshRenderData.WorldMatrix()).GetNormal();
 								VertexColorData colorData = new VertexColorData();
 
 								double startColor = 223.0 / 360.0;

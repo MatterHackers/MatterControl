@@ -138,11 +138,11 @@ namespace MatterHackers.MatterControl
 					var loadedMeshGroups = object3D.VisibleMeshes().ToList();
 					if (loadedMeshGroups?.Count > 0)
 					{
-						AxisAlignedBoundingBox aabb = loadedMeshGroups[0].Mesh.GetAxisAlignedBoundingBox(loadedMeshGroups[0].Matrix);
+						AxisAlignedBoundingBox aabb = loadedMeshGroups[0].Mesh.GetAxisAlignedBoundingBox(loadedMeshGroups[0].WorldMatrix());
 
 						for (int i = 1; i < loadedMeshGroups.Count; i++)
 						{
-							aabb = AxisAlignedBoundingBox.Union(aabb, loadedMeshGroups[i].Mesh.GetAxisAlignedBoundingBox(loadedMeshGroups[i].Matrix));
+							aabb = AxisAlignedBoundingBox.Union(aabb, loadedMeshGroups[i].Mesh.GetAxisAlignedBoundingBox(loadedMeshGroups[i].WorldMatrix()));
 						}
 
 						RectangleDouble bounds2D = new RectangleDouble(aabb.minXYZ.x, aabb.minXYZ.y, aabb.maxXYZ.x, aabb.maxXYZ.y);
@@ -169,7 +169,7 @@ namespace MatterHackers.MatterControl
 
 						foreach (var meshGroup in loadedMeshGroups)
 						{
-							PolygonMesh.Rendering.OrthographicZProjection.DrawTo(partGraphics2D, meshGroup.Mesh, meshGroup.Matrix, new Vector2(-bounds2D.Left + PartMarginMM, -bounds2D.Bottom + textSpaceMM + PartMarginMM), PixelPerMM, RGBA_Bytes.Black);
+							PolygonMesh.Rendering.OrthographicZProjection.DrawTo(partGraphics2D, meshGroup.Mesh, meshGroup.WorldMatrix(), new Vector2(-bounds2D.Left + PartMarginMM, -bounds2D.Bottom + textSpaceMM + PartMarginMM), PixelPerMM, RGBA_Bytes.Black);
 						}
 						partGraphics2D.Render(typeFacePrinter, RGBA_Bytes.Black);
 
