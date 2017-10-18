@@ -26,6 +26,8 @@ namespace MatterHackers.MatterControl
 			this.MinimumSize = new Vector2(200, 200);
 			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 			this.Padding = new BorderDouble(8);
+
+			this.ShowAsSystemWindow();
 		}
 
 		public static void Close(Type type)
