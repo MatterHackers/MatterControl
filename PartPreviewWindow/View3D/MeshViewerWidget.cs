@@ -498,7 +498,10 @@ namespace MatterHackers.MeshVisualizer
 			List<MeshRenderData> transparentMeshes = new List<MeshRenderData>();
 			foreach (var object3D in scene.Children)
 			{
-				DrawObject(object3D, transparentMeshes, false, e);
+				if (object3D.Visible)
+				{
+					DrawObject(object3D, transparentMeshes, false, e);
+				}
 			}
 
 			transparentMeshes.Sort(BackToFrontXY);
