@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 
 namespace MatterHackers.MatterControl.SetupWizard
 {
@@ -30,7 +31,10 @@ namespace MatterHackers.MatterControl.SetupWizard
 				if (!ProfileManager.Instance.ActiveProfiles.Any())
 				{
 					// Switch to setup wizard if no profiles exist
-					UiThread.RunOnIdle(() => WizardWindow.ChangeToSetupPrinterForm());
+					UiThread.RunOnIdle(() =>
+					{
+						WizardWindow.Show(PrinterSetup.GetBestStartPage());
+					});
 				}
 				else if (ProfileManager.Instance.ActiveProfiles.Count() == 1)
 				{

@@ -64,6 +64,8 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 		public SetupStepMakeModelName()
 		{
+			this.WindowTitle = "Setup Wizard".Localize();
+
 			printerManufacturerSelector = new BoundDropList(string.Format("- {0} -", "Select Make".Localize()), maxHeight: 200)
 			{
 				HAnchor = HAnchor.Stretch,

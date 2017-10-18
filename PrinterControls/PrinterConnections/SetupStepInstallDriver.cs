@@ -90,16 +90,28 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 					bool canContinue = this.InstallDriver();
 					if (canContinue)
 					{
-						WizardWindow.ChangeToSetupBaudOrComPortOne(printer);
+						this.ChangeToSetupBaudOrComPortOne();
 					}
 				});
 			};
 
 			skipButton = textImageButtonFactory.Generate("Skip".Localize());
-			skipButton.Click += (s, e) => WizardWindow.ChangeToSetupBaudOrComPortOne(printer);
+			skipButton.Click += (s, e) => this.ChangeToSetupBaudOrComPortOne();
 
 			this.AddPageAction(installButton);
 			this.AddPageAction(skipButton);
+		}
+
+		private void ChangeToSetupBaudOrComPortOne()
+		{
+			if (string.IsNullOrEmpty(printer.Settings.GetValue(SettingsKey.baud_rate)))
+			{
+				this.WizardWindow.ChangeToPage(new SetupStepBaudRate(printer));
+			}
+			else
+			{
+				this.WizardWindow.ChangeToPage(new SetupStepComPortOne(printer));
+			}
 		}
 
 		private void InstallDriver(string fileName)

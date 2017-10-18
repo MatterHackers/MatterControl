@@ -30,7 +30,6 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
@@ -38,6 +37,8 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 	{
 		public SetupStepComPortOne(PrinterConfig printer)
 		{
+			this.WindowTitle = "Setup Wizard".Localize();
+
 			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				VAnchor = VAnchor.Stretch,

@@ -41,6 +41,8 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		public ShowAuthPanel()
 			: base ("Skip")
 		{
+			this.WindowTitle = "Setup Wizard".Localize();
+
 			WrappedTextWidget userSignInPromptLabel = new WrappedTextWidget("Sign in to access your cloud printer profiles.\n\nOnce signed in you will be able to access:".Localize())
 			{
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
@@ -76,7 +78,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				UiThread.RunOnIdle (() => 
 				{
 					WizardWindow.Close();
-					WizardWindow.ChangeToAccountCreate();
+					PrinterSetup.ChangeToAccountCreate();
 				});
 			};
 
@@ -87,7 +89,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				UiThread.RunOnIdle (() => 
 				{
 					WizardWindow.Close();
-					WizardWindow.ShowAuthDialog?.Invoke();
+					PrinterSetup.ShowAuthDialog?.Invoke();
 				});
 			};
 
