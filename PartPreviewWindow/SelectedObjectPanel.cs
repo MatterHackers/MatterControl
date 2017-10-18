@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.HAnchor |= HAnchor.Right;
 			this.VAnchor = VAnchor.Top | VAnchor.Fit;
 			this.Padding = new BorderDouble(8, 10);
-			this.MinimumSize = new VectorMath.Vector2(180, 0);
+			this.MinimumSize = new VectorMath.Vector2(200, 0);
 
 			this.AddChild(itemName = new TextWidget("", textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{

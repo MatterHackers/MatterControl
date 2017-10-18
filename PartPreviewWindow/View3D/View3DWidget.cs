@@ -447,10 +447,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Rotation;
 
-			selectedObjectPanel = new SelectedObjectPanel()
+			selectedObjectPanel = new SelectedObjectPanel(this, theme)
 			{
 				Margin = 5,
-				BackgroundColor = new RGBA_Bytes(0, 0, 0, ViewControlsBase.overlayAlpha)
+				BackgroundColor = new RGBA_Bytes(0, 0, 0, ViewControlsBase.overlayAlpha),
+				Visible = false
 			};
 			AddChild(selectedObjectPanel);
 
@@ -1764,7 +1765,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (!Scene.HasSelection)
 			{
-				selectedObjectPanel.RemoveAllChildren();
+				selectedObjectPanel.Visible = false;
 				return;
 			}
 
@@ -1799,16 +1800,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
-			editorPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			var totalEditor = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				VAnchor = VAnchor.Fit,
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit
 			};
 
 			if (mappedEditors != null)
 			{
+				editorPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
+				{
+					HAnchor = HAnchor.Stretch,
+					VAnchor = VAnchor.Fit
+				};
+
 				var dropDownList = new DropDownList("", maxHeight: 300)
 				{
-					Margin = 3
+					HAnchor = HAnchor.Stretch
 				};
 
 				foreach (IObject3DEditor editor in mappedEditors)
@@ -1820,9 +1828,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					};
 				}
 
-				selectedObjectPanel.RemoveAllChildren();
-				selectedObjectPanel.AddChild(dropDownList);
-				selectedObjectPanel.AddChild(editorPanel);
+				totalEditor.AddChild(dropDownList);
+				totalEditor.AddChild(editorPanel);
 
 				// Select the active editor or fall back to the first if not found
 				this.ActiveSelectionEditor = (from editor in mappedEditors
@@ -1869,6 +1876,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					((RadioButton)extruderButtons[0]).Checked = true;
 				}
 			}
+
+			selectedObjectPanel.SetActiveItem(selectedItem, totalEditor);
 		}
 
 		private void ShowObjectEditor(IObject3DEditor editor)
@@ -1876,6 +1885,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			editorPanel.CloseAllChildren();
 
 			var newEditor = editor.Create(Scene.SelectedItem, this, this.theme);
+			newEditor.HAnchor = HAnchor.Stretch;
+			newEditor.VAnchor = VAnchor.Fit;
+
 			editorPanel.AddChild(newEditor);
 		}
 
@@ -2106,9 +2118,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public static Regex fileNameNumberMatch = new Regex("\\(\\d+\\)", RegexOptions.Compiled);
 
-		internal GuiWidget selectedObjectPanel;
 		private FlowLayoutWidget editorPanel;
-
+		internal SelectedObjectPanel selectedObjectPanel;
+		
 		private async Task SaveChanges()
 		{
 			if (Scene.HasChildren())

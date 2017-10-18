@@ -235,7 +235,6 @@
     <Compile Include="PartPreviewWindow\PrinterTabPage.cs" />
     <Compile Include="PartPreviewWindow\View3D\BedMeshGenerator.cs" />
     <Compile Include="PartPreviewWindow\View3D\ColorSwatchSelector.cs" />
-    <Compile Include="PartPreviewWindow\View3D\GeneralObject3DEditor.cs" />
     <Compile Include="PartPreviewWindow\View3D\DragDropLoadProgress.cs" />
     <Compile Include="PartPreviewWindow\View3D\GridOptionsPanel.cs" />
     <Compile Include="PartPreviewWindow\View3D\InteractionLayer.cs" />
