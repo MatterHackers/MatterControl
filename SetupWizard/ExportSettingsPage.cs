@@ -102,7 +102,6 @@ namespace MatterHackers.MatterControl
 			exportButton.Click += (s, e) => UiThread.RunOnIdle(exportButton_Click);
 
 			exportButton.Visible = true;
-			cancelButton.Visible = true;
 
 			this.AddPageAction(exportButton);
 		}

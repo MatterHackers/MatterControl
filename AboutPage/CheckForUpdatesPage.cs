@@ -137,8 +137,6 @@ namespace MatterHackers.MatterControl.AboutPage
 
 			additionalInfoContainer.Visible = false;
 
-			cancelButton.Visible = true;
-
 			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 		}
 	}

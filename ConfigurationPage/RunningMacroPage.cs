@@ -57,11 +57,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 			this.WindowTitle = "Running Macro".Localize();
 			this.HeaderText = macroData.title;
 
-			cancelButton.Click += (s, e) =>
-			{
-				printer.Connection.MacroCancel();
-			};
-
 			if (macroData.showMaterialSelector)
 			{
 				int extruderIndex = 0;
@@ -120,6 +115,12 @@ namespace MatterHackers.MatterControl.PrinterControls
 				startTimeMs = UiThread.CurrentTimerMs;
 				UiThread.RunOnIdle(CountDownTime);
 			}
+		}
+
+		protected override void OnCancel(out bool abortCancel)
+		{
+			printer.Connection.MacroCancel();
+			abortCancel = false;
 		}
 
 		private EventHandler unregisterEvents;

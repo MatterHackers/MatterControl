@@ -152,11 +152,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
-				SystemWindow systemWindow;
-
 				testRunner.ClickByName("Queue... Menu");
 
-				var exportButton = testRunner.GetWidgetByName(" Export to Zip Menu Item", out systemWindow, 5);
+				var exportButton = testRunner.GetWidgetByName(" Export to Zip Menu Item", out _, 5);
 				Assert.IsNotNull(exportButton, "Export button should exist");
 				Assert.IsTrue(exportButton.Enabled, "Export button should be enabled");
 
