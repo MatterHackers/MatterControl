@@ -122,9 +122,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				if (removeObjects.Any()
 					&& keepObjects.Any())
 				{
-					foreach (var keep in keepObjects)
+					foreach (var remove in removeObjects)
 					{
-						foreach (var remove in removeObjects)
+						foreach (var keep in keepObjects)
 						{
 							var transformedRemove = Mesh.Copy(remove.Mesh, CancellationToken.None);
 							transformedRemove.Transform(remove.WorldMatrix());
@@ -138,6 +138,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 							transformedKeep.Transform(inverse);
 							keep.Mesh = transformedKeep;
 						}
+
+						remove.Visible = false;
 					}
 				}
 			});
