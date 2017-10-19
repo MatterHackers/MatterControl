@@ -68,15 +68,10 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 			textGenerator = new TextGenerator();
 			this.view3DWidget = parentView3D;
 
-			FlowLayoutWidget mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-
-			FlowLayoutWidget tabContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				HAnchor = HAnchor.Absolute,
-				Visible = true,
-				Width = theme.WhiteButtonFactory.Options.FixedWidth
+				HAnchor = HAnchor.Stretch,
 			};
-			mainContainer.AddChild(tabContainer);
 
 			textToAddWidget = new MHTextEditWidget("", messageWhenEmptyAndNotSelected: "Text".Localize())
 			{
@@ -86,7 +81,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 				Width = 50
 			};
 			textToAddWidget.ActualTextEditWidget.EnterPressed += (s, e) => RebuildText(textToAddWidget.Text);
-			tabContainer.AddChild(textToAddWidget);
+			container.AddChild(textToAddWidget);
 
 			createUnderline = new CheckBox(new CheckBoxViewText("Underline".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor))
 			{
@@ -95,15 +90,15 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 				HAnchor = HAnchor.Left
 			};
 			createUnderline.CheckedStateChanged += CreateUnderline_CheckedStateChanged;
-			tabContainer.AddChild(createUnderline);
+			container.AddChild(createUnderline);
 
 			Button updateButton = theme.ButtonFactory.Generate("Update".Localize());
 			updateButton.Margin = new BorderDouble(5);
 			updateButton.HAnchor = HAnchor.Right;
 			updateButton.Click += (s, e) => RebuildText(textToAddWidget.Text);
-			tabContainer.AddChild(updateButton);
+			container.AddChild(updateButton);
 
-			return mainContainer;
+			return container;
 		}
 
 		public string Name { get; } = "Text";

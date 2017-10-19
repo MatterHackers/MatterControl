@@ -65,15 +65,10 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 			brailleGenerator = new BrailleGenerator();
 			this.view3DWidget = parentView3D;
 
-			var mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-
-			var tabContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				HAnchor = HAnchor.Absolute,
-				Visible = true,
-				Width = theme.WhiteButtonFactory.Options.FixedWidth
+				HAnchor = HAnchor.Stretch,
 			};
-			mainContainer.AddChild(tabContainer);
 
 			textToAddWidget = new MHTextEditWidget("", pixelWidth: 300, messageWhenEmptyAndNotSelected: "Enter Text Here".Localize())
 			{
@@ -82,14 +77,14 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 				Text = injectedItem.Text
 			};
 			textToAddWidget.ActualTextEditWidget.EnterPressed += (s, e) => RebuildText(textToAddWidget.Text);
-			tabContainer.AddChild(textToAddWidget);
+			container.AddChild(textToAddWidget);
 
 			useGrade2 = new CheckBox(new CheckBoxViewText("Use Grade 2".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor));
 			useGrade2.ToolTipText = "Experimental support for Braille grade 2 (contractions)".Localize();
 			useGrade2.Checked = false;
 			useGrade2.Margin = new BorderDouble(10, 5);
 			useGrade2.HAnchor = HAnchor.Left;
-			tabContainer.AddChild(useGrade2);
+			container.AddChild(useGrade2);
 			useGrade2.CheckedStateChanged += (sender, e) =>
 			{
 				RebuildText(textToAddWidget.Text);
@@ -99,7 +94,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 			updateButton.Margin = new BorderDouble(5);
 			updateButton.HAnchor = HAnchor.Right;
 			updateButton.Click += (s, e) => RebuildText(textToAddWidget.Text);
-			tabContainer.AddChild(updateButton);
+			container.AddChild(updateButton);
 
 			// put in a link to the wikipedia article
 			{
@@ -118,10 +113,10 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 					});
 				};
 
-				tabContainer.AddChild(moreAboutBrailleLink);
+				container.AddChild(moreAboutBrailleLink);
 			}
 
-			return mainContainer;
+			return container;
 		}
 
 		public string Name { get; } = "Braille";
