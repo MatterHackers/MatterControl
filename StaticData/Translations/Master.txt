@@ -4624,3 +4624,18 @@ Translated:Make Support
 English:Difference
 Translated:Difference
 
+English:Subtract
+Translated:Subtract
+
+English:Intersect
+Translated:Intersect
+
+English:MatterControl: Select Firmware File
+Translated:MatterControl: Select Firmware File
+
+English:Update In Progress: {0}
+Translated:Update In Progress: {0}
+
+English:Paint Material
+Translated:Paint Material
+

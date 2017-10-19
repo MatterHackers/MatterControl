@@ -112,8 +112,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			{
 				var container = this;
 				var participants = this.VisibleMeshes().Where((obj) => obj.OwnerID == this.ID);
-				var removeObjects = participants.Where((obj) => ((DifferenceItem)obj).OutputType == PrintOutputTypes.Hole);
-				var keepObjects = participants.Where((obj) => ((DifferenceItem)obj).OutputType != PrintOutputTypes.Hole);
+				var removeObjects = participants.Where((obj) => obj.OutputType == PrintOutputTypes.Hole);
+				var keepObjects = participants.Where((obj) => obj.OutputType != PrintOutputTypes.Hole);
 
 				if (removeObjects.Any()
 					&& keepObjects.Any())
@@ -146,15 +146,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 	{
 		public IntersectItem()
 		{
-			if (makeHole)
-			{
-				OutputType = PrintOutputTypes.Hole;
-			}
 		}
 
 		public IntersectItem(IObject3D child, string ownerId, bool makeHole)
 			: base(child, ownerId)
 		{
+			if (makeHole)
+			{
+				OutputType = PrintOutputTypes.Hole;
+			}
 		}
 	}
 
@@ -193,8 +193,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			{
 				var container = this;
 				var participants = this.VisibleMeshes().Where((obj) => obj.OwnerID == this.ID);
-				var removeObjects = participants.Where((obj) => ((DifferenceItem)obj).OutputType == PrintOutputTypes.Hole);
-				var keepObjects = participants.Where((obj) => ((DifferenceItem)obj).OutputType != PrintOutputTypes.Hole);
+				var removeObjects = participants.Where((obj) => obj.OutputType == PrintOutputTypes.Hole);
+				var keepObjects = participants.Where((obj) => obj.OutputType != PrintOutputTypes.Hole);
 
 				if (removeObjects.Any()
 					&& keepObjects.Any())
@@ -217,6 +217,98 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 						}
 
 						remove.Visible = false;
+					}
+				}
+			});
+		}
+	}
+
+	public class PaintItem : MeshWrapper
+	{
+		public PaintItem()
+		{
+		}
+
+		public PaintItem(IObject3D child, string ownerId, bool makeHole)
+			: base(child, ownerId)
+		{
+			if (makeHole)
+			{
+				OutputType = PrintOutputTypes.Hole;
+			}
+		}
+	}
+
+	public class PaintMaterialGroup : Object3D
+	{
+		public PaintMaterialGroup(SafeList<IObject3D> children)
+		{
+			Children.Modify((list) =>
+			{
+				foreach (var child in children)
+				{
+					list.Add(child);
+				}
+			});
+
+			bool first = true;
+			// now wrap every first decendant that has a mesh
+			foreach (var child in this.VisibleMeshes().Where((o) => o.Mesh != null))
+			{
+				// wrap the child in a PaintItem
+				child.Parent.Children.Modify((list) =>
+				{
+					list.Remove(child);
+					list.Add(new PaintItem(child, this.ID, !first));
+					first = false;
+				});
+			}
+
+			ProcessBooleans();
+		}
+
+		async void ProcessBooleans()
+		{
+			// spin up a task to remove holes from the objects in the group
+			await Task.Run(() =>
+			{
+				var container = this;
+				var participants = this.VisibleMeshes().Where((obj) => obj.OwnerID == this.ID);
+				var removeObjects = participants.Where((obj) => obj.OutputType == PrintOutputTypes.Hole);
+				var keepObjects = participants.Where((obj) => obj.OutputType != PrintOutputTypes.Hole);
+
+				if (removeObjects.Any()
+					&& keepObjects.Any())
+				{
+					foreach (var remove in removeObjects)
+					{
+						foreach (var keep in keepObjects)
+						{
+							var transformedRemove = Mesh.Copy(remove.Mesh, CancellationToken.None);
+							transformedRemove.Transform(remove.WorldMatrix());
+
+							var transformedKeep = Mesh.Copy(keep.Mesh, CancellationToken.None);
+							transformedKeep.Transform(keep.WorldMatrix());
+
+							// remove the paint from the original
+							var transformedKeep2 = PolygonMesh.Csg.CsgOperations.Subtract(transformedKeep, transformedRemove);
+							var inverseKeep = keep.WorldMatrix();
+							inverseKeep.Invert();
+							transformedKeep2.Transform(inverseKeep);
+							keep.Mesh = transformedKeep2;
+
+							// intersect the paint with the original
+							transformedRemove = PolygonMesh.Csg.CsgOperations.Intersect(transformedKeep, transformedRemove);
+							var inverseRemove = remove.WorldMatrix();
+							inverseRemove.Invert();
+							transformedRemove.Transform(inverseRemove);
+							remove.Mesh = transformedRemove;
+						}
+
+						// set it to the correct extruder
+						remove.MaterialIndex = 1;
+						// now set it to the new solid color
+						remove.OutputType = PrintOutputTypes.Solid;
 					}
 				}
 			});
