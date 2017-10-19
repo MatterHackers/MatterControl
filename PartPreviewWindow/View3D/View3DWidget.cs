@@ -436,7 +436,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				HAnchor = HAnchor.Left | HAnchor.Fit,
 				Margin = new BorderDouble(0, 5, 5, viewControls3D.LocalBounds.Height)
 			};
-			AddChild(selectedObjectPanel);
+
+			var resizeContainer = new ResizeContainer(selectedObjectPanel)
+			{
+				Width = 200,
+				VAnchor = VAnchor.Fit | VAnchor.Top,
+				HAnchor = HAnchor.Right,
+				SpliterBarColor = new RGBA_Bytes(RGBA_Bytes.Red, 30),
+				SplitterWidth = ApplicationController.Instance.Theme.SplitterWidth,
+			};
+			AddChild(resizeContainer);
+			resizeContainer.AddChild(selectedObjectPanel);
 
 			UiThread.RunOnIdle(AutoSpin);
 
