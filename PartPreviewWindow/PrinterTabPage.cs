@@ -179,11 +179,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				SetSliderSizes();
 			};
 
-			// Must come after we have an instance of View3DWidget an its undo buffer
-			topToBottom.AddChild(new PrinterActionsBar(printer, this, theme)
+			var printerActionsBar = new PrinterActionsBar(printer, this, theme)
 			{
 				Padding = theme.ToolbarPadding
-			}, 0);
+			};
+
+			// Must come after we have an instance of View3DWidget an its undo buffer
+			topToBottom.AddChild(printerActionsBar, 0);
+
+			var margin = viewControls3D.Margin;
+			viewControls3D.Margin = new BorderDouble(margin.Left, margin.Bottom, margin.Right, printerActionsBar.Height);
+
 			sceneContext.ActiveLayerChanged += ActiveLayer_Changed;
 
 			SetSliderSizes();
