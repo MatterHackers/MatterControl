@@ -305,14 +305,14 @@ namespace MatterHackers.MatterControl.Library
 					UiThread.RunOnIdle(() =>
 					{
 						//Do something special when unauthorized?
-						StyledMessageBox.ShowMessageBox(null, "Oops! Unable to save changes, unauthorized access", "Unable to save");
+						StyledMessageBox.ShowMessageBox("Oops! Unable to save changes, unauthorized access", "Unable to save");
 					});
 				}
 				catch
 				{
 					UiThread.RunOnIdle(() =>
 					{
-						StyledMessageBox.ShowMessageBox(null, "Oops! Unable to save changes.", "Unable to save");
+						StyledMessageBox.ShowMessageBox("Oops! Unable to save changes.", "Unable to save");
 					});
 				}
 			}

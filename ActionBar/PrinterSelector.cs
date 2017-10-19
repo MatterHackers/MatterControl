@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl
 						if (this.SelectedIndex != lastSelectedIndex)
 						{
 							UiThread.RunOnIdle(() =>
-							StyledMessageBox.ShowMessageBox(null, "Please wait until the print has finished and try again.".Localize(), "Can't switch printers while printing".Localize())
+							StyledMessageBox.ShowMessageBox("Please wait until the print has finished and try again.".Localize(), "Can't switch printers while printing".Localize())
 							);
 							this.SelectedIndex = lastSelectedIndex;
 						}

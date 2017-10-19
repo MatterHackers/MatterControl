@@ -70,7 +70,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					|| ApplicationController.Instance.ActivePrinter.Connection.PrinterIsPaused)
 				{
 					UiThread.RunOnIdle(() =>
-						StyledMessageBox.ShowMessageBox(null, "Please wait until the print has finished and try again.".Localize(), "Can't add printers while printing".Localize())
+						StyledMessageBox.ShowMessageBox("Please wait until the print has finished and try again.".Localize(), "Can't add printers while printing".Localize())
 					);
 				}
 				else

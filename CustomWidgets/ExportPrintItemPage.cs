@@ -227,7 +227,7 @@ namespace MatterHackers.MatterControl
 									{
 										UiThread.RunOnIdle(() =>
 										{
-											StyledMessageBox.ShowMessageBox(null, "Export failed".Localize(), title);
+											StyledMessageBox.ShowMessageBox("Export failed".Localize(), title);
 										});
 									}
 								});

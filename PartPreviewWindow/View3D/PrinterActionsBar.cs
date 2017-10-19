@@ -260,7 +260,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					default:
 						printer.Connection.SendLineToPrinterNow("M115");
-						StyledMessageBox.ShowMessageBox(null, noEepromMappingMessage, noEepromMappingTitle, StyledMessageBox.MessageType.OK);
+						StyledMessageBox.ShowMessageBox(noEepromMappingMessage, noEepromMappingTitle, StyledMessageBox.MessageType.OK);
 						break;
 				}
 #endif

@@ -230,7 +230,7 @@ namespace MatterHackers.MatterControl
 
 										UiThread.RunOnIdle(() =>
 										{
-											StyledMessageBox.ShowMessageBox(null, ex.Message, "Couldn't save file".Localize());
+											StyledMessageBox.ShowMessageBox(ex.Message, "Couldn't save file".Localize());
 										});
 									}
 								}

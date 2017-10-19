@@ -130,6 +130,8 @@ namespace MatterHackers.MatterControl
 
 		public string WindowTitle { get; set; }
 
+		public bool AlwaysOnTopOfMain { get; set; } = true;
+
 		public string HeaderText
 		{
 			get => headerLabel.Text;

@@ -927,7 +927,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						string error = "'Layer Height' must be less than or equal to the 'Nozzle Diameter'.".Localize();
 						string details = string.Format("Layer Height = {0}\nNozzle Diameter = {1}".Localize(), GetValue<double>(SettingsKey.layer_height), GetValue<double>(SettingsKey.nozzle_diameter));
 						string location = "Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Layers/Surface'".Localize();
-						StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
+						StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
 						return false;
 					}
 					else if (GetValue<double>(SettingsKey.first_layer_height) > GetValue<double>(SettingsKey.nozzle_diameter))
@@ -935,7 +935,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						string error = "'First Layer Height' must be less than or equal to the 'Nozzle Diameter'.".Localize();
 						string details = string.Format("First Layer Height = {0}\nNozzle Diameter = {1}".Localize(), GetValue<double>(SettingsKey.first_layer_height), GetValue<double>(SettingsKey.nozzle_diameter));
 						string location = "Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Layers/Surface'".Localize();
-						StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
+						StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
 						return false;
 					}
 				}
@@ -951,7 +951,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						{
 							string error = "Start G-Code cannot contain G29 if Print Recovery is enabled.".Localize();
 							string details = "Your Start G-Code should not contain a G29 if you are planning on using Print Recovery. Change your start G-Code or turn off Print Recovery".Localize();
-							StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
+							StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
 							return false;
 						}
 
@@ -959,7 +959,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						{
 							string error = "Start G-Code cannot contain G30 if Print Leveling is enabled.".Localize();
 							string details = "Your Start G-Code should not contain a G30 if you are planning on using Print Recovery. Change your start G-Code or turn off Print Recovery".Localize();
-							StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
+							StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
 							return false;
 						}
 					}
@@ -976,7 +976,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						{
 							string error = "Start G-Code cannot contain G29 if Print Leveling is enabled.".Localize();
 							string details = "Your Start G-Code should not contain a G29 if you are planning on using print leveling. Change your start G-Code or turn off print leveling".Localize();
-							StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
+							StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
 							return false;
 						}
 
@@ -984,7 +984,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						{
 							string error = "Start G-Code cannot contain G30 if Print Leveling is enabled.".Localize();
 							string details = "Your Start G-Code should not contain a G30 if you are planning on using print leveling. Change your start G-Code or turn off print leveling".Localize();
-							StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
+							StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
 							return false;
 						}
 					}
@@ -996,7 +996,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					string location = "Location: 'Controls' -> 'Movement' -> 'Z Offset'".Localize();
 					string error = "Z Offset is too large.".Localize();
 					string details = "The Z Offset for your printer, sometimes called Babby Stepping, is greater than 2mm and invalid. Clear the value and re-level the bed.".Localize();
-					StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Calibration Error".Localize());
+					StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Calibration Error".Localize());
 					return false;
 				}
 
@@ -1005,7 +1005,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					string error = "'First Layer Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.".Localize();
 					string details = string.Format("First Layer Extrusion Width = {0}\nNozzle Diameter = {1}".Localize(), GetValue(SettingsKey.first_layer_extrusion_width), GetValue<double>(SettingsKey.nozzle_diameter));
 					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'First Layer'".Localize();
-					StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
+					StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
 					return false;
 				}
 
@@ -1014,7 +1014,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					string error = "'First Layer Extrusion Width' must be greater than 0.".Localize();
 					string details = string.Format("First Layer Extrusion Width = {0}".Localize(), GetValue(SettingsKey.first_layer_extrusion_width));
 					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'First Layer'".Localize();
-					StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
+					StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
 					return false;
 				}
 
@@ -1023,7 +1023,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					string error = "'External Perimeter Extrusion Width' must be less than or equal to the 'Nozzle Diameter' * 4.".Localize();
 					string details = string.Format("External Perimeter Extrusion Width = {0}\nNozzle Diameter = {1}".Localize(), GetValue(SettingsKey.external_perimeter_extrusion_width), GetValue<double>(SettingsKey.nozzle_diameter));
 					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'External Perimeter'".Localize();
-					StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
+					StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
 					return false;
 				}
 
@@ -1032,7 +1032,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					string error = "'External Perimeter Extrusion Width' must be greater than 0.".Localize();
 					string details = string.Format("External Perimeter Extrusion Width = {0}".Localize(), GetValue(SettingsKey.external_perimeter_extrusion_width));
 					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Extrusion' -> 'External Perimeter'".Localize();
-					StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
+					StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
 					return false;
 				}
 
@@ -1041,7 +1041,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					string error = "The Minimum Fan Speed can only go as high as 100%.".Localize();
 					string details = string.Format("It is currently set to {0}.".Localize(), GetValue<double>(SettingsKey.min_fan_speed));
 					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Cooling'".Localize();
-					StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
+					StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
 					return false;
 				}
 
@@ -1050,7 +1050,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					string error = "The Maximum Fan Speed can only go as high as 100%.".Localize();
 					string details = string.Format("It is currently set to {0}.".Localize(), GetValue<double>("max_fan_speed"));
 					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'Filament' -> 'Cooling'".Localize();
-					StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
+					StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
 					return false;
 				}
 
@@ -1059,7 +1059,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					string error = "The Extruder Count must be at least 1.".Localize();
 					string details = string.Format("It is currently set to {0}.".Localize(), GetValue<int>(SettingsKey.extruder_count));
 					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'Printer' -> 'Features'".Localize();
-					StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
+					StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
 					return false;
 				}
 
@@ -1068,7 +1068,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					string error = "The Fill Density must be between 0 and 1.".Localize();
 					string details = string.Format("It is currently set to {0}.".Localize(), GetValue<double>(SettingsKey.fill_density));
 					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Infill'".Localize();
-					StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
+					StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
 					return false;
 				}
 
@@ -1078,7 +1078,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					string error = "Solid Infill works best when set to LINES.".Localize();
 					string details = string.Format("It is currently set to {0}.".Localize(), GetValue("infill_type"));
 					string location = "Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Infill Type'".Localize();
-					StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
+					StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2}", error, details, location), "Slice Error".Localize());
 					return true;
 				}
 
@@ -1136,7 +1136,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					string error = string.Format("The '{0}' must be greater than 0.".Localize(), data.PresentationName);
 					string details = string.Format("It is currently set to {0}.".Localize(), actualSpeedValueString);
-					StyledMessageBox.ShowMessageBox(null, string.Format("{0}\n\n{1}\n\n{2} -> '{3}'", error, details, speedLocation, data.PresentationName), "Slice Error".Localize());
+					StyledMessageBox.ShowMessageBox(string.Format("{0}\n\n{1}\n\n{2} -> '{3}'", error, details, speedLocation, data.PresentationName), "Slice Error".Localize());
 				}
 				return false;
 			}
