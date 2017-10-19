@@ -397,7 +397,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				catch (Exception e)
 				{
 					UiThread.RunOnIdle (() => {
-						StyledMessageBox.ShowMessageBox(null, e.Message, "Couldn't save file".Localize());
+						StyledMessageBox.ShowMessageBox(e.Message, "Couldn't save file".Localize());
 					});
 				}
 			});
@@ -422,7 +422,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					catch (Exception e)
 					{
 						UiThread.RunOnIdle (() => {
-							StyledMessageBox.ShowMessageBox(null, e.Message, "Couldn't save file".Localize());
+							StyledMessageBox.ShowMessageBox(e.Message, "Couldn't save file".Localize());
 						});
 					}
 				});

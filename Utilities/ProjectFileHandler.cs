@@ -84,7 +84,6 @@ namespace MatterHackers.MatterControl
 						if (addedFileNames.Contains(item.ID))
 						{
 							StyledMessageBox.ShowMessageBox(
-								null, 
 								string.Format("Duplicate file name found but in a different folder '{0}'. This part will not be added to the collection.\n\n{1}", item.Name, item.ID), 
 								"Duplicate File");
 							continue;

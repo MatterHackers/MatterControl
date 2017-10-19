@@ -510,7 +510,7 @@ namespace MatterHackers.MatterControl
 
 					default:
 						// Did not figure out what this file is, let the user know we don't understand it
-						StyledMessageBox.ShowMessageBox(null, "Oops! Unable to recognize settings file '{0}'.".Localize().FormatWith(Path.GetFileName(settingsFilePath)), "Unable to Import".Localize());
+						StyledMessageBox.ShowMessageBox("Oops! Unable to recognize settings file '{0}'.".Localize().FormatWith(Path.GetFileName(settingsFilePath)), "Unable to Import".Localize());
 						break;
 				}
 			}
@@ -570,7 +570,7 @@ namespace MatterHackers.MatterControl
 					default:
 						WizardWindow.Close();
 						// Did not figure out what this file is, let the user know we don't understand it
-						StyledMessageBox.ShowMessageBox(null, "Oops! Unable to recognize settings file '{0}'.".Localize().FormatWith(Path.GetFileName(settingsFilePath)), "Unable to Import".Localize());
+						StyledMessageBox.ShowMessageBox("Oops! Unable to recognize settings file '{0}'.".Localize().FormatWith(Path.GetFileName(settingsFilePath)), "Unable to Import".Localize());
 						break;
 				}
 			}
@@ -579,7 +579,7 @@ namespace MatterHackers.MatterControl
 
 		private void displayFailedToImportMessage(string settingsFilePath)
 		{
-			StyledMessageBox.ShowMessageBox(null, "Oops! Settings file '{0}' did not contain any settings we could import.".Localize().FormatWith(Path.GetFileName(settingsFilePath)), "Unable to Import".Localize());
+			StyledMessageBox.ShowMessageBox("Oops! Settings file '{0}' did not contain any settings we could import.".Localize().FormatWith(Path.GetFileName(settingsFilePath)), "Unable to Import".Localize());
 		}
 	}
 }

@@ -171,7 +171,7 @@ namespace MatterHackers.MatterControl.Library.Export
 			{
 				UiThread.RunOnIdle(() =>
 				{
-					StyledMessageBox.ShowMessageBox(null, e.Message, "Couldn't save file".Localize());
+					StyledMessageBox.ShowMessageBox(e.Message, "Couldn't save file".Localize());
 				});
 			}
 		}

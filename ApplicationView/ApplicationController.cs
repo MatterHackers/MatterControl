@@ -497,7 +497,7 @@ namespace MatterHackers.MatterControl
 						+ "Error Reported".Localize() + ":"
 						+ $" \"{foundStringEventArgs.LineToCheck}\".";
 					UiThread.RunOnIdle(() =>
-						StyledMessageBox.ShowMessageBox(null, message, "Printer Hardware Error".Localize())
+						StyledMessageBox.ShowMessageBox(message, "Printer Hardware Error".Localize())
 					);
 				}
 			}, ref unregisterEvent);

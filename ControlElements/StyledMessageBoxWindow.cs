@@ -47,6 +47,11 @@ namespace MatterHackers.MatterControl
 		public enum MessageType { OK, YES_NO };
 		private double extraTextScaling = 1;
 
+		public static void ShowMessageBox(string message, string caption, MessageType messageType = MessageType.OK, string yesOk = "", string noCancel = "")
+		{
+			ShowMessageBox(null, message, caption, null, messageType, yesOk, noCancel);
+		}
+
 		public static void ShowMessageBox(Action<bool> callback, string message, string caption, MessageType messageType = MessageType.OK, string yesOk = "", string noCancel = "")
 		{
 			ShowMessageBox(callback, message, caption, null, messageType, yesOk, noCancel);
@@ -215,19 +220,13 @@ namespace MatterHackers.MatterControl
 		private void noButton_Click(object sender, EventArgs mouseEvent)
 		{
 			UiThread.RunOnIdle(Close);
-			if (responseCallback != null)
-			{
-				responseCallback(false);
-			}
+			responseCallback?.Invoke(false);
 		}
 
 		private void okButton_Click(object sender, EventArgs mouseEvent)
 		{
 			UiThread.RunOnIdle(Close);
-			if (responseCallback != null)
-			{
-				responseCallback(true);
-			}
+			responseCallback?.Invoke(true);
 		}
 	}
 }
