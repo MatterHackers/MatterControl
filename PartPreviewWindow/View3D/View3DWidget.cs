@@ -147,7 +147,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.InteractionLayer.AddChild(meshViewerWidget);
 
 			// The slice layers view
-			gcodeViewer = new ViewGcodeBasic(printer, sceneContext, viewControls3D);
+			gcodeViewer = new ViewGcodeBasic(printer, sceneContext, viewControls3D, theme);
 			gcodeViewer.Name = "ViewGcodeBasic";
 			gcodeViewer.AnchorAll();
 			gcodeViewer.Visible = false;
@@ -430,9 +430,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			selectedObjectPanel = new SelectedObjectPanel(this, this.Scene, theme)
 			{
-				Margin = 5,
-				BackgroundColor = new RGBA_Bytes(0, 0, 0, ViewControlsBase.overlayAlpha),
-				Visible = false
+				BackgroundColor = new RGBA_Bytes(0, 0, 0, theme.OverlayAlpha),
+				Visible = false,
+				VAnchor = VAnchor.Top | VAnchor.Fit,
+				HAnchor = HAnchor.Left | HAnchor.Fit,
+				Margin = new BorderDouble(0, 5, 5, viewControls3D.LocalBounds.Height)
 			};
 			AddChild(selectedObjectPanel);
 
@@ -2014,7 +2016,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private FlowLayoutWidget editorPanel;
 		internal SelectedObjectPanel selectedObjectPanel;
-		
+
 		private async Task SaveChanges()
 		{
 			if (Scene.HasChildren())

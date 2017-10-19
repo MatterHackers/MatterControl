@@ -58,11 +58,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			viewControls3D = new ViewControls3D(theme, sceneContext.Scene.UndoBuffer)
 			{
+				BackgroundColor = new RGBA_Bytes(0, 0, 0, theme.OverlayAlpha),
 				PartSelectVisible = false,
 				VAnchor = VAnchor.Top | VAnchor.Fit | VAnchor.Absolute,
-				HAnchor = HAnchor.Left | HAnchor.Fit,
+				HAnchor = HAnchor.Left | HAnchor.Absolute,
 				Visible = true,
-				Margin = new BorderDouble(6, 0, 0, 43)
+				Margin = new BorderDouble(0, 0, 0, 41)
 			};
 			viewControls3D.ResetView += (sender, e) =>
 			{
@@ -102,6 +103,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			view3DContainer.AddChild(view3DWidget);
 
 			leftToRight.AddChild(view3DContainer);
+
+			view3DContainer.BoundsChanged += (s, e) =>
+			{
+				viewControls3D.Width = view3DWidget.Width;
+			};
 
 			view3DWidget.BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor;
 

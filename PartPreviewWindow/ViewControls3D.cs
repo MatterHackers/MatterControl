@@ -49,14 +49,27 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		PartSelect
 	}
 
+	public enum PartViewMode
+	{
+		Layers2D,
+		Layers3D,
+		Model
+	}
+
+	public class ViewModeChangedEventArgs : EventArgs
+	{
+		public PartViewMode ViewMode { get; set; }
+	}
+
 	public class TransformStateChangedEventArgs : EventArgs
 	{
 		public ViewControls3DButtons TransformMode { get; set; }
 	}
 
-	public class ViewControls3D : ViewControlsBase
+	public class ViewControls3D : FlowLayoutWidget
 	{
 		public event EventHandler ResetView;
+
 		public event EventHandler<ViewModeChangedEventArgs> ViewModeChanged;
 
 		public event EventHandler<TransformStateChangedEventArgs> TransformStateChanged;
@@ -136,10 +149,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public ViewControls3D(ThemeConfig theme, UndoBuffer undoBuffer)
 		{
-			this.BackgroundColor = new RGBA_Bytes(0, 0, 0, overlayAlpha);
-			this.HAnchor |= HAnchor.Left;
-			this.VAnchor = VAnchor.Top;
-
 			string iconPath;
 
 			var commonMargin = theme.ButtonSpacing;
@@ -279,9 +288,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			buttonGroupB.Add(Layers2DButton);
 			this.AddChild(Layers2DButton);
 
+			this.AddChild(new HorizontalSpacer());
+
 			this.AddChild(this.OverflowMenu = new OverflowMenu(IconColor.White)
 			{
 				Name = "View3D Overflow Menu",
+				AlignToRightEdge = true,
 				Margin = 3
 			});
 

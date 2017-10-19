@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public SelectedObjectPanel(View3DWidget view3DWidget, InteractiveScene scene, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
 		{
-			this.HAnchor |= HAnchor.Right;
+			this.HAnchor |= HAnchor.Left;
 			this.VAnchor = VAnchor.Top | VAnchor.Fit;
 			this.Padding = new BorderDouble(8, 10);
 			this.MinimumSize = new VectorMath.Vector2(220, 0);
