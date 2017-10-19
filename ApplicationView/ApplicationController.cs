@@ -271,7 +271,7 @@ namespace MatterHackers.MatterControl
 				(scene) => scene.SelectedItem.OutputType = PrintOutputTypes.Support
 			},
 			{
-				"Difference".Localize(),
+				"Subtract".Localize(),
 				(scene) =>
 				{
 					var difference = new DifferenceGroup(scene.SelectedItem.Children);
@@ -281,6 +281,32 @@ namespace MatterHackers.MatterControl
 					});
 					scene.Children.Add(difference);
 					scene.SelectedItem = difference;
+				}
+			},
+			{
+				"Intersect".Localize(),
+				(scene) =>
+				{
+					var intersection = new IntersectGroup(scene.SelectedItem.Children);
+					scene.SelectedItem.Children.Modify((list) =>
+					{
+						list.Clear();
+					});
+					scene.Children.Add(intersection);
+					scene.SelectedItem = intersection;
+				}
+			},
+			{
+				"Paint Material".Localize(),
+				(scene) =>
+				{
+					var materialPaint = new PaintMaterialGroup(scene.SelectedItem.Children);
+					scene.SelectedItem.Children.Modify((list) =>
+					{
+						list.Clear();
+					});
+					scene.Children.Add(materialPaint);
+					scene.SelectedItem = materialPaint;
 				}
 			},
 			{
