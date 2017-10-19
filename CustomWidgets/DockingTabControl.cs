@@ -269,16 +269,16 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		internal class ResizeContainer : FlowLayoutWidget
 		{
-			private DockingTabControl dockingTabControl;
+			private GuiWidget resizeTarget;
 			private double downWidth = 0;
 			private bool mouseDownOnBar = false;
 			private double mouseDownX;
 
 			private int splitterWidth = 10;
 
-			internal ResizeContainer(DockingTabControl dockingTabControl)
+			internal ResizeContainer(GuiWidget resizeTarget)
 			{
-				this.dockingTabControl = dockingTabControl;
+				this.resizeTarget = resizeTarget;
 				this.HAnchor = HAnchor.Absolute;
 				this.Cursor = Cursors.VSplit;
 			}
@@ -322,8 +322,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					int currentMouseX = (int)TransformToScreenSpace(mouseEvent.Position).x;
 					UiThread.RunOnIdle(() =>
 					{
-						dockingTabControl.PageWidth = downWidth + mouseDownX - currentMouseX;
-						Width = dockingTabControl.PageWidth;
+						resizeTarget.PageWidth = downWidth + mouseDownX - currentMouseX;
+						Width = resizeTarget.PageWidth;
 					});
 				}
 				base.OnMouseMove(mouseEvent);
