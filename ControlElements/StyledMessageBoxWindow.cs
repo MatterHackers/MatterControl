@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl
 				}
 
 				this.HeaderText = caption;
-				this.IsModal = true;
+				//this.IsModal = true;
 
 				responseCallback = callback;
 				unwrappedMessage = message;
