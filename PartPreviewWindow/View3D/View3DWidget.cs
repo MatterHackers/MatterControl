@@ -167,25 +167,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor,
 			};
 
-			HashSet<IObject3DEditor> mappedEditors;
-			objectEditorsByType = new Dictionary<Type, HashSet<IObject3DEditor>>();
-
-			// TODO: Consider only loading once into a static
-			var objectEditors = PluginFinder.CreateInstancesOf<IObject3DEditor>();
-			foreach (IObject3DEditor editor in objectEditors)
-			{
-				foreach (Type type in editor.SupportedTypes())
-				{
-					if (!objectEditorsByType.TryGetValue(type, out mappedEditors))
-					{
-						mappedEditors = new HashSet<IObject3DEditor>();
-						objectEditorsByType.Add(type, mappedEditors);
-					}
-
-					mappedEditors.Add(editor);
-				}
-			}
-
 			Scene.SelectionChanged += Scene_SelectionChanged;
 
 			// add in the plater tools
@@ -447,7 +428,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Rotation;
 
-			selectedObjectPanel = new SelectedObjectPanel(this, theme)
+			selectedObjectPanel = new SelectedObjectPanel(this, this.Scene, theme)
 			{
 				Margin = 5,
 				BackgroundColor = new RGBA_Bytes(0, 0, 0, ViewControlsBase.overlayAlpha),
@@ -1755,12 +1736,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		public List<IObject3DEditor> objectEditors = new List<IObject3DEditor>();
-
-		public Dictionary<Type, HashSet<IObject3DEditor>> objectEditorsByType = new Dictionary<Type, HashSet<IObject3DEditor>>();
-
-		public IObject3DEditor ActiveSelectionEditor { get; set; }
-
 		private void Scene_SelectionChanged(object sender, EventArgs e)
 		{
 			if (!Scene.HasSelection)
@@ -1776,87 +1751,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var selectedItem = Scene.SelectedItem;
 
-			HashSet<IObject3DEditor> mappedEditors;
-			objectEditorsByType.TryGetValue(selectedItem.GetType(), out mappedEditors);
-
-			if (mappedEditors == null)
-			{
-				foreach (var editor in objectEditorsByType)
-				{
-					if (selectedItem.GetType().IsSubclassOf(editor.Key))
-					{
-						mappedEditors = editor.Value;
-						break;
-					}
-				}
-			}
-
-			// Add any editor mapped to Object3D to the list
-			if (objectEditorsByType.TryGetValue(typeof(Object3D), out HashSet<IObject3DEditor> globalEditors))
-			{
-				foreach(var editor in globalEditors)
-				{
-					mappedEditors.Add(editor);
-				}
-			}
-
-			var totalEditor = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit
-			};
-
-			if (mappedEditors != null)
-			{
-				editorPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
-				{
-					HAnchor = HAnchor.Stretch,
-					VAnchor = VAnchor.Fit
-				};
-
-				var dropDownList = new DropDownList("", maxHeight: 300)
-				{
-					HAnchor = HAnchor.Stretch
-				};
-
-				foreach (IObject3DEditor editor in mappedEditors)
-				{
-					MenuItem menuItem = dropDownList.AddItem(editor.Name);
-					menuItem.Selected += (s, e2) =>
-					{
-						ShowObjectEditor(editor);
-					};
-				}
-
-				totalEditor.AddChild(dropDownList);
-				totalEditor.AddChild(editorPanel);
-
-				// Select the active editor or fall back to the first if not found
-				this.ActiveSelectionEditor = (from editor in mappedEditors
-											  let type = editor.GetType()
-											  where type.Name == selectedItem.ActiveEditor
-											  select editor).FirstOrDefault();
-
-				// Fall back to default editor?
-				if (this.ActiveSelectionEditor == null)
-				{
-					this.ActiveSelectionEditor = mappedEditors.First();
-				}
-
-				int selectedIndex = 0;
-				for (int i = 0; i < dropDownList.MenuItems.Count; i++)
-				{
-					if (dropDownList.MenuItems[i].Text == this.ActiveSelectionEditor.Name)
-					{
-						selectedIndex = i;
-						break;
-					}
-				}
-
-				dropDownList.SelectedIndex = selectedIndex;
-
-				ShowObjectEditor(this.ActiveSelectionEditor);
-			}
 
 			if (extruderButtons?.Count > 0)
 			{
@@ -1877,7 +1771,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
-			selectedObjectPanel.SetActiveItem(selectedItem, totalEditor);
+			selectedObjectPanel.SetActiveItem(selectedItem);
 		}
 
 		private void ShowObjectEditor(IObject3DEditor editor)
