@@ -312,7 +312,6 @@
     <Compile Include="SetupWizard\SetupWizardTroubleshooting.cs" />
     <Compile Include="SetupWizard\SetupWizardWifi.cs" />
     <Compile Include="SetupWizard\WizardWindow.cs" />
-    <Compile Include="SlicerConfiguration\SliceSettingsMissingWidget.cs" />
     <Compile Include="SlicerConfiguration\SliceSettingListControl.cs" />
     <Compile Include="SlicerConfiguration\SliceSettingsRow.cs" />
     <Compile Include="SlicerConfiguration\UIFields\BoundDoubleField.cs" />
