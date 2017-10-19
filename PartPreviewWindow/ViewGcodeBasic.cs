@@ -43,12 +43,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private TextWidget gcodeProcessingStateInfoText;
 		private PrinterConfig printer;
 		private ViewControls3D viewControls3D;
+		private ThemeConfig theme;
 
-		public ViewGcodeBasic(PrinterConfig printer, BedConfig sceneContext, ViewControls3D viewControls3D)
+		public ViewGcodeBasic(PrinterConfig printer, BedConfig sceneContext, ViewControls3D viewControls3D, ThemeConfig theme)
 		{
 			this.printer = printer;
 			this.sceneContext = sceneContext;
 			this.viewControls3D = viewControls3D;
+			this.theme = theme;
 
 			CreateAndAddChildren(printer);
 
@@ -97,7 +99,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						Margin = new BorderDouble(0, 0, 35, 5),
 						Padding = new BorderDouble(10),
-						BackgroundColor = new RGBA_Bytes(0, 0, 0, ViewControlsBase.overlayAlpha),
+						BackgroundColor = new RGBA_Bytes(0, 0, 0, theme.OverlayAlpha),
 						HAnchor = HAnchor.Right | HAnchor.Absolute,
 						VAnchor = VAnchor.Top | VAnchor.Fit,
 						Width = 150

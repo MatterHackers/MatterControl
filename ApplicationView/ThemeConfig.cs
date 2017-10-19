@@ -114,6 +114,8 @@ namespace MatterHackers.MatterControl
 		public RGBA_Bytes PrimaryTabFillColor { get; internal set; }
 		public double ButtonHeight { get; internal set; } = 32;
 
+		public int OverlayAlpha { get; set; } = 50;
+
 		private EventHandler unregisterEvents;
 
 		static ThemeConfig()
