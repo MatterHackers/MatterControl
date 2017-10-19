@@ -536,10 +536,27 @@ namespace MatterHackers.MatterControl.PrintQueue
 			SetEditButtonsStates();
 		}
 
+		private string pleaseSelectPrinterMessage = "Before you can export printable files, you must select a printer.";
+		private string pleaseSelectPrinterTitle = "Please select a printer";
+
+		private void MustSelectPrinterMessage()
+		{
+			StyledMessageBox.ShowMessageBox(null, pleaseSelectPrinterMessage, pleaseSelectPrinterTitle);
+		}
+
 		private void exportButton_Click(object sender, EventArgs mouseEvent)
 		{
 			//Open export options
-			if (QueueData.Instance.SelectedCount == 1)
+
+			if (!ActiveSliceSettings.Instance.PrinterSelected)
+			{
+				UiThread.RunOnIdle(MustSelectPrinterMessage);
+			}
+			else if (!ActiveSliceSettings.Instance.IsValid())
+			{
+				return;
+			}
+			else if (QueueData.Instance.SelectedCount == 1)
 			{
 				QueueRowItem libraryItem = queueDataView.GetQueueRowItem(QueueData.Instance.SelectedIndex);
 				if (libraryItem != null)
