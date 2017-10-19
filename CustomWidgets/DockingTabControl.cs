@@ -32,7 +32,6 @@ using System.Collections.Generic;
 using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
-using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
@@ -116,6 +115,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			};
 
 			return imageWidget;
+		}
+
+		public override double Width
+		{
+			get => this.PageWidth;
+			set => this.PageWidth = value;
 		}
 
 		// Clamped to MinDockingWidth or value
@@ -264,75 +269,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				{
 					tabControl.SelectedTabIndex = printer.ViewState.SliceSettingsTabIndex;
 				}
-			}
-		}
-
-		internal class ResizeContainer : FlowLayoutWidget
-		{
-			private GuiWidget resizeTarget;
-			private double downWidth = 0;
-			private bool mouseDownOnBar = false;
-			private double mouseDownX;
-
-			private int splitterWidth = 10;
-
-			internal ResizeContainer(GuiWidget resizeTarget)
-			{
-				this.resizeTarget = resizeTarget;
-				this.HAnchor = HAnchor.Absolute;
-				this.Cursor = Cursors.VSplit;
-			}
-
-			public RGBA_Bytes SpliterBarColor { get; set; } = ActiveTheme.Instance.TertiaryBackgroundColor;
-
-			public int SplitterWidth
-			{
-				get => splitterWidth;
-				set
-				{
-					if (splitterWidth != value)
-					{
-						splitterWidth = value;
-						this.Padding = new BorderDouble(splitterWidth, 0, 0, 0);
-					}
-				}
-			}
-
-			public override void OnDraw(Graphics2D graphics2D)
-			{
-				graphics2D.FillRectangle(LocalBounds.Left, LocalBounds.Bottom, LocalBounds.Left + this.SplitterWidth, LocalBounds.Top, this.SpliterBarColor);
-				base.OnDraw(graphics2D);
-			}
-
-			public override void OnMouseDown(MouseEventArgs mouseEvent)
-			{
-				if (mouseEvent.Position.x < this.SplitterWidth)
-				{
-					mouseDownOnBar = true;
-					mouseDownX = TransformToScreenSpace(mouseEvent.Position).x;
-					downWidth = Width;
-				}
-				base.OnMouseDown(mouseEvent);
-			}
-
-			public override void OnMouseMove(MouseEventArgs mouseEvent)
-			{
-				if (mouseDownOnBar)
-				{
-					int currentMouseX = (int)TransformToScreenSpace(mouseEvent.Position).x;
-					UiThread.RunOnIdle(() =>
-					{
-						resizeTarget.PageWidth = downWidth + mouseDownX - currentMouseX;
-						Width = resizeTarget.PageWidth;
-					});
-				}
-				base.OnMouseMove(mouseEvent);
-			}
-
-			public override void OnMouseUp(MouseEventArgs mouseEvent)
-			{
-				mouseDownOnBar = false;
-				base.OnMouseUp(mouseEvent);
 			}
 		}
 
