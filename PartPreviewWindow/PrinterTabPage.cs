@@ -218,7 +218,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				selectLayerSlider.Visible = slidersVisible;
 				layerRenderRatioSlider.Visible = slidersVisible;
 
-				view3DWidget.selectedObjectPanel.Visible = !showSliceLayers;
+				view3DWidget.selectedObjectContainer.Visible = !showSliceLayers && sceneContext.Scene.HasSelection;
 			}
 		}
 
