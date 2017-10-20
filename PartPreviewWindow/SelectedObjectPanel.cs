@@ -95,22 +95,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			behavior3DTypeButtons.AddChild(solidBehaviorButton);
 
-			var objectActionList = new DropDownList("Actions", maxHeight: 200)
-			{
-				HAnchor = HAnchor.Stretch
-			};
-
-			foreach (var namedAction in ApplicationController.Instance.RegisteredSceneOperations())
-			{
-				var menuItem = objectActionList.AddItem(namedAction.Title.Localize());
-				menuItem.Click += (s, e) =>
-				{
-					namedAction.Action.Invoke(ApplicationController.Instance.ActivePrinter.Bed.Scene);
-				};
-			}
-
-			this.AddChild(objectActionList);
-
 			this.AddChild(editorPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				Name = "editorPanel",
@@ -143,7 +127,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (!scene.HasSelection)
 			{
-				this.Visible = false;
+				this.Parent.Visible = false;
 				return;
 			}
 
@@ -153,7 +137,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.editorPanel.RemoveAllChildren();
 
-			this.Visible = true;
+			this.Parent.Visible = true;
 
 			HashSet<IObject3DEditor> mappedEditors;
 			objectEditorsByType.TryGetValue(selectedItem.GetType(), out mappedEditors);

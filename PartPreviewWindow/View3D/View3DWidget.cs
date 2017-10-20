@@ -431,22 +431,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			selectedObjectPanel = new SelectedObjectPanel(this, this.Scene, theme)
 			{
 				BackgroundColor = new RGBA_Bytes(0, 0, 0, theme.OverlayAlpha),
-				Visible = false,
 				VAnchor = VAnchor.Top | VAnchor.Fit,
 				HAnchor = HAnchor.Left | HAnchor.Fit,
-				Margin = new BorderDouble(0, 5, 5, viewControls3D.LocalBounds.Height)
 			};
 
-			var resizeContainer = new ResizeContainer(selectedObjectPanel)
+			selectedObjectContainer = new ResizeContainer(selectedObjectPanel)
 			{
 				Width = 200,
 				VAnchor = VAnchor.Fit | VAnchor.Top,
 				HAnchor = HAnchor.Right,
+				Margin = new BorderDouble(0, 0, 0, viewControls3D.LocalBounds.Height),
 				SpliterBarColor = new RGBA_Bytes(RGBA_Bytes.Red, 30),
 				SplitterWidth = ApplicationController.Instance.Theme.SplitterWidth,
+				Visible = false,
 			};
-			AddChild(resizeContainer);
-			resizeContainer.AddChild(selectedObjectPanel);
+			this.AddChild(selectedObjectContainer);
+			selectedObjectContainer.AddChild(selectedObjectPanel);
 
 			UiThread.RunOnIdle(AutoSpin);
 
@@ -1752,7 +1752,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (!Scene.HasSelection)
 			{
-				selectedObjectPanel.Visible = false;
+				selectedObjectContainer.Visible = false;
 				return;
 			}
 
@@ -2025,7 +2025,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public static Regex fileNameNumberMatch = new Regex("\\(\\d+\\)", RegexOptions.Compiled);
 
 		private FlowLayoutWidget editorPanel;
-		internal SelectedObjectPanel selectedObjectPanel;
+
+		private SelectedObjectPanel selectedObjectPanel;
+
+		internal GuiWidget selectedObjectContainer;
 
 		private async Task SaveChanges()
 		{

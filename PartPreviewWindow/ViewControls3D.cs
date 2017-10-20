@@ -235,10 +235,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				rotateButton.Checked = true;
 			}
 
-			partSelectSeparator = new GuiWidget(2, 32);
-			partSelectSeparator.BackgroundColor = RGBA_Bytes.White;
-			partSelectSeparator.Margin = 3;
-			AddChild(partSelectSeparator);
+			partSelectSeparator = new VerticalLine(50)
+			{
+				Margin = 3
+			};
+
+			this.AddChild(partSelectSeparator);
 
 			iconPath = Path.Combine("ViewTransformControls", "partSelect.png");
 			partSelectButton = buttonFactory.GenerateRadioButton("", AggContext.StaticData.LoadIcon(iconPath, 32, 32, IconColor.White));
@@ -287,6 +289,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			Layers2DButton.Click += SwitchModes_Click;
 			buttonGroupB.Add(Layers2DButton);
 			this.AddChild(Layers2DButton);
+
+			this.AddChild(new VerticalLine(50)
+			{
+				Margin = 3
+			});
+
+			foreach (var namedAction in ApplicationController.Instance.RegisteredSceneOperations())
+			{
+				var button = buttonFactory.Generate(namedAction.Title.Localize());
+				button.Margin = theme.ButtonSpacing;
+				button.Click += (s, e) =>
+				{
+					namedAction.Action.Invoke(ApplicationController.Instance.ActivePrinter.Bed.Scene);
+				};
+				this.AddChild(button);
+			}
 
 			this.AddChild(new HorizontalSpacer());
 
