@@ -54,8 +54,6 @@ namespace MatterHackers.MatterControl
 		protected double labelFontSize = 12 * GuiWidget.DeviceScale;
 		protected double errorFontSize = 10 * GuiWidget.DeviceScale;
 
-		public WizardWindow WizardWindow;
-
 		private GuiWidget mainContainer;
 
 		public WizardPage(string unlocalizedTextForCancelButton = "Cancel")
@@ -127,6 +125,8 @@ namespace MatterHackers.MatterControl
 
 			this.AddChild(mainContainer);
 		}
+
+		public WizardWindow WizardWindow { get; set; }
 
 		public string WindowTitle { get; set; }
 

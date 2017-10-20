@@ -33,7 +33,7 @@ namespace MatterHackers.MatterControl.SetupWizard
 					// Switch to setup wizard if no profiles exist
 					UiThread.RunOnIdle(() =>
 					{
-						WizardWindow.Show(PrinterSetup.GetBestStartPage());
+						this.WizardWindow.ChangeToPage(PrinterSetup.GetBestStartPage());
 					});
 				}
 				else if (ProfileManager.Instance.ActiveProfiles.Count() == 1)
