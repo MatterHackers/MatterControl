@@ -626,21 +626,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			parent.AddChild(sideBar);
 
-			if (printer.Settings.PrinterSelected)
-			{
-				sideBar.AddPage(
-					"Slice Settings".Localize(), 
-					new SliceSettingsWidget(
-						printer, 
-						new SettingsContext(
-							printer,
-							null, 
-							SlicerConfiguration.NamedSettingsLayers.All)));
-			}
-			else
-			{
-				sideBar.AddPage("Slice Settings".Localize(), new SliceSettingsMissingWidget());
-			}
+			sideBar.AddPage(
+				"Slice Settings".Localize(), 
+				new SliceSettingsWidget(
+					printer, 
+					new SettingsContext(
+						printer,
+						null, 
+						NamedSettingsLayers.All)));
 
 			sideBar.AddPage("Controls".Localize(), new ManualPrinterControls(printer));
 

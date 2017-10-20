@@ -141,6 +141,7 @@
     <Compile Include="ControlElements\MHPasswordTextEditWidget.cs" />
     <Compile Include="ControlElements\TextImageWidget.cs" />
     <Compile Include="CustomWidgets\DockingTabControl.cs" />
+    <Compile Include="CustomWidgets\ResizeContainer.cs" />
     <Compile Include="CustomWidgets\SimpleButton.cs" />
     <Compile Include="CustomWidgets\NamedAction.cs" />
     <Compile Include="CustomWidgets\RadioImageWidget.cs" />
@@ -312,7 +313,6 @@
     <Compile Include="SetupWizard\SetupWizardTroubleshooting.cs" />
     <Compile Include="SetupWizard\SetupWizardWifi.cs" />
     <Compile Include="SetupWizard\WizardWindow.cs" />
-    <Compile Include="SlicerConfiguration\SliceSettingsMissingWidget.cs" />
     <Compile Include="SlicerConfiguration\SliceSettingListControl.cs" />
     <Compile Include="SlicerConfiguration\SliceSettingsRow.cs" />
     <Compile Include="SlicerConfiguration\UIFields\BoundDoubleField.cs" />
