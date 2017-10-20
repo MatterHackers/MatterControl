@@ -233,9 +233,8 @@ namespace MatterHackers.MatterControl
 						thumbGenResetEvent.WaitOne();
 					}
 				}
-				catch (ThreadAbortException e)
+				catch (ThreadAbortException)
 				{
-					Console.WriteLine("ThumbGeneration Thread abort");
 				}
 				catch (Exception ex)
 				{

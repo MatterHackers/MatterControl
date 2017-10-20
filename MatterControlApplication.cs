@@ -501,6 +501,10 @@ namespace MatterHackers.MatterControl
 
 				exitDialogOpen = false;
 			}
+			else
+			{
+				this.ApplicationExiting = true;
+			}
 		}
 
 		public bool ApplicationExiting { get; private set; } = false;
