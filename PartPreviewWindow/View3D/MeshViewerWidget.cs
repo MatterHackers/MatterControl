@@ -139,6 +139,9 @@ namespace MatterHackers.MeshVisualizer
 			return totalMeshBounds;
 		}
 
+		private RGBA_Bytes debugBorderColor = RGBA_Bytes.Green;
+		private RGBA_Bytes debugNotSelectedFillColor = new RGBA_Bytes(RGBA_Bytes.White, 120);
+
 		public override void OnLoad(EventArgs args)
 		{
 			// some debug code to be able to click on parts
@@ -151,6 +154,13 @@ namespace MatterHackers.MeshVisualizer
 						this.World.RenderDebugAABB(e.graphics2D, child.TraceData().GetAxisAlignedBoundingBox());
 						this.World.RenderDebugAABB(e.graphics2D, child.GetAxisAlignedBoundingBox(Matrix4X4.Identity));
 					}
+
+					if (scene.DebugItem?.Mesh != null)
+					{
+						var debugItem = scene.DebugItem;
+						GLHelper.Render(debugItem.Mesh, debugBorderColor, debugItem.WorldMatrix(), RenderTypes.Wireframe, debugItem.WorldMatrix() * World.ModelviewMatrix);
+					}
+
 				};
 			}
 
@@ -321,8 +331,6 @@ namespace MatterHackers.MeshVisualizer
 		private void DrawObject(IObject3D object3D, List<IObject3D> transparentMeshes, bool parentSelected, DrawEventArgs e)
 		{
 			var totalVertices = 0;
-			var debugBorderColor = RGBA_Bytes.Green;
-			var debugNotSelectedFillColor = new RGBA_Bytes(RGBA_Bytes.White, 120);
 
 			foreach (var renderData in object3D.VisibleMeshes())
 			{
