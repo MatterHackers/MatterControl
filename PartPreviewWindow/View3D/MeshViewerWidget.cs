@@ -87,7 +87,7 @@ namespace MatterHackers.MeshVisualizer
 			this.sceneContext = sceneContext;
 			this.interactionLayer = interactionLayer;
 			this.World = interactionLayer.World;
-			
+
 			scene.SelectionChanged += (sender, e) =>
 			{
 				Invalidate();
@@ -321,6 +321,8 @@ namespace MatterHackers.MeshVisualizer
 		private void DrawObject(IObject3D object3D, List<IObject3D> transparentMeshes, bool parentSelected, DrawEventArgs e)
 		{
 			var totalVertices = 0;
+			var debugBorderColor = RGBA_Bytes.Green;
+			var debugNotSelectedFillColor = new RGBA_Bytes(RGBA_Bytes.White, 120);
 
 			foreach (var renderData in object3D.VisibleMeshes())
 			{
@@ -336,6 +338,7 @@ namespace MatterHackers.MeshVisualizer
 
 			bool tooBigForComplexSelection = totalVertices > 1000;
 			if (tooBigForComplexSelection
+				&& scene.DebugItem == null
 				&& scene.HasSelection
 				&& (object3D == scene.SelectedItem || scene.SelectedItem.Children.Contains(object3D)))
 			{
@@ -365,7 +368,15 @@ namespace MatterHackers.MeshVisualizer
 					drawColor = MatterialRendering.Color(renderData.WorldMaterialIndex());
 				}
 
-				if (drawColor.alpha == 255)
+				bool isDebugItem = false;
+				bool renderAsSolid = drawColor.alpha == 255;
+#if DEBUG
+				isDebugItem = scene.DebugItem == renderData;
+				renderAsSolid = (renderAsSolid && scene.DebugItem == null)
+									|| isDebugItem;
+#endif
+
+				if (renderAsSolid)
 				{
 					GLHelper.Render(renderData.Mesh, drawColor, renderData.WorldMatrix(), RenderType, renderData.WorldMatrix() * World.ModelviewMatrix);
 				}
@@ -375,7 +386,7 @@ namespace MatterHackers.MeshVisualizer
 					{
 						Mesh = renderData.Mesh,
 						Matrix = renderData.WorldMatrix(),
-						Color = drawColor,
+						Color = (scene.DebugItem == null) ? drawColor : debugNotSelectedFillColor,
 						MaterialIndex = renderData.WorldMaterialIndex(),
 						OutputType = renderData.WorldOutputType()
 					});
@@ -385,6 +396,21 @@ namespace MatterHackers.MeshVisualizer
 				{
 					RenderSelection(renderData, frustum);
 				}
+
+#if DEBUG
+				if (isDebugItem)
+				{
+					var aabb = object3D.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+
+					GLHelper.PrepareFor3DLineRender(true);
+					RenderAABB(frustum, aabb, Matrix4X4.Identity, debugBorderColor, 1);
+
+					if (renderData.Mesh != null)
+					{
+						GLHelper.Render(renderData.Mesh, debugBorderColor, renderData.WorldMatrix(), RenderTypes.Wireframe, renderData.WorldMatrix() * World.ModelviewMatrix);
+					}
+				}
+#endif
 
 				// RenderNormals(renderData);
 
