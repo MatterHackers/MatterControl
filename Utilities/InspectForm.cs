@@ -81,8 +81,6 @@ namespace MatterHackers.MatterControl
 
 		public bool Inspecting { get; set; } = true;
 
-		private GuiWidget mouseUpWidget;
-
 		protected override bool ShowWithoutActivation => true;
 
 		protected override CreateParams CreateParams
@@ -118,11 +116,6 @@ namespace MatterHackers.MatterControl
 					_inspectedWidget.DebugShowBounds = false;
 				}
 
-				if (mouseUpWidget != null)
-				{
-					mouseUpWidget.MouseUp -= inspectedWidget_MouseUp;
-				}
-
 				_inspectedWidget = value;
 
 				this.Text = "Inspector" + (string.IsNullOrEmpty(_inspectedWidget?.Name) ? "" : " - " + _inspectedWidget.Name);
@@ -140,13 +133,6 @@ namespace MatterHackers.MatterControl
 					while(!context.CanSelect && context.Parent != null)
 					{
 						context = context.Parent;
-					}
-
-					if (context.CanSelect)
-					{
-						// Hook to stop listing on click
-						mouseUpWidget = context;
-						mouseUpWidget.MouseUp += inspectedWidget_MouseUp;
 					}
 				}
 
@@ -189,12 +175,6 @@ namespace MatterHackers.MatterControl
 		}
 
 		private Font boldFont;
-
-		private void inspectedWidget_MouseUp(object sender, Agg.UI.MouseEventArgs e)
-		{
-			// Stop listing on click
-			this.Inspecting = false;
-		}
 
 		private void AddItem(GuiWidget widget, string text = null, TreeNode childNode = null, bool showAllParents = true)
 		{
@@ -432,11 +412,6 @@ namespace MatterHackers.MatterControl
 			{
 				scene.Children.ItemsModified -= Scene_ChildrenModified;
 				scene.DebugItem = null;
-			}
-
-			if (mouseUpWidget != null)
-			{
-				mouseUpWidget.MouseUp -= inspectedWidget_MouseUp;
 			}
 
 			base.OnFormClosing(e);
