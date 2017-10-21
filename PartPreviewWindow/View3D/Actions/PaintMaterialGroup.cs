@@ -64,8 +64,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			});
 
 			bool first = true;
-			// now wrap every first decendant that has a mesh
-			foreach (var child in this.VisibleMeshes().Where((o) => o.Mesh != null))
+			// Wrap every first descendant that has a mesh
+			foreach (var child in this.VisibleMeshes().ToList())
 			{
 				// wrap the child in a PaintItem
 				child.Parent.Children.Modify((list) =>
