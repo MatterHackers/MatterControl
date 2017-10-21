@@ -439,20 +439,19 @@ namespace MatterHackers.MatterControl
 				scrollBarWidth = 20;
 			}
 
-			TextWidget spacingText = new TextWidget(header, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			wordOptionContainer.AddChild(new TextWidget(header, textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
 				Margin = new BorderDouble(10, 3, 3, 5),
 				HAnchor = HAnchor.Left
-			};
-			wordOptionContainer.AddChild(spacingText);
+			});
 
-			SolidSlider namedSlider = new SolidSlider(new Vector2(), scrollBarWidth, 0, 1)
+			var namedSlider = new SolidSlider(new Vector2(), scrollBarWidth, 0, 1)
 			{
 				TotalWidthInPixels = DefaultScrollBarWidth,
 				Minimum = min,
 				Maximum = max,
-				Margin = new BorderDouble(3, 5, 3, 3),
-				HAnchor = HAnchor.Center,
+				Margin = new BorderDouble(12, 4),
+				HAnchor = HAnchor.Stretch,
 			};
 
 			wordOptionContainer.AddChild(namedSlider);

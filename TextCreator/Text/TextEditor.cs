@@ -44,7 +44,6 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 	public class TextEditor : IObject3DEditor
 	{
 		private TextObject injectedItem = null;
-		private SolidSlider spacingScrollBar;
 		private TextGenerator textGenerator;
 		private MHTextEditWidget textToAddWidget;
 		private View3DWidget view3DWidget;
@@ -75,14 +74,17 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 			textToAddWidget.ActualTextEditWidget.EnterPressed += (s, e) => RebuildText(textToAddWidget.Text);
 			container.AddChild(textToAddWidget);
 
-			spacingScrollBar = theme.CreateSolidSlider(container, "Spacing:".Localize(), .5, 1);
+			var spacingScrollBar = theme.CreateSolidSlider(container, "Spacing:".Localize(), .5, 1);
+			spacingScrollBar.Value = injectedItem.Spacing;
 			spacingScrollBar.ValueChanged += (sender, e) =>
-			 {
-				 if (injectedItem != null)
-				 {
-					 RebuildText(textToAddWidget.Text);
-				 }
-			 };
+			{
+				injectedItem.Spacing = spacingScrollBar.Value;
+
+				if (injectedItem != null)
+				{
+					RebuildText(textToAddWidget.Text);
+				}
+			};
 
 			Button updateButton = theme.ButtonFactory.Generate("Update".Localize());
 			updateButton.Margin = new BorderDouble(5);
@@ -141,7 +143,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 			{
 				Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
-				return textGenerator.CreateText(text, spacingScrollBar.Value);
+				return textGenerator.CreateText(text, injectedItem.Spacing);
 			});
 
 			var scene = view3DWidget.InteractionLayer.Scene;
