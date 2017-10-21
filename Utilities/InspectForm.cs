@@ -32,7 +32,8 @@ namespace MatterHackers.MatterControl
 			this.scene = scene;
 			this.scene.Children.ItemsModified += Scene_ChildrenModified;
 			sceneTreeView.SuspendLayout();
-			this.AddTree(scene, null, "Scene");
+			this.AddTree(scene, null);
+
 			sceneTreeView.ResumeLayout();
 
 			if (view3DWidget.ContainsFocus)
@@ -49,7 +50,7 @@ namespace MatterHackers.MatterControl
 				sceneTreeView.Nodes.Clear();
 				sceneTreeNodes.Clear();
 
-				this.AddTree(scene, null, "Scene");
+				this.AddTree(scene, null);
 				sceneTreeView.ResumeLayout();
 			});
 		}
@@ -66,7 +67,7 @@ namespace MatterHackers.MatterControl
 			inspectedSystemWindow.Invalidate();
 
 			aggTreeView.SuspendLayout();
-			this.AddTree(inspectedSystemWindow, null, "SystemWindow");
+			this.AddTree(inspectedSystemWindow, null);
 			aggTreeView.ResumeLayout();
 
 			this.TopMost = true;
@@ -242,9 +243,9 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private TreeNode AddItem(GuiWidget widget, TreeNode parentNode, string overrideText = null)
+		private TreeNode AddItem(GuiWidget widget, TreeNode parentNode)
 		{
-			var node = new TreeNode(overrideText ?? BuildDefaultName(widget))
+			var node = new TreeNode(BuildDefaultName(widget))
 			{
 				Tag = widget
 			};
@@ -264,14 +265,13 @@ namespace MatterHackers.MatterControl
 			return node;
 		}
 
-		private TreeNode AddItem(IObject3D item, TreeNode parentNode, string overrideText = null)
+		private TreeNode AddItem(IObject3D item, TreeNode parentNode)
 		{
-			var node = new TreeNode(overrideText ?? BuildDefaultName(item))
+			var node = new TreeNode(BuildDefaultName(item))
 			{
 				Tag = item
 			};
 			sceneTreeNodes.Add(item, node);
-
 
 			if (parentNode == null)
 			{
@@ -290,7 +290,7 @@ namespace MatterHackers.MatterControl
 			return node;
 		}
 
-		private void AddTree(GuiWidget widget, TreeNode parent, string text = null, TreeNode childNode = null)
+		private void AddTree(GuiWidget widget, TreeNode parent)
 		{
 			var node = AddItem(widget, parent);
 
@@ -300,7 +300,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private void AddTree(IObject3D item, TreeNode parent, string text = null, TreeNode childNode = null)
+		private void AddTree(IObject3D item, TreeNode parent)
 		{
 			var node = AddItem(item, parent);
 
@@ -456,7 +456,7 @@ namespace MatterHackers.MatterControl
 				{
 					brush = Brushes.Transparent;
 				}
-				
+
 				e.Graphics.FillRectangle(brush, e.Node.Bounds);
 
 				TextRenderer.DrawText(
