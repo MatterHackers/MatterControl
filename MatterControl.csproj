@@ -158,7 +158,10 @@
     <Compile Include="PartPreviewWindow\PopupMenuButton.cs" />
     <Compile Include="PartPreviewWindow\IconTab.cs" />
     <Compile Include="PartPreviewWindow\PopupButton.cs" />
-    <Compile Include="PartPreviewWindow\View3D\DifferenceObject3D.cs" />
+    <Compile Include="PartPreviewWindow\View3D\Actions\DifferenceGroup.cs" />
+    <Compile Include="PartPreviewWindow\View3D\Actions\IntersectGroup.cs" />
+    <Compile Include="PartPreviewWindow\View3D\Actions\MeshWrapper.cs" />
+    <Compile Include="PartPreviewWindow\View3D\Actions\PaintMaterialGroup.cs" />
     <Compile Include="PartPreviewWindow\View3D\SlicePopupMenu.cs" />
     <Compile Include="PrinterControls\PrinterConnections\PrinterSetup.cs" />
     <Compile Include="Utilities\InspectForm.cs" Condition="'$(Configuration)' == 'Debug'">
