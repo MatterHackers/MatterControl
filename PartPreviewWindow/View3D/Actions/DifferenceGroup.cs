@@ -29,6 +29,8 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -38,6 +40,7 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.PolygonMesh;
+using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
@@ -131,7 +134,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		}
 	}
 
-
 	public class DifferenceGroup : Object3D
 	{
 		public DifferenceGroup(SafeList<IObject3D> children)
@@ -167,7 +169,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			await Task.Run(() =>
 			{
 				var container = this;
-				var participants = this.Descendants().Where((obj) => obj.OwnerID == this.ID).ToList();
+				var participants = this.VisibleMeshes().Where(o => o.OwnerID == this.ID).ToList();
 				var removeObjects = participants.Where((obj) => obj.OutputType == PrintOutputTypes.Hole).ToList();
 				var keepObjects = participants.Where((obj) => obj.OutputType != PrintOutputTypes.Hole).ToList();
 
