@@ -39,6 +39,12 @@ namespace MatterHackers.MatterControl
 			if (view3DWidget.ContainsFocus)
 			{
 				tabControl1.SelectedIndex = 1;
+
+				if (scene.HasSelection
+					&& sceneTreeNodes.TryGetValue(scene.SelectedItem, out TreeNode treeNodeToSelect))
+				{
+					sceneTreeView.SelectedNode = treeNodeToSelect;
+				}
 			}
 		}
 
