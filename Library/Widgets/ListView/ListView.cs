@@ -338,6 +338,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 							var injector = new InsertionGroup(new[] { itemModel }, activeContext.View3DWidget, scene, () => false);
 							injector.ContentLoaded += (s, args) =>
 							{
+								// Get the bounds of the loaded InsertionGroup with all of its content
 								var aabb = injector.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 
 								// Remove position
@@ -353,10 +354,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 							// Move to bed center - (before we know the bounds of the content to load)
 							injector.Matrix *= Matrix4X4.CreateTranslation(new Vector3(bedCenter.x, bedCenter.y, 0));
 
-							scene.Children.Modify(list =>
-							{
-								list.Add(injector);
-							});
+							scene.Children.Add(injector);
 
 							PlatingHelper.MoveToOpenPosition(injector, sceneChildren);
 						}

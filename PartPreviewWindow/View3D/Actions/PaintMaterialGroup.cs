@@ -85,7 +85,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			await Task.Run(() =>
 			{
 				var container = this;
-				var participants = this.Descendants().Where((obj) => obj.OwnerID == this.ID).ToList();
+				var participants = this.VisibleMeshes().Where((obj) => obj.OwnerID == this.ID).ToList();
 				var removeObjects = participants.Where((obj) => obj.OutputType == PrintOutputTypes.Hole).ToList();
 				var keepObjects = participants.Where((obj) => obj.OutputType != PrintOutputTypes.Hole).ToList();
 

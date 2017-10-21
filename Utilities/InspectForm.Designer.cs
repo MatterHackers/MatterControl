@@ -48,6 +48,7 @@
 			// 
 			this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.splitContainer1.Location = new System.Drawing.Point(0, 0);
+			this.splitContainer1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
 			this.splitContainer1.Name = "splitContainer1";
 			// 
 			// splitContainer1.Panel1
@@ -57,8 +58,9 @@
 			// splitContainer1.Panel2
 			// 
 			this.splitContainer1.Panel2.Controls.Add(this.propertyGrid1);
-			this.splitContainer1.Size = new System.Drawing.Size(1246, 972);
-			this.splitContainer1.SplitterDistance = 832;
+			this.splitContainer1.Size = new System.Drawing.Size(831, 632);
+			this.splitContainer1.SplitterDistance = 554;
+			this.splitContainer1.SplitterWidth = 3;
 			this.splitContainer1.TabIndex = 0;
 			// 
 			// tabControl1
@@ -67,20 +69,19 @@
 			this.tabControl1.Controls.Add(this.tabPage2);
 			this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.tabControl1.Location = new System.Drawing.Point(0, 0);
-			this.tabControl1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
 			this.tabControl1.Name = "tabControl1";
 			this.tabControl1.SelectedIndex = 0;
-			this.tabControl1.Size = new System.Drawing.Size(832, 972);
+			this.tabControl1.Size = new System.Drawing.Size(554, 632);
 			this.tabControl1.TabIndex = 1;
+			this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
 			// 
 			// tabPage1
 			// 
 			this.tabPage1.Controls.Add(this.aggTreeView);
-			this.tabPage1.Location = new System.Drawing.Point(4, 29);
-			this.tabPage1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+			this.tabPage1.Location = new System.Drawing.Point(4, 22);
 			this.tabPage1.Name = "tabPage1";
-			this.tabPage1.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
-			this.tabPage1.Size = new System.Drawing.Size(815, 939);
+			this.tabPage1.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
+			this.tabPage1.Size = new System.Drawing.Size(546, 606);
 			this.tabPage1.TabIndex = 0;
 			this.tabPage1.Text = "SystemWindow";
 			this.tabPage1.UseVisualStyleBackColor = true;
@@ -91,9 +92,10 @@
 			this.aggTreeView.DrawMode = System.Windows.Forms.TreeViewDrawMode.OwnerDrawText;
 			this.aggTreeView.FullRowSelect = true;
 			this.aggTreeView.HideSelection = false;
-			this.aggTreeView.Location = new System.Drawing.Point(4, 5);
+			this.aggTreeView.Location = new System.Drawing.Point(3, 3);
+			this.aggTreeView.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
 			this.aggTreeView.Name = "aggTreeView";
-			this.aggTreeView.Size = new System.Drawing.Size(807, 929);
+			this.aggTreeView.Size = new System.Drawing.Size(540, 600);
 			this.aggTreeView.TabIndex = 1;
 			this.aggTreeView.DrawNode += new System.Windows.Forms.DrawTreeNodeEventHandler(this.AggTreeView_DrawNode);
 			this.aggTreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.AggTreeView_AfterSelect);
@@ -101,11 +103,10 @@
 			// tabPage2
 			// 
 			this.tabPage2.Controls.Add(this.sceneTreeView);
-			this.tabPage2.Location = new System.Drawing.Point(4, 29);
-			this.tabPage2.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+			this.tabPage2.Location = new System.Drawing.Point(4, 22);
 			this.tabPage2.Name = "tabPage2";
-			this.tabPage2.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
-			this.tabPage2.Size = new System.Drawing.Size(824, 939);
+			this.tabPage2.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
+			this.tabPage2.Size = new System.Drawing.Size(547, 606);
 			this.tabPage2.TabIndex = 1;
 			this.tabPage2.Text = "Scene";
 			this.tabPage2.UseVisualStyleBackColor = true;
@@ -116,9 +117,10 @@
 			this.sceneTreeView.DrawMode = System.Windows.Forms.TreeViewDrawMode.OwnerDrawText;
 			this.sceneTreeView.FullRowSelect = true;
 			this.sceneTreeView.HideSelection = false;
-			this.sceneTreeView.Location = new System.Drawing.Point(4, 5);
+			this.sceneTreeView.Location = new System.Drawing.Point(3, 3);
+			this.sceneTreeView.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
 			this.sceneTreeView.Name = "sceneTreeView";
-			this.sceneTreeView.Size = new System.Drawing.Size(816, 929);
+			this.sceneTreeView.Size = new System.Drawing.Size(541, 600);
 			this.sceneTreeView.TabIndex = 2;
 			this.sceneTreeView.DrawNode += new System.Windows.Forms.DrawTreeNodeEventHandler(this.SceneTreeView_DrawNode);
 			this.sceneTreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.SceneTreeView_AfterSelect);
@@ -128,17 +130,19 @@
 			this.propertyGrid1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.propertyGrid1.LineColor = System.Drawing.SystemColors.ControlDark;
 			this.propertyGrid1.Location = new System.Drawing.Point(0, 0);
+			this.propertyGrid1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
 			this.propertyGrid1.Name = "propertyGrid1";
-			this.propertyGrid1.Size = new System.Drawing.Size(410, 972);
+			this.propertyGrid1.Size = new System.Drawing.Size(274, 632);
 			this.propertyGrid1.TabIndex = 0;
 			this.propertyGrid1.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGrid1_PropertyValueChanged);
 			// 
 			// InspectForm
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(1246, 972);
+			this.ClientSize = new System.Drawing.Size(831, 632);
 			this.Controls.Add(this.splitContainer1);
+			this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
 			this.Name = "InspectForm";
 			this.Text = "InspectForm";
 			this.splitContainer1.Panel1.ResumeLayout(false);

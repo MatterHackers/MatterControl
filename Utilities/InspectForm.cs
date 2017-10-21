@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
+using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
 
@@ -22,15 +23,29 @@ namespace MatterHackers.MatterControl
 		private Dictionary<IObject3D, TreeNode> sceneTreeNodes = new Dictionary<IObject3D, TreeNode>();
 
 		private InteractiveScene scene;
+		private View3DWidget view3DWidget;
 
-		public InspectForm(GuiWidget inspectedSystemWindow, InteractiveScene scene)
+		public InspectForm(GuiWidget inspectedSystemWindow, InteractiveScene scene, View3DWidget view3DWidget)
 			: this(inspectedSystemWindow)
 		{
+			this.view3DWidget = view3DWidget;
 			this.scene = scene;
 			this.scene.Children.ItemsModified += Scene_ChildrenModified;
 			sceneTreeView.SuspendLayout();
-			this.AddTree(scene, null, "Scene");
+			this.AddTree(scene, null);
+
 			sceneTreeView.ResumeLayout();
+
+			if (view3DWidget.ContainsFocus)
+			{
+				tabControl1.SelectedIndex = 1;
+
+				if (scene.HasSelection
+					&& sceneTreeNodes.TryGetValue(scene.SelectedItem, out TreeNode treeNodeToSelect))
+				{
+					sceneTreeView.SelectedNode = treeNodeToSelect;
+				}
+			}
 		}
 
 		private void Scene_ChildrenModified(object sender, EventArgs e)
@@ -41,7 +56,7 @@ namespace MatterHackers.MatterControl
 				sceneTreeView.Nodes.Clear();
 				sceneTreeNodes.Clear();
 
-				this.AddTree(scene, null, "Scene");
+				this.AddTree(scene, null);
 				sceneTreeView.ResumeLayout();
 			});
 		}
@@ -58,15 +73,11 @@ namespace MatterHackers.MatterControl
 			inspectedSystemWindow.Invalidate();
 
 			aggTreeView.SuspendLayout();
-			this.AddTree(inspectedSystemWindow, null, "SystemWindow");
+			this.AddTree(inspectedSystemWindow, null);
 			aggTreeView.ResumeLayout();
 
 			this.TopMost = true;
 		}
-
-		public bool Inspecting { get; set; } = true;
-
-		private GuiWidget mouseUpWidget;
 
 		protected override bool ShowWithoutActivation => true;
 
@@ -103,11 +114,6 @@ namespace MatterHackers.MatterControl
 					_inspectedWidget.DebugShowBounds = false;
 				}
 
-				if (mouseUpWidget != null)
-				{
-					mouseUpWidget.MouseUp -= inspectedWidget_MouseUp;
-				}
-
 				_inspectedWidget = value;
 
 				this.Text = "Inspector" + (string.IsNullOrEmpty(_inspectedWidget?.Name) ? "" : " - " + _inspectedWidget.Name);
@@ -125,13 +131,6 @@ namespace MatterHackers.MatterControl
 					while(!context.CanSelect && context.Parent != null)
 					{
 						context = context.Parent;
-					}
-
-					if (context.CanSelect)
-					{
-						// Hook to stop listing on click
-						mouseUpWidget = context;
-						mouseUpWidget.MouseUp += inspectedWidget_MouseUp;
 					}
 				}
 
@@ -174,12 +173,6 @@ namespace MatterHackers.MatterControl
 		}
 
 		private Font boldFont;
-
-		private void inspectedWidget_MouseUp(object sender, Agg.UI.MouseEventArgs e)
-		{
-			// Stop listing on click
-			this.Inspecting = false;
-		}
 
 		private void AddItem(GuiWidget widget, string text = null, TreeNode childNode = null, bool showAllParents = true)
 		{
@@ -234,9 +227,9 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private TreeNode AddItem(GuiWidget widget, TreeNode parentNode, string overrideText = null)
+		private TreeNode AddItem(GuiWidget widget, TreeNode parentNode)
 		{
-			var node = new TreeNode(overrideText ?? BuildDefaultName(widget))
+			var node = new TreeNode(BuildDefaultName(widget))
 			{
 				Tag = widget
 			};
@@ -256,14 +249,13 @@ namespace MatterHackers.MatterControl
 			return node;
 		}
 
-		private TreeNode AddItem(IObject3D item, TreeNode parentNode, string overrideText = null)
+		private TreeNode AddItem(IObject3D item, TreeNode parentNode)
 		{
-			var node = new TreeNode(overrideText ?? BuildDefaultName(item))
+			var node = new TreeNode(BuildDefaultName(item))
 			{
 				Tag = item
 			};
 			sceneTreeNodes.Add(item, node);
-
 
 			if (parentNode == null)
 			{
@@ -282,7 +274,7 @@ namespace MatterHackers.MatterControl
 			return node;
 		}
 
-		private void AddTree(GuiWidget widget, TreeNode parent, string text = null, TreeNode childNode = null)
+		private void AddTree(GuiWidget widget, TreeNode parent)
 		{
 			var node = AddItem(widget, parent);
 
@@ -292,7 +284,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private void AddTree(IObject3D item, TreeNode parent, string text = null, TreeNode childNode = null)
+		private void AddTree(IObject3D item, TreeNode parent)
 		{
 			var node = AddItem(item, parent);
 
@@ -340,11 +332,13 @@ namespace MatterHackers.MatterControl
 		private void SceneTreeView_AfterSelect(object sender, TreeViewEventArgs e)
 		{
 			this.InspectedObject3D = e.Node.Tag as IObject3D;
+			this.scene.DebugItem = this.InspectedObject3D;
+			view3DWidget.PartHasBeenChanged();
 		}
 
 		private void propertyGrid1_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
 		{
-			this.InspectedWidget.Invalidate();
+			this.InspectedWidget?.Invalidate();
 		}
 
 		public void MoveUpTree()
@@ -375,7 +369,9 @@ namespace MatterHackers.MatterControl
 
 		private void systemWindow_AfterDraw(object sender, EventArgs e)
 		{
-			if (this.Inspecting && !inspectedSystemWindow.HasBeenClosed)
+			if (this.Inspecting 
+				&& !inspectedSystemWindow.HasBeenClosed
+				&& tabControl1.SelectedIndex == 0)
 			{
 				var namedChildren = new List<GuiWidget.WidgetAndPosition>();
 				inspectedSystemWindow.FindNamedChildrenRecursive(
@@ -413,11 +409,7 @@ namespace MatterHackers.MatterControl
 			if (scene != null)
 			{
 				scene.Children.ItemsModified -= Scene_ChildrenModified;
-			}
-
-			if (mouseUpWidget != null)
-			{
-				mouseUpWidget.MouseUp -= inspectedWidget_MouseUp;
+				scene.DebugItem = null;
 			}
 
 			base.OnFormClosing(e);
@@ -443,7 +435,7 @@ namespace MatterHackers.MatterControl
 				{
 					brush = Brushes.Transparent;
 				}
-				
+
 				e.Graphics.FillRectangle(brush, e.Node.Bounds);
 
 				TextRenderer.DrawText(
@@ -461,22 +453,10 @@ namespace MatterHackers.MatterControl
 			var node = e.Node;
 			if (node.IsVisible)
 			{
-				var item = node.Tag as IObject3D;
-				Brush brush;
-
-				if (scene.HasSelection 
-					&& (scene.SelectedItem == item
-					|| scene.SelectedItem.Children.Contains(item)))
-				{
-
-					brush = SystemBrushes.Highlight;
-				}
-				else
-				{
-					brush = Brushes.Transparent;
-				}
-
-				e.Graphics.FillRectangle(brush, e.Node.Bounds);
+				//var item = node.Tag as IObject3D;
+				e.Graphics.FillRectangle(
+					(sceneTreeView.SelectedNode == node) ? SystemBrushes.Highlight : Brushes.Transparent, 
+					node.Bounds);
 
 				TextRenderer.DrawText(
 					e.Graphics,
@@ -485,6 +465,22 @@ namespace MatterHackers.MatterControl
 					new Point(node.Bounds.Left, node.Bounds.Top),
 					SystemColors.ControlText,
 					Color.Transparent);
+			}
+		}
+
+		private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			if (this.activeTreeNode != null
+				&& tabControl1.SelectedIndex != 0
+				&& this.activeTreeNode.Tag is GuiWidget widget)
+			{
+				widget.DebugShowBounds = false;
+			}
+
+			if (scene.DebugItem != null
+				&& tabControl1.SelectedIndex != 1)
+			{
+				scene.DebugItem = null;
 			}
 		}
 	}
