@@ -79,8 +79,6 @@ namespace MatterHackers.MatterControl
 			this.TopMost = true;
 		}
 
-		public bool Inspecting { get; set; } = true;
-
 		protected override bool ShowWithoutActivation => true;
 
 		protected override CreateParams CreateParams
