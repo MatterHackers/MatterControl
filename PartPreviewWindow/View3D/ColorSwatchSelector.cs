@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
+using MatterHackers.MeshVisualizer;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -36,7 +37,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		private const int colorSize = 32;
 
-		public ColorSwatchSelector(IObject3D item, View3DWidget view3DWidget)
+		public ColorSwatchSelector(InteractiveScene scene)
 			: base(FlowDirection.TopToBottom)
 		{
 			var colorCount = 9;
@@ -50,15 +51,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				for (int colorIndex = 0; colorIndex < colorCount; colorIndex++)
 				{
 					var color = RGBA_Floats.FromHSL(colorIndex / (double)colorCount, 1, lightness[rowIndex]).GetAsRGBA_Bytes();
-					colorRow.AddChild(MakeColorButton(item, view3DWidget, color));
+					colorRow.AddChild(MakeColorButton(scene, color));
 				}
 
 				// put in white and black buttons
-				colorRow.AddChild(MakeColorButton(item, view3DWidget, grayLevel[rowIndex]));
+				colorRow.AddChild(MakeColorButton(scene, grayLevel[rowIndex]));
 			}
 		}
 
-		private Button MakeColorButton(IObject3D item, View3DWidget view3DWidget, RGBA_Bytes color)
+		private Button MakeColorButton(InteractiveScene scene, RGBA_Bytes color)
 		{
 			GuiWidget colorWidget;
 			var button = new Button(colorWidget = new GuiWidget()
@@ -70,9 +71,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			button.Click += (s, e) =>
 			{
-				item.Color = colorWidget.BackgroundColor;
-				item.OutputType = PrintOutputTypes.Solid;
-				view3DWidget.Invalidate();
+				var item = scene.SelectedItem;
+				if (item != null)
+				{
+					item.Color = colorWidget.BackgroundColor;
+					item.OutputType = PrintOutputTypes.Solid;
+				}
 			};
 			return button;
 		}
