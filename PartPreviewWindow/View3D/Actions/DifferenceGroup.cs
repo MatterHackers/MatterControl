@@ -147,9 +147,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			});
 
 			bool first = true;
-			// now wrap every first decendant that has a mesh
-			var visibleMeshes = this.VisibleMeshes().Where((o) => o.Mesh != null).ToList();
-			foreach (var child in visibleMeshes)
+			// Wrap every first descendant that has a mesh
+			foreach (var child in this.VisibleMeshes().ToList())
 			{
 				// wrap the child in a DifferenceItem
 				child.Parent.Children.Modify((list) =>
