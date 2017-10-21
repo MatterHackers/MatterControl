@@ -37,27 +37,19 @@ using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
 
 namespace MatterHackers.MatterControl.Plugins.TextCreator
 {
 	public class TextEditor : IObject3DEditor
 	{
-		private MHTextEditWidget textToAddWidget;
-		private CheckBox createUnderline;
-
-		private TextGenerator textGenerator;
-		private View3DWidget view3DWidget;
-
 		private TextObject injectedItem = null;
-
+		private SolidSlider spacingScrollBar;
+		private TextGenerator textGenerator;
+		private MHTextEditWidget textToAddWidget;
+		private View3DWidget view3DWidget;
+		public string Name { get; } = "Text";
 		public bool Unlocked { get; } = true;
-
-		public IEnumerable<Type> SupportedTypes()
-		{
-			return new Type[] { typeof(TextObject) };
-		}
 
 		public GuiWidget Create(IObject3D item, View3DWidget parentView3D, ThemeConfig theme)
 		{
@@ -83,14 +75,14 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 			textToAddWidget.ActualTextEditWidget.EnterPressed += (s, e) => RebuildText(textToAddWidget.Text);
 			container.AddChild(textToAddWidget);
 
-			createUnderline = new CheckBox(new CheckBoxViewText("Underline".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor))
-			{
-				Checked = true,
-				Margin = new BorderDouble(10, 5),
-				HAnchor = HAnchor.Left
-			};
-			createUnderline.CheckedStateChanged += CreateUnderline_CheckedStateChanged;
-			container.AddChild(createUnderline);
+			spacingScrollBar = theme.CreateSolidSlider(container, "Spacing:".Localize(), .5, 1);
+			spacingScrollBar.ValueChanged += (sender, e) =>
+			 {
+				 if (injectedItem != null)
+				 {
+					 RebuildText(textToAddWidget.Text);
+				 }
+			 };
 
 			Button updateButton = theme.ButtonFactory.Generate("Update".Localize());
 			updateButton.Margin = new BorderDouble(5);
@@ -101,70 +93,14 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 			return container;
 		}
 
-		public string Name { get; } = "Text";
-
-		private void ResetWordLayoutSettings()
+		public IEnumerable<Type> SupportedTypes()
 		{
-			textGenerator.ResetSettings();
+			return new Type[] { typeof(TextObject) };
 		}
 
-		private async void RebuildText(string text)
+		internal void SetInitialFocus()
 		{
-			injectedItem.Text = text;
-
-			// Clear prior selection
-
-			if (text.Length <= 0)
-			{
-				return;
-			}
-
-			ResetWordLayoutSettings();
-
-			//view3DWidget.processingProgressControl.ProcessType = "Inserting Text".Localize();
-			//view3DWidget.processingProgressControl.Visible = true;
-			//view3DWidget.processingProgressControl.PercentComplete = 0;
-
-			view3DWidget.LockEditControls();
-
-			var generatedItem = await Task.Run(() =>
-			{
-				Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-
-				return textGenerator.CreateText(
-					text,
-					1,
-					.25,
-					1,
-					createUnderline.Checked);
-			});
-
-			var scene = view3DWidget.InteractionLayer.Scene;
-			scene.Children.Modify(list =>
-			{
-				var item = list.Find(child => child == injectedItem);
-
-				item.Children.Modify(childList =>
-				{
-					childList.Clear();
-					childList.AddRange(generatedItem.Children);
-				});
-			});
-
-			//PlatingHelper.MoveToOpenPosition(injectedItem, view3DWidget.Scene);
-
-			//view3DWidget.InsertNewItem(injectedItem);
-
-			view3DWidget.UnlockEditControls();
-		}
-
-		private void CreateUnderline_CheckedStateChanged(object sender, EventArgs e)
-		{
-			ModifyInjectedItem(workItem =>
-			{
-				// Change the contents, adding or removing the underline
-				textGenerator.EnableUnderline(workItem, enableUnderline: createUnderline.Checked);
-			});
+			textToAddWidget.Focus();
 		}
 
 		private void ModifyInjectedItem(Action<IObject3D> modifier)
@@ -189,9 +125,38 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 			scene.SelectedItem = injectedItem;
 		}
 
-		internal void SetInitialFocus()
+		private async void RebuildText(string text)
 		{
-			textToAddWidget.Focus();
+			injectedItem.Text = text;
+
+			// Clear prior selection
+			if (text.Length <= 0)
+			{
+				return;
+			}
+
+			view3DWidget.LockEditControls();
+
+			var generatedItem = await Task.Run(() =>
+			{
+				Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+
+				return textGenerator.CreateText(text, spacingScrollBar.Value);
+			});
+
+			var scene = view3DWidget.InteractionLayer.Scene;
+			scene.Children.Modify(list =>
+			{
+				var item = list.Find(child => child == injectedItem);
+
+				item.Children.Modify(childList =>
+				{
+					childList.Clear();
+					childList.AddRange(generatedItem.Children);
+				});
+			});
+
+			view3DWidget.UnlockEditControls();
 		}
 	}
 }
