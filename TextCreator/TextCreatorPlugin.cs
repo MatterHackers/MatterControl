@@ -52,12 +52,7 @@ namespace MatterHackers.Plugins.EditorTools
 					() =>
 					{
 						var generator = new TextGenerator();
-						return generator.CreateText(
-							"Text".Localize(),
-							1,
-							.25,
-							1,
-							true);
+						return generator.CreateText("Text".Localize(), 1);
 					},
 					category));
 

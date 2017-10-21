@@ -39,10 +39,6 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 {
 	public class TextGenerator
 	{
-		private double lastHeightValue = 1;
-		private double lastSizeValue = 1;
-		private bool hasUnderline;
-
 		private TypeFace boldTypeFace;
 		private Vector2[] characterSpacing;
 
@@ -51,7 +47,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 			boldTypeFace = TypeFace.LoadFrom(AggContext.StaticData.ReadAllText(Path.Combine("Fonts", "LiberationSans-Bold.svg")));
 		}
 
-		public IObject3D CreateText(string wordText, double wordSize, double wordHeight, double spacing, bool createUnderline)
+		public IObject3D CreateText(string wordText, double spacing)
 		{
 			var groupItem = new TextObject()
 			{
@@ -72,12 +68,13 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 
 			characterSpacing = new Vector2[wordText.Length];
 
+			int meshIndex = 0;
 			for (int i = 0; i < wordText.Length; i++)
 			{
 				string letter = wordText[i].ToString();
 				TypeFacePrinter letterPrinter = new TypeFacePrinter(letter, typeFace);
 
-				Mesh textMesh = VertexSourceToMesh.Extrude(letterPrinter, 10 + (i % 2));
+				Mesh textMesh = VertexSourceToMesh.Extrude(letterPrinter, 5);
 				if (textMesh.Faces.Count > 0)
 				{
 					var characterObject = new Object3D()
@@ -85,17 +82,14 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 						Mesh = textMesh,
 					};
 
-					characterSpacing[i] = new Vector2( printer.GetOffsetLeftOfCharacterIndex(i).x + centerOffset, 0);
+					characterSpacing[meshIndex++] = new Vector2( printer.GetOffsetLeftOfCharacterIndex(i).x + centerOffset, 0);
 
 					groupItem.Children.Add(characterObject);
 
-					//public static void PlaceMeshGroupOnBed(List<MeshGroup> meshesGroupList, List<Matrix4X4> meshTransforms, int index)
-					{
-						AxisAlignedBoundingBox bounds = characterObject.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
-						Vector3 boundsCenter = (bounds.maxXYZ + bounds.minXYZ) / 2;
+					AxisAlignedBoundingBox bounds = characterObject.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+					Vector3 boundsCenter = (bounds.maxXYZ + bounds.minXYZ) / 2;
 
-						characterObject.Matrix *= Matrix4X4.CreateTranslation(new Vector3(0, 0, -boundsCenter.z + bounds.ZSize / 2));
-					}
+					characterObject.Matrix *= Matrix4X4.CreateTranslation(new Vector3(0, 0, -boundsCenter.z + bounds.ZSize / 2));
 
 					currentRatioDone += ratioPerMeshGroup;
 				}
@@ -104,13 +98,6 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 			}
 
 			SetWordSpacing(groupItem, spacing);
-			SetWordSize(groupItem, wordSize);
-			SetWordHeight(groupItem, wordHeight);
-
-			if (createUnderline)
-			{
-				groupItem.Children.Add(CreateUnderline(groupItem));
-			}
 
 			// jlewin - restore progress
 			//processingProgressControl.PercentComplete = 95;
@@ -118,57 +105,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 			return groupItem;
 		}
 
-		private IObject3D CreateUnderline(IObject3D group)
-		{
-			if (group.HasChildren())
-			{
-				AxisAlignedBoundingBox bounds = group.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
-
-				double xSize = bounds.XSize;
-				double ySize = lastSizeValue * 3;
-				double zSize = bounds.ZSize / 3;
-
-				var lineObject = new Object3D()
-				{
-					Mesh = PlatonicSolids.CreateCube(xSize, ySize, zSize),
-					Matrix = Matrix4X4.CreateTranslation((bounds.maxXYZ.x + bounds.minXYZ.x) / 2, bounds.minXYZ.y + ySize / 2 - ySize * 1 / 3, zSize / 2)
-				};
-
-				return lineObject;
-			}
-
-			return null;
-		}
-
-		public void EnableUnderline(IObject3D group, bool enableUnderline)
-		{
-			hasUnderline = enableUnderline;
-
-			if (enableUnderline && group.HasChildren())
-			{
-				// we need to add the underline
-				group.Children.Add(CreateUnderline(group));
-			}
-			else if (group.HasChildren())
-			{
-				// we need to remove the underline
-				group.Children.Remove(group.Children.Last());
-			}
-		}
-
-		public void RebuildUnderline(IObject3D group)
-		{
-			if (hasUnderline && group.HasChildren())
-			{
-				// Remove the underline object
-				group.Children.Remove(group.Children.Last());
-
-				// we need to add the underline
-				group.Children.Add(CreateUnderline(group));
-			}
-		}
-
-		public void SetWordSpacing(IObject3D group, double spacing, bool rebuildUnderline = false)
+		private void SetWordSpacing(IObject3D group, double spacing)
 		{
 			if (group.HasChildren())
 			{
@@ -181,67 +118,11 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 
 					sceneItem.Matrix *= Matrix4X4.CreateTranslation(-startPosition);
 
-					double newX = characterSpacing[i].x * spacing * lastSizeValue;
+					double newX = characterSpacing[i].x * spacing;
 					sceneItem.Matrix *= Matrix4X4.CreateTranslation(new Vector3(newX, 0, 0) + new Vector3(bedCenter));
 					i += 1;
 				}
-
-				if (rebuildUnderline)
-				{
-					RebuildUnderline(group);
-				}
 			}
-		}
-
-		public void SetWordSize(IObject3D group, double newSize, bool rebuildUnderline = false)
-		{
-			// take out the last scale
-			double oldSize = 1.0 / lastSizeValue;
-
-			Vector3 bedCenter = new Vector3(ApplicationController.Instance.ActivePrinter.Bed.BedCenter);
-			if (group.HasChildren())
-			{
-				foreach (var object3D in group.Children)
-				{
-					object3D.Matrix = PlatingHelper.ApplyAtPosition(object3D.Matrix, Matrix4X4.CreateScale(new Vector3(oldSize, oldSize, oldSize)), new Vector3(bedCenter));
-					object3D.Matrix = PlatingHelper.ApplyAtPosition(object3D.Matrix, Matrix4X4.CreateScale(new Vector3(newSize, newSize, newSize)), new Vector3(bedCenter));
-				}
-
-				lastSizeValue = newSize;
-
-				if (rebuildUnderline)
-				{
-					RebuildUnderline(group);
-				}
-			}
-		}
-
-		public void SetWordHeight(IObject3D group, double newHeight, bool rebuildUnderline = false)
-		{
-			if (group.HasChildren())
-			{
-				foreach (var sceneItem in group.Children)
-				{
-					// take out the last scale
-					double oldHeight = lastHeightValue;
-					sceneItem.Matrix *= Matrix4X4.CreateScale(new Vector3(1, 1, 1 / oldHeight));
-
-					sceneItem.Matrix *= Matrix4X4.CreateScale(new Vector3(1, 1, newHeight));
-				}
-
-				lastHeightValue = newHeight;
-
-				if (rebuildUnderline)
-				{
-					RebuildUnderline(group);
-				}
-			}
-		}
-
-		public void ResetSettings()
-		{
-			lastHeightValue = 1;
-			lastSizeValue = 1;
 		}
 	}
 }
