@@ -141,6 +141,12 @@
     <Compile Include="ControlElements\MHPasswordTextEditWidget.cs" />
     <Compile Include="ControlElements\TextImageWidget.cs" />
     <Compile Include="CustomWidgets\DockingTabControl.cs" />
+    <Compile Include="CustomWidgets\PrintingWindow\BasicBody.cs" />
+    <Compile Include="CustomWidgets\PrintingWindow\BedStatusWidget.cs" />
+    <Compile Include="CustomWidgets\PrintingWindow\ExtruderStatusWidget.cs" />
+    <Compile Include="CustomWidgets\PrintingWindow\ProgressDial.cs" />
+    <Compile Include="CustomWidgets\PrintingWindow\TemperatureStatusWidget.cs" />
+    <Compile Include="CustomWidgets\PrintingWindow\ZAxisControls.cs" />
     <Compile Include="CustomWidgets\ResizeContainer.cs" />
     <Compile Include="CustomWidgets\SimpleButton.cs" />
     <Compile Include="CustomWidgets\NamedAction.cs" />
@@ -190,7 +196,7 @@
     <Compile Include="CustomWidgets\FatFlatClickWidget.cs" />
     <Compile Include="CustomWidgets\FlowSpacers.cs" />
     <Compile Include="CustomWidgets\LibrarySelector\FolderBreadCrumbWidget.cs" />
-    <Compile Include="CustomWidgets\PrintingWindow.cs" />
+    <Compile Include="CustomWidgets\PrintingWindow\PrintingWindow.cs" />
     <Compile Include="CustomWidgets\SlideWidget.cs" />
     <Compile Include="CustomWidgets\SolidSlider.cs" />
     <Compile Include="DataStorage\Models.cs" />
