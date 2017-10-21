@@ -80,7 +80,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				Name = "Solid Colors",
 				AlignToRightEdge = true,
-				PopupContent = new ColorSwatchSelector(item, view3DWidget)
+				PopupContent = new ColorSwatchSelector(scene)
 				{
 					HAnchor = HAnchor.Fit,
 					VAnchor = VAnchor.Fit,

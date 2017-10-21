@@ -84,11 +84,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 			var differenceItems = differenceGroup.Descendants().Where((obj) => obj.OwnerID == differenceGroup.ID).ToList();
 
+			tabContainer.AddChild(new TextWidget("Set as Hole")
+			{
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				HAnchor = HAnchor.Left,
+				AutoExpandBoundsToText = true,
+			});
+
+			int itemNumber = 1;
 			foreach(var differenceItem in differenceItems)
 			{
 				FlowLayoutWidget rowContainer = new FlowLayoutWidget();
 
-				rowContainer.AddChild(new RadioButton(differenceItem.Name));
+				rowContainer.AddChild(new CheckBox($"{itemNumber++} {differenceItem.Name}"));
 
 				tabContainer.AddChild(rowContainer);
 			}
