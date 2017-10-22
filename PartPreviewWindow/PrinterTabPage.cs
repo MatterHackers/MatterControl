@@ -46,12 +46,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private View3DConfig gcodeOptions;
 		private DoubleSolidSlider layerRenderRatioSlider;
-		private SolidSlider selectLayerSlider;
-		private TextWidget layerCountText;
-		private TextWidget layerStartText;
-		private ValueDisplayInfo currentLayerInfo;
 		private SystemWindow parentSystemWindow;
-
+		private SliceLayerSelector layerScrollbar;
 		private PrinterConfig printer;
 
 		public PrinterTabPage(PrinterConfig printer, ThemeConfig theme, string tabTitle)
@@ -94,38 +90,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.ViewMode = e.ViewMode;
 			};
 
-			int sliderWidth = (UserSettings.Instance.IsTouchScreen) ? 20 : 10;
-
-			layerCountText = new TextWidget("", pointSize: 9, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			layerScrollbar = new SliceLayerSelector(printer, sceneContext)
 			{
-				Visible = false,
-				AutoExpandBoundsToText = true
-			};
-
-			layerStartText = new TextWidget("1", pointSize: 9, textColor: ActiveTheme.Instance.PrimaryTextColor)
-			{
-				Visible = false,
-				AutoExpandBoundsToText = true
-			};
-
-			selectLayerSlider = new SolidSlider(new Vector2(), sliderWidth, 0, 1, Orientation.Vertical)
-			{
-				HAnchor = HAnchor.Right,
 				VAnchor = VAnchor.Stretch,
-				Margin = new BorderDouble(0, 80, 12, 20),
+				HAnchor = HAnchor.Right | HAnchor.Absolute,
+				Width = 60,
+				Margin = new BorderDouble(0, 80, 8, 42),
 			};
-			selectLayerSlider.ValueChanged += (s, e) =>
-			{
-				if (printer?.Bed?.RenderInfo != null)
-				{
-					sceneContext.ActiveLayerIndex = (int)(selectLayerSlider.Value + .5);
-				}
+			view3DContainer.AddChild(layerScrollbar);
 
-				// show the layer info next to the slider
-				this.Invalidate();
-			};
-
-			layerRenderRatioSlider = new DoubleSolidSlider(new Vector2(), sliderWidth);
+			layerRenderRatioSlider = new DoubleSolidSlider(new Vector2(), SliceLayerSelector.SliderWidth);
 			layerRenderRatioSlider.FirstValue = 0;
 			layerRenderRatioSlider.FirstValueChanged += (s, e) =>
 			{
@@ -145,34 +119,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				this.Invalidate();
 			};
-
-			currentLayerInfo = new ValueDisplayInfo("1000")
-			{
-				GetDisplayString = (value) => $"{value + 1}"
-			};
-
-			currentLayerInfo.EditComplete += (s, e) =>
-			{
-				sceneContext.ActiveLayerIndex = (int)currentLayerInfo.Value - 1;
-			};
+			view3DContainer.AddChild(layerRenderRatioSlider);
 
 			AddSettingsTabBar(leftToRight, view3DWidget);
-
-			view3DContainer.AddChild(layerRenderRatioSlider);
-			view3DContainer.AddChild(selectLayerSlider);
-			view3DContainer.AddChild(layerCountText);
-			view3DContainer.AddChild(layerStartText);
-
-			sceneContext.ActiveLayerChanged += SetPositionAndValue;
-			selectLayerSlider.MouseEnter += SetPositionAndValue;
 
 			sceneContext.LoadedGCodeChanged += BedPlate_LoadedGCodeChanged;
 
 			this.ShowSliceLayers = false;
-
-			currentLayerInfo.Visible = false;
-
-			view3DContainer.AddChild(currentLayerInfo);
 
 			view3DWidget.BoundsChanged += (s, e) =>
 			{
@@ -189,8 +142,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var margin = viewControls3D.Margin;
 			viewControls3D.Margin = new BorderDouble(margin.Left, margin.Bottom, margin.Right, printerActionsBar.Height);
-
-			sceneContext.ActiveLayerChanged += ActiveLayer_Changed;
 
 			SetSliderSizes();
 		}
@@ -215,7 +166,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				var slidersVisible = sceneContext.RenderInfo != null && value;
 
-				selectLayerSlider.Visible = slidersVisible;
+				layerScrollbar.Visible = slidersVisible;
 				layerRenderRatioSlider.Visible = slidersVisible;
 
 				view3DWidget.selectedObjectContainer.Visible = !showSliceLayers && sceneContext.Scene.HasSelection;
@@ -269,9 +220,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			bool gcodeLoaded = sceneContext.LoadedGCode != null;
 
-			layerCountText.Visible = gcodeLoaded;
-			layerStartText.Visible = gcodeLoaded;
-			selectLayerSlider.Visible = gcodeLoaded;
+			layerScrollbar.Visible = gcodeLoaded;
 			layerRenderRatioSlider.Visible = gcodeLoaded;
 
 			if (!gcodeLoaded)
@@ -279,12 +228,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				return;
 			}
 
-			var layerCount = sceneContext.LoadedGCode.LayerCount;
-			selectLayerSlider.Maximum = layerCount - 1;
-
-			layerCountText.Text = layerCount.ToString();
-			layerCountText.Visible = true;
-			layerStartText.Visible = true;
+			layerScrollbar.Maximum = sceneContext.LoadedGCode.LayerCount;
 
 			// ResetRenderInfo
 			sceneContext.RenderInfo = new GCodeRenderInfo(
@@ -356,7 +300,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				SetAnimationPosition();
 				layerRenderRatioSlider.Visible = false;
-				selectLayerSlider.Visible = false;
+				layerScrollbar.Visible = false;
 			}
 			else
 			{
@@ -367,7 +311,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 
 				layerRenderRatioSlider.Visible = true;
-				selectLayerSlider.Visible = true;
+				layerScrollbar.Visible = true;
 			}
 		}
 
@@ -391,56 +335,31 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void SetSliderSizes()
 		{
-			if (selectLayerSlider == null || view3DWidget == null)
+			if (layerScrollbar == null || view3DWidget == null)
 			{
 				return;
 			}
 
-			selectLayerSlider.OriginRelativeParent = new Vector2(view3DWidget.Width - 20, 78);
-			selectLayerSlider.TotalWidthInPixels = view3DWidget.Height - 100;
-
+			
 			layerRenderRatioSlider.OriginRelativeParent = new Vector2(11, 65);
 			layerRenderRatioSlider.TotalWidthInPixels = view3DWidget.Width - 45;
-
-			layerCountText.OriginRelativeParent = new Vector2(view3DWidget.Width - 26 + (layerCountText.Width / 2), view3DWidget.Height - 15);
-			layerStartText.OriginRelativeParent = new Vector2(view3DWidget.Width - 26 + (layerStartText.Width / 2), 63);
 		}
+
 		private void SetAnimationPosition()
 		{
 			int currentLayer = printer.Connection.CurrentlyPrintingLayer;
 			if (currentLayer <= 0)
 			{
-				selectLayerSlider.Value = 0;
+				layerScrollbar.Value = 0;
 				layerRenderRatioSlider.SecondValue = 0;
 				layerRenderRatioSlider.FirstValue = 0;
 			}
 			else
 			{
-				selectLayerSlider.Value = currentLayer - 1;
+				layerScrollbar.Value = currentLayer - 1;
 				layerRenderRatioSlider.SecondValue = printer.Connection.RatioIntoCurrentLayer;
 				layerRenderRatioSlider.FirstValue = 0;
 			}
-		}
-
-		private void ActiveLayer_Changed(object sender, EventArgs e)
-		{
-			if (selectLayerSlider != null
-				&& sceneContext.ActiveLayerIndex != (int)(selectLayerSlider.Value + .5))
-			{
-				selectLayerSlider.Value = sceneContext.ActiveLayerIndex;
-			}
-		}
-
-		private void SetPositionAndValue(object sender, EventArgs e)
-		{
-			UiThread.RunOnIdle(() =>
-			{
-				currentLayerInfo.Value = sceneContext.ActiveLayerIndex;
-				//currentLayerInfo.DebugShowBounds = true;
-				currentLayerInfo.OriginRelativeParent = selectLayerSlider.OriginRelativeParent
-					+ new Vector2(-currentLayerInfo.Width - 10, selectLayerSlider.PositionPixelsFromFirstValue - currentLayerInfo.Height / 2);
-				currentLayerInfo.Visible = true;
-			});
 		}
 
 		internal GuiWidget ShowGCodeOverflowMenu()
@@ -589,11 +508,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				parentSystemWindow.KeyDown -= Parent_KeyDown;
 			}
 
-			sceneContext.ActiveLayerChanged -= ActiveLayer_Changed;
 			sceneContext.LoadedGCodeChanged -= BedPlate_LoadedGCodeChanged;
-
-			sceneContext.ActiveLayerChanged -= SetPositionAndValue;
-			selectLayerSlider.MouseEnter -= SetPositionAndValue;
 
 			base.OnClosed(e);
 		}
@@ -605,10 +520,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				switch (keyEvent.KeyCode)
 				{
 					case Keys.Up:
-						sceneContext.ActiveLayerIndex += 1;
+						layerScrollbar.Value += 1;
 						break;
 					case Keys.Down:
-						sceneContext.ActiveLayerIndex -= 1;
+						layerScrollbar.Value -= 1;
 						break;
 				}
 			}
@@ -627,12 +542,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			parent.AddChild(sideBar);
 
 			sideBar.AddPage(
-				"Slice Settings".Localize(), 
+				"Slice Settings".Localize(),
 				new SliceSettingsWidget(
-					printer, 
+					printer,
 					new SettingsContext(
 						printer,
-						null, 
+						null,
 						NamedSettingsLayers.All)));
 
 			sideBar.AddPage("Controls".Localize(), new ManualPrinterControls(printer));

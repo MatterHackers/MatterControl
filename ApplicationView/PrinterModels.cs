@@ -170,7 +170,8 @@ namespace MatterHackers.MatterControl
 					// When the active layer changes we update the selected range accordingly - constrain to applicable values
 					if (this.RenderInfo != null)
 					{
-						this.RenderInfo.EndLayerIndex = Math.Min(this.LoadedGCode == null ? 0 : this.LoadedGCode.LayerCount - 1, Math.Max(activeLayerIndex, 1));
+						// TODO: Unexpected that rendering layer 2 requires that we set the range to 0-3. Seems like model should be updated to allow 0-2 to mean render up to layer 2
+						this.RenderInfo.EndLayerIndex = Math.Min(this.LoadedGCode == null ? 0 : this.LoadedGCode.LayerCount, Math.Max(activeLayerIndex + 1, 1));
 					}
 
 					ActiveLayerChanged?.Invoke(this, null);
