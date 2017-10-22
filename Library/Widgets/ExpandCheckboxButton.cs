@@ -46,12 +46,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		private ImageBuffer arrowDown;
 
-		public ExpandCheckboxButton(string text)
+		public ExpandCheckboxButton(string text, int pointSize = 11)
 		{
-			this.HAnchor = HAnchor.Stretch;
-			this.VAnchor = VAnchor.Fit;
-			this.Padding = new BorderDouble(left: 2, bottom: 2, top: 6); // Same padding as toolbar above
-
 			arrowRight = AggContext.StaticData.LoadIcon("fa-angle-right_12.png", IconColor.Theme);
 			arrowDown = AggContext.StaticData.LoadIcon("fa-angle-down_12.png", IconColor.Theme);
 
@@ -67,7 +63,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				HAnchor = HAnchor.Center
 			});
 			this.AddChild(button);
-			this.AddChild(new TextWidget(text, pointSize: 11, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			this.AddChild(new TextWidget(text, pointSize: pointSize, textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{ 
 				VAnchor = VAnchor.Center
 			});
