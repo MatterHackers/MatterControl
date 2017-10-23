@@ -51,10 +51,12 @@ namespace MatterHackers.MatterControl
 		private readonly int fizedHeightA = (int)(25 * GuiWidget.DeviceScale + .5);
 		private readonly double fizedHeightB = 34 * GuiWidget.DeviceScale;
 
-		private readonly int fontSize10 = 10;
-		private readonly int fontSize11 = 11;
-		private readonly int fontSize12 = 12;
-		private readonly int fontSize14 = 14;
+		public int FontSize7 { get; } = 7;
+		public int FontSize9 { get; } = 9;
+		public int FontSize10 { get; } = 10;
+		public int FontSize11 { get; } = 11;
+		public int FontSize12 { get; } = 12;
+		public int FontSize14 { get; } = 14;
 
 		private int shortButtonHeight = 25;
 		private int sideBarButtonWidth;
@@ -340,13 +342,13 @@ namespace MatterHackers.MatterControl
 
 			this.LinkButtonFactory = new LinkButtonFactory()
 			{
-				fontSize = fontSize11,
+				fontSize = FontSize11,
 				textColor = theme.PrimaryTextColor
 			};
 
 			this.HelpLinkFactory = new LinkButtonFactory()
 			{
-				fontSize = fontSize10,
+				fontSize = FontSize10,
 				textColor = theme.SecondaryAccentColor
 			};
 			this.PrimaryTabFillColor = new RGBA_Bytes(RGBA_Bytes.White, ActiveTheme.Instance.IsDarkTheme ?  20 : 60);
@@ -400,7 +402,7 @@ namespace MatterHackers.MatterControl
 			tabControl.TabBar.BorderColor = RGBA_Bytes.Transparent; // theme.SecondaryTextColor;
 			tabControl.TabBar.Margin = 0;
 			tabControl.TabBar.Padding = 0;
-			tabControl.TextPointSize = fontSize12;
+			tabControl.TextPointSize = FontSize12;
 
 			return tabControl;
 		}

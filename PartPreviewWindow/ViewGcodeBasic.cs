@@ -100,7 +100,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					new SectionWidget(
 						"Details".Localize(),
 						ActiveTheme.Instance.PrimaryTextColor,
-						new GCodeDetailsView(new GCodeDetails(printer, printer.Bed.LoadedGCode), 12, 9)
+						new GCodeDetailsView(new GCodeDetails(printer, printer.Bed.LoadedGCode), theme.FontSize12, theme.FontSize9)
 						{
 							HAnchor = HAnchor.Fit,
 							Margin = new BorderDouble(bottom: 3)
@@ -110,7 +110,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					new SectionWidget(
 						"Speeds".Localize(),
 						ActiveTheme.Instance.PrimaryTextColor,
-						new SpeedsLegend(sceneContext.LoadedGCode, theme, pointSize: 12)
+						new SpeedsLegend(sceneContext.LoadedGCode, theme, pointSize: theme.FontSize12)
 						{
 							HAnchor = HAnchor.Stretch,
 							Visible = sceneContext.RendererOptions.RenderSpeeds,

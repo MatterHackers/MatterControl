@@ -42,7 +42,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private EventHandler unregisterEvents;
 
-		public GCodeDetailsView(GCodeDetails gcodeDetails, int dataPointSize = 14, int headingPointSize = 11)
+		public GCodeDetailsView(GCodeDetails gcodeDetails, int dataPointSize, int headingPointSize)
 			: base(FlowDirection.TopToBottom)
 		{
 			var margin = new BorderDouble(0, 9, 0, 3);
