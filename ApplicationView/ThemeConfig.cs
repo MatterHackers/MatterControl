@@ -177,7 +177,7 @@ namespace MatterHackers.MatterControl
 			this.WizardButtons = new TextImageButtonFactory(new ButtonFactoryOptions(commonOptions)
 			{
 #if __ANDROID__
-				FontSize = fontSize14,
+				FontSize = this.FontSize14,
 				FixedHeight = fizedHeightB,
 				Margin = commonOptions.Margin * 1.2
 #endif
