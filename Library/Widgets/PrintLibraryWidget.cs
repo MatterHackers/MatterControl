@@ -92,8 +92,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			};
 			allControls.AddChild(navBar);
 
-			var showFolders = new ExpandCheckboxButton("Folders")
+			var showFolders = new ExpandCheckboxButton("Folders".Localize())
 			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit,
+				Padding = new BorderDouble(left: 2, bottom: 2, top: 6), // Same padding as toolbar above
 				Name = "Show Folders Toggle",
 				Checked = UserSettings.Instance.get("ShowContainers") == "1",
 				BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor

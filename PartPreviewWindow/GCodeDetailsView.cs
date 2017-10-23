@@ -40,50 +40,50 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private TextWidget massTextWidget;
 		private TextWidget costTextWidget;
 
-		// Cost info is only displayed when available - conditionalCostPanel is invisible when cost <= 0
-		private GuiWidget conditionalCostPanel;
-
 		private EventHandler unregisterEvents;
 
-		public GCodeDetailsView(GCodeDetails gcodeDetails)
+		public GCodeDetailsView(GCodeDetails gcodeDetails, int dataPointSize, int headingPointSize)
 			: base(FlowDirection.TopToBottom)
 		{
+			var margin = new BorderDouble(0, 9, 0, 3);
+
 			// put in the print time
-			this.AddChild(new TextWidget("Print Time".Localize() + ":", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 9));
-			this.AddChild(new TextWidget(gcodeDetails.EstimatedPrintTime, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 14)
+			this.AddChild(new TextWidget("Print Time".Localize() + ":", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: headingPointSize));
+			this.AddChild(new TextWidget(gcodeDetails.EstimatedPrintTime, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: dataPointSize)
 			{
-				Margin = new BorderDouble(0, 9, 0, 3)
+				Margin = margin
 			});
 
 			// show the filament used
-			this.AddChild(new TextWidget("Filament Length".Localize() + ":", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 9));
-			this.AddChild(new TextWidget(gcodeDetails.FilamentUsed, pointSize: 14, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			this.AddChild(new TextWidget("Filament Length".Localize() + ":", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: headingPointSize));
+			this.AddChild(new TextWidget(gcodeDetails.FilamentUsed, pointSize: dataPointSize, textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
-				Margin = new BorderDouble(0, 9, 0, 3)
+				Margin = margin
 			});
 
-			this.AddChild(new TextWidget("Filament Volume".Localize() + ":", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 9));
-			this.AddChild(new TextWidget(gcodeDetails.FilamentVolume, pointSize: 14, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			this.AddChild(new TextWidget("Filament Volume".Localize() + ":", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: headingPointSize));
+			this.AddChild(new TextWidget(gcodeDetails.FilamentVolume, pointSize: dataPointSize, textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
-				Margin = new BorderDouble(0, 9, 0, 3)
+				Margin = margin
 			});
 
-			this.AddChild(new TextWidget("Estimated Mass".Localize() + ":", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 9));
+			this.AddChild(new TextWidget("Estimated Mass".Localize() + ":", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: headingPointSize));
 
-			this.AddChild(massTextWidget = new TextWidget(gcodeDetails.EstimatedMass, pointSize: 14, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			this.AddChild(massTextWidget = new TextWidget(gcodeDetails.EstimatedMass, pointSize: dataPointSize, textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
-				Margin = new BorderDouble(0, 9, 0, 3)
+				Margin = new BorderDouble(margin.Left, 0, margin.Right, margin.Top)
 			});
 
-			conditionalCostPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			// Cost info is only displayed when available - conditionalCostPanel is invisible when cost <= 0
+			var conditionalCostPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit,
 				Visible = gcodeDetails.TotalCost > 0
 			};
 
-			conditionalCostPanel.AddChild(new TextWidget("Estimated Cost".Localize() + ":", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 9));
-			conditionalCostPanel.AddChild(costTextWidget = new TextWidget(gcodeDetails.EstimatedCost, pointSize: 14, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			conditionalCostPanel.AddChild(new TextWidget("Estimated Cost".Localize() + ":", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: headingPointSize));
+			conditionalCostPanel.AddChild(costTextWidget = new TextWidget(gcodeDetails.EstimatedCost, pointSize: dataPointSize, textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
 				Margin = new BorderDouble(top: 3)
 			});

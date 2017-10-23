@@ -4639,3 +4639,6 @@ Translated:Update In Progress: {0}
 English:Paint Material
 Translated:Paint Material
 
+English:Folders
+Translated:Folders
+
