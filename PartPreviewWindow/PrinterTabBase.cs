@@ -84,7 +84,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				return this.GetViewControls3DOverflowMenu();
 			};
 
-			bool isPrinterType = this.GetType() == typeof(PrinterTabPage);
+			bool isPrinterType = this is PrinterTabPage;
 
 			// The 3D model view
 			view3DWidget = new View3DWidget(
