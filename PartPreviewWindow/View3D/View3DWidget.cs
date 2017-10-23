@@ -832,7 +832,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public bool DragOperationActive { get; private set; }
 
-		public IObject3D DragDropObject { get; private set; }
+		public InsertionGroup DragDropObject { get; private set; }
 
 		/// <summary>
 		/// Provides a View3DWidget specific drag implementation
@@ -926,9 +926,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				if (mouseUpInBounds)
 				{
-					// Create and push the undo operation
-					this.AddUndoOperation(
-						new InsertCommand(this, this.Scene, this.DragDropObject));
+					if (this.DragDropObject.ContentAcquired)
+					{
+						this.DragDropObject.Collapse();
+					}
 				}
 				else
 				{
