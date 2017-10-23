@@ -85,25 +85,36 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (sceneContext.LoadedGCode?.LineCount > 0)
 			{
-				this.AddChild(
-					new ColorGradientWidget(sceneContext.LoadedGCode)
-					{
-						Margin = new BorderDouble(top: 55, left: 11),
-						HAnchor = HAnchor.Fit | HAnchor.Left,
-						VAnchor = VAnchor.Top,
-						Visible = sceneContext.RendererOptions.RenderSpeeds
-					});
+				var gcodeResultsPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
+				{
+					Margin = new BorderDouble(0, 0, 35, 60),
+					Padding = new BorderDouble(10, 10, 10, 8),
+					BackgroundColor = new RGBA_Bytes(0, 0, 0, theme.OverlayAlpha),
+					HAnchor = HAnchor.Absolute | HAnchor.Right,
+					VAnchor = VAnchor.Top | VAnchor.Fit,
+					Width = 175
+				};
+				this.AddChild(gcodeResultsPanel);
 
-				this.AddChild(
-					new GCodeDetailsView(new GCodeDetails(printer, printer.Bed.LoadedGCode))
-					{
-						Margin = new BorderDouble(0, 0, 35, 5),
-						Padding = new BorderDouble(10),
-						BackgroundColor = new RGBA_Bytes(0, 0, 0, theme.OverlayAlpha),
-						HAnchor = HAnchor.Right | HAnchor.Absolute,
-						VAnchor = VAnchor.Top | VAnchor.Fit,
-						Width = 150
-					});
+				gcodeResultsPanel.AddChild(
+					new SectionWidget(
+						"Details".Localize(),
+						ActiveTheme.Instance.PrimaryTextColor,
+						new GCodeDetailsView(new GCodeDetails(printer, printer.Bed.LoadedGCode), 12, 9)
+						{
+							HAnchor = HAnchor.Fit,
+							Margin = new BorderDouble(bottom: 3)
+						}));
+
+				gcodeResultsPanel.AddChild(
+					new SectionWidget(
+						"Speeds".Localize(),
+						ActiveTheme.Instance.PrimaryTextColor,
+						new ColorGradientWidget(sceneContext.LoadedGCode, theme, pointSize: 12)
+						{
+							HAnchor = HAnchor.Stretch,
+							Visible = sceneContext.RendererOptions.RenderSpeeds,
+						}));
 			}
 		}
 
