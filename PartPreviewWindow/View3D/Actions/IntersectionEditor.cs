@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
 	public class IntersectionEditor : IObject3DEditor
 	{
-		private MeshWrapperOwner group;
+		private MeshWrapperOperation group;
 		private View3DWidget view3DWidget;
 		public string Name => "Intersection";
 
@@ -52,11 +52,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		public GuiWidget Create(IObject3D group, View3DWidget view3DWidget, ThemeConfig theme)
 		{
 			this.view3DWidget = view3DWidget;
-			this.group = group as MeshWrapperOwner;
+			this.group = group as MeshWrapperOperation;
 
 			var mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 
-			if (group is MeshWrapperOwner)
+			if (group is MeshWrapperOperation)
 			{
 				AddHoleSelector(view3DWidget, mainContainer, theme);
 			}
@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 		public IEnumerable<Type> SupportedTypes() => new Type[]
 				{
-			typeof(MeshWrapperOwner),
+			typeof(MeshWrapperOperation),
 		};
 
 		private static FlowLayoutWidget CreateSettingsRow(string labelText)

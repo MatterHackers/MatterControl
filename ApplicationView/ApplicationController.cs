@@ -273,7 +273,10 @@ namespace MatterHackers.MatterControl
 				"Subtract".Localize(),
 				(scene) =>
 				{
-					var difference = new MeshWrapperOwner(scene.SelectedItem.Children);
+					var difference = new MeshWrapperOperation(scene.SelectedItem.Children)
+					{
+						ActiveEditor = nameof(SubtractEditor)
+					};
 					scene.SelectedItem.Children.Modify((list) =>
 					{
 						list.Clear();
@@ -286,11 +289,15 @@ namespace MatterHackers.MatterControl
 				"Intersect".Localize(),
 				(scene) =>
 				{
-					var intersection = new MeshWrapperOwner(scene.SelectedItem.Children);
+					var intersection = new MeshWrapperOperation(scene.SelectedItem.Children)
+					{
+						ActiveEditor = nameof(IntersectionEditor)
+					};
 					scene.SelectedItem.Children.Modify((list) =>
 					{
 						list.Clear();
 					});
+
 					scene.Children.Add(intersection);
 					scene.SelectedItem = intersection;
 				}
@@ -299,7 +306,10 @@ namespace MatterHackers.MatterControl
 				"Paint Material".Localize(),
 				(scene) =>
 				{
-					var materialPaint = new MeshWrapperOwner(scene.SelectedItem.Children);
+					var materialPaint = new MeshWrapperOperation(scene.SelectedItem.Children)
+					{
+						ActiveEditor = nameof(PaintMaterialEditor)
+					};
 					scene.SelectedItem.Children.Modify((list) =>
 					{
 						list.Clear();
