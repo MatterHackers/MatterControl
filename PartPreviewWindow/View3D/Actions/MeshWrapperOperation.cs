@@ -33,9 +33,13 @@ using MatterHackers.PolygonMesh;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
-	public class MeshWrapperOwner : Object3D
+	public class MeshWrapperOperation : Object3D
 	{
-		public MeshWrapperOwner(SafeList<IObject3D> children)
+		public MeshWrapperOperation()
+		{
+		}
+
+		public MeshWrapperOperation(SafeList<IObject3D> children)
 		{
 			Children.Modify((list) =>
 			{

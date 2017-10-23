@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
 	public class IntersectionEditor : IObject3DEditor
 	{
-		private MeshWrapperOwner group;
+		private MeshWrapperOperation group;
 		private View3DWidget view3DWidget;
 		public string Name => "Intersection";
 
@@ -52,11 +52,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		public GuiWidget Create(IObject3D group, View3DWidget view3DWidget, ThemeConfig theme)
 		{
 			this.view3DWidget = view3DWidget;
-			this.group = group as MeshWrapperOwner;
+			this.group = group as MeshWrapperOperation;
 
 			var mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 
-			if (group is MeshWrapperOwner)
+			if (group is MeshWrapperOperation)
 			{
 				AddHoleSelector(view3DWidget, mainContainer, theme);
 			}
@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 		public IEnumerable<Type> SupportedTypes() => new Type[]
 				{
-			typeof(MeshWrapperOwner),
+			typeof(MeshWrapperOperation),
 		};
 
 		private static FlowLayoutWidget CreateSettingsRow(string labelText)
@@ -142,7 +142,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				// spin up a task to remove holes from the objects in the group
 				await Task.Run(() =>
 				{
-					var participants = group.VisibleMeshes().Where((obj) => obj.OwnerID == group.ID);
+					var participants = group.Descendants().Where((obj) => obj.OwnerID == group.ID);
 
 					if (participants.Count() > 1)
 					{
@@ -163,9 +163,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 								inverse.Invert();
 								transformedKeep.Transform(inverse);
 								first.Mesh = transformedKeep;
+								remove.Visible = false;
 							}
-
-							remove.Visible = false;
 						}
 					}
 				});
