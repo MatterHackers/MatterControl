@@ -264,7 +264,7 @@
     <Compile Include="SetupWizard\InputBoxPage.cs" />
     <Compile Include="LocalizedString.cs" />
     <Compile Include="PartPreviewWindow\BedSettings.cs" />
-    <Compile Include="PartPreviewWindow\ColorGradientWidget.cs" />
+    <Compile Include="PartPreviewWindow\SpeedsLegend.cs" />
     <Compile Include="PartPreviewWindow\PartPreviewContent.cs" />
     <Compile Include="PartPreviewWindow\View3D\DebugBvh.cs" />
     <Compile Include="PartPreviewWindow\View3D\UndoCommands\UngroupCommand.cs" />

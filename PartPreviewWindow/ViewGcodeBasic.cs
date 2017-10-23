@@ -110,7 +110,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					new SectionWidget(
 						"Speeds".Localize(),
 						ActiveTheme.Instance.PrimaryTextColor,
-						new ColorGradientWidget(sceneContext.LoadedGCode, theme, pointSize: 12)
+						new SpeedsLegend(sceneContext.LoadedGCode, theme, pointSize: 12)
 						{
 							HAnchor = HAnchor.Stretch,
 							Visible = sceneContext.RendererOptions.RenderSpeeds,

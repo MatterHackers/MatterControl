@@ -1,6 +1,4 @@
-﻿using MatterHackers.Agg;
-
-/*
+﻿/*
 Copyright (c) 2014, Lars Brubaker
 All rights reserved.
 
@@ -31,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System.Collections.Generic;
 using System.Linq;
+using MatterHackers.Agg;
 
 namespace MatterHackers.GCodeVisualizer
 {
