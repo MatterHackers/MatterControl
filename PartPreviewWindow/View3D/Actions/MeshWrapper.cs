@@ -32,6 +32,10 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
+	/// <summary>
+	/// The goal of MeshWrapper is to provide a mutated version of a source item by some operation. To do so we wrap and clone all
+	/// properties of the source item and reset the source matrix to Identity, given that it now exists on the wrapping parent.
+	/// </summary>
 	public class MeshWrapper : Object3D
 	{
 		public MeshWrapper()
