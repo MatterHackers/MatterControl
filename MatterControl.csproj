@@ -168,7 +168,7 @@
     <Compile Include="PartPreviewWindow\SliceLayerSelector.cs" />
     <Compile Include="PartPreviewWindow\View3D\Actions\IntersectionEditor.cs" />
     <Compile Include="PartPreviewWindow\View3D\Actions\MeshWrapper.cs" />
-    <Compile Include="PartPreviewWindow\View3D\Actions\MeshWrapperProcessor.cs" />
+    <Compile Include="PartPreviewWindow\View3D\Actions\MeshWrapperOperation.cs" />
     <Compile Include="PartPreviewWindow\View3D\Actions\PaintMaterialEditor.cs" />
     <Compile Include="PartPreviewWindow\View3D\Actions\SubtractEditor.cs" />
     <Compile Include="PartPreviewWindow\View3D\SlicePopupMenu.cs" />
