@@ -142,7 +142,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				// spin up a task to remove holes from the objects in the group
 				await Task.Run(() =>
 				{
-					var participants = group.VisibleMeshes().Where((obj) => obj.OwnerID == group.ID);
+					var participants = group.Descendants().Where((obj) => obj.OwnerID == group.ID);
 
 					if (participants.Count() > 1)
 					{
@@ -163,9 +163,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 								inverse.Invert();
 								transformedKeep.Transform(inverse);
 								first.Mesh = transformedKeep;
+								remove.Visible = false;
 							}
-
-							remove.Visible = false;
 						}
 					}
 				});
