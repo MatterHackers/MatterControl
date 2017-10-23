@@ -46,6 +46,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		internal static Mesh placeHolderMesh;
 
+		private InteractiveScene scene;
+		private View3DWidget view3DWidget;
+
 		static InsertionGroup()
 		{
 			// Create the placeholder mesh and position it at z0
@@ -58,6 +61,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			// Add a temporary placeholder to give us some bounds
 			this.Mesh = InsertionGroup.placeHolderMesh;
+			this.scene = scene;
+			this.view3DWidget = view3DWidget;
 
 			Task.Run(async () =>
 			{
@@ -108,7 +113,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						// Notification should force invalidate and redraw
 						//progressReporter?.Invoke(1, "");
 
-						this.Children.Add((IObject3D)loadedItem);
+						this.Children.Add(loadedItem);
 
 						// Wait for content to load
 
@@ -122,39 +127,56 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 				this.Children.Remove(placeholderItem);
 
+				this.ContentAcquired = true;
+
 				ContentLoaded?.Invoke(this, null);
 
-				if (dragOperationActive())
+				if (!dragOperationActive())
 				{
-					// Setting the selection group ensures that on lose focus this object will be collapsed
-					this.ItemType = Object3DTypes.SelectionGroup;
-				}
-				else
-				{
-					// Drag operation has finished, we need to perform the collapse
-					var loadedItems = this.Children;
-
-					// Collapse our contents into the root of the scene
-					// of the scene when it loses focus
-					scene.Children.Modify(list =>
-					{
-						this.CollapseInto(list, Object3DTypes.Any);
-					});
-
-					if (scene.SelectedItem == this
-						&& loadedItems.Count > 0)
-					{
-						scene.ClearSelection();
-
-						foreach (var item in loadedItems)
-						{
-							scene.AddToSelection(item);
-						}
-					}
+					this.Collapse();
 				}
 
 				view3DWidget.PartHasBeenChanged();
 			});
+		}
+
+		/// <summary>
+		/// Indicates if all content has been acquired or if pending operations are still active
+		/// </summary>
+		public bool ContentAcquired { get; set; } = false;
+
+		/// <summary>
+		/// Collapse the InsertionGroup into the scene
+		/// </summary>
+		public void Collapse()
+		{
+			// Drag operation has finished, we need to perform the collapse
+			var loadedItems = this.Children;
+
+			// Collapse our contents into the root of the scene
+			// of the scene when it loses focus
+			scene.Children.Modify(list =>
+			{
+				this.CollapseInto(list, Object3DTypes.Any);
+			});
+
+			// Create and push the undo operation
+			foreach (var item in loadedItems)
+			{
+				view3DWidget.AddUndoOperation(
+					new InsertCommand(view3DWidget, scene, item));
+			}
+
+			if (scene.SelectedItem == this
+				&& loadedItems.Count > 0)
+			{
+				scene.ClearSelection();
+
+				foreach (var item in loadedItems)
+				{
+					scene.AddToSelection(item);
+				}
+			}
 		}
 	}
 }
