@@ -166,9 +166,10 @@
     <Compile Include="PartPreviewWindow\PopupButton.cs" />
     <Compile Include="PartPreviewWindow\SectionWidget.cs" />
     <Compile Include="PartPreviewWindow\SliceLayerSelector.cs" />
-    <Compile Include="PartPreviewWindow\View3D\Actions\DifferenceGroup.cs" />
+    <Compile Include="PartPreviewWindow\View3D\Actions\DifferenceEditor.cs" />
     <Compile Include="PartPreviewWindow\View3D\Actions\IntersectGroup.cs" />
     <Compile Include="PartPreviewWindow\View3D\Actions\MeshWrapper.cs" />
+    <Compile Include="PartPreviewWindow\View3D\Actions\MeshWrapperOwner.cs" />
     <Compile Include="PartPreviewWindow\View3D\Actions\PaintMaterialGroup.cs" />
     <Compile Include="PartPreviewWindow\View3D\SlicePopupMenu.cs" />
     <Compile Include="PrinterControls\PrinterConnections\PrinterSetup.cs" />

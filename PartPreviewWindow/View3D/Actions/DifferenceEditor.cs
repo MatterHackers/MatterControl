@@ -29,8 +29,6 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -40,78 +38,36 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.PolygonMesh;
-using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
 	public class DifferenceEditor : IObject3DEditor
 	{
+		private MeshWrapperOwner group;
 		private View3DWidget view3DWidget;
-		private IObject3D item;
-
-		public string Name => "Primitives";
+		public string Name => "Subtract";
 
 		public bool Unlocked { get; } = true;
 
-		public IEnumerable<Type> SupportedTypes() => new Type[]
-		{
-			typeof(DifferenceGroup),
-		};
-
-		public GuiWidget Create(IObject3D item, View3DWidget view3DWidget, ThemeConfig theme)
+		public GuiWidget Create(IObject3D group, View3DWidget view3DWidget, ThemeConfig theme)
 		{
 			this.view3DWidget = view3DWidget;
-			this.item = item;
+			this.group = group as MeshWrapperOwner;
 
 			var mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 
-			var tabContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			if (group is MeshWrapperOwner)
 			{
-				HAnchor = HAnchor.Stretch,
-				Visible = true,
-				Width = theme.WhiteButtonFactory.Options.FixedWidth
-			};
-			mainContainer.AddChild(tabContainer);
-
-			if (item is DifferenceGroup)
-			{
-				AddHoleSelector(view3DWidget, tabContainer, theme);
+				AddHoleSelector(view3DWidget, mainContainer, theme);
 			}
 
 			return mainContainer;
 		}
 
-		private void AddHoleSelector(View3DWidget view3DWidget, FlowLayoutWidget tabContainer, ThemeConfig theme)
+		public IEnumerable<Type> SupportedTypes() => new Type[]
 		{
-			var differenceGroup = this.item as DifferenceGroup;
-
-			var differenceItems = differenceGroup.Descendants().Where((obj) => obj.OwnerID == differenceGroup.ID).ToList();
-
-			tabContainer.AddChild(new TextWidget("Set as Hole")
-			{
-				TextColor = ActiveTheme.Instance.PrimaryTextColor,
-				HAnchor = HAnchor.Left,
-				AutoExpandBoundsToText = true,
-			});
-
-			int itemNumber = 1;
-			foreach(var differenceItem in differenceItems)
-			{
-				FlowLayoutWidget rowContainer = new FlowLayoutWidget();
-
-				rowContainer.AddChild(new CheckBox($"{itemNumber++} {differenceItem.Name}"));
-
-				tabContainer.AddChild(rowContainer);
-			}
-
-			var updateButton = theme.ButtonFactory.Generate("Update".Localize());
-			updateButton.Margin = new BorderDouble(5);
-			updateButton.HAnchor = HAnchor.Right;
-			updateButton.Click += (s, e) =>
-			{
-			};
-			tabContainer.AddChild(updateButton);
-		}
+			typeof(MeshWrapperOwner),
+		};
 
 		private static FlowLayoutWidget CreateSettingsRow(string labelText)
 		{
@@ -132,43 +88,60 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 			return rowContainer;
 		}
-	}
 
-	public class DifferenceGroup : Object3D
-	{
-		public DifferenceGroup(SafeList<IObject3D> children)
+		private void AddHoleSelector(View3DWidget view3DWidget, FlowLayoutWidget tabContainer, ThemeConfig theme)
 		{
-			Children.Modify((list) =>
+			var differenceItems = group.Descendants().Where((obj) => obj.OwnerID == group.ID).ToList();
+
+			tabContainer.AddChild(new TextWidget("Set as Hole")
 			{
-				foreach (var child in children)
-				{
-					list.Add(child);
-				}
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				HAnchor = HAnchor.Left,
+				AutoExpandBoundsToText = true,
 			});
 
-			bool first = true;
-			// Wrap every first descendant that has a mesh
-			foreach (var child in this.VisibleMeshes().ToList())
+			for (int i = 0; i < differenceItems.Count; i++)
 			{
-				// wrap the child in a DifferenceItem
-				child.Parent.Children.Modify((list) =>
+				var itemIndex = i;
+				var item = differenceItems[itemIndex];
+				FlowLayoutWidget rowContainer = new FlowLayoutWidget();
+
+				var checkBox = new CheckBox(string.IsNullOrWhiteSpace(item.Name) ? $"{itemIndex}" : $"{item.Name}")
 				{
-					list.Remove(child);
-					list.Add(new DifferenceItem(child, this.ID, !first));
-					first = false;
-				});
+					Checked = item.OutputType == PrintOutputTypes.Hole,
+					TextColor = ActiveTheme.Instance.PrimaryTextColor
+				};
+				rowContainer.AddChild(checkBox);
+
+				checkBox.CheckedStateChanged += (s, e) =>
+				{
+					// make sure the mesh on the group is not visible
+					group.ResetMeshWrappers();
+					// and set the output type for this checkbox
+					item.OutputType = checkBox.Checked ? PrintOutputTypes.Hole : PrintOutputTypes.Solid;
+				};
+
+				tabContainer.AddChild(rowContainer);
 			}
 
-			ProcessBooleans();
+			var updateButton = theme.ButtonFactory.Generate("Update".Localize());
+			updateButton.Margin = new BorderDouble(5);
+			updateButton.HAnchor = HAnchor.Right;
+			updateButton.Click += (s, e) =>
+			{
+				// make sure the mesh on the group is not visible
+				group.ResetMeshWrappers();
+				ProcessBooleans(group);
+			};
+			tabContainer.AddChild(updateButton);
 		}
 
-		private async void ProcessBooleans()
+		private async void ProcessBooleans(IObject3D group)
 		{
 			// spin up a task to remove holes from the objects in the group
 			await Task.Run(() =>
 			{
-				var container = this;
-				var participants = this.VisibleMeshes().Where(o => o.OwnerID == this.ID).ToList();
+				var participants = group.Descendants().Where(o => o.OwnerID == group.ID).ToList();
 				var removeObjects = participants.Where((obj) => obj.OutputType == PrintOutputTypes.Hole).ToList();
 				var keepObjects = participants.Where((obj) => obj.OutputType != PrintOutputTypes.Hole).ToList();
 
@@ -196,22 +169,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					}
 				}
 			});
-		}
-	}
-
-	public class DifferenceItem : MeshWrapper
-	{
-		public DifferenceItem()
-		{
-		}
-
-		public DifferenceItem(IObject3D child, string ownerId, bool makeHole)
-			: base(child, ownerId)
-		{
-			if (makeHole)
-			{
-				OutputType = PrintOutputTypes.Hole;
-			}
 		}
 	}
 }

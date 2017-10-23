@@ -27,95 +27,148 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using MatterHackers.Agg;
+using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
+using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.PolygonMesh;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
-	public class IntersectGroup : Object3D
+	public class IntersectionEditor : IObject3DEditor
 	{
-		public IntersectGroup()
-		{
-		}
+		private MeshWrapperOwner group;
+		private View3DWidget view3DWidget;
+		public string Name => "Intersection";
 
-		public IntersectGroup(SafeList<IObject3D> children)
-		{
-			Children.Modify((list) =>
-			{
-				foreach (var child in children)
-				{
-					list.Add(child);
-				}
-			});
+		public bool Unlocked { get; } = true;
 
-			bool first = true;
-			// Wrap every first descendant that has a mesh
-			foreach (var child in this.VisibleMeshes().ToList())
+		public GuiWidget Create(IObject3D group, View3DWidget view3DWidget, ThemeConfig theme)
+		{
+			this.view3DWidget = view3DWidget;
+			this.group = group as MeshWrapperOwner;
+
+			var mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
+
+			if (group is MeshWrapperOwner)
 			{
-				// wrap the child in a IntersectItem
-				child.Parent.Children.Modify((list) =>
-				{
-					list.Remove(child);
-					list.Add(new IntersectItem(child, this.ID, !first));
-					first = false;
-				});
+				AddHoleSelector(view3DWidget, mainContainer, theme);
 			}
 
-			ProcessBooleans();
+			return mainContainer;
 		}
 
-		private async void ProcessBooleans()
-		{
-			// spin up a task to remove holes from the objects in the group
-			await Task.Run(() =>
-			{
-				var container = this;
-				var participants = this.VisibleMeshes().Where((obj) => obj.OwnerID == this.ID);
-				var removeObjects = participants.Where((obj) => obj.OutputType == PrintOutputTypes.Hole);
-				var keepObjects = participants.Where((obj) => obj.OutputType != PrintOutputTypes.Hole);
-
-				if (removeObjects.Any()
-					&& keepObjects.Any())
+		public IEnumerable<Type> SupportedTypes() => new Type[]
 				{
-					foreach (var remove in removeObjects)
-					{
-						foreach (var keep in keepObjects)
-						{
-							var transformedRemove = Mesh.Copy(remove.Mesh, CancellationToken.None);
-							transformedRemove.Transform(remove.WorldMatrix());
+			typeof(MeshWrapperOwner),
+		};
 
-							var transformedKeep = Mesh.Copy(keep.Mesh, CancellationToken.None);
-							transformedKeep.Transform(keep.WorldMatrix());
-
-							transformedKeep = PolygonMesh.Csg.CsgOperations.Intersect(transformedKeep, transformedRemove);
-							var inverse = keep.WorldMatrix();
-							inverse.Invert();
-							transformedKeep.Transform(inverse);
-							keep.Mesh = transformedKeep;
-						}
-
-						remove.Visible = false;
-					}
-				}
-			});
-		}
-	}
-
-	public class IntersectItem : MeshWrapper
-	{
-		public IntersectItem()
+		private static FlowLayoutWidget CreateSettingsRow(string labelText)
 		{
-		}
-
-		public IntersectItem(IObject3D child, string ownerId, bool makeHole)
-			: base(child, ownerId)
-		{
-			if (makeHole)
+			var rowContainer = new FlowLayoutWidget(FlowDirection.LeftToRight)
 			{
-				OutputType = PrintOutputTypes.Hole;
+				HAnchor = HAnchor.Stretch,
+				Padding = new BorderDouble(5)
+			};
+
+			var label = new TextWidget(labelText + ":", textColor: ActiveTheme.Instance.PrimaryTextColor)
+			{
+				Margin = new BorderDouble(0, 0, 3, 0),
+				VAnchor = VAnchor.Center
+			};
+			rowContainer.AddChild(label);
+
+			rowContainer.AddChild(new HorizontalSpacer());
+
+			return rowContainer;
+		}
+
+		private void AddHoleSelector(View3DWidget view3DWidget, FlowLayoutWidget tabContainer, ThemeConfig theme)
+		{
+			var differenceItems = group.Descendants().Where((obj) => obj.OwnerID == group.ID).ToList();
+
+			tabContainer.AddChild(new TextWidget("Set as Hole")
+			{
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				HAnchor = HAnchor.Left,
+				AutoExpandBoundsToText = true,
+			});
+
+			for (int i = 0; i < differenceItems.Count; i++)
+			{
+				var itemIndex = i;
+				var item = differenceItems[itemIndex];
+				FlowLayoutWidget rowContainer = new FlowLayoutWidget();
+
+				var checkBox = new CheckBox(string.IsNullOrWhiteSpace(item.Name) ? $"{itemIndex}" : $"{item.Name}")
+				{
+					Checked = item.OutputType == PrintOutputTypes.Hole,
+					TextColor = ActiveTheme.Instance.PrimaryTextColor
+				};
+				rowContainer.AddChild(checkBox);
+
+				checkBox.CheckedStateChanged += (s, e) =>
+				{
+					// make sure the mesh on the group is not visible
+					group.ResetMeshWrappers();
+					// and set the output type for this checkbox
+					item.OutputType = checkBox.Checked ? PrintOutputTypes.Hole : PrintOutputTypes.Solid;
+				};
+
+				tabContainer.AddChild(rowContainer);
+			}
+
+			var updateButton = theme.ButtonFactory.Generate("Update".Localize());
+			updateButton.Margin = new BorderDouble(5);
+			updateButton.HAnchor = HAnchor.Right;
+			updateButton.Click += (s, e) =>
+			{
+				// make sure the mesh on the group is not visible
+				group.ResetMeshWrappers();
+				ProcessBooleans(group);
+			};
+			tabContainer.AddChild(updateButton);
+		}
+
+		private async void ProcessBooleans(IObject3D group)
+		{
+			{
+				// spin up a task to remove holes from the objects in the group
+				await Task.Run(() =>
+				{
+					var participants = group.VisibleMeshes().Where((obj) => obj.OwnerID == group.ID);
+
+					if (participants.Count() > 1)
+					{
+						var first = participants.First();
+
+						foreach (var remove in participants)
+						{
+							if(remove != first)
+							{
+								var transformedRemove = Mesh.Copy(remove.Mesh, CancellationToken.None);
+								transformedRemove.Transform(remove.WorldMatrix());
+
+								var transformedKeep = Mesh.Copy(first.Mesh, CancellationToken.None);
+								transformedKeep.Transform(first.WorldMatrix());
+
+								transformedKeep = PolygonMesh.Csg.CsgOperations.Intersect(transformedKeep, transformedRemove);
+								var inverse = first.WorldMatrix();
+								inverse.Invert();
+								transformedKeep.Transform(inverse);
+								first.Mesh = transformedKeep;
+							}
+
+							remove.Visible = false;
+						}
+					}
+				});
 			}
 		}
 	}

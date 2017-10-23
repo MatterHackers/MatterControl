@@ -27,31 +27,46 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System.Linq;
 using MatterHackers.DataConverters3D;
-using MatterHackers.VectorMath;
+using MatterHackers.PolygonMesh;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
-	public class MeshWrapper : Object3D
+	public class MeshWrapperOwner : Object3D
 	{
-		public MeshWrapper()
+		public MeshWrapperOwner(SafeList<IObject3D> children)
 		{
+			Children.Modify((list) =>
+			{
+				foreach (var child in children)
+				{
+					list.Add(child);
+				}
+			});
+
+			// Wrap every first descendant that has a mesh
+			foreach (var child in this.VisibleMeshes().ToList())
+			{
+				// wrap the child in a DifferenceItem
+				child.Parent.Children.Modify((list) =>
+				{
+					list.Remove(child);
+					list.Add(new MeshWrapper(child, this.ID));
+				});
+			}
 		}
 
-		public MeshWrapper(IObject3D child, string ownerId)
+		public void ResetMeshWrappers()
 		{
-			Children.Add(child);
-
-			this.Name = child.Name;
-			this.OwnerID = ownerId;
-			this.MaterialIndex = child.MaterialIndex;
-			this.ItemType = child.ItemType;
-			this.OutputType = child.OutputType;
-			this.Color = child.Color;
-			this.Mesh = child.Mesh;
-
-			this.Matrix = child.Matrix;
-			child.Matrix = Matrix4X4.Identity;
+			this.Mesh = null;
+			var participants = this.Descendants().Where(o => o.OwnerID == this.ID).ToList();
+			foreach (var item in participants)
+			{
+				item.Visible = true;
+				// set the mesh back to the child mesh
+				item.Mesh = item.Children.First().Mesh;
+			}
 		}
 	}
 }
