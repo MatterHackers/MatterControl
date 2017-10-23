@@ -1,20 +1,17 @@
-﻿using MatterHackers.Agg;
-using MatterHackers.Agg.UI;
-using MatterHackers.GCodeVisualizer;
-using MatterHackers.MatterControl.CustomWidgets;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using MatterHackers.Agg;
+using MatterHackers.Agg.UI;
+using MatterHackers.GCodeVisualizer;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class ColorGradientWidget : FlowLayoutWidget
 	{
-		public ColorGradientWidget(GCodeFile gcodeFileTest)
+		public ColorGradientWidget(GCodeFile gcodeFileTest, ThemeConfig theme, int pointSize)
 			: base(FlowDirection.TopToBottom)
 		{
-			BackgroundColor = new RGBA_Bytes(0, 0, 0, 120);
-
 			HashSet<float> speeds = new HashSet<float>();
 			PrinterMachineInstruction previousInstruction = gcodeFileTest.Instruction(0);
 			for (int i = 1; i < gcodeFileTest.LineCount; i++)
@@ -39,7 +36,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			float min = speeds.Min();
 			float max = speeds.Max();
-			int maxItems = Math.Min(7, speeds.Count());
+			int maxItems = Math.Min(7, speeds.Count);
 
 			int count = maxItems - 1;
 			float increment = (max - min) / count;
@@ -59,43 +56,37 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			for (int i = 0; i < speedColors.Length; i++)
 			{
-				RGBA_Bytes color = speedColors[i];
-				int speed = rangeValues[i];
+				int feedrate = rangeValues[i];
 
-				GuiWidget colorWidget = new GuiWidget();
-				colorWidget.Width = 20;
-				colorWidget.Height = 20;
-				colorWidget.BackgroundColor = color;
-				colorWidget.Margin = new BorderDouble(2);
-				double feedRateToMMPerSecond = speed / 60;
-
-				ColorToSpeedWidget colorToSpeedWidget = new ColorToSpeedWidget(colorWidget, feedRateToMMPerSecond);
-				this.AddChild(colorToSpeedWidget);
+				this.AddChild(
+					new ColorToSpeedWidget(speedColors[i], millimetersPerSecond: feedrate / 60, pointSize: pointSize)
+					{
+						Margin = new BorderDouble(2),
+						HAnchor = HAnchor.Stretch
+					});
 			}
 		}
 
 		public class ColorToSpeedWidget : FlowLayoutWidget
 		{
-			public string layerSpeed;
-			public ColorToSpeedWidget(GuiWidget colorWidget, double speed)
+			public ColorToSpeedWidget(RGBA_Bytes color, double millimetersPerSecond, int pointSize)
 				: base(FlowDirection.LeftToRight)
 			{
-				Margin = new BorderDouble(2);
+				this.AddChild(
+					new GuiWidget
+					{
+						VAnchor = VAnchor.Center,
+						Width = 13,
+						Height = 13,
+						BackgroundColor = color,
+					});
 
-				layerSpeed = "{0} mm/s".FormatWith(speed);
-
-				colorWidget.Margin = new BorderDouble(left: 2);
-
-				TextWidget speedTextBox = new TextWidget(layerSpeed, pointSize: 12);
-				speedTextBox.TextColor = RGBA_Bytes.White;
-				speedTextBox.VAnchor = VAnchor.Center;
-				speedTextBox.Margin = new BorderDouble(5, 0);
-
-				this.AddChild(colorWidget);
-				this.AddChild(new HorizontalSpacer());
-				this.AddChild(speedTextBox);
-
-				this.HAnchor |= HAnchor.Stretch;
+				this.AddChild(
+					new TextWidget($"{millimetersPerSecond} mm/s", pointSize: pointSize, textColor: ActiveTheme.Instance.PrimaryTextColor)
+					{
+						VAnchor = VAnchor.Center,
+						Margin = new BorderDouble(8, 0),
+					});
 			}
 		}
 	}
