@@ -46,6 +46,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		private ImageBuffer arrowDown;
 
+		private TextWidget textWidget;
+
 		public ExpandCheckboxButton(string text, int pointSize = 11)
 		{
 			arrowRight = AggContext.StaticData.LoadIcon("fa-angle-right_12.png", IconColor.Theme);
@@ -63,15 +65,22 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				HAnchor = HAnchor.Center
 			});
 			this.AddChild(button);
-			this.AddChild(new TextWidget(text, pointSize: pointSize, textColor: ActiveTheme.Instance.PrimaryTextColor)
-			{ 
-				VAnchor = VAnchor.Center
+			this.AddChild(textWidget = new TextWidget(text, pointSize: pointSize, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			{
+				VAnchor = VAnchor.Center,
+				AutoExpandBoundsToText = true
 			});
 
 			foreach(var child in this.Children)
 			{
 				child.Selectable = false;
 			}
+		}
+
+		public override string Text
+		{
+			get => textWidget.Text;
+			set => textWidget.Text = value;
 		}
 
 		public void OnCheckChanged()
