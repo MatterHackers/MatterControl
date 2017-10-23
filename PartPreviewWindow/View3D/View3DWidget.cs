@@ -791,17 +791,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnClosed(ClosedEventArgs e)
 		{
-			// Not needed but safer than without
 			viewControls3D.TransformStateChanged -= ViewControls3D_TransformStateChanged;
-
 			sceneContext.LoadedGCodeChanged -= SceneContext_LoadedGCodeChanged;
+			this.Scene.SelectionChanged -= Scene_SelectionChanged;
+			this.InteractionLayer.DrawGlOpaqueContent -= Draw_GlOpaqueContent;
 
 			if (meshViewerWidget != null)
 			{
 				meshViewerWidget.AfterDraw -= AfterDraw3DContent;
 			}
-
-			this.InteractionLayer.DrawGlOpaqueContent -= Draw_GlOpaqueContent;
 
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);

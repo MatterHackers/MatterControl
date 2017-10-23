@@ -88,8 +88,7 @@ namespace MatterHackers.MatterControl
 
 		private RectangleDouble GetThumbBounds()
 		{
-			RectangleDouble thumbBounds = sliderAttachedTo.GetThumbHitBounds();
-			return thumbBounds;
+			return sliderAttachedTo.GetThumbHitBounds();
 		}
 
 		public RectangleDouble GetTotalBounds()
@@ -166,10 +165,7 @@ namespace MatterHackers.MatterControl
 				if (newPosition0To1 != Position0To1)
 				{
 					Position0To1 = newPosition0To1;
-					if (ValueChanged != null)
-					{
-						ValueChanged(this, null);
-					}
+					ValueChanged?.Invoke(this, null);
 					Invalidate();
 				}
 			}
@@ -400,10 +396,7 @@ namespace MatterHackers.MatterControl
 				}
 				if (oldValue != Value)
 				{
-					if (ValueChanged != null)
-					{
-						ValueChanged(this, mouseEvent);
-					}
+					ValueChanged?.Invoke(this, mouseEvent);
 					Invalidate();
 				}
 			}
