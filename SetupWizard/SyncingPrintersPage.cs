@@ -24,7 +24,7 @@ namespace MatterHackers.MatterControl.SetupWizard
 			syncingDetails.AutoExpandBoundsToText = true;
 			contentRow.AddChild(syncingText);
 			contentRow.AddChild(syncingDetails);
-			Progress<SyncReportType> progress = new Progress<SyncReportType>(ReportProgress);
+			Progress<ProgressStatus> progress = new Progress<ProgressStatus>(ReportProgress);
 
 			ApplicationController.SyncPrinterProfiles("SyncingPrintersPage.ctor()", progress).ContinueWith((task) =>
 			{
@@ -54,9 +54,9 @@ namespace MatterHackers.MatterControl.SetupWizard
 			});
 		}
 
-		private void ReportProgress(SyncReportType report)
+		private void ReportProgress(ProgressStatus report)
 		{
-			syncingDetails.Text = report.actionLabel;
+			syncingDetails.Text = report.Status;
 		}
 	}
 }

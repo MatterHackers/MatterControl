@@ -92,9 +92,9 @@ namespace MatterHackers.MatterControl
 		}
 	}
 
-	public class SyncReportType
+	public class ProgressStatus
 	{
-		public string actionLabel;
-		public double percComplete;
+		public string Status { get; set; }
+		public double Progress0To1 { get; set; }
 	}
 }

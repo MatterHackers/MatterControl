@@ -159,7 +159,7 @@ namespace MatterHackers.MatterControl.SettingsManagement
 			return JsonConvert.DeserializeObject<OemProfileDictionary>(json);
 		}
 
-		public async Task ReloadOemProfiles(IProgress<SyncReportType> syncReport = null)
+		public async Task ReloadOemProfiles(IProgress<ProgressStatus> syncReport = null)
 		{
 			// In public builds this won't be assigned to and we should exit
 			if (ApplicationController.GetPublicProfileList == null)
@@ -187,9 +187,9 @@ namespace MatterHackers.MatterControl.SettingsManagement
 			await DownloadMissingProfiles(syncReport);
 		}
 
-		private async Task DownloadMissingProfiles(IProgress<SyncReportType> syncReport)
+		private async Task DownloadMissingProfiles(IProgress<ProgressStatus> syncReport)
 		{
-			SyncReportType reportValue = new SyncReportType();
+			ProgressStatus reportValue = new ProgressStatus();
 			int index = 0;
 			foreach (string oem in OemProfiles.Keys)
 			{
@@ -207,8 +207,8 @@ namespace MatterHackers.MatterControl.SettingsManagement
 
 						if (syncReport != null)
 						{
-							reportValue.actionLabel = string.Format("Downloading public profiles for {0}...", oem);
-							reportValue.percComplete = (double)index / OemProfiles.Count;
+							reportValue.Status = string.Format("Downloading public profiles for {0}...", oem);
+							reportValue.Progress0To1 = (double)index / OemProfiles.Count;
 							syncReport.Report(reportValue);
 						}
 					}

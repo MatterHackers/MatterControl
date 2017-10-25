@@ -233,7 +233,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				partProcessingInfo.progressControl.PercentComplete = percentComplete;
 			}
 
-			partProcessingInfo.operationText.Text = value;
+			partProcessingInfo.operationText.Text = value.Replace("\n", "");
 		}
 
 		public void StartReporting()
