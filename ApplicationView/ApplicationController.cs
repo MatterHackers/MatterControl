@@ -247,7 +247,7 @@ namespace MatterHackers.MatterControl
 		}
 
 		public static Func<PrinterInfo,string, Task<PrinterSettings>> GetPrinterProfileAsync;
-		public static Func<string, IProgress<SyncReportType>,Task> SyncPrinterProfiles;
+		public static Func<string, IProgress<ProgressStatus>,Task> SyncPrinterProfiles;
 		public static Func<Task<OemProfileDictionary>> GetPublicProfileList;
 		public static Func<string, Task<PrinterSettings>> DownloadPublicProfileAsync;
 
