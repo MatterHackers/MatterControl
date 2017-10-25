@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public readonly int EditButtonHeight = 44;
 
-		private ObservableCollection<GuiWidget> extruderButtons = new ObservableCollection<GuiWidget>();
+		private ObservableCollection<GuiWidget> materialButtons = new ObservableCollection<GuiWidget>();
 		private bool hasDrawn = false;
 
 		internal bool partHasBeenEdited = false;
@@ -189,7 +189,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 				this.InteractionLayer.AddChild(processingProgressControl);
 
-				var buttonSpacing = ApplicationController.Instance.Theme.ButtonSpacing;
+				var buttonSpacing = theme.ButtonSpacing;
 
 				Button addButton = smallMarginButtonFactory.Generate("Insert".Localize(), AggContext.StaticData.LoadIcon("cube.png", 14, 14, IconColor.Theme));
 				addButton.Margin = 0;
@@ -1664,7 +1664,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			widget.AddChild(buttonPanel);
 
-			extruderButtons.Clear();
+			materialButtons.Clear();
 			int extruderCount = 4;
 			for (int extruderIndex = 0; extruderIndex < extruderCount; extruderIndex++)
 			{
@@ -1678,8 +1678,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				string materialLabelText = string.Format("{0} {1}", "Material".Localize(), extruderIndex + 1);
 
 				RadioButton materialSelection = new RadioButton(materialLabelText, textColor: RGBA_Bytes.Black);
-				extruderButtons.Add(materialSelection);
-				materialSelection.SiblingRadioButtonList = extruderButtons;
+				materialButtons.Add(materialSelection);
+				materialSelection.SiblingRadioButtonList = materialButtons;
 				colorSelectionContainer.AddChild(materialSelection);
 				colorSelectionContainer.AddChild(new HorizontalSpacer());
 				int extruderIndexCanPassToClick = extruderIndex;
@@ -1763,22 +1763,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var selectedItem = Scene.SelectedItem;
 
 
-			if (extruderButtons?.Count > 0)
+			if (materialButtons?.Count > 0)
 			{
 				bool setSelection = false;
 				// Set the material selector to have the correct material button selected
-				for (int i = 0; i < extruderButtons.Count; i++)
+				for (int i = 0; i < materialButtons.Count; i++)
 				{
 					if (selectedItem.MaterialIndex == i)
 					{
-						((RadioButton)extruderButtons[i]).Checked = true;
+						((RadioButton)materialButtons[i]).Checked = true;
 						setSelection = true;
 					}
 				}
 
 				if(!setSelection)
 				{
-					((RadioButton)extruderButtons[0]).Checked = true;
+					((RadioButton)materialButtons[0]).Checked = true;
 				}
 			}
 
