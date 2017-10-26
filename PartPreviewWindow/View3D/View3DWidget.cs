@@ -69,7 +69,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private ObservableCollection<GuiWidget> materialButtons = new ObservableCollection<GuiWidget>();
 		private bool hasDrawn = false;
 
-		internal bool partHasBeenEdited = false;
 		private ProgressControl processingProgressControl;
 		private SaveAsWindow saveAsWindow = null;
 		private RGBA_Bytes[] SelectionColors = new RGBA_Bytes[] { new RGBA_Bytes(131, 4, 66), new RGBA_Bytes(227, 31, 61), new RGBA_Bytes(255, 148, 1), new RGBA_Bytes(247, 224, 23), new RGBA_Bytes(143, 212, 1) };
@@ -119,7 +118,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			this.TrackballTumbleWidget.AnchorAll();
 
-			this.InteractionLayer = new InteractionLayer(this.World, this.Scene.UndoBuffer, this.PartHasBeenChanged, this.Scene)
+			this.InteractionLayer = new InteractionLayer(this.World, this.Scene.UndoBuffer, this.Scene)
 			{
 				Name = "InteractionLayer",
 			};
@@ -168,6 +167,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			Scene.SelectionChanged += Scene_SelectionChanged;
+
+			// if the scene is invalidated invalidate the widget
+			Scene.Invalidated += (s, e) => Invalidate();
 
 			// add in the plater tools
 			{
@@ -315,6 +317,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				var mirrorButton = new PopupButton(mirrorView)
 				{
+					Name = "Mirror Button",
 					PopDirection = Direction.Up,
 					PopupContent = new MirrorControls(this, Scene),
 					Margin = buttonSpacing,
@@ -653,7 +656,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 							Scene.SelectedItem.Matrix = transformOnMouseDown;
 
-							Invalidate();
+							Scene.Invalidate();
 						}
 						break;
 					case Keys.Space:
@@ -889,7 +892,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			DragDropObject = new InsertionGroup(
 				items,
 				this,
-				this.Scene, 
+				this.Scene,
+				sceneContext.BedCenter,
 				() => this.DragOperationActive);
 
 			// Find intersection position of the mouse with the bed plane
@@ -942,7 +946,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.deferEditorTillMouseUp = false;
 				Scene_SelectionChanged(null, null);
 
-				this.PartHasBeenChanged();
+				Scene.Invalidate();
 
 				// Set focus to View3DWidget after drag-drop
 				UiThread.RunOnIdle(this.Focus);
@@ -1237,7 +1241,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 									Scene.SelectedItem = hitObject;
 								}
 
-								PartHasBeenChanged();
+								Invalidate();
 							}
 
 							transformOnMouseDown = Scene.SelectedItem.Matrix;
@@ -1474,12 +1478,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		public void PartHasBeenChanged()
-		{
-			partHasBeenEdited = true;
-			Invalidate();
-		}
-
 		internal GuiWidget AddAlignControls()
 		{
 			var widget = new IgnoredPopupWidget()
@@ -1553,7 +1551,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					this.Scene.UndoBuffer.AddAndDo(new TransformUndoCommand(transformDatas));
 
 					//Scene.SelectedItem.MaterialIndex = extruderIndexCanPassToClick;
-					PartHasBeenChanged();
+					Scene.Invalidate();
 				}
 			};
 
@@ -1688,7 +1686,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					if (Scene.HasSelection)
 					{
 						Scene.SelectedItem.MaterialIndex = extruderIndexCanPassToClick;
-						PartHasBeenChanged();
+						Scene.Invalidate();
 
 						// "View 3D Overflow Menu" // the menu to click on
 						// "Materials Option" // the item to highlight
@@ -1836,7 +1834,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			UiThread.RunOnIdle(() => processingProgressControl.Visible = false, 1.2);
 
 			this.UnlockEditControls();
-			this.PartHasBeenChanged();
+			Scene.Invalidate();
 			this.Invalidate();
 		}
 
@@ -2014,7 +2012,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// rotate it
 				objectToLayFlatGroup.Matrix = PlatingHelper.ApplyAtCenter(objectToLayFlatGroup, partLevelMatrix);
 
-				PartHasBeenChanged();
+				Scene.Invalidate();
 				Invalidate();
 			}
 
@@ -2412,7 +2410,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public MeshViewerWidget meshViewerWidget;
 
-		private InteractiveScene Scene { get; }
+		public InteractiveScene Scene { get; }
 
 		protected ViewControls3D viewControls3D { get; }
 

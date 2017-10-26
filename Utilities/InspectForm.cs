@@ -333,7 +333,7 @@ namespace MatterHackers.MatterControl
 		{
 			this.InspectedObject3D = e.Node.Tag as IObject3D;
 			this.scene.DebugItem = this.InspectedObject3D;
-			view3DWidget.PartHasBeenChanged();
+			view3DWidget.Invalidate();
 		}
 
 		private void propertyGrid1_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)

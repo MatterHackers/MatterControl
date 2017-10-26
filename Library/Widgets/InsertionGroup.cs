@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		}
 
 		// TODO: Figure out how best to collapse the InsertionGroup after the load task completes
-		public InsertionGroup(IEnumerable<ILibraryItem> items, View3DWidget view3DWidget, InteractiveScene scene, Func<bool> dragOperationActive)
+		public InsertionGroup(IEnumerable<ILibraryItem> items, View3DWidget view3DWidget, InteractiveScene scene, Vector2 bedCenter, Func<bool> dragOperationActive)
 		{
 			// Add a temporary placeholder to give us some bounds
 			this.Mesh = InsertionGroup.placeHolderMesh;
@@ -67,6 +67,10 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			Task.Run(async () =>
 			{
 				var newItemOffset = Vector2.Zero;
+				if (!dragOperationActive())
+				{
+					newItemOffset = bedCenter;
+				}
 
 				var offset = Matrix4X4.Identity;
 
@@ -136,7 +140,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					this.Collapse();
 				}
 
-				view3DWidget.PartHasBeenChanged();
+				this.Invalidate();
 			});
 		}
 

@@ -1,8 +1,13 @@
-﻿using System.Linq;
+﻿using System;
+using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using MatterHackers.DataConverters3D;
+using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrintQueue;
+using MatterHackers.MeshVisualizer;
 using NUnit.Framework;
 
 namespace MatterHackers.MatterControl.Tests.Automation
@@ -221,6 +226,82 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				return Task.CompletedTask;
 			}, overrideWidth: 1300);
+		}
+
+		[Test]
+		public async Task MirrorUndoDo()
+		{
+			await MatterControlUtilities.RunTest((testRunner) =>
+			{
+				testRunner.CloseSignInAndPrinterSelect();
+				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
+
+				testRunner.AddDefaultFileToBedplate(partName: "Row Item MatterControl - Coin.stl");
+
+				// Get View3DWidget
+				var view3D = testRunner.GetWidgetByName("View3DWidget", out _) as View3DWidget;
+				var scene = view3D.InteractionLayer.Scene;
+
+				testRunner.ClickByName("MatterControl - Coin.stl");
+				Assert.IsNotNull(scene.SelectedItem);
+
+				string scenePath = GetSceneTempPath();
+
+				// save the scene
+				string undoScene = Path.Combine(scenePath, "doScene.mcx");
+				scene.Save(undoScene, scenePath);
+				// mirror the part
+				testRunner.ClickByName("Mirror Button");
+				testRunner.ClickByName("Mirror Button X");
+				// save the scene
+				string doScene = Path.Combine(scenePath, scenePath, "undoScene.mcx");
+				// assert new save is different
+
+				// with the part selected
+				AssertUndoRedo(testRunner, scene, scenePath, undoScene, doScene);
+
+				// unselect the part
+				testRunner.ClickByName("MatterControl - Coin.stl"); // place focus back in the scene
+				testRunner.Type(" "); // clear the selection (type a space)
+				testRunner.Delay(() =>
+				{
+					return scene.SelectedItem == null;
+				}, .5);
+				Assert.IsNull(scene.SelectedItem);
+
+				// with the part unselected
+				AssertUndoRedo(testRunner, scene, scenePath, undoScene, doScene);
+
+
+				view3D.CloseOnIdle();
+				testRunner.Delay(.1);
+
+				return Task.CompletedTask;
+			}, overrideWidth: 1300);
+		}
+
+		private void AssertUndoRedo(AutomationRunner testRunner, InteractiveScene scene, string scenePath, string undoScene, string doScene)
+		{
+			testRunner.ClickByName("3D View Undo");
+
+			string postUndoScene = Path.Combine(scenePath, "postUndoScene.mcx");
+			scene.Save(postUndoScene, scenePath);
+			// assert postUndoScene == undoScene
+
+			string postDoScene = Path.Combine(scenePath, "postDoScene.mcx");
+			scene.Save(postDoScene, scenePath);
+			// assert postDoScene == doScene
+
+			testRunner.ClickByName("3D View Redo");
+		}
+
+		public static string GetSceneTempPath()
+		{
+			string tempPath = TestContext.CurrentContext.ResolveProjectPath(4, "Tests", "temp", "scenetests");
+			Directory.CreateDirectory(tempPath);
+			Object3D.AssetsPath = Path.Combine(tempPath, "Assets");
+
+			return tempPath;
 		}
 
 		[Test]

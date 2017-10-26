@@ -116,7 +116,7 @@ namespace MatterHackers.MatterControl
 			// TODO: Define and fire event and eliminate ActiveView3DWidget - model objects need to be dependency free. For the time being prevent application spin up in ClearPlate due to the call below - if MC isn't loaded, don't notify
 			if (!MatterControlApplication.IsLoading)
 			{
-				ApplicationController.Instance.ActiveView3DWidget?.PartHasBeenChanged();
+				ApplicationController.Instance.ActiveView3DWidget?.Invalidate();
 			}
 		}
 

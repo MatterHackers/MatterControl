@@ -90,7 +90,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (progress0To1 > 1.1)
 			{
-				view3DWidget?.PartHasBeenChanged();
+				view3DWidget?.Invalidate();
 				progressBar.Close();
 				if (view3DWidget != null)
 				{
