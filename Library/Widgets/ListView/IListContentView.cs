@@ -36,5 +36,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		int ThumbHeight { get; }
 		ListViewItemBase AddItem(ListViewItem item);
 		void ClearItems();
+
+		void BeginReload();
+		void EndReload();
 	}
 }

@@ -192,6 +192,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 												&& this.ItemFilter(item)
 										  select item;
 
+					itemsContentView.BeginReload();
+
 					foreach (var item in filteredResults)
 					{
 						var listViewItem = new ListViewItem(item, this);
@@ -201,6 +203,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						listViewItem.ViewWidget = itemsContentView.AddItem(listViewItem);
 						listViewItem.ViewWidget.Name = "Row Item " + item.Name;
 					}
+
+					itemsContentView.EndReload();
+
 				}
 
 				if (sourceContainer is ILibraryWritableContainer writableContainer)
@@ -241,7 +246,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				if (value is IListContentView)
 				{
-					if (contentView != null)
+					if (contentView != null
+						&& contentView != value)
 					{
 						this.ScrollArea.CloseAllChildren();
 
