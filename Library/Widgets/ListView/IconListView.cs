@@ -55,7 +55,53 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 		}
 
+		private bool reflowingContent = false;
+
 		public override void OnBoundsChanged(EventArgs e)
+		{
+			if (!reflowingContent)
+			{
+				reflowingContent = true;
+
+				int newColumnCount = RecomputeFlowValues();
+				if (newColumnCount != columnCount)
+				{
+					columnCount = newColumnCount;
+
+					// Reflow Children
+					foreach (var iconView in allIconViews)
+					{
+						iconView.Parent.RemoveChild(iconView);
+						iconView.Margin = new BorderDouble(leftRightMargin, 0);
+					}
+
+					this.CloseAllChildren();
+
+					foreach (var iconView in allIconViews)
+					{
+						iconView.ClearRemovedFlag();
+						AddColumnAndChild(iconView);
+					}
+				}
+				else
+				{
+					foreach (var iconView in allIconViews)
+					{
+						iconView.Margin = new BorderDouble(leftRightMargin, 0);
+					}
+				}
+
+				// put in padding to get the "other" side of the outside icons
+				this.Padding = new BorderDouble(leftRightMargin, 0);
+
+				reflowingContent = false;
+			}
+
+			base.OnBoundsChanged(e);
+
+		}
+
+		private int RecomputeFlowValues()
 		{
 			int padding = 4;
 			int itemWidth = ThumbWidth + (padding * 2);
@@ -63,53 +109,25 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			int newColumnCount = (int)Math.Floor(this.LocalBounds.Width / itemWidth);
 			int remainingSpace = (int)this.LocalBounds.Width - columnCount * itemWidth;
 
-			// Never collapse last column
+			// Reset position before reflow
+			cellIndex = 0;
+			rowButtonContainer = null;
+
+			// There should always be at least one visible column
 			if (newColumnCount < 1)
 			{
-				return;
+				newColumnCount = 1;
 			}
+
+			// Only center items if extra space exists
 
 			// we find the space we want between each column and the sides
-			double spacePerColumn = remainingSpace / (newColumnCount + 1);
+			double spacePerColumn = (remainingSpace > 0) ? remainingSpace / (newColumnCount + 1) : 0;
+
 			// set the margin to be 1/2 the space (it will happen on each side of each icon)
-			double marginAndPading = spacePerColumn / 2;
+			leftRightMargin = (int)(remainingSpace > 0 ? spacePerColumn / 2 : 0);
 
-			leftRightMargin = (int)marginAndPading;
-
-			if (newColumnCount != columnCount)
-			{
-				columnCount = newColumnCount;
-				this.HeavyReflowChildren();
-			}
-			else
-			{
-				foreach (var iconView in allIconViews)
-				{
-					iconView.Margin = new BorderDouble(leftRightMargin, 0);
-				}
-			}
-
-			// put in padding to get the "other" side of the outside icons
-			this.Padding = new BorderDouble(marginAndPading, 0);
-
-			base.OnBoundsChanged(e);
-		}
-
-		private void HeavyReflowChildren()
-		{
-			foreach(var iconView in allIconViews)
-			{
-				iconView.Parent.RemoveChild(iconView);
-				iconView.Margin = new BorderDouble(leftRightMargin, 0);
-			}
-
-			this.CloseAllChildren();
-
-			foreach(var iconView in allIconViews)
-			{
-				iconView.ClearRemovedFlag();
-				AddColumnAndChild(iconView);
-			}
+			return newColumnCount;
 		}
 
 		public ListViewItemBase AddItem(ListViewItem item)
@@ -152,6 +170,17 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			allIconViews.Clear();
 
 			this.CloseAllChildren();
+		}
+
+		public void BeginReload()
+		{
+			columnCount = RecomputeFlowValues();
+			reflowingContent = true;
+		}
+
+		public void EndReload()
+		{
+			reflowingContent = false;
 		}
 	}
 

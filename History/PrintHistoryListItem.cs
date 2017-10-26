@@ -63,6 +63,14 @@ namespace MatterHackers.MatterControl.PrintHistory
 		public void ClearItems()
 		{
 		}
+
+		public void BeginReload()
+		{
+		}
+
+		public void EndReload()
+		{
+		}
 	}
 
 	public class PrintHistoryListItem : ListViewItemBase
@@ -163,7 +171,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 					{
 						timeIndicator.AutoExpandBoundsToText = true;
 						timeIndicator.Text += $" ({printTask.PercentDone:0.0}%)";
-						
+
 						if(printTask.RecoveryCount > 0)
 						{
 							if (printTask.RecoveryCount == 1)

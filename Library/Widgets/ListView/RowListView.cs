@@ -59,6 +59,14 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		public void ClearItems()
 		{
 		}
+
+		public void BeginReload()
+		{
+		}
+
+		public void EndReload()
+		{
+		}
 	}
 
 	public class RowViewItem : ListViewItemBase

@@ -600,6 +600,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				Action = (selectedLibraryItems, listView) =>
 				{
 					listView.ListContentView = new RowListView();
+					listView.Reload().ConfigureAwait(false);
 				},
 			});
 
@@ -610,6 +611,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				Action = (selectedLibraryItems, listView) =>
 				{
 					listView.ListContentView = new IconListView();
+					listView.Reload().ConfigureAwait(false);
 				},
 			});
 
@@ -624,6 +626,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						ThumbWidth = 256,
 						ThumbHeight = 256,
 					};
+
+					listView.Reload().ConfigureAwait(false);
 				},
 			});
 		}
