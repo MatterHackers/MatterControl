@@ -403,9 +403,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void AddDefaultFileToBedplate(this AutomationRunner testRunner, string containerName = "Calibration Parts Row Item Collection", string partName = "Row Item Calibration - Box.stl")
 		{
-			testRunner.NavigateToFolder(containerName);
-			testRunner.ClickByName(partName);
+			if (!testRunner.NameExists(partName))
+			{
+				testRunner.NavigateToFolder(containerName);
+			}
 
+			testRunner.ClickByName(partName);
 			testRunner.AddSelectedItemToBedplate();
 			testRunner.Delay(1);
 		}

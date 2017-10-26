@@ -239,53 +239,99 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.CloseSignInAndPrinterSelect();
 				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
 
-				testRunner.AddDefaultFileToBedplate(partName: "Row Item MatterControl - Coin.stl");
-
-				// TODO: assert the part is centered on the bed
-
-
-				// Get View3DWidget
 				var view3D = testRunner.GetWidgetByName("View3DWidget", out _) as View3DWidget;
-				var scene = view3D.InteractionLayer.Scene;
+				var scene1 = view3D.InteractionLayer.Scene;
 
-				testRunner.ClickByName("MatterControl - Coin.stl");
-				Assert.IsNotNull(scene.SelectedItem);
-
-				string scenePath = GetSceneTempPath();
-
-				// save the scene
-				string preOpperation = Path.Combine(scenePath, "preOpperation.mcx");
-				scene.Save(preOpperation, scenePath);
-				// mirror the part
-				testRunner.ClickByName("Mirror Button");
-				testRunner.ClickByName("Mirror Button X");
-				// save the scene
-				string postOpperation = Path.Combine(scenePath, scenePath, "postOpperation.mcx");
-				scene.Save(postOpperation, scenePath);
-
-				// assert new save is different
-				SceneFilesAreSame(postOpperation, preOpperation, false);
-
-				// with the part selected
-				AssertUndoRedo(testRunner, scene, scenePath, preOpperation, postOpperation);
-
-				// unselect the part
-				testRunner.ClickByName("MatterControl - Coin.stl"); // place focus back in the scene
-				testRunner.Type(" "); // clear the selection (type a space)
-				testRunner.Delay(() =>
+				RunDoUndoTest(testRunner, scene1, (scene) =>
 				{
-					return scene.SelectedItem == null;
-				}, .5);
-				Assert.IsNull(scene.SelectedItem);
+					testRunner.AddDefaultFileToBedplate(partName: "Row Item MatterControl - Coin.stl");
+					// TODO: assert the part is centered on the bed
 
-				// with the part unselected
-				AssertUndoRedo(testRunner, scene, scenePath, preOpperation, postOpperation);
+					testRunner.ClickByName("MatterControl - Coin.stl");
+					Assert.IsNotNull(scene.SelectedItem);
+				},
+				(scene) =>
+				{
+					testRunner.ClickByName("Mirror Button");
+					testRunner.ClickByName("Mirror Button X");
+				});
+
+				RunDoUndoTest(testRunner, scene1, (scene) =>
+				{
+					testRunner.AddSelectedItemToBedplate();
+					testRunner.Delay(.1);
+
+					testRunner.ClickByName("MatterControl - Coin.stl");
+					Assert.IsNotNull(scene.SelectedItem);
+				},
+				(scene) =>
+				{
+					testRunner.ClickByName("Mirror Button");
+					testRunner.ClickByName("Mirror Button Y");
+				});
+
+				RunDoUndoTest(testRunner, scene1, (scene) =>
+				{
+					testRunner.AddSelectedItemToBedplate();
+					testRunner.Delay(.1);
+
+					testRunner.ClickByName("MatterControl - Coin.stl");
+					Assert.IsNotNull(scene.SelectedItem);
+				},
+				(scene) =>
+				{
+					testRunner.ClickByName("Mirror Button");
+					testRunner.ClickByName("Mirror Button Z");
+				});
 
 				view3D.CloseOnIdle();
 				testRunner.Delay(.1);
 
 				return Task.CompletedTask;
 			}, overrideWidth: 1300);
+		}
+
+		private void RunDoUndoTest(AutomationRunner testRunner,
+			InteractiveScene scene, 
+			Action<InteractiveScene> InitializeTest, 
+			Action<InteractiveScene> PerformOpperation)
+		{
+			string scenePath = GetSceneTempPath();
+
+			// clear the bed
+			testRunner.ClickByName("Bed Options Menu");
+			testRunner.ClickByName("Clear Bed Menu Item");
+
+			InitializeTest(scene);
+
+			// save the scene
+			string preOpperation = Path.Combine(scenePath, "preOpperation.mcx");
+			scene.Save(preOpperation, scenePath);
+			
+			// Do the opperation
+			PerformOpperation(scene);
+			
+			// save the scene
+			string postOpperation = Path.Combine(scenePath, scenePath, "postOpperation.mcx");
+			scene.Save(postOpperation, scenePath);
+
+			// assert new save is different
+			SceneFilesAreSame(postOpperation, preOpperation, false);
+
+			// with the part selected
+			AssertUndoRedo(testRunner, scene, scenePath, preOpperation, postOpperation);
+
+			// unselect the part
+			testRunner.ClickByName("View3DWidget"); // place focus back in the scene
+			testRunner.Type(" "); // clear the selection (type a space)
+			testRunner.Delay(() =>
+			{
+				return scene.SelectedItem == null;
+			}, .5);
+			Assert.IsNull(scene.SelectedItem);
+
+			// with the part unselected
+			AssertUndoRedo(testRunner, scene, scenePath, preOpperation, postOpperation);
 		}
 
 		private void SceneFilesAreSame(string fileName1, string fileName2, bool expectedResult)
