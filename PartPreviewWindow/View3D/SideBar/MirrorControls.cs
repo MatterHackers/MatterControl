@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using MatterHackers.Agg.UI;
+using MatterHackers.DataConverters3D;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
 using static MatterHackers.MatterControl.PrinterCommunication.PrinterConnection;
@@ -67,7 +68,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				if (scene.HasSelection)
 				{
-					scene.UndoBuffer.AddAndDo(new UndoRedoActions(() => MirrorOnAxis(Axis.X), () => MirrorOnAxis(Axis.X)));
+					IObject3D item = scene.SelectedItem;
+					scene.UndoBuffer.AddAndDo(new UndoRedoActions(() => MirrorOnAxis(Axis.X, item), () => MirrorOnAxis(Axis.X, item)));
 				}
 			};
 			buttonContainer.AddChild(mirrorXButton);
@@ -79,7 +81,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				if (scene.HasSelection)
 				{
-					scene.UndoBuffer.AddAndDo(new UndoRedoActions(() => MirrorOnAxis(Axis.Y), () => MirrorOnAxis(Axis.Y)));
+					IObject3D item = scene.SelectedItem;
+					scene.UndoBuffer.AddAndDo(new UndoRedoActions(() => MirrorOnAxis(Axis.Y, item), () => MirrorOnAxis(Axis.Y, item)));
 				}
 			};
 			buttonContainer.AddChild(mirrorYButton);
@@ -91,7 +94,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				if (scene.HasSelection)
 				{
-					scene.UndoBuffer.AddAndDo(new UndoRedoActions(() => MirrorOnAxis(Axis.Z), () => MirrorOnAxis(Axis.Z)));
+					IObject3D item = scene.SelectedItem;
+					scene.UndoBuffer.AddAndDo(new UndoRedoActions(() => MirrorOnAxis(Axis.Z, item), () => MirrorOnAxis(Axis.Z, item)));
 				}
 			};
 			buttonContainer.AddChild(mirrorZButton);
@@ -99,32 +103,26 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.AddChild(buttonContainer);
 		}
 
-		private void MirrorOnAxis(Axis axis)
+		private void MirrorOnAxis(Axis axis, IObject3D item)
 		{
-			if (!scene.HasSelection)
-			{
-				return;
-			}
-
-			var selectedItem = scene.SelectedItem;
-			selectedItem.Mesh.ReverseFaceEdges();
+			item.Mesh.ReverseFaceEdges();
 
 			switch (axis)
 			{
 				case Axis.Z:
-					selectedItem.Matrix = PlatingHelper.ApplyAtCenter(selectedItem, Matrix4X4.CreateScale(1, 1, -1));
+					item.Matrix = PlatingHelper.ApplyAtCenter(item, Matrix4X4.CreateScale(1, 1, -1));
 
 					break;
 				case Axis.X:
-					selectedItem.Matrix = PlatingHelper.ApplyAtCenter(selectedItem, Matrix4X4.CreateScale(-1, 1, 1));
+					item.Matrix = PlatingHelper.ApplyAtCenter(item, Matrix4X4.CreateScale(-1, 1, 1));
 					break;
 
 				case Axis.Y:
-					selectedItem.Matrix = PlatingHelper.ApplyAtCenter(selectedItem, Matrix4X4.CreateScale(1, -1, 1));
+					item.Matrix = PlatingHelper.ApplyAtCenter(item, Matrix4X4.CreateScale(1, -1, 1));
 					break;
 			}
 
-			selectedItem.Invalidate();
+			item.Invalidate();
 			Invalidate();
 		}
 	}

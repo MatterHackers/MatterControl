@@ -8,6 +8,9 @@ using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MeshVisualizer;
+using MatterHackers.PolygonMesh;
+using MatterHackers.VectorMath;
+using Newtonsoft.Json;
 using NUnit.Framework;
 
 namespace MatterHackers.MatterControl.Tests.Automation
@@ -238,6 +241,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.AddDefaultFileToBedplate(partName: "Row Item MatterControl - Coin.stl");
 
+				// TODO: assert the part is centered on the bed
+
+
 				// Get View3DWidget
 				var view3D = testRunner.GetWidgetByName("View3DWidget", out _) as View3DWidget;
 				var scene = view3D.InteractionLayer.Scene;
@@ -248,17 +254,20 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				string scenePath = GetSceneTempPath();
 
 				// save the scene
-				string undoScene = Path.Combine(scenePath, "doScene.mcx");
-				scene.Save(undoScene, scenePath);
+				string preOpperation = Path.Combine(scenePath, "preOpperation.mcx");
+				scene.Save(preOpperation, scenePath);
 				// mirror the part
 				testRunner.ClickByName("Mirror Button");
 				testRunner.ClickByName("Mirror Button X");
 				// save the scene
-				string doScene = Path.Combine(scenePath, scenePath, "undoScene.mcx");
+				string postOpperation = Path.Combine(scenePath, scenePath, "postOpperation.mcx");
+				scene.Save(postOpperation, scenePath);
+
 				// assert new save is different
+				SceneFilesAreSame(postOpperation, preOpperation, false);
 
 				// with the part selected
-				AssertUndoRedo(testRunner, scene, scenePath, undoScene, doScene);
+				AssertUndoRedo(testRunner, scene, scenePath, preOpperation, postOpperation);
 
 				// unselect the part
 				testRunner.ClickByName("MatterControl - Coin.stl"); // place focus back in the scene
@@ -270,8 +279,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.IsNull(scene.SelectedItem);
 
 				// with the part unselected
-				AssertUndoRedo(testRunner, scene, scenePath, undoScene, doScene);
-
+				AssertUndoRedo(testRunner, scene, scenePath, preOpperation, postOpperation);
 
 				view3D.CloseOnIdle();
 				testRunner.Delay(.1);
@@ -280,19 +288,78 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideWidth: 1300);
 		}
 
-		private void AssertUndoRedo(AutomationRunner testRunner, InteractiveScene scene, string scenePath, string undoScene, string doScene)
+		private void SceneFilesAreSame(string fileName1, string fileName2, bool expectedResult)
 		{
+			bool areSame = true;
+			string[] fileContent1 = File.ReadAllLines(fileName1);
+			string[] fileContent2 = File.ReadAllLines(fileName2);
+
+			for (int i = 0; i < Math.Min(fileContent1.Length, fileContent2.Length); i++)
+			{
+				areSame &= ValidateSceneLine(fileContent1[i], fileContent2[i]);
+				if (expectedResult)
+				{
+					Assert.IsTrue(areSame, $"Should be same ({i}): '{fileContent1[i]}' '{fileContent2[i]}");
+				}
+			}
+
+			areSame &= fileContent1.Length == fileContent2.Length;
+			if (expectedResult)
+			{
+				Assert.IsTrue(areSame, $"Should be same length: '{fileName1}' '{fileName2}");
+			}
+
+			Assert.IsTrue(expectedResult == areSame, $"Should be different: '{fileName1}' '{fileName2}");
+		}
+
+		private bool ValidateSceneLine(string v1, string v2)
+		{
+			if(v1 == v2)
+			{
+				return true;
+			}
+
+			if (v1.Contains("Matrix"))
+			{
+				double[] test = new double[] { 0, 1, 2, 3 };
+				var expected = JsonConvert.SerializeObject(test, Formatting.Indented);
+
+				// Figure out if the value content of these lines are equivelent.
+				var data1 = v1.Substring(v1.IndexOf('['), v1.IndexOf(']') - v1.IndexOf('[') +  1);
+				var matrix1 = new Matrix4X4(JsonConvert.DeserializeObject<double[]>(data1));
+				var data2 = v2.Substring(v2.IndexOf('['), v2.IndexOf(']') - v2.IndexOf('[') + 1);
+				var matrix2 = new Matrix4X4(JsonConvert.DeserializeObject<double[]>(data2));
+
+				if(matrix1.Equals(matrix2, .001))
+				{
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		private void AssertUndoRedo(AutomationRunner testRunner, InteractiveScene scene, string scenePath, string beforeEventScene, string afterEventScene)
+		{
+			// do an undo
 			testRunner.ClickByName("3D View Undo");
 
-			string postUndoScene = Path.Combine(scenePath, "postUndoScene.mcx");
-			scene.Save(postUndoScene, scenePath);
+			// save the undo data
+			string undoScene = Path.Combine(scenePath, "undoScene.mcx");
+			scene.Save(undoScene, scenePath);
+
 			// assert postUndoScene == undoScene
+			SceneFilesAreSame(beforeEventScene, undoScene, true);
 
-			string postDoScene = Path.Combine(scenePath, "postDoScene.mcx");
-			scene.Save(postDoScene, scenePath);
-			// assert postDoScene == doScene
-
+			// now rede the undo
 			testRunner.ClickByName("3D View Redo");
+
+			// save the redo
+			string redoScene = Path.Combine(scenePath, "redoScene.mcx");
+			scene.Save(redoScene, scenePath);
+			
+			// assert postDoScene == doScene
+			SceneFilesAreSame(afterEventScene, redoScene, true);
 		}
 
 		public static string GetSceneTempPath()
