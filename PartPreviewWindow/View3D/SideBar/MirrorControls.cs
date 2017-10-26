@@ -61,6 +61,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var theme = ApplicationController.Instance.Theme;
 
 			Button mirrorXButton = theme.ButtonFactory.Generate("X");
+			mirrorXButton.Name = "Mirror Button X";
 			mirrorXButton.Margin = theme.ButtonSpacing;
 			mirrorXButton.Click += (s, e) =>
 			{
@@ -72,6 +73,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			buttonContainer.AddChild(mirrorXButton);
 
 			Button mirrorYButton = theme.ButtonFactory.Generate("Y");
+			mirrorYButton.Name = "Mirror Button Y";
 			mirrorYButton.Margin = theme.ButtonSpacing;
 			mirrorYButton.Click += (s, e) =>
 			{
@@ -83,6 +85,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			buttonContainer.AddChild(mirrorYButton);
 
 			Button mirrorZButton = theme.ButtonFactory.Generate("Z");
+			mirrorZButton.Name = "Mirror Button Z";
 			mirrorZButton.Margin = theme.ButtonSpacing;
 			mirrorZButton.Click += (s, e) =>
 			{
@@ -121,7 +124,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					break;
 			}
 
-			view3DWidget.PartHasBeenChanged();
+			selectedItem.Invalidate();
 			Invalidate();
 		}
 	}

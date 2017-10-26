@@ -70,7 +70,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			});
 
 			scene.SelectLastChild();
-			view3DWidget.PartHasBeenChanged();
+			scene.Invalidate();
 		}
 
 		public void Undo()
@@ -95,7 +95,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			});
 
 			scene.SelectLastChild();
-			view3DWidget.PartHasBeenChanged();
+			scene.Invalidate();
 		}
 	}
 }

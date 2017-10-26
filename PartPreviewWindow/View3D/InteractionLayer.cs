@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private float[] specularLight1 = { 0.3f, 0.3f, 0.3f, 1.0f };
 		private float[] lightDirection1 = { 1, 1, 1, 0.0f };
 
-		public InteractionLayer(WorldView world, UndoBuffer undoBuffer, Action notifyPartChanged, InteractiveScene scene)
+		public InteractionLayer(WorldView world, UndoBuffer undoBuffer, InteractiveScene scene)
 		{
 			this.Scene = scene;
 			this.World = world;

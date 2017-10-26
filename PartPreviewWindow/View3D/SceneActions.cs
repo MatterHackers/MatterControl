@@ -89,11 +89,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					if (isGroupItemType)
 					{
 						// Create and perform the delete operation
-						var operation = new UngroupCommand(view3DWidget, Scene, Scene.SelectedItem);
-						operation.Do();
-
 						// Store the operation for undo/redo
-						Scene.UndoBuffer.Add(operation);
+						Scene.UndoBuffer.AddAndDo(new UngroupCommand(view3DWidget, Scene, Scene.SelectedItem));
 					}
 				});
 
@@ -205,7 +202,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (Scene.HasSelection)
 			{
 				// Create and perform the delete operation 
-				var deleteOperation = new DeleteCommand(view3DWidget, Scene, Scene.SelectedItem);
+				var deleteOperation = new DeleteCommand(Scene, Scene.SelectedItem);
 
 				// Store the operation for undo/redo
 				Scene.UndoBuffer.AddAndDo(deleteOperation);

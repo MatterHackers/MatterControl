@@ -38,14 +38,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		private IObject3D item;
 		private Matrix4X4 originalTransform;
-		private View3DWidget view3DWidget;
 		private InteractiveScene scene;
 
 		bool firstPass = true;
 
 		public InsertCommand(View3DWidget view3DWidget, InteractiveScene scene, IObject3D insertingItem)
 		{
-			this.view3DWidget = view3DWidget;
 			this.scene = scene;
 			this.item = insertingItem;
 			this.originalTransform = insertingItem.Matrix;
@@ -63,7 +61,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			scene.SelectedItem = item;
 
-			view3DWidget.PartHasBeenChanged();
+			scene.Invalidate();
 		}
 
 		public void Undo()
@@ -72,7 +70,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			scene.SelectLastChild();
 
-			view3DWidget.PartHasBeenChanged();
+			scene.Invalidate();
 		}
 	}
 }

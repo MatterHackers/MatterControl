@@ -438,6 +438,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 										selectedLibraryItems.Take(1),
 										printerTab.view3DWidget,
 										bedConfig.Scene,
+										bedConfig.BedCenter,
 										() => false));
 							});
 						}
@@ -638,6 +639,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						selectedLibraryItems,
 						context.View3DWidget,
 						scene,
+						context.SceneContext.BedCenter,
 						dragOperationActive: () => false));
 			});
 		}

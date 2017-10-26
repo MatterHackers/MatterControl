@@ -38,12 +38,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		private List<IObject3D> items = new List<IObject3D>();
 
-		private View3DWidget view3DWidget;
 		private InteractiveScene scene;
 
-		public DeleteCommand(View3DWidget view3DWidget, InteractiveScene scene, IObject3D deletingItem)
+		public DeleteCommand(InteractiveScene scene, IObject3D deletingItem)
 		{
-			this.view3DWidget = view3DWidget;
 			this.scene = scene;
 
 			if (deletingItem.ItemType == Object3DTypes.SelectionGroup)
@@ -77,7 +75,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			scene.SelectLastChild();
 
-			view3DWidget.PartHasBeenChanged();
+			scene.Invalidate();
 		}
 
 		public void Undo()
@@ -97,7 +95,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				scene.AddToSelection(item);
 			}
 
-			view3DWidget.PartHasBeenChanged();
+			scene.Invalidate();
 		}
 	}
 }
