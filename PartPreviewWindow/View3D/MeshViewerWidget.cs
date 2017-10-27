@@ -184,7 +184,8 @@ namespace MatterHackers.MeshVisualizer
 					}
 				}
 
-				if (nameFound)
+				if (nameFound
+					&& child.CollisionVolume != null)
 				{
 					AxisAlignedBoundingBox bounds = child.CollisionVolume.GetAxisAlignedBoundingBox();
 					bounds = bounds.NewTransformed(child.TotalTransform);
@@ -202,7 +203,7 @@ namespace MatterHackers.MeshVisualizer
 						Vector2 objectCenterScreenSpace = this.World.GetScreenPosition(renderPosition);
 						Point2D screenPositionOfObject3D = new Point2D((int)objectCenterScreenSpace.x, (int)objectCenterScreenSpace.y);
 
-						foundChildren.Add(new WidgetAndPosition(this, screenPositionOfObject3D, object3DName));
+						foundChildren.Add(new WidgetAndPosition(this, screenPositionOfObject3D, object3DName, child));
 					}
 				}
 			}
@@ -250,7 +251,7 @@ namespace MatterHackers.MeshVisualizer
 						Vector2 objectCenterScreenSpace = this.World.GetScreenPosition(renderPosition);
 						Point2D screenPositionOfObject3D = new Point2D((int)objectCenterScreenSpace.x, (int)objectCenterScreenSpace.y);
 
-						foundChildren.Add(new WidgetAndPosition(this, screenPositionOfObject3D, object3DName));
+						foundChildren.Add(new WidgetAndPosition(this, screenPositionOfObject3D, object3DName, child));
 					}
 				}
 			}

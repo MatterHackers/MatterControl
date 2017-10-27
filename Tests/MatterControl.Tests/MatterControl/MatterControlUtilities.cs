@@ -40,6 +40,7 @@ using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.GuiAutomation;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintLibrary;
@@ -401,15 +402,20 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.Delay(.5);
 		}
 
-		public static void AddDefaultFileToBedplate(this AutomationRunner testRunner, string containerName = "Calibration Parts Row Item Collection", string partName = "Row Item Calibration - Box.stl")
+		public static void AddItemToBedplate(this AutomationRunner testRunner, string containerName = "Calibration Parts Row Item Collection", string partName = "Row Item Calibration - Box.stl")
 		{
-			if (!testRunner.NameExists(partName))
+			if (!testRunner.NameExists(partName, .1) && !string.IsNullOrEmpty(containerName))
 			{
 				testRunner.NavigateToFolder(containerName);
 			}
 
-			testRunner.ClickByName(partName);
-			testRunner.AddSelectedItemToBedplate();
+			var partWidget = testRunner.GetWidgetByName(partName, out _) as ListViewItemBase;
+			if (!partWidget.IsSelected)
+			{
+				testRunner.ClickByName(partName);
+			}
+			testRunner.ClickByName("Print Library Overflow Menu");
+			testRunner.ClickByName("Add to Plate Menu Item");
 			testRunner.Delay(1);
 		}
 
@@ -428,12 +434,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			// Give the SaveAs window time to close before returning to the caller
 			testRunner.Delay(2);
-		}
-
-		public static void AddSelectedItemToBedplate(this AutomationRunner testRunner)
-		{
-			testRunner.ClickByName("Print Library Overflow Menu");
-			testRunner.ClickByName("Add to Plate Menu Item");
 		}
 
 		public static void WaitForPrintFinished(this AutomationRunner testRunner, int maxSeconds = 500)
