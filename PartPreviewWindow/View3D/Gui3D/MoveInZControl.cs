@@ -63,6 +63,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public MoveInZControl(IInteractionVolumeContext context)
 			: base(context)
 		{
+			Name = "MoveInZControl";
 			zHeightDisplayInfo = new ValueDisplayInfo()
 			{
 				ForceHide = () =>

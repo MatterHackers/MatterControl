@@ -233,7 +233,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		}
 
 		[Test]
-		public async Task MirrorUndoDo()
+		public async Task ValidateDoUndoOnSceneOperations()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
@@ -243,55 +243,27 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				var view3D = testRunner.GetWidgetByName("View3DWidget", out _) as View3DWidget;
 				var scene1 = view3D.InteractionLayer.Scene;
 
+				testRunner.AddDefaultFileToBedplate(partName: "Row Item MatterControl - Coin.stl");
+
+				// test z translation
 				RunDoUndoTest(testRunner, scene1, (scene) =>
 				{
-					testRunner.AddDefaultFileToBedplate(partName: "Row Item MatterControl - Coin.stl");
-					// TODO: assert the part is centered on the bed
-
-					testRunner.ClickByName("MatterControl - Coin.stl");
-					Assert.IsNotNull(scene.SelectedItem);
+					AddCoinToBed(testRunner, scene);
 				},
 				(scene) =>
 				{
-					testRunner.ClickByName("Mirror Button");
-					testRunner.ClickByName("Mirror Button X");
+					testRunner.DragDropByName("MoveInZControl", "MoveInZControl", offsetDrop: new Point2D(0, 40));
 				});
 
+				// test mirror operations
+				TestMirrorDoUndo(testRunner, scene1, "Mirror Button X");
+				TestMirrorDoUndo(testRunner, scene1, "Mirror Button Y");
+				TestMirrorDoUndo(testRunner, scene1, "Mirror Button Z");
+
+				// test drag x y translation
 				RunDoUndoTest(testRunner, scene1, (scene) =>
 				{
-					testRunner.AddSelectedItemToBedplate();
-					testRunner.Delay(.1);
-
-					testRunner.ClickByName("MatterControl - Coin.stl");
-					Assert.IsNotNull(scene.SelectedItem);
-				},
-				(scene) =>
-				{
-					testRunner.ClickByName("Mirror Button");
-					testRunner.ClickByName("Mirror Button Y");
-				});
-
-				RunDoUndoTest(testRunner, scene1, (scene) =>
-				{
-					testRunner.AddSelectedItemToBedplate();
-					testRunner.Delay(.1);
-
-					testRunner.ClickByName("MatterControl - Coin.stl");
-					Assert.IsNotNull(scene.SelectedItem);
-				},
-				(scene) =>
-				{
-					testRunner.ClickByName("Mirror Button");
-					testRunner.ClickByName("Mirror Button Z");
-				});
-
-				RunDoUndoTest(testRunner, scene1, (scene) =>
-				{
-					testRunner.AddSelectedItemToBedplate();
-					testRunner.Delay(.1);
-
-					testRunner.ClickByName("MatterControl - Coin.stl");
-					Assert.IsNotNull(scene.SelectedItem);
+					AddCoinToBed(testRunner, scene);
 				},
 				(scene) =>
 				{
@@ -303,6 +275,29 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				return Task.CompletedTask;
 			}, overrideWidth: 1300, maxTimeToRun: 200);
+		}
+
+		private static void AddCoinToBed(AutomationRunner testRunner, InteractiveScene scene)
+		{
+			testRunner.AddSelectedItemToBedplate();
+			testRunner.Delay(.1);
+			// TODO: assert the part is centered on the bed
+
+			testRunner.ClickByName("MatterControl - Coin.stl");
+			Assert.IsNotNull(scene.SelectedItem);
+		}
+
+		private void TestMirrorDoUndo(AutomationRunner testRunner, InteractiveScene scene1, string mirrorButtonName)
+		{
+			RunDoUndoTest(testRunner, scene1, (scene) =>
+			{
+				AddCoinToBed(testRunner, scene);
+			},
+			(scene) =>
+			{
+				testRunner.ClickByName("Mirror Button");
+				testRunner.ClickByName(mirrorButtonName);
+			});
 		}
 
 		private void RunDoUndoTest(AutomationRunner testRunner,

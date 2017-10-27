@@ -48,6 +48,8 @@ namespace MatterHackers.MeshVisualizer
 		public bool MouseDownOnControl;
 		public Matrix4X4 TotalTransform = Matrix4X4.Identity;
 
+		public string Name { get; set; }
+
 		private bool mouseOver = false;
 
 		public InteractionVolume(IInteractionVolumeContext meshViewerToDrawWith)
