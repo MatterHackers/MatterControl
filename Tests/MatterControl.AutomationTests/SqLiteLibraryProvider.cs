@@ -15,7 +15,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
-				testRunner.AddDefaultFileToBedplate();
+				testRunner.AddItemToBedplate();
 
 				var view3D = testRunner.GetWidgetByName("View3DWidget", out _) as View3DWidget;
 				var scene = view3D.InteractionLayer.Scene;

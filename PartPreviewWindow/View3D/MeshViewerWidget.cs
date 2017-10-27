@@ -162,6 +162,52 @@ namespace MatterHackers.MeshVisualizer
 
 		public override void FindNamedChildrenRecursive(string nameToSearchFor, List<WidgetAndPosition> foundChildren, RectangleDouble touchingBounds, SearchType seachType, bool allowInvalidItems = true)
 		{
+			foreach (InteractionVolume child in interactionLayer.InteractionVolumes)
+			{
+				string object3DName = child.Name;
+
+				bool nameFound = false;
+
+				if (seachType == SearchType.Exact)
+				{
+					if (object3DName == nameToSearchFor)
+					{
+						nameFound = true;
+					}
+				}
+				else
+				{
+					if (nameToSearchFor == ""
+						|| object3DName.Contains(nameToSearchFor))
+					{
+						nameFound = true;
+					}
+				}
+
+				if (nameFound
+					&& child.CollisionVolume != null)
+				{
+					AxisAlignedBoundingBox bounds = child.CollisionVolume.GetAxisAlignedBoundingBox();
+					bounds = bounds.NewTransformed(child.TotalTransform);
+
+					RectangleDouble screenBoundsOfObject3D = RectangleDouble.ZeroIntersection;
+					for (int i = 0; i < 4; i++)
+					{
+						screenBoundsOfObject3D.ExpandToInclude(this.World.GetScreenPosition(bounds.GetTopCorner(i)));
+						screenBoundsOfObject3D.ExpandToInclude(this.World.GetScreenPosition(bounds.GetBottomCorner(i)));
+					}
+
+					if (touchingBounds.IsTouching(screenBoundsOfObject3D))
+					{
+						Vector3 renderPosition = bounds.Center;
+						Vector2 objectCenterScreenSpace = this.World.GetScreenPosition(renderPosition);
+						Point2D screenPositionOfObject3D = new Point2D((int)objectCenterScreenSpace.x, (int)objectCenterScreenSpace.y);
+
+						foundChildren.Add(new WidgetAndPosition(this, screenPositionOfObject3D, object3DName, child));
+					}
+				}
+			}
+
 			foreach (var child in scene.Children)
 			{
 				string object3DName = child.Name;
@@ -205,7 +251,7 @@ namespace MatterHackers.MeshVisualizer
 						Vector2 objectCenterScreenSpace = this.World.GetScreenPosition(renderPosition);
 						Point2D screenPositionOfObject3D = new Point2D((int)objectCenterScreenSpace.x, (int)objectCenterScreenSpace.y);
 
-						foundChildren.Add(new WidgetAndPosition(this, screenPositionOfObject3D, object3DName));
+						foundChildren.Add(new WidgetAndPosition(this, screenPositionOfObject3D, object3DName, child));
 					}
 				}
 			}

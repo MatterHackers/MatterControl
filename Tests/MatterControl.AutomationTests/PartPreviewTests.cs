@@ -26,7 +26,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
-				testRunner.AddDefaultFileToBedplate();
+				testRunner.AddItemToBedplate();
 
 				// Get View3DWidget
 				View3DWidget view3D = testRunner.GetWidgetByName("View3DWidget", out _, 3) as View3DWidget;
@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
-				testRunner.AddDefaultFileToBedplate();
+				testRunner.AddItemToBedplate();
 
 				// Get View3DWidget and count Scene.Children before Copy button is clicked
 				View3DWidget view3D = testRunner.GetWidgetByName("View3DWidget", out _, 3) as View3DWidget;
@@ -81,6 +81,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// Get MeshGroupCount before Group is clicked
 				Assert.AreEqual(6, scene.Children.Count, "Scene should have 6 parts after copy loop");
 
+				// select all
 				testRunner.Type("^a");
 
 				testRunner.ClickByName("3D View Group");
@@ -102,7 +103,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
-				testRunner.AddDefaultFileToBedplate();
+				testRunner.AddItemToBedplate();
 
 				var view3D = testRunner.GetWidgetByName("View3DWidget", out _) as View3DWidget;
 				var scene = view3D.InteractionLayer.Scene;
@@ -137,7 +138,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
-				testRunner.AddDefaultFileToBedplate();
+				testRunner.AddItemToBedplate();
 
 				var view3D = testRunner.GetWidgetByName("View3DWidget", out _) as View3DWidget;
 				var scene = view3D.InteractionLayer.Scene;
@@ -192,7 +193,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
-				testRunner.AddDefaultFileToBedplate();
+				testRunner.AddItemToBedplate();
 
 				// Get View3DWidget
 				var view3D = testRunner.GetWidgetByName("View3DWidget", out _) as View3DWidget;
@@ -233,69 +234,72 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		}
 
 		[Test]
-		public async Task MirrorUndoDo()
+		public async Task ValidateDoUndoOnSceneOperations()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
+				AutomationRunner.TimeToMoveMouse = .1;
 				testRunner.CloseSignInAndPrinterSelect();
 				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
 
 				var view3D = testRunner.GetWidgetByName("View3DWidget", out _) as View3DWidget;
 				var scene1 = view3D.InteractionLayer.Scene;
 
+				testRunner.NavigateToFolder("Calibration Parts Row Item Collection");
+
+				// test group 2 objects
 				RunDoUndoTest(testRunner, scene1, (scene) =>
 				{
-					testRunner.AddDefaultFileToBedplate(partName: "Row Item MatterControl - Coin.stl");
-					// TODO: assert the part is centered on the bed
-
-					testRunner.ClickByName("MatterControl - Coin.stl");
-					Assert.IsNotNull(scene.SelectedItem);
+					AddBoxABoxBToBed(testRunner, scene);
+					Assert.AreEqual(2, scene1.Children.Count());
 				},
 				(scene) =>
 				{
-					testRunner.ClickByName("Mirror Button");
-					testRunner.ClickByName("Mirror Button X");
+					testRunner.ClickByName("View3DWidget"); // place focus back in the scene
+					testRunner.Type("^a"); // select all
+					testRunner.ClickByName("3D View Group");
+					testRunner.ClickByName("View3DWidget"); // place focus back in the scene
+					testRunner.Type(" "); // select none
+					testRunner.Delay(() => scene1.Children.Count() == 1, .5);
+					Assert.AreEqual(1, scene1.Children.Count());
+					testRunner.Delay(() => scene.SelectedItem == null, .5);
 				});
 
+				// test mirror operations
+				TestMirrorDoUndo(testRunner, scene1, "Mirror Button X");
+				TestMirrorDoUndo(testRunner, scene1, "Mirror Button Y");
+				TestMirrorDoUndo(testRunner, scene1, "Mirror Button Z");
+
+				var coinName = "MatterControl - Coin.stl";
+				// test drag x y translation
 				RunDoUndoTest(testRunner, scene1, (scene) =>
 				{
-					testRunner.AddSelectedItemToBedplate();
-					testRunner.Delay(.1);
-
-					testRunner.ClickByName("MatterControl - Coin.stl");
-					Assert.IsNotNull(scene.SelectedItem);
+					AddCoinToBed(testRunner, scene);
 				},
 				(scene) =>
 				{
-					testRunner.ClickByName("Mirror Button");
-					testRunner.ClickByName("Mirror Button Y");
+					var part = testRunner.GetObjectByName(coinName, out _) as IObject3D;
+					var start = part.GetAxisAlignedBoundingBox(Matrix4X4.Identity).Center;
+					testRunner.DragDropByName(coinName, coinName, offsetDrop: new Point2D(40, 0));
+					var end = part.GetAxisAlignedBoundingBox(Matrix4X4.Identity).Center;
+					Assert.Greater(end.x, start.x);
+					Assert.Less(end.y, start.y);
+					Assert.True(Math.Abs(end.z - start.z) < .001);
 				});
 
+				// test z translation
 				RunDoUndoTest(testRunner, scene1, (scene) =>
 				{
-					testRunner.AddSelectedItemToBedplate();
-					testRunner.Delay(.1);
-
-					testRunner.ClickByName("MatterControl - Coin.stl");
-					Assert.IsNotNull(scene.SelectedItem);
+					AddCoinToBed(testRunner, scene);
 				},
 				(scene) =>
 				{
-					testRunner.ClickByName("Mirror Button");
-					testRunner.ClickByName("Mirror Button Z");
-				});
-
-				RunDoUndoTest(testRunner, scene1, (scene) =>
-				{
-					testRunner.AddSelectedItemToBedplate();
-					testRunner.Delay(.1);
-
-					testRunner.ClickByName("MatterControl - Coin.stl");
-					Assert.IsNotNull(scene.SelectedItem);
-				},
-				(scene) =>
-				{
-					testRunner.DragDropByName("MatterControl - Coin.stl", "MatterControl - Coin.stl", offsetDrop: new Point2D(40, 0));
+					var part = testRunner.GetObjectByName(coinName, out _) as IObject3D;
+					var startZ = part.GetAxisAlignedBoundingBox(Matrix4X4.Identity).Center.z;
+					// TODO: the offest drag is due to the aabb not being a great representation of the object, improve that and remove this offset.
+					testRunner.DragDropByName("MoveInZControl", "MoveInZControl", offsetDrag: new Point2D(8, 0), offsetDrop: new Point2D(0, 40));
+					var endZ = part.GetAxisAlignedBoundingBox(Matrix4X4.Identity).Center.z;
+					Assert.Greater(endZ, startZ);
 				});
 
 				view3D.CloseOnIdle();
@@ -305,6 +309,46 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideWidth: 1300, maxTimeToRun: 200);
 		}
 
+		private static void AddCoinToBed(AutomationRunner testRunner, InteractiveScene scene)
+		{
+			testRunner.AddItemToBedplate(partName: "Row Item MatterControl - Coin.stl");
+			testRunner.Delay(.1);
+			// TODO: assert the part is centered on the bed
+
+			testRunner.ClickByName("MatterControl - Coin.stl");
+			Assert.IsNotNull(scene.SelectedItem);
+		}
+
+		private static void AddBoxABoxBToBed(AutomationRunner testRunner, InteractiveScene scene)
+		{
+			var item = "Calibration - Box.stl";
+			testRunner.AddItemToBedplate(item);
+			testRunner.Delay(.1);
+			// move the first one over
+			testRunner.DragDropByName(item, item, offsetDrop: new Point2D(40, 40));
+			var part = testRunner.GetObjectByName(item, out _) as IObject3D;
+			part.Name = "BoxA";
+
+			testRunner.AddItemToBedplate();
+			testRunner.Delay(.1);
+
+			part = testRunner.GetObjectByName(item, out _) as IObject3D;
+			part.Name = "BoxB";
+		}
+
+		private void TestMirrorDoUndo(AutomationRunner testRunner, InteractiveScene scene1, string mirrorButtonName)
+		{
+			RunDoUndoTest(testRunner, scene1, (scene) =>
+			{
+				AddCoinToBed(testRunner, scene);
+			},
+			(scene) =>
+			{
+				testRunner.ClickByName("Mirror Button");
+				testRunner.ClickByName(mirrorButtonName);
+			});
+		}
+
 		private void RunDoUndoTest(AutomationRunner testRunner,
 			InteractiveScene scene, 
 			Action<InteractiveScene> InitializeTest, 
@@ -312,9 +356,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			string scenePath = GetSceneTempPath();
 
-			// clear the bed
-			testRunner.ClickByName("Bed Options Menu");
-			testRunner.ClickByName("Clear Bed Menu Item");
+			if (scene.Children.Count() > 0)
+			{
+				// clear the bed
+				testRunner.ClickByName("Bed Options Menu");
+				testRunner.ClickByName("Clear Bed Menu Item");
+			}
 
 			InitializeTest(scene);
 
@@ -338,10 +385,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			// unselect the part
 			testRunner.ClickByName("View3DWidget"); // place focus back in the scene
 			testRunner.Type(" "); // clear the selection (type a space)
-			testRunner.Delay(() =>
-			{
-				return scene.SelectedItem == null;
-			}, .5);
+			testRunner.Delay(() => scene.SelectedItem == null, .5);
 			Assert.IsNull(scene.SelectedItem);
 
 			// with the part unselected
@@ -379,7 +423,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				return true;
 			}
 
-			if (v1.Contains("Matrix"))
+			if (v1.Contains("Matrix")
+				&& v2.Contains("Matrix"))
 			{
 				double[] test = new double[] { 0, 1, 2, 3 };
 				var expected = JsonConvert.SerializeObject(test, Formatting.Indented);
@@ -438,7 +483,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
-				testRunner.AddDefaultFileToBedplate();
+				testRunner.AddItemToBedplate();
 
 				var view3D = testRunner.GetWidgetByName("View3DWidget", out _) as View3DWidget;
 

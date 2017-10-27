@@ -22,8 +22,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.AddTestAssetsToLibrary("Rook.amf");
 
-				testRunner.ClickByName("Row Item Rook");
-				testRunner.AddSelectedItemToBedplate();
+				testRunner.AddItemToBedplate("", "Row Item Rook");
 
 				testRunner.SwitchToAdvancedSliceSettings();
 				testRunner.ClickByName("Raft / Priming Tab");
@@ -57,7 +56,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("Layer(s) To Pause Field");
 					testRunner.Type("4;2;a;not;6");
 
-					testRunner.AddDefaultFileToBedplate();
+					testRunner.AddItemToBedplate();
 
 					testRunner.StartSlicing();
 
@@ -100,7 +99,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("Layer(s) To Pause Field");
 					testRunner.Type("2");
 
-					testRunner.AddDefaultFileToBedplate();
+					testRunner.AddItemToBedplate();
 
 					testRunner.StartSlicing();
 
@@ -203,7 +202,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					// change material
 					var dropDownLists = testRunner.GetWidgetsByName("Hotend Preset Selector");
 					Assert.AreEqual(1, dropDownLists.Count, "There is one. The slice settings and the pop out.");
-					DropDownList materialSelector = dropDownLists[0].widget as DropDownList;
+					DropDownList materialSelector = dropDownLists[0].Widget as DropDownList;
 					Assert.AreEqual("", materialSelector.SelectedValue);
 
 					testRunner.ClickByName("Hotend Preset Selector");

@@ -36,7 +36,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.Type("{BACKSPACE}");
 					testRunner.Type("G28");
 
-					testRunner.AddDefaultFileToBedplate();
+					testRunner.AddItemToBedplate();
 
 					testRunner.ClickByName("Start Print Button");
 
@@ -98,7 +98,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.Delay(1);
 
 					// print a part
-					testRunner.AddDefaultFileToBedplate();
+					testRunner.AddItemToBedplate();
 					testRunner.ClickByName("Start Print Button");
 
 					testRunner.Delay(() => emulator.ZPosition > 5, 3);
@@ -231,7 +231,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("Pin Settings Button");
 
 					// print a part
-					testRunner.AddDefaultFileToBedplate();
+					testRunner.AddItemToBedplate();
 					testRunner.ClickByName("Start Print Button");
 
 					// turn on line error simulation
@@ -273,7 +273,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				{
 					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
 
-					testRunner.AddDefaultFileToBedplate();
+					testRunner.AddItemToBedplate();
 
 					testRunner.SwitchToControlsTab();
 
@@ -365,7 +365,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				{
 					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
 
-					testRunner.AddDefaultFileToBedplate();
+					testRunner.AddItemToBedplate();
 
 					testRunner.SwitchToControlsTab();
 
@@ -491,7 +491,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
 
-					testRunner.AddDefaultFileToBedplate();
+					testRunner.AddItemToBedplate();
 					testRunner.ClickByName("Start Print Button");
 
 					int fanChangedCount = 0;
