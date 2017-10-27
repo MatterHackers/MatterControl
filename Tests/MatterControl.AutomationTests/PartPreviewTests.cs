@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using MatterHackers.Agg;
 using MatterHackers.DataConverters3D;
 using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl.PartPreviewWindow;
@@ -284,11 +285,24 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("Mirror Button Z");
 				});
 
+				RunDoUndoTest(testRunner, scene1, (scene) =>
+				{
+					testRunner.AddSelectedItemToBedplate();
+					testRunner.Delay(.1);
+
+					testRunner.ClickByName("MatterControl - Coin.stl");
+					Assert.IsNotNull(scene.SelectedItem);
+				},
+				(scene) =>
+				{
+					testRunner.DragDropByName("MatterControl - Coin.stl", "MatterControl - Coin.stl", offsetDrop: new Point2D(40, 0));
+				});
+
 				view3D.CloseOnIdle();
 				testRunner.Delay(.1);
 
 				return Task.CompletedTask;
-			}, overrideWidth: 1300);
+			}, overrideWidth: 1300, maxTimeToRun: 200);
 		}
 
 		private void RunDoUndoTest(AutomationRunner testRunner,
