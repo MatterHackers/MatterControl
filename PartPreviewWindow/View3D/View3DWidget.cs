@@ -444,7 +444,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Fit | VAnchor.Top,
 				HAnchor = HAnchor.Right,
 				Margin = new BorderDouble(0, 0, 0, viewControls3D.LocalBounds.Height),
-				SpliterBarColor = new RGBA_Bytes(RGBA_Bytes.Red, 30),
+				SpliterBarColor = ApplicationController.Instance.Theme.SplitterBackground,
 				SplitterWidth = ApplicationController.Instance.Theme.SplitterWidth,
 				Visible = false,
 			};
