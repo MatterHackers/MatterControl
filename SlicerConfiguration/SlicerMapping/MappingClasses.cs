@@ -520,6 +520,37 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 	}
 
+	public class OverrideSpeedOnSlaPrinters : AsPercentOfReferenceOrDirect
+	{
+		public OverrideSpeedOnSlaPrinters(string canonicalSettingsName, string exportedName, string originalReference, double scale = 1)
+			: base(canonicalSettingsName, exportedName, originalReference, scale)
+		{
+		}
+
+		public override string Value
+		{
+			get
+			{
+				if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.sla_printer))
+				{
+					// return the speed based on the layer height
+					var speedAt025 = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.laser_speed_025);
+					var speedAt100 = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.laser_speed_100);
+					var deltaSpeed = speedAt100 - speedAt025;
+
+					var layerHeight = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.layer_height);
+					var deltaHeight = .1 - .025;
+					var heightRatio = (layerHeight - .025) / deltaHeight;
+					return (speedAt025 + deltaSpeed * heightRatio).ToString();
+				}
+				else
+				{
+					return base.Value;
+				}
+			}
+		}
+	}
+
 	public class AsPercentOfReferenceOrDirect : MappedSetting
 	{
 		string originalReference;

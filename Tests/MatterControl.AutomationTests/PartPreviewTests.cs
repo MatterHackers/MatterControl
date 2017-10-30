@@ -247,6 +247,27 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.NavigateToFolder("Calibration Parts Row Item Collection");
 
+				/*
+				// test un-group single mesh
+				RunDoUndoTest(testRunner, scene1, (scene) =>
+				{
+					testRunner.AddItemToBedplate(partName: "Row Item MH Logo.stl");
+					testRunner.Delay(.1);
+					testRunner.ClickByName("MH Logo.stl");
+					Assert.IsNotNull(scene.SelectedItem);
+				},
+				(scene) =>
+				{
+					testRunner.ClickByName("View3DWidget"); // place focus back in the scene
+					testRunner.Type("^a"); // select all
+					testRunner.ClickByName("3D View Ungroup");
+					testRunner.ClickByName("View3DWidget"); // place focus back in the scene
+					testRunner.Type(" "); // select none
+					testRunner.Delay(() => scene1.Children.Count() == 3, .5);
+					Assert.AreEqual(3, scene1.Children.Count());
+				});
+				*/
+
 				// test group 2 objects
 				RunDoUndoTest(testRunner, scene1, (scene) =>
 				{
@@ -263,6 +284,30 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.Delay(() => scene1.Children.Count() == 1, .5);
 					Assert.AreEqual(1, scene1.Children.Count());
 					testRunner.Delay(() => scene.SelectedItem == null, .5);
+				});
+
+				// test un-group 2 grouped objects
+				RunDoUndoTest(testRunner, scene1, (scene) =>
+				{
+					AddBoxABoxBToBed(testRunner, scene);
+					Assert.AreEqual(2, scene1.Children.Count());
+					testRunner.ClickByName("View3DWidget"); // place focus back in the scene
+					testRunner.Type("^a"); // select all
+					testRunner.ClickByName("3D View Group");
+					testRunner.ClickByName("View3DWidget"); // place focus back in the scene
+					testRunner.Type(" "); // select none
+					testRunner.Delay(() => scene1.Children.Count() == 1, .5);
+					Assert.AreEqual(1, scene1.Children.Count());
+				},
+				(scene) =>
+				{
+					testRunner.ClickByName("View3DWidget"); // place focus back in the scene
+					testRunner.Type("^a"); // select all
+					testRunner.ClickByName("3D View Ungroup");
+					testRunner.ClickByName("View3DWidget"); // place focus back in the scene
+					testRunner.Type(" "); // select none
+					testRunner.Delay(() => scene1.Children.Count() == 2, .5);
+					Assert.AreEqual(2, scene1.Children.Count());
 				});
 
 				// test mirror operations

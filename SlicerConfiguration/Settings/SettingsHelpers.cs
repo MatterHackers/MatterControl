@@ -85,6 +85,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string has_power_control = nameof(has_power_control);
 		public const string has_sd_card_reader = nameof(has_sd_card_reader);
 		public const string heat_extruder_before_homing = nameof(heat_extruder_before_homing);
+		public const string include_firmware_updater = nameof(include_firmware_updater);
 		public const string ip_address = nameof(ip_address);
 		public const string ip_port = nameof(ip_port);
 		public const string layer_gcode = nameof(layer_gcode);
@@ -101,6 +102,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string oem_profile_token = nameof(oem_profile_token);
 		public const string pause_gcode = nameof(pause_gcode);
 		public const string perimeter_start_end_overlap = nameof(perimeter_start_end_overlap);
+		public const string laser_speed_025 = nameof(laser_speed_025);
+		public const string laser_speed_100 = nameof(laser_speed_100);
 		public const string print_center = nameof(print_center);
 		public const string print_leveling_data = nameof(print_leveling_data);
 		public const string print_leveling_enabled = nameof(print_leveling_enabled);
@@ -115,6 +118,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string recover_position_before_z_home = nameof(recover_position_before_z_home);
 		public const string resume_gcode = nameof(resume_gcode);
 		public const string show_reset_connection = nameof(show_reset_connection);
+		public const string sla_printer = nameof(sla_printer);
 		public const string validate_layer_height = nameof(validate_layer_height);
 		public const string spiral_vase = nameof(spiral_vase);
 		public const string start_gcode = nameof(start_gcode);
