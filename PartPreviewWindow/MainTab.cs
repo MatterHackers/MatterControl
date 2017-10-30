@@ -102,8 +102,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public int BorderWidth { get; set; } = 1;
 		public int borderRadius { get; set; } = 4;
 
-		private RGBA_Bytes activeTabColor =  ApplicationController.Instance.Theme.PrimaryTabFillColor;
-		private RGBA_Bytes inactiveTabColor = ApplicationController.Instance.Theme.SlightShade;
+		private RGBA_Bytes activeTabColor =  ApplicationController.Instance.Theme.SlightShade;
+		private RGBA_Bytes inactiveTabColor = ApplicationController.Instance.Theme.PrimaryTabFillColor;
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{
