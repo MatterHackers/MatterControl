@@ -355,6 +355,7 @@
 		],
 		"SlicerConfigName": "fill_density",
 		"PresentationName": "Fill Density",
+		"ShowIfSet": "!sla_printer",
 		"HelpText": "The amount of infill material to generate, expressed as a ratio or a percentage.",
 		"DataEditType": "DOUBLE_OR_PERCENT",
 		"DefaultValue": "0.4"
@@ -411,10 +412,11 @@
 	},
 	{
 		"SlicerConfigName": "number_of_first_layers",
-		"PresentationName": "Number of First Layers",
+		"PresentationName": "Slow Layers",
 		"HelpText": "The number of layers to consider as the begining of the print. These will print at first layer speed.",
 		"DataEditType": "INT_OR_MM",
 		"ExtraSettings": "layers or mm",
+		"ShowIfSet": "sla_printer",
 		"DefaultValue": "1"
 	},
 	{
