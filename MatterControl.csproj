@@ -408,7 +408,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ControlElements\MHTextEditWidget.cs" />
-    <Compile Include="PartPreviewWindow\ViewGcodeBasic.cs" />
+    <Compile Include="PartPreviewWindow\GCode3DWidget.cs" />
     <Compile Include="Queue\OptionsMenu\PartsSheetCreator.cs" />
     <Compile Include="Utilities\WebUtilities\JsonResponseDictionary.cs" />
     <Compile Include="PrinterCommunication\PrinterConnection.cs" />

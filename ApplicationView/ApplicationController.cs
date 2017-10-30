@@ -1238,7 +1238,11 @@ namespace MatterHackers.MatterControl
 			printer.Bed.LoadGCode(
 				printItem.GetGCodePathAndFileName(),
 				gcodeLoadCancellationTokenSource.Token,
-				view3DWidget.gcodeViewer.LoadProgress_Changed);
+				null);
+				// TODO: use not yet implemented standard processing notification system to report GCode load
+				//view3DWidget.gcodeViewer.LoadProgress_Changed);
+				//SetProcessingMessage(string.Format("{0} {1:0}%...", "Loading G-Code".Localize(), progress0To1 * 100));
+
 		}
 
 		public class CloudSyncEventArgs : EventArgs

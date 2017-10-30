@@ -93,22 +93,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public TrackballTumbleWidget TrackballTumbleWidget { get; }
 
-		internal ViewGcodeBasic gcodeViewer;
-
 		public InteractionLayer InteractionLayer { get; }
 
 		private BedConfig sceneContext;
 
 		private PrinterConfig printer;
 
-		private PrinterTabBase printerTabBase;
+		private PrinterTabPage printerTabPage;
 
 		public View3DWidget(PrinterConfig printer, BedConfig sceneContext, AutoRotate autoRotate, ViewControls3D viewControls3D, ThemeConfig theme, PrinterTabBase printerTabBase, MeshViewerWidget.EditorType editorType = MeshViewerWidget.EditorType.Part)
 		{
 			var smallMarginButtonFactory = theme.SmallMarginButtonFactory;
 
 			this.sceneContext = sceneContext;
-			this.printerTabBase = printerTabBase;
+			this.printerTabPage = printerTabBase as PrinterTabPage;
 			this.Scene = sceneContext.Scene;
 			this.printer = printer;
 
@@ -144,13 +142,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			meshViewerWidget = new MeshViewerWidget(sceneContext, this.InteractionLayer, editorType: editorType);
 			meshViewerWidget.AnchorAll();
 			this.InteractionLayer.AddChild(meshViewerWidget);
-
-			// The slice layers view
-			gcodeViewer = new ViewGcodeBasic(printer, sceneContext, viewControls3D, theme);
-			gcodeViewer.Name = "ViewGcodeBasic";
-			gcodeViewer.AnchorAll();
-			gcodeViewer.Visible = false;
-			this.InteractionLayer.AddChild(gcodeViewer);
 
 			// TumbleWidget
 			this.InteractionLayer.AddChild(this.TrackballTumbleWidget);
@@ -444,7 +435,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Fit | VAnchor.Top,
 				HAnchor = HAnchor.Right,
 				Margin = new BorderDouble(0, 0, 0, viewControls3D.LocalBounds.Height),
-				SpliterBarColor = new RGBA_Bytes(RGBA_Bytes.Red, 30),
+				SpliterBarColor = ApplicationController.Instance.Theme.SplitterBackground,
 				SplitterWidth = ApplicationController.Instance.Theme.SplitterWidth,
 				Visible = false,
 			};
@@ -518,13 +509,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void SceneContext_LoadedGCodeChanged(object sender, EventArgs e)
 		{
-			if (printerTabBase is PrinterTabPage printerTabPage)
+			if (printerTabPage != null)
 			{
 				// When GCode changes, switch to the 3D layer view
 				printerTabPage.ViewMode = PartViewMode.Layers3D;
 
 				// HACK: directly fire method which previously ran on SlicingDone event on PrintItemWrapper
-				UiThread.RunOnIdle(() => printerTabPage.view3DWidget.gcodeViewer.CreateAndAddChildren(printer));
+				UiThread.RunOnIdle(() => printerTabPage.gcode3DWidget.CreateAndAddChildren(printer));
 			}
 		}
 
@@ -600,7 +591,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// This shows the BVH as rects around the scene items
 			//Scene?.TraceData().RenderBvhRecursive(0, 3);
 
-			if (sceneContext.LoadedGCode == null || sceneContext.GCodeRenderer == null || !gcodeViewer.Visible)
+			if (sceneContext.LoadedGCode == null || sceneContext.GCodeRenderer == null || printerTabPage?.gcode3DWidget.Visible == false)
 			{
 				return;
 			}

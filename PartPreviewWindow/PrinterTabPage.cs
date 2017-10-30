@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Linq;
 using MatterHackers.Agg;
+using MatterHackers.Agg.OpenGlGui;
 using MatterHackers.Agg.UI;
 using MatterHackers.GCodeVisualizer;
 using MatterHackers.Localizations;
@@ -49,6 +50,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private SystemWindow parentSystemWindow;
 		private SliceLayerSelector layerScrollbar;
 		private PrinterConfig printer;
+		internal GCode3DWidget gcode3DWidget;
 
 		public PrinterTabPage(PrinterConfig printer, ThemeConfig theme, string tabTitle)
 			: base(printer, printer.Bed, theme, tabTitle)
@@ -134,7 +136,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var printerActionsBar = new PrinterActionsBar(printer, this, theme)
 			{
-				Padding = theme.ToolbarPadding
+				Padding = new BorderDouble(0, theme.ToolbarPadding.Top)
 			};
 
 			// Must come after we have an instance of View3DWidget an its undo buffer
@@ -142,6 +144,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var margin = viewControls3D.Margin;
 			viewControls3D.Margin = new BorderDouble(margin.Left, margin.Bottom, margin.Right, printerActionsBar.Height);
+
+			var trackball = view3DWidget.InteractionLayer.Children<TrackballTumbleWidget>().FirstOrDefault();
+
+			var position = view3DWidget.InteractionLayer.Children.IndexOf(trackball);
+
+			// The slice layers view
+			gcode3DWidget = new GCode3DWidget(printer, sceneContext, theme)
+			{
+				Name = "GCode3DWidget",
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch,
+				Visible = false
+			};
+			view3DWidget.InteractionLayer.AddChild(gcode3DWidget, position);
 
 			SetSliderSizes();
 		}
@@ -155,7 +171,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			set
 			{
 				showSliceLayers = value;
-				view3DWidget.gcodeViewer.Visible = value;
+
+				if (gcode3DWidget != null)
+				{
+					gcode3DWidget.Visible = value;
+				}
 
 				view3DWidget.meshViewerWidget.IsActive = !value;
 
@@ -467,7 +487,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			bool printerIsRunningPrint = printer.Connection.PrinterIsPaused || printer.Connection.PrinterIsPrinting;
 			if (gcodeOptions.SyncToPrint
 				&& printerIsRunningPrint
-				&& view3DWidget.gcodeViewer.Visible)
+				&& gcode3DWidget.Visible)
 			{
 				SetAnimationPosition();
 				this.Invalidate();
@@ -478,7 +498,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		protected override GuiWidget GetViewControls3DOverflowMenu()
 		{
-			if (view3DWidget.gcodeViewer.Visible)
+			if (gcode3DWidget.Visible)
 			{
 				return this.ShowGCodeOverflowMenu();
 			}
@@ -515,7 +535,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void Parent_KeyDown(object sender, KeyEventArgs keyEvent)
 		{
-			if (view3DWidget.gcodeViewer.Visible)
+			if (gcode3DWidget.Visible)
 			{
 				switch (keyEvent.KeyCode)
 				{

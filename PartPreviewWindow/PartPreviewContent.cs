@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			tabControl = ApplicationController.Instance.Theme.CreateTabControl(2);
 
 			var separator = tabControl.Children<HorizontalLine>().FirstOrDefault();
-			separator.BackgroundColor = ApplicationController.Instance.Theme.PrimaryTabFillColor;
+			separator.BackgroundColor = ApplicationController.Instance.Theme.SlightShade;
 
 			RGBA_Bytes selectedTabColor;
 			if (!UserSettings.Instance.IsTouchScreen)
