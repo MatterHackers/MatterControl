@@ -101,7 +101,6 @@ Advanced
         top_solid_layers
         bottom_solid_layers
       Quality
-        extra_perimeters
         start_perimeters_at_concave_points
         start_perimeters_at_non_overhang
         thin_walls
@@ -112,15 +111,13 @@ Advanced
         infill_type
         solid_fill_pattern
       Advanced
-        infill_every_layers
-        infill_only_where_needed
-        solid_infill_every_layers
         fill_angle
-        solid_infill_below_area
-        infill_first
         infill_overlap_perimeter
         fill_thin_gaps
     Speed
+      Printing Speed
+        laser_speed_025
+        laser_speed_100
       Speed for Infill
         infill_speed
         solid_infill_speed
@@ -133,19 +130,12 @@ Advanced
       Speeds for Other Printing 
         support_material_speed
         bridge_speed
-        gap_fill_speed
       Speed for Non-Print Moves
         travel_speed
       Modifiers
         first_layer_speed
         number_of_first_layers
-      Acceleration Control
-        perimeter_acceleration
-        infill_acceleration
-        bridge_acceleration
-        first_layer_acceleration
-        default_acceleration
-    Raft / Priming
+    Raft / Skirt / Brim
       Raft
         create_raft
         raft_extra_distance_around_part
@@ -160,7 +150,6 @@ Advanced
         min_skirt_length
       Brim
         brims
-        brim_width
     Support Material
       Support Material
         support_material
@@ -197,17 +186,9 @@ Advanced
         g0
       Sequential Printing
         complete_objects
-        extruder_clearance_height
-        extruder_clearance_radius
-      Output File
-        gcode_comments
-        output_filename_format
       Post-Processing Scripts
         post_process
     Multiple Extruders
-      Extruders
-        perimeter_extruder
-        infill_extruder
       Extruder Change
         wipe_shield_distance
         wipe_tower_size
@@ -218,7 +199,6 @@ Advanced
       Other
         threads
         resolution
-        extrusion_axis
         overhangs
     Single Print
       Settings Will Clear at End of Print
@@ -258,7 +238,6 @@ Advanced
     Extrusion
       Flow
         extrusion_multiplier
-        bridge_flow_ratio
       Extrusion Width
         extrusion_width
         first_layer_extrusion_width
@@ -302,6 +281,7 @@ Advanced
         bed_shape
     Features
       Interface
+        sla_printer
         show_reset_connection
         include_firmware_updater
       Hardware

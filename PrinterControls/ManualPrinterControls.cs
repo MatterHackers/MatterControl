@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl
 
 		public override void OnLoad(EventArgs args)
 		{
-			if (!pluginsQueuedToAdd && printer.Settings.GetValue("include_firmware_updater") == "Simple Arduino")
+			if (!pluginsQueuedToAdd && printer.Settings.GetValue(SettingsKey.include_firmware_updater) == "Simple Arduino")
 			{
 				UiThread.RunOnIdle(() =>
 				{
