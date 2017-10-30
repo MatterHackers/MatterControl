@@ -25,7 +25,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.AddItemToBedplate("", "Row Item Rook");
 
 				testRunner.SwitchToAdvancedSliceSettings();
-				testRunner.ClickByName("Raft / Priming Tab");
+				testRunner.ClickByName("Raft / Skirt / Brim Tab");
 				testRunner.ClickByName("Create Raft Field");
 
 				testRunner.StartSlicing();
