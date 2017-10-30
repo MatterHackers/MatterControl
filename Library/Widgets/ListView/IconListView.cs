@@ -132,12 +132,16 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public ListViewItemBase AddItem(ListViewItem item)
 		{
+			reflowingContent = true;
+
 			var iconView = new IconViewItem(item, this.ThumbWidth, this.ThumbHeight);
 			iconView.Margin = new BorderDouble(leftRightMargin, 0);
 
 			allIconViews.Add(iconView);
 
 			AddColumnAndChild(iconView);
+
+			reflowingContent = false;
 
 			return iconView;
 		}
