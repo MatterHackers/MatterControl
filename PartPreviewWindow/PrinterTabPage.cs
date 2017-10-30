@@ -152,7 +152,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// The slice layers view
 			gcode3DWidget = new GCode3DWidget(printer, sceneContext, theme)
 			{
-				Name = "ViewGcodeBasic",
+				Name = "GCode3DWidget",
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Stretch,
 				Visible = false
