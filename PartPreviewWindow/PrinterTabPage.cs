@@ -28,13 +28,17 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.IO;
 using System.Linq;
 using MatterHackers.Agg;
+using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.OpenGlGui;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.GCodeVisualizer;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
@@ -122,6 +126,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.Invalidate();
 			};
 			view3DContainer.AddChild(layerRenderRatioSlider);
+
+			view3DContainer.AddChild(PrintProgressWidget(printer));
 
 			AddSettingsTabBar(leftToRight, view3DWidget);
 
@@ -577,6 +583,104 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Stretch,
 				HAnchor = HAnchor.Stretch
 			});
+		}
+
+		private GuiWidget PrintProgressWidget(PrinterConfig printer)
+		{
+			var bodyRow = new GuiWidget(300, 450)
+			{
+				HAnchor = HAnchor.Center,
+				VAnchor = VAnchor.Center,
+				BackgroundColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryBackgroundColor, 128),
+				Selectable = false
+			};
+
+			// Progress section
+			var expandingContainer = new HorizontalSpacer()
+			{
+				VAnchor = VAnchor.Fit | VAnchor.Center
+			};
+			bodyRow.AddChild(expandingContainer);
+
+			var progressContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				Margin = new BorderDouble(50, 0),
+				VAnchor = VAnchor.Center | VAnchor.Fit,
+				HAnchor = HAnchor.Center | HAnchor.Fit,
+			};
+			expandingContainer.AddChild(progressContainer);
+
+			var progressDial = new ProgressDial()
+			{
+				HAnchor = HAnchor.Center,
+				Height = 200 * DeviceScale,
+				Width = 200 * DeviceScale
+			};
+			progressContainer.AddChild(progressDial);
+
+			var timeContainer = new FlowLayoutWidget()
+			{
+				HAnchor = HAnchor.Center | HAnchor.Fit,
+				Margin = 3
+			};
+			progressContainer.AddChild(timeContainer);
+
+			var timeImage = AggContext.StaticData.LoadImage(Path.Combine("Images", "Screensaver", "time.png"));
+			if (!ActiveTheme.Instance.IsDarkTheme)
+			{
+				timeImage.InvertLightness();
+			}
+
+			timeContainer.AddChild(new ImageWidget(timeImage));
+
+			var timeWidget = new TextWidget("", pointSize: 22, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			{
+				AutoExpandBoundsToText = true,
+				Margin = new BorderDouble(10, 0, 0, 0),
+				VAnchor = VAnchor.Center,
+			};
+
+			timeContainer.AddChild(timeWidget);
+
+			Action updatePrintProgress = null;
+			updatePrintProgress = () =>
+			{
+				int secondsPrinted = printer.Connection.SecondsPrinted;
+				int hoursPrinted = (int)(secondsPrinted / (60 * 60));
+				int minutesPrinted = (secondsPrinted / 60 - hoursPrinted * 60);
+				secondsPrinted = secondsPrinted % 60;
+
+				// TODO: Consider if the consistency of a common time format would look and feel better than changing formats based on elapsed duration
+				timeWidget.Text = (hoursPrinted <= 0) ? $"{minutesPrinted}:{secondsPrinted:00}" : $"{hoursPrinted}:{minutesPrinted:00}:{secondsPrinted:00}";
+
+				progressDial.LayerCount = printer.Connection.CurrentlyPrintingLayer;
+				progressDial.LayerCompletedRatio = printer.Connection.RatioIntoCurrentLayer;
+				progressDial.CompletedRatio = printer.Connection.PercentComplete / 100;
+
+				if (!HasBeenClosed)
+				{
+					switch (printer.Connection.CommunicationState)
+					{
+						case CommunicationStates.PreparingToPrint:
+						case CommunicationStates.Printing:
+						case CommunicationStates.Paused:
+							bodyRow.Visible = true;
+							break;
+
+						default:
+							bodyRow.Visible = false;
+							break;
+					}
+
+					UiThread.RunOnIdle(updatePrintProgress, 1);
+				}
+			};
+
+			UiThread.RunOnIdle(updatePrintProgress, 1);
+
+			bodyRow.Visible = false;
+
+			return bodyRow;
 		}
 	}
 }
