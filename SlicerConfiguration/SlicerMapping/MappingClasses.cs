@@ -541,7 +541,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					var layerHeight = ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.layer_height);
 					var deltaHeight = .1 - .025;
 					var heightRatio = (layerHeight - .025) / deltaHeight;
-					return (speedAt025 + deltaSpeed * heightRatio).ToString();
+					var ajustedSpeed = speedAt025 + deltaSpeed * heightRatio;
+					return ajustedSpeed.ToString();
 				}
 				else
 				{
