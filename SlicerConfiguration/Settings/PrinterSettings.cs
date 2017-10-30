@@ -260,12 +260,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			this.Save();
-
-			// TODO: Define and fire event - model objects need to be dependency free. For the time being prevent application spin up in ClearPlate due to the call below - if MC isn't loaded, don't notify
-			if (!MatterControlApplication.IsLoading)
-			{
-				ApplicationController.Instance.ReloadAdvancedControlsPanel();
-			}
 		}
 
 		internal PrinterSettingsLayer GetMaterialLayer(string layerID)

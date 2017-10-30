@@ -85,7 +85,6 @@ namespace MatterHackers.MatterControl
 		public Action EnterShareCode;
 
 		private static ApplicationController globalInstance;
-		public RootedObjectEventHandler AdvancedControlsPanelReloading = new RootedObjectEventHandler();
 		public RootedObjectEventHandler CloudSyncStatusChanged = new RootedObjectEventHandler();
 		public RootedObjectEventHandler DoneReloadingAll = new RootedObjectEventHandler();
 		public RootedObjectEventHandler PluginsLoaded = new RootedObjectEventHandler();
@@ -471,11 +470,6 @@ namespace MatterHackers.MatterControl
 				}
 			}, ref unregisterEvents);
 
-			ActiveSliceSettings.MaterialPresetChanged += (s, e) =>
-			{
-				ApplicationController.Instance.ReloadAdvancedControlsPanel();
-			};
-
 			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
 			{
 				if (e is StringEventArgs stringArg
@@ -748,11 +742,6 @@ namespace MatterHackers.MatterControl
 			return string.IsNullOrEmpty(libraryItem.ID) ? null : ApplicationController.CacheablePath("ItemThumbnails", $"{libraryItem.ID}.png");
 		}
 
-		public void ReloadAdvancedControlsPanel()
-		{
-			AdvancedControlsPanelReloading.CallEvents(this, null);
-		}
-
 		public void SwitchToPurchasedLibrary()
 		{
 			var purchasedContainer = Library.RootLibaryContainer.ChildContainers.Where(c => c.ID == "LibraryProviderPurchasedKey").FirstOrDefault();
@@ -865,14 +854,13 @@ namespace MatterHackers.MatterControl
 		}
 
 		private static void RunSetupIfRequired()
-        {
-            ApplicationController.Instance.ReloadAdvancedControlsPanel();
-            if (!ProfileManager.Instance.ActiveProfiles.Any())
-            {
-                // Start the setup wizard if no profiles exist
-                UiThread.RunOnIdle(() => WizardWindow.Show(PrinterSetup.GetBestStartPage()));
-            }
-        }
+		{
+			if (!ProfileManager.Instance.ActiveProfiles.Any())
+			{
+				// Start the setup wizard if no profiles exist
+				UiThread.RunOnIdle(() => WizardWindow.Show(PrinterSetup.GetBestStartPage()));
+			}
+		}
 
 		private EventHandler unregisterEvent;
 

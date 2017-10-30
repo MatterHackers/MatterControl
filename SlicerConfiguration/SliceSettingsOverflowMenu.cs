@@ -105,7 +105,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 								if (onlyReloadSliceSettings)
 								{
-									ApplicationController.Instance.ReloadAdvancedControlsPanel();
+									printer?.Bed.GCodeRenderer?.Clear3DGCode();
 								}
 								else
 								{

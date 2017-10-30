@@ -146,7 +146,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			if (!string.IsNullOrEmpty(speedString))
 			{
 				printer.Settings.SetValue(SettingsKey.manual_movement_speeds, speedString);
-				ApplicationController.Instance.ReloadAdvancedControlsPanel();
+				printer.Bed.GCodeRenderer?.Clear3DGCode();
 			}
 		}
 

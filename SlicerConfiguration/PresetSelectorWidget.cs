@@ -156,8 +156,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								printer.Settings.SetMaterialPreset(extruderIndex, "");
 								printer.Settings.MaterialLayers.Remove(layerToEdit);
 								printer.Settings.Save();
-
-								UiThread.RunOnIdle(() => ApplicationController.Instance.ReloadAdvancedControlsPanel());
 							}
 						};
 
@@ -165,7 +163,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						ApplicationController.Instance.EditMaterialPresetsWindow.Closed += (s, e2) =>
 						{
 							ApplicationController.Instance.EditMaterialPresetsWindow = null;
-							ApplicationController.Instance.ReloadAdvancedControlsPanel();
 						};
 						ApplicationController.Instance.EditMaterialPresetsWindow.ShowAsSystemWindow();
 					}
@@ -196,8 +193,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								printer.Settings.ActiveQualityKey = "";
 								printer.Settings.QualityLayers.Remove(layerToEdit);
 								printer.Settings.Save();
-
-								UiThread.RunOnIdle(() => ApplicationController.Instance.ReloadAdvancedControlsPanel());
 							}
 						};
 
@@ -205,7 +200,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						ApplicationController.Instance.EditQualityPresetsWindow.Closed += (s, e2) =>
 						{
 							ApplicationController.Instance.EditQualityPresetsWindow = null;
-							ApplicationController.Instance.ReloadAdvancedControlsPanel();
 						};
 						ApplicationController.Instance.EditQualityPresetsWindow.ShowAsSystemWindow();
 					}
@@ -365,7 +359,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			UiThread.RunOnIdle(() =>
 			{
-				ApplicationController.Instance.ReloadAdvancedControlsPanel();
 				foreach (var keyName in PrinterSettings.KnownSettings)
 				{
 					if (settingBeforeChange[keyName] != printer.Settings.GetValue(keyName))
