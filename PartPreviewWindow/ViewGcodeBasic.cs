@@ -40,16 +40,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private EventHandler unregisterEvents;
 
 		private BedConfig sceneContext;
-		private TextWidget gcodeProcessingStateInfoText;
-		private PrinterConfig printer;
-		private ViewControls3D viewControls3D;
 		private ThemeConfig theme;
 
-		public ViewGcodeBasic(PrinterConfig printer, BedConfig sceneContext, ViewControls3D viewControls3D, ThemeConfig theme)
+		public ViewGcodeBasic(PrinterConfig printer, BedConfig sceneContext, ThemeConfig theme)
 		{
-			this.printer = printer;
 			this.sceneContext = sceneContext;
-			this.viewControls3D = viewControls3D;
 			this.theme = theme;
 
 			CreateAndAddChildren(printer);
@@ -75,13 +70,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		internal void CreateAndAddChildren(PrinterConfig printer)
 		{
 			this.CloseAllChildren();
-
-			this.AddChild(gcodeProcessingStateInfoText = new TextWidget("")
-			{
-				HAnchor = HAnchor.Center,
-				VAnchor = VAnchor.Center,
-				AutoExpandBoundsToText = true
-			});
 
 			if (sceneContext.LoadedGCode?.LineCount > 0)
 			{
@@ -116,17 +104,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							Visible = sceneContext.RendererOptions.RenderSpeeds,
 						}));
 			}
-		}
-
-		internal void LoadProgress_Changed(double progress0To1, string processingState)
-		{
-			SetProcessingMessage(string.Format("{0} {1:0}%...", "Loading G-Code".Localize(), progress0To1 * 100));
-		}
-
-		private void SetProcessingMessage(string message)
-		{
-			gcodeProcessingStateInfoText.BackgroundColor = (message == "") ? RGBA_Bytes.Transparent : RGBA_Bytes.White;
-			gcodeProcessingStateInfoText.Text = message;
 		}
 
 		public override void OnClosed(ClosedEventArgs e)
