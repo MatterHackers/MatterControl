@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			viewControls3D = new ViewControls3D(theme, sceneContext.Scene.UndoBuffer)
 			{
-				BackgroundColor = new RGBA_Bytes(0, 0, 0, theme.OverlayAlpha),
+				//BackgroundColor = new RGBA_Bytes(0, 0, 0, theme.OverlayAlpha),
 				PartSelectVisible = false,
 				VAnchor = VAnchor.Top | VAnchor.Fit | VAnchor.Absolute,
 				HAnchor = HAnchor.Left | HAnchor.Absolute,
@@ -106,17 +106,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			topToBottom.AddChild(leftToRight);
 
 			view3DContainer = new GuiWidget();
-			view3DContainer.AnchorAll();
-			view3DContainer.AddChild(view3DWidget);
-
-			view3DContainer.AddChild(PrintProgressWidget(printer));
-
-			leftToRight.AddChild(view3DContainer);
-
 			view3DContainer.BoundsChanged += (s, e) =>
 			{
 				viewControls3D.Width = view3DWidget.Width;
 			};
+			view3DContainer.AnchorAll();
+
+			view3DContainer.AddChild(view3DWidget);
+			view3DContainer.AddChild(PrintProgressWidget(printer));
+
+			leftToRight.AddChild(view3DContainer);
 
 			view3DWidget.BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor;
 
