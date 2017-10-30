@@ -35,14 +35,14 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class ViewGcodeBasic : GuiWidget
+	public class GCode3DWidget : GuiWidget
 	{
 		private EventHandler unregisterEvents;
 
 		private BedConfig sceneContext;
 		private ThemeConfig theme;
 
-		public ViewGcodeBasic(PrinterConfig printer, BedConfig sceneContext, ThemeConfig theme)
+		public GCode3DWidget(PrinterConfig printer, BedConfig sceneContext, ThemeConfig theme)
 		{
 			this.sceneContext = sceneContext;
 			this.theme = theme;

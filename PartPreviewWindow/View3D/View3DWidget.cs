@@ -93,7 +93,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public TrackballTumbleWidget TrackballTumbleWidget { get; }
 
-		internal ViewGcodeBasic gcodeViewer;
+		internal GCode3DWidget gcodeViewer;
 
 		public InteractionLayer InteractionLayer { get; }
 
@@ -146,7 +146,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.InteractionLayer.AddChild(meshViewerWidget);
 
 			// The slice layers view
-			gcodeViewer = new ViewGcodeBasic(printer, sceneContext, theme);
+			gcodeViewer = new GCode3DWidget(printer, sceneContext, theme);
 			gcodeViewer.Name = "ViewGcodeBasic";
 			gcodeViewer.AnchorAll();
 			gcodeViewer.Visible = false;
