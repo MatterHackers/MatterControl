@@ -141,12 +141,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			overflowMenu.DynamicPopupContent = GeneratePrinterOverflowMenu;
 
-			// Deregister on close
-			this.Closed += (s, e) =>
-			{
-				overflowMenu.DynamicPopupContent = GeneratePrinterOverflowMenu;
-			};
-
 			this.AddChild(overflowMenu);
 		}
 
