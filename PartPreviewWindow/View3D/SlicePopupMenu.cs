@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			this.AddChild(operationText);
 
-			progressControl = new ProgressControl("", RGBA_Bytes.Black, RGBA_Bytes.Black)
+			progressControl = new ProgressControl("", Color.Black, Color.Black)
 			{
 				HAnchor = HAnchor.Left
 			};

@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				string candidatePort = FrostedSerialPort.GetPortNames().Except(startingPortNames).FirstOrDefault();
 				if (candidatePort == null)
 				{
-					printerErrorMessage.TextColor = RGBA_Bytes.Red;
+					printerErrorMessage.TextColor = Color.Red;
 					printerErrorMessage.Text = "Oops! Printer could not be detected ".Localize();
 				}
 				else
@@ -142,7 +142,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			printerErrorMessage = new TextWidget("", 0, 0, 10)
 			{
 				AutoExpandBoundsToText = true,
-				TextColor = RGBA_Bytes.Red,
+				TextColor = Color.Red,
 				HAnchor = HAnchor.Stretch,
 				Margin = elementMargin
 			};
@@ -169,7 +169,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			}
 			else if (printer.Connection.CommunicationState != CommunicationStates.AttemptingToConnect)
 			{
-				printerErrorMessage.TextColor = RGBA_Bytes.Red;
+				printerErrorMessage.TextColor = Color.Red;
 				printerErrorMessage.Text = "Uh-oh! Could not connect to printer.".Localize();
 				connectButton.Visible = true;
 				nextButton.Visible = false;

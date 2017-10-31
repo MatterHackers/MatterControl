@@ -61,9 +61,9 @@ namespace MatterHackers.MeshVisualizer
 
 	public static class MatterialRendering
 	{
-		public static RGBA_Bytes Color(int materialIndex)
+		public static Color Color(int materialIndex)
 		{
-			return RGBA_Floats.FromHSL(Math.Max(materialIndex, 0) / 10.0, .99, .49).GetAsRGBA_Bytes();
+			return ColorF.FromHSL(Math.Max(materialIndex, 0) / 10.0, .99, .49).GetAsRGBA_Bytes();
 		}
 	}
 
@@ -80,8 +80,8 @@ namespace MatterHackers.MeshVisualizer
 
 		private double selectionHighlightWidth = 5;
 
-		private RGBA_Bytes debugBorderColor = RGBA_Bytes.Green;
-		private RGBA_Bytes debugNotSelectedFillColor = new RGBA_Bytes(RGBA_Bytes.White, 120);
+		private Color debugBorderColor = Color.Green;
+		private Color debugNotSelectedFillColor = new Color(Color.White, 120);
 
 		public MeshViewerWidget(BedConfig sceneContext, InteractionLayer interactionLayer, string startingTextMessage = "", EditorType editorType = EditorType.Part)
 		{
@@ -98,8 +98,8 @@ namespace MatterHackers.MeshVisualizer
 			RenderType = RenderTypes.Shaded;
 			RenderBed = true;
 			RenderBuildVolume = false;
-			BedColor = new RGBA_Floats(.8, .8, .8, .7).GetAsRGBA_Bytes();
-			BuildVolumeColor = new RGBA_Floats(.2, .8, .3, .2).GetAsRGBA_Bytes();
+			BedColor = new ColorF(.8, .8, .8, .7).GetAsRGBA_Bytes();
+			BuildVolumeColor = new ColorF(.2, .8, .3, .2).GetAsRGBA_Bytes();
 
 			this.interactionLayer.DrawGlOpaqueContent += Draw_GlOpaqueContent;
 			this.interactionLayer.DrawGlTransparentContent += Draw_GlTransparentContent;
@@ -117,9 +117,9 @@ namespace MatterHackers.MeshVisualizer
 
 		public bool AllowBedRenderingWhenEmpty { get; set; }
 
-		public RGBA_Bytes BedColor { get; set; }
+		public Color BedColor { get; set; }
 
-		public RGBA_Bytes BuildVolumeColor { get; set; }
+		public Color BuildVolumeColor { get; set; }
 
 		public static AxisAlignedBoundingBox GetAxisAlignedBoundingBox(List<MeshGroup> meshGroups)
 		{
@@ -288,7 +288,7 @@ namespace MatterHackers.MeshVisualizer
 #endif
 		}
 
-		public static RGBA_Bytes GetExtruderColor(int extruderIndex)
+		public static Color GetExtruderColor(int extruderIndex)
 		{
 			return MatterialRendering.Color(extruderIndex);
 		}
@@ -390,7 +390,7 @@ namespace MatterHackers.MeshVisualizer
 				&& (object3D == scene.SelectedItem || scene.SelectedItem.Children.Contains(object3D)))
 			{
 				GLHelper.PrepareFor3DLineRender(true);
-				RenderAABB(frustum, object3D.GetAxisAlignedBoundingBox(Matrix4X4.Identity), Matrix4X4.Identity, RGBA_Bytes.White, selectionHighlightWidth);
+				RenderAABB(frustum, object3D.GetAxisAlignedBoundingBox(Matrix4X4.Identity), Matrix4X4.Identity, Color.White, selectionHighlightWidth);
 				GL.Enable(EnableCap.Lighting);
 			}
 
@@ -399,14 +399,14 @@ namespace MatterHackers.MeshVisualizer
 				bool isSelected = parentSelected ||
 					scene.HasSelection && (object3D == scene.SelectedItem || scene.SelectedItem.Children.Contains(object3D));
 
-				RGBA_Bytes drawColor = renderData.WorldColor();
+				Color drawColor = renderData.WorldColor();
 				if (renderData.WorldOutputType() == PrintOutputTypes.Support)
 				{
-					drawColor = new RGBA_Bytes(RGBA_Bytes.Yellow, 120);
+					drawColor = new Color(Color.Yellow, 120);
 				}
 				else if (renderData.WorldOutputType() == PrintOutputTypes.Hole)
 				{
-					drawColor = new RGBA_Bytes(RGBA_Bytes.Gray, 120);
+					drawColor = new Color(Color.Gray, 120);
 				}
 
 				// check if we should be rendering materials (this overrides the other colors)
@@ -484,7 +484,7 @@ namespace MatterHackers.MeshVisualizer
 				var transformed1 = Vector3.Transform(faceCenter, renderData.Matrix);
 				var normal = Vector3.TransformNormal(face.Normal, renderData.Matrix).GetNormal();
 
-				GLHelper.Render3DLineNoPrep(frustum, World, transformed1, transformed1 + normal, RGBA_Bytes.Red, 2);
+				GLHelper.Render3DLineNoPrep(frustum, World, transformed1, transformed1 + normal, Color.Red, 2);
 			}
 		}
 
@@ -517,18 +517,18 @@ namespace MatterHackers.MeshVisualizer
 							var transformed1 = Vector3.Transform(meshEdge.VertexOnEnd[0].Position, renderData.WorldMatrix());
 							var transformed2 = Vector3.Transform(meshEdge.VertexOnEnd[1].Position, renderData.WorldMatrix());
 
-							GLHelper.Render3DLineNoPrep(frustum, World, transformed1, transformed2, RGBA_Bytes.White, selectionHighlightWidth);
+							GLHelper.Render3DLineNoPrep(frustum, World, transformed1, transformed2, Color.White, selectionHighlightWidth);
 						}
 					}
 				}
 			}
 			else // just render the bounding box
 			{
-				RenderAABB(frustum, renderData.Mesh.GetAxisAlignedBoundingBox(), renderData.WorldMatrix(), RGBA_Bytes.White, selectionHighlightWidth);
+				RenderAABB(frustum, renderData.Mesh.GetAxisAlignedBoundingBox(), renderData.WorldMatrix(), Color.White, selectionHighlightWidth);
 			}
 		}
 
-		void RenderAABB(Frustum frustum, AxisAlignedBoundingBox bounds, Matrix4X4 matrix, RGBA_Bytes color, double width)
+		void RenderAABB(Frustum frustum, AxisAlignedBoundingBox bounds, Matrix4X4 matrix, Color color, double width)
 		{
 			for (int i = 0; i < 4; i++)
 			{
@@ -618,11 +618,11 @@ namespace MatterHackers.MeshVisualizer
 					double big = 10;
 					double small = 1;
 					Mesh xAxis = PlatonicSolids.CreateCube(big, small, small);
-					GLHelper.Render(xAxis, RGBA_Bytes.Red);
+					GLHelper.Render(xAxis, Color.Red);
 					Mesh yAxis = PlatonicSolids.CreateCube(small, big, small);
-					GLHelper.Render(yAxis, RGBA_Bytes.Green);
+					GLHelper.Render(yAxis, Color.Green);
 					Mesh zAxis = PlatonicSolids.CreateCube(small, small, big);
-					GLHelper.Render(zAxis, RGBA_Bytes.Blue);
+					GLHelper.Render(zAxis, Color.Blue);
 				}
 			}
 
@@ -645,7 +645,7 @@ namespace MatterHackers.MeshVisualizer
 					var bedColor = this.BedColor;
 					if (!lookingDownOnBed)
 					{
-						bedColor = new RGBA_Bytes(this.BedColor, this.BedColor.alpha / 4);
+						bedColor = new Color(this.BedColor, this.BedColor.alpha / 4);
 					}
 					GLHelper.Render(sceneContext.Mesh, bedColor, RenderTypes.Shaded, World.ModelviewMatrix);
 					if (sceneContext.PrinterShape != null)

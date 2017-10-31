@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		protected override void OnTabIndexChanged()
 		{
-			iconButton.BackgroundColor = (this.TabPage == TabBarContaningTab.GetActivePage()) ? ActiveTheme.Instance.TertiaryBackgroundColor : RGBA_Bytes.Transparent;
+			iconButton.BackgroundColor = (this.TabPage == TabBarContaningTab.GetActivePage()) ? ActiveTheme.Instance.TertiaryBackgroundColor : Color.Transparent;
 			base.OnTabIndexChanged();
 		}
 	}

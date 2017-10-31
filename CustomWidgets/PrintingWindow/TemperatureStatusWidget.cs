@@ -58,8 +58,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				FillColor = ActiveTheme.Instance.PrimaryAccentColor,
 				Margin = new BorderDouble(right: 10),
-				BorderColor = RGBA_Bytes.Transparent,
-				BackgroundColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 50),
+				BorderColor = Color.Transparent,
+				BackgroundColor = new Color(ActiveTheme.Instance.PrimaryTextColor, 50),
 				VAnchor = VAnchor.Center,
 			};
 			this.AddChild(progressBar);

@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				Width = 300,
 				HAnchor = HAnchor.Absolute,
 				VAnchor = VAnchor.Fit,
-				BackgroundColor = RGBA_Bytes.White,
+				BackgroundColor = Color.White,
 				Padding = new BorderDouble(12, 0)
 			};
 
@@ -83,7 +83,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit | VAnchor.Top,
-				BackgroundColor = RGBA_Bytes.White
+				BackgroundColor = Color.White
 			};
 			widget.AddChild(container);
 
@@ -117,8 +117,8 @@ namespace MatterHackers.MatterControl.ActionBar
 			// put in the temp control
 			settingsTemperature = new EditableNumberDisplay(printer.Settings.GetValue<double>(SettingsKey.bed_temperature), "000")
 			{
-				TextColor = RGBA_Bytes.Black,
-				BorderColor = RGBA_Bytes.Black,
+				TextColor = Color.Black,
+				BorderColor = Color.Black,
 				Name = "Temperature Input"
 			};
 			settingsTemperature.ValueChanged += (s, e) =>

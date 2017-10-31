@@ -321,7 +321,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			}
 			else
 			{
-				this.printerNameError.TextColor = RGBA_Bytes.Red;
+				this.printerNameError.TextColor = Color.Red;
 				this.printerNameError.Text = "Printer name cannot be blank".Localize();
 				this.printerNameError.Visible = true;
 

@@ -39,7 +39,7 @@ namespace MatterHackers.MatterControl
 		public MHNumberEdit(double startingValue, double x = 0, double y = 0, double pointSize = 12, double pixelWidth = 0, double pixelHeight = 0, bool allowNegatives = false, bool allowDecimals = false, double minValue = int.MinValue, double maxValue = int.MaxValue, double increment = 1, int tabIndex = 0)
 		{
 			this.Padding = new BorderDouble(3);
-			this.BackgroundColor = RGBA_Bytes.White;
+			this.BackgroundColor = Color.White;
 			this.HAnchor = HAnchor.Fit;
 			this.VAnchor = VAnchor.Fit;
 
@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl
 			base.OnDraw(graphics2D);
 			if (ContainsFocus)
 			{
-				graphics2D.Rectangle(LocalBounds, RGBA_Bytes.Orange);
+				graphics2D.Rectangle(LocalBounds, Color.Orange);
 			}
 		}
 

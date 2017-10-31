@@ -98,7 +98,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.VAnchor = VAnchor.Fit;
 			this.HAnchor = HAnchor.Stretch | HAnchor.Fit;
 			this.Height = 50;
-			this.BackgroundColor = RGBA_Bytes.White;
+			this.BackgroundColor = Color.White;
 			this.Padding = new BorderDouble(0);
 			this.Margin = new BorderDouble(6, 0, 6, 6);
 
@@ -138,7 +138,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 				partLabel = new TextWidget(listViewItem.Model.Name, pointSize: 14)
 				{
-					TextColor = RGBA_Bytes.Black,
+					TextColor = Color.Black,
 					MinimumSize = new Vector2(1, 18),
 					VAnchor = VAnchor.Center
 				};
@@ -233,37 +233,37 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			if (this.IsActivePrint && !this.EditMode)
 			{
 				this.BackgroundColor = ActiveTheme.Instance.SecondaryAccentColor;
-				this.partLabel.TextColor = RGBA_Bytes.White;
+				this.partLabel.TextColor = Color.White;
 				//this.partStatus.TextColor = RGBA_Bytes.White;
-				this.viewButton.BackgroundColor = RGBA_Bytes.White;
+				this.viewButton.BackgroundColor = Color.White;
 				this.viewButtonLabel.TextColor = ActiveTheme.Instance.SecondaryAccentColor;
 			}
 			else if (this.IsSelected)
 			{
 				this.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
-				this.partLabel.TextColor = RGBA_Bytes.White;
+				this.partLabel.TextColor = Color.White;
 				//this.partStatus.TextColor = RGBA_Bytes.White;
-				this.selectionCheckBox.TextColor = RGBA_Bytes.White;
-				this.viewButton.BackgroundColor = RGBA_Bytes.White;
+				this.selectionCheckBox.TextColor = Color.White;
+				this.viewButton.BackgroundColor = Color.White;
 				this.viewButtonLabel.TextColor = ActiveTheme.Instance.SecondaryAccentColor;
 			}
 			else if (this.IsHoverItem)
 			{
-				this.BackgroundColor = RGBA_Bytes.White;
-				this.partLabel.TextColor = RGBA_Bytes.Black;
-				this.selectionCheckBox.TextColor = RGBA_Bytes.Black;
+				this.BackgroundColor = Color.White;
+				this.partLabel.TextColor = Color.Black;
+				this.selectionCheckBox.TextColor = Color.Black;
 				//this.partStatus.TextColor = RGBA_Bytes.Black;
 				this.viewButton.BackgroundColor = ActiveTheme.Instance.SecondaryAccentColor;
-				this.viewButtonLabel.TextColor = RGBA_Bytes.White;
+				this.viewButtonLabel.TextColor = Color.White;
 			}
 			else
 			{
-				this.BackgroundColor = new RGBA_Bytes(255, 255, 255, 255);
-				this.partLabel.TextColor = RGBA_Bytes.Black;
-				this.selectionCheckBox.TextColor = RGBA_Bytes.Black;
+				this.BackgroundColor = new Color(255, 255, 255, 255);
+				this.partLabel.TextColor = Color.Black;
+				this.selectionCheckBox.TextColor = Color.Black;
 				//this.partStatus.TextColor = RGBA_Bytes.Black;
 				this.viewButton.BackgroundColor = ActiveTheme.Instance.SecondaryAccentColor;
-				this.viewButtonLabel.TextColor = RGBA_Bytes.White;
+				this.viewButtonLabel.TextColor = Color.White;
 			}
 		}
 
@@ -272,7 +272,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			var removeLabel = new TextWidget("Remove".Localize())
 			{
 				Name = "Queue Item " + listViewItem.Model.Name + " Remove",
-				TextColor = RGBA_Bytes.White,
+				TextColor = Color.White,
 				VAnchor = VAnchor.Center,
 				HAnchor = HAnchor.Center
 			};
@@ -288,7 +288,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			viewButtonLabel = new TextWidget("View".Localize())
 			{
 				Name = "Queue Item " + listViewItem.Model.Name + " View",
-				TextColor = RGBA_Bytes.White,
+				TextColor = Color.White,
 				VAnchor = VAnchor.Center,
 				HAnchor = HAnchor.Center,
 			};

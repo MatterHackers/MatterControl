@@ -154,11 +154,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			if (UnderMouseState == UnderMouseState.UnderMouseNotFirst
 				|| UnderMouseState == UnderMouseState.FirstUnderMouse)
 			{
-				numberDisplay.TextColor = RGBA_Bytes.Red;
+				numberDisplay.TextColor = Color.Red;
 			}
 			else
 			{
-				numberDisplay.TextColor = RGBA_Bytes.Black;
+				numberDisplay.TextColor = Color.Black;
 			}
 			base.OnDraw(graphics2D);
 		}

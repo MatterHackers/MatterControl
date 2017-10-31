@@ -52,8 +52,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			InvertImageLocation = false,
 			NormalTextColor = ActiveTheme.Instance.PrimaryTextColor,
 			HoverTextColor = ActiveTheme.Instance.PrimaryTextColor,
-			DisabledTextColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 100),
-			DisabledFillColor = RGBA_Bytes.Transparent,
+			DisabledTextColor = new Color(ActiveTheme.Instance.PrimaryTextColor, 100),
+			DisabledFillColor = Color.Transparent,
 			PressedTextColor = ActiveTheme.Instance.PrimaryTextColor
 		});
 
@@ -204,7 +204,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					basicBody.ClearRemovedFlag();
 					bodyContainer.AddChild(basicBody);
 
-					advancedButton.BackgroundColor = RGBA_Bytes.Transparent;
+					advancedButton.BackgroundColor = Color.Transparent;
 				}
 			};
 
@@ -346,7 +346,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			return new HorizontalLine()
 			{
-				BackgroundColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 50)
+				BackgroundColor = new Color(ActiveTheme.Instance.PrimaryTextColor, 50)
 			};
 		}
 
@@ -354,7 +354,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			return new VerticalLine()
 			{
-				BackgroundColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 50)
+				BackgroundColor = new Color(ActiveTheme.Instance.PrimaryTextColor, 50)
 			};
 		}
 	}

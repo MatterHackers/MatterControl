@@ -96,14 +96,14 @@ namespace MatterHackers.MatterControl
 
 		public TextImageButtonFactory imageConverterButtonFactory;
 
-		public RGBA_Bytes TabBodyBackground => new RGBA_Bytes(ActiveTheme.Instance.TertiaryBackgroundColor, 175);
+		public Color TabBodyBackground => new Color(ActiveTheme.Instance.TertiaryBackgroundColor, 175);
 
 		public TextImageButtonFactory ViewControlsButtonFactory { get; private set; }
-		public RGBA_Bytes SplitterBackground { get; private set; } = new RGBA_Bytes(0, 0, 0, 60);
+		public Color SplitterBackground { get; private set; } = new Color(0, 0, 0, 60);
 		public int SplitterWidth => (int)(7 * (GuiWidget.DeviceScale <= 1 ? GuiWidget.DeviceScale : GuiWidget.DeviceScale * 1.4));
 
-		public RGBA_Bytes SlightShade { get; } = new RGBA_Bytes(0, 0, 0, 40);
-		public RGBA_Bytes MinimalShade { get; } = new RGBA_Bytes(0, 0, 0, 15);
+		public Color SlightShade { get; } = new Color(0, 0, 0, 40);
+		public Color MinimalShade { get; } = new Color(0, 0, 0, 15);
 
 		public TextImageButtonFactory DisableableControlBase { get; private set; }
 		public TextImageButtonFactory HomingButtons { get; private set; }
@@ -113,7 +113,7 @@ namespace MatterHackers.MatterControl
 		public BorderDouble ButtonSpacing { get; set; } = new BorderDouble(3, 0, 0, 0);
 		public TextImageButtonFactory NoMarginWhite { get; private set; }
 		public BorderDouble ToolbarPadding { get; set; } = 3;
-		public RGBA_Bytes PrimaryTabFillColor { get; internal set; }
+		public Color PrimaryTabFillColor { get; internal set; }
 		public double ButtonHeight { get; internal set; } = 32;
 
 		public int OverlayAlpha { get; set; } = 50;
@@ -127,14 +127,14 @@ namespace MatterHackers.MatterControl
 
 			if (AggContext.OperatingSystem == OSType.Android)
 			{
-				restoreNormal = ColorCircle(size, new RGBA_Bytes(200, 0, 0));
+				restoreNormal = ColorCircle(size, new Color(200, 0, 0));
 			}
 			else
 			{
-				restoreNormal = ColorCircle(size, new RGBA_Bytes(128, 128, 128));
+				restoreNormal = ColorCircle(size, new Color(128, 128, 128));
 			}
-			restoreHover = ColorCircle(size, new RGBA_Bytes(200, 0, 0));
-			restorePressed = ColorCircle(size, new RGBA_Bytes(255, 0, 0));
+			restoreHover = ColorCircle(size, new Color(200, 0, 0));
+			restorePressed = ColorCircle(size, new Color(255, 0, 0));
 		}
 
 		public ThemeConfig()
@@ -147,7 +147,7 @@ namespace MatterHackers.MatterControl
 		{
 			var theme = ActiveTheme.Instance;
 
-			DefaultThumbView.ThumbColor = new RGBA_Bytes(theme.PrimaryTextColor, 30);
+			DefaultThumbView.ThumbColor = new Color(theme.PrimaryTextColor, 30);
 
 			var commonOptions = new ButtonFactoryOptions();
 			commonOptions.NormalTextColor = theme.PrimaryTextColor;
@@ -186,17 +186,17 @@ namespace MatterHackers.MatterControl
 			this.RadioButtons = new TextImageButtonFactory(new ButtonFactoryOptions(commonOptions)
 			{
 				BorderWidth = 1,
-				CheckedBorderColor = RGBA_Bytes.White,
+				CheckedBorderColor = Color.White,
 				AllowThemeToAdjustImage = false
 			});
 
 			var commonGray = new ButtonFactoryOptions(commonOptions)
 			{
-				NormalTextColor = RGBA_Bytes.Black,
-				NormalFillColor = RGBA_Bytes.LightGray,
-				HoverTextColor = RGBA_Bytes.Black,
-				PressedTextColor = RGBA_Bytes.Black,
-				PressedFillColor = RGBA_Bytes.LightGray,
+				NormalTextColor = Color.Black,
+				NormalFillColor = Color.LightGray,
+				HoverTextColor = Color.Black,
+				PressedTextColor = Color.Black,
+				PressedFillColor = Color.LightGray,
 			};
 
 			this.MenuButtonFactory = new TextImageButtonFactory(new ButtonFactoryOptions(commonGray)
@@ -207,7 +207,7 @@ namespace MatterHackers.MatterControl
 			this.GrayButtonFactory = new TextImageButtonFactory(new ButtonFactoryOptions(commonOptions)
 			{
 				NormalTextColor = theme.PrimaryTextColor,
-				NormalFillColor = RGBA_Bytes.Gray
+				NormalFillColor = Color.Gray
 			});
 
 			int viewControlsButtonHeight = (UserSettings.Instance.IsTouchScreen) ? 40 : 0;
@@ -218,7 +218,7 @@ namespace MatterHackers.MatterControl
 				FixedHeight = viewControlsButtonHeight,
 				FixedWidth = viewControlsButtonHeight,
 				AllowThemeToAdjustImage = false,
-				CheckedBorderColor = RGBA_Bytes.White
+				CheckedBorderColor = Color.White
 			});
 
 			this.MicroButton = new TextImageButtonFactory(new ButtonFactoryOptions()
@@ -237,7 +237,7 @@ namespace MatterHackers.MatterControl
 				FontSize = 8,
 				Margin = 0,
 				BorderWidth = 1,
-				CheckedBorderColor = RGBA_Bytes.Black
+				CheckedBorderColor = Color.Black
 			});
 
 #region PartPreviewWidget
@@ -257,13 +257,13 @@ namespace MatterHackers.MatterControl
 				FixedWidth = sideBarButtonWidth,
 				FixedHeight = shortButtonHeight,
 
-				NormalTextColor = RGBA_Bytes.Black,
-				NormalFillColor = RGBA_Bytes.White,
-				NormalBorderColor = new RGBA_Bytes(theme.PrimaryTextColor, 200),
+				NormalTextColor = Color.Black,
+				NormalFillColor = Color.White,
+				NormalBorderColor = new Color(theme.PrimaryTextColor, 200),
 
-				HoverTextColor = RGBA_Bytes.Black,
-				HoverFillColor = new RGBA_Bytes(255, 255, 255, 200),
-				HoverBorderColor = new RGBA_Bytes(theme.PrimaryTextColor, 200),
+				HoverTextColor = Color.Black,
+				HoverFillColor = new Color(255, 255, 255, 200),
+				HoverBorderColor = new Color(theme.PrimaryTextColor, 200),
 
 				BorderWidth = 1,
 			});
@@ -271,13 +271,13 @@ namespace MatterHackers.MatterControl
 			ExpandMenuOptionFactory = new TextImageButtonFactory(new ButtonFactoryOptions(commonOptions)
 			{
 				HoverTextColor = theme.PrimaryTextColor,
-				HoverFillColor = new RGBA_Bytes(255, 255, 255, 50),
+				HoverFillColor = new Color(255, 255, 255, 50),
 
 				PressedTextColor = theme.PrimaryTextColor,
-				PressedFillColor = new RGBA_Bytes(255, 255, 255, 50),
+				PressedFillColor = new Color(255, 255, 255, 50),
 
 				DisabledTextColor = theme.PrimaryTextColor,
-				DisabledFillColor = new RGBA_Bytes(255, 255, 255, 50),
+				DisabledFillColor = new Color(255, 255, 255, 50),
 				FixedWidth = sideBarButtonWidth,
 			});
 
@@ -289,13 +289,13 @@ namespace MatterHackers.MatterControl
 				FixedWidth = 185,
 				FixedHeight = 30,
 
-				NormalFillColor = RGBA_Bytes.White,
-				NormalTextColor = RGBA_Bytes.Black,
-				NormalBorderColor = new RGBA_Bytes(theme.PrimaryTextColor, 200),
+				NormalFillColor = Color.White,
+				NormalTextColor = Color.Black,
+				NormalBorderColor = new Color(theme.PrimaryTextColor, 200),
 
-				HoverFillColor = new RGBA_Bytes(255, 255, 255, 200),
-				HoverTextColor = RGBA_Bytes.Black,
-				HoverBorderColor = new RGBA_Bytes(theme.PrimaryTextColor, 200),
+				HoverFillColor = new Color(255, 255, 255, 200),
+				HoverTextColor = Color.Black,
+				HoverBorderColor = new Color(theme.PrimaryTextColor, 200),
 
 				BorderWidth = 1,
 			});
@@ -307,23 +307,23 @@ namespace MatterHackers.MatterControl
 				NormalTextColor = theme.PrimaryTextColor,
 
 				HoverTextColor = theme.PrimaryTextColor,
-				HoverFillColor = new RGBA_Bytes(255, 255, 255, 50),
+				HoverFillColor = new Color(255, 255, 255, 50),
 
 				DisabledTextColor = theme.PrimaryTextColor,
-				DisabledFillColor = new RGBA_Bytes(255, 255, 255, 50),
+				DisabledFillColor = new Color(255, 255, 255, 50),
 
 				PressedTextColor = theme.PrimaryTextColor,
-				PressedFillColor = new RGBA_Bytes(255, 255, 255, 50),
+				PressedFillColor = new Color(255, 255, 255, 50),
 			});
 
 			// TODO: Need to remain based default ButtonFactionOptions constructor until reviewed for styling issues
 			var disableableControlOptions = new ButtonFactoryOptions()
 			{
-				NormalFillColor = RGBA_Bytes.White,
-				NormalTextColor = RGBA_Bytes.Black,
+				NormalFillColor = Color.White,
+				NormalTextColor = Color.Black,
 				HoverTextColor = theme.PrimaryTextColor,
-				DisabledFillColor = RGBA_Bytes.White,
-				DisabledTextColor = RGBA_Bytes.DarkGray,
+				DisabledFillColor = Color.White,
+				DisabledTextColor = Color.DarkGray,
 				PressedTextColor = ActiveTheme.Instance.PrimaryTextColor,
 				FixedHeight = 25 * GuiWidget.DeviceScale,
 				FontSize = 11
@@ -333,9 +333,9 @@ namespace MatterHackers.MatterControl
 			this.HomingButtons = new TextImageButtonFactory(new ButtonFactoryOptions(disableableControlOptions)
 			{
 				BorderWidth = 1,
-				NormalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200),
-				HoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200),
-				NormalFillColor = new RGBA_Bytes(180, 180, 180),
+				NormalBorderColor = new Color(ActiveTheme.Instance.PrimaryTextColor, 200),
+				HoverBorderColor = new Color(ActiveTheme.Instance.PrimaryTextColor, 200),
+				NormalFillColor = new Color(180, 180, 180),
 			});
 
 #endregion
@@ -351,7 +351,7 @@ namespace MatterHackers.MatterControl
 				fontSize = FontSize10,
 				textColor = theme.SecondaryAccentColor
 			};
-			this.PrimaryTabFillColor = new RGBA_Bytes(RGBA_Bytes.White, ActiveTheme.Instance.IsDarkTheme ?  20 : 60);
+			this.PrimaryTabFillColor = new Color(Color.White, ActiveTheme.Instance.IsDarkTheme ?  20 : 60);
 		}
 
 		public FlowLayoutWidget CreatePopupMenu(IEnumerable<NamedAction> menuActions)
@@ -360,7 +360,7 @@ namespace MatterHackers.MatterControl
 			{
 				HAnchor = HAnchor.Fit,
 				VAnchor = VAnchor.Fit,
-				BackgroundColor = RGBA_Bytes.White
+				BackgroundColor = Color.White
 			};
 
 			// Create menu items in the DropList for each element in this.menuActions
@@ -399,7 +399,7 @@ namespace MatterHackers.MatterControl
 		internal TabControl CreateTabControl(int height = 1)
 		{
 			var tabControl = new TabControl(separator: new HorizontalLine(alpha: 50, height: height));
-			tabControl.TabBar.BorderColor = RGBA_Bytes.Transparent; // theme.SecondaryTextColor;
+			tabControl.TabBar.BorderColor = Color.Transparent; // theme.SecondaryTextColor;
 			tabControl.TabBar.Margin = 0;
 			tabControl.TabBar.Padding = 0;
 			tabControl.TextPointSize = FontSize12;
@@ -407,14 +407,14 @@ namespace MatterHackers.MatterControl
 			return tabControl;
 		}
 
-		private static ImageBuffer ColorCircle(int size, RGBA_Bytes color)
+		private static ImageBuffer ColorCircle(int size, Color color)
 		{
 			ImageBuffer imageBuffer = new ImageBuffer(size, size);
 			Graphics2D normalGraphics = imageBuffer.NewGraphics2D();
 			Vector2 center = new Vector2(size / 2.0, size / 2.0);
 			normalGraphics.Circle(center, size / 2.0, color);
-			normalGraphics.Line(center + new Vector2(-size / 4.0, -size / 4.0), center + new Vector2(size / 4.0, size / 4.0), RGBA_Bytes.White, 2 * GuiWidget.DeviceScale);
-			normalGraphics.Line(center + new Vector2(-size / 4.0, size / 4.0), center + new Vector2(size / 4.0, -size / 4.0), RGBA_Bytes.White, 2 * GuiWidget.DeviceScale);
+			normalGraphics.Line(center + new Vector2(-size / 4.0, -size / 4.0), center + new Vector2(size / 4.0, size / 4.0), Color.White, 2 * GuiWidget.DeviceScale);
+			normalGraphics.Line(center + new Vector2(-size / 4.0, size / 4.0), center + new Vector2(size / 4.0, -size / 4.0), Color.White, 2 * GuiWidget.DeviceScale);
 
 			return imageBuffer;
 		}

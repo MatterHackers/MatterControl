@@ -29,10 +29,10 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		{
 			if (this.Enabled)
 			{
-				this.TextColor = RGBA_Bytes.White;
+				this.TextColor = Color.White;
 			}
 			{
-				this.TextColor = RGBA_Bytes.Gray;
+				this.TextColor = Color.Gray;
 			}
 		}
 	}
@@ -50,8 +50,8 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 	public class OptionContainer : GuiWidget
 	{
-		private RGBA_Bytes borderColor = new RGBA_Bytes(63, 63, 70);
-		private RGBA_Bytes backgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+		private Color borderColor = new Color(63, 63, 70);
+		private Color backgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
 		public OptionContainer()
 			: base()
@@ -162,7 +162,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 	public class LabelContainer : GuiWidget
 	{
-		private RGBA_Bytes backgroundColor = new RGBA_Bytes(0, 140, 158);
+		private Color backgroundColor = new Color(0, 140, 158);
 
 		public LabelContainer()
 			: base()
@@ -181,8 +181,8 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 	//Base widget for use in ButtonStatesViewWidget
 	public class ControlButtonViewBase : GuiWidget
 	{
-		protected RGBA_Bytes fillColor;
-		protected RGBA_Bytes borderColor;
+		protected Color fillColor;
+		protected Color borderColor;
 		protected double borderWidth;
 		protected double borderRadius;
 		protected double padding;
@@ -194,9 +194,9 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 									 double borderWidth,
 									 double borderRadius,
 									 double padding,
-									 RGBA_Bytes textColor,
-									 RGBA_Bytes fillColor,
-									 RGBA_Bytes borderColor)
+									 Color textColor,
+									 Color fillColor,
+									 Color borderColor)
 			: base(width, height)
 		{
 			this.borderRadius = borderRadius;

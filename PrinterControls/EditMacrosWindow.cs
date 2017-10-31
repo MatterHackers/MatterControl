@@ -386,7 +386,7 @@ namespace MatterHackers.MatterControl
 					macroRow.Margin = new BorderDouble(3, 0, 3, 3);
 					macroRow.HAnchor = Agg.UI.HAnchor.Stretch;
 					macroRow.Padding = new BorderDouble(3);
-					macroRow.BackgroundColor = RGBA_Bytes.White;
+					macroRow.BackgroundColor = Color.White;
 
 					TextWidget buttonLabel = new TextWidget(GCodeMacro.FixMacroName(macro.Name));
 					macroRow.AddChild(buttonLabel);

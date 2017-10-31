@@ -175,9 +175,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						tabTitle + " Tab",
 						12,
 						ActiveTheme.Instance.TabLabelSelected,
-						RGBA_Bytes.Transparent,
+						Color.Transparent,
 						ActiveTheme.Instance.TabLabelUnselected,
-						RGBA_Bytes.Transparent,
+						Color.Transparent,
 						useUnderlineStyling: true);
 
 					tabControl.AddTab(textTab);

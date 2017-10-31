@@ -16,7 +16,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			public Action<bool> ToggleAction { get; set; }
 		}
 
-		private static RGBA_Bytes menuTextColor = RGBA_Bytes.Black;
+		private static Color menuTextColor = Color.Black;
 
 		public SettingsItem(string text, ToggleSwitchConfig toggleSwitchConfig = null, GuiWidget optionalControls = null, ImageBuffer iconImage = null, bool enforceGutter = true)
 			: this(text, CreateToggleSwitch(toggleSwitchConfig), optionalControls, iconImage, enforceGutter)

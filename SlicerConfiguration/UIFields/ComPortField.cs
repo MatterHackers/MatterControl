@@ -67,8 +67,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				Name = "com_port Field",
 				// Prevent droplist interaction when connected
 				Enabled = canChangeComPort,
-				TextColor = canChangeComPort ? ActiveTheme.Instance.PrimaryTextColor : new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 150),
-				BorderColor = canChangeComPort ? ActiveTheme.Instance.SecondaryTextColor : new RGBA_Bytes(ActiveTheme.Instance.SecondaryTextColor, 150),
+				TextColor = canChangeComPort ? ActiveTheme.Instance.PrimaryTextColor : new Color(ActiveTheme.Instance.PrimaryTextColor, 150),
+				BorderColor = canChangeComPort ? ActiveTheme.Instance.SecondaryTextColor : new Color(ActiveTheme.Instance.SecondaryTextColor, 150),
 			};
 
 			dropdownList.Click += (s, e) =>
@@ -84,8 +84,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				canChangeComPort = !printer.Connection.PrinterIsConnected && printer.Connection.CommunicationState != CommunicationStates.AttemptingToConnect;
 				dropdownList.Enabled = canChangeComPort;
-				dropdownList.TextColor = canChangeComPort ? ActiveTheme.Instance.PrimaryTextColor : new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 150);
-				dropdownList.BorderColor = canChangeComPort ? ActiveTheme.Instance.SecondaryTextColor : new RGBA_Bytes(ActiveTheme.Instance.SecondaryTextColor, 150);
+				dropdownList.TextColor = canChangeComPort ? ActiveTheme.Instance.PrimaryTextColor : new Color(ActiveTheme.Instance.PrimaryTextColor, 150);
+				dropdownList.BorderColor = canChangeComPort ? ActiveTheme.Instance.SecondaryTextColor : new Color(ActiveTheme.Instance.SecondaryTextColor, 150);
 			}, ref unregisterEvents);
 
 			// Release event listener on close

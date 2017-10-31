@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		}
 
 		Mesh lineMesh = PlatonicSolids.CreateCube(1, 1, 1);
-		private void RenderLine(Matrix4X4 transform, Vector3 start, Vector3 end, RGBA_Bytes color, bool zBuffered = true)
+		private void RenderLine(Matrix4X4 transform, Vector3 start, Vector3 end, Color color, bool zBuffered = true)
 		{
 			Vector3 lineCenter = (start + end) / 2;
 
@@ -71,19 +71,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (zBuffered)
 			{
-				GLHelper.Render(lineMesh, RGBA_Bytes.Black, lineTransform, RenderTypes.Shaded);
+				GLHelper.Render(lineMesh, Color.Black, lineTransform, RenderTypes.Shaded);
 				//drawEvent.graphics2D.Line(cornerPositionScreen, cornerPositionCcwScreen, RGBA_Bytes.Gray);
 			}
 			else
 			{
 				// render on top of everything very lightly
-				GLHelper.Render(lineMesh, new RGBA_Bytes(RGBA_Bytes.Black, 5), lineTransform, RenderTypes.Shaded);
+				GLHelper.Render(lineMesh, new Color(Color.Black, 5), lineTransform, RenderTypes.Shaded);
 			}
 		}
 
 		private void RenderBounds(AxisAlignedBoundingBox aabb)
 		{
-			RGBA_Bytes color = RGBA_Bytes.Red;
+			Color color = Color.Red;
 
 			// the bottom
 			RenderLine(transform.Peek(), aabb.GetBottomCorner(0), aabb.GetBottomCorner(1), color);

@@ -92,7 +92,7 @@ namespace MatterHackers.GCodeVisualizer
 			if ((renderInfo.CurrentRenderType & RenderType.Moves) == RenderType.Moves)
 			{
 				double movementLineWidth = 0.35 * renderInfo.LayerScale;
-				RGBA_Bytes movementColor = new RGBA_Bytes(10, 190, 15);
+				Color movementColor = new Color(10, 190, 15);
 
 				// render the part using opengl
 				Graphics2DOpenGL graphics2DGl = graphics2D as Graphics2DOpenGL;

@@ -54,12 +54,12 @@ namespace MatterHackers.MatterControl
 			var graphics2D = thumbIcon.NewGraphics2D();
 			var center = new Vector2(width / 2.0, width / 2.0);
 
-			graphics2D.DrawString("GCode", center.x, center.y, 8 * width / 50, Justification.Center, Baseline.BoundsCenter, color: RGBA_Bytes.White);
+			graphics2D.DrawString("GCode", center.x, center.y, 8 * width / 50, Justification.Center, Baseline.BoundsCenter, color: Color.White);
 			graphics2D.Render(
 				new Stroke(
 					new Ellipse(center, width / 2 - width / 12),
 					width / 12),
-				RGBA_Bytes.White);
+				Color.White);
 
 			thumbnailImage = thumbIcon;
 		}

@@ -57,13 +57,13 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			HAnchor = HAnchor.Stretch;
 		}
 
-		internal static RGBA_Bytes GetBorderColor(int alpha)
+		internal static Color GetBorderColor(int alpha)
 		{
-			RGBA_Bytes color = ActiveTheme.Instance.SecondaryTextColor;
+			Color color = ActiveTheme.Instance.SecondaryTextColor;
 
 			if (alpha != 255)
 			{
-				color = new RGBA_Bytes(ActiveTheme.Instance.SecondaryTextColor);
+				color = new Color(ActiveTheme.Instance.SecondaryTextColor);
 				color.alpha = (byte)alpha;
 			}
 

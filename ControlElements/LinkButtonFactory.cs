@@ -7,9 +7,9 @@ namespace MatterHackers.MatterControl
 {
 	public class ChangeTextColorEventArgs : EventArgs
 	{
-		public RGBA_Bytes color;
+		public Color color;
 
-		public ChangeTextColorEventArgs(RGBA_Bytes color)
+		public ChangeTextColorEventArgs(Color color)
 		{
 			this.color = color;
 		}
@@ -18,21 +18,21 @@ namespace MatterHackers.MatterControl
 	//Base widget for use in ButtonStatesViewWidget
 	public class LinkButtonViewBase : GuiWidget
 	{
-		protected RGBA_Bytes fillColor = new RGBA_Bytes(0, 0, 0, 0);
-		protected RGBA_Bytes borderColor = new RGBA_Bytes(0, 0, 0, 0);
+		protected Color fillColor = new Color(0, 0, 0, 0);
+		protected Color borderColor = new Color(0, 0, 0, 0);
 		protected double borderWidth = 0;
 		protected double borderRadius;
 		protected double padding;
 		protected bool isUnderlined = false;
 
-		public RGBA_Bytes TextColor { get; set; }
+		public Color TextColor { get; set; }
 
 		private TextWidget buttonText;
 
 		public LinkButtonViewBase(string label,
 									 double textHeight,
 									 double padding,
-									 RGBA_Bytes textColor,
+									 Color textColor,
 									 bool isUnderlined = false)
 			: base()
 		{
@@ -89,9 +89,9 @@ namespace MatterHackers.MatterControl
 	{
 		public double fontSize = 14;
 		public double padding = 3;
-		public RGBA_Bytes fillColor = new RGBA_Bytes(63, 63, 70, 0);
-		public RGBA_Bytes borderColor = new RGBA_Bytes(37, 37, 38, 0);
-		public RGBA_Bytes textColor = ActiveTheme.Instance.PrimaryAccentColor;
+		public Color fillColor = new Color(63, 63, 70, 0);
+		public Color borderColor = new Color(37, 37, 38, 0);
+		public Color textColor = ActiveTheme.Instance.PrimaryAccentColor;
 		public BorderDouble margin = new BorderDouble(0, 3);
 
 		public Button Generate(string buttonText)

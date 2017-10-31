@@ -289,7 +289,7 @@ namespace MatterHackers.MatterControl
 		{
 			ImageBuffer noCameraImage = new ImageBuffer(640, 480);
 			Graphics2D graphics = noCameraImage.NewGraphics2D();
-			graphics.Clear(RGBA_Bytes.White);
+			graphics.Clear(Color.White);
 			graphics.DrawString("No Camera Detected", 320, 240, pointSize: 24, justification: Agg.Font.Justification.Center);
 			graphics.DrawString(DateTime.Now.ToString(), 320, 200, pointSize: 12, justification: Agg.Font.Justification.Center);
 			AggContext.ImageIO.SaveImageData(imageFileName, noCameraImage);

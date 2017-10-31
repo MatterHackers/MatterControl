@@ -10,7 +10,7 @@ namespace MatterHackers.MatterControl
 	public class ClickWidget : GuiWidget
 	{
 		private int borderWidth = 0;
-		private RGBA_Bytes borderColor = RGBA_Bytes.Black;
+		private Color borderColor = Color.Black;
 
 		public int BorderWidth
 		{
@@ -22,7 +22,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public RGBA_Bytes BorderColor
+		public Color BorderColor
 		{
 			get { return borderColor; }
 			set

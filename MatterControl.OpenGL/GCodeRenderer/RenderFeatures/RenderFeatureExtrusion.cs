@@ -39,9 +39,9 @@ namespace MatterHackers.GCodeVisualizer
 	{
 		private float extrusionVolumeMm3;
 		private float layerHeight;
-		private RGBA_Bytes color;
+		private Color color;
 
-		public RenderFeatureExtrusion(Vector3 start, Vector3 end, int extruderIndex, double travelSpeed, double totalExtrusionMm, double filamentDiameterMm, double layerHeight, RGBA_Bytes color)
+		public RenderFeatureExtrusion(Vector3 start, Vector3 end, int extruderIndex, double travelSpeed, double totalExtrusionMm, double filamentDiameterMm, double layerHeight, Color color)
 			: base(start, end, extruderIndex, travelSpeed)
 		{
 			this.color = color;
@@ -98,7 +98,7 @@ namespace MatterHackers.GCodeVisualizer
 			{
 				double extrusionLineWidths = GetExtrusionWidth(renderInfo.CurrentRenderType) * 2 * renderInfo.LayerScale;
 
-				RGBA_Bytes extrusionColor = RGBA_Bytes.Black;
+				Color extrusionColor = Color.Black;
 				if (extruderIndex > 0)
 				{
 					extrusionColor = renderInfo.GetMaterialColor(extruderIndex);
@@ -110,7 +110,7 @@ namespace MatterHackers.GCodeVisualizer
 
 				if (renderInfo.CurrentRenderType.HasFlag(RenderType.TransparentExtrusion))
 				{
-					extrusionColor = new RGBA_Bytes(extrusionColor, 200);
+					extrusionColor = new Color(extrusionColor, 200);
 				}
 
 				// render the part using opengl

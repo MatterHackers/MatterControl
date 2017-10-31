@@ -116,7 +116,7 @@ namespace MatterHackers.MatterControl.SetupWizard
 			else
 			{
 				loadingText.Text = "Failed To Download History!";
-				loadingText.TextColor = RGBA_Bytes.Red;
+				loadingText.TextColor = Color.Red;
 			}
 			
 			//remove loading profile text/icon

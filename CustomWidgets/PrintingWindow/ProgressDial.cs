@@ -38,7 +38,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 {
 	public class ProgressDial : GuiWidget
 	{
-		private RGBA_Bytes borderColor;
+		private Color borderColor;
 		private Stroke borderStroke;
 		private double completedRatio = -1;
 		private double innerRingRadius;
@@ -55,9 +55,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		private TextWidget percentCompleteWidget;
 
-		private RGBA_Bytes PrimaryAccentColor = ActiveTheme.Instance.PrimaryAccentColor;
+		private Color PrimaryAccentColor = ActiveTheme.Instance.PrimaryAccentColor;
 
-		private RGBA_Bytes PrimaryAccentShade = ActiveTheme.Instance.PrimaryAccentColor.AdjustLightness(0.7).GetAsRGBA_Bytes();
+		private Color PrimaryAccentShade = ActiveTheme.Instance.PrimaryAccentColor.AdjustLightness(0.7).GetAsRGBA_Bytes();
 
 		private double innerRingStrokeWidth = 10 * GuiWidget.DeviceScale;
 

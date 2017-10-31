@@ -39,9 +39,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class SliceSettingsRow : FlowLayoutWidget
 	{
-		private static readonly RGBA_Bytes materialSettingBackgroundColor = RGBA_Bytes.Orange; // new RGBA_Bytes(255, 127, 0, 108);
-		private static readonly RGBA_Bytes qualitySettingBackgroundColor = RGBA_Bytes.YellowGreen; // new RGBA_Bytes(255, 255, 0, 108);
-		public static readonly RGBA_Bytes userSettingBackgroundColor = new RGBA_Bytes(68, 95, 220, 150);
+		private static readonly Color materialSettingBackgroundColor = Color.Orange; // new RGBA_Bytes(255, 127, 0, 108);
+		private static readonly Color qualitySettingBackgroundColor = Color.YellowGreen; // new RGBA_Bytes(255, 255, 0, 108);
+		public static readonly Color userSettingBackgroundColor = new Color(68, 95, 220, 150);
 
 		public event EventHandler StyleChanged;
 
@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			vline = new VerticalLine()
 			{
-				BackgroundColor = RGBA_Bytes.Transparent,
+				BackgroundColor = Color.Transparent,
 				Margin = new BorderDouble(right: 6),
 				Width = 3,
 				VAnchor = VAnchor.Stretch,
@@ -141,7 +141,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public GuiWidget NameArea { get; }
 
-		public RGBA_Bytes HighlightColor
+		public Color HighlightColor
 		{
 			get => vline.BackgroundColor;
 			set
@@ -149,7 +149,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (vline.BackgroundColor != value)
 				{
 					vline.BackgroundColor = value;
-					this.BackgroundColor = (value == RGBA_Bytes.Transparent) ? RGBA_Bytes.Transparent : ApplicationController.Instance.Theme.MinimalShade;
+					this.BackgroundColor = (value == Color.Transparent) ? Color.Transparent : ApplicationController.Instance.Theme.MinimalShade;
 
 					this.StyleChanged?.Invoke(null, null);
 				}
@@ -184,7 +184,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								}
 								else
 								{
-									this.HighlightColor = RGBA_Bytes.Transparent;
+									this.HighlightColor = Color.Transparent;
 								}
 
 								if (restoreButton != null)
@@ -221,7 +221,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 				else
 				{
-					this.HighlightColor = RGBA_Bytes.Transparent;
+					this.HighlightColor = Color.Transparent;
 				}
 
 				if (restoreButton != null) restoreButton.Visible = false;
@@ -229,7 +229,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			else
 			{
 				if (restoreButton != null) restoreButton.Visible = false;
-				this.HighlightColor = RGBA_Bytes.Transparent;
+				this.HighlightColor = Color.Transparent;
 			}
 
 		}

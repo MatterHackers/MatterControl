@@ -98,7 +98,7 @@ namespace MatterHackers.MatterControl.ContactForm
 			TextWidget formLabel = new TextWidget("", pointSize: 11);
 			formLabel.AutoExpandBoundsToText = true;
 			formLabel.Margin = new BorderDouble(0, 5);
-			formLabel.TextColor = RGBA_Bytes.Red;
+			formLabel.TextColor = Color.Red;
 			formLabel.HAnchor = HAnchor.Left;
 			formLabel.Visible = false;
 

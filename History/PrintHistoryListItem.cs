@@ -76,8 +76,8 @@ namespace MatterHackers.MatterControl.PrintHistory
 	public class PrintHistoryListItem : ListViewItemBase
 	{
 		public PrintTask printTask;
-		public RGBA_Bytes WidgetTextColor;
-		public RGBA_Bytes WidgetBackgroundColor;
+		public Color WidgetTextColor;
+		public Color WidgetBackgroundColor;
 
 		public bool isActivePrint = false;
 		public bool isSelectedItem = false;
@@ -119,11 +119,11 @@ namespace MatterHackers.MatterControl.PrintHistory
 				indicator.Width = 15;
 				if (printTask.PrintComplete)
 				{
-					indicator.BackgroundColor = new RGBA_Bytes(38, 147, 51, 180);
+					indicator.BackgroundColor = new Color(38, 147, 51, 180);
 				}
 				else
 				{
-					indicator.BackgroundColor = new RGBA_Bytes(252, 209, 22, 180);
+					indicator.BackgroundColor = new Color(252, 209, 22, 180);
 				}
 
 				FlowLayoutWidget middleColumn = new FlowLayoutWidget(FlowDirection.TopToBottom);
@@ -143,7 +143,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 					middleColumn.AddChild(labelContainer);
 				}
 
-				RGBA_Bytes timeTextColor = new RGBA_Bytes(34, 34, 34);
+				Color timeTextColor = new Color(34, 34, 34);
 
 				FlowLayoutWidget buttonContainer = new FlowLayoutWidget();
 				buttonContainer.Margin = new BorderDouble(0);
@@ -217,12 +217,12 @@ namespace MatterHackers.MatterControl.PrintHistory
 				rightMiddleColumnContainer.VAnchor = VAnchor.Stretch;
 				{
 					TextWidget viewLabel = new TextWidget("View".Localize());
-					viewLabel.TextColor = RGBA_Bytes.White;
+					viewLabel.TextColor = Color.White;
 					viewLabel.VAnchor = VAnchor.Center;
 					viewLabel.HAnchor = HAnchor.Center;
 
 					TextWidget printLabel = new TextWidget("Print".Localize());
-					printLabel.TextColor = RGBA_Bytes.White;
+					printLabel.TextColor = Color.White;
 					printLabel.VAnchor = VAnchor.Center;
 					printLabel.HAnchor = HAnchor.Center;
 
@@ -255,7 +255,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 				{
 					FlowLayoutWidget timestampColumn = new FlowLayoutWidget(FlowDirection.TopToBottom);
 					timestampColumn.VAnchor = Agg.UI.VAnchor.Stretch;
-					timestampColumn.BackgroundColor = RGBA_Bytes.LightGray;
+					timestampColumn.BackgroundColor = Color.LightGray;
 					timestampColumn.Padding = new BorderDouble(6, 0);
 
 					FlowLayoutWidget startTimeContainer = new FlowLayoutWidget();
@@ -300,7 +300,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 					endTimeContainer.AddChild(endDate);
 
 					HorizontalLine horizontalLine = new HorizontalLine();
-					horizontalLine.BackgroundColor = RGBA_Bytes.Gray;
+					horizontalLine.BackgroundColor = Color.Gray;
 
 					timestampColumn.AddChild(endTimeContainer);
 					timestampColumn.AddChild(horizontalLine);
@@ -366,8 +366,8 @@ namespace MatterHackers.MatterControl.PrintHistory
 			if (this.isSelectedItem)
 			{
 				this.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
-				this.partLabel.TextColor = RGBA_Bytes.White;
-				this.selectionCheckBox.TextColor = RGBA_Bytes.White;
+				this.partLabel.TextColor = Color.White;
+				this.selectionCheckBox.TextColor = Color.White;
 
 				//RectangleDouble Bounds = LocalBounds;
 				//RoundedRect rectBorder = new RoundedRect(Bounds, 0);
@@ -379,15 +379,15 @@ namespace MatterHackers.MatterControl.PrintHistory
 				RoundedRect rectBorder = new RoundedRect(Bounds, 0);
 
 				this.BackgroundColor = ActiveTheme.Instance.SecondaryAccentColor;
-				this.partLabel.TextColor = RGBA_Bytes.White;
-				this.selectionCheckBox.TextColor = RGBA_Bytes.White;
+				this.partLabel.TextColor = Color.White;
+				this.selectionCheckBox.TextColor = Color.White;
 
 				graphics2D.Render(new Stroke(rectBorder, 3), ActiveTheme.Instance.PrimaryAccentColor);
 			}
 			else
 			{
-				this.BackgroundColor = new RGBA_Bytes(255, 255, 255, 255);
-				this.partLabel.TextColor = RGBA_Bytes.Black;
+				this.BackgroundColor = new Color(255, 255, 255, 255);
+				this.partLabel.TextColor = Color.Black;
 			}
 		}
 	}

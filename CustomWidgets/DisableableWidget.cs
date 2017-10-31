@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public void SetEnableLevel(EnableLevel enabledLevel)
 		{
-			disableOverlay.BackgroundColor = new RGBA_Bytes(ActiveTheme.Instance.TertiaryBackgroundColor, 160);
+			disableOverlay.BackgroundColor = new Color(ActiveTheme.Instance.TertiaryBackgroundColor, 160);
 
 			switch (enabledLevel)
 			{

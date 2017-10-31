@@ -162,11 +162,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					// don't draw if any other control is dragging
 					if (MouseOver)
 					{
-						GLHelper.Render(upArrowMesh, RGBA_Bytes.Red, TotalTransform, RenderTypes.Shaded);
+						GLHelper.Render(upArrowMesh, Color.Red, TotalTransform, RenderTypes.Shaded);
 					}
 					else
 					{
-						GLHelper.Render(upArrowMesh, RGBA_Bytes.Black, TotalTransform, RenderTypes.Shaded);
+						GLHelper.Render(upArrowMesh, Color.Black, TotalTransform, RenderTypes.Shaded);
 					}
 				}
 			}
@@ -297,12 +297,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					for (int i = 0; i < lines.Count; i += 2)
 					{
 						// draw the measure line
-						drawEvent.graphics2D.Line(lines[i], lines[i + 1], RGBA_Bytes.Black);
+						drawEvent.graphics2D.Line(lines[i], lines[i + 1], Color.Black);
 					}
 
 					for (int i = 0; i < lines.Count; i += 4)
 					{
-						DrawMeasureLine(drawEvent.graphics2D, (lines[i] + lines[i + 1]) / 2, (lines[i + 2] + lines[i + 3]) / 2, RGBA_Bytes.Black, LineArrows.Both);
+						DrawMeasureLine(drawEvent.graphics2D, (lines[i] + lines[i + 1]) / 2, (lines[i + 2] + lines[i + 3]) / 2, Color.Black, LineArrows.Both);
 					}
 
 					AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);

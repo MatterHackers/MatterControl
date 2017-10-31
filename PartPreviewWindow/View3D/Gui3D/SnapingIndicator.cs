@@ -123,8 +123,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (drawEvent != null)
 				{
 					// draw the line that is on the ground
-					drawEvent.graphics2D.Line(lines[0], lines[1], RGBA_Bytes.Red);
-					drawEvent.graphics2D.Line(lines[2], lines[3], RGBA_Bytes.Red);
+					drawEvent.graphics2D.Line(lines[0], lines[1], Color.Red);
+					drawEvent.graphics2D.Line(lines[2], lines[3], Color.Red);
 				}
 			}
 		}

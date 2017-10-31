@@ -70,7 +70,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private bool hasDrawn = false;
 
 		private ProgressControl processingProgressControl;
-		private RGBA_Bytes[] SelectionColors = new RGBA_Bytes[] { new RGBA_Bytes(131, 4, 66), new RGBA_Bytes(227, 31, 61), new RGBA_Bytes(255, 148, 1), new RGBA_Bytes(247, 224, 23), new RGBA_Bytes(143, 212, 1) };
+		private Color[] SelectionColors = new Color[] { new Color(131, 4, 66), new Color(227, 31, 61), new Color(255, 148, 1), new Color(247, 224, 23), new Color(143, 212, 1) };
 		private Stopwatch timeSinceLastSpin = new Stopwatch();
 		private Stopwatch timeSinceReported = new Stopwatch();
 		private Matrix4X4 transformOnMouseDown = Matrix4X4.Identity;
@@ -423,7 +423,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			selectedObjectPanel = new SelectedObjectPanel(this, this.Scene, theme)
 			{
-				BackgroundColor = new RGBA_Bytes(0, 0, 0, theme.OverlayAlpha),
+				BackgroundColor = new Color(0, 0, 0, theme.OverlayAlpha),
 				VAnchor = VAnchor.Top | VAnchor.Fit,
 				HAnchor = HAnchor.Left | HAnchor.Fit,
 			};
@@ -567,7 +567,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				AxisAlignedBoundingBox selectedBounds = this.Scene.SelectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 
 				var drawCenter = CurrentSelectInfo.PlaneDownHitPos;
-				var drawColor = new RGBA_Bytes(RGBA_Bytes.Red, 20);
+				var drawColor = new Color(Color.Red, 20);
 				bool zBuffer = false;
 
 				for (int i = 0; i < 2; i++)
@@ -580,7 +580,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						drawCenter - new Vector3(0, -50, 0),
 						drawCenter - new Vector3(0, 50, 0), drawColor, zBuffer, 2);
 
-					drawColor = RGBA_Bytes.Black;
+					drawColor = Color.Black;
 					drawCenter.z = 0;
 					zBuffer = true;
 				}
@@ -978,7 +978,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (DragSelectionInProgress)
 			{
 				var selectionRectangle = new RectangleDouble(DragSelectionStartPosition, DragSelectionEndPosition);
-				e.graphics2D.Rectangle(selectionRectangle, RGBA_Bytes.Red);
+				e.graphics2D.Rectangle(selectionRectangle, Color.Red);
 			}
 		}
 
@@ -1107,9 +1107,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Vector3 topEndPosition = Vector3.Transform(x.Bvh.GetAxisAlignedBoundingBox().GetTopCorner((i + 1) % 4), x.TransformToWorld);
 					var topEndScreenPos = this.World.GetScreenPosition(topEndPosition);
 
-					e.graphics2D.Line(bottomStartScreenPos, bottomEndScreenPos, RGBA_Bytes.Black);
-					e.graphics2D.Line(topStartScreenPos, topEndScreenPos, RGBA_Bytes.Black);
-					e.graphics2D.Line(topStartScreenPos, bottomStartScreenPos, RGBA_Bytes.Black);
+					e.graphics2D.Line(bottomStartScreenPos, bottomEndScreenPos, Color.Black);
+					e.graphics2D.Line(topStartScreenPos, topEndScreenPos, Color.Black);
+					e.graphics2D.Line(topStartScreenPos, bottomStartScreenPos, Color.Black);
 				}
 
 				TriangleShape tri = x.Bvh as TriangleShape;
@@ -1121,7 +1121,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						var screenCenter = Vector3.Transform(vertexPos, x.TransformToWorld);
 						var screenPos = this.World.GetScreenPosition(screenCenter);
 
-						e.graphics2D.Circle(screenPos, 3, RGBA_Bytes.Red);
+						e.graphics2D.Circle(screenPos, 3, Color.Red);
 					}
 				}
 				else
@@ -1129,7 +1129,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					var center = x.Bvh.GetCenter();
 					var worldCenter = Vector3.Transform(center, x.TransformToWorld);
 					var screenPos2 = this.World.GetScreenPosition(worldCenter);
-					e.graphics2D.Circle(screenPos2, 3, RGBA_Bytes.Yellow);
+					e.graphics2D.Circle(screenPos2, 3, Color.Yellow);
 					e.graphics2D.DrawString($"{x.Depth},", screenPos2.x + 12 * x.Depth, screenPos2.y);
 				}
 			}
@@ -1474,7 +1474,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				HAnchor = HAnchor.Fit,
 				VAnchor = VAnchor.Fit,
-				BackgroundColor = RGBA_Bytes.White,
+				BackgroundColor = Color.White,
 				Padding = new BorderDouble(5, 5, 5, 0)
 			};
 
@@ -1557,7 +1557,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						{
 							var copy = transform.TransformedObject.Clone();
 							copy.Matrix = transform.RedoTransform;
-							copy.Color = new RGBA_Bytes(RGBA_Bytes.Gray, 126);
+							copy.Color = new Color(Color.Gray, 126);
 							list.Add(copy);
 						}
 					});
@@ -1641,7 +1641,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				HAnchor = HAnchor.Fit,
 				VAnchor = VAnchor.Fit,
-				BackgroundColor = RGBA_Bytes.White,
+				BackgroundColor = Color.White,
 				Padding = new BorderDouble(0, 5, 5, 0)
 			};
 
@@ -1665,7 +1665,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				string materialLabelText = string.Format("{0} {1}", "Material".Localize(), extruderIndex + 1);
 
-				RadioButton materialSelection = new RadioButton(materialLabelText, textColor: RGBA_Bytes.Black);
+				RadioButton materialSelection = new RadioButton(materialLabelText, textColor: Color.Black);
 				materialButtons.Add(materialSelection);
 				materialSelection.SiblingRadioButtonList = materialButtons;
 				colorSelectionContainer.AddChild(materialSelection);
@@ -2190,7 +2190,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var popupContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				Padding = 12,
-				BackgroundColor = RGBA_Bytes.White
+				BackgroundColor = Color.White
 			};
 
 			var meshViewer = meshViewerWidget;
@@ -2259,7 +2259,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			//var itemTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			var itemTextColor = RGBA_Bytes.Black;
+			var itemTextColor = Color.Black;
 
 			RenderTypes renderType;
 			bool canParse = Enum.TryParse(renderTypeString, out renderType);
@@ -2358,10 +2358,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								double endColor = 5.0 / 360.0;
 								double delta = endColor - startColor;
 
-								RGBA_Bytes color = RGBA_Floats.FromHSL(startColor, .99, .49).GetAsRGBA_Bytes();
+								Color color = ColorF.FromHSL(startColor, .99, .49).GetAsRGBA_Bytes();
 								if (normal.z < 0)
 								{
-									color = RGBA_Floats.FromHSL(startColor - delta * normal.z, .99, .49).GetAsRGBA_Bytes();
+									color = ColorF.FromHSL(startColor - delta * normal.z, .99, .49).GetAsRGBA_Bytes();
 								}
 
 								colorData.red = color.red;

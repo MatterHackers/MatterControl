@@ -11,7 +11,7 @@ namespace MatterHackers.MatterControl
 		protected TextWidget valueDisplay;
 		public string DisplayFormat { get; set; } = "{0}";
 		public event EventHandler ValueChanged;
-		public RGBA_Bytes TextColor
+		public Color TextColor
 		{
 			get
 			{
@@ -23,14 +23,14 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		RGBA_Bytes _borderColor = RGBA_Bytes.White;
-		public RGBA_Bytes BorderColor
+		Color _borderColor = Color.White;
+		public Color BorderColor
 		{
 			get { return _borderColor; }
 			set
 			{
 				_borderColor = value;
-				clickableValueContainer.BorderColor = new RGBA_Bytes(BorderColor, 140);
+				clickableValueContainer.BorderColor = new Color(BorderColor, 140);
 			}
 		}
 
@@ -49,13 +49,13 @@ namespace MatterHackers.MatterControl
 			clickableValueContainer.MouseEnterBounds += (sender, e) =>
 			{
 				clickableValueContainer.BorderWidth = 2;
-				clickableValueContainer.BorderColor = new RGBA_Bytes(BorderColor, 255);
+				clickableValueContainer.BorderColor = new Color(BorderColor, 255);
 			};
 
 			clickableValueContainer.MouseLeaveBounds += (sender, e) =>
 			{
 				clickableValueContainer.BorderWidth = 1;
-				clickableValueContainer.BorderColor = new RGBA_Bytes(BorderColor, 140);
+				clickableValueContainer.BorderColor = new Color(BorderColor, 140);
 			};
 
 			valueDisplay = new TextWidget(largestPossibleValue, pointSize: 12)

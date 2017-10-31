@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			buttonFactory.Colors.Fill.Normal = ActiveTheme.Instance.PrimaryAccentColor;
 			buttonFactory.Colors.Fill.Hover = ActiveTheme.Instance.PrimaryAccentColor;
 			buttonFactory.BorderWidth = 0;
-			buttonFactory.Colors.Text.Normal = RGBA_Bytes.White;
+			buttonFactory.Colors.Text.Normal = Color.White;
 
 			this.AddChild(new TextWidget("Z+", pointSize: smallScreen ? 12 : 15, textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{

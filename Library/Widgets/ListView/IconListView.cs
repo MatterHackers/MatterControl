@@ -232,11 +232,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			await this.LoadItemThumbnail();
 		}
 
-		public override RGBA_Bytes BackgroundColor
+		public override Color BackgroundColor
 		{
 			get
 			{
-				return this.IsSelected ? ActiveTheme.Instance.PrimaryAccentColor : RGBA_Bytes.Transparent;
+				return this.IsSelected ? ActiveTheme.Instance.PrimaryAccentColor : Color.Transparent;
 			}
 			set { }
 		}

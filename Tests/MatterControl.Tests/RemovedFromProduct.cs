@@ -68,16 +68,16 @@ namespace MatterControl.Tests
 					htmlContent = webClient.DownloadString("http://www.matterhackers.com/s/store?q=pla");
 				}
 
-				HtmlWidget content = new HtmlWidget(htmlContent, RGBA_Bytes.Black);
+				HtmlWidget content = new HtmlWidget(htmlContent, Color.Black);
 				content.AddChild(new GuiWidget()
 				{
 					HAnchor = HAnchor.Absolute,
 					VAnchor = VAnchor.Stretch
 				});
 				content.VAnchor |= VAnchor.Top;
-				content.BackgroundColor = RGBA_Bytes.White;
+				content.BackgroundColor = Color.White;
 				htmlTestWindow.AddChild(content);
-				htmlTestWindow.BackgroundColor = RGBA_Bytes.Cyan;
+				htmlTestWindow.BackgroundColor = Color.Cyan;
 				UiThread.RunOnIdle((state) =>
 				{
 					htmlTestWindow.ShowAsSystemWindow();

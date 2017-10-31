@@ -52,7 +52,7 @@ namespace MatterHackers.GCodeVisualizer
 
 		public static readonly int Stride = Marshal.SizeOf(default(ColorVertexData));
 
-		public ColorVertexData(Vector3 position, Vector3 normal, RGBA_Bytes color)
+		public ColorVertexData(Vector3 position, Vector3 normal, Color color)
 		{
 			r = (byte)color.Red0To255;
 			g = (byte)color.Green0To255;

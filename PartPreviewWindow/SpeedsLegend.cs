@@ -81,7 +81,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				rangeValues = Enumerable.Range(0, maxItems).Select(x => (int)(min + increment * index++)).ToArray();
 			}
 
-			RGBA_Bytes[] speedColors = rangeValues.OrderBy(s => s).Select(speed => extrusionColors.GetColorForSpeed(speed)).ToArray();
+			Color[] speedColors = rangeValues.OrderBy(s => s).Select(speed => extrusionColors.GetColorForSpeed(speed)).ToArray();
 
 			for (int i = 0; i < speedColors.Length; i++)
 			{
@@ -98,7 +98,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private class SpeedLegendRow : FlowLayoutWidget
 		{
-			public SpeedLegendRow(RGBA_Bytes color, double millimetersPerSecond, int pointSize)
+			public SpeedLegendRow(Color color, double millimetersPerSecond, int pointSize)
 				: base(FlowDirection.LeftToRight)
 			{
 				this.AddChild(

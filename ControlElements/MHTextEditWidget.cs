@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl
 		public MHTextEditWidget(string text = "", double x = 0, double y = 0, double pointSize = 12, double pixelWidth = 0, double pixelHeight = 0, bool multiLine = false, int tabIndex = 0, string messageWhenEmptyAndNotSelected = "", TypeFace typeFace = null)
 		{
 			this.Padding = new BorderDouble(3);
-			this.BackgroundColor = RGBA_Bytes.White;
+			this.BackgroundColor = Color.White;
 			this.HAnchor = HAnchor.Fit;
 			this.VAnchor = VAnchor.Fit;
 
@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl
 			this.ActualTextEditWidget.MinimumSize = new Vector2(Math.Max(ActualTextEditWidget.MinimumSize.x, pixelWidth), Math.Max(ActualTextEditWidget.MinimumSize.y, pixelHeight));
 			this.AddChild(this.ActualTextEditWidget);
 
-			this.AddChild(noContentFieldDescription = new TextWidget(messageWhenEmptyAndNotSelected, textColor: RGBA_Bytes.Gray)
+			this.AddChild(noContentFieldDescription = new TextWidget(messageWhenEmptyAndNotSelected, textColor: Color.Gray)
 			{
 				VAnchor = VAnchor.Top,
 				AutoExpandBoundsToText = true
@@ -80,7 +80,7 @@ namespace MatterHackers.MatterControl
 
 			if (ContainsFocus)
 			{
-				graphics2D.Rectangle(LocalBounds, RGBA_Bytes.Orange);
+				graphics2D.Rectangle(LocalBounds, Color.Orange);
 			}
 		}
 

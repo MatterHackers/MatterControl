@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					Margin = new BorderDouble(0, 0, 35, 60),
 					Padding = new BorderDouble(10, 10, 10, 8),
-					BackgroundColor = new RGBA_Bytes(0, 0, 0, theme.OverlayAlpha),
+					BackgroundColor = new Color(0, 0, 0, theme.OverlayAlpha),
 					HAnchor = HAnchor.Absolute | HAnchor.Right,
 					VAnchor = VAnchor.Top | VAnchor.Fit,
 					Width = 175
