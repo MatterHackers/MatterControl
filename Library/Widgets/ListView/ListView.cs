@@ -168,6 +168,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			int width = itemsContentView.ThumbWidth;
 			int height = itemsContentView.ThumbHeight;
 
+			itemsContentView.BeginReload();
+
 			// Folder items
 			if (UserSettings.Instance.get("ShowContainers") == "1")
 			{
@@ -190,8 +192,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 											&& item.IsContentFileType()
 											&& this.ItemFilter(item)
 									  select item;
-
-				itemsContentView.BeginReload();
 
 				foreach (var item in filteredResults)
 				{
