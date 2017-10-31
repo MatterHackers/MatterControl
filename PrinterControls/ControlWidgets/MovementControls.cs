@@ -91,7 +91,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			var buttonFactory = ApplicationController.Instance.Theme.DisableableControlBase;
 
 			Button editButton;
-			movementControlsGroupBox = new AltGroupBox(buttonFactory.GenerateGroupBoxLabelWithEdit(new TextWidget("Movement".Localize(), pointSize: headingPointSize, textColor: ActiveTheme.Instance.SecondaryAccentColor), out editButton))
+			movementControlsGroupBox = new AltGroupBox(buttonFactory.GenerateGroupBoxLabelWithEdit(new TextWidget("Movement".Localize(), pointSize: headingPointSize, textColor: ActiveTheme.Instance.SecondaryAccentColor, bold: true), out editButton))
 			{
 				Margin = new BorderDouble(0),
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,

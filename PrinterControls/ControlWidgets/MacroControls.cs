@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 			// add the widgets to this window
 			Button editButton;
-			AltGroupBox groupBox = new AltGroupBox(buttonFactory.GenerateGroupBoxLabelWithEdit(new TextWidget("Macros".Localize(), pointSize: headingPointSize, textColor: ActiveTheme.Instance.SecondaryAccentColor), out editButton));
+			AltGroupBox groupBox = new AltGroupBox(buttonFactory.GenerateGroupBoxLabelWithEdit(new TextWidget("Macros".Localize(), pointSize: headingPointSize, textColor: ActiveTheme.Instance.SecondaryAccentColor, bold: true), out editButton));
 			editButton.Click += (sender, e) =>
 			{
 				EditMacrosWindow.Show();

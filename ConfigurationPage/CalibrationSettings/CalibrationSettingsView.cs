@@ -25,7 +25,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		{
 			this.printer = printer;
 
-			var mainContainer = new AltGroupBox(new TextWidget("Calibration".Localize(), pointSize: headingPointSize, textColor: ActiveTheme.Instance.SecondaryAccentColor))
+			var mainContainer = new AltGroupBox(new TextWidget("Calibration".Localize(), pointSize: headingPointSize, textColor: ActiveTheme.Instance.SecondaryAccentColor, bold: true))
 			{
 				Margin = new BorderDouble(0),
 				BorderColor = ActiveTheme.Instance.PrimaryTextColor,

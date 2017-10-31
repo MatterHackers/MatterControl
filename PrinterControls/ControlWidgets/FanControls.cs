@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			this.HAnchor = HAnchor.Stretch;
 			this.HAnchor = HAnchor.Stretch;
 
-			var fanControlsGroupBox = new AltGroupBox(new TextWidget("Fan".Localize(), pointSize: headingPointSize, textColor: ActiveTheme.Instance.SecondaryAccentColor))
+			var fanControlsGroupBox = new AltGroupBox(new TextWidget("Fan".Localize(), pointSize: headingPointSize, textColor: ActiveTheme.Instance.SecondaryAccentColor, bold: true))
 			{
 				Margin = new BorderDouble(0),
 				BorderColor = ActiveTheme.Instance.PrimaryTextColor,

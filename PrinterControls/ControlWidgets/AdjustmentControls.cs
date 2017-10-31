@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		public AdjustmentControls(PrinterConfig printer, int headingPointSize)
 		{
-			var adjustmentControlsGroupBox = new AltGroupBox(new TextWidget("Tuning Adjustment".Localize(), pointSize: headingPointSize, textColor: ActiveTheme.Instance.SecondaryAccentColor))
+			var adjustmentControlsGroupBox = new AltGroupBox(new TextWidget("Tuning Adjustment".Localize(), pointSize: headingPointSize, textColor: ActiveTheme.Instance.SecondaryAccentColor, bold: true))
 			{
 				Margin = 0,
 				BorderColor = ActiveTheme.Instance.PrimaryTextColor,
