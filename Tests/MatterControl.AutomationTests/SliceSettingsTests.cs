@@ -65,6 +65,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					// Force lose focus to drop Slice popup window to expose OverFlow menu
 					testRunner.ClickByName("Library Up Button");
 
+					testRunner.ClickByName("Pin Settings Button");
+
 					testRunner.ClickByName("View3D Overflow Menu");
 					testRunner.ClickByName("Sync To Print Checkbox");
 
