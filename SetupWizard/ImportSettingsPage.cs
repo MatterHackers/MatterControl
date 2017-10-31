@@ -231,7 +231,6 @@ namespace MatterHackers.MatterControl
 					};
 
 					ActiveSliceSettings.Instance.Merge(destinationLayer, settingsToImport, sourceFilter, false);
-					UiThread.RunOnIdle(ApplicationController.Instance.ReloadAdvancedControlsPanel);
 
 					string successMessage = importPrinterSuccessMessage.FormatWith(Path.GetFileNameWithoutExtension(settingsFilePath));
 					if (!isMergeIntoUserLayer)
@@ -556,8 +555,6 @@ namespace MatterHackers.MatterControl
 							if (containsValidSetting)
 							{
 								activeSettings.Save();
-
-								UiThread.RunOnIdle(ApplicationController.Instance.ReloadAdvancedControlsPanel);
 							}
 							else
 							{

@@ -165,7 +165,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.Delay(.5);
 				testRunner.Type("Batman Renamed");
-				testRunner.ClickByName("Rename Button");
+				testRunner.ClickByName("InputBoxPage Action Button");
 				Assert.IsTrue(testRunner.WaitForName("Row Item Batman Renamed", 2));
 
 				return Task.CompletedTask;

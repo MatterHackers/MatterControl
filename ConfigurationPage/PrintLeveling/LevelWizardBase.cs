@@ -203,8 +203,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			levelingData.SampledPositions.Clear();
 			printer.Settings.SetValue(SettingsKey.baby_step_z_offset, "0");
 
-			ApplicationController.Instance.ReloadAdvancedControlsPanel();
-
 			LevelWizardBase printLevelWizardWindow;
 			switch (levelingData.CurrentPrinterLevelingSystem)
 			{

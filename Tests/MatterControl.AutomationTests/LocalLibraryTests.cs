@@ -86,13 +86,13 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				// Open and wait rename window
 				testRunner.LibraryRenameSelectedItem();
-				testRunner.WaitForName("Rename Button");
+				testRunner.WaitForName("InputBoxPage Action Button");
 
 				testRunner.Delay(1);
 
 				// Rename item
 				testRunner.Type("Rook Renamed");
-				testRunner.ClickByName("Rename Button");
+				testRunner.ClickByName("InputBoxPage Action Button");
 
 				// Confirm
 				Assert.IsTrue(testRunner.WaitForName("Row Item Rook Renamed"));

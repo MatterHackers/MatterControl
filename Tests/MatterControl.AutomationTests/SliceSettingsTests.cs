@@ -25,7 +25,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.AddItemToBedplate("", "Row Item Rook");
 
 				testRunner.SwitchToAdvancedSliceSettings();
-				testRunner.ClickByName("Raft / Priming Tab");
+				testRunner.ClickByName("Raft / Skirt / Brim Tab");
 				testRunner.ClickByName("Create Raft Field");
 
 				testRunner.StartSlicing();
@@ -64,6 +64,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					// Force lose focus to drop Slice popup window to expose OverFlow menu
 					testRunner.ClickByName("Library Up Button");
+
+					testRunner.ClickByName("Pin Settings Button");
 
 					testRunner.ClickByName("View3D Overflow Menu");
 					testRunner.ClickByName("Sync To Print Checkbox");
