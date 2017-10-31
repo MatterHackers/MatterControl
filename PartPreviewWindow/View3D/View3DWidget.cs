@@ -2105,7 +2105,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								{
 									new FileSystemFileItem(sceneContext.printItem.FileLocation)
 									{
-										Name = returnInfo.newName
+										Name = returnInfo.ItemName
 									}
 								});
 

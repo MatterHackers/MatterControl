@@ -157,10 +157,7 @@ namespace MatterHackers.MatterControl
 
 			if (newName != "")
 			{
-				string fileName = Path.ChangeExtension(Path.GetRandomFileName(), ".amf");
-				string fileNameAndPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, fileName);
-
-				functionToCallOnSaveAs(new SaveAsReturnInfo(newName, fileNameAndPath, librarySelectorWidget.ActiveContainer));
+				functionToCallOnSaveAs(new SaveAsReturnInfo(newName, librarySelectorWidget.ActiveContainer));
 
 				CloseOnIdle();
 			}
@@ -168,16 +165,15 @@ namespace MatterHackers.MatterControl
 
 		public class SaveAsReturnInfo
 		{
-			public string fileNameAndPath;
-			public string newName;
-			public ILibraryContainer DestinationContainer;
-
-			public SaveAsReturnInfo(string newName, string fileNameAndPath, ILibraryContainer destinationLibraryProvider)
+			public SaveAsReturnInfo(string itemName, ILibraryContainer destinationContainer)
 			{
-				this.DestinationContainer = destinationLibraryProvider;
-				this.newName = newName;
-				this.fileNameAndPath = fileNameAndPath;
+				this.DestinationContainer = destinationContainer;
+				this.ItemName = itemName;
 			}
+
+			public string ItemName { get; }
+
+			public ILibraryContainer DestinationContainer { get; }
 		}
 	}
 }
