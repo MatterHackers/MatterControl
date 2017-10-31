@@ -140,6 +140,7 @@ namespace MatterHackers.MatterControl
 
 		public void AddPageAction(Button button)
 		{
+			button.Margin = new BorderDouble(right: ApplicationController.Instance.Theme.ButtonSpacing.Left);
 			footerRow.AddChild(button);
 		}
 

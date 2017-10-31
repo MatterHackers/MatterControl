@@ -296,17 +296,11 @@ namespace MatterHackers.MatterControl
 
 		private string BuildDefaultName(GuiWidget widget)
 		{
-			string nameToWrite = "";
-			if (!string.IsNullOrEmpty(widget.Name))
-			{
-				nameToWrite += $"{widget.GetType().Name} - {widget.Name}";
-			}
-			else
-			{
-				nameToWrite += $"{widget.GetType().Name}";
-			}
+			var type = widget.GetType();
+			string baseType = type == typeof(GuiWidget) || type.BaseType == typeof(GuiWidget) ? "" : $":{type.BaseType.Name}";
+			string controlName = string.IsNullOrEmpty(widget.Name) ? "" : $" - '{widget.Name}'";
 
-			return nameToWrite;
+			return $"{type.Name}{baseType}{controlName}";
 		}
 
 		private string BuildDefaultName(IObject3D item)

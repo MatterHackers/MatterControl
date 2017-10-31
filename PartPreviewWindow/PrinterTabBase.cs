@@ -67,10 +67,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				//BackgroundColor = new RGBA_Bytes(0, 0, 0, theme.OverlayAlpha),
 				PartSelectVisible = false,
-				VAnchor = VAnchor.Top | VAnchor.Fit | VAnchor.Absolute,
-				HAnchor = HAnchor.Left | HAnchor.Absolute,
+				VAnchor = VAnchor.Top | VAnchor.Fit,
+				HAnchor = HAnchor.Left | HAnchor.Stretch,
 				Visible = true,
-				Margin = new BorderDouble(0, 0, 0, 41)
 			};
 			viewControls3D.ResetView += (sender, e) =>
 			{
@@ -100,16 +99,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			topToBottom.AnchorAll();
 			this.AddChild(topToBottom);
 
+			topToBottom.AddChild(viewControls3D);
+
 			leftToRight = new FlowLayoutWidget();
 			leftToRight.Name = "View3DContainerParent";
 			leftToRight.AnchorAll();
 			topToBottom.AddChild(leftToRight);
 
 			view3DContainer = new GuiWidget();
-			view3DContainer.BoundsChanged += (s, e) =>
-			{
-				viewControls3D.Width = view3DWidget.Width;
-			};
 			view3DContainer.AnchorAll();
 
 			view3DContainer.AddChild(view3DWidget);
@@ -122,8 +119,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				this.view3DWidget.ResetView();
 			}
-
-			this.AddChild(viewControls3D);
 
 			this.AnchorAll();
 		}
