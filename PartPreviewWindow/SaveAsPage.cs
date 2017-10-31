@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl
 
 		private ILibraryContext libraryNavContext;
 
-		public SaveAsPage(Func<SaveAsReturnInfo, Task> functionToCallOnSaveAs, bool showQueue, bool getNewName)
+		public SaveAsPage(Func<SaveAsReturnInfo, Task> functionToCallOnSaveAs, bool allowNameChange = true)
 		{
 			var buttonFactory = ApplicationController.Instance.Theme.ButtonFactory;
 
@@ -100,7 +100,7 @@ namespace MatterHackers.MatterControl
 			middleRowContainer.AddChild(chooseWindow);
 
 			// put in the area to type in the new name
-			if(getNewName)
+			if (allowNameChange)
 			{
 				TextWidget fileNameHeader = new TextWidget("Design Name".Localize(), pointSize: 12)
 				{

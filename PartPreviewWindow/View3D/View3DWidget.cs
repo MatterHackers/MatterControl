@@ -2088,32 +2088,31 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void OpenSaveAsWindow()
 		{
-			WizardWindow.Show(new SaveAsPage(
-				async (returnInfo) =>
-				{
-					// Save the scene to disk
-					await this.SaveChanges();
-
-					// Save to the destination provider
-					if (returnInfo?.DestinationContainer != null)
+			WizardWindow.Show(
+				new SaveAsPage(
+					async (returnInfo) =>
 					{
-						// save this part to correct library provider
-						if (returnInfo.DestinationContainer is ILibraryWritableContainer writableContainer)
-						{
-							writableContainer.Add(new[]
-							{
-								new FileSystemFileItem(sceneContext.printItem.FileLocation)
-								{
-									Name = returnInfo.newName
-								}
-							});
+						// Save the scene to disk
+						await this.SaveChanges();
 
-							returnInfo.DestinationContainer.Dispose();
+						// Save to the destination provider
+						if (returnInfo?.DestinationContainer != null)
+						{
+							// save this part to correct library provider
+							if (returnInfo.DestinationContainer is ILibraryWritableContainer writableContainer)
+							{
+								writableContainer.Add(new[]
+								{
+									new FileSystemFileItem(sceneContext.printItem.FileLocation)
+									{
+										Name = returnInfo.newName
+									}
+								});
+
+								returnInfo.DestinationContainer.Dispose();
+							}
 						}
-					}
-				},
-				true,
-				true));
+					}));
 		}
 
 		private bool rotateQueueMenu_Click()
