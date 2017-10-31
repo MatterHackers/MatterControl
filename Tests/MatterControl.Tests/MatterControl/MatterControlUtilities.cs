@@ -42,6 +42,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintLibrary;
 using MatterHackers.MatterControl.SlicerConfiguration;
@@ -404,7 +405,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void AddItemToBedplate(this AutomationRunner testRunner, string containerName = "Calibration Parts Row Item Collection", string partName = "Row Item Calibration - Box.stl")
 		{
-			if (!testRunner.NameExists(partName, .1) && !string.IsNullOrEmpty(containerName))
+			if (!testRunner.NameExists(partName, 0) && !string.IsNullOrEmpty(containerName))
 			{
 				testRunner.NavigateToFolder(containerName);
 			}
@@ -415,8 +416,20 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName(partName);
 			}
 			testRunner.ClickByName("Print Library Overflow Menu");
+
+			var view3D = testRunner.GetWidgetByName("View3DWidget", out _) as View3DWidget;
+			var scene = view3D.InteractionLayer.Scene;
+			var preAddCount = scene.Children.Count();
+
 			testRunner.ClickByName("Add to Plate Menu Item");
-			testRunner.Delay(1);
+			// wait for the object to be added
+			testRunner.Delay(() => scene.Children.Count == preAddCount+1, 1);
+			// wait for the object to be done loading
+			var insertionGroup = scene.Children.LastOrDefault() as InsertionGroup;
+			if(insertionGroup != null)
+			{
+				testRunner.Delay(() => scene.Children.LastOrDefault() as InsertionGroup != null, 10);
+			}
 		}
 
 		public static void SaveBedplateToFolder(this AutomationRunner testRunner, string newFileName, string folderName)
