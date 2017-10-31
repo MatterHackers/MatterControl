@@ -404,16 +404,16 @@
 	},
 	{
 		"SlicerConfigName": "first_layer_speed",
-		"PresentationName": "First Layer Speed",
-		"HelpText": "The speed at which the nozzle will move when printing the first layers. If expressed as a percentage the Infill speed is modified.",
+		"PresentationName": "Initial Layer Speed",
+		"HelpText": "The speed at which the nozzle will move when printing the initial layers. If expressed as a percentage the Infill speed is modified.",
 		"DataEditType": "DOUBLE_OR_PERCENT",
 		"ExtraSettings": "mm/s or %",
 		"DefaultValue": "30%"
 	},
 	{
 		"SlicerConfigName": "number_of_first_layers",
-		"PresentationName": "Slow Layers",
-		"HelpText": "The number of layers to consider as the begining of the print. These will print at first layer speed.",
+		"PresentationName": "Initial Layers",
+		"HelpText": "The number of layers to consider as the begining of the print. These will print at initial layer speed.",
 		"DataEditType": "INT_OR_MM",
 		"ExtraSettings": "layers or mm",
 		"ShowIfSet": "sla_printer",
