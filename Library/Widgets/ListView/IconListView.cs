@@ -55,13 +55,14 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 		}
 
-		private bool reflowingContent = false;
+		private int reflownWidth = -1;
 
 		public override void OnBoundsChanged(EventArgs e)
 		{
-			if (!reflowingContent)
+			int currentWidth = (int)this.Size.X;
+			if (reflownWidth != currentWidth)
 			{
-				reflowingContent = true;
+				reflownWidth = currentWidth;
 
 				int newColumnCount = RecomputeFlowValues();
 				if (newColumnCount != columnCount)
@@ -90,15 +91,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						iconView.Margin = new BorderDouble(leftRightMargin, 0);
 					}
 				}
-
-				// put in padding to get the "other" side of the outside icons
-				this.Padding = new BorderDouble(leftRightMargin, 0);
-
-				reflowingContent = false;
 			}
 
 			base.OnBoundsChanged(e);
-
 		}
 
 		private int RecomputeFlowValues()
@@ -127,21 +122,20 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			// set the margin to be 1/2 the space (it will happen on each side of each icon)
 			leftRightMargin = (int)(remainingSpace > 0 ? spacePerColumn / 2 : 0);
 
+			// put in padding to get the "other" side of the outside icons
+			this.Padding = new BorderDouble(leftRightMargin, 0);
+
 			return newColumnCount;
 		}
 
 		public ListViewItemBase AddItem(ListViewItem item)
 		{
-			reflowingContent = true;
-
 			var iconView = new IconViewItem(item, this.ThumbWidth, this.ThumbHeight);
 			iconView.Margin = new BorderDouble(leftRightMargin, 0);
 
 			allIconViews.Add(iconView);
 
 			AddColumnAndChild(iconView);
-
-			reflowingContent = false;
 
 			return iconView;
 		}
@@ -179,12 +173,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		public void BeginReload()
 		{
 			columnCount = RecomputeFlowValues();
-			reflowingContent = true;
 		}
 
 		public void EndReload()
 		{
-			reflowingContent = false;
 		}
 	}
 

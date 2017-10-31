@@ -144,77 +144,75 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				activeWritable.ItemContentChanged -= WritableContainer_ItemContentChanged;
 			}
 
+			if (sourceContainer == null)
 			{
-				if (sourceContainer == null)
-				{
-					return;
-				}
-
-				var itemsNeedingLoad = new List<ListViewItem>();
-
-				this.items.Clear();
-
-				this.SelectedItems.Clear();
-				contentView.CloseAllChildren();
-
-				var itemsContentView = contentView as IListContentView;
-				itemsContentView.ClearItems();
-
-				// Wait for the container to load
-				await Task.Run(() =>
-				{
-					sourceContainer.Load();
-				});
-
-				int width = itemsContentView.ThumbWidth;
-				int height = itemsContentView.ThumbHeight;
-
-				// Folder items
-				if (UserSettings.Instance.get("ShowContainers") == "1")
-				{
-					foreach (var childContainer in sourceContainer.ChildContainers.Where(c => c.IsVisible && this.ContainerFilter(c)))
-					{
-						var listViewItem = new ListViewItem(childContainer, this);
-						listViewItem.DoubleClick += listViewItem_DoubleClick;
-						items.Add(listViewItem);
-
-						listViewItem.ViewWidget = itemsContentView.AddItem(listViewItem);
-						listViewItem.ViewWidget.Name = childContainer.Name + " Row Item Collection";
-					}
-				}
-
-				// List items
-				if (this.ShowItems)
-				{
-					var filteredResults = from item in sourceContainer.Items
-										  where item.IsVisible
-												&& item.IsContentFileType()
-												&& this.ItemFilter(item)
-										  select item;
-
-					itemsContentView.BeginReload();
-
-					foreach (var item in filteredResults)
-					{
-						var listViewItem = new ListViewItem(item, this);
-						listViewItem.DoubleClick += listViewItem_DoubleClick;
-						items.Add(listViewItem);
-
-						listViewItem.ViewWidget = itemsContentView.AddItem(listViewItem);
-						listViewItem.ViewWidget.Name = "Row Item " + item.Name;
-					}
-
-					itemsContentView.EndReload();
-
-				}
-
-				if (sourceContainer is ILibraryWritableContainer writableContainer)
-				{
-					writableContainer.ItemContentChanged += WritableContainer_ItemContentChanged;
-				}
-
-				this.Invalidate();
+				return;
 			}
+
+			var itemsNeedingLoad = new List<ListViewItem>();
+
+			this.items.Clear();
+
+			this.SelectedItems.Clear();
+			contentView.CloseAllChildren();
+
+			var itemsContentView = contentView as IListContentView;
+			itemsContentView.ClearItems();
+
+			// Wait for the container to load
+			await Task.Run(() =>
+			{
+				sourceContainer.Load();
+			});
+
+			int width = itemsContentView.ThumbWidth;
+			int height = itemsContentView.ThumbHeight;
+
+			itemsContentView.BeginReload();
+
+			// Folder items
+			if (UserSettings.Instance.get("ShowContainers") == "1")
+			{
+				foreach (var childContainer in sourceContainer.ChildContainers.Where(c => c.IsVisible && this.ContainerFilter(c)))
+				{
+					var listViewItem = new ListViewItem(childContainer, this);
+					listViewItem.DoubleClick += listViewItem_DoubleClick;
+					items.Add(listViewItem);
+
+					listViewItem.ViewWidget = itemsContentView.AddItem(listViewItem);
+					listViewItem.ViewWidget.Name = childContainer.Name + " Row Item Collection";
+				}
+			}
+
+			// List items
+			if (this.ShowItems)
+			{
+				var filteredResults = from item in sourceContainer.Items
+									  where item.IsVisible
+											&& item.IsContentFileType()
+											&& this.ItemFilter(item)
+									  select item;
+
+				foreach (var item in filteredResults)
+				{
+					var listViewItem = new ListViewItem(item, this);
+					listViewItem.DoubleClick += listViewItem_DoubleClick;
+					items.Add(listViewItem);
+
+					listViewItem.ViewWidget = itemsContentView.AddItem(listViewItem);
+					listViewItem.ViewWidget.Name = "Row Item " + item.Name;
+				}
+
+				itemsContentView.EndReload();
+
+			}
+
+			if (sourceContainer is ILibraryWritableContainer writableContainer)
+			{
+				writableContainer.ItemContentChanged += WritableContainer_ItemContentChanged;
+			}
+
+			this.Invalidate();
 		}
 
 		private void WritableContainer_ItemContentChanged(object sender, ItemChangedEventArgs e)

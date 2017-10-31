@@ -70,7 +70,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private bool hasDrawn = false;
 
 		private ProgressControl processingProgressControl;
-		private SaveAsWindow saveAsWindow = null;
 		private RGBA_Bytes[] SelectionColors = new RGBA_Bytes[] { new RGBA_Bytes(131, 4, 66), new RGBA_Bytes(227, 31, 61), new RGBA_Bytes(255, 148, 1), new RGBA_Bytes(247, 224, 23), new RGBA_Bytes(143, 212, 1) };
 		private Stopwatch timeSinceLastSpin = new Stopwatch();
 		private Stopwatch timeSinceReported = new Stopwatch();
@@ -2089,10 +2088,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void OpenSaveAsWindow()
 		{
-			if (saveAsWindow == null)
-			{
-				saveAsWindow = new SaveAsWindow(
-					sceneContext,
+			WizardWindow.Show(
+				new SaveAsPage(
 					async (returnInfo) =>
 					{
 						// Save the scene to disk
@@ -2108,33 +2105,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								{
 									new FileSystemFileItem(sceneContext.printItem.FileLocation)
 									{
-										Name = returnInfo.newName
+										Name = returnInfo.ItemName
 									}
 								});
 
 								returnInfo.DestinationContainer.Dispose();
 							}
 						}
-					}, 
-					true, 
-					true);
-
-				saveAsWindow.Closed += SaveAsWindow_Closed;
-			}
-			else
-			{
-				saveAsWindow.BringToFront();
-			}
+					}));
 		}
 
 		private bool rotateQueueMenu_Click()
 		{
 			return true;
-		}
-
-		private void SaveAsWindow_Closed(object sender, ClosedEventArgs e)
-		{
-			this.saveAsWindow = null;
 		}
 
 		public Vector2 DragSelectionStartPosition { get; private set; }

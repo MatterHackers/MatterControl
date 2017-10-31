@@ -448,7 +448,7 @@
     <Compile Include="EeProm\EePromRepetierParameter.cs" />
     <Compile Include="EeProm\EePromRepetierWindow.cs" />
     <Compile Include="EeProm\EePromRepetierStorage.cs" />
-    <Compile Include="PartPreviewWindow\SaveAsWindow.cs" />
+    <Compile Include="PartPreviewWindow\SaveAsPage.cs" />
     <Compile Include="DataStorage\SQLiteAndroid.cs" />
     <Compile Include="CustomWidgets\DataViewGraph.cs" />
     <Compile Include="CustomWidgets\TwoSidedStack.cs" />
