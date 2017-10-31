@@ -103,7 +103,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// add in the update available button
 			LinkButtonFactory linkButtonFactory = new LinkButtonFactory()
 			{
-				textColor = ActiveTheme.Instance.PrimaryAccentColor,
+				textColor = ActiveTheme.Instance.PrimaryTextColor,
 				fontSize = 12,
 			};
 
