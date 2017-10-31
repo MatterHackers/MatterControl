@@ -70,7 +70,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private bool hasDrawn = false;
 
 		private ProgressControl processingProgressControl;
-		private SaveAsWindow saveAsWindow = null;
 		private RGBA_Bytes[] SelectionColors = new RGBA_Bytes[] { new RGBA_Bytes(131, 4, 66), new RGBA_Bytes(227, 31, 61), new RGBA_Bytes(255, 148, 1), new RGBA_Bytes(247, 224, 23), new RGBA_Bytes(143, 212, 1) };
 		private Stopwatch timeSinceLastSpin = new Stopwatch();
 		private Stopwatch timeSinceReported = new Stopwatch();
@@ -2089,52 +2088,37 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void OpenSaveAsWindow()
 		{
-			if (saveAsWindow == null)
-			{
-				saveAsWindow = new SaveAsWindow(
-					sceneContext,
-					async (returnInfo) =>
+			WizardWindow.Show(new SaveAsPage(
+				async (returnInfo) =>
+				{
+					// Save the scene to disk
+					await this.SaveChanges();
+
+					// Save to the destination provider
+					if (returnInfo?.DestinationContainer != null)
 					{
-						// Save the scene to disk
-						await this.SaveChanges();
-
-						// Save to the destination provider
-						if (returnInfo?.DestinationContainer != null)
+						// save this part to correct library provider
+						if (returnInfo.DestinationContainer is ILibraryWritableContainer writableContainer)
 						{
-							// save this part to correct library provider
-							if (returnInfo.DestinationContainer is ILibraryWritableContainer writableContainer)
+							writableContainer.Add(new[]
 							{
-								writableContainer.Add(new[]
+								new FileSystemFileItem(sceneContext.printItem.FileLocation)
 								{
-									new FileSystemFileItem(sceneContext.printItem.FileLocation)
-									{
-										Name = returnInfo.newName
-									}
-								});
+									Name = returnInfo.newName
+								}
+							});
 
-								returnInfo.DestinationContainer.Dispose();
-							}
+							returnInfo.DestinationContainer.Dispose();
 						}
-					}, 
-					true, 
-					true);
-
-				saveAsWindow.Closed += SaveAsWindow_Closed;
-			}
-			else
-			{
-				saveAsWindow.BringToFront();
-			}
+					}
+				},
+				true,
+				true));
 		}
 
 		private bool rotateQueueMenu_Click()
 		{
 			return true;
-		}
-
-		private void SaveAsWindow_Closed(object sender, ClosedEventArgs e)
-		{
-			this.saveAsWindow = null;
 		}
 
 		public Vector2 DragSelectionStartPosition { get; private set; }
