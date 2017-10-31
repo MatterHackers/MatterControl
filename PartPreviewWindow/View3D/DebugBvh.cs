@@ -99,20 +99,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// the sides
 			RenderLine(transform.Peek(),
-				new Vector3(aabb.minXYZ.x, aabb.minXYZ.y, aabb.minXYZ.z),
-				new Vector3(aabb.minXYZ.x, aabb.minXYZ.y, aabb.maxXYZ.z),
+				new Vector3(aabb.minXYZ.X, aabb.minXYZ.Y, aabb.minXYZ.Z),
+				new Vector3(aabb.minXYZ.X, aabb.minXYZ.Y, aabb.maxXYZ.Z),
 				color);
 			RenderLine(transform.Peek(),
-				new Vector3(aabb.maxXYZ.x, aabb.minXYZ.y, aabb.minXYZ.z),
-				new Vector3(aabb.maxXYZ.x, aabb.minXYZ.y, aabb.maxXYZ.z),
+				new Vector3(aabb.maxXYZ.X, aabb.minXYZ.Y, aabb.minXYZ.Z),
+				new Vector3(aabb.maxXYZ.X, aabb.minXYZ.Y, aabb.maxXYZ.Z),
 				color);
 			RenderLine(transform.Peek(),
-				new Vector3(aabb.minXYZ.x, aabb.maxXYZ.y, aabb.minXYZ.z),
-				new Vector3(aabb.minXYZ.x, aabb.maxXYZ.y, aabb.maxXYZ.z),
+				new Vector3(aabb.minXYZ.X, aabb.maxXYZ.Y, aabb.minXYZ.Z),
+				new Vector3(aabb.minXYZ.X, aabb.maxXYZ.Y, aabb.maxXYZ.Z),
 				color);
 			RenderLine(transform.Peek(),
-				new Vector3(aabb.maxXYZ.x, aabb.maxXYZ.y, aabb.minXYZ.z),
-				new Vector3(aabb.maxXYZ.x, aabb.maxXYZ.y, aabb.maxXYZ.z),
+				new Vector3(aabb.maxXYZ.X, aabb.maxXYZ.Y, aabb.minXYZ.Z),
+				new Vector3(aabb.maxXYZ.X, aabb.maxXYZ.Y, aabb.maxXYZ.Z),
 				color);
 		}
 

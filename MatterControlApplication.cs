@@ -336,8 +336,8 @@ namespace MatterHackers.MatterControl
 				// try and open our window matching the last size that we had for it.
 				string[] sizes = windowSize.Split(',');
 
-				width = Math.Max(int.Parse(sizes[0]), (int)minSize.x + 1);
-				height = Math.Max(int.Parse(sizes[1]), (int)minSize.y + 1);
+				width = Math.Max(int.Parse(sizes[0]), (int)minSize.X + 1);
+				height = Math.Max(int.Parse(sizes[1]), (int)minSize.Y + 1);
 			}
 			else // try to set it to a big size or the min size
 			{

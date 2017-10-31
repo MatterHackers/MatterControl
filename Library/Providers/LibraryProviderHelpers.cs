@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl.Library
 			int height = imageBuffer.Height;
 
 			bool resizeWidth = width >= height;
-			bool resizeRequired = (resizeWidth) ? width != expectedSize.x : height != expectedSize.y;
+			bool resizeRequired = (resizeWidth) ? width != expectedSize.X : height != expectedSize.Y;
 			if (resizeRequired)
 			{
 				var scaledImageBuffer = ImageBuffer.CreateScaledImage(imageBuffer, targetWidth, targetHeight);

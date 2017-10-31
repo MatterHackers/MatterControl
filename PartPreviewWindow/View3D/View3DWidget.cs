@@ -581,7 +581,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						drawCenter - new Vector3(0, 50, 0), drawColor, zBuffer, 2);
 
 					drawColor = Color.Black;
-					drawCenter.z = 0;
+					drawCenter.Z = 0;
 					zBuffer = true;
 				}
 			}
@@ -894,7 +894,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				var sourceItemBounds = DragDropObject.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 				var center = sourceItemBounds.Center;
 
-				this.DragDropObject.Matrix *= Matrix4X4.CreateTranslation(-center.x, -center.y, -sourceItemBounds.minXYZ.z);
+				this.DragDropObject.Matrix *= Matrix4X4.CreateTranslation(-center.X, -center.Y, -sourceItemBounds.minXYZ.Z);
 				this.DragDropObject.Matrix *= Matrix4X4.CreateTranslation(new Vector3(intersectInfo.HitPosition));
 
 				CurrentSelectInfo.PlaneDownHitPos = intersectInfo.HitPosition;
@@ -1130,7 +1130,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					var worldCenter = Vector3.Transform(center, x.TransformToWorld);
 					var screenPos2 = this.World.GetScreenPosition(worldCenter);
 					e.graphics2D.Circle(screenPos2, 3, Color.Yellow);
-					e.graphics2D.DrawString($"{x.Depth},", screenPos2.x + 12 * x.Depth, screenPos2.y);
+					e.graphics2D.DrawString($"{x.Depth},", screenPos2.X + 12 * x.Depth, screenPos2.Y);
 				}
 			}
 		}
@@ -1141,7 +1141,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				var center = x.Bvh.GetCenter();
 				var worldCenter = Vector3.Transform(center, x.TransformToWorld);
-				if (worldCenter.z > 0)
+				if (worldCenter.Z > 0)
 				{
 					return true;
 				}
@@ -1208,7 +1208,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						}
 						else
 						{
-							CurrentSelectInfo.HitPlane = new PlaneShape(Vector3.UnitZ, CurrentSelectInfo.PlaneDownHitPos.z, null);
+							CurrentSelectInfo.HitPlane = new PlaneShape(Vector3.UnitZ, CurrentSelectInfo.PlaneDownHitPos.Z, null);
 
 							if (hitObject != Scene.SelectedItem)
 							{
@@ -1241,9 +1241,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 							AxisAlignedBoundingBox selectedBounds = this.Scene.SelectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 
-							if (info.HitPosition.x < selectedBounds.Center.x)
+							if (info.HitPosition.X < selectedBounds.Center.X)
 							{
-								if (info.HitPosition.y < selectedBounds.Center.y)
+								if (info.HitPosition.Y < selectedBounds.Center.Y)
 								{
 									CurrentSelectInfo.HitQuadrant = HitQuadrant.LB;
 								}
@@ -1254,7 +1254,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							}
 							else
 							{
-								if (info.HitPosition.y < selectedBounds.Center.y)
+								if (info.HitPosition.Y < selectedBounds.Center.Y)
 								{
 									CurrentSelectInfo.HitQuadrant = HitQuadrant.RB;
 								}
@@ -1303,43 +1303,43 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					// snap this position to the grid
 					AxisAlignedBoundingBox selectedBounds = this.Scene.SelectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 
-					double xSnapOffset = selectedBounds.minXYZ.x;
+					double xSnapOffset = selectedBounds.minXYZ.X;
 					// snap the x position
 					if (CurrentSelectInfo.HitQuadrant == HitQuadrant.RB
 						|| CurrentSelectInfo.HitQuadrant == HitQuadrant.RT)
 					{
 						// switch to the other side
-						xSnapOffset = selectedBounds.maxXYZ.x;
+						xSnapOffset = selectedBounds.maxXYZ.X;
 					}
-					double xToSnap = xSnapOffset + delta.x;
+					double xToSnap = xSnapOffset + delta.X;
 
 					double snappedX = ((int)((xToSnap / snapGridDistance) + .5)) * snapGridDistance;
-					delta.x = snappedX - xSnapOffset;
+					delta.X = snappedX - xSnapOffset;
 
-					double ySnapOffset = selectedBounds.minXYZ.y;
+					double ySnapOffset = selectedBounds.minXYZ.Y;
 					// snap the y position
 					if (CurrentSelectInfo.HitQuadrant == HitQuadrant.LT
 						|| CurrentSelectInfo.HitQuadrant == HitQuadrant.RT)
 					{
 						// switch to the other side
-						ySnapOffset = selectedBounds.maxXYZ.y;
+						ySnapOffset = selectedBounds.maxXYZ.Y;
 					}
-					double yToSnap = ySnapOffset + delta.y;
+					double yToSnap = ySnapOffset + delta.Y;
 
 					double snappedY = ((int)((yToSnap / snapGridDistance) + .5)) * snapGridDistance;
-					delta.y = snappedY - ySnapOffset;
+					delta.Y = snappedY - ySnapOffset;
 				}
 
 				// if the shift key is down only move on the major axis of x or y
 				if(Keyboard.IsKeyDown(Keys.ShiftKey))
 				{
-					if(Math.Abs(delta.x) < Math.Abs(delta.y))
+					if(Math.Abs(delta.X) < Math.Abs(delta.Y))
 					{
-						delta.x = 0;
+						delta.X = 0;
 					}
 					else
 					{
-						delta.y = 0;
+						delta.Y = 0;
 					}
 				}
 
@@ -1389,8 +1389,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				DragSelectionEndPosition = mouseEvent.Position - OffsetToMeshViewerWidget();
 				DragSelectionEndPosition = new Vector2(
-					Math.Max(Math.Min(DragSelectionEndPosition.x, meshViewerWidget.LocalBounds.Right), meshViewerWidget.LocalBounds.Left),
-					Math.Max(Math.Min(DragSelectionEndPosition.y, meshViewerWidget.LocalBounds.Top), meshViewerWidget.LocalBounds.Bottom));
+					Math.Max(Math.Min(DragSelectionEndPosition.X, meshViewerWidget.LocalBounds.Right), meshViewerWidget.LocalBounds.Left),
+					Math.Max(Math.Min(DragSelectionEndPosition.Y, meshViewerWidget.LocalBounds.Top), meshViewerWidget.LocalBounds.Bottom));
 				Invalidate();
 			}
 
@@ -1615,7 +1615,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							offset = -Vector3.Transform(Vector3.Zero, child.Matrix);
 
 							// figure out how to move it back to the start center
-							if(firstSourceOrigin.x == double.MaxValue)
+							if(firstSourceOrigin.X == double.MaxValue)
 							{
 								firstSourceOrigin = -offset;
 							}
@@ -1790,7 +1790,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				AxisAlignedBoundingBox selectedBounds = Scene.SelectedItem.GetAxisAlignedBoundingBox(Scene.SelectedItem.Matrix);
 				Vector3 boundsCenter = selectedBounds.Center;
-				Vector3 centerTop = new Vector3(boundsCenter.x, boundsCenter.y, selectedBounds.maxXYZ.z);
+				Vector3 centerTop = new Vector3(boundsCenter.X, boundsCenter.Y, selectedBounds.maxXYZ.Z);
 
 				Vector2 centerTopScreenPosition = this.World.GetScreenPosition(centerTop);
 				centerTopScreenPosition = meshViewerWidget.TransformToParentSpace(this, centerTopScreenPosition);
@@ -1943,7 +1943,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						itemToLayFlat = itemToCheck;
 						firstVertex = false;
 					}
-					else if (vertexPosition.z < lowestVertexPosition.z)
+					else if (vertexPosition.Z < lowestVertexPosition.Z)
 					{
 						lowestVertex = itemToCheck.Mesh.Vertices[testIndex];
 						lowestVertexPosition = vertexPosition;
@@ -1964,8 +1964,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						Vector3 faceVertexPosition = Vector3.Transform(faceVertex.Position, itemToLayFlat.Matrix);
 						Vector3 pointRelLowest = faceVertexPosition - lowestVertexPosition;
-						double xLeg = new Vector2(pointRelLowest.x, pointRelLowest.y).Length;
-						double yLeg = pointRelLowest.z;
+						double xLeg = new Vector2(pointRelLowest.X, pointRelLowest.Y).Length;
+						double yLeg = pointRelLowest.Z;
 						double angle = Math.Atan2(yLeg, xLeg);
 						if (angle > biggestAngleToFaceVertex)
 						{
@@ -1986,7 +1986,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				Vector3 vertexPosition = Vector3.Transform(vertex.Position, itemToLayFlat.Matrix);
 				faceVertices.Add(vertexPosition);
-				maxDistFromLowestZ = Math.Max(maxDistFromLowestZ, vertexPosition.z - lowestVertexPosition.z);
+				maxDistFromLowestZ = Math.Max(maxDistFromLowestZ, vertexPosition.Z - lowestVertexPosition.Z);
 			}
 
 			if (maxDistFromLowestZ > .001)
@@ -2359,9 +2359,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								double delta = endColor - startColor;
 
 								Color color = ColorF.FromHSL(startColor, .99, .49).GetAsRGBA_Bytes();
-								if (normal.z < 0)
+								if (normal.Z < 0)
 								{
-									color = ColorF.FromHSL(startColor - delta * normal.z, .99, .49).GetAsRGBA_Bytes();
+									color = ColorF.FromHSL(startColor - delta * normal.Z, .99, .49).GetAsRGBA_Bytes();
 								}
 
 								colorData.red = color.red;

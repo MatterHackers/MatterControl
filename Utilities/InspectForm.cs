@@ -377,7 +377,7 @@ namespace MatterHackers.MatterControl
 				inspectedSystemWindow.FindNamedChildrenRecursive(
 					"",
 					namedChildren,
-					new RectangleDouble(mousePosition.x, mousePosition.y, mousePosition.x + 1, mousePosition.y + 1),
+					new RectangleDouble(mousePosition.X, mousePosition.Y, mousePosition.X + 1, mousePosition.Y + 1),
 					GuiWidget.SearchType.Partial,
 					allowDisabledOrHidden: false);
 

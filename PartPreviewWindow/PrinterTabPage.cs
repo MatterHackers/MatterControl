@@ -278,7 +278,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var viewerVolume = sceneContext.ViewerVolume;
 
 			// Create and append new widget
-			gcode2DWidget = new GCode2DWidget(new Vector2(viewerVolume.x, viewerVolume.y), sceneContext.BedCenter)
+			gcode2DWidget = new GCode2DWidget(new Vector2(viewerVolume.X, viewerVolume.Y), sceneContext.BedCenter)
 			{
 				Visible = (this.ViewMode == PartViewMode.Layers2D)
 			};
@@ -350,8 +350,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				allBounds += aabb;
 			}
 
-			bool onBed = allBounds.minXYZ.z > -.001 && allBounds.minXYZ.z < .001; // really close to the bed
-			RectangleDouble bedRect = new RectangleDouble(0, 0, printer.Settings.GetValue<Vector2>(SettingsKey.bed_size).x, printer.Settings.GetValue<Vector2>(SettingsKey.bed_size).y);
+			bool onBed = allBounds.minXYZ.Z > -.001 && allBounds.minXYZ.Z < .001; // really close to the bed
+			RectangleDouble bedRect = new RectangleDouble(0, 0, printer.Settings.GetValue<Vector2>(SettingsKey.bed_size).X, printer.Settings.GetValue<Vector2>(SettingsKey.bed_size).Y);
 			bedRect.Offset(printer.Settings.GetValue<Vector2>(SettingsKey.print_center) - printer.Settings.GetValue<Vector2>(SettingsKey.bed_size) / 2);
 
 			bool inBounds = bedRect.Contains(new Vector2(allBounds.minXYZ)) && bedRect.Contains(new Vector2(allBounds.maxXYZ));

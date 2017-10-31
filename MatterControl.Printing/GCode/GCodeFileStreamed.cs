@@ -239,9 +239,9 @@ namespace MatterHackers.GCodeVisualizer
 						}
 
 						Vector3 attemptedDestination = lastPrinterPosition;
-						GetFirstNumberAfter("X", lineToParse, ref attemptedDestination.x);
-						GetFirstNumberAfter("Y", lineToParse, ref attemptedDestination.y);
-						GetFirstNumberAfter("Z", lineToParse, ref attemptedDestination.z);
+						GetFirstNumberAfter("X", lineToParse, ref attemptedDestination.X);
+						GetFirstNumberAfter("Y", lineToParse, ref attemptedDestination.Y);
+						GetFirstNumberAfter("Z", lineToParse, ref attemptedDestination.Z);
 
 						double ePosition = lastEPosition;
 						GetFirstNumberAfter("E", lineToParse, ref ePosition);

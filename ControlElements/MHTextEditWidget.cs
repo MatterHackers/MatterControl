@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Bottom
 			};
-			this.ActualTextEditWidget.MinimumSize = new Vector2(Math.Max(ActualTextEditWidget.MinimumSize.x, pixelWidth), Math.Max(ActualTextEditWidget.MinimumSize.y, pixelHeight));
+			this.ActualTextEditWidget.MinimumSize = new Vector2(Math.Max(ActualTextEditWidget.MinimumSize.X, pixelWidth), Math.Max(ActualTextEditWidget.MinimumSize.Y, pixelHeight));
 			this.AddChild(this.ActualTextEditWidget);
 
 			this.AddChild(noContentFieldDescription = new TextWidget(messageWhenEmptyAndNotSelected, textColor: Color.Gray)

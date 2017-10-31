@@ -195,7 +195,7 @@ namespace MatterHackers.Agg.UI
 			Vector2 minSize = new Vector2(LocalBounds.Width, LocalBounds.Height);
 			foreach (MenuItem item in MenuItems)
 			{
-				minSize.x = Math.Max(minSize.x, item.Width);
+				minSize.X = Math.Max(minSize.X, item.Width);
 			}
 
 			string startText = mainControlWidget.Text;
@@ -203,8 +203,8 @@ namespace MatterHackers.Agg.UI
 			{
 				mainControlWidget.Text = item.Text;
 
-				minSize.x = Math.Max(minSize.x, LocalBounds.Width);
-				minSize.y = Math.Max(minSize.y, LocalBounds.Height);
+				minSize.X = Math.Max(minSize.X, LocalBounds.Width);
+				minSize.Y = Math.Max(minSize.Y, LocalBounds.Height);
 			}
 			mainControlWidget.Text = startText;
 
@@ -215,7 +215,7 @@ namespace MatterHackers.Agg.UI
 
 			foreach (MenuItem item in e.NewItems)
 			{
-				item.MinimumSize = new Vector2(minSize.x, item.MinimumSize.y);
+				item.MinimumSize = new Vector2(minSize.X, item.MinimumSize.Y);
 				// remove it if it is there so we don't have two. It is ok to remove a delegate that is not present.
 				item.Selected -= item_Selected;
 				item.Selected += item_Selected;

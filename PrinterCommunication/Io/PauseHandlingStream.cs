@@ -226,8 +226,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			InjectPauseGCode("G92 E{0:0.###}".FormatWith(moveLocationAtEndOfPauseCode.extrusion));
 			Vector3 ensureAllAxisAreSent = positionBeforeActualPause + new Vector3(.01, .01, .01);
 			var feedRates = printer.Settings.Helpers.ManualMovementSpeeds();
-			InjectPauseGCode("G1 X{0:0.###} Y{1:0.###} Z{2:0.###} F{3}".FormatWith(ensureAllAxisAreSent.x, ensureAllAxisAreSent.y, ensureAllAxisAreSent.z, feedRates.x + 1));
-			InjectPauseGCode("G1 X{0:0.###} Y{1:0.###} Z{2:0.###} F{3}".FormatWith(positionBeforeActualPause.x, positionBeforeActualPause.y, positionBeforeActualPause.z, feedRates));
+			InjectPauseGCode("G1 X{0:0.###} Y{1:0.###} Z{2:0.###} F{3}".FormatWith(ensureAllAxisAreSent.X, ensureAllAxisAreSent.Y, ensureAllAxisAreSent.Z, feedRates.X + 1));
+			InjectPauseGCode("G1 X{0:0.###} Y{1:0.###} Z{2:0.###} F{3}".FormatWith(positionBeforeActualPause.X, positionBeforeActualPause.Y, positionBeforeActualPause.Z, feedRates));
 
 			string resumeGCode = printer.Settings.GetValue(SettingsKey.resume_gcode);
 			InjectPauseGCode(resumeGCode);

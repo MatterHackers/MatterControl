@@ -61,7 +61,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 			TypeFacePrinter printer = new TypeFacePrinter(wordText, typeFace);
 
 			Vector2 size = printer.GetSize(wordText);
-			double centerOffset = -size.x / 2;
+			double centerOffset = -size.X / 2;
 
 			double ratioPerMeshGroup = 1.0 / wordText.Length;
 			double currentRatioDone = 0;
@@ -82,14 +82,14 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 						Mesh = textMesh,
 					};
 
-					characterSpacing[meshIndex++] = new Vector2( printer.GetOffsetLeftOfCharacterIndex(i).x + centerOffset, 0);
+					characterSpacing[meshIndex++] = new Vector2( printer.GetOffsetLeftOfCharacterIndex(i).X + centerOffset, 0);
 
 					groupItem.Children.Add(characterObject);
 
 					AxisAlignedBoundingBox bounds = characterObject.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 					Vector3 boundsCenter = (bounds.maxXYZ + bounds.minXYZ) / 2;
 
-					characterObject.Matrix *= Matrix4X4.CreateTranslation(new Vector3(0, 0, -boundsCenter.z + bounds.ZSize / 2));
+					characterObject.Matrix *= Matrix4X4.CreateTranslation(new Vector3(0, 0, -boundsCenter.Z + bounds.ZSize / 2));
 
 					currentRatioDone += ratioPerMeshGroup;
 				}
@@ -118,7 +118,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 
 					sceneItem.Matrix *= Matrix4X4.CreateTranslation(-startPosition);
 
-					double newX = characterSpacing[i].x * spacing;
+					double newX = characterSpacing[i].X * spacing;
 					sceneItem.Matrix *= Matrix4X4.CreateTranslation(new Vector3(newX, 0, 0) + new Vector3(bedCenter));
 					i += 1;
 				}

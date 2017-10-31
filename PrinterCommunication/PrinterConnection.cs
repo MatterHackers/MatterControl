@@ -1176,7 +1176,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		public void MoveAbsolute(Vector3 position, double feedRateMmPerMinute)
 		{
 			SetMovementToAbsolute();
-			SendLineToPrinterNow("G1 X{0:0.###}Y{1:0.###}Z{2:0.###} F{3}".FormatWith(position.x, position.y, position.z, feedRateMmPerMinute));
+			SendLineToPrinterNow("G1 X{0:0.###}Y{1:0.###}Z{2:0.###} F{3}".FormatWith(position.X, position.Y, position.Z, feedRateMmPerMinute));
 		}
 
 		public void MoveExtruderRelative(double moveAmountMm, double feedRateMmPerMinute, int extruderNumber = 0)
@@ -1577,9 +1577,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			FoundStringEventArgs foundStringEventArgs = e as FoundStringEventArgs;
 
 			string lineToParse = foundStringEventArgs.LineToCheck;
-			GCodeFile.GetFirstNumberAfter("X:", lineToParse, ref lastReportedPosition.position.x);
-			GCodeFile.GetFirstNumberAfter("Y:", lineToParse, ref lastReportedPosition.position.y);
-			GCodeFile.GetFirstNumberAfter("Z:", lineToParse, ref lastReportedPosition.position.z);
+			GCodeFile.GetFirstNumberAfter("X:", lineToParse, ref lastReportedPosition.position.X);
+			GCodeFile.GetFirstNumberAfter("Y:", lineToParse, ref lastReportedPosition.position.Y);
+			GCodeFile.GetFirstNumberAfter("Z:", lineToParse, ref lastReportedPosition.position.Z);
 			GCodeFile.GetFirstNumberAfter("E:", lineToParse, ref lastReportedPosition.extrusion);
 
 			//if (currentDestination != positionRead)
@@ -2241,9 +2241,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					newDestination.position = Vector3.Zero;
 				}
 
-				GCodeFile.GetFirstNumberAfter("X", lineBeingSent, ref newDestination.position.x);
-				GCodeFile.GetFirstNumberAfter("Y", lineBeingSent, ref newDestination.position.y);
-				GCodeFile.GetFirstNumberAfter("Z", lineBeingSent, ref newDestination.position.z);
+				GCodeFile.GetFirstNumberAfter("X", lineBeingSent, ref newDestination.position.X);
+				GCodeFile.GetFirstNumberAfter("Y", lineBeingSent, ref newDestination.position.Y);
+				GCodeFile.GetFirstNumberAfter("Z", lineBeingSent, ref newDestination.position.Z);
 
 				GCodeFile.GetFirstNumberAfter("E", lineBeingSent, ref newDestination.extrusion);
 				GCodeFile.GetFirstNumberAfter("F", lineBeingSent, ref newDestination.feedRate);
@@ -2539,9 +2539,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 								&& activePrintTask.PercentDone < currentDone)
 							{
 								activePrintTask.PercentDone = currentDone;
-								activePrintTask.PrintingOffsetX = (float)babyStepsStream7.Offset.x;
-								activePrintTask.PrintingOffsetY = (float)babyStepsStream7.Offset.y;
-								activePrintTask.PrintingOffsetZ = (float)babyStepsStream7.Offset.z;
+								activePrintTask.PrintingOffsetX = (float)babyStepsStream7.Offset.X;
+								activePrintTask.PrintingOffsetY = (float)babyStepsStream7.Offset.Y;
+								activePrintTask.PrintingOffsetZ = (float)babyStepsStream7.Offset.Z;
 								try
 								{
 									Task.Run(() => activePrintTask.Commit());

@@ -211,10 +211,10 @@ namespace MatterHackers.GCodeVisualizer
 
 		protected static double GetSecondsThisLine(Vector3 deltaPositionThisLine, double deltaEPositionThisLine, double feedRateMmPerMin)
 		{
-			double startingVelocityMmPerS = VelocitySameAsStopMmPerS.x;
-			double endingVelocityMmPerS = VelocitySameAsStopMmPerS.x;
-			double maxVelocityMmPerS = Math.Min(feedRateMmPerMin / 60, MaxVelocityMmPerS.x);
-			double acceleration = MaxAccelerationMmPerS2.x;
+			double startingVelocityMmPerS = VelocitySameAsStopMmPerS.X;
+			double endingVelocityMmPerS = VelocitySameAsStopMmPerS.X;
+			double maxVelocityMmPerS = Math.Min(feedRateMmPerMin / 60, MaxVelocityMmPerS.X);
+			double acceleration = MaxAccelerationMmPerS2.X;
 			double lengthOfThisMoveMm = Math.Max(deltaPositionThisLine.Length, deltaEPositionThisLine);
 
 			double distanceToMaxVelocity = GetDistanceToReachEndingVelocity(startingVelocityMmPerS, maxVelocityMmPerS, acceleration);

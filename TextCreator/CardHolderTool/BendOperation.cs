@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 					var circumference = aabb.XSize * MathHelper.Tau / angleRadians;
 					var radius = circumference / MathHelper.Tau;
 
-					var rotateXyPos = new Vector2(aabb.minXYZ.x, BendCW ? aabb.maxXYZ.y : aabb.minXYZ.y);
+					var rotateXyPos = new Vector2(aabb.minXYZ.X, BendCW ? aabb.maxXYZ.Y : aabb.minXYZ.Y);
 					if (!BendCW)
 					{
 						angleRadians = -angleRadians;
@@ -85,15 +85,15 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 						var pos = firstChild.Mesh.Vertices[i].Position;
 						var pos2D = new Vector2(pos);
 						Vector2 rotateSpace = pos2D - rotateXyPos;
-						var rotateRatio = rotateSpace.x / aabb.XSize;
+						var rotateRatio = rotateSpace.X / aabb.XSize;
 
-						rotateSpace.x = 0;
-						rotateSpace.y += BendCW ? -radius : radius;
+						rotateSpace.X = 0;
+						rotateSpace.Y += BendCW ? -radius : radius;
 						rotateSpace.Rotate(angleRadians * rotateRatio);
-						rotateSpace.y += BendCW ? radius : -radius; ;
+						rotateSpace.Y += BendCW ? radius : -radius; ;
 						rotateSpace += rotateXyPos;
 
-						meshChild.Mesh.Vertices[i].Position = new Vector3(rotateSpace.x, rotateSpace.y, pos.z);
+						meshChild.Mesh.Vertices[i].Position = new Vector3(rotateSpace.X, rotateSpace.Y, pos.Z);
 					}
 
 					meshChild.Mesh.MarkAsChanged();

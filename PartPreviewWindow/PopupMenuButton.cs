@@ -101,7 +101,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (this.DrawArrow)
 			{
 				// Draw directional arrow
-				graphics2D.Render(dropArrow, LocalBounds.Right - DropArrow.ArrowHeight * 2 - 2, LocalBounds.Center.y + DropArrow.ArrowHeight / 2, ActiveTheme.Instance.SecondaryTextColor);
+				graphics2D.Render(dropArrow, LocalBounds.Right - DropArrow.ArrowHeight * 2 - 2, LocalBounds.Center.Y + DropArrow.ArrowHeight / 2, ActiveTheme.Instance.SecondaryTextColor);
 			}
 		}
 

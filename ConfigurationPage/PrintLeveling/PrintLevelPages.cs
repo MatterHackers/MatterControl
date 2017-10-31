@@ -235,8 +235,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			var feedRates = printer.Settings.Helpers.ManualMovementSpeeds();
 
-			printer.Connection.MoveAbsolute(PrinterConnection.Axis.Z, probeStartPosition.z, feedRates.z);
-			printer.Connection.MoveAbsolute(probeStartPosition, feedRates.x);
+			printer.Connection.MoveAbsolute(PrinterConnection.Axis.Z, probeStartPosition.Z, feedRates.Z);
+			printer.Connection.MoveAbsolute(probeStartPosition, feedRates.X);
 			printer.Connection.SendLineToPrinterNow("G30");
 			printer.Connection.ReadLine.RegisterEvent(FinishedProbe, ref unregisterEvents);
 
@@ -256,8 +256,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					printer.Connection.ReadLine.UnregisterEvent(FinishedProbe, ref unregisterEvents);
 					int zStringPos = currentEvent.Data.LastIndexOf("Z:");
 					string zProbeHeight = currentEvent.Data.Substring(zStringPos + 2);
-					probePosition.position = new Vector3(probeStartPosition.x, probeStartPosition.y, double.Parse(zProbeHeight));
-					printer.Connection.MoveAbsolute(probeStartPosition, printer.Settings.Helpers.ManualMovementSpeeds().z);
+					probePosition.position = new Vector3(probeStartPosition.X, probeStartPosition.Y, double.Parse(zProbeHeight));
+					printer.Connection.MoveAbsolute(probeStartPosition, printer.Settings.Helpers.ManualMovementSpeeds().Z);
 					printer.Connection.ReadPosition();
 
 					UiThread.RunOnIdle(() => container.nextButton.OnClick(null));
@@ -365,7 +365,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			updateUntilClose = (tw) =>
 			{
 				Vector3 destinationPosition = printer.Connection.CurrentDestination;
-				zPosition.Text = "Z: {0:0.00}".FormatWith(destinationPosition.z);
+				zPosition.Text = "Z: {0:0.00}".FormatWith(destinationPosition.Z);
 				UiThread.RunOnIdle(() => updateUntilClose(zPosition), .3);
 			};
 			updateUntilClose(zPosition);
@@ -441,13 +441,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		private void zMinusControl_Click(object sender, EventArgs mouseEvent)
 		{
-			printer.Connection.MoveRelative(PrinterConnection.Axis.Z, -moveAmount, printer.Settings.Helpers.ManualMovementSpeeds().z);
+			printer.Connection.MoveRelative(PrinterConnection.Axis.Z, -moveAmount, printer.Settings.Helpers.ManualMovementSpeeds().Z);
 			printer.Connection.ReadPosition();
 		}
 
 		private void zPlusControl_Click(object sender, EventArgs mouseEvent)
 		{
-			printer.Connection.MoveRelative(PrinterConnection.Axis.Z, moveAmount, printer.Settings.Helpers.ManualMovementSpeeds().z);
+			printer.Connection.MoveRelative(PrinterConnection.Axis.Z, moveAmount, printer.Settings.Helpers.ManualMovementSpeeds().Z);
 			printer.Connection.ReadPosition();
 		}
 	}
@@ -487,18 +487,18 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				double sampleRead = double.MinValue;
 				if (currentEvent.Data.StartsWith("Bed")) // marlin G30 return code (looks like: 'Bed Position X:20 Y:32 Z:.01')
 				{
-					probePositions[probePositionsBeingEditedIndex].position.x = probeStartPosition.x;
-					probePositions[probePositionsBeingEditedIndex].position.y = probeStartPosition.y;
+					probePositions[probePositionsBeingEditedIndex].position.X = probeStartPosition.X;
+					probePositions[probePositionsBeingEditedIndex].position.Y = probeStartPosition.Y;
 					GCodeFile.GetFirstNumberAfter("Z:", currentEvent.Data, ref sampleRead);
 				}
 				else if (currentEvent.Data.StartsWith("Z:")) // smoothie G30 return code (looks like: 'Z:10.01')
 				{
-					probePositions[probePositionsBeingEditedIndex].position.x = probeStartPosition.x;
-					probePositions[probePositionsBeingEditedIndex].position.y = probeStartPosition.y;
+					probePositions[probePositionsBeingEditedIndex].position.X = probeStartPosition.X;
+					probePositions[probePositionsBeingEditedIndex].position.Y = probeStartPosition.Y;
 					// smoothie returns the position relative to the start postion
 					double reportedProbeZ = 0;
 					GCodeFile.GetFirstNumberAfter("Z:", currentEvent.Data, ref reportedProbeZ);
-					sampleRead = probeStartPosition.z - reportedProbeZ;
+					sampleRead = probeStartPosition.Z - reportedProbeZ;
 				}
 
 				if (sampleRead != double.MinValue)
@@ -516,7 +516,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 							samples.RemoveAt(samples.Count - 1);
 						}
 
-						probePositions[probePositionsBeingEditedIndex].position.z = Math.Round(samples.Average(), 2);
+						probePositions[probePositionsBeingEditedIndex].position.Z = Math.Round(samples.Average(), 2);
 						UiThread.RunOnIdle(() => container.nextButton.OnClick(null));
 					}
 				}
@@ -554,8 +554,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			var probeOffset = printer.Settings.GetValue<Vector2>(SettingsKey.z_probe_xy_offset);
 			adjustedProbePosition -= new Vector3(probeOffset);
 
-			printer.Connection.MoveAbsolute(PrinterConnection.Axis.Z, probeStartPosition.z, feedRates.z);
-			printer.Connection.MoveAbsolute(adjustedProbePosition, feedRates.x);
+			printer.Connection.MoveAbsolute(PrinterConnection.Axis.Z, probeStartPosition.Z, feedRates.Z);
+			printer.Connection.MoveAbsolute(adjustedProbePosition, feedRates.X);
 
 			int numberOfSamples = printer.Settings.GetValue<int>(SettingsKey.z_probe_samples);
 			for (int i = 0; i < numberOfSamples; i++)
@@ -563,7 +563,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				// probe the current position
 				printer.Connection.SendLineToPrinterNow("G30");
 				// raise the probe after each sample
-				printer.Connection.MoveAbsolute(adjustedProbePosition, feedRates.x);
+				printer.Connection.MoveAbsolute(adjustedProbePosition, feedRates.X);
 			}
 
 			container.backButton.Enabled = false;
@@ -609,8 +609,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			var feedRates = printer.Settings.Helpers.ManualMovementSpeeds();
 
-			printer.Connection.MoveAbsolute(PrinterConnection.Axis.Z, probeStartPosition.z, feedRates.z);
-			printer.Connection.MoveAbsolute(probeStartPosition, feedRates.x);
+			printer.Connection.MoveAbsolute(PrinterConnection.Axis.Z, probeStartPosition.Z, feedRates.Z);
+			printer.Connection.MoveAbsolute(probeStartPosition, feedRates.X);
 			printer.Connection.ReadPosition();
 
 			container.backButton.Enabled = false;
@@ -672,7 +672,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 			if (haveDrawn)
 			{
-				printer.Connection.MoveRelative(PrinterConnection.Axis.Z, 2, printer.Settings.Helpers.ManualMovementSpeeds().z);
+				printer.Connection.MoveRelative(PrinterConnection.Axis.Z, 2, printer.Settings.Helpers.ManualMovementSpeeds().Z);
 			}
 			base.PageIsBecomingInactive();
 		}

@@ -91,9 +91,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					{
 						Vector3 position = new Vector3();
 
-						position.x = double.Parse(lines[0 * 3 + i]);
-						position.y = double.Parse(lines[1 * 3 + i]);
-						position.z = double.Parse(lines[2 * 3 + i]);
+						position.X = double.Parse(lines[0 * 3 + i]);
+						position.Y = double.Parse(lines[1 * 3 + i]);
+						position.Z = double.Parse(lines[2 * 3 + i]);
 
 						SampledPositions.Add(position);
 					}

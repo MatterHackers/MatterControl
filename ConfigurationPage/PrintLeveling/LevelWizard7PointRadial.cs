@@ -137,7 +137,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			string medPrecisionLabel = "Medium Precision".Localize();
 			string highPrecisionLabel = "High Precision".Localize();
 
-			double bedRadius = Math.Min(printer.Settings.GetValue<Vector2>(SettingsKey.bed_size).x, printer.Settings.GetValue<Vector2>(SettingsKey.bed_size).y) / 2;
+			double bedRadius = Math.Min(printer.Settings.GetValue<Vector2>(SettingsKey.bed_size).X, printer.Settings.GetValue<Vector2>(SettingsKey.bed_size).Y) / 2;
 
 			double startProbeHeight = printer.Settings.GetValue<double>(SettingsKey.print_leveling_probe_start);
 			for (int i = 0; i < numberOfRadialSamples + 1; i++)
@@ -221,7 +221,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			{
 				Vector3 outPosition = GetPositionWithZOffset(currentDestination);
 
-				newLine = newLine.Append(String.Format("X{0:0.##} Y{1:0.##} Z{2:0.###}", outPosition.x, outPosition.y, outPosition.z));
+				newLine = newLine.Append(String.Format("X{0:0.##} Y{1:0.##} Z{2:0.###}", outPosition.X, outPosition.Y, outPosition.Z));
 			}
 
 			if (extruderDelta != 0)
@@ -245,7 +245,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			{
 				Vector2 destinationFromCenter = new Vector2(currentDestination) - BedCenter;
 
-				double angleToPoint = Math.Atan2(destinationFromCenter.y, destinationFromCenter.x);
+				double angleToPoint = Math.Atan2(destinationFromCenter.Y, destinationFromCenter.X);
 
 				if (angleToPoint < 0)
 				{
@@ -262,9 +262,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 				Plane currentPlane = new Plane(SampledPositions[firstIndex], SampledPositions[lastIndex], SampledPositions[NumberOfRadialSamples]);
 
-				double hitDistance = currentPlane.GetDistanceToIntersection(new Vector3(currentDestination.x, currentDestination.y, 0), Vector3.UnitZ);
+				double hitDistance = currentPlane.GetDistanceToIntersection(new Vector3(currentDestination.X, currentDestination.Y, 0), Vector3.UnitZ);
 
-				currentDestination.z += hitDistance;
+				currentDestination.Z += hitDistance;
 			}
 
 			return currentDestination;

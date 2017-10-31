@@ -314,9 +314,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			Vector3 lightDirectionVector = new Vector3(lightDirection0[0], lightDirection0[1], lightDirection0[2]);
 			lightDirectionVector.Normalize();
-			lightDirection0[0] = (float)lightDirectionVector.x;
-			lightDirection0[1] = (float)lightDirectionVector.y;
-			lightDirection0[2] = (float)lightDirectionVector.z;
+			lightDirection0[0] = (float)lightDirectionVector.X;
+			lightDirection0[1] = (float)lightDirectionVector.Y;
+			lightDirection0[2] = (float)lightDirectionVector.Z;
 			GL.Light(LightName.Light0, LightParameter.Position, lightDirection0);
 			GL.Light(LightName.Light1, LightParameter.Position, lightDirection1);
 #endif

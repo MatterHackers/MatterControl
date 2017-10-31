@@ -71,8 +71,8 @@ namespace MatterHackers.MatterControl.Slicing
 				double maxZ = double.MinValue;
 				foreach (FaceEdge faceEdge in face.FaceEdges())
 				{
-					minZ = Math.Min(minZ, faceEdge.FirstVertex.Position.z);
-					maxZ = Math.Max(maxZ, faceEdge.FirstVertex.Position.z);
+					minZ = Math.Min(minZ, faceEdge.FirstVertex.Position.Z);
+					maxZ = Math.Max(maxZ, faceEdge.FirstVertex.Position.Z);
 				}
 
 				for (int layerIndex = 0; layerIndex < layerCount; layerIndex++)
@@ -95,7 +95,7 @@ namespace MatterHackers.MatterControl.Slicing
 					Vector3 end;
 					if (face.GetCutLine(cutPlane, out start, out end))
 					{
-						layer.UnorderedSegments.Add(new SliceLayer.Segment(new Vector2(start.x, start.y), new Vector2(end.x, end.y)));
+						layer.UnorderedSegments.Add(new SliceLayer.Segment(new Vector2(start.X, start.Y), new Vector2(end.X, end.Y)));
 					}
 				}
 			}
@@ -118,8 +118,8 @@ namespace MatterHackers.MatterControl.Slicing
 				for (int segmentIndex = 0; segmentIndex < unorderedSegments.Count; segmentIndex++)
 				{
 					SliceLayer.Segment segment = unorderedSegments[segmentIndex];
-					stream.Write("G1 X{0}Y{1}\n", segment.start.x, segment.start.y);
-					stream.Write("G1 X{0}Y{1}E{2}\n", segment.end.x, segment.end.y, extrudeAmount++);
+					stream.Write("G1 X{0}Y{1}\n", segment.start.X, segment.start.Y);
+					stream.Write("G1 X{0}Y{1}E{2}\n", segment.end.X, segment.end.Y, extrudeAmount++);
 				}
 			}
 			stream.Close();

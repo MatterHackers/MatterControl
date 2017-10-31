@@ -67,7 +67,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				e.graphics2D.PushTransform();
 				Affine currentGraphics2DTransform = e.graphics2D.GetTransform();
-				Affine accumulatedTransform = currentGraphics2DTransform * Affine.NewTranslation(cornerScreenSpace.x, cornerScreenSpace.y);
+				Affine accumulatedTransform = currentGraphics2DTransform * Affine.NewTranslation(cornerScreenSpace.X, cornerScreenSpace.Y);
 				e.graphics2D.SetTransform(accumulatedTransform);
 
 				progressBar.OnDraw(e.graphics2D);

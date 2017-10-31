@@ -217,7 +217,7 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 			// test the area that the names will go to
 			//nameMesh = new Box(textArea.x, textArea.y, 5);
 
-			double scale = Math.Min(textArea.x / textBounds.XSize, textArea.y / textBounds.YSize);
+			double scale = Math.Min(textArea.X / textBounds.XSize, textArea.Y / textBounds.YSize);
 			nameMesh = new Scale(nameMesh, scale, scale, 1);
 			nameMesh = new Align(nameMesh, Face.Top | Face.Front, plainCardHolder, Face.Bottom | Face.Front);
 			nameMesh = new SetCenter(nameMesh, plainCardHolder.GetCenter(), true, false, false);
@@ -281,7 +281,7 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 			AxisAlignedBoundingBox textBounds = textMesh.GetAxisAlignedBoundingBox();
 			var textArea = new Vector2(25, 6);
 
-			double scale = Math.Min(textArea.x / textBounds.XSize, textArea.y / textBounds.YSize);
+			double scale = Math.Min(textArea.X / textBounds.XSize, textArea.Y / textBounds.YSize);
 			nameMesh = new Scale(nameMesh, scale, scale, 2 / textBounds.ZSize);
 			nameMesh = new Align(nameMesh, Face.Bottom | Face.Front, cancerRibonStl, Face.Top | Face.Front, 0, 0, -1);
 			nameMesh = new SetCenter(nameMesh, cancerRibonStl.GetCenter(), true, false, false);
@@ -336,13 +336,13 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 
 				var ratioToApply = PinchRatio;
 
-				var distFromCenter = pos.x - aabb.Center.x;
+				var distFromCenter = pos.X - aabb.Center.X;
 				var distanceToPinch = distFromCenter * (1-PinchRatio);
-				var delta = (aabb.Center.x + distFromCenter * ratioToApply) - pos.x;
+				var delta = (aabb.Center.X + distFromCenter * ratioToApply) - pos.X;
 
 				// find out how much to pinch based on y position
-				var amountOfRatio = (pos.y - aabb.minXYZ.y) /  aabb.YSize;
-				transformedMesh.Vertices[i].Position = new Vector3(pos.x + delta * amountOfRatio, pos.y, pos.z);
+				var amountOfRatio = (pos.Y - aabb.minXYZ.Y) /  aabb.YSize;
+				transformedMesh.Vertices[i].Position = new Vector3(pos.X + delta * amountOfRatio, pos.Y, pos.Z);
 			}
 
 			transformedMesh.MarkAsChanged();
@@ -383,7 +383,7 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 				var circumference = aabb.XSize * MathHelper.Tau / angleRadians;
 				var radius = circumference / MathHelper.Tau;
 
-				var rotateXyPos = new Vector2(aabb.minXYZ.x, BendCW ? aabb.maxXYZ.y : aabb.minXYZ.y);
+				var rotateXyPos = new Vector2(aabb.minXYZ.X, BendCW ? aabb.maxXYZ.Y : aabb.minXYZ.Y);
 				if(!BendCW)
 				{
 					angleRadians = -angleRadians;
@@ -394,15 +394,15 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 					var pos = inputMesh.Vertices[i].Position;
 					var pos2D = new Vector2(pos);
 					Vector2 rotateSpace = pos2D - rotateXyPos;
-					var rotateRatio = rotateSpace.x / aabb.XSize;
+					var rotateRatio = rotateSpace.X / aabb.XSize;
 
-					rotateSpace.x = 0;
-					rotateSpace.y += BendCW ? -radius : radius;
+					rotateSpace.X = 0;
+					rotateSpace.Y += BendCW ? -radius : radius;
 					rotateSpace.Rotate(angleRadians * rotateRatio);
-					rotateSpace.y += BendCW ? radius : -radius; ;
+					rotateSpace.Y += BendCW ? radius : -radius; ;
 					rotateSpace += rotateXyPos;
 
-					transformedMesh.Vertices[i].Position = new Vector3(rotateSpace.x, rotateSpace.y, pos.z);
+					transformedMesh.Vertices[i].Position = new Vector3(rotateSpace.X, rotateSpace.Y, pos.Z);
 				}
 			}
 			else
@@ -479,7 +479,7 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 				chairFoot = new Rotate(chairFoot, 0, angleRadians, 0);
 				CsgObject clipBox = new Align(new Box(OuterSize * 2, OuterSize * 2, unclippedFootHeight), Face.Top, chairFoot, Face.Bottom, 0, 0, extraHeightForRotation);
 				chairFoot -= clipBox;
-				chairFoot = new Translate(chairFoot, 0, 0, clipBox.GetAxisAlignedBoundingBox().maxXYZ.z);
+				chairFoot = new Translate(chairFoot, 0, 0, clipBox.GetAxisAlignedBoundingBox().maxXYZ.Z);
 
 				SetAndInvalidateMesh(CsgToMesh.Convert(chairFoot));
 			}

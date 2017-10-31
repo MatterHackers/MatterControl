@@ -146,7 +146,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								}
 								double x = Math.Cos(angle*i);
 								double y = Math.Sin(angle*i);
-								bedString += $"{printCenter.x + x * bedSize.x / 2:0.####}x{printCenter.y + y * bedSize.y / 2:0.####}";
+								bedString += $"{printCenter.X + x * bedSize.X / 2:0.####}x{printCenter.Y + y * bedSize.Y / 2:0.####}";
 								first = false;
 							}
 							return bedString;
@@ -157,10 +157,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					default:
 						{
 							//bed_shape = 0x0,200x0,200x200,0x200
-							string bedString = $"{printCenter.x - bedSize.x / 2}x{printCenter.y - bedSize.y / 2}";
-							bedString += $",{printCenter.x + bedSize.x / 2}x{printCenter.y - bedSize.y / 2}";
-							bedString += $",{printCenter.x + bedSize.x / 2}x{printCenter.y + bedSize.y / 2}";
-							bedString += $",{printCenter.x - bedSize.x / 2}x{printCenter.y + bedSize.y / 2}";
+							string bedString = $"{printCenter.X - bedSize.X / 2}x{printCenter.Y - bedSize.Y / 2}";
+							bedString += $",{printCenter.X + bedSize.X / 2}x{printCenter.Y - bedSize.Y / 2}";
+							bedString += $",{printCenter.X + bedSize.X / 2}x{printCenter.Y + bedSize.Y / 2}";
+							bedString += $",{printCenter.X - bedSize.X / 2}x{printCenter.Y + bedSize.Y / 2}";
 							return bedString;
 						}
 				}

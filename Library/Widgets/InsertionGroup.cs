@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			this.scene = scene;
 			this.view3DWidget = view3DWidget;
 
-			Task.Run(async () =>
+			Task.Run((Func<Task>)(async () =>
 			{
 				var newItemOffset = Vector2.Zero;
 				if (!dragOperationActive())
@@ -93,7 +93,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					var progressControl = new DragDropLoadProgress(view3DWidget, null);
 
 					// Position at accumulating offset
-					placeholderItem.Matrix *= Matrix4X4.CreateTranslation(newItemOffset.x, newItemOffset.y, 0);
+					placeholderItem.Matrix *= Matrix4X4.CreateTranslation(newItemOffset.X, (double)newItemOffset.Y, 0);
 					placeholderItem.Visible = true;
 					progressControl.TrackingObject = placeholderItem;
 
@@ -111,7 +111,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						placeholderItem.Visible = false;
 
 						// Copy scale/rotation/translation from the source and Center
-						loadedItem.Matrix = loadedItem.Matrix * Matrix4X4.CreateTranslation((double)-aabb.Center.x, (double)-aabb.Center.y, (double)-aabb.minXYZ.z) * placeholderItem.Matrix;
+						loadedItem.Matrix = loadedItem.Matrix * Matrix4X4.CreateTranslation((double)-aabb.Center.X, (double)-aabb.Center.Y, (double)-aabb.minXYZ.Z) * placeholderItem.Matrix;
 						loadedItem.Color = loadedItem.Color;
 
 						// Notification should force invalidate and redraw
@@ -123,7 +123,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 						// Adjust next item position
 						// TODO: do something more interesting than increment in x
-						newItemOffset.x = loadedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity).XSize/2 + 10;
+						newItemOffset.X = loadedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity).XSize/2 + 10;
 					}
 
 					progressControl.ProgressReporter(1.3, "");
@@ -141,7 +141,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				}
 
 				this.Invalidate();
-			});
+			}));
 		}
 
 		/// <summary>

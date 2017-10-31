@@ -305,9 +305,9 @@ namespace MatterHackers.GCodeVisualizer
 					}
 
 					Vector3 attemptedDestination = lastPrinterPosition;
-					GetFirstNumberAfter("X", lineToParse, ref attemptedDestination.x);
-					GetFirstNumberAfter("Y", lineToParse, ref attemptedDestination.y);
-					GetFirstNumberAfter("Z", lineToParse, ref attemptedDestination.z);
+					GetFirstNumberAfter("X", lineToParse, ref attemptedDestination.X);
+					GetFirstNumberAfter("Y", lineToParse, ref attemptedDestination.Y);
+					GetFirstNumberAfter("Z", lineToParse, ref attemptedDestination.Z);
 
 					double ePosition = lastEPosition;
 					GetFirstNumberAfter("E", lineToParse, ref ePosition);
@@ -625,7 +625,7 @@ namespace MatterHackers.GCodeVisualizer
 							indexOfChangeInZ.Add(GCodeCommandQueue.Count);
 						}
 					}
-					parsingLastZ = processingMachineState.Position.z;
+					parsingLastZ = processingMachineState.Position.Z;
 					break;
 
 				case "10": // firmware retract
@@ -701,13 +701,13 @@ namespace MatterHackers.GCodeVisualizer
 				(int index, ParallelLoopState loop, Vector2 subtotal) =>
 				{
 					PrinterMachineInstruction state = GCodeCommandQueue[index];
-					subtotal += new Vector2(state.Position.x, state.Position.y);
+					subtotal += new Vector2(state.Position.X, state.Position.Y);
 					return subtotal;
 				},
-					(x) =>
+(Action<Vector2>)((x) =>
 					{
-						total += new Vector2(x.x, x.y);
-					}
+						total += new Vector2(x.X, (double)x.Y);
+					})
 			);
 #endif
 
@@ -733,10 +733,10 @@ namespace MatterHackers.GCodeVisualizer
 				(int index, ParallelLoopState loop, RectangleDouble subtotal) =>
 				{
 					PrinterMachineInstruction state = GCodeCommandQueue[index];
-					subtotal.Left = Math.Min(state.Position.x, subtotal.Left);
-					subtotal.Right = Math.Max(state.Position.x, subtotal.Right);
-					subtotal.Bottom = Math.Min(state.Position.y, subtotal.Bottom);
-					subtotal.Top = Math.Max(state.Position.y, subtotal.Top);
+					subtotal.Left = Math.Min(state.Position.X, subtotal.Left);
+					subtotal.Right = Math.Max(state.Position.X, subtotal.Right);
+					subtotal.Bottom = Math.Min(state.Position.Y, subtotal.Bottom);
+					subtotal.Top = Math.Max(state.Position.Y, subtotal.Top);
 
 					return subtotal;
 				},

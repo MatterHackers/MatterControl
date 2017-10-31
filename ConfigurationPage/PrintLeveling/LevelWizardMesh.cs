@@ -109,15 +109,15 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			switch (xIndex)
 			{
 				case 0:
-					samplePosition.x = printCenter.x - (bedSize.x / 2) * .8;
+					samplePosition.X = printCenter.X - (bedSize.X / 2) * .8;
 					break;
 
 				case 1:
-					samplePosition.x = printCenter.x;
+					samplePosition.X = printCenter.X;
 					break;
 
 				case 2:
-					samplePosition.x = printCenter.x + (bedSize.x / 2) * .8;
+					samplePosition.X = printCenter.X + (bedSize.X / 2) * .8;
 					break;
 
 				default:
@@ -127,15 +127,15 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			switch (yIndex)
 			{
 				case 0:
-					samplePosition.y = printCenter.y - (bedSize.y / 2) * .8;
+					samplePosition.Y = printCenter.Y - (bedSize.Y / 2) * .8;
 					break;
 
 				case 1:
-					samplePosition.y = printCenter.y;
+					samplePosition.Y = printCenter.Y;
 					break;
 
 				case 2:
-					samplePosition.y = printCenter.y + (bedSize.y / 2) * .8;
+					samplePosition.Y = printCenter.Y + (bedSize.Y / 2) * .8;
 					break;
 
 				default:
@@ -197,7 +197,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			string medPrecisionLabel = "Medium Precision".Localize();
 			string highPrecisionLabel = "High Precision".Localize();
 
-			double bedRadius = Math.Min(printerSettings.GetValue<Vector2>(SettingsKey.bed_size).x, printerSettings.GetValue<Vector2>(SettingsKey.bed_size).y) / 2;
+			double bedRadius = Math.Min(printerSettings.GetValue<Vector2>(SettingsKey.bed_size).X, printerSettings.GetValue<Vector2>(SettingsKey.bed_size).Y) / 2;
 
 			double startProbeHeight = printerSettings.GetValue<double>(SettingsKey.print_leveling_probe_start);
 			for (int i = 0; i < probeCount; i++)
@@ -292,7 +292,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 				lastDestinationWithLevelingApplied = outPosition;
 
-				newLine = newLine.Append(String.Format("X{0:0.##} Y{1:0.##} Z{2:0.###}", outPosition.x, outPosition.y, outPosition.z));
+				newLine = newLine.Append(String.Format("X{0:0.##} Y{1:0.##} Z{2:0.###}", outPosition.X, outPosition.Y, outPosition.Z));
 			}
 
 			if (extruderDelta != 0)
@@ -331,7 +331,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			switch (printerSettings.GetValue<BedShape>(SettingsKey.bed_shape))
 			{
 				case BedShape.Circular:
-					Vector2 firstPosition = new Vector2(printCenter.x, printCenter.y + (bedSize.y / 2) * .5);
+					Vector2 firstPosition = new Vector2(printCenter.X, printCenter.Y + (bedSize.Y / 2) * .5);
 					switch (index)
 					{
 						case 0:
@@ -352,13 +352,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					switch (index)
 					{
 						case 0:
-							return new Vector2(printCenter.x, printCenter.y + (bedSize.y / 2) * .8);
+							return new Vector2(printCenter.X, printCenter.Y + (bedSize.Y / 2) * .8);
 
 						case 1:
-							return new Vector2(printCenter.x - (bedSize.x / 2) * .8, printCenter.y - (bedSize.y / 2) * .8);
+							return new Vector2(printCenter.X - (bedSize.X / 2) * .8, printCenter.Y - (bedSize.Y / 2) * .8);
 
 						case 2:
-							return new Vector2(printCenter.x + (bedSize.x / 2) * .8, printCenter.y - (bedSize.y / 2) * .8);
+							return new Vector2(printCenter.X + (bedSize.X / 2) * .8, printCenter.Y - (bedSize.Y / 2) * .8);
 
 						default:
 							throw new IndexOutOfRangeException();
@@ -371,7 +371,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			int bestIndex = 0;
 			double bestDist = double.PositiveInfinity;
 
-			currentDestination.z = 0;
+			currentDestination.Z = 0;
 			for (int regionIndex = 0; regionIndex < Regions.Count; regionIndex++)
 			{
 				var dist = (Regions[regionIndex].Center - currentDestination).LengthSquared;
@@ -406,18 +406,18 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					InitializePlanes();
 				}
 
-				var destinationAtZ0 = new Vector3(currentDestination.x, currentDestination.y, 0);
+				var destinationAtZ0 = new Vector3(currentDestination.X, currentDestination.Y, 0);
 
 				// which triangle to check (distance to the centers)
 				if ((LeftBottomCenter - destinationAtZ0).LengthSquared < (RightTopCenter - destinationAtZ0).LengthSquared)
 				{
 					double hitDistance = LeftBottomPlane.GetDistanceToIntersection(destinationAtZ0, Vector3.UnitZ);
-					currentDestination.z += hitDistance;
+					currentDestination.Z += hitDistance;
 				}
 				else
 				{
 					double hitDistance = RightTopPlane.GetDistanceToIntersection(destinationAtZ0, Vector3.UnitZ);
-					currentDestination.z += hitDistance;
+					currentDestination.Z += hitDistance;
 				}
 
 				return currentDestination;

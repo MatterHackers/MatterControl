@@ -161,10 +161,10 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 
 					var spacing = characterSpacing[i++];
 
-					double newX = spacing.x * lastSizeValue;
-					double newY = spacing.y * lastSizeValue;
+					double newX = spacing.X * lastSizeValue;
+					double newY = spacing.Y * lastSizeValue;
 
-					child.Matrix *= Matrix4X4.CreateTranslation(new Vector3(newX, newY, startPosition.z));
+					child.Matrix *= Matrix4X4.CreateTranslation(new Vector3(newX, newY, startPosition.Z));
 				}
 			}
 		}
@@ -187,7 +187,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 					sceneItem.Matrix *= Matrix4X4.CreateScale(new Vector3(1, 1, oldHeight));
 					sceneItem.Matrix *= Matrix4X4.CreateScale(new Vector3(1, 1, newHeight));
 
-					sceneItem.Matrix *= Matrix4X4.CreateTranslation(new Vector3(0, 0, baseBounds.ZSize - startPosition.z));
+					sceneItem.Matrix *= Matrix4X4.CreateTranslation(new Vector3(0, 0, baseBounds.ZSize - startPosition.Z));
 				}
 
 				lastHeightValue = newHeight;
@@ -233,7 +233,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 				AxisAlignedBoundingBox bounds = group.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 
 				double roundingScale = 20;
-				RectangleDouble baseRect = new RectangleDouble(bounds.minXYZ.x, bounds.minXYZ.y, bounds.maxXYZ.x, bounds.maxXYZ.y);
+				RectangleDouble baseRect = new RectangleDouble(bounds.minXYZ.X, bounds.minXYZ.Y, bounds.maxXYZ.X, bounds.maxXYZ.Y);
 				baseRect.Inflate(2);
 				baseRect *= roundingScale;
 

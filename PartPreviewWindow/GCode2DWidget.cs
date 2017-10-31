@@ -207,23 +207,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			GL.Begin(BeginMode.Triangles);
 
 			Vector2 gridOffset = gridCenterMm - gridSizeMm / 2;
-			if (gridSizeMm.x > 0 && gridSizeMm.y > 0)
+			if (gridSizeMm.X > 0 && gridSizeMm.Y > 0)
 			{
 				grid.remove_all();
-				for (int y = 0; y <= gridSizeMm.y; y += 10)
+				for (int y = 0; y <= gridSizeMm.Y; y += 10)
 				{
 					Vector2 start = new Vector2(0, y) + gridOffset;
-					Vector2 end = new Vector2(gridSizeMm.x, y) + gridOffset;
+					Vector2 end = new Vector2(gridSizeMm.X, y) + gridOffset;
 					transform.transform(ref start);
 					transform.transform(ref end);
 
 					graphics2DGl.DrawAALine(start, end, width, gridColor);
 				}
 
-				for (int x = 0; x <= gridSizeMm.x; x += 10)
+				for (int x = 0; x <= gridSizeMm.X; x += 10)
 				{
 					Vector2 start = new Vector2(x, 0) + gridOffset;
-					Vector2 end = new Vector2(x, gridSizeMm.y) + gridOffset;
+					Vector2 end = new Vector2(x, gridSizeMm.Y) + gridOffset;
 					transform.transform(ref start);
 					transform.transform(ref end);
 
@@ -238,27 +238,27 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public void CreateGrid(Affine transform)
 		{
 			Vector2 gridOffset = gridCenterMm - gridSizeMm / 2;
-			if (gridSizeMm.x > 0 && gridSizeMm.y > 0)
+			if (gridSizeMm.X > 0 && gridSizeMm.Y > 0)
 			{
 				grid.remove_all();
-				for (int y = 0; y <= gridSizeMm.y; y += 10)
+				for (int y = 0; y <= gridSizeMm.Y; y += 10)
 				{
 					Vector2 start = new Vector2(0, y) + gridOffset;
-					Vector2 end = new Vector2(gridSizeMm.x, y) + gridOffset;
+					Vector2 end = new Vector2(gridSizeMm.X, y) + gridOffset;
 					transform.transform(ref start);
 					transform.transform(ref end);
-					grid.MoveTo(Math.Round(start.x), Math.Round(start.y));
-					grid.LineTo(Math.Round(end.x), Math.Round(end.y));
+					grid.MoveTo(Math.Round(start.X), Math.Round(start.Y));
+					grid.LineTo(Math.Round(end.X), Math.Round(end.Y));
 				}
 
-				for (int x = 0; x <= gridSizeMm.x; x += 10)
+				for (int x = 0; x <= gridSizeMm.X; x += 10)
 				{
 					Vector2 start = new Vector2(x, 0) + gridOffset;
-					Vector2 end = new Vector2(x, gridSizeMm.y) + gridOffset;
+					Vector2 end = new Vector2(x, gridSizeMm.Y) + gridOffset;
 					transform.transform(ref start);
 					transform.transform(ref end);
-					grid.MoveTo((int)(start.x + .5) + .5, (int)(start.y + .5));
-					grid.LineTo((int)(end.x + .5) + .5, (int)(end.y + .5));
+					grid.MoveTo((int)(start.X + .5) + .5, (int)(start.Y + .5));
+					grid.LineTo((int)(end.X + .5) + .5, (int)(end.Y + .5));
 				}
 			}
 		}
@@ -272,8 +272,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				if (mouseEvent.NumPositions == 1)
 				{
-					mouseDownPosition.x = mouseEvent.X;
-					mouseDownPosition.y = mouseEvent.Y;
+					mouseDownPosition.X = mouseEvent.X;
+					mouseDownPosition.Y = mouseEvent.Y;
 				}
 				else
 				{
@@ -344,13 +344,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					case ETransformState.Scale:
 						double zoomDelta = 1;
-						if (mouseDelta.y < 0)
+						if (mouseDelta.Y < 0)
 						{
-							zoomDelta = 1 - (-1 * mouseDelta.y / 100);
+							zoomDelta = 1 - (-1 * mouseDelta.Y / 100);
 						}
-						else if (mouseDelta.y > 0)
+						else if (mouseDelta.Y > 0)
 						{
-							zoomDelta = 1 + (1 * mouseDelta.y / 100);
+							zoomDelta = 1 + (1 * mouseDelta.Y / 100);
 						}
 
 						Vector2 mousePreScale = mouseDownPosition;

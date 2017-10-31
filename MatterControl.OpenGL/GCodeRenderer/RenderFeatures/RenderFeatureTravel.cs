@@ -46,8 +46,8 @@ namespace MatterHackers.GCodeVisualizer
 			{
 				Vector3Float start = this.start;
 				Vector2 offset = renderInfo.GetExtruderOffset(extruderIndex);
-				start.x += (float)offset.x;
-				start.y += (float)offset.y;
+				start.x += (float)offset.X;
+				start.y += (float)offset.Y;
 				return start;
 			}
 
@@ -60,8 +60,8 @@ namespace MatterHackers.GCodeVisualizer
 			{
 				Vector3Float end = this.end;
 				Vector2 offset = renderInfo.GetExtruderOffset(extruderIndex);
-				end.x += (float)offset.x;
-				end.y += (float)offset.y;
+				end.x += (float)offset.X;
+				end.y += (float)offset.Y;
 				return end;
 			}
 

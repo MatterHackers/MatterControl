@@ -254,9 +254,9 @@ namespace MatterHackers.MatterControl.PrinterControls
 		private void SetDestinationPositionText(TextWidget xPosition, TextWidget yPosition, TextWidget zPosition)
 		{
 			Vector3 destinationPosition = printer.Connection.CurrentDestination;
-			xPosition.Text = "X: {0:0.00}".FormatWith(destinationPosition.x);
-			yPosition.Text = "Y: {0:0.00}".FormatWith(destinationPosition.y);
-			zPosition.Text = "Z: {0:0.00}".FormatWith(destinationPosition.z);
+			xPosition.Text = "X: {0:0.00}".FormatWith(destinationPosition.X);
+			yPosition.Text = "Y: {0:0.00}".FormatWith(destinationPosition.Y);
+			zPosition.Text = "Z: {0:0.00}".FormatWith(destinationPosition.Z);
 		}
 
 		private void homeAll_Click(object sender, EventArgs mouseEvent)

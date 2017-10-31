@@ -48,7 +48,7 @@ namespace MatterControl.Tests
 
 		private static void WriteMove(StreamWriter file, Vector2 center)
 		{
-			file.WriteLine("G1 X" + center.x.ToString() + " Y" + center.y.ToString());
+			file.WriteLine("G1 X" + center.X.ToString() + " Y" + center.Y.ToString());
 		}
 
 		private static void HtmlWindowTest()

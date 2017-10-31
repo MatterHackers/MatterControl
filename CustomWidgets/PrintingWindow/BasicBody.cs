@@ -199,7 +199,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				printerName = new TextWidget(printer.Settings.GetValue(SettingsKey.printer_name), pointSize: 16, textColor: ActiveTheme.Instance.PrimaryTextColor)
 				{
 					HAnchor = HAnchor.Center,
-					MinimumSize = new Vector2(maxTextWidth, MinimumSize.y),
+					MinimumSize = new Vector2(maxTextWidth, MinimumSize.Y),
 					Width = maxTextWidth,
 					Margin = new BorderDouble(0, 3),
 				};
@@ -209,7 +209,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				partName = new TextWidget(printer.Bed.printItem.GetFriendlyName(), pointSize: 16, textColor: ActiveTheme.Instance.PrimaryTextColor)
 				{
 					HAnchor = HAnchor.Center,
-					MinimumSize = new Vector2(maxTextWidth, MinimumSize.y),
+					MinimumSize = new Vector2(maxTextWidth, MinimumSize.Y),
 					Width = maxTextWidth,
 					Margin = new BorderDouble(0, 3)
 				};

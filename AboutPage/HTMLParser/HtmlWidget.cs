@@ -136,7 +136,7 @@ namespace MatterHackers.MatterControl
 							Button linkButton = linkButtonFactory.Generate(decodedHtml.Replace("\r\n", "\n"));
 							StyledTypeFace styled = new StyledTypeFace(LiberationSansFont.Instance, elementState.PointSize);
 							double descentInPixels = styled.DescentInPixels;
-							linkButton.OriginRelativeParent = new VectorMath.Vector2(linkButton.OriginRelativeParent.x, linkButton.OriginRelativeParent.y + descentInPixels);
+							linkButton.OriginRelativeParent = new VectorMath.Vector2(linkButton.OriginRelativeParent.X, linkButton.OriginRelativeParent.Y + descentInPixels);
 							linkButton.Click += (sender, mouseEvent) =>
 							{
 								MatterControlApplication.Instance.LaunchBrowser(elementState.Href);
@@ -247,7 +247,7 @@ namespace MatterHackers.MatterControl
 						createdButton = linkButtonFactory.Generate(decodedHtml);
 						StyledTypeFace styled = new StyledTypeFace(LiberationSansFont.Instance, elementState.PointSize);
 						double descentInPixels = styled.DescentInPixels;
-						createdButton.OriginRelativeParent = new VectorMath.Vector2(createdButton.OriginRelativeParent.x, createdButton.OriginRelativeParent.y + descentInPixels);
+						createdButton.OriginRelativeParent = new VectorMath.Vector2(createdButton.OriginRelativeParent.X, createdButton.OriginRelativeParent.Y + descentInPixels);
 						widgetToAdd = createdButton;
 						linkButtonFactory.fontSize = oldFontSize;
 					}

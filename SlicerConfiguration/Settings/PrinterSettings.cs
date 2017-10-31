@@ -800,8 +800,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					throw new Exception(string.Format("Not parsing {0} as a Vector2", settingsKey));
 				}
 				Vector2 valueAsVector2 = new Vector2();
-				valueAsVector2.x = Helpers.ParseDouble(twoValues[0]);
-				valueAsVector2.y = Helpers.ParseDouble(twoValues[1]);
+				valueAsVector2.X = Helpers.ParseDouble(twoValues[0]);
+				valueAsVector2.Y = Helpers.ParseDouble(twoValues[1]);
 				return (T)(object)(valueAsVector2);
 			}
 			else if (typeof(T) == typeof(double))
