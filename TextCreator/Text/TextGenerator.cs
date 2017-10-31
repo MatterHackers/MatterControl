@@ -39,12 +39,10 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 {
 	public class TextGenerator
 	{
-		private TypeFace boldTypeFace;
 		private Vector2[] characterSpacing;
 
 		public TextGenerator()
 		{
-			boldTypeFace = TypeFace.LoadFrom(AggContext.StaticData.ReadAllText(Path.Combine("Fonts", "LiberationSans-Bold.svg")));
 		}
 
 		public IObject3D CreateText(string wordText, double spacing)
@@ -57,7 +55,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 				ActiveEditor = "TextEditor"
 			};
 
-			StyledTypeFace typeFace = new StyledTypeFace(boldTypeFace, 12);
+			StyledTypeFace typeFace = new StyledTypeFace(LiberationSansBoldFont.Instance, 12);
 			TypeFacePrinter printer = new TypeFacePrinter(wordText, typeFace);
 
 			Vector2 size = printer.GetSize(wordText);
