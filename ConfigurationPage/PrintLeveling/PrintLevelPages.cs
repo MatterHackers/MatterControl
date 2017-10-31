@@ -54,8 +54,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			: base(printer, pageDescription, instructionsText)
 		{
 			int extruderIndex = 0;
-			var materialSelector = new PresetSelectorWidget(printer, string.Format($"{"Material".Localize()} {extruderIndex + 1}"), RGBA_Bytes.Transparent, NamedSettingsLayers.Material, extruderIndex);
-			materialSelector.BackgroundColor = RGBA_Bytes.Transparent;
+			var materialSelector = new PresetSelectorWidget(printer, string.Format($"{"Material".Localize()} {extruderIndex + 1}"), Color.Transparent, NamedSettingsLayers.Material, extruderIndex);
+			materialSelector.BackgroundColor = Color.Transparent;
 			materialSelector.Margin = new BorderDouble(0, 0, 0, 15);
 			topToBottomControls.AddChild(materialSelector);
 		}
@@ -81,7 +81,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			{
 				FillColor = ActiveTheme.Instance.PrimaryAccentColor,
 				BorderColor = ActiveTheme.Instance.PrimaryTextColor,
-				BackgroundColor = RGBA_Bytes.White,
+				BackgroundColor = Color.White,
 				Margin = new BorderDouble(3, 0, 0, 0),
 				VAnchor = VAnchor.Center
 			};
@@ -395,7 +395,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		private FlowLayoutWidget CreateZButtons()
 		{
-			FlowLayoutWidget zButtons = JogControls.CreateZButtons(printer, RGBA_Bytes.White, 4, out zPlusControl, out zMinusControl, true);
+			FlowLayoutWidget zButtons = JogControls.CreateZButtons(printer, Color.White, 4, out zPlusControl, out zMinusControl, true);
 			// set these to 0 so the button does not do any movements by default (we will handle the movement on our click callback)
 			zPlusControl.MoveAmount = 0;
 			zMinusControl.MoveAmount = 0;

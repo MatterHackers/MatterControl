@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				catch
 				{
 					printerComPortHelpLink.Visible = false;
-					printerComPortError.TextColor = RGBA_Bytes.Red;
+					printerComPortError.TextColor = Color.Red;
 					printerComPortError.Text = "Oops! Please select a serial port.".Localize();
 				}
 			};
@@ -179,7 +179,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			else if (printer.Connection.CommunicationState != CommunicationStates.AttemptingToConnect)
 			{
 				printerComPortHelpLink.Visible = false;
-				printerComPortError.TextColor = RGBA_Bytes.Red;
+				printerComPortError.TextColor = Color.Red;
 				printerComPortError.Text = "Uh-oh! Could not connect to printer.".Localize();
 				connectButton.Visible = true;
 				nextButton.Visible = false;

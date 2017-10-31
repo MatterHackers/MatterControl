@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.AddChild(new TextWidget("Snap Grid".Localize())
 			{
-				TextColor = RGBA_Bytes.Black,
+				TextColor = Color.Black,
 				Margin = new BorderDouble(0, 0, 0, 10)
 			});
 
@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var dropDownList = new DropDownList("Custom", Direction.Down)
 			{
-				TextColor = RGBA_Bytes.Black
+				TextColor = Color.Black
 			};
 
 			foreach (var snapSetting in snapSettings)

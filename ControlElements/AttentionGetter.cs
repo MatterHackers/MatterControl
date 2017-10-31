@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl
 		private int cycles = 1;
 		private double lightnessChange = 1;
 		private double pulseTime = 1.38;
-		private RGBA_Bytes startColor;
+		private Color startColor;
 		private Stopwatch timeSinceStart = null;
 		private GuiWidget widgetToHighlight;
 

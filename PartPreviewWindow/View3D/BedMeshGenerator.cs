@@ -44,8 +44,8 @@ namespace MatterHackers.MatterControl
 	{
 		private static ImageBuffer watermarkImage = null;
 
-		private RGBA_Bytes bedBaseColor = new RGBA_Bytes(245, 245, 255);
-		private RGBA_Bytes bedMarkingsColor = RGBA_Bytes.Black;
+		private Color bedBaseColor = new Color(245, 245, 255);
+		private Color bedMarkingsColor = Color.Black;
 		private Mesh printerBed = null;
 
 		public Mesh CreatePrintBed(PrinterConfig printer)

@@ -40,7 +40,7 @@ namespace MatterHackers.MatterControl
 		private int count = 0;
 		private FlowLayoutWidget feedback;
 
-		public SavePartsSheetFeedbackWindow(int totalParts, string firstPartName, RGBA_Bytes backgroundColor)
+		public SavePartsSheetFeedbackWindow(int totalParts, string firstPartName, Color backgroundColor)
 			: base(300, 500)
 		{
 			this.BackgroundColor = backgroundColor;

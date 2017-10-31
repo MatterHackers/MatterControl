@@ -45,9 +45,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.Margin = 0;
 		}
 
-		public RGBA_Bytes HoverColor { get; set; } = RGBA_Bytes.Transparent;
+		public Color HoverColor { get; set; } = Color.Transparent;
 
-		public RGBA_Bytes MouseDownColor { get; set; } = RGBA_Bytes.Transparent;
+		public Color MouseDownColor { get; set; } = Color.Transparent;
 
 		public override void OnMouseEnterBounds(MouseEventArgs mouseEvent)
 		{
@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.Invalidate();
 		}
 
-		public override RGBA_Bytes BackgroundColor
+		public override Color BackgroundColor
 		{
 			get
 			{

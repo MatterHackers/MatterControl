@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl
 
 		private TypeFacePrinter printer = null;
 
-			public RGBA_Bytes TextColor = new RGBA_Bytes(102, 102, 102);
+			public Color TextColor = new Color(102, 102, 102);
 		private int forceStartLine = -1;
 
 		public double Position0To1

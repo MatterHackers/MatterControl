@@ -35,9 +35,9 @@ namespace MatterHackers.GCodeVisualizer
 {
 	public class ExtrusionColors
 	{
-		private SortedList<float, RGBA_Bytes> speedColorLookup = new SortedList<float, RGBA_Bytes>();
+		private SortedList<float, Color> speedColorLookup = new SortedList<float, Color>();
 
-		public RGBA_Bytes GetColorForSpeed(float speed)
+		public Color GetColorForSpeed(float speed)
 		{
 			if (speed > 0)
 			{
@@ -49,7 +49,7 @@ namespace MatterHackers.GCodeVisualizer
 
 					if (!speedColorLookup.ContainsKey(speed))
 					{
-						RGBA_Bytes color = RGBA_Floats.FromHSL(startColor, .99, .49).GetAsRGBA_Bytes();
+						Color color = ColorF.FromHSL(startColor, .99, .49).GetAsRGBA_Bytes();
 						speedColorLookup.Add(speed, color);
 
 						if (speedColorLookup.Count > 1)
@@ -59,8 +59,8 @@ namespace MatterHackers.GCodeVisualizer
 							{
 								double offset = step * index;
 								double fixedColor = startColor - offset;
-								KeyValuePair<float, RGBA_Bytes> keyValue = speedColorLookup.ElementAt(index);
-								speedColorLookup[keyValue.Key] = RGBA_Floats.FromHSL(fixedColor, .99, .49).GetAsRGBA_Bytes();
+								KeyValuePair<float, Color> keyValue = speedColorLookup.ElementAt(index);
+								speedColorLookup[keyValue.Key] = ColorF.FromHSL(fixedColor, .99, .49).GetAsRGBA_Bytes();
 							}
 						}
 					}
@@ -69,7 +69,7 @@ namespace MatterHackers.GCodeVisualizer
 				}
 			}
 
-			return RGBA_Bytes.Black;
+			return Color.Black;
 		}
 	}
 }

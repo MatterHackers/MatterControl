@@ -45,7 +45,7 @@ namespace MatterHackers.GCodeVisualizer
 			this.extruderIndex = extruderIndex;
 		}
 
-		static public void CreateCylinder(VectorPOD<ColorVertexData> colorVertexData, VectorPOD<int> indexData, Vector3 startPos, Vector3 endPos, double radius, int steps, RGBA_Bytes color, double layerHeight)
+		static public void CreateCylinder(VectorPOD<ColorVertexData> colorVertexData, VectorPOD<int> indexData, Vector3 startPos, Vector3 endPos, double radius, int steps, Color color, double layerHeight)
 		{
 			Vector3 direction = endPos - startPos;
 			Vector3 directionNormal = direction.GetNormal();
@@ -148,7 +148,7 @@ namespace MatterHackers.GCodeVisualizer
 			}
 		}
 
-		static public void CreatePointer(VectorPOD<ColorVertexData> colorVertexData, VectorPOD<int> indexData, Vector3 startPos, Vector3 endPos, double radius, int steps, RGBA_Bytes color)
+		static public void CreatePointer(VectorPOD<ColorVertexData> colorVertexData, VectorPOD<int> indexData, Vector3 startPos, Vector3 endPos, double radius, int steps, Color color)
 		{
 			Vector3 direction = endPos - startPos;
 			Vector3 directionNormal = direction.GetNormal();

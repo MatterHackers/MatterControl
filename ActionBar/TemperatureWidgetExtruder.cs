@@ -204,7 +204,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				Width = 350,
 				HAnchor = HAnchor.Absolute,
 				VAnchor = VAnchor.Fit,
-				BackgroundColor = RGBA_Bytes.White,
+				BackgroundColor = Color.White,
 				Padding = new BorderDouble(12, 5, 12, 0)
 			};
 
@@ -212,7 +212,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit,
-				BackgroundColor = RGBA_Bytes.White
+				BackgroundColor = Color.White
 			};
 			widget.AddChild(container);
 
@@ -244,8 +244,8 @@ namespace MatterHackers.MatterControl.ActionBar
 			// put in the temp control
 			settingsTemperature = new EditableNumberDisplay(printer.Settings.GetValue<double>(SettingsKey.temperature), "000")
 			{
-				TextColor = RGBA_Bytes.Black,
-				BorderColor = RGBA_Bytes.Black,
+				TextColor = Color.Black,
+				BorderColor = Color.Black,
 				Name = "Temperature Input"
 			};
 			settingsTemperature.ValueChanged += (s, e) =>
@@ -289,10 +289,10 @@ namespace MatterHackers.MatterControl.ActionBar
 			container.AddChild(graph);
 
 			// put in the material selector
-			var presetsSelector = new PresetSelectorWidget(printer, string.Format($"{"Material".Localize()} {hotendIndex + 1}"), RGBA_Bytes.Transparent, NamedSettingsLayers.Material, hotendIndex, true)
+			var presetsSelector = new PresetSelectorWidget(printer, string.Format($"{"Material".Localize()} {hotendIndex + 1}"), Color.Transparent, NamedSettingsLayers.Material, hotendIndex, true)
 			{
 				Margin = 0,
-				BackgroundColor = RGBA_Bytes.Transparent,
+				BackgroundColor = Color.Transparent,
 				HAnchor = HAnchor.Absolute,
 				Width = 150
 			};
@@ -323,7 +323,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			var dropList = presetsSelector.FindNamedChildRecursive("Material") as DropDownList;
 			if (dropList != null)
 			{
-				dropList.TextColor = RGBA_Bytes.Black;
+				dropList.TextColor = Color.Black;
 			}
 
 			container.AddChild(new SettingsItem("Material".Localize(), presetsSelector, enforceGutter: false));
@@ -343,7 +343,7 @@ namespace MatterHackers.MatterControl.ActionBar
 					container.AddChild(new TextWidget("Extruder".Localize() + " " + (extruderIndex + 1).ToString())
 					{
 						AutoExpandBoundsToText = true,
-						TextColor = RGBA_Bytes.Black,
+						TextColor = Color.Black,
 						HAnchor = HAnchor.Left,
 					});
 					container.AddChild(new ControlContentExtruder(printer, extruderIndex, buttonFactory));

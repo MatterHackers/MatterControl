@@ -132,7 +132,7 @@ namespace MatterHackers.MatterControl
 				HAnchor = HAnchor.Absolute,
 				VAnchor = VAnchor.Fit,
 				Width = 500,
-				BackgroundColor = RGBA_Bytes.White
+				BackgroundColor = Color.White
 			};
 
 			this.AddChild(popupButton);
@@ -148,9 +148,9 @@ namespace MatterHackers.MatterControl
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{
-			graphics2D.Circle(Width / 2, Height / 2, Width / 2, RGBA_Bytes.White);
-			graphics2D.Circle(Width / 2, Height / 2, Width / 2 - 1, RGBA_Bytes.Red);
-			graphics2D.FillRectangle(Width / 2 - 1, Height / 2 - 3, Width / 2 + 1, Height / 2 + 3, RGBA_Bytes.White);
+			graphics2D.Circle(Width / 2, Height / 2, Width / 2, Color.White);
+			graphics2D.Circle(Width / 2, Height / 2, Width / 2 - 1, Color.Red);
+			graphics2D.FillRectangle(Width / 2 - 1, Height / 2 - 3, Width / 2 + 1, Height / 2 + 3, Color.White);
 			base.OnDraw(graphics2D);
 		}
 	}

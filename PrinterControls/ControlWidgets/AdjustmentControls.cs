@@ -168,7 +168,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 					Margin = new BorderDouble(5, 0),
 					Value = ExtrusionMultiplyerStream.ExtrusionRatio
 				};
-				extrusionRatioSlider.BackgroundColor = new RGBA_Bytes();
+				extrusionRatioSlider.BackgroundColor = new Color();
 				extrusionRatioSlider.ValueChanged += (sender, e) =>
 				{
 					extrusionValue.ActuallNumberEdit.Value = Math.Round(extrusionRatioSlider.Value, 2);

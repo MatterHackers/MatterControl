@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 		private TextImageButtonFactory buttonFactory;
 
-		private RGBA_Bytes menuTextColor = RGBA_Bytes.Black;
+		private Color menuTextColor = Color.Black;
 
 		public ApplicationSettingsWidget(TextImageButtonFactory buttonFactory)
 			: base(FlowDirection.TopToBottom)

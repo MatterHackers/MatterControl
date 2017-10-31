@@ -42,12 +42,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			int numberOfHeatedExtruders = printer.Settings.Helpers.NumberOfHotEnds();
 
-			this.AddChild(new PresetSelectorWidget(printer, "Quality".Localize(), RGBA_Bytes.Yellow, NamedSettingsLayers.Quality, 0));
+			this.AddChild(new PresetSelectorWidget(printer, "Quality".Localize(), Color.Yellow, NamedSettingsLayers.Quality, 0));
 			this.AddChild(new GuiWidget(8, 0));
 
 			if (numberOfHeatedExtruders > 1)
 			{
-				List<RGBA_Bytes> colorList = new List<RGBA_Bytes>() { RGBA_Bytes.Orange, RGBA_Bytes.Violet, RGBA_Bytes.YellowGreen };
+				List<Color> colorList = new List<Color>() { Color.Orange, Color.Violet, Color.YellowGreen };
 
 				for (int i = 0; i < numberOfHeatedExtruders; i++)
 				{
@@ -56,13 +56,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						this.AddChild(new GuiWidget(8, 0));
 					}
 					int colorIndex = i % colorList.Count;
-					RGBA_Bytes color = colorList[colorIndex];
+					Color color = colorList[colorIndex];
 					this.AddChild(new PresetSelectorWidget(printer, string.Format("{0} {1}", "Material".Localize(), i + 1), color, NamedSettingsLayers.Material, i));
 				}
 			}
 			else
 			{
-				this.AddChild(new PresetSelectorWidget(printer, "Material".Localize(), RGBA_Bytes.Orange, NamedSettingsLayers.Material, 0));
+				this.AddChild(new PresetSelectorWidget(printer, "Material".Localize(), Color.Orange, NamedSettingsLayers.Material, 0));
 			}
 
 			this.Height = 60 * GuiWidget.DeviceScale;

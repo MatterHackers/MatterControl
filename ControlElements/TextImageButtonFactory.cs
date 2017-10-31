@@ -52,22 +52,22 @@ namespace MatterHackers.MatterControl
 
 		// Private getters act as proxies to new options class
 		private BorderDouble Margin => Options.Margin;
-		private RGBA_Bytes normalFillColor => Options.NormalFillColor;
-		private RGBA_Bytes hoverFillColor => Options.HoverFillColor;
-		private RGBA_Bytes pressedFillColor => Options.PressedFillColor;
-		private RGBA_Bytes disabledFillColor => Options.DisabledFillColor;
+		private Color normalFillColor => Options.NormalFillColor;
+		private Color hoverFillColor => Options.HoverFillColor;
+		private Color pressedFillColor => Options.PressedFillColor;
+		private Color disabledFillColor => Options.DisabledFillColor;
 
-		private RGBA_Bytes normalBorderColor => Options.NormalBorderColor;
-		private RGBA_Bytes hoverBorderColor => Options.HoverBorderColor;
-		private RGBA_Bytes pressedBorderColor => Options.PressedBorderColor;
-		private RGBA_Bytes disabledBorderColor  => Options.DisabledBorderColor;
+		private Color normalBorderColor => Options.NormalBorderColor;
+		private Color hoverBorderColor => Options.HoverBorderColor;
+		private Color pressedBorderColor => Options.PressedBorderColor;
+		private Color disabledBorderColor  => Options.DisabledBorderColor;
 
-		private RGBA_Bytes checkedBorderColor => Options.CheckedBorderColor;
+		private Color checkedBorderColor => Options.CheckedBorderColor;
 
-		private RGBA_Bytes normalTextColor  => Options.NormalTextColor;
-		private RGBA_Bytes hoverTextColor  => Options.HoverTextColor;
-		private RGBA_Bytes pressedTextColor  => Options.PressedTextColor;
-		private RGBA_Bytes disabledTextColor  => Options.DisabledTextColor;
+		private Color normalTextColor  => Options.NormalTextColor;
+		private Color hoverTextColor  => Options.HoverTextColor;
+		private Color pressedTextColor  => Options.PressedTextColor;
+		private Color disabledTextColor  => Options.DisabledTextColor;
 
 		private double fontSize => Options.FontSize;
 		private double borderWidth => Options.BorderWidth;
@@ -184,7 +184,7 @@ namespace MatterHackers.MatterControl
 			if (disabledImage == null && normalImage != null)
 			{
 				// Generate the disabled image by lowering the alpha
-				disabledImage = normalImage.Multiply(new RGBA_Bytes(255, 255, 255, 150));
+				disabledImage = normalImage.Multiply(new Color(255, 255, 255, 150));
 			}
 
 			// TODO: This overrides users settings in a way that's completely unclear
@@ -271,21 +271,21 @@ namespace MatterHackers.MatterControl
 
 	public class ButtonFactoryOptions
 	{
-		public RGBA_Bytes NormalFillColor { get; set; }
-		public RGBA_Bytes NormalBorderColor { get; set; }
-		public RGBA_Bytes NormalTextColor { get; set; }
+		public Color NormalFillColor { get; set; }
+		public Color NormalBorderColor { get; set; }
+		public Color NormalTextColor { get; set; }
 
-		public RGBA_Bytes HoverFillColor { get; set; }
-		public RGBA_Bytes HoverBorderColor { get; set; }
-		public RGBA_Bytes HoverTextColor { get; set; }
+		public Color HoverFillColor { get; set; }
+		public Color HoverBorderColor { get; set; }
+		public Color HoverTextColor { get; set; }
 
-		public RGBA_Bytes PressedFillColor { get; set; }
-		public RGBA_Bytes PressedBorderColor { get; set; }
-		public RGBA_Bytes PressedTextColor { get; set; }
+		public Color PressedFillColor { get; set; }
+		public Color PressedBorderColor { get; set; }
+		public Color PressedTextColor { get; set; }
 
-		public RGBA_Bytes DisabledFillColor { get; set; }
-		public RGBA_Bytes DisabledBorderColor { get; set; }
-		public RGBA_Bytes DisabledTextColor { get; set; }
+		public Color DisabledFillColor { get; set; }
+		public Color DisabledBorderColor { get; set; }
+		public Color DisabledTextColor { get; set; }
 
 		public double FontSize { get; set; } = 12;
 		public double BorderWidth { get; set; } = 1;
@@ -297,7 +297,7 @@ namespace MatterHackers.MatterControl
 		public double ImageSpacing { get; set; } = 0;
 
 		public BorderDouble Margin { get; set; } = new BorderDouble(6, 0);
-		public RGBA_Bytes CheckedBorderColor { get; set; } = new RGBA_Bytes(255, 255, 255, 0);
+		public Color CheckedBorderColor { get; set; } = new Color(255, 255, 255, 0);
 		public FlowDirection FlowDirection { get; set; }
 
 		public ButtonFactoryOptions()
@@ -305,20 +305,20 @@ namespace MatterHackers.MatterControl
 			this.Margin = new BorderDouble(6, 0);
 
 			this.NormalTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			this.NormalFillColor = new RGBA_Bytes(0, 0, 0, 30);
-			this.NormalBorderColor = new RGBA_Bytes(255, 255, 255, 0);
+			this.NormalFillColor = new Color(0, 0, 0, 30);
+			this.NormalBorderColor = new Color(255, 255, 255, 0);
 
 			this.HoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			this.HoverFillColor = new RGBA_Bytes(0, 0, 0, 80);
-			this.HoverBorderColor = new RGBA_Bytes(0, 0, 0, 0);
+			this.HoverFillColor = new Color(0, 0, 0, 80);
+			this.HoverBorderColor = new Color(0, 0, 0, 0);
 
 			this.PressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			this.PressedFillColor = new RGBA_Bytes(0, 0, 0, 0);
-			this.PressedBorderColor = new RGBA_Bytes(0, 0, 0, 0);
+			this.PressedFillColor = new Color(0, 0, 0, 0);
+			this.PressedBorderColor = new Color(0, 0, 0, 0);
 
 			this.DisabledTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			this.DisabledFillColor = new RGBA_Bytes(255, 255, 255, 50);
-			this.DisabledBorderColor = new RGBA_Bytes(0, 0, 0, 0);
+			this.DisabledFillColor = new Color(255, 255, 255, 50);
+			this.DisabledBorderColor = new Color(0, 0, 0, 0);
 		}
 
 		public ButtonFactoryOptions(ButtonFactoryOptions cloneSource)

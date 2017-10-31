@@ -6,7 +6,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class SectionWidget : FlowLayoutWidget
 	{
-		public SectionWidget(string sectionTitle, RGBA_Bytes textColor, GuiWidget sectionContent)
+		public SectionWidget(string sectionTitle, Color textColor, GuiWidget sectionContent)
 			: base (FlowDirection.TopToBottom)
 		{
 			this.HAnchor = HAnchor.Stretch;

@@ -38,12 +38,12 @@ namespace MatterHackers.MatterControl
 	public class TextImageWidget : GuiWidget
 	{
 		private ImageBuffer image;
-		protected RGBA_Bytes fillColor = new RGBA_Bytes(0, 0, 0, 0);
-		protected RGBA_Bytes borderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
+		protected Color fillColor = new Color(0, 0, 0, 0);
+		protected Color borderColor = new Color(ActiveTheme.Instance.PrimaryTextColor, 200);
 		protected double borderWidth = 1;
 		protected double borderRadius = 0;
 
-		public TextImageWidget(string label, RGBA_Bytes fillColor, RGBA_Bytes borderColor, RGBA_Bytes textColor, double borderWidth, BorderDouble margin, ImageBuffer image = null, double fontSize = 12, FlowDirection flowDirection = FlowDirection.LeftToRight, double height = 40, double width = 0, double imageSpacing = 0)
+		public TextImageWidget(string label, Color fillColor, Color borderColor, Color textColor, double borderWidth, BorderDouble margin, ImageBuffer image = null, double fontSize = 12, FlowDirection flowDirection = FlowDirection.LeftToRight, double height = 40, double width = 0, double imageSpacing = 0)
 			: base()
 		{
 			this.image = image;

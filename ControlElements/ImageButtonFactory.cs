@@ -46,12 +46,12 @@ namespace MatterHackers.MatterControl
 			return CreateToggleSwitch(initialState, ActiveTheme.Instance.PrimaryTextColor);
 		}
 
-		public static CheckBox CreateToggleSwitch(bool initialState, RGBA_Bytes textColor, bool useStandardLabels = true)
+		public static CheckBox CreateToggleSwitch(bool initialState, Color textColor, bool useStandardLabels = true)
 		{
 			return CreateToggleSwitch(initialState, textColor, 60 * GuiWidget.DeviceScale, 24 * GuiWidget.DeviceScale, useStandardLabels);
 		}
 
-		public static CheckBox CreateToggleSwitch(bool initialState, RGBA_Bytes textColor, double pixelWidth, double pixelHeight, bool useStandardLabels = true)
+		public static CheckBox CreateToggleSwitch(bool initialState, Color textColor, double pixelWidth, double pixelHeight, bool useStandardLabels = true)
 		{
 			string on = "On";
 			string off = "Off";
@@ -74,10 +74,10 @@ namespace MatterHackers.MatterControl
 					pixelWidth,
 					pixelHeight,
 					ActiveTheme.Instance.PrimaryBackgroundColor,
-					new RGBA_Bytes(220, 220, 220),
+					new Color(220, 220, 220),
 					ActiveTheme.Instance.PrimaryAccentColor,
 					textColor,
-					new RGBA_Bytes(textColor, 70)))
+					new Color(textColor, 70)))
 			{
 				Checked = initialState,
 			};

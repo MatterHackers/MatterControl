@@ -36,7 +36,7 @@ namespace MatterHackers.MatterControl
 	{
 		private GuiWidget groupBoxLabel;
 
-		public RGBA_Bytes TextColor
+		public Color TextColor
 		{
 			get
 			{
@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl
 				{
 					return textBox.TextColor;
 				}
-				return RGBA_Bytes.White;
+				return Color.White;
 			}
 			set
 			{
@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public RGBA_Bytes BorderColor { get; set; } = RGBA_Bytes.Black;
+		public Color BorderColor { get; set; } = Color.Black;
 
 		public GuiWidget ClientArea { get; }
 

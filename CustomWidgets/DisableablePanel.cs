@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				VAnchor = VAnchor.Stretch,
 				HAnchor = HAnchor.Stretch,
 				Visible = !enabled,
-				BackgroundColor = new RGBA_Bytes(ActiveTheme.Instance.TertiaryBackgroundColor, alpha)
+				BackgroundColor = new Color(ActiveTheme.Instance.TertiaryBackgroundColor, alpha)
 			};
 			this.AddChild(disableOverlay);
 		}

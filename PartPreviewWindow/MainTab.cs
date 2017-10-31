@@ -41,7 +41,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			private TextWidget label;
 
-			public TabPill(string tabTitle, RGBA_Bytes textColor, string imageUrl = null)
+			public TabPill(string tabTitle, Color textColor, string imageUrl = null)
 			{
 				var imageWidget = new ImageWidget(new ImageBuffer(16, 16))
 				{
@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
-			public RGBA_Bytes TextColor
+			public Color TextColor
 			{
 				get =>  label.TextColor;
 				set => label.TextColor = value;
@@ -84,7 +84,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public MainTab(string tabTitle, string tabName, TabPage tabPage, string tabImageUrl = null)
 		: this(
-			new TabPill(tabTitle, new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 140), tabImageUrl),
+			new TabPill(tabTitle, new Color(ActiveTheme.Instance.PrimaryTextColor, 140), tabImageUrl),
 			new TabPill(tabTitle, ActiveTheme.Instance.PrimaryTextColor, tabImageUrl),
 			new TabPill(tabTitle, ActiveTheme.Instance.PrimaryTextColor, tabImageUrl),
 			tabName,
@@ -102,8 +102,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public int BorderWidth { get; set; } = 1;
 		public int borderRadius { get; set; } = 4;
 
-		private RGBA_Bytes activeTabColor =  ApplicationController.Instance.Theme.SlightShade;
-		private RGBA_Bytes inactiveTabColor = ApplicationController.Instance.Theme.PrimaryTabFillColor;
+		private Color activeTabColor =  ApplicationController.Instance.Theme.SlightShade;
+		private Color inactiveTabColor = ApplicationController.Instance.Theme.PrimaryTabFillColor;
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{

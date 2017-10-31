@@ -75,17 +75,17 @@ namespace MatterHackers.GCodeVisualizer
 				}
 
 				// retract and unretract are the extruder color
-				RGBA_Bytes color = renderInfo.GetMaterialColor(extruderIndex);
+				Color color = renderInfo.GetMaterialColor(extruderIndex);
 				// except for extruder 0 where they are the red and blue we are familiar with
 				if (extruderIndex == 0)
 				{
 					if (extrusionAmount > 0)
 					{
-						color = RGBA_Bytes.Blue;
+						color = Color.Blue;
 					}
 					else
 					{
-						color = RGBA_Bytes.Red;
+						color = Color.Red;
 					}
 				}
 				if (extrusionAmount > 0)
@@ -116,11 +116,11 @@ namespace MatterHackers.GCodeVisualizer
 
 				renderInfo.Transform.transform(ref position);
 
-				RGBA_Bytes retractionColor = new RGBA_Bytes(RGBA_Bytes.Red, 200);
+				Color retractionColor = new Color(Color.Red, 200);
 				if (extrusionAmount > 0)
 				{
 					// unretraction
-					retractionColor = new RGBA_Bytes(RGBA_Bytes.Blue, 200);
+					retractionColor = new Color(Color.Blue, 200);
 				}
 
 				// render the part using opengl

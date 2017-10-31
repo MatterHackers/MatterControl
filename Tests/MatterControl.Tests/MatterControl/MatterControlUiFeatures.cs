@@ -67,7 +67,7 @@ namespace MatterHackers.MatterControl.UI
 			toggleBox.HAnchor = HAnchor.Stretch;
 			toggleBox.VAnchor = VAnchor.Stretch;
 			toggleBox.Margin = new BorderDouble(marginSize);
-			toggleBox.BackgroundColor = RGBA_Bytes.Red;
+			toggleBox.BackgroundColor = Color.Red;
 			toggleBox.DebugShowBounds = true;
 
 			topToBottomContainer.AddChild(toggleBox);
@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl.UI
 			topToBottomContainer.PerformLayout();
 
 			outerContainer.DoubleBuffer = true;
-			outerContainer.BackBuffer.NewGraphics2D().Clear(RGBA_Bytes.White);
+			outerContainer.BackBuffer.NewGraphics2D().Clear(Color.White);
 			outerContainer.OnDraw(outerContainer.NewGraphics2D());
 
 			// For troubleshooting or visual validation

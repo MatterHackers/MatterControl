@@ -90,18 +90,18 @@ namespace MatterHackers.Agg.UI
 
 		public BorderDouble MenuItemsPadding { get; set; }
 
-		public RGBA_Bytes BorderColor { get; set; }
+		public Color BorderColor { get; set; }
 
-		public RGBA_Bytes NormalArrowColor { get; set; }
+		public Color NormalArrowColor { get; set; }
 
-		public RGBA_Bytes HoverArrowColor { get; set; }
+		public Color HoverArrowColor { get; set; }
 
-		public RGBA_Bytes NormalColor { get; set; }
+		public Color NormalColor { get; set; }
 
-		public RGBA_Bytes HoverColor { get; set; }
+		public Color HoverColor { get; set; }
 
-		private RGBA_Bytes textColor = RGBA_Bytes.Black;
-		public RGBA_Bytes TextColor
+		private Color textColor = Color.Black;
+		public Color TextColor
 		{
 			get { return textColor; }
 			set
@@ -151,7 +151,7 @@ namespace MatterHackers.Agg.UI
 			VAnchor = VAnchor.Fit;
 
 			//IE Don't show arrow unless color is set explicitly
-			NormalArrowColor = new RGBA_Bytes(255, 255, 255, 0);
+			NormalArrowColor = new Color(255, 255, 255, 0);
 			HoverArrowColor = TextColor;
 		}
 
@@ -242,10 +242,10 @@ namespace MatterHackers.Agg.UI
 		{
 			this.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			this.NormalColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-			this.HoverColor = RGBA_Bytes.Gray;
+			this.HoverColor = Color.Gray;
 			this.MenuItemsBorderWidth = 1;
-			this.MenuItemsBackgroundColor = RGBA_Bytes.White;
-			this.MenuItemsBorderColor = RGBA_Bytes.Gray;
+			this.MenuItemsBackgroundColor = Color.White;
+			this.MenuItemsBorderColor = Color.Gray;
 			this.MenuItemsPadding = new BorderDouble(10, 10, 10, 10);
 		}
 
@@ -326,7 +326,7 @@ namespace MatterHackers.Agg.UI
 
 					NormalTextColor = MenuItemsTextColor,
 					OverTextColor = MenuItemsTextHoverColor,
-					DisabledTextColor = RGBA_Bytes.Gray,
+					DisabledTextColor = Color.Gray,
 
 					PointSize = pointSize,
 					Padding = MenuItemsPadding,

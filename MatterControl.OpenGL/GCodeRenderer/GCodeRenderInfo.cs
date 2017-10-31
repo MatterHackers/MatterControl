@@ -49,7 +49,7 @@ namespace MatterHackers.GCodeVisualizer
 			return Vector2.Zero;
 		}
 
-		public Func<int, RGBA_Bytes> GetMaterialColor { get; }
+		public Func<int, Color> GetMaterialColor { get; }
 
 		public int StartLayerIndex { get; set; }
 
@@ -76,7 +76,7 @@ namespace MatterHackers.GCodeVisualizer
 			double featureToStartOnRatio0To1, double featureToEndOnRatio0To1,
 			Vector2[] extruderOffsets,
 			Func<RenderType> getRenderType,
-			Func<int, RGBA_Bytes> getMaterialColor)
+			Func<int, Color> getMaterialColor)
 		{
 			this.GetMaterialColor = getMaterialColor;
 			this.StartLayerIndex = startLayerIndex;

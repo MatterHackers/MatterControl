@@ -81,7 +81,7 @@ namespace MatterHackers.MatterControl
 
 			if (Focused)
 			{
-				graphics2D.Rectangle(LocalBounds, RGBA_Bytes.Orange);
+				graphics2D.Rectangle(LocalBounds, Color.Orange);
 			}
 		}
 	}

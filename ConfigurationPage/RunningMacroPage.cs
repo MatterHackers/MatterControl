@@ -60,8 +60,8 @@ namespace MatterHackers.MatterControl.PrinterControls
 			if (macroData.showMaterialSelector)
 			{
 				int extruderIndex = 0;
-				var materialSelector = new PresetSelectorWidget(printer, string.Format($"{"Material".Localize()} {extruderIndex + 1}"), RGBA_Bytes.Transparent, NamedSettingsLayers.Material, extruderIndex);
-				materialSelector.BackgroundColor = RGBA_Bytes.Transparent;
+				var materialSelector = new PresetSelectorWidget(printer, string.Format($"{"Material".Localize()} {extruderIndex + 1}"), Color.Transparent, NamedSettingsLayers.Material, extruderIndex);
+				materialSelector.BackgroundColor = Color.Transparent;
 				materialSelector.Margin = new BorderDouble(0, 0, 0, 15);
 				contentRow.AddChild(materialSelector);
 			}
@@ -96,7 +96,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			{
 				FillColor = ActiveTheme.Instance.PrimaryAccentColor,
 				BorderColor = ActiveTheme.Instance.PrimaryTextColor,
-				BackgroundColor = RGBA_Bytes.White,
+				BackgroundColor = Color.White,
 				Margin = new BorderDouble(3, 0, 0, 10),
 			};
 			progressBarText = new TextWidget("", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor)

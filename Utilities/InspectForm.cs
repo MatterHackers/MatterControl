@@ -444,7 +444,7 @@ namespace MatterHackers.MatterControl
 					node == activeTreeNode ? boldFont : node.NodeFont,
 					new Point(node.Bounds.Left, node.Bounds.Top),
 					widget.ActuallyVisibleOnScreen() ? SystemColors.ControlText : SystemColors.GrayText,
-					Color.Transparent);
+					System.Drawing.Color.Transparent);
 			}
 		}
 
@@ -464,7 +464,7 @@ namespace MatterHackers.MatterControl
 					node == activeTreeNode ? boldFont : node.NodeFont,
 					new Point(node.Bounds.Left, node.Bounds.Top),
 					SystemColors.ControlText,
-					Color.Transparent);
+					System.Drawing.Color.Transparent);
 			}
 		}
 

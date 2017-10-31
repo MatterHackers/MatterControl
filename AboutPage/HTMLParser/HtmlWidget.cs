@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl
 		private Stack<GuiWidget> elementsUnderConstruction = new Stack<GuiWidget>();
 		HtmlParser htmlParser = new HtmlParser();
 
-		public HtmlWidget(string htmlContent, RGBA_Bytes aboutTextColor)
+		public HtmlWidget(string htmlContent, Color aboutTextColor)
 			: base(FlowDirection.TopToBottom)
 		{
 			this.Name = "HtmlWidget";
@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl
 			private String unwrappedMessage;
 			private TextWidget messageContainer;
 
-			public WrappingTextWidget(string text, double pointSize = 12, Justification justification = Justification.Left, RGBA_Bytes textColor = new RGBA_Bytes(), bool ellipsisIfClipped = true, bool underline = false, RGBA_Bytes backgroundColor = new RGBA_Bytes())
+			public WrappingTextWidget(string text, double pointSize = 12, Justification justification = Justification.Left, Color textColor = new Color(), bool ellipsisIfClipped = true, bool underline = false, Color backgroundColor = new Color())
 			{
 				unwrappedMessage = text;
 				messageContainer = new TextWidget(text, 0, 0, pointSize, justification, textColor, ellipsisIfClipped, underline);

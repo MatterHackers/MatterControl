@@ -82,9 +82,9 @@ namespace MatterHackers.MeshVisualizer
 		protected double SecondsToShowNumberEdit { get; private set; } = 4;
 		protected Stopwatch timeSinceMouseUp { get; private set; } = new Stopwatch();
 
-		public static void DrawMeasureLine(Graphics2D graphics2D, Vector2 lineStart, Vector2 lineEnd, RGBA_Bytes color, LineArrows arrows)
+		public static void DrawMeasureLine(Graphics2D graphics2D, Vector2 lineStart, Vector2 lineEnd, Color color, LineArrows arrows)
 		{
-			graphics2D.Line(lineStart, lineEnd, RGBA_Bytes.Black);
+			graphics2D.Line(lineStart, lineEnd, Color.Black);
 
 			Vector2 direction = lineEnd - lineStart;
 			if (direction.LengthSquared > 0
@@ -99,14 +99,14 @@ namespace MatterHackers.MeshVisualizer
 					double rotation = Math.Atan2(direction.y, direction.x);
 					IVertexSource correctRotation = new VertexSourceApplyTransform(arrow, Affine.NewRotation(rotation - MathHelper.Tau / 4));
 					IVertexSource inPosition = new VertexSourceApplyTransform(correctRotation, Affine.NewTranslation(lineEnd));
-					graphics2D.Render(inPosition, RGBA_Bytes.Black);
+					graphics2D.Render(inPosition, Color.Black);
 				}
 				if (arrows.HasFlag(LineArrows.Start))
 				{
 					double rotation = Math.Atan2(direction.y, direction.x) + MathHelper.Tau / 2;
 					IVertexSource correctRotation = new VertexSourceApplyTransform(arrow, Affine.NewRotation(rotation - MathHelper.Tau / 4));
 					IVertexSource inPosition = new VertexSourceApplyTransform(correctRotation, Affine.NewTranslation(lineStart));
-					graphics2D.Render(inPosition, RGBA_Bytes.Black);
+					graphics2D.Render(inPosition, Color.Black);
 				}
 			}
 		}

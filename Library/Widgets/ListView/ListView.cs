@@ -84,8 +84,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public ILibraryContainer ActiveContainer => this.LibraryContext.ActiveContainer;
 
-		public RGBA_Bytes ThumbnailBackground { get; } = ActiveTheme.Instance.TertiaryBackgroundColor.AdjustLightness(1.05).GetAsRGBA_Bytes();
-		public RGBA_Bytes ThumbnailForeground { get; set; } = ActiveTheme.Instance.PrimaryAccentColor;
+		public Color ThumbnailBackground { get; } = ActiveTheme.Instance.TertiaryBackgroundColor.AdjustLightness(1.05).GetAsRGBA_Bytes();
+		public Color ThumbnailForeground { get; set; } = ActiveTheme.Instance.PrimaryAccentColor;
 
 		private async void ActiveContainer_Changed(object sender, ContainerChangedEventArgs e)
 		{
@@ -299,7 +299,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			renderGraphics.Render(originalImage, width /2 - originalImage.Width /2, height /2 - originalImage.Height /2);
 
-			renderGraphics.FillRectangle(center, RGBA_Bytes.Transparent);
+			renderGraphics.FillRectangle(center, Color.Transparent);
 
 			return destImage;
 		}

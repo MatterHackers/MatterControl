@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private bool whiteBackground;
 		//For multiple materials
 
-		public PresetSelectorWidget(PrinterConfig printer, string label, RGBA_Bytes accentColor, NamedSettingsLayers layerType, int extruderIndex, bool whiteBackground = false)
+		public PresetSelectorWidget(PrinterConfig printer, string label, Color accentColor, NamedSettingsLayers layerType, int extruderIndex, bool whiteBackground = false)
 			: base(FlowDirection.TopToBottom)
 		{
 			this.printer = printer;
@@ -88,7 +88,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			// Section Label
 			this.AddChild(new TextWidget(label.Localize().ToUpper())
 			{
-				TextColor = whiteBackground ? RGBA_Bytes.Black : ActiveTheme.Instance.PrimaryTextColor,
+				TextColor = whiteBackground ? Color.Black : ActiveTheme.Instance.PrimaryTextColor,
 				HAnchor = HAnchor.Left,
 				Margin = new BorderDouble(12, 3, 0, 6)
 			});
@@ -237,7 +237,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				HAnchor = HAnchor.Stretch,
 				MenuItemsPadding = new BorderDouble(10, 7, 7, 7),
-				TextColor = whiteBackground ? RGBA_Bytes.Black : ActiveTheme.Instance.PrimaryTextColor,
+				TextColor = whiteBackground ? Color.Black : ActiveTheme.Instance.PrimaryTextColor,
 			};
 
 			dropDownList.Name = layerType.ToString() + " DropDown List";

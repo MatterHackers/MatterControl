@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		static Mesh normalShadowMesh;
 		static Mesh demoShadowMesh;
-		static RGBA_Bytes shadowColor = new RGBA_Bytes(22, 80, 220);
+		static Color shadowColor = new Color(22, 80, 220);
 		readonly int shadowAlpha = 40;
 
 
@@ -88,9 +88,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				demoTextPrinter.Origin = new Vector2(0, -bounds.Bottom / scale / 2);
 
 				Graphics2D imageGraphics = demoTexture.NewGraphics2D();
-				imageGraphics.Clear(new RGBA_Bytes(RGBA_Bytes.White, shadowAlpha));
+				imageGraphics.Clear(new Color(Color.White, shadowAlpha));
 
-				imageGraphics.Render(new VertexSourceApplyTransform(demoTextPrinter, Affine.NewScaling(scale, scale)), new RGBA_Bytes(RGBA_Bytes.White, 100));
+				imageGraphics.Render(new VertexSourceApplyTransform(demoTextPrinter, Affine.NewScaling(scale, scale)), new Color(Color.White, 100));
 
 				int count = 0;
 				ImageBuffer clearImage = new ImageBuffer(2, 2, 32, new BlenderBGRA());
@@ -126,11 +126,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				//bool authorized = ApplicationController.Instance.ActiveView3DWidget?.ActiveSelectionEditor?.Unlocked == true;
 				if (true) //authorized)
 				{
-					GLHelper.Render(GetNormalShadowMesh(), new RGBA_Bytes(shadowColor, shadowAlpha), withScale, RenderTypes.Shaded);
+					GLHelper.Render(GetNormalShadowMesh(), new Color(shadowColor, shadowAlpha), withScale, RenderTypes.Shaded);
 				}
 				else
 				{
-					GLHelper.Render(GetDemoShadowMesh(), new RGBA_Bytes(shadowColor, 254), withScale, RenderTypes.Shaded);
+					GLHelper.Render(GetDemoShadowMesh(), new Color(shadowColor, 254), withScale, RenderTypes.Shaded);
 				}
 			}
 

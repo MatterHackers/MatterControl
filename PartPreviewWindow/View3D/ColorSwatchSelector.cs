@@ -42,7 +42,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			var colorCount = 9;
 			double[] lightness = new double[] { .7, .5, .3 };
-			RGBA_Bytes[] grayLevel = new RGBA_Bytes[] { RGBA_Bytes.White, new RGBA_Bytes(180, 180, 180), RGBA_Bytes.Gray };
+			Color[] grayLevel = new Color[] { Color.White, new Color(180, 180, 180), Color.Gray };
 			for (int rowIndex = 0; rowIndex < lightness.Length; rowIndex++)
 			{
 				var colorRow = new FlowLayoutWidget();
@@ -50,7 +50,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				for (int colorIndex = 0; colorIndex < colorCount; colorIndex++)
 				{
-					var color = RGBA_Floats.FromHSL(colorIndex / (double)colorCount, 1, lightness[rowIndex]).GetAsRGBA_Bytes();
+					var color = ColorF.FromHSL(colorIndex / (double)colorCount, 1, lightness[rowIndex]).GetAsRGBA_Bytes();
 					colorRow.AddChild(MakeColorButton(scene, color));
 				}
 
@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private Button MakeColorButton(InteractiveScene scene, RGBA_Bytes color)
+		private Button MakeColorButton(InteractiveScene scene, Color color)
 		{
 			GuiWidget colorWidget;
 			var button = new Button(colorWidget = new GuiWidget()

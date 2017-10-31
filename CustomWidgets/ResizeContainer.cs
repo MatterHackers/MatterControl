@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.Cursor = Cursors.VSplit;
 		}
 
-		public RGBA_Bytes SpliterBarColor { get; set; } = ActiveTheme.Instance.TertiaryBackgroundColor;
+		public Color SpliterBarColor { get; set; } = ActiveTheme.Instance.TertiaryBackgroundColor;
 
 		public int SplitterWidth
 		{

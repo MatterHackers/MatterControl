@@ -57,7 +57,7 @@ namespace MatterHackers.GCodeVisualizer
 		private List<List<int>> featureEndIndex = new List<List<int>>();
 		private List<List<RenderFeatureBase>> renderFeatures = new List<List<RenderFeatureBase>>();
 
-		public static RGBA_Bytes TravelColor = RGBA_Bytes.Green;
+		public static Color TravelColor = Color.Green;
 
 		private GCodeFile gCodeFileToDraw;
 
@@ -154,7 +154,7 @@ namespace MatterHackers.GCodeVisualizer
 							layerThickness = gCodeFileToDraw.GetFirstLayerHeight();
 						}
 
-						RGBA_Bytes extrusionColor = extrusionColors.GetColorForSpeed((float)currentInstruction.FeedRate);
+						Color extrusionColor = extrusionColors.GetColorForSpeed((float)currentInstruction.FeedRate);
 						renderFeaturesForLayer.Add(new RenderFeatureExtrusion(previousInstruction.Position, currentInstruction.Position, currentInstruction.ExtruderIndex, currentInstruction.FeedRate, currentInstruction.EPosition - previousInstruction.EPosition, gCodeFileToDraw.GetFilamentDiameter(), layerThickness, extrusionColor));
 					}
 					else

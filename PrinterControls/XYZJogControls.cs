@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl
 		public JogControls(PrinterConfig printer, XYZColors colors)
 		{
 			this.printer = printer;
-			moveButtonFactory.Colors.Text.Normal = RGBA_Bytes.Black;
+			moveButtonFactory.Colors.Text.Normal = Color.Black;
 
 			double distanceBetweenControls = 12;
 			double buttonSeparationDistance = 10;
@@ -92,7 +92,7 @@ namespace MatterHackers.MatterControl
 
 					// add in some movement radio buttons
 					FlowLayoutWidget setMoveDistanceControl = new FlowLayoutWidget();
-					TextWidget buttonsLabel = new TextWidget("Distance:", textColor: RGBA_Bytes.White);
+					TextWidget buttonsLabel = new TextWidget("Distance:", textColor: Color.White);
 					buttonsLabel.VAnchor = Agg.UI.VAnchor.Center;
 					//setMoveDistanceControl.AddChild(buttonsLabel);
 
@@ -175,7 +175,7 @@ namespace MatterHackers.MatterControl
 #endif
 				GuiWidget barBetweenZAndE = new GuiWidget(2, 2);
 				barBetweenZAndE.VAnchor = Agg.UI.VAnchor.Stretch;
-				barBetweenZAndE.BackgroundColor = RGBA_Bytes.White;
+				barBetweenZAndE.BackgroundColor = Color.White;
 				barBetweenZAndE.Margin = new BorderDouble(distanceBetweenControls, 5);
 				allControlsLeftToRight.AddChild(barBetweenZAndE);
 
@@ -493,7 +493,7 @@ namespace MatterHackers.MatterControl
 
 			// add in some movement radio buttons
 			FlowLayoutWidget setMoveDistanceControl = new FlowLayoutWidget();
-			TextWidget buttonsLabel = new TextWidget("Distance:", textColor: RGBA_Bytes.White);
+			TextWidget buttonsLabel = new TextWidget("Distance:", textColor: Color.White);
 			buttonsLabel.VAnchor = Agg.UI.VAnchor.Center;
 			//setMoveDistanceControl.AddChild(buttonsLabel);
 
@@ -551,7 +551,7 @@ namespace MatterHackers.MatterControl
 			return button;
 		}
 
-		public static FlowLayoutWidget CreateZButtons(PrinterConfig printer, RGBA_Bytes color, double buttonSeparationDistance,
+		public static FlowLayoutWidget CreateZButtons(PrinterConfig printer, Color color, double buttonSeparationDistance,
 			out MoveButton zPlusControl, out MoveButton zMinusControl, bool levelingButtons = false)
 		{
 			FlowLayoutWidget zButtons = new FlowLayoutWidget(FlowDirection.TopToBottom);
@@ -698,14 +698,14 @@ namespace MatterHackers.MatterControl
 		{
 			public double BorderWidth { get; set; } = 1;
 
-			private RGBA_Bytes borderColor;
+			private Color borderColor;
 			private Stroke borderStroke = null;
 
-			public MoveButtonWidget(string label, RGBA_Bytes textColor, double fontSize = 12)
+			public MoveButtonWidget(string label, Color textColor, double fontSize = 12)
 			{
 				this.Margin = 0;
 				this.Padding = 0;
-				this.borderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
+				this.borderColor = new Color(ActiveTheme.Instance.PrimaryTextColor, 200);
 
 				this.AnchorAll();
 
@@ -744,10 +744,10 @@ namespace MatterHackers.MatterControl
 
 		public class WidgetStateColors
 		{
-			public RGBA_Bytes Normal { get; set; }
-			public RGBA_Bytes Hover { get; set; }
-			public RGBA_Bytes Pressed { get; set; }
-			public RGBA_Bytes Disabled { get; set; }
+			public Color Normal { get; set; }
+			public Color Hover { get; set; }
+			public Color Pressed { get; set; }
+			public Color Disabled { get; set; }
 		}
 
 		public class WidgetColors
@@ -765,17 +765,17 @@ namespace MatterHackers.MatterControl
 			{
 				Text = new WidgetStateColors()
 				{
-					Normal = RGBA_Bytes.Black,
-					Hover = RGBA_Bytes.White,
-					Pressed = RGBA_Bytes.White,
-					Disabled = RGBA_Bytes.White
+					Normal = Color.Black,
+					Hover = Color.White,
+					Pressed = Color.White,
+					Disabled = Color.White
 				},
 				Fill = new WidgetStateColors()
 				{
-					Normal = RGBA_Bytes.White,
-					Hover = new RGBA_Bytes(0, 0, 0, 50),
-					Pressed = RGBA_Bytes.Transparent,
-					Disabled = new RGBA_Bytes(255, 255, 255, 50)
+					Normal = Color.White,
+					Hover = new Color(0, 0, 0, 50),
+					Pressed = Color.Transparent,
+					Disabled = new Color(255, 255, 255, 50)
 				}
 			};
 

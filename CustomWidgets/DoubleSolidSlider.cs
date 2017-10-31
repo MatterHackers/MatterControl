@@ -40,25 +40,25 @@ namespace MatterHackers.MatterControl
 	{
 		private DoubleSolidSlider sliderAttachedTo;
 
-		public RGBA_Bytes BackgroundColor { get; set; }
+		public Color BackgroundColor { get; set; }
 
-		public RGBA_Bytes FillColor { get; set; }
+		public Color FillColor { get; set; }
 
-		public RGBA_Bytes TrackColor { get; set; }
+		public Color TrackColor { get; set; }
 
 		public double TrackHeight { get; set; }
 
 		public TickPlacement TextPlacement { get; set; }
 
-		public RGBA_Bytes TextColor { get; set; }
+		public Color TextColor { get; set; }
 
 		public StyledTypeFace TextStyle { get; set; }
 
-		public RGBA_Bytes ThumbColor { get; set; }
+		public Color ThumbColor { get; set; }
 
 		public TickPlacement TickPlacement { get; set; }
 
-		public RGBA_Bytes TickColor { get; set; }
+		public Color TickColor { get; set; }
 
 		public DoubleSolidSlideView(DoubleSolidSlider sliderWidget)
 		{
@@ -66,8 +66,8 @@ namespace MatterHackers.MatterControl
 
 			TrackHeight = 10;
 
-			TextColor = RGBA_Bytes.Black;
-			TrackColor = new RGBA_Bytes(220, 220, 220);
+			TextColor = Color.Black;
+			TrackColor = new Color(220, 220, 220);
 			ThumbColor = ActiveTheme.Instance.SecondaryAccentColor;
 
 			sliderWidget.FirstValueChanged += new EventHandler(sliderWidget_ValueChanged);
@@ -130,12 +130,12 @@ namespace MatterHackers.MatterControl
 			// draw the first thumb
 			RectangleDouble firstThumbBounds = sliderAttachedTo.GetFirstThumbHitBounds();
 			RoundedRect firstThumbOutside = new RoundedRect(firstThumbBounds, 0);
-			graphics2D.Render(firstThumbOutside, RGBA_Floats.GetTweenColor(ThumbColor.GetAsRGBA_Floats(), RGBA_Floats.Black.GetAsRGBA_Floats(), .2).GetAsRGBA_Bytes());
+			graphics2D.Render(firstThumbOutside, ColorF.GetTweenColor(ThumbColor.GetAsRGBA_Floats(), ColorF.Black.GetAsRGBA_Floats(), .2).GetAsRGBA_Bytes());
 
 			// draw the second thumb
 			RectangleDouble secondThumbBounds = sliderAttachedTo.GetSecondThumbHitBounds();
 			RoundedRect secondThumbOutside = new RoundedRect(secondThumbBounds, 0);
-			graphics2D.Render(secondThumbOutside, RGBA_Floats.GetTweenColor(ThumbColor.GetAsRGBA_Floats(), RGBA_Floats.Black.GetAsRGBA_Floats(), .2).GetAsRGBA_Bytes());
+			graphics2D.Render(secondThumbOutside, ColorF.GetTweenColor(ThumbColor.GetAsRGBA_Floats(), ColorF.Black.GetAsRGBA_Floats(), .2).GetAsRGBA_Bytes());
 		}
 	}
 

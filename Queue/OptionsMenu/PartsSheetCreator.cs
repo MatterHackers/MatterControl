@@ -163,15 +163,15 @@ namespace MatterHackers.MatterControl
 						double strokeWidth = .5 * PixelPerMM;
 						rectBounds.Inflate(-strokeWidth / 2);
 						RoundedRect rect = new RoundedRect(rectBounds, PartMarginMM * PixelPerMM);
-						partGraphics2D.Render(rect, RGBA_Bytes.LightGray);
+						partGraphics2D.Render(rect, Color.LightGray);
 						Stroke rectOutline = new Stroke(rect, strokeWidth);
-						partGraphics2D.Render(rectOutline, RGBA_Bytes.DarkGray);
+						partGraphics2D.Render(rectOutline, Color.DarkGray);
 
 						foreach (var meshGroup in loadedMeshGroups)
 						{
-							PolygonMesh.Rendering.OrthographicZProjection.DrawTo(partGraphics2D, meshGroup.Mesh, meshGroup.WorldMatrix(), new Vector2(-bounds2D.Left + PartMarginMM, -bounds2D.Bottom + textSpaceMM + PartMarginMM), PixelPerMM, RGBA_Bytes.Black);
+							PolygonMesh.Rendering.OrthographicZProjection.DrawTo(partGraphics2D, meshGroup.Mesh, meshGroup.WorldMatrix(), new Vector2(-bounds2D.Left + PartMarginMM, -bounds2D.Bottom + textSpaceMM + PartMarginMM), PixelPerMM, Color.Black);
 						}
-						partGraphics2D.Render(typeFacePrinter, RGBA_Bytes.Black);
+						partGraphics2D.Render(typeFacePrinter, Color.Black);
 
 						partImagesToPrint.Add(new PartImage(imageOfPart));
 					}
@@ -275,11 +275,11 @@ namespace MatterHackers.MatterControl
 
 			TypeFacePrinter printer = new TypeFacePrinter(string.Format("{0}", Path.GetFileNameWithoutExtension(pathAndFileToSaveTo)), 32, justification: Justification.Center);
 			printer.Origin = new Vector2(plateGraphics.DestImage.Width / 2, 110);
-			plateGraphics.Render(printer, RGBA_Bytes.Black);
+			plateGraphics.Render(printer, Color.Black);
 
 			printer = new TypeFacePrinter(string.Format("Page {0}", plateNumber), 28, justification: Justification.Center);
 			printer.Origin = new Vector2(plateGraphics.DestImage.Width / 2, 60);
-			plateGraphics.Render(printer, RGBA_Bytes.Black);
+			plateGraphics.Render(printer, Color.Black);
 
 			string applicationUserDataPath = ApplicationDataStorage.ApplicationUserDataPath;
 			string folderToSavePrintsTo = Path.Combine(applicationUserDataPath, "data", "temp", "plateImages");
@@ -302,7 +302,7 @@ namespace MatterHackers.MatterControl
 
 		private double PrintTopOfPage(ImageBuffer plateInventoryImage, Graphics2D plateGraphics)
 		{
-			plateGraphics.Clear(RGBA_Bytes.White);
+			plateGraphics.Clear(Color.White);
 
 			double currentlyPrintingHeightPixels = plateInventoryImage.Height - PageMarginMM.Top * PixelPerMM;
 
@@ -320,7 +320,7 @@ namespace MatterHackers.MatterControl
 			double underlineHeightMM = 1;
 			RectangleDouble lineBounds = new RectangleDouble(0, 0, plateInventoryImage.Width - PageMarginPixels.Left * 2, underlineHeightMM * PixelPerMM);
 			lineBounds.Offset(PageMarginPixels.Left, currentlyPrintingHeightPixels - lineBounds.Height);
-			plateGraphics.FillRectangle(lineBounds, RGBA_Bytes.Black);
+			plateGraphics.FillRectangle(lineBounds, Color.Black);
 
 			return currentlyPrintingHeightPixels - (lineBounds.Height + PartPaddingPixels);
 		}

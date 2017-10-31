@@ -50,7 +50,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public override void Initialize(int tabIndex)
 		{
 			base.Initialize(tabIndex);
-			this.textEditWidget.BackgroundColor = RGBA_Bytes.Pink;
+			this.textEditWidget.BackgroundColor = Color.Pink;
 			ChangesMultipleOtherSettings = settingData.SetSettingsOnChange.Count > 0;
 		}
 

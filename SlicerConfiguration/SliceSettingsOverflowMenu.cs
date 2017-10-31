@@ -125,7 +125,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			popupContainer.AddChild(new TextWidget("Mode")
 			{
 				Margin = new BorderDouble(35, 2, 8, 8),
-				TextColor = RGBA_Bytes.Gray
+				TextColor = Color.Gray
 			});
 
 			var modeSelector = new SettingsModeSelector()
@@ -133,7 +133,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				SelectedValue = sliceSettingsWidget.UserLevel,
 				Name = "User Level Dropdown",
 				Margin = new BorderDouble(35, 15, 35, 5),
-				BorderColor = new RGBA_Bytes(ActiveTheme.Instance.SecondaryTextColor, 100)
+				BorderColor = new Color(ActiveTheme.Instance.SecondaryTextColor, 100)
 			};
 			modeSelector.SelectionChanged += (s, e) =>
 			{
@@ -151,7 +151,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public SettingsModeSelector()
 			: base("Basic")
 		{
-			this.TextColor = RGBA_Bytes.Black;
+			this.TextColor = Color.Black;
 
 			this.AddItem("Basic".Localize(), "Simple");
 			this.AddItem("Standard".Localize(), "Intermediate");

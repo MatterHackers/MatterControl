@@ -116,9 +116,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					category.Name + " Tab",
 					14,
 					ActiveTheme.Instance.TabLabelSelected,
-					new RGBA_Bytes(),
+					new Color(),
 					ActiveTheme.Instance.TabLabelUnselected,
-					new RGBA_Bytes(),
+					new Color(),
 					useUnderlineStyling: true));
 
 
@@ -241,7 +241,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			var secondaryTabControl = new TabControl(Orientation.Vertical);
 			secondaryTabControl.TabBar.HAnchor = HAnchor.Fit;
-			secondaryTabControl.TabBar.BorderColor = RGBA_Bytes.Transparent;
+			secondaryTabControl.TabBar.BorderColor = Color.Transparent;
 			secondaryTabControl.TabBar.BackgroundColor = ApplicationController.Instance.Theme.SlightShade;
 
 			foreach (OrganizerGroup group in category.GroupsList)
@@ -261,7 +261,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					ActiveTheme.Instance.TabLabelSelected,
 					ActiveTheme.Instance.TertiaryBackgroundColor, 
 					ActiveTheme.Instance.TabLabelUnselected,
-					RGBA_Bytes.Transparent,
+					Color.Transparent,
 					32);
 				groupTabWidget.HAnchor = HAnchor.MaxFitOrStretch;
 
@@ -403,7 +403,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			double helpPointSize = 10;
 
-			GuiWidget helpWidget = new WrappedTextWidget(settingData.HelpText, pointSize: helpPointSize, textColor: RGBA_Bytes.White);
+			GuiWidget helpWidget = new WrappedTextWidget(settingData.HelpText, pointSize: helpPointSize, textColor: Color.White);
 			helpWidget.Width = textRegionWidth;
 			helpWidget.Margin = new BorderDouble(5, 0, 0, 0);
 			//helpWidget.HAnchor = HAnchor.Left;
@@ -501,7 +501,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				TextWidget settingName = new TextWidget(String.Format("Setting '{0}' not found in known settings", settingData.SlicerConfigName));
 				settingName.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 				settingsRow.NameArea.AddChild(settingName);
-				settingsRow.NameArea.BackgroundColor = RGBA_Bytes.Red;
+				settingsRow.NameArea.BackgroundColor = Color.Red;
 			}
 			else
 			{
@@ -615,7 +615,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						settingsRow.AddContent(new TextWidget(String.Format("Missing the setting for '{0}'.", settingData.DataEditType.ToString()))
 						{
 							TextColor = ActiveTheme.Instance.PrimaryTextColor,
-							BackgroundColor = RGBA_Bytes.Red
+							BackgroundColor = Color.Red
 						});
 						break;
 				}

@@ -296,7 +296,7 @@ namespace MatterHackers.MatterControl.EeProm
 					row.Padding = new BorderDouble(5, 0);
 					if ((settingsColmun.Children.Count % 2) == 1)
 					{
-						row.BackgroundColor = new RGBA_Bytes(0, 0, 0, 30);
+						row.BackgroundColor = new Color(0, 0, 0, 30);
 					}
 
 					CreateSpacer(row);

@@ -12,7 +12,7 @@ namespace MatterHackers.MatterControl
 		private FlowLayoutWidget feedback = new FlowLayoutWidget(FlowDirection.TopToBottom);
 		private TextWidget nextLine;
 
-		public ExportToSdCardFeedbackWindow(int totalParts, string firstPartName, RGBA_Bytes backgroundColor)
+		public ExportToSdCardFeedbackWindow(int totalParts, string firstPartName, Color backgroundColor)
 			: base(300, 500)
 		{
 			BackgroundColor = backgroundColor;
@@ -29,7 +29,7 @@ namespace MatterHackers.MatterControl
 
 		private TextWidget CreateNextLine(string startText)
 		{
-			TextWidget nextLine = new TextWidget(startText, textColor: RGBA_Bytes.White);
+			TextWidget nextLine = new TextWidget(startText, textColor: Color.White);
 			nextLine.Margin = new BorderDouble(0, 2);
 			nextLine.HAnchor = Agg.UI.HAnchor.Left;
 			nextLine.AutoExpandBoundsToText = true;

@@ -35,7 +35,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class PopupButton : GuiWidget, IIgnoredPopupChild
 	{
-		private static readonly RGBA_Bytes slightShade = new RGBA_Bytes(0, 0, 0, 40);
+		private static readonly Color slightShade = new Color(0, 0, 0, 40);
 
 		private GuiWidget buttonView;
 		private bool menuVisibileAtMouseDown = false;
@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		}
 
 		public bool AlignToRightEdge { get; set; }
-		public RGBA_Bytes BorderColor { get; set; } = RGBA_Bytes.Gray;
+		public Color BorderColor { get; set; } = Color.Gray;
 		public Func<GuiWidget> DynamicPopupContent { get; set; }
 		public IPopupLayoutEngine PopupLayoutEngine { get; set; }
 		public Direction PopDirection { get; set; } = Direction.Down;
@@ -122,7 +122,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			popupWidget.Closed += (s, e) =>
 			{
 				// Clear the temp background color
-				this.BackgroundColor = RGBA_Bytes.Transparent;
+				this.BackgroundColor = Color.Transparent;
 				menuVisible = false;
 				popupWidget = null;
 			};

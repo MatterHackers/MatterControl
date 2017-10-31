@@ -254,7 +254,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				RectangleDouble Bounds = LocalBounds;
 				RoundedRect rectBorder = new RoundedRect(Bounds, 0);
 
-				this.BackgroundColor = RGBA_Bytes.White;
+				this.BackgroundColor = Color.White;
 
 				graphics2D.Render(new Stroke(rectBorder, 3), ActiveTheme.Instance.SecondaryAccentColor);
 			}

@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				HAnchor = HAnchor.Stretch,
 				Height = 1,
-				BackgroundColor = RGBA_Bytes.LightGray,
+				BackgroundColor = Color.LightGray,
 				Margin = new BorderDouble(10, 1),
 				VAnchor = VAnchor.Center,
 			}, "HorizontalLine");
@@ -78,11 +78,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			var menuStatesView = new MenuItemColorStatesView(name)
 			{
-				NormalBackgroundColor = RGBA_Bytes.White,
-				OverBackgroundColor = RGBA_Bytes.Gray,
-				NormalTextColor = RGBA_Bytes.Black,
-				OverTextColor = RGBA_Bytes.Black,
-				DisabledTextColor = RGBA_Bytes.Gray,
+				NormalBackgroundColor = Color.White,
+				OverBackgroundColor = Color.Gray,
+				NormalTextColor = Color.Black,
+				OverTextColor = Color.Black,
+				DisabledTextColor = Color.Gray,
 				PointSize = pointSize,
 				Padding = MenuPadding,
 			};
@@ -107,9 +107,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		protected override void BeforeShowPopup()
 		{
-			if (this.PopupContent.BackgroundColor == RGBA_Bytes.Transparent)
+			if (this.PopupContent.BackgroundColor == Color.Transparent)
 			{
-				this.PopupContent.BackgroundColor = RGBA_Bytes.White;
+				this.PopupContent.BackgroundColor = Color.White;
 			}
 		}
 	}

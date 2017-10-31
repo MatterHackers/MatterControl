@@ -216,7 +216,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			catch
 			{
 				printerBaudRateHelpLink.Visible = false;
-				printerBaudRateError.TextColor = RGBA_Bytes.Red;
+				printerBaudRateError.TextColor = Color.Red;
 				printerBaudRateError.Text = "Oops! Please select a baud rate.".Localize();
 			}
 
@@ -230,7 +230,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				catch
 				{
 					printerBaudRateHelpLink.Visible = false;
-					printerBaudRateError.TextColor = RGBA_Bytes.Red;
+					printerBaudRateError.TextColor = Color.Red;
 					printerBaudRateError.Text = "Oops! Baud Rate must be an integer.".Localize();
 					return false;
 				}

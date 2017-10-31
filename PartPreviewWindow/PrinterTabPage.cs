@@ -390,13 +390,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		internal GuiWidget ShowGCodeOverflowMenu()
 		{
-			var textColor = RGBA_Bytes.Black;
+			var textColor = Color.Black;
 
 			var popupContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.Stretch,
 				Padding = 12,
-				BackgroundColor = RGBA_Bytes.White
+				BackgroundColor = Color.White
 			};
 
 			// put in a show grid check box
@@ -591,7 +591,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				HAnchor = HAnchor.Center,
 				VAnchor = VAnchor.Center,
-				BackgroundColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryBackgroundColor, 128),
+				BackgroundColor = new Color(ActiveTheme.Instance.PrimaryBackgroundColor, 128),
 				Selectable = false
 			};
 

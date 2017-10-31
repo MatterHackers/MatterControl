@@ -39,7 +39,7 @@ namespace MatterHackers.MatterControl.Library
 	{
 		private static int currentColorIndex = 0;
 
-		private static RGBA_Bytes[] colors;
+		private static Color[] colors;
 
 		private static int totalColors = 0;
 
@@ -56,12 +56,12 @@ namespace MatterHackers.MatterControl.Library
 				if (totalColors != value)
 				{
 					totalColors = value;
-					colors = Enumerable.Range(0, totalColors).Select(colorIndex => RGBA_Floats.FromHSL(colorIndex / (double)totalColors, 1, .5).GetAsRGBA_Bytes()).ToArray();
+					colors = Enumerable.Range(0, totalColors).Select(colorIndex => ColorF.FromHSL(colorIndex / (double)totalColors, 1, .5).GetAsRGBA_Bytes()).ToArray();
 				}
 			}
 		}
 
-		public static RGBA_Bytes NextColor()
+		public static Color NextColor()
 		{
 			return colors[(currentColorIndex++) % TotalColors];
 		}
@@ -98,14 +98,14 @@ namespace MatterHackers.MatterControl.Library
 		/// </summary>
 		public Func<IObject3D> Collector { get; }
 
-		public RGBA_Bytes Color { get; set; }
+		public Color Color { get; set; }
 
 		public Task<IObject3D> GetContent(Action<double, string> reportProgress)
 		{
 			var result = Collector?.Invoke();
 
 			// If the content has not set a color, we'll assign from the running ColorRange
-			if (result.Color == RGBA_Bytes.Transparent)
+			if (result.Color == Color.Transparent)
 			{
 				result.Color = this.Color;
 			}

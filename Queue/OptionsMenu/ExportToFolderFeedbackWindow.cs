@@ -12,7 +12,7 @@ namespace MatterHackers.MatterControl
 		private FlowLayoutWidget feedback = new FlowLayoutWidget(FlowDirection.TopToBottom);
 		private TextWidget nextLine;
 
-		public ExportToFolderFeedbackWindow(int totalParts, string firstPartName, RGBA_Bytes backgroundColor)
+		public ExportToFolderFeedbackWindow(int totalParts, string firstPartName, Color backgroundColor)
 			: base(300, 500)
 		{
 			BackgroundColor = backgroundColor;

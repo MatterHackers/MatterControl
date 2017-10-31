@@ -209,9 +209,9 @@ namespace MatterHackers.MatterControl
 
 			private static int criteriaCount = 0;
 
-			private static RGBA_Bytes disabledTextColor = new RGBA_Bytes(0.35, 0.35, 0.35);
-			private static RGBA_Bytes disabledBackColor = new RGBA_Bytes(0.22, 0.22, 0.22);
-			private static RGBA_Bytes toggleColor = new RGBA_Bytes(RGBA_Bytes.Gray.red + 2, RGBA_Bytes.Gray.green + 2, RGBA_Bytes.Gray.blue + 2);
+			private static Color disabledTextColor = new Color(0.35, 0.35, 0.35);
+			private static Color disabledBackColor = new Color(0.22, 0.22, 0.22);
+			private static Color toggleColor = new Color(Color.Gray.red + 2, Color.Gray.green + 2, Color.Gray.blue + 2);
 
 			public CriteriaRow (string itemText, string fixitText, string errorText, bool succeeded, Action fixAction) 
 				: base(FlowDirection.LeftToRight)
@@ -225,7 +225,7 @@ namespace MatterHackers.MatterControl
 				base.Height = 40;
 
 				base.AddChild(new TextWidget (string.Format("  {0}. {1}", criteriaCount + 1, itemText)){
-					TextColor = stillSuccessful ? RGBA_Bytes.White : disabledTextColor,
+					TextColor = stillSuccessful ? Color.White : disabledTextColor,
 					VAnchor = VAnchor.Center
 				});
 
@@ -253,7 +253,7 @@ namespace MatterHackers.MatterControl
 
 				if(stillSuccessful) 
 				{
-					this.BackgroundColor = (criteriaCount % 2 == 0) ? RGBA_Bytes.Gray : toggleColor;
+					this.BackgroundColor = (criteriaCount % 2 == 0) ? Color.Gray : toggleColor;
 				}
 				else
 				{

@@ -47,7 +47,7 @@ namespace MatterControl.Tests.MatterControl
 		public UIFieldTestWindow(int width, int height, UIField field)
 			: base(width, height)
 		{
-			this.BackgroundColor = new RGBA_Bytes(56, 56, 56);
+			this.BackgroundColor = new Color(56, 56, 56);
 
 			GuiWidget column, row;
 			double pixelWidth = 70;
@@ -73,7 +73,7 @@ namespace MatterControl.Tests.MatterControl
 			};
 			row.AddChild(column);
 
-			column.AddChild(new TextWidget("Input:", textColor: RGBA_Bytes.White)
+			column.AddChild(new TextWidget("Input:", textColor: Color.White)
 			{
 				Margin = new BorderDouble(right: 10, bottom: 2),
 			});
@@ -90,7 +90,7 @@ namespace MatterControl.Tests.MatterControl
 			};
 			row.AddChild(column);
 
-			column.AddChild(new TextWidget("Expected:", textColor: RGBA_Bytes.White)
+			column.AddChild(new TextWidget("Expected:", textColor: Color.White)
 			{
 				Margin = new BorderDouble(right: 10, bottom: 2)
 			});
@@ -107,7 +107,7 @@ namespace MatterControl.Tests.MatterControl
 			};
 			row.AddChild(column);
 
-			column.AddChild(new TextWidget("Actual:", textColor: RGBA_Bytes.White)
+			column.AddChild(new TextWidget("Actual:", textColor: Color.White)
 			{
 				Margin = new BorderDouble(right: 10, bottom: 2)
 			});

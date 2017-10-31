@@ -9,7 +9,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 	public class DataViewGraph : GuiWidget
 	{
 		private HistoryData dataHistoryArray;
-		private RGBA_Floats LineColor = RGBA_Floats.Black;
+		private ColorF LineColor = ColorF.Black;
 
 		public DataViewGraph()
 		{
@@ -19,8 +19,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public bool DynamiclyScaleRange { get; set; } = true;
 
-		RGBA_Bytes _goalColor = RGBA_Bytes.Yellow;
-		public RGBA_Bytes GoalColor
+		Color _goalColor = Color.Yellow;
+		public Color GoalColor
 		{
 			get { return _goalColor; }
 			set
@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				graphics2D.Line(0, yPos, Width, yPos, GoalColor);
 			}
 
-			RGBA_Bytes backgroundGridColor = RGBA_Bytes.Gray;
+			Color backgroundGridColor = Color.Gray;
 
 			graphics2D.Line(0, 0, Width, 0, backgroundGridColor);
 			graphics2D.Line(0, Height, Width, Height, backgroundGridColor);
@@ -96,7 +96,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				double xPos = Width - ((i * pixelSkip + TotalAdds) % Width);
 				int inset = (int)((i % 2) == 0 ? Height / 6 : Height / 3);
-				graphics2D.Line(xPos, inset, xPos, Height - inset, new RGBA_Bytes(backgroundGridColor, 120));
+				graphics2D.Line(xPos, inset, xPos, Height - inset, new Color(backgroundGridColor, 120));
 			}
 
 			for (int i = 0; i < Width - 1; i++)
