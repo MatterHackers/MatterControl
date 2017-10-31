@@ -90,7 +90,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			base.Initialize();
 
-			Width = 30;
 			VAnchor = VAnchor.Stretch;
 			HAnchor = HAnchor.Fit;
 			topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
