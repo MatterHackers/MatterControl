@@ -232,7 +232,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				get
 				{
 					Vector2 PrinteCenter = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center);
-					return (PrinteCenter.x * 1000).ToString();
+					return (PrinteCenter.X * 1000).ToString();
 				}
 			}
 		}
@@ -249,7 +249,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				get
 				{
 					Vector2 PrinteCenter = ActiveSliceSettings.Instance.GetValue<Vector2>(SettingsKey.print_center);
-					return (PrinteCenter.y * 1000).ToString();
+					return (PrinteCenter.Y * 1000).ToString();
 				}
 			}
 		}

@@ -201,7 +201,7 @@ namespace MatterHackers.MeshVisualizer
 					{
 						Vector3 renderPosition = bounds.Center;
 						Vector2 objectCenterScreenSpace = this.World.GetScreenPosition(renderPosition);
-						Point2D screenPositionOfObject3D = new Point2D((int)objectCenterScreenSpace.x, (int)objectCenterScreenSpace.y);
+						Point2D screenPositionOfObject3D = new Point2D((int)objectCenterScreenSpace.X, (int)objectCenterScreenSpace.Y);
 
 						foundChildren.Add(new WidgetAndPosition(this, screenPositionOfObject3D, object3DName, child));
 					}
@@ -249,7 +249,7 @@ namespace MatterHackers.MeshVisualizer
 					{
 						Vector3 renderPosition = bounds.Center;
 						Vector2 objectCenterScreenSpace = this.World.GetScreenPosition(renderPosition);
-						Point2D screenPositionOfObject3D = new Point2D((int)objectCenterScreenSpace.x, (int)objectCenterScreenSpace.y);
+						Point2D screenPositionOfObject3D = new Point2D((int)objectCenterScreenSpace.X, (int)objectCenterScreenSpace.Y);
 
 						foundChildren.Add(new WidgetAndPosition(this, screenPositionOfObject3D, object3DName, child));
 					}
@@ -550,11 +550,11 @@ namespace MatterHackers.MeshVisualizer
 		private int BackToFrontXY(IObject3D a, IObject3D b)
 		{
 			var aCenterWorld = Vector3.Transform(a.Mesh.GetAxisAlignedBoundingBox().Center, a.Matrix);
-			aCenterWorld.z = 0; // we only want to look at the distance on xy in world space
+			aCenterWorld.Z = 0; // we only want to look at the distance on xy in world space
 			var aCenterInViewSpace = Vector3.Transform(aCenterWorld, World.ModelviewMatrix);
 
 			var bCenterWorld = Vector3.Transform(b.Mesh.GetAxisAlignedBoundingBox().Center, b.Matrix);
-			bCenterWorld.z = 0; // we only want to look at the distance on xy in world space
+			bCenterWorld.Z = 0; // we only want to look at the distance on xy in world space
 			var bCenterInViewSpace = Vector3.Transform(bCenterWorld, World.ModelviewMatrix);
 
 			return bCenterInViewSpace.LengthSquared.CompareTo(aCenterInViewSpace.LengthSquared);

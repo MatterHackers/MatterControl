@@ -120,7 +120,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 
 				AxisAlignedBoundingBox originalSelectedBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
-				var moveAmount = newZPosition - originalSelectedBounds.minXYZ.z;
+				var moveAmount = newZPosition - originalSelectedBounds.minXYZ.Z;
 
 				if (moveAmount != 0)
 				{
@@ -177,9 +177,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public Vector3 GetTopPosition(IObject3D selectedItem)
 		{
 			AxisAlignedBoundingBox originalSelectedBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
-			if (originalSelectedBounds.minXYZ.x != double.PositiveInfinity)
+			if (originalSelectedBounds.minXYZ.X != double.PositiveInfinity)
 			{
-				return new Vector3(originalSelectedBounds.Center.x, originalSelectedBounds.Center.y, originalSelectedBounds.maxXYZ.z);
+				return new Vector3(originalSelectedBounds.Center.X, originalSelectedBounds.Center.Y, originalSelectedBounds.maxXYZ.Z);
 			}
 
 			return Vector3.Zero;
@@ -227,9 +227,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					var selectedItem = InteractionContext.Scene.SelectedItem;
 
-					var delta = info.HitPosition.z - initialHitPosition.z;
+					var delta = info.HitPosition.Z - initialHitPosition.Z;
 
-					double newZPosition = mouseDownSelectedBounds.minXYZ.z + delta;
+					double newZPosition = mouseDownSelectedBounds.minXYZ.Z + delta;
 
 					if (InteractionContext.SnapGridDistance > 0)
 					{
@@ -241,7 +241,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 
 					AxisAlignedBoundingBox originalSelectedBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
-					var moveAmount = newZPosition - originalSelectedBounds.minXYZ.z;
+					var moveAmount = newZPosition - originalSelectedBounds.minXYZ.Z;
 
 					if (moveAmount != 0)
 					{
@@ -265,11 +265,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 
 			Vector3 topPosition = GetTopPosition(selectedItem);
-			Vector3 bottomPosition = new Vector3(topPosition.x, topPosition.y, selectedBounds.minXYZ.z);
+			Vector3 bottomPosition = new Vector3(topPosition.X, topPosition.Y, selectedBounds.minXYZ.Z);
 			double distBetweenPixelsWorldSpace = InteractionContext.World.GetWorldUnitsPerScreenPixelAtPosition(topPosition);
 
 			Vector3 boxCenter = topPosition;
-			boxCenter.z += (10 + upArrowSize / 2) * distBetweenPixelsWorldSpace;
+			boxCenter.Z += (10 + upArrowSize / 2) * distBetweenPixelsWorldSpace;
 
 			Matrix4X4 centerMatrix = Matrix4X4.CreateTranslation(boxCenter);
 			centerMatrix = Matrix4X4.CreateScale(distBetweenPixelsWorldSpace) * centerMatrix;
@@ -278,12 +278,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			lines.Clear();
 			// left lines
 			// the lines on the bed
-			var bedPosition = new Vector3(topPosition.x, topPosition.y, 0);
+			var bedPosition = new Vector3(topPosition.X, topPosition.Y, 0);
 			lines.Add(InteractionContext.World.GetScreenPosition(bedPosition + new Vector3(distToStart * distBetweenPixelsWorldSpace, 0, 0)));
-			lines.Add(new Vector2(lines[0].x + lineLength, lines[0].y));
+			lines.Add(new Vector2(lines[0].X + lineLength, lines[0].Y));
 
 			lines.Add(InteractionContext.World.GetScreenPosition(bottomPosition + new Vector3(distToStart * distBetweenPixelsWorldSpace, 0, 0)));
-			lines.Add(new Vector2(lines[2].x + lineLength, lines[2].y));
+			lines.Add(new Vector2(lines[2].X + lineLength, lines[2].Y));
 		}
 
 		private void InteractionLayer_AfterDraw(object sender, DrawEventArgs drawEvent)
@@ -307,8 +307,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 
-					zHeightDisplayInfo.Value = selectedBounds.minXYZ.z;
-					zHeightDisplayInfo.OriginRelativeParent = lines[1] + new Vector2(10, - zHeightDisplayInfo.LocalBounds.Center.y);
+					zHeightDisplayInfo.Value = selectedBounds.minXYZ.Z;
+					zHeightDisplayInfo.OriginRelativeParent = lines[1] + new Vector2(10, - zHeightDisplayInfo.LocalBounds.Center.Y);
 				}
 			}
 		}

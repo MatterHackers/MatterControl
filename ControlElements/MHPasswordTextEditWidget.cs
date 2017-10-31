@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Bottom
 			};
-			passwordCoverText.MinimumSize = new Vector2(Math.Max(passwordCoverText.MinimumSize.x, pixelWidth), Math.Max(passwordCoverText.MinimumSize.y, pixelHeight));
+			passwordCoverText.MinimumSize = new Vector2(Math.Max(passwordCoverText.MinimumSize.X, pixelWidth), Math.Max(passwordCoverText.MinimumSize.Y, pixelHeight));
 			this.AddChild(passwordCoverText);
 
 			this.ActualTextEditWidget.TextChanged += (sender, e) =>

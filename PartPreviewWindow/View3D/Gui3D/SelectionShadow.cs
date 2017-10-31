@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 			Vector3 boundsCenter = selectedBounds.Center;
 
-			TotalTransform = Matrix4X4.CreateTranslation(new Vector3(boundsCenter.x, boundsCenter.y, 0.1));
+			TotalTransform = Matrix4X4.CreateTranslation(new Vector3(boundsCenter.X, boundsCenter.Y, 0.1));
 		}
 
 		Mesh GetNormalShadowMesh()

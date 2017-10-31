@@ -133,7 +133,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			SystemWindow mcWindowLocal = MatterControlApplication.Instance;
 
 			var mainWindow = testRunner.GetWidgetByName("MatterControl", out _);
-			var windowCenter = new Point2D(mainWindow.LocalBounds.Center.x, mainWindow.LocalBounds.Center.y);
+			var windowCenter = new Point2D(mainWindow.LocalBounds.Center.X, mainWindow.LocalBounds.Center.Y);
 			testRunner.ClickByName("MatterControl", offset: windowCenter + new Point2D(-5, 10));
 
 			testRunner.Delay(.2);

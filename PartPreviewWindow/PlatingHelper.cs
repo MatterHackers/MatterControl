@@ -152,14 +152,14 @@ namespace MatterHackers.MatterControl
 			AxisAlignedBoundingBox bounds = object3D.GetAxisAlignedBoundingBox(Matrix4X4.Identity, true);
 			Vector3 boundsCenter = (bounds.maxXYZ + bounds.minXYZ) / 2;
 
-			object3D.Matrix *= Matrix4X4.CreateTranslation(new Vector3(0, 0, -boundsCenter.z + bounds.ZSize / 2));
+			object3D.Matrix *= Matrix4X4.CreateTranslation(new Vector3(0, 0, -boundsCenter.Z + bounds.ZSize / 2));
 		}
 
 		public static void PlaceMeshAtHeight(IObject3D objectToMove, double zHeight)
 		{
 			AxisAlignedBoundingBox bounds = objectToMove.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 
-			objectToMove.Matrix *= Matrix4X4.CreateTranslation(new Vector3(0, 0, zHeight - bounds.minXYZ.z));
+			objectToMove.Matrix *= Matrix4X4.CreateTranslation(new Vector3(0, 0, zHeight - bounds.minXYZ.Z));
 		}
 
 		public static void CenterMeshGroupXY(List<MeshGroup> meshesGroupList, List<Matrix4X4> meshTransforms, int index)
@@ -167,7 +167,7 @@ namespace MatterHackers.MatterControl
 			AxisAlignedBoundingBox bounds = GetAxisAlignedBoundingBox(meshesGroupList[index], meshTransforms[index]);
 			Vector3 boundsCenter = (bounds.maxXYZ + bounds.minXYZ) / 2;
 
-			meshTransforms[index] *= Matrix4X4.CreateTranslation(new Vector3(-boundsCenter.x + bounds.XSize / 2, -boundsCenter.y + bounds.YSize / 2, 0));
+			meshTransforms[index] *= Matrix4X4.CreateTranslation(new Vector3(-boundsCenter.X + bounds.XSize / 2, -boundsCenter.Y + bounds.YSize / 2, 0));
 		}
 
 		/// <summary>

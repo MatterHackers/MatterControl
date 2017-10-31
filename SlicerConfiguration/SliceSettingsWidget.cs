@@ -184,7 +184,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 			foreach (TabBar tabBar in sideTabBarsListForLayout)
 			{
-				tabBar.MinimumSize = new Vector2(sideTabBarsMinimumWidth, tabBar.MinimumSize.y);
+				tabBar.MinimumSize = new Vector2(sideTabBarsMinimumWidth, tabBar.MinimumSize.Y);
 			}
 		}
 
@@ -409,7 +409,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			//helpWidget.HAnchor = HAnchor.Left;
 			allText.AddChild(helpWidget);
 
-			allText.MinimumSize = new Vector2(0, allText.MinimumSize.y);
+			allText.MinimumSize = new Vector2(0, allText.MinimumSize.Y);
 			return allText;
 		}
 

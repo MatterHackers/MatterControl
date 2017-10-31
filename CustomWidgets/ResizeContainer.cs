@@ -71,10 +71,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
 		{
-			if (mouseEvent.Position.x < this.SplitterWidth)
+			if (mouseEvent.Position.X < this.SplitterWidth)
 			{
 				mouseDownOnBar = true;
-				mouseDownX = TransformToScreenSpace(mouseEvent.Position).x;
+				mouseDownX = TransformToScreenSpace(mouseEvent.Position).X;
 				downWidth = Width;
 			}
 			base.OnMouseDown(mouseEvent);
@@ -84,7 +84,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			if (mouseDownOnBar)
 			{
-				int currentMouseX = (int)TransformToScreenSpace(mouseEvent.Position).x;
+				int currentMouseX = (int)TransformToScreenSpace(mouseEvent.Position).X;
 				UiThread.RunOnIdle(() =>
 				{
 					resizeTarget.Width = downWidth + mouseDownX - currentMouseX;

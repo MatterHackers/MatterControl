@@ -127,7 +127,7 @@ namespace MatterHackers.MatterControl
 
 		public async Task SaveSheets()
 		{
-			await Task.Run(async () =>
+			await Task.Run((Func<Task>)(async () =>
 			{
 				currentlySaving = true;
 				// first create images for all the parts
@@ -145,16 +145,16 @@ namespace MatterHackers.MatterControl
 							aabb = AxisAlignedBoundingBox.Union(aabb, loadedMeshGroups[i].Mesh.GetAxisAlignedBoundingBox(loadedMeshGroups[i].WorldMatrix()));
 						}
 
-						RectangleDouble bounds2D = new RectangleDouble(aabb.minXYZ.x, aabb.minXYZ.y, aabb.maxXYZ.x, aabb.maxXYZ.y);
+						RectangleDouble bounds2D = new RectangleDouble(aabb.minXYZ.X, aabb.minXYZ.Y, aabb.maxXYZ.X, aabb.maxXYZ.Y);
 						double widthInMM = bounds2D.Width + PartMarginMM * 2;
 						double textSpaceMM = 5;
 						double heightMM = textSpaceMM + bounds2D.Height + PartMarginMM * 2;
 
 						TypeFacePrinter typeFacePrinter = new TypeFacePrinter(item.Name, 28, Vector2.Zero, Justification.Center, Baseline.BoundsCenter);
-						double sizeOfNameX = typeFacePrinter.GetSize().x + PartMarginPixels * 2;
+						double sizeOfNameX = typeFacePrinter.GetSize().X + PartMarginPixels * 2;
 						Vector2 sizeOfRender = new Vector2(widthInMM * PixelPerMM, heightMM * PixelPerMM);
 
-						ImageBuffer imageOfPart = new ImageBuffer((int)(Math.Max(sizeOfNameX, sizeOfRender.x)), (int)(sizeOfRender.y));
+						ImageBuffer imageOfPart = new ImageBuffer((int)(Math.Max(sizeOfNameX, sizeOfRender.X)), (int)(sizeOfRender.Y));
 						typeFacePrinter.Origin = new Vector2(imageOfPart.Width / 2, (textSpaceMM / 2) * PixelPerMM);
 
 						Graphics2D partGraphics2D = imageOfPart.NewGraphics2D();
@@ -212,7 +212,7 @@ namespace MatterHackers.MatterControl
 
 				OnDoneSaving();
 				currentlySaving = false;
-			});
+			}));
 		}
 
 		private static int BiggestToLittlestImages(PartImage one, PartImage two)
@@ -234,35 +234,35 @@ namespace MatterHackers.MatterControl
 				ImageBuffer image = partImagesToPrint[nextPartToPrintIndex].image;
 				tallestHeight = Math.Max(tallestHeight, image.Height);
 
-				if (partsOnLine.Count > 0 && offset.x + image.Width > plateInventoryImage.Width - PageMarginPixels.Right)
+				if (partsOnLine.Count > 0 && offset.X + image.Width > plateInventoryImage.Width - PageMarginPixels.Right)
 				{
 					if (partsOnLine.Count == 1)
 					{
-						plateGraphics.Render(partsOnLine[0].image, plateInventoryImage.Width / 2 - partsOnLine[0].image.Width / 2, offset.y - tallestHeight);
+						plateGraphics.Render(partsOnLine[0].image, plateInventoryImage.Width / 2 - partsOnLine[0].image.Width / 2, offset.Y - tallestHeight);
 					}
 					else
 					{
 						foreach (PartImage partToDraw in partsOnLine)
 						{
-							plateGraphics.Render(partToDraw.image, partToDraw.xOffset, offset.y - tallestHeight);
+							plateGraphics.Render(partToDraw.image, partToDraw.xOffset, offset.Y - tallestHeight);
 						}
 					}
 
-					offset.x = PageMarginPixels.Left;
-					offset.y -= (tallestHeight + PartPaddingPixels * 2);
+					offset.X = PageMarginPixels.Left;
+					offset.Y -= (tallestHeight + PartPaddingPixels * 2);
 					tallestHeight = 0;
 					partsOnLine.Clear();
-					if (offset.y - image.Height < PageMarginPixels.Bottom)
+					if (offset.Y - image.Height < PageMarginPixels.Bottom)
 					{
 						break;
 					}
 				}
 				else
 				{
-					partImagesToPrint[nextPartToPrintIndex].xOffset = offset.x;
+					partImagesToPrint[nextPartToPrintIndex].xOffset = offset.X;
 					partsOnLine.Add(partImagesToPrint[nextPartToPrintIndex]);
 					//plateGraphics.Render(image, offset.x, offset.y - image.Height);
-					offset.x += image.Width + PartPaddingPixels * 2;
+					offset.X += image.Width + PartPaddingPixels * 2;
 					nextPartToPrintIndex++;
 				}
 			}
@@ -270,7 +270,7 @@ namespace MatterHackers.MatterControl
 			// print the last line of parts
 			foreach (PartImage partToDraw in partsOnLine)
 			{
-				plateGraphics.Render(partToDraw.image, partToDraw.xOffset, offset.y - tallestHeight);
+				plateGraphics.Render(partToDraw.image, partToDraw.xOffset, offset.Y - tallestHeight);
 			}
 
 			TypeFacePrinter printer = new TypeFacePrinter(string.Format("{0}", Path.GetFileNameWithoutExtension(pathAndFileToSaveTo)), 32, justification: Justification.Center);

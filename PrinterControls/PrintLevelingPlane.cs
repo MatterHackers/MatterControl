@@ -42,9 +42,9 @@ namespace MatterHackers.MatterControl
 			bool inFront;
 			double distanceToPlaneAtBedCenter = planeOfPoints.GetDistanceToIntersection(ray, out inFront);
 
-			Matrix4X4 makePointsFlatMatrix = Matrix4X4.CreateTranslation(-bedCenter.x, -bedCenter.y, -distanceToPlaneAtBedCenter);
+			Matrix4X4 makePointsFlatMatrix = Matrix4X4.CreateTranslation(-bedCenter.X, -bedCenter.Y, -distanceToPlaneAtBedCenter);
 			makePointsFlatMatrix *= Matrix4X4.CreateRotation(planeOfPoints.PlaneNormal, Vector3.UnitZ);
-			makePointsFlatMatrix *= Matrix4X4.CreateTranslation(bedCenter.x, bedCenter.y, 0);//distanceToPlaneAtBedCenter);
+			makePointsFlatMatrix *= Matrix4X4.CreateTranslation(bedCenter.X, bedCenter.Y, 0);//distanceToPlaneAtBedCenter);
 
 			bedLevelMatrix = Matrix4X4.Invert(makePointsFlatMatrix);
 		}
@@ -76,7 +76,7 @@ namespace MatterHackers.MatterControl
 				{
 					Vector3 outPosition = PrintLevelingPlane.Instance.ApplyLeveling(currentDestination);
 
-					newLine = newLine + String.Format("X{0:0.##} Y{1:0.##} Z{2:0.###}", outPosition.x, outPosition.y, outPosition.z);
+					newLine = newLine + String.Format("X{0:0.##} Y{1:0.##} Z{2:0.###}", outPosition.X, outPosition.Y, outPosition.Z);
 				}
 
 				if (extruderDelta != 0)

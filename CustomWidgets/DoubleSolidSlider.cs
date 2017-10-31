@@ -325,7 +325,7 @@ namespace MatterHackers.MatterControl
 		}
 
 		public DoubleSolidSlider(Vector2 lowerLeft, Vector2 upperRight)
-			: this(new Vector2(lowerLeft.x, lowerLeft.y + (upperRight.y - lowerLeft.y) / 2), upperRight.x - lowerLeft.x)
+			: this(new Vector2(lowerLeft.X, lowerLeft.Y + (upperRight.Y - lowerLeft.Y) / 2), upperRight.X - lowerLeft.X)
 		{
 		}
 
@@ -425,11 +425,11 @@ namespace MatterHackers.MatterControl
 			{
 				if (Orientation == Orientation.Horizontal)
 				{
-					mouseDownOffsetFromFirstThumbCenter = mousePos.x - PositionPixelsFromFirstValue;
+					mouseDownOffsetFromFirstThumbCenter = mousePos.X - PositionPixelsFromFirstValue;
 				}
 				else
 				{
-					mouseDownOffsetFromFirstThumbCenter = mousePos.y - PositionPixelsFromFirstValue;
+					mouseDownOffsetFromFirstThumbCenter = mousePos.Y - PositionPixelsFromFirstValue;
 				}
 				downOnFirstThumb = true;
 			}
@@ -437,11 +437,11 @@ namespace MatterHackers.MatterControl
 			{
 				if (Orientation == Orientation.Horizontal)
 				{
-					mouseDownOffsetFromSecondThumbCenter = mousePos.x - PositionPixelsFromSecondValue;
+					mouseDownOffsetFromSecondThumbCenter = mousePos.X - PositionPixelsFromSecondValue;
 				}
 				else
 				{
-					mouseDownOffsetFromSecondThumbCenter = mousePos.y - PositionPixelsFromSecondValue;
+					mouseDownOffsetFromSecondThumbCenter = mousePos.Y - PositionPixelsFromSecondValue;
 				}
 				downOnSecondThumb = true;
 			}
@@ -461,11 +461,11 @@ namespace MatterHackers.MatterControl
 				double oldValue = FirstValue;
 				if (Orientation == Orientation.Horizontal)
 				{
-					PositionPixelsFromFirstValue = Math.Min(mousePos.x - mouseDownOffsetFromFirstThumbCenter, PositionPixelsFromSecondValue - ThumbWidth - 2);
+					PositionPixelsFromFirstValue = Math.Min(mousePos.X - mouseDownOffsetFromFirstThumbCenter, PositionPixelsFromSecondValue - ThumbWidth - 2);
 				}
 				else
 				{
-					PositionPixelsFromFirstValue = Math.Min(mousePos.y - mouseDownOffsetFromFirstThumbCenter, PositionPixelsFromSecondValue - ThumbWidth - 2);
+					PositionPixelsFromFirstValue = Math.Min(mousePos.Y - mouseDownOffsetFromFirstThumbCenter, PositionPixelsFromSecondValue - ThumbWidth - 2);
 				}
 				if (oldValue != FirstValue)
 				{
@@ -481,11 +481,11 @@ namespace MatterHackers.MatterControl
 				double oldValue = SecondValue;
 				if (Orientation == Orientation.Horizontal)
 				{
-					PositionPixelsFromSecondValue = Math.Max(mousePos.x - mouseDownOffsetFromSecondThumbCenter, PositionPixelsFromFirstValue + ThumbWidth + 2);
+					PositionPixelsFromSecondValue = Math.Max(mousePos.X - mouseDownOffsetFromSecondThumbCenter, PositionPixelsFromFirstValue + ThumbWidth + 2);
 				}
 				else
 				{
-					PositionPixelsFromSecondValue = Math.Max(mousePos.y - mouseDownOffsetFromSecondThumbCenter, PositionPixelsFromFirstValue + ThumbWidth + 2);
+					PositionPixelsFromSecondValue = Math.Max(mousePos.Y - mouseDownOffsetFromSecondThumbCenter, PositionPixelsFromFirstValue + ThumbWidth + 2);
 				}
 				if (oldValue != SecondValue)
 				{

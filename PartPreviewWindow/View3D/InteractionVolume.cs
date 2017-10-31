@@ -96,14 +96,14 @@ namespace MatterHackers.MeshVisualizer
 				arrow.LineTo(3, -5);
 				if (arrows.HasFlag(LineArrows.End))
 				{
-					double rotation = Math.Atan2(direction.y, direction.x);
+					double rotation = Math.Atan2(direction.Y, direction.X);
 					IVertexSource correctRotation = new VertexSourceApplyTransform(arrow, Affine.NewRotation(rotation - MathHelper.Tau / 4));
 					IVertexSource inPosition = new VertexSourceApplyTransform(correctRotation, Affine.NewTranslation(lineEnd));
 					graphics2D.Render(inPosition, Color.Black);
 				}
 				if (arrows.HasFlag(LineArrows.Start))
 				{
-					double rotation = Math.Atan2(direction.y, direction.x) + MathHelper.Tau / 2;
+					double rotation = Math.Atan2(direction.Y, direction.X) + MathHelper.Tau / 2;
 					IVertexSource correctRotation = new VertexSourceApplyTransform(arrow, Affine.NewRotation(rotation - MathHelper.Tau / 4));
 					IVertexSource inPosition = new VertexSourceApplyTransform(correctRotation, Affine.NewTranslation(lineStart));
 					graphics2D.Render(inPosition, Color.Black);
@@ -113,15 +113,15 @@ namespace MatterHackers.MeshVisualizer
 
 		public static Vector3 SetBottomControlHeight(AxisAlignedBoundingBox originalSelectedBounds, Vector3 cornerPosition)
 		{
-			if (originalSelectedBounds.minXYZ.z < 0)
+			if (originalSelectedBounds.minXYZ.Z < 0)
 			{
-				if (originalSelectedBounds.maxXYZ.z < 0)
+				if (originalSelectedBounds.maxXYZ.Z < 0)
 				{
-					cornerPosition.z = originalSelectedBounds.maxXYZ.z;
+					cornerPosition.Z = originalSelectedBounds.maxXYZ.Z;
 				}
 				else
 				{
-					cornerPosition.z = 0;
+					cornerPosition.Z = 0;
 				}
 			}
 

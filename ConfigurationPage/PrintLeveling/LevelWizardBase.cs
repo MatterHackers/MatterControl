@@ -83,12 +83,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						}
 
 						Vector2 probePosition = new Vector2();
-						if (!double.TryParse(xyData[0], out probePosition.x))
+						if (!double.TryParse(xyData[0], out probePosition.X))
 						{
 							// error
 							return null;
 						}
-						if (!double.TryParse(xyData[1], out probePosition.y))
+						if (!double.TryParse(xyData[1], out probePosition.Y))
 						{
 							// error
 							return null;
@@ -118,7 +118,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			switch (printerSettings.GetValue<BedShape>(SettingsKey.bed_shape))
 			{
 				case BedShape.Circular:
-					Vector2 firstPosition = new Vector2(printCenter.x, printCenter.y + (bedSize.y / 2) * .5);
+					Vector2 firstPosition = new Vector2(printCenter.X, printCenter.Y + (bedSize.Y / 2) * .5);
 					switch (index)
 					{
 						case 0:
@@ -139,13 +139,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					switch (index)
 					{
 						case 0:
-							return new Vector2(printCenter.x, printCenter.y + (bedSize.y / 2) * .8);
+							return new Vector2(printCenter.X, printCenter.Y + (bedSize.Y / 2) * .8);
 
 						case 1:
-							return new Vector2(printCenter.x - (bedSize.x / 2) * .8, printCenter.y - (bedSize.y / 2) * .8);
+							return new Vector2(printCenter.X - (bedSize.X / 2) * .8, printCenter.Y - (bedSize.Y / 2) * .8);
 
 						case 2:
-							return new Vector2(printCenter.x + (bedSize.x / 2) * .8, printCenter.y - (bedSize.y / 2) * .8);
+							return new Vector2(printCenter.X + (bedSize.X / 2) * .8, printCenter.Y - (bedSize.Y / 2) * .8);
 
 						default:
 							throw new IndexOutOfRangeException();

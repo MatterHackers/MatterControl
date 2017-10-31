@@ -141,7 +141,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						queuedCommands.Add("G28 Y0");
 						// move to the place we can home z from
 						Vector2 recoveryPositionXy = printer.Settings.GetValue<Vector2>(SettingsKey.recover_position_before_z_home);
-						queuedCommands.Add("G1 X{0:0.###}Y{1:0.###}F{2}".FormatWith(recoveryPositionXy.x, recoveryPositionXy.y, printer.Settings.XSpeed()));
+						queuedCommands.Add("G1 X{0:0.###}Y{1:0.###}F{2}".FormatWith(recoveryPositionXy.X, recoveryPositionXy.Y, printer.Settings.XSpeed()));
 						// home z
 						queuedCommands.Add("G28 Z0");
 					}
@@ -223,13 +223,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						{
 							// move to the height we can recover printing from
 							Vector2 recoverPositionXy = printer.Settings.GetValue<Vector2>(SettingsKey.recover_position_before_z_home);
-							queuedCommands.Add(CreateMovementLine(new PrinterMove(new VectorMath.Vector3(recoverPositionXy.x, recoverPositionXy.y, lastDestination.position.z), 0, printer.Settings.ZSpeed())));
+							queuedCommands.Add(CreateMovementLine(new PrinterMove(new VectorMath.Vector3(recoverPositionXy.X, recoverPositionXy.Y, lastDestination.position.Z), 0, printer.Settings.ZSpeed())));
 						}
 
 						double extruderWidth = printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter);
 						// move to a position outside the printed bounds
 						queuedCommands.Add(CreateMovementLine(new PrinterMove(
-							new Vector3(boundsOfSkippedLayers.Left - extruderWidth*2, boundsOfSkippedLayers.Bottom + boundsOfSkippedLayers.Height / 2, lastDestination.position.z),
+							new Vector3(boundsOfSkippedLayers.Left - extruderWidth*2, boundsOfSkippedLayers.Bottom + boundsOfSkippedLayers.Height / 2, lastDestination.position.Z),
 							0, printer.Settings.XSpeed())));
 						
 						// let's prime the extruder

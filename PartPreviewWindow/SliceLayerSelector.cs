@@ -96,12 +96,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void SetPositionAndValue(object sender, EventArgs e)
 		{
-			UiThread.RunOnIdle(() =>
+			UiThread.RunOnIdle((Action)(() =>
 			{
 				currentLayerInfo.Value = sceneContext.ActiveLayerIndex;
-				currentLayerInfo.Position = new Vector2(0, layerSlider.Position.y + layerSlider.PositionPixelsFromFirstValue - 3);
+				currentLayerInfo.Position = new Vector2(0, (double)(layerSlider.Position.Y + layerSlider.PositionPixelsFromFirstValue - 3));
 				currentLayerInfo.Visible = true;
-			});
+			}));
 		}
 
 		private class LayerScrollbar : FlowLayoutWidget

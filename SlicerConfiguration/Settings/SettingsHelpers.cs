@@ -445,9 +445,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			if (!string.IsNullOrEmpty(savedSettings))
 			{
 				var segments = savedSettings.Split(',');
-				feedRate.x = double.Parse(segments[1]);
-				feedRate.y = double.Parse(segments[3]);
-				feedRate.z = double.Parse(segments[5]);
+				feedRate.X = double.Parse(segments[1]);
+				feedRate.Y = double.Parse(segments[3]);
+				feedRate.Z = double.Parse(segments[5]);
 			}
 
 			return feedRate;

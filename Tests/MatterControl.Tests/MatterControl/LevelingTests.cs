@@ -75,7 +75,7 @@ namespace MatterControl.Tests.MatterControl
 				Vector3 destPosition = new Vector3(currentTestPoint, 0);
 
 				Vector3 outPosition = levelingFunctions7Point.GetPositionWithZOffset(destPosition);
-				Assert.IsTrue(outPosition.z <= 10);
+				Assert.IsTrue(outPosition.Z <= 10);
 
 				string outPositionString = levelingFunctions7Point.DoApplyLeveling(GetGCodeString(destPosition), destPosition);
 				double outZ = 0;
@@ -116,25 +116,25 @@ namespace MatterControl.Tests.MatterControl
 				currentTestPoint.Rotate(MathHelper.Tau / 6 * curPoint);
 				Vector3 destPosition = new Vector3(currentTestPoint, 0);
 				Vector3 outPosition = levelingFunctions7Point.GetPositionWithZOffset(destPosition);
-				Assert.AreEqual(outPosition.z, levelingData.SampledPositions[curPoint].z, .001);
+				Assert.AreEqual(outPosition.Z, levelingData.SampledPositions[curPoint].Z, .001);
 				string outPositionString = levelingFunctions7Point.DoApplyLeveling(GetGCodeString(destPosition), destPosition);
 				Assert.AreEqual(GetGCodeString(outPosition), outPositionString);
 
 				// test mid point between samples
 				Vector3 midPoint = (levelingData.SampledPositions[curPoint] + levelingData.SampledPositions[nextPoint]) / 2;
-				currentTestPoint = new Vector2(midPoint.x, midPoint.y);
+				currentTestPoint = new Vector2(midPoint.X, midPoint.Y);
 				destPosition = new Vector3(currentTestPoint, 0);
 				outPosition = levelingFunctions7Point.GetPositionWithZOffset(destPosition);
-				Assert.AreEqual(outPosition.z, midPoint.z, .001);
+				Assert.AreEqual(outPosition.Z, midPoint.Z, .001);
 				outPositionString = levelingFunctions7Point.DoApplyLeveling(GetGCodeString(destPosition), destPosition);
 				Assert.AreEqual(GetGCodeString(outPosition), outPositionString);
 
 				// test mid point between samples with offset
 				Vector3 midPointWithOffset = (levelingData.SampledPositions[curPoint] + levelingData.SampledPositions[nextPoint]) / 2 + new Vector3(0, 0, 3);
-				currentTestPoint = new Vector2(midPointWithOffset.x, midPointWithOffset.y);
+				currentTestPoint = new Vector2(midPointWithOffset.X, midPointWithOffset.Y);
 				destPosition = new Vector3(currentTestPoint, 3);
 				outPosition = levelingFunctions7Point.GetPositionWithZOffset(destPosition);
-				Assert.AreEqual(outPosition.z, midPointWithOffset.z, .001);
+				Assert.AreEqual(outPosition.Z, midPointWithOffset.Z, .001);
 				outPositionString = levelingFunctions7Point.DoApplyLeveling(GetGCodeString(destPosition), destPosition);
 				Assert.AreEqual(GetGCodeString(outPosition), outPositionString);
 
@@ -144,7 +144,7 @@ namespace MatterControl.Tests.MatterControl
 				destPosition = new Vector3(currentTestPoint, 0);
 				outPosition = levelingFunctions7Point.GetPositionWithZOffset(destPosition);
 				// the center is the higest point so the point on the radius has to be less than the mid point of the sample points (it is lower)
-				Assert.IsTrue(outPosition.z < (levelingData.SampledPositions[curPoint].z + levelingData.SampledPositions[nextPoint].z) / 2 - .001);
+				Assert.IsTrue(outPosition.Z < (levelingData.SampledPositions[curPoint].Z + levelingData.SampledPositions[nextPoint].Z) / 2 - .001);
 				outPositionString = levelingFunctions7Point.DoApplyLeveling(GetGCodeString(destPosition), destPosition);
 				Assert.AreEqual(GetGCodeString(outPosition), outPositionString);
 
@@ -153,13 +153,13 @@ namespace MatterControl.Tests.MatterControl
 				currentTestPoint.Rotate(MathHelper.Tau / 6 * curPoint);
 				destPosition = new Vector3(currentTestPoint, 0);
 				outPosition = levelingFunctions7Point.GetPositionWithZOffset(destPosition);
-				Assert.AreEqual(outPosition.z, (levelingData.SampledPositions[curPoint].z + levelingData.SampledPositions[6].z) / 2, .001);
+				Assert.AreEqual(outPosition.Z, (levelingData.SampledPositions[curPoint].Z + levelingData.SampledPositions[6].Z) / 2, .001);
 				outPositionString = levelingFunctions7Point.DoApplyLeveling(GetGCodeString(destPosition), destPosition);
 				Assert.AreEqual(GetGCodeString(outPosition), outPositionString);
 			}
 
 			Vector3 outPosition2 = levelingFunctions7Point.GetPositionWithZOffset(Vector3.Zero);
-			Assert.AreEqual(outPosition2.z, levelingData.SampledPositions[6].z, .001);
+			Assert.AreEqual(outPosition2.Z, levelingData.SampledPositions[6].Z, .001);
 		}
 
 
@@ -252,18 +252,18 @@ namespace MatterControl.Tests.MatterControl
 		void AssertMeshLevelPoint(Vector3 testUnleveled, Vector3 controlLeveled, MeshLevlingFunctions levelingFunctions)
 		{
 			Vector3 testLeveled = levelingFunctions.GetPositionWithZOffset(testUnleveled);
-			Assert.AreEqual(testLeveled.x, testUnleveled.x, .001, "We don't adjust the x or y on mesh leveling");
-			Assert.AreEqual(testLeveled.x, controlLeveled.x, .001, "We don't adjust the x or y on mesh leveling");
-			Assert.AreEqual(testLeveled.y, testUnleveled.y, .001, "We don't adjust the x or y on mesh leveling");
-			Assert.AreEqual(testLeveled.y, controlLeveled.y, .001, "We don't adjust the x or y on mesh leveling");
-			Assert.AreEqual(testLeveled.z, controlLeveled.z, .001);
+			Assert.AreEqual(testLeveled.X, testUnleveled.X, .001, "We don't adjust the x or y on mesh leveling");
+			Assert.AreEqual(testLeveled.X, controlLeveled.X, .001, "We don't adjust the x or y on mesh leveling");
+			Assert.AreEqual(testLeveled.Y, testUnleveled.Y, .001, "We don't adjust the x or y on mesh leveling");
+			Assert.AreEqual(testLeveled.Y, controlLeveled.Y, .001, "We don't adjust the x or y on mesh leveling");
+			Assert.AreEqual(testLeveled.Z, controlLeveled.Z, .001);
 			string outPositionString = levelingFunctions.DoApplyLeveling(GetGCodeString(testUnleveled), testUnleveled);
 			Assert.AreEqual(GetGCodeString(testLeveled), outPositionString);
 		}
 
 		private string GetGCodeString(Vector3 destPosition)
 		{
-			return "G1 X{0:0.##} Y{1:0.##} Z{2:0.###}".FormatWith(destPosition.x, destPosition.y, destPosition.z);
+			return "G1 X{0:0.##} Y{1:0.##} Z{2:0.###}".FormatWith(destPosition.X, destPosition.Y, destPosition.Z);
 		}
 	}
 }

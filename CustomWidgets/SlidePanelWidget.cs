@@ -84,7 +84,7 @@ namespace MatterHackers.MatterControl
 				double maxOffsetPerDraw = timeHasBeenChanging.ElapsedMilliseconds;
 
 				double desiredOffset = desiredPanelIndex * -Width;
-				double currentOffset = panels[0].OriginRelativeParent.x;
+				double currentOffset = panels[0].OriginRelativeParent.X;
 				double delta = desiredOffset - currentOffset;
 				if (delta < 0)
 				{

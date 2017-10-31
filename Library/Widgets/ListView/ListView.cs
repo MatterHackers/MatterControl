@@ -306,7 +306,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		private void listViewItem_DoubleClick(object sender, MouseEventArgs e)
 		{
-			UiThread.RunOnIdle(async () =>
+			UiThread.RunOnIdle((Action)(async () =>
 			{
 				var listViewItem = sender as ListViewItem;
 				var itemModel = listViewItem.Model;
@@ -346,17 +346,17 @@ namespace MatterHackers.MatterControl.CustomWidgets
 								var aabb = injector.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 
 								// Remove position
-								injector.Matrix *= Matrix4X4.CreateTranslation(new Vector3(-aabb.minXYZ.x, -aabb.minXYZ.y, 0));
+								injector.Matrix *= Matrix4X4.CreateTranslation(new Vector3(-aabb.minXYZ.X, -aabb.minXYZ.Y, 0));
 
 								// Recenter
-								injector.Matrix *= Matrix4X4.CreateTranslation(new Vector3(bedCenter.x - aabb.XSize / 2, bedCenter.y - aabb.YSize / 2, 0));
+								injector.Matrix *= Matrix4X4.CreateTranslation(new Vector3(bedCenter.X - aabb.XSize / 2, (double)(bedCenter.Y - aabb.YSize / 2), 0));
 
 								// Move again after content loaded
 								PlatingHelper.MoveToOpenPosition(injector, sceneChildren);
 							};
 
 							// Move to bed center - (before we know the bounds of the content to load)
-							injector.Matrix *= Matrix4X4.CreateTranslation(new Vector3(bedCenter.x, bedCenter.y, 0));
+							injector.Matrix *= Matrix4X4.CreateTranslation(new Vector3(bedCenter.X, (double)bedCenter.Y, 0));
 
 							scene.Children.Add(injector);
 
@@ -364,7 +364,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						}
 					}
 				}
-			});
+			}));
 		}
 
 		public void LoadContainer(ILibraryContainer temp)

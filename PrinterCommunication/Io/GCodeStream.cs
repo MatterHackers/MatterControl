@@ -67,17 +67,17 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 			var sb = new StringBuilder(command);
 
-			if (destination.position.x != start.position.x)
+			if (destination.position.X != start.position.X)
 			{
-				sb.AppendFormat("X{0:0.##} ", destination.position.x);
+				sb.AppendFormat("X{0:0.##} ", destination.position.X);
 			}
-			if (destination.position.y != start.position.y)
+			if (destination.position.Y != start.position.Y)
 			{
-				sb.AppendFormat("Y{0:0.##} ", destination.position.y);
+				sb.AppendFormat("Y{0:0.##} ", destination.position.Y);
 			}
-			if (destination.position.z != start.position.z)
+			if (destination.position.Z != start.position.Z)
 			{
-				sb.AppendFormat("Z{0:0.###} ", destination.position.z);
+				sb.AppendFormat("Z{0:0.###} ", destination.position.Z);
 			}
 
 			if (moveHasExtrusion)
@@ -96,9 +96,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		public static PrinterMove GetPosition(string lineBeingSent, PrinterMove startPositionPosition)
 		{
 			PrinterMove currentDestination = startPositionPosition;
-			GCodeFile.GetFirstNumberAfter("X", lineBeingSent, ref currentDestination.position.x);
-			GCodeFile.GetFirstNumberAfter("Y", lineBeingSent, ref currentDestination.position.y);
-			GCodeFile.GetFirstNumberAfter("Z", lineBeingSent, ref currentDestination.position.z);
+			GCodeFile.GetFirstNumberAfter("X", lineBeingSent, ref currentDestination.position.X);
+			GCodeFile.GetFirstNumberAfter("Y", lineBeingSent, ref currentDestination.position.Y);
+			GCodeFile.GetFirstNumberAfter("Z", lineBeingSent, ref currentDestination.position.Z);
 			GCodeFile.GetFirstNumberAfter("E", lineBeingSent, ref currentDestination.extrusion);
 			GCodeFile.GetFirstNumberAfter("F", lineBeingSent, ref currentDestination.feedRate);
 			return currentDestination;

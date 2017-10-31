@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				case HitQuadrant.LB:
 					{
-						Vector3 cornerPoint = new Vector3(selectedBounds.minXYZ.x, selectedBounds.minXYZ.y, 0);
+						Vector3 cornerPoint = new Vector3(selectedBounds.minXYZ.X, selectedBounds.minXYZ.Y, 0);
 						double distBetweenPixelsWorldSpace = world.GetWorldUnitsPerScreenPixelAtPosition(cornerPoint);
 
 						lines[0] = world.GetScreenPosition(cornerPoint - new Vector3(distToStart * distBetweenPixelsWorldSpace, 0, 0));
@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				case HitQuadrant.LT:
 					{
-						Vector3 cornerPoint = new Vector3(selectedBounds.minXYZ.x, selectedBounds.maxXYZ.y, 0);
+						Vector3 cornerPoint = new Vector3(selectedBounds.minXYZ.X, selectedBounds.maxXYZ.Y, 0);
 						double distBetweenPixelsWorldSpace = world.GetWorldUnitsPerScreenPixelAtPosition(cornerPoint);
 
 						lines[0] = world.GetScreenPosition(cornerPoint - new Vector3(distToStart * distBetweenPixelsWorldSpace, 0, 0));
@@ -88,7 +88,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				case HitQuadrant.RB:
 					{
-						Vector3 cornerPoint = new Vector3(selectedBounds.maxXYZ.x, selectedBounds.minXYZ.y, 0);
+						Vector3 cornerPoint = new Vector3(selectedBounds.maxXYZ.X, selectedBounds.minXYZ.Y, 0);
 						double distBetweenPixelsWorldSpace = world.GetWorldUnitsPerScreenPixelAtPosition(cornerPoint);
 
 						lines[0] = world.GetScreenPosition(cornerPoint + new Vector3(distToStart * distBetweenPixelsWorldSpace, 0, 0));
@@ -101,7 +101,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				case HitQuadrant.RT:
 					{
-						Vector3 cornerPoint = new Vector3(selectedBounds.maxXYZ.x, selectedBounds.maxXYZ.y, 0);
+						Vector3 cornerPoint = new Vector3(selectedBounds.maxXYZ.X, selectedBounds.maxXYZ.Y, 0);
 						double distBetweenPixelsWorldSpace = world.GetWorldUnitsPerScreenPixelAtPosition(cornerPoint);
 
 						lines[0] = world.GetScreenPosition(cornerPoint + new Vector3(distToStart * distBetweenPixelsWorldSpace, 0, 0));
