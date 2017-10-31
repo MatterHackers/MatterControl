@@ -31,7 +31,6 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg.UI;
-using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl.PrintQueue;
 using NUnit.Framework;
 
@@ -43,7 +42,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[Test, Category("FixNeeded" /* Not Finished */)]
 		public async Task ClickOnBuyButton()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest(testRunner =>
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
@@ -58,15 +57,13 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.IsTrue(imageExists2 == true, "Web page is open");
 
 				return Task.CompletedTask;
-			};
-
-			await MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
+			}, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
 		}
 
 		[Test]
 		public async Task ClickOnExportButton()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest(testRunner =>
 			{
 				// Tests that clicking the queue export button with a single item selected opens export item window
 				testRunner.CloseSignInAndPrinterSelect();
@@ -81,9 +78,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.IsTrue(exportWindow != null, "Export window does exist");
 
 				return Task.CompletedTask;
-			};
-
-			await MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
+			}, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
 		}
 
 		/// <summary>
@@ -93,7 +88,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[Test]
 		public async Task ExportToZipImportFromZip()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest(testRunner =>
 			{
 				// Ensure output file does not exist
 				string exportZipPath = MatterControlUtilities.GetTestItemPath("TestExportZip.zip");
@@ -140,15 +135,13 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				catch { }
 
 				return Task.CompletedTask;
-			};
-
-			await MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
+			}, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
 		}
 
 		[Test, Category("FixNeeded") /* Test now works as expected but product does not implement expected functionality */]
 		public async Task QueueExportIsDisabledIfEmpty()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest(testRunner =>
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
@@ -167,9 +160,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.IsFalse(exportButton.Enabled, "Export button should be disabled after Queue Menu -> Remove All");
 
 				return Task.CompletedTask;
-			};
-
-			await MatterControlUtilities.RunTest(testToRun);
+			});
 		}
 
 		/// <summary>
@@ -179,7 +170,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[Test]
 		public async Task CopyButtonMakesACopyOfPartInTheQueue()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest(testRunner =>
 			{
 				int expectedQueueCount = QueueData.Instance.ItemCount + 1;
 
@@ -196,15 +187,13 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Delay(.3);
 
 				return Task.CompletedTask;
-			};
-
-			await MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
+			}, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
 		}
 
 		[Test]
 		public async Task SendMenuClickedWithoutCloudPlugins()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest(testRunner =>
 			{
 				SystemWindow parentWindow;
 
@@ -230,15 +219,13 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Ok Button");
 
 				return Task.CompletedTask;
-			};
-
-			await MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
+			}, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
 		}
 
 		[Test, Category("FixNeeded" /* Not Finished */)]
 		public async Task ClickCreatePartSheetButton()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest(testRunner =>
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
@@ -278,9 +265,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				}
 
 				return Task.CompletedTask;
-			};
-
-			await MatterControlUtilities.RunTest(testToRun, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
+			}, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
 		}
 	}
 }

@@ -1,10 +1,6 @@
-﻿using System;
-using System.Diagnostics;
-using System.IO;
+﻿using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using MatterHackers.Agg.UI.Tests;
-using MatterHackers.GuiAutomation;
 using NUnit.Framework;
 
 namespace MatterHackers.MatterControl.Tests.Automation
@@ -15,7 +11,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[Test, Apartment(ApartmentState.STA)]
 		public async Task ExportAsGcode()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest(testRunner =>
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
@@ -59,9 +55,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.IsTrue(File.Exists(fullPathToGcodeFile + ".gcode") == true);
 
 				return Task.FromResult(0);
-			};
-
-			await MatterControlUtilities.RunTest(testToRun);
+			});
 		}
 	}
 }

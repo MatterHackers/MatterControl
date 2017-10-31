@@ -41,9 +41,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	public class CreateLibraryFolder
 	{
 		[Test, Apartment(ApartmentState.STA)]
-		public async Task CreateFolderStarsOutWithTextFiledFocusedAndEditable()
+		public async Task CreateFolderStartsWithTextFieldFocusedAndEditable()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				testRunner.CloseSignInAndPrinterSelect();
 
@@ -54,18 +54,16 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Type("Test Text");
 				testRunner.Delay(.5);
 
-				SystemWindow containingWindow;
-				GuiWidget textInputWidget = testRunner.GetWidgetByName("Create Folder - Text Input", out containingWindow);
-				MHTextEditWidget textWidgetMH = textInputWidget as MHTextEditWidget;
+				var textWidgetMH = testRunner.GetWidgetByName("InputBoxPage TextEditWidget", out _) as MHTextEditWidget;
+
 				Assert.IsTrue(textWidgetMH != null, "Found Text Widget");
 				Assert.IsTrue(textWidgetMH.Text == "Test Text", "Had the right text");
-				containingWindow.CloseOnIdle();
+
+				testRunner.ClickByName("Cancel Wizard Button");
 				testRunner.Delay(.5);
 
 				return Task.CompletedTask;
-			};
-
-			await MatterControlUtilities.RunTest(testToRun);
+			});
 		}
 	}
 }
