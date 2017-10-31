@@ -28,13 +28,11 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.IO;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.Library;
 
 namespace MatterHackers.MatterControl
@@ -149,18 +147,12 @@ namespace MatterHackers.MatterControl
 
 		private void SubmitForm()
 		{
-			string newName = "none";
-			if (textToAddWidget != null)
-			{
-				newName = textToAddWidget.ActualTextEditWidget.Text;
-			}
+			functionToCallOnSaveAs(
+				new SaveAsReturnInfo(
+					textToAddWidget?.ActualTextEditWidget.Text ?? "none",
+					librarySelectorWidget.ActiveContainer));
 
-			if (newName != "")
-			{
-				functionToCallOnSaveAs(new SaveAsReturnInfo(newName, librarySelectorWidget.ActiveContainer));
-
-				CloseOnIdle();
-			}
+			this.WizardWindow.CloseOnIdle();
 		}
 
 		public class SaveAsReturnInfo
