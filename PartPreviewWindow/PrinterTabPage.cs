@@ -571,7 +571,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					new SettingsContext(
 						printer,
 						null,
-						NamedSettingsLayers.All)));
+						NamedSettingsLayers.All),
+					theme));
 
 			sideBar.AddPage("Controls".Localize(), new ManualPrinterControls(printer));
 

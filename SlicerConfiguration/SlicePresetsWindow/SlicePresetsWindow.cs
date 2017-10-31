@@ -155,7 +155,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				},
 				presetsContext.LayerType);
 
-			return new SliceSettingsWidget(printer, settingsContext)
+			return new SliceSettingsWidget(printer, settingsContext, ApplicationController.Instance.Theme)
 			{
 				ShowControlBar = false
 			};
