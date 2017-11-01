@@ -27,13 +27,12 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PrinterControls
@@ -53,42 +52,34 @@ namespace MatterHackers.MatterControl.PrinterControls
 					: base(FlowDirection.TopToBottom)
 		{
 			this.printer = printer;
-			var buttonFactory = ApplicationController.Instance.Theme.HomingButtons;
-
 			this.HAnchor = HAnchor.Stretch;
 
+			var buttonFactory = ApplicationController.Instance.Theme.HomingButtons;
+
 			// add the widgets to this window
-			Button editButton;
-			AltGroupBox groupBox = new AltGroupBox(buttonFactory.GenerateGroupBoxLabelWithEdit(new TextWidget("Macros".Localize(), pointSize: headingPointSize, textColor: ActiveTheme.Instance.SecondaryAccentColor, bold: true), out editButton));
-			editButton.Click += (sender, e) =>
+			Button editButton = buttonFactory.GenerateIconButton(AggContext.StaticData.LoadIcon("icon_edit.png", 16, 16, IconColor.Theme));
+			editButton.Click += (s, e) =>
 			{
 				EditMacrosWindow.Show();
 			};
 
-			groupBox.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
-			groupBox.HAnchor |= Agg.UI.HAnchor.Stretch;
-			// make sure the client area will get smaller when the contents get smaller
-			groupBox.ClientArea.VAnchor = Agg.UI.VAnchor.Fit;
-
-			FlowLayoutWidget controlRow = new FlowLayoutWidget(Agg.UI.FlowDirection.TopToBottom);
-			controlRow.Margin = new BorderDouble(top: 5);
-			controlRow.HAnchor = HAnchor.Stretch;
-			{
-				controlRow.AddChild(GetMacroButtonContainer(buttonFactory));
-			}
-
-			groupBox.AddChild(controlRow);
-			this.AddChild(groupBox);
+			this.AddChild(
+				new SectionWidget(
+					"Macros".Localize(),
+					ActiveTheme.Instance.PrimaryAccentColor,
+					GetMacroButtonContainer(buttonFactory),
+					editButton));
 		}
 
 		private FlowLayoutWidget GetMacroButtonContainer(TextImageButtonFactory buttonFactory)
 		{
-			FlowLeftRightWithWrapping macroContainer = new FlowLeftRightWithWrapping();
+			var macroContainer = new FlowLeftRightWithWrapping();
 
-			TextWidget noMacrosFound = new TextWidget("No macros are currently set up for this printer.".Localize(), pointSize: 10);
-			noMacrosFound.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			var noMacrosFound = new TextWidget("No macros are currently set up for this printer.".Localize(), pointSize: 10)
+			{
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+			};
 			macroContainer.AddChild(noMacrosFound);
-			noMacrosFound.Visible = false;
 
 			if (printer.Settings?.GetMacros(MacroUiLocation.Controls).Any() != true)
 			{

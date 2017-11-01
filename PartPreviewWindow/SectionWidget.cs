@@ -1,23 +1,39 @@
 ﻿using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
-using MatterHackers.MatterControl.CustomWidgets;
 
-namespace MatterHackers.MatterControl.PartPreviewWindow
+namespace MatterHackers.MatterControl.CustomWidgets
 {
 	public class SectionWidget : FlowLayoutWidget
 	{
-		public SectionWidget(string sectionTitle, Color textColor, GuiWidget sectionContent)
+		public SectionWidget(string sectionTitle, Color textColor, GuiWidget sectionContent, GuiWidget rightAlignedContent = null)
 			: base (FlowDirection.TopToBottom)
 		{
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Fit;
 
+			var theme = ApplicationController.Instance.Theme;
+
 			// Add heading
-			this.AddChild(
-				new TextWidget(sectionTitle, textColor: textColor)
+			var textWidget = new TextWidget(sectionTitle, pointSize: theme.H1PointSize, textColor: textColor, bold: false)
+			{
+				Margin = new BorderDouble(0, 3, 0, 6)
+			};
+
+			if (rightAlignedContent == null)
+			{
+				this.AddChild(textWidget);
+			}
+			else
+			{
+				var headingRow = new FlowLayoutWidget()
 				{
-					Margin = new BorderDouble(0, 3, 0, 6)
-				});
+					HAnchor = HAnchor.Stretch
+				};
+				headingRow.AddChild(textWidget);
+				headingRow.AddChild(new HorizontalSpacer());
+				headingRow.AddChild(rightAlignedContent);
+				this.AddChild(headingRow);
+			}
 
 			// Add heading separator
 			this.AddChild(new HorizontalLine(25)
@@ -28,6 +44,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Force padding and add content widget
 			sectionContent.Padding = 8;
 			sectionContent.HAnchor = HAnchor.Stretch;
+			sectionContent.BackgroundColor = ApplicationController.Instance.Theme.MinimalShade;
 			this.AddChild(sectionContent);
 		}
 	}
