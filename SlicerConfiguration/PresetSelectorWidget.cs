@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			};
 
 			// Section Label
-			this.AddChild(new TextWidget(label.Localize().ToUpper())
+			this.AddChild(new TextWidget(label.Localize())
 			{
 				TextColor = whiteBackground ? Color.Black : ActiveTheme.Instance.PrimaryTextColor,
 				HAnchor = HAnchor.Left,

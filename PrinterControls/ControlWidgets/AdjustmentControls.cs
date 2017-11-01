@@ -31,6 +31,7 @@ using System;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
@@ -54,13 +55,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		public AdjustmentControls(PrinterConfig printer, int headingPointSize)
 		{
-			var adjustmentControlsGroupBox = new AltGroupBox(new TextWidget("Tuning Adjustment".Localize(), pointSize: headingPointSize, textColor: ActiveTheme.Instance.SecondaryAccentColor))
-			{
-				Margin = 0,
-				BorderColor = ActiveTheme.Instance.PrimaryTextColor,
-				HAnchor = HAnchor.Stretch
-			};
-
 			var topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				Margin = new BorderDouble(0, 0, 0, 0),
@@ -74,10 +68,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 			{
 				sliderThumbWidth = 15 * GuiWidget.DeviceScale;
 			}
-
-			var subheader = new TextWidget("", pointSize: 4, textColor: ActiveTheme.Instance.PrimaryTextColor);
-			subheader.Margin = new BorderDouble(bottom: 6);
-			topToBottom.AddChild(subheader);
 
 			{
 				var row = new FlowLayoutWidget()
@@ -210,9 +200,11 @@ namespace MatterHackers.MatterControl.PrinterControls
 				topToBottom.AddChild(row);
 			}
 
-			adjustmentControlsGroupBox.AddChild(topToBottom);
-
-			this.AddChild(adjustmentControlsGroupBox);
+			this.AddChild(
+				new SectionWidget(
+					"Tuning Adjustment".Localize(),
+					ActiveTheme.Instance.PrimaryAccentColor,
+					topToBottom));
 
 			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
 			{

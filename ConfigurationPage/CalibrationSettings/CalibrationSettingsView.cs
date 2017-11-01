@@ -15,7 +15,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 	{
 		private EventHandler unregisterEvents;
 		private EditLevelingSettingsWindow editLevelingSettingsWindow;
-		private TextWidget printLevelingStatusLabel;
 		private Button runPrintLevelingButton;
 
 		private TextImageButtonFactory buttonFactory;
@@ -24,15 +23,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		public CalibrationSettingsWidget(PrinterConfig printer, TextImageButtonFactory buttonFactory, int headingPointSize)
 		{
 			this.printer = printer;
-
-			var mainContainer = new AltGroupBox(new TextWidget("Calibration".Localize(), pointSize: headingPointSize, textColor: ActiveTheme.Instance.SecondaryAccentColor))
-			{
-				Margin = new BorderDouble(0),
-				BorderColor = ActiveTheme.Instance.PrimaryTextColor,
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit
-			};
-			this.AddChild(mainContainer);
+			this.buttonFactory = buttonFactory;
 
 			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -40,51 +31,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				VAnchor = VAnchor.Fit,
 				Padding = new BorderDouble(3, 0)
 			};
-			mainContainer.AddChild(container);
 
-			this.buttonFactory = buttonFactory;
-
-			if (!printer.Settings.GetValue<bool>(SettingsKey.has_hardware_leveling))
-			{
-				container.AddChild(GetAutoLevelControl());
-			}
-
-			container.AddChild(CreateSeparatorLine());
-
-			printer.Connection.CommunicationStateChanged.RegisterEvent(PrinterStatusChanged, ref unregisterEvents);
-			printer.Connection.EnableChanged.RegisterEvent(PrinterStatusChanged, ref unregisterEvents);
-
-			SetVisibleControls();
-		}
-
-		private FlowLayoutWidget GetAutoLevelControl()
-		{
-			var buttonRow = new FlowLayoutWidget()
-			{
-				Name = "AutoLevelRowItem",
-				HAnchor = HAnchor.Stretch,
-				Margin = new BorderDouble(0, 8, 0, 4)
-			};
-
-			var levelingIcon = new ImageWidget(AggContext.StaticData.LoadIcon("leveling_32x32.png", 24, 24, IconColor.Theme));
-			levelingIcon.Margin = new BorderDouble(right: 6);
-			buttonRow.AddChild(levelingIcon);
-
-			// label
-			printLevelingStatusLabel = new TextWidget("")
-			{
-				AutoExpandBoundsToText = true,
-				TextColor = ActiveTheme.Instance.PrimaryTextColor,
-				VAnchor = VAnchor.Center,
-				Text = "Software Print Leveling".Localize()
-			};
-			buttonRow.AddChild(printLevelingStatusLabel);
-
-			// edit 
 			Button editButton = buttonFactory.GenerateIconButton(AggContext.StaticData.LoadIcon("icon_edit.png", 16, 16, IconColor.Theme));
-			editButton.Margin = new BorderDouble(2, 2, 2, 0);
-			editButton.VAnchor = VAnchor.Top;
-			editButton.VAnchor = VAnchor.Center;
 			editButton.Click += (sender, e) =>
 			{
 				UiThread.RunOnIdle(() =>
@@ -104,7 +52,48 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				});
 			};
 
-			buttonRow.AddChild(editButton);
+			this.AddChild(
+				new SectionWidget(
+					"Calibration".Localize(),
+					ActiveTheme.Instance.PrimaryAccentColor,
+					container,
+					editButton));
+
+			if (!printer.Settings.GetValue<bool>(SettingsKey.has_hardware_leveling))
+			{
+				container.AddChild(GetAutoLevelControl());
+			}
+
+			printer.Connection.CommunicationStateChanged.RegisterEvent(PrinterStatusChanged, ref unregisterEvents);
+			printer.Connection.EnableChanged.RegisterEvent(PrinterStatusChanged, ref unregisterEvents);
+
+			SetVisibleControls();
+		}
+
+		private FlowLayoutWidget GetAutoLevelControl()
+		{
+			var buttonRow = new FlowLayoutWidget()
+			{
+				Name = "AutoLevelRowItem",
+				HAnchor = HAnchor.Stretch,
+			};
+
+			buttonRow.AddChild(
+				new ImageWidget(AggContext.StaticData.LoadIcon("leveling_32x32.png", 24, 24, IconColor.Theme))
+				{
+					Margin = new BorderDouble(right: 6),
+					VAnchor = VAnchor.Center
+				});
+
+			// label
+			buttonRow.AddChild(
+				new TextWidget("")
+				{
+					AutoExpandBoundsToText = true,
+					TextColor = ActiveTheme.Instance.PrimaryTextColor,
+					VAnchor = VAnchor.Center,
+					Text = "Software Print Leveling".Localize()
+				});
 
 			buttonRow.AddChild(new HorizontalSpacer());
 

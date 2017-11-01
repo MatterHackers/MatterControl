@@ -50,9 +50,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private EventHandler unregisterEvents;
 
-		public SliceSettingsWidget(PrinterConfig printer, SettingsContext settingsContext)
+		private ThemeConfig theme;
+
+		public SliceSettingsWidget(PrinterConfig printer, SettingsContext settingsContext, ThemeConfig theme)
 			: base (FlowDirection.TopToBottom)
 		{
+			this.theme = theme;
 			this.printer = printer;
 			this.BackgroundColor = ApplicationController.Instance.Theme.TabBodyBackground;
 
@@ -114,7 +117,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				primaryTabControl.AddTab(new TextTab(
 					categoryPage,
 					category.Name + " Tab",
-					14,
+					theme.DefaultFontSize,
 					ActiveTheme.Instance.TabLabelSelected,
 					new Color(),
 					ActiveTheme.Instance.TabLabelUnselected,
@@ -257,7 +260,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				var groupTabWidget = new TextTab(
 					groupTabPage, 
 					group.Name + " Tab", 
-					14,
+					theme.DefaultFontSize,
 					ActiveTheme.Instance.TabLabelSelected,
 					ActiveTheme.Instance.TertiaryBackgroundColor, 
 					ActiveTheme.Instance.TabLabelUnselected,

@@ -58,10 +58,12 @@ namespace MatterHackers.MatterControl
 		public int FontSize12 { get; } = 12;
 		public int FontSize14 { get; } = 14;
 
+		public int DefaultFontSize { get; } = 12;
+
 		private int shortButtonHeight = 25;
 		private int sideBarButtonWidth;
 
-		public int H1PointSize { get; set; } = 16;
+		public int H1PointSize { get; set; } = 13;
 
 		public LinkButtonFactory LinkButtonFactory { get; private set; }
 		public LinkButtonFactory HelpLinkFactory { get; private set; }

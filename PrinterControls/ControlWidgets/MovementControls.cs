@@ -30,8 +30,6 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using MatterHackers.Agg;
-using MatterHackers.Agg.Image;
-using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
@@ -54,8 +52,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 		private Button homeYButton;
 		private Button homeZButton;
 		internal JogControls jogControls;
-		private AltGroupBox movementControlsGroupBox;
-
+		
 		// Provides a list of DisableableWidgets controls that can be toggled on/off at runtime
 		internal List<DisableableWidget> DisableableWidgets = new List<DisableableWidget>();
 
@@ -78,8 +75,12 @@ namespace MatterHackers.MatterControl.PrinterControls
 		/// <param name="widget">The widget to wrap.</param>
 		private DisableableWidget CreateDisableableContainer(GuiWidget widget)
 		{
-			var container = new DisableableWidget();
+			var container = new DisableableWidget()
+			{
+				HAnchor = HAnchor.Left | HAnchor.Stretch
+			};
 			container.AddChild(widget);
+
 			DisableableWidgets.Add(container);
 
 			return container;
@@ -90,15 +91,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			this.printer = printer;
 			var buttonFactory = ApplicationController.Instance.Theme.DisableableControlBase;
 
-			Button editButton;
-			movementControlsGroupBox = new AltGroupBox(buttonFactory.GenerateGroupBoxLabelWithEdit(new TextWidget("Movement".Localize(), pointSize: headingPointSize, textColor: ActiveTheme.Instance.SecondaryAccentColor), out editButton))
-			{
-				Margin = new BorderDouble(0),
-				TextColor = ActiveTheme.Instance.PrimaryTextColor,
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit
-			};
-
+			Button editButton = buttonFactory.GenerateIconButton(AggContext.StaticData.LoadIcon("icon_edit.png", 16, 16, IconColor.Theme));
 			editButton.Click += (sender, e) =>
 			{
 				if (editManualMovementSettingsWindow == null)
@@ -115,30 +108,30 @@ namespace MatterHackers.MatterControl.PrinterControls
 				}
 			};
 
-			jogControls = new JogControls(printer, new XYZColors());
-			jogControls.Margin = new BorderDouble(0);
+			jogControls = new JogControls(printer, new XYZColors())
+			{
+				HAnchor = HAnchor.Left | HAnchor.Stretch,
+				Margin = 0
+			};
 
 			manualControlsLayout = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit,
-				Padding = new BorderDouble(3, 0)
 			};
 
 			manualControlsLayout.AddChild(CreateDisableableContainer(GetHomeButtonBar()));
 			manualControlsLayout.AddChild(CreateSeparatorLine());
 			manualControlsLayout.AddChild(jogControls);
 
-			manualControlsLayout.AddChild(CreateSeparatorLine());
 			manualControlsLayout.AddChild(CreateDisableableContainer(GetHWDestinationBar()));
 
-			var separator = CreateSeparatorLine();
-			separator.Margin = new BorderDouble(0, 0, 0, 5);
-			manualControlsLayout.AddChild(separator);
-
-			movementControlsGroupBox.AddChild(manualControlsLayout);
-
-			this.AddChild(movementControlsGroupBox);
+			this.AddChild(
+				new SectionWidget(
+					"Movement".Localize(),
+					ActiveTheme.Instance.PrimaryAccentColor,
+					manualControlsLayout,
+					editButton));
 		}
 
 		private void SetMovementSpeeds(string speedString)
@@ -222,8 +215,8 @@ namespace MatterHackers.MatterControl.PrinterControls
 		{
 			FlowLayoutWidget hwDestinationBar = new FlowLayoutWidget();
 			hwDestinationBar.HAnchor = HAnchor.Stretch;
-			hwDestinationBar.Margin = new BorderDouble(3, 0, 3, 6);
-			hwDestinationBar.Padding = new BorderDouble(0);
+			hwDestinationBar.Margin = new BorderDouble(top: 8);
+			hwDestinationBar.Padding = 0;
 
 			TextWidget xPosition = new TextWidget("X: 0.0           ", pointSize: 12, textColor: ActiveTheme.Instance.PrimaryTextColor);
 			TextWidget yPosition = new TextWidget("Y: 0.0           ", pointSize: 12, textColor: ActiveTheme.Instance.PrimaryTextColor);

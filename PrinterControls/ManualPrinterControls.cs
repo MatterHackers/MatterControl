@@ -82,15 +82,15 @@ namespace MatterHackers.MatterControl
 
 		public ManualPrinterControlsDesktop(PrinterConfig printer)
 		{
-			this.printer = printer;
-			ScrollArea.HAnchor |= HAnchor.Stretch;
-			AnchorAll();
-			AutoScroll = true;
-
-			HAnchor = HAnchor.MaxFitOrStretch;
-			VAnchor = VAnchor.Stretch;
-
 			var theme = ApplicationController.Instance.Theme;
+
+			this.printer = printer;
+			this.ScrollArea.HAnchor |= HAnchor.Stretch;
+			this.AnchorAll();
+			this.AutoScroll = true;
+			this.HAnchor = HAnchor.Stretch;
+			this.VAnchor = VAnchor.Stretch;
+			this.Padding = new BorderDouble(8, 0, theme.ToolbarPadding.Right, 6);
 
 			int headingPointSize = theme.H1PointSize;
 
@@ -104,6 +104,7 @@ namespace MatterHackers.MatterControl
 			this.AddChild(controlsTopToBottomLayout);
 
 			movementControlsContainer = new MovementControls(printer, headingPointSize);
+			movementControlsContainer.Margin = new BorderDouble(top: 6);
 			controlsTopToBottomLayout.AddChild(movementControlsContainer);
 
 			if (!printer.Settings.GetValue<bool>(SettingsKey.has_hardware_leveling))

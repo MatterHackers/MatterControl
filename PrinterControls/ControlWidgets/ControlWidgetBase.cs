@@ -36,6 +36,11 @@ namespace MatterHackers.MatterControl.PrinterControls
 {
 	public class ControlWidgetBase : DisableableWidget
 	{
+		public ControlWidgetBase()
+		{
+			this.Margin = new BorderDouble(top: 12);
+		}
+
 		protected static GuiWidget CreateSeparatorLine()
 		{
 			return new HorizontalLine(alpha: 100)

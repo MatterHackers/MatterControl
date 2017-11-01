@@ -298,7 +298,7 @@ namespace MatterHackers.MatterControl
 #if !__ANDROID__
 		public override void OnLoad(EventArgs args)
 		{
-			var parents = keyboardFocusBorder.Parents<AltGroupBox>();
+			var parents = keyboardFocusBorder.Parents<SectionWidget>();
 
 			parents.First().KeyDown += JogControls_KeyDown;
 

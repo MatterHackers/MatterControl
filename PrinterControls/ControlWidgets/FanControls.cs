@@ -54,24 +54,32 @@ namespace MatterHackers.MatterControl.PrinterControls
 			this.HAnchor = HAnchor.Stretch;
 			this.HAnchor = HAnchor.Stretch;
 
-			var fanControlsGroupBox = new AltGroupBox(new TextWidget("Fan".Localize(), pointSize: headingPointSize, textColor: ActiveTheme.Instance.SecondaryAccentColor))
+			var leftToRight = new FlowLayoutWidget()
 			{
-				Margin = new BorderDouble(0),
-				BorderColor = ActiveTheme.Instance.PrimaryTextColor,
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit
+				HAnchor = HAnchor.Stretch
 			};
-			this.AddChild(fanControlsGroupBox);
 
-			FlowLayoutWidget leftToRight = new FlowLayoutWidget();
-			fanControlsGroupBox.AddChild(leftToRight);
+			//Matt's test editing to add a on/off toggle switch
+			bool fanActive = printerConnection.FanSpeed0To255 != 0;
 
-			FlowLayoutWidget fanControlsLayout = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			fanControlsLayout.Padding = new BorderDouble(3, 5, 3, 0);
+			toggleSwitch = ImageButtonFactory.CreateToggleSwitch(fanActive);
+			toggleSwitch.Margin = new BorderDouble(5, 0);
+			toggleSwitch.VAnchor = VAnchor.Center;
+			toggleSwitch.CheckedStateChanged += (s, e) =>
 			{
-				fanControlsLayout.AddChild(CreateFanControls());
-			}
-			leftToRight.AddChild(fanControlsLayout);
+				if (!doingDisplayUpdateFromPrinter)
+				{
+					if (toggleSwitch.Checked)
+					{
+						printerConnection.FanSpeed0To255 = 255;
+					}
+					else
+					{
+						printerConnection.FanSpeed0To255 = 0;
+					}
+				}
+			};
+			leftToRight.AddChild(toggleSwitch);
 
 			fanSpeedDisplay = new EditableNumberDisplay(printerConnection.FanSpeed0To255, "255");
 			fanSpeedDisplay.ValueChanged += (sender, e) =>
@@ -79,32 +87,21 @@ namespace MatterHackers.MatterControl.PrinterControls
 				printerConnection.FanSpeed0To255 = (int)fanSpeedDisplay.Value;
 			};
 			leftToRight.AddChild(fanSpeedDisplay);
+
+			this.AddChild(
+				new SectionWidget(
+					"Fan".Localize(),
+					ActiveTheme.Instance.PrimaryAccentColor,
+					leftToRight));
+
+			// CreateFanControls
+			printerConnection.FanSpeedSet.RegisterEvent(FanSpeedChanged_Event, ref unregisterEvents);
 		}
 
 		public override void OnClosed(ClosedEventArgs e)
 		{
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
-		}
-
-		private GuiWidget CreateFanControls()
-		{
-			printerConnection.FanSpeedSet.RegisterEvent(FanSpeedChanged_Event, ref unregisterEvents);
-
-			FlowLayoutWidget leftToRight = new FlowLayoutWidget();
-			leftToRight.Padding = new BorderDouble(3, 0, 0, 5);
-
-			//Matt's test editing to add a on/off toggle switch
-			bool fanActive = printerConnection.FanSpeed0To255 != 0;
-
-			toggleSwitch = ImageButtonFactory.CreateToggleSwitch(fanActive);
-			toggleSwitch.VAnchor = VAnchor.Center;
-			toggleSwitch.CheckedStateChanged += new EventHandler(ToggleSwitch_Click);
-			toggleSwitch.Margin = new BorderDouble(5, 0);
-
-			leftToRight.AddChild(toggleSwitch);
-
-			return leftToRight;
 		}
 
 		private void FanSpeedChanged_Event(object sender, EventArgs e)
@@ -125,22 +122,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 			fanSpeedDisplay.Value = printerConnection.FanSpeed0To255;
 
 			doingDisplayUpdateFromPrinter = false;
-		}
-
-		private void ToggleSwitch_Click(object sender, EventArgs e)
-		{
-			if (!doingDisplayUpdateFromPrinter)
-			{
-				CheckBox toggleSwitch = (CheckBox)sender;
-				if (toggleSwitch.Checked)
-				{
-					printerConnection.FanSpeed0To255 = 255;
-				}
-				else
-				{
-					printerConnection.FanSpeed0To255 = 0;
-				}
-			}
 		}
 	}
 }
