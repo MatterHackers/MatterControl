@@ -441,7 +441,7 @@
 	{
 		"SlicerConfigName": "validate_layer_height",
 		"PresentationName": "Validate Layer Height",
-		"HelpText": "Checks before each print that the layer height is greater than the nozzle diameter (important for filament adhesion)",
+		"HelpText": "Checks before each print that the layer height is less than the nozzle diameter (important for filament adhesion)",
 		"DataEditType": "CHECK_BOX",
 		"ExtraSettings": "",
 		"ShowAsOverride": true,
