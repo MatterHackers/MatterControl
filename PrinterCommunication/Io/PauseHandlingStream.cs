@@ -261,8 +261,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		private bool PauseOnLayer(string layer)
 		{
 			int layerNumber;
+			var printerRecoveryStream = internalStream as PrintRecoveryStream;
 
-			if (int.TryParse(layer, out layerNumber) && printer.Settings.Helpers.LayerToPauseOn().Contains(layerNumber))
+			if (int.TryParse(layer, out layerNumber) 
+				&& printer.Settings.Helpers.LayerToPauseOn().Contains(layerNumber)
+				&& (printerRecoveryStream == null
+					|| printerRecoveryStream.RecoveryState == RecoveryState.PrintingToEnd))
 			{
 				return true;
 			}

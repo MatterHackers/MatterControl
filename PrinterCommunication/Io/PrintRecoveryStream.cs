@@ -36,9 +36,10 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
-	internal class PrintRecoveryStream : GCodeStream
+	public enum RecoveryState { RemoveHeating, Raising, Homing, FindingRecoveryLayer, SkippingGCode, PrimingAndMovingToStart, PrintingSlow, PrintingToEnd }
+
+	public class PrintRecoveryStream : GCodeStream
 	{
-		enum RecoveryState {  RemoveHeating, Raising, Homing, FindingRecoveryLayer, SkippingGCode, PrimingAndMovingToStart, PrintingSlow, PrintingToEnd }
 		private GCodeFileStream internalStream;
 		private double percentDone;
 		double recoverFeedRate;
@@ -46,7 +47,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		QueuedCommandsStream queuedCommands;
 		RectangleDouble boundsOfSkippedLayers = RectangleDouble.ZeroIntersection;
 
-		RecoveryState recoveryState = RecoveryState.RemoveHeating;
+		public RecoveryState RecoveryState { get; private set; } = RecoveryState.RemoveHeating;
 		private PrinterConfig printer;
 
 		public PrintRecoveryStream(PrinterConfig printer, GCodeFileStream internalStream, double percentDone)
@@ -84,7 +85,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				return nextCommand;
 			}
 			
-			switch (recoveryState)
+			switch (RecoveryState)
 			{
 				// heat the extrude to remove it from the part
 				case RecoveryState.RemoveHeating:
@@ -113,7 +114,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						queuedCommands.Add($"M190 S{bedTemp}");
 					}
 
-					recoveryState = RecoveryState.Raising;
+					RecoveryState = RecoveryState.Raising;
 					return "";
 
 				// remove it from the part
@@ -124,7 +125,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					queuedCommands.Add("G91 ; move relative");
 					queuedCommands.Add("G1 Z10 F{0}".FormatWith(printer.Settings.ZSpeed()));
 					queuedCommands.Add("G90 ; move absolute");
-					recoveryState = RecoveryState.Homing;
+					RecoveryState = RecoveryState.Homing;
 					return "";
 
 				// if top homing, home the extruder
@@ -147,7 +148,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					}
 					// We now know where the printer is re-enable print leveling
 					PrintLevelingStream.Enabled = true;
-					recoveryState = RecoveryState.FindingRecoveryLayer;
+					RecoveryState = RecoveryState.FindingRecoveryLayer;
 					return "";
 					
 				// This is to recover printing if an out a filament occurs. 
@@ -162,7 +163,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					}
 					else // we are resuming because of disconnect or reset, skip this
 					{
-						recoveryState = RecoveryState.SkippingGCode;
+						RecoveryState = RecoveryState.SkippingGCode;
 						goto case RecoveryState.SkippingGCode;
 					}
 
@@ -210,7 +211,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						}
 					}
 					
-					recoveryState = RecoveryState.PrimingAndMovingToStart;
+					RecoveryState = RecoveryState.PrimingAndMovingToStart;
 
 					// make sure we always- pick up the last movement
 					boundsOfSkippedLayers.ExpandToInclude(lastDestination.position.Xy);
@@ -241,7 +242,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 						/// reset the printer to know where the filament should be
 						queuedCommands.Add("G92 E{0}".FormatWith(lastDestination.extrusion));
-						recoveryState = RecoveryState.PrintingSlow;
+						RecoveryState = RecoveryState.PrintingSlow;
 					}
 					return "";
 
@@ -273,7 +274,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					}
 
 					// we only fall through to here after seeing the next "; Layer:"
-					recoveryState = RecoveryState.PrintingToEnd;
+					RecoveryState = RecoveryState.PrintingToEnd;
 					return "";
 
 				case RecoveryState.PrintingToEnd:
