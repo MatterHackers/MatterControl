@@ -405,7 +405,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void AddItemToBedplate(this AutomationRunner testRunner, string containerName = "Calibration Parts Row Item Collection", string partName = "Row Item Calibration - Box.stl")
 		{
-			if (!testRunner.NameExists(partName, 0) && !string.IsNullOrEmpty(containerName))
+			if (!testRunner.NameExists(partName, 1) && !string.IsNullOrEmpty(containerName))
 			{
 				testRunner.NavigateToFolder(containerName);
 			}
@@ -591,8 +591,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public static void SwitchToAdvancedSliceSettings(this AutomationRunner testRunner)
 		{
 			testRunner.ClickByName("Slice Settings Sidebar");
-			testRunner.ClickByName("Pin Settings Button");
 			testRunner.Delay(1);
+			testRunner.ClickByName("Pin Settings Button");
+			testRunner.Delay(.5);
 
 			// Switch to Slice Settings Tab
 			//testRunner.ClickByName("Slice Settings Tab");

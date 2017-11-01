@@ -103,8 +103,6 @@ namespace MatterHackers.MatterControl.PrintHistory
 		public bool ShowTimestamp;
 		private static PrintHistoryData instance;
 
-		private static event EventHandler unregisterEvents;
-
 		public static PrintHistoryData Instance
 		{
 			get
@@ -112,10 +110,6 @@ namespace MatterHackers.MatterControl.PrintHistory
 				if (instance == null)
 				{
 					instance = new PrintHistoryData();
-					ApplicationController.Instance.ActivePrinter.Connection.ConnectionSucceeded.RegisterEvent((s, e) =>
-					{
-						UiThread.RunOnIdle(PrintRecovery.CheckIfNeedToRecoverPrint);
-					}, ref unregisterEvents);
 				}
 				return instance;
 			}

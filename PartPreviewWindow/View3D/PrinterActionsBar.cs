@@ -39,6 +39,7 @@ using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.EeProm;
 using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.PrintHistory;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
@@ -140,6 +141,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Margin = theme.ButtonSpacing
 			};
 			overflowMenu.DynamicPopupContent = GeneratePrinterOverflowMenu;
+
+			ApplicationController.Instance.ActivePrinter.Connection.ConnectionSucceeded.RegisterEvent((s, e) =>
+			{
+				UiThread.RunOnIdle(PrintRecovery.CheckIfNeedToRecoverPrint);
+			}, ref unregisterEvents);
 
 			this.AddChild(overflowMenu);
 		}

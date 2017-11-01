@@ -238,7 +238,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					emulator.SimulateLineErrors = true;
 
 					// close the pause dialog pop-up (resume)
-					testRunner.WaitForName("No Button", 90);
+					testRunner.WaitForName("No Button", 90);// the no button is 'Resume'
 					testRunner.ClickByName("No Button");
 
 					// simulate board reboot
@@ -255,6 +255,72 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				return Task.CompletedTask;
 			}, maxTimeToRun: 90);
+		}
+
+		[Test, Category("Emulator")]
+		public async Task PrinterRecoveryTest()
+		{
+			await MatterControlUtilities.RunTest((testRunner) =>
+			{
+				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
+				{
+					ActiveSliceSettings.Instance.SetValue(SettingsKey.recover_is_enabled, "1");
+					ActiveSliceSettings.Instance.SetValue(SettingsKey.has_hardware_leveling, "0");
+
+					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
+
+					testRunner.SwitchToAdvancedSliceSettings();
+
+					testRunner.ClickByName("General Tab");
+					testRunner.ClickByName("Single Print Tab");
+					testRunner.ClickByName("Layer(s) To Pause Field");
+					testRunner.Type("2;4;6");
+
+					testRunner.ClickByName("Pin Settings Button");
+
+					// print a part
+					testRunner.AddItemToBedplate();
+					testRunner.ClickByName("Start Print Button");
+
+					// the printer is now paused
+					testRunner.WaitForName("No Button", 90); // the no button is 'Resume'
+															 // validate the current layer
+					Assert.AreEqual(2, ApplicationController.Instance.ActivePrinter.Connection.CurrentlyPrintingLayer);
+					testRunner.ClickByName("No Button");
+
+					// the printer is now paused
+					// close the pause dialog pop-up do not resume
+					ClickDialogButton(testRunner, "Yes Button", 4);
+
+					// Disconnect 
+					testRunner.ClickByName("Disconnect from printer button");
+
+					// Reconnect
+					testRunner.WaitForName("Connect to printer button", 10);
+					testRunner.ClickByName("Connect to printer button");
+
+					// Assert that recovery happens
+					// Recover the print
+					ClickDialogButton(testRunner, "Yes Button", -1);
+
+					// The first pause that we get affter recovery should be layer 6.
+					// wait for the pause and continue
+					ClickDialogButton(testRunner, "No Button", 6);
+
+					// Wait for done
+					testRunner.WaitForPrintFinished();
+				}
+
+				return Task.CompletedTask;
+			}, maxTimeToRun: 180);
+		}
+
+		private static void ClickDialogButton(AutomationRunner testRunner, string buttonName, int expectedLayer)
+		{
+			testRunner.WaitForName(buttonName, 90);
+			Assert.AreEqual(expectedLayer, ApplicationController.Instance.ActivePrinter.Connection.CurrentlyPrintingLayer);
+			testRunner.ClickByName(buttonName);
+			testRunner.Delay(() => !testRunner.NameExists(buttonName), 1);
 		}
 
 		private EventHandler unregisterEvents;

@@ -255,6 +255,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		private FoundStringStartsWithCallbacks WriteLineStartCallBacks = new FoundStringStartsWithCallbacks();
 
 		private double secondsSinceUpdateHistory = 0;
+		private long lineSinceUpdateHistory = 0;
 
 		private EventHandler unregisterEvents;
 
@@ -2263,6 +2264,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private void CreateStreamProcessors(string gcodeFilename, bool recoveryEnabled)
 		{
+			secondsSinceUpdateHistory = 0;
+			lineSinceUpdateHistory = 0;
+
 			totalGCodeStream?.Dispose();
 
 			GCodeStream firstStream = null;
@@ -2528,8 +2532,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						}
 
 						double secondsSinceStartedPrint = timeSinceStartedPrint.Elapsed.TotalSeconds;
-						if (secondsSinceUpdateHistory > secondsSinceStartedPrint
-							|| secondsSinceUpdateHistory + 1 < secondsSinceStartedPrint)
+						if (timeSinceStartedPrint.Elapsed.TotalSeconds > 0
+							&& gCodeFileStream0 != null
+							&& (secondsSinceUpdateHistory > secondsSinceStartedPrint
+							|| secondsSinceUpdateHistory + 1 < secondsSinceStartedPrint
+							|| lineSinceUpdateHistory + 20 < gCodeFileStream0.LineIndex))
 						{
 							double currentDone = loadedGCode.PercentComplete(gCodeFileStream0.LineIndex);
 							// Only update the amount done if it is greater than what is recorded.
@@ -2552,6 +2559,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 								}
 							}
 							secondsSinceUpdateHistory = secondsSinceStartedPrint;
+							lineSinceUpdateHistory = gCodeFileStream0.LineIndex;
 						}
 
 						currentSentLine = currentSentLine.Trim();
