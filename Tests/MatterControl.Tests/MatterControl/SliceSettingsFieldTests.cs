@@ -363,6 +363,10 @@ namespace MatterControl.Tests.MatterControl
 		/// <returns></returns>
 		public static Task ValidateAgainstValueMap(UIField field, Func<UIField, string> collectValueFromWidget, IEnumerable<ValueMap> valuesMap)
 		{
+			// *************** Enable to investigate/debug/develop new/existing tests ************************
+			bool investigateDebugTests = false;
+			var perItemDelay = (investigateDebugTests) ? 500 : 0;
+
 			var testsWindow = new UIFieldTestWindow(400, 200, field);
 
 			return testsWindow.RunTest((testRunner) =>
@@ -371,7 +375,7 @@ namespace MatterControl.Tests.MatterControl
 
 				foreach (var item in valuesMap)
 				{
-					testsWindow.SetAndValidateValues(item.ExpectedValue, item.InputValue, collectValueFromWidget);
+					testsWindow.SetAndValidateValues(item.ExpectedValue, item.InputValue, collectValueFromWidget, perItemDelay);
 				}
 
 				return Task.CompletedTask;
