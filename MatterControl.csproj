@@ -653,4 +653,8 @@
       <Name>QuadTree</Name>
     </ProjectReference>
   </ItemGroup>
+  <PropertyGroup>
+    <PostBuildEvent>call "$(DevEnvDir)..\..\VC\Auxiliary\Build\vcvarsall.bat"  x86_amd64
+EditBin "$(TargetPath)"  /LARGEADDRESSAWARE</PostBuildEvent>
+  </PropertyGroup>
 </Project>
