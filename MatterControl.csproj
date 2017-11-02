@@ -654,7 +654,7 @@
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
-    <PostBuildEvent>call "$(DevEnvDir)..\..\VC\Auxiliary\Build\vcvarsall.bat"  x86_amd64
+    <PostBuildEvent>call "$(VS150COMNTOOLS)..\..\VC\Auxiliary\Build\vcvarsall.bat"  x86_amd64
 EditBin "$(TargetPath)"  /LARGEADDRESSAWARE</PostBuildEvent>
   </PropertyGroup>
 </Project>
