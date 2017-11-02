@@ -274,7 +274,8 @@ namespace MatterHackers.MatterControl
 				{
 					var difference = new MeshWrapperOperation(scene.SelectedItem.Children)
 					{
-						ActiveEditor = nameof(SubtractEditor)
+						ActiveEditor = nameof(SubtractEditor),
+						Name = "Subtract",
 					};
 					scene.SelectedItem.Children.Modify((list) =>
 					{
@@ -290,7 +291,8 @@ namespace MatterHackers.MatterControl
 				{
 					var intersection = new MeshWrapperOperation(scene.SelectedItem.Children)
 					{
-						ActiveEditor = nameof(IntersectionEditor)
+						ActiveEditor = nameof(IntersectionEditor),
+						Name = "Intersect",
 					};
 					scene.SelectedItem.Children.Modify((list) =>
 					{
@@ -301,13 +303,15 @@ namespace MatterHackers.MatterControl
 					scene.SelectedItem = intersection;
 				}
 			},
+#if DEBUG // keep this work in progress to the editor for now
 			{
 				"Paint Material".Localize(),
 				(scene) =>
 				{
 					var materialPaint = new MeshWrapperOperation(scene.SelectedItem.Children)
 					{
-						ActiveEditor = nameof(PaintMaterialEditor)
+						ActiveEditor = nameof(PaintMaterialEditor),
+						Name = "Material Paint",
 					};
 					scene.SelectedItem.Children.Modify((list) =>
 					{
@@ -328,6 +332,7 @@ namespace MatterHackers.MatterControl
 				// Should be a pinch command that makes a pinch object with the correct controls
 				"Pinch".Localize(), (scene) => scene.UndoBuffer.AddAndDo(new GroupCommand(scene, scene.SelectedItem))
 			}
+#endif
 		};
 
 		static int applicationInstanceCount = 0;

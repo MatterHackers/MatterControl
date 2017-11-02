@@ -48,6 +48,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		public string Name => "Intersection";
 
 		public bool Unlocked { get; } = true;
+		bool processed = false;
 
 		public GuiWidget Create(IObject3D group, View3DWidget view3DWidget, ThemeConfig theme)
 		{
@@ -56,88 +57,31 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 			var mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 
-			if (group is MeshWrapperOperation)
+			if (group is MeshWrapperOperation
+				&& !processed)
 			{
-				AddHoleSelector(view3DWidget, mainContainer, theme);
+				bool first = true;
+				// set all but one mesh to look like holes
+				foreach (var item in group.Descendants().Where((obj) => obj.OwnerID == group.ID).ToList())
+				{
+					item.OutputType = first ? PrintOutputTypes.Solid : PrintOutputTypes.Hole;
+					first = false;
+				}
+
+				ProcessBooleans(group);
 			}
 
 			return mainContainer;
 		}
 
 		public IEnumerable<Type> SupportedTypes() => new Type[]
-				{
+		{
 			typeof(MeshWrapperOperation),
 		};
 
-		private static FlowLayoutWidget CreateSettingsRow(string labelText)
-		{
-			var rowContainer = new FlowLayoutWidget(FlowDirection.LeftToRight)
-			{
-				HAnchor = HAnchor.Stretch,
-				Padding = new BorderDouble(5)
-			};
-
-			var label = new TextWidget(labelText + ":", textColor: ActiveTheme.Instance.PrimaryTextColor)
-			{
-				Margin = new BorderDouble(0, 0, 3, 0),
-				VAnchor = VAnchor.Center
-			};
-			rowContainer.AddChild(label);
-
-			rowContainer.AddChild(new HorizontalSpacer());
-
-			return rowContainer;
-		}
-
-		private void AddHoleSelector(View3DWidget view3DWidget, FlowLayoutWidget tabContainer, ThemeConfig theme)
-		{
-			var differenceItems = group.Descendants().Where((obj) => obj.OwnerID == group.ID).ToList();
-
-			tabContainer.AddChild(new TextWidget("Set as Hole")
-			{
-				TextColor = ActiveTheme.Instance.PrimaryTextColor,
-				HAnchor = HAnchor.Left,
-				AutoExpandBoundsToText = true,
-			});
-
-			for (int i = 0; i < differenceItems.Count; i++)
-			{
-				var itemIndex = i;
-				var item = differenceItems[itemIndex];
-				FlowLayoutWidget rowContainer = new FlowLayoutWidget();
-
-				var checkBox = new CheckBox(string.IsNullOrWhiteSpace(item.Name) ? $"{itemIndex}" : $"{item.Name}")
-				{
-					Checked = item.OutputType == PrintOutputTypes.Hole,
-					TextColor = ActiveTheme.Instance.PrimaryTextColor
-				};
-				rowContainer.AddChild(checkBox);
-
-				checkBox.CheckedStateChanged += (s, e) =>
-				{
-					// make sure the mesh on the group is not visible
-					group.ResetMeshWrappers();
-					// and set the output type for this checkbox
-					item.OutputType = checkBox.Checked ? PrintOutputTypes.Hole : PrintOutputTypes.Solid;
-				};
-
-				tabContainer.AddChild(rowContainer);
-			}
-
-			var updateButton = theme.ButtonFactory.Generate("Update".Localize());
-			updateButton.Margin = new BorderDouble(5);
-			updateButton.HAnchor = HAnchor.Right;
-			updateButton.Click += (s, e) =>
-			{
-				// make sure the mesh on the group is not visible
-				group.ResetMeshWrappers();
-				ProcessBooleans(group);
-			};
-			tabContainer.AddChild(updateButton);
-		}
-
 		private async void ProcessBooleans(IObject3D group)
 		{
+			processed = true;
 			{
 				// spin up a task to remove holes from the objects in the group
 				await Task.Run(() =>
