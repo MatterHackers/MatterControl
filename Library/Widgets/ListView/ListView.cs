@@ -84,7 +84,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public ILibraryContainer ActiveContainer => this.LibraryContext.ActiveContainer;
 
-		public Color ThumbnailBackground { get; } = ActiveTheme.Instance.TertiaryBackgroundColor.AdjustLightness(1.05).GetAsRGBA_Bytes();
+		public Color ThumbnailBackground { get; } = ActiveTheme.Instance.TertiaryBackgroundColor.AdjustLightness(1.05).ToColor();
 		public Color ThumbnailForeground { get; set; } = ActiveTheme.Instance.PrimaryAccentColor;
 
 		private async void ActiveContainer_Changed(object sender, ContainerChangedEventArgs e)

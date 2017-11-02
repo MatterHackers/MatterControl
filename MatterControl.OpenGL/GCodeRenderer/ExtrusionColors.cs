@@ -49,7 +49,7 @@ namespace MatterHackers.GCodeVisualizer
 
 					if (!speedColorLookup.ContainsKey(speed))
 					{
-						Color color = ColorF.FromHSL(startColor, .99, .49).GetAsRGBA_Bytes();
+						Color color = ColorF.FromHSL(startColor, .99, .49).ToColor();
 						speedColorLookup.Add(speed, color);
 
 						if (speedColorLookup.Count > 1)
@@ -60,7 +60,7 @@ namespace MatterHackers.GCodeVisualizer
 								double offset = step * index;
 								double fixedColor = startColor - offset;
 								KeyValuePair<float, Color> keyValue = speedColorLookup.ElementAt(index);
-								speedColorLookup[keyValue.Key] = ColorF.FromHSL(fixedColor, .99, .49).GetAsRGBA_Bytes();
+								speedColorLookup[keyValue.Key] = ColorF.FromHSL(fixedColor, .99, .49).ToColor();
 							}
 						}
 					}

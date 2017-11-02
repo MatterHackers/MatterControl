@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl.Library
 				if (totalColors != value)
 				{
 					totalColors = value;
-					colors = Enumerable.Range(0, totalColors).Select(colorIndex => ColorF.FromHSL(colorIndex / (double)totalColors, 1, .5).GetAsRGBA_Bytes()).ToArray();
+					colors = Enumerable.Range(0, totalColors).Select(colorIndex => ColorF.FromHSL(colorIndex / (double)totalColors, 1, .5).ToColor()).ToArray();
 				}
 			}
 		}

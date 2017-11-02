@@ -98,7 +98,7 @@ namespace MatterHackers.MatterControl
 
 				double lightnessMultiplier = EaseInOutQuad(time);
 
-				widgetToHighlight.BackgroundColor = startColor.AdjustLightness(1 + lightnessChange * lightnessMultiplier).GetAsRGBA_Bytes();
+				widgetToHighlight.BackgroundColor = startColor.AdjustLightness(1 + lightnessChange * lightnessMultiplier).ToColor();
 				if (widgetToHighlight.HasBeenClosed || timeSinceStart.Elapsed.TotalSeconds > cycles * pulseTime)
 				{
 					widgetToHighlight.BackgroundColor = startColor;

@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			fontSize = 13,
 			invertImageLocation = false,
 			hoverFillColor = ActiveTheme.Instance.PrimaryAccentColor,
-			//pressedFillColor = ActiveTheme.Instance.PrimaryAccentColor.AdjustLightness(0.8).GetAsRGBA_Bytes()
+			//pressedFillColor = ActiveTheme.Instance.PrimaryAccentColor.AdjustLightness(0.8).ToColor()
 		};
 		*/
 
@@ -90,7 +90,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				Margin = new BorderDouble(top: 9),
 			});
 
-			//this.BackgroundColor = new RGBA_Bytes(200, 0, 0, 30);
+			//this.BackgroundColor = new Color(200, 0, 0, 30);
 
 			this.Margin = new BorderDouble(0);
 			this.Margin = 0;

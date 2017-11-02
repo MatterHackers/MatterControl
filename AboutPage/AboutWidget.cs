@@ -73,12 +73,12 @@ namespace MatterHackers.MatterControl
 				SystemWindow releaseNotes = new SystemWindow(640, 480);
 				string releaseNotesFile = Path.Combine("OEMSettings", "ReleaseNotes.html");
 				string releaseNotesContent = AggContext.StaticData.ReadAllText(releaseNotesFile);
-				HtmlWidget content = new HtmlWidget(releaseNotesContent, RGBA_Bytes.Black);
+				HtmlWidget content = new HtmlWidget(releaseNotesContent, Color.Black);
 				content.AddChild(new GuiWidget(HAnchor.AbsolutePosition, VAnchor.Stretch));
 				content.VAnchor |= VAnchor.Top;
-				content.BackgroundColor = RGBA_Bytes.White;
+				content.BackgroundColor = Color.White;
 				releaseNotes.AddChild(content);
-				releaseNotes.BackgroundColor = RGBA_Bytes.Cyan;
+				releaseNotes.BackgroundColor = Color.Cyan;
 				UiThread.RunOnIdle((state) =>
 				{
 					releaseNotes.ShowAsSystemWindow();

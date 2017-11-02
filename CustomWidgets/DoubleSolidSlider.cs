@@ -130,12 +130,12 @@ namespace MatterHackers.MatterControl
 			// draw the first thumb
 			RectangleDouble firstThumbBounds = sliderAttachedTo.GetFirstThumbHitBounds();
 			RoundedRect firstThumbOutside = new RoundedRect(firstThumbBounds, 0);
-			graphics2D.Render(firstThumbOutside, ColorF.GetTweenColor(ThumbColor.GetAsRGBA_Floats(), ColorF.Black.GetAsRGBA_Floats(), .2).GetAsRGBA_Bytes());
+			graphics2D.Render(firstThumbOutside, ColorF.GetTweenColor(ThumbColor.ToColorF(), ColorF.Black.ToColorF(), .2).ToColor());
 
 			// draw the second thumb
 			RectangleDouble secondThumbBounds = sliderAttachedTo.GetSecondThumbHitBounds();
 			RoundedRect secondThumbOutside = new RoundedRect(secondThumbBounds, 0);
-			graphics2D.Render(secondThumbOutside, ColorF.GetTweenColor(ThumbColor.GetAsRGBA_Floats(), ColorF.Black.GetAsRGBA_Floats(), .2).GetAsRGBA_Bytes());
+			graphics2D.Render(secondThumbOutside, ColorF.GetTweenColor(ThumbColor.ToColorF(), ColorF.Black.ToColorF(), .2).ToColor());
 		}
 	}
 

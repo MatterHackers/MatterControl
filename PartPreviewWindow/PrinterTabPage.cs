@@ -587,8 +587,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			var bodyRow = new GuiWidget(300, 450)
 			{
-				HAnchor = HAnchor.Center,
-				VAnchor = VAnchor.Center,
+				HAnchor = HAnchor.Left,
+				VAnchor = VAnchor.Top,
 				BackgroundColor = new Color(ActiveTheme.Instance.PrimaryBackgroundColor, 128),
 				Selectable = false
 			};

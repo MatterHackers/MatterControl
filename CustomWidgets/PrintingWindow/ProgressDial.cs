@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		private Color PrimaryAccentColor = ActiveTheme.Instance.PrimaryAccentColor;
 
-		private Color PrimaryAccentShade = ActiveTheme.Instance.PrimaryAccentColor.AdjustLightness(0.7).GetAsRGBA_Bytes();
+		private Color PrimaryAccentShade = ActiveTheme.Instance.PrimaryAccentColor.AdjustLightness(0.7).ToColor();
 
 		private double innerRingStrokeWidth = 10 * GuiWidget.DeviceScale;
 
