@@ -101,6 +101,7 @@ namespace MatterHackers.MatterControl
 			this.AddChild(clickableValueContainer);
 			this.AddChild(numberInputField);
 
+			Value = startingValue + 1;
 			Value = startingValue;
 			BorderColor = TextColor;
 		}

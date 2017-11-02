@@ -183,7 +183,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private PrinterMachineInstruction.MovementTypes extruderMode = PrinterMachineInstruction.MovementTypes.Absolute;
 
-		private int fanSpeed;
+		private double fanSpeed;
 
 		private bool firmwareUriGcodeSend = false;
 
@@ -574,7 +574,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		public int FanSpeed0To255
+		public double FanSpeed0To255
 		{
 			get { return fanSpeed; }
 			set
@@ -583,7 +583,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				OnFanSpeedSet(null);
 				if (PrinterIsConnected)
 				{
-					SendLineToPrinterNow("M106 S{0}".FormatWith(fanSpeed));
+					SendLineToPrinterNow("M106 S{0}".FormatWith((int)(fanSpeed + .5)));
 				}
 			}
 		}

@@ -4642,3 +4642,33 @@ Translated:Paint Material
 English:Folders
 Translated:Folders
 
+English:The speed at which the nozzle will move when printing the initial layers. If expressed as a percentage the Infill speed is modified.
+Translated:The speed at which the nozzle will move when printing the initial layers. If expressed as a percentage the Infill speed is modified.
+
+English:The number of layers to consider as the begining of the print. These will print at initial layer speed.
+Translated:The number of layers to consider as the begining of the print. These will print at initial layer speed.
+
+English:Switch the settings interface to one intended for SLA printers.
+Translated:Switch the settings interface to one intended for SLA printers.
+
+English:The speed to move the laser when the layer height is 0.025mm. Speed will be adjusted linearly at other heights.
+Translated:The speed to move the laser when the layer height is 0.025mm. Speed will be adjusted linearly at other heights.
+
+English:The speed to move the laser when the layer height is 0.1mm. Speed will be adjusted linearly at other heights.
+Translated:The speed to move the laser when the layer height is 0.1mm. Speed will be adjusted linearly at other heights.
+
+English:Initial Layer Speed
+Translated:Initial Layer Speed
+
+English:Raft / Skirt / Brim
+Translated:Raft / Skirt / Brim
+
+English:Printer is SLA
+Translated:Printer is SLA
+
+English:bed_temperature,first_layer_bed_temperature
+Translated:bed_temperature,first_layer_bed_temperature
+
+English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
+Translated:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
+
