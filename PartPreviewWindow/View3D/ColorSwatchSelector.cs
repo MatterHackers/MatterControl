@@ -50,7 +50,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				for (int colorIndex = 0; colorIndex < colorCount; colorIndex++)
 				{
-					var color = ColorF.FromHSL(colorIndex / (double)colorCount, 1, lightness[rowIndex]).GetAsRGBA_Bytes();
+					var color = ColorF.FromHSL(colorIndex / (double)colorCount, 1, lightness[rowIndex]).ToColor();
 					colorRow.AddChild(MakeColorButton(scene, color));
 				}
 

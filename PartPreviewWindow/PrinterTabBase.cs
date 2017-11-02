@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			viewControls3D = new ViewControls3D(theme, sceneContext.Scene.UndoBuffer)
 			{
-				//BackgroundColor = new RGBA_Bytes(0, 0, 0, theme.OverlayAlpha),
+				//BackgroundColor = new Color(0, 0, 0, theme.OverlayAlpha),
 				PartSelectVisible = false,
 				VAnchor = VAnchor.Top | VAnchor.Fit,
 				HAnchor = HAnchor.Left | HAnchor.Stretch,

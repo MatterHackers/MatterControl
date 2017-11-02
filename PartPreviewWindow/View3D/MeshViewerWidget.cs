@@ -63,7 +63,7 @@ namespace MatterHackers.MeshVisualizer
 	{
 		public static Color Color(int materialIndex)
 		{
-			return ColorF.FromHSL(Math.Max(materialIndex, 0) / 10.0, .99, .49).GetAsRGBA_Bytes();
+			return ColorF.FromHSL(Math.Max(materialIndex, 0) / 10.0, .99, .49).ToColor();
 		}
 	}
 
@@ -98,8 +98,8 @@ namespace MatterHackers.MeshVisualizer
 			RenderType = RenderTypes.Shaded;
 			RenderBed = true;
 			RenderBuildVolume = false;
-			BedColor = new ColorF(.8, .8, .8, .7).GetAsRGBA_Bytes();
-			BuildVolumeColor = new ColorF(.2, .8, .3, .2).GetAsRGBA_Bytes();
+			BedColor = new ColorF(.8, .8, .8, .7).ToColor();
+			BuildVolumeColor = new ColorF(.2, .8, .3, .2).ToColor();
 
 			this.interactionLayer.DrawGlOpaqueContent += Draw_GlOpaqueContent;
 			this.interactionLayer.DrawGlTransparentContent += Draw_GlTransparentContent;
@@ -595,7 +595,7 @@ namespace MatterHackers.MeshVisualizer
 				foreach (var transparentRenderData in transparentMeshes)
 				{
 					var color = transparentRenderData.Color;
-					//color = RGBA_Floats.FromHSL(Math.Max(colorIndex++, 0) / 10.0, .99, .49).GetAsRGBA_Bytes();
+					//color = RGBA_Floats.FromHSL(Math.Max(colorIndex++, 0) / 10.0, .99, .49).ToColor();
 					GLHelper.Render(transparentRenderData.Mesh, color, transparentRenderData.Matrix, RenderTypes.Outlines, transparentRenderData.Matrix * World.ModelviewMatrix);
 				}
 			}

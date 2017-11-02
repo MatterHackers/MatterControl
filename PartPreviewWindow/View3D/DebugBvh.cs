@@ -72,7 +72,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (zBuffered)
 			{
 				GLHelper.Render(lineMesh, Color.Black, lineTransform, RenderTypes.Shaded);
-				//drawEvent.graphics2D.Line(cornerPositionScreen, cornerPositionCcwScreen, RGBA_Bytes.Gray);
+				//drawEvent.graphics2D.Line(cornerPositionScreen, cornerPositionCcwScreen, Color.Gray);
 			}
 			else
 			{

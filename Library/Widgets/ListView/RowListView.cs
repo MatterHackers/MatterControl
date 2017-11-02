@@ -234,7 +234,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				this.BackgroundColor = ActiveTheme.Instance.SecondaryAccentColor;
 				this.partLabel.TextColor = Color.White;
-				//this.partStatus.TextColor = RGBA_Bytes.White;
+				//this.partStatus.TextColor = Color.White;
 				this.viewButton.BackgroundColor = Color.White;
 				this.viewButtonLabel.TextColor = ActiveTheme.Instance.SecondaryAccentColor;
 			}
@@ -242,7 +242,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				this.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
 				this.partLabel.TextColor = Color.White;
-				//this.partStatus.TextColor = RGBA_Bytes.White;
+				//this.partStatus.TextColor = Color.White;
 				this.selectionCheckBox.TextColor = Color.White;
 				this.viewButton.BackgroundColor = Color.White;
 				this.viewButtonLabel.TextColor = ActiveTheme.Instance.SecondaryAccentColor;
@@ -252,7 +252,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				this.BackgroundColor = Color.White;
 				this.partLabel.TextColor = Color.Black;
 				this.selectionCheckBox.TextColor = Color.Black;
-				//this.partStatus.TextColor = RGBA_Bytes.Black;
+				//this.partStatus.TextColor = Color.Black;
 				this.viewButton.BackgroundColor = ActiveTheme.Instance.SecondaryAccentColor;
 				this.viewButtonLabel.TextColor = Color.White;
 			}
@@ -261,7 +261,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				this.BackgroundColor = new Color(255, 255, 255, 255);
 				this.partLabel.TextColor = Color.Black;
 				this.selectionCheckBox.TextColor = Color.Black;
-				//this.partStatus.TextColor = RGBA_Bytes.Black;
+				//this.partStatus.TextColor = Color.Black;
 				this.viewButton.BackgroundColor = ActiveTheme.Instance.SecondaryAccentColor;
 				this.viewButtonLabel.TextColor = Color.White;
 			}

@@ -1794,7 +1794,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				Vector2 centerTopScreenPosition = this.World.GetScreenPosition(centerTop);
 				centerTopScreenPosition = meshViewerWidget.TransformToParentSpace(this, centerTopScreenPosition);
-				//graphics2D.Circle(screenPosition.x, screenPosition.y, 5, RGBA_Bytes.Cyan);
+				//graphics2D.Circle(screenPosition.x, screenPosition.y, 5, Color.Cyan);
 
 				VertexStorage zArrow = new VertexStorage();
 				zArrow.MoveTo(-6, -2);
@@ -1805,7 +1805,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				VertexSourceApplyTransform translate = new VertexSourceApplyTransform(zArrow, Affine.NewTranslation(centerTopScreenPosition));
 
-				//graphics2D.Render(translate, RGBA_Bytes.Black);
+				//graphics2D.Render(translate, Color.Black);
 			}
 		}
 
@@ -2358,10 +2358,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								double endColor = 5.0 / 360.0;
 								double delta = endColor - startColor;
 
-								Color color = ColorF.FromHSL(startColor, .99, .49).GetAsRGBA_Bytes();
+								Color color = ColorF.FromHSL(startColor, .99, .49).ToColor();
 								if (normal.Z < 0)
 								{
-									color = ColorF.FromHSL(startColor - delta * normal.Z, .99, .49).GetAsRGBA_Bytes();
+									color = ColorF.FromHSL(startColor - delta * normal.Z, .99, .49).ToColor();
 								}
 
 								colorData.red = color.red;

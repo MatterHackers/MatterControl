@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl
 		public override void OnDraw(Graphics2D graphics2D)
 		{
 			int thumbHeight = 10;
-			//graphics2D.Rectangle(LocalBounds, RGBA_Bytes.Black);
+			//graphics2D.Rectangle(LocalBounds, Color.Black);
 			double bottom = textScrollWidget.Position0To1 * (Height - thumbHeight);// the 2 is the border
 			RectangleDouble thumb = new RectangleDouble(0, bottom, Width, bottom + thumbHeight);// the 1 is the border
 			graphics2D.FillRectangle(thumb, Color.DarkGray);

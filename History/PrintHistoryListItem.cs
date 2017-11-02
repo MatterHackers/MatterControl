@@ -371,7 +371,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 
 				//RectangleDouble Bounds = LocalBounds;
 				//RoundedRect rectBorder = new RoundedRect(Bounds, 0);
-				//graphics2D.Render(new Stroke(rectBorder, 3), RGBA_Bytes.White);
+				//graphics2D.Render(new Stroke(rectBorder, 3), Color.White);
 			}
 			else if (this.isHoverItem)
 			{
