@@ -107,6 +107,7 @@
 		"nPause",
 		"OpenSCAD1",
 		"TestPart",
+		"SLA",
 		"ChairFoot",
 		"XOffset",
 		"amf",
@@ -121,6 +122,7 @@
 		"ComPort",
 		"ms",
 		"HotEnd",
+		"webservice",
 		"2D",
 		"Hotend"
 	]

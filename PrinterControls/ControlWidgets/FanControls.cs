@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Diagnostics;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
@@ -43,8 +44,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 		private EditableNumberDisplay fanSpeedDisplay;
 
 		private CheckBox toggleSwitch;
-
-		private bool doingDisplayUpdateFromPrinter = false;
 
 		PrinterConnection printerConnection;
 
@@ -62,13 +61,16 @@ namespace MatterHackers.MatterControl.PrinterControls
 			//Matt's test editing to add a on/off toggle switch
 			bool fanActive = printerConnection.FanSpeed0To255 != 0;
 
+			Stopwatch timeSinceLastManualSend = new Stopwatch();
 			toggleSwitch = ImageButtonFactory.CreateToggleSwitch(fanActive);
 			toggleSwitch.Margin = new BorderDouble(5, 0);
 			toggleSwitch.VAnchor = VAnchor.Center;
 			toggleSwitch.CheckedStateChanged += (s, e) =>
 			{
-				if (!doingDisplayUpdateFromPrinter)
+				if (!timeSinceLastManualSend.IsRunning
+					|| timeSinceLastManualSend.ElapsedMilliseconds > 500)
 				{
+					timeSinceLastManualSend.Restart();
 					if (toggleSwitch.Checked)
 					{
 						printerConnection.FanSpeed0To255 = 255;
@@ -81,12 +83,27 @@ namespace MatterHackers.MatterControl.PrinterControls
 			};
 			leftToRight.AddChild(toggleSwitch);
 
-			fanSpeedDisplay = new EditableNumberDisplay(printerConnection.FanSpeed0To255, "255");
+			fanSpeedDisplay = new EditableNumberDisplay(0, "100");
+			fanSpeedDisplay.DisplayFormat = "{0:0}";
+			fanSpeedDisplay.Value = printerConnection.FanSpeed0To255 * 100 / 255;
 			fanSpeedDisplay.ValueChanged += (sender, e) =>
 			{
-				printerConnection.FanSpeed0To255 = (int)fanSpeedDisplay.Value;
+				// limit the rate we can send this message to 2 per second so we don't get in a crazy toggle state.
+				if (!timeSinceLastManualSend.IsRunning
+					|| timeSinceLastManualSend.ElapsedMilliseconds > 500)
+				{
+					timeSinceLastManualSend.Restart();
+					printerConnection.FanSpeed0To255 = (int)(fanSpeedDisplay.Value * 255 / 100 + .5);
+				}
 			};
+
 			leftToRight.AddChild(fanSpeedDisplay);
+
+			// put in %
+			leftToRight.AddChild(new TextWidget("%", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			{
+				VAnchor = VAnchor.Center
+			});
 
 			this.AddChild(
 				new SectionWidget(
@@ -95,33 +112,26 @@ namespace MatterHackers.MatterControl.PrinterControls
 					leftToRight));
 
 			// CreateFanControls
-			printerConnection.FanSpeedSet.RegisterEvent(FanSpeedChanged_Event, ref unregisterEvents);
+			printerConnection.FanSpeedSet.RegisterEvent((s, e) =>
+			{
+				if ((int)printerConnection.FanSpeed0To255 > 0)
+				{
+					toggleSwitch.Checked = true;
+				}
+				else
+				{
+					toggleSwitch.Checked = false;
+				}
+
+				fanSpeedDisplay.Value = printerConnection.FanSpeed0To255 * 100 / 255;
+			}
+			, ref unregisterEvents);
 		}
 
 		public override void OnClosed(ClosedEventArgs e)
 		{
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
-		}
-
-		private void FanSpeedChanged_Event(object sender, EventArgs e)
-		{
-			int printerFanSpeed = printerConnection.FanSpeed0To255;
-
-			doingDisplayUpdateFromPrinter = true;
-
-			if (printerFanSpeed > 0)
-			{
-				toggleSwitch.Checked = true;
-			}
-			else
-			{
-				toggleSwitch.Checked = false;
-			}
-
-			fanSpeedDisplay.Value = printerConnection.FanSpeed0To255;
-
-			doingDisplayUpdateFromPrinter = false;
 		}
 	}
 }

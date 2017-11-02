@@ -626,7 +626,7 @@
 	{
 		"SlicerConfigName": "laser_speed_025",
 		"PresentationName": "Speed at 0.025 Height",
-		"HelpText": "The speed to move the laser when the layer height is 0.025mm. Speed will be ajusted linearly at other heights.",
+		"HelpText": "The speed to move the laser when the layer height is 0.025mm. Speed will be adjusted linearly at other heights.",
 		"DataEditType": "POSITIVE_DOUBLE",
 		"ExtraSettings": "mm/s",
 		"ShowIfSet": "sla_printer",
@@ -635,7 +635,7 @@
 	{
 		"SlicerConfigName": "laser_speed_100",
 		"PresentationName": "Speed at 0.1 Height",
-		"HelpText": "The speed to move the laser when the layer height is 0.1mm. Speed will be ajusted linearly at other heights.",
+		"HelpText": "The speed to move the laser when the layer height is 0.1mm. Speed will be adjusted linearly at other heights.",
 		"DataEditType": "POSITIVE_DOUBLE",
 		"ShowIfSet": "sla_printer",
 		"ExtraSettings": "mm/s",
