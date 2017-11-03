@@ -739,6 +739,7 @@ namespace MatterHackers.MatterControl
 
 		public string PrintingItemName { get; set; }
 
+		public string ShortProductName => "MatterControl";
 		public string ProductName => "MatterHackers: MatterControl";
 
 		public string ThumbnailCachePath(ILibraryItem libraryItem)
