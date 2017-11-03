@@ -115,7 +115,7 @@ namespace MatterHackers.MatterControl
 
 			buttonView.AddChild(iconContainer);
 
-			buttonView.AddChild(new TextWidget(ApplicationController.Instance.ProductName, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			buttonView.AddChild(new TextWidget(ApplicationController.Instance.ShortProductName, textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
 				Margin = 0,
 				VAnchor = VAnchor.Center
