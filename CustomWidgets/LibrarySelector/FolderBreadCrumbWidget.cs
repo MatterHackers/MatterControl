@@ -92,7 +92,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			if (this.Width < 250)
 			{
-				Button containerButton = linkButtonFactory.Generate(listView.ActiveContainer.Name);
+				Button containerButton = linkButtonFactory.Generate(listView.ActiveContainer.Name == null ? "?" : listView.ActiveContainer.Name);
 				containerButton.Name = "Bread Crumb Button " + listView.ActiveContainer.Name;
 				containerButton.VAnchor = VAnchor.Center;
 				containerButton.Margin = new BorderDouble(right:  5);
