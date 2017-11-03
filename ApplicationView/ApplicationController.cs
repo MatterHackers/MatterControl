@@ -462,7 +462,7 @@ namespace MatterHackers.MatterControl
 			Object3D.AssetsPath = ApplicationDataStorage.Instance.LibraryAssetsPath;
 
 			this.Library = new LibraryConfig();
-			this.Library.ContentProviders.Add(new[] { "stl", "amf", "mcx" }, new MeshContentProvider());
+			this.Library.ContentProviders.Add(new[] { "stl", "obj", "amf", "mcx" }, new MeshContentProvider());
 
 			this.Library.ContentProviders.Add("gcode", new GCodeContentProvider());
 

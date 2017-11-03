@@ -280,7 +280,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			// the add button
 			addToLibraryButton = textImageButtonFactory.Generate("Add".Localize(), AggContext.StaticData.LoadIcon("cube.png", IconColor.Theme));
 			addToLibraryButton.Enabled = false; // The library selector (the first library selected) is protected so we can't add to it. 
-			addToLibraryButton.ToolTipText = "Add an .stl, .amf, .gcode or .zip file to the Library".Localize();
+			addToLibraryButton.ToolTipText = "Add an .stl, .obj, .amf, .gcode or .zip file to the Library".Localize();
 			addToLibraryButton.Name = "Library Add Button";
 			addToLibraryButton.Margin = new BorderDouble(0, 0, 3, 0);
 			addToLibraryButton.Click += (sender, e) => UiThread.RunOnIdle(() =>

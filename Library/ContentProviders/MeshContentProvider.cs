@@ -104,7 +104,7 @@ namespace MatterHackers.MatterControl
 			if (item is ILibraryContentStream contentModel
 				// Only load the stream if it's available - prevents download of internet content simply for thumbnails
 				&& contentModel.LocalContentExists
-				&& contentModel.FileSize < MaxFileSizeForTracing)
+				&& (!Is32Bit || contentModel.FileSize < MaxFileSizeForTracing))
 			{
 				// TODO: Wire up limits for thumbnail generation. If content is too big, return null allowing the thumbnail to fall back to content default
 				object3D = await contentModel.CreateContent();
