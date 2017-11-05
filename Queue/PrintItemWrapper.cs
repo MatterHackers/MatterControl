@@ -173,7 +173,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 								int sizeOfRead = 1 << 16;
 								byte[] readData = new byte[Math.Max(64, sizeOfRead * 3)];
 
-								// get a chuck from the begining
+								// get a chuck from the beginning
 								fileStream.Read(readData, sizeOfRead, sizeOfRead);
 
 								// the middle

@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			var macroButtons = GetExtruderMacros(extruderIndex, buttonFactory);
 			if (macroButtons != null)
 			{
-				this.AddChild(new SettingsItem("Fillament".Localize(), macroButtons, enforceGutter: false));
+				this.AddChild(new SettingsItem("Filament".Localize(), macroButtons, enforceGutter: false));
 			}
 
 			// Add the Extrude buttons

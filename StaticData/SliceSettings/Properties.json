@@ -413,7 +413,7 @@
 	{
 		"SlicerConfigName": "number_of_first_layers",
 		"PresentationName": "Initial Layers",
-		"HelpText": "The number of layers to consider as the begining of the print. These will print at initial layer speed.",
+		"HelpText": "The number of layers to consider as the beginning of the print. These will print at initial layer speed.",
 		"DataEditType": "INT_OR_MM",
 		"ExtraSettings": "layers or mm",
 		"ShowIfSet": "sla_printer",
@@ -528,7 +528,7 @@
 		"SetSettingsOnChange": [],
 		"SlicerConfigName": "has_z_servo",
 		"PresentationName": "Has Z Servo",
-		"HelpText": "The printer has a servo for lowering and rasing the z probe.",
+		"HelpText": "The printer has a servo for lowering and raising the z probe.",
 		"DataEditType": "CHECK_BOX",
 		"ShowAsOverride": true,
 		"ShowIfSet": "has_z_probe",
