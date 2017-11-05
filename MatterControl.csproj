@@ -331,7 +331,6 @@
     <Compile Include="PrinterControls\ControlWidgets\MacroControls.cs" />
     <Compile Include="PrinterControls\EditManualMovementSpeedsWindow.cs" />
     <Compile Include="PrinterControls\EditMacrosWindow.cs" />
-    <Compile Include="ControlElements\RegisteredCreators.cs" />
     <Compile Include="SlicerConfiguration\SlicerMapping\EngineMappingCura.cs" />
     <Compile Include="SlicerConfiguration\SlicerMapping\EngineMappingSlic3r.cs" />
     <Compile Include="SlicerConfiguration\SlicerMapping\MappingClasses.cs" />

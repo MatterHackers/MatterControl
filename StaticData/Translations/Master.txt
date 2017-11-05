@@ -4135,9 +4135,6 @@ Translated:Add to Plate
 English:Text Size
 Translated:Text Size
 
-English:The printer has a servo for lowering and rasing the z probe.
-Translated:The printer has a servo for lowering and rasing the z probe.
-
 English:The distance the z probe is from the extruder in z. For manual probing, this is thickness of the paper (or other calibration device).
 Translated:The distance the z probe is from the extruder in z. For manual probing, this is thickness of the paper (or other calibration device).
 
@@ -4534,9 +4531,6 @@ Translated:Hotend
 English:Preset Name:
 Translated:Preset Name:
 
-English:Fillament
-Translated:Fillament
-
 English:Write Filter
 Translated:Write Filter
 
@@ -4575,9 +4569,6 @@ Translated:Export failed
 
 English:The speed at which the nozzle will move when printing the first layers. If expressed as a percentage the Infill speed is modified.
 Translated:The speed at which the nozzle will move when printing the first layers. If expressed as a percentage the Infill speed is modified.
-
-English:The number of layers to consider as the begining of the print. These will print at first layer speed.
-Translated:The number of layers to consider as the begining of the print. These will print at first layer speed.
 
 English:Number of First Layers
 Translated:Number of First Layers
@@ -4645,9 +4636,6 @@ Translated:Folders
 English:The speed at which the nozzle will move when printing the initial layers. If expressed as a percentage the Infill speed is modified.
 Translated:The speed at which the nozzle will move when printing the initial layers. If expressed as a percentage the Infill speed is modified.
 
-English:The number of layers to consider as the begining of the print. These will print at initial layer speed.
-Translated:The number of layers to consider as the begining of the print. These will print at initial layer speed.
-
 English:Switch the settings interface to one intended for SLA printers.
 Translated:Switch the settings interface to one intended for SLA printers.
 
@@ -4671,4 +4659,16 @@ Translated:bed_temperature,first_layer_bed_temperature
 
 English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
 Translated:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
+
+English:The number of layers to consider as the beginning of the print. These will print at initial layer speed.
+Translated:The number of layers to consider as the beginning of the print. These will print at initial layer speed.
+
+English:Checks before each print that the layer height is less than the nozzle diameter (important for filament adhesion)
+Translated:Checks before each print that the layer height is less than the nozzle diameter (important for filament adhesion)
+
+English:The printer has a servo for lowering and raising the z probe.
+Translated:The printer has a servo for lowering and raising the z probe.
+
+English:Add an .stl, .obj, .amf, .gcode or .zip file to the Library
+Translated:Add an .stl, .obj, .amf, .gcode or .zip file to the Library
 
