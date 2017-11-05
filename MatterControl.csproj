@@ -409,13 +409,11 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Mindscape.Raygun4Net, Version=5.4.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Mindscape.Raygun4Net.5.4.1\lib\net40\Mindscape.Raygun4Net.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Mindscape.Raygun4Net, Version=5.5.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Mindscape.Raygun4Net.5.5.2\lib\net40\Mindscape.Raygun4Net.dll</HintPath>
     </Reference>
-    <Reference Include="Mindscape.Raygun4Net4, Version=5.4.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Mindscape.Raygun4Net.5.4.1\lib\net40\Mindscape.Raygun4Net4.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Mindscape.Raygun4Net4, Version=5.5.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Mindscape.Raygun4Net.5.5.2\lib\net40\Mindscape.Raygun4Net4.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -430,8 +428,8 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
     <Reference Include="System.Net.Http" />
-    <Reference Include="System.ValueTuple, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>packages\System.ValueTuple.4.3.1\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
+    <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\System.ValueTuple.4.4.0\lib\net461\System.ValueTuple.dll</HintPath>
     </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
