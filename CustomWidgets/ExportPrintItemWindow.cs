@@ -290,6 +290,7 @@ namespace MatterHackers.MatterControl
 		{
 			if (!ActiveSliceSettings.Instance.IsValid())
 			{
+				Close();
 				return;
 			}
 			SaveFileDialogParams saveParams = new SaveFileDialogParams("Export GCode|*.gcode", title: "Export GCode");
