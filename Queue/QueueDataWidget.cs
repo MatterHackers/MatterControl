@@ -552,10 +552,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 			{
 				UiThread.RunOnIdle(MustSelectPrinterMessage);
 			}
-			else if (!ActiveSliceSettings.Instance.IsValid())
-			{
-				return;
-			}
 			else if (QueueData.Instance.SelectedCount == 1)
 			{
 				QueueRowItem libraryItem = queueDataView.GetQueueRowItem(QueueData.Instance.SelectedIndex);

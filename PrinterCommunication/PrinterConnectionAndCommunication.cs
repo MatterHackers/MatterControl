@@ -1359,7 +1359,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					{
 						StartSdCardPrint();
 					}
-					else if (ActiveSliceSettings.Instance.IsValid())
+					else
 					{
 						if (File.Exists(pathAndFile))
 						{
@@ -1390,7 +1390,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 								UiThread.RunOnIdle(() => StyledMessageBox.ShowMessageBox(onConfirmPrint, gcodeWarningMessage, "Warning - GCode file".Localize(), new GuiWidget[] { new VerticalSpacer(), hideGCodeWarningCheckBox }, StyledMessageBox.MessageType.YES_NO));
 							}
-							else
+							else if (ActiveSliceSettings.Instance.IsValid())
 							{
 								CommunicationState = PrinterConnectionAndCommunication.CommunicationStates.PreparingToPrint;
 								PrintItemWrapper partToPrint = ActivePrintItem;
