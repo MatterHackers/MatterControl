@@ -27,21 +27,111 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-#define DO_LIGHTING
-
 using System;
 using System.Collections.Generic;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
 using MatterHackers.MeshVisualizer;
+using MatterHackers.PolygonMesh;
 using MatterHackers.RayTracer;
 using MatterHackers.RayTracer.Traceable;
+using MatterHackers.RenderOpenGl;
 using MatterHackers.RenderOpenGl.OpenGl;
 using MatterHackers.VectorMath;
 using static MatterHackers.MeshVisualizer.MeshViewerWidget;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
+	public class LightingData
+	{
+		internal float[] ambientLight = { 0.2f, 0.2f, 0.2f, 1.0f };
+
+		internal float[] diffuseLight0 = { 0.7f, 0.7f, 0.7f, 1.0f };
+		internal float[] specularLight0 = { 0.5f, 0.5f, 0.5f, 1.0f };
+		internal float[] lightDirection0 = { -1, -1, 1, 0.0f };
+
+		internal float[] diffuseLight1 = { 0.5f, 0.5f, 0.5f, 1.0f };
+		internal float[] specularLight1 = { 0.3f, 0.3f, 0.3f, 1.0f };
+		internal float[] lightDirection1 = { 1, 1, 1, 0.0f };
+	}
+
+	public class ViewRtzControl : GuiWidget
+	{
+		LightingData lighting = new LightingData();
+		Mesh cube = PlatonicSolids.CreateCube(1, 1, 1);
+		WorldView viewToControlAndShow;
+
+		public ViewRtzControl(WorldView viewToControlAndShow)
+			: base(200, 200)
+		{
+			this.viewToControlAndShow = viewToControlAndShow;
+
+			TextureFace(cube.Faces[0], "Top");
+			TextureFace(cube.Faces[1], "Left");
+			TextureFace(cube.Faces[2], "Right");
+			TextureFace(cube.Faces[3], "Bottom");
+			TextureFace(cube.Faces[4], "Back");
+			TextureFace(cube.Faces[5], "Front");
+		}
+
+		public override void OnDraw(Graphics2D graphics2D)
+		{
+			var rotationCubeBounds = this.TransformToScreenSpace(LocalBounds);
+			Render(rotationCubeBounds);
+
+			base.OnDraw(graphics2D);
+		}
+
+		public override void OnMouseDown(MouseEventArgs mouseEvent)
+		{
+			base.OnMouseDown(mouseEvent);
+		}
+
+		public override void OnMouseMove(MouseEventArgs mouseEvent)
+		{
+			// find the ray for this control
+			// check what face it hits
+			// mark that face to draw a highlight
+			base.OnMouseMove(mouseEvent);
+		}
+
+		public override void OnMouseUp(MouseEventArgs mouseEvent)
+		{
+			base.OnMouseUp(mouseEvent);
+		}
+
+		private static void TextureFace(Face frontFace, string name)
+		{
+			ImageBuffer frontImage = new ImageBuffer(256, 256);
+			var frontGraphics = frontImage.NewGraphics2D();
+			frontGraphics.Clear(Color.White);
+			frontGraphics.DrawString(name,
+				frontImage.Width / 2,
+				frontImage.Height / 2,
+				60,
+				justification: Agg.Font.Justification.Center,
+				baseline: Agg.Font.Baseline.BoundsCenter);
+			MeshHelper.PlaceTextureOnFace(frontFace, frontImage);
+		}
+
+		public void Render(RectangleDouble rotationCubeBounds)
+		{
+			var rotatioView = new WorldView(rotationCubeBounds.Width, rotationCubeBounds.Height);
+
+			var forward = -Vector3.UnitZ;
+			var directionForward = Vector3.TransformNormal(forward, viewToControlAndShow.InverseModelviewMatrix);
+
+			var up = Vector3.UnitY;
+			var directionUp = Vector3.TransformNormal(up, viewToControlAndShow.InverseModelviewMatrix);
+			rotatioView.RotationMatrix = Matrix4X4.LookAt(Vector3.Zero, directionForward, directionUp);
+
+			InteractionLayer.SetGlContext(rotatioView, rotationCubeBounds, lighting);
+			GLHelper.Render(cube, Color.White, Matrix4X4.Identity, RenderTypes.Shaded);
+			InteractionLayer.UnsetGlContext();
+		}
+	}
+
 	public class InteractionLayer : GuiWidget, IInteractionVolumeContext
 	{
 		private int volumeIndexWithMouseDown = -1;
@@ -63,15 +153,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private Action notifyPartChanged;
 
-		private float[] ambientLight = { 0.2f, 0.2f, 0.2f, 1.0f };
-
-		private float[] diffuseLight0 = { 0.7f, 0.7f, 0.7f, 1.0f };
-		private float[] specularLight0 = { 0.5f, 0.5f, 0.5f, 1.0f };
-		private float[] lightDirection0 = { -1, -1, 1, 0.0f };
-
-		private float[] diffuseLight1 = { 0.5f, 0.5f, 0.5f, 1.0f };
-		private float[] specularLight1 = { 0.3f, 0.3f, 0.3f, 1.0f };
-		private float[] lightDirection1 = { 1, 1, 1, 0.0f };
+		private LightingData lighting = new LightingData();
 
 		public InteractionLayer(WorldView world, UndoBuffer undoBuffer, InteractiveScene scene)
 		{
@@ -85,6 +167,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			labelContainer.Selectable = false;
 			labelContainer.AnchorAll();
 			this.AddChild(labelContainer);
+
+			this.AddChild(new ViewRtzControl(world)
+			{
+				VAnchor = VAnchor.Top,
+				HAnchor = HAnchor.Left,
+			});
 		}
 
 		internal void SetRenderTarget(GuiWidget renderSource)
@@ -96,7 +184,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (DoOpenGlDrawing)
 			{
-				SetGlContext();
+				SetGlContext(this.World, this.TransformToScreenSpace(LocalBounds), lighting);
 				OnDrawGlContent(e);
 				UnsetGlContext();
 			}
@@ -273,13 +361,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			DrawGlTransparentContent?.Invoke(this, e);
 		}
 
-		private void SetGlContext()
+		public static void SetGlContext(WorldView worldView, RectangleDouble screenRect, LightingData lighting)
 		{
 			GL.ClearDepth(1.0);
 			GL.Clear(ClearBufferMask.DepthBufferBit);   // Clear the Depth Buffer
 
 			GL.PushAttrib(AttribMask.ViewportBit);
-			RectangleDouble screenRect = this.TransformToScreenSpace(LocalBounds);
 			GL.Viewport((int)screenRect.Left, (int)screenRect.Bottom, (int)screenRect.Width, (int)screenRect.Height);
 
 			GL.ShadeModel(ShadingModel.Smooth);
@@ -292,15 +379,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			GL.Disable(EnableCap.DepthTest);
 			//ClearToGradient();
 
-#if DO_LIGHTING
-			GL.Light(LightName.Light0, LightParameter.Ambient, ambientLight);
+			GL.Light(LightName.Light0, LightParameter.Ambient, lighting.ambientLight);
 
-			GL.Light(LightName.Light0, LightParameter.Diffuse, diffuseLight0);
-			GL.Light(LightName.Light0, LightParameter.Specular, specularLight0);
+			GL.Light(LightName.Light0, LightParameter.Diffuse, lighting.diffuseLight0);
+			GL.Light(LightName.Light0, LightParameter.Specular, lighting.specularLight0);
 
 			GL.Light(LightName.Light0, LightParameter.Ambient, new float[] { 0, 0, 0, 0 });
-			GL.Light(LightName.Light1, LightParameter.Diffuse, diffuseLight1);
-			GL.Light(LightName.Light1, LightParameter.Specular, specularLight1);
+			GL.Light(LightName.Light1, LightParameter.Diffuse, lighting.diffuseLight1);
+			GL.Light(LightName.Light1, LightParameter.Specular, lighting.specularLight1);
 
 			GL.ColorMaterial(MaterialFace.FrontAndBack, ColorMaterialParameter.AmbientAndDiffuse);
 
@@ -312,27 +398,26 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			GL.Enable(EnableCap.Lighting);
 			GL.Enable(EnableCap.ColorMaterial);
 
-			Vector3 lightDirectionVector = new Vector3(lightDirection0[0], lightDirection0[1], lightDirection0[2]);
+			Vector3 lightDirectionVector = new Vector3(lighting.lightDirection0[0], lighting.lightDirection0[1], lighting.lightDirection0[2]);
 			lightDirectionVector.Normalize();
-			lightDirection0[0] = (float)lightDirectionVector.X;
-			lightDirection0[1] = (float)lightDirectionVector.Y;
-			lightDirection0[2] = (float)lightDirectionVector.Z;
-			GL.Light(LightName.Light0, LightParameter.Position, lightDirection0);
-			GL.Light(LightName.Light1, LightParameter.Position, lightDirection1);
-#endif
+			lighting.lightDirection0[0] = (float)lightDirectionVector.X;
+			lighting.lightDirection0[1] = (float)lightDirectionVector.Y;
+			lighting.lightDirection0[2] = (float)lightDirectionVector.Z;
+			GL.Light(LightName.Light0, LightParameter.Position, lighting.lightDirection0);
+			GL.Light(LightName.Light1, LightParameter.Position, lighting.lightDirection1);
 
 			// set the projection matrix
 			GL.MatrixMode(MatrixMode.Projection);
 			GL.PushMatrix();
-			GL.LoadMatrix(this.World.ProjectionMatrix.GetAsDoubleArray());
+			GL.LoadMatrix(worldView.ProjectionMatrix.GetAsDoubleArray());
 
 			// set the modelview matrix
 			GL.MatrixMode(MatrixMode.Modelview);
 			GL.PushMatrix();
-			GL.LoadMatrix(this.World.ModelviewMatrix.GetAsDoubleArray());
+			GL.LoadMatrix(worldView.ModelviewMatrix.GetAsDoubleArray());
 		}
 
-		private void UnsetGlContext()
+		public static void UnsetGlContext()
 		{
 			GL.MatrixMode(MatrixMode.Projection);
 			GL.PopMatrix();
@@ -340,12 +425,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			GL.MatrixMode(MatrixMode.Modelview);
 			GL.PopMatrix();
 
-#if DO_LIGHTING
 			GL.Disable(EnableCap.ColorMaterial);
 			GL.Disable(EnableCap.Lighting);
 			GL.Disable(EnableCap.Light0);
 			GL.Disable(EnableCap.Light1);
-#endif
+
 			GL.Disable(EnableCap.Normalize);
 			GL.Disable(EnableCap.Blend);
 			GL.Disable(EnableCap.DepthTest);
