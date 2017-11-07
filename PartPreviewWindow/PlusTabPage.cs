@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System.IO;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -83,6 +84,28 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			createItemsSection.AddChild(createPrinter);
 
+			var importButton = theme.ButtonFactory.Generate("Import Printer".Localize());
+			importButton.Margin = buttonSpacing;
+			importButton.HAnchor = HAnchor.Left;
+			importButton.Click += (s, e) =>
+			{
+				UiThread.RunOnIdle(() =>
+				{
+					AggContext.FileDialogs.OpenFileDialog(
+						new OpenFileDialogParams(
+							"settings files|*.ini;*.printer;*.slice"),
+							(result) =>
+							{
+								if (!string.IsNullOrEmpty(result.FileName)
+									&& File.Exists(result.FileName))
+								{
+									ImportSettingsPage.ImportFromExisting(result.FileName);
+								}
+							});
+				});
+			};
+			createItemsSection.AddChild(importButton);
+
 			var existingPrinterSection = CreateSection("Open Existing".Localize() + ":");
 
 			var printerSelector = new PrinterSelector()
@@ -114,15 +137,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				ApplicationController.Instance.EnterShareCode?.Invoke();
 			};
 			otherItemsSection.AddChild(redeemShareCode);
-
-			var importButton = theme.ButtonFactory.Generate("Import".Localize());
-			importButton.Margin = buttonSpacing;
-			importButton.HAnchor = HAnchor.Left;
-			importButton.Click += (s, e) =>
-			{
-				UiThread.RunOnIdle(() => WizardWindow.Show<ImportSettingsPage>());
-			};
-			otherItemsSection.AddChild(importButton);
 
 			if (OemSettings.Instance.ShowShopButton)
 			{

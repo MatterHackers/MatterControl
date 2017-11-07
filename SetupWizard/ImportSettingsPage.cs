@@ -386,24 +386,27 @@ namespace MatterHackers.MatterControl
 			return container;
 		}
 
-		protected string importPrinterSuccessMessage = "You have successfully imported a new printer profile. You can find '{0}' in your list of available printers.".Localize();
-		protected string importSettingSuccessMessage = "You have successfully imported a new {1} setting. You can find '{0}' in your list of {1} settings.".Localize();
+		private static string importPrinterSuccessMessage = "You have successfully imported a new printer profile. You can find '{0}' in your list of available printers.".Localize();
+		private static string importSettingSuccessMessage = "You have successfully imported a new {1} setting. You can find '{0}' in your list of {1} settings.".Localize();
+
+		public static void ImportFromExisting(string settingsFilePath)
+		{
+			if (ProfileManager.ImportFromExisting(settingsFilePath))
+			{
+				WizardWindow.Show(
+					new ImportSucceeded(importPrinterSuccessMessage.FormatWith(Path.GetFileNameWithoutExtension(settingsFilePath))));
+			}
+			else
+			{
+				displayFailedToImportMessage(settingsFilePath);
+			}
+		}
 
 		private void ImportSettingsFile(string settingsFilePath)
 		{
 			if (newPrinterButton.Checked)
 			{
-				if (ProfileManager.ImportFromExisting(settingsFilePath))
-				{
-					WizardWindow.ChangeToPage(new ImportSucceeded(importPrinterSuccessMessage.FormatWith(Path.GetFileNameWithoutExtension(settingsFilePath)))
-					{
-						WizardWindow = this.WizardWindow,
-					});
-				}
-				else
-				{
-					displayFailedToImportMessage(settingsFilePath);
-				}
+				ImportFromExisting(settingsFilePath);
 			}
 			else if (mergeButton.Checked)
 			{
@@ -574,7 +577,7 @@ namespace MatterHackers.MatterControl
 			Invalidate();
 		}
 
-		private void displayFailedToImportMessage(string settingsFilePath)
+		private static void displayFailedToImportMessage(string settingsFilePath)
 		{
 			StyledMessageBox.ShowMessageBox("Oops! Settings file '{0}' did not contain any settings we could import.".Localize().FormatWith(Path.GetFileName(settingsFilePath)), "Unable to Import".Localize());
 		}
