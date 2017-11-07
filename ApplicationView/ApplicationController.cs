@@ -655,6 +655,7 @@ namespace MatterHackers.MatterControl
 		}
 
 		public bool IsReloading { get; private set; } = false;
+
 		public void ReloadAll()
 		{
 			var reloadingOverlay = new GuiWidget();
@@ -662,7 +663,7 @@ namespace MatterHackers.MatterControl
 			reloadingOverlay.VAnchor = VAnchor.Stretch;
 			reloadingOverlay.BackgroundColor = this.Theme.DarkShade;
 
-			reloadingOverlay.AddChild(new TextWidget("Reloading".Localize() + "...", textColor: Color.White, pointSize: this.Theme.DefaultFontSize * 2)
+			reloadingOverlay.AddChild(new TextWidget("Reloading".Localize() + "...", textColor: Color.White, pointSize: this.Theme.DefaultFontSize * 1.5)
 			{
 				HAnchor = HAnchor.Center,
 				VAnchor = VAnchor.Center
@@ -688,7 +689,7 @@ namespace MatterHackers.MatterControl
 
 				MatterControlApplication.Instance.RemoveChild(reloadingOverlay);
 
-			}, 2);
+			});
 		}
 
 		static int reloadCount = 0;
