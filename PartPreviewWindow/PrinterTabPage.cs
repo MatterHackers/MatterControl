@@ -45,7 +45,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class PrinterTabPage : PrinterTabBase
+	public class PrinterTabPage : PartTabPage
 	{
 		internal GCode2DWidget gcode2DWidget;
 

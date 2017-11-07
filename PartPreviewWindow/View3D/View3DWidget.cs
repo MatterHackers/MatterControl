@@ -100,7 +100,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private PrinterTabPage printerTabPage;
 
-		public View3DWidget(PrinterConfig printer, BedConfig sceneContext, AutoRotate autoRotate, ViewControls3D viewControls3D, ThemeConfig theme, PrinterTabBase printerTabBase, MeshViewerWidget.EditorType editorType = MeshViewerWidget.EditorType.Part)
+		public View3DWidget(PrinterConfig printer, BedConfig sceneContext, AutoRotate autoRotate, ViewControls3D viewControls3D, ThemeConfig theme, PartTabPage printerTabBase, MeshViewerWidget.EditorType editorType = MeshViewerWidget.EditorType.Part)
 		{
 			var smallMarginButtonFactory = theme.SmallMarginButtonFactory;
 

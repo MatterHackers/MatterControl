@@ -113,6 +113,7 @@
     <Compile Include="Library\Providers\WritableContainer.cs" />
     <Compile Include="Library\Widgets\ExpandCheckboxButton.cs" />
     <Compile Include="Library\Widgets\InsertionGroup.cs" />
+    <Compile Include="PartPreviewWindow\PartTabPage.cs" />
     <Compile Include="PartPreviewWindow\PopupMenuButton.cs" />
     <Compile Include="PartPreviewWindow\IconTab.cs" />
     <Compile Include="PartPreviewWindow\PopupButton.cs" />
@@ -196,7 +197,6 @@
     <Compile Include="PartPreviewWindow\OverflowMenu.cs" />
     <Compile Include="PartPreviewWindow\PlusTabPage.cs" />
     <Compile Include="PartPreviewWindow\MainTab.cs" />
-    <Compile Include="PartPreviewWindow\PrinterTabBase.cs" />
     <Compile Include="PartPreviewWindow\PrinterTabPage.cs" />
     <Compile Include="PartPreviewWindow\View3D\BedMeshGenerator.cs" />
     <Compile Include="PartPreviewWindow\View3D\ColorSwatchSelector.cs" />
