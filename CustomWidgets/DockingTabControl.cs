@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 {
 	public enum DockSide { Left, Bottom, Right, Top };
 
-	public class DockingTabControl : GuiWidget
+	public class DockingTabControl : FlowLayoutWidget
 	{
 		public int MinDockingWidth = 400 * (int)GuiWidget.DeviceScale;
 		protected GuiWidget widgetTodockTo;
@@ -52,10 +52,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		private PrinterConfig printer;
 
-		private GuiWidget topToBottom;
-
 		private ThemeConfig theme;
 		public DockingTabControl(GuiWidget widgetTodockTo, DockSide dockSide, PrinterConfig printer)
+			: base (FlowDirection.TopToBottom)
 		{
 			this.theme = ApplicationController.Instance.Theme;
 			this.printer = printer;
@@ -90,14 +89,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			base.Initialize();
 
-			VAnchor = VAnchor.Stretch;
-			HAnchor = HAnchor.Fit;
-			topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				HAnchor = HAnchor.Fit,
-				VAnchor = VAnchor.Stretch
-			};
-			AddChild(topToBottom);
+			this.VAnchor = VAnchor.Stretch;
+			this.HAnchor = HAnchor.Fit;
 		}
 
 		private GuiWidget CreatePinButton()
@@ -139,10 +132,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				nameWidget.Value.ClearRemovedFlag();
 			}
 
-			topToBottom.RemoveAllChildren();
+			this.RemoveAllChildren();
 
-			var tabControl = new TabControl();
-
+			TabControl tabControl = null;
 			if (this.ControlIsPinned)
 			{
 				var resizePage = new ResizeContainer(this)
@@ -156,7 +148,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				tabControl = ApplicationController.Instance.Theme.CreateTabControl();
 				resizePage.AddChild(tabControl);
 
-				topToBottom.AddChild(resizePage);
+				this.AddChild(resizePage);
 			}
 
 			int tabIndex = 0;
@@ -245,7 +237,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					};
 
 					settingsButton.PopupLayoutEngine = new UnpinnedLayoutEngine(settingsButton.PopupContent, widgetTodockTo, DockSide);
-					topToBottom.AddChild(settingsButton);
+					this.AddChild(settingsButton);
 
 					int localTabIndex = tabIndex;
 					settingsButton.Click += (s, e) =>
