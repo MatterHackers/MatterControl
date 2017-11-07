@@ -346,6 +346,8 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
+		public bool DockWindowFloating { get; internal set; }
+
 		public double SliceSettingsWidth
 		{
 			get

@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 {
 	public enum DockSide { Left, Bottom, Right, Top };
 
-	public class DockingTabControl : GuiWidget
+	public class DockingTabControl : FlowLayoutWidget
 	{
 		public int MinDockingWidth = 400 * (int)GuiWidget.DeviceScale;
 		protected GuiWidget widgetTodockTo;
@@ -52,15 +52,17 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		private PrinterConfig printer;
 
-		private GuiWidget topToBottom;
-
 		private ThemeConfig theme;
 		public DockingTabControl(GuiWidget widgetTodockTo, DockSide dockSide, PrinterConfig printer)
+			: base (FlowDirection.TopToBottom)
 		{
 			this.theme = ApplicationController.Instance.Theme;
 			this.printer = printer;
 			this.widgetTodockTo = widgetTodockTo;
 			this.DockSide = dockSide;
+
+			// Add dummy widget to ensure OnLoad fires
+			this.AddChild(new GuiWidget(10, 10));
 		}
 
 		public event EventHandler PinStatusChanged;
@@ -83,21 +85,25 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		public void AddPage(string name, GuiWidget widget)
 		{
 			allTabs.Add(name, widget);
-			Rebuild();
+
+			if (formHasLoaded)
+			{
+				Rebuild();
+			}
+		}
+
+		public override void OnLoad(EventArgs args)
+		{
+			base.OnLoad(args);
+			this.Rebuild();
 		}
 
 		public override void Initialize()
 		{
 			base.Initialize();
 
-			VAnchor = VAnchor.Stretch;
-			HAnchor = HAnchor.Fit;
-			topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				HAnchor = HAnchor.Fit,
-				VAnchor = VAnchor.Stretch
-			};
-			AddChild(topToBottom);
+			this.VAnchor = VAnchor.Stretch;
+			this.HAnchor = HAnchor.Fit;
 		}
 
 		private GuiWidget CreatePinButton()
@@ -110,6 +116,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			imageWidget.Click += (s, e) =>
 			{
 				this.ControlIsPinned = !this.ControlIsPinned;
+				this.printer.ViewState.DockWindowFloating = false;
 				UiThread.RunOnIdle(this.Rebuild);
 			};
 
@@ -139,10 +146,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				nameWidget.Value.ClearRemovedFlag();
 			}
 
-			topToBottom.RemoveAllChildren();
+			this.RemoveAllChildren();
 
-			var tabControl = new TabControl();
-
+			TabControl tabControl = null;
 			if (this.ControlIsPinned)
 			{
 				var resizePage = new ResizeContainer(this)
@@ -156,7 +162,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				tabControl = ApplicationController.Instance.Theme.CreateTabControl();
 				resizePage.AddChild(tabControl);
 
-				topToBottom.AddChild(resizePage);
+				this.AddChild(resizePage);
 			}
 
 			int tabIndex = 0;
@@ -245,13 +251,34 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					};
 
 					settingsButton.PopupLayoutEngine = new UnpinnedLayoutEngine(settingsButton.PopupContent, widgetTodockTo, DockSide);
-					topToBottom.AddChild(settingsButton);
+					this.AddChild(settingsButton);
 
 					int localTabIndex = tabIndex;
 					settingsButton.Click += (s, e) =>
 					{
 						this.printer.ViewState.SliceSettingsTabIndex = localTabIndex;
+						this.printer.ViewState.DockWindowFloating = true;
 					};
+
+					settingsButton.PopupWindowClosed += (s, e) =>
+					{
+						if (!ApplicationController.Instance.IsReloading)
+						{
+							this.printer.ViewState.DockWindowFloating = false;
+						}
+					};
+
+					if (this.printer.ViewState.DockWindowFloating
+						&& localTabIndex == this.printer.ViewState.SliceSettingsTabIndex)
+					{
+						UiThread.RunOnIdle(() =>
+						{
+							if (!settingsButton.HasBeenClosed && settingsButton.Parent != null)
+							{
+								settingsButton.ShowPopup();
+							}
+						});
+					}
 				}
 
 				tabIndex++;
