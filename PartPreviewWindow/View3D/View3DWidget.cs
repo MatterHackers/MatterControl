@@ -798,27 +798,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnClosed(e);
 		}
 
-		public override void OnVisibleChanged(EventArgs e)
-		{
-			var dragDropData = ApplicationController.Instance.DragDropData;
-			if (this.Visible)
-			{
-				// Set reference on show
-				dragDropData.View3DWidget = this;
-				dragDropData.SceneContext = sceneContext;
-			}
-			else
-			{
-				// Clear state on hide
-				if (dragDropData.View3DWidget == this)
-				{
-					dragDropData.Reset();
-				}
-			}
-
-			base.OnVisibleChanged(e);
-		}
-
 		private GuiWidget topMostParent;
 
 		private PlaneShape bedPlane = new PlaneShape(Vector3.UnitZ, 0, null);
