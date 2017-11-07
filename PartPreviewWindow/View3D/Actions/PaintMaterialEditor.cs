@@ -41,6 +41,7 @@ using MatterHackers.PolygonMesh;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
+#if DEBUG // keep this work in progress to the editor for now
 	public class PaintMaterialEditor : IObject3DEditor
 	{
 		private MeshWrapperOperation group;
@@ -181,4 +182,5 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			});
 		}
 	}
+#endif
 }
