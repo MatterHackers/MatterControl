@@ -651,16 +651,24 @@ namespace MatterHackers.MatterControl
 
 			return !string.IsNullOrEmpty(extension)
 				&& (ApplicationSettings.OpenDesignFileParams.Contains(extension) 
-					|| ApplicationController.Instance.Library.ContentProviders.Keys.Contains(extensionWithoutPeriod));
+					|| this.Library.ContentProviders.Keys.Contains(extensionWithoutPeriod));
 		}
 
 		public bool IsReloading { get; private set; } = false;
 		public void ReloadAll()
 		{
-			if (this.IsReloading || MainView == null)
+			var reloadingOverlay = new GuiWidget();
+			reloadingOverlay.HAnchor = HAnchor.Stretch;
+			reloadingOverlay.VAnchor = VAnchor.Stretch;
+			reloadingOverlay.BackgroundColor = this.Theme.DarkShade;
+
+			reloadingOverlay.AddChild(new TextWidget("Reloading".Localize() + "...", textColor: Color.White, pointSize: this.Theme.DefaultFontSize * 2)
 			{
-				return;
-			}
+				HAnchor = HAnchor.Center,
+				VAnchor = VAnchor.Center
+			});
+
+			MatterControlApplication.Instance.AddChild(reloadingOverlay);
 
 			this.IsReloading = true;
 
@@ -677,7 +685,10 @@ namespace MatterHackers.MatterControl
 				}
 
 				this.IsReloading = false;
-			});
+
+				MatterControlApplication.Instance.RemoveChild(reloadingOverlay);
+
+			}, 2);
 		}
 
 		static int reloadCount = 0;

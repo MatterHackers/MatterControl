@@ -106,6 +106,8 @@ namespace MatterHackers.MatterControl
 
 		public Color SlightShade { get; } = new Color(0, 0, 0, 40);
 		public Color MinimalShade { get; } = new Color(0, 0, 0, 15);
+		public Color Shade { get; } = new Color(0, 0, 0, 120);
+		public Color DarkShade { get; } = new Color(0, 0, 0, 190);
 
 		public TextImageButtonFactory DisableableControlBase { get; private set; }
 		public TextImageButtonFactory HomingButtons { get; private set; }
