@@ -37,6 +37,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		private static readonly Color slightShade = new Color(0, 0, 0, 40);
 
+		public event EventHandler PopupWindowClosed;
+		
 		private GuiWidget buttonView;
 		private bool menuVisibileAtMouseDown = false;
 		private bool menuVisible = false;
@@ -125,6 +127,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.BackgroundColor = Color.Transparent;
 				menuVisible = false;
 				popupWidget = null;
+
+				this.PopupWindowClosed?.Invoke(this, null);
 			};
 			popupWidget.Focus();
 		}

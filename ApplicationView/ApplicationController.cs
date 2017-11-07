@@ -654,15 +654,15 @@ namespace MatterHackers.MatterControl
 					|| ApplicationController.Instance.Library.ContentProviders.Keys.Contains(extensionWithoutPeriod));
 		}
 
-		bool pendingReloadRequest = false;
+		public bool IsReloading { get; private set; } = false;
 		public void ReloadAll()
 		{
-			if (pendingReloadRequest || MainView == null)
+			if (this.IsReloading || MainView == null)
 			{
 				return;
 			}
 
-			pendingReloadRequest = true;
+			this.IsReloading = true;
 
 			UiThread.RunOnIdle(() =>
 			{
@@ -676,7 +676,7 @@ namespace MatterHackers.MatterControl
 					this.DoneReloadingAll?.CallEvents(null, null);
 				}
 
-				pendingReloadRequest = false;
+				this.IsReloading = false;
 			});
 		}
 

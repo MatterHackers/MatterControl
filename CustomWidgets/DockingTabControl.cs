@@ -60,6 +60,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.printer = printer;
 			this.widgetTodockTo = widgetTodockTo;
 			this.DockSide = dockSide;
+
+			// Add dummy widget to ensure OnLoad fires
+			this.AddChild(new GuiWidget(10, 10));
 		}
 
 		public event EventHandler PinStatusChanged;
@@ -82,7 +85,17 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		public void AddPage(string name, GuiWidget widget)
 		{
 			allTabs.Add(name, widget);
-			Rebuild();
+
+			if (formHasLoaded)
+			{
+				Rebuild();
+			}
+		}
+
+		public override void OnLoad(EventArgs args)
+		{
+			base.OnLoad(args);
+			this.Rebuild();
 		}
 
 		public override void Initialize()
@@ -103,6 +116,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			imageWidget.Click += (s, e) =>
 			{
 				this.ControlIsPinned = !this.ControlIsPinned;
+				this.printer.ViewState.DockWindowFloating = false;
 				UiThread.RunOnIdle(this.Rebuild);
 			};
 
@@ -243,7 +257,28 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					settingsButton.Click += (s, e) =>
 					{
 						this.printer.ViewState.SliceSettingsTabIndex = localTabIndex;
+						this.printer.ViewState.DockWindowFloating = true;
 					};
+
+					settingsButton.PopupWindowClosed += (s, e) =>
+					{
+						if (!ApplicationController.Instance.IsReloading)
+						{
+							this.printer.ViewState.DockWindowFloating = false;
+						}
+					};
+
+					if (this.printer.ViewState.DockWindowFloating
+						&& localTabIndex == this.printer.ViewState.SliceSettingsTabIndex)
+					{
+						UiThread.RunOnIdle(() =>
+						{
+							if (!settingsButton.HasBeenClosed && settingsButton.Parent != null)
+							{
+								settingsButton.ShowPopup();
+							}
+						});
+					}
 				}
 
 				tabIndex++;
