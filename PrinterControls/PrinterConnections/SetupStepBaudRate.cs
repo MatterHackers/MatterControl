@@ -37,7 +37,7 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
-	public class SetupStepBaudRate : WizardPage
+	public class SetupStepBaudRate : DialogPage
 	{
 		private List<RadioButton> BaudRateButtonsList = new List<RadioButton>();
 		private FlowLayoutWidget printerBaudRateContainer;

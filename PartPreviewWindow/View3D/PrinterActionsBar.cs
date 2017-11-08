@@ -178,7 +178,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Title = "Rename Printer".Localize(),
 					Action = () =>
 					{
-						WizardWindow.Show(
+						DialogWindow.Show(
 							new InputBoxPage(
 								"Rename Printer".Localize(),
 								"Name".Localize(),

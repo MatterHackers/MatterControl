@@ -37,7 +37,7 @@ using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl
 {
-	public class AndroidConnectDevicePage : WizardPage
+	public class AndroidConnectDevicePage : DialogPage
 	{  
 		private EventHandler unregisterEvents;
 

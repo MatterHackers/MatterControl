@@ -11,7 +11,7 @@ using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 
 namespace MatterHackers.MatterControl.SetupWizard
 {
-	public class SyncingPrintersPage: WizardPage
+	public class SyncingPrintersPage: DialogPage
 	{
 		TextWidget syncingDetails;
 		public SyncingPrintersPage()

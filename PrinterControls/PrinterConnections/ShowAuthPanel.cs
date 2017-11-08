@@ -36,7 +36,7 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
-	public class ShowAuthPanel : WizardPage
+	public class ShowAuthPanel : DialogPage
 	{
 		public ShowAuthPanel()
 			: base ("Skip")

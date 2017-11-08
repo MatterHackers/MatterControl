@@ -38,7 +38,7 @@ using MatterHackers.SerialPortCommunication.FrostedSerial;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
-	public class SetupStepComPortTwo : WizardPage
+	public class SetupStepComPortTwo : DialogPage
 	{
 		private string[] startingPortNames;
 

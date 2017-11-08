@@ -71,14 +71,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			menuItem = OverflowMenu.CreateMenuItem("Export".Localize());
 			menuItem.Click += (s, e) =>
 			{
-				WizardWindow.Show<ExportSettingsPage>();
+				DialogWindow.Show<ExportSettingsPage>();
 			};
 			popupContainer.AddChild(menuItem);
 
 			menuItem = OverflowMenu.CreateMenuItem("Restore Settings".Localize());
 			menuItem.Click += (s, e) =>
 			{
-				WizardWindow.Show<PrinterProfileHistoryPage>();
+				DialogWindow.Show<PrinterProfileHistoryPage>();
 			};
 			menuItem.Enabled = !string.IsNullOrEmpty(AuthenticationData.Instance.ActiveSessionUsername);
 			popupContainer.AddChild(menuItem);

@@ -34,7 +34,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
-	public class InputBoxPage : WizardPage
+	public class InputBoxPage : DialogPage
 	{
 		private MHTextEditWidget textEditWidget;
 

@@ -7,7 +7,7 @@ using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl.AboutPage
 {
-	public class CheckForUpdatesPage : WizardPage
+	public class CheckForUpdatesPage : DialogPage
 	{
 		public CheckForUpdatesPage()
 		: base("Close")

@@ -38,7 +38,7 @@ using MatterHackers.SerialPortCommunication.FrostedSerial;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
-	public class SetupStepComPortManual : WizardPage
+	public class SetupStepComPortManual : DialogPage
 	{
 		private Button nextButton;
 		private Button connectButton;

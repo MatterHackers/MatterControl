@@ -38,7 +38,7 @@ using MatterHackers.Agg;
 
 namespace MatterHackers.MatterControl
 {
-	public class ExportSettingsPage : WizardPage
+	public class ExportSettingsPage : DialogPage
 	{
 		RadioButton matterControlButton;
 		RadioButton slic3rButton;

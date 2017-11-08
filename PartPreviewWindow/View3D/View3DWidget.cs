@@ -370,7 +370,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						Title = "Publish".Localize() + "...",
 						Action = () =>
 						{
-							UiThread.RunOnIdle(() => WizardWindow.Show<PublishPartToMatterHackers>());
+							UiThread.RunOnIdle(() => DialogWindow.Show<PublishPartToMatterHackers>());
 						}
 					},
 					new NamedAction()
@@ -2061,7 +2061,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void OpenExportWindow()
 		{
-			WizardWindow.Show(
+			DialogWindow.Show(
 				new ExportPrintItemPage(new[] 
 				{
 					new FileSystemFileItem(sceneContext.printItem.FileLocation)
@@ -2070,7 +2070,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void OpenSaveAsWindow()
 		{
-			WizardWindow.Show(
+			DialogWindow.Show(
 				new SaveAsPage(
 					async (returnInfo) =>
 					{

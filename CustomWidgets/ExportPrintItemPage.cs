@@ -44,7 +44,7 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl
 {
-	public class ExportPrintItemPage : WizardPage
+	public class ExportPrintItemPage : DialogPage
 	{
 		private CheckBox showInFolderAfterSave;
 

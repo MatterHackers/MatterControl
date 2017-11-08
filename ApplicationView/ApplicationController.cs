@@ -815,7 +815,7 @@ namespace MatterHackers.MatterControl
 				&& !ProfileManager.Instance.PrintersImported)
 			{
 				// Show the import printers wizard
-				WizardWindow.Show<CopyGuestProfilesToUser>();
+				DialogWindow.Show<CopyGuestProfilesToUser>();
 			}
 		}
 
@@ -832,7 +832,7 @@ namespace MatterHackers.MatterControl
 				if (ApplicationSettings.Instance.get(ApplicationSettingsKey.SuppressAuthPanel) != "True")
 				{
 					//Launch window to prompt user to sign in
-					UiThread.RunOnIdle(() => WizardWindow.Show(PrinterSetup.GetBestStartPage()));
+					UiThread.RunOnIdle(() => DialogWindow.Show(PrinterSetup.GetBestStartPage()));
 				}
 			}
 			else
@@ -856,7 +856,7 @@ namespace MatterHackers.MatterControl
 				// show this last so it is on top
 				if (UserSettings.Instance.get("SoftwareLicenseAccepted") != "true")
 				{
-					UiThread.RunOnIdle(() => WizardWindow.Show<LicenseAgreementPage>());
+					UiThread.RunOnIdle(() => DialogWindow.Show<LicenseAgreementPage>());
 				}
 			}
 
@@ -876,7 +876,7 @@ namespace MatterHackers.MatterControl
 			if (!ProfileManager.Instance.ActiveProfiles.Any())
 			{
 				// Start the setup wizard if no profiles exist
-				UiThread.RunOnIdle(() => WizardWindow.Show(PrinterSetup.GetBestStartPage()));
+				UiThread.RunOnIdle(() => DialogWindow.Show(PrinterSetup.GetBestStartPage()));
 			}
 		}
 

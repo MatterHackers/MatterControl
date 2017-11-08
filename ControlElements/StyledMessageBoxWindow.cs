@@ -50,11 +50,11 @@ namespace MatterHackers.MatterControl
 
 		public static void ShowMessageBox(Action<bool> callback, string message, string caption, GuiWidget[] extraWidgetsToAdd, MessageType messageType, string yesOk = "", string noCancel = "")
 		{
-			WizardWindow.Show(
+			DialogWindow.Show(
 				new MessageBoxPage(callback, message, caption, messageType, extraWidgetsToAdd, 400, 300, yesOk, noCancel, ApplicationController.Instance.Theme));
 		}
 
-		private class MessageBoxPage : WizardPage
+		private class MessageBoxPage : DialogPage
 		{
 			private string unwrappedMessage;
 			private TextWidget messageContainer;

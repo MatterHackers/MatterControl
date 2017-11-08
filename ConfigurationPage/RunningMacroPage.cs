@@ -40,7 +40,7 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PrinterControls
 {
-	public class RunningMacroPage : WizardPage
+	public class RunningMacroPage : DialogPage
 	{
 		private long startTimeMs;
 		private ProgressBar progressBar;

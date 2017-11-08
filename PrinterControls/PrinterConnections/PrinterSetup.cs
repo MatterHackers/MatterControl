@@ -39,7 +39,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 		public enum StartPageOptions { Default, SkipWifiSetup, ShowMakeModel }
 
-		public static WizardPage GetBestStartPage(StartPageOptions options = StartPageOptions.Default)
+		public static DialogPage GetBestStartPage(StartPageOptions options = StartPageOptions.Default)
 		{
 			// Do the printer setup logic
 			bool WifiDetected = MatterControlApplication.Instance.IsNetworkConnected();

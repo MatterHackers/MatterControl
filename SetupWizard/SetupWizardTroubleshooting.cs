@@ -20,7 +20,7 @@ using Android.Content;
 
 namespace MatterHackers.MatterControl
 {
-	public class SetupWizardTroubleshooting : WizardPage
+	public class SetupWizardTroubleshooting : DialogPage
 	{
 		private Button nextButton;
 

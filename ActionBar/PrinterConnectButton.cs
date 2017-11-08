@@ -144,7 +144,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		private static void RunTroubleShooting()
 		{
-			WizardWindow.Show<SetupWizardTroubleshooting>();
+			DialogWindow.Show<SetupWizardTroubleshooting>();
 		}
 
 		private void SetVisibleStates(object sender, EventArgs e)

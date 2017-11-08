@@ -41,7 +41,7 @@ namespace MatterHackers.MatterControl
 	{
 	}
 
-	public class SaveAsPage : WizardPage
+	public class SaveAsPage : DialogPage
 	{
 		private Func<SaveAsReturnInfo, Task> functionToCallOnSaveAs;
 		private MHTextEditWidget textToAddWidget;

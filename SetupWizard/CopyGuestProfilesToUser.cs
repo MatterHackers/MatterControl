@@ -36,7 +36,7 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl
 {
-	public class CopyGuestProfilesToUser : WizardPage
+	public class CopyGuestProfilesToUser : DialogPage
 	{
 		private string importMessage = "It's time to copy your existing printer settings to your MatterHackers account. Once copied, these printers will be available whenever you sign in to MatterControl. Printers that are not copied will only be available when not signed in.".Localize();
 
