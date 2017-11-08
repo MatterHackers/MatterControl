@@ -29,6 +29,9 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading;
+using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
@@ -65,15 +68,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		WorldView cubeWorld;
 
 		public TumbleCubeControl(InteractionLayer interactionLayer)
-			: base(200, 200)
+			: base(100, 100)
 		{
 			this.interactionLayer = interactionLayer;
 
 			TextureFace(cube.Faces[0], "Top");
-			TextureFace(cube.Faces[1], "Left");
-			TextureFace(cube.Faces[2], "Right");
-			TextureFace(cube.Faces[3], "Bottom");
-			TextureFace(cube.Faces[4], "Back");
+			TextureFace(cube.Faces[1], "Left", Matrix4X4.CreateRotationZ(MathHelper.Tau / 4));
+			TextureFace(cube.Faces[2], "Right", Matrix4X4.CreateRotationZ(-MathHelper.Tau/4));
+			TextureFace(cube.Faces[3], "Bottom", Matrix4X4.CreateRotationZ(MathHelper.Tau / 2));
+			TextureFace(cube.Faces[4], "Back", Matrix4X4.CreateRotationZ(MathHelper.Tau / 2));
 			TextureFace(cube.Faces[5], "Front");
 
 			cubeTraceData = cube.CreateTraceData();
@@ -105,7 +108,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			Ray ray = cubeWorld.GetRayForLocalBounds(mouseEvent.Position);
 			IntersectInfo info = cubeTraceData.GetClosestIntersection(ray);
 
-			if(info != null)
+			if (info != null)
 			{
 				var normal = ((TriangleShape)info.closestHitObject).Plane.PlaneNormal;
 				var directionForward = -new Vector3(normal);
@@ -127,13 +130,35 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					directionUp = Vector3.UnitZ;
 				}
+				else if (directionForward.Equals(Vector3.UnitZ, .001))
+				{
+					directionUp = -Vector3.UnitY;
+				}
 
 				var look = Matrix4X4.LookAt(Vector3.Zero, directionForward, directionUp);
 
-				var q1 = new Quaternion(look);
-				var look2 = Matrix4X4.CreateRotation(q1);
+				var start = new Quaternion(interactionLayer.World.RotationMatrix);
+				var end = new Quaternion(look);
 
-				interactionLayer.World.RotationMatrix = look2;
+				Task.Run(() =>
+				{
+					double duration = .25;
+					var timer = Stopwatch.StartNew();
+					var time = timer.Elapsed.TotalSeconds;
+					while (time < duration)
+					{
+						var current = Quaternion.Slerp(start, end, time / duration);
+						UiThread.RunOnIdle(() =>
+						{
+							interactionLayer.World.RotationMatrix = Matrix4X4.CreateRotation(current);
+							Invalidate();
+						});
+						time = timer.Elapsed.TotalSeconds;
+						Thread.Sleep(10);
+					}
+					interactionLayer.World.RotationMatrix = Matrix4X4.CreateRotation(end);
+					Invalidate();
+				});
 			}
 		}
 
@@ -152,18 +177,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			interactionLayer.Focus();
 		}
 
-		private static void TextureFace(Face frontFace, string name)
+		private static void TextureFace(Face face, string name, Matrix4X4? initialRotation = null)
 		{
-			ImageBuffer frontImage = new ImageBuffer(256, 256);
-			var frontGraphics = frontImage.NewGraphics2D();
+			ImageBuffer textureToUse = new ImageBuffer(256, 256);
+			var frontGraphics = textureToUse.NewGraphics2D();
 			frontGraphics.Clear(Color.White);
 			frontGraphics.DrawString(name,
-				frontImage.Width / 2,
-				frontImage.Height / 2,
+				textureToUse.Width / 2,
+				textureToUse.Height / 2,
 				60,
 				justification: Agg.Font.Justification.Center,
 				baseline: Agg.Font.Baseline.BoundsCenter);
-			MeshHelper.PlaceTextureOnFace(frontFace, frontImage);
+			MeshHelper.PlaceTextureOnFace(face, textureToUse, MeshHelper.GetMaxFaceProjection(face, textureToUse, initialRotation));
 		}
 	}
 
@@ -208,6 +233,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			this.AddChild(new TumbleCubeControl(this)
 			{
+				Margin = new BorderDouble(50, 0, 0, 50),
 				VAnchor = VAnchor.Top,
 				HAnchor = HAnchor.Left,
 			});

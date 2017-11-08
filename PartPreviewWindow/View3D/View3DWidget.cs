@@ -1402,8 +1402,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			world.Reset();
 			world.Scale = .03;
 			world.Translate(-new Vector3(sceneContext.BedCenter));
-			world.Rotate(Quaternion.FromEulerAngles(new Vector3(0, 0, MathHelper.Tau / 16)));
-			world.Rotate(Quaternion.FromEulerAngles(new Vector3(-MathHelper.Tau * .19, 0, 0)));
+			world.Rotate(Quaternion.FromEulerAngles(new Vector3(0, 0, -MathHelper.Tau / 16)));
+			world.Rotate(Quaternion.FromEulerAngles(new Vector3(MathHelper.Tau * .19, 0, 0)));
 		}
 
 		public override void OnMouseUp(MouseEventArgs mouseEvent)
@@ -1941,7 +1941,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					if (faceVertex != lowestVertex)
 					{
-						Vector3 faceVertexPosition = Vector3.Transform(faceVertex.Position, itemToLayFlat.Matrix);
+						Vector3 faceVertexPosition = Vector3.Transform(faceVertex.Position, itemToLayFlat.WorldMatrix());
 						Vector3 pointRelLowest = faceVertexPosition - lowestVertexPosition;
 						double xLeg = new Vector2(pointRelLowest.X, pointRelLowest.Y).Length;
 						double yLeg = pointRelLowest.Z;
@@ -1963,7 +1963,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			List<Vector3> faceVertices = new List<Vector3>();
 			foreach (IVertex vertex in faceToLayFlat.Vertices())
 			{
-				Vector3 vertexPosition = Vector3.Transform(vertex.Position, itemToLayFlat.Matrix);
+				Vector3 vertexPosition = Vector3.Transform(vertex.Position, itemToLayFlat.WorldMatrix());
 				faceVertices.Add(vertexPosition);
 				maxDistFromLowestZ = Math.Max(maxDistFromLowestZ, vertexPosition.Z - lowestVertexPosition.Z);
 			}
