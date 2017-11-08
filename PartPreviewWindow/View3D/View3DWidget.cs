@@ -100,7 +100,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private PrinterTabPage printerTabPage;
 
-		public View3DWidget(PrinterConfig printer, BedConfig sceneContext, AutoRotate autoRotate, ViewControls3D viewControls3D, ThemeConfig theme, PrinterTabBase printerTabBase, MeshViewerWidget.EditorType editorType = MeshViewerWidget.EditorType.Part)
+		public View3DWidget(PrinterConfig printer, BedConfig sceneContext, AutoRotate autoRotate, ViewControls3D viewControls3D, ThemeConfig theme, PartTabPage printerTabBase, MeshViewerWidget.EditorType editorType = MeshViewerWidget.EditorType.Part)
 		{
 			var smallMarginButtonFactory = theme.SmallMarginButtonFactory;
 
@@ -796,27 +796,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
-		}
-
-		public override void OnVisibleChanged(EventArgs e)
-		{
-			var dragDropData = ApplicationController.Instance.DragDropData;
-			if (this.Visible)
-			{
-				// Set reference on show
-				dragDropData.View3DWidget = this;
-				dragDropData.SceneContext = sceneContext;
-			}
-			else
-			{
-				// Clear state on hide
-				if (dragDropData.View3DWidget == this)
-				{
-					dragDropData.Reset();
-				}
-			}
-
-			base.OnVisibleChanged(e);
 		}
 
 		private GuiWidget topMostParent;

@@ -429,7 +429,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						var bedConfig = new BedConfig();
 
 						var newTab = partPreviewContent.CreatePartTab(firstItem.Name, bedConfig, theme);
-						if (newTab.TabPage is PrinterTabBase printerTab)
+						if (newTab.TabPage is PartTabPage printerTab)
 						{
 							bedConfig.Scene.Children.Modify(list =>
 							{

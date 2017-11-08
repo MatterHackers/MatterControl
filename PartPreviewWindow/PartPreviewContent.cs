@@ -56,6 +56,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			tabControl = ApplicationController.Instance.Theme.CreateTabControl(2);
 
+			tabControl.TabBar.TabIndexChanged += (s, e) =>
+			{
+				if (tabControl.GetTabPage(tabControl.SelectedTabIndex) is PartTabPage tabPage)
+				{
+					var dragDropData = ApplicationController.Instance.DragDropData;
+
+					// Set reference on tab change
+					dragDropData.View3DWidget = tabPage.view3DWidget;
+					dragDropData.SceneContext = tabPage.sceneContext;
+				}
+			};
+
 			var separator = tabControl.Children<HorizontalLine>().FirstOrDefault();
 			separator.BackgroundColor = ApplicationController.Instance.Theme.SlightShade;
 
@@ -197,7 +209,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var partTab = new MainTab(
 				tabTitle,
 				"newPart" + tabControl.TabCount,
-				new PrinterTabBase(null, sceneContext, theme, "xxxxx"),
+				new PartTabPage(null, sceneContext, theme, "xxxxx"),
 				"https://i.imgur.com/nkeYgfU.png");
 
 			theme.SetPrinterTabStyles(partTab);

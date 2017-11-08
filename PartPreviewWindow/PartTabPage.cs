@@ -28,34 +28,26 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.IO;
-using MatterHackers.Agg;
-using MatterHackers.Agg.ImageProcessing;
-using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
-using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.MatterControl.PrintQueue;
-using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class PrinterTabBase : TabPage
+	public class PartTabPage : TabPage
 	{
 		internal View3DWidget view3DWidget;
 
 		protected ViewControls3D viewControls3D;
 
-		protected BedConfig sceneContext;
+		internal BedConfig sceneContext;
 		protected ThemeConfig theme;
 
 		protected GuiWidget view3DContainer;
 		protected FlowLayoutWidget topToBottom;
 		protected FlowLayoutWidget leftToRight;
 
-		public PrinterTabBase(PrinterConfig printer, BedConfig sceneContext, ThemeConfig theme, string tabTitle)
+		public PartTabPage(PrinterConfig printer, BedConfig sceneContext, ThemeConfig theme, string tabTitle)
 			: base (tabTitle)
 		{
 			this.sceneContext = sceneContext;
