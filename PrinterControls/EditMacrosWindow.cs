@@ -36,224 +36,78 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.FieldValidation;
 using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
 	public enum MacroUiLocation { Controls, Extruder_1, Extruder_2, Extruder_3, Extruder_4 }
 
-	public class EditMacrosWindow : SystemWindow
+	public class MacroDetailPage : WizardPage
 	{
-		public GCodeMacro ActiveMacro;
-		private static EditMacrosWindow editMacrosWindow = null;
-		PrinterSettings printerSettings;
+		private List<FormField> formFields;
+		private PrinterSettings printerSettings;
 
-		public EditMacrosWindow(PrinterSettings printerSettings)
-			: base(560, 420)
+		public MacroDetailPage(GCodeMacro gcodeMacro, PrinterSettings printerSettings)
 		{
+			// Form validation fields
+			MHTextEditWidget macroNameInput;
+			MHTextEditWidget macroCommandInput;
+			TextWidget macroCommandError;
+			TextWidget macroNameError;
+
+			this.HeaderText = "Edit Macro".Localize();
 			this.printerSettings = printerSettings;
-			AlwaysOnTopOfMain = true;
-			Title = "Macro Editor".Localize();
-			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-			ChangeToMacroList();
-			ShowAsSystemWindow();
-			MinimumSize = new Vector2(360, 420);
-		}
 
-		public static void Show()
-		{
-			if (editMacrosWindow == null)
-			{
-				editMacrosWindow = new EditMacrosWindow(ActiveSliceSettings.Instance);
-				editMacrosWindow.Closed += (popupWindowSender, popupWindowSenderE) => { editMacrosWindow = null; };
-			}
-			else
-			{
-				editMacrosWindow.BringToFront();
-			}
-		}
+			var elementMargin = new BorderDouble(top: 3);
 
-		public void ChangeToMacroDetail(GCodeMacro macro)
-		{
-			this.ActiveMacro = macro;
-			UiThread.RunOnIdle(() =>
+			contentRow.Padding += 3;
+
+			contentRow.AddChild(new TextWidget("Macro Name".Localize() + ":", 0, 0, 12)
 			{
-				this.RemoveAllChildren();
-				this.AddChild(new MacroDetailWidget(printerSettings, this));
-				this.Invalidate();
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				HAnchor = HAnchor.Stretch,
+				Margin = new BorderDouble(0, 0, 0, 1)
 			});
-		}
 
-		public void ChangeToMacroList()
-		{
-			this.ActiveMacro = null;
-			UiThread.RunOnIdle(DoChangeToMacroList);
-		}
-
-		public void RefreshMacros()
-		{
-			printerSettings.Save();
-			ApplicationController.Instance.ReloadAll();
-		}
-
-		private void DoChangeToMacroList()
-		{
-			GuiWidget macroListWidget = new MacroListWidget(printerSettings, this);
-			this.RemoveAllChildren();
-			this.AddChild(macroListWidget);
-			this.Invalidate();
-		}
-	}
-
-	public class MacroDetailWidget : GuiWidget
-	{
-		DropDownList macroUiLocation;
-		private LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
-		private TextWidget macroCommandError;
-		private MHTextEditWidget macroCommandInput;
-		private TextWidget macroNameError;
-		private MHTextEditWidget macroNameInput;
-		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
-		private EditMacrosWindow windowController;
-		PrinterSettings printerSettings;
-
-		public MacroDetailWidget(PrinterSettings printerSettings, EditMacrosWindow windowController)
-		{
-			this.printerSettings = printerSettings;
-			this.windowController = windowController;
-
-			linkButtonFactory.fontSize = 10;
-
-			FlowLayoutWidget topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			topToBottom.AnchorAll();
-			topToBottom.Padding = new BorderDouble(3, 0, 3, 5);
-
-			FlowLayoutWidget headerRow = new FlowLayoutWidget(FlowDirection.LeftToRight);
-			headerRow.HAnchor = HAnchor.Stretch;
-			headerRow.Margin = new BorderDouble(0, 3, 0, 0);
-			headerRow.Padding = new BorderDouble(0, 3, 0, 3);
-
+			contentRow.AddChild(macroNameInput = new MHTextEditWidget(GCodeMacro.FixMacroName(gcodeMacro.Name))
 			{
-				string editMacroLabel = "Edit Macro".Localize();
-				string editMacroLabelFull = string.Format("{0}:", editMacroLabel);
-				TextWidget elementHeader = new TextWidget(editMacroLabelFull, pointSize: 14);
-				elementHeader.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-				elementHeader.HAnchor = HAnchor.Stretch;
-				elementHeader.VAnchor = Agg.UI.VAnchor.Bottom;
-				headerRow.AddChild(elementHeader);
-			}
+				HAnchor = HAnchor.Stretch
+			});
 
-			topToBottom.AddChild(headerRow);
-
-			FlowLayoutWidget presetsFormContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
+			contentRow.AddChild(macroNameError = new TextWidget("Give the macro a name".Localize() + ".", 0, 0, 10)
 			{
-				presetsFormContainer.HAnchor = HAnchor.Stretch;
-				presetsFormContainer.VAnchor = VAnchor.Stretch;
-				presetsFormContainer.Padding = new BorderDouble(3);
-				presetsFormContainer.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
-			}
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				HAnchor = HAnchor.Stretch,
+				Margin = elementMargin
+			});
 
-			topToBottom.AddChild(presetsFormContainer);
-
-			presetsFormContainer.AddChild(CreateMacroNameContainer());
-			presetsFormContainer.AddChild(CreateMacroCommandContainer());
-			presetsFormContainer.AddChild(CreateMacroActionEdit());
-
-			Button addMacroButton = textImageButtonFactory.Generate("Save".Localize());
-			addMacroButton.Click += SaveMacro_Click;
-
-			Button cancelPresetsButton = textImageButtonFactory.Generate("Cancel".Localize());
-			cancelPresetsButton.Click += (sender, e) =>
+			contentRow.AddChild(new TextWidget("Macro Commands".Localize() + ":", 0, 0, 12)
 			{
-				UiThread.RunOnIdle(() =>
-				{
-					windowController.ChangeToMacroList();
-				});
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				HAnchor = HAnchor.Stretch,
+				Margin = new BorderDouble(0, 0, 0, 1)
+			});
+
+			macroCommandInput = new MHTextEditWidget(gcodeMacro.GCode, pixelHeight: 120, multiLine: true, typeFace: ApplicationController.MonoSpacedTypeFace)
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch
 			};
-
-			FlowLayoutWidget buttonRow = new FlowLayoutWidget();
-			buttonRow.HAnchor = HAnchor.Stretch;
-			buttonRow.Padding = new BorderDouble(0, 3);
-
-			GuiWidget hButtonSpacer = new GuiWidget();
-			hButtonSpacer.HAnchor = HAnchor.Stretch;
-
-			buttonRow.AddChild(addMacroButton);
-			buttonRow.AddChild(hButtonSpacer);
-			buttonRow.AddChild(cancelPresetsButton);
-
-			topToBottom.AddChild(buttonRow);
-			AddChild(topToBottom);
-			this.AnchorAll();
-		}
-
-		private FlowLayoutWidget CreateMacroCommandContainer()
-		{
-			FlowLayoutWidget container = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			container.Margin = new BorderDouble(0, 5);
-			BorderDouble elementMargin = new BorderDouble(top: 3);
-
-			string macroCommandLabelTxt = "Macro Commands".Localize();
-			string macroCommandLabelTxtFull = string.Format("{0}:", macroCommandLabelTxt);
-			TextWidget macroCommandLabel = new TextWidget(macroCommandLabelTxtFull, 0, 0, 12);
-			macroCommandLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			macroCommandLabel.HAnchor = HAnchor.Stretch;
-			macroCommandLabel.Margin = new BorderDouble(0, 0, 0, 1);
-
-			macroCommandInput = new MHTextEditWidget(windowController.ActiveMacro.GCode, pixelHeight: 120, multiLine: true, typeFace: ApplicationController.MonoSpacedTypeFace);
-			macroCommandInput.DrawFromHintedCache();
-			macroCommandInput.HAnchor = HAnchor.Stretch;
-			macroCommandInput.VAnchor = VAnchor.Stretch;
 			macroCommandInput.ActualTextEditWidget.VAnchor = VAnchor.Stretch;
+			macroCommandInput.DrawFromHintedCache();
+			contentRow.AddChild(macroCommandInput);
 
-			string shouldBeGCodeLabel = "This should be in 'G-Code'".Localize();
-			string shouldBeGCodeLabelFull = string.Format("{0}.", shouldBeGCodeLabel);
-			macroCommandError = new TextWidget(shouldBeGCodeLabelFull, 0, 0, 10);
-			macroCommandError.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			macroCommandError.HAnchor = HAnchor.Stretch;
-			macroCommandError.Margin = elementMargin;
+			contentRow.AddChild(macroCommandError = new TextWidget("This should be in 'G-Code'".Localize() + ".", 0, 0, 10)
+			{
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				HAnchor = HAnchor.Stretch,
+				Margin = elementMargin
+			});
 
-			container.AddChild(macroCommandLabel);
-			container.AddChild(macroCommandInput);
-			container.AddChild(macroCommandError);
-			container.HAnchor = HAnchor.Stretch;
-			container.VAnchor = VAnchor.Stretch;
-			return container;
-		}
-
-		private FlowLayoutWidget CreateMacroNameContainer()
-		{
-			FlowLayoutWidget container = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			container.Margin = new BorderDouble(0, 5);
-			BorderDouble elementMargin = new BorderDouble(top: 3);
-
-			string macroNameLabelTxtFull = string.Format("{0}:", "Macro Name".Localize());
-			TextWidget macroNameLabel = new TextWidget(macroNameLabelTxtFull, 0, 0, 12);
-			macroNameLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			macroNameLabel.HAnchor = HAnchor.Stretch;
-			macroNameLabel.Margin = new BorderDouble(0, 0, 0, 1);
-
-			macroNameInput = new MHTextEditWidget(GCodeMacro.FixMacroName(windowController.ActiveMacro.Name));
-			macroNameInput.HAnchor = HAnchor.Stretch;
-
-			string giveMacroANameLabel = "Give the macro a name".Localize();
-			string giveMacroANameLabelFull = string.Format("{0}.", giveMacroANameLabel);
-			macroNameError = new TextWidget(giveMacroANameLabelFull, 0, 0, 10);
-			macroNameError.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			macroNameError.HAnchor = HAnchor.Stretch;
-			macroNameError.Margin = elementMargin;
-
-			container.AddChild(macroNameLabel);
-			container.AddChild(macroNameInput);
-			container.AddChild(macroNameError);
-			container.HAnchor = HAnchor.Stretch;
-			return container;
-		}
-
-		FlowLayoutWidget CreateMacroActionEdit()
-		{
-			FlowLayoutWidget container = new FlowLayoutWidget();
-			container.Margin = new BorderDouble(0, 5);
+			var container = new FlowLayoutWidget
+			{
+				Margin = new BorderDouble(0, 5),
+				HAnchor = HAnchor.Stretch
+			};
 
 			container.AddChild(new TextWidget("Where to show this macro:")
 			{
@@ -261,7 +115,7 @@ namespace MatterHackers.MatterControl
 				VAnchor = VAnchor.Center
 			});
 
-			macroUiLocation = new DropDownList("Default", Direction.Up)
+			var macroUiLocation = new DropDownList("Default", Direction.Up)
 			{
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
 				Margin = new BorderDouble(5, 0),
@@ -272,124 +126,123 @@ namespace MatterHackers.MatterControl
 				macroUiLocation.AddItem(location.ToString().Replace("_", " ").Localize(), location.ToString());
 			}
 
-			macroUiLocation.SelectedValue = windowController.ActiveMacro.MacroUiLocation.ToString();
+			macroUiLocation.SelectedValue = gcodeMacro.MacroUiLocation.ToString();
 
 			container.AddChild(macroUiLocation);
-			container.HAnchor = HAnchor.Stretch;
-			return container;
-		}
 
-		private void SaveActiveMacro()
-		{
-			windowController.ActiveMacro.Name = macroNameInput.Text;
-			windowController.ActiveMacro.GCode = macroCommandInput.Text;
-			MacroUiLocation result;
-			if (!Enum.TryParse(macroUiLocation.SelectedValue, out result))
-			{
-				result = MacroUiLocation.Controls;
-			}
-			windowController.ActiveMacro.MacroUiLocation = result;
+			contentRow.AddChild(container);
 
-			if (!printerSettings.Macros.Contains(windowController.ActiveMacro))
+			Button addMacroButton = textImageButtonFactory.Generate("Save".Localize());
+			addMacroButton.Click += (s, e) =>
 			{
-				printerSettings.Macros.Add(windowController.ActiveMacro);
-			}
-		}
-
-		private void SaveMacro_Click(object sender, EventArgs mouseEvent)
-		{
-			UiThread.RunOnIdle(() =>
-			{
-				if (ValidateMacroForm())
+				UiThread.RunOnIdle(() =>
 				{
-					SaveActiveMacro();
+					if (ValidateMacroForm())
+					{
+						// SaveActiveMacro
+						gcodeMacro.Name = macroNameInput.Text;
+						gcodeMacro.GCode = macroCommandInput.Text;
 
-					windowController.RefreshMacros();
-					windowController.ChangeToMacroList();
-				}
-			});
+						MacroUiLocation result;
+						if (!Enum.TryParse(macroUiLocation.SelectedValue, out result))
+						{
+							result = MacroUiLocation.Controls;
+						}
+						gcodeMacro.MacroUiLocation = result;
+
+						if (!printerSettings.Macros.Contains(gcodeMacro))
+						{
+							printerSettings.Macros.Add(gcodeMacro);
+						}
+
+						this.WizardWindow.ChangeToPage(new MacroListPage(printerSettings));
+					}
+				});
+			};
+
+			this.AddPageAction(addMacroButton);
+
+			// Define field validation
+			var validationMethods = new ValidationMethods();
+			var stringValidationHandlers = new FormField.ValidationHandler[] { validationMethods.StringIsNotEmpty };
+
+			formFields = new List<FormField>
+			{
+				new FormField(macroNameInput, macroNameError, stringValidationHandlers),
+				new FormField(macroCommandInput, macroCommandError, stringValidationHandlers)
+			};
+		}
+
+		protected override void OnCancel(out bool abortCancel)
+		{
+			abortCancel = true;
+			this.WizardWindow.ChangeToPage(new MacroListPage(printerSettings));
 		}
 
 		private bool ValidateMacroForm()
 		{
-			ValidationMethods validationMethods = new ValidationMethods();
-
-			List<FormField> formFields = new List<FormField> { };
-			FormField.ValidationHandler[] stringValidationHandlers = new FormField.ValidationHandler[] { validationMethods.StringIsNotEmpty };
-			FormField.ValidationHandler[] nameValidationHandlers = new FormField.ValidationHandler[] { validationMethods.StringIsNotEmpty, validationMethods.StringHasNoSpecialChars };
-
-			formFields.Add(new FormField(macroNameInput, macroNameError, stringValidationHandlers));
-			formFields.Add(new FormField(macroCommandInput, macroCommandError, stringValidationHandlers));
-
 			bool formIsValid = true;
 			foreach (FormField formField in formFields)
 			{
 				formField.FieldErrorMessageWidget.Visible = false;
-				bool fieldIsValid = formField.Validate();
-				if (!fieldIsValid)
+
+				if (!formField.Validate())
 				{
 					formIsValid = false;
 				}
 			}
+
 			return formIsValid;
 		}
 	}
 
-	public class MacroListWidget : GuiWidget
+	public class MacroListPage : WizardPage
 	{
-		private LinkButtonFactory linkButtonFactory = new LinkButtonFactory();
-		private TextImageButtonFactory textImageButtonFactory = new TextImageButtonFactory();
-		private EditMacrosWindow windowController;
-		PrinterSettings printerSettings;
-
-		public MacroListWidget(PrinterSettings printerSettings, EditMacrosWindow windowController)
+		public MacroListPage(PrinterSettings printerSettings)
+			: base ("Close")
 		{
-			this.windowController = windowController;
+			this.WindowTitle = "Macro Editor".Localize();
+			this.HeaderText = "Macro Presets".Localize() + ":";
 
-			linkButtonFactory.fontSize = 10;
-			FlowLayoutWidget topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			topToBottom.AnchorAll();
-			topToBottom.Padding = new BorderDouble(3, 0, 3, 5);
+			var theme = ApplicationController.Instance.Theme;
+			var linkButtonFactory = theme.LinkButtonFactory;
 
-			FlowLayoutWidget headerRow = new FlowLayoutWidget(FlowDirection.LeftToRight);
-			headerRow.HAnchor = HAnchor.Stretch;
-			headerRow.Margin = new BorderDouble(0, 3, 0, 0);
-			headerRow.Padding = new BorderDouble(0, 3, 0, 3);
+			this.RebuildList(printerSettings, linkButtonFactory);
 
+			Button addMacroButton = textImageButtonFactory.Generate("Add".Localize(), AggContext.StaticData.LoadIcon("fa-plus_16.png", IconColor.Theme));
+			addMacroButton.ToolTipText = "Add a new Macro".Localize();
+			addMacroButton.Click += (s, e) =>
 			{
-				string macroPresetsLabel = "Macro Presets".Localize();
-				string macroPresetsLabelFull = string.Format("{0}:", macroPresetsLabel);
-				TextWidget elementHeader = new TextWidget(macroPresetsLabelFull, pointSize: 14);
-				elementHeader.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-				elementHeader.HAnchor = HAnchor.Stretch;
-				elementHeader.VAnchor = Agg.UI.VAnchor.Bottom;
-				headerRow.AddChild(elementHeader);
-			}
+				this.WizardWindow.ChangeToPage(
+					new MacroDetailPage(
+						new GCodeMacro()
+						{
+							Name = "Home All",
+							GCode = "G28 ; Home All Axes"
+						},
+						printerSettings));
+			};
 
-			topToBottom.AddChild(headerRow);
+			this.AddPageAction(addMacroButton);
+		}
 
-			FlowLayoutWidget presetsFormContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			{
-				presetsFormContainer.HAnchor = HAnchor.Stretch;
-				presetsFormContainer.VAnchor = VAnchor.Stretch;
-				presetsFormContainer.Padding = new BorderDouble(3);
-				presetsFormContainer.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
-			}
-
-			topToBottom.AddChild(presetsFormContainer);
+		private void RebuildList(PrinterSettings printerSettings, LinkButtonFactory linkButtonFactory)
+		{
+			this.contentRow.CloseAllChildren();
 
 			if (printerSettings?.Macros != null)
 			{
 				foreach (GCodeMacro macro in printerSettings.Macros)
 				{
-					FlowLayoutWidget macroRow = new FlowLayoutWidget();
-					macroRow.Margin = new BorderDouble(3, 0, 3, 3);
-					macroRow.HAnchor = Agg.UI.HAnchor.Stretch;
-					macroRow.Padding = new BorderDouble(3);
-					macroRow.BackgroundColor = Color.White;
+					var macroRow = new FlowLayoutWidget
+					{
+						Margin = new BorderDouble(3, 0, 3, 3),
+						HAnchor = HAnchor.Stretch,
+						Padding = new BorderDouble(3),
+						BackgroundColor = Color.White
+					};
 
-					TextWidget buttonLabel = new TextWidget(GCodeMacro.FixMacroName(macro.Name));
-					macroRow.AddChild(buttonLabel);
+					macroRow.AddChild(new TextWidget(GCodeMacro.FixMacroName(macro.Name)));
 
 					macroRow.AddChild(new HorizontalSpacer());
 
@@ -399,9 +252,10 @@ namespace MatterHackers.MatterControl
 
 					Button editLink = linkButtonFactory.Generate("edit".Localize());
 					editLink.Margin = new BorderDouble(right: 5);
-					editLink.Click += (sender, e) =>
+					editLink.Click += (s, e) =>
 					{
-						windowController.ChangeToMacroDetail(localMacroReference);
+						this.WizardWindow.ChangeToPage(
+							new MacroDetailPage(localMacroReference, printerSettings));
 					};
 					macroRow.AddChild(editLink);
 
@@ -409,47 +263,13 @@ namespace MatterHackers.MatterControl
 					removeLink.Click += (sender, e) =>
 					{
 						printerSettings.Macros.Remove(localMacroReference);
-
-						windowController.RefreshMacros();
-						windowController.ChangeToMacroList();
+						this.RebuildList(printerSettings, linkButtonFactory);
 					};
 					macroRow.AddChild(removeLink);
 
-					presetsFormContainer.AddChild(macroRow);
+					contentRow.AddChild(macroRow);
 				}
 			}
-
-			Button addMacroButton = textImageButtonFactory.Generate("Add".Localize(), AggContext.StaticData.LoadIcon("icon_circle_plus.png", IconColor.Theme));
-			addMacroButton.ToolTipText = "Add a new Macro".Localize();
-			addMacroButton.Click += (s, e) =>
-			{
-				windowController.ChangeToMacroDetail(new GCodeMacro()
-				{
-					Name = "Home All",
-					GCode = "G28 ; Home All Axes"
-				});
-			};
-
-			Button cancelPresetsButton = textImageButtonFactory.Generate("Close".Localize());
-			cancelPresetsButton.Click += (sender, e) =>
-			{
-				UiThread.RunOnIdle(() => this.windowController.Close());
-			};
-
-			FlowLayoutWidget buttonRow = new FlowLayoutWidget();
-			buttonRow.HAnchor = HAnchor.Stretch;
-			buttonRow.Padding = new BorderDouble(0, 3);
-
-			GuiWidget hButtonSpacer = new GuiWidget();
-			hButtonSpacer.HAnchor = HAnchor.Stretch;
-
-			buttonRow.AddChild(addMacroButton);
-			buttonRow.AddChild(hButtonSpacer);
-			buttonRow.AddChild(cancelPresetsButton);
-
-			topToBottom.AddChild(buttonRow);
-			AddChild(topToBottom);
-			this.AnchorAll();
 		}
 	}
 }
