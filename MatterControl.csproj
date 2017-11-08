@@ -125,6 +125,7 @@
     <Compile Include="PartPreviewWindow\View3D\Actions\PaintMaterialEditor.cs" />
     <Compile Include="PartPreviewWindow\View3D\Actions\SubtractEditor.cs" />
     <Compile Include="PartPreviewWindow\View3D\SlicePopupMenu.cs" />
+    <Compile Include="PrinterControls\MacroDetailPage.cs" />
     <Compile Include="PrinterControls\PrinterConnections\PrinterSetup.cs" />
     <Compile Include="Utilities\InspectForm.cs" Condition="'$(Configuration)' == 'Debug'">
       <SubType>Form</SubType>
@@ -330,7 +331,6 @@
     <Compile Include="PartPreviewWindow\PlatingHelper.cs" />
     <Compile Include="PrinterControls\ControlWidgets\MacroControls.cs" />
     <Compile Include="PrinterControls\EditManualMovementSpeedsWindow.cs" />
-    <Compile Include="PrinterControls\EditMacrosWindow.cs" />
     <Compile Include="SlicerConfiguration\SlicerMapping\EngineMappingCura.cs" />
     <Compile Include="SlicerConfiguration\SlicerMapping\EngineMappingSlic3r.cs" />
     <Compile Include="SlicerConfiguration\SlicerMapping\MappingClasses.cs" />
