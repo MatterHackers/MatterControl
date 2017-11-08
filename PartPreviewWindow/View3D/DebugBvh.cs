@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			Vector3 lineCenter = (start + end) / 2;
 
 			Vector3 delta = start - end;
-			Matrix4X4 rotateTransform = Matrix4X4.CreateRotation(new Quaternion(Vector3.UnitX + new Vector3(.0001, -.00001, .00002), delta.GetNormal()));
+			Matrix4X4 rotateTransform = Matrix4X4.CreateRotation(new Quaternion(delta.GetNormal(), Vector3.UnitX + new Vector3(.0001, -.00001, .00002)));
 			Matrix4X4 scaleTransform = Matrix4X4.CreateScale((end - start).Length, 1, 1);
 			Matrix4X4 lineTransform = scaleTransform * rotateTransform * Matrix4X4.CreateTranslation(lineCenter) * transform;
 

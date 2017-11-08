@@ -29,6 +29,9 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading;
+using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
@@ -56,29 +59,44 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		internal float[] lightDirection1 = { 1, 1, 1, 0.0f };
 	}
 
-	public class ViewRtzControl : GuiWidget
+	public class TumbleCubeControl : GuiWidget
 	{
 		LightingData lighting = new LightingData();
-		Mesh cube = PlatonicSolids.CreateCube(1, 1, 1);
-		WorldView viewToControlAndShow;
+		Mesh cube = PlatonicSolids.CreateCube(3, 3, 3);
+		IPrimitive cubeTraceData;
+		InteractionLayer interactionLayer;
+		WorldView cubeWorld;
 
-		public ViewRtzControl(WorldView viewToControlAndShow)
-			: base(200, 200)
+		public TumbleCubeControl(InteractionLayer interactionLayer)
+			: base(100, 100)
 		{
-			this.viewToControlAndShow = viewToControlAndShow;
+			this.interactionLayer = interactionLayer;
 
 			TextureFace(cube.Faces[0], "Top");
-			TextureFace(cube.Faces[1], "Left");
-			TextureFace(cube.Faces[2], "Right");
-			TextureFace(cube.Faces[3], "Bottom");
-			TextureFace(cube.Faces[4], "Back");
+			TextureFace(cube.Faces[1], "Left", Matrix4X4.CreateRotationZ(MathHelper.Tau / 4));
+			TextureFace(cube.Faces[2], "Right", Matrix4X4.CreateRotationZ(-MathHelper.Tau/4));
+			TextureFace(cube.Faces[3], "Bottom", Matrix4X4.CreateRotationZ(MathHelper.Tau / 2));
+			TextureFace(cube.Faces[4], "Back", Matrix4X4.CreateRotationZ(MathHelper.Tau / 2));
 			TextureFace(cube.Faces[5], "Front");
+
+			cubeTraceData = cube.CreateTraceData();
 		}
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{
-			var rotationCubeBounds = this.TransformToScreenSpace(LocalBounds);
-			Render(rotationCubeBounds);
+			var screenSpcaeBounds = this.TransformToScreenSpace(LocalBounds);
+			cubeWorld = new WorldView(screenSpcaeBounds.Width, screenSpcaeBounds.Height);
+
+			var forward = -Vector3.UnitZ;
+			var directionForward = Vector3.TransformNormal(forward, interactionLayer.World.InverseModelviewMatrix);
+
+			var up = Vector3.UnitY;
+			var directionUp = Vector3.TransformNormal(up, interactionLayer.World.InverseModelviewMatrix);
+			cubeWorld.RotationMatrix = Matrix4X4.LookAt(Vector3.Zero, directionForward, directionUp);
+
+			InteractionLayer.SetGlContext(cubeWorld, screenSpcaeBounds, lighting);
+			GLHelper.Render(cube, Color.White, Matrix4X4.Identity, RenderTypes.Shaded);
+			InteractionLayer.UnsetGlContext();
 
 			base.OnDraw(graphics2D);
 		}
@@ -86,6 +104,62 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
 		{
 			base.OnMouseDown(mouseEvent);
+
+			Ray ray = cubeWorld.GetRayForLocalBounds(mouseEvent.Position);
+			IntersectInfo info = cubeTraceData.GetClosestIntersection(ray);
+
+			if (info != null)
+			{
+				var normal = ((TriangleShape)info.closestHitObject).Plane.PlaneNormal;
+				var directionForward = -new Vector3(normal);
+
+				var directionUp = Vector3.UnitY;
+				if (directionForward.Equals(Vector3.UnitX, .001))
+				{
+					directionUp = Vector3.UnitZ;
+				}
+				else if (directionForward.Equals(-Vector3.UnitX, .001))
+				{
+					directionUp = Vector3.UnitZ;
+				}
+				else if (directionForward.Equals(Vector3.UnitY, .001))
+				{
+					directionUp = Vector3.UnitZ;
+				}
+				else if (directionForward.Equals(-Vector3.UnitY, .001))
+				{
+					directionUp = Vector3.UnitZ;
+				}
+				else if (directionForward.Equals(Vector3.UnitZ, .001))
+				{
+					directionUp = -Vector3.UnitY;
+				}
+
+				var look = Matrix4X4.LookAt(Vector3.Zero, directionForward, directionUp);
+
+				var start = new Quaternion(interactionLayer.World.RotationMatrix);
+				var end = new Quaternion(look);
+
+				Task.Run(() =>
+				{
+					double duration = .25;
+					var timer = Stopwatch.StartNew();
+					var time = timer.Elapsed.TotalSeconds;
+					while (time < duration)
+					{
+						var current = Quaternion.Slerp(start, end, time / duration);
+						UiThread.RunOnIdle(() =>
+						{
+							interactionLayer.World.RotationMatrix = Matrix4X4.CreateRotation(current);
+							Invalidate();
+						});
+						time = timer.Elapsed.TotalSeconds;
+						Thread.Sleep(10);
+					}
+					interactionLayer.World.RotationMatrix = Matrix4X4.CreateRotation(end);
+					Invalidate();
+				});
+			}
 		}
 
 		public override void OnMouseMove(MouseEventArgs mouseEvent)
@@ -99,36 +173,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public override void OnMouseUp(MouseEventArgs mouseEvent)
 		{
 			base.OnMouseUp(mouseEvent);
+
+			interactionLayer.Focus();
 		}
 
-		private static void TextureFace(Face frontFace, string name)
+		private static void TextureFace(Face face, string name, Matrix4X4? initialRotation = null)
 		{
-			ImageBuffer frontImage = new ImageBuffer(256, 256);
-			var frontGraphics = frontImage.NewGraphics2D();
+			ImageBuffer textureToUse = new ImageBuffer(256, 256);
+			var frontGraphics = textureToUse.NewGraphics2D();
 			frontGraphics.Clear(Color.White);
 			frontGraphics.DrawString(name,
-				frontImage.Width / 2,
-				frontImage.Height / 2,
+				textureToUse.Width / 2,
+				textureToUse.Height / 2,
 				60,
 				justification: Agg.Font.Justification.Center,
 				baseline: Agg.Font.Baseline.BoundsCenter);
-			MeshHelper.PlaceTextureOnFace(frontFace, frontImage);
-		}
-
-		public void Render(RectangleDouble rotationCubeBounds)
-		{
-			var rotatioView = new WorldView(rotationCubeBounds.Width, rotationCubeBounds.Height);
-
-			var forward = -Vector3.UnitZ;
-			var directionForward = Vector3.TransformNormal(forward, viewToControlAndShow.InverseModelviewMatrix);
-
-			var up = Vector3.UnitY;
-			var directionUp = Vector3.TransformNormal(up, viewToControlAndShow.InverseModelviewMatrix);
-			rotatioView.RotationMatrix = Matrix4X4.LookAt(Vector3.Zero, directionForward, directionUp);
-
-			InteractionLayer.SetGlContext(rotatioView, rotationCubeBounds, lighting);
-			GLHelper.Render(cube, Color.White, Matrix4X4.Identity, RenderTypes.Shaded);
-			InteractionLayer.UnsetGlContext();
+			MeshHelper.PlaceTextureOnFace(face, textureToUse, MeshHelper.GetMaxFaceProjection(face, textureToUse, initialRotation));
 		}
 	}
 
@@ -167,12 +227,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			labelContainer.Selectable = false;
 			labelContainer.AnchorAll();
 			this.AddChild(labelContainer);
+		}
 
-			this.AddChild(new ViewRtzControl(world)
+		public override void OnLoad(EventArgs args)
+		{
+			this.AddChild(new TumbleCubeControl(this)
 			{
+				Margin = new BorderDouble(50, 0, 0, 50),
 				VAnchor = VAnchor.Top,
 				HAnchor = HAnchor.Left,
 			});
+
+			base.OnLoad(args);
 		}
 
 		internal void SetRenderTarget(GuiWidget renderSource)
