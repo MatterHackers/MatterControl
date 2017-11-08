@@ -596,7 +596,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					case SliceSettingData.DataEditTypes.LIST:
 						uiField = new ListField()
 						{
-							ListItems = settingData.ExtraSettings.Split(',').ToList()
+							ListItems = settingData.ListValues.Split(',').ToList()
 						};
 						break;
 
