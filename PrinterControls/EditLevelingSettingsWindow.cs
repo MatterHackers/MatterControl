@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl
 			var textImageButtonFactory = ApplicationController.Instance.Theme.ButtonFactory;
 
 			AlwaysOnTopOfMain = true;
-			Title = LocalizedString.Get("Leveling Settings".Localize());
+			Title = "Leveling Settings".Localize();
 
 			FlowLayoutWidget topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			topToBottom.AnchorAll();
@@ -63,8 +63,7 @@ namespace MatterHackers.MatterControl
 			headerRow.Padding = new BorderDouble(0, 3, 0, 3);
 
 			{
-				string movementSpeedsLabel = LocalizedString.Get("Sampled Positions".Localize());
-				TextWidget elementHeader = new TextWidget(string.Format("{0}:", movementSpeedsLabel), pointSize: 14);
+				var elementHeader = new TextWidget("Sampled Positions".Localize() + ":", pointSize: 14);
 				elementHeader.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 				elementHeader.HAnchor = HAnchor.Stretch;
 				elementHeader.VAnchor = Agg.UI.VAnchor.Bottom;

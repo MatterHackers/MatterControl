@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 		private Button homeYButton;
 		private Button homeZButton;
 		internal JogControls jogControls;
-		
+
 		// Provides a list of DisableableWidgets controls that can be toggled on/off at runtime
 		internal List<DisableableWidget> DisableableWidgets = new List<DisableableWidget>();
 

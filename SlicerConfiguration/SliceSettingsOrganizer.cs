@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public bool ResetAtEndOfPrint { get; set; } = false;
 
 		public bool RebuildGCodeOnChange { get; set; } = true;
-		
+
 		public bool ReloadUiWhenChanged { get; set; } = false;
 
 		public SliceSettingData(string slicerConfigName, string presentationName, DataEditTypes dataEditType, string extraSettings = "", string helpText = "")
@@ -85,7 +85,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.SlicerConfigName = slicerConfigName;
 			this.PresentationName = presentationName;
 			this.DataEditType = dataEditType;
-			this.HelpText = LocalizedString.Get(helpText);
+			this.HelpText = helpText.Localize();
 		}
 	}
 
@@ -106,7 +106,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public string Name { get; }
 
 		public List<OrganizerSubGroup> SubGroupsList { get; set; } = new List<OrganizerSubGroup>();
-		
+
 		public OrganizerGroup(string displayName)
 		{
 			this.Name = displayName;

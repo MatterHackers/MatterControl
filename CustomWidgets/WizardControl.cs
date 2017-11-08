@@ -69,8 +69,7 @@ namespace MatterHackers.MatterControl
 			headerRow.Padding = new BorderDouble(0, 3, 0, 3);
 
 			{
-				string titleString = LocalizedString.Get("Title Stuff".Localize());
-				stepDescriptionWidget = new TextWidget(titleString, pointSize: 14 * extraTextScaling);
+				stepDescriptionWidget = new TextWidget("", pointSize: 14 * extraTextScaling);
 				stepDescriptionWidget.AutoExpandBoundsToText = true;
 				stepDescriptionWidget.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 				stepDescriptionWidget.HAnchor = HAnchor.Stretch;
