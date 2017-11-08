@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2017, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,7 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg.Platform;
 using MatterHackers.MatterControl;
 
 namespace MatterHackers.Localizations
@@ -62,11 +61,6 @@ namespace MatterHackers.Localizations
 			}
 		}
 
-		public static string Get(string englishText)
-		{
-			return MatterControlTranslationMap.Translate(englishText);
-		}
-
 		public static void ResetTranslationMap()
 		{
 			MatterControlTranslationMap = new TranslationMap("Translations", UserSettings.Instance.Language);
@@ -74,7 +68,7 @@ namespace MatterHackers.Localizations
 
 		public static string Localize(this string englishString)
 		{
-			return Get(englishString);
+			return MatterControlTranslationMap.Translate(englishString);
 		}
 	}
 }
