@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2016, Lars Brubaker, John Lewin
+Copyright (c) 2017, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,17 +27,10 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using Newtonsoft.Json;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
 using System;
-using System.IO;
-using Newtonsoft.Json.Linq;
-using System.Text;
+using System.Text.RegularExpressions;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
-using System.Text.RegularExpressions;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -67,17 +60,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			if (printerConnection.PrinterIsConnected)
 			{
 				printerConnection.MacroStart();
-				SendCommandToPrinter(printerConnection, GCode);
+				printerConnection.SendLineToPrinterNow(GCode);
 				if (GCode.Contains(MacroProcessingStream.MacroPrefix))
 				{
-					SendCommandToPrinter(printerConnection, "\n" + MacroProcessingStream.MacroPrefix + "close()");
+					printerConnection.SendLineToPrinterNow("\n" + MacroProcessingStream.MacroPrefix + "close()");
 				}
 			}
-		}
-
-		protected void SendCommandToPrinter(PrinterConnection printerConnection, string command)
-		{
-			printerConnection.SendLineToPrinterNow(command);
 		}
 	}
 }

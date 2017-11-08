@@ -2061,8 +2061,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void OpenExportWindow()
 		{
-			var exportPage = new ExportPrintItemPage(new[] { new FileSystemFileItem(sceneContext.printItem.FileLocation) });
-			WizardWindow.Show(exportPage);
+			WizardWindow.Show(
+				new ExportPrintItemPage(new[] 
+				{
+					new FileSystemFileItem(sceneContext.printItem.FileLocation)
+				}));
 		}
 
 		private void OpenSaveAsWindow()
