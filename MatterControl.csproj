@@ -126,6 +126,7 @@
     <Compile Include="PartPreviewWindow\View3D\Actions\SubtractEditor.cs" />
     <Compile Include="PartPreviewWindow\View3D\SlicePopupMenu.cs" />
     <Compile Include="PrinterControls\MacroDetailPage.cs" />
+    <Compile Include="PrinterControls\MacroListPage.cs" />
     <Compile Include="PrinterControls\PrinterConnections\PrinterSetup.cs" />
     <Compile Include="Utilities\InspectForm.cs" Condition="'$(Configuration)' == 'Debug'">
       <SubType>Form</SubType>

@@ -30,10 +30,8 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using MatterHackers.Agg;
-using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.FieldValidation;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
@@ -193,83 +191,6 @@ namespace MatterHackers.MatterControl
 			}
 
 			return formIsValid;
-		}
-	}
-
-	public class MacroListPage : WizardPage
-	{
-		public MacroListPage(PrinterSettings printerSettings)
-			: base ("Close")
-		{
-			this.WindowTitle = "Macro Editor".Localize();
-			this.HeaderText = "Macro Presets".Localize() + ":";
-
-			var theme = ApplicationController.Instance.Theme;
-			var linkButtonFactory = theme.LinkButtonFactory;
-
-			this.RebuildList(printerSettings, linkButtonFactory);
-
-			Button addMacroButton = textImageButtonFactory.Generate("Add".Localize(), AggContext.StaticData.LoadIcon("fa-plus_16.png", IconColor.Theme));
-			addMacroButton.ToolTipText = "Add a new Macro".Localize();
-			addMacroButton.Click += (s, e) =>
-			{
-				this.WizardWindow.ChangeToPage(
-					new MacroDetailPage(
-						new GCodeMacro()
-						{
-							Name = "Home All",
-							GCode = "G28 ; Home All Axes"
-						},
-						printerSettings));
-			};
-
-			this.AddPageAction(addMacroButton);
-		}
-
-		private void RebuildList(PrinterSettings printerSettings, LinkButtonFactory linkButtonFactory)
-		{
-			this.contentRow.CloseAllChildren();
-
-			if (printerSettings?.Macros != null)
-			{
-				foreach (GCodeMacro macro in printerSettings.Macros)
-				{
-					var macroRow = new FlowLayoutWidget
-					{
-						Margin = new BorderDouble(3, 0, 3, 3),
-						HAnchor = HAnchor.Stretch,
-						Padding = new BorderDouble(3),
-						BackgroundColor = Color.White
-					};
-
-					macroRow.AddChild(new TextWidget(GCodeMacro.FixMacroName(macro.Name)));
-
-					macroRow.AddChild(new HorizontalSpacer());
-
-					// You can't use the foreach variable inside the lambda functions directly or it will always be the last item.
-					// We make a local variable to create a closure around it to ensure we get the correct instance
-					var localMacroReference = macro;
-
-					Button editLink = linkButtonFactory.Generate("edit".Localize());
-					editLink.Margin = new BorderDouble(right: 5);
-					editLink.Click += (s, e) =>
-					{
-						this.WizardWindow.ChangeToPage(
-							new MacroDetailPage(localMacroReference, printerSettings));
-					};
-					macroRow.AddChild(editLink);
-
-					Button removeLink = linkButtonFactory.Generate("remove".Localize());
-					removeLink.Click += (sender, e) =>
-					{
-						printerSettings.Macros.Remove(localMacroReference);
-						this.RebuildList(printerSettings, linkButtonFactory);
-					};
-					macroRow.AddChild(removeLink);
-
-					contentRow.AddChild(macroRow);
-				}
-			}
 		}
 	}
 }
