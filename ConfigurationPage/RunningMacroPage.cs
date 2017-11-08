@@ -74,7 +74,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 				okButton.Click += (s, e) =>
 				{
 					printer.Connection.MacroContinue();
-					UiThread.RunOnIdle(() => WizardWindow?.Close());
 				};
 
 				this.AddPageAction(okButton);
