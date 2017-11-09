@@ -12,7 +12,7 @@
 		"PresentationName": "Bed Shape",
 		"HelpText": "The shape of the physical print bed.",
 		"DataEditType": "LIST",
-		"ExtraSettings": "rectangular,circular",
+		"ListValues": "rectangular,circular",
 		"DefaultValue": "rectangular",
 		"RebuildGCodeOnChange": false
 	},
@@ -365,7 +365,7 @@
 		"PresentationName": "Fill Pattern",
 		"HelpText": "The geometric shape of the support structure for the inside of parts.",
 		"DataEditType": "LIST",
-		"ExtraSettings": "rectilinear,line,grid,concentric,honeycomb,hilbertcurve,achimedeancords,octagramspiral,3dhoneycomb",
+		"ListValues": "rectilinear,line,grid,concentric,honeycomb,hilbertcurve,achimedeancords,octagramspiral,3dhoneycomb",
 		"DefaultValue": "honeycomb"
 	},
 	{
@@ -491,7 +491,7 @@
 		"PresentationName": "G-Code Flavor",
 		"HelpText": "The version of G-Code the printer's firmware communicates with. Some firmware use different G and M codes. Setting this ensures that the output G-Code will use the correct commands.",
 		"DataEditType": "LIST",
-		"ExtraSettings": "reprap,teacup,makerbot,sailfish,mach3_ecm,no_extrusion",
+		"ListValues": "reprap,teacup,makerbot,sailfish,mach3_ecm,no_extrusion",
 		"DefaultValue": "reprap"
 	},
 	{
@@ -499,7 +499,7 @@
 		"PresentationName": "G-Code Output",
 		"HelpText": "The version of G-Code the printer's firmware communicates with. Some firmware use different G and M codes. Setting this ensures that the output G-Code will use the correct commands.",
 		"DataEditType": "LIST",
-		"ExtraSettings": "REPRAP,ULTIGCODE,BFB,MACH3",
+		"ListValues": "REPRAP,ULTIGCODE,BFB,MACH3",
 		"DefaultValue": "REPRAP"
 	},
 	{
@@ -592,7 +592,7 @@
 		"PresentationName": "Has SD Card Reader",
 		"HelpText": "The printer has a SD card reader.",
 		"DataEditType": "CHECK_BOX",
-		"ExtraSettings": "bed_temperature,first_layer_bed_temperature",
+		"ExtraSettings": "",
 		"DefaultValue": "0",
 		"ShowIfSet": "!sla_printer",
 		"ReloadUiWhenChanged": true,
@@ -655,7 +655,7 @@
 		"PresentationName": "Infill Type",
 		"HelpText": "The geometric shape of the support structure for the inside of parts.",
 		"DataEditType": "LIST",
-		"ExtraSettings": "GRID,TRIANGLES,HEXAGON,LINES,CONCENTRIC",
+		"ListValues": "GRID,TRIANGLES,HEXAGON,LINES,CONCENTRIC",
 		"DefaultValue": "TRIANGLES"
 	},
 	{
@@ -663,7 +663,7 @@
 		"PresentationName": "Leveling Solution",
 		"HelpText": "The print leveling algorithm to use.",
 		"DataEditType": "LIST",
-		"ExtraSettings": "3 Point Plane,7 Point Disk,13 Point Disk,3x3 Mesh",
+		"ListValues": "3 Point Plane,7 Point Disk,13 Point Disk,3x3 Mesh",
 		"ShowAsOverride": true,
 		"ShowIfSet": "!has_hardware_leveling",
 		"DefaultValue": "3 Point Plane",
@@ -1221,7 +1221,7 @@
 		"PresentationName": "Top/Bottom Fill Pattern",
 		"HelpText": "The pattern used on the bottom and top layers of the print.",
 		"DataEditType": "LIST",
-		"ExtraSettings": "rectilinear,concentric,hilbertcurve,achimedeancords,octagramspiral",
+		"ListValues": "rectilinear,concentric,hilbertcurve,achimedeancords,octagramspiral",
 		"DefaultValue": "rectilinear"
 	},
 	{
@@ -1440,7 +1440,7 @@
 		"PresentationName": "Pattern",
 		"HelpText": "The pattern to draw for the generation of support material.",
 		"DataEditType": "LIST",
-		"ExtraSettings": "rectilinear,rectilinear-grid,honeycomb,pillars",
+		"ListValues": "rectilinear,rectilinear-grid,honeycomb,pillars",
 		"DefaultValue": "honeycomb"
 	},
 	{
@@ -1526,7 +1526,7 @@
 		"DataEditType": "LIST",
 		"EnableIfSet": "support_material",
 		"ShowIfSet": "!sla_printer",
-		"ExtraSettings": "GRID,LINES",
+		"ListValues": "GRID,LINES",
 		"DefaultValue": "LINES"
 	},
 	{
