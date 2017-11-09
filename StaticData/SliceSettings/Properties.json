@@ -592,7 +592,7 @@
 		"PresentationName": "Has SD Card Reader",
 		"HelpText": "The printer has a SD card reader.",
 		"DataEditType": "CHECK_BOX",
-		"ExtraSettings": "bed_temperature,first_layer_bed_temperature",
+		"ExtraSettings": "",
 		"DefaultValue": "0",
 		"ShowIfSet": "!sla_printer",
 		"ReloadUiWhenChanged": true,
