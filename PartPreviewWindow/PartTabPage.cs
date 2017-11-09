@@ -70,11 +70,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					this.view3DWidget.ResetView();
 				}
 			};
-			viewControls3D.OverflowMenu.DynamicPopupContent = () =>
-			{
-				return this.GetViewControls3DOverflowMenu();
-			};
-
+			viewControls3D.OverflowMenu.DynamicPopupContent = this.GetViewControls3DOverflowMenu;
+			
 			bool isPrinterType = this is PrinterTabPage;
 
 			// The 3D model view
