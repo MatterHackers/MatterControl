@@ -37,10 +37,6 @@ using MatterHackers.MatterControl.Library;
 
 namespace MatterHackers.MatterControl
 {
-	public class SaveAsContext : LibraryConfig
-	{
-	}
-
 	public class SaveAsPage : DialogPage
 	{
 		private Func<SaveAsReturnInfo, Task> functionToCallOnSaveAs;
@@ -63,13 +59,17 @@ namespace MatterHackers.MatterControl
 
 			contentRow.Padding = 0;
 
-			libraryNavContext = new SaveAsContext()
+			FolderBreadCrumbWidget breadCrumbWidget = null;
+
+			// Create a new library context for the SaveAs view
+			libraryNavContext = new LibraryConfig()
 			{
 				ActiveContainer = ApplicationController.Instance.Library.RootLibaryContainer
 			};
 			libraryNavContext.ContainerChanged += (s, e) =>
 			{
 				saveAsButton.Enabled = libraryNavContext.ActiveContainer is ILibraryWritableContainer;
+				breadCrumbWidget.SetBreadCrumbs(libraryNavContext.ActiveContainer);
 			};
 
 			librarySelectorWidget = new ListView(libraryNavContext, new IconListView(75))
@@ -80,7 +80,7 @@ namespace MatterHackers.MatterControl
 			};
 
 			// put in the bread crumb widget
-			var breadCrumbWidget = new FolderBreadCrumbWidget(librarySelectorWidget);
+			breadCrumbWidget = new FolderBreadCrumbWidget(librarySelectorWidget);
 			contentRow.AddChild(breadCrumbWidget);
 
 			// put in the area to pick the provider to save to
