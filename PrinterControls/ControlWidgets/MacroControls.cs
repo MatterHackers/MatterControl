@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			Button editButton = buttonFactory.GenerateIconButton(AggContext.StaticData.LoadIcon("icon_edit.png", 16, 16, IconColor.Theme));
 			editButton.Click += (s, e) =>
 			{
-				WizardWindow.Show(new MacroListPage(printer.Settings));
+				DialogWindow.Show(new MacroListPage(printer.Settings));
 			};
 
 			this.AddChild(

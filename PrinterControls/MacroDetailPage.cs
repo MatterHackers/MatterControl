@@ -39,7 +39,7 @@ namespace MatterHackers.MatterControl
 {
 	public enum MacroUiLocation { Controls, Extruder_1, Extruder_2, Extruder_3, Extruder_4 }
 
-	public class MacroDetailPage : WizardPage
+	public class MacroDetailPage : DialogPage
 	{
 		private List<FormField> formFields;
 		private PrinterSettings printerSettings;

@@ -36,7 +36,7 @@ using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 namespace MatterHackers.MatterControl
 {
 	// Normally step one of the setup process
-	public class SetupWizardWifi : WizardPage
+	public class SetupWizardWifi : DialogPage
 	{
 		public SetupWizardWifi()
 		{

@@ -33,7 +33,7 @@ using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
-	public class SetupStepComPortOne : WizardPage
+	public class SetupStepComPortOne : DialogPage
 	{
 		public SetupStepComPortOne(PrinterConfig printer)
 		{

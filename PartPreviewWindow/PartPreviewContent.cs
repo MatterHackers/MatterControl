@@ -130,7 +130,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				UiThread.RunOnIdle(() =>
 				{
 					UpdateControlData.Instance.CheckForUpdateUserRequested();
-					WizardWindow.Show<CheckForUpdatesPage>();
+					DialogWindow.Show<CheckForUpdatesPage>();
 				});
 			});
 			tabControl.TabBar.AddChild(updateAvailableButton);

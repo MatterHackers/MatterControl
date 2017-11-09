@@ -12,7 +12,7 @@ using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.SetupWizard
 {
-	class PrinterProfileHistoryPage : WizardPage
+	class PrinterProfileHistoryPage : DialogPage
 	{
 		List<RadioButton> radioButtonList = new List<RadioButton>();
 		Dictionary<string, string> printerProfileData = new Dictionary<string, string>();

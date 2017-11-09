@@ -36,7 +36,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
-	public class WizardPage : GuiWidget
+	public class DialogPage : GuiWidget
 	{
 		private FlowLayoutWidget headerRow;
 		protected FlowLayoutWidget contentRow;
@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl
 
 		private GuiWidget mainContainer;
 
-		public WizardPage(string unlocalizedTextForCancelButton = "Cancel")
+		public DialogPage(string unlocalizedTextForCancelButton = "Cancel")
 		{
 			if (!UserSettings.Instance.IsTouchScreen)
 			{
@@ -126,7 +126,7 @@ namespace MatterHackers.MatterControl
 			this.AddChild(mainContainer);
 		}
 
-		public WizardWindow WizardWindow { get; set; }
+		public DialogWindow WizardWindow { get; set; }
 
 		public string WindowTitle { get; set; }
 

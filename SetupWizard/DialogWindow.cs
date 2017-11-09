@@ -35,15 +35,15 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
-	public class WizardWindow : SystemWindow
+	public class DialogWindow : SystemWindow
 	{
-		private WizardPage activePage;
+		private DialogPage activePage;
 
 		private EventHandler unregisterEvents;
 
-		private static Dictionary<Type, WizardWindow> allWindows = new Dictionary<Type, WizardWindow>();
+		private static Dictionary<Type, DialogWindow> allWindows = new Dictionary<Type, DialogWindow>();
 
-		private WizardWindow()
+		private DialogWindow()
 			: base(500 * GuiWidget.DeviceScale, 500 * GuiWidget.DeviceScale)
 		{
 			this.AlwaysOnTopOfMain = true;
@@ -54,24 +54,24 @@ namespace MatterHackers.MatterControl
 
 		public static void Close(Type type)
 		{
-			if (allWindows.TryGetValue(type, out WizardWindow existingWindow))
+			if (allWindows.TryGetValue(type, out DialogWindow existingWindow))
 			{
 				existingWindow.Close();
 			}
 		}
 
-		public static void Show<PanelType>() where PanelType : WizardPage, new()
+		public static void Show<PanelType>() where PanelType : DialogPage, new()
 		{
-			WizardWindow wizardWindow = GetWindow(typeof(PanelType));
+			DialogWindow wizardWindow = GetWindow(typeof(PanelType));
 			var newPanel = wizardWindow.ChangeToPage<PanelType>();
 			wizardWindow.Title = newPanel.WindowTitle;
 
 			SetSizeAndShow(wizardWindow, newPanel);
 		}
 
-		public static void Show(WizardPage wizardPage)
+		public static void Show(DialogPage wizardPage)
 		{
-			WizardWindow wizardWindow = GetWindow(wizardPage.GetType());
+			DialogWindow wizardWindow = GetWindow(wizardPage.GetType());
 			wizardWindow.Title = wizardPage.WindowTitle;
 
 			SetSizeAndShow(wizardWindow, wizardPage);
@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl
 			set => base.MinimumSize = value;
 		}
 
-		public static void SetSizeAndShow(WizardWindow wizardWindow, WizardPage wizardPage)
+		public static void SetSizeAndShow(DialogWindow wizardWindow, DialogPage wizardPage)
 		{
 			if (wizardPage.WindowSize != Vector2.Zero)
 			{
@@ -100,15 +100,15 @@ namespace MatterHackers.MatterControl
 
 		public static bool IsOpen(Type type) => allWindows.ContainsKey(type);
 
-		private static WizardWindow GetWindow(Type type)
+		private static DialogWindow GetWindow(Type type)
 		{
-			if (allWindows.TryGetValue(type, out WizardWindow wizardWindow))
+			if (allWindows.TryGetValue(type, out DialogWindow wizardWindow))
 			{
 				wizardWindow.BringToFront();
 			}
 			else
 			{
-				wizardWindow = new WizardWindow();
+				wizardWindow = new DialogWindow();
 				wizardWindow.Closed += (s, e) => allWindows.Remove(type);
 				allWindows[type] = wizardWindow;
 			}
@@ -122,7 +122,7 @@ namespace MatterHackers.MatterControl
 			base.OnClosed(e);
 		}
 
-		public void ChangeToPage(WizardPage pageToChangeTo)
+		public void ChangeToPage(DialogPage pageToChangeTo)
 		{
 			activePage = pageToChangeTo;
 
@@ -132,7 +132,7 @@ namespace MatterHackers.MatterControl
 			this.Invalidate();
 		}
 
-		public WizardPage ChangeToPage<PanelType>() where PanelType : WizardPage, new()
+		public DialogPage ChangeToPage<PanelType>() where PanelType : DialogPage, new()
 		{
 			PanelType panel = new PanelType();
 			panel.WizardWindow = this;

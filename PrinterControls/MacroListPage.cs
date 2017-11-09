@@ -36,7 +36,7 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl
 {
-	public class MacroListPage : WizardPage
+	public class MacroListPage : DialogPage
 	{
 		public MacroListPage(PrinterSettings printerSettings)
 			: base ("Close")

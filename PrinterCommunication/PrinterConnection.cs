@@ -1013,7 +1013,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					// Only pop up the com port helper if the USER actually CLICKED the connect button.
 					if (showHelpIfNoPort)
 					{
-						WizardWindow.Show(new SetupStepComPortOne(printer));
+						DialogWindow.Show(new SetupStepComPortOne(printer));
 					}
 #endif
 				}

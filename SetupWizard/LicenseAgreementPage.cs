@@ -34,7 +34,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.CustomWidgets;
 
-public class LicenseAgreementPage : WizardPage
+public class LicenseAgreementPage : DialogPage
 {
 	public LicenseAgreementPage()
 	{

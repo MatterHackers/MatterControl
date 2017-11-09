@@ -207,13 +207,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 								UiThread.RunOnIdle(() =>
 								{
-									WizardWindow.Show(new RunningMacroPage(printer, macroData));
+									DialogWindow.Show(new RunningMacroPage(printer, macroData));
 								});
 								break;
 
 							case "close":
 								runningMacro = false;
-								UiThread.RunOnIdle(() => WizardWindow.Close(typeof(RunningMacroPage)));
+								UiThread.RunOnIdle(() => DialogWindow.Close(typeof(RunningMacroPage)));
 								break;
 
 							case "ding":
@@ -225,7 +225,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 								UiThread.RunOnIdle(() =>
 								{
-									WizardWindow.Show(new RunningMacroPage(printer, macroData));
+									DialogWindow.Show(new RunningMacroPage(printer, macroData));
 								});
 
 								break;
@@ -259,7 +259,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			waitingForUserInput = false;
 			timeHaveBeenWaiting.Reset();
 			maxTimeToWaitForOk = 0;
-			UiThread.RunOnIdle(() => WizardWindow.Close(typeof(RunningMacroPage)));
+			UiThread.RunOnIdle(() => DialogWindow.Close(typeof(RunningMacroPage)));
 		}
 
 		private bool TryGetAfterString(string macroLine, string variableName, out string value)

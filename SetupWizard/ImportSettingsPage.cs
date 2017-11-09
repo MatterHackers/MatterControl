@@ -39,7 +39,7 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl
 {
-	public class SelectPartsOfPrinterToImport : WizardPage
+	public class SelectPartsOfPrinterToImport : DialogPage
 	{
 		private string importMessage = "Select what you would like to merge into your current profile.".Localize();
 
@@ -251,7 +251,7 @@ namespace MatterHackers.MatterControl
 		private string importPrinterSuccessMessage = "Settings have been merged into your current printer.".Localize();
 	}
 
-	public class ImportSucceeded : WizardPage
+	public class ImportSucceeded : DialogPage
 	{
 		public ImportSucceeded(string successMessage) :
 			base("Done")
@@ -263,7 +263,7 @@ namespace MatterHackers.MatterControl
 		}
 	}
 
-	public class ImportSettingsPage : WizardPage
+	public class ImportSettingsPage : DialogPage
 	{
 		private RadioButton newPrinterButton;
 		private RadioButton mergeButton;
@@ -393,7 +393,7 @@ namespace MatterHackers.MatterControl
 		{
 			if (ProfileManager.ImportFromExisting(settingsFilePath))
 			{
-				WizardWindow.Show(
+				DialogWindow.Show(
 					new ImportSucceeded(importPrinterSuccessMessage.FormatWith(Path.GetFileNameWithoutExtension(settingsFilePath))));
 			}
 			else

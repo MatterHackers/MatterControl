@@ -40,7 +40,7 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
-	public class SetupStepInstallDriver : WizardPage
+	public class SetupStepInstallDriver : DialogPage
 	{
 		private static List<string> printerDrivers = null;
 

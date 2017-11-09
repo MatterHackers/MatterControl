@@ -128,6 +128,7 @@
     <Compile Include="PrinterControls\MacroDetailPage.cs" />
     <Compile Include="PrinterControls\MacroListPage.cs" />
     <Compile Include="PrinterControls\PrinterConnections\PrinterSetup.cs" />
+    <Compile Include="SetupWizard\DialogWindow.cs" />
     <Compile Include="Utilities\InspectForm.cs" Condition="'$(Configuration)' == 'Debug'">
       <SubType>Form</SubType>
     </Compile>
@@ -275,10 +276,9 @@
     <Compile Include="ConfigurationPage\RunningMacroPage.cs" />
     <Compile Include="SetupWizard\PublishPartToMatterHackers.cs" />
     <Compile Include="SetupWizard\SyncingPrintersPage.cs" />
-    <Compile Include="SetupWizard\WizardPage.cs" />
+    <Compile Include="SetupWizard\DialogPage.cs" />
     <Compile Include="SetupWizard\SetupWizardTroubleshooting.cs" />
     <Compile Include="SetupWizard\SetupWizardWifi.cs" />
-    <Compile Include="SetupWizard\WizardWindow.cs" />
     <Compile Include="SlicerConfiguration\SliceSettingListControl.cs" />
     <Compile Include="SlicerConfiguration\SliceSettingsRow.cs" />
     <Compile Include="SlicerConfiguration\UIFields\BoundDoubleField.cs" />

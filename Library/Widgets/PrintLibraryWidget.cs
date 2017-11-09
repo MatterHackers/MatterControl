@@ -309,7 +309,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			createFolderButton.Margin = new BorderDouble(0, 0, 3, 0);
 			createFolderButton.Click += (sender, e) =>
 			{
-				WizardWindow.Show(
+				DialogWindow.Show(
 					new InputBoxPage(
 						"Create Folder".Localize(),
 						"Folder Name".Localize(),
@@ -463,7 +463,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 							return;
 						}
 
-						WizardWindow.Show(
+						DialogWindow.Show(
 							new InputBoxPage(
 								"Rename Item".Localize(),
 								"Name".Localize(),
@@ -755,7 +755,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			//Open export options
 			var exportPage = new ExportPrintItemPage(libraryView.SelectedItems.Select(item => item.Model));
 
-			WizardWindow.Show(exportPage);
+			DialogWindow.Show(exportPage);
 		}
 
 		public override void OnMouseEnterBounds(MouseEventArgs mouseEvent)
