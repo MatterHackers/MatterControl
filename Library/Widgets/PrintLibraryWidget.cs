@@ -78,6 +78,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			libraryView = new ListView(ApplicationController.Instance.Library)
 			{
 				BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor,
+				// Drop containers if ShowContainers != 1
+				ContainerFilter = (container) => UserSettings.Instance.get("ShowContainers") == "1"
 			};
 
 			ApplicationController.Instance.Library.ActiveViewWidget = libraryView;
