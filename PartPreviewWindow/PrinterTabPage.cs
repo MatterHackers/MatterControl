@@ -142,7 +142,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var printerActionsBar = new PrinterActionsBar(printer, this, theme)
 			{
-				Padding = new BorderDouble(0, theme.ToolbarPadding.Top)
+				Padding = new BorderDouble(0, theme.ToolbarPadding.Top, theme.ToolbarPadding.Right, theme.ToolbarPadding.Top)
 			};
 
 			// Must come after we have an instance of View3DWidget an its undo buffer
