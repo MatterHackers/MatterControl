@@ -37,10 +37,6 @@ using MatterHackers.MatterControl.Library;
 
 namespace MatterHackers.MatterControl
 {
-	public class SaveAsContext : LibraryConfig
-	{
-	}
-
 	public class SaveAsPage : DialogPage
 	{
 		private Func<SaveAsReturnInfo, Task> functionToCallOnSaveAs;
@@ -61,24 +57,30 @@ namespace MatterHackers.MatterControl
 
 			this.HeaderText = "Save New Design".Localize() + ":";
 
-			libraryNavContext = new SaveAsContext()
+			contentRow.Padding = 0;
+
+			FolderBreadCrumbWidget breadCrumbWidget = null;
+
+			// Create a new library context for the SaveAs view
+			libraryNavContext = new LibraryConfig()
 			{
 				ActiveContainer = ApplicationController.Instance.Library.RootLibaryContainer
 			};
 			libraryNavContext.ContainerChanged += (s, e) =>
 			{
 				saveAsButton.Enabled = libraryNavContext.ActiveContainer is ILibraryWritableContainer;
+				breadCrumbWidget.SetBreadCrumbs(libraryNavContext.ActiveContainer);
 			};
 
-			librarySelectorWidget = new ListView(libraryNavContext)
+			librarySelectorWidget = new ListView(libraryNavContext, new IconListView(75))
 			{
 				BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor,
 				ShowItems = false,
-				ContainerFilter = (container) => !container.IsReadOnly
+				ContainerFilter = (container) => !container.IsReadOnly,
 			};
 
 			// put in the bread crumb widget
-			var breadCrumbWidget = new FolderBreadCrumbWidget(librarySelectorWidget);
+			breadCrumbWidget = new FolderBreadCrumbWidget(librarySelectorWidget);
 			contentRow.AddChild(breadCrumbWidget);
 
 			// put in the area to pick the provider to save to
@@ -87,9 +89,7 @@ namespace MatterHackers.MatterControl
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Stretch,
-				Margin = new BorderDouble(5),
 				BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor,
-				Padding = new BorderDouble(3),
 			};
 			chooseWindow.AddChild(librarySelectorWidget);
 			contentRow.AddChild(chooseWindow);

@@ -623,12 +623,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				AlwaysEnabled = true,
 				Action = (selectedLibraryItems, listView) =>
 				{
-					listView.ListContentView = new IconListView()
-					{
-						ThumbWidth = 256,
-						ThumbHeight = 256,
-					};
-
+					listView.ListContentView = new IconListView(256);
 					listView.Reload().ConfigureAwait(false);
 				},
 			});

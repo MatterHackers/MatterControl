@@ -93,6 +93,7 @@
     <Compile Include="ControlElements\MHPasswordTextEditWidget.cs" />
     <Compile Include="ControlElements\TextImageWidget.cs" />
     <Compile Include="CustomWidgets\DockingTabControl.cs" />
+    <Compile Include="CustomWidgets\InlineEditControl.cs" />
     <Compile Include="CustomWidgets\PrintingWindow\BasicBody.cs" />
     <Compile Include="CustomWidgets\PrintingWindow\BedStatusWidget.cs" />
     <Compile Include="CustomWidgets\PrintingWindow\ExtruderStatusWidget.cs" />
@@ -104,7 +105,6 @@
     <Compile Include="CustomWidgets\NamedAction.cs" />
     <Compile Include="CustomWidgets\RadioImageWidget.cs" />
     <Compile Include="CustomWidgets\RadioPanelWidget.cs" />
-    <Compile Include="CustomWidgets\ValueDisplayInfo.cs" />
     <Compile Include="CustomWidgets\DisableablePanel.cs" />
     <Compile Include="Library\Interfaces\LibraryExtensionMethods.cs" />
     <Compile Include="Library\Providers\CreateFolderItem.cs" />

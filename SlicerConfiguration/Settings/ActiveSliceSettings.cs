@@ -28,14 +28,8 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
 using MatterHackers.Agg;
-using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
-using MatterHackers.MatterControl.SettingsManagement;
-using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {

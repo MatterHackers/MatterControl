@@ -70,11 +70,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					this.view3DWidget.ResetView();
 				}
 			};
-			viewControls3D.OverflowMenu.DynamicPopupContent = () =>
-			{
-				return this.GetViewControls3DOverflowMenu();
-			};
-
+			viewControls3D.OverflowMenu.DynamicPopupContent = this.GetViewControls3DOverflowMenu;
+			
 			bool isPrinterType = this is PrinterTabPage;
 
 			// The 3D model view
@@ -87,21 +84,33 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this,
 				editorType: (isPrinterType) ? MeshViewerWidget.EditorType.Printer : MeshViewerWidget.EditorType.Part);
 
-			topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			topToBottom.AnchorAll();
-			this.AddChild(topToBottom);
+			this.AddChild(topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch
+			});
 
-			topToBottom.AddChild(viewControls3D);
+			topToBottom.AddChild(leftToRight = new FlowLayoutWidget()
+			{
+				Name = "View3DContainerParent",
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch
+			});
 
-			leftToRight = new FlowLayoutWidget();
-			leftToRight.Name = "View3DContainerParent";
-			leftToRight.AnchorAll();
-			topToBottom.AddChild(leftToRight);
+			view3DContainer = new GuiWidget()
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch
+			};
 
-			view3DContainer = new GuiWidget();
-			view3DContainer.AnchorAll();
-
-			view3DContainer.AddChild(view3DWidget);
+			var toolbarAndView3DWidget = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch
+			};
+			toolbarAndView3DWidget.AddChild(viewControls3D);
+			toolbarAndView3DWidget.AddChild(view3DWidget);
+			view3DContainer.AddChild(toolbarAndView3DWidget);
 
 			leftToRight.AddChild(view3DContainer);
 

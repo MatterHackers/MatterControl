@@ -162,7 +162,7 @@ namespace MatterHackers.MatterControl
 
 		internal void ClearActivePrinter()
 		{
-			this.ActivePrinter = emptyPrinter;
+			this.SetActivePrinter(emptyPrinter);
 		}
 
 		public void RefreshActiveInstance(PrinterSettings updatedPrinterSettings)
@@ -658,10 +658,12 @@ namespace MatterHackers.MatterControl
 
 		public void ReloadAll()
 		{
-			var reloadingOverlay = new GuiWidget();
-			reloadingOverlay.HAnchor = HAnchor.Stretch;
-			reloadingOverlay.VAnchor = VAnchor.Stretch;
-			reloadingOverlay.BackgroundColor = this.Theme.DarkShade;
+			var reloadingOverlay = new GuiWidget
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch,
+				BackgroundColor = this.Theme.DarkShade
+			};
 
 			reloadingOverlay.AddChild(new TextWidget("Reloading".Localize() + "...", textColor: Color.White, pointSize: this.Theme.DefaultFontSize * 1.5)
 			{

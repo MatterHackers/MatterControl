@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		/// <summary>
 		/// The original content view before it was replaced by a container default view
 		/// </summary>
-		private GuiWidget stashedContentView = new IconListView();
+		private GuiWidget stashedContentView;
 
 		// Default constructor uses IconListView
 		public ListView(ILibraryContext context)
