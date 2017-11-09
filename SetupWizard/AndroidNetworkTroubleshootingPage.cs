@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2016, Kevin Pope, John Lewin
+Copyright (c) 2017, Kevin Pope, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,24 +27,20 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.IO;
-using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl
 {
-	public class NetworkTroubleshooting : WizardPage
+	public class NetworkTroubleshooting : DialogPage
 	{
 		public NetworkTroubleshooting()
 		{
-			string matterhackersStatusString = "MatterControl was unable to connect to the Internet. Please check your Wifi connection and try again".Localize();
-			contentRow.AddChild(new TextWidget(matterhackersStatusString + "...", 0, 0, 12, textColor: ActiveTheme.Instance.PrimaryTextColor));
+			contentRow.AddChild(
+				new TextWidget(
+					"MatterControl was unable to connect to the Internet. Please check your Wifi connection and try again".Localize() + "...",
+					textColor: ActiveTheme.Instance.PrimaryTextColor));
 
 			Button configureButton = whiteImageButtonFactory.Generate("Configure Wifi".Localize());
 			configureButton.Margin = new BorderDouble(0, 0, 10, 0);
