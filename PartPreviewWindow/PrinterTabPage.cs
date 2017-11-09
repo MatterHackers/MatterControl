@@ -148,6 +148,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Must come after we have an instance of View3DWidget an its undo buffer
 			topToBottom.AddChild(printerActionsBar, 0);
 
+			topToBottom.AddChild(new HorizontalLine(20), 1);
+
 			var trackball = view3DWidget.InteractionLayer.Children<TrackballTumbleWidget>().FirstOrDefault();
 
 			var position = view3DWidget.InteractionLayer.Children.IndexOf(trackball);

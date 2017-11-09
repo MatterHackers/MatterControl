@@ -30,7 +30,6 @@ using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
-using MatterHackers.MeshVisualizer;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -39,12 +38,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public GridOptionsPanel(InteractionLayer interactionLayer) : base(FlowDirection.TopToBottom)
 		{
 			this.HAnchor = HAnchor.Stretch;
-			this.Padding = 10;
 
 			this.AddChild(new TextWidget("Snap Grid".Localize())
 			{
-				TextColor = Color.Black,
-				Margin = new BorderDouble(0, 0, 0, 10)
+				Margin = new BorderDouble(35, 2, 8, 8),
+				TextColor = Color.Gray,
+				HAnchor = HAnchor.Left
 			});
 
 			var snapSettings = new Dictionary<double, string>()
@@ -60,7 +59,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var dropDownList = new DropDownList("Custom", Direction.Down)
 			{
-				TextColor = Color.Black
+				TextColor = Color.Black,
+				Margin = new BorderDouble(35, 15, 35, 5),
+				HAnchor = HAnchor.Left
 			};
 
 			foreach (var snapSetting in snapSettings)

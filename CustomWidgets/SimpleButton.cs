@@ -27,6 +27,9 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
@@ -38,8 +41,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 	{
 		private bool mouseInBounds = false;
 
+		protected ThemeConfig theme;
+
 		public SimpleButton(ThemeConfig theme)
 		{
+			this.theme = theme;
 			this.HoverColor = theme.SlightShade;
 			this.MouseDownColor = theme.MinimalShade;
 			this.Margin = 0;
@@ -146,6 +152,78 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				}
 
 				return _disabledImage;
+			}
+		}
+	}
+
+	public class RadioIconButton : IconButton, IRadioButton
+	{
+		public IEnumerable<GuiWidget> SiblingRadioButtonList { get; set; }
+
+		public event EventHandler CheckedStateChanged;
+
+		public RadioIconButton(ImageBuffer icon, ThemeConfig theme)
+			: base(icon, theme)
+		{
+			this.BorderColor = theme.ButtonFactory.Options.NormalTextColor;
+		}
+
+		public Color BorderColor { get; set; } = Color.White;
+
+		public override void OnClick(MouseEventArgs mouseEvent)
+		{
+			base.OnClick(mouseEvent);
+			this.Checked = true;
+		}
+
+		private bool _checked;
+		public bool Checked
+		{
+			get => _checked;
+			set
+			{
+				if (_checked != value)
+				{
+					_checked = value;
+					if (_checked)
+					{
+						UncheckAllOtherRadioButtons();
+					}
+
+					OnCheckStateChanged();
+					Invalidate();
+				}
+			}
+		}
+
+		public virtual void OnCheckStateChanged()
+		{
+			CheckedStateChanged?.Invoke(this, null);
+		}
+
+		public override void OnDraw(Graphics2D graphics2D)
+		{
+			if (this.Checked)
+			{
+
+				graphics2D.Rectangle(LocalBounds, this.BorderColor);
+			}
+
+			base.OnDraw(graphics2D);
+		}
+
+		private void UncheckAllOtherRadioButtons()
+		{
+			if (SiblingRadioButtonList != null)
+			{
+				foreach (GuiWidget child in SiblingRadioButtonList.Distinct())
+				{
+					var radioButton = child as IRadioButton;
+					if (radioButton != null && radioButton != this)
+					{
+						radioButton.Checked = false;
+					}
+				}
 			}
 		}
 	}
