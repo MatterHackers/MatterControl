@@ -490,6 +490,10 @@ namespace MatterHackers.MeshVisualizer
 
 		private void RenderSelection(IObject3D renderData, Frustum frustum)
 		{
+			if(renderData.Mesh == null)
+			{
+				return;
+			}
 			var screenPosition = new Vector3[3];
 			GLHelper.PrepareFor3DLineRender(true);
 

@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl
 
 			Matrix4X4 makePointsFlatMatrix = Matrix4X4.CreateTranslation(-bedCenter.X, -bedCenter.Y, -distanceToPlaneAtBedCenter);
 			makePointsFlatMatrix *= Matrix4X4.CreateRotation(planeOfPoints.PlaneNormal, Vector3.UnitZ);
-			makePointsFlatMatrix *= Matrix4X4.CreateTranslation(bedCenter.X, bedCenter.Y, 0);//distanceToPlaneAtBedCenter);
+			makePointsFlatMatrix *= Matrix4X4.CreateTranslation(bedCenter.X, bedCenter.Y, 0);
 
 			bedLevelMatrix = Matrix4X4.Invert(makePointsFlatMatrix);
 		}
