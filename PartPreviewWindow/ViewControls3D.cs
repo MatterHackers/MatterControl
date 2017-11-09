@@ -157,26 +157,30 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			double height = theme.ButtonFactory.Options.FixedHeight;
 
-			Button undoButton = buttonFactory.GenerateIconButton(AggContext.StaticData.LoadIcon("Undo_grey_16x.png", 16, 16, IconColor.White));
-			undoButton.Name = "3D View Undo";
-			undoButton.ToolTipText = "Undo";
-			undoButton.Enabled = false;
-			undoButton.MinimumSize = new Vector2(height, height);
-			undoButton.Margin = commonMargin;
+			var undoButton = new IconButton(AggContext.StaticData.LoadIcon("Undo_grey_16x.png", 16, 16, IconColor.Theme), theme)
+			{
+				Name = "3D View Undo",
+				ToolTipText = "Undo",
+				Enabled = false,
+				MinimumSize = new Vector2(height, height),
+				Margin = commonMargin,
+				VAnchor = VAnchor.Center
+			};
 			undoButton.Click += (sender, e) =>
 			{
 				undoBuffer.Undo();
 			};
 			this.AddChild(undoButton);
-			undoButton.VAnchor = VAnchor.Center;
 
-			Button redoButton = buttonFactory.GenerateIconButton(AggContext.StaticData.LoadIcon("Redo_grey_16x.png", 16, 16, IconColor.White));
-			redoButton.Name = "3D View Redo";
-			redoButton.Margin = commonMargin;
-			redoButton.MinimumSize = new Vector2(height, height);
-			redoButton.ToolTipText = "Redo";
-			redoButton.Enabled = false;
-			redoButton.VAnchor = VAnchor.Center;
+			var redoButton = new IconButton(AggContext.StaticData.LoadIcon("Redo_grey_16x.png", 16, 16, IconColor.Theme), theme)
+			{
+				Name = "3D View Redo",
+				Margin = commonMargin,
+				MinimumSize = new Vector2(height, height),
+				ToolTipText = "Redo",
+				Enabled = false,
+				VAnchor = VAnchor.Center
+			};
 			redoButton.Click += (sender, e) =>
 			{
 				undoBuffer.Redo();
