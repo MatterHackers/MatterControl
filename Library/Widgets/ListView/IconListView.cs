@@ -50,9 +50,14 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		private List<IconViewItem> allIconViews = new List<IconViewItem>();
 
-		public IconListView()
+		public IconListView(int thumbnailSize = -1)
 			: base(FlowDirection.TopToBottom)
 		{
+			if (thumbnailSize != -1)
+			{
+				this.ThumbHeight = thumbnailSize;
+				this.ThumbWidth = thumbnailSize;
+			}
 		}
 
 		private int reflownWidth = -1;

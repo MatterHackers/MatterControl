@@ -70,11 +70,11 @@ namespace MatterHackers.MatterControl
 				saveAsButton.Enabled = libraryNavContext.ActiveContainer is ILibraryWritableContainer;
 			};
 
-			librarySelectorWidget = new ListView(libraryNavContext)
+			librarySelectorWidget = new ListView(libraryNavContext, new IconListView(75))
 			{
 				BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor,
 				ShowItems = false,
-				ContainerFilter = (container) => !container.IsReadOnly
+				ContainerFilter = (container) => !container.IsReadOnly,
 			};
 
 			// put in the bread crumb widget
