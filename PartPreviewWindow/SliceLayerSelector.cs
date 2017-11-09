@@ -39,7 +39,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		public static int SliderWidth { get; } = (UserSettings.Instance.IsTouchScreen) ? 20 : 10;
 
-		private ValueDisplayInfo currentLayerInfo;
+		private InlineEditControl currentLayerInfo;
 
 		private LayerScrollbar layerScrollbar;
 		private BedConfig sceneContext;
@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			layerSlider = layerScrollbar.layerSlider;
 
-			currentLayerInfo = new ValueDisplayInfo("1000")
+			currentLayerInfo = new InlineEditControl("1000")
 			{
 				GetDisplayString = (value) => $"{value + 1}",
 				HAnchor = HAnchor.Absolute,

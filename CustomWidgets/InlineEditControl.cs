@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2017, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -31,16 +31,15 @@ using System;
 using System.Diagnostics;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
-using MatterHackers.MeshVisualizer;
 
 namespace MatterHackers.MatterControl.CustomWidgets
 {
-	public class ValueDisplayInfo : GuiWidget
+	public class InlineEditControl : GuiWidget
 	{
 		private TextWidget numberDisplay;
 		private NumberEdit numberEdit;
 
-		public ValueDisplayInfo(string defaultSizeString = "-0000.00", Agg.Font.Justification justification = Agg.Font.Justification.Left)
+		public InlineEditControl(string defaultSizeString = "-0000.00", Agg.Font.Justification justification = Agg.Font.Justification.Left)
 		{
 			double pointSize = 12;
 			numberDisplay = new TextWidget(defaultSizeString, 0, 0, pointSize, justification: justification)

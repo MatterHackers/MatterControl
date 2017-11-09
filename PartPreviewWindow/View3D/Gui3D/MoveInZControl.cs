@@ -57,14 +57,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private double lineLength = 55;
 		private List<Vector2> lines = new List<Vector2>();
 		private double upArrowSize = 7 * GuiWidget.DeviceScale;
-		private ValueDisplayInfo zHeightDisplayInfo;
+		private InlineEditControl zHeightDisplayInfo;
 		private bool HadClickOnControl;
 
 		public MoveInZControl(IInteractionVolumeContext context)
 			: base(context)
 		{
 			Name = "MoveInZControl";
-			zHeightDisplayInfo = new ValueDisplayInfo()
+			zHeightDisplayInfo = new InlineEditControl()
 			{
 				ForceHide = () =>
 				{
