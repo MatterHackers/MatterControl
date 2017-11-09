@@ -61,6 +61,8 @@ namespace MatterHackers.MatterControl
 
 			this.HeaderText = "Save New Design".Localize() + ":";
 
+			contentRow.Padding = 0;
+
 			libraryNavContext = new SaveAsContext()
 			{
 				ActiveContainer = ApplicationController.Instance.Library.RootLibaryContainer
@@ -87,9 +89,7 @@ namespace MatterHackers.MatterControl
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Stretch,
-				Margin = new BorderDouble(5),
 				BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor,
-				Padding = new BorderDouble(3),
 			};
 			chooseWindow.AddChild(librarySelectorWidget);
 			contentRow.AddChild(chooseWindow);
