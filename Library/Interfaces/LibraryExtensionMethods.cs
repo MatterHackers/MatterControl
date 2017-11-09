@@ -49,6 +49,7 @@ namespace MatterHackers.MatterControl.Library
 		{
 			return item is ILibraryContentItem
 				|| item is SDCardFileItem
+				|| item is PrintHistoryItem
 				|| (item is ILibraryContentStream contentStream
 					&& ApplicationController.Instance.Library.IsContentFileType(contentStream.FileName));
 		}
