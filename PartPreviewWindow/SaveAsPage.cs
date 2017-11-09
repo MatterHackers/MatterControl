@@ -61,9 +61,6 @@ namespace MatterHackers.MatterControl
 
 			this.HeaderText = "Save New Design".Localize() + ":";
 
-			//Creates container in the middle of window
-			FlowLayoutWidget middleRowContainer = this.contentRow;
-
 			libraryNavContext = new SaveAsContext()
 			{
 				ActiveContainer = ApplicationController.Instance.Library.RootLibaryContainer
@@ -82,7 +79,7 @@ namespace MatterHackers.MatterControl
 
 			// put in the bread crumb widget
 			var breadCrumbWidget = new FolderBreadCrumbWidget(librarySelectorWidget);
-			middleRowContainer.AddChild(breadCrumbWidget);
+			contentRow.AddChild(breadCrumbWidget);
 
 			// put in the area to pick the provider to save to
 			// Adds text box and check box to the above container
@@ -95,7 +92,7 @@ namespace MatterHackers.MatterControl
 				Padding = new BorderDouble(3),
 			};
 			chooseWindow.AddChild(librarySelectorWidget);
-			middleRowContainer.AddChild(chooseWindow);
+			contentRow.AddChild(chooseWindow);
 
 			// put in the area to type in the new name
 			if (allowNameChange)
@@ -106,6 +103,7 @@ namespace MatterHackers.MatterControl
 					Margin = new BorderDouble(5),
 					HAnchor = HAnchor.Left
 				};
+				contentRow.AddChild(fileNameHeader);
 
 				//Adds text box and check box to the above container
 				textToAddWidget = new MHTextEditWidget("", pixelWidth: 300, messageWhenEmptyAndNotSelected: "Enter a Design Name Here".Localize())
@@ -117,9 +115,7 @@ namespace MatterHackers.MatterControl
 				{
 					SubmitForm();
 				};
-
-				middleRowContainer.AddChild(fileNameHeader);
-				middleRowContainer.AddChild(textToAddWidget);
+				contentRow.AddChild(textToAddWidget);
 			}
 
 			saveAsButton = buttonFactory.Generate("Save".Localize());

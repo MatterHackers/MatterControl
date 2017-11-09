@@ -171,17 +171,14 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			itemsContentView.BeginReload();
 
 			// Folder items
-			if (UserSettings.Instance.get("ShowContainers") == "1")
+			foreach (var childContainer in sourceContainer.ChildContainers.Where(c => c.IsVisible && this.ContainerFilter(c)))
 			{
-				foreach (var childContainer in sourceContainer.ChildContainers.Where(c => c.IsVisible && this.ContainerFilter(c)))
-				{
-					var listViewItem = new ListViewItem(childContainer, this);
-					listViewItem.DoubleClick += listViewItem_DoubleClick;
-					items.Add(listViewItem);
+				var listViewItem = new ListViewItem(childContainer, this);
+				listViewItem.DoubleClick += listViewItem_DoubleClick;
+				items.Add(listViewItem);
 
-					listViewItem.ViewWidget = itemsContentView.AddItem(listViewItem);
-					listViewItem.ViewWidget.Name = childContainer.Name + " Row Item Collection";
-				}
+				listViewItem.ViewWidget = itemsContentView.AddItem(listViewItem);
+				listViewItem.ViewWidget.Name = childContainer.Name + " Row Item Collection";
 			}
 
 			// List items
