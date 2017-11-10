@@ -360,7 +360,7 @@ namespace MatterHackers.MatterControl
 
 		public FlowLayoutWidget CreatePopupMenu(IEnumerable<NamedAction> menuActions)
 		{
-			var widgetToPop = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			var popupMenu = new PopupMenu()
 			{
 				HAnchor = HAnchor.Fit,
 				VAnchor = VAnchor.Fit,
@@ -374,11 +374,11 @@ namespace MatterHackers.MatterControl
 
 				if (menuAction.Title == "----")
 				{
-					menuItem = OverflowMenu.CreateHorizontalLine();
+					menuItem = popupMenu.CreateHorizontalLine();
 				}
 				else
 				{
-					menuItem = OverflowMenu.CreateMenuItem(menuAction.Title);
+					menuItem = popupMenu.CreateMenuItem(menuAction.Title);
 					menuItem.Name = $"{menuAction.Title} Menu Item";
 				}
 
@@ -392,11 +392,9 @@ namespace MatterHackers.MatterControl
 						menuAction.Action();
 					};
 				}
-
-				widgetToPop.AddChild(menuItem);
 			}
 
-			return widgetToPop;
+			return popupMenu;
 		}
 
 

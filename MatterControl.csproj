@@ -114,6 +114,7 @@
     <Compile Include="Library\Widgets\ExpandCheckboxButton.cs" />
     <Compile Include="Library\Widgets\InsertionGroup.cs" />
     <Compile Include="PartPreviewWindow\PartTabPage.cs" />
+    <Compile Include="PartPreviewWindow\PopupMenu.cs" />
     <Compile Include="PartPreviewWindow\PopupMenuButton.cs" />
     <Compile Include="PartPreviewWindow\IconTab.cs" />
     <Compile Include="PartPreviewWindow\PopupButton.cs" />
