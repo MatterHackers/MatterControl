@@ -667,7 +667,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		private void EnableMenus()
 		{
-			foreach (var menuAction in menuActions)
+			foreach (var menuAction in menuActions.Where(m => m.MenuItem != null))
 			{
 				var menuItem = menuAction.MenuItem;
 
@@ -823,32 +823,30 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			// Defer creating menu items until plugins have loaded
 			CreateMenuActions();
 
-			var popupMenu = new PopupMenu();
+			var popupMenu = new PopupMenu(theme);
 
 			// Create menu items in the DropList for each element in this.menuActions
 			foreach (var menuAction in menuActions)
 			{
-				MenuItem menuItem;
-
 				if (menuAction is MenuSeparator)
 				{
-					menuItem = popupMenu.CreateHorizontalLine();
+					popupMenu.CreateHorizontalLine();
 				}
 				else
 				{
-					menuItem = popupMenu.CreateMenuItem((string)menuAction.Title);
+					var menuItem = popupMenu.CreateMenuItem((string)menuAction.Title);
 					menuItem.Name = $"{menuAction.Title} Menu Item";
+
+					menuItem.Enabled = menuAction.Action != null;
+					menuItem.ClearRemovedFlag();
+					menuItem.Click += (s, e) =>
+					{
+						menuAction.Action?.Invoke(libraryView.SelectedItems.Select(i => i.Model), libraryView);
+					};
+
+					// Store a reference to the newly created MenuItem back on the MenuAction definition
+					menuAction.MenuItem = menuItem;
 				}
-
-				menuItem.Enabled = menuAction.Action != null;
-				menuItem.ClearRemovedFlag();
-				menuItem.Click += (s, e) =>
-				{
-					menuAction.Action?.Invoke(libraryView.SelectedItems.Select(i => i.Model), libraryView);
-				};
-
-				// Store a reference to the newly created MenuItem back on the MenuAction definition
-				menuAction.MenuItem = menuItem;
 			}
 
 			EnableMenus();

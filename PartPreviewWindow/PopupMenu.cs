@@ -28,53 +28,56 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
+using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class PopupMenu : FlowLayoutWidget
 	{
+		public static double PointSize { get; set; } = 12;
+
+		public static int GutterWidth { get; set; } = 35;
+
+		private ThemeConfig theme;
+
 		public static BorderDouble MenuPadding { get; set; } = new BorderDouble(40, 8, 20, 8);
 
-		public PopupMenu()
+		public static Color DisabledTextColor { get; set; } = Color.Gray;
+
+		public PopupMenu(ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
 		{
-
+			this.theme = theme;
+			this.VAnchor = VAnchor.Fit;
+			this.HAnchor = HAnchor.Fit;
 		}
 
-		public MenuItem CreateHorizontalLine()
+		public HorizontalLine CreateHorizontalLine()
 		{
-			var menuItem = new MenuItem(new GuiWidget()
+			var line = new HorizontalLine(30)
 			{
-				HAnchor = HAnchor.Stretch,
-				Height = 1,
-				BackgroundColor = Color.LightGray,
-				Margin = new BorderDouble(10, 1),
-				VAnchor = VAnchor.Center,
-			}, "HorizontalLine");
+				Margin = new BorderDouble(PopupMenu.GutterWidth - 5, 2, 5, 2)
+			};
 
-			this.AddChild(menuItem);
+			this.AddChild(line);
 
-			return menuItem;
+			return line;
 		}
 
-		public MenuItem CreateMenuItem(string name, string value = null, double pointSize = 12)
+		public MenuItem CreateMenuItem(string name, ImageBuffer icon = null)
 		{
-			var menuStatesView = new MenuItemColorStatesView(name)
+			var textWidget = new TextWidget(name)
 			{
-				NormalBackgroundColor = Color.White,
-				OverBackgroundColor = Color.Gray,
-				NormalTextColor = Color.Black,
-				OverTextColor = Color.Black,
-				DisabledTextColor = Color.Gray,
-				PointSize = pointSize,
+				PointSize = PopupMenu.PointSize,
 				Padding = MenuPadding,
 			};
 
-			var menuItem = new MenuItem(menuStatesView, value ?? name)
+			var menuItem = new MenuItem(textWidget, theme)
 			{
-				Text = name,
-				Name = name + " Menu Item"
+				Name = name + " Menu Item",
+				Image = icon
 			};
 
 			this.AddChild(menuItem);
@@ -82,11 +85,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return menuItem;
 		}
 
-		public MenuItem CreateMenuItem(GuiWidget guiWidget, string name, string value = null)
+		public MenuItem CreateMenuItem(GuiWidget guiWidget, string name)
 		{
-			guiWidget.Padding = MenuPadding;
-
-			var menuItem = new MenuItem(guiWidget, value ?? name)
+			var menuItem = new MenuItem(guiWidget, theme)
 			{
 				Text = name,
 				Name = name + " Menu Item"
@@ -96,5 +97,54 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			return menuItem;
 		}
+
+		public class MenuItem : SimpleButton
+		{
+			private GuiWidget content;
+
+			public MenuItem(GuiWidget content, ThemeConfig theme)
+				: base (theme)
+			{
+				this.Padding = new BorderDouble(left: PopupMenu.GutterWidth, right: 15);
+				this.BackgroundColor = Color.White;
+				this.HAnchor = HAnchor.MaxFitOrStretch;
+				this.VAnchor = VAnchor.Fit;
+				this.MinimumSize = new VectorMath.Vector2(150, 32);
+				this.content = content;
+
+				content.VAnchor = VAnchor.Center;
+				this.AddChild(content);
+			}
+
+			public ImageBuffer Image { get; set; }
+
+			public override bool Enabled
+			{
+				get => base.Enabled;
+				set
+				{
+					if (content is TextWidget textWidget)
+					{
+						textWidget.TextColor = (value) ? Color.Black : PopupMenu.DisabledTextColor;
+					}
+
+					base.Enabled = value;
+				}
+			}
+
+			public override void OnDraw(Graphics2D graphics2D)
+			{
+				if (this.Image != null)
+				{
+					var x = this.Image.Width / 2 - PopupMenu.GutterWidth;
+					var y = this.Size.Y / 2 - this.Image.Height / 2;
+
+					graphics2D.Render(this.Image, x, y);
+				}
+
+				base.OnDraw(graphics2D);
+			}
+		}
+
 	}
 }

@@ -37,6 +37,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
 using MatterHackers.Agg.OpenGlGui;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.Transform;
@@ -2169,41 +2170,28 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		internal GuiWidget ShowOverflowMenu()
 		{
-			var popupMenu = new PopupMenu();
+			var popupMenu = new PopupMenu(theme);
 
 			var meshViewer = meshViewerWidget;
 
-			popupMenu.CreateMenuItem(
-				this.theme.CreateCheckboxMenuItem(
-					"Show Print Bed".Localize(),
-					"ShowPrintBed",
-					meshViewer.RenderBed,
-					5,
-					(s, e) =>
-					{
-						if (s is CheckBox checkbox)
-						{
-							meshViewer.RenderBed = checkbox.Checked;
-						}
-					}),
-				"ShowPrintBed");
+
+			ImageBuffer icon;
+
+			var checkedIcon = AggContext.StaticData.LoadIcon("fa-check_16.png");
+
+			icon = meshViewer.RenderBed ? checkedIcon : null;
+			popupMenu.CreateMenuItem("Show Print Bed".Localize(), icon).Click += (s, e) =>
+			{
+				meshViewer.RenderBed = !meshViewer.RenderBed;
+			};
 
 			if (sceneContext.BuildHeight > 0)
 			{
-				popupMenu.CreateMenuItem(
-					this.theme.CreateCheckboxMenuItem(
-						"Show Print Area".Localize(),
-						"ShowPrintArea",
-						meshViewer.RenderBuildVolume,
-						5,
-						(s, e) =>
-						{
-							if (s is CheckBox checkbox)
-							{
-								meshViewer.RenderBuildVolume = checkbox.Checked;
-							}
-						}),
-					"ShowPrintArea");
+				icon = meshViewer.RenderBuildVolume ? checkedIcon : null;
+				popupMenu.CreateMenuItem("Show Print Area".Localize(), icon).Click += (s, e) =>
+				{
+					meshViewer.RenderBuildVolume = !meshViewer.RenderBuildVolume;
+				};
 			}
 
 			popupMenu.CreateHorizontalLine();

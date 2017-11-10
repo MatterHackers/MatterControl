@@ -360,7 +360,7 @@ namespace MatterHackers.MatterControl
 
 		public FlowLayoutWidget CreatePopupMenu(IEnumerable<NamedAction> menuActions)
 		{
-			var popupMenu = new PopupMenu()
+			var popupMenu = new PopupMenu(this)
 			{
 				HAnchor = HAnchor.Fit,
 				VAnchor = VAnchor.Fit,
@@ -370,27 +370,25 @@ namespace MatterHackers.MatterControl
 			// Create menu items in the DropList for each element in this.menuActions
 			foreach (var menuAction in menuActions)
 			{
-				MenuItem menuItem;
-
 				if (menuAction.Title == "----")
 				{
-					menuItem = popupMenu.CreateHorizontalLine();
+					popupMenu.CreateHorizontalLine();
 				}
 				else
 				{
-					menuItem = popupMenu.CreateMenuItem(menuAction.Title);
+					var menuItem = popupMenu.CreateMenuItem(menuAction.Title, menuAction.Icon);
 					menuItem.Name = $"{menuAction.Title} Menu Item";
-				}
 
-				menuItem.Enabled = menuAction.Action != null;
-				menuItem.ClearRemovedFlag();
+					menuItem.Enabled = menuAction.Action != null;
+					menuItem.ClearRemovedFlag();
 
-				if (menuItem.Enabled)
-				{
-					menuItem.Click += (s, e) =>
+					if (menuItem.Enabled)
 					{
-						menuAction.Action();
-					};
+						menuItem.Click += (s, e) =>
+						{
+							menuAction.Action();
+						};
+					}
 				}
 			}
 
