@@ -823,7 +823,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			// Defer creating menu items until plugins have loaded
 			CreateMenuActions();
 
-			var popupContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
+			var popupMenu = new PopupMenu();
 
 			// Create menu items in the DropList for each element in this.menuActions
 			foreach (var menuAction in menuActions)
@@ -832,11 +832,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 				if (menuAction is MenuSeparator)
 				{
-					menuItem = OverflowMenu.CreateHorizontalLine();
+					menuItem = popupMenu.CreateHorizontalLine();
 				}
 				else
 				{
-					menuItem = OverflowMenu.CreateMenuItem((string)menuAction.Title);
+					menuItem = popupMenu.CreateMenuItem((string)menuAction.Title);
 					menuItem.Name = $"{menuAction.Title} Menu Item";
 				}
 
@@ -849,13 +849,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 				// Store a reference to the newly created MenuItem back on the MenuAction definition
 				menuAction.MenuItem = menuItem;
-
-				popupContainer.AddChild(menuItem);
 			}
 
 			EnableMenus();
 
-			overflowMenu.PopupContent = popupContainer;
+			overflowMenu.PopupContent = popupMenu;
 
 			base.OnLoad(args);
 		}

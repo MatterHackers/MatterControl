@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private FlowLayoutWidget GenerateMenuContents(PrinterConfig printer, SliceSettingsWidget sliceSettingsWidget)
 		{
-			var popupContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
+			var popupMenu = new PopupMenu();
 
 			var showHelpBox = new CheckBox("Show Help".Localize());
 			showHelpBox.Checked = sliceSettingsWidget.ShowHelpControls;
@@ -59,31 +59,29 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			};
 
 
-			popupContainer.AddChild(new MenuItem(showHelpBox, "Show Help Checkbox")
+			popupMenu.AddChild(new MenuItem(showHelpBox, "Show Help Checkbox")
 			{
-				Padding = OverflowMenu.MenuPadding,
+				Padding = PopupMenu.MenuPadding,
 			});
 
-			popupContainer.AddChild(OverflowMenu.CreateHorizontalLine());
+			popupMenu.CreateHorizontalLine();
 
 			MenuItem menuItem;
 
-			menuItem = OverflowMenu.CreateMenuItem("Export".Localize());
+			menuItem = popupMenu.CreateMenuItem("Export".Localize());
 			menuItem.Click += (s, e) =>
 			{
 				DialogWindow.Show<ExportSettingsPage>();
 			};
-			popupContainer.AddChild(menuItem);
 
-			menuItem = OverflowMenu.CreateMenuItem("Restore Settings".Localize());
+			menuItem = popupMenu.CreateMenuItem("Restore Settings".Localize());
 			menuItem.Click += (s, e) =>
 			{
 				DialogWindow.Show<PrinterProfileHistoryPage>();
 			};
 			menuItem.Enabled = !string.IsNullOrEmpty(AuthenticationData.Instance.ActiveSessionUsername);
-			popupContainer.AddChild(menuItem);
 
-			menuItem = OverflowMenu.CreateMenuItem("Reset to Defaults".Localize());
+			menuItem = popupMenu.CreateMenuItem("Reset to Defaults".Localize());
 			menuItem.Click += (s, e) =>
 			{
 				UiThread.RunOnIdle(() =>
@@ -118,11 +116,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						StyledMessageBox.MessageType.YES_NO);
 				});
 			};
-			popupContainer.AddChild(menuItem);
 
-			popupContainer.AddChild(OverflowMenu.CreateHorizontalLine());
+			popupMenu.CreateHorizontalLine();
 
-			popupContainer.AddChild(new TextWidget("Mode")
+			popupMenu.AddChild(new TextWidget("Mode")
 			{
 				Margin = new BorderDouble(35, 2, 8, 8),
 				TextColor = Color.Gray
@@ -141,8 +138,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				sliceSettingsWidget.RebuildSliceSettingsTabs();
 			};
 
-			popupContainer.AddChild(modeSelector);
-			return popupContainer;
+			popupMenu.AddChild(modeSelector);
+			return popupMenu;
 		}
 	}
 

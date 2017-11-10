@@ -29,54 +29,72 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
-using MatterHackers.Agg.VertexSource;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class PopupMenuButton : PopupButton
+	public class PopupMenu : FlowLayoutWidget
 	{
-		public PopupMenuButton(GuiWidget viewWidget)
-			: base(viewWidget)
+		public static BorderDouble MenuPadding { get; set; } = new BorderDouble(40, 8, 20, 8);
+
+		public PopupMenu()
+			: base(FlowDirection.TopToBottom)
 		{
+
 		}
 
-		private bool _drawArrow = false;
-		public bool DrawArrow
+		public MenuItem CreateHorizontalLine()
 		{
-			get => _drawArrow;
-			set
+			var menuItem = new MenuItem(new GuiWidget()
 			{
-				if (_drawArrow != value)
-				{
-					_drawArrow = value;
+				HAnchor = HAnchor.Stretch,
+				Height = 1,
+				BackgroundColor = Color.LightGray,
+				Margin = new BorderDouble(10, 1),
+				VAnchor = VAnchor.Center,
+			}, "HorizontalLine");
 
-					if (_drawArrow)
-					{
-						this.Padding = new BorderDouble(this.Padding.Left, this.Padding.Bottom, 20, this.Padding.Top);
-					}
-				}
-			}
+			this.AddChild(menuItem);
+
+			return menuItem;
 		}
 
-		private VertexStorage dropArrow = DropArrow.DownArrow;
-
-		public override void OnDraw(Graphics2D graphics2D)
+		public MenuItem CreateMenuItem(string name, string value = null, double pointSize = 12)
 		{
-			base.OnDraw(graphics2D);
-
-			if (this.DrawArrow)
+			var menuStatesView = new MenuItemColorStatesView(name)
 			{
-				// Draw directional arrow
-				graphics2D.Render(dropArrow, LocalBounds.Right - DropArrow.ArrowHeight * 2 - 2, LocalBounds.Center.Y + DropArrow.ArrowHeight / 2, ActiveTheme.Instance.SecondaryTextColor);
-			}
+				NormalBackgroundColor = Color.White,
+				OverBackgroundColor = Color.Gray,
+				NormalTextColor = Color.Black,
+				OverTextColor = Color.Black,
+				DisabledTextColor = Color.Gray,
+				PointSize = pointSize,
+				Padding = MenuPadding,
+			};
+
+			var menuItem = new MenuItem(menuStatesView, value ?? name)
+			{
+				Text = name,
+				Name = name + " Menu Item"
+			};
+
+			this.AddChild(menuItem);
+
+			return menuItem;
 		}
 
-		protected override void BeforeShowPopup()
+		public MenuItem CreateMenuItem(GuiWidget guiWidget, string name, string value = null)
 		{
-			if (this.PopupContent.BackgroundColor == Color.Transparent)
+			guiWidget.Padding = MenuPadding;
+
+			var menuItem = new MenuItem(guiWidget, value ?? name)
 			{
-				this.PopupContent.BackgroundColor = Color.White;
-			}
+				Text = name,
+				Name = name + " Menu Item"
+			};
+
+			this.AddChild(menuItem);
+
+			return menuItem;
 		}
 	}
 }

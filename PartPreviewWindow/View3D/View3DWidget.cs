@@ -2169,46 +2169,44 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		internal GuiWidget ShowOverflowMenu()
 		{
-			var popupContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
+			var popupMenu = new PopupMenu();
 
 			var meshViewer = meshViewerWidget;
 
-			popupContainer.AddChild(
-				OverflowMenu.CreateMenuItem(
+			popupMenu.CreateMenuItem(
+				this.theme.CreateCheckboxMenuItem(
+					"Show Print Bed".Localize(),
+					"ShowPrintBed",
+					meshViewer.RenderBed,
+					5,
+					(s, e) =>
+					{
+						if (s is CheckBox checkbox)
+						{
+							meshViewer.RenderBed = checkbox.Checked;
+						}
+					}),
+				"ShowPrintBed");
+
+			if (sceneContext.BuildHeight > 0)
+			{
+				popupMenu.CreateMenuItem(
 					this.theme.CreateCheckboxMenuItem(
-						"Show Print Bed".Localize(),
-						"ShowPrintBed",
-						meshViewer.RenderBed,
+						"Show Print Area".Localize(),
+						"ShowPrintArea",
+						meshViewer.RenderBuildVolume,
 						5,
 						(s, e) =>
 						{
 							if (s is CheckBox checkbox)
 							{
-								meshViewer.RenderBed = checkbox.Checked;
+								meshViewer.RenderBuildVolume = checkbox.Checked;
 							}
 						}),
-					"ShowPrintBed"));
-
-			if (sceneContext.BuildHeight > 0)
-			{
-				popupContainer.AddChild(
-					OverflowMenu.CreateMenuItem(
-						this.theme.CreateCheckboxMenuItem(
-							"Show Print Area".Localize(),
-							"ShowPrintArea",
-							meshViewer.RenderBuildVolume,
-							5,
-							(s, e) =>
-							{
-								if (s is CheckBox checkbox)
-								{
-									meshViewer.RenderBuildVolume = checkbox.Checked;
-								}
-							}),
-						"ShowPrintArea"));
+					"ShowPrintArea");
 			}
 
-			popupContainer.AddChild(OverflowMenu.CreateHorizontalLine());
+			popupMenu.CreateHorizontalLine();
 
 			// TODO: This should be moved to the MeshViewerWidget constructor or initializer calls
 			string renderTypeString = UserSettings.Instance.get(UserSettingsKey.defaultRenderSetting);
@@ -2225,11 +2223,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				meshViewerWidget.RenderType = renderType;
 			}
 
-			AddRadioButton("Shaded".Localize(), RenderTypes.Shaded, popupContainer);
-			AddRadioButton("Outlines".Localize(), RenderTypes.Outlines, popupContainer);
-			AddRadioButton("Polygons".Localize(), RenderTypes.Polygons, popupContainer);
-			AddRadioButton("Materials Option".Localize(), RenderTypes.Materials, popupContainer);
-			AddRadioButton("Overhang".Localize(), RenderTypes.Overhang, popupContainer, () =>
+			AddRadioButton("Shaded".Localize(), RenderTypes.Shaded, popupMenu);
+			AddRadioButton("Outlines".Localize(), RenderTypes.Outlines, popupMenu);
+			AddRadioButton("Polygons".Localize(), RenderTypes.Polygons, popupMenu);
+			AddRadioButton("Materials Option".Localize(), RenderTypes.Materials, popupMenu);
+			AddRadioButton("Overhang".Localize(), RenderTypes.Overhang, popupMenu, () =>
 			{
 				meshViewerWidget.RenderType = RenderTypes.Overhang;
 
@@ -2268,14 +2266,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			});
 
-			popupContainer.AddChild(OverflowMenu.CreateHorizontalLine());
+			popupMenu.CreateHorizontalLine();
 
-			popupContainer.AddChild(new GridOptionsPanel(this.InteractionLayer));
+			popupMenu.AddChild(new GridOptionsPanel(this.InteractionLayer));
 
-			return popupContainer;
+			return popupMenu;
 		}
 
-		private void AddRadioButton(string label, RenderTypes renderTypes, GuiWidget popupContainer, Action action = null)
+		private void AddRadioButton(string label, RenderTypes renderTypes, PopupMenu popupMenu, Action action = null)
 		{
 			var radioButton = new RadioButton(label, textColor: Color.Black)
 			{
@@ -2299,8 +2297,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			};
 
-			popupContainer.AddChild(
-				OverflowMenu.CreateMenuItem(radioButton, $"{label}-Menu"));
+			popupMenu.CreateMenuItem(radioButton, $"{label}-Menu");
 		}
 
 		protected bool autoRotating = false;
