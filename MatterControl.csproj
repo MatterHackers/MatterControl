@@ -125,7 +125,9 @@
     <Compile Include="PartPreviewWindow\View3D\Actions\MeshWrapperOperation.cs" />
     <Compile Include="PartPreviewWindow\View3D\Actions\PaintMaterialEditor.cs" />
     <Compile Include="PartPreviewWindow\View3D\Actions\SubtractEditor.cs" />
+    <Compile Include="PartPreviewWindow\View3D\LightingData.cs" />
     <Compile Include="PartPreviewWindow\View3D\SlicePopupMenu.cs" />
+    <Compile Include="PartPreviewWindow\View3D\TumbleCubeControl.cs" />
     <Compile Include="PrinterControls\MacroDetailPage.cs" />
     <Compile Include="PrinterControls\MacroListPage.cs" />
     <Compile Include="PrinterControls\PrinterConnections\PrinterSetup.cs" />
