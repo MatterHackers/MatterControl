@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.Library;
+using MatterHackers.MatterControl.PartPreviewWindow;
 
 namespace MatterHackers.MatterControl.PrintQueue
 {
@@ -45,7 +46,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 		public bool AllowProtected { get; set; } = false;
 		public bool AllowContainers { get; set; } = false;
 		public bool AlwaysEnabled { get; set; } = false;
-		internal MenuItem MenuItem { get; set; }
+		internal PopupMenu.MenuItem MenuItem { get; set; }
 	}
 
 	public class MenuSeparator : PrintItemAction

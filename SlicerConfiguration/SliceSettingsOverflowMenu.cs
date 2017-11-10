@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private FlowLayoutWidget GenerateMenuContents(PrinterConfig printer, SliceSettingsWidget sliceSettingsWidget)
 		{
-			var popupMenu = new PopupMenu();
+			var popupMenu = new PopupMenu(ApplicationController.Instance.Theme);
 
 			var showHelpBox = new CheckBox("Show Help".Localize());
 			showHelpBox.Checked = sliceSettingsWidget.ShowHelpControls;
@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			popupMenu.CreateHorizontalLine();
 
-			MenuItem menuItem;
+			PopupMenu.MenuItem menuItem;
 
 			menuItem = popupMenu.CreateMenuItem("Export".Localize());
 			menuItem.Click += (s, e) =>
