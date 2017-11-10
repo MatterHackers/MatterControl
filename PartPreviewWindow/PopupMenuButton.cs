@@ -94,6 +94,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 		}
 
+		public static MenuItem CreateMenuItem(GuiWidget guiWidget, string name, string value = null)
+		{
+			guiWidget.Padding = MenuPadding;
+
+			return new MenuItem(guiWidget, value ?? name)
+			{
+				Text = name,
+				Name = name + " Menu Item"
+			};
+		}
+
 		public override void OnDraw(Graphics2D graphics2D)
 		{
 			base.OnDraw(graphics2D);

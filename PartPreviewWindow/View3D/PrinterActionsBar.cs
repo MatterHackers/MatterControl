@@ -152,7 +152,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void AddChild(GuiWidget childToAdd, int indexInChildrenList = -1)
 		{
-			childToAdd.VAnchor |= VAnchor.Center;
+			childToAdd.VAnchor = VAnchor.Center;
 			base.AddChild(childToAdd, indexInChildrenList);
 		}
 

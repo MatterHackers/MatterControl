@@ -824,7 +824,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			CreateMenuActions();
 
 			var popupContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			
+
 			// Create menu items in the DropList for each element in this.menuActions
 			foreach (var menuAction in menuActions)
 			{

@@ -2169,79 +2169,54 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		internal GuiWidget ShowOverflowMenu()
 		{
-			var popupContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				Padding = 12,
-				BackgroundColor = Color.White
-			};
+			var popupContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 
 			var meshViewer = meshViewerWidget;
 
 			popupContainer.AddChild(
-				this.theme.CreateCheckboxMenuItem(
-					"Show Print Bed".Localize(),
-					"ShowPrintBed",
-					meshViewer.RenderBed,
-					5,
-					(s, e) =>
-					{
-						if (s is CheckBox checkbox)
-						{
-							meshViewer.RenderBed = checkbox.Checked;
-						}
-					}));
-
-			if (sceneContext.BuildHeight > 0)
-			{
-				popupContainer.AddChild(
+				OverflowMenu.CreateMenuItem(
 					this.theme.CreateCheckboxMenuItem(
-						"Show Print Area".Localize(),
-						"ShowPrintArea",
-						meshViewer.RenderBuildVolume,
+						"Show Print Bed".Localize(),
+						"ShowPrintBed",
+						meshViewer.RenderBed,
 						5,
 						(s, e) =>
 						{
 							if (s is CheckBox checkbox)
 							{
-								meshViewer.RenderBuildVolume = checkbox.Checked;
+								meshViewer.RenderBed = checkbox.Checked;
 							}
-						}));
+						}),
+					"ShowPrintBed"));
+
+			if (sceneContext.BuildHeight > 0)
+			{
+				popupContainer.AddChild(
+					OverflowMenu.CreateMenuItem(
+						this.theme.CreateCheckboxMenuItem(
+							"Show Print Area".Localize(),
+							"ShowPrintArea",
+							meshViewer.RenderBuildVolume,
+							5,
+							(s, e) =>
+							{
+								if (s is CheckBox checkbox)
+								{
+									meshViewer.RenderBuildVolume = checkbox.Checked;
+								}
+							}),
+						"ShowPrintArea"));
 			}
 
-			popupContainer.AddChild(new HorizontalLine());
+			popupContainer.AddChild(OverflowMenu.CreateHorizontalLine());
 
-			var renderOptions = CreateRenderTypeRadioButtons();
-			popupContainer.AddChild(renderOptions);
-
-			popupContainer.AddChild(new GridOptionsPanel(this.InteractionLayer));
-
-			return popupContainer;
-		}
-
-		private GuiWidget CreateRenderTypeRadioButtons()
-		{
-			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				HAnchor = HAnchor.Stretch,
-				Margin = new BorderDouble(5, 5, 5, 0)
-			};
-
+			// TODO: This should be moved to the MeshViewerWidget constructor or initializer calls
 			string renderTypeString = UserSettings.Instance.get(UserSettingsKey.defaultRenderSetting);
 			if (renderTypeString == null)
 			{
-				if (UserSettings.Instance.IsTouchScreen)
-				{
-					renderTypeString = "Shaded";
-				}
-				else
-				{
-					renderTypeString = "Outlines";
-				}
+				renderTypeString = (UserSettings.Instance.IsTouchScreen) ? "Shaded" : "Outlines";
 				UserSettings.Instance.set(UserSettingsKey.defaultRenderSetting, renderTypeString);
 			}
-
-			//var itemTextColor = ActiveTheme.Instance.PrimaryTextColor;
-			var itemTextColor = Color.Black;
 
 			RenderTypes renderType;
 			bool canParse = Enum.TryParse(renderTypeString, out renderType);
@@ -2250,115 +2225,82 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				meshViewerWidget.RenderType = renderType;
 			}
 
+			AddRadioButton("Shaded".Localize(), RenderTypes.Shaded, popupContainer);
+			AddRadioButton("Outlines".Localize(), RenderTypes.Outlines, popupContainer);
+			AddRadioButton("Polygons".Localize(), RenderTypes.Polygons, popupContainer);
+			AddRadioButton("Materials Option".Localize(), RenderTypes.Materials, popupContainer);
+			AddRadioButton("Overhang".Localize(), RenderTypes.Overhang, popupContainer, () =>
 			{
-				RadioButton renderTypeCheckBox = new RadioButton("Shaded".Localize(), textColor: itemTextColor);
-				renderTypeCheckBox.Checked = (meshViewerWidget.RenderType == RenderTypes.Shaded);
+				meshViewerWidget.RenderType = RenderTypes.Overhang;
 
-				renderTypeCheckBox.CheckedStateChanged += (sender, e) =>
+				UserSettings.Instance.set("defaultRenderSetting", meshViewerWidget.RenderType.ToString());
+
+				// Loop over all visible meshes, changing the face color depending on the face normal Z value
+				foreach (var meshRenderData in this.Scene.VisibleMeshes())
 				{
-					if (renderTypeCheckBox.Checked)
-					{
-						meshViewerWidget.RenderType = RenderTypes.Shaded;
-						UserSettings.Instance.set(UserSettingsKey.defaultRenderSetting, meshViewerWidget.RenderType.ToString());
-					}
-				};
-				container.AddChild(renderTypeCheckBox);
-			}
+					meshRenderData.Mesh.MarkAsChanged();
 
-			{
-				RadioButton renderTypeCheckBox = new RadioButton("Outlines".Localize(), textColor: itemTextColor);
-				renderTypeCheckBox.Checked = (meshViewerWidget.RenderType == RenderTypes.Outlines);
-				renderTypeCheckBox.CheckedStateChanged += (sender, e) =>
-				{
-					if (renderTypeCheckBox.Checked)
-					{
-						meshViewerWidget.RenderType = RenderTypes.Outlines;
-						UserSettings.Instance.set(UserSettingsKey.defaultRenderSetting, meshViewerWidget.RenderType.ToString());
-					}
-				};
-				container.AddChild(renderTypeCheckBox);
-			}
-
-			{
-				RadioButton renderTypeCheckBox = new RadioButton("Polygons".Localize(), textColor: itemTextColor);
-				renderTypeCheckBox.Checked = (meshViewerWidget.RenderType == RenderTypes.Polygons);
-				renderTypeCheckBox.CheckedStateChanged += (sender, e) =>
-				{
-					if (renderTypeCheckBox.Checked)
-					{
-						meshViewerWidget.RenderType = RenderTypes.Polygons;
-						UserSettings.Instance.set(UserSettingsKey.defaultRenderSetting, meshViewerWidget.RenderType.ToString());
-					}
-				};
-				container.AddChild(renderTypeCheckBox);
-			}
-
-			// Materials option
-			{
-				RadioButton materialsCheckBox = new RadioButton("Materials".Localize(), textColor: itemTextColor);
-				materialsCheckBox.Name = "Materials Option";
-				materialsCheckBox.Checked = (meshViewerWidget.RenderType == RenderTypes.Materials);
-
-				materialsCheckBox.CheckedStateChanged += (sender, e) =>
-				{
-					if (materialsCheckBox.Checked)
-					{
-						meshViewerWidget.RenderType = RenderTypes.Materials;
-						UserSettings.Instance.set("defaultRenderSetting", meshViewerWidget.RenderType.ToString());
-					}
-				};
-
-				container.AddChild(materialsCheckBox);
-			}
-
-			// overhang setting
-			{
-				RadioButton renderTypeCheckBox = new RadioButton("Overhang".Localize(), textColor: itemTextColor);
-				renderTypeCheckBox.Checked = (meshViewerWidget.RenderType == RenderTypes.Overhang);
-
-				renderTypeCheckBox.CheckedStateChanged += (sender, e) =>
-				{
-					if (renderTypeCheckBox.Checked)
-					{
-						// TODO: Determine if Scene is available in scope
-						var scene = this.Scene;
-
-						meshViewerWidget.RenderType = RenderTypes.Overhang;
-
-						UserSettings.Instance.set("defaultRenderSetting", meshViewerWidget.RenderType.ToString());
-						foreach (var meshRenderData in scene.VisibleMeshes())
+					// change the color to be the right thing
+					GLMeshTrianglePlugin.Get(
+						meshRenderData.Mesh, 
+						(faceEdge) =>
 						{
-							meshRenderData.Mesh.MarkAsChanged();
-							// change the color to be the right thing
-							GLMeshTrianglePlugin glMeshPlugin = GLMeshTrianglePlugin.Get(meshRenderData.Mesh, (faceEdge) =>
+							Vector3 normal = faceEdge.ContainingFace.Normal;
+							normal = Vector3.TransformVector(normal, meshRenderData.WorldMatrix()).GetNormal();
+
+							double startColor = 223.0 / 360.0;
+							double endColor = 5.0 / 360.0;
+							double delta = endColor - startColor;
+
+							var color = ColorF.FromHSL(startColor, .99, .49).ToColor();
+							if (normal.Z < 0)
 							{
-								Vector3 normal = faceEdge.ContainingFace.Normal;
-								normal = Vector3.TransformVector(normal, meshRenderData.WorldMatrix()).GetNormal();
-								VertexColorData colorData = new VertexColorData();
+								color = ColorF.FromHSL(startColor - delta * normal.Z, .99, .49).ToColor();
+							}
 
-								double startColor = 223.0 / 360.0;
-								double endColor = 5.0 / 360.0;
-								double delta = endColor - startColor;
+							return new VertexColorData
+							{
+								red = color.red,
+								green = color.green,
+								blue = color.blue
+							};
+						});
+				}
+			});
 
-								Color color = ColorF.FromHSL(startColor, .99, .49).ToColor();
-								if (normal.Z < 0)
-								{
-									color = ColorF.FromHSL(startColor - delta * normal.Z, .99, .49).ToColor();
-								}
+			popupContainer.AddChild(OverflowMenu.CreateHorizontalLine());
 
-								colorData.red = color.red;
-								colorData.green = color.green;
-								colorData.blue = color.blue;
-								return colorData;
-							});
-						}
+			popupContainer.AddChild(new GridOptionsPanel(this.InteractionLayer));
+
+			return popupContainer;
+		}
+
+		private void AddRadioButton(string label, RenderTypes renderTypes, GuiWidget popupContainer, Action action = null)
+		{
+			var radioButton = new RadioButton(label, textColor: Color.Black)
+			{
+				Checked = (meshViewerWidget.RenderType == renderTypes),
+				HAnchor = HAnchor.MaxFitOrStretch,
+				Margin = 0
+			};
+			radioButton.CheckedStateChanged += (s, e) =>
+			{
+				if (radioButton.Checked)
+				{
+					if (action == null)
+					{
+						meshViewerWidget.RenderType = renderTypes;
+						UserSettings.Instance.set(UserSettingsKey.defaultRenderSetting, meshViewerWidget.RenderType.ToString());
 					}
-				};
+					else
+					{
+						action.Invoke();
+					}
+				}
+			};
 
-				container.AddChild(renderTypeCheckBox);
-			}
-
-			return container;
+			popupContainer.AddChild(
+				OverflowMenu.CreateMenuItem(radioButton, $"{label}-Menu"));
 		}
 
 		protected bool autoRotating = false;
