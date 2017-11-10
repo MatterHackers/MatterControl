@@ -124,6 +124,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				container.nextButton.Enabled = false;
 			}
 
+			// if we are trying to go to a temp of 0 than just move on to next window
+			if(printer.Settings.GetValue<double>(SettingsKey.bed_temperature) == 0)
+			{
+				// advance to the next page
+				UiThread.RunOnIdle(() => container.nextButton.OnClick(null));
+			}
+
 			base.PageIsBecomingActive();
 		}
 
