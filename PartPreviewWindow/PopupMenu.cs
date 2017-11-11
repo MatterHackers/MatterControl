@@ -56,9 +56,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public HorizontalLine CreateHorizontalLine()
 		{
-			var line = new HorizontalLine(30)
+			var line = new HorizontalLine(40)
 			{
-				Margin = new BorderDouble(PopupMenu.GutterWidth - 5, 2, 5, 2)
+				Margin = new BorderDouble(PopupMenu.GutterWidth - 8, 1, 8, 1)
 			};
 
 			this.AddChild(line);
@@ -136,7 +136,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				if (this.Image != null)
 				{
-					var x = this.Image.Width / 2 - PopupMenu.GutterWidth;
+					var x = this.Image.Width / 2 - PopupMenu.GutterWidth + 2;
 					var y = this.Size.Y / 2 - this.Image.Height / 2;
 
 					graphics2D.Render(this.Image, x, y);
