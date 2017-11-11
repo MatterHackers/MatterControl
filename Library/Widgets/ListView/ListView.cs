@@ -49,9 +49,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		private ILibraryContext LibraryContext;
 
-		/// <summary>
-		/// The original content view before it was replaced by a container default view
-		/// </summary>
+		private int scrollAmount = -1;
+
 		private GuiWidget stashedContentView;
 
 		// Default constructor uses IconListView
@@ -241,6 +240,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				if (value is IListContentView)
 				{
+					scrollAmount = -1;
+
 					if (contentView != null
 						&& contentView != value)
 					{
@@ -381,6 +382,18 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			}
 
 			base.OnLoad(args);
+		}
+
+		public override void OnMouseWheel(MouseEventArgs mouseEvent)
+		{
+			if (scrollAmount == -1)
+			{
+				scrollAmount = (int) (this.contentView.Children.FirstOrDefault()?.Height ?? 20);
+			}
+
+			int direction = (mouseEvent.WheelDelta > 0) ? -1 : 1;
+
+			ScrollPosition += new Vector2(0, scrollAmount * direction);
 		}
 
 		public override void OnClosed(ClosedEventArgs e)
