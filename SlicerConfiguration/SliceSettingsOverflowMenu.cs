@@ -28,6 +28,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
@@ -50,19 +51,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			var popupMenu = new PopupMenu(ApplicationController.Instance.Theme);
 
-			var showHelpBox = new CheckBox("Show Help".Localize());
-			showHelpBox.Checked = sliceSettingsWidget.ShowHelpControls;
-			showHelpBox.CheckedStateChanged += (s, e) =>
+			var checkedIcon = AggContext.StaticData.LoadIcon("fa-check_16.png");
+
+			var icon = sliceSettingsWidget.ShowHelpControls ? checkedIcon : null;
+
+			popupMenu.CreateMenuItem("Show Help".Localize(), icon).Click += (s, e) =>
 			{
-				sliceSettingsWidget.ShowHelpControls = showHelpBox.Checked;
+				sliceSettingsWidget.ShowHelpControls = !sliceSettingsWidget.ShowHelpControls;
 				sliceSettingsWidget.RebuildSliceSettingsTabs();
 			};
-
-
-			popupMenu.AddChild(new MenuItem(showHelpBox, "Show Help Checkbox")
-			{
-				Padding = PopupMenu.MenuPadding,
-			});
 
 			popupMenu.CreateHorizontalLine();
 
