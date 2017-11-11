@@ -102,7 +102,7 @@ namespace MatterHackers.MatterControl
 
 		public TextImageButtonFactory ViewControlsButtonFactory { get; private set; }
 		public Color SplitterBackground { get; private set; } = new Color(0, 0, 0, 60);
-		public int SplitterWidth => (int)(7 * (GuiWidget.DeviceScale <= 1 ? GuiWidget.DeviceScale : GuiWidget.DeviceScale * 1.4));
+		public int SplitterWidth => (int)(6 * (GuiWidget.DeviceScale <= 1 ? GuiWidget.DeviceScale : GuiWidget.DeviceScale * 1.4));
 
 		public Color SlightShade { get; } = new Color(0, 0, 0, 40);
 		public Color MinimalShade { get; } = new Color(0, 0, 0, 15);
