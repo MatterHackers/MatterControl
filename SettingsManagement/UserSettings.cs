@@ -22,7 +22,8 @@ namespace MatterHackers.MatterControl
 		public const string SliceSettingsWidth = nameof(SliceSettingsWidth);
 		public const string SliceSettingsWidget_CurrentTab = nameof(SliceSettingsWidget_CurrentTab);
 		public const string OpenScadPath = nameof(OpenScadPath);
-    }
+		public const string LibraryViewWidth = nameof(LibraryViewWidth);
+	}
 
 	public class UserSettings
 	{
@@ -109,6 +110,24 @@ namespace MatterHackers.MatterControl
 
 			setting.Value = value;
 			setting.Commit();
+		}
+
+		public double LibraryViewWidth
+		{
+			get
+			{
+				if (!double.TryParse(this.get(UserSettingsKey.LibraryViewWidth), out double controlWidth))
+				{
+					// Default to 254 if no UserSetting value exists
+					controlWidth = 254 * GuiWidget.DeviceScale;
+				}
+
+				return controlWidth;
+			}
+			set
+			{
+				this.set(UserSettingsKey.LibraryViewWidth, value.ToString());
+			}
 		}
 
 		public bool IsTouchScreen => this.get(UserSettingsKey.ApplicationDisplayMode) == "touchscreen";

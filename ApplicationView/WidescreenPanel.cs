@@ -51,12 +51,16 @@ namespace MatterHackers.MatterControl
 
 			var library3DViewSplitter = new Splitter()
 			{
-				Padding = new BorderDouble(4),
-				SplitterDistance = 254 * GuiWidget.DeviceScale,
+				SplitterDistance = UserSettings.Instance.LibraryViewWidth,
 				SplitterWidth = ApplicationController.Instance.Theme.SplitterWidth,
 				SplitterBackground = ApplicationController.Instance.Theme.SplitterBackground
 			};
 			library3DViewSplitter.AnchorAll();
+
+			library3DViewSplitter.DistanceChanged += (s, e) =>
+			{
+				UserSettings.Instance.LibraryViewWidth = library3DViewSplitter.SplitterDistance;
+			};
 
 			this.AddChild(library3DViewSplitter);
 
