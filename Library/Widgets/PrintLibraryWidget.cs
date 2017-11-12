@@ -431,7 +431,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						var bedConfig = new BedConfig();
 
 						var newTab = partPreviewContent.CreatePartTab(firstItem.Name, bedConfig, theme);
-						if (newTab.TabPage is PartTabPage printerTab)
+						if (newTab.TabContent is PartTabPage printerTab)
 						{
 							bedConfig.Scene.Children.Modify(list =>
 							{
@@ -602,6 +602,29 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				Action = (selectedLibraryItems, listView) =>
 				{
 					listView.ListContentView = new RowListView();
+					listView.Reload().ConfigureAwait(false);
+				},
+			});
+
+			menuActions.Add(new PrintItemAction()
+			{
+				Title = "View XSmall Icons".Localize(),
+				AlwaysEnabled = true,
+				Action = (selectedLibraryItems, listView) =>
+				{
+					listView.ListContentView = new IconListView(18);
+					listView.Reload().ConfigureAwait(false);
+				},
+			});
+
+
+			menuActions.Add(new PrintItemAction()
+			{
+				Title = "View Small Icons".Localize(),
+				AlwaysEnabled = true,
+				Action = (selectedLibraryItems, listView) =>
+				{
+					listView.ListContentView = new IconListView(70);
 					listView.Reload().ConfigureAwait(false);
 				},
 			});

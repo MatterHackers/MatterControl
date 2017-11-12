@@ -113,13 +113,14 @@
     <Compile Include="Library\Providers\WritableContainer.cs" />
     <Compile Include="Library\Widgets\ExpandCheckboxButton.cs" />
     <Compile Include="Library\Widgets\InsertionGroup.cs" />
+    <Compile Include="PartPreviewWindow\NewTabButton.cs" />
     <Compile Include="PartPreviewWindow\PartTabPage.cs" />
     <Compile Include="PartPreviewWindow\PopupMenu.cs" />
     <Compile Include="PartPreviewWindow\PopupMenuButton.cs" />
-    <Compile Include="PartPreviewWindow\IconTab.cs" />
     <Compile Include="PartPreviewWindow\PopupButton.cs" />
     <Compile Include="PartPreviewWindow\SectionWidget.cs" />
     <Compile Include="PartPreviewWindow\SliceLayerSelector.cs" />
+    <Compile Include="PartPreviewWindow\Toolbar.cs" />
     <Compile Include="PartPreviewWindow\View3D\Actions\IntersectionEditor.cs" />
     <Compile Include="PartPreviewWindow\View3D\Actions\MeshWrapper.cs" />
     <Compile Include="PartPreviewWindow\View3D\Actions\MeshWrapperOperation.cs" />

@@ -30,13 +30,12 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Linq;
 using MatterHackers.Agg;
-using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.AboutPage;
-using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -45,20 +44,33 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private EventHandler unregisterEvents;
 		private MainTab printerTab = null;
 
-		private TabControl tabControl;
+		private NewTabButton plusTabSelect;
+		private ChromeTabs tabControl;
 
 		public PartPreviewContent()
+			: base(FlowDirection.TopToBottom)
 		{
 			var printer = ApplicationController.Instance.ActivePrinter;
 			var theme = ApplicationController.Instance.Theme;
 
 			this.AnchorAll();
 
-			tabControl = ApplicationController.Instance.Theme.CreateTabControl(2);
+			var extensionArea = new FlowLayoutWidget();
 
-			tabControl.TabBar.TabIndexChanged += (s, e) =>
+			tabControl = new ChromeTabs(extensionArea, theme)
 			{
-				if (tabControl.GetTabPage(tabControl.SelectedTabIndex) is PartTabPage tabPage)
+				VAnchor = VAnchor.Stretch,
+				HAnchor = HAnchor.Stretch,
+				BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor,
+				NewTabPage = () =>
+				{
+					return new PlusTabPage(this, tabControl, theme);
+				}
+			};
+
+			tabControl.ActiveTabChanged += (s, e) =>
+			{
+				if (this.tabControl.ActiveTab?.TabContent is PartTabPage tabPage)
 				{
 					var dragDropData = ApplicationController.Instance.DragDropData;
 
@@ -68,58 +80,27 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			};
 
-			var separator = tabControl.Children<HorizontalLine>().FirstOrDefault();
-			separator.BackgroundColor = ApplicationController.Instance.Theme.SlightShade;
+			tabControl.TabBar.Padding = new BorderDouble(top: 4);
+			tabControl.TabBar.SeparatorLine.BackgroundColor = ApplicationController.Instance.Theme.SlightShade;
+			tabControl.TabBar.SeparatorLine.Height = 2;
 
-			Color selectedTabColor;
-			if (!UserSettings.Instance.IsTouchScreen)
-			{
-				tabControl.TabBar.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-				selectedTabColor = ActiveTheme.Instance.TabLabelSelected;
-			}
-			else
-			{
-				tabControl.TabBar.BackgroundColor = ActiveTheme.Instance.TransparentLightOverlay;
-				selectedTabColor = ActiveTheme.Instance.SecondaryAccentColor;
-			}
+			Color selectedTabColor = ActiveTheme.Instance.TabLabelSelected;
 
 			// Add a tab for the current printer
 			if (ActiveSliceSettings.Instance.PrinterSelected)
 			{
 				string tabTitle = ActiveSliceSettings.Instance.GetValue(SettingsKey.printer_name);
 				printerTab = CreatePrinterTab(printer, theme, tabTitle);
+
 				tabControl.AddTab(printerTab);
 			}
 			else
 			{
-				this.CreatePartTab("New Part", printer.Bed, theme, 0);
+				this.CreatePartTab("New Part", printer.Bed, theme);
 			}
 
-			// TODO: add in the printers and designs that are currently open (or were open last run).
-			var plusTabSelect = new IconTab(
-				"Create New",
-				new TabPage(new PlusTabPage(this, printer, theme),  "+"),
-				AggContext.StaticData.LoadIcon("fa-plus_12.png", IconColor.Theme),
-				theme);
-
-			plusTabSelect.VAnchor = VAnchor.Bottom;
-
-			plusTabSelect.MinimumSize = new VectorMath.Vector2(16, 16);
-			plusTabSelect.Margin = new BorderDouble(left: 10, top: 6);
-			plusTabSelect.Padding = 0;
-			plusTabSelect.ToolTipText = "Create New".Localize();
-			tabControl.AddTab(plusTabSelect);
-
-			tabControl.TabBar.AddChild(new HorizontalSpacer());
-
 			// add in the update available button
-			LinkButtonFactory linkButtonFactory = new LinkButtonFactory()
-			{
-				textColor = ActiveTheme.Instance.PrimaryTextColor,
-				fontSize = 12,
-			};
-
-			Button updateAvailableButton = linkButtonFactory.Generate("Update Available");
+			Button updateAvailableButton = theme.LinkButtonFactory.Generate("Update Available");
 			updateAvailableButton.Name = "Update Available Link";
 			updateAvailableButton.Visible = UpdateControlData.Instance.UpdateStatus == UpdateControlData.UpdateStatusStates.UpdateAvailable;
 			updateAvailableButton.ToolTipText = "There is a new update available for download".Localize();
@@ -133,7 +114,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					DialogWindow.Show<CheckForUpdatesPage>();
 				});
 			});
-			tabControl.TabBar.AddChild(updateAvailableButton);
+
+			tabControl.AddChild(updateAvailableButton);
 
 			UpdateControlData.Instance.UpdateStatusChanged.RegisterEvent((s, e) =>
 			{
@@ -141,17 +123,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}, ref unregisterEvents);
 
 			// this causes the update button to be centered
-			tabControl.TabBar.AddChild(new HorizontalSpacer());
-
-			// put in the login logout control
-			var rightPanelArea = new FlowLayoutWidget()
-			{
-				VAnchor = VAnchor.Stretch
-			};
-
-			var extensionArea = new FlowLayoutWidget();
-
-			rightPanelArea.AddChild(extensionArea);
+			//tabControl.TabBar.AddChild(new HorizontalSpacer());
 
 			//rightPanelArea.AddChild(
 			//	new ImageWidget(
@@ -161,7 +133,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			//		DebugShowBounds  = true
 			//	});
 
-			tabControl.TabBar.AddChild(rightPanelArea);
+			//this.AddChild(tabControl);
 
 			this.AddChild(tabControl);
 
@@ -171,7 +143,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					&& stringEvent.Data == SettingsKey.printer_name
 					&& printerTab != null)
 				{
-					printerTab.TabPage.Text = ActiveSliceSettings.Instance.GetValue(SettingsKey.printer_name);
+					printerTab.Text = ActiveSliceSettings.Instance.GetValue(SettingsKey.printer_name);
 				}
 
 			}, ref unregisterEvents);
@@ -187,38 +159,36 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}, ref unregisterEvents);
 		}
 
-		private static MainTab CreatePrinterTab(PrinterConfig printer, ThemeConfig theme, string tabTitle)
+		private MainTab CreatePrinterTab(PrinterConfig printer, ThemeConfig theme, string tabTitle)
 		{
 			string oemName = printer.Settings.GetValue(SettingsKey.make);
 
 			OemSettings.Instance.OemUrls.TryGetValue(oemName, out string oemUrl);
 
-			var printerTab = new MainTab(
+			return new MainTab(
 				tabTitle,
-				"3D View Tab",
+				tabControl,
 				new PrinterTabPage(printer, theme, tabTitle.ToUpper()),
-				"https://www.google.com/s2/favicons?domain=" + oemUrl ?? "www.matterhackers.com");
-			printerTab.ToolTipText = "Preview 3D Design".Localize();
-
-			theme.SetPrinterTabStyles(printerTab);
-			return printerTab;
+				"https://www.google.com/s2/favicons?domain=" + oemUrl ?? "www.matterhackers.com")
+			{
+				Name = "3D View Tab",
+				MinimumSize = new Vector2(120, theme.shortButtonHeight)
+			};
 		}
 
-		internal MainTab CreatePartTab(string tabTitle, BedConfig sceneContext, ThemeConfig theme, int tabIndex = 1)
+		internal MainTab CreatePartTab(string tabTitle, BedConfig sceneContext, ThemeConfig theme)
 		{
 			var partTab = new MainTab(
 				tabTitle,
-				"newPart" + tabControl.TabCount,
+				tabControl,
 				new PartTabPage(null, sceneContext, theme, "xxxxx"),
-				"https://i.imgur.com/nkeYgfU.png");
+				"https://i.imgur.com/nkeYgfU.png")
+			{
+				Name = "newPart" + tabControl.AllTabs.Count(),
+				MinimumSize = new Vector2(120, theme.shortButtonHeight)
+			};
 
-			theme.SetPrinterTabStyles(partTab);
-
-			var margin = partTab.Margin;
-			partTab.Margin = new BorderDouble(1, margin.Bottom, 1, margin.Top);
-
-			tabControl.AddTab(partTab, tabPosition: tabIndex);
-			tabControl.SelectedTabIndex = tabIndex;
+			tabControl.AddTab(partTab);
 
 			return partTab;
 		}
