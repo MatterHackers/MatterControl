@@ -64,9 +64,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
 			{
-				StringEventArgs stringEvent = e as StringEventArgs;
-				if (stringEvent != null
-					&& stringEvent.Data == SettingsKey.default_material_presets)
+				if (e is StringEventArgs stringEvent
+					&& (stringEvent.Data == SettingsKey.default_material_presets
+						|| stringEvent.Data == SettingsKey.layer_name))
 				{
 					RebuildDropDownList();
 				}
