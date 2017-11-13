@@ -249,11 +249,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (sender is ITab tab)
 			{
 				this.RemoveTab(sender as ITab);
-
-				if (tab.TabContent is PrinterTabPage printerTab)
-				{
-					printerTab.printer.Settings.Helpers.SetMarkedForDelete(true);
-				}
+				ApplicationController.Instance.ClearActivePrinter();
 			}
 		}
 
