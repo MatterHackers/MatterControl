@@ -31,8 +31,10 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.ConfigurationPage;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrintLibrary;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
@@ -49,11 +51,13 @@ namespace MatterHackers.MatterControl
 			this.AnchorAll();
 			this.Name = "WidescreenPanel";
 
+			var theme = ApplicationController.Instance.Theme;
+
 			var library3DViewSplitter = new Splitter()
 			{
 				SplitterDistance = UserSettings.Instance.LibraryViewWidth,
-				SplitterWidth = ApplicationController.Instance.Theme.SplitterWidth,
-				SplitterBackground = ApplicationController.Instance.Theme.SplitterBackground
+				SplitterWidth = theme.SplitterWidth,
+				SplitterBackground = theme.SplitterBackground
 			};
 			library3DViewSplitter.AnchorAll();
 
@@ -67,12 +71,21 @@ namespace MatterHackers.MatterControl
 			var leftNav = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			leftNav.AnchorAll();
 
-			leftNav.AddChild(new BrandMenuButton()
+			var toolbar = new Toolbar(null, theme)
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit,
+				MinimumSize = new Vector2(16, 16)
+			};
+			toolbar.SeparatorLine.BackgroundColor = ApplicationController.Instance.Theme.SlightShade;
+			toolbar.SeparatorLine.Height = 2;
+			toolbar.ActionBar.AddChild(new BrandMenuButton(theme)
 			{
 				MinimumSize = new VectorMath.Vector2(0, 34),
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit
 			});
+			leftNav.AddChild(toolbar);
 
 			var partPreviewContent = new PartPreviewContent()
 			{
@@ -80,7 +93,7 @@ namespace MatterHackers.MatterControl
 				HAnchor = HAnchor.Left | HAnchor.Right
 			};
 
-			leftNav.AddChild(new PrintLibraryWidget(partPreviewContent, ApplicationController.Instance.Theme));
+			leftNav.AddChild(new PrintLibraryWidget(partPreviewContent, theme));
 
 			// put in the left column
 			library3DViewSplitter.Panel1.AddChild(leftNav);
@@ -90,56 +103,40 @@ namespace MatterHackers.MatterControl
 		}
 	}
 
-	public class BrandMenuButton : GuiWidget
+	public class BrandMenuButton : PopupButton
 	{
-		public BrandMenuButton()
+		public BrandMenuButton(ThemeConfig theme)
 		{
-			this.Padding = new BorderDouble(left: 2);
-
-			Name = "MatterControl BrandMenuButton";
-			var buttonView = new FlowLayoutWidget()
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit,
-				Margin = 0
-			};
-
-			var buttonHeight = ApplicationController.Instance.Theme.ButtonHeight;
-
-			var iconContainer = new GuiWidget()
-			{
-				Width = buttonHeight,
-				Height = buttonHeight
-			};
-			iconContainer.AddChild(new ImageWidget(AggContext.StaticData.LoadIcon("mh-app-logo.png", IconColor.Theme))
-			{
-				VAnchor = VAnchor.Center,
-				HAnchor = HAnchor.Center
-			});
-
-			buttonView.AddChild(iconContainer);
-
-			buttonView.AddChild(new TextWidget(ApplicationController.Instance.ShortProductName, textColor: ActiveTheme.Instance.PrimaryTextColor)
-			{
-				Margin = 0,
-				VAnchor = VAnchor.Center
-			});
-
-			var popupButton = new PopupButton(buttonView)
-			{
-				VAnchor = VAnchor.Center,
-				HAnchor = HAnchor.Stretch,
-				Margin = 0
-			};
-			popupButton.PopupContent = new ApplicationSettingsWidget(ApplicationController.Instance.Theme.MenuButtonFactory)
+			this.Name = "MatterControl BrandMenuButton";
+			this.VAnchor = VAnchor.Stretch;
+			this.HAnchor = HAnchor.Stretch;
+			this.Margin = 0;
+			this.PopupContent = new ApplicationSettingsWidget(theme.MenuButtonFactory)
 			{
 				HAnchor = HAnchor.Absolute,
-				VAnchor = VAnchor.Fit,
+				VAnchor = VAnchor.Center,
 				Width = 500,
 				BackgroundColor = Color.White
 			};
 
-			this.AddChild(popupButton);
+			var row = new FlowLayoutWidget()
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch,
+			};
+			this.AddChild(row);
+
+			row.AddChild(new IconButton(AggContext.StaticData.LoadIcon("mh-app-logo.png", IconColor.Theme), theme)
+			{
+				VAnchor = VAnchor.Center,
+				Margin = new BorderDouble(right: 4),
+				Selectable = false
+			});
+
+			row.AddChild(new TextWidget(ApplicationController.Instance.ShortProductName, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			{
+				VAnchor = VAnchor.Center
+			});
 		}
 	}
 

@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private DoubleSolidSlider layerRenderRatioSlider;
 		private SystemWindow parentSystemWindow;
 		private SliceLayerSelector layerScrollbar;
-		private PrinterConfig printer;
+		internal PrinterConfig printer;
 		internal GCode3DWidget gcode3DWidget;
 
 		public PrinterTabPage(PrinterConfig printer, ThemeConfig theme, string tabTitle)
@@ -281,7 +281,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				Visible = (this.ViewMode == PartViewMode.Layers2D)
 			};
-			view3DContainer.AddChild(gcode2DWidget);
+			view3DWidget.InteractionLayer.AddChild(gcode2DWidget);
 
 			viewControls3D.Layers2DButton.Enabled = true;
 		}

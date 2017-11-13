@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl
 
 		public int DefaultFontSize { get; } = 12;
 
-		private int shortButtonHeight = 25;
+		internal int shortButtonHeight = 25;
 		private int sideBarButtonWidth;
 
 		public int H1PointSize { get; set; } = 13;
@@ -89,12 +89,6 @@ namespace MatterHackers.MatterControl
 		public TextImageButtonFactory GrayButtonFactory { get; private set; }
 
 		public TextImageButtonFactory imageConverterExpandMenuOptionFactory;
-
-		internal void SetPrinterTabStyles(MainTab printerTab)
-		{
-			printerTab.Margin = new BorderDouble(10, 0, 0, 5);
-			printerTab.Padding = new BorderDouble(8, 4, 12, 6);
-		}
 
 		public TextImageButtonFactory imageConverterButtonFactory;
 
@@ -135,9 +129,9 @@ namespace MatterHackers.MatterControl
 			}
 			else
 			{
-				restoreNormal = ColorCircle(size, new Color(128, 128, 128));
+				restoreNormal = ColorCircle(size, Color.Transparent);
 			}
-			restoreHover = ColorCircle(size, new Color(200, 0, 0));
+			restoreHover = ColorCircle(size, new Color("#DB4437"));
 			restorePressed = ColorCircle(size, new Color(255, 0, 0));
 		}
 
@@ -412,9 +406,20 @@ namespace MatterHackers.MatterControl
 			ImageBuffer imageBuffer = new ImageBuffer(size, size);
 			Graphics2D normalGraphics = imageBuffer.NewGraphics2D();
 			Vector2 center = new Vector2(size / 2.0, size / 2.0);
-			normalGraphics.Circle(center, size / 2.0, color);
-			normalGraphics.Line(center + new Vector2(-size / 4.0, -size / 4.0), center + new Vector2(size / 4.0, size / 4.0), Color.White, 2 * GuiWidget.DeviceScale);
-			normalGraphics.Line(center + new Vector2(-size / 4.0, size / 4.0), center + new Vector2(size / 4.0, -size / 4.0), Color.White, 2 * GuiWidget.DeviceScale);
+
+			Color barColor;
+			if (color != Color.Transparent)
+			{
+				normalGraphics.Circle(center, size / 2.0, color);
+				barColor = Color.White;
+			}
+			else
+			{
+				barColor = new Color("#999");
+			}
+
+			normalGraphics.Line(center + new Vector2(-size / 4.0, -size / 4.0), center + new Vector2(size / 4.0, size / 4.0), barColor, 2 * GuiWidget.DeviceScale);
+			normalGraphics.Line(center + new Vector2(-size / 4.0, size / 4.0), center + new Vector2(size / 4.0, -size / 4.0), barColor, 2 * GuiWidget.DeviceScale);
 
 			return imageBuffer;
 		}

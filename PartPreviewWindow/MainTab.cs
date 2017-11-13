@@ -27,38 +27,161 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
-using MatterHackers.VectorMath;
+using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class MainTab : ThreeViewTab
+	public class MainTab : GuiWidget, ITab
 	{
+		public event EventHandler CloseClicked;
+
+		private SimpleTabs parentTabControl;
+
+		public MainTab(string tabLabel, SimpleTabs parentTabControl, GuiWidget tabContent, string tabImageUrl = null)
+		{
+			this.HAnchor = HAnchor.Fit;
+			this.VAnchor = VAnchor.Fit | VAnchor.Bottom;
+			this.Padding = 0;
+			this.Margin = 0;
+
+			this.TabContent = tabContent;
+			this.parentTabControl = parentTabControl;
+
+			this.AddChild(
+				new TabPill(tabLabel, ActiveTheme.Instance.PrimaryTextColor, tabImageUrl)
+				{
+					Margin = new BorderDouble(right: 16)
+				});
+
+			var closeButton = ApplicationController.Instance.Theme.CreateSmallResetButton();
+			closeButton.HAnchor = HAnchor.Right;
+			closeButton.Margin = new BorderDouble(right: 7, top: 1);
+			closeButton.Name = "Close Tab Button";
+			closeButton.ToolTipText = "Close".Localize();
+			closeButton.Click += (sender, e) =>
+			{
+				UiThread.RunOnIdle(() =>
+				{
+					this.CloseClicked?.Invoke(this, null);
+				});
+			};
+
+			this.AddChild(closeButton);
+		}
+
+		public GuiWidget TabContent { get; }
+
+		public static Color ActiveTabColor =  ApplicationController.Instance.Theme.SlightShade;
+
+		public static Color InactiveTabColor = ApplicationController.Instance.Theme.PrimaryTabFillColor;
+
+		private static int tabInsetDistance = 14 / 2;
+
+		internal MainTab NextTab { get; set; }
+
+		internal MainTab PreviousTab { get; set; }
+
+		public override void OnDraw(Graphics2D graphics2D)
+		{
+			var rect = LocalBounds;
+			var centerY = rect.YCenter;
+
+			var siblings = this.Parent.Children.OfType<MainTab>().ToList();
+
+			int position = siblings.IndexOf(this);
+
+			//MainTab leftSibling = (position > 0) ? siblings[position - 1] : null;
+			//MainTab rightSibling = (position < siblings.Count - 1) ? siblings[position + 1] : null;
+
+			var activeTab = parentTabControl.ActiveTab;
+
+			bool isFirstTab = position == 0;
+			bool rightSiblingSelected = this.NextTab == activeTab;
+
+			// Tab - core
+			var tabShape = new VertexStorage();
+			tabShape.MoveTo(rect.Left, centerY);
+			tabShape.LineTo(rect.Left + tabInsetDistance, rect.Top);
+			tabShape.LineTo(rect.Right - tabInsetDistance, rect.Top);
+			tabShape.LineTo(rect.Right, centerY);
+			if (!rightSiblingSelected)
+			{
+				tabShape.LineTo(rect.Right, rect.Bottom);
+			}
+			tabShape.LineTo(rect.Right - tabInsetDistance, rect.Bottom);
+			tabShape.LineTo(rect.Left + tabInsetDistance, rect.Bottom);
+
+			if (isFirstTab)
+			{
+				tabShape.LineTo(rect.Left, rect.Bottom);
+			}
+
+			graphics2D.Render(
+				tabShape,
+				(this == activeTab) ? ActiveTabColor : InactiveTabColor);
+
+			if (!isFirstTab)
+			{
+				DrawTabLowerLeft(
+					graphics2D, 
+					rect, 
+					(this.PreviousTab == activeTab || this == activeTab) ? ActiveTabColor : InactiveTabColor);
+			}
+
+			if (rightSiblingSelected)
+			{
+				DrawTabLowerRight(graphics2D, rect, ActiveTabColor);
+			}
+
+			base.OnDraw(graphics2D);
+		}
+
+		public static void DrawTabLowerRight(Graphics2D graphics2D, RectangleDouble rect, Color color)
+		{
+			// Tab - right nub
+			var tabRight = new VertexStorage();
+			tabRight.MoveTo(rect.Right, rect.YCenter);
+			tabRight.LineTo(rect.Right, rect.Bottom);
+			tabRight.LineTo(rect.Right - tabInsetDistance, rect.Bottom);
+
+			graphics2D.Render(tabRight, color);
+		}
+
+		public static void DrawTabLowerLeft(Graphics2D graphics2D, RectangleDouble rect, Color color)
+		{
+			// Tab - left nub
+			var tabLeft = new VertexStorage();
+			tabLeft.MoveTo(rect.Left, rect.YCenter);
+			tabLeft.LineTo(rect.Left + tabInsetDistance, rect.Bottom);
+			tabLeft.LineTo(rect.Left, rect.Bottom);
+
+			graphics2D.Render(tabLeft, color);
+		}
+
 		private class TabPill : FlowLayoutWidget
 		{
 			private TextWidget label;
 
 			public TabPill(string tabTitle, Color textColor, string imageUrl = null)
 			{
-				var imageWidget = new ImageWidget(new ImageBuffer(16, 16))
-				{
-					Margin = new BorderDouble(right: 6),
-					VAnchor = VAnchor.Center
-				};
-				this.AddChild(imageWidget);
-
-				label = new TextWidget(tabTitle)
-				{
-					TextColor = textColor,
-					VAnchor = VAnchor.Center
-				};
-				this.AddChild(label);
+				this.Selectable = false;
+				this.Padding = new BorderDouble(10, 5, 10, 4);
 
 				if (!string.IsNullOrEmpty(imageUrl))
 				{
+					var imageWidget = new ImageWidget(new ImageBuffer(16, 16))
+					{
+						Margin = new BorderDouble(right: 6, bottom: 2),
+						VAnchor = VAnchor.Center
+					};
+					this.AddChild(imageWidget);
+
 					// Attempt to load image
 					try
 					{
@@ -67,11 +190,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 					catch { }
 				}
+
+				label = new TextWidget(tabTitle)
+				{
+					TextColor = textColor,
+					VAnchor = VAnchor.Center
+				};
+				this.AddChild(label);
 			}
 
 			public Color TextColor
 			{
-				get =>  label.TextColor;
+				get => label.TextColor;
 				set => label.TextColor = value;
 			}
 
@@ -80,47 +210,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				get => label.Text;
 				set => label.Text = value;
 			}
-		}
-
-		public MainTab(string tabTitle, string tabName, TabPage tabPage, string tabImageUrl = null)
-		: this(
-			new TabPill(tabTitle, new Color(ActiveTheme.Instance.PrimaryTextColor, 140), tabImageUrl),
-			new TabPill(tabTitle, ActiveTheme.Instance.PrimaryTextColor, tabImageUrl),
-			new TabPill(tabTitle, ActiveTheme.Instance.PrimaryTextColor, tabImageUrl),
-			tabName,
-			tabPage)
-		{
-		}
-
-		public MainTab(GuiWidget normalWidget, GuiWidget hoverWidget, GuiWidget pressedWidget, string tabName, TabPage tabPage)
-			: base(tabName, normalWidget, hoverWidget, pressedWidget, tabPage)
-		{
-			this.HAnchor = HAnchor.Fit;
-			this.VAnchor = VAnchor.Fit | VAnchor.Bottom;
-		}
-
-		public int BorderWidth { get; set; } = 1;
-		public int borderRadius { get; set; } = 4;
-
-		private Color activeTabColor =  ApplicationController.Instance.Theme.SlightShade;
-		private Color inactiveTabColor = ApplicationController.Instance.Theme.PrimaryTabFillColor;
-
-		public override void OnDraw(Graphics2D graphics2D)
-		{
-			RectangleDouble borderRectangle = LocalBounds;
-			borderRectangle.ExpandToInclude(new Vector2(0, -15));
-
-			if (BorderWidth > 0)
-			{
-				var r = new RoundedRect(borderRectangle, this.borderRadius);
-				r.normalize_radius();
-
-				graphics2D.Render(
-					r,
-					selectedWidget.Visible ? activeTabColor : inactiveTabColor);
-			}
-
-			base.OnDraw(graphics2D);
 		}
 	}
 }

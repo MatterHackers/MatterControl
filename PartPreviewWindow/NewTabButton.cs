@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
@@ -34,27 +35,38 @@ using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class IconTab : Tab
+	public class NewTabButton : GuiWidget
 	{
-		private IconButton iconButton;
+		private SimpleTabs parentTabControl;
 
-		public IconTab(string tabName, TabPage tabPage, ImageBuffer imageBuffer, ThemeConfig theme)
-			: base(tabName, tabPage)
+		public IconButton IconButton { get; }
+
+		public NewTabButton(ImageBuffer imageBuffer, SimpleTabs parentTabControl, ThemeConfig theme)
 		{
-			iconButton = new IconButton(imageBuffer, theme)
+			this.parentTabControl = parentTabControl;
+			this.HAnchor = HAnchor.Fit;
+
+			IconButton = new IconButton(imageBuffer, theme)
 			{
+				HAnchor = HAnchor.Left,
 				Height = theme.MicroButton.Options.FixedHeight,
 				Width = theme.MicroButton.Options.FixedHeight,
-				Selectable = false
+				Margin = new BorderDouble(left: 10),
 			};
 
-			this.AddChild(iconButton);
+			this.AddChild(IconButton);
 		}
 
-		protected override void OnTabIndexChanged()
+		public ITab LastTab { get; set; }
+
+		public override void OnDraw(Graphics2D graphics2D)
 		{
-			iconButton.BackgroundColor = (this.TabPage == TabBarContaningTab.GetActivePage()) ? ActiveTheme.Instance.TertiaryBackgroundColor : Color.Transparent;
-			base.OnTabIndexChanged();
+			MainTab.DrawTabLowerLeft(
+				graphics2D, 
+				this.LocalBounds, 
+				(parentTabControl.ActiveTab == this.LastTab) ? MainTab.ActiveTabColor : MainTab.InactiveTabColor);
+
+			base.OnDraw(graphics2D);
 		}
 	}
 }

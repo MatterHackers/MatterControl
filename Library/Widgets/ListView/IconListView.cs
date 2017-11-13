@@ -194,41 +194,55 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			this.VAnchor = VAnchor.Fit;
 			this.HAnchor = HAnchor.Fit;
-			this.Padding = 4;
+			this.Padding = 2;
 			this.Margin = new BorderDouble(6, 0, 0, 6);
-
-			var container = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			this.AddChild(container);
-
-			imageWidget = new ImageWidget(thumbWidth, thumbHeight)
-			{
-				AutoResize = false,
-				Name = "List Item Thumbnail",
-				BackgroundColor = item.ListView.ThumbnailBackground,
-				Margin = 0,
-			};
-			container.AddChild(imageWidget);
-
-			this.SetItemThumbnail(loadingImage);
 
 			int maxWidth = thumbWidth - 4;
 
-			var text = new TextWidget(item.Model.Name, 0, 0, 9, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			if (thumbWidth < 75)
 			{
-				AutoExpandBoundsToText = false,
-				EllipsisIfClipped = true,
-				HAnchor = HAnchor.Center,
-				Margin = new BorderDouble(0, 0, 0, 3),
-			};
+				imageWidget = new ImageWidget(thumbWidth, thumbHeight)
+				{
+					AutoResize = false,
+					Name = "List Item Thumbnail",
+					BackgroundColor = item.ListView.ThumbnailBackground,
+					Margin = 0,
+				};
+				this.AddChild(imageWidget);
+			}
+			else
+			{
+				var container = new FlowLayoutWidget(FlowDirection.TopToBottom);
+				this.AddChild(container);
 
-			text.MaximumSize = new Vector2(maxWidth, 20);
-			if (text.Printer.LocalBounds.Width > maxWidth)
-			{
-				text.Width = maxWidth;
-				text.Text = item.Model.Name;
+				imageWidget = new ImageWidget(thumbWidth, thumbHeight)
+				{
+					AutoResize = false,
+					Name = "List Item Thumbnail",
+					BackgroundColor = item.ListView.ThumbnailBackground,
+					Margin = 0,
+				};
+				container.AddChild(imageWidget);
+
+				var text = new TextWidget(item.Model.Name, 0, 0, 9, textColor: ActiveTheme.Instance.PrimaryTextColor)
+				{
+					AutoExpandBoundsToText = false,
+					EllipsisIfClipped = true,
+					HAnchor = HAnchor.Center,
+					Margin = new BorderDouble(0, 0, 0, 3),
+				};
+
+				text.MaximumSize = new Vector2(maxWidth, 20);
+				if (text.Printer.LocalBounds.Width > maxWidth)
+				{
+					text.Width = maxWidth;
+					text.Text = item.Model.Name;
+				}
+
+				container.AddChild(text);
 			}
 
-			container.AddChild(text);
+			this.SetItemThumbnail(loadingImage);
 		}
 
 		public override async void OnLoad(EventArgs args)

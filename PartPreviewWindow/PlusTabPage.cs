@@ -40,7 +40,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class PlusTabPage : FlowLayoutWidget
 	{
-		public PlusTabPage(PartPreviewContent partPreviewContent, PrinterConfig printer, ThemeConfig theme)
+		public PlusTabPage(PartPreviewContent partPreviewContent, SimpleTabs simpleTabs, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
 		{
 			this.HAnchor = HAnchor.Stretch;
@@ -58,7 +58,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			createItemsSection.AddChild(createPart);
 			createPart.Click += (s, e) =>
 			{
-				partPreviewContent.CreatePartTab("New Part", new BedConfig(), theme);
+				UiThread.RunOnIdle(() =>
+				{
+					simpleTabs.RemoveTab(simpleTabs.ActiveTab);
+					partPreviewContent.CreatePartTab("New Part", new BedConfig(), theme);
+				});
 			};
 
 			var createPrinter = theme.ButtonFactory.Generate("Create Printer".Localize());
@@ -67,20 +71,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			createPrinter.HAnchor = HAnchor.Left;
 			createPrinter.Click += (s, e) =>
 			{
-				if (ApplicationController.Instance.ActivePrinter.Connection.PrinterIsPrinting
+				UiThread.RunOnIdle(() =>
+				{
+					simpleTabs.RemoveTab(simpleTabs.ActiveTab);
+
+					if (ApplicationController.Instance.ActivePrinter.Connection.PrinterIsPrinting
 					|| ApplicationController.Instance.ActivePrinter.Connection.PrinterIsPaused)
-				{
-					UiThread.RunOnIdle(() =>
-						StyledMessageBox.ShowMessageBox("Please wait until the print has finished and try again.".Localize(), "Can't add printers while printing".Localize())
-					);
-				}
-				else
-				{
-					UiThread.RunOnIdle(() =>
+					{
+						StyledMessageBox.ShowMessageBox("Please wait until the print has finished and try again.".Localize(), "Can't add printers while printing".Localize());
+					}
+					else
 					{
 						DialogWindow.Show(PrinterSetup.GetBestStartPage(PrinterSetup.StartPageOptions.ShowMakeModel));
-					});
-				}
+					}
+				});
 			};
 			createItemsSection.AddChild(createPrinter);
 
@@ -99,6 +103,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								if (!string.IsNullOrEmpty(result.FileName)
 									&& File.Exists(result.FileName))
 								{
+									simpleTabs.RemoveTab(simpleTabs.ActiveTab);
 									ImportSettingsPage.ImportFromExisting(result.FileName);
 								}
 							});
@@ -122,8 +127,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			redeemDesignCode.HAnchor = HAnchor.Left;
 			redeemDesignCode.Click += (s, e) =>
 			{
-				// Implementation already does RunOnIdle
-				ApplicationController.Instance.RedeemDesignCode?.Invoke();
+				UiThread.RunOnIdle(() =>
+				{
+					simpleTabs.RemoveTab(simpleTabs.ActiveTab);
+					// Implementation already does RunOnIdle
+					ApplicationController.Instance.RedeemDesignCode?.Invoke();
+				});
 			};
 			otherItemsSection.AddChild(redeemDesignCode);
 
@@ -133,8 +142,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			redeemShareCode.HAnchor = HAnchor.Left;
 			redeemShareCode.Click += (s, e) =>
 			{
-				// Implementation already does RunOnIdle
-				ApplicationController.Instance.EnterShareCode?.Invoke();
+				UiThread.RunOnIdle(() =>
+				{
+					simpleTabs.RemoveTab(simpleTabs.ActiveTab);
+
+					// Implementation already does RunOnIdle
+					ApplicationController.Instance.EnterShareCode?.Invoke();
+				});
 			};
 			otherItemsSection.AddChild(redeemShareCode);
 
@@ -147,17 +161,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				shopButton.Margin = buttonSpacing;
 				shopButton.Click += (sender, e) =>
 				{
-					double activeFilamentDiameter = 0;
-					if (ActiveSliceSettings.Instance.PrinterSelected)
+					UiThread.RunOnIdle(() =>
 					{
-						activeFilamentDiameter = 3;
-						if (ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_diameter) < 2)
-						{
-							activeFilamentDiameter = 1.75;
-						}
-					}
+						simpleTabs.RemoveTab(simpleTabs.ActiveTab);
 
-					MatterControlApplication.Instance.LaunchBrowser("http://www.matterhackers.com/mc/store/redirect?d={0}&clk=mcs&a={1}".FormatWith(activeFilamentDiameter, OemSettings.Instance.AffiliateCode));
+						double activeFilamentDiameter = 0;
+						if (ActiveSliceSettings.Instance.PrinterSelected)
+						{
+							activeFilamentDiameter = 3;
+							if (ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_diameter) < 2)
+							{
+								activeFilamentDiameter = 1.75;
+							}
+						}
+
+						MatterControlApplication.Instance.LaunchBrowser("http://www.matterhackers.com/mc/store/redirect?d={0}&clk=mcs&a={1}".FormatWith(activeFilamentDiameter, OemSettings.Instance.AffiliateCode));
+					});
 				};
 				otherItemsSection.AddChild(shopButton);
 			}

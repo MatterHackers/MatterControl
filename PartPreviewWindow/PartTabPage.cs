@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			};
 			viewControls3D.OverflowMenu.DynamicPopupContent = this.GetViewControls3DOverflowMenu;
-			
+
 			bool isPrinterType = this is PrinterTabPage;
 
 			// The 3D model view
