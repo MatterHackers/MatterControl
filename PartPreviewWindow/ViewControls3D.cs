@@ -156,8 +156,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			double height = theme.ButtonFactory.Options.FixedHeight;
 
-			iconPath = Path.Combine("ViewTransformControls", "reset.png");
-			var homeButton = new RadioIconButton(AggContext.StaticData.LoadIcon(iconPath, 32, 32, IconColor.Theme), theme)
+			var homeButton = new IconButton(AggContext.StaticData.LoadIcon("fa-home_16.png", IconColor.Theme), theme)
 			{
 				ToolTipText = "Reset View".Localize(),
 				Margin = commonMargin
