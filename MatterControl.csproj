@@ -108,6 +108,7 @@
     <Compile Include="CustomWidgets\DisableablePanel.cs" />
     <Compile Include="Library\Interfaces\LibraryExtensionMethods.cs" />
     <Compile Include="Library\Providers\CreateFolderItem.cs" />
+    <Compile Include="Library\Providers\MatterControl\PlatingHistoryContainer.cs" />
     <Compile Include="Library\Providers\MatterControl\PrintHistoryContainer.cs" />
     <Compile Include="Library\Providers\MatterControl\PrintHistoryItem.cs" />
     <Compile Include="Library\Providers\WritableContainer.cs" />
