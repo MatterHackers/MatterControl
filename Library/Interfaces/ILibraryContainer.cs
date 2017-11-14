@@ -31,6 +31,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MatterHackers.Agg.Image;
+using MatterHackers.DataConverters3D;
 
 namespace MatterHackers.MatterControl.Library
 {
@@ -66,6 +67,8 @@ namespace MatterHackers.MatterControl.Library
 		void Remove(IEnumerable<ILibraryItem> items);
 		void Rename(ILibraryItem item, string revisedName);
 		void Move(IEnumerable<ILibraryItem> items, ILibraryContainer targetContainer);
+
+		void Save(ILibraryItem item, IObject3D content);
 
 		void SetThumbnail(ILibraryItem item, int width, int height, ImageBuffer imageBuffer);
 		bool AllowAction(ContainerActions containerActions);

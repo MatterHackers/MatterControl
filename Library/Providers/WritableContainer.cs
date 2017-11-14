@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using MatterHackers.Agg.Image;
+using MatterHackers.DataConverters3D;
 
 namespace MatterHackers.MatterControl.Library
 {
@@ -51,6 +52,10 @@ namespace MatterHackers.MatterControl.Library
 		}
 
 		public virtual void Rename(ILibraryItem item, string revisedName)
+		{
+		}
+
+		public virtual void Save(ILibraryItem item, IObject3D content)
 		{
 		}
 
