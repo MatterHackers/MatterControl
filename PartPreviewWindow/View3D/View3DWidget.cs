@@ -363,7 +363,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						Title = "Export".Localize() + "...",
 						Action = () =>
 						{
-							UiThread.RunOnIdle(OpenExportWindow);
+							UiThread.RunOnIdle(() =>
+							{
+								DialogWindow.Show(
+									new ExportPrintItemPage(new[]
+									{
+										new FileSystemFileItem(sceneContext.printItem.FileLocation)
+									}));
+							});
 						}
 					},
 					new NamedAction()
@@ -2058,15 +2065,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			UiThread.RunOnIdle(SwitchStateToEditing);
-		}
-
-		private void OpenExportWindow()
-		{
-			DialogWindow.Show(
-				new ExportPrintItemPage(new[] 
-				{
-					new FileSystemFileItem(sceneContext.printItem.FileLocation)
-				}));
 		}
 
 		private void OpenSaveAsWindow()
