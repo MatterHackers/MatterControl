@@ -35,6 +35,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl;
+using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.Tests.Automation;
 using MatterHackers.MeshVisualizer;
 using Newtonsoft.Json;
@@ -101,7 +102,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 #endif
 
-			var sceneContext = new BedConfig();
+			var sceneContext = new BedConfig(null);
 
 			var scene = sceneContext.Scene;
 			scene.Children.Add(new Object3D
@@ -135,7 +136,10 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			scene.Children.Modify(list => list.Clear());
 
 			// Reload the model
-			await Task.Run(() => sceneContext.Scene.Load(filePath));
+			await Task.Run(() =>
+			{
+				sceneContext.Scene.Load(Object3D.Load(filePath, CancellationToken.None));
+			});
 
 			// Serialize and compare the two trees
 			string onDiskData = JsonConvert.SerializeObject(loadedItem, Formatting.Indented);

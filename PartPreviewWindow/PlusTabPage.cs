@@ -61,7 +61,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				UiThread.RunOnIdle(() =>
 				{
 					simpleTabs.RemoveTab(simpleTabs.ActiveTab);
-					partPreviewContent.CreatePartTab("New Part", new BedConfig(), theme);
+					partPreviewContent.CreatePartTab(
+						"New Part", 
+						new BedConfig(
+							new EditContext()
+							{
+								LibraryContainer = ApplicationController.Instance.Library.PlatingHistory,
+								SourceItem = BedConfig.NewPlatingItem()
+							}), 
+						theme);
 				});
 			};
 
