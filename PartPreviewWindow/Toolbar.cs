@@ -244,12 +244,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private void MainTab_CloseClicked(object sender, EventArgs e)
+		private async void MainTab_CloseClicked(object sender, EventArgs e)
 		{
-			if (sender is ITab tab)
+			if (sender is ITab tab
+				&& tab.TabContent is PrinterTabPage)
 			{
-				this.RemoveTab(sender as ITab);
-				ApplicationController.Instance.ClearActivePrinter();
+				await ApplicationController.Instance.ClearActivePrinter();
 			}
 		}
 
