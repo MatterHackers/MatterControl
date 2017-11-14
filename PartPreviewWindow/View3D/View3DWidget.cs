@@ -343,14 +343,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						Title = "Save".Localize(),
 						Action = async () =>
 						{
-							if (sceneContext.printItem == null)
-							{
-								UiThread.RunOnIdle(OpenSaveAsWindow);
-							}
-							else
-							{
-								await this.SaveChanges();
-							}
+							await this.SaveChanges();
 						}
 					},
 					new NamedAction()
@@ -2017,16 +2010,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					try
 					{
-						// Force to .mcx
-						if (Path.GetExtension(sceneContext.printItem.FileLocation) != ".mcx")
-						{
-							sceneContext.printItem.FileLocation = Path.ChangeExtension(sceneContext.printItem.FileLocation, ".mcx");
-						}
-
-						// TODO: Hook up progress reporting
-						Scene.Save(sceneContext.printItem.FileLocation, ApplicationDataStorage.Instance.ApplicationLibraryDataPath);
-
-						sceneContext.printItem.PrintItem.Commit();
+						sceneContext.Save();
 					}
 					catch (Exception ex)
 					{
