@@ -39,7 +39,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	[TestFixture, Ignore("Product code still needs to be implemented"), Category("MatterControl.UI.Automation"), Category("MatterControl.Automation"), RunInApplicationDomain, Apartment(ApartmentState.STA)]
 	public class LibraryActionTests
 	{
-		[Test, Category("FixNeeded" /* Not Finished */)]
+		[Test, Ignore("Not Finished")]
 		public async Task ClickOnBuyButton()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
@@ -138,7 +138,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
 		}
 
-		[Test, Category("FixNeeded") /* Test now works as expected but product does not implement expected functionality */]
+		[Test, Ignore("Test now works as expected but product does not implement expected functionality")]
 		public async Task QueueExportIsDisabledIfEmpty()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
@@ -222,7 +222,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, queueItemFolderToAdd: QueueTemplate.Three_Queue_Items);
 		}
 
-		[Test, Category("FixNeeded" /* Not Finished */)]
+		[Test, Ignore("Not Finished")]
 		public async Task ClickCreatePartSheetButton()
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
