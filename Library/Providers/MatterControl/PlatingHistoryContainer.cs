@@ -35,8 +35,6 @@ using MatterHackers.Agg.Image;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.PrintHistory;
-using MatterHackers.MatterControl.Library;
 
 namespace MatterHackers.MatterControl.Library
 {
@@ -99,6 +97,7 @@ namespace MatterHackers.MatterControl.Library
 			{
 				// Serialize the scene to disk using a modified Json.net pipeline with custom ContractResolvers and JsonConverters
 				File.WriteAllText(fileItem.Path, content.ToJson());
+				this.ItemContentChanged?.Invoke(this, new ItemChangedEventArgs(fileItem));
 			}
 		}
 

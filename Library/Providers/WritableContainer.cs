@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using MatterHackers.Agg.Image;
 using MatterHackers.DataConverters3D;
 
@@ -40,7 +41,7 @@ namespace MatterHackers.MatterControl.Library
 
 		public virtual void OnItemContentChanged(ItemChangedEventArgs args)
 		{
-			ItemContentChanged?.Invoke(this, args);
+			this.ItemContentChanged?.Invoke(this, args);
 		}
 
 		public virtual void Add(IEnumerable<ILibraryItem> items)
@@ -57,6 +58,13 @@ namespace MatterHackers.MatterControl.Library
 
 		public virtual void Save(ILibraryItem item, IObject3D content)
 		{
+			if (item is FileSystemFileItem fileItem)
+			{
+				// Serialize the scene to disk using a modified Json.net pipeline with custom ContractResolvers and JsonConverters
+				File.WriteAllText(fileItem.Path, content.ToJson());
+
+				this.OnItemContentChanged(new ItemChangedEventArgs(fileItem));
+			}
 		}
 
 		public virtual void Move(IEnumerable<ILibraryItem> items, ILibraryContainer targetContainer)

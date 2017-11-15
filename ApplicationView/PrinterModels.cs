@@ -351,6 +351,12 @@ namespace MatterHackers.MatterControl
 
 		internal void Save()
 		{
+			var thumbnailPath = ApplicationController.Instance.ThumbnailCachePath(this.SourceItem);
+			if (File.Exists(thumbnailPath))
+			{
+				File.Delete(thumbnailPath);
+			}
+
 			// Call save on the provider
 			this.LibraryContainer.Save(this.SourceItem, this.Content);
 		}

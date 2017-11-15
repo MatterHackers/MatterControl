@@ -37,8 +37,6 @@ using System.Threading.Tasks;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
-using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MeshVisualizer;
 
 namespace MatterHackers.MatterControl.Library
 {
@@ -326,17 +324,6 @@ namespace MatterHackers.MatterControl.Library
 					fileItem.Path = destFile;
 
 					this.OnContentChanged();
-				}
-			}
-		}
-
-		public override void Save(ILibraryItem item, IObject3D content)
-		{
-			if (item is FileSystemFileItem fileItem)
-			{
-				if (content is InteractiveScene scene)
-				{
-					scene.Save(fileItem.Path, ApplicationDataStorage.Instance.ApplicationLibraryDataPath);
 				}
 			}
 		}
