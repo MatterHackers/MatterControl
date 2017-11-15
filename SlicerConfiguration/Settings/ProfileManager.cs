@@ -66,7 +66,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								LibraryContainer = ApplicationController.Instance.Library.PlatingHistory,
 								SourceItem = BedConfig.LoadLastPlateOrNew()
 							},
-							LoadProfileAsync(activeInstance.LastProfileID).Result)).ConfigureAwait(false);
+							// Short term workaround to run sync during load
+							LoadProfileAsync(activeInstance.LastProfileID).Result)).Wait();
 				}
 			}
 		}
