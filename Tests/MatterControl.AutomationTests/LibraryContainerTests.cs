@@ -241,6 +241,11 @@ namespace MatterControl.Tests.MatterControl
 		}
 
 		[Test, Ignore("Not implemented")]
+		public async Task PlatingHistoryContainerTest()
+		{
+		}
+
+		[Test, Ignore("Not implemented")]
 		public async Task SDCardContainerTest()
 		{
 		}
