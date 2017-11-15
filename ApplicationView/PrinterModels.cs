@@ -334,7 +334,8 @@ namespace MatterHackers.MatterControl
 	{
 		private ILibraryItem _sourceItem;
 
-		public ILibraryWritableContainer LibraryContainer { get; set; }
+		public IContentStore ContentStore { get; set; }
+
 		public ILibraryItem SourceItem
 		{
 			get => _sourceItem;
@@ -351,6 +352,7 @@ namespace MatterHackers.MatterControl
 				}
 			}
 		}
+
 		public IObject3D Content { get; set; }
 
 		public string GCodeFilePath => printItem.GetGCodePathAndFileName();
@@ -372,7 +374,7 @@ namespace MatterHackers.MatterControl
 			}
 
 			// Call save on the provider
-			this.LibraryContainer.Save(this.SourceItem, this.Content);
+			this.ContentStore.Save(this.SourceItem, this.Content);
 		}
 	}
 

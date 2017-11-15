@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.Library
 		void Load();
 	}
 
-	public interface ILibraryWritableContainer : ILibraryContainer
+	public interface ILibraryWritableContainer : ILibraryContainer, IContentStore
 	{
 		event EventHandler<ItemChangedEventArgs> ItemContentChanged;
 
@@ -67,8 +67,6 @@ namespace MatterHackers.MatterControl.Library
 		void Remove(IEnumerable<ILibraryItem> items);
 		void Rename(ILibraryItem item, string revisedName);
 		void Move(IEnumerable<ILibraryItem> items, ILibraryContainer targetContainer);
-
-		void Save(ILibraryItem item, IObject3D content);
 
 		void SetThumbnail(ILibraryItem item, int width, int height, ImageBuffer imageBuffer);
 		bool AllowAction(ContainerActions containerActions);
@@ -90,5 +88,10 @@ namespace MatterHackers.MatterControl.Library
 		{
 			this.LibraryItem = libraryItem;
 		}
+	}
+
+	public interface IContentStore
+	{
+		void Save(ILibraryItem item, IObject3D content);
 	}
 }

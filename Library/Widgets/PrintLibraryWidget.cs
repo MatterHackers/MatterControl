@@ -439,7 +439,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 							bed = new BedConfig(
 								new EditContext()
 								{
-									LibraryContainer = writableContainer,
+									ContentStore = writableContainer,
 									SourceItem = firstItem
 								}), 
 							theme);
