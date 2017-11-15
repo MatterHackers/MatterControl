@@ -14,7 +14,7 @@ namespace MatterControl.Tests.MatterControl
 	[TestFixture]
 	public class PrinterConfigurationTests
 	{
-		[Test, Category("PrinterConfigurationFiles"), Category("FixNeeded" /* Not Finished/previously ignored */)]
+		[Test, Category("PrinterConfigurationFiles"), Ignore("Not Finished/previously ignored")]
 		public void PrinterConfigTests()
 		{
 			string staticDataPath = TestContext.CurrentContext.ResolveProjectPath(5, "MatterControl", "StaticData");
