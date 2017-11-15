@@ -1184,8 +1184,8 @@ namespace MatterHackers.MatterControl
 
 								await ApplicationController.Instance.SliceFileLoadOutput(
 									printer,
-									printer.Bed.EditContext.PartFilePath,
-									printer.Bed.EditContext.GCodeFilePath,
+									partFilePath,
+									gcodeFilePath,
 									view3DWidget,
 									reporter);
 
