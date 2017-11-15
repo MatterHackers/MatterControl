@@ -125,13 +125,13 @@ namespace MatterHackers.MatterControl.Library.Export
 				//  - If bedplate, save any pending changes before starting the print
 				await ApplicationController.Instance.ActiveView3DWidget.PersistPlateIfNeeded();
 
-				var printItem = ApplicationController.Instance.ActivePrinter.Bed.printItem;
+				var context = ApplicationController.Instance.ActivePrinter.Bed.EditContext;
 
 				//  - Slice
-				await Slicer.SliceFileAsync(printItem, null);
+				await Slicer.SliceFileAsync(context.PartFilePath, context.GCodeFilePath, null);
 
 				//  - Return
-				fileToProcess = printItem.GetGCodePathAndFileName();
+				fileToProcess = context.GCodeFilePath;
 			}
 
 			return fileToProcess;

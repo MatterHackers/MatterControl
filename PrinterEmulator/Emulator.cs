@@ -360,7 +360,10 @@ namespace MatterHackers.PrinterEmulator
 			{
 				// M104 S210 or M109 S[temp]
 				var sIndex = command.IndexOf('S') + 1;
-				Hotend.TargetTemperature = int.Parse(command.Substring(sIndex));
+				var spaceIndex = command.IndexOf(" ", sIndex);
+				var temp = (spaceIndex < 0) ? command.Substring(sIndex) : command.Substring(sIndex, spaceIndex - sIndex);
+
+				Hotend.TargetTemperature = int.Parse(temp);
 				ExtruderTemperatureChanged?.Invoke(this, null);
 			}
 			catch (Exception e)

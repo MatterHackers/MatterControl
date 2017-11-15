@@ -99,11 +99,11 @@ namespace MatterHackers.MatterControl.PrintQueue
 				savedGCodeFileNames = new List<string>();
 				foreach (PrintItem part in allFilesToExport)
 				{
-					PrintItemWrapper printItemWrapper = new PrintItemWrapper(part);
+					var printItemWrapper = new PrintItemWrapper(part);
 					string extension = Path.GetExtension(printItemWrapper.FileLocation).ToUpper();
-					if ((extension != "" && MeshFileIo.ValidFileExtensions().Contains(extension)))
+					if (extension != "" && MeshFileIo.ValidFileExtensions().Contains(extension))
 					{
-						Slicer.SliceFileAsync(printItemWrapper, null).ContinueWith((task) =>
+						Slicer.SliceFileAsync(printItemWrapper.FileLocation, printItemWrapper.GetGCodePathAndFileName(), null).ContinueWith((task) =>
 						{
 							Console.WriteLine("Part Slicing Completed");
 						});
@@ -183,7 +183,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 #if DEBUG
 								if (instruction.movementType != PrinterMachineInstruction.MovementTypes.Absolute)
 								{
-									throw new Exception("radial funcitons can only execute absolute moves.");
+									throw new Exception("Radial functions can only execute absolute moves.");
 								}
 #endif
 								Vector3 currentDestination = instruction.Position;

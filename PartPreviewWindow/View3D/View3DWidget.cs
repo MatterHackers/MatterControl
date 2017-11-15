@@ -353,7 +353,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					},
 					new NamedAction()
 					{
-						Title = "Export".Localize() + "...",
+						Title = "Export".Localize(),
 						Action = () =>
 						{
 							UiThread.RunOnIdle(() =>
@@ -361,14 +361,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								DialogWindow.Show(
 									new ExportPrintItemPage(new[]
 									{
-										new FileSystemFileItem(sceneContext.printItem.FileLocation)
+										new FileSystemFileItem(sceneContext.EditContext.PartFilePath)
 									}));
 							});
 						}
 					},
 					new NamedAction()
 					{
-						Title = "Publish".Localize() + "...",
+						Title = "Publish".Localize(),
 						Action = () =>
 						{
 							UiThread.RunOnIdle(() => DialogWindow.Show<PublishPartToMatterHackers>());
@@ -2068,7 +2068,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							{
 								writableContainer.Add(new[]
 								{
-									new FileSystemFileItem(sceneContext.printItem.FileLocation)
+									new FileSystemFileItem(sceneContext.EditContext.PartFilePath)
 									{
 										Name = returnInfo.ItemName
 									}

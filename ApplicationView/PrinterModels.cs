@@ -58,8 +58,6 @@ namespace MatterHackers.MatterControl
 
 		public View3DConfig RendererOptions { get; } = new View3DConfig();
 
-		public PrintItemWrapper printItem = null;
-
 		public PrinterConfig Printer { get; set; }
 
 		public EditContext EditContext { get; private set; }
@@ -98,8 +96,6 @@ namespace MatterHackers.MatterControl
 			// Clear existing
 			this.LoadedGCode = null;
 			this.GCodeRenderer = null;
-
-			this.printItem = new PrintItemWrapper(new PrintItem(now, mcxPath));
 
 			var content = new Object3D();
 
@@ -196,15 +192,6 @@ namespace MatterHackers.MatterControl
 		public InteractiveScene Scene { get; } = new InteractiveScene();
 
 		public GCodeRenderInfo RenderInfo { get; set; }
-
-		public string GCodePath
-		{
-			get
-			{
-				bool isGCode = Path.GetExtension(printItem.FileLocation).ToUpper() == ".GCODE";
-				return isGCode ? printItem.FileLocation : printItem.GetGCodePathAndFileName();
-			}
-		}
 
 		BedMeshGenerator bedGenerator;
 
@@ -345,9 +332,36 @@ namespace MatterHackers.MatterControl
 
 	public class EditContext
 	{
+		private ILibraryItem _sourceItem;
+
 		public ILibraryWritableContainer LibraryContainer { get; set; }
-		public ILibraryItem SourceItem { get; set; }
+		public ILibraryItem SourceItem
+		{
+			get => _sourceItem;
+			set
+			{
+				if (_sourceItem != value)
+				{
+					_sourceItem = value;
+
+					if (_sourceItem is FileSystemFileItem fileItem)
+					{
+						printItem = new PrintItemWrapper(new PrintItem(fileItem.FileName, fileItem.Path));
+					}
+				}
+			}
+		}
 		public IObject3D Content { get; set; }
+
+		public string GCodeFilePath => printItem.GetGCodePathAndFileName();
+
+		public string PartFilePath => printItem.FileLocation;
+
+		/// <summary>
+		/// Short term stop gap that should only be used until GCode path helpers, hash code and print recovery components can be extracted
+		/// </summary>
+		[Obsolete]
+		internal PrintItemWrapper printItem { get; set; }
 
 		internal void Save()
 		{
