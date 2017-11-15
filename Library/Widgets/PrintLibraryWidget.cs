@@ -423,26 +423,29 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				AllowMultiple = false,
 				AllowProtected = false,
 				AllowContainers = false,
-				Action = (selectedLibraryItems, listView) =>
+				Action = async (selectedLibraryItems, listView) =>
 				{
-					var firstItem = selectedLibraryItems.FirstOrDefault();
-					if (firstItem != null)
+					if (selectedLibraryItems.FirstOrDefault() is ILibraryItem firstItem
+						&& ApplicationController.Instance.Library.ActiveContainer is ILibraryWritableContainer writableContainer)
 					{
-						var bedConfig = new BedConfig();
+						BedConfig bed;
 
-						var newTab = partPreviewContent.CreatePartTab(firstItem.Name, bedConfig, theme);
-						if (newTab.TabContent is PartTabPage printerTab)
+						var newTab = partPreviewContent.CreatePartTab(
+							firstItem.Name,
+							bed = new BedConfig(
+								new EditContext()
+								{
+									LibraryContainer = writableContainer,
+									SourceItem = firstItem
+								}), 
+							theme);
+
+						// Load content after UI widgets to support progress notification during acquire/load
+						await bed.LoadContent();
+
+						if (newTab.TabContent is PartTabPage partTab)
 						{
-							bedConfig.Scene.Children.Modify(list =>
-							{
-								list.Add(
-									new InsertionGroup(
-										selectedLibraryItems.Take(1),
-										printerTab.view3DWidget,
-										bedConfig.Scene,
-										bedConfig.BedCenter,
-										() => false));
-							});
+							// TODO: Restore ability to render progress loading
 						}
 					}
 				}

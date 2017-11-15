@@ -44,6 +44,7 @@ namespace MatterHackers.MatterControl
 	using MatterHackers.Agg;
 	using MatterHackers.DataConverters3D;
 	using MatterHackers.GCodeVisualizer;
+	using MatterHackers.MatterControl.Library;
 	using MatterHackers.MatterControl.PrinterCommunication;
 	using MatterHackers.MeshVisualizer;
 	using MatterHackers.PolygonMesh;
@@ -61,40 +62,31 @@ namespace MatterHackers.MatterControl
 
 		public PrinterConfig Printer { get; set; }
 
+		public EditContext EditContext { get; private set; }
+
 		public Mesh PrinterShape { get; private set; }
 
-		public BedConfig(PrinterConfig printer = null, bool loadLastBedplate = false)
+		public BedConfig(EditContext editContext, PrinterConfig printer = null)
 		{
+			this.EditContext = editContext;
 			this.Printer = printer;
+		}
 
-			if (loadLastBedplate)
-			{
-				// Find the last used bed plate mcx
-				var directoryInfo = new DirectoryInfo(ApplicationDataStorage.Instance.PlatingDirectory);
-				var firstFile = directoryInfo.GetFileSystemInfos("*.mcx").OrderByDescending(fl => fl.CreationTime).FirstOrDefault();
+		public async Task LoadContent()
+		{
+			// View or caller should invoke LoadContent
+			this.EditContext.Content = await EditContext.SourceItem.CreateContent(null);
+			this.Scene.Load(this.EditContext.Content);
+		}
 
-				// Set as the current item - should be restored as the Active scene in the MeshViewer
-				if (firstFile != null)
-				{
-					try
-					{
-						var loadedItem = new PrintItemWrapper(new PrintItem(firstFile.Name, firstFile.FullName));
-						if (loadedItem != null)
-						{
-							this.printItem = loadedItem;
-						}
+		internal static ILibraryItem NewPlatingItem()
+		{
+			string now = DateTime.Now.ToString("yyyyMMdd-HHmmss");
+			string mcxPath = Path.Combine(ApplicationDataStorage.Instance.PlatingDirectory, now + ".mcx");
 
-						this.Scene.Load(firstFile.FullName);
-					}
-					catch { }
-				}
-			}
+			File.WriteAllText(mcxPath, new Object3D().ToJson());
 
-			// Clear if not assigned above
-			if (this.printItem == null)
-			{
-				this.ClearPlate();
-			}
+			return new FileSystemFileItem(mcxPath);
 		}
 
 		internal void ClearPlate()
@@ -109,15 +101,35 @@ namespace MatterHackers.MatterControl
 
 			this.printItem = new PrintItemWrapper(new PrintItem(now, mcxPath));
 
-			File.WriteAllText(mcxPath, new Object3D().ToJson());
+			var content = new Object3D();
 
-			this.Scene.Load(mcxPath);
+			this.Scene.Load(content);
+
+			//this.Scene.Save()
+
+			File.WriteAllText(mcxPath, content.ToJson());
 
 			// TODO: Define and fire event and eliminate ActiveView3DWidget - model objects need to be dependency free. For the time being prevent application spin up in ClearPlate due to the call below - if MC isn't loaded, don't notify
 			if (!MatterControlApplication.IsLoading)
 			{
 				ApplicationController.Instance.ActiveView3DWidget?.Invalidate();
 			}
+		}
+
+		internal static ILibraryItem LoadLastPlateOrNew()
+		{
+			// Find the last used bed plate mcx
+			var directoryInfo = new DirectoryInfo(ApplicationDataStorage.Instance.PlatingDirectory);
+			var firstFile = directoryInfo.GetFileSystemInfos("*.mcx").OrderByDescending(fl => fl.CreationTime).FirstOrDefault();
+
+			// Set as the current item - should be restored as the Active scene in the MeshViewer
+			if (firstFile != null)
+			{
+				return new FileSystemFileItem(firstFile.FullName);
+			}
+
+			// Otherwise generate a new plating item
+			return NewPlatingItem();
 		}
 
 		private GCodeFile loadedGCode;
@@ -320,6 +332,34 @@ namespace MatterHackers.MatterControl
 			// Invalidate bed mesh cache
 			_bedMesh = null;
 		}
+
+		internal void Save()
+		{
+			if (this.Scene.Persistable)
+			{
+				this.Scene.PersistAssets(ApplicationDataStorage.Instance.ApplicationLibraryDataPath);
+				this.EditContext.Save();
+			}
+		}
+	}
+
+	public class EditContext
+	{
+		public ILibraryWritableContainer LibraryContainer { get; set; }
+		public ILibraryItem SourceItem { get; set; }
+		public IObject3D Content { get; set; }
+
+		internal void Save()
+		{
+			var thumbnailPath = ApplicationController.Instance.ThumbnailCachePath(this.SourceItem);
+			if (File.Exists(thumbnailPath))
+			{
+				File.Delete(thumbnailPath);
+			}
+
+			// Call save on the provider
+			this.LibraryContainer.Save(this.SourceItem, this.Content);
+		}
 	}
 
 	public class PrinterViewState
@@ -386,9 +426,9 @@ namespace MatterHackers.MatterControl
 
 		private EventHandler unregisterEvents;
 
-		public PrinterConfig(bool loadLastBedplate, PrinterSettings settings)
+		public PrinterConfig(EditContext editContext, PrinterSettings settings)
 		{
-			this.Bed = new BedConfig(this, loadLastBedplate);
+			this.Bed = new BedConfig(editContext, this);
 
 			this.Connection = new PrinterConnection(printer: this);
 

@@ -206,7 +206,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 				progressContainer.AddChild(printerName);
 
-				partName = new TextWidget(printer.Bed.printItem.GetFriendlyName(), pointSize: 16, textColor: ActiveTheme.Instance.PrimaryTextColor)
+				partName = new TextWidget(printer.Bed.EditContext.SourceItem.Name, pointSize: 16, textColor: ActiveTheme.Instance.PrimaryTextColor)
 				{
 					HAnchor = HAnchor.Center,
 					MinimumSize = new Vector2(maxTextWidth, MinimumSize.Y),

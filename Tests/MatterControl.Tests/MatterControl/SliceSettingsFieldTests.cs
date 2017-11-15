@@ -277,7 +277,7 @@ namespace MatterControl.Tests.MatterControl
 			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
-			var field = new ComPortField(new PrinterConfig(false, PrinterSettings.Empty));
+			var field = new ComPortField(new PrinterConfig(null, PrinterSettings.Empty));
 
 			await ValidateAgainstValueMap(
 				field,

@@ -61,8 +61,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					// Load or download on a background thread the last loaded settings
 					ApplicationController.Instance.SetActivePrinter(
 						new PrinterConfig(
-							true,
-							LoadProfileAsync(activeInstance.LastProfileID).Result));
+							new EditContext()
+							{
+								LibraryContainer = ApplicationController.Instance.Library.PlatingHistory,
+								SourceItem = BedConfig.LoadLastPlateOrNew()
+							},
+							// Short term workaround to run sync during load
+							LoadProfileAsync(activeInstance.LastProfileID).Result)).Wait();
 				}
 			}
 		}
@@ -142,9 +147,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			ProfileManager.Instance.LastProfileID = printerID;
 
-			ApplicationController.Instance.SetActivePrinter(
+			await ApplicationController.Instance.SetActivePrinter(
 				new PrinterConfig(
-					false,
+					new EditContext()
+					{
+						LibraryContainer = ApplicationController.Instance.Library.PlatingHistory,
+						SourceItem = BedConfig.LoadLastPlateOrNew()
+					},
 					await ProfileManager.LoadProfileAsync(printerID)));
 		}
 
@@ -472,9 +481,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			// Set as active profile
 			ProfileManager.Instance.LastProfileID = guid;
 
-			var printer = new PrinterConfig(false, printerSettings);
+			var printer = new PrinterConfig(
+				new EditContext()
+				{
+					LibraryContainer = ApplicationController.Instance.Library.PlatingHistory,
+					SourceItem = BedConfig.LoadLastPlateOrNew()
+				}, 
+				printerSettings);
 
-			ApplicationController.Instance.SetActivePrinter(printer);
+			await ApplicationController.Instance.SetActivePrinter(printer);
 
 			return printer;
 		}

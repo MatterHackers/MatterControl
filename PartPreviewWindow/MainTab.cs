@@ -68,6 +68,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				UiThread.RunOnIdle(() =>
 				{
+					this.parentTabControl.RemoveTab(this);
 					this.CloseClicked?.Invoke(this, null);
 				});
 			};

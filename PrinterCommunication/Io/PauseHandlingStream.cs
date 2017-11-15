@@ -105,12 +105,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 				case PauseReason.PauseLayerReached:
 				case PauseReason.GCodeRequest:
-					printer.Connection.PauseOnLayer.CallEvents(printer.Connection, new PrintItemWrapperEventArgs(printer.Bed.printItem));
+					printer.Connection.PauseOnLayer.CallEvents(printer.Connection, new NamedItemEventArgs(printer.Bed.EditContext?.SourceItem?.Name ?? "Unknown"));
 					UiThread.RunOnIdle(() => StyledMessageBox.ShowMessageBox(ResumePrint, layerPauseMessage.FormatWith(layerNumber), pauseCaption, StyledMessageBox.MessageType.YES_NO, "Ok".Localize(), "Resume".Localize()));
 					break;
 
 				case PauseReason.FilamentRunout:
-					printer.Connection.FilamentRunout.CallEvents(printer.Connection, new PrintItemWrapperEventArgs(printer.Bed.printItem));
+					printer.Connection.FilamentRunout.CallEvents(printer.Connection, new NamedItemEventArgs(printer.Bed.EditContext?.SourceItem?.Name ?? "Unknown"));
 					UiThread.RunOnIdle(() => StyledMessageBox.ShowMessageBox(ResumePrint, filamentPauseMessage, pauseCaption, StyledMessageBox.MessageType.YES_NO, "Ok".Localize(), "Resume".Localize()));
 					break;
 			}

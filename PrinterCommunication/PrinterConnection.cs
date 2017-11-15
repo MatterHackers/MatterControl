@@ -473,7 +473,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 									// Set this early as we always want our functions to know the state we are in.
 									communicationState = value;
 									timeSinceStartedPrint.Stop();
-									PrintFinished.CallEvents(this, new PrintItemWrapperEventArgs(printer.Bed.printItem));
+									PrintFinished.CallEvents(this, new NamedItemEventArgs(printer.Bed.EditContext.SourceItem.Name));
 
 									// clear single use setting on print completion
 									foreach (var keyValue in printer.Settings.BaseLayer)
@@ -2846,14 +2846,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		}
 	}
 
-	public class PrintItemWrapperEventArgs : EventArgs
+	public class NamedItemEventArgs : EventArgs
 	{
-		public PrintItemWrapperEventArgs(PrintItemWrapper printItemWrapper)
+		public NamedItemEventArgs(string name)
 		{
-			this.PrintItemWrapper = printItemWrapper;
+			this.ItemName = name;
 		}
 
-		public PrintItemWrapper PrintItemWrapper { get; }
+		public string ItemName { get; }
 	}
 
 	/// <summary>

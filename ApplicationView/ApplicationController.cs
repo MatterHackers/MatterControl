@@ -41,6 +41,7 @@ using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using Newtonsoft.Json;
+using MatterHackers.MatterControl.Library;
 
 namespace MatterHackers.MatterControl
 {
@@ -72,7 +73,9 @@ namespace MatterHackers.MatterControl
 		// A list of printers which are open (i.e. displaying a tab) on this instance of MatterControl
 		public IEnumerable<PrinterConfig> ActivePrinters { get; } = new List<PrinterConfig>();
 
-		private static PrinterConfig emptyPrinter = new PrinterConfig(false, PrinterSettings.Empty);
+		private static PrinterConfig emptyPrinter = new PrinterConfig(null, PrinterSettings.Empty);
+
+		private static string cacheDirectory = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "cache");
 
 		// TODO: Any references to this property almost certainly need to be reconsidered. ActiveSliceSettings static references that assume a single printer 
 		// selection are being redirected here. This allows us to break the dependency to the original statics and consolidates
@@ -112,11 +115,17 @@ namespace MatterHackers.MatterControl
 
 		private Queue<Func<Task>> queuedThumbCallbacks = new Queue<Func<Task>>();
 
-		public void SetActivePrinter(PrinterConfig printer, bool allowChangedEvent = true)
+		public async Task SetActivePrinter(PrinterConfig printer, bool allowChangedEvent = true)
 		{
 			var initialPrinter = this.ActivePrinter;
 			if (initialPrinter?.Settings.ID != printer.Settings.ID)
 			{
+				// TODO: Consider if autosave is appropriate
+				if (initialPrinter != emptyPrinter)
+				{
+					initialPrinter.Bed.Save();
+				}
+
 				// If we have an active printer, run Disable
 				if (initialPrinter.Settings != PrinterSettings.Empty)
 				{
@@ -126,6 +135,11 @@ namespace MatterHackers.MatterControl
 				// ActivePrinters is IEnumerable to force us to use SetActivePrinter until it's ingrained in our pattern - cast to list since it is and we need to add
 				(this.ActivePrinters as List<PrinterConfig>).Add(printer);
 				this.ActivePrinter = printer;
+
+				if (printer != emptyPrinter)
+				{
+					await printer.Bed.LoadContent();
+				}
 
 				// TODO: Decide if non-printer contexts should prompt for a printer, if we should have a default printer, or get "ActiveTab printer" working
 				// HACK: short term solution to resolve printer reference for non-printer related contexts
@@ -160,9 +174,9 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		internal void ClearActivePrinter()
+		internal async Task ClearActivePrinter()
 		{
-			this.SetActivePrinter(emptyPrinter);
+			await this.SetActivePrinter(emptyPrinter);
 		}
 
 		public void RefreshActiveInstance(PrinterSettings updatedPrinterSettings)
@@ -409,6 +423,7 @@ namespace MatterHackers.MatterControl
 						() => new SqliteLibraryContainer(rootLibraryCollection.Id)));
 			}
 
+
 			this.Library.RegisterRootProvider(
 				new DynamicContainerLink(
 					"Print History".Localize(),
@@ -451,6 +466,13 @@ namespace MatterHackers.MatterControl
 					IsReadOnly = true
 				});
 
+			this.Library.PlatingHistory = new PlatingHistoryContainer();
+
+			this.Library.RegisterRootProvider(
+				new DynamicContainerLink(
+					"Plating History".Localize(),
+					LibraryProviderHelpers.LoadInvertIcon("FileDialog", "folder.png"),
+					() => ApplicationController.Instance.Library.PlatingHistory));
 		}
 
 		public ApplicationController()
@@ -632,8 +654,6 @@ namespace MatterHackers.MatterControl
 			return await LoadCacheableAsync<T>(cacheKey, cacheScope, staticDataFallbackPath);
 		}
 
-		private static string cacheDirectory = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "cache");
-
 		public static string CacheablePath(string cacheScope, string cacheKey)
 		{
 			string scopeDirectory = Path.Combine(cacheDirectory, cacheScope);
@@ -700,6 +720,13 @@ namespace MatterHackers.MatterControl
 
 		public void OnApplicationClosed()
 		{
+			// Save changes before close
+			if (this.ActivePrinter != null
+				&& this.ActivePrinter != emptyPrinter)
+			{
+				this.ActivePrinter.Bed.Save();
+			}
+
 			ApplicationClosed?.Invoke(null, null);
 		}
 
@@ -968,6 +995,7 @@ namespace MatterHackers.MatterControl
 					{
 						AggContext.StaticData.LoadImageData(stream, imageToLoadInto);
 					}
+
 					imageToLoadInto.MarkImageChanged();
 				}
 				catch
