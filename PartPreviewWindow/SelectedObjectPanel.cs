@@ -30,15 +30,18 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.Library;
 using MatterHackers.MeshVisualizer;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class SelectedObjectPanel : FlowLayoutWidget
+	public class SelectedObjectPanel : FlowLayoutWidget, IContentStore
 	{
 		private IObject3D item = new Object3D();
 
@@ -94,6 +97,27 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			behavior3DTypeButtons.AddChild(solidBehaviorButton);
+
+			var editButton = new TextButton("Edit", theme);
+			editButton.Click += async (s, e) =>
+			{
+				BedConfig bed;
+
+				var partPreviewContent = this.Parents<PartPreviewContent>().FirstOrDefault();
+				partPreviewContent.CreatePartTab(
+					"New Part",
+					bed = new BedConfig(
+						new EditContext()
+						{
+							ContentStore = ApplicationController.Instance.Library.PlatingHistory,
+							SourceItem = new InMemoryItem(this.item),
+						}),
+					theme);
+
+				await bed.LoadContent();
+			};
+			behavior3DTypeButtons.AddChild(editButton);
+
 
 			this.AddChild(editorPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -233,6 +257,46 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			editorPanel.AddChild(newEditor);
 
 			activeEditorWidget = newEditor;
+		}
+
+		public void Save(ILibraryItem item, IObject3D content)
+		{
+			this.item.Parent.Children.Modify(children =>
+			{
+				children.Remove(this.item);
+				children.Add(content);
+			});
+		}
+
+		public class InMemoryItem : ILibraryContentItem
+		{
+			private IObject3D existingItem;
+
+			public InMemoryItem(IObject3D existingItem)
+			{
+				this.existingItem = existingItem;
+			}
+
+			public string ID => existingItem.ID;
+
+			public string Name => existingItem.Name;
+
+			public bool IsProtected => !existingItem.Persistable;
+
+			public bool IsVisible => existingItem.Visible;
+
+			public string ContentType => "stl";
+
+			public string Category => "";
+
+			public Task<IObject3D> GetContent(Action<double, string> reportProgress)
+			{
+				return Task.FromResult(existingItem);
+			}
+
+			public void SetContent(IObject3D item)
+			{
+			}
 		}
 	}
 }
