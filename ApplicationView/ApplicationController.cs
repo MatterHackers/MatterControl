@@ -1095,7 +1095,7 @@ namespace MatterHackers.MatterControl
 
 		private string doNotAskAgainMessage = "Don't remind me again".Localize();
 
-		public async Task PrintPart(PrintItemWrapper printItem, PrinterConfig printer, View3DWidget view3DWidget, SliceProgressReporter reporter, bool overrideAllowGCode = false)
+		public async Task PrintPart(string partFilePath, string gcodePathAndFileName, string printItemName, PrinterConfig printer, View3DWidget view3DWidget, SliceProgressReporter reporter, bool overrideAllowGCode = false)
 		{
 			// Exit if called in a non-applicable state
 			if (this.ActivePrinter.Connection.CommunicationState != CommunicationStates.Connected
@@ -1121,21 +1121,20 @@ namespace MatterHackers.MatterControl
 				// Save any pending changes before starting the print
 				await ApplicationController.Instance.ActiveView3DWidget.PersistPlateIfNeeded();
 
-				if (printItem != null)
+				if (!string.IsNullOrEmpty(partFilePath) 
+					&& File.Exists(partFilePath))
 				{
-					this.PrintingItemName = printItem.Name;
-					string pathAndFile = printItem.FileLocation;
+					this.PrintingItemName = printItemName;
 
 					if (ActiveSliceSettings.Instance.IsValid())
 					{
-						if (File.Exists(pathAndFile))
 						{
 							// clear the output cache prior to starting a print
 							this.ActivePrinter.Connection.TerminalLog.Clear();
 
 							string hideGCodeWarning = ApplicationSettings.Instance.get(ApplicationSettingsKey.HideGCodeWarning);
 
-							if (Path.GetExtension(pathAndFile).ToUpper() == ".GCODE"
+							if (Path.GetExtension(partFilePath).ToUpper() == ".GCODE"
 								&& hideGCodeWarning == null
 								&& !overrideAllowGCode)
 							{
@@ -1165,7 +1164,7 @@ namespace MatterHackers.MatterControl
 											if (messageBoxResponse)
 											{
 												this.ActivePrinter.Connection.CommunicationState = CommunicationStates.PreparingToPrint;
-												partToPrint_SliceDone(printItem);
+												partToPrint_SliceDone(partFilePath, gcodePathAndFileName);
 											}
 										},
 										"The file you are attempting to print is a GCode file.\n\nIt is recommended that you only print Gcode files known to match your printer's configuration.\n\nAre you sure you want to print this GCode file?".Localize(),
@@ -1185,11 +1184,12 @@ namespace MatterHackers.MatterControl
 
 								await ApplicationController.Instance.SliceFileLoadOutput(
 									printer,
-									printItem,
+									printer.Bed.EditContext.PartFilePath,
+									printer.Bed.EditContext.GCodeFilePath,
 									view3DWidget,
 									reporter);
 
-								partToPrint_SliceDone(printItem);
+								partToPrint_SliceDone(partFilePath, gcodePathAndFileName);
 							}
 						}
 					}
@@ -1200,18 +1200,18 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private void partToPrint_SliceDone(PrintItemWrapper partToPrint)
+		private void partToPrint_SliceDone(string partFilePath, string gcodePathAndFileName)
 		{
-			if (partToPrint != null)
+			if (!string.IsNullOrEmpty(partFilePath) 
+				&& File.Exists(partFilePath))
 			{
-				string gcodePathAndFileName = partToPrint.GetGCodePathAndFileName();
 				if (gcodePathAndFileName != "")
 				{
-					bool originalIsGCode = Path.GetExtension(partToPrint.FileLocation).ToUpper() == ".GCODE";
+					bool originalIsGCode = Path.GetExtension(partFilePath).ToUpper() == ".GCODE";
 					if (File.Exists(gcodePathAndFileName))
 					{
 						// Create archive point for printing attempt
-						if (Path.GetExtension(partToPrint.FileLocation).ToUpper() == ".MCX")
+						if (Path.GetExtension(partFilePath).ToUpper() == ".MCX")
 						{
 							// TODO: We should zip mcx and settings when starting a print
 							string platingDirectory = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, "PrintHistory");
@@ -1223,7 +1223,7 @@ namespace MatterHackers.MatterControl
 							using (var file = File.OpenWrite(archivePath))
 							using (var zip = new ZipArchive(file, ZipArchiveMode.Create))
 							{
-								zip.CreateEntryFromFile(partToPrint.FileLocation, "PrinterPlate.mcx");
+								zip.CreateEntryFromFile(partFilePath, "PrinterPlate.mcx");
 								zip.CreateEntryFromFile(ActiveSliceSettings.Instance.DocumentPath, ActiveSliceSettings.Instance.GetValue(SettingsKey.printer_name) + ".printer");
 								zip.CreateEntryFromFile(gcodePathAndFileName, "sliced.gcode");
 							}
@@ -1260,7 +1260,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public async Task SliceFileLoadOutput(PrinterConfig printer, PrintItemWrapper printItem, View3DWidget view3DWidget, SliceProgressReporter reporter)
+		public async Task SliceFileLoadOutput(PrinterConfig printer, string partFilePath, string gcodePathAndFileName, View3DWidget view3DWidget, SliceProgressReporter reporter)
 		{
 			var gcodeLoadCancellationTokenSource = new CancellationTokenSource();
 
@@ -1269,18 +1269,17 @@ namespace MatterHackers.MatterControl
 
 			// Slice
 			reporter?.StartReporting();
-			await Slicer.SliceFileAsync(printItem, reporter);
+			await Slicer.SliceFileAsync(partFilePath, gcodePathAndFileName, reporter);
 			reporter?.EndReporting();
 
 			// Load
 			printer.Bed.LoadGCode(
-				printItem.GetGCodePathAndFileName(),
+				gcodePathAndFileName,
 				gcodeLoadCancellationTokenSource.Token,
 				null);
 				// TODO: use not yet implemented standard processing notification system to report GCode load
 				//view3DWidget.gcodeViewer.LoadProgress_Changed);
 				//SetProcessingMessage(string.Format("{0} {1:0}%...", "Loading G-Code".Localize(), progress0To1 * 100));
-
 		}
 
 		public class CloudSyncEventArgs : EventArgs

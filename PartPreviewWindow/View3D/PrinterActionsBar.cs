@@ -280,8 +280,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				UiThread.RunOnIdle(async () =>
 				{
+					var context = printer.Bed.EditContext;
 					await ApplicationController.Instance.PrintPart(
-						printer.Bed.printItem,
+						context.PartFilePath,
+						context.GCodeFilePath,
+						context.SourceItem.Name,
 						printer,
 						printerTabPage.view3DWidget,
 						null);
@@ -298,8 +301,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				UiThread.RunOnIdle(async () =>
 				{
+					var context = printer.Bed.EditContext;
 					await ApplicationController.Instance.PrintPart(
-						printer.Bed.printItem,
+						context.PartFilePath,
+						context.GCodeFilePath,
+						context.SourceItem.Name,
 						printer,
 						printerTabPage.view3DWidget,
 						null);

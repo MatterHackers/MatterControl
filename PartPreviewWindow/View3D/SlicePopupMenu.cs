@@ -116,7 +116,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (printer.Settings.PrinterSelected)
 			{
-				if (printer.Settings.IsValid() && printer.Bed.printItem != null)
+				if (printer.Settings.IsValid() && printer.Bed.EditContext.SourceItem != null)
 				{
 					activelySlicing = true;
 
@@ -124,7 +124,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						await ApplicationController.Instance.SliceFileLoadOutput(
 							printer,
-							printer.Bed.printItem,
+							printer.Bed.EditContext.PartFilePath,
+							printer.Bed.EditContext.GCodeFilePath,
 							printerTabPage.view3DWidget,
 							new SliceProgressReporter(this.PopupContent, printer));
 					}

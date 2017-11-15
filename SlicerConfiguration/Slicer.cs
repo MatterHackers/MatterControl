@@ -226,13 +226,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return filePath;
 		}
 
-		public static async Task SliceFileAsync(PrintItemWrapper printItem, IProgress<string> progressReporter)
+		public static async Task SliceFileAsync(string partFilePath, string gcodeFilePath, IProgress<string> progressReporter)
 		{
-			string gcodeFilePath = printItem.GetGCodePathAndFileName();
-
 			await Task.Run(() => SliceFile(
-				printItem.FileLocation, 
-				gcodeFilePath, 
+				partFilePath,
+				gcodeFilePath,
 				progressReporter));
 		}
 

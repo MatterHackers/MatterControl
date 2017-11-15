@@ -390,8 +390,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 									AddToPlate(selectedLibraryItems);
 
+									var context = printer.Bed.EditContext;
+
 									await ApplicationController.Instance.PrintPart(
-										printer.Bed.printItem,
+										context.PartFilePath,
+										context.GCodeFilePath,
+										context.SourceItem.Name,
 										printer,
 										activeContext.View3DWidget,
 										null);

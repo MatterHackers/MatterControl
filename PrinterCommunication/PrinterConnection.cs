@@ -2331,7 +2331,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 				case CommunicationStates.PreparingToPrint:
 					{
-						var activePrintItem = printer.Bed.printItem;
+						var activePrintItem = printer.Bed.EditContext.printItem;
 						if (activePrintItem.PrintItem.Id == 0)
 						{
 							activePrintItem.PrintItem.Commit();
