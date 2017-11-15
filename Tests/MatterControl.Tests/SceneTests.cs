@@ -127,10 +127,11 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			Assert.AreEqual(1, Directory.GetFiles(tempPath).Length, "Only .mcx file should exists");
 			Assert.AreEqual(1, Directory.GetFiles(Path.Combine(tempPath, "Assets")).Length, "Only 1 asset should exist");
 
-			var originalFiles = Directory.GetFiles(tempPath).ToArray(); ;
+			var originalFiles = Directory.GetFiles(tempPath).ToArray();
 
+			// Load the file from disk
 			IObject3D loadedItem = Object3D.Load(filePath, CancellationToken.None);
-			Assert.IsTrue(loadedItem.Children.Count == 1);
+			Assert.AreEqual(1, loadedItem.Children.Count);
 
 			// Ensure the UI scene is cleared
 			scene.Children.Modify(list => list.Clear());
@@ -142,13 +143,17 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			});
 
 			// Serialize and compare the two trees
-			string onDiskData = JsonConvert.SerializeObject(loadedItem, Formatting.Indented);
-			string inMemoryData = JsonConvert.SerializeObject(scene, Formatting.Indented);
-			Assert.IsTrue(inMemoryData == onDiskData);
+			string onDiskData = loadedItem.ToJson();
+			string inMemoryData = scene.ToJson();
+
+			//File.WriteAllText(@"c:\temp\file-a.txt", onDiskData);
+			//File.WriteAllText(@"c:\temp\file-b.txt", inMemoryData);
+
+			Assert.AreEqual(inMemoryData, onDiskData, "Serialized content should match");
 
 			// Save the scene a second time, validate that things remain the same
 			scene.Save(filePath, tempPath);
-			onDiskData = JsonConvert.SerializeObject(loadedItem, Formatting.Indented);
+			onDiskData = loadedItem.ToJson();
 
 			Assert.IsTrue(inMemoryData == onDiskData);
 
