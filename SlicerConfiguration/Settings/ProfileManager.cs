@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						new PrinterConfig(
 							new EditContext()
 							{
-								LibraryContainer = ApplicationController.Instance.Library.PlatingHistory,
+								ContentStore = ApplicationController.Instance.Library.PlatingHistory,
 								SourceItem = BedConfig.LoadLastPlateOrNew()
 							},
 							// Short term workaround to run sync during load
@@ -151,7 +151,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				new PrinterConfig(
 					new EditContext()
 					{
-						LibraryContainer = ApplicationController.Instance.Library.PlatingHistory,
+						ContentStore = ApplicationController.Instance.Library.PlatingHistory,
 						SourceItem = BedConfig.LoadLastPlateOrNew()
 					},
 					await ProfileManager.LoadProfileAsync(printerID)));
@@ -484,7 +484,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			var printer = new PrinterConfig(
 				new EditContext()
 				{
-					LibraryContainer = ApplicationController.Instance.Library.PlatingHistory,
+					ContentStore = ApplicationController.Instance.Library.PlatingHistory,
 					SourceItem = BedConfig.LoadLastPlateOrNew()
 				}, 
 				printerSettings);

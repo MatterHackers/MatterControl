@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						new BedConfig(
 							new EditContext()
 							{
-								LibraryContainer = ApplicationController.Instance.Library.PlatingHistory,
+								ContentStore = ApplicationController.Instance.Library.PlatingHistory,
 								SourceItem = BedConfig.NewPlatingItem()
 							}), 
 						theme);
