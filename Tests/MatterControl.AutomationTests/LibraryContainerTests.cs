@@ -175,6 +175,11 @@ namespace MatterControl.Tests.MatterControl
 
 				if (Activator.CreateInstance(containerType, args.ToArray()) is ILibraryWritableContainer libraryContainer)
 				{
+					if (!libraryContainer.AllowAction(ContainerActions.AddItems))
+					{
+						continue;
+					}
+
 					if (libraryContainer is ZipMemoryContainer zipContainer)
 					{
 						zipContainer.Path = TestContext.CurrentContext.ResolveProjectPath(4, "Tests", "TestData", "TestParts", "Batman.zip");
