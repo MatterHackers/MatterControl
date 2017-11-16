@@ -121,12 +121,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			bool shareTemp = printer.Settings.GetValue<bool>(SettingsKey.extruders_share_temperature);
 			int extruderCount = shareTemp ? 1 : printer.Settings.GetValue<int>(SettingsKey.extruder_count);
 
-			for (int extruderIndex = 0; extruderIndex < extruderCount; extruderIndex++)
+			if (!printer.Settings.GetValue<bool>(SettingsKey.sla_printer))
 			{
-				this.AddChild(new TemperatureWidgetHotend(printer, extruderIndex, theme.MenuButtonFactory)
+				for (int extruderIndex = 0; extruderIndex < extruderCount; extruderIndex++)
 				{
-					Margin = new BorderDouble(right: 10)
-				});
+					this.AddChild(new TemperatureWidgetHotend(printer, extruderIndex, theme.MenuButtonFactory)
+					{
+						Margin = new BorderDouble(right: 10)
+					});
+				}
 			}
 
 			if (printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed))
