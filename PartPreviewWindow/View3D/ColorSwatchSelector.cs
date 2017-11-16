@@ -27,9 +27,12 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MeshVisualizer;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -40,9 +43,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public ColorSwatchSelector(InteractiveScene scene)
 			: base(FlowDirection.TopToBottom)
 		{
-			var colorCount = 9;
+			var theme = ApplicationController.Instance.Theme;
+
+			this.BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor;
+
+			int colorCount = 9;
+
 			double[] lightness = new double[] { .7, .5, .3 };
-			Color[] grayLevel = new Color[] { Color.White, new Color(180, 180, 180), Color.Gray };
+
+			var grayLevel = new Color[] { Color.White, new Color(180, 180, 180), Color.Gray };
+
 			for (int rowIndex = 0; rowIndex < lightness.Length; rowIndex++)
 			{
 				var colorRow = new FlowLayoutWidget();
@@ -56,6 +66,36 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				// put in white and black buttons
 				colorRow.AddChild(MakeColorButton(scene, grayLevel[rowIndex]));
+
+				switch(rowIndex)
+				{
+					case 0:
+						{
+							var resetButton = new IconButton(AggContext.StaticData.LoadIcon("transparent_grid.png"), theme)
+							{
+								Width = colorSize,
+								Height = colorSize,
+								Margin = Button.DefaultMargin
+							};
+							resetButton.Click += (s, e) =>
+							{
+								var item = scene.SelectedItem;
+								item.Color = Color.Transparent;
+								item.OutputType = PrintOutputTypes.Solid;
+							};
+							colorRow.AddChild(resetButton);
+						}
+
+						break;
+
+					case 1:
+						colorRow.AddChild(MakeColorButton(scene, new Color("#555")));
+						break;
+
+					case 2:
+						colorRow.AddChild(MakeColorButton(scene, new Color("#222")));
+						break;
+				}
 			}
 		}
 

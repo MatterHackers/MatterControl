@@ -87,7 +87,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					HAnchor = HAnchor.Fit,
 					VAnchor = VAnchor.Fit,
-					BackgroundColor = Color.White
 				},
 				Margin = buttonMargin
 			};
