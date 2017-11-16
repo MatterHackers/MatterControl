@@ -108,13 +108,13 @@ namespace MatterHackers.MatterControl
 		public BrandMenuButton(ThemeConfig theme)
 		{
 			this.Name = "MatterControl BrandMenuButton";
-			this.VAnchor = VAnchor.Stretch;
+			this.VAnchor = VAnchor.Fit;
 			this.HAnchor = HAnchor.Stretch;
 			this.Margin = 0;
 			this.PopupContent = new ApplicationSettingsWidget(theme.MenuButtonFactory)
 			{
 				HAnchor = HAnchor.Absolute,
-				VAnchor = VAnchor.Center,
+				VAnchor = VAnchor.Fit,
 				Width = 500,
 				BackgroundColor = Color.White
 			};
