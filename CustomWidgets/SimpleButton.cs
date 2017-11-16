@@ -267,5 +267,4 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			}
 		}
 	}
-
 }
