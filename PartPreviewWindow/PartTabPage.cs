@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.BackgroundColor = theme.TabBodyBackground;
 			this.Padding = 0;
 
-			viewControls3D = new ViewControls3D(theme, sceneContext.Scene.UndoBuffer)
+			viewControls3D = new ViewControls3D(sceneContext, theme, sceneContext.Scene.UndoBuffer)
 			{
 				//BackgroundColor = new Color(0, 0, 0, theme.OverlayAlpha),
 				PartSelectVisible = false,

@@ -146,7 +146,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		public ViewControls3D(ThemeConfig theme, UndoBuffer undoBuffer)
+		public ViewControls3D(BedConfig sceneContext, ThemeConfig theme, UndoBuffer undoBuffer)
 		{
 			string iconPath;
 
@@ -323,7 +323,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 				button.Click += (s, e) =>
 				{
-					namedAction.Action.Invoke(ApplicationController.Instance.ActivePrinter.Bed.Scene);
+					namedAction.Action.Invoke(sceneContext.Scene);
 				};
 				this.AddChild(button);
 			}
