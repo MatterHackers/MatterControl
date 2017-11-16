@@ -63,6 +63,13 @@ namespace MatterHackers.MatterControl
 			this.Name = "Export Item Window";
 
 			CreateWindowContent();
+
+			string svgPath = Path.GetFullPath(Path.Combine("..", "..", "Tests", "TestData", "zip.svg"));
+			this.AddChild(new SvgWidget(svgPath, 1.5)
+			{
+				VAnchor = VAnchor.Top,
+				HAnchor = HAnchor.Right
+			});
 		}
 
 		public void CreateWindowContent()
