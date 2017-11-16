@@ -111,6 +111,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				OrganizerCategory category = SliceSettingsOrganizer.Instance.UserLevels[UserLevel].CategoriesList[topCategoryIndex];
 
+				if (category.Name == "Printer"
+					&& (settingsContext.ViewFilter == NamedSettingsLayers.Material || settingsContext.ViewFilter == NamedSettingsLayers.Quality))
+				{
+					continue;
+				}
+
 				var categoryPage = new TabPage(category.Name.Localize());
 				categoryPage.AnchorAll();
 
@@ -240,6 +246,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private TabControl CreateSideTabsAndPages(OrganizerCategory category, bool showHelpControls)
 		{
+			var oemAndUserContext = new SettingsContext(
+						printer,
+						null,
+						NamedSettingsLayers.MHBaseSettings | NamedSettingsLayers.OEMSettings | NamedSettingsLayers.User);
+
 			this.HAnchor = HAnchor.Stretch;
 
 			var secondaryTabControl = new TabControl(Orientation.Vertical);
@@ -299,7 +310,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					{
 						// Note: tab sections may disappear if / when they are empty, as controlled by:
 						// settingShouldBeShown / addedSettingToSubGroup / needToAddSubGroup
-						bool settingShouldBeShown = CheckIfShouldBeShown(settingData);
+						bool settingShouldBeShown = CheckIfShouldBeShown(settingData, oemAndUserContext);
 
 						if (EngineMappingsMatterSlice.Instance.MapContains(settingData.SlicerConfigName)
 							&& settingShouldBeShown)
@@ -376,7 +387,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return secondaryTabControl;
 		}
 
-		private bool CheckIfShouldBeShown(SliceSettingData settingData)
+		private bool CheckIfShouldBeShown(SliceSettingData settingData, SettingsContext settingsContext)
 		{
 			bool settingShouldBeShown = settingsContext.ParseShowString(settingData.ShowIfSet);
 			if (settingsContext.ViewFilter == NamedSettingsLayers.Material || settingsContext.ViewFilter == NamedSettingsLayers.Quality)
@@ -388,11 +399,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			return settingShouldBeShown;
-		}
-
-		private bool CheckIfEnabled(SliceSettingData settingData)
-		{
-			return settingsContext.ParseShowString(settingData.EnableIfSet);
 		}
 
 		private GuiWidget AddInHelpText(FlowLayoutWidget topToBottomSettings, SliceSettingData settingData)
@@ -666,8 +672,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			// Invoke the UpdateStyle implementation
 			settingsRow.UpdateStyle();
 
-			bool settingShouldEnabled = settingsContext.ParseShowString(settingData.EnableIfSet);
-			if (settingShouldEnabled)
+			bool settingEnabled = settingsContext.ParseShowString(settingData.EnableIfSet);
+			if (settingEnabled
+				|| settingsContext.ViewFilter == NamedSettingsLayers.Material 
+				|| settingsContext.ViewFilter == NamedSettingsLayers.Quality)
 			{
 				if (placeFieldInDedicatedRow)
 				{
