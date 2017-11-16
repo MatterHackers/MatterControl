@@ -106,6 +106,7 @@
     <Compile Include="CustomWidgets\RadioImageWidget.cs" />
     <Compile Include="CustomWidgets\RadioPanelWidget.cs" />
     <Compile Include="CustomWidgets\DisableablePanel.cs" />
+    <Compile Include="CustomWidgets\SvgWidget.cs" />
     <Compile Include="Library\Interfaces\LibraryExtensionMethods.cs" />
     <Compile Include="Library\Providers\CreateFolderItem.cs" />
     <Compile Include="Library\Providers\MatterControl\PlatingHistoryContainer.cs" />
