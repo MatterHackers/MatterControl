@@ -42,10 +42,8 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		public Action<IEnumerable<ILibraryItem>, ListView> Action { get; set; }
 
-		public bool AllowMultiple { get; set; } = false;
-		public bool AllowProtected { get; set; } = false;
-		public bool AllowContainers { get; set; } = false;
-		public bool AlwaysEnabled { get; set; } = false;
+		public Func<IEnumerable<ListViewItem>, ListView, bool> IsEnabled { get; set; }
+
 		internal PopupMenu.MenuItem MenuItem { get; set; }
 	}
 

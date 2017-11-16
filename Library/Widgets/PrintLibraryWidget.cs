@@ -359,9 +359,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			menuActions.Add(new PrintItemAction()
 			{
 				Title = "Print",
-				AllowMultiple = false,
-				AllowContainers = false,
-				AllowProtected = true,
 				Action = (selectedLibraryItems, listView) =>
 				{
 					// TODO: Sort out the right way to have an ActivePrinter context that looks and behaves correctly
@@ -404,6 +401,13 @@ namespace MatterHackers.MatterControl.PrintLibrary
 							break;
 					}
 
+				},
+				IsEnabled = (selectedListItems, listView) =>
+				{
+					// Singleselect - disallow containers
+					return listView.SelectedItems.Count == 1
+						&& selectedListItems.FirstOrDefault()?.Model is ILibraryItem firstItem
+						&& !(firstItem is ILibraryContainer);
 				}
 			});
 
@@ -411,22 +415,21 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			menuActions.Add(new PrintItemAction()
 			{
 				Title = "Add to Plate".Localize(),
-				AllowMultiple = true,
-				AllowProtected = true,
-				AllowContainers = false,
 				Action = (selectedLibraryItems, listView) =>
 				{
 					AddToPlate(selectedLibraryItems);
-				}
+				},
+				IsEnabled = (selectedListItems, listView) =>
+				{
+					// Multiselect - disallow containers
+					return listView.SelectedItems.All(i => !(i.Model is ILibraryContainer));
+				}		
 			});
 
 			// edit menu item
 			menuActions.Add(new PrintItemAction()
 			{
 				Title = "Edit".Localize(),
-				AllowMultiple = false,
-				AllowProtected = false,
-				AllowContainers = false,
 				Action = async (selectedLibraryItems, listView) =>
 				{
 					if (selectedLibraryItems.FirstOrDefault() is ILibraryItem firstItem
@@ -452,6 +455,15 @@ namespace MatterHackers.MatterControl.PrintLibrary
 							// TODO: Restore ability to render progress loading
 						}
 					}
+				},
+				IsEnabled = (selectedListItems, listView) =>
+				{
+					// Singleselect, WritableContainer - disallow containers and protected items
+					return listView.SelectedItems.Count == 1
+						&& selectedListItems.FirstOrDefault()?.Model is ILibraryItem firstItem
+						&& !(firstItem is ILibraryContainer)
+						&& !firstItem.IsProtected
+						&& ApplicationController.Instance.Library.ActiveContainer is ILibraryWritableContainer;
 				}
 			});
 
@@ -459,9 +471,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			menuActions.Add(new PrintItemAction()
 			{
 				Title = "Rename".Localize(),
-				AllowMultiple = false,
-				AllowProtected = false,
-				AllowContainers = true,
 				Action = (selectedLibraryItems, listView) =>
 				{
 					if (libraryView.SelectedItems.Count == 1)
@@ -494,26 +503,41 @@ namespace MatterHackers.MatterControl.PrintLibrary
 								}));
 					}
 				},
+				IsEnabled = (selectedListItems, listView) =>
+				{
+					// Singleselect, WritableContainer - disallow protected items
+					return listView.SelectedItems.Count == 1
+						&& selectedListItems.FirstOrDefault()?.Model is ILibraryItem firstItem
+						&& !firstItem.IsProtected
+						&& ApplicationController.Instance.Library.ActiveContainer is ILibraryWritableContainer;
+				}
 			});
 
 			// move menu item
 			menuActions.Add(new PrintItemAction()
 			{
 				Title = "Move".Localize(),
-				AllowMultiple = true,
-				AllowProtected = false,
-				AllowContainers = true,
 				Action = (selectedLibraryItems, listView) => moveInLibraryButton_Click(selectedLibraryItems, null),
+				IsEnabled = (selectedListItems, listView) =>
+				{
+					// Multiselect, WritableContainer - disallow protected
+					return listView.SelectedItems.All(i => !i.Model.IsProtected
+						&& ApplicationController.Instance.Library.ActiveContainer is ILibraryWritableContainer);
+
+				}
 			});
 
 			// remove menu item
 			menuActions.Add(new PrintItemAction()
 			{
 				Title = "Remove".Localize(),
-				AllowMultiple = true,
-				AllowProtected = false,
-				AllowContainers = true,
 				Action = (selectedLibraryItems, listView) => deleteFromLibraryButton_Click(selectedLibraryItems, null),
+				IsEnabled = (selectedListItems, listView) =>
+				{
+					// Multiselect, WritableContainer - disallow protected
+					return listView.SelectedItems.All(i => !i.Model.IsProtected
+						&& ApplicationController.Instance.Library.ActiveContainer is ILibraryWritableContainer);
+				}
 			});
 
 			menuActions.Add(new MenuSeparator("Classic Queue"));
@@ -522,30 +546,39 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			menuActions.Add(new PrintItemAction()
 			{
 				Title = "Add to Queue".Localize(),
-				AllowMultiple = true,
-				AllowProtected = true,
-				AllowContainers = false,
 				Action = (selectedLibraryItems, listView) => addToQueueButton_Click(selectedLibraryItems, null),
+				IsEnabled = (selectedListItems, listView) =>
+				{
+					// Multiselect - disallow containers
+					return listView.SelectedItems.All(i => !(i.Model is ILibraryContainer));
+				},
 			});
 
 			// export menu item
 			menuActions.Add(new PrintItemAction()
 			{
 				Title = "Export".Localize(),
-				AllowMultiple = true,
-				AllowProtected = true,
-				AllowContainers = false,
 				Action = (selectedLibraryItems, listView) => exportButton_Click(selectedLibraryItems, null),
+				IsEnabled = (selectedListItems, listView) =>
+				{
+					// Multiselect - disallow containers
+					return listView.SelectedItems.All(i => !(i.Model is ILibraryContainer));
+				},
 			});
 
 			// share menu item
 			menuActions.Add(new PrintItemAction()
 			{
 				Title = "Share".Localize(),
-				AllowMultiple = false,
-				AllowProtected = false,
-				AllowContainers = false,
 				Action = (selectedLibraryItems, listView) => shareFromLibraryButton_Click(selectedLibraryItems, null),
+				IsEnabled = (selectedListItems, listView) =>
+				{
+					// Singleselect - disallow containers and protected items
+					return listView.SelectedItems.Count == 1
+						&& selectedListItems.FirstOrDefault()?.Model is ILibraryItem firstItem
+						&& !(firstItem is ILibraryContainer)
+						&& !firstItem.IsProtected;
+				}
 			});
 
 			// Extension point - RegisteredLibraryActions not defined in this file/assembly can insert here via this named token
@@ -560,9 +593,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				menuActions.Add(new PrintItemAction()
 				{
 					Title = "Create Part Sheet".Localize(),
-					AllowMultiple = true,
-					AllowProtected = true,
-					AllowContainers = false,
 					Action = (selectedLibraryItems, listView) =>
 					{
 						UiThread.RunOnIdle(() =>
@@ -596,6 +626,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 									});
 							}
 						});
+					},
+					IsEnabled = (selectedListItems, listView) =>
+					{
+						// Multiselect - disallow containers
+						return listView.SelectedItems.All(i => !(i.Model is ILibraryContainer));
 					}
 				});
 			}
@@ -605,57 +640,57 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			menuActions.Add(new PrintItemAction()
 			{
 				Title = "View List".Localize(),
-				AlwaysEnabled = true,
 				Action = (selectedLibraryItems, listView) =>
 				{
 					listView.ListContentView = new RowListView();
 					listView.Reload().ConfigureAwait(false);
 				},
+				IsEnabled = (selectedListItems, listView) => true
 			});
 
 			menuActions.Add(new PrintItemAction()
 			{
 				Title = "View XSmall Icons".Localize(),
-				AlwaysEnabled = true,
 				Action = (selectedLibraryItems, listView) =>
 				{
 					listView.ListContentView = new IconListView(18);
 					listView.Reload().ConfigureAwait(false);
 				},
+				IsEnabled = (selectedListItems, listView) => true
 			});
 
 
 			menuActions.Add(new PrintItemAction()
 			{
 				Title = "View Small Icons".Localize(),
-				AlwaysEnabled = true,
 				Action = (selectedLibraryItems, listView) =>
 				{
 					listView.ListContentView = new IconListView(70);
 					listView.Reload().ConfigureAwait(false);
 				},
+				IsEnabled = (selectedListItems, listView) => true
 			});
 
 			menuActions.Add(new PrintItemAction()
 			{
 				Title = "View Icons".Localize(),
-				AlwaysEnabled = true,
 				Action = (selectedLibraryItems, listView) =>
 				{
 					listView.ListContentView = new IconListView();
 					listView.Reload().ConfigureAwait(false);
 				},
+				IsEnabled = (selectedListItems, listView) => true
 			});
 
 			menuActions.Add(new PrintItemAction()
 			{
 				Title = "View Large Icons".Localize(),
-				AlwaysEnabled = true,
 				Action = (selectedLibraryItems, listView) =>
 				{
 					listView.ListContentView = new IconListView(256);
 					listView.Reload().ConfigureAwait(false);
 				},
+				IsEnabled = (selectedListItems, listView) => true
 			});
 		}
 
@@ -699,30 +734,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			foreach (var menuAction in menuActions.Where(m => m.MenuItem != null))
 			{
-				var menuItem = menuAction.MenuItem;
-
-				if (menuAction.AlwaysEnabled)
-				{
-					menuItem.Enabled = true;
-					continue;
-				}
-
-				menuItem.Enabled = menuAction.Action != null && libraryView.SelectedItems.Count > 0;
-
-				if (!menuAction.AllowMultiple)
-				{
-					menuItem.Enabled &= libraryView.SelectedItems.Count == 1;
-				}
-
-				if (!menuAction.AllowProtected)
-				{
-					menuItem.Enabled &= libraryView.SelectedItems.All(i => !i.Model.IsProtected);
-				}
-
-				if (!menuAction.AllowContainers)
-				{
-					menuItem.Enabled &= libraryView.SelectedItems.All(i => !(i.Model is ILibraryContainer));
-				}
+				menuAction.MenuItem.Enabled = libraryView.SelectedItems.Count > 0
+					&& menuAction.IsEnabled(libraryView.SelectedItems, libraryView);
 			}
 		}
 
