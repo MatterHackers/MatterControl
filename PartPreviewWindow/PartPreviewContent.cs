@@ -96,7 +96,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 			else
 			{
-				this.CreatePartTab("New Part", printer.Bed, theme);
+				this.CreatePartTab(
+						"New Part",
+						new BedConfig(
+							new EditContext()
+							{
+								ContentStore = ApplicationController.Instance.Library.PlatingHistory,
+								SourceItem = BedConfig.NewPlatingItem()
+							}),
+						theme);
 			}
 
 			// add in the update available button
