@@ -52,6 +52,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Height = theme.MicroButton.Options.FixedHeight,
 				Width = theme.MicroButton.Options.FixedHeight,
 				Margin = new BorderDouble(left: 10),
+				Name = "Create New",
 			};
 
 			this.AddChild(IconButton);

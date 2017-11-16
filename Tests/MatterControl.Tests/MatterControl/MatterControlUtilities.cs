@@ -162,8 +162,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void CloseSignInAndPrinterSelect(this AutomationRunner testRunner, PrepAction preAction = PrepAction.CloseSignInAndPrinterSelect)
 		{
+			// NOTE: Tests fail to detect and close this Window when delay is ~.5
+			//
 			// Non-MCCentral builds won't have the plugin. Reduce the wait time for these cases
-			if (testRunner.WaitForName("Connection Wizard Skip Sign In Button", 0.5))
+			if (testRunner.WaitForName("Connection Wizard Skip Sign In Button", 1))
 			{
 				testRunner.ClickByName("Connection Wizard Skip Sign In Button");
 			}
