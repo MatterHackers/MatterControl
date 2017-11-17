@@ -193,8 +193,6 @@ namespace MatterHackers.MatterControl
 
 		public GCodeRenderInfo RenderInfo { get; set; }
 
-		BedMeshGenerator bedGenerator;
-
 		private Mesh _bedMesh;
 		public Mesh Mesh
 		{
@@ -202,12 +200,10 @@ namespace MatterHackers.MatterControl
 			{
 				if (_bedMesh == null)
 				{
-					bedGenerator = new BedMeshGenerator();
 
-					//Construct the thing
-					var bedAndVolume = bedGenerator.CreatePrintBedAndVolume(Printer);
-					_bedMesh = bedAndVolume.bed;
-					_buildVolumeMesh = bedAndVolume.volume;
+					// Load bed and build volume meshes
+					var bedGenerator = new BedMeshGenerator();
+					(_bedMesh, _buildVolumeMesh) = bedGenerator.CreatePrintBedAndVolume(Printer);
 
 					Task.Run(() =>
 					{
