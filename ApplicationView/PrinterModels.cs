@@ -205,7 +205,9 @@ namespace MatterHackers.MatterControl
 					bedGenerator = new BedMeshGenerator();
 
 					//Construct the thing
-					_bedMesh = bedGenerator.CreatePrintBed(Printer);
+					var bedAndVolume = bedGenerator.CreatePrintBedAndVolume(Printer);
+					_bedMesh = bedAndVolume.bed;
+					_buildVolumeMesh = bedAndVolume.volume;
 
 					Task.Run(() =>
 					{
@@ -264,12 +266,6 @@ namespace MatterHackers.MatterControl
 		{
 			get
 			{
-				if (_buildVolumeMesh == null)
-				{
-					//Construct the thing
-					//_buildVolumeMesh = CreatePrintBed(printer);
-				}
-
 				return _buildVolumeMesh;
 			}
 		}
