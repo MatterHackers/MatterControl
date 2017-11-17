@@ -407,7 +407,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					// Singleselect - disallow containers
 					return listView.SelectedItems.Count == 1
 						&& selectedListItems.FirstOrDefault()?.Model is ILibraryItem firstItem
-						&& !(firstItem is ILibraryContainer);
+						&& !(firstItem is ILibraryContainer)
+						&& ApplicationController.Instance.DragDropData?.Printer.Connection.CommunicationState == CommunicationStates.Connected;
 				}
 			});
 
