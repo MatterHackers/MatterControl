@@ -78,7 +78,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var buttonMargin = new BorderDouble(2, 5);
 
 			// put in the button for making the behavior solid
-			var solidButtonView = theme.ButtonFactory.Generate("Color".Localize());
+			var solidButtonView = new TextButton("Color".Localize(), theme)
+			{
+				BackgroundColor = theme.MinimalShade
+			};
 			var solidBehaviorButton = new PopupButton(solidButtonView)
 			{
 				Name = "Solid Colors",
@@ -88,7 +91,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					HAnchor = HAnchor.Fit,
 					VAnchor = VAnchor.Fit,
 				},
-				Margin = buttonMargin
 			};
 			solidBehaviorButton.Click += (s, e) =>
 			{
@@ -97,7 +99,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			behavior3DTypeButtons.AddChild(solidBehaviorButton);
 
-			var editButton = new TextButton("Edit", theme);
+			editButton = new TextButton("Edit", theme)
+			{
+				BackgroundColor = theme.MinimalShade,
+				Margin = theme.ButtonSpacing
+			};
 			editButton.Click += async (s, e) =>
 			{
 				BedConfig bed;
@@ -116,7 +122,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				await bed.LoadContent();
 			};
 			behavior3DTypeButtons.AddChild(editButton);
-
 
 			this.AddChild(editorPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -153,6 +158,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.Parent.Visible = false;
 				return;
 			}
+
+			editButton.Enabled = (selectedItem.Children.Count > 0);
 
 			this.itemName.Text = selectedItem.Name ?? selectedItem.GetType().Name;
 
@@ -239,6 +246,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		}
 
 		private GuiWidget activeEditorWidget;
+		private TextButton editButton;
 
 		private void ShowObjectEditor(IObject3DEditor editor)
 		{
