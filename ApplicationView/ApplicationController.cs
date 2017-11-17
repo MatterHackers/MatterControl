@@ -1269,7 +1269,7 @@ namespace MatterHackers.MatterControl
 
 			// Slice
 			reporter?.StartReporting();
-			await Slicer.SliceFileAsync(partFilePath, gcodeFilePath, reporter);
+			await Slicer.SliceFileAsync(partFilePath, gcodeFilePath, printer, reporter);
 			reporter?.EndReporting();
 
 			// Load

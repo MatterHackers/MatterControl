@@ -96,6 +96,9 @@ namespace MatterHackers.MatterControl.PrintQueue
 			{
 				StartingNextPart?.Invoke(this, new StringEventArgs(ItemNameBeingWorkedOn));
 
+				// TODO: Export operations need to resolve printer context interactively
+				var printer = ApplicationController.Instance.ActivePrinter;
+
 				savedGCodeFileNames = new List<string>();
 				foreach (PrintItem part in allFilesToExport)
 				{
@@ -103,7 +106,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 					string extension = Path.GetExtension(printItemWrapper.FileLocation).ToUpper();
 					if (extension != "" && MeshFileIo.ValidFileExtensions().Contains(extension))
 					{
-						Slicer.SliceFileAsync(printItemWrapper.FileLocation, printItemWrapper.GetGCodePathAndFileName(), null).ContinueWith((task) =>
+						Slicer.SliceFileAsync(printItemWrapper.FileLocation, printItemWrapper.GetGCodePathAndFileName(), printer, null).ContinueWith((task) =>
 						{
 							Console.WriteLine("Part Slicing Completed");
 						});
