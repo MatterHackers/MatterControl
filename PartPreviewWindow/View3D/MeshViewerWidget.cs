@@ -65,6 +65,45 @@ namespace MatterHackers.MeshVisualizer
 		{
 			return ColorF.FromHSL(Math.Max(materialIndex, 0) / 10.0, .99, .49).ToColor();
 		}
+
+		public static bool InsideBuildVolume(this IObject3D item, PrinterConfig printerConfig)
+		{
+			if(item.Mesh == null)
+			{
+				return true;
+			}
+
+			var worldMatrix = item.WorldMatrix();
+			// probably need , true (require precision)
+			var aabb = item.Mesh.GetAxisAlignedBoundingBox(worldMatrix);
+
+			var bed = printerConfig.Bed;
+
+			if (aabb.maxXYZ.Z <= 0
+				|| aabb.maxXYZ.Z >= bed.BuildHeight)
+			{
+				// object completely below the bed or any part above the build volume
+				return false;
+			}
+
+			switch(bed.BedShape)
+			{
+				case BedShape.Rectangular:
+					if(aabb.minXYZ.X < bed.BedCenter.X - bed.ViewerVolume.X/2
+						|| aabb.maxXYZ.X > bed.BedCenter.X + bed.ViewerVolume.X / 2
+						|| aabb.minXYZ.Y < bed.BedCenter.Y - bed.ViewerVolume.Y / 2
+						|| aabb.maxXYZ.Y > bed.BedCenter.Y + bed.ViewerVolume.Y / 2)
+					{
+						return false;
+					}
+					break;
+
+				case BedShape.Circular:
+					break;
+			}
+
+			return true;
+		}
 	}
 
 	public class MeshViewerWidget : GuiWidget
@@ -407,6 +446,15 @@ namespace MatterHackers.MeshVisualizer
 				else if (renderData.WorldOutputType() == PrintOutputTypes.Hole)
 				{
 					drawColor = new Color(Color.Gray, 120);
+				}
+
+				// If there is a printer - check if the object is within the bed volume (has no AABB outside the bed volume)
+				if(sceneContext.Printer != null)
+				{
+					if (!renderData.InsideBuildVolume(sceneContext.Printer))
+					{
+						drawColor = new Color(drawColor, 65);
+					}
 				}
 
 				// check if we should be rendering materials (this overrides the other colors)

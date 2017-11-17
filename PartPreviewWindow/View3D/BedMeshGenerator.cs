@@ -46,10 +46,10 @@ namespace MatterHackers.MatterControl
 
 		private Color bedBaseColor = new Color(245, 245, 255);
 		private Color bedMarkingsColor = Color.Black;
-		private Mesh printerBed = null;
 
-		public Mesh CreatePrintBed(PrinterConfig printer)
+		public (Mesh bed, Mesh volume) CreatePrintBedAndVolume(PrinterConfig printer)
 		{
+			Mesh printerBed = null;
 			Mesh buildVolume = null;
 
 			Vector3 displayVolumeToBuild = Vector3.ComponentMax(printer.Bed.ViewerVolume, new Vector3(1, 1, 1));
@@ -144,7 +144,7 @@ namespace MatterHackers.MatterControl
 				}
 			}
 			
-			return printerBed;
+			return (printerBed, buildVolume);
 		}
 
 		private ImageBuffer CreateCircularBedGridImage(int linesInX, int linesInY, int increment = 1)
