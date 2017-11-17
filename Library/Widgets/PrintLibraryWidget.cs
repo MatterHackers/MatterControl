@@ -39,6 +39,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintQueue;
 
 namespace MatterHackers.MatterControl.PrintLibrary
@@ -408,7 +409,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					return listView.SelectedItems.Count == 1
 						&& selectedListItems.FirstOrDefault()?.Model is ILibraryItem firstItem
 						&& !(firstItem is ILibraryContainer)
-						&& ApplicationController.Instance.DragDropData?.Printer.Connection.CommunicationState == PrinterCommunication.CommunicationStates.Connected;
+						&& ApplicationController.Instance.DragDropData?.Printer.Connection.CommunicationState == CommunicationStates.Connected;
 				}
 			});
 
