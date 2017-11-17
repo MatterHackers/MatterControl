@@ -39,6 +39,7 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SettingsManagement;
+using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
@@ -94,7 +95,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				case ".OBJ":
 					// TODO: Once graph parsing is added to MatterSlice we can remove and avoid this flattening
 					meshPrintOutputSettings.Clear();
-					List<MeshGroup> meshGroups = new List<MeshGroup> { Object3D.Load(fileToSlice, CancellationToken.None).Flatten(meshPrintOutputSettings) };
+
+					var reloadedItem = Object3D.Load(fileToSlice, CancellationToken.None);
+
+					// Flatten the scene, filtering out items outside of the build volume
+					var flattenScene = reloadedItem.Flatten(meshPrintOutputSettings, (item) => item.InsideBuildVolume(printer));
+
+					var meshGroups = new List<MeshGroup> { flattenScene };
 					if (meshGroups != null)
 					{
 						List<MeshGroup> extruderMeshGroups = new List<MeshGroup>();
