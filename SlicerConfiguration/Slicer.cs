@@ -39,6 +39,7 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SettingsManagement;
+using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
@@ -52,32 +53,32 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private static Process slicerProcess = null;
 
-		public static string[] GetStlFileLocations(string fileToSlice, ref string mergeRules)
+		public static string[] GetStlFileLocations(string fileToSlice, ref string mergeRules, PrinterConfig printer)
 		{
 			extrudersUsed.Clear();
 
-			int extruderCount = ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.extruder_count);
+			int extruderCount = printer.Settings.GetValue<int>(SettingsKey.extruder_count);
 			for (int extruderIndex = 0; extruderIndex < extruderCount; extruderIndex++)
 			{
 				extrudersUsed.Add(false);
 			}
 
 			// If we have support enabled and are using an extruder other than 0 for it
-			if (ActiveSliceSettings.Instance.GetValue<bool>("support_material"))
+			if (printer.Settings.GetValue<bool>("support_material"))
 			{
-				if (ActiveSliceSettings.Instance.GetValue<int>("support_material_extruder") != 0)
+				if (printer.Settings.GetValue<int>("support_material_extruder") != 0)
 				{
-					int supportExtruder = Math.Max(0, Math.Min(ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.extruder_count) - 1, ActiveSliceSettings.Instance.GetValue<int>("support_material_extruder") - 1));
+					int supportExtruder = Math.Max(0, Math.Min(printer.Settings.GetValue<int>(SettingsKey.extruder_count) - 1, printer.Settings.GetValue<int>("support_material_extruder") - 1));
 					extrudersUsed[supportExtruder] = true;
 				}
 			}
 
 			// If we have raft enabled and are using an extruder other than 0 for it
-			if (ActiveSliceSettings.Instance.GetValue<bool>("create_raft"))
+			if (printer.Settings.GetValue<bool>("create_raft"))
 			{
-				if (ActiveSliceSettings.Instance.GetValue<int>("raft_extruder") != 0)
+				if (printer.Settings.GetValue<int>("raft_extruder") != 0)
 				{
-					int raftExtruder = Math.Max(0, Math.Min(ActiveSliceSettings.Instance.GetValue<int>(SettingsKey.extruder_count) - 1, ActiveSliceSettings.Instance.GetValue<int>("raft_extruder") - 1));
+					int raftExtruder = Math.Max(0, Math.Min(printer.Settings.GetValue<int>(SettingsKey.extruder_count) - 1, printer.Settings.GetValue<int>("raft_extruder") - 1));
 					extrudersUsed[raftExtruder] = true;
 				}
 			}
@@ -94,7 +95,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				case ".OBJ":
 					// TODO: Once graph parsing is added to MatterSlice we can remove and avoid this flattening
 					meshPrintOutputSettings.Clear();
-					List<MeshGroup> meshGroups = new List<MeshGroup> { Object3D.Load(fileToSlice, CancellationToken.None).Flatten(meshPrintOutputSettings) };
+
+					var reloadedItem = Object3D.Load(fileToSlice, CancellationToken.None);
+
+					// Flatten the scene, filtering out items outside of the build volume
+					var flattenScene = reloadedItem.Flatten(meshPrintOutputSettings, (item) => item.InsideBuildVolume(printer));
+
+					var meshGroups = new List<MeshGroup> { flattenScene };
 					if (meshGroups != null)
 					{
 						List<MeshGroup> extruderMeshGroups = new List<MeshGroup>();
@@ -226,25 +233,26 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return filePath;
 		}
 
-		public static async Task SliceFileAsync(string partFilePath, string gcodeFilePath, IProgress<string> progressReporter)
+		public static async Task SliceFileAsync(string partFilePath, string gcodeFilePath, PrinterConfig printer, IProgress<string> progressReporter)
 		{
 			await Task.Run(() => SliceFile(
 				partFilePath,
 				gcodeFilePath,
+				printer,
 				progressReporter));
 		}
 
-		private static void SliceFile(string sourceFile, string gcodeFilePath, IProgress<string> progressReporter)
+		private static void SliceFile(string sourceFile, string gcodeFilePath, PrinterConfig printer, IProgress<string> progressReporter)
 		{
 			string mergeRules = "";
 
-			string[] stlFileLocations = GetStlFileLocations(sourceFile, ref mergeRules);
+			string[] stlFileLocations = GetStlFileLocations(sourceFile, ref mergeRules, printer);
 			string fileToSlice = stlFileLocations[0];
 
 			{
 				string configFilePath = Path.Combine(
 					ApplicationDataStorage.Instance.GCodeOutputPath,
-					string.Format("config_{0}.ini", ActiveSliceSettings.Instance.GetLongHashCode().ToString()));
+					string.Format("config_{0}.ini", printer.Settings.GetLongHashCode().ToString()));
 
 				if (!File.Exists(gcodeFilePath))
 				{

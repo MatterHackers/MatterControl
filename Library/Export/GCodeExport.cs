@@ -90,9 +90,12 @@ namespace MatterHackers.MatterControl.Library.Export
 
 			if (libraryContent != null)
 			{
+				// TODO: Export operations need to resolve printer context interactively
+				var printer = ApplicationController.Instance.ActivePrinter;
+
 				try
 				{
-					string newGCodePath = await SliceFileIfNeeded(libraryContent);
+					string newGCodePath = await SliceFileIfNeeded(libraryContent, printer);
 
 					if (File.Exists(newGCodePath))
 					{
@@ -110,7 +113,7 @@ namespace MatterHackers.MatterControl.Library.Export
 
 		}
 
-		private async Task<string> SliceFileIfNeeded(ILibraryContentStream libraryContent)
+		private async Task<string> SliceFileIfNeeded(ILibraryContentStream libraryContent, PrinterConfig printer)
 		{
 			// TODO: How to handle gcode files in library content?
 			//string fileToProcess = partIsGCode ?  printItemWrapper.FileLocation : "";
@@ -128,7 +131,7 @@ namespace MatterHackers.MatterControl.Library.Export
 				var context = ApplicationController.Instance.ActivePrinter.Bed.EditContext;
 
 				//  - Slice
-				await Slicer.SliceFileAsync(context.PartFilePath, context.GCodeFilePath, null);
+				await Slicer.SliceFileAsync(context.PartFilePath, context.GCodeFilePath, printer, null);
 
 				//  - Return
 				fileToProcess = context.GCodeFilePath;
