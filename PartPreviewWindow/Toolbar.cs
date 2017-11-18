@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
@@ -45,34 +46,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		public FlowLayoutWidget ActionBar { get; }
 
-		public HorizontalLine SeparatorLine { get; }
-
 		public Toolbar(GuiWidget rightAnchorItem, ThemeConfig theme, bool bottomBorder = true)
 			: base(rightAnchorItem, theme)
 		{
-			GuiWidget context = this;
-
 			this.ActionBar = new FlowLayoutWidget()
 			{
 				HAnchor = HAnchor.Stretch
 			};
 
-			if (bottomBorder)
-			{
-				var column = new FlowLayoutWidget(FlowDirection.TopToBottom)
-				{
-					HAnchor = HAnchor.Stretch,
-					VAnchor = VAnchor.Fit
-				};
-				this.AddChild(column, 0);
-
-				column.AddChild(this.ActionBar);
-				column.AddChild(this.SeparatorLine = new HorizontalLine(40));
-			}
-			else
-			{
-				this.AddChild(this.ActionBar, 0);
-			}
+			this.AddChild(this.ActionBar, 0);
 		}
 	}
 
