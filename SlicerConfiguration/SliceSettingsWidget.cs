@@ -740,7 +740,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			return new TextWidget(label, pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
-				VAnchor = VAnchor.Center,
+				VAnchor = VAnchor.Center | VAnchor.Fit,
 				EllipsisIfClipped = true,
 				AutoExpandBoundsToText = false,
 				ToolTipText = helpText,
