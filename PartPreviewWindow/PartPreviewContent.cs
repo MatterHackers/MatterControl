@@ -81,8 +81,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			tabControl.TabBar.Padding = new BorderDouble(top: 4);
-			tabControl.TabBar.SeparatorLine.BackgroundColor = ApplicationController.Instance.Theme.SlightShade;
-			tabControl.TabBar.SeparatorLine.Height = 2;
+			tabControl.TabBar.BorderColor = ApplicationController.Instance.Theme.SlightShade;
+			tabControl.TabBar.Border = new BorderDouble(bottom: 2);
 
 			Color selectedTabColor = ActiveTheme.Instance.TabLabelSelected;
 

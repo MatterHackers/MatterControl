@@ -77,8 +77,8 @@ namespace MatterHackers.MatterControl
 				VAnchor = VAnchor.Fit,
 				MinimumSize = new Vector2(16, 16)
 			};
-			toolbar.SeparatorLine.BackgroundColor = ApplicationController.Instance.Theme.SlightShade;
-			toolbar.SeparatorLine.Height = 2;
+			toolbar.BorderColor = ApplicationController.Instance.Theme.SlightShade;
+			toolbar.Border = new BorderDouble(bottom:  2);
 			toolbar.ActionBar.AddChild(new BrandMenuButton(theme)
 			{
 				MinimumSize = new VectorMath.Vector2(0, 34),

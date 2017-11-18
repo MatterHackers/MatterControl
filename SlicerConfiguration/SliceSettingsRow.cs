@@ -32,7 +32,6 @@ using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
@@ -53,7 +52,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private GuiWidget unitsArea;
 		private GuiWidget restoreArea;
 		private Button restoreButton = null;
-		private VerticalLine vline;
 
 		private const bool debugLayout = false;
 
@@ -62,17 +60,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.printer = printer;
 			this.settingData = settingData;
 			this.settingsContext = settingsContext;
-
-			vline = new VerticalLine()
-			{
-				BackgroundColor = Color.Transparent,
-				Margin = new BorderDouble(right: 6),
-				Width = 3,
-				VAnchor = VAnchor.Stretch,
-				MinimumSize = new Vector2(0, 28),
-				DebugShowBounds = debugLayout
-			};
-			this.AddChild(vline);
+			this.Border = new BorderDouble(right: 4 /*, left: 1 */);
+			this.MinimumSize = new Vector2(0, 28);
 
 			this.NameArea = new GuiWidget()
 			{
@@ -143,12 +132,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public Color HighlightColor
 		{
-			get => vline.BackgroundColor;
+			get => this.BorderColor;
 			set
 			{
-				if (vline.BackgroundColor != value)
+				if (this.BorderColor != value)
 				{
-					vline.BackgroundColor = value;
+					this.BorderColor = value;
 					this.BackgroundColor = (value == Color.Transparent) ? Color.Transparent : ApplicationController.Instance.Theme.MinimalShade;
 
 					this.StyleChanged?.Invoke(null, null);
