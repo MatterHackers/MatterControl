@@ -80,7 +80,7 @@ namespace MatterHackers.GCodeVisualizer
 				colorVertexData.Add(new ColorVertexData(tubeEnd, tubeNormal, color));
 
 				// create cap verts
-				Vector3 rotateAngle = Vector3.Cross(direction, startSweepDirection);
+				Vector3 rotateAngle = Vector3.Cross(startSweepDirection, direction);
 				Vector3 capStartNormal = Vector3.Transform(startSweepDirection, Matrix4X4.CreateRotation(rotateAngle, MathHelper.Tau / 8));
 				capStartNormal = Vector3.Transform(capStartNormal, Matrix4X4.CreateRotation(direction, MathHelper.Tau / (steps * 2) + MathHelper.Tau / (steps) * i));
 				capStartNormal = (capStartNormal * scale).GetNormal();
