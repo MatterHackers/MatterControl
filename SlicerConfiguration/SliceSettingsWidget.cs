@@ -692,10 +692,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						Name = "row",
 						VAnchor = VAnchor.Fit,
 						HAnchor = HAnchor.Stretch,
+						MinimumSize = new Vector2(0, 28),
 						BackgroundColor = settingsRow.BackgroundColor,
-						Border = new BorderDouble(left: 4),
-						Padding = new BorderDouble(left: 6, bottom: 2),
-						MinimumSize = new Vector2(0, 28)
+						Border = settingsRow.Border,
+						Padding = settingsRow.Padding,
+						Margin = settingsRow.Margin,
 					};
 					column.AddChild(row);
 
