@@ -498,8 +498,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			var settingsRow = new SliceSettingsRow(printer, settingsContext, settingData)
 			{
-				Margin = new BorderDouble(0, 0),
-				Padding = new BorderDouble(0, 0, 10, 0),
+				Margin = new BorderDouble(right: 4),
+				Padding = new BorderDouble(12, 0, 10, 0),
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit
 			};
@@ -692,19 +692,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						Name = "row",
 						VAnchor = VAnchor.Fit,
 						HAnchor = HAnchor.Stretch,
-						BackgroundColor = settingsRow.BackgroundColor
+						BackgroundColor = settingsRow.BackgroundColor,
+						Border = new BorderDouble(left: 4),
+						Padding = new BorderDouble(left: 6, bottom: 2),
+						MinimumSize = new Vector2(0, 28)
 					};
 					column.AddChild(row);
-
-					var vline = new VerticalLine()
-					{
-						BackgroundColor = settingsRow.HighlightColor,
-						Margin = new BorderDouble(right: 6, bottom: 2),
-						Width = 3,
-						VAnchor = VAnchor.Stretch,
-						MinimumSize = new Vector2(0, 28),
-					};
-					row.AddChild(vline);
 
 					var contentWrapper = new GuiWidget
 					{
@@ -720,7 +713,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					settingsRow.StyleChanged += (s, e) =>
 					{
 						row.BackgroundColor = settingsRow.BackgroundColor;
-						vline.BackgroundColor = settingsRow.HighlightColor;
+						row.BorderColor = settingsRow.HighlightColor;
 					};
 
 					return column;
