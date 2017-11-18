@@ -409,7 +409,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					return listView.SelectedItems.Count == 1
 						&& selectedListItems.FirstOrDefault()?.Model is ILibraryItem firstItem
 						&& !(firstItem is ILibraryContainer)
-						&& ApplicationController.Instance.DragDropData?.Printer.Connection.CommunicationState == CommunicationStates.Connected;
+						&& ApplicationController.Instance.DragDropData?.Printer?.Connection.CommunicationState == CommunicationStates.Connected;
 				}
 			});
 

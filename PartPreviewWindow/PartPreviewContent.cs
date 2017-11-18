@@ -33,6 +33,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.AboutPage;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
@@ -123,7 +124,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				});
 			});
 
-			tabControl.AddChild(updateAvailableButton);
+			tabControl.TabBar.ActionBar.AddChild(updateAvailableButton);
 
 			UpdateControlData.Instance.UpdateStatusChanged.RegisterEvent((s, e) =>
 			{
