@@ -83,7 +83,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				var labelWidget = SliceSettingsWidget.CreateSettingsLabel($"Nozzle {i + 1}", "");
 				labelWidget.Name = $"Nozzle {i}";
-				labelWidget.AutoExpandBoundsToText = true;
 				labelWidget.Margin = new BorderDouble(right: 60, left: 20);
 				row.AddChild(labelWidget);
 

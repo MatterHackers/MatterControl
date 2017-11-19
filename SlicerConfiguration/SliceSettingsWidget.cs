@@ -730,14 +730,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public static TextWidget CreateSettingsLabel(string label, string helpText)
+		public static GuiWidget CreateSettingsLabel(string label, string helpText)
 		{
-			return new TextWidget(label, pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			return new WrappedTextWidget(label, pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
 				VAnchor = VAnchor.Center | VAnchor.Fit,
-				EllipsisIfClipped = true,
-				AutoExpandBoundsToText = false,
 				ToolTipText = helpText,
+				Margin = new BorderDouble(0, 5),
 			};
 		}
 
