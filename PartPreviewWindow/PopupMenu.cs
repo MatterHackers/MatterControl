@@ -27,8 +27,10 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.CustomWidgets;
 
@@ -78,6 +80,35 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				Name = name + " Menu Item",
 				Image = icon
+			};
+
+			this.AddChild(menuItem);
+
+			return menuItem;
+		}
+
+		private static ImageBuffer checkedIcon = AggContext.StaticData.LoadIcon("fa-check_16.png");
+
+		public MenuItem CreateBoolMenuItem(string name, Func<bool> getter, Action<bool> setter)
+		{
+			var textWidget = new TextWidget(name)
+			{
+				PointSize = PopupMenu.PointSize,
+				Padding = MenuPadding,
+			};
+
+			bool isChecked = (getter?.Invoke() == true);
+
+			var menuItem = new MenuItem(textWidget, theme)
+			{
+				Name = name + " Menu Item",
+				Image = isChecked ? checkedIcon : null
+			};
+
+			menuItem.Click += (s, e) =>
+			{
+				isChecked = !isChecked;
+				setter?.Invoke(isChecked);
 			};
 
 			this.AddChild(menuItem);

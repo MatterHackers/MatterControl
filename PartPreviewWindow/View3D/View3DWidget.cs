@@ -140,6 +140,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// MeshViewer
 			meshViewerWidget = new MeshViewerWidget(sceneContext, this.InteractionLayer, editorType: editorType);
+			meshViewerWidget.RenderBed = sceneContext.RendererOptions.RenderBed;
 			meshViewerWidget.AnchorAll();
 			this.InteractionLayer.AddChild(meshViewerWidget);
 
@@ -2156,24 +2157,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var meshViewer = meshViewerWidget;
 
-
-			ImageBuffer icon;
-
-			var checkedIcon = AggContext.StaticData.LoadIcon("fa-check_16.png");
-
-			icon = meshViewer.RenderBed ? checkedIcon : null;
-			popupMenu.CreateMenuItem("Show Print Bed".Localize(), icon).Click += (s, e) =>
-			{
-				meshViewer.RenderBed = !meshViewer.RenderBed;
-			};
+			popupMenu.CreateBoolMenuItem(
+				"Show Print Bed".Localize(),
+				() => sceneContext.RendererOptions.RenderBed,
+				(value) =>
+				{
+					meshViewer.RenderBed = value;
+					sceneContext.RendererOptions.RenderBed = value;
+				});
 
 			if (sceneContext.BuildHeight > 0)
 			{
-				icon = meshViewer.RenderBuildVolume ? checkedIcon : null;
-				popupMenu.CreateMenuItem("Show Print Area".Localize(), icon).Click += (s, e) =>
-				{
-					meshViewer.RenderBuildVolume = !meshViewer.RenderBuildVolume;
-				};
+				popupMenu.CreateBoolMenuItem(
+					"Show Print Area".Localize(),
+					() => meshViewer.RenderBuildVolume,
+					(value) => meshViewer.RenderBuildVolume = value);
 			}
 
 			popupMenu.CreateHorizontalLine();

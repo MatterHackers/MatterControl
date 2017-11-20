@@ -155,7 +155,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					Affine transform = TotalTransform;
 
-					if (options.RenderGrid)
+					if (options.RenderBed)
 					{
 						//using (new PerformanceTimer("GCode Timer", "Render Grid"))
 						{
