@@ -1518,7 +1518,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (Scene.HasSelection)
 				{
 					var transformDatas = GetTransforms(axisIndex, alignment);
-					this.Scene.UndoBuffer.AddAndDo(new TransformUndoCommand(transformDatas));
+					this.Scene.UndoBuffer.AddAndDo(new TransformCommand(transformDatas));
 
 					//Scene.SelectedItem.MaterialIndex = extruderIndexCanPassToClick;
 					Scene.Invalidate();

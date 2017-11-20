@@ -58,39 +58,44 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						&& !selectedItem.HasChildren()
 						&& selectedItem.Mesh != null)
 					{
-						var discreetMeshes = CreateDiscreteMeshes.SplitVolumesIntoMeshes(Scene.SelectedItem.Mesh, CancellationToken.None, (double progress0To1, string processingState) =>
+						var ungroupItem = Scene.SelectedItem;
+						// clear the selection
+						Scene.SelectedItem = null;
+
+						// try to cut it up into multiple meshes
+						var discreetMeshes = CreateDiscreteMeshes.SplitVolumesIntoMeshes(ungroupItem.Mesh, CancellationToken.None, (double progress0To1, string processingState) =>
 						{
 							view3DWidget.ReportProgressChanged(progress0To1 * .5, processingState);
 						});
 
 						if (discreetMeshes.Count == 1)
 						{
+							// restore the selection
+							Scene.SelectedItem = ungroupItem;
 							// No further processing needed, nothing to ungroup
 							return;
 						}
 
-						selectedItem.Children.Modify(list =>
+						// build the ungroup list
+						List<IObject3D> addItems = new List<IObject3D>(discreetMeshes.Select(mesh => new Object3D()
 						{
-							list.Clear();
-							list.AddRange(
-								discreetMeshes.Select(mesh => new Object3D()
-								{
-									Mesh = mesh
-								}));
-						});
-
-						selectedItem.Mesh = null;
-						selectedItem.MeshPath = null;
-						selectedItem.ItemType = Object3DTypes.Group;
-
-						isGroupItemType = true;
+							Mesh = mesh,
+							Matrix = ungroupItem.Matrix,
+						}));
+						// add and do the undo data
+						Scene.UndoBuffer.AddAndDo(new ReplaceCommand(new List<IObject3D> { ungroupItem }, addItems));
+						// select all the new items
+						foreach (var item in addItems)
+						{
+							Scene.AddToSelection(item);
+						}
 					}
 
 					if (isGroupItemType)
 					{
 						// Create and perform the delete operation
 						// Store the operation for undo/redo
-						Scene.UndoBuffer.AddAndDo(new UngroupCommand(view3DWidget, Scene, Scene.SelectedItem));
+						Scene.UndoBuffer.AddAndDo(new UngroupCommand(Scene, Scene.SelectedItem));
 					}
 				});
 
@@ -190,7 +195,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			// Create and perform a new insert operation
-			var insertOperation = new InsertCommand(view3DWidget, Scene, newItem);
+			var insertOperation = new InsertCommand(Scene, newItem);
 			insertOperation.Do();
 
 			// Store the operation for undo/redo
@@ -213,7 +218,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		internal class ArangeUndoCommand : IUndoRedoCommand
 		{
-			private List<TransformUndoCommand> allUndoTransforms = new List<TransformUndoCommand>();
+			private List<TransformCommand> allUndoTransforms = new List<TransformCommand>();
 
 			public ArangeUndoCommand(View3DWidget view3DWidget, List<Matrix4X4> preArrangeTarnsforms, List<Matrix4X4> postArrangeTarnsforms)
 			{

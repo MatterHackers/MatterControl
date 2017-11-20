@@ -167,8 +167,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			// Create and push the undo operation
 			foreach (var item in loadedItems)
 			{
-				view3DWidget.AddUndoOperation(
-					new InsertCommand(view3DWidget, scene, item));
+				view3DWidget.AddUndoOperation(new InsertCommand(scene, item));
 			}
 
 			if (scene.SelectedItem == this

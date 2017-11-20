@@ -27,50 +27,76 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System.Collections.Generic;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
-using MatterHackers.MeshVisualizer;
+using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class InsertCommand : IUndoRedoCommand
+	internal class TransformData
 	{
-		private IObject3D item;
-		private Matrix4X4 originalTransform;
-		private InteractiveScene scene;
+		public IObject3D TransformedObject { get; set; }
+		public Matrix4X4 RedoTransform { get; set; }
+		public Matrix4X4 UndoTransform { get; set; }
+	}
 
-		bool firstPass = true;
+	internal class TransformCommand : IUndoRedoCommand
+	{
+		private List<TransformData> transformDatas = new List<TransformData>();
 
-		public InsertCommand(InteractiveScene scene, IObject3D insertingItem)
+		public TransformCommand(List<TransformData> transformDatas)
 		{
-			this.scene = scene;
-			this.item = insertingItem;
-			this.originalTransform = insertingItem.Matrix;
+			this.transformDatas = transformDatas;
+		}
+
+		public TransformCommand(IObject3D transformedObject, Matrix4X4 undoTransform, Matrix4X4 redoTransform)
+		{
+			if (transformedObject.ItemType == Object3DTypes.SelectionGroup)
+			{
+				// move the group transform into the items
+				foreach (var child in transformedObject.Children)
+				{
+					var itemUndo = new TransformData()
+					{
+						TransformedObject = child,
+						UndoTransform = child.Matrix,
+						RedoTransform = child.Matrix * transformedObject.Matrix
+					};
+					this.transformDatas.Add(itemUndo);
+
+					child.Matrix = itemUndo.RedoTransform;
+				}
+
+				// clear the group transform
+				transformedObject.Matrix = Matrix4X4.Identity;
+			}
+			else
+			{
+				this.transformDatas.Add(new TransformData()
+				{
+					TransformedObject = transformedObject,
+					UndoTransform = undoTransform,
+					RedoTransform = redoTransform
+				});
+			}
 		}
 
 		public void Do()
 		{
-			if (!firstPass)
+			foreach(var transformData in transformDatas)
 			{
-				item.Matrix = originalTransform;
-				firstPass = false;
+				transformData.TransformedObject.Matrix = transformData.RedoTransform;
 			}
-
-			scene.Children.Modify(list => list.Add(item));
-
-			scene.SelectedItem = item;
-
-			scene.Invalidate();
 		}
 
 		public void Undo()
 		{
-			scene.Children.Modify(list => list.Remove(item));
-
-			scene.SelectLastChild();
-
-			scene.Invalidate();
+			foreach (var transformData in transformDatas)
+			{
+				transformData.TransformedObject.Matrix = transformData.UndoTransform;
+			}
 		}
 	}
 }

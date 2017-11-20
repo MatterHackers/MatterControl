@@ -37,13 +37,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public class UngroupCommand : IUndoRedoCommand
 	{
 		private IObject3D originalItem;
-		private View3DWidget view3DWidget;
 		private InteractiveScene scene;
 
-		public UngroupCommand(View3DWidget view3DWidget, InteractiveScene scene, IObject3D ungroupingItem)
+		public UngroupCommand(InteractiveScene scene, IObject3D ungroupingItem)
 		{
 			this.originalItem = ungroupingItem;
-			this.view3DWidget = view3DWidget;
 			this.scene = scene;
 		}
 

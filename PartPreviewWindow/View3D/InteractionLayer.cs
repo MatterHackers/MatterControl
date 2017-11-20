@@ -251,7 +251,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (this.Scene.HasSelection && this.Scene.SelectedItem.Matrix != originalTransform)
 			{
-				this.undoBuffer.Add(new TransformUndoCommand(Scene.SelectedItem, originalTransform, Scene.SelectedItem.Matrix));
+				this.undoBuffer.Add(new TransformCommand(Scene.SelectedItem, originalTransform, Scene.SelectedItem.Matrix));
 			}
 		}
 
