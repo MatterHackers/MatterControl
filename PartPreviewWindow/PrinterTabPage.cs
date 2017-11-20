@@ -31,6 +31,7 @@ using System;
 using System.IO;
 using System.Linq;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
 using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.OpenGlGui;
 using MatterHackers.Agg.Platform;
@@ -389,102 +390,63 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		internal GuiWidget ShowGCodeOverflowMenu()
 		{
-			var textColor = Color.Black;
+			var popupMenu = new PopupMenu(theme);
 
-			var popupContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				HAnchor = HAnchor.Stretch,
-				Padding = 12,
-				BackgroundColor = Color.White
-			};
+			popupMenu.CreateBoolMenuItem(
+				"Show Print Bed".Localize(),
+				() => gcodeOptions.RenderBed,
+				(value) =>
+				{
+					gcodeOptions.RenderBed = value;
+					view3DWidget.meshViewerWidget.RenderBed = value;
+				});
 
-			// put in a show grid check box
-			CheckBox showGrid = new CheckBox("Print Bed".Localize(), textColor: textColor);
-			showGrid.Checked = gcodeOptions.RenderGrid;
-			showGrid.CheckedStateChanged += (sender, e) =>
-			{
-				// TODO: How (if at all) do we disable bed rendering on GCode2D?
-				gcodeOptions.RenderGrid = showGrid.Checked;
-			};
-			popupContainer.AddChild(showGrid);
+			popupMenu.CreateBoolMenuItem(
+				"Moves".Localize(),
+				() => gcodeOptions.RenderMoves,
+				(value) => gcodeOptions.RenderMoves = value);
 
-			// put in a show moves checkbox
-			var showMoves = new CheckBox("Moves".Localize(), textColor: textColor);
-			showMoves.Checked = gcodeOptions.RenderMoves;
-			showMoves.CheckedStateChanged += (sender, e) =>
-			{
-				gcodeOptions.RenderMoves = showMoves.Checked;
-			};
-			popupContainer.AddChild(showMoves);
+			popupMenu.CreateBoolMenuItem(
+				"Retractions".Localize(),
+				() => gcodeOptions.RenderRetractions,
+				(value) => gcodeOptions.RenderRetractions = value);
 
-			// put in a show Retractions checkbox
-			CheckBox showRetractions = new CheckBox("Retractions".Localize(), textColor: textColor);
-			showRetractions.Checked = gcodeOptions.RenderRetractions;
-			showRetractions.CheckedStateChanged += (sender, e) =>
-			{
-				gcodeOptions.RenderRetractions = showRetractions.Checked;
-			};
-			popupContainer.AddChild(showRetractions);
+			popupMenu.CreateBoolMenuItem(
+				"Speeds".Localize(),
+				() => gcodeOptions.RenderSpeeds,
+				(value) => gcodeOptions.RenderSpeeds = value);
 
-			// Speeds checkbox
-			var showSpeeds = new CheckBox("Speeds".Localize(), textColor: textColor);
-			showSpeeds.Checked = gcodeOptions.RenderSpeeds;
-			showSpeeds.CheckedStateChanged += (sender, e) =>
-			{
-				//gradientWidget.Visible = showSpeeds.Checked;
-				gcodeOptions.RenderSpeeds = showSpeeds.Checked;
-			};
+			popupMenu.CreateHorizontalLine();
 
-			popupContainer.AddChild(showSpeeds);
+			popupMenu.CreateBoolMenuItem(
+				"Extrusion".Localize(),
+				() => gcodeOptions.SimulateExtrusion,
+				(value) => gcodeOptions.SimulateExtrusion = value);
 
-			// Extrusion checkbox
-			var simulateExtrusion = new CheckBox("Extrusion".Localize(), textColor: textColor);
-			simulateExtrusion.Checked = gcodeOptions.SimulateExtrusion;
-			simulateExtrusion.CheckedStateChanged += (sender, e) =>
-			{
-				gcodeOptions.SimulateExtrusion = simulateExtrusion.Checked;
-			};
-			popupContainer.AddChild(simulateExtrusion);
+			popupMenu.CreateBoolMenuItem(
+				"Transparent".Localize(),
+				() => gcodeOptions.TransparentExtrusion,
+				(value) => gcodeOptions.TransparentExtrusion = value);
 
-			// Transparent checkbox
-			var transparentExtrusion = new CheckBox("Transparent".Localize(), textColor: textColor)
-			{
-				Checked = gcodeOptions.TransparentExtrusion,
-				Margin = new BorderDouble(5, 0, 0, 0),
-				HAnchor = HAnchor.Left,
-			};
-			transparentExtrusion.CheckedStateChanged += (sender, e) =>
-			{
-				gcodeOptions.TransparentExtrusion = transparentExtrusion.Checked;
-			};
-			popupContainer.AddChild(transparentExtrusion);
+			popupMenu.CreateHorizontalLine();
 
-			// Extrusion checkbox
 			if (printer.Settings.GetValue<int>(SettingsKey.extruder_count) > 1)
 			{
-				CheckBox hideExtruderOffsets = new CheckBox("Hide Offsets", textColor: textColor);
-				hideExtruderOffsets.Checked = gcodeOptions.HideExtruderOffsets;
-				hideExtruderOffsets.CheckedStateChanged += (sender, e) =>
-				{
-					gcodeOptions.HideExtruderOffsets = hideExtruderOffsets.Checked;
-				};
-				popupContainer.AddChild(hideExtruderOffsets);
+				popupMenu.CreateBoolMenuItem(
+					"Hide Offsets".Localize(),
+					() => gcodeOptions.HideExtruderOffsets,
+					(value) => gcodeOptions.HideExtruderOffsets = value);
 			}
 
-			// Sync To Print checkbox
-			{
-				var syncToPrint = new CheckBox("Sync To Print".Localize(), textColor: textColor);
-				syncToPrint.Checked = (UserSettings.Instance.get("LayerViewSyncToPrint") == "True");
-				syncToPrint.Name = "Sync To Print Checkbox";
-				syncToPrint.CheckedStateChanged += (s, e) =>
-				{
-					gcodeOptions.SyncToPrint = syncToPrint.Checked;
-					SetSyncToPrintVisibility();
-				};
-				popupContainer.AddChild(syncToPrint);
-			}
+			// TODO: Should we be serializing this value at some point? If not, why were we restoring to the previous value on load?
+			//
+			//syncToPrint.Checked = (UserSettings.Instance.get("LayerViewSyncToPrint") == "True");
+			popupMenu.CreateBoolMenuItem(
+				"Sync To Print".Localize(),
+				() => gcodeOptions.SyncToPrint,
+				(value) => gcodeOptions.SyncToPrint = value);
 
-			return popupContainer;
+			return popupMenu;
 		}
 
 		public override void OnDraw(Graphics2D graphics2D)

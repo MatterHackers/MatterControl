@@ -480,14 +480,14 @@ namespace MatterHackers.MatterControl
 	{
 		public bool IsDirty { get; internal set; }
 
-		public bool RenderGrid
+		public bool RenderBed
 		{
 			get
 			{
 				string value = UserSettings.Instance.get("GcodeViewerRenderGrid");
 				if (value == null)
 				{
-					RenderGrid = true;
+					RenderBed = true;
 					return true;
 				}
 				return (value == "True");
