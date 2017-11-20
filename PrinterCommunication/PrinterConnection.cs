@@ -1837,9 +1837,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			if (read_regex != printer.Settings.GetValue(SettingsKey.read_regex))
 			{
 				ReadLineReplacements.Clear();
-				string splitString = "\\n";
 				read_regex = printer.Settings.GetValue(SettingsKey.read_regex);
-				foreach (string regExLine in read_regex.Split(splitString.ToCharArray(), StringSplitOptions.RemoveEmptyEntries))
+				foreach (string regExLine in read_regex.Split(new string[] { "\n" }, StringSplitOptions.RemoveEmptyEntries))
 				{
 					var matches = getQuotedParts.Matches(regExLine);
 					if (matches.Count == 2)
