@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("Pin Settings Button");
 
 					testRunner.ClickByName("View3D Overflow Menu");
-					testRunner.ClickByName("Sync To Print Checkbox");
+					testRunner.ClickByName("Sync To Print Menu Item");
 
 					testRunner.ClickByName("Start Print Button");
 
@@ -111,7 +111,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("Pin Settings Button");
 
 					testRunner.ClickByName("View3D Overflow Menu");
-					testRunner.ClickByName("Sync To Print Checkbox");
+					testRunner.ClickByName("Sync To Print Menu Item");
 
 					testRunner.ClickByName("Start Print Button");
 
