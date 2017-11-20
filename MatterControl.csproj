@@ -131,6 +131,9 @@
     <Compile Include="PartPreviewWindow\View3D\LightingData.cs" />
     <Compile Include="PartPreviewWindow\View3D\SlicePopupMenu.cs" />
     <Compile Include="PartPreviewWindow\View3D\TumbleCubeControl.cs" />
+    <Compile Include="PartPreviewWindow\View3D\UndoCommands\DeleteCommand.cs" />
+    <Compile Include="PartPreviewWindow\View3D\UndoCommands\ReplaceCommand.cs" />
+    <Compile Include="PartPreviewWindow\View3D\UndoCommands\TransformCommand.cs" />
     <Compile Include="PrinterControls\MacroDetailPage.cs" />
     <Compile Include="PrinterControls\MacroListPage.cs" />
     <Compile Include="PrinterControls\PrinterConnections\PrinterSetup.cs" />
@@ -231,12 +234,10 @@
     <Compile Include="PartPreviewWindow\View3D\DebugBvh.cs" />
     <Compile Include="PartPreviewWindow\View3D\UndoCommands\UngroupCommand.cs" />
     <Compile Include="PartPreviewWindow\View3D\UndoCommands\InsertCommand.cs" />
-    <Compile Include="PartPreviewWindow\View3D\UndoCommands\DeleteUndoCommand.cs" />
     <Compile Include="PartPreviewWindow\View3D\UndoCommands\GroupCommand.cs" />
     <Compile Include="PartPreviewWindow\View3D\Gui3D\SnapingIndicator.cs" />
     <Compile Include="PartPreviewWindow\View3D\Gui3D\SelectionShadow.cs" />
     <Compile Include="PartPreviewWindow\View3D\Gui3D\MoveInZControl.cs" />
-    <Compile Include="PartPreviewWindow\View3D\UndoCommands\TransformUndoCommand.cs" />
     <Compile Include="PartPreviewWindow\View3D\SceneActions.cs" />
     <Compile Include="PartPreviewWindow\View3D\SideBar\MirrorControls.cs" />
     <Compile Include="PartPreviewWindow\View3D\IObject3DEditor.cs" />

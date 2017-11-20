@@ -112,20 +112,20 @@ namespace MatterControl.Tests
 		public void MatterControlDependenciesAreOptimized()
 		{
 #if (!DEBUG)
-            var matterControl = Assembly.Load("MatterControl, Culture=neutral, PublicKeyToken=null");
+			var matterControl = Assembly.Load("MatterControl, Culture=neutral, PublicKeyToken=null");
 
-            // Loop over all referenced assemblies to verify they are optimized and lack (symbols and Debug compile flag)
-            foreach(var assemblyName in matterControl.GetReferencedAssemblies())
-            {
-                var assembly = Assembly.Load(assemblyName.FullName);
-                var firstNamespace = assembly.GetTypes().First().Namespace;
+			// Loop over all referenced assemblies to verify they are optimized and lack (symbols and Debug compile flag)
+			foreach (var assemblyName in matterControl.GetReferencedAssemblies())
+			{
+				var assembly = Assembly.Load(assemblyName.FullName);
+				var firstNamespace = assembly?.GetTypes()?.FirstOrDefault()?.Namespace;
 
-                // Only validate our assemblies
+				// Only validate our assemblies
 				if (firstNamespace != null && (firstNamespace.Contains("MatterHackers") || firstNamespace.Contains("MatterControl")))
-                {
-                    IsAssemblyOptimized(assembly);
-                }
-            }
+				{
+					IsAssemblyOptimized(assembly);
+				}
+			}
 #endif
 		}
 
