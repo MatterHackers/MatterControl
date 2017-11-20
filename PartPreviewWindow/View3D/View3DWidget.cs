@@ -2211,9 +2211,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					// change the color to be the right thing
 					GLMeshTrianglePlugin.Get(
 						meshRenderData.Mesh, 
-						(faceEdge) =>
+						(normal) =>
 						{
-							Vector3 normal = faceEdge.ContainingFace.Normal;
 							normal = Vector3.TransformVector(normal, meshRenderData.WorldMatrix()).GetNormal();
 
 							double startColor = 223.0 / 360.0;
@@ -2226,12 +2225,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								color = ColorF.FromHSL(startColor - delta * normal.Z, .99, .49).ToColor();
 							}
 
-							return new VertexColorData
-							{
-								red = color.red,
-								green = color.green,
-								blue = color.blue
-							};
+							return color;
 						});
 				}
 			});
