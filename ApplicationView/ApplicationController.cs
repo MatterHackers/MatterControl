@@ -934,6 +934,28 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
+		public string ComputeFileSha1(string filePath)
+		{
+			using (var stream = File.OpenRead(filePath))
+			{
+				return GenerateSha1(stream);
+			}
+		}
+
+		private string GenerateSha1(Stream stream)
+		{
+			// var timer = Stopwatch.StartNew();
+			using (var sha1 = System.Security.Cryptography.SHA1.Create())
+			{
+				byte[] hash = sha1.ComputeHash(stream);
+				string SHA1 = BitConverter.ToString(hash).Replace("-", String.Empty);
+
+				// Console.WriteLine("{0} {1} {2}", SHA1, timer.ElapsedMilliseconds, filePath);
+				return SHA1;
+			}
+		}
+
+
 		/// <summary>
 		/// Compute hash for string encoded as UTF8
 		/// </summary>

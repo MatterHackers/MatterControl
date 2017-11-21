@@ -122,6 +122,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					try
 					{
+						await printerTabPage.view3DWidget.SaveChanges();
+
 						await ApplicationController.Instance.SliceFileLoadOutput(
 							printer,
 							printer.Bed.EditContext.PartFilePath,

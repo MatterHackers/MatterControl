@@ -43,12 +43,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private SimpleTabs parentTabControl;
 
-		public MainTab(string tabLabel, SimpleTabs parentTabControl, GuiWidget tabContent, string tabImageUrl = null)
+		public MainTab(string tabLabel, SimpleTabs parentTabControl, GuiWidget tabContent, ThemeConfig theme, string tabImageUrl = null)
 		{
 			this.HAnchor = HAnchor.Fit;
 			this.VAnchor = VAnchor.Fit | VAnchor.Bottom;
 			this.Padding = 0;
 			this.Margin = 0;
+			this.theme = theme;
 
 			this.TabContent = tabContent;
 			this.parentTabControl = parentTabControl;
@@ -76,11 +77,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.AddChild(closeButton);
 		}
 
+		private ThemeConfig theme;
+
 		public GuiWidget TabContent { get; }
-
-		public static Color ActiveTabColor =  ApplicationController.Instance.Theme.SlightShade;
-
-		public static Color InactiveTabColor = ApplicationController.Instance.Theme.PrimaryTabFillColor;
 
 		private static int tabInsetDistance = 14 / 2;
 
@@ -125,19 +124,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			graphics2D.Render(
 				tabShape,
-				(this == activeTab) ? ActiveTabColor : InactiveTabColor);
+				(this == activeTab) ? theme.ActiveTabColor : theme.InactiveTabColor);
 
 			if (!isFirstTab)
 			{
 				DrawTabLowerLeft(
 					graphics2D, 
 					rect, 
-					(this.PreviousTab == activeTab || this == activeTab) ? ActiveTabColor : InactiveTabColor);
+					(this.PreviousTab == activeTab || this == activeTab) ? theme.ActiveTabColor : theme.InactiveTabColor);
 			}
 
 			if (rightSiblingSelected)
 			{
-				DrawTabLowerRight(graphics2D, rect, ActiveTabColor);
+				DrawTabLowerRight(graphics2D, rect, theme.ActiveTabColor);
 			}
 
 			base.OnDraw(graphics2D);

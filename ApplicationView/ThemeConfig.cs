@@ -95,13 +95,18 @@ namespace MatterHackers.MatterControl
 		public Color TabBodyBackground => new Color(ActiveTheme.Instance.TertiaryBackgroundColor, 175);
 
 		public TextImageButtonFactory ViewControlsButtonFactory { get; private set; }
+
 		public Color SplitterBackground { get; private set; } = new Color(0, 0, 0, 60);
+
 		public int SplitterWidth => (int)(6 * (GuiWidget.DeviceScale <= 1 ? GuiWidget.DeviceScale : GuiWidget.DeviceScale * 1.4));
 
 		public Color SlightShade { get; } = new Color(0, 0, 0, 40);
 		public Color MinimalShade { get; } = new Color(0, 0, 0, 15);
 		public Color Shade { get; } = new Color(0, 0, 0, 120);
 		public Color DarkShade { get; } = new Color(0, 0, 0, 190);
+
+		public Color ActiveTabColor { get; set; }
+		public Color InactiveTabColor { get; set; }
 
 		public TextImageButtonFactory DisableableControlBase { get; private set; }
 		public TextImageButtonFactory HomingButtons { get; private set; }
@@ -111,7 +116,6 @@ namespace MatterHackers.MatterControl
 		public BorderDouble ButtonSpacing { get; set; } = new BorderDouble(3, 0, 0, 0);
 		public TextImageButtonFactory NoMarginWhite { get; private set; }
 		public BorderDouble ToolbarPadding { get; set; } = 3;
-		public Color PrimaryTabFillColor { get; internal set; }
 		public double ButtonHeight { get; internal set; } = 32;
 
 		public int OverlayAlpha { get; set; } = 50;
@@ -157,6 +161,14 @@ namespace MatterHackers.MatterControl
 			commonOptions.ImageSpacing = 8;
 			commonOptions.BorderWidth = 0;
 			commonOptions.FixedHeight = 32;
+
+			this.ActiveTabColor = ResolveColor(theme.PrimaryBackgroundColor, new Color(Color.Black, this.SlightShade.alpha));
+
+			float alpha0to1 = (ActiveTheme.Instance.IsDarkTheme ? 20 : 60) / 255.0f;
+
+			this.InactiveTabColor = ResolveColor(theme.PrimaryBackgroundColor, new Color(Color.White, this.SlightShade.alpha));
+
+			this.SplitterBackground = this.ActiveTabColor;
 
 			this.ButtonFactory = new TextImageButtonFactory(commonOptions);
 
@@ -349,7 +361,12 @@ namespace MatterHackers.MatterControl
 				fontSize = FontSize10,
 				textColor = theme.SecondaryAccentColor
 			};
-			this.PrimaryTabFillColor = new Color(Color.White, ActiveTheme.Instance.IsDarkTheme ?  20 : 60);
+		}
+
+		// Compute a fixed color from a source and a target alpha
+		public Color ResolveColor(Color background, Color overlay)
+		{
+			return new BlenderRGBA().Blend(background, overlay);
 		}
 
 		public FlowLayoutWidget CreatePopupMenu(IEnumerable<NamedAction> menuActions)

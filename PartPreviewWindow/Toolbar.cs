@@ -181,7 +181,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			leadingTabAdornment.AfterDraw += (s, e) =>
 			{
 				var firstItem = this.AllTabs.OfType<MainTab>().FirstOrDefault();
-				MainTab.DrawTabLowerRight(e.graphics2D, leadingTabAdornment.LocalBounds, (firstItem == this.ActiveTab) ? MainTab.ActiveTabColor : MainTab.InactiveTabColor);
+				MainTab.DrawTabLowerRight(e.graphics2D, leadingTabAdornment.LocalBounds, (firstItem == this.ActiveTab) ? theme.ActiveTabColor : theme.InactiveTabColor);
 			};
 			this.TabBar.ActionBar.AddChild(leadingTabAdornment);
 
@@ -198,7 +198,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			plusTabButton.IconButton.Click += (s, e) =>
 			{
 				this.AddTab(
-					new MainTab("New Tab".Localize(), this, this.NewTabPage())
+					new MainTab("New Tab".Localize(), this, this.NewTabPage(), theme)
 					{
 						MinimumSize = new Vector2(0, theme.shortButtonHeight)
 					});
