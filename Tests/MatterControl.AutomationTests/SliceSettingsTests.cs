@@ -6,6 +6,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.VectorMath;
 using NUnit.Framework;
 
 namespace MatterHackers.MatterControl.Tests.Automation
@@ -171,6 +172,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.ClickByName("Printer Tab");
 				testRunner.ClickByName("Features Tab");
+
+				// Find any sibling toggle switch and scroll the parent to the bottom
+				var widget = testRunner.GetWidgetByName("has_fan Row", out _);
+				var scrollable = widget.Parents<ScrollableWidget>().First();
+				scrollable.ScrollPosition = new Vector2(0, 30);
 
 				CheckAndUncheckSetting(testRunner, SettingsKey.heat_extruder_before_homing, false);
 
