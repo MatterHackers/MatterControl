@@ -235,6 +235,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							break;
 
 						case PartViewMode.Model:
+							if (gcode2DWidget != null)
+							{
+								gcode2DWidget.Visible = false;
+							}
 							this.ShowSliceLayers = false;
 							break;
 					}
