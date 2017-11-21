@@ -67,19 +67,19 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			return lines[0];
 		}
 
-		static string write_regex = "";
+		static string writeRegexString = "";
 		static private List<(Regex Regex, string Replacement)> WriteLineReplacements = new List<(Regex Regex, string Replacement)>();
 
 		public static List<string> ProcessWriteRegEx(PrinterSettings printerSettings, string lineToWrite)
 		{
 			lock (WriteLineReplacements)
 			{
-				if (write_regex != printerSettings.GetValue(SettingsKey.write_regex))
+				if (writeRegexString != printerSettings.GetValue(SettingsKey.write_regex))
 				{
 					WriteLineReplacements.Clear();
 					string splitString = "\\n";
-					write_regex = printerSettings.GetValue(SettingsKey.write_regex);
-					foreach (string regExLine in write_regex.Split(new string[] { splitString }, StringSplitOptions.RemoveEmptyEntries))
+					writeRegexString = printerSettings.GetValue(SettingsKey.write_regex);
+					foreach (string regExLine in writeRegexString.Split(new string[] { splitString }, StringSplitOptions.RemoveEmptyEntries))
 					{
 						var matches = getQuotedParts.Matches(regExLine);
 						if (matches.Count == 2)
