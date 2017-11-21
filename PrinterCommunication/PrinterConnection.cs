@@ -43,7 +43,6 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
-using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.SerialPortCommunication;
 using MatterHackers.SerialPortCommunication.FrostedSerial;
@@ -1828,8 +1827,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		}
 
 		#region ProcessRead
-		static Regex getQuotedParts = new Regex(@"([""'])(\\?.)*?\1", RegexOptions.Compiled);
-		string readRegexString = "";
+		private static Regex getQuotedParts = new Regex(@"([""'])(\\?.)*?\1", RegexOptions.Compiled);
+		private string readRegexString = "";
 		private List<(Regex Regex, string Replacement)> ReadLineReplacements = new List<(Regex Regex, string Replacement)>();
 
 		private string ProcessReadRegEx(string lineBeingRead)
