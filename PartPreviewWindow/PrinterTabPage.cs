@@ -438,9 +438,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					(value) => gcodeOptions.HideExtruderOffsets = value);
 			}
 
-			// TODO: Should we be serializing this value at some point? If not, why were we restoring to the previous value on load?
-			//
-			//syncToPrint.Checked = (UserSettings.Instance.get("LayerViewSyncToPrint") == "True");
 			popupMenu.CreateBoolMenuItem(
 				"Sync To Print".Localize(),
 				() => gcodeOptions.SyncToPrint,

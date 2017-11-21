@@ -283,6 +283,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				UiThread.RunOnIdle(async () =>
 				{
+					// Save any pending changes before starting print operation
+					await this.printerTabPage.view3DWidget.PersistPlateIfNeeded();
+
 					var context = printer.Bed.EditContext;
 					await ApplicationController.Instance.PrintPart(
 						context.PartFilePath,
