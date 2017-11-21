@@ -155,11 +155,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				{
 					Width = PageWidth,
 					VAnchor = VAnchor.Stretch,
-					SpliterBarColor = ApplicationController.Instance.Theme.SplitterBackground,
-					SplitterWidth = ApplicationController.Instance.Theme.SplitterWidth,
+					SpliterBarColor = theme.SplitterBackground,
+					SplitterWidth = theme.SplitterWidth,
 				};
 
-				tabControl = ApplicationController.Instance.Theme.CreateTabControl();
+				tabControl = theme.CreateTabControl();
 				resizePage.AddChild(tabControl);
 
 				this.AddChild(resizePage);
@@ -222,11 +222,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						MakeScrollable = false,
 					};
 
-					var spliterColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-					var alpha = ApplicationController.Instance.Theme.SplitterBackground.Alpha0To1;
-					spliterColor.Red0To1 *= (1 - alpha);
-					spliterColor.Green0To1 *= (1 - alpha);
-					spliterColor.Blue0To1 *= (1 - alpha);
+					var spliterColor = theme.SplitterBackground;
 
 					var resizeContainer = new ResizeContainer(this)
 					{
@@ -297,6 +293,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				}
 			}
 		}
+
 
 		private class DockingWindowContent : GuiWidget, IIgnoredPopupChild
 		{

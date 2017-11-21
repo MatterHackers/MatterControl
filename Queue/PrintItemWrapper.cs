@@ -153,68 +153,16 @@ namespace MatterHackers.MatterControl.PrintQueue
 			}
 		}
 
-		public long FileHashCode
+		public string FileHashCode
 		{
 			get
 			{
-				bool fileExists = System.IO.File.Exists(this.FileLocation);
-				if (fileExists)
+				if (File.Exists(this.FileLocation))
 				{
-					long currentWriteTime = File.GetLastWriteTime(this.FileLocation).ToBinary();
-
-					if (this.fileHashCode == 0 || writeTime != currentWriteTime)
-					{
-						writeTime = currentWriteTime;
-						try
-						{
-							using (FileStream fileStream = new FileStream(this.FileLocation, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-							{
-								long sizeOfFile = fileStream.Length;
-								int sizeOfRead = 1 << 16;
-								byte[] readData = new byte[Math.Max(64, sizeOfRead * 3)];
-
-								// get a chuck from the beginning
-								fileStream.Read(readData, sizeOfRead, sizeOfRead);
-
-								// the middle
-								fileStream.Seek(sizeOfFile / 2, SeekOrigin.Begin);
-								fileStream.Read(readData, sizeOfRead * 1, sizeOfRead);
-
-								// and the end
-								fileStream.Seek(Math.Max(0, sizeOfFile - sizeOfRead), SeekOrigin.Begin);
-								fileStream.Read(readData, sizeOfRead * 2, sizeOfRead);
-
-								// push the file size into the first bytes
-								byte[] fileSizeAsBytes = BitConverter.GetBytes(sizeOfFile);
-								for (int i = 0; i < fileSizeAsBytes.Length; i++)
-								{
-									readData[i] = fileSizeAsBytes[i];
-								}
-
-								// push the write time
-								byte[] writeTimeAsBytes = BitConverter.GetBytes(currentWriteTime);
-								for (int i = 0; i < writeTimeAsBytes.Length; i++)
-								{
-									readData[fileSizeAsBytes.Length + i] = fileSizeAsBytes[i];
-								}
-
-								this.fileHashCode = agg_basics.ComputeHash(readData);
-							}
-						}
-						catch(Exception e)
-						{
-							Debug.Print(e.Message);
-							GuiWidget.BreakInDebugger();
-							this.fileHashCode = 0;
-						}
-					}
-				}
-				else
-				{
-					this.fileHashCode = 0;
+					return ApplicationController.Instance.ComputeFileSha1(this.FileLocation);
 				}
 
-				return this.fileHashCode;
+				return "file-missing";
 			}
 		}
 
@@ -256,9 +204,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 					return FileLocation;
 				}
 
-				string engineString = (0).ToString();
-
-				string gcodeFileName = this.FileHashCode.ToString() + "_" + engineString + "_" + ActiveSliceSettings.Instance.GetLongHashCode().ToString();
+				string gcodeFileName = this.FileHashCode.ToString() + "_" + ActiveSliceSettings.Instance.GetLongHashCode();
 				return Path.Combine(ApplicationDataStorage.Instance.GCodeOutputPath, gcodeFileName + ".gcode");
 			}
 			else

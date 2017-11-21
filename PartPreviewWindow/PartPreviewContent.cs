@@ -44,8 +44,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		private EventHandler unregisterEvents;
 		private MainTab printerTab = null;
-
-		private NewTabButton plusTabSelect;
 		private ChromeTabs tabControl;
 
 		public PartPreviewContent()
@@ -81,8 +79,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			};
 
+			tabControl.TabBar.BorderColor = theme.ActiveTabColor;
 			tabControl.TabBar.Padding = new BorderDouble(top: 4);
-			tabControl.TabBar.BorderColor = ApplicationController.Instance.Theme.SlightShade;
 			tabControl.TabBar.Border = new BorderDouble(bottom: 2);
 
 			Color selectedTabColor = ActiveTheme.Instance.TabLabelSelected;
@@ -98,14 +96,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			else
 			{
 				this.CreatePartTab(
-						"New Part",
-						new BedConfig(
-							new EditContext()
-							{
-								ContentStore = ApplicationController.Instance.Library.PlatingHistory,
-								SourceItem = BedConfig.NewPlatingItem()
-							}),
-						theme);
+					"New Part",
+					new BedConfig(
+						new EditContext()
+						{
+							ContentStore = ApplicationController.Instance.Library.PlatingHistory,
+							SourceItem = BedConfig.NewPlatingItem()
+						}),
+					theme);
 			}
 
 			// add in the update available button
@@ -178,6 +176,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				tabTitle,
 				tabControl,
 				new PrinterTabPage(printer, theme, tabTitle.ToUpper()),
+				theme,
 				"https://www.google.com/s2/favicons?domain=" + oemUrl ?? "www.matterhackers.com")
 			{
 				Name = "3D View Tab",
@@ -191,6 +190,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				tabTitle,
 				tabControl,
 				new PartTabPage(null, sceneContext, theme, "xxxxx"),
+				theme,
 				"https://i.imgur.com/nkeYgfU.png")
 			{
 				Name = "newPart" + tabControl.AllTabs.Count(),

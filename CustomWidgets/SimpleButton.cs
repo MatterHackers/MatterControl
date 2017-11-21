@@ -165,10 +165,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		public RadioIconButton(ImageBuffer icon, ThemeConfig theme)
 			: base(icon, theme)
 		{
-			this.BorderColor = theme.ButtonFactory.Options.NormalTextColor;
 		}
-
-		public Color BorderColor { get; set; } = Color.White;
 
 		public override void OnClick(MouseEventArgs mouseEvent)
 		{
@@ -190,6 +187,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						UncheckAllOtherRadioButtons();
 					}
 
+					this.BackgroundColor = (_checked) ? theme.MinimalShade : Color.Transparent;
+
 					OnCheckStateChanged();
 					Invalidate();
 				}
@@ -205,8 +204,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			if (this.Checked)
 			{
-
-				graphics2D.Rectangle(LocalBounds, this.BorderColor);
+				graphics2D.Rectangle(0, 0, LocalBounds.Right, 2, ActiveTheme.Instance.PrimaryAccentColor);
 			}
 
 			base.OnDraw(graphics2D);

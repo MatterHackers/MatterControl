@@ -310,7 +310,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.AddChild(new VerticalLine(50)
 			{
-				Margin = 3
+				Margin = 3,
+				Border = new BorderDouble(right: 5),
+				BorderColor = new Color(theme.ButtonFactory.Options.NormalTextColor, 100)
 			});
 
 			foreach (var namedAction in ApplicationController.Instance.RegisteredSceneOperations())

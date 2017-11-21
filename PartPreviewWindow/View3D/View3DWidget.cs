@@ -1998,7 +1998,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		internal GuiWidget selectedObjectContainer;
 
-		private async Task SaveChanges()
+		internal async Task SaveChanges()
 		{
 			if (Scene.HasChildren())
 			{

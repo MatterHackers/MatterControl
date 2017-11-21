@@ -38,13 +38,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public class NewTabButton : GuiWidget
 	{
 		private SimpleTabs parentTabControl;
-
-		public IconButton IconButton { get; }
+		private ThemeConfig theme;
 
 		public NewTabButton(ImageBuffer imageBuffer, SimpleTabs parentTabControl, ThemeConfig theme)
 		{
 			this.parentTabControl = parentTabControl;
 			this.HAnchor = HAnchor.Fit;
+			this.theme = theme;
 
 			IconButton = new IconButton(imageBuffer, theme)
 			{
@@ -60,12 +60,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public ITab LastTab { get; set; }
 
+		public IconButton IconButton { get; }
+
 		public override void OnDraw(Graphics2D graphics2D)
 		{
 			MainTab.DrawTabLowerLeft(
 				graphics2D, 
 				this.LocalBounds, 
-				(parentTabControl.ActiveTab == this.LastTab) ? MainTab.ActiveTabColor : MainTab.InactiveTabColor);
+				(parentTabControl.ActiveTab == this.LastTab) ? theme.ActiveTabColor : theme.InactiveTabColor);
 
 			base.OnDraw(graphics2D);
 		}
