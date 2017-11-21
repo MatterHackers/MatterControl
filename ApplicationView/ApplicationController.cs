@@ -248,6 +248,7 @@ namespace MatterHackers.MatterControl
 				}
 				catch (ThreadAbortException)
 				{
+					return;
 				}
 				catch (Exception ex)
 				{
