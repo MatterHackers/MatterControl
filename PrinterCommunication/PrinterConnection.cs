@@ -43,7 +43,6 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
-using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.SerialPortCommunication;
 using MatterHackers.SerialPortCommunication.FrostedSerial;
@@ -1828,17 +1827,17 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		}
 
 		#region ProcessRead
-		static Regex getQuotedParts = new Regex(@"([""'])(\\?.)*?\1", RegexOptions.Compiled);
-		string read_regex = "";
+		private static Regex getQuotedParts = new Regex(@"([""'])(\\?.)*?\1", RegexOptions.Compiled);
+		private string readRegexString = "";
 		private List<(Regex Regex, string Replacement)> ReadLineReplacements = new List<(Regex Regex, string Replacement)>();
 
 		private string ProcessReadRegEx(string lineBeingRead)
 		{
-			if (read_regex != printer.Settings.GetValue(SettingsKey.read_regex))
+			if (readRegexString != printer.Settings.GetValue(SettingsKey.read_regex))
 			{
 				ReadLineReplacements.Clear();
-				read_regex = printer.Settings.GetValue(SettingsKey.read_regex);
-				foreach (string regExLine in read_regex.Split(new string[] { "\n" }, StringSplitOptions.RemoveEmptyEntries))
+				readRegexString = printer.Settings.GetValue(SettingsKey.read_regex);
+				foreach (string regExLine in readRegexString.Split(new string[] { "\n" }, StringSplitOptions.RemoveEmptyEntries))
 				{
 					var matches = getQuotedParts.Matches(regExLine);
 					if (matches.Count == 2)
