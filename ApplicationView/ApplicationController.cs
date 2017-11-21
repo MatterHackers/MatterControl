@@ -1118,9 +1118,6 @@ namespace MatterHackers.MatterControl
 					}
 				}
 
-				// Save any pending changes before starting the print
-				await ApplicationController.Instance.ActiveView3DWidget.PersistPlateIfNeeded();
-
 				if (!string.IsNullOrEmpty(partFilePath) 
 					&& File.Exists(partFilePath))
 				{
@@ -1263,9 +1260,6 @@ namespace MatterHackers.MatterControl
 		public async Task SliceFileLoadOutput(PrinterConfig printer, string partFilePath, string gcodeFilePath, View3DWidget view3DWidget, SliceProgressReporter reporter)
 		{
 			var gcodeLoadCancellationTokenSource = new CancellationTokenSource();
-
-			// Save any pending changes
-			await view3DWidget.PersistPlateIfNeeded();
 
 			// Slice
 			reporter?.StartReporting();
