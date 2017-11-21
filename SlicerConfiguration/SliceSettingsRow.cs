@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.printer = printer;
 			this.settingData = settingData;
 			this.settingsContext = settingsContext;
-			this.Border = new BorderDouble(right: 4 /*, left: 1 */);
+			this.Border = new BorderDouble(left: 3);
 			this.MinimumSize = new Vector2(0, 28);
 
 			this.NameArea = new GuiWidget()
