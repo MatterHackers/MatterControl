@@ -736,7 +736,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				VAnchor = VAnchor.Center | VAnchor.Fit,
 				ToolTipText = helpText,
-				Margin = new BorderDouble(0, 5),
+				Margin = new BorderDouble(0, 5, 5, 5),
 			};
 		}
 
