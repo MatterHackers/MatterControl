@@ -658,33 +658,22 @@ namespace MatterHackers.MeshVisualizer
 
 			if (lookingDownOnBed)
 			{
-				// render the bed 
 				RenderBedMesh(lookingDownOnBed);
-
-				// then the transparent objects
-				foreach (var object3D in transparentMeshes)
-				{
-					GLHelper.Render(
-						object3D.Mesh,
-						GetItemColor(object3D), 
-						object3D.WorldMatrix(), 
-						RenderTypes.Outlines, 
-						object3D.WorldMatrix() * World.ModelviewMatrix);
-				}
 			}
-			else
+
+			// Transparent objects
+			foreach (var object3D in transparentMeshes)
 			{
-				// render transparent objects
-				foreach (var object3D in transparentMeshes)
-				{
-					GLHelper.Render(
-						object3D.Mesh, 
-						object3D.WorldColor(), 
-						object3D.WorldMatrix(), 
-						RenderTypes.Outlines, 
-						object3D.WorldMatrix() * World.ModelviewMatrix);
-				}
-				// than render the bed 
+				GLHelper.Render(
+					object3D.Mesh,
+					GetItemColor(object3D),
+					object3D.WorldMatrix(),
+					RenderTypes.Outlines,
+					object3D.WorldMatrix() * World.ModelviewMatrix);
+			}
+
+			if (!lookingDownOnBed)
+			{
 				RenderBedMesh(lookingDownOnBed);
 			}
 
