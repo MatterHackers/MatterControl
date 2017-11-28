@@ -125,7 +125,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.viewControls3D = viewControls3D;
 			this.theme = theme;
 			this.Name = "View3DWidget";
-			this.BackgroundColor = ApplicationController.Instance.Theme.TabBodyBackground;
+			this.BackgroundColor = theme.TabBodyBackground;
 
 			autoRotating = allowAutoRotate;
 			allowAutoRotate = (autoRotate == AutoRotate.Enabled);
@@ -154,7 +154,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var buttonBottomPanel = new FlowLayoutWidget(FlowDirection.LeftToRight)
 			{
 				HAnchor = HAnchor.Stretch,
-				Padding = ApplicationController.Instance.Theme.ToolbarPadding,
+				Padding = theme.ToolbarPadding,
 				BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor,
 			};
 
@@ -404,7 +404,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					new PopupButton(buttonView)
 					{
 						PopDirection = Direction.Up,
-						PopupContent = ApplicationController.Instance.Theme.CreatePopupMenu(bedMenuActions),
+						PopupContent = theme.CreatePopupMenu(bedMenuActions),
 						AlignToRightEdge = true,
 						Margin = buttonSpacing,
 						Name = "Bed Options Menu",
@@ -425,7 +425,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			selectedObjectPanel = new SelectedObjectPanel(this, this.Scene, theme)
 			{
-				BackgroundColor = new Color(0, 0, 0, theme.OverlayAlpha),
+				BackgroundColor = theme.InteractionLayerOverlayColor,
 				VAnchor = VAnchor.Top | VAnchor.Fit,
 				HAnchor = HAnchor.Left | HAnchor.Fit,
 			};
@@ -436,8 +436,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Fit | VAnchor.Top,
 				HAnchor = HAnchor.Right,
 				Margin = new BorderDouble(0, 0, 0, viewControls3D.LocalBounds.Height),
-				SpliterBarColor = ApplicationController.Instance.Theme.SplitterBackground,
-				SplitterWidth = ApplicationController.Instance.Theme.SplitterWidth,
+				SpliterBarColor = theme.SplitterBackground,
+				SplitterWidth = theme.SplitterWidth,
 				Visible = false,
 			};
 			this.AddChild(selectedObjectContainer);
@@ -1490,7 +1490,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				alignButtons.AddChild(new HorizontalSpacer());
 			}
 
-			var dualExtrusionAlignButton = ApplicationController.Instance.Theme.MenuButtonFactory.Generate("Align for Dual Extrusion".Localize());
+			var dualExtrusionAlignButton = theme.MenuButtonFactory.Generate("Align for Dual Extrusion".Localize());
 			dualExtrusionAlignButton.Margin = new BorderDouble(21, 0);
 			dualExtrusionAlignButton.HAnchor = HAnchor.Left;
 			buttonPanel.AddChild(dualExtrusionAlignButton);
@@ -1503,7 +1503,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		internal enum AxisAlignment { Min, Center, Max, SourceCoordinateSystem };
 		private GuiWidget CreateAlignButton(int axisIndex, AxisAlignment alignment, string lable)
 		{
-			var smallMarginButtonFactory = ApplicationController.Instance.Theme.MenuButtonFactory;
+			var smallMarginButtonFactory = theme.MenuButtonFactory;
 			var alignButton = smallMarginButtonFactory.Generate(lable);
 			alignButton.Margin = new BorderDouble(3, 0);
 
