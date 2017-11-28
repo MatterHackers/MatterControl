@@ -70,7 +70,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				var gcodeResultsPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 				{
-					Margin = new BorderDouble(0, 0, 35, 60),
+					Margin = new BorderDouble(0, 0, 35, 0),
 					Padding = new BorderDouble(10, 10, 10, 8),
 					BackgroundColor = theme.InteractionLayerOverlayColor,
 					HAnchor = HAnchor.Absolute | HAnchor.Right,
