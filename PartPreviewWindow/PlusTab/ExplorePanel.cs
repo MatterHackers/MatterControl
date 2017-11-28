@@ -39,78 +39,6 @@ using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 {
-	public class ExploreFeedContent
-	{
-		public string content_type;
-		public List<ExplorerFeedItem> group_items;
-		public string group_link;
-		public string group_subtitle;
-		public string group_title;
-		public string icon_url;
-		public string image_url;
-		public string link;
-		public string theme_filter;
-	}
-
-	public class ExploreItem : FlowLayoutWidget
-	{
-		public ExploreItem(ExplorerFeedItem item)
-		{
-			var content = new FlowLayoutWidget()
-			{
-				Border = new BorderDouble(2),
-				BorderColor = ActiveTheme.Instance.PrimaryTextColor,
-				HAnchor = HAnchor.Absolute,
-				Width = 220 * GuiWidget.DeviceScale,
-				Margin = new BorderDouble(5),
-			};
-			this.AddChild(content);
-
-			if (item.icon != null)
-			{
-				ImageBuffer image = new ImageBuffer((int)(64 * GuiWidget.DeviceScale), (int)(64 * GuiWidget.DeviceScale));
-				ImageWidget imageWidget = new ImageWidget(image)
-				{
-					Selectable = false,
-					VAnchor = VAnchor.Top,
-					Margin = new BorderDouble(3)
-				};
-
-				imageWidget.Load += (s, e) => ApplicationController.Instance.DownloadToImageAsync(image, item.icon, true, new BlenderPreMultBGRA());
-				content.AddChild(imageWidget);
-			}
-
-			var wrappedText = new WrappedTextWidget(item.title)
-			{
-				Selectable = false,
-				VAnchor = VAnchor.Center | VAnchor.Fit,
-				Margin = new BorderDouble(3)
-			};
-			content.AddChild(wrappedText);
-			wrappedText.Load += (s, e) =>
-			{
-				wrappedText.VAnchor = VAnchor.Top | VAnchor.Fit;
-			};
-
-			if (item.url != null)
-			{
-				content.Cursor = Cursors.Hand;
-				content.Click += (s, e) =>
-				{
-					MatterControlApplication.Instance.LaunchBrowser("http://www.matterhackers.com/" + item.url);
-				};
-			}
-			else if(item.reference != null)
-			{
-				content.Cursor = Cursors.Hand;
-				content.Click += (s, e) =>
-				{
-					MatterControlApplication.Instance.LaunchBrowser(item.reference);
-				};
-			}
-		}
-	}
-
 	public class ExplorePanel : ScrollableWidget
 	{
 		public ExplorePanel()
@@ -138,6 +66,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 
 					// add a bunch of content
 					AddControlsForContent(content);
+
+					UiThread.RunOnIdle(() =>
+					{
+						// Force layout to change to get it working
+						var oldMargin = this.Margin;
+						this.Margin = new BorderDouble(20);
+						this.Margin = oldMargin;
+					});
 				}
 				catch
 				{
@@ -202,6 +138,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 		}
 	}
 
+	#region json expand classes
+
+	public class ExploreFeedContent
+	{
+		public string content_type;
+		public List<ExplorerFeedItem> group_items;
+		public string group_link;
+		public string group_subtitle;
+		public string group_title;
+		public string icon_url;
+		public string image_url;
+		public string link;
+		public string theme_filter;
+	}
+
 	public class ExplorerFeed
 	{
 		public List<ExploreFeedContent> Content;
@@ -216,132 +167,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 		public string description;
 		public string hero;
 		public string icon;
+		public string reference;
 		public string title;
 		public string url;
-		public string reference;
 	}
 
-	public class ExploreSection : FlowLayoutWidget
-	{
-		private List<ExploreItem> allIconViews = new List<ExploreItem>();
-		private int cellIndex = 0;
-		private int columnCount = 1;
-		private ExploreFeedContent content;
-		private int lastReflowWidth = -1;
-		private int leftRightMargin;
-		private FlowLayoutWidget rowButtonContainer = null;
-
-		public ExploreSection(ExploreFeedContent content)
-			: base(FlowDirection.TopToBottom)
-		{
-			this.content = content;
-			this.HAnchor = HAnchor.Stretch;
-
-			foreach (var item in content.group_items)
-			{
-				allIconViews.Add(new ExploreItem(item));
-			}
-		}
-
-		public override void OnBoundsChanged(EventArgs e)
-		{
-			int currentWidth = (int)this.Size.X;
-			if (lastReflowWidth != currentWidth)
-			{
-				lastReflowWidth = currentWidth;
-
-				int newColumnCount = RecomputeFlowValues();
-				if (newColumnCount != columnCount)
-				{
-					columnCount = newColumnCount;
-
-					// Reflow Children
-					foreach (var iconView in allIconViews)
-					{
-						iconView.Parent?.RemoveChild(iconView);
-						iconView.Margin = new BorderDouble(leftRightMargin, 0);
-					}
-
-					this.CloseAllChildren();
-
-					if (content.group_title != null)
-					{
-						this.AddChild(new TextWidget(content.group_title, pointSize: 16, textColor: ActiveTheme.Instance.PrimaryTextColor)
-						{
-							HAnchor = HAnchor.Left,
-							Margin = new BorderDouble(5)
-						});
-					}
-
-					foreach (var iconView in allIconViews)
-					{
-						iconView.ClearRemovedFlag();
-						AddColumnAndChild(iconView);
-					}
-				}
-				else
-				{
-					foreach (var iconView in allIconViews)
-					{
-						iconView.Margin = new BorderDouble(leftRightMargin, 0);
-					}
-				}
-			}
-
-			base.OnBoundsChanged(e);
-		}
-
-		private void AddColumnAndChild(ExploreItem iconView)
-		{
-			if (rowButtonContainer == null)
-			{
-				rowButtonContainer = new FlowLayoutWidget(FlowDirection.LeftToRight)
-				{
-					HAnchor = HAnchor.Stretch,
-					Padding = 0
-				};
-				this.AddChild(rowButtonContainer);
-			}
-
-			rowButtonContainer.AddChild(iconView);
-
-			if (cellIndex++ >= columnCount - 1)
-			{
-				rowButtonContainer = null;
-				cellIndex = 0;
-			}
-		}
-
-		private int RecomputeFlowValues()
-		{
-			int padding = 4;
-			int itemWidth = (int)allIconViews[0].Width + (padding * 2);
-
-			int newColumnCount = (int)Math.Floor(this.LocalBounds.Width / itemWidth);
-			int remainingSpace = (int)this.LocalBounds.Width - columnCount * itemWidth;
-
-			// Reset position before reflow
-			cellIndex = 0;
-			rowButtonContainer = null;
-
-			// There should always be at least one visible column
-			if (newColumnCount < 1)
-			{
-				newColumnCount = 1;
-			}
-
-			// Only center items if extra space exists
-
-			// we find the space we want between each column and the sides
-			double spacePerColumn = (remainingSpace > 0) ? remainingSpace / (newColumnCount + 1) : 0;
-
-			// set the margin to be 1/2 the space (it will happen on each side of each icon)
-			leftRightMargin = (int)(remainingSpace > 0 ? spacePerColumn / 2 : 0);
-
-			// put in padding to get the "other" side of the outside icons
-			this.Padding = new BorderDouble(leftRightMargin, 0);
-
-			return newColumnCount;
-		}
-	}
+	#endregion json expand classes
 }
