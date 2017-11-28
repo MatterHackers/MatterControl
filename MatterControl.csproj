@@ -117,6 +117,7 @@
     <Compile Include="Library\Widgets\InsertionGroup.cs" />
     <Compile Include="PartPreviewWindow\NewTabButton.cs" />
     <Compile Include="PartPreviewWindow\PartTabPage.cs" />
+    <Compile Include="PartPreviewWindow\PlusTab\ExplorePanel.cs" />
     <Compile Include="PartPreviewWindow\PopupMenu.cs" />
     <Compile Include="PartPreviewWindow\PopupMenuButton.cs" />
     <Compile Include="PartPreviewWindow\PopupButton.cs" />
@@ -207,7 +208,7 @@
     <Compile Include="PartPreviewWindow\GCodeDetails.cs" />
     <Compile Include="PartPreviewWindow\GCodeDetailsView.cs" />
     <Compile Include="PartPreviewWindow\OverflowMenu.cs" />
-    <Compile Include="PartPreviewWindow\PlusTabPage.cs" />
+    <Compile Include="PartPreviewWindow\PlusTab\PlusTabPage.cs" />
     <Compile Include="PartPreviewWindow\MainTab.cs" />
     <Compile Include="PartPreviewWindow\PrinterTabPage.cs" />
     <Compile Include="PartPreviewWindow\View3D\BedMeshGenerator.cs" />

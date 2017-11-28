@@ -35,14 +35,23 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.Library;
 
-namespace MatterHackers.MatterControl.PartPreviewWindow
+namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 {
 	public class PlusTabPage : FlowLayoutWidget
 	{
 		public PlusTabPage(PartPreviewContent partPreviewContent, SimpleTabs simpleTabs, ThemeConfig theme)
-			: base(FlowDirection.TopToBottom)
 		{
+			var leftContent = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				VAnchor = VAnchor.Stretch,
+			};
+			this.AddChild(leftContent);
+
+			this.AddChild(new ExplorePanel());
+
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Stretch;
 			this.Padding = 15;
@@ -50,7 +59,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			BorderDouble buttonSpacing = 3;
 
 			// put in the add new design stuff
-			var createItemsSection = CreateSection("Create New".Localize() + ":");
+			var createItemsSection = CreateSection(leftContent, "Create New".Localize() + ":");
 
 			var createPart = theme.ButtonFactory.Generate("Create Part".Localize());
 			createPart.Margin = buttonSpacing;
@@ -119,7 +128,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			createItemsSection.AddChild(importButton);
 
-			var existingPrinterSection = CreateSection("Open Existing".Localize() + ":");
+			var existingPrinterSection = CreateSection(leftContent, "Open Existing".Localize() + ":");
 
 			var printerSelector = new PrinterSelector()
 			{
@@ -127,7 +136,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			existingPrinterSection.AddChild(printerSelector);
 
-			var otherItemsSection = CreateSection("Other".Localize() + ":");
+			var otherItemsSection = CreateSection(leftContent, "Other".Localize() + ":");
 
 			var redeemDesignCode = theme.ButtonFactory.Generate("Redeem Design Code".Localize());
 			redeemDesignCode.Name = "Redeem Design Code Button";
@@ -190,10 +199,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private FlowLayoutWidget CreateSection(string headingText)
+		private FlowLayoutWidget CreateSection(GuiWidget parent, string headingText)
 		{
 			// Add heading
-			this.AddChild(new TextWidget(headingText, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			parent.AddChild(new TextWidget(headingText, textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
 				HAnchor = HAnchor.Left
 			});
@@ -201,11 +210,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Add container
 			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit,
 				Margin = new BorderDouble(10, 10, 10, 8),
 			};
-			this.AddChild(container);
+			parent.AddChild(container);
 
 			return container;
 		}
