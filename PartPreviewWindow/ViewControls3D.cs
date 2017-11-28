@@ -343,21 +343,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.printer = sceneContext.Printer;
 
-			printer.ViewState.ViewModeChanged += (s, e) =>
+			if (printer != null)
 			{
-				if (e.ViewMode == PartViewMode.Layers2D)
+				printer.ViewState.ViewModeChanged += (s, e) =>
 				{
-					this.Layers2DButton.Checked = true;
-				}
-				else if (e.ViewMode == PartViewMode.Layers3D)
-				{
-					layers3DButton.Checked = true;
-				}
-				else
-				{
-					modelViewButton.Checked = true;
-				}
-			};
+					if (e.ViewMode == PartViewMode.Layers2D)
+					{
+						this.Layers2DButton.Checked = true;
+					}
+					else if (e.ViewMode == PartViewMode.Layers3D)
+					{
+						layers3DButton.Checked = true;
+					}
+					else
+					{
+						modelViewButton.Checked = true;
+					}
+				};
+			}
 		}
 
 		private void SwitchModes_Click(object sender, MouseEventArgs e)
