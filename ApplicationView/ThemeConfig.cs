@@ -173,7 +173,7 @@ namespace MatterHackers.MatterControl
 
 			this.InactiveTabColor = ResolveColor(theme.PrimaryBackgroundColor, new Color(Color.White, this.SlightShade.alpha));
 
-			this.SplitterBackground = this.ActiveTabColor;
+			this.SplitterBackground = this.ActiveTabColor.AdjustLightness(0.87).ToColor();
 
 			this.ButtonFactory = new TextImageButtonFactory(commonOptions);
 
