@@ -92,9 +92,40 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					gcode2DWidget.CenterPartInView();
 				}
 			};
-			viewControls3D.ViewModeChanged += (s, e) =>
+
+			printer.ViewState.ViewModeChanged += (s, e) =>
 			{
-				this.ViewMode = e.ViewMode;
+				switch (e.ViewMode)
+				{
+					case PartViewMode.Layers2D:
+						UserSettings.Instance.set("LayerViewDefault", "2D Layer");
+						if (gcode2DWidget != null)
+						{
+							gcode2DWidget.Visible = true;
+
+							// HACK: Getting the Layer2D view to show content only works if CenterPartInView is called after the control is visible and after some cycles have passed
+							UiThread.RunOnIdle(gcode2DWidget.CenterPartInView);
+						}
+						this.ShowSliceLayers = true;
+						break;
+
+					case PartViewMode.Layers3D:
+						UserSettings.Instance.set("LayerViewDefault", "3D Layer");
+						if (gcode2DWidget != null)
+						{
+							gcode2DWidget.Visible = false;
+						}
+						this.ShowSliceLayers = true;
+						break;
+
+					case PartViewMode.Model:
+						if (gcode2DWidget != null)
+						{
+							gcode2DWidget.Visible = false;
+						}
+						this.ShowSliceLayers = false;
+						break;
+				}
 			};
 
 			layerScrollbar = new SliceLayerSelector(printer, sceneContext)
@@ -199,53 +230,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private PartViewMode viewMode;
-		public PartViewMode ViewMode
-		{
-			get => viewMode;
-			set
-			{
-				if (viewMode != value)
-				{
-					viewMode = value;
-
-					viewControls3D.ViewMode = viewMode;
-
-					switch (viewMode)
-					{
-						case PartViewMode.Layers2D:
-							UserSettings.Instance.set("LayerViewDefault", "2D Layer");
-							if (gcode2DWidget != null)
-							{
-								gcode2DWidget.Visible = true;
-
-								// HACK: Getting the Layer2D view to show content only works if CenterPartInView is called after the control is visible and after some cycles have passed
-								UiThread.RunOnIdle(gcode2DWidget.CenterPartInView);
-							}
-							this.ShowSliceLayers = true;
-							break;
-
-						case PartViewMode.Layers3D:
-							UserSettings.Instance.set("LayerViewDefault", "3D Layer");
-							if (gcode2DWidget != null)
-							{
-								gcode2DWidget.Visible = false;
-							}
-							this.ShowSliceLayers = true;
-							break;
-
-						case PartViewMode.Model:
-							if (gcode2DWidget != null)
-							{
-								gcode2DWidget.Visible = false;
-							}
-							this.ShowSliceLayers = false;
-							break;
-					}
-				}
-			}
-		}
-
 		private void BedPlate_LoadedGCodeChanged(object sender, EventArgs e)
 		{
 			bool gcodeLoaded = sceneContext.LoadedGCode != null;
@@ -284,7 +268,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Create and append new widget
 			gcode2DWidget = new GCode2DWidget(new Vector2(viewerVolume.X, viewerVolume.Y), sceneContext.BedCenter)
 			{
-				Visible = (this.ViewMode == PartViewMode.Layers2D)
+				Visible = (printer.ViewState.ViewMode == PartViewMode.Layers2D)
 			};
 			view3DWidget.InteractionLayer.AddChild(gcode2DWidget);
 

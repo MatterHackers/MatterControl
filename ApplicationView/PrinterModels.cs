@@ -49,6 +49,7 @@ namespace MatterHackers.MatterControl
 	using MatterHackers.MeshVisualizer;
 	using MatterHackers.PolygonMesh;
 	using MatterHackers.VectorMath;
+	using MatterHackers.MatterControl.PartPreviewWindow;
 
 	public class BedConfig
 	{
@@ -372,6 +373,8 @@ namespace MatterHackers.MatterControl
 
 	public class PrinterViewState
 	{
+		public event EventHandler<ViewModeChangedEventArgs> ViewModeChanged;
+
 		public bool SliceSettingsTabPinned
 		{
 			get => UserSettings.Instance.get(UserSettingsKey.SliceSettingsTabPinned) == "true";
@@ -406,6 +409,24 @@ namespace MatterHackers.MatterControl
 			set
 			{
 				UserSettings.Instance.set(UserSettingsKey.SliceSettingsWidth, value.ToString());
+			}
+		}
+
+		private PartViewMode viewMode = PartViewMode.Model;
+		public PartViewMode ViewMode
+		{
+			get => viewMode;
+			set
+			{
+				if (viewMode != value)
+				{
+					viewMode = value;
+
+					ViewModeChanged?.Invoke(this, new ViewModeChangedEventArgs()
+					{
+						ViewMode = this.ViewMode
+					});
+				}
 			}
 		}
 	}

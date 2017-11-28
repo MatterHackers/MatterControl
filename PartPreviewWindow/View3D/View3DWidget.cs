@@ -435,7 +435,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Width = 200,
 				VAnchor = VAnchor.Fit | VAnchor.Top,
 				HAnchor = HAnchor.Right,
-				Margin = new BorderDouble(0, 0, 0, viewControls3D.LocalBounds.Height),
 				SpliterBarColor = theme.SplitterBackground,
 				SplitterWidth = theme.SplitterWidth,
 				Visible = false,
@@ -513,7 +512,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (printerTabPage != null)
 			{
 				// When GCode changes, switch to the 3D layer view
-				printerTabPage.ViewMode = PartViewMode.Layers3D;
+				printer.ViewState.ViewMode = PartViewMode.Layers3D;
 
 				// HACK: directly fire method which previously ran on SlicingDone event on PrintItemWrapper
 				UiThread.RunOnIdle(() => printerTabPage.gcode3DWidget.CreateAndAddChildren(printer));
