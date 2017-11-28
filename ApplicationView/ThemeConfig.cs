@@ -120,6 +120,8 @@ namespace MatterHackers.MatterControl
 
 		public int OverlayAlpha { get; set; } = 50;
 
+		public Color InteractionLayerOverlayColor { get; private set; }
+
 		private EventHandler unregisterEvents;
 
 		static ThemeConfig()
@@ -163,6 +165,9 @@ namespace MatterHackers.MatterControl
 			commonOptions.FixedHeight = 32;
 
 			this.ActiveTabColor = ResolveColor(theme.PrimaryBackgroundColor, new Color(Color.Black, this.SlightShade.alpha));
+
+			// Active tab color with slight transparency
+			this.InteractionLayerOverlayColor = new Color(this.ActiveTabColor, 200);
 
 			float alpha0to1 = (ActiveTheme.Instance.IsDarkTheme ? 20 : 60) / 255.0f;
 
