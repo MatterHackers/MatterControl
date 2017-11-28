@@ -70,8 +70,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		public event EventHandler ResetView;
 
-		public event EventHandler<ViewModeChangedEventArgs> ViewModeChanged;
-
 		public event EventHandler<TransformStateChangedEventArgs> TransformStateChanged;
 
 		internal OverflowMenu OverflowMenu;
@@ -84,8 +82,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private RadioIconButton partSelectButton;
 
 		public RadioIconButton Layers2DButton;
+		private RadioIconButton modelViewButton;
+		private RadioIconButton layers3DButton;
 
 		private EventHandler unregisterEvents;
+
+		private PrinterConfig printer;
 
 		private ViewControls3DButtons activeTransformState = ViewControls3DButtons.Rotate;
 
@@ -267,7 +269,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var buttonGroupB = new ObservableCollection<GuiWidget>();
 
 			iconPath = Path.Combine("ViewTransformControls", "model.png");
-			var modelViewButton = new RadioIconButton(AggContext.StaticData.LoadIcon(iconPath, IconColor.Theme), theme)
+			modelViewButton = new RadioIconButton(AggContext.StaticData.LoadIcon(iconPath, IconColor.Theme), theme)
 			{
 				SiblingRadioButtonList = buttonGroupB,
 				Name = "Model View Button",
@@ -280,7 +282,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			AddChild(modelViewButton);
 
 			iconPath = Path.Combine("ViewTransformControls", "3d.png");
-			var layers3DButton = new RadioIconButton(AggContext.StaticData.LoadIcon(iconPath, IconColor.Theme), theme)
+			layers3DButton = new RadioIconButton(AggContext.StaticData.LoadIcon(iconPath, IconColor.Theme), theme)
 			{
 				SiblingRadioButtonList = buttonGroupB,
 				Name = "Layers3D Button",
@@ -339,7 +341,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Margin = 3
 			});
 
-			this.ViewMode = PartViewMode.Model;
+			this.printer = sceneContext.Printer;
+
+			printer.ViewState.ViewModeChanged += (s, e) =>
+			{
+				if (e.ViewMode == PartViewMode.Layers2D)
+				{
+					this.Layers2DButton.Checked = true;
+				}
+				else if (e.ViewMode == PartViewMode.Layers3D)
+				{
+					layers3DButton.Checked = true;
+				}
+				else
+				{
+					modelViewButton.Checked = true;
+				}
+			};
 		}
 
 		private void SwitchModes_Click(object sender, MouseEventArgs e)
@@ -348,54 +366,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				if (widget.Name == "Layers2D Button")
 				{
-					this.ViewMode = PartViewMode.Layers2D;
+					printer.ViewState.ViewMode = PartViewMode.Layers2D;
 				}
 				else if (widget.Name == "Layers3D Button")
 				{
-					this.ViewMode = PartViewMode.Layers3D;
+					printer.ViewState.ViewMode = PartViewMode.Layers3D;
 				}
 				else
 				{
-					this.ViewMode = PartViewMode.Model;
-				}
-
-				ViewModeChanged?.Invoke(this, new ViewModeChangedEventArgs()
-				{
-					ViewMode = this.ViewMode
-				});
-			}
-		}
-
-		private PartViewMode viewMode;
-		public PartViewMode ViewMode
-		{
-			get => viewMode;
-			set
-			{
-				if (viewMode != value)
-				{
-					viewMode = value;
-
-					string controlName;
-
-					if (viewMode == PartViewMode.Layers2D)
-					{
-						controlName = "Layers2D Button";
-					}
-					else if (viewMode == PartViewMode.Layers3D)
-					{
-						controlName = "Layers3D Button";
-					}
-					else
-					{
-						controlName = "Model View Button";
-					}
-
-					var targetChild = Children.Where(c => c.Name == controlName).FirstOrDefault();
-					if (targetChild != null && targetChild is RadioButton button)
-					{
-						button.Checked = true;
-					}
+					printer.ViewState.ViewMode = PartViewMode.Model;
 				}
 			}
 		}
