@@ -81,7 +81,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private RadioIconButton scaleButton;
 		private RadioIconButton partSelectButton;
 
-		public RadioIconButton Layers2DButton;
+		private RadioIconButton layers2DButton;
 		internal RadioIconButton modelViewButton;
 		private RadioIconButton layers3DButton;
 
@@ -290,17 +290,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			iconPath = Path.Combine("ViewTransformControls", "2d.png");
-			Layers2DButton = new RadioIconButton(AggContext.StaticData.LoadIcon(iconPath, IconColor.Theme), theme)
+			layers2DButton = new RadioIconButton(AggContext.StaticData.LoadIcon(iconPath, IconColor.Theme), theme)
 			{
 				SiblingRadioButtonList = buttonGroupB,
 				Name = "Layers2D Button",
 				ToolTipText = "2D Layers".Localize(),
-				Enabled = false,
 				Margin = commonMargin
 			};
-			Layers2DButton.Click += SwitchModes_Click;
-			buttonGroupB.Add(Layers2DButton);
-			this.AddChild(Layers2DButton);
+			layers2DButton.Click += SwitchModes_Click;
+			buttonGroupB.Add(layers2DButton);
+			this.AddChild(layers2DButton);
 
 			this.AddChild(new VerticalLine(50)
 			{
@@ -341,7 +340,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					if (e.ViewMode == PartViewMode.Layers2D)
 					{
-						this.Layers2DButton.Checked = true;
+						this.layers2DButton.Checked = true;
 					}
 					else if (e.ViewMode == PartViewMode.Layers3D)
 					{

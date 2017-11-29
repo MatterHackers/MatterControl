@@ -197,6 +197,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			view3DWidget.InteractionLayer.AddChild(gcode3DWidget, position);
 
+			var viewerVolume = sceneContext.ViewerVolume;
+
+			// Create and append new widget
+			gcode2DWidget = new GCode2DWidget(new Vector2(viewerVolume.X, viewerVolume.Y), sceneContext.BedCenter)
+			{
+				Visible = (printer.ViewState.ViewMode == PartViewMode.Layers2D)
+			};
+			view3DWidget.InteractionLayer.AddChild(gcode2DWidget);
+
 			SetSliderSizes();
 		}
 
@@ -260,20 +269,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				},
 				this.GetRenderType,
 				MeshViewerWidget.GetExtruderColor);
-
-			// Close and remove any existing widget reference
-			gcode2DWidget?.Close();
-
-			var viewerVolume = sceneContext.ViewerVolume;
-
-			// Create and append new widget
-			gcode2DWidget = new GCode2DWidget(new Vector2(viewerVolume.X, viewerVolume.Y), sceneContext.BedCenter)
-			{
-				Visible = (printer.ViewState.ViewMode == PartViewMode.Layers2D)
-			};
-			view3DWidget.InteractionLayer.AddChild(gcode2DWidget);
-
-			viewControls3D.Layers2DButton.Enabled = true;
 		}
 
 		private RenderType GetRenderType()
