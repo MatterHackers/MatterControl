@@ -859,7 +859,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Set the hitplane to the bed plane
 			CurrentSelectInfo.HitPlane = bedPlane;
 
-			DragDropObject = new InsertionGroup(
+			var insertionGroup = new InsertionGroup(
 				items,
 				this,
 				this.Scene,
@@ -871,11 +871,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (intersectInfo != null)
 			{
 				// Set the initial transform on the inject part to the current transform mouse position
-				var sourceItemBounds = DragDropObject.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+				var sourceItemBounds = insertionGroup.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 				var center = sourceItemBounds.Center;
 
-				this.DragDropObject.Matrix *= Matrix4X4.CreateTranslation(-center.X, -center.Y, -sourceItemBounds.minXYZ.Z);
-				this.DragDropObject.Matrix *= Matrix4X4.CreateTranslation(new Vector3(intersectInfo.HitPosition));
+				insertionGroup.Matrix *= Matrix4X4.CreateTranslation(-center.X, -center.Y, -sourceItemBounds.minXYZ.Z);
+				insertionGroup.Matrix *= Matrix4X4.CreateTranslation(new Vector3(intersectInfo.HitPosition));
 
 				CurrentSelectInfo.PlaneDownHitPos = intersectInfo.HitPosition;
 				CurrentSelectInfo.LastMoveDelta = Vector3.Zero;
@@ -886,10 +886,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Add item to scene and select it
 			this.Scene.Children.Modify(list =>
 			{
-				list.Add(this.DragDropObject);
+				list.Add(insertionGroup);
 			});
-			Scene.SelectedItem = this.DragDropObject;
+			Scene.SelectedItem = insertionGroup;
 
+			this.DragDropObject = insertionGroup;
 		}
 
 		internal void FinishDrop(bool mouseUpInBounds)
