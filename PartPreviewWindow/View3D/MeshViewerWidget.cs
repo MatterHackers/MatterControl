@@ -444,63 +444,33 @@ namespace MatterHackers.MeshVisualizer
 				GL.Enable(EnableCap.Lighting);
 			}
 
-			foreach (var renderData in object3D.VisibleMeshes())
+			foreach (var item in object3D.VisibleMeshes())
 			{
 				bool isSelected = parentSelected ||
 					scene.HasSelection && (object3D == scene.SelectedItem || scene.SelectedItem.Children.Contains(object3D));
 
-				Color drawColor = renderData.WorldColor();
-				if (renderData.WorldOutputType() == PrintOutputTypes.Support)
-				{
-					drawColor = new Color(Color.Yellow, 120);
-				}
-				else if (renderData.WorldOutputType() == PrintOutputTypes.Hole)
-				{
-					drawColor = new Color(Color.Gray, 120);
-				}
-
-				// If there is a printer - check if the object is within the bed volume (has no AABB outside the bed volume)
-				if(sceneContext.Printer != null)
-				{
-					if (!renderData.InsideBuildVolume(sceneContext.Printer))
-					{
-						drawColor = new Color(drawColor, 65);
-					}
-				}
-
-				// check if we should be rendering materials (this overrides the other colors)
-				if (this.RenderType == RenderTypes.Materials)
-				{
-					drawColor = MatterialRendering.Color(renderData.WorldMaterialIndex());
-				}
+				Color drawColor = GetItemColor(item);
 
 				bool isDebugItem = false;
 				bool renderAsSolid = drawColor.alpha == 255;
 #if DEBUG
-				isDebugItem = scene.DebugItem == renderData;
+				isDebugItem = scene.DebugItem == item;
 				renderAsSolid = (renderAsSolid && scene.DebugItem == null)
 									|| isDebugItem;
 #endif
 
 				if (renderAsSolid)
 				{
-					GLHelper.Render(renderData.Mesh, drawColor, renderData.WorldMatrix(), RenderType, renderData.WorldMatrix() * World.ModelviewMatrix);
+					GLHelper.Render(item.Mesh, drawColor, item.WorldMatrix(), RenderType, item.WorldMatrix() * World.ModelviewMatrix);
 				}
 				else
 				{
-					transparentMeshes.Add(new Object3D()
-					{
-						Mesh = renderData.Mesh,
-						Matrix = renderData.WorldMatrix(),
-						Color = (scene.DebugItem == null) ? drawColor : debugNotSelectedFillColor,
-						MaterialIndex = renderData.WorldMaterialIndex(),
-						OutputType = renderData.WorldOutputType()
-					});
+					transparentMeshes.Add(item);
 				}
 
 				if (isSelected && !tooBigForComplexSelection)
 				{
-					RenderSelection(renderData, frustum);
+					RenderSelection(item, frustum);
 				}
 
 #if DEBUG
@@ -511,9 +481,9 @@ namespace MatterHackers.MeshVisualizer
 					GLHelper.PrepareFor3DLineRender(true);
 					RenderAABB(frustum, aabb, Matrix4X4.Identity, debugBorderColor, 1);
 
-					if (renderData.Mesh != null)
+					if (item.Mesh != null)
 					{
-						GLHelper.Render(renderData.Mesh, debugBorderColor, renderData.WorldMatrix(), RenderTypes.Wireframe, renderData.WorldMatrix() * World.ModelviewMatrix);
+						GLHelper.Render(item.Mesh, debugBorderColor, item.WorldMatrix(), RenderTypes.Wireframe, item.WorldMatrix() * World.ModelviewMatrix);
 					}
 				}
 #endif
@@ -523,6 +493,36 @@ namespace MatterHackers.MeshVisualizer
 				// turn lighting back on after rendering selection outlines
 				GL.Enable(EnableCap.Lighting);
 			}
+		}
+
+		private Color GetItemColor(IObject3D item)
+		{
+			Color drawColor = item.WorldColor();
+			if (item.WorldOutputType() == PrintOutputTypes.Support)
+			{
+				drawColor = new Color(Color.Yellow, 120);
+			}
+			else if (item.WorldOutputType() == PrintOutputTypes.Hole)
+			{
+				drawColor = new Color(Color.Gray, 120);
+			}
+
+			// If there is a printer - check if the object is within the bed volume (has no AABB outside the bed volume)
+			if (sceneContext.Printer != null)
+			{
+				if (!item.InsideBuildVolume(sceneContext.Printer))
+				{
+					drawColor = new Color(drawColor, 65);
+				}
+			}
+
+			// check if we should be rendering materials (this overrides the other colors)
+			if (this.RenderType == RenderTypes.Materials)
+			{
+				drawColor = MatterialRendering.Color(item.WorldMaterialIndex());
+			}
+
+			return drawColor;
 		}
 
 		private void RenderNormals(IObject3D renderData)
@@ -658,25 +658,22 @@ namespace MatterHackers.MeshVisualizer
 
 			if (lookingDownOnBed)
 			{
-				// render the bed 
 				RenderBedMesh(lookingDownOnBed);
-				// than the transparent stuff
-				//int colorIndex = 0; // helps debug the sorting order
-				foreach (var transparentRenderData in transparentMeshes)
-				{
-					var color = transparentRenderData.Color;
-					//color = RGBA_Floats.FromHSL(Math.Max(colorIndex++, 0) / 10.0, .99, .49).ToColor();
-					GLHelper.Render(transparentRenderData.Mesh, color, transparentRenderData.Matrix, RenderTypes.Outlines, transparentRenderData.Matrix * World.ModelviewMatrix);
-				}
 			}
-			else
+
+			// Transparent objects
+			foreach (var object3D in transparentMeshes)
 			{
-				// render the transparent stuff
-				foreach (var transparentRenderData in transparentMeshes)
-				{
-					GLHelper.Render(transparentRenderData.Mesh, transparentRenderData.Color, transparentRenderData.Matrix, RenderTypes.Outlines, transparentRenderData.Matrix * World.ModelviewMatrix);
-				}
-				// than render the bed 
+				GLHelper.Render(
+					object3D.Mesh,
+					GetItemColor(object3D),
+					object3D.WorldMatrix(),
+					RenderTypes.Outlines,
+					object3D.WorldMatrix() * World.ModelviewMatrix);
+			}
+
+			if (!lookingDownOnBed)
+			{
 				RenderBedMesh(lookingDownOnBed);
 			}
 
@@ -790,3 +787,4 @@ namespace MatterHackers.MeshVisualizer
 		}
 	}
 }
+ 
