@@ -45,6 +45,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 			var leftContent = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				VAnchor = VAnchor.Stretch,
+				Padding = 15
 			};
 			this.AddChild(leftContent);
 
@@ -52,7 +53,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Stretch;
-			this.Padding = 15;
 
 			BorderDouble buttonSpacing = 3;
 
