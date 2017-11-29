@@ -109,6 +109,7 @@
     <Compile Include="CustomWidgets\SvgWidget.cs" />
     <Compile Include="Library\Interfaces\LibraryExtensionMethods.cs" />
     <Compile Include="Library\Providers\CreateFolderItem.cs" />
+    <Compile Include="Library\Providers\FileSystem\SceneReplacementFileItem.cs" />
     <Compile Include="Library\Providers\MatterControl\PlatingHistoryContainer.cs" />
     <Compile Include="Library\Providers\MatterControl\PrintHistoryContainer.cs" />
     <Compile Include="Library\Providers\MatterControl\PrintHistoryItem.cs" />

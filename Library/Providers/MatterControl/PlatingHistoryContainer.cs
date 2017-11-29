@@ -70,10 +70,12 @@ namespace MatterHackers.MatterControl.Library
 			}
 		}
 
+		// PrintItems projected onto FileSystemFileItem
 		public override void Load()
 		{
-			// PrintItems projected onto FileSystemFileItem
-			Items =  new DirectoryInfo(ApplicationDataStorage.Instance.PlatingDirectory).GetFiles("*.mcx").OrderByDescending(f => f.CreationTime).Take(25).Select(f => new FileSystemFileItem(f.FullName)).ToList<ILibraryItem>();
+			// Select the 25 most recent files and project onto FileSystemItems
+			var recentFiles = new DirectoryInfo(ApplicationDataStorage.Instance.PlatingDirectory).GetFiles("*.mcx").OrderByDescending(f => f.LastWriteTime);
+			Items = recentFiles.Take(25).Select(f => new SceneReplacementFileItem(f.FullName)).ToList<ILibraryItem>();
 		}
 
 		public void Move(IEnumerable<ILibraryItem> items, ILibraryContainer targetContainer)

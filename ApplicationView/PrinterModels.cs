@@ -91,6 +91,12 @@ namespace MatterHackers.MatterControl
 			{
 				editContext.Content = await editContext.SourceItem.CreateContent(null);
 				this.Scene.Load(editContext.Content);
+
+				if (File.Exists(editContext?.GCodeFilePath))
+				{
+					this.LoadGCode(editContext.GCodeFilePath, CancellationToken.None, null);
+				}
+
 				this.EditableScene = true;
 			}
 
@@ -129,7 +135,7 @@ namespace MatterHackers.MatterControl
 		{
 			// Find the last used bed plate mcx
 			var directoryInfo = new DirectoryInfo(ApplicationDataStorage.Instance.PlatingDirectory);
-			var firstFile = directoryInfo.GetFileSystemInfos("*.mcx").OrderByDescending(fl => fl.CreationTime).FirstOrDefault();
+			var firstFile = directoryInfo.GetFileSystemInfos("*.mcx").OrderByDescending(fl => fl.LastWriteTime).FirstOrDefault();
 
 			// Set as the current item - should be restored as the Active scene in the MeshViewer
 			if (firstFile != null)

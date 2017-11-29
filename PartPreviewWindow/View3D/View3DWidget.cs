@@ -878,11 +878,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			this.DragOperationActive = true;
 
-			if (items.FirstOrDefault() is ILibraryContentStream contentStream
+			var firstItem = items.FirstOrDefault();
+
+			if ((firstItem is ILibraryContentStream contentStream
 				&& contentStream.ContentType == "gcode")
+				|| firstItem is SceneReplacementFileItem)
 			{
 				DragDropObject = null;
-				this.SceneReplacement = contentStream;
+				this.SceneReplacement = firstItem as ILibraryContentStream;
 
 				// TODO: Figure out a mechanism to disable View3DWidget with dark overlay, displaying something like "Switch to xxx.gcode", make disappear on mouseLeaveBounds and dragfinish
 				this.InteractionLayer.BackgroundColor = new Color(Color.Black, 200);
@@ -944,7 +947,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							new EditContext()
 							{
 								SourceItem = this.SceneReplacement,
-								ContentStore = null
+								// No content store for GCode, otherwise PlatingHistory
+								ContentStore = (this.SceneReplacement.ContentType == "gcode") ? null : ApplicationController.Instance.Library.PlatingHistory
 							}).ConfigureAwait(false);
 
 						this.SceneReplacement = null;
