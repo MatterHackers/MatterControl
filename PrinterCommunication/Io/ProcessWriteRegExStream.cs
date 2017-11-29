@@ -38,9 +38,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 	{
 		private static Regex getQuotedParts = new Regex(@"([""'])(\\?.)*?\1", RegexOptions.Compiled);
 
-		private static List<(Regex Regex, string Replacement)> WriteLineReplacements = new List<(Regex Regex, string Replacement)>();
+		private List<(Regex Regex, string Replacement)> WriteLineReplacements = new List<(Regex Regex, string Replacement)>();
 
-		private static string writeRegexString = "";
+		private string writeRegexString = "";
 
 		private QueuedCommandsStream queueStream;
 
@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				return null;
 			}
 
-			var lines = ProcessWriteRegEx(printerSettings, baseLine);
+			var lines = ProcessWriteRegEx(baseLine);
 			for (int i = 1; i < lines.Count; i++)
 			{
 				queueStream.Add(lines[i]);
@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			return lines[0];
 		}
 
-		public static List<string> ProcessWriteRegEx(PrinterSettings printerSettings, string lineToWrite)
+		public List<string> ProcessWriteRegEx(string lineToWrite)
 		{
 			lock (WriteLineReplacements)
 			{
