@@ -35,60 +35,60 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 {
 	public class ExploreItem : FlowLayoutWidget
 	{
+		private ExplorerFeedItem item;
+
 		public ExploreItem(ExplorerFeedItem item)
 		{
-			var content = new FlowLayoutWidget()
-			{
-				Border = new BorderDouble(2),
-				BorderColor = ActiveTheme.Instance.PrimaryTextColor,
-				HAnchor = HAnchor.Absolute,
-				Width = 220 * GuiWidget.DeviceScale,
-				Margin = new BorderDouble(5),
-			};
-			this.AddChild(content);
+			int spacing = 10;
+
+			this.HAnchor = HAnchor.Absolute;
+			this.Width = 250 * GuiWidget.DeviceScale;
+			//this.Border = spacing;
+			this.Padding = spacing;
+			this.item = item;
 
 			if (item.icon != null)
 			{
 				ImageBuffer image = new ImageBuffer((int)(64 * GuiWidget.DeviceScale), (int)(64 * GuiWidget.DeviceScale));
-				ImageWidget imageWidget = new ImageWidget(image)
+
+				var imageWidget = new ImageWidget(image)
 				{
 					Selectable = false,
 					VAnchor = VAnchor.Top,
-					Margin = new BorderDouble(3)
+					Margin = new BorderDouble(right: spacing)
 				};
 
 				imageWidget.Load += (s, e) => ApplicationController.Instance.DownloadToImageAsync(image, item.icon, true, new BlenderPreMultBGRA());
-				content.AddChild(imageWidget);
+				this.AddChild(imageWidget);
 			}
 
 			var wrappedText = new WrappedTextWidget(item.title, textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
 				Selectable = false,
 				VAnchor = VAnchor.Center | VAnchor.Fit,
-				Margin = new BorderDouble(3)
+				Margin = 3
 			};
-			content.AddChild(wrappedText);
+			this.AddChild(wrappedText);
 			wrappedText.Load += (s, e) =>
 			{
 				wrappedText.VAnchor = VAnchor.Top | VAnchor.Fit;
 			};
 
+			this.Cursor = Cursors.Hand;
+		}
+
+		public override void OnClick(MouseEventArgs mouseEvent)
+		{
 			if (item.url != null)
 			{
-				content.Cursor = Cursors.Hand;
-				content.Click += (s, e) =>
-				{
-					MatterControlApplication.Instance.LaunchBrowser("http://www.matterhackers.com/" + item.url);
-				};
+				MatterControlApplication.Instance.LaunchBrowser("http://www.matterhackers.com/" + item.url);
 			}
 			else if (item.reference != null)
 			{
-				content.Cursor = Cursors.Hand;
-				content.Click += (s, e) =>
-				{
-					MatterControlApplication.Instance.LaunchBrowser(item.reference);
-				};
+				MatterControlApplication.Instance.LaunchBrowser(item.reference);
 			}
+
+			base.OnClick(mouseEvent);
 		}
 	}
 }

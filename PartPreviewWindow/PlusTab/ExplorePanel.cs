@@ -41,17 +41,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 {
 	public class ExplorePanel : ScrollableWidget
 	{
-		public ExplorePanel()
-		{
-			HAnchor = HAnchor.Stretch;
-			VAnchor = VAnchor.Stretch;
-			BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
+		private ThemeConfig theme;
 
+		public ExplorePanel(ThemeConfig theme)
+		{
+			this.HAnchor = HAnchor.Stretch;
+			this.VAnchor = VAnchor.Stretch;
+			this.BackgroundColor = theme.TabBodyBackground;
 			this.MinimumSize = new Vector2(0, 200);
 			this.AnchorAll();
 			this.AutoScroll = true;
 			this.ScrollArea.Padding = new BorderDouble(3);
 			this.ScrollArea.HAnchor = HAnchor.Stretch;
+			this.theme = theme;
 
 			WebClient client = new WebClient();
 			client.DownloadDataCompleted += (object sender, DownloadDataCompletedEventArgs e) =>
@@ -131,7 +133,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 
 					case "article_group":
 					case "product_group":
-						topToBottom.AddChild(new ExploreSection(content));
+						topToBottom.AddChild(new ExploreSection(content, theme));
 						break;
 				}
 			}

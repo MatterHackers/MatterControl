@@ -35,8 +35,6 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.Library;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 {
@@ -50,7 +48,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 			};
 			this.AddChild(leftContent);
 
-			this.AddChild(new ExplorePanel());
+			this.AddChild(new ExplorePanel(theme));
 
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Stretch;
