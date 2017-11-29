@@ -4672,3 +4672,18 @@ Translated:The printer has a servo for lowering and raising the z probe.
 English:Add an .stl, .obj, .amf, .gcode or .zip file to the Library
 Translated:Add an .stl, .obj, .amf, .gcode or .zip file to the Library
 
+English:Plating History
+Translated:Plating History
+
+English:View XSmall Icons
+Translated:View XSmall Icons
+
+English:View Small Icons
+Translated:View Small Icons
+
+English:Reloading
+Translated:Reloading
+
+English:Materials Option
+Translated:Materials Option
+
