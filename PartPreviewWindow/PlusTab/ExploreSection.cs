@@ -127,8 +127,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 
 		private int RecomputeFlowValues()
 		{
-			int padding = 4;
-			int itemWidth = (int)allIconViews[0].Width + (padding * 2);
+			int itemWidth = (int)allIconViews[0].Width;
 
 			int newColumnCount = (int)Math.Floor(this.LocalBounds.Width / itemWidth);
 			int remainingSpace = (int)this.LocalBounds.Width - columnCount * itemWidth;
