@@ -52,35 +52,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private Vector2 gridSizeMm;
 		private Vector2 gridCenterMm;
 
-		private Affine ScalingTransform
-		{
-			get
-			{
-				return Affine.NewScaling(layerScale, layerScale);
-			}
-		}
-
-		public Affine TotalTransform
-		{
-			get
-			{
-				Affine transform = Affine.NewIdentity();
-				transform *= Affine.NewTranslation(unscaledRenderOffset);
-
-				// scale to view
-				transform *= ScalingTransform;
-				transform *= Affine.NewTranslation(Width / 2, Height / 2);
-
-				return transform;
-			}
-		}
-
 		private Vector2 unscaledRenderOffset = new Vector2(0, 0);
-
 		private GCodeFile loadedGCode => printer.Bed.LoadedGCode;
-
 		private View3DConfig options;
 		private PrinterConfig printer;
+		private VertexStorage grid = new VertexStorage();
+
+		private static Color gridColor = new Color(190, 190, 190, 255);
 
 		public GCode2DWidget(Vector2 gridSizeMm, Vector2 gridCenterMm)
 		{
@@ -96,6 +74,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			printer.Bed.LoadedGCodeChanged += BedPlate_LoadedGCodeChanged;
 		}
+
+		private Affine scalingTransform => Affine.NewScaling(layerScale, layerScale);
+
+		private Affine totalTransform => Affine.NewTranslation(unscaledRenderOffset) * scalingTransform * Affine.NewTranslation(Width / 2, Height / 2);
 
 		private void BedPlate_LoadedGCodeChanged(object sender, EventArgs e)
 		{
@@ -144,18 +126,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private VertexStorage grid = new VertexStorage();
-		static Color gridColor = new Color(190, 190, 190, 255);
-
 		public override void OnDraw(Graphics2D graphics2D)
 		{
 			if (loadedGCode != null)
 			{
 				//using (new PerformanceTimer("GCode Timer", "Total"))
 				{
-					Affine transform = TotalTransform;
+					Affine transform = totalTransform;
 
-					if (options.RenderBed)
+					if (this.options.RenderBed)
 					{
 						//using (new PerformanceTimer("GCode Timer", "Render Grid"))
 						{
@@ -176,20 +155,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						}
 					}
 
-					var activeOptions = printer.Bed.RenderInfo;
+					if (printer.Bed.RenderInfo is GCodeRenderInfo options)
+					{
+						var renderInfo = new GCodeRenderInfo(
+							printer.Bed.ActiveLayerIndex,
+							printer.Bed.ActiveLayerIndex,
+							transform,
+							layerScale,
+							options.FeatureToStartOnRatio0To1,
+							options.FeatureToEndOnRatio0To1,
+							options.extruderOffsets,
+							options.GetRenderType,
+							options.GetMaterialColor);
 
-					var renderInfo = new GCodeRenderInfo(
-						printer.Bed.ActiveLayerIndex,
-						printer.Bed.ActiveLayerIndex,
-						transform,
-						layerScale,
-						activeOptions.FeatureToStartOnRatio0To1,
-						activeOptions.FeatureToEndOnRatio0To1,
-						activeOptions.extruderOffsets,
-						activeOptions.GetRenderType,
-						activeOptions.GetMaterialColor);
-
-					printer.Bed.GCodeRenderer?.Render(graphics2D, renderInfo);
+						printer.Bed.GCodeRenderer?.Render(graphics2D, renderInfo);
+					}
 				}
 			}
 
@@ -303,12 +283,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		void ScalePartAndFixPosition(MouseEventArgs mouseEvent, double scaleAmount)
 		{
 			Vector2 mousePreScale = new Vector2(mouseEvent.X, mouseEvent.Y);
-			TotalTransform.inverse_transform(ref mousePreScale);
+			totalTransform.inverse_transform(ref mousePreScale);
 
 			layerScale = scaleAmount;
 
 			Vector2 mousePostScale = new Vector2(mouseEvent.X, mouseEvent.Y);
-			TotalTransform.inverse_transform(ref mousePostScale);
+			totalTransform.inverse_transform(ref mousePostScale);
 
 			unscaledRenderOffset += (mousePostScale - mousePreScale);
 		}
@@ -332,7 +312,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				switch (TransformState)
 				{
 					case ETransformState.Move:
-						ScalingTransform.inverse_transform(ref mouseDelta);
+						scalingTransform.inverse_transform(ref mouseDelta);
 
 						unscaledRenderOffset += mouseDelta;
 						break;
@@ -349,12 +329,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						}
 
 						Vector2 mousePreScale = mouseDownPosition;
-						TotalTransform.inverse_transform(ref mousePreScale);
+						totalTransform.inverse_transform(ref mousePreScale);
 
 						layerScale *= zoomDelta;
 
 						Vector2 mousePostScale = mouseDownPosition;
-						TotalTransform.inverse_transform(ref mousePostScale);
+						totalTransform.inverse_transform(ref mousePostScale);
 
 						unscaledRenderOffset += (mousePostScale - mousePreScale);
 						break;
