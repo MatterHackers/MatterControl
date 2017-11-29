@@ -56,6 +56,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private SliceLayerSelector layerScrollbar;
 		internal PrinterConfig printer;
 		internal GCode3DWidget gcode3DWidget;
+		internal PrinterActionsBar printerActionsBar;
 
 		public PrinterTabPage(PrinterConfig printer, ThemeConfig theme, string tabTitle)
 			: base(printer, printer.Bed, theme, tabTitle)
@@ -172,7 +173,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				SetSliderSizes();
 			};
 
-			var printerActionsBar = new PrinterActionsBar(printer, this, theme)
+			printerActionsBar = new PrinterActionsBar(printer, this, theme)
 			{
 				Padding = new BorderDouble(0, theme.ToolbarPadding.Top, theme.ToolbarPadding.Right, theme.ToolbarPadding.Top)
 			};

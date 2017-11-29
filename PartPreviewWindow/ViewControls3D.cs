@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private RadioIconButton partSelectButton;
 
 		public RadioIconButton Layers2DButton;
-		private RadioIconButton modelViewButton;
+		internal RadioIconButton modelViewButton;
 		private RadioIconButton layers3DButton;
 
 		private EventHandler unregisterEvents;

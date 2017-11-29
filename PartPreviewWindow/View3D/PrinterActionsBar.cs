@@ -71,6 +71,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private CancellationTokenSource gcodeLoadCancellationTokenSource;
 
 		private PrinterTabPage printerTabPage;
+		internal GuiWidget sliceButton;
 
 		public PrinterActionsBar(PrinterConfig printer, PrinterTabPage printerTabPage, ThemeConfig theme)
 		{
@@ -84,7 +85,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			BuildChildElements(theme);
 
-			this.AddChild(new SlicePopupMenu(printer, theme, printerTabPage));
+			this.AddChild(sliceButton = new SlicePopupMenu(printer, theme, printerTabPage));
 
 			// Add Handlers
 			printer.Connection.CommunicationStateChanged.RegisterEvent((s, e) =>
