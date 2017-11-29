@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 		private int leftRightMargin;
 		private FlowLayoutWidget rowButtonContainer = null;
 
-		public ExploreSection(ExploreFeedContent content)
+		public ExploreSection(ExploreFeedContent content, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
 		{
 			this.content = content;
@@ -52,12 +52,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 
 			foreach (var item in content.group_items)
 			{
-				allIconViews.Add(new ExploreItem(item));
+				allIconViews.Add(new ExploreItem(item)
+				{
+					BackgroundColor = theme.SlightShade,
+					VAnchor = VAnchor.Top | VAnchor.Fit,
+				});
 			}
 		}
 
 		public override void OnBoundsChanged(EventArgs e)
 		{
+			int topBottomMargin = 5;
+
 			int currentWidth = (int)this.Size.X;
 			if (lastReflowWidth != currentWidth)
 			{
@@ -72,9 +78,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 					foreach (var iconView in allIconViews)
 					{
 						iconView.Parent?.RemoveChild(iconView);
-						iconView.Margin = new BorderDouble(leftRightMargin, 0);
 					}
-
 					this.CloseAllChildren();
 
 					if (content.group_title != null)
@@ -82,13 +86,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 						this.AddChild(new TextWidget(content.group_title, pointSize: 16, textColor: ActiveTheme.Instance.PrimaryTextColor)
 						{
 							HAnchor = HAnchor.Left,
-							Margin = new BorderDouble(5)
+							Margin = 5
 						});
 					}
 
 					foreach (var iconView in allIconViews)
 					{
 						iconView.ClearRemovedFlag();
+						iconView.Margin = new BorderDouble(leftRightMargin, topBottomMargin);
 						AddColumnAndChild(iconView);
 					}
 				}
@@ -96,7 +101,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 				{
 					foreach (var iconView in allIconViews)
 					{
-						iconView.Margin = new BorderDouble(leftRightMargin, 0);
+						iconView.Margin = new BorderDouble(leftRightMargin, topBottomMargin);
 					}
 				}
 			}
@@ -127,8 +132,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 
 		private int RecomputeFlowValues()
 		{
-			int padding = 4;
-			int itemWidth = (int)allIconViews[0].Width + (padding * 2);
+			int itemWidth = (int)allIconViews[0].Width;
 
 			int newColumnCount = (int)Math.Floor(this.LocalBounds.Width / itemWidth);
 			int remainingSpace = (int)this.LocalBounds.Width - columnCount * itemWidth;
@@ -149,7 +153,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 			double spacePerColumn = (remainingSpace > 0) ? remainingSpace / (newColumnCount + 1) : 0;
 
 			// set the margin to be 1/2 the space (it will happen on each side of each icon)
-			leftRightMargin = (int)(remainingSpace > 0 ? spacePerColumn / 2 : 0);
+			//
+			// TODO: Replace short term hack with new solution
+			//leftRightMargin = (int)(remainingSpace > 0 ? spacePerColumn / 2 : 0);
+			leftRightMargin = Math.Max(8, (int)(remainingSpace > 0 ? spacePerColumn / 2 : 0));
 
 			// put in padding to get the "other" side of the outside icons
 			this.Padding = new BorderDouble(leftRightMargin, 0);

@@ -35,8 +35,6 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.Library;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 {
@@ -47,14 +45,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 			var leftContent = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				VAnchor = VAnchor.Stretch,
+				Padding = 15
 			};
 			this.AddChild(leftContent);
 
-			this.AddChild(new ExplorePanel());
+			this.AddChild(new ExplorePanel(theme));
 
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Stretch;
-			this.Padding = 15;
 
 			BorderDouble buttonSpacing = 3;
 
