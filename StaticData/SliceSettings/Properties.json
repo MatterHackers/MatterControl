@@ -355,7 +355,6 @@
 		],
 		"SlicerConfigName": "fill_density",
 		"PresentationName": "Fill Density",
-		"ShowIfSet": "!sla_printer",
 		"HelpText": "The amount of infill material to generate, expressed as a ratio or a percentage.",
 		"DataEditType": "DOUBLE_OR_PERCENT",
 		"DefaultValue": "0.4"
@@ -655,6 +654,7 @@
 		"PresentationName": "Infill Type",
 		"HelpText": "The geometric shape of the support structure for the inside of parts.",
 		"DataEditType": "LIST",
+		"ShowIfSet": "!sla_printer",
 		"ListValues": "GRID,TRIANGLES,HEXAGON,LINES,CONCENTRIC",
 		"DefaultValue": "TRIANGLES"
 	},
