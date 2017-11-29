@@ -57,6 +57,8 @@ namespace MatterHackers.MatterControl
 
 		public event EventHandler LoadedGCodeChanged;
 
+		public event EventHandler SceneLoaded;
+
 		public View3DConfig RendererOptions { get; } = new View3DConfig();
 
 		public PrinterConfig Printer { get; set; }
@@ -102,15 +104,9 @@ namespace MatterHackers.MatterControl
 
 			this.Scene.Load(content);
 
-			//this.Scene.Save()
-
 			File.WriteAllText(mcxPath, content.ToJson());
 
-			// TODO: Define and fire event and eliminate ActiveView3DWidget - model objects need to be dependency free. For the time being prevent application spin up in ClearPlate due to the call below - if MC isn't loaded, don't notify
-			if (!MatterControlApplication.IsLoading)
-			{
-				ApplicationController.Instance.ActiveView3DWidget?.Invalidate();
-			}
+			this.SceneLoaded?.Invoke(this, null);
 		}
 
 		internal static ILibraryItem LoadLastPlateOrNew()

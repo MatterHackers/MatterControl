@@ -505,6 +505,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.SwitchStateToEditing();
 
 			this.InteractionLayer.DrawGlOpaqueContent += Draw_GlOpaqueContent;
+
+			this.sceneContext.SceneLoaded += SceneContext_SceneLoaded;
+		}
+
+		private void SceneContext_SceneLoaded(object sender, EventArgs e)
+		{
+			this.Invalidate();
 		}
 
 		private void SceneContext_LoadedGCodeChanged(object sender, EventArgs e)
@@ -789,6 +796,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			sceneContext.LoadedGCodeChanged -= SceneContext_LoadedGCodeChanged;
 			this.Scene.SelectionChanged -= Scene_SelectionChanged;
 			this.InteractionLayer.DrawGlOpaqueContent -= Draw_GlOpaqueContent;
+			this.sceneContext.SceneLoaded -= SceneContext_SceneLoaded;
 
 			if (meshViewerWidget != null)
 			{
