@@ -67,17 +67,22 @@ namespace MatterHackers.MatterControl
 
 		public Mesh PrinterShape { get; private set; }
 
-		public BedConfig(EditContext editContext, PrinterConfig printer = null)
+		public BedConfig(PrinterConfig printer = null)
 		{
-			this.EditContext = editContext;
 			this.Printer = printer;
 		}
 
-		public async Task LoadContent()
+		public async Task LoadContent(EditContext editContext)
 		{
-			// View or caller should invoke LoadContent
-			this.EditContext.Content = await EditContext.SourceItem.CreateContent(null);
-			this.Scene.Load(this.EditContext.Content);
+			// Load
+			editContext.Content = await editContext.SourceItem.CreateContent(null);
+			this.Scene.Load(editContext.Content);
+
+			// Store
+			this.EditContext = editContext;
+
+			// Notify
+			this.SceneLoaded?.Invoke(this, null);
 		}
 
 		internal static ILibraryItem NewPlatingItem()
@@ -92,21 +97,16 @@ namespace MatterHackers.MatterControl
 
 		internal void ClearPlate()
 		{
-			string now = DateTime.Now.ToString("yyyyMMdd-HHmmss");
-
-			string mcxPath = Path.Combine(ApplicationDataStorage.Instance.PlatingDirectory, now + ".mcx");
-
 			// Clear existing
 			this.LoadedGCode = null;
 			this.GCodeRenderer = null;
 
-			var content = new Object3D();
-
-			this.Scene.Load(content);
-
-			File.WriteAllText(mcxPath, content.ToJson());
-
-			this.SceneLoaded?.Invoke(this, null);
+			// Load
+			this.LoadContent(new EditContext()
+			{
+				ContentStore = ApplicationController.Instance.Library.PlatingHistory,
+				SourceItem = BedConfig.NewPlatingItem()
+			}).ConfigureAwait(false);
 		}
 
 		internal static ILibraryItem LoadLastPlateOrNew()
@@ -280,7 +280,15 @@ namespace MatterHackers.MatterControl
 
 		public void LoadGCode(string filePath, CancellationToken cancellationToken, Action<double, string> progressReporter)
 		{
-			this.LoadedGCode = GCodeMemoryFile.Load(filePath, cancellationToken, progressReporter);
+			using (var stream = File.OpenRead(filePath))
+			{
+				this.LoadGCode(stream, cancellationToken, progressReporter);
+			}
+		}
+
+		public void LoadGCode(Stream stream, CancellationToken cancellationToken, Action<double, string> progressReporter)
+		{
+			this.LoadedGCode = GCodeMemoryFile.Load(stream, cancellationToken, progressReporter);
 			this.GCodeRenderer = new GCodeRenderer(loadedGCode);
 
 			if (ActiveSliceSettings.Instance.PrinterSelected)
@@ -453,7 +461,9 @@ namespace MatterHackers.MatterControl
 
 		public PrinterConfig(EditContext editContext, PrinterSettings settings)
 		{
-			this.Bed = new BedConfig(editContext, this);
+			this.Bed = new BedConfig(this);
+
+			this.Bed.LoadContent(editContext).ConfigureAwait(false);
 
 			this.Connection = new PrinterConnection(printer: this);
 

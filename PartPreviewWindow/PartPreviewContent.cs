@@ -96,15 +96,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 			else
 			{
+				BedConfig bed;
 				this.CreatePartTab(
 					"New Part",
-					new BedConfig(
-						new EditContext()
-						{
-							ContentStore = ApplicationController.Instance.Library.PlatingHistory,
-							SourceItem = BedConfig.NewPlatingItem()
-						}),
+					bed = new BedConfig(),
 					theme);
+
+				bed.LoadContent(
+					new EditContext()
+					{
+						ContentStore = ApplicationController.Instance.Library.PlatingHistory,
+						SourceItem = BedConfig.NewPlatingItem()
+					}).ConfigureAwait(false);
 			}
 
 			// add in the update available button

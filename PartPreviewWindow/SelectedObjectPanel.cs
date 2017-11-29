@@ -111,15 +111,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				var partPreviewContent = this.Parents<PartPreviewContent>().FirstOrDefault();
 				partPreviewContent.CreatePartTab(
 					"New Part",
-					bed = new BedConfig(
-						new EditContext()
-						{
-							ContentStore = ApplicationController.Instance.Library.PlatingHistory,
-							SourceItem = new InMemoryItem(this.item),
-						}),
+					bed = new BedConfig(),
 					theme);
 
-				await bed.LoadContent();
+				await bed.LoadContent(
+					new EditContext()
+					{
+						ContentStore = ApplicationController.Instance.Library.PlatingHistory,
+						SourceItem = new InMemoryItem(this.item),
+					});
 			};
 			behavior3DTypeButtons.AddChild(editButton);
 

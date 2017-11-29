@@ -441,16 +441,16 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 						var newTab = partPreviewContent.CreatePartTab(
 							firstItem.Name,
-							bed = new BedConfig(
-								new EditContext()
-								{
-									ContentStore = writableContainer,
-									SourceItem = firstItem
-								}), 
+							bed = new BedConfig(), 
 							theme);
 
 						// Load content after UI widgets to support progress notification during acquire/load
-						await bed.LoadContent();
+						await bed.LoadContent(
+							new EditContext()
+							{
+								ContentStore = writableContainer,
+								SourceItem = firstItem
+							});
 
 						if (newTab.TabContent is PartTabPage partTab)
 						{
