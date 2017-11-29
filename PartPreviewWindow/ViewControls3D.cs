@@ -143,6 +143,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public ViewControls3D(BedConfig sceneContext, ThemeConfig theme, UndoBuffer undoBuffer)
 		{
+			this.printer = sceneContext.Printer;
+
 			string iconPath;
 
 			var commonMargin = theme.ButtonSpacing;
@@ -265,7 +267,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				SiblingRadioButtonList = buttonGroupB,
 				Name = "Model View Button",
-				Checked = true,
+				Checked = printer?.ViewState.ViewMode == PartViewMode.Model || printer == null,
 				ToolTipText = "Model".Localize(),
 				Margin = commonMargin
 			};
@@ -278,6 +280,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				SiblingRadioButtonList = buttonGroupB,
 				Name = "Layers3D Button",
+				Checked = printer?.ViewState.ViewMode == PartViewMode.Layers3D,
 				ToolTipText = "3D Layers".Localize(),
 				Margin = commonMargin
 			};
@@ -294,6 +297,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				SiblingRadioButtonList = buttonGroupB,
 				Name = "Layers2D Button",
+				Checked = printer?.ViewState.ViewMode == PartViewMode.Layers2D,
 				ToolTipText = "2D Layers".Localize(),
 				Margin = commonMargin
 			};
@@ -331,8 +335,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				AlignToRightEdge = true,
 				Margin = 3
 			});
-
-			this.printer = sceneContext.Printer;
 
 			if (printer != null)
 			{

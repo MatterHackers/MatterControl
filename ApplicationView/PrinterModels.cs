@@ -310,10 +310,58 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
+		private RenderType GetRenderType()
+		{
+			var options = this.RendererOptions;
+
+			RenderType renderType = RenderType.Extrusions;
+
+			if (options.RenderMoves)
+			{
+				renderType |= RenderType.Moves;
+			}
+			if (options.RenderRetractions)
+			{
+				renderType |= RenderType.Retractions;
+			}
+			if (options.RenderSpeeds)
+			{
+				renderType |= RenderType.SpeedColors;
+			}
+			if (options.SimulateExtrusion)
+			{
+				renderType |= RenderType.SimulateExtrusion;
+			}
+			if (options.TransparentExtrusion)
+			{
+				renderType |= RenderType.TransparentExtrusion;
+			}
+			if (options.HideExtruderOffsets)
+			{
+				renderType |= RenderType.HideExtruderOffsets;
+			}
+
+			return renderType;
+		}
+
 		public void LoadGCode(Stream stream, CancellationToken cancellationToken, Action<double, string> progressReporter)
 		{
 			this.LoadedGCode = GCodeMemoryFile.Load(stream, cancellationToken, progressReporter);
 			this.GCodeRenderer = new GCodeRenderer(loadedGCode);
+			this.RenderInfo = new GCodeRenderInfo(
+					0,
+					1,
+					Agg.Transform.Affine.NewIdentity(),
+					1,
+					0,
+					1,
+					new Vector2[]
+					{
+						this.Printer.Settings.Helpers.ExtruderOffset(0),
+						this.Printer.Settings.Helpers.ExtruderOffset(1)
+					},
+					this.GetRenderType,
+					MeshViewerWidget.GetExtruderColor);
 
 			if (ActiveSliceSettings.Instance.PrinterSelected)
 			{

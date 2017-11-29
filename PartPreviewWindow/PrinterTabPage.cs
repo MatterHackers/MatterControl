@@ -96,37 +96,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			printer.ViewState.ViewModeChanged += (s, e) =>
 			{
-				switch (e.ViewMode)
-				{
-					case PartViewMode.Layers2D:
-						UserSettings.Instance.set("LayerViewDefault", "2D Layer");
-						if (gcode2DWidget != null)
-						{
-							gcode2DWidget.Visible = true;
-
-							// HACK: Getting the Layer2D view to show content only works if CenterPartInView is called after the control is visible and after some cycles have passed
-							UiThread.RunOnIdle(gcode2DWidget.CenterPartInView);
-						}
-						this.ShowSliceLayers = true;
-						break;
-
-					case PartViewMode.Layers3D:
-						UserSettings.Instance.set("LayerViewDefault", "3D Layer");
-						if (gcode2DWidget != null)
-						{
-							gcode2DWidget.Visible = false;
-						}
-						this.ShowSliceLayers = true;
-						break;
-
-					case PartViewMode.Model:
-						if (gcode2DWidget != null)
-						{
-							gcode2DWidget.Visible = false;
-						}
-						this.ShowSliceLayers = false;
-						break;
-				}
+				this.SetViewMode(e.ViewMode);
 			};
 
 			layerScrollbar = new SliceLayerSelector(printer, sceneContext)
@@ -165,8 +135,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			AddSettingsTabBar(leftToRight, view3DWidget);
 
 			sceneContext.LoadedGCodeChanged += BedPlate_LoadedGCodeChanged;
-
-			this.ShowSliceLayers = false;
 
 			view3DWidget.BoundsChanged += (s, e) =>
 			{
@@ -207,38 +175,56 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			view3DWidget.InteractionLayer.AddChild(gcode2DWidget);
 
 			SetSliderSizes();
+
+			this.SetViewMode(printer.ViewState.ViewMode);
+		}
+
+		private void SetViewMode(PartViewMode viewMode)
+		{
+			if (gcode3DWidget == null || gcode2DWidget == null)
+			{
+				// Wait for controls to initialize
+				return;
+			}
+
+			switch (viewMode)
+			{
+				case PartViewMode.Layers2D:
+					UserSettings.Instance.set("LayerViewDefault", "2D Layer");
+					// HACK: Getting the Layer2D view to show content only works if CenterPartInView is called after the control is visible and after some cycles have passed
+					gcode2DWidget.Visible = true;
+					UiThread.RunOnIdle(gcode2DWidget.CenterPartInView);
+					break;
+
+				case PartViewMode.Layers3D:
+					UserSettings.Instance.set("LayerViewDefault", "3D Layer");
+					break;
+
+				case PartViewMode.Model:
+					break;
+			}
+
+			bool showSliceLayers = viewMode == PartViewMode.Layers3D;
+
+			gcode3DWidget.Visible = viewMode == PartViewMode.Layers3D;
+			gcode2DWidget.Visible = viewMode == PartViewMode.Layers2D;
+
+			view3DWidget.meshViewerWidget.IsActive = !showSliceLayers;
+
+			if (showSliceLayers)
+			{
+				printer.Bed.Scene.ClearSelection();
+			}
+
+			var slidersVisible = sceneContext.RenderInfo != null && showSliceLayers;
+
+			layerScrollbar.Visible = slidersVisible;
+			layerRenderRatioSlider.Visible = slidersVisible;
+
+			view3DWidget.selectedObjectContainer.Visible = !showSliceLayers && sceneContext.Scene.HasSelection;
 		}
 
 		private GCodeFile loadedGCode => sceneContext.LoadedGCode;
-
-		private bool showSliceLayers;
-		private bool ShowSliceLayers
-		{
-			get => showSliceLayers;
-			set
-			{
-				showSliceLayers = value;
-
-				if (gcode3DWidget != null)
-				{
-					gcode3DWidget.Visible = value;
-				}
-
-				view3DWidget.meshViewerWidget.IsActive = !value;
-
-				if (showSliceLayers)
-				{
-					printer.Bed.Scene.ClearSelection();
-				}
-
-				var slidersVisible = sceneContext.RenderInfo != null && value;
-
-				layerScrollbar.Visible = slidersVisible;
-				layerRenderRatioSlider.Visible = slidersVisible;
-
-				view3DWidget.selectedObjectContainer.Visible = !showSliceLayers && sceneContext.Scene.HasSelection;
-			}
-		}
 
 		private void BedPlate_LoadedGCodeChanged(object sender, EventArgs e)
 		{
@@ -253,53 +239,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			layerScrollbar.Maximum = sceneContext.LoadedGCode.LayerCount;
-
-			// ResetRenderInfo
-			sceneContext.RenderInfo = new GCodeRenderInfo(
-				0,
-				1,
-				Agg.Transform.Affine.NewIdentity(),
-				1,
-				0,
-				1,
-				new Vector2[]
-				{
-					printer.Settings.Helpers.ExtruderOffset(0),
-					printer.Settings.Helpers.ExtruderOffset(1)
-				},
-				this.GetRenderType,
-				MeshViewerWidget.GetExtruderColor);
-		}
-
-		private RenderType GetRenderType()
-		{
-			RenderType renderType = RenderType.Extrusions;
-			if (gcodeOptions.RenderMoves)
-			{
-				renderType |= RenderType.Moves;
-			}
-			if (gcodeOptions.RenderRetractions)
-			{
-				renderType |= RenderType.Retractions;
-			}
-			if (gcodeOptions.RenderSpeeds)
-			{
-				renderType |= RenderType.SpeedColors;
-			}
-			if (gcodeOptions.SimulateExtrusion)
-			{
-				renderType |= RenderType.SimulateExtrusion;
-			}
-			if (gcodeOptions.TransparentExtrusion)
-			{
-				renderType |= RenderType.TransparentExtrusion;
-			}
-			if (gcodeOptions.HideExtruderOffsets)
-			{
-				renderType |= RenderType.HideExtruderOffsets;
-			}
-
-			return renderType;
 		}
 
 		private void SetSyncToPrintVisibility()
