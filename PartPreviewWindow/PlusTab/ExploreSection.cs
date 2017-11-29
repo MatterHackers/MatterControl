@@ -153,7 +153,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 			double spacePerColumn = (remainingSpace > 0) ? remainingSpace / (newColumnCount + 1) : 0;
 
 			// set the margin to be 1/2 the space (it will happen on each side of each icon)
-			leftRightMargin = (int)(remainingSpace > 0 ? spacePerColumn / 2 : 0);
+			//
+			// TODO: Replace short term hack with new solution
+			//leftRightMargin = (int)(remainingSpace > 0 ? spacePerColumn / 2 : 0);
+			leftRightMargin = Math.Max(8, (int)(remainingSpace > 0 ? spacePerColumn / 2 : 0));
 
 			// put in padding to get the "other" side of the outside icons
 			this.Padding = new BorderDouble(leftRightMargin, 0);
