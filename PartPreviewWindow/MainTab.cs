@@ -103,6 +103,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			bool isFirstTab = position == 0;
 			bool rightSiblingSelected = this.NextTab == activeTab;
+			bool leftSiblingSelected = this.PreviousTab == activeTab;
+
+			bool drawLeftTabOverlap = this != activeTab && !isFirstTab;
 
 			// Tab - core
 			var tabShape = new VertexStorage();
@@ -116,8 +119,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 			tabShape.LineTo(rect.Right - tabInsetDistance, rect.Bottom);
 			tabShape.LineTo(rect.Left + tabInsetDistance, rect.Bottom);
-
-			if (isFirstTab)
+			if (!drawLeftTabOverlap)
 			{
 				tabShape.LineTo(rect.Left, rect.Bottom);
 			}
@@ -126,12 +128,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				tabShape,
 				(this == activeTab) ? theme.ActiveTabColor : theme.InactiveTabColor);
 
-			if (!isFirstTab)
+			if (drawLeftTabOverlap)
 			{
 				DrawTabLowerLeft(
 					graphics2D, 
 					rect, 
-					(this.PreviousTab == activeTab || this == activeTab) ? theme.ActiveTabColor : theme.InactiveTabColor);
+					(leftSiblingSelected || this == activeTab) ? theme.ActiveTabColor : theme.InactiveTabColor);
 			}
 
 			if (rightSiblingSelected)
