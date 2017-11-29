@@ -2124,7 +2124,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		private void ClearQueuedGCode()
 		{
 			loadedGCode.Clear();
-			WriteChecksumLineToPrinter("M110 N1");
+			// Force a reset of the printer checksum state (but allow it to be write regexed)
+			var transformedCommand = processWriteRegExStream11.ProcessWriteRegEx("M110 N1");
+			foreach (var line in transformedCommand)
+			{
+				WriteChecksumLineToPrinter(line);
+			}
 		}
 
 		private void Connect_Thread()
