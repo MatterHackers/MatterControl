@@ -264,6 +264,8 @@ namespace MatterHackers.MatterControl
 				Title = Title + " - {1}".FormatWith(version, OemSettings.Instance.WindowTitleExtra);
 			}
 
+			Title =  IntPtr.Size == 4 ? Title + " - 32Bit" : Title = Title + " - 64Bit";
+
 			UiThread.RunOnIdle(CheckOnPrinter);
 
 			string desktopPosition = ApplicationSettings.Instance.get(ApplicationSettingsKey.DesktopPosition);
