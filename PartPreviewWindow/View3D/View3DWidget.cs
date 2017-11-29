@@ -2144,7 +2144,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (wasInSelectMode)
 			{
-				viewControls3D.PartSelectVisible = true;
 				viewControls3D.ActiveButton = ViewControls3DButtons.PartSelect;
 				wasInSelectMode = false;
 			}
