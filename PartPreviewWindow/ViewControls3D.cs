@@ -91,16 +91,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private ViewControls3DButtons activeTransformState = ViewControls3DButtons.Rotate;
 
-		public bool PartSelectVisible
-		{
-			get { return partSelectSeparator.Visible; }
-			set
-			{
-				partSelectSeparator.Visible = false;
-				partSelectButton.Visible = false;
-			}
-		}
-
 		public ViewControls3DButtons ActiveButton
 		{
 			get
@@ -137,7 +127,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						break;
 
 					case ViewControls3DButtons.PartSelect:
-						partSelectButton.Checked = true;
+						if (partSelectButton != null)
+						{
+							partSelectButton.Checked = true;
+						}
 						break;
 				}
 
@@ -245,26 +238,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				AddChild(scaleButton);
 
 				rotateButton.Checked = true;
+
+				partSelectSeparator = new VerticalLine(50)
+				{
+					Margin = 3
+				};
+
+				this.AddChild(partSelectSeparator);
+
+				iconPath = Path.Combine("ViewTransformControls", "partSelect.png");
+				partSelectButton = new RadioIconButton(AggContext.StaticData.LoadIcon(iconPath, 32, 32, IconColor.Theme), theme)
+				{
+					SiblingRadioButtonList = buttonGroupA,
+					ToolTipText = "Select Part".Localize(),
+					Margin = commonMargin
+				};
+				partSelectButton.Click += (s, e) => this.ActiveButton = ViewControls3DButtons.PartSelect;
+				buttonGroupA.Add(partSelectButton);
+				AddChild(partSelectButton);
 			}
-
-			partSelectSeparator = new VerticalLine(50)
-			{
-				Margin = 3
-			};
-
-			this.AddChild(partSelectSeparator);
-
-			iconPath = Path.Combine("ViewTransformControls", "partSelect.png");
-			partSelectButton = new RadioIconButton(AggContext.StaticData.LoadIcon(iconPath, 32, 32, IconColor.Theme), theme)
-			{
-				SiblingRadioButtonList = buttonGroupA,
-				ToolTipText = "Select Part".Localize(),
-				Visible = false,
-				Margin = commonMargin
-			};
-			partSelectButton.Click += (s, e) => this.ActiveButton = ViewControls3DButtons.PartSelect;
-			buttonGroupA.Add(partSelectButton);
-			AddChild(partSelectButton);
 
 			var buttonGroupB = new ObservableCollection<GuiWidget>();
 
