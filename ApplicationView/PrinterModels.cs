@@ -75,8 +75,24 @@ namespace MatterHackers.MatterControl
 		public async Task LoadContent(EditContext editContext)
 		{
 			// Load
-			editContext.Content = await editContext.SourceItem.CreateContent(null);
-			this.Scene.Load(editContext.Content);
+
+			if (editContext.SourceItem is ILibraryContentStream contentStream
+				&& contentStream.ContentType == "gcode")
+			{
+				using (var task = await contentStream.GetContentStream(null))
+				{
+					this.LoadGCode(task.Stream, CancellationToken.None, null);
+				}
+
+				this.Scene.Children.Modify(children => children.Clear());
+				this.EditableScene = false;
+			}
+			else
+			{
+				editContext.Content = await editContext.SourceItem.CreateContent(null);
+				this.Scene.Load(editContext.Content);
+				this.EditableScene = true;
+			}
 
 			// Store
 			this.EditContext = editContext;
@@ -263,6 +279,8 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
+		public bool EditableScene { get; private set; }
+
 		internal void Render3DLayerFeatures(DrawEventArgs e)
 		{
 			if (this.RenderInfo != null)
@@ -364,14 +382,17 @@ namespace MatterHackers.MatterControl
 
 		internal void Save()
 		{
-			var thumbnailPath = ApplicationController.Instance.ThumbnailCachePath(this.SourceItem);
-			if (File.Exists(thumbnailPath))
+			if (this.ContentStore != null)
 			{
-				File.Delete(thumbnailPath);
-			}
+				var thumbnailPath = ApplicationController.Instance.ThumbnailCachePath(this.SourceItem);
+				if (File.Exists(thumbnailPath))
+				{
+					File.Delete(thumbnailPath);
+				}
 
-			// Call save on the provider
-			this.ContentStore.Save(this.SourceItem, this.Content);
+				// Call save on the provider
+				this.ContentStore.Save(this.SourceItem, this.Content);
+			}
 		}
 	}
 
@@ -463,7 +484,10 @@ namespace MatterHackers.MatterControl
 		{
 			this.Bed = new BedConfig(this);
 
-			this.Bed.LoadContent(editContext).ConfigureAwait(false);
+			if (editContext != null)
+			{
+				this.Bed.LoadContent(editContext).ConfigureAwait(false);
+			}
 
 			this.Connection = new PrinterConnection(printer: this);
 
