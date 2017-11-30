@@ -51,7 +51,7 @@ namespace MatterHackers.PrinterEmulator
 		// Dictionary of command and response callback
 		private Dictionary<string, Func<string, string>> responses;
 
-		private bool shutDown = false;
+		private bool shuttingDown = false;
 
 		public Heater HeatedBed { get; } = new Heater("HeatedBed") { CurrentTemperature = 26 };
 
@@ -148,8 +148,7 @@ namespace MatterHackers.PrinterEmulator
 
 		public void Dispose()
 		{
-			ShutDown();
-
+			this.ShutDown();
 			Emulator.Instance = null;
 		}
 
@@ -250,9 +249,13 @@ namespace MatterHackers.PrinterEmulator
 
 		public void ShutDown()
 		{
-			HeatedBed.Stop();
-			Hotend.Stop();
-			shutDown = true;
+			if (!shuttingDown)
+			{
+				shuttingDown = true;
+
+				HeatedBed.Stop();
+				Hotend.Stop();
+			}
 		}
 
 		public void SimulateReboot()
@@ -452,6 +455,8 @@ namespace MatterHackers.PrinterEmulator
 				// Maintain temperatures
 				Task.Run(() =>
 				{
+					Thread.CurrentThread.Name = $"EmulatorHeator{identifier}";
+
 					var random = new Random();
 
 					double requiredLoops = 0;
@@ -583,7 +588,7 @@ namespace MatterHackers.PrinterEmulator
 
 		public void Close()
 		{
-			this.shutDown = true;
+			this.ShutDown();
 		}
 
 		public void Open()
@@ -599,7 +604,8 @@ namespace MatterHackers.PrinterEmulator
 
 			Task.Run(() =>
 			{
-				while (!shutDown)
+				Thread.CurrentThread.Name = "EmulatorDtr";
+				while (!shuttingDown)
 				{
 					if (this.DtrEnable != DsrState)
 					{
@@ -613,11 +619,18 @@ namespace MatterHackers.PrinterEmulator
 
 			Task.Run(() =>
 			{
-				while (!shutDown || receiveQueue.Count > 0)
+				Thread.CurrentThread.Name = "EmulatorPipeline";
+
+				while (!shuttingDown || receiveQueue.Count > 0)
 				{
 					if (receiveQueue.Count == 0)
 					{
 						receiveResetEvent.WaitOne();
+					}
+
+					if (shuttingDown)
+					{
+						return;
 					}
 
 					if (receiveQueue.Count == 0)
@@ -648,11 +661,8 @@ namespace MatterHackers.PrinterEmulator
 
 				this.IsOpen = false;
 
-				this.Close();
 				this.Dispose();
 			});
-
-			this.IsOpen = true;
 		}
 
 		public void QueueResponse(string line)
