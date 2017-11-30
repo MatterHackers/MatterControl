@@ -49,6 +49,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private InteractiveScene scene;
 		private View3DWidget view3DWidget;
 
+		public Task LoadingItemsTask { get; }
+
 		static InsertionGroup()
 		{
 			// Create the placeholder mesh and position it at z0
@@ -64,7 +66,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			this.scene = scene;
 			this.view3DWidget = view3DWidget;
 
-			Task.Run((Func<Task>)(async () =>
+			this.LoadingItemsTask = Task.Run((Func<Task>)(async () =>
 			{
 				var newItemOffset = Vector2.Zero;
 				if (!dragOperationActive())
