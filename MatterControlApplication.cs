@@ -466,13 +466,16 @@ namespace MatterHackers.MatterControl
 				// Record that we are waiting for a response to the request to close
 				exitDialogOpen = true;
 
+				// We need to show an interactive dialog to determine if the original Close request should be honored, thus cancel the current Close request
+				eventArgs.Cancel = true;
+
 				StyledMessageBox.ShowMessageBox(
 					(exitConfirmed) =>
 					{
 						// Record that the exitDialog has closed
 						exitDialogOpen = false;
 
-						// Continue with shutdown if exit confirmed by user
+						// Continue with the original shutdown request if exit confirmed by user
 						if (exitConfirmed)
 						{
 							this.ApplicationExiting = true;
@@ -492,11 +495,10 @@ namespace MatterHackers.MatterControl
 									break;
 							}
 
+							MatterControlApplication.instance.CloseOnIdle();
+
 							this.RestartOnClose = false;
 						}
-
-						// If the user allowed the exit, don't cancel the OnClosing event
-						eventArgs.Cancel = !exitConfirmed;
 					},
 					message,
 					caption,
