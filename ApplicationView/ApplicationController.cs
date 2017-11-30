@@ -266,8 +266,6 @@ namespace MatterHackers.MatterControl
 
 		public ApplicationView MainView;
 
-		public event EventHandler ApplicationClosed;
-
 		private EventHandler unregisterEvents;
 
 		private Dictionary<string, List<PrintItemAction>> registeredLibraryActions = new Dictionary<string, List<PrintItemAction>>();
@@ -504,16 +502,7 @@ namespace MatterHackers.MatterControl
 					UiThread.RunOnIdle(ReloadAll);
 				}
 			}, ref unregisterEvents);
-
-			// Remove consumed ClientToken from running list on shutdown
-			ApplicationClosed += (s, e) =>
-			{
-				ApplicationSettings.Instance.ReleaseClientToken();
-
-				// Release the waiting ThumbnailGeneration task so it can shutdown gracefully
-				thumbGenResetEvent?.Set();
-			};
-
+			
 			PrinterConnection.ErrorReported.RegisterEvent((s, e) =>
 			{
 				var foundStringEventArgs = e as FoundStringEventArgs;
@@ -716,6 +705,9 @@ namespace MatterHackers.MatterControl
 
 		public void OnApplicationClosed()
 		{
+			// Release the waiting ThumbnailGeneration task so it can shutdown gracefully
+			thumbGenResetEvent?.Set();
+
 			// Save changes before close
 			if (this.ActivePrinter != null
 				&& this.ActivePrinter != emptyPrinter)
@@ -723,7 +715,7 @@ namespace MatterHackers.MatterControl
 				this.ActivePrinter.Bed.Save();
 			}
 
-			ApplicationClosed?.Invoke(null, null);
+			ApplicationSettings.Instance.ReleaseClientToken();
 		}
 
 		static void LoadOemOrDefaultTheme()
