@@ -317,7 +317,7 @@ namespace MatterHackers.MeshVisualizer
 
 		public RenderTypes RenderType
 		{
-			get => this.IsActive ? renderType : RenderTypes.Wireframe;
+			get => this.ModelView ? renderType : RenderTypes.Wireframe;
 			set
 			{
 				if (renderType != value)
@@ -415,7 +415,7 @@ namespace MatterHackers.MeshVisualizer
 			base.OnClosed(e);
 		}
 
-		public bool IsActive { get; set; } = true;
+		public bool ModelView { get; set; } = true;
 
 		private void DrawObject(IObject3D object3D, List<IObject3D> transparentMeshes, bool parentSelected, DrawEventArgs e)
 		{

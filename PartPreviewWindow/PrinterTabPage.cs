@@ -105,9 +105,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				HAnchor = HAnchor.Right | HAnchor.Absolute,
 				Width = 60,
 				Margin = new BorderDouble(0, 80, 8, 42),
+				Maximum = sceneContext.LoadedGCode?.LayerCount ?? 1
 			};
 			view3DContainer.AddChild(layerScrollbar);
-
+			
 			layerRenderRatioSlider = new DoubleSolidSlider(new Vector2(), SliceLayerSelector.SliderWidth);
 			layerRenderRatioSlider.FirstValue = 0;
 			layerRenderRatioSlider.FirstValueChanged += (s, e) =>
@@ -130,11 +131,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			view3DContainer.AddChild(layerRenderRatioSlider);
 
+			sceneContext.LoadedGCodeChanged += BedPlate_LoadedGCodeChanged;
+
 			view3DContainer.AddChild(PrintProgressWidget(printer));
 
 			AddSettingsTabBar(leftToRight, view3DWidget);
-
-			sceneContext.LoadedGCodeChanged += BedPlate_LoadedGCodeChanged;
 
 			view3DWidget.BoundsChanged += (s, e) =>
 			{
@@ -209,19 +210,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			gcode3DWidget.Visible = viewMode == PartViewMode.Layers3D;
 			gcode2DWidget.Visible = viewMode == PartViewMode.Layers2D;
 
-			view3DWidget.meshViewerWidget.IsActive = !showSliceLayers;
+			view3DWidget.meshViewerWidget.ModelView = viewMode == PartViewMode.Model;
 
 			if (showSliceLayers)
 			{
 				printer.Bed.Scene.ClearSelection();
 			}
 
-			var slidersVisible = sceneContext.RenderInfo != null && showSliceLayers;
+			var slidersVisible = viewMode != PartViewMode.Model && printer.Bed.LoadedGCode?.LayerCount > 0;
 
 			layerScrollbar.Visible = slidersVisible;
 			layerRenderRatioSlider.Visible = slidersVisible;
 
-			view3DWidget.selectedObjectContainer.Visible = !showSliceLayers && sceneContext.Scene.HasSelection;
+			view3DWidget.selectedObjectContainer.Visible = view3DWidget.meshViewerWidget.ModelView
+				&& sceneContext.Scene.HasSelection
+				&& printer?.ViewState.ViewMode != PartViewMode.Layers2D;
 		}
 
 		private GCodeFile loadedGCode => sceneContext.LoadedGCode;
@@ -422,7 +425,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void Parent_KeyDown(object sender, KeyEventArgs keyEvent)
 		{
-			if (gcode3DWidget.Visible)
+			if (gcode3DWidget.Visible
+				|| gcode2DWidget.Visible)
 			{
 				switch (keyEvent.KeyCode)
 				{

@@ -428,7 +428,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Rotation;
 
-			selectedObjectPanel = new SelectedObjectPanel(this, this.Scene, theme)
+			selectedObjectPanel = new SelectedObjectPanel(this, this.Scene, theme, printer)
 			{
 				BackgroundColor = theme.InteractionLayerOverlayColor,
 				VAnchor = VAnchor.Top | VAnchor.Fit,
@@ -444,8 +444,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				SplitterWidth = theme.SplitterWidth,
 				Visible = false,
 			};
-			this.AddChild(selectedObjectContainer);
+			this.InteractionLayer.AddChild(selectedObjectContainer);
 			selectedObjectContainer.AddChild(selectedObjectPanel);
+
+			this.InteractionLayer.AddChild(new TumbleCubeControl(this.InteractionLayer)
+			{
+				Margin = new BorderDouble(50, 0, 0, 50),
+				VAnchor = VAnchor.Top,
+				HAnchor = HAnchor.Left,
+			});
 
 			UiThread.RunOnIdle(AutoSpin);
 
@@ -1785,7 +1792,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			var selectedItem = Scene.SelectedItem;
-
 
 			if (materialButtons?.Count > 0)
 			{

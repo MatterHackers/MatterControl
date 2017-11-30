@@ -50,10 +50,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private ThemeConfig theme;
 		private View3DWidget view3DWidget;
 		private InteractiveScene scene;
-
+		private PrinterConfig printer;
 		private Dictionary<Type, HashSet<IObject3DEditor>> objectEditorsByType;
 
-		public SelectedObjectPanel(View3DWidget view3DWidget, InteractiveScene scene, ThemeConfig theme)
+		public SelectedObjectPanel(View3DWidget view3DWidget, InteractiveScene scene, ThemeConfig theme, PrinterConfig printer)
 			: base(FlowDirection.TopToBottom)
 		{
 			this.HAnchor |= HAnchor.Left;
@@ -64,6 +64,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.view3DWidget = view3DWidget;
 			this.theme = theme;
 			this.scene = scene;
+			this.printer = printer;
 
 			this.AddChild(itemName = new TextWidget("", textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
@@ -167,7 +168,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.editorPanel.RemoveAllChildren();
 
-			this.Parent.Visible = true;
+			var viewMode = printer?.ViewState.ViewMode;
+
+			this.Parent.Visible = viewMode == null || viewMode == PartViewMode.Model;
 
 			HashSet<IObject3DEditor> mappedEditors;
 			objectEditorsByType.TryGetValue(selectedItem.GetType(), out mappedEditors);
@@ -199,12 +202,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					HAnchor = HAnchor.Stretch
 				};
-
-				//dropDownList.SelectionChanged += (s, e) =>
-				//{
-				//	ShowObjectEditor(
-				//		mappedEditors.Where(m => m.Name == dropDownList.SelectedLabel).FirstOrDefault());
-				//};
 
 				foreach (IObject3DEditor editor in mappedEditors)
 				{
