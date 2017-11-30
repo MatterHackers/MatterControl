@@ -365,7 +365,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					// TODO: Sort out the right way to have an ActivePrinter context that looks and behaves correctly
 					var activeContext = ApplicationController.Instance.DragDropData;
 					var printer = activeContext.Printer;
-					//var printerTabPage = activeContext.View3DWidget.Parents<PrinterTabPage>().FirstOrDefault();
 
 					switch (selectedLibraryItems.FirstOrDefault())
 					{
@@ -384,19 +383,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 							{
 								UiThread.RunOnIdle(async () =>
 								{
-									printer.Bed.ClearPlate();
-
-									AddToPlate(selectedLibraryItems);
-
-									var context = printer.Bed.EditContext;
-
-									await ApplicationController.Instance.PrintPart(
-										context.PartFilePath,
-										context.GCodeFilePath,
-										context.SourceItem.Name,
-										printer,
-										activeContext.View3DWidget,
-										null);
+									await printer.Bed.StashAndPrint(selectedLibraryItems);
 								});
 							}
 							break;
@@ -405,11 +392,14 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				},
 				IsEnabled = (selectedListItems, listView) =>
 				{
+					var communicationState = ApplicationController.Instance.DragDropData?.Printer?.Connection.CommunicationState;
+
 					// Singleselect - disallow containers
 					return listView.SelectedItems.Count == 1
 						&& selectedListItems.FirstOrDefault()?.Model is ILibraryItem firstItem
 						&& !(firstItem is ILibraryContainer)
-						&& ApplicationController.Instance.DragDropData?.Printer?.Connection.CommunicationState == CommunicationStates.Connected;
+						&& (communicationState == CommunicationStates.Connected
+							|| communicationState == CommunicationStates.FinishedPrint);
 				}
 			});
 
@@ -419,7 +409,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				Title = "Add to Plate".Localize(),
 				Action = (selectedLibraryItems, listView) =>
 				{
-					AddToPlate(selectedLibraryItems);
+					// TODO: Sort out the right way to have an ActivePrinter context that looks and behaves correctly
+					var activeContext = ApplicationController.Instance.DragDropData;
+					var printer = activeContext.Printer;
+
+					printer.Bed.AddToPlate(selectedLibraryItems);
 				},
 				IsEnabled = (selectedListItems, listView) =>
 				{
@@ -693,22 +687,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					listView.Reload().ConfigureAwait(false);
 				},
 				IsEnabled = (selectedListItems, listView) => true
-			});
-		}
-
-		private static void AddToPlate(IEnumerable<ILibraryItem> selectedLibraryItems)
-		{
-			var context = ApplicationController.Instance.DragDropData;
-			var scene = context.SceneContext.Scene;
-			scene.Children.Modify(list =>
-			{
-				list.Add(
-					new InsertionGroup(
-						selectedLibraryItems,
-						context.View3DWidget,
-						scene,
-						context.SceneContext.BedCenter,
-						dragOperationActive: () => false));
 			});
 		}
 

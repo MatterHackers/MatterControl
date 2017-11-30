@@ -293,7 +293,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						context.GCodeFilePath,
 						context.SourceItem.Name,
 						printer,
-						printerTabPage.view3DWidget,
 						null);
 				});
 			};
@@ -314,7 +313,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						context.GCodeFilePath,
 						context.SourceItem.Name,
 						printer,
-						printerTabPage.view3DWidget,
 						null);
 				});
 			};

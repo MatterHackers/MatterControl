@@ -394,7 +394,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						Title = "Clear Bed".Localize(),
 						Action = () =>
 						{
-							UiThread.RunOnIdle(sceneContext.ClearPlate);
+							UiThread.RunOnIdle(() =>
+							{
+								sceneContext.ClearPlate().ConfigureAwait(false);
+							});
 						}
 					}
 				};

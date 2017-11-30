@@ -205,6 +205,11 @@ namespace MatterHackers.MatterControl.SettingsManagement
 						await Task.Delay(20000);
 						await ProfileManager.LoadOemProfileAsync(publicDevice, oem, model);
 
+						if (MatterControlApplication.Instance.ApplicationExiting)
+						{
+							return;
+						}
+
 						if (syncReport != null)
 						{
 							reportValue.Status = string.Format("Downloading public profiles for {0}...", oem);

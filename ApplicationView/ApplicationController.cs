@@ -266,8 +266,6 @@ namespace MatterHackers.MatterControl
 
 		public ApplicationView MainView;
 
-		public event EventHandler ApplicationClosed;
-
 		private EventHandler unregisterEvents;
 
 		private Dictionary<string, List<PrintItemAction>> registeredLibraryActions = new Dictionary<string, List<PrintItemAction>>();
@@ -504,16 +502,7 @@ namespace MatterHackers.MatterControl
 					UiThread.RunOnIdle(ReloadAll);
 				}
 			}, ref unregisterEvents);
-
-			// Remove consumed ClientToken from running list on shutdown
-			ApplicationClosed += (s, e) =>
-			{
-				ApplicationSettings.Instance.ReleaseClientToken();
-
-				// Release the waiting ThumbnailGeneration task so it can shutdown gracefully
-				thumbGenResetEvent?.Set();
-			};
-
+			
 			PrinterConnection.ErrorReported.RegisterEvent((s, e) =>
 			{
 				var foundStringEventArgs = e as FoundStringEventArgs;
@@ -716,6 +705,9 @@ namespace MatterHackers.MatterControl
 
 		public void OnApplicationClosed()
 		{
+			// Release the waiting ThumbnailGeneration task so it can shutdown gracefully
+			thumbGenResetEvent?.Set();
+
 			// Save changes before close
 			if (this.ActivePrinter != null
 				&& this.ActivePrinter != emptyPrinter)
@@ -723,7 +715,7 @@ namespace MatterHackers.MatterControl
 				this.ActivePrinter.Bed.Save();
 			}
 
-			ApplicationClosed?.Invoke(null, null);
+			ApplicationSettings.Instance.ReleaseClientToken();
 		}
 
 		static void LoadOemOrDefaultTheme()
@@ -1113,7 +1105,7 @@ namespace MatterHackers.MatterControl
 
 		private string doNotAskAgainMessage = "Don't remind me again".Localize();
 
-		public async Task PrintPart(string partFilePath, string gcodeFilePath, string printItemName, PrinterConfig printer, View3DWidget view3DWidget, SliceProgressReporter reporter, bool overrideAllowGCode = false)
+		public async Task PrintPart(string partFilePath, string gcodeFilePath, string printItemName, PrinterConfig printer, SliceProgressReporter reporter, bool overrideAllowGCode = false)
 		{
 			// Exit if called in a non-applicable state
 			if (this.ActivePrinter.Connection.CommunicationState != CommunicationStates.Connected
@@ -1201,7 +1193,6 @@ namespace MatterHackers.MatterControl
 									printer,
 									partFilePath,
 									gcodeFilePath,
-									view3DWidget,
 									reporter);
 
 								partToPrint_SliceDone(partFilePath, gcodeFilePath);
@@ -1275,7 +1266,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public async Task SliceFileLoadOutput(PrinterConfig printer, string partFilePath, string gcodeFilePath, View3DWidget view3DWidget, SliceProgressReporter reporter)
+		public async Task SliceFileLoadOutput(PrinterConfig printer, string partFilePath, string gcodeFilePath, SliceProgressReporter reporter)
 		{
 			var gcodeLoadCancellationTokenSource = new CancellationTokenSource();
 

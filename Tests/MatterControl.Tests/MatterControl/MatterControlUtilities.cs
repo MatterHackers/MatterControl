@@ -286,7 +286,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			// An unpredictable period of time will pass between Clicking Save, everything reloading and us returning to the caller.
 			// Block until ReloadAll has completed then close and return to the caller, at which point hopefully everything is reloaded.
-			WaitForReloadAll(testRunner, () => testRunner.ClickByName("Save & Continue Button"));
+			testRunner.WaitForReloadAll(() => testRunner.ClickByName("Save & Continue Button"));
 
 			testRunner.ClickByName("Cancel Wizard Button");
 			testRunner.Delay(1);

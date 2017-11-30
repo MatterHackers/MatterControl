@@ -50,8 +50,10 @@ namespace MatterHackers.MatterControl
 	using MatterHackers.PolygonMesh;
 	using MatterHackers.VectorMath;
 	using MatterHackers.MatterControl.PartPreviewWindow;
+    using System.Collections.Generic;
+    using MatterHackers.MatterControl.PrintLibrary;
 
-	public class BedConfig
+    public class BedConfig
 	{
 		public event EventHandler ActiveLayerChanged;
 
@@ -117,18 +119,60 @@ namespace MatterHackers.MatterControl
 			return new FileSystemFileItem(mcxPath);
 		}
 
-		internal void ClearPlate()
+		internal async Task ClearPlate()
 		{
 			// Clear existing
 			this.LoadedGCode = null;
 			this.GCodeRenderer = null;
 
 			// Load
-			this.LoadContent(new EditContext()
+			await this.LoadContent(new EditContext()
 			{
 				ContentStore = ApplicationController.Instance.Library.PlatingHistory,
 				SourceItem = BedConfig.NewPlatingItem()
-			}).ConfigureAwait(false);
+			});
+		}
+
+		public InsertionGroup AddToPlate(IEnumerable<ILibraryItem> selectedLibraryItems)
+		{
+			InsertionGroup insertionGroup = null;
+
+			var context = ApplicationController.Instance.DragDropData;
+			var scene = context.SceneContext.Scene;
+			scene.Children.Modify(list =>
+			{
+				list.Add(
+					insertionGroup = new InsertionGroup(
+						selectedLibraryItems,
+						context.View3DWidget,
+						scene,
+						context.SceneContext.BedCenter,
+						dragOperationActive: () => false));
+			});
+
+			return insertionGroup;
+		}
+
+		public async Task StashAndPrint(IEnumerable<ILibraryItem> selectedLibraryItems)
+		{
+			// Clear plate
+			await this.ClearPlate();
+
+			// Add content
+			var insertionGroup = this.AddToPlate(selectedLibraryItems);
+			await insertionGroup.LoadingItemsTask;
+
+			// Persist changes
+			this.Save();
+
+			// Slice and print
+			var context = this.EditContext;
+			await ApplicationController.Instance.PrintPart(
+				context.PartFilePath,
+				context.GCodeFilePath,
+				context.SourceItem.Name,
+				this.Printer,
+				null);
 		}
 
 		internal static ILibraryItem LoadLastPlateOrNew()
