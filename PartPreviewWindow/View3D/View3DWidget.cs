@@ -525,7 +525,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void SceneContext_SceneLoaded(object sender, EventArgs e)
 		{
-			if (this.printerTabPage.printerActionsBar?.sliceButton is GuiWidget sliceButton)
+			if (this.printerTabPage?.printerActionsBar?.sliceButton is GuiWidget sliceButton)
 			{
 				sliceButton.Enabled = sceneContext.EditableScene;
 			}
