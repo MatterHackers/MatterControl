@@ -128,7 +128,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							printer,
 							printer.Bed.EditContext.PartFilePath,
 							printer.Bed.EditContext.GCodeFilePath,
-							printerTabPage.view3DWidget,
 							new SliceProgressReporter(this.PopupContent, printer));
 					}
 					catch (Exception ex)

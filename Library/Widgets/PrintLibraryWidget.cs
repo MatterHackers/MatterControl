@@ -400,7 +400,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 										context.GCodeFilePath,
 										context.SourceItem.Name,
 										printer,
-										activeContext.View3DWidget,
 										null);
 								});
 							}

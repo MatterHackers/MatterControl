@@ -1113,7 +1113,7 @@ namespace MatterHackers.MatterControl
 
 		private string doNotAskAgainMessage = "Don't remind me again".Localize();
 
-		public async Task PrintPart(string partFilePath, string gcodeFilePath, string printItemName, PrinterConfig printer, View3DWidget view3DWidget, SliceProgressReporter reporter, bool overrideAllowGCode = false)
+		public async Task PrintPart(string partFilePath, string gcodeFilePath, string printItemName, PrinterConfig printer, SliceProgressReporter reporter, bool overrideAllowGCode = false)
 		{
 			// Exit if called in a non-applicable state
 			if (this.ActivePrinter.Connection.CommunicationState != CommunicationStates.Connected
@@ -1201,7 +1201,6 @@ namespace MatterHackers.MatterControl
 									printer,
 									partFilePath,
 									gcodeFilePath,
-									view3DWidget,
 									reporter);
 
 								partToPrint_SliceDone(partFilePath, gcodeFilePath);
@@ -1275,7 +1274,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public async Task SliceFileLoadOutput(PrinterConfig printer, string partFilePath, string gcodeFilePath, View3DWidget view3DWidget, SliceProgressReporter reporter)
+		public async Task SliceFileLoadOutput(PrinterConfig printer, string partFilePath, string gcodeFilePath, SliceProgressReporter reporter)
 		{
 			var gcodeLoadCancellationTokenSource = new CancellationTokenSource();
 
