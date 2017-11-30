@@ -625,16 +625,21 @@ namespace MatterHackers.PrinterEmulator
 				{
 					if (receiveQueue.Count == 0)
 					{
-						receiveResetEvent.WaitOne();
-					}
+						if (shuttingDown)
+						{
+							return;
+						}
 
-					if (shuttingDown)
-					{
-						return;
+						receiveResetEvent.WaitOne();
 					}
 
 					if (receiveQueue.Count == 0)
 					{
+						if (shuttingDown)
+						{
+							return;
+						}
+
 						Thread.Sleep(10);
 					}
 					else
