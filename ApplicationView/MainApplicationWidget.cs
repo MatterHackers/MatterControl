@@ -71,6 +71,7 @@ namespace MatterHackers.MatterControl
 			var container = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			container.AnchorAll();
 
+			GuiWidget.TouchScreenMode = UserSettings.Instance.IsTouchScreen;
 			if (!UserSettings.Instance.IsTouchScreen)
 			{
 #if false // !__ANDROID__
