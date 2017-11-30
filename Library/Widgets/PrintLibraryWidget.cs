@@ -405,11 +405,14 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				},
 				IsEnabled = (selectedListItems, listView) =>
 				{
+					var communicationState = ApplicationController.Instance.DragDropData?.Printer?.Connection.CommunicationState;
+
 					// Singleselect - disallow containers
 					return listView.SelectedItems.Count == 1
 						&& selectedListItems.FirstOrDefault()?.Model is ILibraryItem firstItem
 						&& !(firstItem is ILibraryContainer)
-						&& ApplicationController.Instance.DragDropData?.Printer?.Connection.CommunicationState == CommunicationStates.Connected;
+						&& (communicationState == CommunicationStates.Connected
+							|| communicationState == CommunicationStates.FinishedPrint);
 				}
 			});
 
