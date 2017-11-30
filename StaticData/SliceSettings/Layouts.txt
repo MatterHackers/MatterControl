@@ -299,6 +299,7 @@ Advanced
         z_homes_to_max
         heat_extruder_before_homing
         validate_layer_height
+        reset_long_extrusion
       Firmware
         gcode_flavor
         use_relative_e_distances

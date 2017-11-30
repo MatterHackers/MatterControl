@@ -91,6 +91,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				new MappedSetting("raft_fan_speed_percent", "raftFanSpeedPercent"),
 				new MappedSetting("retract_length_tool_change", "retractionOnExtruderSwitch"),
 				new MappedSetting("retract_restart_extra_toolchange", "unretractExtraOnExtruderSwitch"),
+				new MappedToBoolString("reset_long_extrusion", "resetLongExtrusion"),
 				new MappedSetting("skirt_distance", "skirtDistanceFromObject"),
 				new MappedSetting("slowdown_below_layer_time", "minimumLayerTimeSeconds"),
 				new MappedSetting("support_air_gap", "supportAirGap"),

@@ -1100,6 +1100,14 @@
 		"DefaultValue": "0"
 	},
 	{
+		"SlicerConfigName": "reset_long_extrusion",
+		"PresentationName": "Reset Long Extrusion",
+		"HelpText": "If the extruder has been running for a long time, it may be reporting values that are too large, this will periodically reset it.",
+		"DataEditType": "CHECK_BOX",
+		"ShowIfSet": "!sla_printer",
+		"DefaultValue": "1"
+	},
+	{
 		"SlicerConfigName": "retract_restart_extra",
 		"PresentationName": "Extra Length On Restart",
 		"HelpText": "Length of filament to extrude after a complete retraction (in addition to the re-extrusion of the Length on Move distance).",
