@@ -411,9 +411,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				{
 					// TODO: Sort out the right way to have an ActivePrinter context that looks and behaves correctly
 					var activeContext = ApplicationController.Instance.DragDropData;
-					var printer = activeContext.Printer;
-
-					printer.Bed.AddToPlate(selectedLibraryItems);
+					activeContext.SceneContext.AddToPlate(selectedLibraryItems);
 				},
 				IsEnabled = (selectedListItems, listView) =>
 				{
