@@ -4687,3 +4687,6 @@ Translated:Reloading
 English:Materials Option
 Translated:Materials Option
 
+English:New Tab
+Translated:New Tab
+
