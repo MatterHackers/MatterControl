@@ -1108,6 +1108,14 @@
 		"DefaultValue": "1"
 	},
 	{
+		"SlicerConfigName": "send_with_checksum",
+		"PresentationName": "Send With Checksum",
+		"HelpText": "Calculate and transmit a standard rep-rap checksum for all commands.",
+		"DataEditType": "CHECK_BOX",
+		"ShowIfSet": "!sla_printer",
+		"DefaultValue": "1"
+	},
+	{
 		"SlicerConfigName": "retract_restart_extra",
 		"PresentationName": "Extra Length On Restart",
 		"HelpText": "Length of filament to extrude after a complete retraction (in addition to the re-extrusion of the Length on Move distance).",

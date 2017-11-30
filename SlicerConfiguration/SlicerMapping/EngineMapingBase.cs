@@ -42,6 +42,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			SettingsKey.bed_shape,
 			SettingsKey.bed_size,
+			SettingsKey.print_center,
+			SettingsKey.send_with_checksum,
 			SettingsKey.bed_temperature,
 			SettingsKey.build_height,
 			SettingsKey.cancel_gcode,
