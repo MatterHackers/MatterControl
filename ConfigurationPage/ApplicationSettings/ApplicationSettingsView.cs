@@ -305,8 +305,30 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			this.AddChild(new SettingsItem("Theme".Localize(), new GuiWidget()));
 			this.AddChild(this.GetThemeControl());
+			this.AddChild(new HorizontalLine(70)
+			{
+				Margin = new BorderDouble(left: 30),
+			});
 
 			var aboutMatterControl = new SettingsItem("About".Localize() + " " + ApplicationController.Instance.ProductName);
+			if (IntPtr.Size == 8)
+			{
+				// Push right
+				aboutMatterControl.AddChild(new HorizontalSpacer());
+
+				// Add x64 adornment
+				var blueBox = new FlowLayoutWidget()
+				{
+					Margin = new BorderDouble(10, 0),
+					Padding = new BorderDouble(2),
+					Border = new BorderDouble(1),
+					BorderColor = ActiveTheme.Instance.PrimaryAccentColor,
+					VAnchor = VAnchor.Center | VAnchor.Fit
+				};
+				blueBox.AddChild(new TextWidget("64", pointSize: 8, textColor: ActiveTheme.Instance.PrimaryAccentColor));
+
+				aboutMatterControl.AddChild(blueBox);
+			}
 			aboutMatterControl.Click += (s, e) =>
 			{
 				UiThread.RunOnIdle(AboutWindow.Show);
