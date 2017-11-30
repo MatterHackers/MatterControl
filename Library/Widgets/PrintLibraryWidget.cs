@@ -384,12 +384,18 @@ namespace MatterHackers.MatterControl.PrintLibrary
 							{
 								UiThread.RunOnIdle(async () =>
 								{
+									// Clear plate
 									await printer.Bed.ClearPlate();
 
-									AddToPlate(selectedLibraryItems);
+									// Add content
+									var insertionGroup = AddToPlate(selectedLibraryItems);
+									await insertionGroup.LoadingItemsTask;
 
+									// Persist changes
+									printer.Bed.Save();
+
+									// Slice and print
 									var context = printer.Bed.EditContext;
-
 									await ApplicationController.Instance.PrintPart(
 										context.PartFilePath,
 										context.GCodeFilePath,
@@ -699,20 +705,24 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			});
 		}
 
-		private static void AddToPlate(IEnumerable<ILibraryItem> selectedLibraryItems)
+		private static InsertionGroup AddToPlate(IEnumerable<ILibraryItem> selectedLibraryItems)
 		{
+			InsertionGroup insertionGroup = null;
+
 			var context = ApplicationController.Instance.DragDropData;
 			var scene = context.SceneContext.Scene;
 			scene.Children.Modify(list =>
 			{
 				list.Add(
-					new InsertionGroup(
+					insertionGroup = new InsertionGroup(
 						selectedLibraryItems,
 						context.View3DWidget,
 						scene,
 						context.SceneContext.BedCenter,
 						dragOperationActive: () => false));
 			});
+
+			return insertionGroup;
 		}
 
 		public override void OnClosed(ClosedEventArgs e)
