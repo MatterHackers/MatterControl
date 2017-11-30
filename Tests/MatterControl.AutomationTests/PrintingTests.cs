@@ -545,7 +545,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		}
 
 		[Test, Category("Emulator")]
-		public async Task CancelingNormalPrintTurnsHeatAndFanOff()
+		public async Task CancelingPrintTurnsHeatAndFanOff()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
@@ -581,12 +581,30 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					};
 					resetEvent.WaitOne();
 
+					// Click close but cancel
+					testRunner.CloseMatterControlViaUi();
+					testRunner.ClickByName("No Button");
+
+					// Wait for close
+					testRunner.WaitVanishForName("Yes Button", 4);
+					testRunner.Delay(2);
+
+					// Confirm abort
+					Assert.IsFalse(MatterControlApplication.Instance.HasBeenClosed, "Canceling Close dialog should *not* close MatterControl");
+
 					// Close MatterControl and cancel print
 					testRunner.CloseMatterControlViaUi();
 					testRunner.ClickByName("Yes Button");
 
 					// Wait for Disconnected CommunicationState which occurs after PrinterConnection.Disable()
 					testRunner.WaitForCommunicationStateDisconnected(maxSeconds: 30);
+
+					// Wait for close
+					testRunner.WaitVanishForName("Yes Button", 4);
+					testRunner.Delay(2);
+
+					// Confirm close
+					Assert.IsTrue(MatterControlApplication.Instance.HasBeenClosed, "Confirming Close dialog *should* close MatterControl");
 
 					// Wait for M106 change
 					testRunner.Delay(() => fanChangedCount > 0, 15, 500);
