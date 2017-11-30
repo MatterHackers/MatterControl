@@ -117,18 +117,18 @@ namespace MatterHackers.MatterControl
 			return new FileSystemFileItem(mcxPath);
 		}
 
-		internal void ClearPlate()
+		internal async Task ClearPlate()
 		{
 			// Clear existing
 			this.LoadedGCode = null;
 			this.GCodeRenderer = null;
 
 			// Load
-			this.LoadContent(new EditContext()
+			await this.LoadContent(new EditContext()
 			{
 				ContentStore = ApplicationController.Instance.Library.PlatingHistory,
 				SourceItem = BedConfig.NewPlatingItem()
-			}).ConfigureAwait(false);
+			});
 		}
 
 		internal static ILibraryItem LoadLastPlateOrNew()

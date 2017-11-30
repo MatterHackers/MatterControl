@@ -384,7 +384,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 							{
 								UiThread.RunOnIdle(async () =>
 								{
-									printer.Bed.ClearPlate();
+									await printer.Bed.ClearPlate();
 
 									AddToPlate(selectedLibraryItems);
 
