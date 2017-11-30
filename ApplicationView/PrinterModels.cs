@@ -50,8 +50,10 @@ namespace MatterHackers.MatterControl
 	using MatterHackers.PolygonMesh;
 	using MatterHackers.VectorMath;
 	using MatterHackers.MatterControl.PartPreviewWindow;
+    using System.Collections.Generic;
+    using MatterHackers.MatterControl.PrintLibrary;
 
-	public class BedConfig
+    public class BedConfig
 	{
 		public event EventHandler ActiveLayerChanged;
 
@@ -129,6 +131,26 @@ namespace MatterHackers.MatterControl
 				ContentStore = ApplicationController.Instance.Library.PlatingHistory,
 				SourceItem = BedConfig.NewPlatingItem()
 			});
+		}
+
+		public InsertionGroup AddToPlate(IEnumerable<ILibraryItem> selectedLibraryItems)
+		{
+			InsertionGroup insertionGroup = null;
+
+			var context = ApplicationController.Instance.DragDropData;
+			var scene = context.SceneContext.Scene;
+			scene.Children.Modify(list =>
+			{
+				list.Add(
+					insertionGroup = new InsertionGroup(
+						selectedLibraryItems,
+						context.View3DWidget,
+						scene,
+						context.SceneContext.BedCenter,
+						dragOperationActive: () => false));
+			});
+
+			return insertionGroup;
 		}
 
 		internal static ILibraryItem LoadLastPlateOrNew()

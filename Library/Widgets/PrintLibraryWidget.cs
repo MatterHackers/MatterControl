@@ -365,7 +365,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					// TODO: Sort out the right way to have an ActivePrinter context that looks and behaves correctly
 					var activeContext = ApplicationController.Instance.DragDropData;
 					var printer = activeContext.Printer;
-					//var printerTabPage = activeContext.View3DWidget.Parents<PrinterTabPage>().FirstOrDefault();
 
 					switch (selectedLibraryItems.FirstOrDefault())
 					{
@@ -388,7 +387,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 									await printer.Bed.ClearPlate();
 
 									// Add content
-									var insertionGroup = AddToPlate(selectedLibraryItems);
+									var insertionGroup = printer.Bed.AddToPlate(selectedLibraryItems);
 									await insertionGroup.LoadingItemsTask;
 
 									// Persist changes
@@ -428,7 +427,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				Title = "Add to Plate".Localize(),
 				Action = (selectedLibraryItems, listView) =>
 				{
-					AddToPlate(selectedLibraryItems);
+					// TODO: Sort out the right way to have an ActivePrinter context that looks and behaves correctly
+					var activeContext = ApplicationController.Instance.DragDropData;
+					var printer = activeContext.Printer;
+
+					printer.Bed.AddToPlate(selectedLibraryItems);
 				},
 				IsEnabled = (selectedListItems, listView) =>
 				{
@@ -703,26 +706,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				},
 				IsEnabled = (selectedListItems, listView) => true
 			});
-		}
-
-		private static InsertionGroup AddToPlate(IEnumerable<ILibraryItem> selectedLibraryItems)
-		{
-			InsertionGroup insertionGroup = null;
-
-			var context = ApplicationController.Instance.DragDropData;
-			var scene = context.SceneContext.Scene;
-			scene.Children.Modify(list =>
-			{
-				list.Add(
-					insertionGroup = new InsertionGroup(
-						selectedLibraryItems,
-						context.View3DWidget,
-						scene,
-						context.SceneContext.BedCenter,
-						dragOperationActive: () => false));
-			});
-
-			return insertionGroup;
 		}
 
 		public override void OnClosed(ClosedEventArgs e)
