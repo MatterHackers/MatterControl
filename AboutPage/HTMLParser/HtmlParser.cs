@@ -88,10 +88,7 @@ namespace MatterHackers.MatterControl.HtmlParsing
 						&& nextOpenPosition != -1)
 					{
 						string content = htmlContent.Substring(closePosition + 1, nextOpenPosition - closePosition - 1);
-						if (!string.IsNullOrWhiteSpace(content))
-						{
-							addContentFunction(this, content);
-						}
+						addContentFunction(this, content);
 					}
 
 					if (voidElements.Contains(elementQueue.Peek().typeName))

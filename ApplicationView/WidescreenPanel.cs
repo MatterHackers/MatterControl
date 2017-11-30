@@ -138,20 +138,6 @@ namespace MatterHackers.MatterControl
 			{
 				VAnchor = VAnchor.Center
 			});
-			if (IntPtr.Size == 8)
-			{
-				var text = new TextWidget("64", pointSize: 8, textColor: ActiveTheme.Instance.PrimaryAccentColor);
-				var container = new FlowLayoutWidget()
-				{
-					Margin = new BorderDouble(5, 0, 0, 0),
-					Padding = new BorderDouble(2),
-					Border = new BorderDouble(1),
-					BorderColor = ActiveTheme.Instance.PrimaryAccentColor,
-					VAnchor = VAnchor.Center | VAnchor.Fit
-				};
-				container.AddChild(text);
-				row.AddChild(container);
-			}
 		}
 	}
 
