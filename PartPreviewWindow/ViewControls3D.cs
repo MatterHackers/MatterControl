@@ -81,8 +81,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private RadioIconButton scaleButton;
 		private RadioIconButton partSelectButton;
 
-		public RadioIconButton Layers2DButton;
-		private RadioIconButton modelViewButton;
+		private RadioIconButton layers2DButton;
+		internal RadioIconButton modelViewButton;
 		private RadioIconButton layers3DButton;
 
 		private EventHandler unregisterEvents;
@@ -143,6 +143,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public ViewControls3D(BedConfig sceneContext, ThemeConfig theme, UndoBuffer undoBuffer)
 		{
+			this.printer = sceneContext.Printer;
+
 			string iconPath;
 
 			var commonMargin = theme.ButtonSpacing;
@@ -265,7 +267,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				SiblingRadioButtonList = buttonGroupB,
 				Name = "Model View Button",
-				Checked = true,
+				Checked = printer?.ViewState.ViewMode == PartViewMode.Model || printer == null,
 				ToolTipText = "Model".Localize(),
 				Margin = commonMargin
 			};
@@ -278,6 +280,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				SiblingRadioButtonList = buttonGroupB,
 				Name = "Layers3D Button",
+				Checked = printer?.ViewState.ViewMode == PartViewMode.Layers3D,
 				ToolTipText = "3D Layers".Localize(),
 				Margin = commonMargin
 			};
@@ -290,17 +293,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			iconPath = Path.Combine("ViewTransformControls", "2d.png");
-			Layers2DButton = new RadioIconButton(AggContext.StaticData.LoadIcon(iconPath, IconColor.Theme), theme)
+			layers2DButton = new RadioIconButton(AggContext.StaticData.LoadIcon(iconPath, IconColor.Theme), theme)
 			{
 				SiblingRadioButtonList = buttonGroupB,
 				Name = "Layers2D Button",
+				Checked = printer?.ViewState.ViewMode == PartViewMode.Layers2D,
 				ToolTipText = "2D Layers".Localize(),
-				Enabled = false,
 				Margin = commonMargin
 			};
-			Layers2DButton.Click += SwitchModes_Click;
-			buttonGroupB.Add(Layers2DButton);
-			this.AddChild(Layers2DButton);
+			layers2DButton.Click += SwitchModes_Click;
+			buttonGroupB.Add(layers2DButton);
+			this.AddChild(layers2DButton);
 
 			this.AddChild(new VerticalLine(50)
 			{
@@ -333,15 +336,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Margin = 3
 			});
 
-			this.printer = sceneContext.Printer;
-
 			if (printer != null)
 			{
 				printer.ViewState.ViewModeChanged += (s, e) =>
 				{
 					if (e.ViewMode == PartViewMode.Layers2D)
 					{
-						this.Layers2DButton.Checked = true;
+						this.layers2DButton.Checked = true;
 					}
 					else if (e.ViewMode == PartViewMode.Layers3D)
 					{

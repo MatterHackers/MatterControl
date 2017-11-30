@@ -345,12 +345,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						Action = async () =>
 						{
 							await this.SaveChanges();
-						}
+						},
+						IsEnabled = () => sceneContext.EditableScene
 					},
 					new NamedAction()
 					{
 						Title = "Save As".Localize(),
-						Action = () => UiThread.RunOnIdle(OpenSaveAsWindow)
+						Action = () => UiThread.RunOnIdle(OpenSaveAsWindow),
+						IsEnabled = () => sceneContext.EditableScene
 					},
 					new NamedAction()
 					{
@@ -365,7 +367,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 										new FileSystemFileItem(sceneContext.EditContext.PartFilePath)
 									}));
 							});
-						}
+						},
+						IsEnabled = () => sceneContext.EditableScene
 					},
 					new NamedAction()
 					{
@@ -373,7 +376,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						Action = () =>
 						{
 							UiThread.RunOnIdle(() => DialogWindow.Show<PublishPartToMatterHackers>());
-						}
+						},
+						IsEnabled = () => sceneContext.EditableScene
 					},
 					new NamedAction()
 					{
@@ -381,7 +385,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						Action = () =>
 						{
 							this.Scene.AutoArrangeChildren(this);
-						}
+						},
+						IsEnabled = () => sceneContext.EditableScene
 					},
 					new NamedAction() { Title = "----" },
 					new NamedAction()
@@ -404,7 +409,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					new PopupButton(buttonView)
 					{
 						PopDirection = Direction.Up,
-						PopupContent = theme.CreatePopupMenu(bedMenuActions),
+						DynamicPopupContent = () => theme.CreatePopupMenu(bedMenuActions),
 						AlignToRightEdge = true,
 						Margin = buttonSpacing,
 						Name = "Bed Options Menu",
@@ -423,7 +428,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Rotation;
 
-			selectedObjectPanel = new SelectedObjectPanel(this, this.Scene, theme)
+			selectedObjectPanel = new SelectedObjectPanel(this, this.Scene, theme, printer)
 			{
 				BackgroundColor = theme.InteractionLayerOverlayColor,
 				VAnchor = VAnchor.Top | VAnchor.Fit,
@@ -439,8 +444,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				SplitterWidth = theme.SplitterWidth,
 				Visible = false,
 			};
-			this.AddChild(selectedObjectContainer);
+			this.InteractionLayer.AddChild(selectedObjectContainer);
 			selectedObjectContainer.AddChild(selectedObjectPanel);
+
+			this.InteractionLayer.AddChild(new TumbleCubeControl(this.InteractionLayer)
+			{
+				Margin = new BorderDouble(50, 0, 0, 50),
+				VAnchor = VAnchor.Top,
+				HAnchor = HAnchor.Left,
+			});
 
 			UiThread.RunOnIdle(AutoSpin);
 
@@ -505,6 +517,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.SwitchStateToEditing();
 
 			this.InteractionLayer.DrawGlOpaqueContent += Draw_GlOpaqueContent;
+
+			this.sceneContext.SceneLoaded += SceneContext_SceneLoaded;
+
+			this.viewControls3D.modelViewButton.Enabled = sceneContext.EditableScene;
+		}
+
+		private void SceneContext_SceneLoaded(object sender, EventArgs e)
+		{
+			if (this.printerTabPage?.printerActionsBar?.sliceButton is GuiWidget sliceButton)
+			{
+				sliceButton.Enabled = sceneContext.EditableScene;
+			}
+
+			this.viewControls3D.modelViewButton.Enabled = sceneContext.EditableScene;
+			this.Invalidate();
 		}
 
 		private void SceneContext_LoadedGCodeChanged(object sender, EventArgs e)
@@ -789,6 +816,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			sceneContext.LoadedGCodeChanged -= SceneContext_LoadedGCodeChanged;
 			this.Scene.SelectionChanged -= Scene_SelectionChanged;
 			this.InteractionLayer.DrawGlOpaqueContent -= Draw_GlOpaqueContent;
+			this.sceneContext.SceneLoaded -= SceneContext_SceneLoaded;
 
 			if (meshViewerWidget != null)
 			{
@@ -806,6 +834,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public bool DragOperationActive { get; private set; }
 
 		public InsertionGroup DragDropObject { get; private set; }
+		public ILibraryContentStream SceneReplacement { get; private set; }
 
 		/// <summary>
 		/// Provides a View3DWidget specific drag implementation
@@ -856,10 +885,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			this.DragOperationActive = true;
 
+			var firstItem = items.FirstOrDefault();
+
+			if ((firstItem is ILibraryContentStream contentStream
+				&& contentStream.ContentType == "gcode")
+				|| firstItem is SceneReplacementFileItem)
+			{
+				DragDropObject = null;
+				this.SceneReplacement = firstItem as ILibraryContentStream;
+
+				// TODO: Figure out a mechanism to disable View3DWidget with dark overlay, displaying something like "Switch to xxx.gcode", make disappear on mouseLeaveBounds and dragfinish
+				this.InteractionLayer.BackgroundColor = new Color(Color.Black, 200);
+
+				return;
+			}
+
 			// Set the hitplane to the bed plane
 			CurrentSelectInfo.HitPlane = bedPlane;
 
-			DragDropObject = new InsertionGroup(
+			var insertionGroup = new InsertionGroup(
 				items,
 				this,
 				this.Scene,
@@ -871,11 +915,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (intersectInfo != null)
 			{
 				// Set the initial transform on the inject part to the current transform mouse position
-				var sourceItemBounds = DragDropObject.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+				var sourceItemBounds = insertionGroup.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 				var center = sourceItemBounds.Center;
 
-				this.DragDropObject.Matrix *= Matrix4X4.CreateTranslation(-center.X, -center.Y, -sourceItemBounds.minXYZ.Z);
-				this.DragDropObject.Matrix *= Matrix4X4.CreateTranslation(new Vector3(intersectInfo.HitPosition));
+				insertionGroup.Matrix *= Matrix4X4.CreateTranslation(-center.X, -center.Y, -sourceItemBounds.minXYZ.Z);
+				insertionGroup.Matrix *= Matrix4X4.CreateTranslation(new Vector3(intersectInfo.HitPosition));
 
 				CurrentSelectInfo.PlaneDownHitPos = intersectInfo.HitPosition;
 				CurrentSelectInfo.LastMoveDelta = Vector3.Zero;
@@ -886,22 +930,41 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Add item to scene and select it
 			this.Scene.Children.Modify(list =>
 			{
-				list.Add(this.DragDropObject);
+				list.Add(insertionGroup);
 			});
-			Scene.SelectedItem = this.DragDropObject;
+			Scene.SelectedItem = insertionGroup;
 
+			this.DragDropObject = insertionGroup;
 		}
 
 		internal void FinishDrop(bool mouseUpInBounds)
 		{
 			if (this.DragOperationActive)
 			{
+				this.InteractionLayer.BackgroundColor = Color.Transparent;
 				this.DragOperationActive = false;
 
 				if (mouseUpInBounds)
 				{
-					if (this.DragDropObject.ContentAcquired)
+					if (this.DragDropObject == null
+						&& this.SceneReplacement != null)
 					{
+						// Drop handler for special case of GCode or similar (change loaded scene to new context)
+						sceneContext.LoadContent(
+							new EditContext()
+							{
+								SourceItem = this.SceneReplacement,
+								// No content store for GCode, otherwise PlatingHistory
+								ContentStore = (this.SceneReplacement.ContentType == "gcode") ? null : ApplicationController.Instance.Library.PlatingHistory
+							}).ConfigureAwait(false);
+
+						this.SceneReplacement = null;
+					}
+					else if (this.DragDropObject.ContentAcquired)
+					{
+
+						// Drop handler for InsertionGroup - all normal content
+						this.viewControls3D.modelViewButton.Enabled = true;
 						this.DragDropObject.Collapse();
 					}
 				}
@@ -1729,7 +1792,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			var selectedItem = Scene.SelectedItem;
-
 
 			if (materialButtons?.Count > 0)
 			{

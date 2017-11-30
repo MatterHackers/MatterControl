@@ -395,7 +395,9 @@ namespace MatterHackers.MatterControl
 					var menuItem = popupMenu.CreateMenuItem(menuAction.Title, menuAction.Icon);
 					menuItem.Name = $"{menuAction.Title} Menu Item";
 
-					menuItem.Enabled = menuAction.Action != null;
+					menuItem.Enabled = menuAction.Action != null
+						&& menuAction.IsEnabled?.Invoke() != false;
+
 					menuItem.ClearRemovedFlag();
 
 					if (menuItem.Enabled)

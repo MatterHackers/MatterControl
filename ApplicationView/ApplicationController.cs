@@ -136,11 +136,6 @@ namespace MatterHackers.MatterControl
 				(this.ActivePrinters as List<PrinterConfig>).Add(printer);
 				this.ActivePrinter = printer;
 
-				if (printer != emptyPrinter)
-				{
-					await printer.Bed.LoadContent();
-				}
-
 				// TODO: Decide if non-printer contexts should prompt for a printer, if we should have a default printer, or get "ActiveTab printer" working
 				// HACK: short term solution to resolve printer reference for non-printer related contexts
 				DragDropData.Printer = printer;

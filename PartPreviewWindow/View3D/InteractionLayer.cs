@@ -75,18 +75,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.AddChild(labelContainer);
 		}
 
-		public override void OnLoad(EventArgs args)
-		{
-			this.AddChild(new TumbleCubeControl(this)
-			{
-				Margin = new BorderDouble(50, 0, 0, 50),
-				VAnchor = VAnchor.Top,
-				HAnchor = HAnchor.Left,
-			});
-
-			base.OnLoad(args);
-		}
-
 		internal void SetRenderTarget(GuiWidget renderSource)
 		{
 			renderSource.AfterDraw += RenderSource_DrawExtra;

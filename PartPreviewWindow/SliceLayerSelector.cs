@@ -131,6 +131,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					VAnchor = VAnchor.Stretch,
 					Margin = new BorderDouble(0, 5),
 					Minimum = 0,
+					Maximum = sceneContext.LoadedGCode?.LayerCount ?? 1,
+					Value = sceneContext.ActiveLayerIndex
 				};
 				layerSlider.ValueChanged += (s, e) =>
 				{
@@ -161,7 +163,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					layerSlider.Maximum = value - 1;
 					layerCountText.Text = value.ToString();
-					layerSlider.Value = 0;
 				}
 			}
 

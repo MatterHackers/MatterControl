@@ -67,16 +67,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 			{
 				UiThread.RunOnIdle(() =>
 				{
+					BedConfig bed;
 					simpleTabs.RemoveTab(simpleTabs.ActiveTab);
 					partPreviewContent.CreatePartTab(
 						"New Part", 
-						new BedConfig(
-							new EditContext()
-							{
-								ContentStore = ApplicationController.Instance.Library.PlatingHistory,
-								SourceItem = BedConfig.NewPlatingItem()
-							}), 
+						bed = new BedConfig(), 
 						theme);
+
+					bed.LoadContent(
+						new EditContext()
+						{
+							ContentStore = ApplicationController.Instance.Library.PlatingHistory,
+							SourceItem = BedConfig.NewPlatingItem()
+						}).ConfigureAwait(false);
 				});
 			};
 

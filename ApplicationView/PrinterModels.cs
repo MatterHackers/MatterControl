@@ -57,6 +57,8 @@ namespace MatterHackers.MatterControl
 
 		public event EventHandler LoadedGCodeChanged;
 
+		public event EventHandler SceneLoaded;
+
 		public View3DConfig RendererOptions { get; } = new View3DConfig();
 
 		public PrinterConfig Printer { get; set; }
@@ -65,17 +67,44 @@ namespace MatterHackers.MatterControl
 
 		public Mesh PrinterShape { get; private set; }
 
-		public BedConfig(EditContext editContext, PrinterConfig printer = null)
+		public BedConfig(PrinterConfig printer = null)
 		{
-			this.EditContext = editContext;
 			this.Printer = printer;
 		}
 
-		public async Task LoadContent()
+		public async Task LoadContent(EditContext editContext)
 		{
-			// View or caller should invoke LoadContent
-			this.EditContext.Content = await EditContext.SourceItem.CreateContent(null);
-			this.Scene.Load(this.EditContext.Content);
+			// Load
+
+			if (editContext.SourceItem is ILibraryContentStream contentStream
+				&& contentStream.ContentType == "gcode")
+			{
+				using (var task = await contentStream.GetContentStream(null))
+				{
+					this.LoadGCode(task.Stream, CancellationToken.None, null);
+				}
+
+				this.Scene.Children.Modify(children => children.Clear());
+				this.EditableScene = false;
+			}
+			else
+			{
+				editContext.Content = await editContext.SourceItem.CreateContent(null);
+				this.Scene.Load(editContext.Content);
+
+				if (File.Exists(editContext?.GCodeFilePath))
+				{
+					this.LoadGCode(editContext.GCodeFilePath, CancellationToken.None, null);
+				}
+
+				this.EditableScene = true;
+			}
+
+			// Store
+			this.EditContext = editContext;
+
+			// Notify
+			this.SceneLoaded?.Invoke(this, null);
 		}
 
 		internal static ILibraryItem NewPlatingItem()
@@ -90,34 +119,23 @@ namespace MatterHackers.MatterControl
 
 		internal void ClearPlate()
 		{
-			string now = DateTime.Now.ToString("yyyyMMdd-HHmmss");
-
-			string mcxPath = Path.Combine(ApplicationDataStorage.Instance.PlatingDirectory, now + ".mcx");
-
 			// Clear existing
 			this.LoadedGCode = null;
 			this.GCodeRenderer = null;
 
-			var content = new Object3D();
-
-			this.Scene.Load(content);
-
-			//this.Scene.Save()
-
-			File.WriteAllText(mcxPath, content.ToJson());
-
-			// TODO: Define and fire event and eliminate ActiveView3DWidget - model objects need to be dependency free. For the time being prevent application spin up in ClearPlate due to the call below - if MC isn't loaded, don't notify
-			if (!MatterControlApplication.IsLoading)
+			// Load
+			this.LoadContent(new EditContext()
 			{
-				ApplicationController.Instance.ActiveView3DWidget?.Invalidate();
-			}
+				ContentStore = ApplicationController.Instance.Library.PlatingHistory,
+				SourceItem = BedConfig.NewPlatingItem()
+			}).ConfigureAwait(false);
 		}
 
 		internal static ILibraryItem LoadLastPlateOrNew()
 		{
 			// Find the last used bed plate mcx
 			var directoryInfo = new DirectoryInfo(ApplicationDataStorage.Instance.PlatingDirectory);
-			var firstFile = directoryInfo.GetFileSystemInfos("*.mcx").OrderByDescending(fl => fl.CreationTime).FirstOrDefault();
+			var firstFile = directoryInfo.GetFileSystemInfos("*.mcx").OrderByDescending(fl => fl.LastWriteTime).FirstOrDefault();
 
 			// Set as the current item - should be restored as the Active scene in the MeshViewer
 			if (firstFile != null)
@@ -267,6 +285,8 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
+		public bool EditableScene { get; private set; }
+
 		internal void Render3DLayerFeatures(DrawEventArgs e)
 		{
 			if (this.RenderInfo != null)
@@ -284,8 +304,64 @@ namespace MatterHackers.MatterControl
 
 		public void LoadGCode(string filePath, CancellationToken cancellationToken, Action<double, string> progressReporter)
 		{
-			this.LoadedGCode = GCodeMemoryFile.Load(filePath, cancellationToken, progressReporter);
+			using (var stream = File.OpenRead(filePath))
+			{
+				this.LoadGCode(stream, cancellationToken, progressReporter);
+			}
+		}
+
+		private RenderType GetRenderType()
+		{
+			var options = this.RendererOptions;
+
+			RenderType renderType = RenderType.Extrusions;
+
+			if (options.RenderMoves)
+			{
+				renderType |= RenderType.Moves;
+			}
+			if (options.RenderRetractions)
+			{
+				renderType |= RenderType.Retractions;
+			}
+			if (options.RenderSpeeds)
+			{
+				renderType |= RenderType.SpeedColors;
+			}
+			if (options.SimulateExtrusion)
+			{
+				renderType |= RenderType.SimulateExtrusion;
+			}
+			if (options.TransparentExtrusion)
+			{
+				renderType |= RenderType.TransparentExtrusion;
+			}
+			if (options.HideExtruderOffsets)
+			{
+				renderType |= RenderType.HideExtruderOffsets;
+			}
+
+			return renderType;
+		}
+
+		public void LoadGCode(Stream stream, CancellationToken cancellationToken, Action<double, string> progressReporter)
+		{
+			this.LoadedGCode = GCodeMemoryFile.Load(stream, cancellationToken, progressReporter);
 			this.GCodeRenderer = new GCodeRenderer(loadedGCode);
+			this.RenderInfo = new GCodeRenderInfo(
+					0,
+					1,
+					Agg.Transform.Affine.NewIdentity(),
+					1,
+					0,
+					1,
+					new Vector2[]
+					{
+						this.Printer.Settings.Helpers.ExtruderOffset(0),
+						this.Printer.Settings.Helpers.ExtruderOffset(1)
+					},
+					this.GetRenderType,
+					MeshViewerWidget.GetExtruderColor);
 
 			if (ActiveSliceSettings.Instance.PrinterSelected)
 			{
@@ -360,14 +436,17 @@ namespace MatterHackers.MatterControl
 
 		internal void Save()
 		{
-			var thumbnailPath = ApplicationController.Instance.ThumbnailCachePath(this.SourceItem);
-			if (File.Exists(thumbnailPath))
+			if (this.ContentStore != null)
 			{
-				File.Delete(thumbnailPath);
-			}
+				var thumbnailPath = ApplicationController.Instance.ThumbnailCachePath(this.SourceItem);
+				if (File.Exists(thumbnailPath))
+				{
+					File.Delete(thumbnailPath);
+				}
 
-			// Call save on the provider
-			this.ContentStore.Save(this.SourceItem, this.Content);
+				// Call save on the provider
+				this.ContentStore.Save(this.SourceItem, this.Content);
+			}
 		}
 	}
 
@@ -457,7 +536,12 @@ namespace MatterHackers.MatterControl
 
 		public PrinterConfig(EditContext editContext, PrinterSettings settings)
 		{
-			this.Bed = new BedConfig(editContext, this);
+			this.Bed = new BedConfig(this);
+
+			if (editContext != null)
+			{
+				this.Bed.LoadContent(editContext).ConfigureAwait(false);
+			}
 
 			this.Connection = new PrinterConnection(printer: this);
 

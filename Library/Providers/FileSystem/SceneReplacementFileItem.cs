@@ -1,6 +1,5 @@
 ﻿/*
 Copyright (c) 2017, John Lewin
-
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -28,49 +27,14 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.Collections.Generic;
-using MatterHackers.Agg.Image;
-using MatterHackers.MeshVisualizer;
 
-namespace MatterHackers.Agg.UI
+namespace MatterHackers.MatterControl.Library
 {
-	public class NamedAction
+	public class SceneReplacementFileItem : FileSystemFileItem
 	{
-		public string Title { get; set; }
-		public Action Action { get; set; }
-		public ImageBuffer Icon { get; set; }
-		public Func<bool> IsEnabled { get; set; }
-	}
-
-	public class SceneSelectionOperation
-	{
-		public string Title { get; set; }
-		public Action<InteractiveScene> Action { get; set; }
-
-		//public bool AllowXXX { get; set; } = false;
-		//public bool AllowYYY { get; set; } = false;
-		//internal MenuItem MenuItem { get; set; }
-	}
-
-	public static class NamedActionExtensions
-	{
-		public static void Add(this List<NamedAction> list, string title, Action action)
+		public SceneReplacementFileItem(string filePath)
+			: base(filePath)
 		{
-			list.Add(new NamedAction()
-			{
-				Title = title,
-				Action = action
-			});
-		}
-
-		public static void Add(this List<SceneSelectionOperation> list, string title, Action<InteractiveScene> action)
-		{
-			list.Add(new SceneSelectionOperation()
-			{
-				Title = title,
-				Action = action
-			});
 		}
 	}
 }
