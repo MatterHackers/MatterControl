@@ -105,6 +105,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string laser_speed_025 = nameof(laser_speed_025);
 		public const string laser_speed_100 = nameof(laser_speed_100);
 		public const string print_center = nameof(print_center);
+		public const string send_with_checksum = nameof(send_with_checksum);
 		public const string print_leveling_data = nameof(print_leveling_data);
 		public const string print_leveling_enabled = nameof(print_leveling_enabled);
 		public const string print_leveling_probe_start = nameof(print_leveling_probe_start);

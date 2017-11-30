@@ -2620,31 +2620,38 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 			KeepTrackOfAbsolutePostionAndDestination(lineToWrite);
 
-			// always send the reset line number without a checksum so that it is accepted
-			string lineWithCount;
-			if (lineToWrite.StartsWith("M110"))
+			if (this.printer.Settings.GetValue<bool>(SettingsKey.send_with_checksum))
 			{
-				lineWithCount = $"N1 {lineToWrite}";
-				GCodeFile.GetFirstNumberAfter("N", lineToWrite, ref currentLineIndexToSend);
-				allCheckSumLinesSent.SetStartingIndex(currentLineIndexToSend);
+				// always send the reset line number without a checksum so that it is accepted
+				string lineWithCount;
+				if (lineToWrite.StartsWith("M110"))
+				{
+					lineWithCount = $"N1 {lineToWrite}";
+					GCodeFile.GetFirstNumberAfter("N", lineToWrite, ref currentLineIndexToSend);
+					allCheckSumLinesSent.SetStartingIndex(currentLineIndexToSend);
+				}
+				else
+				{
+					lineWithCount = $"N{allCheckSumLinesSent.Count} {lineToWrite}";
+					if (lineToWrite.StartsWith("M999"))
+					{
+						allCheckSumLinesSent.SetStartingIndex(1);
+					}
+				}
+
+				string lineWithChecksum = lineWithCount + "*" + GCodeFile.CalculateChecksum(lineWithCount).ToString();
+
+				allCheckSumLinesSent.Add(lineWithChecksum);
+
+				//if ((checkSumCount++ % 11) == 0)
+				//lineWithChecksum = lineWithCount + "*" + (GCodeFile.CalculateChecksum(lineWithCount) + checkSumCount).ToString();
+
+				WriteRawToPrinter(lineWithChecksum + "\n", lineToWrite);
 			}
 			else
 			{
-				lineWithCount = $"N{allCheckSumLinesSent.Count} {lineToWrite}";
-				if (lineToWrite.StartsWith("M999"))
-				{
-					allCheckSumLinesSent.SetStartingIndex(1);
-				}
+				WriteRawToPrinter(lineToWrite + "\n", lineToWrite);
 			}
-
-			string lineWithChecksum = lineWithCount + "*" + GCodeFile.CalculateChecksum(lineWithCount).ToString();
-
-			allCheckSumLinesSent.Add(lineWithChecksum);
-
-			//if ((checkSumCount++ % 11) == 0)
-			//lineWithChecksum = lineWithCount + "*" + (GCodeFile.CalculateChecksum(lineWithCount) + checkSumCount).ToString();
-
-			WriteRawToPrinter(lineWithChecksum + "\n", lineToWrite);
 
 			SetDetailedPrintingState(lineToWrite);
 		}
