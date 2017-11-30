@@ -153,6 +153,28 @@ namespace MatterHackers.MatterControl
 			return insertionGroup;
 		}
 
+		public async Task StashAndPrint(IEnumerable<ILibraryItem> selectedLibraryItems)
+		{
+			// Clear plate
+			await this.ClearPlate();
+
+			// Add content
+			var insertionGroup = this.AddToPlate(selectedLibraryItems);
+			await insertionGroup.LoadingItemsTask;
+
+			// Persist changes
+			this.Save();
+
+			// Slice and print
+			var context = this.EditContext;
+			await ApplicationController.Instance.PrintPart(
+				context.PartFilePath,
+				context.GCodeFilePath,
+				context.SourceItem.Name,
+				this.Printer,
+				null);
+		}
+
 		internal static ILibraryItem LoadLastPlateOrNew()
 		{
 			// Find the last used bed plate mcx

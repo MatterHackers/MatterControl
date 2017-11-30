@@ -383,24 +383,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 							{
 								UiThread.RunOnIdle(async () =>
 								{
-									// Clear plate
-									await printer.Bed.ClearPlate();
-
-									// Add content
-									var insertionGroup = printer.Bed.AddToPlate(selectedLibraryItems);
-									await insertionGroup.LoadingItemsTask;
-
-									// Persist changes
-									printer.Bed.Save();
-
-									// Slice and print
-									var context = printer.Bed.EditContext;
-									await ApplicationController.Instance.PrintPart(
-										context.PartFilePath,
-										context.GCodeFilePath,
-										context.SourceItem.Name,
-										printer,
-										null);
+									await printer.Bed.StashAndPrint(selectedLibraryItems);
 								});
 							}
 							break;
