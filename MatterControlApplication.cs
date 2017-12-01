@@ -161,33 +161,6 @@ namespace MatterHackers.MatterControl
 						ShowMemoryUsed = true;
 						DoCGCollectEveryDraw = true;
 						break;
-
-					//case "CREATE_AND_SELECT_PRINTER":
-					//	if (currentCommandIndex + 1 <= commandLineArgs.Length)
-					//	{
-					//		currentCommandIndex++;
-					//		string argument = commandLineArgs[currentCommandIndex];
-					//		string[] printerData = argument.Split(',');
-					//		if (printerData.Length >= 2)
-					//		{
-					//			Printer ActivePrinter = new Printer();
-
-					//			ActivePrinter.Name = "Auto: {0} {1}".FormatWith(printerData[0], printerData[1]);
-					//			ActivePrinter.Make = printerData[0];
-					//			ActivePrinter.Model = printerData[1];
-
-					//			if (printerData.Length == 3)
-					//			{
-					//				ActivePrinter.ComPort = printerData[2];
-					//			}
-
-					//			PrinterSetupStatus test = new PrinterSetupStatus(ActivePrinter);
-					//			test.LoadSettingsFromConfigFile(ActivePrinter.Make, ActivePrinter.Model);
-					//			ActiveSliceSettings.Instance = ActivePrinter;
-					//		}
-					//	}
-
-					//	break;
 				}
 
 				if (MeshFileIo.ValidFileExtensions().Contains(Path.GetExtension(command).ToUpper()))
@@ -197,21 +170,12 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
-			//WriteTestGCodeFile();
-#if !DEBUG
-			if (File.Exists("RunUnitTests.txt"))
-#endif
-			{
 #if IS_WINDOWS_FORMS
-				if (!Clipboard.IsInitialized)
-				{
-					Clipboard.SetSystemClipboard(new WindowsFormsClipboard());
-				}
-#endif
-
-				// you can turn this on to debug some bounds issues
-				//GuiWidget.DebugBoundsUnderMouse = true;
+			if (!Clipboard.IsInitialized)
+			{
+				Clipboard.SetSystemClipboard(new WindowsFormsClipboard());
 			}
+#endif
 
 			GuiWidget.DefaultEnforceIntegerBounds = true;
 
