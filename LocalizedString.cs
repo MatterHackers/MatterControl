@@ -43,20 +43,7 @@ namespace MatterHackers.Localizations
 			{
 				if (MatterControlTranslationMap == null)
 				{
-#if DEBUG && !__ANDROID__
-					if (!System.Environment.CurrentDirectory.ToLower().Contains(".tests"))
-					{
-						// In debug builds we load a translation map capable of generating/updating master.txt
-						MatterControlTranslationMap = new AutoGeneratingTranslationMap("Translations", UserSettings.Instance.Language);
-					}
-					else
-					{
-						// Create a pass through TranslationMap for tests by requesting a non-existing language name
-						MatterControlTranslationMap = new TranslationMap("Translations", "NA");
-					}
-#else
 					MatterControlTranslationMap = new TranslationMap("Translations", UserSettings.Instance.Language);
-#endif
 				}
 			}
 		}
