@@ -468,9 +468,9 @@ namespace MatterHackers.MatterControl
 
 		public IObject3D Content { get; set; }
 
-		public string GCodeFilePath => printItem.GetGCodePathAndFileName();
+		public string GCodeFilePath => printItem?.GetGCodePathAndFileName();
 
-		public string PartFilePath => printItem.FileLocation;
+		public string PartFilePath => printItem?.FileLocation;
 
 		/// <summary>
 		/// Short term stop gap that should only be used until GCode path helpers, hash code and print recovery components can be extracted
