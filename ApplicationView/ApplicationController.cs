@@ -1123,7 +1123,7 @@ namespace MatterHackers.MatterControl
 					PrintLevelingData levelingData = ActiveSliceSettings.Instance.Helpers.GetPrintLevelingData();
 					if (levelingData?.HasBeenRunAndEnabled() != true)
 					{
-						LevelWizardBase.ShowPrintLevelWizard(ApplicationController.Instance.ActivePrinter);// HACK: We need to show the instance that's printing not the static instance
+						LevelWizardBase.ShowPrintLevelWizard(printer);
 						return;
 					}
 				}
