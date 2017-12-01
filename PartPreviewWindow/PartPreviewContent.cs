@@ -188,7 +188,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 		}
 
-		internal MainTab CreatePartTab(string tabTitle, BedConfig sceneContext, ThemeConfig theme)
+		public MainTab CreatePartTab(string tabTitle, BedConfig sceneContext, ThemeConfig theme)
 		{
 			var partTab = new MainTab(
 				tabTitle,
