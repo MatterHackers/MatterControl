@@ -2495,7 +2495,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 							// Basically we got some response but it did not contain an OK.
 							// The theory is that we may have received a transmission error (like 'OP' rather than 'OK')
 							// and in that event we don't want the print to just stop and wait forever.
-							currentLineIndexToSend--; // we are going to resend the last command
+							currentLineIndexToSend = Math.Max(0, currentLineIndexToSend--); // we are going to resend the last command
 						}
 						else
 						{
