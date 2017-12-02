@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			double.TryParse(xyValueStrings[0], out double currentXValue);
 
-			xEditWidget = new MHNumberEdit(currentXValue, allowDecimals: true, pixelWidth: VectorXYEditWidth, tabIndex: tabIndex)
+			xEditWidget = new MHNumberEdit(currentXValue, allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYEditWidth, tabIndex: tabIndex)
 			{
 				ToolTipText = this.HelpText,
 				TabIndex = tabIndex,
@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			double.TryParse(xyValueStrings[1], out double currentYValue);
 
-			yEditWidget = new MHNumberEdit(currentYValue, allowDecimals: true, pixelWidth: VectorXYEditWidth, tabIndex: tabIndex)
+			yEditWidget = new MHNumberEdit(currentYValue, allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYEditWidth, tabIndex: tabIndex)
 			{
 				ToolTipText = this.HelpText,
 				TabIndex = tabIndex + 1,
