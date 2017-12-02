@@ -124,7 +124,8 @@
 		"HelpText": "Creates a raft under the printed part. Useful to prevent warping when printing ABS (and other warping-prone plastics) as it helps parts adhere to the bed.",
 		"DataEditType": "CHECK_BOX",
 		"ShowIfSet": "!sla_printer",
-		"DefaultValue": "0"
+		"DefaultValue": "0",
+		"ReloadUiWhenChanged": true
 	},
 	{
 		"SlicerConfigName": "raft_extra_distance_around_part",
@@ -133,6 +134,7 @@
 		"DataEditType": "INT_OR_MM",
 		"ExtraSettings": "count or mm",
 		"ShowIfSet": "!sla_printer",
+		"EnableIfSet": "create_raft",
 		"DefaultValue": "5"
 	},
 	{
@@ -142,6 +144,7 @@
 		"DataEditType": "POSITIVE_DOUBLE",
 		"ExtraSettings": "mm",
 		"ShowIfSet": "!sla_printer",
+		"EnableIfSet": "create_raft",
 		"DefaultValue": ".2"
 	},
 	{
@@ -150,6 +153,7 @@
 		"HelpText": "The speed at which the cooling fan(s) will run during the printing of the raft, expressed as a percentage of full power.",
 		"DataEditType": "POSITIVE_DOUBLE",
 		"ExtraSettings": "%",
+		"EnableIfSet": "create_raft",
 		"ShowIfSet": "has_fan",
 		"DefaultValue": "100"
 	},
@@ -1412,6 +1416,7 @@
 		"PresentationName": "Raft Extruder",
 		"HelpText": "The index of the extruder to use to print the raft. Set to 0 to use the support extruder index.",
 		"ShowIfSet": "!sla_printer",
+		"EnableIfSet": "create_raft",
 		"DataEditType": "INT",
 		"DefaultValue": "0"
 	},
