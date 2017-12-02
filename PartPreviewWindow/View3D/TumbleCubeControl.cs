@@ -109,6 +109,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					lastMovePosition = movePosition;
 					interactionLayer.World.RotationMatrix = interactionLayer.World.RotationMatrix * Matrix4X4.CreateRotation(activeRotationQuaternion);
+					interactionLayer.Invalidate();
 				}
 			}
 		}
