@@ -4390,9 +4390,6 @@ Translated:Heat the bed
 English:Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Layers/Surface'
 Translated:Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Layers/Surface'
 
-English:New User? 
-Translated:New User? 
-
 English:Arrange All Parts
 Translated:Arrange All Parts
 
@@ -4461,9 +4458,6 @@ Translated:Hot End
 
 English:Are you sure you want exit while a print is running from SD Card?\n\nNote: If you exit, it is recommended you wait until the print is completed before running MatterControl again.
 Translated:Are you sure you want exit while a print is running from SD Card?\n\nNote: If you exit, it is recommended you wait until the print is completed before running MatterControl again.
-
-English:Version 
-Translated:Version 
 
 English:Developed by:
 Translated:Developed by:
