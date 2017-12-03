@@ -425,8 +425,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void Parent_KeyDown(object sender, KeyEventArgs keyEvent)
 		{
-			if (gcode3DWidget.Visible
-				|| gcode2DWidget.Visible)
+			if (!keyEvent.Handled
+				&& (gcode3DWidget.Visible
+				|| gcode2DWidget.Visible))
 			{
 				switch (keyEvent.KeyCode)
 				{
