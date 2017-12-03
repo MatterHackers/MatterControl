@@ -997,9 +997,6 @@ Translated:Support Type
 English:Top & Bottom Layers
 Translated:Top & Bottom Layers
 
-English:
-Translated:
-
 English:gcode_output_type
 Translated:gcode_output_type
 
