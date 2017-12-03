@@ -159,7 +159,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					// new item can be null by the time this task kicks off
 					var clonedItem = Scene.SelectedItem?.Clone();
-					PlatingHelper.MoveToOpenPositionRelativeGroup(clonedItem, Scene.Children);
+
+					// More usefull if it creates the part in the exact positon and then the user can move it.
+					// Consistent with othre software as well. LBB 2017-12-02
+					//PlatingHelper.MoveToOpenPositionRelativeGroup(clonedItem, Scene.Children);
 
 					return clonedItem;
 				});
