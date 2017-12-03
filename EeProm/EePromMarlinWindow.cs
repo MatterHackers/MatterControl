@@ -136,42 +136,42 @@ namespace MatterHackers.MatterControl.EeProm
 			conterContent.Padding = new BorderDouble(top: 3);
 			conterContent.Margin = new BorderDouble(top: topBarHeight);
 
-			conterContent.AddChild(Create4FieldSet("Steps per mm:".Localize(),
+			conterContent.AddChild(Create4FieldSet("Steps per mm".Localize() + ":",
 				"X:", ref stepsPerMmX,
 				"Y:", ref stepsPerMmY,
 				"Z:", ref stepsPerMmZ,
 				"E:", ref stepsPerMmE));
 
-			conterContent.AddChild(Create4FieldSet("Maximum feedrates [mm/s]:".Localize(),
+			conterContent.AddChild(Create4FieldSet("Maximum feedrates [mm/s]".Localize() + ":",
 				"X:", ref maxFeedrateMmPerSX,
 				"Y:", ref maxFeedrateMmPerSY,
 				"Z:", ref maxFeedrateMmPerSZ,
 				"E:", ref maxFeedrateMmPerSE));
 
-			conterContent.AddChild(Create4FieldSet("Maximum Acceleration [mm/s²]:".Localize(),
+			conterContent.AddChild(Create4FieldSet("Maximum Acceleration [mm/s²]".Localize() + ":",
 				"X:", ref maxAccelerationMmPerSSqrdX,
 				"Y:", ref maxAccelerationMmPerSSqrdY,
 				"Z:", ref maxAccelerationMmPerSSqrdZ,
 				"E:", ref maxAccelerationMmPerSSqrdE));
 
-			conterContent.AddChild(CreateField("Acceleration:".Localize(), ref acceleration));
-			conterContent.AddChild(CreateField("Retract Acceleration:".Localize(), ref retractAcceleration));
+			conterContent.AddChild(CreateField("Acceleration".Localize() + ":", ref acceleration));
+			conterContent.AddChild(CreateField("Retract Acceleration".Localize() + ":", ref retractAcceleration));
 
-			conterContent.AddChild(Create3FieldSet("PID settings:".Localize(),
+			conterContent.AddChild(Create3FieldSet("PID settings".Localize() + ":",
 				"P:", ref pidP,
 				"I:", ref pidI,
 				"D:", ref pidD));
 
-			conterContent.AddChild(Create3FieldSet("Homing Offset:".Localize(),
+			conterContent.AddChild(Create3FieldSet("Homing Offset".Localize() + ":",
 				"X:", ref homingOffsetX,
 				"Y:", ref homingOffsetY,
 				"Z:", ref homingOffsetZ));
 
-			conterContent.AddChild(CreateField("Min feedrate [mm/s]:".Localize(), ref minFeedrate));
-			conterContent.AddChild(CreateField("Min travel feedrate [mm/s]:".Localize(), ref minTravelFeedrate));
-			conterContent.AddChild(CreateField("Minimum segment time [ms]:".Localize(), ref minSegmentTime));
-			conterContent.AddChild(CreateField("Maximum X-Y jerk [mm/s]:".Localize(), ref maxXYJerk));
-			conterContent.AddChild(CreateField("Maximum Z jerk [mm/s]:".Localize(), ref maxZJerk));
+			conterContent.AddChild(CreateField("Min feedrate [mm/s]".Localize() + ":", ref minFeedrate));
+			conterContent.AddChild(CreateField("Min travel feedrate [mm/s]".Localize() + ":", ref minTravelFeedrate));
+			conterContent.AddChild(CreateField("Minimum segment time [ms]".Localize() + ":", ref minSegmentTime));
+			conterContent.AddChild(CreateField("Maximum X-Y jerk [mm/s]".Localize() + ":", ref maxXYJerk));
+			conterContent.AddChild(CreateField("Maximum Z jerk [mm/s]".Localize() + ":", ref maxZJerk));
 
 			GuiWidget topBottomSpacer = new GuiWidget(1, 1);
 			topBottomSpacer.VAnchor = VAnchor.Stretch;

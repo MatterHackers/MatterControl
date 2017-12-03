@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl
 			};
 			contentRow.AddChild(printerNameLabel);
 
-			contentRow.AddChild(new TextWidget("Instructions:".Localize(), 0, 0, 12,textColor:ActiveTheme.Instance.PrimaryTextColor));
+			contentRow.AddChild(new TextWidget("Instructions".Localize() + ":", 0, 0, 12,textColor:ActiveTheme.Instance.PrimaryTextColor));
 			contentRow.AddChild(new TextWidget("1. Power on your 3D Printer.".Localize(), 0, 0, 12,textColor:ActiveTheme.Instance.PrimaryTextColor));
 			contentRow.AddChild(new TextWidget("2. Attach your 3D Printer via USB.".Localize(), 0, 0, 12,textColor:ActiveTheme.Instance.PrimaryTextColor));
 			contentRow.AddChild(new TextWidget("3. Press 'Connect'.".Localize(), 0, 0, 12,textColor:ActiveTheme.Instance.PrimaryTextColor));

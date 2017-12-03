@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		{
 			this.WindowTitle = "Setup Wizard".Localize();
 
-			WrappedTextWidget userSignInPromptLabel = new WrappedTextWidget("Sign in to access your cloud printer profiles.\n\nOnce signed in you will be able to access:".Localize())
+			WrappedTextWidget userSignInPromptLabel = new WrappedTextWidget("Sign in to access your cloud printer profiles.\n\nOnce signed in you will be able to access".Localize() + ":")
 			{
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
 			};

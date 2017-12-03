@@ -117,7 +117,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			};
 
 			// Add label
-			topRow.AddChild(new TextWidget("Preset Name:".Localize(), pointSize: 14)
+			topRow.AddChild(new TextWidget("Preset Name".Localize() + ":", pointSize: 14)
 			{
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
 				VAnchor = VAnchor.Center,

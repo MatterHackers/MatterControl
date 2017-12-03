@@ -72,7 +72,7 @@ namespace MatterHackers.MatterControl
 			var guest = ProfileManager.Load("guest");
 			if (guest?.Profiles.Count > 0)
 			{
-				container.AddChild(new TextWidget("Printers to Copy:".Localize())
+				container.AddChild(new TextWidget("Printers to Copy".Localize() + ":")
 				{
 					TextColor = ActiveTheme.Instance.PrimaryTextColor,
 					Margin = new BorderDouble(0, 3, 0, 15),
