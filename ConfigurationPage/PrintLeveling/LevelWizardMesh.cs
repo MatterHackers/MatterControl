@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	public class LevelWizard3x3Mesh : LevelWizardMeshBase
 	{
 		public LevelWizard3x3Mesh(PrinterConfig printer, LevelWizardBase.RuningState runningState)
-			: base(printer, runningState, 500, 370, 21, 3, 3)
+			: base(printer, runningState, 500, 370, 27, 3, 3)
 		{
 		}
 
