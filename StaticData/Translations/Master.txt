@@ -4186,29 +4186,11 @@ Translated:NOTE: You need to select a printer, but do not need to connect to it.
 English:WARNING: Write Failed!
 Translated:WARNING: Write Failed!
 
-English:Create New Folder:
-Translated:Create New Folder:
-
-English:Top Solid Layers:
-Translated:Top Solid Layers:
-
-English:Bottom Solid Layers:
-Translated:Bottom Solid Layers:
-
-English:Layer(s) To Pause:
-Translated:Layer(s) To Pause:
-
 English:Extruder 1
 Translated:Extruder 1
 
 English:Note: Be sure the tip of the extruder is clean and the bed is clear.
 Translated:Note: Be sure the tip of the extruder is clean and the bed is clear.
-
-English:Rename Item:
-Translated:Rename Item:
-
-English:Rotation Count:
-Translated:Rotation Count:
 
 English:Location: 'Settings & Controls' -> 'Settings' -> 'Printer' -> 'Print Recovery' -> 'Enable Recovery'
 Translated:Location: 'Settings & Controls' -> 'Settings' -> 'Printer' -> 'Print Recovery' -> 'Enable Recovery'
@@ -4230,18 +4212,6 @@ Translated:Material 1
 
 English:Extruder 2
 Translated:Extruder 2
-
-English:Size:
-Translated:Size:
-
-English:Infill:
-Translated:Infill:
-
-English:Start Threshold:
-Translated:Start Threshold:
-
-English:End Threshold:
-Translated:End Threshold:
 
 English:Firmware Version: {0}
 Translated:Firmware Version: {0}
@@ -4278,9 +4248,6 @@ Translated:Slice
 
 English:Slice Parts
 Translated:Slice Parts
-
-English:Spacing:
-Translated:Spacing:
 
 English:Your 3D print has been auto-paused.\nPause layer{0} reached.
 Translated:Your 3D print has been auto-paused.\nPause layer{0} reached.
@@ -4399,9 +4366,6 @@ Translated:Lay Flat
 English:Part
 Translated:Part
 
-English:File export options:
-Translated:File export options:
-
 English:To Folder
 Translated:To Folder
 
@@ -4423,14 +4387,8 @@ Translated:Checks before each print that the layer height is greater than the no
 English:Validate Layer Height
 Translated:Validate Layer Height
 
-English:Rename Printer:
-Translated:Rename Printer:
-
 English:Copy Printers
 Translated:Copy Printers
-
-English:Printers to Copy:
-Translated:Printers to Copy:
 
 English:Sync Printer Profiles Page
 Translated:Sync Printer Profiles Page
@@ -4456,15 +4414,6 @@ Translated:Hot End
 English:Are you sure you want exit while a print is running from SD Card?\n\nNote: If you exit, it is recommended you wait until the print is completed before running MatterControl again.
 Translated:Are you sure you want exit while a print is running from SD Card?\n\nNote: If you exit, it is recommended you wait until the print is completed before running MatterControl again.
 
-English:Developed by:
-Translated:Developed by:
-
-English:Build: 
-Translated:Build: 
-
-English:Status: 
-Translated:Status: 
-
 English:Export selection to:
 Translated:Export selection to:
 
@@ -4474,14 +4423,8 @@ Translated:Machine File (G-Code)
 English:Machine File (X3G)
 Translated:Machine File (X3G)
 
-English:Print Notification Settings:
-Translated:Print Notification Settings:
-
 English:NOTE: Standard messaging rates may apply.
 Translated:NOTE: Standard messaging rates may apply.
-
-English:Enter Share Code:
-Translated:Enter Share Code:
 
 English:Publish
 Translated:Publish
@@ -4518,9 +4461,6 @@ Translated:Change
 
 English:Hotend
 Translated:Hotend
-
-English:Preset Name:
-Translated:Preset Name:
 
 English:Write Filter
 Translated:Write Filter
@@ -4563,42 +4503,6 @@ Translated:The speed at which the nozzle will move when printing the first layer
 
 English:Number of First Layers
 Translated:Number of First Layers
-
-English:Steps per mm:
-Translated:Steps per mm:
-
-English:Maximum feedrates [mm/s]:
-Translated:Maximum feedrates [mm/s]:
-
-English:Maximum Acceleration [mm/s²]:
-Translated:Maximum Acceleration [mm/s²]:
-
-English:Acceleration:
-Translated:Acceleration:
-
-English:Retract Acceleration:
-Translated:Retract Acceleration:
-
-English:PID settings:
-Translated:PID settings:
-
-English:Homing Offset:
-Translated:Homing Offset:
-
-English:Min feedrate [mm/s]:
-Translated:Min feedrate [mm/s]:
-
-English:Min travel feedrate [mm/s]:
-Translated:Min travel feedrate [mm/s]:
-
-English:Minimum segment time [ms]:
-Translated:Minimum segment time [ms]:
-
-English:Maximum X-Y jerk [mm/s]:
-Translated:Maximum X-Y jerk [mm/s]:
-
-English:Maximum Z jerk [mm/s]:
-Translated:Maximum Z jerk [mm/s]:
 
 English:Make Support
 Translated:Make Support
