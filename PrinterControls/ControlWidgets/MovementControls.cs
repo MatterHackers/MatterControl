@@ -184,7 +184,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			disableMotors.Margin = new BorderDouble(0);
 			disableMotors.Click += (s, e) =>
 			{
-				printer.Connection.ReleaseMotors();
+				printer.Connection.ReleaseMotors(true);
 			};
 
 			homeButtonBar.AddChild(homeIconImageWidget);

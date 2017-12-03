@@ -298,6 +298,7 @@ Advanced
       Behavior
         z_homes_to_max
         heat_extruder_before_homing
+        auto_release_motors
         validate_layer_height
         send_with_checksum
         reset_long_extrusion
