@@ -27,12 +27,14 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
+using MatterHackers.Agg.VertexSource;
 using MatterHackers.PolygonMesh;
 using MatterHackers.RayTracer;
 using MatterHackers.RenderOpenGl;
@@ -54,7 +56,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			: base(100, 100)
 		{
 			this.interactionLayer = interactionLayer;
-
+		
 			TextureFace(cube.Faces[0], "Top");
 			TextureFace(cube.Faces[1], "Left", Matrix4X4.CreateRotationZ(MathHelper.Tau / 4));
 			TextureFace(cube.Faces[2], "Right", Matrix4X4.CreateRotationZ(-MathHelper.Tau/4));
@@ -192,6 +194,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				60,
 				justification: Agg.Font.Justification.Center,
 				baseline: Agg.Font.Baseline.BoundsCenter);
+			frontGraphics.Render(new Stroke(new RoundedRect(.5, .5, 254.5, 254.4, 0), 6), Color.DarkGray);
+			//ImageGlPlugin.GetImageGlPlugin(textureToUse, true);
 			MeshHelper.PlaceTextureOnFace(face, textureToUse, MeshHelper.GetMaxFaceProjection(face, textureToUse, initialRotation));
 		}
 	}
