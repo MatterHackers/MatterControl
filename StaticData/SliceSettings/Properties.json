@@ -482,6 +482,14 @@
 		"DefaultValue": "205"
 	},
 	{
+		"SlicerConfigName": "auto_release_motors",
+		"PresentationName": "Auto Release Motors",
+		"HelpText": "Turn off motor current at end of print or after cancel print.",
+		"DataEditType": "CHECK_BOX",
+		"ShowIfSet": "!sla_printer",
+		"DefaultValue": "1"
+	},
+	{
 		"SlicerConfigName": "g0",
 		"PresentationName": "Use G0",
 		"HelpText": "Use G0 for moves rather than G1.",

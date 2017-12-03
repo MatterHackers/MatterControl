@@ -1712,9 +1712,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			serialPort.DtrEnable = true;
 		}
 
-		public void ReleaseMotors()
+		public void ReleaseMotors(bool forceRelease = false)
 		{
-			SendLineToPrinterNow("M84");
+			if (forceRelease
+				|| this.printer.Settings.GetValue<bool>(SettingsKey.auto_release_motors))
+			{
+				SendLineToPrinterNow("M84");
+			}
 		}
 
 		public void RequestPause()

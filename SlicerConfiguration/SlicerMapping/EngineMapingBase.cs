@@ -79,6 +79,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			SettingsKey.number_of_first_layers,
 			SettingsKey.recover_is_enabled,
 			SettingsKey.recover_position_before_z_home,
+			SettingsKey.auto_release_motors,
 			SettingsKey.resume_gcode,
 			SettingsKey.temperature,
 			SettingsKey.enable_retractions,
