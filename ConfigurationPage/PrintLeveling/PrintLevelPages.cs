@@ -443,9 +443,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			base.OnKeyDown(keyEvent);
 		}
 
-		private static string zIsTooLowMessage = "You cannot move any lower. This position on your bed is too low for the extruder to reach. You need to raise your bed, or adjust your limits to allow the extruder to go lower.".Localize();
-		private static string zTooLowTitle = "Warning - Moving Too Low".Localize();
-
 		private void zMinusControl_Click(object sender, EventArgs mouseEvent)
 		{
 			printer.Connection.MoveRelative(PrinterConnection.Axis.Z, -moveAmount, printer.Settings.Helpers.ManualMovementSpeeds().Z);
@@ -593,19 +590,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 	public class GetCoarseBedHeight : FindBedHeight
 	{
-		private static string setZHeightCoarseInstruction1 = "Using the [Z] controls on this screen, we will now take a coarse measurement of the extruder height at this position.".Localize();
-
-		private static string setZHeightCourseInstructTextOne = "Place the paper under the extruder".Localize();
-		private static string setZHeightCourseInstructTextTwo = "Using the above controls".Localize();
-		private static string setZHeightCourseInstructTextThree = "Press [Z-] until there is resistance to moving the paper".Localize();
-		private static string setZHeightCourseInstructTextFour = "Press [Z+] once to release the paper".Localize();
-		private static string setZHeightCourseInstructTextFive = "Finally click 'Next' to continue.".Localize();
-		private static string setZHeightCoarseInstruction2 = string.Format("\t• {0}\n\t• {1}\n\t• {2}\n\t• {3}\n\n{4}", setZHeightCourseInstructTextOne, setZHeightCourseInstructTextTwo, setZHeightCourseInstructTextThree, setZHeightCourseInstructTextFour, setZHeightCourseInstructTextFive);
-
 		protected Vector3 probeStartPosition;
 
-		public GetCoarseBedHeight(PrinterConfig printer, WizardControl container, Vector3 probeStartPosition, string pageDescription, List<ProbePosition> probePositions, int probePositionsBeingEditedIndex)
-			: base(printer, container, pageDescription, setZHeightCoarseInstruction1, setZHeightCoarseInstruction2, 1, probePositions, probePositionsBeingEditedIndex)
+		public GetCoarseBedHeight(PrinterConfig printer, WizardControl container, Vector3 probeStartPosition, string pageDescription, List<ProbePosition> probePositions, int probePositionsBeingEditedIndex, LevelingStrings levelingStrings)
+			: base(printer, container, pageDescription, levelingStrings.CoarseInstruction1, levelingStrings.CoarseInstruction2, 1, probePositions, probePositionsBeingEditedIndex)
 		{
 			this.probeStartPosition = probeStartPosition;
 		}
@@ -643,27 +631,16 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 	public class GetFineBedHeight : FindBedHeight
 	{
-		private static string setZHeightFineInstruction1 = "We will now refine our measurement of the extruder height at this position.".Localize();
-		private static string setZHeightFineInstructionTextOne = "Press [Z-] until there is resistance to moving the paper".Localize();
-		private static string setZHeightFineInstructionTextTwo = "Press [Z+] once to release the paper".Localize();
-		private static string setZHeightFineInstructionTextThree = "Finally click 'Next' to continue.".Localize();
-		private static string setZHeightFineInstruction2 = string.Format("\t• {0}\n\t• {1}\n\n{2}", setZHeightFineInstructionTextOne, setZHeightFineInstructionTextTwo, setZHeightFineInstructionTextThree);
-
-		public GetFineBedHeight(PrinterConfig printer, WizardControl container, string pageDescription, List<ProbePosition> probePositions, int probePositionsBeingEditedIndex)
-			: base(printer, container, pageDescription, setZHeightFineInstruction1, setZHeightFineInstruction2, .1, probePositions, probePositionsBeingEditedIndex)
+		public GetFineBedHeight(PrinterConfig printer, WizardControl container, string pageDescription, List<ProbePosition> probePositions, int probePositionsBeingEditedIndex, LevelingStrings levelingStrings)
+			: base(printer, container, pageDescription, levelingStrings.FineInstruction1, levelingStrings.FineInstruction2, .1, probePositions, probePositionsBeingEditedIndex)
 		{
 		}
 	}
 
 	public class GetUltraFineBedHeight : FindBedHeight
 	{
-		private static string setZHeightFineInstruction1 = "We will now finalize our measurement of the extruder height at this position.".Localize();
-		private static string setHeightFineInstructionTextOne = "Press [Z-] one click PAST the first hint of resistance".Localize();
-		private static string setHeightFineInstructionTextTwo = "Finally click 'Next' to continue.".Localize();
-		private static string setZHeightFineInstruction2 = string.Format("\t• {0}\n\n\n{1}", setHeightFineInstructionTextOne, setHeightFineInstructionTextTwo);
-
-		public GetUltraFineBedHeight(PrinterConfig printer, WizardControl container, string pageDescription, List<ProbePosition> probePositions, int probePositionsBeingEditedIndex)
-			: base(printer, container, pageDescription, setZHeightFineInstruction1, setZHeightFineInstruction2, .02, probePositions, probePositionsBeingEditedIndex)
+		public GetUltraFineBedHeight(PrinterConfig printer, WizardControl container, string pageDescription, List<ProbePosition> probePositions, int probePositionsBeingEditedIndex, LevelingStrings levelingStrings)
+			: base(printer, container, pageDescription, levelingStrings.UltraFineInstruction1, levelingStrings.FineInstruction2, .02, probePositions, probePositionsBeingEditedIndex)
 		{
 		}
 
