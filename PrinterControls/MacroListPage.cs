@@ -39,7 +39,7 @@ namespace MatterHackers.MatterControl
 	public class MacroListPage : DialogPage
 	{
 		public MacroListPage(PrinterSettings printerSettings)
-			: base ("Close")
+			: base ("Close".Localize())
 		{
 			this.WindowTitle = "Macro Editor".Localize();
 			this.HeaderText = "Macro Presets".Localize() + ":";

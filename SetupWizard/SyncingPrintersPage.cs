@@ -15,7 +15,7 @@ namespace MatterHackers.MatterControl.SetupWizard
 	{
 		TextWidget syncingDetails;
 		public SyncingPrintersPage()
-			: base("Close")
+			: base("Close".Localize())
 		{
 			this.WindowTitle = "Sync Printer Profiles Page".Localize();
 

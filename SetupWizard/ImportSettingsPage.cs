@@ -254,7 +254,7 @@ namespace MatterHackers.MatterControl
 	public class ImportSucceeded : DialogPage
 	{
 		public ImportSucceeded(string successMessage) :
-			base("Done")
+			base("Done".Localize())
 		{
 			this.WindowTitle = "Import Wizard".Localize();
 			this.HeaderText = "Import Successful".Localize();
