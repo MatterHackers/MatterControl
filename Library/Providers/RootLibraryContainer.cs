@@ -31,6 +31,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MatterHackers.Agg.Image;
+using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.Library
 {
@@ -50,7 +51,7 @@ namespace MatterHackers.MatterControl.Library
 
 		public string ID { get; } = "rootLibraryProvider";
 
-		public string Name => "Home";
+		public string Name => "Home".Localize();
 
 		public bool IsProtected => true;
 
@@ -69,16 +70,10 @@ namespace MatterHackers.MatterControl.Library
 
 		public void Load() { }
 
-		public void Dispose()
-		{
-		}
+		public void Dispose() { }
 
-		public void Activate()
-		{
-		}
+		public void Activate() { }
 
-		public void Deactivate()
-		{
-		}
+		public void Deactivate() { }
 	}
 }

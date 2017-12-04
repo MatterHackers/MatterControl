@@ -359,7 +359,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			menuActions.Add(new PrintItemAction()
 			{
-				Title = "Print",
+
+				Title = "Print".Localize(),
 				Action = (selectedLibraryItems, listView) =>
 				{
 					// TODO: Sort out the right way to have an ActivePrinter context that looks and behaves correctly
