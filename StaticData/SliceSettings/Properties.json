@@ -629,10 +629,24 @@
 	{
 		"SlicerConfigName": "infill_overlap_perimeter",
 		"PresentationName": "Infill Overlap",
-		"HelpText": "The amount the infill edge will push into the perimeter. Helps ensure the infill is connected to the edge.",
-		"DataEditType": "POSITIVE_DOUBLE",
-		"ExtraSettings": "mm",
-		"DefaultValue": ".1"
+		"HelpText": "The amount the infill edge will push into the perimeter. Helps ensure the infill is connected to the edge. This can be expressed as a percentage of the Nozzle Diameter.",
+		"DataEditType": "DOUBLE_OR_PERCENT",
+		"ExtraSettings": "mm or %",
+		"DefaultValue": "25%",
+		"QuickMenuSettings": [
+			{
+				"MenuName": "Light",
+				"Value": "20%"
+			},
+			{
+				"MenuName": "Standard",
+				"Value": "35%"
+			},
+			{
+				"MenuName": "Heavy",
+				"Value": "75%"
+			}
+		],
 	},
 	{
 		"SlicerConfigName": "laser_speed_025",
@@ -996,7 +1010,21 @@
 		"HelpText": "The distance that a perimeter will overlap itself when it completes its loop, expressed as a percentage of the Nozzle Diameter.",
 		"DataEditType": "POSITIVE_DOUBLE",
 		"ExtraSettings": "%",
-		"DefaultValue": "100"
+		"DefaultValue": "90",
+		"QuickMenuSettings": [
+			{
+				"MenuName": "Light",
+				"Value": "20"
+			},
+			{
+				"MenuName": "Standard",
+				"Value": "80"
+			},
+			{
+				"MenuName": "Heavy",
+				"Value": "100"
+			}
+		],
 	},
 	{
 		"SlicerConfigName": "perimeters",

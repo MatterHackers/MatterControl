@@ -75,6 +75,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string filament_runout_sensor = nameof(filament_runout_sensor);
 		public const string fill_density = nameof(fill_density);
 		public const string fill_thin_gaps = nameof(fill_thin_gaps);
+		public const string infill_overlap_perimeter = nameof(infill_overlap_perimeter);
 		public const string first_layer_extrusion_width = nameof(first_layer_extrusion_width);
 		public const string first_layer_height = nameof(first_layer_height);
 		public const string first_layer_speed = nameof(first_layer_speed);
