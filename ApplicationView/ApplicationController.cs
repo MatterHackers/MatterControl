@@ -273,11 +273,11 @@ namespace MatterHackers.MatterControl
 		private List<SceneSelectionOperation> registeredSceneOperations = new List<SceneSelectionOperation>()
 		{
 			{
-				"Make Support".Localize(),
+				() => "Make Support".Localize(),
 				(scene) => scene.SelectedItem.OutputType = PrintOutputTypes.Support
 			},
 			{
-				"Subtract".Localize(),
+				() => "Subtract".Localize(),
 				(scene) =>
 				{
 					var difference = new MeshWrapperOperation(scene.SelectedItem.Children)
@@ -294,7 +294,7 @@ namespace MatterHackers.MatterControl
 				}
 			},
 			{
-				"Intersect".Localize(),
+				() => "Intersect".Localize(),
 				(scene) =>
 				{
 					var intersection = new MeshWrapperOperation(scene.SelectedItem.Children)
@@ -313,7 +313,7 @@ namespace MatterHackers.MatterControl
 			},
 #if DEBUG // keep this work in progress to the editor for now
 			{
-				"Paint Material".Localize(),
+				() => "Paint Material".Localize(),
 				(scene) =>
 				{
 					var materialPaint = new MeshWrapperOperation(scene.SelectedItem.Children)
@@ -330,15 +330,17 @@ namespace MatterHackers.MatterControl
 				}
 			},
 			{
-				"Bend".Localize(),
+				() => "Bend".Localize(),
 				(scene) => new BendOperation(scene.SelectedItem)
 			},
 			{
-				"Cut Out".Localize(), (scene) => Console.WriteLine("Cut out")
+				() => "Cut Out".Localize(),
+				(scene) => Console.WriteLine("Cut out")
 			},
 			{
 				// Should be a pinch command that makes a pinch object with the correct controls
-				"Pinch".Localize(), (scene) => scene.UndoBuffer.AddAndDo(new GroupCommand(scene, scene.SelectedItem))
+				() => "Pinch".Localize(),
+				(scene) => scene.UndoBuffer.AddAndDo(new GroupCommand(scene, scene.SelectedItem))
 			}
 #endif
 		};
@@ -502,7 +504,7 @@ namespace MatterHackers.MatterControl
 					UiThread.RunOnIdle(ReloadAll);
 				}
 			}, ref unregisterEvents);
-			
+
 			PrinterConnection.ErrorReported.RegisterEvent((s, e) =>
 			{
 				var foundStringEventArgs = e as FoundStringEventArgs;
