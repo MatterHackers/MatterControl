@@ -314,7 +314,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			foreach (var namedAction in ApplicationController.Instance.RegisteredSceneOperations())
 			{
-				var button = new TextButton(namedAction.Title.Localize(), theme)
+				var button = new TextButton(namedAction.Title, theme)
 				{
 					VAnchor = VAnchor.Center,
 					Margin = theme.ButtonSpacing,

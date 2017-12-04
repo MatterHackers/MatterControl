@@ -43,14 +43,15 @@ namespace MatterHackers.Agg.UI
 		public Func<bool> IsEnabled { get; set; }
 	}
 
-	public class SceneSelectionOperation
+	public abstract class LocalizedAction
 	{
-		public string Title { get; set; }
-		public Action<InteractiveScene> Action { get; set; }
+		public Func<string> TitleResolver { get; set; }
+		public string Title => this.TitleResolver?.Invoke();
+	}
 
-		//public bool AllowXXX { get; set; } = false;
-		//public bool AllowYYY { get; set; } = false;
-		//internal MenuItem MenuItem { get; set; }
+	public class SceneSelectionOperation : LocalizedAction
+	{
+		public Action<InteractiveScene> Action { get; set; }
 	}
 
 	public static class NamedActionExtensions
@@ -64,11 +65,11 @@ namespace MatterHackers.Agg.UI
 			});
 		}
 
-		public static void Add(this List<SceneSelectionOperation> list, string title, Action<InteractiveScene> action)
+		public static void Add(this List<SceneSelectionOperation> list, Func<string> titleResolver, Action<InteractiveScene> action)
 		{
 			list.Add(new SceneSelectionOperation()
 			{
-				Title = title,
+				TitleResolver = titleResolver,
 				Action = action
 			});
 		}
