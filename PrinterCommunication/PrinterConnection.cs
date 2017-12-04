@@ -2716,11 +2716,15 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 					try
 					{
-						lock (locker)
+						// only send the line if there is something to send (other than the \n)
+						if (lineToWrite.Trim().Length > 0)
 						{
-							serialPort.Write(lineToWrite);
-							timeSinceLastWrite.Restart();
-							timeHaveBeenWaitingForOK.Restart();
+							lock (locker)
+							{
+								serialPort.Write(lineToWrite);
+								timeSinceLastWrite.Restart();
+								timeHaveBeenWaitingForOK.Restart();
+							}
 						}
 						//Debug.Write("w: " + lineToWrite);
 					}
