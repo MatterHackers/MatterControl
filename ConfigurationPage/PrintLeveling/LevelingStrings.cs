@@ -122,6 +122,32 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public string OverviewText { get; } = "Print Leveling Overview".Localize();
 
+		string setZHeightLower = "Press [Z-] until there is resistance to moving the paper".Localize();
+		string setZHeightRaise = "Press [Z+] once to release the paper".Localize();
+		string setZHeightNext = "Finally click 'Next' to continue.".Localize();
+
+		public string CoarseInstruction1 => "Using the [Z] controls on this screen, we will now take a coarse measurement of the extruder height at this position.".Localize();
+		public string CoarseInstruction2
+		{
+			get
+			{
+				string setZHeightCourseInstructTextOne = "Place the paper under the extruder".Localize();
+				string setZHeightCourseInstructTextTwo = "Using the above controls".Localize();
+				return string.Format("\t• {0}\n\t• {1}\n\t• {2}\n\t• {3}\n\n{4}", setZHeightCourseInstructTextOne, setZHeightCourseInstructTextTwo, setZHeightLower, setZHeightRaise, setZHeightNext);
+			}
+		}
+
+		public string FineInstruction1 => "We will now refine our measurement of the extruder height at this position.".Localize();
+		public string FineInstruction2
+		{
+			get
+			{
+				return string.Format("\t• {0}\n\t• {1}\n\n{2}", setZHeightLower, setZHeightRaise, setZHeightNext);
+			}
+		}
+
+		public string UltraFineInstruction1 => "We will now finalize our measurement of the extruder height at this position.".Localize();
+
 		public string GetStepString(int totalSteps)
 		{
 			return "{0} {1} {2} {3}:".FormatWith(stepTextBeg, stepNumber++, stepTextEnd, totalSteps);

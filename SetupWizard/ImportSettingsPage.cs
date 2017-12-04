@@ -386,13 +386,11 @@ namespace MatterHackers.MatterControl
 			return container;
 		}
 
-		private static string importPrinterSuccessMessage = "You have successfully imported a new printer profile. You can find '{0}' in your list of available printers.".Localize();
-		private static string importSettingSuccessMessage = "You have successfully imported a new {1} setting. You can find '{0}' in your list of {1} settings.".Localize();
-
 		public static void ImportFromExisting(string settingsFilePath)
 		{
 			if (ProfileManager.ImportFromExisting(settingsFilePath))
 			{
+				string importPrinterSuccessMessage = "You have successfully imported a new printer profile. You can find '{0}' in your list of available printers.".Localize();
 				DialogWindow.Show(
 					new ImportSucceeded(importPrinterSuccessMessage.FormatWith(Path.GetFileNameWithoutExtension(settingsFilePath))));
 			}
@@ -497,6 +495,7 @@ namespace MatterHackers.MatterControl
 
 								ActiveSliceSettings.Instance.Save();
 
+								string importSettingSuccessMessage = "You have successfully imported a new {1} setting. You can find '{0}' in your list of {1} settings.".Localize();
 								WizardWindow.ChangeToPage(new ImportSucceeded(importSettingSuccessMessage.FormatWith(Path.GetFileNameWithoutExtension(settingsFilePath), sectionName))
 								{
 									WizardWindow = this.WizardWindow,
