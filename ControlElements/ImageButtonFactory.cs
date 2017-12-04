@@ -53,13 +53,8 @@ namespace MatterHackers.MatterControl
 
 		public static CheckBox CreateToggleSwitch(bool initialState, Color textColor, double pixelWidth, double pixelHeight, bool useStandardLabels = true)
 		{
-			string on = "On";
-			string off = "Off";
-			if (AggContext.StaticData != null)
-			{
-				on = on.Localize();
-				off = off.Localize();
-			}
+			string on = "On".Localize();
+			string off = "Off".Localize();
 
 			if (!useStandardLabels)
 			{
@@ -69,7 +64,7 @@ namespace MatterHackers.MatterControl
 
 			return new CheckBox(
 				new ToggleSwitchView(
-					on, 
+					on,
 					off,
 					pixelWidth,
 					pixelHeight,
