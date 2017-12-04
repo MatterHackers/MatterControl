@@ -69,15 +69,17 @@ namespace MatterHackers.MatterControl.Library
 
 	public class GeneratorItem : ILibraryContentItem
 	{
-		public GeneratorItem(string name)
+		private Func<string> nameResolver;
+
+		public GeneratorItem(Func<string> nameResolver)
 		{
-			this.Name = name;
+			this.nameResolver = nameResolver;
 			this.IsProtected = true;
 		}
 
-		public GeneratorItem(string name, Func<IObject3D> collector, string category = null)
+		public GeneratorItem(Func<string> nameResolver, Func<IObject3D> collector, string category = null)
 		{
-			this.Name = name;
+			this.nameResolver = nameResolver;
 			this.Collector = collector;
 			this.Category = category;
 			this.Color = ColorRange.NextColor();
@@ -85,7 +87,7 @@ namespace MatterHackers.MatterControl.Library
 
 		public string ID => $"MatterHackers/ItemGenerator/{Name}".GetHashCode().ToString();
 		public string Category { get; set; }
-		public string Name { get; set; }
+		public string Name => nameResolver?.Invoke();
 		public string ThumbnailKey { get; } = "";
 
 		public string ContentType { get; set; } = "stl";

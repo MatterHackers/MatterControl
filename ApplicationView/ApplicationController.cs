@@ -386,7 +386,7 @@ namespace MatterHackers.MatterControl
 			{
 				this.Library.RegisterRootProvider(
 					new DynamicContainerLink(
-						"Downloads".Localize(),
+						() => "Downloads".Localize(),
 						LibraryProviderHelpers.LoadInvertIcon("FileDialog", "download_folder.png"),
 						() => new FileSystemContainer(ApplicationDataStorage.Instance.DownloadsDirectory)
 						{
@@ -396,7 +396,7 @@ namespace MatterHackers.MatterControl
 
 			this.Library.RegisterRootProvider(
 				new DynamicContainerLink(
-					"Calibration Parts".Localize(),
+					() => "Calibration Parts".Localize(),
 					LibraryProviderHelpers.LoadInvertIcon("FileDialog", "folder.png"),
 					() => new CalibrationPartsContainer())
 				{
@@ -405,7 +405,7 @@ namespace MatterHackers.MatterControl
 
 			this.Library.RegisterRootProvider(
 				new DynamicContainerLink(
-					"Print Queue".Localize(),
+					() => "Print Queue".Localize(),
 					LibraryProviderHelpers.LoadInvertIcon("FileDialog", "queue_folder.png"),
 					() => new PrintQueueContainer()));
 
@@ -414,7 +414,7 @@ namespace MatterHackers.MatterControl
 			{
 				this.Library.RegisterRootProvider(
 					new DynamicContainerLink(
-						"Local Library".Localize(),
+						() => "Local Library".Localize(),
 						LibraryProviderHelpers.LoadInvertIcon("FileDialog", "library_folder.png"),
 						() => new SqliteLibraryContainer(rootLibraryCollection.Id)));
 			}
@@ -422,7 +422,7 @@ namespace MatterHackers.MatterControl
 
 			this.Library.RegisterRootProvider(
 				new DynamicContainerLink(
-					"Print History".Localize(),
+					() => "Print History".Localize(),
 					LibraryProviderHelpers.LoadInvertIcon("FileDialog", "folder.png"),
 					() => new PrintHistoryContainer())
 				{
@@ -447,7 +447,7 @@ namespace MatterHackers.MatterControl
 
 			this.Library.RegisterRootProvider(
 				new DynamicContainerLink(
-						"SD Card".Localize(),
+						() => "SD Card".Localize(),
 						LibraryProviderHelpers.LoadInvertIcon("FileDialog", "sd_folder.png"),
 						() => new SDCardContainer(),
 						() =>
@@ -466,7 +466,7 @@ namespace MatterHackers.MatterControl
 
 			this.Library.RegisterRootProvider(
 				new DynamicContainerLink(
-					"Plating History".Localize(),
+					() => "Plating History".Localize(),
 					LibraryProviderHelpers.LoadInvertIcon("FileDialog", "folder.png"),
 					() => ApplicationController.Instance.Library.PlatingHistory));
 		}
