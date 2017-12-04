@@ -64,10 +64,7 @@ namespace MatterHackers.MatterControl.AboutPage
 				UpdateControlData.Instance.CheckForUpdateUserRequested();
 			};
 
-			string currentBuildNo = VersionInfo.Instance.BuildVersion;
-			string currentBuildInfoLabel = String.Format("Current Build : {0}", currentBuildNo);
-
-			var currentBuildInfo = new TextWidget(currentBuildInfoLabel.Localize());
+			var currentBuildInfo = new TextWidget("Current Build".Localize() + $" : {VersionInfo.Instance.BuildVersion}");
 			currentBuildInfo.HAnchor = HAnchor.Stretch;
 			currentBuildInfo.Margin = new BorderDouble(left: 5, bottom: 15, top: 20);
 			currentBuildInfo.TextColor = ActiveTheme.Instance.PrimaryTextColor;
