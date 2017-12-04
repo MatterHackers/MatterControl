@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl
 		private List<CheckBox> checkBoxes = new List<CheckBox>();
 
 		public CopyGuestProfilesToUser()
-		: base("Close")
+		: base("Close".Localize())
 		{
 			this.WindowTitle = "Copy Printers".Localize();
 			this.HeaderText = "Copy Printers to Account".Localize();

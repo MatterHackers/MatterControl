@@ -56,8 +56,13 @@ namespace MatterHackers.MatterControl
 
 		private GuiWidget mainContainer;
 
-		public DialogPage(string unlocalizedTextForCancelButton = "Cancel")
+		public DialogPage(string cancelButtonText = null)
 		{
+			if (cancelButtonText == null)
+			{
+				cancelButtonText = "Cancel".Localize();
+			}
+
 			if (!UserSettings.Instance.IsTouchScreen)
 			{
 				this.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
@@ -66,7 +71,7 @@ namespace MatterHackers.MatterControl
 
 			this.AnchorAll();
 
-			cancelButton = textImageButtonFactory.Generate(unlocalizedTextForCancelButton.Localize());
+			cancelButton = textImageButtonFactory.Generate(cancelButtonText);
 			cancelButton.Name = "Cancel Wizard Button";
 
 			// Create the main container

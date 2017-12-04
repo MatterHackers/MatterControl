@@ -39,7 +39,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 	public class ShowAuthPanel : DialogPage
 	{
 		public ShowAuthPanel()
-			: base ("Skip")
+			: base ("Skip".Localize())
 		{
 			this.WindowTitle = "Setup Wizard".Localize();
 
