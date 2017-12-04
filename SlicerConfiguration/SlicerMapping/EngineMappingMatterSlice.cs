@@ -79,7 +79,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				new MappedSetting("disable_fan_first_layers", "firstLayerToAllowFan"),
 				new MappedSetting("extrusion_multiplier", "extrusionMultiplier"),
 				new MappedSetting("fill_angle", "infillStartingAngle"),
-				new MappedSetting("infill_overlap_perimeter", "infillExtendIntoPerimeter"),
+				new AsPercentOfReferenceOrDirect(SettingsKey.infill_overlap_perimeter, "infillExtendIntoPerimeter", SettingsKey.nozzle_diameter),
 				new OverrideSpeedOnSlaPrinters("infill_speed", "infillSpeed", "infill_speed"),
 				new MappedSetting("infill_type", "infillType"),
 				new MappedSetting("max_fan_speed", "fanSpeedMaxPercent"),
