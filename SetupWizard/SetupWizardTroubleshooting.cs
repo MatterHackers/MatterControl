@@ -177,9 +177,9 @@ namespace MatterHackers.MatterControl
 
 #endif
 			connectToPrinterRow = new CriteriaRow(
-				"Connect to Printer",
-				"Connect",
-				"Click the 'Connect' button to retry the original connection attempt",
+				"Connect to Printer".Localize(),
+				"Connect".Localize(),
+				"Click the 'Connect' button to retry the original connection attempt".Localize(),
 				false,
 				() => ApplicationController.Instance.ActivePrinter.Connection.Connect());
 
@@ -213,7 +213,7 @@ namespace MatterHackers.MatterControl
 			private static Color disabledBackColor = new Color(0.22, 0.22, 0.22);
 			private static Color toggleColor = new Color(Color.Gray.red + 2, Color.Gray.green + 2, Color.Gray.blue + 2);
 
-			public CriteriaRow (string itemText, string fixitText, string errorText, bool succeeded, Action fixAction) 
+			public CriteriaRow (string itemText, string fixitText, string errorText, bool succeeded, Action fixAction)
 				: base(FlowDirection.LeftToRight)
 			{
 				HAnchor = HAnchor.Stretch;
@@ -243,15 +243,15 @@ namespace MatterHackers.MatterControl
 						AddSuccessIcon();
 					} else {
 						// Add Fix button
-						Button button  = buttonFactory.Generate(fixitText.Localize());
+						Button button  = buttonFactory.Generate(fixitText);
 						button.VAnchor = VAnchor.Center;
 						button.Padding = new BorderDouble(3, 8);
-						button.Click += (sender, e) => fixAction();
+						button.Click += (sender, e) => fixAction?.Invoke();
 						base.AddChild(button);
 					}
 				}
 
-				if(stillSuccessful) 
+				if(stillSuccessful)
 				{
 					this.BackgroundColor = (criteriaCount % 2 == 0) ? Color.Gray : toggleColor;
 				}

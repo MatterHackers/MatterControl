@@ -39,11 +39,11 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 	public class ShowAuthPanel : DialogPage
 	{
 		public ShowAuthPanel()
-			: base ("Skip")
+			: base ("Skip".Localize())
 		{
 			this.WindowTitle = "Setup Wizard".Localize();
 
-			WrappedTextWidget userSignInPromptLabel = new WrappedTextWidget("Sign in to access your cloud printer profiles.\n\nOnce signed in you will be able to access:".Localize())
+			WrappedTextWidget userSignInPromptLabel = new WrappedTextWidget("Sign in to access your cloud printer profiles.\n\nOnce signed in you will be able to access".Localize() + ":")
 			{
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
 			};

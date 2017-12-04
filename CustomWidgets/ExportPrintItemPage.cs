@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl
 		public ExportPrintItemPage(IEnumerable<ILibraryItem> libraryItems)
 		{
 			this.WindowTitle = "Export File".Localize();
-			this.HeaderText = "Export selection to:".Localize();
+			this.HeaderText = "Export selection to".Localize() + ":";
 
 			this.libraryItems = libraryItems;
 			this.Name = "Export Item Window";
@@ -89,7 +89,7 @@ namespace MatterHackers.MatterControl
 				foreach (IExportPlugin plugin in PluginFinder.CreateInstancesOf<IExportPlugin>().OrderBy(p => p.ButtonText))
 				{
 					// Create export button for each plugin
-					var pluginButton = new RadioButton(new RadioImageWidget(plugin.ButtonText.Localize(), plugin.Icon))
+					var pluginButton = new RadioButton(new RadioImageWidget(plugin.ButtonText, plugin.Icon))
 					{
 						HAnchor = HAnchor.Left,
 						Margin = commonMargin,

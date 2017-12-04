@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl
 			private double extraTextScaling = (UserSettings.Instance.IsTouchScreen) ? 1.33333 : 1;
 
 			public MessageBoxPage(Action<bool> callback, string message, string caption, MessageType messageType, GuiWidget[] extraWidgetsToAdd, double width, double height, string yesOk, string noCancel, ThemeConfig theme)
-				: base((noCancel == "") ? "No" : noCancel)
+				: base((noCancel == "") ? "No".Localize() : noCancel)
 			{
 				this.WindowSize = new VectorMath.Vector2(width, height);
 

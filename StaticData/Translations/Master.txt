@@ -19,14 +19,8 @@ Translated:Select Printer
 English:Options
 Translated:Options
 
-English:Next Print
-Translated:Next Print
-
 English:Add
 Translated:Add
-
-English:Add a file to be printed
-Translated:Add a file to be printed
 
 English:Start
 Translated:Start
@@ -67,15 +61,6 @@ Translated:Resume the current print
 English:Done
 Translated:Done
 
-English:Press 'Add' to choose an item to print
-Translated:Press 'Add' to choose an item to print
-
-English:No items in the print queue
-Translated:No items in the print queue
-
-English:Queued to Print
-Translated:Queued to Print
-
 English:View
 Translated:View
 
@@ -88,12 +73,6 @@ Translated:Add to Queue
 English:Export
 Translated:Export
 
-English:Est. Print Time
-Translated:Est. Print Time
-
-English:Calculating...
-Translated:Calculating...
-
 English:complete
 Translated:complete
 
@@ -102,9 +81,6 @@ Translated:Remove All
 
 English:Export to Zip
 Translated:Export to Zip
-
-English:Export to Folder
-Translated:Export to Folder
 
 English:Extra
 Translated:Extra
@@ -205,9 +181,6 @@ Translated:Close
 English:Generate
 Translated:Generate
 
-English:Press 'generate' to view layers
-Translated:Press 'generate' to view layers
-
 English:Model
 Translated:Model
 
@@ -241,9 +214,6 @@ Translated:Extrude
 English:Communications
 Translated:Communications
 
-English:Fan Controls
-Translated:Fan Controls
-
 English:Fan Speed
 Translated:Fan Speed
 
@@ -271,29 +241,11 @@ Translated:Show Help
 English:Revert
 Translated:Revert
 
-English:Slice Engine
-Translated:Slice Engine
-
-English:No Printer Selected
-Translated:No Printer Selected
-
 English:The shape of the physical print bed.
 Translated:The shape of the physical print bed.
 
-English:Acceleration to during bridging. Set to 0 to disable changing the printer's acceleration.
-Translated:Acceleration to during bridging. Set to 0 to disable changing the printer's acceleration.
-
 English:Turns on and off all cooling settings (all settings below this one).
 Translated:Turns on and off all cooling settings (all settings below this one).
-
-English:Acceleration to use on all moves not defined above. Set to 0 to disable changing the printer's acceleration.
-Translated:Acceleration to use on all moves not defined above. Set to 0 to disable changing the printer's acceleration.
-
-English:Allow slicer to generate extra perimeters when needed for sloping walls.
-Translated:Allow slicer to generate extra perimeters when needed for sloping walls.
-
-English:This is used to figure out how far apart individual parts must be printed to allow them to be completed before printing the next part.
-Translated:This is used to figure out how far apart individual parts must be printed to allow them to be completed before printing the next part.
 
 English:Leave this as 0 to allow automatic calculation of extrusion width.
 Translated:Leave this as 0 to allow automatic calculation of extrusion width.
@@ -310,47 +262,14 @@ Translated:The temperature to set the bed to before printing the first layer. Th
 English:Use G0 for moves rather than G1.
 Translated:Use G0 for moves rather than G1.
 
-English:Speed to fill small gaps. Keep low to avoid vibration. Set to 0 to skip filling small gaps.
-Translated:Speed to fill small gaps. Keep low to avoid vibration. Set to 0 to skip filling small gaps.
-
-English:Use firmware arcs rather than multiple segments for curves.
-Translated:Use firmware arcs rather than multiple segments for curves.
-
-English:Sets which layers will receive infill. This should normally stay set to 1 to make strong parts.
-Translated:Sets which layers will receive infill. This should normally stay set to 1 to make strong parts.
-
-English:The index of the extruder to use for infill.
-Translated:The index of the extruder to use for infill.
-
-English:Sets infill to happen before perimeters are created.
-Translated:Sets infill to happen before perimeters are created.
-
-English:Creates infill only where it will be used as internal support.
-Translated:Creates infill only where it will be used as internal support.
-
-English:Prevents retraction while within a printing perimeter.
-Translated:Prevents retraction while within a printing perimeter.
-
 English:Experimental feature that attempts to improve overhangs using the fan and bridge settings.
 Translated:Experimental feature that attempts to improve overhangs using the fan and bridge settings.
-
-English:Sets the way that slicer creates file names (this is not used by MatterControl).
-Translated:Sets the way that slicer creates file names (this is not used by MatterControl).
-
-English:Acceleration to use on perimeters. Set to 0 to disable changing the printer's acceleration.
-Translated:Acceleration to use on perimeters. Set to 0 to disable changing the printer's acceleration.
-
-English:The index of the extruder to use for perimeters.
-Translated:The index of the extruder to use for perimeters.
 
 English:Number of layers to print before printing any parts.
 Translated:Number of layers to print before printing any parts.
 
 English:Start each new layer from a different vertex to reduce seams.
 Translated:Start each new layer from a different vertex to reduce seams.
-
-English:If set, a retraction will occur prior to changing the layer height.
-Translated:If set, a retraction will occur prior to changing the layer height.
 
 English:The minimum feature size to consider from the model. Leave at 0 to use all the model detail.
 Translated:The minimum feature size to consider from the model. Leave at 0 to use all the model detail.
@@ -363,12 +282,6 @@ Translated:Used for small perimeters (usually holes). This can be set explicitly
 
 English:The pattern used on the bottom and top layers of the print.
 Translated:The pattern used on the bottom and top layers of the print.
-
-English:Forces solid infill for any area less than this amount.
-Translated:Forces solid infill for any area less than this amount.
-
-English:Sets how often a layer will be forced to be solid infilled. Zero will result in normal infill throughout.
-Translated:Sets how often a layer will be forced to be solid infilled. Zero will result in normal infill throughout.
 
 English:The speed to print infill when completely solid. This can be set explicitly or as a percentage of the Infill speed.
 Translated:The speed to print infill when completely solid. This can be set explicitly or as a percentage of the Infill speed.
@@ -499,9 +412,6 @@ Translated:Filament Volume
 English:Weight
 Translated:Weight
 
-English:Show Retractions
-Translated:Show Retractions
-
 English:Go
 Translated:Go
 
@@ -556,9 +466,6 @@ Translated:Auto Connect
 English:Preparing To Print
 Translated:Preparing To Print
 
-English:Preparing to slice model
-Translated:Preparing to slice model
-
 English:Printing
 Translated:Printing
 
@@ -570,9 +477,6 @@ Translated:Auto Uppercase
 
 English:Send
 Translated:Send
-
-English:MatterControl - Terminal
-Translated:MatterControl - Terminal
 
 English:First Layer Height
 Translated:First Layer Height
@@ -588,9 +492,6 @@ Translated:Perimeters
 
 English:Travel
 Translated:Travel
-
-English:First Layer Speed
-Translated:First Layer Speed
 
 English:Modifiers
 Translated:Modifiers
@@ -673,21 +574,6 @@ Translated:External Perimeters First
 English:Top/Bottom Fill Pattern
 Translated:Top/Bottom Fill Pattern
 
-English:Infill Every
-Translated:Infill Every
-
-English:Only Infill Where Needed
-Translated:Only Infill Where Needed
-
-English:Solid Infill Every
-Translated:Solid Infill Every
-
-English:Solid Infill Threshold Area
-Translated:Solid Infill Threshold Area
-
-English:Do Infill Before Perimeters
-Translated:Do Infill Before Perimeters
-
 English:Small Perimeters
 Translated:Small Perimeters
 
@@ -703,9 +589,6 @@ Translated:Top Solid Infill
 English:Bridges
 Translated:Bridges
 
-English:Gap Fill
-Translated:Gap Fill
-
 English:Bridge
 Translated:Bridge
 
@@ -715,14 +598,8 @@ Translated:First Layer
 English:Default
 Translated:Default
 
-English:Acceleration Control
-Translated:Acceleration Control
-
 English:Skirt Height
 Translated:Skirt Height
-
-English:Brim Width
-Translated:Brim Width
 
 English:Brim
 Translated:Brim
@@ -748,32 +625,11 @@ Translated:Interface Pattern Spacing
 English:Complete Individual Objects
 Translated:Complete Individual Objects
 
-English:Extruder Clearance Height
-Translated:Extruder Clearance Height
-
-English:Extruder Clearance Radius
-Translated:Extruder Clearance Radius
-
 English:Sequential Printing
 Translated:Sequential Printing
 
-English:Verbose G-Code
-Translated:Verbose G-Code
-
-English:Output File Name Format
-Translated:Output File Name Format
-
-English:Output File
-Translated:Output File
-
 English:Post-Processing Scripts
 Translated:Post-Processing Scripts
-
-English:Perimeter Extruder
-Translated:Perimeter Extruder
-
-English:Infill Extruder
-Translated:Infill Extruder
 
 English:Support Material Extruder
 Translated:Support Material Extruder
@@ -796,9 +652,6 @@ Translated:Default Extrusion Width
 English:Extrusion Width
 Translated:Extrusion Width
 
-English:Bridge Flow Ratio
-Translated:Bridge Flow Ratio
-
 English:Flow
 Translated:Flow
 
@@ -807,9 +660,6 @@ Translated:Threads
 
 English:Resolution
 Translated:Resolution
-
-English:Extrusion Axis
-Translated:Extrusion Axis
 
 English:Optimize Overhangs
 Translated:Optimize Overhangs
@@ -828,9 +678,6 @@ Translated:G-Code Flavor
 
 English:Use Relative E Distances
 Translated:Use Relative E Distances
-
-English:Use Arcs
-Translated:Use Arcs
 
 English:Use G0
 Translated:Use G0
@@ -859,17 +706,11 @@ Translated:Resume G-Code
 English:Cancel G-Code
 Translated:Cancel G-Code
 
-English:Extruder Offset
-Translated:Extruder Offset
-
 English:Z Lift
 Translated:Z Lift
 
 English:Extra Length On Restart
 Translated:Extra Length On Restart
-
-English:Retract on Layer Change
-Translated:Retract on Layer Change
 
 English:Wipe Before Retract
 Translated:Wipe Before Retract
@@ -877,38 +718,23 @@ Translated:Wipe Before Retract
 English:Paused
 Translated:Paused
 
-English:Printing Paused
-Translated:Printing Paused
-
 English:Ok
 Translated:Ok
 
 English:Finished Print
 Translated:Finished Print
 
-English:Done Printing
-Translated:Done Printing
-
 English:Save As
 Translated:Save As
 
-English:Select a Design Tool
-Translated:Select a Design Tool
-
 English:Select Model
 Translated:Select Model
-
-English:Theme Settings
-Translated:Theme Settings
 
 English:New updates are ready to install.
 Translated:New updates are ready to install.
 
 English:File not found on disk.
 Translated:File not found on disk.
-
-English:Not connected. Press 'Connect' to enable printing.
-Translated:Not connected. Press 'Connect' to enable printing.
 
 English:Loading Parts
 Translated:Loading Parts
@@ -933,9 +759,6 @@ Translated:Saving
 
 English:Export File
 Translated:Export File
-
-English:File export options
-Translated:File export options
 
 English:Export as
 Translated:Export as
@@ -976,12 +799,6 @@ Translated:Note
 English:To enable GCode export, select a printer profile.
 Translated:To enable GCode export, select a printer profile.
 
-English:The amount to remove from the bottom of the model
-Translated:The amount to remove from the bottom of the model
-
-English:Bottom Clip
-Translated:Bottom Clip
-
 English:Infill Overlap
 Translated:Infill Overlap
 
@@ -994,20 +811,11 @@ Translated:Outside Perimeter
 English:Support Type
 Translated:Support Type
 
-English:Top & Bottom Layers
-Translated:Top & Bottom Layers
-
-English:
-Translated:
-
 English:gcode_output_type
 Translated:gcode_output_type
 
 English:Starting Angle
 Translated:Starting Angle
-
-English:Add Printer
-Translated:Add Printer
 
 English:Wipe Shield Dist
 Translated:Wipe Shield Dist
@@ -1039,14 +847,8 @@ Translated:Wipe Shield Distance
 English:Slice Presets Editor
 Translated:Slice Presets Editor
 
-English:Attempting to Connect
-Translated:Attempting to Connect
-
 English:Making Copy
 Translated:Making Copy
-
-English:Arranging Parts
-Translated:Arranging Parts
 
 English:Shaded
 Translated:Shaded
@@ -1204,20 +1006,11 @@ Translated:or
 English:You can also
 Translated:You can also
 
-English:Extruder Temperature Settings
-Translated:Extruder Temperature Settings
-
-English:Temperature Shortcut Presets
-Translated:Temperature Shortcut Presets
-
 English:Label
 Translated:Label
 
 English:Preset
 Translated:Preset
-
-English:Bed Temperature Settings
-Translated:Bed Temperature Settings
 
 English:Movement Speeds
 Translated:Movement Speeds
@@ -1261,9 +1054,6 @@ Translated:Infill Type
 English:Unknown
 Translated:Unknown
 
-English:Press 'Add' to select an item.
-Translated:Press 'Add' to select an item.
-
 English:Shop
 Translated:Shop
 
@@ -1275,18 +1065,6 @@ Translated:Ready to Print
 
 English:File Not Found\n'{0}'
 Translated:File Not Found\n'{0}'
-
-English:Slicing Error.\nPlease review your slice settings.
-Translated:Slicing Error.\nPlease review your slice settings.
-
-English:Special thanks to
-Translated:Special thanks to
-
-English:Alessandro Ranellucci for
-Translated:Alessandro Ranellucci for
-
-English:David Braam and Ultimaker BV for
-Translated:David Braam and Ultimaker BV for
 
 English:To enable GCode export, select a printer profile
 Translated:To enable GCode export, select a printer profile
@@ -1308,9 +1086,6 @@ Translated:Developed by
 
 English:Send Feedback
 Translated:Send Feedback
-
-English:Update Feed
-Translated:Update Feed
 
 English:File
 Translated:File
@@ -1357,9 +1132,6 @@ Translated:Apply
 English:Buy Materials
 Translated:Buy Materials
 
-English:Add File
-Translated:Add File
-
 English:Time
 Translated:Time
 
@@ -1401,9 +1173,6 @@ Translated:Maximum X-Y jerk [mm/s]
 
 English:Maximum Z jerk [mm/s]
 Translated:Maximum Z jerk [mm/s]
-
-English:Design Add-ons
-Translated:Design Add-ons
 
 English:Retrieving download info...
 Translated:Retrieving download info...
@@ -1453,9 +1222,6 @@ Translated:Homing The Printer
 English:Print Leveling Overview
 Translated:Print Leveling Overview
 
-English:Title Stuff
-Translated:Title Stuff
-
 English:Oops! You cannot exit while a print is active.
 Translated:Oops! You cannot exit while a print is active.
 
@@ -1476,9 +1242,6 @@ Translated:The extruder is currently heating and its target temperature cannot b
 
 English:Waiting For Extruder To Heat
 Translated:Waiting For Extruder To Heat
-
-English:The bed is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting bed temperature in 'Slice Settings' -> 'Filament'.\n\n{1}
-Translated:The bed is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting bed temperature in 'Slice Settings' -> 'Filament'.\n\n{1}
 
 English:Waiting For Bed To Heat
 Translated:Waiting For Bed To Heat
@@ -1507,14 +1270,8 @@ Translated:Alert
 English:Report a Bug
 Translated:Report a Bug
 
-English:About MatterControl
-Translated:About MatterControl
-
 English:Oops! Printer could not be detected
 Translated:Oops! Printer could not be detected
-
-English:Load Files
-Translated:Load Files
 
 English:Has Fan
 Translated:Has Fan
@@ -1603,12 +1360,6 @@ Translated:Extrusion
 English:Clear
 Translated:Clear
 
-English:Z Can Be Negative
-Translated:Z Can Be Negative
-
-English:Export as X3G
-Translated:Export as X3G
-
 English:Extruder Change
 Translated:Extruder Change
 
@@ -1660,15 +1411,6 @@ Translated:Ungroup
 English:Selection
 Translated:Selection
 
-English:Preheat
-Translated:Preheat
-
-English:Update Notification Feed
-Translated:Update Notification Feed
-
-English:Pre-Release
-Translated:Pre-Release
-
 English:Development
 Translated:Development
 
@@ -1677,9 +1419,6 @@ Translated:Design
 
 English:Normal
 Translated:Normal
-
-English:Touchscreen
-Translated:Touchscreen
 
 English:Theme
 Translated:Theme
@@ -1756,9 +1495,6 @@ Translated:Invalid printer response
 English:Could not find a selected button.
 Translated:Could not find a selected button.
 
-English:Aligning
-Translated:Aligning
-
 English:Single
 Translated:Single
 
@@ -1786,9 +1522,6 @@ Translated:Amount
 English:Settings
 Translated:Settings
 
-English:No printer is currently selected. Please select a printer to edit slice settings.
-Translated:No printer is currently selected. Please select a printer to edit slice settings.
-
 English:NOTE
 Translated:NOTE
 
@@ -1806,9 +1539,6 @@ Translated:Insert
 
 English:Restore
 Translated:Restore
-
-English:WINDOWED MODE
-Translated:WINDOWED MODE
 
 English:Sending File(s)...
 Translated:Sending File(s)...
@@ -1900,9 +1630,6 @@ Translated:Please wait. Sending files...
 English:Has Hardware Leveling
 Translated:Has Hardware Leveling
 
-English:Inserting Text
-Translated:Inserting Text
-
 English:Reset Connection
 Translated:Reset Connection
 
@@ -1915,9 +1642,6 @@ Translated:Please wait. Slicing files {0} of {1}
 English:Heat Before Homing
 Translated:Heat Before Homing
 
-English:Clear Print History
-Translated:Clear Print History
-
 English:Reset\nConnection
 Translated:Reset\nConnection
 
@@ -1927,14 +1651,8 @@ Translated:Show Reset Connection
 English:You may need to wait a minute for your printer to finish initializing.
 Translated:You may need to wait a minute for your printer to finish initializing.
 
-English:Export to Folder or SD Card
-Translated:Export to Folder or SD Card
-
 English:Print Queue
 Translated:Print Queue
-
-English:Interface Mode
-Translated:Interface Mode
 
 English:Standard
 Translated:Standard
@@ -1959,9 +1677,6 @@ Translated:Top Solid Layers
 
 English:Bottom Solid Layers
 Translated:Bottom Solid Layers
-
-English:Calculating Positions...
-Translated:Calculating Positions...
 
 English:ATX Power Control
 Translated:ATX Power Control
@@ -1999,15 +1714,6 @@ Translated:Check For Update
 English:solid_shell
 Translated:solid_shell
 
-English:GCode file too big to preview ({0}).
-Translated:GCode file too big to preview ({0}).
-
-English:Up to Date
-Translated:Up to Date
-
-English:Checking For Update
-Translated:Checking For Update
-
 English:Loading Parts...
 Translated:Loading Parts...
 
@@ -2044,9 +1750,6 @@ Translated:First Layer Extrusion Width = {0}
 English:Open
 Translated:Open
 
-English:Checking For Update...
-Translated:Checking For Update...
-
 English:Create Folder
 Translated:Create Folder
 
@@ -2062,9 +1765,6 @@ Translated:Create New Folder
 English:Folder Name
 Translated:Folder Name
 
-English:Enter a Folder Name Here
-Translated:Enter a Folder Name Here
-
 English:Design Name
 Translated:Design Name
 
@@ -2079,9 +1779,6 @@ Translated:Purchased
 
 English:Session Expired
 Translated:Session Expired
-
-English:Thumbnail Rendering
-Translated:Thumbnail Rendering
 
 English:Flat
 Translated:Flat
@@ -2125,9 +1822,6 @@ Translated:Oops! You cannot restart while a print is active.
 English:Unable to restart
 Translated:Unable to restart
 
-English:Add File To Queue
-Translated:Add File To Queue
-
 English:Using the above controls
 Translated:Using the above controls
 
@@ -2145,12 +1839,6 @@ Translated:Uploading...
 
 English:Click to show in 3D View
 Translated:Click to show in 3D View
-
-English:Pop This Tab out into its own Window
-Translated:Pop This Tab out into its own Window
-
-English:Bring the Window back into this Tab
-Translated:Bring the Window back into this Tab
 
 English:Update Channel
 Translated:Update Channel
@@ -2170,20 +1858,11 @@ Translated:Disconnect from current printer
 English:Current extruder temperature
 Translated:Current extruder temperature
 
-English:Preheat the Extruder
-Translated:Preheat the Extruder
-
 English:Current bed temperature
 Translated:Current bed temperature
 
-English:Preheat the Bed
-Translated:Preheat the Bed
-
 English:Shop online for printing materials
 Translated:Shop online for printing materials
-
-English:Add an .stl, .amf, .gcode or .zip file to the Library
-Translated:Add an .stl, .amf, .gcode or .zip file to the Library
 
 English:Select Part
 Translated:Select Part
@@ -2193,12 +1872,6 @@ Translated:Move
 
 English:Zoom
 Translated:Zoom
-
-English:Preview 3D Design
-Translated:Preview 3D Design
-
-English:Print leveling is enabled.
-Translated:Print leveling is enabled.
 
 English:Edit notification settings
 Translated:Edit notification settings
@@ -2232,12 +1905,6 @@ Translated:Loading...
 
 English:Wrapping
 Translated:Wrapping
-
-English:Cloud Sync
-Translated:Cloud Sync
-
-English:Include Text
-Translated:Include Text
 
 English:Use Grade 2
 Translated:Use Grade 2
@@ -2302,12 +1969,6 @@ Translated:Exporting to Folder or SD Card
 English:Materials
 Translated:Materials
 
-English:Material {0}
-Translated:Material {0}
-
-English:Redeem Purchase
-Translated:Redeem Purchase
-
 English:Oops! Please sign in to enable this feature.
 Translated:Oops! Please sign in to enable this feature.
 
@@ -2322,9 +1983,6 @@ Translated:Sample the bed at {0} points
 
 English:Layer Height = {0}\nNozzle Diameter = {1}
 Translated:Layer Height = {0}\nNozzle Diameter = {1}
-
-English:Show normal text above the braille
-Translated:Show normal text above the braille
 
 English:The image file you have attempted to load is invalid or has no data. Please check the file or try another image.
 Translated:The image file you have attempted to load is invalid or has no data. Please check the file or try another image.
@@ -2367,9 +2025,6 @@ Translated:Error Loading Contents
 
 English:CHANGE
 Translated:CHANGE
-
-English:REVERT
-Translated:REVERT
 
 English:UPDATE
 Translated:UPDATE
@@ -2461,14 +2116,8 @@ Translated:Extruder Temperatures
 English:Bed Temperatures
 Translated:Bed Temperatures
 
-English:Waiting for device to connect...
-Translated:Waiting for device to connect...
-
 English:Detecting device firmware...
 Translated:Detecting device firmware...
-
-English:Detecting target firmware...
-Translated:Detecting target firmware...
 
 English:Support Percent
 Translated:Support Percent
@@ -2485,9 +2134,6 @@ Translated:The X and Y values of the size of the print bed, in millimeters. For 
 English:The temperature to which the bed will be set for the duration of the print. Set to 0 to disable.
 Translated:The temperature to which the bed will be set for the duration of the print. Set to 0 to disable.
 
-English:The amount to remove from the bottom of the model, in millimeters.
-Translated:The amount to remove from the bottom of the model, in millimeters.
-
 English:The number of layers or the distance in millimeters to solid fill on the bottom surface(s) of the object. Add mm to the end of the number to specify distance in millimeters.
 Translated:The number of layers or the distance in millimeters to solid fill on the bottom surface(s) of the object. Add mm to the end of the number to specify distance in millimeters.
 
@@ -2496,9 +2142,6 @@ Translated:The speed at which the layer cooling fan will run when bridging, expr
 
 English:The speed at which bridging between walls will print.
 Translated:The speed at which bridging between walls will print.
-
-English:The amount of brim that will be drawn around each object, in millimeters. This can be useful to ensure that parts stay affixed to the bed.
-Translated:The amount of brim that will be drawn around each object, in millimeters. This can be useful to ensure that parts stay affixed to the bed.
 
 English:G-Code to run when a print is canceled.
 Translated:G-Code to run when a print is canceled.
@@ -2533,9 +2176,6 @@ Translated:The number of extruders the printer has.
 English:Forces the printer to heat the nozzle before homing.
 Translated:Forces the printer to heat the nozzle before homing.
 
-English:This is the identifier used in the G-Code to specify the extruder.
-Translated:This is the identifier used in the G-Code to specify the extruder.
-
 English:The actual diameter of the filament used for printing.
 Translated:The actual diameter of the filament used for printing.
 
@@ -2547,15 +2187,6 @@ Translated:The amount of infill material to generate, expressed as a ratio or a 
 
 English:The geometric shape of the support structure for the inside of parts.
 Translated:The geometric shape of the support structure for the inside of parts.
-
-English:Acceleration to use while printing the first layer. Set to 0 to use the default first layer acceleration.
-Translated:Acceleration to use while printing the first layer. Set to 0 to use the default first layer acceleration.
-
-English:The speed at which the nozzle will move when printing the first layer. If expressed as a percentage the Infill speed is modified.
-Translated:The speed at which the nozzle will move when printing the first layer. If expressed as a percentage the Infill speed is modified.
-
-English:Include detailed comments in the G-Code.
-Translated:Include detailed comments in the G-Code.
 
 English:The version of G-Code the printer's firmware communicates with. Some firmware use different G and M codes. Setting this ensures that the output G-Code will use the correct commands.
 Translated:The version of G-Code the printer's firmware communicates with. Some firmware use different G and M codes. Setting this ensures that the output G-Code will use the correct commands.
@@ -2575,9 +2206,6 @@ Translated:The printer has a SD card reader.
 English:Shows a button at the right side of the Printer Connection Bar used to reset the USB connection to the printer. This can be used on printers that support it as an emergency stop.
 Translated:Shows a button at the right side of the Printer Connection Bar used to reset the USB connection to the printer. This can be used on printers that support it as an emergency stop.
 
-English:Acceleration to use when printing infill. Set to 0 to disable changing the printer's acceleration.
-Translated:Acceleration to use when printing infill. Set to 0 to disable changing the printer's acceleration.
-
 English:The speed at which infill will print.
 Translated:The speed at which infill will print.
 
@@ -2586,9 +2214,6 @@ Translated:The print leveling algorithm to use.
 
 English:G-Code to be run after the change in Z height for the next layer.
 Translated:G-Code to be run after the change in Z height for the next layer.
-
-English:The height of each layer of the print, except the first. A smaller number will create more layers and more vertical accuracy but also a slower print.
-Translated:The height of each layer of the print, except the first. A smaller number will create more layers and more vertical accuracy but also a slower print.
 
 English:Sets the size of the outer solid surface (perimeter) for the entire print.
 Translated:Sets the size of the outer solid surface (perimeter) for the entire print.
@@ -2737,9 +2362,6 @@ Translated:Creates a perimeter around the part on which to wipe the other nozzle
 English:The length and width of a tower created at the back left of the print used for wiping the next nozzle when changing between multiple extruders. Set to 0 to disable.
 Translated:The length and width of a tower created at the back left of the print used for wiping the next nozzle when changing between multiple extruders. Set to 0 to disable.
 
-English:Allows the printer to attempt going below 0 along the Z axis during the Software Print Leveling wizard, and disables related warnings. Does not override actual endstops, physical or software.
-Translated:Allows the printer to attempt going below 0 along the Z axis during the Software Print Leveling wizard, and disables related warnings. Does not override actual endstops, physical or software.
-
 English:The distance to move the nozzle along the Z axis to ensure that it is the correct distance from the print bed. A positive number will raise the nozzle, and a negative number will lower it.
 Translated:The distance to move the nozzle along the Z axis to ensure that it is the correct distance from the print bed. A positive number will raise the nozzle, and a negative number will lower it.
 
@@ -2757,9 +2379,6 @@ Translated:Downloads
 
 English:Local Library
 Translated:Local Library
-
-English:Go to Dashboard
-Translated:Go to Dashboard
 
 English:Sign Up for an Account
 Translated:Sign Up for an Account
@@ -2818,9 +2437,6 @@ Translated:sign out
 English:No macros are currently set up for this printer.
 Translated:No macros are currently set up for this printer.
 
-English:The offset of each extruder relative to the first extruder. Only useful for multiple extruder machines.
-Translated:The offset of each extruder relative to the first extruder. Only useful for multiple extruder machines.
-
 English:A modifier of the width of the extrusion for the first layer of the print. A value greater than 100% can help with adhesion to the print bed.
 Translated:A modifier of the width of the extrusion for the first layer of the print. A value greater than 100% can help with adhesion to the print bed.
 
@@ -2847,12 +2463,6 @@ Translated:Application
 
 English:Language
 Translated:Language
-
-English:Display Mode
-Translated:Display Mode
-
-English:Loading G-Code...
-Translated:Loading G-Code...
 
 English:demo
 Translated:demo
@@ -2904,9 +2514,6 @@ Translated:The speed at which outside, external, or the otherwise visible perime
 
 English:Used to specify if more than one extruder share a common heater cartridge.
 Translated:Used to specify if more than one extruder share a common heater cartridge.
-
-English:The height of the first layer. A first layer taller than the default layer height can ensure good adhesion to the build plate.
-Translated:The height of the first layer. A first layer taller than the default layer height can ensure good adhesion to the build plate.
 
 English:The printer has the ability to control the power supply. Enable this function to show the ATX Power Control section on the Controls pane.
 Translated:The printer has the ability to control the power supply. Enable this function to show the ATX Power Control section on the Controls pane.
@@ -3031,9 +2638,6 @@ Translated:Will Clear at End of Print
 English:Settings Will Clear at End of Print
 Translated:Settings Will Clear at End of Print
 
-English:Max Temp
-Translated:Max Temp
-
 English:Add a new Macro
 Translated:Add a new Macro
 
@@ -3115,14 +2719,8 @@ Translated:Camera Monitoring
 English:Details
 Translated:Details
 
-English:Edit Printer Settings
-Translated:Edit Printer Settings
-
 English:Edit Selected Setting
 Translated:Edit Selected Setting
-
-English:Edit Current Printer Settings
-Translated:Edit Current Printer Settings
 
 English:Printer Settings
 Translated:Printer Settings
@@ -3130,14 +2728,8 @@ Translated:Printer Settings
 English:Delete Printer
 Translated:Delete Printer
 
-English:Estimated Print Time
-Translated:Estimated Print Time
-
 English:Setup Wizard
 Translated:Setup Wizard
-
-English:Setup Options
-Translated:Setup Options
 
 English:Connect Your Device
 Translated:Connect Your Device
@@ -3181,15 +2773,6 @@ Translated:mm zero to disable
 English:Connection Troubleshooting
 Translated:Connection Troubleshooting
 
-English:Generate Extra Perimeters When Needed
-Translated:Generate Extra Perimeters When Needed
-
-English:mm2
-Translated:mm2
-
-English:mm/s�
-Translated:mm/s�
-
 English:mm or % leave 0 for auto
 Translated:mm or % leave 0 for auto
 
@@ -3198,9 +2781,6 @@ Translated:Enable Fan If Layer Print Time Is Below
 
 English:Hz
 Translated:Hz
-
-English:Current Settings
-Translated:Current Settings
 
 English:Export MatterControl settings (*.printer)
 Translated:Export MatterControl settings (*.printer)
@@ -3400,15 +2980,6 @@ Translated:Properties
 English:Temperatures
 Translated:Temperatures
 
-English:While Printing
-Translated:While Printing
-
-English:On Tool Change
-Translated:On Tool Change
-
-English:Select a Printer.
-Translated:Select a Printer.
-
 English:The profile you are attempting to load has been corrupted. We loaded your last usable {0} {1} profile from your recent profile history instead.
 Translated:The profile you are attempting to load has been corrupted. We loaded your last usable {0} {1} profile from your recent profile history instead.
 
@@ -3453,9 +3024,6 @@ Translated:Sailfish Communication
 
 English:The position (X and Y coordinates) of the center of the print bed, in millimeters. Normally this is 1/2 the bed size for Cartesian printers and 0, 0 for Delta printers.
 Translated:The position (X and Y coordinates) of the center of the print bed, in millimeters. Normally this is 1/2 the bed size for Cartesian printers and 0, 0 for Delta printers.
-
-English:Update Required
-Translated:Update Required
 
 English:There is a required update available.
 Translated:There is a required update available.
@@ -3565,12 +3133,6 @@ Translated:Connection Status
 English:Retry Login
 Translated:Retry Login
 
-English:Select and add a new printer.
-Translated:Select and add a new printer.
-
-English:Select an existing printer.
-Translated:Select an existing printer.
-
 English:The distance between the top of the support and the bottom of the model. A good value depends on the type of material. For ABS and PLA a value between 0.4 and 0.6 works well, respectively.
 Translated:The distance between the top of the support and the bottom of the model. A good value depends on the type of material. For ABS and PLA a value between 0.4 and 0.6 works well, respectively.
 
@@ -3628,9 +3190,6 @@ Translated:Merge Overlapping Lines
 English:Restore Settings
 Translated:Restore Settings
 
-English:Streaming GCode...
-Translated:Streaming GCode...
-
 English:Layers & Infill
 Translated:Layers & Infill
 
@@ -3645,9 +3204,6 @@ Translated:Library - Enter Share Code
 
 English:OK
 Translated:OK
-
-English:This controls the ratio of material extruded during bridging. Reducing this slightly can help bridging by stretching the filament more, and using a fan can also help greatly.
-Translated:This controls the ratio of material extruded during bridging. Reducing this slightly can help bridging by stretching the filament more, and using a fan can also help greatly.
 
 English:Each individual part is printed to completion then the nozzle is lowered back to the bed and the next part is printed.
 Translated:Each individual part is printed to completion then the nozzle is lowered back to the bed and the next part is printed.
@@ -3688,9 +3244,6 @@ Translated:- none -
 English:Actions
 Translated:Actions
 
-English:Show In Action Menu
-Translated:Show In Action Menu
-
 English:Unable to Connect
 Translated:Unable to Connect
 
@@ -3714,9 +3267,6 @@ Translated:Continue Printing
 
 English:recovered once
 Translated:recovered once
-
-English:Add New Printer
-Translated:Add New Printer
 
 English:Add New Setting
 Translated:Add New Setting
@@ -3799,59 +3349,8 @@ Translated:Home Y
 English:Home Z
 Translated:Home Z
 
-English:Open cloud sync dashboard in web browser
-Translated:Open cloud sync dashboard in web browser
-
 English:Restart
 Translated:Restart
-
-English:Please Review Your Order
-Translated:Please Review Your Order
-
-English:Loading product information. Please wait...
-Translated:Loading product information. Please wait...
-
-English:Enter Code
-Translated:Enter Code
-
-English:Use Promo Code
-Translated:Use Promo Code
-
-English:Applying...
-Translated:Applying...
-
-English:Enter your Billing Address
-Translated:Enter your Billing Address
-
-English:Full Name
-Translated:Full Name
-
-English:Enter your Payment Info
-Translated:Enter your Payment Info
-
-English:Place Order
-Translated:Place Order
-
-English:Additional payment options coming soon!
-Translated:Additional payment options coming soon!
-
-English:- Please Select -
-Translated:- Please Select -
-
-English:Credit Card Number
-Translated:Credit Card Number
-
-English:Expiration Date
-Translated:Expiration Date
-
-English:Card Verification Number
-Translated:Card Verification Number
-
-English:Saving...
-Translated:Saving...
-
-English:Oops! Payment has been declined.
-Translated:Oops! Payment has been declined.
 
 English:Distance or Loops
 Translated:Distance or Loops
@@ -3871,17 +3370,8 @@ Translated:The distance between the top of the raft and the bottom of the model.
 English:Clear ZOffset
 Translated:Clear ZOffset
 
-English:Printing Window...
-Translated:Printing Window...
-
-English:Only Retract When Crossing Perimeters
-Translated:Only Retract When Crossing Perimeters
-
 English:baby_step_z_offset
 Translated:baby_step_z_offset
-
-English:gcode_arcs
-Translated:gcode_arcs
 
 English:calibration_files
 Translated:calibration_files
@@ -3919,12 +3409,6 @@ Translated:Done!
 English:Print Monitor
 Translated:Print Monitor
 
-English:Currently Printing
-Translated:Currently Printing
-
-English:Homing Axis
-Translated:Homing Axis
-
 English:Waiting for Extruder to Heat to
 Translated:Waiting for Extruder to Heat to
 
@@ -3942,9 +3426,6 @@ Translated:Tuning Adjust
 
 English:Initializing
 Translated:Initializing
-
-English:Connection Failed
-Translated:Connection Failed
 
 English:Show Password
 Translated:Show Password
@@ -4048,9 +3529,6 @@ Translated:Has Z Probe
 English:Overhang
 Translated:Overhang
 
-English:OpenSCAD1
-Translated:OpenSCAD1
-
 English:Images
 Translated:Images
 
@@ -4117,9 +3595,6 @@ Translated:More...
 English:Select Image
 Translated:Select Image
 
-English:Unlock to Print
-Translated:Unlock to Print
-
 English:Demo
 Translated:Demo
 
@@ -4171,9 +3646,6 @@ Translated:Lower / Deploy
 English:Raise / Stow
 Translated:Raise / Stow
 
-English:The layer(s) at which the print will pause, allowing for a change in filament. Leave blank to disable. To pause on multiple layers, separate the layer numbers with semicolons. For example: "16; 37".
-Translated:The layer(s) at which the print will pause, allowing for a change in filament. Leave blank to disable. To pause on multiple layers, separate the layer numbers with semicolons. For example: "16; 37".
-
 English:If set, these positions will be used when running the leveling solution. Leave empty for defaults. Data Format:'X1,Y1:...:Xn,Yn'
 Translated:If set, these positions will be used when running the leveling solution. Leave empty for defaults. Data Format:'X1,Y1:...:Xn,Yn'
 
@@ -4183,35 +3655,11 @@ Translated:Touch Screen Mode
 English:WARNING: Disconnecting will stop the current print.\n\nAre you sure you want to disconnect?
 Translated:WARNING: Disconnecting will stop the current print.\n\nAre you sure you want to disconnect?
 
-English:NOTE: You need to select a printer, but do not need to connect to it.
-Translated:NOTE: You need to select a printer, but do not need to connect to it.
-
 English:WARNING: Write Failed!
 Translated:WARNING: Write Failed!
 
-English:Create New Folder:
-Translated:Create New Folder:
-
-English:Top Solid Layers:
-Translated:Top Solid Layers:
-
-English:Bottom Solid Layers:
-Translated:Bottom Solid Layers:
-
-English:Layer(s) To Pause:
-Translated:Layer(s) To Pause:
-
-English:Extruder 1
-Translated:Extruder 1
-
 English:Note: Be sure the tip of the extruder is clean and the bed is clear.
 Translated:Note: Be sure the tip of the extruder is clean and the bed is clear.
-
-English:Rename Item:
-Translated:Rename Item:
-
-English:Rotation Count:
-Translated:Rotation Count:
 
 English:Location: 'Settings & Controls' -> 'Settings' -> 'Printer' -> 'Print Recovery' -> 'Enable Recovery'
 Translated:Location: 'Settings & Controls' -> 'Settings' -> 'Printer' -> 'Print Recovery' -> 'Enable Recovery'
@@ -4228,24 +3676,6 @@ Translated:Thumbnails
 English:Note: Slice Settings are applied before the print actually starts. Changes while printing will not effect the active print.
 Translated:Note: Slice Settings are applied before the print actually starts. Changes while printing will not effect the active print.
 
-English:Material 1
-Translated:Material 1
-
-English:Extruder 2
-Translated:Extruder 2
-
-English:Size:
-Translated:Size:
-
-English:Infill:
-Translated:Infill:
-
-English:Start Threshold:
-Translated:Start Threshold:
-
-English:End Threshold:
-Translated:End Threshold:
-
 English:Firmware Version: {0}
 Translated:Firmware Version: {0}
 
@@ -4258,32 +3688,8 @@ Translated:HotEnd
 English:Heated Bed
 Translated:Heated Bed
 
-English:Write Filters
-Translated:Write Filters
-
-English:Read Filters
-Translated:Read Filters
-
-English:Material 3
-Translated:Material 3
-
-English:Material 4
-Translated:Material 4
-
-English:Extruder 3
-Translated:Extruder 3
-
-English:Extruder 4
-Translated:Extruder 4
-
 English:Slice
 Translated:Slice
-
-English:Slice Parts
-Translated:Slice Parts
-
-English:Spacing:
-Translated:Spacing:
 
 English:Your 3D print has been auto-paused.\nPause layer{0} reached.
 Translated:Your 3D print has been auto-paused.\nPause layer{0} reached.
@@ -4315,9 +3721,6 @@ Translated:This is a set of regular expressions to apply to lines prior to sendi
 English:This is a set of regular expressions to apply to lines after they are received from the printer. They will be applied in order to each line received.
 Translated:This is a set of regular expressions to apply to lines after they are received from the printer. They will be applied in order to each line received.
 
-English:Sign in to access your cloud printer profiles.\n\nOnce signed in you will be able to access:
-Translated:Sign in to access your cloud printer profiles.\n\nOnce signed in you will be able to access:
-
 English:Updating Mesh
 Translated:Updating Mesh
 
@@ -4338,9 +3741,6 @@ Translated:The thickness of each layer of the print, except the first layer. A s
 
 English:Turn retractions on and off.
 Translated:Turn retractions on and off.
-
-English:Clear Plate
-Translated:Clear Plate
 
 English:Layer Thickness
 Translated:Layer Thickness
@@ -4390,9 +3790,6 @@ Translated:Heat the bed
 English:Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Layers/Surface'
 Translated:Location: 'Settings & Controls' -> 'Settings' -> 'General' -> 'Layers/Surface'
 
-English:New User? 
-Translated:New User? 
-
 English:Arrange All Parts
 Translated:Arrange All Parts
 
@@ -4405,17 +3802,11 @@ Translated:Lay Flat
 English:Part
 Translated:Part
 
-English:File export options:
-Translated:File export options:
-
 English:To Folder
 Translated:To Folder
 
 English:ZIP File
 Translated:ZIP File
-
-English:G-Code File
-Translated:G-Code File
 
 English:STL File
 Translated:STL File
@@ -4423,20 +3814,11 @@ Translated:STL File
 English:AMF File
 Translated:AMF File
 
-English:Checks before each print that the layer height is greater than the nozzle diameter (important for filament adhesion)
-Translated:Checks before each print that the layer height is greater than the nozzle diameter (important for filament adhesion)
-
 English:Validate Layer Height
 Translated:Validate Layer Height
 
-English:Rename Printer:
-Translated:Rename Printer:
-
 English:Copy Printers
 Translated:Copy Printers
-
-English:Printers to Copy:
-Translated:Printers to Copy:
 
 English:Sync Printer Profiles Page
 Translated:Sync Printer Profiles Page
@@ -4456,26 +3838,8 @@ Translated:Reach
 English:Angle
 Translated:Angle
 
-English:Hot End
-Translated:Hot End
-
 English:Are you sure you want exit while a print is running from SD Card?\n\nNote: If you exit, it is recommended you wait until the print is completed before running MatterControl again.
 Translated:Are you sure you want exit while a print is running from SD Card?\n\nNote: If you exit, it is recommended you wait until the print is completed before running MatterControl again.
-
-English:Version 
-Translated:Version 
-
-English:Developed by:
-Translated:Developed by:
-
-English:Build: 
-Translated:Build: 
-
-English:Status: 
-Translated:Status: 
-
-English:Export selection to:
-Translated:Export selection to:
 
 English:Machine File (G-Code)
 Translated:Machine File (G-Code)
@@ -4483,14 +3847,8 @@ Translated:Machine File (G-Code)
 English:Machine File (X3G)
 Translated:Machine File (X3G)
 
-English:Print Notification Settings:
-Translated:Print Notification Settings:
-
 English:NOTE: Standard messaging rates may apply.
 Translated:NOTE: Standard messaging rates may apply.
-
-English:Enter Share Code:
-Translated:Enter Share Code:
 
 English:Publish
 Translated:Publish
@@ -4507,9 +3865,6 @@ Translated:Running Macro
 English:There is a new update available for download
 Translated:There is a new update available for download
 
-English:Current Build : Test Build
-Translated:Current Build : Test Build
-
 English:Stable: The current release version of MatterControl (recommended).
 Translated:Stable: The current release version of MatterControl (recommended).
 
@@ -4519,17 +3874,11 @@ Translated:Beta: The release candidate version of MatterControl.
 English:Alpha: The in development version of MatterControl.
 Translated:Alpha: The in development version of MatterControl.
 
-English:Changing your update channel will change the version of MatterControl that you receive when updating:
-Translated:Changing your update channel will change the version of MatterControl that you receive when updating:
-
 English:Change
 Translated:Change
 
 English:Hotend
 Translated:Hotend
-
-English:Preset Name:
-Translated:Preset Name:
 
 English:Write Filter
 Translated:Write Filter
@@ -4566,48 +3915,6 @@ Translated:Align for Dual Extrusion
 
 English:Export failed
 Translated:Export failed
-
-English:The speed at which the nozzle will move when printing the first layers. If expressed as a percentage the Infill speed is modified.
-Translated:The speed at which the nozzle will move when printing the first layers. If expressed as a percentage the Infill speed is modified.
-
-English:Number of First Layers
-Translated:Number of First Layers
-
-English:Steps per mm:
-Translated:Steps per mm:
-
-English:Maximum feedrates [mm/s]:
-Translated:Maximum feedrates [mm/s]:
-
-English:Maximum Acceleration [mm/s²]:
-Translated:Maximum Acceleration [mm/s²]:
-
-English:Acceleration:
-Translated:Acceleration:
-
-English:Retract Acceleration:
-Translated:Retract Acceleration:
-
-English:PID settings:
-Translated:PID settings:
-
-English:Homing Offset:
-Translated:Homing Offset:
-
-English:Min feedrate [mm/s]:
-Translated:Min feedrate [mm/s]:
-
-English:Min travel feedrate [mm/s]:
-Translated:Min travel feedrate [mm/s]:
-
-English:Minimum segment time [ms]:
-Translated:Minimum segment time [ms]:
-
-English:Maximum X-Y jerk [mm/s]:
-Translated:Maximum X-Y jerk [mm/s]:
-
-English:Maximum Z jerk [mm/s]:
-Translated:Maximum Z jerk [mm/s]:
 
 English:Make Support
 Translated:Make Support
@@ -4653,9 +3960,6 @@ Translated:Raft / Skirt / Brim
 
 English:Printer is SLA
 Translated:Printer is SLA
-
-English:bed_temperature,first_layer_bed_temperature
-Translated:bed_temperature,first_layer_bed_temperature
 
 English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
 Translated:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.

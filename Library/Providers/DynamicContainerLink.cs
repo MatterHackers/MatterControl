@@ -36,7 +36,6 @@ namespace MatterHackers.MatterControl.Library
 	public class DynamicContainerLink : ILibraryContainerLink, IThumbnail
 	{
 		public string ID { get; set; }
-		public string Name { get; }
 		public string Category { get; set; }
 		public string ThumbnailKey => thumbnail.GetHashCode().ToString();
 		public bool IsProtected { get; set; } = true;
@@ -46,14 +45,17 @@ namespace MatterHackers.MatterControl.Library
 		private ImageBuffer thumbnail;
 		private Func<ILibraryContainer> containerCreator;
 		private Func<bool> visibilityResolver;
+		private Func<string> nameResolver;
 
-		public DynamicContainerLink(string name, ImageBuffer thumbnail, Func<ILibraryContainer> creator = null, Func<bool> visibilityResolver = null)
+		public DynamicContainerLink(Func<string> nameResolver, ImageBuffer thumbnail, Func<ILibraryContainer> creator = null, Func<bool> visibilityResolver = null)
 		{
 			this.thumbnail = thumbnail;
-			this.Name = name;
+			this.nameResolver = nameResolver;
 			this.containerCreator = creator;
 			this.visibilityResolver = visibilityResolver ?? (() => true);
 		}
+
+		public string Name => nameResolver?.Invoke();
 
 		public bool IsVisible => this.visibilityResolver();
 

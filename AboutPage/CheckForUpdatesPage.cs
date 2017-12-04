@@ -64,10 +64,7 @@ namespace MatterHackers.MatterControl.AboutPage
 				UpdateControlData.Instance.CheckForUpdateUserRequested();
 			};
 
-			string currentBuildNo = VersionInfo.Instance.BuildVersion;
-			string currentBuildInfoLabel = String.Format("Current Build : {0}", currentBuildNo);
-
-			var currentBuildInfo = new TextWidget(currentBuildInfoLabel.Localize());
+			var currentBuildInfo = new TextWidget("Current Build".Localize() + $" : {VersionInfo.Instance.BuildVersion}");
 			currentBuildInfo.HAnchor = HAnchor.Stretch;
 			currentBuildInfo.Margin = new BorderDouble(left: 5, bottom: 15, top: 20);
 			currentBuildInfo.TextColor = ActiveTheme.Instance.PrimaryTextColor;
@@ -77,7 +74,7 @@ namespace MatterHackers.MatterControl.AboutPage
 			additionalInfoContainer.HAnchor = HAnchor.Stretch;
 			additionalInfoContainer.Padding = new BorderDouble(left: 6, top: 6);
 
-			string aboutUpdateChannel = "Changing your update channel will change the version of MatterControl that you receive when updating:".Localize();
+			string aboutUpdateChannel = "Changing your update channel will change the version of MatterControl that you receive when updating".Localize() + ":";
 			var updateChannelLabel = new WrappedTextWidget(aboutUpdateChannel);
 			updateChannelLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 			updateChannelLabel.HAnchor = HAnchor.Stretch;

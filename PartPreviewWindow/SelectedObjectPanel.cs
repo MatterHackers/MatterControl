@@ -100,7 +100,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			behavior3DTypeButtons.AddChild(solidBehaviorButton);
 
-			editButton = new TextButton("Edit", theme)
+			editButton = new TextButton("Edit".Localize(), theme)
 			{
 				BackgroundColor = theme.MinimalShade,
 				Margin = theme.ButtonSpacing

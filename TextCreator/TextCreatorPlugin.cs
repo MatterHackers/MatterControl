@@ -48,7 +48,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 			library.RegisterCreator(
 				new GeneratorItem(
-					"Text".Localize(), 
+					() => "Text".Localize(), 
 					() =>
 					{
 						var generator = new TextGenerator();
@@ -58,7 +58,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 			library.RegisterCreator(
 				new GeneratorItem(
-					"Braille".Localize(), 
+					() => "Braille".Localize(), 
 					() =>
 					{
 						string braille = "Braille".Localize();

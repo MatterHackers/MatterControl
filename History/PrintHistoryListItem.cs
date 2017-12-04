@@ -335,7 +335,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 					string end = maxLengthName.Substring(maxLengthName.Length - amountRemaining, amountRemaining);
 					maxLengthName = start + end;
 				}
-				string notFoundMessage = "Oops! Could not find this file:".Localize();
+				string notFoundMessage = "Oops! Could not find this file".Localize() + ":";
 				string message = "{0}:\n'{1}'".FormatWith(notFoundMessage, maxLengthName);
 				string titleLabel = "Item not Found".Localize();
 				StyledMessageBox.ShowMessageBox(onConfirmRemove, message, titleLabel, StyledMessageBox.MessageType.OK);
