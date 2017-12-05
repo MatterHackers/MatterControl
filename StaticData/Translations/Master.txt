@@ -3994,3 +3994,21 @@ Translated:Materials Option
 English:New Tab
 Translated:New Tab
 
+English:Turn off motor current at end of print or after cancel print.
+Translated:Turn off motor current at end of print or after cancel print.
+
+English:If the extruder has been running for a long time, it may be reporting values that are too large, this will periodically reset it.
+Translated:If the extruder has been running for a long time, it may be reporting values that are too large, this will periodically reset it.
+
+English:Calculate and transmit a standard rep-rap checksum for all commands.
+Translated:Calculate and transmit a standard rep-rap checksum for all commands.
+
+English:Auto Release Motors
+Translated:Auto Release Motors
+
+English:Send With Checksum
+Translated:Send With Checksum
+
+English:Reset Long Extrusion
+Translated:Reset Long Extrusion
+

@@ -243,7 +243,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	{
 		private Vector3 lastDestinationWithLevelingApplied = new Vector3();
 
-		private EventHandler unregisterEvents;
 		PrinterSettings printerSettings;
 
 		public MeshLevlingFunctions(PrinterSettings printerSettings, int gridWidth, int gridHeight, PrintLevelingData levelingData)
@@ -274,7 +273,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public void Dispose()
 		{
-			unregisterEvents?.Invoke(this, null);
 		}
 
 		public string DoApplyLeveling(string lineBeingSent, Vector3 currentDestination)
