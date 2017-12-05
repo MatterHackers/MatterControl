@@ -121,7 +121,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				if (info != null)
 				{
-					var uV = ((TriangleShape)info.closestHitObject).GetUv(info);
+					var uV = ((TriangleShapeUv)info.closestHitObject).GetUv(info);
 				}
 			}
 		}

@@ -121,6 +121,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 							{
 								addedLines.Add(splitReplacement[j]);
 							}
+							break;
 						}
 					}
 				}
