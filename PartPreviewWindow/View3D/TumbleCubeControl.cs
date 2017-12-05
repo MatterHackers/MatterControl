@@ -114,7 +114,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					interactionLayer.Invalidate();
 				}
 			}
-			else
+			else if(world != null)
 			{
 				Ray ray = world.GetRayForLocalBounds(mouseEvent.Position);
 				IntersectInfo info = cubeTraceData.GetClosestIntersection(ray);
