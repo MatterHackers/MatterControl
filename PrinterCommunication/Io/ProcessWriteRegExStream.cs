@@ -62,6 +62,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				return null;
 			}
 
+			// if the line has no content don't process it
+			if (baseLine.Length == 0
+				|| baseLine.Trim().Length == 0)
+			{
+				return baseLine;
+			}
+
 			var lines = ProcessWriteRegEx(baseLine);
 			for (int i = 1; i < lines.Count; i++)
 			{
