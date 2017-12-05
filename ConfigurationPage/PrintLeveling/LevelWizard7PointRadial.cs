@@ -183,7 +183,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 	public class RadialLevlingFunctions : IDisposable
 	{
-		private EventHandler unregisterEvents;
 		PrinterSettings printerSettings;
 
 		public RadialLevlingFunctions(PrinterSettings printerSettings, int numberOfRadialSamples, PrintLevelingData levelingData, Vector2 bedCenter)
@@ -205,7 +204,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public void Dispose()
 		{
-			unregisterEvents?.Invoke(this, null);
 		}
 
 		public string DoApplyLeveling(string lineBeingSent, Vector3 currentDestination)

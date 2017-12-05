@@ -114,6 +114,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					interactionLayer.Invalidate();
 				}
 			}
+			else
+			{
+				Ray ray = world.GetRayForLocalBounds(mouseEvent.Position);
+				IntersectInfo info = cubeTraceData.GetClosestIntersection(ray);
+
+				if (info != null)
+				{
+					var uV = ((TriangleShape)info.closestHitObject).GetUv(info);
+				}
+			}
 		}
 
 		public override void OnMouseUp(MouseEventArgs mouseEvent)
@@ -127,7 +137,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				if (info != null)
 				{
-					var normal = ((TriangleShape)info.closestHitObject).Plane.PlaneNormal;
+					var normal = ((TriangleShape)info.closestHitObject).Plane.Normal;
 					var directionForward = -new Vector3(normal);
 
 					var directionUp = Vector3.UnitY;
