@@ -48,8 +48,6 @@ namespace MatterHackers.MatterControl
 	{
 		private CheckBox showInFolderAfterSave;
 
-		private EventHandler unregisterEvents;
-
 		private Dictionary<RadioButton, IExportPlugin> exportPluginButtons;
 
 		private IEnumerable<ILibraryItem> libraryItems;
@@ -257,12 +255,6 @@ namespace MatterHackers.MatterControl
 					AggContext.FileDialogs.ShowFileInFolder(filename);
 				}
 			}
-		}
-
-		public override void OnClosed(ClosedEventArgs e)
-		{
-			unregisterEvents?.Invoke(this, null);
-			base.OnClosed(e);
 		}
 	}
 }

@@ -319,8 +319,6 @@ namespace MatterHackers.MatterControl.PrintHistory
 			}
 		}
 
-		private EventHandler unregisterEvents;
-
 		public void ShowCantFindFileMessage(PrintItemWrapper printItemWrapper)
 		{
 			itemToRemove = printItemWrapper;
@@ -351,12 +349,6 @@ namespace MatterHackers.MatterControl.PrintHistory
 				int index = QueueData.Instance.GetIndex(itemToRemove);
 				UiThread.RunOnIdle(() => QueueData.Instance.RemoveAt(index));
 			}
-		}
-
-		public override void OnClosed(ClosedEventArgs e)
-		{
-			unregisterEvents?.Invoke(this, null);
-			base.OnClosed(e);
 		}
 
 		public override void OnDraw(Graphics2D graphics2D)
