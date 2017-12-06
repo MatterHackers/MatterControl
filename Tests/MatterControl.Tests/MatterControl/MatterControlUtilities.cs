@@ -480,16 +480,16 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				staticDataPathOverride = TestContext.CurrentContext.ResolveProjectPath(5, "MatterControl", "StaticData");
 			}
 
-			// Override the default SystemWindow type without config.json
-			AggContext.Config.ProviderTypes.SystemWindow = "MatterHackers.Agg.UI.OpenGLSystemWindow, agg_platform_win32";
-
 #if DEBUG
 			string outputDirectory = "Debug";
 #else
 			string outputDirectory = "Release";
 #endif
 
-			Environment.CurrentDirectory = TestContext.CurrentContext.ResolveProjectPath(5, "MatterControl", "bin", outputDirectory); 
+			Environment.CurrentDirectory = TestContext.CurrentContext.ResolveProjectPath(5, "MatterControl", "bin", outputDirectory);
+
+			// Override the default SystemWindow type without config.json
+			AggContext.Config.ProviderTypes.SystemWindow = "MatterHackers.Agg.UI.OpenGLSystemWindow, agg_platform_win32";
 
 #if !__ANDROID__
 			// Set the static data to point to the directory of MatterControl
