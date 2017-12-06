@@ -514,6 +514,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			var config = TestAutomationConfig.Load();
 
+            if (config.UseAutomationDialogs)
+            {
+                AggContext.Config.ProviderTypes.DialogProvider = "MatterHackers.Agg.Platform.AutomationDialogProvider, GuiAutomation";
+            }
+
 			// Extract mouse speed from config
 			AutomationRunner.TimeToMoveMouse = config.TimeToMoveMouse;
 
@@ -700,8 +705,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		/// The number of seconds to move the mouse when going to a new position.
 		/// </summary>
 		public double TimeToMoveMouse { get; set; } = .5;
+        public bool UseAutomationDialogs { get; set; }
 
-		public static TestAutomationConfig Load()
+        public static TestAutomationConfig Load()
 		{
 			TestAutomationConfig config = null;
 
