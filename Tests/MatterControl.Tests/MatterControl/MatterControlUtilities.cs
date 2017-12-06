@@ -693,16 +693,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		/// </summary>
 		public string TestEnvClientToken { get; set; }
 
-		/// <summary>
-		/// The serial port that MatterControl will communicate with for the Com0Com connection
-		/// </summary>
-		public string MCPort { get; set; }
-
-		/// <summary>
-		/// The serial port that Python will communicate with to emulate printer firmware
-		/// </summary>
-		public string Printer { get; set; }
-
 		[JsonConverter(typeof(StringEnumConverter))]
 		public AutomationRunner.InputType AutomationInputType { get; set; } = AutomationRunner.InputType.Native;
 
@@ -723,12 +713,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			else
 			{
 				config = JsonConvert.DeserializeObject<TestAutomationConfig>(File.ReadAllText(configPath));
-			}
-
-			// if no com port set, issue instructions on how to set it
-			if (string.IsNullOrEmpty(config.MCPort) || string.IsNullOrEmpty(config.Printer))
-			{
-				throw new Exception("You must set the port and printer in: " + configPath);
 			}
 
 			return config;
