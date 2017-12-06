@@ -54,10 +54,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				// Click Add button and select files
 				testRunner.ClickByName("Library Add Button");
-				testRunner.WaitForName("Automation Dialog TextEdit");
-				testRunner.Type(MatterControlUtilities.GetTestItemPath("Fennec_Fox.stl"));
-				testRunner.Delay(1);
-				testRunner.Type("{Enter}");
+
+				// Open Fennec_Fox
+				testRunner.CompleteDialog(
+					MatterControlUtilities.GetTestItemPath("Fennec_Fox.stl"));
 
 				// Wait up to 3 seconds for expected outcome
 				testRunner.Delay(() => QueueData.Instance.ItemCount == expectedCount, 3);
@@ -84,14 +84,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				// Click Add button and select files
 				testRunner.ClickByName("Library Add Button");
-				testRunner.WaitForName("Automation Dialog TextEdit");
-				testRunner.Type(string.Format(
-					"\"{0}\" \"{1}\"",
-					MatterControlUtilities.GetTestItemPath("Fennec_Fox.stl"),
-					MatterControlUtilities.GetTestItemPath("Batman.stl")));
 
-				testRunner.Delay(2);
-				testRunner.Type("{Enter}");
+				// Open Fennec_Fox, Batman files
+				testRunner.CompleteDialog(
+					string.Format(
+						"\"{0}\" \"{1}\"",
+						MatterControlUtilities.GetTestItemPath("Fennec_Fox.stl"),
+						MatterControlUtilities.GetTestItemPath("Batman.stl")),
+					secondsToWait: 2);
 
 				// Wait up to 3 seconds for expected outcome
 				testRunner.Delay(() => QueueData.Instance.ItemCount == expectedCount, 3);
@@ -198,11 +198,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				// Click Add button and select files
 				testRunner.ClickByName("Library Add Button");
-				testRunner.WaitForName("Automation Dialog TextEdit");
 
-				testRunner.Type(MatterControlUtilities.GetTestItemPath("Rook.amf"));
-				testRunner.Delay(1);
-				testRunner.Type("{Enter}");
+				// Open Rook
+				testRunner.CompleteDialog(
+					MatterControlUtilities.GetTestItemPath("Rook.amf"));
 
 				// Wait up to 3 seconds for expected outcome
 				testRunner.Delay(() => QueueData.Instance.ItemCount == expectedCount, 3);
@@ -229,11 +228,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				// Click Add button and select files
 				testRunner.ClickByName("Library Add Button");
-				testRunner.WaitForName("Automation Dialog TextEdit");
 
-				testRunner.Type(MatterControlUtilities.GetTestItemPath("Batman.stl"));
-				testRunner.Delay(1);
-				testRunner.Type("{Enter}");
+				// Open Batman
+				testRunner.CompleteDialog(
+					MatterControlUtilities.GetTestItemPath("Batman.stl"));
 
 				// Wait up to 3 seconds for expected outcome
 				testRunner.Delay(() => QueueData.Instance.ItemCount == expectedCount, 3);
@@ -260,11 +258,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				// Click Add button and select files
 				testRunner.ClickByName("Library Add Button");
-				testRunner.WaitForName("Automation Dialog TextEdit");
 
-				testRunner.Type(MatterControlUtilities.GetTestItemPath("chichen-itza_pyramid.gcode"));
-				testRunner.Delay(1);
-				testRunner.Type("{Enter}");
+				// Open chichen-itza_pyramid
+				testRunner.CompleteDialog(
+					MatterControlUtilities.GetTestItemPath("chichen-itza_pyramid.gcode"));
 
 				// Wait up to 3 seconds for expected outcome
 				testRunner.Delay(() => QueueData.Instance.ItemCount == expectedCount, 3);
