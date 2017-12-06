@@ -527,7 +527,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testMethod, 
 				maxTimeToRun, 
 				defaultTestImages, 
-				config.AutomationInputType,
+				config.UseAutomationMouse ? AutomationRunner.InputType.SimulatedDrawMouse : AutomationRunner.InputType.Native,
 				closeWindow: () =>
 				{
 					if (ApplicationController.Instance.ActivePrinter.Connection.CommunicationState == CommunicationStates.Printing)
@@ -698,16 +698,16 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		/// </summary>
 		public string TestEnvClientToken { get; set; }
 
-		[JsonConverter(typeof(StringEnumConverter))]
-		public AutomationRunner.InputType AutomationInputType { get; set; } = AutomationRunner.InputType.Native;
-
 		/// <summary>
 		/// The number of seconds to move the mouse when going to a new position.
 		/// </summary>
 		public double TimeToMoveMouse { get; set; } = .5;
-        public bool UseAutomationDialogs { get; set; }
 
-        public static TestAutomationConfig Load()
+		public bool UseAutomationDialogs { get; set; }
+
+		public bool UseAutomationMouse { get; set; }
+
+		public static TestAutomationConfig Load()
 		{
 			TestAutomationConfig config = null;
 
