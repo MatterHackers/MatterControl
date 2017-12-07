@@ -50,6 +50,7 @@ using MatterHackers.PrinterEmulator;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using NUnit.Framework;
+using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
@@ -269,7 +270,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public static void AddAndSelectPrinter(this AutomationRunner testRunner, string make, string model)
 		{
 			// If SelectMake is not visible and the ConnectionWizard is, click Skip
-			if (!testRunner.NameExists("Select Make", 1.5))
+			if (!testRunner.NameExists("Select Make", 0.1))
 			{
 				// Go to the new tab screen
 				testRunner.ClickByName("Create New");
@@ -277,19 +278,25 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}
 
 			testRunner.ClickByName("Select Make");
+			testRunner.Delay(() => testRunner.WidgetExists<PopupWidget>());
 			testRunner.Type(make);
 			testRunner.Type("{Enter}");
+			testRunner.Delay(() => !testRunner.WidgetExists<PopupWidget>());
+
 
 			testRunner.ClickByName("Select Model");
+			testRunner.Delay(() => testRunner.WidgetExists<PopupWidget>());
 			testRunner.Type(model);
 			testRunner.Type("{Enter}");
+			testRunner.Delay(() => !testRunner.WidgetExists<PopupWidget>());
 
 			// An unpredictable period of time will pass between Clicking Save, everything reloading and us returning to the caller.
 			// Block until ReloadAll has completed then close and return to the caller, at which point hopefully everything is reloaded.
 			testRunner.WaitForReloadAll(() => testRunner.ClickByName("Save & Continue Button"));
 
+			testRunner.Delay(() => testRunner.WidgetExists<SetupStepInstallDriver>());
 			testRunner.ClickByName("Cancel Wizard Button");
-			testRunner.Delay(1);
+			testRunner.Delay(() => !testRunner.WidgetExists<SetupStepInstallDriver>());
 		}
 
 		public static void OpenPrintersDropdown(this AutomationRunner testRunner)
