@@ -333,13 +333,16 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.ClickByName("General Tab");
 				testRunner.ClickByName("Layers / Surface Tab");
-
 				Assert.AreEqual(0, layerHeightChangedCount, "No change to layer height yet.");
+
 				testRunner.ClickByName("Quality");
-				testRunner.ClickByName("Fine Menu", delayBeforeReturn: .5);
+				testRunner.ClickByName("Fine Menu");
+				testRunner.Delay(.5);
 				Assert.AreEqual(1, layerHeightChangedCount, "Changed to fine.");
+
 				testRunner.ClickByName("Quality");
-				testRunner.ClickByName("Standard Menu", delayBeforeReturn: .5);
+				testRunner.ClickByName("Standard Menu");
+				testRunner.Delay(.5);
 				Assert.AreEqual(2, layerHeightChangedCount, "Changed to standard.");
 
 				return Task.CompletedTask;
@@ -483,7 +486,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Slice Settings Tab");
 
 				testRunner.ClickByName("Quality");
-				testRunner.ClickByName("- none - Menu Item", delayBeforeReturn: .5);
+				testRunner.ClickByName("- none - Menu Item");
+				testRunner.Delay(.5);
 				Assert.AreEqual(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.layer_height).ToString(), "0.5", "Layer height is what we set it to");
 
 				return Task.CompletedTask;
