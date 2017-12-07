@@ -34,6 +34,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
@@ -48,8 +49,6 @@ namespace MatterHackers.MatterControl.Library
 
 		private bool isActiveContainer;
 		private bool isDirty;
-
-		private static Regex fileNameNumberMatch = new Regex("\\(\\d+\\)", RegexOptions.Compiled);
 
 		public FileSystemContainer(string path)
 		{
@@ -205,29 +204,14 @@ namespace MatterHackers.MatterControl.Library
 
 		private string GetNonCollidingName(string fileName)
 		{
-			string incrementedFilePath;
-			string fileExtension = Path.GetExtension(fileName);
-
 			// Switching from .stl, .obj or similar to AMF. Save the file and update the
 			// the filename with an incremented (n) value to reflect the extension change in the UI 
-			fileName = Path.GetFileNameWithoutExtension(fileName);
+			var similarFileNames = Directory.GetFiles(this.fullPath, $"{Path.GetFileNameWithoutExtension(fileName)}.*");
 
-			// Drop bracketed number sections from our source filename to ensure we don't generate something like "file (1) (1).amf"
-			if (fileName.Contains("("))
-			{
-				fileName = fileNameNumberMatch.Replace(fileName, "").Trim();
-			}
+			// ;
+			var validName = agg_basics.GetNonCollidingName(fileName, (testName) => !File.Exists(testName));
 
-			// Generate and search for an incremented file name until no match is found at the target directory
-			int foundCount = 1;
-			do
-			{
-				incrementedFilePath = Path.Combine(this.fullPath, $"{fileName} ({foundCount++}){fileExtension}");
-
-				// Continue incrementing while any matching file exists
-			} while (File.Exists(incrementedFilePath));
-
-			return incrementedFilePath;
+			return validName;
 		}
 
 		public async override void Add(IEnumerable<ILibraryItem> items)

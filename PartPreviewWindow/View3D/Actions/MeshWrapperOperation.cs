@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System.Collections.Generic;
 using System.Linq;
 using MatterHackers.DataConverters3D;
 using MatterHackers.PolygonMesh;
@@ -39,7 +40,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		{
 		}
 
-		public MeshWrapperOperation(SafeList<IObject3D> children)
+		public MeshWrapperOperation(List<IObject3D> children)
 		{
 			Children.Modify((list) =>
 			{

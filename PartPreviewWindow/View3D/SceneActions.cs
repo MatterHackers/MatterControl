@@ -32,10 +32,12 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MeshVisualizer;
+using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
@@ -157,14 +159,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// Copy selected item
 				IObject3D newItem = await Task.Run(() =>
 				{
-					// new item can be null by the time this task kicks off
-					var clonedItem = Scene.SelectedItem?.Clone();
+					var originalItem = Scene.SelectedItem;
+					if (originalItem != null)
+					{
+						// new item can be null by the time this task kicks off
+						var clonedItem = originalItem.Clone();
 
-					// More usefull if it creates the part in the exact positon and then the user can move it.
-					// Consistent with othre software as well. LBB 2017-12-02
-					//PlatingHelper.MoveToOpenPositionRelativeGroup(clonedItem, Scene.Children);
+						// make the name unique
+						var newName = agg_basics.GetNonCollidingName(originalItem.Name, Scene.Descendants().Select((d) => d.Name));
+						clonedItem.Name = newName;
 
-					return clonedItem;
+						// More usefull if it creates the part in the exact positon and then the user can move it.
+						// Consistent with othre software as well. LBB 2017-12-02
+						//PlatingHelper.MoveToOpenPositionRelativeGroup(clonedItem, Scene.Children);
+
+						return clonedItem;
+					}
+
+					return null;
 				});
 
 				if (view3DWidget.HasBeenClosed)

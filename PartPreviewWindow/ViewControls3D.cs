@@ -316,6 +316,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				var button = new TextButton(namedAction.Title, theme)
 				{
+					Name = namedAction.Title + " Button",
 					VAnchor = VAnchor.Center,
 					Margin = theme.ButtonSpacing,
 					BackgroundColor = theme.MinimalShade

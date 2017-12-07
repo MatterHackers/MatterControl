@@ -161,26 +161,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			};
 		}
 
-		private string GetNonCollidingName(string profileName, IEnumerable<string> existingNames)
-		{
-			if (!existingNames.Contains(profileName))
-			{
-				return profileName;
-			}
-			else
-			{
-				int currentIndex = 1;
-				string possiblePrinterName;
-
-				do
-				{
-					possiblePrinterName = String.Format("{0} ({1})", profileName, currentIndex++);
-				} while (existingNames.Contains(possiblePrinterName));
-
-				return possiblePrinterName;
-			}
-		}
-
 		private FlowLayoutWidget GetBottomRow(TextImageButtonFactory buttonFactory)
 		{
 			var container = new FlowLayoutWidget()
@@ -195,7 +175,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				UiThread.RunOnIdle(() =>
 				{
 					string sanitizedName = numberMatch.Replace(presetNameInput.Text, "").Trim();
-					string newProfileName = GetNonCollidingName(sanitizedName, presetsContext.PresetLayers.Select(preset => preset.ValueOrDefault(SettingsKey.layer_name)));
+					string newProfileName = agg_basics.GetNonCollidingName(sanitizedName, presetsContext.PresetLayers.Select(preset => preset.ValueOrDefault(SettingsKey.layer_name)));
 
 					var clonedLayer = presetsContext.PersistenceLayer.Clone();
 					clonedLayer.Name = newProfileName;
