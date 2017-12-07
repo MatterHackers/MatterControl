@@ -45,6 +45,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 {
 	public class ListView : ScrollableWidget
 	{
+		public event EventHandler ContentReloaded;
+
 		private EventHandler unregisterEvents;
 
 		private ILibraryContext LibraryContext;
@@ -209,6 +211,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			}
 
 			this.Invalidate();
+
+			this.ContentReloaded?.Invoke(this, null);
 		}
 
 		private void WritableContainer_ItemContentChanged(object sender, ItemChangedEventArgs e)

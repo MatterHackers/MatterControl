@@ -44,6 +44,7 @@ using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 using MatterHackers.MatterControl.PrintLibrary;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.PrinterEmulator;
@@ -390,11 +391,26 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void EnsureFoldersVisible(this AutomationRunner testRunner)
 		{
-			var checkBox = (ExpandCheckboxButton)testRunner.GetWidgetByName("Show Folders Toggle", out SystemWindow _, 3);
+			var listView = testRunner.GetWidgetByName("LibraryView", out _) as ListView;
+			var resetEvent = new AutoResetEvent(false);
+
+			EventHandler contentReloaded = (s, e) =>
+			{
+				resetEvent.Set();
+			};
+
+			listView.ContentReloaded += contentReloaded;
+
+			var checkBox = (ExpandCheckboxButton)testRunner.GetWidgetByName("Show Folders Toggle", out _);
 			if (!checkBox.Checked)
 			{
 				testRunner.ClickByName("Show Folders Toggle");
 			}
+
+			// Wait for reload
+			resetEvent.WaitOne();
+
+			listView.ContentReloaded -= contentReloaded;
 		}
 
 		public static void NavigateToLibraryHome(this AutomationRunner testRunner)

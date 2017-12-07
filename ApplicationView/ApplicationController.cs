@@ -681,6 +681,7 @@ namespace MatterHackers.MatterControl
 					MainView?.CloseAllChildren();
 					using (new QuickTimer("ReloadAll_AddElements"))
 					{
+						// Actual ReloadAll implementation
 						MainView?.CreateAndAddChildren();
 					}
 					this.DoneReloadingAll?.CallEvents(null, null);

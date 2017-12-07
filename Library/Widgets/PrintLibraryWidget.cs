@@ -78,6 +78,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			libraryView = new ListView(ApplicationController.Instance.Library)
 			{
+				Name = "LibraryView",
 				BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor,
 				// Drop containers if ShowContainers != 1
 				ContainerFilter = (container) => UserSettings.Instance.get("ShowContainers") == "1"
@@ -107,7 +108,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			showFolders.CheckedStateChanged += async (s, e) =>
 			{
 				UserSettings.Instance.set("ShowContainers", showFolders.Checked ? "1" : "0");
-				libraryView.Reload();
+				await libraryView.Reload();
 			};
 			allControls.AddChild(showFolders);
 
