@@ -259,7 +259,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 					string mappedMakeText = printerManufacturerSelector.SelectedLabel;
 
 					var existingPrinterNames = ProfileManager.Instance.ActiveProfiles.Select(p => p.Name);
-					printerNameInput.Text = agg_basics.GetNonCollidingName(existingPrinterNames, $"{mappedMakeText} {activeModel}");
+					printerNameInput.Text = agg_basics.GetNonCollidingName($"{mappedMakeText} {activeModel}", existingPrinterNames);
 				}
 			});
 		}

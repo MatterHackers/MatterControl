@@ -280,16 +280,21 @@ namespace MatterHackers.MatterControl
 				() => "Subtract".Localize(),
 				(scene) =>
 				{
-					var difference = new MeshWrapperOperation(scene.SelectedItem.Children)
+					var children = scene.SelectedItem.Children;
+					scene.SelectedItem = null;
+
+					var difference = new MeshWrapperOperation(new List<IObject3D> (children.Select((i) => i.Clone())))
 					{
 						ActiveEditor = nameof(SubtractEditor),
 						Name = "Subtract",
 					};
-					scene.SelectedItem.Children.Modify((list) =>
-					{
-						list.Clear();
-					});
-					scene.Children.Add(difference);
+
+					scene.UndoBuffer.AddAndDo(
+						new ReplaceCommand(
+							new List<IObject3D>(children),
+							new List<IObject3D> { difference }));
+
+					difference.MakeNameNonColliding();
 					scene.SelectedItem = difference;
 				}
 			},
@@ -297,17 +302,21 @@ namespace MatterHackers.MatterControl
 				() => "Intersect".Localize(),
 				(scene) =>
 				{
-					var intersection = new MeshWrapperOperation(scene.SelectedItem.Children)
+					var selectedItems = scene.SelectedItem.Children;
+					scene.SelectedItem = null;
+
+					var intersection = new MeshWrapperOperation(new List<IObject3D> (selectedItems.Select((i) => i.Clone())))
 					{
 						ActiveEditor = nameof(IntersectionEditor),
 						Name = "Intersect",
 					};
-					scene.SelectedItem.Children.Modify((list) =>
-					{
-						list.Clear();
-					});
 
-					scene.Children.Add(intersection);
+					scene.UndoBuffer.AddAndDo(
+						new ReplaceCommand(
+							new List<IObject3D>(selectedItems),
+							new List<IObject3D> { intersection }));
+
+					intersection.MakeNameNonColliding();
 					scene.SelectedItem = intersection;
 				}
 			},
@@ -316,16 +325,21 @@ namespace MatterHackers.MatterControl
 				() => "Paint Material".Localize(),
 				(scene) =>
 				{
-					var materialPaint = new MeshWrapperOperation(scene.SelectedItem.Children)
+					var selectedItems = scene.SelectedItem.Children;
+					scene.SelectedItem = null;
+
+					var materialPaint = new MeshWrapperOperation(new List<IObject3D> (selectedItems.Select((i) => i.Clone())))
 					{
 						ActiveEditor = nameof(PaintMaterialEditor),
 						Name = "Material Paint",
 					};
-					scene.SelectedItem.Children.Modify((list) =>
-					{
-						list.Clear();
-					});
-					scene.Children.Add(materialPaint);
+
+					scene.UndoBuffer.AddAndDo(
+						new ReplaceCommand(
+							new List<IObject3D>(selectedItems),
+							new List<IObject3D> { materialPaint }));
+
+					materialPaint.MakeNameNonColliding();
 					scene.SelectedItem = materialPaint;
 				}
 			},

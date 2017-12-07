@@ -121,6 +121,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 						this.Children.Add(loadedItem);
 
+						loadedItem.MakeNameNonColliding();
+
 						// Wait for content to load
 
 						// Adjust next item position

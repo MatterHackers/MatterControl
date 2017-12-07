@@ -153,26 +153,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					{
 						foreach (var keep in keepObjects)
 						{
-							if (paint.MaterialIndex != keep.MaterialIndex)
-							{
-								var transformedPaint = Mesh.Copy(paint.Mesh, CancellationToken.None);
-								transformedPaint.Transform(paint.WorldMatrix());
+							var transformedPaint = Mesh.Copy(paint.Mesh, CancellationToken.None);
+							transformedPaint.Transform(paint.WorldMatrix());
 
-								var transformedKeep = Mesh.Copy(keep.Mesh, CancellationToken.None);
-								transformedKeep.Transform(keep.WorldMatrix());
+							var transformedKeep = Mesh.Copy(keep.Mesh, CancellationToken.None);
+							transformedKeep.Transform(keep.WorldMatrix());
 
-								// remove the paint from the original
-								var intersectAndSubtract = PolygonMesh.Csg.CsgOperations.IntersectAndSubtract(transformedKeep, transformedPaint);
-								var inverseKeep = keep.WorldMatrix();
-								inverseKeep.Invert();
-								intersectAndSubtract.subtract.Transform(inverseKeep);
-								keep.Mesh = intersectAndSubtract.subtract;
+							// remove the paint from the original
+							var intersectAndSubtract = PolygonMesh.Csg.CsgOperations.IntersectAndSubtract(transformedKeep, transformedPaint);
+							var inverseKeep = keep.WorldMatrix();
+							inverseKeep.Invert();
+							intersectAndSubtract.subtract.Transform(inverseKeep);
+							keep.Mesh = intersectAndSubtract.subtract;
 
-								var inverseRemove = paint.WorldMatrix();
-								inverseRemove.Invert();
-								intersectAndSubtract.intersect.Transform(inverseRemove);
-								paint.Mesh = intersectAndSubtract.intersect;
-							}
+							var inverseRemove = paint.WorldMatrix();
+							inverseRemove.Invert();
+							intersectAndSubtract.intersect.Transform(inverseRemove);
+							paint.Mesh = intersectAndSubtract.intersect;
 						}
 
 						// now set it to the new solid color
