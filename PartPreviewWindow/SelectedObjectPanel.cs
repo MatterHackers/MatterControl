@@ -93,10 +93,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					VAnchor = VAnchor.Fit,
 				},
 			};
-			solidBehaviorButton.Click += (s, e) =>
-			{
-				item.OutputType = PrintOutputTypes.Solid;
-			};
 
 			behavior3DTypeButtons.AddChild(solidBehaviorButton);
 

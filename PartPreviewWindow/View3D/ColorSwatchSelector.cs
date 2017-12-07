@@ -79,9 +79,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							};
 							resetButton.Click += (s, e) =>
 							{
-								var item = scene.SelectedItem;
-								item.Color = Color.Transparent;
-								item.OutputType = PrintOutputTypes.Solid;
+								scene.UndoBuffer.AddAndDo(new ChangeColor(scene.SelectedItem, Color.Transparent));
 							};
 							colorRow.AddChild(resetButton);
 						}
@@ -111,12 +109,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			button.Click += (s, e) =>
 			{
-				var item = scene.SelectedItem;
-				if (item != null)
-				{
-					item.Color = colorWidget.BackgroundColor;
-					item.OutputType = PrintOutputTypes.Solid;
-				}
+				scene.UndoBuffer.AddAndDo(new ChangeColor(scene.SelectedItem, colorWidget.BackgroundColor));
 			};
 			return button;
 		}
