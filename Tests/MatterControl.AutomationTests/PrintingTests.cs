@@ -515,7 +515,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.ClickByName("Row Item Item 1.gcode");
 
-					testRunner.ClickByName("Print Library Overflow Menu", delayBeforeReturn: 1);
+					testRunner.ClickByName("Print Library Overflow Menu");
 					testRunner.ClickByName("Print Menu Item");
 
 					testRunner.Delay(2);
