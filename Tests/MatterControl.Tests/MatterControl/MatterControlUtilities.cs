@@ -378,11 +378,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public static void NavigateToFolder(this AutomationRunner testRunner, string libraryRowItemName)
 		{
 			EnsureFoldersVisible(testRunner);
-
-			testRunner.ClickByName(libraryRowItemName);
-			testRunner.Delay(.5);
 			testRunner.DoubleClickByName(libraryRowItemName);
-			testRunner.Delay(.5);
 		}
 
 		public static void EnsureFoldersVisible(this AutomationRunner testRunner)
@@ -403,6 +399,25 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}
 
 			testRunner.Delay(.5);
+		}
+
+		/// <summary>
+		/// Types the specified text into the dialog and sends {Enter} to complete the interaction
+		/// </summary>
+		/// <param name="testRunner">The TestRunner to interact with</param>
+		/// <param name="textValue">The text to type</param>
+		public static void CompleteDialog(this AutomationRunner testRunner, string textValue, int secondsToWait = 1)
+		{
+			testRunner.WaitForName("Automation Dialog TextEdit");
+			testRunner.Type(textValue);
+
+			// AutomationDialog requires no delay
+			if (!(AggContext.FileDialogs is AutomationDialogProvider))
+			{
+				testRunner.Delay(secondsToWait);
+			}
+
+			testRunner.Type("{Enter}");
 		}
 
 		public static void AddItemToBedplate(this AutomationRunner testRunner, string containerName = "Calibration Parts Row Item Collection", string partName = "Row Item Calibration - Box.stl")
@@ -471,8 +486,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			string defaultTestImages = null)
 		{
 			// Walk back a step in the stack and output the callers name
-			StackTrace st = new StackTrace(false);
-			Debug.WriteLine("\r\n ***** Running automation test: {0} {1} ", st.GetFrames().Skip(1).First().GetMethod().Name, DateTime.Now);
+			//StackTrace st = new StackTrace(false);
+			//Debug.WriteLine("\r\n ***** Running automation test: {0} {1} ", st.GetFrames().Skip(1).First().GetMethod().Name, DateTime.Now);
 
 			if (staticDataPathOverride == null)
 			{
@@ -527,7 +542,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testMethod, 
 				maxTimeToRun, 
 				defaultTestImages, 
-				config.AutomationInputType,
+				config.UseAutomationMouse ? AutomationRunner.InputType.SimulatedDrawMouse : AutomationRunner.InputType.Native,
 				closeWindow: () =>
 				{
 					if (ApplicationController.Instance.ActivePrinter.Connection.CommunicationState == CommunicationStates.Printing)
@@ -698,16 +713,16 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		/// </summary>
 		public string TestEnvClientToken { get; set; }
 
-		[JsonConverter(typeof(StringEnumConverter))]
-		public AutomationRunner.InputType AutomationInputType { get; set; } = AutomationRunner.InputType.Native;
-
 		/// <summary>
 		/// The number of seconds to move the mouse when going to a new position.
 		/// </summary>
 		public double TimeToMoveMouse { get; set; } = .5;
-        public bool UseAutomationDialogs { get; set; }
 
-        public static TestAutomationConfig Load()
+		public bool UseAutomationDialogs { get; set; }
+
+		public bool UseAutomationMouse { get; set; }
+
+		public static TestAutomationConfig Load()
 		{
 			TestAutomationConfig config = null;
 
