@@ -582,7 +582,7 @@
 		"PresentationName": "Show Firmware Updater",
 		"HelpText": "This will only work on specific hardware. Do not use unless you are sure your printer controller supports this feature",
 		"DataEditType": "LIST",
-		"ExtraSettings": "None,Simple Arduino",
+		"ListValues": "None,Simple Arduino",
 		"DefaultValue": "None",
 		"ShowIfSet": "!sla_printer",
 		"ReloadUiWhenChanged": true,
