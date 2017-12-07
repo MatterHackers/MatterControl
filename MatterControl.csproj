@@ -133,6 +133,8 @@
     <Compile Include="PartPreviewWindow\View3D\Actions\PaintMaterialEditor.cs" />
     <Compile Include="PartPreviewWindow\View3D\Actions\SubtractEditor.cs" />
     <Compile Include="PartPreviewWindow\View3D\LightingData.cs" />
+    <Compile Include="PartPreviewWindow\View3D\UndoCommands\ChangeColor.cs" />
+    <Compile Include="PartPreviewWindow\View3D\UndoCommands\MakeSupport.cs" />
     <Compile Include="PartPreviewWindow\View3D\SlicePopupMenu.cs" />
     <Compile Include="PartPreviewWindow\View3D\TumbleCubeControl.cs" />
     <Compile Include="PartPreviewWindow\View3D\UndoCommands\DeleteCommand.cs" />

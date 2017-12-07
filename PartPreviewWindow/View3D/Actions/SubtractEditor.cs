@@ -80,43 +80,70 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				AutoExpandBoundsToText = true,
 			});
 
-			for (int i = 0; i < children.Count; i++)
-			{
-				var itemIndex = i;
-				var item = children[itemIndex];
-				FlowLayoutWidget rowContainer = new FlowLayoutWidget();
-
-				var checkBox = new CheckBox(string.IsNullOrWhiteSpace(item.Name) ? $"{itemIndex}" : $"{item.Name}")
-				{
-					Checked = item.OutputType == PrintOutputTypes.Hole,
-					TextColor = ActiveTheme.Instance.PrimaryTextColor
-				};
-				rowContainer.AddChild(checkBox);
-
-				checkBox.CheckedStateChanged += (s, e) =>
-				{
-					// make sure the mesh on the group is not visible
-					group.ResetMeshWrappers();
-
-					foreach (var meshWrapper in item.Descendants().Where((obj) => obj.OwnerID == group.ID).ToList())
-					{
-						// and set the output type for this checkbox
-						meshWrapper.OutputType = checkBox.Checked ? PrintOutputTypes.Hole : PrintOutputTypes.Solid;
-					}
-				};
-
-				tabContainer.AddChild(rowContainer);
-			}
-
+			// create this early so we can use enable disable it on button changed state
 			var updateButton = theme.ButtonFactory.Generate("Update".Localize());
 			updateButton.Margin = new BorderDouble(5);
 			updateButton.HAnchor = HAnchor.Right;
+			updateButton.Enabled = false; // starts out disabled as there are no holes selected
 			updateButton.Click += (s, e) =>
 			{
 				// make sure the mesh on the group is not visible
 				group.ResetMeshWrappers();
 				ProcessBooleans(group);
 			};
+
+			List<GuiWidget> radioSiblings = new List<GuiWidget>();
+			for (int i = 0; i < children.Count; i++)
+			{
+				var itemIndex = i;
+				var item = children[itemIndex];
+				FlowLayoutWidget rowContainer = new FlowLayoutWidget();
+
+				GuiWidget selectWidget;
+				if (children.Count == 2)
+				{
+					var radioButton = new RadioButton(string.IsNullOrWhiteSpace(item.Name) ? $"{itemIndex}" : $"{item.Name}")
+					{
+						Checked = item.OutputType == PrintOutputTypes.Hole,
+						TextColor = ActiveTheme.Instance.PrimaryTextColor
+					};
+					radioSiblings.Add(radioButton);
+					radioButton.SiblingRadioButtonList = radioSiblings;
+					selectWidget = radioButton;
+				}
+				else
+				{
+					selectWidget = new CheckBox(string.IsNullOrWhiteSpace(item.Name) ? $"{itemIndex}" : $"{item.Name}")
+					{
+						Checked = item.OutputType == PrintOutputTypes.Hole,
+						TextColor = ActiveTheme.Instance.PrimaryTextColor
+					};
+				}
+				rowContainer.AddChild(selectWidget);
+				ICheckbox checkBox = selectWidget as ICheckbox;
+
+				checkBox.CheckedStateChanged += (s, e) =>
+				{
+					// make sure the mesh on the group is not visible
+					group.ResetMeshWrappers();
+
+					var wrappedItems = item.Descendants().Where((obj) => obj.OwnerID == group.ID).ToList();
+					foreach (var meshWrapper in wrappedItems)
+					{
+						// and set the output type for this checkbox
+						meshWrapper.OutputType = checkBox.Checked ? PrintOutputTypes.Hole : PrintOutputTypes.Solid;
+					}
+
+					var allItems = group.Descendants().Where((obj) => obj.OwnerID == group.ID).ToList();
+					int holeCount = allItems.Where((o) => o.OutputType == PrintOutputTypes.Hole).Count();
+					int solidCount = allItems.Where((o) => o.OutputType != PrintOutputTypes.Hole).Count();
+					updateButton.Enabled = allItems.Count() != holeCount && allItems.Count() != solidCount;
+				};
+
+				tabContainer.AddChild(rowContainer);
+			}
+
+			// add this last so it is at the bottom
 			tabContainer.AddChild(updateButton);
 		}
 
