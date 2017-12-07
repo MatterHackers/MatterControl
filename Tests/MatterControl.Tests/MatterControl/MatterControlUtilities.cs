@@ -150,7 +150,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void Select3DPart(this AutomationRunner testRunner, string partNameToSelect)
 		{
-			if(testRunner.NameExists("3D View Edit", .2))
+			if (testRunner.NameExists("3D View Edit", .2))
 			{
 				testRunner.ClickByName("3D View Edit");
 			}
@@ -181,7 +181,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.NavigateToFolder("Print Queue Row Item Collection");
 		}
 
-		public class PrintEmulatorProcess: Process
+		public class PrintEmulatorProcess : Process
 		{
 			protected override void Dispose(bool disposing)
 			{
@@ -226,7 +226,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			Emulator.Instance.RunSlow = runSlow;
 
 			return Emulator.Instance;
-	}
+		}
 
 		public static void CancelPrint(this AutomationRunner testRunner)
 		{
@@ -392,7 +392,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void NavigateToLibraryHome(this AutomationRunner testRunner)
 		{
-			while(!testRunner.NameExists("Local Library Row Item Collection", .5))
+			while (!testRunner.NameExists("Local Library Row Item Collection", .5))
 			{
 				testRunner.ClickByName("Library Up Button");
 				testRunner.Delay(1);
@@ -408,16 +408,22 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		/// <param name="textValue">The text to type</param>
 		public static void CompleteDialog(this AutomationRunner testRunner, string textValue, int secondsToWait = 1)
 		{
-			testRunner.WaitForName("Automation Dialog TextEdit");
-			testRunner.Type(textValue);
-
 			// AutomationDialog requires no delay
-			if (!(AggContext.FileDialogs is AutomationDialogProvider))
+			if (AggContext.FileDialogs is AutomationDialogProvider)
+			{
+				// Wait for text widget to have focus
+				var widget = testRunner.GetWidgetByName("Automation Dialog TextEdit", out _, 5);
+				testRunner.Delay(() => widget.ContainsFocus);
+			}
+			else
 			{
 				testRunner.Delay(secondsToWait);
 			}
 
+			testRunner.Type(textValue);
+
 			testRunner.Type("{Enter}");
+			testRunner.WaitVanishForName("Automation Dialog TextEdit", 5);
 		}
 
 		public static void AddItemToBedplate(this AutomationRunner testRunner, string containerName = "Calibration Parts Row Item Collection", string partName = "Row Item Calibration - Box.stl")
@@ -440,10 +446,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			testRunner.ClickByName("Add to Plate Menu Item");
 			// wait for the object to be added
-			testRunner.Delay(() => scene.Children.Count == preAddCount+1, 1);
+			testRunner.Delay(() => scene.Children.Count == preAddCount + 1, 1);
 			// wait for the object to be done loading
 			var insertionGroup = scene.Children.LastOrDefault() as InsertionGroup;
-			if(insertionGroup != null)
+			if (insertionGroup != null)
 			{
 				testRunner.Delay(() => scene.Children.LastOrDefault() as InsertionGroup != null, 10);
 			}
@@ -481,7 +487,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			string staticDataPathOverride = null,
 			double maxTimeToRun = 60,
 			QueueTemplate queueItemFolderToAdd = QueueTemplate.None,
-			int overrideWidth = -1, 
+			int overrideWidth = -1,
 			int overrideHeight = -1,
 			string defaultTestImages = null)
 		{
@@ -529,19 +535,20 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			var config = TestAutomationConfig.Load();
 
-            if (config.UseAutomationDialogs)
-            {
-                AggContext.Config.ProviderTypes.DialogProvider = "MatterHackers.Agg.Platform.AutomationDialogProvider, GuiAutomation";
-            }
+			if (config.UseAutomationDialogs)
+			{
+				AggContext.Config.ProviderTypes.DialogProvider = "MatterHackers.Agg.Platform.AutomationDialogProvider, GuiAutomation";
+			}
 
 			// Extract mouse speed from config
 			AutomationRunner.TimeToMoveMouse = config.TimeToMoveMouse;
+			AutomationRunner.UpDelaySeconds = config.MouseUpDelay;
 
 			await AutomationRunner.ShowWindowAndExecuteTests(
-				matterControlWindow, 
-				testMethod, 
-				maxTimeToRun, 
-				defaultTestImages, 
+				matterControlWindow,
+				testMethod,
+				maxTimeToRun,
+				defaultTestImages,
 				config.UseAutomationMouse ? AutomationRunner.InputType.SimulatedDrawMouse : AutomationRunner.InputType.Native,
 				closeWindow: () =>
 				{
@@ -656,18 +663,15 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			foreach (string assetName in assetNames)
 			{
 				string friendlyName = Path.GetFileNameWithoutExtension(assetName);
-				Assert.IsFalse(testRunner.WaitForName($"Row Item {friendlyName}", 1), $"{friendlyName} part should not exist at test start");
+				Assert.IsFalse(testRunner.WaitForName($"Row Item {friendlyName}", .1), $"{friendlyName} part should not exist at test start");
 			}
-
-			// Generate the full, quoted paths for the requested assets
-			string fullQuotedAssetPaths = string.Join(" ", assetNames.Select(name => $"\"{MatterControlUtilities.GetTestItemPath(name)}\""));
 
 			// Add Library item
 			testRunner.ClickByName("Library Add Button");
-			testRunner.Delay(2);
-			testRunner.Type(fullQuotedAssetPaths);
-			testRunner.Delay(1);
-			testRunner.Type("{Enter}");
+
+			// Generate the full, quoted paths for the requested assets
+			string fullQuotedAssetPaths = string.Join(" ", assetNames.Select(name => $"\"{MatterControlUtilities.GetTestItemPath(name)}\""));
+			testRunner.CompleteDialog(fullQuotedAssetPaths);
 
 			// Assert that the added items *are* in the list
 			foreach (string assetName in assetNames)
@@ -686,7 +690,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			// Control click all items
 			Keyboard.SetKeyDownState(Keys.ControlKey, down: true);
-			foreach(var widgetName in widgetNames)
+			foreach (var widgetName in widgetNames)
 			{
 				testRunner.ClickByName(widgetName);
 			}
@@ -721,6 +725,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public bool UseAutomationDialogs { get; set; }
 
 		public bool UseAutomationMouse { get; set; }
+
+		public double MouseUpDelay { get; set; } = 0.2;
 
 		public static TestAutomationConfig Load()
 		{
