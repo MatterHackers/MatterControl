@@ -92,7 +92,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 		private void AddPaintSelector(View3DWidget view3DWidget, FlowLayoutWidget tabContainer, ThemeConfig theme)
 		{
-			var differenceItems = group.Descendants().Where((obj) => obj.OwnerID == group.ID).ToList();
+			var children = group.Children.ToList();
 
 			tabContainer.AddChild(new TextWidget("Set as Paint")
 			{
@@ -101,39 +101,70 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				AutoExpandBoundsToText = true,
 			});
 
-			for (int i = 0; i < differenceItems.Count; i++)
-			{
-				var itemIndex = i;
-				var item = differenceItems[itemIndex];
-				FlowLayoutWidget rowContainer = new FlowLayoutWidget();
-
-				var checkBox = new CheckBox(string.IsNullOrWhiteSpace(item.Name) ? $"{itemIndex}" : $"{item.Name}")
-				{
-					Checked = item.OutputType == PrintOutputTypes.Hole,
-					TextColor = ActiveTheme.Instance.PrimaryTextColor
-				};
-				rowContainer.AddChild(checkBox);
-
-				checkBox.CheckedStateChanged += (s, e) =>
-				{
-					// make sure the mesh on the group is not visible
-					group.ResetMeshWrappers();
-					// and set the output type for this checkbox
-					item.OutputType = checkBox.Checked ? PrintOutputTypes.Hole : PrintOutputTypes.Solid;
-				};
-
-				tabContainer.AddChild(rowContainer);
-			}
-
+			// create this early so we can use enable disable it on button changed state
 			var updateButton = theme.ButtonFactory.Generate("Update".Localize());
 			updateButton.Margin = new BorderDouble(5);
 			updateButton.HAnchor = HAnchor.Right;
+			updateButton.Enabled = false; // starts out disabled as there are no holes selected
 			updateButton.Click += (s, e) =>
 			{
 				// make sure the mesh on the group is not visible
 				group.ResetMeshWrappers();
 				ProcessBooleans(group);
 			};
+
+			List<GuiWidget> radioSiblings = new List<GuiWidget>();
+			for (int i = 0; i < children.Count; i++)
+			{
+				var itemIndex = i;
+				var item = children[itemIndex];
+				FlowLayoutWidget rowContainer = new FlowLayoutWidget();
+
+				GuiWidget selectWidget;
+				if (children.Count == 2)
+				{
+					var radioButton = new RadioButton(string.IsNullOrWhiteSpace(item.Name) ? $"{itemIndex}" : $"{item.Name}")
+					{
+						Checked = item.OutputType == PrintOutputTypes.Hole,
+						TextColor = ActiveTheme.Instance.PrimaryTextColor
+					};
+					radioSiblings.Add(radioButton);
+					radioButton.SiblingRadioButtonList = radioSiblings;
+					selectWidget = radioButton;
+				}
+				else
+				{
+					selectWidget = new CheckBox(string.IsNullOrWhiteSpace(item.Name) ? $"{itemIndex}" : $"{item.Name}")
+					{
+						Checked = item.OutputType == PrintOutputTypes.Hole,
+						TextColor = ActiveTheme.Instance.PrimaryTextColor
+					};
+				}
+				rowContainer.AddChild(selectWidget);
+				ICheckbox checkBox = selectWidget as ICheckbox;
+
+				checkBox.CheckedStateChanged += (s, e) =>
+				{
+					// make sure the mesh on the group is not visible
+					group.ResetMeshWrappers();
+
+					var wrappedItems = item.Descendants().Where((obj) => obj.OwnerID == group.ID).ToList();
+					foreach (var meshWrapper in wrappedItems)
+					{
+						// and set the output type for this checkbox
+						meshWrapper.OutputType = checkBox.Checked ? PrintOutputTypes.Hole : PrintOutputTypes.Solid;
+					}
+
+					var allItems = group.Descendants().Where((obj) => obj.OwnerID == group.ID).ToList();
+					int holeCount = allItems.Where((o) => o.OutputType == PrintOutputTypes.Hole).Count();
+					int solidCount = allItems.Where((o) => o.OutputType != PrintOutputTypes.Hole).Count();
+					updateButton.Enabled = allItems.Count() != holeCount && allItems.Count() != solidCount;
+				};
+
+				tabContainer.AddChild(rowContainer);
+			}
+
+			// add this last so it is at the bottom
 			tabContainer.AddChild(updateButton);
 		}
 
@@ -151,11 +182,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				{
 					foreach (var paint in paintObjects)
 					{
+						var transformedPaint = Mesh.Copy(paint.Mesh, CancellationToken.None);
+						transformedPaint.Transform(paint.WorldMatrix());
+						var inverseRemove = paint.WorldMatrix();
+						inverseRemove.Invert();
+						paint.Mesh = null;
+
 						foreach (var keep in keepObjects)
 						{
-							var transformedPaint = Mesh.Copy(paint.Mesh, CancellationToken.None);
-							transformedPaint.Transform(paint.WorldMatrix());
-
 							var transformedKeep = Mesh.Copy(keep.Mesh, CancellationToken.None);
 							transformedKeep.Transform(keep.WorldMatrix());
 
@@ -166,11 +200,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 							intersectAndSubtract.subtract.Transform(inverseKeep);
 							keep.Mesh = intersectAndSubtract.subtract;
 
-							var inverseRemove = paint.WorldMatrix();
-							inverseRemove.Invert();
-							intersectAndSubtract.intersect.Transform(inverseRemove);
-							paint.Mesh = intersectAndSubtract.intersect;
+							// keep all the intersections together
+							if(paint.Mesh == null)
+							{
+								paint.Mesh = intersectAndSubtract.intersect;
+							}
+							else // union into the current paint
+							{
+								paint.Mesh = PolygonMesh.Csg.CsgOperations.Union(paint.Mesh, intersectAndSubtract.intersect);
+							}
 						}
+
+						// move the paint mesh back to its original coordinates
+						paint.Mesh.Transform(inverseRemove);
 
 						// now set it to the new solid color
 						paint.OutputType = PrintOutputTypes.Solid;
