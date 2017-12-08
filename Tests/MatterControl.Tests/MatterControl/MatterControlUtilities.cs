@@ -391,26 +391,30 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void EnsureFoldersVisible(this AutomationRunner testRunner)
 		{
-			var listView = testRunner.GetWidgetByName("LibraryView", out _) as ListView;
-			var resetEvent = new AutoResetEvent(false);
-
-			EventHandler contentReloaded = (s, e) =>
-			{
-				resetEvent.Set();
-			};
-
-			listView.ContentReloaded += contentReloaded;
 
 			var checkBox = (ExpandCheckboxButton)testRunner.GetWidgetByName("Show Folders Toggle", out _);
 			if (!checkBox.Checked)
 			{
+				var resetEvent = new AutoResetEvent(false);
+
+				// Wire up event listener
+				var listView = testRunner.GetWidgetByName("LibraryView", out _) as ListView;
+				EventHandler contentReloaded = (s, e) =>
+				{
+					resetEvent.Set();
+				};
+				listView.ContentReloaded += contentReloaded;
+
+				// Start reload
 				testRunner.ClickByName("Show Folders Toggle");
+
+				// Wait for reload
+				resetEvent.WaitOne();
+
+				// Release event listener
+				listView.ContentReloaded -= contentReloaded;
 			}
 
-			// Wait for reload
-			resetEvent.WaitOne();
-
-			listView.ContentReloaded -= contentReloaded;
 		}
 
 		public static void NavigateToLibraryHome(this AutomationRunner testRunner)
@@ -556,6 +560,13 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			//GL.HardwareAvailable = false;
 			MatterControlApplication matterControlWindow = MatterControlApplication.CreateInstance(overrideWidth, overrideHeight);
 
+			EventHandler<ClosedEventArgs> unexpectedClose = (s, e) =>
+			{
+				throw new Exception("MatterControl closed unexpectedly");
+			};
+
+			matterControlWindow.Closed += unexpectedClose;
+
 			var config = TestAutomationConfig.Load();
 
 			if (config.UseAutomationDialogs)
@@ -575,6 +586,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				config.UseAutomationMouse ? AutomationRunner.InputType.SimulatedDrawMouse : AutomationRunner.InputType.Native,
 				closeWindow: () =>
 				{
+					matterControlWindow.Closed -= unexpectedClose;
+
 					if (ApplicationController.Instance.ActivePrinter.Connection.CommunicationState == CommunicationStates.Printing)
 					{
 						ApplicationController.Instance.ActivePrinter.Connection.Disable();
