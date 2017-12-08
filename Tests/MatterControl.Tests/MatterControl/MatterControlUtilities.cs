@@ -391,7 +391,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void EnsureFoldersVisible(this AutomationRunner testRunner)
 		{
-
 			var checkBox = (ExpandCheckboxButton)testRunner.GetWidgetByName("Show Folders Toggle", out _);
 			if (!checkBox.Checked)
 			{
