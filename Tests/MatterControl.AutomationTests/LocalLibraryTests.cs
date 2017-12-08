@@ -233,6 +233,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// Select both items
 				testRunner.ClickByName("Row Item Rook");
 				Keyboard.SetKeyDownState(Keys.ControlKey, down: true);
+
 				testRunner.ClickByName("Row Item Batman");
 				Keyboard.SetKeyDownState(Keys.ControlKey, down: false);
 
