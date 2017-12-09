@@ -77,7 +77,17 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void CreateDownloadsSubFolder()
 		{
+			if (Directory.Exists(PathToDownloadsSubFolder))
+			{
+				foreach (string filePath in Directory.GetFiles(PathToDownloadsSubFolder))
+				{
+					File.Delete(filePath);
+				}
+			}
+			else
+		{
 			Directory.CreateDirectory(PathToDownloadsSubFolder);
+		}
 		}
 		
 		public static void DeleteDownloadsSubFolder()
