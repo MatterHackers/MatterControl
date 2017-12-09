@@ -58,10 +58,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private Button cancelConnectButton;
 		private Button resetConnectionButton;
-		private Button resumeResumeButton;
 
 		private Button startPrintButton;
-		private Button pausePrintButton;
 		private Button cancelPrintButton;
 
 		private Button finishSetupButton;
@@ -80,8 +78,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Fit;
-
-			this.AddChild(new PrinterConnectButton(printer, theme));
 
 			BuildChildElements(theme);
 
@@ -276,6 +272,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			var defaultMargin = theme.ButtonSpacing;
 
+			// add the reset button first (if there is one)
+			if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.show_reset_connection))
+			{
+				resetConnectionButton = theme.ButtonFactory.Generate("Reset".Localize().ToUpper(), AggContext.StaticData.LoadIcon("e_stop.png", 14, 14, IconColor.Theme));
+				resetConnectionButton.ToolTipText = "Reboots the firmware on the controller".Localize();
+				resetConnectionButton.Margin = defaultMargin;
+				resetConnectionButton.Click += (s, e) =>
+				{
+					UiThread.RunOnIdle(printer.Connection.RebootBoard);
+				};
+				this.AddChild(resetConnectionButton);
+				allPrintButtons.Add(resetConnectionButton);
+			}
+
+			// next add the connect/disconnect button (todo move the cancel connectb up here)
+			this.AddChild(new PrinterConnectButton(printer, theme));
+
+			// add the cancel connect / print / finish setup / stop button
 			startPrintButton = theme.ButtonFactory.Generate("Print".Localize().ToUpper());
 			startPrintButton.Name = "Start Print Button";
 			startPrintButton.ToolTipText = "Begin printing the selected item.".Localize();
@@ -319,27 +333,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.AddChild(finishSetupButton);
 			allPrintButtons.Add(finishSetupButton);
 
-			resetConnectionButton = theme.ButtonFactory.Generate("Reset".Localize().ToUpper(), AggContext.StaticData.LoadIcon("e_stop.png", 14, 14, IconColor.Theme));
-			resetConnectionButton.ToolTipText = "Reboots the firmware on the controller".Localize();
-			resetConnectionButton.Margin = defaultMargin;
-			resetConnectionButton.Click += (s, e) =>
-			{
-				UiThread.RunOnIdle(printer.Connection.RebootBoard);
-			};
-			this.AddChild(resetConnectionButton);
-			allPrintButtons.Add(resetConnectionButton);
-
-			pausePrintButton = theme.ButtonFactory.Generate("Pause".Localize().ToUpper());
-			pausePrintButton.ToolTipText = "Pause the current print".Localize();
-			pausePrintButton.Margin = defaultMargin;
-			pausePrintButton.Click += (s, e) =>
-			{
-				UiThread.RunOnIdle(printer.Connection.RequestPause);
-				pausePrintButton.Enabled = false;
-			};
-			this.AddChild(pausePrintButton);
-			allPrintButtons.Add(pausePrintButton);
-
 			cancelConnectButton = theme.ButtonFactory.Generate("Cancel Connect".Localize().ToUpper());
 			cancelConnectButton.ToolTipText = "Stop trying to connect to the printer.".Localize();
 			cancelConnectButton.Margin = defaultMargin;
@@ -363,30 +356,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.AddChild(cancelPrintButton);
 			allPrintButtons.Add(cancelPrintButton);
 
-			resumeResumeButton = theme.ButtonFactory.Generate("Resume".Localize().ToUpper());
-			resumeResumeButton.ToolTipText = "Resume the current print".Localize();
-			resumeResumeButton.Margin = defaultMargin;
-			resumeResumeButton.Name = "Resume Button";
-			resumeResumeButton.Click += (s, e) =>
-			{
-				if (printer.Connection.PrinterIsPaused)
-				{
-					printer.Connection.Resume();
-				}
-				pausePrintButton.Enabled = true;
-			};
-			this.AddChild(resumeResumeButton);
-			allPrintButtons.Add(resumeResumeButton);
-
+			this.AddChild(new PauseResumeButton(this, printer, theme));
+			
 			SetButtonStates();
-		}
-
-		protected void DisableActiveButtons()
-		{
-			foreach (Button button in this.activePrintButtons)
-			{
-				button.Enabled = false;
-			}
 		}
 
 		protected void EnableActiveButtons()
@@ -409,9 +381,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					// TODO: Possibly upsell add printer - ideally don't show printer tab, only show Plus tab
 					//this.activePrintButtons.Add(addPrinterButton);
 				}
-
-				ShowActiveButtons();
-				EnableActiveButtons();
 			}
 			else
 			{
@@ -419,7 +388,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					case CommunicationStates.AttemptingToConnect:
 						this.activePrintButtons.Add(cancelConnectButton);
-						EnableActiveButtons();
 						break;
 
 					case CommunicationStates.Connected:
@@ -433,54 +401,38 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						{
 							this.activePrintButtons.Add(startPrintButton);
 						}
-
-						EnableActiveButtons();
 						break;
 
 					case CommunicationStates.PreparingToPrint:
 						this.activePrintButtons.Add(cancelPrintButton);
-						EnableActiveButtons();
 						break;
 
 					case CommunicationStates.PrintingFromSd:
 					case CommunicationStates.Printing:
 						if (!printer.Connection.PrintWasCanceled)
 						{
-							this.activePrintButtons.Add(pausePrintButton);
 							this.activePrintButtons.Add(cancelPrintButton);
 						}
-						else if (UserSettings.Instance.IsTouchScreen)
-						{
-							this.activePrintButtons.Add(resetConnectionButton);
-						}
-
-						EnableActiveButtons();
 						break;
 
 					case CommunicationStates.Paused:
-						this.activePrintButtons.Add(resumeResumeButton);
 						this.activePrintButtons.Add(cancelPrintButton);
-						EnableActiveButtons();
 						break;
 
 					case CommunicationStates.FinishedPrint:
 						this.activePrintButtons.Add(startPrintButton);
-						EnableActiveButtons();
 						break;
 
 					default:
-						DisableActiveButtons();
 						break;
 				}
 			}
 
-			if (printer.Connection.PrinterIsConnected
-				&& printer.Settings.GetValue<bool>(SettingsKey.show_reset_connection))
+			if (printer.Settings.GetValue<bool>(SettingsKey.show_reset_connection))
 			{
 				this.activePrintButtons.Add(resetConnectionButton);
-				ShowActiveButtons();
-				EnableActiveButtons();
 			}
+			EnableActiveButtons();
 			ShowActiveButtons();
 		}
 
