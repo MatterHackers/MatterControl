@@ -10,13 +10,24 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class LibraryDownloadsTests
 	{
+		[SetUp]
+		public void Setup()
+		{
+			MatterControlUtilities.CreateDownloadsSubFolder();
+		}
+
+		[TearDown]
+		public void TearDown()
+		{
+			MatterControlUtilities.DeleteDownloadsSubFolder();
+		}
+
 		[Test, Apartment(ApartmentState.STA)]
 		public async Task DownloadsAddButtonAddsMultipleFiles()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest(testRunner =>
 			{
 				testRunner.CloseSignInAndPrinterSelect();
-				MatterControlUtilities.CreateDownloadsSubFolder();
 
 				// Navigate to Downloads Library Provider
 				testRunner.NavigateToFolder("Downloads Row Item Collection");
@@ -38,28 +49,15 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.IsTrue(testRunner.WaitForName("Row Item Batman", 2), "Batman item exists");
 
 				return Task.CompletedTask;
-			};
-
-			// TODO: The standard assignment without a try/catch should be used and DeleteDownloadsSubFolder should be called from a TearDown method
-			try
-			{
-				await MatterControlUtilities.RunTest(testToRun);
-
-			}
-			catch { }
-			finally
-			{
-				MatterControlUtilities.DeleteDownloadsSubFolder();
-			}
+			});
 		}
 
 		[Test, Apartment(ApartmentState.STA)]
 		public async Task DownloadsAddButtonAddsAMFFiles()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest(testRunner =>
 			{
 				testRunner.CloseSignInAndPrinterSelect();
-				MatterControlUtilities.CreateDownloadsSubFolder();
 
 				// Navigate to Downloads Library Provider
 				testRunner.NavigateToFolder("Downloads Row Item Collection");
@@ -74,27 +72,15 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Delay(1);
 
 				return Task.CompletedTask;
-			};
-
-			try
-			{
-				await MatterControlUtilities.RunTest(testToRun);
-
-			}
-			catch { }
-			finally
-			{
-				MatterControlUtilities.DeleteDownloadsSubFolder();
-			}
+			});
 		}
 
 		[Test, Apartment(ApartmentState.STA)]
 		public async Task DownloadsAddButtonAddsZipFiles()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest(testRunner =>
 			{
 				testRunner.CloseSignInAndPrinterSelect();
-				MatterControlUtilities.CreateDownloadsSubFolder();
 
 				// Navigate to Downloads Library Provider
 				testRunner.NavigateToFolder("Downloads Row Item Collection");
@@ -109,37 +95,21 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.IsTrue(testRunner.WaitForName("Row Item Circle Calibration", 2), "Circle Calibration item exists");
 
 				return Task.CompletedTask;
-			};
-
-			try
-			{
-				MatterControlUtilities.RunTest(testToRun);
-			}
-			catch { }
-
-			// Give MatterControl a moment to shutdown
-			Thread.Sleep(2000);
-			try
-			{
-				// Then attempt to clean up
-				MatterControlUtilities.DeleteDownloadsSubFolder();
-			}
-			catch { }
+			});
 		}
 
 		[Test, Apartment(ApartmentState.STA)]
 		public async Task RenameDownloadsPrintItem()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest(testRunner =>
 			{
 				testRunner.CloseSignInAndPrinterSelect();
-				MatterControlUtilities.CreateDownloadsSubFolder();
 
 				// Navigate to Downloads Library Provider
 				testRunner.NavigateToFolder("Downloads Row Item Collection");
 				testRunner.NavigateToFolder("-Temporary Row Item Collection");
 				testRunner.ClickByName("Library Add Button");
-				
+
 				testRunner.CompleteDialog(MatterControlUtilities.GetTestItemPath("Batman.stl"), 2);
 				testRunner.Type("{Enter}");
 
@@ -154,27 +124,15 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.IsTrue(testRunner.WaitForName("Row Item Batman Renamed", 2));
 
 				return Task.CompletedTask;
-			};
-
-			try
-			{
-				await MatterControlUtilities.RunTest(testToRun);
-
-			}
-			catch { }
-			finally
-			{
-				MatterControlUtilities.DeleteDownloadsSubFolder();
-			}
+			});
 		}
 
 		[Test, Apartment(ApartmentState.STA)]
 		public async Task CreateFolder()
 		{
-			AutomationTest testToRun = (testRunner) =>
+			await MatterControlUtilities.RunTest(testRunner =>
 			{
 				testRunner.CloseSignInAndPrinterSelect();
-				MatterControlUtilities.CreateDownloadsSubFolder();
 
 				//Navigate to Downloads Library Provider
 				testRunner.NavigateToFolder("Downloads Row Item Collection");
@@ -190,18 +148,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.IsTrue(testRunner.WaitForName(newFolderName + " Row Item Collection"), $"{newFolderName} exists");
 
 				return Task.CompletedTask;
-			};
-
-			try
-			{
-				await MatterControlUtilities.RunTest(testToRun);
-
-			}
-			catch { }
-			finally
-			{
-				MatterControlUtilities.DeleteDownloadsSubFolder();
-			}
+			});
 		}
 	}
 }

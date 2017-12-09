@@ -66,6 +66,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		private static string runName = DateTime.Now.ToString("yyyy-MM-ddTHH-mm-ss");
 
+		public static string PathToDownloadsSubFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads", "-Temporary");
+		
 		public static void RemoveAllFromQueue(this AutomationRunner testRunner)
 		{
 			testRunner.ClickByName("Queue... Menu");
@@ -77,15 +79,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			Directory.CreateDirectory(PathToDownloadsSubFolder);
 		}
-
-		public static string PathToDownloadsSubFolder
-		{
-			get
-			{
-				return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads", "-Temporary");
-			}
-		}
-
+		
 		public static void DeleteDownloadsSubFolder()
 		{
 			Directory.Delete(PathToDownloadsSubFolder, true);
