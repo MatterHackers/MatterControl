@@ -66,6 +66,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		private static string runName = DateTime.Now.ToString("yyyy-MM-ddTHH-mm-ss");
 
+		public static string PathToDownloadsSubFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads", "-Temporary");
+		
 		public static void RemoveAllFromQueue(this AutomationRunner testRunner)
 		{
 			testRunner.ClickByName("Queue... Menu");
@@ -75,17 +77,19 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void CreateDownloadsSubFolder()
 		{
-			Directory.CreateDirectory(PathToDownloadsSubFolder);
-		}
-
-		public static string PathToDownloadsSubFolder
-		{
-			get
+			if (Directory.Exists(PathToDownloadsSubFolder))
 			{
-				return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads", "-Temporary");
+				foreach (string filePath in Directory.GetFiles(PathToDownloadsSubFolder))
+				{
+					File.Delete(filePath);
+				}
+			}
+			else
+			{
+				Directory.CreateDirectory(PathToDownloadsSubFolder);
 			}
 		}
-
+		
 		public static void DeleteDownloadsSubFolder()
 		{
 			Directory.Delete(PathToDownloadsSubFolder, true);
@@ -432,7 +436,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		/// </summary>
 		/// <param name="testRunner">The TestRunner to interact with</param>
 		/// <param name="textValue">The text to type</param>
-		public static void CompleteDialog(this AutomationRunner testRunner, string textValue, int secondsToWait = 1)
+		public static void CompleteDialog(this AutomationRunner testRunner, string textValue, double secondsToWait = 1)
 		{
 			// AutomationDialog requires no delay
 			if (AggContext.FileDialogs is AutomationDialogProvider)
