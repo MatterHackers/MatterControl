@@ -127,6 +127,10 @@
       <Project>{D3E41B4E-BFBB-44CA-94C8-95C00F754FDD}</Project>
       <Name>VectorMath</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\TextCreator\TextCreator.csproj">
+      <Project>{f49ec1dd-d645-4709-8667-b57318af67b0}</Project>
+      <Name>TextCreator</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
