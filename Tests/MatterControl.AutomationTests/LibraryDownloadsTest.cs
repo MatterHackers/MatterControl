@@ -18,27 +18,24 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.CloseSignInAndPrinterSelect();
 				MatterControlUtilities.CreateDownloadsSubFolder();
 
-				//Navigate to Downloads Library Provider
+				// Navigate to Downloads Library Provider
 				testRunner.NavigateToFolder("Downloads Row Item Collection");
 				testRunner.NavigateToFolder("-Temporary Row Item Collection");
-				testRunner.ClickByName("Library Add Button");
-				testRunner.Delay(3);
-
-				testRunner.Delay(2);
 
 				// Add both files to the FileOpen dialog
-				testRunner.Type(
+				testRunner.ClickByName("Library Add Button");
+				testRunner.CompleteDialog(
 					string.Format(
 						"\"{0}\" \"{1}\"",
 						MatterControlUtilities.GetTestItemPath("Fennec_Fox.stl"),
-						MatterControlUtilities.GetTestItemPath("Batman.stl")));
+						MatterControlUtilities.GetTestItemPath("Batman.stl")),
+					5);
 
 				testRunner.Delay(1);
 				testRunner.Type("{Enter}");
 
 				Assert.IsTrue(testRunner.WaitForName("Row Item Fennec Fox", 2), "Fennec Fox item exists");
 				Assert.IsTrue(testRunner.WaitForName("Row Item Batman", 2), "Batman item exists");
-				testRunner.Delay(1);
 
 				return Task.CompletedTask;
 			};
@@ -64,16 +61,13 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.CloseSignInAndPrinterSelect();
 				MatterControlUtilities.CreateDownloadsSubFolder();
 
-				//Navigate to Downloads Library Provider
+				// Navigate to Downloads Library Provider
 				testRunner.NavigateToFolder("Downloads Row Item Collection");
 				testRunner.NavigateToFolder("-Temporary Row Item Collection");
-				testRunner.ClickByName("Library Add Button");
-				testRunner.Delay(2);
 
-				//Add AMF part items to Downloads and then type paths into file dialog 
-				testRunner.Delay(2);
-				testRunner.Type(MatterControlUtilities.GetTestItemPath("Rook.amf"));
-				testRunner.Delay(1);
+				// Add AMF part items to Downloads and then type paths into file dialog 
+				testRunner.ClickByName("Library Add Button");
+				testRunner.CompleteDialog(MatterControlUtilities.GetTestItemPath("Rook.amf"), 4);
 				testRunner.Type("{Enter}");
 
 				Assert.IsTrue(testRunner.WaitForName("Row Item Rook", 2), "Rook item exists");
@@ -105,20 +99,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// Navigate to Downloads Library Provider
 				testRunner.NavigateToFolder("Downloads Row Item Collection");
 				testRunner.NavigateToFolder("-Temporary Row Item Collection");
-				testRunner.ClickByName("Library Add Button");
-				testRunner.Delay(2);
 
-				// Add AMF part items to Downloads and then type paths into file dialogs 
-				testRunner.Delay(2);
-				testRunner.Type(MatterControlUtilities.GetTestItemPath("Test.zip"));
-				testRunner.Delay(1);
+				testRunner.ClickByName("Library Add Button");
+				testRunner.CompleteDialog(MatterControlUtilities.GetTestItemPath("Test.zip"), 4);
 				testRunner.Type("{Enter}");
 
 				Assert.IsTrue(testRunner.WaitForName("Row Item Chinese Dragon", 2), "Chinese Dragon item exists");
 				Assert.IsTrue(testRunner.WaitForName("Row Item chichen-itza pyramid", 2), "chichen-itza item exists");
 				Assert.IsTrue(testRunner.WaitForName("Row Item Circle Calibration", 2), "Circle Calibration item exists");
-
-				testRunner.Delay(1);
 
 				return Task.CompletedTask;
 			};
@@ -195,12 +183,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				string newFolderName = "New Folder";
 
 				testRunner.ClickByName("Create Folder From Library Button");
-				testRunner.Delay(2);
+				testRunner.WaitForName("InputBoxPage Action Button");
 				testRunner.Type(newFolderName);
 				testRunner.ClickByName("InputBoxPage Action Button");
 
-				testRunner.Delay(2);
-				Assert.IsTrue(testRunner.WaitForName(newFolderName + " Row Item Collection", 2), $"{newFolderName} exists");
+				Assert.IsTrue(testRunner.WaitForName(newFolderName + " Row Item Collection"), $"{newFolderName} exists");
 
 				return Task.CompletedTask;
 			};
