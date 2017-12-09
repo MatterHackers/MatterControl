@@ -169,7 +169,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 		public string description;
 		public string hero;
 		public string icon;
-		public string reference;
+		public string link;
 		public string title;
 		public string url;
 	}

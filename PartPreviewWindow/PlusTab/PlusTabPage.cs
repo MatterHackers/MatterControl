@@ -49,7 +49,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 			};
 			this.AddChild(leftContent);
 
-			this.AddChild(new ExplorePanel(theme));
+			if (OemSettings.Instance.ShowShopButton)
+			{
+				this.AddChild(new ExplorePanel(theme));
+			}
 
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Stretch;
@@ -169,35 +172,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 				});
 			};
 			otherItemsSection.AddChild(redeemShareCode);
-
-			if (OemSettings.Instance.ShowShopButton)
-			{
-				var shopButton = theme.ButtonFactory.Generate("Buy Materials".Localize(), AggContext.StaticData.LoadIcon("icon_shopping_cart_32x32.png", 24, 24, IconColor.Theme));
-				shopButton.ToolTipText = "Shop online for printing materials".Localize();
-				shopButton.Name = "Buy Materials Button";
-				shopButton.HAnchor = HAnchor.Left;
-				shopButton.Margin = buttonSpacing;
-				shopButton.Click += (sender, e) =>
-				{
-					UiThread.RunOnIdle(() =>
-					{
-						simpleTabs.RemoveTab(simpleTabs.ActiveTab);
-
-						double activeFilamentDiameter = 0;
-						if (ActiveSliceSettings.Instance.PrinterSelected)
-						{
-							activeFilamentDiameter = 3;
-							if (ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.filament_diameter) < 2)
-							{
-								activeFilamentDiameter = 1.75;
-							}
-						}
-
-						MatterControlApplication.Instance.LaunchBrowser("http://www.matterhackers.com/mc/store/redirect?d={0}&clk=mcs&a={1}".FormatWith(activeFilamentDiameter, OemSettings.Instance.AffiliateCode));
-					});
-				};
-				otherItemsSection.AddChild(shopButton);
-			}
 		}
 
 		private FlowLayoutWidget CreateSection(GuiWidget parent, string headingText)
