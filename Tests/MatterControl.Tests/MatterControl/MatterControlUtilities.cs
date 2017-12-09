@@ -85,9 +85,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				}
 			}
 			else
-		{
-			Directory.CreateDirectory(PathToDownloadsSubFolder);
-		}
+			{
+				Directory.CreateDirectory(PathToDownloadsSubFolder);
+			}
 		}
 		
 		public static void DeleteDownloadsSubFolder()

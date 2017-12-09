@@ -42,11 +42,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 						MatterControlUtilities.GetTestItemPath("Batman.stl")),
 					5);
 
-				testRunner.Delay(1);
-				testRunner.Type("{Enter}");
-
-				Assert.IsTrue(testRunner.WaitForName("Row Item Fennec Fox", 2), "Fennec Fox item exists");
-				Assert.IsTrue(testRunner.WaitForName("Row Item Batman", 2), "Batman item exists");
+				Assert.IsTrue(testRunner.WaitForName("Row Item Fennec_Fox.stl", 2), "Fennec Fox item exists");
+				Assert.IsTrue(testRunner.WaitForName("Row Item Batman.stl", 2), "Batman item exists");
 
 				return Task.CompletedTask;
 			});
@@ -66,10 +63,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// Add AMF part items to Downloads and then type paths into file dialog 
 				testRunner.ClickByName("Library Add Button");
 				testRunner.CompleteDialog(MatterControlUtilities.GetTestItemPath("Rook.amf"), 4);
-				testRunner.Type("{Enter}");
 
-				Assert.IsTrue(testRunner.WaitForName("Row Item Rook", 2), "Rook item exists");
-				testRunner.Delay(1);
+				Assert.IsTrue(testRunner.WaitForName("Row Item Rook.amf"), "Rook item exists");
 
 				return Task.CompletedTask;
 			});
@@ -88,7 +83,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.ClickByName("Library Add Button");
 				testRunner.CompleteDialog(MatterControlUtilities.GetTestItemPath("Test.zip"), 4);
-				testRunner.Type("{Enter}");
 
 				Assert.IsTrue(testRunner.WaitForName("Row Item Chinese Dragon", 2), "Chinese Dragon item exists");
 				Assert.IsTrue(testRunner.WaitForName("Row Item chichen-itza pyramid", 2), "chichen-itza item exists");
@@ -111,17 +105,18 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Library Add Button");
 
 				testRunner.CompleteDialog(MatterControlUtilities.GetTestItemPath("Batman.stl"), 2);
-				testRunner.Type("{Enter}");
 
 				// Rename added item
-				testRunner.ClickByName("Library Edit Button");
-				testRunner.ClickByName("Row Item Batman");
+				testRunner.ClickByName("Row Item Batman.stl");
 
 				testRunner.LibraryRenameSelectedItem();
-				testRunner.CompleteDialog("Batman Renamed", .5);
+
+				testRunner.WaitForName("InputBoxPage Action Button");
+				testRunner.Type("Batman Renamed");
 
 				testRunner.ClickByName("InputBoxPage Action Button");
-				Assert.IsTrue(testRunner.WaitForName("Row Item Batman Renamed", 2));
+
+				Assert.IsTrue(testRunner.WaitForName("Row Item Batman Renamed.stl", 2));
 
 				return Task.CompletedTask;
 			});
