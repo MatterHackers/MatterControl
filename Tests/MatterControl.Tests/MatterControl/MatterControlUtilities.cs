@@ -563,13 +563,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			//GL.HardwareAvailable = false;
 			MatterControlApplication matterControlWindow = MatterControlApplication.CreateInstance(overrideWidth, overrideHeight);
 
-			EventHandler<ClosedEventArgs> unexpectedClose = (s, e) =>
-			{
-				throw new Exception("MatterControl closed unexpectedly");
-			};
-
-			matterControlWindow.Closed += unexpectedClose;
-
 			var config = TestAutomationConfig.Load();
 
 			if (config.UseAutomationDialogs)
@@ -589,8 +582,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				config.UseAutomationMouse ? AutomationRunner.InputType.SimulatedDrawMouse : AutomationRunner.InputType.Native,
 				closeWindow: () =>
 				{
-					matterControlWindow.Closed -= unexpectedClose;
-
 					if (ApplicationController.Instance.ActivePrinter.Connection.CommunicationState == CommunicationStates.Printing)
 					{
 						ApplicationController.Instance.ActivePrinter.Connection.Disable();
