@@ -209,6 +209,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 							{
 								paint.Mesh = PolygonMesh.Csg.CsgOperations.Union(paint.Mesh, intersectAndSubtract.intersect);
 							}
+
+							view3DWidget.Invalidate();
 						}
 
 						// move the paint mesh back to its original coordinates

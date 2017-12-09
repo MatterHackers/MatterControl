@@ -174,6 +174,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 							inverse.Invert();
 							transformedKeep.Transform(inverse);
 							keep.Mesh = transformedKeep;
+							view3DWidget.Invalidate();
 						}
 
 						remove.Visible = false;
