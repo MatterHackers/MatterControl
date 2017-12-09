@@ -147,24 +147,21 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.CloseSignInAndPrinterSelect();
 				MatterControlUtilities.CreateDownloadsSubFolder();
 
-				//Navigate to Downloads Library Provider
+				// Navigate to Downloads Library Provider
 				testRunner.NavigateToFolder("Downloads Row Item Collection");
 				testRunner.NavigateToFolder("-Temporary Row Item Collection");
 				testRunner.ClickByName("Library Add Button");
-				testRunner.Delay(2);
-
-				testRunner.Type(MatterControlUtilities.GetTestItemPath("Batman.stl"));
-				testRunner.Delay(1);
+				
+				testRunner.CompleteDialog(MatterControlUtilities.GetTestItemPath("Batman.stl"), 2);
 				testRunner.Type("{Enter}");
 
-				//Rename added item
+				// Rename added item
 				testRunner.ClickByName("Library Edit Button");
 				testRunner.ClickByName("Row Item Batman");
 
 				testRunner.LibraryRenameSelectedItem();
+				testRunner.CompleteDialog("Batman Renamed", .5);
 
-				testRunner.Delay(.5);
-				testRunner.Type("Batman Renamed");
 				testRunner.ClickByName("InputBoxPage Action Button");
 				Assert.IsTrue(testRunner.WaitForName("Row Item Batman Renamed", 2));
 

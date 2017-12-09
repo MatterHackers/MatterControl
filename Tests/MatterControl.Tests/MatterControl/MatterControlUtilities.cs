@@ -432,7 +432,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		/// </summary>
 		/// <param name="testRunner">The TestRunner to interact with</param>
 		/// <param name="textValue">The text to type</param>
-		public static void CompleteDialog(this AutomationRunner testRunner, string textValue, int secondsToWait = 1)
+		public static void CompleteDialog(this AutomationRunner testRunner, string textValue, double secondsToWait = 1)
 		{
 			// AutomationDialog requires no delay
 			if (AggContext.FileDialogs is AutomationDialogProvider)
