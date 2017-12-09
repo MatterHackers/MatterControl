@@ -436,7 +436,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		/// </summary>
 		/// <param name="testRunner">The TestRunner to interact with</param>
 		/// <param name="textValue">The text to type</param>
-		public static void CompleteDialog(this AutomationRunner testRunner, string textValue, double secondsToWait = 1)
+		public static void CompleteDialog(this AutomationRunner testRunner, string textValue, double secondsToWait = 2)
 		{
 			// AutomationDialog requires no delay
 			if (AggContext.FileDialogs is AutomationDialogProvider)
@@ -563,13 +563,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			//GL.HardwareAvailable = false;
 			MatterControlApplication matterControlWindow = MatterControlApplication.CreateInstance(overrideWidth, overrideHeight);
 
-			EventHandler<ClosedEventArgs> unexpectedClose = (s, e) =>
-			{
-				throw new Exception("MatterControl closed unexpectedly");
-			};
-
-			matterControlWindow.Closed += unexpectedClose;
-
 			var config = TestAutomationConfig.Load();
 
 			if (config.UseAutomationDialogs)
@@ -589,8 +582,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				config.UseAutomationMouse ? AutomationRunner.InputType.SimulatedDrawMouse : AutomationRunner.InputType.Native,
 				closeWindow: () =>
 				{
-					matterControlWindow.Closed -= unexpectedClose;
-
 					if (ApplicationController.Instance.ActivePrinter.Connection.CommunicationState == CommunicationStates.Printing)
 					{
 						ApplicationController.Instance.ActivePrinter.Connection.Disable();

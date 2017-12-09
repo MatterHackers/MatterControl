@@ -241,6 +241,10 @@ namespace MatterHackers.MatterControl
 						thumbGenResetEvent.WaitOne();
 					}
 				}
+				catch (AppDomainUnloadedException)
+				{
+					return;
+				}
 				catch (ThreadAbortException)
 				{
 					return;
