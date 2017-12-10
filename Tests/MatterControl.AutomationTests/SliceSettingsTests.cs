@@ -176,7 +176,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// Find any sibling toggle switch and scroll the parent to the bottom
 				var widget = testRunner.GetWidgetByName("has_fan Row", out _);
 				var scrollable = widget.Parents<ScrollableWidget>().First();
-				scrollable.ScrollPosition = new Vector2(0, 30);
+				scrollable.ScrollPosition = new Vector2(0, -100);
 
 				CheckAndUncheckSetting(testRunner, SettingsKey.heat_extruder_before_homing, false);
 
