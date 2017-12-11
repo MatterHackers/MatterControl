@@ -136,10 +136,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		protected void SetButtonStates()
 		{
+			PrintLevelingData levelingData = printer.Settings.Helpers.GetPrintLevelingData();
+
 			switch (printer.Connection.CommunicationState)
 			{
 				case CommunicationStates.Connected:
-					PrintLevelingData levelingData = printer.Settings.Helpers.GetPrintLevelingData();
 					if (levelingData != null && printer.Settings.GetValue<bool>(SettingsKey.print_leveling_required_to_print)
 						&& !levelingData.HasBeenRunAndEnabled())
 					{
@@ -165,7 +166,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					break;
 
 				default:
-					SetChildVisible(startPrintButton, false);
+					if (levelingData != null && printer.Settings.GetValue<bool>(SettingsKey.print_leveling_required_to_print)
+						&& !levelingData.HasBeenRunAndEnabled())
+					{
+						SetChildVisible(finishSetupButton, false);
+					}
+					else
+					{
+						SetChildVisible(startPrintButton, false);
+					}
 					break;
 			}
 		}
