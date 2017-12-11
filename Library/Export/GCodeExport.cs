@@ -110,7 +110,6 @@ namespace MatterHackers.MatterControl.Library.Export
 			}
 
 			return false;
-
 		}
 
 		private async Task<string> SliceFileIfNeeded(ILibraryContentStream libraryContent, PrinterConfig printer)
@@ -126,12 +125,15 @@ namespace MatterHackers.MatterControl.Library.Export
 				// Conceptually we need to:
 				//  - Check to see if the libraryContent is the bed plate, load into a scene if not or reference loaded scene
 				//  - If bedplate, save any pending changes before starting the print
-				await ApplicationController.Instance.ActiveView3DWidget.PersistPlateIfNeeded();
+				await ApplicationController.Instance.Tasks.Execute(ApplicationController.Instance.ActiveView3DWidget.SaveChanges);
 
 				var context = ApplicationController.Instance.ActivePrinter.Bed.EditContext;
 
 				//  - Slice
-				await Slicer.SliceFileAsync(context.PartFilePath, context.GCodeFilePath, printer, null);
+				await ApplicationController.Instance.Tasks.Execute((reporter, cancellationToken) =>
+				{
+					return Slicer.SliceFile(context.PartFilePath, context.GCodeFilePath, printer, reporter, cancellationToken);
+				});
 
 				//  - Return
 				fileToProcess = context.GCodeFilePath;
@@ -178,7 +180,5 @@ namespace MatterHackers.MatterControl.Library.Export
 				});
 			}
 		}
-
-
 	}
 }

@@ -67,7 +67,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						// try to cut it up into multiple meshes
 						var discreetMeshes = CreateDiscreteMeshes.SplitVolumesIntoMeshes(ungroupItem.Mesh, CancellationToken.None, (double progress0To1, string processingState) =>
 						{
-							view3DWidget.ReportProgressChanged(progress0To1 * .5, processingState);
+							//view3DWidget.ReportProgressChanged(progress0To1 * .5, processingState);
 						});
 
 						if (discreetMeshes.Count == 1)

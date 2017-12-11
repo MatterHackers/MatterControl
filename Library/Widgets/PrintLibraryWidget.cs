@@ -41,6 +41,7 @@ using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintQueue;
+using System.Threading;
 
 namespace MatterHackers.MatterControl.PrintLibrary
 {

@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Threading;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
@@ -67,7 +68,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						context.GCodeFilePath,
 						context.SourceItem.Name,
 						printer,
-						null);
+						null,
+						CancellationToken.None);
 				});
 			};
 			this.AddChild(finishSetupButton);
@@ -82,7 +84,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				UiThread.RunOnIdle(async () =>
 				{
 					// Save any pending changes before starting print operation
-					await printerTabPage.view3DWidget.PersistPlateIfNeeded();
+					await ApplicationController.Instance.Tasks.Execute(printerTabPage.view3DWidget.SaveChanges);
 
 					var context = printer.Bed.EditContext;
 					await ApplicationController.Instance.PrintPart(
@@ -90,7 +92,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						context.GCodeFilePath,
 						context.SourceItem.Name,
 						printer,
-						null);
+						null,
+						CancellationToken.None);
 				});
 			};
 			this.AddChild(startPrintButton);

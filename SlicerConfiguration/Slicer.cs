@@ -53,8 +53,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private static Process slicerProcess = null;
 
-		public static string[] GetStlFileLocations(string fileToSlice, ref string mergeRules, PrinterConfig printer)
+		public static string[] GetStlFileLocations(string fileToSlice, ref string mergeRules, PrinterConfig printer, IProgress<ProgressStatus> progressReporter, CancellationToken cancellationToken)
 		{
+			var progressStatus = new ProgressStatus();
+
 			extrudersUsed.Clear();
 
 			int extruderCount = printer.Settings.GetValue<int>(SettingsKey.extruder_count);
@@ -96,7 +98,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					// TODO: Once graph parsing is added to MatterSlice we can remove and avoid this flattening
 					meshPrintOutputSettings.Clear();
 
-					var reloadedItem = Object3D.Load(fileToSlice, CancellationToken.None);
+					progressStatus.Status = "Loading";
+					progressReporter.Report(progressStatus);
+
+					var reloadedItem = Object3D.Load(fileToSlice, cancellationToken);
+
+					progressStatus.Status = "Flattening";
+					progressReporter.Report(progressStatus);
 
 					// Flatten the scene, filtering out items outside of the build volume
 					var flattenScene = reloadedItem.Flatten(meshPrintOutputSettings, (item) => item.InsideBuildVolume(printer));
@@ -233,26 +241,27 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return filePath;
 		}
 
-		public static async Task SliceFileAsync(string partFilePath, string gcodeFilePath, PrinterConfig printer, IProgress<string> progressReporter)
-		{
-			await Task.Run(() => SliceFile(
-				partFilePath,
-				gcodeFilePath,
-				printer,
-				progressReporter));
-		}
-
-		private static void SliceFile(string sourceFile, string gcodeFilePath, PrinterConfig printer, IProgress<string> progressReporter)
+		public static Task SliceFile(string sourceFile, string gcodeFilePath, PrinterConfig printer, IProgress<ProgressStatus> progressReporter, CancellationToken cancellationToken)
 		{
 			string mergeRules = "";
 
-			string[] stlFileLocations = GetStlFileLocations(sourceFile, ref mergeRules, printer);
+			string[] stlFileLocations = GetStlFileLocations(sourceFile, ref mergeRules, printer, progressReporter, cancellationToken);
+
 			string fileToSlice = stlFileLocations[0];
 
 			{
+				var progressStatus = new ProgressStatus()
+				{
+					Status = "Generating Config"
+				};
+				progressReporter.Report(progressStatus);
+
 				string configFilePath = Path.Combine(
 					ApplicationDataStorage.Instance.GCodeOutputPath,
 					string.Format("config_{0}.ini", printer.Settings.GetLongHashCode().ToString()));
+
+				progressStatus.Status = "Starting slicer";
+				progressReporter.Report(progressStatus);
 
 				if (!File.Exists(gcodeFilePath))
 				{
@@ -278,20 +287,22 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						|| AggContext.OperatingSystem == OSType.Mac
 						|| runInProcess)
 					{
-						EventHandler WriteOutput = (object s, EventArgs e) =>
+						EventHandler WriteOutput = (s, e) =>
 						{
-							string data = s as string;
-							if (data != null)
+							if (s is string stringValue)
 							{
-								progressReporter?.Report(data);
+								progressReporter?.Report(new ProgressStatus()
+								{
+									Status = stringValue
+								});
 							}
 						};
 
-						MatterHackers.MatterSlice.LogOutput.GetLogWrites += WriteOutput;
+						MatterSlice.LogOutput.GetLogWrites += WriteOutput;
 
 						MatterSlice.MatterSlice.ProcessArgs(commandArgs);
 
-						MatterHackers.MatterSlice.LogOutput.GetLogWrites -= WriteOutput;
+						MatterSlice.LogOutput.GetLogWrites -= WriteOutput;
 
 					}
 					else
@@ -310,18 +321,21 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							}
 						};
 
-						slicerProcess.OutputDataReceived += (sender, args) =>
+						slicerProcess.OutputDataReceived += (s, e) =>
 						{
-							if (args.Data != null)
+							if (e.Data is string stringValue)
 							{
-								string message = args.Data.Replace("=>", "").Trim();
+								string message = stringValue.Replace("=>", "").Trim();
 								if (message.Contains(".gcode"))
 								{
 									message = "Saving intermediate file";
 								}
 								message += "...";
 
-								progressReporter?.Report(message);
+								progressReporter?.Report(new ProgressStatus()
+								{
+									Status = message
+								});
 							}
 						};
 
@@ -384,6 +398,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 				}
 			}
+
+			return Task.CompletedTask;
 		}
 
 		internal static void CancelCurrentSlicing()
