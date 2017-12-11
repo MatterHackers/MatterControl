@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.printer = printer;
 
 			// add the finish setup button
-			finishSetupButton = theme.ButtonFactory.Generate("Finish Setup...".Localize(), AggContext.StaticData.LoadIcon("icon_play_32x32.png", 14, 14, IconColor.Theme));
+			finishSetupButton = theme.ButtonFactory.Generate("Setup...".Localize(), AggContext.StaticData.LoadIcon("icon_play_32x32.png", 14, 14, IconColor.Theme));
 			finishSetupButton.Name = "Finish Setup Button";
 			finishSetupButton.ToolTipText = "Run setup configuration for printer.".Localize();
 			finishSetupButton.Margin = defaultMargin;
