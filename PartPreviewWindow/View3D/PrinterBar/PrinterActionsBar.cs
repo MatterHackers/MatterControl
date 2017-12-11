@@ -26,16 +26,13 @@ The views and conclusions contained in the software and documentation are those
 of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
+
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ActionBar;
-using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.EeProm;
 using MatterHackers.MatterControl.PrinterCommunication;
@@ -53,51 +50,37 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private string noEepromMappingMessage = "Oops! There is no eeprom mapping for your printer's firmware.".Localize() + "\n\n" + "You may need to wait a minute for your printer to finish initializing.".Localize();
 		private string noEepromMappingTitle = "Warning - No EEProm Mapping".Localize();
 
-		private List<Button> activePrintButtons = new List<Button>();
-		private List<Button> allPrintButtons = new List<Button>();
-
-		private Button cancelConnectButton;
-		private Button resetConnectionButton;
-
-		private Button startPrintButton;
-		private Button cancelPrintButton;
-
-		private Button finishSetupButton;
-
 		private OverflowMenu overflowMenu;
 
-		private CancellationTokenSource gcodeLoadCancellationTokenSource;
-
-		private PrinterTabPage printerTabPage;
 		internal GuiWidget sliceButton;
 
 		public PrinterActionsBar(PrinterConfig printer, PrinterTabPage printerTabPage, ThemeConfig theme)
 		{
 			this.printer = printer;
-			this.printerTabPage = printerTabPage;
 
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Fit;
 
-			BuildChildElements(theme);
+			var defaultMargin = theme.ButtonSpacing;
+
+			// add the reset button first (if there is one)
+			if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.show_reset_connection))
+			{
+				var resetConnectionButton = theme.ButtonFactory.Generate("Reset".Localize().ToUpper(), AggContext.StaticData.LoadIcon("e_stop.png", 14, 14, IconColor.Theme));
+				resetConnectionButton.ToolTipText = "Reboots the firmware on the controller".Localize();
+				resetConnectionButton.Margin = defaultMargin;
+				resetConnectionButton.Click += (s, e) =>
+				{
+					UiThread.RunOnIdle(printer.Connection.RebootBoard);
+				};
+				this.AddChild(resetConnectionButton);
+			}
+
+			this.AddChild(new PrinterConnectButton(printer, theme));
+			this.AddChild(new PrintPauseResumeButton(this, printerTabPage, printer, theme));
+			this.AddChild(new CancelButton(printer, theme));
 
 			this.AddChild(sliceButton = new SlicePopupMenu(printer, theme, printerTabPage));
-
-			// Add Handlers
-			printer.Connection.CommunicationStateChanged.RegisterEvent((s, e) =>
-			{
-				UiThread.RunOnIdle(SetButtonStates);
-			}, ref unregisterEvents);
-
-			ProfileManager.ProfilesListChanged.RegisterEvent((s, e) =>
-			{
-				UiThread.RunOnIdle(SetButtonStates);
-			}, ref unregisterEvents);
-
-			printer.Settings.PrintLevelingEnabledChanged.RegisterEvent((s, e) =>
-			{
-				SetButtonStates();
-			}, ref unregisterEvents);
 
 			// put in the detail message
 			var printerConnectionDetail = new TextWidget("")
@@ -159,7 +142,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public override void OnClosed(ClosedEventArgs e)
 		{
 			unregisterEvents?.Invoke(this, null);
-			gcodeLoadCancellationTokenSource?.Cancel();
 			base.OnClosed(e);
 		}
 
@@ -266,191 +248,5 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 #endif
 			});
 		}
-
-		#region From PrinterActionRow
-		protected void BuildChildElements(ThemeConfig theme)
-		{
-			var defaultMargin = theme.ButtonSpacing;
-
-			// add the reset button first (if there is one)
-			if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.show_reset_connection))
-			{
-				resetConnectionButton = theme.ButtonFactory.Generate("Reset".Localize().ToUpper(), AggContext.StaticData.LoadIcon("e_stop.png", 14, 14, IconColor.Theme));
-				resetConnectionButton.ToolTipText = "Reboots the firmware on the controller".Localize();
-				resetConnectionButton.Margin = defaultMargin;
-				resetConnectionButton.Click += (s, e) =>
-				{
-					UiThread.RunOnIdle(printer.Connection.RebootBoard);
-				};
-				this.AddChild(resetConnectionButton);
-				allPrintButtons.Add(resetConnectionButton);
-			}
-
-			// next add the connect/disconnect button (todo move the cancel connectb up here)
-			this.AddChild(new PrinterConnectButton(printer, theme));
-
-			// add the cancel connect / print / finish setup / stop button
-			startPrintButton = theme.ButtonFactory.Generate("Print".Localize().ToUpper());
-			startPrintButton.Name = "Start Print Button";
-			startPrintButton.ToolTipText = "Begin printing the selected item.".Localize();
-			startPrintButton.Margin = defaultMargin;
-			startPrintButton.Click += (s, e) =>
-			{
-				UiThread.RunOnIdle(async () =>
-				{
-					// Save any pending changes before starting print operation
-					await this.printerTabPage.view3DWidget.PersistPlateIfNeeded();
-
-					var context = printer.Bed.EditContext;
-					await ApplicationController.Instance.PrintPart(
-						context.PartFilePath,
-						context.GCodeFilePath,
-						context.SourceItem.Name,
-						printer,
-						null);
-				});
-			};
-			this.AddChild(startPrintButton);
-			allPrintButtons.Add(startPrintButton);
-
-			finishSetupButton = theme.ButtonFactory.Generate("Finish Setup...".Localize());
-			finishSetupButton.Name = "Finish Setup Button";
-			finishSetupButton.ToolTipText = "Run setup configuration for printer.".Localize();
-			finishSetupButton.Margin = defaultMargin;
-			finishSetupButton.Click += (s, e) =>
-			{
-				UiThread.RunOnIdle(async () =>
-				{
-					var context = printer.Bed.EditContext;
-					await ApplicationController.Instance.PrintPart(
-						context.PartFilePath,
-						context.GCodeFilePath,
-						context.SourceItem.Name,
-						printer,
-						null);
-				});
-			};
-			this.AddChild(finishSetupButton);
-			allPrintButtons.Add(finishSetupButton);
-
-			cancelConnectButton = theme.ButtonFactory.Generate("Cancel Connect".Localize().ToUpper());
-			cancelConnectButton.ToolTipText = "Stop trying to connect to the printer.".Localize();
-			cancelConnectButton.Margin = defaultMargin;
-			cancelConnectButton.Click += (s, e) => UiThread.RunOnIdle(() =>
-			{
-				ApplicationController.Instance.ConditionalCancelPrint();
-				UiThread.RunOnIdle(SetButtonStates);
-			});
-			this.AddChild(cancelConnectButton);
-			allPrintButtons.Add(cancelConnectButton);
-
-			cancelPrintButton = theme.ButtonFactory.Generate("Cancel".Localize().ToUpper());
-			cancelPrintButton.ToolTipText = "Stop the current print".Localize();
-			cancelPrintButton.Name = "Cancel Print Button";
-			cancelPrintButton.Margin = defaultMargin;
-			cancelPrintButton.Click += (s, e) => UiThread.RunOnIdle(() =>
-			{
-				ApplicationController.Instance.ConditionalCancelPrint();
-				SetButtonStates();
-			});
-			this.AddChild(cancelPrintButton);
-			allPrintButtons.Add(cancelPrintButton);
-
-			this.AddChild(new PauseResumeButton(this, printer, theme));
-			
-			SetButtonStates();
-		}
-
-		protected void EnableActiveButtons()
-		{
-			foreach (Button button in this.activePrintButtons)
-			{
-				button.Enabled = true;
-			}
-		}
-
-		//Set the states of the buttons based on the status of PrinterCommunication
-		protected void SetButtonStates()
-		{
-			this.activePrintButtons.Clear();
-			if (!printer.Connection.PrinterIsConnected
-				&& printer.Connection.CommunicationState != CommunicationStates.AttemptingToConnect)
-			{
-				if (!ProfileManager.Instance.ActiveProfiles.Any())
-				{
-					// TODO: Possibly upsell add printer - ideally don't show printer tab, only show Plus tab
-					//this.activePrintButtons.Add(addPrinterButton);
-				}
-			}
-			else
-			{
-				switch (printer.Connection.CommunicationState)
-				{
-					case CommunicationStates.AttemptingToConnect:
-						this.activePrintButtons.Add(cancelConnectButton);
-						break;
-
-					case CommunicationStates.Connected:
-						PrintLevelingData levelingData = printer.Settings.Helpers.GetPrintLevelingData();
-						if (levelingData != null && printer.Settings.GetValue<bool>(SettingsKey.print_leveling_required_to_print)
-							&& !levelingData.HasBeenRunAndEnabled())
-						{
-							this.activePrintButtons.Add(finishSetupButton);
-						}
-						else
-						{
-							this.activePrintButtons.Add(startPrintButton);
-						}
-						break;
-
-					case CommunicationStates.PreparingToPrint:
-						this.activePrintButtons.Add(cancelPrintButton);
-						break;
-
-					case CommunicationStates.PrintingFromSd:
-					case CommunicationStates.Printing:
-						if (!printer.Connection.PrintWasCanceled)
-						{
-							this.activePrintButtons.Add(cancelPrintButton);
-						}
-						break;
-
-					case CommunicationStates.Paused:
-						this.activePrintButtons.Add(cancelPrintButton);
-						break;
-
-					case CommunicationStates.FinishedPrint:
-						this.activePrintButtons.Add(startPrintButton);
-						break;
-
-					default:
-						break;
-				}
-			}
-
-			if (printer.Settings.GetValue<bool>(SettingsKey.show_reset_connection))
-			{
-				this.activePrintButtons.Add(resetConnectionButton);
-			}
-			EnableActiveButtons();
-			ShowActiveButtons();
-		}
-
-		protected void ShowActiveButtons()
-		{
-			foreach (Button button in this.allPrintButtons)
-			{
-				if (activePrintButtons.IndexOf(button) >= 0)
-				{
-					button.Visible = true;
-				}
-				else
-				{
-					button.Visible = false;
-				}
-			}
-		}
-
-		#endregion
 	}
 }

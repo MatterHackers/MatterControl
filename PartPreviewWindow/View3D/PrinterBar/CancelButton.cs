@@ -26,50 +26,37 @@ The views and conclusions contained in the software and documentation are those
 of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
+
 using System;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class PauseResumeButton : FlowLayoutWidget
+	public class CancelButton : FlowLayoutWidget
 	{
-		private EventHandler unregisterEvents;
+		private Button cancelPrintButton;
 		private PrinterConfig printer;
-		GuiWidget pausePrintButton;
-		GuiWidget resumePrintButton;
+		private EventHandler unregisterEvents;
 
-		public PauseResumeButton(PrinterActionsBar printerActionsBar, PrinterConfig printer, ThemeConfig theme)
+		public CancelButton(PrinterConfig printer, ThemeConfig theme)
 		{
 			var defaultMargin = theme.ButtonSpacing;
 
 			this.printer = printer;
 
-			// add the pause / resume button
-			pausePrintButton = theme.ButtonFactory.Generate("Pause".Localize().ToUpper());
-			pausePrintButton.ToolTipText = "Pause the current print".Localize();
-			pausePrintButton.Margin = defaultMargin;
-			pausePrintButton.Click += (s, e) =>
+			cancelPrintButton = theme.ButtonFactory.Generate("Cancel".Localize().ToUpper(), AggContext.StaticData.LoadIcon("icon_stop_32x32.png", 14, 14, IconColor.Theme));
+			cancelPrintButton.ToolTipText = "Stop the current print".Localize();
+			cancelPrintButton.Name = "Cancel Print Button";
+			cancelPrintButton.Margin = defaultMargin;
+			cancelPrintButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
-				UiThread.RunOnIdle(printer.Connection.RequestPause);
-				pausePrintButton.Enabled = false;
-			};
-			this.AddChild(pausePrintButton);
-
-			resumePrintButton = theme.ButtonFactory.Generate("Resume".Localize().ToUpper());
-			resumePrintButton.ToolTipText = "Resume the current print".Localize();
-			resumePrintButton.Margin = defaultMargin;
-			resumePrintButton.Name = "Resume Button";
-			resumePrintButton.Click += (s, e) =>
-			{
-				if (printer.Connection.PrinterIsPaused)
-				{
-					printer.Connection.Resume();
-				}
-				pausePrintButton.Enabled = true;
-			};
-			this.AddChild(resumePrintButton);
+				ApplicationController.Instance.ConditionalCancelPrint();
+				SetButtonStates();
+			});
+			this.AddChild(cancelPrintButton);
 
 			printer.Connection.CommunicationStateChanged.RegisterEvent((s, e) =>
 			{
@@ -79,33 +66,27 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			SetButtonStates();
 		}
 
-		protected void SetButtonStates()
-		{
-			switch (printer.Connection.CommunicationState)
-			{
-				case CommunicationStates.PrintingFromSd:
-				case CommunicationStates.Printing:
-					pausePrintButton.Visible = true;
-					resumePrintButton.Visible = false;
-					break;
-
-				case CommunicationStates.Paused:
-					resumePrintButton.Visible = true;
-					pausePrintButton.Visible = false;
-					break;
-
-				default:
-					pausePrintButton.Visible = true;
-					pausePrintButton.Enabled = false;
-					resumePrintButton.Visible = false;
-					break;
-			}
-		}
-
 		public override void OnClosed(ClosedEventArgs e)
 		{
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
+		}
+
+		protected void SetButtonStates()
+		{
+			switch (printer.Connection.CommunicationState)
+			{
+				case CommunicationStates.PreparingToPrint:
+				case CommunicationStates.PrintingFromSd:
+				case CommunicationStates.Printing:
+				case CommunicationStates.Paused:
+					cancelPrintButton.Enabled = !printer.Connection.PrintWasCanceled;
+					break;
+
+				default:
+					cancelPrintButton.Enabled = false;
+					break;
+			}
 		}
 	}
 }
