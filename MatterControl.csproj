@@ -81,7 +81,7 @@
     <Compile Include="ActionBar\PrinterSelector.cs" />
     <Compile Include="ActionBar\ResetButton.cs" />
     <Compile Include="ActionBar\TemperatureWidgetBed.cs" />
-    <Compile Include="ActionBar\PrinterConnectButton.cs" />
+    <Compile Include="PartPreviewWindow\View3D\PrinterBar\PrinterConnectButton.cs" />
     <Compile Include="ActionBar\TemperatureWidgetBase.cs" />
     <Compile Include="ActionBar\TemperatureWidgetExtruder.cs" />
     <Compile Include="ApplicationView\ApplicationController.cs" />
@@ -133,6 +133,8 @@
     <Compile Include="PartPreviewWindow\View3D\Actions\PaintMaterialEditor.cs" />
     <Compile Include="PartPreviewWindow\View3D\Actions\SubtractEditor.cs" />
     <Compile Include="PartPreviewWindow\View3D\LightingData.cs" />
+    <Compile Include="PartPreviewWindow\View3D\PrinterBar\CancelButton.cs" />
+    <Compile Include="PartPreviewWindow\View3D\PrinterBar\PauseResumeButton.cs" />
     <Compile Include="PartPreviewWindow\View3D\UndoCommands\ChangeColor.cs" />
     <Compile Include="PartPreviewWindow\View3D\UndoCommands\MakeSupport.cs" />
     <Compile Include="PartPreviewWindow\View3D\SlicePopupMenu.cs" />
@@ -224,7 +226,7 @@
     <Compile Include="PartPreviewWindow\View3D\InteractionVolume.cs" />
     <Compile Include="PartPreviewWindow\View3D\MeshViewerWidget.cs" />
     <Compile Include="PartPreviewWindow\View3D\MouseEvent3DArgs.cs" />
-    <Compile Include="PartPreviewWindow\View3D\PrinterActionsBar.cs" />
+    <Compile Include="PartPreviewWindow\View3D\PrinterBar\PrinterActionsBar.cs" />
     <Compile Include="PrinterCommunication\Io\NotPrintingStream.cs" />
     <Compile Include="Library\Widgets\ListView\ListView.cs" />
     <Compile Include="Library\Widgets\ListView\ListViewItem.cs" />

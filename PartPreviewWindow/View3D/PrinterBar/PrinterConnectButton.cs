@@ -32,16 +32,15 @@ using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.SerialPortCommunication.FrostedSerial;
 
 namespace MatterHackers.MatterControl.ActionBar
 {
-	public class PrinterConnectButton : GuiWidget
+	public class PrinterConnectButton : FlowLayoutWidget
 	{
 		private readonly string disconnectAndCancelTitle = "Disconnect and stop the current print?".Localize();
 		private readonly string disconnectAndCancelMessage = "WARNING: Disconnecting will stop the current print.\n\nAre you sure you want to disconnect?".Localize();
 
+		private Button cancelConnectButton;
 		private GuiWidget connectButton;
 		private Button disconnectButton;
 
@@ -56,7 +55,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			this.Margin = 0;
 			this.Padding = 0;
 
-			connectButton = theme.ButtonFactory.Generate("Connect".Localize().ToUpper(), AggContext.StaticData.LoadIcon("connect.png", 14, 14, IconColor.Theme));
+			connectButton = theme.ButtonFactory.Generate("Connect".Localize(), AggContext.StaticData.LoadIcon("connect.png", 14, 14, IconColor.Theme));
 			connectButton.Name = "Connect to printer button";
 			connectButton.ToolTipText = "Connect to the currently selected printer".Localize();
 			connectButton.Click += (s, e) =>
@@ -71,7 +70,17 @@ namespace MatterHackers.MatterControl.ActionBar
 			};
 			this.AddChild(connectButton);
 
-			disconnectButton = theme.ButtonFactory.Generate("Disconnect".Localize().ToUpper(), AggContext.StaticData.LoadIcon("connect.png", 14, 14, IconColor.Theme));
+			// add the cancel stop button
+			cancelConnectButton = theme.ButtonFactory.Generate("Cancel".Localize(), AggContext.StaticData.LoadIcon("connect.png", 14, 14, IconColor.Theme));
+			cancelConnectButton.ToolTipText = "Stop trying to connect to the printer.".Localize();
+			cancelConnectButton.Click += (s, e) => UiThread.RunOnIdle(() =>
+			{
+				ApplicationController.Instance.ConditionalCancelPrint();
+				cancelConnectButton.Enabled = false;
+			});
+			this.AddChild(cancelConnectButton);
+
+			disconnectButton = theme.ButtonFactory.Generate("Disconnect".Localize(), AggContext.StaticData.LoadIcon("connect.png", 14, 14, IconColor.Theme));
 			disconnectButton.Name = "Disconnect from printer button";
 			disconnectButton.Visible = false;
 			disconnectButton.ToolTipText = "Disconnect from current printer".Localize();
@@ -103,17 +112,15 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			foreach (var child in Children)
 			{
-				child.VAnchor = VAnchor.Top;
-				child.HAnchor = HAnchor.Left;
+				child.VAnchor = VAnchor.Center;
 				child.Cursor = Cursors.Hand;
 				child.Margin = theme.ButtonSpacing;
 			}
 
-			// Bind connect button states to active printer state
-			this.SetVisibleStates(null, null);
+			printer.Connection.EnableChanged.RegisterEvent((s, e) => SetVisibleStates(), ref unregisterEvents);
+			printer.Connection.CommunicationStateChanged.RegisterEvent((s, e) => SetVisibleStates(), ref unregisterEvents);
 
-			printer.Connection.EnableChanged.RegisterEvent(SetVisibleStates, ref unregisterEvents);
-			printer.Connection.CommunicationStateChanged.RegisterEvent(SetVisibleStates, ref unregisterEvents);
+			this.SetVisibleStates();
 		}
 
 		public override void OnClosed(ClosedEventArgs e)
@@ -147,29 +154,44 @@ namespace MatterHackers.MatterControl.ActionBar
 			DialogWindow.Show<SetupWizardTroubleshooting>();
 		}
 
-		private void SetVisibleStates(object sender, EventArgs e)
+		private void SetChildVisible(GuiWidget visibleChild, bool enabled)
 		{
-			UiThread.RunOnIdle(() =>
+			foreach (var child in Children)
 			{
-				if (printer.Connection.PrinterIsConnected)
+				if (child == visibleChild)
 				{
-					disconnectButton.Visible = true;
-					connectButton.Visible = false;
+					child.Visible = true;
+					child.Enabled = enabled;
 				}
 				else
 				{
-					disconnectButton.Visible = false;
-					connectButton.Visible = true;
+					child.Visible = false;
 				}
+			}
+		}
 
-				var communicationState = printer.Connection.CommunicationState;
+		private void SetVisibleStates()
+		{
+			switch (printer.Connection.CommunicationState)
+			{
+				case CommunicationStates.FailedToConnect:
+				case CommunicationStates.Disconnected:
+				case CommunicationStates.ConnectionLost:
+					SetChildVisible(connectButton, true);
+					break;
 
-				// Ensure connect buttons are locked while long running processes are executing to prevent duplicate calls into said actions
-				connectButton.Enabled = printer.Settings.PrinterSelected
-					&& communicationState != CommunicationStates.AttemptingToConnect;
+				case CommunicationStates.Disconnecting:
+					SetChildVisible(disconnectButton, false);
+					break;
 
-				disconnectButton.Enabled = communicationState != CommunicationStates.Disconnecting;
-			});
+				case CommunicationStates.AttemptingToConnect:
+					SetChildVisible(cancelConnectButton, true);
+					break;
+
+				default:
+					SetChildVisible(disconnectButton, true);
+					break;
+			}
 		}
 	}
 }

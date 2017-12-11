@@ -684,7 +684,7 @@
 		"ListValues": "GRID,TRIANGLES,HEXAGON,LINES,CONCENTRIC",
 		"DefaultValue": "TRIANGLES"
 	},
-	{
+	{ 
 		"SlicerConfigName": "print_leveling_solution",
 		"PresentationName": "Leveling Solution",
 		"HelpText": "The print leveling algorithm to use.",
@@ -693,6 +693,17 @@
 		"ShowAsOverride": true,
 		"ShowIfSet": "!has_hardware_leveling",
 		"DefaultValue": "3 Point Plane",
+		"ReloadUiWhenChanged": true,
+		"RebuildGCodeOnChange": false
+	},
+	{
+		"SlicerConfigName": "print_leveling_required_to_print",
+		"PresentationName": "Require Leveling To Print",
+		"HelpText": "The printer requires print leveling to run correctly.",
+		"DataEditType": "CHECK_BOX",
+		"ShowIfSet": "!has_hardware_leveling",
+		"DefaultValue": "0",
+		"ShowAsOverride": true,
 		"ReloadUiWhenChanged": true,
 		"RebuildGCodeOnChange": false
 	},

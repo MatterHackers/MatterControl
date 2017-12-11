@@ -367,7 +367,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			popupMenu.CreateBoolMenuItem(
 				"Sync To Print".Localize(),
 				() => gcodeOptions.SyncToPrint,
-				(value) => gcodeOptions.SyncToPrint = value);
+				(value) =>
+				{
+					gcodeOptions.SyncToPrint = value;
+					if (!gcodeOptions.SyncToPrint)
+					{
+						// If we are turning off sync to print, set the slider to full.
+						layerRenderRatioSlider.SecondValue = 1;
+					}
+				});
 
 			return popupMenu;
 		}

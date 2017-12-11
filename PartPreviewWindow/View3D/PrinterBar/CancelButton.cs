@@ -28,41 +28,65 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.MatterControl.PrinterCommunication;
 
-namespace MatterHackers.MatterControl.ActionBar
+namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class ResetButton : GuiWidget
+	public class CancelButton : FlowLayoutWidget
 	{
-		private readonly string resetConnectionText = "Reset\nConnection".Localize();
+		private Button cancelPrintButton;
+		private PrinterConfig printer;
 		private EventHandler unregisterEvents;
 
-		public ResetButton(PrinterConfig printer, TextImageButtonFactory buttonFactory)
+		public CancelButton(PrinterConfig printer, ThemeConfig theme)
 		{
-			this.HAnchor = HAnchor.Stretch | HAnchor.Fit;
-			this.VAnchor = VAnchor.Fit;
-			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+			var defaultMargin = theme.ButtonSpacing;
 
-			Button resetConnectionButton = buttonFactory.Generate(resetConnectionText, AggContext.StaticData.LoadIcon("e_stop4.png", IconColor.Theme));
-			resetConnectionButton.Visible = printer.Settings.GetValue<bool>(SettingsKey.show_reset_connection);
-			resetConnectionButton.Click += (s, e) =>
-			{
-				UiThread.RunOnIdle(printer.Connection.RebootBoard);
-			};
-			this.AddChild(resetConnectionButton);
+			this.printer = printer;
 
-			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
+			cancelPrintButton = theme.ButtonFactory.Generate("Cancel".Localize(), AggContext.StaticData.LoadIcon("icon_stop_32x32.png", 14, 14, IconColor.Theme));
+			cancelPrintButton.ToolTipText = "Stop the current print".Localize();
+			cancelPrintButton.Name = "Cancel Print Button";
+			cancelPrintButton.Margin = defaultMargin;
+			cancelPrintButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
-				var stringEvent = e as StringEventArgs;
-				if (stringEvent?.Data == SettingsKey.show_reset_connection)
-				{
-					resetConnectionButton.Visible = printer.Settings.GetValue<bool>(SettingsKey.show_reset_connection);
-				}
+				ApplicationController.Instance.ConditionalCancelPrint();
+				SetButtonStates();
+			});
+			this.AddChild(cancelPrintButton);
+
+			printer.Connection.CommunicationStateChanged.RegisterEvent((s, e) =>
+			{
+				UiThread.RunOnIdle(SetButtonStates);
 			}, ref unregisterEvents);
+
+			SetButtonStates();
+		}
+
+		public override void OnClosed(ClosedEventArgs e)
+		{
+			unregisterEvents?.Invoke(this, null);
+			base.OnClosed(e);
+		}
+
+		protected void SetButtonStates()
+		{
+			switch (printer.Connection.CommunicationState)
+			{
+				case CommunicationStates.PreparingToPrint:
+				case CommunicationStates.PrintingFromSd:
+				case CommunicationStates.Printing:
+				case CommunicationStates.Paused:
+					cancelPrintButton.Enabled = !printer.Connection.PrintWasCanceled;
+					break;
+
+				default:
+					cancelPrintButton.Enabled = false;
+					break;
+			}
 		}
 	}
 }
