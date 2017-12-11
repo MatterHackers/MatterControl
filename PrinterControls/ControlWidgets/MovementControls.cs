@@ -180,7 +180,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			homeZButton.Click += homeZButton_Click;
 
 			// Create 'Release' button, clearing fixedWidth needed on sibling 'Home' controls
-			disableMotors = commonButtonFactory.Generate("Release".Localize().ToUpper(), fixedWidth: 0);
+			disableMotors = commonButtonFactory.Generate("Release".Localize(), fixedWidth: 0);
 			disableMotors.Margin = new BorderDouble(0);
 			disableMotors.Click += (s, e) =>
 			{

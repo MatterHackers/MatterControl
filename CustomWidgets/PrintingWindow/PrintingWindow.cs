@@ -123,7 +123,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			actionBar.AddChild(new HorizontalSpacer());
 
 			// put in the pause button
-			var pauseButton = CreateButton("Pause".Localize().ToUpper(), smallScreen);
+			var pauseButton = CreateButton("Pause".Localize(), smallScreen);
 			pauseButton.Click += (s, e) =>
 			{
 				UiThread.RunOnIdle(() =>
@@ -137,7 +137,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			actionBar.AddChild(pauseButton);
 
 			// put in the resume button
-			var resumeButton = CreateButton("Resume".Localize().ToUpper(), smallScreen);
+			var resumeButton = CreateButton("Resume".Localize(), smallScreen);
 			resumeButton.Visible = false;
 			resumeButton.Click += (s, e) =>
 			{
@@ -154,7 +154,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			actionBar.AddChild(CreateVerticalLine());
 
 			// put in cancel button
-			var cancelButton = CreateButton("Cancel".Localize().ToUpper(), smallScreen);
+			var cancelButton = CreateButton("Cancel".Localize(), smallScreen);
 			cancelButton.Click += (s, e) =>
 			{
 				bool canceled = ApplicationController.Instance.ConditionalCancelPrint();
@@ -169,7 +169,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			actionBar.AddChild(CreateVerticalLine());
 
 			// put in the reset button
-			var resetButton = CreateButton("Reset".Localize().ToUpper(), smallScreen, true, AggContext.StaticData.LoadIcon("e_stop4.png", 32, 32));
+			var resetButton = CreateButton("Reset".Localize(), smallScreen, true, AggContext.StaticData.LoadIcon("e_stop4.png", 32, 32));
 
 			resetButton.Visible = printer.Settings.GetValue<bool>(SettingsKey.show_reset_connection);
 			resetButton.Click += (s, e) =>
@@ -180,7 +180,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			actionBar.AddChild(CreateVerticalLine());
 
-			var advancedButton = CreateButton("Advanced".Localize().ToUpper(), smallScreen);
+			var advancedButton = CreateButton("Advanced".Localize(), smallScreen);
 			actionBar.AddChild(advancedButton);
 			advancedButton.Click += (s, e) =>
 			{

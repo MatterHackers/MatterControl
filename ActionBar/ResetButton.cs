@@ -38,7 +38,7 @@ namespace MatterHackers.MatterControl.ActionBar
 {
 	public class ResetButton : GuiWidget
 	{
-		private readonly string resetConnectionText = "Reset\nConnection".Localize().ToUpper();
+		private readonly string resetConnectionText = "Reset\nConnection".Localize();
 		private EventHandler unregisterEvents;
 
 		public ResetButton(PrinterConfig printer, TextImageButtonFactory buttonFactory)

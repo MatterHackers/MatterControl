@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.AddChild(finishSetupButton);
 
 			// add the start print button
-			startPrintButton = theme.ButtonFactory.Generate("Print".Localize().ToUpper(), AggContext.StaticData.LoadIcon("icon_play_32x32.png", 14, 14, IconColor.Theme));
+			startPrintButton = theme.ButtonFactory.Generate("Print".Localize(), AggContext.StaticData.LoadIcon("icon_play_32x32.png", 14, 14, IconColor.Theme));
 			startPrintButton.Name = "Start Print Button";
 			startPrintButton.ToolTipText = "Begin printing the selected item.".Localize();
 			startPrintButton.Margin = defaultMargin;
@@ -96,7 +96,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.AddChild(startPrintButton);
 
 			// add the pause / resume button
-			pausePrintButton = theme.ButtonFactory.Generate("Pause".Localize().ToUpper(), AggContext.StaticData.LoadIcon("icon_pause_32x32.png", 14, 14, IconColor.Theme));
+			pausePrintButton = theme.ButtonFactory.Generate("Pause".Localize(), AggContext.StaticData.LoadIcon("icon_pause_32x32.png", 14, 14, IconColor.Theme));
 			pausePrintButton.ToolTipText = "Pause the current print".Localize();
 			pausePrintButton.Margin = defaultMargin;
 			pausePrintButton.Click += (s, e) =>
@@ -106,7 +106,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			this.AddChild(pausePrintButton);
 
-			resumePrintButton = theme.ButtonFactory.Generate("Resume".Localize().ToUpper(), AggContext.StaticData.LoadIcon("icon_play_32x32.png", 14, 14, IconColor.Theme));
+			resumePrintButton = theme.ButtonFactory.Generate("Resume".Localize(), AggContext.StaticData.LoadIcon("icon_play_32x32.png", 14, 14, IconColor.Theme));
 			resumePrintButton.ToolTipText = "Resume the current print".Localize();
 			resumePrintButton.Margin = defaultMargin;
 			resumePrintButton.Name = "Resume Button";

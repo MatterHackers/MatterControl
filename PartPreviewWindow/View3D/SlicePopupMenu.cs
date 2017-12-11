@@ -89,7 +89,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				MinimumSize = new VectorMath.Vector2(300, 65),
 			};
 
-			this.AddChild(new TextButton("Slice".Localize().ToUpper(), theme)
+			this.AddChild(new TextButton("Slice".Localize(), theme)
 			{
 				//Name = "Slice Dropdown Button",
 				Name = "Generate Gcode Button",

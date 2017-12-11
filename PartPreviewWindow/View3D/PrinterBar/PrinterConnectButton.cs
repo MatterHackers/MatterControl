@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			this.Margin = 0;
 			this.Padding = 0;
 
-			connectButton = theme.ButtonFactory.Generate("Connect".Localize().ToUpper(), AggContext.StaticData.LoadIcon("connect.png", 14, 14, IconColor.Theme));
+			connectButton = theme.ButtonFactory.Generate("Connect".Localize(), AggContext.StaticData.LoadIcon("connect.png", 14, 14, IconColor.Theme));
 			connectButton.Name = "Connect to printer button";
 			connectButton.ToolTipText = "Connect to the currently selected printer".Localize();
 			connectButton.Click += (s, e) =>
@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			this.AddChild(connectButton);
 
 			// add the cancel stop button
-			cancelConnectButton = theme.ButtonFactory.Generate("Cancel".Localize().ToUpper(), AggContext.StaticData.LoadIcon("connect.png", 14, 14, IconColor.Theme));
+			cancelConnectButton = theme.ButtonFactory.Generate("Cancel".Localize(), AggContext.StaticData.LoadIcon("connect.png", 14, 14, IconColor.Theme));
 			cancelConnectButton.ToolTipText = "Stop trying to connect to the printer.".Localize();
 			cancelConnectButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
@@ -80,7 +80,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			});
 			this.AddChild(cancelConnectButton);
 
-			disconnectButton = theme.ButtonFactory.Generate("Disconnect".Localize().ToUpper(), AggContext.StaticData.LoadIcon("connect.png", 14, 14, IconColor.Theme));
+			disconnectButton = theme.ButtonFactory.Generate("Disconnect".Localize(), AggContext.StaticData.LoadIcon("connect.png", 14, 14, IconColor.Theme));
 			disconnectButton.Name = "Disconnect from printer button";
 			disconnectButton.Visible = false;
 			disconnectButton.ToolTipText = "Disconnect from current printer".Localize();
