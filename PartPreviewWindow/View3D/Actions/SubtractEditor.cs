@@ -147,11 +147,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			tabContainer.AddChild(updateButton);
 		}
 
-		private async void ProcessBooleans(IObject3D group)
+		private void ProcessBooleans(IObject3D group)
 		{
 			// spin up a task to remove holes from the objects in the group
-			await Task.Run(() =>
+			ApplicationController.Instance.Tasks.Execute((reporter, cancelationToken) =>
 			{
+				var progressStatus = new ProgressStatus()
+				{
+					Status = "Processing Booleans"
+				};
+
+				reporter.Report(progressStatus);
+
 				var participants = group.Descendants().Where(o => o.OwnerID == group.ID).ToList();
 				var removeObjects = participants.Where((obj) => obj.OutputType == PrintOutputTypes.Hole).ToList();
 				var keepObjects = participants.Where((obj) => obj.OutputType != PrintOutputTypes.Hole).ToList();
@@ -159,27 +166,46 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				if (removeObjects.Any()
 					&& keepObjects.Any())
 				{
+					var totalOpperations = removeObjects.Count() * keepObjects.Count();
+					double amountPerOperation = 1.0 / totalOpperations;
+					double percentCompleted = 0;
+
 					foreach (var remove in removeObjects)
 					{
 						foreach (var keep in keepObjects)
 						{
+							progressStatus.Status = "Copy Remove";
+							reporter.Report(progressStatus);
 							var transformedRemove = Mesh.Copy(remove.Mesh, CancellationToken.None);
 							transformedRemove.Transform(remove.WorldMatrix());
 
+							progressStatus.Status = "Copy Keep";
+							reporter.Report(progressStatus);
 							var transformedKeep = Mesh.Copy(keep.Mesh, CancellationToken.None);
 							transformedKeep.Transform(keep.WorldMatrix());
 
-							transformedKeep = PolygonMesh.Csg.CsgOperations.Subtract(transformedKeep, transformedRemove);
+							progressStatus.Status = "Do CSG";
+							reporter.Report(progressStatus);
+							transformedKeep = PolygonMesh.Csg.CsgOperations.Subtract(transformedKeep, transformedRemove, (csgStatus) =>
+							{
+								progressStatus.Status = csgStatus.Status;
+								reporter.Report(progressStatus);
+							}, cancelationToken);
 							var inverse = keep.WorldMatrix();
 							inverse.Invert();
 							transformedKeep.Transform(inverse);
 							keep.Mesh = transformedKeep;
 							view3DWidget.Invalidate();
+
+							percentCompleted += amountPerOperation;
+							progressStatus.Progress0To1 = percentCompleted;
+							reporter.Report(progressStatus);
 						}
 
 						remove.Visible = false;
 					}
 				}
+				return Task.CompletedTask;
 			});
 		}
 	}

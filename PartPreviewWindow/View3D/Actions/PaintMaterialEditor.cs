@@ -170,7 +170,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 		private void ProcessBooleans(IObject3D group)
 		{
-			// spin up a task to remove holes from the objects in the group
+			// spin up a task to calculate the paint
 			ApplicationController.Instance.Tasks.Execute((reporter, cancelationToken) =>
 			{
 				var progressStatus = new ProgressStatus()

@@ -85,10 +85,4 @@ namespace MatterHackers.MatterControl
 			}
 		}
 	}
-
-	public class ProgressStatus : EventArgs
-	{
-		public string Status { get; set; }
-		public double Progress0To1 { get; set; }
-	}
 }
