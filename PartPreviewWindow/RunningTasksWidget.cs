@@ -107,10 +107,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// Add new items
 				foreach (var taskItem in tasks.RunningTasks.Where(t => !displayedTasks.Contains(t)))
 				{
-					pendingTasksList.AddChild(new RunningTaskRow("", taskItem, theme)
+					var taskRow = new RunningTaskRow("", taskItem, theme)
 					{
 						HAnchor = HAnchor.Stretch
-					});
+					};
+
+					pendingTasksList.AddChild(taskRow);
+
+					if (taskItem.ExtraInfo != null
+						&& taskItem.ExtraInfo?.Invoke() is GuiWidget guiWidget)
+					{
+						guiWidget.VAnchor = VAnchor.Absolute;
+						pendingTasksList.AddChild(guiWidget);
+					}
 				}
 
 				pendingTasksList.Invalidate();

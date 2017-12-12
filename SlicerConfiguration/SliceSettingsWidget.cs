@@ -487,7 +487,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return dataArea;
 		}
 
+
 		private GuiWidget CreateItemRow(SliceSettingData settingData, ref int tabIndexForItem)
+		{
+			return CreateItemRow(settingData, settingsContext, printer, ref tabIndexForItem, allUiFields);
+		}
+
+		public static GuiWidget CreateItemRow(SliceSettingData settingData, SettingsContext settingsContext, PrinterConfig printer, ref int tabIndexForItem, Dictionary<string, UIField> fieldCache = null)
 		{
 			string sliceSettingValue = settingsContext.GetValue(settingData.SlicerConfigName);
 
@@ -632,7 +638,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			if (uiField != null)
 			{
-				allUiFields[settingData.SlicerConfigName] = uiField;
+				if (fieldCache != null)
+				{
+					fieldCache[settingData.SlicerConfigName] = uiField;
+				}
 
 				uiField.HelpText = settingData.HelpText;
 
