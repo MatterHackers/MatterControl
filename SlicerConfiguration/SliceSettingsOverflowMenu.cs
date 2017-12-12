@@ -114,42 +114,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				});
 			};
 
-			popupMenu.CreateHorizontalLine();
-
-			popupMenu.AddChild(new TextWidget("Mode")
-			{
-				Margin = new BorderDouble(35, 2, 8, 8),
-				TextColor = Color.Gray
-			});
-
-			var modeSelector = new SettingsModeSelector()
-			{
-				SelectedValue = sliceSettingsWidget.UserLevel,
-				Name = "User Level Dropdown",
-				Margin = new BorderDouble(35, 15, 35, 5),
-				BorderColor = new Color(ActiveTheme.Instance.SecondaryTextColor, 100)
-			};
-			modeSelector.SelectionChanged += (s, e) =>
-			{
-				UserSettings.Instance.set(UserSettingsKey.SliceSettingsLevel, modeSelector.SelectedValue);
-				sliceSettingsWidget.RebuildSliceSettingsTabs();
-			};
-
-			popupMenu.AddChild(modeSelector);
 			return popupMenu;
-		}
-	}
-
-	public class SettingsModeSelector : DropDownList, IIgnoredPopupChild
-	{
-		public SettingsModeSelector()
-			: base("Basic")
-		{
-			this.TextColor = Color.Black;
-
-			this.AddItem("Basic".Localize(), "Simple");
-			this.AddItem("Standard".Localize(), "Intermediate");
-			this.AddItem("Advanced".Localize(), "Advanced");
 		}
 	}
 }
