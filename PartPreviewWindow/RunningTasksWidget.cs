@@ -113,13 +113,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					};
 
 					pendingTasksList.AddChild(taskRow);
-
-					if (taskItem.ExtraInfo != null
-						&& taskItem.ExtraInfo?.Invoke() is GuiWidget guiWidget)
-					{
-						guiWidget.VAnchor = VAnchor.Absolute;
-						pendingTasksList.AddChild(guiWidget);
-					}
 				}
 
 				pendingTasksList.Invalidate();
