@@ -53,15 +53,7 @@ namespace MatterHackers.MatterControl
 
 			FlowLayoutWidget topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			topToBottom.AnchorAll();
-
-			if (UserSettings.Instance.IsTouchScreen)
-			{
-				topToBottom.Padding = new BorderDouble(12);
-			}
-			else
-			{
-				topToBottom.Padding = new BorderDouble(3, 0, 3, 5);
-			}
+			topToBottom.Padding = new BorderDouble(3, 0, 3, 5);
 
 			FlowLayoutWidget headerRow = new FlowLayoutWidget(FlowDirection.LeftToRight);
 			headerRow.HAnchor = HAnchor.Stretch;

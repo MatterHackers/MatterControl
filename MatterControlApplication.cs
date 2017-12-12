@@ -184,6 +184,7 @@ namespace MatterHackers.MatterControl
 				GuiWidget.DeviceScale = 1.3;
 				SystemWindow.ShareSingleOsWindow = true;
 			}
+
 			string textSizeMode = UserSettings.Instance.get(UserSettingsKey.ApplicationTextSize);
 			if (!string.IsNullOrEmpty(textSizeMode))
 			{

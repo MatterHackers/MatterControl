@@ -225,13 +225,11 @@ namespace MatterHackers.MatterControl
 				NormalFillColor = Color.Gray
 			});
 
-			int viewControlsButtonHeight = (UserSettings.Instance.IsTouchScreen) ? 40 : 0;
-
 			this.ViewControlsButtonFactory = new TextImageButtonFactory(new ButtonFactoryOptions(commonOptions)
 			{
 				DisabledTextColor = theme.PrimaryTextColor,
-				FixedHeight = viewControlsButtonHeight,
-				FixedWidth = viewControlsButtonHeight,
+				FixedHeight = 0,
+				FixedWidth = 0,
 				AllowThemeToAdjustImage = false,
 				CheckedBorderColor = Color.White
 			});
@@ -256,16 +254,9 @@ namespace MatterHackers.MatterControl
 			});
 
 #region PartPreviewWidget
-			if (UserSettings.Instance.IsTouchScreen)
-			{
-				sideBarButtonWidth = 180;
-				shortButtonHeight = 40;
-			}
-			else
-			{
-				sideBarButtonWidth = 138;
-				shortButtonHeight = 30;
-			}
+			
+			sideBarButtonWidth = 138;
+			shortButtonHeight = 30;
 
 			WhiteButtonFactory = new TextImageButtonFactory(new ButtonFactoryOptions(commonOptions)
 			{
@@ -465,10 +456,6 @@ namespace MatterHackers.MatterControl
 		public SolidSlider CreateSolidSlider(GuiWidget wordOptionContainer, string header, double min = 0, double max = .5)
 		{
 			double scrollBarWidth = 10;
-			if (UserSettings.Instance.IsTouchScreen)
-			{
-				scrollBarWidth = 20;
-			}
 
 			wordOptionContainer.AddChild(new TextWidget(header, textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{

@@ -73,14 +73,6 @@ namespace MatterHackers.MatterControl
 			container.AnchorAll();
 
 			GuiWidget.TouchScreenMode = UserSettings.Instance.IsTouchScreen;
-			if (!UserSettings.Instance.IsTouchScreen)
-			{
-#if false // !__ANDROID__
-				// The application menu bar, which is suppressed on Android
-				var menuRow = new ApplicationMenuRow();
-				container.AddChild(menuRow);
-#endif
-			}
 
 			container.AddChild(new HorizontalLine(alpha:50));
 
