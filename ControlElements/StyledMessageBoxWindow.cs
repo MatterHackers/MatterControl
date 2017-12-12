@@ -60,8 +60,6 @@ namespace MatterHackers.MatterControl
 			private TextWidget messageContainer;
 			private Action<bool> responseCallback;
 
-			private double extraTextScaling = (UserSettings.Instance.IsTouchScreen) ? 1.33333 : 1;
-
 			public MessageBoxPage(Action<bool> callback, string message, string caption, MessageType messageType, GuiWidget[] extraWidgetsToAdd, double width, double height, string yesOk, string noCancel, ThemeConfig theme)
 				: base((noCancel == "") ? "No".Localize() : noCancel)
 			{
@@ -78,7 +76,7 @@ namespace MatterHackers.MatterControl
 				responseCallback = callback;
 				unwrappedMessage = message;
 
-				contentRow.AddChild(messageContainer = new TextWidget(message, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 12 * extraTextScaling)
+				contentRow.AddChild(messageContainer = new TextWidget(message, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 12 * DeviceScale)
 				{
 					AutoExpandBoundsToText = true,
 					HAnchor = HAnchor.Left
@@ -137,7 +135,7 @@ namespace MatterHackers.MatterControl
 					double wrappingSize = contentRow.Width - (contentRow.Padding.Width + messageContainer.Margin.Width);
 					if (wrappingSize > 0)
 					{
-						var wrapper = new EnglishTextWrapping(12 * extraTextScaling * GuiWidget.DeviceScale);
+						var wrapper = new EnglishTextWrapping(12 * GuiWidget.DeviceScale);
 						messageContainer.Text = wrapper.InsertCRs(unwrappedMessage, wrappingSize);
 					}
 				}

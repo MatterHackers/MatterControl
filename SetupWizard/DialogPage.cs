@@ -65,7 +65,6 @@ namespace MatterHackers.MatterControl
 
 			if (!UserSettings.Instance.IsTouchScreen)
 			{
-				this.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
 				this.Padding = new BorderDouble(0); //To be re-enabled once native borders are turned off
 			}
 
@@ -117,16 +116,13 @@ namespace MatterHackers.MatterControl
 			mainContainer.AddChild(contentRow);
 			mainContainer.AddChild(footerRow);
 
-			if (!UserSettings.Instance.IsTouchScreen)
-			{
-				mainContainer.Padding = new BorderDouble(3, 5, 3, 5);
-				headerRow.Padding = new BorderDouble(0, 3, 0, 3);
+			mainContainer.Padding = new BorderDouble(3, 5, 3, 5);
+			headerRow.Padding = new BorderDouble(0, 3, 0, 3);
 
-				headerLabel.TextWidget.PointSize = 14;
-				headerLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-				contentRow.Padding = new BorderDouble(5);
-				footerRow.Margin = new BorderDouble(0, 3);
-			}
+			headerLabel.TextWidget.PointSize = 14;
+			headerLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			contentRow.Padding = new BorderDouble(5);
+			footerRow.Margin = new BorderDouble(0, 3);
 
 			this.AddChild(mainContainer);
 		}

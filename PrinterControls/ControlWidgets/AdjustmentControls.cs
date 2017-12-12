@@ -64,10 +64,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 			double sliderWidth = 300 * GuiWidget.DeviceScale;
 			double sliderThumbWidth = 10 * GuiWidget.DeviceScale;
-			if (UserSettings.Instance.IsTouchScreen)
-			{
-				sliderThumbWidth = 15 * GuiWidget.DeviceScale;
-			}
 
 			{
 				var row = new FlowLayoutWidget()

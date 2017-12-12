@@ -37,7 +37,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class SliceLayerSelector : GuiWidget
 	{
-		public static int SliderWidth { get; } = (UserSettings.Instance.IsTouchScreen) ? 20 : 10;
+		public static int SliderWidth { get; } = 10;
 
 		private InlineEditControl currentLayerInfo;
 
