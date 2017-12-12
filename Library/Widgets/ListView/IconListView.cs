@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
@@ -47,6 +48,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		private int cellIndex = 0;
 		private int columnCount = 1;
 		private int leftRightMargin;
+		private int iconViewPadding = IconViewItem.ItemPadding;
 
 		private List<IconViewItem> allIconViews = new List<IconViewItem>();
 
@@ -103,8 +105,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		private int RecomputeFlowValues()
 		{
-			int padding = 4;
-			int itemWidth = ThumbWidth + (padding * 2);
+			int itemWidth = ThumbWidth + (iconViewPadding * 2);
 
 			int newColumnCount = (int)Math.Floor(this.LocalBounds.Width / itemWidth);
 			int remainingSpace = (int)this.LocalBounds.Width - columnCount * itemWidth;
@@ -189,12 +190,14 @@ namespace MatterHackers.MatterControl.CustomWidgets
 	{
 		private static ImageBuffer loadingImage = AggContext.StaticData.LoadIcon("IC_32x32.png");
 
+		internal static int ItemPadding = 2;
+
 		public IconViewItem(ListViewItem item, int thumbWidth, int thumbHeight)
 			: base(item, thumbWidth, thumbHeight)
 		{
 			this.VAnchor = VAnchor.Fit;
 			this.HAnchor = HAnchor.Fit;
-			this.Padding = 2;
+			this.Padding = IconViewItem.ItemPadding;
 			this.Margin = new BorderDouble(6, 0, 0, 6);
 
 			int maxWidth = thumbWidth - 4;
