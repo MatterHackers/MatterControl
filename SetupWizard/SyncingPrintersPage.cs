@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
+using MatterHackers.Agg;
 
 namespace MatterHackers.MatterControl.SetupWizard
 {
