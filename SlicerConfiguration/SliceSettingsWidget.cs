@@ -197,26 +197,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public string UserLevel
-		{
-			get
-			{
-				// Preset windows that are not the primary view should be in Advanced mode
-				if (!settingsContext.IsPrimarySettingsView)
-				{
-					return "Advanced";
-				}
-
-				string settingsLevel = UserSettings.Instance.get(UserSettingsKey.SliceSettingsLevel);
-				if (!string.IsNullOrEmpty(settingsLevel)
-					&& SliceSettingsOrganizer.Instance.UserLevels.ContainsKey(settingsLevel))
-				{
-					return settingsLevel;
-				}
-
-				return "Simple";
-			}
-		}
+		public string UserLevel { get; } = "Advanced";
 
 		// TODO: This should just proxy to settingsControlBar.Visible. Having local state and pushing values on event listeners seems off
 		private bool showControlBar = true;
