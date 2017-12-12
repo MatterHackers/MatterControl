@@ -54,7 +54,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var detailsPanel = new GuiWidget()
 			{
-				MinimumSize = new Vector2(280, 20)
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit,
 			};
 
 			var rowContainer = new GuiWidget()
@@ -102,7 +103,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			expandButton.CheckedStateChanged += async (s, e) =>
 			{
-				progressBar.Visible = !expandButton.Checked;
+				progressBar.FillColor = expandButton.Checked ? theme.Shade : ActiveTheme.Instance.PrimaryAccentColor;
 				detailsPanel.Visible = expandButton.Checked;
 			};
 			topRow.AddChild(expandButton);
@@ -125,6 +126,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				taskDetails.CancelTask();
 			};
 			topRow.AddChild(stopButton);
+
+			this.AddChild(detailsPanel);
+
+			// Add rich progress controls
+			if (taskDetails.ExtraInfo != null
+					&& taskDetails.ExtraInfo?.Invoke() is GuiWidget guiWidget)
+			{
+				guiWidget.VAnchor = VAnchor.Absolute;
+				guiWidget.Visible = false;
+				expandButton.Checked = true;
+				detailsPanel.AddChild(guiWidget);
+			}
 
 			taskDetails.ProgressChanged += TaskDetails_ProgressChanged;
 		}

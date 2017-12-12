@@ -133,8 +133,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			sceneContext.LoadedGCodeChanged += BedPlate_LoadedGCodeChanged;
 
-			view3DContainer.AddChild(PrintProgressWidget(printer));
-
 			AddSettingsTabBar(leftToRight, view3DWidget);
 
 			view3DWidget.BoundsChanged += (s, e) =>
@@ -488,13 +486,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			});
 		}
 
-		private GuiWidget PrintProgressWidget(PrinterConfig printer)
+		public static GuiWidget PrintProgressWidget(PrinterConfig printer)
 		{
-			var bodyRow = new GuiWidget(300, 450)
+			var bodyRow = new GuiWidget()
 			{
-				HAnchor = HAnchor.Left,
-				VAnchor = VAnchor.Top,
-				BackgroundColor = new Color(ActiveTheme.Instance.PrimaryBackgroundColor, 128),
+				HAnchor = HAnchor.Fit | HAnchor.Center,
+				VAnchor = VAnchor.Top | VAnchor.Fit,
+				//BackgroundColor = new Color(ActiveTheme.Instance.PrimaryBackgroundColor, 128),
+				MinimumSize = new Vector2(275, 140),
 				Selectable = false
 			};
 
@@ -560,7 +559,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				progressDial.LayerCompletedRatio = printer.Connection.RatioIntoCurrentLayer;
 				progressDial.CompletedRatio = printer.Connection.PercentComplete / 100;
 
-				if (!HasBeenClosed)
+				if (!bodyRow.HasBeenClosed)
 				{
 					switch (printer.Connection.CommunicationState)
 					{

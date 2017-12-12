@@ -1105,7 +1105,7 @@ namespace MatterHackers.MatterControl
 
 		private string doNotAskAgainMessage = "Don't remind me again".Localize();
 
-		public async Task PrintPart(string partFilePath, string gcodeFilePath, string printItemName, PrinterConfig printer, SliceProgressReporter reporter, CancellationToken cancellationToken, bool overrideAllowGCode = false)
+		public async Task PrintPart(string partFilePath, string gcodeFilePath, string printItemName, PrinterConfig printer, IProgress<ProgressStatus> reporter, CancellationToken cancellationToken, bool overrideAllowGCode = false)
 		{
 			// Exit if called in a non-applicable state
 			if (this.ActivePrinter.Connection.CommunicationState != CommunicationStates.Connected
@@ -1166,7 +1166,7 @@ namespace MatterHackers.MatterControl
 								UiThread.RunOnIdle(() =>
 								{
 									StyledMessageBox.ShowMessageBox(
-										async (messageBoxResponse) =>
+										(messageBoxResponse) =>
 										{
 											if (messageBoxResponse)
 											{
@@ -1196,6 +1196,40 @@ namespace MatterHackers.MatterControl
 
 								partToPrint_SliceDone(partFilePath, gcodeFilePath);
 							}
+
+							await ApplicationController.Instance.Tasks.Execute(
+								(reporterB, cancellationTokenB) =>
+								{
+									var progressStatus = new ProgressStatus()
+									{
+										Status = "Printing".Localize()
+									};
+									reporterB.Report(progressStatus);
+
+									return Task.Run(() =>
+									{
+										string printing = "Printing".Localize();
+										int totalLayers = printer.Connection.TotalLayersInPrint;
+
+										while (!printer.Connection.PrinterIsPrinting
+											&& !cancellationTokenB.IsCancellationRequested)
+										{
+											// Wait for printing
+											Thread.Sleep(200);
+										}
+
+										while (printer.Connection.PrinterIsPrinting
+											&& !cancellationTokenB.IsCancellationRequested)
+										{
+											//progressStatus.Status = $"{printing} Layer ({printer.Connection.CurrentlyPrintingLayer } of {totalLayers})";
+											progressStatus.Status = $"{printing} ({printer.Connection.CurrentlyPrintingLayer})";
+											progressStatus.Progress0To1 = printer.Connection.PercentComplete / 100;
+											reporterB.Report(progressStatus);
+											Thread.Sleep(200);
+										}
+									});
+								},
+								extraInfo: () => PrinterTabPage.PrintProgressWidget(printer));
 						}
 					}
 				}
@@ -1339,6 +1373,8 @@ namespace MatterHackers.MatterControl
 	{
 		public event EventHandler<ProgressStatus> ProgressChanged;
 
+		public Func<GuiWidget> ExtraInfo { get; set; }
+
 		public RunningTaskDetails(CancellationTokenSource tokenSource)
 		{
 			this.tokenSource = tokenSource;
@@ -1375,11 +1411,14 @@ namespace MatterHackers.MatterControl
 			};
 		}
 
-		internal Task Execute(Func<IProgress<ProgressStatus>, CancellationToken, Task> func)
+		internal Task Execute(Func<IProgress<ProgressStatus>, CancellationToken, Task> func, Func<GuiWidget> extraInfo = null)
 		{
 			var tokenSource = new CancellationTokenSource();
 
-			var taskDetails = new RunningTaskDetails(tokenSource);
+			var taskDetails = new RunningTaskDetails(tokenSource)
+			{
+				ExtraInfo = extraInfo
+			};
 
 			executingTasks.Add(taskDetails);
 
