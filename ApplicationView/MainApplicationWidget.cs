@@ -34,6 +34,7 @@ using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
+using System;
 
 namespace MatterHackers.MatterControl
 {
@@ -93,7 +94,7 @@ namespace MatterHackers.MatterControl
 		}
 	}
 
-	public class ProgressStatus
+	public class ProgressStatus : EventArgs
 	{
 		public string Status { get; set; }
 		public double Progress0To1 { get; set; }

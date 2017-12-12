@@ -70,7 +70,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private ObservableCollection<GuiWidget> materialButtons = new ObservableCollection<GuiWidget>();
 		private bool hasDrawn = false;
 
-		private ProgressControl processingProgressControl;
 		private Color[] SelectionColors = new Color[] { new Color(131, 4, 66), new Color(227, 31, 61), new Color(255, 148, 1), new Color(247, 224, 23), new Color(143, 212, 1) };
 		private Stopwatch timeSinceLastSpin = new Stopwatch();
 		private Stopwatch timeSinceReported = new Stopwatch();
@@ -172,16 +171,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 
 				bottomActionPanel = new DisableablePanel(selectionActionBar, enabled: true);
-
-				processingProgressControl = new ProgressControl("", ActiveTheme.Instance.PrimaryTextColor, ActiveTheme.Instance.PrimaryAccentColor)
-				{
-					VAnchor = VAnchor.Top,
-					HAnchor = HAnchor.Center,
-					MinimumSize = new Vector2(400, 40),
-					BackgroundColor = theme.SlightShade,
-					Padding = 10
-				};
-				this.InteractionLayer.AddChild(processingProgressControl);
 
 				var buttonSpacing = theme.ButtonSpacing;
 
@@ -344,7 +333,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						Title = "Save".Localize(),
 						Action = async () =>
 						{
-							await this.SaveChanges();
+							await ApplicationController.Instance.Tasks.Execute(this.SaveChanges);
 						},
 						IsEnabled = () => sceneContext.EditableScene
 					},
@@ -1767,20 +1756,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		internal void ReportProgressChanged(double progress0To1, string processingState)
-		{
-			if (!timeSinceReported.IsRunning || timeSinceReported.ElapsedMilliseconds > 100)
-			{
-				UiThread.RunOnIdle(() =>
-				{
-					processingProgressControl.RatioComplete = progress0To1;
-					// TODO: filter needed?  processingState != processingProgressControl.ProgressMessage
-					processingProgressControl.ProgressMessage = processingState;
-				});
-				timeSinceReported.Restart();
-			}
-		}
-
 		private void Scene_SelectionChanged(object sender, EventArgs e)
 		{
 			if (!Scene.HasSelection)
@@ -1856,18 +1831,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void StartProgress(string rootTask)
 		{
-			processingProgressControl.ProcessType = rootTask;
-			processingProgressControl.Visible = true;
-			processingProgressControl.PercentComplete = 0;
-
 			this.LockEditControls();
 		}
 
 		public void EndProgress()
 		{
-			// TODO: Leave on screen for a few seconds to aid in troubleshooting - remove after done investigating
-			UiThread.RunOnIdle(() => processingProgressControl.Visible = false, 1.2);
-
 			this.UnlockEditControls();
 			Scene.Invalidate();
 			this.Invalidate();
@@ -1930,21 +1898,29 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				string progressMessage = "Loading Parts...".Localize();
 
-				double ratioPerFile = 1.0 / filesToLoad.Count;
-				double currentRatioDone = 0;
-
 				var itemCache = new Dictionary<string, IObject3D>();
 
 				foreach (string filePath in filesToLoad)
 				{
 					var libraryItem = new FileSystemFileItem(filePath);
 
-					var object3D = await libraryItem.CreateContent((double progress0To1, string processingState) =>
-					{
-						double ratioAvailable = (ratioPerFile * .5);
-						double currentRatio = currentRatioDone + progress0To1 * ratioAvailable;
+					IObject3D object3D = null;
 
-						ReportProgressChanged(currentRatio, progressMessage);
+					await ApplicationController.Instance.Tasks.Execute(async (progressReporter, cancelationToken) =>
+					{
+						var progressStatus = new ProgressStatus()
+						{
+							Status = "Loading ".Localize() + Path.GetFileName(filePath),
+						};
+
+						progressReporter.Report(progressStatus);
+
+						object3D = await libraryItem.CreateContent((double progress0To1, string processingState) =>
+						{
+							progressStatus.Progress0To1 = progress0To1;
+							progressStatus.Status = processingState;
+							progressReporter.Report(progressStatus);
+						});
 					});
 
 					if (object3D != null)
@@ -1952,12 +1928,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						Scene.Children.Modify(list => list.Add(object3D));
 
 						PlatingHelper.MoveToOpenPositionRelativeGroup(object3D, this.Scene.Children);
-
-						// TODO: There should be a batch insert so you can undo large 'add to scene' operations in one go
-						//this.InsertNewItem(tempScene);
 					}
-
-					currentRatioDone += ratioPerFile;
 				}
 			}
 		}
@@ -2062,35 +2033,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		internal GuiWidget selectedObjectContainer;
 
-		internal async Task SaveChanges()
+		public Task SaveChanges(IProgress<ProgressStatus> progress, CancellationToken cancellationToken)
 		{
-			if (Scene.HasChildren())
+			var progressStatus = new ProgressStatus()
 			{
-				this.StartProgress("Saving".Localize() + ":");
+				Status = "Saving Changes"
+			};
 
-				// Perform the actual save operation
-				await Task.Run(() =>
-				{
-					Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+			progress.Report(progressStatus);
 
-					try
-					{
-						sceneContext.Save();
-					}
-					catch (Exception ex)
-					{
-						Trace.WriteLine("Error saving file: ", ex.Message);
-					}
-				});
+			sceneContext.Save((progress0to1, status) =>
+			{
+				progressStatus.Status = status;
+				progressStatus.Progress0To1 = progress0to1;
+				progress.Report(progressStatus);
+			});
 
-				// Post Save cleanup
-				if (this.HasBeenClosed)
-				{
-					return;
-				}
-
-				this.EndProgress();
-			}
+			return Task.CompletedTask;
 		}
 
 		private void meshViewerWidget_LoadDone(object sender, EventArgs e)
@@ -2123,7 +2082,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					async (returnInfo) =>
 					{
 						// Save the scene to disk
-						await this.SaveChanges();
+						await ApplicationController.Instance.Tasks.Execute(this.SaveChanges);
 
 						// Save to the destination provider
 						if (returnInfo?.DestinationContainer != null)
@@ -2186,16 +2145,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.EndProgress();
 
 			viewControls3D.ActiveButton = ViewControls3DButtons.PartSelect;
-		}
-
-		// Before printing persist any changes to disk
-		internal async Task PersistPlateIfNeeded()
-		{
-			// TODO: Clean up caching, restore conditional save once Dirty state is trustworthy
-			//if (partHasBeenEdited)
-			{
-				await this.SaveChanges();
-			}
 		}
 
 		public void LockEditControls()

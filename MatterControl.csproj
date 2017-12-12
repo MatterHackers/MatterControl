@@ -81,6 +81,7 @@
     <Compile Include="ActionBar\PrinterSelector.cs" />
     <Compile Include="ActionBar\ResetButton.cs" />
     <Compile Include="ActionBar\TemperatureWidgetBed.cs" />
+    <Compile Include="PartPreviewWindow\View3D\PrinterBar\SliceButton.cs" />
     <Compile Include="PartPreviewWindow\View3D\PrinterBar\PrinterConnectButton.cs" />
     <Compile Include="ActionBar\TemperatureWidgetBase.cs" />
     <Compile Include="ActionBar\TemperatureWidgetExtruder.cs" />
@@ -124,6 +125,8 @@
     <Compile Include="PartPreviewWindow\PopupMenu.cs" />
     <Compile Include="PartPreviewWindow\PopupMenuButton.cs" />
     <Compile Include="PartPreviewWindow\PopupButton.cs" />
+    <Compile Include="PartPreviewWindow\RunningTaskRow.cs" />
+    <Compile Include="PartPreviewWindow\RunningTasksWidget.cs" />
     <Compile Include="PartPreviewWindow\SectionWidget.cs" />
     <Compile Include="PartPreviewWindow\SliceLayerSelector.cs" />
     <Compile Include="PartPreviewWindow\Toolbar.cs" />
@@ -135,9 +138,9 @@
     <Compile Include="PartPreviewWindow\View3D\LightingData.cs" />
     <Compile Include="PartPreviewWindow\View3D\PrinterBar\CancelButton.cs" />
     <Compile Include="PartPreviewWindow\View3D\PrinterBar\PauseResumeButton.cs" />
+    <Compile Include="PartPreviewWindow\View3D\SliceProgressReporter.cs" />
     <Compile Include="PartPreviewWindow\View3D\UndoCommands\ChangeColor.cs" />
     <Compile Include="PartPreviewWindow\View3D\UndoCommands\MakeSupport.cs" />
-    <Compile Include="PartPreviewWindow\View3D\SlicePopupMenu.cs" />
     <Compile Include="PartPreviewWindow\View3D\TumbleCubeControl.cs" />
     <Compile Include="PartPreviewWindow\View3D\UndoCommands\DeleteCommand.cs" />
     <Compile Include="PartPreviewWindow\View3D\UndoCommands\ReplaceCommand.cs" />

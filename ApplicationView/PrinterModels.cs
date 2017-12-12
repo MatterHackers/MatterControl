@@ -172,7 +172,8 @@ namespace MatterHackers.MatterControl
 				context.GCodeFilePath,
 				context.SourceItem.Name,
 				this.Printer,
-				null);
+				null,
+				CancellationToken.None);
 		}
 
 		internal static ILibraryItem LoadLastPlateOrNew()
@@ -433,11 +434,11 @@ namespace MatterHackers.MatterControl
 			_bedMesh = null;
 		}
 
-		internal void Save()
+		internal void Save(Action<double, string> progress = null)
 		{
 			if (this.Scene.Persistable)
 			{
-				this.Scene.PersistAssets(ApplicationDataStorage.Instance.ApplicationLibraryDataPath);
+				this.Scene.PersistAssets(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, progress);
 				this.EditContext.Save();
 			}
 		}

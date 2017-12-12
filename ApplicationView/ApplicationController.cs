@@ -42,6 +42,7 @@ using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using Newtonsoft.Json;
 using MatterHackers.MatterControl.Library;
+using System.Collections.ObjectModel;
 
 namespace MatterHackers.MatterControl
 {
@@ -69,6 +70,8 @@ namespace MatterHackers.MatterControl
 	public class ApplicationController
 	{
 		public ThemeConfig Theme { get; set; } = new ThemeConfig();
+
+		public RunningTasksConfig Tasks { get; set; } = new RunningTasksConfig();
 
 		// A list of printers which are open (i.e. displaying a tab) on this instance of MatterControl
 		public IEnumerable<PrinterConfig> ActivePrinters { get; } = new List<PrinterConfig>();
@@ -1102,7 +1105,7 @@ namespace MatterHackers.MatterControl
 
 		private string doNotAskAgainMessage = "Don't remind me again".Localize();
 
-		public async Task PrintPart(string partFilePath, string gcodeFilePath, string printItemName, PrinterConfig printer, SliceProgressReporter reporter, bool overrideAllowGCode = false)
+		public async Task PrintPart(string partFilePath, string gcodeFilePath, string printItemName, PrinterConfig printer, SliceProgressReporter reporter, CancellationToken cancellationToken, bool overrideAllowGCode = false)
 		{
 			// Exit if called in a non-applicable state
 			if (this.ActivePrinter.Connection.CommunicationState != CommunicationStates.Connected
@@ -1189,8 +1192,7 @@ namespace MatterHackers.MatterControl
 								await ApplicationController.Instance.SliceFileLoadOutput(
 									printer,
 									partFilePath,
-									gcodeFilePath,
-									reporter);
+									gcodeFilePath);
 
 								partToPrint_SliceDone(partFilePath, gcodeFilePath);
 							}
@@ -1263,23 +1265,45 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public async Task SliceFileLoadOutput(PrinterConfig printer, string partFilePath, string gcodeFilePath, SliceProgressReporter reporter)
+		public async Task SliceFileLoadOutput(PrinterConfig printer, string partFilePath, string gcodeFilePath)
 		{
-			var gcodeLoadCancellationTokenSource = new CancellationTokenSource();
-
 			// Slice
-			reporter?.StartReporting();
-			await Slicer.SliceFileAsync(partFilePath, gcodeFilePath, printer, reporter);
-			reporter?.EndReporting();
+			await ApplicationController.Instance.Tasks.Execute((reporter, cancelationToken) =>
+			{
+				reporter.Report(new ProgressStatus() { Status = "Slicing..." });
 
-			// Load
-			printer.Bed.LoadGCode(
-				gcodeFilePath,
-				gcodeLoadCancellationTokenSource.Token,
-				null);
-				// TODO: use not yet implemented standard processing notification system to report GCode load
-				//view3DWidget.gcodeViewer.LoadProgress_Changed);
-				//SetProcessingMessage(string.Format("{0} {1:0}%...", "Loading G-Code".Localize(), progress0To1 * 100));
+				return Slicer.SliceFile(
+					partFilePath, 
+					gcodeFilePath, 
+					printer,
+					new SliceProgressReporter(reporter, printer),
+					cancelationToken);
+			});
+			
+			await ApplicationController.Instance.Tasks.Execute((innerProgress, token) =>
+			{
+				var status = new ProgressStatus()
+				{
+					Status = "Loading GCode"
+				};
+
+				innerProgress.Report(status);
+
+				Thread.Sleep(800);
+
+				printer.Bed.LoadGCode(gcodeFilePath, token, (progress0to1, statusText) =>
+				{
+					UiThread.RunOnIdle(() =>
+					{
+						status.Progress0To1 = progress0to1;
+						status.Status = statusText;
+
+						innerProgress.Report(status);
+					});
+				});
+
+				return Task.CompletedTask;
+			});
 		}
 
 		public class CloudSyncEventArgs : EventArgs
@@ -1308,6 +1332,63 @@ namespace MatterHackers.MatterControl
 		{
 			this.View3DWidget = null;
 			this.SceneContext = null;
+		}
+	}
+
+	public class RunningTaskDetails : IProgress<ProgressStatus>
+	{
+		public event EventHandler<ProgressStatus> ProgressChanged;
+
+		public RunningTaskDetails(CancellationTokenSource tokenSource)
+		{
+			this.tokenSource = tokenSource;
+		}
+
+		public string Title { get; set; }
+
+		private CancellationTokenSource tokenSource;
+
+		public void Report(ProgressStatus progressStatus)
+		{
+			this.ProgressChanged?.Invoke(this, progressStatus);
+		}
+
+		public void CancelTask()
+		{
+			this.tokenSource.Cancel();
+		}
+	}
+
+	public class RunningTasksConfig
+	{
+		public event EventHandler TasksChanged;
+
+		private ObservableCollection<RunningTaskDetails> executingTasks = new ObservableCollection<RunningTaskDetails>();
+
+		public IEnumerable<RunningTaskDetails> RunningTasks => executingTasks.ToList();
+
+		public RunningTasksConfig()
+		{
+			executingTasks.CollectionChanged += (s, e) =>
+			{
+				this.TasksChanged?.Invoke(this, null);
+			};
+		}
+
+		internal Task Execute(Func<IProgress<ProgressStatus>, CancellationToken, Task> func)
+		{
+			var tokenSource = new CancellationTokenSource();
+
+			var taskDetails = new RunningTaskDetails(tokenSource);
+
+			executingTasks.Add(taskDetails);
+
+			return Task.Run(async () =>
+			{
+				await func?.Invoke(taskDetails, tokenSource.Token);
+
+				executingTasks.Remove(taskDetails);
+			});
 		}
 	}
 }

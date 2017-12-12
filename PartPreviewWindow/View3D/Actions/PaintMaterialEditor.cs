@@ -168,11 +168,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			tabContainer.AddChild(updateButton);
 		}
 
-		private async void ProcessBooleans(IObject3D group)
+		private void ProcessBooleans(IObject3D group)
 		{
 			// spin up a task to remove holes from the objects in the group
-			await Task.Run(() =>
+			ApplicationController.Instance.Tasks.Execute((reporter, cancelationToken) =>
 			{
+				var progressStatus = new ProgressStatus()
+				{
+					Status = "Processing Booleans"
+				};
+
+				reporter.Report(progressStatus);
+
 				var participants = group.Descendants().Where((obj) => obj.OwnerID == group.ID).ToList();
 				var paintObjects = participants.Where((obj) => obj.OutputType == PrintOutputTypes.Hole).ToList();
 				var keepObjects = participants.Where((obj) => obj.OutputType != PrintOutputTypes.Hole).ToList();
@@ -182,15 +189,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				{
 					foreach (var paint in paintObjects)
 					{
-						var transformedPaint = Mesh.Copy(paint.Mesh, CancellationToken.None);
+						var transformedPaint = Mesh.Copy(paint.Mesh, cancelationToken);
 						transformedPaint.Transform(paint.WorldMatrix());
 						var inverseRemove = paint.WorldMatrix();
 						inverseRemove.Invert();
-						paint.Mesh = null;
+						Mesh paintMesh = null;
 
 						foreach (var keep in keepObjects)
 						{
-							var transformedKeep = Mesh.Copy(keep.Mesh, CancellationToken.None);
+							var transformedKeep = Mesh.Copy(keep.Mesh, cancelationToken);
 							transformedKeep.Transform(keep.WorldMatrix());
 
 							// remove the paint from the original
@@ -201,25 +208,34 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 							keep.Mesh = intersectAndSubtract.subtract;
 
 							// keep all the intersections together
-							if(paint.Mesh == null)
+							if(paintMesh == null)
 							{
-								paint.Mesh = intersectAndSubtract.intersect;
+								paintMesh = intersectAndSubtract.intersect;
 							}
 							else // union into the current paint
 							{
-								paint.Mesh = PolygonMesh.Csg.CsgOperations.Union(paint.Mesh, intersectAndSubtract.intersect);
+								paintMesh = PolygonMesh.Csg.CsgOperations.Union(paintMesh, intersectAndSubtract.intersect);
+							}
+
+							if (cancelationToken.IsCancellationRequested)
+							{
+								break;
 							}
 
 							view3DWidget.Invalidate();
 						}
 
 						// move the paint mesh back to its original coordinates
-						paint.Mesh.Transform(inverseRemove);
+						paintMesh.Transform(inverseRemove);
+
+						paint.Mesh = paintMesh;
 
 						// now set it to the new solid color
 						paint.OutputType = PrintOutputTypes.Solid;
 					}
 				}
+
+				return Task.CompletedTask;
 			});
 		}
 	}

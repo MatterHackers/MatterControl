@@ -90,7 +90,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			itemCountBeingWorkedOn = 0;
 		}
 
-		public void Start()
+		public async void Start()
 		{
 			if (allFilesToExport.Count > 0)
 			{
@@ -106,11 +106,10 @@ namespace MatterHackers.MatterControl.PrintQueue
 					string extension = Path.GetExtension(printItemWrapper.FileLocation).ToUpper();
 					if (extension != "" && MeshFileIo.ValidFileExtensions().Contains(extension))
 					{
-						Slicer.SliceFileAsync(printItemWrapper.FileLocation, printItemWrapper.GetGCodePathAndFileName(), printer, null).ContinueWith((task) =>
+						await ApplicationController.Instance.Tasks.Execute((reporter, cancellationToken) =>
 						{
-							Console.WriteLine("Part Slicing Completed");
+							return Slicer.SliceFile(printItemWrapper.FileLocation, printItemWrapper.GetGCodePathAndFileName(), printer, reporter, cancellationToken);
 						});
-
 					}
 					else if (Path.GetExtension(printItemWrapper.FileLocation).ToUpper() == ".GCODE")
 					{
