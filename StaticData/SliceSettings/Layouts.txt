@@ -200,10 +200,6 @@ Advanced
         threads
         resolution
         overhangs
-    Single Print
-      Settings Will Clear at End of Print
-        spiral_vase
-        layer_to_pause
   Filament
     Material
       Properties
