@@ -1202,12 +1202,15 @@ namespace MatterHackers.MatterControl
 								{
 									var progressStatus = new ProgressStatus()
 									{
-										Status = "Printing"
+										Status = "Printing".Localize()
 									};
 									reporterB.Report(progressStatus);
 
 									return Task.Run(() =>
 									{
+										string printing = "Printing".Localize();
+										int totalLayers = printer.Connection.TotalLayersInPrint;
+
 										while (!printer.Connection.PrinterIsPrinting
 											&& !cancellationTokenB.IsCancellationRequested)
 										{
@@ -1218,6 +1221,8 @@ namespace MatterHackers.MatterControl
 										while (printer.Connection.PrinterIsPrinting
 											&& !cancellationTokenB.IsCancellationRequested)
 										{
+											//progressStatus.Status = $"{printing} Layer ({printer.Connection.CurrentlyPrintingLayer } of {totalLayers})";
+											progressStatus.Status = $"{printing} ({printer.Connection.CurrentlyPrintingLayer})";
 											progressStatus.Progress0To1 = printer.Connection.PercentComplete / 100;
 											reporterB.Report(progressStatus);
 											Thread.Sleep(200);
