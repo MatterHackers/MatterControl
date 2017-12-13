@@ -170,8 +170,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private string connectionFailureMessage = "Unknown Reason";
 
-		private Thread connectThread;
-
 		private PrinterMove currentDestination;
 
 		public double CurrentExtruderDestination { get { return currentDestination.extrusion; } }
@@ -843,12 +841,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			// Set .Disconnecting to allow the read loop to exit gracefully before a forced thread join (and extended timeout)
 			CommunicationState = CommunicationStates.Disconnecting;
 
-			// Shutdown the connectionAttempt thread
-			if (connectThread != null)
-			{
-				connectThread.Join(JoinThreadTimeoutMs); //Halt connection thread
-			}
-
 			// Shutdown the readFromPrinter thread
 			if (shutdownReadLoop)
 			{
@@ -929,15 +921,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 			if (SerialPortIsAvailable(this.ComPort))
 			{
-				//Create a timed callback to determine whether connection succeeded
-				Timer connectionTimer = new Timer(new TimerCallback(ConnectionCallbackTimer));
-				connectionTimer.Change(100, 0);
-
 				//Create and start connection thread
-				connectThread = new Thread(Connect_Thread);
-				connectThread.Name = "Connect To Printer";
-				connectThread.IsBackground = true;
-				connectThread.Start();
+				Task.Run(() =>
+				{
+					Connect_Thread();
+				});
 			}
 			else
 			{
@@ -1949,7 +1937,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 				case CommunicationStates.AttemptingToConnect:
 					CommunicationState = CommunicationStates.FailedToConnect;
-					connectThread.Join(JoinThreadTimeoutMs);
+					//connectThread.Join(JoinThreadTimeoutMs);
+
 					CommunicationState = CommunicationStates.Disconnecting;
 					ReadThread.Join();
 					if (serialPort != null)
@@ -2109,12 +2098,15 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		private void Connect_Thread()
 		{
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+			
 			// Allow the user to set the appropriate properties.
 			var portNames = FrostedSerialPort.GetPortNames();
+			
 			//Debug.WriteLine("Open ports: {0}".FormatWith(portNames.Length));
 			if (portNames.Length > 0 || IsNetworkPrinting())
 			{
 				AttemptToConnect(this.ComPort, this.BaudRate);
+
 				if (CommunicationState == CommunicationStates.FailedToConnect)
 				{
 					OnConnectionFailed(null);
@@ -2124,46 +2116,23 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			{
 				OnConnectionFailed(null);
 			}
-		}
 
-		private void ConnectionCallbackTimer(object state)
-		{
-			Timer t = (Timer)state;
-			if (!ContinueConnectionThread())
-			{
-				t.Dispose();
-			}
-			else
-			{
-				t.Change(100, 0);
-			}
-		}
-
-		private bool ContinueConnectionThread()
-		{
-			if (CommunicationState == CommunicationStates.AttemptingToConnect)
-			{
-				if (this.stopTryingToConnect)
-				{
-					connectThread.Join(JoinThreadTimeoutMs); //Halt connection thread
-					Disable();
-					connectionFailureMessage = "Canceled".Localize();
-					OnConnectionFailed(null);
-					return false;
-				}
-				else
-				{
-					return true;
-				}
-			}
-			else
-			{
-				// If we're no longer in the .AttemptingToConnect state, shutdown the connection thread and fire the
-				// OnConnectonSuccess event if we're connected and not Disconnecting
-				connectThread.Join(JoinThreadTimeoutMs);
-
-				return false;
-			}
+			//// From ContinueConnectionThread
+			//if (CommunicationState == CommunicationStates.AttemptingToConnect)
+			//{
+			//	if (this.stopTryingToConnect)
+			//	{
+			//		connectThread.Join(JoinThreadTimeoutMs); //Halt connection thread
+			//		Disable();
+			//		connectionFailureMessage = "Canceled".Localize();
+			//		OnConnectionFailed(null);
+			//		return false;
+			//	}
+			//	else
+			//	{
+			//		return true;
+			//	}
+			//}
 		}
 
 		private void DonePrintingSdFile(object sender, FoundStringEventArgs e)
