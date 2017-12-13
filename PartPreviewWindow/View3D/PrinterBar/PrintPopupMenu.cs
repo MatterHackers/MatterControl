@@ -27,14 +27,13 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Threading;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.SlicerConfiguration;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -43,7 +42,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private TextImageButtonFactory buttonFactory = ApplicationController.Instance.Theme.ButtonFactory;
 		private PrinterConfig printer;
 		private PrinterTabPage printerTabPage;
-		private bool activelySlicing = false;
 
 		public PrintPopupMenu(PrinterConfig printer, ThemeConfig theme, PrinterTabPage printerTabPage)
 		{
@@ -112,6 +110,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							CancellationToken.None);
 					});
 				};
+				button.EnabledChanged += (s, e) => Console.WriteLine();
 				column.AddChild(button);
 
 				return column;
@@ -123,17 +122,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Name = "Start Print Button",
 				BackgroundColor = theme.ButtonFactory.Options.NormalFillColor,
 				HoverColor = theme.ButtonFactory.Options.HoverFillColor,
-				Margin = theme.ButtonSpacing,
 			});
 		}
 
 		private class IgnoredFlowLayout : FlowLayoutWidget, IIgnoredPopupChild
 		{
 			public IgnoredFlowLayout()
-				: base (FlowDirection.TopToBottom)
+				: base(FlowDirection.TopToBottom)
 			{
 			}
 		}
-
 	}
 }

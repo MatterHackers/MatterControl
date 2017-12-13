@@ -110,28 +110,51 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			topRow.AddChild(new HorizontalSpacer());
 
-			var pauseButton = theme.ButtonFactory.GenerateIconButton(AggContext.StaticData.LoadIcon("fa-pause_12.png", IconColor.Theme));
+			IconButton resumeButton = null;
+
+			var pauseButton = new IconButton(AggContext.StaticData.LoadIcon("fa-pause_12.png", IconColor.Theme), theme);
 			pauseButton.Margin = theme.ButtonSpacing;
-			pauseButton.Enabled = false;
+			pauseButton.Enabled = taskDetails.TaskActions?.Pause != null;
 			pauseButton.Click += (s, e) =>
 			{
-				taskDetails.CancelTask();
+				taskDetails.TaskActions?.Pause();
+				pauseButton.Visible = false;
+				resumeButton.Visible = true;
 			};
 			topRow.AddChild(pauseButton);
+
+			resumeButton = new IconButton(AggContext.StaticData.LoadIcon("fa-play_12.png", IconColor.Theme), theme);
+			resumeButton.Visible = false;
+			resumeButton.Margin = theme.ButtonSpacing;
+			resumeButton.Click += (s, e) =>
+			{
+				taskDetails.TaskActions?.Resume();
+				pauseButton.Visible = true;
+				resumeButton.Visible = false;
+			};
+			topRow.AddChild(resumeButton);
 
 			var stopButton = theme.ButtonFactory.GenerateIconButton(AggContext.StaticData.LoadIcon("fa-stop_12.png", IconColor.Theme));
 			stopButton.Margin = theme.ButtonSpacing;
 			stopButton.Click += (s, e) =>
 			{
-				taskDetails.CancelTask();
+				var stopAction = taskDetails.TaskActions?.Stop;
+				if (stopAction == null)
+				{
+					taskDetails.CancelTask();
+				}
+				else
+				{
+					stopAction.Invoke();
+				}
 			};
 			topRow.AddChild(stopButton);
 
 			this.AddChild(detailsPanel);
 
 			// Add rich progress controls
-			if (taskDetails.ExtraInfo != null
-					&& taskDetails.ExtraInfo?.Invoke() is GuiWidget guiWidget)
+			if (taskDetails.TaskActions?.RichProgressWidget != null
+					&& taskDetails.TaskActions?.RichProgressWidget?.Invoke() is GuiWidget guiWidget)
 			{
 				guiWidget.VAnchor = VAnchor.Absolute;
 				guiWidget.Visible = false;
