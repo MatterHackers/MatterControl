@@ -189,8 +189,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 							transformedKeep = PolygonMesh.Csg.CsgOperations.Subtract(transformedKeep, transformedRemove, (csgStatus) =>
 							{
 								progressStatus.Status = csgStatus.Status;
+								progressStatus.Progress0To1 = percentCompleted + amountPerOperation * csgStatus.Progress0To1;
 								reporter.Report(progressStatus);
 							}, cancelationToken);
+							if(cancelationToken.IsCancellationRequested)
+							{
+								return Task.CompletedTask;
+							}
 							var inverse = keep.WorldMatrix();
 							inverse.Invert();
 							transformedKeep.Transform(inverse);

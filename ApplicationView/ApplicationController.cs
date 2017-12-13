@@ -1453,7 +1453,14 @@ namespace MatterHackers.MatterControl
 
 			return Task.Run(async () =>
 			{
-				await func?.Invoke(taskDetails, tokenSource.Token);
+				try
+				{
+					await func?.Invoke(taskDetails, tokenSource.Token);
+				}
+				catch
+				{
+
+				}
 
 				executingTasks.Remove(taskDetails);
 			});

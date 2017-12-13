@@ -75,44 +75,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return normalShadowMesh;
 		}
 
-		Mesh GetDemoShadowMesh()
-		{
-			if (demoShadowMesh == null)
-			{
-				demoShadowMesh = PlatonicSolids.CreateCube(1, 1, .1);
-				TypeFacePrinter demoTextPrinter = new TypeFacePrinter("Demo".Localize() + " ", 62);
-				var bounds = demoTextPrinter.LocalBounds;
-
-				var demoTexture = new ImageBuffer(512, 512);
-				var scale = demoTexture.Width / bounds.Width;
-				demoTextPrinter.Origin = new Vector2(0, -bounds.Bottom / scale / 2);
-
-				Graphics2D imageGraphics = demoTexture.NewGraphics2D();
-				imageGraphics.Clear(new Color(Color.White, shadowAlpha));
-
-				imageGraphics.Render(new VertexSourceApplyTransform(demoTextPrinter, Affine.NewScaling(scale, scale)), new Color(Color.White, 100));
-
-				int count = 0;
-				ImageBuffer clearImage = new ImageBuffer(2, 2, 32, new BlenderBGRA());
-				foreach (Face face in demoShadowMesh.Faces)
-				{
-					if (count == 0)
-					{
-						MeshHelper.PlaceTextureOnFace(face, demoTexture);
-					}
-					else
-					{
-						MeshHelper.PlaceTextureOnFace(face, clearImage);
-					}
-					count++;
-				}
-
-				ImageGlPlugin.GetImageGlPlugin(demoTexture, true);
-			}
-
-			return demoShadowMesh;
-		}
-
 		public override void DrawGlContent(DrawGlContentEventArgs e)
 		{
 			if (InteractionContext.Scene.HasSelection
@@ -122,16 +84,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				AxisAlignedBoundingBox selectedBounds = InteractionContext.Scene.SelectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 
 				var withScale = Matrix4X4.CreateScale(selectedBounds.XSize, selectedBounds.YSize, 1) * TotalTransform;
-
-				//bool authorized = ApplicationController.Instance.ActiveView3DWidget?.ActiveSelectionEditor?.Unlocked == true;
-				if (true) //authorized)
-				{
-					GLHelper.Render(GetNormalShadowMesh(), new Color(shadowColor, shadowAlpha), withScale, RenderTypes.Shaded);
-				}
-				else
-				{
-					GLHelper.Render(GetDemoShadowMesh(), new Color(shadowColor, 254), withScale, RenderTypes.Shaded);
-				}
+				GLHelper.Render(GetNormalShadowMesh(), new Color(shadowColor, shadowAlpha), withScale, RenderTypes.Shaded);
 			}
 
 			base.DrawGlContent(e);
