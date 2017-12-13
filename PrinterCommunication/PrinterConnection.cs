@@ -900,24 +900,24 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public void Connect(bool showHelpIfNoPort = false)
 		{
-			if (printer.Settings != null)
+			// TODO: Consider adding any conditions that would results in a connection failure to this initial test
+			// Start the process of requesting permission and exit if permission is not currently granted
+			if (!printer.Settings.GetValue<bool>(SettingsKey.enable_network_printing)
+				&& !FrostedSerialPort.EnsureDeviceAccess())
 			{
-				// Start the process of requesting permission and exit if permission is not currently granted
-				if (!printer.Settings.GetValue<bool>(SettingsKey.enable_network_printing)
-					&& !FrostedSerialPort.EnsureDeviceAccess())
-				{
-					CommunicationState = CommunicationStates.FailedToConnect;
-					return;
-				}
+				// TODO: Consider calling OnConnectionFailed as we do below to fire events that indicate connection failed
+				CommunicationState = CommunicationStates.FailedToConnect;
+				return;
+			}
 
-				TerminalLog.Clear();
-				//Attempt connecting to a specific printer
-				this.stopTryingToConnect = false;
-				this.FirmwareType = FirmwareTypes.Unknown;
-				firmwareUriGcodeSend = false;
+			TerminalLog.Clear();
+			//Attempt connecting to a specific printer
+			this.stopTryingToConnect = false;
+			this.FirmwareType = FirmwareTypes.Unknown;
+			firmwareUriGcodeSend = false;
 
-				// On Android, there will never be more than one serial port available for us to connect to. Override the current .ComPort value to account for
-				// this aspect to ensure the validation logic that verifies port availability/in use status can proceed without additional workarounds for Android
+			// On Android, there will never be more than one serial port available for us to connect to. Override the current .ComPort value to account for
+			// this aspect to ensure the validation logic that verifies port availability/in use status can proceed without additional workarounds for Android
 #if __ANDROID__
 				string currentPortName = FrostedSerialPort.GetPortNames().FirstOrDefault();
 				if (!string.IsNullOrEmpty(currentPortName))
@@ -927,36 +927,35 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				}
 #endif
 
-				if (SerialPortIsAvailable(this.ComPort))
-				{
-					//Create a timed callback to determine whether connection succeeded
-					Timer connectionTimer = new Timer(new TimerCallback(ConnectionCallbackTimer));
-					connectionTimer.Change(100, 0);
+			if (SerialPortIsAvailable(this.ComPort))
+			{
+				//Create a timed callback to determine whether connection succeeded
+				Timer connectionTimer = new Timer(new TimerCallback(ConnectionCallbackTimer));
+				connectionTimer.Change(100, 0);
 
-					//Create and start connection thread
-					connectThread = new Thread(Connect_Thread);
-					connectThread.Name = "Connect To Printer";
-					connectThread.IsBackground = true;
-					connectThread.Start();
-				}
-				else
-				{
-					Debug.WriteLine("Connection failed: {0}".FormatWith(this.ComPort));
+				//Create and start connection thread
+				connectThread = new Thread(Connect_Thread);
+				connectThread.Name = "Connect To Printer";
+				connectThread.IsBackground = true;
+				connectThread.Start();
+			}
+			else
+			{
+				Debug.WriteLine("Connection failed: {0}".FormatWith(this.ComPort));
 
-					connectionFailureMessage = string.Format(
-										"{0} is not available".Localize(),
-										this.ComPort);
+				connectionFailureMessage = string.Format(
+									"{0} is not available".Localize(),
+									this.ComPort);
 
-					OnConnectionFailed(null);
+				OnConnectionFailed(null);
 
 #if !__ANDROID__
-					// Only pop up the com port helper if the USER actually CLICKED the connect button.
-					if (showHelpIfNoPort)
-					{
-						DialogWindow.Show(new SetupStepComPortOne(printer));
-					}
-#endif
+				// Only pop up the com port helper if the USER actually CLICKED the connect button.
+				if (showHelpIfNoPort)
+				{
+					DialogWindow.Show(new SetupStepComPortOne(printer));
 				}
+#endif
 			}
 		}
 
