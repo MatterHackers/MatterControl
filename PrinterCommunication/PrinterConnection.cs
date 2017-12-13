@@ -971,6 +971,41 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 										Thread.Sleep(500);
 										CommunicationState = CommunicationStates.AttemptingToConnect;
 
+
+										// Read character data until we see a newline
+										while(...)
+
+										// If we've encountered a newline character and we're still in .AttemptingToConnect
+										if (CommunicationState == CommunicationStates.AttemptingToConnect)
+										{
+											// TODO: This is an initial proof of concept for validating the printer response after DTR. More work is
+											// needed to test this technique across existing hardware and/or edge cases where this simple approach
+											// (initial line having more than 3 non-ASCII characters) may not be adequate or appropriate.
+											// TODO: Revise the INVALID char count to an agreed upon threshold
+											string[] segments = lastLineRead.Split('?');
+											if (segments.Length <= MAX_INVALID_CONNECTION_CHARS)
+											{
+												CommunicationState = CommunicationStates.Connected;
+												TurnOffBedAndExtruders(); // make sure our ui and the printer agree and that the printer is in a known state (not heating).
+												haveReportedError = false;
+												// now send any command that initialize this printer
+												ClearQueuedGCode();
+												string connectGCode = printer.Settings.GetValue(SettingsKey.connect_gcode);
+												SendLineToPrinterNow(connectGCode);
+
+												// Call global event
+												AnyConnectionSucceeded.CallEvents(this, null);
+
+												// Call instance event
+												ConnectionSucceeded.CallEvents(this, null);
+											}
+											else
+											{
+												// Force port shutdown and cleanup
+												AbortConnectionAttempt("Invalid printer response".Localize(), false);
+											}
+										}
+
 										ReadThread.Join();
 
 										Console.WriteLine("ReadFromPrinter thread created.");
@@ -1527,37 +1562,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 										if (foundResponse.SendToDelegateFunctions)
 										{
 											ReadLine.CallEvents(this, currentEvent);
-										}
-									}
-
-									// If we've encountered a newline character and we're still in .AttemptingToConnect
-									if (CommunicationState == CommunicationStates.AttemptingToConnect)
-									{
-										// TODO: This is an initial proof of concept for validating the printer response after DTR. More work is
-										// needed to test this technique across existing hardware and/or edge cases where this simple approach
-										// (initial line having more than 3 non-ASCII characters) may not be adequate or appropriate.
-										// TODO: Revise the INVALID char count to an agreed upon threshold
-										string[] segments = lastLineRead.Split('?');
-										if (segments.Length <= MAX_INVALID_CONNECTION_CHARS)
-										{
-											CommunicationState = CommunicationStates.Connected;
-											TurnOffBedAndExtruders(); // make sure our ui and the printer agree and that the printer is in a known state (not heating).
-											haveReportedError = false;
-											// now send any command that initialize this printer
-											ClearQueuedGCode();
-											string connectGCode = printer.Settings.GetValue(SettingsKey.connect_gcode);
-											SendLineToPrinterNow(connectGCode);
-
-											// Call global event
-											AnyConnectionSucceeded.CallEvents(this, null);
-
-											// Call instance event
-											ConnectionSucceeded.CallEvents(this, null);
-										}
-										else
-										{
-											// Force port shutdown and cleanup
-											AbortConnectionAttempt("Invalid printer response".Localize(), false);
 										}
 									}
 								}
