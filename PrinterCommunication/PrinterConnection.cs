@@ -924,7 +924,43 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				//Create and start connection thread
 				Task.Run(() =>
 				{
-					Connect_Thread();
+					Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+
+					// Allow the user to set the appropriate properties.
+					var portNames = FrostedSerialPort.GetPortNames();
+
+					//Debug.WriteLine("Open ports: {0}".FormatWith(portNames.Length));
+					if (portNames.Length > 0 || IsNetworkPrinting())
+					{
+						AttemptToConnect(this.ComPort, this.BaudRate);
+
+						if (CommunicationState == CommunicationStates.FailedToConnect)
+						{
+							OnConnectionFailed(null);
+						}
+					}
+					else
+					{
+						OnConnectionFailed(null);
+					}
+
+					//// From ContinueConnectionThread
+					//if (CommunicationState == CommunicationStates.AttemptingToConnect)
+					//{
+					//	if (this.stopTryingToConnect)
+					//	{
+					//		connectThread.Join(JoinThreadTimeoutMs); //Halt connection thread
+					//		Disable();
+					//		connectionFailureMessage = "Canceled".Localize();
+					//		OnConnectionFailed(null);
+					//		return false;
+					//	}
+					//	else
+					//	{
+					//		return true;
+					//	}
+					//}
+
 				});
 			}
 			else
@@ -2093,46 +2129,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			{
 				WriteChecksumLineToPrinter(line);
 			}
-		}
-
-		private void Connect_Thread()
-		{
-			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-			
-			// Allow the user to set the appropriate properties.
-			var portNames = FrostedSerialPort.GetPortNames();
-			
-			//Debug.WriteLine("Open ports: {0}".FormatWith(portNames.Length));
-			if (portNames.Length > 0 || IsNetworkPrinting())
-			{
-				AttemptToConnect(this.ComPort, this.BaudRate);
-
-				if (CommunicationState == CommunicationStates.FailedToConnect)
-				{
-					OnConnectionFailed(null);
-				}
-			}
-			else
-			{
-				OnConnectionFailed(null);
-			}
-
-			//// From ContinueConnectionThread
-			//if (CommunicationState == CommunicationStates.AttemptingToConnect)
-			//{
-			//	if (this.stopTryingToConnect)
-			//	{
-			//		connectThread.Join(JoinThreadTimeoutMs); //Halt connection thread
-			//		Disable();
-			//		connectionFailureMessage = "Canceled".Localize();
-			//		OnConnectionFailed(null);
-			//		return false;
-			//	}
-			//	else
-			//	{
-			//		return true;
-			//	}
-			//}
 		}
 
 		private void DonePrintingSdFile(object sender, FoundStringEventArgs e)
