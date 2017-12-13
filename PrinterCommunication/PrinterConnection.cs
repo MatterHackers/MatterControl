@@ -932,7 +932,84 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					//Debug.WriteLine("Open ports: {0}".FormatWith(portNames.Length));
 					if (portNames.Length > 0 || IsNetworkPrinting())
 					{
-						AttemptToConnect(this.ComPort, this.BaudRate);
+						// AttemptToConnect {{
+						{
+							string serialPortName = this.ComPort;
+							int baudRate = this.BaudRate;
+
+							// make sure we don't have a left over print task
+							activePrintTask = null;
+
+							connectionFailureMessage = "Unknown Reason".Localize();
+
+							if (PrinterIsConnected)
+							{
+#if DEBUG
+								throw new Exception("You can only connect when not currently connected.".Localize());
+#else
+				return;
+#endif
+							}
+
+							var portFactory = FrostedSerialPortFactory.GetAppropriateFactory(this.DriverType);
+
+							bool serialPortIsAvailable = portFactory.SerialPortIsAvailable(serialPortName);
+							bool serialPortIsAlreadyOpen = this.ComPort != "Emulator" &&
+								portFactory.SerialPortAlreadyOpen(serialPortName);
+
+							if (serialPortIsAvailable && !serialPortIsAlreadyOpen)
+							{
+								if (!PrinterIsConnected)
+								{
+									try
+									{
+										serialPort = portFactory.CreateAndOpen(serialPortName, baudRate, true);
+#if __ANDROID__
+						ToggleHighLowHigh(serialPort);
+#endif
+										// wait a bit of time to let the firmware start up
+										Thread.Sleep(500);
+										CommunicationState = CommunicationStates.AttemptingToConnect;
+
+										ReadThread.Join();
+
+										Console.WriteLine("ReadFromPrinter thread created.");
+										ReadThread.Start(this);
+
+										CreateStreamProcessors(null, false);
+
+										// We have to send a line because some printers (like old print-r-bots) do not send anything when connecting and there is no other way to know they are there.
+										SendLineToPrinterNow("M110 N1");
+										ClearQueuedGCode();
+										// We do not need to wait for the M105
+										PrintingCanContinue(null, null);
+									}
+									catch (System.ArgumentOutOfRangeException e)
+									{
+										TerminalLog.WriteLine("Exception:" + e.Message);
+										connectionFailureMessage = "Unsupported Baud Rate".Localize();
+										OnConnectionFailed(null);
+									}
+									catch (Exception ex)
+									{
+										TerminalLog.WriteLine("Exception:" + ex.Message);
+										OnConnectionFailed(null);
+									}
+								}
+							}
+							else
+							{
+								// If the serial port isn't available (i.e. the specified port name wasn't found in GetPortNames()) or the serial
+								// port is already opened in another instance or process, then report the connection problem back to the user
+								connectionFailureMessage = (serialPortIsAlreadyOpen ?
+									this.ComPort + " " + "in use".Localize() :
+									"Port not found".Localize());
+
+								OnConnectionFailed(null);
+							}
+						}
+
+						// AttemptToConnect }}
 
 						if (CommunicationState == CommunicationStates.FailedToConnect)
 						{
@@ -2045,80 +2122,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		[DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
 		internal static extern SafeFileHandle CreateFile(string lpFileName, int dwDesiredAccess, int dwShareMode, IntPtr securityAttrs, int dwCreationDisposition, int dwFlagsAndAttributes, IntPtr hTemplateFile);
-
-		private void AttemptToConnect(string serialPortName, int baudRate)
-		{
-			// make sure we don't have a left over print task
-			activePrintTask = null;
-
-			connectionFailureMessage = "Unknown Reason".Localize();
-
-			if (PrinterIsConnected)
-			{
-#if DEBUG
-				throw new Exception("You can only connect when not currently connected.".Localize());
-#else
-				return;
-#endif
-			}
-
-			var portFactory = FrostedSerialPortFactory.GetAppropriateFactory(this.DriverType);
-
-			bool serialPortIsAvailable = portFactory.SerialPortIsAvailable(serialPortName);
-			bool serialPortIsAlreadyOpen = this.ComPort != "Emulator" &&
-				portFactory.SerialPortAlreadyOpen(serialPortName);
-
-			if (serialPortIsAvailable && !serialPortIsAlreadyOpen)
-			{
-				if (!PrinterIsConnected)
-				{
-					try
-					{
-						serialPort = portFactory.CreateAndOpen(serialPortName, baudRate, true);
-#if __ANDROID__
-						ToggleHighLowHigh(serialPort);
-#endif
-						// wait a bit of time to let the firmware start up
-						Thread.Sleep(500);
-						CommunicationState = CommunicationStates.AttemptingToConnect;
-
-						ReadThread.Join();
-
-						Console.WriteLine("ReadFromPrinter thread created.");
-						ReadThread.Start(this);
-
-						CreateStreamProcessors(null, false);
-
-						// We have to send a line because some printers (like old print-r-bots) do not send anything when connecting and there is no other way to know they are there.
-						SendLineToPrinterNow("M110 N1");
-						ClearQueuedGCode();
-						// We do not need to wait for the M105
-						PrintingCanContinue(null, null);
-					}
-					catch (System.ArgumentOutOfRangeException e)
-					{
-						TerminalLog.WriteLine("Exception:" + e.Message);
-						connectionFailureMessage = "Unsupported Baud Rate".Localize();
-						OnConnectionFailed(null);
-					}
-					catch (Exception ex)
-					{
-						TerminalLog.WriteLine("Exception:" + ex.Message);
-						OnConnectionFailed(null);
-					}
-				}
-			}
-			else
-			{
-				// If the serial port isn't available (i.e. the specified port name wasn't found in GetPortNames()) or the serial
-				// port is already opened in another instance or process, then report the connection problem back to the user
-				connectionFailureMessage = (serialPortIsAlreadyOpen ?
-					this.ComPort + " " + "in use".Localize() :
-					"Port not found".Localize());
-
-				OnConnectionFailed(null);
-			}
-		}
 
 		private void ClearQueuedGCode()
 		{
