@@ -43,6 +43,8 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 using Newtonsoft.Json;
 using MatterHackers.MatterControl.Library;
 using System.Collections.ObjectModel;
+using MatterHackers.MatterControl;
+using System.Threading;
 
 namespace MatterHackers.MatterControl
 {
@@ -1218,7 +1220,7 @@ namespace MatterHackers.MatterControl
 											Thread.Sleep(200);
 										}
 
-										while (printer.Connection.PrinterIsPrinting
+										while ((printer.Connection.PrinterIsPrinting || printer.Connection.PrinterIsPaused)
 											&& !cancellationTokenB.IsCancellationRequested)
 										{
 											//progressStatus.Status = $"{printing} Layer ({printer.Connection.CurrentlyPrintingLayer } of {totalLayers})";
@@ -1229,7 +1231,22 @@ namespace MatterHackers.MatterControl
 										}
 									});
 								},
-								extraInfo: () => PrinterTabPage.PrintProgressWidget(printer));
+								taskActions: new RunningTaskActions()
+								{
+									RichProgressWidget = () => PrinterTabPage.PrintProgressWidget(printer),
+									Pause = () => UiThread.RunOnIdle(() =>
+									{
+										printer.Connection.RequestPause();
+									}),
+									Resume = () => UiThread.RunOnIdle(() =>
+									{
+										printer.Connection.Resume();
+									}),
+									Stop = () => UiThread.RunOnIdle(() =>
+									{
+										ApplicationController.Instance.ConditionalCancelPrint();
+									})
+								});
 						}
 					}
 				}
@@ -1373,7 +1390,7 @@ namespace MatterHackers.MatterControl
 	{
 		public event EventHandler<ProgressStatus> ProgressChanged;
 
-		public Func<GuiWidget> ExtraInfo { get; set; }
+		public Func<GuiWidget> DetailsItemAction { get; set; }
 
 		public RunningTaskDetails(CancellationTokenSource tokenSource)
 		{
@@ -1381,6 +1398,10 @@ namespace MatterHackers.MatterControl
 		}
 
 		public string Title { get; set; }
+		public Action<Printer> PauseAction { get; internal set; }
+		public Action<Printer> ResumeAction { get; internal set; }
+		public Action<Printer> StopAction { get; internal set; }
+		public RunningTaskActions TaskActions { get; internal set; }
 
 		private CancellationTokenSource tokenSource;
 
@@ -1393,6 +1414,14 @@ namespace MatterHackers.MatterControl
 		{
 			this.tokenSource.Cancel();
 		}
+	}
+
+	public class RunningTaskActions
+	{
+		public Func<GuiWidget> RichProgressWidget { get; set; }
+		public Action Pause { get; set; }
+		public Action Resume { get; set; }
+		public Action Stop { get; set; }
 	}
 
 	public class RunningTasksConfig
@@ -1411,13 +1440,13 @@ namespace MatterHackers.MatterControl
 			};
 		}
 
-		internal Task Execute(Func<IProgress<ProgressStatus>, CancellationToken, Task> func, Func<GuiWidget> extraInfo = null)
+		internal Task Execute(Func<IProgress<ProgressStatus>, CancellationToken, Task> func, RunningTaskActions taskActions = null)
 		{
 			var tokenSource = new CancellationTokenSource();
 
 			var taskDetails = new RunningTaskDetails(tokenSource)
 			{
-				ExtraInfo = extraInfo
+				TaskActions = taskActions,
 			};
 
 			executingTasks.Add(taskDetails);

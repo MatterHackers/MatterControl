@@ -38,26 +38,23 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class PrintPauseResumeButton : FlowLayoutWidget
+	public class PrintButton : FlowLayoutWidget
 	{
 		private GuiWidget finishSetupButton;
-		private GuiWidget pausePrintButton;
-		private PrinterConfig printer;
-		private GuiWidget resumePrintButton;
 		private GuiWidget startPrintButton;
+
 		private EventHandler unregisterEvents;
+		private PrinterConfig printer;
 
-		public PrintPauseResumeButton(PrinterActionsBar printerActionsBar, PrinterTabPage printerTabPage, PrinterConfig printer, ThemeConfig theme)
+		public PrintButton(PrinterTabPage printerTabPage, PrinterConfig printer, ThemeConfig theme)
 		{
-			var defaultMargin = theme.ButtonSpacing;
-
 			this.printer = printer;
 
 			// add the finish setup button
 			finishSetupButton = theme.ButtonFactory.Generate("Setup...".Localize(), AggContext.StaticData.LoadIcon("icon_play_32x32.png", 14, 14, IconColor.Theme));
 			finishSetupButton.Name = "Finish Setup Button";
 			finishSetupButton.ToolTipText = "Run setup configuration for printer.".Localize();
-			finishSetupButton.Margin = defaultMargin;
+			finishSetupButton.Margin = theme.ButtonSpacing;
 			finishSetupButton.Click += (s, e) =>
 			{
 				UiThread.RunOnIdle(async () =>
@@ -75,53 +72,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.AddChild(finishSetupButton);
 
 			// add the start print button
-			startPrintButton = theme.ButtonFactory.Generate("Print".Localize(), AggContext.StaticData.LoadIcon("icon_play_32x32.png", 14, 14, IconColor.Theme));
-			startPrintButton.Name = "Start Print Button";
-			startPrintButton.ToolTipText = "Begin printing the selected item.".Localize();
-			startPrintButton.Margin = defaultMargin;
-			startPrintButton.Click += (s, e) =>
-			{
-				UiThread.RunOnIdle(async () =>
-				{
-					// Save any pending changes before starting print operation
-					await ApplicationController.Instance.Tasks.Execute(printerTabPage.view3DWidget.SaveChanges);
-
-					var context = printer.Bed.EditContext;
-					await ApplicationController.Instance.PrintPart(
-						context.PartFilePath,
-						context.GCodeFilePath,
-						context.SourceItem.Name,
-						printer,
-						null,
-						CancellationToken.None);
-				});
-			};
+			startPrintButton = new PrintPopupMenu(printer, theme, printerTabPage);
+			startPrintButton.Margin = theme.ButtonSpacing;
 			this.AddChild(startPrintButton);
-
-			// add the pause / resume button
-			pausePrintButton = theme.ButtonFactory.Generate("Pause".Localize(), AggContext.StaticData.LoadIcon("icon_pause_32x32.png", 14, 14, IconColor.Theme));
-			pausePrintButton.ToolTipText = "Pause the current print".Localize();
-			pausePrintButton.Margin = defaultMargin;
-			pausePrintButton.Click += (s, e) =>
-			{
-				UiThread.RunOnIdle(printer.Connection.RequestPause);
-				pausePrintButton.Enabled = false;
-			};
-			this.AddChild(pausePrintButton);
-
-			resumePrintButton = theme.ButtonFactory.Generate("Resume".Localize(), AggContext.StaticData.LoadIcon("icon_play_32x32.png", 14, 14, IconColor.Theme));
-			resumePrintButton.ToolTipText = "Resume the current print".Localize();
-			resumePrintButton.Margin = defaultMargin;
-			resumePrintButton.Name = "Resume Button";
-			resumePrintButton.Click += (s, e) =>
-			{
-				if (printer.Connection.PrinterIsPaused)
-				{
-					printer.Connection.Resume();
-				}
-				pausePrintButton.Enabled = true;
-			};
-			this.AddChild(resumePrintButton);
 
 			printer.Connection.CommunicationStateChanged.RegisterEvent((s, e) =>
 			{
@@ -157,11 +110,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				case CommunicationStates.PrintingFromSd:
 				case CommunicationStates.Printing:
-					SetChildVisible(pausePrintButton, true);
-					break;
-
 				case CommunicationStates.Paused:
-					SetChildVisible(resumePrintButton, true);
 					break;
 
 				case CommunicationStates.FinishedPrint:
