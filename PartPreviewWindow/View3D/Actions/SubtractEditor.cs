@@ -192,6 +192,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 								progressStatus.Progress0To1 = percentCompleted + amountPerOperation * csgStatus.Progress0To1;
 								reporter.Report(progressStatus);
 							}, cancelationToken);
+							if(cancelationToken.IsCancellationRequested)
+							{
+								return Task.CompletedTask;
+							}
 							var inverse = keep.WorldMatrix();
 							inverse.Invert();
 							transformedKeep.Transform(inverse);
