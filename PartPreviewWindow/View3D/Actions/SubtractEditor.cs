@@ -186,10 +186,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 							progressStatus.Status = "Do CSG";
 							reporter.Report(progressStatus);
-							transformedKeep = PolygonMesh.Csg.CsgOperations.Subtract(transformedKeep, transformedRemove, (csgStatus) =>
+							transformedKeep = PolygonMesh.Csg.CsgOperations.Subtract(transformedKeep, transformedRemove, (status, progress0To1) =>
 							{
-								progressStatus.Status = csgStatus.Status;
-								progressStatus.Progress0To1 = percentCompleted + amountPerOperation * csgStatus.Progress0To1;
+								// Abort if flagged
+								cancelationToken.ThrowIfCancellationRequested();
+
+								progressStatus.Status = status;
+								progressStatus.Progress0To1 = percentCompleted + amountPerOperation * progress0To1;
 								reporter.Report(progressStatus);
 							}, cancelationToken);
 							if(cancelationToken.IsCancellationRequested)
