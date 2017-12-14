@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 using System;
 using System.Collections.Generic;
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MeshVisualizer;
@@ -41,7 +42,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public PopupActionPanel() : base(FlowDirection.TopToBottom)
 		{
 			this.Padding = 15;
-			this.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
+			BackgroundColor = Color.White;
 		}
 	}
 
@@ -61,7 +62,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var theme = ApplicationController.Instance.Theme;
 
-			Button mirrorXButton = theme.ButtonFactory.Generate("X");
+			Button mirrorXButton = theme.MenuButtonFactory.Generate("X");
 			mirrorXButton.Name = "Mirror Button X";
 			mirrorXButton.Margin = theme.ButtonSpacing;
 			mirrorXButton.Click += (s, e) =>
@@ -74,7 +75,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			buttonContainer.AddChild(mirrorXButton);
 
-			Button mirrorYButton = theme.ButtonFactory.Generate("Y");
+			Button mirrorYButton = theme.MenuButtonFactory.Generate("Y");
 			mirrorYButton.Name = "Mirror Button Y";
 			mirrorYButton.Margin = theme.ButtonSpacing;
 			mirrorYButton.Click += (s, e) =>
@@ -87,7 +88,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			buttonContainer.AddChild(mirrorYButton);
 
-			Button mirrorZButton = theme.ButtonFactory.Generate("Z");
+			Button mirrorZButton = theme.MenuButtonFactory.Generate("Z");
 			mirrorZButton.Name = "Mirror Button Z";
 			mirrorZButton.Margin = theme.ButtonSpacing;
 			mirrorZButton.Click += (s, e) =>

@@ -301,6 +301,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Name = "Mirror Button",
 					PopDirection = Direction.Up,
 					PopupContent = new MirrorControls(this, Scene),
+					AlignToRightEdge = true,
 					Margin = buttonSpacing,
 				};
 				this.Scene.SelectionChanged += (s, e) =>
