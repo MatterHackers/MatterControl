@@ -522,6 +522,12 @@ namespace MatterHackers.MeshVisualizer
 				drawColor = MatterialRendering.Color(item.WorldMaterialIndex());
 			}
 
+			if(drawColor.alpha != 255
+				&& item as Object3D != null)
+			{
+				((Object3D)item).EnsureTransparentSorting();
+			}
+
 			return drawColor;
 		}
 
