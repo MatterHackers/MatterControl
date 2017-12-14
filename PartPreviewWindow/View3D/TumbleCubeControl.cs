@@ -56,15 +56,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			: base(100, 100)
 		{
 			this.interactionLayer = interactionLayer;
-		
-			TextureFace(cube.Faces[0], "Top");
-			TextureFace(cube.Faces[1], "Left", Matrix4X4.CreateRotationZ(MathHelper.Tau / 4));
-			TextureFace(cube.Faces[2], "Right", Matrix4X4.CreateRotationZ(-MathHelper.Tau/4));
-			TextureFace(cube.Faces[3], "Bottom", Matrix4X4.CreateRotationZ(MathHelper.Tau / 2));
-			TextureFace(cube.Faces[4], "Back", Matrix4X4.CreateRotationZ(MathHelper.Tau / 2));
-			TextureFace(cube.Faces[5], "Front");
 
-			cubeTraceData = cube.CreateTraceData();
+			// this data needs to be made on the ui thread
+			UiThread.RunOnIdle(() =>
+			{
+				TextureFace(cube.Faces[0], "Top");
+				TextureFace(cube.Faces[1], "Left", Matrix4X4.CreateRotationZ(MathHelper.Tau / 4));
+				TextureFace(cube.Faces[2], "Right", Matrix4X4.CreateRotationZ(-MathHelper.Tau / 4));
+				TextureFace(cube.Faces[3], "Bottom", Matrix4X4.CreateRotationZ(MathHelper.Tau / 2));
+				TextureFace(cube.Faces[4], "Back", Matrix4X4.CreateRotationZ(MathHelper.Tau / 2));
+				TextureFace(cube.Faces[5], "Front");
+				cube.MarkAsChanged();
+
+				cubeTraceData = cube.CreateTraceData();
+			});
 		}
 
 		public override void OnDraw(Graphics2D graphics2D)
@@ -205,7 +210,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				justification: Agg.Font.Justification.Center,
 				baseline: Agg.Font.Baseline.BoundsCenter);
 			frontGraphics.Render(new Stroke(new RoundedRect(.5, .5, 254.5, 254.4, 0), 6), Color.DarkGray);
-			//ImageGlPlugin.GetImageGlPlugin(textureToUse, true);
+			ImageGlPlugin.GetImageGlPlugin(textureToUse, true);
 			MeshHelper.PlaceTextureOnFace(face, textureToUse, MeshHelper.GetMaxFaceProjection(face, textureToUse, initialRotation));
 		}
 	}
