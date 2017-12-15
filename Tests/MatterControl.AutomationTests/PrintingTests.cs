@@ -38,7 +38,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.AddItemToBedplate();
 
-					testRunner.ClickByName("Start Print Button");
+					testRunner.StartPrint();
 
 					// Wait for print to finish
 					testRunner.WaitForPrintFinished();
