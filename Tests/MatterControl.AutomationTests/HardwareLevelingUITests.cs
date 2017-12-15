@@ -19,7 +19,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.SwitchToSliceSettings();
 
 				testRunner.ClickByName("Printer Tab");
-				testRunner.Delay(1);
+				testRunner.Delay(.2);
 
 				Assert.IsFalse(testRunner.WaitForName("Print Leveling Tab", .5), "Print leveling should not exist for an Airwolf HD");
 

@@ -432,15 +432,22 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
 				testRunner.SwitchToSliceSettings();
 
+				var printer = ApplicationController.Instance.ActivePrinter;
+
 				testRunner.ClickByName("Layer Thickness Field");
-				testRunner.Type(".5\n");
-				testRunner.Delay(.5);
-				Assert.AreEqual(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.layer_height).ToString(), "0.5", "Layer height is what we set it to");
+				testRunner.Type(".5");
+
+				// Force lose focus
+				testRunner.ClickByName("First Layer Thickness Field");
+
+				testRunner.Delay(() => printer.Settings.GetValue<double>(SettingsKey.layer_height) == 0.5);
+				Assert.AreEqual(printer.Settings.GetValue<double>(SettingsKey.layer_height).ToString(), "0.5", "Layer height is what we set it to");
+
 				testRunner.ClickByName("Quality");
 				testRunner.ClickByName("Fine Menu");
 
-				testRunner.Delay(.5);
-				Assert.AreEqual(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.layer_height).ToString(), "0.1", "Layer height is the fine override");
+				testRunner.Delay(() => printer.Settings.GetValue<double>(SettingsKey.layer_height) == 0.1);
+				Assert.AreEqual(printer.Settings.GetValue<double>(SettingsKey.layer_height).ToString(), "0.1", "Layer height is the fine override");
 
 				testRunner.AddAndSelectPrinter("BCN", "Sigma");
 
@@ -451,16 +458,19 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.OpenPrintersDropdown();
 				testRunner.ClickByName("Airwolf 3D HD Menu Item");
 
-				testRunner.Delay(1);
-				Assert.AreEqual(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.layer_height).ToString(), "0.1", "Layer height is the fine override");
+				printer = ApplicationController.Instance.ActivePrinter;
+
+				testRunner.Delay(() => printer.Settings.GetValue<double>(SettingsKey.layer_height) == 0.1);
+				Assert.AreEqual(printer.Settings.GetValue<double>(SettingsKey.layer_height).ToString(), "0.1", "Layer height is the fine override");
 
 				// Switch to Slice Settings Tab
 				testRunner.ClickByName("Slice Settings Tab");
 
 				testRunner.ClickByName("Quality");
 				testRunner.ClickByName("- none - Menu Item");
-				testRunner.Delay(.5);
-				Assert.AreEqual(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.layer_height).ToString(), "0.5", "Layer height is what we set it to");
+
+				testRunner.Delay(() => printer.Settings.GetValue<double>(SettingsKey.layer_height) == 0.5);
+				Assert.AreEqual(printer.Settings.GetValue<double>(SettingsKey.layer_height).ToString(), "0.5", "Layer height is what we set it to");
 
 				return Task.CompletedTask;
 			}, maxTimeToRun: 120);
