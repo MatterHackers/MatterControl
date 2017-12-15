@@ -88,6 +88,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				var button = new TextButton("Start Print".Localize(), theme)
 				{
+					Name = "Start Print Button",
 					HAnchor = HAnchor.Right,
 					VAnchor = VAnchor.Absolute,
 					Margin = new BorderDouble(top: 10),
@@ -118,8 +119,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.AddChild(new TextButton("Print".Localize(), theme)
 			{
-				//Name = "Slice Dropdown Button",
-				Name = "Start Print Button",
 				BackgroundColor = theme.ButtonFactory.Options.NormalFillColor,
 				HoverColor = theme.ButtonFactory.Options.HoverFillColor,
 			});

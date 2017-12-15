@@ -16,10 +16,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// Add printer that has hardware leveling
 				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
 
-				testRunner.SwitchToAdvancedSliceSettings();
+				testRunner.SwitchToSliceSettings();
 
 				testRunner.ClickByName("Printer Tab");
-				testRunner.Delay(1);
+				testRunner.Delay(.2);
 
 				Assert.IsFalse(testRunner.WaitForName("Print Leveling Tab", .5), "Print leveling should not exist for an Airwolf HD");
 
@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator("JumpStart", "V1", runSlow: false))
 				{
 					// make sure it is showing the correct button
-					Assert.IsFalse(testRunner.WaitForName("Start Print Button", .5), "Start Print should not be visible if PrintLeveling is required");
+					Assert.IsFalse(testRunner.WaitForName("PrintPopupMenu", .5), "Start Print should not be visible if PrintLeveling is required");
 					Assert.IsTrue(testRunner.WaitForName("Finish Setup Button"), "Finish Setup should be visible if PrintLeveling is required");
 
 					// do print leveling
@@ -64,19 +64,18 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("Done Button");
 
 					// make sure the button has changed to start print
-					Assert.IsTrue(testRunner.WaitForName("Start Print Button"), "Start Print should be visible after leveling the printer");
+					Assert.IsTrue(testRunner.WaitForName("PrintPopupMenu"), "Start Print should be visible after leveling the printer");
 					Assert.IsFalse(testRunner.WaitForName("Finish Setup Button", .5), "Finish Setup should not be visible after leveling the printer");
 
 					// reset to defaults and make sure print leveling is cleared
-					testRunner.SwitchToAdvancedSliceSettings();
+					testRunner.SwitchToSliceSettings();
 
 					testRunner.ClickByName("Slice Settings Overflow Menu");
 					testRunner.ClickByName("Reset to Defaults Menu Item");
 					testRunner.ClickByName("Yes Button");
-					testRunner.Delay(1);
 
 					// make sure it is showing the correct button
-					Assert.IsTrue(!testRunner.WaitForName("Start Print Button"), "Start Print should be visible after reset to Defaults");
+					Assert.IsTrue(!testRunner.WaitForName("PrintPopupMenu"), "Start Print should be visible after reset to Defaults");
 					Assert.IsTrue(testRunner.WaitForName("Finish Setup Button"), "Finish Setup should not be visible after reset to Defaults");
 				}
 

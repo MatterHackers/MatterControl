@@ -27,7 +27,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				{
 					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
 
-					testRunner.SwitchToAdvancedSliceSettings();
+					testRunner.SwitchToSliceSettings();
 
 					testRunner.ClickByName("Printer Tab");
 					testRunner.ClickByName("Custom G-Code Tab");
@@ -38,7 +38,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.AddItemToBedplate();
 
-					testRunner.ClickByName("Start Print Button");
+					testRunner.StartPrint();
 
 					// Wait for print to finish
 					testRunner.WaitForPrintFinished();
@@ -70,10 +70,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					// close the finish setup window
 					testRunner.ClickByName("Cancel Button");
 
-					testRunner.SwitchToAdvancedSliceSettings();
-
-					testRunner.ClickByName("General Tab");
-					testRunner.ClickByName("Single Print Tab");
+					testRunner.OpenPrintPopupMenu();
 					testRunner.ClickByName("Layer(s) To Pause Field");
 					testRunner.Type("2");
 
@@ -221,18 +218,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				{
 					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
 
-					testRunner.SwitchToAdvancedSliceSettings();
-
-					testRunner.ClickByName("General Tab");
-					testRunner.ClickByName("Single Print Tab");
+					testRunner.OpenPrintPopupMenu();
 					testRunner.ClickByName("Layer(s) To Pause Field");
 					testRunner.Type("2;6");
 
-					testRunner.ClickByName("Pin Settings Button");
-
 					// print a part
 					testRunner.AddItemToBedplate();
-					testRunner.ClickByName("Start Print Button");
+
+					testRunner.StartPrint();
 
 					// turn on line error simulation
 					emulator.SimulateLineErrors = true;
@@ -269,22 +262,21 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
 
-					testRunner.SwitchToAdvancedSliceSettings();
+					// TODO: Delay needed to work around timing issue in MatterHackers/MCCentral#2415
+					testRunner.Delay(1);
 
-					testRunner.ClickByName("General Tab");
-					testRunner.ClickByName("Single Print Tab");
+					testRunner.OpenPrintPopupMenu();
 					testRunner.ClickByName("Layer(s) To Pause Field");
 					testRunner.Type("2;4;6");
 
-					testRunner.ClickByName("Pin Settings Button");
-
 					// print a part
 					testRunner.AddItemToBedplate();
-					testRunner.ClickByName("Start Print Button");
+					testRunner.StartPrint();
 
-					// the printer is now paused
+					// Dismiss pause dialog
 					testRunner.WaitForName("No Button", 90); // the no button is 'Resume'
-															 // validate the current layer
+					
+					// validate the current layer
 					Assert.AreEqual(2, ApplicationController.Instance.ActivePrinter.Connection.CurrentlyPrintingLayer);
 					testRunner.ClickByName("No Button");
 
@@ -300,6 +292,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("Connect to printer button");
 
 					// Assert that recovery happens
+
 					// Recover the print
 					ClickDialogButton(testRunner, "Yes Button", -1);
 

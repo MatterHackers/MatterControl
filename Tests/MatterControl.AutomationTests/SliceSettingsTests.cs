@@ -25,7 +25,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.AddItemToBedplate("", "Row Item Rook");
 
-				testRunner.SwitchToAdvancedSliceSettings();
+				testRunner.SwitchToSliceSettings();
 				testRunner.ClickByName("Raft / Skirt / Brim Tab");
 				testRunner.ClickByName("Create Raft Field");
 
@@ -50,28 +50,16 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				{
 					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
 
-					testRunner.SwitchToAdvancedSliceSettings();
-
-					testRunner.ClickByName("General Tab");
-					testRunner.ClickByName("Single Print Tab");
+					testRunner.OpenPrintPopupMenu();
 					testRunner.ClickByName("Layer(s) To Pause Field");
 					testRunner.Type("4;2;a;not;6");
 
 					testRunner.AddItemToBedplate();
 
-					testRunner.StartSlicing();
-
-					testRunner.WaitForName("GCode3DWidget", 8);
-
-					// Force lose focus to drop Slice popup window to expose OverFlow menu
-					testRunner.ClickByName("Library Up Button");
-
-					testRunner.ClickByName("Pin Settings Button");
-
-					testRunner.ClickByName("View3D Overflow Menu");
+					testRunner.OpenGCode3DOverflowMenu();
 					testRunner.ClickByName("Sync To Print Menu Item");
 
-					testRunner.ClickByName("Start Print Button");
+					testRunner.StartPrint();
 
 					WaitForLayerAndResume(testRunner, 2);
 					WaitForLayerAndResume(testRunner, 4);
@@ -91,51 +79,39 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
-					ActiveSliceSettings.Instance.SetValue(SettingsKey.cancel_gcode, "G28 ; Cancel GCode");
+					var printer = ApplicationController.Instance.ActivePrinter;
+
+					printer.Settings.SetValue(SettingsKey.cancel_gcode, "G28 ; Cancel GCode");
 
 					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
 
-					testRunner.SwitchToAdvancedSliceSettings();
+					testRunner.OpenPrintPopupMenu();
 
-					testRunner.ClickByName("General Tab");
-					testRunner.ClickByName("Single Print Tab");
 					testRunner.ClickByName("Layer(s) To Pause Field");
 					testRunner.Type("2");
 
 					testRunner.AddItemToBedplate();
 
-					testRunner.StartSlicing();
-
-					// Force lose focus to drop Slice popup window to expose OverFlow menu
-					testRunner.ClickByName("Library Up Button");
-
-					testRunner.ClickByName("Pin Settings Button");
-
-					testRunner.ClickByName("View3D Overflow Menu");
+					// Turn on Sync-to-print
+					testRunner.OpenGCode3DOverflowMenu();
 					testRunner.ClickByName("Sync To Print Menu Item");
 
-					testRunner.ClickByName("Start Print Button");
+					testRunner.StartPrint();
 
-					// assert the leveling is working
-					testRunner.WaitForName("Yes Button", 200);
-					// close the pause dialog pop-up
+					// Wait for the Ok button
+					testRunner.WaitForName("Yes Button", 30);
 					testRunner.ClickByName("Yes Button");
 
-					testRunner.WaitForName("Resume Button", 30);
-					testRunner.ClickByName("Cancel Print Button");
+					// Cancel the Printing task
+					testRunner.ClickByName("Stop Task Button");
 
-					Assert.IsTrue(testRunner.NameExists("Start Print Button"));
+					// Wait for and assert that printing has been canceled
+					testRunner.Delay(() => printer.Connection.CommunicationState == PrinterCommunication.CommunicationStates.Connected);
+					Assert.IsTrue(printer.Connection.CommunicationState == PrinterCommunication.CommunicationStates.Connected);
 
-					int g28Count = 0;
-					foreach(var line in ApplicationController.Instance.ActivePrinter.Connection.TerminalLog.PrinterLines)
-					{
-						if(line.Contains("G28"))
-						{
-							g28Count++;
-						}
-					}
-
-					Assert.AreEqual(2, g28Count, "There should be the start come and the cancel print home");
+					// Assert that two G28s were output to the terminal
+					int g28Count = printer.Connection.TerminalLog.PrinterLines.Where(line => line.Contains("G28")).Count();
+					Assert.AreEqual(2, g28Count, "The terminal log should contain one G28 from Start-GCode and one G28 from Cancel-GCode");
 				}
 
 				return Task.CompletedTask;
@@ -144,18 +120,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		private static void WaitForLayerAndResume(AutomationRunner testRunner, int indexToWaitFor)
 		{
-			// assert the leveling is working
-			testRunner.WaitForName("Yes Button", 30);
-			// close the pause dialog pop-up
-			testRunner.ClickByName("Yes Button");
-
+			testRunner.WaitForName("No Button", 30);
+			
 			var printer = ApplicationController.Instance.ActivePrinter;
 
 			testRunner.Delay(() => printer.Bed.ActiveLayerIndex + 1 == indexToWaitFor, 30, 500);
-
 			Assert.AreEqual(indexToWaitFor, printer.Bed.ActiveLayerIndex + 1);
-			testRunner.ClickByName("Resume Button");
-			testRunner.Delay(.1);
+
+			testRunner.ClickByName("No Button");
 		}
 
 		[Test /* Test will fail if screen size is and "HeatBeforeHoming" falls below the fold */]
@@ -168,7 +140,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
 
 				// Navigate to Local Library 
-				testRunner.SwitchToAdvancedSliceSettings();
+				testRunner.SwitchToSliceSettings();
 
 				testRunner.ClickByName("Printer Tab");
 				testRunner.ClickByName("Features Tab");
@@ -194,7 +166,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
 					// Navigate to Local Library 
-					testRunner.SwitchToAdvancedSliceSettings();
+					testRunner.SwitchToSliceSettings();
 
 					testRunner.ClickByName("Printer Tab");
 					testRunner.ClickByName("Features Tab");
@@ -329,7 +301,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
 
 				// Navigate to Local Library 
-				testRunner.SwitchToAdvancedSliceSettings();
+				testRunner.SwitchToSliceSettings();
 
 				testRunner.ClickByName("General Tab");
 				testRunner.ClickByName("Layers / Surface Tab");
@@ -417,7 +389,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
 
 				// Navigate to Settings Tab and make sure Bed Temp Text box is visible 
-				testRunner.SwitchToAdvancedSliceSettings();
+				testRunner.SwitchToSliceSettings();
 
 				testRunner.ClickByName("Filament Tab");
 				testRunner.ClickByName("Temperatures Tab");
@@ -458,17 +430,24 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				// Add Guest printers
 				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
-				testRunner.SwitchToAdvancedSliceSettings();
+				testRunner.SwitchToSliceSettings();
+
+				var printer = ApplicationController.Instance.ActivePrinter;
 
 				testRunner.ClickByName("Layer Thickness Field");
-				testRunner.Type(".5\n");
-				testRunner.Delay(.5);
-				Assert.AreEqual(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.layer_height).ToString(), "0.5", "Layer height is what we set it to");
+				testRunner.Type(".5");
+
+				// Force lose focus
+				testRunner.ClickByName("First Layer Thickness Field");
+
+				testRunner.Delay(() => printer.Settings.GetValue<double>(SettingsKey.layer_height) == 0.5);
+				Assert.AreEqual(printer.Settings.GetValue<double>(SettingsKey.layer_height).ToString(), "0.5", "Layer height is what we set it to");
+
 				testRunner.ClickByName("Quality");
 				testRunner.ClickByName("Fine Menu");
 
-				testRunner.Delay(.5);
-				Assert.AreEqual(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.layer_height).ToString(), "0.1", "Layer height is the fine override");
+				testRunner.Delay(() => printer.Settings.GetValue<double>(SettingsKey.layer_height) == 0.1);
+				Assert.AreEqual(printer.Settings.GetValue<double>(SettingsKey.layer_height).ToString(), "0.1", "Layer height is the fine override");
 
 				testRunner.AddAndSelectPrinter("BCN", "Sigma");
 
@@ -479,16 +458,19 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.OpenPrintersDropdown();
 				testRunner.ClickByName("Airwolf 3D HD Menu Item");
 
-				testRunner.Delay(1);
-				Assert.AreEqual(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.layer_height).ToString(), "0.1", "Layer height is the fine override");
+				printer = ApplicationController.Instance.ActivePrinter;
+
+				testRunner.Delay(() => printer.Settings.GetValue<double>(SettingsKey.layer_height) == 0.1);
+				Assert.AreEqual(printer.Settings.GetValue<double>(SettingsKey.layer_height).ToString(), "0.1", "Layer height is the fine override");
 
 				// Switch to Slice Settings Tab
 				testRunner.ClickByName("Slice Settings Tab");
 
 				testRunner.ClickByName("Quality");
 				testRunner.ClickByName("- none - Menu Item");
-				testRunner.Delay(.5);
-				Assert.AreEqual(ActiveSliceSettings.Instance.GetValue<double>(SettingsKey.layer_height).ToString(), "0.5", "Layer height is what we set it to");
+
+				testRunner.Delay(() => printer.Settings.GetValue<double>(SettingsKey.layer_height) == 0.5);
+				Assert.AreEqual(printer.Settings.GetValue<double>(SettingsKey.layer_height).ToString(), "0.5", "Layer height is what we set it to");
 
 				return Task.CompletedTask;
 			}, maxTimeToRun: 120);
