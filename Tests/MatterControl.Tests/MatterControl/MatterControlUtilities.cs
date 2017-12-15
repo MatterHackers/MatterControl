@@ -134,19 +134,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			return TestContext.CurrentContext.ResolveProjectPath(4, "Tests", "TestData", "QueueItems", queueItemToLoad);
 		}
 
-		public static void CloseMatterControlViaUi(this AutomationRunner testRunner)
+		public static void CloseMatterControl(this AutomationRunner testRunner)
 		{
-			SystemWindow mcWindowLocal = MatterControlApplication.Instance;
-
-			var mainWindow = testRunner.GetWidgetByName("MatterControl", out _);
-			var windowCenter = new Point2D(mainWindow.LocalBounds.Center.X, mainWindow.LocalBounds.Center.Y);
-			testRunner.ClickByName("MatterControl", offset: windowCenter + new Point2D(-5, 10));
-
-			testRunner.Delay(.2);
-			if (mcWindowLocal.Parent != null)
-			{
-				mcWindowLocal.CloseOnIdle();
-			}
+			MatterControlApplication.Instance.Close();
 		}
 
 		public enum PrepAction
@@ -236,12 +226,33 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void CancelPrint(this AutomationRunner testRunner)
 		{
-			testRunner.ClickByName("Cancel Print Button");
+			// TODO: Improve this to more accurately find the print task row and click its Stop button
+			testRunner.ClickByName("Stop Task Button");
 
 			if (testRunner.WaitForName("Yes Button", 1))
 			{
 				testRunner.ClickByName("Yes Button");
 			}
+		}
+
+		public static void WaitForLayer(this Emulator emulator, PrinterSettings printerSettings, int layerNumber, double secondsToWait = 30)
+		{
+			var resetEvent = new AutoResetEvent(false);
+
+			var heightAtTargetLayer = printerSettings.GetValue<double>(SettingsKey.layer_height) * layerNumber;
+
+			// Wait for emulator to hit target layer
+			emulator.ZPositionChanged += (s, e) =>
+			{
+				// Wait for print to start, then slow down the emulator and continue. Failing to slow down frequently causes a timing issue where the print
+				// finishes before we make it down to 'CloseMatterControlViaUi' and thus no prompt to close appears and the test fails when clicking 'Yes Button'
+				if (emulator.ZPosition >= heightAtTargetLayer)
+				{
+					resetEvent.Set();
+				}
+			};
+
+			resetEvent.WaitOne((int) (secondsToWait * 1000));
 		}
 
 		public static bool CompareExpectedSliceSettingValueWithActualVaue(string sliceSetting, string expectedValue)
@@ -654,7 +665,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			var printerConnection = ApplicationController.Instance.ActivePrinter.Connection;
 
-			if (printerConnection.CommunicationState != CommunicationStates.Connected)
+			if (printerConnection.CommunicationState != CommunicationStates.Connected
+				&& printerConnection.CommunicationState != CommunicationStates.FinishedPrint)
 			{
 				testRunner.ClickByName("Connect to printer button");
 				testRunner.Delay(() => printerConnection.CommunicationState == CommunicationStates.Connected);
