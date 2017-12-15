@@ -39,12 +39,6 @@ namespace MatterHackers.MatterControl.Library
 {
 	public static class LibraryProviderHelpers
 	{
-		
-		public static ImageBuffer LoadInvertIcon(params string[] pathSegments)
-		{
-			return AggContext.StaticData.LoadIcon(Path.Combine(pathSegments)); //.InvertLightness();
-		}
-
 		public static void RenderCentered(this Graphics2D graphics2D, ImageBuffer imageBuffer, double width, double height)
 		{
 			int targetWidth = graphics2D.DestImage.Width;

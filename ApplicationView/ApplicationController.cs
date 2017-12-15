@@ -386,7 +386,7 @@ namespace MatterHackers.MatterControl
 				this.Library.RegisterRootProvider(
 					new DynamicContainerLink(
 						() => "Downloads".Localize(),
-						LibraryProviderHelpers.LoadInvertIcon("FileDialog", "download_folder.png"),
+						AggContext.StaticData.LoadIcon(Path.Combine("FileDialog", "download_folder.png")),
 						() => new FileSystemContainer(ApplicationDataStorage.Instance.DownloadsDirectory)
 						{
 							UseIncrementedNameDuringTypeChange = true
@@ -396,7 +396,7 @@ namespace MatterHackers.MatterControl
 			this.Library.RegisterRootProvider(
 				new DynamicContainerLink(
 					() => "Calibration Parts".Localize(),
-					LibraryProviderHelpers.LoadInvertIcon("FileDialog", "folder.png"),
+					AggContext.StaticData.LoadIcon(Path.Combine("FileDialog", "folder.png")),
 					() => new CalibrationPartsContainer())
 				{
 					IsReadOnly = true
@@ -405,7 +405,7 @@ namespace MatterHackers.MatterControl
 			this.Library.RegisterRootProvider(
 				new DynamicContainerLink(
 					() => "Print Queue".Localize(),
-					LibraryProviderHelpers.LoadInvertIcon("FileDialog", "queue_folder.png"),
+					AggContext.StaticData.LoadIcon(Path.Combine("FileDialog", "queue_folder.png")),
 					() => new PrintQueueContainer()));
 
 			var rootLibraryCollection = Datastore.Instance.dbSQLite.Table<PrintItemCollection>().Where(v => v.Name == "_library").Take(1).FirstOrDefault();
@@ -414,7 +414,7 @@ namespace MatterHackers.MatterControl
 				this.Library.RegisterRootProvider(
 					new DynamicContainerLink(
 						() => "Local Library".Localize(),
-						LibraryProviderHelpers.LoadInvertIcon("FileDialog", "library_folder.png"),
+						AggContext.StaticData.LoadIcon(Path.Combine("FileDialog", "library_folder.png")),
 						() => new SqliteLibraryContainer(rootLibraryCollection.Id)));
 			}
 
@@ -422,7 +422,7 @@ namespace MatterHackers.MatterControl
 			this.Library.RegisterRootProvider(
 				new DynamicContainerLink(
 					() => "Print History".Localize(),
-					LibraryProviderHelpers.LoadInvertIcon("FileDialog", "folder.png"),
+					AggContext.StaticData.LoadIcon(Path.Combine("FileDialog", "folder.png")),
 					() => new PrintHistoryContainer())
 				{
 					IsReadOnly = true
@@ -433,7 +433,7 @@ namespace MatterHackers.MatterControl
 				// Add each path defined in the CustomLibraryFolders file as a new FileSystemContainerItem
 				foreach (string directory in File.ReadLines(ApplicationDataStorage.Instance.CustomLibraryFoldersPath))
 				{
-					if (Directory.Exists(directory))
+					//if (Directory.Exists(directory))
 					{
 						this.Library.RegisterRootProvider(
 							new FileSystemContainer.DirectoryContainerLink(directory)
@@ -447,7 +447,7 @@ namespace MatterHackers.MatterControl
 			this.Library.RegisterRootProvider(
 				new DynamicContainerLink(
 						() => "SD Card".Localize(),
-						LibraryProviderHelpers.LoadInvertIcon("FileDialog", "sd_folder.png"),
+						AggContext.StaticData.LoadIcon(Path.Combine("FileDialog", "sd_folder.png")),
 						() => new SDCardContainer(),
 						() =>
 						{
@@ -466,7 +466,7 @@ namespace MatterHackers.MatterControl
 			this.Library.RegisterRootProvider(
 				new DynamicContainerLink(
 					() => "Plating History".Localize(),
-					LibraryProviderHelpers.LoadInvertIcon("FileDialog", "folder.png"),
+					AggContext.StaticData.LoadIcon(Path.Combine("FileDialog", "folder.png")),
 					() => ApplicationController.Instance.Library.PlatingHistory));
 		}
 

@@ -29,10 +29,12 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 
@@ -78,7 +80,7 @@ namespace MatterHackers.MatterControl.Library
 		public override Task<ImageBuffer> GetThumbnail(ILibraryItem item, int width, int height)
 		{
 			bool largeIcon = width > 50 || height > 50;
-			var thumbnail = LibraryProviderHelpers.LoadInvertIcon(largeIcon ? "icon_sd_card_115x115.png" : "icon_sd_card_50x50.png");
+			var thumbnail = AggContext.StaticData.LoadIcon(Path.Combine(largeIcon ? "icon_sd_card_115x115.png" : "icon_sd_card_50x50.png"));
 
 			return Task.FromResult(thumbnail);
 		}
