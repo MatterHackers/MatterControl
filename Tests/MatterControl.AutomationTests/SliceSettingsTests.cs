@@ -124,10 +124,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			
 			var printer = ApplicationController.Instance.ActivePrinter;
 
+			// Wait for layer
 			testRunner.Delay(() => printer.Bed.ActiveLayerIndex + 1 == indexToWaitFor, 30, 500);
 			Assert.AreEqual(indexToWaitFor, printer.Bed.ActiveLayerIndex + 1);
 
 			testRunner.ClickByName("No Button");
+			testRunner.WaitVanishForName("No Button", 10);
 		}
 
 		[Test /* Test will fail if screen size is and "HeatBeforeHoming" falls below the fold */]

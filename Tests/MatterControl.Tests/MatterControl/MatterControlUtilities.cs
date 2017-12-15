@@ -672,6 +672,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Delay(() => printerConnection.CommunicationState == CommunicationStates.Connected);
 			}
 
+			// Wait for button to become enabled
+			var printerPopup = testRunner.GetWidgetByName("PrintPopupMenu", out _);
+			testRunner.Delay(() => printerPopup.Enabled);
+
 			testRunner.ClickByName("PrintPopupMenu");
 		}
 
