@@ -70,10 +70,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					// close the finish setup window
 					testRunner.ClickByName("Cancel Button");
 
-					testRunner.SwitchToSliceSettings();
-
-					testRunner.ClickByName("General Tab");
-					testRunner.ClickByName("Single Print Tab");
+					testRunner.OpenPrintPopupMenu();
 					testRunner.ClickByName("Layer(s) To Pause Field");
 					testRunner.Type("2");
 
