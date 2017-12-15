@@ -384,6 +384,11 @@ namespace MatterHackers.MatterControl
 
 		public override void OnClosing(ClosingEventArgs eventArgs)
 		{
+			if (this.HasBeenClosed)
+			{
+				return;
+			}
+
 			// save the last size of the window so we can restore it next time.
 			ApplicationSettings.Instance.set(ApplicationSettingsKey.MainWindowMaximized, this.Maximized.ToString().ToLower());
 
@@ -434,42 +439,43 @@ namespace MatterHackers.MatterControl
 				// We need to show an interactive dialog to determine if the original Close request should be honored, thus cancel the current Close request
 				eventArgs.Cancel = true;
 
-				StyledMessageBox.ShowMessageBox(
-					(exitConfirmed) =>
-					{
-						// Record that the exitDialog has closed
-						exitDialogOpen = false;
-
-						// Continue with the original shutdown request if exit confirmed by user
-						if (exitConfirmed)
+				UiThread.RunOnIdle(() =>
+				{
+					StyledMessageBox.ShowMessageBox(
+						(exitConfirmed) =>
 						{
-							this.ApplicationExiting = true;
+							// Record that the exitDialog has closed
+							exitDialogOpen = false;
 
-							ApplicationController.Instance.Shutdown();
-
-							// Always call PrinterConnection.Disable on exit unless PrintingFromSd
-							PrinterConnection printerConnection = ApplicationController.Instance.ActivePrinter.Connection;
-							switch (printerConnection.CommunicationState)
+							// Continue with the original shutdown request if exit confirmed by user
+							if (exitConfirmed)
 							{
-								case CommunicationStates.PrintingFromSd:
-								case CommunicationStates.Paused when printerConnection.PrePauseCommunicationState == CommunicationStates.PrintingFromSd:
-									break;
+								this.ApplicationExiting = true;
 
-								default:
-									printerConnection.Disable();
-									break;
+								ApplicationController.Instance.Shutdown();
+
+								// Always call PrinterConnection.Disable on exit unless PrintingFromSd
+								PrinterConnection printerConnection = ApplicationController.Instance.ActivePrinter.Connection;
+								switch (printerConnection.CommunicationState)
+								{
+									case CommunicationStates.PrintingFromSd:
+									case CommunicationStates.Paused when printerConnection.PrePauseCommunicationState == CommunicationStates.PrintingFromSd:
+										break;
+
+									default:
+										printerConnection.Disable();
+										break;
+								}
+
+								MatterControlApplication.instance.CloseOnIdle();
+
+								this.RestartOnClose = false;
 							}
-
-							MatterControlApplication.instance.CloseOnIdle();
-
-							this.RestartOnClose = false;
-						}
-					},
-					message,
-					caption,
-					StyledMessageBox.MessageType.YES_NO);
-
-				exitDialogOpen = false;
+						},
+						message,
+						caption,
+						StyledMessageBox.MessageType.YES_NO);
+				});
 			}
 			else
 			{

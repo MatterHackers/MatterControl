@@ -70,10 +70,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					// close the finish setup window
 					testRunner.ClickByName("Cancel Button");
 
-					testRunner.OpenPrintPopupMenu();
-					testRunner.ClickByName("Layer(s) To Pause Field");
-					testRunner.Type("2");
-
 					// switch to controls so we can see the heights
 					testRunner.SwitchToControlsTab();
 
@@ -96,14 +92,16 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					// print a part
 					testRunner.AddItemToBedplate();
-					testRunner.ClickByName("Start Print Button");
+					testRunner.StartPrint();
+
+					emulator.WaitForLayer(ActiveSliceSettings.Instance.printer.Settings, 2);
 
 					testRunner.Delay(() => emulator.ZPosition > 5, 3);
 
 					// assert the leveling is working
 					Assert.Greater(emulator.ZPosition, 5);
 
-					testRunner.ClickByName("Cancel Print Button");
+					testRunner.CancelPrint();
 				}
 
 				return Task.CompletedTask;
@@ -340,7 +338,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					var printFinishedResetEvent = new AutoResetEvent(false);
 					ApplicationController.Instance.ActivePrinter.Connection.PrintFinished.RegisterEvent((s, e) => printFinishedResetEvent.Set(), ref unregisterEvents);
 
-					testRunner.ClickByName("Start Print Button");
+					testRunner.StartPrint();
 
 					var container = testRunner.GetWidgetByName("ManualPrinterControls.ControlsContainer", out _, 5);
 
@@ -385,7 +383,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.WaitForPrintFinished();
 
 					// Restart the print
-					testRunner.ClickByName("Start Print Button");
+					testRunner.StartPrint();
 					testRunner.Delay(2);
 
 					// Values should match entered values
@@ -428,10 +426,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.SwitchToControlsTab();
 
-					var printFinishedResetEvent = new AutoResetEvent(false);
-					ApplicationController.Instance.ActivePrinter.Connection.PrintFinished.RegisterEvent((s, e) => printFinishedResetEvent.Set(), ref unregisterEvents);
+					var printer = ApplicationController.Instance.ActivePrinter;
 
-					testRunner.ClickByName("Start Print Button");
+					var printFinishedResetEvent = new AutoResetEvent(false);
+					printer.Connection.PrintFinished.RegisterEvent((s, e) => printFinishedResetEvent.Set(), ref unregisterEvents);
+
+					testRunner.StartPrint();
 
 					var container = testRunner.GetWidgetByName("ManualPrinterControls.ControlsContainer", out _, 5);
 
@@ -463,7 +463,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate);
 
 					// Wait for slicing to complete before setting target values
-					testRunner.Delay(() => ApplicationController.Instance.ActivePrinter.Connection.DetailedPrintingState == DetailedPrintingState.Printing, 8);
+					testRunner.Delay(() => printer.Connection.DetailedPrintingState == DetailedPrintingState.Printing, 8);
 					testRunner.Delay();
 
 					// Values should remain after print completes
@@ -475,14 +475,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.WaitForPrintFinished();
 
 					// Values should match entered values
-					testRunner.ClickByName("Start Print Button");
-					testRunner.Delay(2);
+					testRunner.StartPrint();
+					testRunner.Delay(() => printer.Connection.CommunicationState == CommunicationStates.Printing, 15);
 
 					// Values should match entered values
 					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate);
 
 					testRunner.CancelPrint();
-					testRunner.Delay(1);
+					testRunner.Delay(() => printer.Connection.CommunicationState == CommunicationStates.Connected, 15);
 
 					// Values should match entered values
 					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate);
@@ -524,7 +524,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 						fanChangedCount++;
 					};
 
-					testRunner.CloseMatterControlViaUi();
+					testRunner.CloseMatterControl();
 
 					testRunner.ClickByName("Yes Button");
 
@@ -551,31 +551,22 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
 
 					testRunner.AddItemToBedplate();
-					testRunner.ClickByName("Start Print Button");
 
+					testRunner.StartPrint();
+					
 					int fanChangedCount = 0;
 					emulator.FanSpeedChanged += (s, e) =>
 					{
 						fanChangedCount++;
 					};
 
-					var layerTwoZHeight = ApplicationController.Instance.ActivePrinter.Settings.GetValue<double>(SettingsKey.layer_height) * 2;
+					var printer = ApplicationController.Instance.ActivePrinter;
 
-					// Wait for layer 2
-					emulator.ZPositionChanged += (s, e) =>
-					{
-						// Wait for print to start, then slow down the emulator and continue. Failing to slow down frequently causes a timing issue where the print
-						// finishes before we make it down to 'CloseMatterControlViaUi' and thus no prompt to close appears and the test fails when clicking 'Yes Button'
-						if (emulator.ZPosition >= layerTwoZHeight)
-						{
-							emulator.RunSlow = true;
-							resetEvent.Set();
-						}
-					};
-					resetEvent.WaitOne();
-
+					emulator.WaitForLayer(printer.Settings, 2);
+					emulator.RunSlow = true;
+				
 					// Click close but cancel
-					testRunner.CloseMatterControlViaUi();
+					testRunner.CloseMatterControl();
 					testRunner.ClickByName("No Button");
 
 					// Wait for close
@@ -586,7 +577,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					Assert.IsFalse(MatterControlApplication.Instance.HasBeenClosed, "Canceling Close dialog should *not* close MatterControl");
 
 					// Close MatterControl and cancel print
-					testRunner.CloseMatterControlViaUi();
+					testRunner.CloseMatterControl();
 					testRunner.ClickByName("Yes Button");
 
 					// Wait for Disconnected CommunicationState which occurs after PrinterConnection.Disable()
