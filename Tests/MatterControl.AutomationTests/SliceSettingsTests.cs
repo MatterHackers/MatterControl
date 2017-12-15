@@ -50,28 +50,16 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				{
 					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
 
-					testRunner.SwitchToSliceSettings();
-
-					testRunner.ClickByName("General Tab");
-					testRunner.ClickByName("Single Print Tab");
+					testRunner.OpenPrintPopupMenu();
 					testRunner.ClickByName("Layer(s) To Pause Field");
 					testRunner.Type("4;2;a;not;6");
 
 					testRunner.AddItemToBedplate();
 
-					testRunner.StartSlicing();
-
-					testRunner.WaitForName("GCode3DWidget", 8);
-
-					// Force lose focus to drop Slice popup window to expose OverFlow menu
-					testRunner.ClickByName("Library Up Button");
-
-					testRunner.ClickByName("Pin Settings Button");
-
-					testRunner.ClickByName("View3D Overflow Menu");
+					testRunner.OpenGCode3DOverflowMenu();
 					testRunner.ClickByName("Sync To Print Menu Item");
 
-					testRunner.ClickByName("Start Print Button");
+					testRunner.StartPrint();
 
 					WaitForLayerAndResume(testRunner, 2);
 					WaitForLayerAndResume(testRunner, 4);
@@ -132,18 +120,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		private static void WaitForLayerAndResume(AutomationRunner testRunner, int indexToWaitFor)
 		{
-			// assert the leveling is working
-			testRunner.WaitForName("Yes Button", 30);
-			// close the pause dialog pop-up
-			testRunner.ClickByName("Yes Button");
-
+			testRunner.WaitForName("No Button", 30);
+			
 			var printer = ApplicationController.Instance.ActivePrinter;
 
 			testRunner.Delay(() => printer.Bed.ActiveLayerIndex + 1 == indexToWaitFor, 30, 500);
-
 			Assert.AreEqual(indexToWaitFor, printer.Bed.ActiveLayerIndex + 1);
-			testRunner.ClickByName("Resume Button");
-			testRunner.Delay(.1);
+
+			testRunner.ClickByName("No Button");
 		}
 
 		[Test /* Test will fail if screen size is and "HeatBeforeHoming" falls below the fold */]
