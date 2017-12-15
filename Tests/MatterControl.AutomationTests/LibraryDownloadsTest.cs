@@ -84,9 +84,13 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Library Add Button");
 				testRunner.CompleteDialog(MatterControlUtilities.GetTestItemPath("Test.zip"), 4);
 
-				Assert.IsTrue(testRunner.WaitForName("Row Item Chinese Dragon", 2), "Chinese Dragon item exists");
-				Assert.IsTrue(testRunner.WaitForName("Row Item chichen-itza pyramid", 2), "chichen-itza item exists");
-				Assert.IsTrue(testRunner.WaitForName("Row Item Circle Calibration", 2), "Circle Calibration item exists");
+				testRunner.DoubleClickByName("Test.zip Row Item Collection");
+
+				testRunner.DoubleClickByName("TestCompress Row Item Collection");
+
+				Assert.IsTrue(testRunner.WaitForName("Row Item Chinese Dragon.stl", 2), "Chinese Dragon item exists");
+				Assert.IsTrue(testRunner.WaitForName("Row Item chichen-itza_pyramid.stl", 2), "chichen-itza item exists");
+				Assert.IsTrue(testRunner.WaitForName("Row Item Circle Calibration.stl", 2), "Circle Calibration item exists");
 
 				return Task.CompletedTask;
 			});
