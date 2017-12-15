@@ -21,7 +21,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
 
-				testRunner.SwitchToAdvancedSliceSettings();
+				testRunner.SwitchToSliceSettings();
 
 				testRunner.ClickByName("Printer Tab");
 

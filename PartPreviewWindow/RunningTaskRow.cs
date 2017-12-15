@@ -136,6 +136,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var stopButton = theme.ButtonFactory.GenerateIconButton(AggContext.StaticData.LoadIcon("fa-stop_12.png", IconColor.Theme));
 			stopButton.Margin = theme.ButtonSpacing;
+			stopButton.Name = "Stop Task Button";
 			stopButton.Click += (s, e) =>
 			{
 				var stopAction = taskDetails.TaskActions?.Stop;

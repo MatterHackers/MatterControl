@@ -119,29 +119,5 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 		}
-
-		private Task LoadRunningTaskExample(IProgress<ProgressStatus> progress, CancellationToken cancellationToken)
-		{
-			var reportDetails = new ProgressStatus();
-
-			var timer = Stopwatch.StartNew();
-			while (timer.Elapsed.TotalMinutes < 0.5)
-			{
-				if (cancellationToken.IsCancellationRequested)
-				{
-					break;
-				}
-
-				reportDetails.Progress0To1 = timer.Elapsed.TotalSeconds / 30d;
-
-				reportDetails.Status = reportDetails.Progress0To1 < .5 ? "first half" : "second half";
-
-				progress.Report(reportDetails);
-
-				Thread.Sleep(100);
-			}
-
-			return Task.CompletedTask;
-		}
 	}
 }

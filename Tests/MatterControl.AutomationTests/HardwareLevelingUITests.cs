@@ -16,7 +16,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// Add printer that has hardware leveling
 				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
 
-				testRunner.SwitchToAdvancedSliceSettings();
+				testRunner.SwitchToSliceSettings();
 
 				testRunner.ClickByName("Printer Tab");
 				testRunner.Delay(1);
@@ -68,12 +68,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					Assert.IsFalse(testRunner.WaitForName("Finish Setup Button", .5), "Finish Setup should not be visible after leveling the printer");
 
 					// reset to defaults and make sure print leveling is cleared
-					testRunner.SwitchToAdvancedSliceSettings();
+					testRunner.SwitchToSliceSettings();
 
 					testRunner.ClickByName("Slice Settings Overflow Menu");
 					testRunner.ClickByName("Reset to Defaults Menu Item");
 					testRunner.ClickByName("Yes Button");
-					testRunner.Delay(1);
 
 					// make sure it is showing the correct button
 					Assert.IsTrue(!testRunner.WaitForName("Start Print Button"), "Start Print should be visible after reset to Defaults");

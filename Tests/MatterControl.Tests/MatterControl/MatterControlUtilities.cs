@@ -644,39 +644,75 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public static void StartSlicing(this AutomationRunner testRunner)
 		{
 			testRunner.ClickByName("Generate Gcode Button");
-			testRunner.WaitForName("SlicePopupMenu Panel");
 		}
 
-		public static void SwitchToAdvancedSliceSettings(this AutomationRunner testRunner)
+		/// <summary>
+		/// Switch to the primary SliceSettings tab
+		/// </summary>
+		/// <param name="testRunner"></param>
+		public static void OpenPrintPopupMenu(this AutomationRunner testRunner)
 		{
-			testRunner.ClickByName("Slice Settings Sidebar");
-			testRunner.Delay(1);
-			testRunner.ClickByName("Pin Settings Button");
-			testRunner.Delay(.5);
+			var printerConnection = ApplicationController.Instance.ActivePrinter.Connection;
 
-			// Switch to Slice Settings Tab
-			//testRunner.ClickByName("Slice Settings Tab");
+			if (printerConnection.CommunicationState != CommunicationStates.Connected)
+			{
+				testRunner.ClickByName("Connect to printer button");
+				testRunner.Delay(() => printerConnection.CommunicationState == CommunicationStates.Connected);
+			}
 
-			// Show the overflow menu
-			testRunner.ClickByName("Slice Settings Overflow Menu");
-
-			// Change to Advanced view
-			testRunner.ClickByName("User Level Dropdown");
-			testRunner.ClickByName("Advanced Menu Item");
-			testRunner.Delay(.5);
+			testRunner.ClickByName("PrintPopupMenu");
 		}
 
+		/// <summary>
+		/// Open the Print popup menu and click the Start Print button
+		/// </summary>
+		/// <param name="testRunner"></param>
+		public static void StartPrint(this AutomationRunner testRunner)
+		{
+			testRunner.OpenPrintPopupMenu();
+			testRunner.ClickByName("Start Print Button");
+		}
+
+		public static void OpenGCode3DOverflowMenu(this AutomationRunner testRunner)
+		{
+			var button = testRunner.GetWidgetByName("Layers3D Button", out _) as ICheckbox;
+			if (!button.Checked)
+			{
+				testRunner.ClickByName("Layers3D Button");
+			}
+
+			testRunner.ClickByName("View3D Overflow Menu");
+		}
+
+		/// <summary>
+		/// Switch to the primary SliceSettings tab
+		/// </summary>
+		/// <param name="testRunner"></param>
+		public static void SwitchToSliceSettings(this AutomationRunner testRunner)
+		{
+			EnsurePrinterSidebarOpen(testRunner);
+			testRunner.ClickByName("General Tab");
+		}
+
+		/// <summary>
+		/// Switch to Printer -> Controls
+		/// </summary>
+		/// <param name="testRunner"></param>
 		public static void SwitchToControlsTab(this AutomationRunner testRunner)
+		{
+			// Change to Printer Controls
+			EnsurePrinterSidebarOpen(testRunner);
+			testRunner.ClickByName("Controls Tab");
+		}
+
+		private static void EnsurePrinterSidebarOpen(AutomationRunner testRunner)
 		{
 			// If the sidebar exists, we need to expand and pin it
 			if (testRunner.WaitForName("Slice Settings Sidebar", 0.2))
 			{
 				testRunner.ClickByName("Slice Settings Sidebar");
 				testRunner.ClickByName("Pin Settings Button");
-				testRunner.Delay(1);
 			}
-
-			testRunner.ClickByName("Controls Tab");
 		}
 
 		/// <summary>
