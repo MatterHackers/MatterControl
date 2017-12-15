@@ -523,9 +523,9 @@ namespace MatterHackers.MeshVisualizer
 			}
 
 			if(drawColor.alpha != 255
-				&& item as Object3D != null)
+				&& item is Object3D item3D)
 			{
-				((Object3D)item).EnsureTransparentSorting();
+				item3D.EnsureTransparentSorting();
 			}
 
 			return drawColor;
