@@ -221,18 +221,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				{
 					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
 
-					testRunner.SwitchToSliceSettings();
-
-					testRunner.ClickByName("General Tab");
-					testRunner.ClickByName("Single Print Tab");
+					testRunner.OpenPrintPopupMenu();
 					testRunner.ClickByName("Layer(s) To Pause Field");
 					testRunner.Type("2;6");
 
-					testRunner.ClickByName("Pin Settings Button");
-
 					// print a part
 					testRunner.AddItemToBedplate();
-					testRunner.ClickByName("Start Print Button");
+
+					testRunner.StartPrint();
 
 					// turn on line error simulation
 					emulator.SimulateLineErrors = true;
