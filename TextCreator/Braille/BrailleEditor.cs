@@ -109,7 +109,7 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 				{
 					UiThread.RunOnIdle(() =>
 					{
-						MatterControlApplication.Instance.LaunchBrowser("https://en.wikipedia.org/wiki/Braille");
+						ApplicationController.Instance.LaunchBrowser("https://en.wikipedia.org/wiki/Braille");
 					});
 				};
 

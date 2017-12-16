@@ -286,11 +286,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			}
 #endif
 
-			AddMenuItem("Forums".Localize(), () => MatterControlApplication.Instance.LaunchBrowser("https://forums.matterhackers.com/category/20/mattercontrol"));
-			AddMenuItem("Wiki".Localize(), () => MatterControlApplication.Instance.LaunchBrowser("http://wiki.mattercontrol.com"));
-			AddMenuItem("Guides and Articles".Localize(), () => MatterControlApplication.Instance.LaunchBrowser("http://www.matterhackers.com/topic/mattercontrol"));
-			AddMenuItem("Release Notes".Localize(), () => MatterControlApplication.Instance.LaunchBrowser("http://wiki.mattercontrol.com/Release_Notes"));
-			AddMenuItem("Report a Bug".Localize(), () => MatterControlApplication.Instance.LaunchBrowser("https://github.com/MatterHackers/MatterControl/issues"));
+			AddMenuItem("Forums".Localize(), () => ApplicationController.Instance.LaunchBrowser("https://forums.matterhackers.com/category/20/mattercontrol"));
+			AddMenuItem("Wiki".Localize(), () => ApplicationController.Instance.LaunchBrowser("http://wiki.mattercontrol.com"));
+			AddMenuItem("Guides and Articles".Localize(), () => ApplicationController.Instance.LaunchBrowser("http://www.matterhackers.com/topic/mattercontrol"));
+			AddMenuItem("Release Notes".Localize(), () => ApplicationController.Instance.LaunchBrowser("http://wiki.mattercontrol.com/Release_Notes"));
+			AddMenuItem("Report a Bug".Localize(), () => ApplicationController.Instance.LaunchBrowser("https://github.com/MatterHackers/MatterControl/issues"));
 
 			var updateMatterControl = new SettingsItem("Check For Update".Localize());
 			updateMatterControl.Click += (s, e) =>

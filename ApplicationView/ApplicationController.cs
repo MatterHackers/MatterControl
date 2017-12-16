@@ -178,6 +178,13 @@ namespace MatterHackers.MatterControl
 		{
 			await this.SetActivePrinter(emptyPrinter);
 		}
+		public void LaunchBrowser(string targetUri)
+		{
+			UiThread.RunOnIdle(() =>
+			{
+				Process.Start(targetUri);
+			});
+		}
 
 		public void RefreshActiveInstance(PrinterSettings updatedPrinterSettings)
 		{

@@ -344,14 +344,6 @@ namespace MatterHackers.MatterControl
 			return instance;
 		}
 
-		public void LaunchBrowser(string targetUri)
-		{
-			UiThread.RunOnIdle(() =>
-			{
-				System.Diagnostics.Process.Start(targetUri);
-			});
-		}
-
 		public override void OnClosed(ClosedEventArgs e)
 		{
 			UserSettings.Instance.Fields.StartCountDurringExit = UserSettings.Instance.Fields.StartCount;
