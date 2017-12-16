@@ -471,7 +471,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.Type(textValue);
 
 			testRunner.Type("{Enter}");
-			testRunner.WaitVanishForName("Automation Dialog TextEdit", 5);
+			testRunner.WaitForWidgetDisappear("Automation Dialog TextEdit", 5);
 		}
 
 		public static void AddItemToBedplate(this AutomationRunner testRunner, string containerName = "Calibration Parts Row Item Collection", string partName = "Row Item Calibration - Box.stl")

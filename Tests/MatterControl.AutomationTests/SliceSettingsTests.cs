@@ -129,7 +129,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			Assert.AreEqual(indexToWaitFor, printer.Bed.ActiveLayerIndex + 1);
 
 			testRunner.ClickByName("No Button");
-			testRunner.WaitVanishForName("No Button", 10);
+			testRunner.WaitForWidgetDisappear("No Button", 10);
 		}
 
 		[Test /* Test will fail if screen size is and "HeatBeforeHoming" falls below the fold */]

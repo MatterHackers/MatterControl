@@ -569,7 +569,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("No Button");
 
 					// Wait for close
-					testRunner.WaitVanishForName("Yes Button", 4);
+					testRunner.WaitForWidgetDisappear("Yes Button", 4);
 					testRunner.Delay(2);
 
 					// Confirm abort
@@ -583,7 +583,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.WaitForCommunicationStateDisconnected(maxSeconds: 30);
 
 					// Wait for close
-					testRunner.WaitVanishForName("Yes Button", 4);
+					testRunner.WaitForWidgetDisappear("Yes Button", 4);
 					testRunner.Delay(2);
 
 					// Confirm close
