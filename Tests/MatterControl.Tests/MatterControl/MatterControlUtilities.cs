@@ -214,7 +214,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.ClickByName("Printer Tab");
 			var serialPortDropDown = testRunner.GetWidgetByName("com_port Field", out _, 1);
 
-			testRunner.WaitFor(() => serialPortDropDown.Enabled, 5); // Wait until the serialPortDropDown is ready to click it. Ensures the printer is loaded.
+			testRunner.WaitFor(() => serialPortDropDown.Enabled); // Wait until the serialPortDropDown is ready to click it. Ensures the printer is loaded.
 
 			testRunner.ClickByName("com_port Field");
 
@@ -494,7 +494,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			testRunner.ClickByName("Add to Plate Menu Item");
 			// wait for the object to be added
-			testRunner.WaitFor(() => scene.Children.Count == preAddCount + 1, 1);
+			testRunner.WaitFor(() => scene.Children.Count == preAddCount + 1);
 			// wait for the object to be done loading
 			var insertionGroup = scene.Children.LastOrDefault() as InsertionGroup;
 			if (insertionGroup != null)

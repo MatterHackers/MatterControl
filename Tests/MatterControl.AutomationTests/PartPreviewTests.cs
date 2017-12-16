@@ -40,12 +40,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				// Click Copy button and count Scene.Children 
 				testRunner.ClickByName("3D View Copy");
-				testRunner.WaitFor(() => scene.Children.Count == 2, 3);
+				testRunner.WaitFor(() => scene.Children.Count == 2);
 				Assert.AreEqual(2, scene.Children.Count, "Should have 2 parts after copy");
 
 				// Click Copy button a second time and count Scene.Children
 				testRunner.ClickByName("3D View Copy");
-				testRunner.WaitFor(() => scene.Children.Count > 2, 3);
+				testRunner.WaitFor(() => scene.Children.Count > 2);
 				Assert.AreEqual(3, scene.Children.Count, "Should have 3 parts after 2nd copy");
 
 				return Task.CompletedTask;
@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				for (int i = 2; i <= 6; i++)
 				{
 					testRunner.ClickByName("3D View Copy");
-					testRunner.WaitFor(() => scene.Children.Count == i, 3);
+					testRunner.WaitFor(() => scene.Children.Count == i);
 					Assert.AreEqual(i, scene.Children.Count, $"Should have {i} parts after copy");
 				}
 
@@ -85,11 +85,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Type("^a");
 
 				testRunner.ClickByName("3D View Group");
-				testRunner.WaitFor(() => scene.Children.Count == 1, 3);
+				testRunner.WaitFor(() => scene.Children.Count == 1);
 				Assert.AreEqual(1, scene.Children.Count, $"Should have 1 parts after group");
 
 				testRunner.ClickByName("3D View Ungroup");
-				testRunner.WaitFor(() => scene.Children.Count == 6, 3);
+				testRunner.WaitFor(() => scene.Children.Count == 6);
 				Assert.AreEqual(6, scene.Children.Count, $"Should have 6 parts after ungroup");
 
 				return Task.CompletedTask;

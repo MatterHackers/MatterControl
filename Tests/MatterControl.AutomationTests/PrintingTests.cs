@@ -44,11 +44,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.WaitForPrintFinished();
 
 					// Wait for expected temp
-					testRunner.WaitFor(() => ApplicationController.Instance.ActivePrinter.Connection.GetActualHotendTemperature(0) <= 0, 5);
+					testRunner.WaitFor(() => ApplicationController.Instance.ActivePrinter.Connection.GetActualHotendTemperature(0) <= 0);
 					Assert.Less(ApplicationController.Instance.ActivePrinter.Connection.GetActualHotendTemperature(0), 30);
 
 					// Wait for expected temp
-					testRunner.WaitFor(() => ApplicationController.Instance.ActivePrinter.Connection.ActualBedTemperature <= 10, 5);
+					testRunner.WaitFor(() => ApplicationController.Instance.ActivePrinter.Connection.ActualBedTemperature <= 10);
 					Assert.Less(ApplicationController.Instance.ActivePrinter.Connection.ActualBedTemperature, 10);
 				}
 
@@ -95,7 +95,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					emulator.WaitForLayer(ActiveSliceSettings.Instance.printer.Settings, 2);
 
-					testRunner.WaitFor(() => emulator.ZPosition > 5, 3);
+					testRunner.WaitFor(() => emulator.ZPosition > 5);
 
 					// assert the leveling is working
 					Assert.Greater(emulator.ZPosition, 5);
