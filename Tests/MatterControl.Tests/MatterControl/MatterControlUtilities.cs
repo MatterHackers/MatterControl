@@ -52,6 +52,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using NUnit.Framework;
 using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
+using MatterHackers.MatterControl.PrinterCommunication.Io;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
@@ -196,8 +197,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			// Load the TestEnv config
 			var config = TestAutomationConfig.Load();
 
+			// Override the heat up time
 			Emulator.DefaultHeatUpTime = config.HeatupTime;
-			
+
+			// Override the temp stablization time
+			WaitForTempStream.WaitAfterReachTempTime = config.TempStabilizationTime;
+
 			// Create the printer
 			testRunner.AddAndSelectPrinter(make, model);
 
@@ -816,6 +821,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		/// The number of seconds the emulator should take to heat up and given target
 		/// </summary>
 		public double HeatupTime { get; set; } = 0.5;
+
+		/// <summary>
+		/// The number of seconds to wait after reaching the target temp before continuing. Analogous to 
+		/// firmware dwell time for temperature stabilization
+		/// </summary>
+		public double TempStabilizationTime { get; set; } = 0.5;
 
 		public static TestAutomationConfig Load()
 		{

@@ -36,13 +36,19 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
 	public class WaitForTempStream : GCodeStreamProxy
 	{
+		/// <summary>
+		/// The number of seconds to wait after reaching the target temp before continuing. Analogous to 
+		/// firmware dwell time for temperature stabilization
+		/// </summary>
+		public static double WaitAfterReachTempTime { get; set; } = 3;
+
 		private double extruderIndex;
 		private double ignoreRequestIfBelowTemp = 20;
 		private double sameTempRange = 1;
 		private State state = State.passthrough;
 		private double targetTemp = 0;
 		private Stopwatch timeHaveBeenAtTemp = new Stopwatch();
-		private double waitAfterReachTempTime = 3;
+
 		private bool waitWhenCooling = false;
 		PrinterConnection printerConnection;
 
@@ -142,7 +148,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 							timeHaveBeenAtTemp.Start();
 						}
 
-						if (timeHaveBeenAtTemp.Elapsed.TotalSeconds > waitAfterReachTempTime
+						if (timeHaveBeenAtTemp.Elapsed.TotalSeconds > WaitAfterReachTempTime
 							|| printerConnection.PrintWasCanceled)
 						{
 							// switch to pass through and continue
@@ -176,7 +182,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 							timeHaveBeenAtTemp.Start();
 						}
 
-						if (timeHaveBeenAtTemp.Elapsed.TotalSeconds > waitAfterReachTempTime
+						if (timeHaveBeenAtTemp.Elapsed.TotalSeconds > WaitAfterReachTempTime
 							|| printerConnection.PrintWasCanceled)
 						{
 							// switch to pass through and continue
