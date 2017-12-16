@@ -119,7 +119,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					interactionLayer.Invalidate();
 				}
 			}
-			else if(world != null)
+			else if(world != null 
+				&& cubeTraceData != null) // Make sure we don't use the trace data before it is ready
 			{
 				Ray ray = world.GetRayForLocalBounds(mouseEvent.Position);
 				IntersectInfo info = cubeTraceData.GetClosestIntersection(ray);
@@ -135,7 +136,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			base.OnMouseUp(mouseEvent);
 
-			if (mouseDownPosition == mouseEvent.Position)
+			// Make sure we don't use the trace data before it is ready
+			if (mouseDownPosition == mouseEvent.Position
+				&& cubeTraceData != null)
 			{
 				Ray ray = world.GetRayForLocalBounds(mouseEvent.Position);
 				IntersectInfo info = cubeTraceData.GetClosestIntersection(ray);
