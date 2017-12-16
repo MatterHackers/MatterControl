@@ -427,32 +427,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		private string rebuildThumbnailsMessage = "You are switching to a different thumbnail rendering mode. If you want, your current thumbnails can be removed and recreated in the new style. You can switch back and forth at any time. There will be some processing overhead while the new thumbnails are created.\n\nDo you want to rebuild your existing thumbnails now?".Localize();
 		private string rebuildThumbnailsTitle = "Rebuild Thumbnails Now".Localize();
 
-		private void RestartApplication()
-		{
-			UiThread.RunOnIdle(() =>
-			{
-				// Iterate to the top SystemWindow
-				GuiWidget parent = this;
-				while (parent.Parent != null)
-				{
-					parent = parent.Parent;
-				}
-
-				// MatterControlApplication is the root child on the SystemWindow object
-				MatterControlApplication app = parent.Children[0] as MatterControlApplication;
-#if !__ANDROID__
-				app.RestartOnClose = true;
-				app.Close();
-#else
-                // Re-initialize and load
-                LocalizedString.ResetTranslationMap();
-                ApplicationController.Instance.MainView = new DesktopView();
-				app.RemoveAllChildren();
-                app.AnchorAll();
-#endif
-			});
-		}
-
 		[Conditional("DEBUG")]
 		private void GenerateLocalizationValidationFile()
 		{

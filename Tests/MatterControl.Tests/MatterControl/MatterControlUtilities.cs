@@ -606,7 +606,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					}
 
 					MatterControlApplication app = MatterControlApplication.Instance;
-					app.RestartOnClose = false;
 					app.Close();
 				});
 		}
