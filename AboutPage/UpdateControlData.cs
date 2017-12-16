@@ -239,32 +239,13 @@ namespace MatterHackers.MatterControl
 			{
 				InitiateUpdateDownload();
 				// Switch to the about page so we can see the download progress.
-				GuiWidget aboutTabWidget = FindNamedWidgetRecursive(ApplicationController.Instance.MainView, "About Tab");
+				GuiWidget aboutTabWidget = ApplicationController.Instance.MainView.FindNamedChildRecursive("About Tab");
 
 				if (aboutTabWidget is Tab aboutTab)
 				{
 					aboutTab.TabBarContaningTab.SelectTab(aboutTab);
 				}
 			}
-		}
-
-		private static GuiWidget FindNamedWidgetRecursive(GuiWidget root, string name)
-		{
-			foreach (GuiWidget child in root.Children)
-			{
-				if (child.Name == name)
-				{
-					return child;
-				}
-
-				GuiWidget foundWidget = FindNamedWidgetRecursive(child, name);
-				if (foundWidget != null)
-				{
-					return foundWidget;
-				}
-			}
-
-			return null;
 		}
 
 		private void onVersionRequestFailed(object sender, ResponseErrorEventArgs e)
