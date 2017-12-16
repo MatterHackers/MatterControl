@@ -32,6 +32,7 @@ using System.IO;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.MatterControl.Library;
@@ -42,9 +43,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 {
 	public class ListViewItemBase : GuiWidget
 	{
-		private static ImageBuffer defaultFolderIcon = LibraryProviderHelpers.LoadInvertIcon("FileDialog", "folder.png");
-		private static ImageBuffer defaultItemIcon = LibraryProviderHelpers.LoadInvertIcon("FileDialog", "file.png");
-		private static ImageBuffer generatingThumbnailIcon = LibraryProviderHelpers.LoadInvertIcon("building_thumbnail_40x40.png");
+		private static ImageBuffer defaultFolderIcon = AggContext.StaticData.LoadIcon(Path.Combine("FileDialog", "folder.png"));
+		private static ImageBuffer defaultItemIcon = AggContext.StaticData.LoadIcon(Path.Combine("FileDialog", "file.png"));
+		private static ImageBuffer generatingThumbnailIcon = AggContext.StaticData.LoadIcon(Path.Combine("building_thumbnail_40x40.png"));
 
 		protected ListViewItem listViewItem;
 		protected View3DWidget view3DWidget;

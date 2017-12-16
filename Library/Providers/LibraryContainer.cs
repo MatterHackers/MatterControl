@@ -29,8 +29,10 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using MatterHackers.Agg.Image;
+using MatterHackers.Agg.Platform;
 
 namespace MatterHackers.MatterControl.Library
 {
@@ -48,6 +50,11 @@ namespace MatterHackers.MatterControl.Library
 
 		public virtual Task<ImageBuffer> GetThumbnail(ILibraryItem item, int width, int height)
 		{
+			if (item is LocalZipContainerLink)
+			{
+				return Task.FromResult(AggContext.StaticData.LoadIcon(Path.Combine("FileDialog", "folder_zip.png")).AlphaToPrimaryAccent());
+			}
+
 			return Task.FromResult<ImageBuffer>(null);
 		}
 

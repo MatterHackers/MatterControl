@@ -1329,6 +1329,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					Matrix4X4 totalTransform = Matrix4X4.CreateTranslation(new Vector3(-CurrentSelectInfo.LastMoveDelta));
 					Scene.SelectedItem.Matrix *= totalTransform;
+
+					// Invalidate the item to account for the position change
+					Scene.SelectedItem.Invalidate();
 				}
 
 				Vector3 delta = info.HitPosition - CurrentSelectInfo.PlaneDownHitPos;

@@ -150,7 +150,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public ImageBuffer DefaultImage => LibraryProviderHelpers.LoadInvertIcon("mesh.png");
+		public ImageBuffer DefaultImage => AggContext.StaticData.LoadIcon("mesh.png");
 
 		private static bool MeshIsTooBigToLoad(string fileLocation)
 		{

@@ -32,6 +32,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using MatterHackers.Agg.Image;
+using MatterHackers.Agg.Platform;
 
 namespace MatterHackers.MatterControl.Library
 {
@@ -41,7 +42,7 @@ namespace MatterHackers.MatterControl.Library
 
 		static LocalZipContainerLink()
 		{
-			thumbnail = LibraryProviderHelpers.LoadInvertIcon("FileDialog", "folder_zip.png");
+			thumbnail = AggContext.StaticData.LoadIcon(System.IO.Path.Combine("FileDialog", "folder_zip.png"));
 		}
 
 		public bool IsReadOnly { get; } = false;
