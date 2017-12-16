@@ -87,6 +87,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string has_sd_card_reader = nameof(has_sd_card_reader);
 		public const string heat_extruder_before_homing = nameof(heat_extruder_before_homing);
 		public const string include_firmware_updater = nameof(include_firmware_updater);
+		public const string selector_ip_address = nameof(selector_ip_address);
 		public const string ip_address = nameof(ip_address);
 		public const string ip_port = nameof(ip_port);
 		public const string layer_gcode = nameof(layer_gcode);
