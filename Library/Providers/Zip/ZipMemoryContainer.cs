@@ -39,13 +39,13 @@ namespace MatterHackers.MatterControl.Library
 {
 	public class ZipMemoryContainer : LibraryContainer
 	{
-		public ZipMemoryContainer()
-		{
-		}
+		private static char[] pathSeparators = new[] { '/', '\\' };
 
 		public string RelativeDirectory { get; set; }
 
 		public string Path { get; set; }
+
+		private string pathSeparator = null;
 
 		public override void Load()
 		{
@@ -60,9 +60,14 @@ namespace MatterHackers.MatterControl.Library
 				{
 					if (entry.FullName.StartsWith(RelativeDirectory))
 					{
-						string remainingPath = entry.FullName.Substring(RelativeDirectory.Length)?.Trim().TrimStart('/');
+						string remainingPath = entry.FullName.Substring(RelativeDirectory.Length)?.Trim().TrimStart(pathSeparators);
 
-						var segments = remainingPath.Split('/');
+						if (pathSeparator == null && RelativeDirectory.Length > 0)
+						{
+							pathSeparator = entry.FullName.Substring(RelativeDirectory.Length, 1);
+						}
+
+						var segments = remainingPath.Split(pathSeparators);
 						var firstDirectory = segments.First();
 						var lastSegment = segments.Last();
 
@@ -83,10 +88,10 @@ namespace MatterHackers.MatterControl.Library
 			this.ChildContainers = directories.Where(d => !string.IsNullOrEmpty(d)).Select(d =>
 				new LocalZipContainerLink(this.Path)
 				{
-					CurrentDirectory = RelativeDirectory.Length == 0 ? d : $"{RelativeDirectory}/{d}"
+					CurrentDirectory = RelativeDirectory.Length == 0 ? d : $"{RelativeDirectory}{pathSeparator}{d}"
 				}).ToList<ILibraryContainerLink>();
 
-			this.Items = items.Select(kvp => new ZipMemoryItem(this.Path, RelativeDirectory.Length == 0 ? kvp.Key : $"{RelativeDirectory}/{kvp.Key}", kvp.Value)).ToList<ILibraryItem>();
+			this.Items = items.Select(kvp => new ZipMemoryItem(this.Path, RelativeDirectory.Length == 0 ? kvp.Key : $"{RelativeDirectory}{pathSeparator}{kvp.Key}", kvp.Value)).ToList<ILibraryItem>();
 		}
 
 		public override void Dispose()
