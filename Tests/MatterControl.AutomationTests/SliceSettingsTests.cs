@@ -30,7 +30,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Create Raft Field");
 
 				testRunner.StartSlicing();
-				testRunner.Delay(() => MatterControlUtilities.CompareExpectedSliceSettingValueWithActualVaue("enableRaft", "True"), 10);
+				testRunner.WaitFor(() => MatterControlUtilities.CompareExpectedSliceSettingValueWithActualVaue("enableRaft", "True"), 10);
 
 				// Call compare slice settings method here
 				Assert.IsTrue(MatterControlUtilities.CompareExpectedSliceSettingValueWithActualVaue("enableRaft", "True"));
@@ -106,7 +106,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("Stop Task Button");
 
 					// Wait for and assert that printing has been canceled
-					testRunner.Delay(() => printer.Connection.CommunicationState == PrinterCommunication.CommunicationStates.Connected);
+					testRunner.WaitFor(() => printer.Connection.CommunicationState == PrinterCommunication.CommunicationStates.Connected);
 					Assert.IsTrue(printer.Connection.CommunicationState == PrinterCommunication.CommunicationStates.Connected);
 
 					// Assert that two G28s were output to the terminal
@@ -125,7 +125,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			var printer = ApplicationController.Instance.ActivePrinter;
 
 			// Wait for layer
-			testRunner.Delay(() => printer.Bed.ActiveLayerIndex + 1 == indexToWaitFor, 30, 500);
+			testRunner.WaitFor(() => printer.Bed.ActiveLayerIndex + 1 == indexToWaitFor, 30, 500);
 			Assert.AreEqual(indexToWaitFor, printer.Bed.ActiveLayerIndex + 1);
 
 			testRunner.ClickByName("No Button");
@@ -442,13 +442,13 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// Force lose focus
 				testRunner.ClickByName("First Layer Thickness Field");
 
-				testRunner.Delay(() => printer.Settings.GetValue<double>(SettingsKey.layer_height) == 0.5);
+				testRunner.WaitFor(() => printer.Settings.GetValue<double>(SettingsKey.layer_height) == 0.5);
 				Assert.AreEqual(printer.Settings.GetValue<double>(SettingsKey.layer_height).ToString(), "0.5", "Layer height is what we set it to");
 
 				testRunner.ClickByName("Quality");
 				testRunner.ClickByName("Fine Menu");
 
-				testRunner.Delay(() => printer.Settings.GetValue<double>(SettingsKey.layer_height) == 0.1);
+				testRunner.WaitFor(() => printer.Settings.GetValue<double>(SettingsKey.layer_height) == 0.1);
 				Assert.AreEqual(printer.Settings.GetValue<double>(SettingsKey.layer_height).ToString(), "0.1", "Layer height is the fine override");
 
 				testRunner.AddAndSelectPrinter("BCN", "Sigma");
@@ -462,7 +462,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				printer = ApplicationController.Instance.ActivePrinter;
 
-				testRunner.Delay(() => printer.Settings.GetValue<double>(SettingsKey.layer_height) == 0.1);
+				testRunner.WaitFor(() => printer.Settings.GetValue<double>(SettingsKey.layer_height) == 0.1);
 				Assert.AreEqual(printer.Settings.GetValue<double>(SettingsKey.layer_height).ToString(), "0.1", "Layer height is the fine override");
 
 				// Switch to Slice Settings Tab
@@ -471,7 +471,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Quality");
 				testRunner.ClickByName("- none - Menu Item");
 
-				testRunner.Delay(() => printer.Settings.GetValue<double>(SettingsKey.layer_height) == 0.5);
+				testRunner.WaitFor(() => printer.Settings.GetValue<double>(SettingsKey.layer_height) == 0.5);
 				Assert.AreEqual(printer.Settings.GetValue<double>(SettingsKey.layer_height).ToString(), "0.5", "Layer height is what we set it to");
 
 				return Task.CompletedTask;

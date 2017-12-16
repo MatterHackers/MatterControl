@@ -44,11 +44,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.WaitForPrintFinished();
 
 					// Wait for expected temp
-					testRunner.Delay(() => ApplicationController.Instance.ActivePrinter.Connection.GetActualHotendTemperature(0) <= 0, 5);
+					testRunner.WaitFor(() => ApplicationController.Instance.ActivePrinter.Connection.GetActualHotendTemperature(0) <= 0, 5);
 					Assert.Less(ApplicationController.Instance.ActivePrinter.Connection.GetActualHotendTemperature(0), 30);
 
 					// Wait for expected temp
-					testRunner.Delay(() => ApplicationController.Instance.ActivePrinter.Connection.ActualBedTemperature <= 10, 5);
+					testRunner.WaitFor(() => ApplicationController.Instance.ActivePrinter.Connection.ActualBedTemperature <= 10, 5);
 					Assert.Less(ApplicationController.Instance.ActivePrinter.Connection.ActualBedTemperature, 10);
 				}
 
@@ -95,7 +95,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					emulator.WaitForLayer(ActiveSliceSettings.Instance.printer.Settings, 2);
 
-					testRunner.Delay(() => emulator.ZPosition > 5, 3);
+					testRunner.WaitFor(() => emulator.ZPosition > 5, 3);
 
 					// assert the leveling is working
 					Assert.Greater(emulator.ZPosition, 5);
@@ -310,7 +310,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.WaitForName(buttonName, 90);
 			Assert.AreEqual(expectedLayer, ApplicationController.Instance.ActivePrinter.Connection.CurrentlyPrintingLayer);
 			testRunner.ClickByName(buttonName);
-			testRunner.Delay(() => !testRunner.NameExists(buttonName), 1);
+			testRunner.WaitFor(() => !testRunner.NameExists(buttonName), 1);
 		}
 
 		private EventHandler unregisterEvents;
@@ -369,7 +369,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate);
 
 					// Wait for slicing to complete before setting target values
-					testRunner.Delay(() => ApplicationController.Instance.ActivePrinter.Connection.DetailedPrintingState == DetailedPrintingState.Printing, 8);
+					testRunner.WaitFor(() => ApplicationController.Instance.ActivePrinter.Connection.DetailedPrintingState == DetailedPrintingState.Printing, 8);
 					testRunner.Delay();
 
 					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate);
@@ -462,7 +462,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate);
 
 					// Wait for slicing to complete before setting target values
-					testRunner.Delay(() => printer.Connection.DetailedPrintingState == DetailedPrintingState.Printing, 8);
+					testRunner.WaitFor(() => printer.Connection.DetailedPrintingState == DetailedPrintingState.Printing, 8);
 					testRunner.Delay();
 
 					// Values should remain after print completes
@@ -475,13 +475,13 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					// Values should match entered values
 					testRunner.StartPrint();
-					testRunner.Delay(() => printer.Connection.CommunicationState == CommunicationStates.Printing, 15);
+					testRunner.WaitFor(() => printer.Connection.CommunicationState == CommunicationStates.Printing, 15);
 
 					// Values should match entered values
 					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate);
 
 					testRunner.CancelPrint();
-					testRunner.Delay(() => printer.Connection.CommunicationState == CommunicationStates.Connected, 15);
+					testRunner.WaitFor(() => printer.Connection.CommunicationState == CommunicationStates.Connected, 15);
 
 					// Values should match entered values
 					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate);
@@ -590,7 +590,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					Assert.IsTrue(MatterControlApplication.Instance.HasBeenClosed, "Confirming Close dialog *should* close MatterControl");
 
 					// Wait for M106 change
-					testRunner.Delay(() => fanChangedCount > 0, 15, 500);
+					testRunner.WaitFor(() => fanChangedCount > 0, 15, 500);
 
 					// Assert expected temp targets and fan transitions
 					Assert.AreEqual(0, (int) emulator.Hotend.TargetTemperature, "Unexpected target temperature - MC close should call Connection.Disable->TurnOffBedAndExtruders to shutdown heaters");

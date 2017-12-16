@@ -110,7 +110,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Delay(2);
 				testRunner.Type("{Enter}");
 
-				testRunner.Delay(() => File.Exists(exportZipPath), 3);
+				testRunner.WaitFor(() => File.Exists(exportZipPath), 3);
 				Assert.IsTrue(File.Exists(exportZipPath), "Queue was exported to zip file, file exists on disk at expected path");
 
 				// Import the exported zip file and confirm the Queue Count increases by 3 
@@ -120,7 +120,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Delay(1);
 				testRunner.Type("{Enter}");
 
-				testRunner.Delay(() => QueueData.Instance.ItemCount == 8, 5);
+				testRunner.WaitFor(() => QueueData.Instance.ItemCount == 8, 5);
 				Assert.AreEqual(8, QueueData.Instance.ItemCount, "All parts imported successfully from exported zip");
 
 				testRunner.Delay(.3);
@@ -156,7 +156,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Delay(1);
 
 				testRunner.ClickByName("Queue... Menu");
-				testRunner.Delay(() => !exportButton.Enabled, 4);
+				testRunner.WaitFor(() => !exportButton.Enabled, 4);
 				Assert.IsFalse(exportButton.Enabled, "Export button should be disabled after Queue Menu -> Remove All");
 
 				return Task.CompletedTask;
@@ -180,7 +180,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Delay(.2);
 
 				testRunner.ClickByName("Queue Copy Button");
-				testRunner.Delay(() => QueueData.Instance.ItemCount == expectedQueueCount, 3);
+				testRunner.WaitFor(() => QueueData.Instance.ItemCount == expectedQueueCount, 3);
 
 				Assert.AreEqual(expectedQueueCount, QueueData.Instance.ItemCount, "Copy button increases queue count by one");
 				Assert.IsTrue(testRunner.WaitForName("Row Item Batman - copy"), "Copied Batman item exists with expected name");

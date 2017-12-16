@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					MatterControlUtilities.GetTestItemPath("Fennec_Fox.stl"));
 
 				// Wait up to 3 seconds for expected outcome
-				testRunner.Delay(() => QueueData.Instance.ItemCount == expectedCount, 3);
+				testRunner.WaitFor(() => QueueData.Instance.ItemCount == expectedCount, 3);
 
 				// Assert - one part  added and queue count increases by one
 				Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should increase by 1 when adding 1 item");
@@ -94,7 +94,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					secondsToWait: 2);
 
 				// Wait up to 3 seconds for expected outcome
-				testRunner.Delay(() => QueueData.Instance.ItemCount == expectedCount, 3);
+				testRunner.WaitFor(() => QueueData.Instance.ItemCount == expectedCount, 3);
 
 				// Assert - two parts added and queue count increases by two
 				Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should increase by 2 when adding 2 items");
@@ -121,7 +121,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				// Remove item
 				testRunner.LibraryRemoveSelectedItem();
-				testRunner.Delay(() => QueueData.Instance.ItemCount == expectedCount, 5, 500);
+				testRunner.WaitFor(() => QueueData.Instance.ItemCount == expectedCount, 5, 500);
 
 				Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should decrease by one after clicking Remove");
 
@@ -148,7 +148,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				// Remove items
 				testRunner.LibraryRemoveSelectedItem();
-				testRunner.Delay(() => QueueData.Instance.ItemCount == expectedCount, 5, 500);
+				testRunner.WaitFor(() => QueueData.Instance.ItemCount == expectedCount, 5, 500);
 
 				Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should decrease by two after clicking Remove");
 
@@ -204,7 +204,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					MatterControlUtilities.GetTestItemPath("Rook.amf"));
 
 				// Wait up to 3 seconds for expected outcome
-				testRunner.Delay(() => QueueData.Instance.ItemCount == expectedCount, 3);
+				testRunner.WaitFor(() => QueueData.Instance.ItemCount == expectedCount, 3);
 
 				// Assert - one part  added and queue count increases by one
 				Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should increase by 1 when adding 1 item");
@@ -234,7 +234,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					MatterControlUtilities.GetTestItemPath("Batman.stl"));
 
 				// Wait up to 3 seconds for expected outcome
-				testRunner.Delay(() => QueueData.Instance.ItemCount == expectedCount, 3);
+				testRunner.WaitFor(() => QueueData.Instance.ItemCount == expectedCount, 3);
 
 				// Assert - one part  added and queue count increases by one
 				Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should increase by 1 when adding 1 item");
@@ -264,7 +264,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					MatterControlUtilities.GetTestItemPath("chichen-itza_pyramid.gcode"));
 
 				// Wait up to 3 seconds for expected outcome
-				testRunner.Delay(() => QueueData.Instance.ItemCount == expectedCount, 3);
+				testRunner.WaitFor(() => QueueData.Instance.ItemCount == expectedCount, 3);
 
 				// Assert - one part  added and queue count increases by one
 				Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount, "Queue count should increase by 1 when adding 1 item");

@@ -50,7 +50,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Type(fullPathToGcodeFile);
 				testRunner.Type("{Enter}");
 
-				testRunner.Delay(() => File.Exists(fullPathToGcodeFile + ".gcode"), 10);
+				testRunner.WaitFor(() => File.Exists(fullPathToGcodeFile + ".gcode"), 10);
 
 				Assert.IsTrue(File.Exists(fullPathToGcodeFile + ".gcode") == true);
 
