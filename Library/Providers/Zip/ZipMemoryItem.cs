@@ -72,7 +72,8 @@ namespace MatterHackers.MatterControl.Library
 				using (var zip = new ZipArchive(file, ZipArchiveMode.Read))
 				{
 					var zipStream = zip.Entries.Where(e => e.FullName == this.RelativePath).FirstOrDefault()?.Open();
-					zipStream.CopyTo(memoryStream);
+					zipStream?.CopyTo(memoryStream);
+					zipStream?.Dispose();
 				}
 
 				memoryStream.Position = 0;
