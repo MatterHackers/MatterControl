@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			var previewButton = buttonFactory.Generate("Preview".Localize().ToUpper());
 			previewButton.Click += (s, e) =>
 			{
-				MatterControlApplication.Instance.OpenCameraPreview();
+				AppContext.Platform.OpenCameraPreview();
 			};
 
 			this.AddSettingsRow(

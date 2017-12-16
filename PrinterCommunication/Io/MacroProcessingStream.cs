@@ -217,7 +217,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 								break;
 
 							case "ding":
-								MatterControlApplication.Instance.PlaySound("timer-done.wav");
+								AppContext.Platform.PlaySound("timer-done.wav");
 								break;
 
 							case "show_message":

@@ -69,8 +69,18 @@ namespace MatterHackers.MatterControl
 	using MatterHackers.VectorMath;
 	using SettingsManagement;
 
+	public class AppContext
+	{
+		/// <summary>
+		/// Native platform features 
+		/// </summary>
+		public static INativePlatformFeatures Platform { get; set; }
+	}
+
 	public class ApplicationController
 	{
+		public static string PlatformFeaturesProvider { get; set; } = "MatterHackers.MatterControl.WindowsPlatformsFeatures, MatterControl";
+
 		public ThemeConfig Theme { get; set; } = new ThemeConfig();
 
 		public RunningTasksConfig Tasks { get; set; } = new RunningTasksConfig();
@@ -483,13 +493,13 @@ namespace MatterHackers.MatterControl
 			ScrollBar.ScrollBarWidth = 8 * GuiWidget.DeviceScale;
 			ScrollBar.GrowThumbBy = 2;
 
+			// Initialize statics
 			DefaultThumbBackground.DefaultBackgroundColor = Color.Transparent;
-
+			AppContext.Platform = AggContext.CreateInstanceFrom<INativePlatformFeatures>(PlatformFeaturesProvider);
 			Object3D.AssetsPath = ApplicationDataStorage.Instance.LibraryAssetsPath;
 
 			this.Library = new LibraryConfig();
 			this.Library.ContentProviders.Add(new[] { "stl", "obj", "amf", "mcx" }, new MeshContentProvider());
-
 			this.Library.ContentProviders.Add("gcode", new GCodeContentProvider());
 
 			// Name = "MainSlidePanel";
@@ -1471,6 +1481,69 @@ namespace MatterHackers.MatterControl
 
 				executingTasks.Remove(taskDetails);
 			});
+		}
+	}
+
+	public interface INativePlatformFeatures
+	{
+		event EventHandler PictureTaken;
+		void TakePhoto(string imageFileName);
+		void OpenCameraPreview();
+		void PlaySound(string fileName);
+		void ConfigureWifi();
+		bool CameraInUseByExternalProcess { get; set; }
+		bool IsNetworkConnected();
+	}
+
+	public class WindowsPlatformsFeatures : INativePlatformFeatures
+	{
+		public bool CameraInUseByExternalProcess { get; set; } = false;
+
+		public event EventHandler PictureTaken;
+
+		public void TakePhoto(string imageFileName)
+		{
+			ImageBuffer noCameraImage = new ImageBuffer(640, 480);
+			Graphics2D graphics = noCameraImage.NewGraphics2D();
+			graphics.Clear(Color.White);
+			graphics.DrawString("No Camera Detected", 320, 240, pointSize: 24, justification: Agg.Font.Justification.Center);
+			graphics.DrawString(DateTime.Now.ToString(), 320, 200, pointSize: 12, justification: Agg.Font.Justification.Center);
+			AggContext.ImageIO.SaveImageData(imageFileName, noCameraImage);
+
+			PictureTaken?.Invoke(null, null);
+		}
+
+		public void OpenCameraPreview()
+		{
+			//Camera launcher placeholder (KP)
+			if (ApplicationSettings.Instance.get(ApplicationSettingsKey.HardwareHasCamera) == "true")
+			{
+				//Do something
+			}
+			else
+			{
+				//Do something else (like show warning message)
+			}
+		}
+
+		public void PlaySound(string fileName)
+		{
+			if (AggContext.OperatingSystem == OSType.Windows)
+			{
+				using (var mediaStream = AggContext.StaticData.OpenSteam(Path.Combine("Sounds", fileName)))
+				{
+					(new System.Media.SoundPlayer(mediaStream)).Play();
+				}
+			}
+		}
+
+		public bool IsNetworkConnected()
+		{
+			return true;
+		}
+
+		public void ConfigureWifi()
+		{
 		}
 	}
 }

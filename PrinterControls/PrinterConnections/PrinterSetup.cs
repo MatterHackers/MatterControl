@@ -42,7 +42,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		public static DialogPage GetBestStartPage(StartPageOptions options = StartPageOptions.Default)
 		{
 			// Do the printer setup logic
-			bool WifiDetected = MatterControlApplication.Instance.IsNetworkConnected();
+			bool WifiDetected = AppContext.Platform.IsNetworkConnected();
 			if (!WifiDetected 
 				&& options != StartPageOptions.SkipWifiSetup)
 			{

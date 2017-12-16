@@ -67,7 +67,6 @@ namespace MatterHackers.MatterControl
 		public static string MCWSBaseUri { get; } = "https://mattercontrol.appspot.com";
 #endif
 
-		public static bool CameraInUseByExternalProcess { get; set; } = false;
 		private static MatterControlApplication instance;
 		private string[] commandLineArgs = null;
 		private bool DoCGCollectEveryDraw = false;
@@ -251,18 +250,6 @@ namespace MatterHackers.MatterControl
 			this.Maximized = ApplicationSettings.Instance.get(ApplicationSettingsKey.MainWindowMaximized) == "true";
 		}
 
-		public void TakePhoto(string imageFileName)
-		{
-			ImageBuffer noCameraImage = new ImageBuffer(640, 480);
-			Graphics2D graphics = noCameraImage.NewGraphics2D();
-			graphics.Clear(Color.White);
-			graphics.DrawString("No Camera Detected", 320, 240, pointSize: 24, justification: Agg.Font.Justification.Center);
-			graphics.DrawString(DateTime.Now.ToString(), 320, 200, pointSize: 12, justification: Agg.Font.Justification.Center);
-			AggContext.ImageIO.SaveImageData(imageFileName, noCameraImage);
-
-			PictureTaken?.Invoke(null, null);
-		}
-
 		private bool dropWasOnChild = true;
 
 		private EventHandler unregisterEvent;
@@ -280,8 +267,6 @@ namespace MatterHackers.MatterControl
 				return instance;
 			}
 		}
-
-		public event EventHandler PictureTaken;
 
 		private static Vector2 minSize { get; set; } = new Vector2(600, 600);
 
@@ -555,30 +540,6 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public void OpenCameraPreview()
-		{
-			//Camera launcher placeholder (KP)
-			if (ApplicationSettings.Instance.get(ApplicationSettingsKey.HardwareHasCamera) == "true")
-			{
-				//Do something
-			}
-			else
-			{
-				//Do something else (like show warning message)
-			}
-		}
-
-		public void PlaySound(string fileName)
-		{
-			if (AggContext.OperatingSystem == OSType.Windows)
-			{
-				using (var mediaStream = AggContext.StaticData.OpenSteam(Path.Combine("Sounds", fileName)))
-				{
-					(new System.Media.SoundPlayer(mediaStream)).Play();
-				}
-			}
-		}
-
 		private void CheckOnPrinter()
 		{
 			try
@@ -654,11 +615,6 @@ namespace MatterHackers.MatterControl
 			MatterHackers.MatterSlice.MatterSlice.AssertDebugNotDefined();
 			MatterHackers.MeshVisualizer.MeshViewerWidget.AssertDebugNotDefined();
 			MatterHackers.RenderOpenGl.GLMeshTrianglePlugin.AssertDebugNotDefined();
-		}
-
-		public bool IsNetworkConnected()
-		{
-			return true;
 		}
 	}
 }
