@@ -32,8 +32,6 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
-using MatterHackers.Agg;
-using MatterHackers.DataConverters3D;
 
 namespace MatterHackers.MatterControl.Library
 {
@@ -87,20 +85,5 @@ namespace MatterHackers.MatterControl.Library
 				Length = memStream.Length
 			};
 		}
-
-		/*
-		public async Task<IObject3D> GetContent(Action<double, string> reportProgress)
-		{
-			var streamAndLength = await GetContentStream(null);
-			IObject3D object3D = Object3D.Load(streamAndLength.Stream, System.IO.Path.GetExtension(Name));
-			streamAndLength.Stream.Dispose();
-
-			return object3D;
-		}
-
-		public void SetContent(IObject3D item)
-		{
-			throw new NotImplementedException();
-		} */
 	}
 }
