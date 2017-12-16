@@ -1422,7 +1422,16 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					{
 						lock (locker)
 						{
-							string allDataRead = serialPort.ReadExisting();
+							string allDataRead;
+							if (addedReadLines.Count > 0)
+							{
+								allDataRead = addedReadLines[0] + "\n";
+								addedReadLines.RemoveAt(0);
+							}
+							else
+							{
+								allDataRead = serialPort.ReadExisting();
+							}
 							//Debug.Write("r: " + allDataRead);
 							allDataRead = allDataRead.Replace("\r\n", "\n");
 							allDataRead = allDataRead.Replace('\r', '\n');
@@ -1834,14 +1843,16 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		private static Regex getQuotedParts = new Regex(@"([""'])(\\?.)*?\1", RegexOptions.Compiled);
 		private string readRegexString = "";
 		private List<(Regex Regex, string Replacement)> ReadLineReplacements = new List<(Regex Regex, string Replacement)>();
+		private List<string> addedReadLines = new List<string>();
 
 		private string ProcessReadRegEx(string lineBeingRead)
 		{
 			if (readRegexString != printer.Settings.GetValue(SettingsKey.read_regex))
 			{
 				ReadLineReplacements.Clear();
+				string splitString = "\\n";
 				readRegexString = printer.Settings.GetValue(SettingsKey.read_regex);
-				foreach (string regExLine in readRegexString.Split(new string[] { "\n" }, StringSplitOptions.RemoveEmptyEntries))
+				foreach (string regExLine in readRegexString.Split(new string[] { splitString }, StringSplitOptions.RemoveEmptyEntries))
 				{
 					var matches = getQuotedParts.Matches(regExLine);
 					if (matches.Count == 2)
@@ -1853,12 +1864,31 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				}
 			}
 
+			var addedLines = new List<string>();
 			foreach (var item in ReadLineReplacements)
 			{
-				lineBeingRead = item.Regex.Replace(lineBeingRead, item.Replacement);
+				var splitReplacement = item.Replacement.Split(',');
+				if (splitReplacement.Length > 0)
+				{
+					if (item.Regex.IsMatch(lineBeingRead))
+					{
+						// replace on the first replacement group only
+						var replacedString = item.Regex.Replace(lineBeingRead, splitReplacement[0]);
+						lineBeingRead = replacedString;
+						// add in the other replacement groups
+						for (int j = 1; j < splitReplacement.Length; j++)
+						{
+							addedLines.Add(splitReplacement[j]);
+						}
+						break;
+					}
+				}
 			}
 
+			addedReadLines.AddRange(addedLines);
+
 			return lineBeingRead;
+
 		}
 		#endregion // ProcessRead
 
