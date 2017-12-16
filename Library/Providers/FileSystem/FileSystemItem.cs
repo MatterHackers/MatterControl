@@ -50,7 +50,7 @@ namespace MatterHackers.MatterControl.Library
 			this.Path = path;
 		}
 
-		public string ID => this.Path.GetHashCode().ToString();
+		public virtual string ID => this.Path.GetHashCode().ToString();
 
 		public virtual string Name
 		{

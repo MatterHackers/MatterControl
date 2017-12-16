@@ -47,6 +47,8 @@ namespace MatterHackers.MatterControl.Library
 			this.FileSize = fileSize;
 		}
 
+		public override string ID => $"{this.Path}/{this.RelativePath}".GetHashCode().ToString();
+
 		public string RelativePath { get; set; }
 
 		public string ContentType => System.IO.Path.GetExtension(this.Name).ToLower().Trim('.');
