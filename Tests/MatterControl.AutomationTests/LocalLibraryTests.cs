@@ -242,7 +242,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				MatterControlUtilities.LibraryAddSelectionToQueue(testRunner);
 
 				// TODO: Somehow thumbnail generation is happening on the UI thread and bogging this down. Leave at 15 second for a short-term workaround
-				testRunner.Delay(() => QueueData.Instance.ItemCount == expectedCount, 15, 500);
+				testRunner.WaitFor(() => QueueData.Instance.ItemCount == expectedCount, 15, 500);
 
 				// Make sure Queue Count increases by the correct amount
 				Assert.AreEqual(expectedCount, QueueData.Instance.ItemCount);

@@ -214,7 +214,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.ClickByName("Printer Tab");
 			var serialPortDropDown = testRunner.GetWidgetByName("com_port Field", out _, 1);
 
-			testRunner.Delay(() => serialPortDropDown.Enabled, 5); // Wait until the serialPortDropDown is ready to click it. Ensures the printer is loaded.
+			testRunner.WaitFor(() => serialPortDropDown.Enabled); // Wait until the serialPortDropDown is ready to click it. Ensures the printer is loaded.
 
 			testRunner.ClickByName("com_port Field");
 
@@ -301,25 +301,25 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}
 
 			testRunner.ClickByName("Select Make");
-			testRunner.Delay(() => testRunner.WidgetExists<PopupWidget>());
+			testRunner.WaitFor(() => testRunner.WidgetExists<PopupWidget>());
 			testRunner.Type(make);
 			testRunner.Type("{Enter}");
-			testRunner.Delay(() => !testRunner.WidgetExists<PopupWidget>());
+			testRunner.WaitFor(() => !testRunner.WidgetExists<PopupWidget>());
 
 
 			testRunner.ClickByName("Select Model");
-			testRunner.Delay(() => testRunner.WidgetExists<PopupWidget>());
+			testRunner.WaitFor(() => testRunner.WidgetExists<PopupWidget>());
 			testRunner.Type(model);
 			testRunner.Type("{Enter}");
-			testRunner.Delay(() => !testRunner.WidgetExists<PopupWidget>());
+			testRunner.WaitFor(() => !testRunner.WidgetExists<PopupWidget>());
 
 			// An unpredictable period of time will pass between Clicking Save, everything reloading and us returning to the caller.
 			// Block until ReloadAll has completed then close and return to the caller, at which point hopefully everything is reloaded.
 			testRunner.WaitForReloadAll(() => testRunner.ClickByName("Save & Continue Button"));
 
-			testRunner.Delay(() => testRunner.WidgetExists<SetupStepInstallDriver>());
+			testRunner.WaitFor(() => testRunner.WidgetExists<SetupStepInstallDriver>());
 			testRunner.ClickByName("Cancel Wizard Button");
-			testRunner.Delay(() => !testRunner.WidgetExists<SetupStepInstallDriver>());
+			testRunner.WaitFor(() => !testRunner.WidgetExists<SetupStepInstallDriver>());
 		}
 
 		public static void OpenPrintersDropdown(this AutomationRunner testRunner)
@@ -461,7 +461,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				// Wait for text widget to have focus
 				var widget = testRunner.GetWidgetByName("Automation Dialog TextEdit", out _, 5);
-				testRunner.Delay(() => widget.ContainsFocus);
+				testRunner.WaitFor(() => widget.ContainsFocus);
 			}
 			else
 			{
@@ -471,7 +471,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.Type(textValue);
 
 			testRunner.Type("{Enter}");
-			testRunner.WaitVanishForName("Automation Dialog TextEdit", 5);
+			testRunner.WaitForWidgetDisappear("Automation Dialog TextEdit", 5);
 		}
 
 		public static void AddItemToBedplate(this AutomationRunner testRunner, string containerName = "Calibration Parts Row Item Collection", string partName = "Row Item Calibration - Box.stl")
@@ -494,12 +494,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			testRunner.ClickByName("Add to Plate Menu Item");
 			// wait for the object to be added
-			testRunner.Delay(() => scene.Children.Count == preAddCount + 1, 1);
+			testRunner.WaitFor(() => scene.Children.Count == preAddCount + 1);
 			// wait for the object to be done loading
 			var insertionGroup = scene.Children.LastOrDefault() as InsertionGroup;
 			if (insertionGroup != null)
 			{
-				testRunner.Delay(() => scene.Children.LastOrDefault() as InsertionGroup != null, 10);
+				testRunner.WaitFor(() => scene.Children.LastOrDefault() as InsertionGroup != null, 10);
 			}
 		}
 
@@ -522,12 +522,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void WaitForPrintFinished(this AutomationRunner testRunner, int maxSeconds = 500)
 		{
-			testRunner.Delay(() => ApplicationController.Instance.ActivePrinter.Connection.CommunicationState == CommunicationStates.FinishedPrint, maxSeconds);
+			testRunner.WaitFor(() => ApplicationController.Instance.ActivePrinter.Connection.CommunicationState == CommunicationStates.FinishedPrint, maxSeconds);
 		}
 
 		public static void WaitForCommunicationStateDisconnected(this AutomationRunner testRunner, int maxSeconds = 500)
 		{
-			testRunner.Delay(() => ApplicationController.Instance.ActivePrinter.Connection.CommunicationState == CommunicationStates.Disconnected, maxSeconds);
+			testRunner.WaitFor(() => ApplicationController.Instance.ActivePrinter.Connection.CommunicationState == CommunicationStates.Disconnected, maxSeconds);
 		}
 
 		public static async Task RunTest(
@@ -676,12 +676,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				&& printerConnection.CommunicationState != CommunicationStates.FinishedPrint)
 			{
 				testRunner.ClickByName("Connect to printer button");
-				testRunner.Delay(() => printerConnection.CommunicationState == CommunicationStates.Connected);
+				testRunner.WaitFor(() => printerConnection.CommunicationState == CommunicationStates.Connected);
 			}
 
 			// Wait for button to become enabled
 			var printerPopup = testRunner.GetWidgetByName("PrintPopupMenu", out _);
-			testRunner.Delay(() => printerPopup.Enabled);
+			testRunner.WaitFor(() => printerPopup.Enabled);
 
 			testRunner.ClickByName("PrintPopupMenu");
 		}

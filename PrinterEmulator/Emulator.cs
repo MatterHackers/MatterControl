@@ -34,7 +34,7 @@ namespace MatterHackers.PrinterEmulator
 	public partial class Emulator : IDisposable
 	{
 		/// <summary>
-		/// The number of seconds the emulator should take to heat up and given target
+		/// The number of seconds the emulator should take to heat up to a given target
 		/// </summary>
 		public static double DefaultHeatUpTime = 3;
 
