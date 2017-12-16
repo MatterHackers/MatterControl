@@ -196,6 +196,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			// Load the TestEnv config
 			var config = TestAutomationConfig.Load();
 
+			Emulator.DefaultHeatUpTime = config.HeatupTime;
+			
 			// Create the printer
 			testRunner.AddAndSelectPrinter(make, model);
 
@@ -809,6 +811,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public bool UseAutomationMouse { get; set; }
 
 		public double MouseUpDelay { get; set; } = 0.2;
+
+		/// <summary>
+		/// The number of seconds the emulator should take to heat up and given target
+		/// </summary>
+		public double HeatupTime { get; set; } = 0.5;
 
 		public static TestAutomationConfig Load()
 		{

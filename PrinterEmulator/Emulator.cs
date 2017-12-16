@@ -33,6 +33,11 @@ namespace MatterHackers.PrinterEmulator
 {
 	public partial class Emulator : IDisposable
 	{
+		/// <summary>
+		/// The number of seconds the emulator should take to heat up and given target
+		/// </summary>
+		public static double DefaultHeatUpTime = 3;
+
 		public int CDChangeCount;
 		public bool CDState;
 		public int CtsChangeCount;
@@ -499,7 +504,7 @@ namespace MatterHackers.PrinterEmulator
 				}
 			}
 
-			private double _heatupTimeInSeconds = 3;
+			private double _heatupTimeInSeconds = DefaultHeatUpTime;
 			public double HeatUpTimeInSeconds
 			{
 				get => _heatupTimeInSeconds;
@@ -544,7 +549,6 @@ namespace MatterHackers.PrinterEmulator
 				shutdown = true;
 			}
 		}
-
 	}
 
 	public class EmulatorPortFactory : FrostedSerialPortFactory
