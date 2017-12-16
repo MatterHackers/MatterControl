@@ -116,7 +116,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 							// replace on the first replacement group only
 							var replacedString = item.Regex.Replace(lineToWrite, splitReplacement[0]);
 							linesToWrite[i] = replacedString;
-							// add in the othre replacement groups
+							// add in the other replacement groups
 							for (int j = 1; j < splitReplacement.Length; j++)
 							{
 								addedLines.Add(splitReplacement[j]);
