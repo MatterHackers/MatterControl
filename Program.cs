@@ -3,7 +3,9 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Font;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
@@ -17,6 +19,14 @@ namespace MatterHackers.MatterControl
 		private const int RaygunMaxNotifications = 15;
 
 		private static int raygunNotificationCount = 0;
+
+		private static string lastSection = "";
+
+		private static RaygunClient _raygunClient = GetCorrectClient();
+		private static Stopwatch timer;
+		private static ProgressBar progressBar;
+		private static TextWidget statusText;
+		private static FlowLayoutWidget progressPanel;
 
 		/// <summary>
 		/// The main entry point for the application.
@@ -44,7 +54,7 @@ namespace MatterHackers.MatterControl
 				AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
 			}
 
-			var timer = Stopwatch.StartNew();
+			timer = Stopwatch.StartNew();
 
 			// Get startup bounds from MatterControl and construct system window
 			//var systemWindow = new DesktopMainWindow(400, 200)
@@ -55,36 +65,77 @@ namespace MatterHackers.MatterControl
 				BackgroundColor = Color.DarkGray
 			};
 
+			progressPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.Center,
+				VAnchor = VAnchor.Center,
+				MinimumSize = new VectorMath.Vector2(400, 100),
+			};
+			systemWindow.AddChild(progressPanel);
+
+			progressPanel.AddChild(statusText = new TextWidget("XXXXXXXXXXXXX", textColor: new Color("#bbb"))
+			{
+				MinimumSize = new VectorMath.Vector2(200, 30)
+			});
+
+			progressPanel.AddChild(progressBar = new ProgressBar()
+			{
+				FillColor = new Color("#3D4B72"),
+				BorderColor = new Color("#777"),
+				Height = 11,
+				Width = 300,
+				HAnchor = HAnchor.Absolute,
+				VAnchor = VAnchor.Absolute
+			});
+
 			AppContext.RootSystemWindow = systemWindow;
 
 			// Hook SystemWindow load and spin up MatterControl once we've hit first draw
 			systemWindow.Load += (s, e) =>
 			{
-				UiThread.RunOnIdle(() =>
+				ReportStartupProgress(0.1, "First draw->RunOnIdle");
+
+				//UiThread.RunOnIdle(() =>
+				Task.Run(() =>
 				{
+					ReportStartupProgress(0.5, "Datastore");
 					Datastore.Instance.Initialize();
 
-					var mainView = MatterControlApplication.Initialize(systemWindow, ReportStartupProgress);
+					ReportStartupProgress(0.15, "MatterControlApplication.Initialize");
+					var mainView = MatterControlApplication.Initialize(systemWindow, (progress0To1, status) =>
+					{
+						ReportStartupProgress(0.2 + progress0To1 * 0.7, status);
+					});
 
-					Console.WriteLine("Time to MatterControlApplication.Instance init: " + timer.Elapsed.TotalSeconds);
-
+					ReportStartupProgress(0.9, "AddChild->MainView");
 					systemWindow.RemoveAllChildren();
-
 					systemWindow.AddChild(mainView);
 
-					Console.WriteLine("Time to MatterControlApplication Layout: " + timer.Elapsed.TotalSeconds);
+					ReportStartupProgress(1, "X9x");
+
+					systemWindow.BackgroundColor = Color.Transparent;
+					systemWindow.Invalidate();
+
+					ReportStartupProgress(1.1, "X9x");
 				});
 			};
 
 			// Block indefinitely
+			ReportStartupProgress(0, "ShowAsSystemWindow");
 			systemWindow.ShowAsSystemWindow();
 		}
 
-		private static void ReportStartupProgress(string status)
+		private static void ReportStartupProgress(double progress0To1, string section)
 		{
-			Console.WriteLine(status);
-		}
+			statusText.Text = section;
+			progressBar.RatioComplete = progress0To1;
+			progressPanel.Invalidate();
 
+			Console.WriteLine($"Time to '{lastSection}': {timer.ElapsedMilliseconds}");
+			timer.Restart();
+
+			lastSection = section;
+		}
 
 		private static void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
 		{
@@ -105,8 +156,6 @@ namespace MatterHackers.MatterControl
 			}
 #endif
 		}
-
-		private static RaygunClient _raygunClient = GetCorrectClient();
 
 		private static RaygunClient GetCorrectClient()
 		{

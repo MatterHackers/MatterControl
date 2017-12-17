@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl
 
 		public static bool IsLoading { get; private set; } = true;
 
-		public static GuiWidget Initialize(SystemWindow systemWindow, Action<string> reporter)
+		public static GuiWidget Initialize(SystemWindow systemWindow, Action<double, string> reporter)
 		{
 			if (AggContext.OperatingSystem == OSType.Mac && AggContext.StaticData == null)
 			{
@@ -84,7 +84,7 @@ namespace MatterHackers.MatterControl
 			// Initialize a standard file system backed StaticData provider
 			if (AggContext.StaticData == null) // it may already be initialized by tests
 			{
-				reporter?.Invoke( "StaticData");
+				reporter?.Invoke(0.01, "StaticData");
 				AggContext.StaticData = new MatterHackers.Agg.FileSystemStaticData();
 			}
 
@@ -118,22 +118,22 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
-			reporter?.Invoke("ApplicationController");
+			reporter?.Invoke(0.05, "ApplicationController");
 			var na = ApplicationController.Instance;
 
 			// Set the default theme colors
-			reporter?.Invoke("LoadOemOrDefaultTheme");
+			reporter?.Invoke(0.1, "LoadOemOrDefaultTheme");
 			ApplicationController.LoadOemOrDefaultTheme();
 
 			// Accessing any property on ProfileManager will run the static constructor and spin up the ProfileManager instance
-			reporter?.Invoke("ProfileManager");
+			reporter?.Invoke(0.2, "ProfileManager");
 			bool na2 = ProfileManager.Instance.IsGuestProfile;
 
-			reporter?.Invoke("MainView");
-			ApplicationController.Instance.MainView = new DesktopView();
+			reporter?.Invoke(0.3, "MainView");
+			ApplicationController.Instance.MainView = new WidescreenPanel();
 
 			// now that we are all set up lets load our plugins and allow them their chance to set things up
-			reporter?.Invoke("Plugins");
+			reporter?.Invoke(0.8, "Plugins");
 			FindAndInstantiatePlugins(systemWindow);
 			if (ApplicationController.Instance.PluginsLoaded != null)
 			{
@@ -151,6 +151,7 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
+			reporter?.Invoke(0.9, "AfterLoad");
 			AfterLoad();
 
 			return ApplicationController.Instance.MainView;
@@ -164,7 +165,7 @@ namespace MatterHackers.MatterControl
 
 			// TODO: Calling UserChanged seems wrong. Load the right user before we spin up controls, rather than after
 			// Pushing this after load fixes that empty printer list
-			ApplicationController.Instance.UserChanged();
+			/////////////////////ApplicationController.Instance.UserChanged();
 
 			bool showAuthWindow =  PrinterSetup.ShouldShowAuthPanel?.Invoke() ?? false;
 			if (showAuthWindow)
