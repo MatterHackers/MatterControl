@@ -71,8 +71,6 @@ namespace MatterHackers.MatterControl
 
 		private double fontSize => Options.FontSize;
 		private double borderWidth => Options.BorderWidth;
-		private bool invertImageLocation => Options.InvertImageLocation;
-		private FlowDirection flowDirection => Options.FlowDirection;
 		private double FixedWidth => Options.FixedWidth;
 		private double FixedHeight => Options.FixedHeight;
 		private double ImageSpacing => Options.ImageSpacing;
@@ -140,10 +138,10 @@ namespace MatterHackers.MatterControl
 		{
 			// Create button based on view container widget
 			var buttonViewWidget = new ButtonViewStates(
-				new TextImageWidget(label, normalFillColor, normalBorderColor, normalTextColor, borderWidth, Margin, null, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight, imageSpacing: ImageSpacing),
-				new TextImageWidget(label, hoverFillColor, hoverBorderColor, hoverTextColor, borderWidth, Margin, null, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight, imageSpacing: ImageSpacing),
-				new TextImageWidget(label, pressedFillColor, pressedBorderColor, pressedTextColor, borderWidth, Margin, null, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight, imageSpacing: ImageSpacing),
-				new TextImageWidget(label, disabledFillColor, disabledBorderColor, disabledTextColor, borderWidth, Margin, null, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight, imageSpacing: ImageSpacing)
+				new TextImageWidget(label, normalFillColor, normalBorderColor, normalTextColor, borderWidth, Margin, null, fontSize: this.fontSize, height: this.FixedHeight, imageSpacing: ImageSpacing),
+				new TextImageWidget(label, hoverFillColor, hoverBorderColor, hoverTextColor, borderWidth, Margin, null, fontSize: this.fontSize, height: this.FixedHeight, imageSpacing: ImageSpacing),
+				new TextImageWidget(label, pressedFillColor, pressedBorderColor, pressedTextColor, borderWidth, Margin, null, fontSize: this.fontSize, height: this.FixedHeight, imageSpacing: ImageSpacing),
+				new TextImageWidget(label, disabledFillColor, disabledBorderColor, disabledTextColor, borderWidth, Margin, null, fontSize: this.fontSize, height: this.FixedHeight, imageSpacing: ImageSpacing)
 			);
 
 			var textImageButton = new Button(0, 0, buttonViewWidget)
@@ -188,22 +186,14 @@ namespace MatterHackers.MatterControl
 				disabledImage = normalImage.Multiply(new Color(255, 255, 255, 150));
 			}
 
-			// TODO: This overrides users settings in a way that's completely unclear
-			if (invertImageLocation)
-			{
-				Options.FlowDirection = FlowDirection.RightToLeft;
-			}
-			else
-			{
-				Options.FlowDirection = FlowDirection.LeftToRight;
-			}
+			Options.FlowDirection = FlowDirection.LeftToRight;
 
 			//Create the multi-state button view
 			return new ButtonViewStates(
-				new TextImageWidget(label, normalFillColor, normalBorderColor, normalTextColor, borderWidth, Margin, normalImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight, imageSpacing: ImageSpacing),
-				new TextImageWidget(label, hoverFillColor, hoverBorderColor, hoverTextColor, borderWidth, Margin, hoverImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight, imageSpacing: ImageSpacing),
-				new TextImageWidget(label, pressedFillColor, pressedBorderColor, pressedTextColor, borderWidth, Margin, pressedImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight, imageSpacing: ImageSpacing),
-				new TextImageWidget(label, disabledFillColor, disabledBorderColor, disabledTextColor, borderWidth, Margin, disabledImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight, imageSpacing: ImageSpacing)
+				new TextImageWidget(label, normalFillColor, normalBorderColor, normalTextColor, borderWidth, Margin, normalImage, fontSize: this.fontSize, height: this.FixedHeight, imageSpacing: ImageSpacing),
+				new TextImageWidget(label, hoverFillColor, hoverBorderColor, hoverTextColor, borderWidth, Margin, hoverImage, fontSize: this.fontSize, height: this.FixedHeight, imageSpacing: ImageSpacing),
+				new TextImageWidget(label, pressedFillColor, pressedBorderColor, pressedTextColor, borderWidth, Margin, pressedImage, fontSize: this.fontSize, height: this.FixedHeight, imageSpacing: ImageSpacing),
+				new TextImageWidget(label, disabledFillColor, disabledBorderColor, disabledTextColor, borderWidth, Margin, disabledImage, fontSize: this.fontSize, height: this.FixedHeight, imageSpacing: ImageSpacing)
 			);
 		}
 
@@ -221,24 +211,16 @@ namespace MatterHackers.MatterControl
 				pressedText = label;
 			}
 
-			// TODO: This overrides users settings in a way that's completely unclear
-			if (invertImageLocation)
-			{
-				Options.FlowDirection = FlowDirection.RightToLeft;
-			}
-			else
-			{
-				Options.FlowDirection = FlowDirection.LeftToRight;
-			}
+			Options.FlowDirection = FlowDirection.LeftToRight;
 
 			//Create the multi-state button view
-			GuiWidget normal = new TextImageWidget(label, normalFillColor, normalBorderColor, normalTextColor, borderWidth, Margin, normalImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight);
-			GuiWidget normalHover = new TextImageWidget(label, hoverFillColor, normalBorderColor, hoverTextColor, borderWidth, Margin, normalImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight);
-			GuiWidget switchNormalToPressed = new TextImageWidget(label, pressedFillColor, normalBorderColor, pressedTextColor, borderWidth, Margin, normalToPressedImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight);
-			GuiWidget pressed = new TextImageWidget(pressedText, pressedFillColor, pressedBorderColor, pressedTextColor, borderWidth, Margin, pressedImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight);
-			GuiWidget pressedHover = new TextImageWidget(label, hoverFillColor, pressedBorderColor, hoverTextColor, borderWidth, Margin, pressedImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight);
-			GuiWidget switchPressedToNormal = new TextImageWidget(label, normalFillColor, pressedBorderColor, normalTextColor, borderWidth, Margin, pressedToNormalImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight);
-			GuiWidget disabled = new TextImageWidget(label, disabledFillColor, disabledBorderColor, disabledTextColor, borderWidth, Margin, normalImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight);
+			GuiWidget normal = new TextImageWidget(label, normalFillColor, normalBorderColor, normalTextColor, borderWidth, Margin, normalImage, fontSize: this.fontSize, height: this.FixedHeight);
+			GuiWidget normalHover = new TextImageWidget(label, hoverFillColor, normalBorderColor, hoverTextColor, borderWidth, Margin, normalImage, fontSize: this.fontSize, height: this.FixedHeight);
+			GuiWidget switchNormalToPressed = new TextImageWidget(label, pressedFillColor, normalBorderColor, pressedTextColor, borderWidth, Margin, normalToPressedImage, fontSize: this.fontSize, height: this.FixedHeight);
+			GuiWidget pressed = new TextImageWidget(pressedText, pressedFillColor, pressedBorderColor, pressedTextColor, borderWidth, Margin, pressedImage, fontSize: this.fontSize, height: this.FixedHeight);
+			GuiWidget pressedHover = new TextImageWidget(label, hoverFillColor, pressedBorderColor, hoverTextColor, borderWidth, Margin, pressedImage, fontSize: this.fontSize, height: this.FixedHeight);
+			GuiWidget switchPressedToNormal = new TextImageWidget(label, normalFillColor, pressedBorderColor, normalTextColor, borderWidth, Margin, pressedToNormalImage, fontSize: this.fontSize, height: this.FixedHeight);
+			GuiWidget disabled = new TextImageWidget(label, disabledFillColor, disabledBorderColor, disabledTextColor, borderWidth, Margin, normalImage, fontSize: this.fontSize, height: this.FixedHeight);
 
 			return new CheckBoxViewStates(normal, normalHover, switchNormalToPressed, pressed, pressedHover, switchPressedToNormal, disabled);
 		}
@@ -247,11 +229,11 @@ namespace MatterHackers.MatterControl
 		{
 			BorderDouble internalMargin = 0;
 
-			var nomalState = new TextImageWidget(label, normalFillColor, normalBorderColor, normalTextColor, borderWidth, internalMargin, iconImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight, width: this.FixedWidth);
-			var hoverState = new TextImageWidget(label, hoverFillColor, hoverBorderColor, hoverTextColor, borderWidth, internalMargin, iconImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight, width: this.FixedWidth);
-			var checkingState = new TextImageWidget(label, hoverFillColor, checkedBorderColor, hoverTextColor, borderWidth, internalMargin, iconImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight, width: this.FixedWidth);
-			var checkedState = new TextImageWidget(label, pressedFillColor, checkedBorderColor, pressedTextColor, borderWidth, internalMargin, iconImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight, width: this.FixedWidth);
-			var disabledState = new TextImageWidget(label, disabledFillColor, disabledBorderColor, disabledTextColor, borderWidth, internalMargin, iconImage, flowDirection: flowDirection, fontSize: this.fontSize, height: this.FixedHeight, width: this.FixedWidth);
+			var nomalState = new TextImageWidget(label, normalFillColor, normalBorderColor, normalTextColor, borderWidth, internalMargin, iconImage, fontSize: this.fontSize, height: this.FixedHeight, width: this.FixedWidth);
+			var hoverState = new TextImageWidget(label, hoverFillColor, hoverBorderColor, hoverTextColor, borderWidth, internalMargin, iconImage, fontSize: this.fontSize, height: this.FixedHeight, width: this.FixedWidth);
+			var checkingState = new TextImageWidget(label, hoverFillColor, checkedBorderColor, hoverTextColor, borderWidth, internalMargin, iconImage, fontSize: this.fontSize, height: this.FixedHeight, width: this.FixedWidth);
+			var checkedState = new TextImageWidget(label, pressedFillColor, checkedBorderColor, pressedTextColor, borderWidth, internalMargin, iconImage, fontSize: this.fontSize, height: this.FixedHeight, width: this.FixedWidth);
+			var disabledState = new TextImageWidget(label, disabledFillColor, disabledBorderColor, disabledTextColor, borderWidth, internalMargin, iconImage, fontSize: this.fontSize, height: this.FixedHeight, width: this.FixedWidth);
 
 			var buttonView = new RadioButtonViewStates(nomalState, hoverState, checkingState, checkedState, disabledState);
 
@@ -292,7 +274,6 @@ namespace MatterHackers.MatterControl
 
 		public double FontSize { get; set; } = 12;
 		public double BorderWidth { get; set; } = 1;
-		public bool InvertImageLocation { get; set; } = false;
 		public bool AllowThemeToAdjustImage { get; set; } = true;
 
 		public double FixedWidth { get; set; } = 0;
@@ -334,7 +315,6 @@ namespace MatterHackers.MatterControl
 			this.FlowDirection = cloneSource.FlowDirection;
 			this.FontSize = cloneSource.FontSize;
 			this.ImageSpacing = cloneSource.ImageSpacing;
-			this.InvertImageLocation = cloneSource.InvertImageLocation;
 			this.Margin = cloneSource.Margin;
 
 			this.NormalTextColor = cloneSource.NormalTextColor;

@@ -162,18 +162,37 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					var originalItem = Scene.SelectedItem;
 					if (originalItem != null)
 					{
-						// new item can be null by the time this task kicks off
-						var clonedItem = originalItem.Clone();
+						if (originalItem.ItemType == Object3DTypes.SelectionGroup)
+						{
+							// the selection is a group of obects that need to be copied
+							var copyList = originalItem.Children.ToList();
+							Scene.SelectedItem = null;
+							foreach(var item in copyList)
+							{
+								var clonedItem = item.Clone();
+								// make the name unique
+								var newName = agg_basics.GetNonCollidingName(item.Name, Scene.Descendants().Select((d) => d.Name));
+								clonedItem.Name = newName;
+								// add it to the scene
+								Scene.Children.Add(clonedItem);
+								// add it to the selection
+								Scene.AddToSelection(clonedItem);
+							}
+						}
+						else // the selection can be cloned easily
+						{
+							var clonedItem = originalItem.Clone();
 
-						// make the name unique
-						var newName = agg_basics.GetNonCollidingName(originalItem.Name, Scene.Descendants().Select((d) => d.Name));
-						clonedItem.Name = newName;
+							// make the name unique
+							var newName = agg_basics.GetNonCollidingName(originalItem.Name, Scene.Descendants().Select((d) => d.Name));
+							clonedItem.Name = newName;
 
-						// More usefull if it creates the part in the exact positon and then the user can move it.
-						// Consistent with othre software as well. LBB 2017-12-02
-						//PlatingHelper.MoveToOpenPositionRelativeGroup(clonedItem, Scene.Children);
+							// More usefull if it creates the part in the exact positon and then the user can move it.
+							// Consistent with othre software as well. LBB 2017-12-02
+							//PlatingHelper.MoveToOpenPositionRelativeGroup(clonedItem, Scene.Children);
 
-						return clonedItem;
+							return clonedItem;
+						}
 					}
 
 					return null;

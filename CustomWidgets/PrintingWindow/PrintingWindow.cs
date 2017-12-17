@@ -49,7 +49,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		private TextImageButtonFactory buttonFactory = new TextImageButtonFactory(new ButtonFactoryOptions()
 		{
 			FontSize = 15,
-			InvertImageLocation = false,
 			NormalTextColor = ActiveTheme.Instance.PrimaryTextColor,
 			HoverTextColor = ActiveTheme.Instance.PrimaryTextColor,
 			DisabledTextColor = new Color(ActiveTheme.Instance.PrimaryTextColor, 100),
