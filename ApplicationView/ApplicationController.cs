@@ -787,6 +787,12 @@ namespace MatterHackers.MatterControl
 			return string.IsNullOrEmpty(libraryItem.ID) ? null : ApplicationController.CacheablePath("ItemThumbnails", $"{libraryItem.ID}.png");
 		}
 
+		public string ThumbnailCachePath(ILibraryItem libraryItem, int width, int height)
+		{
+			// TODO: Use content SHA
+			return string.IsNullOrEmpty(libraryItem.ID) ? null : ApplicationController.CacheablePath("ItemThumbnails", $"{libraryItem.ID}-{width}x{height}.png");
+		}
+
 		public void SwitchToPurchasedLibrary()
 		{
 			var purchasedContainer = Library.RootLibaryContainer.ChildContainers.Where(c => c.ID == "LibraryProviderPurchasedKey").FirstOrDefault();
