@@ -323,7 +323,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						if (container != null)
 						{
 							container.Parent = ActiveContainer;
-							LoadContainer(container);
+							SetActiveContainer(container);
 						}
 					}
 				}
@@ -369,9 +369,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			}));
 		}
 
-		public void LoadContainer(ILibraryContainer temp)
+		public void SetActiveContainer(ILibraryContainer container)
 		{
-			this.LibraryContext.ActiveContainer = temp;
+			this.LibraryContext.ActiveContainer = container;
 		}
 
 		public ObservableCollection<ListViewItem> SelectedItems { get; } = new ObservableCollection<ListViewItem>();
