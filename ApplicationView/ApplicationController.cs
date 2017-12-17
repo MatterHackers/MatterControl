@@ -75,6 +75,11 @@ namespace MatterHackers.MatterControl
 		/// Native platform features 
 		/// </summary>
 		public static INativePlatformFeatures Platform { get; set; }
+
+		/// <summary>
+		/// The root SystemWindow
+		/// </summary>
+		public static SystemWindow RootSystemWindow { get; internal set; }
 	}
 
 	public class ApplicationController
@@ -123,6 +128,8 @@ namespace MatterHackers.MatterControl
 		/// Allows application components to hook initial SystemWindow Load event without an existing Widget instance
 		/// </summary>
 		public static event EventHandler Load;
+
+		public bool ApplicationExiting { get; internal set; } = false;
 
 		public static Func<string, Task<Dictionary<string, string>>> GetProfileHistory;
 
@@ -241,7 +248,7 @@ namespace MatterHackers.MatterControl
 		{
 			Thread.CurrentThread.Name = $"ThumbnailGeneration";
 
-			while(!MatterControlApplication.Instance.ApplicationExiting)
+			while(!this.ApplicationExiting)
 			{
 				Thread.Sleep(100);
 
@@ -696,7 +703,7 @@ namespace MatterHackers.MatterControl
 				VAnchor = VAnchor.Center
 			});
 
-			MatterControlApplication.Instance.AddChild(reloadingOverlay);
+			AppContext.RootSystemWindow.AddChild(reloadingOverlay);
 
 			this.IsReloading = true;
 
@@ -715,8 +722,7 @@ namespace MatterHackers.MatterControl
 
 				this.IsReloading = false;
 
-				MatterControlApplication.Instance.RemoveChild(reloadingOverlay);
-
+				AppContext.RootSystemWindow.RemoveChild(reloadingOverlay);
 			});
 		}
 

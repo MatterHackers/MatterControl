@@ -436,7 +436,7 @@ namespace MatterHackers.MatterControl
 				installUpdate.Start();
 
 				//Attempt to close current application
-				SystemWindow topSystemWindow = MatterControlApplication.Instance as SystemWindow;
+				SystemWindow topSystemWindow = AppContext.RootSystemWindow;
 				if (topSystemWindow != null)
 				{
 					topSystemWindow.CloseOnIdle();

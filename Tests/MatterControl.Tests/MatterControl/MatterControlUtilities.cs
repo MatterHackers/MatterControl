@@ -68,7 +68,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		private static string runName = DateTime.Now.ToString("yyyy-MM-ddTHH-mm-ss");
 
 		public static string PathToDownloadsSubFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads", "-Temporary");
-		
+
+		private static SystemWindow rootSystemWindow;
+
 		public static void RemoveAllFromQueue(this AutomationRunner testRunner)
 		{
 			testRunner.ClickByName("Queue... Menu");
@@ -137,7 +139,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void CloseMatterControl(this AutomationRunner testRunner)
 		{
-			MatterControlApplication.Instance.Close();
+			rootSystemWindow?.Close();
 		}
 
 		public enum PrepAction
@@ -579,10 +581,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			UserSettings.Instance.set(UserSettingsKey.ThumbnailRenderingMode, "orthographic");
 			//GL.HardwareAvailable = false;
-			MatterControlApplication matterControlWindow = MatterControlApplication.CreateInstance(overrideWidth, overrideHeight);
 
 			var config = TestAutomationConfig.Load();
-
 			if (config.UseAutomationDialogs)
 			{
 				AggContext.Config.ProviderTypes.DialogProvider = "MatterHackers.Agg.Platform.AutomationDialogProvider, GuiAutomation";
@@ -592,8 +592,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			AutomationRunner.TimeToMoveMouse = config.TimeToMoveMouse;
 			AutomationRunner.UpDelaySeconds = config.MouseUpDelay;
 
+			rootSystemWindow = new DesktopMainWindow(overrideWidth, overrideHeight);
+
 			await AutomationRunner.ShowWindowAndExecuteTests(
-				matterControlWindow,
+				rootSystemWindow,
 				testMethod,
 				maxTimeToRun,
 				defaultTestImages,
@@ -605,8 +607,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 						ApplicationController.Instance.ActivePrinter.Connection.Disable();
 					}
 
-					MatterControlApplication app = MatterControlApplication.Instance;
-					app.Close();
+					rootSystemWindow.Close();
 				});
 		}
 
