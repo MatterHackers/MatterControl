@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl
 			};
 			systemWindow.AddChild(progressPanel);
 
-			progressPanel.AddChild(statusText = new TextWidget("XXXXXXXXXXXXX", textColor: new Color("#bbb"))
+			progressPanel.AddChild(statusText = new TextWidget("", textColor: new Color("#bbb"))
 			{
 				MinimumSize = new VectorMath.Vector2(200, 30)
 			});
@@ -93,12 +93,12 @@ namespace MatterHackers.MatterControl
 			// Hook SystemWindow load and spin up MatterControl once we've hit first draw
 			systemWindow.Load += (s, e) =>
 			{
-				ReportStartupProgress(0.1, "First draw->RunOnIdle");
+				ReportStartupProgress(0.02, "First draw->RunOnIdle");
 
 				//UiThread.RunOnIdle(() =>
 				Task.Run(() =>
 				{
-					ReportStartupProgress(0.5, "Datastore");
+					ReportStartupProgress(0.1, "Datastore");
 					Datastore.Instance.Initialize();
 
 					ReportStartupProgress(0.15, "MatterControlApplication.Initialize");
@@ -111,12 +111,14 @@ namespace MatterHackers.MatterControl
 					systemWindow.RemoveAllChildren();
 					systemWindow.AddChild(mainView);
 
-					ReportStartupProgress(1, "X9x");
+					ReportStartupProgress(1, "");
 
 					systemWindow.BackgroundColor = Color.Transparent;
+
 					systemWindow.Invalidate();
 
-					ReportStartupProgress(1.1, "X9x");
+					// TODO: Still can't figure out the delay between concluding this block and the first actual render with MainView content. Current 
+					// best guess is delays between widget construction and OpenGL texture creation
 				});
 			};
 
