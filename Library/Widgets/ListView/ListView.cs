@@ -215,7 +215,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			if (firstItem != null)
 			{
 				firstItem.ViewWidget.LoadItemThumbnail().ConfigureAwait(false);
-				firstItem.ViewWidget.Invalidate();
 			}
 		}
 
@@ -271,7 +270,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			if (bigRender != null)
 			{
 				try
-			{
+				{
 					var thumbnail = LibraryProviderHelpers.ResizeImage(bigRender, width, height);
 
 					// Cache at requested size
@@ -279,8 +278,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						ApplicationController.Instance.ThumbnailCachePath(listViewItem.Model, width, height), 
 						thumbnail);
 
-				return thumbnail;
-			}
+					return thumbnail;
+				}
 				catch { } // suppress and return null on errors
 			}
 
