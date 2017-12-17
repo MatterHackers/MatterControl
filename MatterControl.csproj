@@ -81,6 +81,7 @@
     <Compile Include="ActionBar\PrinterSelector.cs" />
     <Compile Include="ActionBar\ResetButton.cs" />
     <Compile Include="ActionBar\TemperatureWidgetBed.cs" />
+    <Compile Include="ApplicationView\OemProfileDictionary.cs" />
     <Compile Include="DesktopRootSystemWindow.cs" />
     <Compile Include="PartPreviewWindow\View3D\PrinterBar\PrintPopupMenu.cs" />
     <Compile Include="PartPreviewWindow\View3D\PrinterBar\SliceButton.cs" />
@@ -375,7 +376,6 @@
     <Compile Include="DataStorage\Datastore.cs" />
     <Compile Include="DataStorage\SQLiteUnix.cs" />
     <Compile Include="DataStorage\SQLiteAsync.cs" />
-    <Compile Include="ApplicationView\MainApplicationWidget.cs" />
     <Compile Include="Utilities\ManifestFileHandler.cs">
       <SubType>Code</SubType>
     </Compile>

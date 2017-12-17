@@ -292,7 +292,7 @@ namespace MatterHackers.MatterControl
 
 		public SlicePresetsWindow EditQualityPresetsWindow { get; set; }
 
-		public ApplicationView MainView;
+		public GuiWidget MainView;
 
 		private EventHandler unregisterEvents;
 
@@ -706,18 +706,17 @@ namespace MatterHackers.MatterControl
 			{
 				using (new QuickTimer($"ReloadAll_{reloadCount++}:"))
 				{
-					MainView?.CloseAllChildren();
-					using (new QuickTimer("ReloadAll_AddElements"))
-					{
-						// Actual ReloadAll implementation
-						MainView?.CreateAndAddChildren();
-					}
+					MainView = new WidescreenPanel();
 					this.DoneReloadingAll?.CallEvents(null, null);
+
+					using (new QuickTimer("Time to AddMainview: "))
+					{
+						AppContext.RootSystemWindow.CloseAllChildren();
+						AppContext.RootSystemWindow.AddChild(MainView);
+					}
 				}
 
 				this.IsReloading = false;
-
-				AppContext.RootSystemWindow.RemoveChild(reloadingOverlay);
 			});
 		}
 
