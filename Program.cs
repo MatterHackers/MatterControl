@@ -33,7 +33,6 @@ namespace MatterHackers.MatterControl
 			// Make sure we have the right working directory as we assume everything relative to the executable.
 			Directory.SetCurrentDirectory(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location));
 
-			Datastore.Instance.Initialize();
 
 #if !DEBUG
 			// Conditionally spin up error reporting if not on the Stable channel
@@ -63,23 +62,29 @@ namespace MatterHackers.MatterControl
 			{
 				UiThread.RunOnIdle(() =>
 				{
-					var matterControl = new MatterControlApplication(-1, -1);
+					Datastore.Instance.Initialize();
+
+					var mainView = MatterControlApplication.Initialize(systemWindow, ReportStartupProgress);
 
 					Console.WriteLine("Time to MatterControlApplication.Instance init: " + timer.Elapsed.TotalSeconds);
 
 					systemWindow.RemoveAllChildren();
 
-					systemWindow.AddChild(matterControl);
+					systemWindow.AddChild(mainView);
 
 					Console.WriteLine("Time to MatterControlApplication Layout: " + timer.Elapsed.TotalSeconds);
-
-					systemWindow.Invalidate();
 				});
 			};
 
 			// Block indefinitely
 			systemWindow.ShowAsSystemWindow();
 		}
+
+		private static void ReportStartupProgress(string status)
+		{
+			Console.WriteLine(status);
+		}
+
 
 		private static void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
 		{

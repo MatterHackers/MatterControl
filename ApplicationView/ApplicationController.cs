@@ -124,11 +124,6 @@ namespace MatterHackers.MatterControl
 		public const string EnvironmentName = "";
 #endif
 
-		/// <summary>
-		/// Allows application components to hook initial SystemWindow Load event without an existing Widget instance
-		/// </summary>
-		public static event EventHandler Load;
-
 		public bool ApplicationExiting { get; internal set; } = false;
 
 		public static Func<string, Task<Dictionary<string, string>>> GetProfileHistory;
@@ -743,7 +738,7 @@ namespace MatterHackers.MatterControl
 			ApplicationSettings.Instance.ReleaseClientToken();
 		}
 
-		static void LoadOemOrDefaultTheme()
+		internal static void LoadOemOrDefaultTheme()
 		{
 			// if not check for the oem color and use it if set
 			// else default to "Blue - Light"
@@ -764,26 +759,15 @@ namespace MatterHackers.MatterControl
 			{
 				if (globalInstance == null)
 				{
-					//using (new PerformanceTimer("Startup", "AppController Instance"))
+					globalInstance = new ApplicationController();
+
+					ActiveSliceSettings.ActivePrinterChanged.RegisterEvent((s, e) =>
 					{
-						globalInstance = new ApplicationController();
-
-						// Set the default theme colors
-						LoadOemOrDefaultTheme();
-
-						// Accessing any property on ProfileManager will run the static constructor and spin up the ProfileManager instance
-						bool na = ProfileManager.Instance.IsGuestProfile;
-
-						globalInstance.MainView = new DesktopView();
-
-						ActiveSliceSettings.ActivePrinterChanged.RegisterEvent((s, e) =>
+						if (!MatterControlApplication.IsLoading)
 						{
-							if (!MatterControlApplication.IsLoading)
-							{
-								ApplicationController.Instance.ReloadAll();
-							}
-						}, ref globalInstance.unregisterEvents);
-					}
+							ApplicationController.Instance.ReloadAll();
+						}
+					}, ref globalInstance.unregisterEvents);
 				}
 				return globalInstance;
 			}
@@ -860,67 +844,6 @@ namespace MatterHackers.MatterControl
 			{
 				// Show the import printers wizard
 				DialogWindow.Show<CopyGuestProfilesToUser>();
-			}
-		}
-
-		public void OnLoadActions()
-		{
-			Load?.Invoke(this, null);
-
-			// Pushing this after load fixes that empty printer list
-			ApplicationController.Instance.UserChanged();
-
-			bool showAuthWindow = PrinterSetup.ShouldShowAuthPanel?.Invoke() ?? false;
-			if (showAuthWindow)
-			{
-				if (ApplicationSettings.Instance.get(ApplicationSettingsKey.SuppressAuthPanel) != "True")
-				{
-					//Launch window to prompt user to sign in
-					UiThread.RunOnIdle(() => DialogWindow.Show(PrinterSetup.GetBestStartPage()));
-				}
-			}
-			else
-			{
-				//If user in logged in sync before checking to prompt to create printer
-				if (ApplicationController.SyncPrinterProfiles == null)
-				{
-					RunSetupIfRequired();
-				}
-				else
-				{
-					ApplicationController.SyncPrinterProfiles.Invoke("ApplicationController.OnLoadActions()", null).ContinueWith((task) =>
-					{
-						RunSetupIfRequired();
-					});
-				}
-			}
-
-			if (AggContext.OperatingSystem == OSType.Android)
-			{
-				// show this last so it is on top
-				if (UserSettings.Instance.get("SoftwareLicenseAccepted") != "true")
-				{
-					UiThread.RunOnIdle(() => DialogWindow.Show<LicenseAgreementPage>());
-				}
-			}
-
-			if (this.ActivePrinter.Settings.PrinterSelected
-				&& this.ActivePrinter.Settings.GetValue<bool>(SettingsKey.auto_connect))
-			{
-				UiThread.RunOnIdle(() =>
-				{
-					//PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
-					this.ActivePrinter.Connection.Connect();
-				}, 2);
-			}
-		}
-
-		private static void RunSetupIfRequired()
-		{
-			if (!ProfileManager.Instance.ActiveProfiles.Any())
-			{
-				// Start the setup wizard if no profiles exist
-				UiThread.RunOnIdle(() => DialogWindow.Show(PrinterSetup.GetBestStartPage()));
 			}
 		}
 

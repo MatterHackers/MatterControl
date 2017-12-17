@@ -45,6 +45,7 @@ using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PluginSystem;
 using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.PolygonMesh.Processors;
@@ -53,7 +54,7 @@ using Mindscape.Raygun4Net;
 
 namespace MatterHackers.MatterControl
 {
-	public class MatterControlApplication : GuiWidget
+	public static class MatterControlApplication
 	{
 #if DEBUG
 
@@ -65,18 +66,12 @@ namespace MatterHackers.MatterControl
 #endif
 
 		public static bool CameraInUseByExternalProcess { get; set; } = false;
-		public bool RestartOnClose = false;
 		
-		private string[] commandLineArgs = null;
+		private static string[] commandLineArgs = null;
 
 		public static bool IsLoading { get; private set; } = true;
 
-		public static void RequestPowerShutDown()
-		{
-			// does nothing on windows
-		}
-
-		static MatterControlApplication()
+		public static GuiWidget Initialize(SystemWindow systemWindow, Action<string> reporter)
 		{
 			if (AggContext.OperatingSystem == OSType.Mac && AggContext.StaticData == null)
 			{
@@ -86,27 +81,21 @@ namespace MatterHackers.MatterControl
 				Directory.SetCurrentDirectory(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location));
 			}
 
-			// Because fields on this class call localization methods and because those methods depend on the StaticData provider and because the field
-			// initializers run before the class constructor, we need to init the platform specific provider in the static constructor (or write a custom initializer method)
-			//
 			// Initialize a standard file system backed StaticData provider
 			if (AggContext.StaticData == null) // it may already be initialized by tests
 			{
+				reporter?.Invoke( "StaticData");
 				AggContext.StaticData = new MatterHackers.Agg.FileSystemStaticData();
 			}
-		}
 
-		public MatterControlApplication(double width, double height)
-			: base(width, height)
-		{
-			this.Name = "MatterControlApplication Widget";
 
 			ApplicationSettings.Instance.set("HardwareHasCamera", "false");
 
+			// TODO: Appears to be unused and should be removed
 			// set this at startup so that we can tell next time if it got set to true in close
 			UserSettings.Instance.Fields.StartCount = UserSettings.Instance.Fields.StartCount + 1;
 
-			this.commandLineArgs = Environment.GetCommandLineArgs();
+			var commandLineArgs = Environment.GetCommandLineArgs();
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
 			for (int currentCommandIndex = 0; currentCommandIndex < commandLineArgs.Length; currentCommandIndex++)
@@ -127,40 +116,31 @@ namespace MatterHackers.MatterControl
 						DesktopRootSystemWindow.ShowMemoryUsed = true;
 						break;
 				}
-
-				if (MeshFileIo.ValidFileExtensions().Contains(Path.GetExtension(command).ToUpper()))
-				{
-					// If we are the only instance running then do nothing.
-					// Else send these to the running instance so it can load them.
-				}
 			}
 
-			using (new PerformanceTimer("Startup", "MainView"))
-			{
-				this.AddChild(ApplicationController.Instance.MainView);
-			}
+			reporter?.Invoke("ApplicationController");
+			var na = ApplicationController.Instance;
 
-			this.AnchorAll();
+			// Set the default theme colors
+			reporter?.Invoke("LoadOemOrDefaultTheme");
+			ApplicationController.LoadOemOrDefaultTheme();
 
-			UiThread.RunOnIdle(CheckOnPrinter);
-		}
+			// Accessing any property on ProfileManager will run the static constructor and spin up the ProfileManager instance
+			reporter?.Invoke("ProfileManager");
+			bool na2 = ProfileManager.Instance.IsGuestProfile;
 
-		public override void OnLoad(EventArgs args)
-		{
-			// Moved from OnParentChanged
-			if (File.Exists("RunUnitTests.txt"))
-			{
-				//DiagnosticWidget diagnosticView = new DiagnosticWidget(this);
-			}
+			reporter?.Invoke("MainView");
+			ApplicationController.Instance.MainView = new DesktopView();
 
 			// now that we are all set up lets load our plugins and allow them their chance to set things up
-			FindAndInstantiatePlugins();
-
+			reporter?.Invoke("Plugins");
+			FindAndInstantiatePlugins(systemWindow);
 			if (ApplicationController.Instance.PluginsLoaded != null)
 			{
 				ApplicationController.Instance.PluginsLoaded.CallEvents(null, null);
 			}
 
+			// TODO: Do we still want to support command line arguments for adding to the queue?
 			foreach (string arg in commandLineArgs)
 			{
 				string argExtension = Path.GetExtension(arg).ToUpper();
@@ -171,19 +151,86 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
-			ApplicationController.Instance.OnLoadActions();
+			AfterLoad();
+
+			return ApplicationController.Instance.MainView;
+		}
+
+		public static void AfterLoad()
+		{
+			UiThread.RunOnIdle(CheckOnPrinter);
+
+			// ApplicationController.Instance.OnLoadActions {{
+
+			// TODO: Calling UserChanged seems wrong. Load the right user before we spin up controls, rather than after
+			// Pushing this after load fixes that empty printer list
+			ApplicationController.Instance.UserChanged();
+
+			bool showAuthWindow =  PrinterSetup.ShouldShowAuthPanel?.Invoke() ?? false;
+			if (showAuthWindow)
+			{
+				if (ApplicationSettings.Instance.get(ApplicationSettingsKey.SuppressAuthPanel) != "True")
+				{
+					//Launch window to prompt user to sign in
+					UiThread.RunOnIdle(() => DialogWindow.Show(PrinterSetup.GetBestStartPage()));
+				}
+			}
+			else
+			{
+				//If user in logged in sync before checking to prompt to create printer
+				if (ApplicationController.SyncPrinterProfiles == null)
+				{
+					RunSetupIfRequired();
+				}
+				else
+				{
+					ApplicationController.SyncPrinterProfiles.Invoke("ApplicationController.OnLoadActions()", null).ContinueWith((task) =>
+					{
+						RunSetupIfRequired();
+					});
+				}
+			}
+
+			if (AggContext.OperatingSystem == OSType.Android)
+			{
+				// show this last so it is on top
+				if (UserSettings.Instance.get("SoftwareLicenseAccepted") != "true")
+				{
+					UiThread.RunOnIdle(() => DialogWindow.Show<LicenseAgreementPage>());
+				}
+			}
+
+			if (ApplicationController.Instance.ActivePrinter is PrinterConfig printer
+				&& printer.Settings.PrinterSelected
+				&& printer.Settings.GetValue<bool>(SettingsKey.auto_connect))
+			{
+				UiThread.RunOnIdle(() =>
+				{
+					//PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
+					printer.Connection.Connect();
+				}, 2);
+			}
+			// ApplicationController.Instance.OnLoadActions }}
 
 			//HtmlWindowTest();
 
 			IsLoading = false;
-
-			base.OnLoad(args);
 		}
-		
-		private void CheckOnPrinter()
+
+		private static void RunSetupIfRequired()
+		{
+			if (!ProfileManager.Instance.ActiveProfiles.Any())
+			{
+				// Start the setup wizard if no profiles exist
+				UiThread.RunOnIdle(() => DialogWindow.Show(PrinterSetup.GetBestStartPage()));
+			}
+		}
+
+		private static void CheckOnPrinter()
 		{
 			try
 			{
+				// TODO: UiThread should not be driving anything in Printer.Connection
 				ApplicationController.Instance.ActivePrinter.Connection.OnIdle();
 			}
 			catch (Exception e)
@@ -197,7 +244,7 @@ namespace MatterHackers.MatterControl
 			UiThread.RunOnIdle(CheckOnPrinter);
 		}
 
-		private void FindAndInstantiatePlugins()
+		private static void FindAndInstantiatePlugins(SystemWindow systemWindow)
 		{
 #if false
 			string pluginDirectory = Path.Combine("..", "..", "..", "MatterControlPlugins", "bin");
@@ -214,7 +261,6 @@ namespace MatterHackers.MatterControl
 			// TODO: this should look in a plugin folder rather than just the application directory (we probably want it in the user folder).
 			PluginFinder<MatterControlPlugin> pluginFinder = new PluginFinder<MatterControlPlugin>(pluginDirectory);
 #endif
-
 			string oemName = ApplicationSettings.Instance.GetOEMName();
 			foreach (MatterControlPlugin plugin in PluginFinder.CreateInstancesOf<MatterControlPlugin>())
 			{
@@ -225,12 +271,12 @@ namespace MatterHackers.MatterControl
 				{
 					if (nameValuePairs["OEM"] == oemName)
 					{
-						plugin.Initialize(this);
+						plugin.Initialize(systemWindow);
 					}
 				}
 				else
 				{
-					plugin.Initialize(this);
+					plugin.Initialize(systemWindow);
 				}
 			}
 		}
