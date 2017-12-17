@@ -160,12 +160,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			var itemsContentView = contentView as IListContentView;
 			itemsContentView.ClearItems();
 
-			// Wait for the container to load
-			await Task.Run(() =>
-			{
-				sourceContainer.Load();
-			});
-
 			int width = itemsContentView.ThumbWidth;
 			int height = itemsContentView.ThumbHeight;
 
@@ -308,7 +302,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		private void listViewItem_DoubleClick(object sender, MouseEventArgs e)
 		{
-			UiThread.RunOnIdle((Action)(async () =>
+			UiThread.RunOnIdle(async () =>
 			{
 				var listViewItem = sender as ListViewItem;
 				var itemModel = listViewItem.Model;
@@ -320,6 +314,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					if (containerLink != null)
 					{
 						var container = await containerLink.GetContainer(null);
+						await Task.Run(() =>
+						{
+							container.Load();
+						});
+
 						if (container != null)
 						{
 							container.Parent = ActiveContainer;
@@ -366,7 +365,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						}
 					}
 				}
-			}));
+			});
 		}
 
 		public void SetActiveContainer(ILibraryContainer container)
