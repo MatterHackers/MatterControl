@@ -65,13 +65,18 @@ namespace MatterHackers.MatterControl
 				BackgroundColor = Color.DarkGray
 			};
 
+			var overlay = new GuiWidget();
+			overlay.AnchorAll();
+
+			systemWindow.AddChild(overlay);
+
 			progressPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.Center,
 				VAnchor = VAnchor.Center,
 				MinimumSize = new VectorMath.Vector2(400, 100),
 			};
-			systemWindow.AddChild(progressPanel);
+			overlay.AddChild(progressPanel);
 
 			progressPanel.AddChild(statusText = new TextWidget("", textColor: new Color("#bbb"))
 			{
@@ -108,14 +113,11 @@ namespace MatterHackers.MatterControl
 					});
 
 					ReportStartupProgress(0.9, "AddChild->MainView");
-					systemWindow.RemoveAllChildren();
-					systemWindow.AddChild(mainView);
+					systemWindow.AddChild(mainView, 0);
 
 					ReportStartupProgress(1, "");
-
 					systemWindow.BackgroundColor = Color.Transparent;
-
-					systemWindow.Invalidate();
+					overlay.Close();
 
 					// TODO: Still can't figure out the delay between concluding this block and the first actual render with MainView content. Current 
 					// best guess is delays between widget construction and OpenGL texture creation
