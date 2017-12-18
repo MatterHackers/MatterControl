@@ -534,8 +534,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// When GCode changes, switch to the 3D layer view
 				printer.ViewState.ViewMode = PartViewMode.Layers3D;
 
-				// HACK: directly fire method which previously ran on SlicingDone event on PrintItemWrapper
-				UiThread.RunOnIdle(() => printerTabPage.gcode3DWidget.CreateAndAddChildren(printer));
+				if (printerTabPage.gcode3DWidget != null)
+				{
+					// HACK: directly fire method which previously ran on SlicingDone event on PrintItemWrapper
+					UiThread.RunOnIdle(() => printerTabPage.gcode3DWidget.CreateAndAddChildren(printer));
+				}
 			}
 		}
 
