@@ -62,6 +62,7 @@ namespace MatterHackers.MatterControl
 	using MatterHackers.MatterControl.Library;
 	using MatterHackers.MatterControl.PartPreviewWindow;
 	using MatterHackers.MatterControl.PartPreviewWindow.View3D;
+	using MatterHackers.MatterControl.PluginSystem;
 	using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 	using MatterHackers.MatterControl.SimplePartScripting;
 	using MatterHackers.MeshVisualizer;
@@ -1429,6 +1430,7 @@ namespace MatterHackers.MatterControl
 		void ConfigureWifi();
 		bool CameraInUseByExternalProcess { get; set; }
 		bool IsNetworkConnected();
+		void FindAndInstantiatePlugins(SystemWindow systemWindow);
 	}
 
 	public class WindowsPlatformsFeatures : INativePlatformFeatures
@@ -1480,6 +1482,28 @@ namespace MatterHackers.MatterControl
 
 		public void ConfigureWifi()
 		{
+		}
+
+		public void FindAndInstantiatePlugins(SystemWindow systemWindow)
+		{
+			string oemName = ApplicationSettings.Instance.GetOEMName();
+			foreach (MatterControlPlugin plugin in PluginFinder.CreateInstancesOf<MatterControlPlugin>())
+			{
+				string pluginInfo = plugin.GetPluginInfoJSon();
+				Dictionary<string, string> nameValuePairs = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, string>>(pluginInfo);
+
+				if (nameValuePairs != null && nameValuePairs.ContainsKey("OEM"))
+				{
+					if (nameValuePairs["OEM"] == oemName)
+					{
+						plugin.Initialize(systemWindow);
+					}
+				}
+				else
+				{
+					plugin.Initialize(systemWindow);
+				}
+			}
 		}
 	}
 }

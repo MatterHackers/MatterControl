@@ -120,7 +120,7 @@ namespace MatterHackers.MatterControl
 
 			// now that we are all set up lets load our plugins and allow them their chance to set things up
 			reporter?.Invoke(0.8, "Plugins");
-			FindAndInstantiatePlugins(systemWindow);
+			AppContext.Platform.FindAndInstantiatePlugins(systemWindow);
 			if (ApplicationController.Instance.PluginsLoaded != null)
 			{
 				ApplicationController.Instance.PluginsLoaded.CallEvents(null, null);
@@ -230,43 +230,6 @@ namespace MatterHackers.MatterControl
 #endif
 			}
 			UiThread.RunOnIdle(CheckOnPrinter);
-		}
-
-		private static void FindAndInstantiatePlugins(SystemWindow systemWindow)
-		{
-#if false
-			string pluginDirectory = Path.Combine("..", "..", "..", "MatterControlPlugins", "bin");
-#if DEBUG
-			pluginDirectory = Path.Combine(pluginDirectory, "Debug");
-#else
-			pluginDirectory = Path.Combine(pluginDirectory, "Release");
-#endif
-			if (!Directory.Exists(pluginDirectory))
-			{
-				string dataPath = ApplicationDataStorage.Instance.ApplicationUserDataPath;
-				pluginDirectory = Path.Combine(dataPath, "Plugins");
-			}
-			// TODO: this should look in a plugin folder rather than just the application directory (we probably want it in the user folder).
-			PluginFinder<MatterControlPlugin> pluginFinder = new PluginFinder<MatterControlPlugin>(pluginDirectory);
-#endif
-			string oemName = ApplicationSettings.Instance.GetOEMName();
-			foreach (MatterControlPlugin plugin in PluginFinder.CreateInstancesOf<MatterControlPlugin>())
-			{
-				string pluginInfo = plugin.GetPluginInfoJSon();
-				Dictionary<string, string> nameValuePairs = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, string>>(pluginInfo);
-
-				if (nameValuePairs != null && nameValuePairs.ContainsKey("OEM"))
-				{
-					if (nameValuePairs["OEM"] == oemName)
-					{
-						plugin.Initialize(systemWindow);
-					}
-				}
-				else
-				{
-					plugin.Initialize(systemWindow);
-				}
-			}
 		}
 
 		private static void AssertDebugNotDefined()
