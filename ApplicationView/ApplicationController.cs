@@ -97,6 +97,8 @@ namespace MatterHackers.MatterControl
 
 		private static string cacheDirectory = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "cache");
 
+		public bool IsLoading { get; internal set; } = true;
+
 		// TODO: Any references to this property almost certainly need to be reconsidered. ActiveSliceSettings static references that assume a single printer 
 		// selection are being redirected here. This allows us to break the dependency to the original statics and consolidates
 		// us down to a single point where code is making assumptions about the presence of a printer, printer counts, etc. If we previously checked for
@@ -157,7 +159,7 @@ namespace MatterHackers.MatterControl
 				// HACK: short term solution to resolve printer reference for non-printer related contexts
 				DragDropData.Printer = printer;
 
-				if (!MatterControlApplication.IsLoading)
+				if (!ApplicationController.Instance.IsLoading)
 				{
 					// Fire printer changed event
 				}
@@ -173,7 +175,7 @@ namespace MatterHackers.MatterControl
 					ActiveSliceSettings.OnActivePrinterChanged(null);
 				}
 
-				if (!MatterControlApplication.IsLoading
+				if (!ApplicationController.Instance.IsLoading
 					&& printer.Settings.PrinterSelected
 					&& printer.Settings.GetValue<bool>(SettingsKey.auto_connect))
 				{
@@ -507,7 +509,7 @@ namespace MatterHackers.MatterControl
 			// Name = "MainSlidePanel";
 			ActiveTheme.ThemeChanged.RegisterEvent((s, e) =>
 			{
-				if (!MatterControlApplication.IsLoading)
+				if (!ApplicationController.Instance.IsLoading)
 				{
 					ReloadAll();
 				}
@@ -762,7 +764,7 @@ namespace MatterHackers.MatterControl
 
 					ActiveSliceSettings.ActivePrinterChanged.RegisterEvent((s, e) =>
 					{
-						if (!MatterControlApplication.IsLoading)
+						if (!ApplicationController.Instance.IsLoading)
 						{
 							ApplicationController.Instance.ReloadAll();
 						}

@@ -65,12 +65,6 @@ namespace MatterHackers.MatterControl
 		public static string MCWSBaseUri { get; } = "https://mattercontrol.appspot.com";
 #endif
 
-		public static bool CameraInUseByExternalProcess { get; set; } = false;
-		
-		private static string[] commandLineArgs = null;
-
-		public static bool IsLoading { get; private set; } = true;
-
 		public static GuiWidget Initialize(SystemWindow systemWindow, Action<double, string> reporter)
 		{
 			if (AggContext.OperatingSystem == OSType.Mac && AggContext.StaticData == null)
@@ -215,7 +209,7 @@ namespace MatterHackers.MatterControl
 
 			//HtmlWindowTest();
 
-			IsLoading = false;
+			ApplicationController.Instance.IsLoading = false;
 		}
 
 		private static void RunSetupIfRequired()
