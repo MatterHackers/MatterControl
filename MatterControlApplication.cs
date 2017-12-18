@@ -33,24 +33,17 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Threading;
 using MatterHackers.Agg;
-using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
-using MatterHackers.ImageProcessing;
 using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PluginSystem;
-using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.RenderOpenGl.OpenGl;
-using Mindscape.Raygun4Net;
 
 namespace MatterHackers.MatterControl
 {
@@ -60,7 +53,6 @@ namespace MatterHackers.MatterControl
 
 		//public static string MCWSBaseUri { get; } = "http://192.168.2.129:9206";
 		public static string MCWSBaseUri { get; } = "https://mattercontrol-test.appspot.com";
-
 #else
 		public static string MCWSBaseUri { get; } = "https://mattercontrol.appspot.com";
 #endif
@@ -153,8 +145,6 @@ namespace MatterHackers.MatterControl
 
 		public static void AfterLoad()
 		{
-			UiThread.RunOnIdle(CheckOnPrinter);
-
 			// ApplicationController.Instance.OnLoadActions {{
 
 			// TODO: Calling UserChanged seems wrong. Load the right user before we spin up controls, rather than after
@@ -186,6 +176,7 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
+			// TODO: This should be moved into the splash screen and shown instead of MainView
 			if (AggContext.OperatingSystem == OSType.Android)
 			{
 				// show this last so it is on top
@@ -208,6 +199,8 @@ namespace MatterHackers.MatterControl
 			// ApplicationController.Instance.OnLoadActions }}
 
 			//HtmlWindowTest();
+
+			UiThread.RunOnIdle(CheckOnPrinter);
 
 			ApplicationController.Instance.IsLoading = false;
 		}
