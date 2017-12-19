@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl
 			//var systemWindow = new DesktopMainWindow(400, 200)
 			var (width, height) = RootSystemWindow.GetStartupBounds();
 
-			Application.LoadRootWindow(width, height);
+			Application.LoadRootWindow(width, height).ShowAsSystemWindow();
 		}
 
 		private static void Application_ThreadException(object sender, ThreadExceptionEventArgs e)

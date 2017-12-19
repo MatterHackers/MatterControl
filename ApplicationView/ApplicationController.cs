@@ -1580,7 +1580,6 @@ namespace MatterHackers.MatterControl
 
 			// Block indefinitely
 			ReportStartupProgress(0, "ShowAsSystemWindow");
-			systemWindow.ShowAsSystemWindow();
 
 			return systemWindow;
 		}
