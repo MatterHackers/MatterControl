@@ -116,6 +116,14 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						loadedItem.Matrix = loadedItem.Matrix * Matrix4X4.CreateTranslation((double)-aabb.Center.X, (double)-aabb.Center.Y, (double)-aabb.minXYZ.Z) * placeholderItem.Matrix;
 						loadedItem.Color = loadedItem.Color;
 
+						// Set mesh path if tracking requested
+						if (trackSourceFiles 
+							&& item is FileSystemFileItem fileItem
+							&& item.IsMeshFileType())
+						{
+							loadedItem.MeshPath = fileItem.Path;
+						}
+
 						// Notification should force invalidate and redraw
 						//progressReporter?.Invoke(1, "");
 

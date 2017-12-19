@@ -187,6 +187,13 @@ namespace MatterHackers.MatterControl.Library
 					|| ApplicationController.Instance.Library.ContentProviders.Keys.Contains(fileExtensionLower));
 		}
 
+		public bool IsMeshFileType(string fileName)
+		{
+			string fileExtensionLower = Path.GetExtension(fileName).ToLower().Trim('.');
+			return !string.IsNullOrEmpty(fileExtensionLower)
+				&& ApplicationSettings.LibraryMeshFileExtensions.Contains(fileExtensionLower);
+		}
+
 		/// <summary>
 		/// Notifies listeners that the ActiveContainer Changed
 		/// </summary>
