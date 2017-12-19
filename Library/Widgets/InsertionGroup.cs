@@ -171,10 +171,10 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			// Collapse our contents into the root of the scene
 			// of the scene when it loses focus
-			scene.Children.Modify(list =>
+			scene.Children.Modify((Action<List<IObject3D>>)((List<IObject3D> list) =>
 			{
-				this.CollapseInto(list, Object3DTypes.Any);
-			});
+				(this).CollapseInto(list, (Object3DTypes)Object3DTypes.Node);
+			}));
 
 			// Create and push the undo operation
 			foreach (var item in loadedItems)

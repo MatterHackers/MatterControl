@@ -50,7 +50,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				// This is the original do() case. The selection needs to be changed into a group and selected
 				// change it to a standard group
-				scene.SelectedItem.ItemType = Object3DTypes.Group;
+				scene.SelectedItem.ItemType = Object3DTypes.Node;
 			}
 			else
 			{

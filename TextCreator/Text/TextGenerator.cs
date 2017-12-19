@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 		{
 			var groupItem = new TextObject()
 			{
-				ItemType = Object3DTypes.Group,
+				ItemType = Object3DTypes.Node,
 				Text = wordText,
 				Name = "Text",
 				Spacing = spacing,
