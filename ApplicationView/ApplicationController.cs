@@ -1514,7 +1514,7 @@ namespace MatterHackers.MatterControl
 		{
 			timer = Stopwatch.StartNew();
 
-			var systemWindow = new DesktopRootSystemWindow(width, height)
+			var systemWindow = new RootSystemWindow(width, height)
 			{
 				BackgroundColor = Color.DarkGray
 			};

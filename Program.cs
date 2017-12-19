@@ -50,7 +50,7 @@ namespace MatterHackers.MatterControl
 
 			// Get startup bounds from MatterControl and construct system window
 			//var systemWindow = new DesktopMainWindow(400, 200)
-			var (width, height) = DesktopRootSystemWindow.GetStartupBounds();
+			var (width, height) = RootSystemWindow.GetStartupBounds();
 
 			Application.LoadRootWindow(width, height);
 		}

@@ -135,7 +135,7 @@ namespace MatterHackers.MatterControl
 						break;
 
 					case "SHOW_MEMORY":
-						DesktopRootSystemWindow.ShowMemoryUsed = true;
+						RootSystemWindow.ShowMemoryUsed = true;
 						break;
 				}
 			}

@@ -83,7 +83,6 @@
     <Compile Include="ActionBar\TemperatureWidgetBed.cs" />
     <Compile Include="ApplicationView\OemProfileDictionary.cs" />
     <Compile Include="ApplicationView\WindowsPlatformsFeatures.cs" />
-    <Compile Include="DesktopRootSystemWindow.cs" />
     <Compile Include="PartPreviewWindow\View3D\PrinterBar\PrintPopupMenu.cs" />
     <Compile Include="PartPreviewWindow\View3D\PrinterBar\SliceButton.cs" />
     <Compile Include="PartPreviewWindow\View3D\PrinterBar\PrinterConnectButton.cs" />
@@ -152,6 +151,7 @@
     <Compile Include="PrinterControls\MacroDetailPage.cs" />
     <Compile Include="PrinterControls\MacroListPage.cs" />
     <Compile Include="PrinterControls\PrinterConnections\PrinterSetup.cs" />
+    <Compile Include="RootSystemWindow.cs" />
     <Compile Include="SetupWizard\DialogWindow.cs" />
     <Compile Include="Utilities\InspectForm.cs" Condition="'$(Configuration)' == 'Debug'">
       <SubType>Form</SubType>

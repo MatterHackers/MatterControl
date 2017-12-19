@@ -44,7 +44,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
-	public class DesktopRootSystemWindow : SystemWindow
+	public class RootSystemWindow : SystemWindow
 	{
 		private static Vector2 minSize { get; set; } = new Vector2(600, 600);
 
@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl
 
 		private bool exitDialogOpen = false;
 
-		public DesktopRootSystemWindow(double width, double height)
+		public RootSystemWindow(double width, double height)
 			: base(width, height)
 		{
 			this.Name = "MatterControl";
