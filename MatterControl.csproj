@@ -82,6 +82,7 @@
     <Compile Include="ActionBar\ResetButton.cs" />
     <Compile Include="ActionBar\TemperatureWidgetBed.cs" />
     <Compile Include="ApplicationView\OemProfileDictionary.cs" />
+    <Compile Include="ApplicationView\WindowsPlatformsFeatures.cs" />
     <Compile Include="DesktopRootSystemWindow.cs" />
     <Compile Include="PartPreviewWindow\View3D\PrinterBar\PrintPopupMenu.cs" />
     <Compile Include="PartPreviewWindow\View3D\PrinterBar\SliceButton.cs" />
