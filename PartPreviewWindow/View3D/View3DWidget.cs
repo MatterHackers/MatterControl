@@ -877,7 +877,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private void StartDragDrop(IEnumerable<ILibraryItem> items, Vector2 screenSpaceMousePosition)
+		private void StartDragDrop(IEnumerable<ILibraryItem> items, Vector2 screenSpaceMousePosition, bool trackSourceFiles = false)
 		{
 			this.DragOperationActive = true;
 
@@ -904,7 +904,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this,
 				this.Scene,
 				sceneContext.BedCenter,
-				() => this.DragOperationActive);
+				() => this.DragOperationActive,
+				trackSourceFiles);
 
 			// Find intersection position of the mouse with the bed plane
 			var intersectInfo = GetIntersectPosition(screenSpaceMousePosition);

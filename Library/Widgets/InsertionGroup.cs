@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		}
 
 		// TODO: Figure out how best to collapse the InsertionGroup after the load task completes
-		public InsertionGroup(IEnumerable<ILibraryItem> items, View3DWidget view3DWidget, InteractiveScene scene, Vector2 bedCenter, Func<bool> dragOperationActive)
+		public InsertionGroup(IEnumerable<ILibraryItem> items, View3DWidget view3DWidget, InteractiveScene scene, Vector2 bedCenter, Func<bool> dragOperationActive, bool trackSourceFiles = false)
 		{
 			// Add a temporary placeholder to give us some bounds
 			this.Mesh = InsertionGroup.placeHolderMesh;
