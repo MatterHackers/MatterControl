@@ -1634,14 +1634,17 @@ namespace MatterHackers.MatterControl
 
 		private static void ReportStartupProgress(double progress0To1, string section)
 		{
-			statusText.Text = section;
-			progressBar.RatioComplete = progress0To1;
-			progressPanel.Invalidate();
+			UiThread.RunOnIdle(() =>
+			{
+				statusText.Text = section;
+				progressBar.RatioComplete = progress0To1;
+				progressPanel.Invalidate();
 
-			Console.WriteLine($"Time to '{lastSection}': {timer.ElapsedMilliseconds}");
-			timer.Restart();
+				Console.WriteLine($"Time to '{lastSection}': {timer.ElapsedMilliseconds}");
+				timer.Restart();
 
-			lastSection = section;
+				lastSection = section;
+			});
 		}
 
 		private static void CheckOnPrinter()
