@@ -1417,8 +1417,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{ 
 					// Project DragFiles to IEnumerable<FileSystemFileItem>
 					this.StartDragDrop(
-					mouseEvent.DragFiles.Select(path => new FileSystemFileItem(path)),
-					screenSpaceMousePosition: this.TransformToScreenSpace(mouseEvent.Position));
+						mouseEvent.DragFiles.Select(path => new FileSystemFileItem(path)),
+						screenSpaceMousePosition: this.TransformToScreenSpace(mouseEvent.Position),
+						trackSourceFiles: true);
 				}
 			}
 
