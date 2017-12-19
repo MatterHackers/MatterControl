@@ -91,6 +91,7 @@ namespace MatterHackers.MatterControl
 		public TextImageButtonFactory imageConverterExpandMenuOptionFactory;
 
 		public TextImageButtonFactory imageConverterButtonFactory;
+		public TextImageButtonFactory imageConverterUnlockButtonFactory;
 
 		public Color TabBodyBackground => new Color(ActiveTheme.Instance.TertiaryBackgroundColor, 175);
 
@@ -302,6 +303,22 @@ namespace MatterHackers.MatterControl
 				HoverFillColor = new Color(255, 255, 255, 200),
 				HoverTextColor = Color.Black,
 				HoverBorderColor = new Color(theme.PrimaryTextColor, 200),
+
+				BorderWidth = 1,
+			});
+
+			imageConverterUnlockButtonFactory = new TextImageButtonFactory(new ButtonFactoryOptions(commonOptions)
+			{
+				FixedWidth = 185,
+				FixedHeight = 30,
+
+				NormalFillColor = ActiveTheme.Instance.PrimaryAccentColor.SetLightness(.8).ToColor(),
+				NormalTextColor = Color.Black,
+				NormalBorderColor = new Color(ActiveTheme.Instance.PrimaryAccentColor.SetLightness(.8).ToColor(), 200),
+
+				HoverFillColor = ActiveTheme.Instance.PrimaryAccentColor.SetLightness(.9).ToColor(),
+				HoverTextColor = Color.Black,
+				HoverBorderColor = new Color(ActiveTheme.Instance.PrimaryAccentColor.SetLightness(.9).ToColor(), 200),
 
 				BorderWidth = 1,
 			});
