@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.CompleteDialog(
 					MatterControlUtilities.GetTestItemPath("Fennec_Fox.stl"));
 
-				// Wait up to 3 seconds for expected outcome
+				// Wait for expected outcome
 				testRunner.WaitFor(() => QueueData.Instance.ItemCount == expectedCount);
 
 				// Assert - one part  added and queue count increases by one
@@ -93,7 +93,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 						MatterControlUtilities.GetTestItemPath("Batman.stl")),
 					secondsToWait: 2);
 
-				// Wait up to 3 seconds for expected outcome
+				// Wait for expected outcome
 				testRunner.WaitFor(() => QueueData.Instance.ItemCount == expectedCount);
 
 				// Assert - two parts added and queue count increases by two
@@ -203,7 +203,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.CompleteDialog(
 					MatterControlUtilities.GetTestItemPath("Rook.amf"));
 
-				// Wait up to 3 seconds for expected outcome
+				// Wait for expected outcome
 				testRunner.WaitFor(() => QueueData.Instance.ItemCount == expectedCount);
 
 				// Assert - one part  added and queue count increases by one
@@ -233,7 +233,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.CompleteDialog(
 					MatterControlUtilities.GetTestItemPath("Batman.stl"));
 
-				// Wait up to 3 seconds for expected outcome
+				// Wait for expected outcome
 				testRunner.WaitFor(() => QueueData.Instance.ItemCount == expectedCount);
 
 				// Assert - one part  added and queue count increases by one
@@ -263,7 +263,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.CompleteDialog(
 					MatterControlUtilities.GetTestItemPath("chichen-itza_pyramid.gcode"));
 
-				// Wait up to 3 seconds for expected outcome
+				// Wait for expected outcome
 				testRunner.WaitFor(() => QueueData.Instance.ItemCount == expectedCount);
 
 				// Assert - one part  added and queue count increases by one
