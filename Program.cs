@@ -20,13 +20,7 @@ namespace MatterHackers.MatterControl
 
 		private static int raygunNotificationCount = 0;
 
-		private static string lastSection = "";
-
 		private static RaygunClient _raygunClient = GetCorrectClient();
-		private static Stopwatch timer;
-		private static ProgressBar progressBar;
-		private static TextWidget statusText;
-		private static FlowLayoutWidget progressPanel;
 
 		/// <summary>
 		/// The main entry point for the application.
@@ -54,91 +48,11 @@ namespace MatterHackers.MatterControl
 				AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
 			}
 
-			timer = Stopwatch.StartNew();
-
 			// Get startup bounds from MatterControl and construct system window
 			//var systemWindow = new DesktopMainWindow(400, 200)
 			var (width, height) = DesktopRootSystemWindow.GetStartupBounds();
 
-			var systemWindow = new DesktopRootSystemWindow(width, height)
-			{
-				BackgroundColor = Color.DarkGray
-			};
-
-			var overlay = new GuiWidget();
-			overlay.AnchorAll();
-
-			systemWindow.AddChild(overlay);
-
-			progressPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				HAnchor = HAnchor.Center,
-				VAnchor = VAnchor.Center,
-				MinimumSize = new VectorMath.Vector2(400, 100),
-			};
-			overlay.AddChild(progressPanel);
-
-			progressPanel.AddChild(statusText = new TextWidget("", textColor: new Color("#bbb"))
-			{
-				MinimumSize = new VectorMath.Vector2(200, 30)
-			});
-
-			progressPanel.AddChild(progressBar = new ProgressBar()
-			{
-				FillColor = new Color("#3D4B72"),
-				BorderColor = new Color("#777"),
-				Height = 11,
-				Width = 300,
-				HAnchor = HAnchor.Absolute,
-				VAnchor = VAnchor.Absolute
-			});
-
-			AppContext.RootSystemWindow = systemWindow;
-
-			// Hook SystemWindow load and spin up MatterControl once we've hit first draw
-			systemWindow.Load += (s, e) =>
-			{
-				ReportStartupProgress(0.02, "First draw->RunOnIdle");
-
-				//UiThread.RunOnIdle(() =>
-				Task.Run(() =>
-				{
-					ReportStartupProgress(0.1, "Datastore");
-					Datastore.Instance.Initialize();
-
-					ReportStartupProgress(0.15, "MatterControlApplication.Initialize");
-					var mainView = MatterControlApplication.Initialize(systemWindow, (progress0To1, status) =>
-					{
-						ReportStartupProgress(0.2 + progress0To1 * 0.7, status);
-					});
-
-					ReportStartupProgress(0.9, "AddChild->MainView");
-					systemWindow.AddChild(mainView, 0);
-
-					ReportStartupProgress(1, "");
-					systemWindow.BackgroundColor = Color.Transparent;
-					overlay.Close();
-
-					// TODO: Still can't figure out the delay between concluding this block and the first actual render with MainView content. Current 
-					// best guess is delays between widget construction and OpenGL texture creation
-				});
-			};
-
-			// Block indefinitely
-			ReportStartupProgress(0, "ShowAsSystemWindow");
-			systemWindow.ShowAsSystemWindow();
-		}
-
-		private static void ReportStartupProgress(double progress0To1, string section)
-		{
-			statusText.Text = section;
-			progressBar.RatioComplete = progress0To1;
-			progressPanel.Invalidate();
-
-			Console.WriteLine($"Time to '{lastSection}': {timer.ElapsedMilliseconds}");
-			timer.Restart();
-
-			lastSection = section;
+			Application.LoadRootWindow(width, height);
 		}
 
 		private static void Application_ThreadException(object sender, ThreadExceptionEventArgs e)

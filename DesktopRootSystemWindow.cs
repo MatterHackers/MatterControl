@@ -133,7 +133,7 @@ namespace MatterHackers.MatterControl
 			}
 #endif
 
-#if DEBUG
+#if DEBUG && !__ANDROID__
 			WinformsSystemWindow.InspectorCreator = (inspectingWindow) =>
 			{
 				if (inspectingWindow == this)
@@ -268,12 +268,13 @@ namespace MatterHackers.MatterControl
 					message = "Are you sure you want exit while a print is running from SD Card?\n\nNote: If you exit, it is recommended you wait until the print is completed before running MatterControl again.".Localize();
 				}
 			}
+#if !__ANDROID__
 			else if (PartsSheet.IsSaving())
 			{
 				caption = "Confirm Exit".Localize();
 				message = "You are currently saving a parts sheet, are you sure you want to exit?".Localize();
 			}
-
+#endif
 			if (caption != null)
 			{
 				// Record that we are waiting for a response to the request to close

@@ -34,6 +34,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -49,6 +50,7 @@ namespace MatterHackers.MatterControl
 {
 	public static class MatterControlApplication
 	{
+
 #if DEBUG
 
 		//public static string MCWSBaseUri { get; } = "http://192.168.2.129:9206";
@@ -57,181 +59,7 @@ namespace MatterHackers.MatterControl
 		public static string MCWSBaseUri { get; } = "https://mattercontrol.appspot.com";
 #endif
 
-		public static GuiWidget Initialize(SystemWindow systemWindow, Action<double, string> reporter)
-		{
-			if (AggContext.OperatingSystem == OSType.Mac && AggContext.StaticData == null)
-			{
-				// Set working directory - this duplicates functionality in Main but is necessary on OSX as Main fires much later (after the constructor in this case)
-				// resulting in invalid paths due to path tests running before the working directory has been overridden. Setting the value before initializing StaticData
-				// works around this architectural difference.
-				Directory.SetCurrentDirectory(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location));
-			}
-
-			// Initialize a standard file system backed StaticData provider
-			if (AggContext.StaticData == null) // it may already be initialized by tests
-			{
-				reporter?.Invoke(0.01, "StaticData");
-				AggContext.StaticData = new MatterHackers.Agg.FileSystemStaticData();
-			}
-
-
-			ApplicationSettings.Instance.set("HardwareHasCamera", "false");
-
-			// TODO: Appears to be unused and should be removed
-			// set this at startup so that we can tell next time if it got set to true in close
-			UserSettings.Instance.Fields.StartCount = UserSettings.Instance.Fields.StartCount + 1;
-
-			var commandLineArgs = Environment.GetCommandLineArgs();
-			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-
-			for (int currentCommandIndex = 0; currentCommandIndex < commandLineArgs.Length; currentCommandIndex++)
-			{
-				string command = commandLineArgs[currentCommandIndex];
-				string commandUpper = command.ToUpper();
-				switch (commandUpper)
-				{
-					case "FORCE_SOFTWARE_RENDERING":
-						GL.HardwareAvailable = false;
-						break;
-
-					case "CLEAR_CACHE":
-						AboutWidget.DeleteCacheData(0);
-						break;
-
-					case "SHOW_MEMORY":
-						DesktopRootSystemWindow.ShowMemoryUsed = true;
-						break;
-				}
-			}
-
-			reporter?.Invoke(0.05, "ApplicationController");
-			var na = ApplicationController.Instance;
-
-			// Set the default theme colors
-			reporter?.Invoke(0.1, "LoadOemOrDefaultTheme");
-			ApplicationController.LoadOemOrDefaultTheme();
-
-			// Accessing any property on ProfileManager will run the static constructor and spin up the ProfileManager instance
-			reporter?.Invoke(0.2, "ProfileManager");
-			bool na2 = ProfileManager.Instance.IsGuestProfile;
-
-			reporter?.Invoke(0.3, "MainView");
-			ApplicationController.Instance.MainView = new WidescreenPanel();
-
-			// now that we are all set up lets load our plugins and allow them their chance to set things up
-			reporter?.Invoke(0.8, "Plugins");
-			AppContext.Platform.FindAndInstantiatePlugins(systemWindow);
-			if (ApplicationController.Instance.PluginsLoaded != null)
-			{
-				ApplicationController.Instance.PluginsLoaded.CallEvents(null, null);
-			}
-
-			// TODO: Do we still want to support command line arguments for adding to the queue?
-			foreach (string arg in commandLineArgs)
-			{
-				string argExtension = Path.GetExtension(arg).ToUpper();
-				if (argExtension.Length > 1
-					&& MeshFileIo.ValidFileExtensions().Contains(argExtension))
-				{
-					QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(Path.GetFileName(arg), Path.GetFullPath(arg))));
-				}
-			}
-
-			reporter?.Invoke(0.9, "AfterLoad");
-			AfterLoad();
-
-			return ApplicationController.Instance.MainView;
-		}
-
-		public static void AfterLoad()
-		{
-			// ApplicationController.Instance.OnLoadActions {{
-
-			// TODO: Calling UserChanged seems wrong. Load the right user before we spin up controls, rather than after
-			// Pushing this after load fixes that empty printer list
-			/////////////////////ApplicationController.Instance.UserChanged();
-
-			bool showAuthWindow =  PrinterSetup.ShouldShowAuthPanel?.Invoke() ?? false;
-			if (showAuthWindow)
-			{
-				if (ApplicationSettings.Instance.get(ApplicationSettingsKey.SuppressAuthPanel) != "True")
-				{
-					//Launch window to prompt user to sign in
-					UiThread.RunOnIdle(() => DialogWindow.Show(PrinterSetup.GetBestStartPage()));
-				}
-			}
-			else
-			{
-				//If user in logged in sync before checking to prompt to create printer
-				if (ApplicationController.SyncPrinterProfiles == null)
-				{
-					RunSetupIfRequired();
-				}
-				else
-				{
-					ApplicationController.SyncPrinterProfiles.Invoke("ApplicationController.OnLoadActions()", null).ContinueWith((task) =>
-					{
-						RunSetupIfRequired();
-					});
-				}
-			}
-
-			// TODO: This should be moved into the splash screen and shown instead of MainView
-			if (AggContext.OperatingSystem == OSType.Android)
-			{
-				// show this last so it is on top
-				if (UserSettings.Instance.get("SoftwareLicenseAccepted") != "true")
-				{
-					UiThread.RunOnIdle(() => DialogWindow.Show<LicenseAgreementPage>());
-				}
-			}
-
-			if (ApplicationController.Instance.ActivePrinter is PrinterConfig printer
-				&& printer.Settings.PrinterSelected
-				&& printer.Settings.GetValue<bool>(SettingsKey.auto_connect))
-			{
-				UiThread.RunOnIdle(() =>
-				{
-					//PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
-					printer.Connection.Connect();
-				}, 2);
-			}
-			// ApplicationController.Instance.OnLoadActions }}
-
-			//HtmlWindowTest();
-
-			UiThread.RunOnIdle(CheckOnPrinter);
-
-			ApplicationController.Instance.IsLoading = false;
-		}
-
-		private static void RunSetupIfRequired()
-		{
-			if (!ProfileManager.Instance.ActiveProfiles.Any())
-			{
-				// Start the setup wizard if no profiles exist
-				UiThread.RunOnIdle(() => DialogWindow.Show(PrinterSetup.GetBestStartPage()));
-			}
-		}
-
-		private static void CheckOnPrinter()
-		{
-			try
-			{
-				// TODO: UiThread should not be driving anything in Printer.Connection
-				ApplicationController.Instance.ActivePrinter.Connection.OnIdle();
-			}
-			catch (Exception e)
-			{
-				Debug.Print(e.Message);
-				GuiWidget.BreakInDebugger();
-#if DEBUG
-				throw e;
-#endif
-			}
-			UiThread.RunOnIdle(CheckOnPrinter);
-		}
-
+	
 		private static void AssertDebugNotDefined()
 		{
 #if DEBUG
