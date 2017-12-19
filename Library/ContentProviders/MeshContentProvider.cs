@@ -127,10 +127,16 @@ namespace MatterHackers.MatterControl
 
 				if (thumbnail != null)
 				{
+					// Cache big render
 					string cachePath = ApplicationController.Instance.ThumbnailCachePath(item);
 					AggContext.ImageIO.SaveImageData(cachePath, thumbnail);
 
-					if(ApplicationController.Instance.Library.ActiveContainer is ILibraryWritableContainer writableContainer)
+					// Cache at requested size
+					cachePath = ApplicationController.Instance.ThumbnailCachePath(item, width, height);
+					thumbnail = LibraryProviderHelpers.ResizeImage(thumbnail, width, height);
+					AggContext.ImageIO.SaveImageData(cachePath, thumbnail);
+
+					if (ApplicationController.Instance.Library.ActiveContainer is ILibraryWritableContainer writableContainer)
 					{
 						writableContainer.SetThumbnail(item, thumbnail.Width, thumbnail.Height, thumbnail);
 					}

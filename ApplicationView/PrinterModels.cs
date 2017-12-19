@@ -439,7 +439,7 @@ namespace MatterHackers.MatterControl
 			if (this.Scene.Persistable)
 			{
 				this.Scene.PersistAssets(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, progress);
-				this.EditContext.Save();
+				this.EditContext?.Save();
 			}
 		}
 	}

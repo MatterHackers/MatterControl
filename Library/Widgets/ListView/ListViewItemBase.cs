@@ -93,7 +93,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			var listView = listViewItem.ListView;
 
-			var thumbnail = listView.LoadCachedImage(listViewItem);
+			var thumbnail = listView.LoadCachedImage(listViewItem, thumbWidth, thumbHeight);
 			if (thumbnail != null)
 			{
 				SetItemThumbnail(thumbnail);

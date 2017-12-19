@@ -139,7 +139,7 @@ namespace MatterHackers.MatterControl
 							linkButton.OriginRelativeParent = new VectorMath.Vector2(linkButton.OriginRelativeParent.X, linkButton.OriginRelativeParent.Y + descentInPixels);
 							linkButton.Click += (sender, mouseEvent) =>
 							{
-								MatterControlApplication.Instance.LaunchBrowser(elementState.Href);
+								ApplicationController.Instance.LaunchBrowser(elementState.Href);
 							};
 							elementsUnderConstruction.Peek().AddChild(linkButton);
 						}
@@ -196,7 +196,7 @@ namespace MatterHackers.MatterControl
 							linkButton.Cursor = Cursors.Hand;
 							linkButton.Click += (sender, mouseEvent) =>
 							{
-								MatterControlApplication.Instance.LaunchBrowser(elementState.Href);
+								ApplicationController.Instance.LaunchBrowser(elementState.Href);
 							};
 							elementsUnderConstruction.Peek().AddChild(linkButton);
 						}

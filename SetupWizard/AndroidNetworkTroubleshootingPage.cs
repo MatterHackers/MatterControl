@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl
 			configureButton.Margin = new BorderDouble(0, 0, 10, 0);
 			configureButton.Click += (s, e) =>
 			{
-				MatterControlApplication.Instance.ConfigureWifi();
+				MatterControl.AppContext.Platform.ConfigureWifi();
 				UiThread.RunOnIdle(WizardWindow.Close, 1);
 
 				// We could clear the failure count allowing the user to toggle wifi, then retry sign-in

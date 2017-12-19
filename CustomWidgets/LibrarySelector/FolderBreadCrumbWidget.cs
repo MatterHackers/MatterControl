@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				if (listView.ActiveContainer.Parent != null)
 				{
-					UiThread.RunOnIdle(() => listView.LoadContainer(listView.ActiveContainer.Parent));
+					UiThread.RunOnIdle(() => listView.SetActiveContainer(listView.ActiveContainer.Parent));
 				}
 			};
 
@@ -119,7 +119,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					gotoProviderButton.Margin = new BorderDouble(right:  5);
 					gotoProviderButton.Click += (s, e) =>
 					{
-						UiThread.RunOnIdle(() => listView.LoadContainer(container));
+						UiThread.RunOnIdle(() => listView.SetActiveContainer(container));
 					};
 					this.AddChild(gotoProviderButton);
 

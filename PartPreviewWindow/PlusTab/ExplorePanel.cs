@@ -120,7 +120,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 									imageWidget.Cursor = Cursors.Hand;
 									imageWidget.Click += (s, e) =>
 									{
-										MatterControlApplication.Instance.LaunchBrowser(content.link);
+										ApplicationController.Instance.LaunchBrowser(content.link);
 									};
 								}
 

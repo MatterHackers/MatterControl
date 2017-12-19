@@ -81,11 +81,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 		{
 			if (item.url != null)
 			{
-				MatterControlApplication.Instance.LaunchBrowser("http://www.matterhackers.com/" + item.url);
+				ApplicationController.Instance.LaunchBrowser("http://www.matterhackers.com/" + item.url);
 			}
 			else if (item.link != null)
 			{
-				MatterControlApplication.Instance.LaunchBrowser(item.link);
+				ApplicationController.Instance.LaunchBrowser(item.link);
 			}
 
 			base.OnClick(mouseEvent);

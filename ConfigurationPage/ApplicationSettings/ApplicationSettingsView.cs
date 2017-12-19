@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			var previewButton = buttonFactory.Generate("Preview".Localize().ToUpper());
 			previewButton.Click += (s, e) =>
 			{
-				MatterControlApplication.Instance.OpenCameraPreview();
+				AppContext.Platform.OpenCameraPreview();
 			};
 
 			this.AddSettingsRow(
@@ -286,11 +286,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			}
 #endif
 
-			AddMenuItem("Forums".Localize(), () => MatterControlApplication.Instance.LaunchBrowser("https://forums.matterhackers.com/category/20/mattercontrol"));
-			AddMenuItem("Wiki".Localize(), () => MatterControlApplication.Instance.LaunchBrowser("http://wiki.mattercontrol.com"));
-			AddMenuItem("Guides and Articles".Localize(), () => MatterControlApplication.Instance.LaunchBrowser("http://www.matterhackers.com/topic/mattercontrol"));
-			AddMenuItem("Release Notes".Localize(), () => MatterControlApplication.Instance.LaunchBrowser("http://wiki.mattercontrol.com/Release_Notes"));
-			AddMenuItem("Report a Bug".Localize(), () => MatterControlApplication.Instance.LaunchBrowser("https://github.com/MatterHackers/MatterControl/issues"));
+			AddMenuItem("Forums".Localize(), () => ApplicationController.Instance.LaunchBrowser("https://forums.matterhackers.com/category/20/mattercontrol"));
+			AddMenuItem("Wiki".Localize(), () => ApplicationController.Instance.LaunchBrowser("http://wiki.mattercontrol.com"));
+			AddMenuItem("Guides and Articles".Localize(), () => ApplicationController.Instance.LaunchBrowser("http://www.matterhackers.com/topic/mattercontrol"));
+			AddMenuItem("Release Notes".Localize(), () => ApplicationController.Instance.LaunchBrowser("http://wiki.mattercontrol.com/Release_Notes"));
+			AddMenuItem("Report a Bug".Localize(), () => ApplicationController.Instance.LaunchBrowser("https://github.com/MatterHackers/MatterControl/issues"));
 
 			var updateMatterControl = new SettingsItem("Check For Update".Localize());
 			updateMatterControl.Click += (s, e) =>
@@ -426,32 +426,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 		private string rebuildThumbnailsMessage = "You are switching to a different thumbnail rendering mode. If you want, your current thumbnails can be removed and recreated in the new style. You can switch back and forth at any time. There will be some processing overhead while the new thumbnails are created.\n\nDo you want to rebuild your existing thumbnails now?".Localize();
 		private string rebuildThumbnailsTitle = "Rebuild Thumbnails Now".Localize();
-
-		private void RestartApplication()
-		{
-			UiThread.RunOnIdle(() =>
-			{
-				// Iterate to the top SystemWindow
-				GuiWidget parent = this;
-				while (parent.Parent != null)
-				{
-					parent = parent.Parent;
-				}
-
-				// MatterControlApplication is the root child on the SystemWindow object
-				MatterControlApplication app = parent.Children[0] as MatterControlApplication;
-#if !__ANDROID__
-				app.RestartOnClose = true;
-				app.Close();
-#else
-                // Re-initialize and load
-                LocalizedString.ResetTranslationMap();
-                ApplicationController.Instance.MainView = new DesktopView();
-				app.RemoveAllChildren();
-                app.AnchorAll();
-#endif
-			});
-		}
 
 		[Conditional("DEBUG")]
 		private void GenerateLocalizationValidationFile()

@@ -51,6 +51,7 @@ namespace MatterHackers.MatterControl
 
 			this.AnchorAll();
 			this.Name = "WidescreenPanel";
+			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
 
 			var theme = ApplicationController.Instance.Theme;
 

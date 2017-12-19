@@ -69,6 +69,21 @@ namespace MatterHackers.MatterControl
 	using MatterHackers.VectorMath;
 	using SettingsManagement;
 
+	public class AppContext
+	{
+		/// <summary>
+		/// Native platform features 
+		/// </summary>
+		public static INativePlatformFeatures Platform { get; set; }
+
+		public static bool IsLoading { get; internal set; } = true;
+
+		/// <summary>
+		/// The root SystemWindow
+		/// </summary>
+		public static SystemWindow RootSystemWindow { get; internal set; }
+	}
+
 	public class ApplicationController
 	{
 		public ThemeConfig Theme { get; set; } = new ThemeConfig();
@@ -109,10 +124,7 @@ namespace MatterHackers.MatterControl
 		public const string EnvironmentName = "";
 #endif
 
-		/// <summary>
-		/// Allows application components to hook initial SystemWindow Load event without an existing Widget instance
-		/// </summary>
-		public static event EventHandler Load;
+		public bool ApplicationExiting { get; internal set; } = false;
 
 		public static Func<string, Task<Dictionary<string, string>>> GetProfileHistory;
 
@@ -145,7 +157,7 @@ namespace MatterHackers.MatterControl
 				// HACK: short term solution to resolve printer reference for non-printer related contexts
 				DragDropData.Printer = printer;
 
-				if (!MatterControlApplication.IsLoading)
+				if (!AppContext.IsLoading)
 				{
 					// Fire printer changed event
 				}
@@ -161,7 +173,7 @@ namespace MatterHackers.MatterControl
 					ActiveSliceSettings.OnActivePrinterChanged(null);
 				}
 
-				if (!MatterControlApplication.IsLoading
+				if (!AppContext.IsLoading
 					&& printer.Settings.PrinterSelected
 					&& printer.Settings.GetValue<bool>(SettingsKey.auto_connect))
 				{
@@ -177,6 +189,13 @@ namespace MatterHackers.MatterControl
 		internal async Task ClearActivePrinter()
 		{
 			await this.SetActivePrinter(emptyPrinter);
+		}
+		public void LaunchBrowser(string targetUri)
+		{
+			UiThread.RunOnIdle(() =>
+			{
+				Process.Start(targetUri);
+			});
 		}
 
 		public void RefreshActiveInstance(PrinterSettings updatedPrinterSettings)
@@ -224,7 +243,7 @@ namespace MatterHackers.MatterControl
 		{
 			Thread.CurrentThread.Name = $"ThumbnailGeneration";
 
-			while(!MatterControlApplication.Instance.ApplicationExiting)
+			while(!this.ApplicationExiting)
 			{
 				Thread.Sleep(100);
 
@@ -273,7 +292,7 @@ namespace MatterHackers.MatterControl
 
 		public SlicePresetsWindow EditQualityPresetsWindow { get; set; }
 
-		public ApplicationView MainView;
+		public GuiWidget MainView;
 
 		private EventHandler unregisterEvents;
 
@@ -476,19 +495,18 @@ namespace MatterHackers.MatterControl
 			ScrollBar.ScrollBarWidth = 8 * GuiWidget.DeviceScale;
 			ScrollBar.GrowThumbBy = 2;
 
+			// Initialize statics
 			DefaultThumbBackground.DefaultBackgroundColor = Color.Transparent;
-
 			Object3D.AssetsPath = ApplicationDataStorage.Instance.LibraryAssetsPath;
 
 			this.Library = new LibraryConfig();
 			this.Library.ContentProviders.Add(new[] { "stl", "obj", "amf", "mcx" }, new MeshContentProvider());
-
 			this.Library.ContentProviders.Add("gcode", new GCodeContentProvider());
 
 			// Name = "MainSlidePanel";
 			ActiveTheme.ThemeChanged.RegisterEvent((s, e) =>
 			{
-				if (!MatterControlApplication.IsLoading)
+				if (!AppContext.IsLoading)
 				{
 					ReloadAll();
 				}
@@ -679,7 +697,7 @@ namespace MatterHackers.MatterControl
 				VAnchor = VAnchor.Center
 			});
 
-			MatterControlApplication.Instance.AddChild(reloadingOverlay);
+			AppContext.RootSystemWindow.AddChild(reloadingOverlay);
 
 			this.IsReloading = true;
 
@@ -687,19 +705,17 @@ namespace MatterHackers.MatterControl
 			{
 				using (new QuickTimer($"ReloadAll_{reloadCount++}:"))
 				{
-					MainView?.CloseAllChildren();
-					using (new QuickTimer("ReloadAll_AddElements"))
-					{
-						// Actual ReloadAll implementation
-						MainView?.CreateAndAddChildren();
-					}
+					MainView = new WidescreenPanel();
 					this.DoneReloadingAll?.CallEvents(null, null);
+
+					using (new QuickTimer("Time to AddMainview: "))
+					{
+						AppContext.RootSystemWindow.CloseAllChildren();
+						AppContext.RootSystemWindow.AddChild(MainView);
+					}
 				}
 
 				this.IsReloading = false;
-
-				MatterControlApplication.Instance.RemoveChild(reloadingOverlay);
-
 			});
 		}
 
@@ -720,7 +736,7 @@ namespace MatterHackers.MatterControl
 			ApplicationSettings.Instance.ReleaseClientToken();
 		}
 
-		static void LoadOemOrDefaultTheme()
+		internal static void LoadOemOrDefaultTheme()
 		{
 			// if not check for the oem color and use it if set
 			// else default to "Blue - Light"
@@ -741,26 +757,15 @@ namespace MatterHackers.MatterControl
 			{
 				if (globalInstance == null)
 				{
-					//using (new PerformanceTimer("Startup", "AppController Instance"))
+					globalInstance = new ApplicationController();
+
+					ActiveSliceSettings.ActivePrinterChanged.RegisterEvent((s, e) =>
 					{
-						globalInstance = new ApplicationController();
-
-						// Set the default theme colors
-						LoadOemOrDefaultTheme();
-
-						// Accessing any property on ProfileManager will run the static constructor and spin up the ProfileManager instance
-						bool na = ProfileManager.Instance.IsGuestProfile;
-
-						globalInstance.MainView = new DesktopView();
-
-						ActiveSliceSettings.ActivePrinterChanged.RegisterEvent((s, e) =>
+						if (!AppContext.IsLoading)
 						{
-							if (!MatterControlApplication.IsLoading)
-							{
-								ApplicationController.Instance.ReloadAll();
-							}
-						}, ref globalInstance.unregisterEvents);
-					}
+							ApplicationController.Instance.ReloadAll();
+						}
+					}, ref globalInstance.unregisterEvents);
 				}
 				return globalInstance;
 			}
@@ -781,6 +786,12 @@ namespace MatterHackers.MatterControl
 			return string.IsNullOrEmpty(libraryItem.ID) ? null : ApplicationController.CacheablePath("ItemThumbnails", $"{libraryItem.ID}.png");
 		}
 
+		public string ThumbnailCachePath(ILibraryItem libraryItem, int width, int height)
+		{
+			// TODO: Use content SHA
+			return string.IsNullOrEmpty(libraryItem.ID) ? null : ApplicationController.CacheablePath("ItemThumbnails", $"{libraryItem.ID}-{width}x{height}.png");
+		}
+
 		public void SwitchToPurchasedLibrary()
 		{
 			var purchasedContainer = Library.RootLibaryContainer.ChildContainers.Where(c => c.ID == "LibraryProviderPurchasedKey").FirstOrDefault();
@@ -788,6 +799,72 @@ namespace MatterHackers.MatterControl
 			{
 				// TODO: Navigate to purchased container
 				throw new NotImplementedException("SwitchToPurchasedLibrary");
+			}
+		}
+
+		public void OnLoadActions()
+		{
+			// TODO: Calling UserChanged seems wrong. Load the right user before we spin up controls, rather than after
+			// Pushing this after load fixes that empty printer list
+			/////////////////////ApplicationController.Instance.UserChanged();
+
+			bool showAuthWindow = PrinterSetup.ShouldShowAuthPanel?.Invoke() ?? false;
+			if (showAuthWindow)
+			{
+				if (ApplicationSettings.Instance.get(ApplicationSettingsKey.SuppressAuthPanel) != "True")
+				{
+					//Launch window to prompt user to sign in
+					UiThread.RunOnIdle(() => DialogWindow.Show(PrinterSetup.GetBestStartPage()));
+				}
+			}
+			else
+			{
+				//If user in logged in sync before checking to prompt to create printer
+				if (ApplicationController.SyncPrinterProfiles == null)
+				{
+					RunSetupIfRequired();
+				}
+				else
+				{
+					ApplicationController.SyncPrinterProfiles.Invoke("ApplicationController.OnLoadActions()", null).ContinueWith((task) =>
+					{
+						RunSetupIfRequired();
+					});
+				}
+			}
+
+			// TODO: This should be moved into the splash screen and shown instead of MainView
+			if (AggContext.OperatingSystem == OSType.Android)
+			{
+				// show this last so it is on top
+				if (UserSettings.Instance.get("SoftwareLicenseAccepted") != "true")
+				{
+					UiThread.RunOnIdle(() => DialogWindow.Show<LicenseAgreementPage>());
+				}
+			}
+
+			if (ApplicationController.Instance.ActivePrinter is PrinterConfig printer
+				&& printer.Settings.PrinterSelected
+				&& printer.Settings.GetValue<bool>(SettingsKey.auto_connect))
+			{
+				UiThread.RunOnIdle(() =>
+				{
+					//PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
+					printer.Connection.Connect();
+				}, 2);
+			}
+
+			//HtmlWindowTest();
+
+			AppContext.IsLoading = false;
+		}
+
+		private static void RunSetupIfRequired()
+		{
+			if (!ProfileManager.Instance.ActiveProfiles.Any())
+			{
+				// Start the setup wizard if no profiles exist
+				UiThread.RunOnIdle(() => DialogWindow.Show(PrinterSetup.GetBestStartPage()));
 			}
 		}
 
@@ -837,67 +914,6 @@ namespace MatterHackers.MatterControl
 			{
 				// Show the import printers wizard
 				DialogWindow.Show<CopyGuestProfilesToUser>();
-			}
-		}
-
-		public void OnLoadActions()
-		{
-			Load?.Invoke(this, null);
-
-			// Pushing this after load fixes that empty printer list
-			ApplicationController.Instance.UserChanged();
-
-			bool showAuthWindow = PrinterSetup.ShouldShowAuthPanel?.Invoke() ?? false;
-			if (showAuthWindow)
-			{
-				if (ApplicationSettings.Instance.get(ApplicationSettingsKey.SuppressAuthPanel) != "True")
-				{
-					//Launch window to prompt user to sign in
-					UiThread.RunOnIdle(() => DialogWindow.Show(PrinterSetup.GetBestStartPage()));
-				}
-			}
-			else
-			{
-				//If user in logged in sync before checking to prompt to create printer
-				if (ApplicationController.SyncPrinterProfiles == null)
-				{
-					RunSetupIfRequired();
-				}
-				else
-				{
-					ApplicationController.SyncPrinterProfiles.Invoke("ApplicationController.OnLoadActions()", null).ContinueWith((task) =>
-					{
-						RunSetupIfRequired();
-					});
-				}
-			}
-
-			if (AggContext.OperatingSystem == OSType.Android)
-			{
-				// show this last so it is on top
-				if (UserSettings.Instance.get("SoftwareLicenseAccepted") != "true")
-				{
-					UiThread.RunOnIdle(() => DialogWindow.Show<LicenseAgreementPage>());
-				}
-			}
-
-			if (this.ActivePrinter.Settings.PrinterSelected
-				&& this.ActivePrinter.Settings.GetValue<bool>(SettingsKey.auto_connect))
-			{
-				UiThread.RunOnIdle(() =>
-				{
-					//PrinterConnectionAndCommunication.Instance.HaltConnectionThread();
-					this.ActivePrinter.Connection.Connect();
-				}, 2);
-			}
-		}
-
-		private static void RunSetupIfRequired()
-		{
-			if (!ProfileManager.Instance.ActiveProfiles.Any())
-			{
-				// Start the setup wizard if no profiles exist
-				UiThread.RunOnIdle(() => DialogWindow.Show(PrinterSetup.GetBestStartPage()));
 			}
 		}
 
@@ -1464,6 +1480,188 @@ namespace MatterHackers.MatterControl
 
 				executingTasks.Remove(taskDetails);
 			});
+		}
+	}
+
+	public enum ReportSeverity2 { Warning, Error }
+
+	public interface INativePlatformFeatures
+	{
+		event EventHandler PictureTaken;
+		void TakePhoto(string imageFileName);
+		void OpenCameraPreview();
+		void PlaySound(string fileName);
+		void ConfigureWifi();
+		bool CameraInUseByExternalProcess { get; set; }
+		bool IsNetworkConnected();
+		void FindAndInstantiatePlugins(SystemWindow systemWindow);
+		void ProcessCommandline();
+		void ReportException(Exception e, string key = "", string value = "", ReportSeverity2 warningLevel = ReportSeverity2.Warning);
+		void PlatformInit(Action<string> reporter);
+	}
+
+	public static class Application
+	{
+		private static ProgressBar progressBar;
+		private static TextWidget statusText;
+		private static FlowLayoutWidget progressPanel;
+		private static string lastSection = "";
+		private static Stopwatch timer;
+
+		public static string PlatformFeaturesProvider { get; set; } = "MatterHackers.MatterControl.WindowsPlatformsFeatures, MatterControl";
+		
+		public static SystemWindow LoadRootWindow(int width, int height)
+		{
+			timer = Stopwatch.StartNew();
+
+			var systemWindow = new RootSystemWindow(width, height)
+			{
+				BackgroundColor = Color.DarkGray
+			};
+
+			var overlay = new GuiWidget();
+			overlay.AnchorAll();
+
+			systemWindow.AddChild(overlay);
+
+			progressPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.Center,
+				VAnchor = VAnchor.Center,
+				MinimumSize = new VectorMath.Vector2(400, 100),
+			};
+			overlay.AddChild(progressPanel);
+
+			progressPanel.AddChild(statusText = new TextWidget("", textColor: new Color("#bbb"))
+			{
+				MinimumSize = new VectorMath.Vector2(200, 30)
+			});
+
+			progressPanel.AddChild(progressBar = new ProgressBar()
+			{
+				FillColor = new Color("#3D4B72"),
+				BorderColor = new Color("#777"),
+				Height = 11,
+				Width = 300,
+				HAnchor = HAnchor.Absolute,
+				VAnchor = VAnchor.Absolute
+			});
+
+			AppContext.RootSystemWindow = systemWindow;
+
+			// Hook SystemWindow load and spin up MatterControl once we've hit first draw
+			systemWindow.Load += (s, e) =>
+			{
+				ReportStartupProgress(0.02, "First draw->RunOnIdle");
+
+				//UiThread.RunOnIdle(() =>
+				Task.Run(() =>
+				{
+					ReportStartupProgress(0.1, "Datastore");
+					Datastore.Instance.Initialize();
+
+					ReportStartupProgress(0.15, "MatterControlApplication.Initialize");
+					var mainView = Initialize(systemWindow, (progress0To1, status) =>
+					{
+						ReportStartupProgress(0.2 + progress0To1 * 0.7, status);
+					});
+
+					ReportStartupProgress(0.9, "AddChild->MainView");
+					systemWindow.AddChild(mainView, 0);
+
+					ReportStartupProgress(1, "");
+					systemWindow.BackgroundColor = Color.Transparent;
+					overlay.Close();
+
+					// TODO: Still can't figure out the delay between concluding this block and the first actual render with MainView content. Current 
+					// best guess is delays between widget construction and OpenGL texture creation
+				});
+			};
+
+			// Block indefinitely
+			ReportStartupProgress(0, "ShowAsSystemWindow");
+
+			return systemWindow;
+		}
+
+		public static GuiWidget Initialize(SystemWindow systemWindow, Action<double, string> reporter)
+		{
+			AppContext.Platform = AggContext.CreateInstanceFrom<INativePlatformFeatures>(PlatformFeaturesProvider);
+
+			reporter?.Invoke(0.01, "PlatformInit");
+			AppContext.Platform.PlatformInit((status) =>
+			{
+				reporter?.Invoke(0.01, status);
+			});
+
+			// TODO: Appears to be unused and should be removed
+			// set this at startup so that we can tell next time if it got set to true in close
+			UserSettings.Instance.Fields.StartCount = UserSettings.Instance.Fields.StartCount + 1;
+
+			reporter?.Invoke(0.05, "ApplicationController");
+			var na = ApplicationController.Instance;
+
+			// Set the default theme colors
+			reporter?.Invoke(0.1, "LoadOemOrDefaultTheme");
+			ApplicationController.LoadOemOrDefaultTheme();
+
+			// Accessing any property on ProfileManager will run the static constructor and spin up the ProfileManager instance
+			reporter?.Invoke(0.2, "ProfileManager");
+			bool na2 = ProfileManager.Instance.IsGuestProfile;
+
+			reporter?.Invoke(0.3, "MainView");
+			ApplicationController.Instance.MainView = new WidescreenPanel();
+
+			// now that we are all set up lets load our plugins and allow them their chance to set things up
+			reporter?.Invoke(0.8, "Plugins");
+			AppContext.Platform.FindAndInstantiatePlugins(systemWindow);
+			if (ApplicationController.Instance.PluginsLoaded != null)
+			{
+				ApplicationController.Instance.PluginsLoaded.CallEvents(null, null);
+			}
+
+			reporter?.Invoke(0.9, "Process Commandline");
+			AppContext.Platform.ProcessCommandline();
+
+			reporter?.Invoke(0.91, "OnLoadActions");
+			ApplicationController.Instance.OnLoadActions();
+
+			UiThread.RunOnIdle(CheckOnPrinter);
+
+			return ApplicationController.Instance.MainView;
+		}
+
+		private static void ReportStartupProgress(double progress0To1, string section)
+		{
+			UiThread.RunOnIdle(() =>
+			{
+				statusText.Text = section;
+				progressBar.RatioComplete = progress0To1;
+				progressPanel.Invalidate();
+
+				Console.WriteLine($"Time to '{lastSection}': {timer.ElapsedMilliseconds}");
+				timer.Restart();
+
+				lastSection = section;
+			});
+		}
+
+		private static void CheckOnPrinter()
+		{
+			try
+			{
+				// TODO: UiThread should not be driving anything in Printer.Connection
+				ApplicationController.Instance.ActivePrinter.Connection.OnIdle();
+			}
+			catch (Exception e)
+			{
+				Debug.Print(e.Message);
+				GuiWidget.BreakInDebugger();
+#if DEBUG
+				throw e;
+#endif
+			}
+			UiThread.RunOnIdle(CheckOnPrinter);
 		}
 	}
 }

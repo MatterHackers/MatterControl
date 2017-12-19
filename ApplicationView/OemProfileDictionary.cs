@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2015, Lars Brubaker
+Copyright (c) 2017, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -28,13 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Collections.Generic;
-using MatterHackers.Agg;
-using MatterHackers.Agg.UI;
-using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.VectorMath;
-using System;
 
 namespace MatterHackers.MatterControl
 {
@@ -48,41 +42,5 @@ namespace MatterHackers.MatterControl
 		public string ProfileToken { get; set; }
 		public string ShortProfileID { get; set; }
 		public string CacheKey => this.ShortProfileID + ProfileManager.ProfileExtension;
-	}
-
-	public abstract class ApplicationView : GuiWidget
-	{
-		public abstract void CreateAndAddChildren();
-	}
-
-	public class DesktopView : ApplicationView
-	{
-		private WidescreenPanel widescreenPanel;
-
-		public DesktopView()
-		{
-			CreateAndAddChildren();
-			this.AnchorAll();
-		}
-
-		public override void CreateAndAddChildren()
-		{
-			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-
-			var container = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			container.AnchorAll();
-
-			GuiWidget.TouchScreenMode = UserSettings.Instance.IsTouchScreen;
-
-			container.AddChild(new HorizontalLine(alpha:50));
-
-			widescreenPanel = new WidescreenPanel();
-			container.AddChild(widescreenPanel);
-
-			using (new PerformanceTimer("ReloadAll", "AddChild"))
-			{
-				this.AddChild(container);
-			}
-		}
 	}
 }

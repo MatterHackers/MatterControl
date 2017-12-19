@@ -573,7 +573,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.Delay(2);
 
 					// Confirm abort
-					Assert.IsFalse(MatterControlApplication.Instance.HasBeenClosed, "Canceling Close dialog should *not* close MatterControl");
+					Assert.IsFalse(AppContext.RootSystemWindow.HasBeenClosed, "Canceling Close dialog should *not* close MatterControl");
 
 					// Close MatterControl and cancel print
 					testRunner.CloseMatterControl();
@@ -587,7 +587,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.Delay(2);
 
 					// Confirm close
-					Assert.IsTrue(MatterControlApplication.Instance.HasBeenClosed, "Confirming Close dialog *should* close MatterControl");
+					Assert.IsTrue(AppContext.RootSystemWindow.HasBeenClosed, "Confirming Close dialog *should* close MatterControl");
 
 					// Wait for M106 change
 					testRunner.WaitFor(() => fanChangedCount > 0, 15, 500);

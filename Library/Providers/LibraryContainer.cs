@@ -68,6 +68,9 @@ namespace MatterHackers.MatterControl.Library
 
 		protected void OnContentChanged()
 		{
+			// Reload the container when new contents are available
+			this.Load();
+
 			this.ContentChanged?.Invoke(this, null);
 		}
 

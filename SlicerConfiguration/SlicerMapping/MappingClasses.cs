@@ -98,7 +98,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			double value;
 			if (!double.TryParse(textValue, out value))
 			{
-				MatterControlApplication.BreakInDebugger("Slicing value is not a double.");
 				return valueOnError;
 			}
 

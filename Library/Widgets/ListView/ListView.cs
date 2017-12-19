@@ -160,12 +160,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			var itemsContentView = contentView as IListContentView;
 			itemsContentView.ClearItems();
 
-			// Wait for the container to load
-			await Task.Run(() =>
-			{
-				sourceContainer.Load();
-			});
-
 			int width = itemsContentView.ThumbWidth;
 			int height = itemsContentView.ThumbHeight;
 
@@ -221,7 +215,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			if (firstItem != null)
 			{
 				firstItem.ViewWidget.LoadItemThumbnail().ConfigureAwait(false);
-				firstItem.ViewWidget.Invalidate();
 			}
 		}
 
@@ -264,21 +257,55 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			}
 		}
 
-		internal ImageBuffer LoadCachedImage(ListViewItem listViewItem)
+		internal ImageBuffer LoadCachedImage(ListViewItem listViewItem, int width, int height)
 		{
-			string cachePath = ApplicationController.Instance.ThumbnailCachePath(listViewItem.Model);
-
-			bool isCached = !string.IsNullOrEmpty(cachePath) && File.Exists(cachePath);
-			if (isCached)
+			ImageBuffer cachedItem = LoadImage(ApplicationController.Instance.ThumbnailCachePath(listViewItem.Model, width, height));
+			if (cachedItem != null)
 			{
-				ImageBuffer thumbnail = new ImageBuffer();
-				AggContext.ImageIO.LoadImageData(cachePath, thumbnail);
-				thumbnail.SetRecieveBlender(new BlenderPreMultBGRA());
+				return cachedItem;
+			}
 
-				return thumbnail;
+			// Check for big render, resize, cache and return
+			var bigRender = LoadImage(ApplicationController.Instance.ThumbnailCachePath(listViewItem.Model));
+			if (bigRender != null)
+			{
+				try
+				{
+					var thumbnail = LibraryProviderHelpers.ResizeImage(bigRender, width, height);
+
+					// Cache at requested size
+					AggContext.ImageIO.SaveImageData(
+						ApplicationController.Instance.ThumbnailCachePath(listViewItem.Model, width, height), 
+						thumbnail);
+
+					return thumbnail;
+				}
+				catch { } // suppress and return null on errors
 			}
 
 			return null;
+		}
+
+		private ImageBuffer LoadImage(string filePath)
+		{
+			ImageBuffer thumbnail = null;
+
+			try
+			{
+				if (File.Exists(filePath))
+				{
+					var temp = new ImageBuffer();
+					AggContext.ImageIO.LoadImageData(filePath, temp);
+					temp.SetRecieveBlender(new BlenderPreMultBGRA());
+
+					thumbnail = temp;
+				}
+
+				return thumbnail;
+			}
+			catch { } // Suppress exceptions, return null on any errors
+
+			return thumbnail;
 		}
 
 		// TODO: ResizeCanvas is also colorizing thumbnails as a proof of concept
@@ -308,7 +335,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		private void listViewItem_DoubleClick(object sender, MouseEventArgs e)
 		{
-			UiThread.RunOnIdle((Action)(async () =>
+			UiThread.RunOnIdle(async () =>
 			{
 				var listViewItem = sender as ListViewItem;
 				var itemModel = listViewItem.Model;
@@ -320,10 +347,15 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					if (containerLink != null)
 					{
 						var container = await containerLink.GetContainer(null);
+						await Task.Run(() =>
+						{
+							container.Load();
+						});
+
 						if (container != null)
 						{
 							container.Parent = ActiveContainer;
-							LoadContainer(container);
+							SetActiveContainer(container);
 						}
 					}
 				}
@@ -366,12 +398,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						}
 					}
 				}
-			}));
+			});
 		}
 
-		public void LoadContainer(ILibraryContainer temp)
+		public void SetActiveContainer(ILibraryContainer container)
 		{
-			this.LibraryContext.ActiveContainer = temp;
+			this.LibraryContext.ActiveContainer = container;
 		}
 
 		public ObservableCollection<ListViewItem> SelectedItems { get; } = new ObservableCollection<ListViewItem>();

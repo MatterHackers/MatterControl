@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl
 					nextButton.Visible = true;
 					skipButton.Visible = false;
 					configureButton.Visible = false;
-					MatterControlApplication.Instance.ConfigureWifi();
+					AppContext.Platform.ConfigureWifi();
 				});
 			};
 
