@@ -592,7 +592,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			AutomationRunner.TimeToMoveMouse = config.TimeToMoveMouse;
 			AutomationRunner.UpDelaySeconds = config.MouseUpDelay;
 
-			rootSystemWindow = Application.LoadRootWindow(overrideWidth, overrideHeight);
+			var (width, height) = RootSystemWindow.GetStartupBounds();
+
+			rootSystemWindow = Application.LoadRootWindow(
+				overrideWidth == -1 ? width : overrideWidth, 
+				overrideHeight == -1 ? height : overrideHeight);
 
 			await AutomationRunner.ShowWindowAndExecuteTests(
 				rootSystemWindow,
