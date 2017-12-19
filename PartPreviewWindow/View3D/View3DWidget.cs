@@ -268,18 +268,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				selectionActionBar.AddChild(this.CreateActionSeparator());
 
-				var copyButton = smallMarginButtonFactory.Generate("Copy".Localize());
-				copyButton.Name = "3D View Copy";
-				copyButton.Margin = buttonSpacing;
-				copyButton.Click += (sender, e) =>
+				var duplicateButton = smallMarginButtonFactory.Generate("Duplicate".Localize());
+				duplicateButton.Name = "3D View Copy";
+				duplicateButton.Margin = buttonSpacing;
+				duplicateButton.Click += (sender, e) =>
 				{
 					this.Scene.DuplicateSelection(this);
 				};
 				this.Scene.SelectionChanged += (s, e) =>
 				{
-					copyButton.Enabled = this.Scene.HasSelection;
+					duplicateButton.Enabled = this.Scene.HasSelection;
 				};
-				selectionActionBar.AddChild(copyButton);
+				selectionActionBar.AddChild(duplicateButton);
 
 				var deleteButton = smallMarginButtonFactory.Generate("Remove".Localize());
 				deleteButton.Name = "3D View Remove";
