@@ -34,6 +34,7 @@ using MatterHackers.Agg.Font;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
+using MatterHackers.DataConverters3D;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
 
@@ -62,7 +63,6 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 		{
 			var group = new TextObject
 			{
-				ItemType = Object3DTypes.Node,
 				Text = wordText,
 				ActiveEditor = "BrailleEditor"
 			};

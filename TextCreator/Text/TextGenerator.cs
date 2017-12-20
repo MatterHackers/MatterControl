@@ -32,6 +32,7 @@ using System.Linq;
 using MatterHackers.Agg.Font;
 using MatterHackers.Agg.Platform;
 using MatterHackers.DataConverters3D;
+using MatterHackers.DataConverters3D;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
 
@@ -49,7 +50,6 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 		{
 			var groupItem = new TextObject()
 			{
-				ItemType = Object3DTypes.Node,
 				Text = wordText,
 				Name = "Text",
 				Spacing = spacing,

@@ -84,13 +84,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							Mesh = mesh,
 							Matrix = ungroupItem.Matrix,
 						}));
+						
 						// add and do the undo data
 						Scene.UndoBuffer.AddAndDo(new ReplaceCommand(new List<IObject3D> { ungroupItem }, addItems));
-						// select all the new items
-						foreach (var item in addItems)
-						{
-							Scene.AddToSelection(item);
-						}
 					}
 
 					if (isGroupItemType)
@@ -106,8 +102,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					return;
 				}
 
-				// our selection changed to the mesh we just added which is at the end
-				Scene.SelectLastChild();
+				// leave no selection
+				Scene.SelectedItem = null;
 
 				view3DWidget.EndProgress();
 			}
@@ -119,18 +115,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				view3DWidget.StartProgress("Group Selection");
 
-				var item = Scene.SelectedItem;
+				var selectedItem = Scene.SelectedItem;
 
 				await Task.Run(() =>
 				{
-					if (Scene.IsSelected(Object3DTypes.SelectionGroup))
-					{
-						// Create and perform the delete operation
-						var operation = new GroupCommand(Scene, Scene.SelectedItem);
+					// Create and perform the delete operation
+					var operation = new GroupCommand(Scene, selectedItem);
 
-						// Store the operation for undo/redo
-						Scene.UndoBuffer.AddAndDo(operation);
-					}
+					// Store the operation for undo/redo
+					Scene.UndoBuffer.AddAndDo(operation);
 				});
 
 				if (view3DWidget.HasBeenClosed)
@@ -162,7 +155,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					var originalItem = Scene.SelectedItem;
 					if (originalItem != null)
 					{
-						if (originalItem.ItemType == Object3DTypes.SelectionGroup)
+						if (originalItem is SelectionGroup)
 						{
 							// the selection is a group of obects that need to be copied
 							var copyList = originalItem.Children.ToList();

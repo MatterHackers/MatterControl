@@ -34,7 +34,6 @@ using System.Threading.Tasks;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
 
@@ -173,7 +172,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			// of the scene when it loses focus
 			scene.Children.Modify((Action<List<IObject3D>>)((List<IObject3D> list) =>
 			{
-				(this).CollapseInto(list, (Object3DTypes)Object3DTypes.Node);
+				(this).CollapseInto(list, false);
 			}));
 
 			// Create and push the undo operation
