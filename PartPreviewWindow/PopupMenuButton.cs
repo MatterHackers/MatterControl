@@ -71,12 +71,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		protected override void BeforeShowPopup()
+		protected override void OnBeforePopup()
 		{
 			if (this.PopupContent.BackgroundColor == Color.Transparent)
 			{
 				this.PopupContent.BackgroundColor = Color.White;
 			}
+
+			base.OnBeforePopup();
 		}
 	}
 }
