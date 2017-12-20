@@ -38,6 +38,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private static readonly Color slightShade = new Color(0, 0, 0, 40);
 
 		public event EventHandler PopupWindowClosed;
+		public event EventHandler BeforePopup;
 		
 		private GuiWidget buttonView;
 		private bool menuVisibileAtMouseDown = false;
@@ -113,7 +114,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				return;
 			}
 
-			this.BeforeShowPopup();
+			this.OnBeforePopup();
 
 			popupWidget = new PopupWidget(this.PopupContent, PopupLayoutEngine, MakeScrollable)
 			{
@@ -133,8 +134,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			popupWidget.Focus();
 		}
 
-		protected virtual void BeforeShowPopup()
+		protected virtual void OnBeforePopup()
 		{
+			this.BeforePopup?.Invoke(this, null);
 		}
 	}
 }
