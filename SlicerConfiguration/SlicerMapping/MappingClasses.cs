@@ -553,12 +553,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 	public class AsPercentOfReferenceOrDirect : MappedSetting
 	{
+		bool change0ToReference;
 		string originalReference;
 		double scale;
 
-		public AsPercentOfReferenceOrDirect(string canonicalSettingsName, string exportedName, string originalReference, double scale = 1)
+		public AsPercentOfReferenceOrDirect(string canonicalSettingsName, string exportedName, string originalReference, double scale = 1, bool change0ToReference = true)
 			: base(canonicalSettingsName, exportedName)
 		{
+			this.change0ToReference = change0ToReference;
 			this.scale = scale;
 			this.originalReference = originalReference;
 		}
@@ -581,7 +583,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					finalValue = ParseDouble(base.Value);
 				}
 
-				if (finalValue == 0)
+				if (change0ToReference
+					&& finalValue == 0)
 				{
 					finalValue = ParseDouble(ActiveSliceSettings.Instance.GetValue(originalReference));
 				}
