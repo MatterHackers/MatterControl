@@ -32,18 +32,22 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
 using System;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class SliceButton : TextButton
 	{
 		private PrinterConfig printer;
+		private PrinterTabPage printerTabPage;
 		private EventHandler unregisterEvents;
+		private bool activelySlicing { get; set; }
 
-		public SliceButton(PrinterConfig printer, ThemeConfig theme)
+		public SliceButton(PrinterConfig printer, PrinterTabPage printerTabPage, ThemeConfig theme)
 			: base("Slice".Localize(), theme)
 		{
 			this.printer = printer;
+			this.printerTabPage = printerTabPage;
 
 			printer.Connection.CommunicationStateChanged.RegisterEvent((s, e) =>
 			{
@@ -53,13 +57,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			SetButtonStates();
 		}
 
+		public override async void OnClick(MouseEventArgs mouseEvent)
+		{
+			base.OnClick(mouseEvent);
+			await this.SliceFileTask();
+		}
+
 		public override void OnClosed(ClosedEventArgs e)
 		{
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
 		}
 
-		protected void SetButtonStates()
+		private void SetButtonStates()
 		{
 			switch (printer.Connection.CommunicationState)
 			{
@@ -71,8 +81,47 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					break;
 
 				default:
-					this.Enabled = true;
+					this.Enabled = !activelySlicing;
 					break;
+			}
+		}
+
+		private async Task SliceFileTask()
+		{
+			if (printer.Settings.PrinterSelected)
+			{
+				if (!activelySlicing
+					&& printer.Settings.IsValid()
+					&& printer.Bed.EditContext.SourceItem != null)
+				{
+					activelySlicing = true;
+					this.SetButtonStates();
+
+					try
+					{
+						await ApplicationController.Instance.Tasks.Execute(printerTabPage.view3DWidget.SaveChanges);
+
+						await ApplicationController.Instance.SliceFileLoadOutput(
+							printer,
+							printer.Bed.EditContext.PartFilePath,
+							printer.Bed.EditContext.GCodeFilePath);
+					}
+					catch (Exception ex)
+					{
+						Console.WriteLine("Error slicing file: " + ex.Message);
+					}
+
+					activelySlicing = false;
+				};
+
+				this.SetButtonStates();
+			}
+			else
+			{
+				UiThread.RunOnIdle(() =>
+				{
+					StyledMessageBox.ShowMessageBox("Oops! Please select a printer in order to continue slicing.", "Select Printer", StyledMessageBox.MessageType.OK);
+				});
 			}
 		}
 	}
