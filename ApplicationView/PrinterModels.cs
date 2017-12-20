@@ -176,7 +176,7 @@ namespace MatterHackers.MatterControl
 				CancellationToken.None);
 		}
 
-		internal static ILibraryItem LoadLastPlateOrNew()
+		internal static ILibraryItem GetLastPlateOrNew()
 		{
 			// Find the last used bed plate mcx
 			var directoryInfo = new DirectoryInfo(ApplicationDataStorage.Instance.PlatingDirectory);
