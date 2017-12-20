@@ -233,8 +233,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					item.ViewWidget.IsSelected = true;
 				}
 			}
-
-			EnableMenus();
 		}
 
 		private void Library_ContainerChanged(object sender, ContainerChangedEventArgs e)
@@ -419,7 +417,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				IsEnabled = (selectedListItems, listView) =>
 				{
 					// Multiselect - disallow containers
-					return listView.SelectedItems.All(i => !(i.Model is ILibraryContainer));
+					return listView.SelectedItems.Any()
+						&& listView.SelectedItems.All(i => !(i.Model is ILibraryContainer));
 				}		
 			});
 
@@ -518,7 +517,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				IsEnabled = (selectedListItems, listView) =>
 				{
 					// Multiselect, WritableContainer - disallow protected
-					return listView.SelectedItems.All(i => !i.Model.IsProtected
+					return listView.SelectedItems.Any()
+						&& listView.SelectedItems.All(i => !i.Model.IsProtected
 						&& ApplicationController.Instance.Library.ActiveContainer is ILibraryWritableContainer);
 
 				}
@@ -532,7 +532,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				IsEnabled = (selectedListItems, listView) =>
 				{
 					// Multiselect, WritableContainer - disallow protected
-					return listView.SelectedItems.All(i => !i.Model.IsProtected
+					return listView.SelectedItems.Any()
+						&& listView.SelectedItems.All(i => !i.Model.IsProtected
 						&& ApplicationController.Instance.Library.ActiveContainer is ILibraryWritableContainer);
 				}
 			});
@@ -547,7 +548,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				IsEnabled = (selectedListItems, listView) =>
 				{
 					// Multiselect - disallow containers
-					return listView.SelectedItems.All(i => !(i.Model is ILibraryContainer));
+					return listView.SelectedItems.Any()
+						&& listView.SelectedItems.All(i => !(i.Model is ILibraryContainer));
 				},
 			});
 
@@ -559,7 +561,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				IsEnabled = (selectedListItems, listView) =>
 				{
 					// Multiselect - disallow containers
-					return listView.SelectedItems.All(i => !(i.Model is ILibraryContainer));
+					return listView.SelectedItems.Any()
+						&& listView.SelectedItems.All(i => !(i.Model is ILibraryContainer));
 				},
 			});
 
@@ -627,7 +630,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					IsEnabled = (selectedListItems, listView) =>
 					{
 						// Multiselect - disallow containers
-						return listView.SelectedItems.All(i => !(i.Model is ILibraryContainer));
+						return listView.SelectedItems.Any()
+							&& listView.SelectedItems.All(i => !(i.Model is ILibraryContainer));
 					}
 				});
 			}
@@ -715,8 +719,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			foreach (var menuAction in menuActions.Where(m => m.MenuItem != null))
 			{
-				menuAction.MenuItem.Enabled = libraryView.SelectedItems.Count > 0
-					&& menuAction.IsEnabled(libraryView.SelectedItems, libraryView);
+				menuAction.MenuItem.Enabled = menuAction.IsEnabled(libraryView.SelectedItems, libraryView);
 			}
 		}
 
@@ -873,9 +876,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				}
 			}
 
-			EnableMenus();
-
 			overflowMenu.PopupContent = popupMenu;
+			overflowMenu.BeforePopup += (s, e) =>
+			{
+				this.EnableMenus();
+			};
 
 			base.OnLoad(args);
 		}
