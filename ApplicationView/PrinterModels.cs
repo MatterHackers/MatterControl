@@ -76,8 +76,10 @@ namespace MatterHackers.MatterControl
 
 		public async Task LoadContent(EditContext editContext)
 		{
-			// Load
+			// Store
+			this.EditContext = editContext;
 
+			// Load
 			if (editContext.SourceItem is ILibraryContentStream contentStream
 				&& contentStream.ContentType == "gcode")
 			{
@@ -101,9 +103,6 @@ namespace MatterHackers.MatterControl
 
 				this.EditableScene = true;
 			}
-
-			// Store
-			this.EditContext = editContext;
 
 			// Notify
 			this.SceneLoaded?.Invoke(this, null);
