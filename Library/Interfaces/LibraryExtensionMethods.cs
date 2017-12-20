@@ -53,5 +53,11 @@ namespace MatterHackers.MatterControl.Library
 				|| (item is ILibraryContentStream contentStream
 					&& ApplicationController.Instance.Library.IsContentFileType(contentStream.FileName));
 		}
+
+		public static bool IsMeshFileType(this ILibraryItem item)
+		{
+			return item is ILibraryContentStream contentStream
+					&& ApplicationController.Instance.Library.IsMeshFileType(contentStream.FileName);
+		}
 	}
 }

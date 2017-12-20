@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		}
 
 		// TODO: Figure out how best to collapse the InsertionGroup after the load task completes
-		public InsertionGroup(IEnumerable<ILibraryItem> items, View3DWidget view3DWidget, InteractiveScene scene, Vector2 bedCenter, Func<bool> dragOperationActive)
+		public InsertionGroup(IEnumerable<ILibraryItem> items, View3DWidget view3DWidget, InteractiveScene scene, Vector2 bedCenter, Func<bool> dragOperationActive, bool trackSourceFiles = false)
 		{
 			// Add a temporary placeholder to give us some bounds
 			this.Mesh = InsertionGroup.placeHolderMesh;
@@ -115,6 +115,14 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						// Copy scale/rotation/translation from the source and Center
 						loadedItem.Matrix = loadedItem.Matrix * Matrix4X4.CreateTranslation((double)-aabb.Center.X, (double)-aabb.Center.Y, (double)-aabb.minXYZ.Z) * placeholderItem.Matrix;
 						loadedItem.Color = loadedItem.Color;
+
+						// Set mesh path if tracking requested
+						if (trackSourceFiles 
+							&& item is FileSystemFileItem fileItem
+							&& item.IsMeshFileType())
+						{
+							loadedItem.MeshPath = fileItem.Path;
+						}
 
 						// Notification should force invalidate and redraw
 						//progressReporter?.Invoke(1, "");
