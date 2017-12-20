@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public TransformCommand(IObject3D transformedObject, Matrix4X4 undoTransform, Matrix4X4 redoTransform)
 		{
-			if (transformedObject.ItemType == Object3DTypes.SelectionGroup)
+			if (transformedObject is SelectionGroup)
 			{
 				// move the group transform into the items
 				foreach (var child in transformedObject.Children)

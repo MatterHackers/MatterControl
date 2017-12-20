@@ -215,7 +215,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.Scene.SelectionChanged += (s, e) =>
 				{
 					groupButton.Enabled = this.Scene.HasSelection
-						&& this.Scene.SelectedItem.ItemType != Object3DTypes.Group
+						&& this.Scene.SelectedItem is SelectionGroup
 						&& this.Scene.SelectedItem.Children.Count > 1;
 				};
 				selectionActionBar.AddChild(groupButton);
@@ -246,7 +246,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.Scene.SelectionChanged += (s, e) =>
 				{
 					alignButton.Enabled = this.Scene.HasSelection
-						&& this.Scene.SelectedItem.ItemType != Object3DTypes.Group
+						&& this.Scene.SelectedItem is SelectionGroup
 						&& this.Scene.SelectedItem.Children.Count > 1;
 				};
 				selectionActionBar.AddChild(alignButton);
@@ -703,7 +703,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			try
 			{
-				booleanGroup = new Object3D { ItemType = Object3DTypes.Group };
+				booleanGroup = new Object3D();
 
 				booleanGroup.Children.Add(new Object3D()
 				{

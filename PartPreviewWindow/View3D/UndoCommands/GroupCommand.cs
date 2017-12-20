@@ -46,11 +46,29 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public async void Do()
 		{
-			if (scene.SelectedItem == item)
+			var selectedItem = scene.SelectedItem;
+			if (selectedItem == item)
 			{
 				// This is the original do() case. The selection needs to be changed into a group and selected
 				// change it to a standard group
-				scene.SelectedItem.ItemType = Object3DTypes.Group;
+				var newGroup = new Object3D();
+				newGroup.Children.Modify((gChildren) =>
+				{
+					selectedItem.Children.Modify((sChildren) =>
+					{
+						for(int i= sChildren.Count-1; i >= 0; i--)
+						{
+							var child = sChildren[i];
+							sChildren.RemoveAt(i);
+							gChildren.Add(child);
+						}
+					});
+				});
+				scene.Children.Add(newGroup);
+				scene.SelectedItem = null;
+				item = newGroup;
+
+				scene.SelectedItem = item;
 			}
 			else
 			{
@@ -67,7 +85,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					children.Add(item);
 				});
 
-				scene.SelectedItem = item;
+				scene.SelectedItem = null;
 			}
 		}
 
@@ -87,7 +105,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				list.AddRange(item.Children);
 			});
 
-			scene.SelectLastChild();
+			scene.SelectedItem = null;
 		}
 	}
 }

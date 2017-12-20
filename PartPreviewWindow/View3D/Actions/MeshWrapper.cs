@@ -49,7 +49,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			this.Name = child.Name;
 			this.OwnerID = ownerId;
 			this.MaterialIndex = child.MaterialIndex;
-			this.ItemType = child.ItemType;
 			this.OutputType = child.OutputType;
 			this.Color = child.Color;
 			this.Mesh = child.Mesh;
