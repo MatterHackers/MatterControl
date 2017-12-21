@@ -41,16 +41,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private string lastOutputLine = "";
 		private IProgress<ProgressStatus> parentProgress;
 		private PrinterConfig printer;
+		private Stopwatch timer = Stopwatch.StartNew();
+		private string progressSection = "";
 
 		public SliceProgressReporter(IProgress<ProgressStatus> progressStatus, PrinterConfig printer)
 		{
 			this.parentProgress = progressStatus;
 			this.printer = printer;
 		}
-
-		private Stopwatch timer = Stopwatch.StartNew();
-
-		private string progressSection = "";
 
 		public void Report(ProgressStatus progressStatus)
 		{
@@ -80,7 +78,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				timer.Restart();
 
-				progressStatus.Status = progressSection;
+				progressStatus.Status = progressStatus.Status.TrimEnd('.');
 				progressStatus.Progress0To1 = 0;
 			}
 			else
