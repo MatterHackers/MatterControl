@@ -202,7 +202,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 							var inverse = keep.WorldMatrix();
 							inverse.Invert();
 							transformedKeep.Transform(inverse);
-							keep.Mesh = transformedKeep;
+
+							keep.SetAndInvalidateMesh(transformedKeep);
 							view3DWidget.Invalidate();
 
 							percentCompleted += amountPerOperation;
