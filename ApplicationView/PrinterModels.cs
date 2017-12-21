@@ -52,8 +52,9 @@ namespace MatterHackers.MatterControl
 	using MatterHackers.MatterControl.PartPreviewWindow;
     using System.Collections.Generic;
     using MatterHackers.MatterControl.PrintLibrary;
+	using MatterHackers.Localizations;
 
-    public class BedConfig
+	public class BedConfig
 	{
 		public event EventHandler ActiveLayerChanged;
 
@@ -85,7 +86,7 @@ namespace MatterHackers.MatterControl
 			{
 				using (var task = await contentStream.GetContentStream(null))
 				{
-					this.LoadGCode(task.Stream, CancellationToken.None, null);
+					await LoadGCodeContent(task.Stream);
 				}
 
 				this.Scene.Children.Modify(children => children.Clear());
@@ -98,7 +99,10 @@ namespace MatterHackers.MatterControl
 
 				if (File.Exists(editContext?.GCodeFilePath))
 				{
-					this.LoadGCode(editContext.GCodeFilePath, CancellationToken.None, null);
+					using (var stream = File.OpenRead(editContext.GCodeFilePath))
+					{
+						await LoadGCodeContent(stream);
+					}
 				}
 
 				this.EditableScene = true;
@@ -106,6 +110,27 @@ namespace MatterHackers.MatterControl
 
 			// Notify
 			this.SceneLoaded?.Invoke(this, null);
+		}
+
+		private async Task LoadGCodeContent(Stream stream)
+		{
+			await ApplicationController.Instance.Tasks.Execute((reporter, cancellationToken) =>
+			{
+				var progressStatus = new ProgressStatus()
+				{
+					Status = "Loading G-Code".Localize()
+				};
+				reporter.Report(progressStatus);
+
+				this.LoadGCode(stream, cancellationToken, (progress0To1, status) =>
+				{
+					progressStatus.Status = status;
+					progressStatus.Progress0To1 = progress0To1;
+					reporter.Report(progressStatus);
+				});
+
+				return Task.CompletedTask;
+			});
 		}
 
 		internal static ILibraryItem NewPlatingItem()
