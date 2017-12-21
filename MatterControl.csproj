@@ -83,6 +83,8 @@
     <Compile Include="ActionBar\TemperatureWidgetBed.cs" />
     <Compile Include="ApplicationView\OemProfileDictionary.cs" />
     <Compile Include="ApplicationView\WindowsPlatformsFeatures.cs" />
+    <Compile Include="PartPreviewWindow\LibraryBrowserPage.cs" />
+    <Compile Include="PartPreviewWindow\MoveItemPage.cs" />
     <Compile Include="PartPreviewWindow\View3D\PrinterBar\PrintPopupMenu.cs" />
     <Compile Include="PartPreviewWindow\View3D\PrinterBar\SliceButton.cs" />
     <Compile Include="PartPreviewWindow\View3D\PrinterBar\PrinterConnectButton.cs" />

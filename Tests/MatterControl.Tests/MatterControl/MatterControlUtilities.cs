@@ -520,7 +520,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			testRunner.NavigateToFolder(folderName);
 
-			testRunner.ClickByName("Save As Save Button");
+			testRunner.ClickByName("Accept Button");
 
 			// Give the SaveAs window time to close before returning to the caller
 			testRunner.Delay(2);
