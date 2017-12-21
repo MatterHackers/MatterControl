@@ -161,8 +161,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void CloseSignInAndPrinterSelect(this AutomationRunner testRunner, PrepAction preAction = PrepAction.CloseSignInAndPrinterSelect)
 		{
-			// NOTE: Tests fail to detect and close this Window when delay is ~.5
-			//
+			SystemWindow systemWindow;
+			testRunner.GetWidgetByName("View3DWidget", out systemWindow);
+			// make sure we wait for MC to be up and running
+			testRunner.WaitforDraw(systemWindow);
+
+			// If there is a auth pannel make sure we try and close it
 			// Non-MCCentral builds won't have the plugin. Reduce the wait time for these cases
 			if (testRunner.WaitForName("Connection Wizard Skip Sign In Button", 1))
 			{

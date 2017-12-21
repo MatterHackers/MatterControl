@@ -56,12 +56,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					selectedItem.Children.Modify((sChildren) =>
 					{
-						for(int i= sChildren.Count-1; i >= 0; i--)
+						foreach(var child in sChildren)
 						{
-							var child = sChildren[i];
-							sChildren.RemoveAt(i);
 							gChildren.Add(child);
 						}
+
+						sChildren.Clear();
 					});
 				});
 				scene.Children.Add(newGroup);
