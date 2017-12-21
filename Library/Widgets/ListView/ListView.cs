@@ -340,30 +340,26 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				var listViewItem = sender as ListViewItem;
 				var itemModel = listViewItem.Model;
 
-				if (itemModel is ILibraryContainerLink)
+				if (itemModel is ILibraryContainerLink containerLink)
 				{
 					// Container items
-					var containerLink = itemModel as ILibraryContainerLink;
-					if (containerLink != null)
-					{
-						var container = await containerLink.GetContainer(null);
-						await Task.Run(() =>
-						{
-							container.Load();
-						});
+					var container = await containerLink.GetContainer(null);
 
-						if (container != null)
-						{
-							container.Parent = ActiveContainer;
-							SetActiveContainer(container);
-						}
+					await Task.Run(() =>
+					{
+						container.Load();
+					});
+
+					if (container != null)
+					{
+						container.Parent = ActiveContainer;
+						SetActiveContainer(container);
 					}
 				}
 				else
 				{
 					// List items
-					var contentModel = itemModel as ILibraryContentStream;
-					if (contentModel != null)
+					if (itemModel is ILibraryContentStream contentModel)
 					{
 						var activeContext = ApplicationController.Instance.DragDropData;
 						if (activeContext.View3DWidget != null)
