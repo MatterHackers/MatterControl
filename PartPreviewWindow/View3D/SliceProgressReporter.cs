@@ -52,8 +52,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void Report(ProgressStatus progressStatus)
 		{
-			bool foundProgressNumbers = false;
-
 			string value = progressStatus.Status;
 
 			if (GCodeFile.GetFirstNumberAfter("", value, ref currentValue)
@@ -63,8 +61,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					destValue = 1;
 				}
-
-				foundProgressNumbers = true;
 
 				int pos = value.IndexOf(currentValue.ToString());
 				if (pos != -1)
@@ -79,7 +75,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				timer.Restart();
 
 				progressStatus.Status = progressStatus.Status.TrimEnd('.');
-				progressStatus.Progress0To1 = 0;
+				progressStatus.Progress0To1 = currentValue / destValue;
 			}
 			else
 			{
@@ -91,11 +87,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (lastOutputLine != value.Substring(0, lengthBeforeNumber))
 			{
 				lastOutputLine = value.Substring(0, lengthBeforeNumber);
-			}
-
-			if (foundProgressNumbers)
-			{
-				progressStatus.Progress0To1 = currentValue / destValue;
 			}
 
 			parentProgress.Report(progressStatus);
