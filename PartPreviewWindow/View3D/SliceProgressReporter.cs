@@ -97,8 +97,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (foundProgressNumbers)
 			{
-				double complete = currentValue / destValue;
-				progressStatus.Progress0To1 = complete;
+				progressStatus.Progress0To1 = currentValue / destValue;
 			}
 
 			parentProgress.Report(progressStatus);
