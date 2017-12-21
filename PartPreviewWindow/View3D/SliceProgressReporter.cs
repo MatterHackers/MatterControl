@@ -41,7 +41,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private IProgress<ProgressStatus> parentProgress;
 		private PrinterConfig printer;
 		private Stopwatch timer = Stopwatch.StartNew();
-		private string progressSection = "";
 
 		public SliceProgressReporter(IProgress<ProgressStatus> progressStatus, PrinterConfig printer)
 		{
@@ -59,16 +58,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (destValue == 0)
 				{
 					destValue = 1;
-				}
-
-				int pos = value.IndexOf(currentValue.ToString());
-				if (pos != -1)
-				{
-					progressSection = value.Substring(0, pos);
-				}
-				else
-				{
-					progressSection = value;
 				}
 
 				timer.Restart();
