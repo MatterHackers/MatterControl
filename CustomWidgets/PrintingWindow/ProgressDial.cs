@@ -102,7 +102,15 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					// Flag for redraw
 					this.Invalidate();
 
-					percentCompleteWidget.Text = $"{CompletedRatio * 100:0}%";
+					double percentComplete = CompletedRatio * 100;
+					if (percentComplete < 99)
+					{
+						percentCompleteWidget.Text = $"{percentComplete:0}%";
+					}
+					else // let's show the extra decimal during the last perecent
+					{
+						percentCompleteWidget.Text = $"{Math.Min(99.9, percentComplete):0.0}%";
+					}
 				}
 			}
 		}
