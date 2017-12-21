@@ -1,14 +1,8 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Threading;
-using System.Threading.Tasks;
-using MatterHackers.Agg;
-using MatterHackers.Agg.Font;
 using MatterHackers.Agg.Platform;
-using MatterHackers.Agg.UI;
-using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.SettingsManagement;
 using Mindscape.Raygun4Net;
 
@@ -52,7 +46,8 @@ namespace MatterHackers.MatterControl
 			//var systemWindow = new DesktopMainWindow(400, 200)
 			var (width, height) = RootSystemWindow.GetStartupBounds();
 
-			Application.LoadRootWindow(width, height).ShowAsSystemWindow();
+			var systemWindow = Application.LoadRootWindow(width, height);
+			systemWindow.ShowAsSystemWindow();
 		}
 
 		private static void Application_ThreadException(object sender, ThreadExceptionEventArgs e)

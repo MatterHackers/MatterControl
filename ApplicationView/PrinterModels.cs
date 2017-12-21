@@ -582,6 +582,19 @@ namespace MatterHackers.MatterControl
 	public class PrinterConfig
 	{
 		public BedConfig Bed { get; }
+
+		private EventHandler unregisterEvents;
+
+		public PrinterConfig(PrinterSettings settings)
+		{
+			this.Bed = new BedConfig(this);
+			this.Connection = new PrinterConnection(printer: this);
+			this.Settings = settings;
+			this.Settings.printer = this;
+
+			ActiveSliceSettings.SettingChanged.RegisterEvent(Printer_SettingChanged, ref unregisterEvents);
+		}
+
 		public PrinterViewState ViewState { get; } = new PrinterViewState();
 
 		private PrinterSettings _settings;
@@ -601,23 +614,17 @@ namespace MatterHackers.MatterControl
 
 		public PrinterConnection Connection { get; private set; }
 
-		private EventHandler unregisterEvents;
-
-		public PrinterConfig(EditContext editContext, PrinterSettings settings)
+		/// <summary>
+		/// Loads content to the bed and prepares the printer for use
+		/// </summary>
+		/// <param name="editContext"></param>
+		/// <returns></returns>
+		public async Task Initialize(EditContext editContext)
 		{
-			this.Bed = new BedConfig(this);
-
 			if (editContext != null)
 			{
-				this.Bed.LoadContent(editContext).ConfigureAwait(false);
+				await this.Bed.LoadContent(editContext);
 			}
-
-			this.Connection = new PrinterConnection(printer: this);
-
-			this.Settings = settings;
-			this.Settings.printer = this;
-
-			ActiveSliceSettings.SettingChanged.RegisterEvent(Printer_SettingChanged, ref unregisterEvents);
 		}
 
 		internal void SwapToSettings(PrinterSettings printerSettings)

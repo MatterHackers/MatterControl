@@ -93,7 +93,7 @@ namespace MatterHackers.MatterControl
 		// A list of printers which are open (i.e. displaying a tab) on this instance of MatterControl
 		public IEnumerable<PrinterConfig> ActivePrinters { get; } = new List<PrinterConfig>();
 
-		private static PrinterConfig emptyPrinter = new PrinterConfig(null, PrinterSettings.Empty);
+		private static PrinterConfig emptyPrinter = new PrinterConfig(PrinterSettings.Empty);
 
 		private static string cacheDirectory = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "cache");
 
@@ -1508,7 +1508,7 @@ namespace MatterHackers.MatterControl
 		private static Stopwatch timer;
 
 		public static string PlatformFeaturesProvider { get; set; } = "MatterHackers.MatterControl.WindowsPlatformsFeatures, MatterControl";
-		
+
 		public static SystemWindow LoadRootWindow(int width, int height)
 		{
 			timer = Stopwatch.StartNew();
@@ -1554,13 +1554,13 @@ namespace MatterHackers.MatterControl
 				ReportStartupProgress(0.02, "First draw->RunOnIdle");
 
 				//UiThread.RunOnIdle(() =>
-				Task.Run(() =>
+				Task.Run(async () =>
 				{
 					ReportStartupProgress(0.1, "Datastore");
 					Datastore.Instance.Initialize();
 
 					ReportStartupProgress(0.15, "MatterControlApplication.Initialize");
-					var mainView = Initialize(systemWindow, (progress0To1, status) =>
+					var mainView = await Initialize(systemWindow, (progress0To1, status) =>
 					{
 						ReportStartupProgress(0.2 + progress0To1 * 0.7, status);
 					});
@@ -1583,7 +1583,7 @@ namespace MatterHackers.MatterControl
 			return systemWindow;
 		}
 
-		public static GuiWidget Initialize(SystemWindow systemWindow, Action<double, string> reporter)
+		public static async Task<GuiWidget> Initialize(SystemWindow systemWindow, Action<double, string> reporter)
 		{
 			AppContext.Platform = AggContext.CreateInstanceFrom<INativePlatformFeatures>(PlatformFeaturesProvider);
 
@@ -1607,6 +1607,8 @@ namespace MatterHackers.MatterControl
 			// Accessing any property on ProfileManager will run the static constructor and spin up the ProfileManager instance
 			reporter?.Invoke(0.2, "ProfileManager");
 			bool na2 = ProfileManager.Instance.IsGuestProfile;
+
+			await ProfileManager.Instance.Initialize();
 
 			reporter?.Invoke(0.3, "MainView");
 			ApplicationController.Instance.MainView = new WidescreenPanel();
