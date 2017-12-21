@@ -148,7 +148,19 @@ namespace MatterHackers.MatterControl.Library
 		public void RegisterRootProvider(ILibraryContainerLink containerItem)
 		{
 			libraryProviders.Add(containerItem);
+			libraryProviders.Sort(SortOnName);
 			OnLibraryItemsChanged();
+		}
+
+		private int SortOnName(ILibraryContainerLink x, ILibraryContainerLink y)
+		{
+			if (x != null && x.Name != null
+				&& y != null && y.Name != null)
+			{
+				return string.Compare(x.Name, y.Name, StringComparison.OrdinalIgnoreCase);
+			}
+
+			return 0;
 		}
 
 		public void RegisterCreator(ILibraryContentItem libraryItem)

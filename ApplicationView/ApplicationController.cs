@@ -437,7 +437,6 @@ namespace MatterHackers.MatterControl
 						() => new SqliteLibraryContainer(rootLibraryCollection.Id)));
 			}
 
-
 			this.Library.RegisterRootProvider(
 				new DynamicContainerLink(
 					() => "Print History".Localize(),
