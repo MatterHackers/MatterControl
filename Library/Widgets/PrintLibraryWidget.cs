@@ -515,31 +515,16 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				Title = "Move".Localize(),
 				Action = (selectedLibraryItems, listView) =>
 				{
-					// TODO: If we don't filter to non-container content here, then the providers could be passed a container to move to some other container
 					var partItems = selectedLibraryItems.Where(item => item is ILibraryContentStream);
-					if (partItems.Count() > 0)
+					if (partItems.Any()
+						&& libraryView.ActiveContainer is ILibraryWritableContainer sourceContainer)
 					{
-						// If all selected items are LibraryRowItemParts, then we can invoke the batch remove functionality (in the Cloud library scenario)
-						// and perform all moves as part of a single request, with a single notification from Socketeer
-
-						var container = libraryView.ActiveContainer as ILibraryWritableContainer;
-						if (container != null)
+						DialogWindow.Show(new MoveItemPage((newName, destinationContainer) =>
 						{
-							var movePage = new MoveItemPage((newName, destinationContainer) =>
-							{
-								Console.WriteLine(destinationContainer.Name);
-
-								throw new NotImplementedException("Library Move not implemented");
-								// TODO: Implement move
-								//container.Move(partItems.Select(p => p.Model), null);
-
-							});
-
-							DialogWindow.Show(movePage);
-						}
+							destinationContainer.Move(partItems, sourceContainer);
+							libraryView.SelectedItems.Clear();
+						}));
 					}
-
-					libraryView.SelectedItems.Clear();
 				},
 				IsEnabled = (selectedListItems, listView) =>
 				{
@@ -547,7 +532,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					return listView.SelectedItems.Any()
 						&& listView.SelectedItems.All(i => !i.Model.IsProtected
 						&& ApplicationController.Instance.Library.ActiveContainer is ILibraryWritableContainer);
-
 				}
 			});
 
