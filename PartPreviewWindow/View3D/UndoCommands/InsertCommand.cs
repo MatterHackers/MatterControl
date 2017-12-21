@@ -65,9 +65,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void Undo()
 		{
+			bool clearSelection = scene.SelectedItem == item;
 			scene.Children.Modify(list => list.Remove(item));
 
-			scene.SelectLastChild();
+			if(clearSelection)
+			{
+				scene.SelectedItem = null;
+			}
 
 			scene.Invalidate();
 		}

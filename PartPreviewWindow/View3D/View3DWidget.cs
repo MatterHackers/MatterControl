@@ -998,9 +998,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{
-			if (Scene.HasSelection)
+			var selectedItem = Scene.SelectedItem;
+
+			if (Scene.HasSelection
+				&& selectedItem != null)
 			{
-				var selectedItem = Scene.SelectedItem;
 
 				foreach (InteractionVolume volume in this.InteractionLayer.InteractionVolumes)
 				{
