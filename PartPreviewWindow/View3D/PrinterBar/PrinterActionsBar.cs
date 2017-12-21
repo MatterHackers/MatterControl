@@ -56,8 +56,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private PrinterTabPage printerTabPage;
 		internal GuiWidget sliceButton;
 
-		private bool activelySlicing;
-
 		public PrinterActionsBar(PrinterConfig printer, PrinterTabPage printerTabPage, ThemeConfig theme)
 		{
 			this.printer = printer;
@@ -84,20 +82,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.AddChild(new PrinterConnectButton(printer, theme));
 			this.AddChild(new PrintButton(printerTabPage, printer, theme));
 
-			var sliceButton = new SliceButton(printer, theme)
+			var sliceButton = new SliceButton(printer, printerTabPage, theme)
 			{
 				Name = "Generate Gcode Button",
 				BackgroundColor = theme.ButtonFactory.Options.NormalFillColor,
 				HoverColor = theme.ButtonFactory.Options.HoverFillColor,
 				Margin = theme.ButtonSpacing,
-			};
-
-			sliceButton.Click += async (s, e) =>
-			{
-				if (!activelySlicing)
-				{
-					await this.SliceFileTask();
-				}
 			};
 			this.AddChild(sliceButton);
 
@@ -150,40 +140,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}, ref unregisterEvents);
 
 			this.AddChild(overflowMenu);
-		}
-
-		public async Task SliceFileTask()
-		{
-			if (printer.Settings.PrinterSelected)
-			{
-				if (printer.Settings.IsValid() && printer.Bed.EditContext.SourceItem != null)
-				{
-					activelySlicing = true;
-
-					try
-					{
-						await ApplicationController.Instance.Tasks.Execute(printerTabPage.view3DWidget.SaveChanges);
-
-						await ApplicationController.Instance.SliceFileLoadOutput(
-							printer,
-							printer.Bed.EditContext.PartFilePath,
-							printer.Bed.EditContext.GCodeFilePath);
-					}
-					catch (Exception ex)
-					{
-						Console.WriteLine("Error slicing file: " + ex.Message);
-					}
-
-					activelySlicing = false;
-				};
-			}
-			else
-			{
-				UiThread.RunOnIdle(() =>
-				{
-					StyledMessageBox.ShowMessageBox("Oops! Please select a printer in order to continue slicing.", "Select Printer", StyledMessageBox.MessageType.OK);
-				});
-			}
 		}
 
 		public override void AddChild(GuiWidget childToAdd, int indexInChildrenList = -1)

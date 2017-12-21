@@ -52,8 +52,9 @@ namespace MatterHackers.MatterControl
 	using MatterHackers.MatterControl.PartPreviewWindow;
     using System.Collections.Generic;
     using MatterHackers.MatterControl.PrintLibrary;
+	using MatterHackers.Localizations;
 
-    public class BedConfig
+	public class BedConfig
 	{
 		public event EventHandler ActiveLayerChanged;
 
@@ -76,14 +77,16 @@ namespace MatterHackers.MatterControl
 
 		public async Task LoadContent(EditContext editContext)
 		{
-			// Load
+			// Store
+			this.EditContext = editContext;
 
+			// Load
 			if (editContext.SourceItem is ILibraryContentStream contentStream
 				&& contentStream.ContentType == "gcode")
 			{
 				using (var task = await contentStream.GetContentStream(null))
 				{
-					this.LoadGCode(task.Stream, CancellationToken.None, null);
+					await LoadGCodeContent(task.Stream);
 				}
 
 				this.Scene.Children.Modify(children => children.Clear());
@@ -96,17 +99,38 @@ namespace MatterHackers.MatterControl
 
 				if (File.Exists(editContext?.GCodeFilePath))
 				{
-					this.LoadGCode(editContext.GCodeFilePath, CancellationToken.None, null);
+					using (var stream = File.OpenRead(editContext.GCodeFilePath))
+					{
+						await LoadGCodeContent(stream);
+					}
 				}
 
 				this.EditableScene = true;
 			}
 
-			// Store
-			this.EditContext = editContext;
-
 			// Notify
 			this.SceneLoaded?.Invoke(this, null);
+		}
+
+		private async Task LoadGCodeContent(Stream stream)
+		{
+			await ApplicationController.Instance.Tasks.Execute((reporter, cancellationToken) =>
+			{
+				var progressStatus = new ProgressStatus()
+				{
+					Status = "Loading G-Code".Localize()
+				};
+				reporter.Report(progressStatus);
+
+				this.LoadGCode(stream, cancellationToken, (progress0To1, status) =>
+				{
+					progressStatus.Status = status;
+					progressStatus.Progress0To1 = progress0To1;
+					reporter.Report(progressStatus);
+				});
+
+				return Task.CompletedTask;
+			});
 		}
 
 		internal static ILibraryItem NewPlatingItem()
@@ -176,7 +200,7 @@ namespace MatterHackers.MatterControl
 				CancellationToken.None);
 		}
 
-		internal static ILibraryItem LoadLastPlateOrNew()
+		internal static ILibraryItem GetLastPlateOrNew()
 		{
 			// Find the last used bed plate mcx
 			var directoryInfo = new DirectoryInfo(ApplicationDataStorage.Instance.PlatingDirectory);
@@ -558,6 +582,19 @@ namespace MatterHackers.MatterControl
 	public class PrinterConfig
 	{
 		public BedConfig Bed { get; }
+
+		private EventHandler unregisterEvents;
+
+		public PrinterConfig(PrinterSettings settings)
+		{
+			this.Bed = new BedConfig(this);
+			this.Connection = new PrinterConnection(printer: this);
+			this.Settings = settings;
+			this.Settings.printer = this;
+
+			ActiveSliceSettings.SettingChanged.RegisterEvent(Printer_SettingChanged, ref unregisterEvents);
+		}
+
 		public PrinterViewState ViewState { get; } = new PrinterViewState();
 
 		private PrinterSettings _settings;
@@ -577,23 +614,17 @@ namespace MatterHackers.MatterControl
 
 		public PrinterConnection Connection { get; private set; }
 
-		private EventHandler unregisterEvents;
-
-		public PrinterConfig(EditContext editContext, PrinterSettings settings)
+		/// <summary>
+		/// Loads content to the bed and prepares the printer for use
+		/// </summary>
+		/// <param name="editContext"></param>
+		/// <returns></returns>
+		public async Task Initialize(EditContext editContext)
 		{
-			this.Bed = new BedConfig(this);
-
 			if (editContext != null)
 			{
-				this.Bed.LoadContent(editContext).ConfigureAwait(false);
+				await this.Bed.LoadContent(editContext);
 			}
-
-			this.Connection = new PrinterConnection(printer: this);
-
-			this.Settings = settings;
-			this.Settings.printer = this;
-
-			ActiveSliceSettings.SettingChanged.RegisterEvent(Printer_SettingChanged, ref unregisterEvents);
 		}
 
 		internal void SwapToSettings(PrinterSettings printerSettings)

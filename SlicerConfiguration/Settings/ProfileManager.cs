@@ -45,32 +45,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	{
 		public static RootedObjectEventHandler ProfilesListChanged = new RootedObjectEventHandler();
 
-		private static ProfileManager activeInstance = null;
-		public static ProfileManager Instance
-		{
-			get => activeInstance;
-			private set
-			{
-				activeInstance = value;
-
-				// Select a 'LastProfile' exists and it is missing from ActivePrinters, load it
-				var lastProfile = activeInstance[activeInstance.LastProfileID];
-				if (lastProfile != null
-					&& !ApplicationController.Instance.ActivePrinters.Where(p => p.Settings.ID == lastProfile.ID).Any())
-				{
-					// Load or download on a background thread the last loaded settings
-					ApplicationController.Instance.SetActivePrinter(
-						new PrinterConfig(
-							new EditContext()
-							{
-								ContentStore = ApplicationController.Instance.Library.PlatingHistory,
-								SourceItem = BedConfig.LoadLastPlateOrNew()
-							},
-							// Short term workaround to run sync during load
-							LoadProfileAsync(activeInstance.LastProfileID).Result)).Wait();
-				}
-			}
-		}
+		public static ProfileManager Instance { get; private set; }
 
 		private static EventHandler unregisterEvents;
 
@@ -84,6 +59,26 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			ActiveSliceSettings.SettingChanged.RegisterEvent(SettingsChanged, ref unregisterEvents);
 			ReloadActiveUser();
+		}
+
+		public async Task Initialize()
+		{
+			// Select a 'LastProfile' exists and it is missing from ActivePrinters, load it
+			var lastProfile = this[this.LastProfileID];
+			if (lastProfile != null
+				&& !ApplicationController.Instance.ActivePrinters.Where(p => p.Settings.ID == lastProfile.ID).Any())
+			{
+				// TODO: This application init code should move to caller and be awaited
+				var printer = new PrinterConfig(await LoadProfileAsync(this.LastProfileID));
+
+				await printer.Initialize(new EditContext()
+				{
+					ContentStore = ApplicationController.Instance.Library.PlatingHistory,
+					SourceItem = BedConfig.GetLastPlateOrNew()
+				});
+
+				await ApplicationController.Instance.SetActivePrinter(printer);
+			}
 		}
 
 		public string UserName { get; set; }
@@ -147,14 +142,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			ProfileManager.Instance.LastProfileID = printerID;
 
-			await ApplicationController.Instance.SetActivePrinter(
-				new PrinterConfig(
-					new EditContext()
-					{
-						ContentStore = ApplicationController.Instance.Library.PlatingHistory,
-						SourceItem = BedConfig.LoadLastPlateOrNew()
-					},
-					await ProfileManager.LoadProfileAsync(printerID)));
+			var printer = new PrinterConfig(await ProfileManager.LoadProfileAsync(printerID));
+
+			await printer.Initialize(new EditContext()
+			{
+				ContentStore = ApplicationController.Instance.Library.PlatingHistory,
+				SourceItem = BedConfig.GetLastPlateOrNew()
+			});
+
+			await ApplicationController.Instance.SetActivePrinter(printer);
 		}
 
 		/// <summary>
@@ -481,13 +477,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			// Set as active profile
 			ProfileManager.Instance.LastProfileID = guid;
 
-			var printer = new PrinterConfig(
-				new EditContext()
-				{
-					ContentStore = ApplicationController.Instance.Library.PlatingHistory,
-					SourceItem = BedConfig.LoadLastPlateOrNew()
-				}, 
-				printerSettings);
+			var printer = new PrinterConfig(printerSettings);
+			await printer.Initialize(new EditContext()
+			{
+				ContentStore = ApplicationController.Instance.Library.PlatingHistory,
+				SourceItem = BedConfig.GetLastPlateOrNew()
+			});
 
 			await ApplicationController.Instance.SetActivePrinter(printer);
 

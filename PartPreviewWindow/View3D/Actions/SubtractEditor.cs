@@ -137,7 +137,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					var allItems = group.Descendants().Where((obj) => obj.OwnerID == group.ID).ToList();
 					int holeCount = allItems.Where((o) => o.OutputType == PrintOutputTypes.Hole).Count();
 					int solidCount = allItems.Where((o) => o.OutputType != PrintOutputTypes.Hole).Count();
-					updateButton.Enabled = allItems.Count() != holeCount && allItems.Count() != solidCount;
+					updateButton.Enabled = allItems.Count != holeCount && allItems.Count != solidCount;
 				};
 
 				tabContainer.AddChild(rowContainer);
@@ -166,7 +166,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				if (removeObjects.Any()
 					&& keepObjects.Any())
 				{
-					var totalOpperations = removeObjects.Count() * keepObjects.Count();
+					var totalOpperations = removeObjects.Count * keepObjects.Count;
 					double amountPerOperation = 1.0 / totalOpperations;
 					double percentCompleted = 0;
 
@@ -202,7 +202,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 							var inverse = keep.WorldMatrix();
 							inverse.Invert();
 							transformedKeep.Transform(inverse);
-							keep.Mesh = transformedKeep;
+
+							keep.SetAndInvalidateMesh(transformedKeep);
 							view3DWidget.Invalidate();
 
 							percentCompleted += amountPerOperation;
