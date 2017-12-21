@@ -39,8 +39,9 @@ namespace MatterHackers.MatterControl
 		protected Button acceptButton = null;
 		protected MHTextEditWidget itemNameWidget;
 		private ILibraryContext libraryNavContext;
+		protected ListView librarySelectorWidget;
 
-		public LibraryBrowserPage(Action<string, ILibraryContainer> acceptCallback, string acceptButtonText)
+		public LibraryBrowserPage(Action<string, ILibraryWritableContainer> acceptCallback, string acceptButtonText)
 		{
 			FolderBreadCrumbWidget breadCrumbWidget = null;
 			var buttonFactory = ApplicationController.Instance.Theme.ButtonFactory;
@@ -48,8 +49,7 @@ namespace MatterHackers.MatterControl
 			this.WindowSize = new VectorMath.Vector2(480, 500);
 
 			contentRow.Padding = 0;
-			ListView librarySelectorWidget;
-		
+
 			// Create a new library context for the SaveAs view
 			libraryNavContext = new LibraryConfig()
 			{
@@ -89,9 +89,12 @@ namespace MatterHackers.MatterControl
 			acceptButton.Cursor = Cursors.Hand;
 			acceptButton.Click += (s, e) =>
 			{
-				acceptCallback(
-					itemNameWidget?.ActualTextEditWidget.Text ?? "none",
-					librarySelectorWidget.ActiveContainer);
+				if (librarySelectorWidget.ActiveContainer is ILibraryWritableContainer writableContainer)
+				{
+					acceptCallback(
+						itemNameWidget?.ActualTextEditWidget.Text ?? "none",
+						writableContainer);
+				}
 
 				this.WizardWindow.CloseOnIdle();
 			};

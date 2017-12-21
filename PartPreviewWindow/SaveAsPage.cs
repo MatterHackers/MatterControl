@@ -37,8 +37,8 @@ namespace MatterHackers.MatterControl
 {
 	public class SaveAsPage : LibraryBrowserPage
 	{
-		public SaveAsPage(Action<string, ILibraryContainer> functionToCallOnSaveAs, bool allowNameChange = true)
-			: base (functionToCallOnSaveAs, "Save".Localize())
+		public SaveAsPage(Action<string, ILibraryContainer> itemSaver, bool allowNameChange = true)
+			: base (itemSaver, "Save".Localize())
 		{
 			this.WindowTitle = "MatterControl - " + "Save As".Localize();
 			this.Name = "Save As Window";
