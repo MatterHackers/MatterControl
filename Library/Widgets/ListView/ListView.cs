@@ -55,6 +55,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		private GuiWidget stashedContentView;
 
+		private ILibraryContainerLink loadingContainerLink;
+
 		// Default constructor uses IconListView
 		public ListView(ILibraryContext context)
 			: this(context, new IconListView())
@@ -342,18 +344,34 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 				if (itemModel is ILibraryContainerLink containerLink)
 				{
-					// Container items
-					var container = await containerLink.GetContainer(null);
-
-					await Task.Run(() =>
+					// Prevent invalid assignment of container.Parent due to overlapping load attempts that 
+					// would otherwise result in containers with self referencing parent properties
+					if (loadingContainerLink != containerLink)
 					{
-						container.Load();
-					});
+						loadingContainerLink = containerLink;
 
-					if (container != null)
-					{
-						container.Parent = ActiveContainer;
-						SetActiveContainer(container);
+						try
+						{
+							// Container items
+							var container = await containerLink.GetContainer(null);
+
+							await Task.Run(() =>
+							{
+								container.Load();
+							});
+
+							if (container != null)
+							{
+								container.Parent = ActiveContainer;
+								SetActiveContainer(container);
+							}
+						}
+						catch { }
+						finally
+						{
+							// Clear the loading guard and any completed load attempt
+							loadingContainerLink = null;
+						}
 					}
 				}
 				else
