@@ -2090,26 +2090,26 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			DialogWindow.Show(
 				new SaveAsPage(
-					async (returnInfo) =>
+					async (newName, destinationContainer) =>
 					{
 						// Save the scene to disk
 						await ApplicationController.Instance.Tasks.Execute(this.SaveChanges);
 
 						// Save to the destination provider
-						if (returnInfo?.DestinationContainer != null)
+						if (destinationContainer != null)
 						{
 							// save this part to correct library provider
-							if (returnInfo.DestinationContainer is ILibraryWritableContainer writableContainer)
+							if (destinationContainer is ILibraryWritableContainer writableContainer)
 							{
 								writableContainer.Add(new[]
 								{
 									new FileSystemFileItem(sceneContext.EditContext.PartFilePath)
 									{
-										Name = returnInfo.ItemName
+										Name = newName
 									}
 								});
 
-								returnInfo.DestinationContainer.Dispose();
+								destinationContainer.Dispose();
 							}
 						}
 					}));

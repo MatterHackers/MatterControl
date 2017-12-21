@@ -39,14 +39,14 @@ namespace MatterHackers.MatterControl
 {
 	public class SaveAsPage : DialogPage
 	{
-		private Func<SaveAsReturnInfo, Task> functionToCallOnSaveAs;
+		private Action<string, ILibraryContainer> functionToCallOnSaveAs;
 		private MHTextEditWidget textToAddWidget;
 		private ListView librarySelectorWidget;
 		private Button saveAsButton;
 
 		private ILibraryContext libraryNavContext;
 
-		public SaveAsPage(Func<SaveAsReturnInfo, Task> functionToCallOnSaveAs, bool allowNameChange = true)
+		public SaveAsPage(Action<string, ILibraryContainer> functionToCallOnSaveAs, bool allowNameChange = true)
 		{
 			var buttonFactory = ApplicationController.Instance.Theme.ButtonFactory;
 
@@ -144,24 +144,10 @@ namespace MatterHackers.MatterControl
 		private void SubmitForm()
 		{
 			functionToCallOnSaveAs(
-				new SaveAsReturnInfo(
 					textToAddWidget?.ActualTextEditWidget.Text ?? "none",
-					librarySelectorWidget.ActiveContainer));
+					librarySelectorWidget.ActiveContainer);
 
 			this.WizardWindow.CloseOnIdle();
-		}
-
-		public class SaveAsReturnInfo
-		{
-			public SaveAsReturnInfo(string itemName, ILibraryContainer destinationContainer)
-			{
-				this.DestinationContainer = destinationContainer;
-				this.ItemName = itemName;
-			}
-
-			public string ItemName { get; }
-
-			public ILibraryContainer DestinationContainer { get; }
 		}
 	}
 }
