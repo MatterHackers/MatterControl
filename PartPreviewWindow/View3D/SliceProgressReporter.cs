@@ -38,7 +38,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		private double currentValue = 0;
 		private double destValue = 10;
-		private string lastOutputLine = "";
 		private IProgress<ProgressStatus> parentProgress;
 		private PrinterConfig printer;
 		private Stopwatch timer = Stopwatch.StartNew();
@@ -80,13 +79,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			else
 			{
 				printer.Connection.TerminalLog.WriteLine(value);
-			}
-
-			int lengthBeforeNumber = value.IndexOfAny("0123456789".ToCharArray()) - 1;
-			lengthBeforeNumber = lengthBeforeNumber < 0 ? lengthBeforeNumber = value.Length : lengthBeforeNumber;
-			if (lastOutputLine != value.Substring(0, lengthBeforeNumber))
-			{
-				lastOutputLine = value.Substring(0, lengthBeforeNumber);
 			}
 
 			parentProgress.Report(progressStatus);
