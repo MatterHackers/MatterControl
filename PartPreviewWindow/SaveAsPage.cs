@@ -28,7 +28,6 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
@@ -39,28 +38,23 @@ namespace MatterHackers.MatterControl
 {
 	public class SaveAsPage : DialogPage
 	{
-		private Action<string, ILibraryContainer> functionToCallOnSaveAs;
 		private MHTextEditWidget textToAddWidget;
-		private ListView librarySelectorWidget;
-		private Button saveAsButton;
-
 		private ILibraryContext libraryNavContext;
 
 		public SaveAsPage(Action<string, ILibraryContainer> functionToCallOnSaveAs, bool allowNameChange = true)
 		{
+			Button saveAsButton = null;
+			FolderBreadCrumbWidget breadCrumbWidget = null;
 			var buttonFactory = ApplicationController.Instance.Theme.ButtonFactory;
 
 			this.WindowTitle = "MatterControl - " + "Save As".Localize();
 			this.Name = "Save As Window";
-			this.functionToCallOnSaveAs = functionToCallOnSaveAs;
 			this.WindowSize = new VectorMath.Vector2(480, 500);
-
 			this.HeaderText = "Save New Design".Localize() + ":";
 
 			contentRow.Padding = 0;
-
-			FolderBreadCrumbWidget breadCrumbWidget = null;
-
+			ListView librarySelectorWidget;
+		
 			// Create a new library context for the SaveAs view
 			libraryNavContext = new LibraryConfig()
 			{
@@ -113,7 +107,7 @@ namespace MatterHackers.MatterControl
 				};
 				textToAddWidget.ActualTextEditWidget.EnterPressed += (s, e) =>
 				{
-					SubmitForm();
+					saveAsButton.OnClick(new MouseEventArgs(MouseButtons.Left, 1, 1, 1, -1));
 				};
 				contentRow.AddChild(textToAddWidget);
 			}
@@ -125,7 +119,11 @@ namespace MatterHackers.MatterControl
 			saveAsButton.Cursor = Cursors.Hand;
 			saveAsButton.Click += (s, e) =>
 			{
-				SubmitForm();
+				functionToCallOnSaveAs(
+					textToAddWidget?.ActualTextEditWidget.Text ?? "none",
+					librarySelectorWidget.ActiveContainer);
+
+				this.WizardWindow.CloseOnIdle();
 			};
 
 			this.AddPageAction(saveAsButton);
@@ -139,15 +137,6 @@ namespace MatterHackers.MatterControl
 				UiThread.RunOnIdle(textToAddWidget.Focus);
 			}
 			base.OnLoad(args);
-		}
-
-		private void SubmitForm()
-		{
-			functionToCallOnSaveAs(
-					textToAddWidget?.ActualTextEditWidget.Text ?? "none",
-					librarySelectorWidget.ActiveContainer);
-
-			this.WizardWindow.CloseOnIdle();
 		}
 	}
 }
