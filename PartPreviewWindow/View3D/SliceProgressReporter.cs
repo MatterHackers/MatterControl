@@ -50,10 +50,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void Report(ProgressStatus progressStatus)
 		{
-			string value = progressStatus.Status;
+			string statusText = progressStatus.Status;
 
-			if (GCodeFile.GetFirstNumberAfter("", value, ref currentValue)
-				&& GCodeFile.GetFirstNumberAfter("/", value, ref destValue))
+			if (GCodeFile.GetFirstNumberAfter("", statusText, ref currentValue)
+				&& GCodeFile.GetFirstNumberAfter("/", statusText, ref destValue))
 			{
 				if (destValue == 0)
 				{
@@ -67,7 +67,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 			else
 			{
-				printer.Connection.TerminalLog.WriteLine(value);
+				printer.Connection.TerminalLog.WriteLine(statusText);
 			}
 
 			parentProgress.Report(progressStatus);
