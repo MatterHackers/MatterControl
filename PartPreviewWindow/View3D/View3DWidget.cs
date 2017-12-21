@@ -2115,11 +2115,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}));
 		}
 
-		private bool rotateQueueMenu_Click()
-		{
-			return true;
-		}
-
 		public Vector2 DragSelectionStartPosition { get; private set; }
 		public bool DragSelectionInProgress { get; private set; }
 		public Vector2 DragSelectionEndPosition { get; private set; }
