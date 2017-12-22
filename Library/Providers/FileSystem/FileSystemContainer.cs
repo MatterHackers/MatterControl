@@ -102,6 +102,8 @@ namespace MatterHackers.MatterControl.Library
 				if (keywordFilter != value)
 				{
 					keywordFilter = value;
+					this.Load();
+					this.OnContentChanged();
 				}
 			}
 		}
