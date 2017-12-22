@@ -36,8 +36,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class SliceProgressReporter : IProgress<ProgressStatus>
 	{
-		private double currentValue = 0;
-		private double destValue = 10;
 		private IProgress<ProgressStatus> reporter;
 		private PrinterConfig printer;
 
@@ -49,6 +47,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void Report(ProgressStatus progressStatus)
 		{
+			double currentValue = 0;
+			double destValue = 10;
+
 			string statusText = progressStatus.Status;
 
 			if (GCodeFile.GetFirstNumberAfter("", statusText, ref currentValue)
