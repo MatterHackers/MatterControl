@@ -9,12 +9,15 @@ using System.Text;
 using System.Threading.Tasks;
 using MatterHackers.SerialPortCommunication.FrostedSerial;
 using Zeroconf;
+using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.Agg.Platform;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	class IpAddessField : UIField
 	{
 		private DropDownList dropdownList;
+		private IconButton refreshButton;
 
 		private PrinterConfig printer;
 
@@ -42,13 +45,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			};
 
-			dropdownList.Click += (s, e) =>
+			//Create default option
+			MenuItem defaultOption = dropdownList.AddItem("Manual", "127.0.0.1:23");
+			defaultOption.Selected += (sender, e) =>
 			{
-				//this blows up without runonidle
-				//RebuildMenuItems();
+				printer.Settings.SetValue(SettingsKey.selector_ip_address, defaultOption.Text);
 			};
-
-			RebuildMenuItems();
+			UiThread.RunOnIdle(RebuildMenuItems);
 
 			// Prevent droplist interaction when connected
 			printer.Connection.CommunicationStateChanged.RegisterEvent((s, e) =>
@@ -65,7 +68,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				unregisterEvents?.Invoke(null, null);
 			};
 
-			this.Content = dropdownList;
+			var widget = new FlowLayoutWidget();
+			widget.AddChild(dropdownList);
+			refreshButton = new IconButton(AggContext.StaticData.LoadIcon("fa-refresh_14.png", IconColor.Theme), ApplicationController.Instance.Theme)
+			{
+				Margin = new BorderDouble(left: 5)
+			};
+
+			refreshButton.Click += (s, e) => RebuildMenuItems();
+			widget.AddChild(refreshButton);
+
+			this.Content = widget;
 		}
 
 		protected override void OnValueChanged(FieldChangedEventArgs fieldChangedEventArgs)
@@ -74,15 +87,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			base.OnValueChanged(fieldChangedEventArgs);
 		}
 
-		private void RebuildMenuItems()
+		private async void RebuildMenuItems()
 		{
-			IReadOnlyList<Zeroconf.IZeroconfHost> possibleHosts = ProbeForNetworkedTelenetConnections().Result;
+			refreshButton.Enabled = false;
+			IReadOnlyList<Zeroconf.IZeroconfHost> possibleHosts = await ProbeForNetworkedTelenetConnections();
 			dropdownList.MenuItems.Clear();
+
 			MenuItem defaultOption = dropdownList.AddItem("Manual", "127.0.0.1:23");
 			defaultOption.Selected += (sender, e) =>
 			{
 				printer.Settings.SetValue(SettingsKey.selector_ip_address,defaultOption.Text);
 			};
+
 			foreach (Zeroconf.IZeroconfHost host in possibleHosts)
 			{
 				// Add each found telnet host to the dropdown list 
@@ -105,7 +121,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					}
 				};
 			}
-
+			refreshButton.Enabled = true;
 		}
 
 		private void DefaultOption_Selected(object sender, EventArgs e)
