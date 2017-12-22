@@ -55,5 +55,28 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.Less(stopWatch.ElapsedMilliseconds, 2000, "Elapsed thumbnail generation for Rook.amf should be less than 2 seconds for expected orthographic mode");
 			});
 		}
+
+		[Test]
+		public async Task View3DOverflowMenus()
+		{
+			await MatterControlUtilities.RunTest(testRunner =>
+			{
+				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
+
+				testRunner.ClickByName("Model View Button");
+				testRunner.ClickByName("View3D Overflow Menu");
+				Assert.IsTrue(testRunner.WaitForName("Overhang-Menu Menu Item"), "Model overflow menu should have Overhang item");
+
+				testRunner.ClickByName("Layers3D Button");
+				testRunner.ClickByName("View3D Overflow Menu");
+				Assert.IsTrue(testRunner.WaitForName("Sync To Print Menu Item"), "GCode3D overflow menu should have sync-to-print item");
+
+				testRunner.ClickByName("Layers2D Button");
+				testRunner.ClickByName("View3D Overflow Menu");
+				Assert.IsTrue(testRunner.WaitForName("Sync To Print Menu Item"), "GCode2D overflow menu should have sync-to-print item");
+
+				return Task.CompletedTask;
+			});
+		}
 	}
 }

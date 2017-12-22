@@ -402,7 +402,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		protected override GuiWidget GetViewControls3DOverflowMenu()
 		{
-			if (gcode3DWidget.Visible)
+			if (gcode3DWidget.Visible
+				|| gcode2DWidget.Visible)
 			{
 				return this.ShowGCodeOverflowMenu();
 			}
