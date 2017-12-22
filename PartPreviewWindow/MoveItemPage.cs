@@ -28,46 +28,20 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using MatterHackers.Agg;
-using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.Library;
 
 namespace MatterHackers.MatterControl
 {
-	public class SaveAsPage : LibraryBrowserPage
+	public class MoveItemPage : LibraryBrowserPage
 	{
-		public SaveAsPage(Action<string, ILibraryContainer> itemSaver, bool allowNameChange = true)
-			: base (itemSaver, "Save".Localize())
+		public MoveItemPage(Action<string, ILibraryWritableContainer> itemMover)
+			: base(itemMover, "Move".Localize())
 		{
-			this.WindowTitle = "MatterControl - " + "Save As".Localize();
-			this.Name = "Save As Window";
+			this.WindowTitle = "MatterControl - " + "Move Item".Localize();
+			this.Name = "Move Item Window";
 			this.WindowSize = new VectorMath.Vector2(480, 500);
-			this.HeaderText = "Save New Design".Localize() + ":";
-
-			// put in the area to type in the new name
-			if (allowNameChange)
-			{
-				var fileNameHeader = new TextWidget("Design Name".Localize(), pointSize: 12)
-				{
-					TextColor = ActiveTheme.Instance.PrimaryTextColor,
-					Margin = new BorderDouble(5),
-					HAnchor = HAnchor.Left
-				};
-				contentRow.AddChild(fileNameHeader);
-
-				//Adds text box and check box to the above container
-				itemNameWidget = new MHTextEditWidget("", pixelWidth: 300, messageWhenEmptyAndNotSelected: "Enter a Design Name Here".Localize())
-				{
-					HAnchor = HAnchor.Stretch,
-					Margin = new BorderDouble(5)
-				};
-				itemNameWidget.ActualTextEditWidget.EnterPressed += (s, e) =>
-				{
-					acceptButton.OnClick(new MouseEventArgs(MouseButtons.Left, 1, 1, 1, -1));
-				};
-				contentRow.AddChild(itemNameWidget);
-			}
+			this.HeaderText = "Select a new Destination".Localize() + ":";
 		}
 	}
 }

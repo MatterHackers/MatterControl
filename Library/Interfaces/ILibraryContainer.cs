@@ -66,7 +66,13 @@ namespace MatterHackers.MatterControl.Library
 		void Add(IEnumerable<ILibraryItem> items);
 		void Remove(IEnumerable<ILibraryItem> items);
 		void Rename(ILibraryItem item, string revisedName);
-		void Move(IEnumerable<ILibraryItem> items, ILibraryContainer targetContainer);
+
+		/// <summary>
+		/// Move the given items from the source container to this container
+		/// </summary>
+		/// <param name="items">The items to move</param>
+		/// <param name="sourceContainer">The current parent container</param>
+		void Move(IEnumerable<ILibraryItem> items, ILibraryWritableContainer sourceContainer);
 
 		void SetThumbnail(ILibraryItem item, int width, int height, ImageBuffer imageBuffer);
 		bool AllowAction(ContainerActions containerActions);

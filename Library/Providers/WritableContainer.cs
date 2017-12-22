@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using MatterHackers.Agg.Image;
 using MatterHackers.DataConverters3D;
 
@@ -67,8 +68,16 @@ namespace MatterHackers.MatterControl.Library
 			}
 		}
 
-		public virtual void Move(IEnumerable<ILibraryItem> items, ILibraryContainer targetContainer)
+		public virtual void Move(IEnumerable<ILibraryItem> items, ILibraryWritableContainer sourceContainer)
 		{
+			foreach(var item in items.OfType<ILibraryContentStream>().ToList())
+			{
+				var enumerable = new[] { item };
+
+				this.Add(enumerable);
+				sourceContainer.Remove(enumerable);
+			}
+
 		}
 
 		public virtual void SetThumbnail(ILibraryItem item, int width, int height, ImageBuffer imageBuffer)

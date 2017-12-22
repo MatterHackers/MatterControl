@@ -78,7 +78,7 @@ namespace MatterHackers.MatterControl.Library
 			Items = recentFiles.Take(25).Select(f => new SceneReplacementFileItem(f.FullName)).ToList<ILibraryItem>();
 		}
 
-		public void Move(IEnumerable<ILibraryItem> items, ILibraryContainer targetContainer)
+		public void Move(IEnumerable<ILibraryItem> items, ILibraryWritableContainer targetContainer)
 		{
 			throw new NotImplementedException();
 		}

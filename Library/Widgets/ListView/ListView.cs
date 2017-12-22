@@ -55,6 +55,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		private GuiWidget stashedContentView;
 
+		private ILibraryContainerLink loadingContainerLink;
+
 		// Default constructor uses IconListView
 		public ListView(ILibraryContext context)
 			: this(context, new IconListView())
@@ -340,30 +342,42 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				var listViewItem = sender as ListViewItem;
 				var itemModel = listViewItem.Model;
 
-				if (itemModel is ILibraryContainerLink)
+				if (itemModel is ILibraryContainerLink containerLink)
 				{
-					// Container items
-					var containerLink = itemModel as ILibraryContainerLink;
-					if (containerLink != null)
+					// Prevent invalid assignment of container.Parent due to overlapping load attempts that 
+					// would otherwise result in containers with self referencing parent properties
+					if (loadingContainerLink != containerLink)
 					{
-						var container = await containerLink.GetContainer(null);
-						await Task.Run(() =>
-						{
-							container.Load();
-						});
+						loadingContainerLink = containerLink;
 
-						if (container != null)
+						try
 						{
-							container.Parent = ActiveContainer;
-							SetActiveContainer(container);
+							// Container items
+							var container = await containerLink.GetContainer(null);
+
+							await Task.Run(() =>
+							{
+								container.Load();
+							});
+
+							if (container != null)
+							{
+								container.Parent = ActiveContainer;
+								SetActiveContainer(container);
+							}
+						}
+						catch { }
+						finally
+						{
+							// Clear the loading guard and any completed load attempt
+							loadingContainerLink = null;
 						}
 					}
 				}
 				else
 				{
 					// List items
-					var contentModel = itemModel as ILibraryContentStream;
-					if (contentModel != null)
+					if (itemModel is ILibraryContentStream contentModel)
 					{
 						var activeContext = ApplicationController.Instance.DragDropData;
 						if (activeContext.View3DWidget != null)

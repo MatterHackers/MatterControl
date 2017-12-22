@@ -513,14 +513,25 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			menuActions.Add(new PrintItemAction()
 			{
 				Title = "Move".Localize(),
-				Action = (selectedLibraryItems, listView) => moveInLibraryButton_Click(selectedLibraryItems, null),
+				Action = (selectedLibraryItems, listView) =>
+				{
+					var partItems = selectedLibraryItems.Where(item => item is ILibraryContentStream);
+					if (partItems.Any()
+						&& libraryView.ActiveContainer is ILibraryWritableContainer sourceContainer)
+					{
+						DialogWindow.Show(new MoveItemPage((newName, destinationContainer) =>
+						{
+							destinationContainer.Move(partItems, sourceContainer);
+							libraryView.SelectedItems.Clear();
+						}));
+					}
+				},
 				IsEnabled = (selectedListItems, listView) =>
 				{
 					// Multiselect, WritableContainer - disallow protected
 					return listView.SelectedItems.Any()
 						&& listView.SelectedItems.All(i => !i.Model.IsProtected
 						&& ApplicationController.Instance.Library.ActiveContainer is ILibraryWritableContainer);
-
 				}
 			});
 
@@ -732,27 +743,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				if (container != null)
 				{
 					container.Remove(libraryItems);
-				}
-			}
-
-			libraryView.SelectedItems.Clear();
-		}
-
-		private void moveInLibraryButton_Click(object sender, EventArgs e)
-		{
-			// TODO: If we don't filter to non-container content here, then the providers could be passed a container to move to some other container
-			var partItems = libraryView.SelectedItems.Where(item => item is ILibraryContentItem);
-			if (partItems.Count() > 0)
-			{
-				// If all selected items are LibraryRowItemParts, then we can invoke the batch remove functionality (in the Cloud library scenario)
-				// and perform all moves as part of a single request, with a single notification from Socketeer
-
-				var container = libraryView.ActiveContainer as ILibraryWritableContainer;
-				if (container != null)
-				{
-					throw new NotImplementedException("Library Move not implemented");
-					// TODO: Implement move
-					container.Move(partItems.Select(p => p.Model), null);
 				}
 			}
 
