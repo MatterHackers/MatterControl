@@ -36,72 +36,39 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class SliceProgressReporter : IProgress<ProgressStatus>
 	{
-		private double currentValue = 0;
-		private double destValue = 10;
-		private string lastOutputLine = "";
-		private IProgress<ProgressStatus> parentProgress;
+		private IProgress<ProgressStatus> reporter;
 		private PrinterConfig printer;
 
-		public SliceProgressReporter(IProgress<ProgressStatus> progressStatus, PrinterConfig printer)
+		public SliceProgressReporter(IProgress<ProgressStatus> reporter, PrinterConfig printer)
 		{
-			this.parentProgress = progressStatus;
+			this.reporter = reporter;
 			this.printer = printer;
 		}
 
-		private Stopwatch timer = Stopwatch.StartNew();
-
-		private string progressSection = "";
-
 		public void Report(ProgressStatus progressStatus)
 		{
-			bool foundProgressNumbers = false;
+			double currentValue = 0;
+			double destValue = 10;
 
-			string value = progressStatus.Status;
+			string statusText = progressStatus.Status;
 
-			if (GCodeFile.GetFirstNumberAfter("", value, ref currentValue)
-				&& GCodeFile.GetFirstNumberAfter("/", value, ref destValue))
+			if (GCodeFile.GetFirstNumberAfter("", statusText, ref currentValue)
+				&& GCodeFile.GetFirstNumberAfter("/", statusText, ref destValue))
 			{
 				if (destValue == 0)
 				{
 					destValue = 1;
 				}
 
-				foundProgressNumbers = true;
-
-				int pos = value.IndexOf(currentValue.ToString());
-				if (pos != -1)
-				{
-					progressSection = value.Substring(0, pos);
-				}
-				else
-				{
-					progressSection = value;
-				}
-
-				timer.Restart();
-
-				progressStatus.Status = progressSection;
-				progressStatus.Progress0To1 = 0;
+				progressStatus.Status = progressStatus.Status.TrimEnd('.');
+				progressStatus.Progress0To1 = currentValue / destValue;
 			}
 			else
 			{
-				printer.Connection.TerminalLog.WriteLine(value);
+				printer.Connection.TerminalLog.WriteLine(statusText);
 			}
 
-			int lengthBeforeNumber = value.IndexOfAny("0123456789".ToCharArray()) - 1;
-			lengthBeforeNumber = lengthBeforeNumber < 0 ? lengthBeforeNumber = value.Length : lengthBeforeNumber;
-			if (lastOutputLine != value.Substring(0, lengthBeforeNumber))
-			{
-				lastOutputLine = value.Substring(0, lengthBeforeNumber);
-			}
-
-			if (foundProgressNumbers)
-			{
-				double complete = currentValue / destValue;
-				progressStatus.Progress0To1 = complete;
-			}
-
-			parentProgress.Report(progressStatus);
+			reporter.Report(progressStatus);
 		}
 	}
 }
