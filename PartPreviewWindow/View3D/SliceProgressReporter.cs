@@ -38,12 +38,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		private double currentValue = 0;
 		private double destValue = 10;
-		private IProgress<ProgressStatus> parentProgress;
+		private IProgress<ProgressStatus> reporter;
 		private PrinterConfig printer;
 
-		public SliceProgressReporter(IProgress<ProgressStatus> progressStatus, PrinterConfig printer)
+		public SliceProgressReporter(IProgress<ProgressStatus> reporter, PrinterConfig printer)
 		{
-			this.parentProgress = progressStatus;
+			this.reporter = reporter;
 			this.printer = printer;
 		}
 
@@ -67,7 +67,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				printer.Connection.TerminalLog.WriteLine(statusText);
 			}
 
-			parentProgress.Report(progressStatus);
+			reporter.Report(progressStatus);
 		}
 	}
 }
