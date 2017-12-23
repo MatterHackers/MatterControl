@@ -531,17 +531,14 @@ namespace MatterHackers.MatterControl.EeProm
 			{
 				if (eventAdded != null)
 				{
-					UiThread.RunOnIdle(CallEventAdded, lineString);
+					UiThread.RunOnIdle(() =>
+					{
+						if (lineString != null)
+						{
+							eventAdded(this, lineString);
+						}
+					});
 				}
-			}
-		}
-
-		private void CallEventAdded(object state)
-		{
-			StringEventArgs lineString = state as StringEventArgs;
-			if (lineString != null)
-			{
-				eventAdded(this, lineString);
 			}
 		}
 
