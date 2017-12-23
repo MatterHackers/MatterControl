@@ -2063,29 +2063,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return Task.CompletedTask;
 		}
 
-		private void meshViewerWidget_LoadDone(object sender, EventArgs e)
-		{
-			if (sceneContext.RendererOptions.SyncToPrint)
-			{
-				switch (sceneContext.Printer?.Connection.CommunicationState)
-				{
-					case CommunicationStates.Printing:
-					case CommunicationStates.Paused:
-						break;
-
-					default:
-						UnlockEditControls();
-						break;
-				}
-			}
-			else
-			{
-				UnlockEditControls();
-			}
-
-			UiThread.RunOnIdle(SwitchStateToEditing);
-		}
-
 		private void OpenSaveAsWindow()
 		{
 			DialogWindow.Show(
