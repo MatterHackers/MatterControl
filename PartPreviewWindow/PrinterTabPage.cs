@@ -391,7 +391,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			bool printerIsRunningPrint = printer.Connection.PrinterIsPaused || printer.Connection.PrinterIsPrinting;
 			if (gcodeOptions.SyncToPrint
 				&& printerIsRunningPrint
-				&& gcode3DWidget.Visible)
+				&& (gcode3DWidget.Visible || gcode2DWidget.Visible))
 			{
 				SetAnimationPosition();
 				this.Invalidate();
