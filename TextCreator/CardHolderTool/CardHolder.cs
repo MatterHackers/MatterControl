@@ -186,7 +186,7 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 		{
 			CsgObject boxCombine = new Box(10, 10, 10);
 			boxCombine -= new Translate(new Box(10, 10, 10), XOffset, -3, 2);
-			SetAndInvalidateMesh(CsgToMesh.Convert(boxCombine));
+			this.Mesh = CsgToMesh.Convert(boxCombine);
 		}
 	}
 	
@@ -246,7 +246,7 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 				});
 			});
 
-			this.SetAndInvalidateMesh(null);
+			this.Mesh = null;
 		}
 	}
 
@@ -307,7 +307,7 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 				});
 			});
 
-			this.SetAndInvalidateMesh(null);
+			this.Mesh = null;
 		}
 	}
 
@@ -348,7 +348,7 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 			transformedMesh.MarkAsChanged();
 			transformedMesh.CalculateNormals();
 			
-			SetAndInvalidateMesh(transformedMesh);
+			this.Mesh = transformedMesh;
 		}
 	}
 
@@ -416,7 +416,7 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 			transformedMesh.MarkAsChanged();
 			transformedMesh.CalculateNormals();
 
-			SetAndInvalidateMesh(transformedMesh);
+			this.Mesh = transformedMesh;
 		}
 	}
 
@@ -481,7 +481,7 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 				chairFoot -= clipBox;
 				chairFoot = new Translate(chairFoot, 0, 0, clipBox.GetAxisAlignedBoundingBox().maxXYZ.Z);
 
-				SetAndInvalidateMesh(CsgToMesh.Convert(chairFoot));
+				this.Mesh = CsgToMesh.Convert(chairFoot);
 			}
 			else // fit part
 			{
@@ -509,7 +509,7 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 
 				chairFoot += new Align(ring, Face.Bottom, chairFoot, Face.Top, 0, 0, -.1);
 
-				SetAndInvalidateMesh(CsgToMesh.Convert(chairFoot));
+				this.Mesh = CsgToMesh.Convert(chairFoot);
 			}
 		}
 	}

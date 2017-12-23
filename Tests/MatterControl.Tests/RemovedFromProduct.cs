@@ -78,7 +78,7 @@ namespace MatterControl.Tests
 				content.BackgroundColor = Color.White;
 				htmlTestWindow.AddChild(content);
 				htmlTestWindow.BackgroundColor = Color.Cyan;
-				UiThread.RunOnIdle((state) =>
+				UiThread.RunOnIdle(() =>
 				{
 					htmlTestWindow.ShowAsSystemWindow();
 				}, 1);
