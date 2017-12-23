@@ -136,6 +136,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				new VisibleButNotMappedToEngine("solid_shell"),
 				new VisibleButNotMappedToEngine(SettingsKey.laser_speed_025),
 				new VisibleButNotMappedToEngine(SettingsKey.laser_speed_100),
+				new VisibleButNotMappedToEngine("selector_ip_address"),
 			};
 
 			matterSliceSettingNames = new HashSet<string>(mappedSettings.Select(m => m.CanonicalSettingsName));
