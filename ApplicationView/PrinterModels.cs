@@ -421,7 +421,7 @@ namespace MatterHackers.MatterControl
 			this.GCodeRenderer = new GCodeRenderer(loadedGCode);
 			this.RenderInfo = new GCodeRenderInfo(
 					0,
-					1,
+					Math.Max(1, this.ActiveLayerIndex),
 					Agg.Transform.Affine.NewIdentity(),
 					1,
 					0,
@@ -455,6 +455,14 @@ namespace MatterHackers.MatterControl
 
 			// Assign property causing event and UI load
 			this.LoadedGCode = loadedGCode;
+
+			// Constrain to max layers
+			if (this.ActiveLayerIndex > loadedGCode.LayerCount)
+			{
+				this.ActiveLayerIndex = loadedGCode.LayerCount;
+			}
+
+			ActiveLayerChanged?.Invoke(this, null);
 		}
 
 		public void InvalidateBedMesh()

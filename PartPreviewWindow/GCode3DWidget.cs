@@ -99,6 +99,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							Visible = sceneContext.RendererOptions.RenderSpeeds,
 						}));
 			}
+
+			this.Invalidate();
 		}
 
 		public override void OnClosed(ClosedEventArgs e)
