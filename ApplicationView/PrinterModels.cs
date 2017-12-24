@@ -211,7 +211,7 @@ namespace MatterHackers.MatterControl
 		public GCodeFile LoadedGCode
 		{
 			get => loadedGCode;
-			set
+			private set
 			{
 				if (loadedGCode != value)
 				{
