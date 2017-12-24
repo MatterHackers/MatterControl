@@ -246,31 +246,31 @@ namespace MatterHackers.MatterControl
 		// TODO: Make assignment private, wire up post slicing initialization here
 		public GCodeRenderer GCodeRenderer { get; set; }
 
-		private int activeLayerIndex;
+		private int _activeLayerIndex;
 		public int ActiveLayerIndex
 		{
-			get => activeLayerIndex;
+			get => _activeLayerIndex;
 			set
 			{
-				if (activeLayerIndex != value)
+				if (_activeLayerIndex != value)
 				{
-					activeLayerIndex = value;
+					_activeLayerIndex = value;
 
 					// Clamp activeLayerIndex to valid range
-					if (this.GCodeRenderer == null || activeLayerIndex < 0)
+					if (this.GCodeRenderer == null || _activeLayerIndex < 0)
 					{
-						activeLayerIndex = 0;
+						_activeLayerIndex = 0;
 					}
-					else if (activeLayerIndex >= this.LoadedGCode.LayerCount)
+					else if (_activeLayerIndex >= this.LoadedGCode.LayerCount)
 					{
-						activeLayerIndex = this.LoadedGCode.LayerCount - 1;
+						_activeLayerIndex = this.LoadedGCode.LayerCount - 1;
 					}
 
 					// When the active layer changes we update the selected range accordingly - constrain to applicable values
 					if (this.RenderInfo != null)
 					{
 						// TODO: Unexpected that rendering layer 2 requires that we set the range to 0-3. Seems like model should be updated to allow 0-2 to mean render up to layer 2
-						this.RenderInfo.EndLayerIndex = Math.Min(this.LoadedGCode == null ? 0 : this.LoadedGCode.LayerCount, Math.Max(activeLayerIndex + 1, 1));
+						this.RenderInfo.EndLayerIndex = Math.Min(this.LoadedGCode == null ? 0 : this.LoadedGCode.LayerCount, Math.Max(_activeLayerIndex + 1, 1));
 					}
 
 					ActiveLayerChanged?.Invoke(this, null);
