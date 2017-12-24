@@ -605,10 +605,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						placeFieldInDedicatedRow = true;
 						uiField = new ExtruderOffsetField(settingsContext, settingData.SlicerConfigName);
 						break;
-
+#if !__ANDROID__
 					case SliceSettingData.DataEditTypes.IP_LIST:
 						uiField = new IpAddessField(printer);
 						break;
+#endif
+
 					default:
 						// Missing Setting
 						settingsRow.AddContent(new TextWidget(String.Format("Missing the setting for '{0}'.", settingData.DataEditType.ToString()))
