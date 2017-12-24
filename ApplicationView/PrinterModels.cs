@@ -417,7 +417,7 @@ namespace MatterHackers.MatterControl
 
 		public void LoadGCode(Stream stream, CancellationToken cancellationToken, Action<double, string> progressReporter)
 		{
-			this.LoadedGCode = GCodeMemoryFile.Load(stream, cancellationToken, progressReporter);
+			var loadedGCode = GCodeMemoryFile.Load(stream, cancellationToken, progressReporter);
 			this.GCodeRenderer = new GCodeRenderer(loadedGCode);
 			this.RenderInfo = new GCodeRenderInfo(
 					0,
@@ -452,6 +452,9 @@ namespace MatterHackers.MatterControl
 			{
 				Debug.Print(ex.Message);
 			}
+
+			// Assign property causing event and UI load
+			this.LoadedGCode = loadedGCode;
 		}
 
 		public void InvalidateBedMesh()
