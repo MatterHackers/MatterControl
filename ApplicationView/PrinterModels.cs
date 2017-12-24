@@ -96,15 +96,6 @@ namespace MatterHackers.MatterControl
 			{
 				editContext.Content = await editContext.SourceItem.CreateContent(null);
 				this.Scene.Load(editContext.Content);
-
-				if (File.Exists(editContext?.GCodeFilePath))
-				{
-					using (var stream = File.OpenRead(editContext.GCodeFilePath))
-					{
-						await LoadGCodeContent(stream);
-					}
-				}
-
 				this.EditableScene = true;
 			}
 
@@ -227,6 +218,21 @@ namespace MatterHackers.MatterControl
 					loadedGCode = value;
 					LoadedGCodeChanged?.Invoke(null, null);
 				}
+			}
+		}
+
+		internal void EnsureGCodeLoaded()
+		{
+			if (this.loadedGCode == null
+				&& File.Exists(this.EditContext?.GCodeFilePath))
+			{
+				UiThread.RunOnIdle(async () =>
+				{
+					using (var stream = File.OpenRead(this.EditContext.GCodeFilePath))
+					{
+						await LoadGCodeContent(stream);
+					}
+				});
 			}
 		}
 
