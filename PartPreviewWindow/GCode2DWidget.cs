@@ -87,42 +87,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 			else
 			{
-				SetInitalLayer();
 				CenterPartInView();
-			}
-		}
-
-		private void SetInitalLayer()
-		{
-			if (loadedGCode?.LineCount > 0)
-			{
-				int firstExtrusionIndex = 0;
-				Vector3 lastPosition = loadedGCode.Instruction(0).Position;
-				double ePosition = loadedGCode.Instruction(0).EPosition;
-				// let's find the first layer that has extrusion if possible and go to that
-				for (int i = 1; i < loadedGCode.LineCount; i++)
-				{
-					PrinterMachineInstruction currentInstruction = loadedGCode.Instruction(i);
-					if (currentInstruction.EPosition > ePosition && lastPosition != currentInstruction.Position)
-					{
-						firstExtrusionIndex = i;
-						break;
-					}
-
-					lastPosition = currentInstruction.Position;
-				}
-
-				if (firstExtrusionIndex > 0)
-				{
-					for (int layerIndex = 0; layerIndex < loadedGCode.LayerCount; layerIndex++)
-					{
-						if (firstExtrusionIndex < loadedGCode.GetInstructionIndexAtLayer(layerIndex))
-						{
-							printer.Bed.ActiveLayerIndex = Math.Max(0, layerIndex - 1);
-							break;
-						}
-					}
-				}
 			}
 		}
 
