@@ -246,13 +246,10 @@ namespace MatterHackers.MatterControl
 		// TODO: Make assignment private, wire up post slicing initialization here
 		public GCodeRenderer GCodeRenderer { get; set; }
 
+		private int activeLayerIndex;
 		public int ActiveLayerIndex
 		{
-			get
-			{
-				return activeLayerIndex;
-			}
-
+			get => activeLayerIndex;
 			set
 			{
 				if (activeLayerIndex != value)
@@ -281,7 +278,6 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private int activeLayerIndex;
 
 		public InteractiveScene Scene { get; } = new InteractiveScene();
 
