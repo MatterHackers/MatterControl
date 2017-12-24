@@ -96,15 +96,6 @@ namespace MatterHackers.MatterControl
 			{
 				editContext.Content = await editContext.SourceItem.CreateContent(null);
 				this.Scene.Load(editContext.Content);
-
-				if (File.Exists(editContext?.GCodeFilePath))
-				{
-					using (var stream = File.OpenRead(editContext.GCodeFilePath))
-					{
-						await LoadGCodeContent(stream);
-					}
-				}
-
 				this.EditableScene = true;
 			}
 
@@ -220,13 +211,28 @@ namespace MatterHackers.MatterControl
 		public GCodeFile LoadedGCode
 		{
 			get => loadedGCode;
-			set
+			private set
 			{
 				if (loadedGCode != value)
 				{
 					loadedGCode = value;
 					LoadedGCodeChanged?.Invoke(null, null);
 				}
+			}
+		}
+
+		internal void EnsureGCodeLoaded()
+		{
+			if (this.loadedGCode == null
+				&& File.Exists(this.EditContext?.GCodeFilePath))
+			{
+				UiThread.RunOnIdle(async () =>
+				{
+					using (var stream = File.OpenRead(this.EditContext.GCodeFilePath))
+					{
+						await LoadGCodeContent(stream);
+					}
+				});
 			}
 		}
 
@@ -240,34 +246,31 @@ namespace MatterHackers.MatterControl
 		// TODO: Make assignment private, wire up post slicing initialization here
 		public GCodeRenderer GCodeRenderer { get; set; }
 
+		private int _activeLayerIndex;
 		public int ActiveLayerIndex
 		{
-			get
-			{
-				return activeLayerIndex;
-			}
-
+			get => _activeLayerIndex;
 			set
 			{
-				if (activeLayerIndex != value)
+				if (_activeLayerIndex != value)
 				{
-					activeLayerIndex = value;
+					_activeLayerIndex = value;
 
 					// Clamp activeLayerIndex to valid range
-					if (this.GCodeRenderer == null || activeLayerIndex < 0)
+					if (this.GCodeRenderer == null || _activeLayerIndex < 0)
 					{
-						activeLayerIndex = 0;
+						_activeLayerIndex = 0;
 					}
-					else if (activeLayerIndex >= this.LoadedGCode.LayerCount)
+					else if (_activeLayerIndex >= this.LoadedGCode.LayerCount)
 					{
-						activeLayerIndex = this.LoadedGCode.LayerCount - 1;
+						_activeLayerIndex = this.LoadedGCode.LayerCount - 1;
 					}
 
 					// When the active layer changes we update the selected range accordingly - constrain to applicable values
 					if (this.RenderInfo != null)
 					{
 						// TODO: Unexpected that rendering layer 2 requires that we set the range to 0-3. Seems like model should be updated to allow 0-2 to mean render up to layer 2
-						this.RenderInfo.EndLayerIndex = Math.Min(this.LoadedGCode == null ? 0 : this.LoadedGCode.LayerCount, Math.Max(activeLayerIndex + 1, 1));
+						this.RenderInfo.EndLayerIndex = Math.Min(this.LoadedGCode == null ? 0 : this.LoadedGCode.LayerCount, Math.Max(_activeLayerIndex + 1, 1));
 					}
 
 					ActiveLayerChanged?.Invoke(this, null);
@@ -275,7 +278,6 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private int activeLayerIndex;
 
 		public InteractiveScene Scene { get; } = new InteractiveScene();
 
@@ -415,11 +417,11 @@ namespace MatterHackers.MatterControl
 
 		public void LoadGCode(Stream stream, CancellationToken cancellationToken, Action<double, string> progressReporter)
 		{
-			this.LoadedGCode = GCodeMemoryFile.Load(stream, cancellationToken, progressReporter);
+			var loadedGCode = GCodeMemoryFile.Load(stream, cancellationToken, progressReporter);
 			this.GCodeRenderer = new GCodeRenderer(loadedGCode);
 			this.RenderInfo = new GCodeRenderInfo(
 					0,
-					1,
+					Math.Max(1, this.ActiveLayerIndex),
 					Agg.Transform.Affine.NewIdentity(),
 					1,
 					0,
@@ -450,6 +452,17 @@ namespace MatterHackers.MatterControl
 			{
 				Debug.Print(ex.Message);
 			}
+
+			// Assign property causing event and UI load
+			this.LoadedGCode = loadedGCode;
+
+			// Constrain to max layers
+			if (this.ActiveLayerIndex > loadedGCode.LayerCount)
+			{
+				this.ActiveLayerIndex = loadedGCode.LayerCount;
+			}
+
+			ActiveLayerChanged?.Invoke(this, null);
 		}
 
 		public void InvalidateBedMesh()

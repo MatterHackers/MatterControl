@@ -531,9 +531,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (printerTabPage != null)
 			{
-				// When GCode changes, switch to the 3D layer view
-				printer.ViewState.ViewMode = PartViewMode.Layers3D;
-
 				if (printerTabPage.gcode3DWidget != null)
 				{
 					// HACK: directly fire method which previously ran on SlicingDone event on PrintItemWrapper

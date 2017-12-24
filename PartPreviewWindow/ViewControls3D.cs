@@ -364,10 +364,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (widget.Name == "Layers2D Button")
 				{
 					printer.ViewState.ViewMode = PartViewMode.Layers2D;
+					printer.Bed.EnsureGCodeLoaded();
 				}
 				else if (widget.Name == "Layers3D Button")
 				{
 					printer.ViewState.ViewMode = PartViewMode.Layers3D;
+					printer.Bed.EnsureGCodeLoaded();
 				}
 				else
 				{
