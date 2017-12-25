@@ -112,15 +112,15 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						});
 					}
 
-					Button gotoProviderButton =  linkButtonFactory.Generate(container.Name);
-					gotoProviderButton.Name = "Bread Crumb Button " + container.Name;
-					gotoProviderButton.VAnchor = VAnchor.Center;
-					gotoProviderButton.Margin = new BorderDouble(right:  5);
-					gotoProviderButton.Click += (s, e) =>
+					Button containerButton =  linkButtonFactory.Generate(container.Name);
+					containerButton.Name = "Bread Crumb Button " + container.Name;
+					containerButton.VAnchor = VAnchor.Center;
+					containerButton.Margin = new BorderDouble(right:  5);
+					containerButton.Click += (s, e) =>
 					{
 						UiThread.RunOnIdle(() => listView.SetActiveContainer(container));
 					};
-					this.AddChild(gotoProviderButton);
+					this.AddChild(containerButton);
 
 					firstItem = false;
 				}
