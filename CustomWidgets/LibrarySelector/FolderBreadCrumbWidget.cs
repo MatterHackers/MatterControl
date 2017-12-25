@@ -105,13 +105,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					if (!firstItem)
 					{
 						// Add separator
-						this.AddChild(new TextWidget(">", textColor: ActiveTheme.Instance.PrimaryTextColor)
-						{
-							VAnchor = VAnchor.Center,
-							Margin = new BorderDouble(right: 5)
-						});
+						this.CreateSeparator(theme);
 					}
 
+					// Create a button for each container
 					Button containerButton =  linkButtonFactory.Generate(container.Name);
 					containerButton.Name = "Bread Crumb Button " + container.Name;
 					containerButton.VAnchor = VAnchor.Center;
@@ -128,11 +125,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				if (haveFilterRunning)
 				{
 					// Add separator ;
-					this.AddChild(new TextWidget(">", textColor: ActiveTheme.Instance.PrimaryTextColor)
-					{
-						VAnchor = VAnchor.Center,
-						Margin = new BorderDouble(right: 5)
-					});
+					this.CreateSeparator(theme);
 
 					Button searchResultsButton = null;
 					if (UserSettings.Instance.IsTouchScreen)
@@ -172,6 +165,15 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					}
 				}
 			}
+		}
+
+		private void CreateSeparator(ThemeConfig theme)
+		{
+			this.AddChild(new TextWidget("/", pointSize: theme.FontSize11, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			{
+				VAnchor = VAnchor.Center,
+				Margin = new BorderDouble(right: 5)
+			});
 		}
 	}
 }
