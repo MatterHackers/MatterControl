@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.Library;
@@ -70,17 +71,11 @@ namespace MatterHackers.MatterControl
 
 			// put in the bread crumb widget
 			breadCrumbWidget = new FolderBreadCrumbWidget(librarySelectorWidget);
+			breadCrumbWidget.BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor;
 			contentRow.AddChild(breadCrumbWidget);
+			contentRow.BackgroundColor = Color.Transparent;
 
-			// put in the area to pick the provider to save to
-			var selectorPanel = new GuiWidget(10, 30)
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Stretch,
-				BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor,
-			};
-			selectorPanel.AddChild(librarySelectorWidget);
-			contentRow.AddChild(selectorPanel);
+			contentRow.AddChild(librarySelectorWidget);
 
 			acceptButton = buttonFactory.Generate(acceptButtonText);
 			acceptButton.Name = "Accept Button";

@@ -354,14 +354,13 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						{
 							// Container items
 							var container = await containerLink.GetContainer(null);
-
-							await Task.Run(() =>
-							{
-								container.Load();
-							});
-
 							if (container != null)
 							{
+								await Task.Run(() =>
+								{
+									container.Load();
+								});
+
 								container.Parent = ActiveContainer;
 								SetActiveContainer(container);
 							}

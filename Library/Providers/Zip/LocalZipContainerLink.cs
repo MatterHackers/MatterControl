@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl.Library
 			thumbnail = AggContext.StaticData.LoadIcon(System.IO.Path.Combine("FileDialog", "folder_zip.png"));
 		}
 
-		public bool IsReadOnly { get; } = false;
+		public bool IsReadOnly { get; } = true;
 
 		public Stream ZipStream { get; set; }
 
