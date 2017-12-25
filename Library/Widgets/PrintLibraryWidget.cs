@@ -253,7 +253,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			createFolderButton.Enabled = containerSupportsEdits && writableContainer?.AllowAction(ContainerActions.AddContainers) == true;
 
 			searchInput.Text = activeContainer.KeywordFilter;
-			breadCrumbWidget.SetBreadCrumbs(activeContainer);
+			breadCrumbWidget.SetContainer(activeContainer);
 
 			activeContainer.ContentChanged += UpdateStatus;
 
