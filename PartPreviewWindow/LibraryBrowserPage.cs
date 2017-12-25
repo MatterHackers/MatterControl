@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl
 			libraryNavContext.ContainerChanged += (s, e) =>
 			{
 				acceptButton.Enabled = libraryNavContext.ActiveContainer is ILibraryWritableContainer;
-				breadCrumbWidget.SetBreadCrumbs(libraryNavContext.ActiveContainer);
+				breadCrumbWidget.SetContainer(libraryNavContext.ActiveContainer);
 			};
 
 			librarySelectorWidget = new ListView(libraryNavContext, new IconListView(75))

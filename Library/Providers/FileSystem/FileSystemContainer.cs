@@ -92,11 +92,7 @@ namespace MatterHackers.MatterControl.Library
 		private string keywordFilter = "";
 		public override string KeywordFilter
 		{
-			get
-			{
-				return keywordFilter;
-			}
-
+			get => keywordFilter;
 			set
 			{
 				if (keywordFilter != value)

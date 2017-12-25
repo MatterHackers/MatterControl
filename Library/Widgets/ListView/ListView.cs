@@ -428,7 +428,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			if (this.ListContentView.Children.Count <= 0)
 			{
-				this.Reload();
+				this.Reload().ConfigureAwait(false);
 			}
 
 			base.OnLoad(args);

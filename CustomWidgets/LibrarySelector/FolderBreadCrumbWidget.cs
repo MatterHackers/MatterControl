@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Kevin Pope
+Copyright (c) 2017, Kevin Pope, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -45,12 +45,13 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		public FolderBreadCrumbWidget(ListView listView)
 		{
 			this.listView = listView;
-			this.Name = "FolderBreadCrumbWidget";
-			UiThread.RunOnIdle(() => SetBreadCrumbs(listView.ActiveContainer));
 
+			this.Name = "FolderBreadCrumbWidget";
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Fit | VAnchor.Center;
 			this.Padding = new BorderDouble(left: 2);
+
+			UiThread.RunOnIdle(() => SetContainer(listView.ActiveContainer));
 		}
 
 		public static IEnumerable<ILibraryContainer> ItemAndParents(ILibraryContainer item)
@@ -63,19 +64,18 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			}
 		}
 
-		public void SetBreadCrumbs(ILibraryContainer currentContainer)
+		public void SetContainer(ILibraryContainer currentContainer)
 		{
 			var buttonFactory = ApplicationController.Instance.Theme.SmallMarginButtonFactory;
-
 			var linkButtonFactory = ApplicationController.Instance.Theme.LinkButtonFactory;
-
-			this.CloseAllChildren();
+			var theme = ApplicationController.Instance.Theme;
 
 			bool haveFilterRunning = !string.IsNullOrEmpty(currentContainer.KeywordFilter);
 
-			var theme = ApplicationController.Instance.Theme;
+			this.CloseAllChildren();
 
 			var upbutton = theme.ButtonFactory.GenerateIconButton(AggContext.StaticData.LoadIcon(Path.Combine("FileDialog", "up_folder_20.png"), IconColor.Theme));
+			upbutton.Enabled = currentContainer.Parent != null;
 			upbutton.Name = "Library Up Button";
 			upbutton.Margin = new BorderDouble(right: 2);
 			upbutton.Click += (s, e) =>
@@ -85,7 +85,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					UiThread.RunOnIdle(() => listView.SetActiveContainer(listView.ActiveContainer.Parent));
 				}
 			};
-
 			this.AddChild(upbutton);
 
 			bool firstItem = true;
