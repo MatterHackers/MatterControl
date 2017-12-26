@@ -144,6 +144,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				Padding = new BorderDouble(0, theme.ToolbarPadding.Top, theme.ToolbarPadding.Right, theme.ToolbarPadding.Top)
 			};
+			printerActionsBar.OverflowMenu.BackgroundColor = theme.ResolveColor(theme.TabBodyBackground, theme.TabBodyBackground);
 
 			// Must come after we have an instance of View3DWidget an its undo buffer
 			topToBottom.AddChild(printerActionsBar, 0);
