@@ -42,40 +42,39 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	/// <summary>
 	/// A toolbar with an optional right anchored element and an ActionBar child to add actions to the bar
 	/// </summary>
-	public class Toolbar : Bar
+	public class Toolbar : GuiWidget
 	{
 		public FlowLayoutWidget ActionArea { get; }
 
 		public Toolbar(GuiWidget rightAnchorItem, ThemeConfig theme, bool bottomBorder = true)
-			: base(rightAnchorItem, theme)
 		{
 			this.ActionArea = new FlowLayoutWidget()
 			{
 				HAnchor = HAnchor.Stretch
 			};
 
-			this.AddChild(this.ActionArea, 0);
+			base.AddChild(this.ActionArea, 0);
+			this.SetRightAnchorItem(rightAnchorItem);
+		}
+
+		protected void SetRightAnchorItem(GuiWidget rightAnchorItem)
+		{
+			if (rightAnchorItem != null)
+			{
+				rightAnchorItem.HAnchor |= HAnchor.Right;
+				base.AddChild(rightAnchorItem);
+			}
+		}
+
+		public override void AddChild(GuiWidget childToAdd, int indexInChildrenList = -1)
+		{
+			ActionArea.AddChild(childToAdd, indexInChildrenList);
 		}
 	}
 
 	public interface ITab
 	{
 		GuiWidget TabContent { get; }
-	}
-
-	/// <summary>
-	/// A toolbar like item with an optional right anchored element
-	/// </summary>
-	public class Bar : GuiWidget
-	{
-		public Bar(GuiWidget rightAnchorItem, ThemeConfig theme)
-		{
-			if (rightAnchorItem != null)
-			{
-				rightAnchorItem.HAnchor |= HAnchor.Right;
-				this.AddChild(rightAnchorItem);
-			}
-		}
 	}
 
 	/// <summary>
