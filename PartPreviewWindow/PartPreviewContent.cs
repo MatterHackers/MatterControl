@@ -126,7 +126,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				});
 			});
 
-			tabControl.TabBar.ActionBar.AddChild(updateAvailableButton);
+			tabControl.TabBar.ActionArea.AddChild(updateAvailableButton);
 
 			UpdateControlData.Instance.UpdateStatusChanged.RegisterEvent((s, e) =>
 			{
