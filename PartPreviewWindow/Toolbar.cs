@@ -40,42 +40,41 @@ using MatterHackers.VectorMath;
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	/// <summary>
-	/// A toolbar with an optional right anchored element and an ActionBar child to add  actions to the bar
+	/// A toolbar with an optional right anchored element and an ActionBar child to add actions to the bar
 	/// </summary>
-	public class Toolbar : Bar
+	public class Toolbar : GuiWidget
 	{
-		public FlowLayoutWidget ActionBar { get; }
+		public FlowLayoutWidget ActionArea { get; }
 
 		public Toolbar(GuiWidget rightAnchorItem, ThemeConfig theme, bool bottomBorder = true)
-			: base(rightAnchorItem, theme)
 		{
-			this.ActionBar = new FlowLayoutWidget()
+			this.ActionArea = new FlowLayoutWidget()
 			{
 				HAnchor = HAnchor.Stretch
 			};
 
-			this.AddChild(this.ActionBar, 0);
+			base.AddChild(this.ActionArea, 0);
+			this.SetRightAnchorItem(rightAnchorItem);
+		}
+
+		protected void SetRightAnchorItem(GuiWidget rightAnchorItem)
+		{
+			if (rightAnchorItem != null)
+			{
+				rightAnchorItem.HAnchor |= HAnchor.Right;
+				base.AddChild(rightAnchorItem);
+			}
+		}
+
+		public override void AddChild(GuiWidget childToAdd, int indexInChildrenList = -1)
+		{
+			ActionArea.AddChild(childToAdd, indexInChildrenList);
 		}
 	}
 
 	public interface ITab
 	{
 		GuiWidget TabContent { get; }
-	}
-
-	/// <summary>
-	/// A toolbar like item with an optional right anchored element
-	/// </summary>
-	public class Bar : GuiWidget
-	{
-		public Bar(GuiWidget rightAnchorItem, ThemeConfig theme)
-		{
-			if (rightAnchorItem != null)
-			{
-				rightAnchorItem.HAnchor |= HAnchor.Right;
-				this.AddChild(rightAnchorItem);
-			}
-		}
 	}
 
 	/// <summary>
@@ -117,7 +116,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			tabWidget.Click += TabWidget_Click;
 
-			this.TabBar.ActionBar.AddChild(tabWidget, position);
+			this.TabBar.ActionArea.AddChild(tabWidget, position);
 
 			this.body.AddChild(iTab.TabContent);
 		}
@@ -131,7 +130,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			_allTabs.Remove(tab);
 
-			TabBar.ActionBar.RemoveChild(tab as GuiWidget);
+			TabBar.ActionArea.RemoveChild(tab as GuiWidget);
 			body.RemoveChild(tab.TabContent);
 
 			ActiveTab = _allTabs.LastOrDefault();
@@ -183,7 +182,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				var firstItem = this.AllTabs.OfType<MainTab>().FirstOrDefault();
 				MainTab.DrawTabLowerRight(e.graphics2D, leadingTabAdornment.LocalBounds, (firstItem == this.ActiveTab) ? theme.ActiveTabColor : theme.InactiveTabColor);
 			};
-			this.TabBar.ActionBar.AddChild(leadingTabAdornment);
+			this.TabBar.ActionArea.AddChild(leadingTabAdornment);
 
 			// TODO: add in the printers and designs that are currently open (or were open last run).
 			plusTabButton = new NewTabButton(
@@ -204,12 +203,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					});
 			};
 
-			this.TabBar.ActionBar.AddChild(plusTabButton);
+			this.TabBar.ActionArea.AddChild(plusTabButton);
 		}
 
 		public void AddTab(GuiWidget tab)
 		{
-			var position = this.TabBar.ActionBar.GetChildIndex(plusTabButton);
+			var position = this.TabBar.ActionArea.GetChildIndex(plusTabButton);
 
 			if (tab is MainTab mainTab)
 			{

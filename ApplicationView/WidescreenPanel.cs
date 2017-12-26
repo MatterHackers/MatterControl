@@ -81,7 +81,7 @@ namespace MatterHackers.MatterControl
 			};
 			toolbar.BorderColor = ApplicationController.Instance.Theme.SlightShade;
 			toolbar.Border = new BorderDouble(bottom:  2);
-			toolbar.ActionBar.AddChild(new BrandMenuButton(theme)
+			toolbar.ActionArea.AddChild(new BrandMenuButton(theme)
 			{
 				MinimumSize = new VectorMath.Vector2(0, 34),
 				HAnchor = HAnchor.Stretch,

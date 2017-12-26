@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
@@ -42,7 +43,7 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class PrinterActionsBar : FlowLayoutWidget
+	public class PrinterActionsBar : OverflowBar
 	{
 		private PrinterConfig printer;
 		private EventHandler unregisterEvents;
@@ -51,12 +52,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private string noEepromMappingMessage = "Oops! There is no eeprom mapping for your printer's firmware.".Localize() + "\n\n" + "You may need to wait a minute for your printer to finish initializing.".Localize();
 		private string noEepromMappingTitle = "Warning - No EEProm Mapping".Localize();
 
-		private OverflowMenu overflowMenu;
-
 		private PrinterTabPage printerTabPage;
 		internal GuiWidget sliceButton;
 
 		public PrinterActionsBar(PrinterConfig printer, PrinterTabPage printerTabPage, ThemeConfig theme)
+			: base(theme)
 		{
 			this.printer = printer;
 			this.printerTabPage = printerTabPage;
@@ -126,20 +126,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.AddChild(new TemperatureWidgetBed(printer));
 			}
 
-			overflowMenu = new OverflowMenu(IconColor.Theme)
-			{
-				AlignToRightEdge = true,
-				Name = "Printer Overflow Menu",
-				Margin = theme.ButtonSpacing
-			};
-			overflowMenu.DynamicPopupContent = GeneratePrinterOverflowMenu;
+			this.OverflowMenu.Name = "Printer Overflow Menu";
+			this.OverflowMenu.DynamicPopupContent = GeneratePrinterOverflowMenu;
 
 			ApplicationController.Instance.ActivePrinter.Connection.ConnectionSucceeded.RegisterEvent((s, e) =>
 			{
 				UiThread.RunOnIdle(PrintRecovery.CheckIfNeedToRecoverPrint);
 			}, ref unregisterEvents);
-
-			this.AddChild(overflowMenu);
 		}
 
 		public override void AddChild(GuiWidget childToAdd, int indexInChildrenList = -1)

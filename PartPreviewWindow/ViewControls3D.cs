@@ -66,13 +66,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public ViewControls3DButtons TransformMode { get; set; }
 	}
 
-	public class ViewControls3D : FlowLayoutWidget
+	public class ViewControls3D : OverflowBar
 	{
 		public event EventHandler ResetView;
 
 		public event EventHandler<TransformStateChangedEventArgs> TransformStateChanged;
-
-		internal OverflowMenu OverflowMenu;
 
 		private GuiWidget partSelectSeparator;
 
@@ -142,6 +140,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		}
 
 		public ViewControls3D(BedConfig sceneContext, ThemeConfig theme, UndoBuffer undoBuffer)
+			: base (theme)
 		{
 			this.printer = sceneContext.Printer;
 
@@ -327,15 +326,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 				this.AddChild(button);
 			}
-
-			this.AddChild(new HorizontalSpacer());
-
-			this.AddChild(this.OverflowMenu = new OverflowMenu()
-			{
-				Name = "View3D Overflow Menu",
-				AlignToRightEdge = true,
-				Margin = 3
-			});
 
 			if (printer != null)
 			{
