@@ -632,13 +632,6 @@ namespace MatterHackers.MeshVisualizer
 		private void Draw_GlOpaqueContent(object sender, DrawEventArgs e)
 		{
 			List<IObject3D> transparentMeshes = new List<IObject3D>();
-
-			// TODO: Adding in to test out how editing InteractiveScene roots might work. Remove/adjust after discussing
-			if (scene.Mesh != null)
-			{
-				GLHelper.Render(scene.Mesh, scene.WorldColor(), scene.Matrix, RenderTypes.Shaded);
-			}
-
 			foreach (var object3D in scene.Children)
 			{
 				DrawObject(object3D, transparentMeshes, false, e);
