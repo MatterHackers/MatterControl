@@ -272,53 +272,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				bool needToAddSubGroup = false;
 				foreach (OrganizerSubGroup subGroup in group.SubGroupsList)
 				{
-					string subGroupTitle = subGroup.Name;
-
-					bool addedSettingToSubGroup = false;
-
-					var topToBottomSettings = new FlowLayoutWidget(FlowDirection.TopToBottom)
-					{
-						HAnchor = HAnchor.Stretch
-					};
-
-					GuiWidget hline = new HorizontalLine(20)
-					{
-						Margin = new BorderDouble(top: 5)
-					};
-					topToBottomSettings.AddChild(hline);
-
-					foreach (SliceSettingData settingData in subGroup.SettingDataList)
-					{
-						// Note: tab sections may disappear if / when they are empty, as controlled by:
-						// settingShouldBeShown / addedSettingToSubGroup / needToAddSubGroup
-						bool settingShouldBeShown = CheckIfShouldBeShown(settingData, oemAndUserContext);
-
-						if (EngineMappingsMatterSlice.Instance.MapContains(settingData.SlicerConfigName)
-							&& settingShouldBeShown)
-						{
-							addedSettingToSubGroup = true;
-
-							topToBottomSettings.AddChild(
-								CreateItemRow(settingData, ref tabIndexForItem));
-
-							hline = new HorizontalLine(20)
-							{
-								Margin = 0
-							};
-							topToBottomSettings.AddChild(hline);
-
-							if (showHelpControls)
-							{
-								topToBottomSettings.AddChild(AddInHelpText(topToBottomSettings, settingData));
-							}
-						}
-					}
-
-					if (addedSettingToSubGroup)
+					var section = AddSettingRowsForSubgroup(subGroup, oemAndUserContext, showHelpControls);
+					if (section != null)
 					{
 						needToAddSubGroup = true;
 
-						var groupBox = new AltGroupBox(subGroupTitle.Localize())
+						var groupBox = new AltGroupBox(subGroup.Name.Localize())
 						{
 							TextColor = ActiveTheme.Instance.PrimaryTextColor,
 							BorderColor = ActiveTheme.Instance.PrimaryTextColor,
@@ -326,7 +285,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							Margin = new BorderDouble(bottom: 8, top: 8),
 							Padding = new BorderDouble(left: 4),
 						};
-						groupBox.AddChild(topToBottomSettings);
+						groupBox.AddChild(section);
 
 						subGroupLayoutTopToBottom.AddChild(groupBox);
 					}
@@ -334,8 +293,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				if (needToAddSubGroup)
 				{
-					SliceSettingListControl scrollOnGroupTab = new SliceSettingListControl();
-
+					var scrollOnGroupTab = new SliceSettingListControl();
 					subGroupLayoutTopToBottom.VAnchor = VAnchor.Fit;
 					subGroupLayoutTopToBottom.HAnchor = HAnchor.Stretch;
 
@@ -366,6 +324,45 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			};
 
 			return secondaryTabControl;
+		}
+
+		private GuiWidget AddSettingRowsForSubgroup(OrganizerSubGroup subGroup, SettingsContext oemAndUserContext, bool showHelpControls)
+		{
+			var topToBottomSettings = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.Stretch,
+			};
+
+			topToBottomSettings.AddChild(new HorizontalLine(20)
+			{
+				Margin = new BorderDouble(top: 5),
+			});
+
+			foreach (SliceSettingData settingData in subGroup.SettingDataList)
+			{
+				// Note: tab sections may disappear if / when they are empty, as controlled by:
+				// settingShouldBeShown / addedSettingToSubGroup / needToAddSubGroup
+				bool settingShouldBeShown = CheckIfShouldBeShown(settingData, oemAndUserContext);
+
+				if (EngineMappingsMatterSlice.Instance.MapContains(settingData.SlicerConfigName)
+					&& settingShouldBeShown)
+				{
+					topToBottomSettings.AddChild(
+						CreateItemRow(settingData, ref tabIndexForItem));
+
+					topToBottomSettings.AddChild(new HorizontalLine(20)
+					{
+						Margin = 0
+					});
+
+					if (showHelpControls)
+					{
+						topToBottomSettings.AddChild(AddInHelpText(topToBottomSettings, settingData));
+					}
+				}
+			}
+
+			return (topToBottomSettings.Children.Count == 1) ? null : topToBottomSettings;
 		}
 
 		private bool CheckIfShouldBeShown(SliceSettingData settingData, SettingsContext settingsContext)
