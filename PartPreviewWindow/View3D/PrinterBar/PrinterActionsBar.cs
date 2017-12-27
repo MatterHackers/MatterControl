@@ -34,6 +34,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.AboutPage;
 using MatterHackers.MatterControl.ActionBar;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.EeProm;
@@ -130,7 +131,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			this.OverflowMenu.Name = "Printer Overflow Menu";
-			this.OverflowMenu.DynamicPopupContent = GeneratePrinterOverflowMenu;
+			this.OverflowMenu.DynamicPopupContent = () => GeneratePrinterOverflowMenu(theme);
 
 			ApplicationController.Instance.ActivePrinter.Connection.ConnectionSucceeded.RegisterEvent((s, e) =>
 			{
@@ -150,7 +151,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnClosed(e);
 		}
 
-		private GuiWidget GeneratePrinterOverflowMenu()
+		private GuiWidget GeneratePrinterOverflowMenu(ThemeConfig theme)
 		{
 			var menuActions = new NamedAction[]
 			{
@@ -179,6 +180,26 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 										printer.Settings.SetValue(SettingsKey.printer_name, newName);
 									}
 								}));
+					}
+				},
+				new NamedAction()
+				{
+					Title = "Configure Printer".Localize(),
+					Action = () =>
+					{
+						var partTabPage = this.Parents<PartTabPage>().FirstOrDefault();
+						var dockingTabControl = partTabPage.FindNamedChildRecursive("DockingTabControl") as DockingTabControl;
+						printer.ViewState.SliceSettingsTabIndex = 3;
+
+						dockingTabControl.AddPage(
+							"Printer",
+							new ConfigurePrinterWidget(partTabPage, theme)
+							{
+								BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor,
+								Padding = new BorderDouble(top: 10),
+								HAnchor = HAnchor.Stretch,
+								VAnchor = VAnchor.Stretch,
+							});
 					}
 				},
 				new NamedAction() { Title = "----" },

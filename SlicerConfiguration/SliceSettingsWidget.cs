@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private TabControl primaryTabControl;
 		internal PresetsToolbar settingsControlBar;
 
-		private SettingsContext settingsContext;
+		internal SettingsContext settingsContext;
 		private PrinterConfig printer;
 
 		private Dictionary<string, UIField> allUiFields = new Dictionary<string, UIField>();
@@ -307,7 +307,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return secondaryTabControl;
 		}
 
-		private FlowLayoutWidget CreateGroupContent(OrganizerGroup group, SettingsContext oemAndUserContext, bool showHelpControls)
+		public FlowLayoutWidget CreateGroupContent(OrganizerGroup group, SettingsContext oemAndUserContext, bool showHelpControls)
 		{
 			var groupPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -476,7 +476,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 
 
-		private GuiWidget CreateItemRow(SliceSettingData settingData, ref int tabIndexForItem)
+		internal GuiWidget CreateItemRow(SliceSettingData settingData, ref int tabIndexForItem)
 		{
 			return CreateItemRow(settingData, settingsContext, printer, ref tabIndexForItem, allUiFields);
 		}

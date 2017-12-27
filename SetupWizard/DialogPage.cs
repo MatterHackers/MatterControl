@@ -84,6 +84,7 @@ namespace MatterHackers.MatterControl
 			// Create the header row for the widget
 			headerRow = new FlowLayoutWidget(FlowDirection.LeftToRight)
 			{
+				Name = "HeaderRow",
 				Margin = new BorderDouble(0, 3, 0, 0),
 				Padding = new BorderDouble(0, 12),
 				HAnchor = HAnchor.Stretch
