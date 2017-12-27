@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			var mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 
 			if (group is MeshWrapperOperation operationNode
-				&& operationNode.Mesh == null)
+				&& operationNode.Children.All(c => c.OutputType != PrintOutputTypes.Hole))
 			{
 				bool first = true;
 				// set all but one mesh to look like holes
