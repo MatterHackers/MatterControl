@@ -266,8 +266,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					child.Padding = new BorderDouble(10);
 				}
 
-				var subGroupLayoutTopToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
-				subGroupLayoutTopToBottom.AnchorAll();
+				var subGroupLayoutTopToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
+				{
+					VAnchor = VAnchor.Fit,
+					HAnchor = HAnchor.Stretch
+				};
 
 				foreach (OrganizerSubGroup subGroup in group.SubGroupsList)
 				{
@@ -291,9 +294,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (subGroupLayoutTopToBottom.Children.Count > 0)
 				{
 					var scrollOnGroupTab = new SliceSettingListControl();
-					subGroupLayoutTopToBottom.VAnchor = VAnchor.Fit;
-					subGroupLayoutTopToBottom.HAnchor = HAnchor.Stretch;
-
 					scrollOnGroupTab.AddChild(subGroupLayoutTopToBottom);
 					groupTabPage.AddChild(scrollOnGroupTab);
 					secondaryTabControl.AddTab(groupTabWidget);
