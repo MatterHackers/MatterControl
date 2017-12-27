@@ -46,8 +46,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class MoveInZControl : InteractionVolume
 	{
-		public IObject3D SelectedItemOnMouseMove;
-		public IObject3D SelectedItemOnMouseDown;
+		public IObject3D ActiveSelectedItem;
 		protected PlaneShape hitPlane;
 		protected Vector3 initialHitPosition;
 		protected Mesh upArrowMesh;
@@ -68,9 +67,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				ForceHide = () =>
 				{
+					var selectedItem = InteractionContext.Scene.SelectedItem;
 					// if the selection changes
-					if (InteractionContext.Scene.SelectedItem != SelectedItemOnMouseDown
-						&& InteractionContext.Scene.SelectedItem != SelectedItemOnMouseMove)
+					if (selectedItem != ActiveSelectedItem)
 					{
 						return true;
 					}
@@ -187,14 +186,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnMouseDown(MouseEvent3DArgs mouseEvent3D)
 		{
-			if (mouseEvent3D.info != null && InteractionContext.Scene.HasSelection)
+			var selectedItem = InteractionContext.Scene.SelectedItem;
+
+			if (mouseEvent3D.info != null 
+				&& selectedItem != null)
 			{
 				HadClickOnControl = true;
-				SelectedItemOnMouseDown = InteractionContext.Scene.SelectedItem;
+				ActiveSelectedItem = selectedItem;
 
 				zHeightDisplayInfo.Visible = true;
-
-				var selectedItem = InteractionContext.Scene.SelectedItem;
 
 				double distanceToHit = Vector3.Dot(mouseEvent3D.info.HitPosition, mouseEvent3D.MouseRay.directionNormal);
 				hitPlane = new PlaneShape(mouseEvent3D.MouseRay.directionNormal, distanceToHit, null);
@@ -209,7 +209,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnMouseMove(MouseEvent3DArgs mouseEvent3D)
 		{
-			SelectedItemOnMouseMove = InteractionContext.Scene.SelectedItem;
+			var selectedItem = InteractionContext.Scene.SelectedItem;
+			ActiveSelectedItem = selectedItem;
 			if (MouseOver)
 			{
 				zHeightDisplayInfo.Visible = true;
@@ -223,10 +224,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				IntersectInfo info = hitPlane.GetClosestIntersection(mouseEvent3D.MouseRay);
 
-				if (info != null && InteractionContext.Scene.HasSelection)
+				if (info != null 
+					&& selectedItem != null)
 				{
-					var selectedItem = InteractionContext.Scene.SelectedItem;
-
 					var delta = info.HitPosition.Z - initialHitPosition.Z;
 
 					double newZPosition = mouseDownSelectedBounds.minXYZ.Z + delta;
@@ -288,13 +288,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void InteractionLayer_AfterDraw(object sender, DrawEventArgs drawEvent)
 		{
-			if (InteractionContext.Scene.HasSelection
+			var selectedItem = InteractionContext.Scene.SelectedItem;
+
+			if (selectedItem != null
 				&& lines.Count > 2)
 			{
 				if (zHeightDisplayInfo.Visible)
 				{
-					var selectedItem = InteractionContext.Scene.SelectedItem;
-
 					for (int i = 0; i < lines.Count; i += 2)
 					{
 						// draw the measure line
