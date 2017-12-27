@@ -293,9 +293,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				if (subGroupLayoutTopToBottom.Children.Count > 0)
 				{
-					var scrollOnGroupTab = new SliceSettingListControl();
-					scrollOnGroupTab.AddChild(subGroupLayoutTopToBottom);
-					groupTabPage.AddChild(scrollOnGroupTab);
+					var scrollableWidget = new ScrollableWidget()
+					{
+						AutoScroll = true,
+
+					};
+
+					scrollableWidget.ScrollArea.HAnchor = HAnchor.Stretch;
+					scrollableWidget.AnchorAll();
+					scrollableWidget.AddChild(subgroupPanel);
+
+					groupTabPage.AddChild(scrollableWidget);
 					secondaryTabControl.AddTab(groupTabWidget);
 				}
 

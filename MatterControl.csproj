@@ -305,7 +305,6 @@
     <Compile Include="SetupWizard\DialogPage.cs" />
     <Compile Include="SetupWizard\SetupWizardTroubleshooting.cs" />
     <Compile Include="SetupWizard\SetupWizardWifi.cs" />
-    <Compile Include="SlicerConfiguration\SliceSettingListControl.cs" />
     <Compile Include="SlicerConfiguration\SliceSettingsRow.cs" />
     <Compile Include="SlicerConfiguration\UIFields\BoundDoubleField.cs" />
     <Compile Include="SlicerConfiguration\UIFields\UIField.cs" />
