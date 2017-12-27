@@ -161,6 +161,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			ApplicationController.Instance.NotifyPrintersTabRightElement(extensionArea);
 
+			// Show start page during initial application startup
+			if (AppContext.IsLoading)
+			{
+				tabControl.AddTab(
+					new MainTab("New Tab".Localize(), tabControl, tabControl.NewTabPage(), theme)
+					{
+						MinimumSize = new Vector2(0, theme.shortButtonHeight)
+					});
+			}
+
 			// When the application is first started, plugins are loaded after the MainView control has been initialized,
 			// and as such they not around when this constructor executes. In that case, we run the AddRightElement 
 			// delegate after the plugins have been initialized via the PluginsLoaded event
