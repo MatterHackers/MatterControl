@@ -266,31 +266,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					child.Padding = new BorderDouble(10);
 				}
 
-				var subgroupPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
-				{
-					VAnchor = VAnchor.Fit,
-					HAnchor = HAnchor.Stretch
-				};
-
-				foreach (OrganizerSubGroup subGroup in group.SubGroupsList)
-				{
-					var section = AddSettingRowsForSubgroup(subGroup, oemAndUserContext, showHelpControls);
-					if (section != null)
-					{
-						var groupBox = new AltGroupBox(subGroup.Name.Localize())
-						{
-							TextColor = ActiveTheme.Instance.PrimaryTextColor,
-							BorderColor = ActiveTheme.Instance.PrimaryTextColor,
-							HAnchor = HAnchor.Stretch,
-							Margin = new BorderDouble(bottom: 8, top: 8),
-							Padding = new BorderDouble(left: 4),
-						};
-						groupBox.AddChild(section);
-
-						subgroupPanel.AddChild(groupBox);
-					}
-				}
-
+				FlowLayoutWidget subgroupPanel = CreateGroupContent(group, oemAndUserContext, showHelpControls);
 				if (subgroupPanel.Children.Count > 0)
 				{
 					var scrollableWidget = new ScrollableWidget()
@@ -329,6 +305,35 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			};
 
 			return secondaryTabControl;
+		}
+
+		private FlowLayoutWidget CreateGroupContent(OrganizerGroup group, SettingsContext oemAndUserContext, bool showHelpControls)
+		{
+			var groupPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				VAnchor = VAnchor.Fit,
+				HAnchor = HAnchor.Stretch
+			};
+			foreach (OrganizerSubGroup subGroup in group.SubGroupsList)
+			{
+				var section = AddSettingRowsForSubgroup(subGroup, oemAndUserContext, showHelpControls);
+				if (section != null)
+				{
+					var groupBox = new AltGroupBox(subGroup.Name.Localize())
+					{
+						TextColor = ActiveTheme.Instance.PrimaryTextColor,
+						BorderColor = ActiveTheme.Instance.PrimaryTextColor,
+						HAnchor = HAnchor.Stretch,
+						Margin = new BorderDouble(bottom: 8, top: 8),
+						Padding = new BorderDouble(left: 4),
+					};
+					groupBox.AddChild(section);
+
+					groupPanel.AddChild(groupBox);
+				}
+			}
+
+			return groupPanel;
 		}
 
 		private GuiWidget AddSettingRowsForSubgroup(OrganizerSubGroup subGroup, SettingsContext oemAndUserContext, bool showHelpControls)
