@@ -288,7 +288,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void InteractionLayer_AfterDraw(object sender, DrawEventArgs drawEvent)
 		{
-			if (InteractionContext.Scene.HasSelection)
+			if (InteractionContext.Scene.HasSelection
+				&& lines.Count > 2)
 			{
 				if (zHeightDisplayInfo.Visible)
 				{
