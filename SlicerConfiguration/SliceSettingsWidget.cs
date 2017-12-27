@@ -269,14 +269,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				var subGroupLayoutTopToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
 				subGroupLayoutTopToBottom.AnchorAll();
 
-				bool needToAddSubGroup = false;
 				foreach (OrganizerSubGroup subGroup in group.SubGroupsList)
 				{
 					var section = AddSettingRowsForSubgroup(subGroup, oemAndUserContext, showHelpControls);
 					if (section != null)
 					{
-						needToAddSubGroup = true;
-
 						var groupBox = new AltGroupBox(subGroup.Name.Localize())
 						{
 							TextColor = ActiveTheme.Instance.PrimaryTextColor,
@@ -291,7 +288,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					}
 				}
 
-				if (needToAddSubGroup)
+				if (subGroupLayoutTopToBottom.Children.Count > 0)
 				{
 					var scrollOnGroupTab = new SliceSettingListControl();
 					subGroupLayoutTopToBottom.VAnchor = VAnchor.Fit;
