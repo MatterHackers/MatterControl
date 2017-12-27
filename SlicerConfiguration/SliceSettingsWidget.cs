@@ -266,7 +266,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					child.Padding = new BorderDouble(10);
 				}
 
-				var subGroupLayoutTopToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
+				var subgroupPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 				{
 					VAnchor = VAnchor.Fit,
 					HAnchor = HAnchor.Stretch
@@ -287,11 +287,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						};
 						groupBox.AddChild(section);
 
-						subGroupLayoutTopToBottom.AddChild(groupBox);
+						subgroupPanel.AddChild(groupBox);
 					}
 				}
 
-				if (subGroupLayoutTopToBottom.Children.Count > 0)
+				if (subgroupPanel.Children.Count > 0)
 				{
 					var scrollableWidget = new ScrollableWidget()
 					{
@@ -309,7 +309,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				if (group.Name == "Connection")
 				{
-					subGroupLayoutTopToBottom.AddChild(SliceSettingsWidget.CreateOemProfileInfoRow(settingsContext, isPrimarySettingsView: true));
+					subgroupPanel.AddChild(SliceSettingsWidget.CreateOemProfileInfoRow(settingsContext, isPrimarySettingsView: true));
 				}
 			}
 
