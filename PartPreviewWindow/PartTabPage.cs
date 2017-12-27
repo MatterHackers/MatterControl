@@ -71,6 +71,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			viewControls3D.OverflowMenu.DynamicPopupContent = this.GetViewControls3DOverflowMenu;
 			viewControls3D.OverflowMenu.BackgroundColor = theme.ResolveColor(theme.TabBodyBackground, theme.TabBodyBackground);
+			viewControls3D.OverflowMenu.Name = "View3D Overflow Menu";
 
 			bool isPrinterType = this is PrinterTabPage;
 
