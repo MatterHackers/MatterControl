@@ -30,14 +30,30 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
+using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class PopupMenuButton : PopupButton
 	{
+		public PopupMenuButton()
+		{
+		}
+
 		public PopupMenuButton(GuiWidget viewWidget)
 			: base(viewWidget)
 		{
+		}
+
+		public PopupMenuButton(string text, ThemeConfig theme)
+			: this (new TextButton(text, theme)
+			{
+				Selectable = false,
+				Padding = theme.ButtonFactory.Options.Margin.Clone(right: 5)
+			})
+		{
+			this.DrawArrow = true;
+			this.BackgroundColor = theme.SlightShade;
 		}
 
 		private bool _drawArrow = false;

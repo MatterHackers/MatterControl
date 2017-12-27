@@ -294,10 +294,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 				selectionActionBar.AddChild(deleteButton);
 
-				// put in the mirror button
-				var mirrorView = smallMarginButtonFactory.Generate("Mirror".Localize());
-
-				var mirrorButton = new PopupButton(mirrorView)
+				var mirrorButton = new PopupMenuButton("Mirror".Localize(), theme)
 				{
 					Name = "Mirror Button",
 					PopDirection = Direction.Up,
@@ -329,7 +326,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				selectionActionBar.AddChild(scaleButton);
 
 				// put in the material options
-				var materialsButton = new PopupButton(smallMarginButtonFactory.Generate("Materials".Localize()))
+				var materialsButton = new PopupMenuButton("Materials".Localize(), theme)
 				{
 					PopDirection = Direction.Up,
 					PopupContent = this.AddMaterialControls(),

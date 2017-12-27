@@ -76,6 +76,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnMouseDown(mouseEvent);
 		}
 
+		private Color stashedColor;
+
 		public override void OnMouseUp(MouseEventArgs mouseEvent)
 		{
 			// HACK: Child controls seem to be interfering with this.MouseCaptured - this short term workaround ensure we get clicks but likely mean mouse down outside of the control will fire the popup
@@ -88,6 +90,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				ShowPopup();
 
 				// Set a background color while the menu is active
+				stashedColor = this.BackgroundColor;
 				this.BackgroundColor = slightShade;
 			}
 
@@ -125,7 +128,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			popupWidget.Closed += (s, e) =>
 			{
 				// Clear the temp background color
-				this.BackgroundColor = Color.Transparent;
+				this.BackgroundColor = stashedColor;
 				menuVisible = false;
 				popupWidget = null;
 

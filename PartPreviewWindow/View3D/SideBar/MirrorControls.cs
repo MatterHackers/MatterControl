@@ -37,22 +37,15 @@ using static MatterHackers.MatterControl.PrinterCommunication.PrinterConnection;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class PopupActionPanel : FlowLayoutWidget, IIgnoredPopupChild
-	{
-		public PopupActionPanel() : base(FlowDirection.TopToBottom)
-		{
-			this.Padding = 15;
-			BackgroundColor = Color.White;
-		}
-	}
 
-	public class MirrorControls : PopupActionPanel
+	public class MirrorControls : FlowLayoutWidget, IIgnoredPopupChild
 	{
 		private InteractiveScene scene;
 
 		public MirrorControls(InteractiveScene scene)
 		{
 			this.scene = scene;
+			this.Padding = 15;
 
 			FlowLayoutWidget buttonContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
 			buttonContainer.HAnchor = HAnchor.Fit;
