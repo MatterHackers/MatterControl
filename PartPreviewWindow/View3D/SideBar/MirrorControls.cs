@@ -106,7 +106,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void MirrorOnAxis(Axis axis, IObject3D item)
 		{
-			item.Mesh.ReverseFaceEdges();
+			foreach (var meshItems in item.VisibleMeshes())
+			{
+				meshItems.Mesh.ReverseFaceEdges();
+			}
 
 			switch (axis)
 			{

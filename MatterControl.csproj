@@ -192,7 +192,6 @@
     <Compile Include="Library\Export\ZipExport.cs" />
     <Compile Include="Library\Export\GCodeExport.cs" />
     <Compile Include="Library\Export\StlExport.cs" />
-    <Compile Include="Library\Export\AmfExport.cs" />
     <Compile Include="Library\Export\MeshExport.cs" />
     <Compile Include="Library\ExtensionMethods.cs" />
     <Compile Include="Library\Interfaces\ILibraryContainer.cs" />
