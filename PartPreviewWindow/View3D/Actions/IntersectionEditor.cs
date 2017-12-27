@@ -32,11 +32,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.PolygonMesh;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
@@ -48,7 +45,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		public string Name => "Intersection";
 
 		public bool Unlocked { get; } = true;
-		bool processed = false;
 
 		public GuiWidget Create(IObject3D group, View3DWidget view3DWidget, ThemeConfig theme)
 		{
@@ -57,8 +53,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 			var mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 
-			if (group is MeshWrapperOperation
-				&& !processed)
+			if (group is MeshWrapperOperation operationNode
+				&& operationNode.Mesh == null)
 			{
 				bool first = true;
 				// set all but one mesh to look like holes
@@ -81,8 +77,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 		private async void ProcessBooleans(IObject3D group)
 		{
-			processed = true;
-			{
 				// spin up a task to remove holes from the objects in the group
 				await Task.Run(() =>
 				{
@@ -112,7 +106,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 						}
 					}
 				});
-			}
 		}
 	}
 }
