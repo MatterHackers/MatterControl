@@ -38,6 +38,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		public PopupMenuButton()
 		{
+			this.DisabledColor = new Color(ActiveTheme.Instance.SecondaryTextColor, 50);
 		}
 
 		public PopupMenuButton(GuiWidget viewWidget)
@@ -46,6 +47,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			viewWidget.Selectable = false;
 			viewWidget.BackgroundColor = Color.Transparent;
 			this.BackgroundColor = ApplicationController.Instance.Theme.SlightShade;
+
+			this.DisabledColor = new Color(ActiveTheme.Instance.SecondaryTextColor, 50);
 		}
 
 		public PopupMenuButton(string text, ThemeConfig theme)
@@ -58,6 +61,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.DrawArrow = true;
 			this.BackgroundColor = theme.SlightShade;
 		}
+
+		public Color DisabledColor { get; set; }
 
 		private bool _drawArrow = false;
 		public bool DrawArrow
@@ -86,7 +91,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (this.DrawArrow)
 			{
 				// Draw directional arrow
-				graphics2D.Render(dropArrow, LocalBounds.Right - DropArrow.ArrowHeight * 2 - 2, LocalBounds.Center.Y + DropArrow.ArrowHeight / 2, ActiveTheme.Instance.SecondaryTextColor);
+				graphics2D.Render(
+					dropArrow, 
+					LocalBounds.Right - DropArrow.ArrowHeight * 2 - 2,
+					LocalBounds.Center.Y + DropArrow.ArrowHeight / 2,
+					this.Enabled ? ActiveTheme.Instance.SecondaryTextColor : this.DisabledColor);
 			}
 		}
 
@@ -94,7 +103,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (this.PopupContent.BackgroundColor == Color.Transparent)
 			{
-				this.PopupContent.BackgroundColor = Color.White;
+				this.PopupContent.BackgroundColor = new Color("#f6f6f6");
 			}
 
 			base.OnBeforePopup();
