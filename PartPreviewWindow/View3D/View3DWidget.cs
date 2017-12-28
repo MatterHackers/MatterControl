@@ -294,13 +294,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 				selectionActionBar.AddChild(deleteButton);
 
+				// put in the mirror button
 				var mirrorView = smallMarginButtonFactory.Generate("Mirror".Localize());
 
 				var mirrorButton = new PopupButton(mirrorView)
 				{
 					Name = "Mirror Button",
 					PopDirection = Direction.Up,
-					PopupContent = new MirrorControls(this, Scene),
+					PopupContent = new MirrorControls(Scene),
 					AlignToRightEdge = true,
 					Margin = buttonSpacing,
 				};
@@ -309,6 +310,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					mirrorButton.Enabled = this.Scene.HasSelection;
 				};
 				selectionActionBar.AddChild(mirrorButton);
+
+				// put in the scale button
+				var scaleView = smallMarginButtonFactory.Generate("Scale".Localize());
+
+				var scaleButton = new PopupButton(scaleView)
+				{
+					Name = "Scale Button",
+					PopDirection = Direction.Up,
+					DynamicPopupContent = () => new ScaleControls(Scene),
+					AlignToRightEdge = true,
+					Margin = buttonSpacing,
+				};
+				this.Scene.SelectionChanged += (s, e) =>
+				{
+					scaleButton.Enabled = this.Scene.HasSelection;
+				};
+				selectionActionBar.AddChild(scaleButton);
 
 				// put in the material options
 				var materialsButton = new PopupButton(smallMarginButtonFactory.Generate("Materials".Localize()))
@@ -1974,6 +1992,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						itemToLayFlat = itemToCheck;
 					}
 				}
+			}
+
+			if(lowestVertex == null)
+			{
+				// didn't find any selected mesh
+				return;
 			}
 
 			Face faceToLayFlat = null;

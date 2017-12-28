@@ -48,13 +48,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 	public class MirrorControls : PopupActionPanel
 	{
-		private View3DWidget view3DWidget;
-
 		private InteractiveScene scene;
 
-		public MirrorControls(View3DWidget view3DWidget, InteractiveScene scene)
+		public MirrorControls(InteractiveScene scene)
 		{
-			this.view3DWidget = view3DWidget;
 			this.scene = scene;
 
 			FlowLayoutWidget buttonContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
