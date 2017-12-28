@@ -161,8 +161,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			ApplicationController.Instance.NotifyPrintersTabRightElement(extensionArea);
 
+			// TODO: Disable until automation tests workaround is implemented
 			// Show start page during initial application startup
-			if (AppContext.IsLoading)
+			if (false && AppContext.IsLoading)
 			{
 				tabControl.AddTab(
 					new MainTab("New Tab".Localize(), tabControl, tabControl.NewTabPage(), theme)
