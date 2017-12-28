@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
@@ -36,6 +37,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public OverflowBar(ThemeConfig theme)
 			: base(null, theme)
 		{
+			this.Padding = theme.ToolbarPadding.Clone(left: 0);
 			this.OverflowMenu = new OverflowMenu(IconColor.Theme)
 			{
 				AlignToRightEdge = true,
