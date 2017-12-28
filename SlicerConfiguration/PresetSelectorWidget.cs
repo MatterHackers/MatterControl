@@ -101,7 +101,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			pullDownContainer.AddChild(GetPulldownContainer());
 			this.AddChild(pullDownContainer);
 
-			this.AddChild(new VerticalSpacer());
 			this.AddChild(accentBar);
 		}
 
