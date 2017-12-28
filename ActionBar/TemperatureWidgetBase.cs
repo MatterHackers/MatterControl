@@ -37,7 +37,7 @@ using MatterHackers.MatterControl.PartPreviewWindow;
 
 namespace MatterHackers.MatterControl.ActionBar
 {
-	internal abstract class TemperatureWidgetBase : PopupButton
+	internal abstract class TemperatureWidgetBase : PopupMenuButton
 	{
 		protected CheckBox heatToggle;
 		protected TextWidget CurrentTempIndicator;
@@ -60,6 +60,8 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		public TemperatureWidgetBase(PrinterConfig printer, string textValue)
 		{
+			this.AlignToRightEdge = true;
+			this.DrawArrow = true;
 			this.printer = printer;
 			this.HAnchor = HAnchor.Fit;
 			this.VAnchor = VAnchor.Fit | VAnchor.Center;
@@ -71,7 +73,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			{
 				HAnchor = HAnchor.Fit,
 				VAnchor = VAnchor.Fit,
-				Padding = new BorderDouble(5)
+				Padding = new BorderDouble(10, 5, 0, 5)
 			};
 			this.AddChild(container);
 

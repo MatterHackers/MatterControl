@@ -46,6 +46,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 		public bool Unlocked { get; } = true;
 
+		public IEnumerable<Type> SupportedTypes() => new Type[] { typeof(MeshWrapperOperation) };
+
 		public GuiWidget Create(IObject3D group, View3DWidget view3DWidget, ThemeConfig theme)
 		{
 			this.view3DWidget = view3DWidget;
@@ -54,7 +56,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			var mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 
 			if (group is MeshWrapperOperation operationNode
-				&& operationNode.Mesh == null)
+				&& operationNode.Children.All(c => c.OutputType != PrintOutputTypes.Hole))
 			{
 				bool first = true;
 				// set all but one mesh to look like holes
@@ -70,42 +72,36 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			return mainContainer;
 		}
 
-		public IEnumerable<Type> SupportedTypes() => new Type[]
-		{
-			typeof(MeshWrapperOperation),
-		};
-
 		private async void ProcessBooleans(IObject3D group)
 		{
-				// spin up a task to remove holes from the objects in the group
-				await Task.Run(() =>
+			await Task.Run(() =>
+			{
+				var participants = group.Descendants().Where((obj) => obj.OwnerID == group.ID);
+
+				if (participants.Count() > 1)
 				{
-					var participants = group.Descendants().Where((obj) => obj.OwnerID == group.ID);
+					var first = participants.First();
 
-					if (participants.Count() > 1)
+					foreach (var remove in participants)
 					{
-						var first = participants.First();
-
-						foreach (var remove in participants)
+						if (remove != first)
 						{
-							if(remove != first)
-							{
-								var transformedRemove = Mesh.Copy(remove.Mesh, CancellationToken.None);
-								transformedRemove.Transform(remove.WorldMatrix());
+							var transformedRemove = Mesh.Copy(remove.Mesh, CancellationToken.None);
+							transformedRemove.Transform(remove.WorldMatrix());
 
-								var transformedKeep = Mesh.Copy(first.Mesh, CancellationToken.None);
-								transformedKeep.Transform(first.WorldMatrix());
+							var transformedKeep = Mesh.Copy(first.Mesh, CancellationToken.None);
+							transformedKeep.Transform(first.WorldMatrix());
 
-								transformedKeep = PolygonMesh.Csg.CsgOperations.Intersect(transformedKeep, transformedRemove);
-								var inverse = first.WorldMatrix();
-								inverse.Invert();
-								transformedKeep.Transform(inverse);
-								first.Mesh = transformedKeep;
-								remove.Visible = false;
-							}
+							transformedKeep = PolygonMesh.Csg.CsgOperations.Intersect(transformedKeep, transformedRemove);
+							var inverse = first.WorldMatrix();
+							inverse.Invert();
+							transformedKeep.Transform(inverse);
+							first.Mesh = transformedKeep;
+							remove.Visible = false;
 						}
 					}
-				});
+				}
+			});
 		}
 	}
 }

@@ -854,8 +854,6 @@ namespace MatterHackers.MatterControl
 			}
 
 			//HtmlWindowTest();
-
-			AppContext.IsLoading = false;
 		}
 
 		private static void RunSetupIfRequired()
@@ -1572,8 +1570,7 @@ namespace MatterHackers.MatterControl
 					systemWindow.BackgroundColor = Color.Transparent;
 					overlay.Close();
 
-					// TODO: Still can't figure out the delay between concluding this block and the first actual render with MainView content. Current 
-					// best guess is delays between widget construction and OpenGL texture creation
+					AppContext.IsLoading = false;
 				});
 			};
 

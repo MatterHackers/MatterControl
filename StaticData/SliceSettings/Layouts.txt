@@ -260,29 +260,49 @@ Advanced
         min_print_speed
       Enable
         cool_extruder_lift
-  Printer
-    Connection
-      Description
-        printer_name
-      Details
+Printer
+  General
+    Common
+      Settings
         auto_connect
         baud_rate
         com_port
         selector_ip_address
         ip_address
         ip_port
-    Print Area
       Size and Coordinates
         bed_size
         print_center
         build_height
         z_offset
         bed_shape
+      Extruders
+        extruder_count
+        nozzle_diameter
+        extruders_share_temperature
+        extruder_offset
+  Features
     Features
       Interface
         sla_printer
         show_reset_connection
         include_firmware_updater
+      Print Recovery
+        recover_is_enabled
+        recover_first_layer_speed
+        recover_position_before_z_home
+      Print Leveling
+        print_leveling_solution
+        leveling_manual_positions
+        print_leveling_required_to_print
+      Leveling Probe
+        print_leveling_probe_start
+        use_z_probe
+        z_probe_samples
+        z_probe_xy_offset
+        z_probe_z_offset
+        z_servo_depolyed_angle
+        z_servo_retracted_angle
       Hardware
         has_fan
         has_hardware_leveling
@@ -307,24 +327,7 @@ Advanced
       Advanced
         use_firmware_retraction
         vibration_limit
-    Print Leveling
-      Machine Settings
-        print_leveling_solution
-        leveling_manual_positions
-        print_leveling_required_to_print
-      Probe Settings
-        print_leveling_probe_start
-        use_z_probe
-        z_probe_samples
-        z_probe_xy_offset
-        z_probe_z_offset
-        z_servo_depolyed_angle
-        z_servo_retracted_angle
-    Print Recovery
-      Recover Settings
-        recover_is_enabled
-        recover_first_layer_speed
-        recover_position_before_z_home
+  G-Code
     Custom G-Code
       Custom G-Code
         start_gcode
@@ -339,9 +342,3 @@ Advanced
       Filters
         write_regex
         read_regex
-    Extruder
-      Extruders
-        extruder_count
-        nozzle_diameter
-        extruders_share_temperature
-        extruder_offset

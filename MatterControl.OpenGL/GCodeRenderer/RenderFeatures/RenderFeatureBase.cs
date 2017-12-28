@@ -62,6 +62,10 @@ namespace MatterHackers.GCodeVisualizer
 			double zScale = halfHeight / radius;
 			double xScale = halfWidth / radius;
 
+			// Adjust start/end positions to be centered on Z for the given layer height
+			startPos.Z -= halfHeight;
+			endPos.Z -= halfHeight;
+
 			Vector3 scale = new Vector3(xScale, xScale, zScale);
 
 			for (int i = 0; i < steps; i++)

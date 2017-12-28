@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private TabControl primaryTabControl;
 		internal PresetsToolbar settingsControlBar;
 
-		private SettingsContext settingsContext;
+		internal SettingsContext settingsContext;
 		private PrinterConfig printer;
 
 		private Dictionary<string, UIField> allUiFields = new Dictionary<string, UIField>();
@@ -266,87 +266,26 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					child.Padding = new BorderDouble(10);
 				}
 
-				var subGroupLayoutTopToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
-				subGroupLayoutTopToBottom.AnchorAll();
-
-				bool needToAddSubGroup = false;
-				foreach (OrganizerSubGroup subGroup in group.SubGroupsList)
+				FlowLayoutWidget subgroupPanel = CreateGroupContent(group, oemAndUserContext, showHelpControls);
+				if (subgroupPanel.Children.Count > 0)
 				{
-					string subGroupTitle = subGroup.Name;
-
-					bool addedSettingToSubGroup = false;
-
-					var topToBottomSettings = new FlowLayoutWidget(FlowDirection.TopToBottom)
+					var scrollableWidget = new ScrollableWidget()
 					{
-						HAnchor = HAnchor.Stretch
+						AutoScroll = true,
+
 					};
 
-					GuiWidget hline = new HorizontalLine(20)
-					{
-						Margin = new BorderDouble(top: 5)
-					};
-					topToBottomSettings.AddChild(hline);
+					scrollableWidget.ScrollArea.HAnchor = HAnchor.Stretch;
+					scrollableWidget.AnchorAll();
+					scrollableWidget.AddChild(subgroupPanel);
 
-					foreach (SliceSettingData settingData in subGroup.SettingDataList)
-					{
-						// Note: tab sections may disappear if / when they are empty, as controlled by:
-						// settingShouldBeShown / addedSettingToSubGroup / needToAddSubGroup
-						bool settingShouldBeShown = CheckIfShouldBeShown(settingData, oemAndUserContext);
-
-						if (EngineMappingsMatterSlice.Instance.MapContains(settingData.SlicerConfigName)
-							&& settingShouldBeShown)
-						{
-							addedSettingToSubGroup = true;
-
-							topToBottomSettings.AddChild(
-								CreateItemRow(settingData, ref tabIndexForItem));
-
-							hline = new HorizontalLine(20)
-							{
-								Margin = 0
-							};
-							topToBottomSettings.AddChild(hline);
-
-							if (showHelpControls)
-							{
-								topToBottomSettings.AddChild(AddInHelpText(topToBottomSettings, settingData));
-							}
-						}
-					}
-
-					if (addedSettingToSubGroup)
-					{
-						needToAddSubGroup = true;
-
-						var groupBox = new AltGroupBox(subGroupTitle.Localize())
-						{
-							TextColor = ActiveTheme.Instance.PrimaryTextColor,
-							BorderColor = ActiveTheme.Instance.PrimaryTextColor,
-							HAnchor = HAnchor.Stretch,
-							Margin = new BorderDouble(bottom: 8, top: 8),
-							Padding = new BorderDouble(left: 4),
-						};
-						groupBox.AddChild(topToBottomSettings);
-
-						subGroupLayoutTopToBottom.AddChild(groupBox);
-					}
-				}
-
-				if (needToAddSubGroup)
-				{
-					SliceSettingListControl scrollOnGroupTab = new SliceSettingListControl();
-
-					subGroupLayoutTopToBottom.VAnchor = VAnchor.Fit;
-					subGroupLayoutTopToBottom.HAnchor = HAnchor.Stretch;
-
-					scrollOnGroupTab.AddChild(subGroupLayoutTopToBottom);
-					groupTabPage.AddChild(scrollOnGroupTab);
+					groupTabPage.AddChild(scrollableWidget);
 					secondaryTabControl.AddTab(groupTabWidget);
 				}
 
 				if (group.Name == "Connection")
 				{
-					subGroupLayoutTopToBottom.AddChild(SliceSettingsWidget.CreateOemProfileInfoRow(settingsContext, isPrimarySettingsView: true));
+					subgroupPanel.AddChild(SliceSettingsWidget.CreateOemProfileInfoRow(settingsContext, isPrimarySettingsView: true));
 				}
 			}
 
@@ -366,6 +305,74 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			};
 
 			return secondaryTabControl;
+		}
+
+		public FlowLayoutWidget CreateGroupContent(OrganizerGroup group, SettingsContext oemAndUserContext, bool showHelpControls)
+		{
+			var groupPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				VAnchor = VAnchor.Fit,
+				HAnchor = HAnchor.Stretch
+			};
+			foreach (OrganizerSubGroup subGroup in group.SubGroupsList)
+			{
+				var section = AddSettingRowsForSubgroup(subGroup, oemAndUserContext, showHelpControls);
+				if (section != null)
+				{
+					var groupBox = new AltGroupBox(subGroup.Name.Localize())
+					{
+						TextColor = ActiveTheme.Instance.PrimaryTextColor,
+						BorderColor = ActiveTheme.Instance.PrimaryTextColor,
+						HAnchor = HAnchor.Stretch,
+						Margin = new BorderDouble(bottom: 8, top: 8),
+						Padding = new BorderDouble(left: 4),
+					};
+					groupBox.AddChild(section);
+
+					groupPanel.AddChild(groupBox);
+				}
+			}
+
+			return groupPanel;
+		}
+
+		private GuiWidget AddSettingRowsForSubgroup(OrganizerSubGroup subGroup, SettingsContext oemAndUserContext, bool showHelpControls)
+		{
+			var topToBottomSettings = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.Stretch,
+			};
+
+			topToBottomSettings.AddChild(new HorizontalLine(20)
+			{
+				Margin = new BorderDouble(top: 5),
+			});
+
+			foreach (SliceSettingData settingData in subGroup.SettingDataList)
+			{
+				// Note: tab sections may disappear if / when they are empty, as controlled by:
+				// settingShouldBeShown / addedSettingToSubGroup / needToAddSubGroup
+				bool settingShouldBeShown = CheckIfShouldBeShown(settingData, oemAndUserContext);
+
+				if (EngineMappingsMatterSlice.Instance.MapContains(settingData.SlicerConfigName)
+					&& settingShouldBeShown)
+				{
+					topToBottomSettings.AddChild(
+						CreateItemRow(settingData, ref tabIndexForItem));
+
+					topToBottomSettings.AddChild(new HorizontalLine(20)
+					{
+						Margin = 0
+					});
+
+					if (showHelpControls)
+					{
+						topToBottomSettings.AddChild(AddInHelpText(topToBottomSettings, settingData));
+					}
+				}
+			}
+
+			return (topToBottomSettings.Children.Count == 1) ? null : topToBottomSettings;
 		}
 
 		private bool CheckIfShouldBeShown(SliceSettingData settingData, SettingsContext settingsContext)
@@ -469,7 +476,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 
 
-		private GuiWidget CreateItemRow(SliceSettingData settingData, ref int tabIndexForItem)
+		internal GuiWidget CreateItemRow(SliceSettingData settingData, ref int tabIndexForItem)
 		{
 			return CreateItemRow(settingData, settingsContext, printer, ref tabIndexForItem, allUiFields);
 		}

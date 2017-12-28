@@ -236,7 +236,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 
 				// put in the material options
-				var alignButton = new PopupButton(smallMarginButtonFactory.Generate("Align".Localize()))
+				var alignButton = new PopupMenuButton("Align".Localize(), theme)
 				{
 					PopDirection = Direction.Up,
 					PopupContent = this.AddAlignControls(),
@@ -294,10 +294,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 				selectionActionBar.AddChild(deleteButton);
 
-				// put in the mirror button
-				var mirrorView = smallMarginButtonFactory.Generate("Mirror".Localize());
-
-				var mirrorButton = new PopupButton(mirrorView)
+				var mirrorButton = new PopupMenuButton("Mirror".Localize(), theme)
 				{
 					Name = "Mirror Button",
 					PopDirection = Direction.Up,
@@ -311,10 +308,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 				selectionActionBar.AddChild(mirrorButton);
 
-				// put in the scale button
-				var scaleView = smallMarginButtonFactory.Generate("Scale".Localize());
-
-				var scaleButton = new PopupButton(scaleView)
+				var scaleButton = new PopupMenuButton("Scale".Localize(), theme)
 				{
 					Name = "Scale Button",
 					PopDirection = Direction.Up,
@@ -329,7 +323,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				selectionActionBar.AddChild(scaleButton);
 
 				// put in the material options
-				var materialsButton = new PopupButton(smallMarginButtonFactory.Generate("Materials".Localize()))
+				var materialsButton = new PopupMenuButton("Materials".Localize(), theme)
 				{
 					PopDirection = Direction.Up,
 					PopupContent = this.AddMaterialControls(),
@@ -412,13 +406,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				bool isPrinterMode = meshViewerWidget.EditorMode == MeshViewerWidget.EditorType.Printer;
 
-				var buttonView = smallMarginButtonFactory.Generate(
-					label: (isPrinterMode) ? "Bed".Localize() : "Part".Localize(),
-					normalImage: AggContext.StaticData.LoadIcon((isPrinterMode) ? "bed.png" : "cube.png", IconColor.Theme));
+				var buttonView = new FlowLayoutWidget();
+				buttonView.AddChild(new ImageWidget(AggContext.StaticData.LoadIcon((isPrinterMode) ? "bed.png" : "cube.png", IconColor.Theme))
+				{
+					Margin = new BorderDouble(left: 10),
+					VAnchor = VAnchor.Center
+				});
+
+				var buttonText = (isPrinterMode) ? "Bed".Localize() : "Part".Localize();
+				buttonView.AddChild(new TextButton(buttonText, theme)
+				{
+					Padding = new BorderDouble(8, 4, 0, 4) 
+				});
 
 				selectionActionBar.AddChild(
-					new PopupButton(buttonView)
+					new PopupMenuButton(buttonView)
 					{
+						DrawArrow = true,
 						PopDirection = Direction.Up,
 						DynamicPopupContent = () => theme.CreatePopupMenu(bedMenuActions),
 						AlignToRightEdge = true,

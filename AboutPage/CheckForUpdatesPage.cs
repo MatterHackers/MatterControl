@@ -10,12 +10,11 @@ namespace MatterHackers.MatterControl.AboutPage
 	public class CheckForUpdatesPage : DialogPage
 	{
 		public CheckForUpdatesPage()
-		: base("Close")
+		: base("Close".Localize())
 		{
 			AnchorAll();
 
-			this.WindowTitle = "Check for Update".Localize();
-			this.HeaderText = "Check for Update".Localize();
+			this.WindowTitle = this.HeaderText = "Check for Update".Localize();
 
 			var theme = ApplicationController.Instance.Theme;
 

@@ -37,7 +37,7 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class PrintPopupMenu : PopupButton
+	public class PrintPopupMenu : PopupMenuButton
 	{
 		private TextImageButtonFactory buttonFactory = ApplicationController.Instance.Theme.ButtonFactory;
 		private PrinterConfig printer;
@@ -47,6 +47,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			this.printerTabPage = printerTabPage;
 			this.printer = printer;
+			this.DrawArrow = true;
+			this.BackgroundColor = theme.ButtonFactory.Options.NormalFillColor;
+			//this.HoverColor = theme.ButtonFactory.Options.HoverFillColor;
 			this.Name = "PrintPopupMenu";
 			this.HAnchor = HAnchor.Fit;
 			this.VAnchor = VAnchor.Fit;
@@ -92,7 +95,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					HAnchor = HAnchor.Right,
 					VAnchor = VAnchor.Absolute,
 					Margin = new BorderDouble(top: 10),
-					BackgroundColor = theme.MinimalShade
 				};
 				button.Click += (s, e) =>
 				{
@@ -119,8 +121,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.AddChild(new TextButton("Print".Localize(), theme)
 			{
-				BackgroundColor = theme.ButtonFactory.Options.NormalFillColor,
-				HoverColor = theme.ButtonFactory.Options.HoverFillColor,
+				Selectable = false,
+				Padding = theme.ButtonFactory.Options.Margin.Clone(right: 5)
 			});
 		}
 
