@@ -216,8 +216,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			ActiveSliceSettings.Instance.SetValue("driver_type", "Emulator");
 
 			// edit the com port
-			testRunner.ClickByName("Slice Settings Sidebar");
-			testRunner.ClickByName("Printer Tab");
+			testRunner.SwitchToPrinterSettings();
+
 			var serialPortDropDown = testRunner.GetWidgetByName("com_port Field", out _, 1);
 
 			testRunner.WaitFor(() => serialPortDropDown.Enabled); // Wait until the serialPortDropDown is ready to click it. Ensures the printer is loaded.
@@ -723,6 +723,19 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			EnsurePrinterSidebarOpen(testRunner);
 			testRunner.ClickByName("General Tab");
+		}
+
+		/// <summary>
+		/// Switch to printer settings
+		/// </summary>
+		/// <param name="testRunner"></param>
+		public static void SwitchToPrinterSettings(this AutomationRunner testRunner)
+		{
+			testRunner.SwitchToSliceSettings();
+
+			testRunner.ClickByName("Printer Overflow Menu");
+			testRunner.ClickByName("Configure Printer Menu Item");
+			testRunner.ClickByName("Printer Tab");
 		}
 
 		/// <summary>

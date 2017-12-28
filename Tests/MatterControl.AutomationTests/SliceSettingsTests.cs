@@ -142,9 +142,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
 
 				// Navigate to Local Library 
-				testRunner.SwitchToSliceSettings();
+				testRunner.SwitchToPrinterSettings();
 
-				testRunner.ClickByName("Printer Tab");
 				testRunner.ClickByName("Features Tab");
 
 				// Find any sibling toggle switch and scroll the parent to the bottom
@@ -167,10 +166,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
-					// Navigate to Local Library 
-					testRunner.SwitchToSliceSettings();
-
-					testRunner.ClickByName("Printer Tab");
 					testRunner.ClickByName("Features Tab");
 
 					// only 1 hotend and 1 extruder
@@ -252,7 +247,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					// and the on toggle is showing off
 					Assert.IsFalse(heatToggle.Checked);
 
-					testRunner.ClickByName("Extruder Tab");
+					// Collapse the popup and switch back to the general tab
+					testRunner.ClickByName("Hotend 0");
+					testRunner.ClickByName("General Tab");
 
 					testRunner.ClickByName(SliceSettingsOrganizer.Instance.GetSettingsData(SettingsKey.extruder_count).PresentationName + " Field");
 					testRunner.Type("2");
@@ -400,7 +397,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Bed Temperature Field");
 
 				// Uncheck Has Heated Bed checkbox and make sure Bed Temp Textbox is not visible
-				testRunner.ClickByName("Printer Tab");
+				testRunner.SwitchToPrinterSettings();
 				testRunner.ClickByName("Features Tab");
 
 				// Scroll the 'Has Heated Bed' field into view
