@@ -16,20 +16,16 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// Add printer that has hardware leveling
 				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
 
-				testRunner.SwitchToSliceSettings();
-
-				testRunner.ClickByName("Printer Tab");
-				testRunner.Delay(.2);
-
-				Assert.IsFalse(testRunner.WaitForName("Print Leveling Tab", .5), "Print leveling should not exist for an Airwolf HD");
+				testRunner.SwitchToPrinterSettings();
+				testRunner.ClickByName("Features Tab");
+				Assert.IsFalse(testRunner.WaitForName("print_leveling_solution Row", .5), "Print leveling should not exist for an Airwolf HD");
 
 				// Add printer that does not have hardware leveling
 				testRunner.AddAndSelectPrinter("3D Factory", "MendelMax 1.5");
 
-				testRunner.ClickByName("Slice Settings Tab");
-				testRunner.ClickByName("Printer Tab");
-
-				Assert.IsTrue(testRunner.WaitForName("Print Leveling Tab"), "Print leveling should exist for a 3D Factory MendelMax");
+				testRunner.SwitchToPrinterSettings();
+				testRunner.ClickByName("Features Tab");
+				Assert.IsTrue(testRunner.WaitForName("print_leveling_solution Row"), "Print leveling should exist for a 3D Factory MendelMax");
 
 				return Task.CompletedTask;
 			}, overrideHeight: 800);

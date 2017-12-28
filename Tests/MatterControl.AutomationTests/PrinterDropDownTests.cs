@@ -21,17 +21,17 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
 
-				testRunner.SwitchToSliceSettings();
-
-				testRunner.ClickByName("Printer Tab");
+				testRunner.SwitchToPrinterSettings();
 
 				testRunner.ClickByName("Printer Name Field");
 
 				var textWidget = testRunner.GetWidgetByName("Printer Name Field", out _);
 				string newName = "Updated name";
 				textWidget.Text = newName;
+
+				// Force loose focus
 				testRunner.ClickByName("Printer Tab");
-				testRunner.Delay(4);
+				testRunner.Delay(1);
 
 				//Check to make sure the Printer dropdown gets the name change 
 				testRunner.OpenPrintersDropdown();
