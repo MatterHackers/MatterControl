@@ -144,6 +144,7 @@
     <Compile Include="PartPreviewWindow\View3D\LightingData.cs" />
     <Compile Include="PartPreviewWindow\View3D\PrinterBar\CancelButton.cs" />
     <Compile Include="PartPreviewWindow\View3D\PrinterBar\PauseResumeButton.cs" />
+    <Compile Include="PartPreviewWindow\View3D\SideBar\ScaleControl.cs" />
     <Compile Include="PartPreviewWindow\View3D\SliceProgressReporter.cs" />
     <Compile Include="PartPreviewWindow\View3D\UndoCommands\ChangeColor.cs" />
     <Compile Include="PartPreviewWindow\View3D\UndoCommands\MakeSupport.cs" />

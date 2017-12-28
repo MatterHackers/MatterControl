@@ -125,12 +125,29 @@ namespace MatterHackers.MatterControl
 			numberInputField.ActuallNumberEdit.InternalNumberEdit.SelectAll();
 		}
 
-		private void UpdateDisplayString()
+		private void UpdateDisplayString(bool callValueChanged = true)
 		{
 			clickableValueContainer.Visible = true;
 			numberInputField.Visible = false;
 			valueDisplay.Text = string.Format(DisplayFormat, numberInputField.Value);
-			ValueChanged?.Invoke(this, null);
+			if (callValueChanged)
+			{
+				ValueChanged?.Invoke(this, null);
+			}
+		}
+
+		public double ValueDirect
+		{
+			set
+			{
+				double sameError = .00001;
+				if (value < numberInputField.Value - sameError
+					|| value > numberInputField.Value + sameError)
+				{
+					numberInputField.Value = value;
+					UpdateDisplayString(false);
+				}
+			}
 		}
 
 		public double Value
@@ -142,7 +159,9 @@ namespace MatterHackers.MatterControl
 
 			set
 			{
-				if (value != numberInputField.Value)
+				double sameError = .00001;
+				if (value < numberInputField.Value - sameError
+					|| value > numberInputField.Value + sameError)
 				{
 					numberInputField.Value = value;
 					UpdateDisplayString();
