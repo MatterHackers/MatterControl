@@ -43,6 +43,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public PopupMenuButton(GuiWidget viewWidget)
 			: base(viewWidget)
 		{
+			viewWidget.Selectable = false;
+			viewWidget.BackgroundColor = Color.Transparent;
+			this.BackgroundColor = ApplicationController.Instance.Theme.SlightShade;
 		}
 
 		public PopupMenuButton(string text, ThemeConfig theme)

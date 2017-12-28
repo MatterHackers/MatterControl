@@ -35,7 +35,7 @@ using MatterHackers.DataConverters3D;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public partial class ScaleControls : PopupActionPanel
+	public partial class ScaleControls : FlowLayoutWidget, IIgnoredPopupChild
 	{
 		private EditableNumberDisplay[] sizeDisplay = new EditableNumberDisplay[3];
 		internal CheckBox uniformScale;
@@ -44,10 +44,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private InteractiveScene scene;
 
 		public ScaleControls(InteractiveScene scene)
+			: base (FlowDirection.TopToBottom)
 		{
 			this.scene = scene;
 
 			var theme = ApplicationController.Instance.Theme;
+
+			this.Padding = 15;
 
 			List<GuiWidget> scaleControls = new List<GuiWidget>();
 
