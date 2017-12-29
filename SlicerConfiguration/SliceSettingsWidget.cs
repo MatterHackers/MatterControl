@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		internal SettingsContext settingsContext;
 		private PrinterConfig printer;
-
+		private Color textColor;
 		private Dictionary<string, UIField> allUiFields = new Dictionary<string, UIField>();
 
 		private EventHandler unregisterEvents;
@@ -57,6 +57,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			this.theme = theme;
 			this.printer = printer;
+			this.textColor = ActiveTheme.Instance.PrimaryTextColor;
 			this.BackgroundColor = ApplicationController.Instance.Theme.TabBodyBackground;
 
 			this.settingsContext = settingsContext;
@@ -321,8 +322,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					var groupBox = new AltGroupBox(subGroup.Name.Localize())
 					{
-						TextColor = ActiveTheme.Instance.PrimaryTextColor,
-						BorderColor = ActiveTheme.Instance.PrimaryTextColor,
+						TextColor = textColor,
+						BorderColor = textColor,
 						HAnchor = HAnchor.Stretch,
 						Margin = new BorderDouble(bottom: 8, top: 8),
 						Padding = new BorderDouble(left: 4),

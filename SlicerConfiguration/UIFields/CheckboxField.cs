@@ -67,12 +67,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	public class ToggleboxField : UIField
 	{
 		private CheckBox checkBoxWidget;
+		private Color textColor;
+
+		public ToggleboxField(Color textColor)
+		{
+			this.textColor = textColor;
+		}
 
 		public override void Initialize(int tabIndex)
 		{
 			var pixelWidth = this.ControlWidth + 6; // HACK: work around agg-bug where text fields are padding*2 bigger than ControlWidth
 
-			checkBoxWidget = ImageButtonFactory.CreateToggleSwitch(false, ActiveTheme.Instance.PrimaryTextColor, pixelWidth, pixelHeight: 24 * GuiWidget.DeviceScale, useStandardLabels: false);
+			checkBoxWidget = ImageButtonFactory.CreateToggleSwitch(false, textColor, pixelWidth, pixelHeight: 24 * GuiWidget.DeviceScale, useStandardLabels: false);
 			checkBoxWidget.VAnchor = VAnchor.Center;
 			checkBoxWidget.Name = this.Name;
 			checkBoxWidget.Margin = 0;

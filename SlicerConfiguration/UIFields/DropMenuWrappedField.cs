@@ -36,12 +36,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	public class DropMenuWrappedField
 	{
 		private UIField uiField;
+		private Color textColor;
 		private SliceSettingData settingData;
 
-		public DropMenuWrappedField(UIField uiField, SliceSettingData settingData)
+		public DropMenuWrappedField(UIField uiField, SliceSettingData settingData, Color textColor)
 		{
 			this.settingData = settingData;
 			this.uiField = uiField;
+			this.textColor = textColor;
 		}
 
 		public void SetValue(string newValue, bool userInitiated)
@@ -59,7 +61,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			var totalContent = new FlowLayoutWidget();
 
-			var selectableOptions = new DropDownList("Custom", maxHeight: 200);
+			var selectableOptions = new DropDownList("Custom", textColor, maxHeight: 200);
 			selectableOptions.Margin = new BorderDouble(0, 0, 10, 0);
 
 			foreach (QuickMenuNameValue nameValue in settingData.QuickMenuSettings)
