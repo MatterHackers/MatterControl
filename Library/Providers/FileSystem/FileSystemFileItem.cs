@@ -58,8 +58,10 @@ namespace MatterHackers.MatterControl.Library
 
 		public Task<StreamAndLength> GetContentStream(Action<double, string> reportProgress)
 		{
-			if (ApplicationController.Instance.IsLoadableFile(this.Path)
-				&& File.Exists(this.Path))
+			if (File.Exists(this.Path)
+				&& (ApplicationController.Instance.IsLoadableFile(this.Path)
+					|| (System.IO.Path.GetExtension(this.Path) is string extension
+						&& string.Equals(extension, ".zip", StringComparison.OrdinalIgnoreCase))))
 			{
 				var stream = File.OpenRead(this.Path);
 				return Task.FromResult(new StreamAndLength()

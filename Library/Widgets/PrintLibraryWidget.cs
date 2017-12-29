@@ -772,50 +772,18 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			DialogWindow.Show(exportPage);
 		}
 
-		public override void OnMouseEnterBounds(MouseEventArgs mouseEvent)
-		{
-			if (mouseEvent.DragFiles?.Count > 0)
-			{
-				if (libraryView?.ActiveContainer?.IsProtected == false)
-				{
-					foreach (string file in mouseEvent.DragFiles)
-					{
-						string extension = Path.GetExtension(file).ToUpper();
-						if ((extension != "" && MeshFileIo.ValidFileExtensions().Contains(extension))
-							|| extension == ".GCODE"
-							|| extension == ".ZIP")
-						{
-							mouseEvent.AcceptDrop = true;
-						}
-					}
-				}
-			}
-
-			base.OnMouseEnterBounds(mouseEvent);
-		}
-
 		public override void OnMouseMove(MouseEventArgs mouseEvent)
 		{
 			if (PositionWithinLocalBounds(mouseEvent.X, mouseEvent.Y)
 				&& mouseEvent.DragFiles?.Count > 0)
 			{
-				if (libraryView != null
-					&& !libraryView.ActiveContainer.IsProtected)
+				if (libraryView?.ActiveContainer.IsProtected == false)
 				{
-					// TODO: Consider reusing common accept drop logic
-					//mouseEvent.AcceptDrop = mouseEvent.DragFiles.TrueForAll(filePath => ApplicationController.Instance.IsLoadableFile(filePath));
-
-					foreach (string file in mouseEvent.DragFiles)
-					{
-						string extension = Path.GetExtension(file).ToUpper();
-						if ((extension != "" && MeshFileIo.ValidFileExtensions().Contains(extension))
-							|| extension == ".GCODE"
-							|| extension == ".ZIP")
-						{
-							mouseEvent.AcceptDrop = true;
-							break;
-						}
-					}
+					// Allow drag-drop if IsLoadable or extension == '.zip'
+					mouseEvent.AcceptDrop = mouseEvent.DragFiles?.Count > 0
+						&& mouseEvent.DragFiles.TrueForAll(filePath => ApplicationController.Instance.IsLoadableFile(filePath)
+							|| (Path.GetExtension(filePath) is string extension
+							&& string.Equals(extension, ".zip", StringComparison.OrdinalIgnoreCase)));
 				}
 			}
 
