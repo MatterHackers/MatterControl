@@ -32,7 +32,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			base.Initialize(tabIndex);
 			bool canChangeComPort = !printer.Connection.PrinterIsConnected && printer.Connection.CommunicationState != CommunicationStates.AttemptingToConnect;
-			dropdownList = new DropDownList("Manual".Localize(), maxHeight: 200)
+			dropdownList = new DropDownList("Manual".Localize(), ActiveTheme.Instance.PrimaryTextColor, maxHeight: 200)
 			{
 				ToolTipText = HelpText,
 				Margin = new BorderDouble(),

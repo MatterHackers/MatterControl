@@ -161,7 +161,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 #if !__ANDROID__
 			{
 				// ThumbnailRendering
-				var thumbnailsModeDropList = new DropDownList("", maxHeight: 200)
+				var thumbnailsModeDropList = new DropDownList("", ActiveTheme.Instance.PrimaryTextColor, maxHeight: 200)
 				{
 					TextColor = menuTextColor,
 				};

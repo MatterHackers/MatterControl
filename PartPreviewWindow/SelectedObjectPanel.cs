@@ -194,7 +194,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (mappedEditors != null)
 			{
-				var dropDownList = new DropDownList("", maxHeight: 300)
+				var dropDownList = new DropDownList("", ActiveTheme.Instance.PrimaryTextColor, maxHeight: 300)
 				{
 					HAnchor = HAnchor.Stretch
 				};

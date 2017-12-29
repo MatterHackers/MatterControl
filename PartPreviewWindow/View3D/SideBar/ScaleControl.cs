@@ -192,7 +192,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{ 10, "cm to mm (10)"},
 				};
 
-				var dropDownList = new DropDownList("Scale".Localize(), Direction.Down)
+				var dropDownList = new DropDownList("Scale".Localize(), ActiveTheme.Instance.PrimaryTextColor, Direction.Down)
 				{
 					TextColor = Color.Black,
 					HAnchor = HAnchor.Left
