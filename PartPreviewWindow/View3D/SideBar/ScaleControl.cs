@@ -42,11 +42,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		internal CheckBox usePercents;
 		internal Vector3 scaleRatios = Vector3.One;
 		private InteractiveScene scene;
+		private Color textColor;
 
-		public ScaleControls(InteractiveScene scene)
+		public ScaleControls(InteractiveScene scene, Color textColor)
 			: base (FlowDirection.TopToBottom)
 		{
 			this.scene = scene;
+			this.textColor = textColor;
 
 			var theme = ApplicationController.Instance.Theme;
 
@@ -57,8 +59,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Put in the scale ratio edit field
 			this.AddChild(new ScaleOptionsPanel(this));
 
-			// Going to use this in the scaling controls, creat it early.
-			usePercents = new CheckBox("Use Percents".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
+			// Going to use this in the scaling controls, create it early.
+			usePercents = new CheckBox("Use Percents".Localize(), textColor: textColor);
 
 			// add in the dimensions
 			this.AddChild(CreateAxisScalingControl("x".ToUpper(), 0));
@@ -66,7 +68,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.AddChild(CreateAxisScalingControl("z".ToUpper(), 2));
 
 			// lock ratio checkbox
-			uniformScale = new CheckBox("Lock Ratio".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
+			uniformScale = new CheckBox("Lock Ratio".Localize(), textColor: textColor);
 			uniformScale.Margin = new BorderDouble(5, 3);
 			uniformScale.Checked = true;
 			uniformScale.CheckedStateChanged += (s, e) =>
@@ -89,8 +91,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.AddChild(usePercents);
 
 			// put in the apply button
-			Button applyScaleButton = theme.ButtonFactory.Generate("Apply Scale".Localize());
-			applyScaleButton.Cursor = Cursors.Hand;
+			var applyScaleButton = new TextButton("Apply Scale".Localize(), theme, Color.Black)
+			{
+				VAnchor = VAnchor.Absolute,
+				HAnchor = HAnchor.Right,
+				BackgroundColor = theme.SlightShade,
+				Cursor = Cursors.Hand
+			};
 			this.AddChild(applyScaleButton);
 
 			scaleControls.Add(applyScaleButton);
@@ -119,13 +126,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			FlowLayoutWidget leftToRight = new FlowLayoutWidget();
 			leftToRight.Padding = new BorderDouble(5, 3);
 
-			TextWidget sizeDescription = new TextWidget("{0}:".FormatWith(axis), textColor: ActiveTheme.Instance.PrimaryTextColor)
+			TextWidget sizeDescription = new TextWidget("{0}:".FormatWith(axis), textColor: textColor)
 			{
 				VAnchor = VAnchor.Center
 			};
 			leftToRight.AddChild(sizeDescription);
 
-			sizeDisplay[axisIndex] = new EditableNumberDisplay(100, "1000.00");
+			sizeDisplay[axisIndex] = new EditableNumberDisplay(100, "1000.00", textColor);
 			sizeDisplay[axisIndex].DisplayFormat = "{0:0.00}";
 			sizeDisplay[axisIndex].ValueChanged += (sender, e) =>
 			{
@@ -144,7 +151,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			leftToRight.AddChild(sizeDisplay[axisIndex]);
 
-			TextWidget units = new TextWidget("mm".FormatWith(axis), textColor: ActiveTheme.Instance.PrimaryTextColor)
+			TextWidget units = new TextWidget("mm".FormatWith(axis), textColor: textColor)
 			{
 				VAnchor = VAnchor.Center
 			};

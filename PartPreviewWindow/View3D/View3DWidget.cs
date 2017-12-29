@@ -312,7 +312,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					Name = "Scale Button",
 					PopDirection = Direction.Up,
-					DynamicPopupContent = () => new ScaleControls(Scene),
+					DynamicPopupContent = () => new ScaleControls(Scene, Color.Black),
 					AlignToRightEdge = true,
 					Margin = buttonSpacing,
 				};
