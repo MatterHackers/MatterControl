@@ -86,7 +86,12 @@ namespace MatterHackers.MatterControl
 				};
 				scrollable.ScrollArea.HAnchor = HAnchor.Stretch;
 				scrollable.AddChild(
-					sliceSettingsWidget.CreateGroupContent(section.GroupsList.FirstOrDefault() , sliceSettingsWidget.settingsContext, sliceSettingsWidget.ShowHelpControls));
+					sliceSettingsWidget.CreateGroupContent(
+						section.GroupsList.FirstOrDefault(), 
+						sliceSettingsWidget.settingsContext, 
+						sliceSettingsWidget.ShowHelpControls,
+						ActiveTheme.Instance.PrimaryTextColor));
+
 				tabPage.AddChild(scrollable);
 			}
 		}
