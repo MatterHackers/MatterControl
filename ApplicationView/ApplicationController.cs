@@ -664,8 +664,7 @@ namespace MatterHackers.MatterControl
 			// Ensure directory exists
 			Directory.CreateDirectory(scopeDirectory);
 
-			string cachePath = Path.Combine(scopeDirectory, cacheKey);
-			return cachePath;
+			return Path.Combine(scopeDirectory, cacheKey);
 		}
 
 		// Indicates if given file can be opened on the design surface
