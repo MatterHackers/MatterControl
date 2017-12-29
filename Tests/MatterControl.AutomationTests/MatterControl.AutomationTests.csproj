@@ -86,6 +86,10 @@
       <Project>{0b8d6f56-bd7f-4426-b858-d9292b084656}</Project>
       <Name>MatterControl</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\MatterControl.Printing\MatterControl.Printing.csproj">
+      <Project>{97d5ade3-c1b4-4b46-8a3e-718a4f7f079f}</Project>
+      <Name>MatterControl.Printing</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\PrinterEmulator\PrinterEmulator.csproj">
       <Project>{bb58ca42-991b-41b7-bde7-dcd2911df8b9}</Project>
       <Name>PrinterEmulator</Name>
@@ -117,10 +121,6 @@
     <ProjectReference Include="..\..\Submodules\agg-sharp\RenderOpenGl\RenderOpenGl.csproj">
       <Project>{545B6912-77FF-4B34-BA76-6C3D6A32BE6A}</Project>
       <Name>RenderOpenGl</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Submodules\agg-sharp\SerialPortCommunication\SerialPortCommunication.csproj">
-      <Project>{D3ABF72C-64C2-4E51-A119-E077210FA990}</Project>
-      <Name>SerialPortCommunication</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Submodules\agg-sharp\Tests\Agg.Tests\Agg.Tests.csproj">
       <Project>{195cbe56-e654-437b-ab05-3be1b9452497}</Project>

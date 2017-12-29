@@ -583,10 +583,6 @@
       <Project>{D3E41B4E-BFBB-44CA-94C8-95C00F754FDD}</Project>
       <Name>VectorMath</Name>
     </ProjectReference>
-    <ProjectReference Include="Submodules\agg-sharp\SerialPortCommunication\SerialPortCommunication.csproj">
-      <Project>{D3ABF72C-64C2-4E51-A119-E077210FA990}</Project>
-      <Name>SerialPortCommunication</Name>
-    </ProjectReference>
     <ProjectReference Include="Submodules\MatterSlice\MatterSlice.csproj">
       <Project>{C46CA728-DD2F-4DD1-971A-AAA89D9DFF95}</Project>
       <Name>MatterSlice</Name>

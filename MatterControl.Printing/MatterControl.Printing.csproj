@@ -17,16 +17,17 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;USE_STANDARD_SERIAL</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>AnyCPU</PlatformTarget>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;USE_STANDARD_SERIAL</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -45,6 +46,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Communication\FoundStringCallBacks.cs" />
+    <Compile Include="Communication\FrostedSerial\CSharpSerialPortWrapper.cs" />
+    <Compile Include="Communication\FrostedSerial\FrostedSerialPort.cs" />
+    <Compile Include="Communication\FrostedSerial\FrostedSerialPortFactory.cs" />
+    <Compile Include="Communication\FrostedSerial\FrostedSerialStream.cs" />
+    <Compile Include="Communication\FrostedSerial\IFrostedSerialPort.cs" />
+    <Compile Include="Communication\FrostedSerial\IFrostedSerialStream.cs" />
+    <Compile Include="Communication\SerialPortFixer.cs" />
+    <Compile Include="Communication\TermiosH.cs" />
     <Compile Include="GCode\GCodeFile.cs" />
     <Compile Include="GCode\GCodeMemoryFile.cs" />
     <Compile Include="GCode\GCodeFileStreamed.cs" />
