@@ -55,6 +55,8 @@ namespace MatterHackers.MatterControl.Library
 			this.fullPath = path;
 			this.Name = Path.GetFileName(path);
 
+			this.IsProtected = false;
+
 			this.ChildContainers = new List<ILibraryContainerLink>();
 			this.Items = new List<ILibraryItem>();
 #if !__ANDROID__
