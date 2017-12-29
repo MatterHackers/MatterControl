@@ -35,16 +35,23 @@ namespace MatterHackers.MatterControl
 		}
 
 		public EditableNumberDisplay(double startingValue, string largestPossibleValue)
-			: base(Agg.UI.FlowDirection.LeftToRight)
+			: this(startingValue, largestPossibleValue, ActiveTheme.Instance.PrimaryTextColor)
+		{
+		}
+
+		public EditableNumberDisplay(double startingValue, string largestPossibleValue, Color textColor)
+			: base(FlowDirection.LeftToRight)
 		{
 			this.Margin = new BorderDouble(3, 0);
 			this.VAnchor = VAnchor.Center;
 
-			clickableValueContainer = new ClickWidget();
-			clickableValueContainer.VAnchor = VAnchor.Stretch;
-			clickableValueContainer.Cursor = Cursors.Hand;
-			clickableValueContainer.BorderWidth = 1;
-			clickableValueContainer.BorderColor = BorderColor;
+			clickableValueContainer = new ClickWidget
+			{
+				VAnchor = VAnchor.Stretch,
+				Cursor = Cursors.Hand,
+				BorderWidth = 1,
+				BorderColor = BorderColor
+			};
 
 			clickableValueContainer.MouseEnterBounds += (sender, e) =>
 			{
@@ -60,7 +67,7 @@ namespace MatterHackers.MatterControl
 
 			valueDisplay = new TextWidget(largestPossibleValue, pointSize: 12)
 			{
-				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				TextColor = textColor,
 				VAnchor = VAnchor.Center,
 				HAnchor = HAnchor.Left,
 				Margin = new BorderDouble(6),
@@ -71,10 +78,12 @@ namespace MatterHackers.MatterControl
 			clickableValueContainer.AddChild(valueDisplay);
 			clickableValueContainer.SetBoundsToEncloseChildren();
 
-			numberInputField = new MHNumberEdit(0, pixelWidth: 40, allowDecimals: true);
-			numberInputField.VAnchor = VAnchor.Center;
-			numberInputField.Margin = new BorderDouble(left: 6);
-			numberInputField.Visible = false;
+			numberInputField = new MHNumberEdit(0, pixelWidth: 40, allowDecimals: true)
+			{
+				VAnchor = VAnchor.Center,
+				Margin = new BorderDouble(left: 6),
+				Visible = false
+			};
 
 			// This is a hack to make sure the control is tall enough.
 			// TODO: This hack needs a unit test and then pass and then remove this line.
