@@ -41,9 +41,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public InlineEditControl(string defaultSizeString = "-0000.00", Agg.Font.Justification justification = Agg.Font.Justification.Left)
 		{
+			base.Visible = false;
+
 			double pointSize = 12;
 			numberDisplay = new TextWidget(defaultSizeString, 0, 0, pointSize, justification: justification)
 			{
+				Visible = false,
 				VAnchor = VAnchor.Bottom,
 				HAnchor = HAnchor.Left,
 				Text = "0",
