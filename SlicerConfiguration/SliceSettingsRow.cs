@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private const bool debugLayout = false;
 
-		public SliceSettingsRow(PrinterConfig printer, SettingsContext settingsContext, SliceSettingData settingData, bool fullRow = false)
+		public SliceSettingsRow(PrinterConfig printer, SettingsContext settingsContext, SliceSettingData settingData, Color textColor, bool fullRow = false)
 		{
 			this.printer = printer;
 			this.settingData = settingData;
@@ -94,7 +94,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				&& settingData.DataEditType != SliceSettingData.DataEditTypes.HARDWARE_PRESENT)
 			{
 				unitsArea.AddChild(
-				new WrappedTextWidget(settingData.ExtraSettings.Localize(), pointSize: 8, textColor: ActiveTheme.Instance.PrimaryTextColor)
+				new WrappedTextWidget(settingData.ExtraSettings.Localize(), pointSize: 8, textColor: textColor)
 				{
 					Margin = new BorderDouble(5, 0),
 				});
