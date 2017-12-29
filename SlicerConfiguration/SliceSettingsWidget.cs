@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		internal SettingsContext settingsContext;
 		private PrinterConfig printer;
-
+		private Color textColor;
 		private Dictionary<string, UIField> allUiFields = new Dictionary<string, UIField>();
 
 		private EventHandler unregisterEvents;
@@ -57,6 +57,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			this.theme = theme;
 			this.printer = printer;
+			this.textColor = ActiveTheme.Instance.PrimaryTextColor;
 			this.BackgroundColor = ApplicationController.Instance.Theme.TabBodyBackground;
 
 			this.settingsContext = settingsContext;
@@ -266,7 +267,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					child.Padding = new BorderDouble(10);
 				}
 
-				FlowLayoutWidget subgroupPanel = CreateGroupContent(group, oemAndUserContext, showHelpControls);
+				FlowLayoutWidget subgroupPanel = CreateGroupContent(group, oemAndUserContext, showHelpControls, textColor);
 				if (subgroupPanel.Children.Count > 0)
 				{
 					var scrollableWidget = new ScrollableWidget()
@@ -307,7 +308,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return secondaryTabControl;
 		}
 
-		public FlowLayoutWidget CreateGroupContent(OrganizerGroup group, SettingsContext oemAndUserContext, bool showHelpControls)
+		public FlowLayoutWidget CreateGroupContent(OrganizerGroup group, SettingsContext oemAndUserContext, bool showHelpControls, Color textColor)
 		{
 			var groupPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -321,8 +322,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					var groupBox = new AltGroupBox(subGroup.Name.Localize())
 					{
-						TextColor = ActiveTheme.Instance.PrimaryTextColor,
-						BorderColor = ActiveTheme.Instance.PrimaryTextColor,
+						TextColor = textColor,
+						BorderColor = textColor,
 						HAnchor = HAnchor.Stretch,
 						Margin = new BorderDouble(bottom: 8, top: 8),
 						Padding = new BorderDouble(left: 4),
@@ -391,20 +392,23 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private GuiWidget AddInHelpText(FlowLayoutWidget topToBottomSettings, SliceSettingData settingData)
 		{
-			FlowLayoutWidget allText = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			allText.HAnchor = HAnchor.Stretch;
 			double textRegionWidth = 380 * GuiWidget.DeviceScale;
-			allText.Margin = new BorderDouble(0);
-			allText.Padding = new BorderDouble(5);
-			allText.BackgroundColor = ActiveTheme.Instance.TransparentDarkOverlay;
-
 			double helpPointSize = 10;
 
-			GuiWidget helpWidget = new WrappedTextWidget(settingData.HelpText, pointSize: helpPointSize, textColor: Color.White);
-			helpWidget.Width = textRegionWidth;
-			helpWidget.Margin = new BorderDouble(5, 0, 0, 0);
-			//helpWidget.HAnchor = HAnchor.Left;
-			allText.AddChild(helpWidget);
+			var allText = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.Stretch,
+				Margin = new BorderDouble(0),
+				Padding = new BorderDouble(5),
+				BackgroundColor = textColor
+			};
+
+			allText.AddChild(
+				new WrappedTextWidget(settingData.HelpText, pointSize: helpPointSize, textColor: Color.White)
+				{
+					Width = textRegionWidth,
+					Margin = new BorderDouble(5, 0, 0, 0)
+				});
 
 			allText.MinimumSize = new Vector2(0, allText.MinimumSize.Y);
 			return allText;
@@ -474,14 +478,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			return dataArea;
 		}
-
-
+		
 		internal GuiWidget CreateItemRow(SliceSettingData settingData, ref int tabIndexForItem)
 		{
-			return CreateItemRow(settingData, settingsContext, printer, ref tabIndexForItem, allUiFields);
+			return CreateItemRow(settingData, settingsContext, printer, ActiveTheme.Instance.PrimaryTextColor, ref tabIndexForItem, allUiFields);
 		}
 
-		public static GuiWidget CreateItemRow(SliceSettingData settingData, SettingsContext settingsContext, PrinterConfig printer, ref int tabIndexForItem, Dictionary<string, UIField> fieldCache = null)
+		public static GuiWidget CreateItemRow(SliceSettingData settingData, SettingsContext settingsContext, PrinterConfig printer, Color textColor, ref int tabIndexForItem, Dictionary<string, UIField> fieldCache = null)
 		{
 			string sliceSettingValue = settingsContext.GetValue(settingData.SlicerConfigName);
 
@@ -490,7 +493,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			bool useDefaultSavePattern = true;
 			bool placeFieldInDedicatedRow = false;
 
-			var settingsRow = new SliceSettingsRow(printer, settingsContext, settingData)
+			var settingsRow = new SliceSettingsRow(printer, settingsContext, settingData, textColor)
 			{
 				Margin = new BorderDouble(right: 4),
 				Padding = new BorderDouble(12, 0, 10, 0),
@@ -502,14 +505,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				// the setting we think we are adding is not in the known settings it may have been deprecated
 				TextWidget settingName = new TextWidget(String.Format("Setting '{0}' not found in known settings", settingData.SlicerConfigName));
-				settingName.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+				settingName.TextColor = textColor;
 				settingsRow.NameArea.AddChild(settingName);
 				settingsRow.NameArea.BackgroundColor = Color.Red;
 			}
 			else
 			{
 				settingsRow.NameArea.AddChild(
-					CreateSettingsLabel(settingData.PresentationName.Localize(), settingData.HelpText));
+					CreateSettingsLabel(settingData.PresentationName.Localize(), settingData.HelpText, textColor));
 
 				switch (settingData.DataEditType)
 				{
@@ -542,7 +545,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						break;
 
 					case SliceSettingData.DataEditTypes.CHECK_BOX:
-						uiField = new ToggleboxField();
+						uiField = new ToggleboxField(textColor);
 						useDefaultSavePattern = false;
 						uiField.ValueChanged += (s, e) =>
 						{
@@ -601,7 +604,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						break;
 
 					case SliceSettingData.DataEditTypes.HARDWARE_PRESENT:
-						uiField = new ToggleboxField();
+						uiField = new ToggleboxField(textColor);
 						break;
 
 					case SliceSettingData.DataEditTypes.VECTOR2:
@@ -610,7 +613,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 					case SliceSettingData.DataEditTypes.OFFSET2:
 						placeFieldInDedicatedRow = true;
-						uiField = new ExtruderOffsetField(settingsContext, settingData.SlicerConfigName);
+						uiField = new ExtruderOffsetField(settingsContext, settingData.SlicerConfigName, textColor);
 						break;
 #if !__ANDROID__
 					case SliceSettingData.DataEditTypes.IP_LIST:
@@ -622,7 +625,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						// Missing Setting
 						settingsRow.AddContent(new TextWidget(String.Format("Missing the setting for '{0}'.", settingData.DataEditType.ToString()))
 						{
-							TextColor = ActiveTheme.Instance.PrimaryTextColor,
+							TextColor = textColor,
 							BackgroundColor = Color.Red
 						});
 						break;
@@ -657,7 +660,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				// After initializing the field, wrap with dropmenu if applicable
 				if (settingData.QuickMenuSettings.Count > 0)
 				{
-					var dropMenu = new DropMenuWrappedField(uiField, settingData);
+					var dropMenu = new DropMenuWrappedField(uiField, settingData, textColor);
 					dropMenu.Initialize(tabIndexForItem);
 
 					settingsRow.AddContent(dropMenu.Content);
@@ -732,9 +735,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public static GuiWidget CreateSettingsLabel(string label, string helpText)
+		public static GuiWidget CreateSettingsLabel(string label, string helpText, Color textColor)
 		{
-			return new WrappedTextWidget(label, pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			return new WrappedTextWidget(label, pointSize: 10, textColor: textColor)
 			{
 				VAnchor = VAnchor.Center | VAnchor.Fit,
 				ToolTipText = helpText,
@@ -747,7 +750,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			string sliceSettingValue =settingsContext.GetValue(settingData.SlicerConfigName);
 			FlowLayoutWidget totalContent = new FlowLayoutWidget();
 
-			DropDownList selectableOptions = new DropDownList("Custom", maxHeight: 200);
+			DropDownList selectableOptions = new DropDownList("Custom", ActiveTheme.Instance.PrimaryTextColor, maxHeight: 200);
 			selectableOptions.Margin = new BorderDouble(0, 0, 10, 0);
 
 			foreach (QuickMenuNameValue nameValue in settingData.QuickMenuSettings)

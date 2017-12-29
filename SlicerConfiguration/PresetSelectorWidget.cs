@@ -232,7 +232,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private DropDownList CreateDropdown()
 		{
-			var dropDownList = new DropDownList(defaultMenuItemText, maxHeight: 300, useLeftIcons: true)
+			var dropDownList = new DropDownList(defaultMenuItemText, ActiveTheme.Instance.PrimaryTextColor, maxHeight: 300, useLeftIcons: true)
 			{
 				HAnchor = HAnchor.Stretch,
 				MenuItemsPadding = new BorderDouble(10, 7, 7, 7),

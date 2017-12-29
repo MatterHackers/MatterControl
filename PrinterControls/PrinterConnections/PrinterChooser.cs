@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl
 		private List<KeyValuePair<string, string>> listSource;
 
 		public BoundDropList(string noSelectionString, int maxHeight = 0)
-			: base(noSelectionString, maxHeight: maxHeight)
+			: base(noSelectionString, ActiveTheme.Instance.PrimaryTextColor, maxHeight: maxHeight)
 		{
 		}
 

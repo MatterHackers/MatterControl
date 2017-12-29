@@ -113,7 +113,7 @@ namespace MatterHackers.MatterControl
 				VAnchor = VAnchor.Center
 			});
 
-			var macroUiLocation = new DropDownList("Default", Direction.Up)
+			var macroUiLocation = new DropDownList("Default", ActiveTheme.Instance.PrimaryTextColor, Direction.Up)
 			{
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
 				Margin = new BorderDouble(5, 0),

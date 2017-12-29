@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public override void Initialize(int tabIndex)
 		{
-			dropdownList = new DropDownList("None".Localize(), maxHeight: 200)
+			dropdownList = new DropDownList("None".Localize(), ActiveTheme.Instance.PrimaryTextColor, maxHeight: 200)
 			{
 				ToolTipText = this.HelpText,
 				TabIndex = tabIndex,

@@ -9,7 +9,7 @@ namespace MatterHackers.MatterControl
 		private Dictionary<string, string> languageDict;
 
 		public LanguageSelector()
-			: base("Default")
+			: base("Default", ActiveTheme.Instance.PrimaryTextColor)
 		{
 			this.MinimumSize = new Vector2(this.LocalBounds.Width, this.LocalBounds.Height);
 

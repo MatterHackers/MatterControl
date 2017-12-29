@@ -84,17 +84,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				foreach (var key in new[] { "layer_height", "fill_density", "support_material", "create_raft", "spiral_vase", "layer_to_pause" })
 				{
 					var settingsData = SliceSettingsOrganizer.Instance.GetSettingsData(key);
-					var row = SliceSettingsWidget.CreateItemRow(settingsData, settingsContext, printer, ref tabIndex);
+					var row = SliceSettingsWidget.CreateItemRow(settingsData, settingsContext, printer, Color.Black, ref tabIndex);
 
 					optionsPanel.AddChild(row);
 				}
 
-				var button = new TextButton("Start Print".Localize(), theme)
+				var button = new TextButton("Start Print".Localize(), theme, Color.Black)
 				{
 					Name = "Start Print Button",
 					HAnchor = HAnchor.Right,
 					VAnchor = VAnchor.Absolute,
 					Margin = new BorderDouble(top: 10),
+					BackgroundColor = theme.MinimalShade
 				};
 				button.Click += (s, e) =>
 				{

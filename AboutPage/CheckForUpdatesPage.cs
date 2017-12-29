@@ -36,7 +36,7 @@ namespace MatterHackers.MatterControl.AboutPage
 			feedLabel.VAnchor = VAnchor.Center;
 			feedLabel.Margin = new BorderDouble(left: 5);
 
-			var releaseOptionsDropList = new DropDownList("Development", maxHeight: 200);
+			var releaseOptionsDropList = new DropDownList("Development", ActiveTheme.Instance.PrimaryTextColor, maxHeight: 200);
 			releaseOptionsDropList.HAnchor = HAnchor.Stretch;
 
 			releaseOptionsDropList.AddItem("Stable".Localize(), "release");
