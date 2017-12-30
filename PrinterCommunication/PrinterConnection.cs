@@ -34,6 +34,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -835,17 +836,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		/// of occasional OnConnectionFailed calls, .Disable and .stopTryingToConnect
 		/// </summary>
 		/// <param name="abortReason">The concise message which will be used to describe the connection failure</param>
-		/// <param name="shutdownReadLoop">Shutdown/join the readFromPrinterThread</param>
-		public void AbortConnectionAttempt(string abortReason, bool shutdownReadLoop = true)
+		public void AbortConnectionAttempt(string abortReason)
 		{
 			// Set .Disconnecting to allow the read loop to exit gracefully before a forced thread join (and extended timeout)
 			CommunicationState = CommunicationStates.Disconnecting;
-
-			// Shutdown the readFromPrinter thread
-			if (shutdownReadLoop)
-			{
-				ReadThread.Join();
-			}
 
 			// Shutdown the serial port
 			if (serialPort != null)
@@ -967,46 +961,63 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 #if __ANDROID__
 						ToggleHighLowHigh(serialPort);
 #endif
+										// TODO: Review and reconsider the cases where this was required
 										// wait a bit of time to let the firmware start up
-										Thread.Sleep(500);
+										//Thread.Sleep(500);
+
 										CommunicationState = CommunicationStates.AttemptingToConnect;
 
+										// We have to send a line because some printers (like old print-r-bots) do not send anything when connecting and there is no other way to know they are there.
+										SendLineToPrinterNow("M110 N1");
 
-										// Read character data until we see a newline
-										while(...)
+										var sb = new StringBuilder();
 
-										// If we've encountered a newline character and we're still in .AttemptingToConnect
-										if (CommunicationState == CommunicationStates.AttemptingToConnect)
+										// Read character data until we see a newline or exceed the MAX_INVALID_CONNECTION_CHARS threshold
+										while (true)
 										{
-											// TODO: This is an initial proof of concept for validating the printer response after DTR. More work is
-											// needed to test this technique across existing hardware and/or edge cases where this simple approach
-											// (initial line having more than 3 non-ASCII characters) may not be adequate or appropriate.
-											// TODO: Revise the INVALID char count to an agreed upon threshold
-											string[] segments = lastLineRead.Split('?');
-											if (segments.Length <= MAX_INVALID_CONNECTION_CHARS)
-											{
-												CommunicationState = CommunicationStates.Connected;
-												TurnOffBedAndExtruders(); // make sure our ui and the printer agree and that the printer is in a known state (not heating).
-												haveReportedError = false;
-												// now send any command that initialize this printer
-												ClearQueuedGCode();
-												string connectGCode = printer.Settings.GetValue(SettingsKey.connect_gcode);
-												SendLineToPrinterNow(connectGCode);
+											// Read, sanitize, store
+											string response = serialPort.ReadExisting().Replace("\r\n", "\n").Replace('\r', '\n');
+											sb.Append(response);
 
-												// Call global event
-												AnyConnectionSucceeded.CallEvents(this, null);
-
-												// Call instance event
-												ConnectionSucceeded.CallEvents(this, null);
-											}
-											else
+											bool hasNewline = response.Contains('\n');
+											if (hasNewline || response.Contains('?'))
 											{
-												// Force port shutdown and cleanup
-												AbortConnectionAttempt("Invalid printer response".Localize(), false);
+												int invalidCharactersOnFirstLine = sb.ToString().Split('?').Length - 1;
+												if (hasNewline
+													&& invalidCharactersOnFirstLine <= MAX_INVALID_CONNECTION_CHARS)
+												{
+													// Switch to connected state when a newline is found and we haven't exceeded the invalid char count
+													CommunicationState = CommunicationStates.Connected;
+													TurnOffBedAndExtruders(); // make sure our ui and the printer agree and that the printer is in a known state (not heating).
+													haveReportedError = false;
+													// now send any command that initialize this printer
+													ClearQueuedGCode();
+
+													SendLineToPrinterNow(
+														printer.Settings.GetValue(SettingsKey.connect_gcode));
+
+													// Call global event
+													AnyConnectionSucceeded.CallEvents(this, null);
+
+													// Call instance event
+													ConnectionSucceeded.CallEvents(this, null);
+
+													// Exit loop
+													break;
+												}
+												else if (invalidCharactersOnFirstLine > MAX_INVALID_CONNECTION_CHARS)
+												{
+													// Abort if we've exceeded the invalid char count
+
+													// Force port shutdown and cleanup
+													AbortConnectionAttempt("Invalid printer response".Localize());
+													return;
+												}
 											}
 										}
 
-										ReadThread.Join();
+										// Place all consumed data back in the buffer to be processed by ReadFromPrinter
+										dataLastRead = sb.ToString();
 
 										Console.WriteLine("ReadFromPrinter thread created.");
 										ReadThread.Start(this);
@@ -1473,10 +1484,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
+		private string dataLastRead = string.Empty;
+
 		public void ReadFromPrinter(ReadThread readThreadHolder)
 		{
-			string dataLastRead = string.Empty;
-
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 			timeSinceLastReadAnything.Restart();
 			// we want this while loop to be as fast as possible. Don't allow any significant work to happen in here
@@ -1515,17 +1526,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 							do
 							{
 								int returnPosition = dataLastRead.IndexOf('\n');
-
-								// Abort if we're AttemptingToConnect, no newline was found in the accumulator string and there's too many non-ascii chars
-								if (this.communicationState == CommunicationStates.AttemptingToConnect && returnPosition < 0)
-								{
-									int totalInvalid = dataLastRead.Count(c => c == '?');
-									if (totalInvalid > MAX_INVALID_CONNECTION_CHARS)
-									{
-										AbortConnectionAttempt("Invalid printer response".Localize(), false);
-									}
-								}
-
 								if (returnPosition < 0)
 								{
 									// there is no return keep getting characters
@@ -2131,10 +2131,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			loadedGCode.Clear();
 			// Force a reset of the printer checksum state (but allow it to be write regexed)
-			var transformedCommand = processWriteRegExStream11.ProcessWriteRegEx("M110 N1");
-			foreach (var line in transformedCommand)
+			var transformedCommand = processWriteRegExStream11?.ProcessWriteRegEx("M110 N1");
+			if (transformedCommand != null)
 			{
-				WriteChecksumLineToPrinter(line);
+				foreach (var line in transformedCommand)
+				{
+					WriteChecksumLineToPrinter(line);
+				}
 			}
 		}
 
