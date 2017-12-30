@@ -100,7 +100,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			printer.Connection.PrintingStateChanged.RegisterEvent((s, e) =>
 			{
-				printerConnectionDetail.Text = printer.Connection.PrinterConnectionStatus;
+				printerConnectionDetail.Text = printer.PrinterConnectionStatus;
 			}, ref unregisterEvents);
 			this.AddChild(printerConnectionDetail);
 

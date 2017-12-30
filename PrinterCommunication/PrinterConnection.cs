@@ -627,65 +627,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		public string PrinterConnectionStatus
-		{
-			get
-			{
-				switch (CommunicationState)
-				{
-					case CommunicationStates.Disconnected:
-						return "Not Connected".Localize();
-
-					case CommunicationStates.Disconnecting:
-						return "Disconnecting".Localize();
-
-					case CommunicationStates.AttemptingToConnect:
-						return "Connecting".Localize() + "...";
-
-					case CommunicationStates.ConnectionLost:
-						return "Connection Lost".Localize();
-
-					case CommunicationStates.FailedToConnect:
-						return "Unable to Connect".Localize();
-
-					case CommunicationStates.Connected:
-						return "Connected".Localize();
-
-					case CommunicationStates.PreparingToPrint:
-						return "Preparing To Print".Localize();
-
-					case CommunicationStates.Printing:
-						switch (DetailedPrintingState)
-						{
-							case DetailedPrintingState.HomingAxis:
-								return "Homing".Localize();
-
-							case DetailedPrintingState.HeatingBed:
-								return "Waiting for Bed to Heat to".Localize() + $" {TargetBedTemperature}°";
-
-							case DetailedPrintingState.HeatingExtruder:
-								return "Waiting for Extruder to Heat to".Localize() + $" {GetTargetHotendTemperature(0)}°";
-
-							case DetailedPrintingState.Printing:
-							default:
-								return "Printing".Localize();
-						}
-
-					case CommunicationStates.PrintingFromSd:
-						return "Printing From SD Card".Localize();
-
-					case CommunicationStates.Paused:
-						return "Paused".Localize();
-
-					case CommunicationStates.FinishedPrint:
-						return "Finished Print".Localize();
-
-					default:
-						throw new NotImplementedException("Make sure every status returns the correct connected state.");
-				}
-			}
-		}
-
 		public bool PrinterIsConnected
 		{
 			get
