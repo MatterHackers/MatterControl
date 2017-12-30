@@ -40,7 +40,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.GCodeVisualizer;
-using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
@@ -169,8 +168,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private CommunicationStates communicationState = CommunicationStates.Disconnected;
 
-		private string connectionFailureMessage = "Unknown Reason";
-
 		private PrinterMove currentDestination;
 
 		public double CurrentExtruderDestination { get { return currentDestination.extrusion; } }
@@ -188,8 +185,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		private int currentLineIndexToSend = 0;
 
 		private bool ForceImmediateWrites = false;
-
-		private string itemNotFoundMessage = "Item not found".Localize();
 
 		private string lastLineRead = "";
 
@@ -544,8 +539,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		public string ConnectionFailureMessage { get { return connectionFailureMessage; } }
-
 		public Vector3 CurrentDestination { get { return currentDestination.position; } }
 
 		public int CurrentlyPrintingLayer
@@ -853,11 +846,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			// Set the final communication state
 			CommunicationState = CommunicationStates.Disconnected;
 
-			// Set the connection failure message and call OnConnectionFailed
-			connectionFailureMessage = abortReason;
-
 			// Notify
-			OnConnectionFailed(null);
+			OnConnectionFailed(ConnectionFailure.Aborted, abortReason);
 		}
 
 		public void BedTemperatureWasWritenToPrinter(object sender, EventArgs e)
@@ -934,15 +924,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 							// make sure we don't have a left over print task
 							activePrintTask = null;
 
-							connectionFailureMessage = "Unknown Reason".Localize();
-
 							if (PrinterIsConnected)
 							{
-#if DEBUG
-								throw new Exception("You can only connect when not currently connected.".Localize());
-#else
-				return;
-#endif
+								this.OnConnectionFailed(ConnectionFailure.AlreadyConnected);
+								return;
 							}
 
 							var portFactory = FrostedSerialPortFactory.GetAppropriateFactory(this.DriverType);
@@ -1044,25 +1029,26 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 									catch (ArgumentOutOfRangeException e)
 									{
 										TerminalLog.WriteLine("Exception:" + e.Message);
-										connectionFailureMessage = "Unsupported Baud Rate".Localize();
-										OnConnectionFailed(null);
+									
+										OnConnectionFailed(ConnectionFailure.UnsupportedBaudRate);
 									}
 									catch (Exception ex)
 									{
 										TerminalLog.WriteLine("Exception:" + ex.Message);
-										OnConnectionFailed(null);
+										OnConnectionFailed(ConnectionFailure.Unknown);
 									}
 								}
 							}
 							else
 							{
-								// If the serial port isn't available (i.e. the specified port name wasn't found in GetPortNames()) or the serial
-								// port is already opened in another instance or process, then report the connection problem back to the user
-								connectionFailureMessage = (serialPortIsAlreadyOpen ?
-									this.ComPort + " " + "in use".Localize() :
-									"Port not found".Localize());
-
-								OnConnectionFailed(null);
+								if (serialPortIsAlreadyOpen)
+								{
+									OnConnectionFailed(ConnectionFailure.PortInUse);
+								}
+								else
+								{
+									OnConnectionFailed(ConnectionFailure.PortUnavailable);
+								}
 							}
 						}
 
@@ -1070,24 +1056,20 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 						if (CommunicationState == CommunicationStates.FailedToConnect)
 						{
-							OnConnectionFailed(null);
+							OnConnectionFailed(ConnectionFailure.FailedToConnect);
 						}
 					}
 					else
 					{
-						OnConnectionFailed(null);
+						OnConnectionFailed(ConnectionFailure.PortUnavailable);
 					}
 				});
 			}
 			else
 			{
-				Debug.WriteLine("Connection failed: {0}".FormatWith(this.ComPort));
-
-				connectionFailureMessage = string.Format(
-									"{0} is not available".Localize(),
-									this.ComPort);
-
-				OnConnectionFailed(null);
+				OnConnectionFailed(
+					ConnectionFailure.PortUnavailable,
+					$"{this.ComPort} is not available");
 
 #if !__ANDROID__
 				// Only pop up the com port helper if the USER actually CLICKED the connect button.
@@ -1321,12 +1303,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 #endif
 		}
 
-		public void OnConnectionFailed(EventArgs e)
+		public void OnConnectionFailed(ConnectionFailure reason, string failureDetails = null)
 		{
-			ConnectionFailed.CallEvents(this, e);
+			var eventArgs = new ConnectFailedEventArgs(reason);
+
+			ConnectionFailed.CallEvents(this, eventArgs);
 
 			CommunicationState = CommunicationStates.FailedToConnect;
-			OnEnabledChanged(e);
+			OnEnabledChanged(eventArgs);
 		}
 
 		public void OnIdle()
@@ -1578,18 +1562,18 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				catch (IOException e2)
 				{
 					TerminalLog.WriteLine("Exception:" + e2.Message);
-					OnConnectionFailed(null);
+					OnConnectionFailed(ConnectionFailure.IOException);
 				}
 				catch (InvalidOperationException ex)
 				{
 					TerminalLog.WriteLine("Exception:" + ex.Message);
 					// this happens when the serial port closes after we check and before we read it.
-					OnConnectionFailed(null);
+					OnConnectionFailed(ConnectionFailure.InvalidOperationException);
 				}
 				catch (UnauthorizedAccessException e3)
 				{
 					TerminalLog.WriteLine("Exception:" + e3.Message);
-					OnConnectionFailed(null);
+					OnConnectionFailed(ConnectionFailure.UnauthorizedAccessException);
 				}
 				catch (Exception)
 				{
@@ -2692,7 +2676,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				}
 				else
 				{
-					OnConnectionFailed(null);
+					OnConnectionFailed(ConnectionFailure.WriteFailed);
 				}
 			}
 		}
@@ -2800,6 +2784,33 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				addedCount = startingIndex;
 			}
 		}
+	}
+
+	public class ConnectFailedEventArgs : EventArgs
+	{
+		public ConnectionFailure Reason { get; }
+
+		public ConnectFailedEventArgs(ConnectionFailure reason)
+		{
+			this.Reason = reason;
+		}
+	}
+
+	public enum ConnectionFailure
+	{
+		Unknown,
+		AlreadyConnected,
+		MaximumErrorsReached,
+		PortNotFound,
+		PortInUse,
+		WriteFailed,
+		UnsupportedBaudRate,
+		PortUnavailable,
+		Aborted,
+		FailedToConnect,
+		IOException,
+		InvalidOperationException,
+		UnauthorizedAccessException
 	}
 
 	public class NamedItemEventArgs : EventArgs

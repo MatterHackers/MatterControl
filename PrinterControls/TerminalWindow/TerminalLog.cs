@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg;
+using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
 using System;
 using System.Collections.Generic;
@@ -92,6 +93,33 @@ namespace MatterHackers.MatterControl
 		private void Instance_ConnectionFailed(object sender, EventArgs e)
 		{
 			OnHasChanged(null);
+
+			if (e is ConnectFailedEventArgs args)
+			{
+				string message;
+
+				switch(args.Reason)
+				{
+					case ConnectionFailure.AlreadyConnected:
+						message = "You can only connect when not currently connected.".Localize();
+						break;
+					case ConnectionFailure.UnsupportedBaudRate:
+						message = "Unsupported Baud Rate".Localize();
+						break;
+					case ConnectionFailure.PortInUse:
+						message = "Serial port in use".Localize();
+						break;
+					case ConnectionFailure.PortNotFound:
+						message = "Port not found".Localize();
+						break;
+					default:
+						message = "Unknown Reason".Localize();
+						break;
+				}
+
+				PrinterLines.Add("Connection Failed".Localize() + ": " + message);
+			}
+
 			StringEventArgs eventArgs = new StringEventArgs("Lost connection to printer.");
 			PrinterLines.Add(eventArgs.Data);
 			OnHasChanged(eventArgs);
