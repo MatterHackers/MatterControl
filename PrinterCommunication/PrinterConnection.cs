@@ -1023,6 +1023,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 										// Call instance event
 										ConnectionSucceeded.CallEvents(this, null);
 
+										// TODO: Shouldn't we wait to start reading until after we create the stream pipeline?
 										Console.WriteLine("ReadFromPrinter thread created.");
 										ReadThread.Start(this);
 
@@ -1030,10 +1031,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 										CommunicationState = CommunicationStates.Connected;
 
+										// TODO: Couldn't we send something simple like a few ms dwell or something having less effect?
 										// We have to send a line because some printers (like old print-r-bots) do not send anything when connecting and there is no other way to know they are there.
 										SendLineToPrinterNow("M110 N1");
 
+										// TODO: Why clear after send?
 										ClearQueuedGCode();
+
 										// We do not need to wait for the M105
 										PrintingCanContinue(null, null);
 									}
