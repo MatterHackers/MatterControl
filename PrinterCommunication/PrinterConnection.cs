@@ -822,18 +822,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private int NumberOfLinesInCurrentPrint => loadedGCode.LineCount;
 
-		/// <summary>
-		/// Abort an ongoing attempt to establish communication with a printer due to the specified problem. This is a specialized
-		/// version of the functionality that's previously been in .Disable but focused specifically on the task of aborting an
-		/// ongoing connection. Ideally we should unify all abort invocations to use this implementation rather than the mix
-		/// of occasional OnConnectionFailed calls, .Disable and .stopTryingToConnect
-		/// </summary>
-		/// <param name="abortReason">The concise message which will be used to describe the connection failure</param>
-		public void AbortConnectionAttempt(string abortReason)
+		private void ReleaseAndReportFailedConnection(ConnectionFailure reason, string details = null)
 		{
-			// Set .Disconnecting to allow the read loop to exit gracefully before a forced thread join (and extended timeout)
-			CommunicationState = CommunicationStates.Disconnecting;
-
 			// Shutdown the serial port
 			if (serialPort != null)
 			{
@@ -843,11 +833,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				serialPort = null;
 			}
 
-			// Set the final communication state
-			CommunicationState = CommunicationStates.Disconnected;
-
 			// Notify
-			OnConnectionFailed(ConnectionFailure.Aborted, abortReason);
+			OnConnectionFailed(reason, details);
 		}
 
 		public void BedTemperatureWasWritenToPrinter(object sender, EventArgs e)
@@ -979,7 +966,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 													// Abort if we've exceeded the invalid char count
 
 													// Force port shutdown and cleanup
-													AbortConnectionAttempt("Invalid printer response".Localize());
+													ReleaseAndReportFailedConnection(ConnectionFailure.MaximumErrorsReached);
 													return;
 												}
 											}
@@ -1306,10 +1293,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		public void OnConnectionFailed(ConnectionFailure reason, string failureDetails = null)
 		{
 			var eventArgs = new ConnectFailedEventArgs(reason);
-
 			ConnectionFailed.CallEvents(this, eventArgs);
 
-			CommunicationState = CommunicationStates.FailedToConnect;
+			CommunicationState = CommunicationStates.Disconnected;
 			OnEnabledChanged(eventArgs);
 		}
 
@@ -2657,7 +2643,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						if (CommunicationState == CommunicationStates.AttemptingToConnect)
 						{
 							// Handle hardware disconnects by relaying the failure reason and shutting down open resources
-							AbortConnectionAttempt("Connection Lost - " + ex.Message);
+							ReleaseAndReportFailedConnection(ConnectionFailure.ConnectionLost, ex.Message);
 						}
 					}
 					catch (TimeoutException e2) // known ok
@@ -2668,7 +2654,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					catch (UnauthorizedAccessException e3)
 					{
 						TerminalLog.WriteLine("Exception:" + e3.Message);
-						AbortConnectionAttempt(e3.Message);
+						ReleaseAndReportFailedConnection(ConnectionFailure.UnauthorizedAccessException, e3.Message);
 					}
 					catch (Exception)
 					{
@@ -2810,7 +2796,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		FailedToConnect,
 		IOException,
 		InvalidOperationException,
-		UnauthorizedAccessException
+		UnauthorizedAccessException,
+		ConnectionLost
 	}
 
 	public class NamedItemEventArgs : EventArgs
