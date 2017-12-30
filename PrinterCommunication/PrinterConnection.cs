@@ -986,23 +986,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 												if (hasNewline
 													&& invalidCharactersOnFirstLine <= MAX_INVALID_CONNECTION_CHARS)
 												{
-													// Switch to connected state when a newline is found and we haven't exceeded the invalid char count
-													CommunicationState = CommunicationStates.Connected;
-													TurnOffBedAndExtruders(); // make sure our ui and the printer agree and that the printer is in a known state (not heating).
-													haveReportedError = false;
-													// now send any command that initialize this printer
-													ClearQueuedGCode();
-
-													SendLineToPrinterNow(
-														printer.Settings.GetValue(SettingsKey.connect_gcode));
-
-													// Call global event
-													AnyConnectionSucceeded.CallEvents(this, null);
-
-													// Call instance event
-													ConnectionSucceeded.CallEvents(this, null);
-
-													// Exit loop
+													// Exit loop, continue with connect
 													break;
 												}
 												else if (invalidCharactersOnFirstLine > MAX_INVALID_CONNECTION_CHARS)
@@ -1019,6 +1003,22 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 										// Place all consumed data back in the buffer to be processed by ReadFromPrinter
 										dataLastRead = sb.ToString();
 
+										// Switch to connected state when a newline is found and we haven't exceeded the invalid char count
+										CommunicationState = CommunicationStates.Connected;
+										TurnOffBedAndExtruders(); // make sure our ui and the printer agree and that the printer is in a known state (not heating).
+										haveReportedError = false;
+										// now send any command that initialize this printer
+										ClearQueuedGCode();
+
+										SendLineToPrinterNow(
+											printer.Settings.GetValue(SettingsKey.connect_gcode));
+
+										// Call global event
+										AnyConnectionSucceeded.CallEvents(this, null);
+
+										// Call instance event
+										ConnectionSucceeded.CallEvents(this, null);
+
 										Console.WriteLine("ReadFromPrinter thread created.");
 										ReadThread.Start(this);
 
@@ -1030,7 +1030,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 										// We do not need to wait for the M105
 										PrintingCanContinue(null, null);
 									}
-									catch (System.ArgumentOutOfRangeException e)
+									catch (ArgumentOutOfRangeException e)
 									{
 										TerminalLog.WriteLine("Exception:" + e.Message);
 										connectionFailureMessage = "Unsupported Baud Rate".Localize();
