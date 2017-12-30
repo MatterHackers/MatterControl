@@ -1066,24 +1066,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					{
 						OnConnectionFailed(null);
 					}
-
-					//// From ContinueConnectionThread
-					//if (CommunicationState == CommunicationStates.AttemptingToConnect)
-					//{
-					//	if (this.stopTryingToConnect)
-					//	{
-					//		connectThread.Join(JoinThreadTimeoutMs); //Halt connection thread
-					//		Disable();
-					//		connectionFailureMessage = "Canceled".Localize();
-					//		OnConnectionFailed(null);
-					//		return false;
-					//	}
-					//	else
-					//	{
-					//		return true;
-					//	}
-					//}
-
 				});
 			}
 			else
