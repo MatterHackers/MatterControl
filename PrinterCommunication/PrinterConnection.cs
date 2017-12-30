@@ -1003,8 +1003,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 										// Place all consumed data back in the buffer to be processed by ReadFromPrinter
 										dataLastRead = sb.ToString();
 
+										// Setting connected before calling ReadThread.Start causes the misguided CheckOnPrinter logic to spin up new  ReadThreads 
+										/* 
 										// Switch to connected state when a newline is found and we haven't exceeded the invalid char count
 										CommunicationState = CommunicationStates.Connected;
+										*/
+
 										TurnOffBedAndExtruders(); // make sure our ui and the printer agree and that the printer is in a known state (not heating).
 										haveReportedError = false;
 										// now send any command that initialize this printer
@@ -1024,8 +1028,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 										CreateStreamProcessors(null, false);
 
+										CommunicationState = CommunicationStates.Connected;
+
 										// We have to send a line because some printers (like old print-r-bots) do not send anything when connecting and there is no other way to know they are there.
 										SendLineToPrinterNow("M110 N1");
+
 										ClearQueuedGCode();
 										// We do not need to wait for the M105
 										PrintingCanContinue(null, null);
