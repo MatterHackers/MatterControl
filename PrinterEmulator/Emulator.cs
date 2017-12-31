@@ -564,7 +564,7 @@ namespace MatterHackers.PrinterEmulator
 		public bool DtrEnable { get; set; }
 		public int BaudRate { get; set; }
 
-		private Queue<string> sendQueue = new Queue<string>();
+		private Queue<string> sendQueue = new Queue<string>(new string[] { "Emulator v0.1\n" });
 		private Queue<string> receiveQueue = new Queue<string>();
 
 		private AutoResetEvent receiveResetEvent;

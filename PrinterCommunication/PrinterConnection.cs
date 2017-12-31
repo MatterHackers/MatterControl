@@ -34,12 +34,12 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.GCodeVisualizer;
-using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
@@ -168,10 +168,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private CommunicationStates communicationState = CommunicationStates.Disconnected;
 
-		private string connectionFailureMessage = "Unknown Reason";
-
-		private Thread connectThread;
-
 		private PrinterMove currentDestination;
 
 		public double CurrentExtruderDestination { get { return currentDestination.extrusion; } }
@@ -189,8 +185,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		private int currentLineIndexToSend = 0;
 
 		private bool ForceImmediateWrites = false;
-
-		private string itemNotFoundMessage = "Item not found".Localize();
 
 		private string lastLineRead = "";
 
@@ -545,8 +539,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		public string ConnectionFailureMessage { get { return connectionFailureMessage; } }
-
 		public Vector3 CurrentDestination { get { return currentDestination.position; } }
 
 		public int CurrentlyPrintingLayer
@@ -623,65 +615,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				else
 				{
 					return 0.0;
-				}
-			}
-		}
-
-		public string PrinterConnectionStatus
-		{
-			get
-			{
-				switch (CommunicationState)
-				{
-					case CommunicationStates.Disconnected:
-						return "Not Connected".Localize();
-
-					case CommunicationStates.Disconnecting:
-						return "Disconnecting".Localize();
-
-					case CommunicationStates.AttemptingToConnect:
-						return "Connecting".Localize() + "...";
-
-					case CommunicationStates.ConnectionLost:
-						return "Connection Lost".Localize();
-
-					case CommunicationStates.FailedToConnect:
-						return "Unable to Connect".Localize();
-
-					case CommunicationStates.Connected:
-						return "Connected".Localize();
-
-					case CommunicationStates.PreparingToPrint:
-						return "Preparing To Print".Localize();
-
-					case CommunicationStates.Printing:
-						switch (DetailedPrintingState)
-						{
-							case DetailedPrintingState.HomingAxis:
-								return "Homing".Localize();
-
-							case DetailedPrintingState.HeatingBed:
-								return "Waiting for Bed to Heat to".Localize() + $" {TargetBedTemperature}°";
-
-							case DetailedPrintingState.HeatingExtruder:
-								return "Waiting for Extruder to Heat to".Localize() + $" {GetTargetHotendTemperature(0)}°";
-
-							case DetailedPrintingState.Printing:
-							default:
-								return "Printing".Localize();
-						}
-
-					case CommunicationStates.PrintingFromSd:
-						return "Printing From SD Card".Localize();
-
-					case CommunicationStates.Paused:
-						return "Paused".Localize();
-
-					case CommunicationStates.FinishedPrint:
-						return "Finished Print".Localize();
-
-					default:
-						throw new NotImplementedException("Make sure every status returns the correct connected state.");
 				}
 			}
 		}
@@ -889,31 +822,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private int NumberOfLinesInCurrentPrint => loadedGCode.LineCount;
 
-		/// <summary>
-		/// Abort an ongoing attempt to establish communication with a printer due to the specified problem. This is a specialized
-		/// version of the functionality that's previously been in .Disable but focused specifically on the task of aborting an
-		/// ongoing connection. Ideally we should unify all abort invocations to use this implementation rather than the mix
-		/// of occasional OnConnectionFailed calls, .Disable and .stopTryingToConnect
-		/// </summary>
-		/// <param name="abortReason">The concise message which will be used to describe the connection failure</param>
-		/// <param name="shutdownReadLoop">Shutdown/join the readFromPrinterThread</param>
-		public void AbortConnectionAttempt(string abortReason, bool shutdownReadLoop = true)
+		private void ReleaseAndReportFailedConnection(ConnectionFailure reason, string details = null)
 		{
-			// Set .Disconnecting to allow the read loop to exit gracefully before a forced thread join (and extended timeout)
-			CommunicationState = CommunicationStates.Disconnecting;
-
-			// Shutdown the connectionAttempt thread
-			if (connectThread != null)
-			{
-				connectThread.Join(JoinThreadTimeoutMs); //Halt connection thread
-			}
-
-			// Shutdown the readFromPrinter thread
-			if (shutdownReadLoop)
-			{
-				ReadThread.Join();
-			}
-
 			// Shutdown the serial port
 			if (serialPort != null)
 			{
@@ -923,14 +833,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				serialPort = null;
 			}
 
-			// Set the final communication state
-			CommunicationState = CommunicationStates.Disconnected;
-
-			// Set the connection failure message and call OnConnectionFailed
-			connectionFailureMessage = abortReason;
-
 			// Notify
-			OnConnectionFailed(null);
+			OnConnectionFailed(reason, details);
 		}
 
 		public void BedTemperatureWasWritenToPrinter(object sender, EventArgs e)
@@ -959,24 +863,24 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public void Connect(bool showHelpIfNoPort = false)
 		{
-			if (printer.Settings != null)
+			// TODO: Consider adding any conditions that would results in a connection failure to this initial test
+			// Start the process of requesting permission and exit if permission is not currently granted
+			if (!printer.Settings.GetValue<bool>(SettingsKey.enable_network_printing)
+				&& !FrostedSerialPort.EnsureDeviceAccess())
 			{
-				// Start the process of requesting permission and exit if permission is not currently granted
-				if (!printer.Settings.GetValue<bool>(SettingsKey.enable_network_printing)
-					&& !FrostedSerialPort.EnsureDeviceAccess())
-				{
-					CommunicationState = CommunicationStates.FailedToConnect;
-					return;
-				}
+				// TODO: Consider calling OnConnectionFailed as we do below to fire events that indicate connection failed
+				CommunicationState = CommunicationStates.FailedToConnect;
+				return;
+			}
 
-				TerminalLog.Clear();
-				//Attempt connecting to a specific printer
-				this.stopTryingToConnect = false;
-				this.FirmwareType = FirmwareTypes.Unknown;
-				firmwareUriGcodeSend = false;
+			TerminalLog.Clear();
+			//Attempt connecting to a specific printer
+			this.stopTryingToConnect = false;
+			this.FirmwareType = FirmwareTypes.Unknown;
+			firmwareUriGcodeSend = false;
 
-				// On Android, there will never be more than one serial port available for us to connect to. Override the current .ComPort value to account for
-				// this aspect to ensure the validation logic that verifies port availability/in use status can proceed without additional workarounds for Android
+			// On Android, there will never be more than one serial port available for us to connect to. Override the current .ComPort value to account for
+			// this aspect to ensure the validation logic that verifies port availability/in use status can proceed without additional workarounds for Android
 #if __ANDROID__
 				string currentPortName = FrostedSerialPort.GetPortNames().FirstOrDefault();
 				if (!string.IsNullOrEmpty(currentPortName))
@@ -986,36 +890,181 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				}
 #endif
 
-				if (SerialPortIsAvailable(this.ComPort))
+			if (SerialPortIsAvailable(this.ComPort))
+			{
+				//Create and start connection thread
+				Task.Run(() =>
 				{
-					//Create a timed callback to determine whether connection succeeded
-					Timer connectionTimer = new Timer(new TimerCallback(ConnectionCallbackTimer));
-					connectionTimer.Change(100, 0);
+					Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
-					//Create and start connection thread
-					connectThread = new Thread(Connect_Thread);
-					connectThread.Name = "Connect To Printer";
-					connectThread.IsBackground = true;
-					connectThread.Start();
-				}
-				else
-				{
-					Debug.WriteLine("Connection failed: {0}".FormatWith(this.ComPort));
+					// Allow the user to set the appropriate properties.
+					var portNames = FrostedSerialPort.GetPortNames();
 
-					connectionFailureMessage = string.Format(
-										"{0} is not available".Localize(),
-										this.ComPort);
+					//Debug.WriteLine("Open ports: {0}".FormatWith(portNames.Length));
+					if (portNames.Length > 0 || IsNetworkPrinting())
+					{
+						// AttemptToConnect {{
+						{
+							string serialPortName = this.ComPort;
+							int baudRate = this.BaudRate;
 
-					OnConnectionFailed(null);
+							// make sure we don't have a left over print task
+							activePrintTask = null;
+
+							if (PrinterIsConnected)
+							{
+								this.OnConnectionFailed(ConnectionFailure.AlreadyConnected);
+								return;
+							}
+
+							var portFactory = FrostedSerialPortFactory.GetAppropriateFactory(this.DriverType);
+
+							bool serialPortIsAvailable = portFactory.SerialPortIsAvailable(serialPortName);
+							bool serialPortIsAlreadyOpen = this.ComPort != "Emulator" &&
+								portFactory.SerialPortAlreadyOpen(serialPortName);
+
+							if (serialPortIsAvailable && !serialPortIsAlreadyOpen)
+							{
+								if (!PrinterIsConnected)
+								{
+									try
+									{
+										serialPort = portFactory.CreateAndOpen(serialPortName, baudRate, true);
+#if __ANDROID__
+						ToggleHighLowHigh(serialPort);
+#endif
+										// TODO: Review and reconsider the cases where this was required
+										// wait a bit of time to let the firmware start up
+										//Thread.Sleep(500);
+
+										CommunicationState = CommunicationStates.AttemptingToConnect;
+
+										// We have to send a line because some printers (like old print-r-bots) do not send anything when connecting and there is no other way to know they are there.
+										SendLineToPrinterNow("M110 N1");
+
+										var sb = new StringBuilder();
+
+										// Read character data until we see a newline or exceed the MAX_INVALID_CONNECTION_CHARS threshold
+										while (true)
+										{
+											// Read, sanitize, store
+											string response = serialPort.ReadExisting().Replace("\r\n", "\n").Replace('\r', '\n');
+											sb.Append(response);
+
+											bool hasNewline = response.Contains('\n');
+											if (hasNewline || response.Contains('?'))
+											{
+												int invalidCharactersOnFirstLine = sb.ToString().Split('?').Length - 1;
+												if (hasNewline
+													&& invalidCharactersOnFirstLine <= MAX_INVALID_CONNECTION_CHARS)
+												{
+													// Exit loop, continue with connect
+													break;
+												}
+												else if (invalidCharactersOnFirstLine > MAX_INVALID_CONNECTION_CHARS)
+												{
+													// Abort if we've exceeded the invalid char count
+
+													// Force port shutdown and cleanup
+													ReleaseAndReportFailedConnection(ConnectionFailure.MaximumErrorsReached);
+													return;
+												}
+											}
+										}
+
+										// Place all consumed data back in the buffer to be processed by ReadFromPrinter
+										dataLastRead = sb.ToString();
+
+										// Setting connected before calling ReadThread.Start causes the misguided CheckOnPrinter logic to spin up new  ReadThreads 
+										/* 
+										// Switch to connected state when a newline is found and we haven't exceeded the invalid char count
+										CommunicationState = CommunicationStates.Connected;
+										*/
+
+										TurnOffBedAndExtruders(); // make sure our ui and the printer agree and that the printer is in a known state (not heating).
+										haveReportedError = false;
+										// now send any command that initialize this printer
+										ClearQueuedGCode();
+
+										SendLineToPrinterNow(
+											printer.Settings.GetValue(SettingsKey.connect_gcode));
+
+										// Call global event
+										AnyConnectionSucceeded.CallEvents(this, null);
+
+										// Call instance event
+										ConnectionSucceeded.CallEvents(this, null);
+
+										// TODO: Shouldn't we wait to start reading until after we create the stream pipeline?
+										Console.WriteLine("ReadFromPrinter thread created.");
+										ReadThread.Start(this);
+
+										CreateStreamProcessors(null, false);
+
+										CommunicationState = CommunicationStates.Connected;
+
+										// TODO: Couldn't we send something simple like a few ms dwell or something having less effect?
+										// We have to send a line because some printers (like old print-r-bots) do not send anything when connecting and there is no other way to know they are there.
+										SendLineToPrinterNow("M110 N1");
+
+										// TODO: Why clear after send?
+										ClearQueuedGCode();
+
+										// We do not need to wait for the M105
+										PrintingCanContinue(null, null);
+									}
+									catch (ArgumentOutOfRangeException e)
+									{
+										TerminalLog.WriteLine("Exception:" + e.Message);
+									
+										OnConnectionFailed(ConnectionFailure.UnsupportedBaudRate);
+									}
+									catch (Exception ex)
+									{
+										TerminalLog.WriteLine("Exception:" + ex.Message);
+										OnConnectionFailed(ConnectionFailure.Unknown);
+									}
+								}
+							}
+							else
+							{
+								if (serialPortIsAlreadyOpen)
+								{
+									OnConnectionFailed(ConnectionFailure.PortInUse);
+								}
+								else
+								{
+									OnConnectionFailed(ConnectionFailure.PortUnavailable);
+								}
+							}
+						}
+
+						// AttemptToConnect }}
+
+						if (CommunicationState == CommunicationStates.FailedToConnect)
+						{
+							OnConnectionFailed(ConnectionFailure.FailedToConnect);
+						}
+					}
+					else
+					{
+						OnConnectionFailed(ConnectionFailure.PortUnavailable);
+					}
+				});
+			}
+			else
+			{
+				OnConnectionFailed(
+					ConnectionFailure.PortUnavailable,
+					$"{this.ComPort} is not available");
 
 #if !__ANDROID__
-					// Only pop up the com port helper if the USER actually CLICKED the connect button.
-					if (showHelpIfNoPort)
-					{
-						DialogWindow.Show(new SetupStepComPortOne(printer));
-					}
-#endif
+				// Only pop up the com port helper if the USER actually CLICKED the connect button.
+				if (showHelpIfNoPort)
+				{
+					DialogWindow.Show(new SetupStepComPortOne(printer));
 				}
+#endif
 			}
 		}
 
@@ -1241,12 +1290,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 #endif
 		}
 
-		public void OnConnectionFailed(EventArgs e)
+		public void OnConnectionFailed(ConnectionFailure reason, string failureDetails = null)
 		{
-			ConnectionFailed.CallEvents(this, e);
+			var eventArgs = new ConnectFailedEventArgs(reason);
+			ConnectionFailed.CallEvents(this, eventArgs);
 
-			CommunicationState = CommunicationStates.FailedToConnect;
-			OnEnabledChanged(e);
+			CommunicationState = CommunicationStates.Disconnected;
+			OnEnabledChanged(eventArgs);
 		}
 
 		public void OnIdle()
@@ -1397,10 +1447,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
+		private string dataLastRead = string.Empty;
+
 		public void ReadFromPrinter(ReadThread readThreadHolder)
 		{
-			string dataLastRead = string.Empty;
-
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 			timeSinceLastReadAnything.Restart();
 			// we want this while loop to be as fast as possible. Don't allow any significant work to happen in here
@@ -1439,17 +1489,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 							do
 							{
 								int returnPosition = dataLastRead.IndexOf('\n');
-
-								// Abort if we're AttemptingToConnect, no newline was found in the accumulator string and there's too many non-ascii chars
-								if (this.communicationState == CommunicationStates.AttemptingToConnect && returnPosition < 0)
-								{
-									int totalInvalid = dataLastRead.Count(c => c == '?');
-									if (totalInvalid > MAX_INVALID_CONNECTION_CHARS)
-									{
-										AbortConnectionAttempt("Invalid printer response".Localize(), false);
-									}
-								}
-
 								if (returnPosition < 0)
 								{
 									// there is no return keep getting characters
@@ -1488,37 +1527,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 											ReadLine.CallEvents(this, currentEvent);
 										}
 									}
-
-									// If we've encountered a newline character and we're still in .AttemptingToConnect
-									if (CommunicationState == CommunicationStates.AttemptingToConnect)
-									{
-										// TODO: This is an initial proof of concept for validating the printer response after DTR. More work is
-										// needed to test this technique across existing hardware and/or edge cases where this simple approach
-										// (initial line having more than 3 non-ASCII characters) may not be adequate or appropriate.
-										// TODO: Revise the INVALID char count to an agreed upon threshold
-										string[] segments = lastLineRead.Split('?');
-										if (segments.Length <= MAX_INVALID_CONNECTION_CHARS)
-										{
-											CommunicationState = CommunicationStates.Connected;
-											TurnOffBedAndExtruders(); // make sure our ui and the printer agree and that the printer is in a known state (not heating).
-											haveReportedError = false;
-											// now send any command that initialize this printer
-											ClearQueuedGCode();
-											string connectGCode = printer.Settings.GetValue(SettingsKey.connect_gcode);
-											SendLineToPrinterNow(connectGCode);
-
-											// Call global event
-											AnyConnectionSucceeded.CallEvents(this, null);
-
-											// Call instance event
-											ConnectionSucceeded.CallEvents(this, null);
-										}
-										else
-										{
-											// Force port shutdown and cleanup
-											AbortConnectionAttempt("Invalid printer response".Localize(), false);
-										}
-									}
 								}
 							} while (true);
 						}
@@ -1540,18 +1548,18 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				catch (IOException e2)
 				{
 					TerminalLog.WriteLine("Exception:" + e2.Message);
-					OnConnectionFailed(null);
+					OnConnectionFailed(ConnectionFailure.IOException);
 				}
 				catch (InvalidOperationException ex)
 				{
 					TerminalLog.WriteLine("Exception:" + ex.Message);
 					// this happens when the serial port closes after we check and before we read it.
-					OnConnectionFailed(null);
+					OnConnectionFailed(ConnectionFailure.InvalidOperationException);
 				}
 				catch (UnauthorizedAccessException e3)
 				{
 					TerminalLog.WriteLine("Exception:" + e3.Message);
-					OnConnectionFailed(null);
+					OnConnectionFailed(ConnectionFailure.UnauthorizedAccessException);
 				}
 				catch (Exception)
 				{
@@ -2009,7 +2017,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 				case CommunicationStates.AttemptingToConnect:
 					CommunicationState = CommunicationStates.FailedToConnect;
-					connectThread.Join(JoinThreadTimeoutMs);
+					//connectThread.Join(JoinThreadTimeoutMs);
+
 					CommunicationState = CommunicationStates.Disconnecting;
 					ReadThread.Join();
 					if (serialPort != null)
@@ -2081,148 +2090,17 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		[DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
 		internal static extern SafeFileHandle CreateFile(string lpFileName, int dwDesiredAccess, int dwShareMode, IntPtr securityAttrs, int dwCreationDisposition, int dwFlagsAndAttributes, IntPtr hTemplateFile);
 
-		private void AttemptToConnect(string serialPortName, int baudRate)
-		{
-			// make sure we don't have a left over print task
-			activePrintTask = null;
-
-			connectionFailureMessage = "Unknown Reason".Localize();
-
-			if (PrinterIsConnected)
-			{
-#if DEBUG
-				throw new Exception("You can only connect when not currently connected.".Localize());
-#else
-				return;
-#endif
-			}
-
-			var portFactory = FrostedSerialPortFactory.GetAppropriateFactory(this.DriverType);
-
-			bool serialPortIsAvailable = portFactory.SerialPortIsAvailable(serialPortName);
-			bool serialPortIsAlreadyOpen = this.ComPort != "Emulator" &&
-				portFactory.SerialPortAlreadyOpen(serialPortName);
-
-			if (serialPortIsAvailable && !serialPortIsAlreadyOpen)
-			{
-				if (!PrinterIsConnected)
-				{
-					try
-					{
-						serialPort = portFactory.CreateAndOpen(serialPortName, baudRate, true);
-#if __ANDROID__
-						ToggleHighLowHigh(serialPort);
-#endif
-						// wait a bit of time to let the firmware start up
-						Thread.Sleep(500);
-						CommunicationState = CommunicationStates.AttemptingToConnect;
-
-						ReadThread.Join();
-
-						Console.WriteLine("ReadFromPrinter thread created.");
-						ReadThread.Start(this);
-
-						CreateStreamProcessors(null, false);
-
-						// We have to send a line because some printers (like old print-r-bots) do not send anything when connecting and there is no other way to know they are there.
-						SendLineToPrinterNow("M110 N1");
-						ClearQueuedGCode();
-						// We do not need to wait for the M105
-						PrintingCanContinue(null, null);
-					}
-					catch (System.ArgumentOutOfRangeException e)
-					{
-						TerminalLog.WriteLine("Exception:" + e.Message);
-						connectionFailureMessage = "Unsupported Baud Rate".Localize();
-						OnConnectionFailed(null);
-					}
-					catch (Exception ex)
-					{
-						TerminalLog.WriteLine("Exception:" + ex.Message);
-						OnConnectionFailed(null);
-					}
-				}
-			}
-			else
-			{
-				// If the serial port isn't available (i.e. the specified port name wasn't found in GetPortNames()) or the serial
-				// port is already opened in another instance or process, then report the connection problem back to the user
-				connectionFailureMessage = (serialPortIsAlreadyOpen ?
-					this.ComPort + " " + "in use".Localize() :
-					"Port not found".Localize());
-
-				OnConnectionFailed(null);
-			}
-		}
-
 		private void ClearQueuedGCode()
 		{
 			loadedGCode.Clear();
 			// Force a reset of the printer checksum state (but allow it to be write regexed)
-			var transformedCommand = processWriteRegExStream11.ProcessWriteRegEx("M110 N1");
-			foreach (var line in transformedCommand)
+			var transformedCommand = processWriteRegExStream11?.ProcessWriteRegEx("M110 N1");
+			if (transformedCommand != null)
 			{
-				WriteChecksumLineToPrinter(line);
-			}
-		}
-
-		private void Connect_Thread()
-		{
-			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-			// Allow the user to set the appropriate properties.
-			var portNames = FrostedSerialPort.GetPortNames();
-			//Debug.WriteLine("Open ports: {0}".FormatWith(portNames.Length));
-			if (portNames.Length > 0 || IsNetworkPrinting())
-			{
-				AttemptToConnect(this.ComPort, this.BaudRate);
-				if (CommunicationState == CommunicationStates.FailedToConnect)
+				foreach (var line in transformedCommand)
 				{
-					OnConnectionFailed(null);
+					WriteChecksumLineToPrinter(line);
 				}
-			}
-			else
-			{
-				OnConnectionFailed(null);
-			}
-		}
-
-		private void ConnectionCallbackTimer(object state)
-		{
-			Timer t = (Timer)state;
-			if (!ContinueConnectionThread())
-			{
-				t.Dispose();
-			}
-			else
-			{
-				t.Change(100, 0);
-			}
-		}
-
-		private bool ContinueConnectionThread()
-		{
-			if (CommunicationState == CommunicationStates.AttemptingToConnect)
-			{
-				if (this.stopTryingToConnect)
-				{
-					connectThread.Join(JoinThreadTimeoutMs); //Halt connection thread
-					Disable();
-					connectionFailureMessage = "Canceled".Localize();
-					OnConnectionFailed(null);
-					return false;
-				}
-				else
-				{
-					return true;
-				}
-			}
-			else
-			{
-				// If we're no longer in the .AttemptingToConnect state, shutdown the connection thread and fire the
-				// OnConnectonSuccess event if we're connected and not Disconnecting
-				connectThread.Join(JoinThreadTimeoutMs);
-
-				return false;
 			}
 		}
 
@@ -2765,7 +2643,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						if (CommunicationState == CommunicationStates.AttemptingToConnect)
 						{
 							// Handle hardware disconnects by relaying the failure reason and shutting down open resources
-							AbortConnectionAttempt("Connection Lost - " + ex.Message);
+							ReleaseAndReportFailedConnection(ConnectionFailure.ConnectionLost, ex.Message);
 						}
 					}
 					catch (TimeoutException e2) // known ok
@@ -2776,7 +2654,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					catch (UnauthorizedAccessException e3)
 					{
 						TerminalLog.WriteLine("Exception:" + e3.Message);
-						AbortConnectionAttempt(e3.Message);
+						ReleaseAndReportFailedConnection(ConnectionFailure.UnauthorizedAccessException, e3.Message);
 					}
 					catch (Exception)
 					{
@@ -2784,7 +2662,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				}
 				else
 				{
-					OnConnectionFailed(null);
+					OnConnectionFailed(ConnectionFailure.WriteFailed);
 				}
 			}
 		}
@@ -2892,6 +2770,34 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				addedCount = startingIndex;
 			}
 		}
+	}
+
+	public class ConnectFailedEventArgs : EventArgs
+	{
+		public ConnectionFailure Reason { get; }
+
+		public ConnectFailedEventArgs(ConnectionFailure reason)
+		{
+			this.Reason = reason;
+		}
+	}
+
+	public enum ConnectionFailure
+	{
+		Unknown,
+		AlreadyConnected,
+		MaximumErrorsReached,
+		PortNotFound,
+		PortInUse,
+		WriteFailed,
+		UnsupportedBaudRate,
+		PortUnavailable,
+		Aborted,
+		FailedToConnect,
+		IOException,
+		InvalidOperationException,
+		UnauthorizedAccessException,
+		ConnectionLost
 	}
 
 	public class NamedItemEventArgs : EventArgs
