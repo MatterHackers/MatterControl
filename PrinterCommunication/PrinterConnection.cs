@@ -822,7 +822,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private int NumberOfLinesInCurrentPrint => loadedGCode.LineCount;
 
-		private void ReleaseAndReportFailedConnection(ConnectionFailure reason, string details = null)
+		public void ReleaseAndReportFailedConnection(ConnectionFailure reason, string details = null)
 		{
 			// Shutdown the serial port
 			if (serialPort != null)
@@ -2797,7 +2797,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		IOException,
 		InvalidOperationException,
 		UnauthorizedAccessException,
-		ConnectionLost
+		ConnectionLost,
+		UsbDisconnected
 	}
 
 	public class NamedItemEventArgs : EventArgs
