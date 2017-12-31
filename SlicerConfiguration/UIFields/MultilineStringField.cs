@@ -57,6 +57,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 			};
 
+			editWidget.ActualTextEditWidget.TextChanged += (s, e) =>
+			{
+				UiThread.RunOnIdle(() =>
+				{
+					editWidget.ActualTextEditWidget.Height = Math.Min(editWidget.ActualTextEditWidget.Printer.LocalBounds.Height, 500);
+				});
+			};
+
 			this.Content = editWidget;
 		}
 
