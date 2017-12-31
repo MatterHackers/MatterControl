@@ -53,7 +53,6 @@ namespace MatterControl.Tests
 						MatterHackers.OpenGL.UI.dll
 						agg_platform_win32.dll
 						Community.CsharpSqlite.dll
-						MatterHackers.SerialPortCommunication.dll
 						MatterHackers.MatterControl.Plugins.dll
 						MatterHackers.Agg.ImageProcessing.dll
 						MatterHackers.MarchingSquares.dll
