@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.PolygonMesh;
@@ -72,15 +73,26 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			return mainContainer;
 		}
 
-		private async void ProcessBooleans(IObject3D group)
+		private void ProcessBooleans(IObject3D group)
 		{
-			await Task.Run(() =>
+			ApplicationController.Instance.Tasks.Execute((reporter, cancelationToken) =>
 			{
+				var progressStatus = new ProgressStatus()
+				{
+					Status = "Processing Booleans"
+				};
+
+				reporter.Report(progressStatus);
+
 				var participants = group.Descendants().Where((obj) => obj.OwnerID == group.ID);
 
 				if (participants.Count() > 1)
 				{
 					var first = participants.First();
+
+					var totalOpperations = participants.Count()-1;
+					double amountPerOperation = 1.0 / totalOpperations;
+					double percentCompleted = 0;
 
 					foreach (var remove in participants)
 					{
@@ -92,15 +104,29 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 							var transformedKeep = Mesh.Copy(first.Mesh, CancellationToken.None);
 							transformedKeep.Transform(first.WorldMatrix());
 
-							transformedKeep = PolygonMesh.Csg.CsgOperations.Intersect(transformedKeep, transformedRemove);
+							transformedKeep = PolygonMesh.Csg.CsgOperations.Intersect(transformedKeep, transformedRemove, (status, progress0To1) =>
+							{
+								// Abort if flagged
+								cancelationToken.ThrowIfCancellationRequested();
+
+								progressStatus.Status = status;
+								progressStatus.Progress0To1 = percentCompleted + amountPerOperation * progress0To1;
+								reporter.Report(progressStatus);
+							}, cancelationToken);
 							var inverse = first.WorldMatrix();
 							inverse.Invert();
 							transformedKeep.Transform(inverse);
 							first.Mesh = transformedKeep;
 							remove.Visible = false;
+
+							percentCompleted += amountPerOperation;
+							progressStatus.Progress0To1 = percentCompleted;
+							reporter.Report(progressStatus);
 						}
 					}
 				}
+
+				return Task.CompletedTask;
 			});
 		}
 	}
