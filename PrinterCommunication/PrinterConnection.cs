@@ -386,6 +386,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
+		private bool communicationPossible = false;
+
 		public CommunicationStates CommunicationState
 		{
 			get
@@ -407,6 +409,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						break;
 
 					case CommunicationStates.Connected:
+						communicationPossible = true;
 						SendLineToPrinterNow("M115");
 						ReadPosition();
 						ApplicationController.Instance.PrintingItemName = "";
@@ -414,15 +417,21 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 					case CommunicationStates.ConnectionLost:
 					case CommunicationStates.Disconnected:
-						TurnOffBedAndExtruders();
-						for (int hotendIndex = 0; hotendIndex < MAX_EXTRUDERS; hotendIndex++)
+						if (communicationPossible)
 						{
-							actualHotendTemperature[hotendIndex] = 0;
-							OnHotendTemperatureRead(new TemperatureEventArgs(hotendIndex, GetActualHotendTemperature(hotendIndex)));
+							TurnOffBedAndExtruders();
+							for (int hotendIndex = 0; hotendIndex < MAX_EXTRUDERS; hotendIndex++)
+							{
+								actualHotendTemperature[hotendIndex] = 0;
+								OnHotendTemperatureRead(new TemperatureEventArgs(hotendIndex, GetActualHotendTemperature(hotendIndex)));
+							}
+
+							actualBedTemperature = 0;
+							OnBedTemperatureRead(new TemperatureEventArgs(0, ActualBedTemperature));
 						}
 
-						actualBedTemperature = 0;
-						OnBedTemperatureRead(new TemperatureEventArgs(0, ActualBedTemperature));
+						communicationPossible = false;
+
 						break;
 				}
 
@@ -818,7 +827,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		}
 
 		// HACK: PrinterConnection must be revised to take a constructor that receives and stores a reference to its parent PrinterConfig - this 
-		private PrinterConfig printer {  get; set; }
+		private PrinterConfig printer { get; set; }
 
 		private int NumberOfLinesInCurrentPrint => loadedGCode.LineCount;
 
@@ -1016,7 +1025,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 									catch (ArgumentOutOfRangeException e)
 									{
 										TerminalLog.WriteLine("Exception:" + e.Message);
-									
+
 										OnConnectionFailed(ConnectionFailure.UnsupportedBaudRate);
 									}
 									catch (Exception ex)
@@ -1292,6 +1301,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public void OnConnectionFailed(ConnectionFailure reason, string failureDetails = null)
 		{
+			communicationPossible = false;
+
 			var eventArgs = new ConnectFailedEventArgs(reason);
 			ConnectionFailed.CallEvents(this, eventArgs);
 
@@ -1359,7 +1370,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				FoundStringEventArgs foundStringEventArgs = e as FoundStringEventArgs;
 				if (foundStringEventArgs != null)
 				{
-					ErrorReported.CallEvents(null, foundStringEventArgs); 
+					ErrorReported.CallEvents(null, foundStringEventArgs);
 				}
 			}
 		}
