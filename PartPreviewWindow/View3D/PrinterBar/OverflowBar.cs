@@ -27,8 +27,11 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
+using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -49,13 +52,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public OverflowMenu OverflowMenu { get; }
 
-		//// On parent changes walk back to the first ancestor with background colors and copy
-		//public override void OnParentChanged(EventArgs e)
-		//{
-		//	var firstBackgroundColor = this.Parents<GuiWidget>().Where(p => p.BackgroundColor != Color.Transparent).FirstOrDefault()?.BackgroundColor;
-		//	this.OverflowMenu.BackgroundColor = firstBackgroundColor ?? Color.Transparent;
+		// On load walk back to the first ancestor with background colors and copy
+		public override void OnLoad(EventArgs args)
+		{
+			var firstBackgroundColor = this.Parents<GuiWidget>().Where(p => p.BackgroundColor.Alpha0To1 == 1).FirstOrDefault()?.BackgroundColor;
+			this.OverflowMenu.BackgroundColor = firstBackgroundColor ?? Color.Transparent;
 
-		//	base.OnParentChanged(e);
-		//}
+			base.OnLoad(args);
+		}
 	}
 }

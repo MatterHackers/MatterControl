@@ -93,7 +93,7 @@ namespace MatterHackers.MatterControl
 		public TextImageButtonFactory imageConverterButtonFactory;
 		public TextImageButtonFactory imageConverterUnlockButtonFactory;
 
-		public Color TabBodyBackground => new Color(ActiveTheme.Instance.TertiaryBackgroundColor, 175);
+		public Color TabBodyBackground { get; private set; }
 
 		public TextImageButtonFactory ViewControlsButtonFactory { get; private set; }
 
@@ -166,6 +166,8 @@ namespace MatterHackers.MatterControl
 			commonOptions.FixedHeight = 32;
 
 			this.ActiveTabColor = ResolveColor(theme.PrimaryBackgroundColor, new Color(Color.Black, this.SlightShade.alpha));
+
+			this.TabBodyBackground = this.ResolveColor(ActiveTheme.Instance.TertiaryBackgroundColor, new Color(Color.White, 25));
 
 			// Active tab color with slight transparency
 			this.InteractionLayerOverlayColor = new Color(this.ActiveTabColor, 200);

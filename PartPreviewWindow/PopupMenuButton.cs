@@ -46,7 +46,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			viewWidget.Selectable = false;
 			viewWidget.BackgroundColor = Color.Transparent;
-			this.BackgroundColor = ApplicationController.Instance.Theme.SlightShade;
 
 			this.DisabledColor = new Color(ActiveTheme.Instance.SecondaryTextColor, 50);
 		}
@@ -101,6 +100,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		protected override void OnBeforePopup()
 		{
+			// Force off-white if content has transparent background
 			if (this.PopupContent.BackgroundColor == Color.Transparent)
 			{
 				this.PopupContent.BackgroundColor = new Color("#f6f6f6");
