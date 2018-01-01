@@ -93,7 +93,7 @@ namespace MatterHackers.MatterControl
 		public TextImageButtonFactory imageConverterButtonFactory;
 		public TextImageButtonFactory imageConverterUnlockButtonFactory;
 
-		public Color TabBodyBackground => new Color(ActiveTheme.Instance.TertiaryBackgroundColor, 175);
+		public Color TabBodyBackground => this.ResolveColor(ActiveTheme.Instance.TertiaryBackgroundColor, new Color(Color.White, 25));
 
 		public TextImageButtonFactory ViewControlsButtonFactory { get; private set; }
 
