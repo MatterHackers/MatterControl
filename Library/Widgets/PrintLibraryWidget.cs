@@ -54,9 +54,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private GuiWidget providerMessageContainer;
 		private TextWidget providerMessageWidget;
 
-		private OverflowMenu overflowMenu;
-
-		//private DropDownMenu actionMenu;
 		private List<PrintItemAction> menuActions = new List<PrintItemAction>();
 
 		private FolderBreadCrumbWidget breadCrumbWidget;
@@ -64,8 +61,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private ILibraryContainer searchContainer;
 
 		private PartPreviewContent partPreviewContent;
-
 		private ThemeConfig theme;
+		private OverflowBar navBar;
 
 		public PrintLibraryWidget(PartPreviewContent partPreviewContent, ThemeConfig theme)
 		{
@@ -91,9 +88,10 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			ApplicationController.Instance.Library.ContainerChanged += Library_ContainerChanged;
 
-			var navBar = new FlowLayoutWidget()
+			navBar = new OverflowBar(theme)
 			{
-				HAnchor = HAnchor.Stretch
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit,
 			};
 			allControls.AddChild(navBar);
 
@@ -161,14 +159,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				}
 			};
 			navBar.AddChild(searchButton);
-
-			overflowMenu = new OverflowMenu(IconColor.Theme)
-			{
-				VAnchor = VAnchor.Center,
-				AlignToRightEdge = true,
-				Name = "Print Library Overflow Menu",
-			};
-			navBar.AddChild(overflowMenu);
 
 			allControls.AddChild(libraryView);
 
@@ -834,8 +824,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				}
 			}
 
-			overflowMenu.PopupContent = popupMenu;
-			overflowMenu.BeforePopup += (s, e) =>
+			navBar.OverflowMenu.Name = "Print Library Overflow Menu";
+			navBar.OverflowMenu.PopupContent = popupMenu;
+			navBar.OverflowMenu.BeforePopup += (s, e) =>
 			{
 				this.EnableMenus();
 			};
