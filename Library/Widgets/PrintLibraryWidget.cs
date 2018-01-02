@@ -809,7 +809,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				}
 				else
 				{
-					var menuItem = popupMenu.CreateMenuItem((string)menuAction.Title);
+					var menuItem = popupMenu.CreateMenuItem(menuAction.Title);
 					menuItem.Name = $"{menuAction.Title} Menu Item";
 
 					menuItem.Enabled = menuAction.Action != null;

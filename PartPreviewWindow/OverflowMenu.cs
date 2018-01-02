@@ -41,5 +41,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			this.ToolTipText = "More...".Localize();
 		}
+
+		public OverflowMenu(GuiWidget viewWidget)
+			: base(viewWidget)
+		{
+		}
 	}
 }
