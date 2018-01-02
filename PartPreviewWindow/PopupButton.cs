@@ -39,7 +39,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public event EventHandler PopupWindowClosed;
 		public event EventHandler BeforePopup;
-		
+
 		private GuiWidget buttonView;
 		private bool menuVisibileAtMouseDown = false;
 		private bool menuVisible = false;
@@ -61,7 +61,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		}
 
 		public bool AlignToRightEdge { get; set; }
-		public Color BorderColor { get; set; } = Color.Gray;
 		public Func<GuiWidget> DynamicPopupContent { get; set; }
 		public IPopupLayoutEngine PopupLayoutEngine { get; set; }
 		public Direction PopDirection { get; set; } = Direction.Down;
@@ -91,14 +90,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnMouseUp(mouseEvent);
 		}
 
-		public override void OnDrawBackground(Graphics2D graphics2D)
+		public override void OnDraw(Graphics2D graphics2D)
 		{
-			base.OnDrawBackground(graphics2D);
-
 			if (menuVisible)
 			{
 				graphics2D.FillRectangle(this.LocalBounds, slightShade);
 			}
+
+			base.OnDraw(graphics2D);
 		}
 
 		public void ShowPopup()
