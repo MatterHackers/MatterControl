@@ -91,6 +91,76 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
+		public override void OnDraw(Graphics2D graphics2D)
+		{
+			//RendereSceneTraceData(new DrawEventArgs(graphics2D));
+
+			base.OnDraw(graphics2D);
+		}
+
+		private void RendereSceneTraceData(DrawEventArgs e)
+		{
+			var bvhIterator = new BvhIterator(Scene?.TraceData(), decentFilter: (x) =>
+			{
+				var center = x.Bvh.GetCenter();
+				var worldCenter = Vector3.Transform(center, x.TransformToWorld);
+				if (worldCenter.Z > 0)
+				{
+					return true;
+				}
+
+				return false;
+			});
+
+			RenderBounds(e, World, bvhIterator);
+		}
+
+		public static void RenderBounds(DrawEventArgs e, WorldView World, IEnumerable<BvhIterator> allResults)
+		{
+			foreach (var x in allResults)
+			{
+				for (int i = 0; i < 4; i++)
+				{
+					Vector3 bottomStartPosition = Vector3.Transform(x.Bvh.GetAxisAlignedBoundingBox().GetBottomCorner(i), x.TransformToWorld);
+					var bottomStartScreenPos = World.GetScreenPosition(bottomStartPosition);
+
+					Vector3 bottomEndPosition = Vector3.Transform(x.Bvh.GetAxisAlignedBoundingBox().GetBottomCorner((i + 1) % 4), x.TransformToWorld);
+					var bottomEndScreenPos = World.GetScreenPosition(bottomEndPosition);
+
+					Vector3 topStartPosition = Vector3.Transform(x.Bvh.GetAxisAlignedBoundingBox().GetTopCorner(i), x.TransformToWorld);
+					var topStartScreenPos = World.GetScreenPosition(topStartPosition);
+
+					Vector3 topEndPosition = Vector3.Transform(x.Bvh.GetAxisAlignedBoundingBox().GetTopCorner((i + 1) % 4), x.TransformToWorld);
+					var topEndScreenPos = World.GetScreenPosition(topEndPosition);
+
+					e.graphics2D.Line(bottomStartScreenPos, bottomEndScreenPos, Color.Black);
+					e.graphics2D.Line(topStartScreenPos, topEndScreenPos, Color.Black);
+					e.graphics2D.Line(topStartScreenPos, bottomStartScreenPos, Color.Black);
+				}
+
+				TriangleShape tri = x.Bvh as TriangleShape;
+				if (tri != null)
+				{
+					for (int i = 0; i < 3; i++)
+					{
+						var vertexPos = tri.GetVertex(i);
+						var screenCenter = Vector3.Transform(vertexPos, x.TransformToWorld);
+						var screenPos = World.GetScreenPosition(screenCenter);
+
+						e.graphics2D.Circle(screenPos, 3, Color.Red);
+					}
+				}
+				else
+				{
+					var center = x.Bvh.GetCenter();
+					var worldCenter = Vector3.Transform(center, x.TransformToWorld);
+					var screenPos2 = World.GetScreenPosition(worldCenter);
+					e.graphics2D.Circle(screenPos2, 3, Color.Yellow);
+					e.graphics2D.DrawString($"{x.Depth},", screenPos2.X + 12 * x.Depth, screenPos2.Y);
+				}
+			}
+		}
+
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
 		{
 			base.OnMouseDown(mouseEvent);

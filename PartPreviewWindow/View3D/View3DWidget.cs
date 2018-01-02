@@ -1064,7 +1064,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 				else
 				{
-					RenderBounds(e, allResults);
+					InteractionLayer.RenderBounds(e, World, allResults);
 				}
 			}
 		}
@@ -1136,69 +1136,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			return false;
-		}
-
-		private void RenderBounds(DrawEventArgs e, IEnumerable<BvhIterator> allResults)
-		{
-			foreach (var x in allResults)
-			{
-				for (int i = 0; i < 4; i++)
-				{
-					Vector3 bottomStartPosition = Vector3.Transform(x.Bvh.GetAxisAlignedBoundingBox().GetBottomCorner(i), x.TransformToWorld);
-					var bottomStartScreenPos = this.World.GetScreenPosition(bottomStartPosition);
-
-					Vector3 bottomEndPosition = Vector3.Transform(x.Bvh.GetAxisAlignedBoundingBox().GetBottomCorner((i + 1) % 4), x.TransformToWorld);
-					var bottomEndScreenPos = this.World.GetScreenPosition(bottomEndPosition);
-
-					Vector3 topStartPosition = Vector3.Transform(x.Bvh.GetAxisAlignedBoundingBox().GetTopCorner(i), x.TransformToWorld);
-					var topStartScreenPos = this.World.GetScreenPosition(topStartPosition);
-
-					Vector3 topEndPosition = Vector3.Transform(x.Bvh.GetAxisAlignedBoundingBox().GetTopCorner((i + 1) % 4), x.TransformToWorld);
-					var topEndScreenPos = this.World.GetScreenPosition(topEndPosition);
-
-					e.graphics2D.Line(bottomStartScreenPos, bottomEndScreenPos, Color.Black);
-					e.graphics2D.Line(topStartScreenPos, topEndScreenPos, Color.Black);
-					e.graphics2D.Line(topStartScreenPos, bottomStartScreenPos, Color.Black);
-				}
-
-				TriangleShape tri = x.Bvh as TriangleShape;
-				if (tri != null)
-				{
-					for (int i = 0; i < 3; i++)
-					{
-						var vertexPos = tri.GetVertex(i);
-						var screenCenter = Vector3.Transform(vertexPos, x.TransformToWorld);
-						var screenPos = this.World.GetScreenPosition(screenCenter);
-
-						e.graphics2D.Circle(screenPos, 3, Color.Red);
-					}
-				}
-				else
-				{
-					var center = x.Bvh.GetCenter();
-					var worldCenter = Vector3.Transform(center, x.TransformToWorld);
-					var screenPos2 = this.World.GetScreenPosition(worldCenter);
-					e.graphics2D.Circle(screenPos2, 3, Color.Yellow);
-					e.graphics2D.DrawString($"{x.Depth},", screenPos2.X + 12 * x.Depth, screenPos2.Y);
-				}
-			}
-		}
-
-		private void RendereSceneTraceData(DrawEventArgs e)
-		{
-			var bvhIterator = new BvhIterator(Scene?.TraceData(), decentFilter: (x) =>
-			{
-				var center = x.Bvh.GetCenter();
-				var worldCenter = Vector3.Transform(center, x.TransformToWorld);
-				if (worldCenter.Z > 0)
-				{
-					return true;
-				}
-
-				return false;
-			});
-
-			RenderBounds(e, bvhIterator);
 		}
 
 		private ViewControls3DButtons? activeButtonBeforeMouseOverride = null;
@@ -2117,8 +2054,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (Scene.HasChildren())
 			{
-				// TODO: Why is this in widget land? When we load content we should queue trace generation, not when we rebuild ui controls
-				// CreateSelectionData()
+				// This should be very fast (only building up a trace data for non-meshes, mesh should happen as background task).
 				await Task.Run(() =>
 				{
 					Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
@@ -2291,7 +2227,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				foreach (Object3D object3D in Scene.Children)
 				{
-					if (object3D.TraceData().Contains(intersectionInfo.closestHitObject))
+					if (object3D.TraceData().Contains(intersectionInfo.HitPosition))
 					{
 						CurrentSelectInfo.PlaneDownHitPos = intersectionInfo.HitPosition;
 						CurrentSelectInfo.LastMoveDelta = new Vector3();
