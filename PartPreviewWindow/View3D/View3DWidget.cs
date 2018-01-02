@@ -150,13 +150,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			mainContainerTopToBottom.AddChild(this.InteractionLayer);
 
-			var buttonBottomPanel = new FlowLayoutWidget(FlowDirection.LeftToRight)
-			{
-				HAnchor = HAnchor.Stretch,
-				Padding = theme.ToolbarPadding,
-				BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor,
-			};
-
 			Scene.SelectionChanged += Scene_SelectionChanged;
 
 			// if the scene is invalidated invalidate the widget
@@ -164,15 +157,37 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// add in the plater tools
 			{
-				var selectionActionBar = new FlowLayoutWidget()
+				bool isPrinterMode = meshViewerWidget.EditorMode == MeshViewerWidget.EditorType.Printer;
+				var buttonSpacing = theme.ButtonSpacing;
+
+				var buttonView = new FlowLayoutWidget();
+				buttonView.AddChild(new ImageWidget(AggContext.StaticData.LoadIcon((isPrinterMode) ? "bed.png" : "cube.png", IconColor.Theme))
+				{
+					Margin = new BorderDouble(left: 10),
+					VAnchor = VAnchor.Center
+				});
+
+				var buttonText = (isPrinterMode) ? "Bed".Localize() : "Part".Localize();
+				buttonView.AddChild(new TextButton(buttonText, theme)
+				{
+					Padding = new BorderDouble(8, 4, 0, 4)
+				});
+
+				var selectionActionBar = new OverflowBar(theme, buttonView)
 				{
 					VAnchor = VAnchor.Center | VAnchor.Fit,
-					HAnchor = HAnchor.Stretch
+					HAnchor = HAnchor.Stretch,
 				};
+				selectionActionBar.OverflowMenu.Name = "Bed Options Menu";
+				selectionActionBar.OverflowMenu.PopDirection = Direction.Up;
+				selectionActionBar.OverflowMenu.DynamicPopupContent = () => theme.CreatePopupMenu(this.BedMenuActions(sceneContext));
+				selectionActionBar.OverflowMenu.AlignToRightEdge = true;
+				selectionActionBar.OverflowMenu.DrawArrow = true;
 
-				bottomActionPanel = new DisableablePanel(selectionActionBar, enabled: true);
-
-				var buttonSpacing = theme.ButtonSpacing;
+				bottomActionPanel = new DisableablePanel(selectionActionBar, enabled: true)
+				{
+					BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor,
+				};
 
 				Button addButton = smallMarginButtonFactory.Generate("Insert".Localize(), AggContext.StaticData.LoadIcon("cube.png", 14, 14, IconColor.Theme));
 				addButton.Margin = 0;
@@ -335,107 +350,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					materialsButton.Enabled = this.Scene.HasSelection;
 				};
 				selectionActionBar.AddChild(materialsButton);
-
-				selectionActionBar.AddChild(new HorizontalSpacer());
-
-				// Bed menu
-				var bedMenuActions = new[]
-				{
-					new NamedAction()
-					{
-						Title = "Save".Localize(),
-						Action = async () =>
-						{
-							await ApplicationController.Instance.Tasks.Execute(this.SaveChanges);
-						},
-						IsEnabled = () => sceneContext.EditableScene
-					},
-					new NamedAction()
-					{
-						Title = "Save As".Localize(),
-						Action = () => UiThread.RunOnIdle(OpenSaveAsWindow),
-						IsEnabled = () => sceneContext.EditableScene
-					},
-					new NamedAction()
-					{
-						Title = "Export".Localize(),
-						Action = () =>
-						{
-							UiThread.RunOnIdle(() =>
-							{
-								DialogWindow.Show(
-									new ExportPrintItemPage(new[]
-									{
-										new FileSystemFileItem(sceneContext.EditContext.PartFilePath)
-									}));
-							});
-						},
-						IsEnabled = () => sceneContext.EditableScene
-					},
-					new NamedAction()
-					{
-						Title = "Publish".Localize(),
-						Action = () =>
-						{
-							UiThread.RunOnIdle(() => DialogWindow.Show<PublishPartToMatterHackers>());
-						},
-						IsEnabled = () => sceneContext.EditableScene
-					},
-					new NamedAction()
-					{
-						Title = "Arrange All Parts".Localize(),
-						Action = () =>
-						{
-							this.Scene.AutoArrangeChildren(this);
-						},
-						IsEnabled = () => sceneContext.EditableScene
-					},
-					new NamedAction() { Title = "----" },
-					new NamedAction()
-					{
-						Title = "Clear Bed".Localize(),
-						Action = () =>
-						{
-							UiThread.RunOnIdle(() =>
-							{
-								sceneContext.ClearPlate().ConfigureAwait(false);
-							});
-						}
-					}
-				};
-
-				bool isPrinterMode = meshViewerWidget.EditorMode == MeshViewerWidget.EditorType.Printer;
-
-				var buttonView = new FlowLayoutWidget();
-				buttonView.AddChild(new ImageWidget(AggContext.StaticData.LoadIcon((isPrinterMode) ? "bed.png" : "cube.png", IconColor.Theme))
-				{
-					Margin = new BorderDouble(left: 10),
-					VAnchor = VAnchor.Center
-				});
-
-				var buttonText = (isPrinterMode) ? "Bed".Localize() : "Part".Localize();
-				buttonView.AddChild(new TextButton(buttonText, theme)
-				{
-					Padding = new BorderDouble(8, 4, 0, 4) 
-				});
-
-				selectionActionBar.AddChild(
-					new PopupMenuButton(buttonView)
-					{
-						DrawArrow = true,
-						PopDirection = Direction.Up,
-						DynamicPopupContent = () => theme.CreatePopupMenu(bedMenuActions),
-						AlignToRightEdge = true,
-						Margin = buttonSpacing,
-						Name = "Bed Options Menu",
-					});
 			}
-
-			buttonBottomPanel.AddChild(bottomActionPanel);
 
 			LockEditControls();
 
-			mainContainerTopToBottom.AddChild(buttonBottomPanel);
+			mainContainerTopToBottom.AddChild(bottomActionPanel);
 
 			this.AddChild(mainContainerTopToBottom);
 
@@ -536,6 +455,75 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.sceneContext.SceneLoaded += SceneContext_SceneLoaded;
 
 			this.viewControls3D.modelViewButton.Enabled = sceneContext.EditableScene;
+		}
+
+		private NamedAction[] BedMenuActions(BedConfig sceneContext)
+		{
+			// Bed menu
+			return new[]
+			{
+				new NamedAction()
+				{
+					Title = "Save".Localize(),
+					Action = async () =>
+					{
+						await ApplicationController.Instance.Tasks.Execute(this.SaveChanges);
+					},
+					IsEnabled = () => sceneContext.EditableScene
+				},
+				new NamedAction()
+				{
+					Title = "Save As".Localize(),
+					Action = () => UiThread.RunOnIdle(OpenSaveAsWindow),
+					IsEnabled = () => sceneContext.EditableScene
+				},
+				new NamedAction()
+				{
+					Title = "Export".Localize(),
+					Action = () =>
+					{
+						UiThread.RunOnIdle(() =>
+						{
+							DialogWindow.Show(
+								new ExportPrintItemPage(new[]
+								{
+									new FileSystemFileItem(sceneContext.EditContext.PartFilePath)
+								}));
+						});
+					},
+					IsEnabled = () => sceneContext.EditableScene
+				},
+				new NamedAction()
+				{
+					Title = "Publish".Localize(),
+					Action = () =>
+					{
+						UiThread.RunOnIdle(() => DialogWindow.Show<PublishPartToMatterHackers>());
+					},
+					IsEnabled = () => sceneContext.EditableScene
+				},
+				new NamedAction()
+				{
+					Title = "Arrange All Parts".Localize(),
+					Action = () =>
+					{
+						this.Scene.AutoArrangeChildren(this);
+					},
+					IsEnabled = () => sceneContext.EditableScene
+				},
+				new NamedAction() { Title = "----" },
+				new NamedAction()
+				{
+					Title = "Clear Bed".Localize(),
+					Action = () =>
+					{
+						UiThread.RunOnIdle(() =>
+						{
+							sceneContext.ClearPlate().ConfigureAwait(false);
+						});
+					}
+				}
+			};
 		}
 
 		private void SceneContext_SceneLoaded(object sender, EventArgs e)

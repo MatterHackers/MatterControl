@@ -37,15 +37,27 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class OverflowBar : Toolbar
 	{
-		public OverflowBar(ThemeConfig theme)
+		public OverflowBar(ThemeConfig theme, GuiWidget viewWidget = null)
 			: base(null, theme)
 		{
 			this.Padding = theme.ToolbarPadding.Clone(left: 0);
-			this.OverflowMenu = new OverflowMenu(IconColor.Theme)
+
+			if (viewWidget == null)
 			{
-				AlignToRightEdge = true,
-				Margin = theme.ButtonSpacing
-			};
+				this.OverflowMenu = new OverflowMenu(IconColor.Theme)
+				{
+					AlignToRightEdge = true,
+					Margin = theme.ButtonSpacing
+				};
+			}
+			else
+			{
+				this.OverflowMenu = new OverflowMenu(viewWidget)
+				{
+					AlignToRightEdge = true,
+					Margin = theme.ButtonSpacing
+				};
+			}
 
 			this.SetRightAnchorItem(this.OverflowMenu);
 		}
