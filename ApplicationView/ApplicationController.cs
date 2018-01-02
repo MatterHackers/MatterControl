@@ -1553,9 +1553,6 @@ namespace MatterHackers.MatterControl
 				//UiThread.RunOnIdle(() =>
 				Task.Run(async () =>
 				{
-					ReportStartupProgress(0.1, "Datastore");
-					Datastore.Instance.Initialize();
-
 					ReportStartupProgress(0.15, "MatterControlApplication.Initialize");
 					var mainView = await Initialize(systemWindow, (progress0To1, status) =>
 					{

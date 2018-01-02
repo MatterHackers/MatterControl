@@ -3,6 +3,7 @@ using System.Globalization;
 using System.IO;
 using System.Threading;
 using MatterHackers.Agg.Platform;
+using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.SettingsManagement;
 using Mindscape.Raygun4Net;
 
@@ -31,6 +32,7 @@ namespace MatterHackers.MatterControl
 			// Make sure we have the right working directory as we assume everything relative to the executable.
 			Directory.SetCurrentDirectory(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location));
 
+			Datastore.Instance.Initialize();
 
 #if !DEBUG
 			// Conditionally spin up error reporting if not on the Stable channel
