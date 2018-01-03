@@ -44,6 +44,12 @@ namespace MatterHackers.Agg.UI
 		public Func<bool> IsEnabled { get; set; }
 	}
 
+	public class NamedBoolAction : NamedAction
+	{
+		public Func<bool> GetIsActive { get; set; }
+		public Action<bool> SetIsActive { get; set; }
+	}
+
 	public abstract class LocalizedAction
 	{
 		public Func<string> TitleResolver { get; set; }

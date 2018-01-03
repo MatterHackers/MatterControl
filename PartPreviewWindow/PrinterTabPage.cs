@@ -31,7 +31,6 @@ using System;
 using System.IO;
 using System.Linq;
 using MatterHackers.Agg;
-using MatterHackers.Agg.Image;
 using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.OpenGlGui;
 using MatterHackers.Agg.Platform;
@@ -57,6 +56,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		internal PrinterConfig printer;
 		internal GCode3DWidget gcode3DWidget;
 		internal PrinterActionsBar printerActionsBar;
+		private DockingTabControl sideBar;
+		private SliceSettingsWidget sliceSettingsWidget;
 
 		public PrinterTabPage(PrinterConfig printer, ThemeConfig theme, string tabTitle)
 			: base(printer, printer.Bed, theme, tabTitle)
@@ -108,7 +109,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Maximum = sceneContext.LoadedGCode?.LayerCount ?? 1
 			};
 			view3DContainer.AddChild(layerScrollbar);
-			
+
 			layerRenderRatioSlider = new DoubleSolidSlider(new Vector2(), SliceLayerSelector.SliderWidth);
 			layerRenderRatioSlider.FirstValue = 0;
 			layerRenderRatioSlider.FirstValueChanged += (s, e) =>
@@ -182,6 +183,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			SetSliderSizes();
 
 			this.SetViewMode(printer.ViewState.ViewMode);
+
+			printer.ViewState.ConfigurePrinterChanged += ConfigurePrinter_Changed;
+		}
+
+		private void ConfigurePrinter_Changed(object sender, EventArgs e)
+		{
+			this.ProcessOptionalTab();
 		}
 
 		private void SetViewMode(PartViewMode viewMode)
@@ -432,6 +440,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			sceneContext.LoadedGCodeChanged -= BedPlate_LoadedGCodeChanged;
+			printer.ViewState.ConfigurePrinterChanged -= ConfigurePrinter_Changed;
 
 			base.OnClosed(e);
 		}
@@ -456,7 +465,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void AddSettingsTabBar(GuiWidget parent, GuiWidget widgetTodockTo)
 		{
-			var sideBar = new DockingTabControl(widgetTodockTo, DockSide.Right, ApplicationController.Instance.ActivePrinter)
+			sideBar = new DockingTabControl(widgetTodockTo, DockSide.Right, ApplicationController.Instance.ActivePrinter)
 			{
 				Name = "DockingTabControl",
 				ControlIsPinned = ApplicationController.Instance.ActivePrinter.ViewState.SliceSettingsTabPinned
@@ -469,7 +478,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			sideBar.AddPage(
 				"Slice Settings".Localize(),
-				new SliceSettingsWidget(
+				sliceSettingsWidget = new SliceSettingsWidget(
 					printer,
 					new SettingsContext(
 						printer,
@@ -484,6 +493,28 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Stretch,
 				HAnchor = HAnchor.Stretch
 			});
+
+			this.ProcessOptionalTab();
+		}
+
+		private void ProcessOptionalTab()
+		{
+			if (ApplicationController.Instance.ActivePrinter.ViewState.ConfigurePrinterVisible)
+			{
+				sideBar.AddPage(
+					"Printer".Localize(),
+					new ConfigurePrinterWidget(sliceSettingsWidget, theme)
+					{
+						BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor,
+						Padding = new BorderDouble(top: 10),
+						HAnchor = HAnchor.Stretch,
+						VAnchor = VAnchor.Stretch,
+					});
+			}
+			else
+			{
+				sideBar.RemovePage("Printer");
+			}
 		}
 
 		public static GuiWidget PrintProgressWidget(PrinterConfig printer)

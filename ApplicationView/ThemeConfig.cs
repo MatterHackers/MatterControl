@@ -406,7 +406,17 @@ namespace MatterHackers.MatterControl
 				}
 				else
 				{
-					var menuItem = popupMenu.CreateMenuItem(menuAction.Title, menuAction.Icon);
+					PopupMenu.MenuItem menuItem;
+
+					if (menuAction is NamedBoolAction boolAction)
+					{
+						menuItem = popupMenu.CreateBoolMenuItem(menuAction.Title, boolAction.GetIsActive, boolAction.SetIsActive);
+					}
+					else
+					{
+						menuItem = popupMenu.CreateMenuItem(menuAction.Title, menuAction.Icon);
+					}
+
 					menuItem.Name = $"{menuAction.Title} Menu Item";
 
 					menuItem.Enabled = menuAction.Action != null
