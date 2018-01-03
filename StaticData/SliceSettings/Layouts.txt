@@ -42,12 +42,10 @@ Advanced
         perimeter_speed
         small_perimeter_speed
         external_perimeter_speed
-      Speeds for Other Printing 
+      Other 
         support_material_speed
         bridge_speed
-      Speed for Non-Print Moves
         travel_speed
-      Modifiers
         first_layer_speed
         number_of_first_layers
     Raft / Skirt / Brim
