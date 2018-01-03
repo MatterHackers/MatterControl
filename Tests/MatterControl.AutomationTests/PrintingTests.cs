@@ -48,6 +48,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					// Wait for expected temp
 					testRunner.WaitFor(() => ApplicationController.Instance.ActivePrinter.Connection.ActualBedTemperature <= 10);
 					Assert.Less(ApplicationController.Instance.ActivePrinter.Connection.ActualBedTemperature, 10);
+
+					// Validate that the bottom controls have been re-enabled
 				}
 
 				return Task.CompletedTask;

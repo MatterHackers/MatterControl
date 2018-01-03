@@ -137,8 +137,6 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 
 			brailleGenerator.ResetSettings();
 
-			view3DWidget.LockEditControls();
-
 			var generatedItem = await Task.Run(() =>
 			{
 				Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
@@ -163,12 +161,6 @@ namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 					childList.AddRange(generatedItem.Children);
 				});
 			});
-
-			//PlatingHelper.MoveToOpenPosition(injectedItem, view3DWidget.Scene);
-
-			//view3DWidget.InsertNewItem(injectedItem);
-
-			view3DWidget.UnlockEditControls();
 		}
 
 		private void RebuildBase()

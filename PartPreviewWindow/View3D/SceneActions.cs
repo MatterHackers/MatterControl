@@ -48,8 +48,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (Scene.HasSelection)
 			{
-				view3DWidget.StartProgress("Ungroup");
-
 				await Task.Run(() =>
 				{
 					var selectedItem = Scene.SelectedItem;
@@ -104,8 +102,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				// leave no selection
 				Scene.SelectedItem = null;
-
-				view3DWidget.EndProgress();
 			}
 		}
 
@@ -113,8 +109,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (Scene.HasChildren())
 			{
-				view3DWidget.StartProgress("Group Selection");
-
 				var selectedItem = Scene.SelectedItem;
 
 				await Task.Run(() =>
@@ -130,8 +124,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					return;
 				}
-
-				view3DWidget.EndProgress();
 			}
 		}
 
@@ -147,8 +139,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (Scene.HasSelection)
 			{
-				view3DWidget.StartProgress("Making Copy".Localize() + ":");
-
 				// Copy selected item
 				IObject3D newItem = await Task.Run(() =>
 				{
@@ -201,8 +191,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					Scene.InsertNewItem(view3DWidget, newItem);
 				}
-
-				view3DWidget.EndProgress();
 			}
 		}
 
