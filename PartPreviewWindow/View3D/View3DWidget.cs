@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private bool DoBooleanTest = false;
 		private bool deferEditorTillMouseUp = false;
 
-		public DisableablePanel bottomActionPanel;
+		public GuiWidget bottomActionPanel;
 
 		public readonly int EditButtonHeight = 44;
 
@@ -75,8 +75,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private Stopwatch timeSinceReported = new Stopwatch();
 		private Matrix4X4 transformOnMouseDown = Matrix4X4.Identity;
 		private EventHandler unregisterEvents;
-
-		private bool wasInSelectMode = false;
 
 		private ThemeConfig theme;
 
@@ -352,8 +350,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				selectionActionBar.AddChild(materialsButton);
 			}
 
-			LockEditControls();
-
 			mainContainerTopToBottom.AddChild(bottomActionPanel);
 
 			this.AddChild(mainContainerTopToBottom);
@@ -389,43 +385,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			});
 
 			UiThread.RunOnIdle(AutoSpin);
-
-			// Wire up CommunicationStateChanged to lock footer bar when SyncToPrint is enabled
-			if (sceneContext.Printer != null)
-			{
-				sceneContext.Printer.Connection.CommunicationStateChanged.RegisterEvent((s, e) =>
-				{
-					if (sceneContext.RendererOptions.SyncToPrint
-						&& sceneContext.Printer != null)
-					{
-						switch (sceneContext.Printer.Connection.CommunicationState)
-						{
-							case CommunicationStates.Printing:
-							case CommunicationStates.Paused:
-								LockEditControls();
-								break;
-
-							default:
-								UnlockEditControls();
-								break;
-						}
-					}
-				},
-				ref unregisterEvents);
-
-				// make sure we lock the controls if we are printing or paused
-				switch (sceneContext.Printer.Connection.CommunicationState)
-				{
-					case CommunicationStates.Printing:
-					case CommunicationStates.Paused:
-						if (sceneContext.RendererOptions.SyncToPrint)
-						{
-							LockEditControls();
-						}
-
-						break;
-				}
-			}
 
 			var interactionVolumes = this.InteractionLayer.InteractionVolumes;
 			interactionVolumes.Add(new MoveInZControl(this.InteractionLayer));
@@ -1777,31 +1736,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				zArrow.LineTo(6, -2);
 				zArrow.LineTo(0, 12);
 				zArrow.LineTo(-6, -2);
-
-				VertexSourceApplyTransform translate = new VertexSourceApplyTransform(zArrow, Affine.NewTranslation(centerTopScreenPosition));
-
-				//graphics2D.Render(translate, Color.Black);
 			}
-		}
-
-		public void StartProgress(string rootTask)
-		{
-			this.LockEditControls();
-		}
-
-		public void EndProgress()
-		{
-			this.UnlockEditControls();
-			Scene.Invalidate();
-			this.Invalidate();
 		}
 
 		private async void LoadAndAddPartsToPlate(string[] filesToLoad)
 		{
 			if (filesToLoad != null && filesToLoad.Length > 0)
 			{
-				this.StartProgress("Loading Parts".Localize() + ":");
-
 				await Task.Run(() => loadAndAddPartsToPlate(filesToLoad));
 
 				if (HasBeenClosed)
@@ -1820,7 +1761,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 				}
 
-				this.EndProgress();
+				Scene.Invalidate();
+				this.Invalidate();
 			}
 		}
 
@@ -2050,8 +1992,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			viewControls3D.ActiveButton = ViewControls3DButtons.PartSelect;
 
-			this.StartProgress("Preparing Meshes".Localize() + ":");
-
 			if (Scene.HasChildren())
 			{
 				// This should be very fast (only building up a trace data for non-meshes, mesh should happen as background task).
@@ -2074,25 +2014,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Scene.SelectFirstChild();
 			}
 
-			this.EndProgress();
+			this.Invalidate();
+			Scene.Invalidate();
 
 			viewControls3D.ActiveButton = ViewControls3DButtons.PartSelect;
-		}
-
-		public void LockEditControls()
-		{
-			bottomActionPanel.Enabled = false;
-		}
-
-		public void UnlockEditControls()
-		{
-			bottomActionPanel.Enabled = true;
-
-			if (wasInSelectMode)
-			{
-				viewControls3D.ActiveButton = ViewControls3DButtons.PartSelect;
-				wasInSelectMode = false;
-			}
 		}
 
 		internal GuiWidget ShowOverflowMenu()

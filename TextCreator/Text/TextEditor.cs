@@ -137,8 +137,6 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 				return;
 			}
 
-			view3DWidget.LockEditControls();
-
 			var generatedItem = await Task.Run(() =>
 			{
 				Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
@@ -157,8 +155,6 @@ namespace MatterHackers.MatterControl.Plugins.TextCreator
 					childList.AddRange(generatedItem.Children);
 				});
 			});
-
-			view3DWidget.UnlockEditControls();
 		}
 	}
 }
