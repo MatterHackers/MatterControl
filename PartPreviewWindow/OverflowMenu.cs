@@ -28,16 +28,11 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
-using MatterHackers.Agg.RasterizerScanline;
-using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
-using MatterHackers.Agg.VertexSource;
 using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
@@ -71,48 +66,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			base.OnLoad(args);
 
-			var innerGradient = new gradient_x();
-			var outerGradient = new gradient_clamp_adaptor(innerGradient); // gradient_repeat_adaptor/gradient_reflect_adaptor/gradient_clamp_adaptor
+			int gradientDistance = 5;
 
-			var rect = new RoundedRect(new RectangleDouble(0, 0, this.LocalBounds.Width, this.LocalBounds.Height), 0);
+			gradientBackground = agg_basics.TrasparentToColorGradientX(
+					(int)this.LocalBounds.Width + gradientDistance,
+					(int)this.LocalBounds.Height,
+					this.BackgroundColor,
+					gradientDistance);
 
-			var ras = new ScanlineRasterizer();
-			ras.add_path(rect);
-
-			gradientBackground = new ImageBuffer((int)this.LocalBounds.Width, (int)this.LocalBounds.Height);
 			gradientBackground.SetRecieveBlender(new BlenderPreMultBGRA());
-
-			var color = this.BackgroundColor;
-
-			var colors = new GradientColors(
-				Enumerable.Range(0, 256).Select(i => new Color(color, i)).ToArray());
-
-			var scanlineRenderer = new ScanlineRenderer();
-			scanlineRenderer.GenerateAndRender(
-				ras,
-				new scanline_unpacked_8(), 
-				gradientBackground,
-				new span_allocator(),
-				new span_gradient(
-					new span_interpolator_linear(Affine.NewIdentity()),
-					outerGradient, 
-					colors, //new gradient_linear_color(Color.Transparent, this.BackgroundColor, ), 
-					0, 
-					5));
-		}
-
-		private class GradientColors : IColorFunction
-		{
-			private List<Color> colors;
-
-			public GradientColors(IEnumerable<Color> colors)
-			{
-				this.colors = new List<Color>(colors);
-			}
-
-			public Color this[int v] => colors[v];
-
-			public int size() => colors.Count;
 		}
 	}
 }

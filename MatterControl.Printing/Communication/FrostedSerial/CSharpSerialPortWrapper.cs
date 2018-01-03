@@ -33,8 +33,6 @@ using System.Text;
 
 namespace MatterHackers.SerialPortCommunication.FrostedSerial
 {
-#if USE_STANDARD_SERIAL
-
 	public class CSharpSerialPortWrapper : IFrostedSerialPort
 	{
 		private System.IO.Ports.SerialPort port;
@@ -162,6 +160,4 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 			return port.Read(buffer, offset, count);
 		}
 	}
-
-#endif
-		}
+}

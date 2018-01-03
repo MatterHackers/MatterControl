@@ -147,9 +147,7 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 			}
 			else // use the c# native serial port
 			{
-#if USE_STANDARD_SERIAL
 				newPort = new CSharpSerialPortWrapper(serialPortName);
-#endif
 			}
 
 			return newPort;
