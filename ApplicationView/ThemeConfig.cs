@@ -167,7 +167,11 @@ namespace MatterHackers.MatterControl
 
 			this.ActiveTabColor = ResolveColor(theme.PrimaryBackgroundColor, new Color(Color.Black, this.SlightShade.alpha));
 
-			this.TabBodyBackground = this.ResolveColor(ActiveTheme.Instance.TertiaryBackgroundColor, new Color(Color.White, 25));
+			this.TabBodyBackground = this.ResolveColor(
+				ActiveTheme.Instance.TertiaryBackgroundColor, 
+				new Color(
+					Color.White, 
+					(ActiveTheme.Instance.IsDarkTheme) ? 3 : 25));
 
 			// Active tab color with slight transparency
 			this.InteractionLayerOverlayColor = new Color(this.ActiveTabColor, 200);

@@ -1,90 +1,3 @@
-Simple
-  General
-    Single
-      Layers & Infill
-        layer_height
-        fill_density
-      Raft & Support
-        create_raft
-        support_material
-  Printer
-    Connection
-      Description
-        printer_name
-      Details
-        auto_connect
-        baud_rate
-        com_port
-        selector_ip_address
-        ip_address
-        ip_port
-Intermediate
-  General
-    Layers / Surface
-      Layer Height
-        layer_height
-        first_layer_height
-      Outer Surface
-        solid_shell
-    Infill
-      Infill
-        fill_density
-        fill_pattern
-        infill_type
-    Raft / Priming
-      Raft
-        create_raft
-      Skirt
-        skirt_distance
-    Support Material
-      Support Material
-        support_material
-        support_type
-        support_material_threshold
-        support_material_percent
-      Support Options
-        support_material_spacing
-        support_material_interface_layers
-        support_material_z_gap_layers
-        support_material_create_internal_support
-      Extruders
-        support_material_extruder
-  Filament
-    Material
-      Properties
-        filament_diameter
-        filament_density
-        filament_cost
-    Temperatures
-      Extruder Temperatures
-        first_layer_temperature
-        temperature
-        extruder_wipe_temperature
-      Bed Temperatures
-        first_layer_bed_temperature
-        bed_temperature
-        bed_remove_part_temperature
-    Retraction
-      After Move
-        enable_retractions
-        retract_length
-        retract_speed
-        retract_lift
-    Cooling
-      Fan Speed
-        min_fan_speed
-        max_fan_speed
-  Printer
-    Connection
-      Description
-        printer_name
-      Details
-        auto_connect
-        baud_rate
-        com_port
-        selector_ip_address
-        ip_address
-        ip_port
 Advanced
   General
     Layers / Surface
@@ -129,12 +42,10 @@ Advanced
         perimeter_speed
         small_perimeter_speed
         external_perimeter_speed
-      Speeds for Other Printing 
+      Other 
         support_material_speed
         bridge_speed
-      Speed for Non-Print Moves
         travel_speed
-      Modifiers
         first_layer_speed
         number_of_first_layers
     Raft / Skirt / Brim
@@ -175,6 +86,12 @@ Advanced
       Extruders
         support_material_extruder
         support_material_interface_extruder
+      Extruder Change
+        wipe_shield_distance
+        wipe_tower_size
+      Ooze Prevention
+        ooze_prevention
+        standby_temperature_delta
     Repair
       Outlines
         repair_outlines_extensive_stitching
@@ -182,41 +99,39 @@ Advanced
     Notes
       Notes
         notes
-    Output Options
-      File Settings
-        output_only_first_layer
-        g0
       Sequential Printing
         complete_objects
       Post-Processing Scripts
         post_process
-    Multiple Extruders
-      Extruder Change
-        wipe_shield_distance
-        wipe_tower_size
-      Ooze Prevention
-        ooze_prevention
-        standby_temperature_delta
     Advanced
       Other
         threads
         resolution
         overhangs
   Filament
-    Material
-      Properties
+    General
+      Material
         filament_diameter
         filament_density
         filament_cost
-    Temperatures
-      Extruder Temperatures
+      Temperatures
         first_layer_temperature
         temperature
         extruder_wipe_temperature
-      Bed Temperatures
         first_layer_bed_temperature
         bed_temperature
         bed_remove_part_temperature
+      Extrusion
+        extrusion_multiplier
+      Extrusion Width
+        extrusion_width
+        first_layer_extrusion_width
+        perimeter_extrusion_width
+        external_perimeter_extrusion_width
+        infill_extrusion_width
+        solid_infill_extrusion_width
+        top_infill_extrusion_width
+        support_material_extrusion_width
     Retraction
       After Move
         enable_retractions
@@ -233,18 +148,6 @@ Advanced
       Before Tool Change
         retract_length_tool_change
         retract_restart_extra_toolchange
-    Extrusion
-      Flow
-        extrusion_multiplier
-      Extrusion Width
-        extrusion_width
-        first_layer_extrusion_width
-        perimeter_extrusion_width
-        external_perimeter_extrusion_width
-        infill_extrusion_width
-        solid_infill_extrusion_width
-        top_infill_extrusion_width
-        support_material_extrusion_width
     Cooling
       Enable
         fan_always_on
@@ -327,6 +230,9 @@ Printer
       Advanced
         use_firmware_retraction
         vibration_limit
+      Slicing Options
+        output_only_first_layer
+        g0
   G-Code
     Custom G-Code
       Custom G-Code
