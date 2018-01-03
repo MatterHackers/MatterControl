@@ -101,10 +101,6 @@ Advanced
     Notes
       Notes
         notes
-    Output Options
-      File Settings
-        output_only_first_layer
-        g0
       Sequential Printing
         complete_objects
       Post-Processing Scripts
@@ -236,6 +232,9 @@ Printer
       Advanced
         use_firmware_retraction
         vibration_limit
+      Slicing Options
+        output_only_first_layer
+        g0
   G-Code
     Custom G-Code
       Custom G-Code
