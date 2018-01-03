@@ -126,7 +126,7 @@ namespace MatterHackers.MatterControl
 
 		internal static ILibraryItem NewPlatingItem()
 		{
-			string now = DateTime.Now.ToString("yyyyMMdd-HHmmss");
+			string now = "Workspace " + DateTime.Now.ToString("yyyy-MM-dd HH_mm_ss");
 			string mcxPath = Path.Combine(ApplicationDataStorage.Instance.PlatingDirectory, now + ".mcx");
 
 			File.WriteAllText(mcxPath, new Object3D().ToJson());

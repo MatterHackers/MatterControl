@@ -1285,7 +1285,7 @@ namespace MatterHackers.MatterControl
 							string platingDirectory = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, "PrintHistory");
 							Directory.CreateDirectory(platingDirectory);
 
-							string now = DateTime.Now.ToString("yyyyMMdd-HHmmss");
+							string now = "Workspace " + DateTime.Now.ToString("yyyy-MM-dd HH_mm_ss");
 							string archivePath = Path.Combine(platingDirectory, now + ".zip");
 
 							using (var file = File.OpenWrite(archivePath))

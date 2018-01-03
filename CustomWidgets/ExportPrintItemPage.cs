@@ -198,12 +198,13 @@ namespace MatterHackers.MatterControl
 				UiThread.RunOnIdle(() =>
 				{
 					string title = ApplicationController.Instance.ProductName + " - " + "Export File".Localize();
+					string workspaceName = "Workspace " + DateTime.Now.ToString("yyyy-MM-dd HH_mm_ss");
 					AggContext.FileDialogs.SaveFileDialog(
 						new SaveFileDialogParams(fileTypeFilter)
 						{
 							Title = title,
 							ActionButtonLabel = "Export".Localize(),
-							FileName = Path.GetFileNameWithoutExtension(libraryItems.FirstOrDefault()?.Name ?? DateTime.Now.ToString("yyyyMMdd-HHmmss"))
+							FileName = Path.GetFileNameWithoutExtension(libraryItems.FirstOrDefault()?.Name ?? workspaceName)
 						},
 						(saveParams) =>
 						{
