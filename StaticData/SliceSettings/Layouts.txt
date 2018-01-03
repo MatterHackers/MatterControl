@@ -116,20 +116,29 @@ Advanced
         resolution
         overhangs
   Filament
-    Material
-      Properties
+    General
+      Material
         filament_diameter
         filament_density
         filament_cost
-    Temperatures
-      Extruder Temperatures
+      Temperatures
         first_layer_temperature
         temperature
         extruder_wipe_temperature
-      Bed Temperatures
         first_layer_bed_temperature
         bed_temperature
         bed_remove_part_temperature
+      Extrusion
+        extrusion_multiplier
+      Extrusion Width
+        extrusion_width
+        first_layer_extrusion_width
+        perimeter_extrusion_width
+        external_perimeter_extrusion_width
+        infill_extrusion_width
+        solid_infill_extrusion_width
+        top_infill_extrusion_width
+        support_material_extrusion_width
     Retraction
       After Move
         enable_retractions
@@ -146,18 +155,6 @@ Advanced
       Before Tool Change
         retract_length_tool_change
         retract_restart_extra_toolchange
-    Extrusion
-      Flow
-        extrusion_multiplier
-      Extrusion Width
-        extrusion_width
-        first_layer_extrusion_width
-        perimeter_extrusion_width
-        external_perimeter_extrusion_width
-        infill_extrusion_width
-        solid_infill_extrusion_width
-        top_infill_extrusion_width
-        support_material_extrusion_width
     Cooling
       Enable
         fan_always_on
