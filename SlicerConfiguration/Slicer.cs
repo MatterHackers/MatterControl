@@ -107,7 +107,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					progressReporter.Report(progressStatus);
 
 					// Flatten the scene, filtering out items outside of the build volume
-					var flattenScene = reloadedItem.Flatten(meshPrintOutputSettings, (item) => item.InsideBuildVolume(printer));
+					var flattenScene = reloadedItem.Flatten(meshPrintOutputSettings, (item) => item.InsideBuildVolume(printer, null));
 
 					var meshGroups = new List<MeshGroup> { flattenScene };
 					if (meshGroups != null)

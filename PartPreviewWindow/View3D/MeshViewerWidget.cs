@@ -66,14 +66,14 @@ namespace MatterHackers.MeshVisualizer
 			return ColorF.FromHSL(Math.Max(materialIndex, 0) / 10.0, .99, .49).ToColor();
 		}
 
-		public static bool InsideBuildVolume(this IObject3D item, PrinterConfig printerConfig)
+		public static bool InsideBuildVolume(this IObject3D item, PrinterConfig printerConfig, IObject3D root)
 		{
 			if(item.Mesh == null)
 			{
 				return true;
 			}
 
-			var worldMatrix = item.WorldMatrix();
+			var worldMatrix = item.WorldMatrix(root);
 			// probably need , true (require precision)
 			var aabb = item.Mesh.GetAxisAlignedBoundingBox(worldMatrix);
 
@@ -461,7 +461,7 @@ namespace MatterHackers.MeshVisualizer
 
 				if (renderAsSolid)
 				{
-					GLHelper.Render(item.Mesh, drawColor, item.WorldMatrix(), RenderType, item.WorldMatrix() * World.ModelviewMatrix);
+					GLHelper.Render(item.Mesh, drawColor, item.WorldMatrix(scene.RootItem), RenderType, item.WorldMatrix(scene.RootItem) * World.ModelviewMatrix);
 				}
 				else
 				{
@@ -483,7 +483,8 @@ namespace MatterHackers.MeshVisualizer
 
 					if (item.Mesh != null)
 					{
-						GLHelper.Render(item.Mesh, debugBorderColor, item.WorldMatrix(), RenderTypes.Wireframe, item.WorldMatrix() * World.ModelviewMatrix);
+						GLHelper.Render(item.Mesh, debugBorderColor, item.WorldMatrix(scene.RootItem), 
+							RenderTypes.Wireframe, item.WorldMatrix(scene.RootItem) * World.ModelviewMatrix);
 					}
 				}
 #endif
@@ -497,12 +498,12 @@ namespace MatterHackers.MeshVisualizer
 
 		private Color GetItemColor(IObject3D item)
 		{
-			Color drawColor = item.WorldColor();
-			if (item.WorldOutputType() == PrintOutputTypes.Support)
+			Color drawColor = item.WorldColor(scene.RootItem);
+			if (item.WorldOutputType(scene.RootItem) == PrintOutputTypes.Support)
 			{
 				drawColor = new Color(Color.Yellow, 120);
 			}
-			else if (item.WorldOutputType() == PrintOutputTypes.Hole)
+			else if (item.WorldOutputType(scene.RootItem) == PrintOutputTypes.Hole)
 			{
 				drawColor = new Color(Color.Gray, 120);
 			}
@@ -510,7 +511,7 @@ namespace MatterHackers.MeshVisualizer
 			// If there is a printer - check if the object is within the bed volume (has no AABB outside the bed volume)
 			if (sceneContext.Printer != null)
 			{
-				if (!item.InsideBuildVolume(sceneContext.Printer))
+				if (!item.InsideBuildVolume(sceneContext.Printer, scene.RootItem))
 				{
 					drawColor = new Color(drawColor, 65);
 				}
@@ -519,7 +520,7 @@ namespace MatterHackers.MeshVisualizer
 			// check if we should be rendering materials (this overrides the other colors)
 			if (this.RenderType == RenderTypes.Materials)
 			{
-				drawColor = MatterialRendering.Color(item.WorldMaterialIndex());
+				drawColor = MatterialRendering.Color(item.WorldMaterialIndex(scene.RootItem));
 			}
 
 			if(drawColor.alpha != 255
@@ -568,7 +569,7 @@ namespace MatterHackers.MeshVisualizer
 				{
 					if (meshEdge.GetNumFacesSharingEdge() == 2)
 					{
-						var meshToView = renderData.WorldMatrix() * World.ModelviewMatrix;
+						var meshToView = renderData.WorldMatrix(scene.RootItem) * World.ModelviewMatrix;
 
 						FaceEdge firstFaceEdge = meshEdge.firstFaceEdge;
 						FaceEdge nextFaceEdge = meshEdge.firstFaceEdge.radialNextFaceEdge;
@@ -583,8 +584,8 @@ namespace MatterHackers.MeshVisualizer
 
 						if (firstTowards != nextTowards)
 						{
-							var transformed1 = Vector3.Transform(meshEdge.VertexOnEnd[0].Position, renderData.WorldMatrix());
-							var transformed2 = Vector3.Transform(meshEdge.VertexOnEnd[1].Position, renderData.WorldMatrix());
+							var transformed1 = Vector3.Transform(meshEdge.VertexOnEnd[0].Position, renderData.WorldMatrix(scene.RootItem));
+							var transformed2 = Vector3.Transform(meshEdge.VertexOnEnd[1].Position, renderData.WorldMatrix(scene.RootItem));
 
 							GLHelper.Render3DLineNoPrep(frustum, World, transformed1, transformed2, Color.White, selectionHighlightWidth);
 						}
@@ -593,7 +594,7 @@ namespace MatterHackers.MeshVisualizer
 			}
 			else // just render the bounding box
 			{
-				RenderAABB(frustum, renderData.Mesh.GetAxisAlignedBoundingBox(), renderData.WorldMatrix(), Color.White, selectionHighlightWidth);
+				RenderAABB(frustum, renderData.Mesh.GetAxisAlignedBoundingBox(), renderData.WorldMatrix(scene.RootItem), Color.White, selectionHighlightWidth);
 			}
 		}
 
@@ -666,9 +667,9 @@ namespace MatterHackers.MeshVisualizer
 				GLHelper.Render(
 					object3D.Mesh,
 					GetItemColor(object3D),
-					object3D.WorldMatrix(),
+					object3D.WorldMatrix(scene.RootItem),
 					RenderTypes.Outlines,
-					object3D.WorldMatrix() * World.ModelviewMatrix);
+					object3D.WorldMatrix(scene.RootItem) * World.ModelviewMatrix);
 			}
 
 			if (!lookingDownOnBed)
@@ -697,7 +698,8 @@ namespace MatterHackers.MeshVisualizer
 			if (scene.DebugItem?.Mesh != null)
 			{
 				var debugItem = scene.DebugItem;
-				GLHelper.Render(debugItem.Mesh, debugBorderColor, debugItem.WorldMatrix(), RenderTypes.Wireframe, debugItem.WorldMatrix() * World.ModelviewMatrix);
+				GLHelper.Render(debugItem.Mesh, debugBorderColor, debugItem.WorldMatrix(scene.RootItem), 
+					RenderTypes.Wireframe, debugItem.WorldMatrix(scene.RootItem) * World.ModelviewMatrix);
 			}
 		}
 

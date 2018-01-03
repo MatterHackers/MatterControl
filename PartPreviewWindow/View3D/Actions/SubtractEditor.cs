@@ -177,12 +177,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 							progressStatus.Status = "Copy Remove";
 							reporter.Report(progressStatus);
 							var transformedRemove = Mesh.Copy(remove.Mesh, CancellationToken.None);
-							transformedRemove.Transform(remove.WorldMatrix());
+							transformedRemove.Transform(remove.WorldMatrix(null));
 
 							progressStatus.Status = "Copy Keep";
 							reporter.Report(progressStatus);
 							var transformedKeep = Mesh.Copy(keep.Mesh, CancellationToken.None);
-							transformedKeep.Transform(keep.WorldMatrix());
+							transformedKeep.Transform(keep.WorldMatrix(null));
 
 							progressStatus.Status = "Do CSG";
 							reporter.Report(progressStatus);
@@ -195,7 +195,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 								progressStatus.Progress0To1 = percentCompleted + amountPerOperation * progress0To1;
 								reporter.Report(progressStatus);
 							}, cancelationToken);
-							var inverse = keep.WorldMatrix();
+							var inverse = keep.WorldMatrix(null);
 							inverse.Invert();
 							transformedKeep.Transform(inverse);
 
