@@ -27,6 +27,8 @@ The views and conclusions contained in the software and documentation are those
 of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
+using System;
+using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -45,6 +47,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.Name = "Slice Settings Overflow Menu";
 
 			this.PopupContent = GenerateMenuContents(printer, sliceSettingsWidget);
+		}
+
+		// On load walk back to the first ancestor with background colors and copy
+		public override void OnLoad(EventArgs args)
+		{
+			var firstBackgroundColor = this.Parents<GuiWidget>().Where(p => p.BackgroundColor.Alpha0To1 == 1).FirstOrDefault()?.BackgroundColor;
+			this.BackgroundColor = firstBackgroundColor ?? Color.Transparent;
+
+			base.OnLoad(args);
 		}
 
 		private FlowLayoutWidget GenerateMenuContents(PrinterConfig printer, SliceSettingsWidget sliceSettingsWidget)

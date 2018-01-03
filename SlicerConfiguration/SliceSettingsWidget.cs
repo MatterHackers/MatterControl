@@ -154,7 +154,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			if (settingsContext.IsPrimarySettingsView)
 			{
 				// Add the Overflow menu
-				primaryTabControl.TabBar.AddChild(new SliceSettingsOverflowMenu(printer, this));
+				primaryTabControl.TabBar.AddChild(new SliceSettingsOverflowMenu(printer, this)
+				{
+					Margin = new BorderDouble(right: theme.ToolbarPadding.Right)
+				});
 			}
 
 			FindWidestTabAndSetAllMinimumSize(sideTabBarsListForLayout);
