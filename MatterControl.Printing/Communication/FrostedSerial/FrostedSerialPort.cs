@@ -178,7 +178,6 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 			}
 			else
 			{
-#if USE_STANDARD_SERIAL
 				using (RegistryKey subkey = Registry.LocalMachine.OpenSubKey("HARDWARE\\DEVICEMAP\\SERIALCOMM"))
 				{
 					if (subkey != null)
@@ -192,7 +191,6 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 						}
 					}
 				}
-#endif
 			}
 
 #if DEBUG
