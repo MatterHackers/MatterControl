@@ -270,7 +270,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					if (this.Scene.HasSelection)
 					{
-						MakeLowestFaceFlat(this.Scene.SelectedItem);
+						MakeLowestFaceFlat(this.Scene.SelectedItem, Scene.RootItem);
 					}
 				};
 				this.Scene.SelectionChanged += (s, e) =>
@@ -1830,7 +1830,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		internal void MakeLowestFaceFlat(IObject3D objectToLayFlatGroup)
+		internal void MakeLowestFaceFlat(IObject3D objectToLayFlatGroup, IObject3D root)
 		{
 			bool firstVertex = true;
 
@@ -1848,7 +1848,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				for (int testIndex = 0; testIndex < itemToCheck.Mesh.Vertices.Count; testIndex++)
 				{
 					var vertex = itemToCheck.Mesh.Vertices[testIndex];
-					Vector3 vertexPosition = Vector3.Transform(vertex.Position, itemToCheck.WorldMatrix());
+					Vector3 vertexPosition = Vector3.Transform(vertex.Position, itemToCheck.WorldMatrix(root));
 					if(firstVertex)
 					{
 						lowestVertex = itemToCheck.Mesh.Vertices[testIndex];
@@ -1881,7 +1881,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					if (faceVertex != lowestVertex)
 					{
-						Vector3 faceVertexPosition = Vector3.Transform(faceVertex.Position, itemToLayFlat.WorldMatrix());
+						Vector3 faceVertexPosition = Vector3.Transform(faceVertex.Position, itemToLayFlat.WorldMatrix(root));
 						Vector3 pointRelLowest = faceVertexPosition - lowestVertexPosition;
 						double xLeg = new Vector2(pointRelLowest.X, pointRelLowest.Y).Length;
 						double yLeg = pointRelLowest.Z;
@@ -1903,7 +1903,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			List<Vector3> faceVertices = new List<Vector3>();
 			foreach (IVertex vertex in faceToLayFlat.Vertices())
 			{
-				Vector3 vertexPosition = Vector3.Transform(vertex.Position, itemToLayFlat.WorldMatrix());
+				Vector3 vertexPosition = Vector3.Transform(vertex.Position, itemToLayFlat.WorldMatrix(root));
 				faceVertices.Add(vertexPosition);
 				maxDistFromLowestZ = Math.Max(maxDistFromLowestZ, vertexPosition.Z - lowestVertexPosition.Z);
 			}
@@ -2080,7 +2080,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						meshRenderData.Mesh, 
 						(normal) =>
 						{
-							normal = Vector3.TransformVector(normal, meshRenderData.WorldMatrix()).GetNormal();
+							normal = Vector3.TransformVector(normal, meshRenderData.WorldMatrix(Scene.RootItem)).GetNormal();
 
 							double startColor = 223.0 / 360.0;
 							double endColor = 5.0 / 360.0;
