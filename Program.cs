@@ -23,9 +23,13 @@ namespace MatterHackers.MatterControl
 		[STAThread]
 		public static void Main()
 		{
+			// this sets the global culture for the app and all new threads
 			CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
+			CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
 
+			// and make sure tha appl is set correctly
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+			Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
 
 			AggContext.Init(embeddedResourceName: "config.json");
 
