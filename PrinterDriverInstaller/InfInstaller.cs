@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace MatterHackers.InfInstaller
 {
@@ -63,6 +65,14 @@ namespace MatterHackers.InfInstaller
 		[STAThread]
 		public static void Main(string[] args)
 		{
+			// this sets the global culture for the app and all new threads
+			CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
+			CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
+
+			// and make sure tha appl is set correctly
+			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+			Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
+
 			if (args.Length > 0 && File.Exists(args[0]))
 			{
 				InfInstallerApp driverInstaller = new InfInstallerApp();
