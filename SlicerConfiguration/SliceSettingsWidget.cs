@@ -228,7 +228,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 
 				column.AddChild(
-					CreateGroupContent(group, oemAndUserContext, showHelpControls, textColor));
+					CreateGroupContent(group, oemAndUserContext, showHelpControls, textColor, column));
 			}
 
 			var scrollable = new ScrollableWidget(true);
@@ -239,7 +239,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return scrollable;
 		}
 
-		public FlowLayoutWidget CreateGroupContent(OrganizerGroup group, SettingsContext oemAndUserContext, bool showHelpControls, Color textColor)
+		public FlowLayoutWidget CreateGroupContent(OrganizerGroup group, SettingsContext oemAndUserContext, bool showHelpControls, Color textColor, GuiWidget parent)
 		{
 			var groupPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -247,10 +247,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				HAnchor = HAnchor.Stretch,
 			};
 
-			var sectionWidget = new SectionWidget(group.Name, ActiveTheme.Instance.PrimaryTextColor, groupPanel, headingPointSize: theme.FontSize12)
+			string groupName = (group.Name.Contains("!hidden")) ? "" : group.Name;
+
+			var sectionWidget = new SectionWidget(groupName, ActiveTheme.Instance.PrimaryTextColor, groupPanel, headingPointSize: theme.FontSize12)
 			{
 				Margin = new BorderDouble(bottom: 8),
 			};
+
+			if (string.IsNullOrEmpty(groupName))
+			{
+				// If not title will be display, sync the left and top padding values
+				parent.Padding = parent.Padding.Clone(top: parent.Padding.Left);
+			}
 
 			groupPanel.Padding = 0;
 

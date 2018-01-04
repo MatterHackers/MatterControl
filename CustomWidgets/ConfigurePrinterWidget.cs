@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl
 			{
 				var tabPage = new TabPage(section.Name.Localize())
 				{
-					Padding = new BorderDouble(10, 4)
+					Padding = new BorderDouble(1, 4)
 				};
 
 				primaryTabControl.AddTab(new TextTab(
@@ -88,7 +88,7 @@ namespace MatterHackers.MatterControl
 						section.GroupsList.FirstOrDefault(), 
 						sliceSettingsWidget.settingsContext, 
 						sliceSettingsWidget.ShowHelpControls,
-						ActiveTheme.Instance.PrimaryTextColor));
+						ActiveTheme.Instance.PrimaryTextColor, scrollable.ScrollArea));
 
 				tabPage.AddChild(scrollable);
 			}
