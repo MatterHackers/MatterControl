@@ -28,8 +28,10 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.IO;
 using System.Linq;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.AboutPage;
