@@ -22,6 +22,11 @@ Advanced
         fill_angle
         infill_overlap_perimeter
         fill_thin_gaps
+    Extruder Change
+      Extruder Change!hidden
+        wipe_shield_distance
+        wipe_tower_size
+
   Speed
     Speed!hidden
       Printing Speed
@@ -62,9 +67,6 @@ Advanced
         min_skirt_length
       Brim
         brims
-      Extruder Change / Wipe Tower
-        wipe_shield_distance
-        wipe_tower_size
   Support
     Support!hidden
       Support!hidden
