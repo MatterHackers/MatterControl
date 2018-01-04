@@ -5,7 +5,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 {
 	public class SectionWidget : FlowLayoutWidget
 	{
-		public SectionWidget(string sectionTitle, Color textColor, GuiWidget sectionContent, GuiWidget rightAlignedContent = null)
+		public SectionWidget(string sectionTitle, Color textColor, GuiWidget sectionContent, GuiWidget rightAlignedContent = null, int headingPointSize = -1)
 			: base (FlowDirection.TopToBottom)
 		{
 			this.HAnchor = HAnchor.Stretch;
@@ -14,7 +14,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			var theme = ApplicationController.Instance.Theme;
 
 			// Add heading
-			var textWidget = new TextWidget(sectionTitle, pointSize: theme.H1PointSize, textColor: textColor, bold: false)
+			var pointSize = (headingPointSize) == -1 ? theme.H1PointSize : headingPointSize;
+			var textWidget = new TextWidget(sectionTitle, pointSize: pointSize, textColor: textColor, bold: false)
 			{
 				Margin = new BorderDouble(0, 3, 0, 6)
 			};
@@ -42,7 +43,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			});
 
 			// Force padding and add content widget
-			sectionContent.Padding = 8;
 			sectionContent.HAnchor = HAnchor.Stretch;
 			sectionContent.BackgroundColor = ApplicationController.Instance.Theme.MinimalShade;
 			this.AddChild(sectionContent);

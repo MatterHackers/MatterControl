@@ -106,7 +106,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			primaryTabControl.Margin = new BorderDouble(top: 8);
 			primaryTabControl.AnchorAll();
 
-			var sideTabBarsListForLayout = new List<TabBar>();
 
 			for (int topCategoryIndex = 0; topCategoryIndex < SliceSettingsOrganizer.Instance.UserLevels[UserLevel].CategoriesList.Count; topCategoryIndex++)
 			{
@@ -130,23 +129,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					ActiveTheme.Instance.TabLabelUnselected,
 					new Color(),
 					useUnderlineStyling: true));
-
-
-				var column = new FlowLayoutWidget(FlowDirection.TopToBottom);
-				column.AnchorAll();
-
-				var hline = new HorizontalLine()
-				{
-					BackgroundColor = ApplicationController.Instance.Theme.SlightShade,
-					Height = 4
-				};
-				column.AddChild(hline);
-
-				TabControl sideTabs = CreateSideTabsAndPages(category, this.ShowHelpControls);
-				sideTabBarsListForLayout.Add(sideTabs.TabBar);
-				column.AddChild(sideTabs);
-
-				categoryPage.AddChild(column);
+				
+				var sideTabs = CreateSideTabsAndPages(category, this.ShowHelpControls);
+				sideTabs.MinimumSize = new Vector2(200, 200);
+				categoryPage.AddChild(sideTabs);
 			}
 
 			primaryTabControl.TabBar.AddChild(new HorizontalSpacer());
@@ -158,18 +144,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					Margin = new BorderDouble(right: theme.ToolbarPadding.Right)
 				});
-			}
-
-			FindWidestTabAndSetAllMinimumSize(sideTabBarsListForLayout);
-
-			// check if there is only one left side tab. If so hide the left tabs and expand the content.
-			foreach (var tabList in sideTabBarsListForLayout)
-			{
-				if (tabList.CountVisibleChildren() == 1)
-				{
-					tabList.MinimumSize = new Vector2(0, 0);
-					tabList.Width = 0;
-				}
 			}
 
 			this.AddChild(primaryTabControl);
@@ -229,86 +203,40 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			set => UserSettings.Instance.set(UserSettingsKey.SliceSettingsShowHelp, value.ToString().ToLower());
 		}
 
-		private TabControl CreateSideTabsAndPages(OrganizerCategory category, bool showHelpControls)
+		private GuiWidget CreateSideTabsAndPages(OrganizerCategory category, bool showHelpControls)
 		{
 			var oemAndUserContext = new SettingsContext(
 						printer,
 						null,
 						NamedSettingsLayers.MHBaseSettings | NamedSettingsLayers.OEMSettings | NamedSettingsLayers.User);
 
-			this.HAnchor = HAnchor.Stretch;
-
-			var secondaryTabControl = new TabControl(Orientation.Vertical);
-			secondaryTabControl.TabBar.HAnchor = HAnchor.Fit;
-			secondaryTabControl.TabBar.BorderColor = Color.Transparent;
-			secondaryTabControl.TabBar.BackgroundColor = ApplicationController.Instance.Theme.SlightShade;
+			var column = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				VAnchor = VAnchor.Fit,
+				HAnchor = HAnchor.Stretch,
+				Padding = new BorderDouble(10, 10, 13, 6),
+			};
 
 			foreach (OrganizerGroup group in category.GroupsList)
 			{
 				tabIndexForItem = 0;
 
-				var groupTabPage = new TabPage(group.Name.Localize())
-				{
-					HAnchor = HAnchor.Stretch
-				};
-
-				//Side Tabs
-				var groupTabWidget = new TextTab(
-					groupTabPage, 
-					group.Name + " Tab", 
-					theme.DefaultFontSize,
-					ActiveTheme.Instance.TabLabelSelected,
-					ActiveTheme.Instance.TertiaryBackgroundColor, 
-					ActiveTheme.Instance.TabLabelUnselected,
-					Color.Transparent,
-					32);
-				groupTabWidget.HAnchor = HAnchor.MaxFitOrStretch;
-
-				foreach(var child in groupTabWidget.Children)
-				{
-					child.HAnchor = HAnchor.MaxFitOrStretch;
-					child.Padding = new BorderDouble(10);
-				}
-
-				FlowLayoutWidget subgroupPanel = CreateGroupContent(group, oemAndUserContext, showHelpControls, textColor);
-				if (subgroupPanel.Children.Count > 0)
-				{
-					var scrollableWidget = new ScrollableWidget()
-					{
-						AutoScroll = true,
-
-					};
-
-					scrollableWidget.ScrollArea.HAnchor = HAnchor.Stretch;
-					scrollableWidget.AnchorAll();
-					scrollableWidget.AddChild(subgroupPanel);
-
-					groupTabPage.AddChild(scrollableWidget);
-					secondaryTabControl.AddTab(groupTabWidget);
-				}
-
 				if (group.Name == "Connection")
 				{
-					subgroupPanel.AddChild(SliceSettingsWidget.CreateOemProfileInfoRow(settingsContext, isPrimarySettingsView: true));
+					column.AddChild(
+						SliceSettingsWidget.CreateOemProfileInfoRow(settingsContext, isPrimarySettingsView: true));
 				}
+
+				column.AddChild(
+					CreateGroupContent(group, oemAndUserContext, showHelpControls, textColor));
 			}
 
-			// Make sure we are on the right tab when we create this view
-			string settingsTypeName = $"SliceSettingsWidget_{category.Name}_CurrentTab";
-			string selectedTab = UserSettings.Instance.get(settingsTypeName);
-			secondaryTabControl.SelectTab(selectedTab);
+			var scrollable = new ScrollableWidget(true);
+			scrollable.AnchorAll();
+			scrollable.ScrollArea.HAnchor = HAnchor.Stretch;
+			scrollable.AddChild(column);
 
-			secondaryTabControl.TabBar.TabIndexChanged += (object sender, EventArgs e) =>
-			{
-				string selectedTabName = secondaryTabControl.TabBar.SelectedTabName;
-				if (!string.IsNullOrEmpty(selectedTabName)
-					&& settingsContext.IsPrimarySettingsView)
-				{
-					UserSettings.Instance.set(settingsTypeName, selectedTabName);
-				}
-			};
-
-			return secondaryTabControl;
+			return scrollable;
 		}
 
 		public FlowLayoutWidget CreateGroupContent(OrganizerGroup group, SettingsContext oemAndUserContext, bool showHelpControls, Color textColor)
@@ -316,28 +244,46 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			var groupPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				VAnchor = VAnchor.Fit,
-				HAnchor = HAnchor.Stretch
+				HAnchor = HAnchor.Stretch,
 			};
+
+			var sectionWidget = new SectionWidget(group.Name, ActiveTheme.Instance.PrimaryTextColor, groupPanel, headingPointSize: theme.FontSize12)
+			{
+				Margin = new BorderDouble(bottom: 8),
+			};
+
+			groupPanel.Padding = 0;
+
+			var zebraColor = theme.MinimalShade;
+
 			foreach (OrganizerSubGroup subGroup in group.SubGroupsList)
 			{
 				var section = AddSettingRowsForSubgroup(subGroup, oemAndUserContext, showHelpControls);
 				if (section != null)
 				{
-					var groupBox = new AltGroupBox(subGroup.Name.Localize())
+					zebraColor = (zebraColor == Color.Transparent) ? zebraColor = theme.MinimalShade : Color.Transparent;
+					var column = new FlowLayoutWidget(FlowDirection.TopToBottom)
 					{
-						TextColor = textColor,
-						BorderColor = textColor,
 						HAnchor = HAnchor.Stretch,
-						Margin = new BorderDouble(bottom: 8, top: 8),
+						//Margin = new BorderDouble(bottom: 3, top: 3),
+						BackgroundColor = zebraColor,
 						Padding = new BorderDouble(left: 4),
 					};
-					groupBox.AddChild(section);
 
-					groupPanel.AddChild(groupBox);
+					if (!subGroup.Name.Contains("!hidden"))
+					{
+						column.AddChild(new TextWidget("  " + subGroup.Name.Localize(), textColor: textColor, pointSize: 11)
+						{
+							Margin = new BorderDouble(left: 8, top: 8, bottom: 6),
+						});
+					}
+					column.AddChild(section);
+
+					groupPanel.AddChild(column);
 				}
 			}
 
-			return groupPanel;
+			return sectionWidget;
 		}
 
 		private GuiWidget AddSettingRowsForSubgroup(OrganizerSubGroup subGroup, SettingsContext oemAndUserContext, bool showHelpControls)
@@ -349,7 +295,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			topToBottomSettings.AddChild(new HorizontalLine(20)
 			{
-				Margin = new BorderDouble(top: 5),
 			});
 
 			foreach (SliceSettingData settingData in subGroup.SettingDataList)
