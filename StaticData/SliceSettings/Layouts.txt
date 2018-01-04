@@ -39,6 +39,14 @@ Advanced
         travel_speed
         first_layer_speed
         number_of_first_layers
+      Fan
+        min_fan_speed
+        max_fan_speed
+        bridge_fan_speed
+        disable_fan_first_layers
+      Cooling Thresholds
+        slowdown_below_layer_time
+        min_print_speed
     Raft / Skirt / Brim
       Raft
         create_raft
@@ -104,15 +112,6 @@ Advanced
       Before Tool Change
         retract_length_tool_change
         retract_restart_extra_toolchange
-    Cooling
-      Fan Speed
-        min_fan_speed
-        max_fan_speed
-        bridge_fan_speed
-        disable_fan_first_layers
-      Cooling Thresholds
-        slowdown_below_layer_time
-        min_print_speed
 Printer
   General
     Common
