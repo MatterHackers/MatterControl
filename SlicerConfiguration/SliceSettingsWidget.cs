@@ -256,6 +256,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			var zebraColor = theme.MinimalShade;
 
+			var headingColor = textColor.AdjustLightness(ActiveTheme.Instance.IsDarkTheme ? 0.5 : 2.8).ToColor();
+
 			foreach (OrganizerSubGroup subGroup in group.SubGroupsList)
 			{
 				var section = AddSettingRowsForSubgroup(subGroup, oemAndUserContext, showHelpControls);
@@ -265,16 +267,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					var column = new FlowLayoutWidget(FlowDirection.TopToBottom)
 					{
 						HAnchor = HAnchor.Stretch,
-						//Margin = new BorderDouble(bottom: 3, top: 3),
 						BackgroundColor = zebraColor,
 						Padding = new BorderDouble(left: 4),
 					};
 
 					if (!subGroup.Name.Contains("!hidden"))
 					{
-						column.AddChild(new TextWidget("  " + subGroup.Name.Localize(), textColor: textColor, pointSize: 11)
+						// Section heading
+						column.AddChild(new TextWidget("  " + subGroup.Name.Localize(), textColor: headingColor, pointSize: theme.FontSize10)
 						{
-							Margin = new BorderDouble(left: 8, top: 8, bottom: 6),
+							Margin = new BorderDouble(left: 8, top: 6, bottom: 4),
 						});
 					}
 					column.AddChild(section);
