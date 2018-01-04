@@ -92,6 +92,15 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			}
 		}
 
+		public void RemovePage(string name)
+		{
+			if (allTabs.ContainsKey(name))
+			{
+				allTabs.Remove(name);
+				this.Rebuild();
+			}
+		}
+
 		public override void OnLoad(EventArgs args)
 		{
 			base.OnLoad(args);

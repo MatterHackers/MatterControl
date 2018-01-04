@@ -180,25 +180,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								}));
 					}
 				},
-				new NamedAction()
+				new NamedBoolAction()
 				{
 					Title = "Configure Printer".Localize(),
-					Action = () =>
-					{
-						var partTabPage = this.Parents<PartTabPage>().FirstOrDefault();
-						var dockingTabControl = partTabPage.FindNamedChildRecursive("DockingTabControl") as DockingTabControl;
-						printer.ViewState.SliceSettingsTabIndex = 3;
-
-						dockingTabControl.AddPage(
-							"Printer",
-							new ConfigurePrinterWidget(partTabPage, theme)
-							{
-								BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor,
-								Padding = new BorderDouble(top: 10),
-								HAnchor = HAnchor.Stretch,
-								VAnchor = VAnchor.Stretch,
-							});
-					}
+					Action = () => { },
+					GetIsActive = () => printer.ViewState.ConfigurePrinterVisible,
+					SetIsActive = (value) => printer.ViewState.ConfigurePrinterVisible = value
 				},
 				new NamedAction() { Title = "----" },
 				new NamedAction()

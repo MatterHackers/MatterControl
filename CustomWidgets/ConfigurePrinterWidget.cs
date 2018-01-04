@@ -38,11 +38,9 @@ namespace MatterHackers.MatterControl
 {
 	public class ConfigurePrinterWidget : FlowLayoutWidget
 	{
-		public ConfigurePrinterWidget(PartTabPage partTabPage, ThemeConfig theme)
+		public ConfigurePrinterWidget(SliceSettingsWidget sliceSettingsWidget, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
 		{
-			var sliceSettingsWidget = partTabPage.ChildrenRecursive<SliceSettingsWidget>().FirstOrDefault();
-
 			int tabIndex = 0;
 			var rowItem = sliceSettingsWidget.CreateItemRow(SliceSettingsOrganizer.SettingsData["printer_name"], ref tabIndex);
 
@@ -68,7 +66,7 @@ namespace MatterHackers.MatterControl
 				{
 					Padding = new BorderDouble(10, 4)
 				};
-			
+
 				primaryTabControl.AddTab(new TextTab(
 					tabPage,
 					section.Name + " Tab",

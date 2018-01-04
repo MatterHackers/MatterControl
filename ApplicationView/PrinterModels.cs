@@ -536,6 +536,8 @@ namespace MatterHackers.MatterControl
 	{
 		public event EventHandler<ViewModeChangedEventArgs> ViewModeChanged;
 
+		public event EventHandler ConfigurePrinterChanged;
+
 		public bool SliceSettingsTabPinned
 		{
 			get => UserSettings.Instance.get(UserSettingsKey.SliceSettingsTabPinned) == "true";
@@ -587,6 +589,26 @@ namespace MatterHackers.MatterControl
 					{
 						ViewMode = this.ViewMode
 					});
+				}
+			}
+		}
+
+		public bool _configurePrinterVisible = false;
+
+		public bool ConfigurePrinterVisible
+		{
+			get => _configurePrinterVisible;
+			set
+			{
+				if (_configurePrinterVisible != value)
+				{
+					if (value)
+					{
+						this.SliceSettingsTabIndex = 3;
+					}
+
+					_configurePrinterVisible = value;
+					ConfigurePrinterChanged?.Invoke(this, null);
 				}
 			}
 		}
