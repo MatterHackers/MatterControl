@@ -949,7 +949,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 										CommunicationState = CommunicationStates.AttemptingToConnect;
 
 										// We have to send a line because some printers (like old print-r-bots) do not send anything when connecting and there is no other way to know they are there.
-										SendLineToPrinterNow("M110 N1");
+										serialPort.Write("M110 N1\n");
 
 										var sb = new StringBuilder();
 
