@@ -269,7 +269,7 @@ namespace MatterHackers.MatterControl
 			}
 			commandHistory.Add(textToSend);
 			commandHistoryIndex = commandHistory.Count;
-			printer.Connection.SendLineToPrinterNow(textToSend);
+			printer.Connection.QueueLine(textToSend);
 			manualCommandTextEdit.Text = "";
 		}
 	}

@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl.Library
 				printer.Connection.ReadLine.RegisterEvent(Printer_LineRead, ref unregisterEvents);
 
 				gotBeginFileList = false;
-				printer.Connection.SendLineToPrinterNow("M21\r\nM20");
+				printer.Connection.QueueLine("M21\r\nM20");
 
 				// Ask for files and wait for response
 				autoResetEvent.WaitOne();

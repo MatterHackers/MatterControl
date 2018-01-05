@@ -142,7 +142,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 				StringBuilder commands = new StringBuilder();
 				commands.AppendLine("M21"); // Init SD card
 				commands.AppendLine("M20"); // List SD card
-				ApplicationController.Instance.ActivePrinter.Connection.SendLineToPrinterNow(commands.ToString());
+				ApplicationController.Instance.ActivePrinter.Connection.QueueLine(commands.ToString());
 			}
 		}
 
