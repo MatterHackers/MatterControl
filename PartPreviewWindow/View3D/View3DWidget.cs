@@ -361,14 +361,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			selectedObjectPanel = new SelectedObjectPanel(this, this.Scene, theme, printer)
 			{
 				BackgroundColor = theme.InteractionLayerOverlayColor,
-				VAnchor = VAnchor.Top | VAnchor.Fit,
+				VAnchor = VAnchor.Stretch,
 				HAnchor = HAnchor.Left | HAnchor.Fit,
 			};
 
 			selectedObjectContainer = new ResizeContainer(selectedObjectPanel)
 			{
 				Width = 200,
-				VAnchor = VAnchor.Fit | VAnchor.Top,
+				VAnchor = VAnchor.Stretch,
 				HAnchor = HAnchor.Right,
 				SpliterBarColor = theme.SplitterBackground,
 				SplitterWidth = theme.SplitterWidth,

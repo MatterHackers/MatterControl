@@ -555,7 +555,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				if (gCodeFileStream0 != null)
 				{
 					int instructionIndex = gCodeFileStream0.LineIndex - backupAmount;
-					return gCodeFileStream0.GCodeFile.GetLayerIndex(instructionIndex);
+					return gCodeFileStream0?.GCodeFile?.GetLayerIndex(instructionIndex) ?? 0;
 				}
 
 				return 0;
@@ -747,7 +747,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			get
 			{
-				if (gCodeFileStream0 == null)
+				if (gCodeFileStream0?.GCodeFile == null)
 				{
 					return 0;
 				}
@@ -790,26 +790,15 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		public int TotalLayersInPrint
-		{
-			get
-			{
-				try
-				{
-					return gCodeFileStream0.GCodeFile.LayerCount;
-				}
-				catch (Exception)
-				{
-					return -1;
-				}
-			}
-		}
+		public int TotalLayersInPrint => gCodeFileStream0?.GCodeFile?.LayerCount ?? -1;
+
+		private int NumberOfLinesInCurrentPrint => gCodeFileStream0?.GCodeFile?.LineCount ?? -1;
 
 		public int TotalSecondsInPrint
 		{
 			get
 			{
-				if (gCodeFileStream0.GCodeFile.LineCount > 0)
+				if (gCodeFileStream0?.GCodeFile?.LineCount > 0)
 				{
 					if (feedRateRatio != 0)
 					{
@@ -825,8 +814,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		// HACK: PrinterConnection must be revised to take a constructor that receives and stores a reference to its parent PrinterConfig - this 
 		private PrinterConfig printer { get; set; }
-
-		private int NumberOfLinesInCurrentPrint => gCodeFileStream0.GCodeFile.LineCount;
 
 		public void ReleaseAndReportFailedConnection(ConnectionFailure reason, string details = null)
 		{
