@@ -5,7 +5,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 {
 	public class SectionWidget : FlowLayoutWidget
 	{
-		public SectionWidget(string sectionTitle, Color textColor, GuiWidget sectionContent, GuiWidget rightAlignedContent = null)
+		public SectionWidget(string sectionTitle, Color textColor, GuiWidget sectionContent, GuiWidget rightAlignedContent = null, int headingPointSize = -1)
 			: base (FlowDirection.TopToBottom)
 		{
 			this.HAnchor = HAnchor.Stretch;
@@ -13,36 +13,39 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			var theme = ApplicationController.Instance.Theme;
 
-			// Add heading
-			var textWidget = new TextWidget(sectionTitle, pointSize: theme.H1PointSize, textColor: textColor, bold: false)
+			if (!string.IsNullOrEmpty(sectionTitle))
 			{
-				Margin = new BorderDouble(0, 3, 0, 6)
-			};
-
-			if (rightAlignedContent == null)
-			{
-				this.AddChild(textWidget);
-			}
-			else
-			{
-				var headingRow = new FlowLayoutWidget()
+				// Add heading
+				var pointSize = (headingPointSize) == -1 ? theme.H1PointSize : headingPointSize;
+				var textWidget = new TextWidget(sectionTitle, pointSize: pointSize, textColor: textColor, bold: false)
 				{
-					HAnchor = HAnchor.Stretch
+					Margin = new BorderDouble(0, 3, 0, 6)
 				};
-				headingRow.AddChild(textWidget);
-				headingRow.AddChild(new HorizontalSpacer());
-				headingRow.AddChild(rightAlignedContent);
-				this.AddChild(headingRow);
-			}
 
-			// Add heading separator
-			this.AddChild(new HorizontalLine(25)
-			{
-				Margin = new BorderDouble(0)
-			});
+				if (rightAlignedContent == null)
+				{
+					this.AddChild(textWidget);
+				}
+				else
+				{
+					var headingRow = new FlowLayoutWidget()
+					{
+						HAnchor = HAnchor.Stretch
+					};
+					headingRow.AddChild(textWidget);
+					headingRow.AddChild(new HorizontalSpacer());
+					headingRow.AddChild(rightAlignedContent);
+					this.AddChild(headingRow);
+				}
+
+				// Add heading separator
+				this.AddChild(new HorizontalLine(25)
+				{
+					Margin = new BorderDouble(0)
+				});
+			}
 
 			// Force padding and add content widget
-			sectionContent.Padding = 8;
 			sectionContent.HAnchor = HAnchor.Stretch;
 			sectionContent.BackgroundColor = ApplicationController.Instance.Theme.MinimalShade;
 			this.AddChild(sectionContent);

@@ -15,22 +15,28 @@ Advanced
         top_solid_layers
         bottom_solid_layers
     Infill
-      Infill
+      Infill!hidden
         fill_density
         infill_type
       Advanced
         fill_angle
         infill_overlap_perimeter
         fill_thin_gaps
-    Speed
+    Extruder Change
+      Extruder Change!hidden
+        wipe_shield_distance
+        wipe_tower_size
+
+  Speed
+    Speed!hidden
       Printing Speed
         laser_speed_025
         laser_speed_100
-      Speed for Infill
+      Speed for Infill!hidden
         infill_speed
         top_solid_infill_speed
         raft_print_speed
-      Speed for Perimeters
+      Speed for Perimeters!hidden
         perimeter_speed
         external_perimeter_speed
       Other 
@@ -47,7 +53,8 @@ Advanced
       Cooling Thresholds
         slowdown_below_layer_time
         min_print_speed
-    Raft / Skirt / Brim
+  Adhesion
+    Raft / Skirt / Brim!hidden
       Raft
         create_raft
         raft_extra_distance_around_part
@@ -60,12 +67,13 @@ Advanced
         min_skirt_length
       Brim
         brims
-    Support Material
-      Support Material
+  Support
+    Support!hidden
+      Support!hidden
         support_material
         support_type
         support_material_percent
-      Support Options
+      Support Options!hidden
         support_material_spacing
         support_material_infill_angle
         support_material_interface_layers
@@ -76,12 +84,8 @@ Advanced
       Extruders
         support_material_extruder
         support_material_interface_extruder
-      Extruder Change
-        wipe_shield_distance
-        wipe_tower_size
-      Ooze Prevention
   Filament
-    General
+    General!hidden
       Material
         filament_diameter
         filament_density
@@ -98,7 +102,7 @@ Advanced
         external_perimeter_extrusion_width
         support_material_extrusion_width
     Retraction
-      After Move
+      After Move!hidden
         enable_retractions
         retract_length
         retract_restart_extra
@@ -114,7 +118,7 @@ Advanced
         retract_restart_extra_toolchange
 Printer
   General
-    Common
+    Common!hidden
       Settings
         auto_connect
         baud_rate
@@ -134,7 +138,7 @@ Printer
         extruders_share_temperature
         extruder_offset
   Features
-    Features
+    Features!hidden
       Interface
         sla_printer
         show_reset_connection
@@ -177,7 +181,7 @@ Printer
         output_only_first_layer
         g0
   G-Code
-    Custom G-Code
+    Custom G-Code!hidden
       Custom G-Code
         start_gcode
         end_gcode
