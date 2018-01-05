@@ -28,8 +28,8 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using MatterControl.Printing;
 using MatterHackers.Agg;
-using MatterHackers.GCodeVisualizer;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 

@@ -38,7 +38,7 @@ using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.VectorMath;
 
-namespace MatterHackers.GCodeVisualizer
+namespace MatterControl.Printing
 {
 	public class GCodeMemoryFile : GCodeFile
 	{

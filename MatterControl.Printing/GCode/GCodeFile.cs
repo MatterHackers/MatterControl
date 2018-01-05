@@ -26,18 +26,15 @@ The views and conclusions contained in the software and documentation are those
 of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
+using System;
+using System.IO;
+using System.Threading;
 using MatterHackers.Agg;
 using MatterHackers.VectorMath;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Threading.Tasks;
-using System.Threading;
 
-namespace MatterHackers.GCodeVisualizer
+namespace MatterControl.Printing
 {
-    public abstract class GCodeFile
+	public abstract class GCodeFile
 	{
 		private static readonly Vector4 MaxAccelerationMmPerS2 = new Vector4(1000, 1000, 100, 5000);
 		private static readonly Vector4 MaxVelocityMmPerS = new Vector4(500, 500, 5, 25);

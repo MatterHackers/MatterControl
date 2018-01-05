@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using MatterControl.Printing;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;

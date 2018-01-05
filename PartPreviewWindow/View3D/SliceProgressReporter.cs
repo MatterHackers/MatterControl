@@ -28,8 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Diagnostics;
-using MatterHackers.GCodeVisualizer;
+using MatterControl.Printing;
 using MatterHackers.Agg;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow

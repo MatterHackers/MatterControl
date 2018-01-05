@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using MatterControl.Printing;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.RenderOpenGl;

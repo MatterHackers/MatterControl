@@ -30,7 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.VectorMath;
 using System.Text;
 
-namespace MatterHackers.GCodeVisualizer
+namespace MatterControl.Printing
 {
 	public class PrinterMachineInstruction
 	{

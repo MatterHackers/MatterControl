@@ -29,7 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Text;
-using MatterHackers.GCodeVisualizer;
+using MatterControl.Printing;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io

@@ -27,13 +27,12 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System.Collections.Generic;
+using MatterControl.Printing;
 using MatterHackers.Agg;
-using MatterHackers.GCodeVisualizer;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
-using System.Collections.Generic;
-using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {

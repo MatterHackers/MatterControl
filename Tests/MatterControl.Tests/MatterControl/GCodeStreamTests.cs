@@ -29,11 +29,10 @@ either expressed or implied, of the FreeBSD Project.
 
 using System.Collections.Generic;
 using System.Diagnostics;
+using MatterControl.Printing;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
-using MatterHackers.GCodeVisualizer;
 using MatterHackers.MatterControl;
-using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.Tests.Automation;

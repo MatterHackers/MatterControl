@@ -30,12 +30,12 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.IO;
 using System.Linq;
+using MatterControl.Printing;
 using MatterHackers.Agg;
 using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.OpenGlGui;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
-using MatterHackers.GCodeVisualizer;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
@@ -238,8 +238,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				&& sceneContext.Scene.HasSelection
 				&& printer?.ViewState.ViewMode != PartViewMode.Layers2D;
 		}
-
-		private GCodeFile loadedGCode => sceneContext.LoadedGCode;
 
 		private void BedPlate_LoadedGCodeChanged(object sender, EventArgs e)
 		{
