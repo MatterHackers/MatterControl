@@ -172,7 +172,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					// and skip everything else until we get to the point we left off last time
 					int commandCount = 0;
 					boundsOfSkippedLayers = RectangleDouble.ZeroIntersection;
-					while (internalStream.FileStreaming.PercentComplete(internalStream.LineIndex) < percentDone)
+					while (internalStream.GCodeFile.PercentComplete(internalStream.LineIndex) < percentDone)
 					{
 						string line = internalStream.ReadLine();
 						if(line == null)

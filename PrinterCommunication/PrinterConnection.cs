@@ -190,8 +190,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private PrinterMove lastReportedPosition;
 
-		private GCodeFile loadedGCode = new GCodeMemoryFile();
-
 		private GCodeFileStream gCodeFileStream0 = null;
 		private PauseHandlingStream pauseHandlingStream1 = null;
 		private QueuedCommandsStream queuedCommandStream2 = null;
@@ -557,7 +555,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				if (gCodeFileStream0 != null)
 				{
 					int instructionIndex = gCodeFileStream0.LineIndex - backupAmount;
-					return loadedGCode.GetLayerIndex(instructionIndex);
+					return gCodeFileStream0.GCodeFile.GetLayerIndex(instructionIndex);
 				}
 
 				return 0;
@@ -616,10 +614,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					return 100.0;
 				}
 				else if (NumberOfLinesInCurrentPrint > 0
-					&& loadedGCode != null
-					&& gCodeFileStream0 != null)
+					&& gCodeFileStream0?.GCodeFile != null)
 				{
-					return loadedGCode.PercentComplete(gCodeFileStream0.LineIndex);
+					return gCodeFileStream0.GCodeFile.PercentComplete(gCodeFileStream0.LineIndex);
 				}
 				else
 				{
@@ -756,7 +753,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				}
 
 				int instructionIndex = gCodeFileStream0.LineIndex - backupAmount;
-				return loadedGCode.Ratio0to1IntoContainedLayer(instructionIndex);
+				return gCodeFileStream0.GCodeFile.Ratio0to1IntoContainedLayer(instructionIndex);
 			}
 		}
 
@@ -799,7 +796,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			{
 				try
 				{
-					return loadedGCode.LayerCount;
+					return gCodeFileStream0.GCodeFile.LayerCount;
 				}
 				catch (Exception)
 				{
@@ -812,14 +809,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			get
 			{
-				if (loadedGCode.LineCount > 0)
+				if (gCodeFileStream0.GCodeFile.LineCount > 0)
 				{
 					if (feedRateRatio != 0)
 					{
-						return (int)(loadedGCode.TotalSecondsInPrint / feedRateRatio);
+						return (int)(gCodeFileStream0.GCodeFile.TotalSecondsInPrint / feedRateRatio);
 					}
 
-					return (int)(loadedGCode.TotalSecondsInPrint);
+					return (int)(gCodeFileStream0.GCodeFile.TotalSecondsInPrint);
 				}
 
 				return 0;
@@ -829,7 +826,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		// HACK: PrinterConnection must be revised to take a constructor that receives and stores a reference to its parent PrinterConfig - this 
 		private PrinterConfig printer { get; set; }
 
-		private int NumberOfLinesInCurrentPrint => loadedGCode.LineCount;
+		private int NumberOfLinesInCurrentPrint => gCodeFileStream0.GCodeFile.LineCount;
 
 		public void ReleaseAndReportFailedConnection(ConnectionFailure reason, string details = null)
 		{
@@ -993,10 +990,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 										CommunicationState = CommunicationStates.Connected;
 										*/
 
+										CreateStreamProcessors(null, false);
+
 										TurnOffBedAndExtruders(); // make sure our ui and the printer agree and that the printer is in a known state (not heating).
 										haveReportedError = false;
-										// now send any command that initialize this printer
-										ClearQueuedGCode();
 
 										QueueLine(
 											printer.Settings.GetValue(SettingsKey.connect_gcode));
@@ -1011,12 +1008,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 										Console.WriteLine("ReadFromPrinter thread created.");
 										ReadThread.Start(this);
 
-										CreateStreamProcessors(null, false);
-
 										CommunicationState = CommunicationStates.Connected;
-
-										// TODO: Why clear after send?
-										ClearQueuedGCode();
 
 										// We do not need to wait for the M105
 										PrintingCanContinue(null, null);
@@ -2102,16 +2094,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private void ClearQueuedGCode()
 		{
-			loadedGCode.Clear();
-			// Force a reset of the printer checksum state (but allow it to be write regexed)
-			var transformedCommand = processWriteRegExStream11?.ProcessWriteRegEx("M110 N1");
-			if (transformedCommand != null)
-			{
-				foreach (var line in transformedCommand)
-				{
-					WriteChecksumLine(line);
-				}
-			}
+			gCodeFileStream0?.GCodeFile?.Clear();
 		}
 
 		private void DonePrintingSdFile(object sender, FoundStringEventArgs e)
@@ -2186,8 +2169,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			GCodeStream firstStream = null;
 			if (gcodeFilename != null)
 			{
-				loadedGCode = GCodeFile.Load(gcodeFilename, CancellationToken.None);
-				gCodeFileStream0 = new GCodeFileStream(loadedGCode);
+				gCodeFileStream0 = new GCodeFileStream(GCodeFile.Load(gcodeFilename, CancellationToken.None));
 
 				if (printer.Settings.GetValue<bool>(SettingsKey.recover_is_enabled)
 					&& activePrintTask != null) // We are resuming a failed print (do lots of interesting stuff).
@@ -2225,6 +2207,16 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			requestTemperaturesStream10 = new RequestTemperaturesStream(this, feedrateMultiplyerStream9);
 			processWriteRegExStream11 = new ProcessWriteRegexStream(this.printer.Settings, requestTemperaturesStream10, queuedCommandStream2);
 			totalGCodeStream = processWriteRegExStream11;
+
+			// Force a reset of the printer checksum state (but allow it to be write regexed)
+			var transformedCommand = processWriteRegExStream11?.ProcessWriteRegEx("M110 N1");
+			if (transformedCommand != null)
+			{
+				foreach (var line in transformedCommand)
+				{
+					WriteChecksumLine(line);
+				}
+			}
 
 			// Get the current position of the printer any time we reset our streams
 			ReadPosition();
@@ -2452,7 +2444,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 							|| secondsSinceUpdateHistory + 1 < secondsSinceStartedPrint
 							|| lineSinceUpdateHistory + 20 < gCodeFileStream0.LineIndex))
 						{
-							double currentDone = loadedGCode.PercentComplete(gCodeFileStream0.LineIndex);
+							double currentDone = gCodeFileStream0.GCodeFile.PercentComplete(gCodeFileStream0.LineIndex);
 							// Only update the amount done if it is greater than what is recorded.
 							// We don't want to mess up the resume before we actually resume it.
 							if (activePrintTask != null
@@ -2540,6 +2532,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					lineWithCount = $"N1 {lineToWrite}";
 					GCodeFile.GetFirstNumberAfter("N", lineToWrite, ref currentLineIndexToSend);
 					allCheckSumLinesSent.SetStartingIndex(currentLineIndexToSend);
+					currentLineIndexToSend++;
 				}
 				else
 				{
