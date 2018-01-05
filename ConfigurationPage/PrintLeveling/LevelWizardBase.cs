@@ -184,7 +184,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					{
 						// make sure the servo is retracted
 						var servoRetract = printer.Settings.GetValue<double>(SettingsKey.z_servo_retracted_angle);
-						printer.Connection.SendLineToPrinterNow($"M280 P0 S{servoRetract}");
+						printer.Connection.QueueLine($"M280 P0 S{servoRetract}");
 					}
 				};
 			}

@@ -60,10 +60,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			if (printerConnection.PrinterIsConnected)
 			{
 				printerConnection.MacroStart();
-				printerConnection.SendLineToPrinterNow(GCode);
+				printerConnection.QueueLine(GCode);
 				if (GCode.Contains(MacroProcessingStream.MacroPrefix))
 				{
-					printerConnection.SendLineToPrinterNow("\n" + MacroProcessingStream.MacroPrefix + "close()");
+					printerConnection.QueueLine("\n" + MacroProcessingStream.MacroPrefix + "close()");
 				}
 			}
 		}

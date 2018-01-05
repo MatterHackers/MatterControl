@@ -244,7 +244,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			printer.Connection.MoveAbsolute(PrinterConnection.Axis.Z, probeStartPosition.Z, feedRates.Z);
 			printer.Connection.MoveAbsolute(probeStartPosition, feedRates.X);
-			printer.Connection.SendLineToPrinterNow("G30");
+			printer.Connection.QueueLine("G30");
 			printer.Connection.ReadLine.RegisterEvent(FinishedProbe, ref unregisterEvents);
 
 			base.PageIsBecomingActive();
@@ -548,7 +548,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			{
 				// make sure the servo is deployed
 				var servoDeploy = printer.Settings.GetValue<double>(SettingsKey.z_servo_depolyed_angle);
-				printer.Connection.SendLineToPrinterNow($"M280 P0 S{servoDeploy}");
+				printer.Connection.QueueLine($"M280 P0 S{servoDeploy}");
 			}
 
 			var feedRates = printer.Settings.Helpers.ManualMovementSpeeds();
@@ -565,7 +565,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			for (int i = 0; i < numberOfSamples; i++)
 			{
 				// probe the current position
-				printer.Connection.SendLineToPrinterNow("G30");
+				printer.Connection.QueueLine("G30");
 				// raise the probe after each sample
 				printer.Connection.MoveAbsolute(adjustedProbePosition, feedRates.X);
 			}

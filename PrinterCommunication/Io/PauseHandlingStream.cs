@@ -165,7 +165,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						// request to read the endstop state
 						if (!timeSinceLastEndstopRead.IsRunning || timeSinceLastEndstopRead.ElapsedMilliseconds > 5000)
 						{
-							printer.Connection.SendLineToPrinterNow("M119");
+							printer.Connection.QueueLine("M119");
 							timeSinceLastEndstopRead.Restart();
 						}
 					}

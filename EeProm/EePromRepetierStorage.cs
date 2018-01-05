@@ -100,7 +100,7 @@ namespace MatterHackers.MatterControl.EeProm
 
 		public void AskPrinterForSettings(PrinterConnection printerConnection)
 		{
-			printerConnection.SendLineToPrinterNow("M205");
+			printerConnection.QueueLine("M205");
 		}
 
 		internal void Export(string fileName)
