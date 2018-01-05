@@ -120,13 +120,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			behavior3DTypeButtons.AddChild(editButton);
 
-			this.AddChild(editorPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			editorPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				Name = "editorPanel",
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit,
+			};
+
+			var scrollable = new ScrollableWidget(true)
+			{
+				Name = "editorPanel",
 				Margin = new BorderDouble(top: 10),
-			});
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch,
+			};
+
+			scrollable.AddChild(editorPanel);
+			scrollable.ScrollArea.HAnchor = HAnchor.Stretch;
+
+			this.AddChild(scrollable);
 
 			HashSet<IObject3DEditor> mappedEditors;
 			objectEditorsByType = new Dictionary<Type, HashSet<IObject3DEditor>>();
