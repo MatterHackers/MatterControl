@@ -32,6 +32,7 @@ using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.SerialPortCommunication.FrostedSerial;
 
@@ -48,6 +49,9 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		private EventHandler unregisterEvents;
 		private PrinterConfig printer;
+
+		private bool listenForConnectFailed = false;
+		private long connectStartMs;
 
 		public PrinterConnectButton(PrinterConfig printer, ThemeConfig theme)
 		{
@@ -77,6 +81,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			cancelConnectButton.ToolTipText = "Stop trying to connect to the printer.".Localize();
 			cancelConnectButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
+				listenForConnectFailed = false;
 				ApplicationController.Instance.ConditionalCancelPrint();
 				cancelConnectButton.Enabled = false;
 			});
@@ -121,6 +126,21 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			printer.Connection.EnableChanged.RegisterEvent((s, e) => SetVisibleStates(), ref unregisterEvents);
 			printer.Connection.CommunicationStateChanged.RegisterEvent((s, e) => SetVisibleStates(), ref unregisterEvents);
+			printer.Connection.ConnectionFailed.RegisterEvent((s, e) =>
+			{
+#if !__ANDROID__
+				// TODO: Someday this functionality should be revised to an awaitable Connect() call in the Connect button that
+				// shows troubleshooting on failed attempts, rather than hooking the failed event and trying to determine if the
+				// Connect button started the task
+				if (listenForConnectFailed
+					&& UiThread.CurrentTimerMs - connectStartMs < 25000)
+				{
+					// User initiated connect attempt failed, show port selection dialog
+					DialogWindow.Show(new SetupStepComPortOne(printer));
+				}
+#endif
+				listenForConnectFailed = false;
+			}, ref unregisterEvents);
 
 			this.SetVisibleStates();
 		}
@@ -135,6 +155,9 @@ namespace MatterHackers.MatterControl.ActionBar
 		{
 			if (printer.Settings.PrinterSelected)
 			{
+				listenForConnectFailed = true;
+				connectStartMs = UiThread.CurrentTimerMs;
+
 #if __ANDROID__
 				if (!printer.Settings.GetValue<bool>(SettingsKey.enable_network_printing)
 					&& !FrostedSerialPort.HasPermissionToDevice())
@@ -146,7 +169,7 @@ namespace MatterHackers.MatterControl.ActionBar
 #endif
 				{
 					printer.Connection.HaltConnectionThread();
-					printer.Connection.Connect(true);
+					printer.Connection.Connect();
 				}
 			}
 		}
@@ -191,6 +214,7 @@ namespace MatterHackers.MatterControl.ActionBar
 					break;
 
 				default:
+					listenForConnectFailed = false;
 					SetChildVisible(disconnectButton, true);
 					break;
 			}

@@ -42,7 +42,6 @@ using MatterControl.Printing;
 using MatterHackers.Agg;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
-using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.SerialPortCommunication;
 using MatterHackers.SerialPortCommunication.FrostedSerial;
@@ -854,7 +853,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		public void Connect(bool showHelpIfNoPort = false)
+		public void Connect()
 		{
 			// TODO: Consider adding any conditions that would results in a connection failure to this initial test
 			// Start the process of requesting permission and exit if permission is not currently granted
@@ -1044,14 +1043,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				OnConnectionFailed(
 					ConnectionFailure.PortUnavailable,
 					$"{this.ComPort} is not available");
-
-#if !__ANDROID__
-				// Only pop up the com port helper if the USER actually CLICKED the connect button.
-				if (showHelpIfNoPort)
-				{
-					DialogWindow.Show(new SetupStepComPortOne(printer));
-				}
-#endif
 			}
 		}
 
