@@ -28,23 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using MatterHackers.Agg;
-using MatterHackers.Agg.Platform;
-using MatterHackers.Agg.UI;
-using MatterHackers.DataConverters3D;
-using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.PluginSystem;
-using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
-using MatterHackers.MatterControl.PrintQueue;
-using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.RenderOpenGl.OpenGl;
+using MatterControl.Printing;
 
 namespace MatterHackers.MatterControl
 {
@@ -70,7 +54,7 @@ namespace MatterHackers.MatterControl
 		public static void CheckKnownAssemblyConditionalCompSymbols()
 		{
 			MatterControlApplication.AssertDebugNotDefined();
-			MatterHackers.GCodeVisualizer.GCodeFile.AssertDebugNotDefined();
+			GCodeFile.AssertDebugNotDefined();
 			MatterHackers.Agg.Graphics2D.AssertDebugNotDefined();
 			MatterHackers.Agg.UI.SystemWindow.AssertDebugNotDefined();
 			MatterHackers.Agg.ImageProcessing.InvertLightness.AssertDebugNotDefined();

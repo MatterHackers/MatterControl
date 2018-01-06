@@ -1,7 +1,6 @@
-﻿using MatterHackers.GCodeVisualizer;
-using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
+﻿using System;
+using MatterControl.Printing;
 using MatterHackers.VectorMath;
-using System;
 
 namespace MatterHackers.MatterControl
 {

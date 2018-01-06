@@ -27,16 +27,16 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg;
-using MatterHackers.Agg.UI;
-using MatterHackers.GCodeVisualizer;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using MatterControl.Printing;
+using MatterHackers.Agg;
+using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
+using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {

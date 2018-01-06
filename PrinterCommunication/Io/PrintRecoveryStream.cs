@@ -27,11 +27,9 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using MatterHackers.GCodeVisualizer;
+using MatterControl.Printing;
 using MatterHackers.Agg;
 using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.MatterControl.PrinterControls;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io

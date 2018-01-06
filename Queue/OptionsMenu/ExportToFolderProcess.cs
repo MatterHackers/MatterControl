@@ -31,6 +31,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+using MatterControl.Printing;
 using MatterHackers.Agg;
 using MatterHackers.DataConverters3D;
 using MatterHackers.GCodeVisualizer;

@@ -33,7 +33,7 @@ using MatterHackers.VectorMath;
 using System;
 using System.IO;
 
-namespace MatterHackers.GCodeVisualizer
+namespace MatterControl.Printing
 {
 	public class GCodeFileStreamed : GCodeFile
 	{

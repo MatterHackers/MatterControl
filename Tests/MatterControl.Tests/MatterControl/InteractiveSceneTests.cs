@@ -27,14 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System.Collections.Generic;
-using MatterHackers.Agg;
-using MatterHackers.Agg.Platform;
-using MatterHackers.GCodeVisualizer;
-using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
-using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.MatterControl.Tests.Automation;
-using MatterHackers.VectorMath;
 using NUnit.Framework;
 
 namespace MatterControl.Tests.MatterControl

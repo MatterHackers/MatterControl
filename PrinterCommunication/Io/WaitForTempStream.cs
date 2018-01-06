@@ -30,7 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Diagnostics;
 using System.Threading;
-using MatterHackers.GCodeVisualizer;
+using MatterControl.Printing;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
