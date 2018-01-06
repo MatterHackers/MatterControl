@@ -179,7 +179,7 @@ namespace MatterHackers.MatterControl
 				{
 					UiThread.RunOnIdle(() =>
 					{
-						printer.Settings.printer.Connection.Connect(false);
+						printer.Settings.printer.Connection.Connect();
 					}, 2);
 				}
 
