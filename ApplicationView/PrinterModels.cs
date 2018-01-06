@@ -78,6 +78,9 @@ namespace MatterHackers.MatterControl
 
 		public async Task LoadContent(EditContext editContext)
 		{
+			// Make sure we don't have a selection 
+			this.Scene.SelectedItem = null;
+
 			// Store
 			this.EditContext = editContext;
 
