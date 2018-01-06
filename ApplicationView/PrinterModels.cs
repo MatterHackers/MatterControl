@@ -54,6 +54,7 @@ namespace MatterHackers.MatterControl
     using System.Collections.Generic;
     using MatterHackers.MatterControl.PrintLibrary;
 	using MatterHackers.Localizations;
+	using System.Text.RegularExpressions;
 
 	public class BedConfig
 	{
@@ -617,6 +618,10 @@ namespace MatterHackers.MatterControl
 
 	public class PrinterConfig
 	{
+		private static Regex getQuotedParts = new Regex(@"([""'])(\\?.)*?\1", RegexOptions.Compiled);
+		private string constructedReadRegexString;
+		private string readRegexString = "";
+
 		public BedConfig Bed { get; }
 
 		private EventHandler unregisterEvents;
@@ -628,7 +633,62 @@ namespace MatterHackers.MatterControl
 			this.Settings = settings;
 			this.Settings.printer = this;
 
+			// TODO: ActiveSliceSettings is not our Settings! Move SettingsChanged to instance rather than static
 			ActiveSliceSettings.SettingChanged.RegisterEvent(Printer_SettingChanged, ref unregisterEvents);
+
+			this.Connection.PrintFinished.RegisterEvent((s, e) =>
+			{
+				// clear single use setting on print completion
+				foreach (var keyValue in this.Settings.BaseLayer)
+				{
+					string currentValue = this.Settings.GetValue(keyValue.Key);
+
+					bool valueIsClear = currentValue == "0" | currentValue == "";
+
+					SliceSettingData data = SliceSettingsOrganizer.Instance.GetSettingsData(keyValue.Key);
+					if (data?.ResetAtEndOfPrint == true && !valueIsClear)
+					{
+						this.Settings.ClearValue(keyValue.Key);
+					}
+				}
+			}, ref unregisterEvents);
+
+			if (!string.IsNullOrEmpty(this.Settings.GetValue(SettingsKey.baud_rate)))
+			{
+				this.Connection.BaudRate = this.Settings.GetValue<int>(SettingsKey.baud_rate);
+			}
+			this.Connection.ConnectGCode = this.Settings.GetValue(SettingsKey.connect_gcode);
+			this.Connection.CancelGCode = this.Settings.GetValue(SettingsKey.cancel_gcode);
+			this.Connection.EnableNetworkPrinting = this.Settings.GetValue<bool>(SettingsKey.enable_network_printing);
+			this.Connection.AutoReleaseMotors = this.Settings.GetValue<bool>(SettingsKey.auto_release_motors);
+			this.Connection.RecoveryIsEnabled = this.Settings.GetValue<bool>(SettingsKey.recover_is_enabled);
+			this.Connection.ExtruderCount = this.Settings.GetValue<int>(SettingsKey.extruder_count);
+			this.Connection.SendWithChecksum = this.Settings.GetValue<bool>(SettingsKey.send_with_checksum);
+
+			this.ConstructReadReplacements();
+		}
+
+		private void ConstructReadReplacements()
+		{
+			string readRegex = this.Settings.GetValue(SettingsKey.read_regex);
+
+			if (this.constructedReadRegexString != readRegex)
+			{
+				this.constructedReadRegexString = readRegex;
+
+				this.Connection.ReadLineReplacements.Clear();
+
+				foreach (string regExLine in readRegex.Split(new string[] { "\\n" }, StringSplitOptions.RemoveEmptyEntries))
+				{
+					var matches = getQuotedParts.Matches(regExLine);
+					if (matches.Count == 2)
+					{
+						var search = matches[0].Value.Substring(1, matches[0].Value.Length - 2);
+						var replace = matches[1].Value.Substring(1, matches[1].Value.Length - 2);
+						this.Connection.ReadLineReplacements.Add((new Regex(search, RegexOptions.Compiled), replace));
+					}
+				}
+			}
 		}
 
 		public PrinterViewState ViewState { get; } = new PrinterViewState();
@@ -747,6 +807,49 @@ namespace MatterHackers.MatterControl
 				{
 					this.ReloadSettings();
 					this.Bed.InvalidateBedMesh();
+				}
+
+				// Sync settings changes to printer connection
+				switch(stringEvent.Data)
+				{
+					case SettingsKey.feedrate_ratio:
+						this.Connection.FeedRateRatio = this.Settings.GetValue<double>(SettingsKey.feedrate_ratio);
+						break;
+
+					case SettingsKey.baud_rate:
+						if (!string.IsNullOrEmpty(this.Settings.GetValue(SettingsKey.baud_rate)))
+						{
+							this.Connection.BaudRate = this.Settings.GetValue<int>(SettingsKey.baud_rate);
+						}
+						break;
+
+					case SettingsKey.connect_gcode:
+						this.Connection.ConnectGCode = this.Settings.GetValue(SettingsKey.connect_gcode);
+						break;
+
+					case SettingsKey.cancel_gcode:
+						this.Connection.CancelGCode = this.Settings.GetValue(SettingsKey.cancel_gcode);
+						break;
+
+					case SettingsKey.enable_network_printing:
+						this.Connection.EnableNetworkPrinting = this.Settings.GetValue<bool>(SettingsKey.enable_network_printing);
+						break;
+
+					case SettingsKey.auto_release_motors:
+						this.Connection.AutoReleaseMotors = this.Settings.GetValue<bool>(SettingsKey.auto_release_motors);
+						break;
+
+					case SettingsKey.recover_is_enabled:
+						this.Connection.RecoveryIsEnabled = this.Settings.GetValue<bool>(SettingsKey.recover_is_enabled);
+						break;
+
+					case SettingsKey.extruder_count:
+						this.Connection.ExtruderCount = this.Settings.GetValue<int>(SettingsKey.extruder_count);
+						break;
+
+					case SettingsKey.send_with_checksum:
+						this.Connection.SendWithChecksum = this.Settings.GetValue<bool>(SettingsKey.send_with_checksum);
+						break;
 				}
 			}
 		}

@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -42,7 +42,6 @@ using MatterControl.Printing;
 using MatterHackers.Agg;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
-using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.SerialPortCommunication;
 using MatterHackers.SerialPortCommunication.FrostedSerial;
 using MatterHackers.VectorMath;
@@ -249,8 +248,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private EventHandler unregisterEvents;
 
-		private double feedRateRatio = 1;
-
 		public PrinterConnection(PrinterConfig printer)
 		{
 			this.printer = printer;
@@ -272,7 +269,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 			ReadLineStartCallBacks.AddCallbackToKey("B:", ReadTemperatures); // smoothie
 			ReadLineContainsCallBacks.AddCallbackToKey("T0:", ReadTemperatures); // marlin
-			ReadLineContainsCallBacks.AddCallbackToKey("T:", ReadTemperatures); // repatier
+			ReadLineContainsCallBacks.AddCallbackToKey("T:", ReadTemperatures); // repetier
 
 			ReadLineStartCallBacks.AddCallbackToKey("SD printing byte", ReadSdProgress); // repetier
 
@@ -328,15 +325,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			WriteLineStartCallBacks.AddCallbackToKey("M140", BedTemperatureWasWritenToPrinter);
 			WriteLineStartCallBacks.AddCallbackToKey("M190", BedTemperatureWasWritenToPrinter);
 			WriteLineStartCallBacks.AddCallbackToKey("T", ExtruderIndexSet);
-
-			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
-			{
-				var eventArgs = e as StringEventArgs;
-				if (eventArgs?.Data == SettingsKey.feedrate_ratio)
-				{
-					feedRateRatio = this.printer.Settings.GetValue<double>(SettingsKey.feedrate_ratio);
-				}
-			}, ref unregisterEvents);
 		}
 
 		private void ExtruderIndexSet(object sender, EventArgs e)
@@ -361,27 +349,29 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		public int BaudRate
-		{
-			get
-			{
-				int baudRate = 250000;
-				if (this.printer.Settings != null)
-				{
-					try
-					{
-						if (!string.IsNullOrEmpty(printer.Settings.GetValue(SettingsKey.baud_rate)))
-						{
-							baudRate = Convert.ToInt32(printer.Settings.GetValue(SettingsKey.baud_rate));
-						}
-					}
-					catch
-					{
-					}
-				}
-				return baudRate;
-			}
-		}
+		// PrinterSettings/Options {{
+
+		public int BaudRate { get; set; } = 250000;
+
+		public double FeedRateRatio { get; set; } = 1;
+
+		public string ConnectGCode { get; set; } = "";
+
+		public string CancelGCode { get; set; } = "";
+
+		public int ExtruderCount { get; set; }
+
+		public bool SendWithChecksum { get; set; }
+
+		public bool EnableNetworkPrinting { get; set; }
+
+		public bool AutoReleaseMotors { get; set; }
+
+		public bool RecoveryIsEnabled { get; set; }
+
+		public List<(Regex Regex, string Replacement)> ReadLineReplacements { get; set; } = new List<(Regex Regex, string Replacement)>();
+
+		// PrinterSettings/Options }}
 
 		private bool communicationPossible = false;
 
@@ -473,19 +463,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 									communicationState = value;
 									timeSinceStartedPrint.Stop();
 									PrintFinished.CallEvents(this, new NamedItemEventArgs(printer.Bed.EditContext.SourceItem.Name));
-
-									// clear single use setting on print completion
-									foreach (var keyValue in printer.Settings.BaseLayer)
-									{
-										string currentValue = printer.Settings.GetValue(keyValue.Key);
-
-										bool valueIsClear = currentValue == "0" | currentValue == "";
-										SliceSettingData data = SliceSettingsOrganizer.Instance.GetSettingsData(keyValue.Key);
-										if (data?.ResetAtEndOfPrint == true && !valueIsClear)
-										{
-											printer.Settings.ClearValue(keyValue.Key);
-										}
-									}
 								}
 								else
 								{
@@ -799,9 +776,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			{
 				if (gCodeFileStream0?.GCodeFile?.LineCount > 0)
 				{
-					if (feedRateRatio != 0)
+					if (this.FeedRateRatio != 0)
 					{
-						return (int)(gCodeFileStream0.GCodeFile.TotalSecondsInPrint / feedRateRatio);
+						return (int)(gCodeFileStream0.GCodeFile.TotalSecondsInPrint / this.FeedRateRatio);
 					}
 
 					return (int)(gCodeFileStream0.GCodeFile.TotalSecondsInPrint);
@@ -813,6 +790,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		// HACK: PrinterConnection must be revised to take a constructor that receives and stores a reference to its parent PrinterConfig - this 
 		private PrinterConfig printer { get; set; }
+		public string ReadRegex { get; private set; }
 
 		public void ReleaseAndReportFailedConnection(ConnectionFailure reason, string details = null)
 		{
@@ -855,9 +833,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public void Connect()
 		{
+
 			// TODO: Consider adding any conditions that would results in a connection failure to this initial test
 			// Start the process of requesting permission and exit if permission is not currently granted
-			if (!printer.Settings.GetValue<bool>(SettingsKey.enable_network_printing)
+			if (!this.EnableNetworkPrinting
 				&& !FrostedSerialPort.EnsureDeviceAccess())
 			{
 				// TODO: Consider calling OnConnectionFailed as we do below to fire events that indicate connection failed
@@ -981,8 +960,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 										TurnOffBedAndExtruders(); // make sure our ui and the printer agree and that the printer is in a known state (not heating).
 										haveReportedError = false;
 
-										QueueLine(
-											printer.Settings.GetValue(SettingsKey.connect_gcode));
+										QueueLine(this.ConnectGCode);
 
 										// Call global event
 										AnyConnectionSucceeded.CallEvents(this, null);
@@ -1300,7 +1278,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				{
 					if (currentLineIndexToSend == allCheckSumLinesSent.Count)
 					{
-						// asking for the next line don't do anything, conitue with sending next instruction
+						// asking for the next line don't do anything, continue with sending next instruction
 						return;
 					}
 					// smoothie sends an N before the number and no ok
@@ -1313,7 +1291,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 				if (currentLineIndexToSend == allCheckSumLinesSent.Count)
 				{
-					// asking for the next line don't do anything, conitue with sending next instruction
+					// asking for the next line don't do anything, continue with sending next instruction
 					return;
 				}
 
@@ -1712,7 +1690,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		public void ReleaseMotors(bool forceRelease = false)
 		{
 			if (forceRelease
-				|| this.printer.Settings.GetValue<bool>(SettingsKey.auto_release_motors))
+				|| this.AutoReleaseMotors)
 			{
 				QueueLine("M84");
 			}
@@ -1828,32 +1806,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		}
 
 		#region ProcessRead
-		private static Regex getQuotedParts = new Regex(@"([""'])(\\?.)*?\1", RegexOptions.Compiled);
-		private string readRegexString = "";
-		private List<(Regex Regex, string Replacement)> ReadLineReplacements = new List<(Regex Regex, string Replacement)>();
+
 		private List<string> addedReadLines = new List<string>();
 
 		private string ProcessReadRegEx(string lineBeingRead)
 		{
-			if (readRegexString != printer.Settings.GetValue(SettingsKey.read_regex))
-			{
-				ReadLineReplacements.Clear();
-				string splitString = "\\n";
-				readRegexString = printer.Settings.GetValue(SettingsKey.read_regex);
-				foreach (string regExLine in readRegexString.Split(new string[] { splitString }, StringSplitOptions.RemoveEmptyEntries))
-				{
-					var matches = getQuotedParts.Matches(regExLine);
-					if (matches.Count == 2)
-					{
-						var search = matches[0].Value.Substring(1, matches[0].Value.Length - 2);
-						var replace = matches[1].Value.Substring(1, matches[1].Value.Length - 2);
-						ReadLineReplacements.Add((new Regex(search, RegexOptions.Compiled), replace));
-					}
-				}
-			}
-
 			var addedLines = new List<string>();
-			foreach (var item in ReadLineReplacements)
+			foreach (var item in this.ReadLineReplacements)
 			{
 				var splitReplacement = item.Replacement.Split(',');
 				if (splitReplacement.Length > 0)
@@ -2020,13 +1979,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			lock (locker)
 			{
+
 				// get rid of all the gcode we have left to print
 				ClearQueuedGCode();
-				string cancelGCode = printer.Settings.GetValue(SettingsKey.cancel_gcode);
-				if (cancelGCode.Trim() != "")
+
+				if (!string.IsNullOrEmpty(this.CancelGCode))
 				{
 					// add any gcode we want to print while canceling
-					QueueLine(cancelGCode);
+					QueueLine(this.CancelGCode);
 				}
 				// let the process know we canceled not ended normally.
 				this.PrintWasCanceled = true;
@@ -2149,7 +2109,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			{
 				gCodeFileStream0 = new GCodeFileStream(GCodeFile.Load(gcodeFilename, CancellationToken.None));
 
-				if (printer.Settings.GetValue<bool>(SettingsKey.recover_is_enabled)
+				if (this.RecoveryIsEnabled
 					&& activePrintTask != null) // We are resuming a failed print (do lots of interesting stuff).
 				{
 					pauseHandlingStream1 = new PauseHandlingStream(printer, new PrintRecoveryStream(printer, gCodeFileStream0, activePrintTask.PercentDone));
@@ -2202,7 +2162,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private void LoadGCodeToPrint(string gcodeFilename)
 		{
-			CreateStreamProcessors(gcodeFilename, printer.Settings.GetValue<bool>(SettingsKey.recover_is_enabled));
+			CreateStreamProcessors(gcodeFilename, this.RecoveryIsEnabled);
 		}
 
 		private void DoneLoadingGCodeToPrint()
@@ -2308,7 +2268,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private bool IsNetworkPrinting()
 		{
-			return printer.Settings.GetValue<bool>(SettingsKey.enable_network_printing);
+			return this.EnableNetworkPrinting;
 		}
 
 		private void OnAtxPowerStateChanged(bool enableAtxPower)
@@ -2485,7 +2445,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private void TurnOffBedAndExtruders()
 		{
-			for (int i = 0; i < printer.Settings.GetValue<int>(SettingsKey.extruder_count); i++)
+			for (int i = 0; i < this.ExtruderCount; i++)
 			{
 				SetTargetHotendTemperature(i, 0, true);
 			}
@@ -2501,7 +2461,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 			KeepTrackOfAbsolutePostionAndDestination(lineToWrite);
 
-			if (this.printer.Settings.GetValue<bool>(SettingsKey.send_with_checksum))
+			if (this.SendWithChecksum)
 			{
 				// always send the reset line number without a checksum so that it is accepted
 				string lineWithCount;
