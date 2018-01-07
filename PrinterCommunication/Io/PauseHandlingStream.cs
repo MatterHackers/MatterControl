@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			: base(internalStream)
 		{
 			this.printer = printer;
-			printer.Connection.ReadLine.RegisterEvent((s, e) =>
+			printer.Connection.LineReceived.RegisterEvent((s, e) =>
 			{
 				StringEventArgs currentEvent = e as StringEventArgs;
 				if (currentEvent != null)

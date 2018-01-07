@@ -117,9 +117,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public RootedObjectEventHandler PrintingStateChanged = new RootedObjectEventHandler();
 
-		public RootedObjectEventHandler ReadLine = new RootedObjectEventHandler();
+		public RootedObjectEventHandler LineReceived = new RootedObjectEventHandler();
 
-		public RootedObjectEventHandler WroteLine = new RootedObjectEventHandler();
+		public RootedObjectEventHandler LineSent = new RootedObjectEventHandler();
 
 		public bool WatingForPositionRead
 		{
@@ -1508,7 +1508,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 										if (foundResponse.SendToDelegateFunctions)
 										{
-											ReadLine.CallEvents(this, currentEvent);
+											LineReceived.CallEvents(this, currentEvent);
 										}
 									}
 								}
@@ -2573,7 +2573,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 							if (foundStringEvent.SendToDelegateFunctions)
 							{
-								WroteLine.CallEvents(this, currentEvent);
+								LineSent.CallEvents(this, currentEvent);
 							}
 						}
 					}

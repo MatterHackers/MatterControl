@@ -41,20 +41,19 @@ using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl
 {
+	using System.Collections.Generic;
 	using System.Threading;
 	using MatterHackers.Agg;
 	using MatterHackers.DataConverters3D;
 	using MatterHackers.GCodeVisualizer;
+	using MatterHackers.Localizations;
 	using MatterHackers.MatterControl.Library;
+	using MatterHackers.MatterControl.PartPreviewWindow;
 	using MatterHackers.MatterControl.PrinterCommunication;
+	using MatterHackers.MatterControl.PrintLibrary;
 	using MatterHackers.MeshVisualizer;
 	using MatterHackers.PolygonMesh;
 	using MatterHackers.VectorMath;
-	using MatterHackers.MatterControl.PartPreviewWindow;
-    using System.Collections.Generic;
-    using MatterHackers.MatterControl.PrintLibrary;
-	using MatterHackers.Localizations;
-	using System.Text.RegularExpressions;
 
 	public class BedConfig
 	{
