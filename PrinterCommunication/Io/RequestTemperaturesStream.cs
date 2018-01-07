@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		public override string ReadLine()
 		{
-			if (!printerConnection.WatingForPositionRead
+			if (!printerConnection.WaitingForPositionRead
 				&& nextReadTimeMs < UiThread.CurrentTimerMs
 				&& printerConnection.PrinterIsConnected)
 			{

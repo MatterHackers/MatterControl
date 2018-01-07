@@ -121,7 +121,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public RootedObjectEventHandler LineSent = new RootedObjectEventHandler();
 
-		public bool WatingForPositionRead
+		public bool WaitingForPositionRead
 		{
 			get
 			{
