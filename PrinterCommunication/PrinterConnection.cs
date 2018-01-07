@@ -146,11 +146,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private const int MAX_INVALID_CONNECTION_CHARS = 3;
 
-		private static PrinterConnection globalInstance;
-
 		private object locker = new object();
-
-		private readonly int JoinThreadTimeoutMs = 5000;
 
 		private PrintTask activePrintTask;
 
@@ -174,11 +170,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private double currentSdBytes = 0;
 
-		private PrinterMachineInstruction.MovementTypes extruderMode = PrinterMachineInstruction.MovementTypes.Absolute;
-
 		private double fanSpeed;
-
-		private bool firmwareUriGcodeSend = false;
 
 		private int currentLineIndexToSend = 0;
 
@@ -283,7 +275,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			ReadLineContainsCallBacks.AddCallbackToKey("Resend:", PrinterRequestsResend);
 
 			ReadLineContainsCallBacks.AddCallbackToKey("FIRMWARE_NAME:", PrinterStatesFirmware);
-			ReadLineStartCallBacks.AddCallbackToKey("EXTENSIONS:", PrinterStatesExtensions);
 
 			#region hardware failure callbacks
 
@@ -316,8 +307,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			WriteLineStartCallBacks.AddCallbackToKey("G91", MovementWasSetToRelativeMode);
 			WriteLineStartCallBacks.AddCallbackToKey("M80", AtxPowerUpWasWritenToPrinter);
 			WriteLineStartCallBacks.AddCallbackToKey("M81", AtxPowerDownWasWritenToPrinter);
-			WriteLineStartCallBacks.AddCallbackToKey("M82", (s, e) => extruderMode = PrinterMachineInstruction.MovementTypes.Absolute);
-			WriteLineStartCallBacks.AddCallbackToKey("M83", (s, e) => extruderMode = PrinterMachineInstruction.MovementTypes.Relative);
 			WriteLineStartCallBacks.AddCallbackToKey("M104", HotendTemperatureWasWritenToPrinter);
 			WriteLineStartCallBacks.AddCallbackToKey("M106", FanSpeedWasWritenToPrinter);
 			WriteLineStartCallBacks.AddCallbackToKey("M107", FanOffWasWritenToPrinter);
@@ -874,7 +863,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			//Attempt connecting to a specific printer
 			this.stopTryingToConnect = false;
 			this.FirmwareType = FirmwareTypes.Unknown;
-			firmwareUriGcodeSend = false;
 
 			// On Android, there will never be more than one serial port available for us to connect to. Override the current .ComPort value to account for
 			// this aspect to ensure the validation logic that verifies port availability/in use status can proceed without additional workarounds for Android
@@ -1344,18 +1332,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				if (foundStringEventArgs != null)
 				{
 					ErrorReported.CallEvents(null, foundStringEventArgs);
-				}
-			}
-		}
-
-		public void PrinterStatesExtensions(object sender, EventArgs e)
-		{
-			FoundStringEventArgs foundStringEventArgs = e as FoundStringEventArgs;
-			if (foundStringEventArgs != null)
-			{
-				if (foundStringEventArgs.LineToCheck.Contains("URI_GCODE_SEND"))
-				{
-					firmwareUriGcodeSend = true;
 				}
 			}
 		}
@@ -2220,8 +2196,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				default:
 #if DEBUG
 					throw new Exception("We are not preparing to print so we should not be starting to print");
-					//#else
-					CommunicationState = CommunicationStates.Connected;
 #endif
 					break;
 			}
