@@ -34,29 +34,19 @@ namespace MatterHackers.SerialPortCommunication
 {
 	public class FoundStringEventArgs : EventArgs
 	{
-		public bool CallbackWasCalled { get; set; }
-
-		private bool sendToDelegateFunctions = true;
-		private string lineToCheck;
-
 		public FoundStringEventArgs(string lineReceived)
 		{
-			this.lineToCheck = lineReceived.Trim();
+			this.LineToCheck = lineReceived.Trim();
 		}
 
-		public string LineToCheck { get { return lineToCheck; } }
+		public bool CallbackWasCalled { get; set; }
 
-		public bool SendToDelegateFunctions
-		{
-			get
-			{
-				return sendToDelegateFunctions;
-			}
-			set
-			{
-				sendToDelegateFunctions = value;
-			}
-		}
+		public string LineToCheck { get; }
+
+		/// <summary>
+		/// Used to conditionally invoke LineSent/LineReceived events. Setting to false suppresses notification, hiding lines from listeners
+		/// </summary>
+		public bool AllowListenerNotification { get; set; }
 	}
 
 	public class FoundStringCallbacks

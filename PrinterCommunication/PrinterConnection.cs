@@ -117,11 +117,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public RootedObjectEventHandler PrintingStateChanged = new RootedObjectEventHandler();
 
-		public RootedObjectEventHandler ReadLine = new RootedObjectEventHandler();
+		public RootedObjectEventHandler LineReceived = new RootedObjectEventHandler();
 
-		public RootedObjectEventHandler WroteLine = new RootedObjectEventHandler();
+		public RootedObjectEventHandler LineSent = new RootedObjectEventHandler();
 
-		public bool WatingForPositionRead
+		public bool WaitingForPositionRead
 		{
 			get
 			{
@@ -146,11 +146,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private const int MAX_INVALID_CONNECTION_CHARS = 3;
 
-		private static PrinterConnection globalInstance;
-
 		private object locker = new object();
-
-		private readonly int JoinThreadTimeoutMs = 5000;
 
 		private PrintTask activePrintTask;
 
@@ -174,11 +170,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private double currentSdBytes = 0;
 
-		private PrinterMachineInstruction.MovementTypes extruderMode = PrinterMachineInstruction.MovementTypes.Absolute;
-
 		private double fanSpeed;
-
-		private bool firmwareUriGcodeSend = false;
 
 		private int currentLineIndexToSend = 0;
 
@@ -256,7 +248,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 			MonitorPrinterTemperature = true;
 
-			StringComparer stringComparer = StringComparer.OrdinalIgnoreCase;
 			ReadLineStartCallBacks.AddCallbackToKey("start", FoundStart);
 			ReadLineStartCallBacks.AddCallbackToKey("start", PrintingCanContinue);
 
@@ -283,7 +274,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			ReadLineContainsCallBacks.AddCallbackToKey("Resend:", PrinterRequestsResend);
 
 			ReadLineContainsCallBacks.AddCallbackToKey("FIRMWARE_NAME:", PrinterStatesFirmware);
-			ReadLineStartCallBacks.AddCallbackToKey("EXTENSIONS:", PrinterStatesExtensions);
 
 			#region hardware failure callbacks
 
@@ -316,8 +306,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			WriteLineStartCallBacks.AddCallbackToKey("G91", MovementWasSetToRelativeMode);
 			WriteLineStartCallBacks.AddCallbackToKey("M80", AtxPowerUpWasWritenToPrinter);
 			WriteLineStartCallBacks.AddCallbackToKey("M81", AtxPowerDownWasWritenToPrinter);
-			WriteLineStartCallBacks.AddCallbackToKey("M82", ExtruderWasSetToAbsoluteMode);
-			WriteLineStartCallBacks.AddCallbackToKey("M83", ExtruderWasSetToRelativeMode);
 			WriteLineStartCallBacks.AddCallbackToKey("M104", HotendTemperatureWasWritenToPrinter);
 			WriteLineStartCallBacks.AddCallbackToKey("M106", FanSpeedWasWritenToPrinter);
 			WriteLineStartCallBacks.AddCallbackToKey("M107", FanOffWasWritenToPrinter);
@@ -874,7 +862,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			//Attempt connecting to a specific printer
 			this.stopTryingToConnect = false;
 			this.FirmwareType = FirmwareTypes.Unknown;
-			firmwareUriGcodeSend = false;
 
 			// On Android, there will never be more than one serial port available for us to connect to. Override the current .ComPort value to account for
 			// this aspect to ensure the validation logic that verifies port availability/in use status can proceed without additional workarounds for Android
@@ -1152,8 +1139,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public void FoundStart(object sender, EventArgs e)
 		{
-			FoundStringEventArgs foundStringEventArgs = e as FoundStringEventArgs;
-			foundStringEventArgs.SendToDelegateFunctions = false;
+			(e as FoundStringEventArgs).AllowListenerNotification = false;
 		}
 
 		public double GetActualHotendTemperature(int hotendIndex0Based)
@@ -1348,18 +1334,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		public void PrinterStatesExtensions(object sender, EventArgs e)
-		{
-			FoundStringEventArgs foundStringEventArgs = e as FoundStringEventArgs;
-			if (foundStringEventArgs != null)
-			{
-				if (foundStringEventArgs.LineToCheck.Contains("URI_GCODE_SEND"))
-				{
-					firmwareUriGcodeSend = true;
-				}
-			}
-		}
-
 		public void PrinterStatesFirmware(object sender, EventArgs e)
 		{
 			FoundStringEventArgs foundStringEventArgs = e as FoundStringEventArgs;
@@ -1506,9 +1480,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 										ReadLineStartCallBacks.CheckForKeys(foundResponse);
 										ReadLineContainsCallBacks.CheckForKeys(foundResponse);
 
-										if (foundResponse.SendToDelegateFunctions)
+										if (foundResponse.AllowListenerNotification)
 										{
-											ReadLine.CallEvents(this, currentEvent);
+											LineReceived.CallEvents(this, currentEvent);
 										}
 									}
 								}
@@ -2049,12 +2023,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public void SuppressEcho(object sender, EventArgs e)
 		{
-			FoundStringEventArgs foundStringEventArgs = e as FoundStringEventArgs;
-			foundStringEventArgs.SendToDelegateFunctions = false;
+			(e as FoundStringEventArgs).AllowListenerNotification = false;
 		}
-
-		[DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-		internal static extern SafeFileHandle CreateFile(string lpFileName, int dwDesiredAccess, int dwShareMode, IntPtr securityAttrs, int dwCreationDisposition, int dwFlagsAndAttributes, IntPtr hTemplateFile);
 
 		private void ClearQueuedGCode()
 		{
@@ -2072,16 +2042,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			TurnOffBedAndExtruders();
 
 			ReleaseMotors();
-		}
-
-		private void ExtruderWasSetToAbsoluteMode(object sender, EventArgs e)
-		{
-			extruderMode = PrinterMachineInstruction.MovementTypes.Absolute;
-		}
-
-		private void ExtruderWasSetToRelativeMode(object sender, EventArgs e)
-		{
-			extruderMode = PrinterMachineInstruction.MovementTypes.Relative;
 		}
 
 		private void FileDeleteConfirmed(object sender, EventArgs e)
@@ -2230,8 +2190,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				default:
 #if DEBUG
 					throw new Exception("We are not preparing to print so we should not be starting to print");
-					//#else
-					CommunicationState = CommunicationStates.Connected;
 #endif
 					break;
 			}
@@ -2571,9 +2529,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 							WriteLineStartCallBacks.CheckForKeys(foundStringEvent);
 							WriteLineContainsCallBacks.CheckForKeys(foundStringEvent);
 
-							if (foundStringEvent.SendToDelegateFunctions)
+							if (foundStringEvent.AllowListenerNotification)
 							{
-								WroteLine.CallEvents(this, currentEvent);
+								LineSent.CallEvents(this, currentEvent);
 							}
 						}
 					}

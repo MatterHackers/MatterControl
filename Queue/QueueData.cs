@@ -138,7 +138,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 				|| ApplicationController.Instance.ActivePrinter.Connection.PrinterIsPaused))
 			{
 				gotBeginFileList = false;
-				ApplicationController.Instance.ActivePrinter.Connection.ReadLine.RegisterEvent(GetSdCardList, ref unregisterEvents);
+				ApplicationController.Instance.ActivePrinter.Connection.LineReceived.RegisterEvent(GetSdCardList, ref unregisterEvents);
 				StringBuilder commands = new StringBuilder();
 				commands.AppendLine("M21"); // Init SD card
 				commands.AppendLine("M20"); // List SD card
@@ -192,7 +192,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 							break;
 
 						case "End file list":
-							ApplicationController.Instance.ActivePrinter.Connection.ReadLine.UnregisterEvent(GetSdCardList, ref unregisterEvents);
+							ApplicationController.Instance.ActivePrinter.Connection.LineReceived.UnregisterEvent(GetSdCardList, ref unregisterEvents);
 							break;
 					}
 				}

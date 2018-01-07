@@ -239,14 +239,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public override void PageIsBecomingActive()
 		{
 			// first make sure there is no leftover FinishedProbe event
-			printer.Connection.ReadLine.UnregisterEvent(FinishedProbe, ref unregisterEvents);
+			printer.Connection.LineReceived.UnregisterEvent(FinishedProbe, ref unregisterEvents);
 
 			var feedRates = printer.Settings.Helpers.ManualMovementSpeeds();
 
 			printer.Connection.MoveAbsolute(PrinterConnection.Axis.Z, probeStartPosition.Z, feedRates.Z);
 			printer.Connection.MoveAbsolute(probeStartPosition, feedRates.X);
 			printer.Connection.QueueLine("G30");
-			printer.Connection.ReadLine.RegisterEvent(FinishedProbe, ref unregisterEvents);
+			printer.Connection.LineReceived.RegisterEvent(FinishedProbe, ref unregisterEvents);
 
 			base.PageIsBecomingActive();
 
@@ -261,7 +261,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			{
 				if (currentEvent.Data.Contains("endstops hit"))
 				{
-					printer.Connection.ReadLine.UnregisterEvent(FinishedProbe, ref unregisterEvents);
+					printer.Connection.LineReceived.UnregisterEvent(FinishedProbe, ref unregisterEvents);
 					int zStringPos = currentEvent.Data.LastIndexOf("Z:");
 					string zProbeHeight = currentEvent.Data.Substring(zStringPos + 2);
 					probePosition.position = new Vector3(probeStartPosition.X, probeStartPosition.Y, double.Parse(zProbeHeight));
@@ -578,13 +578,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				&& !(printer.Connection.PrinterIsPrinting
 				|| printer.Connection.PrinterIsPaused))
 			{
-				printer.Connection.ReadLine.RegisterEvent(GetZProbeHeight, ref unregisterEvents);
+				printer.Connection.LineReceived.RegisterEvent(GetZProbeHeight, ref unregisterEvents);
 			}
 		}
 
 		public override void PageIsBecomingInactive()
 		{
-			printer.Connection.ReadLine.UnregisterEvent(GetZProbeHeight, ref unregisterEvents);
+			printer.Connection.LineReceived.UnregisterEvent(GetZProbeHeight, ref unregisterEvents);
 			base.PageIsBecomingInactive();
 		}
 	}

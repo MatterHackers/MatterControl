@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				contentRow.AddChild(materialSelector);
 			}
 
-			printer.Connection.WroteLine.RegisterEvent(LookForTempRequest, ref unregisterEvents);
+			printer.Connection.LineSent.RegisterEvent(LookForTempRequest, ref unregisterEvents);
 
 			if (macroData.waitOk | macroData.expireTime > 0)
 			{

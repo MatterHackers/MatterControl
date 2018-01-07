@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl.Library
 			{
 				autoResetEvent = new AutoResetEvent(false);
 
-				printer.Connection.ReadLine.RegisterEvent(Printer_LineRead, ref unregisterEvents);
+				printer.Connection.LineReceived.RegisterEvent(Printer_LineRead, ref unregisterEvents);
 
 				gotBeginFileList = false;
 				printer.Connection.QueueLine("M21\r\nM20");
@@ -99,7 +99,7 @@ namespace MatterHackers.MatterControl.Library
 							break;
 
 						case "End file list":
-							printer.Connection.ReadLine.UnregisterEvent(Printer_LineRead, ref unregisterEvents);
+							printer.Connection.LineReceived.UnregisterEvent(Printer_LineRead, ref unregisterEvents);
 
 							// Release the Load WaitOne
 							autoResetEvent.Set();
@@ -128,7 +128,7 @@ namespace MatterHackers.MatterControl.Library
 		public override void Dispose()
 		{
 			// In case "End file list" is never received
-			printer.Connection.ReadLine.UnregisterEvent(Printer_LineRead, ref unregisterEvents);
+			printer.Connection.LineReceived.UnregisterEvent(Printer_LineRead, ref unregisterEvents);
 
 			// Release the Load WaitOne
 			autoResetEvent?.Set();
