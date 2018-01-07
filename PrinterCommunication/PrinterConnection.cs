@@ -316,8 +316,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			WriteLineStartCallBacks.AddCallbackToKey("G91", MovementWasSetToRelativeMode);
 			WriteLineStartCallBacks.AddCallbackToKey("M80", AtxPowerUpWasWritenToPrinter);
 			WriteLineStartCallBacks.AddCallbackToKey("M81", AtxPowerDownWasWritenToPrinter);
-			WriteLineStartCallBacks.AddCallbackToKey("M82", ExtruderWasSetToAbsoluteMode);
-			WriteLineStartCallBacks.AddCallbackToKey("M83", ExtruderWasSetToRelativeMode);
+			WriteLineStartCallBacks.AddCallbackToKey("M82", (s, e) => extruderMode = PrinterMachineInstruction.MovementTypes.Absolute);
+			WriteLineStartCallBacks.AddCallbackToKey("M83", (s, e) => extruderMode = PrinterMachineInstruction.MovementTypes.Relative);
 			WriteLineStartCallBacks.AddCallbackToKey("M104", HotendTemperatureWasWritenToPrinter);
 			WriteLineStartCallBacks.AddCallbackToKey("M106", FanSpeedWasWritenToPrinter);
 			WriteLineStartCallBacks.AddCallbackToKey("M107", FanOffWasWritenToPrinter);
@@ -2072,16 +2072,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			TurnOffBedAndExtruders();
 
 			ReleaseMotors();
-		}
-
-		private void ExtruderWasSetToAbsoluteMode(object sender, EventArgs e)
-		{
-			extruderMode = PrinterMachineInstruction.MovementTypes.Absolute;
-		}
-
-		private void ExtruderWasSetToRelativeMode(object sender, EventArgs e)
-		{
-			extruderMode = PrinterMachineInstruction.MovementTypes.Relative;
 		}
 
 		private void FileDeleteConfirmed(object sender, EventArgs e)
