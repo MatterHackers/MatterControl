@@ -27,9 +27,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				{
 					Assert.IsTrue(ProfileManager.Instance.ActiveProfile != null);
 
-					testRunner.SwitchToPrinterSettings();
-					testRunner.ClickByName("G-Code Tab");
-					testRunner.ClickByName("End G-Code Field");
+					testRunner.SelectSliceSettingsField("Printer", "end_gcode");
+
 					testRunner.Type("^a");
 					testRunner.Type("{BACKSPACE}");
 					testRunner.Type("G28");

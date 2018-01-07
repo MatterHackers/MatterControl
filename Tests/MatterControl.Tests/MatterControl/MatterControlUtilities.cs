@@ -738,6 +738,23 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.ClickByName("Printer Tab");
 		}
 
+		public static void SelectSliceSettingsField(this AutomationRunner testRunner, string userLevel, string slicerConfigName)
+		{
+			var rootLevel = SliceSettingsOrganizer.Instance.UserLevels[userLevel];
+
+			var settingData = SliceSettingsOrganizer.Instance.GetSettingsData(slicerConfigName);
+
+			var subGroup = rootLevel.GetContainerForSetting(slicerConfigName);
+
+			var category = subGroup.OrganizerGroup.OrganizerCategory;
+
+			// Click tab
+			testRunner.ClickByName(category.Name + " Tab");
+
+			// Click field
+			testRunner.ClickByName($"{settingData.PresentationName} Field");
+		}
+
 		/// <summary>
 		/// Switch to Printer -> Controls
 		/// </summary>
