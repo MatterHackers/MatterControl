@@ -248,7 +248,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 			MonitorPrinterTemperature = true;
 
-			StringComparer stringComparer = StringComparer.OrdinalIgnoreCase;
 			ReadLineStartCallBacks.AddCallbackToKey("start", FoundStart);
 			ReadLineStartCallBacks.AddCallbackToKey("start", PrintingCanContinue);
 
@@ -1140,8 +1139,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public void FoundStart(object sender, EventArgs e)
 		{
-			FoundStringEventArgs foundStringEventArgs = e as FoundStringEventArgs;
-			foundStringEventArgs.SendToDelegateFunctions = false;
+			(e as FoundStringEventArgs).AllowListenerNotification = false;
 		}
 
 		public double GetActualHotendTemperature(int hotendIndex0Based)
@@ -1482,7 +1480,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 										ReadLineStartCallBacks.CheckForKeys(foundResponse);
 										ReadLineContainsCallBacks.CheckForKeys(foundResponse);
 
-										if (foundResponse.SendToDelegateFunctions)
+										if (foundResponse.AllowListenerNotification)
 										{
 											LineReceived.CallEvents(this, currentEvent);
 										}
@@ -2025,12 +2023,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public void SuppressEcho(object sender, EventArgs e)
 		{
-			FoundStringEventArgs foundStringEventArgs = e as FoundStringEventArgs;
-			foundStringEventArgs.SendToDelegateFunctions = false;
+			(e as FoundStringEventArgs).AllowListenerNotification = false;
 		}
-
-		[DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-		internal static extern SafeFileHandle CreateFile(string lpFileName, int dwDesiredAccess, int dwShareMode, IntPtr securityAttrs, int dwCreationDisposition, int dwFlagsAndAttributes, IntPtr hTemplateFile);
 
 		private void ClearQueuedGCode()
 		{
@@ -2535,7 +2529,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 							WriteLineStartCallBacks.CheckForKeys(foundStringEvent);
 							WriteLineContainsCallBacks.CheckForKeys(foundStringEvent);
 
-							if (foundStringEvent.SendToDelegateFunctions)
+							if (foundStringEvent.AllowListenerNotification)
 							{
 								LineSent.CallEvents(this, currentEvent);
 							}

@@ -43,7 +43,10 @@ namespace MatterHackers.SerialPortCommunication
 
 		public string LineToCheck { get; }
 
-		public bool SendToDelegateFunctions { get; set; }
+		/// <summary>
+		/// Used to conditionally invoke LineSent/LineReceived events. Setting to false suppresses notification, hiding lines from listeners
+		/// </summary>
+		public bool AllowListenerNotification { get; set; }
 	}
 
 	public class FoundStringCallbacks
