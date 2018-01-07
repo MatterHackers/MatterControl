@@ -369,7 +369,34 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public bool RecoveryIsEnabled { get; set; }
 
-		public List<(Regex Regex, string Replacement)> ReadLineReplacements { get; set; } = new List<(Regex Regex, string Replacement)>();
+		private List<(Regex Regex, string Replacement)> readLineReplacements = new List<(Regex Regex, string Replacement)>();
+
+		private string _readLineReplacementString = "";
+		public string ReadLineReplacementString
+		{
+			get => _readLineReplacementString;
+			set
+			{
+				if (value != _readLineReplacementString)
+				{
+					_readLineReplacementString = value;
+
+					// Clear and rebuild the replacement list
+					readLineReplacements.Clear();
+
+					foreach (string regExLine in _readLineReplacementString.Split(new string[] { "\\n" }, StringSplitOptions.RemoveEmptyEntries))
+					{
+						var matches = getQuotedParts.Matches(regExLine);
+						if (matches.Count == 2)
+						{
+							var search = matches[0].Value.Substring(1, matches[0].Value.Length - 2);
+							var replace = matches[1].Value.Substring(1, matches[1].Value.Length - 2);
+							readLineReplacements.Add((new Regex(search, RegexOptions.Compiled), replace));
+						}
+					}
+				}
+			}
+		}
 
 		// PrinterSettings/Options }}
 
@@ -790,7 +817,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		// HACK: PrinterConnection must be revised to take a constructor that receives and stores a reference to its parent PrinterConfig - this 
 		private PrinterConfig printer { get; set; }
-		public string ReadRegex { get; private set; }
 
 		public void ReleaseAndReportFailedConnection(ConnectionFailure reason, string details = null)
 		{
@@ -1806,13 +1832,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		}
 
 		#region ProcessRead
-
+		private static Regex getQuotedParts = new Regex(@"([""'])(\\?.)*?\1", RegexOptions.Compiled);
 		private List<string> addedReadLines = new List<string>();
 
 		private string ProcessReadRegEx(string lineBeingRead)
 		{
 			var addedLines = new List<string>();
-			foreach (var item in this.ReadLineReplacements)
+			foreach (var item in readLineReplacements)
 			{
 				var splitReplacement = item.Replacement.Split(',');
 				if (splitReplacement.Length > 0)

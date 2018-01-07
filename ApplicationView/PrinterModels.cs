@@ -618,10 +618,6 @@ namespace MatterHackers.MatterControl
 
 	public class PrinterConfig
 	{
-		private static Regex getQuotedParts = new Regex(@"([""'])(\\?.)*?\1", RegexOptions.Compiled);
-		private string constructedReadRegexString;
-		private string readRegexString = "";
-
 		public BedConfig Bed { get; }
 
 		private EventHandler unregisterEvents;
@@ -664,32 +660,10 @@ namespace MatterHackers.MatterControl
 			this.Connection.RecoveryIsEnabled = this.Settings.GetValue<bool>(SettingsKey.recover_is_enabled);
 			this.Connection.ExtruderCount = this.Settings.GetValue<int>(SettingsKey.extruder_count);
 			this.Connection.SendWithChecksum = this.Settings.GetValue<bool>(SettingsKey.send_with_checksum);
-
-			this.ConstructReadReplacements();
+			this.Connection.ReadLineReplacementString = this.Settings.GetValue(SettingsKey.read_regex);
 		}
 
-		private void ConstructReadReplacements()
-		{
-			string readRegex = this.Settings.GetValue(SettingsKey.read_regex);
-
-			if (this.constructedReadRegexString != readRegex)
-			{
-				this.constructedReadRegexString = readRegex;
-
-				this.Connection.ReadLineReplacements.Clear();
-
-				foreach (string regExLine in readRegex.Split(new string[] { "\\n" }, StringSplitOptions.RemoveEmptyEntries))
-				{
-					var matches = getQuotedParts.Matches(regExLine);
-					if (matches.Count == 2)
-					{
-						var search = matches[0].Value.Substring(1, matches[0].Value.Length - 2);
-						var replace = matches[1].Value.Substring(1, matches[1].Value.Length - 2);
-						this.Connection.ReadLineReplacements.Add((new Regex(search, RegexOptions.Compiled), replace));
-					}
-				}
-			}
-		}
+		
 
 		public PrinterViewState ViewState { get; } = new PrinterViewState();
 
@@ -849,6 +823,10 @@ namespace MatterHackers.MatterControl
 
 					case SettingsKey.send_with_checksum:
 						this.Connection.SendWithChecksum = this.Settings.GetValue<bool>(SettingsKey.send_with_checksum);
+						break;
+
+					case SettingsKey.read_regex:
+						this.Connection.ReadLineReplacementString = this.Settings.GetValue(SettingsKey.read_regex);
 						break;
 				}
 			}
