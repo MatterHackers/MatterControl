@@ -162,19 +162,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			};
 		}
 
-		private static void FindWidestTabAndSetAllMinimumSize(List<TabBar> sideTabBarsListForLayout)
-		{
-			double sideTabBarsMinimumWidth = 0;
-			foreach (TabBar tabBar in sideTabBarsListForLayout)
-			{
-				sideTabBarsMinimumWidth = Math.Max(sideTabBarsMinimumWidth, tabBar.Width);
-			}
-			foreach (TabBar tabBar in sideTabBarsListForLayout)
-			{
-				tabBar.MinimumSize = new Vector2(sideTabBarsMinimumWidth, tabBar.MinimumSize.Y);
-			}
-		}
-
 		public string UserLevel { get; } = "Advanced";
 
 		// TODO: This should just proxy to settingsControlBar.Visible. Having local state and pushing values on event listeners seems off
