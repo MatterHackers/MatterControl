@@ -26,8 +26,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.AddItemToBedplate("", "Row Item Rook");
 
 				testRunner.SwitchToSliceSettings();
-				testRunner.ClickByName("Raft / Skirt / Brim Tab");
-				testRunner.ClickByName("Create Raft Field");
+				testRunner.SelectSliceSettingsField("Advanced", "create_raft");
 
 				testRunner.StartSlicing();
 				testRunner.WaitFor(() => MatterControlUtilities.CompareExpectedSliceSettingValueWithActualVaue("enableRaft", "True"), 10);
@@ -302,8 +301,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// Navigate to Local Library 
 				testRunner.SwitchToSliceSettings();
 
-				testRunner.ClickByName("General Tab");
-				testRunner.ClickByName("Layers / Surface Tab");
+				// Navigate to General Tab -> Layers / Surface Tab
+				testRunner.SelectSliceSettingsField("Advanced", "layer_height");
 				Assert.AreEqual(0, layerHeightChangedCount, "No change to layer height yet.");
 
 				testRunner.ClickByName("Quality");
@@ -390,11 +389,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// Navigate to Settings Tab and make sure Bed Temp Text box is visible 
 				testRunner.SwitchToSliceSettings();
 
-				testRunner.ClickByName("Filament Tab");
-				testRunner.ClickByName("Temperatures Tab");
-
-				testRunner.ClickByName("Extruder Temperature Field"); 
-				testRunner.ClickByName("Bed Temperature Field");
+				testRunner.SelectSliceSettingsField("Advanced", "bed_temperature");
+				testRunner.SelectSliceSettingsField("Advanced", "temperature");
 
 				// Uncheck Has Heated Bed checkbox and make sure Bed Temp Textbox is not visible
 				testRunner.SwitchToPrinterSettings();
@@ -408,7 +404,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Has Heated Bed Field");
 				testRunner.Delay(.5);
 
-				testRunner.ClickByName("Filament Tab");
+				testRunner.SwitchToSliceSettings();
+				testRunner.SelectSliceSettingsField("Advanced", "temperature");
 				Assert.IsFalse(testRunner.WaitForName("Bed Temperature Textbox", .5), "Filament -> Bed Temp should not be visible after Heated Bed unchecked");
 
 				// Make sure Bed Temperature Options are not visible in printer controls
@@ -433,11 +430,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				var printer = ApplicationController.Instance.ActivePrinter;
 
-				testRunner.ClickByName("Layer Thickness Field");
+				testRunner.SelectSliceSettingsField("Advanced", "layer_height");
 				testRunner.Type(".5");
 
 				// Force lose focus
-				testRunner.ClickByName("First Layer Thickness Field");
+				testRunner.SelectSliceSettingsField("Advanced", "first_layer_height");
 
 				testRunner.WaitFor(() => printer.Settings.GetValue<double>(SettingsKey.layer_height) == 0.5);
 				Assert.AreEqual(printer.Settings.GetValue<double>(SettingsKey.layer_height).ToString(), "0.5", "Layer height is what we set it to");

@@ -78,6 +78,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public bool ReloadUiWhenChanged { get; set; } = false;
 
+		public OrganizerSubGroup OrganizerSubGroup { get; set; }
+
 		public SliceSettingData(string slicerConfigName, string presentationName, DataEditTypes dataEditType, string extraSettings = "", string helpText = "")
 		{
 			// During deserialization Json.net has to call this constructor but may fail to find the optional ExtraSettings
@@ -97,22 +99,30 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public List<SliceSettingData> SettingDataList { get; private set; } = new List<SliceSettingData>();
 
-		public OrganizerSubGroup(string groupName)
+		public OrganizerSubGroup(string groupName, OrganizerGroup organizerGroup)
 		{
 			this.Name = groupName;
+			this.OrganizerGroup = organizerGroup;
 		}
+
+		public OrganizerGroup OrganizerGroup { get; }
 	}
 
 	public class OrganizerGroup
 	{
 		public string Name { get; }
 
+
 		public List<OrganizerSubGroup> SubGroupsList { get; set; } = new List<OrganizerSubGroup>();
 
-		public OrganizerGroup(string displayName)
+		public OrganizerGroup(string displayName, OrganizerCategory organizerCategory)
 		{
 			this.Name = displayName;
+			this.OrganizerCategory = organizerCategory;
 		}
+
+		public OrganizerCategory OrganizerCategory { get; }
+
 	}
 
 	public class OrganizerCategory
@@ -121,10 +131,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public List<OrganizerGroup> GroupsList { get; set; } = new List<OrganizerGroup>();
 
-		public OrganizerCategory(string categoryName)
+		public OrganizerCategory(string categoryName, OrganizerUserLevel organizerUserLevel)
 		{
 			this.Name = categoryName;
+			this.OrganizerUserLevel = organizerUserLevel;
 		}
+
+		private OrganizerUserLevel OrganizerUserLevel { get; }
 	}
 
 	public class OrganizerUserLevel
@@ -133,16 +146,26 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public List<OrganizerCategory> CategoriesList = new List<OrganizerCategory>();
 
+		private Dictionary<string, OrganizerSubGroup> mappedSettings = new Dictionary<string, OrganizerSubGroup>();
+
 		public OrganizerUserLevel(string userLevelName)
 		{
 			this.Name = userLevelName;
+		}
+
+		internal void AddSetting(string slicerConfigName, OrganizerSubGroup organizerSubGroup)
+		{
+			mappedSettings.Add(slicerConfigName, organizerSubGroup);
+		}
+
+		public OrganizerSubGroup GetContainerForSetting(string slicerConfigName)
+		{
+			return mappedSettings[slicerConfigName];
 		}
 	}
 
 	public class SliceSettingsOrganizer
 	{
-		private static Dictionary<string, string> defaultSettings = null;
-
 		public Dictionary<string, OrganizerUserLevel> UserLevels { get; set; } = new Dictionary<string, OrganizerUserLevel>();
 
 		private static SliceSettingsOrganizer instance = null;
@@ -241,17 +264,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							break;
 
 						case 2:
-							categoryToAddTo = new OrganizerCategory(sanitizedLine);
+							categoryToAddTo = new OrganizerCategory(sanitizedLine, userLevelToAddTo);
 							userLevelToAddTo.CategoriesList.Add(categoryToAddTo);
 							break;
 
 						case 4:
-							groupToAddTo = new OrganizerGroup(sanitizedLine);
+							groupToAddTo = new OrganizerGroup(sanitizedLine, categoryToAddTo);
 							categoryToAddTo.GroupsList.Add(groupToAddTo);
 							break;
 
 						case 6:
-							subGroupToAddTo = new OrganizerSubGroup(sanitizedLine);
+							subGroupToAddTo = new OrganizerSubGroup(sanitizedLine, groupToAddTo);
 							groupToAddTo.SubGroupsList.Add(subGroupToAddTo);
 							break;
 
@@ -260,6 +283,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							if (data != null)
 							{
 								subGroupToAddTo.SettingDataList.Add(data);
+								data.OrganizerSubGroup = subGroupToAddTo;
+								userLevelToAddTo.AddSetting(data.SlicerConfigName, subGroupToAddTo);
 							}
 
 							break;

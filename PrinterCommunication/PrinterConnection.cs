@@ -546,10 +546,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				if (gCodeFileStream0 != null)
 				{
 					int instructionIndex = gCodeFileStream0.LineIndex - backupAmount;
-					return gCodeFileStream0?.GCodeFile?.GetLayerIndex(instructionIndex) ?? 0;
+					return gCodeFileStream0?.GCodeFile?.GetLayerIndex(instructionIndex) ?? -1;
 				}
 
-				return 0;
+				return -1;
 			}
 		}
 
@@ -2112,6 +2112,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 			else
 			{
+				gCodeFileStream0 = null;
 				firstStream = new NotPrintingStream();
 			}
 

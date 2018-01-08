@@ -123,7 +123,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				primaryTabControl.AddTab(new TextTab(
 					categoryPage,
 					category.Name + " Tab",
-					theme.DefaultFontSize,
+					theme.FontSize11, // TODO: Short term workaround for tests until new tabs and overflow menu come in
 					ActiveTheme.Instance.TabLabelSelected,
 					new Color(),
 					ActiveTheme.Instance.TabLabelUnselected,
@@ -160,19 +160,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					UserSettings.Instance.set(UserSettingsKey.SliceSettingsWidget_CurrentTab, primaryTabControl.TabBar.SelectedTabName);
 				}
 			};
-		}
-
-		private static void FindWidestTabAndSetAllMinimumSize(List<TabBar> sideTabBarsListForLayout)
-		{
-			double sideTabBarsMinimumWidth = 0;
-			foreach (TabBar tabBar in sideTabBarsListForLayout)
-			{
-				sideTabBarsMinimumWidth = Math.Max(sideTabBarsMinimumWidth, tabBar.Width);
-			}
-			foreach (TabBar tabBar in sideTabBarsListForLayout)
-			{
-				tabBar.MinimumSize = new Vector2(sideTabBarsMinimumWidth, tabBar.MinimumSize.Y);
-			}
 		}
 
 		public string UserLevel { get; } = "Advanced";

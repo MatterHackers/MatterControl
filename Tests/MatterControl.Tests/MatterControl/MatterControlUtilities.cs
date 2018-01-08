@@ -162,7 +162,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public static void CloseSignInAndPrinterSelect(this AutomationRunner testRunner, PrepAction preAction = PrepAction.CloseSignInAndPrinterSelect)
 		{
 			SystemWindow systemWindow;
-			testRunner.GetWidgetByName("View3DWidget", out systemWindow);
+			testRunner.GetWidgetByName("View3DWidget", out systemWindow, 10);
 			// make sure we wait for MC to be up and running
 			testRunner.WaitforDraw(systemWindow);
 
@@ -722,6 +722,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public static void SwitchToSliceSettings(this AutomationRunner testRunner)
 		{
 			EnsurePrinterSidebarOpen(testRunner);
+
+			testRunner.ClickByName("Slice Settings Tab");
 			testRunner.ClickByName("General Tab");
 		}
 
@@ -736,6 +738,23 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.ClickByName("Printer Overflow Menu");
 			testRunner.ClickByName("Configure Printer Menu Item");
 			testRunner.ClickByName("Printer Tab");
+		}
+
+		public static void SelectSliceSettingsField(this AutomationRunner testRunner, string userLevel, string slicerConfigName)
+		{
+			var rootLevel = SliceSettingsOrganizer.Instance.UserLevels[userLevel];
+
+			var settingData = SliceSettingsOrganizer.Instance.GetSettingsData(slicerConfigName);
+
+			var subGroup = rootLevel.GetContainerForSetting(slicerConfigName);
+
+			var category = subGroup.OrganizerGroup.OrganizerCategory;
+
+			// Click tab
+			testRunner.ClickByName(category.Name + " Tab");
+
+			// Click field
+			testRunner.ClickByName($"{settingData.PresentationName} Field");
 		}
 
 		/// <summary>
@@ -757,6 +776,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Slice Settings Sidebar");
 				testRunner.ClickByName("Pin Settings Button");
 			}
+
+
 		}
 
 		/// <summary>
