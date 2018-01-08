@@ -48,7 +48,19 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.WaitFor(() => ApplicationController.Instance.ActivePrinter.Connection.ActualBedTemperature <= 10);
 					Assert.Less(ApplicationController.Instance.ActivePrinter.Connection.ActualBedTemperature, 10);
 
-					// Validate that the bottom controls have been re-enabled
+					// Make sure we can run this whole thing again
+					testRunner.StartPrint();
+
+					// Wait for print to finish
+					testRunner.WaitForPrintFinished();
+
+					// Wait for expected temp
+					testRunner.WaitFor(() => ApplicationController.Instance.ActivePrinter.Connection.GetActualHotendTemperature(0) <= 0);
+					Assert.Less(ApplicationController.Instance.ActivePrinter.Connection.GetActualHotendTemperature(0), 30);
+
+					// Wait for expected temp
+					testRunner.WaitFor(() => ApplicationController.Instance.ActivePrinter.Connection.ActualBedTemperature <= 10);
+					Assert.Less(ApplicationController.Instance.ActivePrinter.Connection.ActualBedTemperature, 10);
 				}
 
 				return Task.CompletedTask;
