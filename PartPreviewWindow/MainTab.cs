@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public GuiWidget TabContent { get; protected set; }
 
-		public SimpleTab(string tabLabel, SimpleTabs parentTabControl, GuiWidget tabContent, ThemeConfig theme, string tabImageUrl = null, bool hasClose = true, double pointSize = 12)
+		public SimpleTab(string tabLabel, SimpleTabs parentTabControl, GuiWidget tabContent, ThemeConfig theme, string tabImageUrl = null, bool hasClose = true, double pointSize = 12, ImageBuffer iconImage = null)
 		{
 			this.HAnchor = HAnchor.Fit;
 			this.VAnchor = VAnchor.Fit | VAnchor.Bottom;
@@ -60,11 +60,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.TabContent = tabContent;
 			this.parentTabControl = parentTabControl;
 
-			this.AddChild(
-				tabPill = new TabPill(tabLabel, ActiveTheme.Instance.PrimaryTextColor, tabImageUrl, pointSize)
-				{
-					Margin = (hasClose) ? new BorderDouble(right: 16) : 0
-				});
+			if (iconImage != null)
+			{
+				tabPill = new TabPill(tabLabel, ActiveTheme.Instance.PrimaryTextColor, iconImage, pointSize);
+			}
+			else
+			{
+				tabPill = new TabPill(tabLabel, ActiveTheme.Instance.PrimaryTextColor, tabImageUrl, pointSize);
+			}
+			tabPill.Margin = (hasClose) ? new BorderDouble(right: 16) : 0;
+
+			this.AddChild(tabPill);
 
 			if (hasClose)
 			{
@@ -89,28 +95,37 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		protected class TabPill : FlowLayoutWidget
 		{
 			private TextWidget label;
+			private ImageWidget imageWidget;
 
 			public TabPill(string tabTitle, Color textColor, string imageUrl = null, double pointSize = 12)
+				: this (tabTitle, textColor, string.IsNullOrEmpty(imageUrl) ? null : new ImageBuffer(16, 16), pointSize)
+			{
+				if (imageWidget != null
+					&& !string.IsNullOrEmpty(imageUrl))
+				{
+					try
+					{
+						// TODO: Use caching
+						// Attempt to load image
+						ApplicationController.Instance.DownloadToImageAsync(imageWidget.Image, imageUrl, false);
+					}
+					catch { }
+				}
+			}
+
+			public TabPill(string tabTitle, Color textColor, ImageBuffer imageBuffer = null, double pointSize = 12)
 			{
 				this.Selectable = false;
 				this.Padding = new BorderDouble(10, 5, 10, 4);
 
-				if (!string.IsNullOrEmpty(imageUrl))
+				if (imageBuffer != null)
 				{
-					var imageWidget = new ImageWidget(new ImageBuffer(16, 16))
+					imageWidget = new ImageWidget(imageBuffer)
 					{
 						Margin = new BorderDouble(right: 6, bottom: 2),
 						VAnchor = VAnchor.Center
 					};
 					this.AddChild(imageWidget);
-
-					// Attempt to load image
-					try
-					{
-						// TODO: Must use caching
-						ApplicationController.Instance.DownloadToImageAsync(imageWidget.Image, imageUrl, false);
-					}
-					catch { }
 				}
 
 				label = new TextWidget(tabTitle, pointSize: pointSize)
@@ -170,6 +185,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		public ChromeTab(string tabLabel, SimpleTabs parentTabControl, GuiWidget tabContent, ThemeConfig theme, string tabImageUrl = null)
 			: base (tabLabel, parentTabControl, tabContent, theme, tabImageUrl)
+		{
+		}
+
+		public ChromeTab(string tabLabel, SimpleTabs parentTabControl, GuiWidget tabContent, ThemeConfig theme, ImageBuffer imageBuffer)
+			: base(tabLabel, parentTabControl, tabContent, theme, iconImage: imageBuffer)
 		{
 		}
 
