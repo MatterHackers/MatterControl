@@ -287,12 +287,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.WaitForName("Connect to printer button", 10);
 					testRunner.ClickByName("Connect to printer button");
 
+					testRunner.WaitFor(() => ApplicationController.Instance.ActivePrinter.Connection.CommunicationState == CommunicationStates.Connected);
+
 					// Assert that recovery happens
 
 					// Recover the print
 					ClickDialogButton(testRunner, "Yes Button", -1);
 
-					// The first pause that we get affter recovery should be layer 6.
+					// The first pause that we get after recovery should be layer 6.
 					// wait for the pause and continue
 					ClickDialogButton(testRunner, "No Button", 6);
 
