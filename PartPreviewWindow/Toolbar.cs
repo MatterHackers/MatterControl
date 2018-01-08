@@ -108,6 +108,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public IEnumerable<ITab> AllTabs => _allTabs;
 
+		public int TabCount => _allTabs.Count;
+
 		public void AddTab(GuiWidget tabWidget, int position)
 		{
 			var iTab = tabWidget as ITab;
@@ -124,6 +126,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private void TabWidget_Click(object sender, MouseEventArgs e)
 		{
 			this.ActiveTab = sender as ITab;
+			//this.SelectedTabIndex = this.Children.IndexOf(sender as GuiWidget);
+		}
+
+		public int SelectedTabIndex
+		{
+			get => _allTabs.IndexOf(this.ActiveTab);
+			set
+			{
+				this.ActiveTab = _allTabs[value];
+			}
 		}
 
 		internal void RemoveTab(ITab tab)
@@ -179,8 +191,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			leadingTabAdornment.AfterDraw += (s, e) =>
 			{
-				var firstItem = this.AllTabs.OfType<MainTab>().FirstOrDefault();
-				MainTab.DrawTabLowerRight(e.graphics2D, leadingTabAdornment.LocalBounds, (firstItem == this.ActiveTab) ? theme.ActiveTabColor : theme.InactiveTabColor);
+				var firstItem = this.AllTabs.OfType<ChromeTab>().FirstOrDefault();
+				ChromeTab.DrawTabLowerRight(e.graphics2D, leadingTabAdornment.LocalBounds, (firstItem == this.ActiveTab) ? theme.ActiveTabColor : theme.InactiveTabColor);
 			};
 			this.TabBar.ActionArea.AddChild(leadingTabAdornment);
 
@@ -197,7 +209,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			plusTabButton.IconButton.Click += (s, e) =>
 			{
 				this.AddTab(
-					new MainTab("New Tab".Localize(), this, this.NewTabPage(), theme)
+					new ChromeTab("New Tab".Localize(), this, this.NewTabPage(), theme)
 					{
 						MinimumSize = new Vector2(0, theme.shortButtonHeight)
 					});
@@ -210,9 +222,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			var position = this.TabBar.ActionArea.GetChildIndex(plusTabButton);
 
-			if (tab is MainTab mainTab)
+			if (tab is ChromeTab mainTab)
 			{
-				mainTab.PreviousTab = this.AllTabs.OfType<MainTab>().LastOrDefault();
+				mainTab.PreviousTab = this.AllTabs.OfType<ChromeTab>().LastOrDefault();
 				if (mainTab.PreviousTab != null)
 				{
 					mainTab.PreviousTab.NextTab = mainTab;

@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public class PartPreviewContent : FlowLayoutWidget
 	{
 		private EventHandler unregisterEvents;
-		private MainTab printerTab = null;
+		private ChromeTab printerTab = null;
 		private ChromeTabs tabControl;
 
 		public PartPreviewContent()
@@ -168,7 +168,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (false && AppContext.IsLoading)
 			{
 				tabControl.AddTab(
-					new MainTab("New Tab".Localize(), tabControl, tabControl.NewTabPage(), theme)
+					new ChromeTab("New Tab".Localize(), tabControl, tabControl.NewTabPage(), theme)
 					{
 						MinimumSize = new Vector2(0, theme.shortButtonHeight)
 					});
@@ -183,13 +183,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}, ref unregisterEvents);
 		}
 
-		private MainTab CreatePrinterTab(PrinterConfig printer, ThemeConfig theme, string tabTitle)
+		private ChromeTab CreatePrinterTab(PrinterConfig printer, ThemeConfig theme, string tabTitle)
 		{
 			string oemName = printer.Settings.GetValue(SettingsKey.make);
 
 			OemSettings.Instance.OemUrls.TryGetValue(oemName, out string oemUrl);
 
-			return new MainTab(
+			return new ChromeTab(
 				tabTitle,
 				tabControl,
 				new PrinterTabPage(printer, theme, tabTitle.ToUpper()),
@@ -201,9 +201,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 		}
 
-		public MainTab CreatePartTab(string tabTitle, BedConfig sceneContext, ThemeConfig theme)
+		public ChromeTab CreatePartTab(string tabTitle, BedConfig sceneContext, ThemeConfig theme)
 		{
-			var partTab = new MainTab(
+			var partTab = new ChromeTab(
 				tabTitle,
 				tabControl,
 				new PartTabPage(null, sceneContext, theme, "xxxxx"),

@@ -37,13 +37,19 @@ using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class MainTab : GuiWidget, ITab
+	public class SimpleTab : GuiWidget, ITab
 	{
 		public event EventHandler CloseClicked;
 
-		private SimpleTabs parentTabControl;
+		protected SimpleTabs parentTabControl;
 
-		public MainTab(string tabLabel, SimpleTabs parentTabControl, GuiWidget tabContent, ThemeConfig theme, string tabImageUrl = null)
+		protected ThemeConfig theme;
+
+		protected TabPill tabPill;
+
+		public GuiWidget TabContent { get; protected set; }
+
+		public SimpleTab(string tabLabel, SimpleTabs parentTabControl, GuiWidget tabContent, ThemeConfig theme, string tabImageUrl = null, bool hasClose = true, double pointSize = 12)
 		{
 			this.HAnchor = HAnchor.Fit;
 			this.VAnchor = VAnchor.Fit | VAnchor.Bottom;
@@ -55,44 +61,119 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.parentTabControl = parentTabControl;
 
 			this.AddChild(
-				new TabPill(tabLabel, ActiveTheme.Instance.PrimaryTextColor, tabImageUrl)
+				tabPill = new TabPill(tabLabel, ActiveTheme.Instance.PrimaryTextColor, tabImageUrl, pointSize)
 				{
-					Margin = new BorderDouble(right: 16)
+					Margin = (hasClose) ? new BorderDouble(right: 16) : 0
 				});
 
-			var closeButton = ApplicationController.Instance.Theme.CreateSmallResetButton();
-			closeButton.HAnchor = HAnchor.Right;
-			closeButton.Margin = new BorderDouble(right: 7, top: 1);
-			closeButton.Name = "Close Tab Button";
-			closeButton.ToolTipText = "Close".Localize();
-			closeButton.Click += (sender, e) =>
+			if (hasClose)
 			{
-				UiThread.RunOnIdle(() =>
+				var closeButton = ApplicationController.Instance.Theme.CreateSmallResetButton();
+				closeButton.HAnchor = HAnchor.Right;
+				closeButton.Margin = new BorderDouble(right: 7, top: 1);
+				closeButton.Name = "Close Tab Button";
+				closeButton.ToolTipText = "Close".Localize();
+				closeButton.Click += (sender, e) =>
 				{
-					this.parentTabControl.RemoveTab(this);
-					this.CloseClicked?.Invoke(this, null);
-				});
-			};
+					UiThread.RunOnIdle(() =>
+					{
+						this.parentTabControl.RemoveTab(this);
+						this.CloseClicked?.Invoke(this, null);
+					});
+				};
 
-			this.AddChild(closeButton);
+				this.AddChild(closeButton);
+			}
 		}
 
-		private ThemeConfig theme;
+		protected class TabPill : FlowLayoutWidget
+		{
+			private TextWidget label;
 
-		public GuiWidget TabContent { get; }
+			public TabPill(string tabTitle, Color textColor, string imageUrl = null, double pointSize = 12)
+			{
+				this.Selectable = false;
+				this.Padding = new BorderDouble(10, 5, 10, 4);
+
+				if (!string.IsNullOrEmpty(imageUrl))
+				{
+					var imageWidget = new ImageWidget(new ImageBuffer(16, 16))
+					{
+						Margin = new BorderDouble(right: 6, bottom: 2),
+						VAnchor = VAnchor.Center
+					};
+					this.AddChild(imageWidget);
+
+					// Attempt to load image
+					try
+					{
+						// TODO: Must use caching
+						ApplicationController.Instance.DownloadToImageAsync(imageWidget.Image, imageUrl, false);
+					}
+					catch { }
+				}
+
+				label = new TextWidget(tabTitle, pointSize: pointSize)
+				{
+					TextColor = textColor,
+					VAnchor = VAnchor.Center
+				};
+				this.AddChild(label);
+			}
+
+			public Color TextColor
+			{
+				get => label.TextColor;
+				set => label.TextColor = value;
+			}
+
+			public override string Text
+			{
+				get => label.Text;
+				set => label.Text = value;
+			}
+		}
+	}
+
+	public class ToolTab : SimpleTab
+	{
+		public Color InactiveTabColor { get; set; }
+		public Color ActiveTabColor { get; set; }
+		public ToolTab(string tabLabel, SimpleTabs parentTabControl, GuiWidget tabContent, ThemeConfig theme, string tabImageUrl = null, bool hasClose = true)
+			: base(tabLabel, parentTabControl, tabContent, theme, tabImageUrl, hasClose, theme.FontSize10)
+		{
+			tabPill.Padding = tabPill.Padding.Clone(top: 9, bottom: 10);
+		}
+
+		public override void OnDraw(Graphics2D graphics2D)
+		{
+			graphics2D.Render(
+				new RoundedRect(this.LocalBounds, 0),
+				(this == parentTabControl.ActiveTab) ? this.ActiveTabColor : this.InactiveTabColor);
+
+			base.OnDraw(graphics2D);
+		}
+	}
+
+	public class ChromeTab : SimpleTab
+	{
+		public ChromeTab(string tabLabel, SimpleTabs parentTabControl, GuiWidget tabContent, ThemeConfig theme, string tabImageUrl = null)
+			: base (tabLabel, parentTabControl, tabContent, theme, tabImageUrl)
+		{
+		}
 
 		private static int tabInsetDistance = 14 / 2;
 
-		internal MainTab NextTab { get; set; }
+		internal ChromeTab NextTab { get; set; }
 
-		internal MainTab PreviousTab { get; set; }
+		internal ChromeTab PreviousTab { get; set; }
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{
 			var rect = LocalBounds;
 			var centerY = rect.YCenter;
 
-			var siblings = this.Parent.Children.OfType<MainTab>().ToList();
+			var siblings = this.Parent.Children.OfType<ChromeTab>().ToList();
 
 			int position = siblings.IndexOf(this);
 
@@ -164,54 +245,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			tabLeft.LineTo(rect.Left, rect.Bottom);
 
 			graphics2D.Render(tabLeft, color);
-		}
-
-		private class TabPill : FlowLayoutWidget
-		{
-			private TextWidget label;
-
-			public TabPill(string tabTitle, Color textColor, string imageUrl = null)
-			{
-				this.Selectable = false;
-				this.Padding = new BorderDouble(10, 5, 10, 4);
-
-				if (!string.IsNullOrEmpty(imageUrl))
-				{
-					var imageWidget = new ImageWidget(new ImageBuffer(16, 16))
-					{
-						Margin = new BorderDouble(right: 6, bottom: 2),
-						VAnchor = VAnchor.Center
-					};
-					this.AddChild(imageWidget);
-
-					// Attempt to load image
-					try
-					{
-						// TODO: Must use caching
-						ApplicationController.Instance.DownloadToImageAsync(imageWidget.Image, imageUrl, false);
-					}
-					catch { }
-				}
-
-				label = new TextWidget(tabTitle)
-				{
-					TextColor = textColor,
-					VAnchor = VAnchor.Center
-				};
-				this.AddChild(label);
-			}
-
-			public Color TextColor
-			{
-				get => label.TextColor;
-				set => label.TextColor = value;
-			}
-
-			public override string Text
-			{
-				get => label.Text;
-				set => label.Text = value;
-			}
 		}
 	}
 }

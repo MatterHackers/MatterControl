@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{
-			MainTab.DrawTabLowerLeft(
+			ChromeTab.DrawTabLowerLeft(
 				graphics2D, 
 				this.LocalBounds, 
 				(parentTabControl.ActiveTab == this.LastTab) ? theme.ActiveTabColor : theme.InactiveTabColor);
