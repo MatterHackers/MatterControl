@@ -59,6 +59,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 			}
 
+			this.ActionArea.Margin = new BorderDouble(right: this.OverflowMenu.Width);
 			this.SetRightAnchorItem(this.OverflowMenu);
 		}
 

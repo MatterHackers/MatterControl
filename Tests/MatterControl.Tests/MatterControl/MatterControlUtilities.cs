@@ -162,7 +162,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public static void CloseSignInAndPrinterSelect(this AutomationRunner testRunner, PrepAction preAction = PrepAction.CloseSignInAndPrinterSelect)
 		{
 			SystemWindow systemWindow;
-			testRunner.GetWidgetByName("View3DWidget", out systemWindow);
+			testRunner.GetWidgetByName("View3DWidget", out systemWindow, 10);
 			// make sure we wait for MC to be up and running
 			testRunner.WaitforDraw(systemWindow);
 
