@@ -301,8 +301,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// Navigate to Local Library 
 				testRunner.SwitchToSliceSettings();
 
-				testRunner.ClickByName("General Tab");
-				testRunner.ClickByName("Layers / Surface Tab");
+				// Navigate to General Tab -> Layers / Surface Tab
+				testRunner.SelectSliceSettingsField("Advanced", "layer_height");
 				Assert.AreEqual(0, layerHeightChangedCount, "No change to layer height yet.");
 
 				testRunner.ClickByName("Quality");
