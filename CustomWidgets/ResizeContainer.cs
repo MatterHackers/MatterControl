@@ -87,8 +87,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				int currentMouseX = (int)TransformToScreenSpace(mouseEvent.Position).X;
 				UiThread.RunOnIdle(() =>
 				{
-					resizeTarget.Width = downWidth + mouseDownX - currentMouseX;
-					Width = resizeTarget.Width;
+					Width = downWidth + mouseDownX - currentMouseX;
 				});
 			}
 			base.OnMouseMove(mouseEvent);

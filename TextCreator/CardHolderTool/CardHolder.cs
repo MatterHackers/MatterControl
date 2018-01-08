@@ -189,7 +189,27 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 			this.Mesh = CsgToMesh.Convert(boxCombine);
 		}
 	}
-	
+
+	public class BadSubtract : MatterCadObject3D
+	{
+		public double Sides { get; set; } = 4;
+
+		public BadSubtract()
+		{
+			RebuildMeshes();
+		}
+
+		public override void RebuildMeshes()
+		{
+			int sides = 3;
+			CsgObject keep = new Cylinder(20, 20, sides);
+			CsgObject subtract = new Cylinder(10, 21, sides);
+			subtract = new SetCenter(subtract, keep.GetCenter());
+			CsgObject result = keep - subtract;
+			this.Mesh = CsgToMesh.Convert(result);
+		}
+	}
+
 	public class CardHolder : MatterCadObject3D
 	{
 		[DisplayName("Name")]
@@ -461,8 +481,8 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 				//chairFootBox.BevelEdge(Edge.RightFront, 2);
 				CsgObject chairFoot = chairFootBox;
 
-				CsgObject ring = new Cylinder(InnerSize / 2 - 1, InsideReach);
-				ring -= new Cylinder(ring.XSize / 2 - 2, ring.ZSize + 1);
+				CsgObject ring = new Cylinder(InnerSize / 2 - 1, InsideReach, 30);
+				ring -= new Cylinder(ring.XSize / 2 - 2, ring.ZSize + 1, 30);
 
 				CsgObject fins = new Box(3, 1, ring.ZSize);
 				fins = new Translate(fins, 0, 1) + new Translate(fins, 0, -1);
@@ -494,8 +514,8 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 				chairFootBox.BevelEdge(Edge.RightFront, 2);
 				CsgObject chairFoot = chairFootBox;
 
-				CsgObject ring = new Cylinder(InnerSize / 2 - 1, insideHeight);
-				ring -= new Cylinder(ring.XSize / 2 - 2, ring.ZSize + 1);
+				CsgObject ring = new Cylinder(InnerSize / 2 - 1, insideHeight, 30);
+				ring -= new Cylinder(ring.XSize / 2 - 2, ring.ZSize + 1, 30);
 
 				CsgObject fins = new Box(3, 1, ring.ZSize);
 				fins = new Translate(fins, 0, 1) + new Translate(fins, 0, -1);

@@ -362,7 +362,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				BackgroundColor = theme.InteractionLayerOverlayColor,
 				VAnchor = VAnchor.Stretch,
-				HAnchor = HAnchor.Left | HAnchor.Fit,
 			};
 
 			selectedObjectContainer = new ResizeContainer(selectedObjectPanel)
