@@ -75,8 +75,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.extruderIndex = extruderIndex;
 			this.layerType = layerType;
 
-			this.HAnchor = HAnchor.MaxFitOrStretch;
-			this.VAnchor = VAnchor.MaxFitOrStretch;
+			this.HAnchor = HAnchor.Stretch;
+			this.VAnchor = VAnchor.Fit;
 			this.BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor;
 
 			GuiWidget accentBar = new GuiWidget(7, 3)

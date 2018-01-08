@@ -432,11 +432,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				var printer = ApplicationController.Instance.ActivePrinter;
 
-				testRunner.ClickByName("Layer Thickness Field");
+				testRunner.SelectSliceSettingsField("Advanced", "layer_height");
 				testRunner.Type(".5");
 
 				// Force lose focus
-				testRunner.ClickByName("First Layer Thickness Field");
+				testRunner.SelectSliceSettingsField("Advanced", "first_layer_height");
 
 				testRunner.WaitFor(() => printer.Settings.GetValue<double>(SettingsKey.layer_height) == 0.5);
 				Assert.AreEqual(printer.Settings.GetValue<double>(SettingsKey.layer_height).ToString(), "0.5", "Layer height is what we set it to");
