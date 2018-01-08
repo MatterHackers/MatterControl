@@ -389,11 +389,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// Navigate to Settings Tab and make sure Bed Temp Text box is visible 
 				testRunner.SwitchToSliceSettings();
 
-				testRunner.ClickByName("Filament Tab");
-				testRunner.ClickByName("Temperatures Tab");
-
-				testRunner.ClickByName("Extruder Temperature Field"); 
-				testRunner.ClickByName("Bed Temperature Field");
+				testRunner.SelectSliceSettingsField("Advanced", "bed_temperature");
+				testRunner.SelectSliceSettingsField("Advanced", "temperature");
 
 				// Uncheck Has Heated Bed checkbox and make sure Bed Temp Textbox is not visible
 				testRunner.SwitchToPrinterSettings();
@@ -407,7 +404,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Has Heated Bed Field");
 				testRunner.Delay(.5);
 
-				testRunner.ClickByName("Filament Tab");
+				testRunner.SwitchToSliceSettings();
+				testRunner.SelectSliceSettingsField("Advanced", "temperature");
 				Assert.IsFalse(testRunner.WaitForName("Bed Temperature Textbox", .5), "Filament -> Bed Temp should not be visible after Heated Bed unchecked");
 
 				// Make sure Bed Temperature Options are not visible in printer controls
