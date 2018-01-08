@@ -64,11 +64,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Stretch,
 				HAnchor = HAnchor.Stretch,
 				BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor,
+				BorderColor = theme.MinimalShade,
+				Border = new BorderDouble(left: 1),
 				NewTabPage = () =>
 				{
 					return new PlusTabPage(this, tabControl, theme);
 				}
 			};
+			tabControl.TabBar.BackgroundColor = theme.ActiveTabBarBackground;
 
 			tabControl.ActiveTabChanged += (s, e) =>
 			{
@@ -84,7 +87,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			tabControl.TabBar.BorderColor = theme.ActiveTabColor;
 			tabControl.TabBar.Padding = new BorderDouble(top: 4);
-			tabControl.TabBar.Border = new BorderDouble(bottom: 2);
+			//tabControl.TabBar.Border = new BorderDouble(bottom: 2);
 
 			Color selectedTabColor = ActiveTheme.Instance.TabLabelSelected;
 
@@ -134,19 +137,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				updateAvailableButton.Visible = UpdateControlData.Instance.UpdateStatus == UpdateControlData.UpdateStatusStates.UpdateAvailable;
 			}, ref unregisterEvents);
-
-			// this causes the update button to be centered
-			//tabControl.TabBar.AddChild(new HorizontalSpacer());
-
-			//rightPanelArea.AddChild(
-			//	new ImageWidget(
-			//		AggContext.StaticData.LoadImage(Path.Combine("Images", "minimize.png")))
-			//	{
-			//		VAnchor = VAnchor.Top,
-			//		DebugShowBounds  = true
-			//	});
-
-			//this.AddChild(tabControl);
 
 			this.AddChild(tabControl);
 

@@ -168,12 +168,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					SplitterWidth = theme.SplitterWidth,
 				};
 
-				tabControl = new SimpleTabs(this.CreatePinButton(), theme)
+				tabControl = new SimpleTabs(this.CreatePinButton())
 				{
 					VAnchor = VAnchor.Stretch,
 					HAnchor = HAnchor.Stretch,
 				};
-				tabControl.TabBar.BackgroundColor = theme.ActiveTabColor.AdjustLightness(0.9).ToColor();
+				tabControl.TabBar.BackgroundColor = theme.ActiveTabBarBackground;
 
 				tabControl.ActiveTabChanged += (s, e) =>
 				{

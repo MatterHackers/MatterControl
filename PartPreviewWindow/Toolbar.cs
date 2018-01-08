@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		public FlowLayoutWidget ActionArea { get; }
 
-		public Toolbar(GuiWidget rightAnchorItem, ThemeConfig theme, bool bottomBorder = true)
+		public Toolbar(GuiWidget rightAnchorItem = null)
 		{
 			this.ActionArea = new FlowLayoutWidget()
 			{
@@ -86,10 +86,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private GuiWidget body;
 
-		public SimpleTabs(GuiWidget rightAnchorItem, ThemeConfig theme, bool bottomBorder = true)
+		public SimpleTabs(GuiWidget rightAnchorItem)
 			: base(FlowDirection.TopToBottom)
 		{
-			this.AddChild(TabBar = new Toolbar(rightAnchorItem, theme, bottomBorder)
+			this.AddChild(TabBar = new Toolbar(rightAnchorItem)
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit
@@ -181,12 +181,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private NewTabButton plusTabButton;
 
 		public ChromeTabs(GuiWidget rightAnchorItem, ThemeConfig theme)
-			: base(rightAnchorItem, theme)
+			: base(rightAnchorItem)
 		{
 			// TODO: add in the printers and designs that are currently open (or were open last run).
 			var leadingTabAdornment = new GuiWidget()
 			{
-				MinimumSize = new VectorMath.Vector2(16, theme.shortButtonHeight),
+				MinimumSize = new Vector2(16, theme.shortButtonHeight),
 				VAnchor = VAnchor.Bottom
 			};
 			leadingTabAdornment.AfterDraw += (s, e) =>

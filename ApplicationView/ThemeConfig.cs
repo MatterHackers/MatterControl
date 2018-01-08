@@ -108,6 +108,7 @@ namespace MatterHackers.MatterControl
 
 		public Color ActiveTabColor { get; set; }
 		public Color InactiveTabColor { get; set; }
+		public Color ActiveTabBarBackground { get; set; }
 
 		public TextImageButtonFactory DisableableControlBase { get; private set; }
 		public TextImageButtonFactory HomingButtons { get; private set; }
@@ -165,13 +166,14 @@ namespace MatterHackers.MatterControl
 			commonOptions.BorderWidth = 0;
 			commonOptions.FixedHeight = 32;
 
-			this.ActiveTabColor = ResolveColor(theme.PrimaryBackgroundColor, new Color(Color.Black, this.SlightShade.alpha));
-
 			this.TabBodyBackground = this.ResolveColor(
 				ActiveTheme.Instance.TertiaryBackgroundColor, 
 				new Color(
 					Color.White, 
 					(ActiveTheme.Instance.IsDarkTheme) ? 3 : 25));
+
+			this.ActiveTabColor = this.TabBodyBackground;
+			this.ActiveTabBarBackground = this.ActiveTabColor.AdjustLightness(0.85).ToColor();
 
 			// Active tab color with slight transparency
 			this.InteractionLayerOverlayColor = new Color(this.ActiveTabColor, 200);

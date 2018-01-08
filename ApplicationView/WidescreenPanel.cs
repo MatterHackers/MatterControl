@@ -73,19 +73,22 @@ namespace MatterHackers.MatterControl
 			var leftNav = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			leftNav.AnchorAll();
 
-			var toolbar = new Toolbar(null, theme)
+			var toolbar = new Toolbar()
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit,
-				MinimumSize = new Vector2(16, 16)
+				MinimumSize = new Vector2(16, 16),
+				BackgroundColor = theme.ActiveTabBarBackground,
+				BorderColor = theme.ActiveTabColor,
+				Border = 0 //new BorderDouble(bottom: 2),
 			};
-			toolbar.BorderColor = ApplicationController.Instance.Theme.SlightShade;
-			toolbar.Border = new BorderDouble(bottom:  2);
 			toolbar.ActionArea.AddChild(new BrandMenuButton(theme)
 			{
-				MinimumSize = new VectorMath.Vector2(0, 34),
+				MinimumSize = new Vector2(0, 34),
 				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit
+				VAnchor = VAnchor.Fit,
+				Border = new BorderDouble(right: 1),
+				BorderColor = theme.MinimalShade
 			});
 			leftNav.AddChild(toolbar);
 

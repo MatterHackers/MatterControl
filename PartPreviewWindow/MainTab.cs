@@ -139,17 +139,28 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		public Color InactiveTabColor { get; set; }
 		public Color ActiveTabColor { get; set; }
+
+		public override Color BorderColor
+		{
+			get =>  (this.IsActiveTab) ? ActiveTheme.Instance.PrimaryAccentColor : base.BorderColor;
+			set => base.BorderColor = value;
+		}
+
 		public ToolTab(string tabLabel, SimpleTabs parentTabControl, GuiWidget tabContent, ThemeConfig theme, string tabImageUrl = null, bool hasClose = true, int pointSize = -1)
 			: base(tabLabel, parentTabControl, tabContent, theme, tabImageUrl, hasClose, pointSize: (pointSize == -1) ? theme.FontSize10 : pointSize)
 		{
-			tabPill.Padding = tabPill.Padding.Clone(top: 9, bottom: 10);
+			this.Border = new BorderDouble(top: 1);
+
+			tabPill.Padding = tabPill.Padding.Clone(top: 8, bottom: 10);
 		}
+
+		private bool IsActiveTab => this == parentTabControl.ActiveTab;
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{
 			graphics2D.Render(
 				new RoundedRect(this.LocalBounds, 0),
-				(this == parentTabControl.ActiveTab) ? this.ActiveTabColor : this.InactiveTabColor);
+				(this.IsActiveTab) ? this.ActiveTabColor : this.InactiveTabColor);
 
 			base.OnDraw(graphics2D);
 		}

@@ -104,14 +104,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			var rightItem = (settingsContext.IsPrimarySettingsView) ? new SliceSettingsOverflowMenu(printer, this) : new GuiWidget();
 
-			primaryTabControl = new SimpleTabs(rightItem, theme)
+			primaryTabControl = new SimpleTabs(rightItem)
 			{
 				Margin = new BorderDouble(top: 8),
 				VAnchor = VAnchor.Stretch,
 				HAnchor = HAnchor.Stretch,
 				MinimumSize = new Vector2(200, 200)
 			};
-			primaryTabControl.TabBar.BackgroundColor = theme.ActiveTabColor.AdjustLightness(0.9).ToColor();
+			primaryTabControl.TabBar.BackgroundColor = theme.ActiveTabBarBackground;
 
 			for (int topCategoryIndex = 0; topCategoryIndex < SliceSettingsOrganizer.Instance.UserLevels[UserLevel].CategoriesList.Count; topCategoryIndex++)
 			{
@@ -148,6 +148,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				&& tabIndex < primaryTabControl.TabCount - 1)
 			{
 				primaryTabControl.SelectedTabIndex = tabIndex;
+			}
+			else
+			{
+				primaryTabControl.SelectedTabIndex = 0;
 			}
 
 			// Store the last selected tab on change

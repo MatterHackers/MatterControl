@@ -38,7 +38,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public class OverflowBar : Toolbar
 	{
 		public OverflowBar(ThemeConfig theme, GuiWidget viewWidget = null)
-			: base(null, theme)
 		{
 			this.Padding = theme.ToolbarPadding.Clone(left: 0);
 
