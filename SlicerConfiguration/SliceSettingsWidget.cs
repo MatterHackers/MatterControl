@@ -123,7 +123,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				primaryTabControl.AddTab(new TextTab(
 					categoryPage,
 					category.Name + " Tab",
-					theme.DefaultFontSize,
+					theme.FontSize11, // TODO: Short term workaround for tests until new tabs and overflow menu come in
 					ActiveTheme.Instance.TabLabelSelected,
 					new Color(),
 					ActiveTheme.Instance.TabLabelUnselected,

@@ -722,6 +722,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public static void SwitchToSliceSettings(this AutomationRunner testRunner)
 		{
 			EnsurePrinterSidebarOpen(testRunner);
+
+			testRunner.ClickByName("Slice Settings Tab");
 			testRunner.ClickByName("General Tab");
 		}
 
@@ -774,6 +776,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Slice Settings Sidebar");
 				testRunner.ClickByName("Pin Settings Button");
 			}
+
+
 		}
 
 		/// <summary>
