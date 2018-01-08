@@ -157,7 +157,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			this.RemoveAllChildren();
 
-			TabControl tabControl = null;
+			SimpleTabs tabControl = null;
 			if (this.ControlIsPinned)
 			{
 				var resizePage = new ResizeContainer(this)
@@ -168,7 +168,18 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					SplitterWidth = theme.SplitterWidth,
 				};
 
-				tabControl = theme.CreateTabControl();
+				tabControl = new SimpleTabs(this.CreatePinButton(), theme)
+				{
+					VAnchor = VAnchor.Stretch,
+					HAnchor = HAnchor.Stretch,
+				};
+				tabControl.TabBar.BackgroundColor = theme.ActiveTabColor.AdjustLightness(0.9).ToColor();
+
+				tabControl.ActiveTabChanged += (s, e) =>
+				{
+					printer.ViewState.SliceSettingsTabIndex = tabControl.SelectedTabIndex;
+				};
+
 				resizePage.AddChild(tabControl);
 
 				this.AddChild(resizePage);
@@ -183,24 +194,19 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				{
 					var content = new DockingWindowContent(this, nameWidget.Value, tabTitle);
 
-					var tabPage = new TabPage(content, tabTitle);
-					var textTab = new TextTab(
-						tabPage,
-						tabTitle + " Tab",
-						12,
-						ActiveTheme.Instance.TabLabelSelected,
-						Color.Transparent,
-						ActiveTheme.Instance.TabLabelUnselected,
-						Color.Transparent,
-						useUnderlineStyling: true);
-
-					tabControl.AddTab(textTab);
-
-					int localTabIndex = tabIndex;
-					textTab.Click += (s, e) =>
-					{
-						printer.ViewState.SliceSettingsTabIndex = localTabIndex;
-					};
+					tabControl.AddTab(
+						new ToolTab(
+							tabTitle,
+							tabControl,
+							content,
+							theme,
+							hasClose: false,
+							pointSize: theme.FontSize11)
+						{
+							Name = tabTitle + " Tab",
+							InactiveTabColor = Color.Transparent,
+							ActiveTabColor = theme.TabBodyBackground
+						});
 				}
 				else // control is floating
 				{
@@ -291,9 +297,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			if (this.ControlIsPinned)
 			{
-				tabControl.TabBar.AddChild(new HorizontalSpacer());
-				tabControl.TabBar.AddChild(this.CreatePinButton());
-
 				tabControl.TabBar.Padding = new BorderDouble(right: theme.ToolbarPadding.Right);
 
 				if (printer.ViewState.SliceSettingsTabIndex < tabControl.TabCount)

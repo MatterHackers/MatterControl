@@ -111,7 +111,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				HAnchor = HAnchor.Stretch,
 				MinimumSize = new Vector2(200, 200)
 			};
-			primaryTabControl.TabBar.BackgroundColor = theme.ActiveTabColor.AdjustLightness(0.85).ToColor();
+			primaryTabControl.TabBar.BackgroundColor = theme.ActiveTabColor.AdjustLightness(0.9).ToColor();
 
 			for (int topCategoryIndex = 0; topCategoryIndex < SliceSettingsOrganizer.Instance.UserLevels[UserLevel].CategoriesList.Count; topCategoryIndex++)
 			{

@@ -139,8 +139,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		public Color InactiveTabColor { get; set; }
 		public Color ActiveTabColor { get; set; }
-		public ToolTab(string tabLabel, SimpleTabs parentTabControl, GuiWidget tabContent, ThemeConfig theme, string tabImageUrl = null, bool hasClose = true)
-			: base(tabLabel, parentTabControl, tabContent, theme, tabImageUrl, hasClose, theme.FontSize10)
+		public ToolTab(string tabLabel, SimpleTabs parentTabControl, GuiWidget tabContent, ThemeConfig theme, string tabImageUrl = null, bool hasClose = true, int pointSize = -1)
+			: base(tabLabel, parentTabControl, tabContent, theme, tabImageUrl, hasClose, pointSize: (pointSize == -1) ? theme.FontSize10 : pointSize)
 		{
 			tabPill.Padding = tabPill.Padding.Clone(top: 9, bottom: 10);
 		}

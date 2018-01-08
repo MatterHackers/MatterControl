@@ -110,7 +110,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public int TabCount => _allTabs.Count;
 
-		public void AddTab(GuiWidget tabWidget, int position)
+		public void AddTab(GuiWidget tabWidget, int position = -1)
 		{
 			var iTab = tabWidget as ITab;
 
