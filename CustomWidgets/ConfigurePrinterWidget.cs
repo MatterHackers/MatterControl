@@ -33,6 +33,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
@@ -55,28 +56,18 @@ namespace MatterHackers.MatterControl
 
 			this.AddChild(rowItem);
 
-			var primaryTabControl = new TabControl();
-			primaryTabControl.TabBar.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
-			primaryTabControl.AnchorAll();
+			var primaryTabControl = new SimpleTabs(new GuiWidget())
+			{
+				Margin = new BorderDouble(top: 8),
+				VAnchor = VAnchor.Stretch,
+				HAnchor = HAnchor.Stretch,
+				MinimumSize = new Vector2(200, 200)
+			};
+			primaryTabControl.TabBar.BackgroundColor = theme.ActiveTabBarBackground;
 			this.AddChild(primaryTabControl);
 
 			foreach (var section in SliceSettingsOrganizer.Instance.UserLevels["Printer"].CategoriesList)
 			{
-				var tabPage = new TabPage(section.Name.Localize())
-				{
-					Padding = new BorderDouble(1, 4)
-				};
-
-				primaryTabControl.AddTab(new TextTab(
-					tabPage,
-					section.Name + " Tab",
-					theme.DefaultFontSize,
-					ActiveTheme.Instance.TabLabelSelected,
-					new Color(),
-					ActiveTheme.Instance.TabLabelUnselected,
-					new Color(),
-					useUnderlineStyling: true));
-
 				var scrollable = new ScrollableWidget(true)
 				{
 					VAnchor = VAnchor.Stretch,
@@ -90,8 +81,22 @@ namespace MatterHackers.MatterControl
 						sliceSettingsWidget.ShowHelpControls,
 						ActiveTheme.Instance.PrimaryTextColor, scrollable.ScrollArea));
 
-				tabPage.AddChild(scrollable);
+				primaryTabControl.AddTab(
+					new ToolTab(
+						section.Name.Localize(),
+						primaryTabControl,
+						scrollable,
+						theme,
+						hasClose: false)
+					{
+						Name = section.Name + " Tab",
+						InactiveTabColor = Color.Transparent,
+						ActiveTabColor = theme.ActiveTabColor
+					});
 			}
+
+			primaryTabControl.SelectedTabIndex = 0;
+
 		}
 	}
 }
