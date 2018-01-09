@@ -56,7 +56,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private View3DWidget view3DWidget;
 		private InteractiveScene scene;
 		private PrinterConfig printer;
-		private List<NamedAction> sceneActions;
 		private Dictionary<Type, HashSet<IObject3DEditor>> objectEditorsByType;
 		private ObservableCollection<GuiWidget> materialButtons = new ObservableCollection<GuiWidget>();
 		private SectionWidget editorSection;
@@ -74,61 +73,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.theme = theme;
 			this.scene = scene;
 			this.printer = printer;
-
-			sceneActions = new List<NamedAction>
-			{
-				new NamedAction()
-				{
-					Title = "Ungroup".Localize(),
-					Action = () =>
-					{
-						scene.UngroupSelection();
-					},
-					IsEnabled = () => scene.HasSelection
-				},
-				new NamedAction()
-				{
-					Title = "Group".Localize(),
-					Action = () =>
-					{
-						scene.GroupSelection();
-					},
-					IsEnabled = () => scene.HasSelection
-						&& scene.SelectedItem is SelectionGroup
-						&& scene.SelectedItem.Children.Count > 1
-				},
-
-				new NamedAction()
-				{
-					Title = "Lay Flat".Localize(),
-					Action = () =>
-					{
-						if (scene.HasSelection)
-						{
-							MakeLowestFaceFlat(scene.SelectedItem, scene.RootItem);
-						}
-					},
-					IsEnabled = () => scene.HasSelection
-				},
-				new NamedAction()
-				{
-					Title = "Duplicate".Localize(),
-					Action = () =>
-					{
-						scene.DuplicateSelection();
-					},
-					IsEnabled = () => scene.HasSelection
-				},
-				new NamedAction()
-				{
-					Title = "Remove".Localize(),
-					Action = () =>
-					{
-						scene.DeleteSelection();
-					},
-					IsEnabled = () => scene.HasSelection
-				}
-			};
 
 			var firstPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -218,27 +162,30 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var operationsContainer = new FlowLeftRightWithWrapping();
 
-			foreach (var sceneAction in sceneActions)
+			foreach (var namedAction in ApplicationController.Instance.RegisteredSceneOperations)
 			{
-				var button = new TextButton(sceneAction.Title, theme)
-				{
-					Name = sceneAction.Title + " Button",
-					Margin = theme.ButtonSpacing,
-					BackgroundColor = theme.MinimalShade
-				};
-				button.Click += (s, e) => sceneAction.Action.Invoke();
+				GuiWidget button;
 
-				operationsContainer.AddChild(button);
-			}
-
-			foreach (var namedAction in ApplicationController.Instance.RegisteredSceneOperations())
-			{
-				var button = new TextButton(namedAction.Title, theme)
+				if (namedAction.Icon != null)
 				{
-					Name = namedAction.Title + " Button",
-					Margin = theme.ButtonSpacing,
-					BackgroundColor = theme.MinimalShade
-				};
+					button = new IconButton(namedAction.Icon, theme)
+					{
+						Name = namedAction.Title + " Button",
+						ToolTipText = namedAction.Title,
+						Margin = theme.ButtonSpacing,
+						BackgroundColor = theme.MinimalShade
+					};
+				}
+				else
+				{
+					button = new TextButton(namedAction.Title, theme)
+					{
+						Name = namedAction.Title + " Button",
+						Margin = theme.ButtonSpacing,
+						BackgroundColor = theme.MinimalShade
+					};
+				}
+
 				button.Click += (s, e) =>
 				{
 					namedAction.Action.Invoke(scene);
@@ -490,104 +437,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			return widget;
-		}
-
-		private void MakeLowestFaceFlat(IObject3D objectToLayFlatGroup, IObject3D root)
-		{
-			bool firstVertex = true;
-
-			IObject3D objectToLayFlat = objectToLayFlatGroup;
-
-			IVertex lowestVertex = null;
-			Vector3 lowestVertexPosition = Vector3.Zero;
-			IObject3D itemToLayFlat = null;
-
-			// Process each child, checking for the lowest vertex
-			var objectsToCheck = objectToLayFlat.VisibleMeshes();
-			foreach (var itemToCheck in objectsToCheck)
-			{
-				// find the lowest point on the model
-				for (int testIndex = 0; testIndex < itemToCheck.Mesh.Vertices.Count; testIndex++)
-				{
-					var vertex = itemToCheck.Mesh.Vertices[testIndex];
-					Vector3 vertexPosition = Vector3.Transform(vertex.Position, itemToCheck.WorldMatrix(root));
-					if (firstVertex)
-					{
-						lowestVertex = itemToCheck.Mesh.Vertices[testIndex];
-						lowestVertexPosition = vertexPosition;
-						itemToLayFlat = itemToCheck;
-						firstVertex = false;
-					}
-					else if (vertexPosition.Z < lowestVertexPosition.Z)
-					{
-						lowestVertex = itemToCheck.Mesh.Vertices[testIndex];
-						lowestVertexPosition = vertexPosition;
-						itemToLayFlat = itemToCheck;
-					}
-				}
-			}
-
-			if (lowestVertex == null)
-			{
-				// didn't find any selected mesh
-				return;
-			}
-
-			Face faceToLayFlat = null;
-			double lowestAngleOfAnyFace = double.MaxValue;
-			// Check all the faces that are connected to the lowest point to find out which one to lay flat.
-			foreach (Face face in lowestVertex.ConnectedFaces())
-			{
-				double biggestAngleToFaceVertex = double.MinValue;
-				foreach (IVertex faceVertex in face.Vertices())
-				{
-					if (faceVertex != lowestVertex)
-					{
-						Vector3 faceVertexPosition = Vector3.Transform(faceVertex.Position, itemToLayFlat.WorldMatrix(root));
-						Vector3 pointRelLowest = faceVertexPosition - lowestVertexPosition;
-						double xLeg = new Vector2(pointRelLowest.X, pointRelLowest.Y).Length;
-						double yLeg = pointRelLowest.Z;
-						double angle = Math.Atan2(yLeg, xLeg);
-						if (angle > biggestAngleToFaceVertex)
-						{
-							biggestAngleToFaceVertex = angle;
-						}
-					}
-				}
-				if (biggestAngleToFaceVertex < lowestAngleOfAnyFace)
-				{
-					lowestAngleOfAnyFace = biggestAngleToFaceVertex;
-					faceToLayFlat = face;
-				}
-			}
-
-			double maxDistFromLowestZ = 0;
-			List<Vector3> faceVertices = new List<Vector3>();
-			foreach (IVertex vertex in faceToLayFlat.Vertices())
-			{
-				Vector3 vertexPosition = Vector3.Transform(vertex.Position, itemToLayFlat.WorldMatrix(root));
-				faceVertices.Add(vertexPosition);
-				maxDistFromLowestZ = Math.Max(maxDistFromLowestZ, vertexPosition.Z - lowestVertexPosition.Z);
-			}
-
-			if (maxDistFromLowestZ > .001)
-			{
-				Vector3 xPositive = (faceVertices[1] - faceVertices[0]).GetNormal();
-				Vector3 yPositive = (faceVertices[2] - faceVertices[0]).GetNormal();
-				Vector3 planeNormal = Vector3.Cross(xPositive, yPositive).GetNormal();
-
-				// this code takes the minimum rotation required and looks much better.
-				Quaternion rotation = new Quaternion(planeNormal, new Vector3(0, 0, -1));
-				Matrix4X4 partLevelMatrix = Matrix4X4.CreateRotation(rotation);
-
-				// rotate it
-				objectToLayFlatGroup.Matrix = PlatingHelper.ApplyAtCenter(objectToLayFlatGroup, partLevelMatrix);
-
-				scene.Invalidate();
-				Invalidate();
-			}
-
-			PlatingHelper.PlaceOnBed(objectToLayFlatGroup);
 		}
 
 		private List<TransformData> GetTransforms(int axisIndex, AxisAlignment alignment)
