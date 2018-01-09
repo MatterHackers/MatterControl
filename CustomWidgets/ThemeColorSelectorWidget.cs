@@ -75,13 +75,13 @@ namespace MatterHackers.MatterControl
 		public Button CreateThemeButton(IThemeColors darkTheme, int darkThemeIndex)
 		{
 			var normal = new GuiWidget(colorSelectSize, colorSelectSize);
-			normal.BackgroundColor = darkTheme.PrimaryAccentColor;
+			normal.BackgroundColor = darkTheme.SourceColor;
 
 			var hover = new GuiWidget(colorSelectSize, colorSelectSize);
-			hover.BackgroundColor = darkTheme.SecondaryAccentColor;
+			hover.BackgroundColor = darkTheme.SourceColor;
 
 			var pressed = new GuiWidget(colorSelectSize, colorSelectSize);
-			pressed.BackgroundColor = darkTheme.SecondaryAccentColor;
+			pressed.BackgroundColor = darkTheme.SourceColor;
 
 			var disabled = new GuiWidget(colorSelectSize, colorSelectSize);
 
