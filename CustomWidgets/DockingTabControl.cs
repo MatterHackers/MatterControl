@@ -166,6 +166,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					VAnchor = VAnchor.Stretch,
 					SpliterBarColor = theme.SplitterBackground,
 					SplitterWidth = theme.SplitterWidth,
+					MinimumSize = new Vector2(this.MinDockingWidth, 200)
 				};
 
 				tabControl = new SimpleTabs(this.CreatePinButton())
