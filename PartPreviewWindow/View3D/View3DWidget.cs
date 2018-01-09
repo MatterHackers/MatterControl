@@ -1176,7 +1176,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (!Scene.HasSelection)
 			{
-				printer.ViewState.SelectedObjectPanelWidth = selectedObjectPanel.Width;
+				if (printer != null)
+				{
+					printer.ViewState.SelectedObjectPanelWidth = selectedObjectPanel.Width;
+				}
+
 				selectedObjectContainer.Visible = false;
 				return;
 			}
