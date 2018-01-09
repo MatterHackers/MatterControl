@@ -172,7 +172,6 @@ namespace MatterHackers.MatterControl.ActionBar
 		private TextImageButtonFactory buttonFactory;
 		private int hotendIndex = -1;
 
-		private EditableNumberDisplay settingsTemperature;
 		private string sliceSettingsNote = "Note: Slice Settings are applied before the print actually starts. Changes while printing will not effect the active print.".Localize();
 		private string waitingForExtruderToHeatMessage = "The extruder is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting extruder temperature in 'Slice Settings' -> 'Filament'.\n\n{1}".Localize();
 
@@ -190,12 +189,6 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		protected override int ActualTemperature => (int)printer.Connection.GetActualHotendTemperature(hotendIndex);
 		protected override int TargetTemperature => (int)printer.Connection.GetTargetHotendTemperature(hotendIndex);
-
-		public override void OnClosed(ClosedEventArgs e)
-		{
-			ActiveSliceSettings.MaterialPresetChanged -= ActiveSliceSettings_MaterialPresetChanged;
-			base.OnClosed(e);
-		}
 
 		protected override GuiWidget GetPopupContent()
 		{
@@ -227,7 +220,7 @@ namespace MatterHackers.MatterControl.ActionBar
 						if (itemChecked)
 						{
 							// Set to goal temp
-							SetTargetTemperature(settingsTemperature.Value);
+							SetTargetTemperature(printer.Settings.Helpers.ExtruderTemperature(hotendIndex));
 						}
 						else
 						{
@@ -241,23 +234,16 @@ namespace MatterHackers.MatterControl.ActionBar
 			heatToggle = hotendRow.ChildrenRecursive<CheckBox>().FirstOrDefault();
 			heatToggle.Name = "Toggle Heater";
 
-			// put in the temp control
-			settingsTemperature = new EditableNumberDisplay(printer.Settings.GetValue<double>(SettingsKey.temperature), "000")
+			int tabIndex = 0;
+			var settingsContext = new SettingsContext(printer, null, NamedSettingsLayers.All);
+			foreach (var key in new[] { SettingsKey.temperature })
 			{
-				TextColor = Color.Black,
-				BorderColor = Color.Black,
-				Name = "Temperature Input"
-			};
-			settingsTemperature.ValueChanged += (s, e) =>
-			{
-				if (heatToggle.Checked)
-				{
-					SetTargetTemperature(settingsTemperature.Value);
-				}
-			};
-			container.AddChild(new SettingsItem(
-				"Temperature".Localize(),
-				settingsTemperature, enforceGutter: false));
+				// TODO: make this be for the correct extruder
+				var settingsData = SliceSettingsOrganizer.Instance.GetSettingsData(key);
+				var row = SliceSettingsWidget.CreateItemRow(settingsData, settingsContext, printer, Color.Black, ref tabIndex);
+
+				container.AddChild(row);
+			}
 
 			// add in the temp graph
 			Action fillGraph = null;
@@ -267,14 +253,10 @@ namespace MatterHackers.MatterControl.ActionBar
 				MinValue = 0,
 				ShowGoal = true,
 				GoalColor = ActiveTheme.Instance.PrimaryAccentColor,
-				GoalValue = settingsTemperature.Value,
+				GoalValue = printer.Settings.Helpers.ExtruderTemperature(hotendIndex),
 				MaxValue = 280, // could come from some profile value in the future
 				Width = widget.Width - 20,
 				Height = 35, // this works better if it is a common multiple of the Width
-			};
-			settingsTemperature.ValueChanged += (s, e) =>
-			{
-				graph.GoalValue = settingsTemperature.Value;
 			};
 			fillGraph = () =>
 			{
@@ -284,6 +266,20 @@ namespace MatterHackers.MatterControl.ActionBar
 					UiThread.RunOnIdle(fillGraph, 1);
 				}
 			};
+
+			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
+			{
+				if (e is StringEventArgs stringEvent)
+				{
+					var temp = printer.Settings.Helpers.ExtruderTemperature(hotendIndex);
+					if (stringEvent.Data == SettingsKey.temperature
+						&& heatToggle.Checked)
+					{
+						SetTargetTemperature(temp);
+					}
+					graph.GoalValue = temp;
+				};
+			}, ref unregisterEvents);
 
 			UiThread.RunOnIdle(fillGraph);
 			container.AddChild(graph);
@@ -298,15 +294,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			};
 
 			presetsSelector.DropDownList.Name = "Hotend Preset Selector";
-
-			presetsSelector.DropDownList.SelectionChanged += (s, e) =>
-			{
-				// delay this for an update so the slice setting can get updated first
-				UiThread.RunOnIdle(() =>
-				{
-					settingsTemperature.Value = printer.Settings.GetValue<double>(SettingsKey.temperature);
-				});
-			};
 
 			this.Width = 150;
 
@@ -354,8 +341,6 @@ namespace MatterHackers.MatterControl.ActionBar
 				container.AddChild(new ControlContentExtruder(printer, hotendIndex, buttonFactory));
 			}
 
-			ActiveSliceSettings.MaterialPresetChanged += ActiveSliceSettings_MaterialPresetChanged;
-
 			return widget;
 		}
 
@@ -382,14 +367,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			else
 			{
 				printer.Connection.SetTargetHotendTemperature(hotendIndex, (int)(targetTemp + .5));
-			}
-		}
-
-		private void ActiveSliceSettings_MaterialPresetChanged(object sender, EventArgs e)
-		{
-			if (settingsTemperature != null && printer.Settings != null)
-			{
-				settingsTemperature.Text = printer.Settings.GetValue(SettingsKey.temperature);
 			}
 		}
 	}
