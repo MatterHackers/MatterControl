@@ -318,22 +318,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.AddChild(layers2DButton);
 
 
-			Button addButton = theme.SmallMarginButtonFactory.Generate("Insert".Localize(), AggContext.StaticData.LoadIcon("cube.png", 14, 14, IconColor.Theme));
-			addButton.Margin = 0;
-			addButton.Click += (sender, e) =>
-			{
-				UiThread.RunOnIdle(() =>
-				{
-					AggContext.FileDialogs.OpenFileDialog(
-						new OpenFileDialogParams(ApplicationSettings.OpenDesignFileParams, multiSelect: true),
-						(openParams) =>
-						{
-							this.LoadAndAddPartsToPlate(openParams.FileNames, sceneContext.Scene);
-						});
-				});
-			};
-			this.AddChild(addButton);
-
 			var buttonSpacing = theme.ButtonSpacing;
 
 			var buttonView = new FlowLayoutWidget();
@@ -497,6 +481,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Bed menu
 			return new[]
 			{
+				new NamedAction()
+				{
+					Title = "Insert".Localize(),
+					Icon = AggContext.StaticData.LoadIcon("cube.png", 14, 14, IconColor.Theme),
+					Action = () =>
+					{
+						UiThread.RunOnIdle(() =>
+						{
+							AggContext.FileDialogs.OpenFileDialog(
+								new OpenFileDialogParams(ApplicationSettings.OpenDesignFileParams, multiSelect: true),
+								(openParams) =>
+								{
+									this.LoadAndAddPartsToPlate(openParams.FileNames, sceneContext.Scene);
+								});
+						});
+					}
+				},
 				new NamedAction()
 				{
 					Title = "Save".Localize(),
