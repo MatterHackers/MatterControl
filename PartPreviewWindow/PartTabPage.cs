@@ -55,12 +55,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.BackgroundColor = theme.TabBodyBackground;
 			this.Padding = 0;
 
+			bool isPrinterType = this is PrinterTabPage;
+			
 			viewControls3D = new ViewControls3D(sceneContext, theme, sceneContext.Scene.UndoBuffer)
 			{
 				//BackgroundColor = new Color(0, 0, 0, theme.OverlayAlpha),
 				VAnchor = VAnchor.Top | VAnchor.Fit,
 				HAnchor = HAnchor.Left | HAnchor.Stretch,
 				Visible = true,
+				IsPrinterMode = isPrinterType
 			};
 			viewControls3D.ResetView += (sender, e) =>
 			{
@@ -73,8 +76,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			viewControls3D.OverflowMenu.BackgroundColor = theme.ResolveColor(theme.TabBodyBackground, theme.TabBodyBackground);
 			viewControls3D.OverflowMenu.Name = "View3D Overflow Menu";
 
-			bool isPrinterType = this is PrinterTabPage;
-
 			// The 3D model view
 			view3DWidget = new View3DWidget(
 				printer,
@@ -84,6 +85,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				theme,
 				this,
 				editorType: (isPrinterType) ? MeshViewerWidget.EditorType.Printer : MeshViewerWidget.EditorType.Part);
+
+			viewControls3D.SetView3DWidget(view3DWidget);
 
 			this.AddChild(topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{

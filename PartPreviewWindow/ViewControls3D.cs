@@ -28,15 +28,21 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.Library;
+using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
@@ -86,8 +92,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private EventHandler unregisterEvents;
 
 		private PrinterConfig printer;
+		private View3DWidget view3DWidget;
 
 		private ViewControls3DButtons activeTransformState = ViewControls3DButtons.Rotate;
+		public bool IsPrinterMode { get; set; }
 
 		public ViewControls3DButtons ActiveButton
 		{
@@ -137,6 +145,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					TransformMode = activeTransformState
 				});
 			}
+		}
+
+		internal void SetView3DWidget(View3DWidget view3DWidget)
+		{
+			this.view3DWidget = view3DWidget;
 		}
 
 		public ViewControls3D(BedConfig sceneContext, ThemeConfig theme, UndoBuffer undoBuffer)
@@ -304,28 +317,50 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			buttonGroupB.Add(layers2DButton);
 			this.AddChild(layers2DButton);
 
-			this.AddChild(new VerticalLine(50)
+
+			Button addButton = theme.SmallMarginButtonFactory.Generate("Insert".Localize(), AggContext.StaticData.LoadIcon("cube.png", 14, 14, IconColor.Theme));
+			addButton.Margin = 0;
+			addButton.Click += (sender, e) =>
 			{
-				Margin = 3,
-				Border = new BorderDouble(right: 5),
-				BorderColor = new Color(theme.ButtonFactory.Options.NormalTextColor, 100)
+				UiThread.RunOnIdle(() =>
+				{
+					AggContext.FileDialogs.OpenFileDialog(
+						new OpenFileDialogParams(ApplicationSettings.OpenDesignFileParams, multiSelect: true),
+						(openParams) =>
+						{
+							this.LoadAndAddPartsToPlate(openParams.FileNames, sceneContext.Scene);
+						});
+				});
+			};
+			this.AddChild(addButton);
+
+			var buttonSpacing = theme.ButtonSpacing;
+
+			var buttonView = new FlowLayoutWidget();
+			buttonView.AddChild(new ImageWidget(AggContext.StaticData.LoadIcon((IsPrinterMode) ? "bed.png" : "cube.png", IconColor.Theme))
+			{
+				Margin = new BorderDouble(left: 10),
+				VAnchor = VAnchor.Center
 			});
 
-			foreach (var namedAction in ApplicationController.Instance.RegisteredSceneOperations())
+			var buttonText = (IsPrinterMode) ? "Bed".Localize() : "Part".Localize();
+			buttonView.AddChild(new TextButton(buttonText, theme)
 			{
-				var button = new TextButton(namedAction.Title, theme)
-				{
-					Name = namedAction.Title + " Button",
-					VAnchor = VAnchor.Center,
-					Margin = theme.ButtonSpacing,
-					BackgroundColor = theme.MinimalShade
-				};
-				button.Click += (s, e) =>
-				{
-					namedAction.Action.Invoke(sceneContext.Scene);
-				};
-				this.AddChild(button);
-			}
+				Padding = new BorderDouble(8, 4, 0, 4)
+			});
+
+			var overflowMenu = new OverflowMenu(buttonView)
+			{
+				Name = "Bed Options Menu",
+				DynamicPopupContent = () => theme.CreatePopupMenu(this.BedMenuActions(sceneContext)),
+				DrawArrow = true
+			};
+			overflowMenu.Load += (s, e) =>
+			{
+				var firstBackgroundColor = this.Parents<GuiWidget>().Where(p => p.BackgroundColor.Alpha0To1 == 1).FirstOrDefault()?.BackgroundColor;
+				overflowMenu.BackgroundColor = firstBackgroundColor ?? Color.Transparent;
+			};
+			this.AddChild(overflowMenu);
 
 			if (printer != null)
 			{
@@ -366,6 +401,164 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					printer.ViewState.ViewMode = PartViewMode.Model;
 				}
 			}
+		}
+
+		private async void LoadAndAddPartsToPlate(string[] filesToLoad, InteractiveScene scene)
+		{
+			if (filesToLoad != null && filesToLoad.Length > 0)
+			{
+				await Task.Run(() => loadAndAddPartsToPlate(filesToLoad, scene));
+
+				if (HasBeenClosed)
+				{
+					return;
+				}
+
+				bool addingOnlyOneItem = scene.Children.Count == scene.Children.Count + 1;
+
+				if (scene.HasChildren())
+				{
+					if (addingOnlyOneItem)
+					{
+						// if we are only adding one part to the plate set the selection to it
+						scene.SelectLastChild();
+					}
+				}
+
+				scene.Invalidate();
+				this.Invalidate();
+			}
+		}
+
+		private async Task loadAndAddPartsToPlate(string[] filesToLoadIncludingZips, InteractiveScene scene)
+		{
+			if (filesToLoadIncludingZips?.Any() == true)
+			{
+				List<string> filesToLoad = new List<string>();
+				foreach (string loadedFileName in filesToLoadIncludingZips)
+				{
+					string extension = Path.GetExtension(loadedFileName).ToUpper();
+					if ((extension != "" && MeshFileIo.ValidFileExtensions().Contains(extension)))
+					{
+						filesToLoad.Add(loadedFileName);
+					}
+					else if (extension == ".ZIP")
+					{
+						List<PrintItem> partFiles = ProjectFileHandler.ImportFromProjectArchive(loadedFileName);
+						if (partFiles != null)
+						{
+							foreach (PrintItem part in partFiles)
+							{
+								filesToLoad.Add(part.FileLocation);
+							}
+						}
+					}
+				}
+
+				string progressMessage = "Loading Parts...".Localize();
+
+				var itemCache = new Dictionary<string, IObject3D>();
+
+				foreach (string filePath in filesToLoad)
+				{
+					var libraryItem = new FileSystemFileItem(filePath);
+
+					IObject3D object3D = null;
+
+					await ApplicationController.Instance.Tasks.Execute(async (progressReporter, cancelationToken) =>
+					{
+						var progressStatus = new ProgressStatus()
+						{
+							Status = "Loading ".Localize() + Path.GetFileName(filePath),
+						};
+
+						progressReporter.Report(progressStatus);
+
+						object3D = await libraryItem.CreateContent((double progress0To1, string processingState) =>
+						{
+							progressStatus.Progress0To1 = progress0To1;
+							progressStatus.Status = processingState;
+							progressReporter.Report(progressStatus);
+						});
+					});
+
+					if (object3D != null)
+					{
+						scene.Children.Modify(list => list.Add(object3D));
+
+						PlatingHelper.MoveToOpenPositionRelativeGroup(object3D, scene.Children);
+					}
+				}
+			}
+		}
+
+		private NamedAction[] BedMenuActions(BedConfig sceneContext)
+		{
+			// Bed menu
+			return new[]
+			{
+				new NamedAction()
+				{
+					Title = "Save".Localize(),
+					Action = async () =>
+					{
+						await ApplicationController.Instance.Tasks.Execute(view3DWidget.SaveChanges);
+					},
+					IsEnabled = () => sceneContext.EditableScene
+				},
+				new NamedAction()
+				{
+					Title = "Save As".Localize(),
+					Action = () => UiThread.RunOnIdle(view3DWidget.OpenSaveAsWindow),
+					IsEnabled = () => sceneContext.EditableScene
+				},
+				new NamedAction()
+				{
+					Title = "Export".Localize(),
+					Action = () =>
+					{
+						UiThread.RunOnIdle(() =>
+						{
+							DialogWindow.Show(
+								new ExportPrintItemPage(new[]
+								{
+									new FileSystemFileItem(sceneContext.EditContext.PartFilePath)
+								}));
+						});
+					},
+					IsEnabled = () => sceneContext.EditableScene
+				},
+				new NamedAction()
+				{
+					Title = "Publish".Localize(),
+					Action = () =>
+					{
+						UiThread.RunOnIdle(() => DialogWindow.Show<PublishPartToMatterHackers>());
+					},
+					IsEnabled = () => sceneContext.EditableScene
+				},
+				new NamedAction()
+				{
+					Title = "Arrange All Parts".Localize(),
+					Action = () =>
+					{
+						sceneContext.Scene.AutoArrangeChildren(view3DWidget);
+					},
+					IsEnabled = () => sceneContext.EditableScene
+				},
+				new NamedAction() { Title = "----" },
+				new NamedAction()
+				{
+					Title = "Clear Bed".Localize(),
+					Action = () =>
+					{
+						UiThread.RunOnIdle(() =>
+						{
+							sceneContext.ClearPlate().ConfigureAwait(false);
+						});
+					}
+				}
+			};
 		}
 
 		public override void OnClosed(ClosedEventArgs e)

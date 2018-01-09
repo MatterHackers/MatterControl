@@ -59,7 +59,7 @@ namespace MatterHackers.MeshVisualizer
 		}
 	}
 
-	public static class MatterialRendering
+	public static class MaterialRendering
 	{
 		public static Color Color(int materialIndex)
 		{
@@ -340,7 +340,7 @@ namespace MatterHackers.MeshVisualizer
 
 		public static Color GetExtruderColor(int extruderIndex)
 		{
-			return MatterialRendering.Color(extruderIndex);
+			return MaterialRendering.Color(extruderIndex);
 		}
 
 		public void CreateGlDataObject(IObject3D item)
@@ -520,7 +520,7 @@ namespace MatterHackers.MeshVisualizer
 			// check if we should be rendering materials (this overrides the other colors)
 			if (this.RenderType == RenderTypes.Materials)
 			{
-				drawColor = MatterialRendering.Color(item.WorldMaterialIndex(scene.RootItem));
+				drawColor = MaterialRendering.Color(item.WorldMaterialIndex(scene.RootItem));
 			}
 
 			if(drawColor.alpha != 255

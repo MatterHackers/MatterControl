@@ -24,14 +24,13 @@ either expressed or implied, of the FreeBSD Project.
 */
 //#define DoBooleanTest
 
+using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.VectorMath;
-using System;
-using System.Collections.Generic;
-using MatterHackers.DataConverters3D;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {

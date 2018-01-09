@@ -5,7 +5,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 {
 	public class SectionWidget : FlowLayoutWidget
 	{
-		public SectionWidget(string sectionTitle, Color textColor, GuiWidget sectionContent, GuiWidget rightAlignedContent = null, int headingPointSize = -1, bool expandingContent = true)
+		private GuiWidget contentWidget;
+
+		public SectionWidget(string sectionTitle, Color textColor, GuiWidget sectionContent, GuiWidget rightAlignedContent = null, int headingPointSize = -1, bool expandingContent = true, bool expanded = true)
 			: base (FlowDirection.TopToBottom)
 		{
 			this.HAnchor = HAnchor.Stretch;
@@ -22,11 +24,14 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 				if (expandingContent)
 				{
-					var checkbox = new ExpandCheckboxButton(sectionTitle, pointSize: pointSize);
-					checkbox.Checked = true;
+					var checkbox = new ExpandCheckboxButton(sectionTitle, pointSize: pointSize)
+					{
+						HAnchor = HAnchor.Stretch,
+						Checked = expanded
+					};
 					checkbox.CheckedStateChanged += (s, e) =>
 					{
-						sectionContent.Visible = checkbox.Checked;
+						contentWidget.Visible = checkbox.Checked;
 					};
 
 					heading = checkbox;
@@ -60,10 +65,21 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				});
 			}
 
-			// Force padding and add content widget
-			sectionContent.HAnchor = HAnchor.Stretch;
-			sectionContent.BackgroundColor = ApplicationController.Instance.Theme.MinimalShade;
-			this.AddChild(sectionContent);
+			sectionContent.Visible = expanded;
+
+			this.SetContentWidget(sectionContent);
+		}
+
+		public void SetContentWidget(GuiWidget guiWidget)
+		{
+			contentWidget?.Close();
+
+			contentWidget = guiWidget;
+			contentWidget.HAnchor = HAnchor.Stretch;
+			contentWidget.VAnchor = VAnchor.Fit;
+			contentWidget.BackgroundColor = ApplicationController.Instance.Theme.MinimalShade;
+
+			this.AddChild(contentWidget);
 		}
 	}
 }
