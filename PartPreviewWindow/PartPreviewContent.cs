@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public class PartPreviewContent : FlowLayoutWidget
 	{
 		private EventHandler unregisterEvents;
-		private MainTab printerTab = null;
+		private ChromeTab printerTab = null;
 		private ChromeTabs tabControl;
 
 		public PartPreviewContent()
@@ -64,11 +64,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Stretch,
 				HAnchor = HAnchor.Stretch,
 				BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor,
+				BorderColor = theme.MinimalShade,
+				Border = new BorderDouble(left: 1),
 				NewTabPage = () =>
 				{
 					return new PlusTabPage(this, tabControl, theme);
 				}
 			};
+			tabControl.TabBar.BackgroundColor = theme.ActiveTabBarBackground;
 
 			tabControl.ActiveTabChanged += (s, e) =>
 			{
@@ -84,7 +87,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			tabControl.TabBar.BorderColor = theme.ActiveTabColor;
 			tabControl.TabBar.Padding = new BorderDouble(top: 4);
-			tabControl.TabBar.Border = new BorderDouble(bottom: 2);
+			//tabControl.TabBar.Border = new BorderDouble(bottom: 2);
 
 			Color selectedTabColor = ActiveTheme.Instance.TabLabelSelected;
 
@@ -135,19 +138,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				updateAvailableButton.Visible = UpdateControlData.Instance.UpdateStatus == UpdateControlData.UpdateStatusStates.UpdateAvailable;
 			}, ref unregisterEvents);
 
-			// this causes the update button to be centered
-			//tabControl.TabBar.AddChild(new HorizontalSpacer());
-
-			//rightPanelArea.AddChild(
-			//	new ImageWidget(
-			//		AggContext.StaticData.LoadImage(Path.Combine("Images", "minimize.png")))
-			//	{
-			//		VAnchor = VAnchor.Top,
-			//		DebugShowBounds  = true
-			//	});
-
-			//this.AddChild(tabControl);
-
 			this.AddChild(tabControl);
 
 			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
@@ -168,7 +158,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (false && AppContext.IsLoading)
 			{
 				tabControl.AddTab(
-					new MainTab("New Tab".Localize(), tabControl, tabControl.NewTabPage(), theme)
+					new ChromeTab("New Tab".Localize(), tabControl, tabControl.NewTabPage(), theme)
 					{
 						MinimumSize = new Vector2(0, theme.shortButtonHeight)
 					});
@@ -183,13 +173,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}, ref unregisterEvents);
 		}
 
-		private MainTab CreatePrinterTab(PrinterConfig printer, ThemeConfig theme, string tabTitle)
+		private ChromeTab CreatePrinterTab(PrinterConfig printer, ThemeConfig theme, string tabTitle)
 		{
 			string oemName = printer.Settings.GetValue(SettingsKey.make);
 
 			OemSettings.Instance.OemUrls.TryGetValue(oemName, out string oemUrl);
 
-			return new MainTab(
+			return new ChromeTab(
 				tabTitle,
 				tabControl,
 				new PrinterTabPage(printer, theme, tabTitle.ToUpper()),
@@ -201,14 +191,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 		}
 
-		public MainTab CreatePartTab(string tabTitle, BedConfig sceneContext, ThemeConfig theme)
+		public ChromeTab CreatePartTab(string tabTitle, BedConfig sceneContext, ThemeConfig theme)
 		{
-			var partTab = new MainTab(
+			var partTab = new ChromeTab(
 				tabTitle,
 				tabControl,
 				new PartTabPage(null, sceneContext, theme, "xxxxx"),
 				theme,
-				"https://i.imgur.com/nkeYgfU.png")
+				AggContext.StaticData.LoadIcon("part.png"))
 			{
 				Name = "newPart" + tabControl.AllTabs.Count(),
 				MinimumSize = new Vector2(120, theme.shortButtonHeight)

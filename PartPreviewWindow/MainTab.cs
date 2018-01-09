@@ -37,13 +37,19 @@ using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class MainTab : GuiWidget, ITab
+	public class SimpleTab : GuiWidget, ITab
 	{
 		public event EventHandler CloseClicked;
 
-		private SimpleTabs parentTabControl;
+		protected SimpleTabs parentTabControl;
 
-		public MainTab(string tabLabel, SimpleTabs parentTabControl, GuiWidget tabContent, ThemeConfig theme, string tabImageUrl = null)
+		protected ThemeConfig theme;
+
+		protected TabPill tabPill;
+
+		public GuiWidget TabContent { get; protected set; }
+
+		public SimpleTab(string tabLabel, SimpleTabs parentTabControl, GuiWidget tabContent, ThemeConfig theme, string tabImageUrl = null, bool hasClose = true, double pointSize = 12, ImageBuffer iconImage = null)
 		{
 			this.HAnchor = HAnchor.Fit;
 			this.VAnchor = VAnchor.Fit | VAnchor.Bottom;
@@ -54,45 +60,151 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.TabContent = tabContent;
 			this.parentTabControl = parentTabControl;
 
-			this.AddChild(
-				new TabPill(tabLabel, ActiveTheme.Instance.PrimaryTextColor, tabImageUrl)
-				{
-					Margin = new BorderDouble(right: 16)
-				});
-
-			var closeButton = ApplicationController.Instance.Theme.CreateSmallResetButton();
-			closeButton.HAnchor = HAnchor.Right;
-			closeButton.Margin = new BorderDouble(right: 7, top: 1);
-			closeButton.Name = "Close Tab Button";
-			closeButton.ToolTipText = "Close".Localize();
-			closeButton.Click += (sender, e) =>
+			if (iconImage != null)
 			{
-				UiThread.RunOnIdle(() =>
-				{
-					this.parentTabControl.RemoveTab(this);
-					this.CloseClicked?.Invoke(this, null);
-				});
-			};
+				tabPill = new TabPill(tabLabel, ActiveTheme.Instance.PrimaryTextColor, iconImage, pointSize);
+			}
+			else
+			{
+				tabPill = new TabPill(tabLabel, ActiveTheme.Instance.PrimaryTextColor, tabImageUrl, pointSize);
+			}
+			tabPill.Margin = (hasClose) ? new BorderDouble(right: 16) : 0;
 
-			this.AddChild(closeButton);
+			this.AddChild(tabPill);
+
+			if (hasClose)
+			{
+				var closeButton = ApplicationController.Instance.Theme.CreateSmallResetButton();
+				closeButton.HAnchor = HAnchor.Right;
+				closeButton.Margin = new BorderDouble(right: 7, top: 1);
+				closeButton.Name = "Close Tab Button";
+				closeButton.ToolTipText = "Close".Localize();
+				closeButton.Click += (sender, e) =>
+				{
+					UiThread.RunOnIdle(() =>
+					{
+						this.parentTabControl.RemoveTab(this);
+						this.CloseClicked?.Invoke(this, null);
+					});
+				};
+
+				this.AddChild(closeButton);
+			}
 		}
 
-		private ThemeConfig theme;
+		protected class TabPill : FlowLayoutWidget
+		{
+			private TextWidget label;
+			private ImageWidget imageWidget;
 
-		public GuiWidget TabContent { get; }
+			public TabPill(string tabTitle, Color textColor, string imageUrl = null, double pointSize = 12)
+				: this (tabTitle, textColor, string.IsNullOrEmpty(imageUrl) ? null : new ImageBuffer(16, 16), pointSize)
+			{
+				if (imageWidget != null
+					&& !string.IsNullOrEmpty(imageUrl))
+				{
+					try
+					{
+						// TODO: Use caching
+						// Attempt to load image
+						ApplicationController.Instance.DownloadToImageAsync(imageWidget.Image, imageUrl, false);
+					}
+					catch { }
+				}
+			}
+
+			public TabPill(string tabTitle, Color textColor, ImageBuffer imageBuffer = null, double pointSize = 12)
+			{
+				this.Selectable = false;
+				this.Padding = new BorderDouble(10, 5, 10, 4);
+
+				if (imageBuffer != null)
+				{
+					imageWidget = new ImageWidget(imageBuffer)
+					{
+						Margin = new BorderDouble(right: 6, bottom: 2),
+						VAnchor = VAnchor.Center
+					};
+					this.AddChild(imageWidget);
+				}
+
+				label = new TextWidget(tabTitle, pointSize: pointSize)
+				{
+					TextColor = textColor,
+					VAnchor = VAnchor.Center
+				};
+				this.AddChild(label);
+			}
+
+			public Color TextColor
+			{
+				get => label.TextColor;
+				set => label.TextColor = value;
+			}
+
+			public override string Text
+			{
+				get => label.Text;
+				set => label.Text = value;
+			}
+		}
+	}
+
+	public class ToolTab : SimpleTab
+	{
+		public Color InactiveTabColor { get; set; }
+		public Color ActiveTabColor { get; set; }
+
+		public override Color BorderColor
+		{
+			get =>  (this.IsActiveTab) ? ActiveTheme.Instance.PrimaryAccentColor : base.BorderColor;
+			set => base.BorderColor = value;
+		}
+
+		public ToolTab(string tabLabel, SimpleTabs parentTabControl, GuiWidget tabContent, ThemeConfig theme, string tabImageUrl = null, bool hasClose = true, int pointSize = -1)
+			: base(tabLabel, parentTabControl, tabContent, theme, tabImageUrl, hasClose, pointSize: (pointSize == -1) ? theme.FontSize10 : pointSize)
+		{
+			this.Border = new BorderDouble(top: 1);
+
+			tabPill.Padding = tabPill.Padding.Clone(top: 10, bottom: 10);
+		}
+
+		private bool IsActiveTab => this == parentTabControl.ActiveTab;
+
+		public override void OnDraw(Graphics2D graphics2D)
+		{
+			graphics2D.Render(
+				new RoundedRect(this.LocalBounds, 0),
+				(this.IsActiveTab) ? this.ActiveTabColor : this.InactiveTabColor);
+
+			base.OnDraw(graphics2D);
+		}
+	}
+
+	public class ChromeTab : SimpleTab
+	{
+		public ChromeTab(string tabLabel, SimpleTabs parentTabControl, GuiWidget tabContent, ThemeConfig theme, string tabImageUrl = null)
+			: base (tabLabel, parentTabControl, tabContent, theme, tabImageUrl)
+		{
+		}
+
+		public ChromeTab(string tabLabel, SimpleTabs parentTabControl, GuiWidget tabContent, ThemeConfig theme, ImageBuffer imageBuffer)
+			: base(tabLabel, parentTabControl, tabContent, theme, iconImage: imageBuffer)
+		{
+		}
 
 		private static int tabInsetDistance = 14 / 2;
 
-		internal MainTab NextTab { get; set; }
+		internal ChromeTab NextTab { get; set; }
 
-		internal MainTab PreviousTab { get; set; }
+		internal ChromeTab PreviousTab { get; set; }
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{
 			var rect = LocalBounds;
 			var centerY = rect.YCenter;
 
-			var siblings = this.Parent.Children.OfType<MainTab>().ToList();
+			var siblings = this.Parent.Children.OfType<ChromeTab>().ToList();
 
 			int position = siblings.IndexOf(this);
 
@@ -164,54 +276,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			tabLeft.LineTo(rect.Left, rect.Bottom);
 
 			graphics2D.Render(tabLeft, color);
-		}
-
-		private class TabPill : FlowLayoutWidget
-		{
-			private TextWidget label;
-
-			public TabPill(string tabTitle, Color textColor, string imageUrl = null)
-			{
-				this.Selectable = false;
-				this.Padding = new BorderDouble(10, 5, 10, 4);
-
-				if (!string.IsNullOrEmpty(imageUrl))
-				{
-					var imageWidget = new ImageWidget(new ImageBuffer(16, 16))
-					{
-						Margin = new BorderDouble(right: 6, bottom: 2),
-						VAnchor = VAnchor.Center
-					};
-					this.AddChild(imageWidget);
-
-					// Attempt to load image
-					try
-					{
-						// TODO: Must use caching
-						ApplicationController.Instance.DownloadToImageAsync(imageWidget.Image, imageUrl, false);
-					}
-					catch { }
-				}
-
-				label = new TextWidget(tabTitle)
-				{
-					TextColor = textColor,
-					VAnchor = VAnchor.Center
-				};
-				this.AddChild(label);
-			}
-
-			public Color TextColor
-			{
-				get => label.TextColor;
-				set => label.TextColor = value;
-			}
-
-			public override string Text
-			{
-				get => label.Text;
-				set => label.Text = value;
-			}
 		}
 	}
 }

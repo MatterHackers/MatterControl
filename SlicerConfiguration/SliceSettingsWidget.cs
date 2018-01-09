@@ -34,13 +34,14 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class SliceSettingsWidget : FlowLayoutWidget
 	{
-		private TabControl primaryTabControl;
+		private SimpleTabs primaryTabControl;
 		internal PresetsToolbar settingsControlBar;
 
 		internal SettingsContext settingsContext;
@@ -101,63 +102,64 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			// Close and remove children
 			primaryTabControl?.Close();
 
-			primaryTabControl = new TabControl();
-			primaryTabControl.TabBar.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
-			primaryTabControl.Margin = new BorderDouble(top: 8);
-			primaryTabControl.AnchorAll();
+			var rightItem = (settingsContext.IsPrimarySettingsView) ? new SliceSettingsOverflowMenu(printer, this) : new GuiWidget();
 
+			primaryTabControl = new SimpleTabs(rightItem)
+			{
+				Margin = new BorderDouble(top: 8),
+				VAnchor = VAnchor.Stretch,
+				HAnchor = HAnchor.Stretch,
+				MinimumSize = new Vector2(200, 200)
+			};
+			primaryTabControl.TabBar.BackgroundColor = theme.ActiveTabBarBackground;
 
 			for (int topCategoryIndex = 0; topCategoryIndex < SliceSettingsOrganizer.Instance.UserLevels[UserLevel].CategoriesList.Count; topCategoryIndex++)
 			{
 				OrganizerCategory category = SliceSettingsOrganizer.Instance.UserLevels[UserLevel].CategoriesList[topCategoryIndex];
-
 				if (category.Name == "Printer"
 					&& (settingsContext.ViewFilter == NamedSettingsLayers.Material || settingsContext.ViewFilter == NamedSettingsLayers.Quality))
 				{
 					continue;
 				}
 
-				var categoryPage = new TabPage(category.Name.Localize());
-				categoryPage.AnchorAll();
+				var content = CreateSideTabsAndPages(category, this.ShowHelpControls);
+				content.BackgroundColor = theme.ActiveTabColor;
 
-				primaryTabControl.AddTab(new TextTab(
-					categoryPage,
-					category.Name + " Tab",
-					theme.FontSize11, // TODO: Short term workaround for tests until new tabs and overflow menu come in
-					ActiveTheme.Instance.TabLabelSelected,
-					new Color(),
-					ActiveTheme.Instance.TabLabelUnselected,
-					new Color(),
-					useUnderlineStyling: true));
-				
-				var sideTabs = CreateSideTabsAndPages(category, this.ShowHelpControls);
-				sideTabs.MinimumSize = new Vector2(200, 200);
-				categoryPage.AddChild(sideTabs);
+				primaryTabControl.AddTab(
+					new ToolTab(category.Name.Localize(),
+						primaryTabControl,
+						content,
+						theme,
+						hasClose: false)
+					{
+						Name = category.Name + " Tab",
+						InactiveTabColor = Color.Transparent,
+						ActiveTabColor = theme.ActiveTabColor
+					});
 			}
 
 			primaryTabControl.TabBar.AddChild(new HorizontalSpacer());
 
-			if (settingsContext.IsPrimarySettingsView)
-			{
-				// Add the Overflow menu
-				primaryTabControl.TabBar.AddChild(new SliceSettingsOverflowMenu(printer, this)
-				{
-					Margin = new BorderDouble(right: theme.ToolbarPadding.Right)
-				});
-			}
-
 			this.AddChild(primaryTabControl);
 
 			// Restore the last selected tab
-			primaryTabControl.SelectTab(UserSettings.Instance.get(UserSettingsKey.SliceSettingsWidget_CurrentTab));
+			if (int.TryParse(UserSettings.Instance.get(UserSettingsKey.SliceSettingsWidget_CurrentTab), out int tabIndex)
+				&& tabIndex >= 0
+				&& tabIndex < primaryTabControl.TabCount - 1)
+			{
+				primaryTabControl.SelectedTabIndex = tabIndex;
+			}
+			else
+			{
+				primaryTabControl.SelectedTabIndex = 0;
+			}
 
 			// Store the last selected tab on change
-			primaryTabControl.TabBar.TabIndexChanged += (s, e) =>
+			primaryTabControl.ActiveTabChanged += (s, e) =>
 			{
-				if (!string.IsNullOrEmpty(primaryTabControl.TabBar.SelectedTabName)
-					&& settingsContext.IsPrimarySettingsView)
+				if (settingsContext.IsPrimarySettingsView)
 				{
-					UserSettings.Instance.set(UserSettingsKey.SliceSettingsWidget_CurrentTab, primaryTabControl.TabBar.SelectedTabName);
+					UserSettings.Instance.set(UserSettingsKey.SliceSettingsWidget_CurrentTab, primaryTabControl.SelectedTabIndex.ToString());
 				}
 			};
 		}

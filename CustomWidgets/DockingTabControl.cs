@@ -157,7 +157,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			this.RemoveAllChildren();
 
-			TabControl tabControl = null;
+			SimpleTabs tabControl = null;
 			if (this.ControlIsPinned)
 			{
 				var resizePage = new ResizeContainer(this)
@@ -168,39 +168,54 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					SplitterWidth = theme.SplitterWidth,
 				};
 
-				tabControl = theme.CreateTabControl();
+				tabControl = new SimpleTabs(this.CreatePinButton())
+				{
+					VAnchor = VAnchor.Stretch,
+					HAnchor = HAnchor.Stretch,
+				};
+				tabControl.TabBar.BackgroundColor = theme.ActiveTabBarBackground;
+
+				tabControl.ActiveTabChanged += (s, e) =>
+				{
+					printer.ViewState.SliceSettingsTabIndex = tabControl.SelectedTabIndex;
+				};
+
 				resizePage.AddChild(tabControl);
 
 				this.AddChild(resizePage);
 			}
 
 			int tabIndex = 0;
-			foreach (var nameWidget in allTabs)
+			foreach (var kvp in allTabs)
 			{
-				string tabTitle = nameWidget.Key;
+				string tabTitle = kvp.Key;
 
 				if (this.ControlIsPinned)
 				{
-					var content = new DockingWindowContent(this, nameWidget.Value, tabTitle);
+					var content = new DockingWindowContent(this, kvp.Value, tabTitle);
 
-					var tabPage = new TabPage(content, tabTitle);
-					var textTab = new TextTab(
-						tabPage,
-						tabTitle + " Tab",
-						12,
-						ActiveTheme.Instance.TabLabelSelected,
-						Color.Transparent,
-						ActiveTheme.Instance.TabLabelUnselected,
-						Color.Transparent,
-						useUnderlineStyling: true);
+					var tab = new ToolTab(
+							tabTitle,
+							tabControl,
+							content,
+							theme,
+							hasClose: kvp.Value is ConfigurePrinterWidget,
+							pointSize: theme.FontSize11)
+						{
+							Name = tabTitle + " Tab",
+							InactiveTabColor = Color.Transparent,
+							ActiveTabColor = theme.TabBodyBackground
+						};
 
-					tabControl.AddTab(textTab);
-
-					int localTabIndex = tabIndex;
-					textTab.Click += (s, e) =>
+					tab.CloseClicked += (s, e) =>
 					{
-						printer.ViewState.SliceSettingsTabIndex = localTabIndex;
+						if (tab.Name == "Printer Tab")
+						{
+							printer.ViewState.ConfigurePrinterVisible = false;
+						}
 					};
+
+					tabControl.AddTab(tab);
 				}
 				else // control is floating
 				{
@@ -241,7 +256,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						SpliterBarColor = spliterColor,
 						SplitterWidth = ApplicationController.Instance.Theme.SplitterWidth,
 					};
-					resizeContainer.AddChild(new DockingWindowContent(this, nameWidget.Value, tabTitle)
+					resizeContainer.AddChild(new DockingWindowContent(this, kvp.Value, tabTitle)
 					{
 						BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor,
 						Width = PageWidth
@@ -291,14 +306,15 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			if (this.ControlIsPinned)
 			{
-				tabControl.TabBar.AddChild(new HorizontalSpacer());
-				tabControl.TabBar.AddChild(this.CreatePinButton());
-
 				tabControl.TabBar.Padding = new BorderDouble(right: theme.ToolbarPadding.Right);
 
 				if (printer.ViewState.SliceSettingsTabIndex < tabControl.TabCount)
 				{
 					tabControl.SelectedTabIndex = printer.ViewState.SliceSettingsTabIndex;
+				}
+				else
+				{
+					tabControl.SelectedTabIndex = 0;
 				}
 			}
 		}
