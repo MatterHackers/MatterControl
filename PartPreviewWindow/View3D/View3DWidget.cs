@@ -158,7 +158,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			selectedObjectContainer = new ResizeContainer(selectedObjectPanel)
 			{
-				Width = printer.ViewState.SelectedObjectPanelWidth,
+				Width = printer?.ViewState.SelectedObjectPanelWidth ?? 200,
 				VAnchor = VAnchor.Stretch,
 				HAnchor = HAnchor.Right,
 				SpliterBarColor = theme.SplitterBackground,
@@ -497,7 +497,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnClosed(ClosedEventArgs e)
 		{
-			printer.ViewState.SelectedObjectPanelWidth = selectedObjectPanel.Width;
+			if (printer != null)
+			{
+				printer.ViewState.SelectedObjectPanelWidth = selectedObjectPanel.Width;
+			}
 
 			viewControls3D.TransformStateChanged -= ViewControls3D_TransformStateChanged;
 			sceneContext.LoadedGCodeChanged -= SceneContext_LoadedGCodeChanged;
