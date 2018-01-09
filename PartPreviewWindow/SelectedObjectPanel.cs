@@ -29,6 +29,8 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
@@ -36,8 +38,11 @@ using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MeshVisualizer;
+using MatterHackers.PolygonMesh;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -51,22 +56,89 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private View3DWidget view3DWidget;
 		private InteractiveScene scene;
 		private PrinterConfig printer;
+		private List<NamedAction> sceneActions;
 		private Dictionary<Type, HashSet<IObject3DEditor>> objectEditorsByType;
+		private ObservableCollection<GuiWidget> materialButtons = new ObservableCollection<GuiWidget>();
+		private SectionWidget editorSection;
+		private TextButton editButton;
 
 		public SelectedObjectPanel(View3DWidget view3DWidget, InteractiveScene scene, ThemeConfig theme, PrinterConfig printer)
 			: base(FlowDirection.TopToBottom)
 		{
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Top | VAnchor.Fit;
-			this.Padding = new BorderDouble(8, 10);
-			this.MinimumSize = new VectorMath.Vector2(220, 0);
+			this.Padding = 0; // new BorderDouble(8, 10);
+			//this.MinimumSize = new VectorMath.Vector2(220, 0);
 
 			this.view3DWidget = view3DWidget;
 			this.theme = theme;
 			this.scene = scene;
 			this.printer = printer;
 
-			this.AddChild(itemName = new TextWidget("", textColor: ActiveTheme.Instance.PrimaryTextColor)
+			sceneActions = new List<NamedAction>
+			{
+				new NamedAction()
+				{
+					Title = "Ungroup".Localize(),
+					Action = () =>
+					{
+						scene.UngroupSelection();
+					},
+					IsEnabled = () => scene.HasSelection
+				},
+				new NamedAction()
+				{
+					Title = "Group".Localize(),
+					Action = () =>
+					{
+						scene.GroupSelection();
+					},
+					IsEnabled = () => scene.HasSelection
+						&& scene.SelectedItem is SelectionGroup
+						&& scene.SelectedItem.Children.Count > 1
+				},
+
+				new NamedAction()
+				{
+					Title = "Lay Flat".Localize(),
+					Action = () =>
+					{
+						if (scene.HasSelection)
+						{
+							MakeLowestFaceFlat(scene.SelectedItem, scene.RootItem);
+						}
+					},
+					IsEnabled = () => scene.HasSelection
+				},
+				new NamedAction()
+				{
+					Title = "Duplicate".Localize(),
+					Action = () =>
+					{
+						scene.DuplicateSelection();
+					},
+					IsEnabled = () => scene.HasSelection
+				},
+				new NamedAction()
+				{
+					Title = "Remove".Localize(),
+					Action = () =>
+					{
+						scene.DeleteSelection();
+					},
+					IsEnabled = () => scene.HasSelection
+				}
+			};
+
+			var firstPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				Padding = 10,
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit
+			};
+			this.AddChild(firstPanel);
+
+			firstPanel.AddChild(itemName = new TextWidget("", textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
 				AutoExpandBoundsToText = true,
 				EllipsisIfClipped = true,
@@ -74,7 +146,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			});
 
 			var behavior3DTypeButtons = new FlowLayoutWidget();
-			this.AddChild(behavior3DTypeButtons);
+			firstPanel.AddChild(behavior3DTypeButtons);
 
 			var buttonMargin = new BorderDouble(2, 5);
 
@@ -129,7 +201,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var scrollable = new ScrollableWidget(true)
 			{
 				Name = "editorPanel",
-				Margin = new BorderDouble(top: 10),
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Stretch,
 			};
@@ -138,6 +209,80 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			scrollable.ScrollArea.HAnchor = HAnchor.Stretch;
 
 			this.AddChild(scrollable);
+
+			// Add heading separator
+			editorPanel.AddChild(new HorizontalLine(25)
+			{
+				Margin = new BorderDouble(0)
+			});
+
+			var operationsContainer = new FlowLeftRightWithWrapping();
+
+			foreach (var sceneAction in sceneActions)
+			{
+				var button = new TextButton(sceneAction.Title, theme)
+				{
+					Name = sceneAction.Title + " Button",
+					Margin = theme.ButtonSpacing,
+					BackgroundColor = theme.MinimalShade
+				};
+				button.Click += (s, e) => sceneAction.Action.Invoke();
+
+				operationsContainer.AddChild(button);
+			}
+
+			foreach (var namedAction in ApplicationController.Instance.RegisteredSceneOperations())
+			{
+				var button = new TextButton(namedAction.Title, theme)
+				{
+					Name = namedAction.Title + " Button",
+					Margin = theme.ButtonSpacing,
+					BackgroundColor = theme.MinimalShade
+				};
+				button.Click += (s, e) =>
+				{
+					namedAction.Action.Invoke(scene);
+				};
+				operationsContainer.AddChild(button);
+			}
+
+
+
+
+			var operationsSection = new SectionWidget("Operations".Localize(), ActiveTheme.Instance.PrimaryTextColor, operationsContainer);
+			editorPanel.AddChild(operationsSection);
+
+			editorSection = new SectionWidget("Editor", ActiveTheme.Instance.PrimaryTextColor, new GuiWidget());
+			editorPanel.AddChild(editorSection);
+
+			// TODO: Implements
+				//alignButton.Enabled = this.scene.HasSelection
+				//	&& this.scene.SelectedItem is SelectionGroup
+				//	&& this.scene.SelectedItem.Children.Count > 1;
+
+			var alignSection = new SectionWidget("Align".Localize(), ActiveTheme.Instance.PrimaryTextColor, this.AddAlignControls(), expanded: false)
+			{
+				Name = "Align Panel",
+			};
+			editorPanel.AddChild(alignSection);
+
+			var mirrorSection = new SectionWidget("Mirror".Localize(), ActiveTheme.Instance.PrimaryTextColor, new MirrorControls(scene), expanded: false)
+			{
+				Name = "Mirror Panel",
+			};
+			editorPanel.AddChild(mirrorSection);
+
+			var scaleSection = new SectionWidget("Scale".Localize(), ActiveTheme.Instance.PrimaryTextColor, new ScaleControls(scene, ActiveTheme.Instance.PrimaryTextColor), expanded: false)
+			{
+				Name = "Scale Panel",
+			};
+			editorPanel.AddChild(scaleSection);
+
+			var materialsSection = new SectionWidget("Materials".Localize(), ActiveTheme.Instance.PrimaryTextColor, this.AddMaterialControls(), expanded: false)
+			{
+				Name = "Materials Panel",
+			};
+			editorPanel.AddChild(materialsSection);
 
 			HashSet<IObject3DEditor> mappedEditors;
 			objectEditorsByType = new Dictionary<Type, HashSet<IObject3DEditor>>();
@@ -173,7 +318,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.item = selectedItem;
 
-			this.editorPanel.RemoveAllChildren();
+			//this.editorPanel.RemoveAllChildren();
 
 			var viewMode = printer?.ViewState.ViewMode;
 
@@ -205,21 +350,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (mappedEditors != null)
 			{
-				var dropDownList = new DropDownList("", ActiveTheme.Instance.PrimaryTextColor, maxHeight: 300)
-				{
-					HAnchor = HAnchor.Stretch
-				};
+				//var dropDownList = new DropDownList("", ActiveTheme.Instance.PrimaryTextColor, maxHeight: 300)
+				//{
+				//	HAnchor = HAnchor.Stretch
+				//};
 
-				foreach (IObject3DEditor editor in mappedEditors)
-				{
-					MenuItem menuItem = dropDownList.AddItem(editor.Name);
-					menuItem.Selected += (s, e2) =>
-					{
-						ShowObjectEditor(editor);
-					};
-				}
+				//foreach (IObject3DEditor editor in mappedEditors)
+				//{
+				//	MenuItem menuItem = dropDownList.AddItem(editor.Name);
+				//	menuItem.Selected += (s, e2) =>
+				//	{
+				//		ShowObjectEditor(editor);
+				//	};
+				//}
 
-				editorPanel.AddChild(dropDownList);
+				//editorPanel.AddChild(dropDownList);
 
 				// Select the active editor or fall back to the first if not found
 				var firstEditor = (from editor in mappedEditors
@@ -233,24 +378,40 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					firstEditor = mappedEditors.First();
 				}
 
-				int selectedIndex = 0;
-				for (int i = 0; i < dropDownList.MenuItems.Count; i++)
-				{
-					if (dropDownList.MenuItems[i].Text == firstEditor.Name)
-					{
-						selectedIndex = i;
-						break;
-					}
-				}
+				//int selectedIndex = 0;
+				//for (int i = 0; i < dropDownList.MenuItems.Count; i++)
+				//{
+				//	if (dropDownList.MenuItems[i].Text == firstEditor.Name)
+				//	{
+				//		selectedIndex = i;
+				//		break;
+				//	}
+				//}
 
-				dropDownList.SelectedIndex = selectedIndex;
+				//dropDownList.SelectedIndex = selectedIndex;
 
 				ShowObjectEditor(firstEditor);
+
+				if (materialButtons?.Count > 0)
+				{
+					bool setSelection = false;
+					// Set the material selector to have the correct material button selected
+					for (int i = 0; i < materialButtons.Count; i++)
+					{
+						if (selectedItem.MaterialIndex == i)
+						{
+							((RadioButton)materialButtons[i]).Checked = true;
+							setSelection = true;
+						}
+					}
+
+					if (!setSelection)
+					{
+						((RadioButton)materialButtons[0]).Checked = true;
+					}
+				}
 			}
 		}
-
-		private GuiWidget activeEditorWidget;
-		private TextButton editButton;
 
 		private void ShowObjectEditor(IObject3DEditor editor)
 		{
@@ -259,15 +420,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				return;
 			}
 
-			activeEditorWidget?.Close();
+			var editorWidget = editor.Create(scene.SelectedItem, view3DWidget, theme);
+			editorWidget.HAnchor = HAnchor.Stretch;
+			editorWidget.VAnchor = VAnchor.Fit;
 
-			var newEditor = editor.Create(scene.SelectedItem, view3DWidget, theme);
-			newEditor.HAnchor = HAnchor.Stretch;
-			newEditor.VAnchor = VAnchor.Fit;
-
-			editorPanel.AddChild(newEditor);
-
-			activeEditorWidget = newEditor;
+			editorSection.SetContentWidget(editorWidget);
 		}
 
 		public void Save(ILibraryItem item, IObject3D content)
@@ -277,6 +434,331 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				children.Remove(this.item);
 				children.Add(content);
 			});
+		}
+
+		private GuiWidget AddMaterialControls()
+		{
+			var widget = new IgnoredPopupWidget()
+			{
+				HAnchor = HAnchor.Fit,
+				VAnchor = VAnchor.Fit,
+				BackgroundColor = Color.White,
+				Padding = new BorderDouble(0, 5, 5, 0)
+			};
+
+			FlowLayoutWidget buttonPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				VAnchor = VAnchor.Fit,
+				HAnchor = HAnchor.Fit,
+			};
+			widget.AddChild(buttonPanel);
+
+			materialButtons.Clear();
+			int extruderCount = 4;
+			for (int extruderIndex = 0; extruderIndex < extruderCount; extruderIndex++)
+			{
+				FlowLayoutWidget colorSelectionContainer = new FlowLayoutWidget(FlowDirection.LeftToRight)
+				{
+					HAnchor = HAnchor.Fit,
+					Padding = new BorderDouble(5)
+				};
+				buttonPanel.AddChild(colorSelectionContainer);
+
+				string materialLabelText = string.Format("{0} {1}", "Material".Localize(), extruderIndex + 1);
+
+				RadioButton materialSelection = new RadioButton(materialLabelText, textColor: Color.Black);
+				materialButtons.Add(materialSelection);
+				materialSelection.SiblingRadioButtonList = materialButtons;
+				colorSelectionContainer.AddChild(materialSelection);
+				colorSelectionContainer.AddChild(new HorizontalSpacer());
+				int extruderIndexCanPassToClick = extruderIndex;
+				materialSelection.Click += (sender, e) =>
+				{
+					if (scene.HasSelection)
+					{
+						scene.SelectedItem.MaterialIndex = extruderIndexCanPassToClick;
+						scene.Invalidate();
+
+						// "View 3D Overflow Menu" // the menu to click on
+						// "Materials Option" // the item to highlight
+						//HelpSystem.
+					}
+				};
+
+				colorSelectionContainer.AddChild(new GuiWidget(16, 16)
+				{
+					BackgroundColor = MaterialRendering.Color(extruderIndex),
+					Margin = new BorderDouble(5, 0, 0, 0)
+				});
+			}
+
+			return widget;
+		}
+
+		private void MakeLowestFaceFlat(IObject3D objectToLayFlatGroup, IObject3D root)
+		{
+			bool firstVertex = true;
+
+			IObject3D objectToLayFlat = objectToLayFlatGroup;
+
+			IVertex lowestVertex = null;
+			Vector3 lowestVertexPosition = Vector3.Zero;
+			IObject3D itemToLayFlat = null;
+
+			// Process each child, checking for the lowest vertex
+			var objectsToCheck = objectToLayFlat.VisibleMeshes();
+			foreach (var itemToCheck in objectsToCheck)
+			{
+				// find the lowest point on the model
+				for (int testIndex = 0; testIndex < itemToCheck.Mesh.Vertices.Count; testIndex++)
+				{
+					var vertex = itemToCheck.Mesh.Vertices[testIndex];
+					Vector3 vertexPosition = Vector3.Transform(vertex.Position, itemToCheck.WorldMatrix(root));
+					if (firstVertex)
+					{
+						lowestVertex = itemToCheck.Mesh.Vertices[testIndex];
+						lowestVertexPosition = vertexPosition;
+						itemToLayFlat = itemToCheck;
+						firstVertex = false;
+					}
+					else if (vertexPosition.Z < lowestVertexPosition.Z)
+					{
+						lowestVertex = itemToCheck.Mesh.Vertices[testIndex];
+						lowestVertexPosition = vertexPosition;
+						itemToLayFlat = itemToCheck;
+					}
+				}
+			}
+
+			if (lowestVertex == null)
+			{
+				// didn't find any selected mesh
+				return;
+			}
+
+			Face faceToLayFlat = null;
+			double lowestAngleOfAnyFace = double.MaxValue;
+			// Check all the faces that are connected to the lowest point to find out which one to lay flat.
+			foreach (Face face in lowestVertex.ConnectedFaces())
+			{
+				double biggestAngleToFaceVertex = double.MinValue;
+				foreach (IVertex faceVertex in face.Vertices())
+				{
+					if (faceVertex != lowestVertex)
+					{
+						Vector3 faceVertexPosition = Vector3.Transform(faceVertex.Position, itemToLayFlat.WorldMatrix(root));
+						Vector3 pointRelLowest = faceVertexPosition - lowestVertexPosition;
+						double xLeg = new Vector2(pointRelLowest.X, pointRelLowest.Y).Length;
+						double yLeg = pointRelLowest.Z;
+						double angle = Math.Atan2(yLeg, xLeg);
+						if (angle > biggestAngleToFaceVertex)
+						{
+							biggestAngleToFaceVertex = angle;
+						}
+					}
+				}
+				if (biggestAngleToFaceVertex < lowestAngleOfAnyFace)
+				{
+					lowestAngleOfAnyFace = biggestAngleToFaceVertex;
+					faceToLayFlat = face;
+				}
+			}
+
+			double maxDistFromLowestZ = 0;
+			List<Vector3> faceVertices = new List<Vector3>();
+			foreach (IVertex vertex in faceToLayFlat.Vertices())
+			{
+				Vector3 vertexPosition = Vector3.Transform(vertex.Position, itemToLayFlat.WorldMatrix(root));
+				faceVertices.Add(vertexPosition);
+				maxDistFromLowestZ = Math.Max(maxDistFromLowestZ, vertexPosition.Z - lowestVertexPosition.Z);
+			}
+
+			if (maxDistFromLowestZ > .001)
+			{
+				Vector3 xPositive = (faceVertices[1] - faceVertices[0]).GetNormal();
+				Vector3 yPositive = (faceVertices[2] - faceVertices[0]).GetNormal();
+				Vector3 planeNormal = Vector3.Cross(xPositive, yPositive).GetNormal();
+
+				// this code takes the minimum rotation required and looks much better.
+				Quaternion rotation = new Quaternion(planeNormal, new Vector3(0, 0, -1));
+				Matrix4X4 partLevelMatrix = Matrix4X4.CreateRotation(rotation);
+
+				// rotate it
+				objectToLayFlatGroup.Matrix = PlatingHelper.ApplyAtCenter(objectToLayFlatGroup, partLevelMatrix);
+
+				scene.Invalidate();
+				Invalidate();
+			}
+
+			PlatingHelper.PlaceOnBed(objectToLayFlatGroup);
+		}
+
+		private List<TransformData> GetTransforms(int axisIndex, AxisAlignment alignment)
+		{
+			var transformDatas = new List<TransformData>();
+			var totalAABB = scene.SelectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+
+			Vector3 firstSourceOrigin = new Vector3(double.MaxValue, double.MaxValue, double.MaxValue);
+
+			// move the objects to the right place
+			foreach (var child in scene.SelectedItem.Children)
+			{
+				var childAABB = child.GetAxisAlignedBoundingBox(scene.SelectedItem.Matrix);
+				var offset = new Vector3();
+				switch (alignment)
+				{
+					case AxisAlignment.Min:
+						offset[axisIndex] = totalAABB.minXYZ[axisIndex] - childAABB.minXYZ[axisIndex];
+						break;
+
+					case AxisAlignment.Center:
+						offset[axisIndex] = totalAABB.Center[axisIndex] - childAABB.Center[axisIndex];
+						break;
+
+					case AxisAlignment.Max:
+						offset[axisIndex] = totalAABB.maxXYZ[axisIndex] - childAABB.maxXYZ[axisIndex];
+						break;
+
+					case AxisAlignment.SourceCoordinateSystem:
+						{
+							// move the object back to the origin
+							offset = -Vector3.Transform(Vector3.Zero, child.Matrix);
+
+							// figure out how to move it back to the start center
+							if (firstSourceOrigin.X == double.MaxValue)
+							{
+								firstSourceOrigin = -offset;
+							}
+
+							offset += firstSourceOrigin;
+						}
+						break;
+				}
+				transformDatas.Add(new TransformData()
+				{
+					TransformedObject = child,
+					RedoTransform = child.Matrix * Matrix4X4.CreateTranslation(offset),
+					UndoTransform = child.Matrix,
+				});
+			}
+
+			return transformDatas;
+		}
+
+		private void AddAlignDelegates(int axisIndex, AxisAlignment alignment, Button alignButton)
+		{
+			alignButton.Click += (sender, e) =>
+			{
+				if (scene.HasSelection)
+				{
+					var transformDatas = GetTransforms(axisIndex, alignment);
+					scene.UndoBuffer.AddAndDo(new TransformCommand(transformDatas));
+
+					//scene.SelectedItem.MaterialIndex = extruderIndexCanPassToClick;
+					scene.Invalidate();
+				}
+			};
+
+			alignButton.MouseEnter += (s2, e2) =>
+			{
+				if (scene.HasSelection)
+				{
+					// make a preview of the new positions
+					var transformDatas = GetTransforms(axisIndex, alignment);
+					scene.Children.Modify((list) =>
+					{
+						foreach (var transform in transformDatas)
+						{
+							var copy = transform.TransformedObject.Clone();
+							copy.Matrix = transform.RedoTransform;
+							copy.Color = new Color(Color.Gray, 126);
+							list.Add(copy);
+						}
+					});
+				}
+			};
+
+			alignButton.MouseLeave += (s3, e3) =>
+			{
+				if (scene.HasSelection)
+				{
+					// clear the preview of the new positions
+					scene.Children.Modify((list) =>
+					{
+						for (int i = list.Count - 1; i >= 0; i--)
+						{
+							if (list[i].Color.Alpha0To255 == 126)
+							{
+								list.RemoveAt(i);
+							}
+						}
+					});
+				}
+			};
+		}
+
+		internal enum AxisAlignment { Min, Center, Max, SourceCoordinateSystem };
+
+		private GuiWidget CreateAlignButton(int axisIndex, AxisAlignment alignment, string lable)
+		{
+			var smallMarginButtonFactory = theme.MenuButtonFactory;
+			var alignButton = smallMarginButtonFactory.Generate(lable);
+			alignButton.Margin = new BorderDouble(3, 0);
+
+			AddAlignDelegates(axisIndex, alignment, alignButton);
+
+			return alignButton;
+		}
+
+		private GuiWidget AddAlignControls()
+		{
+			var widget = new IgnoredPopupWidget()
+			{
+				HAnchor = HAnchor.Fit,
+				VAnchor = VAnchor.Fit,
+				BackgroundColor = Color.White,
+				Padding = new BorderDouble(5, 5, 5, 0)
+			};
+
+			FlowLayoutWidget buttonPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				VAnchor = VAnchor.Fit,
+				HAnchor = HAnchor.Fit,
+			};
+			widget.AddChild(buttonPanel);
+
+			string[] axisNames = new string[] { "X", "Y", "Z" };
+			for (int axisIndex = 0; axisIndex < 3; axisIndex++)
+			{
+				FlowLayoutWidget alignButtons = new FlowLayoutWidget(FlowDirection.LeftToRight)
+				{
+					HAnchor = HAnchor.Fit,
+					Padding = new BorderDouble(5)
+				};
+				buttonPanel.AddChild(alignButtons);
+
+				alignButtons.AddChild(new TextWidget(axisNames[axisIndex])
+				{
+					VAnchor = VAnchor.Center,
+					Margin = new BorderDouble(0, 0, 3, 0)
+				});
+
+				alignButtons.AddChild(CreateAlignButton(axisIndex, AxisAlignment.Min, "Min"));
+				alignButtons.AddChild(new HorizontalSpacer());
+				alignButtons.AddChild(CreateAlignButton(axisIndex, AxisAlignment.Center, "Center"));
+				alignButtons.AddChild(new HorizontalSpacer());
+				alignButtons.AddChild(CreateAlignButton(axisIndex, AxisAlignment.Max, "Max"));
+				alignButtons.AddChild(new HorizontalSpacer());
+			}
+
+			var dualExtrusionAlignButton = theme.MenuButtonFactory.Generate("Align for Dual Extrusion".Localize());
+			dualExtrusionAlignButton.Margin = new BorderDouble(21, 0);
+			dualExtrusionAlignButton.HAnchor = HAnchor.Left;
+			buttonPanel.AddChild(dualExtrusionAlignButton);
+
+			AddAlignDelegates(0, AxisAlignment.SourceCoordinateSystem, dualExtrusionAlignButton);
+
+			return widget;
 		}
 
 		public class InMemoryItem : ILibraryContentItem

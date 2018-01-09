@@ -28,27 +28,21 @@ either expressed or implied, of the FreeBSD Project.
 */
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
-using MatterHackers.Agg.Image;
 using MatterHackers.Agg.OpenGlGui;
 using MatterHackers.Agg.Platform;
-using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.Library;
-using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintLibrary;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
@@ -63,11 +57,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private bool DoBooleanTest = false;
 		private bool deferEditorTillMouseUp = false;
 
-		public GuiWidget bottomActionPanel;
-
 		public readonly int EditButtonHeight = 44;
 
-		private ObservableCollection<GuiWidget> materialButtons = new ObservableCollection<GuiWidget>();
 		private bool hasDrawn = false;
 
 		private Color[] SelectionColors = new Color[] { new Color(131, 4, 66), new Color(227, 31, 61), new Color(255, 148, 1), new Color(247, 224, 23), new Color(143, 212, 1) };
@@ -153,205 +144,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// if the scene is invalidated invalidate the widget
 			Scene.Invalidated += (s, e) => Invalidate();
 
-			// add in the plater tools
-			{
-				bool isPrinterMode = meshViewerWidget.EditorMode == MeshViewerWidget.EditorType.Printer;
-				var buttonSpacing = theme.ButtonSpacing;
-
-				var buttonView = new FlowLayoutWidget();
-				buttonView.AddChild(new ImageWidget(AggContext.StaticData.LoadIcon((isPrinterMode) ? "bed.png" : "cube.png", IconColor.Theme))
-				{
-					Margin = new BorderDouble(left: 10),
-					VAnchor = VAnchor.Center
-				});
-
-				var buttonText = (isPrinterMode) ? "Bed".Localize() : "Part".Localize();
-				buttonView.AddChild(new TextButton(buttonText, theme)
-				{
-					Padding = new BorderDouble(8, 4, 0, 4)
-				});
-
-				var selectionActionBar = new OverflowBar(theme, buttonView)
-				{
-					VAnchor = VAnchor.Center | VAnchor.Fit,
-					HAnchor = HAnchor.Stretch,
-				};
-				selectionActionBar.OverflowMenu.Name = "Bed Options Menu";
-				selectionActionBar.OverflowMenu.PopDirection = Direction.Up;
-				selectionActionBar.OverflowMenu.DynamicPopupContent = () => theme.CreatePopupMenu(this.BedMenuActions(sceneContext));
-				selectionActionBar.OverflowMenu.AlignToRightEdge = true;
-				selectionActionBar.OverflowMenu.DrawArrow = true;
-
-				bottomActionPanel = new DisableablePanel(selectionActionBar, enabled: true)
-				{
-					BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor,
-				};
-
-				Button addButton = smallMarginButtonFactory.Generate("Insert".Localize(), AggContext.StaticData.LoadIcon("cube.png", 14, 14, IconColor.Theme));
-				addButton.Margin = 0;
-				addButton.Click += (sender, e) =>
-				{
-					UiThread.RunOnIdle(() =>
-					{
-						AggContext.FileDialogs.OpenFileDialog(
-							new OpenFileDialogParams(ApplicationSettings.OpenDesignFileParams, multiSelect: true),
-							(openParams) =>
-							{
-								this.LoadAndAddPartsToPlate(openParams.FileNames);
-							});
-					});
-				};
-				selectionActionBar.AddChild(addButton);
-
-				selectionActionBar.AddChild(this.CreateActionSeparator());
-
-				Button ungroupButton = smallMarginButtonFactory.Generate("Ungroup".Localize());
-				ungroupButton.Name = "3D View Ungroup";
-				ungroupButton.Margin = buttonSpacing;
-				ungroupButton.Click += (sender, e) =>
-				{
-					this.Scene.UngroupSelection(this);
-				};
-				this.Scene.SelectionChanged += (s, e) =>
-				{
-					ungroupButton.Enabled = this.Scene.HasSelection;
-				};
-				selectionActionBar.AddChild(ungroupButton);
-
-				Button groupButton = smallMarginButtonFactory.Generate("Group".Localize());
-				groupButton.Name = "3D View Group";
-				groupButton.Margin = buttonSpacing;
-				groupButton.Click += (sender, e) =>
-				{
-					this.Scene.GroupSelection(this);
-				};
-				this.Scene.SelectionChanged += (s, e) =>
-				{
-					groupButton.Enabled = this.Scene.HasSelection
-						&& this.Scene.SelectedItem is SelectionGroup
-						&& this.Scene.SelectedItem.Children.Count > 1;
-				};
-				selectionActionBar.AddChild(groupButton);
-
-				// this is closer to the old align button
-				if (false)
-				{
-					var absoluteButton = smallMarginButtonFactory.Generate("Absolute".Localize());
-					absoluteButton.Margin = buttonSpacing;
-					absoluteButton.Click += (sender, e) =>
-					{
-						if (this.Scene.HasSelection)
-						{
-							this.Scene.SelectedItem.Matrix = Matrix4X4.Identity;
-						}
-					};
-					selectionActionBar.AddChild(absoluteButton);
-				}
-
-				// put in the material options
-				var alignButton = new PopupMenuButton("Align".Localize(), theme)
-				{
-					PopDirection = Direction.Up,
-					PopupContent = this.AddAlignControls(),
-					AlignToRightEdge = true,
-					Margin = buttonSpacing
-				};
-				this.Scene.SelectionChanged += (s, e) =>
-				{
-					alignButton.Enabled = this.Scene.HasSelection
-						&& this.Scene.SelectedItem is SelectionGroup
-						&& this.Scene.SelectedItem.Children.Count > 1;
-				};
-				selectionActionBar.AddChild(alignButton);
-
-				var layFlatButton = smallMarginButtonFactory.Generate("Lay Flat".Localize());
-				layFlatButton.Margin = buttonSpacing;
-				layFlatButton.Click += (sender, e) =>
-				{
-					if (this.Scene.HasSelection)
-					{
-						MakeLowestFaceFlat(this.Scene.SelectedItem, Scene.RootItem);
-					}
-				};
-				this.Scene.SelectionChanged += (s, e) =>
-				{
-					layFlatButton.Enabled = this.Scene.HasSelection;
-				};
-				selectionActionBar.AddChild(layFlatButton);
-
-				selectionActionBar.AddChild(this.CreateActionSeparator());
-
-				var duplicateButton = smallMarginButtonFactory.Generate("Duplicate".Localize());
-				duplicateButton.Name = "3D View Copy";
-				duplicateButton.Margin = buttonSpacing;
-				duplicateButton.Click += (sender, e) =>
-				{
-					this.Scene.DuplicateSelection(this);
-				};
-				this.Scene.SelectionChanged += (s, e) =>
-				{
-					duplicateButton.Enabled = this.Scene.HasSelection;
-				};
-				selectionActionBar.AddChild(duplicateButton);
-
-				var deleteButton = smallMarginButtonFactory.Generate("Remove".Localize());
-				deleteButton.Name = "3D View Remove";
-				deleteButton.Margin = buttonSpacing;
-				deleteButton.Click += (sender, e) =>
-				{
-					this.Scene.DeleteSelection(this);
-				};
-				this.Scene.SelectionChanged += (s, e) =>
-				{
-					deleteButton.Enabled = this.Scene.HasSelection;
-				};
-				selectionActionBar.AddChild(deleteButton);
-
-				var mirrorButton = new PopupMenuButton("Mirror".Localize(), theme)
-				{
-					Name = "Mirror Button",
-					PopDirection = Direction.Up,
-					PopupContent = new MirrorControls(Scene),
-					AlignToRightEdge = true,
-					Margin = buttonSpacing,
-				};
-				this.Scene.SelectionChanged += (s, e) =>
-				{
-					mirrorButton.Enabled = this.Scene.HasSelection;
-				};
-				selectionActionBar.AddChild(mirrorButton);
-
-				var scaleButton = new PopupMenuButton("Scale".Localize(), theme)
-				{
-					Name = "Scale Button",
-					PopDirection = Direction.Up,
-					DynamicPopupContent = () => new ScaleControls(Scene, Color.Black),
-					AlignToRightEdge = true,
-					Margin = buttonSpacing,
-				};
-				this.Scene.SelectionChanged += (s, e) =>
-				{
-					scaleButton.Enabled = this.Scene.HasSelection;
-				};
-				selectionActionBar.AddChild(scaleButton);
-
-				// put in the material options
-				var materialsButton = new PopupMenuButton("Materials".Localize(), theme)
-				{
-					PopDirection = Direction.Up,
-					PopupContent = this.AddMaterialControls(),
-					AlignToRightEdge = true,
-					Margin = buttonSpacing
-				};
-				this.Scene.SelectionChanged += (s, e) =>
-				{
-					materialsButton.Enabled = this.Scene.HasSelection;
-				};
-				selectionActionBar.AddChild(materialsButton);
-			}
-
-			mainContainerTopToBottom.AddChild(bottomActionPanel);
-
 			this.AddChild(mainContainerTopToBottom);
 
 			this.AnchorAll();
@@ -366,13 +158,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			selectedObjectContainer = new ResizeContainer(selectedObjectPanel)
 			{
-				Width = 200,
+				Width = printer?.ViewState.SelectedObjectPanelWidth ?? 200,
 				VAnchor = VAnchor.Stretch,
 				HAnchor = HAnchor.Right,
 				SpliterBarColor = theme.SplitterBackground,
 				SplitterWidth = theme.SplitterWidth,
 				Visible = false,
 			};
+
 			this.InteractionLayer.AddChild(selectedObjectContainer);
 			selectedObjectContainer.AddChild(selectedObjectPanel);
 
@@ -413,75 +206,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.sceneContext.SceneLoaded += SceneContext_SceneLoaded;
 
 			this.viewControls3D.modelViewButton.Enabled = sceneContext.EditableScene;
-		}
-
-		private NamedAction[] BedMenuActions(BedConfig sceneContext)
-		{
-			// Bed menu
-			return new[]
-			{
-				new NamedAction()
-				{
-					Title = "Save".Localize(),
-					Action = async () =>
-					{
-						await ApplicationController.Instance.Tasks.Execute(this.SaveChanges);
-					},
-					IsEnabled = () => sceneContext.EditableScene
-				},
-				new NamedAction()
-				{
-					Title = "Save As".Localize(),
-					Action = () => UiThread.RunOnIdle(OpenSaveAsWindow),
-					IsEnabled = () => sceneContext.EditableScene
-				},
-				new NamedAction()
-				{
-					Title = "Export".Localize(),
-					Action = () =>
-					{
-						UiThread.RunOnIdle(() =>
-						{
-							DialogWindow.Show(
-								new ExportPrintItemPage(new[]
-								{
-									new FileSystemFileItem(sceneContext.EditContext.PartFilePath)
-								}));
-						});
-					},
-					IsEnabled = () => sceneContext.EditableScene
-				},
-				new NamedAction()
-				{
-					Title = "Publish".Localize(),
-					Action = () =>
-					{
-						UiThread.RunOnIdle(() => DialogWindow.Show<PublishPartToMatterHackers>());
-					},
-					IsEnabled = () => sceneContext.EditableScene
-				},
-				new NamedAction()
-				{
-					Title = "Arrange All Parts".Localize(),
-					Action = () =>
-					{
-						this.Scene.AutoArrangeChildren(this);
-					},
-					IsEnabled = () => sceneContext.EditableScene
-				},
-				new NamedAction() { Title = "----" },
-				new NamedAction()
-				{
-					Title = "Clear Bed".Localize(),
-					Action = () =>
-					{
-						UiThread.RunOnIdle(() =>
-						{
-							sceneContext.ClearPlate().ConfigureAwait(false);
-						});
-					}
-				}
-			};
 		}
 
 		private void SceneContext_SceneLoaded(object sender, EventArgs e)
@@ -625,7 +349,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					case Keys.Delete:
 					case Keys.Back:
-						this.Scene.DeleteSelection(this);
+						this.Scene.DeleteSelection();
 						break;
 
 					case Keys.Escape:
@@ -773,6 +497,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnClosed(ClosedEventArgs e)
 		{
+			if (printer != null)
+			{
+				printer.ViewState.SelectedObjectPanelWidth = selectedObjectPanel.Width;
+			}
+
 			viewControls3D.TransformStateChanged -= ViewControls3D_TransformStateChanged;
 			sceneContext.LoadedGCodeChanged -= SceneContext_LoadedGCodeChanged;
 			this.Scene.SelectionChanged -= Scene_SelectionChanged;
@@ -1416,232 +1145,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		internal GuiWidget AddAlignControls()
-		{
-			var widget = new IgnoredPopupWidget()
-			{
-				HAnchor = HAnchor.Fit,
-				VAnchor = VAnchor.Fit,
-				BackgroundColor = Color.White,
-				Padding = new BorderDouble(5, 5, 5, 0)
-			};
-
-			FlowLayoutWidget buttonPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				VAnchor = VAnchor.Fit,
-				HAnchor = HAnchor.Fit,
-			};
-			widget.AddChild(buttonPanel);
-
-			string[] axisNames = new string[] { "X", "Y", "Z" };
-			for (int axisIndex = 0; axisIndex < 3; axisIndex++)
-			{
-				FlowLayoutWidget alignButtons = new FlowLayoutWidget(FlowDirection.LeftToRight)
-				{
-					HAnchor = HAnchor.Fit,
-					Padding = new BorderDouble(5)
-				};
-				buttonPanel.AddChild(alignButtons);
-
-				alignButtons.AddChild(new TextWidget(axisNames[axisIndex])
-				{
-					VAnchor = VAnchor.Center,
-					Margin = new BorderDouble(0, 0, 3, 0)
-				});
-
-				alignButtons.AddChild(CreateAlignButton(axisIndex, AxisAlignment.Min, "Min"));
-				alignButtons.AddChild(new HorizontalSpacer());
-				alignButtons.AddChild(CreateAlignButton(axisIndex, AxisAlignment.Center, "Center"));
-				alignButtons.AddChild(new HorizontalSpacer());
-				alignButtons.AddChild(CreateAlignButton(axisIndex, AxisAlignment.Max, "Max"));
-				alignButtons.AddChild(new HorizontalSpacer());
-			}
-
-			var dualExtrusionAlignButton = theme.MenuButtonFactory.Generate("Align for Dual Extrusion".Localize());
-			dualExtrusionAlignButton.Margin = new BorderDouble(21, 0);
-			dualExtrusionAlignButton.HAnchor = HAnchor.Left;
-			buttonPanel.AddChild(dualExtrusionAlignButton);
-
-			AddAlignDelegates(0, AxisAlignment.SourceCoordinateSystem, dualExtrusionAlignButton);
-
-			return widget;
-		}
-
-		internal enum AxisAlignment { Min, Center, Max, SourceCoordinateSystem };
-		private GuiWidget CreateAlignButton(int axisIndex, AxisAlignment alignment, string lable)
-		{
-			var smallMarginButtonFactory = theme.MenuButtonFactory;
-			var alignButton = smallMarginButtonFactory.Generate(lable);
-			alignButton.Margin = new BorderDouble(3, 0);
-
-			AddAlignDelegates(axisIndex, alignment, alignButton);
-
-			return alignButton;
-		}
-
-		private void AddAlignDelegates(int axisIndex, AxisAlignment alignment, Button alignButton)
-		{
-			alignButton.Click += (sender, e) =>
-			{
-				if (Scene.HasSelection)
-				{
-					var transformDatas = GetTransforms(axisIndex, alignment);
-					this.Scene.UndoBuffer.AddAndDo(new TransformCommand(transformDatas));
-
-					//Scene.SelectedItem.MaterialIndex = extruderIndexCanPassToClick;
-					Scene.Invalidate();
-				}
-			};
-
-			alignButton.MouseEnter += (s2, e2) =>
-			{
-				if (Scene.HasSelection)
-				{
-					// make a preview of the new positions
-					var transformDatas = GetTransforms(axisIndex, alignment);
-					Scene.Children.Modify((list) =>
-					{
-						foreach (var transform in transformDatas)
-						{
-							var copy = transform.TransformedObject.Clone();
-							copy.Matrix = transform.RedoTransform;
-							copy.Color = new Color(Color.Gray, 126);
-							list.Add(copy);
-						}
-					});
-				}
-			};
-
-			alignButton.MouseLeave += (s3, e3) =>
-			{
-				if (Scene.HasSelection)
-				{
-					// clear the preview of the new positions
-					Scene.Children.Modify((list) =>
-					{
-						for(int i=list.Count-1; i>=0; i--)
-						{
-							if (list[i].Color.Alpha0To255 == 126)
-							{
-								list.RemoveAt(i);
-							}
-						}
-					});
-				}
-			};
-		}
-
-		private List<TransformData> GetTransforms(int axisIndex, AxisAlignment alignment)
-		{
-			var transformDatas = new List<TransformData>();
-			var totalAABB = Scene.SelectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
-
-			Vector3 firstSourceOrigin = new Vector3(double.MaxValue, double.MaxValue, double.MaxValue);
-
-			// move the objects to the right place
-			foreach (var child in Scene.SelectedItem.Children)
-			{
-				var childAABB = child.GetAxisAlignedBoundingBox(Scene.SelectedItem.Matrix);
-				var offset = new Vector3();
-				switch (alignment)
-				{
-					case AxisAlignment.Min:
-						offset[axisIndex] = totalAABB.minXYZ[axisIndex] - childAABB.minXYZ[axisIndex];
-						break;
-
-					case AxisAlignment.Center:
-						offset[axisIndex] = totalAABB.Center[axisIndex] - childAABB.Center[axisIndex];
-						break;
-
-					case AxisAlignment.Max:
-						offset[axisIndex] = totalAABB.maxXYZ[axisIndex] - childAABB.maxXYZ[axisIndex];
-						break;
-
-					case AxisAlignment.SourceCoordinateSystem:
-						{
-							// move the object back to the origin
-							offset = -Vector3.Transform(Vector3.Zero, child.Matrix);
-
-							// figure out how to move it back to the start center
-							if(firstSourceOrigin.X == double.MaxValue)
-							{
-								firstSourceOrigin = -offset;
-							}
-
-							offset += firstSourceOrigin;
-						}
-						break;
-				}
-				transformDatas.Add(new TransformData()
-				{
-					TransformedObject = child,
-					RedoTransform = child.Matrix * Matrix4X4.CreateTranslation(offset),
-					UndoTransform = child.Matrix,
-				});
-			}
-
-			return transformDatas;
-		}
-
-		internal GuiWidget AddMaterialControls()
-		{
-			var widget = new IgnoredPopupWidget()
-			{
-				HAnchor = HAnchor.Fit,
-				VAnchor = VAnchor.Fit,
-				BackgroundColor = Color.White,
-				Padding = new BorderDouble(0, 5, 5, 0)
-			};
-
-			FlowLayoutWidget buttonPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				VAnchor = VAnchor.Fit,
-				HAnchor = HAnchor.Fit,
-			};
-			widget.AddChild(buttonPanel);
-
-			materialButtons.Clear();
-			int extruderCount = 4;
-			for (int extruderIndex = 0; extruderIndex < extruderCount; extruderIndex++)
-			{
-				FlowLayoutWidget colorSelectionContainer = new FlowLayoutWidget(FlowDirection.LeftToRight)
-				{
-					HAnchor = HAnchor.Fit,
-					Padding = new BorderDouble(5)
-				};
-				buttonPanel.AddChild(colorSelectionContainer);
-
-				string materialLabelText = string.Format("{0} {1}", "Material".Localize(), extruderIndex + 1);
-
-				RadioButton materialSelection = new RadioButton(materialLabelText, textColor: Color.Black);
-				materialButtons.Add(materialSelection);
-				materialSelection.SiblingRadioButtonList = materialButtons;
-				colorSelectionContainer.AddChild(materialSelection);
-				colorSelectionContainer.AddChild(new HorizontalSpacer());
-				int extruderIndexCanPassToClick = extruderIndex;
-				materialSelection.Click += (sender, e) =>
-				{
-					if (Scene.HasSelection)
-					{
-						Scene.SelectedItem.MaterialIndex = extruderIndexCanPassToClick;
-						Scene.Invalidate();
-
-						// "View 3D Overflow Menu" // the menu to click on
-						// "Materials Option" // the item to highlight
-						//HelpSystem.
-					}
-				};
-
-				colorSelectionContainer.AddChild(new GuiWidget(16, 16)
-				{
-					BackgroundColor = MatterialRendering.Color(extruderIndex),
-					Margin = new BorderDouble(5, 0, 0, 0)
-				});
-			}
-
-			return widget;
-		}
-
 		// TODO: Consider if we should always allow DragDrop or if we should prevent during printer or other scenarios
 		private bool AllowDragDrop() => true;
 
@@ -1673,6 +1176,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (!Scene.HasSelection)
 			{
+				printer.ViewState.SelectedObjectPanelWidth = selectedObjectPanel.Width;
 				selectedObjectContainer.Visible = false;
 				return;
 			}
@@ -1683,25 +1187,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			var selectedItem = Scene.SelectedItem;
-
-			if (materialButtons?.Count > 0)
-			{
-				bool setSelection = false;
-				// Set the material selector to have the correct material button selected
-				for (int i = 0; i < materialButtons.Count; i++)
-				{
-					if (selectedItem.MaterialIndex == i)
-					{
-						((RadioButton)materialButtons[i]).Checked = true;
-						setSelection = true;
-					}
-				}
-
-				if(!setSelection)
-				{
-					((RadioButton)materialButtons[0]).Checked = true;
-				}
-			}
 
 			selectedObjectPanel.SetActiveItem(selectedItem);
 		}
@@ -1738,195 +1223,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private async void LoadAndAddPartsToPlate(string[] filesToLoad)
-		{
-			if (filesToLoad != null && filesToLoad.Length > 0)
-			{
-				await Task.Run(() => loadAndAddPartsToPlate(filesToLoad));
-
-				if (HasBeenClosed)
-				{
-					return;
-				}
-
-				bool addingOnlyOneItem = Scene.Children.Count == Scene.Children.Count + 1;
-
-				if (Scene.HasChildren())
-				{
-					if (addingOnlyOneItem)
-					{
-						// if we are only adding one part to the plate set the selection to it
-						Scene.SelectLastChild();
-					}
-				}
-
-				Scene.Invalidate();
-				this.Invalidate();
-			}
-		}
-
-		private async Task loadAndAddPartsToPlate(string[] filesToLoadIncludingZips)
-		{
-			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-
-			if (filesToLoadIncludingZips?.Any() == true)
-			{
-				List<string> filesToLoad = new List<string>();
-				foreach (string loadedFileName in filesToLoadIncludingZips)
-				{
-					string extension = Path.GetExtension(loadedFileName).ToUpper();
-					if ((extension != "" && MeshFileIo.ValidFileExtensions().Contains(extension)))
-					{
-						filesToLoad.Add(loadedFileName);
-					}
-					else if (extension == ".ZIP")
-					{
-						List<PrintItem> partFiles = ProjectFileHandler.ImportFromProjectArchive(loadedFileName);
-						if (partFiles != null)
-						{
-							foreach (PrintItem part in partFiles)
-							{
-								filesToLoad.Add(part.FileLocation);
-							}
-						}
-					}
-				}
-
-				string progressMessage = "Loading Parts...".Localize();
-
-				var itemCache = new Dictionary<string, IObject3D>();
-
-				foreach (string filePath in filesToLoad)
-				{
-					var libraryItem = new FileSystemFileItem(filePath);
-
-					IObject3D object3D = null;
-
-					await ApplicationController.Instance.Tasks.Execute(async (progressReporter, cancelationToken) =>
-					{
-						var progressStatus = new ProgressStatus()
-						{
-							Status = "Loading ".Localize() + Path.GetFileName(filePath),
-						};
-
-						progressReporter.Report(progressStatus);
-
-						object3D = await libraryItem.CreateContent((double progress0To1, string processingState) =>
-						{
-							progressStatus.Progress0To1 = progress0To1;
-							progressStatus.Status = processingState;
-							progressReporter.Report(progressStatus);
-						});
-					});
-
-					if (object3D != null)
-					{
-						Scene.Children.Modify(list => list.Add(object3D));
-
-						PlatingHelper.MoveToOpenPositionRelativeGroup(object3D, this.Scene.Children);
-					}
-				}
-			}
-		}
-
-		internal void MakeLowestFaceFlat(IObject3D objectToLayFlatGroup, IObject3D root)
-		{
-			bool firstVertex = true;
-
-			IObject3D objectToLayFlat = objectToLayFlatGroup;
-
-			IVertex lowestVertex = null;
-			Vector3 lowestVertexPosition = Vector3.Zero;
-			IObject3D itemToLayFlat = null;
-
-			// Process each child, checking for the lowest vertex
-			var objectsToCheck = objectToLayFlat.VisibleMeshes();
-			foreach (var itemToCheck in objectsToCheck)
-			{
-				// find the lowest point on the model
-				for (int testIndex = 0; testIndex < itemToCheck.Mesh.Vertices.Count; testIndex++)
-				{
-					var vertex = itemToCheck.Mesh.Vertices[testIndex];
-					Vector3 vertexPosition = Vector3.Transform(vertex.Position, itemToCheck.WorldMatrix(root));
-					if(firstVertex)
-					{
-						lowestVertex = itemToCheck.Mesh.Vertices[testIndex];
-						lowestVertexPosition = vertexPosition;
-						itemToLayFlat = itemToCheck;
-						firstVertex = false;
-					}
-					else if (vertexPosition.Z < lowestVertexPosition.Z)
-					{
-						lowestVertex = itemToCheck.Mesh.Vertices[testIndex];
-						lowestVertexPosition = vertexPosition;
-						itemToLayFlat = itemToCheck;
-					}
-				}
-			}
-
-			if(lowestVertex == null)
-			{
-				// didn't find any selected mesh
-				return;
-			}
-
-			Face faceToLayFlat = null;
-			double lowestAngleOfAnyFace = double.MaxValue;
-			// Check all the faces that are connected to the lowest point to find out which one to lay flat.
-			foreach (Face face in lowestVertex.ConnectedFaces())
-			{
-				double biggestAngleToFaceVertex = double.MinValue;
-				foreach (IVertex faceVertex in face.Vertices())
-				{
-					if (faceVertex != lowestVertex)
-					{
-						Vector3 faceVertexPosition = Vector3.Transform(faceVertex.Position, itemToLayFlat.WorldMatrix(root));
-						Vector3 pointRelLowest = faceVertexPosition - lowestVertexPosition;
-						double xLeg = new Vector2(pointRelLowest.X, pointRelLowest.Y).Length;
-						double yLeg = pointRelLowest.Z;
-						double angle = Math.Atan2(yLeg, xLeg);
-						if (angle > biggestAngleToFaceVertex)
-						{
-							biggestAngleToFaceVertex = angle;
-						}
-					}
-				}
-				if (biggestAngleToFaceVertex < lowestAngleOfAnyFace)
-				{
-					lowestAngleOfAnyFace = biggestAngleToFaceVertex;
-					faceToLayFlat = face;
-				}
-			}
-
-			double maxDistFromLowestZ = 0;
-			List<Vector3> faceVertices = new List<Vector3>();
-			foreach (IVertex vertex in faceToLayFlat.Vertices())
-			{
-				Vector3 vertexPosition = Vector3.Transform(vertex.Position, itemToLayFlat.WorldMatrix(root));
-				faceVertices.Add(vertexPosition);
-				maxDistFromLowestZ = Math.Max(maxDistFromLowestZ, vertexPosition.Z - lowestVertexPosition.Z);
-			}
-
-			if (maxDistFromLowestZ > .001)
-			{
-				Vector3 xPositive = (faceVertices[1] - faceVertices[0]).GetNormal();
-				Vector3 yPositive = (faceVertices[2] - faceVertices[0]).GetNormal();
-				Vector3 planeNormal = Vector3.Cross(xPositive, yPositive).GetNormal();
-
-				// this code takes the minimum rotation required and looks much better.
-				Quaternion rotation = new Quaternion(planeNormal, new Vector3(0, 0, -1));
-				Matrix4X4 partLevelMatrix = Matrix4X4.CreateRotation(rotation);
-
-				// rotate it
-				objectToLayFlatGroup.Matrix = PlatingHelper.ApplyAtCenter(objectToLayFlatGroup, partLevelMatrix);
-
-				Scene.Invalidate();
-				Invalidate();
-			}
-
-			PlatingHelper.PlaceOnBed(objectToLayFlatGroup);
-		}
-
 		public static Regex fileNameNumberMatch = new Regex("\\(\\d+\\)", RegexOptions.Compiled);
 
 		private FlowLayoutWidget editorPanel;
@@ -1954,7 +1250,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return Task.CompletedTask;
 		}
 
-		private void OpenSaveAsWindow()
+		internal void OpenSaveAsWindow()
 		{
 			DialogWindow.Show(
 				new SaveAsPage(

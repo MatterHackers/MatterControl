@@ -5,7 +5,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 {
 	public class SectionWidget : FlowLayoutWidget
 	{
-		public SectionWidget(string sectionTitle, Color textColor, GuiWidget sectionContent, GuiWidget rightAlignedContent = null, int headingPointSize = -1)
+		private GuiWidget contentWidget;
+
+		public SectionWidget(string sectionTitle, Color textColor, GuiWidget sectionContent, GuiWidget rightAlignedContent = null, int headingPointSize = -1, bool expandingContent = true, bool expanded = true)
 			: base (FlowDirection.TopToBottom)
 		{
 			this.HAnchor = HAnchor.Stretch;
@@ -17,14 +19,32 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				// Add heading
 				var pointSize = (headingPointSize) == -1 ? theme.H1PointSize : headingPointSize;
-				var textWidget = new TextWidget(sectionTitle, pointSize: pointSize, textColor: textColor, bold: false)
+
+				GuiWidget heading;
+
+				if (expandingContent)
 				{
-					Margin = new BorderDouble(0, 3, 0, 6)
-				};
+					var checkbox = new ExpandCheckboxButton(sectionTitle, pointSize: pointSize)
+					{
+						HAnchor = HAnchor.Stretch,
+						Checked = expanded
+					};
+					checkbox.CheckedStateChanged += (s, e) =>
+					{
+						contentWidget.Visible = checkbox.Checked;
+					};
+
+					heading = checkbox;
+				}
+				else
+				{
+					heading = new TextWidget(sectionTitle, pointSize: pointSize, textColor: textColor);
+				}
+				heading.Margin = new BorderDouble(0, 3, 0, 6);
 
 				if (rightAlignedContent == null)
 				{
-					this.AddChild(textWidget);
+					this.AddChild(heading);
 				}
 				else
 				{
@@ -32,7 +52,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					{
 						HAnchor = HAnchor.Stretch
 					};
-					headingRow.AddChild(textWidget);
+					headingRow.AddChild(heading);
 					headingRow.AddChild(new HorizontalSpacer());
 					headingRow.AddChild(rightAlignedContent);
 					this.AddChild(headingRow);
@@ -45,10 +65,21 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				});
 			}
 
-			// Force padding and add content widget
-			sectionContent.HAnchor = HAnchor.Stretch;
-			sectionContent.BackgroundColor = ApplicationController.Instance.Theme.MinimalShade;
-			this.AddChild(sectionContent);
+			sectionContent.Visible = expanded;
+
+			this.SetContentWidget(sectionContent);
+		}
+
+		public void SetContentWidget(GuiWidget guiWidget)
+		{
+			contentWidget?.Close();
+
+			contentWidget = guiWidget;
+			contentWidget.HAnchor = HAnchor.Stretch;
+			contentWidget.VAnchor = VAnchor.Fit;
+			contentWidget.BackgroundColor = ApplicationController.Instance.Theme.MinimalShade;
+
+			this.AddChild(contentWidget);
 		}
 	}
 }

@@ -616,6 +616,23 @@ namespace MatterHackers.MatterControl
 				}
 			}
 		}
+
+		public double SelectedObjectPanelWidth
+		{
+			get
+			{
+				if (double.TryParse(UserSettings.Instance.get(UserSettingsKey.SelectedObjectPanelWidth), out double controlWidth))
+				{
+					return controlWidth;
+				}
+
+				return 200;
+			}
+			set
+			{
+				UserSettings.Instance.set(UserSettingsKey.SelectedObjectPanelWidth, value.ToString());
+			}
+		}
 	}
 
 	public class PrinterConfig

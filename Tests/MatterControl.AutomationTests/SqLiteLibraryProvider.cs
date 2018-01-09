@@ -25,11 +25,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Select3DPart("Calibration - Box.stl");
 				Assert.IsTrue(scene.HasSelection);
 
-				testRunner.ClickByName("3D View Copy");
+				testRunner.ClickByName("Duplicate Button");
 
 				// wait for the copy to finish
 				testRunner.Delay(.1);
-				testRunner.ClickByName("3D View Remove");
+				testRunner.ClickByName("Remove Button");
 
 				testRunner.SaveBedplateToFolder("0Test Part", "Local Library Row Item Collection");
 

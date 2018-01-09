@@ -39,12 +39,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Select3DPart("Calibration - Box.stl");
 
 				// Click Copy button and count Scene.Children 
-				testRunner.ClickByName("3D View Copy");
+				testRunner.ClickByName("Duplicate Button");
 				testRunner.WaitFor(() => scene.Children.Count == 2);
 				Assert.AreEqual(2, scene.Children.Count, "Should have 2 parts after copy");
 
 				// Click Copy button a second time and count Scene.Children
-				testRunner.ClickByName("3D View Copy");
+				testRunner.ClickByName("Duplicate Button");
 				testRunner.WaitFor(() => scene.Children.Count > 2);
 				Assert.AreEqual(3, scene.Children.Count, "Should have 3 parts after 2nd copy");
 
@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				for (int i = 2; i <= 6; i++)
 				{
-					testRunner.ClickByName("3D View Copy");
+					testRunner.ClickByName("Duplicate Button");
 					testRunner.WaitFor(() => scene.Children.Count == i);
 					Assert.AreEqual(i, scene.Children.Count, $"Should have {i} parts after copy");
 				}
@@ -84,11 +84,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// select all
 				testRunner.Type("^a");
 
-				testRunner.ClickByName("3D View Group");
+				testRunner.ClickByName("Group Button");
 				testRunner.WaitFor(() => scene.Children.Count == 1);
 				Assert.AreEqual(1, scene.Children.Count, $"Should have 1 parts after group");
 
-				testRunner.ClickByName("3D View Ungroup");
+				testRunner.ClickByName("Ungroup Button");
 				testRunner.WaitFor(() => scene.Children.Count == 6);
 				Assert.AreEqual(6, scene.Children.Count, $"Should have 6 parts after ungroup");
 
@@ -115,14 +115,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// Add 5 items
 				for (int i = 0; i <= 4; i++)
 				{
-					testRunner.ClickByName("3D View Copy");
+					testRunner.ClickByName("Duplicate Button");
 					testRunner.Delay(.5);
 				}
 
 				Assert.AreEqual(6, scene.Children.Count, "There should be 6 parts on the bed after the copy loop");
 
 				// Remove an item
-				testRunner.ClickByName("3D View Remove");
+				testRunner.ClickByName("Remove Button");
 
 				// Confirm
 				Assert.AreEqual(5, scene.Children.Count, "There should be 5 parts on the bed after remove");
@@ -146,7 +146,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				for (int i = 0; i <= 2; i++)
 				{
-					testRunner.ClickByName("3D View Copy");
+					testRunner.ClickByName("Duplicate Button");
 					testRunner.Delay(.5);
 				}
 

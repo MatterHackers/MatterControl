@@ -28,23 +28,19 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
-using MatterHackers.Localizations;
-using MatterHackers.MeshVisualizer;
-using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public static class SceneActions
 	{
-		public static async void UngroupSelection(this InteractiveScene Scene, View3DWidget view3DWidget)
+		public static async void UngroupSelection(this InteractiveScene Scene)
 		{
 			if (Scene.HasSelection)
 			{
@@ -95,17 +91,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 				});
 
-				if (view3DWidget.HasBeenClosed)
-				{
-					return;
-				}
-
 				// leave no selection
 				Scene.SelectedItem = null;
 			}
 		}
 
-		public static async void GroupSelection(this InteractiveScene Scene, View3DWidget view3DWidget)
+		public static async void GroupSelection(this InteractiveScene Scene)
 		{
 			if (Scene.HasChildren())
 			{
@@ -119,11 +110,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					// Store the operation for undo/redo
 					Scene.UndoBuffer.AddAndDo(operation);
 				});
-
-				if (view3DWidget.HasBeenClosed)
-				{
-					return;
-				}
 			}
 		}
 
@@ -135,7 +121,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			});
 		}
 
-		public static async void DuplicateSelection(this InteractiveScene Scene, View3DWidget view3DWidget)
+		public static async void DuplicateSelection(this InteractiveScene Scene)
 		{
 			if (Scene.HasSelection)
 			{
@@ -147,7 +133,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						if (originalItem is SelectionGroup)
 						{
-							// the selection is a group of obects that need to be copied
+							// the selection is a group of objects that need to be copied
 							var copyList = originalItem.Children.ToList();
 							Scene.SelectedItem = null;
 							foreach(var item in copyList)
@@ -170,8 +156,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							var newName = agg_basics.GetNonCollidingName(originalItem.Name, Scene.Descendants().Select((d) => d.Name));
 							clonedItem.Name = newName;
 
-							// More usefull if it creates the part in the exact positon and then the user can move it.
-							// Consistent with othre software as well. LBB 2017-12-02
+							// More useful if it creates the part in the exact position and then the user can move it.
+							// Consistent with other software as well. LBB 2017-12-02
 							//PlatingHelper.MoveToOpenPositionRelativeGroup(clonedItem, Scene.Children);
 
 							return clonedItem;
@@ -181,20 +167,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					return null;
 				});
 
-				if (view3DWidget.HasBeenClosed)
-				{
-					return;
-				}
-
 				// it might come back null due to threading
 				if (newItem != null)
 				{
-					Scene.InsertNewItem(view3DWidget, newItem);
+					Scene.InsertNewItem(newItem);
 				}
 			}
 		}
 
-		public static void InsertNewItem(this InteractiveScene Scene, View3DWidget view3DWidget, IObject3D newItem)
+		public static void InsertNewItem(this InteractiveScene Scene, IObject3D newItem)
 		{
 			// Reposition first item to bed center
 			if (Scene.Children.Count == 0)
@@ -217,7 +198,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			Scene.UndoBuffer.Add(insertOperation);
 		}
 
-		public static void DeleteSelection(this InteractiveScene Scene, View3DWidget view3DWidget)
+		public static void DeleteSelection(this InteractiveScene Scene)
 		{
 			if (Scene.HasSelection)
 			{
