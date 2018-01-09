@@ -231,19 +231,16 @@ namespace MatterHackers.MatterControl.ActionBar
 				},
 				enforceGutter: false));
 
-			heatToggle = hotendRow.ChildrenRecursive<CheckBox>().FirstOrDefault();
+			heatToggle = hotendRow.Decendants<CheckBox>().FirstOrDefault();
 			heatToggle.Name = "Toggle Heater";
 
 			int tabIndex = 0;
 			var settingsContext = new SettingsContext(printer, null, NamedSettingsLayers.All);
-			foreach (var key in new[] { SettingsKey.temperature })
-			{
-				// TODO: make this be for the correct extruder
-				var settingsData = SliceSettingsOrganizer.Instance.GetSettingsData(key);
-				var row = SliceSettingsWidget.CreateItemRow(settingsData, settingsContext, printer, Color.Black, ref tabIndex);
+			// TODO: make this be for the correct extruder
+			var settingsData = SliceSettingsOrganizer.Instance.GetSettingsData(SettingsKey.temperature);
+			var row = SliceSettingsWidget.CreateItemRow(settingsData, settingsContext, printer, Color.Black, ref tabIndex);
 
-				container.AddChild(row);
-			}
+			container.AddChild(row);
 
 			// add in the temp graph
 			Action fillGraph = null;
@@ -267,17 +264,22 @@ namespace MatterHackers.MatterControl.ActionBar
 				}
 			};
 
+			var valueField = row.Decendants<MHNumberEdit>().FirstOrDefault();
+			valueField.Name = "Temperature Input";
+			var settingsRow = row.Decendants<SliceSettingsRow>().FirstOrDefault(); 
 			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
 			{
 				if (e is StringEventArgs stringEvent)
 				{
 					var temp = printer.Settings.Helpers.ExtruderTemperature(hotendIndex);
+					valueField.Value = temp;
+					graph.GoalValue = temp;
+					settingsRow.UpdateStyle();
 					if (stringEvent.Data == SettingsKey.temperature
 						&& heatToggle.Checked)
 					{
 						SetTargetTemperature(temp);
 					}
-					graph.GoalValue = temp;
 				};
 			}, ref unregisterEvents);
 
