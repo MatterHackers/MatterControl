@@ -246,19 +246,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				operationsContainer.AddChild(button);
 			}
 
-
-
-
-			var operationsSection = new SectionWidget("Operations".Localize(), ActiveTheme.Instance.PrimaryTextColor, operationsContainer);
-			editorPanel.AddChild(operationsSection);
-
 			editorSection = new SectionWidget("Editor", ActiveTheme.Instance.PrimaryTextColor, new GuiWidget());
 			editorPanel.AddChild(editorSection);
 
 			// TODO: Implements
-				//alignButton.Enabled = this.scene.HasSelection
-				//	&& this.scene.SelectedItem is SelectionGroup
-				//	&& this.scene.SelectedItem.Children.Count > 1;
+			//alignButton.Enabled = this.scene.HasSelection
+			//	&& this.scene.SelectedItem is SelectionGroup
+			//	&& this.scene.SelectedItem.Children.Count > 1;
+
+			var operationsSection = new SectionWidget("Operations".Localize(), ActiveTheme.Instance.PrimaryTextColor, operationsContainer);
+			editorPanel.AddChild(operationsSection);
 
 			var alignSection = new SectionWidget("Align".Localize(), ActiveTheme.Instance.PrimaryTextColor, this.AddAlignControls(), expanded: false)
 			{
