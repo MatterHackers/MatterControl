@@ -166,7 +166,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			this.Border = new BorderDouble(top: 1);
 
-			tabPill.Padding = tabPill.Padding.Clone(top: 8, bottom: 10);
+			tabPill.Padding = tabPill.Padding.Clone(top: 10, bottom: 10);
 		}
 
 		private bool IsActiveTab => this == parentTabControl.ActiveTab;

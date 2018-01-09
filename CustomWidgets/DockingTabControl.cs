@@ -186,27 +186,36 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			}
 
 			int tabIndex = 0;
-			foreach (var nameWidget in allTabs)
+			foreach (var kvp in allTabs)
 			{
-				string tabTitle = nameWidget.Key;
+				string tabTitle = kvp.Key;
 
 				if (this.ControlIsPinned)
 				{
-					var content = new DockingWindowContent(this, nameWidget.Value, tabTitle);
+					var content = new DockingWindowContent(this, kvp.Value, tabTitle);
 
-					tabControl.AddTab(
-						new ToolTab(
+					var tab = new ToolTab(
 							tabTitle,
 							tabControl,
 							content,
 							theme,
-							hasClose: false,
+							hasClose: kvp.Value is ConfigurePrinterWidget,
 							pointSize: theme.FontSize11)
 						{
 							Name = tabTitle + " Tab",
 							InactiveTabColor = Color.Transparent,
 							ActiveTabColor = theme.TabBodyBackground
-						});
+						};
+
+					tab.CloseClicked += (s, e) =>
+					{
+						if (tab.Name == "Printer Tab")
+						{
+							printer.ViewState.ConfigurePrinterVisible = false;
+						}
+					};
+
+					tabControl.AddTab(tab);
 				}
 				else // control is floating
 				{
@@ -247,7 +256,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						SpliterBarColor = spliterColor,
 						SplitterWidth = ApplicationController.Instance.Theme.SplitterWidth,
 					};
-					resizeContainer.AddChild(new DockingWindowContent(this, nameWidget.Value, tabTitle)
+					resizeContainer.AddChild(new DockingWindowContent(this, kvp.Value, tabTitle)
 					{
 						BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor,
 						Width = PageWidth
@@ -302,6 +311,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				if (printer.ViewState.SliceSettingsTabIndex < tabControl.TabCount)
 				{
 					tabControl.SelectedTabIndex = printer.ViewState.SliceSettingsTabIndex;
+				}
+				else
+				{
+					tabControl.SelectedTabIndex = 0;
 				}
 			}
 		}
