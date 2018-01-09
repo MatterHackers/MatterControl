@@ -366,13 +366,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			selectedObjectContainer = new ResizeContainer(selectedObjectPanel)
 			{
-				Width = 200,
+				Width = printer.ViewState.SelectedObjectPanelWidth,
 				VAnchor = VAnchor.Stretch,
 				HAnchor = HAnchor.Right,
 				SpliterBarColor = theme.SplitterBackground,
 				SplitterWidth = theme.SplitterWidth,
 				Visible = false,
 			};
+
 			this.InteractionLayer.AddChild(selectedObjectContainer);
 			selectedObjectContainer.AddChild(selectedObjectPanel);
 
@@ -773,6 +774,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnClosed(ClosedEventArgs e)
 		{
+			printer.ViewState.SelectedObjectPanelWidth = selectedObjectPanel.Width;
+
 			viewControls3D.TransformStateChanged -= ViewControls3D_TransformStateChanged;
 			sceneContext.LoadedGCodeChanged -= SceneContext_LoadedGCodeChanged;
 			this.Scene.SelectionChanged -= Scene_SelectionChanged;
@@ -1673,6 +1676,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (!Scene.HasSelection)
 			{
+				printer.ViewState.SelectedObjectPanelWidth = selectedObjectPanel.Width;
 				selectedObjectContainer.Visible = false;
 				return;
 			}

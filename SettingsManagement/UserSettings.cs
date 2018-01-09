@@ -22,6 +22,7 @@ namespace MatterHackers.MatterControl
 		public const string SliceSettingsWidget_CurrentTab = nameof(SliceSettingsWidget_CurrentTab);
 		public const string OpenScadPath = nameof(OpenScadPath);
 		public const string LibraryViewWidth = nameof(LibraryViewWidth);
+		public const string SelectedObjectPanelWidth = nameof(SelectedObjectPanelWidth);
 	}
 
 	public class UserSettings
