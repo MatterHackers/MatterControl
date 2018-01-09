@@ -174,7 +174,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("Hotend 0");
 
 					// assert the temp is set when we first open (it comes from the material)
-					EditableNumberDisplay tempWidget = testRunner.GetWidgetByName("Temperature Input", out _) as EditableNumberDisplay;
+					MHNumberEdit tempWidget = testRunner.GetWidgetByName("Temperature Input", out _) as MHNumberEdit;
 					Assert.AreEqual(240, (int)tempWidget.Value);
 
 					// change material
@@ -237,6 +237,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					// type in 0 and have the heater turn off
 					testRunner.ClickByName("Temperature Input");
+					testRunner.Type("^a");
 					testRunner.Type("0");
 					testRunner.Type("{Enter}");
 					testRunner.Delay();
