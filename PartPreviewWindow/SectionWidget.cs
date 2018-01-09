@@ -5,7 +5,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 {
 	public class SectionWidget : FlowLayoutWidget
 	{
-		public SectionWidget(string sectionTitle, Color textColor, GuiWidget sectionContent, GuiWidget rightAlignedContent = null, int headingPointSize = -1)
+		public SectionWidget(string sectionTitle, Color textColor, GuiWidget sectionContent, GuiWidget rightAlignedContent = null, int headingPointSize = -1, bool expandingContent = true)
 			: base (FlowDirection.TopToBottom)
 		{
 			this.HAnchor = HAnchor.Stretch;
@@ -17,14 +17,29 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				// Add heading
 				var pointSize = (headingPointSize) == -1 ? theme.H1PointSize : headingPointSize;
-				var textWidget = new TextWidget(sectionTitle, pointSize: pointSize, textColor: textColor, bold: false)
+
+				GuiWidget heading;
+
+				if (expandingContent)
 				{
-					Margin = new BorderDouble(0, 3, 0, 6)
-				};
+					var checkbox = new ExpandCheckboxButton(sectionTitle, pointSize: pointSize);
+					checkbox.Checked = true;
+					checkbox.CheckedStateChanged += (s, e) =>
+					{
+						sectionContent.Visible = checkbox.Checked;
+					};
+
+					heading = checkbox;
+				}
+				else
+				{
+					heading = new TextWidget(sectionTitle, pointSize: pointSize, textColor: textColor);
+				}
+				heading.Margin = new BorderDouble(0, 3, 0, 6);
 
 				if (rightAlignedContent == null)
 				{
-					this.AddChild(textWidget);
+					this.AddChild(heading);
 				}
 				else
 				{
@@ -32,7 +47,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					{
 						HAnchor = HAnchor.Stretch
 					};
-					headingRow.AddChild(textWidget);
+					headingRow.AddChild(heading);
 					headingRow.AddChild(new HorizontalSpacer());
 					headingRow.AddChild(rightAlignedContent);
 					this.AddChild(headingRow);

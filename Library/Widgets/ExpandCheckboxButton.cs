@@ -28,13 +28,11 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
-using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 
-namespace MatterHackers.MatterControl.PrintLibrary
+namespace MatterHackers.MatterControl.CustomWidgets
 {
 	public class ExpandCheckboxButton : FlowLayoutWidget
 	{
