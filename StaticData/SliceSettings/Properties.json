@@ -1607,6 +1607,33 @@
 		"DefaultValue": "200"
 	},
 	{
+		"SlicerConfigName": "temperature1",
+		"PresentationName": "Extruder 2 Temperature",
+		"HelpText": "The target temperature the extruder will attempt to reach during the print.",
+		"DataEditType": "POSITIVE_DOUBLE",
+		"ExtraSettings": "°C",
+		"ShowIfSet": "!sla_printer",
+		"DefaultValue": "200"
+	},
+	{
+		"SlicerConfigName": "temperature2",
+		"PresentationName": "Extruder 3 Temperature",
+		"HelpText": "The target temperature the extruder will attempt to reach during the print.",
+		"DataEditType": "POSITIVE_DOUBLE",
+		"ExtraSettings": "°C",
+		"ShowIfSet": "!sla_printer",
+		"DefaultValue": "200"
+	},
+	{
+		"SlicerConfigName": "temperature3",
+		"PresentationName": "Extruder 4 Temperature",
+		"HelpText": "The target temperature the extruder will attempt to reach during the print.",
+		"DataEditType": "POSITIVE_DOUBLE",
+		"ExtraSettings": "°C",
+		"ShowIfSet": "!sla_printer",
+		"DefaultValue": "200"
+	},
+	{
 		"SlicerConfigName": "extruder_wipe_temperature",
 		"PresentationName": "Extruder Wipe Temperature",
 		"HelpText": "The temperature at which the extruder will wipe the nozzle, as specified by Custom G-Code.",

@@ -130,6 +130,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string write_regex = nameof(write_regex);
 		public const string read_regex = nameof(read_regex);
 		public const string temperature = nameof(temperature);
+		public const string temperature1 = nameof(temperature1);
+		public const string temperature2 = nameof(temperature2);
+		public const string temperature3 = nameof(temperature3);
 		public const string enable_retractions = nameof(enable_retractions);
 		public const string use_z_probe = nameof(use_z_probe);
 		public const string z_probe_samples = nameof(z_probe_samples);
@@ -196,21 +199,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				// Otherwise, use the SettingsLayers that is bound to this extruder
 				if (extruderIndex < printerSettings.MaterialSettingsKeys.Count)
 				{
-					string materialKey = printerSettings.MaterialSettingsKeys[extruderIndex];
-					PrinterSettingsLayer layer = printerSettings.GetMaterialLayer(materialKey);
-
-					if (layer != null)
-					{
-						string result = "0";
-						if (layer.TryGetValue(SettingsKey.temperature, out result))
-						{
-							double value = 0;
-							if (double.TryParse(result, out value))
-							{
-								return value;
-							}
-						}
-					}
+					return printerSettings.GetValue<double>($"{SettingsKey.temperature}{extruderIndex}");
 				}
 
 				// else return the normal settings cascade

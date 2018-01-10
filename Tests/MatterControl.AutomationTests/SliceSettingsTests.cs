@@ -195,21 +195,21 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					// assert the temp changed to a new temp
 					Assert.AreEqual(hipsGoalTemp,(int) tempWidget.Value, "The goal temp should match the material temp");
 					// and the printer heat is off
-					Assert.AreEqual(0, (int) emulator.ExtruderGoalTemperature, "The printer should report the heaters are off");
+					Assert.AreEqual(0, (int) emulator.CurrentExtruder.TargetTemperature, "The printer should report the heaters are off");
 
 					// turn on the heater
 					testRunner.ClickByName("Toggle Heater");
 					testRunner.Delay(2);
 
 					// assert the printer is heating
-					Assert.AreEqual(hipsGoalTemp, (int)emulator.ExtruderGoalTemperature, "The printer should report the expected goal temp");
+					Assert.AreEqual(hipsGoalTemp, (int)emulator.CurrentExtruder.TargetTemperature, "The printer should report the expected goal temp");
 
 					// turn off the heater
 					testRunner.ClickByName("Toggle Heater");
 					testRunner.Delay(2);
 
 					// assert the printer is off
-					Assert.AreEqual(0, (int)emulator.ExtruderGoalTemperature, "The printer should report the heaters are off");
+					Assert.AreEqual(0, (int)emulator.CurrentExtruder.TargetTemperature, "The printer should report the heaters are off");
 
 					// type in a temp when the heating is off
 					testRunner.ClickByName("Temperature Input");
@@ -218,7 +218,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.Delay();
 
 					// assert the printer is off
-					Assert.AreEqual(0, (int)emulator.ExtruderGoalTemperature);
+					Assert.AreEqual(0, (int)emulator.CurrentExtruder.TargetTemperature);
 
 					// and the heat toggle is showing on
 					CheckBox heatToggle = testRunner.GetWidgetByName("Toggle Heater", out _) as CheckBox;
@@ -226,14 +226,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					// turn it on
 					testRunner.ClickByName("Toggle Heater");
-					Assert.AreEqual(110, (int)emulator.ExtruderGoalTemperature);
+					Assert.AreEqual(110, (int)emulator.CurrentExtruder.TargetTemperature);
 
 					// adjust when on
 					testRunner.ClickByName("Temperature Input");
 					testRunner.Type("104");
 					testRunner.Type("{Enter}");
 					testRunner.Delay();
-					Assert.AreEqual(104, (int)emulator.ExtruderGoalTemperature);
+					Assert.AreEqual(104, (int)emulator.CurrentExtruder.TargetTemperature);
 
 					// type in 0 and have the heater turn off
 					testRunner.ClickByName("Temperature Input");
@@ -243,7 +243,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.Delay();
 
 					// assert the printer is not heating
-					Assert.AreEqual(0, (int)emulator.ExtruderGoalTemperature);
+					Assert.AreEqual(0, (int)emulator.CurrentExtruder.TargetTemperature);
 					// and the on toggle is showing off
 					Assert.IsFalse(heatToggle.Checked);
 

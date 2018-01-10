@@ -190,6 +190,14 @@ namespace MatterHackers.MatterControl.ActionBar
 		protected override int ActualTemperature => (int)printer.Connection.GetActualHotendTemperature(hotendIndex);
 		protected override int TargetTemperature => (int)printer.Connection.GetTargetHotendTemperature(hotendIndex);
 
+		string TemperatureKey
+		{
+			get
+			{
+				return "temperature" + ((hotendIndex > 0 && hotendIndex < 4) ? hotendIndex.ToString() : "");
+			}
+		}
+
 		protected override GuiWidget GetPopupContent()
 		{
 			var widget = new IgnoredPopupWidget()
@@ -237,7 +245,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			int tabIndex = 0;
 			var settingsContext = new SettingsContext(printer, null, NamedSettingsLayers.All);
 			// TODO: make this be for the correct extruder
-			var settingsData = SliceSettingsOrganizer.Instance.GetSettingsData(SettingsKey.temperature);
+			var settingsData = SliceSettingsOrganizer.Instance.GetSettingsData(TemperatureKey);
 			var row = SliceSettingsWidget.CreateItemRow(settingsData, settingsContext, printer, Color.Black, ref tabIndex);
 
 			container.AddChild(row);
@@ -271,14 +279,16 @@ namespace MatterHackers.MatterControl.ActionBar
 			{
 				if (e is StringEventArgs stringEvent)
 				{
-					var temp = printer.Settings.Helpers.ExtruderTemperature(hotendIndex);
-					valueField.Value = temp;
-					graph.GoalValue = temp;
-					settingsRow.UpdateStyle();
-					if (stringEvent.Data == SettingsKey.temperature
-						&& heatToggle.Checked)
+					if (stringEvent.Data == TemperatureKey)
 					{
-						SetTargetTemperature(temp);
+						var temp = printer.Settings.Helpers.ExtruderTemperature(hotendIndex);
+						valueField.Value = temp;
+						graph.GoalValue = temp;
+						settingsRow.UpdateStyle();
+						if (heatToggle.Checked)
+						{
+							SetTargetTemperature(temp);
+						}
 					}
 				};
 			}, ref unregisterEvents);
@@ -286,36 +296,43 @@ namespace MatterHackers.MatterControl.ActionBar
 			UiThread.RunOnIdle(fillGraph);
 			container.AddChild(graph);
 
-			// put in the material selector
-			var presetsSelector = new PresetSelectorWidget(printer, string.Format($"{"Material".Localize()} {hotendIndex + 1}"), Color.Transparent, NamedSettingsLayers.Material, hotendIndex, true)
+			if (hotendIndex == 0)
 			{
-				Margin = 0,
-				BackgroundColor = Color.Transparent,
-				HAnchor = HAnchor.Absolute,
-				Width = 150
-			};
+				// put in the material selector
+				var presetsSelector = new PresetSelectorWidget(printer, "Material".Localize(), Color.Transparent, NamedSettingsLayers.Material, true)
+				{
+					Margin = 0,
+					BackgroundColor = Color.Transparent,
+					HAnchor = HAnchor.Absolute,
+					Width = 150
+				};
 
-			presetsSelector.DropDownList.Name = "Hotend Preset Selector";
+				presetsSelector.DropDownList.Name = "Hotend Preset Selector";
 
-			this.Width = 150;
+				this.Width = 150;
 
-			// HACK: remove undesired item
-			var label = presetsSelector.Children<TextWidget>().FirstOrDefault();
-			label.Close();
+				// HACK: remove undesired item
+				var label = presetsSelector.Children<TextWidget>().FirstOrDefault();
+				label.Close();
 
-			var pulldownContainer = presetsSelector.FindNamedChildRecursive("Preset Pulldown Container");
-			if (pulldownContainer != null)
-			{
-				pulldownContainer.Padding = 0;
+				var pulldownContainer = presetsSelector.FindNamedChildRecursive("Preset Pulldown Container");
+				if (pulldownContainer != null)
+				{
+					pulldownContainer.Padding = 0;
+				}
+
+				var dropList = presetsSelector.FindNamedChildRecursive("Material") as DropDownList;
+				if (dropList != null)
+				{
+					dropList.TextColor = Color.Black;
+				}
+
+				container.AddChild(new SettingsItem("Material".Localize(), presetsSelector, enforceGutter: false));
 			}
-
-			var dropList = presetsSelector.FindNamedChildRecursive("Material") as DropDownList;
-			if (dropList != null)
+			else // put in a temperature selector for the correct material
 			{
-				dropList.TextColor = Color.Black;
-			}
 
-			container.AddChild(new SettingsItem("Material".Localize(), presetsSelector, enforceGutter: false));
+			}
 
 			// put in the actual extruder controls
 			bool shareTemp = printer.Settings.GetValue<bool>(SettingsKey.extruders_share_temperature);

@@ -59,8 +59,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 			if (macroData.showMaterialSelector)
 			{
-				int extruderIndex = 0;
-				var materialSelector = new PresetSelectorWidget(printer, string.Format($"{"Material".Localize()} {extruderIndex + 1}"), Color.Transparent, NamedSettingsLayers.Material, extruderIndex);
+				var materialSelector = new PresetSelectorWidget(printer, "Material".Localize(), Color.Transparent, NamedSettingsLayers.Material);
 				materialSelector.BackgroundColor = Color.Transparent;
 				materialSelector.Margin = new BorderDouble(0, 0, 0, 15);
 				contentRow.AddChild(materialSelector);

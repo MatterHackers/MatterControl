@@ -42,28 +42,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			int numberOfHeatedExtruders = printer.Settings.Helpers.NumberOfHotEnds();
 
-			this.AddChild(new PresetSelectorWidget(printer, "Quality".Localize(), Color.Yellow, NamedSettingsLayers.Quality, 0));
+			this.AddChild(new PresetSelectorWidget(printer, "Quality".Localize(), Color.Yellow, NamedSettingsLayers.Quality));
 			this.AddChild(new GuiWidget(8, 0));
-
-			if (numberOfHeatedExtruders > 1)
-			{
-				List<Color> colorList = new List<Color>() { Color.Orange, Color.Violet, Color.YellowGreen };
-
-				for (int i = 0; i < numberOfHeatedExtruders; i++)
-				{
-					if (i > 0)
-					{
-						this.AddChild(new GuiWidget(8, 0));
-					}
-					int colorIndex = i % colorList.Count;
-					Color color = colorList[colorIndex];
-					this.AddChild(new PresetSelectorWidget(printer, string.Format("{0} {1}", "Material".Localize(), i + 1), color, NamedSettingsLayers.Material, i));
-				}
-			}
-			else
-			{
-				this.AddChild(new PresetSelectorWidget(printer, "Material".Localize(), Color.Orange, NamedSettingsLayers.Material, 0));
-			}
+			this.AddChild(new PresetSelectorWidget(printer, "Material".Localize(), Color.Orange, NamedSettingsLayers.Material));
 
 			this.Height = 60 * GuiWidget.DeviceScale;
 		}

@@ -465,7 +465,7 @@ namespace MatterControl.Tests.MatterControl
 				printerSettings.AutoSave = false;
 
 				// Disable active material/quality overrides
-				printerSettings.SetMaterialPreset(0, "");
+				printerSettings.ActiveMaterialKey = "";
 				printerSettings.ActiveQualityKey = "";
 
 				// Validate just the OemLayer
@@ -481,7 +481,7 @@ namespace MatterControl.Tests.MatterControl
 				{
 					printer.RuleViolated = false;
 
-					printerSettings.SetMaterialPreset(0, layer.LayerID);
+					printerSettings.ActiveMaterialKey = layer.LayerID;
 
 					// Validate the settings with this material layer active
 					action(printer, printerSettings);
@@ -492,7 +492,7 @@ namespace MatterControl.Tests.MatterControl
 					}
 				}
 
-				printerSettings.SetMaterialPreset(0, "");
+				printerSettings.ActiveMaterialKey = "";
 
 				// Validate quality layers
 				foreach (var layer in printer.PrinterSettings.QualityLayers)
