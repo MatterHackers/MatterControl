@@ -50,7 +50,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			FlowLayoutWidget buttonContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
 			buttonContainer.HAnchor = HAnchor.Fit;
 
-			Button mirrorXButton = theme.MenuButtonFactory.Generate("X");
+			Button mirrorXButton = theme.ButtonFactory.Generate("X");
 			mirrorXButton.Name = "Mirror Button X";
 			mirrorXButton.Margin = theme.ButtonSpacing;
 			mirrorXButton.Click += (s, e) =>
@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			buttonContainer.AddChild(mirrorXButton);
 
-			Button mirrorYButton = theme.MenuButtonFactory.Generate("Y");
+			Button mirrorYButton = theme.ButtonFactory.Generate("Y");
 			mirrorYButton.Name = "Mirror Button Y";
 			mirrorYButton.Margin = theme.ButtonSpacing;
 			mirrorYButton.Click += (s, e) =>
@@ -76,7 +76,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			buttonContainer.AddChild(mirrorYButton);
 
-			Button mirrorZButton = theme.MenuButtonFactory.Generate("Z");
+			Button mirrorZButton = theme.ButtonFactory.Generate("Z");
 			mirrorZButton.Name = "Mirror Button Z";
 			mirrorZButton.Margin = theme.ButtonSpacing;
 			mirrorZButton.Click += (s, e) =>
