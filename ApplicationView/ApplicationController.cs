@@ -374,7 +374,8 @@ namespace MatterHackers.MatterControl
 					{
 						scene.UndoBuffer.AddAndDo(new MakeSupport(scene.SelectedItem));
 					}
-				}
+				},
+				Icon = AggContext.StaticData.LoadIcon("support.png").SetPreMultiply(),
 			},
 			new SceneSelectionOperation()
 			{
