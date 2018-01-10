@@ -383,7 +383,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				Name = "Bed Options Menu",
 				DynamicPopupContent = () => theme.CreatePopupMenu(this.BedMenuActions(sceneContext)),
-				DrawArrow = true
+				DrawArrow = true,
+				Margin = 0
 			};
 			overflowMenu.Load += (s, e) =>
 			{
