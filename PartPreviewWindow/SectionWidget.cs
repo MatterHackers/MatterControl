@@ -8,6 +8,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 	/// </summary>
 	public class SectionWidget : FlowLayoutWidget
 	{
+		private Color borderColor;
+
 		public SectionWidget(string sectionTitle, Color textColor, GuiWidget sectionContent, GuiWidget rightAlignedContent = null, int headingPointSize = -1, bool expandingContent = true, bool expanded = true)
 			: base (FlowDirection.TopToBottom)
 		{
@@ -15,6 +17,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.VAnchor = VAnchor.Fit;
 
 			var theme = ApplicationController.Instance.Theme;
+
+			borderColor = new Color(theme.Colors.SecondaryTextColor, 50);
 
 			if (!string.IsNullOrEmpty(sectionTitle))
 			{
@@ -28,11 +32,14 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					var checkbox = new ExpandCheckboxButton(sectionTitle, pointSize: pointSize)
 					{
 						HAnchor = HAnchor.Stretch,
-						Checked = expanded
+						Checked = expanded,
+						BorderColor = (expanded) ? Color.Transparent : borderColor,
+						Border = new BorderDouble(bottom: 1),
 					};
 					checkbox.CheckedStateChanged += (s, e) =>
 					{
 						ContentPanel.Visible = checkbox.Checked;
+						checkbox.BorderColor = (checkbox.Checked) ? Color.Transparent : borderColor;
 					};
 
 					heading = checkbox;
@@ -41,7 +48,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				{
 					heading = new TextWidget(sectionTitle, pointSize: pointSize, textColor: textColor);
 				}
-				heading.Margin = new BorderDouble(0, 3, 0, 6);
+				heading.Padding = new BorderDouble(0, 3, 0, 6);
 
 				if (rightAlignedContent == null)
 				{
@@ -58,12 +65,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					headingRow.AddChild(rightAlignedContent);
 					this.AddChild(headingRow);
 				}
-
-				// Add heading separator
-				this.AddChild(new HorizontalLine(25)
-				{
-					Margin = new BorderDouble(0)
-				});
 			}
 
 			sectionContent.Visible = expanded;
@@ -72,17 +73,24 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		}
 
 		public GuiWidget ContentPanel { get; private set; }
-		
+
 		public void SetContentWidget(GuiWidget guiWidget)
 		{
-			ContentPanel?.Close();
+			// Close old child
+			this.ContentPanel?.Close();
 
-			ContentPanel = guiWidget;
-			ContentPanel.HAnchor = HAnchor.Stretch;
-			ContentPanel.VAnchor = VAnchor.Fit;
-			ContentPanel.BackgroundColor = ApplicationController.Instance.Theme.MinimalShade;
+			// Apply default rules for panel widget
+			guiWidget.HAnchor = HAnchor.Stretch;
+			guiWidget.VAnchor = VAnchor.Fit;
+			//guiWidget.BackgroundColor = ApplicationController.Instance.Theme.MinimalShade;
+			guiWidget.BorderColor = borderColor;
+			guiWidget.Border = new BorderDouble(bottom: 1);
 
-			this.AddChild(ContentPanel);
+			// Set
+			this.AddChild(guiWidget);
+
+			// Store
+			this.ContentPanel = guiWidget;
 		}
 	}
 }

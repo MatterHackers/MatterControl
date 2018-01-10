@@ -28,13 +28,11 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Collections.Generic;
-using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.Library;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
@@ -54,7 +52,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.VAnchor = VAnchor.Fit;
 				this.Padding = new BorderDouble(5, 5, 5, 0);
 
-				FlowLayoutWidget buttonPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
+				var buttonPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 				{
 					VAnchor = VAnchor.Fit,
 					HAnchor = HAnchor.Fit,
@@ -71,7 +69,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					};
 					buttonPanel.AddChild(alignButtons);
 
-					alignButtons.AddChild(new TextWidget(axisNames[axisIndex])
+					alignButtons.AddChild(new TextWidget(axisNames[axisIndex], textColor: theme.Colors.PrimaryTextColor)
 					{
 						VAnchor = VAnchor.Center,
 						Margin = new BorderDouble(0, 0, 3, 0)

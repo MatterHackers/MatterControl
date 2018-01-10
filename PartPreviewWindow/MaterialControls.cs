@@ -44,10 +44,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public class MaterialControls : IgnoredPopupWidget
 		{
 			private ObservableCollection<GuiWidget> materialButtons = new ObservableCollection<GuiWidget>();
+			private ThemeConfig theme;
 			private InteractiveScene scene;
 
-			public MaterialControls(InteractiveScene scene)
+			public MaterialControls(InteractiveScene scene, ThemeConfig theme)
 			{
+				this.theme = theme;
 				this.scene = scene;
 				this.HAnchor = HAnchor.Fit;
 				this.VAnchor = VAnchor.Fit;
@@ -71,7 +73,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					};
 					buttonPanel.AddChild(colorSelectionContainer);
 
-					var materialSelection = new RadioButton(string.Format("{0} {1}", "Material".Localize(), extruderIndex + 1), textColor: Color.Black);
+					var materialSelection = new RadioButton(string.Format("{0} {1}", "Material".Localize(), extruderIndex + 1), textColor: theme.Colors.PrimaryTextColor);
 					materialButtons.Add(materialSelection);
 					materialSelection.SiblingRadioButtonList = materialButtons;
 					colorSelectionContainer.AddChild(materialSelection);
@@ -104,7 +106,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				var selectedItem = scene.SelectedItem;
 
-				if (materialButtons?.Count > 0)
+				if (selectedItem != null
+					&& materialButtons?.Count > 0)
 				{
 					bool setSelection = false;
 					// Set the material selector to have the correct material button selected

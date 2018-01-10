@@ -42,15 +42,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		private InteractiveScene scene;
 
-		public MirrorControls(InteractiveScene scene)
+		public MirrorControls(InteractiveScene scene, ThemeConfig theme)
 		{
 			this.scene = scene;
 			this.Padding = 15;
 
 			FlowLayoutWidget buttonContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
 			buttonContainer.HAnchor = HAnchor.Fit;
-
-			var theme = ApplicationController.Instance.Theme;
 
 			Button mirrorXButton = theme.MenuButtonFactory.Generate("X");
 			mirrorXButton.Name = "Mirror Button X";

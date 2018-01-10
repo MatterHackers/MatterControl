@@ -183,19 +183,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			scrollableContent.AddChild(alignSection);
 
-			var mirrorSection = new SectionWidget("Mirror".Localize(), ActiveTheme.Instance.PrimaryTextColor, new MirrorControls(scene), expanded: false)
+			var mirrorSection = new SectionWidget("Mirror".Localize(), ActiveTheme.Instance.PrimaryTextColor, new MirrorControls(scene, theme), expanded: false)
 			{
 				Name = "Mirror Panel",
 			};
 			scrollableContent.AddChild(mirrorSection);
 
-			var scaleSection = new SectionWidget("Scale".Localize(), ActiveTheme.Instance.PrimaryTextColor, new ScaleControls(scene, ActiveTheme.Instance.PrimaryTextColor), expanded: false)
+			var scaleSection = new SectionWidget("Scale".Localize(), ActiveTheme.Instance.PrimaryTextColor, new ScaleControls(scene, theme), expanded: false)
 			{
 				Name = "Scale Panel",
 			};
 			scrollableContent.AddChild(scaleSection);
 
-			var materialsSection = new SectionWidget("Materials".Localize(), ActiveTheme.Instance.PrimaryTextColor, new MaterialControls(scene), expanded: false)
+			var materialsSection = new SectionWidget("Materials".Localize(), ActiveTheme.Instance.PrimaryTextColor, new MaterialControls(scene, theme), expanded: false)
 			{
 				Name = "Materials Panel",
 			};
@@ -241,8 +241,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.itemName.Text = selectedItem.Name ?? selectedItem.GetType().Name;
 
 			this.item = selectedItem;
-
-			//this.editorPanel.RemoveAllChildren();
 
 			var viewMode = printer?.ViewState.ViewMode;
 
