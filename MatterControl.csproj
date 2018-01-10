@@ -86,6 +86,7 @@
     <Compile Include="ApplicationView\WindowsPlatformsFeatures.cs" />
     <Compile Include="PartPreviewWindow\LibraryBrowserPage.cs" />
     <Compile Include="PartPreviewWindow\MoveItemPage.cs" />
+    <Compile Include="PartPreviewWindow\View3D\Actions\SubtractAndReplace.cs" />
     <Compile Include="PartPreviewWindow\View3D\PrinterBar\OverflowBar.cs" />
     <Compile Include="PartPreviewWindow\View3D\PrinterBar\PrintPopupMenu.cs" />
     <Compile Include="PartPreviewWindow\View3D\PrinterBar\SliceButton.cs" />
@@ -140,7 +141,6 @@
     <Compile Include="PartPreviewWindow\View3D\Actions\IntersectionEditor.cs" />
     <Compile Include="PartPreviewWindow\View3D\Actions\MeshWrapper.cs" />
     <Compile Include="PartPreviewWindow\View3D\Actions\MeshWrapperOperation.cs" />
-    <Compile Include="PartPreviewWindow\View3D\Actions\PaintMaterialEditor.cs" />
     <Compile Include="PartPreviewWindow\View3D\Actions\SubtractEditor.cs" />
     <Compile Include="PartPreviewWindow\View3D\LightingData.cs" />
     <Compile Include="PartPreviewWindow\View3D\PrinterBar\CancelButton.cs" />

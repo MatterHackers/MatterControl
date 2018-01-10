@@ -361,7 +361,7 @@ namespace MatterHackers.MatterControl
 			new SceneSelectionOperation()
 			{
 				TitleResolver = () => "Subtract & Replace".Localize(),
-				Action = (scene) => DoOpperation(scene, nameof(PaintMaterialEditor), "Subtract & Replace"),
+				Action = (scene) => DoOpperation(scene, nameof(SubtractAndReplace), "Subtract & Replace"),
 				Icon = AggContext.StaticData.LoadIcon("paint.png").SetPreMultiply(),
 			},
 			new SceneSelectionOperation()
