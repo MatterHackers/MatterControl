@@ -39,35 +39,30 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public partial class SelectedObjectPanel
 	{
-		public class AlignControls : IgnoredPopupWidget
+		public class AlignControls : FlowLayoutWidget
 		{
 			private InteractiveScene scene;
 			private ThemeConfig theme;
 
 			public AlignControls(InteractiveScene scene, ThemeConfig theme)
+				: base (FlowDirection.TopToBottom)
 			{
 				this.scene = scene;
 				this.theme = theme;
-				this.HAnchor = HAnchor.Fit;
+				this.HAnchor = HAnchor.Stretch;
 				this.VAnchor = VAnchor.Fit;
-				this.Padding = new BorderDouble(5, 5, 5, 0);
 
-				var buttonPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
-				{
-					VAnchor = VAnchor.Fit,
-					HAnchor = HAnchor.Fit,
-				};
-				this.AddChild(buttonPanel);
+				FlowLayoutWidget alignButtons = null;
 
 				string[] axisNames = new string[] { "X", "Y", "Z" };
 				for (int axisIndex = 0; axisIndex < 3; axisIndex++)
 				{
-					var alignButtons = new FlowLayoutWidget(FlowDirection.LeftToRight)
+					alignButtons = new FlowLayoutWidget(FlowDirection.LeftToRight)
 					{
-						HAnchor = HAnchor.Fit,
-						Padding = new BorderDouble(5)
+						HAnchor = HAnchor.Left | HAnchor.Fit,
+						Padding = new BorderDouble(0, 2)
 					};
-					buttonPanel.AddChild(alignButtons);
+					this.AddChild(alignButtons);
 
 					alignButtons.AddChild(new TextWidget(axisNames[axisIndex], textColor: theme.Colors.PrimaryTextColor)
 					{
@@ -77,34 +72,37 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					alignButtons.AddChild(CreateAlignButton(axisIndex, AxisAlignment.Min, "Min"));
 					alignButtons.AddChild(new HorizontalSpacer());
+
 					alignButtons.AddChild(CreateAlignButton(axisIndex, AxisAlignment.Center, "Center"));
 					alignButtons.AddChild(new HorizontalSpacer());
+
 					alignButtons.AddChild(CreateAlignButton(axisIndex, AxisAlignment.Max, "Max"));
 					alignButtons.AddChild(new HorizontalSpacer());
 				}
 
-				var dualExtrusionAlignButton = theme.MenuButtonFactory.Generate("Align for Dual Extrusion".Localize());
-				dualExtrusionAlignButton.Margin = new BorderDouble(21, 0);
+				var secondChild = alignButtons.Children[1];
+
+				var dualExtrusionAlignButton = theme.ButtonFactory.Generate("Align for Dual Extrusion".Localize());
 				dualExtrusionAlignButton.HAnchor = HAnchor.Left;
-				buttonPanel.AddChild(dualExtrusionAlignButton);
+				dualExtrusionAlignButton.Margin = new BorderDouble(left: secondChild.OriginRelativeParent.X, top: 6);
+				this.AddChild(dualExtrusionAlignButton);
 
 				AddAlignDelegates(0, AxisAlignment.SourceCoordinateSystem, dualExtrusionAlignButton);
 			}
 
-			private GuiWidget CreateAlignButton(int axisIndex, AxisAlignment alignment, string lable)
+			private GuiWidget CreateAlignButton(int axisIndex, AxisAlignment alignment, string label)
 			{
-				var smallMarginButtonFactory = theme.MenuButtonFactory;
-				var alignButton = smallMarginButtonFactory.Generate(lable);
-				alignButton.Margin = new BorderDouble(3, 0);
+				var alignButton = theme.ButtonFactory.Generate(label);
+				alignButton.Margin = new BorderDouble(2, 0);
 
 				AddAlignDelegates(axisIndex, alignment, alignButton);
 
 				return alignButton;
 			}
 
-			private void AddAlignDelegates(int axisIndex, AxisAlignment alignment, Button alignButton)
+			private void AddAlignDelegates(int axisIndex, AxisAlignment alignment, Button button)
 			{
-				alignButton.Click += (sender, e) =>
+				button.Click += (sender, e) =>
 				{
 					if (scene.HasSelection)
 					{
@@ -116,7 +114,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 				};
 
-				alignButton.MouseEnter += (s2, e2) =>
+				button.MouseEnter += (s2, e2) =>
 				{
 					if (scene.HasSelection)
 					{
@@ -135,7 +133,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 				};
 
-				alignButton.MouseLeave += (s3, e3) =>
+				button.MouseLeave += (s3, e3) =>
 				{
 					if (scene.HasSelection)
 					{
