@@ -317,13 +317,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			buttonGroupB.Add(layers2DButton);
 			this.AddChild(layers2DButton);
 
-
-			var buttonSpacing = theme.ButtonSpacing;
-
 			var buttonView = new FlowLayoutWidget();
 			buttonView.AddChild(new ImageWidget(AggContext.StaticData.LoadIcon((IsPrinterMode) ? "bed.png" : "cube.png", IconColor.Theme))
 			{
-				VAnchor = VAnchor.Center
+				VAnchor = VAnchor.Center,
 				Margin = theme.ButtonSpacing,
 			});
 

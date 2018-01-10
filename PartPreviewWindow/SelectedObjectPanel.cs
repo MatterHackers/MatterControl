@@ -30,7 +30,6 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
@@ -38,10 +37,8 @@ using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MeshVisualizer;
-using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
@@ -50,7 +47,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		private IObject3D item = new Object3D();
 
-		private FlowLayoutWidget editorPanel;
+		private FlowLayoutWidget scrollableContent;
 		private TextWidget itemName;
 		private ThemeConfig theme;
 		private View3DWidget view3DWidget;
@@ -60,6 +57,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private ObservableCollection<GuiWidget> materialButtons = new ObservableCollection<GuiWidget>();
 		private SectionWidget editorSection;
 		private TextButton editButton;
+		private GuiWidget editorPanel;
 
 		public SelectedObjectPanel(View3DWidget view3DWidget, InteractiveScene scene, ThemeConfig theme, PrinterConfig printer)
 			: base(FlowDirection.TopToBottom)
@@ -67,7 +65,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Top | VAnchor.Fit;
 			this.Padding = 0; // new BorderDouble(8, 10);
-			//this.MinimumSize = new VectorMath.Vector2(220, 0);
+							  //this.MinimumSize = new VectorMath.Vector2(220, 0);
 
 			this.view3DWidget = view3DWidget;
 			this.theme = theme;
@@ -89,54 +87,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Margin = new BorderDouble(bottom: 10)
 			});
 
-			var behavior3DTypeButtons = new FlowLayoutWidget();
-			firstPanel.AddChild(behavior3DTypeButtons);
-
-			var buttonMargin = new BorderDouble(2, 5);
-
-			// put in the button for making the behavior solid
-			var solidButtonView = new TextButton("Color".Localize(), theme)
-			{
-				BackgroundColor = theme.MinimalShade
-			};
-			var solidBehaviorButton = new PopupButton(solidButtonView)
-			{
-				Name = "Solid Colors",
-				AlignToRightEdge = true,
-				PopupContent = new ColorSwatchSelector(scene)
-				{
-					HAnchor = HAnchor.Fit,
-					VAnchor = VAnchor.Fit,
-				},
-			};
-
-			behavior3DTypeButtons.AddChild(solidBehaviorButton);
-
-			editButton = new TextButton("Edit".Localize(), theme)
-			{
-				BackgroundColor = theme.MinimalShade,
-				Margin = theme.ButtonSpacing
-			};
-			editButton.Click += async (s, e) =>
-			{
-				BedConfig bed;
-
-				var partPreviewContent = this.Parents<PartPreviewContent>().FirstOrDefault();
-				partPreviewContent.CreatePartTab(
-					"New Part",
-					bed = new BedConfig(),
-					theme);
-
-				await bed.LoadContent(
-					new EditContext()
-					{
-						ContentStore = ApplicationController.Instance.Library.PlatingHistory,
-						SourceItem = new InMemoryItem(this.item),
-					});
-			};
-			behavior3DTypeButtons.AddChild(editButton);
-
-			editorPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			scrollableContent = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit,
@@ -149,13 +100,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Stretch,
 			};
 
-			scrollable.AddChild(editorPanel);
+			scrollable.AddChild(scrollableContent);
 			scrollable.ScrollArea.HAnchor = HAnchor.Stretch;
 
 			this.AddChild(scrollable);
 
 			// Add heading separator
-			editorPanel.AddChild(new HorizontalLine(25)
+			scrollableContent.AddChild(new HorizontalLine(25)
 			{
 				Margin = new BorderDouble(0)
 			});
@@ -193,8 +144,69 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				operationsContainer.AddChild(button);
 			}
 
-			editorSection = new SectionWidget("Editor", ActiveTheme.Instance.PrimaryTextColor, new GuiWidget());
-			editorPanel.AddChild(editorSection);
+			var editorColumn = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit
+			};
+
+			var toolbar = new Toolbar()
+			{
+				Padding = theme.ToolbarPadding,
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit
+			};
+			editorColumn.AddChild(toolbar);
+
+			// put in the button for making the behavior solid
+			var solidBehaviorButton = new PopupButton(new TextButton("Color".Localize(), theme))
+			{
+				Name = "Solid Colors",
+				AlignToRightEdge = true,
+				PopupContent = new ColorSwatchSelector(scene)
+				{
+					HAnchor = HAnchor.Fit,
+					VAnchor = VAnchor.Fit,
+				},
+				Margin = theme.ButtonSpacing.Clone(left: 0),
+				BackgroundColor = theme.MinimalShade
+			};
+			toolbar.AddChild(solidBehaviorButton);
+
+			editButton = new TextButton("Edit".Localize(), theme)
+			{
+				BackgroundColor = theme.MinimalShade,
+				Margin = theme.ButtonSpacing
+			};
+			editButton.Click += async (s, e) =>
+			{
+				var bed = new BedConfig();
+
+				var partPreviewContent = this.Parents<PartPreviewContent>().FirstOrDefault();
+				partPreviewContent.CreatePartTab(
+					"New Part",
+					bed,
+					theme);
+
+				await bed.LoadContent(
+					new EditContext()
+					{
+						ContentStore = ApplicationController.Instance.Library.PlatingHistory,
+						SourceItem = new InMemoryItem(this.item),
+					});
+			};
+			toolbar.AddChild(editButton);
+
+			// Add container used to host the current specialized editor for the selection
+			editorColumn.AddChild(editorPanel = new GuiWidget()
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit,
+				Padding = 6
+			});
+
+			editorSection = new SectionWidget("Editor", ActiveTheme.Instance.PrimaryTextColor, editorColumn);
+			scrollableContent.AddChild(editorSection);
 
 			// TODO: Implements
 			//alignButton.Enabled = this.scene.HasSelection
@@ -202,31 +214,31 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			//	&& this.scene.SelectedItem.Children.Count > 1;
 
 			var operationsSection = new SectionWidget("Operations".Localize(), ActiveTheme.Instance.PrimaryTextColor, operationsContainer);
-			editorPanel.AddChild(operationsSection);
+			scrollableContent.AddChild(operationsSection);
 
 			var alignSection = new SectionWidget("Align".Localize(), ActiveTheme.Instance.PrimaryTextColor, this.AddAlignControls(), expanded: false)
 			{
 				Name = "Align Panel",
 			};
-			editorPanel.AddChild(alignSection);
+			scrollableContent.AddChild(alignSection);
 
 			var mirrorSection = new SectionWidget("Mirror".Localize(), ActiveTheme.Instance.PrimaryTextColor, new MirrorControls(scene), expanded: false)
 			{
 				Name = "Mirror Panel",
 			};
-			editorPanel.AddChild(mirrorSection);
+			scrollableContent.AddChild(mirrorSection);
 
 			var scaleSection = new SectionWidget("Scale".Localize(), ActiveTheme.Instance.PrimaryTextColor, new ScaleControls(scene, ActiveTheme.Instance.PrimaryTextColor), expanded: false)
 			{
 				Name = "Scale Panel",
 			};
-			editorPanel.AddChild(scaleSection);
+			scrollableContent.AddChild(scaleSection);
 
 			var materialsSection = new SectionWidget("Materials".Localize(), ActiveTheme.Instance.PrimaryTextColor, this.AddMaterialControls(), expanded: false)
 			{
 				Name = "Materials Panel",
 			};
-			editorPanel.AddChild(materialsSection);
+			scrollableContent.AddChild(materialsSection);
 
 			HashSet<IObject3DEditor> mappedEditors;
 			objectEditorsByType = new Dictionary<Type, HashSet<IObject3DEditor>>();
@@ -292,7 +304,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
-			if (mappedEditors != null)
+			if (mappedEditors == null)
+			{
+				editorPanel.CloseAllChildren();
+				editorPanel.Invalidate();
+			}
+			else
 			{
 				//var dropDownList = new DropDownList("", ActiveTheme.Instance.PrimaryTextColor, maxHeight: 300)
 				//{
@@ -359,6 +376,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void ShowObjectEditor(IObject3DEditor editor)
 		{
+			editorPanel.CloseAllChildren();
+
 			if (editor == null)
 			{
 				return;
@@ -368,7 +387,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			editorWidget.HAnchor = HAnchor.Stretch;
 			editorWidget.VAnchor = VAnchor.Fit;
 
-			editorSection.SetContentWidget(editorWidget);
+			editorPanel.AddChild(editorWidget);
 		}
 
 		public void Save(ILibraryItem item, IObject3D content)
