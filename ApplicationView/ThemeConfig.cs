@@ -101,6 +101,8 @@ namespace MatterHackers.MatterControl
 
 		public int SplitterWidth => (int)(6 * (GuiWidget.DeviceScale <= 1 ? GuiWidget.DeviceScale : GuiWidget.DeviceScale * 1.4));
 
+		public IThemeColors Colors { get; set; }
+
 		public Color SlightShade { get; } = new Color(0, 0, 0, 40);
 		public Color MinimalShade { get; } = new Color(0, 0, 0, 15);
 		public Color Shade { get; } = new Color(0, 0, 0, 120);
@@ -152,6 +154,7 @@ namespace MatterHackers.MatterControl
 		public void RebuildTheme()
 		{
 			var theme = ActiveTheme.Instance;
+			this.Colors = theme;
 
 			DefaultThumbView.ThumbColor = new Color(theme.PrimaryTextColor, 30);
 
@@ -167,10 +170,10 @@ namespace MatterHackers.MatterControl
 			commonOptions.FixedHeight = 32;
 
 			this.TabBodyBackground = this.ResolveColor(
-				ActiveTheme.Instance.TertiaryBackgroundColor, 
+				theme.TertiaryBackgroundColor, 
 				new Color(
 					Color.White, 
-					(ActiveTheme.Instance.IsDarkTheme) ? 3 : 25));
+					(theme.IsDarkTheme) ? 3 : 25));
 
 			this.ActiveTabColor = this.TabBodyBackground;
 			this.ActiveTabBarBackground = this.ActiveTabColor.AdjustLightness(0.85).ToColor();
@@ -178,7 +181,7 @@ namespace MatterHackers.MatterControl
 			// Active tab color with slight transparency
 			this.InteractionLayerOverlayColor = new Color(this.ActiveTabColor, 200);
 
-			float alpha0to1 = (ActiveTheme.Instance.IsDarkTheme ? 20 : 60) / 255.0f;
+			float alpha0to1 = (theme.IsDarkTheme ? 20 : 60) / 255.0f;
 
 			this.InactiveTabColor = ResolveColor(theme.PrimaryBackgroundColor, new Color(Color.White, this.SlightShade.alpha));
 
@@ -249,7 +252,7 @@ namespace MatterHackers.MatterControl
 				FixedWidth = 30 * GuiWidget.DeviceScale,
 				FontSize = 8,
 				Margin = 0,
-				CheckedBorderColor = ActiveTheme.Instance.PrimaryTextColor
+				CheckedBorderColor = theme.PrimaryTextColor
 			});
 
 			this.MicroButtonMenu = new TextImageButtonFactory(new ButtonFactoryOptions(commonGray)
@@ -320,13 +323,13 @@ namespace MatterHackers.MatterControl
 				FixedWidth = 185,
 				FixedHeight = 30,
 
-				NormalFillColor = ActiveTheme.Instance.PrimaryAccentColor.SetLightness(.8).ToColor(),
+				NormalFillColor = theme.PrimaryAccentColor.SetLightness(.8).ToColor(),
 				NormalTextColor = Color.Black,
-				NormalBorderColor = new Color(ActiveTheme.Instance.PrimaryAccentColor.SetLightness(.8).ToColor(), 200),
+				NormalBorderColor = new Color(theme.PrimaryAccentColor.SetLightness(.8).ToColor(), 200),
 
-				HoverFillColor = ActiveTheme.Instance.PrimaryAccentColor.SetLightness(.9).ToColor(),
+				HoverFillColor = theme.PrimaryAccentColor.SetLightness(.9).ToColor(),
 				HoverTextColor = Color.Black,
-				HoverBorderColor = new Color(ActiveTheme.Instance.PrimaryAccentColor.SetLightness(.9).ToColor(), 200),
+				HoverBorderColor = new Color(theme.PrimaryAccentColor.SetLightness(.9).ToColor(), 200),
 
 				BorderWidth = 1,
 			});
@@ -355,7 +358,7 @@ namespace MatterHackers.MatterControl
 				HoverTextColor = theme.PrimaryTextColor,
 				DisabledFillColor = Color.White,
 				DisabledTextColor = Color.DarkGray,
-				PressedTextColor = ActiveTheme.Instance.PrimaryTextColor,
+				PressedTextColor = theme.PrimaryTextColor,
 				FixedHeight = 25 * GuiWidget.DeviceScale,
 				FontSize = 11
 			};
@@ -364,8 +367,8 @@ namespace MatterHackers.MatterControl
 			this.HomingButtons = new TextImageButtonFactory(new ButtonFactoryOptions(disableableControlOptions)
 			{
 				BorderWidth = 1,
-				NormalBorderColor = new Color(ActiveTheme.Instance.PrimaryTextColor, 200),
-				HoverBorderColor = new Color(ActiveTheme.Instance.PrimaryTextColor, 200),
+				NormalBorderColor = new Color(theme.PrimaryTextColor, 200),
+				HoverBorderColor = new Color(theme.PrimaryTextColor, 200),
 				NormalFillColor = new Color(180, 180, 180),
 			});
 
@@ -492,7 +495,7 @@ namespace MatterHackers.MatterControl
 		{
 			double scrollBarWidth = 10;
 
-			wordOptionContainer.AddChild(new TextWidget(header, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			wordOptionContainer.AddChild(new TextWidget(header, textColor: this.Colors.PrimaryTextColor)
 			{
 				Margin = new BorderDouble(10, 3, 3, 5),
 				HAnchor = HAnchor.Left
