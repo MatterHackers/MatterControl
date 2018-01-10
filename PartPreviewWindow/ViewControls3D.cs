@@ -409,6 +409,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (printer != null)
 			{
+				printer.Bed.Scene.SelectionChanged += Scene_SelectionChanged;
+
 				printer.ViewState.ViewModeChanged += (s, e) =>
 				{
 					if (e.ViewMode == PartViewMode.Layers2D)
@@ -425,8 +427,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 				};
 			}
-
-			printer.Bed.Scene.SelectionChanged += Scene_SelectionChanged;
 
 			// Run on load
 			Scene_SelectionChanged(null, null);
