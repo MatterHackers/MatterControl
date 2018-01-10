@@ -78,8 +78,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public event EventHandler<TransformStateChangedEventArgs> TransformStateChanged;
 
-		private GuiWidget partSelectSeparator;
-
 		private RadioIconButton translateButton;
 		private RadioIconButton rotateButton;
 		private RadioIconButton scaleButton;
@@ -253,12 +251,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				rotateButton.Checked = true;
 
-				partSelectSeparator = new VerticalLine(50)
+				// Add vertical separator
+				this.AddChild(new VerticalLine(50)
 				{
 					Margin = 3
-				};
-
-				this.AddChild(partSelectSeparator);
+				});
 
 				iconPath = Path.Combine("ViewTransformControls", "partSelect.png");
 				partSelectButton = new RadioIconButton(AggContext.StaticData.LoadIcon(iconPath, 32, 32, IconColor.Theme), theme)
@@ -316,6 +313,58 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			layers2DButton.Click += SwitchModes_Click;
 			buttonGroupB.Add(layers2DButton);
 			this.AddChild(layers2DButton);
+
+			// Add vertical separator
+			this.AddChild(new VerticalLine(50)
+			{
+				Margin = 3
+			});
+
+			// Add Selected IObject3D -> Operations to toolbar
+			foreach (var namedAction in ApplicationController.Instance.RegisteredSceneOperations)
+			{
+
+				if (namedAction is SceneSelectionSeparator)
+				{
+					var margin = new BorderDouble(3);
+					margin = margin.Clone(left: margin.Left + theme.ButtonSpacing.Left);
+
+					this.AddChild(new VerticalLine(50)
+					{
+						Margin = margin
+					});
+
+					continue;
+				}
+
+				GuiWidget button;
+
+				if (namedAction.Icon != null)
+				{
+					button = new IconButton(namedAction.Icon, theme)
+					{
+						Name = namedAction.Title + " Button",
+						ToolTipText = namedAction.Title,
+						Margin = theme.ButtonSpacing,
+						BackgroundColor = theme.MinimalShade
+					};
+				}
+				else
+				{
+					button = new TextButton(namedAction.Title, theme)
+					{
+						Name = namedAction.Title + " Button",
+						Margin = theme.ButtonSpacing,
+						BackgroundColor = theme.MinimalShade
+					};
+				}
+
+				button.Click += (s, e) =>
+				{
+					namedAction.Action.Invoke(sceneContext.Scene);
+				};
+				this.AddChild(button);
+			}
 
 			var buttonView = new FlowLayoutWidget();
 			buttonView.AddChild(new ImageWidget(AggContext.StaticData.LoadIcon((IsPrinterMode) ? "bed.png" : "cube.png", IconColor.Theme))

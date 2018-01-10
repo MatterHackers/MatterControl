@@ -111,38 +111,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Margin = new BorderDouble(0)
 			});
 
-			var operationsContainer = new FlowLeftRightWithWrapping();
-
-			foreach (var namedAction in ApplicationController.Instance.RegisteredSceneOperations)
-			{
-				GuiWidget button;
-
-				if (namedAction.Icon != null)
-				{
-					button = new IconButton(namedAction.Icon, theme)
-					{
-						Name = namedAction.Title + " Button",
-						ToolTipText = namedAction.Title,
-						Margin = theme.ButtonSpacing,
-						BackgroundColor = theme.MinimalShade
-					};
-				}
-				else
-				{
-					button = new TextButton(namedAction.Title, theme)
-					{
-						Name = namedAction.Title + " Button",
-						Margin = theme.ButtonSpacing,
-						BackgroundColor = theme.MinimalShade
-					};
-				}
-
-				button.Click += (s, e) =>
-				{
-					namedAction.Action.Invoke(scene);
-				};
-				operationsContainer.AddChild(button);
-			}
 
 			var editorColumn = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -212,9 +180,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			//alignButton.Enabled = this.scene.HasSelection
 			//	&& this.scene.SelectedItem is SelectionGroup
 			//	&& this.scene.SelectedItem.Children.Count > 1;
-
-			var operationsSection = new SectionWidget("Operations".Localize(), ActiveTheme.Instance.PrimaryTextColor, operationsContainer);
-			scrollableContent.AddChild(operationsSection);
 
 			var alignSection = new SectionWidget("Align".Localize(), ActiveTheme.Instance.PrimaryTextColor, this.AddAlignControls(), expanded: false)
 			{
