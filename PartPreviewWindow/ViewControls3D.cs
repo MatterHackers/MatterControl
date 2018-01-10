@@ -317,30 +317,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			buttonGroupB.Add(layers2DButton);
 			this.AddChild(layers2DButton);
 
-
-			Button addButton = theme.SmallMarginButtonFactory.Generate("Insert".Localize(), AggContext.StaticData.LoadIcon("cube.png", 14, 14, IconColor.Theme));
-			addButton.Margin = 0;
-			addButton.Click += (sender, e) =>
-			{
-				UiThread.RunOnIdle(() =>
-				{
-					AggContext.FileDialogs.OpenFileDialog(
-						new OpenFileDialogParams(ApplicationSettings.OpenDesignFileParams, multiSelect: true),
-						(openParams) =>
-						{
-							this.LoadAndAddPartsToPlate(openParams.FileNames, sceneContext.Scene);
-						});
-				});
-			};
-			this.AddChild(addButton);
-
-			var buttonSpacing = theme.ButtonSpacing;
-
 			var buttonView = new FlowLayoutWidget();
 			buttonView.AddChild(new ImageWidget(AggContext.StaticData.LoadIcon((IsPrinterMode) ? "bed.png" : "cube.png", IconColor.Theme))
 			{
-				Margin = new BorderDouble(left: 10),
-				VAnchor = VAnchor.Center
+				VAnchor = VAnchor.Center,
+				Margin = theme.ButtonSpacing,
 			});
 
 			var buttonText = (IsPrinterMode) ? "Bed".Localize() : "Part".Localize();
@@ -497,6 +478,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Bed menu
 			return new[]
 			{
+				new NamedAction()
+				{
+					Title = "Insert".Localize(),
+					Icon = AggContext.StaticData.LoadIcon("cube.png", 16, 16, IconColor.Raw),
+					Action = () =>
+					{
+						UiThread.RunOnIdle(() =>
+						{
+							AggContext.FileDialogs.OpenFileDialog(
+								new OpenFileDialogParams(ApplicationSettings.OpenDesignFileParams, multiSelect: true),
+								(openParams) =>
+								{
+									this.LoadAndAddPartsToPlate(openParams.FileNames, sceneContext.Scene);
+								});
+						});
+					}
+				},
 				new NamedAction()
 				{
 					Title = "Save".Localize(),

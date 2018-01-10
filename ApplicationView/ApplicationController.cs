@@ -300,42 +300,98 @@ namespace MatterHackers.MatterControl
 
 		private List<SceneSelectionOperation> registeredSceneOperations = new List<SceneSelectionOperation>()
 		{
+			new SceneSelectionOperation()
 			{
-				() => "Make Support".Localize(),
-				(scene) =>
+				TitleResolver = () => "Group".Localize(),
+				Action = (scene) => scene.GroupSelection(),
+				IsEnabled = (scene) => scene.HasSelection
+					&& scene.SelectedItem is SelectionGroup
+					&& scene.SelectedItem.Children.Count > 1,
+				Icon = AggContext.StaticData.LoadIcon("group.png").SetPreMultiply(),
+			},
+			new SceneSelectionOperation()
+			{
+				TitleResolver = () => "Ungroup".Localize(),
+				Action = (scene) => scene.UngroupSelection(),
+				IsEnabled = (scene) => scene.HasSelection,
+				Icon = AggContext.StaticData.LoadIcon("ungroup.png").SetPreMultiply(),
+			},
+			new SceneSelectionOperation()
+			{
+				TitleResolver = () => "Duplicate".Localize(),
+				Action = (scene) => scene.DuplicateSelection(),
+				IsEnabled = (scene) => scene.HasSelection,
+				Icon = AggContext.StaticData.LoadIcon("duplicate.png").SetPreMultiply(),
+			},
+			new SceneSelectionOperation()
+			{
+				TitleResolver = () => "Remove".Localize(),
+				Action = (scene) => scene.DeleteSelection(),
+				IsEnabled = (scene) => scene.HasSelection,
+				Icon = AggContext.StaticData.LoadIcon("remove.png").SetPreMultiply(),
+			},
+			new SceneSelectionOperation()
+			{
+				TitleResolver = () => "Lay Flat".Localize(),
+				Action = (scene) =>
+				{
+					if (scene.HasSelection)
+					{
+						scene.MakeLowestFaceFlat(scene.SelectedItem, scene.RootItem);
+					}
+				},
+				IsEnabled = (scene) => scene.HasSelection,
+				Icon = AggContext.StaticData.LoadIcon("lay_flat.png").SetPreMultiply(),
+			},
+
+			new SceneSelectionOperation()
+			{
+				TitleResolver = () => "Subtract".Localize(),
+				Action = (scene) => DoOpperation(scene, nameof(SubtractEditor), "Subtract"),
+				Icon = AggContext.StaticData.LoadIcon("subtract.png").SetPreMultiply(),
+
+			},
+			new SceneSelectionOperation()
+			{
+				TitleResolver = () => "Intersect".Localize(),
+				Action = (scene) => DoOpperation(scene, nameof(IntersectionEditor), "Intersect"),
+				Icon = AggContext.StaticData.LoadIcon("intersect.png")
+			},
+#if DEBUG // keep this work in progress to the editor for now
+			new SceneSelectionOperation()
+			{
+				TitleResolver = () => "Subtract & Replace".Localize(),
+				Action = (scene) => DoOpperation(scene, nameof(PaintMaterialEditor), "Subtract & Replace"),
+				Icon = AggContext.StaticData.LoadIcon("paint.png").SetPreMultiply(),
+			},
+			new SceneSelectionOperation()
+			{
+				TitleResolver = () => "Make Support".Localize(),
+				Action = (scene) =>
 				{
 					if (scene.SelectedItem != null
 						&& scene.SelectedItem.OutputType != PrintOutputTypes.Support)
 					{
 						scene.UndoBuffer.AddAndDo(new MakeSupport(scene.SelectedItem));
 					}
-				}
+				},
+				Icon = AggContext.StaticData.LoadIcon("support.png").SetPreMultiply(),
 			},
+			new SceneSelectionOperation()
 			{
-				() => "Subtract".Localize(),
-				(scene) => DoOpperation(scene, nameof(SubtractEditor), "Subtract")
+				TitleResolver = () => "Bend".Localize(),
+				Action = (scene) => new BendOperation(scene.SelectedItem),
 			},
+			new SceneSelectionOperation()
 			{
-				() => "Intersect".Localize(),
-				(scene) => DoOpperation(scene, nameof(IntersectionEditor), "Intersect")
+				TitleResolver = () => "Cut Out".Localize(),
+				Action = (scene) => Console.WriteLine("Cut out")
 			},
-#if DEBUG // keep this work in progress to the editor for now
-			{
-				() => "Paint Material".Localize(),
-				(scene) => DoOpperation(scene, nameof(PaintMaterialEditor), "Material Paint")
-			},
-			{
-				() => "Bend".Localize(),
-				(scene) => new BendOperation(scene.SelectedItem)
-			},
-			{
-				() => "Cut Out".Localize(),
-				(scene) => Console.WriteLine("Cut out")
-			},
+			new SceneSelectionOperation()
 			{
 				// Should be a pinch command that makes a pinch object with the correct controls
-				() => "Pinch".Localize(),
-				(scene) => scene.UndoBuffer.AddAndDo(new GroupCommand(scene, scene.SelectedItem))
+				TitleResolver = () => "Pinch".Localize(),
+				Action = (scene) => scene.UndoBuffer.AddAndDo(new GroupCommand(scene, scene.SelectedItem))
 			}
 #endif
 		};
@@ -1105,10 +1161,7 @@ namespace MatterHackers.MatterControl
 			return Enumerable.Empty<PrintItemAction>();
 		}
 
-		public IEnumerable<SceneSelectionOperation> RegisteredSceneOperations()
-		{
-			return registeredSceneOperations;
-		}
+		public IEnumerable<SceneSelectionOperation> RegisteredSceneOperations => registeredSceneOperations;
 
 		public event EventHandler<WidgetSourceEventArgs> AddPrintersTabRightElement;
 

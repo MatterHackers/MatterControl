@@ -32,7 +32,6 @@ using System;
 using System.Collections.Generic;
 using MatterHackers.Agg.Image;
 using MatterHackers.DataConverters3D;
-using MatterHackers.MeshVisualizer;
 
 namespace MatterHackers.Agg.UI
 {
@@ -54,11 +53,13 @@ namespace MatterHackers.Agg.UI
 	{
 		public Func<string> TitleResolver { get; set; }
 		public string Title => this.TitleResolver?.Invoke();
+		public ImageBuffer Icon { get; set; }
 	}
 
 	public class SceneSelectionOperation : LocalizedAction
 	{
 		public Action<InteractiveScene> Action { get; set; }
+		public Func<InteractiveScene, bool> IsEnabled { get; set; }
 	}
 
 	public static class NamedActionExtensions

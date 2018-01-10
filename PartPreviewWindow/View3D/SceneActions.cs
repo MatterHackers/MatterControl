@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -34,6 +35,7 @@ using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
+using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
@@ -210,6 +212,102 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				Scene.ClearSelection();
 			}
+		}
+
+		public static void MakeLowestFaceFlat(this InteractiveScene scene, IObject3D objectToLayFlatGroup, IObject3D root)
+		{
+			bool firstVertex = true;
+
+			IObject3D objectToLayFlat = objectToLayFlatGroup;
+
+			IVertex lowestVertex = null;
+			Vector3 lowestVertexPosition = Vector3.Zero;
+			IObject3D itemToLayFlat = null;
+
+			// Process each child, checking for the lowest vertex
+			foreach (var itemToCheck in objectToLayFlat.VisibleMeshes())
+			{
+				// find the lowest point on the model
+				for (int testIndex = 0; testIndex < itemToCheck.Mesh.Vertices.Count; testIndex++)
+				{
+					var vertex = itemToCheck.Mesh.Vertices[testIndex];
+					Vector3 vertexPosition = Vector3.Transform(vertex.Position, itemToCheck.WorldMatrix(root));
+					if (firstVertex)
+					{
+						lowestVertex = itemToCheck.Mesh.Vertices[testIndex];
+						lowestVertexPosition = vertexPosition;
+						itemToLayFlat = itemToCheck;
+						firstVertex = false;
+					}
+					else if (vertexPosition.Z < lowestVertexPosition.Z)
+					{
+						lowestVertex = itemToCheck.Mesh.Vertices[testIndex];
+						lowestVertexPosition = vertexPosition;
+						itemToLayFlat = itemToCheck;
+					}
+				}
+			}
+
+			if (lowestVertex == null)
+			{
+				// didn't find any selected mesh
+				return;
+			}
+
+			Face faceToLayFlat = null;
+			double lowestAngleOfAnyFace = double.MaxValue;
+			// Check all the faces that are connected to the lowest point to find out which one to lay flat.
+			foreach (Face face in lowestVertex.ConnectedFaces())
+			{
+				double biggestAngleToFaceVertex = double.MinValue;
+				foreach (IVertex faceVertex in face.Vertices())
+				{
+					if (faceVertex != lowestVertex)
+					{
+						Vector3 faceVertexPosition = Vector3.Transform(faceVertex.Position, itemToLayFlat.WorldMatrix(root));
+						Vector3 pointRelLowest = faceVertexPosition - lowestVertexPosition;
+						double xLeg = new Vector2(pointRelLowest.X, pointRelLowest.Y).Length;
+						double yLeg = pointRelLowest.Z;
+						double angle = Math.Atan2(yLeg, xLeg);
+						if (angle > biggestAngleToFaceVertex)
+						{
+							biggestAngleToFaceVertex = angle;
+						}
+					}
+				}
+				if (biggestAngleToFaceVertex < lowestAngleOfAnyFace)
+				{
+					lowestAngleOfAnyFace = biggestAngleToFaceVertex;
+					faceToLayFlat = face;
+				}
+			}
+
+			double maxDistFromLowestZ = 0;
+			List<Vector3> faceVertices = new List<Vector3>();
+			foreach (IVertex vertex in faceToLayFlat.Vertices())
+			{
+				Vector3 vertexPosition = Vector3.Transform(vertex.Position, itemToLayFlat.WorldMatrix(root));
+				faceVertices.Add(vertexPosition);
+				maxDistFromLowestZ = Math.Max(maxDistFromLowestZ, vertexPosition.Z - lowestVertexPosition.Z);
+			}
+
+			if (maxDistFromLowestZ > .001)
+			{
+				Vector3 xPositive = (faceVertices[1] - faceVertices[0]).GetNormal();
+				Vector3 yPositive = (faceVertices[2] - faceVertices[0]).GetNormal();
+				Vector3 planeNormal = Vector3.Cross(xPositive, yPositive).GetNormal();
+
+				// this code takes the minimum rotation required and looks much better.
+				Quaternion rotation = new Quaternion(planeNormal, new Vector3(0, 0, -1));
+				Matrix4X4 partLevelMatrix = Matrix4X4.CreateRotation(rotation);
+
+				// rotate it
+				objectToLayFlatGroup.Matrix = PlatingHelper.ApplyAtCenter(objectToLayFlatGroup, partLevelMatrix);
+
+				scene.Invalidate();
+			}
+
+			PlatingHelper.PlaceOnBed(objectToLayFlatGroup);
 		}
 
 		internal class ArangeUndoCommand : IUndoRedoCommand

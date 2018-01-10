@@ -30,7 +30,6 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
@@ -46,7 +45,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 	{
 		private MeshWrapperOperation group;
 		private View3DWidget view3DWidget;
-		public string Name => "Paint Material";
+		public string Name => "Subtract & Replace";
 
 		public bool Unlocked { get; } = true;
 

@@ -34,7 +34,6 @@ using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.ImageProcessing;
-using MatterHackers.MatterControl.PrintQueue;
 
 namespace MatterHackers.MatterControl.Library
 {
@@ -64,11 +63,18 @@ namespace MatterHackers.MatterControl.Library
 			var contentProvider = ApplicationController.Instance.Library.GetContentProvider(item) as ISceneContentProvider;
 			return contentProvider?.CreateItem(item, reporter);
 		}
-		
+
 		// Color ExtensionMethods
 		public static ImageBuffer MultiplyWithPrimaryAccent(this ImageBuffer sourceImage)
 		{
 			return sourceImage.Multiply(ActiveTheme.Instance.PrimaryAccentColor);
+		}
+
+		public static ImageBuffer SetPreMultiply(this ImageBuffer sourceImage)
+		{
+			sourceImage.SetRecieveBlender(new BlenderPreMultBGRA());
+
+			return sourceImage;
 		}
 
 		public static ImageBuffer AlphaToPrimaryAccent(this ImageBuffer sourceImage)
