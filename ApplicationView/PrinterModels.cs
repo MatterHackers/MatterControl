@@ -623,14 +623,15 @@ namespace MatterHackers.MatterControl
 			{
 				if (double.TryParse(UserSettings.Instance.get(UserSettingsKey.SelectedObjectPanelWidth), out double controlWidth))
 				{
-					return controlWidth;
+					return Math.Max(controlWidth, 150);
 				}
 
 				return 200;
 			}
 			set
 			{
-				UserSettings.Instance.set(UserSettingsKey.SelectedObjectPanelWidth, value.ToString());
+				var minimumValue = Math.Max(value, 150);
+				UserSettings.Instance.set(UserSettingsKey.SelectedObjectPanelWidth, minimumValue.ToString());
 			}
 		}
 	}
