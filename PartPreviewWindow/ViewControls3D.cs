@@ -323,8 +323,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var buttonView = new FlowLayoutWidget();
 			buttonView.AddChild(new ImageWidget(AggContext.StaticData.LoadIcon((IsPrinterMode) ? "bed.png" : "cube.png", IconColor.Theme))
 			{
-				Margin = new BorderDouble(left: 10),
 				VAnchor = VAnchor.Center
+				Margin = theme.ButtonSpacing,
 			});
 
 			var buttonText = (IsPrinterMode) ? "Bed".Localize() : "Part".Localize();
@@ -484,7 +484,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				new NamedAction()
 				{
 					Title = "Insert".Localize(),
-					Icon = AggContext.StaticData.LoadIcon("cube.png", 14, 14, IconColor.Theme),
+					Icon = AggContext.StaticData.LoadIcon("cube.png", 16, 16, IconColor.Raw),
 					Action = () =>
 					{
 						UiThread.RunOnIdle(() =>
