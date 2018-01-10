@@ -187,14 +187,14 @@ namespace MatterHackers.MatterControl.ActionBar
 			printer.Connection.HotendTemperatureRead.RegisterEvent((s, e) => DisplayCurrentTemperature(), ref unregisterEvents);
 		}
 
-		protected override int ActualTemperature => (int)printer.Connection.GetActualHotendTemperature(hotendIndex);
-		protected override int TargetTemperature => (int)printer.Connection.GetTargetHotendTemperature(hotendIndex);
+		protected override int ActualTemperature => (int)printer.Connection.GetActualHotendTemperature(this.hotendIndex);
+		protected override int TargetTemperature => (int)printer.Connection.GetTargetHotendTemperature(this.hotendIndex);
 
 		string TemperatureKey
 		{
 			get
 			{
-				return "temperature" + ((hotendIndex > 0 && hotendIndex < 4) ? hotendIndex.ToString() : "");
+				return "temperature" + ((this.hotendIndex > 0 && this.hotendIndex < 4) ? hotendIndex.ToString() : "");
 			}
 		}
 

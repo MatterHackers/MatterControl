@@ -197,7 +197,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				// Check if there is a material override for this extruder
 				// Otherwise, use the SettingsLayers that is bound to this extruder
-				if (extruderIndex < printerSettings.MaterialSettingsKeys.Count)
+				if (extruderIndex < printerSettings.GetValue<int>(SettingsKey.extruder_count))
 				{
 					return printerSettings.GetValue<double>($"{SettingsKey.temperature}{extruderIndex}");
 				}

@@ -207,10 +207,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			QualityLayer = GetQualityLayer(ActiveQualityKey);
 
-			string materialSettingsKey = GetMaterialPresetKey(0);
-			if (!string.IsNullOrEmpty(materialSettingsKey))
+			if (!string.IsNullOrEmpty(ActiveMaterialKey))
 			{
-				MaterialLayer = GetMaterialLayer(materialSettingsKey);
+				MaterialLayer = GetMaterialLayer(ActiveMaterialKey);
 			}
 		}
 
@@ -295,22 +294,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			get
 			{
-				return GetMaterialPresetKey(0);
+				return MaterialSettingsKeys[0];
 			}
 			internal set
 			{
 				SetMaterialPreset(0, value);
 			}
-		}
-
-		private string GetMaterialPresetKey(int extruderIndex)
-		{
-			if (extruderIndex >= MaterialSettingsKeys.Count)
-			{
-				return null;
-			}
-
-			return MaterialSettingsKeys[extruderIndex];
 		}
 
 		private void SetMaterialPreset(int extruderIndex, string materialKey)
