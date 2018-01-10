@@ -39,22 +39,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 {
 	public class ZAxisControls : FlowLayoutWidget
 	{
-		/*
-		private static TextImageButtonFactory buttonFactory = new TextImageButtonFactory()
-		{
-			fontSize = 13,
-			invertImageLocation = false,
-			hoverFillColor = ActiveTheme.Instance.PrimaryAccentColor,
-			//pressedFillColor = ActiveTheme.Instance.PrimaryAccentColor.AdjustLightness(0.8).ToColor()
-		};
-		*/
-
 		private MoveButtonFactory buttonFactory = new MoveButtonFactory()
 		{
 			FontSize = 13,
 		};
 
-		public ZAxisControls(PrinterConfig printer, bool smallScreen) :
+		public ZAxisControls(PrinterConfig printer, ThemeConfig theme, bool smallScreen) :
 			base(FlowDirection.TopToBottom)
 		{
 			buttonFactory.Colors.Fill.Normal = ActiveTheme.Instance.PrimaryAccentColor;
@@ -73,7 +63,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			this.AddChild(CreateZMoveButton(printer, .02, smallScreen));
 
-			this.AddChild(new ZTuningWidget(printer.Settings, false)
+			this.AddChild(new ZTuningWidget(printer.Settings, theme)
 			{
 				HAnchor = HAnchor.Center | HAnchor.Fit,
 				Margin = 10

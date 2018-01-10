@@ -45,11 +45,8 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		private CheckBox toggleSwitch;
 
-		PrinterConnection printerConnection;
-
-		public FanControls(PrinterConnection printerConnection, int headingPointSize)
+		public FanControls(PrinterConnection printerConnection, ThemeConfig theme)
 		{
-			this.printerConnection = printerConnection;
 			this.HAnchor = HAnchor.Stretch;
 			this.HAnchor = HAnchor.Stretch;
 
@@ -108,8 +105,8 @@ namespace MatterHackers.MatterControl.PrinterControls
 			this.AddChild(
 				new SectionWidget(
 					"Fan".Localize(),
-					ActiveTheme.Instance.PrimaryAccentColor,
-					leftToRight));
+					leftToRight,
+					theme));
 
 			// CreateFanControls
 			printerConnection.FanSpeedSet.RegisterEvent((s, e) =>

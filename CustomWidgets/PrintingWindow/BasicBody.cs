@@ -220,7 +220,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			// ZControls
 			{
-				var widget = new ZAxisControls(printer, smallScreen)
+				var widget = new ZAxisControls(printer, ApplicationController.Instance.Theme, smallScreen)
 				{
 					Margin = new BorderDouble(left: 50),
 					VAnchor = VAnchor.Center,

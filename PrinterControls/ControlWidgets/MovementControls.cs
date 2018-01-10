@@ -44,6 +44,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 	public class MovementControls : ControlWidgetBase
 	{
 		private PrinterConfig printer;
+		private ThemeConfig theme;
 		public FlowLayoutWidget manualControlsLayout;
 		private Button disableMotors;
 		private EditManualMovementSpeedsWindow editManualMovementSettingsWindow;
@@ -86,10 +87,12 @@ namespace MatterHackers.MatterControl.PrinterControls
 			return container;
 		}
 
-		public MovementControls(PrinterConfig printer, int headingPointSize)
+		public MovementControls(PrinterConfig printer, ThemeConfig theme)
 		{
 			this.printer = printer;
-			var buttonFactory = ApplicationController.Instance.Theme.DisableableControlBase;
+			this.theme = theme;
+
+			var buttonFactory = theme.DisableableControlBase;
 
 			Button editButton = buttonFactory.GenerateIconButton(AggContext.StaticData.LoadIcon("icon_edit.png", 16, 16, IconColor.Theme));
 			editButton.Click += (sender, e) =>
@@ -129,8 +132,8 @@ namespace MatterHackers.MatterControl.PrinterControls
 			this.AddChild(
 				new SectionWidget(
 					"Movement".Localize(),
-					ActiveTheme.Instance.PrimaryAccentColor,
 					manualControlsLayout,
+					theme,
 					editButton));
 		}
 
@@ -150,8 +153,8 @@ namespace MatterHackers.MatterControl.PrinterControls
 			homeButtonBar.Margin = new BorderDouble(0);
 			homeButtonBar.Padding = new BorderDouble(0);
 
-			var homingButtonFactory = ApplicationController.Instance.Theme.HomingButtons;
-			var commonButtonFactory = ApplicationController.Instance.Theme.ButtonFactory;
+			var homingButtonFactory = theme.HomingButtons;
+			var commonButtonFactory = theme.ButtonFactory;
 
 			var homeIconImageWidget = new ImageWidget(AggContext.StaticData.LoadIcon("icon_home_white_24x24.png", 24, 24, IconColor.Theme));
 			homeIconImageWidget.Margin = new BorderDouble(0, 0, 6, 0);
@@ -202,9 +205,9 @@ namespace MatterHackers.MatterControl.PrinterControls
 			};
 			homeButtonBar.AddChild(offsetStreamLabel);
 
-			var ztuningWidget = new ZTuningWidget(printer.Settings);
+			var ztuningWidget = new ZTuningWidget(printer.Settings, theme);
 			homeButtonBar.AddChild(ztuningWidget);
-			
+
 			homeButtonBar.AddChild(new HorizontalSpacer());
 			homeButtonBar.AddChild(disableMotors);
 
@@ -295,7 +298,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 		private bool allowRemoveButton;
 		PrinterSettings printerSettings;
 
-		public ZTuningWidget(PrinterSettings printerSettings, bool allowRemoveButton = true)
+		public ZTuningWidget(PrinterSettings printerSettings, ThemeConfig theme, bool allowRemoveButton = true)
 		{
 			this.printerSettings = printerSettings;
 			this.allowRemoveButton = allowRemoveButton;
@@ -331,7 +334,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			};
 			zOffsetStreamContainer.AddChild(zOffsetStreamDisplay);
 
-			clearZOffsetButton = ApplicationController.Instance.Theme.CreateSmallResetButton();
+			clearZOffsetButton = theme.CreateSmallResetButton();
 			clearZOffsetButton.Name = "Clear ZOffset button";
 			clearZOffsetButton.ToolTipText = "Clear ZOffset".Localize();
 			clearZOffsetButton.Visible = allowRemoveButton && zoffset != 0;

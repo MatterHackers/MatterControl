@@ -169,7 +169,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Padding = 6
 			});
 
-			editorSection = new SectionWidget("Editor", ActiveTheme.Instance.PrimaryTextColor, editorColumn);
+			editorSection = new SectionWidget("Editor", editorColumn, theme);
 			scrollableContent.AddChild(editorSection);
 
 			// TODO: Implements
@@ -177,25 +177,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			//	&& this.scene.SelectedItem is SelectionGroup
 			//	&& this.scene.SelectedItem.Children.Count > 1;
 
-			var alignSection = new SectionWidget("Align".Localize(), ActiveTheme.Instance.PrimaryTextColor, new AlignControls(scene, theme), expanded: false)
+			var alignSection = new SectionWidget("Align".Localize(), new AlignControls(scene, theme), theme, expanded: false)
 			{
 				Name = "Align Panel",
 			};
 			scrollableContent.AddChild(alignSection);
 
-			var mirrorSection = new SectionWidget("Mirror".Localize(), ActiveTheme.Instance.PrimaryTextColor, new MirrorControls(scene, theme), expanded: false)
+			var mirrorSection = new SectionWidget("Mirror".Localize(), new MirrorControls(scene, theme), theme, expanded: false)
 			{
 				Name = "Mirror Panel",
 			};
 			scrollableContent.AddChild(mirrorSection);
 
-			var scaleSection = new SectionWidget("Scale".Localize(), ActiveTheme.Instance.PrimaryTextColor, new ScaleControls(scene, theme), expanded: false)
+			var scaleSection = new SectionWidget("Scale".Localize(), new ScaleControls(scene, theme), theme, expanded: false)
 			{
 				Name = "Scale Panel",
 			};
 			scrollableContent.AddChild(scaleSection);
 
-			var materialsSection = new SectionWidget("Materials".Localize(), ActiveTheme.Instance.PrimaryTextColor, new MaterialControls(scene, theme), expanded: false)
+			var materialsSection = new SectionWidget("Materials".Localize(), new MaterialControls(scene, theme), theme, expanded: false)
 			{
 				Name = "Materials Panel",
 			};

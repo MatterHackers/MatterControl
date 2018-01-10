@@ -82,22 +82,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				gcodeResultsPanel.AddChild(
 					new SectionWidget(
 						"Details".Localize(),
-						ActiveTheme.Instance.PrimaryTextColor,
 						new GCodeDetailsView(new GCodeDetails(printer, printer.Bed.LoadedGCode), theme.FontSize12, theme.FontSize9)
 						{
 							HAnchor = HAnchor.Fit,
 							Margin = new BorderDouble(bottom: 3)
-						}));
+						},
+						theme));
 
 				gcodeResultsPanel.AddChild(
 					new SectionWidget(
 						"Speeds".Localize(),
-						ActiveTheme.Instance.PrimaryTextColor,
 						new SpeedsLegend(sceneContext.LoadedGCode, theme, pointSize: theme.FontSize12)
 						{
 							HAnchor = HAnchor.Stretch,
 							Visible = sceneContext.RendererOptions.RenderSpeeds,
-						}));
+						},
+						theme));
 			}
 
 			this.Invalidate();

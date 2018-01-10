@@ -29,7 +29,6 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.ObjectModel;
-using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;

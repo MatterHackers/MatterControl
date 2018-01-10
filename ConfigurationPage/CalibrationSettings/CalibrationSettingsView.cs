@@ -20,10 +20,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		private TextImageButtonFactory buttonFactory;
 		private PrinterConfig printer;
 
-		public CalibrationSettingsWidget(PrinterConfig printer, TextImageButtonFactory buttonFactory, int headingPointSize)
+		public CalibrationSettingsWidget(PrinterConfig printer, ThemeConfig theme)
 		{
 			this.printer = printer;
-			this.buttonFactory = buttonFactory;
+			this.buttonFactory = theme.ButtonFactory;
 
 			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -55,8 +55,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			this.AddChild(
 				new SectionWidget(
 					"Calibration".Localize(),
-					ActiveTheme.Instance.PrimaryAccentColor,
 					container,
+					theme,
 					editButton));
 
 			if (!printer.Settings.GetValue<bool>(SettingsKey.has_hardware_leveling))

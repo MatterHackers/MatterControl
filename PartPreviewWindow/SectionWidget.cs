@@ -10,13 +10,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 	{
 		private Color borderColor;
 
-		public SectionWidget(string sectionTitle, Color textColor, GuiWidget sectionContent, GuiWidget rightAlignedContent = null, int headingPointSize = -1, bool expandingContent = true, bool expanded = true)
+		public SectionWidget(string sectionTitle, GuiWidget sectionContent, ThemeConfig theme, GuiWidget rightAlignedContent = null, int headingPointSize = -1, bool expandingContent = true, bool expanded = true)
 			: base (FlowDirection.TopToBottom)
 		{
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Fit;
-
-			var theme = ApplicationController.Instance.Theme;
+			this.Border = new BorderDouble(bottom: 1);
 
 			borderColor = new Color(theme.Colors.SecondaryTextColor, 50);
 
@@ -33,20 +32,20 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					{
 						HAnchor = HAnchor.Stretch,
 						Checked = expanded,
-						BorderColor = (expanded) ? Color.Transparent : borderColor,
-						Border = new BorderDouble(bottom: 1),
 					};
 					checkbox.CheckedStateChanged += (s, e) =>
 					{
 						ContentPanel.Visible = checkbox.Checked;
-						checkbox.BorderColor = (checkbox.Checked) ? Color.Transparent : borderColor;
+						this.BorderColor = (checkbox.Checked) ? Color.Transparent : borderColor;
 					};
+
+					this.BorderColor = BorderColor = (expanded) ? Color.Transparent : borderColor;
 
 					heading = checkbox;
 				}
 				else
 				{
-					heading = new TextWidget(sectionTitle, pointSize: pointSize, textColor: textColor);
+					heading = new TextWidget(sectionTitle, pointSize: pointSize, textColor: theme.Colors.PrimaryTextColor);
 				}
 				heading.Padding = new BorderDouble(0, 3, 0, 6);
 

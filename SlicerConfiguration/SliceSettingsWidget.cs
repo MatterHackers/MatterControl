@@ -238,7 +238,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			string groupName = (group.Name.Contains("!hidden")) ? "" : group.Name;
 
-			var sectionWidget = new SectionWidget(groupName, ActiveTheme.Instance.PrimaryTextColor, groupPanel, headingPointSize: theme.FontSize12)
+			var sectionWidget = new SectionWidget(groupName, groupPanel, theme)
 			{
 				Margin = new BorderDouble(bottom: 8),
 			};

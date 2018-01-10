@@ -39,19 +39,18 @@ namespace MatterHackers.MatterControl.PrinterControls
 {
 	public class MacroControls : ControlWidgetBase
 	{
-		public MacroControls(PrinterConfig printer, int headingPointSize)
+		public MacroControls(PrinterConfig printer, ThemeConfig theme)
 		{
-			this.AddChild(new MacroControlsWidget(printer, headingPointSize));
+			this.AddChild(new MacroControlsWidget(printer, theme));
 		}
 	}
 
 	public class MacroControlsWidget : FlowLayoutWidget
 	{
-		private PrinterConfig printer;
-		public MacroControlsWidget(PrinterConfig printer, int headingPointSize)
+		//private PrinterConfig printer;
+		public MacroControlsWidget(PrinterConfig printer, ThemeConfig theme)
 					: base(FlowDirection.TopToBottom)
 		{
-			this.printer = printer;
 			this.HAnchor = HAnchor.Stretch;
 
 			var buttonFactory = ApplicationController.Instance.Theme.HomingButtons;
@@ -66,12 +65,12 @@ namespace MatterHackers.MatterControl.PrinterControls
 			this.AddChild(
 				new SectionWidget(
 					"Macros".Localize(),
-					ActiveTheme.Instance.PrimaryAccentColor,
-					GetMacroButtonContainer(buttonFactory),
+					GetMacroButtonContainer(buttonFactory, printer),
+					theme,
 					editButton));
 		}
 
-		private FlowLayoutWidget GetMacroButtonContainer(TextImageButtonFactory buttonFactory)
+		private FlowLayoutWidget GetMacroButtonContainer(TextImageButtonFactory buttonFactory, PrinterConfig printer)
 		{
 			var macroContainer = new FlowLeftRightWithWrapping();
 
@@ -103,7 +102,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 					noMacrosFound.Visible = macroContainer.Children.Count == 0;
 				}
 			};
-			
+
 			return macroContainer;
 		}
 	}

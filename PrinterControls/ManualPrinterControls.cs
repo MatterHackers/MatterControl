@@ -103,17 +103,17 @@ namespace MatterHackers.MatterControl
 			};
 			this.AddChild(controlsTopToBottomLayout);
 
-			movementControlsContainer = new MovementControls(printer, headingPointSize);
+			movementControlsContainer = new MovementControls(printer, theme);
 			movementControlsContainer.Margin = new BorderDouble(top: 6);
 			controlsTopToBottomLayout.AddChild(movementControlsContainer);
 
 			if (!printer.Settings.GetValue<bool>(SettingsKey.has_hardware_leveling))
 			{
-				calibrationControlsContainer = new CalibrationSettingsWidget(printer, theme.ButtonFactory, headingPointSize);
+				calibrationControlsContainer = new CalibrationSettingsWidget(printer, theme);
 				controlsTopToBottomLayout.AddChild(calibrationControlsContainer);
 			}
 
-			macroControlsContainer = new MacroControls(printer, headingPointSize);
+			macroControlsContainer = new MacroControls(printer, theme);
 			controlsTopToBottomLayout.AddChild(macroControlsContainer);
 
 			var linearPanel = new FlowLayoutWidget()
@@ -122,7 +122,7 @@ namespace MatterHackers.MatterControl
 			};
 			controlsTopToBottomLayout.AddChild(linearPanel);
 
-			fanControlsContainer = new FanControls(printer.Connection, headingPointSize);
+			fanControlsContainer = new FanControls(printer.Connection, theme);
 			if (printer.Settings.GetValue<bool>(SettingsKey.has_fan))
 			{
 				controlsTopToBottomLayout.AddChild(fanControlsContainer);
@@ -131,7 +131,7 @@ namespace MatterHackers.MatterControl
 #if !__ANDROID__
 			controlsTopToBottomLayout.AddChild(new PowerControls(printer, headingPointSize));
 #endif
-			tuningAdjustmentControlsContainer = new AdjustmentControls(printer, headingPointSize);
+			tuningAdjustmentControlsContainer = new AdjustmentControls(printer, theme);
 			controlsTopToBottomLayout.AddChild(tuningAdjustmentControlsContainer);
 
 			// HACK: this is a hack to make the layout engine fire again for this control

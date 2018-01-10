@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		private EventHandler unregisterEvents;
 
-		public AdjustmentControls(PrinterConfig printer, int headingPointSize)
+		public AdjustmentControls(PrinterConfig printer, ThemeConfig theme)
 		{
 			var topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -199,8 +199,8 @@ namespace MatterHackers.MatterControl.PrinterControls
 			this.AddChild(
 				new SectionWidget(
 					"Tuning Adjustment".Localize(),
-					ActiveTheme.Instance.PrimaryAccentColor,
-					topToBottom));
+					topToBottom,
+					theme));
 
 			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
 			{
