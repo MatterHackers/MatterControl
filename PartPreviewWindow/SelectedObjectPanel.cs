@@ -29,7 +29,6 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
@@ -38,12 +37,10 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.Library;
-using MatterHackers.MeshVisualizer;
-using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class SelectedObjectPanel : FlowLayoutWidget, IContentStore
+	public partial class SelectedObjectPanel : FlowLayoutWidget, IContentStore
 	{
 		private IObject3D item = new Object3D();
 
@@ -54,7 +51,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private InteractiveScene scene;
 		private PrinterConfig printer;
 		private Dictionary<Type, HashSet<IObject3DEditor>> objectEditorsByType;
-		private ObservableCollection<GuiWidget> materialButtons = new ObservableCollection<GuiWidget>();
 		private SectionWidget editorSection;
 		private TextButton editButton;
 		private GuiWidget editorPanel;
@@ -181,7 +177,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			//	&& this.scene.SelectedItem is SelectionGroup
 			//	&& this.scene.SelectedItem.Children.Count > 1;
 
-			var alignSection = new SectionWidget("Align".Localize(), ActiveTheme.Instance.PrimaryTextColor, this.AddAlignControls(), expanded: false)
+			var alignSection = new SectionWidget("Align".Localize(), ActiveTheme.Instance.PrimaryTextColor, new AlignControls(scene, theme), expanded: false)
 			{
 				Name = "Align Panel",
 			};
@@ -199,7 +195,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			scrollableContent.AddChild(scaleSection);
 
-			var materialsSection = new SectionWidget("Materials".Localize(), ActiveTheme.Instance.PrimaryTextColor, this.AddMaterialControls(), expanded: false)
+			var materialsSection = new SectionWidget("Materials".Localize(), ActiveTheme.Instance.PrimaryTextColor, new MaterialControls(scene), expanded: false)
 			{
 				Name = "Materials Panel",
 			};
@@ -326,25 +322,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				//dropDownList.SelectedIndex = selectedIndex;
 
 				ShowObjectEditor(firstEditor);
-
-				if (materialButtons?.Count > 0)
-				{
-					bool setSelection = false;
-					// Set the material selector to have the correct material button selected
-					for (int i = 0; i < materialButtons.Count; i++)
-					{
-						if (selectedItem.MaterialIndex == i)
-						{
-							((RadioButton)materialButtons[i]).Checked = true;
-							setSelection = true;
-						}
-					}
-
-					if (!setSelection)
-					{
-						((RadioButton)materialButtons[0]).Checked = true;
-					}
-				}
 			}
 		}
 
@@ -373,232 +350,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			});
 		}
 
-		private GuiWidget AddMaterialControls()
-		{
-			var widget = new IgnoredPopupWidget()
-			{
-				HAnchor = HAnchor.Fit,
-				VAnchor = VAnchor.Fit,
-				BackgroundColor = Color.White,
-				Padding = new BorderDouble(0, 5, 5, 0)
-			};
-
-			FlowLayoutWidget buttonPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				VAnchor = VAnchor.Fit,
-				HAnchor = HAnchor.Fit,
-			};
-			widget.AddChild(buttonPanel);
-
-			materialButtons.Clear();
-			int extruderCount = 4;
-			for (int extruderIndex = 0; extruderIndex < extruderCount; extruderIndex++)
-			{
-				FlowLayoutWidget colorSelectionContainer = new FlowLayoutWidget(FlowDirection.LeftToRight)
-				{
-					HAnchor = HAnchor.Fit,
-					Padding = new BorderDouble(5)
-				};
-				buttonPanel.AddChild(colorSelectionContainer);
-
-				string materialLabelText = string.Format("{0} {1}", "Material".Localize(), extruderIndex + 1);
-
-				RadioButton materialSelection = new RadioButton(materialLabelText, textColor: Color.Black);
-				materialButtons.Add(materialSelection);
-				materialSelection.SiblingRadioButtonList = materialButtons;
-				colorSelectionContainer.AddChild(materialSelection);
-				colorSelectionContainer.AddChild(new HorizontalSpacer());
-				int extruderIndexCanPassToClick = extruderIndex;
-				materialSelection.Click += (sender, e) =>
-				{
-					if (scene.HasSelection)
-					{
-						scene.SelectedItem.MaterialIndex = extruderIndexCanPassToClick;
-						scene.Invalidate();
-
-						// "View 3D Overflow Menu" // the menu to click on
-						// "Materials Option" // the item to highlight
-						//HelpSystem.
-					}
-				};
-
-				colorSelectionContainer.AddChild(new GuiWidget(16, 16)
-				{
-					BackgroundColor = MaterialRendering.Color(extruderIndex),
-					Margin = new BorderDouble(5, 0, 0, 0)
-				});
-			}
-
-			return widget;
-		}
-
-		private List<TransformData> GetTransforms(int axisIndex, AxisAlignment alignment)
-		{
-			var transformDatas = new List<TransformData>();
-			var totalAABB = scene.SelectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
-
-			Vector3 firstSourceOrigin = new Vector3(double.MaxValue, double.MaxValue, double.MaxValue);
-
-			// move the objects to the right place
-			foreach (var child in scene.SelectedItem.Children)
-			{
-				var childAABB = child.GetAxisAlignedBoundingBox(scene.SelectedItem.Matrix);
-				var offset = new Vector3();
-				switch (alignment)
-				{
-					case AxisAlignment.Min:
-						offset[axisIndex] = totalAABB.minXYZ[axisIndex] - childAABB.minXYZ[axisIndex];
-						break;
-
-					case AxisAlignment.Center:
-						offset[axisIndex] = totalAABB.Center[axisIndex] - childAABB.Center[axisIndex];
-						break;
-
-					case AxisAlignment.Max:
-						offset[axisIndex] = totalAABB.maxXYZ[axisIndex] - childAABB.maxXYZ[axisIndex];
-						break;
-
-					case AxisAlignment.SourceCoordinateSystem:
-						{
-							// move the object back to the origin
-							offset = -Vector3.Transform(Vector3.Zero, child.Matrix);
-
-							// figure out how to move it back to the start center
-							if (firstSourceOrigin.X == double.MaxValue)
-							{
-								firstSourceOrigin = -offset;
-							}
-
-							offset += firstSourceOrigin;
-						}
-						break;
-				}
-				transformDatas.Add(new TransformData()
-				{
-					TransformedObject = child,
-					RedoTransform = child.Matrix * Matrix4X4.CreateTranslation(offset),
-					UndoTransform = child.Matrix,
-				});
-			}
-
-			return transformDatas;
-		}
-
-		private void AddAlignDelegates(int axisIndex, AxisAlignment alignment, Button alignButton)
-		{
-			alignButton.Click += (sender, e) =>
-			{
-				if (scene.HasSelection)
-				{
-					var transformDatas = GetTransforms(axisIndex, alignment);
-					scene.UndoBuffer.AddAndDo(new TransformCommand(transformDatas));
-
-					//scene.SelectedItem.MaterialIndex = extruderIndexCanPassToClick;
-					scene.Invalidate();
-				}
-			};
-
-			alignButton.MouseEnter += (s2, e2) =>
-			{
-				if (scene.HasSelection)
-				{
-					// make a preview of the new positions
-					var transformDatas = GetTransforms(axisIndex, alignment);
-					scene.Children.Modify((list) =>
-					{
-						foreach (var transform in transformDatas)
-						{
-							var copy = transform.TransformedObject.Clone();
-							copy.Matrix = transform.RedoTransform;
-							copy.Color = new Color(Color.Gray, 126);
-							list.Add(copy);
-						}
-					});
-				}
-			};
-
-			alignButton.MouseLeave += (s3, e3) =>
-			{
-				if (scene.HasSelection)
-				{
-					// clear the preview of the new positions
-					scene.Children.Modify((list) =>
-					{
-						for (int i = list.Count - 1; i >= 0; i--)
-						{
-							if (list[i].Color.Alpha0To255 == 126)
-							{
-								list.RemoveAt(i);
-							}
-						}
-					});
-				}
-			};
-		}
-
 		internal enum AxisAlignment { Min, Center, Max, SourceCoordinateSystem };
-
-		private GuiWidget CreateAlignButton(int axisIndex, AxisAlignment alignment, string lable)
-		{
-			var smallMarginButtonFactory = theme.MenuButtonFactory;
-			var alignButton = smallMarginButtonFactory.Generate(lable);
-			alignButton.Margin = new BorderDouble(3, 0);
-
-			AddAlignDelegates(axisIndex, alignment, alignButton);
-
-			return alignButton;
-		}
-
-		private GuiWidget AddAlignControls()
-		{
-			var widget = new IgnoredPopupWidget()
-			{
-				HAnchor = HAnchor.Fit,
-				VAnchor = VAnchor.Fit,
-				BackgroundColor = Color.White,
-				Padding = new BorderDouble(5, 5, 5, 0)
-			};
-
-			FlowLayoutWidget buttonPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				VAnchor = VAnchor.Fit,
-				HAnchor = HAnchor.Fit,
-			};
-			widget.AddChild(buttonPanel);
-
-			string[] axisNames = new string[] { "X", "Y", "Z" };
-			for (int axisIndex = 0; axisIndex < 3; axisIndex++)
-			{
-				FlowLayoutWidget alignButtons = new FlowLayoutWidget(FlowDirection.LeftToRight)
-				{
-					HAnchor = HAnchor.Fit,
-					Padding = new BorderDouble(5)
-				};
-				buttonPanel.AddChild(alignButtons);
-
-				alignButtons.AddChild(new TextWidget(axisNames[axisIndex])
-				{
-					VAnchor = VAnchor.Center,
-					Margin = new BorderDouble(0, 0, 3, 0)
-				});
-
-				alignButtons.AddChild(CreateAlignButton(axisIndex, AxisAlignment.Min, "Min"));
-				alignButtons.AddChild(new HorizontalSpacer());
-				alignButtons.AddChild(CreateAlignButton(axisIndex, AxisAlignment.Center, "Center"));
-				alignButtons.AddChild(new HorizontalSpacer());
-				alignButtons.AddChild(CreateAlignButton(axisIndex, AxisAlignment.Max, "Max"));
-				alignButtons.AddChild(new HorizontalSpacer());
-			}
-
-			var dualExtrusionAlignButton = theme.MenuButtonFactory.Generate("Align for Dual Extrusion".Localize());
-			dualExtrusionAlignButton.Margin = new BorderDouble(21, 0);
-			dualExtrusionAlignButton.HAnchor = HAnchor.Left;
-			buttonPanel.AddChild(dualExtrusionAlignButton);
-
-			AddAlignDelegates(0, AxisAlignment.SourceCoordinateSystem, dualExtrusionAlignButton);
-
-			return widget;
-		}
 
 		public class InMemoryItem : ILibraryContentItem
 		{

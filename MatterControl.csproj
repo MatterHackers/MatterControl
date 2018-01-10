@@ -84,7 +84,9 @@
     <Compile Include="ActionBar\TemperatureWidgetBed.cs" />
     <Compile Include="ApplicationView\OemProfileDictionary.cs" />
     <Compile Include="ApplicationView\WindowsPlatformsFeatures.cs" />
+    <Compile Include="PartPreviewWindow\AlignControls.cs" />
     <Compile Include="PartPreviewWindow\LibraryBrowserPage.cs" />
+    <Compile Include="PartPreviewWindow\MaterialControls.cs" />
     <Compile Include="PartPreviewWindow\MoveItemPage.cs" />
     <Compile Include="PartPreviewWindow\View3D\Actions\SubtractAndReplace.cs" />
     <Compile Include="PartPreviewWindow\View3D\PrinterBar\OverflowBar.cs" />
