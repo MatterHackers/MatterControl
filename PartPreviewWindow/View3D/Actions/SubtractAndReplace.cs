@@ -41,7 +41,7 @@ using MatterHackers.PolygonMesh;
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
 #if DEBUG // keep this work in progress to the editor for now
-	public class PaintMaterialEditor : IObject3DEditor
+	public class SubtractAndReplace : IObject3DEditor
 	{
 		private MeshWrapperOperation group;
 		private View3DWidget view3DWidget;
@@ -93,7 +93,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		{
 			var children = group.Children.ToList();
 
-			tabContainer.AddChild(new TextWidget("Set as Paint")
+			tabContainer.AddChild(new TextWidget("Set Replace")
 			{
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
 				HAnchor = HAnchor.Left,
@@ -104,7 +104,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			var updateButton = theme.ButtonFactory.Generate("Update".Localize());
 			updateButton.Margin = new BorderDouble(5);
 			updateButton.HAnchor = HAnchor.Right;
-			updateButton.Enabled = false; // starts out disabled as there are no holes selected
 			updateButton.Click += (s, e) =>
 			{
 				// make sure the mesh on the group is not visible
@@ -112,6 +111,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				ProcessBooleans(group);
 			};
 
+			int checkedCount = 0;
 			List<GuiWidget> radioSiblings = new List<GuiWidget>();
 			for (int i = 0; i < children.Count; i++)
 			{
@@ -161,6 +161,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				};
 
 				tabContainer.AddChild(rowContainer);
+				checkedCount += checkBox.Checked ? 1 : 0;
+			}
+
+			if(checkedCount == 0) // no items selected
+			{
+				// select the last item
+				if (tabContainer.Decendants().Where((d) => d is ICheckbox).Last() is ICheckbox firstCheckBox)
+				{ 
+					firstCheckBox.Checked = true;
+				}
 			}
 
 			// add this last so it is at the bottom
