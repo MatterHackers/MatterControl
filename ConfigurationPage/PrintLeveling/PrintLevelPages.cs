@@ -54,8 +54,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public SelectMaterialPage(PrinterConfig printer, string pageDescription, string instructionsText)
 			: base(printer, pageDescription, instructionsText)
 		{
-			int extruderIndex = 0;
-			var materialSelector = new PresetSelectorWidget(printer, string.Format($"{"Material".Localize()} {extruderIndex + 1}"), Color.Transparent, NamedSettingsLayers.Material, extruderIndex);
+			var materialSelector = new PresetSelectorWidget(printer, "Material".Localize(), Color.Transparent, NamedSettingsLayers.Material);
 			materialSelector.BackgroundColor = Color.Transparent;
 			materialSelector.Margin = new BorderDouble(0, 0, 0, 15);
 			topToBottomControls.AddChild(materialSelector);

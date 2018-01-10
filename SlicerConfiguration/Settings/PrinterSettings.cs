@@ -291,7 +291,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public string GetMaterialPresetKey(int extruderIndex)
+		public string ActiveMaterialKey
+		{
+			get
+			{
+				return GetMaterialPresetKey(0);
+			}
+			internal set
+			{
+				SetMaterialPreset(0, value);
+			}
+		}
+
+		private string GetMaterialPresetKey(int extruderIndex)
 		{
 			if (extruderIndex >= MaterialSettingsKeys.Count)
 			{
@@ -301,7 +313,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return MaterialSettingsKeys[extruderIndex];
 		}
 
-		public void SetMaterialPreset(int extruderIndex, string materialKey)
+		private void SetMaterialPreset(int extruderIndex, string materialKey)
 		{
 			if (extruderIndex >= PrinterCommunication.PrinterConnection.MAX_EXTRUDERS)
 			{

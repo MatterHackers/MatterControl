@@ -606,7 +606,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.WaitFor(() => fanChangedCount > 0, 15, 500);
 
 					// Assert expected temp targets and fan transitions
-					Assert.AreEqual(0, (int) emulator.Hotend.TargetTemperature, "Unexpected target temperature - MC close should call Connection.Disable->TurnOffBedAndExtruders to shutdown heaters");
+					Assert.AreEqual(0, (int) emulator.CurrentExtruder.TargetTemperature, "Unexpected target temperature - MC close should call Connection.Disable->TurnOffBedAndExtruders to shutdown heaters");
 					Assert.AreEqual(0, (int) emulator.HeatedBed.TargetTemperature, "Unexpected target temperature - MC close should call Connection.Disable->TurnOffBedAndExtruders to shutdown heaters");
 					Assert.AreEqual(1, fanChangedCount, "Unexpected fan speed change count - MC close should call Connection.Disable which shuts down fans via M106");
 				}

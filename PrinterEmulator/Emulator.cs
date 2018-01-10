@@ -50,17 +50,10 @@ namespace MatterHackers.PrinterEmulator
 
 		private int recievedCount = 0;
 
-		// Instance reference allows test to access the most recently initialized emulator
-		public static Emulator Instance { get; private set; }
-
 		// Dictionary of command and response callback
 		private Dictionary<string, Func<string, string>> responses;
 
 		private bool shuttingDown = false;
-
-		public Heater HeatedBed { get; } = new Heater("HeatedBed") { CurrentTemperature = 26 };
-
-		public Heater Hotend { get; } = new Heater("Hotend1") { CurrentTemperature = 27 };
 
 		public Emulator()
 		{
@@ -86,29 +79,38 @@ namespace MatterHackers.PrinterEmulator
 				{ "M20", ListSdCard },
 				{ "M21", InitSdCard },
 				{ "N", ParseChecksumLine },
+				{ "T", SetExtruderIndex },
 			};
 		}
 
-		public event EventHandler ZPositionChanged;
+		public event EventHandler ExtruderIndexChanged;
 
 		public event EventHandler ExtruderTemperatureChanged;
 
 		public event EventHandler FanSpeedChanged;
 
-		public double EPosition { get; private set; }
+		public event EventHandler ZPositionChanged;
 
-		public double ExtruderGoalTemperature => this.Hotend.TargetTemperature;
+		// Instance reference allows test to access the most recently initialized emulator
+		public static Emulator Instance { get; private set; }
+
+		public Heater CurrentExtruder { get { return Extruders[ExtruderIndex]; } }
+		public int ExtruderIndex { get; private set; }
+
+		public List<Heater> Extruders { get; private set; } = new List<Heater>()
+		{
+			new Heater("Hotend1") { CurrentTemperature = 27 }
+		};
+
 		public double FanSpeed { get; private set; }
-
+		public bool HasHeatedBed { get; set; } = true;
+		public Heater HeatedBed { get; } = new Heater("HeatedBed") { CurrentTemperature = 26 };
 		public string PortName { get; set; }
 
 		public bool RunSlow { get; set; } = false;
 
 		public bool SimulateLineErrors { get; set; } = false;
 		public double XPosition { get; private set; }
-
-		public bool HasHeatedBed { get; set; } = true;
-
 		public double YPosition { get; private set; }
 
 		public double ZPosition { get; private set; }
@@ -219,7 +221,7 @@ namespace MatterHackers.PrinterEmulator
 		public string GetPosition(string command)
 		{
 			// position commands look like this: X:0.00 Y:0.00 Z0.00 E:0.00 Count X: 0.00 Y:0.00 Z:0.00 then an ok on the next line
-			return $"X:{XPosition:0.00} Y: {YPosition:0.00} Z: {ZPosition:0.00} E: {EPosition:0.00} Count X: 0.00 Y: 0.00 Z: 0.00\nok\n";
+			return $"X:{XPosition:0.00} Y: {YPosition:0.00} Z: {ZPosition:0.00} E: {CurrentExtruder.EPosition:0.00} Count X: 0.00 Y: 0.00 Z: 0.00\nok\n";
 		}
 
 		public string ReportMarlinFirmware(string command)
@@ -231,9 +233,15 @@ namespace MatterHackers.PrinterEmulator
 		public string ReturnTemp(string command)
 		{
 			// temp commands look like this: ok T:19.4 /0.0 B:0.0 /0.0 @:0 B@:0
-			return $"ok T:{Hotend.CurrentTemperature:0.0} / {Hotend.TargetTemperature:0.0}"
-				// Newline if HeatedBed is disabled otherwise HeatedBed stats
-				+ ((!this.HasHeatedBed) ? "\n" : $" B: {HeatedBed.CurrentTemperature:0.0} / {HeatedBed.TargetTemperature:0.0}\n");
+			string response = "ok";
+			for(int i=0; i<Extruders.Count; i++)
+			{
+				string TString = (Extruders.Count == 1) ? "T" : $"T{i}";
+				response += $" {TString}:{Extruders[i].CurrentTemperature:0.0} / {Extruders[i].TargetTemperature:0.0}";
+			}
+			// Newline if HeatedBed is disabled otherwise HeatedBed stats
+			response += ((!this.HasHeatedBed) ? "\n" : $" B: {HeatedBed.CurrentTemperature:0.0} / {HeatedBed.TargetTemperature:0.0}\n");
+			return response;
 		}
 
 		public string SetFan(string command)
@@ -259,7 +267,10 @@ namespace MatterHackers.PrinterEmulator
 				shuttingDown = true;
 
 				HeatedBed.Stop();
-				Hotend.Stop();
+				foreach (var extuder in Extruders)
+				{
+					extuder.Stop();
+				}
 			}
 		}
 
@@ -362,16 +373,54 @@ namespace MatterHackers.PrinterEmulator
 			return "ok\n";
 		}
 
+		private string SetExtruderIndex(string command)
+		{
+			try
+			{
+				// T0, T1, T2 are the expected format
+				var tIndex = command.IndexOf('T') + 1;
+				var extruderIndex = command.Substring(tIndex);
+
+				ExtruderIndex = int.Parse(extruderIndex);
+				ExtruderIndexChanged?.Invoke(this, null);
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine(e);
+			}
+
+			return "ok\n";
+		}
+
 		private string SetExtruderTemperature(string command)
 		{
 			try
 			{
 				// M104 S210 or M109 S[temp]
-				var sIndex = command.IndexOf('S') + 1;
-				var spaceIndex = command.IndexOf(" ", sIndex);
-				var temp = (spaceIndex < 0) ? command.Substring(sIndex) : command.Substring(sIndex, spaceIndex - sIndex);
 
-				Hotend.TargetTemperature = int.Parse(temp);
+				double index = 0;
+				GetFirstNumberAfter("T", command, ref index);
+
+				double temp = 0;
+				GetFirstNumberAfter("S", command, ref temp);
+
+				if (index > Extruders.Count - 1)
+				{
+					// increase the number of extruders
+					var newList = new List<Heater>(Extruders.Count + 1);
+					foreach(var extruder in Extruders)
+					{
+						newList.Add(extruder);
+					}
+
+					for(int i=Extruders.Count+1; i<index+2; i++)
+					{
+						newList.Add(new Heater($"Hotend{i}") { CurrentTemperature = 27 });
+					}
+					Extruders = newList;
+				}
+
+				Extruders[(int)index].TargetTemperature = temp;
 				ExtruderTemperatureChanged?.Invoke(this, null);
 			}
 			catch (Exception e)
@@ -411,7 +460,7 @@ namespace MatterHackers.PrinterEmulator
 			}
 			if (GetFirstNumberAfter("E", command, ref value))
 			{
-				EPosition = value;
+				CurrentExtruder.EPosition = value;
 			}
 
 			return "ok\n";
@@ -440,137 +489,17 @@ namespace MatterHackers.PrinterEmulator
 
 			return "ok\n";
 		}
-
-		public class Heater
-		{
-			public static double IncrementAmount = 5.3;
-
-			public static int BounceAmount = (int)IncrementAmount / 2;
-
-			private bool shutdown = false;
-			private double targetTemp;
-
-			private static int loopTimeInMs = 100;
-
-			private bool isDirty = true;
-			public Heater(string identifier)
-			{
-				this.ID = identifier;
-
-				// Maintain temperatures
-				Task.Run(() =>
-				{
-					Thread.CurrentThread.Name = $"EmulatorHeator{identifier}";
-
-					var random = new Random();
-
-					double requiredLoops = 0;
-					double incrementPerLoop = 0;
-
-					while (!shutdown)
-					{
-						if (this.Enabled
-							&& targetTemp > 0)
-						{
-							if (this.isDirty)
-							{
-								requiredLoops = this.HeatUpTimeInSeconds * 1000 / loopTimeInMs;
-								incrementPerLoop = TargetTemperature / requiredLoops;
-							}
-
-							if (CurrentTemperature < targetTemp)
-							{
-								CurrentTemperature += incrementPerLoop;
-							}
-							else if (CurrentTemperature != targetTemp)
-							{
-								CurrentTemperature = targetTemp;
-							}
-						}
-
-						Thread.Sleep(loopTimeInMs);
-					}
-				});
-			}
-
-			private double _currentTemperature;
-			public double CurrentTemperature
-			{
-				get => _currentTemperature;
-				set
-				{
-					_currentTemperature = value;
-					isDirty = true;
-				}
-			}
-
-			private double _heatupTimeInSeconds = DefaultHeatUpTime;
-			public double HeatUpTimeInSeconds
-			{
-				get => _heatupTimeInSeconds;
-				set
-				{
-					_heatupTimeInSeconds = value;
-					isDirty = true;
-				}
-			}
-
-			private bool _enabled;
-			public bool Enabled
-			{
-				get => _enabled;
-				set
-				{
-					if (_enabled != value)
-					{
-						_enabled = value;
-						CurrentTemperature = 0;
-					}
-				}
-			}
-
-			public string ID { get; }
-
-			public double TargetTemperature
-			{
-				get => targetTemp;
-				set
-				{
-					if (targetTemp != value)
-					{
-						targetTemp = value;
-						this.Enabled = this.targetTemp > 0;
-					}
-				}
-			}
-
-			public void Stop()
-			{
-				shutdown = true;
-			}
-		}
-	}
-
-	public class EmulatorPortFactory : FrostedSerialPortFactory
-	{
-		override protected string GetDriverType() => "Emulator";
-		public override IFrostedSerialPort Create(string serialPortName) => new Emulator();
 	}
 
 	// EmulatorPort
 	public partial class Emulator : IFrostedSerialPort
 	{
-		public bool RtsEnable { get; set; }
-		public bool DtrEnable { get; set; }
-		public int BaudRate { get; set; }
-
-		private Queue<string> sendQueue = new Queue<string>(new string[] { "Emulator v0.1\n" });
-		private Queue<string> receiveQueue = new Queue<string>();
-
-		private AutoResetEvent receiveResetEvent;
-
 		private object receiveLock = new object();
+		private Queue<string> receiveQueue = new Queue<string>();
+		private AutoResetEvent receiveResetEvent;
 		private object sendLock = new object();
+		private Queue<string> sendQueue = new Queue<string>(new string[] { "Emulator v0.1\n" });
+		public int BaudRate { get; set; }
 
 		public int BytesToRead
 		{
@@ -585,10 +514,11 @@ namespace MatterHackers.PrinterEmulator
 			}
 		}
 
-		public int WriteTimeout { get; set; }
-		public int ReadTimeout { get; set; }
-
+		public bool DtrEnable { get; set; }
 		public bool IsOpen { get; private set; }
+		public int ReadTimeout { get; set; }
+		public bool RtsEnable { get; set; }
+		public int WriteTimeout { get; set; }
 
 		public void Close()
 		{
@@ -660,7 +590,7 @@ namespace MatterHackers.PrinterEmulator
 							//Thread.Sleep(250);
 							string emulatedResponse = GetCorrectResponse(receivedLine);
 
-							lock(sendLock)
+							lock (sendLock)
 							{
 								sendQueue.Enqueue(emulatedResponse);
 							}
@@ -679,9 +609,11 @@ namespace MatterHackers.PrinterEmulator
 			sendQueue.Enqueue(line);
 		}
 
+		public int Read(byte[] buffer, int offset, int count) => throw new NotImplementedException();
+
 		public string ReadExisting()
 		{
-			lock(sendLock)
+			lock (sendLock)
 			{
 				return sendQueue.Dequeue();
 			}
@@ -689,7 +621,7 @@ namespace MatterHackers.PrinterEmulator
 
 		public void Write(string receivedLine)
 		{
-			lock(receiveLock)
+			lock (receiveLock)
 			{
 				receiveQueue.Enqueue(receivedLine);
 			}
@@ -697,8 +629,6 @@ namespace MatterHackers.PrinterEmulator
 			// Release the main loop to process the received command
 			receiveResetEvent.Set();
 		}
-
-		public int Read(byte[] buffer, int offset, int count) => throw new NotImplementedException();
 
 		public void Write(byte[] buffer, int offset, int count) => throw new NotImplementedException();
 	}

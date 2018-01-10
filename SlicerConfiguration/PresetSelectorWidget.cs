@@ -45,7 +45,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public DropDownList DropDownList;
 		private string defaultMenuItemText = "- none -".Localize();
 		private Button editButton;
-		private int extruderIndex;
 		private NamedSettingsLayers layerType;
 		private PrinterConfig printer;
 		private GuiWidget pullDownContainer;
@@ -53,7 +52,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private bool whiteBackground;
 		//For multiple materials
 
-		public PresetSelectorWidget(PrinterConfig printer, string label, Color accentColor, NamedSettingsLayers layerType, int extruderIndex, bool whiteBackground = false)
+		public PresetSelectorWidget(PrinterConfig printer, string label, Color accentColor, NamedSettingsLayers layerType, bool whiteBackground = false)
 			: base(FlowDirection.TopToBottom)
 		{
 			this.printer = printer;
@@ -72,7 +71,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 			}, ref unregisterEvents);
 
-			this.extruderIndex = extruderIndex;
 			this.layerType = layerType;
 
 			this.HAnchor = HAnchor.Stretch;
@@ -126,7 +124,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					if (ApplicationController.Instance.EditMaterialPresetsWindow == null)
 					{
-						string presetsID = printer.Settings.GetMaterialPresetKey(extruderIndex);
+						string presetsID = printer.Settings.ActiveMaterialKey;
 						if (string.IsNullOrEmpty(presetsID))
 						{
 							return;
@@ -139,7 +137,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							LayerType = NamedSettingsLayers.Material,
 							SetAsActive = (materialKey) =>
 							{
-								printer.Settings.SetMaterialPreset(this.extruderIndex, materialKey);
+								printer.Settings.ActiveMaterialKey = materialKey;
 							},
 							DeleteLayer = () =>
 							{
@@ -152,7 +150,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 									}
 								}
 
-								printer.Settings.SetMaterialPreset(extruderIndex, "");
+								printer.Settings.ActiveMaterialKey = "";
 								printer.Settings.MaterialLayers.Remove(layerToEdit);
 								printer.Settings.Save();
 							}
@@ -268,7 +266,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					newLayer.Name = "Material" + printer.Settings.MaterialLayers.Count;
 					printer.Settings.MaterialLayers.Add(newLayer);
-					printer.Settings.SetMaterialPreset(this.extruderIndex, newLayer.LayerID);
+					printer.Settings.ActiveMaterialKey = newLayer.LayerID;
 				}
 
 				RebuildDropDownList();
@@ -282,7 +280,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				if (layerType == NamedSettingsLayers.Material)
 				{
-					settingsKey = printer.Settings.GetMaterialPresetKey(extruderIndex);
+					settingsKey = printer.Settings.ActiveMaterialKey;
 
 					printer.Settings.MaterialLayers.CollectionChanged += SettingsLayers_CollectionChanged;
 					dropDownList.Closed += (s1, e1) =>
@@ -328,12 +326,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			if (layerType == NamedSettingsLayers.Material)
 			{
-				if (activeSettings.GetMaterialPresetKey(extruderIndex) != item.Value)
+				if (activeSettings.ActiveMaterialKey != item.Value)
 				{
 					// Restore deactivated user overrides by iterating the Material preset we're coming off of
 					activeSettings.RestoreConflictingUserOverrides(activeSettings.MaterialLayer);
 
-					activeSettings.SetMaterialPreset(extruderIndex, item.Value);
+					activeSettings.ActiveMaterialKey = item.Value;
 
 					// Deactivate conflicting user overrides by iterating the Material preset we've just switched to
 					activeSettings.DeactivateConflictingUserOverrides(activeSettings.MaterialLayer);
