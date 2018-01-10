@@ -360,8 +360,8 @@ namespace MatterHackers.MatterControl
 #if DEBUG // keep this work in progress to the editor for now
 			new SceneSelectionOperation()
 			{
-				TitleResolver = () => "Paint Material".Localize(),
-				Action = (scene) => DoOpperation(scene, nameof(PaintMaterialEditor), "Material Paint"),
+				TitleResolver = () => "Subtract & Replace".Localize(),
+				Action = (scene) => DoOpperation(scene, nameof(PaintMaterialEditor), "Subtract & Replace"),
 				Icon = AggContext.StaticData.LoadIcon("paint.png").SetPreMultiply(),
 			},
 			new SceneSelectionOperation()
