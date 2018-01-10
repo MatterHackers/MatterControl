@@ -240,6 +240,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			scrollableContent.AddChild(materialsSection);
 
+			// Enforce panel padding in sidebar
+			foreach(var sectionWidget in scrollableContent.Children<SectionWidget>())
+			{
+				var contentPanel = sectionWidget.ContentPanel;
+				contentPanel.Padding = 8;
+			}
+
 			HashSet<IObject3DEditor> mappedEditors;
 			objectEditorsByType = new Dictionary<Type, HashSet<IObject3DEditor>>();
 
