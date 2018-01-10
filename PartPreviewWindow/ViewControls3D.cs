@@ -426,10 +426,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						modelViewButton.Checked = true;
 					}
 				};
-			}
 
-			// Run on load
-			Scene_SelectionChanged(null, null);
+				// Run on load
+				Scene_SelectionChanged(null, null);
+			}
 		}
 
 		private void Scene_SelectionChanged(object sender, EventArgs e)
