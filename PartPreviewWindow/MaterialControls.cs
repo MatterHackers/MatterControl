@@ -40,58 +40,47 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public partial class SelectedObjectPanel
 	{
-		public class MaterialControls : IgnoredPopupWidget
+		public class MaterialControls : FlowLayoutWidget, IIgnoredPopupChild
 		{
 			private ObservableCollection<GuiWidget> materialButtons = new ObservableCollection<GuiWidget>();
 			private ThemeConfig theme;
 			private InteractiveScene scene;
 
 			public MaterialControls(InteractiveScene scene, ThemeConfig theme)
+				: base (FlowDirection.TopToBottom)
 			{
 				this.theme = theme;
 				this.scene = scene;
-				this.HAnchor = HAnchor.Fit;
+				this.HAnchor = HAnchor.Stretch;
 				this.VAnchor = VAnchor.Fit;
-				this.Padding = new BorderDouble(0, 5, 5, 0);
-
-				var buttonPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
-				{
-					VAnchor = VAnchor.Fit,
-					HAnchor = HAnchor.Fit,
-				};
-				this.AddChild(buttonPanel);
 
 				materialButtons.Clear();
 				int extruderCount = 4;
 				for (int extruderIndex = 0; extruderIndex < extruderCount; extruderIndex++)
 				{
-					var colorSelectionContainer = new FlowLayoutWidget(FlowDirection.LeftToRight)
+					var row = new FlowLayoutWidget()
 					{
-						HAnchor = HAnchor.Fit,
-						Padding = new BorderDouble(5)
+						HAnchor = HAnchor.Stretch,
+						VAnchor = VAnchor.Fit
 					};
-					buttonPanel.AddChild(colorSelectionContainer);
+					this.AddChild(row);
 
-					var materialSelection = new RadioButton(string.Format("{0} {1}", "Material".Localize(), extruderIndex + 1), textColor: theme.Colors.PrimaryTextColor);
-					materialButtons.Add(materialSelection);
-					materialSelection.SiblingRadioButtonList = materialButtons;
-					colorSelectionContainer.AddChild(materialSelection);
-					colorSelectionContainer.AddChild(new HorizontalSpacer());
+					var radioButton = new RadioButton(string.Format("{0} {1}", "Material".Localize(), extruderIndex + 1), textColor: theme.Colors.PrimaryTextColor);
+					materialButtons.Add(radioButton);
+					radioButton.SiblingRadioButtonList = materialButtons;
+					row.AddChild(radioButton);
+
 					int extruderIndexCanPassToClick = extruderIndex;
-					materialSelection.Click += (sender, e) =>
+					radioButton.Click += (sender, e) =>
 					{
 						if (scene.HasSelection)
 						{
 							scene.SelectedItem.MaterialIndex = extruderIndexCanPassToClick;
 							scene.Invalidate();
-
-						// "View 3D Overflow Menu" // the menu to click on
-						// "Materials Option" // the item to highlight
-						//HelpSystem.
-					}
+						}
 					};
 
-					colorSelectionContainer.AddChild(new GuiWidget(16, 16)
+					row.AddChild(new GuiWidget(16, 16)
 					{
 						BackgroundColor = MaterialRendering.Color(extruderIndex),
 						Margin = new BorderDouble(5, 0, 0, 0)
