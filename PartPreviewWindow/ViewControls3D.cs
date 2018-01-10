@@ -78,8 +78,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public event EventHandler<TransformStateChangedEventArgs> TransformStateChanged;
 
-		private GuiWidget partSelectSeparator;
-
 		private RadioIconButton translateButton;
 		private RadioIconButton rotateButton;
 		private RadioIconButton scaleButton;
@@ -95,6 +93,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private View3DWidget view3DWidget;
 
 		private ViewControls3DButtons activeTransformState = ViewControls3DButtons.Rotate;
+		private List<(GuiWidget button, SceneSelectionOperation operation)> operationButtons;
+
 		public bool IsPrinterMode { get; set; }
 
 		public ViewControls3DButtons ActiveButton
@@ -253,12 +253,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				rotateButton.Checked = true;
 
-				partSelectSeparator = new VerticalLine(50)
+				// Add vertical separator
+				this.AddChild(new VerticalLine(50)
 				{
 					Margin = 3
-				};
-
-				this.AddChild(partSelectSeparator);
+				});
 
 				iconPath = Path.Combine("ViewTransformControls", "partSelect.png");
 				partSelectButton = new RadioIconButton(AggContext.StaticData.LoadIcon(iconPath, 32, 32, IconColor.Theme), theme)
@@ -317,6 +316,62 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			buttonGroupB.Add(layers2DButton);
 			this.AddChild(layers2DButton);
 
+			// Add vertical separator
+			this.AddChild(new VerticalLine(50)
+			{
+				Margin = 3
+			});
+
+			operationButtons = new List<(GuiWidget, SceneSelectionOperation)>();
+
+			// Add Selected IObject3D -> Operations to toolbar
+			foreach (var namedAction in ApplicationController.Instance.RegisteredSceneOperations)
+			{
+
+				if (namedAction is SceneSelectionSeparator)
+				{
+					var margin = new BorderDouble(3);
+					margin = margin.Clone(left: margin.Left + theme.ButtonSpacing.Left);
+
+					this.AddChild(new VerticalLine(50)
+					{
+						Margin = margin
+					});
+
+					continue;
+				}
+
+				GuiWidget button;
+
+				if (namedAction.Icon != null)
+				{
+					button = new IconButton(namedAction.Icon, theme)
+					{
+						Name = namedAction.Title + " Button",
+						ToolTipText = namedAction.Title,
+						Margin = theme.ButtonSpacing,
+						BackgroundColor = theme.MinimalShade
+					};
+				}
+				else
+				{
+					button = new TextButton(namedAction.Title, theme)
+					{
+						Name = namedAction.Title + " Button",
+						Margin = theme.ButtonSpacing,
+						BackgroundColor = theme.MinimalShade
+					};
+				}
+
+				operationButtons.Add((button, namedAction));
+
+				button.Click += (s, e) =>
+				{
+					namedAction.Action.Invoke(sceneContext.Scene);
+				};
+				this.AddChild(button);
+			}
+
 			var buttonView = new FlowLayoutWidget();
 			buttonView.AddChild(new ImageWidget(AggContext.StaticData.LoadIcon((IsPrinterMode) ? "bed.png" : "cube.png", IconColor.Theme))
 			{
@@ -330,12 +385,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Padding = new BorderDouble(8, 4, 0, 4)
 			});
 
+			this.AddChild(new HorizontalSpacer());
+
 			var overflowMenu = new OverflowMenu(buttonView)
 			{
 				Name = "Bed Options Menu",
 				DynamicPopupContent = () => theme.CreatePopupMenu(this.BedMenuActions(sceneContext)),
-				DrawArrow = true
+				DrawArrow = true,
+				AlignToRightEdge = true,
+				Margin = new BorderDouble(right: theme.ButtonSpacing.Left),
 			};
+
+			// HACK: Fix left padding to improve style. Ideally fix this in the underlying button
+			var firstChild = overflowMenu.Children.First();
+			firstChild.Margin = firstChild.Margin.Clone(left: 8);
+
 			overflowMenu.Load += (s, e) =>
 			{
 				var firstBackgroundColor = this.Parents<GuiWidget>().Where(p => p.BackgroundColor.Alpha0To1 == 1).FirstOrDefault()?.BackgroundColor;
@@ -345,6 +409,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (printer != null)
 			{
+				printer.Bed.Scene.SelectionChanged += Scene_SelectionChanged;
+
 				printer.ViewState.ViewModeChanged += (s, e) =>
 				{
 					if (e.ViewMode == PartViewMode.Layers2D)
@@ -360,6 +426,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						modelViewButton.Checked = true;
 					}
 				};
+
+				// Run on load
+				Scene_SelectionChanged(null, null);
+			}
+		}
+
+		private void Scene_SelectionChanged(object sender, EventArgs e)
+		{
+			// Set enabled level based on operation rules
+			foreach(var item in operationButtons)
+			{
+				item.button.Enabled = item.operation.IsEnabled?.Invoke(printer.Bed.Scene) ?? false;
 			}
 		}
 

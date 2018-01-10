@@ -3,10 +3,11 @@ using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.CustomWidgets
 {
+	/// <summary>
+	/// A container control having a header and a content panel, with optional collapse behavior and right aligned widget
+	/// </summary>
 	public class SectionWidget : FlowLayoutWidget
 	{
-		private GuiWidget contentWidget;
-
 		public SectionWidget(string sectionTitle, Color textColor, GuiWidget sectionContent, GuiWidget rightAlignedContent = null, int headingPointSize = -1, bool expandingContent = true, bool expanded = true)
 			: base (FlowDirection.TopToBottom)
 		{
@@ -31,7 +32,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					};
 					checkbox.CheckedStateChanged += (s, e) =>
 					{
-						contentWidget.Visible = checkbox.Checked;
+						ContentPanel.Visible = checkbox.Checked;
 					};
 
 					heading = checkbox;
@@ -70,16 +71,18 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.SetContentWidget(sectionContent);
 		}
 
+		public GuiWidget ContentPanel { get; private set; }
+		
 		public void SetContentWidget(GuiWidget guiWidget)
 		{
-			contentWidget?.Close();
+			ContentPanel?.Close();
 
-			contentWidget = guiWidget;
-			contentWidget.HAnchor = HAnchor.Stretch;
-			contentWidget.VAnchor = VAnchor.Fit;
-			contentWidget.BackgroundColor = ApplicationController.Instance.Theme.MinimalShade;
+			ContentPanel = guiWidget;
+			ContentPanel.HAnchor = HAnchor.Stretch;
+			ContentPanel.VAnchor = VAnchor.Fit;
+			ContentPanel.BackgroundColor = ApplicationController.Instance.Theme.MinimalShade;
 
-			this.AddChild(contentWidget);
+			this.AddChild(ContentPanel);
 		}
 	}
 }
