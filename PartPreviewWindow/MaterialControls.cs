@@ -51,7 +51,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.scene = scene;
 				this.HAnchor = HAnchor.Fit;
 				this.VAnchor = VAnchor.Fit;
-				this.BackgroundColor = Color.White;
 				this.Padding = new BorderDouble(0, 5, 5, 0);
 
 				var buttonPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
