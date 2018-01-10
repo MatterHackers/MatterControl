@@ -63,15 +63,13 @@ namespace MatterHackers.MatterControl
 		internal int shortButtonHeight = 25;
 		private int sideBarButtonWidth;
 
-		public int H1PointSize { get; set; } = 13;
+		public int H1PointSize { get; set; } = 12;
 
 		public LinkButtonFactory LinkButtonFactory { get; private set; }
 		public LinkButtonFactory HelpLinkFactory { get; private set; }
 
 		public TextImageButtonFactory ExpandMenuOptionFactory;
 		public TextImageButtonFactory WhiteButtonFactory;
-
-		private readonly int borderWidth = 1;
 
 		public TextImageButtonFactory ButtonFactory { get; private set; }
 		public TextImageButtonFactory SmallMarginButtonFactory { get; private set; }
