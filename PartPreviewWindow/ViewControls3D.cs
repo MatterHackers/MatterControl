@@ -379,13 +379,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Padding = new BorderDouble(8, 4, 0, 4)
 			});
 
+			this.AddChild(new HorizontalSpacer());
+
 			var overflowMenu = new OverflowMenu(buttonView)
 			{
 				Name = "Bed Options Menu",
 				DynamicPopupContent = () => theme.CreatePopupMenu(this.BedMenuActions(sceneContext)),
 				DrawArrow = true,
-				Margin = 0
+				AlignToRightEdge = true,
+				Margin = new BorderDouble(right: theme.ButtonSpacing.Left),
 			};
+
+			// HACK: Fix left padding to improve style. Ideally fix this in the underlying button
+			var firstChild = overflowMenu.Children.First();
+			firstChild.Margin = firstChild.Margin.Clone(left: 8);
+
 			overflowMenu.Load += (s, e) =>
 			{
 				var firstBackgroundColor = this.Parents<GuiWidget>().Where(p => p.BackgroundColor.Alpha0To1 == 1).FirstOrDefault()?.BackgroundColor;
