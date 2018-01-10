@@ -294,7 +294,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			get
 			{
-				return MaterialSettingsKeys[0];
+				if (MaterialSettingsKeys.Count > 0)
+				{
+					return MaterialSettingsKeys[0];
+				}
+
+				return null;
 			}
 			internal set
 			{
