@@ -349,13 +349,14 @@ namespace MatterHackers.MatterControl
 				TitleResolver = () => "Subtract".Localize(),
 				Action = (scene) => DoOpperation(scene, nameof(SubtractEditor), "Subtract"),
 				Icon = AggContext.StaticData.LoadIcon("subtract.png").SetPreMultiply(),
-
+				IsEnabled = (scene) => scene.SelectedItem is SelectionGroup,
 			},
 			new SceneSelectionOperation()
 			{
 				TitleResolver = () => "Intersect".Localize(),
 				Action = (scene) => DoOpperation(scene, nameof(IntersectionEditor), "Intersect"),
-				Icon = AggContext.StaticData.LoadIcon("intersect.png")
+				Icon = AggContext.StaticData.LoadIcon("intersect.png"),
+				IsEnabled = (scene) => scene.SelectedItem is SelectionGroup,
 			},
 #if DEBUG // keep this work in progress to the editor for now
 			new SceneSelectionOperation()
@@ -363,6 +364,7 @@ namespace MatterHackers.MatterControl
 				TitleResolver = () => "Subtract & Replace".Localize(),
 				Action = (scene) => DoOpperation(scene, nameof(SubtractAndReplace), "Subtract & Replace"),
 				Icon = AggContext.StaticData.LoadIcon("paint.png").SetPreMultiply(),
+				IsEnabled = (scene) => scene.SelectedItem is SelectionGroup,
 			},
 			new SceneSelectionOperation()
 			{
@@ -376,23 +378,21 @@ namespace MatterHackers.MatterControl
 					}
 				},
 				Icon = AggContext.StaticData.LoadIcon("support.png").SetPreMultiply(),
+				IsEnabled = (scene) => scene.HasSelection,
 			},
 			new SceneSelectionSeparator(),
 			new SceneSelectionOperation()
 			{
 				TitleResolver = () => "Bend".Localize(),
 				Action = (scene) => new BendOperation(scene.SelectedItem),
-			},
-			new SceneSelectionOperation()
-			{
-				TitleResolver = () => "Cut Out".Localize(),
-				Action = (scene) => Console.WriteLine("Cut out")
+				IsEnabled = (scene) => scene.HasSelection,
 			},
 			new SceneSelectionOperation()
 			{
 				// Should be a pinch command that makes a pinch object with the correct controls
 				TitleResolver = () => "Pinch".Localize(),
-				Action = (scene) => scene.UndoBuffer.AddAndDo(new GroupCommand(scene, scene.SelectedItem))
+				Action = (scene) => scene.UndoBuffer.AddAndDo(new GroupCommand(scene, scene.SelectedItem)),
+				IsEnabled = (scene) => scene.HasSelection,
 			}
 #endif
 		};

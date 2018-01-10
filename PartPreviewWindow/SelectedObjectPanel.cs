@@ -279,6 +279,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (mappedEditors == null)
 			{
 				editorPanel.CloseAllChildren();
+				editorPanel.VAnchor = VAnchor.Absolute;
+				editorPanel.VAnchor = VAnchor.Fit;
 				editorPanel.Invalidate();
 			}
 			else
