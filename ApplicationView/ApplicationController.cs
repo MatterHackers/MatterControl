@@ -377,6 +377,7 @@ namespace MatterHackers.MatterControl
 				},
 				Icon = AggContext.StaticData.LoadIcon("support.png").SetPreMultiply(),
 			},
+			new SceneSelectionSeparator(),
 			new SceneSelectionOperation()
 			{
 				TitleResolver = () => "Bend".Localize(),

@@ -62,6 +62,10 @@ namespace MatterHackers.Agg.UI
 		public Func<InteractiveScene, bool> IsEnabled { get; set; }
 	}
 
+	public class SceneSelectionSeparator : SceneSelectionOperation
+	{
+	}
+
 	public static class NamedActionExtensions
 	{
 		public static void Add(this List<NamedAction> list, string title, Action action)
