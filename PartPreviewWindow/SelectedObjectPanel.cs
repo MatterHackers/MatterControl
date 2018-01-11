@@ -40,7 +40,7 @@ using MatterHackers.MatterControl.Library;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public partial class SelectedObjectPanel : FlowLayoutWidget, IContentStore
+	public class SelectedObjectPanel : FlowLayoutWidget, IContentStore
 	{
 		private IObject3D item = new Object3D();
 
@@ -166,7 +166,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit,
-				Padding = 6
+				Padding = new BorderDouble(top: 10)
 			});
 
 			editorSection = new SectionWidget("Editor", editorColumn, theme);
@@ -335,6 +335,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var editorWidget = editor.Create(scene.SelectedItem, view3DWidget, theme);
 			editorWidget.HAnchor = HAnchor.Stretch;
 			editorWidget.VAnchor = VAnchor.Fit;
+			editorWidget.Padding = 0;
 
 			editorPanel.AddChild(editorWidget);
 		}
@@ -347,8 +348,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				children.Add(content);
 			});
 		}
-
-		internal enum AxisAlignment { Min, Center, Max, SourceCoordinateSystem };
 
 		public class InMemoryItem : ILibraryContentItem
 		{
@@ -381,4 +380,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 	}
+
+	public enum AxisAlignment { Min, Center, Max, SourceCoordinateSystem };
 }

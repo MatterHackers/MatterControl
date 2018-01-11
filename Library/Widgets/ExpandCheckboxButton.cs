@@ -34,7 +34,7 @@ using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.CustomWidgets
 {
-	public class ExpandCheckboxButton : FlowLayoutWidget
+	public class ExpandCheckboxButton : FlowLayoutWidget, ICheckbox
 	{
 		public event EventHandler CheckedStateChanged;
 

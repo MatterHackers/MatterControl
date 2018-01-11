@@ -9,6 +9,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 	/// </summary>
 	public class SectionWidget : FlowLayoutWidget
 	{
+		private ExpandCheckboxButton checkbox;
+
 		public SectionWidget(string sectionTitle, GuiWidget sectionContent, ThemeConfig theme, GuiWidget rightAlignedContent = null, int headingPointSize = -1, bool expandingContent = true, bool expanded = true)
 			: base (FlowDirection.TopToBottom)
 		{
@@ -27,7 +29,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 				if (expandingContent)
 				{
-					var checkbox = new ExpandCheckboxButton(sectionTitle, pointSize: pointSize)
+					checkbox = new ExpandCheckboxButton(sectionTitle, pointSize: pointSize)
 					{
 						HAnchor = HAnchor.Stretch,
 						Checked = expanded,
@@ -69,6 +71,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			this.SetContentWidget(sectionContent);
 		}
+
+		public ICheckbox Checkbox => checkbox;
 
 		private Color _seperatorColor;
 		public Color SeperatorColor

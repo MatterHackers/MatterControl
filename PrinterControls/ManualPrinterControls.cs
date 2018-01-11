@@ -116,13 +116,7 @@ namespace MatterHackers.MatterControl
 
 		public GuiWidget RegisterSection(SectionWidget sectionWidget)
 		{
-			// Enforce panel padding
-			sectionWidget.ContentPanel.Padding = new BorderDouble(16, 16, 8, 2);
-
-			sectionWidget.SeperatorColor = Color.Transparent;
-			sectionWidget.BorderRadius = 5;
-			sectionWidget.Margin = new BorderDouble(10, 0, 10, 10);
-			sectionWidget.BackgroundColor = theme.MinimalShade;
+			ApplicationController.Instance.Theme.BoxStyleSectionWidget(sectionWidget);
 
 			column.AddChild(sectionWidget);
 

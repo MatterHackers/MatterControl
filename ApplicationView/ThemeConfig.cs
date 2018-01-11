@@ -37,6 +37,7 @@ namespace MatterHackers.MatterControl
 	using Agg.Image;
 	using CustomWidgets;
 	using MatterHackers.Agg.Platform;
+	using MatterHackers.Localizations;
 	using MatterHackers.MatterControl.PartPreviewWindow;
 	using MatterHackers.VectorMath;
 
@@ -111,6 +112,18 @@ namespace MatterHackers.MatterControl
 		public Color ActiveTabBarBackground { get; set; }
 
 		public TextImageButtonFactory DisableableControlBase { get; private set; }
+
+		public void BoxStyleSectionWidget(SectionWidget sectionWidget)
+		{
+			// Enforce panel padding
+			sectionWidget.ContentPanel.Padding = new BorderDouble(16, 10, 10, 2);
+
+			sectionWidget.SeperatorColor = Color.Transparent;
+			sectionWidget.BorderRadius = 5;
+			sectionWidget.Margin = new BorderDouble(10, 0, 10, 10);
+			sectionWidget.BackgroundColor = this.MinimalShade;
+		}
+
 		public TextImageButtonFactory HomingButtons { get; private set; }
 		public TextImageButtonFactory MicroButton { get; private set; }
 		public TextImageButtonFactory MicroButtonMenu { get; private set; }
@@ -121,6 +134,14 @@ namespace MatterHackers.MatterControl
 		public double ButtonHeight { get; internal set; } = 32;
 
 		public int OverlayAlpha { get; set; } = 50;
+
+		public GuiWidget CreateSearchButton()
+		{
+			return new IconButton(AggContext.StaticData.LoadIcon("icon_search_24x24.png", 16, 16, IconColor.Theme), this)
+			{
+				ToolTipText = "Search".Localize(),
+			};
+		}
 
 		public Color InteractionLayerOverlayColor { get; private set; }
 
@@ -177,7 +198,7 @@ namespace MatterHackers.MatterControl
 			this.ActiveTabBarBackground = this.ActiveTabColor.AdjustLightness(0.85).ToColor();
 
 			// Active tab color with slight transparency
-			this.InteractionLayerOverlayColor = new Color(this.ActiveTabColor, 200);
+			this.InteractionLayerOverlayColor = new Color(this.ActiveTabColor, 240);
 
 			float alpha0to1 = (theme.IsDarkTheme ? 20 : 60) / 255.0f;
 

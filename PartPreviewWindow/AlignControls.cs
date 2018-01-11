@@ -37,172 +37,169 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public partial class SelectedObjectPanel
+	public class AlignControls : FlowLayoutWidget
 	{
-		public class AlignControls : FlowLayoutWidget
+		private InteractiveScene scene;
+		private ThemeConfig theme;
+
+		public AlignControls(InteractiveScene scene, ThemeConfig theme)
+			: base(FlowDirection.TopToBottom)
 		{
-			private InteractiveScene scene;
-			private ThemeConfig theme;
+			this.scene = scene;
+			this.theme = theme;
+			this.HAnchor = HAnchor.Stretch;
+			this.VAnchor = VAnchor.Fit;
 
-			public AlignControls(InteractiveScene scene, ThemeConfig theme)
-				: base (FlowDirection.TopToBottom)
+			FlowLayoutWidget alignButtons = null;
+
+			string[] axisNames = new string[] { "X", "Y", "Z" };
+			for (int axisIndex = 0; axisIndex < 3; axisIndex++)
 			{
-				this.scene = scene;
-				this.theme = theme;
-				this.HAnchor = HAnchor.Stretch;
-				this.VAnchor = VAnchor.Fit;
-
-				FlowLayoutWidget alignButtons = null;
-
-				string[] axisNames = new string[] { "X", "Y", "Z" };
-				for (int axisIndex = 0; axisIndex < 3; axisIndex++)
+				alignButtons = new FlowLayoutWidget(FlowDirection.LeftToRight)
 				{
-					alignButtons = new FlowLayoutWidget(FlowDirection.LeftToRight)
-					{
-						HAnchor = HAnchor.Left | HAnchor.Fit,
-						Padding = new BorderDouble(0, 2)
-					};
-					this.AddChild(alignButtons);
+					HAnchor = HAnchor.Left | HAnchor.Fit,
+					Padding = new BorderDouble(0, 2)
+				};
+				this.AddChild(alignButtons);
 
-					alignButtons.AddChild(new TextWidget(axisNames[axisIndex], textColor: theme.Colors.PrimaryTextColor)
-					{
-						VAnchor = VAnchor.Center,
-						Margin = new BorderDouble(0, 0, 3, 0)
-					});
+				alignButtons.AddChild(new TextWidget(axisNames[axisIndex], textColor: theme.Colors.PrimaryTextColor)
+				{
+					VAnchor = VAnchor.Center,
+					Margin = new BorderDouble(0, 0, 3, 0)
+				});
 
-					alignButtons.AddChild(CreateAlignButton(axisIndex, AxisAlignment.Min, "Min"));
-					alignButtons.AddChild(new HorizontalSpacer());
+				alignButtons.AddChild(CreateAlignButton(axisIndex, AxisAlignment.Min, "Min"));
+				alignButtons.AddChild(new HorizontalSpacer());
 
-					alignButtons.AddChild(CreateAlignButton(axisIndex, AxisAlignment.Center, "Center"));
-					alignButtons.AddChild(new HorizontalSpacer());
+				alignButtons.AddChild(CreateAlignButton(axisIndex, AxisAlignment.Center, "Center"));
+				alignButtons.AddChild(new HorizontalSpacer());
 
-					alignButtons.AddChild(CreateAlignButton(axisIndex, AxisAlignment.Max, "Max"));
-					alignButtons.AddChild(new HorizontalSpacer());
-				}
-
-				var secondChild = alignButtons.Children[1];
-
-				var dualExtrusionAlignButton = theme.ButtonFactory.Generate("Align for Dual Extrusion".Localize());
-				dualExtrusionAlignButton.HAnchor = HAnchor.Left;
-				dualExtrusionAlignButton.Margin = new BorderDouble(left: secondChild.OriginRelativeParent.X, top: 6);
-				this.AddChild(dualExtrusionAlignButton);
-
-				AddAlignDelegates(0, AxisAlignment.SourceCoordinateSystem, dualExtrusionAlignButton);
+				alignButtons.AddChild(CreateAlignButton(axisIndex, AxisAlignment.Max, "Max"));
+				alignButtons.AddChild(new HorizontalSpacer());
 			}
 
-			private GuiWidget CreateAlignButton(int axisIndex, AxisAlignment alignment, string label)
+			var secondChild = alignButtons.Children[1];
+
+			var dualExtrusionAlignButton = theme.ButtonFactory.Generate("Align for Dual Extrusion".Localize());
+			dualExtrusionAlignButton.HAnchor = HAnchor.Left;
+			dualExtrusionAlignButton.Margin = new BorderDouble(left: secondChild.OriginRelativeParent.X, top: 6);
+			this.AddChild(dualExtrusionAlignButton);
+
+			AddAlignDelegates(0, AxisAlignment.SourceCoordinateSystem, dualExtrusionAlignButton);
+		}
+
+		private GuiWidget CreateAlignButton(int axisIndex, AxisAlignment alignment, string label)
+		{
+			var alignButton = theme.ButtonFactory.Generate(label);
+			alignButton.Margin = new BorderDouble(2, 0);
+
+			AddAlignDelegates(axisIndex, alignment, alignButton);
+
+			return alignButton;
+		}
+
+		private void AddAlignDelegates(int axisIndex, AxisAlignment alignment, Button button)
+		{
+			button.Click += (sender, e) =>
 			{
-				var alignButton = theme.ButtonFactory.Generate(label);
-				alignButton.Margin = new BorderDouble(2, 0);
-
-				AddAlignDelegates(axisIndex, alignment, alignButton);
-
-				return alignButton;
-			}
-
-			private void AddAlignDelegates(int axisIndex, AxisAlignment alignment, Button button)
-			{
-				button.Click += (sender, e) =>
+				if (scene.HasSelection)
 				{
-					if (scene.HasSelection)
-					{
-						var transformDatas = GetTransforms(axisIndex, alignment);
-						scene.UndoBuffer.AddAndDo(new TransformCommand(transformDatas));
+					var transformDatas = GetTransforms(axisIndex, alignment);
+					scene.UndoBuffer.AddAndDo(new TransformCommand(transformDatas));
 
 						//scene.SelectedItem.MaterialIndex = extruderIndexCanPassToClick;
 						scene.Invalidate();
-					}
-				};
+				}
+			};
 
-				button.MouseEnter += (s2, e2) =>
+			button.MouseEnter += (s2, e2) =>
+			{
+				if (scene.HasSelection)
 				{
-					if (scene.HasSelection)
-					{
 						// make a preview of the new positions
 						var transformDatas = GetTransforms(axisIndex, alignment);
-						scene.Children.Modify((list) =>
+					scene.Children.Modify((list) =>
+					{
+						foreach (var transform in transformDatas)
 						{
-							foreach (var transform in transformDatas)
-							{
-								var copy = transform.TransformedObject.Clone();
-								copy.Matrix = transform.RedoTransform;
-								copy.Color = new Color(Color.Gray, 126);
-								list.Add(copy);
-							}
-						});
-					}
-				};
-
-				button.MouseLeave += (s3, e3) =>
-				{
-					if (scene.HasSelection)
-					{
-						// clear the preview of the new positions
-						scene.Children.Modify((list) =>
-						{
-							for (int i = list.Count - 1; i >= 0; i--)
-							{
-								if (list[i].Color.Alpha0To255 == 126)
-								{
-									list.RemoveAt(i);
-								}
-							}
-						});
-					}
-				};
-			}
-
-			private List<TransformData> GetTransforms(int axisIndex, AxisAlignment alignment)
-			{
-				var transformDatas = new List<TransformData>();
-				var totalAABB = scene.SelectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
-
-				Vector3 firstSourceOrigin = new Vector3(double.MaxValue, double.MaxValue, double.MaxValue);
-
-				// move the objects to the right place
-				foreach (var child in scene.SelectedItem.Children)
-				{
-					var childAABB = child.GetAxisAlignedBoundingBox(scene.SelectedItem.Matrix);
-					var offset = new Vector3();
-					switch (alignment)
-					{
-						case AxisAlignment.Min:
-							offset[axisIndex] = totalAABB.minXYZ[axisIndex] - childAABB.minXYZ[axisIndex];
-							break;
-
-						case AxisAlignment.Center:
-							offset[axisIndex] = totalAABB.Center[axisIndex] - childAABB.Center[axisIndex];
-							break;
-
-						case AxisAlignment.Max:
-							offset[axisIndex] = totalAABB.maxXYZ[axisIndex] - childAABB.maxXYZ[axisIndex];
-							break;
-
-						case AxisAlignment.SourceCoordinateSystem:
-							{
-								// move the object back to the origin
-								offset = -Vector3.Transform(Vector3.Zero, child.Matrix);
-
-								// figure out how to move it back to the start center
-								if (firstSourceOrigin.X == double.MaxValue)
-								{
-									firstSourceOrigin = -offset;
-								}
-
-								offset += firstSourceOrigin;
-							}
-							break;
-					}
-					transformDatas.Add(new TransformData()
-					{
-						TransformedObject = child,
-						RedoTransform = child.Matrix * Matrix4X4.CreateTranslation(offset),
-						UndoTransform = child.Matrix,
+							var copy = transform.TransformedObject.Clone();
+							copy.Matrix = transform.RedoTransform;
+							copy.Color = new Color(Color.Gray, 126);
+							list.Add(copy);
+						}
 					});
 				}
+			};
 
-				return transformDatas;
+			button.MouseLeave += (s3, e3) =>
+			{
+				if (scene.HasSelection)
+				{
+						// clear the preview of the new positions
+						scene.Children.Modify((list) =>
+					{
+						for (int i = list.Count - 1; i >= 0; i--)
+						{
+							if (list[i].Color.Alpha0To255 == 126)
+							{
+								list.RemoveAt(i);
+							}
+						}
+					});
+				}
+			};
+		}
+
+		private List<TransformData> GetTransforms(int axisIndex, AxisAlignment alignment)
+		{
+			var transformDatas = new List<TransformData>();
+			var totalAABB = scene.SelectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+
+			Vector3 firstSourceOrigin = new Vector3(double.MaxValue, double.MaxValue, double.MaxValue);
+
+			// move the objects to the right place
+			foreach (var child in scene.SelectedItem.Children)
+			{
+				var childAABB = child.GetAxisAlignedBoundingBox(scene.SelectedItem.Matrix);
+				var offset = new Vector3();
+				switch (alignment)
+				{
+					case AxisAlignment.Min:
+						offset[axisIndex] = totalAABB.minXYZ[axisIndex] - childAABB.minXYZ[axisIndex];
+						break;
+
+					case AxisAlignment.Center:
+						offset[axisIndex] = totalAABB.Center[axisIndex] - childAABB.Center[axisIndex];
+						break;
+
+					case AxisAlignment.Max:
+						offset[axisIndex] = totalAABB.maxXYZ[axisIndex] - childAABB.maxXYZ[axisIndex];
+						break;
+
+					case AxisAlignment.SourceCoordinateSystem:
+						{
+							// move the object back to the origin
+							offset = -Vector3.Transform(Vector3.Zero, child.Matrix);
+
+							// figure out how to move it back to the start center
+							if (firstSourceOrigin.X == double.MaxValue)
+							{
+								firstSourceOrigin = -offset;
+							}
+
+							offset += firstSourceOrigin;
+						}
+						break;
+				}
+				transformDatas.Add(new TransformData()
+				{
+					TransformedObject = child,
+					RedoTransform = child.Matrix * Matrix4X4.CreateTranslation(offset),
+					UndoTransform = child.Matrix,
+				});
 			}
+
+			return transformDatas;
 		}
 	}
 }
