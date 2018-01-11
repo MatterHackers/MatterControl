@@ -648,8 +648,6 @@ namespace MatterHackers.MatterControl
 
 				this.Click += (s, e) =>
 				{
-					MoveButton moveButton = (MoveButton)s;
-
 					if (printer.Connection.CommunicationState == CommunicationStates.Printing)
 					{
 						if (moveAxis == PrinterConnection.Axis.Z) // only works on z
