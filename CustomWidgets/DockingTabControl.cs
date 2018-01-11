@@ -53,6 +53,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		private PrinterConfig printer;
 
 		private ThemeConfig theme;
+		private ResizeContainer resizePage;
+
 		public DockingTabControl(GuiWidget widgetTodockTo, DockSide dockSide, PrinterConfig printer)
 			: base (FlowDirection.TopToBottom)
 		{
@@ -132,23 +134,28 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			return imageWidget;
 		}
 
-		public override double Width
-		{
-			get => this.PageWidth;
-			set => this.PageWidth = value;
-		}
-
 		// Clamped to MinDockingWidth or value
-		double PageWidth
+		private double _constrainedWidth;
+		private double ConstrainedWidth
 		{
 			get => Math.Max(MinDockingWidth, printer.ViewState.SliceSettingsWidth);
-			set => printer.ViewState.SliceSettingsWidth = Math.Max(MinDockingWidth, value);
+			set
+			{
+				if (value > MinDockingWidth
+					&& _constrainedWidth != value)
+				{
+					_constrainedWidth = value;
+					printer.ViewState.SliceSettingsWidth = value;
+				}
+			}
 		}
 
 		private void Rebuild()
 		{
 			settingsButtons.Clear();
-			Focus();
+
+			this.Focus();
+
 			foreach (var nameWidget in allTabs)
 			{
 				nameWidget.Value.Parent?.RemoveChild(nameWidget.Value);
@@ -162,11 +169,15 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				var resizePage = new ResizeContainer(this)
 				{
-					Width = PageWidth,
+					Width = this.ConstrainedWidth,
 					VAnchor = VAnchor.Stretch,
 					SpliterBarColor = theme.SplitterBackground,
 					SplitterWidth = theme.SplitterWidth,
-					MinimumSize = new Vector2(this.MinDockingWidth, 200)
+					MinimumSize = new Vector2(this.MinDockingWidth, 0)
+				};
+				resizePage.BoundsChanged += (s, e) =>
+				{
+					this.ConstrainedWidth = resizePage.Width;
 				};
 
 				tabControl = new SimpleTabs(this.CreatePinButton())
@@ -251,7 +262,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 					var resizeContainer = new ResizeContainer(this)
 					{
-						Width = PageWidth,
+						Width = this.ConstrainedWidth,
 						VAnchor = VAnchor.Stretch,
 						HAnchor = HAnchor.Right,
 						SpliterBarColor = spliterColor,
@@ -260,15 +271,16 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					resizeContainer.AddChild(new DockingWindowContent(this, kvp.Value, tabTitle)
 					{
 						BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor,
-						Width = PageWidth
+						Width = this.ConstrainedWidth
 					});
 
 					settingsButtons.Add(settingsButton);
+					settingsButton.DebugShowBounds = true;
 					settingsButton.PopupContent = resizeContainer;
 
 					settingsButton.Click += (s, e) =>
 					{
-						resizeContainer.Width = PageWidth;
+						resizeContainer.Width = this.ConstrainedWidth;
 					};
 
 					settingsButton.PopupLayoutEngine = new UnpinnedLayoutEngine(settingsButton.PopupContent, widgetTodockTo, DockSide);
