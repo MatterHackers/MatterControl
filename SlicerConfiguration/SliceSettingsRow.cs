@@ -138,11 +138,35 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (this.BorderColor != value)
 				{
 					this.BorderColor = value;
-					this.BackgroundColor = (value == Color.Transparent) ? Color.Transparent : ApplicationController.Instance.Theme.MinimalShade;
 
 					this.StyleChanged?.Invoke(null, null);
 				}
 			}
+		}
+
+		private Color hoverColor => ApplicationController.Instance.Theme.MinimalShade;
+
+		public override Color BackgroundColor
+		{
+			get => (mouseInBounds) ? hoverColor : base.BackgroundColor;
+			set => base.BackgroundColor = value;
+		}
+
+		private bool mouseInBounds = false;
+
+		public override void OnMouseEnterBounds(MouseEventArgs mouseEvent)
+		{
+			mouseInBounds = true;
+			this.Invalidate();
+			base.OnMouseEnter(mouseEvent);
+		}
+
+		public override void OnMouseLeaveBounds(MouseEventArgs mouseEvent)
+		{
+			mouseInBounds = false;
+
+			this.Invalidate();
+			base.OnMouseLeaveBounds(mouseEvent);
 		}
 
 		public void UpdateStyle()
