@@ -29,9 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using MatterHackers.Agg;
-using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
-using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrinterControls;
@@ -99,7 +97,7 @@ namespace MatterHackers.MatterControl
 			this.AutoScroll = true;
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Stretch;
-			this.Padding = new BorderDouble(8, 0, theme.ToolbarPadding.Right, 6);
+			//this.Padding = new BorderDouble(8, 0, theme.ToolbarPadding.Right, 6);
 
 			int headingPointSize = theme.H1PointSize;
 
@@ -149,6 +147,11 @@ namespace MatterHackers.MatterControl
 			{
 				var contentPanel = widget.ContentPanel;
 				contentPanel.Padding = new BorderDouble(16, 16, 8, 2);
+
+				widget.SeperatorColor = Color.Transparent;
+				widget.BorderRadius = 5;
+				widget.Margin = new BorderDouble(10, 0, 10, 10);
+				widget.BackgroundColor = theme.MinimalShade;
 			}
 
 			// HACK: this is a hack to make the layout engine fire again for this control

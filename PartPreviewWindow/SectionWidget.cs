@@ -1,5 +1,6 @@
 ﻿using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.Agg.VertexSource;
 
 namespace MatterHackers.MatterControl.CustomWidgets
 {
@@ -8,8 +9,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 	/// </summary>
 	public class SectionWidget : FlowLayoutWidget
 	{
-		private Color borderColor;
-
 		public SectionWidget(string sectionTitle, GuiWidget sectionContent, ThemeConfig theme, GuiWidget rightAlignedContent = null, int headingPointSize = -1, bool expandingContent = true, bool expanded = true)
 			: base (FlowDirection.TopToBottom)
 		{
@@ -17,7 +16,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.VAnchor = VAnchor.Fit;
 			this.Border = new BorderDouble(bottom: 1);
 
-			borderColor = new Color(theme.Colors.SecondaryTextColor, 50);
+			SeperatorColor = new Color(theme.Colors.SecondaryTextColor, 50);
 
 			if (!string.IsNullOrEmpty(sectionTitle))
 			{
@@ -36,10 +35,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					checkbox.CheckedStateChanged += (s, e) =>
 					{
 						ContentPanel.Visible = checkbox.Checked;
-						this.BorderColor = (checkbox.Checked) ? Color.Transparent : borderColor;
+						this.BorderColor = (checkbox.Checked) ? Color.Transparent : SeperatorColor;
 					};
 
-					this.BorderColor = BorderColor = (expanded) ? Color.Transparent : borderColor;
+					this.BorderColor = BorderColor = (expanded) ? Color.Transparent : SeperatorColor;
 
 					heading = checkbox;
 				}
@@ -71,6 +70,24 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.SetContentWidget(sectionContent);
 		}
 
+		private Color _seperatorColor;
+		public Color SeperatorColor
+		{
+			get => _seperatorColor;
+			set
+			{
+				if (value != _seperatorColor)
+				{
+					_seperatorColor = value;
+					this.BorderColor = _seperatorColor;
+					if (this.ContentPanel != null)
+					{
+						this.ContentPanel.BorderColor = _seperatorColor;
+					}
+				}
+			}
+		}
+
 		public GuiWidget ContentPanel { get; private set; }
 
 		public void SetContentWidget(GuiWidget guiWidget)
@@ -82,7 +99,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			guiWidget.HAnchor = HAnchor.Stretch;
 			guiWidget.VAnchor = VAnchor.Fit;
 			//guiWidget.BackgroundColor = ApplicationController.Instance.Theme.MinimalShade;
-			guiWidget.BorderColor = borderColor;
+			guiWidget.BorderColor = SeperatorColor;
 			guiWidget.Border = new BorderDouble(bottom: 1);
 
 			// Set
@@ -90,6 +107,21 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			// Store
 			this.ContentPanel = guiWidget;
+		}
+
+		public int BorderRadius { get; set; } = 0;
+
+		public override void OnDrawBackground(Graphics2D graphics2D)
+		{
+			if (this.BorderRadius > 0)
+			{
+				var rect = new RoundedRect(this.LocalBounds, this.BorderRadius);
+				graphics2D.Render(rect, this.BackgroundColor);
+			}
+			else
+			{
+				base.OnDrawBackground(graphics2D);
+			}
 		}
 	}
 }
