@@ -1430,20 +1430,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					{
 						lock (locker)
 						{
-							string allDataRead;
-							if (addedReadLines.Count > 0)
-							{
-								allDataRead = addedReadLines[0] + "\n";
-								addedReadLines.RemoveAt(0);
-							}
-							else
-							{
-								allDataRead = serialPort.ReadExisting();
-							}
-							//Debug.Write("r: " + allDataRead);
+							string allDataRead = serialPort.ReadExisting();
 							allDataRead = allDataRead.Replace("\r\n", "\n");
 							allDataRead = allDataRead.Replace('\r', '\n');
 							dataLastRead += allDataRead;
+
 							do
 							{
 								int returnPosition = dataLastRead.IndexOf('\n');
@@ -1460,7 +1451,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 										timeSinceRecievedOk.Restart();
 									}
 									lastLineRead = dataLastRead.Substring(0, returnPosition);
-									lastLineRead = ProcessReadRegEx(lastLineRead);
+									var processingData = ProcessReadRegEx(lastLineRead);
+									lastLineRead = processingData.firstLine;
+									dataLastRead += processingData.extraLines;
 									dataLastRead = dataLastRead.Substring(returnPosition + 1);
 
 									// process this command
@@ -1807,9 +1800,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		#region ProcessRead
 		private static Regex getQuotedParts = new Regex(@"([""'])(\\?.)*?\1", RegexOptions.Compiled);
-		private List<string> addedReadLines = new List<string>();
 
-		private string ProcessReadRegEx(string lineBeingRead)
+		private (string firstLine, string extraLines) ProcessReadRegEx(string lineBeingRead)
 		{
 			var addedLines = new List<string>();
 			foreach (var item in readLineReplacements)
@@ -1832,9 +1824,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				}
 			}
 
-			addedReadLines.AddRange(addedLines);
+			string extraLines = "";
+			foreach(var line in addedLines)
+			{
+				extraLines += line + "\n";
+			}
 
-			return lineBeingRead;
+			return (lineBeingRead, extraLines);
 
 		}
 		#endregion // ProcessRead
@@ -2441,12 +2437,15 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		//int checkSumCount = 1;
 		private void WriteChecksumLine(string lineToWrite)
 		{
+			bool sendLineWithChecksum = true;
+			sendLineWithChecksum = !lineToWrite.Contains("WRITE_RAW");
+
 			// remove the comment if any
 			lineToWrite = RemoveCommentIfAny(lineToWrite);
 
 			KeepTrackOfAbsolutePostionAndDestination(lineToWrite);
 
-			if (this.SendWithChecksum)
+			if (this.SendWithChecksum && sendLineWithChecksum)
 			{
 				// always send the reset line number without a checksum so that it is accepted
 				string lineWithCount;
