@@ -206,6 +206,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				Padding = new BorderDouble(10, 10, 13, 6),
 			};
 
+			bool isFirstSection = true;
+
 			foreach (OrganizerGroup group in category.GroupsList)
 			{
 				tabIndexForItem = 0;
@@ -217,7 +219,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 
 				column.AddChild(
-					CreateGroupContent(group, oemAndUserContext, showHelpControls, textColor, column));
+					CreateGroupContent(group, oemAndUserContext, showHelpControls, textColor, column, expanded: isFirstSection));
+
+				isFirstSection = false;
 			}
 
 			var scrollable = new ScrollableWidget(true);
@@ -228,7 +232,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return scrollable;
 		}
 
-		public FlowLayoutWidget CreateGroupContent(OrganizerGroup group, SettingsContext oemAndUserContext, bool showHelpControls, Color textColor, GuiWidget parent)
+		public FlowLayoutWidget CreateGroupContent(OrganizerGroup group, SettingsContext oemAndUserContext, bool showHelpControls, Color textColor, GuiWidget parent, bool expanded = true)
 		{
 			var groupPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -238,10 +242,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			string groupName = (group.Name.Contains("!hidden")) ? "" : group.Name;
 
-			var sectionWidget = new SectionWidget(groupName, groupPanel, theme)
+			var sectionWidget = new SectionWidget(groupName, groupPanel, theme, expanded: expanded)
 			{
 				Margin = new BorderDouble(bottom: 8),
 			};
+
+			theme.BoxStyleSectionWidget(sectionWidget);
 
 			if (string.IsNullOrEmpty(groupName))
 			{
@@ -260,15 +266,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				var section = AddSettingRowsForSubgroup(subGroup, oemAndUserContext, showHelpControls);
 				if (section != null)
 				{
-					zebraColor = (zebraColor == Color.Transparent) ? zebraColor = theme.MinimalShade : Color.Transparent;
+					//zebraColor = (zebraColor == Color.Transparent) ? zebraColor = theme.MinimalShade : Color.Transparent;
+					zebraColor = Color.Transparent;
+
 					var column = new FlowLayoutWidget(FlowDirection.TopToBottom)
 					{
 						HAnchor = HAnchor.Stretch,
 						BackgroundColor = zebraColor,
-						Padding = new BorderDouble(left: 4),
 					};
 
-					if (!subGroup.Name.Contains("!hidden"))
+					if (false && !subGroup.Name.Contains("!hidden"))
 					{
 						// Section heading
 						column.AddChild(new TextWidget("  " + subGroup.Name.Localize(), textColor: headingColor, pointSize: theme.FontSize10)
