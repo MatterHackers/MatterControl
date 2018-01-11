@@ -1195,16 +1195,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			selectedObjectPanel.SetActiveItem(selectedItem);
 		}
 
-		private void ShowObjectEditor(IObject3DEditor editor)
-		{
-			editorPanel.CloseAllChildren();
-
-			var newEditor = editor.Create(Scene.SelectedItem, this, this.theme);
-			newEditor.HAnchor = HAnchor.Stretch;
-			newEditor.VAnchor = VAnchor.Fit;
-
-			editorPanel.AddChild(newEditor);
-		}
 
 		private void DrawStuffForSelectedPart(Graphics2D graphics2D)
 		{
@@ -1228,8 +1218,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		}
 
 		public static Regex fileNameNumberMatch = new Regex("\\(\\d+\\)", RegexOptions.Compiled);
-
-		private FlowLayoutWidget editorPanel;
 
 		private SelectedObjectPanel selectedObjectPanel;
 
