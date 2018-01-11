@@ -103,51 +103,49 @@ namespace MatterHackers.MatterControl
 
 			int headingPointSize = theme.H1PointSize;
 
-			var controlsTopToBottomLayout = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			var column = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.MaxFitOrStretch,
 				VAnchor = VAnchor.Fit,
 				Name = "ManualPrinterControls.ControlsContainer",
 				Margin = new BorderDouble(0)
 			};
-			this.AddChild(controlsTopToBottomLayout);
+			this.AddChild(column);
 
-			SectionWidget sectionWidget;
-
-			sectionWidget = MovementControls.CreateSection(printer, theme);
-			controlsTopToBottomLayout.AddChild(sectionWidget);
+			SectionWidget sectionWidget = MovementControls.CreateSection(printer, theme);
+			column.AddChild(sectionWidget);
 			movementControlsContainer = sectionWidget.ContentPanel as MovementControls;
 
 			if (!printer.Settings.GetValue<bool>(SettingsKey.has_hardware_leveling))
 			{
 				sectionWidget = CalibrationControls.CreateSection(printer, theme);
-				controlsTopToBottomLayout.AddChild(sectionWidget);
+				column.AddChild(sectionWidget);
 				calibrationControlsContainer = sectionWidget.ContentPanel;
 			}
 
 			sectionWidget = MacroControls.CreateSection(printer, theme);
-			controlsTopToBottomLayout.AddChild(sectionWidget);
+			column.AddChild(sectionWidget);
 			macroControlsContainer = sectionWidget.ContentPanel;
 
 			if (printer.Settings.GetValue<bool>(SettingsKey.has_fan))
 			{
 				sectionWidget = FanControls.CreateSection(printer, theme);
-				controlsTopToBottomLayout.AddChild(sectionWidget);
+				column.AddChild(sectionWidget);
 				fanControlsContainer = sectionWidget.ContentPanel;
 			}
 
 #if !__ANDROID__
 			sectionWidget = PowerControls.CreateSection(printer, theme);
-			controlsTopToBottomLayout.AddChild(sectionWidget);
+			column.AddChild(sectionWidget);
 #endif
 
 			sectionWidget = AdjustmentControls.CreateSection(printer, theme);
-			controlsTopToBottomLayout.AddChild(sectionWidget);
+			column.AddChild(sectionWidget);
 			tuningAdjustmentControlsContainer = sectionWidget.ContentPanel;
 
 
 			// Enforce panel padding in sidebar
-			foreach (var widget in controlsTopToBottomLayout.Children<SectionWidget>())
+			foreach (var widget in column.Children<SectionWidget>())
 			{
 				var contentPanel = widget.ContentPanel;
 				contentPanel.Padding = new BorderDouble(16, 16, 8, 2);
