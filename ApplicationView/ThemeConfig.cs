@@ -198,7 +198,7 @@ namespace MatterHackers.MatterControl
 			this.ActiveTabBarBackground = this.ActiveTabColor.AdjustLightness(0.85).ToColor();
 
 			// Active tab color with slight transparency
-			this.InteractionLayerOverlayColor = new Color(this.ActiveTabColor, 200);
+			this.InteractionLayerOverlayColor = new Color(this.ActiveTabColor, 240);
 
 			float alpha0to1 = (theme.IsDarkTheme ? 20 : 60) / 255.0f;
 
