@@ -46,19 +46,11 @@ namespace MatterHackers.MatterControl.PrinterControls
 		private PrinterConfig printer;
 		private ThemeConfig theme;
 		public FlowLayoutWidget manualControlsLayout;
-		private Button disableMotors;
 		private EditManualMovementSpeedsWindow editManualMovementSettingsWindow;
-		private Button homeAllButton;
-		private Button homeXButton;
-		private Button homeYButton;
-		private Button homeZButton;
 		internal JogControls jogControls;
 
 		// Provides a list of DisableableWidgets controls that can be toggled on/off at runtime
 		internal List<DisableableWidget> DisableableWidgets = new List<DisableableWidget>();
-
-		// Displays the current baby step offset stream values
-		private TextWidget offsetStreamLabel;
 
 		private LimitCallingFrequency reportDestinationChanged = null;
 
@@ -77,12 +69,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 			};
 
 			this.AddChild(CreateDisableableContainer(GetHomeButtonBar()));
-
-			// Separator line
-			this.AddChild(new HorizontalLine(alpha: 50)
-			{
-				Margin = new BorderDouble(0, 5)
-			});
 
 			this.AddChild(jogControls);
 
@@ -153,70 +139,75 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		private FlowLayoutWidget GetHomeButtonBar()
 		{
-			FlowLayoutWidget homeButtonBar = new FlowLayoutWidget();
-			homeButtonBar.HAnchor = HAnchor.Stretch;
-			homeButtonBar.Margin = new BorderDouble(0);
-			homeButtonBar.Padding = new BorderDouble(0);
-
-			var homingButtonFactory = theme.HomingButtons;
-			var commonButtonFactory = theme.ButtonFactory;
-
-			var homeIconImageWidget = new ImageWidget(AggContext.StaticData.LoadIcon("icon_home_white_24x24.png", 24, 24, IconColor.Theme));
-			homeIconImageWidget.Margin = new BorderDouble(0, 0, 6, 0);
-			homeIconImageWidget.OriginRelativeParent += new Vector2(0, 2) * GuiWidget.DeviceScale;
-
-			homeAllButton = homingButtonFactory.Generate("ALL".Localize());
-			homeAllButton.ToolTipText = "Home X, Y and Z".Localize();
-			homeAllButton.Margin = new BorderDouble(0, 0, 6, 0);
-			homeAllButton.Click += homeAll_Click;
-
-			double fixedWidth = (int)homeAllButton.Width * GuiWidget.DeviceScale;
-
-			homeXButton = homingButtonFactory.Generate("X", fixedWidth: fixedWidth);
-			homeXButton.ToolTipText = "Home X".Localize();
-			homeXButton.Margin = new BorderDouble(0, 0, 6, 0);
-			homeXButton.Click += homeXButton_Click;
-
-			homeYButton = homingButtonFactory.Generate("Y", fixedWidth: fixedWidth);
-			homeYButton.ToolTipText = "Home Y".Localize();
-			homeYButton.Margin = new BorderDouble(0, 0, 6, 0);
-			homeYButton.Click += homeYButton_Click;
-
-			homeZButton = homingButtonFactory.Generate("Z", fixedWidth: fixedWidth);
-			homeZButton.ToolTipText = "Home Z".Localize();
-			homeZButton.Margin = new BorderDouble(0, 0, 6, 0);
-			homeZButton.Click += homeZButton_Click;
-
-			// Create 'Release' button, clearing fixedWidth needed on sibling 'Home' controls
-			disableMotors = commonButtonFactory.Generate("Release".Localize(), fixedWidth: 0);
-			disableMotors.Margin = new BorderDouble(0);
-			disableMotors.Click += (s, e) =>
+			var toolbar = new FlowLayoutWidget
 			{
-				printer.Connection.ReleaseMotors(true);
+				HAnchor = HAnchor.Stretch,
+				Margin = new BorderDouble(bottom: 10)
 			};
 
-			homeButtonBar.AddChild(homeIconImageWidget);
-			homeButtonBar.AddChild(homeAllButton);
-			homeButtonBar.AddChild(homeXButton);
-			homeButtonBar.AddChild(homeYButton);
-			homeButtonBar.AddChild(homeZButton);
+			var homeIcon = new IconButton(AggContext.StaticData.LoadIcon("fa-home_16.png", IconColor.Theme), theme)
+			{
+				ToolTipText = ToolTipText = "Home X, Y and Z".Localize(),
+				BackgroundColor = theme.ActiveTabColor,
+				Margin = theme.ButtonSpacing
+			};
+			homeIcon.Click += (s, e) => printer.Connection.HomeAxis(PrinterConnection.Axis.XYZ);
+			toolbar.AddChild(homeIcon);
 
-			offsetStreamLabel = new TextWidget("Z Offset".Localize() + ":", pointSize: 8)
+			var homeXButton = new TextButton("X", theme)
+			{
+				ToolTipText = "Home X".Localize(),
+				BackgroundColor = theme.ActiveTabColor,
+				Margin = theme.ButtonSpacing
+			};
+			homeXButton.Click += (s, e) => printer.Connection.HomeAxis(PrinterConnection.Axis.X);
+			toolbar.AddChild(homeXButton);
+
+			var homeYButton = new TextButton("Y", theme)
+			{
+				ToolTipText = "Home Y".Localize(),
+				BackgroundColor = theme.ActiveTabColor,
+				Margin = theme.ButtonSpacing
+			};
+			homeYButton.Click += (s, e) => printer.Connection.HomeAxis(PrinterConnection.Axis.Y);
+			toolbar.AddChild(homeYButton);
+
+			var homeZButton = new TextButton("Z", theme)
+			{
+				ToolTipText = "Home Z".Localize(),
+				BackgroundColor = theme.ActiveTabColor,
+				Margin = theme.ButtonSpacing
+			};
+			homeZButton.Click += (s, e) => printer.Connection.HomeAxis(PrinterConnection.Axis.Z);
+			toolbar.AddChild(homeZButton);
+
+			// Display the current baby step offset stream values
+			var offsetStreamLabel = new TextWidget("Z Offset".Localize() + ":", pointSize: 8)
 			{
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
 				Margin = new BorderDouble(left: 10),
 				AutoExpandBoundsToText = true,
 				VAnchor = VAnchor.Center
 			};
-			homeButtonBar.AddChild(offsetStreamLabel);
+			toolbar.AddChild(offsetStreamLabel);
 
 			var ztuningWidget = new ZTuningWidget(printer.Settings, theme);
-			homeButtonBar.AddChild(ztuningWidget);
+			toolbar.AddChild(ztuningWidget);
 
-			homeButtonBar.AddChild(new HorizontalSpacer());
-			homeButtonBar.AddChild(disableMotors);
+			toolbar.AddChild(new HorizontalSpacer());
 
-			return homeButtonBar;
+			// Create 'Release' button
+			var disableMotors = new TextButton("Release".Localize(), theme)
+			{
+				BackgroundColor = theme.ActiveTabColor,
+			};
+			disableMotors.Click += (s, e) =>
+			{
+				printer.Connection.ReleaseMotors(true);
+			};
+			toolbar.AddChild(disableMotors);
+
+			return toolbar;
 		}
 
 		private FlowLayoutWidget GetHWDestinationBar()
@@ -258,26 +249,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 			xPosition.Text = "X: {0:0.00}".FormatWith(destinationPosition.X);
 			yPosition.Text = "Y: {0:0.00}".FormatWith(destinationPosition.Y);
 			zPosition.Text = "Z: {0:0.00}".FormatWith(destinationPosition.Z);
-		}
-
-		private void homeAll_Click(object sender, EventArgs mouseEvent)
-		{
-			printer.Connection.HomeAxis(PrinterConnection.Axis.XYZ);
-		}
-
-		private void homeXButton_Click(object sender, EventArgs mouseEvent)
-		{
-			printer.Connection.HomeAxis(PrinterConnection.Axis.X);
-		}
-
-		private void homeYButton_Click(object sender, EventArgs mouseEvent)
-		{
-			printer.Connection.HomeAxis(PrinterConnection.Axis.Y);
-		}
-
-		private void homeZButton_Click(object sender, EventArgs mouseEvent)
-		{
-			printer.Connection.HomeAxis(PrinterConnection.Axis.Z);
 		}
 	}
 
