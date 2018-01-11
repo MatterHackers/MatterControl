@@ -1,5 +1,6 @@
 ﻿using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.Agg.VertexSource;
 
 namespace MatterHackers.MatterControl.CustomWidgets
 {
@@ -8,13 +9,14 @@ namespace MatterHackers.MatterControl.CustomWidgets
 	/// </summary>
 	public class SectionWidget : FlowLayoutWidget
 	{
-		public SectionWidget(string sectionTitle, Color textColor, GuiWidget sectionContent, GuiWidget rightAlignedContent = null, int headingPointSize = -1, bool expandingContent = true, bool expanded = true)
+		public SectionWidget(string sectionTitle, GuiWidget sectionContent, ThemeConfig theme, GuiWidget rightAlignedContent = null, int headingPointSize = -1, bool expandingContent = true, bool expanded = true)
 			: base (FlowDirection.TopToBottom)
 		{
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Fit;
+			this.Border = new BorderDouble(bottom: 1);
 
-			var theme = ApplicationController.Instance.Theme;
+			SeperatorColor = new Color(theme.Colors.SecondaryTextColor, 50);
 
 			if (!string.IsNullOrEmpty(sectionTitle))
 			{
@@ -28,20 +30,23 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					var checkbox = new ExpandCheckboxButton(sectionTitle, pointSize: pointSize)
 					{
 						HAnchor = HAnchor.Stretch,
-						Checked = expanded
+						Checked = expanded,
 					};
 					checkbox.CheckedStateChanged += (s, e) =>
 					{
 						ContentPanel.Visible = checkbox.Checked;
+						this.BorderColor = (checkbox.Checked) ? Color.Transparent : SeperatorColor;
 					};
+
+					this.BorderColor = BorderColor = (expanded) ? Color.Transparent : SeperatorColor;
 
 					heading = checkbox;
 				}
 				else
 				{
-					heading = new TextWidget(sectionTitle, pointSize: pointSize, textColor: textColor);
+					heading = new TextWidget(sectionTitle, pointSize: pointSize, textColor: theme.Colors.PrimaryTextColor);
 				}
-				heading.Margin = new BorderDouble(0, 3, 0, 6);
+				heading.Padding = new BorderDouble(0, 5, 0, 6);
 
 				if (rightAlignedContent == null)
 				{
@@ -58,12 +63,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					headingRow.AddChild(rightAlignedContent);
 					this.AddChild(headingRow);
 				}
-
-				// Add heading separator
-				this.AddChild(new HorizontalLine(25)
-				{
-					Margin = new BorderDouble(0)
-				});
 			}
 
 			sectionContent.Visible = expanded;
@@ -71,18 +70,58 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.SetContentWidget(sectionContent);
 		}
 
+		private Color _seperatorColor;
+		public Color SeperatorColor
+		{
+			get => _seperatorColor;
+			set
+			{
+				if (value != _seperatorColor)
+				{
+					_seperatorColor = value;
+					this.BorderColor = _seperatorColor;
+					if (this.ContentPanel != null)
+					{
+						this.ContentPanel.BorderColor = _seperatorColor;
+					}
+				}
+			}
+		}
+
 		public GuiWidget ContentPanel { get; private set; }
-		
+
 		public void SetContentWidget(GuiWidget guiWidget)
 		{
-			ContentPanel?.Close();
+			// Close old child
+			this.ContentPanel?.Close();
 
-			ContentPanel = guiWidget;
-			ContentPanel.HAnchor = HAnchor.Stretch;
-			ContentPanel.VAnchor = VAnchor.Fit;
-			ContentPanel.BackgroundColor = ApplicationController.Instance.Theme.MinimalShade;
+			// Apply default rules for panel widget
+			guiWidget.HAnchor = HAnchor.Stretch;
+			guiWidget.VAnchor = VAnchor.Fit;
+			//guiWidget.BackgroundColor = ApplicationController.Instance.Theme.MinimalShade;
+			guiWidget.BorderColor = SeperatorColor;
+			guiWidget.Border = new BorderDouble(bottom: 1);
 
-			this.AddChild(ContentPanel);
+			// Set
+			this.AddChild(guiWidget);
+
+			// Store
+			this.ContentPanel = guiWidget;
+		}
+
+		public int BorderRadius { get; set; } = 0;
+
+		public override void OnDrawBackground(Graphics2D graphics2D)
+		{
+			if (this.BorderRadius > 0)
+			{
+				var rect = new RoundedRect(this.LocalBounds, this.BorderRadius);
+				graphics2D.Render(rect, this.BackgroundColor);
+			}
+			else
+			{
+				base.OnDrawBackground(graphics2D);
+			}
 		}
 	}
 }

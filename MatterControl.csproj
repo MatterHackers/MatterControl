@@ -73,6 +73,7 @@
   <ItemGroup>
     <Compile Include="AboutPage\AboutWindow.cs" />
     <Compile Include="AboutPage\CheckForUpdatesPage.cs" />
+    <Compile Include="ConfigurationPage\CalibrationSettings\CalibrationControls.cs" />
     <Compile Include="CustomWidgets\ConfigurePrinterWidget.cs" />
     <Compile Include="AboutPage\HTMLParser\HtmlWidget.cs" />
     <Compile Include="AboutPage\HTMLParser\ElementState.cs" />
@@ -84,7 +85,9 @@
     <Compile Include="ActionBar\TemperatureWidgetBed.cs" />
     <Compile Include="ApplicationView\OemProfileDictionary.cs" />
     <Compile Include="ApplicationView\WindowsPlatformsFeatures.cs" />
+    <Compile Include="PartPreviewWindow\AlignControls.cs" />
     <Compile Include="PartPreviewWindow\LibraryBrowserPage.cs" />
+    <Compile Include="PartPreviewWindow\MaterialControls.cs" />
     <Compile Include="PartPreviewWindow\MoveItemPage.cs" />
     <Compile Include="PartPreviewWindow\View3D\Actions\SubtractAndReplace.cs" />
     <Compile Include="PartPreviewWindow\View3D\PrinterBar\OverflowBar.cs" />
@@ -169,7 +172,6 @@
     <Compile Include="Library\ContentProviders\IContentProvider.cs" />
     <Compile Include="ConfigurationPage\ApplicationSettings\ApplicationSettingsView.cs" />
     <Compile Include="ConfigurationPage\LanguageSelector.cs" />
-    <Compile Include="ConfigurationPage\CalibrationSettings\CalibrationSettingsView.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\InstructionsPage.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\LevelingStrings.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\LevelWizardMesh.cs" />
@@ -284,7 +286,6 @@
     <Compile Include="PrinterCommunication\Io\BabyStepsStream.cs" />
     <Compile Include="PrinterCommunication\Io\PrintRecoveryStream.cs" />
     <Compile Include="PrinterControls\ControlWidgets\AdjustmentControls.cs" />
-    <Compile Include="PrinterControls\ControlWidgets\ControlWidgetBase.cs" />
     <Compile Include="PrinterControls\ControlWidgets\FanControls.cs" />
     <Compile Include="PrinterControls\ControlWidgets\MovementControls.cs" />
     <Compile Include="PrinterControls\ControlWidgets\PowerControls.cs" />

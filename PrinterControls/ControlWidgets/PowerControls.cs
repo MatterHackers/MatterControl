@@ -31,57 +31,53 @@ using System;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PrinterControls
 {
-	public class PowerControls : ControlWidgetBase
+	public class PowerControls : FlowLayoutWidget
 	{
 		private EventHandler unregisterEvents;
 		private CheckBox atxPowertoggleSwitch;
 		private PrinterConfig printer;
 
-		public PowerControls(PrinterConfig printer, int headingPointSize)
+		private PowerControls(PrinterConfig printer)
+			: base(FlowDirection.TopToBottom)
 		{
 			this.printer = printer;
-
-			var fanControlsGroupBox = new AltGroupBox(new TextWidget("ATX Power Control".Localize(), pointSize: headingPointSize, textColor: ActiveTheme.Instance.SecondaryAccentColor, bold: true));
-			fanControlsGroupBox.Margin = new BorderDouble(0);
-			fanControlsGroupBox.BorderColor = ActiveTheme.Instance.PrimaryTextColor;
-			fanControlsGroupBox.HAnchor |= HAnchor.Stretch;
-			this.AddChild(fanControlsGroupBox);
+			this.HAnchor = HAnchor.Stretch;
+			this.VAnchor = VAnchor.Stretch;
+			this.Visible = printer.Settings.GetValue<bool>(SettingsKey.has_power_control);
+			this.Enabled = printer.Connection.PrinterIsConnected;
 
 			atxPowertoggleSwitch = ImageButtonFactory.CreateToggleSwitch(false);
+			atxPowertoggleSwitch.HAnchor = HAnchor.Left;
 			atxPowertoggleSwitch.Margin = new BorderDouble(6, 0, 6, 6);
 			atxPowertoggleSwitch.CheckedStateChanged += (sender, e) =>
 			{
 				printer.Connection.AtxPowerEnabled = atxPowertoggleSwitch.Checked;
 			};
-
-			FlowLayoutWidget paddingContainer = new FlowLayoutWidget();
-			paddingContainer.Padding = new BorderDouble(3, 5, 3, 0);
-			{
-				paddingContainer.AddChild(atxPowertoggleSwitch);
-			}
-			fanControlsGroupBox.AddChild(paddingContainer);
+			this.AddChild(atxPowertoggleSwitch);
 
 			printer.Connection.CommunicationStateChanged.RegisterEvent((s, e) =>
-			{ 
+			{
 				this.Visible = printer.Settings.GetValue<bool>(SettingsKey.has_power_control);
-				this.SetEnableLevel(printer.Connection.PrinterIsConnected ? EnableLevel.Enabled : EnableLevel.Disabled);
+				this.Enabled = printer.Connection.PrinterIsConnected;
 			}, ref unregisterEvents);
 
 			printer.Connection.AtxPowerStateChanged.RegisterEvent((s, e) =>
 			{
 				this.atxPowertoggleSwitch.Checked = printer.Connection.AtxPowerEnabled;
 			}, ref unregisterEvents);
+		}
 
-			this.Visible = printer.Settings.GetValue<bool>(SettingsKey.has_power_control);
-			this.SetEnableLevel(printer.Connection.PrinterIsConnected ? EnableLevel.Enabled : EnableLevel.Disabled);
-
-			this.HAnchor = HAnchor.Stretch;
-			this.HAnchor = HAnchor.Stretch;
-			this.VAnchor = VAnchor.Stretch;
+		public static SectionWidget CreateSection(PrinterConfig printer, ThemeConfig theme)
+		{
+			return new SectionWidget(
+				"ATX Power Control".Localize(),
+				new PowerControls(printer),
+				theme);
 		}
 
 		public override void OnClosed(ClosedEventArgs e)

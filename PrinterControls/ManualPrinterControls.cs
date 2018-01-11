@@ -30,7 +30,6 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
-using MatterHackers.MatterControl.ConfigurationPage;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrinterControls;
@@ -38,6 +37,14 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl
 {
+	public static class EnabledWidgetExtensions
+	{
+		public static void SetEnabled(this GuiWidget guiWidget, bool enabled)
+		{
+			guiWidget.Enabled = enabled;
+		}
+	}
+
 	public class ManualPrinterControls : GuiWidget
 	{
 		static public RootedObjectEventHandler AddPluginControls = new RootedObjectEventHandler();
@@ -71,11 +78,11 @@ namespace MatterHackers.MatterControl
 
 	public class ManualPrinterControlsDesktop : ScrollableWidget
 	{
-		private DisableableWidget fanControlsContainer;
-		private DisableableWidget macroControlsContainer;
-		private DisableableWidget tuningAdjustmentControlsContainer;
+		private GuiWidget fanControlsContainer;
+		private GuiWidget macroControlsContainer;
+		private GuiWidget tuningAdjustmentControlsContainer;
 		private MovementControls movementControlsContainer;
-		private DisableableWidget calibrationControlsContainer;
+		private GuiWidget calibrationControlsContainer;
 
 		private EventHandler unregisterEvents;
 		private PrinterConfig printer;
@@ -90,49 +97,62 @@ namespace MatterHackers.MatterControl
 			this.AutoScroll = true;
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Stretch;
-			this.Padding = new BorderDouble(8, 0, theme.ToolbarPadding.Right, 6);
+			//this.Padding = new BorderDouble(8, 0, theme.ToolbarPadding.Right, 6);
 
 			int headingPointSize = theme.H1PointSize;
 
-			var controlsTopToBottomLayout = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			var column = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.MaxFitOrStretch,
 				VAnchor = VAnchor.Fit,
 				Name = "ManualPrinterControls.ControlsContainer",
 				Margin = new BorderDouble(0)
 			};
-			this.AddChild(controlsTopToBottomLayout);
+			this.AddChild(column);
 
-			movementControlsContainer = new MovementControls(printer, headingPointSize);
-			movementControlsContainer.Margin = new BorderDouble(top: 6);
-			controlsTopToBottomLayout.AddChild(movementControlsContainer);
+			SectionWidget sectionWidget = MovementControls.CreateSection(printer, theme);
+			column.AddChild(sectionWidget);
+			movementControlsContainer = sectionWidget.ContentPanel as MovementControls;
 
 			if (!printer.Settings.GetValue<bool>(SettingsKey.has_hardware_leveling))
 			{
-				calibrationControlsContainer = new CalibrationSettingsWidget(printer, theme.ButtonFactory, headingPointSize);
-				controlsTopToBottomLayout.AddChild(calibrationControlsContainer);
+				sectionWidget = CalibrationControls.CreateSection(printer, theme);
+				column.AddChild(sectionWidget);
+				calibrationControlsContainer = sectionWidget.ContentPanel;
 			}
 
-			macroControlsContainer = new MacroControls(printer, headingPointSize);
-			controlsTopToBottomLayout.AddChild(macroControlsContainer);
+			sectionWidget = MacroControls.CreateSection(printer, theme);
+			column.AddChild(sectionWidget);
+			macroControlsContainer = sectionWidget.ContentPanel;
 
-			var linearPanel = new FlowLayoutWidget()
-			{
-				HAnchor = HAnchor.Stretch
-			};
-			controlsTopToBottomLayout.AddChild(linearPanel);
-
-			fanControlsContainer = new FanControls(printer.Connection, headingPointSize);
 			if (printer.Settings.GetValue<bool>(SettingsKey.has_fan))
 			{
-				controlsTopToBottomLayout.AddChild(fanControlsContainer);
+				sectionWidget = FanControls.CreateSection(printer, theme);
+				column.AddChild(sectionWidget);
+				fanControlsContainer = sectionWidget.ContentPanel;
 			}
 
 #if !__ANDROID__
-			controlsTopToBottomLayout.AddChild(new PowerControls(printer, headingPointSize));
+			sectionWidget = PowerControls.CreateSection(printer, theme);
+			column.AddChild(sectionWidget);
 #endif
-			tuningAdjustmentControlsContainer = new AdjustmentControls(printer, headingPointSize);
-			controlsTopToBottomLayout.AddChild(tuningAdjustmentControlsContainer);
+
+			sectionWidget = AdjustmentControls.CreateSection(printer, theme);
+			column.AddChild(sectionWidget);
+			tuningAdjustmentControlsContainer = sectionWidget.ContentPanel;
+
+
+			// Enforce panel padding in sidebar
+			foreach (var widget in column.Children<SectionWidget>())
+			{
+				var contentPanel = widget.ContentPanel;
+				contentPanel.Padding = new BorderDouble(16, 16, 8, 2);
+
+				widget.SeperatorColor = Color.Transparent;
+				widget.BorderRadius = 5;
+				widget.Margin = new BorderDouble(10, 0, 10, 10);
+				widget.BackgroundColor = theme.MinimalShade;
+			}
 
 			// HACK: this is a hack to make the layout engine fire again for this control
 			UiThread.RunOnIdle(() => tuningAdjustmentControlsContainer.Width = tuningAdjustmentControlsContainer.Width + 1);
@@ -159,11 +179,11 @@ namespace MatterHackers.MatterControl
 		{
 			if (!printer.Settings.PrinterSelected)
 			{
-				movementControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-				fanControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-				macroControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-				calibrationControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-				tuningAdjustmentControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+				movementControlsContainer?.SetEnabled(false);
+				fanControlsContainer?.SetEnabled(false);
+				macroControlsContainer?.SetEnabled(false);
+				calibrationControlsContainer?.SetEnabled(false);
+				tuningAdjustmentControlsContainer?.SetEnabled(false);
 			}
 			else // we at least have a printer selected
 			{
@@ -174,15 +194,15 @@ namespace MatterHackers.MatterControl
 					case CommunicationStates.Disconnected:
 					case CommunicationStates.AttemptingToConnect:
 					case CommunicationStates.FailedToConnect:
-						movementControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
-						fanControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-						macroControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
-						tuningAdjustmentControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-						calibrationControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+						movementControlsContainer?.SetEnabled(false);
+						fanControlsContainer?.SetEnabled(false);
+						macroControlsContainer?.SetEnabled(false);
+						tuningAdjustmentControlsContainer?.SetEnabled(false);
+						calibrationControlsContainer?.SetEnabled(false);
 
 						foreach (var widget in movementControlsContainer.DisableableWidgets)
 						{
-							widget?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+							widget?.SetEnabled(true);
 						}
 						movementControlsContainer?.jogControls.SetEnabledLevels(false, false);
 
@@ -190,25 +210,25 @@ namespace MatterHackers.MatterControl
 
 					case CommunicationStates.FinishedPrint:
 					case CommunicationStates.Connected:
-						movementControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						fanControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						macroControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						tuningAdjustmentControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						calibrationControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+						movementControlsContainer?.SetEnabled(true);
+						fanControlsContainer?.SetEnabled(true);
+						macroControlsContainer?.SetEnabled(true);
+						tuningAdjustmentControlsContainer?.SetEnabled(true);
+						calibrationControlsContainer?.SetEnabled(true);
 
 						foreach (var widget in movementControlsContainer.DisableableWidgets)
 						{
-							widget?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+							widget?.SetEnabled(true);
 						}
 						movementControlsContainer?.jogControls.SetEnabledLevels(false, true);
 						break;
 
 					case CommunicationStates.PrintingFromSd:
-						movementControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
-						fanControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						macroControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
-						tuningAdjustmentControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-						calibrationControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+						movementControlsContainer?.SetEnabled(false);
+						fanControlsContainer?.SetEnabled(true);
+						macroControlsContainer?.SetEnabled(false);
+						tuningAdjustmentControlsContainer?.SetEnabled(false);
+						calibrationControlsContainer?.SetEnabled(false);
 						break;
 
 					case CommunicationStates.PreparingToPrint:
@@ -219,14 +239,14 @@ namespace MatterHackers.MatterControl
 							case DetailedPrintingState.HeatingBed:
 							case DetailedPrintingState.HeatingExtruder:
 							case DetailedPrintingState.Printing:
-								fanControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-								macroControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
-								tuningAdjustmentControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-								calibrationControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+								fanControlsContainer?.SetEnabled(true);
+								macroControlsContainer?.SetEnabled(false);
+								tuningAdjustmentControlsContainer?.SetEnabled(true);
+								calibrationControlsContainer?.SetEnabled(false);
 
 								foreach (var widget in movementControlsContainer.DisableableWidgets)
 								{
-									widget?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+									widget?.SetEnabled(false);
 								}
 
 								movementControlsContainer?.jogControls.SetEnabledLevels(true, false);
@@ -238,15 +258,15 @@ namespace MatterHackers.MatterControl
 						break;
 
 					case CommunicationStates.Paused:
-						movementControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						fanControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						macroControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						tuningAdjustmentControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						calibrationControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+						movementControlsContainer?.SetEnabled(true);
+						fanControlsContainer?.SetEnabled(true);
+						macroControlsContainer?.SetEnabled(true);
+						tuningAdjustmentControlsContainer?.SetEnabled(true);
+						calibrationControlsContainer?.SetEnabled(true);
 
 						foreach (var widget in movementControlsContainer.DisableableWidgets)
 						{
-							widget?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+							widget?.SetEnabled(true);
 						}
 						movementControlsContainer?.jogControls.SetEnabledLevels(false, true);
 

@@ -40,26 +40,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		internal CheckBox uniformScale;
 		internal CheckBox usePercents;
 		internal Vector3 scaleRatios = Vector3.One;
+		private ThemeConfig theme;
 		private InteractiveScene scene;
-		private Color textColor;
 
-		public ScaleControls(InteractiveScene scene, Color textColor)
+		public ScaleControls(InteractiveScene scene, ThemeConfig theme)
 			: base (FlowDirection.TopToBottom)
 		{
+			this.theme = theme;
 			this.scene = scene;
-			this.textColor = textColor;
-
-			var theme = ApplicationController.Instance.Theme;
-
 			this.Padding = 15;
 
 			List<GuiWidget> scaleControls = new List<GuiWidget>();
 
 			// Put in the scale ratio edit field
-			this.AddChild(new ScaleOptionsPanel(this));
+			this.AddChild(new ScaleOptionsPanel(this, theme));
 
 			// Going to use this in the scaling controls, create it early.
-			usePercents = new CheckBox("Use Percents".Localize(), textColor: textColor);
+			usePercents = new CheckBox("Use Percents".Localize(), textColor: theme.Colors.PrimaryTextColor);
 
 			// add in the dimensions
 			this.AddChild(CreateAxisScalingControl("x".ToUpper(), 0));
@@ -67,7 +64,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.AddChild(CreateAxisScalingControl("z".ToUpper(), 2));
 
 			// lock ratio checkbox
-			uniformScale = new CheckBox("Lock Ratio".Localize(), textColor: textColor);
+			uniformScale = new CheckBox("Lock Ratio".Localize(), textColor: theme.Colors.PrimaryTextColor);
 			uniformScale.Margin = new BorderDouble(5, 3);
 			uniformScale.Checked = true;
 			uniformScale.CheckedStateChanged += (s, e) =>
@@ -90,7 +87,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.AddChild(usePercents);
 
 			// put in the apply button
-			var applyScaleButton = new TextButton("Apply Scale".Localize(), theme, Color.Black)
+			var applyScaleButton = new TextButton("Apply Scale".Localize(), theme)
 			{
 				VAnchor = VAnchor.Absolute,
 				HAnchor = HAnchor.Right,
@@ -122,16 +119,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private GuiWidget CreateAxisScalingControl(string axis, int axisIndex)
 		{
-			FlowLayoutWidget leftToRight = new FlowLayoutWidget();
-			leftToRight.Padding = new BorderDouble(5, 3);
+			var leftToRight = new FlowLayoutWidget
+			{
+				Padding = new BorderDouble(5, 3)
+			};
 
-			TextWidget sizeDescription = new TextWidget("{0}:".FormatWith(axis), textColor: textColor)
+			var sizeDescription = new TextWidget("{0}:".FormatWith(axis), textColor: theme.Colors.PrimaryTextColor)
 			{
 				VAnchor = VAnchor.Center
 			};
 			leftToRight.AddChild(sizeDescription);
 
-			sizeDisplay[axisIndex] = new EditableNumberDisplay(100, "1000.00", textColor);
+			sizeDisplay[axisIndex] = new EditableNumberDisplay(100, "1000.00", theme.Colors.PrimaryTextColor);
 			sizeDisplay[axisIndex].DisplayFormat = "{0:0.00}";
 			sizeDisplay[axisIndex].ValueChanged += (sender, e) =>
 			{
@@ -150,7 +149,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			leftToRight.AddChild(sizeDisplay[axisIndex]);
 
-			TextWidget units = new TextWidget("mm".FormatWith(axis), textColor: textColor)
+			var units = new TextWidget("mm".FormatWith(axis), textColor: theme.Colors.PrimaryTextColor)
 			{
 				VAnchor = VAnchor.Center
 			};
@@ -184,7 +183,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public class ScaleOptionsPanel : FlowLayoutWidget, IIgnoredPopupChild
 		{
-			public ScaleOptionsPanel(ScaleControls scaleControls)
+			public ScaleOptionsPanel(ScaleControls scaleControls, ThemeConfig theme)
 				: base(FlowDirection.TopToBottom)
 			{
 				this.HAnchor = HAnchor.Stretch;
@@ -198,9 +197,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{ 10, "cm to mm (10)"},
 				};
 
-				var dropDownList = new DropDownList("Scale".Localize(), ActiveTheme.Instance.PrimaryTextColor, Direction.Down)
+				var dropDownList = new DropDownList("Scale".Localize(), theme.Colors.PrimaryTextColor, Direction.Down)
 				{
-					TextColor = Color.Black,
 					HAnchor = HAnchor.Left
 				};
 

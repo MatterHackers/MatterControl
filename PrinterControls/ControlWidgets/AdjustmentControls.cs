@@ -38,7 +38,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PrinterControls
 {
-	public class AdjustmentControls : ControlWidgetBase
+	public class AdjustmentControls : FlowLayoutWidget
 	{
 		private MHNumberEdit feedRateValue;
 		private MHNumberEdit extrusionValue;
@@ -53,15 +53,9 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		private EventHandler unregisterEvents;
 
-		public AdjustmentControls(PrinterConfig printer, int headingPointSize)
+		private AdjustmentControls(PrinterConfig printer, ThemeConfig theme)
+			: base (FlowDirection.TopToBottom)
 		{
-			var topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				Margin = new BorderDouble(0, 0, 0, 0),
-				HAnchor = HAnchor.Stretch,
-				Padding = new BorderDouble(3, 0, 3, 0)
-			};
-
 			double sliderWidth = 300 * GuiWidget.DeviceScale;
 			double sliderThumbWidth = 10 * GuiWidget.DeviceScale;
 
@@ -127,7 +121,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				};
 				row.AddChild(feedRateValue);
 
-				topToBottom.AddChild(row);
+				this.AddChild(row);
 			}
 
 			{
@@ -193,14 +187,8 @@ namespace MatterHackers.MatterControl.PrinterControls
 				row.AddChild(extrusionRatioSlider);
 				row.AddChild(extrusionValue);
 
-				topToBottom.AddChild(row);
+				this.AddChild(row);
 			}
-
-			this.AddChild(
-				new SectionWidget(
-					"Tuning Adjustment".Localize(),
-					ActiveTheme.Instance.PrimaryAccentColor,
-					topToBottom));
 
 			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
 			{
@@ -218,6 +206,14 @@ namespace MatterHackers.MatterControl.PrinterControls
 					feedRateValue.ActuallNumberEdit.Value = Math.Round(feedrateRatio, 2);
 				}
 			}, ref unregisterEvents);
+		}
+
+		public static SectionWidget CreateSection(PrinterConfig printer, ThemeConfig theme)
+		{
+			return new SectionWidget(
+				"Tuning Adjustment".Localize(),
+				new AdjustmentControls(printer, theme),
+				theme);
 		}
 
 		public override void OnLoad(EventArgs args)

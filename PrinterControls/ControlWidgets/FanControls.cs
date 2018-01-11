@@ -37,7 +37,7 @@ using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl.PrinterControls
 {
-	public class FanControls : ControlWidgetBase
+	public class FanControls : FlowLayoutWidget
 	{
 		private EventHandler unregisterEvents;
 
@@ -45,11 +45,9 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		private CheckBox toggleSwitch;
 
-		PrinterConnection printerConnection;
-
-		public FanControls(PrinterConnection printerConnection, int headingPointSize)
+		private FanControls(PrinterConnection printerConnection, ThemeConfig theme)
+			: base(FlowDirection.TopToBottom)
 		{
-			this.printerConnection = printerConnection;
 			this.HAnchor = HAnchor.Stretch;
 			this.HAnchor = HAnchor.Stretch;
 
@@ -105,11 +103,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				VAnchor = VAnchor.Center
 			});
 
-			this.AddChild(
-				new SectionWidget(
-					"Fan".Localize(),
-					ActiveTheme.Instance.PrimaryAccentColor,
-					leftToRight));
+			this.AddChild(leftToRight);
 
 			// CreateFanControls
 			printerConnection.FanSpeedSet.RegisterEvent((s, e) =>
@@ -126,6 +120,14 @@ namespace MatterHackers.MatterControl.PrinterControls
 				fanSpeedDisplay.Value = printerConnection.FanSpeed0To255 * 100 / 255;
 			}
 			, ref unregisterEvents);
+		}
+
+		public static SectionWidget CreateSection(PrinterConfig printer, ThemeConfig theme)
+		{
+			return new SectionWidget(
+				"Fan".Localize(),
+				new FanControls(printer.Connection, theme),
+				theme);
 		}
 
 		public override void OnClosed(ClosedEventArgs e)

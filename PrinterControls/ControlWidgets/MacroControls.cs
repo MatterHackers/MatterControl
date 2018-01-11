@@ -37,74 +37,56 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PrinterControls
 {
-	public class MacroControls : ControlWidgetBase
+	public class MacroControls : FlowLeftRightWithWrapping
 	{
-		public MacroControls(PrinterConfig printer, int headingPointSize)
+		//private PrinterConfig printer;
+		private MacroControls(PrinterConfig printer, ThemeConfig theme)
 		{
-			this.AddChild(new MacroControlsWidget(printer, headingPointSize));
+			var noMacrosFound = new TextWidget("No macros are currently set up for this printer.".Localize(), pointSize: 10)
+			{
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+			};
+			this.AddChild(noMacrosFound);
+
+			if (printer.Settings?.GetMacros(MacroUiLocation.Controls).Any() != true)
+			{
+				noMacrosFound.Visible = true;
+				return;
+			}
+
+			foreach (GCodeMacro macro in printer.Settings.GetMacros(MacroUiLocation.Controls))
+			{
+				Button macroButton = theme.HomingButtons.Generate(GCodeMacro.FixMacroName(macro.Name));
+				macroButton.Margin = new BorderDouble(right: 5);
+				macroButton.Click += (s, e) => macro.Run(printer.Connection);
+
+				this.AddChild(macroButton);
+			}
+
+			this.Children.CollectionChanged += (s, e) =>
+			{
+				if (!this.HasBeenClosed)
+				{
+					noMacrosFound.Visible = this.Children.Count == 0;
+				}
+			};
 		}
-	}
 
-	public class MacroControlsWidget : FlowLayoutWidget
-	{
-		private PrinterConfig printer;
-		public MacroControlsWidget(PrinterConfig printer, int headingPointSize)
-					: base(FlowDirection.TopToBottom)
+		public static SectionWidget CreateSection(PrinterConfig printer, ThemeConfig theme)
 		{
-			this.printer = printer;
-			this.HAnchor = HAnchor.Stretch;
+			var widget = new MacroControls(printer, theme);
 
-			var buttonFactory = ApplicationController.Instance.Theme.HomingButtons;
-
-			// add the widgets to this window
-			Button editButton = buttonFactory.GenerateIconButton(AggContext.StaticData.LoadIcon("icon_edit.png", 16, 16, IconColor.Theme));
+			var editButton = new IconButton(AggContext.StaticData.LoadIcon("icon_edit.png", 16, 16, IconColor.Theme), theme);
 			editButton.Click += (s, e) =>
 			{
 				DialogWindow.Show(new MacroListPage(printer.Settings));
 			};
 
-			this.AddChild(
-				new SectionWidget(
-					"Macros".Localize(),
-					ActiveTheme.Instance.PrimaryAccentColor,
-					GetMacroButtonContainer(buttonFactory),
-					editButton));
-		}
-
-		private FlowLayoutWidget GetMacroButtonContainer(TextImageButtonFactory buttonFactory)
-		{
-			var macroContainer = new FlowLeftRightWithWrapping();
-
-			var noMacrosFound = new TextWidget("No macros are currently set up for this printer.".Localize(), pointSize: 10)
-			{
-				TextColor = ActiveTheme.Instance.PrimaryTextColor,
-			};
-			macroContainer.AddChild(noMacrosFound);
-
-			if (printer.Settings?.GetMacros(MacroUiLocation.Controls).Any() != true)
-			{
-				noMacrosFound.Visible = true;
-				return macroContainer;
-			}
-
-			foreach (GCodeMacro macro in printer.Settings.GetMacros(MacroUiLocation.Controls))
-			{
-				Button macroButton = buttonFactory.Generate(GCodeMacro.FixMacroName(macro.Name));
-				macroButton.Margin = new BorderDouble(right: 5);
-				macroButton.Click += (s, e) => macro.Run(printer.Connection);
-
-				macroContainer.AddChild(macroButton);
-			}
-
-			macroContainer.Children.CollectionChanged += (s, e) =>
-			{
-				if (!this.HasBeenClosed)
-				{
-					noMacrosFound.Visible = macroContainer.Children.Count == 0;
-				}
-			};
-			
-			return macroContainer;
+			return new SectionWidget(
+				"Macros".Localize(),
+				widget,
+				theme,
+				editButton);
 		}
 	}
 }
