@@ -143,7 +143,7 @@ namespace MatterHackers.MatterControl.Library.Export
 			return fileToProcess;
 		}
 
-		public bool ApplyLeveling { get; set; }
+		public bool ApplyLeveling { get; set; } = true;
 
 		private void SaveGCodeToNewLocation(string gcodeFilename, string dest)
 		{
