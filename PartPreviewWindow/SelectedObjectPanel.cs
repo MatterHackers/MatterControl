@@ -40,7 +40,7 @@ using MatterHackers.MatterControl.Library;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public partial class SelectedObjectPanel : FlowLayoutWidget, IContentStore
+	public class SelectedObjectPanel : FlowLayoutWidget, IContentStore
 	{
 		private IObject3D item = new Object3D();
 
@@ -349,8 +349,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			});
 		}
 
-		internal enum AxisAlignment { Min, Center, Max, SourceCoordinateSystem };
-
 		public class InMemoryItem : ILibraryContentItem
 		{
 			private IObject3D existingItem;
@@ -382,4 +380,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 	}
+
+	public enum AxisAlignment { Min, Center, Max, SourceCoordinateSystem };
 }

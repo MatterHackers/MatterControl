@@ -33,93 +33,89 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MeshVisualizer;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public partial class SelectedObjectPanel
+	public class MaterialControls : FlowLayoutWidget, IIgnoredPopupChild
 	{
-		public class MaterialControls : FlowLayoutWidget, IIgnoredPopupChild
+		private ObservableCollection<GuiWidget> materialButtons = new ObservableCollection<GuiWidget>();
+		private ThemeConfig theme;
+		private InteractiveScene scene;
+
+		public MaterialControls(InteractiveScene scene, ThemeConfig theme)
+			: base(FlowDirection.TopToBottom)
 		{
-			private ObservableCollection<GuiWidget> materialButtons = new ObservableCollection<GuiWidget>();
-			private ThemeConfig theme;
-			private InteractiveScene scene;
+			this.theme = theme;
+			this.scene = scene;
+			this.HAnchor = HAnchor.Stretch;
+			this.VAnchor = VAnchor.Fit;
 
-			public MaterialControls(InteractiveScene scene, ThemeConfig theme)
-				: base (FlowDirection.TopToBottom)
+			materialButtons.Clear();
+			int extruderCount = 4;
+			for (int extruderIndex = 0; extruderIndex < extruderCount; extruderIndex++)
 			{
-				this.theme = theme;
-				this.scene = scene;
-				this.HAnchor = HAnchor.Stretch;
-				this.VAnchor = VAnchor.Fit;
-
-				materialButtons.Clear();
-				int extruderCount = 4;
-				for (int extruderIndex = 0; extruderIndex < extruderCount; extruderIndex++)
+				var row = new FlowLayoutWidget()
 				{
-					var row = new FlowLayoutWidget()
+					HAnchor = HAnchor.Stretch,
+					VAnchor = VAnchor.Fit
+				};
+				this.AddChild(row);
+
+				var radioButton = new RadioButton(string.Format("{0} {1}", "Material".Localize(), extruderIndex + 1), textColor: theme.Colors.PrimaryTextColor);
+				materialButtons.Add(radioButton);
+				radioButton.SiblingRadioButtonList = materialButtons;
+				row.AddChild(radioButton);
+
+				int extruderIndexCanPassToClick = extruderIndex;
+				radioButton.Click += (sender, e) =>
+				{
+					if (scene.HasSelection)
 					{
-						HAnchor = HAnchor.Stretch,
-						VAnchor = VAnchor.Fit
-					};
-					this.AddChild(row);
+						scene.SelectedItem.MaterialIndex = extruderIndexCanPassToClick;
+						scene.Invalidate();
+					}
+				};
 
-					var radioButton = new RadioButton(string.Format("{0} {1}", "Material".Localize(), extruderIndex + 1), textColor: theme.Colors.PrimaryTextColor);
-					materialButtons.Add(radioButton);
-					radioButton.SiblingRadioButtonList = materialButtons;
-					row.AddChild(radioButton);
-
-					int extruderIndexCanPassToClick = extruderIndex;
-					radioButton.Click += (sender, e) =>
-					{
-						if (scene.HasSelection)
-						{
-							scene.SelectedItem.MaterialIndex = extruderIndexCanPassToClick;
-							scene.Invalidate();
-						}
-					};
-
-					row.AddChild(new GuiWidget(16, 16)
-					{
-						BackgroundColor = MaterialRendering.Color(extruderIndex),
-						Margin = new BorderDouble(5, 0, 0, 0)
-					});
-				}
-
-				scene.SelectionChanged += Scene_SelectionChanged;
+				row.AddChild(new GuiWidget(16, 16)
+				{
+					BackgroundColor = MaterialRendering.Color(extruderIndex),
+					Margin = new BorderDouble(5, 0, 0, 0)
+				});
 			}
 
-			private void Scene_SelectionChanged(object sender, EventArgs e)
+			scene.SelectionChanged += Scene_SelectionChanged;
+		}
+
+		private void Scene_SelectionChanged(object sender, EventArgs e)
+		{
+			var selectedItem = scene.SelectedItem;
+
+			if (selectedItem != null
+				&& materialButtons?.Count > 0)
 			{
-				var selectedItem = scene.SelectedItem;
-
-				if (selectedItem != null
-					&& materialButtons?.Count > 0)
+				bool setSelection = false;
+				// Set the material selector to have the correct material button selected
+				for (int i = 0; i < materialButtons.Count; i++)
 				{
-					bool setSelection = false;
-					// Set the material selector to have the correct material button selected
-					for (int i = 0; i < materialButtons.Count; i++)
+					if (selectedItem.MaterialIndex == i)
 					{
-						if (selectedItem.MaterialIndex == i)
-						{
-							((RadioButton)materialButtons[i]).Checked = true;
-							setSelection = true;
-						}
-					}
-
-					if (!setSelection)
-					{
-						((RadioButton)materialButtons[0]).Checked = true;
+						((RadioButton)materialButtons[i]).Checked = true;
+						setSelection = true;
 					}
 				}
-			}
 
-			public override void OnClosed(ClosedEventArgs e)
-			{
-				scene.SelectionChanged -= Scene_SelectionChanged;
-				base.OnClosed(e);
+				if (!setSelection)
+				{
+					((RadioButton)materialButtons[0]).Checked = true;
+				}
 			}
+		}
+
+		public override void OnClosed(ClosedEventArgs e)
+		{
+			scene.SelectionChanged -= Scene_SelectionChanged;
+			base.OnClosed(e);
 		}
 	}
 }
