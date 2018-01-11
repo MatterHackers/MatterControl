@@ -90,7 +90,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					return false;
 				}
 ,
-				GetDisplayString = (value) => "{0:0.0}mm".FormatWith(value)
+				GetDisplayString = (value) => "{0:0.0#}mm".FormatWith(value)
 			};
 
 			zHeightDisplayInfo.VisibleChanged += (s, e) =>
