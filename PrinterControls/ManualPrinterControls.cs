@@ -38,6 +38,14 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl
 {
+	public static class EnabledWidgetExtensions
+	{
+		public static void SetEnabled(this GuiWidget guiWidget, bool enabled)
+		{
+			guiWidget.Enabled = enabled;
+		}
+	}
+
 	public class ManualPrinterControls : GuiWidget
 	{
 		static public RootedObjectEventHandler AddPluginControls = new RootedObjectEventHandler();
@@ -71,11 +79,11 @@ namespace MatterHackers.MatterControl
 
 	public class ManualPrinterControlsDesktop : ScrollableWidget
 	{
-		private DisableableWidget fanControlsContainer;
-		private DisableableWidget macroControlsContainer;
-		private DisableableWidget tuningAdjustmentControlsContainer;
+		private GuiWidget fanControlsContainer;
+		private GuiWidget macroControlsContainer;
+		private GuiWidget tuningAdjustmentControlsContainer;
 		private MovementControls movementControlsContainer;
-		private DisableableWidget calibrationControlsContainer;
+		private GuiWidget calibrationControlsContainer;
 
 		private EventHandler unregisterEvents;
 		private PrinterConfig printer;
@@ -103,8 +111,12 @@ namespace MatterHackers.MatterControl
 			};
 			this.AddChild(controlsTopToBottomLayout);
 
-			movementControlsContainer = new MovementControls(printer, theme);
-			movementControlsContainer.Margin = new BorderDouble(top: 6);
+			movementControlsContainer = new MovementControls(printer, theme)
+			{
+				Margin = new BorderDouble(top: 6),
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit
+			};
 			controlsTopToBottomLayout.AddChild(movementControlsContainer);
 
 			if (!printer.Settings.GetValue<bool>(SettingsKey.has_hardware_leveling))
@@ -113,7 +125,7 @@ namespace MatterHackers.MatterControl
 				controlsTopToBottomLayout.AddChild(calibrationControlsContainer);
 			}
 
-			macroControlsContainer = new MacroControls(printer, theme);
+			macroControlsContainer = new MacroControlsWidget(printer, theme);
 			controlsTopToBottomLayout.AddChild(macroControlsContainer);
 
 			var linearPanel = new FlowLayoutWidget()
@@ -129,9 +141,17 @@ namespace MatterHackers.MatterControl
 			}
 
 #if !__ANDROID__
-			controlsTopToBottomLayout.AddChild(new PowerControls(printer, headingPointSize));
+			controlsTopToBottomLayout.AddChild(new PowerControls(printer, headingPointSize)
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit
+			});
 #endif
-			tuningAdjustmentControlsContainer = new AdjustmentControls(printer, theme);
+			tuningAdjustmentControlsContainer = new AdjustmentControls(printer, theme)
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit
+			};
 			controlsTopToBottomLayout.AddChild(tuningAdjustmentControlsContainer);
 
 			// HACK: this is a hack to make the layout engine fire again for this control
@@ -159,11 +179,11 @@ namespace MatterHackers.MatterControl
 		{
 			if (!printer.Settings.PrinterSelected)
 			{
-				movementControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-				fanControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-				macroControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-				calibrationControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-				tuningAdjustmentControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+				movementControlsContainer?.SetEnabled(false);
+				fanControlsContainer?.SetEnabled(false);
+				macroControlsContainer?.SetEnabled(false);
+				calibrationControlsContainer?.SetEnabled(false);
+				tuningAdjustmentControlsContainer?.SetEnabled(false);
 			}
 			else // we at least have a printer selected
 			{
@@ -174,15 +194,15 @@ namespace MatterHackers.MatterControl
 					case CommunicationStates.Disconnected:
 					case CommunicationStates.AttemptingToConnect:
 					case CommunicationStates.FailedToConnect:
-						movementControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
-						fanControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-						macroControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
-						tuningAdjustmentControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-						calibrationControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+						movementControlsContainer?.SetEnabled(false);
+						fanControlsContainer?.SetEnabled(false);
+						macroControlsContainer?.SetEnabled(false);
+						tuningAdjustmentControlsContainer?.SetEnabled(false);
+						calibrationControlsContainer?.SetEnabled(false);
 
 						foreach (var widget in movementControlsContainer.DisableableWidgets)
 						{
-							widget?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+							widget?.SetEnabled(true);
 						}
 						movementControlsContainer?.jogControls.SetEnabledLevels(false, false);
 
@@ -190,25 +210,25 @@ namespace MatterHackers.MatterControl
 
 					case CommunicationStates.FinishedPrint:
 					case CommunicationStates.Connected:
-						movementControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						fanControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						macroControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						tuningAdjustmentControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						calibrationControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+						movementControlsContainer?.SetEnabled(true);
+						fanControlsContainer?.SetEnabled(true);
+						macroControlsContainer?.SetEnabled(true);
+						tuningAdjustmentControlsContainer?.SetEnabled(true);
+						calibrationControlsContainer?.SetEnabled(true);
 
 						foreach (var widget in movementControlsContainer.DisableableWidgets)
 						{
-							widget?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+							widget?.SetEnabled(true);
 						}
 						movementControlsContainer?.jogControls.SetEnabledLevels(false, true);
 						break;
 
 					case CommunicationStates.PrintingFromSd:
-						movementControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
-						fanControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						macroControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
-						tuningAdjustmentControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
-						calibrationControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+						movementControlsContainer?.SetEnabled(false);
+						fanControlsContainer?.SetEnabled(true);
+						macroControlsContainer?.SetEnabled(false);
+						tuningAdjustmentControlsContainer?.SetEnabled(false);
+						calibrationControlsContainer?.SetEnabled(false);
 						break;
 
 					case CommunicationStates.PreparingToPrint:
@@ -219,14 +239,14 @@ namespace MatterHackers.MatterControl
 							case DetailedPrintingState.HeatingBed:
 							case DetailedPrintingState.HeatingExtruder:
 							case DetailedPrintingState.Printing:
-								fanControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-								macroControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.ConfigOnly);
-								tuningAdjustmentControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-								calibrationControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+								fanControlsContainer?.SetEnabled(true);
+								macroControlsContainer?.SetEnabled(false);
+								tuningAdjustmentControlsContainer?.SetEnabled(true);
+								calibrationControlsContainer?.SetEnabled(false);
 
 								foreach (var widget in movementControlsContainer.DisableableWidgets)
 								{
-									widget?.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+									widget?.SetEnabled(false);
 								}
 
 								movementControlsContainer?.jogControls.SetEnabledLevels(true, false);
@@ -238,15 +258,15 @@ namespace MatterHackers.MatterControl
 						break;
 
 					case CommunicationStates.Paused:
-						movementControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						fanControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						macroControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						tuningAdjustmentControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
-						calibrationControlsContainer?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+						movementControlsContainer?.SetEnabled(true);
+						fanControlsContainer?.SetEnabled(true);
+						macroControlsContainer?.SetEnabled(true);
+						tuningAdjustmentControlsContainer?.SetEnabled(true);
+						calibrationControlsContainer?.SetEnabled(true);
 
 						foreach (var widget in movementControlsContainer.DisableableWidgets)
 						{
-							widget?.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+							widget?.SetEnabled(true);
 						}
 						movementControlsContainer?.jogControls.SetEnabledLevels(false, true);
 

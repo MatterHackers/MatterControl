@@ -37,19 +37,11 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PrinterControls
 {
-	public class MacroControls : ControlWidgetBase
-	{
-		public MacroControls(PrinterConfig printer, ThemeConfig theme)
-		{
-			this.AddChild(new MacroControlsWidget(printer, theme));
-		}
-	}
-
 	public class MacroControlsWidget : FlowLayoutWidget
 	{
 		//private PrinterConfig printer;
 		public MacroControlsWidget(PrinterConfig printer, ThemeConfig theme)
-					: base(FlowDirection.TopToBottom)
+			: base(FlowDirection.TopToBottom)
 		{
 			this.HAnchor = HAnchor.Stretch;
 

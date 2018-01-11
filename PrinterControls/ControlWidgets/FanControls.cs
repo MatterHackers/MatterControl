@@ -37,7 +37,7 @@ using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl.PrinterControls
 {
-	public class FanControls : ControlWidgetBase
+	public class FanControls : FlowLayoutWidget
 	{
 		private EventHandler unregisterEvents;
 
@@ -46,6 +46,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 		private CheckBox toggleSwitch;
 
 		public FanControls(PrinterConnection printerConnection, ThemeConfig theme)
+			: base(FlowDirection.TopToBottom)
 		{
 			this.HAnchor = HAnchor.Stretch;
 			this.HAnchor = HAnchor.Stretch;

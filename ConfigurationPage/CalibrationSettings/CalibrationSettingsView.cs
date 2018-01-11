@@ -6,12 +6,11 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.MatterControl.PrinterControls;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.ConfigurationPage
 {
-	public class CalibrationSettingsWidget : ControlWidgetBase
+	public class CalibrationSettingsWidget : FlowLayoutWidget
 	{
 		private EventHandler unregisterEvents;
 		private EditLevelingSettingsWindow editLevelingSettingsWindow;
@@ -21,6 +20,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		private PrinterConfig printer;
 
 		public CalibrationSettingsWidget(PrinterConfig printer, ThemeConfig theme)
+			: base(FlowDirection.TopToBottom)
 		{
 			this.printer = printer;
 			this.buttonFactory = theme.ButtonFactory;
@@ -148,12 +148,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				|| printer.Connection.CommunicationState == CommunicationStates.Printing
 				|| printer.Connection.PrinterIsPaused)
 			{
-				this.SetEnableLevel(DisableableWidget.EnableLevel.Disabled);
+				this.Enabled = false;
 				runPrintLevelingButton.Enabled = true; // setting this true when the element is disabled makes the colors stay correct
 			}
 			else
 			{
-				this.SetEnableLevel(DisableableWidget.EnableLevel.Enabled);
+				this.Enabled = true;
 				runPrintLevelingButton.Enabled = printer.Connection.PrinterIsConnected;
 			}
 		}

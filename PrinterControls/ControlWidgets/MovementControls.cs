@@ -41,7 +41,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PrinterControls
 {
-	public class MovementControls : ControlWidgetBase
+	public class MovementControls : FlowLayoutWidget
 	{
 		private PrinterConfig printer;
 		private ThemeConfig theme;
@@ -88,6 +88,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 		}
 
 		public MovementControls(PrinterConfig printer, ThemeConfig theme)
+			: base (FlowDirection.TopToBottom)
 		{
 			this.printer = printer;
 			this.theme = theme;
@@ -124,7 +125,13 @@ namespace MatterHackers.MatterControl.PrinterControls
 			};
 
 			manualControlsLayout.AddChild(CreateDisableableContainer(GetHomeButtonBar()));
-			manualControlsLayout.AddChild(CreateSeparatorLine());
+
+			// Separator line
+			manualControlsLayout.AddChild(new HorizontalLine(alpha: 50)
+			{
+				Margin = new BorderDouble(0, 5)
+			});
+
 			manualControlsLayout.AddChild(jogControls);
 
 			manualControlsLayout.AddChild(CreateDisableableContainer(GetHWDestinationBar()));

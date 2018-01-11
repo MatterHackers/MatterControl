@@ -35,13 +35,14 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PrinterControls
 {
-	public class PowerControls : ControlWidgetBase
+	public class PowerControls : FlowLayoutWidget
 	{
 		private EventHandler unregisterEvents;
 		private CheckBox atxPowertoggleSwitch;
 		private PrinterConfig printer;
 
 		public PowerControls(PrinterConfig printer, int headingPointSize)
+			: base(FlowDirection.TopToBottom)
 		{
 			this.printer = printer;
 
@@ -68,7 +69,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			printer.Connection.CommunicationStateChanged.RegisterEvent((s, e) =>
 			{ 
 				this.Visible = printer.Settings.GetValue<bool>(SettingsKey.has_power_control);
-				this.SetEnableLevel(printer.Connection.PrinterIsConnected ? EnableLevel.Enabled : EnableLevel.Disabled);
+				this.Enabled = printer.Connection.PrinterIsConnected;
 			}, ref unregisterEvents);
 
 			printer.Connection.AtxPowerStateChanged.RegisterEvent((s, e) =>
@@ -77,9 +78,8 @@ namespace MatterHackers.MatterControl.PrinterControls
 			}, ref unregisterEvents);
 
 			this.Visible = printer.Settings.GetValue<bool>(SettingsKey.has_power_control);
-			this.SetEnableLevel(printer.Connection.PrinterIsConnected ? EnableLevel.Enabled : EnableLevel.Disabled);
+			this.Enabled = printer.Connection.PrinterIsConnected;
 
-			this.HAnchor = HAnchor.Stretch;
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Stretch;
 		}

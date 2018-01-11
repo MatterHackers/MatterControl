@@ -38,7 +38,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PrinterControls
 {
-	public class AdjustmentControls : ControlWidgetBase
+	public class AdjustmentControls : FlowLayoutWidget
 	{
 		private MHNumberEdit feedRateValue;
 		private MHNumberEdit extrusionValue;
@@ -54,6 +54,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 		private EventHandler unregisterEvents;
 
 		public AdjustmentControls(PrinterConfig printer, ThemeConfig theme)
+			: base (FlowDirection.TopToBottom)
 		{
 			var topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
