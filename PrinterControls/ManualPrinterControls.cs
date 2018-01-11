@@ -45,39 +45,11 @@ namespace MatterHackers.MatterControl
 		}
 	}
 
-	public class ManualPrinterControls : GuiWidget
+	public class ManualPrinterControls : ScrollableWidget
 	{
-		static public RootedObjectEventHandler AddPluginControls = new RootedObjectEventHandler();
-
+		public static RootedObjectEventHandler AddPluginControls = new RootedObjectEventHandler();
 		private static bool pluginsQueuedToAdd = false;
-		private PrinterConfig printer;
 
-		public ManualPrinterControls(PrinterConfig printer)
-		{
-			this.printer = printer;
-			this.BackgroundColor = ApplicationController.Instance.Theme.TabBodyBackground;
-			this.AnchorAll();
-			this.AddChild(new ManualPrinterControlsDesktop(printer));
-		}
-
-		public override void OnLoad(EventArgs args)
-		{
-			if (!pluginsQueuedToAdd && printer.Settings.GetValue(SettingsKey.include_firmware_updater) == "Simple Arduino")
-			{
-				UiThread.RunOnIdle(() =>
-				{
-					AddPluginControls.CallEvents(this, null);
-					pluginsQueuedToAdd = false;
-				});
-				pluginsQueuedToAdd = true;
-			}
-
-			base.OnLoad(args);
-		}
-	}
-
-	public class ManualPrinterControlsDesktop : ScrollableWidget
-	{
 		private GuiWidget fanControlsContainer;
 		private GuiWidget macroControlsContainer;
 		private GuiWidget tuningAdjustmentControlsContainer;
@@ -89,7 +61,7 @@ namespace MatterHackers.MatterControl
 		private PrinterConfig printer;
 		private FlowLayoutWidget column;
 
-		public ManualPrinterControlsDesktop(PrinterConfig printer)
+		public ManualPrinterControls(PrinterConfig printer)
 		{
 			this.theme = ApplicationController.Instance.Theme;
 
@@ -156,6 +128,21 @@ namespace MatterHackers.MatterControl
 
 			// Return the panel widget rather than the source sectionWidget
 			return sectionWidget.ContentPanel;
+		}
+
+		public override void OnLoad(EventArgs args)
+		{
+			if (!pluginsQueuedToAdd && printer.Settings.GetValue(SettingsKey.include_firmware_updater) == "Simple Arduino")
+			{
+				UiThread.RunOnIdle(() =>
+				{
+					AddPluginControls.CallEvents(this, null);
+					pluginsQueuedToAdd = false;
+				});
+				pluginsQueuedToAdd = true;
+			}
+
+			base.OnLoad(args);
 		}
 
 		public override void OnClosed(ClosedEventArgs e)
