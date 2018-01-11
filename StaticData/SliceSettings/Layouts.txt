@@ -1,23 +1,22 @@
 Advanced
   General
-    Layers / Surface
-      Layer Height
+    General
+      General
         layer_height
         first_layer_height
-      Outer Surface - Perimeters
         perimeters
+        top_solid_layers
+        bottom_solid_layers
+        fill_density
+        infill_type
+    Layers / Surface
+      Outer Surface - Perimeters
         avoid_crossing_perimeters
         external_perimeters_first
         perimeter_start_end_overlap
         merge_overlapping_lines
         expand_thin_walls
-      Outer Surface - Top & Bottom
-        top_solid_layers
-        bottom_solid_layers
     Infill
-      Infill!hidden
-        fill_density
-        infill_type
       Advanced
         fill_angle
         infill_overlap_perimeter
@@ -28,15 +27,15 @@ Advanced
         wipe_tower_size
 
   Speed
-    Speed!hidden
+    Speed
       Printing Speed
         laser_speed_025
         laser_speed_100
-      Speed for Infill!hidden
+      Speed for Infill
         infill_speed
         top_solid_infill_speed
         raft_print_speed
-      Speed for Perimeters!hidden
+      Speed for Perimeters
         perimeter_speed
         external_perimeter_speed
       Other 
@@ -45,34 +44,42 @@ Advanced
         travel_speed
         first_layer_speed
         number_of_first_layers
+    Fan
       Fan
         min_fan_speed
         max_fan_speed
         bridge_fan_speed
         disable_fan_first_layers
+    Cooling
       Cooling Thresholds
         slowdown_below_layer_time
         min_print_speed
   Adhesion
-    Raft / Skirt / Brim!hidden
-      Raft
+    Adhesion
+      Enable
         create_raft
+    Raft
+      Raft
         raft_extra_distance_around_part
         raft_air_gap
         raft_fan_speed_percent
         raft_extruder
+    Skirt
       Skirt
         skirts
         skirt_distance
         min_skirt_length
+    Brim
       Brim
         brims
   Support
-    Support!hidden
-      Support!hidden
+    Support
+      Support
         support_material
-        support_type
         support_material_percent
+    Advanced
+      Support
+        support_type
       Support Options!hidden
         support_material_spacing
         support_material_infill_angle
@@ -85,15 +92,17 @@ Advanced
         support_material_extruder
         support_material_interface_extruder
   Filament
-    General!hidden
-      Material
+    Filament
+      Filament
         filament_diameter
         filament_density
         filament_cost
-      Temperatures
         temperature
-        extruder_wipe_temperature
         bed_temperature
+    Advanced
+      Material
+      Temperatures
+        extruder_wipe_temperature
         bed_remove_part_temperature
       Extrusion
         extrusion_multiplier
