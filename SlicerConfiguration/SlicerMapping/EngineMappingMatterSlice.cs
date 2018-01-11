@@ -186,9 +186,20 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							final.Append(",");
 						}
 						string[] xy = offset.Split('x');
-						final.Append("[{0},{1}]".FormatWith(double.Parse(xy[0]), double.Parse(xy[1])));
-						first = false;
-						count++;
+						if (xy.Length == 2)
+						{
+							double x = 0;
+							double.TryParse(xy[0], out x);
+							double y = 0;
+							double.TryParse(xy[1], out y);
+							final.Append($"[{x},{y}]");
+							first = false;
+							count++;
+						}
+						else
+						{
+							final.Append("[0,0]");
+						}
 					}
 					while (count < 16)
 					{
