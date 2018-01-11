@@ -234,7 +234,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// keep the bottom where it was
 			AxisAlignedBoundingBox scaledBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
-			PlatingHelper.PlaceMeshAtHeight(selectedItem, scaledBounds.minXYZ.Z);
+			PlatingHelper.PlaceMeshAtHeight(selectedItem, originalMeshBounds.minXYZ.Z);
 
 			Invalidate();
 		}
