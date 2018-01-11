@@ -46,7 +46,7 @@ namespace MatterHackers.SerialPortCommunication
 		/// <summary>
 		/// Used to conditionally invoke LineSent/LineReceived events. Setting to false suppresses notification, hiding lines from listeners
 		/// </summary>
-		public bool AllowListenerNotification { get; set; }
+		public bool AllowListenerNotification { get; set; } = true;
 	}
 
 	public class FoundStringCallbacks
