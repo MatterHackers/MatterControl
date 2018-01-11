@@ -166,7 +166,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit,
-				Padding = 6
+				Padding = new BorderDouble(top: 10)
 			});
 
 			editorSection = new SectionWidget("Editor", editorColumn, theme);

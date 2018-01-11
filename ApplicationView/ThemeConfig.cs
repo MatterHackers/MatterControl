@@ -116,7 +116,7 @@ namespace MatterHackers.MatterControl
 		public void BoxStyleSectionWidget(SectionWidget sectionWidget)
 		{
 			// Enforce panel padding
-			sectionWidget.ContentPanel.Padding = new BorderDouble(16, 16, 8, 2);
+			sectionWidget.ContentPanel.Padding = new BorderDouble(16, 10, 10, 2);
 
 			sectionWidget.SeperatorColor = Color.Transparent;
 			sectionWidget.BorderRadius = 5;
