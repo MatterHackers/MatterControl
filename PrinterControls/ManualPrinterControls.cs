@@ -45,19 +45,89 @@ namespace MatterHackers.MatterControl
 		}
 	}
 
-	public class ManualPrinterControls : GuiWidget
+	public class ManualPrinterControls : ScrollableWidget
 	{
-		static public RootedObjectEventHandler AddPluginControls = new RootedObjectEventHandler();
-
+		public static RootedObjectEventHandler AddPluginControls = new RootedObjectEventHandler();
 		private static bool pluginsQueuedToAdd = false;
+
+		private GuiWidget fanControlsContainer;
+		private GuiWidget macroControlsContainer;
+		private GuiWidget tuningAdjustmentControlsContainer;
+		private MovementControls movementControlsContainer;
+		private GuiWidget calibrationControlsContainer;
+
+		private EventHandler unregisterEvents;
+		private ThemeConfig theme;
 		private PrinterConfig printer;
+		private FlowLayoutWidget column;
 
 		public ManualPrinterControls(PrinterConfig printer)
 		{
+			this.theme = ApplicationController.Instance.Theme;
+
 			this.printer = printer;
-			this.BackgroundColor = ApplicationController.Instance.Theme.TabBodyBackground;
+			this.ScrollArea.HAnchor |= HAnchor.Stretch;
 			this.AnchorAll();
-			this.AddChild(new ManualPrinterControlsDesktop(printer));
+			this.AutoScroll = true;
+			this.HAnchor = HAnchor.Stretch;
+			this.VAnchor = VAnchor.Stretch;
+
+			this.Name = "ManualPrinterControls";
+
+			int headingPointSize = theme.H1PointSize;
+
+			column = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.MaxFitOrStretch,
+				VAnchor = VAnchor.Fit,
+				Name = "ManualPrinterControls.ControlsContainer",
+				Margin = new BorderDouble(0)
+			};
+			this.AddChild(column);
+
+			movementControlsContainer = this.RegisterSection(MovementControls.CreateSection(printer, theme)) as MovementControls;
+
+			if (!printer.Settings.GetValue<bool>(SettingsKey.has_hardware_leveling))
+			{
+				calibrationControlsContainer = this.RegisterSection(CalibrationControls.CreateSection(printer, theme));
+			}
+
+			macroControlsContainer = this.RegisterSection(MacroControls.CreateSection(printer, theme));
+
+			if (printer.Settings.GetValue<bool>(SettingsKey.has_fan))
+			{
+				fanControlsContainer = this.RegisterSection(FanControls.CreateSection(printer, theme));
+			}
+
+#if !__ANDROID__
+			this.RegisterSection(PowerControls.CreateSection(printer, theme));
+#endif
+
+			tuningAdjustmentControlsContainer = this.RegisterSection(AdjustmentControls.CreateSection(printer, theme));
+
+			// HACK: this is a hack to make the layout engine fire again for this control
+			UiThread.RunOnIdle(() => tuningAdjustmentControlsContainer.Width = tuningAdjustmentControlsContainer.Width + 1);
+
+			printer.Connection.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
+			printer.Connection.EnableChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
+
+			SetVisibleControls();
+		}
+
+		public GuiWidget RegisterSection(SectionWidget sectionWidget)
+		{
+			// Enforce panel padding
+			sectionWidget.ContentPanel.Padding = new BorderDouble(16, 16, 8, 2);
+
+			sectionWidget.SeperatorColor = Color.Transparent;
+			sectionWidget.BorderRadius = 5;
+			sectionWidget.Margin = new BorderDouble(10, 0, 10, 10);
+			sectionWidget.BackgroundColor = theme.MinimalShade;
+
+			column.AddChild(sectionWidget);
+
+			// Return the panel widget rather than the source sectionWidget
+			return sectionWidget.ContentPanel;
 		}
 
 		public override void OnLoad(EventArgs args)
@@ -73,94 +143,6 @@ namespace MatterHackers.MatterControl
 			}
 
 			base.OnLoad(args);
-		}
-	}
-
-	public class ManualPrinterControlsDesktop : ScrollableWidget
-	{
-		private GuiWidget fanControlsContainer;
-		private GuiWidget macroControlsContainer;
-		private GuiWidget tuningAdjustmentControlsContainer;
-		private MovementControls movementControlsContainer;
-		private GuiWidget calibrationControlsContainer;
-
-		private EventHandler unregisterEvents;
-		private PrinterConfig printer;
-
-		public ManualPrinterControlsDesktop(PrinterConfig printer)
-		{
-			var theme = ApplicationController.Instance.Theme;
-
-			this.printer = printer;
-			this.ScrollArea.HAnchor |= HAnchor.Stretch;
-			this.AnchorAll();
-			this.AutoScroll = true;
-			this.HAnchor = HAnchor.Stretch;
-			this.VAnchor = VAnchor.Stretch;
-			//this.Padding = new BorderDouble(8, 0, theme.ToolbarPadding.Right, 6);
-
-			int headingPointSize = theme.H1PointSize;
-
-			var column = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				HAnchor = HAnchor.MaxFitOrStretch,
-				VAnchor = VAnchor.Fit,
-				Name = "ManualPrinterControls.ControlsContainer",
-				Margin = new BorderDouble(0)
-			};
-			this.AddChild(column);
-
-			SectionWidget sectionWidget = MovementControls.CreateSection(printer, theme);
-			column.AddChild(sectionWidget);
-			movementControlsContainer = sectionWidget.ContentPanel as MovementControls;
-
-			if (!printer.Settings.GetValue<bool>(SettingsKey.has_hardware_leveling))
-			{
-				sectionWidget = CalibrationControls.CreateSection(printer, theme);
-				column.AddChild(sectionWidget);
-				calibrationControlsContainer = sectionWidget.ContentPanel;
-			}
-
-			sectionWidget = MacroControls.CreateSection(printer, theme);
-			column.AddChild(sectionWidget);
-			macroControlsContainer = sectionWidget.ContentPanel;
-
-			if (printer.Settings.GetValue<bool>(SettingsKey.has_fan))
-			{
-				sectionWidget = FanControls.CreateSection(printer, theme);
-				column.AddChild(sectionWidget);
-				fanControlsContainer = sectionWidget.ContentPanel;
-			}
-
-#if !__ANDROID__
-			sectionWidget = PowerControls.CreateSection(printer, theme);
-			column.AddChild(sectionWidget);
-#endif
-
-			sectionWidget = AdjustmentControls.CreateSection(printer, theme);
-			column.AddChild(sectionWidget);
-			tuningAdjustmentControlsContainer = sectionWidget.ContentPanel;
-
-
-			// Enforce panel padding in sidebar
-			foreach (var widget in column.Children<SectionWidget>())
-			{
-				var contentPanel = widget.ContentPanel;
-				contentPanel.Padding = new BorderDouble(16, 16, 8, 2);
-
-				widget.SeperatorColor = Color.Transparent;
-				widget.BorderRadius = 5;
-				widget.Margin = new BorderDouble(10, 0, 10, 10);
-				widget.BackgroundColor = theme.MinimalShade;
-			}
-
-			// HACK: this is a hack to make the layout engine fire again for this control
-			UiThread.RunOnIdle(() => tuningAdjustmentControlsContainer.Width = tuningAdjustmentControlsContainer.Width + 1);
-
-			printer.Connection.CommunicationStateChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
-			printer.Connection.EnableChanged.RegisterEvent(onPrinterStatusChanged, ref unregisterEvents);
-
-			SetVisibleControls();
 		}
 
 		public override void OnClosed(ClosedEventArgs e)
