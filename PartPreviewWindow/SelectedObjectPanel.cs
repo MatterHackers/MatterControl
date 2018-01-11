@@ -335,6 +335,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var editorWidget = editor.Create(scene.SelectedItem, view3DWidget, theme);
 			editorWidget.HAnchor = HAnchor.Stretch;
 			editorWidget.VAnchor = VAnchor.Fit;
+			editorWidget.Padding = 0;
 
 			editorPanel.AddChild(editorWidget);
 		}

@@ -37,6 +37,7 @@ namespace MatterHackers.MatterControl
 	using Agg.Image;
 	using CustomWidgets;
 	using MatterHackers.Agg.Platform;
+	using MatterHackers.Localizations;
 	using MatterHackers.MatterControl.PartPreviewWindow;
 	using MatterHackers.VectorMath;
 
@@ -121,6 +122,14 @@ namespace MatterHackers.MatterControl
 		public double ButtonHeight { get; internal set; } = 32;
 
 		public int OverlayAlpha { get; set; } = 50;
+
+		public GuiWidget CreateSearchButton()
+		{
+			return new IconButton(AggContext.StaticData.LoadIcon("icon_search_24x24.png", 16, 16, IconColor.Theme), this)
+			{
+				ToolTipText = "Search".Localize(),
+			};
+		}
 
 		public Color InteractionLayerOverlayColor { get; private set; }
 
