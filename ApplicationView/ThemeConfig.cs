@@ -112,6 +112,18 @@ namespace MatterHackers.MatterControl
 		public Color ActiveTabBarBackground { get; set; }
 
 		public TextImageButtonFactory DisableableControlBase { get; private set; }
+
+		public void BoxStyleSectionWidget(SectionWidget sectionWidget)
+		{
+			// Enforce panel padding
+			sectionWidget.ContentPanel.Padding = new BorderDouble(16, 16, 8, 2);
+
+			sectionWidget.SeperatorColor = Color.Transparent;
+			sectionWidget.BorderRadius = 5;
+			sectionWidget.Margin = new BorderDouble(10, 0, 10, 10);
+			sectionWidget.BackgroundColor = this.MinimalShade;
+		}
+
 		public TextImageButtonFactory HomingButtons { get; private set; }
 		public TextImageButtonFactory MicroButton { get; private set; }
 		public TextImageButtonFactory MicroButtonMenu { get; private set; }
