@@ -19,59 +19,12 @@ namespace MatterHackers.MatterControl.PrinterControls
 		private TextImageButtonFactory buttonFactory;
 		private PrinterConfig printer;
 
-		public CalibrationControls(PrinterConfig printer, ThemeConfig theme)
+		private CalibrationControls(PrinterConfig printer, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
 		{
 			this.printer = printer;
 			this.buttonFactory = theme.ButtonFactory;
 
-			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit,
-				Padding = new BorderDouble(3, 0)
-			};
-
-			Button editButton = buttonFactory.GenerateIconButton(AggContext.StaticData.LoadIcon("icon_edit.png", 16, 16, IconColor.Theme));
-			editButton.Click += (sender, e) =>
-			{
-				UiThread.RunOnIdle(() =>
-				{
-					if (editLevelingSettingsWindow == null)
-					{
-						editLevelingSettingsWindow = new EditLevelingSettingsWindow(printer.Settings);
-						editLevelingSettingsWindow.Closed += (sender2, e2) =>
-						{
-							editLevelingSettingsWindow = null;
-						};
-					}
-					else
-					{
-						editLevelingSettingsWindow.BringToFront();
-					}
-				});
-			};
-
-			this.AddChild(
-				new SectionWidget(
-					"Calibration".Localize(),
-					container,
-					theme,
-					editButton));
-
-			if (!printer.Settings.GetValue<bool>(SettingsKey.has_hardware_leveling))
-			{
-				container.AddChild(GetAutoLevelControl());
-			}
-
-			printer.Connection.CommunicationStateChanged.RegisterEvent(PrinterStatusChanged, ref unregisterEvents);
-			printer.Connection.EnableChanged.RegisterEvent(PrinterStatusChanged, ref unregisterEvents);
-
-			SetVisibleControls();
-		}
-
-		private FlowLayoutWidget GetAutoLevelControl()
-		{
 			var buttonRow = new FlowLayoutWidget()
 			{
 				Name = "AutoLevelRowItem",
@@ -127,13 +80,54 @@ namespace MatterHackers.MatterControl.PrinterControls
 				buttonRow.AddChild(printLevelingSwitch);
 			}
 
-			return buttonRow;
+			this.AddChild(buttonRow);
+
+			printer.Connection.CommunicationStateChanged.RegisterEvent(PrinterStatusChanged, ref unregisterEvents);
+			printer.Connection.EnableChanged.RegisterEvent(PrinterStatusChanged, ref unregisterEvents);
+
+			SetVisibleControls();
+		}
+
+		public static SectionWidget CreateSection(PrinterConfig printer, ThemeConfig theme)
+		{
+			var widget = new CalibrationControls(printer, theme);
+
+			var editButton = new IconButton(AggContext.StaticData.LoadIcon("icon_edit.png", 16, 16, IconColor.Theme), theme);
+			editButton.Click += (s, e) =>
+			{
+				widget.EditOptions();
+			};
+
+			return new SectionWidget(
+				"Calibration".Localize(),
+				widget,
+				theme,
+				editButton);
 		}
 
 		public override void OnClosed(ClosedEventArgs e)
 		{
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
+		}
+
+		private void EditOptions()
+		{
+			UiThread.RunOnIdle(() =>
+			{
+				if (editLevelingSettingsWindow == null)
+				{
+					editLevelingSettingsWindow = new EditLevelingSettingsWindow(printer.Settings);
+					editLevelingSettingsWindow.Closed += (s, e) =>
+					{
+						editLevelingSettingsWindow = null;
+					};
+				}
+				else
+				{
+					editLevelingSettingsWindow.BringToFront();
+				}
+			});
 		}
 
 		private void PrinterStatusChanged(object sender, EventArgs e)

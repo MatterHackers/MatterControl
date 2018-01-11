@@ -64,10 +64,65 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		private EventHandler unregisterEvents;
 
+		private MovementControls(PrinterConfig printer, ThemeConfig theme)
+			: base (FlowDirection.TopToBottom)
+		{
+			this.printer = printer;
+			this.theme = theme;
+
+			jogControls = new JogControls(printer, new XYZColors())
+			{
+				HAnchor = HAnchor.Left | HAnchor.Stretch,
+				Margin = 0
+			};
+
+			this.AddChild(CreateDisableableContainer(GetHomeButtonBar()));
+
+			// Separator line
+			this.AddChild(new HorizontalLine(alpha: 50)
+			{
+				Margin = new BorderDouble(0, 5)
+			});
+
+			this.AddChild(jogControls);
+
+			this.AddChild(CreateDisableableContainer(GetHWDestinationBar()));
+		}
+
+		public static SectionWidget CreateSection(PrinterConfig printer, ThemeConfig theme)
+		{
+			var widget = new MovementControls(printer, theme);
+
+			var editButton = new IconButton(AggContext.StaticData.LoadIcon("icon_edit.png", 16, 16, IconColor.Theme), theme);
+			editButton.Click += (s, e) => widget.EditOptions();
+
+			return new SectionWidget(
+				"Movement".Localize(),
+				widget,
+				theme,
+				editButton);
+		}
+
 		public override void OnClosed(ClosedEventArgs e)
 		{
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
+		}
+
+		private void EditOptions()
+		{
+			if (editManualMovementSettingsWindow == null)
+			{
+				editManualMovementSettingsWindow = new EditManualMovementSpeedsWindow("Movement Speeds".Localize(), printer.Settings.Helpers.GetMovementSpeedsString(), SetMovementSpeeds);
+				editManualMovementSettingsWindow.Closed += (s, e) =>
+				{
+					editManualMovementSettingsWindow = null;
+				};
+			}
+			else
+			{
+				editManualMovementSettingsWindow.BringToFront();
+			}
 		}
 
 		/// <summary>
@@ -85,63 +140,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 			DisableableWidgets.Add(container);
 
 			return container;
-		}
-
-		public MovementControls(PrinterConfig printer, ThemeConfig theme)
-			: base (FlowDirection.TopToBottom)
-		{
-			this.printer = printer;
-			this.theme = theme;
-
-			var buttonFactory = theme.DisableableControlBase;
-
-			Button editButton = buttonFactory.GenerateIconButton(AggContext.StaticData.LoadIcon("icon_edit.png", 16, 16, IconColor.Theme));
-			editButton.Click += (sender, e) =>
-			{
-				if (editManualMovementSettingsWindow == null)
-				{
-					editManualMovementSettingsWindow = new EditManualMovementSpeedsWindow("Movement Speeds".Localize(), printer.Settings.Helpers.GetMovementSpeedsString(), SetMovementSpeeds);
-					editManualMovementSettingsWindow.Closed += (s, e2) =>
-					{
-						editManualMovementSettingsWindow = null;
-					};
-				}
-				else
-				{
-					editManualMovementSettingsWindow.BringToFront();
-				}
-			};
-
-			jogControls = new JogControls(printer, new XYZColors())
-			{
-				HAnchor = HAnchor.Left | HAnchor.Stretch,
-				Margin = 0
-			};
-
-			manualControlsLayout = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit,
-			};
-
-			manualControlsLayout.AddChild(CreateDisableableContainer(GetHomeButtonBar()));
-
-			// Separator line
-			manualControlsLayout.AddChild(new HorizontalLine(alpha: 50)
-			{
-				Margin = new BorderDouble(0, 5)
-			});
-
-			manualControlsLayout.AddChild(jogControls);
-
-			manualControlsLayout.AddChild(CreateDisableableContainer(GetHWDestinationBar()));
-
-			this.AddChild(
-				new SectionWidget(
-					"Movement".Localize(),
-					manualControlsLayout,
-					theme,
-					editButton));
 		}
 
 		private void SetMovementSpeeds(string speedString)
@@ -369,5 +367,4 @@ namespace MatterHackers.MatterControl.PrinterControls
 			base.OnClosed(e);
 		}
 	}
-
 }

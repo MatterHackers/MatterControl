@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				{
 					heading = new TextWidget(sectionTitle, pointSize: pointSize, textColor: theme.Colors.PrimaryTextColor);
 				}
-				heading.Padding = new BorderDouble(0, 3, 0, 6);
+				heading.Padding = new BorderDouble(0, 5, 0, 6);
 
 				if (rightAlignedContent == null)
 				{

@@ -29,7 +29,10 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrinterControls;
 using MatterHackers.MatterControl.SlicerConfiguration;
@@ -109,48 +112,46 @@ namespace MatterHackers.MatterControl
 			};
 			this.AddChild(controlsTopToBottomLayout);
 
-			movementControlsContainer = new MovementControls(printer, theme)
-			{
-				Margin = new BorderDouble(top: 6),
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit
-			};
-			controlsTopToBottomLayout.AddChild(movementControlsContainer);
+			SectionWidget sectionWidget;
+
+			sectionWidget = MovementControls.CreateSection(printer, theme);
+			controlsTopToBottomLayout.AddChild(sectionWidget);
+			movementControlsContainer = sectionWidget.ContentPanel as MovementControls;
 
 			if (!printer.Settings.GetValue<bool>(SettingsKey.has_hardware_leveling))
 			{
-				calibrationControlsContainer = new CalibrationControls(printer, theme);
-				controlsTopToBottomLayout.AddChild(calibrationControlsContainer);
+				sectionWidget = CalibrationControls.CreateSection(printer, theme);
+				controlsTopToBottomLayout.AddChild(sectionWidget);
+				calibrationControlsContainer = sectionWidget.ContentPanel;
 			}
 
-			macroControlsContainer = new MacroControls(printer, theme);
-			controlsTopToBottomLayout.AddChild(macroControlsContainer);
+			sectionWidget = MacroControls.CreateSection(printer, theme);
+			controlsTopToBottomLayout.AddChild(sectionWidget);
+			macroControlsContainer = sectionWidget.ContentPanel;
 
-			var linearPanel = new FlowLayoutWidget()
-			{
-				HAnchor = HAnchor.Stretch
-			};
-			controlsTopToBottomLayout.AddChild(linearPanel);
-
-			fanControlsContainer = new FanControls(printer.Connection, theme);
 			if (printer.Settings.GetValue<bool>(SettingsKey.has_fan))
 			{
-				controlsTopToBottomLayout.AddChild(fanControlsContainer);
+				sectionWidget = FanControls.CreateSection(printer, theme);
+				controlsTopToBottomLayout.AddChild(sectionWidget);
+				fanControlsContainer = sectionWidget.ContentPanel;
 			}
 
 #if !__ANDROID__
-			controlsTopToBottomLayout.AddChild(new PowerControls(printer, headingPointSize)
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit
-			});
+			sectionWidget = PowerControls.CreateSection(printer, theme);
+			controlsTopToBottomLayout.AddChild(sectionWidget);
 #endif
-			tuningAdjustmentControlsContainer = new AdjustmentControls(printer, theme)
+
+			sectionWidget = AdjustmentControls.CreateSection(printer, theme);
+			controlsTopToBottomLayout.AddChild(sectionWidget);
+			tuningAdjustmentControlsContainer = sectionWidget.ContentPanel;
+
+
+			// Enforce panel padding in sidebar
+			foreach (var widget in controlsTopToBottomLayout.Children<SectionWidget>())
 			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit
-			};
-			controlsTopToBottomLayout.AddChild(tuningAdjustmentControlsContainer);
+				var contentPanel = widget.ContentPanel;
+				contentPanel.Padding = new BorderDouble(16, 16, 8, 2);
+			}
 
 			// HACK: this is a hack to make the layout engine fire again for this control
 			UiThread.RunOnIdle(() => tuningAdjustmentControlsContainer.Width = tuningAdjustmentControlsContainer.Width + 1);
