@@ -30,8 +30,6 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
-using MatterHackers.MatterControl.ConfigurationPage;
-using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrinterControls;
 using MatterHackers.MatterControl.SlicerConfiguration;
@@ -121,11 +119,11 @@ namespace MatterHackers.MatterControl
 
 			if (!printer.Settings.GetValue<bool>(SettingsKey.has_hardware_leveling))
 			{
-				calibrationControlsContainer = new CalibrationSettingsWidget(printer, theme);
+				calibrationControlsContainer = new CalibrationControls(printer, theme);
 				controlsTopToBottomLayout.AddChild(calibrationControlsContainer);
 			}
 
-			macroControlsContainer = new MacroControlsWidget(printer, theme);
+			macroControlsContainer = new MacroControls(printer, theme);
 			controlsTopToBottomLayout.AddChild(macroControlsContainer);
 
 			var linearPanel = new FlowLayoutWidget()

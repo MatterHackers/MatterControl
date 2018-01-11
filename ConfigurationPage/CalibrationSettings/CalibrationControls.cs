@@ -8,9 +8,9 @@ using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
-namespace MatterHackers.MatterControl.ConfigurationPage
+namespace MatterHackers.MatterControl.PrinterControls
 {
-	public class CalibrationSettingsWidget : FlowLayoutWidget
+	public class CalibrationControls : FlowLayoutWidget
 	{
 		private EventHandler unregisterEvents;
 		private EditLevelingSettingsWindow editLevelingSettingsWindow;
@@ -19,7 +19,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		private TextImageButtonFactory buttonFactory;
 		private PrinterConfig printer;
 
-		public CalibrationSettingsWidget(PrinterConfig printer, ThemeConfig theme)
+		public CalibrationControls(PrinterConfig printer, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
 		{
 			this.printer = printer;

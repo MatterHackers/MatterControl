@@ -73,6 +73,7 @@
   <ItemGroup>
     <Compile Include="AboutPage\AboutWindow.cs" />
     <Compile Include="AboutPage\CheckForUpdatesPage.cs" />
+    <Compile Include="ConfigurationPage\CalibrationSettings\CalibrationControls.cs" />
     <Compile Include="CustomWidgets\ConfigurePrinterWidget.cs" />
     <Compile Include="AboutPage\HTMLParser\HtmlWidget.cs" />
     <Compile Include="AboutPage\HTMLParser\ElementState.cs" />
@@ -171,7 +172,6 @@
     <Compile Include="Library\ContentProviders\IContentProvider.cs" />
     <Compile Include="ConfigurationPage\ApplicationSettings\ApplicationSettingsView.cs" />
     <Compile Include="ConfigurationPage\LanguageSelector.cs" />
-    <Compile Include="ConfigurationPage\CalibrationSettings\CalibrationSettingsView.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\InstructionsPage.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\LevelingStrings.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\LevelWizardMesh.cs" />
