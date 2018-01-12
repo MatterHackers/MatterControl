@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.AddChild(new ScaleOptionsPanel(this, theme));
 
 			// Going to use this in the scaling controls, create it early.
-			usePercents = new CheckBox("Use Percents".Localize(), textColor: theme.Colors.PrimaryTextColor);
+			usePercents = new CheckBox("Use Percents".Localize(), textColor: theme.Colors.PrimaryTextColor, textSize: theme.DefaultFontSize);
 
 			// add in the dimensions
 			this.AddChild(CreateAxisScalingControl("x".ToUpper(), 0));
@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.AddChild(CreateAxisScalingControl("z".ToUpper(), 2));
 
 			// lock ratio checkbox
-			uniformScale = new CheckBox("Lock Ratio".Localize(), textColor: theme.Colors.PrimaryTextColor);
+			uniformScale = new CheckBox("Lock Ratio".Localize(), textColor: theme.Colors.PrimaryTextColor, textSize: theme.DefaultFontSize);
 			uniformScale.Margin = new BorderDouble(5, 3);
 			uniformScale.Checked = true;
 			uniformScale.CheckedStateChanged += (s, e) =>
@@ -134,7 +134,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Padding = new BorderDouble(5, 3)
 			};
 
-			var sizeDescription = new TextWidget("{0}:".FormatWith(axis), textColor: theme.Colors.PrimaryTextColor)
+			var sizeDescription = new TextWidget("{0}:".FormatWith(axis), textColor: theme.Colors.PrimaryTextColor, pointSize: theme.DefaultFontSize)
 			{
 				VAnchor = VAnchor.Center
 			};
@@ -159,7 +159,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			leftToRight.AddChild(sizeDisplay[axisIndex]);
 
-			var units = new TextWidget("mm".FormatWith(axis), textColor: theme.Colors.PrimaryTextColor)
+			var units = new TextWidget("mm".FormatWith(axis), textColor: theme.Colors.PrimaryTextColor, pointSize: theme.DefaultFontSize)
 			{
 				VAnchor = VAnchor.Center
 			};
