@@ -53,7 +53,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		private PrinterConfig printer;
 
 		private ThemeConfig theme;
-		private ResizeContainer resizePage;
 
 		public DockingTabControl(GuiWidget widgetTodockTo, DockSide dockSide, PrinterConfig printer)
 			: base (FlowDirection.TopToBottom)
@@ -62,6 +61,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.printer = printer;
 			this.widgetTodockTo = widgetTodockTo;
 			this.DockSide = dockSide;
+			this.BorderColor = theme.MinimalShade;
+			this.Border = new BorderDouble(left: 1);
 
 			// Add dummy widget to ensure OnLoad fires
 			this.AddChild(new GuiWidget(10, 10));
@@ -275,7 +276,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					});
 
 					settingsButtons.Add(settingsButton);
-					settingsButton.DebugShowBounds = true;
 					settingsButton.PopupContent = resizeContainer;
 
 					settingsButton.Click += (s, e) =>

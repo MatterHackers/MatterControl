@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl
 		public int FontSize12 { get; } = 12;
 		public int FontSize14 { get; } = 14;
 
-		public int DefaultFontSize { get; } = 12;
+		public int DefaultFontSize { get; } = 11;
 
 		internal int shortButtonHeight = 25;
 		private int sideBarButtonWidth;
@@ -172,7 +172,7 @@ namespace MatterHackers.MatterControl
 			commonOptions.PressedTextColor = theme.PrimaryTextColor;
 			commonOptions.DisabledTextColor = theme.TertiaryBackgroundColor;
 			commonOptions.Margin = new BorderDouble(14, 0);
-			commonOptions.FontSize = 11;
+			commonOptions.FontSize = this.DefaultFontSize;
 			commonOptions.ImageSpacing = 8;
 			commonOptions.BorderWidth = 0;
 			commonOptions.FixedHeight = 32;

@@ -212,14 +212,16 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		private FlowLayoutWidget GetHWDestinationBar()
 		{
-			FlowLayoutWidget hwDestinationBar = new FlowLayoutWidget();
-			hwDestinationBar.HAnchor = HAnchor.Stretch;
-			hwDestinationBar.Margin = new BorderDouble(top: 8);
-			hwDestinationBar.Padding = 0;
+			var hwDestinationBar = new FlowLayoutWidget
+			{
+				HAnchor = HAnchor.Stretch,
+				Margin = new BorderDouble(top: 8),
+				Padding = 0
+			};
 
-			TextWidget xPosition = new TextWidget("X: 0.0           ", pointSize: 12, textColor: ActiveTheme.Instance.PrimaryTextColor);
-			TextWidget yPosition = new TextWidget("Y: 0.0           ", pointSize: 12, textColor: ActiveTheme.Instance.PrimaryTextColor);
-			TextWidget zPosition = new TextWidget("Z: 0.0           ", pointSize: 12, textColor: ActiveTheme.Instance.PrimaryTextColor);
+			var xPosition = new TextWidget("X: 0.0           ", pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor);
+			var yPosition = new TextWidget("Y: 0.0           ", pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor);
+			var zPosition = new TextWidget("Z: 0.0           ", pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor);
 
 			hwDestinationBar.AddChild(xPosition);
 			hwDestinationBar.AddChild(yPosition);
@@ -301,7 +303,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			this.AddChild(zOffsetStreamContainer);
 
 			double zoffset = printerSettings.GetValue<double>(SettingsKey.baby_step_z_offset);
-			zOffsetStreamDisplay = new TextWidget(zoffset.ToString("0.##"))
+			zOffsetStreamDisplay = new TextWidget(zoffset.ToString("0.##"), pointSize: theme.DefaultFontSize)
 			{
 				AutoExpandBoundsToText = true,
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,

@@ -244,7 +244,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.Padding = theme.ButtonFactory.Options.Margin;
 			this.TextColor = textColor;
 
-			this.AddChild(textWidget = new TextWidget(text, pointSize: theme.ButtonFactory.Options.FontSize, textColor: textColor)
+			this.AddChild(textWidget = new TextWidget(text, pointSize: theme.DefaultFontSize, textColor: textColor)
 			{
 				HAnchor = HAnchor.Center,
 				VAnchor = VAnchor.Center

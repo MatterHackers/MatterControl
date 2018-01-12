@@ -36,6 +36,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		public SettingsItem (string text, Color textColor, GuiWidget settingsControls, GuiWidget optionalControls = null, ImageBuffer imageBuffer = null, bool enforceGutter = true)
 			: base (FlowDirection.LeftToRight)
 		{
+			var theme = ApplicationController.Instance.Theme;
 			this.SettingsControl = settingsControls;
 			this.HAnchor = HAnchor.Stretch;
 			this.MinimumSize = new Vector2(0, 40);
@@ -59,7 +60,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				});
 			}
 
-			this.AddChild(new TextWidget(text, textColor: textColor)
+			this.AddChild(new TextWidget(text, textColor: textColor, pointSize: theme.DefaultFontSize)
 			{
 				AutoExpandBoundsToText = true,
 				VAnchor = VAnchor.Center,

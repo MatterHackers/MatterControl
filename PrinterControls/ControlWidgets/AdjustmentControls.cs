@@ -67,7 +67,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 					VAnchor = VAnchor.Fit
 				};
 
-				var feedRateDescription = new TextWidget("Speed Multiplier".Localize())
+				var feedRateDescription = new TextWidget("Speed Multiplier".Localize(), pointSize: theme.DefaultFontSize)
 				{
 					MinimumSize = new Vector2(140, 0) * GuiWidget.DeviceScale,
 					TextColor = ActiveTheme.Instance.PrimaryTextColor,
@@ -132,7 +132,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 					VAnchor = VAnchor.Fit
 				};
 
-				var extrusionDescription = new TextWidget("Extrusion Multiplier".Localize())
+				var extrusionDescription = new TextWidget("Extrusion Multiplier".Localize(), pointSize: theme.DefaultFontSize)
 				{
 					MinimumSize = new Vector2(140, 0) * GuiWidget.DeviceScale,
 					TextColor = ActiveTheme.Instance.PrimaryTextColor,

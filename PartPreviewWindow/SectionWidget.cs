@@ -23,7 +23,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			if (!string.IsNullOrEmpty(sectionTitle))
 			{
 				// Add heading
-				var pointSize = (headingPointSize) == -1 ? theme.H1PointSize : headingPointSize;
+				var pointSize = (headingPointSize) == -1 ? theme.DefaultFontSize : headingPointSize;
 
 				GuiWidget heading;
 
