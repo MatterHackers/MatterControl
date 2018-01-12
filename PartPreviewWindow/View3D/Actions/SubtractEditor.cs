@@ -154,7 +154,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			if (!opperationApplied && !selectionHasBeenMade)
 			{
 				// select the last item
-				if (tabContainer.Decendants().Where((d) => d is ICheckbox).Last() is ICheckbox firstCheckBox)
+				if (tabContainer.Descendants().Where((d) => d is ICheckbox).Last() is ICheckbox firstCheckBox)
 				{
 					firstCheckBox.Checked = true;
 				}
