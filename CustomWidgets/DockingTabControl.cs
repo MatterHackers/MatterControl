@@ -53,7 +53,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		private PrinterConfig printer;
 
 		private ThemeConfig theme;
-		private ResizeContainer resizePage;
 
 		public DockingTabControl(GuiWidget widgetTodockTo, DockSide dockSide, PrinterConfig printer)
 			: base (FlowDirection.TopToBottom)
