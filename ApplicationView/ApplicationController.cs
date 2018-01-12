@@ -358,7 +358,6 @@ namespace MatterHackers.MatterControl
 				Icon = AggContext.StaticData.LoadIcon("intersect.png"),
 				IsEnabled = (scene) => scene.SelectedItem is SelectionGroup,
 			},
-#if DEBUG // keep this work in progress to the editor for now
 			new SceneSelectionOperation()
 			{
 				TitleResolver = () => "Subtract & Replace".Localize(),
@@ -366,6 +365,7 @@ namespace MatterHackers.MatterControl
 				Icon = AggContext.StaticData.LoadIcon("paint.png").SetPreMultiply(),
 				IsEnabled = (scene) => scene.SelectedItem is SelectionGroup,
 			},
+#if DEBUG // keep this work in progress to the editor for now
 			new SceneSelectionOperation()
 			{
 				TitleResolver = () => "Make Support".Localize(),

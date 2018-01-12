@@ -40,7 +40,6 @@ using MatterHackers.PolygonMesh;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
-#if DEBUG // keep this work in progress to the editor for now
 	public class SubtractAndReplace : IObject3DEditor
 	{
 		private MeshWrapperOperation group;
@@ -108,10 +107,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			{
 				// make sure the mesh on the group is not visible
 				group.ResetMeshWrappers();
+				updateButton.Enabled = false;
 				ProcessBooleans(group);
 			};
 
-			int checkedCount = 0;
 			List<GuiWidget> radioSiblings = new List<GuiWidget>();
 			for (int i = 0; i < children.Count; i++)
 			{
@@ -161,16 +160,27 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				};
 
 				tabContainer.AddChild(rowContainer);
-				checkedCount += checkBox.Checked ? 1 : 0;
 			}
 
-			if(checkedCount == 0) // no items selected
+			bool opperationApplied = group.Descendants()
+				.Where((obj) => obj.OwnerID == group.ID)
+				.Where((objId) => objId.Mesh != objId.Children.First().Mesh).Count() > 0;
+
+			bool selectionHasBeenMade = group.Descendants()
+				.Where((obj) => obj.OwnerID == group.ID)
+				.Where((objId) => objId.OutputType == PrintOutputTypes.Hole).Count() > 0;
+
+			if (!opperationApplied && !selectionHasBeenMade)
 			{
 				// select the last item
 				if (tabContainer.Decendants().Where((d) => d is ICheckbox).Last() is ICheckbox firstCheckBox)
 				{ 
 					firstCheckBox.Checked = true;
 				}
+			}
+			else
+			{
+				updateButton.Enabled = opperationApplied;
 			}
 
 			// add this last so it is at the bottom
@@ -248,5 +258,4 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			});
 		}
 	}
-#endif
 }
