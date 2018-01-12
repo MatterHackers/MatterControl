@@ -161,8 +161,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var commonMargin = theme.ButtonSpacing;
 
-			var buttonFactory = theme.RadioButtons;
-
 			double height = theme.ButtonFactory.Options.FixedHeight;
 
 			var homeButton = new IconButton(AggContext.StaticData.LoadIcon("fa-home_16.png", IconColor.Theme), theme)

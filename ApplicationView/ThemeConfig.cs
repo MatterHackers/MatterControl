@@ -69,12 +69,10 @@ namespace MatterHackers.MatterControl
 		public LinkButtonFactory LinkButtonFactory { get; private set; }
 		public LinkButtonFactory HelpLinkFactory { get; private set; }
 
-		public TextImageButtonFactory ExpandMenuOptionFactory;
 		public TextImageButtonFactory WhiteButtonFactory;
 
 		public TextImageButtonFactory ButtonFactory { get; private set; }
 		public TextImageButtonFactory SmallMarginButtonFactory { get; private set; }
-		public TextImageButtonFactory RadioButtons { get; private set; }
 		public TextImageButtonFactory WizardButtons { get; private set; }
 
 		/// <summary>
@@ -87,14 +85,7 @@ namespace MatterHackers.MatterControl
 		/// </summary>
 		public TextImageButtonFactory GrayButtonFactory { get; private set; }
 
-		public TextImageButtonFactory imageConverterExpandMenuOptionFactory;
-
-		public TextImageButtonFactory imageConverterButtonFactory;
-		public TextImageButtonFactory imageConverterUnlockButtonFactory;
-
 		public Color TabBodyBackground { get; private set; }
-
-		public TextImageButtonFactory ViewControlsButtonFactory { get; private set; }
 
 		public Color SplitterBackground { get; private set; } = new Color(0, 0, 0, 60);
 
@@ -124,12 +115,10 @@ namespace MatterHackers.MatterControl
 			sectionWidget.BackgroundColor = this.MinimalShade;
 		}
 
-		public TextImageButtonFactory HomingButtons { get; private set; }
 		public TextImageButtonFactory MicroButton { get; private set; }
 		public TextImageButtonFactory MicroButtonMenu { get; private set; }
 
 		public BorderDouble ButtonSpacing { get; set; } = new BorderDouble(3, 0, 0, 0);
-		public TextImageButtonFactory NoMarginWhite { get; private set; }
 		public BorderDouble ToolbarPadding { get; set; } = 3;
 		public double ButtonHeight { get; internal set; } = 32;
 
@@ -208,12 +197,6 @@ namespace MatterHackers.MatterControl
 
 			this.ButtonFactory = new TextImageButtonFactory(commonOptions);
 
-			this.NoMarginWhite = new TextImageButtonFactory(new ButtonFactoryOptions(commonOptions)
-			{
-				Margin = 0,
-				AllowThemeToAdjustImage = false
-			});
-
 			this.SmallMarginButtonFactory = new TextImageButtonFactory(new ButtonFactoryOptions(commonOptions)
 			{
 				Margin = new BorderDouble(8, 0),
@@ -227,13 +210,6 @@ namespace MatterHackers.MatterControl
 				FixedHeight = fizedHeightB,
 				Margin = commonOptions.Margin * 1.2
 #endif
-			});
-
-			this.RadioButtons = new TextImageButtonFactory(new ButtonFactoryOptions(commonOptions)
-			{
-				BorderWidth = 1,
-				CheckedBorderColor = Color.White,
-				AllowThemeToAdjustImage = false
 			});
 
 			var commonGray = new ButtonFactoryOptions(commonOptions)
@@ -254,15 +230,6 @@ namespace MatterHackers.MatterControl
 			{
 				NormalTextColor = theme.PrimaryTextColor,
 				NormalFillColor = Color.Gray
-			});
-
-			this.ViewControlsButtonFactory = new TextImageButtonFactory(new ButtonFactoryOptions(commonOptions)
-			{
-				DisabledTextColor = theme.PrimaryTextColor,
-				FixedHeight = 0,
-				FixedWidth = 0,
-				AllowThemeToAdjustImage = false,
-				CheckedBorderColor = Color.White
 			});
 
 			this.MicroButton = new TextImageButtonFactory(new ButtonFactoryOptions()
@@ -304,71 +271,9 @@ namespace MatterHackers.MatterControl
 
 				BorderWidth = 1,
 			});
-
-			ExpandMenuOptionFactory = new TextImageButtonFactory(new ButtonFactoryOptions(commonOptions)
-			{
-				HoverTextColor = theme.PrimaryTextColor,
-				HoverFillColor = new Color(255, 255, 255, 50),
-
-				PressedTextColor = theme.PrimaryTextColor,
-				PressedFillColor = new Color(255, 255, 255, 50),
-
-				DisabledTextColor = theme.PrimaryTextColor,
-				DisabledFillColor = new Color(255, 255, 255, 50),
-				FixedWidth = sideBarButtonWidth,
-			});
-
 #endregion
 
 #region ImageConverter
-			imageConverterButtonFactory = new TextImageButtonFactory(new ButtonFactoryOptions(commonOptions)
-			{
-				FixedWidth = 185,
-				FixedHeight = 30,
-
-				NormalFillColor = Color.White,
-				NormalTextColor = Color.Black,
-				NormalBorderColor = new Color(theme.PrimaryTextColor, 200),
-
-				HoverFillColor = new Color(255, 255, 255, 200),
-				HoverTextColor = Color.Black,
-				HoverBorderColor = new Color(theme.PrimaryTextColor, 200),
-
-				BorderWidth = 1,
-			});
-
-			imageConverterUnlockButtonFactory = new TextImageButtonFactory(new ButtonFactoryOptions(commonOptions)
-			{
-				FixedWidth = 185,
-				FixedHeight = 30,
-
-				NormalFillColor = theme.PrimaryAccentColor.SetLightness(.8).ToColor(),
-				NormalTextColor = Color.Black,
-				NormalBorderColor = new Color(theme.PrimaryAccentColor.SetLightness(.8).ToColor(), 200),
-
-				HoverFillColor = theme.PrimaryAccentColor.SetLightness(.9).ToColor(),
-				HoverTextColor = Color.Black,
-				HoverBorderColor = new Color(theme.PrimaryAccentColor.SetLightness(.9).ToColor(), 200),
-
-				BorderWidth = 1,
-			});
-
-			imageConverterExpandMenuOptionFactory = new TextImageButtonFactory(new ButtonFactoryOptions(commonOptions)
-			{
-				FixedWidth = 200,
-
-				NormalTextColor = theme.PrimaryTextColor,
-
-				HoverTextColor = theme.PrimaryTextColor,
-				HoverFillColor = new Color(255, 255, 255, 50),
-
-				DisabledTextColor = theme.PrimaryTextColor,
-				DisabledFillColor = new Color(255, 255, 255, 50),
-
-				PressedTextColor = theme.PrimaryTextColor,
-				PressedFillColor = new Color(255, 255, 255, 50),
-			});
-
 			// TODO: Need to remain based default ButtonFactionOptions constructor until reviewed for styling issues
 			var disableableControlOptions = new ButtonFactoryOptions()
 			{
@@ -383,14 +288,6 @@ namespace MatterHackers.MatterControl
 			};
 
 			this.DisableableControlBase = new TextImageButtonFactory(disableableControlOptions);
-			this.HomingButtons = new TextImageButtonFactory(new ButtonFactoryOptions(disableableControlOptions)
-			{
-				BorderWidth = 1,
-				NormalBorderColor = new Color(theme.PrimaryTextColor, 200),
-				HoverBorderColor = new Color(theme.PrimaryTextColor, 200),
-				NormalFillColor = new Color(180, 180, 180),
-			});
-
 #endregion
 
 			this.LinkButtonFactory = new LinkButtonFactory()
@@ -459,18 +356,6 @@ namespace MatterHackers.MatterControl
 			}
 
 			return popupMenu;
-		}
-
-
-		internal TabControl CreateTabControl(int height = 1)
-		{
-			var tabControl = new TabControl(separator: new HorizontalLine(alpha: 50, height: height));
-			tabControl.TabBar.BorderColor = Color.Transparent; // theme.SecondaryTextColor;
-			tabControl.TabBar.Margin = 0;
-			tabControl.TabBar.Padding = 0;
-			tabControl.TextPointSize = FontSize12;
-
-			return tabControl;
 		}
 
 		private static ImageBuffer ColorCircle(int size, Color color)
