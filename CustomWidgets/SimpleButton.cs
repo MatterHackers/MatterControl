@@ -242,6 +242,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.VAnchor = VAnchor.Absolute | VAnchor.Center;
 			this.Height = theme.ButtonFactory.Options.FixedHeight;
 			this.Padding = theme.ButtonFactory.Options.Margin;
+			this.TextColor = textColor;
 
 			this.AddChild(textWidget = new TextWidget(text, pointSize: theme.ButtonFactory.Options.FontSize, textColor: textColor)
 			{
@@ -249,6 +250,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				VAnchor = VAnchor.Center
 			});
 		}
+
+		public Color TextColor { get; }
 
 		public override string Text
 		{

@@ -56,8 +56,11 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 			foreach (GCodeMacro macro in printer.Settings.GetMacros(MacroUiLocation.Controls))
 			{
-				Button macroButton = theme.HomingButtons.Generate(GCodeMacro.FixMacroName(macro.Name));
-				macroButton.Margin = new BorderDouble(right: 5);
+				var macroButton = new TextButton(GCodeMacro.FixMacroName(macro.Name), theme)
+				{
+					BackgroundColor = theme.MinimalShade,
+					Margin = new BorderDouble(right: 5)
+				};
 				macroButton.Click += (s, e) => macro.Run(printer.Connection);
 
 				this.AddChild(macroButton);

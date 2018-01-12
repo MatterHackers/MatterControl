@@ -148,7 +148,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			var homeIcon = new IconButton(AggContext.StaticData.LoadIcon("fa-home_16.png", IconColor.Theme), theme)
 			{
 				ToolTipText = ToolTipText = "Home X, Y and Z".Localize(),
-				BackgroundColor = theme.ActiveTabColor,
+				BackgroundColor = theme.MinimalShade,
 				Margin = theme.ButtonSpacing
 			};
 			homeIcon.Click += (s, e) => printer.Connection.HomeAxis(PrinterConnection.Axis.XYZ);
@@ -157,7 +157,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			var homeXButton = new TextButton("X", theme)
 			{
 				ToolTipText = "Home X".Localize(),
-				BackgroundColor = theme.ActiveTabColor,
+				BackgroundColor = theme.MinimalShade,
 				Margin = theme.ButtonSpacing
 			};
 			homeXButton.Click += (s, e) => printer.Connection.HomeAxis(PrinterConnection.Axis.X);
@@ -166,7 +166,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			var homeYButton = new TextButton("Y", theme)
 			{
 				ToolTipText = "Home Y".Localize(),
-				BackgroundColor = theme.ActiveTabColor,
+				BackgroundColor = theme.MinimalShade,
 				Margin = theme.ButtonSpacing
 			};
 			homeYButton.Click += (s, e) => printer.Connection.HomeAxis(PrinterConnection.Axis.Y);
@@ -175,7 +175,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			var homeZButton = new TextButton("Z", theme)
 			{
 				ToolTipText = "Home Z".Localize(),
-				BackgroundColor = theme.ActiveTabColor,
+				BackgroundColor = theme.MinimalShade,
 				Margin = theme.ButtonSpacing
 			};
 			homeZButton.Click += (s, e) => printer.Connection.HomeAxis(PrinterConnection.Axis.Z);
@@ -199,7 +199,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			// Create 'Release' button
 			var disableMotors = new TextButton("Release".Localize(), theme)
 			{
-				BackgroundColor = theme.ActiveTabColor,
+				BackgroundColor = theme.MinimalShade,
 			};
 			disableMotors.Click += (s, e) =>
 			{

@@ -29,9 +29,11 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
@@ -47,40 +49,51 @@ namespace MatterHackers.MatterControl
 		public UpdateControlView(ThemeConfig theme)
 		{
 			this.HAnchor = HAnchor.Stretch;
-			this.BackgroundColor = ActiveTheme.Instance.TransparentDarkOverlay;
-			this.Padding = new BorderDouble(6, 5);
+			this.BackgroundColor = theme.MinimalShade;
+			this.Padding = theme.ToolbarPadding.Clone(left: 8);
 
-			updateStatusText = new TextWidget(string.Format(""), textColor: ActiveTheme.Instance.PrimaryTextColor);
-			updateStatusText.AutoExpandBoundsToText = true;
-			updateStatusText.VAnchor = VAnchor.Center;
-			this.AddChild(updateStatusText);
+			this.AddChild(updateStatusText = new TextWidget(string.Format(""), textColor: ActiveTheme.Instance.PrimaryTextColor)
+			{
+				AutoExpandBoundsToText = true,
+				VAnchor = VAnchor.Center
+			});
 
 			this.AddChild(new HorizontalSpacer());
 
-			checkUpdateLink = theme.GrayButtonFactory.Generate("Check for Update".Localize());
-			checkUpdateLink.VAnchor = VAnchor.Center;
+			checkUpdateLink = new IconButton(AggContext.StaticData.LoadIcon("fa-refresh_14.png", IconColor.Theme), ApplicationController.Instance.Theme)
+			{
+				ToolTipText = "Check for Update".Localize(),
+				BackgroundColor = theme.MinimalShade,
+				Cursor = Cursors.Hand,
+				Visible = false
+			};
 			checkUpdateLink.Click += (s, e) =>
 			{
 				UpdateControlData.Instance.CheckForUpdateUserRequested();
 			};
-			checkUpdateLink.Visible = false;
 			this.AddChild(checkUpdateLink);
 
-			downloadUpdateLink = theme.GrayButtonFactory.Generate("Download Update".Localize());
-			downloadUpdateLink.Visible = false;
-			downloadUpdateLink.VAnchor = VAnchor.Center;
+			this.MinimumSize = new Vector2(0, checkUpdateLink.Height);
+
+			downloadUpdateLink = new TextButton("Download Update".Localize(), theme)
+			{
+				BackgroundColor = theme.MinimalShade,
+				Visible = false
+			};
 			downloadUpdateLink.Click += (s, e) =>
 			{
 				downloadUpdateLink.Visible = false;
-				updateStatusText.Text = string.Format("Retrieving download info...".Localize());
+				updateStatusText.Text = "Retrieving download info...".Localize();
 
 				UpdateControlData.Instance.InitiateUpdateDownload();
 			};
 			this.AddChild(downloadUpdateLink);
 
-			installUpdateLink = theme.GrayButtonFactory.Generate("Install Update".Localize());
-			installUpdateLink.Visible = false;
-			installUpdateLink.VAnchor = VAnchor.Center;
+			installUpdateLink = new TextButton("Install Update".Localize(), theme)
+			{
+				BackgroundColor = theme.MinimalShade,
+				Visible = false
+			};
 			installUpdateLink.Click += (s, e) =>
 			{
 				try
@@ -88,21 +101,19 @@ namespace MatterHackers.MatterControl
 					if (!UpdateControlData.Instance.InstallUpdate())
 					{
 						installUpdateLink.Visible = false;
-						updateStatusText.Text = string.Format("Oops! Unable to install update.".Localize());
+						updateStatusText.Text = "Oops! Unable to install update.".Localize();
 					}
 				}
 				catch
 				{
 					GuiWidget.BreakInDebugger();
 					installUpdateLink.Visible = false;
-					updateStatusText.Text = string.Format("Oops! Unable to install update.".Localize());
+					updateStatusText.Text = "Oops! Unable to install update.".Localize();
 				}
 			};
 			this.AddChild(installUpdateLink);
 
 			UpdateControlData.Instance.UpdateStatusChanged.RegisterEvent(UpdateStatusChanged, ref unregisterEvents);
-
-			this.MinimumSize = new VectorMath.Vector2(0, 50);
 
 			this.UpdateStatusChanged(null, null);
 		}
@@ -113,25 +124,25 @@ namespace MatterHackers.MatterControl
 			base.OnClosed(e);
 		}
 
-		string recommendedUpdateAvailable = "There is a recommended update available.".Localize();
-		string requiredUpdateAvailable = "There is a required update available.".Localize();
+		string recommendedUpdateAvailable = "There is a recommended update available".Localize();
+		string requiredUpdateAvailable = "There is a required update available".Localize();
 
 		private void UpdateStatusChanged(object sender, EventArgs e)
 		{
 			switch (UpdateControlData.Instance.UpdateStatus)
 			{
 				case UpdateControlData.UpdateStatusStates.MayBeAvailable:
-					updateStatusText.Text = string.Format("New updates may be available.".Localize());
+					updateStatusText.Text = "New updates may be available".Localize();
 					checkUpdateLink.Visible = true;
 					break;
 
 				case UpdateControlData.UpdateStatusStates.CheckingForUpdate:
 					updateStatusText.Text = "Checking for updates...".Localize();
-					checkUpdateLink.Visible = false;
+					//checkUpdateLink.Visible = false;
 					break;
 
 				case UpdateControlData.UpdateStatusStates.UnableToConnectToServer:
-					updateStatusText.Text = "Oops! Unable to connect to server.".Localize();
+					updateStatusText.Text = "Oops! Unable to connect to server".Localize();
 					downloadUpdateLink.Visible = false;
 					installUpdateLink.Visible = false;
 					checkUpdateLink.Visible = true;
@@ -152,20 +163,21 @@ namespace MatterHackers.MatterControl
 					break;
 
 				case UpdateControlData.UpdateStatusStates.UpdateDownloading:
-					string newText = "Downloading updates...".Localize();
-					newText = "{0} {1}%".FormatWith(newText, UpdateControlData.Instance.DownloadPercent);
-					updateStatusText.Text = newText;
+					updateStatusText.Text = string.Format(
+						"{0} {1}%",
+						"Downloading updates...".Localize(),
+						UpdateControlData.Instance.DownloadPercent);
 					break;
 
 				case UpdateControlData.UpdateStatusStates.ReadyToInstall:
-					updateStatusText.Text = string.Format("New updates are ready to install.".Localize());
+					updateStatusText.Text = "New updates are ready to install".Localize();
 					downloadUpdateLink.Visible = false;
 					installUpdateLink.Visible = true;
 					checkUpdateLink.Visible = false;
 					break;
 
 				case UpdateControlData.UpdateStatusStates.UpToDate:
-					updateStatusText.Text = string.Format("Your application is up-to-date.".Localize());
+					updateStatusText.Text = "Your application is up-to-date".Localize();
 					downloadUpdateLink.Visible = false;
 					installUpdateLink.Visible = false;
 					checkUpdateLink.Visible = true;

@@ -95,7 +95,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private ViewControls3DButtons activeTransformState = ViewControls3DButtons.Rotate;
 		private List<(GuiWidget button, SceneSelectionOperation operation)> operationButtons;
 
-		public bool IsPrinterMode { get; set; }
+		public bool IsPrinterMode { get; }
 
 		public ViewControls3DButtons ActiveButton
 		{
@@ -152,18 +152,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.view3DWidget = view3DWidget;
 		}
 
-		public ViewControls3D(BedConfig sceneContext, ThemeConfig theme, UndoBuffer undoBuffer)
+		public ViewControls3D(BedConfig sceneContext, ThemeConfig theme, UndoBuffer undoBuffer, bool isPrinterType)
 			: base (theme)
 		{
 			this.printer = sceneContext.Printer;
+			this.IsPrinterMode = isPrinterType;
 
 			string iconPath;
 
 			var commonMargin = theme.ButtonSpacing;
 
-			var buttonFactory = theme.RadioButtons;
-
 			double height = theme.ButtonFactory.Options.FixedHeight;
+
+			this.AddChild(CreateBedMenu(sceneContext, theme));
 
 			var homeButton = new IconButton(AggContext.StaticData.LoadIcon("fa-home_16.png", IconColor.Theme), theme)
 			{
@@ -372,41 +373,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.AddChild(button);
 			}
 
-			var buttonView = new FlowLayoutWidget();
-			buttonView.AddChild(new ImageWidget(AggContext.StaticData.LoadIcon((IsPrinterMode) ? "bed.png" : "cube.png", IconColor.Theme))
-			{
-				VAnchor = VAnchor.Center,
-				Margin = theme.ButtonSpacing,
-			});
-
-			var buttonText = (IsPrinterMode) ? "Bed".Localize() : "Part".Localize();
-			buttonView.AddChild(new TextButton(buttonText, theme)
-			{
-				Padding = new BorderDouble(8, 4, 0, 4)
-			});
-
-			this.AddChild(new HorizontalSpacer());
-
-			var overflowMenu = new OverflowMenu(buttonView)
-			{
-				Name = "Bed Options Menu",
-				DynamicPopupContent = () => theme.CreatePopupMenu(this.BedMenuActions(sceneContext)),
-				DrawArrow = true,
-				AlignToRightEdge = true,
-				Margin = new BorderDouble(right: theme.ButtonSpacing.Left),
-			};
-
-			// HACK: Fix left padding to improve style. Ideally fix this in the underlying button
-			var firstChild = overflowMenu.Children.First();
-			firstChild.Margin = firstChild.Margin.Clone(left: 8);
-
-			overflowMenu.Load += (s, e) =>
-			{
-				var firstBackgroundColor = this.Parents<GuiWidget>().Where(p => p.BackgroundColor.Alpha0To1 == 1).FirstOrDefault()?.BackgroundColor;
-				overflowMenu.BackgroundColor = firstBackgroundColor ?? Color.Transparent;
-			};
-			this.AddChild(overflowMenu);
-
 			if (printer != null)
 			{
 				printer.Bed.Scene.SelectionChanged += Scene_SelectionChanged;
@@ -439,6 +405,42 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				item.button.Enabled = item.operation.IsEnabled?.Invoke(printer.Bed.Scene) ?? false;
 			}
+		}
+
+		private OverflowMenu CreateBedMenu(BedConfig sceneContext, ThemeConfig theme)
+		{
+			var buttonView = new FlowLayoutWidget();
+			buttonView.AddChild(new ImageWidget(AggContext.StaticData.LoadIcon((IsPrinterMode) ? "bed.png" : "cube.png", IconColor.Theme))
+			{
+				VAnchor = VAnchor.Center,
+				Margin = theme.ButtonSpacing,
+			});
+
+			var buttonText = (IsPrinterMode) ? "Bed".Localize() : "Part".Localize();
+			buttonView.AddChild(new TextButton(buttonText, theme)
+			{
+				Padding = new BorderDouble(8, 4, 0, 4)
+			});
+
+			var overflowMenu = new OverflowMenu(buttonView)
+			{
+				Name = "Bed Options Menu",
+				DynamicPopupContent = () => theme.CreatePopupMenu(this.BedMenuActions(sceneContext)),
+				DrawArrow = true,
+				AlignToRightEdge = true,
+				Margin = new BorderDouble(right: theme.ButtonSpacing.Left),
+			};
+
+			// HACK: Fix left padding to improve style. Ideally fix this in the underlying button
+			var firstChild = overflowMenu.Children.First();
+			firstChild.Margin = firstChild.Margin.Clone(left: 8);
+
+			overflowMenu.Load += (s, e) =>
+			{
+				var firstBackgroundColor = this.Parents<GuiWidget>().Where(p => p.BackgroundColor.Alpha0To1 == 1).FirstOrDefault()?.BackgroundColor;
+				overflowMenu.BackgroundColor = firstBackgroundColor ?? Color.Transparent;
+			};
+			return overflowMenu;
 		}
 
 		private void SwitchModes_Click(object sender, MouseEventArgs e)

@@ -58,6 +58,7 @@ namespace MatterHackers.MatterControl
 
 		public DialogPage(string cancelButtonText = null)
 		{
+			var theme = ApplicationController.Instance.Theme;
 			if (cancelButtonText == null)
 			{
 				cancelButtonText = "Cancel".Localize();
@@ -77,7 +78,7 @@ namespace MatterHackers.MatterControl
 			mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				Padding = new BorderDouble(12, 12, 12, 0),
-				BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor
+				BackgroundColor = theme.Colors.PrimaryBackgroundColor
 			};
 			mainContainer.AnchorAll();
 
@@ -90,7 +91,7 @@ namespace MatterHackers.MatterControl
 				HAnchor = HAnchor.Stretch
 			};
 
-			headerLabel = new WrappedTextWidget("Setup Wizard".Localize(), pointSize: 24, textColor: ActiveTheme.Instance.SecondaryAccentColor)
+			headerLabel = new WrappedTextWidget("Setup Wizard".Localize(), pointSize: 24, textColor: theme.Colors.SecondaryAccentColor)
 			{
 				HAnchor = HAnchor.Stretch
 			};
@@ -100,7 +101,7 @@ namespace MatterHackers.MatterControl
 			contentRow = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				Padding = new BorderDouble(10),
-				BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor,
+				BackgroundColor = theme.MinimalShade,
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Stretch
 			};
@@ -125,7 +126,7 @@ namespace MatterHackers.MatterControl
 				headerRow.Padding = new BorderDouble(0, 3, 0, 3);
 
 				headerLabel.TextWidget.PointSize = 14;
-				headerLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+				headerLabel.TextColor = theme.Colors.PrimaryTextColor;
 				contentRow.Padding = new BorderDouble(5);
 				footerRow.Margin = new BorderDouble(0, 3);
 			}

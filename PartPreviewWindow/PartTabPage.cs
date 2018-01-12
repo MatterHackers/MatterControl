@@ -57,13 +57,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			bool isPrinterType = this is PrinterTabPage;
 			
-			viewControls3D = new ViewControls3D(sceneContext, theme, sceneContext.Scene.UndoBuffer)
+			viewControls3D = new ViewControls3D(sceneContext, theme, sceneContext.Scene.UndoBuffer, isPrinterType)
 			{
 				//BackgroundColor = new Color(0, 0, 0, theme.OverlayAlpha),
 				VAnchor = VAnchor.Top | VAnchor.Fit,
 				HAnchor = HAnchor.Left | HAnchor.Stretch,
 				Visible = true,
-				IsPrinterMode = isPrinterType
 			};
 			viewControls3D.ResetView += (sender, e) =>
 			{

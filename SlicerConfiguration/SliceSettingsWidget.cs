@@ -203,7 +203,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				VAnchor = VAnchor.Fit,
 				HAnchor = HAnchor.Stretch,
-				Padding = new BorderDouble(10, 10, 13, 6),
+				Padding = new BorderDouble(10, 0, 12, 10),
 			};
 
 			bool isFirstSection = true;
@@ -242,12 +242,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			string groupName = (group.Name.Contains("!hidden")) ? "" : group.Name;
 
-			var sectionWidget = new SectionWidget(groupName, groupPanel, theme, expanded: expanded)
-			{
-				Margin = new BorderDouble(bottom: 8),
-			};
-
+			var sectionWidget = new SectionWidget(groupName, groupPanel, theme, expanded: expanded);
 			theme.BoxStyleSectionWidget(sectionWidget);
+			sectionWidget.Margin = new BorderDouble(bottom: 10);
 
 			if (string.IsNullOrEmpty(groupName))
 			{

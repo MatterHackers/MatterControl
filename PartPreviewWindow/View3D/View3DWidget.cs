@@ -164,6 +164,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				SpliterBarColor = theme.SplitterBackground,
 				SplitterWidth = theme.SplitterWidth,
 				Visible = false,
+				Border = new BorderDouble(top: 1),
+				BorderColor = theme.MinimalShade
 			};
 
 			this.InteractionLayer.AddChild(selectedObjectContainer);

@@ -18,14 +18,25 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 		private static Color menuTextColor = Color.Black;
 
-		public SettingsItem(string text, ToggleSwitchConfig toggleSwitchConfig = null, GuiWidget optionalControls = null, ImageBuffer iconImage = null, bool enforceGutter = true)
-			: this(text, CreateToggleSwitch(toggleSwitchConfig), optionalControls, iconImage, enforceGutter)
+		public SettingsItem(string text, Color textColor, ToggleSwitchConfig toggleSwitchConfig = null, GuiWidget optionalControls = null, ImageBuffer iconImage = null, bool enforceGutter = true)
+			: this(text, textColor, CreateToggleSwitch(toggleSwitchConfig, textColor), optionalControls, iconImage, enforceGutter)
 		{
 		}
 
-		public SettingsItem (string text, GuiWidget settingsControls, GuiWidget optionalControls = null, ImageBuffer imageBuffer = null, bool enforceGutter = true)
+		public SettingsItem(string text, ToggleSwitchConfig toggleSwitchConfig = null, GuiWidget optionalControls = null, ImageBuffer iconImage = null, bool enforceGutter = true)
+			: this(text, CreateToggleSwitch(toggleSwitchConfig, menuTextColor), optionalControls, iconImage, enforceGutter)
+		{
+		}
+
+		public SettingsItem(string text, GuiWidget settingsControls, GuiWidget optionalControls = null, ImageBuffer imageBuffer = null, bool enforceGutter = true)
+			: this(text, menuTextColor, settingsControls, optionalControls, imageBuffer, enforceGutter)
+		{
+		}
+
+		public SettingsItem (string text, Color textColor, GuiWidget settingsControls, GuiWidget optionalControls = null, ImageBuffer imageBuffer = null, bool enforceGutter = true)
 			: base (FlowDirection.LeftToRight)
 		{
+			this.SettingsControl = settingsControls;
 			this.HAnchor = HAnchor.Stretch;
 			this.MinimumSize = new Vector2(0, 40);
 
@@ -48,10 +59,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				});
 			}
 
-			this.AddChild(new TextWidget(text)
+			this.AddChild(new TextWidget(text, textColor: textColor)
 			{
 				AutoExpandBoundsToText = true,
-				TextColor = menuTextColor,
 				VAnchor = VAnchor.Center,
 			});
 
@@ -68,14 +78,16 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			}
 		}
 
-		private static CheckBox CreateToggleSwitch(ToggleSwitchConfig toggleSwitchConfig)
+		public GuiWidget SettingsControl { get; }
+
+		private static CheckBox CreateToggleSwitch(ToggleSwitchConfig toggleSwitchConfig, Color textColor)
 		{
 			if (toggleSwitchConfig == null)
 			{
 				return null;
 			}
 
-			var toggleSwitch = ImageButtonFactory.CreateToggleSwitch(toggleSwitchConfig.Checked, menuTextColor);
+			var toggleSwitch = ImageButtonFactory.CreateToggleSwitch(toggleSwitchConfig.Checked, textColor);
 			toggleSwitch.VAnchor = VAnchor.Center;
 			toggleSwitch.Margin = new BorderDouble(left: 16);
 			toggleSwitch.CheckedStateChanged += (sender, e) =>

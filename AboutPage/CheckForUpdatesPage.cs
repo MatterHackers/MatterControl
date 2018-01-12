@@ -12,94 +12,51 @@ namespace MatterHackers.MatterControl.AboutPage
 		public CheckForUpdatesPage()
 		: base("Close".Localize())
 		{
-			AnchorAll();
-
-			this.WindowTitle = this.HeaderText = "Check for Update".Localize();
-
 			var theme = ApplicationController.Instance.Theme;
 
-			FlowLayoutWidget topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			topToBottom.AnchorAll();
-			topToBottom.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
-			Padding = 0;
+			this.WindowTitle = this.HeaderText = "Check for Update".Localize();
+			this.Padding = 0;
+			this.AnchorAll();
 
-			FlowLayoutWidget currentFeedAndDropDownContainer = new FlowLayoutWidget(FlowDirection.LeftToRight);
-			currentFeedAndDropDownContainer.VAnchor = VAnchor.Fit;
-			currentFeedAndDropDownContainer.HAnchor = HAnchor.Stretch;
-			currentFeedAndDropDownContainer.Margin = new BorderDouble(0, 5, 0, 0);
-			currentFeedAndDropDownContainer.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
-			
-			UpdateControlView updateStatusWidget = new UpdateControlView(ApplicationController.Instance.Theme);
+			// Clear padding so UpdateControlView toolbar appears like toolbar 
+			contentRow.Padding = 0;
 
-			TextWidget feedLabel = new TextWidget("Update Channel".Localize(), pointSize: 12);
-			feedLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			feedLabel.VAnchor = VAnchor.Center;
-			feedLabel.Margin = new BorderDouble(left: 5);
+			// Update Status Widget
+			contentRow.AddChild(
+				new UpdateControlView(ApplicationController.Instance.Theme));
 
-			var releaseOptionsDropList = new DropDownList("Development", ActiveTheme.Instance.PrimaryTextColor, maxHeight: 200);
-			releaseOptionsDropList.HAnchor = HAnchor.Stretch;
-
-			releaseOptionsDropList.AddItem("Stable".Localize(), "release");
-			releaseOptionsDropList.AddItem("Beta".Localize(), "pre-release");
-			releaseOptionsDropList.AddItem("Alpha".Localize(), "development");
-
-			var acceptableUpdateFeedTypeValues = new List<string>() { "release", "pre-release", "development" };
-
-			string currentUpdateFeedType = UserSettings.Instance.get(UserSettingsKey.UpdateFeedType);
-			if (acceptableUpdateFeedTypeValues.IndexOf(currentUpdateFeedType) == -1)
+			var contentPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				UserSettings.Instance.set(UserSettingsKey.UpdateFeedType, "release");
-			}
-
-			releaseOptionsDropList.SelectedValue = currentUpdateFeedType;
-			releaseOptionsDropList.SelectionChanged += (s, e) =>
-			{
-				string releaseCode = releaseOptionsDropList.SelectedValue;
-				if (releaseCode != UserSettings.Instance.get(UserSettingsKey.UpdateFeedType))
-				{
-					UserSettings.Instance.set(UserSettingsKey.UpdateFeedType, releaseCode);
-				}
-
-				UpdateControlData.Instance.CheckForUpdateUserRequested();
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch,
+				Padding = 8
 			};
+			contentRow.AddChild(contentPanel);
 
-			var currentBuildInfo = new TextWidget("Current Build".Localize() + $" : {VersionInfo.Instance.BuildVersion}");
-			currentBuildInfo.HAnchor = HAnchor.Stretch;
-			currentBuildInfo.Margin = new BorderDouble(left: 5, bottom: 15, top: 20);
-			currentBuildInfo.TextColor = ActiveTheme.Instance.PrimaryTextColor;
+			var currentBuildInfo = new TextWidget("Current Build".Localize() + $" : {VersionInfo.Instance.BuildVersion}")
+			{
+				HAnchor = HAnchor.Stretch,
+				Margin = new BorderDouble(left: 5, bottom: 15, top: 20),
+				TextColor = theme.Colors.PrimaryTextColor
+			};
+			contentPanel.AddChild(currentBuildInfo);
 
-			FlowLayoutWidget additionalInfoContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			additionalInfoContainer.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
-			additionalInfoContainer.HAnchor = HAnchor.Stretch;
-			additionalInfoContainer.Padding = new BorderDouble(left: 6, top: 6);
+			var currentFeedAndDropDownContainer = new FlowLayoutWidget(FlowDirection.LeftToRight)
+			{
+				VAnchor = VAnchor.Fit,
+				HAnchor = HAnchor.Stretch,
+			};
+			contentPanel.AddChild(currentFeedAndDropDownContainer);
 
-			string aboutUpdateChannel = "Changing your update channel will change the version of MatterControl that you receive when updating".Localize() + ":";
-			var updateChannelLabel = new WrappedTextWidget(aboutUpdateChannel);
-			updateChannelLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			updateChannelLabel.HAnchor = HAnchor.Stretch;
-			updateChannelLabel.Margin = new BorderDouble(bottom: 20);
-			additionalInfoContainer.AddChild(updateChannelLabel);
+			var feedLabel = new TextWidget("Update Channel".Localize(), pointSize: 12)
+			{
+				TextColor = theme.Colors.PrimaryTextColor,
+				VAnchor = VAnchor.Center,
+				Margin = new BorderDouble(left: 5)
+			};
+			currentFeedAndDropDownContainer.AddChild(feedLabel);
 
-			string stableFeedInfoText = "Stable: The current release version of MatterControl (recommended).".Localize();
-			var stableInfoLabel = new WrappedTextWidget(stableFeedInfoText);
-			stableInfoLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			stableInfoLabel.HAnchor = HAnchor.Stretch;
-			stableInfoLabel.Margin = new BorderDouble(bottom: 10);
-			additionalInfoContainer.AddChild(stableInfoLabel);
-
-			string betaFeedInfoText = "Beta: The release candidate version of MatterControl.".Localize();
-			var betaInfoLabel = new WrappedTextWidget(betaFeedInfoText);
-			betaInfoLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			betaInfoLabel.HAnchor = HAnchor.Stretch;
-			betaInfoLabel.Margin = new BorderDouble(bottom: 10);
-			additionalInfoContainer.AddChild(betaInfoLabel);
-
-			string alphaFeedInfoText = "Alpha: The in development version of MatterControl.".Localize();
-			var alphaInfoLabel = new WrappedTextWidget(alphaFeedInfoText);
-			alphaInfoLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-			alphaInfoLabel.HAnchor = HAnchor.Stretch;
-			alphaInfoLabel.Margin = new BorderDouble(bottom: 10);
-			additionalInfoContainer.AddChild(alphaInfoLabel);
+			FlowLayoutWidget additionalInfoContainer = null;
 
 			Button whatsThisLink = theme.HelpLinkFactory.Generate("What's this?".Localize());
 			whatsThisLink.VAnchor = VAnchor.Center;
@@ -118,22 +75,78 @@ namespace MatterHackers.MatterControl.AboutPage
 					}
 				});
 			};
-
-			topToBottom.AddChild(updateStatusWidget);
-			topToBottom.AddChild(currentBuildInfo);
-			currentFeedAndDropDownContainer.AddChild(feedLabel);
 			currentFeedAndDropDownContainer.AddChild(whatsThisLink);
+
 			currentFeedAndDropDownContainer.AddChild(new HorizontalSpacer());
+
+
+			var acceptableUpdateFeedTypeValues = new List<string>() { "release", "pre-release", "development" };
+
+			string currentUpdateFeedType = UserSettings.Instance.get(UserSettingsKey.UpdateFeedType);
+			if (acceptableUpdateFeedTypeValues.IndexOf(currentUpdateFeedType) == -1)
+			{
+				UserSettings.Instance.set(UserSettingsKey.UpdateFeedType, "release");
+			}
+
+			var releaseOptionsDropList = new DropDownList("Development", theme.Colors.PrimaryTextColor, maxHeight: 200)
+			{
+				HAnchor = HAnchor.Fit
+			};
+			releaseOptionsDropList.AddItem("Stable".Localize(), "release");
+			releaseOptionsDropList.AddItem("Beta".Localize(), "pre-release");
+			releaseOptionsDropList.AddItem("Alpha".Localize(), "development");
+			releaseOptionsDropList.SelectedValue = currentUpdateFeedType;
+			releaseOptionsDropList.SelectionChanged += (s, e) =>
+			{
+				string releaseCode = releaseOptionsDropList.SelectedValue;
+				if (releaseCode != UserSettings.Instance.get(UserSettingsKey.UpdateFeedType))
+				{
+					UserSettings.Instance.set(UserSettingsKey.UpdateFeedType, releaseCode);
+				}
+
+				UpdateControlData.Instance.CheckForUpdateUserRequested();
+			};
 			currentFeedAndDropDownContainer.AddChild(releaseOptionsDropList);
-			topToBottom.AddChild(currentFeedAndDropDownContainer);
 
-			topToBottom.AddChild(additionalInfoContainer);
+			additionalInfoContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor,
+				HAnchor = HAnchor.Stretch,
+				Padding = new BorderDouble(left: 6, top: 6),
+				Visible = false
+			};
+			additionalInfoContainer.AddChild(
+				new WrappedTextWidget("Changing your update channel will change the version of MatterControl that you receive when updating".Localize() + ":")
+				{
+					TextColor = theme.Colors.PrimaryTextColor,
+					HAnchor = HAnchor.Stretch,
+					Margin = new BorderDouble(bottom: 20)
+				});
 
-			contentRow.AddChild(topToBottom);
+			additionalInfoContainer.AddChild(
+				new WrappedTextWidget("Stable: The current release version of MatterControl (recommended)".Localize())
+				{
+					TextColor = theme.Colors.PrimaryTextColor,
+					HAnchor = HAnchor.Stretch,
+					Margin = new BorderDouble(bottom: 10)
+				});
 
-			additionalInfoContainer.Visible = false;
+			additionalInfoContainer.AddChild(
+				new WrappedTextWidget("Beta: The release candidate version of MatterControl".Localize())
+				{
+					TextColor = theme.Colors.PrimaryTextColor,
+					HAnchor = HAnchor.Stretch,
+					Margin = new BorderDouble(bottom: 10)
+				});
 
-			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+			additionalInfoContainer.AddChild(
+				new WrappedTextWidget("Alpha: The in development version of MatterControl".Localize())
+				{
+					TextColor = theme.Colors.PrimaryTextColor,
+					HAnchor = HAnchor.Stretch,
+					Margin = new BorderDouble(bottom: 10)
+				});
+			contentPanel.AddChild(additionalInfoContainer);
 		}
 	}
 }
