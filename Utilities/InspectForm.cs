@@ -477,5 +477,17 @@ namespace MatterHackers.MatterControl
 				scene.DebugItem = null;
 			}
 		}
+
+		private void debugTextWidget_CheckedChanged(object sender, EventArgs e)
+		{
+			TextWidget.DebugShowSize = debugTextWidget.Checked;
+
+
+			foreach(var widget in this.inspectedSystemWindow.Descendants<TextWidget>())
+			{
+				widget.Invalidate();
+			}
+
+		}
 	}
 }
