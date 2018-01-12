@@ -116,6 +116,12 @@ namespace MatterHackers.MatterControl
 
 		public GuiWidget RegisterSection(SectionWidget sectionWidget)
 		{
+			// Section not active due to constraints
+			if (sectionWidget == null)
+			{
+				return null;
+			}
+
 			ApplicationController.Instance.Theme.BoxStyleSectionWidget(sectionWidget);
 
 			column.AddChild(sectionWidget);
