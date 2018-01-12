@@ -61,7 +61,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			var totalContent = new FlowLayoutWidget();
 
-			var selectableOptions = new DropDownList("Custom", textColor, maxHeight: 200);
+			var selectableOptions = new DropDownList("Custom", textColor, maxHeight: 200, pointSize: ApplicationController.Instance.Theme.DefaultFontSize);
 			selectableOptions.Margin = new BorderDouble(0, 0, 10, 0);
 
 			foreach (QuickMenuNameValue nameValue in settingData.QuickMenuSettings)

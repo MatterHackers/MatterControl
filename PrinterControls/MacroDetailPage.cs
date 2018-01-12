@@ -46,6 +46,8 @@ namespace MatterHackers.MatterControl
 
 		public MacroDetailPage(GCodeMacro gcodeMacro, PrinterSettings printerSettings)
 		{
+			var theme = ApplicationController.Instance.Theme;
+
 			// Form validation fields
 			MHTextEditWidget macroNameInput;
 			MHTextEditWidget macroCommandInput;
@@ -61,7 +63,7 @@ namespace MatterHackers.MatterControl
 
 			contentRow.AddChild(new TextWidget("Macro Name".Localize() + ":", 0, 0, 12)
 			{
-				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				TextColor = theme.Colors.PrimaryTextColor,
 				HAnchor = HAnchor.Stretch,
 				Margin = new BorderDouble(0, 0, 0, 1)
 			});
@@ -73,14 +75,14 @@ namespace MatterHackers.MatterControl
 
 			contentRow.AddChild(macroNameError = new TextWidget("Give the macro a name".Localize() + ".", 0, 0, 10)
 			{
-				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				TextColor = theme.Colors.PrimaryTextColor,
 				HAnchor = HAnchor.Stretch,
 				Margin = elementMargin
 			});
 
 			contentRow.AddChild(new TextWidget("Macro Commands".Localize() + ":", 0, 0, 12)
 			{
-				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				TextColor = theme.Colors.PrimaryTextColor,
 				HAnchor = HAnchor.Stretch,
 				Margin = new BorderDouble(0, 0, 0, 1)
 			});
@@ -96,7 +98,7 @@ namespace MatterHackers.MatterControl
 
 			contentRow.AddChild(macroCommandError = new TextWidget("This should be in 'G-Code'".Localize() + ".", 0, 0, 10)
 			{
-				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				TextColor = theme.Colors.PrimaryTextColor,
 				HAnchor = HAnchor.Stretch,
 				Margin = elementMargin
 			});
@@ -109,13 +111,13 @@ namespace MatterHackers.MatterControl
 
 			container.AddChild(new TextWidget("Where to show this macro:")
 			{
-				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				TextColor = theme.Colors.PrimaryTextColor,
 				VAnchor = VAnchor.Center
 			});
 
-			var macroUiLocation = new DropDownList("Default", ActiveTheme.Instance.PrimaryTextColor, Direction.Up)
+			var macroUiLocation = new DropDownList("Default", theme.Colors.PrimaryTextColor, Direction.Up, pointSize: theme.DefaultFontSize)
 			{
-				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				TextColor = theme.Colors.PrimaryTextColor,
 				Margin = new BorderDouble(5, 0),
 				VAnchor = VAnchor.Center
 			};

@@ -35,7 +35,6 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
@@ -46,6 +45,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private string defaultMenuItemText = "- none -".Localize();
 		private Button editButton;
 		private NamedSettingsLayers layerType;
+		private ThemeConfig theme;
 		private PrinterConfig printer;
 		private GuiWidget pullDownContainer;
 		private EventHandler unregisterEvents;
@@ -55,9 +55,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public PresetSelectorWidget(PrinterConfig printer, string label, Color accentColor, NamedSettingsLayers layerType, bool whiteBackground = false)
 			: base(FlowDirection.TopToBottom)
 		{
+			theme = ApplicationController.Instance.Theme;
+
 			this.printer = printer;
 			this.whiteBackground = whiteBackground;
-			Name = label;
+			this.Name = label;
 
 			ActiveSliceSettings.MaterialPresetChanged += ActiveSliceSettings_MaterialPresetChanged;
 
@@ -75,7 +77,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Fit;
-			this.BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor;
+			this.BackgroundColor = theme.Colors.TertiaryBackgroundColor;
 
 			GuiWidget accentBar = new GuiWidget(7, 3)
 			{
@@ -84,9 +86,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			};
 
 			// Section Label
-			this.AddChild(new TextWidget(label)
+			this.AddChild(new TextWidget(label, pointSize: theme.DefaultFontSize)
 			{
-				TextColor = whiteBackground ? Color.Black : ActiveTheme.Instance.PrimaryTextColor,
+				TextColor = whiteBackground ? Color.Black : theme.Colors.PrimaryTextColor,
 				HAnchor = HAnchor.Left,
 				Margin = new BorderDouble(12, 3, 0, 6)
 			});
@@ -216,10 +218,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public override void OnClosed(ClosedEventArgs e)
 		{
 			ActiveSliceSettings.MaterialPresetChanged -= ActiveSliceSettings_MaterialPresetChanged;
-			if (unregisterEvents != null)
-			{
-				unregisterEvents(this, null);
-			}
+			unregisterEvents?.Invoke(this, null);
+
 			base.OnClosed(e);
 		}
 
@@ -230,11 +230,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private DropDownList CreateDropdown()
 		{
-			var dropDownList = new DropDownList(defaultMenuItemText, ActiveTheme.Instance.PrimaryTextColor, maxHeight: 300, useLeftIcons: true)
+			var dropDownList = new DropDownList(defaultMenuItemText, theme.Colors.PrimaryTextColor, maxHeight: 300, useLeftIcons: true, pointSize: theme.DefaultFontSize)
 			{
 				HAnchor = HAnchor.Stretch,
 				MenuItemsPadding = new BorderDouble(10, 7, 7, 7),
-				TextColor = whiteBackground ? Color.Black : ActiveTheme.Instance.PrimaryTextColor,
+				TextColor = whiteBackground ? Color.Black : theme.Colors.PrimaryTextColor,
 			};
 
 			dropDownList.Name = layerType.ToString() + " DropDown List";

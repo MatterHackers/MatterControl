@@ -134,7 +134,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 
 			var existingPrinterSection = CreateSection(leftContent, "Open Existing".Localize() + ":");
 
-			var printerSelector = new PrinterSelector()
+			var printerSelector = new PrinterSelector(theme)
 			{
 				Margin = new BorderDouble(left: 15)
 			};

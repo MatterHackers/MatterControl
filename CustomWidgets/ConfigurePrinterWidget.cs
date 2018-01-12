@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl
 			: base(FlowDirection.TopToBottom)
 		{
 			int tabIndex = 0;
-			var rowItem = sliceSettingsWidget.CreateItemRow(SliceSettingsOrganizer.SettingsData["printer_name"], ref tabIndex);
+			var rowItem = sliceSettingsWidget.CreateItemRow(SliceSettingsOrganizer.SettingsData["printer_name"],ref tabIndex, theme);
 
 			var firstChild = rowItem.Children.FirstOrDefault();
 			firstChild.HAnchor = HAnchor.Absolute;
