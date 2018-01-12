@@ -76,7 +76,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			this.AddChild(firstPanel);
 
-			firstPanel.AddChild(itemName = new TextWidget("", textColor: ActiveTheme.Instance.PrimaryTextColor)
+			firstPanel.AddChild(itemName = new TextWidget("", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: theme.DefaultFontSize)
 			{
 				AutoExpandBoundsToText = true,
 				EllipsisIfClipped = true,

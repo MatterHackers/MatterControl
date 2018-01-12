@@ -38,8 +38,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class PopupMenu : FlowLayoutWidget
 	{
-		public static double PointSize { get; set; } = 12;
-
 		public static int GutterWidth { get; set; } = 35;
 
 		private ThemeConfig theme;
@@ -70,9 +68,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public MenuItem CreateMenuItem(string name, ImageBuffer icon = null)
 		{
-			var textWidget = new TextWidget(name)
+			var textWidget = new TextWidget(name, pointSize: theme.DefaultFontSize)
 			{
-				PointSize = PopupMenu.PointSize,
 				Padding = MenuPadding,
 			};
 
@@ -91,9 +88,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public MenuItem CreateBoolMenuItem(string name, Func<bool> getter, Action<bool> setter)
 		{
-			var textWidget = new TextWidget(name)
+			var textWidget = new TextWidget(name, pointSize: theme.DefaultFontSize)
 			{
-				PointSize = PopupMenu.PointSize,
 				Padding = MenuPadding,
 			};
 

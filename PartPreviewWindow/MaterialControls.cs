@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 				this.AddChild(row);
 
-				var radioButton = new RadioButton(string.Format("{0} {1}", "Material".Localize(), extruderIndex + 1), textColor: theme.Colors.PrimaryTextColor);
+				var radioButton = new RadioButton(string.Format("{0} {1}", "Material".Localize(), extruderIndex + 1), textColor: theme.Colors.PrimaryTextColor, fontSize: theme.DefaultFontSize);
 				materialButtons.Add(radioButton);
 				radioButton.SiblingRadioButtonList = materialButtons;
 				row.AddChild(radioButton);
