@@ -95,7 +95,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private ViewControls3DButtons activeTransformState = ViewControls3DButtons.Rotate;
 		private List<(GuiWidget button, SceneSelectionOperation operation)> operationButtons;
 
-		public bool IsPrinterMode { get; set; }
+		public bool IsPrinterMode { get; }
 
 		public ViewControls3DButtons ActiveButton
 		{
@@ -152,10 +152,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.view3DWidget = view3DWidget;
 		}
 
-		public ViewControls3D(BedConfig sceneContext, ThemeConfig theme, UndoBuffer undoBuffer)
+		public ViewControls3D(BedConfig sceneContext, ThemeConfig theme, UndoBuffer undoBuffer, bool isPrinterType)
 			: base (theme)
 		{
 			this.printer = sceneContext.Printer;
+			this.IsPrinterMode = isPrinterType;
 
 			string iconPath;
 
