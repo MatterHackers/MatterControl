@@ -32,7 +32,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using MatterHackers.Agg;
-using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
@@ -59,7 +58,10 @@ namespace MatterHackers.MatterControl
 		private MoveButton zPlusControl;
 		private MoveButton zMinusControl;
 
-		private MoveButtonFactory moveButtonFactory = new MoveButtonFactory();
+		private MoveButtonFactory moveButtonFactory = new MoveButtonFactory()
+		{
+			FontSize = ApplicationController.Instance.Theme.DefaultFontSize
+		};
 		private PrinterConfig printer;
 
 		public JogControls(PrinterConfig printer, XYZColors colors)
@@ -556,7 +558,10 @@ namespace MatterHackers.MatterControl
 		{
 			FlowLayoutWidget zButtons = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			{
-				MoveButtonFactory moveButtonFactory = new MoveButtonFactory();
+				var moveButtonFactory = new MoveButtonFactory()
+				{
+					FontSize = ApplicationController.Instance.Theme.DefaultFontSize
+				};
 				moveButtonFactory.Colors.Fill.Normal = color;
 
 				zPlusControl = CreateMoveButton(printer, "Z+", PrinterConnection.Axis.Z, printer.Settings.ZSpeed(), levelingButtons, moveButtonFactory);
@@ -805,22 +810,22 @@ namespace MatterHackers.MatterControl
 			{
 				//Create the multi-state button view
 				var buttonViewStates = new ButtonViewStates(
-					new MoveButtonWidget(label, Colors.Text.Normal)
+					new MoveButtonWidget(label, Colors.Text.Normal, this.FontSize)
 					{
 						BackgroundColor = Colors.Fill.Normal,
 						BorderWidth = this.BorderWidth
 					},
-					new MoveButtonWidget(label, Colors.Text.Hover)
+					new MoveButtonWidget(label, Colors.Text.Hover, this.FontSize)
 					{
 						BackgroundColor = Colors.Fill.Hover,
 						BorderWidth = this.BorderWidth
 					},
-					new MoveButtonWidget(label, Colors.Text.Pressed)
+					new MoveButtonWidget(label, Colors.Text.Pressed, this.FontSize)
 					{
 						BackgroundColor = Colors.Fill.Pressed,
 						BorderWidth = this.BorderWidth
 					},
-					new MoveButtonWidget(label, Colors.Text.Disabled)
+					new MoveButtonWidget(label, Colors.Text.Disabled, this.FontSize)
 					{
 						BackgroundColor = Colors.Fill.Disabled,
 						BorderWidth = this.BorderWidth

@@ -87,7 +87,8 @@ namespace MatterHackers.MatterControl
 						primaryTabControl,
 						scrollable,
 						theme,
-						hasClose: false)
+						hasClose: false,
+						pointSize: theme.DefaultFontSize)
 					{
 						Name = section.Name + " Tab",
 						InactiveTabColor = Color.Transparent,

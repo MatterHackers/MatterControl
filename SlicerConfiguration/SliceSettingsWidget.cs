@@ -109,7 +109,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				Margin = new BorderDouble(top: 8),
 				VAnchor = VAnchor.Stretch,
 				HAnchor = HAnchor.Stretch,
-				MinimumSize = new Vector2(200, 200)
+				MinimumSize = new Vector2(200, 200),
 			};
 			primaryTabControl.TabBar.BackgroundColor = theme.ActiveTabBarBackground;
 
@@ -130,7 +130,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						primaryTabControl,
 						content,
 						theme,
-						hasClose: false)
+						hasClose: false,
+						pointSize: theme.DefaultFontSize)
 					{
 						Name = category.Name + " Tab",
 						InactiveTabColor = Color.Transparent,

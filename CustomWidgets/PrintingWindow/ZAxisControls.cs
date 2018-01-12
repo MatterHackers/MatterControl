@@ -41,7 +41,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 	{
 		private MoveButtonFactory buttonFactory = new MoveButtonFactory()
 		{
-			FontSize = 13,
+			FontSize = ApplicationController.Instance.Theme.DefaultFontSize,
 		};
 
 		public ZAxisControls(PrinterConfig printer, ThemeConfig theme, bool smallScreen) :
