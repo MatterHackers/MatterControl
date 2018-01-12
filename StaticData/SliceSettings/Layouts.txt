@@ -76,19 +76,17 @@ Advanced
     Support
       Support
         support_material
+        support_material_create_internal_support
         support_material_percent
     Advanced
-      Support
-        support_type
-      Support Options!hidden
-        support_material_spacing
-        support_material_infill_angle
+      Support Options
+        support_material_create_perimeter
         support_material_interface_layers
         support_material_xy_distance
         support_air_gap
-        support_material_create_internal_support
-        support_material_create_perimeter
-      Extruders
+        support_type
+        support_material_spacing
+        support_material_infill_angle
         support_material_extruder
         support_material_interface_extruder
   Filament
