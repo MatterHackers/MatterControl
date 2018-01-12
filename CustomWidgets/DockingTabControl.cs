@@ -213,7 +213,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 							content,
 							theme,
 							hasClose: kvp.Value is ConfigurePrinterWidget,
-							pointSize: theme.FontSize11)
+							pointSize: theme.DefaultFontSize)
 						{
 							Name = tabTitle + " Tab",
 							InactiveTabColor = Color.Transparent,

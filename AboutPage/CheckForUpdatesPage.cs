@@ -88,7 +88,7 @@ namespace MatterHackers.MatterControl.AboutPage
 				UserSettings.Instance.set(UserSettingsKey.UpdateFeedType, "release");
 			}
 
-			var releaseOptionsDropList = new DropDownList("Development", theme.Colors.PrimaryTextColor, maxHeight: 200)
+			var releaseOptionsDropList = new DropDownList("Development", theme.Colors.PrimaryTextColor, maxHeight: 200, pointSize: theme.DefaultFontSize)
 			{
 				HAnchor = HAnchor.Fit
 			};

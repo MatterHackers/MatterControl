@@ -39,11 +39,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	public class ComPortField : UIField
 	{
 		private DropDownList dropdownList;
-
+		private ThemeConfig theme;
 		private PrinterConfig printer;
 
-		public ComPortField(PrinterConfig printer)
+		public ComPortField(PrinterConfig printer, ThemeConfig theme)
 		{
+			this.theme = theme;
 			this.printer = printer;
 		}
 
@@ -59,7 +60,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			// bind to a context that will place it in the SliceSetting view but it binds its values to a machine
 			// specific dictionary key that is not exposed in the UI. At runtime we lookup and store to '<machinename>_com_port'
 			// ensuring that a single printer can be shared across different devices and we'll select the correct com port in each case
-			dropdownList = new DropDownList("None".Localize(), ActiveTheme.Instance.PrimaryTextColor, maxHeight: 200)
+			dropdownList = new DropDownList("None".Localize(), ActiveTheme.Instance.PrimaryTextColor, maxHeight: 200, pointSize: theme.DefaultFontSize)
 			{
 				ToolTipText = this.HelpText,
 				Margin = new BorderDouble(),

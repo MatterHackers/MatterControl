@@ -42,7 +42,8 @@ namespace MatterHackers.MatterControl
 		private EventHandler unregisterEvents;
 		int lastSelectedIndex = -1;
 
-		public PrinterSelector() : base("Printers".Localize() + "... ", ActiveTheme.Instance.PrimaryTextColor)
+		public PrinterSelector(ThemeConfig theme) 
+			: base("Printers".Localize() + "... ", theme.Colors.PrimaryTextColor, pointSize: theme.DefaultFontSize)
 		{
 			Rebuild();
 

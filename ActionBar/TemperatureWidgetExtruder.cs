@@ -239,14 +239,14 @@ namespace MatterHackers.MatterControl.ActionBar
 				},
 				enforceGutter: false));
 
-			heatToggle = hotendRow.Decendants<CheckBox>().FirstOrDefault();
+			heatToggle = hotendRow.Descendants<CheckBox>().FirstOrDefault();
 			heatToggle.Name = "Toggle Heater";
 
 			int tabIndex = 0;
 			var settingsContext = new SettingsContext(printer, null, NamedSettingsLayers.All);
 			// TODO: make this be for the correct extruder
 			var settingsData = SliceSettingsOrganizer.Instance.GetSettingsData(TemperatureKey);
-			var row = SliceSettingsWidget.CreateItemRow(settingsData, settingsContext, printer, Color.Black, ref tabIndex);
+			var row = SliceSettingsWidget.CreateItemRow(settingsData, settingsContext, printer, Color.Black, ApplicationController.Instance.Theme, ref tabIndex);
 
 			container.AddChild(row);
 
@@ -272,9 +272,9 @@ namespace MatterHackers.MatterControl.ActionBar
 				}
 			};
 
-			var valueField = row.Decendants<MHNumberEdit>().FirstOrDefault();
+			var valueField = row.Descendants<MHNumberEdit>().FirstOrDefault();
 			valueField.Name = "Temperature Input";
-			var settingsRow = row.Decendants<SliceSettingsRow>().FirstOrDefault(); 
+			var settingsRow = row.Descendants<SliceSettingsRow>().FirstOrDefault(); 
 			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
 			{
 				if (e is StringEventArgs stringEvent)

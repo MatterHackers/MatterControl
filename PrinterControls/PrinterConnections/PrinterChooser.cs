@@ -27,15 +27,9 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg.Platform;
-using MatterHackers.Agg.UI;
-using MatterHackers.Localizations;
 using System.Collections.Generic;
-using MatterHackers.MatterControl.SettingsManagement;
-using System.IO;
-using System.Linq;
 using MatterHackers.Agg;
-using System;
+using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl
 {
@@ -44,7 +38,7 @@ namespace MatterHackers.MatterControl
 		private List<KeyValuePair<string, string>> listSource;
 
 		public BoundDropList(string noSelectionString, int maxHeight = 0)
-			: base(noSelectionString, ActiveTheme.Instance.PrimaryTextColor, maxHeight: maxHeight)
+			: base(noSelectionString, ActiveTheme.Instance.PrimaryTextColor, maxHeight: maxHeight, pointSize: ApplicationController.Instance.Theme.DefaultFontSize)
 		{
 		}
 

@@ -109,7 +109,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				Margin = new BorderDouble(top: 8),
 				VAnchor = VAnchor.Stretch,
 				HAnchor = HAnchor.Stretch,
-				MinimumSize = new Vector2(200, 200)
+				MinimumSize = new Vector2(200, 200),
 			};
 			primaryTabControl.TabBar.BackgroundColor = theme.ActiveTabBarBackground;
 
@@ -130,7 +130,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						primaryTabControl,
 						content,
 						theme,
-						hasClose: false)
+						hasClose: false,
+						pointSize: theme.DefaultFontSize)
 					{
 						Name = category.Name + " Tab",
 						InactiveTabColor = Color.Transparent,
@@ -310,7 +311,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					&& settingShouldBeShown)
 				{
 					topToBottomSettings.AddChild(
-						CreateItemRow(settingData, ref tabIndexForItem));
+						CreateItemRow(settingData, ref tabIndexForItem, theme));
 
 					topToBottomSettings.AddChild(new HorizontalLine(20)
 					{
@@ -430,12 +431,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return dataArea;
 		}
 		
-		internal GuiWidget CreateItemRow(SliceSettingData settingData, ref int tabIndexForItem)
+		internal GuiWidget CreateItemRow(SliceSettingData settingData, ref int tabIndexForItem, ThemeConfig theme)
 		{
-			return CreateItemRow(settingData, settingsContext, printer, ActiveTheme.Instance.PrimaryTextColor, ref tabIndexForItem, allUiFields);
+			return CreateItemRow(settingData, settingsContext, printer, theme.Colors.PrimaryTextColor, theme, ref tabIndexForItem, allUiFields);
 		}
 
-		public static GuiWidget CreateItemRow(SliceSettingData settingData, SettingsContext settingsContext, PrinterConfig printer, Color textColor, ref int tabIndexForItem, Dictionary<string, UIField> fieldCache = null)
+		public static GuiWidget CreateItemRow(SliceSettingData settingData, SettingsContext settingsContext, PrinterConfig printer, Color textColor, ThemeConfig theme, ref int tabIndexForItem, Dictionary<string, UIField> fieldCache = null)
 		{
 			string sliceSettingValue = settingsContext.GetValue(settingData.SlicerConfigName);
 
@@ -536,7 +537,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 						sliceSettingValue = printer.Settings.Helpers.ComPort();
 
-						uiField = new ComPortField(printer);
+						uiField = new ComPortField(printer, theme);
 						uiField.ValueChanged += (s, e) =>
 						{
 							if (e.UserInitiated)
@@ -698,10 +699,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public static GuiWidget CreateQuickMenu(SliceSettingData settingData, SettingsContext settingsContext, GuiWidget content, InternalTextEditWidget internalTextWidget)
 		{
+			var theme = ApplicationController.Instance.Theme;
+
 			string sliceSettingValue =settingsContext.GetValue(settingData.SlicerConfigName);
 			FlowLayoutWidget totalContent = new FlowLayoutWidget();
 
-			DropDownList selectableOptions = new DropDownList("Custom", ActiveTheme.Instance.PrimaryTextColor, maxHeight: 200);
+			DropDownList selectableOptions = new DropDownList("Custom", theme.Colors.PrimaryTextColor, maxHeight: 200, pointSize: theme.DefaultFontSize);
 			selectableOptions.Margin = new BorderDouble(0, 0, 10, 0);
 
 			foreach (QuickMenuNameValue nameValue in settingData.QuickMenuSettings)

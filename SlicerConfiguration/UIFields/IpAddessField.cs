@@ -30,19 +30,21 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			EventHandler unregisterEvents = null;
 
+			var theme = ApplicationController.Instance.Theme;
+
 			base.Initialize(tabIndex);
 			bool canChangeComPort = !printer.Connection.PrinterIsConnected && printer.Connection.CommunicationState != CommunicationStates.AttemptingToConnect;
 			//This setting defaults to Manual
 			var selectedMachine = printer.Settings.GetValue(SettingsKey.selector_ip_address);
-			dropdownList = new DropDownList(selectedMachine, ActiveTheme.Instance.PrimaryTextColor, maxHeight: 200)
+			dropdownList = new DropDownList(selectedMachine, theme.Colors.PrimaryTextColor, maxHeight: 200, pointSize: theme.DefaultFontSize)
 			{
 				ToolTipText = HelpText,
 				Margin = new BorderDouble(),
 				TabIndex = tabIndex,
 
 				Enabled = canChangeComPort,
-				TextColor = canChangeComPort ? ActiveTheme.Instance.PrimaryTextColor : new Color(ActiveTheme.Instance.PrimaryTextColor, 150),
-				BorderColor = canChangeComPort ? ActiveTheme.Instance.SecondaryTextColor : new Color(ActiveTheme.Instance.SecondaryTextColor, 150),
+				TextColor = canChangeComPort ? theme.Colors.PrimaryTextColor : new Color(theme.Colors.PrimaryTextColor, 150),
+				BorderColor = canChangeComPort ? theme.Colors.SecondaryTextColor : new Color(theme.Colors.SecondaryTextColor, 150),
 
 
 			};
@@ -60,8 +62,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				canChangeComPort = !printer.Connection.PrinterIsConnected && printer.Connection.CommunicationState != CommunicationStates.AttemptingToConnect;
 				dropdownList.Enabled = canChangeComPort;
-				dropdownList.TextColor = canChangeComPort ? ActiveTheme.Instance.PrimaryTextColor : new Color(ActiveTheme.Instance.PrimaryTextColor, 150);
-				dropdownList.BorderColor = canChangeComPort ? ActiveTheme.Instance.SecondaryTextColor : new Color(ActiveTheme.Instance.SecondaryTextColor, 150);
+				dropdownList.TextColor = canChangeComPort ? theme.Colors.PrimaryTextColor : new Color(theme.Colors.PrimaryTextColor, 150);
+				dropdownList.BorderColor = canChangeComPort ? theme.Colors.SecondaryTextColor : new Color(theme.Colors.SecondaryTextColor, 150);
 			}, ref unregisterEvents);
 
 			// Release event listener on close

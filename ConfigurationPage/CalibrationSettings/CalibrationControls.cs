@@ -40,10 +40,9 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 			// label
 			buttonRow.AddChild(
-				new TextWidget("")
+				new TextWidget("", textColor: theme.Colors.PrimaryTextColor, pointSize: theme.DefaultFontSize)
 				{
 					AutoExpandBoundsToText = true,
-					TextColor = ActiveTheme.Instance.PrimaryTextColor,
 					VAnchor = VAnchor.Center,
 					Text = "Software Print Leveling".Localize()
 				});

@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl
 			};
 			this.AddChild(headerRow);
 
-			filterOutput = new CheckBox("Filter Output".Localize())
+			filterOutput = new CheckBox("Filter Output".Localize(), textSize: theme.DefaultFontSize)
 			{
 				TextColor = ActiveTheme.Instance.PrimaryTextColor,
 				VAnchor = VAnchor.Bottom,
@@ -85,7 +85,7 @@ namespace MatterHackers.MatterControl
 			};
 			headerRow.AddChild(filterOutput);
 
-			autoUppercase = new CheckBox("Auto Uppercase".Localize())
+			autoUppercase = new CheckBox("Auto Uppercase".Localize(), textSize: theme.DefaultFontSize)
 			{
 				Margin = new BorderDouble(left: 25),
 				Checked = UserSettings.Instance.Fields.GetBool(UserSettingsKey.TerminalAutoUppercase, true),
