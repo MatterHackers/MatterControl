@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl
 
 			FlowLayoutWidget allControlsTopToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
 
-			allControlsTopToBottom.HAnchor |= Agg.UI.HAnchor.Stretch;
+			allControlsTopToBottom.HAnchor |= HAnchor.Stretch;
 
 			{
 				FlowLayoutWidget allControlsLeftToRight = new FlowLayoutWidget();
@@ -87,7 +87,7 @@ namespace MatterHackers.MatterControl
 						xYZControls.AddChild(xyGrid);
 
 						FlowLayoutWidget zButtons = CreateZButtons(printer, XYZColors.zColor, buttonSeparationDistance, out zPlusControl, out zMinusControl);
-						zButtons.VAnchor = Agg.UI.VAnchor.Bottom;
+						zButtons.VAnchor = VAnchor.Bottom;
 						xYZControls.AddChild(zButtons);
 						xYZWithDistance.AddChild(xYZControls);
 					}
@@ -95,7 +95,7 @@ namespace MatterHackers.MatterControl
 					// add in some movement radio buttons
 					FlowLayoutWidget setMoveDistanceControl = new FlowLayoutWidget();
 					TextWidget buttonsLabel = new TextWidget("Distance:", textColor: Color.White);
-					buttonsLabel.VAnchor = Agg.UI.VAnchor.Center;
+					buttonsLabel.VAnchor = VAnchor.Center;
 					//setMoveDistanceControl.AddChild(buttonsLabel);
 
 					{
@@ -106,21 +106,21 @@ namespace MatterHackers.MatterControl
 						var radioList = new ObservableCollection<GuiWidget>();
 
 						movePointZeroTwoMmButton = buttonFactory.GenerateRadioButton("0.02");
-						movePointZeroTwoMmButton.VAnchor = Agg.UI.VAnchor.Center;
+						movePointZeroTwoMmButton.VAnchor = VAnchor.Center;
 						movePointZeroTwoMmButton.CheckedStateChanged += (sender, e) => { if (((RadioButton)sender).Checked) SetXYZMoveAmount(.02); };
 						movePointZeroTwoMmButton.SiblingRadioButtonList = radioList;
 						radioList.Add(movePointZeroTwoMmButton);
 						moveRadioButtons.AddChild(movePointZeroTwoMmButton);
 
 						RadioButton pointOneButton = buttonFactory.GenerateRadioButton("0.1");
-						pointOneButton.VAnchor = Agg.UI.VAnchor.Center;
+						pointOneButton.VAnchor = VAnchor.Center;
 						pointOneButton.CheckedStateChanged += (sender, e) => { if (((RadioButton)sender).Checked) SetXYZMoveAmount(.1); };
 						pointOneButton.SiblingRadioButtonList = radioList;
 						radioList.Add(pointOneButton);
 						moveRadioButtons.AddChild(pointOneButton);
 
 						moveOneMmButton = buttonFactory.GenerateRadioButton("1");
-						moveOneMmButton.VAnchor = Agg.UI.VAnchor.Center;
+						moveOneMmButton.VAnchor = VAnchor.Center;
 						moveOneMmButton.CheckedStateChanged += (sender, e) => { if (((RadioButton)sender).Checked) SetXYZMoveAmount(1); };
 						moveOneMmButton.SiblingRadioButtonList = radioList;
 						radioList.Add(moveOneMmButton);
@@ -137,7 +137,7 @@ namespace MatterHackers.MatterControl
 						tooBigForBabyStepping.AddChild(tooBigFlowLayout);
 
 						tenButton = buttonFactory.GenerateRadioButton("10");
-						tenButton.VAnchor = Agg.UI.VAnchor.Center;
+						tenButton.VAnchor = VAnchor.Center;
 						tenButton.CheckedStateChanged += (sender, e) => { if (((RadioButton)sender).Checked) SetXYZMoveAmount(10); };
 						tenButton.SiblingRadioButtonList = radioList;
 						radioList.Add(tenButton);
@@ -145,7 +145,7 @@ namespace MatterHackers.MatterControl
 						tooBigFlowLayout.AddChild(tenButton);
 
 						oneHundredButton = buttonFactory.GenerateRadioButton("100");
-						oneHundredButton.VAnchor = Agg.UI.VAnchor.Center;
+						oneHundredButton.VAnchor = VAnchor.Center;
 						oneHundredButton.CheckedStateChanged += (sender, e) => { if (((RadioButton)sender).Checked) SetXYZMoveAmount(100); };
 						oneHundredButton.SiblingRadioButtonList = radioList;
 						radioList.Add(oneHundredButton);
@@ -162,11 +162,11 @@ namespace MatterHackers.MatterControl
 						tooBigFlowLayout.AddChild(new TextWidget("mm", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 8)
 						{
 							Margin = new BorderDouble(left: 10),
-							VAnchor = Agg.UI.VAnchor.Center
+							VAnchor = VAnchor.Center
 						});
 					}
 
-					setMoveDistanceControl.HAnchor = Agg.UI.HAnchor.Left;
+					setMoveDistanceControl.HAnchor = HAnchor.Left;
 					xYZWithDistance.AddChild(setMoveDistanceControl);
 				}
 
@@ -176,7 +176,7 @@ namespace MatterHackers.MatterControl
 				allControlsLeftToRight.AddChild(GetHotkeyControlContainer());
 #endif
 				GuiWidget barBetweenZAndE = new GuiWidget(2, 2);
-				barBetweenZAndE.VAnchor = Agg.UI.VAnchor.Stretch;
+				barBetweenZAndE.VAnchor = VAnchor.Stretch;
 				barBetweenZAndE.BackgroundColor = Color.White;
 				barBetweenZAndE.Margin = new BorderDouble(distanceBetweenControls, 5);
 				allControlsLeftToRight.AddChild(barBetweenZAndE);
@@ -438,7 +438,7 @@ namespace MatterHackers.MatterControl
 
 				TextWidget eMinusControlLabel = new TextWidget("Retract".Localize(), pointSize: 11);
 				eMinusControlLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-				eMinusControlLabel.VAnchor = Agg.UI.VAnchor.Center;
+				eMinusControlLabel.VAnchor = VAnchor.Center;
 				eMinusButtonAndText.AddChild(eMinusControlLabel);
 				eButtons.AddChild(eMinusButtonAndText);
 
@@ -484,7 +484,7 @@ namespace MatterHackers.MatterControl
 
 				TextWidget ePlusControlLabel = new TextWidget("Extrude".Localize(), pointSize: 11);
 				ePlusControlLabel.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-				ePlusControlLabel.VAnchor = Agg.UI.VAnchor.Center;
+				ePlusControlLabel.VAnchor = VAnchor.Center;
 				ePlusButtonAndText.AddChild(ePlusControlLabel);
 				eButtons.AddChild(ePlusButtonAndText);
 				ePlusButtonAndText.HAnchor = HAnchor.Fit;
@@ -496,7 +496,7 @@ namespace MatterHackers.MatterControl
 			// add in some movement radio buttons
 			FlowLayoutWidget setMoveDistanceControl = new FlowLayoutWidget();
 			TextWidget buttonsLabel = new TextWidget("Distance:", textColor: Color.White);
-			buttonsLabel.VAnchor = Agg.UI.VAnchor.Center;
+			buttonsLabel.VAnchor = VAnchor.Center;
 			//setMoveDistanceControl.AddChild(buttonsLabel);
 
 			{
@@ -504,15 +504,15 @@ namespace MatterHackers.MatterControl
 				
 				var moveRadioButtons = new FlowLayoutWidget();
 				RadioButton oneButton = buttonFactory.GenerateRadioButton("1");
-				oneButton.VAnchor = Agg.UI.VAnchor.Center;
+				oneButton.VAnchor = VAnchor.Center;
 				oneButton.CheckedStateChanged += (sender, e) => { if (((RadioButton)sender).Checked) SetEMoveAmount(1); };
 				moveRadioButtons.AddChild(oneButton);
 				RadioButton tenButton = buttonFactory.GenerateRadioButton("10");
-				tenButton.VAnchor = Agg.UI.VAnchor.Center;
+				tenButton.VAnchor = VAnchor.Center;
 				tenButton.CheckedStateChanged += (sender, e) => { if (((RadioButton)sender).Checked) SetEMoveAmount(10); };
 				moveRadioButtons.AddChild(tenButton);
 				RadioButton oneHundredButton = buttonFactory.GenerateRadioButton("100");
-				oneHundredButton.VAnchor = Agg.UI.VAnchor.Center;
+				oneHundredButton.VAnchor = VAnchor.Center;
 				oneHundredButton.CheckedStateChanged += (sender, e) => { if (((RadioButton)sender).Checked) SetEMoveAmount(100); };
 				moveRadioButtons.AddChild(oneHundredButton);
 				tenButton.Checked = true;
@@ -521,10 +521,10 @@ namespace MatterHackers.MatterControl
 			}
 
 			var mmLabel = new TextWidget("mm", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 8);
-			mmLabel.VAnchor = Agg.UI.VAnchor.Center;
+			mmLabel.VAnchor = VAnchor.Center;
 			mmLabel.Margin = new BorderDouble(left: 10);
 			setMoveDistanceControl.AddChild(mmLabel);
-			setMoveDistanceControl.HAnchor = Agg.UI.HAnchor.Left;
+			setMoveDistanceControl.HAnchor = HAnchor.Left;
 			eButtons.AddChild(setMoveDistanceControl);
 
 			eButtons.HAnchor = HAnchor.Fit;
@@ -569,10 +569,12 @@ namespace MatterHackers.MatterControl
 				zPlusControl.ToolTipText = "Move Z positive".Localize();
 				zButtons.AddChild(zPlusControl);
 
-				GuiWidget spacer = new GuiWidget(2, buttonSeparationDistance);
-				spacer.HAnchor = Agg.UI.HAnchor.Center;
-				spacer.BackgroundColor = XYZColors.zColor;
-				zButtons.AddChild(spacer);
+				// spacer
+				zButtons.AddChild(new GuiWidget(2, buttonSeparationDistance)
+				{
+					HAnchor = HAnchor.Center,
+					BackgroundColor = XYZColors.zColor
+				});
 
 				zMinusControl = CreateMoveButton(printer, "Z-", PrinterConnection.Axis.Z, printer.Settings.ZSpeed(), levelingButtons, moveButtonFactory);
 				zMinusControl.ToolTipText = "Move Z negative".Localize();
@@ -589,17 +591,19 @@ namespace MatterHackers.MatterControl
 				FlowLayoutWidget xButtons = new FlowLayoutWidget();
 				{
 					moveButtonFactory.Colors.Fill.Normal = XYZColors.xColor;
-					xButtons.HAnchor |= Agg.UI.HAnchor.Center;
-					xButtons.VAnchor |= Agg.UI.VAnchor.Center;
+					xButtons.HAnchor |= HAnchor.Center;
+					xButtons.VAnchor |= VAnchor.Center;
 
 					xMinusControl = CreateMoveButton(printer, "X-", PrinterConnection.Axis.X, printer.Settings.XSpeed(), false, moveButtonFactory);
 					xMinusControl.ToolTipText = "Move X negative".Localize();
 					xButtons.AddChild(xMinusControl);
 
-					GuiWidget spacer = new GuiWidget(xMinusControl.Width + buttonSeparationDistance * 2, 2);
-					spacer.VAnchor = Agg.UI.VAnchor.Center;
-					spacer.BackgroundColor = XYZColors.xColor;
-					xButtons.AddChild(spacer);
+					// spacer
+					xButtons.AddChild(new GuiWidget(xMinusControl.Width + buttonSeparationDistance * 2, 2)
+					{
+						VAnchor = VAnchor.Center,
+						BackgroundColor = XYZColors.xColor
+					});
 
 					xPlusControl = CreateMoveButton(printer, "X+", PrinterConnection.Axis.X, printer.Settings.XSpeed(), false, moveButtonFactory);
 					xPlusControl.ToolTipText = "Move X positive".Localize();
@@ -610,16 +614,18 @@ namespace MatterHackers.MatterControl
 				FlowLayoutWidget yButtons = new FlowLayoutWidget(FlowDirection.TopToBottom);
 				{
 					moveButtonFactory.Colors.Fill.Normal = XYZColors.yColor;
-					yButtons.HAnchor |= Agg.UI.HAnchor.Center;
-					yButtons.VAnchor |= Agg.UI.VAnchor.Center;
+					yButtons.HAnchor |= HAnchor.Center;
+					yButtons.VAnchor |= VAnchor.Center;
 					yPlusControl = CreateMoveButton(printer, "Y+", PrinterConnection.Axis.Y, printer.Settings.YSpeed(), false, moveButtonFactory);
 					yPlusControl.ToolTipText = "Move Y positive".Localize();
 					yButtons.AddChild(yPlusControl);
 
-					GuiWidget spacer = new GuiWidget(2, buttonSeparationDistance);
-					spacer.HAnchor = Agg.UI.HAnchor.Center;
-					spacer.BackgroundColor = XYZColors.yColor;
-					yButtons.AddChild(spacer);
+					// spacer
+					yButtons.AddChild(new GuiWidget(2, buttonSeparationDistance)
+					{
+						HAnchor = HAnchor.Center,
+						BackgroundColor = XYZColors.yColor
+					});
 
 					yMinusControl = CreateMoveButton(printer, "Y-", PrinterConnection.Axis.Y, printer.Settings.YSpeed(), false, moveButtonFactory);
 					yMinusControl.ToolTipText = "Move Y negative".Localize();
@@ -629,7 +635,7 @@ namespace MatterHackers.MatterControl
 			}
 			xyGrid.HAnchor = HAnchor.Fit;
 			xyGrid.VAnchor = VAnchor.Fit;
-			xyGrid.VAnchor = Agg.UI.VAnchor.Bottom;
+			xyGrid.VAnchor = VAnchor.Bottom;
 			xyGrid.Margin = new BorderDouble(0, 5, distanceBetweenControls, 5);
 			return xyGrid;
 		}
