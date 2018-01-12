@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public string HelpText { get; set; } = "";
 
-		public string ExtraSettings { get; set; } = "";
+		public string Units { get; set; } = "";
 
 		public string ListValues { get; set; } = "";
 
@@ -80,12 +80,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public OrganizerSubGroup OrganizerSubGroup { get; set; }
 
-		public SliceSettingData(string slicerConfigName, string presentationName, DataEditTypes dataEditType, string extraSettings = "", string helpText = "")
+		public SliceSettingData(string slicerConfigName, string presentationName, DataEditTypes dataEditType, string helpText = "")
 		{
 			// During deserialization Json.net has to call this constructor but may fail to find the optional ExtraSettings
 			// value. When this occurs, it passes null overriding the default empty string. To ensure empty string instead
 			// of null, we conditionally reassign "" if null
-			this.ExtraSettings = extraSettings ?? "";
 			this.SlicerConfigName = slicerConfigName;
 			this.PresentationName = presentationName;
 			this.DataEditType = dataEditType;
