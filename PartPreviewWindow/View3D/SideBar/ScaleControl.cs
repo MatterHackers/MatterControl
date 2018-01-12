@@ -114,6 +114,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			};
 
+			scene.SelectionChanged += (s, e) =>
+			{
+				UpdateSizeValues();
+			};
+
+			scene.Invalidated += (s, e) =>
+			{
+				UpdateSizeValues();
+			};
+
 			UpdateSizeValues();
 		}
 
