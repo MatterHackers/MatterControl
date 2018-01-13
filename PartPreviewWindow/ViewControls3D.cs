@@ -436,7 +436,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				BackgroundColor = theme.MinimalShade,
 				GradientDistance = -1,
 				DrawArrow = true,
-				AlignToRightEdge = true,
 				Margin = theme.ButtonSpacing,
 			};
 
