@@ -160,11 +160,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			string iconPath;
 
-			var commonMargin = theme.ButtonSpacing;
+			var commonMargin = theme.ButtonSpacing; 
 
 			double height = theme.ButtonFactory.Options.FixedHeight;
 
 			this.AddChild(CreateBedMenu(sceneContext, theme));
+
+			this.AddChild(new VerticalLine(50)
+			{
+				Margin = 4
+			});
 
 			var homeButton = new IconButton(AggContext.StaticData.LoadIcon("fa-home_16.png", IconColor.Theme), theme)
 			{
@@ -413,7 +418,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			buttonView.AddChild(new ImageWidget(AggContext.StaticData.LoadIcon((IsPrinterMode) ? "bed.png" : "cube.png", IconColor.Theme))
 			{
 				VAnchor = VAnchor.Center,
-				Margin = theme.ButtonSpacing,
+				Margin = theme.ButtonSpacing.Clone(left: 10),
 			});
 
 			var buttonText = (IsPrinterMode) ? "Bed".Localize() : "Part".Localize();
@@ -426,20 +431,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				Name = "Bed Options Menu",
 				DynamicPopupContent = () => theme.CreatePopupMenu(this.BedMenuActions(sceneContext)),
+				BackgroundColor = theme.MinimalShade,
+				GradientDistance = -1,
 				DrawArrow = true,
 				AlignToRightEdge = true,
-				Margin = new BorderDouble(right: theme.ButtonSpacing.Left),
+				Margin = theme.ButtonSpacing,
 			};
 
-			// HACK: Fix left padding to improve style. Ideally fix this in the underlying button
-			var firstChild = overflowMenu.Children.First();
-			firstChild.Margin = firstChild.Margin.Clone(left: 8);
-
-			overflowMenu.Load += (s, e) =>
-			{
-				var firstBackgroundColor = this.Parents<GuiWidget>().Where(p => p.BackgroundColor.Alpha0To1 == 1).FirstOrDefault()?.BackgroundColor;
-				overflowMenu.BackgroundColor = firstBackgroundColor ?? Color.Transparent;
-			};
 			return overflowMenu;
 		}
 
