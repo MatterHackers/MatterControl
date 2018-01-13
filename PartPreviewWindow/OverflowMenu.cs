@@ -52,29 +52,34 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 		}
 
+		public int GradientDistance { get; set; } = 5;
+
 		public override void OnDrawBackground(Graphics2D graphics2D)
 		{
 			if (gradientBackground != null)
 			{
 				graphics2D.Render(gradientBackground, this.LocalBounds.Left, 0);
 			}
-
-			//base.OnDrawBackground(graphics2D);
+			else
+			{
+				base.OnDrawBackground(graphics2D);
+			}
 		}
 
 		public override void OnLoad(EventArgs args)
 		{
 			base.OnLoad(args);
 
-			int gradientDistance = 5;
+			if (this.GradientDistance > 0)
+			{
+				gradientBackground = agg_basics.TrasparentToColorGradientX(
+						(int)this.LocalBounds.Width + this.GradientDistance,
+						(int)this.LocalBounds.Height,
+						this.BackgroundColor,
+						this.GradientDistance);
 
-			gradientBackground = agg_basics.TrasparentToColorGradientX(
-					(int)this.LocalBounds.Width + gradientDistance,
-					(int)this.LocalBounds.Height,
-					this.BackgroundColor,
-					gradientDistance);
-
-			gradientBackground.SetRecieveBlender(new BlenderPreMultBGRA());
+				gradientBackground.SetRecieveBlender(new BlenderPreMultBGRA());
+			}
 		}
 	}
 }
