@@ -47,6 +47,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string active_quality_key = nameof(active_quality_key);
 		public const string active_theme_name = nameof(active_theme_name);
 		public const string auto_connect = nameof(auto_connect);
+		public const string backup_firmware_before_update = nameof(backup_firmware_before_update);
 		public const string baby_step_z_offset = nameof(baby_step_z_offset);
 		public const string baud_rate = nameof(baud_rate);
 		public const string bed_remove_part_temperature = nameof(bed_remove_part_temperature);

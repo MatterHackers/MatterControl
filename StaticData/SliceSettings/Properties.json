@@ -589,6 +589,15 @@
 		"RebuildGCodeOnChange": false
 	},
 	{
+		"SlicerConfigName": "backup_firmware_before_update",
+		"PresentationName": "Backup Firmware Before Update",
+		"HelpText": "When upgrading to new firmware, first save a backup of the current firmware.",
+		"DataEditType": "CHECK_BOX",
+		"DefaultValue": "1",
+		"ShowIfSet": "!sla_printer",
+		"RebuildGCodeOnChange": false
+	},
+	{
 		"SlicerConfigName": "has_power_control",
 		"PresentationName": "Has Power Control",
 		"HelpText": "The printer has the ability to control the power supply. Enable this function to show the ATX Power Control section on the Controls pane.",
