@@ -143,7 +143,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				tabContainer.AddChild(rowContainer);
 			}
 
-			bool opperationApplied = group.Descendants()
+			bool operationApplied = group.Descendants()
 				.Where((obj) => obj.OwnerID == group.ID)
 				.Where((objId) => objId.Mesh != objId.Children.First().Mesh).Count() > 0;
 
@@ -151,7 +151,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				.Where((obj) => obj.OwnerID == group.ID)
 				.Where((objId) => objId.OutputType == PrintOutputTypes.Hole).Count() > 0;
 
-			if (!opperationApplied && !selectionHasBeenMade)
+			if (!operationApplied && !selectionHasBeenMade)
 			{
 				// select the last item
 				if (tabContainer.Descendants().Where((d) => d is ICheckbox).Last() is ICheckbox firstCheckBox)
@@ -161,7 +161,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			}
 			else
 			{
-				updateButton.Enabled = !opperationApplied;
+				updateButton.Enabled = !operationApplied;
 			}
 
 			// add this last so it is at the bottom
@@ -187,8 +187,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				if (removeObjects.Any()
 					&& keepObjects.Any())
 				{
-					var totalOpperations = removeObjects.Count * keepObjects.Count;
-					double amountPerOperation = 1.0 / totalOpperations;
+					var totalOperations = removeObjects.Count * keepObjects.Count;
+					double amountPerOperation = 1.0 / totalOperations;
 					double percentCompleted = 0;
 
 					foreach (var remove in removeObjects)

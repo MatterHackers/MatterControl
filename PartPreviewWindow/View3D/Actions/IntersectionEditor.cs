@@ -90,8 +90,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				{
 					var first = participants.First();
 
-					var totalOpperations = participants.Count()-1;
-					double amountPerOperation = 1.0 / totalOpperations;
+					var totalOperations = participants.Count()-1;
+					double amountPerOperation = 1.0 / totalOperations;
 					double percentCompleted = 0;
 
 					foreach (var remove in participants)
