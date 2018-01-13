@@ -136,12 +136,18 @@ namespace MatterHackers.MatterControl
 
 		public Button Generate(string label, double fixedWidth = -1)
 		{
-			var theme = ApplicationController.Instance.Theme;
+			// Create button based on view container widget
+			var buttonViewWidget = new ButtonViewStates(
+				new TextImageWidget(label, normalFillColor, normalBorderColor, normalTextColor, borderWidth, Margin, null, fontSize: this.fontSize, height: this.FixedHeight, imageSpacing: ImageSpacing),
+				new TextImageWidget(label, hoverFillColor, hoverBorderColor, hoverTextColor, borderWidth, Margin, null, fontSize: this.fontSize, height: this.FixedHeight, imageSpacing: ImageSpacing),
+				new TextImageWidget(label, pressedFillColor, pressedBorderColor, pressedTextColor, borderWidth, Margin, null, fontSize: this.fontSize, height: this.FixedHeight, imageSpacing: ImageSpacing),
+				new TextImageWidget(label, disabledFillColor, disabledBorderColor, disabledTextColor, borderWidth, Margin, null, fontSize: this.fontSize, height: this.FixedHeight, imageSpacing: ImageSpacing)
+			);
 
-			var button = new TextButton(label, theme)
+			var textImageButton = new Button(0, 0, buttonViewWidget)
 			{
-				BackgroundColor = theme.MinimalShade,
-				VAnchor = VAnchor.Absolute
+				Margin = new BorderDouble(0),
+				Padding = new BorderDouble(0),
 			};
 
 			// Allow fixedWidth parameter to override local .FixedWith property
@@ -149,17 +155,17 @@ namespace MatterHackers.MatterControl
 			{
 				if (fixedWidth > 0)
 				{
-					button.HAnchor = HAnchor.Absolute;
-					button.Width = fixedWidth;
+					buttonViewWidget.Width = fixedWidth;
+					textImageButton.Width = fixedWidth;
 				}
 			}
 			else if (this.FixedWidth != 0)
 			{
 				//Override the width if requested
-				button.HAnchor = HAnchor.Absolute;
-				button.Width = this.FixedWidth;
+				buttonViewWidget.Width = this.FixedWidth;
+				textImageButton.Width = this.FixedWidth;
 			}
-			return button;
+			return textImageButton;
 		}
 
 		private ButtonViewStates getButtonView(string label, ImageBuffer normalImage = null, ImageBuffer hoverImage = null, ImageBuffer pressedImage = null, ImageBuffer disabledImage = null)
