@@ -104,7 +104,7 @@ namespace MatterHackers.MatterControl.AboutPage
 					UserSettings.Instance.set(UserSettingsKey.UpdateFeedType, releaseCode);
 				}
 
-				UpdateControlData.Instance.CheckForUpdateUserRequested();
+				UpdateControlData.Instance.CheckForUpdate();
 			};
 			currentFeedAndDropDownContainer.AddChild(releaseOptionsDropList);
 

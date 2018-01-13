@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl
 			};
 			checkUpdateLink.Click += (s, e) =>
 			{
-				UpdateControlData.Instance.CheckForUpdateUserRequested();
+				UpdateControlData.Instance.CheckForUpdate();
 			};
 			this.AddChild(checkUpdateLink);
 
