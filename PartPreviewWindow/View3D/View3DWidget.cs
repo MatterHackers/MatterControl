@@ -427,7 +427,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private Mesh ApplyBoolean(Func<Mesh, Mesh, Mesh> meshOpperation, Func<AxisAlignedBoundingBox, AxisAlignedBoundingBox, AxisAlignedBoundingBox> aabbOpperation, Vector3 centering, string opp)
+		private Mesh ApplyBoolean(Func<Mesh, Mesh, Mesh> meshOperation, Func<AxisAlignedBoundingBox, AxisAlignedBoundingBox, AxisAlignedBoundingBox> aabbOperation, Vector3 centering, string opp)
 		{
 			Mesh boxA = PlatonicSolids.CreateCube(40, 40, 40);
 			//boxA = PlatonicSolids.CreateIcosahedron(35);
@@ -468,16 +468,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			Matrix4X4 transformB = Matrix4X4.CreateScale(scaleCurrent) * Matrix4X4.CreateRotation(rotCurrent) * Matrix4X4.CreateTranslation(offsetB);
 			boxB.Transform(transformB);
 
-			Mesh meshToAdd = meshOpperation(boxA, boxB);
+			Mesh meshToAdd = meshOperation(boxA, boxB);
 			meshToAdd.CleanAndMergMesh(CancellationToken.None);
 
-			if (aabbOpperation != null)
+			if (aabbOperation != null)
 			{
 				AxisAlignedBoundingBox boundsA = boxA.GetAxisAlignedBoundingBox();
 				AxisAlignedBoundingBox boundsB = boxB.GetAxisAlignedBoundingBox();
 				AxisAlignedBoundingBox boundsAdd = meshToAdd.GetAxisAlignedBoundingBox();
 
-				AxisAlignedBoundingBox boundsResult = aabbOpperation(boundsA, boundsB);
+				AxisAlignedBoundingBox boundsResult = aabbOperation(boundsA, boundsB);
 			}
 
 			return meshToAdd;

@@ -161,6 +161,7 @@
     <Compile Include="PrinterControls\PrinterConnections\PrinterSetup.cs" />
     <Compile Include="RootSystemWindow.cs" />
     <Compile Include="SetupWizard\DialogWindow.cs" />
+    <Compile Include="SlicerConfiguration\SlicerMapping\SliceEngineMapping.cs" />
     <Compile Include="SlicerConfiguration\UIFields\IpAddessField.cs" />
     <Compile Include="Utilities\InspectForm.cs" Condition="'$(Configuration)' == 'Debug'">
       <SubType>Form</SubType>
@@ -362,7 +363,6 @@
     <Compile Include="SlicerConfiguration\SlicerMapping\EngineMappingCura.cs" />
     <Compile Include="SlicerConfiguration\SlicerMapping\EngineMappingSlic3r.cs" />
     <Compile Include="SlicerConfiguration\SlicerMapping\MappingClasses.cs" />
-    <Compile Include="SlicerConfiguration\SlicerMapping\EngineMapingBase.cs" />
     <Compile Include="ApplicationView\WidescreenPanel.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\PrintLevelPages.cs" />
     <Compile Include="AboutPage\ContactForm.cs" />

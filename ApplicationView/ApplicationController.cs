@@ -347,21 +347,21 @@ namespace MatterHackers.MatterControl
 			new SceneSelectionOperation()
 			{
 				TitleResolver = () => "Subtract".Localize(),
-				Action = (scene) => DoOpperation(scene, nameof(SubtractEditor), "Subtract"),
+				Action = (scene) => DoOperation(scene, nameof(SubtractEditor), "Subtract"),
 				Icon = AggContext.StaticData.LoadIcon("subtract.png").SetPreMultiply(),
 				IsEnabled = (scene) => scene.SelectedItem is SelectionGroup,
 			},
 			new SceneSelectionOperation()
 			{
 				TitleResolver = () => "Intersect".Localize(),
-				Action = (scene) => DoOpperation(scene, nameof(IntersectionEditor), "Intersect"),
+				Action = (scene) => DoOperation(scene, nameof(IntersectionEditor), "Intersect"),
 				Icon = AggContext.StaticData.LoadIcon("intersect.png"),
 				IsEnabled = (scene) => scene.SelectedItem is SelectionGroup,
 			},
 			new SceneSelectionOperation()
 			{
 				TitleResolver = () => "Subtract & Replace".Localize(),
-				Action = (scene) => DoOpperation(scene, nameof(SubtractAndReplace), "Subtract & Replace"),
+				Action = (scene) => DoOperation(scene, nameof(SubtractAndReplace), "Subtract & Replace"),
 				Icon = AggContext.StaticData.LoadIcon("paint.png").SetPreMultiply(),
 				IsEnabled = (scene) => scene.SelectedItem is SelectionGroup,
 			},
@@ -397,7 +397,7 @@ namespace MatterHackers.MatterControl
 #endif
 		};
 
-		private static void DoOpperation(InteractiveScene scene, string classDescriptor, string editorName)
+		private static void DoOperation(InteractiveScene scene, string classDescriptor, string editorName)
 		{
 			if (scene.HasSelection && scene.SelectedItem.Children.Count() > 1)
 			{

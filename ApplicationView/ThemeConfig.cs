@@ -161,16 +161,15 @@ namespace MatterHackers.MatterControl
 
 		public void RebuildTheme()
 		{
-			var theme = ActiveTheme.Instance;
-			this.Colors = theme;
+			var colors = this.Colors = ActiveTheme.Instance;
 
-			DefaultThumbView.ThumbColor = new Color(theme.PrimaryTextColor, 30);
+			DefaultThumbView.ThumbColor = new Color(colors.PrimaryTextColor, 30);
 
 			var commonOptions = new ButtonFactoryOptions();
-			commonOptions.NormalTextColor = theme.PrimaryTextColor;
-			commonOptions.HoverTextColor = theme.PrimaryTextColor;
-			commonOptions.PressedTextColor = theme.PrimaryTextColor;
-			commonOptions.DisabledTextColor = theme.TertiaryBackgroundColor;
+			commonOptions.NormalTextColor = colors.PrimaryTextColor;
+			commonOptions.HoverTextColor = colors.PrimaryTextColor;
+			commonOptions.PressedTextColor = colors.PrimaryTextColor;
+			commonOptions.DisabledTextColor = colors.TertiaryBackgroundColor;
 			commonOptions.Margin = new BorderDouble(14, 0);
 			commonOptions.FontSize = this.DefaultFontSize;
 			commonOptions.ImageSpacing = 8;
@@ -178,10 +177,10 @@ namespace MatterHackers.MatterControl
 			commonOptions.FixedHeight = 32;
 
 			this.TabBodyBackground = this.ResolveColor(
-				theme.TertiaryBackgroundColor, 
+				colors.TertiaryBackgroundColor, 
 				new Color(
 					Color.White, 
-					(theme.IsDarkTheme) ? 3 : 25));
+					(colors.IsDarkTheme) ? 3 : 25));
 
 			this.ActiveTabColor = this.TabBodyBackground;
 			this.ActiveTabBarBackground = this.ActiveTabColor.AdjustLightness(0.85).ToColor();
@@ -189,9 +188,9 @@ namespace MatterHackers.MatterControl
 			// Active tab color with slight transparency
 			this.InteractionLayerOverlayColor = new Color(this.ActiveTabColor, 240);
 
-			float alpha0to1 = (theme.IsDarkTheme ? 20 : 60) / 255.0f;
+			float alpha0to1 = (colors.IsDarkTheme ? 20 : 60) / 255.0f;
 
-			this.InactiveTabColor = ResolveColor(theme.PrimaryBackgroundColor, new Color(Color.White, this.SlightShade.alpha));
+			this.InactiveTabColor = ResolveColor(colors.PrimaryBackgroundColor, new Color(Color.White, this.SlightShade.alpha));
 
 			this.SplitterBackground = this.ActiveTabColor.AdjustLightness(0.87).ToColor();
 
@@ -228,7 +227,7 @@ namespace MatterHackers.MatterControl
 
 			this.GrayButtonFactory = new TextImageButtonFactory(new ButtonFactoryOptions(commonOptions)
 			{
-				NormalTextColor = theme.PrimaryTextColor,
+				NormalTextColor = colors.PrimaryTextColor,
 				NormalFillColor = Color.Gray
 			});
 
@@ -238,7 +237,7 @@ namespace MatterHackers.MatterControl
 				FixedWidth = 30 * GuiWidget.DeviceScale,
 				FontSize = 8,
 				Margin = 0,
-				CheckedBorderColor = theme.PrimaryTextColor
+				CheckedBorderColor = colors.PrimaryTextColor
 			});
 
 			this.MicroButtonMenu = new TextImageButtonFactory(new ButtonFactoryOptions(commonGray)
@@ -263,11 +262,11 @@ namespace MatterHackers.MatterControl
 
 				NormalTextColor = Color.Black,
 				NormalFillColor = Color.White,
-				NormalBorderColor = new Color(theme.PrimaryTextColor, 200),
+				NormalBorderColor = new Color(colors.PrimaryTextColor, 200),
 
 				HoverTextColor = Color.Black,
 				HoverFillColor = new Color(255, 255, 255, 200),
-				HoverBorderColor = new Color(theme.PrimaryTextColor, 200),
+				HoverBorderColor = new Color(colors.PrimaryTextColor, 200),
 
 				BorderWidth = 1,
 			});
@@ -279,10 +278,10 @@ namespace MatterHackers.MatterControl
 			{
 				NormalFillColor = Color.White,
 				NormalTextColor = Color.Black,
-				HoverTextColor = theme.PrimaryTextColor,
+				HoverTextColor = colors.PrimaryTextColor,
 				DisabledFillColor = Color.White,
 				DisabledTextColor = Color.DarkGray,
-				PressedTextColor = theme.PrimaryTextColor,
+				PressedTextColor = colors.PrimaryTextColor,
 				FixedHeight = 25 * GuiWidget.DeviceScale,
 				FontSize = 11
 			};
@@ -293,13 +292,13 @@ namespace MatterHackers.MatterControl
 			this.LinkButtonFactory = new LinkButtonFactory()
 			{
 				fontSize = FontSize11,
-				textColor = theme.PrimaryTextColor
+				textColor = colors.PrimaryTextColor
 			};
 
 			this.HelpLinkFactory = new LinkButtonFactory()
 			{
 				fontSize = FontSize10,
-				textColor = theme.SecondaryAccentColor
+				textColor = colors.SecondaryAccentColor
 			};
 		}
 

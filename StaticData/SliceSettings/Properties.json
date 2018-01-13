@@ -21,7 +21,7 @@
 		"PresentationName": "Bed Size",
 		"HelpText": "The X and Y values of the size of the print bed, in millimeters. For printers with a circular bed, these values are the diameters on the X and Y axes.",
 		"DataEditType": "VECTOR2",
-		"ExtraSettings": "mm",
+		"Units": "mm",
 		"DefaultValue": "200,200"
 	},
 	{
@@ -29,7 +29,7 @@
 		"PresentationName": "Bed Temperature",
 		"HelpText": "The temperature to which the bed will be set for the duration of the print. Set to 0 to disable.",
 		"DataEditType": "POSITIVE_DOUBLE",
-		"ExtraSettings": "°C",
+		"Units": "°C",
 		"ShowIfSet": "has_heated_bed",
 		"DefaultValue": "70"
 	},
@@ -38,7 +38,7 @@
 		"PresentationName": "Bottom Solid Layers",
 		"HelpText": "The number of layers or the distance in millimeters to solid fill on the bottom surface(s) of the object. Add mm to the end of the number to specify distance in millimeters.",
 		"DataEditType": "INT_OR_MM",
-		"ExtraSettings": "count or mm",
+		"Units": "count or mm",
 		"DefaultValue": "1mm"
 	},
 	{
@@ -55,7 +55,7 @@
 		"PresentationName": "Bridging Fan Speed",
 		"HelpText": "The speed at which the layer cooling fan will run when bridging, expressed as a percentage of full power.",
 		"DataEditType": "INT",
-		"ExtraSettings": "%",
+		"Units": "%",
 		"ShowIfSet": "has_fan",
 		"DefaultValue": "100"
 	},
@@ -64,7 +64,7 @@
 		"PresentationName": "Bridges",
 		"HelpText": "The speed at which bridging between walls will print.",
 		"DataEditType": "POSITIVE_DOUBLE",
-		"ExtraSettings": "mm/s",
+		"Units": "mm/s",
 		"ShowIfSet": "!sla_printer",
 		"DefaultValue": "20"
 	},
@@ -73,7 +73,7 @@
 		"PresentationName": "Build Height",
 		"HelpText": "The height of the printer's printable volume, in millimeters. Controls the height of the visual print area displayed in 3D View.",
 		"DataEditType": "POSITIVE_DOUBLE",
-		"ExtraSettings": "mm",
+		"Units": "mm",
 		"DefaultValue": "0",
 		"RebuildGCodeOnChange": false
 	},
@@ -132,7 +132,7 @@
 		"PresentationName": "Expand Distance",
 		"HelpText": "The extra distance the raft will extend around the edge of the part.",
 		"DataEditType": "INT_OR_MM",
-		"ExtraSettings": "count or mm",
+		"Units": "count or mm",
 		"ShowIfSet": "!sla_printer",
 		"EnableIfSet": "create_raft",
 		"DefaultValue": "5"
@@ -142,7 +142,7 @@
 		"PresentationName": "Air Gap",
 		"HelpText": "The distance between the top of the raft and the bottom of the model. 0.6 mm is a good starting point for PLA and 0.4 mm is a good starting point for ABS. Lower values give a smoother surface, higher values make the print easier to remove.",
 		"DataEditType": "POSITIVE_DOUBLE",
-		"ExtraSettings": "mm",
+		"Units": "mm",
 		"ShowIfSet": "!sla_printer",
 		"EnableIfSet": "create_raft",
 		"DefaultValue": ".2"
@@ -152,7 +152,7 @@
 		"PresentationName": "Fan Speed",
 		"HelpText": "The speed at which the cooling fan(s) will run during the printing of the raft, expressed as a percentage of full power.",
 		"DataEditType": "POSITIVE_DOUBLE",
-		"ExtraSettings": "%",
+		"Units": "%",
 		"EnableIfSet": "create_raft",
 		"ShowIfSet": "has_fan",
 		"DefaultValue": "100"
@@ -162,7 +162,7 @@
 		"PresentationName": "Raft",
 		"HelpText": "The speed at which the layers of the raft (other than the first layer) will print. This can be set explicitly or as a percentage of the Infill speed.",
 		"DataEditType": "DOUBLE_OR_PERCENT",
-		"ExtraSettings": "mm/s or %",
+		"Units": "mm/s or %",
 		"ShowIfSet": "!sla_printer",
 		"DefaultValue": "100%"
 	},
@@ -171,7 +171,7 @@
 		"PresentationName": "Disable Fan For The First",
 		"HelpText": "The number of layers for which the layer cooling fan will be forced off at the start of the print.",
 		"DataEditType": "INT",
-		"ExtraSettings": "layers",
+		"Units": "layers",
 		"ShowIfSet": "has_fan",
 		"DefaultValue": "1"
 	},
@@ -188,7 +188,7 @@
 		"HelpText": "The speed at which outside, external, or the otherwise visible perimeters will print.",
 		"DataEditType": "DOUBLE_OR_PERCENT",
 		"ShowIfSet": "!sla_printer",
-		"ExtraSettings": "mm/s or %",
+		"Units": "mm/s or %",
 		"DefaultValue": "70%"
 	},
 	{
@@ -213,7 +213,7 @@
 		"PresentationName": "Nozzle Offsets",
 		"HelpText": "The offset of each nozzle relative to the first nozzle. Only useful for multiple extruder machines.",
 		"DataEditType": "OFFSET2",
-		"ExtraSettings": "mm",
+		"Units": "mm",
 		"ShowIfSet": "!sla_printer",
 		"DefaultValue": "0x0,0x0,0x0,0x0"
 	},
@@ -222,7 +222,7 @@
 		"PresentationName": "Baby Step Offset",
 		"HelpText": "The z offset to apply to improve the first layer adhesion.",
 		"DataEditType": "DOUBLE",
-		"ExtraSettings": "mm",
+		"Units": "mm",
 		"DefaultValue": "0",
 		"ShowIfSet": "!sla_printer",
 		"RebuildGCodeOnChange": false
@@ -273,7 +273,7 @@
 		"PresentationName": "Default Extrusion Width",
 		"HelpText": "Leave this as 0 to allow automatic calculation of extrusion width.",
 		"DataEditType": "DOUBLE_OR_PERCENT",
-		"ExtraSettings": "mm or % leave 0 for auto",
+		"Units": "mm or % leave 0 for auto",
 		"DefaultValue": "0"
 	},
 	{
@@ -289,7 +289,7 @@
 		"PresentationName": "Enable Fan If Layer Print Time Is Below",
 		"HelpText": "If a layer is estimated to take less than this to print, the fan will be turned on.",
 		"DataEditType": "INT",
-		"ExtraSettings": "seconds",
+		"Units": "seconds",
 		"ShowIfSet": "has_fan",
 		"DefaultValue": "60"
 	},
@@ -298,7 +298,7 @@
 		"PresentationName": "Cost",
 		"HelpText": "The price of one kilogram of filament. Used for estimating the cost of a print in the Layer View.",
 		"DataEditType": "POSITIVE_DOUBLE",
-		"ExtraSettings": "$/kg",
+		"Units": "$/kg",
 		"DefaultValue": "0",
 		"RebuildGCodeOnChange": false
 	},
@@ -321,7 +321,7 @@
 		"PresentationName": "Density",
 		"HelpText": "Material density. Only used for estimating mass in the Layer View.",
 		"DataEditType": "POSITIVE_DOUBLE",
-		"ExtraSettings": "g/cm³",
+		"Units": "g/cm³",
 		"DefaultValue": "1.24",
 		"RebuildGCodeOnChange": false
 	},
@@ -331,7 +331,7 @@
 		"HelpText": "The actual diameter of the filament used for printing.",
 		"DataEditType": "POSITIVE_DOUBLE",
 		"ShowIfSet": "!sla_printer",
-		"ExtraSettings": "mm",
+		"Units": "mm",
 		"DefaultValue": "3"
 	},
 	{
@@ -339,7 +339,7 @@
 		"PresentationName": "Starting Angle",
 		"HelpText": "The angle of the infill, measured from the X axis. Not used when bridging.",
 		"DataEditType": "POSITIVE_DOUBLE",
-		"ExtraSettings": "°",
+		"Units": "°",
 		"DefaultValue": "45"
 	},
 	{
@@ -384,7 +384,7 @@
 		"PresentationName": "Bed First Layer",
 		"HelpText": "The temperature to set the bed to before printing the first layer. The printer will wait until this temperature has been reached before printing. Set to 0 to eliminate bed temperature commands.",
 		"DataEditType": "DOUBLE",
-		"ExtraSettings": "°C",
+		"Units": "°C",
 		"ShowIfSet": "has_heated_bed",
 		"DefaultValue": "75"
 	},
@@ -393,7 +393,7 @@
 		"PresentationName": "First Layer",
 		"HelpText": "A modifier of the width of the extrusion for the first layer of the print. A value greater than 100% can help with adhesion to the print bed.",
 		"DataEditType": "DOUBLE_OR_PERCENT",
-		"ExtraSettings": "mm or %",
+		"Units": "mm or %",
 		"ShowIfSet": "!sla_printer",
 		"DefaultValue": "100%"
 	},
@@ -402,7 +402,7 @@
 		"PresentationName": "First Layer Thickness",
 		"HelpText": "The thickness of the first layer. A first layer taller than the default layer thickness can ensure good adhesion to the build plate.",
 		"DataEditType": "DOUBLE_OR_PERCENT",
-		"ExtraSettings": "mm or %",
+		"Units": "mm or %",
 		"DefaultValue": "0.3"
 	},
 	{
@@ -410,7 +410,7 @@
 		"PresentationName": "Initial Layer Speed",
 		"HelpText": "The speed at which the nozzle will move when printing the initial layers. If expressed as a percentage the Infill speed is modified.",
 		"DataEditType": "DOUBLE_OR_PERCENT",
-		"ExtraSettings": "mm/s or %",
+		"Units": "mm/s or %",
 		"DefaultValue": "30%"
 	},
 	{
@@ -418,7 +418,7 @@
 		"PresentationName": "Initial Layers",
 		"HelpText": "The number of layers to consider as the beginning of the print. These will print at initial layer speed.",
 		"DataEditType": "INT_OR_MM",
-		"ExtraSettings": "layers or mm",
+		"Units": "layers or mm",
 		"ShowIfSet": "sla_printer",
 		"DefaultValue": "1"
 	},
@@ -427,7 +427,7 @@
 		"PresentationName": "Recover Layer Speed",
 		"HelpText": "The speed at which the nozzle will move when recovering a failed print, for 1 layer.",
 		"DataEditType": "POSITIVE_DOUBLE",
-		"ExtraSettings": "mm/s",
+		"Units": "mm/s",
 		"ShowIfSet": "!has_hardware_leveling",
 		"DefaultValue": "10",
 		"RebuildGCodeOnChange": false
@@ -446,7 +446,7 @@
 		"PresentationName": "Validate Layer Height",
 		"HelpText": "Checks before each print that the layer height is less than the nozzle diameter (important for filament adhesion)",
 		"DataEditType": "CHECK_BOX",
-		"ExtraSettings": "",
+		"Units": "",
 		"ShowAsOverride": true,
 		"DefaultValue": "1",
 		"ShowIfSet": "!sla_printer",
@@ -467,7 +467,7 @@
 		"PresentationName": "XY Homing Position",
 		"HelpText": "The X and Y position of the hot end that minimizes the chance of colliding with the parts on the bed.",
 		"DataEditType": "VECTOR2",
-		"ExtraSettings": "mm",
+		"Units": "mm",
 		"ShowIfSet": "!has_hardware_leveling&!z_homes_to_max",
 		"DefaultValue": "0,0",
 		"RebuildGCodeOnChange": false
@@ -477,7 +477,7 @@
 		"PresentationName": "Extrude First Layer",
 		"HelpText": "The temperature to which the nozzle will be heated before printing the first layer of a part. The printer will wait until this temperature has been reached before printing.",
 		"DataEditType": "POSITIVE_DOUBLE",
-		"ExtraSettings": "°C",
+		"Units": "°C",
 		"ShowIfSet": "!sla_printer",
 		"DefaultValue": "205"
 	},
@@ -612,7 +612,7 @@
 		"PresentationName": "Has SD Card Reader",
 		"HelpText": "The printer has a SD card reader.",
 		"DataEditType": "CHECK_BOX",
-		"ExtraSettings": "",
+		"Units": "",
 		"DefaultValue": "0",
 		"ShowIfSet": "!sla_printer",
 		"ReloadUiWhenChanged": true,
@@ -632,7 +632,7 @@
 		"PresentationName": "Infill",
 		"HelpText": "Leave this as 0 to allow automatic calculation of extrusion width.",
 		"DataEditType": "DOUBLE_OR_PERCENT",
-		"ExtraSettings": "mm or %",
+		"Units": "mm or %",
 		"DefaultValue": "0"
 	},
 	{
@@ -640,7 +640,7 @@
 		"PresentationName": "Infill Overlap",
 		"HelpText": "The amount the infill edge will push into the perimeter. Helps ensure the infill is connected to the edge. This can be expressed as a percentage of the Nozzle Diameter.",
 		"DataEditType": "DOUBLE_OR_PERCENT",
-		"ExtraSettings": "mm or %",
+		"Units": "mm or %",
 		"DefaultValue": "25%",
 		"QuickMenuSettings": [
 			{
@@ -662,7 +662,7 @@
 		"PresentationName": "Speed at 0.025 Height",
 		"HelpText": "The speed to move the laser when the layer height is 0.025mm. Speed will be adjusted linearly at other heights.",
 		"DataEditType": "POSITIVE_DOUBLE",
-		"ExtraSettings": "mm/s",
+		"Units": "mm/s",
 		"ShowIfSet": "sla_printer",
 		"DefaultValue": "100"
 	},
@@ -672,7 +672,7 @@
 		"HelpText": "The speed to move the laser when the layer height is 0.1mm. Speed will be adjusted linearly at other heights.",
 		"DataEditType": "POSITIVE_DOUBLE",
 		"ShowIfSet": "sla_printer",
-		"ExtraSettings": "mm/s",
+		"Units": "mm/s",
 		"DefaultValue": "85"
 	},
 	{
@@ -681,7 +681,7 @@
 		"HelpText": "The speed at which infill will print.",
 		"DataEditType": "POSITIVE_DOUBLE",
 		"ShowIfSet": "!sla_printer",
-		"ExtraSettings": "mm/s",
+		"Units": "mm/s",
 		"DefaultValue": "60"
 	},
 	{
@@ -723,7 +723,7 @@
 		"PresentationName": "Leveling Positions",
 		"HelpText": "If set, these positions will be used when running the leveling solution. Leave empty for defaults. Data Format:'X1,Y1:...:Xn,Yn'",
 		"DataEditType": "STRING",
-		"ExtraSettings": "empty for default",
+		"Units": "empty for default",
 		"ShowAsOverride": true,
 		"ShowIfSet": "!has_hardware_leveling&print_leveling_solution=3 Point Plane|print_leveling_solution=3x3 Mesh",
 		"ResetAtEndOfPrint": false,
@@ -748,7 +748,7 @@
 		"PresentationName": "Start Height",
 		"HelpText": "The starting height (z) of the print head before probing each print level position.",
 		"DataEditType": "DOUBLE",
-		"ExtraSettings": "mm",
+		"Units": "mm",
 		"ShowIfSet": "!has_hardware_leveling",
 		"DefaultValue": "10",
 		"RebuildGCodeOnChange": false
@@ -758,7 +758,7 @@
 		"PresentationName": "Z Offset",
 		"HelpText": "The distance the z probe is from the extruder in z. For manual probing, this is thickness of the paper (or other calibration device).",
 		"DataEditType": "DOUBLE",
-		"ExtraSettings": "mm",
+		"Units": "mm",
 		"ShowIfSet": "!has_hardware_leveling",
 		"DefaultValue": ".1",
 		"RebuildGCodeOnChange": false
@@ -782,7 +782,7 @@
 		"PresentationName": "XY Offset",
 		"HelpText": "The distance the z probe is from the extruder in x and y.",
 		"DataEditType": "VECTOR2",
-		"ExtraSettings": "mm",
+		"Units": "mm",
 		"ShowAsOverride": true,
 		"ShowIfSet": "!has_hardware_leveling&has_z_probe&use_z_probe",
 		"ResetAtEndOfPrint": false,
@@ -796,7 +796,7 @@
 		"PresentationName": "Number of Samples",
 		"HelpText": "The number of times to sample each probe position (results will be averaged).",
 		"DataEditType": "INT",
-		"ExtraSettings": "",
+		"Units": "",
 		"ShowAsOverride": true,
 		"ShowIfSet": "!has_hardware_leveling&has_z_probe&use_z_probe",
 		"ResetAtEndOfPrint": false,
@@ -810,7 +810,7 @@
 		"PresentationName": "Lower / Deploy",
 		"HelpText": "This is the angle that lowers or deploys the z probe.",
 		"DataEditType": "POSITIVE_DOUBLE",
-		"ExtraSettings": "°",
+		"Units": "°",
 		"ShowAsOverride": true,
 		"ShowIfSet": "!has_hardware_leveling&has_z_probe&use_z_probe&has_z_servo",
 		"ResetAtEndOfPrint": false,
@@ -824,7 +824,7 @@
 		"PresentationName": "Raise / Stow",
 		"HelpText": "This is the angle that raises or stows the z probe.",
 		"DataEditType": "POSITIVE_DOUBLE",
-		"ExtraSettings": "°",
+		"Units": "°",
 		"ShowAsOverride": true,
 		"ShowIfSet": "!has_hardware_leveling&has_z_probe&use_z_probe&has_z_servo",
 		"ResetAtEndOfPrint": false,
@@ -859,7 +859,7 @@
 		"PresentationName": "Layer Thickness",
 		"HelpText": "The thickness of each layer of the print, except the first layer. A smaller number will create more layers and more vertical accuracy but also a slower print.",
 		"DataEditType": "POSITIVE_DOUBLE",
-		"ExtraSettings": "mm",
+		"Units": "mm",
 		"DefaultValue": "0.4"
 	},
 	{
@@ -895,7 +895,7 @@
 		"PresentationName": "Width",
 		"HelpText": "Sets the size of the outer solid surface (perimeter) for the entire print.",
 		"DataEditType": "POSITIVE_DOUBLE",
-		"ExtraSettings": "mm",
+		"Units": "mm",
 		"DefaultValue": "0"
 	},
 	{
@@ -903,7 +903,7 @@
 		"PresentationName": "Maximum Fan Speed",
 		"HelpText": "The maximum speed at which the layer cooling fan will run, expressed as a percentage of full power.",
 		"DataEditType": "INT",
-		"ExtraSettings": "%",
+		"Units": "%",
 		"ShowIfSet": "has_fan",
 		"DefaultValue": "100"
 	},
@@ -912,7 +912,7 @@
 		"PresentationName": "Minimum Extrusion Requiring Retraction",
 		"HelpText": "The minimum length of filament that must be extruded before a retraction can occur.",
 		"DataEditType": "POSITIVE_DOUBLE",
-		"ExtraSettings": "mm",
+		"Units": "mm",
 		"ShowIfSet": "!sla_printer",
 		"EnableIfSet": "enable_retractions",
 		"ShowIfSet": "!sla_printer",
@@ -923,7 +923,7 @@
 		"PresentationName": "Minimum Fan Speed",
 		"HelpText": "The minimum speed at which the layer cooling fan will run, expressed as a percentage of full power.",
 		"DataEditType": "INT",
-		"ExtraSettings": "%",
+		"Units": "%",
 		"ShowIfSet": "has_fan",
 		"DefaultValue": "35"
 	},
@@ -932,7 +932,7 @@
 		"PresentationName": "Minimum Print Speed",
 		"HelpText": "The minimum speed to which the printer will reduce to in order to attempt to make the layer print time long enough to satisfy the minimum layer time.",
 		"DataEditType": "POSITIVE_DOUBLE",
-		"ExtraSettings": "mm/s",
+		"Units": "mm/s",
 		"ShowIfSet": "!sla_printer",
 		"DefaultValue": "10"
 	},
@@ -942,7 +942,7 @@
 		"HelpText": "The minimum length of filament to use printing the skirt loops. Enough skirt loops will be drawn to use this amount of filament, overriding the value set in Loops if the value in Loops will produce a skirt shorter than this value.",
 		"DataEditType": "POSITIVE_DOUBLE",
 		"ShowIfSet": "!sla_printer",
-		"ExtraSettings": "mm",
+		"Units": "mm",
 		"DefaultValue": "0"
 	},
 	{
@@ -957,7 +957,7 @@
 		"PresentationName": "Nozzle Diameter",
 		"HelpText": "The diameter of the extruder's nozzle.",
 		"DataEditType": "POSITIVE_DOUBLE",
-		"ExtraSettings": "mm",
+		"Units": "mm",
 		"DefaultValue": "0.5"
 	},
 	{
@@ -1003,7 +1003,7 @@
 		"PresentationName": "Perimeters",
 		"HelpText": "Leave this as 0 to allow automatic calculation of extrusion width.",
 		"DataEditType": "DOUBLE_OR_PERCENT",
-		"ExtraSettings": "mm or %",
+		"Units": "mm or %",
 		"DefaultValue": "0"
 	},
 	{
@@ -1011,7 +1011,7 @@
 		"PresentationName": "Outside Perimeters",
 		"HelpText": "A modifier of the width of the extrusion when printing outside perimeters. Can be useful to fine-adjust actual print size when objects print larger or smaller than specified in the digital model.",
 		"DataEditType": "DOUBLE_OR_PERCENT",
-		"ExtraSettings": "mm or %",
+		"Units": "mm or %",
 		"ShowIfSet": "!sla_printer",
 		"DefaultValue": "100%"
 	},
@@ -1021,7 +1021,7 @@
 		"HelpText": "The speed at which inside perimeters will print.",
 		"DataEditType": "POSITIVE_DOUBLE",
 		"ShowIfSet": "!sla_printer",
-		"ExtraSettings": "mm/s",
+		"Units": "mm/s",
 		"DefaultValue": "30"
 	},
 	{
@@ -1029,7 +1029,7 @@
 		"PresentationName": "Start End Overlap",
 		"HelpText": "The distance that a perimeter will overlap itself when it completes its loop, expressed as a percentage of the Nozzle Diameter.",
 		"DataEditType": "POSITIVE_DOUBLE",
-		"ExtraSettings": "%",
+		"Units": "%",
 		"DefaultValue": "90",
 		"QuickMenuSettings": [
 			{
@@ -1051,7 +1051,7 @@
 		"PresentationName": "Perimeters",
 		"HelpText": "The number, or total width, of external shells to create. Add mm to the end of the number to specify width in millimeters.",
 		"DataEditType": "INT_OR_MM",
-		"ExtraSettings": "count or mm",
+		"Units": "count or mm",
 		"DefaultValue": "3"
 	},
 	{
@@ -1066,7 +1066,7 @@
 		"PresentationName": "Print Center",
 		"HelpText": "The position (X and Y coordinates) of the center of the print bed, in millimeters. Normally this is 1/2 the bed size for Cartesian printers and 0, 0 for Delta printers.",
 		"DataEditType": "VECTOR2",
-		"ExtraSettings": "mm",
+		"Units": "mm",
 		"DefaultValue": "100,100"
 	},
 	{
@@ -1074,7 +1074,7 @@
 		"PresentationName": "Raft Layers",
 		"HelpText": "Number of layers to print before printing any parts.",
 		"DataEditType": "INT",
-		"ExtraSettings": "layers",
+		"Units": "layers",
 		"DefaultValue": "0"
 	},
 	{
@@ -1098,7 +1098,7 @@
 		"PresentationName": "Minimum Travel Requiring Retraction",
 		"HelpText": "The minimum distance of a non-print move which will trigger a retraction.",
 		"DataEditType": "POSITIVE_DOUBLE",
-		"ExtraSettings": "mm",
+		"Units": "mm",
 		"ShowIfSet": "!sla_printer",
 		"EnableIfSet": "enable_retractions",
 		"DefaultValue": "20"
@@ -1117,7 +1117,7 @@
 		"PresentationName": "Retract Length",
 		"HelpText": "The distance filament will reverse before each qualifying non-print move",
 		"DataEditType": "POSITIVE_DOUBLE",
-		"ExtraSettings": "mm",
+		"Units": "mm",
 		"DefaultValue": "1",
 		"ShowIfSet": "!sla_printer",
 		"EnableIfSet": "enable_retractions"
@@ -1128,7 +1128,7 @@
 		"HelpText": "When using multiple extruders, the distance filament will reverse before changing to a different extruder.",
 		"DataEditType": "POSITIVE_DOUBLE",
 		"ShowIfSet": "!sla_printer",
-		"ExtraSettings": "mm",
+		"Units": "mm",
 		"DefaultValue": "10"
 	},
 	{
@@ -1145,7 +1145,7 @@
 		"PresentationName": "Z Lift",
 		"HelpText": "The distance the nozzle will lift after each retraction.",
 		"DataEditType": "POSITIVE_DOUBLE",
-		"ExtraSettings": "mm",
+		"Units": "mm",
 		"ShowIfSet": "!sla_printer",
 		"EnableIfSet": "enable_retractions",
 		"DefaultValue": "0"
@@ -1156,7 +1156,7 @@
 		"HelpText": "Length of extra filament to extrude after a complete tool change (in addition to the re-extrusion of the tool change retraction distance).",
 		"DataEditType": "POSITIVE_DOUBLE",
 		"ShowIfSet": "!sla_printer",
-		"ExtraSettings": "mm zero to disable",
+		"Units": "mm zero to disable",
 		"DefaultValue": "0"
 	},
 	{
@@ -1180,7 +1180,7 @@
 		"PresentationName": "Extra Length On Restart",
 		"HelpText": "Length of filament to extrude after a complete retraction (in addition to the re-extrusion of the Length on Move distance).",
 		"DataEditType": "DOUBLE",
-		"ExtraSettings": "mm",
+		"Units": "mm",
 		"ShowIfSet": "!sla_printer",
 		"EnableIfSet": "enable_retractions",
 		"DefaultValue": "0"
@@ -1190,7 +1190,7 @@
 		"PresentationName": "Time For Extra Length",
 		"HelpText": "The time over which to increase the Extra Length On Restart to its maximum value. Below this time only a portion of the extra length will be applied. Leave 0 to apply the entire amount all the time.",
 		"DataEditType": "DOUBLE",
-		"ExtraSettings": "s",
+		"Units": "s",
 		"ShowIfSet": "!sla_printer",
 		"EnableIfSet": "enable_retractions",
 		"DefaultValue": "0"
@@ -1200,7 +1200,7 @@
 		"PresentationName": "Speed",
 		"HelpText": "The speed at which filament will retract and re-extrude.",
 		"DataEditType": "POSITIVE_DOUBLE",
-		"ExtraSettings": "mm/s",
+		"Units": "mm/s",
 		"ShowIfSet": "!sla_printer",
 		"EnableIfSet": "enable_retractions",
 		"DefaultValue": "30"
@@ -1224,7 +1224,7 @@
 		"PresentationName": "Resolution",
 		"HelpText": "The minimum feature size to consider from the model. Leave at 0 to use all the model detail.",
 		"DataEditType": "POSITIVE_DOUBLE",
-		"ExtraSettings": "mm",
+		"Units": "mm",
 		"DefaultValue": "0"
 	},
 	{
@@ -1247,7 +1247,7 @@
 		"HelpText": "The distance from the model at which the first skirt loop is drawn. Make this 0 to create an anchor for the part to the bed, also known as a brim.",
 		"DataEditType": "POSITIVE_DOUBLE",
 		"ShowIfSet": "!sla_printer",
-		"ExtraSettings": "mm",
+		"Units": "mm",
 		"DefaultValue": "6"
 	},
 	{
@@ -1255,7 +1255,7 @@
 		"PresentationName": "Skirt Height",
 		"HelpText": "The number of layers to draw the skirt.",
 		"DataEditType": "INT",
-		"ExtraSettings": "layers",
+		"Units": "layers",
 		"DefaultValue": "1"
 	},
 	{
@@ -1264,7 +1264,7 @@
 		"HelpText": "The number of loops to draw around all the parts on the bed before starting on the parts. Used mostly to prime the nozzle so the flow is even when the actual print begins.",
 		"DataEditType": "INT_OR_MM",
 		"ShowIfSet": "!sla_printer",
-		"ExtraSettings": "count or mm",
+		"Units": "count or mm",
 		"DefaultValue": "1"
 	},
 	{
@@ -1272,7 +1272,7 @@
 		"PresentationName": "Distance or Loops",
 		"HelpText": "The number of loops to draw around parts. Used to provide additional bed adhesion",
 		"DataEditType": "INT_OR_MM",
-		"ExtraSettings": "count or mm",
+		"Units": "count or mm",
 		"DefaultValue": "0"
 	},
 	{
@@ -1280,7 +1280,7 @@
 		"PresentationName": "Slow Down If Layer Print Time Is Below",
 		"HelpText": "The minimum amount of time a layer must take to print. If a layer will take less than this amount of time, the movement speed is reduced so the layer print time will match this value, down to the minimum print speed at the slowest.",
 		"DataEditType": "INT",
-		"ExtraSettings": "seconds",
+		"Units": "seconds",
 		"ShowIfSet": "!sla_printer",
 		"DefaultValue": "30"
 	},
@@ -1289,7 +1289,7 @@
 		"PresentationName": "Small Perimeters",
 		"HelpText": "Used for small perimeters (usually holes). This can be set explicitly or as a percentage of the Perimeters' speed.",
 		"DataEditType": "DOUBLE_OR_PERCENT",
-		"ExtraSettings": "mm/s or %",
+		"Units": "mm/s or %",
 		"DefaultValue": "30"
 	},
 	{
@@ -1305,7 +1305,7 @@
 		"PresentationName": "Solid Infill",
 		"HelpText": "Leave this as 0 to allow automatic calculation of extrusion width.",
 		"DataEditType": "DOUBLE_OR_PERCENT",
-		"ExtraSettings": "mm or %",
+		"Units": "mm or %",
 		"DefaultValue": "0"
 	},
 	{
@@ -1313,7 +1313,7 @@
 		"PresentationName": "Solid Infill",
 		"HelpText": "The speed to print infill when completely solid. This can be set explicitly or as a percentage of the Infill speed.",
 		"DataEditType": "DOUBLE_OR_PERCENT",
-		"ExtraSettings": "mm/s or %",
+		"Units": "mm/s or %",
 		"DefaultValue": "60"
 	},
 	{
@@ -1330,7 +1330,7 @@
 		"PresentationName": "Temp Lower Amount",
 		"HelpText": "The number of degrees Centigrade to lower the temperature of a nozzle while it is not active.",
 		"DataEditType": "DOUBLE",
-		"ExtraSettings": "°C",
+		"Units": "°C",
 		"DefaultValue": "-5"
 	},
 	{
@@ -1347,7 +1347,7 @@
 		"PresentationName": "Write Filter",
 		"HelpText": "This is a set of regular expressions to apply to lines prior to sending to a printer. They will be applied in the order listed before sending. To return more than one instruction separate them with comma.",
 		"DataEditType": "MULTI_LINE_TEXT",
-		"ExtraSettings": "",
+		"Units": "",
 		"ShowAsOverride": true,
 		"ShowIfSet": null,
 		"ResetAtEndOfPrint": false,
@@ -1360,7 +1360,7 @@
 		"PresentationName": "Read Filter",
 		"HelpText": "This is a set of regular expressions to apply to lines after they are received from the printer. They will be applied in order to each line received.",
 		"DataEditType": "MULTI_LINE_TEXT",
-		"ExtraSettings": "",
+		"Units": "",
 		"ShowAsOverride": true,
 		"ShowIfSet": null,
 		"ResetAtEndOfPrint": false,
@@ -1386,7 +1386,7 @@
 		"HelpText": "The distance between the top of the support and the bottom of the model. A good value depends on the type of material. For ABS and PLA a value between 0.4 and 0.6 works well, respectively.",
 		"DataEditType": "POSITIVE_DOUBLE",
 		"ShowIfSet": "!sla_printer",
-		"ExtraSettings": "mm",
+		"Units": "mm",
 		"DefaultValue": ".3"
 	},
 	{
@@ -1410,7 +1410,7 @@
 		"DataEditType": "POSITIVE_DOUBLE",
 		"EnableIfSet": "support_material",
 		"ShowIfSet": "!sla_printer",
-		"ExtraSettings": "%",
+		"Units": "%",
 		"DefaultValue": "50"
 	},
 	{
@@ -1419,7 +1419,7 @@
 		"HelpText": "The angle at which the support material lines will be drawn.",
 		"DataEditType": "POSITIVE_DOUBLE",
 		"ShowIfSet": "!sla_printer",
-		"ExtraSettings": "°",
+		"Units": "°",
 		"DefaultValue": "45"
 	},
 	{
@@ -1470,7 +1470,7 @@
 		"HelpText": "The number of layers or the distance to print solid material between the supports and the part. Add mm to the end of the number to specify distance.",
 		"DataEditType": "INT_OR_MM",
 		"ShowIfSet": "!sla_printer",
-		"ExtraSettings": "layers or mm",
+		"Units": "layers or mm",
 		"DefaultValue": ".9mm"
 	},
 	{
@@ -1478,7 +1478,7 @@
 		"PresentationName": "Pattern Spacing",
 		"HelpText": "The distance between support material lines.",
 		"DataEditType": "POSITIVE_DOUBLE",
-		"ExtraSettings": "mm",
+		"Units": "mm",
 		"ShowIfSet": "!sla_printer",
 		"DefaultValue": "2.5"
 	},
@@ -1488,7 +1488,7 @@
 		"HelpText": "The speed at which support material structures will print.",
 		"DataEditType": "POSITIVE_DOUBLE",
 		"ShowIfSet": "!sla_printer",
-		"ExtraSettings": "mm/s",
+		"Units": "mm/s",
 		"DefaultValue": "60"
 	},
 	{
@@ -1497,7 +1497,7 @@
 		"HelpText": "The distance the support material will be from the object in the X and Y directions.",
 		"DataEditType": "POSITIVE_DOUBLE",
 		"ShowIfSet": "!sla_printer",
-		"ExtraSettings": "mm",
+		"Units": "mm",
 		"DefaultValue": "0.7"
 	},
 	{
@@ -1523,7 +1523,7 @@
 		"PresentationName": "Extruder Temperature",
 		"HelpText": "The target temperature the extruder will attempt to reach during the print.",
 		"DataEditType": "POSITIVE_DOUBLE",
-		"ExtraSettings": "°C",
+		"Units": "°C",
 		"ShowIfSet": "!sla_printer",
 		"DefaultValue": "200"
 	},
@@ -1532,7 +1532,7 @@
 		"PresentationName": "Extruder 2 Temperature",
 		"HelpText": "The target temperature the extruder will attempt to reach during the print.",
 		"DataEditType": "POSITIVE_DOUBLE",
-		"ExtraSettings": "°C",
+		"Units": "°C",
 		"ShowIfSet": "!sla_printer",
 		"DefaultValue": "200"
 	},
@@ -1541,7 +1541,7 @@
 		"PresentationName": "Extruder 3 Temperature",
 		"HelpText": "The target temperature the extruder will attempt to reach during the print.",
 		"DataEditType": "POSITIVE_DOUBLE",
-		"ExtraSettings": "°C",
+		"Units": "°C",
 		"ShowIfSet": "!sla_printer",
 		"DefaultValue": "200"
 	},
@@ -1550,7 +1550,7 @@
 		"PresentationName": "Extruder 4 Temperature",
 		"HelpText": "The target temperature the extruder will attempt to reach during the print.",
 		"DataEditType": "POSITIVE_DOUBLE",
-		"ExtraSettings": "°C",
+		"Units": "°C",
 		"ShowIfSet": "!sla_printer",
 		"DefaultValue": "200"
 	},
@@ -1560,7 +1560,7 @@
 		"HelpText": "The temperature at which the extruder will wipe the nozzle, as specified by Custom G-Code.",
 		"DataEditType": "POSITIVE_DOUBLE",
 		"ShowIfSet": "!sla_printer",
-		"ExtraSettings": "°C",
+		"Units": "°C",
 		"DefaultValue": "0"
 	},
 	{
@@ -1568,7 +1568,7 @@
 		"PresentationName": "Bed Remove Part Temperature",
 		"HelpText": "The temperature to which the bed will heat (or cool) in order to remove the part, as specified in Custom G-Code.",
 		"DataEditType": "POSITIVE_DOUBLE",
-		"ExtraSettings": "°C",
+		"Units": "°C",
 		"ShowIfSet": "has_heated_bed",
 		"DefaultValue": "0"
 	},
@@ -1608,7 +1608,7 @@
 		"PresentationName": "Top Solid Infill",
 		"HelpText": "Leave this as 0 to allow automatic calculation of extrusion width.",
 		"DataEditType": "DOUBLE_OR_PERCENT",
-		"ExtraSettings": "mm or %",
+		"Units": "mm or %",
 		"DefaultValue": "0"
 	},
 	{
@@ -1616,7 +1616,7 @@
 		"PresentationName": "Top Solid Infill",
 		"HelpText": "The speed at which the top solid layers will print. Can be set explicitly or as a percentage of the Infill speed.",
 		"DataEditType": "DOUBLE_OR_PERCENT",
-		"ExtraSettings": "mm/s or %",
+		"Units": "mm/s or %",
 		"ShowIfSet": "!sla_printer",
 		"DefaultValue": "50"
 	},
@@ -1625,7 +1625,7 @@
 		"PresentationName": "Top Solid Layers",
 		"HelpText": "The number of layers, or the distance in millimeters, to solid fill on the top surface(s) of the object. Add mm to the end of the number to specify distance in millimeters.",
 		"DataEditType": "INT_OR_MM",
-		"ExtraSettings": "count or mm",
+		"Units": "count or mm",
 		"DefaultValue": "1mm"
 	},
 	{
@@ -1633,7 +1633,7 @@
 		"PresentationName": "Travel",
 		"HelpText": "The speed at which the nozzle will move when not extruding material.",
 		"DataEditType": "POSITIVE_DOUBLE",
-		"ExtraSettings": "mm/s",
+		"Units": "mm/s",
 		"DefaultValue": "130"
 	},
 	{
@@ -1704,7 +1704,7 @@
 		"PresentationName": "Vibration Limit",
 		"HelpText": "This is to help reduce vibrations during printing. If your printer has a resonance frequency that is causing trouble you can set this to try and reduce printing at that frequency.",
 		"DataEditType": "INT",
-		"ExtraSettings": "Hz",
+		"Units": "Hz",
 		"DefaultValue": "0"
 	},
 	{
@@ -1722,7 +1722,7 @@
 		"HelpText": "Creates a perimeter around the part on which to wipe the other nozzle when printing using dual extrusion. Set to 0 to disable.",
 		"DataEditType": "POSITIVE_DOUBLE",
 		"ShowIfSet": "!sla_printer",
-		"ExtraSettings": "mm",
+		"Units": "mm",
 		"DefaultValue": "0"
 	},
 	{
@@ -1730,7 +1730,7 @@
 		"PresentationName": "Wipe Tower Size",
 		"HelpText": "The length and width of a tower created at the back left of the print used for wiping the next nozzle when changing between multiple extruders. Set to 0 to disable.",
 		"DataEditType": "POSITIVE_DOUBLE",
-		"ExtraSettings": "mm",
+		"Units": "mm",
 		"ShowIfSet": "!sla_printer",
 		"DefaultValue": "0"
 	},
@@ -1812,7 +1812,7 @@
 		"PresentationName": "Z Offset",
 		"HelpText": "The distance to move the nozzle along the Z axis to ensure that it is the correct distance from the print bed. A positive number will raise the nozzle, and a negative number will lower it.",
 		"DataEditType": "OFFSET",
-		"ExtraSettings": "mm",
+		"Units": "mm",
 		"DefaultValue": "0"
 	},
 	{
