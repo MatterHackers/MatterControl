@@ -469,7 +469,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				switch (settingData.DataEditType)
 				{
 					case SliceSettingData.DataEditTypes.INT:
-						uiField = new IntField();
+
+						var intField = new IntField();
+						uiField = intField;
+
+						if (settingData.SlicerConfigName == "extruder_count")
+						{
+							intField.MaxValue = 4;
+							intField.MinValue = 0;
+						}
+
 						break;
 
 					case SliceSettingData.DataEditTypes.DOUBLE:
