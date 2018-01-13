@@ -145,11 +145,12 @@ Printer
         extruders_share_temperature
         extruder_offset
   Features
-    Features!hidden
+    Features
       Interface
         sla_printer
         show_reset_connection
         include_firmware_updater
+        backup_firmware_before_update
       Print Recovery
         recover_is_enabled
         recover_first_layer_speed

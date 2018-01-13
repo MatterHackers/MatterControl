@@ -57,6 +57,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			SettingsKey.has_sd_card_reader,
 			SettingsKey.printer_name,
 			SettingsKey.auto_connect,
+			SettingsKey.backup_firmware_before_update,
 			SettingsKey.baud_rate,
 			SettingsKey.com_port,
 			SettingsKey.filament_cost,
