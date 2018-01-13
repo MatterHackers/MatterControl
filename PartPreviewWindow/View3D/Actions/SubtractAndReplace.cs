@@ -164,23 +164,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 			bool operationApplied = group.Descendants()
 				.Where((obj) => obj.OwnerID == group.ID)
-				.Where((objId) => objId.Mesh != objId.Children.First().Mesh).Count() > 0;
+				.Where((objId) => objId.Mesh != objId.Children.First().Mesh).Any();
 
 			bool selectionHasBeenMade = group.Descendants()
-				.Where((obj) => obj.OwnerID == group.ID)
-				.Where((objId) => objId.OutputType == PrintOutputTypes.Hole).Count() > 0;
+				.Where((obj) => obj.OwnerID == group.ID && obj.OutputType == PrintOutputTypes.Hole)
+				.Any();
 
 			if (!operationApplied && !selectionHasBeenMade)
 			{
 				// select the last item
-				if (tabContainer.Descendants().Where((d) => d is ICheckbox).Last() is ICheckbox firstCheckBox)
+				if (tabContainer.Descendants().Where((d) => d is ICheckbox).Last() is ICheckbox lastCheckBox)
 				{ 
-					firstCheckBox.Checked = true;
+					lastCheckBox.Checked = true;
 				}
 			}
 			else
 			{
-				updateButton.Enabled = operationApplied;
+				updateButton.Enabled = !operationApplied;
 			}
 
 			// add this last so it is at the bottom
