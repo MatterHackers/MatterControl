@@ -285,21 +285,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				SiblingRadioButtonList = buttonGroupB,
 				Name = "Model View Button",
 				Checked = printer?.ViewState.ViewMode == PartViewMode.Model || printer == null,
-				ToolTipText = "Model".Localize(),
+				ToolTipText = "Model View".Localize(),
 				Margin = commonMargin
 			};
 			modelViewButton.Click += SwitchModes_Click;
 			buttonGroupB.Add(modelViewButton);
 			AddChild(modelViewButton);
 
-			iconPath = Path.Combine("ViewTransformControls", "3d.png");
+			iconPath = Path.Combine("ViewTransformControls", "gcode_3d.png");
 			layers3DButton = new RadioIconButton(AggContext.StaticData.LoadIcon(iconPath, IconColor.Theme), theme)
 			{
 				SiblingRadioButtonList = buttonGroupB,
 				Name = "Layers3D Button",
 				Checked = printer?.ViewState.ViewMode == PartViewMode.Layers3D,
-				ToolTipText = "3D Layers".Localize(),
-				Margin = commonMargin
+				ToolTipText = "3D Layer View".Localize(),
+				Margin = commonMargin,
+				Enabled = isPrinterType
 			};
 			layers3DButton.Click += SwitchModes_Click;
 			buttonGroupB.Add(layers3DButton);
@@ -309,14 +310,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.AddChild(layers3DButton);
 			}
 
-			iconPath = Path.Combine("ViewTransformControls", "2d.png");
+			iconPath = Path.Combine("ViewTransformControls", "gcode_2d.png");
 			layers2DButton = new RadioIconButton(AggContext.StaticData.LoadIcon(iconPath, IconColor.Theme), theme)
 			{
 				SiblingRadioButtonList = buttonGroupB,
 				Name = "Layers2D Button",
 				Checked = printer?.ViewState.ViewMode == PartViewMode.Layers2D,
-				ToolTipText = "2D Layers".Localize(),
-				Margin = commonMargin
+				ToolTipText = "2D Layer View".Localize(),
+				Margin = commonMargin,
+				Enabled = isPrinterType
 			};
 			layers2DButton.Click += SwitchModes_Click;
 			buttonGroupB.Add(layers2DButton);
@@ -443,6 +445,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void SwitchModes_Click(object sender, MouseEventArgs e)
 		{
+			if (!IsPrinterMode)
+			{
+				return;
+			}
+
 			if (sender is GuiWidget widget)
 			{
 				if (widget.Name == "Layers2D Button")
