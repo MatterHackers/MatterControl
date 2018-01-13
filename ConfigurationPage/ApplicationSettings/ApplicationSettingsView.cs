@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 		private Color menuTextColor = Color.Black;
 
-		public ApplicationSettingsWidget(TextImageButtonFactory buttonFactory)
+		public ApplicationSettingsWidget(TextImageButtonFactory buttonFactory, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
 		{
 			this.buttonFactory = buttonFactory;
@@ -161,7 +161,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 #if !__ANDROID__
 			{
 				// ThumbnailRendering
-				var thumbnailsModeDropList = new DropDownList("", ActiveTheme.Instance.PrimaryTextColor, maxHeight: 200, pointSize: ApplicationController.Instance.Theme.DefaultFontSize)
+				var thumbnailsModeDropList = new DropDownList("", theme.Colors.PrimaryTextColor, maxHeight: 200, pointSize: theme.DefaultFontSize)
 				{
 					TextColor = menuTextColor,
 				};
@@ -304,7 +304,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			this.AddSettingsRow(updateMatterControl);
 
 			this.AddChild(new SettingsItem("Theme".Localize(), new GuiWidget()));
-			this.AddChild(this.GetThemeControl());
+			this.AddChild(this.GetThemeControl(theme));
 			this.AddChild(new HorizontalLine(70)
 			{
 				Margin = new BorderDouble(left: 30),
@@ -322,10 +322,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 					Margin = new BorderDouble(10, 0),
 					Padding = new BorderDouble(2),
 					Border = new BorderDouble(1),
-					BorderColor = ActiveTheme.Instance.PrimaryAccentColor,
+					BorderColor = theme.Colors.PrimaryAccentColor,
 					VAnchor = VAnchor.Center | VAnchor.Fit
 				};
-				blueBox.AddChild(new TextWidget("64", pointSize: 8, textColor: ActiveTheme.Instance.PrimaryAccentColor));
+				blueBox.AddChild(new TextWidget("64", pointSize: 8, textColor: theme.Colors.PrimaryAccentColor));
 
 				aboutMatterControl.AddChild(blueBox);
 			}
@@ -359,7 +359,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			});
 		}
 
-		private FlowLayoutWidget GetThemeControl()
+		private FlowLayoutWidget GetThemeControl(ThemeConfig theme)
 		{
 			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -367,7 +367,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			};
 
 			// Determine if we should set the dark or light version of the theme
-			var activeThemeIndex = ActiveTheme.AvailableThemes.IndexOf(ActiveTheme.Instance);
+			var activeThemeIndex = ActiveTheme.AvailableThemes.IndexOf(theme.Colors);
 
 			var midPoint = ActiveTheme.AvailableThemes.Count / 2;
 
