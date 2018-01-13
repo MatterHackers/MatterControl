@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -34,10 +35,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	{
 		private int intValue;
 
+		public int MinValue { get; set; } = int.MinValue;
+
+		public int MaxValue { get; set; } = int.MaxValue;
+
 		protected override string ConvertValue(string newValue)
 		{
 			decimal.TryParse(newValue, out decimal currentValue);
-			intValue = (int)currentValue;
+
+			// Clamp to range
+			intValue = Math.Min((int)currentValue, this.MaxValue);
+			intValue = Math.Max(intValue, this.MinValue);
 
 			return intValue.ToString();
 		}
