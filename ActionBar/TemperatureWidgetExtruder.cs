@@ -274,7 +274,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			var valueField = row.Descendants<MHNumberEdit>().FirstOrDefault();
 			valueField.Name = "Temperature Input";
-			var settingsRow = row.Descendants<SliceSettingsRow>().FirstOrDefault(); 
+			var settingsRow = row.DescendantsAndSelf<SliceSettingsRow>().FirstOrDefault(); 
 			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
 			{
 				if (e is StringEventArgs stringEvent)
