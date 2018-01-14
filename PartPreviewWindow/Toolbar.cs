@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker
+Copyright (c) 2018, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -30,11 +30,9 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
@@ -84,22 +82,31 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		public Toolbar TabBar { get; }
 
-		private GuiWidget body;
+		protected GuiWidget tabBody;
 
 		public SimpleTabs(GuiWidget rightAnchorItem)
+			: this(
+				new GuiWidget()
+				{
+					HAnchor = HAnchor.Stretch,
+					VAnchor = VAnchor.Stretch,
+				},
+				rightAnchorItem)
+		{
+		}
+
+		public SimpleTabs(GuiWidget tabBody, GuiWidget rightAnchorItem)
 			: base(FlowDirection.TopToBottom)
 		{
+			this.tabBody = tabBody;
+
 			this.AddChild(TabBar = new Toolbar(rightAnchorItem)
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit
 			});
 
-			this.AddChild(body = new GuiWidget()
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Stretch,
-			});
+			this.AddChild(tabBody);
 		}
 
 		public event EventHandler ActiveTabChanged;
@@ -120,7 +127,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.TabBar.ActionArea.AddChild(tabWidget, position);
 
-			this.body.AddChild(iTab.TabContent);
+			this.tabBody.AddChild(iTab.TabContent);
 		}
 
 		private void TabWidget_Click(object sender, MouseEventArgs e)
@@ -143,7 +150,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			_allTabs.Remove(tab);
 
 			TabBar.ActionArea.RemoveChild(tab as GuiWidget);
-			body.RemoveChild(tab.TabContent);
+			tabBody.RemoveChild(tab.TabContent);
 
 			ActiveTab = _allTabs.LastOrDefault();
 		}

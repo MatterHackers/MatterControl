@@ -22,10 +22,9 @@ Advanced
         infill_overlap_perimeter
         fill_thin_gaps
     Extruder Change
-      Extruder Change!hidden
+      Extruder Change
         wipe_shield_distance
         wipe_tower_size
-
   Speed
     Speed
       Printing Speed
@@ -109,7 +108,7 @@ Advanced
         external_perimeter_extrusion_width
         support_material_extrusion_width
     Retraction
-      After Move!hidden
+      After Move
         enable_retractions
         retract_length
         retract_restart_extra
@@ -125,7 +124,7 @@ Advanced
         retract_restart_extra_toolchange
 Printer
   General
-    Common!hidden
+    General
       Settings
         auto_connect
         baud_rate
@@ -133,12 +132,14 @@ Printer
         selector_ip_address
         ip_address
         ip_port
+    Bed
       Size and Coordinates
         bed_size
         print_center
         build_height
         z_offset
         bed_shape
+    Extruders
       Extruders
         extruder_count
         nozzle_diameter
@@ -167,6 +168,7 @@ Printer
         z_probe_z_offset
         z_servo_depolyed_angle
         z_servo_retracted_angle
+    Hardware
       Hardware
         has_fan
         has_hardware_leveling
@@ -178,6 +180,7 @@ Printer
         has_z_servo
         enable_network_printing
         enable_sailfish_communication
+    Behavior
       Behavior
         z_homes_to_max
         heat_extruder_before_homing
@@ -185,12 +188,13 @@ Printer
         validate_layer_height
         send_with_checksum
         reset_long_extrusion
+    Slicing
       Slicing Options
         output_only_first_layer
         g0
   G-Code
-    Custom G-Code!hidden
-      Custom G-Code
+    G-Code
+      G-Code
         start_gcode
         end_gcode
         layer_gcode

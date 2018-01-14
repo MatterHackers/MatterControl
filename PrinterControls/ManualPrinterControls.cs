@@ -122,7 +122,7 @@ namespace MatterHackers.MatterControl
 				return null;
 			}
 
-			ApplicationController.Instance.Theme.BoxStyleSectionWidget(sectionWidget);
+			sectionWidget.ApplyBoxStyle().ContentPanel.Padding = new BorderDouble(10, 10, 10, 0);
 
 			column.AddChild(sectionWidget);
 

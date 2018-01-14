@@ -501,7 +501,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				sideBar.AddPage(
 					"Printer".Localize(),
-					new ConfigurePrinterWidget(sliceSettingsWidget, theme)
+					new ConfigurePrinterWidget(sliceSettingsWidget, printer, theme)
 					{
 						BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor,
 						Padding = new BorderDouble(top: 10),

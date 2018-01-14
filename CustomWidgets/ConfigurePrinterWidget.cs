@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, John Lewin
+Copyright (c) 2018, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,77 +27,28 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System.Linq;
-using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
 	public class ConfigurePrinterWidget : FlowLayoutWidget
 	{
-		public ConfigurePrinterWidget(SliceSettingsWidget sliceSettingsWidget, ThemeConfig theme)
+		private SliceSettingsTabView sliceSettingsTabView;
+
+		public ConfigurePrinterWidget(SliceSettingsWidget sliceSettingsWidget, PrinterConfig printer, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
 		{
-			int tabIndex = 0;
-			var rowItem = sliceSettingsWidget.CreateItemRow(SettingsOrganizer.SettingsData["printer_name"],ref tabIndex, theme);
-
-			var firstChild = rowItem.Children.FirstOrDefault();
-			firstChild.HAnchor = HAnchor.Absolute;
-			firstChild.Width = 100;
-			firstChild.Margin = firstChild.Margin.Clone(right: 0);
-
-			var nextChild = rowItem.Children.Skip(1).FirstOrDefault();
-			nextChild.HAnchor = HAnchor.Stretch;
-			nextChild.Children.FirstOrDefault().HAnchor = HAnchor.Stretch;
-
-			this.AddChild(rowItem);
-
-			var primaryTabControl = new SimpleTabs(new GuiWidget())
-			{
-				Margin = new BorderDouble(top: 8),
-				VAnchor = VAnchor.Stretch,
-				HAnchor = HAnchor.Stretch,
-				MinimumSize = new Vector2(200, 200)
-			};
-			primaryTabControl.TabBar.BackgroundColor = theme.ActiveTabBarBackground;
-			this.AddChild(primaryTabControl);
-
-			foreach (var section in SettingsOrganizer.Instance.UserLevels["Printer"].Categories)
-			{
-				var scrollable = new ScrollableWidget(true)
-				{
-					VAnchor = VAnchor.Stretch,
-					HAnchor = HAnchor.Stretch,
-				};
-				scrollable.ScrollArea.HAnchor = HAnchor.Stretch;
-				scrollable.AddChild(
-					sliceSettingsWidget.CreateGroupContent(
-						section.Groups.FirstOrDefault(), 
-						sliceSettingsWidget.settingsContext, 
-						sliceSettingsWidget.ShowHelpControls,
-						ActiveTheme.Instance.PrimaryTextColor, scrollable.ScrollArea));
-
-				primaryTabControl.AddTab(
-					new ToolTab(
-						section.Name.Localize(),
-						primaryTabControl,
-						scrollable,
-						theme,
-						hasClose: false,
-						pointSize: theme.DefaultFontSize)
-					{
-						Name = section.Name + " Tab",
-						InactiveTabColor = Color.Transparent,
-						ActiveTabColor = theme.ActiveTabColor
-					});
-			}
-
-			primaryTabControl.SelectedTabIndex = 0;
-
+			this.AddChild(
+				sliceSettingsTabView = new SliceSettingsTabView(
+					sliceSettingsWidget.settingsContext,
+					printer,
+					"Printer",
+					theme,
+					false,
+					isPrimarySettingsView: true,
+					rightAnchorItem: new GuiWidget(),
+					databaseMRUKey: UserSettingsKey.ConfigurePrinter_CurrentTab));
 		}
 	}
 }

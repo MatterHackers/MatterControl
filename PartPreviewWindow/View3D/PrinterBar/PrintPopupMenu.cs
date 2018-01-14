@@ -84,7 +84,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				foreach (var key in new[] { "layer_height", "fill_density", "support_material", "create_raft", "spiral_vase", "layer_to_pause" })
 				{
 					var settingsData = SettingsOrganizer.Instance.GetSettingsData(key);
-					var row = SliceSettingsWidget.CreateItemRow(settingsData, settingsContext, printer, Color.Black, theme, ref tabIndex);
+					var row = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, Color.Black, theme, ref tabIndex);
 
 					optionsPanel.AddChild(row);
 				}

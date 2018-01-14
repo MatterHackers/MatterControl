@@ -111,7 +111,8 @@ namespace MatterHackers.MatterControl.ActionBar
 			var settingsContext = new SettingsContext(printer, null, NamedSettingsLayers.All);
 
 			var settingsData = SettingsOrganizer.Instance.GetSettingsData(SettingsKey.bed_temperature);
-			var row = SliceSettingsWidget.CreateItemRow(settingsData, settingsContext, printer, Color.Black, ApplicationController.Instance.Theme, ref tabIndex);
+			var row = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, Color.Black, ApplicationController.Instance.Theme, ref tabIndex);
+
 			container.AddChild(row);
 
 			// add in the temp graph
