@@ -113,9 +113,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			};
 			primaryTabControl.TabBar.BackgroundColor = theme.ActiveTabBarBackground;
 
-			for (int topCategoryIndex = 0; topCategoryIndex < SliceSettingsOrganizer.Instance.UserLevels[UserLevel].Categories.Count; topCategoryIndex++)
+			for (int topCategoryIndex = 0; topCategoryIndex < SettingsOrganizer.Instance.UserLevels[UserLevel].Categories.Count; topCategoryIndex++)
 			{
-				var category = SliceSettingsOrganizer.Instance.UserLevels[UserLevel].Categories[topCategoryIndex];
+				var category = SettingsOrganizer.Instance.UserLevels[UserLevel].Categories[topCategoryIndex];
 				if (category.Name == "Printer"
 					&& (settingsContext.ViewFilter == NamedSettingsLayers.Material || settingsContext.ViewFilter == NamedSettingsLayers.Quality))
 				{
@@ -193,7 +193,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			set => UserSettings.Instance.set(UserSettingsKey.SliceSettingsShowHelp, value.ToString().ToLower());
 		}
 
-		private GuiWidget CreateSideTabsAndPages(SliceSettingsOrganizer.Category category, bool showHelpControls)
+		private GuiWidget CreateSideTabsAndPages(SettingsOrganizer.Category category, bool showHelpControls)
 		{
 			var oemAndUserContext = new SettingsContext(
 						printer,
@@ -233,7 +233,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return scrollable;
 		}
 
-		public FlowLayoutWidget CreateGroupContent(SliceSettingsOrganizer.Group group, SettingsContext oemAndUserContext, bool showHelpControls, Color textColor, GuiWidget parent, bool expanded = true)
+		public FlowLayoutWidget CreateGroupContent(SettingsOrganizer.Group group, SettingsContext oemAndUserContext, bool showHelpControls, Color textColor, GuiWidget parent, bool expanded = true)
 		{
 			var groupPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -290,7 +290,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return sectionWidget;
 		}
 
-		private GuiWidget AddSettingRowsForSubgroup(SliceSettingsOrganizer.SubGroup subGroup, SettingsContext oemAndUserContext, bool showHelpControls)
+		private GuiWidget AddSettingRowsForSubgroup(SettingsOrganizer.SubGroup subGroup, SettingsContext oemAndUserContext, bool showHelpControls)
 		{
 			var topToBottomSettings = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{

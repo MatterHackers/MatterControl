@@ -571,7 +571,7 @@ namespace MatterHackers.MatterControl
 			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
 			{
 				if (e is StringEventArgs stringArg
-					&& SliceSettingsOrganizer.SettingsData.TryGetValue(stringArg.Data, out SliceSettingData settingsData)
+					&& SettingsOrganizer.SettingsData.TryGetValue(stringArg.Data, out SliceSettingData settingsData)
 					&& settingsData.ReloadUiWhenChanged)
 				{
 					UiThread.RunOnIdle(ReloadAll);

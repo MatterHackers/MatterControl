@@ -252,7 +252,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("Hotend 0");
 					testRunner.ClickByName("General Tab");
 
-					testRunner.ClickByName(SliceSettingsOrganizer.Instance.GetSettingsData(SettingsKey.extruder_count).PresentationName + " Field");
+					testRunner.ClickByName(SettingsOrganizer.Instance.GetSettingsData(SettingsKey.extruder_count).PresentationName + " Field");
 					testRunner.Type("2");
 					testRunner.Type("{Enter}");
 
@@ -281,7 +281,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(5, "MatterControl", "StaticData"));
 
-			var organizer = SliceSettingsOrganizer.Instance;
+			var organizer = SettingsOrganizer.Instance;
 
 			var userLevel = organizer.UserLevels["Advanced"];
 			Assert.IsNotNull(userLevel);
@@ -367,7 +367,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		private static void SetCheckBoxSetting(AutomationRunner testRunner, string settingToChange, bool valueToSet)
 		{
-			var settingsData = SliceSettingsOrganizer.Instance.GetSettingsData(settingToChange);
+			var settingsData = SettingsOrganizer.Instance.GetSettingsData(settingToChange);
 			string checkBoxName = $"{settingsData.PresentationName} Field";
 
 			Assert.IsTrue(ActiveSliceSettings.Instance.GetValue<bool>(settingToChange) != valueToSet);

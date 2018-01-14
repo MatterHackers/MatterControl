@@ -161,6 +161,7 @@
     <Compile Include="PrinterControls\PrinterConnections\PrinterSetup.cs" />
     <Compile Include="RootSystemWindow.cs" />
     <Compile Include="SetupWizard\DialogWindow.cs" />
+    <Compile Include="SlicerConfiguration\SettingsOrganizer.cs" />
     <Compile Include="SlicerConfiguration\SlicerMapping\SliceEngineMapping.cs" />
     <Compile Include="SlicerConfiguration\UIFields\IpAddessField.cs" />
     <Compile Include="Utilities\InspectForm.cs" Condition="'$(Configuration)' == 'Debug'">
@@ -412,7 +413,6 @@
     <Compile Include="SettingsManagement\UserSettings.cs" />
     <Compile Include="SlicerConfiguration\PresetsToolbar.cs" />
     <Compile Include="SlicerConfiguration\SliceSettingsWidget.cs" />
-    <Compile Include="SlicerConfiguration\SliceSettingsOrganizer.cs" />
     <Compile Include="SlicerConfiguration\Slicer.cs" />
     <Compile Include="VersionManagement\ContactFormRequest.cs" />
     <Compile Include="VersionManagement\LatestVersionRequest.cs" />

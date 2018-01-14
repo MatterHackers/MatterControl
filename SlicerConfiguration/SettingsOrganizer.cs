@@ -78,7 +78,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public bool ReloadUiWhenChanged { get; set; } = false;
 
-		public SliceSettingsOrganizer.SubGroup OrganizerSubGroup { get; set; }
+		public SettingsOrganizer.SubGroup OrganizerSubGroup { get; set; }
 
 		public SliceSettingData(string slicerConfigName, string presentationName, DataEditTypes dataEditType, string helpText = "")
 		{
@@ -92,15 +92,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 	}
 
-	public class SliceSettingsOrganizer
+	public class SettingsOrganizer
 	{
 		public Dictionary<string, UserLevel> UserLevels { get; set; } = new Dictionary<string, UserLevel>();
 
-		private static SliceSettingsOrganizer instance = null;
+		private static SettingsOrganizer instance = null;
 
 		public static Dictionary<string, SliceSettingData> SettingsData { get; }
 
-		static SliceSettingsOrganizer()
+		static SettingsOrganizer()
 		{
 			string propertiesFileContents = AggContext.StaticData.ReadAllText(Path.Combine("SliceSettings", "Properties.json"));
 			var propertiesJsonData = JsonConvert.DeserializeObject<List<SliceSettingData>>(propertiesFileContents);
@@ -112,20 +112,20 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public static SliceSettingsOrganizer Instance
+		public static SettingsOrganizer Instance
 		{
 			get
 			{
 				if (instance == null)
 				{
-					instance = new SliceSettingsOrganizer();
+					instance = new SettingsOrganizer();
 				}
 
 				return instance;
 			}
 		}
 
-		private SliceSettingsOrganizer()
+		private SettingsOrganizer()
 		{
 			LoadAndParseSettingsFiles();
 
@@ -152,7 +152,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public SliceSettingData GetSettingsData(string slicerConfigName)
 		{
-			if (SliceSettingsOrganizer.SettingsData.TryGetValue(slicerConfigName, out SliceSettingData settingsData))
+			if (SettingsOrganizer.SettingsData.TryGetValue(slicerConfigName, out SliceSettingData settingsData))
 			{
 				return settingsData;
 			}

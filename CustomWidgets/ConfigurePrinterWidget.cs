@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl
 			: base(FlowDirection.TopToBottom)
 		{
 			int tabIndex = 0;
-			var rowItem = sliceSettingsWidget.CreateItemRow(SliceSettingsOrganizer.SettingsData["printer_name"],ref tabIndex, theme);
+			var rowItem = sliceSettingsWidget.CreateItemRow(SettingsOrganizer.SettingsData["printer_name"],ref tabIndex, theme);
 
 			var firstChild = rowItem.Children.FirstOrDefault();
 			firstChild.HAnchor = HAnchor.Absolute;
@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl
 			primaryTabControl.TabBar.BackgroundColor = theme.ActiveTabBarBackground;
 			this.AddChild(primaryTabControl);
 
-			foreach (var section in SliceSettingsOrganizer.Instance.UserLevels["Printer"].Categories)
+			foreach (var section in SettingsOrganizer.Instance.UserLevels["Printer"].Categories)
 			{
 				var scrollable = new ScrollableWidget(true)
 				{
