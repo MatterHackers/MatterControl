@@ -590,7 +590,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return "";
 		}
 
-		public Tuple<string, string> GetValueAndLayerName(string sliceSetting, IEnumerable<PrinterSettingsLayer> layerCascade = null)
+		public (string currentValue, string layerName) GetValueAndLayerName(string sliceSetting, IEnumerable<PrinterSettingsLayer> layerCascade = null)
 		{
 			if (layerCascade == null)
 			{
@@ -621,11 +621,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						layerName = "Quality";
 					}
 
-					return new Tuple<string, string>(value, layerName);
+					return (value, layerName);
 				}
 			}
 
-			return new Tuple<string, string>("", "");
+			return ("", "");
 		}
 
 		public bool Contains(string sliceSetting, IEnumerable<PrinterSettingsLayer> layerCascade = null)

@@ -42,8 +42,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	/// </summary>
 	public class Toolbar : GuiWidget
 	{
-		public FlowLayoutWidget ActionArea { get; }
-
 		public Toolbar(GuiWidget rightAnchorItem = null)
 		{
 			this.ActionArea = new FlowLayoutWidget()
@@ -55,6 +53,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.SetRightAnchorItem(rightAnchorItem);
 		}
 
+		public FlowLayoutWidget ActionArea { get; }
+
+		public GuiWidget RightAnchorItem { get; private set; }
+
 		protected void SetRightAnchorItem(GuiWidget rightAnchorItem)
 		{
 			if (rightAnchorItem != null)
@@ -62,6 +64,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				rightAnchorItem.HAnchor |= HAnchor.Right;
 				base.AddChild(rightAnchorItem);
 			}
+
+			this.RightAnchorItem = rightAnchorItem;
 		}
 
 		public override void AddChild(GuiWidget childToAdd, int indexInChildrenList = -1)
@@ -82,23 +86,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		public Toolbar TabBar { get; }
 
-		protected GuiWidget tabBody;
+		public GuiWidget TabContainer { get; protected set; }
 
 		public SimpleTabs(GuiWidget rightAnchorItem)
-			: this(
-				new GuiWidget()
-				{
-					HAnchor = HAnchor.Stretch,
-					VAnchor = VAnchor.Stretch,
-				},
-				rightAnchorItem)
-		{
-		}
-
-		public SimpleTabs(GuiWidget tabBody, GuiWidget rightAnchorItem)
 			: base(FlowDirection.TopToBottom)
 		{
-			this.tabBody = tabBody;
 
 			this.AddChild(TabBar = new Toolbar(rightAnchorItem)
 			{
@@ -106,7 +98,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Fit
 			});
 
-			this.AddChild(tabBody);
+			this.TabContainer = this;
 		}
 
 		public event EventHandler ActiveTabChanged;
@@ -127,7 +119,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.TabBar.ActionArea.AddChild(tabWidget, position);
 
-			this.tabBody.AddChild(iTab.TabContent);
+			this.TabContainer.AddChild(iTab.TabContent);
 		}
 
 		private void TabWidget_Click(object sender, MouseEventArgs e)
@@ -150,7 +142,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			_allTabs.Remove(tab);
 
 			TabBar.ActionArea.RemoveChild(tab as GuiWidget);
-			tabBody.RemoveChild(tab.TabContent);
+			this.TabContainer.RemoveChild(tab.TabContent);
 
 			ActiveTab = _allTabs.LastOrDefault();
 		}

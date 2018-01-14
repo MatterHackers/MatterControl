@@ -35,20 +35,44 @@ namespace MatterHackers.MatterControl
 	public class ConfigurePrinterWidget : FlowLayoutWidget
 	{
 		private SliceSettingsTabView sliceSettingsTabView;
+		private SettingsContext settingsContext;
+		private PrinterConfig printer;
+		private ThemeConfig theme;
 
-		public ConfigurePrinterWidget(SliceSettingsWidget sliceSettingsWidget, PrinterConfig printer, ThemeConfig theme)
+		public ConfigurePrinterWidget(SettingsContext settingsContext, PrinterConfig printer, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
+		{
+			this.settingsContext = settingsContext;
+			this.printer = printer;
+			this.theme = theme;
+
+			this.RebuildTabView();
+
+			ApplicationController.Instance.ShowHelpChanged += ShowHelp_Changed;
+		}
+
+		private void RebuildTabView()
 		{
 			this.AddChild(
 				sliceSettingsTabView = new SliceSettingsTabView(
-					sliceSettingsWidget.settingsContext,
+					settingsContext,
 					printer,
 					"Printer",
 					theme,
-					false,
 					isPrimarySettingsView: true,
-					rightAnchorItem: new GuiWidget(),
 					databaseMRUKey: UserSettingsKey.ConfigurePrinter_CurrentTab));
+		}
+
+		private void ShowHelp_Changed(object sender, System.EventArgs e)
+		{
+			sliceSettingsTabView?.Close();
+			this.RebuildTabView();
+		}
+
+		public override void OnClosed(ClosedEventArgs e)
+		{
+			ApplicationController.Instance.ShowHelpChanged -= ShowHelp_Changed;
+			base.OnClosed(e);
 		}
 	}
 }

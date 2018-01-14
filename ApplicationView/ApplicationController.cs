@@ -453,6 +453,18 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
+		public event EventHandler ShowHelpChanged;
+
+		public bool ShowHelpControls
+		{
+			get => UserSettings.Instance.get(UserSettingsKey.SliceSettingsShowHelp) == "true";
+			set
+			{
+				UserSettings.Instance.set(UserSettingsKey.SliceSettingsShowHelp, value.ToString().ToLower());
+				ShowHelpChanged?.Invoke(null, null);
+			}
+		}
+
 		public LibraryConfig Library { get; }
 
 		private void InitializeLibrary()
