@@ -115,7 +115,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			for (int topCategoryIndex = 0; topCategoryIndex < SliceSettingsOrganizer.Instance.UserLevels[UserLevel].Categories.Count; topCategoryIndex++)
 			{
-				Category category = SliceSettingsOrganizer.Instance.UserLevels[UserLevel].Categories[topCategoryIndex];
+				var category = SliceSettingsOrganizer.Instance.UserLevels[UserLevel].Categories[topCategoryIndex];
 				if (category.Name == "Printer"
 					&& (settingsContext.ViewFilter == NamedSettingsLayers.Material || settingsContext.ViewFilter == NamedSettingsLayers.Quality))
 				{
@@ -193,7 +193,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			set => UserSettings.Instance.set(UserSettingsKey.SliceSettingsShowHelp, value.ToString().ToLower());
 		}
 
-		private GuiWidget CreateSideTabsAndPages(Category category, bool showHelpControls)
+		private GuiWidget CreateSideTabsAndPages(SliceSettingsOrganizer.Category category, bool showHelpControls)
 		{
 			var oemAndUserContext = new SettingsContext(
 						printer,
@@ -209,7 +209,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			bool isFirstSection = true;
 
-			foreach (Group group in category.Groups)
+			foreach (var group in category.Groups)
 			{
 				tabIndexForItem = 0;
 
@@ -233,7 +233,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return scrollable;
 		}
 
-		public FlowLayoutWidget CreateGroupContent(Group group, SettingsContext oemAndUserContext, bool showHelpControls, Color textColor, GuiWidget parent, bool expanded = true)
+		public FlowLayoutWidget CreateGroupContent(SliceSettingsOrganizer.Group group, SettingsContext oemAndUserContext, bool showHelpControls, Color textColor, GuiWidget parent, bool expanded = true)
 		{
 			var groupPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -259,7 +259,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			var headingColor = textColor.AdjustLightness(ActiveTheme.Instance.IsDarkTheme ? 0.5 : 2.8).ToColor();
 
-			foreach (SubGroup subGroup in group.SubGroups)
+			foreach (var subGroup in group.SubGroups)
 			{
 				var section = AddSettingRowsForSubgroup(subGroup, oemAndUserContext, showHelpControls);
 				if (section != null)
@@ -290,7 +290,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return sectionWidget;
 		}
 
-		private GuiWidget AddSettingRowsForSubgroup(SubGroup subGroup, SettingsContext oemAndUserContext, bool showHelpControls)
+		private GuiWidget AddSettingRowsForSubgroup(SliceSettingsOrganizer.SubGroup subGroup, SettingsContext oemAndUserContext, bool showHelpControls)
 		{
 			var topToBottomSettings = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{

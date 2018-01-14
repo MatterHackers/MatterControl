@@ -78,7 +78,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public bool ReloadUiWhenChanged { get; set; } = false;
 
-		public SubGroup OrganizerSubGroup { get; set; }
+		public SliceSettingsOrganizer.SubGroup OrganizerSubGroup { get; set; }
 
 		public SliceSettingData(string slicerConfigName, string presentationName, DataEditTypes dataEditType, string helpText = "")
 		{
@@ -89,78 +89,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.PresentationName = presentationName;
 			this.DataEditType = dataEditType;
 			this.HelpText = helpText.Localize();
-		}
-	}
-
-	public class SubGroup
-	{
-		public string Name { get; }
-
-		public List<SliceSettingData> Settings { get; private set; } = new List<SliceSettingData>();
-
-		public SubGroup(string groupName, Group group)
-		{
-			this.Name = groupName;
-			this.Group = group;
-		}
-
-		public Group Group { get; }
-	}
-
-	public class Group
-	{
-		public string Name { get; }
-
-		public List<SubGroup> SubGroups { get; set; } = new List<SubGroup>();
-
-		public Group(string displayName, Category organizerCategory)
-		{
-			this.Name = displayName;
-			this.Category = organizerCategory;
-		}
-
-		public Category Category { get; }
-
-	}
-
-	public class Category
-	{
-		public string Name { get; set; }
-
-		public List<Group> Groups { get; set; } = new List<Group>();
-
-		public Category(string categoryName, UserLevel userLevel)
-		{
-			this.Name = categoryName;
-			this.UserLevel = userLevel;
-		}
-
-		private UserLevel UserLevel { get; }
-	}
-
-	public class UserLevel
-	{
-		public string Name { get; set; }
-
-		public List<Category> Categories = new List<Category>();
-
-		private Dictionary<string, SubGroup> mappedSettings = new Dictionary<string, SubGroup>();
-
-		public UserLevel(string userLevelName)
-		{
-			this.Name = userLevelName;
-		}
-
-		internal void AddSetting(string slicerConfigName, SubGroup organizerSubGroup)
-		{
-			mappedSettings.Add(slicerConfigName, organizerSubGroup);
-		}
-
-		public bool ContainsKey(string settingsKey) => mappedSettings.ContainsKey(settingsKey);
-
-		public SubGroup GetContainerForSetting(string slicerConfigName)
-		{
-			return mappedSettings[slicerConfigName];
 		}
 	}
 
@@ -293,5 +221,78 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 			return numSpaces;
 		}
+
+		public class UserLevel
+		{
+			private Dictionary<string, SubGroup> mappedSettings = new Dictionary<string, SubGroup>();
+
+			public UserLevel(string userLevelName)
+			{
+				this.Name = userLevelName;
+			}
+
+			public string Name { get; set; }
+
+			public List<Category> Categories = new List<Category>();
+
+			internal void AddSetting(string slicerConfigName, SubGroup organizerSubGroup)
+			{
+				mappedSettings.Add(slicerConfigName, organizerSubGroup);
+			}
+
+			public bool ContainsKey(string settingsKey) => mappedSettings.ContainsKey(settingsKey);
+
+			public SubGroup GetContainerForSetting(string slicerConfigName)
+			{
+				return mappedSettings[slicerConfigName];
+			}
+		}
+
+		public class Category
+		{
+			public Category(string categoryName, UserLevel userLevel)
+			{
+				this.Name = categoryName;
+				this.UserLevel = userLevel;
+			}
+
+			public string Name { get; set; }
+
+			public List<Group> Groups { get; set; } = new List<Group>();
+
+			private UserLevel UserLevel { get; }
+		}
+
+		public class Group
+		{
+			public Group(string displayName, Category organizerCategory)
+			{
+				this.Name = displayName;
+				this.Category = organizerCategory;
+			}
+
+			public string Name { get; }
+
+			public List<SubGroup> SubGroups { get; set; } = new List<SubGroup>();
+
+
+			public Category Category { get; }
+		}
+
+		public class SubGroup
+		{
+			public SubGroup(string groupName, Group group)
+			{
+				this.Name = groupName;
+				this.Group = group;
+			}
+
+			public string Name { get; }
+
+			public List<SliceSettingData> Settings { get; private set; } = new List<SliceSettingData>();
+
+			public Group Group { get; }
+		}
+
 	}
 }
