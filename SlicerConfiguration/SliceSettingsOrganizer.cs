@@ -96,31 +96,30 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	{
 		public string Name { get; }
 
-		public List<SliceSettingData> SettingDataList { get; private set; } = new List<SliceSettingData>();
+		public List<SliceSettingData> Settings { get; private set; } = new List<SliceSettingData>();
 
-		public OrganizerSubGroup(string groupName, OrganizerGroup organizerGroup)
+		public OrganizerSubGroup(string groupName, OrganizerGroup group)
 		{
 			this.Name = groupName;
-			this.OrganizerGroup = organizerGroup;
+			this.Group = group;
 		}
 
-		public OrganizerGroup OrganizerGroup { get; }
+		public OrganizerGroup Group { get; }
 	}
 
 	public class OrganizerGroup
 	{
 		public string Name { get; }
 
-
-		public List<OrganizerSubGroup> SubGroupsList { get; set; } = new List<OrganizerSubGroup>();
+		public List<OrganizerSubGroup> SubGroups { get; set; } = new List<OrganizerSubGroup>();
 
 		public OrganizerGroup(string displayName, OrganizerCategory organizerCategory)
 		{
 			this.Name = displayName;
-			this.OrganizerCategory = organizerCategory;
+			this.Category = organizerCategory;
 		}
 
-		public OrganizerCategory OrganizerCategory { get; }
+		public OrganizerCategory Category { get; }
 
 	}
 
@@ -128,22 +127,22 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	{
 		public string Name { get; set; }
 
-		public List<OrganizerGroup> GroupsList { get; set; } = new List<OrganizerGroup>();
+		public List<OrganizerGroup> Groups { get; set; } = new List<OrganizerGroup>();
 
-		public OrganizerCategory(string categoryName, OrganizerUserLevel organizerUserLevel)
+		public OrganizerCategory(string categoryName, OrganizerUserLevel userLevel)
 		{
 			this.Name = categoryName;
-			this.OrganizerUserLevel = organizerUserLevel;
+			this.UserLevel = userLevel;
 		}
 
-		private OrganizerUserLevel OrganizerUserLevel { get; }
+		private OrganizerUserLevel UserLevel { get; }
 	}
 
 	public class OrganizerUserLevel
 	{
 		public string Name { get; set; }
 
-		public List<OrganizerCategory> CategoriesList = new List<OrganizerCategory>();
+		public List<OrganizerCategory> Categories = new List<OrganizerCategory>();
 
 		private Dictionary<string, OrganizerSubGroup> mappedSettings = new Dictionary<string, OrganizerSubGroup>();
 
@@ -254,24 +253,24 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 						case 2:
 							categoryToAddTo = new OrganizerCategory(sanitizedLine, userLevelToAddTo);
-							userLevelToAddTo.CategoriesList.Add(categoryToAddTo);
+							userLevelToAddTo.Categories.Add(categoryToAddTo);
 							break;
 
 						case 4:
 							groupToAddTo = new OrganizerGroup(sanitizedLine, categoryToAddTo);
-							categoryToAddTo.GroupsList.Add(groupToAddTo);
+							categoryToAddTo.Groups.Add(groupToAddTo);
 							break;
 
 						case 6:
 							subGroupToAddTo = new OrganizerSubGroup(sanitizedLine, groupToAddTo);
-							groupToAddTo.SubGroupsList.Add(subGroupToAddTo);
+							groupToAddTo.SubGroups.Add(subGroupToAddTo);
 							break;
 
 						case 8:
 							SliceSettingData data = GetSettingsData(sanitizedLine);
 							if (data != null)
 							{
-								subGroupToAddTo.SettingDataList.Add(data);
+								subGroupToAddTo.Settings.Add(data);
 								data.OrganizerSubGroup = subGroupToAddTo;
 								userLevelToAddTo.AddSetting(data.SlicerConfigName, subGroupToAddTo);
 							}

@@ -113,9 +113,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			};
 			primaryTabControl.TabBar.BackgroundColor = theme.ActiveTabBarBackground;
 
-			for (int topCategoryIndex = 0; topCategoryIndex < SliceSettingsOrganizer.Instance.UserLevels[UserLevel].CategoriesList.Count; topCategoryIndex++)
+			for (int topCategoryIndex = 0; topCategoryIndex < SliceSettingsOrganizer.Instance.UserLevels[UserLevel].Categories.Count; topCategoryIndex++)
 			{
-				OrganizerCategory category = SliceSettingsOrganizer.Instance.UserLevels[UserLevel].CategoriesList[topCategoryIndex];
+				OrganizerCategory category = SliceSettingsOrganizer.Instance.UserLevels[UserLevel].Categories[topCategoryIndex];
 				if (category.Name == "Printer"
 					&& (settingsContext.ViewFilter == NamedSettingsLayers.Material || settingsContext.ViewFilter == NamedSettingsLayers.Quality))
 				{
@@ -209,7 +209,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			bool isFirstSection = true;
 
-			foreach (OrganizerGroup group in category.GroupsList)
+			foreach (OrganizerGroup group in category.Groups)
 			{
 				tabIndexForItem = 0;
 
@@ -259,7 +259,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			var headingColor = textColor.AdjustLightness(ActiveTheme.Instance.IsDarkTheme ? 0.5 : 2.8).ToColor();
 
-			foreach (OrganizerSubGroup subGroup in group.SubGroupsList)
+			foreach (OrganizerSubGroup subGroup in group.SubGroups)
 			{
 				var section = AddSettingRowsForSubgroup(subGroup, oemAndUserContext, showHelpControls);
 				if (section != null)
@@ -301,7 +301,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 			});
 
-			foreach (SliceSettingData settingData in subGroup.SettingDataList)
+			foreach (SliceSettingData settingData in subGroup.Settings)
 			{
 				// Note: tab sections may disappear if / when they are empty, as controlled by:
 				// settingShouldBeShown / addedSettingToSubGroup / needToAddSubGroup

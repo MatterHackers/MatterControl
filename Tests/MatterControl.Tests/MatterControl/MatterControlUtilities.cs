@@ -748,7 +748,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			var subGroup = rootLevel.GetContainerForSetting(slicerConfigName);
 
-			var category = subGroup.OrganizerGroup.OrganizerCategory;
+			var category = subGroup.Group.Category;
 
 			// Click tab
 			testRunner.ClickByName(category.Name + " Tab");

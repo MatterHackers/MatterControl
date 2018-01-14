@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl
 			primaryTabControl.TabBar.BackgroundColor = theme.ActiveTabBarBackground;
 			this.AddChild(primaryTabControl);
 
-			foreach (var section in SliceSettingsOrganizer.Instance.UserLevels["Printer"].CategoriesList)
+			foreach (var section in SliceSettingsOrganizer.Instance.UserLevels["Printer"].Categories)
 			{
 				var scrollable = new ScrollableWidget(true)
 				{
@@ -76,7 +76,7 @@ namespace MatterHackers.MatterControl
 				scrollable.ScrollArea.HAnchor = HAnchor.Stretch;
 				scrollable.AddChild(
 					sliceSettingsWidget.CreateGroupContent(
-						section.GroupsList.FirstOrDefault(), 
+						section.Groups.FirstOrDefault(), 
 						sliceSettingsWidget.settingsContext, 
 						sliceSettingsWidget.ShowHelpControls,
 						ActiveTheme.Instance.PrimaryTextColor, scrollable.ScrollArea));
