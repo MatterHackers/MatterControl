@@ -37,6 +37,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					checkbox.CheckedStateChanged += (s, e) =>
 					{
 						ContentPanel.Visible = checkbox.Checked;
+						// TODO: Remove this Height = 10 and figure out why the layout engine is not sizing these corretly without this.
+						ContentPanel.Height = 10;
 						this.BorderColor = (checkbox.Checked) ? Color.Transparent : SeperatorColor;
 					};
 
