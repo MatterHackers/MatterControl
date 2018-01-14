@@ -86,6 +86,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.AddChild(dualExtrusionAlignButton);
 
 			AddAlignDelegates(0, AxisAlignment.SourceCoordinateSystem, dualExtrusionAlignButton);
+
+			scene.SelectionChanged += (s, e) =>
+			{
+				bool haveSelectionGroup = scene.SelectedItem is SelectionGroup;
+				foreach(var button in this.Descendants<Button>())
+				{
+					button.Enabled = haveSelectionGroup;
+				}
+			};
 		}
 
 		private GuiWidget CreateAlignButton(int axisIndex, AxisAlignment alignment, string label)
