@@ -70,8 +70,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			var linkButtonFactory = ApplicationController.Instance.Theme.LinkButtonFactory;
 			var theme = ApplicationController.Instance.Theme;
 
-			bool haveFilterRunning = !string.IsNullOrEmpty(currentContainer.KeywordFilter);
-
 			this.CloseAllChildren();
 
 			var upbutton = theme.ButtonFactory.GenerateIconButton(AggContext.StaticData.LoadIcon(Path.Combine("FileDialog", "up_folder_20.png"), IconColor.Theme));
@@ -120,25 +118,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					this.AddChild(containerButton);
 
 					firstItem = false;
-				}
-
-				if (haveFilterRunning)
-				{
-					// Add separator ;
-					this.CreateSeparator(theme);
-
-					Button searchResultsButton = null;
-					if (UserSettings.Instance.IsTouchScreen)
-					{
-						searchResultsButton = buttonFactory.Generate("Search Results".Localize(), AggContext.StaticData.LoadIcon("icon_search_32x32.png", IconColor.Theme));
-					}
-					else
-					{
-						searchResultsButton = buttonFactory.Generate("Search Results".Localize(), AggContext.StaticData.LoadIcon("icon_search_24x24.png", IconColor.Theme));
-					}
-					searchResultsButton.Name = "Bread Crumb Button " + "Search Results";
-					searchResultsButton.Margin = new BorderDouble(right:  5);
-					this.AddChild(searchResultsButton);
 				}
 
 				// while all the buttons don't fit in the control
