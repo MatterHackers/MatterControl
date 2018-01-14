@@ -157,6 +157,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			mappedSettings.Add(slicerConfigName, organizerSubGroup);
 		}
 
+		public bool ContainsKey(string settingsKey) => mappedSettings.ContainsKey(settingsKey);
+
 		public OrganizerSubGroup GetContainerForSetting(string slicerConfigName)
 		{
 			return mappedSettings[slicerConfigName];
@@ -211,23 +213,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 #endif
 		}
 
-		public bool Contains(string userLevel, string slicerConfigName)
+		public bool Contains(string userLevelKey, string slicerConfigName)
 		{
-			foreach (OrganizerCategory category in UserLevels[userLevel].CategoriesList)
+			if (this.UserLevels.TryGetValue(userLevelKey, out OrganizerUserLevel userLevel))
 			{
-				foreach (OrganizerGroup group in category.GroupsList)
-				{
-					foreach (OrganizerSubGroup subGroup in group.SubGroupsList)
-					{
-						foreach (SliceSettingData settingData in subGroup.SettingDataList)
-						{
-							if (settingData.SlicerConfigName == slicerConfigName)
-							{
-								return true;
-							}
-						}
-					}
-				}
+				return userLevel.ContainsKey(slicerConfigName);
 			}
 
 			return false;

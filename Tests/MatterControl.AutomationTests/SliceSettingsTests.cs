@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl.SlicerConfiguration;
@@ -273,6 +274,26 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				return Task.CompletedTask;
 			}, maxTimeToRun: 666, overrideWidth: 1224, overrideHeight: 900);
+		}
+
+		[Test, RunInApplicationDomain]
+		public async Task SliceSettingsOrganizerSupportsKeyLookup()
+		{
+			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(5, "MatterControl", "StaticData"));
+
+			var organizer = SliceSettingsOrganizer.Instance;
+
+			var userLevel = organizer.UserLevels["Advanced"];
+			Assert.IsNotNull(userLevel);
+
+			// Confirm expected keys
+			Assert.IsTrue(userLevel.ContainsKey("bed_temperature"));
+			Assert.IsTrue(organizer.Contains("Advanced", "bed_temperature"));
+			Assert.IsTrue(organizer.Contains("Printer", "extruder_count"));
+
+			// Confirm non-existent key
+			Assert.IsFalse(userLevel.ContainsKey("non_existing_setting"));
+			Assert.IsFalse(organizer.Contains("Advanced", "non_existing_setting"));
 		}
 
 		[Test /* Test will fail if screen size is and "HeatBeforeHoming" falls below the fold */]
