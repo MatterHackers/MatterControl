@@ -80,6 +80,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				};
 			}
 
+			selectableOptions.AddItem("Custom");
+
 			totalContent.AddChild(selectableOptions);
 
 			uiField.Content.VAnchor = VAnchor.Center;
@@ -92,11 +94,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (e is StringEventArgs stringArgs
 					&& stringArgs.Data == settingData.SlicerConfigName)
 				{
+					string newSliceSettingValue = ActiveSliceSettings.Instance.GetValue(settingData.SlicerConfigName);
+
 					bool foundSetting = false;
 					foreach (QuickMenuNameValue nameValue in settingData.QuickMenuSettings)
 					{
 						string localName = nameValue.MenuName;
-						string newSliceSettingValue = uiField.Value;
 						if (newSliceSettingValue == nameValue.Value)
 						{
 							selectableOptions.SelectedLabel = localName;
