@@ -78,7 +78,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public bool ReloadUiWhenChanged { get; set; } = false;
 
-		public OrganizerSubGroup OrganizerSubGroup { get; set; }
+		public SubGroup OrganizerSubGroup { get; set; }
 
 		public SliceSettingData(string slicerConfigName, string presentationName, DataEditTypes dataEditType, string helpText = "")
 		{
@@ -92,73 +92,73 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 	}
 
-	public class OrganizerSubGroup
+	public class SubGroup
 	{
 		public string Name { get; }
 
 		public List<SliceSettingData> Settings { get; private set; } = new List<SliceSettingData>();
 
-		public OrganizerSubGroup(string groupName, OrganizerGroup group)
+		public SubGroup(string groupName, Group group)
 		{
 			this.Name = groupName;
 			this.Group = group;
 		}
 
-		public OrganizerGroup Group { get; }
+		public Group Group { get; }
 	}
 
-	public class OrganizerGroup
+	public class Group
 	{
 		public string Name { get; }
 
-		public List<OrganizerSubGroup> SubGroups { get; set; } = new List<OrganizerSubGroup>();
+		public List<SubGroup> SubGroups { get; set; } = new List<SubGroup>();
 
-		public OrganizerGroup(string displayName, OrganizerCategory organizerCategory)
+		public Group(string displayName, Category organizerCategory)
 		{
 			this.Name = displayName;
 			this.Category = organizerCategory;
 		}
 
-		public OrganizerCategory Category { get; }
+		public Category Category { get; }
 
 	}
 
-	public class OrganizerCategory
+	public class Category
 	{
 		public string Name { get; set; }
 
-		public List<OrganizerGroup> Groups { get; set; } = new List<OrganizerGroup>();
+		public List<Group> Groups { get; set; } = new List<Group>();
 
-		public OrganizerCategory(string categoryName, OrganizerUserLevel userLevel)
+		public Category(string categoryName, UserLevel userLevel)
 		{
 			this.Name = categoryName;
 			this.UserLevel = userLevel;
 		}
 
-		private OrganizerUserLevel UserLevel { get; }
+		private UserLevel UserLevel { get; }
 	}
 
-	public class OrganizerUserLevel
+	public class UserLevel
 	{
 		public string Name { get; set; }
 
-		public List<OrganizerCategory> Categories = new List<OrganizerCategory>();
+		public List<Category> Categories = new List<Category>();
 
-		private Dictionary<string, OrganizerSubGroup> mappedSettings = new Dictionary<string, OrganizerSubGroup>();
+		private Dictionary<string, SubGroup> mappedSettings = new Dictionary<string, SubGroup>();
 
-		public OrganizerUserLevel(string userLevelName)
+		public UserLevel(string userLevelName)
 		{
 			this.Name = userLevelName;
 		}
 
-		internal void AddSetting(string slicerConfigName, OrganizerSubGroup organizerSubGroup)
+		internal void AddSetting(string slicerConfigName, SubGroup organizerSubGroup)
 		{
 			mappedSettings.Add(slicerConfigName, organizerSubGroup);
 		}
 
 		public bool ContainsKey(string settingsKey) => mappedSettings.ContainsKey(settingsKey);
 
-		public OrganizerSubGroup GetContainerForSetting(string slicerConfigName)
+		public SubGroup GetContainerForSetting(string slicerConfigName)
 		{
 			return mappedSettings[slicerConfigName];
 		}
@@ -166,7 +166,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 	public class SliceSettingsOrganizer
 	{
-		public Dictionary<string, OrganizerUserLevel> UserLevels { get; set; } = new Dictionary<string, OrganizerUserLevel>();
+		public Dictionary<string, UserLevel> UserLevels { get; set; } = new Dictionary<string, UserLevel>();
 
 		private static SliceSettingsOrganizer instance = null;
 
@@ -214,7 +214,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public bool Contains(string userLevelKey, string slicerConfigName)
 		{
-			if (this.UserLevels.TryGetValue(userLevelKey, out OrganizerUserLevel userLevel))
+			if (this.UserLevels.TryGetValue(userLevelKey, out UserLevel userLevel))
 			{
 				return userLevel.ContainsKey(slicerConfigName);
 			}
@@ -234,10 +234,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private void LoadAndParseSettingsFiles()
 		{
-			OrganizerUserLevel userLevelToAddTo = null;
-			OrganizerCategory categoryToAddTo = null;
-			OrganizerGroup groupToAddTo = null;
-			OrganizerSubGroup subGroupToAddTo = null;
+			UserLevel userLevelToAddTo = null;
+			Category categoryToAddTo = null;
+			Group groupToAddTo = null;
+			SubGroup subGroupToAddTo = null;
 
 			foreach (string line in AggContext.StaticData.ReadAllLines(Path.Combine("SliceSettings", "Layouts.txt")))
 			{
@@ -247,22 +247,22 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					switch (CountLeadingSpaces(line))
 					{
 						case 0:
-							userLevelToAddTo = new OrganizerUserLevel(sanitizedLine);
+							userLevelToAddTo = new UserLevel(sanitizedLine);
 							UserLevels.Add(sanitizedLine, userLevelToAddTo);
 							break;
 
 						case 2:
-							categoryToAddTo = new OrganizerCategory(sanitizedLine, userLevelToAddTo);
+							categoryToAddTo = new Category(sanitizedLine, userLevelToAddTo);
 							userLevelToAddTo.Categories.Add(categoryToAddTo);
 							break;
 
 						case 4:
-							groupToAddTo = new OrganizerGroup(sanitizedLine, categoryToAddTo);
+							groupToAddTo = new Group(sanitizedLine, categoryToAddTo);
 							categoryToAddTo.Groups.Add(groupToAddTo);
 							break;
 
 						case 6:
-							subGroupToAddTo = new OrganizerSubGroup(sanitizedLine, groupToAddTo);
+							subGroupToAddTo = new SubGroup(sanitizedLine, groupToAddTo);
 							groupToAddTo.SubGroups.Add(subGroupToAddTo);
 							break;
 
