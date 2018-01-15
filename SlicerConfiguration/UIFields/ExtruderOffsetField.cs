@@ -83,7 +83,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				};
 				column.AddChild(row);
 
-				var labelWidget = SliceSettingsWidget.CreateSettingsLabel($"Nozzle {i + 1}", "", textColor);
+				var labelWidget = SliceSettingsTabView.CreateSettingsLabel($"Nozzle {i + 1}", "", textColor);
 				labelWidget.Name = $"Nozzle {i}";
 				labelWidget.Margin = new BorderDouble(right: 60, left: 20);
 				row.AddChild(labelWidget);

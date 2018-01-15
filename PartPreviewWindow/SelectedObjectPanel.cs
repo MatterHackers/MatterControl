@@ -205,7 +205,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			foreach(var sectionWidget in scrollableContent.Children<SectionWidget>())
 			{
 				var contentPanel = sectionWidget.ContentPanel;
-				contentPanel.Padding = new BorderDouble(16, 8, 8, 2);
+				contentPanel.Padding = new BorderDouble(10, 10, 10, 0);
 			}
 
 			HashSet<IObject3DEditor> mappedEditors;

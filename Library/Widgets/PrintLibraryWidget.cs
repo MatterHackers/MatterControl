@@ -830,32 +830,33 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			base.OnLoad(args);
 		}
-		private class SearchInputBox : GuiWidget
+	}
+
+	public class SearchInputBox : GuiWidget
+	{
+		internal MHTextEditWidget searchInput;
+		internal Button resetButton;
+
+		public SearchInputBox()
 		{
-			internal MHTextEditWidget searchInput;
-			internal Button resetButton;
+			this.VAnchor = VAnchor.Center | VAnchor.Fit;
+			this.HAnchor = HAnchor.Stretch;
 
-			public SearchInputBox()
+			searchInput = new MHTextEditWidget(messageWhenEmptyAndNotSelected: "Search".Localize())
 			{
-				this.VAnchor = VAnchor.Center | VAnchor.Fit;
-				this.HAnchor = HAnchor.Stretch;
+				Name = "Search Library Edit",
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Center
+			};
+			this.AddChild(searchInput);
 
-				searchInput = new MHTextEditWidget(messageWhenEmptyAndNotSelected: "Search Library".Localize())
-				{
-					Name = "Search Library Edit",
-					HAnchor = HAnchor.Stretch,
-					VAnchor = VAnchor.Center
-				};
-				this.AddChild(searchInput);
+			resetButton = ApplicationController.Instance.Theme.CreateSmallResetButton();
+			resetButton.HAnchor = HAnchor.Right | HAnchor.Fit;
+			resetButton.VAnchor = VAnchor.Center | VAnchor.Fit;
+			resetButton.Name = "Close Search";
+			resetButton.ToolTipText = "Clear".Localize();
 
-				resetButton = ApplicationController.Instance.Theme.CreateSmallResetButton();
-				resetButton.HAnchor = HAnchor.Right | HAnchor.Fit;
-				resetButton.VAnchor = VAnchor.Center | VAnchor.Fit;
-				resetButton.Name = "Close Search";
-				resetButton.ToolTipText = "Clear".Localize();
-
-				this.AddChild(resetButton);
-			}
+			this.AddChild(resetButton);
 		}
 	}
 }

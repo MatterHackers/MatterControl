@@ -78,7 +78,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public bool ReloadUiWhenChanged { get; set; } = false;
 
-		public OrganizerSubGroup OrganizerSubGroup { get; set; }
+		public SettingsOrganizer.SubGroup OrganizerSubGroup { get; set; }
 
 		public SliceSettingData(string slicerConfigName, string presentationName, DataEditTypes dataEditType, string helpText = "")
 		{
@@ -92,86 +92,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 	}
 
-	public class OrganizerSubGroup
+	public class SettingsOrganizer
 	{
-		public string Name { get; }
+		public Dictionary<string, UserLevel> UserLevels { get; set; } = new Dictionary<string, UserLevel>();
 
-		public List<SliceSettingData> SettingDataList { get; private set; } = new List<SliceSettingData>();
-
-		public OrganizerSubGroup(string groupName, OrganizerGroup organizerGroup)
-		{
-			this.Name = groupName;
-			this.OrganizerGroup = organizerGroup;
-		}
-
-		public OrganizerGroup OrganizerGroup { get; }
-	}
-
-	public class OrganizerGroup
-	{
-		public string Name { get; }
-
-
-		public List<OrganizerSubGroup> SubGroupsList { get; set; } = new List<OrganizerSubGroup>();
-
-		public OrganizerGroup(string displayName, OrganizerCategory organizerCategory)
-		{
-			this.Name = displayName;
-			this.OrganizerCategory = organizerCategory;
-		}
-
-		public OrganizerCategory OrganizerCategory { get; }
-
-	}
-
-	public class OrganizerCategory
-	{
-		public string Name { get; set; }
-
-		public List<OrganizerGroup> GroupsList { get; set; } = new List<OrganizerGroup>();
-
-		public OrganizerCategory(string categoryName, OrganizerUserLevel organizerUserLevel)
-		{
-			this.Name = categoryName;
-			this.OrganizerUserLevel = organizerUserLevel;
-		}
-
-		private OrganizerUserLevel OrganizerUserLevel { get; }
-	}
-
-	public class OrganizerUserLevel
-	{
-		public string Name { get; set; }
-
-		public List<OrganizerCategory> CategoriesList = new List<OrganizerCategory>();
-
-		private Dictionary<string, OrganizerSubGroup> mappedSettings = new Dictionary<string, OrganizerSubGroup>();
-
-		public OrganizerUserLevel(string userLevelName)
-		{
-			this.Name = userLevelName;
-		}
-
-		internal void AddSetting(string slicerConfigName, OrganizerSubGroup organizerSubGroup)
-		{
-			mappedSettings.Add(slicerConfigName, organizerSubGroup);
-		}
-
-		public OrganizerSubGroup GetContainerForSetting(string slicerConfigName)
-		{
-			return mappedSettings[slicerConfigName];
-		}
-	}
-
-	public class SliceSettingsOrganizer
-	{
-		public Dictionary<string, OrganizerUserLevel> UserLevels { get; set; } = new Dictionary<string, OrganizerUserLevel>();
-
-		private static SliceSettingsOrganizer instance = null;
+		private static SettingsOrganizer instance = null;
 
 		public static Dictionary<string, SliceSettingData> SettingsData { get; }
 
-		static SliceSettingsOrganizer()
+		static SettingsOrganizer()
 		{
 			string propertiesFileContents = AggContext.StaticData.ReadAllText(Path.Combine("SliceSettings", "Properties.json"));
 			var propertiesJsonData = JsonConvert.DeserializeObject<List<SliceSettingData>>(propertiesFileContents);
@@ -183,20 +112,20 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public static SliceSettingsOrganizer Instance
+		public static SettingsOrganizer Instance
 		{
 			get
 			{
 				if (instance == null)
 				{
-					instance = new SliceSettingsOrganizer();
+					instance = new SettingsOrganizer();
 				}
 
 				return instance;
 			}
 		}
 
-		private SliceSettingsOrganizer()
+		private SettingsOrganizer()
 		{
 			LoadAndParseSettingsFiles();
 
@@ -211,23 +140,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 #endif
 		}
 
-		public bool Contains(string userLevel, string slicerConfigName)
+		public bool Contains(string userLevelKey, string slicerConfigName)
 		{
-			foreach (OrganizerCategory category in UserLevels[userLevel].CategoriesList)
+			if (this.UserLevels.TryGetValue(userLevelKey, out UserLevel userLevel))
 			{
-				foreach (OrganizerGroup group in category.GroupsList)
-				{
-					foreach (OrganizerSubGroup subGroup in group.SubGroupsList)
-					{
-						foreach (SliceSettingData settingData in subGroup.SettingDataList)
-						{
-							if (settingData.SlicerConfigName == slicerConfigName)
-							{
-								return true;
-							}
-						}
-					}
-				}
+				return userLevel.ContainsKey(slicerConfigName);
 			}
 
 			return false;
@@ -235,7 +152,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public SliceSettingData GetSettingsData(string slicerConfigName)
 		{
-			if (SliceSettingsOrganizer.SettingsData.TryGetValue(slicerConfigName, out SliceSettingData settingsData))
+			if (SettingsOrganizer.SettingsData.TryGetValue(slicerConfigName, out SliceSettingData settingsData))
 			{
 				return settingsData;
 			}
@@ -245,10 +162,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private void LoadAndParseSettingsFiles()
 		{
-			OrganizerUserLevel userLevelToAddTo = null;
-			OrganizerCategory categoryToAddTo = null;
-			OrganizerGroup groupToAddTo = null;
-			OrganizerSubGroup subGroupToAddTo = null;
+			UserLevel userLevelToAddTo = null;
+			Category categoryToAddTo = null;
+			Group groupToAddTo = null;
+			SubGroup subGroupToAddTo = null;
 
 			foreach (string line in AggContext.StaticData.ReadAllLines(Path.Combine("SliceSettings", "Layouts.txt")))
 			{
@@ -258,30 +175,30 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					switch (CountLeadingSpaces(line))
 					{
 						case 0:
-							userLevelToAddTo = new OrganizerUserLevel(sanitizedLine);
+							userLevelToAddTo = new UserLevel(sanitizedLine);
 							UserLevels.Add(sanitizedLine, userLevelToAddTo);
 							break;
 
 						case 2:
-							categoryToAddTo = new OrganizerCategory(sanitizedLine, userLevelToAddTo);
-							userLevelToAddTo.CategoriesList.Add(categoryToAddTo);
+							categoryToAddTo = new Category(sanitizedLine, userLevelToAddTo);
+							userLevelToAddTo.Categories.Add(categoryToAddTo);
 							break;
 
 						case 4:
-							groupToAddTo = new OrganizerGroup(sanitizedLine, categoryToAddTo);
-							categoryToAddTo.GroupsList.Add(groupToAddTo);
+							groupToAddTo = new Group(sanitizedLine, categoryToAddTo);
+							categoryToAddTo.Groups.Add(groupToAddTo);
 							break;
 
 						case 6:
-							subGroupToAddTo = new OrganizerSubGroup(sanitizedLine, groupToAddTo);
-							groupToAddTo.SubGroupsList.Add(subGroupToAddTo);
+							subGroupToAddTo = new SubGroup(sanitizedLine, groupToAddTo);
+							groupToAddTo.SubGroups.Add(subGroupToAddTo);
 							break;
 
 						case 8:
 							SliceSettingData data = GetSettingsData(sanitizedLine);
 							if (data != null)
 							{
-								subGroupToAddTo.SettingDataList.Add(data);
+								subGroupToAddTo.Settings.Add(data);
 								data.OrganizerSubGroup = subGroupToAddTo;
 								userLevelToAddTo.AddSetting(data.SlicerConfigName, subGroupToAddTo);
 							}
@@ -304,5 +221,78 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 			return numSpaces;
 		}
+
+		public class UserLevel
+		{
+			private Dictionary<string, SubGroup> mappedSettings = new Dictionary<string, SubGroup>();
+
+			public UserLevel(string userLevelName)
+			{
+				this.Name = userLevelName;
+			}
+
+			public string Name { get; set; }
+
+			public List<Category> Categories = new List<Category>();
+
+			internal void AddSetting(string slicerConfigName, SubGroup organizerSubGroup)
+			{
+				mappedSettings.Add(slicerConfigName, organizerSubGroup);
+			}
+
+			public bool ContainsKey(string settingsKey) => mappedSettings.ContainsKey(settingsKey);
+
+			public SubGroup GetContainerForSetting(string slicerConfigName)
+			{
+				return mappedSettings[slicerConfigName];
+			}
+		}
+
+		public class Category
+		{
+			public Category(string categoryName, UserLevel userLevel)
+			{
+				this.Name = categoryName;
+				this.UserLevel = userLevel;
+			}
+
+			public string Name { get; set; }
+
+			public List<Group> Groups { get; set; } = new List<Group>();
+
+			private UserLevel UserLevel { get; }
+		}
+
+		public class Group
+		{
+			public Group(string displayName, Category organizerCategory)
+			{
+				this.Name = displayName;
+				this.Category = organizerCategory;
+			}
+
+			public string Name { get; }
+
+			public List<SubGroup> SubGroups { get; set; } = new List<SubGroup>();
+
+
+			public Category Category { get; }
+		}
+
+		public class SubGroup
+		{
+			public SubGroup(string groupName, Group group)
+			{
+				this.Name = groupName;
+				this.Group = group;
+			}
+
+			public string Name { get; }
+
+			public List<SliceSettingData> Settings { get; private set; } = new List<SliceSettingData>();
+
+			public Group Group { get; }
+		}
+
 	}
 }

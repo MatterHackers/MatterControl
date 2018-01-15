@@ -590,7 +590,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return "";
 		}
 
-		public Tuple<string, string> GetValueAndLayerName(string sliceSetting, IEnumerable<PrinterSettingsLayer> layerCascade = null)
+		public (string currentValue, string layerName) GetValueAndLayerName(string sliceSetting, IEnumerable<PrinterSettingsLayer> layerCascade = null)
 		{
 			if (layerCascade == null)
 			{
@@ -621,11 +621,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						layerName = "Quality";
 					}
 
-					return new Tuple<string, string>(value, layerName);
+					return (value, layerName);
 				}
 			}
 
-			return new Tuple<string, string>("", "");
+			return ("", "");
 		}
 
 		public bool Contains(string sliceSetting, IEnumerable<PrinterSettingsLayer> layerCascade = null)
@@ -720,7 +720,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			keysToRetain.Remove(SettingsKey.print_leveling_enabled);
 
 			// Iterate all items that have .ShowAsOverride = false and conditionally add to the retention list
-			foreach (var item in SliceSettingsOrganizer.SettingsData.Values.Where(settingsItem => settingsItem.ShowAsOverride == false))
+			foreach (var item in SettingsOrganizer.SettingsData.Values.Where(settingsItem => settingsItem.ShowAsOverride == false))
 			{
 				switch (item.SlicerConfigName)
 				{
@@ -896,7 +896,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			foreach (var keyValue in this.BaseLayer)
 			{
 				// Add key/value to accumulating string for hash
-				SliceSettingData data = SliceSettingsOrganizer.Instance.GetSettingsData(keyValue.Key);
+				SliceSettingData data = SettingsOrganizer.Instance.GetSettingsData(keyValue.Key);
 				if (data?.RebuildGCodeOnChange == true)
 				{
 					bigStringForHashCode.Append(keyValue.Key);
@@ -1121,7 +1121,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				|| (EngineMappingsMatterSlice.Instance.MapContains(speedSetting)
 				&& speedToCheck <= 0))
 			{
-				SliceSettingData data = SliceSettingsOrganizer.Instance.GetSettingsData(speedSetting);
+				SliceSettingData data = SettingsOrganizer.Instance.GetSettingsData(speedSetting);
 				if (data != null)
 				{
 					string error = string.Format("The '{0}' must be greater than 0.".Localize(), data.PresentationName);

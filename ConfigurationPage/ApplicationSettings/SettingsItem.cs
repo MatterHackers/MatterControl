@@ -39,7 +39,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			var theme = ApplicationController.Instance.Theme;
 			this.SettingsControl = settingsControls;
 			this.HAnchor = HAnchor.Stretch;
-			this.MinimumSize = new Vector2(0, 40);
+			this.MinimumSize = new Vector2(0, theme.ButtonHeight);
 
 			if (imageBuffer != null)
 			{

@@ -453,6 +453,18 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
+		public event EventHandler ShowHelpChanged;
+
+		public bool ShowHelpControls
+		{
+			get => UserSettings.Instance.get(UserSettingsKey.SliceSettingsShowHelp) == "true";
+			set
+			{
+				UserSettings.Instance.set(UserSettingsKey.SliceSettingsShowHelp, value.ToString().ToLower());
+				ShowHelpChanged?.Invoke(null, null);
+			}
+		}
+
 		public LibraryConfig Library { get; }
 
 		private void InitializeLibrary()
@@ -571,7 +583,7 @@ namespace MatterHackers.MatterControl
 			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
 			{
 				if (e is StringEventArgs stringArg
-					&& SliceSettingsOrganizer.SettingsData.TryGetValue(stringArg.Data, out SliceSettingData settingsData)
+					&& SettingsOrganizer.SettingsData.TryGetValue(stringArg.Data, out SliceSettingData settingsData)
 					&& settingsData.ReloadUiWhenChanged)
 				{
 					UiThread.RunOnIdle(ReloadAll);

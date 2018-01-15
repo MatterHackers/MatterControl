@@ -47,13 +47,12 @@ public class LicenseAgreementPage : DialogPage
 		scrollable.ScrollArea.HAnchor = HAnchor.Stretch;
 		contentRow.AddChild(scrollable);
 
-		var textBox = new WrappedTextWidget(eulaText, textColor: ActiveTheme.Instance.PrimaryTextColor, doubleBufferText: false)
+		scrollable.ScrollArea.Margin = new BorderDouble(0, 0, 15, 0);
+		scrollable.AddChild(new WrappedTextWidget(eulaText, textColor: ActiveTheme.Instance.PrimaryTextColor, doubleBufferText: false)
 		{
 			DrawFromHintedCache = true,
 			Name = "LicenseAgreementPage",
-		};
-		scrollable.ScrollArea.Margin = new BorderDouble(0, 0, 15, 0);
-		scrollable.AddChild(textBox);
+		});
 
 		var acceptButton = textImageButtonFactory.Generate("Accept".Localize());
 		acceptButton.Click += (s, e) =>

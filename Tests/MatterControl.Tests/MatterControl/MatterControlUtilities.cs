@@ -742,13 +742,13 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void SelectSliceSettingsField(this AutomationRunner testRunner, string userLevel, string slicerConfigName)
 		{
-			var rootLevel = SliceSettingsOrganizer.Instance.UserLevels[userLevel];
+			var rootLevel = SettingsOrganizer.Instance.UserLevels[userLevel];
 
-			var settingData = SliceSettingsOrganizer.Instance.GetSettingsData(slicerConfigName);
+			var settingData = SettingsOrganizer.Instance.GetSettingsData(slicerConfigName);
 
 			var subGroup = rootLevel.GetContainerForSetting(slicerConfigName);
 
-			var category = subGroup.OrganizerGroup.OrganizerCategory;
+			var category = subGroup.Group.Category;
 
 			// Click tab
 			testRunner.ClickByName(category.Name + " Tab");

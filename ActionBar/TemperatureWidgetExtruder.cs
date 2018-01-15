@@ -245,8 +245,8 @@ namespace MatterHackers.MatterControl.ActionBar
 			int tabIndex = 0;
 			var settingsContext = new SettingsContext(printer, null, NamedSettingsLayers.All);
 			// TODO: make this be for the correct extruder
-			var settingsData = SliceSettingsOrganizer.Instance.GetSettingsData(TemperatureKey);
-			var row = SliceSettingsWidget.CreateItemRow(settingsData, settingsContext, printer, Color.Black, ApplicationController.Instance.Theme, ref tabIndex);
+			var settingsData = SettingsOrganizer.Instance.GetSettingsData(TemperatureKey);
+			var row = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, Color.Black, ApplicationController.Instance.Theme, ref tabIndex);
 
 			container.AddChild(row);
 

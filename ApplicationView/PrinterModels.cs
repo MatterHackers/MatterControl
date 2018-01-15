@@ -661,7 +661,7 @@ namespace MatterHackers.MatterControl
 
 					bool valueIsClear = currentValue == "0" | currentValue == "";
 
-					SliceSettingData data = SliceSettingsOrganizer.Instance.GetSettingsData(keyValue.Key);
+					SliceSettingData data = SettingsOrganizer.Instance.GetSettingsData(keyValue.Key);
 					if (data?.ResetAtEndOfPrint == true && !valueIsClear)
 					{
 						this.Settings.ClearValue(keyValue.Key);

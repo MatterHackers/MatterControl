@@ -34,20 +34,40 @@ using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.MatterControl.SetupWizard;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class SliceSettingsOverflowMenu : OverflowMenu
 	{
-		public SliceSettingsOverflowMenu(PrinterConfig printer, SliceSettingsWidget sliceSettingsWidget)
+		// showHelpControls
+		public SliceSettingsOverflowMenu(PrinterConfig printer)
 		{
 			this.VAnchor = VAnchor.Fit | VAnchor.Center;
 			this.AlignToRightEdge = true;
 			this.Name = "Slice Settings Overflow Menu";
 
-			this.PopupContent = GenerateMenuContents(printer, sliceSettingsWidget);
+			var popupMenu = new PopupMenu(ApplicationController.Instance.Theme);
+
+			var checkedIcon = AggContext.StaticData.LoadIcon("fa-check_16.png");
+
+			popupMenu.CreateMenuItem("View Just My Settings".Localize()).Click += (s, e) =>
+			{
+				this.TabView.FilterToOverrides();
+			};
+
+			popupMenu.CreateHorizontalLine();
+
+			var icon = (ApplicationController.Instance.ShowHelpControls) ? checkedIcon : null;
+
+			popupMenu.CreateMenuItem("Show Help".Localize(), icon).Click += (s, e) =>
+			{
+				ApplicationController.Instance.ShowHelpControls = !ApplicationController.Instance.ShowHelpControls;
+			};
+
+			this.PopupContent = popupMenu;
 		}
+
+		public PopupMenu PopupMenu { get; }
 
 		// On load walk back to the first ancestor with background colors and copy
 		public override void OnLoad(EventArgs args)
@@ -58,74 +78,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			base.OnLoad(args);
 		}
 
-		private FlowLayoutWidget GenerateMenuContents(PrinterConfig printer, SliceSettingsWidget sliceSettingsWidget)
-		{
-			var popupMenu = new PopupMenu(ApplicationController.Instance.Theme);
-
-			var checkedIcon = AggContext.StaticData.LoadIcon("fa-check_16.png");
-
-			var icon = sliceSettingsWidget.ShowHelpControls ? checkedIcon : null;
-
-			popupMenu.CreateMenuItem("Show Help".Localize(), icon).Click += (s, e) =>
-			{
-				sliceSettingsWidget.ShowHelpControls = !sliceSettingsWidget.ShowHelpControls;
-				sliceSettingsWidget.RebuildSliceSettingsTabs();
-			};
-
-			popupMenu.CreateHorizontalLine();
-
-			PopupMenu.MenuItem menuItem;
-
-			menuItem = popupMenu.CreateMenuItem("Export".Localize());
-			menuItem.Click += (s, e) =>
-			{
-				DialogWindow.Show<ExportSettingsPage>();
-			};
-
-			menuItem = popupMenu.CreateMenuItem("Restore Settings".Localize());
-			menuItem.Click += (s, e) =>
-			{
-				DialogWindow.Show<PrinterProfileHistoryPage>();
-			};
-			menuItem.Enabled = !string.IsNullOrEmpty(AuthenticationData.Instance.ActiveSessionUsername);
-
-			menuItem = popupMenu.CreateMenuItem("Reset to Defaults".Localize());
-			menuItem.Click += (s, e) =>
-			{
-				UiThread.RunOnIdle(() =>
-				{
-					StyledMessageBox.ShowMessageBox(
-						revertSettings =>
-						{
-							if (revertSettings)
-							{
-								bool onlyReloadSliceSettings = true;
-								if (printer.Settings.GetValue<bool>(SettingsKey.print_leveling_required_to_print)
-								&& printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled))
-								{
-									onlyReloadSliceSettings = false;
-								}
-
-								printer.Settings.ClearUserOverrides();
-								printer.Settings.Save();
-
-								if (onlyReloadSliceSettings)
-								{
-									printer?.Bed.GCodeRenderer?.Clear3DGCode();
-								}
-								else
-								{
-									ApplicationController.Instance.ReloadAll();
-								}
-							}
-						},
-						"Resetting to default values will remove your current overrides and restore your original printer settings.\nAre you sure you want to continue?".Localize(),
-						"Revert Settings".Localize(),
-						StyledMessageBox.MessageType.YES_NO);
-				});
-			};
-
-			return popupMenu;
-		}
+		public SliceSettingsTabView TabView { get; internal set; }
 	}
 }

@@ -104,17 +104,6 @@ namespace MatterHackers.MatterControl
 
 		public TextImageButtonFactory DisableableControlBase { get; private set; }
 
-		public void BoxStyleSectionWidget(SectionWidget sectionWidget)
-		{
-			// Enforce panel padding
-			sectionWidget.ContentPanel.Padding = new BorderDouble(16, 10, 10, 2);
-
-			sectionWidget.SeperatorColor = Color.Transparent;
-			sectionWidget.BorderRadius = 5;
-			sectionWidget.Margin = new BorderDouble(10, 0, 10, 10);
-			sectionWidget.BackgroundColor = this.MinimalShade;
-		}
-
 		public TextImageButtonFactory MicroButton { get; private set; }
 		public TextImageButtonFactory MicroButtonMenu { get; private set; }
 
@@ -430,6 +419,28 @@ namespace MatterHackers.MatterControl
 			{
 				Padding = padding,
 			};
+		}
+	}
+
+	public static class ThemeExtensionMethods
+	{
+		public static SectionWidget ApplyBoxStyle(this SectionWidget sectionWidget)
+		{
+			return ApplyBoxStyle(sectionWidget, ApplicationController.Instance.Theme.MinimalShade);
+		}
+
+		public static SectionWidget ApplyBoxStyle(this SectionWidget sectionWidget, Color backgroundColor)
+		{
+			// Enforce panel padding
+			// sectionWidget.ContentPanel.Padding = new BorderDouble(10, 0, 10, 2);
+			//sectionWidget.ContentPanel.Padding = 0;
+
+			sectionWidget.SeperatorColor = Color.Transparent;
+			sectionWidget.BorderRadius = 5;
+			sectionWidget.Margin = new BorderDouble(10, 0, 10, 10);
+			sectionWidget.BackgroundColor = backgroundColor;
+
+			return sectionWidget;
 		}
 	}
 }

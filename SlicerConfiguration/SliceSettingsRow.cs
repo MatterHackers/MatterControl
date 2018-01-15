@@ -180,10 +180,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						{
 							var defaultCascade = printer.Settings.defaultLayerCascade;
 							var firstParentValue = printer.Settings.GetValueAndLayerName(settingData.SlicerConfigName, defaultCascade.Skip(1));
-							var currentValueAndLayerName = printer.Settings.GetValueAndLayerName(settingData.SlicerConfigName, defaultCascade);
-
-							var currentValue = currentValueAndLayerName.Item1;
-							var layerName = currentValueAndLayerName.Item2;
+							var (currentValue, layerName) = printer.Settings.GetValueAndLayerName(settingData.SlicerConfigName, defaultCascade);
 
 							if (firstParentValue.Item1 == currentValue)
 							{
