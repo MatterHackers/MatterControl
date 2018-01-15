@@ -203,6 +203,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.SwitchStateToEditing();
 
+
+			// Make sure the render mode is set correctly
+			string renderTypeString = UserSettings.Instance.get(UserSettingsKey.defaultRenderSetting);
+			if (renderTypeString == null)
+			{
+				renderTypeString = (UserSettings.Instance.IsTouchScreen) ? "Shaded" : "Outlines";
+				UserSettings.Instance.set(UserSettingsKey.defaultRenderSetting, renderTypeString);
+			}
+
+			RenderTypes renderType;
+			bool canParse = Enum.TryParse(renderTypeString, out renderType);
+			if (canParse)
+			{
+				meshViewerWidget.RenderType = renderType;
+			}
+
 			this.InteractionLayer.DrawGlOpaqueContent += Draw_GlOpaqueContent;
 
 			this.sceneContext.SceneLoaded += SceneContext_SceneLoaded;
@@ -1333,21 +1349,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			popupMenu.CreateHorizontalLine();
-
-			// TODO: This should be moved to the MeshViewerWidget constructor or initializer calls
-			string renderTypeString = UserSettings.Instance.get(UserSettingsKey.defaultRenderSetting);
-			if (renderTypeString == null)
-			{
-				renderTypeString = (UserSettings.Instance.IsTouchScreen) ? "Shaded" : "Outlines";
-				UserSettings.Instance.set(UserSettingsKey.defaultRenderSetting, renderTypeString);
-			}
-
-			RenderTypes renderType;
-			bool canParse = Enum.TryParse(renderTypeString, out renderType);
-			if (canParse)
-			{
-				meshViewerWidget.RenderType = renderType;
-			}
 
 			AddRadioButton("Shaded".Localize(), RenderTypes.Shaded, popupMenu);
 			AddRadioButton("Outlines".Localize(), RenderTypes.Outlines, popupMenu);
