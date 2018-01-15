@@ -145,7 +145,7 @@ namespace MatterHackers.MatterControl.Library
 			return provider;
 		}
 
-		public void RegisterRootProvider(ILibraryContainerLink containerItem)
+		public void RegisterContainer(ILibraryContainerLink containerItem)
 		{
 			libraryProviders.Add(containerItem);
 			libraryProviders.Sort(SortOnName);

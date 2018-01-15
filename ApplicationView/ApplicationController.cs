@@ -471,7 +471,7 @@ namespace MatterHackers.MatterControl
 		{
 			if (Directory.Exists(ApplicationDataStorage.Instance.DownloadsDirectory))
 			{
-				this.Library.RegisterRootProvider(
+				this.Library.RegisterContainer(
 					new DynamicContainerLink(
 						() => "Downloads".Localize(),
 						AggContext.StaticData.LoadIcon(Path.Combine("FileDialog", "download_folder.png")),
@@ -481,7 +481,7 @@ namespace MatterHackers.MatterControl
 						}));
 			}
 
-			this.Library.RegisterRootProvider(
+			this.Library.RegisterContainer(
 				new DynamicContainerLink(
 					() => "Calibration Parts".Localize(),
 					AggContext.StaticData.LoadIcon(Path.Combine("FileDialog", "folder.png")),
@@ -490,7 +490,7 @@ namespace MatterHackers.MatterControl
 					IsReadOnly = true
 				});
 
-			this.Library.RegisterRootProvider(
+			this.Library.RegisterContainer(
 				new DynamicContainerLink(
 					() => "Print Queue".Localize(),
 					AggContext.StaticData.LoadIcon(Path.Combine("FileDialog", "queue_folder.png")),
@@ -499,14 +499,14 @@ namespace MatterHackers.MatterControl
 			var rootLibraryCollection = Datastore.Instance.dbSQLite.Table<PrintItemCollection>().Where(v => v.Name == "_library").Take(1).FirstOrDefault();
 			if (rootLibraryCollection != null)
 			{
-				this.Library.RegisterRootProvider(
+				this.Library.RegisterContainer(
 					new DynamicContainerLink(
 						() => "Local Library".Localize(),
 						AggContext.StaticData.LoadIcon(Path.Combine("FileDialog", "library_folder.png")),
 						() => new SqliteLibraryContainer(rootLibraryCollection.Id)));
 			}
 
-			this.Library.RegisterRootProvider(
+			this.Library.RegisterContainer(
 				new DynamicContainerLink(
 					() => "Print History".Localize(),
 					AggContext.StaticData.LoadIcon(Path.Combine("FileDialog", "folder.png")),
@@ -522,7 +522,7 @@ namespace MatterHackers.MatterControl
 				{
 					//if (Directory.Exists(directory))
 					{
-						this.Library.RegisterRootProvider(
+						this.Library.RegisterContainer(
 							new FileSystemContainer.DirectoryContainerLink(directory)
 							{
 								UseIncrementedNameDuringTypeChange = true
@@ -531,7 +531,7 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
-			this.Library.RegisterRootProvider(
+			this.Library.RegisterContainer(
 				new DynamicContainerLink(
 						() => "SD Card".Localize(),
 						AggContext.StaticData.LoadIcon(Path.Combine("FileDialog", "sd_folder.png")),
@@ -550,7 +550,7 @@ namespace MatterHackers.MatterControl
 
 			this.Library.PlatingHistory = new PlatingHistoryContainer();
 
-			this.Library.RegisterRootProvider(
+			this.Library.RegisterContainer(
 				new DynamicContainerLink(
 					() => "Plating History".Localize(),
 					AggContext.StaticData.LoadIcon(Path.Combine("FileDialog", "folder.png")),
