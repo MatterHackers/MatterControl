@@ -59,10 +59,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				var column = new FlowLayoutWidget(FlowDirection.TopToBottom)
 				{
-					BackgroundColor = new Color(245, 245, 245),
-					Padding = 10
+					Padding = 10,
 				};
-
 				column.AddChild(new TextWidget("Options".Localize())
 				{
 					HAnchor = HAnchor.Left
@@ -75,7 +73,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					VAnchor = VAnchor.Fit,
 					Padding = 5,
 					MinimumSize = new VectorMath.Vector2(400, 65),
-					Margin = new BorderDouble(left: 8)
+					Margin = new BorderDouble(top: 10),
+					BackgroundColor = theme.MinimalShade
 				};
 				column.AddChild(optionsPanel);
 
