@@ -1354,38 +1354,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			AddRadioButton("Outlines".Localize(), RenderTypes.Outlines, popupMenu);
 			AddRadioButton("Polygons".Localize(), RenderTypes.Polygons, popupMenu);
 			AddRadioButton("Materials Option".Localize(), RenderTypes.Materials, popupMenu);
-			AddRadioButton("Overhang".Localize(), RenderTypes.Overhang, popupMenu, () =>
-			{
-				meshViewerWidget.RenderType = RenderTypes.Overhang;
-
-				UserSettings.Instance.set("defaultRenderSetting", meshViewerWidget.RenderType.ToString());
-
-				// Loop over all visible meshes, changing the face color depending on the face normal Z value
-				foreach (var meshRenderData in this.Scene.VisibleMeshes())
-				{
-					meshRenderData.Mesh.MarkAsChanged();
-
-					// change the color to be the right thing
-					GLMeshTrianglePlugin.Get(
-						meshRenderData.Mesh, 
-						(normal) =>
-						{
-							normal = Vector3.TransformVector(normal, meshRenderData.WorldMatrix(Scene.RootItem)).GetNormal();
-
-							double startColor = 223.0 / 360.0;
-							double endColor = 5.0 / 360.0;
-							double delta = endColor - startColor;
-
-							var color = ColorF.FromHSL(startColor, .99, .49).ToColor();
-							if (normal.Z < 0)
-							{
-								color = ColorF.FromHSL(startColor - delta * normal.Z, .99, .49).ToColor();
-							}
-
-							return color;
-						});
-				}
-			});
+			AddRadioButton("Overhang".Localize(), RenderTypes.Overhang, popupMenu);
 
 			popupMenu.CreateHorizontalLine();
 
