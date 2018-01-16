@@ -84,27 +84,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	/// </summary>
 	public class SimpleTabs : FlowLayoutWidget
 	{
-		public Toolbar TabBar { get; }
-
-		public GuiWidget TabContainer { get; protected set; }
-
 		public SimpleTabs(GuiWidget rightAnchorItem)
 			: base(FlowDirection.TopToBottom)
 		{
+			this.TabContainer = this;
 
 			this.AddChild(TabBar = new Toolbar(rightAnchorItem)
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit
 			});
-
-			this.TabContainer = this;
 		}
+
+		public Toolbar TabBar { get; }
+
+		public GuiWidget TabContainer { get; protected set; }
 
 		public event EventHandler ActiveTabChanged;
 
 		private List<ITab> _allTabs = new List<ITab>();
-
 		public IEnumerable<ITab> AllTabs => _allTabs;
 
 		public int TabCount => _allTabs.Count;
@@ -166,6 +164,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					this.OnActiveTabChanged();
 				}
+			}
+		}
+
+		public override void AddChild(GuiWidget childToAdd, int indexInChildrenList = -1)
+		{
+			if (this.TabContainer == this)
+			{
+				base.AddChild(childToAdd, indexInChildrenList);
+			}
+			else
+			{
+				this.TabContainer.AddChild(childToAdd, indexInChildrenList);
 			}
 		}
 

@@ -216,9 +216,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private int groupPanelCount = 0;
 		private List<(GuiWidget widget, SliceSettingData settingData)> settingsRows;
 		private TextWidget filteredItemsHeading;
+		private ScrollableWidget scrollable;
 
 		public SliceSettingsTabView(SettingsContext settingsContext, PrinterConfig printer, string UserLevel, ThemeConfig theme, bool isPrimarySettingsView, string databaseMRUKey)
-			: base (new SliceSettingsOverflowMenu(printer))
+			: base(new SliceSettingsOverflowMenu(printer))
 		{
 			this.VAnchor = VAnchor.Stretch;
 			this.HAnchor = HAnchor.Stretch;
@@ -268,6 +269,29 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			this.AddChild(searchPanel, 0);
 
+			var scrollable = new ScrollableWidget(true)
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch,
+			};
+			scrollable.ScrollArea.HAnchor = HAnchor.Stretch;
+			//scrollable.ScrollArea.VAnchor = VAnchor.Fit;
+
+			var tabContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				VAnchor = VAnchor.Fit,
+				HAnchor = HAnchor.Stretch,
+				//DebugShowBounds = true,
+				//MinimumSize = new Vector2(200, 200)
+			};
+
+			scrollable.AddChild(tabContainer);
+
+			this.AddChild(scrollable);
+
+			// Force TopToBottom flowlayout contained in scrollable as AddChild target
+			this.TabContainer = tabContainer;
+
 			this.theme = theme;
 			this.printer = printer;
 			this.settingsContext = settingsContext;
@@ -305,32 +329,23 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							this.CreateOemProfileInfoRow());
 					}
 
-					categoryPanel.AddChild(this.CreateGroupContent(group));
+					categoryPanel.AddChild(
+						this.CreateGroupContent(group));
 				}
-
-				// Wrap tab content in a scrollable area
-				var scrollable = new ScrollableWidget(true)
-				{
-					HAnchor = HAnchor.Stretch,
-					VAnchor = VAnchor.Stretch,
-				};
-				scrollable.ScrollArea.HAnchor = HAnchor.Stretch;
-
-				scrollable.AddChild(categoryPanel);
 
 				this.AddTab(
 					new ToolTab(
 						category.Name.Localize(),
 						this,
-						scrollable,
+						categoryPanel,
 						theme,
 						hasClose: false,
 						pointSize: theme.DefaultFontSize)
-				{
-					Name = category.Name + " Tab",
-					InactiveTabColor = Color.Transparent,
-					ActiveTabColor = theme.ActiveTabColor
-				});
+					{
+						Name = category.Name + " Tab",
+						InactiveTabColor = Color.Transparent,
+						ActiveTabColor = theme.ActiveTabColor
+					});
 			}
 
 			this.TabBar.AddChild(new HorizontalSpacer());
@@ -384,7 +399,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			};
 
 			var sectionWidget = new SectionWidget(group.Name, groupPanel, theme).ApplyBoxStyle();
-
+			
 			foreach (var subGroup in group.SubGroups)
 			{
 				var subGroupPanel = this.AddSettingRowsForSubgroup(subGroup);
@@ -859,18 +874,20 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				section.Visible = section.Descendants<SliceSettingsRow>().Any(row => row.Visible && row.Parent.Visible);
 			}
 
-			// HACK: Toggle needed to force layout quirk fix
-			foreach (var scrollable in this.Children<ScrollableWidget>())
-			{
-				scrollable.VAnchor = VAnchor.Absolute;
-				scrollable.VAnchor = VAnchor.Fit;
-			}
-
 			// Show all tab containers
 			foreach (var tab in this.AllTabs)
 			{
 				tab.TabContent.Visible = true;
 			}
+		}
+
+		protected override void OnActiveTabChanged()
+		{
+			if (scrollable != null)
+			{
+				scrollable.ScrollPosition = new Vector2(0, -scrollable.ScrollArea.Height);
+			}
+			base.OnActiveTabChanged();
 		}
 
 		public void ClearFilter()
@@ -890,14 +907,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				// HACK: Include parent visibility in mix as complex fields that return wrapped SliceSettingsRows will be visible and their parent will be hidden
 				section.Visible = section.Descendants<SliceSettingsRow>().Any(row => row.Visible && row.Parent.Visible);
-			}
-
-			// HACK: Toggle needed to force layout quirk fix
-			foreach (var scrollable in this.Children<ScrollableWidget>())
-			{
-				scrollable.VAnchor = VAnchor.Stretch;
-				scrollable.VAnchor = VAnchor.Fit;
-				scrollable.VAnchor = VAnchor.Stretch;
 			}
 
 			this.TabBar.Visible = true;
