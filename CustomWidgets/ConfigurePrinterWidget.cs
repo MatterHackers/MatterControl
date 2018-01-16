@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl
 
 			int tabIndex = 0;
 
-			// TODO: Remove this name field hack, created a dedicated field that behaves more like an inline edit control (label by default, short term text box during edit) - use on Presets Edit Window, Macro Editor, Selected Object Editor Name, here, etc...
+			// TODO: Remove this name field hack, create a dedicated field that behaves more like an inline edit control (label by default, short term text box during edit) - use on Presets Edit Window, Macro Editor, Selected Object Editor Name, here, etc...
 			var rowItem = SliceSettingsTabView.CreateItemRow( SettingsOrganizer.SettingsData["printer_name"], settingsContext, printer, theme.Colors.PrimaryTextColor, theme, ref tabIndex);
 
 			var firstChild = rowItem.Children.FirstOrDefault();

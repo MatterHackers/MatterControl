@@ -121,7 +121,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[Test, Category("Emulator")]
 		public void ExpectedEmulatorResponses()
 		{
-			// TODO: Emulator behavior should emulate actual printer firmware and not user configuration rather than M104/M109 sends to set extruder count
+			// TODO: Emulator behavior should emulate actual printer firmware and use configuration rather than M104/M109 sends to set extruder count
 			//
 			// Quirky emulator returns single extruder M105 responses until after the first M104, at which point it extends its extruder count to match
 			string M105ResponseBeforeM104 = "ok T:27.0 / 0.0";
