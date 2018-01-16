@@ -1879,12 +1879,16 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
+		private CancellationTokenSource printingCancellation;
+
 		public async void StartPrint(string gcodeFilename, PrintTask printTaskToUse = null)
 		{
 			if (!PrinterIsConnected || PrinterIsPrinting)
 			{
 				return;
 			}
+
+			printingCancellation = new CancellationTokenSource();
 
 			haveReportedError = false;
 			PrintWasCanceled = false;
@@ -1897,9 +1901,53 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 			await Task.Run(() =>
 			{
-				LoadGCodeToPrint(gcodeFilename);
+				// LoadGCodeToPrint
+				CreateStreamProcessors(gcodeFilename, this.RecoveryIsEnabled);
 			});
-			DoneLoadingGCodeToPrint();
+
+			// DoneLoadingGCodeToPrint
+			switch (communicationState)
+			{
+				case CommunicationStates.Connected:
+					// This can happen if the printer is reset during the slicing of the part.
+					break;
+
+				case CommunicationStates.PreparingToPrint:
+					{
+						var activePrintItem = printer.Bed.EditContext.printItem;
+						if (activePrintItem.PrintItem.Id == 0)
+						{
+							activePrintItem.PrintItem.Commit();
+						}
+
+						if (activePrintTask == null)
+						{
+							// TODO: Fix printerItemID int requirement
+							activePrintTask = new PrintTask
+							{
+								PrintStart = DateTime.Now,
+								PrinterId = this.printer.Settings.ID.GetHashCode(),
+								PrintName = activePrintItem.PrintItem.Name,
+								PrintItemId = activePrintItem.PrintItem.Id,
+								PrintingGCodeFileName = activePrintItem.GetGCodePathAndFileName(),
+								PrintComplete = false
+							};
+
+							activePrintTask.Commit();
+
+							Task.Run(() => this.SyncProgressToDB(printingCancellation.Token)).ConfigureAwait(false);
+						}
+					}
+
+					CommunicationState = CommunicationStates.Printing;
+					break;
+
+				default:
+#if DEBUG
+					throw new Exception("We are not preparing to print so we should not be starting to print");
+#endif
+					break;
+			}
 		}
 
 		public bool StartSdCardPrint(string m23FileName)
@@ -1975,6 +2023,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			lock (locker)
 			{
+				// Flag as canceled, wait briefly for listening threads to catch up
+				printingCancellation.Cancel();
+				Thread.Sleep(15);
 
 				// get rid of all the gcode we have left to print
 				ClearQueuedGCode();
@@ -2143,53 +2194,47 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			ReadPosition();
 		}
 
-		private void LoadGCodeToPrint(string gcodeFilename)
+		private void SyncProgressToDB(CancellationToken cancellationToken)
 		{
-			CreateStreamProcessors(gcodeFilename, this.RecoveryIsEnabled);
-		}
+			//var timer = Stopwatch.StartNew();
 
-		private void DoneLoadingGCodeToPrint()
-		{
-			switch (communicationState)
+			while (!cancellationToken.IsCancellationRequested
+				&& this.CommunicationState != CommunicationStates.FinishedPrint
+				&& this.communicationState != CommunicationStates.Connected)
 			{
-				case CommunicationStates.Connected:
-					// This can happen if the printer is reset during the slicing of the part.
-					break;
+				double secondsSinceStartedPrint = timeSinceStartedPrint.Elapsed.TotalSeconds;
 
-				case CommunicationStates.PreparingToPrint:
+				if (timeSinceStartedPrint.Elapsed.TotalSeconds > 0
+					&& gCodeFileStream0 != null
+					&& (secondsSinceUpdateHistory > secondsSinceStartedPrint
+					|| secondsSinceUpdateHistory + 1 < secondsSinceStartedPrint
+					|| lineSinceUpdateHistory + 20 < gCodeFileStream0.LineIndex))
+				{
+					double currentDone = gCodeFileStream0.GCodeFile.PercentComplete(gCodeFileStream0.LineIndex);
+					// Only update the amount done if it is greater than what is recorded.
+					// We don't want to mess up the resume before we actually resume it.
+					if (activePrintTask != null
+						&& babyStepsStream7 != null
+						&& activePrintTask.PercentDone < currentDone)
 					{
-						var activePrintItem = printer.Bed.EditContext.printItem;
-						if (activePrintItem.PrintItem.Id == 0)
-						{
-							activePrintItem.PrintItem.Commit();
-						}
+						activePrintTask.PercentDone = currentDone;
+						activePrintTask.PrintingOffsetX = (float)babyStepsStream7.Offset.X;
+						activePrintTask.PrintingOffsetY = (float)babyStepsStream7.Offset.Y;
+						activePrintTask.PrintingOffsetZ = (float)babyStepsStream7.Offset.Z;
+						activePrintTask?.Commit();
 
-						if (activePrintTask == null)
-						{
-							// TODO: Fix printerItemID int requirement
-							activePrintTask = new PrintTask
-							{
-								PrintStart = DateTime.Now,
-								PrinterId = this.printer.Settings.ID.GetHashCode(),
-								PrintName = activePrintItem.PrintItem.Name,
-								PrintItemId = activePrintItem.PrintItem.Id,
-								PrintingGCodeFileName = activePrintItem.GetGCodePathAndFileName(),
-								PrintComplete = false
-							};
-
-							activePrintTask.Commit();
-						}
+						// Interval looks to be ~10ms
+						//Console.WriteLine("DB write: {0}ms", timer.ElapsedMilliseconds);
+						//timer.Restart();
 					}
+					secondsSinceUpdateHistory = secondsSinceStartedPrint;
+					lineSinceUpdateHistory = gCodeFileStream0.LineIndex;
+				}
 
-					CommunicationState = CommunicationStates.Printing;
-					break;
-
-				default:
-#if DEBUG
-					throw new Exception("We are not preparing to print so we should not be starting to print");
-#endif
-					break;
+				Thread.Sleep(5);
 			}
+
+			// Console.WriteLine("Syncing print to db stopped");
 		}
 
 		private void MovementWasSetToAbsoluteMode(object sender, EventArgs e)
@@ -2354,37 +2399,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 							&& PrinterIsConnected)
 						{
 							waitingForPosition.Restart();
-						}
-
-						double secondsSinceStartedPrint = timeSinceStartedPrint.Elapsed.TotalSeconds;
-						if (timeSinceStartedPrint.Elapsed.TotalSeconds > 0
-							&& gCodeFileStream0 != null
-							&& (secondsSinceUpdateHistory > secondsSinceStartedPrint
-							|| secondsSinceUpdateHistory + 1 < secondsSinceStartedPrint
-							|| lineSinceUpdateHistory + 20 < gCodeFileStream0.LineIndex))
-						{
-							double currentDone = gCodeFileStream0.GCodeFile.PercentComplete(gCodeFileStream0.LineIndex);
-							// Only update the amount done if it is greater than what is recorded.
-							// We don't want to mess up the resume before we actually resume it.
-							if (activePrintTask != null
-								&& babyStepsStream7 != null
-								&& activePrintTask.PercentDone < currentDone)
-							{
-								activePrintTask.PercentDone = currentDone;
-								activePrintTask.PrintingOffsetX = (float)babyStepsStream7.Offset.X;
-								activePrintTask.PrintingOffsetY = (float)babyStepsStream7.Offset.Y;
-								activePrintTask.PrintingOffsetZ = (float)babyStepsStream7.Offset.Z;
-								try
-								{
-									Task.Run(() => activePrintTask?.Commit());
-								}
-								catch
-								{
-									// Can't write for some reason, continue with the write.
-								}
-							}
-							secondsSinceUpdateHistory = secondsSinceStartedPrint;
-							lineSinceUpdateHistory = gCodeFileStream0.LineIndex;
 						}
 
 						currentSentLine = currentSentLine.Trim();

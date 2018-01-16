@@ -33,6 +33,7 @@ using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
@@ -51,10 +52,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.printer = printer;
 
 			// add the finish setup button
-			finishSetupButton = theme.ButtonFactory.Generate("Setup...".Localize(), AggContext.StaticData.LoadIcon("icon_play_32x32.png", 14, 14, IconColor.Theme));
-			finishSetupButton.Name = "Finish Setup Button";
-			finishSetupButton.ToolTipText = "Run setup configuration for printer.".Localize();
-			finishSetupButton.Margin = theme.ButtonSpacing;
+			finishSetupButton = new TextButton("Setup...".Localize(), theme)
+			{
+				Name = "Finish Setup Button",
+				ToolTipText = "Run setup configuration for printer.".Localize(),
+				Margin = theme.ButtonSpacing,
+				BackgroundColor = theme.ButtonFactory.Options.NormalFillColor,
+				HoverColor = theme.ButtonFactory.Options.HoverFillColor,
+			};
 			finishSetupButton.Click += (s, e) =>
 			{
 				UiThread.RunOnIdle(async () =>
