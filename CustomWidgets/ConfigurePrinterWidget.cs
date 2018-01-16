@@ -27,6 +27,8 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System.Linq;
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
@@ -53,6 +55,28 @@ namespace MatterHackers.MatterControl
 
 		private void RebuildTabView()
 		{
+			this.CloseAllChildren();
+
+			int tabIndex = 0;
+
+			// TODO: Remove this name field hack, created a dedicated field that behaves more like an inline edit control (label by default, short term text box during edit) - use on Presets Edit Window, Macro Editor, Selected Object Editor Name, here, etc...
+			var rowItem = SliceSettingsTabView.CreateItemRow( SettingsOrganizer.SettingsData["printer_name"], settingsContext, printer, theme.Colors.PrimaryTextColor, theme, ref tabIndex);
+
+			var firstChild = rowItem.Children.FirstOrDefault();
+			firstChild.HAnchor = HAnchor.Absolute;
+			firstChild.Width = 100;
+			firstChild.Margin = firstChild.Margin.Clone(right: 0);
+
+			var nextChild = rowItem.Children.Skip(1).FirstOrDefault();
+			nextChild.HAnchor = HAnchor.Stretch;
+			nextChild.Children.FirstOrDefault().HAnchor = HAnchor.Stretch;
+
+			rowItem.Margin = new BorderDouble(5, 12, 10, 5);
+
+			this.AddChild(rowItem);
+
+			sliceSettingsTabView?.Close();
+
 			this.AddChild(
 				sliceSettingsTabView = new SliceSettingsTabView(
 					settingsContext,
@@ -65,7 +89,6 @@ namespace MatterHackers.MatterControl
 
 		private void ShowHelp_Changed(object sender, System.EventArgs e)
 		{
-			sliceSettingsTabView?.Close();
 			this.RebuildTabView();
 		}
 
