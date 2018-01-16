@@ -1897,7 +1897,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 			await Task.Run(() =>
 			{
-				LoadGCodeToPrint(gcodeFilename);
+				// LoadGCodeToPrint
+				CreateStreamProcessors(gcodeFilename, this.RecoveryIsEnabled);
 			});
 
 			// DoneLoadingGCodeToPrint
@@ -2182,11 +2183,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 			// Get the current position of the printer any time we reset our streams
 			ReadPosition();
-		}
-
-		private void LoadGCodeToPrint(string gcodeFilename)
-		{
-			CreateStreamProcessors(gcodeFilename, this.RecoveryIsEnabled);
 		}
 
 		private void MovementWasSetToAbsoluteMode(object sender, EventArgs e)
