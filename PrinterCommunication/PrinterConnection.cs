@@ -1899,7 +1899,48 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			{
 				LoadGCodeToPrint(gcodeFilename);
 			});
-			DoneLoadingGCodeToPrint();
+
+			// DoneLoadingGCodeToPrint
+			switch (communicationState)
+			{
+				case CommunicationStates.Connected:
+					// This can happen if the printer is reset during the slicing of the part.
+					break;
+
+				case CommunicationStates.PreparingToPrint:
+					{
+						var activePrintItem = printer.Bed.EditContext.printItem;
+						if (activePrintItem.PrintItem.Id == 0)
+						{
+							activePrintItem.PrintItem.Commit();
+						}
+
+						if (activePrintTask == null)
+						{
+							// TODO: Fix printerItemID int requirement
+							activePrintTask = new PrintTask
+							{
+								PrintStart = DateTime.Now,
+								PrinterId = this.printer.Settings.ID.GetHashCode(),
+								PrintName = activePrintItem.PrintItem.Name,
+								PrintItemId = activePrintItem.PrintItem.Id,
+								PrintingGCodeFileName = activePrintItem.GetGCodePathAndFileName(),
+								PrintComplete = false
+							};
+
+							activePrintTask.Commit();
+						}
+					}
+
+					CommunicationState = CommunicationStates.Printing;
+					break;
+
+				default:
+#if DEBUG
+					throw new Exception("We are not preparing to print so we should not be starting to print");
+#endif
+					break;
+			}
 		}
 
 		public bool StartSdCardPrint(string m23FileName)
@@ -2146,50 +2187,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		private void LoadGCodeToPrint(string gcodeFilename)
 		{
 			CreateStreamProcessors(gcodeFilename, this.RecoveryIsEnabled);
-		}
-
-		private void DoneLoadingGCodeToPrint()
-		{
-			switch (communicationState)
-			{
-				case CommunicationStates.Connected:
-					// This can happen if the printer is reset during the slicing of the part.
-					break;
-
-				case CommunicationStates.PreparingToPrint:
-					{
-						var activePrintItem = printer.Bed.EditContext.printItem;
-						if (activePrintItem.PrintItem.Id == 0)
-						{
-							activePrintItem.PrintItem.Commit();
-						}
-
-						if (activePrintTask == null)
-						{
-							// TODO: Fix printerItemID int requirement
-							activePrintTask = new PrintTask
-							{
-								PrintStart = DateTime.Now,
-								PrinterId = this.printer.Settings.ID.GetHashCode(),
-								PrintName = activePrintItem.PrintItem.Name,
-								PrintItemId = activePrintItem.PrintItem.Id,
-								PrintingGCodeFileName = activePrintItem.GetGCodePathAndFileName(),
-								PrintComplete = false
-							};
-
-							activePrintTask.Commit();
-						}
-					}
-
-					CommunicationState = CommunicationStates.Printing;
-					break;
-
-				default:
-#if DEBUG
-					throw new Exception("We are not preparing to print so we should not be starting to print");
-#endif
-					break;
-			}
 		}
 
 		private void MovementWasSetToAbsoluteMode(object sender, EventArgs e)
