@@ -121,6 +121,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[Test, Category("Emulator")]
 		public void ExpectedEmulatorResponses()
 		{
+			// TODO: Emulator behavior should emulate actual printer firmware and use configuration rather than M104/M109 sends to set extruder count
+			//
+			// Quirky emulator returns single extruder M105 responses until after the first M104, at which point it extends its extruder count to match
+			string M105ResponseBeforeM104 = "ok T:27.0 / 0.0";
+			string M105ResponseAfterM104 = "ok T0:27.0 / 0.0 T1:27.0 / 0.0";
+
 			string[] test1 = new string[]
 			{
 				"N1 M110 N1 * 125",
@@ -129,7 +135,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				"X:0.00 Y: 0.00 Z: 0.00 E: 0.00 Count X: 0.00 Y: 0.00 Z: 0.00",
 				"ok",
 				"N3 M105 * 36",
-				"ok T:27.0 / 0.0",
+				M105ResponseBeforeM104,
 				"N1 M110 N1*125",
 				"ok",
 				"N2 M115 * 36",
@@ -140,39 +146,39 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				"N4 M104 T1 S0 * 36",
 				"ok",
 				"N5 M105 * 34",
-				"ok T:27.0 / 0.0",
+				M105ResponseAfterM104,
 				"N6 M105 * 45",
 				"Error:checksum mismatch, Last Line: 5",
 				"Resend: 6",
 				"ok",
 				"N6 M105 * 33",
-				"ok T:27.0 / 0.0",
+				M105ResponseAfterM104,
 				"N7 M105 * 32",
-				"ok T:27.0 / 0.0",
+				M105ResponseAfterM104,
 				"N8 M105 * 47",
-				"ok T:27.0 / 0.0",
+				M105ResponseAfterM104,
 				"N9 M105 * 46",
-				"ok T:27.0 / 0.0",
+				M105ResponseAfterM104,
 				"N10 M105 * 22",
-				"ok T:27.0 / 0.0",
+				M105ResponseAfterM104,
 				"N11 M105 * 23",
-				"ok T:27.0 / 0.0",
+				M105ResponseAfterM104,
 				"N12 M105 * 20",
-				"ok T:27.0 / 0.0",
+				M105ResponseAfterM104,
 				"N13 M105 * 21",
-				"ok T:27.0 / 0.0",
+				M105ResponseAfterM104,
 				"N14 M105 * 18",
-				"ok T:27.0 / 0.0",
+				M105ResponseAfterM104,
 				"N15 M105 * 19",
-				"ok T:27.0 / 0.0",
+				M105ResponseAfterM104,
 				"N16 M105 * 16",
-				"ok T:27.0 / 0.0",
+				M105ResponseAfterM104,
 				"N17 M105 * 40",
 				"Error:checksum mismatch, Last Line: 16",
 				"Resend: 17",
 				"ok",
 				"N17 M105 * 17",
-				"ok T:27.0 / 0.0",
+				M105ResponseAfterM104,
 			};
 
 			string[] test2 = new string[]
@@ -355,7 +361,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					var container = testRunner.GetWidgetByName("ManualPrinterControls.ControlsContainer", out _, 5);
 
 					// Scroll the widget into view
-					var scrollable = container.Parents<ManualPrinterControls>().First().Children<ScrollableWidget>().First();
+					var scrollable = container.Parents<ManualPrinterControls>().First() as ScrollableWidget;
 					var width = scrollable.Width;
 
 					// Workaround needed to scroll to the bottom of the Controls panel
@@ -448,7 +454,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					var container = testRunner.GetWidgetByName("ManualPrinterControls.ControlsContainer", out _, 5);
 
 					// Scroll the widget into view
-					var scrollable = container.Parents<ManualPrinterControls>().First().Children<ScrollableWidget>().First();
+					var scrollable = container.Parents<ManualPrinterControls>().FirstOrDefault() as ScrollableWidget;
 					var width = scrollable.Width;
 
 					// Workaround needed to scroll to the bottom of the Controls panel

@@ -81,6 +81,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// Get MeshGroupCount before Group is clicked
 				Assert.AreEqual(6, scene.Children.Count, "Scene should have 6 parts after copy loop");
 
+				// Duplicate button moved to new container - move focus back to View3DWidget so CTRL-A below is seen by expected control
+				testRunner.Select3DPart("Calibration - Box.stl");
+
 				// select all
 				testRunner.Type("^a");
 
