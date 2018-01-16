@@ -1879,12 +1879,16 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
+		private CancellationTokenSource printingCancellation;
+
 		public async void StartPrint(string gcodeFilename, PrintTask printTaskToUse = null)
 		{
 			if (!PrinterIsConnected || PrinterIsPrinting)
 			{
 				return;
 			}
+
+			printingCancellation = new CancellationTokenSource();
 
 			haveReportedError = false;
 			PrintWasCanceled = false;
@@ -1930,6 +1934,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 							};
 
 							activePrintTask.Commit();
+
+							Task.Run(() => this.SyncProgressToDB(printingCancellation.Token)).ConfigureAwait(false);
 						}
 					}
 
@@ -2017,6 +2023,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			lock (locker)
 			{
+				// Flag as canceled, wait briefly for listening threads to catch up
+				printingCancellation.Cancel();
+				Thread.Sleep(15);
 
 				// get rid of all the gcode we have left to print
 				ClearQueuedGCode();
@@ -2185,6 +2194,49 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			ReadPosition();
 		}
 
+		private void SyncProgressToDB(CancellationToken cancellationToken)
+		{
+			//var timer = Stopwatch.StartNew();
+
+			while (!cancellationToken.IsCancellationRequested
+				&& this.CommunicationState != CommunicationStates.FinishedPrint
+				&& this.communicationState != CommunicationStates.Connected)
+			{
+				double secondsSinceStartedPrint = timeSinceStartedPrint.Elapsed.TotalSeconds;
+
+				if (timeSinceStartedPrint.Elapsed.TotalSeconds > 0
+					&& gCodeFileStream0 != null
+					&& (secondsSinceUpdateHistory > secondsSinceStartedPrint
+					|| secondsSinceUpdateHistory + 1 < secondsSinceStartedPrint
+					|| lineSinceUpdateHistory + 20 < gCodeFileStream0.LineIndex))
+				{
+					double currentDone = gCodeFileStream0.GCodeFile.PercentComplete(gCodeFileStream0.LineIndex);
+					// Only update the amount done if it is greater than what is recorded.
+					// We don't want to mess up the resume before we actually resume it.
+					if (activePrintTask != null
+						&& babyStepsStream7 != null
+						&& activePrintTask.PercentDone < currentDone)
+					{
+						activePrintTask.PercentDone = currentDone;
+						activePrintTask.PrintingOffsetX = (float)babyStepsStream7.Offset.X;
+						activePrintTask.PrintingOffsetY = (float)babyStepsStream7.Offset.Y;
+						activePrintTask.PrintingOffsetZ = (float)babyStepsStream7.Offset.Z;
+						activePrintTask?.Commit();
+
+						// Interval looks to be ~10ms
+						//Console.WriteLine("DB write: {0}ms", timer.ElapsedMilliseconds);
+						//timer.Restart();
+					}
+					secondsSinceUpdateHistory = secondsSinceStartedPrint;
+					lineSinceUpdateHistory = gCodeFileStream0.LineIndex;
+				}
+
+				Thread.Sleep(5);
+			}
+
+			// Console.WriteLine("Syncing print to db stopped");
+		}
+
 		private void MovementWasSetToAbsoluteMode(object sender, EventArgs e)
 		{
 			movementMode = PrinterMachineInstruction.MovementTypes.Absolute;
@@ -2347,37 +2399,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 							&& PrinterIsConnected)
 						{
 							waitingForPosition.Restart();
-						}
-
-						double secondsSinceStartedPrint = timeSinceStartedPrint.Elapsed.TotalSeconds;
-						if (timeSinceStartedPrint.Elapsed.TotalSeconds > 0
-							&& gCodeFileStream0 != null
-							&& (secondsSinceUpdateHistory > secondsSinceStartedPrint
-							|| secondsSinceUpdateHistory + 1 < secondsSinceStartedPrint
-							|| lineSinceUpdateHistory + 20 < gCodeFileStream0.LineIndex))
-						{
-							double currentDone = gCodeFileStream0.GCodeFile.PercentComplete(gCodeFileStream0.LineIndex);
-							// Only update the amount done if it is greater than what is recorded.
-							// We don't want to mess up the resume before we actually resume it.
-							if (activePrintTask != null
-								&& babyStepsStream7 != null
-								&& activePrintTask.PercentDone < currentDone)
-							{
-								activePrintTask.PercentDone = currentDone;
-								activePrintTask.PrintingOffsetX = (float)babyStepsStream7.Offset.X;
-								activePrintTask.PrintingOffsetY = (float)babyStepsStream7.Offset.Y;
-								activePrintTask.PrintingOffsetZ = (float)babyStepsStream7.Offset.Z;
-								try
-								{
-									Task.Run(() => activePrintTask?.Commit());
-								}
-								catch
-								{
-									// Can't write for some reason, continue with the write.
-								}
-							}
-							secondsSinceUpdateHistory = secondsSinceStartedPrint;
-							lineSinceUpdateHistory = gCodeFileStream0.LineIndex;
 						}
 
 						currentSentLine = currentSentLine.Trim();
