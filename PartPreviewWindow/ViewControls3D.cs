@@ -92,6 +92,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private PrinterConfig printer;
 		private View3DWidget view3DWidget;
+		private BedConfig sceneContext;
 
 		private ViewControls3DButtons activeTransformState = ViewControls3DButtons.Rotate;
 		private List<(GuiWidget button, SceneSelectionOperation operation)> operationButtons;
@@ -158,6 +159,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			this.printer = sceneContext.Printer;
 			this.IsPrinterMode = isPrinterType;
+			this.sceneContext = sceneContext;
 
 			string iconPath;
 
@@ -386,8 +388,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (printer != null)
 			{
-				printer.Bed.Scene.SelectionChanged += Scene_SelectionChanged;
-
 				printer.ViewState.ViewModeChanged += (s, e) =>
 				{
 					if (e.ViewMode == PartViewMode.Layers2D)
@@ -403,10 +403,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						modelViewButton.Checked = true;
 					}
 				};
-
-				// Run on load
-				Scene_SelectionChanged(null, null);
 			}
+
+			sceneContext.Scene.SelectionChanged += Scene_SelectionChanged;
+
+			// Run on load
+			Scene_SelectionChanged(null, null);
 		}
 
 		private void Scene_SelectionChanged(object sender, EventArgs e)
@@ -414,7 +416,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Set enabled level based on operation rules
 			foreach(var item in operationButtons)
 			{
-				item.button.Enabled = item.operation.IsEnabled?.Invoke(printer.Bed.Scene) ?? false;
+				item.button.Enabled = item.operation.IsEnabled?.Invoke(sceneContext.Scene) ?? false;
 			}
 		}
 
