@@ -130,7 +130,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			{
 				Visible = false,
 				Margin = new BorderDouble(10, 0, 5, 0),
-				Enabled = false
 			};
 			searchPanel.searchInput.ActualTextEditWidget.EnterPressed += (s, e) =>
 			{
