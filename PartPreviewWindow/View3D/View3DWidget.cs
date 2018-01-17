@@ -113,7 +113,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.viewControls3D = viewControls3D;
 			this.theme = theme;
 			this.Name = "View3DWidget";
-			this.BackgroundColor = theme.TabBodyBackground;
+			this.BackgroundColor = theme.ActiveTabColor;
+			this.Border = new BorderDouble(top: 1);
+			this.BorderColor = theme.MinimalShade;
 
 			autoRotating = allowAutoRotate;
 			allowAutoRotate = (autoRotate == AutoRotate.Enabled);
@@ -164,8 +166,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				SpliterBarColor = theme.SplitterBackground,
 				SplitterWidth = theme.SplitterWidth,
 				Visible = false,
-				Border = new BorderDouble(top: 1),
-				BorderColor = theme.MinimalShade
 			};
 
 			this.InteractionLayer.AddChild(selectedObjectContainer);

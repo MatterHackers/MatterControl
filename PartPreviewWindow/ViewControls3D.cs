@@ -336,7 +336,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Add Selected IObject3D -> Operations to toolbar
 			foreach (var namedAction in ApplicationController.Instance.RegisteredSceneOperations)
 			{
-
 				if (namedAction is SceneSelectionSeparator)
 				{
 					var margin = new BorderDouble(3);

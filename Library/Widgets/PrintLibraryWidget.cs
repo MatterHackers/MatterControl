@@ -67,7 +67,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			this.theme = theme;
 			this.partPreviewContent = partPreviewContent;
 			this.Padding = 0;
-			this.BackgroundColor = ApplicationController.Instance.Theme.TabBodyBackground;
 			this.AnchorAll();
 
 			var allControls = new FlowLayoutWidget(FlowDirection.TopToBottom);
@@ -75,9 +74,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			libraryView = new ListView(ApplicationController.Instance.Library)
 			{
 				Name = "LibraryView",
-				BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor,
 				// Drop containers if ShowContainers != 1
-				ContainerFilter = (container) => UserSettings.Instance.get("ShowContainers") == "1"
+				ContainerFilter = (container) => UserSettings.Instance.get("ShowContainers") == "1",
+				BackgroundColor = theme.ActiveTabColor,
+				//BorderColor = theme.MinimalShade,
+				Border = new BorderDouble(top: 1)
 			};
 
 			ApplicationController.Instance.Library.ActiveViewWidget = libraryView;
@@ -93,6 +94,16 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			};
 			allControls.AddChild(navBar);
 
+			allControls.AddChild(new HorizontalLine(20), 1);
+
+			var toolbar = new Toolbar()
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit
+			};
+			toolbar.Padding = theme.ToolbarPadding;
+			allControls.AddChild(toolbar);
+
 			var showFolders = new ExpandCheckboxButton("Folders".Localize())
 			{
 				HAnchor = HAnchor.Stretch,
@@ -100,14 +111,14 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				Padding = new BorderDouble(left: 2, bottom: 2, top: 6), // Same padding as toolbar above
 				Name = "Show Folders Toggle",
 				Checked = UserSettings.Instance.get("ShowContainers") == "1",
-				BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor
+				MinimumSize = new VectorMath.Vector2(0, theme.ButtonHeight)
 			};
 			showFolders.CheckedStateChanged += async (s, e) =>
 			{
 				UserSettings.Instance.set("ShowContainers", showFolders.Checked ? "1" : "0");
 				await libraryView.Reload();
 			};
-			allControls.AddChild(showFolders);
+			toolbar.AddChild(showFolders);
 
 			breadCrumbWidget = new FolderBreadCrumbWidget(libraryView);
 			navBar.AddChild(breadCrumbWidget);
@@ -163,7 +174,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			{
 				HAnchor = HAnchor.Stretch,
 				Padding = ApplicationController.Instance.Theme.ToolbarPadding,
-				BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor,
 			};
 			AddLibraryButtonElements();
 			allControls.AddChild(buttonPanel);

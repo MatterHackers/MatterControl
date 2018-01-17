@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			this.sceneContext = sceneContext;
 			this.theme = theme;
-			this.BackgroundColor = theme.TabBodyBackground;
+			this.BackgroundColor = theme.ActiveTabColor;
 			this.Padding = 0;
 
 			bool isPrinterType = this is PrinterTabPage;
