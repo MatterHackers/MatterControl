@@ -188,6 +188,9 @@ Printer
         validate_layer_height
         send_with_checksum
         reset_long_extrusion
+        max_acceleration
+        max_velocity
+        jerk_velocity
     Slicing
       Slicing Options
         output_only_first_layer

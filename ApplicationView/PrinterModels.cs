@@ -421,7 +421,16 @@ namespace MatterHackers.MatterControl
 
 		public void LoadGCode(Stream stream, CancellationToken cancellationToken, Action<double, string> progressReporter)
 		{
-			var loadedGCode = GCodeMemoryFile.Load(stream, cancellationToken, progressReporter);
+			var settings = this.Printer.Settings;
+			var maxAcceleration = settings.GetValue<double>(SettingsKey.max_acceleration);
+			var maxVelocity = settings.GetValue<double>(SettingsKey.max_velocity);
+			var jerkVelocity = settings.GetValue<double>(SettingsKey.jerk_velocity);
+
+			var loadedGCode = GCodeMemoryFile.Load(stream,
+				new Vector4(maxAcceleration, maxAcceleration, maxAcceleration, maxAcceleration),
+				new Vector4(maxVelocity, maxVelocity, maxVelocity, maxVelocity),
+				new Vector4(jerkVelocity, jerkVelocity, jerkVelocity, jerkVelocity),
+				cancellationToken, progressReporter);
 			this.GCodeRenderer = new GCodeRenderer(loadedGCode);
 			this.RenderInfo = new GCodeRenderInfo(
 					0,
@@ -432,8 +441,8 @@ namespace MatterHackers.MatterControl
 					1,
 					new Vector2[]
 					{
-						this.Printer.Settings.Helpers.ExtruderOffset(0),
-						this.Printer.Settings.Helpers.ExtruderOffset(1)
+						settings.Helpers.ExtruderOffset(0),
+						settings.Helpers.ExtruderOffset(1)
 					},
 					this.GetRenderType,
 					MeshViewerWidget.GetExtruderColor);

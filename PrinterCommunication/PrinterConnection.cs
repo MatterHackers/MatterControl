@@ -2140,7 +2140,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			GCodeStream firstStream = null;
 			if (gcodeFilename != null)
 			{
-				gCodeFileStream0 = new GCodeFileStream(GCodeFile.Load(gcodeFilename, CancellationToken.None));
+				gCodeFileStream0 = new GCodeFileStream(GCodeFile.Load(gcodeFilename,
+					new Vector4(),
+					new Vector4(),
+					new Vector4(),
+					CancellationToken.None));
 
 				if (this.RecoveryIsEnabled
 					&& activePrintTask != null) // We are resuming a failed print (do lots of interesting stuff).

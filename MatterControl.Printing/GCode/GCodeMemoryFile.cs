@@ -61,11 +61,19 @@ namespace MatterControl.Printing
 			this.gcodeHasExplicitLayerChangeInfo = gcodeHasExplicitLayerChangeInfo;
 		}
 
-		public GCodeMemoryFile(string pathAndFileName, CancellationToken cancellationToken, bool gcodeHasExplicitLayerChangeInfo = false)
+		public GCodeMemoryFile(string pathAndFileName,
+			Vector4 maxAccelerationMmPerS2,
+			Vector4 maxVelocityMmPerS,
+			Vector4 velocitySameAsStopMmPerS,
+			CancellationToken cancellationToken, bool gcodeHasExplicitLayerChangeInfo = false)
 		{
 			this.gcodeHasExplicitLayerChangeInfo = gcodeHasExplicitLayerChangeInfo;
 
-			var loadedFile = GCodeMemoryFile.Load(pathAndFileName, cancellationToken, null);
+			var loadedFile = GCodeMemoryFile.Load(pathAndFileName,
+				maxAccelerationMmPerS2,
+				maxVelocityMmPerS,
+				velocitySameAsStopMmPerS,
+				cancellationToken, null);
 			if (loadedFile != null)
 			{
 				this.indexOfChangeInZ = loadedFile.indexOfChangeInZ;
@@ -108,18 +116,30 @@ namespace MatterControl.Printing
 			GCodeCommandQueue.Insert(insertIndex, printerMachineInstruction);
 		}
 
-		public static GCodeFile ParseGCodeString(string gcodeContents, CancellationToken cancellationToken)
+		public static GCodeFile ParseGCodeString(string gcodeContents, 
+			Vector4 maxAccelerationMmPerS2,
+			Vector4 maxVelocityMmPerS,
+			Vector4 velocitySameAsStopMmPerS,
+			CancellationToken cancellationToken)
 		{
-			return ParseFileContents(gcodeContents, cancellationToken, null);
+			return ParseFileContents(gcodeContents, 
+				maxAccelerationMmPerS2, maxVelocityMmPerS, velocitySameAsStopMmPerS, cancellationToken, null);
 		}
 
-		public static GCodeMemoryFile Load(Stream fileStream, CancellationToken cancellationToken, Action<double, string> progressReporter = null)
+		public static GCodeMemoryFile Load(Stream fileStream, 
+			Vector4 maxAccelerationMmPerS2,
+			Vector4 maxVelocityMmPerS,
+			Vector4 velocitySameAsStopMmPerS,
+			CancellationToken cancellationToken,
+			Action<double, string> progressReporter = null)
 		{
 			try
 			{
 				using (var reader = new StreamReader(fileStream))
 				{
-					return ParseFileContents(reader.ReadToEnd(), cancellationToken, progressReporter);
+					return ParseFileContents(reader.ReadToEnd(), 
+						maxAccelerationMmPerS2, maxVelocityMmPerS, velocitySameAsStopMmPerS, 
+						cancellationToken, progressReporter);
 				}
 			}
 			catch (Exception e)
@@ -130,7 +150,11 @@ namespace MatterControl.Printing
 			return null;
 		}
 
-		public static GCodeMemoryFile Load(string filePath, CancellationToken cancellationToken, Action<double, string> progressReporter)
+		public static GCodeMemoryFile Load(string filePath,
+			Vector4 maxAccelerationMmPerS2,
+			Vector4 maxVelocityMmPerS,
+			Vector4 velocitySameAsStopMmPerS,
+			CancellationToken cancellationToken, Action<double, string> progressReporter)
 		{
 			if (Path.GetExtension(filePath).ToUpper() == ".GCODE")
 			{
@@ -138,7 +162,11 @@ namespace MatterControl.Printing
 				{
 					using (var stream = File.OpenRead(filePath))
 					{
-						return Load(stream, cancellationToken, progressReporter);
+						return Load(stream, 
+							maxAccelerationMmPerS2,
+							maxVelocityMmPerS,
+							velocitySameAsStopMmPerS,
+							cancellationToken, progressReporter);
 					}
 				}
 				catch (Exception e)
@@ -180,7 +208,11 @@ namespace MatterControl.Printing
 			return crCount + 1;
 		}
 
-		public static GCodeMemoryFile ParseFileContents(string gCodeString, CancellationToken cancellationToken, Action<double, string> progressReporter)
+		public static GCodeMemoryFile ParseFileContents(string gCodeString,
+			Vector4 maxAccelerationMmPerS2,
+			Vector4 maxVelocityMmPerS,
+			Vector4 velocitySameAsStopMmPerS,
+			CancellationToken cancellationToken, Action<double, string> progressReporter)
 		{
 			if (gCodeString == null)
 			{
@@ -272,7 +304,10 @@ namespace MatterControl.Printing
 				lineIndex++;
 			}
 
-			loadedGCodeFile.AnalyzeGCodeLines(cancellationToken, progressReporter);
+			loadedGCodeFile.AnalyzeGCodeLines(cancellationToken, progressReporter, 
+				maxAccelerationMmPerS2,
+				maxVelocityMmPerS,
+				velocitySameAsStopMmPerS);
 
 			loadTime.Stop();
 			Console.WriteLine("Time To Load Seconds: {0:0.00}".FormatWith(loadTime.Elapsed.TotalSeconds));
@@ -280,7 +315,10 @@ namespace MatterControl.Printing
 			return loadedGCodeFile;
 		}
 
-		private void AnalyzeGCodeLines(CancellationToken cancellationToken, Action<double, string> progressReporter)
+		private void AnalyzeGCodeLines(CancellationToken cancellationToken, Action<double, string> progressReporter,
+			Vector4 maxAccelerationMmPerS2,
+			Vector4 maxVelocityMmPerS,
+			Vector4 velocitySameAsStopMmPerS)
 		{
 			double feedRateMmPerMin = 0;
 			Vector3 lastPrinterPosition = new Vector3();
@@ -329,7 +367,8 @@ namespace MatterControl.Printing
 
 				if (feedRateMmPerMin > 0) 
 				{
-					instruction.secondsThisLine = (float)GetSecondsThisLine(deltaPositionThisLine, deltaEPositionThisLine, feedRateMmPerMin);
+					instruction.secondsThisLine = (float)GetSecondsThisLine(deltaPositionThisLine, deltaEPositionThisLine, feedRateMmPerMin,
+						maxAccelerationMmPerS2, maxVelocityMmPerS, velocitySameAsStopMmPerS);
 				}
 
 				if (progressReporter != null && maxProgressReport.ElapsedMilliseconds > 200)
