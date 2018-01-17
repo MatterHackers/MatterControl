@@ -36,10 +36,6 @@ namespace MatterControl.Printing
 {
 	public abstract class GCodeFile
 	{
-		private static readonly Vector4 MaxAccelerationMmPerS2 = new Vector4(1000, 1000, 100, 5000);
-		private static readonly Vector4 MaxVelocityMmPerS = new Vector4(500, 500, 5, 25);
-		private static readonly Vector4 VelocitySameAsStopMmPerS = new Vector4(8, 8, .4, 5);
-
 #if __ANDROID__
 		protected const int Max32BitFileSize = 10000000; // 10 megs
 #else
@@ -173,7 +169,11 @@ namespace MatterControl.Printing
 			return false;
 		}
 
-		public static GCodeFile Load(string fileName, CancellationToken cancellationToken)
+		public static GCodeFile Load(string fileName, 
+			Vector4 maxAccelerationMmPerS2,
+			Vector4 maxVelocityMmPerS,
+			Vector4 velocitySameAsStopMmPerS,
+			CancellationToken cancellationToken)
 		{
 			if (FileTooBigToLoad(fileName))
 			{
@@ -181,7 +181,10 @@ namespace MatterControl.Printing
 			}
 			else
 			{
-				return new GCodeMemoryFile(fileName, cancellationToken);
+				return new GCodeMemoryFile(fileName,
+					maxAccelerationMmPerS2,
+					maxVelocityMmPerS,
+					velocitySameAsStopMmPerS, cancellationToken);
 			}
 		}
 
@@ -206,20 +209,29 @@ namespace MatterControl.Printing
 			return stringWithNumber;
 		}
 
-		protected static double GetSecondsThisLine(Vector3 deltaPositionThisLine, double deltaEPositionThisLine, double feedRateMmPerMin)
+		// Vector4 maxAccelerationMmPerS2 = new Vector4(1000, 1000, 100, 5000);
+		// Vector4 maxVelocityMmPerS = new Vector4(500, 500, 5, 25);
+		// Vector4 velocitySameAsStopMmPerS = new Vector4(8, 8, .4, 5);
+
+		protected static double GetSecondsThisLine(Vector3 deltaPositionThisLine, 
+			double deltaEPositionThisLine, 
+			double feedRateMmPerMin,
+			Vector4 maxAccelerationMmPerS2,
+			Vector4 maxVelocityMmPerS,
+			Vector4 velocitySameAsStopMmPerS)
 		{
-			double startingVelocityMmPerS = VelocitySameAsStopMmPerS.X;
-			double endingVelocityMmPerS = VelocitySameAsStopMmPerS.X;
-			double maxVelocityMmPerS = Math.Min(feedRateMmPerMin / 60, MaxVelocityMmPerS.X);
-			double acceleration = MaxAccelerationMmPerS2.X;
+			double startingVelocityMmPerS = velocitySameAsStopMmPerS.X;
+			double endingVelocityMmPerS = velocitySameAsStopMmPerS.X;
+			double maxVelocityMmPerSx = Math.Min(feedRateMmPerMin / 60, maxVelocityMmPerS.X);
+			double acceleration = maxAccelerationMmPerS2.X;
 			double lengthOfThisMoveMm = Math.Max(deltaPositionThisLine.Length, deltaEPositionThisLine);
 
-			double distanceToMaxVelocity = GetDistanceToReachEndingVelocity(startingVelocityMmPerS, maxVelocityMmPerS, acceleration);
+			double distanceToMaxVelocity = GetDistanceToReachEndingVelocity(startingVelocityMmPerS, maxVelocityMmPerSx, acceleration);
 			if (distanceToMaxVelocity <= lengthOfThisMoveMm / 2)
 			{
 				// we will reach max velocity then run at it and then decelerate
 				double accelerationTime = GetTimeToAccelerateDistance(startingVelocityMmPerS, distanceToMaxVelocity, acceleration) * 2;
-				double runningTime = (lengthOfThisMoveMm - (distanceToMaxVelocity * 2)) / maxVelocityMmPerS;
+				double runningTime = (lengthOfThisMoveMm - (distanceToMaxVelocity * 2)) / maxVelocityMmPerSx;
 				return accelerationTime + runningTime;
 			}
 			else

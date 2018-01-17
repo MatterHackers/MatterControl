@@ -43,6 +43,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.Library.Export
 {
@@ -149,7 +150,11 @@ namespace MatterHackers.MatterControl.Library.Export
 		{
 			try
 			{
-				GCodeFileStream gCodeFileStream = new GCodeFileStream(GCodeFile.Load(gcodeFilename, CancellationToken.None));
+				GCodeFileStream gCodeFileStream = new GCodeFileStream(GCodeFile.Load(gcodeFilename,
+					new Vector4(),
+					new Vector4(),
+					new Vector4(),
+					CancellationToken.None));
 
 				var printerSettings = ActiveSliceSettings.Instance;
 				bool addLevelingStream = printerSettings.GetValue<bool>(SettingsKey.print_leveling_enabled) && this.ApplyLeveling;

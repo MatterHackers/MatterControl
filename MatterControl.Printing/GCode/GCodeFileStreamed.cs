@@ -261,11 +261,6 @@ namespace MatterControl.Printing
 						}
 					}
 
-					if (feedRateMmPerMin > 0)
-					{
-						instruction.secondsThisLine = (float)GetSecondsThisLine(deltaPositionThisLine, deltaEPositionThisLine, feedRateMmPerMin);
-					}
-
 					readLineCount++;
 				}
 			}

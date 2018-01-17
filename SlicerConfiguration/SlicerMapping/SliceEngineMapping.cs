@@ -99,6 +99,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			SettingsKey.model,
 			SettingsKey.enable_network_printing,
 			SettingsKey.enable_sailfish_communication,
+			SettingsKey.max_velocity,
+			SettingsKey.jerk_velocity,
+			SettingsKey.max_acceleration,
 			SettingsKey.ip_address,
 			SettingsKey.ip_port,
 

@@ -1,1820 +1,1847 @@
 [
-	{
-		"SlicerConfigName": "avoid_crossing_perimeters",
-		"PresentationName": "Avoid Crossing Perimeters",
-		"HelpText": "Forces the slicer to attempt to avoid having the perimeter line cross over existing perimeter lines. This can help with oozing or strings.",
-		"DataEditType": "CHECK_BOX",
-		"ShowIfSet": "!sla_printer",
-		"DefaultValue": "1"
-	},
-	{
-		"SlicerConfigName": "bed_shape",
-		"PresentationName": "Bed Shape",
-		"HelpText": "The shape of the physical print bed.",
-		"DataEditType": "LIST",
-		"ListValues": "rectangular,circular",
-		"DefaultValue": "rectangular",
-		"RebuildGCodeOnChange": false
-	},
-	{
-		"SlicerConfigName": "bed_size",
-		"PresentationName": "Bed Size",
-		"HelpText": "The X and Y values of the size of the print bed, in millimeters. For printers with a circular bed, these values are the diameters on the X and Y axes.",
-		"DataEditType": "VECTOR2",
-		"Units": "mm",
-		"DefaultValue": "200,200"
-	},
-	{
-		"SlicerConfigName": "bed_temperature",
-		"PresentationName": "Bed Temperature",
-		"HelpText": "The temperature to which the bed will be set for the duration of the print. Set to 0 to disable.",
-		"DataEditType": "POSITIVE_DOUBLE",
-		"Units": "°C",
-		"ShowIfSet": "has_heated_bed",
-		"DefaultValue": "70"
-	},
-	{
-		"SlicerConfigName": "bottom_solid_layers",
-		"PresentationName": "Bottom Solid Layers",
-		"HelpText": "The number of layers or the distance in millimeters to solid fill on the bottom surface(s) of the object. Add mm to the end of the number to specify distance in millimeters.",
-		"DataEditType": "INT_OR_MM",
-		"Units": "count or mm",
-		"DefaultValue": "1mm"
-	},
-	{
-		"SlicerConfigName": "layer_to_pause",
-		"PresentationName": "Layer(s) To Pause",
-		"HelpText": "The layer(s) at which the print will pause, allowing for a change in filament. Leave blank to disable. To pause on multiple layers, separate the layer numbers with semicolons. For example: \"16; 37\".",
-		"DataEditType": "STRING",
-		"ShowIfSet": "!sla_printer",
-		"ResetAtEndOfPrint": true,
-		"DefaultValue": ""
-	},
-	{
-		"SlicerConfigName": "bridge_fan_speed",
-		"PresentationName": "Bridging Fan Speed",
-		"HelpText": "The speed at which the layer cooling fan will run when bridging, expressed as a percentage of full power.",
-		"DataEditType": "INT",
-		"Units": "%",
-		"ShowIfSet": "has_fan",
-		"DefaultValue": "100"
-	},
-	{
-		"SlicerConfigName": "bridge_speed",
-		"PresentationName": "Bridges",
-		"HelpText": "The speed at which bridging between walls will print.",
-		"DataEditType": "POSITIVE_DOUBLE",
-		"Units": "mm/s",
-		"ShowIfSet": "!sla_printer",
-		"DefaultValue": "20"
-	},
-	{
-		"SlicerConfigName": "build_height",
-		"PresentationName": "Build Height",
-		"HelpText": "The height of the printer's printable volume, in millimeters. Controls the height of the visual print area displayed in 3D View.",
-		"DataEditType": "POSITIVE_DOUBLE",
-		"Units": "mm",
-		"DefaultValue": "0",
-		"RebuildGCodeOnChange": false
-	},
-	{
-		"SlicerConfigName": "cancel_gcode",
-		"PresentationName": "Cancel G-Code",
-		"HelpText": "G-Code to run when a print is canceled.",
-		"DataEditType": "MULTI_LINE_TEXT",
-		"ShowIfSet": "!sla_printer",
-		"DefaultValue": "",
-		"RebuildGCodeOnChange": false
-	},
-	{
-		"SlicerConfigName": "complete_objects",
-		"PresentationName": "Complete Individual Objects",
-		"HelpText": "Each individual part is printed to completion then the nozzle is lowered back to the bed and the next part is printed.",
-		"DataEditType": "CHECK_BOX",
-		"ShowIfSet": "!sla_printer",
-		"DefaultValue": "0"
-	},
-	{
-		"SlicerConfigName": "connect_gcode",
-		"PresentationName": "On Connect G-Code",
-		"HelpText": "G-Code to run upon successful connection to a printer. This can be useful to set settings specific to a given printer.",
-		"ShowIfSet": "!sla_printer",
-		"DataEditType": "MULTI_LINE_TEXT",
-		"DefaultValue": ""
-	},
-	{
-		"SlicerConfigName": "cool_extruder_lift",
-		"PresentationName": "Enable Extruder Lift",
-		"HelpText": "Moves the nozzle up and off the part to allow cooling.",
-		"DataEditType": "CHECK_BOX",
-		"ShowIfSet": "!sla_printer",
-		"DefaultValue": "0"
-	},
-	{
-		"SlicerConfigName": "cooling",
-		"PresentationName": "Enable Auto Cooling",
-		"HelpText": "Turns on and off all cooling settings (all settings below this one).",
-		"DataEditType": "CHECK_BOX",
-		"ShowIfSet": "!sla_printer",
-		"DefaultValue": "1"
-	},
-	{
-		"SlicerConfigName": "create_raft",
-		"PresentationName": "Create Raft",
-		"HelpText": "Creates a raft under the printed part. Useful to prevent warping when printing ABS (and other warping-prone plastics) as it helps parts adhere to the bed.",
-		"DataEditType": "CHECK_BOX",
-		"ShowIfSet": "!sla_printer",
-		"DefaultValue": "0",
-		"ReloadUiWhenChanged": true
-	},
-	{
-		"SlicerConfigName": "raft_extra_distance_around_part",
-		"PresentationName": "Expand Distance",
-		"HelpText": "The extra distance the raft will extend around the edge of the part.",
-		"DataEditType": "INT_OR_MM",
-		"Units": "count or mm",
-		"ShowIfSet": "!sla_printer",
-		"EnableIfSet": "create_raft",
-		"DefaultValue": "5"
-	},
-	{
-		"SlicerConfigName": "raft_air_gap",
-		"PresentationName": "Air Gap",
-		"HelpText": "The distance between the top of the raft and the bottom of the model. 0.6 mm is a good starting point for PLA and 0.4 mm is a good starting point for ABS. Lower values give a smoother surface, higher values make the print easier to remove.",
-		"DataEditType": "POSITIVE_DOUBLE",
-		"Units": "mm",
-		"ShowIfSet": "!sla_printer",
-		"EnableIfSet": "create_raft",
-		"DefaultValue": ".2"
-	},
-	{
-		"SlicerConfigName": "raft_fan_speed_percent",
-		"PresentationName": "Fan Speed",
-		"HelpText": "The speed at which the cooling fan(s) will run during the printing of the raft, expressed as a percentage of full power.",
-		"DataEditType": "POSITIVE_DOUBLE",
-		"Units": "%",
-		"EnableIfSet": "create_raft",
-		"ShowIfSet": "has_fan",
-		"DefaultValue": "100"
-	},
-	{
-		"SlicerConfigName": "raft_print_speed",
-		"PresentationName": "Raft",
-		"HelpText": "The speed at which the layers of the raft (other than the first layer) will print. This can be set explicitly or as a percentage of the Infill speed.",
-		"DataEditType": "DOUBLE_OR_PERCENT",
-		"Units": "mm/s or %",
-		"ShowIfSet": "!sla_printer",
-		"DefaultValue": "100%"
-	},
-	{
-		"SlicerConfigName": "disable_fan_first_layers",
-		"PresentationName": "Disable Fan For The First",
-		"HelpText": "The number of layers for which the layer cooling fan will be forced off at the start of the print.",
-		"DataEditType": "INT",
-		"Units": "layers",
-		"ShowIfSet": "has_fan",
-		"DefaultValue": "1"
-	},
-	{
-		"SlicerConfigName": "end_gcode",
-		"PresentationName": "End G-Code",
-		"HelpText": "G-Code to be run at the end of all automatic output (the very end of the G-Code commands).",
-		"DataEditType": "MULTI_LINE_TEXT",
-		"DefaultValue": "M104 S0 ; turn off temperature\\nG28 X0 ; home X axis\\nM84 ; disable motors"
-	},
-	{
-		"SlicerConfigName": "external_perimeter_speed",
-		"PresentationName": "Outside Perimeter",
-		"HelpText": "The speed at which outside, external, or the otherwise visible perimeters will print.",
-		"DataEditType": "DOUBLE_OR_PERCENT",
-		"ShowIfSet": "!sla_printer",
-		"Units": "mm/s or %",
-		"DefaultValue": "70%"
-	},
-	{
-		"SlicerConfigName": "external_perimeters_first",
-		"PresentationName": "External Perimeters First",
-		"HelpText": "Forces external perimeters to be printed first. By default, they will print last.",
-		"DataEditType": "CHECK_BOX",
-		"ShowIfSet": "!sla_printer",
-		"DefaultValue": "0"
-	},
-	{
-		"SlicerConfigName": "extruder_count",
-		"PresentationName": "Extruder Count",
-		"HelpText": "The number of extruders the printer has.",
-		"DataEditType": "INT",
-		"DefaultValue": "1",
-		"ShowIfSet": "!sla_printer",
-		"ReloadUiWhenChanged": true
-	},
-	{
-		"SlicerConfigName": "extruder_offset",
-		"PresentationName": "Nozzle Offsets",
-		"HelpText": "The offset of each nozzle relative to the first nozzle. Only useful for multiple extruder machines.",
-		"DataEditType": "OFFSET2",
-		"Units": "mm",
-		"ShowIfSet": "!sla_printer",
-		"DefaultValue": "0x0,0x0,0x0,0x0"
-	},
-	{
-		"SlicerConfigName": "baby_step_z_offset",
-		"PresentationName": "Baby Step Offset",
-		"HelpText": "The z offset to apply to improve the first layer adhesion.",
-		"DataEditType": "DOUBLE",
-		"Units": "mm",
-		"DefaultValue": "0",
-		"ShowIfSet": "!sla_printer",
-		"RebuildGCodeOnChange": false
-	},
-	{
-		"SlicerConfigName": "extruders_share_temperature",
-		"PresentationName": "Share Temperature",
-		"HelpText": "Used to specify if more than one extruder share a common heater cartridge.",
-		"DataEditType": "CHECK_BOX",
-		"DefaultValue": "0",
-		"ShowIfSet": "!sla_printer",
-		"ReloadUiWhenChanged": true
-	},
-	{
-		"SlicerConfigName": "heat_extruder_before_homing",
-		"PresentationName": "Heat Before Homing",
-		"HelpText": "Forces the printer to heat the nozzle before homing.",
-		"DataEditType": "CHECK_BOX",
-		"ShowIfSet": "!sla_printer",
-		"DefaultValue": "0"
-	},
-	{
-		"SlicerConfigName": "merge_overlapping_lines",
-		"PresentationName": "Merge Overlapping Lines",
-		"HelpText": "Detect perimeters that cross over themselves and combine them.",
-		"DataEditType": "CHECK_BOX",
-		"ShowIfSet": "!sla_printer",
-		"DefaultValue": "1"
-	},
-	{
-		"SlicerConfigName": "expand_thin_walls",
-		"PresentationName": "Expand Thin Walls",
-		"HelpText": "Detects sections of the model that would be too thin to print and expands them to make them printable.",
-		"DataEditType": "CHECK_BOX",
-		"ShowIfSet": "!sla_printer",
-		"DefaultValue": "1"
-	},
-	{
-		"SlicerConfigName": "extrusion_multiplier",
-		"PresentationName": "Extrusion Multiplier",
-		"HelpText": "All extrusions are multiplied by this value. Increasing it above 1 will increase the amount of filament being extruded (1.1 is a good max value); decreasing it will decrease the amount being extruded (.9 is a good minimum value).",
-		"DataEditType": "POSITIVE_DOUBLE",
-		"ShowIfSet": "!sla_printer",
-		"DefaultValue": "1"
-	},
-	{
-		"SlicerConfigName": "extrusion_width",
-		"PresentationName": "Default Extrusion Width",
-		"HelpText": "Leave this as 0 to allow automatic calculation of extrusion width.",
-		"DataEditType": "DOUBLE_OR_PERCENT",
-		"Units": "mm or % leave 0 for auto",
-		"DefaultValue": "0"
-	},
-	{
-		"SlicerConfigName": "fan_always_on",
-		"PresentationName": "Keep Fan Always On",
-		"HelpText": "This will force the fan to remain on throughout the print. In general you should have this off and just enable auto cooling.",
-		"DataEditType": "CHECK_BOX",
-		"ShowIfSet": "has_fan",
-		"DefaultValue": "0"
-	},
-	{
-		"SlicerConfigName": "fan_below_layer_time",
-		"PresentationName": "Enable Fan If Layer Print Time Is Below",
-		"HelpText": "If a layer is estimated to take less than this to print, the fan will be turned on.",
-		"DataEditType": "INT",
-		"Units": "seconds",
-		"ShowIfSet": "has_fan",
-		"DefaultValue": "60"
-	},
-	{
-		"SlicerConfigName": "filament_cost",
-		"PresentationName": "Cost",
-		"HelpText": "The price of one kilogram of filament. Used for estimating the cost of a print in the Layer View.",
-		"DataEditType": "POSITIVE_DOUBLE",
-		"Units": "$/kg",
-		"DefaultValue": "0",
-		"RebuildGCodeOnChange": false
-	},
-	{
-		"QuickMenuSettings": [
-			{
-				"MenuName": "PLA",
-				"Value": "1.24"
-			},
-			{
-				"MenuName": "PET",
-				"Value": "1.27"
-			},
-			{
-				"MenuName": "ABS",
-				"Value": "1.04"
-			}
-		],
-		"SlicerConfigName": "filament_density",
-		"PresentationName": "Density",
-		"HelpText": "Material density. Only used for estimating mass in the Layer View.",
-		"DataEditType": "POSITIVE_DOUBLE",
-		"Units": "g/cm³",
-		"DefaultValue": "1.24",
-		"RebuildGCodeOnChange": false
-	},
-	{
-		"SlicerConfigName": "filament_diameter",
-		"PresentationName": "Diameter",
-		"HelpText": "The actual diameter of the filament used for printing.",
-		"DataEditType": "POSITIVE_DOUBLE",
-		"ShowIfSet": "!sla_printer",
-		"Units": "mm",
-		"DefaultValue": "3"
-	},
-	{
-		"SlicerConfigName": "fill_angle",
-		"PresentationName": "Starting Angle",
-		"HelpText": "The angle of the infill, measured from the X axis. Not used when bridging.",
-		"DataEditType": "POSITIVE_DOUBLE",
-		"Units": "°",
-		"DefaultValue": "45"
-	},
-	{
-		"QuickMenuSettings": [
-			{
-				"MenuName": "Light",
-				"Value": "10%"
-			},
-			{
-				"MenuName": "Standard",
-				"Value": "30%"
-			},
-			{
-				"MenuName": "Heavy",
-				"Value": "90%"
-			}
-		],
-		"SlicerConfigName": "fill_density",
-		"PresentationName": "Fill Density",
-		"HelpText": "The amount of infill material to generate, expressed as a ratio or a percentage.",
-		"DataEditType": "DOUBLE_OR_PERCENT",
-		"DefaultValue": "0.4"
-	},
-	{
-		"SlicerConfigName": "fill_pattern",
-		"PresentationName": "Fill Pattern",
-		"HelpText": "The geometric shape of the support structure for the inside of parts.",
-		"DataEditType": "LIST",
-		"ListValues": "rectilinear,line,grid,concentric,honeycomb,hilbertcurve,achimedeancords,octagramspiral,3dhoneycomb",
-		"DefaultValue": "honeycomb"
-	},
-	{
-		"SlicerConfigName": "fill_thin_gaps",
-		"PresentationName": "Fill Thin Gaps",
-		"HelpText": "Detect gaps between perimeters that are too thin to fill with normal infill and attempt to fill them.",
-		"DataEditType": "CHECK_BOX",
-		"ShowIfSet": "!sla_printer",
-		"DefaultValue": "1"
-	},
-	{
-		"SlicerConfigName": "first_layer_bed_temperature",
-		"PresentationName": "Bed First Layer",
-		"HelpText": "The temperature to set the bed to before printing the first layer. The printer will wait until this temperature has been reached before printing. Set to 0 to eliminate bed temperature commands.",
-		"DataEditType": "DOUBLE",
-		"Units": "°C",
-		"ShowIfSet": "has_heated_bed",
-		"DefaultValue": "75"
-	},
-	{
-		"SlicerConfigName": "first_layer_extrusion_width",
-		"PresentationName": "First Layer",
-		"HelpText": "A modifier of the width of the extrusion for the first layer of the print. A value greater than 100% can help with adhesion to the print bed.",
-		"DataEditType": "DOUBLE_OR_PERCENT",
-		"Units": "mm or %",
-		"ShowIfSet": "!sla_printer",
-		"DefaultValue": "100%"
-	},
-	{
-		"SlicerConfigName": "first_layer_height",
-		"PresentationName": "First Layer Thickness",
-		"HelpText": "The thickness of the first layer. A first layer taller than the default layer thickness can ensure good adhesion to the build plate.",
-		"DataEditType": "DOUBLE_OR_PERCENT",
-		"Units": "mm or %",
-		"DefaultValue": "0.3"
-	},
-	{
-		"SlicerConfigName": "first_layer_speed",
-		"PresentationName": "Initial Layer Speed",
-		"HelpText": "The speed at which the nozzle will move when printing the initial layers. If expressed as a percentage the Infill speed is modified.",
-		"DataEditType": "DOUBLE_OR_PERCENT",
-		"Units": "mm/s or %",
-		"DefaultValue": "30%"
-	},
-	{
-		"SlicerConfigName": "number_of_first_layers",
-		"PresentationName": "Initial Layers",
-		"HelpText": "The number of layers to consider as the beginning of the print. These will print at initial layer speed.",
-		"DataEditType": "INT_OR_MM",
-		"Units": "layers or mm",
-		"ShowIfSet": "sla_printer",
-		"DefaultValue": "1"
-	},
-	{
-		"SlicerConfigName": "recover_first_layer_speed",
-		"PresentationName": "Recover Layer Speed",
-		"HelpText": "The speed at which the nozzle will move when recovering a failed print, for 1 layer.",
-		"DataEditType": "POSITIVE_DOUBLE",
-		"Units": "mm/s",
-		"ShowIfSet": "!has_hardware_leveling",
-		"DefaultValue": "10",
-		"RebuildGCodeOnChange": false
-	},
-	{
-		"SlicerConfigName": "recover_is_enabled",
-		"PresentationName": "Enable Recovery",
-		"HelpText": "When this is checked MatterControl will attempt to recover a print in the event of a failure, such as lost connection or lost power.",
-		"DataEditType": "CHECK_BOX",
-		"ShowIfSet": "!has_hardware_leveling",
-		"DefaultValue": "0",
-		"RebuildGCodeOnChange": false
-	},
-	{
-		"SlicerConfigName": "validate_layer_height",
-		"PresentationName": "Validate Layer Height",
-		"HelpText": "Checks before each print that the layer height is less than the nozzle diameter (important for filament adhesion)",
-		"DataEditType": "CHECK_BOX",
-		"Units": "",
-		"ShowAsOverride": true,
-		"DefaultValue": "1",
-		"ShowIfSet": "!sla_printer",
-		"RebuildGCodeOnChange": false
-	},
-	{
-		"SlicerConfigName": "z_homes_to_max",
-		"PresentationName": "Home Z Max",
-		"HelpText": "Indicates that the Z axis homes the hot end away from the bed (z-max homing)",
-		"DataEditType": "CHECK_BOX",
-		"ShowIfSet": "!has_hardware_leveling",
-		"DefaultValue": "0",
-		"ReloadUiWhenChanged": true,
-		"RebuildGCodeOnChange": false
-	},
-	{
-		"SlicerConfigName": "recover_position_before_z_home",
-		"PresentationName": "XY Homing Position",
-		"HelpText": "The X and Y position of the hot end that minimizes the chance of colliding with the parts on the bed.",
-		"DataEditType": "VECTOR2",
-		"Units": "mm",
-		"ShowIfSet": "!has_hardware_leveling&!z_homes_to_max",
-		"DefaultValue": "0,0",
-		"RebuildGCodeOnChange": false
-	},
-	{
-		"SlicerConfigName": "first_layer_temperature",
-		"PresentationName": "Extrude First Layer",
-		"HelpText": "The temperature to which the nozzle will be heated before printing the first layer of a part. The printer will wait until this temperature has been reached before printing.",
-		"DataEditType": "POSITIVE_DOUBLE",
-		"Units": "°C",
-		"ShowIfSet": "!sla_printer",
-		"DefaultValue": "205"
-	},
-	{
-		"SlicerConfigName": "auto_release_motors",
-		"PresentationName": "Auto Release Motors",
-		"HelpText": "Turn off motor current at end of print or after cancel print.",
-		"DataEditType": "CHECK_BOX",
-		"ShowIfSet": "!sla_printer",
-		"DefaultValue": "1"
-	},
-	{
-		"SlicerConfigName": "g0",
-		"PresentationName": "Use G0",
-		"HelpText": "Use G0 for moves rather than G1.",
-		"DataEditType": "CHECK_BOX",
-		"ShowIfSet": "!sla_printer",
-		"DefaultValue": "0"
-	},
-	{
-		"SlicerConfigName": "gcode_flavor",
-		"PresentationName": "G-Code Flavor",
-		"HelpText": "The version of G-Code the printer's firmware communicates with. Some firmware use different G and M codes. Setting this ensures that the output G-Code will use the correct commands.",
-		"DataEditType": "LIST",
-		"ListValues": "reprap,teacup,makerbot,sailfish,mach3_ecm,no_extrusion",
-		"DefaultValue": "reprap"
-	},
-	{
-		"SlicerConfigName": "gcode_output_type",
-		"PresentationName": "G-Code Output",
-		"HelpText": "The version of G-Code the printer's firmware communicates with. Some firmware use different G and M codes. Setting this ensures that the output G-Code will use the correct commands.",
-		"DataEditType": "LIST",
-		"ListValues": "REPRAP,ULTIGCODE,BFB,MACH3",
-		"DefaultValue": "REPRAP"
-	},
-	{
-		"SlicerConfigName": "has_fan",
-		"PresentationName": "Has Fan",
-		"HelpText": "The printer has a layer-cooling fan.",
-		"DataEditType": "CHECK_BOX",
-		"ShowIfSet": "!sla_printer",
-		"DefaultValue": "1",
-		"ReloadUiWhenChanged": true
-	},
-	{
-		"SlicerConfigName": "has_z_probe",
-		"PresentationName": "Has Z Probe",
-		"HelpText": "The printer has a z probe for measuring bed level.",
-		"DataEditType": "CHECK_BOX",
-		"ShowAsOverride": true,
-		"ShowIfSet": "!sla_printer",
-		"ResetAtEndOfPrint": false,
-		"DefaultValue": "0",
-		"ReloadUiWhenChanged": true,
-		"RebuildGCodeOnChange": false
-	},
-	{
-		"SlicerConfigName": "has_z_servo",
-		"PresentationName": "Has Z Servo",
-		"HelpText": "The printer has a servo for lowering and raising the z probe.",
-		"DataEditType": "CHECK_BOX",
-		"ShowAsOverride": true,
-		"ShowIfSet": "has_z_probe",
-		"ResetAtEndOfPrint": false,
-		"DefaultValue": "0",
-		"ReloadUiWhenChanged": true,
-		"RebuildGCodeOnChange": false
-	},
-	{
-		"SlicerConfigName": "has_hardware_leveling",
-		"PresentationName": "Has Hardware Leveling",
-		"HelpText": "The printer has its own auto bed leveling probe and procedure which can be called using a G29 command during Start G-Code.",
-		"DataEditType": "CHECK_BOX",
-		"ShowIfSet": "!sla_printer",
-		"DefaultValue": "0",
-		"ReloadUiWhenChanged": true
-	},
-	{
-		"SlicerConfigName": "has_heated_bed",
-		"PresentationName": "Has Heated Bed",
-		"HelpText": "The printer has a heated bed.",
-		"DataEditType": "CHECK_BOX",
-		"ShowIfSet": "!sla_printer",
-		"DefaultValue": "1",
-		"ReloadUiWhenChanged": true
-	},
-	{
-		"SlicerConfigName": "sla_printer",
-		"PresentationName": "Printer is SLA",
-		"HelpText": "Switch the settings interface to one intended for SLA printers.",
-		"DataEditType": "CHECK_BOX",
-		"DefaultValue": "0",
-		"ReloadUiWhenChanged": true,
-		"RebuildGCodeOnChange": false
-	},
-	{
-		"SlicerConfigName": "include_firmware_updater",
-		"PresentationName": "Show Firmware Updater",
-		"HelpText": "This will only work on specific hardware. Do not use unless you are sure your printer controller supports this feature",
-		"DataEditType": "LIST",
-		"ListValues": "None,Simple Arduino",
-		"DefaultValue": "None",
-		"ShowIfSet": "!sla_printer",
-		"ReloadUiWhenChanged": true,
-		"RebuildGCodeOnChange": false
-	},
-	{
-		"SlicerConfigName": "backup_firmware_before_update",
-		"PresentationName": "Backup Firmware Before Update",
-		"HelpText": "When upgrading to new firmware, first save a backup of the current firmware.",
-		"DataEditType": "CHECK_BOX",
-		"DefaultValue": "1",
-		"ShowIfSet": "!sla_printer",
-		"RebuildGCodeOnChange": false
-	},
-	{
-		"SlicerConfigName": "has_power_control",
-		"PresentationName": "Has Power Control",
-		"HelpText": "The printer has the ability to control the power supply. Enable this function to show the ATX Power Control section on the Controls pane.",
-		"DataEditType": "CHECK_BOX",
-		"DefaultValue": "0",
-		"ShowIfSet": "!sla_printer",
-		"ReloadUiWhenChanged": true,
-		"RebuildGCodeOnChange": false
-	},
-	{
-		"SlicerConfigName": "has_sd_card_reader",
-		"PresentationName": "Has SD Card Reader",
-		"HelpText": "The printer has a SD card reader.",
-		"DataEditType": "CHECK_BOX",
-		"Units": "",
-		"DefaultValue": "0",
-		"ShowIfSet": "!sla_printer",
-		"ReloadUiWhenChanged": true,
-		"RebuildGCodeOnChange": false
-	},
-	{
-		"SlicerConfigName": "show_reset_connection",
-		"PresentationName": "Show Reset Connection",
-		"HelpText": "Shows a button at the right side of the Printer Connection Bar used to reset the USB connection to the printer. This can be used on printers that support it as an emergency stop.",
-		"DataEditType": "CHECK_BOX",
-		"ShowIfSet": "!sla_printer",
-		"ReloadUiWhenChanged": true,
-		"DefaultValue": "0"
-	},
-	{
-		"SlicerConfigName": "infill_extrusion_width",
-		"PresentationName": "Infill",
-		"HelpText": "Leave this as 0 to allow automatic calculation of extrusion width.",
-		"DataEditType": "DOUBLE_OR_PERCENT",
-		"Units": "mm or %",
-		"DefaultValue": "0"
-	},
-	{
-		"SlicerConfigName": "infill_overlap_perimeter",
-		"PresentationName": "Infill Overlap",
-		"HelpText": "The amount the infill edge will push into the perimeter. Helps ensure the infill is connected to the edge. This can be expressed as a percentage of the Nozzle Diameter.",
-		"DataEditType": "DOUBLE_OR_PERCENT",
-		"Units": "mm or %",
-		"DefaultValue": "25%",
-		"QuickMenuSettings": [
-			{
-				"MenuName": "Light",
-				"Value": "20%"
-			},
-			{
-				"MenuName": "Standard",
-				"Value": "35%"
-			},
-			{
-				"MenuName": "Heavy",
-				"Value": "75%"
-			}
-		],
-	},
-	{
-		"SlicerConfigName": "laser_speed_025",
-		"PresentationName": "Speed at 0.025 Height",
-		"HelpText": "The speed to move the laser when the layer height is 0.025mm. Speed will be adjusted linearly at other heights.",
-		"DataEditType": "POSITIVE_DOUBLE",
-		"Units": "mm/s",
-		"ShowIfSet": "sla_printer",
-		"DefaultValue": "100"
-	},
-	{
-		"SlicerConfigName": "laser_speed_100",
-		"PresentationName": "Speed at 0.1 Height",
-		"HelpText": "The speed to move the laser when the layer height is 0.1mm. Speed will be adjusted linearly at other heights.",
-		"DataEditType": "POSITIVE_DOUBLE",
-		"ShowIfSet": "sla_printer",
-		"Units": "mm/s",
-		"DefaultValue": "85"
-	},
-	{
-		"SlicerConfigName": "infill_speed",
-		"PresentationName": "Infill",
-		"HelpText": "The speed at which infill will print.",
-		"DataEditType": "POSITIVE_DOUBLE",
-		"ShowIfSet": "!sla_printer",
-		"Units": "mm/s",
-		"DefaultValue": "60"
-	},
-	{
-		"SlicerConfigName": "infill_type",
-		"PresentationName": "Infill Type",
-		"HelpText": "The geometric shape of the support structure for the inside of parts.",
-		"DataEditType": "LIST",
-		"ShowIfSet": "!sla_printer",
-		"ListValues": "GRID,TRIANGLES,HEXAGON,LINES,CONCENTRIC",
-		"DefaultValue": "TRIANGLES"
-	},
-	{ 
-		"SlicerConfigName": "print_leveling_solution",
-		"PresentationName": "Leveling Solution",
-		"HelpText": "The print leveling algorithm to use.",
-		"DataEditType": "LIST",
-		"ListValues": "3 Point Plane,7 Point Disk,13 Point Disk,3x3 Mesh",
-		"ShowAsOverride": true,
-		"ShowIfSet": "!has_hardware_leveling",
-		"DefaultValue": "3 Point Plane",
-		"ReloadUiWhenChanged": true,
-		"RebuildGCodeOnChange": false
-	},
-	{
-		"SlicerConfigName": "print_leveling_required_to_print",
-		"PresentationName": "Require Leveling To Print",
-		"HelpText": "The printer requires print leveling to run correctly.",
-		"DataEditType": "CHECK_BOX",
-		"ShowIfSet": "!has_hardware_leveling",
-		"DefaultValue": "0",
-		"ShowAsOverride": true,
-		"ReloadUiWhenChanged": true,
-		"RebuildGCodeOnChange": false
-	},
-	{
-		"SlicerConfigName": "leveling_manual_positions",
-		"PresentationName": "Leveling Positions",
-		"HelpText": "If set, these positions will be used when running the leveling solution. Leave empty for defaults. Data Format:'X1,Y1:...:Xn,Yn'",
-		"DataEditType": "STRING",
-		"Units": "empty for default",
-		"ShowAsOverride": true,
-		"ShowIfSet": "!has_hardware_leveling&print_leveling_solution=3 Point Plane|print_leveling_solution=3x3 Mesh",
-		"ResetAtEndOfPrint": false,
-		"DefaultValue": "",
-		"RebuildGCodeOnChange": false
-	},
-	{
-		"SlicerConfigName": "filament_runout_sensor",
-		"PresentationName": "Has Filament Runout Sensor",
-		"HelpText": "Specifies that the firmware has support for ros_0 endstop reporting on M119. TRIGGERED state defines filament has runout. If runout is detected the printers pause G-Code is run.",
-		"DataEditType": "CHECK_BOX",
-		"ShowAsOverride": true,
-		"ShowIfSet": "!sla_printer",
-		"ResetAtEndOfPrint": false,
-		"DefaultValue": "0",
-		"RebuildGCodeOnChange": false
-	},
-	{
-		"SlicerConfigName": "print_leveling_probe_start",
-		"PresentationName": "Start Height",
-		"HelpText": "The starting height (z) of the print head before probing each print level position.",
-		"DataEditType": "DOUBLE",
-		"Units": "mm",
-		"ShowIfSet": "!has_hardware_leveling",
-		"DefaultValue": "10",
-		"RebuildGCodeOnChange": false
-	},
-	{
-		"SlicerConfigName": "z_probe_z_offset",
-		"PresentationName": "Z Offset",
-		"HelpText": "The distance the z probe is from the extruder in z. For manual probing, this is thickness of the paper (or other calibration device).",
-		"DataEditType": "DOUBLE",
-		"Units": "mm",
-		"ShowIfSet": "!has_hardware_leveling",
-		"DefaultValue": ".1",
-		"RebuildGCodeOnChange": false
-	},
-	{
-		"SlicerConfigName": "use_z_probe",
-		"PresentationName": "Use Automatic Z Probe",
-		"HelpText": "Enable this if your printer has hardware support for G30 (automatic bed probing) and you want to use it rather than manually measuring the probe positions.",
-		"DataEditType": "CHECK_BOX",
-		"ShowAsOverride": true,
-		"ShowIfSet": "!has_hardware_leveling&has_z_probe",
-		"ResetAtEndOfPrint": false,
-		"RebuildGCodeOnChange": false,
-		"ReloadUiWhenChanged": true,
-		"DefaultValue": "0"
-	},
-	{
-		"SlicerConfigName": "z_probe_xy_offset",
-		"PresentationName": "XY Offset",
-		"HelpText": "The distance the z probe is from the extruder in x and y.",
-		"DataEditType": "VECTOR2",
-		"Units": "mm",
-		"ShowAsOverride": true,
-		"ShowIfSet": "!has_hardware_leveling&has_z_probe&use_z_probe",
-		"ResetAtEndOfPrint": false,
-		"RebuildGCodeOnChange": false,
-		"DefaultValue": "0,0"
-	},
-	{
-		"SlicerConfigName": "z_probe_samples",
-		"PresentationName": "Number of Samples",
-		"HelpText": "The number of times to sample each probe position (results will be averaged).",
-		"DataEditType": "INT",
-		"Units": "",
-		"ShowAsOverride": true,
-		"ShowIfSet": "!has_hardware_leveling&has_z_probe&use_z_probe",
-		"ResetAtEndOfPrint": false,
-		"RebuildGCodeOnChange": false,
-		"DefaultValue": "1"
-	},
-	{
-		"SlicerConfigName": "z_servo_depolyed_angle",
-		"PresentationName": "Lower / Deploy",
-		"HelpText": "This is the angle that lowers or deploys the z probe.",
-		"DataEditType": "POSITIVE_DOUBLE",
-		"Units": "°",
-		"ShowAsOverride": true,
-		"ShowIfSet": "!has_hardware_leveling&has_z_probe&use_z_probe&has_z_servo",
-		"ResetAtEndOfPrint": false,
-		"RebuildGCodeOnChange": false,
-		"DefaultValue": "0"
-	},
-	{
-		"SlicerConfigName": "z_servo_retracted_angle",
-		"PresentationName": "Raise / Stow",
-		"HelpText": "This is the angle that raises or stows the z probe.",
-		"DataEditType": "POSITIVE_DOUBLE",
-		"Units": "°",
-		"ShowAsOverride": true,
-		"ShowIfSet": "!has_hardware_leveling&has_z_probe&use_z_probe&has_z_servo",
-		"ResetAtEndOfPrint": false,
-		"RebuildGCodeOnChange": false,
-		"DefaultValue": "0"
-	},
-	{
-		"SlicerConfigName": "layer_gcode",
-		"PresentationName": "Layer Change G-Code",
-		"HelpText": "G-Code to be run after the change in Z height for the next layer.",
-		"DataEditType": "MULTI_LINE_TEXT",
-		"DefaultValue": "; LAYER:[layer_num]"
-	},
-	{
-		"QuickMenuSettings": [
-			{
-				"MenuName": "Fine",
-				"Value": "0.1"
-			},
-			{
-				"MenuName": "Standard",
-				"Value": "0.2"
-			},
-			{
-				"MenuName": "Coarse",
-				"Value": "0.3"
-			}
-		],
-		"SlicerConfigName": "layer_height",
-		"PresentationName": "Layer Thickness",
-		"HelpText": "The thickness of each layer of the print, except the first layer. A smaller number will create more layers and more vertical accuracy but also a slower print.",
-		"DataEditType": "POSITIVE_DOUBLE",
-		"Units": "mm",
-		"DefaultValue": "0.4"
-	},
-	{
-		"QuickMenuSettings": [
-			{
-				"MenuName": "Minimum",
-				"Value": "0.3"
-			},
-			{
-				"MenuName": "Standard",
-				"Value": "0.6"
-			},
-			{
-				"MenuName": "Full",
-				"Value": "1"
-			}
-		],
-		"SetSettingsOnChange": [
-			{
-				"TargetSetting": "bottom_solid_layers",
-				"Value": "[current_value]"
-			},
-			{
-				"TargetSetting": "top_solid_layers",
-				"Value": "[current_value]"
-			},
-			{
-				"TargetSetting": "perimeters",
-				"Value": "[current_value]"
-			}
-		],
-		"SlicerConfigName": "solid_shell",
-		"PresentationName": "Width",
-		"HelpText": "Sets the size of the outer solid surface (perimeter) for the entire print.",
-		"DataEditType": "POSITIVE_DOUBLE",
-		"Units": "mm",
-		"DefaultValue": "0"
-	},
-	{
-		"SlicerConfigName": "max_fan_speed",
-		"PresentationName": "Maximum Fan Speed",
-		"HelpText": "The maximum speed at which the layer cooling fan will run, expressed as a percentage of full power.",
-		"DataEditType": "INT",
-		"Units": "%",
-		"ShowIfSet": "has_fan",
-		"DefaultValue": "100"
-	},
-	{
-		"SlicerConfigName": "min_extrusion_before_retract",
-		"PresentationName": "Minimum Extrusion Requiring Retraction",
-		"HelpText": "The minimum length of filament that must be extruded before a retraction can occur.",
-		"DataEditType": "POSITIVE_DOUBLE",
-		"Units": "mm",
-		"ShowIfSet": "!sla_printer",
-		"EnableIfSet": "enable_retractions",
-		"ShowIfSet": "!sla_printer",
-		"DefaultValue": ".1"
-	},
-	{
-		"SlicerConfigName": "min_fan_speed",
-		"PresentationName": "Minimum Fan Speed",
-		"HelpText": "The minimum speed at which the layer cooling fan will run, expressed as a percentage of full power.",
-		"DataEditType": "INT",
-		"Units": "%",
-		"ShowIfSet": "has_fan",
-		"DefaultValue": "35"
-	},
-	{
-		"SlicerConfigName": "min_print_speed",
-		"PresentationName": "Minimum Print Speed",
-		"HelpText": "The minimum speed to which the printer will reduce to in order to attempt to make the layer print time long enough to satisfy the minimum layer time.",
-		"DataEditType": "POSITIVE_DOUBLE",
-		"Units": "mm/s",
-		"ShowIfSet": "!sla_printer",
-		"DefaultValue": "10"
-	},
-	{
-		"SlicerConfigName": "min_skirt_length",
-		"PresentationName": "Minimum Extrusion Length",
-		"HelpText": "The minimum length of filament to use printing the skirt loops. Enough skirt loops will be drawn to use this amount of filament, overriding the value set in Loops if the value in Loops will produce a skirt shorter than this value.",
-		"DataEditType": "POSITIVE_DOUBLE",
-		"ShowIfSet": "!sla_printer",
-		"Units": "mm",
-		"DefaultValue": "0"
-	},
-	{
-		"SlicerConfigName": "notes",
-		"PresentationName": "notes",
-		"HelpText": "These notes will be added as comments in the header of the output G-Code.",
-		"DataEditType": "MULTI_LINE_TEXT",
-		"DefaultValue": ""
-	},
-	{
-		"SlicerConfigName": "nozzle_diameter",
-		"PresentationName": "Nozzle Diameter",
-		"HelpText": "The diameter of the extruder's nozzle.",
-		"DataEditType": "POSITIVE_DOUBLE",
-		"Units": "mm",
-		"DefaultValue": "0.5"
-	},
-	{
-		"SlicerConfigName": "ooze_prevention",
-		"PresentationName": "Enable",
-		"HelpText": "This will lower the temperature of the non-printing nozzle to help prevent oozing.",
-		"DataEditType": "CHECK_BOX",
-		"DefaultValue": "0"
-	},
-	{
-		"SlicerConfigName": "overhangs",
-		"PresentationName": "Optimize Overhangs",
-		"HelpText": "Experimental feature that attempts to improve overhangs using the fan and bridge settings.",
-		"DataEditType": "CHECK_BOX",
-		"DefaultValue": "1"
-	},
-	{
-		"SlicerConfigName": "calibration_files",
-		"PresentationName": "Calibration Files",
-		"HelpText": "Sets the models that will be added to the queue when a new printer is created.",
-		"DataEditType": "STRING",
-		"DefaultValue": "Calibration - Box.stl"
-	},
-	{
-		"SlicerConfigName": "output_only_first_layer",
-		"PresentationName": "First Layer Only",
-		"HelpText": "Output only the first layer of the print. Especially useful for outputting gcode data for applications like engraving or cutting.",
-		"DataEditType": "CHECK_BOX",
-		"ShowIfSet": "!sla_printer",
-		"DefaultValue": "0"
-	},
-	{
-		"SlicerConfigName": "pause_gcode",
-		"PresentationName": "Pause G-Code",
-		"HelpText": "G-Code to run when the printer is paused.",
-		"DataEditType": "MULTI_LINE_TEXT",
-		"ShowIfSet": "!sla_printer",
-		"DefaultValue": "",
-		"RebuildGCodeOnChange": false
-	},
-	{
-		"SlicerConfigName": "perimeter_extrusion_width",
-		"PresentationName": "Perimeters",
-		"HelpText": "Leave this as 0 to allow automatic calculation of extrusion width.",
-		"DataEditType": "DOUBLE_OR_PERCENT",
-		"Units": "mm or %",
-		"DefaultValue": "0"
-	},
-	{
-		"SlicerConfigName": "external_perimeter_extrusion_width",
-		"PresentationName": "Outside Perimeters",
-		"HelpText": "A modifier of the width of the extrusion when printing outside perimeters. Can be useful to fine-adjust actual print size when objects print larger or smaller than specified in the digital model.",
-		"DataEditType": "DOUBLE_OR_PERCENT",
-		"Units": "mm or %",
-		"ShowIfSet": "!sla_printer",
-		"DefaultValue": "100%"
-	},
-	{
-		"SlicerConfigName": "perimeter_speed",
-		"PresentationName": "Inside Perimeters",
-		"HelpText": "The speed at which inside perimeters will print.",
-		"DataEditType": "POSITIVE_DOUBLE",
-		"ShowIfSet": "!sla_printer",
-		"Units": "mm/s",
-		"DefaultValue": "30"
-	},
-	{
-		"SlicerConfigName": "perimeter_start_end_overlap",
-		"PresentationName": "Start End Overlap",
-		"HelpText": "The distance that a perimeter will overlap itself when it completes its loop, expressed as a percentage of the Nozzle Diameter.",
-		"DataEditType": "POSITIVE_DOUBLE",
-		"Units": "%",
-		"DefaultValue": "90",
-		"QuickMenuSettings": [
-			{
-				"MenuName": "Light",
-				"Value": "20"
-			},
-			{
-				"MenuName": "Standard",
-				"Value": "80"
-			},
-			{
-				"MenuName": "Heavy",
-				"Value": "100"
-			}
-		],
-	},
-	{
-		"SlicerConfigName": "perimeters",
-		"PresentationName": "Perimeters",
-		"HelpText": "The number, or total width, of external shells to create. Add mm to the end of the number to specify width in millimeters.",
-		"DataEditType": "INT_OR_MM",
-		"Units": "count or mm",
-		"DefaultValue": "3"
-	},
-	{
-		"SlicerConfigName": "post_process",
-		"PresentationName": "Post-Processing Scripts",
-		"HelpText": "You can include additional programs to process the G-Code after slicer is finished. The complete path of the program to run should be included here.",
-		"DataEditType": "MULTI_LINE_TEXT",
-		"DefaultValue": ""
-	},
-	{
-		"SlicerConfigName": "print_center",
-		"PresentationName": "Print Center",
-		"HelpText": "The position (X and Y coordinates) of the center of the print bed, in millimeters. Normally this is 1/2 the bed size for Cartesian printers and 0, 0 for Delta printers.",
-		"DataEditType": "VECTOR2",
-		"Units": "mm",
-		"DefaultValue": "100,100"
-	},
-	{
-		"SlicerConfigName": "raft_layers",
-		"PresentationName": "Raft Layers",
-		"HelpText": "Number of layers to print before printing any parts.",
-		"DataEditType": "INT",
-		"Units": "layers",
-		"DefaultValue": "0"
-	},
-	{
-		"SlicerConfigName": "randomize_start",
-		"PresentationName": "Randomize Starting Points",
-		"HelpText": "Start each new layer from a different vertex to reduce seams.",
-		"DataEditType": "CHECK_BOX",
-		"DefaultValue": "0"
-	},
-	{
-		"SlicerConfigName": "resume_gcode",
-		"PresentationName": "Resume G-Code",
-		"HelpText": "G-Code to be run when the print resumes after a pause.",
-		"DataEditType": "MULTI_LINE_TEXT",
-		"ShowIfSet": "!sla_printer",
-		"DefaultValue": "",
-		"RebuildGCodeOnChange": false
-	},
-	{
-		"SlicerConfigName": "retract_before_travel",
-		"PresentationName": "Minimum Travel Requiring Retraction",
-		"HelpText": "The minimum distance of a non-print move which will trigger a retraction.",
-		"DataEditType": "POSITIVE_DOUBLE",
-		"Units": "mm",
-		"ShowIfSet": "!sla_printer",
-		"EnableIfSet": "enable_retractions",
-		"DefaultValue": "20"
-	},
-	{
-		"SlicerConfigName": "enable_retractions",
-		"PresentationName": "Enable Retractions",
-		"HelpText": "Turn retractions on and off.",
-		"DataEditType": "CHECK_BOX",
-		"ShowIfSet": "!sla_printer",
-		"DefaultValue": "1",
-		"ReloadUiWhenChanged": true
-	},
-	{
-		"SlicerConfigName": "retract_length",
-		"PresentationName": "Retract Length",
-		"HelpText": "The distance filament will reverse before each qualifying non-print move",
-		"DataEditType": "POSITIVE_DOUBLE",
-		"Units": "mm",
-		"DefaultValue": "1",
-		"ShowIfSet": "!sla_printer",
-		"EnableIfSet": "enable_retractions"
-	},
-	{
-		"SlicerConfigName": "retract_length_tool_change",
-		"PresentationName": "Length on Tool Change",
-		"HelpText": "When using multiple extruders, the distance filament will reverse before changing to a different extruder.",
-		"DataEditType": "POSITIVE_DOUBLE",
-		"ShowIfSet": "!sla_printer",
-		"Units": "mm",
-		"DefaultValue": "10"
-	},
-	{
-		"SlicerConfigName": "retract_when_changing_islands",
-		"PresentationName": "Retract When Changing Islands",
-		"HelpText": "Force a retraction when moving between islands (distinct parts on the layer).",
-		"DataEditType": "CHECK_BOX",
-		"ShowIfSet": "!sla_printer",
-		"EnableIfSet": "enable_retractions",
-		"DefaultValue": "1"
-	},
-	{
-		"SlicerConfigName": "retract_lift",
-		"PresentationName": "Z Lift",
-		"HelpText": "The distance the nozzle will lift after each retraction.",
-		"DataEditType": "POSITIVE_DOUBLE",
-		"Units": "mm",
-		"ShowIfSet": "!sla_printer",
-		"EnableIfSet": "enable_retractions",
-		"DefaultValue": "0"
-	},
-	{
-		"SlicerConfigName": "retract_restart_extra_toolchange",
-		"PresentationName": "Extra Length After Tool Change",
-		"HelpText": "Length of extra filament to extrude after a complete tool change (in addition to the re-extrusion of the tool change retraction distance).",
-		"DataEditType": "POSITIVE_DOUBLE",
-		"ShowIfSet": "!sla_printer",
-		"Units": "mm zero to disable",
-		"DefaultValue": "0"
-	},
-	{
-		"SlicerConfigName": "reset_long_extrusion",
-		"PresentationName": "Reset Long Extrusion",
-		"HelpText": "If the extruder has been running for a long time, it may be reporting values that are too large, this will periodically reset it.",
-		"DataEditType": "CHECK_BOX",
-		"ShowIfSet": "!sla_printer",
-		"DefaultValue": "1"
-	},
-	{
-		"SlicerConfigName": "send_with_checksum",
-		"PresentationName": "Send With Checksum",
-		"HelpText": "Calculate and transmit a standard rep-rap checksum for all commands.",
-		"DataEditType": "CHECK_BOX",
-		"ShowIfSet": "!sla_printer",
-		"DefaultValue": "1"
-	},
-	{
-		"SlicerConfigName": "retract_restart_extra",
-		"PresentationName": "Extra Length On Restart",
-		"HelpText": "Length of filament to extrude after a complete retraction (in addition to the re-extrusion of the Length on Move distance).",
-		"DataEditType": "DOUBLE",
-		"Units": "mm",
-		"ShowIfSet": "!sla_printer",
-		"EnableIfSet": "enable_retractions",
-		"DefaultValue": "0"
-	},
-	{
-		"SlicerConfigName": "retract_restart_extra_time_to_apply",
-		"PresentationName": "Time For Extra Length",
-		"HelpText": "The time over which to increase the Extra Length On Restart to its maximum value. Below this time only a portion of the extra length will be applied. Leave 0 to apply the entire amount all the time.",
-		"DataEditType": "DOUBLE",
-		"Units": "s",
-		"ShowIfSet": "!sla_printer",
-		"EnableIfSet": "enable_retractions",
-		"DefaultValue": "0"
-	},
-	{
-		"SlicerConfigName": "retract_speed",
-		"PresentationName": "Speed",
-		"HelpText": "The speed at which filament will retract and re-extrude.",
-		"DataEditType": "POSITIVE_DOUBLE",
-		"Units": "mm/s",
-		"ShowIfSet": "!sla_printer",
-		"EnableIfSet": "enable_retractions",
-		"DefaultValue": "30"
-	},
-	{
-		"SlicerConfigName": "repair_outlines_extensive_stitching",
-		"PresentationName": "Connect Bad Edges",
-		"HelpText": "Try to connect mesh edges when the actual mesh data is not all the way connected.",
-		"DataEditType": "CHECK_BOX",
-		"DefaultValue": "0"
-	},
-	{
-		"SlicerConfigName": "repair_outlines_keep_open",
-		"PresentationName": "Close Polygons",
-		"HelpText": "Sometime a mesh will not have closed a perimeter. When this is checked these non-closed perimeters while be closed.",
-		"DataEditType": "CHECK_BOX",
-		"DefaultValue": "0"
-	},
-	{
-		"SlicerConfigName": "resolution",
-		"PresentationName": "Resolution",
-		"HelpText": "The minimum feature size to consider from the model. Leave at 0 to use all the model detail.",
-		"DataEditType": "POSITIVE_DOUBLE",
-		"Units": "mm",
-		"DefaultValue": "0"
-	},
-	{
-		"QuickMenuSettings": [
-			{
-				"MenuName": "Touching",
-				"Value": "0"
-			},
-			{
-				"MenuName": "Standard",
-				"Value": "3"
-			},
-			{
-				"MenuName": "Far",
-				"Value": "10"
-			}
-		],
-		"SlicerConfigName": "skirt_distance",
-		"PresentationName": "Distance From Object",
-		"HelpText": "The distance from the model at which the first skirt loop is drawn. Make this 0 to create an anchor for the part to the bed, also known as a brim.",
-		"DataEditType": "POSITIVE_DOUBLE",
-		"ShowIfSet": "!sla_printer",
-		"Units": "mm",
-		"DefaultValue": "6"
-	},
-	{
-		"SlicerConfigName": "skirt_height",
-		"PresentationName": "Skirt Height",
-		"HelpText": "The number of layers to draw the skirt.",
-		"DataEditType": "INT",
-		"Units": "layers",
-		"DefaultValue": "1"
-	},
-	{
-		"SlicerConfigName": "skirts",
-		"PresentationName": "Distance or Loops",
-		"HelpText": "The number of loops to draw around all the parts on the bed before starting on the parts. Used mostly to prime the nozzle so the flow is even when the actual print begins.",
-		"DataEditType": "INT_OR_MM",
-		"ShowIfSet": "!sla_printer",
-		"Units": "count or mm",
-		"DefaultValue": "1"
-	},
-	{
-		"SlicerConfigName": "brims",
-		"PresentationName": "Distance or Loops",
-		"HelpText": "The number of loops to draw around parts. Used to provide additional bed adhesion",
-		"DataEditType": "INT_OR_MM",
-		"Units": "count or mm",
-		"DefaultValue": "0"
-	},
-	{
-		"SlicerConfigName": "slowdown_below_layer_time",
-		"PresentationName": "Slow Down If Layer Print Time Is Below",
-		"HelpText": "The minimum amount of time a layer must take to print. If a layer will take less than this amount of time, the movement speed is reduced so the layer print time will match this value, down to the minimum print speed at the slowest.",
-		"DataEditType": "INT",
-		"Units": "seconds",
-		"ShowIfSet": "!sla_printer",
-		"DefaultValue": "30"
-	},
-	{
-		"SlicerConfigName": "small_perimeter_speed",
-		"PresentationName": "Small Perimeters",
-		"HelpText": "Used for small perimeters (usually holes). This can be set explicitly or as a percentage of the Perimeters' speed.",
-		"DataEditType": "DOUBLE_OR_PERCENT",
-		"Units": "mm/s or %",
-		"DefaultValue": "30"
-	},
-	{
-		"SlicerConfigName": "solid_fill_pattern",
-		"PresentationName": "Top/Bottom Fill Pattern",
-		"HelpText": "The pattern used on the bottom and top layers of the print.",
-		"DataEditType": "LIST",
-		"ListValues": "rectilinear,concentric,hilbertcurve,achimedeancords,octagramspiral",
-		"DefaultValue": "rectilinear"
-	},
-	{
-		"SlicerConfigName": "solid_infill_extrusion_width",
-		"PresentationName": "Solid Infill",
-		"HelpText": "Leave this as 0 to allow automatic calculation of extrusion width.",
-		"DataEditType": "DOUBLE_OR_PERCENT",
-		"Units": "mm or %",
-		"DefaultValue": "0"
-	},
-	{
-		"SlicerConfigName": "solid_infill_speed",
-		"PresentationName": "Solid Infill",
-		"HelpText": "The speed to print infill when completely solid. This can be set explicitly or as a percentage of the Infill speed.",
-		"DataEditType": "DOUBLE_OR_PERCENT",
-		"Units": "mm/s or %",
-		"DefaultValue": "60"
-	},
-	{
-		"SlicerConfigName": "spiral_vase",
-		"PresentationName": "Spiral Vase",
-		"HelpText": "Forces the print to have only one extrusion and gradually increase the Z height during the print. Only one part will print at a time with this feature.",
-		"DataEditType": "CHECK_BOX",
-		"ShowIfSet": "!sla_printer",
-		"ResetAtEndOfPrint": true,
-		"DefaultValue": "0"
-	},
-	{
-		"SlicerConfigName": "standby_temperature_delta",
-		"PresentationName": "Temp Lower Amount",
-		"HelpText": "The number of degrees Centigrade to lower the temperature of a nozzle while it is not active.",
-		"DataEditType": "DOUBLE",
-		"Units": "°C",
-		"DefaultValue": "-5"
-	},
-	{
-		"SlicerConfigName": "start_gcode",
-		"PresentationName": "Start G-Code",
-		"HelpText": "G-Code to be run immediately following the temperature setting commands. Including commands to set temperature in this section will cause them not be generated outside of this section. Will accept Custom G-Code variables.",
-		"DataEditType": "MULTI_LINE_TEXT",
-		"DefaultValue": "G28 ; home all axes\\nG1 Z5 F5000 ; lift nozzle"
-	},
-	{
-		"SlicerConfigName": "write_regex",
-		"PresentationName": "Write Filter",
-		"HelpText": "This is a set of regular expressions to apply to lines prior to sending to a printer. They will be applied in the order listed before sending. To return more than one instruction separate them with comma.",
-		"DataEditType": "MULTI_LINE_TEXT",
-		"Units": "",
-		"ShowAsOverride": true,
-		"ShowIfSet": null,
-		"ResetAtEndOfPrint": false,
-		"DefaultValue": ""
-	},
-	{
-		"SlicerConfigName": "read_regex",
-		"PresentationName": "Read Filter",
-		"HelpText": "This is a set of regular expressions to apply to lines after they are received from the printer. They will be applied in order to each line received.",
-		"DataEditType": "MULTI_LINE_TEXT",
-		"Units": "",
-		"ShowAsOverride": true,
-		"ShowIfSet": null,
-		"ResetAtEndOfPrint": false,
-		"DefaultValue": ""
-	},
-	{
-		"SlicerConfigName": "start_perimeters_at_concave_points",
-		"PresentationName": "Start At Concave Points",
-		"HelpText": "Make sure the first point on a perimeter is a concave point.",
-		"DataEditType": "CHECK_BOX",
-		"DefaultValue": "0"
-	},
-	{
-		"SlicerConfigName": "start_perimeters_at_non_overhang",
-		"PresentationName": "Start At Non Overhang",
-		"HelpText": "Make sure the first point on a perimeter is not an overhang.",
-		"DataEditType": "CHECK_BOX",
-		"DefaultValue": "0"
-	},
-	{
-		"SlicerConfigName": "support_air_gap",
-		"PresentationName": "Air Gap",
-		"HelpText": "The distance between the top of the support and the bottom of the model. A good value depends on the type of material. For ABS and PLA a value between 0.4 and 0.6 works well, respectively.",
-		"DataEditType": "POSITIVE_DOUBLE",
-		"ShowIfSet": "!sla_printer",
-		"Units": "mm",
-		"DefaultValue": ".3"
-	},
-	{
-		"QuickMenuSettings": [
-			{
-				"MenuName": "Little",
-				"Value": "10"
-			},
-			{
-				"MenuName": "Standard",
-				"Value": "50"
-			},
-			{
-				"MenuName": "Lots",
-				"Value": "90"
-			}
-		],
-		"SlicerConfigName": "support_material_percent",
-		"PresentationName": "Support Percent",
-		"HelpText": "The percent of the extrusion width that can be overlapped and still generate.",
-		"DataEditType": "POSITIVE_DOUBLE",
-		"EnableIfSet": "support_material",
-		"ShowIfSet": "!sla_printer",
-		"Units": "%",
-		"DefaultValue": "50"
-	},
-	{
-		"SlicerConfigName": "support_material_infill_angle",
-		"PresentationName": "Infill Angle",
-		"HelpText": "The angle at which the support material lines will be drawn.",
-		"DataEditType": "POSITIVE_DOUBLE",
-		"ShowIfSet": "!sla_printer",
-		"Units": "°",
-		"DefaultValue": "45"
-	},
-	{
-		"SlicerConfigName": "support_material_create_internal_support",
-		"PresentationName": "Support Everywhere",
-		"HelpText": "Generates support material starting on top of internal surfaces. If unchecked support will only generate starting on the bed.",
-		"EnableIfSet": "support_material",
-		"ShowIfSet": "!sla_printer",
-		"DataEditType": "CHECK_BOX",
-		"DefaultValue": "1"
-	},
-	{
-		"SlicerConfigName": "support_material_create_perimeter",
-		"PresentationName": "Create Perimeter",
-		"HelpText": "Generates an outline around the support material to improve strength and hold up interface layers.",
-		"ShowIfSet": "!sla_printer",
-		"DataEditType": "CHECK_BOX",
-		"DefaultValue": "1"
-	},
-	{
-		"SlicerConfigName": "support_material_extruder",
-		"PresentationName": "Support Material Extruder",
-		"ShowIfSet": "!sla_printer",
-		"HelpText": "The index of the extruder to use for printing support material. Applicable only when Extruder Count is set to a value more than 1.",
-		"DataEditType": "INT",
-		"DefaultValue": "1"
-	},
-	{
-		"SlicerConfigName": "raft_extruder",
-		"PresentationName": "Raft Extruder",
-		"HelpText": "The index of the extruder to use to print the raft. Set to 0 to use the support extruder index.",
-		"ShowIfSet": "!sla_printer",
-		"EnableIfSet": "create_raft",
-		"DataEditType": "INT",
-		"DefaultValue": "0"
-	},
-	{
-		"SlicerConfigName": "support_material_interface_extruder",
-		"PresentationName": "Support Interface Extruder",
-		"HelpText": "The index of the extruder to use for support material interface layer(s).",
-		"ShowIfSet": "!sla_printer",
-		"DataEditType": "INT",
-		"DefaultValue": "1"
-	},
-	{
-		"SlicerConfigName": "support_material_interface_layers",
-		"PresentationName": "Interface Layers",
-		"HelpText": "The number of layers or the distance to print solid material between the supports and the part. Add mm to the end of the number to specify distance.",
-		"DataEditType": "INT_OR_MM",
-		"ShowIfSet": "!sla_printer",
-		"Units": "layers or mm",
-		"DefaultValue": ".9mm"
-	},
-	{
-		"SlicerConfigName": "support_material_spacing",
-		"PresentationName": "Pattern Spacing",
-		"HelpText": "The distance between support material lines.",
-		"DataEditType": "POSITIVE_DOUBLE",
-		"Units": "mm",
-		"ShowIfSet": "!sla_printer",
-		"DefaultValue": "2.5"
-	},
-	{
-		"SlicerConfigName": "support_material_speed",
-		"PresentationName": "Support Material",
-		"HelpText": "The speed at which support material structures will print.",
-		"DataEditType": "POSITIVE_DOUBLE",
-		"ShowIfSet": "!sla_printer",
-		"Units": "mm/s",
-		"DefaultValue": "60"
-	},
-	{
-		"SlicerConfigName": "support_material_xy_distance",
-		"PresentationName": "X and Y Distance",
-		"HelpText": "The distance the support material will be from the object in the X and Y directions.",
-		"DataEditType": "POSITIVE_DOUBLE",
-		"ShowIfSet": "!sla_printer",
-		"Units": "mm",
-		"DefaultValue": "0.7"
-	},
-	{
-		"SlicerConfigName": "support_material",
-		"PresentationName": "Generate Support Material",
-		"HelpText": "Generates support material under areas of the part which may be too steep to support themselves.",
-		"DataEditType": "CHECK_BOX",
-		"ShowIfSet": "!sla_printer",
-		"ReloadUiWhenChanged": true,
-		"DefaultValue": "0"
-	},
-	{
-		"SlicerConfigName": "support_type",
-		"PresentationName": "Support Type",
-		"HelpText": "The pattern to draw for the generation of support material.",
-		"DataEditType": "LIST",
-		"ShowIfSet": "!sla_printer",
-		"ListValues": "GRID,LINES",
-		"DefaultValue": "LINES"
-	},
-	{
-		"SlicerConfigName": "temperature",
-		"PresentationName": "Extruder Temperature",
-		"HelpText": "The target temperature the extruder will attempt to reach during the print.",
-		"DataEditType": "POSITIVE_DOUBLE",
-		"Units": "°C",
-		"ShowIfSet": "!sla_printer",
-		"DefaultValue": "200"
-	},
-	{
-		"SlicerConfigName": "temperature1",
-		"PresentationName": "Extruder 2 Temperature",
-		"HelpText": "The target temperature the extruder will attempt to reach during the print.",
-		"DataEditType": "POSITIVE_DOUBLE",
-		"Units": "°C",
-		"ShowIfSet": "!sla_printer",
-		"DefaultValue": "200"
-	},
-	{
-		"SlicerConfigName": "temperature2",
-		"PresentationName": "Extruder 3 Temperature",
-		"HelpText": "The target temperature the extruder will attempt to reach during the print.",
-		"DataEditType": "POSITIVE_DOUBLE",
-		"Units": "°C",
-		"ShowIfSet": "!sla_printer",
-		"DefaultValue": "200"
-	},
-	{
-		"SlicerConfigName": "temperature3",
-		"PresentationName": "Extruder 4 Temperature",
-		"HelpText": "The target temperature the extruder will attempt to reach during the print.",
-		"DataEditType": "POSITIVE_DOUBLE",
-		"Units": "°C",
-		"ShowIfSet": "!sla_printer",
-		"DefaultValue": "200"
-	},
-	{
-		"SlicerConfigName": "extruder_wipe_temperature",
-		"PresentationName": "Extruder Wipe Temperature",
-		"HelpText": "The temperature at which the extruder will wipe the nozzle, as specified by Custom G-Code.",
-		"DataEditType": "POSITIVE_DOUBLE",
-		"ShowIfSet": "!sla_printer",
-		"Units": "°C",
-		"DefaultValue": "0"
-	},
-	{
-		"SlicerConfigName": "bed_remove_part_temperature",
-		"PresentationName": "Bed Remove Part Temperature",
-		"HelpText": "The temperature to which the bed will heat (or cool) in order to remove the part, as specified in Custom G-Code.",
-		"DataEditType": "POSITIVE_DOUBLE",
-		"Units": "°C",
-		"ShowIfSet": "has_heated_bed",
-		"DefaultValue": "0"
-	},
-	{
-		"SlicerConfigName": "thin_walls",
-		"PresentationName": "Thin Walls",
-		"HelpText": "Detect when walls are too close together and need to be extruded as just one wall.",
-		"DataEditType": "CHECK_BOX",
-		"DefaultValue": "1"
-	},
-	{
-		"SlicerConfigName": "threads",
-		"PresentationName": "Threads",
-		"HelpText": "The number of CPU cores to use while doing slicing. Increasing this can slow down your machine.",
-		"DataEditType": "INT",
-		"DefaultValue": "2",
-		"RebuildGCodeOnChange": false
-	},
-	{
-		"SlicerConfigName": "toolchange_gcode",
-		"PresentationName": "After Tool Change G-Code",
-		"HelpText": "G-Code to be run after every tool change.",
-		"ShowIfSet": "!sla_printer",
-		"DataEditType": "MULTI_LINE_TEXT",
-		"DefaultValue": ""
-	},
-	{
-		"SlicerConfigName": "before_toolchange_gcode",
-		"PresentationName": "Before Tool Change G-Code",
-		"HelpText": "G-Code to be run before every tool change.",
-		"DataEditType": "MULTI_LINE_TEXT",
-		"ShowIfSet": "!sla_printer",
-		"DefaultValue": ""
-	},
-	{
-		"SlicerConfigName": "top_infill_extrusion_width",
-		"PresentationName": "Top Solid Infill",
-		"HelpText": "Leave this as 0 to allow automatic calculation of extrusion width.",
-		"DataEditType": "DOUBLE_OR_PERCENT",
-		"Units": "mm or %",
-		"DefaultValue": "0"
-	},
-	{
-		"SlicerConfigName": "top_solid_infill_speed",
-		"PresentationName": "Top Solid Infill",
-		"HelpText": "The speed at which the top solid layers will print. Can be set explicitly or as a percentage of the Infill speed.",
-		"DataEditType": "DOUBLE_OR_PERCENT",
-		"Units": "mm/s or %",
-		"ShowIfSet": "!sla_printer",
-		"DefaultValue": "50"
-	},
-	{
-		"SlicerConfigName": "top_solid_layers",
-		"PresentationName": "Top Solid Layers",
-		"HelpText": "The number of layers, or the distance in millimeters, to solid fill on the top surface(s) of the object. Add mm to the end of the number to specify distance in millimeters.",
-		"DataEditType": "INT_OR_MM",
-		"Units": "count or mm",
-		"DefaultValue": "1mm"
-	},
-	{
-		"SlicerConfigName": "travel_speed",
-		"PresentationName": "Travel",
-		"HelpText": "The speed at which the nozzle will move when not extruding material.",
-		"DataEditType": "POSITIVE_DOUBLE",
-		"Units": "mm/s",
-		"DefaultValue": "130"
-	},
-	{
-		"SlicerConfigName": "use_firmware_retraction",
-		"PresentationName": "Use Firmware Retraction",
-		"HelpText": "Request the firmware to do retractions rather than specify the extruder movements directly.",
-		"DataEditType": "CHECK_BOX",
-		"DefaultValue": "0"
-	},
-	{
-		"SlicerConfigName": "use_relative_e_distances",
-		"PresentationName": "Use Relative E Distances",
-		"HelpText": "Normally you will want to use absolute e distances. Only check this if you know your printer needs relative e distances.",
-		"DataEditType": "CHECK_BOX",
-		"DefaultValue": "0"
-	},
-	{
-		"QuickMenuSettings": [
-			{
-				"MenuName": "115200",
-				"Value": "115200"
-			},
-			{
-				"MenuName": "250000",
-				"Value": "250000"
-			}
-		],
-		"SlicerConfigName": "baud_rate",
-		"PresentationName": "Baud Rate",
-		"HelpText": "The serial port communication speed of the printers firmware.",
-		"DataEditType": "INT",
-		"ShowAsOverride": false,
-		"ShowIfSet": null,
-		"ResetAtEndOfPrint": false,
-		"DefaultValue": "250000",
-		"RebuildGCodeOnChange": false
-	},
-	{
-		"SlicerConfigName": "printer_name",
-		"PresentationName": "Printer Name",
-		"HelpText": "This is the name of your printer that will be displayed in the choose printer menu.",
-		"DataEditType": "STRING",
-		"ShowAsOverride": false,
-		"DefaultValue": "",
-		"RebuildGCodeOnChange": false
-	},
-	{
-		"SlicerConfigName": "auto_connect",
-		"PresentationName": "Auto Connect",
-		"HelpText": "If set, the printer will automatically attempt to connect when selected.",
-		"DataEditType": "CHECK_BOX",
-		"ShowAsOverride": false,
-		"DefaultValue": "1",
-		"RebuildGCodeOnChange": false
-	},
-	{
-		"SlicerConfigName": "com_port",
-		"PresentationName": "Serial Port",
-		"HelpText": "The serial port to use while connecting to this printer.",
-		"DataEditType": "COM_PORT",
-		"ShowAsOverride": false,
-		"ShowIfSet": "!enable_network_printing",
-		"DefaultValue": "",
-		"RebuildGCodeOnChange": false
-	},
-	{
-		"SlicerConfigName": "vibration_limit",
-		"PresentationName": "Vibration Limit",
-		"HelpText": "This is to help reduce vibrations during printing. If your printer has a resonance frequency that is causing trouble you can set this to try and reduce printing at that frequency.",
-		"DataEditType": "INT",
-		"Units": "Hz",
-		"DefaultValue": "0"
-	},
-	{
-		"SlicerConfigName": "wipe",
-		"PresentationName": "Wipe Before Retract",
-		"HelpText": "The extruder will wipe the nozzle over the last up to 10 mm of tool path after retracting.",
-		"DataEditType": "CHECK_BOX",
-		"ShowIfSet": "!sla_printer",
-		"EnableIfSet": "enable_retractions",
-		"DefaultValue": "0"
-	},
-	{
-		"SlicerConfigName": "wipe_shield_distance",
-		"PresentationName": "Wipe Shield Distance",
-		"HelpText": "Creates a perimeter around the part on which to wipe the other nozzle when printing using dual extrusion. Set to 0 to disable.",
-		"DataEditType": "POSITIVE_DOUBLE",
-		"ShowIfSet": "!sla_printer",
-		"Units": "mm",
-		"DefaultValue": "0"
-	},
-	{
-		"SlicerConfigName": "wipe_tower_size",
-		"PresentationName": "Wipe Tower Size",
-		"HelpText": "The length and width of a tower created at the back left of the print used for wiping the next nozzle when changing between multiple extruders. Set to 0 to disable.",
-		"DataEditType": "POSITIVE_DOUBLE",
-		"Units": "mm",
-		"ShowIfSet": "!sla_printer",
-		"DefaultValue": "0"
-	},
-	{
-		"SlicerConfigName": "driver_type",
-		"PresentationName": "The serial driver to use",
-		"DefaultValue": "RepRap",
-		"HelpText": ""
-	},
-	{
-		"SlicerConfigName": "enable_network_printing",
-		"PresentationName": "Networked Printing",
-		"HelpText": "Sets MatterControl to attempt to connect to a printer over the network. (You must disconnect and reconnect for this to take effect)",
-		"ShowIfSet": "!sla_printer",
-		"DataEditType": "CHECK_BOX",
-		"SetSettingsOnChange": [
-			{
-				"TargetSetting": "driver_type",
-				"OnValue": "TCPIP",
-				"OffValue": "RepRap"
-			}
-		],
-		"DefaultValue": "0",
-		"RebuildGCodeOnChange": false,
-		"ReloadUiWhenChanged": true
-	},
-	{
-		"SlicerConfigName": "enable_sailfish_communication",
-		"PresentationName": "Sailfish Communication",
-		"HelpText": "Sets MatterControl to use s3g communication method. (You must disconnect and reconnect for this to take effect)",
-		"ShowIfSet": "!sla_printer",
-		"DataEditType": "CHECK_BOX",
-		"SetSettingsOnChange": [
-			{
-				"TargetSetting": "driver_type",
-				"OnValue": "X3G",
-				"OffValue": "RepRap"
-			}
-		],
-		"DefaultValue": "0",
-		"RebuildGCodeOnChange": false,
-		"ReloadUiWhenChanged": true
-	},
-	{
-		"SlicerConfigName": "selector_ip_address",
-		"PresentationName": "IP Finder",
-		"HelpText": "List of IP's discovered on the network",
-		"DataEditType": "IP_LIST",
-		"ShowAsOverride": false,
-		"ShowIfSet": "enable_network_printing",
-		"DefaultValue": "Manual",
-		"RebuildGCodeOnChange": false,
-		"ReloadUiWhenChanged": true
-	},
-	{
-		"SlicerConfigName": "ip_address",
-		"PresentationName": "IP Address",
-		"HelpText": "IP Address of printer/printer controller",
-		"DataEditType": "STRING",
-		"ShowAsOverride": false,
-		"ShowIfSet": "enable_network_printing",
-		"EnableIfSet": "selector_ip_address=Manual",
-		"DefaultValue": "127.0.0.1",
-		"RebuildGCodeOnChange": false
-	},
-	{
-		"SlicerConfigName": "ip_port",
-		"PresentationName": "Port",
-		"HelpText": "Port number to be used with IP Address to connect to printer over the network",
-		"DataEditType": "INT",
-		"ShowAsOverride": false,
-		"ShowIfSet": "enable_network_printing",
-		"EnableIfSet": "selector_ip_address=Manual",
-		"DefaultValue": "23",
-		"RebuildGCodeOnChange": false
-	},
-	{
-		"SlicerConfigName": "z_offset",
-		"PresentationName": "Z Offset",
-		"HelpText": "The distance to move the nozzle along the Z axis to ensure that it is the correct distance from the print bed. A positive number will raise the nozzle, and a negative number will lower it.",
-		"DataEditType": "OFFSET",
-		"Units": "mm",
-		"DefaultValue": "0"
-	},
-	{
-		"SlicerConfigName": "feedrate_ratio",
-		"PresentationName": "Feedrate Ratio",
-		"HelpText": "Controls the speed of printer moves",
-		"DataEditType": "POSITIVE_DOUBLE",
-		"DefaultValue": "1",
-		"RebuildGCodeOnChange": false
-	},
-	{
-		"SlicerConfigName": "extrusion_ratio",
-		"PresentationName": "Extrusion Ratio",
-		"HelpText": "Controls the amount of extrusion",
-		"DataEditType": "POSITIVE_DOUBLE",
-		"DefaultValue": "1",
-		"RebuildGCodeOnChange": false
-	},
-	{
-		"SlicerConfigName": "manual_movement_speeds",
-		"PresentationName": "Manual Movement Speeds",
-		"HelpText": "Axis movement speeds",
-		"DataEditType": "STRING",
-		"DefaultValue": "x,3000,y,3000,z,315,e0,150",
-		"RebuildGCodeOnChange": false
-	}
+  {
+    "SlicerConfigName": "avoid_crossing_perimeters",
+    "PresentationName": "Avoid Crossing Perimeters",
+    "HelpText": "Forces the slicer to attempt to avoid having the perimeter line cross over existing perimeter lines. This can help with oozing or strings.",
+    "DataEditType": "CHECK_BOX",
+    "ShowIfSet": "!sla_printer",
+    "DefaultValue": "1"
+  },
+  {
+    "SlicerConfigName": "bed_shape",
+    "PresentationName": "Bed Shape",
+    "HelpText": "The shape of the physical print bed.",
+    "DataEditType": "LIST",
+    "ListValues": "rectangular,circular",
+    "DefaultValue": "rectangular",
+    "RebuildGCodeOnChange": false
+  },
+  {
+    "SlicerConfigName": "bed_size",
+    "PresentationName": "Bed Size",
+    "HelpText": "The X and Y values of the size of the print bed, in millimeters. For printers with a circular bed, these values are the diameters on the X and Y axes.",
+    "DataEditType": "VECTOR2",
+    "Units": "mm",
+    "DefaultValue": "200,200"
+  },
+  {
+    "SlicerConfigName": "bed_temperature",
+    "PresentationName": "Bed Temperature",
+    "HelpText": "The temperature to which the bed will be set for the duration of the print. Set to 0 to disable.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "Units": "°C",
+    "ShowIfSet": "has_heated_bed",
+    "DefaultValue": "70"
+  },
+  {
+    "SlicerConfigName": "bottom_solid_layers",
+    "PresentationName": "Bottom Solid Layers",
+    "HelpText": "The number of layers or the distance in millimeters to solid fill on the bottom surface(s) of the object. Add mm to the end of the number to specify distance in millimeters.",
+    "DataEditType": "INT_OR_MM",
+    "Units": "count or mm",
+    "DefaultValue": "1mm"
+  },
+  {
+    "SlicerConfigName": "layer_to_pause",
+    "PresentationName": "Layer(s) To Pause",
+    "HelpText": "The layer(s) at which the print will pause, allowing for a change in filament. Leave blank to disable. To pause on multiple layers, separate the layer numbers with semicolons. For example: \"16; 37\".",
+    "DataEditType": "STRING",
+    "ShowIfSet": "!sla_printer",
+    "ResetAtEndOfPrint": true,
+    "DefaultValue": ""
+  },
+  {
+    "SlicerConfigName": "bridge_fan_speed",
+    "PresentationName": "Bridging Fan Speed",
+    "HelpText": "The speed at which the layer cooling fan will run when bridging, expressed as a percentage of full power.",
+    "DataEditType": "INT",
+    "Units": "%",
+    "ShowIfSet": "has_fan",
+    "DefaultValue": "100"
+  },
+  {
+    "SlicerConfigName": "bridge_speed",
+    "PresentationName": "Bridges",
+    "HelpText": "The speed at which bridging between walls will print.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "Units": "mm/s",
+    "ShowIfSet": "!sla_printer",
+    "DefaultValue": "20"
+  },
+  {
+    "SlicerConfigName": "build_height",
+    "PresentationName": "Build Height",
+    "HelpText": "The height of the printer's printable volume, in millimeters. Controls the height of the visual print area displayed in 3D View.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "Units": "mm",
+    "DefaultValue": "0",
+    "RebuildGCodeOnChange": false
+  },
+  {
+    "SlicerConfigName": "cancel_gcode",
+    "PresentationName": "Cancel G-Code",
+    "HelpText": "G-Code to run when a print is canceled.",
+    "DataEditType": "MULTI_LINE_TEXT",
+    "ShowIfSet": "!sla_printer",
+    "DefaultValue": "",
+    "RebuildGCodeOnChange": false
+  },
+  {
+    "SlicerConfigName": "complete_objects",
+    "PresentationName": "Complete Individual Objects",
+    "HelpText": "Each individual part is printed to completion then the nozzle is lowered back to the bed and the next part is printed.",
+    "DataEditType": "CHECK_BOX",
+    "ShowIfSet": "!sla_printer",
+    "DefaultValue": "0"
+  },
+  {
+    "SlicerConfigName": "connect_gcode",
+    "PresentationName": "On Connect G-Code",
+    "HelpText": "G-Code to run upon successful connection to a printer. This can be useful to set settings specific to a given printer.",
+    "ShowIfSet": "!sla_printer",
+    "DataEditType": "MULTI_LINE_TEXT",
+    "DefaultValue": ""
+  },
+  {
+    "SlicerConfigName": "cool_extruder_lift",
+    "PresentationName": "Enable Extruder Lift",
+    "HelpText": "Moves the nozzle up and off the part to allow cooling.",
+    "DataEditType": "CHECK_BOX",
+    "ShowIfSet": "!sla_printer",
+    "DefaultValue": "0"
+  },
+  {
+    "SlicerConfigName": "cooling",
+    "PresentationName": "Enable Auto Cooling",
+    "HelpText": "Turns on and off all cooling settings (all settings below this one).",
+    "DataEditType": "CHECK_BOX",
+    "ShowIfSet": "!sla_printer",
+    "DefaultValue": "1"
+  },
+  {
+    "SlicerConfigName": "create_raft",
+    "PresentationName": "Create Raft",
+    "HelpText": "Creates a raft under the printed part. Useful to prevent warping when printing ABS (and other warping-prone plastics) as it helps parts adhere to the bed.",
+    "DataEditType": "CHECK_BOX",
+    "ShowIfSet": "!sla_printer",
+    "DefaultValue": "0",
+    "ReloadUiWhenChanged": true
+  },
+  {
+    "SlicerConfigName": "raft_extra_distance_around_part",
+    "PresentationName": "Expand Distance",
+    "HelpText": "The extra distance the raft will extend around the edge of the part.",
+    "DataEditType": "INT_OR_MM",
+    "Units": "count or mm",
+    "ShowIfSet": "!sla_printer",
+    "EnableIfSet": "create_raft",
+    "DefaultValue": "5"
+  },
+  {
+    "SlicerConfigName": "raft_air_gap",
+    "PresentationName": "Air Gap",
+    "HelpText": "The distance between the top of the raft and the bottom of the model. 0.6 mm is a good starting point for PLA and 0.4 mm is a good starting point for ABS. Lower values give a smoother surface, higher values make the print easier to remove.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "Units": "mm",
+    "ShowIfSet": "!sla_printer",
+    "EnableIfSet": "create_raft",
+    "DefaultValue": ".2"
+  },
+  {
+    "SlicerConfigName": "raft_fan_speed_percent",
+    "PresentationName": "Fan Speed",
+    "HelpText": "The speed at which the cooling fan(s) will run during the printing of the raft, expressed as a percentage of full power.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "Units": "%",
+    "EnableIfSet": "create_raft",
+    "ShowIfSet": "has_fan",
+    "DefaultValue": "100"
+  },
+  {
+    "SlicerConfigName": "raft_print_speed",
+    "PresentationName": "Raft",
+    "HelpText": "The speed at which the layers of the raft (other than the first layer) will print. This can be set explicitly or as a percentage of the Infill speed.",
+    "DataEditType": "DOUBLE_OR_PERCENT",
+    "Units": "mm/s or %",
+    "ShowIfSet": "!sla_printer",
+    "DefaultValue": "100%"
+  },
+  {
+    "SlicerConfigName": "disable_fan_first_layers",
+    "PresentationName": "Disable Fan For The First",
+    "HelpText": "The number of layers for which the layer cooling fan will be forced off at the start of the print.",
+    "DataEditType": "INT",
+    "Units": "layers",
+    "ShowIfSet": "has_fan",
+    "DefaultValue": "1"
+  },
+  {
+    "SlicerConfigName": "end_gcode",
+    "PresentationName": "End G-Code",
+    "HelpText": "G-Code to be run at the end of all automatic output (the very end of the G-Code commands).",
+    "DataEditType": "MULTI_LINE_TEXT",
+    "DefaultValue": "M104 S0 ; turn off temperature\\nG28 X0 ; home X axis\\nM84 ; disable motors"
+  },
+  {
+    "SlicerConfigName": "external_perimeter_speed",
+    "PresentationName": "Outside Perimeter",
+    "HelpText": "The speed at which outside, external, or the otherwise visible perimeters will print.",
+    "DataEditType": "DOUBLE_OR_PERCENT",
+    "ShowIfSet": "!sla_printer",
+    "Units": "mm/s or %",
+    "DefaultValue": "70%"
+  },
+  {
+    "SlicerConfigName": "external_perimeters_first",
+    "PresentationName": "External Perimeters First",
+    "HelpText": "Forces external perimeters to be printed first. By default, they will print last.",
+    "DataEditType": "CHECK_BOX",
+    "ShowIfSet": "!sla_printer",
+    "DefaultValue": "0"
+  },
+  {
+    "SlicerConfigName": "extruder_count",
+    "PresentationName": "Extruder Count",
+    "HelpText": "The number of extruders the printer has.",
+    "DataEditType": "INT",
+    "DefaultValue": "1",
+    "ShowIfSet": "!sla_printer",
+    "ReloadUiWhenChanged": true
+  },
+  {
+    "SlicerConfigName": "extruder_offset",
+    "PresentationName": "Nozzle Offsets",
+    "HelpText": "The offset of each nozzle relative to the first nozzle. Only useful for multiple extruder machines.",
+    "DataEditType": "OFFSET2",
+    "Units": "mm",
+    "ShowIfSet": "!sla_printer",
+    "DefaultValue": "0x0,0x0,0x0,0x0"
+  },
+  {
+    "SlicerConfigName": "baby_step_z_offset",
+    "PresentationName": "Baby Step Offset",
+    "HelpText": "The z offset to apply to improve the first layer adhesion.",
+    "DataEditType": "DOUBLE",
+    "Units": "mm",
+    "DefaultValue": "0",
+    "ShowIfSet": "!sla_printer",
+    "RebuildGCodeOnChange": false
+  },
+  {
+    "SlicerConfigName": "extruders_share_temperature",
+    "PresentationName": "Share Temperature",
+    "HelpText": "Used to specify if more than one extruder share a common heater cartridge.",
+    "DataEditType": "CHECK_BOX",
+    "DefaultValue": "0",
+    "ShowIfSet": "!sla_printer",
+    "ReloadUiWhenChanged": true
+  },
+  {
+    "SlicerConfigName": "heat_extruder_before_homing",
+    "PresentationName": "Heat Before Homing",
+    "HelpText": "Forces the printer to heat the nozzle before homing.",
+    "DataEditType": "CHECK_BOX",
+    "ShowIfSet": "!sla_printer",
+    "DefaultValue": "0"
+  },
+  {
+    "SlicerConfigName": "merge_overlapping_lines",
+    "PresentationName": "Merge Overlapping Lines",
+    "HelpText": "Detect perimeters that cross over themselves and combine them.",
+    "DataEditType": "CHECK_BOX",
+    "ShowIfSet": "!sla_printer",
+    "DefaultValue": "1"
+  },
+  {
+    "SlicerConfigName": "expand_thin_walls",
+    "PresentationName": "Expand Thin Walls",
+    "HelpText": "Detects sections of the model that would be too thin to print and expands them to make them printable.",
+    "DataEditType": "CHECK_BOX",
+    "ShowIfSet": "!sla_printer",
+    "DefaultValue": "1"
+  },
+  {
+    "SlicerConfigName": "extrusion_multiplier",
+    "PresentationName": "Extrusion Multiplier",
+    "HelpText": "All extrusions are multiplied by this value. Increasing it above 1 will increase the amount of filament being extruded (1.1 is a good max value); decreasing it will decrease the amount being extruded (.9 is a good minimum value).",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ShowIfSet": "!sla_printer",
+    "DefaultValue": "1"
+  },
+  {
+    "SlicerConfigName": "extrusion_width",
+    "PresentationName": "Default Extrusion Width",
+    "HelpText": "Leave this as 0 to allow automatic calculation of extrusion width.",
+    "DataEditType": "DOUBLE_OR_PERCENT",
+    "Units": "mm or % leave 0 for auto",
+    "DefaultValue": "0"
+  },
+  {
+    "SlicerConfigName": "fan_always_on",
+    "PresentationName": "Keep Fan Always On",
+    "HelpText": "This will force the fan to remain on throughout the print. In general you should have this off and just enable auto cooling.",
+    "DataEditType": "CHECK_BOX",
+    "ShowIfSet": "has_fan",
+    "DefaultValue": "0"
+  },
+  {
+    "SlicerConfigName": "fan_below_layer_time",
+    "PresentationName": "Enable Fan If Layer Print Time Is Below",
+    "HelpText": "If a layer is estimated to take less than this to print, the fan will be turned on.",
+    "DataEditType": "INT",
+    "Units": "seconds",
+    "ShowIfSet": "has_fan",
+    "DefaultValue": "60"
+  },
+  {
+    "SlicerConfigName": "filament_cost",
+    "PresentationName": "Cost",
+    "HelpText": "The price of one kilogram of filament. Used for estimating the cost of a print in the Layer View.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "Units": "$/kg",
+    "DefaultValue": "0",
+    "RebuildGCodeOnChange": false
+  },
+  {
+    "QuickMenuSettings": [
+      {
+        "MenuName": "PLA",
+        "Value": "1.24"
+      },
+      {
+        "MenuName": "PET",
+        "Value": "1.27"
+      },
+      {
+        "MenuName": "ABS",
+        "Value": "1.04"
+      }
+    ],
+    "SlicerConfigName": "filament_density",
+    "PresentationName": "Density",
+    "HelpText": "Material density. Only used for estimating mass in the Layer View.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "Units": "g/cm³",
+    "DefaultValue": "1.24",
+    "RebuildGCodeOnChange": false
+  },
+  {
+    "SlicerConfigName": "filament_diameter",
+    "PresentationName": "Diameter",
+    "HelpText": "The actual diameter of the filament used for printing.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ShowIfSet": "!sla_printer",
+    "Units": "mm",
+    "DefaultValue": "3"
+  },
+  {
+    "SlicerConfigName": "fill_angle",
+    "PresentationName": "Starting Angle",
+    "HelpText": "The angle of the infill, measured from the X axis. Not used when bridging.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "Units": "°",
+    "DefaultValue": "45"
+  },
+  {
+    "QuickMenuSettings": [
+      {
+        "MenuName": "Light",
+        "Value": "10%"
+      },
+      {
+        "MenuName": "Standard",
+        "Value": "30%"
+      },
+      {
+        "MenuName": "Heavy",
+        "Value": "90%"
+      }
+    ],
+    "SlicerConfigName": "fill_density",
+    "PresentationName": "Fill Density",
+    "HelpText": "The amount of infill material to generate, expressed as a ratio or a percentage.",
+    "DataEditType": "DOUBLE_OR_PERCENT",
+    "DefaultValue": "0.4"
+  },
+  {
+    "SlicerConfigName": "fill_pattern",
+    "PresentationName": "Fill Pattern",
+    "HelpText": "The geometric shape of the support structure for the inside of parts.",
+    "DataEditType": "LIST",
+    "ListValues": "rectilinear,line,grid,concentric,honeycomb,hilbertcurve,achimedeancords,octagramspiral,3dhoneycomb",
+    "DefaultValue": "honeycomb"
+  },
+  {
+    "SlicerConfigName": "fill_thin_gaps",
+    "PresentationName": "Fill Thin Gaps",
+    "HelpText": "Detect gaps between perimeters that are too thin to fill with normal infill and attempt to fill them.",
+    "DataEditType": "CHECK_BOX",
+    "ShowIfSet": "!sla_printer",
+    "DefaultValue": "1"
+  },
+  {
+    "SlicerConfigName": "first_layer_bed_temperature",
+    "PresentationName": "Bed First Layer",
+    "HelpText": "The temperature to set the bed to before printing the first layer. The printer will wait until this temperature has been reached before printing. Set to 0 to eliminate bed temperature commands.",
+    "DataEditType": "DOUBLE",
+    "Units": "°C",
+    "ShowIfSet": "has_heated_bed",
+    "DefaultValue": "75"
+  },
+  {
+    "SlicerConfigName": "first_layer_extrusion_width",
+    "PresentationName": "First Layer",
+    "HelpText": "A modifier of the width of the extrusion for the first layer of the print. A value greater than 100% can help with adhesion to the print bed.",
+    "DataEditType": "DOUBLE_OR_PERCENT",
+    "Units": "mm or %",
+    "ShowIfSet": "!sla_printer",
+    "DefaultValue": "100%"
+  },
+  {
+    "SlicerConfigName": "first_layer_height",
+    "PresentationName": "First Layer Thickness",
+    "HelpText": "The thickness of the first layer. A first layer taller than the default layer thickness can ensure good adhesion to the build plate.",
+    "DataEditType": "DOUBLE_OR_PERCENT",
+    "Units": "mm or %",
+    "DefaultValue": "0.3"
+  },
+  {
+    "SlicerConfigName": "first_layer_speed",
+    "PresentationName": "Initial Layer Speed",
+    "HelpText": "The speed at which the nozzle will move when printing the initial layers. If expressed as a percentage the Infill speed is modified.",
+    "DataEditType": "DOUBLE_OR_PERCENT",
+    "Units": "mm/s or %",
+    "DefaultValue": "30%"
+  },
+  {
+    "SlicerConfigName": "number_of_first_layers",
+    "PresentationName": "Initial Layers",
+    "HelpText": "The number of layers to consider as the beginning of the print. These will print at initial layer speed.",
+    "DataEditType": "INT_OR_MM",
+    "Units": "layers or mm",
+    "ShowIfSet": "sla_printer",
+    "DefaultValue": "1"
+  },
+  {
+    "SlicerConfigName": "recover_first_layer_speed",
+    "PresentationName": "Recover Layer Speed",
+    "HelpText": "The speed at which the nozzle will move when recovering a failed print, for 1 layer.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "Units": "mm/s",
+    "ShowIfSet": "!has_hardware_leveling",
+    "DefaultValue": "10",
+    "RebuildGCodeOnChange": false
+  },
+  {
+    "SlicerConfigName": "recover_is_enabled",
+    "PresentationName": "Enable Recovery",
+    "HelpText": "When this is checked MatterControl will attempt to recover a print in the event of a failure, such as lost connection or lost power.",
+    "DataEditType": "CHECK_BOX",
+    "ShowIfSet": "!has_hardware_leveling",
+    "DefaultValue": "0",
+    "RebuildGCodeOnChange": false
+  },
+  {
+    "SlicerConfigName": "validate_layer_height",
+    "PresentationName": "Validate Layer Height",
+    "HelpText": "Checks before each print that the layer height is less than the nozzle diameter (important for filament adhesion)",
+    "DataEditType": "CHECK_BOX",
+    "Units": "",
+    "ShowAsOverride": true,
+    "DefaultValue": "1",
+    "ShowIfSet": "!sla_printer",
+    "RebuildGCodeOnChange": false
+  },
+  {
+    "SlicerConfigName": "z_homes_to_max",
+    "PresentationName": "Home Z Max",
+    "HelpText": "Indicates that the Z axis homes the hot end away from the bed (z-max homing)",
+    "DataEditType": "CHECK_BOX",
+    "ShowIfSet": "!has_hardware_leveling",
+    "DefaultValue": "0",
+    "ReloadUiWhenChanged": true,
+    "RebuildGCodeOnChange": false
+  },
+  {
+    "SlicerConfigName": "recover_position_before_z_home",
+    "PresentationName": "XY Homing Position",
+    "HelpText": "The X and Y position of the hot end that minimizes the chance of colliding with the parts on the bed.",
+    "DataEditType": "VECTOR2",
+    "Units": "mm",
+    "ShowIfSet": "!has_hardware_leveling&!z_homes_to_max",
+    "DefaultValue": "0,0",
+    "RebuildGCodeOnChange": false
+  },
+  {
+    "SlicerConfigName": "first_layer_temperature",
+    "PresentationName": "Extrude First Layer",
+    "HelpText": "The temperature to which the nozzle will be heated before printing the first layer of a part. The printer will wait until this temperature has been reached before printing.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "Units": "°C",
+    "ShowIfSet": "!sla_printer",
+    "DefaultValue": "205"
+  },
+  {
+    "SlicerConfigName": "auto_release_motors",
+    "PresentationName": "Auto Release Motors",
+    "HelpText": "Turn off motor current at end of print or after cancel print.",
+    "DataEditType": "CHECK_BOX",
+    "ShowIfSet": "!sla_printer",
+    "DefaultValue": "1"
+  },
+  {
+    "SlicerConfigName": "g0",
+    "PresentationName": "Use G0",
+    "HelpText": "Use G0 for moves rather than G1.",
+    "DataEditType": "CHECK_BOX",
+    "ShowIfSet": "!sla_printer",
+    "DefaultValue": "0"
+  },
+  {
+    "SlicerConfigName": "gcode_flavor",
+    "PresentationName": "G-Code Flavor",
+    "HelpText": "The version of G-Code the printer's firmware communicates with. Some firmware use different G and M codes. Setting this ensures that the output G-Code will use the correct commands.",
+    "DataEditType": "LIST",
+    "ListValues": "reprap,teacup,makerbot,sailfish,mach3_ecm,no_extrusion",
+    "DefaultValue": "reprap"
+  },
+  {
+    "SlicerConfigName": "gcode_output_type",
+    "PresentationName": "G-Code Output",
+    "HelpText": "The version of G-Code the printer's firmware communicates with. Some firmware use different G and M codes. Setting this ensures that the output G-Code will use the correct commands.",
+    "DataEditType": "LIST",
+    "ListValues": "REPRAP,ULTIGCODE,BFB,MACH3",
+    "DefaultValue": "REPRAP"
+  },
+  {
+    "SlicerConfigName": "has_fan",
+    "PresentationName": "Has Fan",
+    "HelpText": "The printer has a layer-cooling fan.",
+    "DataEditType": "CHECK_BOX",
+    "ShowIfSet": "!sla_printer",
+    "DefaultValue": "1",
+    "ReloadUiWhenChanged": true
+  },
+  {
+    "SlicerConfigName": "has_z_probe",
+    "PresentationName": "Has Z Probe",
+    "HelpText": "The printer has a z probe for measuring bed level.",
+    "DataEditType": "CHECK_BOX",
+    "ShowAsOverride": true,
+    "ShowIfSet": "!sla_printer",
+    "ResetAtEndOfPrint": false,
+    "DefaultValue": "0",
+    "ReloadUiWhenChanged": true,
+    "RebuildGCodeOnChange": false
+  },
+  {
+    "SlicerConfigName": "has_z_servo",
+    "PresentationName": "Has Z Servo",
+    "HelpText": "The printer has a servo for lowering and raising the z probe.",
+    "DataEditType": "CHECK_BOX",
+    "ShowAsOverride": true,
+    "ShowIfSet": "has_z_probe",
+    "ResetAtEndOfPrint": false,
+    "DefaultValue": "0",
+    "ReloadUiWhenChanged": true,
+    "RebuildGCodeOnChange": false
+  },
+  {
+    "SlicerConfigName": "has_hardware_leveling",
+    "PresentationName": "Has Hardware Leveling",
+    "HelpText": "The printer has its own auto bed leveling probe and procedure which can be called using a G29 command during Start G-Code.",
+    "DataEditType": "CHECK_BOX",
+    "ShowIfSet": "!sla_printer",
+    "DefaultValue": "0",
+    "ReloadUiWhenChanged": true
+  },
+  {
+    "SlicerConfigName": "has_heated_bed",
+    "PresentationName": "Has Heated Bed",
+    "HelpText": "The printer has a heated bed.",
+    "DataEditType": "CHECK_BOX",
+    "ShowIfSet": "!sla_printer",
+    "DefaultValue": "1",
+    "ReloadUiWhenChanged": true
+  },
+  {
+    "SlicerConfigName": "sla_printer",
+    "PresentationName": "Printer is SLA",
+    "HelpText": "Switch the settings interface to one intended for SLA printers.",
+    "DataEditType": "CHECK_BOX",
+    "DefaultValue": "0",
+    "ReloadUiWhenChanged": true,
+    "RebuildGCodeOnChange": false
+  },
+  {
+    "SlicerConfigName": "include_firmware_updater",
+    "PresentationName": "Show Firmware Updater",
+    "HelpText": "This will only work on specific hardware. Do not use unless you are sure your printer controller supports this feature",
+    "DataEditType": "LIST",
+    "ListValues": "None,Simple Arduino",
+    "DefaultValue": "None",
+    "ShowIfSet": "!sla_printer",
+    "ReloadUiWhenChanged": true,
+    "RebuildGCodeOnChange": false
+  },
+  {
+    "SlicerConfigName": "backup_firmware_before_update",
+    "PresentationName": "Backup Firmware Before Update",
+    "HelpText": "When upgrading to new firmware, first save a backup of the current firmware.",
+    "DataEditType": "CHECK_BOX",
+    "DefaultValue": "1",
+    "ShowIfSet": "!sla_printer",
+    "RebuildGCodeOnChange": false
+  },
+  {
+    "SlicerConfigName": "has_power_control",
+    "PresentationName": "Has Power Control",
+    "HelpText": "The printer has the ability to control the power supply. Enable this function to show the ATX Power Control section on the Controls pane.",
+    "DataEditType": "CHECK_BOX",
+    "DefaultValue": "0",
+    "ShowIfSet": "!sla_printer",
+    "ReloadUiWhenChanged": true,
+    "RebuildGCodeOnChange": false
+  },
+  {
+    "SlicerConfigName": "has_sd_card_reader",
+    "PresentationName": "Has SD Card Reader",
+    "HelpText": "The printer has a SD card reader.",
+    "DataEditType": "CHECK_BOX",
+    "Units": "",
+    "DefaultValue": "0",
+    "ShowIfSet": "!sla_printer",
+    "ReloadUiWhenChanged": true,
+    "RebuildGCodeOnChange": false
+  },
+  {
+    "SlicerConfigName": "show_reset_connection",
+    "PresentationName": "Show Reset Connection",
+    "HelpText": "Shows a button at the right side of the Printer Connection Bar used to reset the USB connection to the printer. This can be used on printers that support it as an emergency stop.",
+    "DataEditType": "CHECK_BOX",
+    "ShowIfSet": "!sla_printer",
+    "ReloadUiWhenChanged": true,
+    "DefaultValue": "0"
+  },
+  {
+    "SlicerConfigName": "infill_extrusion_width",
+    "PresentationName": "Infill",
+    "HelpText": "Leave this as 0 to allow automatic calculation of extrusion width.",
+    "DataEditType": "DOUBLE_OR_PERCENT",
+    "Units": "mm or %",
+    "DefaultValue": "0"
+  },
+  {
+    "SlicerConfigName": "infill_overlap_perimeter",
+    "PresentationName": "Infill Overlap",
+    "HelpText": "The amount the infill edge will push into the perimeter. Helps ensure the infill is connected to the edge. This can be expressed as a percentage of the Nozzle Diameter.",
+    "DataEditType": "DOUBLE_OR_PERCENT",
+    "Units": "mm or %",
+    "DefaultValue": "25%",
+    "QuickMenuSettings": [
+      {
+        "MenuName": "Light",
+        "Value": "20%"
+      },
+      {
+        "MenuName": "Standard",
+        "Value": "35%"
+      },
+      {
+        "MenuName": "Heavy",
+        "Value": "75%"
+      }
+    ]
+  },
+  {
+    "SlicerConfigName": "laser_speed_025",
+    "PresentationName": "Speed at 0.025 Height",
+    "HelpText": "The speed to move the laser when the layer height is 0.025mm. Speed will be adjusted linearly at other heights.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "Units": "mm/s",
+    "ShowIfSet": "sla_printer",
+    "DefaultValue": "100"
+  },
+  {
+    "SlicerConfigName": "laser_speed_100",
+    "PresentationName": "Speed at 0.1 Height",
+    "HelpText": "The speed to move the laser when the layer height is 0.1mm. Speed will be adjusted linearly at other heights.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ShowIfSet": "sla_printer",
+    "Units": "mm/s",
+    "DefaultValue": "85"
+  },
+  {
+    "SlicerConfigName": "infill_speed",
+    "PresentationName": "Infill",
+    "HelpText": "The speed at which infill will print.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ShowIfSet": "!sla_printer",
+    "Units": "mm/s",
+    "DefaultValue": "60"
+  },
+  {
+    "SlicerConfigName": "infill_type",
+    "PresentationName": "Infill Type",
+    "HelpText": "The geometric shape of the support structure for the inside of parts.",
+    "DataEditType": "LIST",
+    "ShowIfSet": "!sla_printer",
+    "ListValues": "GRID,TRIANGLES,HEXAGON,LINES,CONCENTRIC",
+    "DefaultValue": "TRIANGLES"
+  },
+  {
+    "SlicerConfigName": "print_leveling_solution",
+    "PresentationName": "Leveling Solution",
+    "HelpText": "The print leveling algorithm to use.",
+    "DataEditType": "LIST",
+    "ListValues": "3 Point Plane,7 Point Disk,13 Point Disk,3x3 Mesh",
+    "ShowAsOverride": true,
+    "ShowIfSet": "!has_hardware_leveling",
+    "DefaultValue": "3 Point Plane",
+    "ReloadUiWhenChanged": true,
+    "RebuildGCodeOnChange": false
+  },
+  {
+    "SlicerConfigName": "print_leveling_required_to_print",
+    "PresentationName": "Require Leveling To Print",
+    "HelpText": "The printer requires print leveling to run correctly.",
+    "DataEditType": "CHECK_BOX",
+    "ShowIfSet": "!has_hardware_leveling",
+    "DefaultValue": "0",
+    "ShowAsOverride": true,
+    "ReloadUiWhenChanged": true,
+    "RebuildGCodeOnChange": false
+  },
+  {
+    "SlicerConfigName": "leveling_manual_positions",
+    "PresentationName": "Leveling Positions",
+    "HelpText": "If set, these positions will be used when running the leveling solution. Leave empty for defaults. Data Format:'X1,Y1:...:Xn,Yn'",
+    "DataEditType": "STRING",
+    "Units": "empty for default",
+    "ShowAsOverride": true,
+    "ShowIfSet": "!has_hardware_leveling&print_leveling_solution=3 Point Plane|print_leveling_solution=3x3 Mesh",
+    "ResetAtEndOfPrint": false,
+    "DefaultValue": "",
+    "RebuildGCodeOnChange": false
+  },
+  {
+    "SlicerConfigName": "filament_runout_sensor",
+    "PresentationName": "Has Filament Runout Sensor",
+    "HelpText": "Specifies that the firmware has support for ros_0 endstop reporting on M119. TRIGGERED state defines filament has runout. If runout is detected the printers pause G-Code is run.",
+    "DataEditType": "CHECK_BOX",
+    "ShowAsOverride": true,
+    "ShowIfSet": "!sla_printer",
+    "ResetAtEndOfPrint": false,
+    "DefaultValue": "0",
+    "RebuildGCodeOnChange": false
+  },
+  {
+    "SlicerConfigName": "print_leveling_probe_start",
+    "PresentationName": "Start Height",
+    "HelpText": "The starting height (z) of the print head before probing each print level position.",
+    "DataEditType": "DOUBLE",
+    "Units": "mm",
+    "ShowIfSet": "!has_hardware_leveling",
+    "DefaultValue": "10",
+    "RebuildGCodeOnChange": false
+  },
+  {
+    "SlicerConfigName": "z_probe_z_offset",
+    "PresentationName": "Z Offset",
+    "HelpText": "The distance the z probe is from the extruder in z. For manual probing, this is thickness of the paper (or other calibration device).",
+    "DataEditType": "DOUBLE",
+    "Units": "mm",
+    "ShowIfSet": "!has_hardware_leveling",
+    "DefaultValue": ".1",
+    "RebuildGCodeOnChange": false
+  },
+  {
+    "SlicerConfigName": "use_z_probe",
+    "PresentationName": "Use Automatic Z Probe",
+    "HelpText": "Enable this if your printer has hardware support for G30 (automatic bed probing) and you want to use it rather than manually measuring the probe positions.",
+    "DataEditType": "CHECK_BOX",
+    "ShowAsOverride": true,
+    "ShowIfSet": "!has_hardware_leveling&has_z_probe",
+    "ResetAtEndOfPrint": false,
+    "RebuildGCodeOnChange": false,
+    "ReloadUiWhenChanged": true,
+    "DefaultValue": "0"
+  },
+  {
+    "SlicerConfigName": "z_probe_xy_offset",
+    "PresentationName": "XY Offset",
+    "HelpText": "The distance the z probe is from the extruder in x and y.",
+    "DataEditType": "VECTOR2",
+    "Units": "mm",
+    "ShowAsOverride": true,
+    "ShowIfSet": "!has_hardware_leveling&has_z_probe&use_z_probe",
+    "ResetAtEndOfPrint": false,
+    "RebuildGCodeOnChange": false,
+    "DefaultValue": "0,0"
+  },
+  {
+    "SlicerConfigName": "z_probe_samples",
+    "PresentationName": "Number of Samples",
+    "HelpText": "The number of times to sample each probe position (results will be averaged).",
+    "DataEditType": "INT",
+    "Units": "",
+    "ShowAsOverride": true,
+    "ShowIfSet": "!has_hardware_leveling&has_z_probe&use_z_probe",
+    "ResetAtEndOfPrint": false,
+    "RebuildGCodeOnChange": false,
+    "DefaultValue": "1"
+  },
+  {
+    "SlicerConfigName": "z_servo_depolyed_angle",
+    "PresentationName": "Lower / Deploy",
+    "HelpText": "This is the angle that lowers or deploys the z probe.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "Units": "°",
+    "ShowAsOverride": true,
+    "ShowIfSet": "!has_hardware_leveling&has_z_probe&use_z_probe&has_z_servo",
+    "ResetAtEndOfPrint": false,
+    "RebuildGCodeOnChange": false,
+    "DefaultValue": "0"
+  },
+  {
+    "SlicerConfigName": "z_servo_retracted_angle",
+    "PresentationName": "Raise / Stow",
+    "HelpText": "This is the angle that raises or stows the z probe.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "Units": "°",
+    "ShowAsOverride": true,
+    "ShowIfSet": "!has_hardware_leveling&has_z_probe&use_z_probe&has_z_servo",
+    "ResetAtEndOfPrint": false,
+    "RebuildGCodeOnChange": false,
+    "DefaultValue": "0"
+  },
+  {
+    "SlicerConfigName": "layer_gcode",
+    "PresentationName": "Layer Change G-Code",
+    "HelpText": "G-Code to be run after the change in Z height for the next layer.",
+    "DataEditType": "MULTI_LINE_TEXT",
+    "DefaultValue": "; LAYER:[layer_num]"
+  },
+  {
+    "QuickMenuSettings": [
+      {
+        "MenuName": "Fine",
+        "Value": "0.1"
+      },
+      {
+        "MenuName": "Standard",
+        "Value": "0.2"
+      },
+      {
+        "MenuName": "Coarse",
+        "Value": "0.3"
+      }
+    ],
+    "SlicerConfigName": "layer_height",
+    "PresentationName": "Layer Thickness",
+    "HelpText": "The thickness of each layer of the print, except the first layer. A smaller number will create more layers and more vertical accuracy but also a slower print.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "Units": "mm",
+    "DefaultValue": "0.4"
+  },
+  {
+    "QuickMenuSettings": [
+      {
+        "MenuName": "Minimum",
+        "Value": "0.3"
+      },
+      {
+        "MenuName": "Standard",
+        "Value": "0.6"
+      },
+      {
+        "MenuName": "Full",
+        "Value": "1"
+      }
+    ],
+    "SetSettingsOnChange": [
+      {
+        "TargetSetting": "bottom_solid_layers",
+        "Value": "[current_value]"
+      },
+      {
+        "TargetSetting": "top_solid_layers",
+        "Value": "[current_value]"
+      },
+      {
+        "TargetSetting": "perimeters",
+        "Value": "[current_value]"
+      }
+    ],
+    "SlicerConfigName": "solid_shell",
+    "PresentationName": "Width",
+    "HelpText": "Sets the size of the outer solid surface (perimeter) for the entire print.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "Units": "mm",
+    "DefaultValue": "0"
+  },
+  {
+    "SlicerConfigName": "max_fan_speed",
+    "PresentationName": "Maximum Fan Speed",
+    "HelpText": "The maximum speed at which the layer cooling fan will run, expressed as a percentage of full power.",
+    "DataEditType": "INT",
+    "Units": "%",
+    "ShowIfSet": "has_fan",
+    "DefaultValue": "100"
+  },
+  {
+    "SlicerConfigName": "min_extrusion_before_retract",
+    "PresentationName": "Minimum Extrusion Requiring Retraction",
+    "HelpText": "The minimum length of filament that must be extruded before a retraction can occur.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "Units": "mm",
+    "ShowIfSet": "!sla_printer",
+    "EnableIfSet": "enable_retractions",
+    "ShowIfSet": "!sla_printer",
+    "DefaultValue": ".1"
+  },
+  {
+    "SlicerConfigName": "min_fan_speed",
+    "PresentationName": "Minimum Fan Speed",
+    "HelpText": "The minimum speed at which the layer cooling fan will run, expressed as a percentage of full power.",
+    "DataEditType": "INT",
+    "Units": "%",
+    "ShowIfSet": "has_fan",
+    "DefaultValue": "35"
+  },
+  {
+    "SlicerConfigName": "min_print_speed",
+    "PresentationName": "Minimum Print Speed",
+    "HelpText": "The minimum speed to which the printer will reduce to in order to attempt to make the layer print time long enough to satisfy the minimum layer time.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "Units": "mm/s",
+    "ShowIfSet": "!sla_printer",
+    "DefaultValue": "10"
+  },
+  {
+    "SlicerConfigName": "min_skirt_length",
+    "PresentationName": "Minimum Extrusion Length",
+    "HelpText": "The minimum length of filament to use printing the skirt loops. Enough skirt loops will be drawn to use this amount of filament, overriding the value set in Loops if the value in Loops will produce a skirt shorter than this value.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ShowIfSet": "!sla_printer",
+    "Units": "mm",
+    "DefaultValue": "0"
+  },
+  {
+    "SlicerConfigName": "notes",
+    "PresentationName": "notes",
+    "HelpText": "These notes will be added as comments in the header of the output G-Code.",
+    "DataEditType": "MULTI_LINE_TEXT",
+    "DefaultValue": ""
+  },
+  {
+    "SlicerConfigName": "nozzle_diameter",
+    "PresentationName": "Nozzle Diameter",
+    "HelpText": "The diameter of the extruder's nozzle.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "Units": "mm",
+    "DefaultValue": "0.5"
+  },
+  {
+    "SlicerConfigName": "ooze_prevention",
+    "PresentationName": "Enable",
+    "HelpText": "This will lower the temperature of the non-printing nozzle to help prevent oozing.",
+    "DataEditType": "CHECK_BOX",
+    "DefaultValue": "0"
+  },
+  {
+    "SlicerConfigName": "overhangs",
+    "PresentationName": "Optimize Overhangs",
+    "HelpText": "Experimental feature that attempts to improve overhangs using the fan and bridge settings.",
+    "DataEditType": "CHECK_BOX",
+    "DefaultValue": "1"
+  },
+  {
+    "SlicerConfigName": "calibration_files",
+    "PresentationName": "Calibration Files",
+    "HelpText": "Sets the models that will be added to the queue when a new printer is created.",
+    "DataEditType": "STRING",
+    "DefaultValue": "Calibration - Box.stl"
+  },
+  {
+    "SlicerConfigName": "output_only_first_layer",
+    "PresentationName": "First Layer Only",
+    "HelpText": "Output only the first layer of the print. Especially useful for outputting gcode data for applications like engraving or cutting.",
+    "DataEditType": "CHECK_BOX",
+    "ShowIfSet": "!sla_printer",
+    "DefaultValue": "0"
+  },
+  {
+    "SlicerConfigName": "pause_gcode",
+    "PresentationName": "Pause G-Code",
+    "HelpText": "G-Code to run when the printer is paused.",
+    "DataEditType": "MULTI_LINE_TEXT",
+    "ShowIfSet": "!sla_printer",
+    "DefaultValue": "",
+    "RebuildGCodeOnChange": false
+  },
+  {
+    "SlicerConfigName": "perimeter_extrusion_width",
+    "PresentationName": "Perimeters",
+    "HelpText": "Leave this as 0 to allow automatic calculation of extrusion width.",
+    "DataEditType": "DOUBLE_OR_PERCENT",
+    "Units": "mm or %",
+    "DefaultValue": "0"
+  },
+  {
+    "SlicerConfigName": "external_perimeter_extrusion_width",
+    "PresentationName": "Outside Perimeters",
+    "HelpText": "A modifier of the width of the extrusion when printing outside perimeters. Can be useful to fine-adjust actual print size when objects print larger or smaller than specified in the digital model.",
+    "DataEditType": "DOUBLE_OR_PERCENT",
+    "Units": "mm or %",
+    "ShowIfSet": "!sla_printer",
+    "DefaultValue": "100%"
+  },
+  {
+    "SlicerConfigName": "perimeter_speed",
+    "PresentationName": "Inside Perimeters",
+    "HelpText": "The speed at which inside perimeters will print.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ShowIfSet": "!sla_printer",
+    "Units": "mm/s",
+    "DefaultValue": "30"
+  },
+  {
+    "SlicerConfigName": "perimeter_start_end_overlap",
+    "PresentationName": "Start End Overlap",
+    "HelpText": "The distance that a perimeter will overlap itself when it completes its loop, expressed as a percentage of the Nozzle Diameter.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "Units": "%",
+    "DefaultValue": "90",
+    "QuickMenuSettings": [
+      {
+        "MenuName": "Light",
+        "Value": "20"
+      },
+      {
+        "MenuName": "Standard",
+        "Value": "80"
+      },
+      {
+        "MenuName": "Heavy",
+        "Value": "100"
+      }
+    ]
+  },
+  {
+    "SlicerConfigName": "perimeters",
+    "PresentationName": "Perimeters",
+    "HelpText": "The number, or total width, of external shells to create. Add mm to the end of the number to specify width in millimeters.",
+    "DataEditType": "INT_OR_MM",
+    "Units": "count or mm",
+    "DefaultValue": "3"
+  },
+  {
+    "SlicerConfigName": "post_process",
+    "PresentationName": "Post-Processing Scripts",
+    "HelpText": "You can include additional programs to process the G-Code after slicer is finished. The complete path of the program to run should be included here.",
+    "DataEditType": "MULTI_LINE_TEXT",
+    "DefaultValue": ""
+  },
+  {
+    "SlicerConfigName": "print_center",
+    "PresentationName": "Print Center",
+    "HelpText": "The position (X and Y coordinates) of the center of the print bed, in millimeters. Normally this is 1/2 the bed size for Cartesian printers and 0, 0 for Delta printers.",
+    "DataEditType": "VECTOR2",
+    "Units": "mm",
+    "DefaultValue": "100,100"
+  },
+  {
+    "SlicerConfigName": "raft_layers",
+    "PresentationName": "Raft Layers",
+    "HelpText": "Number of layers to print before printing any parts.",
+    "DataEditType": "INT",
+    "Units": "layers",
+    "DefaultValue": "0"
+  },
+  {
+    "SlicerConfigName": "randomize_start",
+    "PresentationName": "Randomize Starting Points",
+    "HelpText": "Start each new layer from a different vertex to reduce seams.",
+    "DataEditType": "CHECK_BOX",
+    "DefaultValue": "0"
+  },
+  {
+    "SlicerConfigName": "resume_gcode",
+    "PresentationName": "Resume G-Code",
+    "HelpText": "G-Code to be run when the print resumes after a pause.",
+    "DataEditType": "MULTI_LINE_TEXT",
+    "ShowIfSet": "!sla_printer",
+    "DefaultValue": "",
+    "RebuildGCodeOnChange": false
+  },
+  {
+    "SlicerConfigName": "retract_before_travel",
+    "PresentationName": "Minimum Travel Requiring Retraction",
+    "HelpText": "The minimum distance of a non-print move which will trigger a retraction.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "Units": "mm",
+    "ShowIfSet": "!sla_printer",
+    "EnableIfSet": "enable_retractions",
+    "DefaultValue": "20"
+  },
+  {
+    "SlicerConfigName": "enable_retractions",
+    "PresentationName": "Enable Retractions",
+    "HelpText": "Turn retractions on and off.",
+    "DataEditType": "CHECK_BOX",
+    "ShowIfSet": "!sla_printer",
+    "DefaultValue": "1",
+    "ReloadUiWhenChanged": true
+  },
+  {
+    "SlicerConfigName": "retract_length",
+    "PresentationName": "Retract Length",
+    "HelpText": "The distance filament will reverse before each qualifying non-print move",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "Units": "mm",
+    "DefaultValue": "1",
+    "ShowIfSet": "!sla_printer",
+    "EnableIfSet": "enable_retractions"
+  },
+  {
+    "SlicerConfigName": "retract_length_tool_change",
+    "PresentationName": "Length on Tool Change",
+    "HelpText": "When using multiple extruders, the distance filament will reverse before changing to a different extruder.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ShowIfSet": "!sla_printer",
+    "Units": "mm",
+    "DefaultValue": "10"
+  },
+  {
+    "SlicerConfigName": "retract_when_changing_islands",
+    "PresentationName": "Retract When Changing Islands",
+    "HelpText": "Force a retraction when moving between islands (distinct parts on the layer).",
+    "DataEditType": "CHECK_BOX",
+    "ShowIfSet": "!sla_printer",
+    "EnableIfSet": "enable_retractions",
+    "DefaultValue": "1"
+  },
+  {
+    "SlicerConfigName": "retract_lift",
+    "PresentationName": "Z Lift",
+    "HelpText": "The distance the nozzle will lift after each retraction.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "Units": "mm",
+    "ShowIfSet": "!sla_printer",
+    "EnableIfSet": "enable_retractions",
+    "DefaultValue": "0"
+  },
+  {
+    "SlicerConfigName": "retract_restart_extra_toolchange",
+    "PresentationName": "Extra Length After Tool Change",
+    "HelpText": "Length of extra filament to extrude after a complete tool change (in addition to the re-extrusion of the tool change retraction distance).",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ShowIfSet": "!sla_printer",
+    "Units": "mm zero to disable",
+    "DefaultValue": "0"
+  },
+  {
+    "SlicerConfigName": "reset_long_extrusion",
+    "PresentationName": "Reset Long Extrusion",
+    "HelpText": "If the extruder has been running for a long time, it may be reporting values that are too large, this will periodically reset it.",
+    "DataEditType": "CHECK_BOX",
+    "ShowIfSet": "!sla_printer",
+    "DefaultValue": "1"
+  },
+  {
+    "SlicerConfigName": "send_with_checksum",
+    "PresentationName": "Send With Checksum",
+    "HelpText": "Calculate and transmit a standard rep-rap checksum for all commands.",
+    "DataEditType": "CHECK_BOX",
+    "ShowIfSet": "!sla_printer",
+    "DefaultValue": "1"
+  },
+  {
+    "SlicerConfigName": "retract_restart_extra",
+    "PresentationName": "Extra Length On Restart",
+    "HelpText": "Length of filament to extrude after a complete retraction (in addition to the re-extrusion of the Length on Move distance).",
+    "DataEditType": "DOUBLE",
+    "Units": "mm",
+    "ShowIfSet": "!sla_printer",
+    "EnableIfSet": "enable_retractions",
+    "DefaultValue": "0"
+  },
+  {
+    "SlicerConfigName": "retract_restart_extra_time_to_apply",
+    "PresentationName": "Time For Extra Length",
+    "HelpText": "The time over which to increase the Extra Length On Restart to its maximum value. Below this time only a portion of the extra length will be applied. Leave 0 to apply the entire amount all the time.",
+    "DataEditType": "DOUBLE",
+    "Units": "s",
+    "ShowIfSet": "!sla_printer",
+    "EnableIfSet": "enable_retractions",
+    "DefaultValue": "0"
+  },
+  {
+    "SlicerConfigName": "retract_speed",
+    "PresentationName": "Speed",
+    "HelpText": "The speed at which filament will retract and re-extrude.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "Units": "mm/s",
+    "ShowIfSet": "!sla_printer",
+    "EnableIfSet": "enable_retractions",
+    "DefaultValue": "30"
+  },
+  {
+    "SlicerConfigName": "repair_outlines_extensive_stitching",
+    "PresentationName": "Connect Bad Edges",
+    "HelpText": "Try to connect mesh edges when the actual mesh data is not all the way connected.",
+    "DataEditType": "CHECK_BOX",
+    "DefaultValue": "0"
+  },
+  {
+    "SlicerConfigName": "repair_outlines_keep_open",
+    "PresentationName": "Close Polygons",
+    "HelpText": "Sometime a mesh will not have closed a perimeter. When this is checked these non-closed perimeters while be closed.",
+    "DataEditType": "CHECK_BOX",
+    "DefaultValue": "0"
+  },
+  {
+    "SlicerConfigName": "resolution",
+    "PresentationName": "Resolution",
+    "HelpText": "The minimum feature size to consider from the model. Leave at 0 to use all the model detail.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "Units": "mm",
+    "DefaultValue": "0"
+  },
+  {
+    "QuickMenuSettings": [
+      {
+        "MenuName": "Touching",
+        "Value": "0"
+      },
+      {
+        "MenuName": "Standard",
+        "Value": "3"
+      },
+      {
+        "MenuName": "Far",
+        "Value": "10"
+      }
+    ],
+    "SlicerConfigName": "skirt_distance",
+    "PresentationName": "Distance From Object",
+    "HelpText": "The distance from the model at which the first skirt loop is drawn. Make this 0 to create an anchor for the part to the bed, also known as a brim.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ShowIfSet": "!sla_printer",
+    "Units": "mm",
+    "DefaultValue": "6"
+  },
+  {
+    "SlicerConfigName": "skirt_height",
+    "PresentationName": "Skirt Height",
+    "HelpText": "The number of layers to draw the skirt.",
+    "DataEditType": "INT",
+    "Units": "layers",
+    "DefaultValue": "1"
+  },
+  {
+    "SlicerConfigName": "skirts",
+    "PresentationName": "Distance or Loops",
+    "HelpText": "The number of loops to draw around all the parts on the bed before starting on the parts. Used mostly to prime the nozzle so the flow is even when the actual print begins.",
+    "DataEditType": "INT_OR_MM",
+    "ShowIfSet": "!sla_printer",
+    "Units": "count or mm",
+    "DefaultValue": "1"
+  },
+  {
+    "SlicerConfigName": "brims",
+    "PresentationName": "Distance or Loops",
+    "HelpText": "The number of loops to draw around parts. Used to provide additional bed adhesion",
+    "DataEditType": "INT_OR_MM",
+    "Units": "count or mm",
+    "DefaultValue": "0"
+  },
+  {
+    "SlicerConfigName": "slowdown_below_layer_time",
+    "PresentationName": "Slow Down If Layer Print Time Is Below",
+    "HelpText": "The minimum amount of time a layer must take to print. If a layer will take less than this amount of time, the movement speed is reduced so the layer print time will match this value, down to the minimum print speed at the slowest.",
+    "DataEditType": "INT",
+    "Units": "seconds",
+    "ShowIfSet": "!sla_printer",
+    "DefaultValue": "30"
+  },
+  {
+    "SlicerConfigName": "small_perimeter_speed",
+    "PresentationName": "Small Perimeters",
+    "HelpText": "Used for small perimeters (usually holes). This can be set explicitly or as a percentage of the Perimeters' speed.",
+    "DataEditType": "DOUBLE_OR_PERCENT",
+    "Units": "mm/s or %",
+    "DefaultValue": "30"
+  },
+  {
+    "SlicerConfigName": "solid_fill_pattern",
+    "PresentationName": "Top/Bottom Fill Pattern",
+    "HelpText": "The pattern used on the bottom and top layers of the print.",
+    "DataEditType": "LIST",
+    "ListValues": "rectilinear,concentric,hilbertcurve,achimedeancords,octagramspiral",
+    "DefaultValue": "rectilinear"
+  },
+  {
+    "SlicerConfigName": "solid_infill_extrusion_width",
+    "PresentationName": "Solid Infill",
+    "HelpText": "Leave this as 0 to allow automatic calculation of extrusion width.",
+    "DataEditType": "DOUBLE_OR_PERCENT",
+    "Units": "mm or %",
+    "DefaultValue": "0"
+  },
+  {
+    "SlicerConfigName": "solid_infill_speed",
+    "PresentationName": "Solid Infill",
+    "HelpText": "The speed to print infill when completely solid. This can be set explicitly or as a percentage of the Infill speed.",
+    "DataEditType": "DOUBLE_OR_PERCENT",
+    "Units": "mm/s or %",
+    "DefaultValue": "60"
+  },
+  {
+    "SlicerConfigName": "spiral_vase",
+    "PresentationName": "Spiral Vase",
+    "HelpText": "Forces the print to have only one extrusion and gradually increase the Z height during the print. Only one part will print at a time with this feature.",
+    "DataEditType": "CHECK_BOX",
+    "ShowIfSet": "!sla_printer",
+    "ResetAtEndOfPrint": true,
+    "DefaultValue": "0"
+  },
+  {
+    "SlicerConfigName": "standby_temperature_delta",
+    "PresentationName": "Temp Lower Amount",
+    "HelpText": "The number of degrees Centigrade to lower the temperature of a nozzle while it is not active.",
+    "DataEditType": "DOUBLE",
+    "Units": "°C",
+    "DefaultValue": "-5"
+  },
+  {
+    "SlicerConfigName": "start_gcode",
+    "PresentationName": "Start G-Code",
+    "HelpText": "G-Code to be run immediately following the temperature setting commands. Including commands to set temperature in this section will cause them not be generated outside of this section. Will accept Custom G-Code variables.",
+    "DataEditType": "MULTI_LINE_TEXT",
+    "DefaultValue": "G28 ; home all axes\\nG1 Z5 F5000 ; lift nozzle"
+  },
+  {
+    "SlicerConfigName": "write_regex",
+    "PresentationName": "Write Filter",
+    "HelpText": "This is a set of regular expressions to apply to lines prior to sending to a printer. They will be applied in the order listed before sending. To return more than one instruction separate them with comma.",
+    "DataEditType": "MULTI_LINE_TEXT",
+    "Units": "",
+    "ShowAsOverride": true,
+    "ShowIfSet": null,
+    "ResetAtEndOfPrint": false,
+    "DefaultValue": ""
+  },
+  {
+    "SlicerConfigName": "read_regex",
+    "PresentationName": "Read Filter",
+    "HelpText": "This is a set of regular expressions to apply to lines after they are received from the printer. They will be applied in order to each line received.",
+    "DataEditType": "MULTI_LINE_TEXT",
+    "Units": "",
+    "ShowAsOverride": true,
+    "ShowIfSet": null,
+    "ResetAtEndOfPrint": false,
+    "DefaultValue": ""
+  },
+  {
+    "SlicerConfigName": "start_perimeters_at_concave_points",
+    "PresentationName": "Start At Concave Points",
+    "HelpText": "Make sure the first point on a perimeter is a concave point.",
+    "DataEditType": "CHECK_BOX",
+    "DefaultValue": "0"
+  },
+  {
+    "SlicerConfigName": "start_perimeters_at_non_overhang",
+    "PresentationName": "Start At Non Overhang",
+    "HelpText": "Make sure the first point on a perimeter is not an overhang.",
+    "DataEditType": "CHECK_BOX",
+    "DefaultValue": "0"
+  },
+  {
+    "SlicerConfigName": "support_air_gap",
+    "PresentationName": "Air Gap",
+    "HelpText": "The distance between the top of the support and the bottom of the model. A good value depends on the type of material. For ABS and PLA a value between 0.4 and 0.6 works well, respectively.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ShowIfSet": "!sla_printer",
+    "Units": "mm",
+    "DefaultValue": ".3"
+  },
+  {
+    "QuickMenuSettings": [
+      {
+        "MenuName": "Little",
+        "Value": "10"
+      },
+      {
+        "MenuName": "Standard",
+        "Value": "50"
+      },
+      {
+        "MenuName": "Lots",
+        "Value": "90"
+      }
+    ],
+    "SlicerConfigName": "support_material_percent",
+    "PresentationName": "Support Percent",
+    "HelpText": "The percent of the extrusion width that can be overlapped and still generate.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "EnableIfSet": "support_material",
+    "ShowIfSet": "!sla_printer",
+    "Units": "%",
+    "DefaultValue": "50"
+  },
+  {
+    "SlicerConfigName": "support_material_infill_angle",
+    "PresentationName": "Infill Angle",
+    "HelpText": "The angle at which the support material lines will be drawn.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ShowIfSet": "!sla_printer",
+    "Units": "°",
+    "DefaultValue": "45"
+  },
+  {
+    "SlicerConfigName": "support_material_create_internal_support",
+    "PresentationName": "Support Everywhere",
+    "HelpText": "Generates support material starting on top of internal surfaces. If unchecked support will only generate starting on the bed.",
+    "EnableIfSet": "support_material",
+    "ShowIfSet": "!sla_printer",
+    "DataEditType": "CHECK_BOX",
+    "DefaultValue": "1"
+  },
+  {
+    "SlicerConfigName": "support_material_create_perimeter",
+    "PresentationName": "Create Perimeter",
+    "HelpText": "Generates an outline around the support material to improve strength and hold up interface layers.",
+    "ShowIfSet": "!sla_printer",
+    "DataEditType": "CHECK_BOX",
+    "DefaultValue": "1"
+  },
+  {
+    "SlicerConfigName": "support_material_extruder",
+    "PresentationName": "Support Material Extruder",
+    "ShowIfSet": "!sla_printer",
+    "HelpText": "The index of the extruder to use for printing support material. Applicable only when Extruder Count is set to a value more than 1.",
+    "DataEditType": "INT",
+    "DefaultValue": "1"
+  },
+  {
+    "SlicerConfigName": "raft_extruder",
+    "PresentationName": "Raft Extruder",
+    "HelpText": "The index of the extruder to use to print the raft. Set to 0 to use the support extruder index.",
+    "ShowIfSet": "!sla_printer",
+    "EnableIfSet": "create_raft",
+    "DataEditType": "INT",
+    "DefaultValue": "0"
+  },
+  {
+    "SlicerConfigName": "support_material_interface_extruder",
+    "PresentationName": "Support Interface Extruder",
+    "HelpText": "The index of the extruder to use for support material interface layer(s).",
+    "ShowIfSet": "!sla_printer",
+    "DataEditType": "INT",
+    "DefaultValue": "1"
+  },
+  {
+    "SlicerConfigName": "support_material_interface_layers",
+    "PresentationName": "Interface Layers",
+    "HelpText": "The number of layers or the distance to print solid material between the supports and the part. Add mm to the end of the number to specify distance.",
+    "DataEditType": "INT_OR_MM",
+    "ShowIfSet": "!sla_printer",
+    "Units": "layers or mm",
+    "DefaultValue": ".9mm"
+  },
+  {
+    "SlicerConfigName": "support_material_spacing",
+    "PresentationName": "Pattern Spacing",
+    "HelpText": "The distance between support material lines.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "Units": "mm",
+    "ShowIfSet": "!sla_printer",
+    "DefaultValue": "2.5"
+  },
+  {
+    "SlicerConfigName": "support_material_speed",
+    "PresentationName": "Support Material",
+    "HelpText": "The speed at which support material structures will print.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ShowIfSet": "!sla_printer",
+    "Units": "mm/s",
+    "DefaultValue": "60"
+  },
+  {
+    "SlicerConfigName": "support_material_xy_distance",
+    "PresentationName": "X and Y Distance",
+    "HelpText": "The distance the support material will be from the object in the X and Y directions.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ShowIfSet": "!sla_printer",
+    "Units": "mm",
+    "DefaultValue": "0.7"
+  },
+  {
+    "SlicerConfigName": "support_material",
+    "PresentationName": "Generate Support Material",
+    "HelpText": "Generates support material under areas of the part which may be too steep to support themselves.",
+    "DataEditType": "CHECK_BOX",
+    "ShowIfSet": "!sla_printer",
+    "ReloadUiWhenChanged": true,
+    "DefaultValue": "0"
+  },
+  {
+    "SlicerConfigName": "support_type",
+    "PresentationName": "Support Type",
+    "HelpText": "The pattern to draw for the generation of support material.",
+    "DataEditType": "LIST",
+    "ShowIfSet": "!sla_printer",
+    "ListValues": "GRID,LINES",
+    "DefaultValue": "LINES"
+  },
+  {
+    "SlicerConfigName": "temperature",
+    "PresentationName": "Extruder Temperature",
+    "HelpText": "The target temperature the extruder will attempt to reach during the print.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "Units": "°C",
+    "ShowIfSet": "!sla_printer",
+    "DefaultValue": "200"
+  },
+  {
+    "SlicerConfigName": "temperature1",
+    "PresentationName": "Extruder 2 Temperature",
+    "HelpText": "The target temperature the extruder will attempt to reach during the print.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "Units": "°C",
+    "ShowIfSet": "!sla_printer",
+    "DefaultValue": "200"
+  },
+  {
+    "SlicerConfigName": "temperature2",
+    "PresentationName": "Extruder 3 Temperature",
+    "HelpText": "The target temperature the extruder will attempt to reach during the print.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "Units": "°C",
+    "ShowIfSet": "!sla_printer",
+    "DefaultValue": "200"
+  },
+  {
+    "SlicerConfigName": "temperature3",
+    "PresentationName": "Extruder 4 Temperature",
+    "HelpText": "The target temperature the extruder will attempt to reach during the print.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "Units": "°C",
+    "ShowIfSet": "!sla_printer",
+    "DefaultValue": "200"
+  },
+  {
+    "SlicerConfigName": "extruder_wipe_temperature",
+    "PresentationName": "Extruder Wipe Temperature",
+    "HelpText": "The temperature at which the extruder will wipe the nozzle, as specified by Custom G-Code.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ShowIfSet": "!sla_printer",
+    "Units": "°C",
+    "DefaultValue": "0"
+  },
+  {
+    "SlicerConfigName": "bed_remove_part_temperature",
+    "PresentationName": "Bed Remove Part Temperature",
+    "HelpText": "The temperature to which the bed will heat (or cool) in order to remove the part, as specified in Custom G-Code.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "Units": "°C",
+    "ShowIfSet": "has_heated_bed",
+    "DefaultValue": "0"
+  },
+  {
+    "SlicerConfigName": "thin_walls",
+    "PresentationName": "Thin Walls",
+    "HelpText": "Detect when walls are too close together and need to be extruded as just one wall.",
+    "DataEditType": "CHECK_BOX",
+    "DefaultValue": "1"
+  },
+  {
+    "SlicerConfigName": "threads",
+    "PresentationName": "Threads",
+    "HelpText": "The number of CPU cores to use while doing slicing. Increasing this can slow down your machine.",
+    "DataEditType": "INT",
+    "DefaultValue": "2",
+    "RebuildGCodeOnChange": false
+  },
+  {
+    "SlicerConfigName": "toolchange_gcode",
+    "PresentationName": "After Tool Change G-Code",
+    "HelpText": "G-Code to be run after every tool change.",
+    "ShowIfSet": "!sla_printer",
+    "DataEditType": "MULTI_LINE_TEXT",
+    "DefaultValue": ""
+  },
+  {
+    "SlicerConfigName": "before_toolchange_gcode",
+    "PresentationName": "Before Tool Change G-Code",
+    "HelpText": "G-Code to be run before every tool change.",
+    "DataEditType": "MULTI_LINE_TEXT",
+    "ShowIfSet": "!sla_printer",
+    "DefaultValue": ""
+  },
+  {
+    "SlicerConfigName": "top_infill_extrusion_width",
+    "PresentationName": "Top Solid Infill",
+    "HelpText": "Leave this as 0 to allow automatic calculation of extrusion width.",
+    "DataEditType": "DOUBLE_OR_PERCENT",
+    "Units": "mm or %",
+    "DefaultValue": "0"
+  },
+  {
+    "SlicerConfigName": "top_solid_infill_speed",
+    "PresentationName": "Top Solid Infill",
+    "HelpText": "The speed at which the top solid layers will print. Can be set explicitly or as a percentage of the Infill speed.",
+    "DataEditType": "DOUBLE_OR_PERCENT",
+    "Units": "mm/s or %",
+    "ShowIfSet": "!sla_printer",
+    "DefaultValue": "50"
+  },
+  {
+    "SlicerConfigName": "top_solid_layers",
+    "PresentationName": "Top Solid Layers",
+    "HelpText": "The number of layers, or the distance in millimeters, to solid fill on the top surface(s) of the object. Add mm to the end of the number to specify distance in millimeters.",
+    "DataEditType": "INT_OR_MM",
+    "Units": "count or mm",
+    "DefaultValue": "1mm"
+  },
+  {
+    "SlicerConfigName": "travel_speed",
+    "PresentationName": "Travel",
+    "HelpText": "The speed at which the nozzle will move when not extruding material.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "Units": "mm/s",
+    "DefaultValue": "130"
+  },
+  {
+    "SlicerConfigName": "use_firmware_retraction",
+    "PresentationName": "Use Firmware Retraction",
+    "HelpText": "Request the firmware to do retractions rather than specify the extruder movements directly.",
+    "DataEditType": "CHECK_BOX",
+    "DefaultValue": "0"
+  },
+  {
+    "SlicerConfigName": "use_relative_e_distances",
+    "PresentationName": "Use Relative E Distances",
+    "HelpText": "Normally you will want to use absolute e distances. Only check this if you know your printer needs relative e distances.",
+    "DataEditType": "CHECK_BOX",
+    "DefaultValue": "0"
+  },
+  {
+    "QuickMenuSettings": [
+      {
+        "MenuName": "115200",
+        "Value": "115200"
+      },
+      {
+        "MenuName": "250000",
+        "Value": "250000"
+      }
+    ],
+    "SlicerConfigName": "baud_rate",
+    "PresentationName": "Baud Rate",
+    "HelpText": "The serial port communication speed of the printers firmware.",
+    "DataEditType": "INT",
+    "ShowAsOverride": false,
+    "ShowIfSet": null,
+    "ResetAtEndOfPrint": false,
+    "DefaultValue": "250000",
+    "RebuildGCodeOnChange": false
+  },
+  {
+    "SlicerConfigName": "printer_name",
+    "PresentationName": "Printer Name",
+    "HelpText": "This is the name of your printer that will be displayed in the choose printer menu.",
+    "DataEditType": "STRING",
+    "ShowAsOverride": false,
+    "DefaultValue": "",
+    "RebuildGCodeOnChange": false
+  },
+  {
+    "SlicerConfigName": "auto_connect",
+    "PresentationName": "Auto Connect",
+    "HelpText": "If set, the printer will automatically attempt to connect when selected.",
+    "DataEditType": "CHECK_BOX",
+    "ShowAsOverride": false,
+    "DefaultValue": "1",
+    "RebuildGCodeOnChange": false
+  },
+  {
+    "SlicerConfigName": "com_port",
+    "PresentationName": "Serial Port",
+    "HelpText": "The serial port to use while connecting to this printer.",
+    "DataEditType": "COM_PORT",
+    "ShowAsOverride": false,
+    "ShowIfSet": "!enable_network_printing",
+    "DefaultValue": "",
+    "RebuildGCodeOnChange": false
+  },
+  {
+    "SlicerConfigName": "vibration_limit",
+    "PresentationName": "Vibration Limit",
+    "HelpText": "This is to help reduce vibrations during printing. If your printer has a resonance frequency that is causing trouble you can set this to try and reduce printing at that frequency.",
+    "DataEditType": "INT",
+    "Units": "Hz",
+    "DefaultValue": "0"
+  },
+  {
+    "SlicerConfigName": "wipe",
+    "PresentationName": "Wipe Before Retract",
+    "HelpText": "The extruder will wipe the nozzle over the last up to 10 mm of tool path after retracting.",
+    "DataEditType": "CHECK_BOX",
+    "ShowIfSet": "!sla_printer",
+    "EnableIfSet": "enable_retractions",
+    "DefaultValue": "0"
+  },
+  {
+    "SlicerConfigName": "wipe_shield_distance",
+    "PresentationName": "Wipe Shield Distance",
+    "HelpText": "Creates a perimeter around the part on which to wipe the other nozzle when printing using dual extrusion. Set to 0 to disable.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "ShowIfSet": "!sla_printer",
+    "Units": "mm",
+    "DefaultValue": "0"
+  },
+  {
+    "SlicerConfigName": "wipe_tower_size",
+    "PresentationName": "Wipe Tower Size",
+    "HelpText": "The length and width of a tower created at the back left of the print used for wiping the next nozzle when changing between multiple extruders. Set to 0 to disable.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "Units": "mm",
+    "ShowIfSet": "!sla_printer",
+    "DefaultValue": "0"
+  },
+  {
+    "SlicerConfigName": "driver_type",
+    "PresentationName": "The serial driver to use",
+    "DefaultValue": "RepRap",
+    "HelpText": ""
+  },
+  {
+    "SlicerConfigName": "enable_network_printing",
+    "PresentationName": "Networked Printing",
+    "HelpText": "Sets MatterControl to attempt to connect to a printer over the network. (You must disconnect and reconnect for this to take effect)",
+    "ShowIfSet": "!sla_printer",
+    "DataEditType": "CHECK_BOX",
+    "SetSettingsOnChange": [
+      {
+        "TargetSetting": "driver_type",
+        "OnValue": "TCPIP",
+        "OffValue": "RepRap"
+      }
+    ],
+    "DefaultValue": "0",
+    "RebuildGCodeOnChange": false,
+    "ReloadUiWhenChanged": true
+  },
+  {
+    "SlicerConfigName": "enable_sailfish_communication",
+    "PresentationName": "Sailfish Communication",
+    "HelpText": "Sets MatterControl to use s3g communication method. (You must disconnect and reconnect for this to take effect)",
+    "ShowIfSet": "!sla_printer",
+    "DataEditType": "CHECK_BOX",
+    "SetSettingsOnChange": [
+      {
+        "TargetSetting": "driver_type",
+        "OnValue": "X3G",
+        "OffValue": "RepRap"
+      }
+    ],
+    "DefaultValue": "0",
+    "RebuildGCodeOnChange": false,
+    "ReloadUiWhenChanged": true
+  },
+  {
+    "SlicerConfigName": "selector_ip_address",
+    "PresentationName": "IP Finder",
+    "HelpText": "List of IP's discovered on the network",
+    "DataEditType": "IP_LIST",
+    "ShowAsOverride": false,
+    "ShowIfSet": "enable_network_printing",
+    "DefaultValue": "Manual",
+    "RebuildGCodeOnChange": false,
+    "ReloadUiWhenChanged": true
+  },
+  {
+    "SlicerConfigName": "ip_address",
+    "PresentationName": "IP Address",
+    "HelpText": "IP Address of printer/printer controller",
+    "DataEditType": "STRING",
+    "ShowAsOverride": false,
+    "ShowIfSet": "enable_network_printing",
+    "EnableIfSet": "selector_ip_address=Manual",
+    "DefaultValue": "127.0.0.1",
+    "RebuildGCodeOnChange": false
+  },
+  {
+    "SlicerConfigName": "ip_port",
+    "PresentationName": "Port",
+    "HelpText": "Port number to be used with IP Address to connect to printer over the network",
+    "DataEditType": "INT",
+    "ShowAsOverride": false,
+    "ShowIfSet": "enable_network_printing",
+    "EnableIfSet": "selector_ip_address=Manual",
+    "DefaultValue": "23",
+    "RebuildGCodeOnChange": false
+  },
+  {
+    "SlicerConfigName": "z_offset",
+    "PresentationName": "Z Offset",
+    "HelpText": "The distance to move the nozzle along the Z axis to ensure that it is the correct distance from the print bed. A positive number will raise the nozzle, and a negative number will lower it.",
+    "DataEditType": "OFFSET",
+    "Units": "mm",
+    "DefaultValue": "0"
+  },
+  {
+    "SlicerConfigName": "feedrate_ratio",
+    "PresentationName": "Feedrate Ratio",
+    "HelpText": "Controls the speed of printer moves",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "DefaultValue": "1",
+    "RebuildGCodeOnChange": false
+  },
+  {
+    "SlicerConfigName": "extrusion_ratio",
+    "PresentationName": "Extrusion Ratio",
+    "HelpText": "Controls the amount of extrusion",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "DefaultValue": "1",
+    "RebuildGCodeOnChange": false
+  },
+  {
+    "SlicerConfigName": "max_acceleration",
+    "PresentationName": "Max Acceleration",
+    "HelpText": "The maximum amount the printer can accelerate on a G-Code move. Only effects G-Code time estimates, does not change printer behavior.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "DefaultValue": "1000",
+    "Units": "mm/s²",
+    "RebuildGCodeOnChange": false
+  },
+  {
+    "SlicerConfigName": "max_velocity",
+    "PresentationName": "Max Velocity",
+    "HelpText": "The maximum speed the printer can move. Only effects G-Code time estimates, does not change printer behavior.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "DefaultValue": "500",
+    "Units": "mm/s",
+    "RebuildGCodeOnChange": false
+  },
+  {
+    "SlicerConfigName": "jerk_velocity",
+    "PresentationName": "Jerk Velocity",
+    "HelpText": "The maximum speed that the printer treats as 0 and changes direction instantly. Only effects G-Code time estimates, does not change printer behavior.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "DefaultValue": "8",
+    "Units": "mm/s",
+    "RebuildGCodeOnChange": false
+  },
+  {
+    "SlicerConfigName": "manual_movement_speeds",
+    "PresentationName": "Manual Movement Speeds",
+    "HelpText": "Axis movement speeds",
+    "DataEditType": "STRING",
+    "DefaultValue": "x,3000,y,3000,z,315,e0,150",
+    "RebuildGCodeOnChange": false
+  }
 ]
