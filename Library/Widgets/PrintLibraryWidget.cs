@@ -96,6 +96,14 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			allControls.AddChild(new HorizontalLine(20), 1);
 
+			var toolbar = new Toolbar()
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit
+			};
+			toolbar.Padding = theme.ToolbarPadding;
+			allControls.AddChild(toolbar);
+
 			var showFolders = new ExpandCheckboxButton("Folders".Localize())
 			{
 				HAnchor = HAnchor.Stretch,
@@ -110,7 +118,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				UserSettings.Instance.set("ShowContainers", showFolders.Checked ? "1" : "0");
 				await libraryView.Reload();
 			};
-			allControls.AddChild(showFolders);
+			toolbar.AddChild(showFolders);
 
 			breadCrumbWidget = new FolderBreadCrumbWidget(libraryView);
 			navBar.AddChild(breadCrumbWidget);
