@@ -33,6 +33,7 @@ using MatterHackers.Agg.Image;
 using MatterHackers.Agg.PlatformAbstract;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.ControlElements;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.SerialPortCommunication.FrostedSerial;
@@ -1460,7 +1461,88 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							};
 						}
 						break;
+					case SliceSettingData.DataEditTypes.IP_LIST:
+						//ip_selector = new IpAddressField(printer);
+						//dataArea.AddChild(ip_selector);
 
+						EventHandler unregisterEvents = null;
+						
+						bool isEnabled = !PrinterConnectionAndCommunication.Instance.PrinterIsConnected && PrinterConnectionAndCommunication.Instance.CommunicationState != PrinterConnectionAndCommunication.CommunicationStates.AttemptingToConnect;
+						//This setting defaults to Manual
+						var selectedMachine = ActiveSliceSettings.Instance.GetValue(SettingsKey.selector_ip_address);
+						var dropdownList = new DropDownList(selectedMachine, maxHeight: 200)
+						{
+							ToolTipText = settingData.HelpText,
+							Margin = new BorderDouble(),
+							TabIndex = tabIndexForItem,
+							MenuItemsPadding = new BorderDouble(10, 4, 10, 6),
+
+							Enabled = isEnabled,
+							TextColor = isEnabled ? ActiveTheme.Instance.PrimaryTextColor : new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 150),
+							BorderColor = isEnabled ? ActiveTheme.Instance.SecondaryTextColor : new RGBA_Bytes(ActiveTheme.Instance.SecondaryTextColor, 150),
+
+						};
+
+						//Create default option
+						MenuItem defaultOption = dropdownList.AddItem("Manual", "127.0.0.1:23");
+						defaultOption.Selected += (sender, e) =>
+						{
+							ActiveSliceSettings.Instance.SetValue(SettingsKey.selector_ip_address, defaultOption.Text);
+						};
+
+
+						// Prevent droplist interaction when connected
+						PrinterConnectionAndCommunication.Instance.CommunicationStateChanged.RegisterEvent((s, e) =>
+						{
+							isEnabled = !PrinterConnectionAndCommunication.Instance.PrinterIsConnected && PrinterConnectionAndCommunication.Instance.CommunicationState != PrinterConnectionAndCommunication.CommunicationStates.AttemptingToConnect;
+							dropdownList.Enabled = isEnabled;
+							dropdownList.TextColor = isEnabled ? ActiveTheme.Instance.PrimaryTextColor : new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 150);
+							dropdownList.BorderColor = isEnabled ? ActiveTheme.Instance.SecondaryTextColor : new RGBA_Bytes(ActiveTheme.Instance.SecondaryTextColor, 150);
+						}, ref unregisterEvents);
+
+						// Release event listener on close
+						dropdownList.Closed += (s, e) =>
+						{
+							unregisterEvents?.Invoke(null, null);
+						};
+
+						// Release event listener on close
+						dropdownList.Closed += (s, e) =>
+						{
+							unregisterEvents?.Invoke(null, null);
+						};
+
+						var widget = new FlowLayoutWidget();
+						widget.AddChild(dropdownList);
+						var buttonFactory = new TextImageButtonFactory();
+						buttonFactory.normalFillColor = RGBA_Bytes.Transparent;
+						buttonFactory.fontSize = 8;
+						buttonFactory.borderWidth = 1;
+						buttonFactory.normalBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
+						buttonFactory.hoverBorderColor = new RGBA_Bytes(ActiveTheme.Instance.PrimaryTextColor, 200);
+
+						buttonFactory.disabledTextColor = RGBA_Bytes.Gray;
+						buttonFactory.hoverTextColor = ActiveTheme.Instance.PrimaryTextColor;
+						buttonFactory.normalTextColor = ActiveTheme.Instance.SecondaryTextColor;
+						buttonFactory.pressedTextColor = ActiveTheme.Instance.PrimaryTextColor;
+
+						buttonFactory.FixedHeight = dropdownList.Height;
+						buttonFactory.fontSize = 10;
+						buttonFactory.normalTextColor = RGBA_Bytes.DarkGray;
+						var refreshButton = buttonFactory.Generate("", StaticData.Instance.LoadIcon("fa-refresh_14.png"));
+						refreshButton.Margin = new BorderDouble(left: 5);
+
+
+						UiThread.RunOnIdle(() =>
+						{
+							IpAddressField.RebuildMenuItems(refreshButton,dropdownList);
+						});
+						refreshButton.Click += (s, e) => IpAddressField.RebuildMenuItems(refreshButton, dropdownList);
+						widget.AddChild(refreshButton);
+
+						dataArea.AddChild(widget);
+
+						break;
 					default:
 						var missingSetting = new TextWidget(String.Format("Missing the setting for '{0}'.", settingData.DataEditType.ToString()))
 						{

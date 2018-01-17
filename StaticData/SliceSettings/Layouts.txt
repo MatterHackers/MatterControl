@@ -15,6 +15,7 @@ Simple
         auto_connect
         baud_rate
         com_port
+        selector_ip_address
         ip_address
         ip_port
 Intermediate
@@ -79,6 +80,7 @@ Intermediate
         auto_connect
         baud_rate
         com_port
+        selector_ip_address
         ip_address
         ip_port
 Advanced
@@ -290,6 +292,7 @@ Advanced
         auto_connect
         baud_rate
         com_port
+        selector_ip_address
         ip_address
         ip_port
     Print Area

@@ -135,6 +135,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				new VisibleButNotMappedToEngine("extruders_share_temperature"),
 				new VisibleButNotMappedToEngine("g0"),
 				new VisibleButNotMappedToEngine("solid_shell"),
+				new VisibleButNotMappedToEngine("selector_ip_address"),
 			};
 
 			matterSliceSettingNames = new HashSet<string>(mappedSettings.Select(m => m.CanonicalSettingsName));

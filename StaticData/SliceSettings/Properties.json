@@ -2799,6 +2799,17 @@
 		"ReloadUiWhenChanged": true
 	},
 	{
+        "SlicerConfigName": "selector_ip_address",
+        "PresentationName": "IP Finder",
+        "HelpText": "List of IP's discovered on the network",
+        "DataEditType": "IP_LIST",
+        "ShowAsOverride": false,
+        "ShowIfSet": "enable_network_printing",
+        "DefaultValue": "Manual",
+        "RebuildGCodeOnChange": false,
+        "ReloadUiWhenChanged": true
+    },
+	{
 		"QuickMenuSettings": [ ],
 		"SetSettingsOnChange": [ ],
 		"SlicerConfigName": "ip_address",
@@ -2808,6 +2819,7 @@
 		"ExtraSettings": "",
 		"ShowAsOverride": false,
 		"ShowIfSet": "enable_network_printing",
+		"EnableIfSet": "selector_ip_address=Manual",
 		"ResetAtEndOfPrint": false,
 		"DefaultValue": "127.0.0.1",
 		"RebuildGCodeOnChange": false
@@ -2822,6 +2834,7 @@
 		"ExtraSettings": "",
 		"ShowAsOverride": false,
 		"ShowIfSet": "enable_network_printing",
+		"EnableIfSet": "selector_ip_address=Manual",
 		"ResetAtEndOfPrint": false,
 		"DefaultValue": "23",
 		"RebuildGCodeOnChange": false
