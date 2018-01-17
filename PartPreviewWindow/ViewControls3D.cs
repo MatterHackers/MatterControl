@@ -533,7 +533,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					IObject3D object3D = null;
 
-					await ApplicationController.Instance.Tasks.Execute(async (progressReporter, cancelationToken) =>
+					await ApplicationController.Instance.Tasks.Execute(async (progressReporter, cancellationToken) =>
 					{
 						var progressStatus = new ProgressStatus()
 						{

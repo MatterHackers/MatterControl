@@ -1380,16 +1380,16 @@ namespace MatterHackers.MatterControl
 		public async Task SliceFileLoadOutput(PrinterConfig printer, string partFilePath, string gcodeFilePath)
 		{
 			// Slice
-			await ApplicationController.Instance.Tasks.Execute((reporter, cancelationToken) =>
+			await ApplicationController.Instance.Tasks.Execute((reporter, cancellationToken) =>
 			{
-				reporter.Report(new ProgressStatus() { Status = "Slicing..." });
+				reporter.Report(new ProgressStatus() { Status = "Slicing".Localize() });
 
 				return Slicer.SliceFile(
 					partFilePath, 
 					gcodeFilePath, 
 					printer,
 					new SliceProgressReporter(reporter, printer),
-					cancelationToken);
+					cancellationToken);
 			});
 			
 			await ApplicationController.Instance.Tasks.Execute((innerProgress, token) =>
@@ -1501,7 +1501,7 @@ namespace MatterHackers.MatterControl
 			};
 		}
 
-		internal Task Execute(Func<IProgress<ProgressStatus>, CancellationToken, Task> func, RunningTaskActions taskActions = null)
+		public Task Execute(Func<IProgress<ProgressStatus>, CancellationToken, Task> func, RunningTaskActions taskActions = null)
 		{
 			var tokenSource = new CancellationTokenSource();
 
