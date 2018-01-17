@@ -130,7 +130,7 @@ namespace MatterHackers.MatterControl
 
 		//public Color ToolbarButtonDown { get; set; } = Color.Transparent;
 		public Color ToolbarButtonDown => this.MinimalShade;
-		
+
 		private EventHandler unregisterEvents;
 
 		static ThemeConfig()

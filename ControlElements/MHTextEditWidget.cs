@@ -45,13 +45,12 @@ namespace MatterHackers.MatterControl
 		{
 			this.Padding = new BorderDouble(3);
 			this.BackgroundColor = Color.White;
-			this.HAnchor = HAnchor.Stretch;
+			this.HAnchor = HAnchor.Fit;
 			this.VAnchor = VAnchor.Fit;
 
 			this.ActualTextEditWidget = new TextEditWidget(text, x, y, pointSize, pixelWidth, pixelHeight, multiLine, tabIndex: tabIndex, typeFace: typeFace)
 			{
-				VAnchor = VAnchor.Bottom,
-				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Bottom
 			};
 			this.ActualTextEditWidget.MinimumSize = new Vector2(Math.Max(ActualTextEditWidget.MinimumSize.X, pixelWidth), Math.Max(ActualTextEditWidget.MinimumSize.Y, pixelHeight));
 			this.AddChild(this.ActualTextEditWidget);
@@ -63,6 +62,16 @@ namespace MatterHackers.MatterControl
 			});
 
 			SetNoContentFieldDescriptionVisibility();
+		}
+
+		public override HAnchor HAnchor
+		{
+			get => base.HAnchor;
+			set
+			{
+				base.HAnchor = value;
+				if(ActualTextEditWidget != null) ActualTextEditWidget.HAnchor = value;
+			}
 		}
 
 		private void SetNoContentFieldDescriptionVisibility()
