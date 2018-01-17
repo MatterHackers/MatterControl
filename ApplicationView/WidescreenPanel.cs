@@ -98,7 +98,10 @@ namespace MatterHackers.MatterControl
 				HAnchor = HAnchor.Left | HAnchor.Right
 			};
 
-			leftNav.AddChild(new PrintLibraryWidget(partPreviewContent, theme));
+			leftNav.AddChild(new PrintLibraryWidget(partPreviewContent, theme)
+			{
+				BackgroundColor = theme.ActiveTabColor
+			});
 
 			// put in the left column
 			library3DViewSplitter.Panel1.AddChild(leftNav);
