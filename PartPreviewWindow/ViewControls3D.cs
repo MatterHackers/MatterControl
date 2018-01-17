@@ -34,6 +34,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
 using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -358,7 +359,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						Name = namedAction.Title + " Button",
 						ToolTipText = namedAction.Title,
 						Margin = theme.ButtonSpacing,
-						BackgroundColor = theme.MinimalShade
+						BackgroundColor = theme.ToolbarButtonBackground,
+						HoverColor = theme.ToolbarButtonHover,
+						MouseDownColor = theme.ToolbarButtonDown,
 					};
 				}
 				else
@@ -367,7 +370,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						Name = namedAction.Title + " Button",
 						Margin = theme.ButtonSpacing,
-						BackgroundColor = theme.MinimalShade
+						BackgroundColor = theme.ToolbarButtonBackground,
+						HoverColor = theme.ToolbarButtonHover,
+						MouseDownColor = theme.ToolbarButtonDown,
 					};
 				}
 
@@ -416,24 +421,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private OverflowMenu CreateBedMenu(BedConfig sceneContext, ThemeConfig theme)
 		{
-			var buttonView = new FlowLayoutWidget();
-			buttonView.AddChild(new ImageWidget(AggContext.StaticData.LoadIcon((IsPrinterMode) ? "bed.png" : "cube.png", IconColor.Theme))
-			{
-				VAnchor = VAnchor.Center,
-				Margin = theme.ButtonSpacing.Clone(left: 10),
-			});
+			var buttonView = new TextIconButton(
+				(IsPrinterMode) ? "Bed".Localize() : "Part".Localize(),
+				AggContext.StaticData.LoadIcon((IsPrinterMode) ? "bed.png" : "cube.png", IconColor.Theme),
+				theme);
 
-			var buttonText = (IsPrinterMode) ? "Bed".Localize() : "Part".Localize();
-			buttonView.AddChild(new TextButton(buttonText, theme)
-			{
-				Padding = new BorderDouble(8, 4, 0, 4)
-			});
+			// Remove right Padding for drop style
+			buttonView.Padding = buttonView.Padding.Clone(right: 0);
 
-			var overflowMenu = new OverflowMenu(buttonView)
+			var overflowMenu = new OverflowMenu(buttonView, theme)
 			{
 				Name = "Bed Options Menu",
 				DynamicPopupContent = () => theme.CreatePopupMenu(this.BedMenuActions(sceneContext)),
-				BackgroundColor = theme.MinimalShade,
+				BackgroundColor = theme.ToolbarButtonBackground,
+				HoverColor = theme.ToolbarButtonHover,
+				MouseDownColor = theme.ToolbarButtonDown,
 				GradientDistance = -1,
 				DrawArrow = true,
 				Margin = theme.ButtonSpacing,

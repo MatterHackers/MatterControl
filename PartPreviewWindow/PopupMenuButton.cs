@@ -38,16 +38,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		public PopupMenuButton()
 		{
-			this.DisabledColor = new Color(ActiveTheme.Instance.SecondaryTextColor, 50);
+			var theme = ApplicationController.Instance.Theme;
+			this.DisabledColor = new Color(theme.Colors.SecondaryTextColor, 50);
+			this.HoverColor = theme.MinimalShade;
 		}
 
-		public PopupMenuButton(GuiWidget viewWidget)
+		public PopupMenuButton(GuiWidget viewWidget, ThemeConfig theme)
 			: base(viewWidget)
 		{
 			viewWidget.Selectable = false;
 			viewWidget.BackgroundColor = Color.Transparent;
 
 			this.DisabledColor = new Color(ActiveTheme.Instance.SecondaryTextColor, 50);
+
+			this.HoverColor = theme.ToolbarButtonHover;
+			this.BackgroundColor = theme.ToolbarButtonBackground;
+			this.MouseDownColor = theme.ToolbarButtonDown;
 		}
 
 		public PopupMenuButton(string text, ThemeConfig theme)
@@ -55,13 +61,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				Selectable = false,
 				Padding = theme.ButtonFactory.Options.Margin.Clone(right: 5)
-			})
+			}, theme)
 		{
 			this.DrawArrow = true;
-			this.BackgroundColor = theme.SlightShade;
+			this.HoverColor = theme.ToolbarButtonHover;
+			this.BackgroundColor = theme.ToolbarButtonBackground;
+			this.MouseDownColor = theme.ToolbarButtonDown;
 		}
 
 		public Color DisabledColor { get; set; }
+
+		public Color HoverColor { get; set; } = Color.Transparent;
+
+		public Color MouseDownColor { get; set;} = Color.Transparent;
 
 		private bool _drawArrow = false;
 		public bool DrawArrow
@@ -96,6 +108,44 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					LocalBounds.Center.Y + DropArrow.ArrowHeight / 2,
 					this.Enabled ? ActiveTheme.Instance.SecondaryTextColor : this.DisabledColor);
 			}
+		}
+
+		private bool mouseInBounds;
+		public override void OnMouseEnterBounds(MouseEventArgs mouseEvent)
+		{
+			mouseInBounds = true;
+			base.OnMouseEnterBounds(mouseEvent);
+			this.Invalidate();
+		}
+
+		public override void OnMouseLeaveBounds(MouseEventArgs mouseEvent)
+		{
+			mouseInBounds = false;
+			base.OnMouseLeaveBounds(mouseEvent);
+			this.Invalidate();
+		}
+
+		public override Color BackgroundColor
+		{
+			get
+			{
+				if (this.MouseCaptured
+					&& mouseInBounds
+					&& this.Enabled)
+				{
+					return this.MouseDownColor;
+				}
+				else if (this.mouseInBounds
+					&& this.Enabled)
+				{
+					return this.HoverColor;
+				}
+				else
+				{
+					return base.BackgroundColor;
+				}
+			}
+			set => base.BackgroundColor = value;
 		}
 
 		protected override void OnBeforePopup()

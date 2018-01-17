@@ -49,6 +49,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.printer = printer;
 			this.printerTabPage = printerTabPage;
 
+			this.BackgroundColor = theme.ToolbarButtonBackground;
+			this.HoverColor = theme.ToolbarButtonHover;
+			this.MouseDownColor = theme.ToolbarButtonDown;
+
 			printer.Connection.CommunicationStateChanged.RegisterEvent((s, e) =>
 			{
 				UiThread.RunOnIdle(SetButtonStates);

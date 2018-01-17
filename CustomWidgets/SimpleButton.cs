@@ -37,13 +37,81 @@ using MatterHackers.ImageProcessing;
 
 namespace MatterHackers.MatterControl.CustomWidgets
 {
-	public class SimpleButton : Button
+	public class SimpleButton : GuiWidget
 	{
 		private bool mouseInBounds = false;
 
 		protected ThemeConfig theme;
 
 		public SimpleButton(ThemeConfig theme)
+		{
+			this.theme = theme;
+			this.HoverColor = theme.SlightShade;
+			this.MouseDownColor = theme.MinimalShade;
+			this.Margin = 0;
+		}
+
+		public Color HoverColor { get; set; } = Color.Transparent;
+
+		public Color MouseDownColor { get; set; } = Color.Transparent;
+
+		public override void OnMouseEnterBounds(MouseEventArgs mouseEvent)
+		{
+			mouseInBounds = true;
+			base.OnMouseEnterBounds(mouseEvent);
+			this.Invalidate();
+		}
+
+		public override void OnMouseLeaveBounds(MouseEventArgs mouseEvent)
+		{
+			mouseInBounds = false;
+			base.OnMouseLeaveBounds(mouseEvent);
+			this.Invalidate();
+		}
+
+		public override void OnMouseDown(MouseEventArgs mouseEvent)
+		{
+			base.OnMouseDown(mouseEvent);
+			this.Invalidate();
+		}
+
+		public override void OnMouseUp(MouseEventArgs mouseEvent)
+		{
+			base.OnMouseUp(mouseEvent);
+			this.Invalidate();
+		}
+
+		public override Color BackgroundColor
+		{
+			get
+			{
+				if (this.MouseCaptured
+					&& mouseInBounds
+					&& this.Enabled)
+				{
+					return this.MouseDownColor;
+				}
+				else if (this.mouseInBounds
+					&& this.Enabled)
+				{
+					return this.HoverColor;
+				}
+				else
+				{
+					return base.BackgroundColor;
+				}
+			}
+			set => base.BackgroundColor = value;
+		}
+	}
+
+	public class SimpleFlowButton : FlowLayoutWidget
+	{
+		private bool mouseInBounds = false;
+
+		protected ThemeConfig theme;
+
+		public SimpleFlowButton(ThemeConfig theme)
 		{
 			this.theme = theme;
 			this.HoverColor = theme.SlightShade;
@@ -272,5 +340,41 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				textWidget.Enabled = value;
 			}
 		}
+	}
+
+	public class TextIconButton : SimpleFlowButton
+	{
+		private TextWidget textWidget;
+
+		public TextIconButton(string text, ImageBuffer icon, ThemeConfig theme)
+			: base(theme)
+		{
+			this.HAnchor = HAnchor.Fit;
+			this.VAnchor = VAnchor.Absolute | VAnchor.Center;
+			this.Height = theme.ButtonFactory.Options.FixedHeight;
+			this.Padding = theme.ButtonFactory.Options.Margin;
+
+			this.AddChild(ImageWidget = new ImageWidget(icon)
+			{
+				VAnchor = VAnchor.Center,
+				Selectable = false
+			});
+
+			// TODO: Only needed because TextWidget violates normal padding/margin rules
+			var textContainer = new GuiWidget()
+			{
+				Padding = new BorderDouble(8, 4, 2, 4),
+				HAnchor = HAnchor.Fit,
+				VAnchor = VAnchor.Center | VAnchor.Fit,
+				Selectable = false
+			};
+			this.AddChild(textContainer);
+
+			textContainer.AddChild(textWidget = new TextWidget(text, pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor));
+		}
+
+		public ImageWidget ImageWidget { get; }
+
+		public override string Text { get => textWidget.Text; set => textWidget.Text = value; }
 	}
 }

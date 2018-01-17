@@ -68,9 +68,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// add the reset button first (if there is one)
 			if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.show_reset_connection))
 			{
-				var resetConnectionButton = theme.ButtonFactory.Generate("Reset".Localize(), AggContext.StaticData.LoadIcon("e_stop.png", 14, 14, IconColor.Theme));
-				resetConnectionButton.ToolTipText = "Reboots the firmware on the controller".Localize();
-				resetConnectionButton.Margin = defaultMargin;
+				var resetConnectionButton = new TextIconButton(
+					"Reset".Localize(),
+					AggContext.StaticData.LoadIcon("e_stop.png", 14, 14, IconColor.Theme),
+					theme)
+				{
+					ToolTipText = "Reboots the firmware on the controller".Localize(),
+					Margin = defaultMargin
+				};
 				resetConnectionButton.Click += (s, e) =>
 				{
 					UiThread.RunOnIdle(printer.Connection.RebootBoard);
@@ -84,8 +89,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var sliceButton = new SliceButton(printer, printerTabPage, theme)
 			{
 				Name = "Generate Gcode Button",
-				BackgroundColor = theme.ButtonFactory.Options.NormalFillColor,
-				HoverColor = theme.ButtonFactory.Options.HoverFillColor,
 				Margin = theme.ButtonSpacing,
 			};
 			this.AddChild(sliceButton);

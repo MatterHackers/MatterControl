@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	{
 		public DropDownList DropDownList;
 		private string defaultMenuItemText = "- none -".Localize();
-		private Button editButton;
+		private GuiWidget editButton;
 		private NamedSettingsLayers layerType;
 		private ThemeConfig theme;
 		private PrinterConfig printer;

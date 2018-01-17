@@ -39,9 +39,9 @@ namespace MatterHackers.MatterControl
 {
 	public class UpdateControlView : FlowLayoutWidget
 	{
-		private Button downloadUpdateLink;
-		private Button checkUpdateLink;
-		private Button installUpdateLink;
+		private GuiWidget downloadButton;
+		private GuiWidget checkUpdateButton;
+		private GuiWidget installButton;
 		private TextWidget updateStatusText;
 
 		private EventHandler unregisterEvents;
@@ -60,58 +60,58 @@ namespace MatterHackers.MatterControl
 
 			this.AddChild(new HorizontalSpacer());
 
-			checkUpdateLink = new IconButton(AggContext.StaticData.LoadIcon("fa-refresh_14.png", IconColor.Theme), ApplicationController.Instance.Theme)
+			checkUpdateButton = new IconButton(AggContext.StaticData.LoadIcon("fa-refresh_14.png", IconColor.Theme), ApplicationController.Instance.Theme)
 			{
 				ToolTipText = "Check for Update".Localize(),
 				BackgroundColor = theme.MinimalShade,
 				Cursor = Cursors.Hand,
 				Visible = false
 			};
-			checkUpdateLink.Click += (s, e) =>
+			checkUpdateButton.Click += (s, e) =>
 			{
 				UpdateControlData.Instance.CheckForUpdate();
 			};
-			this.AddChild(checkUpdateLink);
+			this.AddChild(checkUpdateButton);
 
-			this.MinimumSize = new Vector2(0, checkUpdateLink.Height);
+			this.MinimumSize = new Vector2(0, checkUpdateButton.Height);
 
-			downloadUpdateLink = new TextButton("Download Update".Localize(), theme)
+			downloadButton = new TextButton("Download Update".Localize(), theme)
 			{
 				BackgroundColor = theme.MinimalShade,
 				Visible = false
 			};
-			downloadUpdateLink.Click += (s, e) =>
+			downloadButton.Click += (s, e) =>
 			{
-				downloadUpdateLink.Visible = false;
+				downloadButton.Visible = false;
 				updateStatusText.Text = "Retrieving download info...".Localize();
 
 				UpdateControlData.Instance.InitiateUpdateDownload();
 			};
-			this.AddChild(downloadUpdateLink);
+			this.AddChild(downloadButton);
 
-			installUpdateLink = new TextButton("Install Update".Localize(), theme)
+			installButton = new TextButton("Install Update".Localize(), theme)
 			{
 				BackgroundColor = theme.MinimalShade,
 				Visible = false
 			};
-			installUpdateLink.Click += (s, e) =>
+			installButton.Click += (s, e) =>
 			{
 				try
 				{
 					if (!UpdateControlData.Instance.InstallUpdate())
 					{
-						installUpdateLink.Visible = false;
+						installButton.Visible = false;
 						updateStatusText.Text = "Oops! Unable to install update.".Localize();
 					}
 				}
 				catch
 				{
 					GuiWidget.BreakInDebugger();
-					installUpdateLink.Visible = false;
+					installButton.Visible = false;
 					updateStatusText.Text = "Oops! Unable to install update.".Localize();
 				}
 			};
-			this.AddChild(installUpdateLink);
+			this.AddChild(installButton);
 
 			UpdateControlData.Instance.UpdateStatusChanged.RegisterEvent(UpdateStatusChanged, ref unregisterEvents);
 
@@ -133,7 +133,7 @@ namespace MatterHackers.MatterControl
 			{
 				case UpdateControlData.UpdateStatusStates.MayBeAvailable:
 					updateStatusText.Text = "New updates may be available".Localize();
-					checkUpdateLink.Visible = true;
+					checkUpdateButton.Visible = true;
 					break;
 
 				case UpdateControlData.UpdateStatusStates.CheckingForUpdate:
@@ -143,9 +143,9 @@ namespace MatterHackers.MatterControl
 
 				case UpdateControlData.UpdateStatusStates.UnableToConnectToServer:
 					updateStatusText.Text = "Oops! Unable to connect to server".Localize();
-					downloadUpdateLink.Visible = false;
-					installUpdateLink.Visible = false;
-					checkUpdateLink.Visible = true;
+					downloadButton.Visible = false;
+					installButton.Visible = false;
+					checkUpdateButton.Visible = true;
 					break;
 
 				case UpdateControlData.UpdateStatusStates.UpdateAvailable:
@@ -157,9 +157,9 @@ namespace MatterHackers.MatterControl
 					{
 						updateStatusText.Text = recommendedUpdateAvailable;
 					}
-					downloadUpdateLink.Visible = true;
-					installUpdateLink.Visible = false;
-					checkUpdateLink.Visible = false;
+					downloadButton.Visible = true;
+					installButton.Visible = false;
+					checkUpdateButton.Visible = false;
 					break;
 
 				case UpdateControlData.UpdateStatusStates.UpdateDownloading:
@@ -171,16 +171,16 @@ namespace MatterHackers.MatterControl
 
 				case UpdateControlData.UpdateStatusStates.ReadyToInstall:
 					updateStatusText.Text = "New updates are ready to install".Localize();
-					downloadUpdateLink.Visible = false;
-					installUpdateLink.Visible = true;
-					checkUpdateLink.Visible = false;
+					downloadButton.Visible = false;
+					installButton.Visible = true;
+					checkUpdateButton.Visible = false;
 					break;
 
 				case UpdateControlData.UpdateStatusStates.UpToDate:
 					updateStatusText.Text = "Your application is up-to-date".Localize();
-					downloadUpdateLink.Visible = false;
-					installUpdateLink.Visible = false;
-					checkUpdateLink.Visible = true;
+					downloadButton.Visible = false;
+					installButton.Visible = false;
+					checkUpdateButton.Visible = true;
 					break;
 
 				default:

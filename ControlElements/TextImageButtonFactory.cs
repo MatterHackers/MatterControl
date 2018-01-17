@@ -91,7 +91,7 @@ namespace MatterHackers.MatterControl
 			return groupLableAndEditControl;
 		}
 
-		public Button GenerateIconButton(ImageBuffer icon)
+		public GuiWidget GenerateIconButton(ImageBuffer icon)
 		{
 			return new IconButton(icon, ApplicationController.Instance.Theme);
 		}
