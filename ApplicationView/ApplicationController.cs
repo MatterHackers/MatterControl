@@ -606,23 +606,6 @@ namespace MatterHackers.MatterControl
 				}
 			}, ref unregisterEvent);
 
-			PrinterConnection.AnyCommunicationStateChanged.RegisterEvent((s, e) =>
-			{
-				var printerConnection = s as PrinterConnection;
-
-				switch (printerConnection.CommunicationState)
-				{
-					case CommunicationStates.Printing:
-						if (UserSettings.Instance.IsTouchScreen)
-						{
-							// TODO: This basic hook won't work with multi-tenancy. Need to lookup the passed in sender from ActivePrinters use the found instance instead of the .ActivePrinter below
-							UiThread.RunOnIdle(() => PrintingWindow.Show(ApplicationController.Instance.ActivePrinter)); // HACK: We need to show the instance that's printing not the static instance
-						}
-
-						break;
-				}
-			}, ref unregisterEvents);
-
 			this.InitializeLibrary();
 
 			PrinterConnection.AnyConnectionSucceeded.RegisterEvent((s, e) =>
