@@ -197,13 +197,16 @@ Printer
       G-Code
         start_gcode
         end_gcode
+        cancel_gcode
+    Advanced
+      Advanced
+        pause_gcode
+        resume_gcode
+        connect_gcode
         layer_gcode
         before_toolchange_gcode
         toolchange_gcode
-        pause_gcode
-        resume_gcode
-        cancel_gcode
-        connect_gcode
+    Filters
       Filters
         write_regex
         read_regex
