@@ -45,12 +45,13 @@ namespace MatterHackers.MatterControl
 		{
 			this.Padding = new BorderDouble(3);
 			this.BackgroundColor = Color.White;
-			this.HAnchor = HAnchor.Fit;
+			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Fit;
 
 			this.ActualTextEditWidget = new TextEditWidget(text, x, y, pointSize, pixelWidth, pixelHeight, multiLine, tabIndex: tabIndex, typeFace: typeFace)
 			{
-				VAnchor = VAnchor.Bottom
+				VAnchor = VAnchor.Bottom,
+				HAnchor = HAnchor.Stretch,
 			};
 			this.ActualTextEditWidget.MinimumSize = new Vector2(Math.Max(ActualTextEditWidget.MinimumSize.X, pixelWidth), Math.Max(ActualTextEditWidget.MinimumSize.Y, pixelHeight));
 			this.AddChild(this.ActualTextEditWidget);
