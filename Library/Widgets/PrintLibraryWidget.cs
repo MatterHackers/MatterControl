@@ -61,6 +61,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private PartPreviewContent partPreviewContent;
 		private ThemeConfig theme;
 		private OverflowBar navBar;
+		private GuiWidget searchButton;
 
 		public PrintLibraryWidget(PartPreviewContent partPreviewContent, ThemeConfig theme)
 		{
@@ -128,7 +129,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			var searchPanel = new SearchInputBox()
 			{
 				Visible = false,
-				Margin = new BorderDouble(10, 0, 5, 0)
+				Margin = new BorderDouble(10, 0, 5, 0),
+				Enabled = false
 			};
 			searchPanel.searchInput.ActualTextEditWidget.EnterPressed += (s, e) =>
 			{
@@ -149,7 +151,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			navBar.AddChild(searchPanel);
 
-			var searchButton = ApplicationController.Instance.Theme.CreateSearchButton();
+			searchButton = ApplicationController.Instance.Theme.CreateSearchButton();
+			searchButton.Enabled = false;
 			searchButton.Name = "Search Library Button";
 			searchButton.Click += (s, e) =>
 			{
@@ -253,6 +256,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			breadCrumbWidget.SetContainer(activeContainer);
 
 			activeContainer.ContentChanged += UpdateStatus;
+
+			searchButton.Enabled = activeContainer.Parent != null;
 
 			UpdateStatus(null, null);
 		}

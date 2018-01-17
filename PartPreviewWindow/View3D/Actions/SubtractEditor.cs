@@ -171,7 +171,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		private void ProcessBooleans(IObject3D group)
 		{
 			// spin up a task to remove holes from the objects in the group
-			ApplicationController.Instance.Tasks.Execute((reporter, cancelationToken) =>
+			ApplicationController.Instance.Tasks.Execute((reporter, cancellationToken) =>
 			{
 				var progressStatus = new ProgressStatus()
 				{
@@ -210,12 +210,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 							transformedKeep = PolygonMesh.Csg.CsgOperations.Subtract(transformedKeep, transformedRemove, (status, progress0To1) =>
 							{
 								// Abort if flagged
-								cancelationToken.ThrowIfCancellationRequested();
+								cancellationToken.ThrowIfCancellationRequested();
 
 								progressStatus.Status = status;
 								progressStatus.Progress0To1 = percentCompleted + amountPerOperation * progress0To1;
 								reporter.Report(progressStatus);
-							}, cancelationToken);
+							}, cancellationToken);
 							var inverse = keep.WorldMatrix(null);
 							inverse.Invert();
 							transformedKeep.Transform(inverse);

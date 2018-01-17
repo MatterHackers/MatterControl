@@ -190,7 +190,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		private void ProcessBooleans(IObject3D group)
 		{
 			// spin up a task to calculate the paint
-			ApplicationController.Instance.Tasks.Execute((reporter, cancelationToken) =>
+			ApplicationController.Instance.Tasks.Execute((reporter, cancellationToken) =>
 			{
 				var progressStatus = new ProgressStatus()
 				{
@@ -208,7 +208,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				{
 					foreach (var paint in paintObjects)
 					{
-						var transformedPaint = Mesh.Copy(paint.Mesh, cancelationToken);
+						var transformedPaint = Mesh.Copy(paint.Mesh, cancellationToken);
 						transformedPaint.Transform(paint.WorldMatrix(null));
 						var inverseRemove = paint.WorldMatrix(null);
 						inverseRemove.Invert();
@@ -216,7 +216,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 						foreach (var keep in keepObjects)
 						{
-							var transformedKeep = Mesh.Copy(keep.Mesh, cancelationToken);
+							var transformedKeep = Mesh.Copy(keep.Mesh, cancellationToken);
 							transformedKeep.Transform(keep.WorldMatrix(null));
 
 							// remove the paint from the original
@@ -236,7 +236,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 								paintMesh = PolygonMesh.Csg.CsgOperations.Union(paintMesh, intersectAndSubtract.intersect);
 							}
 
-							if (cancelationToken.IsCancellationRequested)
+							if (cancellationToken.IsCancellationRequested)
 							{
 								break;
 							}
