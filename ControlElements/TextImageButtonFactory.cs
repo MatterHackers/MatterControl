@@ -75,22 +75,6 @@ namespace MatterHackers.MatterControl
 		private double FixedHeight => Options.FixedHeight;
 		private double ImageSpacing => Options.ImageSpacing;
 
-		public GuiWidget GenerateGroupBoxLabelWithEdit(TextWidget textWidget, out Button editButton)
-		{
-			editButton = GenerateIconButton(AggContext.StaticData.LoadIcon("icon_edit.png", 16, 16, IconColor.Theme));
-			editButton.Margin = 0;
-			editButton.VAnchor = VAnchor.Bottom;
-
-			textWidget.VAnchor = VAnchor.Bottom;
-			textWidget.Margin = new BorderDouble(right: 4);
-
-			var groupLableAndEditControl = new FlowLayoutWidget();
-			groupLableAndEditControl.AddChild(textWidget);
-			groupLableAndEditControl.AddChild(editButton);
-
-			return groupLableAndEditControl;
-		}
-
 		public GuiWidget GenerateIconButton(ImageBuffer icon)
 		{
 			return new IconButton(icon, ApplicationController.Instance.Theme);
