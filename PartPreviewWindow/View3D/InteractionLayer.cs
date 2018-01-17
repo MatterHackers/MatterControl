@@ -69,11 +69,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.World = world;
 			this.InteractionVolumes = interactionVolumes;
 			this.undoBuffer = undoBuffer;
-
-			var labelContainer = new GuiWidget();
-			labelContainer.Selectable = false;
-			labelContainer.AnchorAll();
-			this.AddChild(labelContainer);
 		}
 
 		internal void SetRenderTarget(GuiWidget renderSource)
