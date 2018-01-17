@@ -123,6 +123,14 @@ namespace MatterHackers.MatterControl
 
 		public Color InteractionLayerOverlayColor { get; private set; }
 
+		public Color ToolbarButtonBackground { get; set; } = Color.Transparent;
+
+		//public Color ToolbarButtonHover { get; set; } = Color.Transparent;
+		public Color ToolbarButtonHover => this.SlightShade;
+
+		//public Color ToolbarButtonDown { get; set; } = Color.Transparent;
+		public Color ToolbarButtonDown => this.MinimalShade;
+		
 		private EventHandler unregisterEvents;
 
 		static ThemeConfig()

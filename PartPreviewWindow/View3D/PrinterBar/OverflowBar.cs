@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 			else
 			{
-				this.OverflowMenu = new OverflowMenu(viewWidget)
+				this.OverflowMenu = new OverflowMenu(viewWidget, theme)
 				{
 					AlignToRightEdge = true,
 					Margin = theme.ButtonSpacing

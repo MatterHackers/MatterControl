@@ -42,13 +42,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private ImageBuffer gradientBackground;
 
 		public OverflowMenu(IconColor iconColor = IconColor.Theme)
-			: base(new ImageWidget(AggContext.StaticData.LoadIcon(Path.Combine("ViewTransformControls", "overflow.png"), 32, 32, iconColor)) { Margin = new BorderDouble(left: 5), HAnchor = HAnchor.Left })
+			: base(new ImageWidget(AggContext.StaticData.LoadIcon(Path.Combine("ViewTransformControls", "overflow.png"), 32, 32, iconColor)) { Margin = new BorderDouble(left: 5), HAnchor = HAnchor.Left }, ApplicationController.Instance.Theme)
 		{
 			this.ToolTipText = "More...".Localize();
 		}
 
-		public OverflowMenu(GuiWidget viewWidget)
-			: base(viewWidget)
+		public OverflowMenu(GuiWidget viewWidget, ThemeConfig theme)
+			: base(viewWidget, theme)
 		{
 		}
 

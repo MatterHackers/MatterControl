@@ -106,7 +106,6 @@
     <Compile Include="ControlElements\TextImageWidget.cs" />
     <Compile Include="CustomWidgets\DockingTabControl.cs" />
     <Compile Include="CustomWidgets\InlineEditControl.cs" />
-    <Compile Include="CustomWidgets\PrintingWindow\BasicBody.cs" />
     <Compile Include="CustomWidgets\PrintingWindow\BedStatusWidget.cs" />
     <Compile Include="CustomWidgets\PrintingWindow\ExtruderStatusWidget.cs" />
     <Compile Include="CustomWidgets\PrintingWindow\ProgressDial.cs" />
@@ -189,7 +188,6 @@
     <Compile Include="CustomWidgets\FatFlatClickWidget.cs" />
     <Compile Include="CustomWidgets\FlowSpacers.cs" />
     <Compile Include="CustomWidgets\LibrarySelector\FolderBreadCrumbWidget.cs" />
-    <Compile Include="CustomWidgets\PrintingWindow\PrintingWindow.cs" />
     <Compile Include="CustomWidgets\SlideWidget.cs" />
     <Compile Include="CustomWidgets\SolidSlider.cs" />
     <Compile Include="DataStorage\Models.cs" />
@@ -314,7 +312,6 @@
     <Compile Include="SlicerConfiguration\UIFields\UIField.cs" />
     <Compile Include="SlicerConfiguration\UIFields\DoubleField.cs" />
     <Compile Include="SlicerConfiguration\UIFields\DoubleOrPercentField.cs" />
-    <Compile Include="SlicerConfiguration\UIFields\DropMenuWrappedField.cs" />
     <Compile Include="SlicerConfiguration\UIFields\FieldChangedEventArgs.cs" />
     <Compile Include="SlicerConfiguration\UIFields\IntField.cs" />
     <Compile Include="SlicerConfiguration\UIFields\IntOrMmField.cs" />
