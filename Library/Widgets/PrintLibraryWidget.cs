@@ -93,6 +93,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			};
 			allControls.AddChild(navBar);
 
+			allControls.AddChild(new HorizontalLine(20), 1);
+
 			var showFolders = new ExpandCheckboxButton("Folders".Localize())
 			{
 				HAnchor = HAnchor.Stretch,
