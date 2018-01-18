@@ -85,6 +85,7 @@
     <Compile Include="ActionBar\TemperatureWidgetBed.cs" />
     <Compile Include="ApplicationView\OemProfileDictionary.cs" />
     <Compile Include="ApplicationView\WindowsPlatformsFeatures.cs" />
+    <Compile Include="DataStorage\ApplicationDataStorage.cs" />
     <Compile Include="PartPreviewWindow\AlignControls.cs" />
     <Compile Include="PartPreviewWindow\LibraryBrowserPage.cs" />
     <Compile Include="PartPreviewWindow\MaterialControls.cs" />
