@@ -89,14 +89,13 @@ namespace MatterHackers.MatterControl.DataStorage
 
 		public string DownloadsDirectory { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
 
-		public string CustomLibraryFoldersPath { get; } = Path.Combine(_applicationUserDataPath, "LibraryFolders.conf");
+		public string CustomLibraryFoldersPath => Path.Combine(_applicationUserDataPath, "LibraryFolders.conf");
 
 		/// <summary>
 		/// Returns the path to the sqlite database
 		/// </summary>
 		/// <returns></returns>
-		public string DatastorePath { get; } = Path.Combine(_applicationUserDataPath, datastoreName);
-
+		public string DatastorePath => Path.Combine(EnsurePath(_applicationUserDataPath), datastoreName);
 
 #if __ANDROID__
 		/// <summary>
