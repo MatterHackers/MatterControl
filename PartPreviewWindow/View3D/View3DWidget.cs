@@ -52,7 +52,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class View3DWidget : GuiWidget
+	public class View3DWidget : GuiWidget 
 	{
 		private bool DoBooleanTest = false;
 		private bool deferEditorTillMouseUp = false;
@@ -847,10 +847,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
 		{
 			// Show transform override
-			if (activeButtonBeforeMouseOverride == null && mouseEvent.Button == MouseButtons.Right)
+			if (activeButtonBeforeMouseOverride == null 
+				&& (mouseEvent.Button == MouseButtons.Right || Keyboard.IsKeyDown(Keys.Control)))
 			{
-				activeButtonBeforeMouseOverride = viewControls3D.ActiveButton;
-				viewControls3D.ActiveButton = ViewControls3DButtons.Rotate;
+				if (Keyboard.IsKeyDown(Keys.Shift))
+				{
+					activeButtonBeforeMouseOverride = viewControls3D.ActiveButton;
+					viewControls3D.ActiveButton = ViewControls3DButtons.Translate;
+				}
+				else
+				{
+					activeButtonBeforeMouseOverride = viewControls3D.ActiveButton;
+					viewControls3D.ActiveButton = ViewControls3DButtons.Rotate;
+				}
 			}
 			else if (activeButtonBeforeMouseOverride == null && mouseEvent.Button == MouseButtons.Middle)
 			{
@@ -870,6 +879,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (this.TrackballTumbleWidget.UnderMouseState == UnderMouseState.FirstUnderMouse)
 			{
 				if (mouseEvent.Button == MouseButtons.Left
+					&& viewControls3D.ActiveButton == ViewControls3DButtons.PartSelect
 					&&
 					(ModifierKeys == Keys.Shift || ModifierKeys == Keys.Control)
 					|| (
