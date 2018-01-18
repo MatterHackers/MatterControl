@@ -68,33 +68,31 @@ namespace MatterHackers.MatterControl.PrintHistory
 					bool safeHomingDirection = printer.Settings.GetValue<bool>(SettingsKey.z_homes_to_max);
 
 					StyledMessageBox.ShowMessageBox(
-						RecoverPrintProcessDialogResponse,
+						(messageBoxResponse) =>
+						{
+							if (messageBoxResponse)
+							{
+								UiThread.RunOnIdle(() =>
+								{
+									if (ApplicationController.Instance.ActivePrinter.Connection.CommunicationState == CommunicationStates.Connected)
+									{
+										ApplicationController.Instance.ActivePrinter.Connection.CommunicationState = CommunicationStates.PreparingToPrint;
+										ApplicationController.Instance.ActivePrinter.Connection.StartPrint(lastPrintTask.PrintingGCodeFileName, lastPrintTask);
+									}
+								});
+							}
+							else // the recovery has been canceled
+							{
+								lastPrintTask.PrintingGCodeFileName = null;
+								lastPrintTask.Commit();
+							}
+						},
 						(safeHomingDirection) ? printRecoveryMessage : printRecoveryMessage + "\n\n" + printRecoveryWarningMessage,
 						recoverPrintTitle,
 						StyledMessageBox.MessageType.YES_NO,
 						recoverPrint,
 						cancelRecovery);
 				}
-			}
-		}
-
-		private static void RecoverPrintProcessDialogResponse(bool messageBoxResponse)
-		{
-			if (messageBoxResponse)
-			{
-				UiThread.RunOnIdle(() =>
-				{
-					if (ApplicationController.Instance.ActivePrinter.Connection.CommunicationState == CommunicationStates.Connected)
-					{
-						ApplicationController.Instance.ActivePrinter.Connection.CommunicationState = CommunicationStates.PreparingToPrint;
-						ApplicationController.Instance.ActivePrinter.Connection.StartPrint(lastPrintTask.PrintingGCodeFileName, lastPrintTask);
-					}
-				});
-			}
-			else // the recovery has been canceled
-			{
-				lastPrintTask.PrintingGCodeFileName = null;
-				lastPrintTask.Commit();
 			}
 		}
 	}
