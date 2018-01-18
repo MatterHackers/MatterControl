@@ -64,14 +64,16 @@ namespace MatterHackers.MatterControl.PrintHistory
 					&& !printer.Settings.GetValue<bool>(SettingsKey.has_hardware_leveling))
 				{
 					lastPrintTask = lastPrint;
-					if (printer.Settings.GetValue<bool>(SettingsKey.z_homes_to_max))
-					{
-						StyledMessageBox.ShowMessageBox(RecoverPrintProcessDialogResponse, printRecoveryMessage, recoverPrintTitle, StyledMessageBox.MessageType.YES_NO, recoverPrint, cancelRecovery);
-					}
-					else // make sure we include a waring
-					{
-						StyledMessageBox.ShowMessageBox(RecoverPrintProcessDialogResponse, printRecoveryMessage + "\n\n" + printRecoveryWarningMessage, recoverPrintTitle, StyledMessageBox.MessageType.YES_NO, recoverPrint, cancelRecovery);
-					}
+
+					bool safeHomingDirection = printer.Settings.GetValue<bool>(SettingsKey.z_homes_to_max);
+
+					StyledMessageBox.ShowMessageBox(
+						RecoverPrintProcessDialogResponse,
+						(safeHomingDirection) ? printRecoveryMessage : printRecoveryMessage + "\n\n" + printRecoveryWarningMessage,
+						recoverPrintTitle,
+						StyledMessageBox.MessageType.YES_NO,
+						recoverPrint,
+						cancelRecovery);
 				}
 			}
 		}
