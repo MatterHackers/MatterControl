@@ -14,7 +14,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 	{
 		private EventHandler unregisterEvents;
 		private EditLevelingSettingsWindow editLevelingSettingsWindow;
-		private Button runPrintLevelingButton;
+		private GuiWidget runPrintLevelingButton;
 
 		private TextImageButtonFactory buttonFactory;
 		private PrinterConfig printer;
@@ -32,7 +32,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			};
 
 			buttonRow.AddChild(
-				new ImageWidget(AggContext.StaticData.LoadIcon("leveling_32x32.png", 24, 24, IconColor.Theme))
+				new IconButton(AggContext.StaticData.LoadIcon("leveling_32x32.png", 24, 24, IconColor.Theme), theme)
 				{
 					Margin = new BorderDouble(right: 6),
 					VAnchor = VAnchor.Center
@@ -40,18 +40,18 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 			// label
 			buttonRow.AddChild(
-				new TextWidget("", textColor: theme.Colors.PrimaryTextColor, pointSize: theme.DefaultFontSize)
+				new TextWidget("Software Print Leveling".Localize(), textColor: theme.Colors.PrimaryTextColor, pointSize: theme.DefaultFontSize)
 				{
 					AutoExpandBoundsToText = true,
 					VAnchor = VAnchor.Center,
-					Text = "Software Print Leveling".Localize()
 				});
 
 			buttonRow.AddChild(new HorizontalSpacer());
 
 			// configure button
-			runPrintLevelingButton = buttonFactory.Generate("Configure".Localize().ToUpper());
-			runPrintLevelingButton.Margin = new BorderDouble(left: 6);
+			runPrintLevelingButton = new TextButton("Configure".Localize(), theme);
+			runPrintLevelingButton.Margin = theme.ButtonSpacing;
+			runPrintLevelingButton.BackgroundColor = theme.MinimalShade;
 			runPrintLevelingButton.VAnchor = VAnchor.Center;
 			runPrintLevelingButton.Click += (sender, e) =>
 			{
