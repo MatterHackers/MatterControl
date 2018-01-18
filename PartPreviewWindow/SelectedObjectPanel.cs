@@ -45,7 +45,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private IObject3D item = new Object3D();
 
 		private FlowLayoutWidget scrollableContent;
-		private TextWidget itemName;
 		private ThemeConfig theme;
 		private View3DWidget view3DWidget;
 		private InteractiveScene scene;
@@ -54,6 +53,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private SectionWidget editorSection;
 		private TextButton editButton;
 		private GuiWidget editorPanel;
+		private InlineTitleEdit inlineTitleEdit;
 
 		public SelectedObjectPanel(View3DWidget view3DWidget, InteractiveScene scene, ThemeConfig theme, PrinterConfig printer)
 			: base(FlowDirection.TopToBottom)
@@ -68,20 +68,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.scene = scene;
 			this.printer = printer;
 
-			var firstPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			this.AddChild(inlineTitleEdit = new InlineTitleEdit("", theme));
+			inlineTitleEdit.TitleChanged += (s, e) =>
 			{
-				Padding = 10,
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit
+				if (item != null)
+				{
+					item.Name = inlineTitleEdit.Text;
+				}
 			};
-			this.AddChild(firstPanel);
-
-			firstPanel.AddChild(itemName = new TextWidget("", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: theme.DefaultFontSize)
-			{
-				AutoExpandBoundsToText = true,
-				EllipsisIfClipped = true,
-				Margin = new BorderDouble(bottom: 10)
-			});
 
 			scrollableContent = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -238,7 +232,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			editButton.Enabled = (selectedItem.Children.Count > 0);
 
-			this.itemName.Text = selectedItem.Name ?? selectedItem.GetType().Name;
+			inlineTitleEdit.Text = selectedItem.Name ?? selectedItem.GetType().Name;
 
 			this.item = selectedItem;
 

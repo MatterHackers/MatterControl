@@ -42,10 +42,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 		//private PrinterConfig printer;
 		private MacroControls(PrinterConfig printer, ThemeConfig theme)
 		{
-			var noMacrosFound = new TextWidget("No macros are currently set up for this printer.".Localize(), pointSize: 10)
-			{
-				TextColor = ActiveTheme.Instance.PrimaryTextColor,
-			};
+			var noMacrosFound = new TextWidget("No macros are currently set up for this printer.".Localize(), pointSize: 10, textColor: theme.Colors.PrimaryTextColor);
 			this.AddChild(noMacrosFound);
 
 			if (printer.Settings?.GetMacros(MacroUiLocation.Controls).Any() != true)

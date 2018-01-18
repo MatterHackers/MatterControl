@@ -161,8 +161,11 @@ namespace MatterHackers.MatterControl.ActionBar
 				if (listenForConnectFailed
 					&& UiThread.CurrentTimerMs - connectStartMs < 25000)
 				{
-					// User initiated connect attempt failed, show port selection dialog
-					DialogWindow.Show(new SetupStepComPortOne(printer));
+					UiThread.RunOnIdle(() =>
+					{
+						// User initiated connect attempt failed, show port selection dialog
+						DialogWindow.Show(new SetupStepComPortOne(printer));
+					});
 				}
 #endif
 				listenForConnectFailed = false;

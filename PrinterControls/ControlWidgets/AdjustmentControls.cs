@@ -67,10 +67,9 @@ namespace MatterHackers.MatterControl.PrinterControls
 					VAnchor = VAnchor.Fit
 				};
 
-				var feedRateDescription = new TextWidget("Speed Multiplier".Localize(), pointSize: theme.DefaultFontSize)
+				var feedRateDescription = new TextWidget("Speed Multiplier".Localize(), pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
 				{
 					MinimumSize = new Vector2(140, 0) * GuiWidget.DeviceScale,
-					TextColor = ActiveTheme.Instance.PrimaryTextColor,
 					VAnchor = VAnchor.Center,
 				};
 				row.AddChild(feedRateDescription);
@@ -132,10 +131,9 @@ namespace MatterHackers.MatterControl.PrinterControls
 					VAnchor = VAnchor.Fit
 				};
 
-				var extrusionDescription = new TextWidget("Extrusion Multiplier".Localize(), pointSize: theme.DefaultFontSize)
+				var extrusionDescription = new TextWidget("Extrusion Multiplier".Localize(), pointSize: theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
 				{
 					MinimumSize = new Vector2(140, 0) * GuiWidget.DeviceScale,
-					TextColor = ActiveTheme.Instance.PrimaryTextColor,
 					VAnchor = VAnchor.Center
 				};
 				row.AddChild(extrusionDescription);

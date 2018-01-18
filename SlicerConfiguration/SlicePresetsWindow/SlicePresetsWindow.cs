@@ -65,15 +65,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private PresetsContext presetsContext;
 		private PrinterConfig printer;
-		private MHTextEditWidget presetNameInput;
-
-		private string initialPresetName = null;
-
 		private GuiWidget middleRow;
+		private InlineTitleEdit inlineTitleEdit;
 
 		public SlicePresetsWindow(PrinterConfig printer, PresetsContext presetsContext)
 				: base(641, 481)
 		{
+			var theme = ApplicationController.Instance.Theme;
 			this.presetsContext = presetsContext;
 			this.printer = printer;
 			this.AlwaysOnTopOfMain = true;
@@ -99,48 +97,20 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			middleRow.AnchorAll();
 			middleRow.AddChild(CreateSliceSettingsWidget(printer, presetsContext.PersistenceLayer));
 
-			mainContainer.AddChild(GetTopRow());
+			inlineTitleEdit = new InlineTitleEdit(presetsContext.PersistenceLayer.Name, theme, boldFont: true);
+			inlineTitleEdit.TitleChanged += (s, e) =>
+			{
+				printer.Settings.SetValue(SettingsKey.layer_name, inlineTitleEdit.Text, presetsContext.PersistenceLayer);
+				//ActiveSliceSettings.SettingChanged.CallEvents(null, new StringEventArgs(SettingsKey.layer_name));
+			};
+			mainContainer.AddChild(inlineTitleEdit);
+
 			mainContainer.AddChild(middleRow);
 			mainContainer.AddChild(GetBottomRow(buttonFactory));
 
 			this.AddChild(mainContainer);
 
 			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-		}
-
-		private FlowLayoutWidget GetTopRow()
-		{
-			var topRow = new FlowLayoutWidget()
-			{
-				HAnchor = HAnchor.Stretch,
-				Padding = new BorderDouble(0, 3)
-			};
-
-			// Add label
-			topRow.AddChild(new TextWidget("Preset Name".Localize() + ":", pointSize: 14)
-			{
-				TextColor = ActiveTheme.Instance.PrimaryTextColor,
-				VAnchor = VAnchor.Center,
-				Margin = new BorderDouble(right: 4)
-			});
-
-			// Add textbox
-			initialPresetName = presetsContext.PersistenceLayer.Name;
-			presetNameInput = new MHTextEditWidget(initialPresetName)
-			{
-				HAnchor = HAnchor.Stretch
-			};
-
-			presetNameInput.ActualTextEditWidget.EditComplete += (s, e) =>
-			{
-				ActiveSliceSettings.Instance.SetValue(SettingsKey.layer_name, presetNameInput.Text, presetsContext.PersistenceLayer);
-				ActiveSliceSettings.SettingChanged.CallEvents(null, new StringEventArgs(SettingsKey.layer_name));
-			};
-
-			topRow.AddChild(presetNameInput);
-
-			// Return container
-			return topRow;
 		}
 
 		private GuiWidget CreateSliceSettingsWidget(PrinterConfig printer, PrinterSettingsLayer persistenceLayer)
@@ -174,7 +144,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				UiThread.RunOnIdle(() =>
 				{
-					string sanitizedName = numberMatch.Replace(presetNameInput.Text, "").Trim();
+					string sanitizedName = numberMatch.Replace(inlineTitleEdit.Text, "").Trim();
 					string newProfileName = agg_basics.GetNonCollidingName(sanitizedName, presetsContext.PresetLayers.Select(preset => preset.ValueOrDefault(SettingsKey.layer_name)));
 
 					var clonedLayer = presetsContext.PersistenceLayer.Clone();
@@ -187,7 +157,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					middleRow.CloseAllChildren();
 					middleRow.AddChild(CreateSliceSettingsWidget(printer, clonedLayer));
 
-					presetNameInput.Text = newProfileName;
+					inlineTitleEdit.Text = newProfileName;
 				});
 			};
 

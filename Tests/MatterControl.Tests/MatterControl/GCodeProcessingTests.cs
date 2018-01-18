@@ -64,7 +64,7 @@ namespace MatterControl.Tests.MatterControl
 		{
 			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
-			
+
 			TestMacroReplacement("[temperature]", "200");
 			TestMacroReplacement("[first_layer_speed]", "1080");
 			TestMacroReplacement("[bed_remove_part_temperature]", "0");
