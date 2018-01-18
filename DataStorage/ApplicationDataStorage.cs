@@ -40,14 +40,7 @@ namespace MatterHackers.MatterControl.DataStorage
 		private static ApplicationDataStorage globalInstance;
 		private const string applicationDataFolderName = "MatterControl";
 		private const string datastoreName = "MatterControl.db";
-		private string applicationPath;
 
-		private static string _applicationUserDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), applicationDataFolderName);
-		public static string ApplicationUserDataPath => EnsurePath(_applicationUserDataPath);
-
-		/// <summary>
-		/// Creates a global instance of ApplicationDataStorage
-		/// </summary>
 		public static ApplicationDataStorage Instance
 		{
 			get
@@ -58,6 +51,83 @@ namespace MatterHackers.MatterControl.DataStorage
 				}
 				return globalInstance;
 			}
+		}
+
+		private string _applicationPath;
+		public string ApplicationPath
+		{
+			get
+			{
+				if (_applicationPath == null)
+				{
+					_applicationPath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+				}
+
+				return _applicationPath;
+			}
+		}
+
+		private static string _applicationUserDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), applicationDataFolderName);
+		public static string ApplicationUserDataPath => EnsurePath(_applicationUserDataPath);
+
+		private static string _applicationLibraryDataPath = Path.Combine(ApplicationUserDataPath, "Library");
+		public string ApplicationLibraryDataPath => EnsurePath(_applicationLibraryDataPath);
+
+		private static string _libraryAssetPath = Path.Combine(_applicationLibraryDataPath, "Assets");
+		public string LibraryAssetsPath => EnsurePath(_libraryAssetPath);
+
+		private static string _applicationTempDataPath = Path.Combine(_applicationUserDataPath, "data", "temp");
+		public string ApplicationTempDataPath => EnsurePath(_applicationTempDataPath);
+
+		private static string _platingDirectory = Path.Combine(_applicationLibraryDataPath, "Plating");
+		public string PlatingDirectory => EnsurePath(_platingDirectory);
+
+		public string DownloadsDirectory { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
+
+		public string CustomLibraryFoldersPath { get; } = Path.Combine(_applicationUserDataPath, "LibraryFolders.conf");
+
+		/// <summary>
+		/// Returns the path to the sqlite database
+		/// </summary>
+		/// <returns></returns>
+		public string DatastorePath { get; } = Path.Combine(_applicationUserDataPath, datastoreName);
+
+		private static string _gcodeOutputPath = Path.Combine(_applicationUserDataPath, "data", "gcode");
+		public string GCodeOutputPath => EnsurePath(_gcodeOutputPath);
+
+#if __ANDROID__
+		/// <summary>
+		/// Returns the public storage folder (ex. download folder on Android)
+		/// </summary>
+		public string PublicDataStoragePath { get; } = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads).AbsolutePath;
+#endif
+
+		/// <summary>
+		/// Invokes CreateDirectory on all paths, creating if missing, before returning
+		/// </summary>
+		/// <returns></returns>
+		private static string EnsurePath(string fullPath)
+		{
+			Directory.CreateDirectory(fullPath);
+			return fullPath;
+		}
+
+		/// <summary>
+		/// Overrides the AppData location. Used by tests to set a non-standard AppData location
+		/// </summary>
+		/// <param name="path">The new AppData path.</param>
+		internal void OverrideAppDataLocation(string path)
+		{
+			Console.WriteLine("   Overriding ApplicationUserDataPath: " + path);
+
+			// Ensure the target directory exists
+			Directory.CreateDirectory(path);
+
+			_applicationUserDataPath = path;
+
+			// Initialize a fresh datastore instance after overriding the AppData path
+			Datastore.Instance = new Datastore();
+			Datastore.Instance.Initialize();
 		}
 
 		public string GetTempFileName(string fileExtension = null)
@@ -84,78 +154,5 @@ namespace MatterHackers.MatterControl.DataStorage
 
 			return filePath;
 		}
-
-		/// <summary>
-		/// Invokes CreateDirectory on all paths, creating if missing, before returning
-		/// </summary>
-		/// <returns></returns>
-		private static string EnsurePath(string fullPath)
-		{
-			Directory.CreateDirectory(fullPath);
-			return fullPath;
-		}
-
-		private static string _applicationLibraryDataPath = Path.Combine(ApplicationUserDataPath, "Library");
-		public string ApplicationLibraryDataPath => EnsurePath(_applicationLibraryDataPath);
-
-		private static string _libraryAssetPath = Path.Combine(_applicationLibraryDataPath, "Assets");
-		public string LibraryAssetsPath => EnsurePath(_libraryAssetPath);
-
-		/// <summary>
-		/// Overrides the AppData location.
-		/// </summary>
-		/// <param name="path">The new AppData path.</param>
-		internal void OverrideAppDataLocation(string path)
-		{
-			Console.WriteLine("   Overriding ApplicationUserDataPath: " + path);
-
-			// Ensure the target directory exists
-			Directory.CreateDirectory(path);
-
-			_applicationUserDataPath = path;
-
-			// Initialize a fresh datastore instance after overriding the AppData path
-			Datastore.Instance = new Datastore();
-			Datastore.Instance.Initialize();
-		}
-
-		public string ApplicationPath
-		{
-			get
-			{
-				if (this.applicationPath == null)
-				{
-					applicationPath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-				}
-				return applicationPath;
-			}
-		}
-
-		private static string _applicationTempDataPath = Path.Combine(_applicationUserDataPath, "data", "temp");
-		public string ApplicationTempDataPath => EnsurePath(_applicationTempDataPath);
-
-		private static string _platingDirectory = Path.Combine(_applicationLibraryDataPath, "Plating");
-		public string PlatingDirectory => EnsurePath(_platingDirectory);
-
-		public string DownloadsDirectory { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
-
-		public string CustomLibraryFoldersPath { get; } = Path.Combine(_applicationUserDataPath, "LibraryFolders.conf");
-
-
-		/// <summary>
-		/// Returns the path to the sqlite database
-		/// </summary>
-		/// <returns></returns>
-		public string DatastorePath { get; } = Path.Combine(_applicationUserDataPath, datastoreName);
-
-		private static string _gcodeOutputPath = Path.Combine(_applicationUserDataPath, "data", "gcode");
-		public string GCodeOutputPath => EnsurePath(_gcodeOutputPath);
-
-#if __ANDROID__
-		/// <summary>
-		/// Returns the public storage folder (ex. download folder on Android)
-		/// </summary>
-		public string PublicDataStoragePath { get; } = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads).AbsolutePath;
-#endif
 	}
 }
