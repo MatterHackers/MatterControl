@@ -37,6 +37,7 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace MatterHackers.MatterControl.PrintHistory
 {
@@ -44,7 +45,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 	{
 		static PrintTask lastPrintTask;
 
-		public static void CheckIfNeedToRecoverPrint()
+		public static void CheckIfNeedToRecoverPrint(PrinterConfig printer)
 		{
 			string recoverPrint = "Recover Print".Localize();
 			string cancelRecovery = "Cancel".Localize();
@@ -52,7 +53,8 @@ namespace MatterHackers.MatterControl.PrintHistory
 			string printRecoveryMessage = "It appears your last print failed to complete.\n\nWould your like to attempt to recover from the last know position?".Localize();
 			string recoverPrintTitle = "Recover Last Print".Localize();
 
-			foreach (PrintTask lastPrint in PrintHistoryData.Instance.GetHistoryItems(1))
+			PrintTask lastPrint = PrintHistoryData.Instance.GetHistoryForPrinter(printer.Settings.ID.GetHashCode()).FirstOrDefault();
+			if (lastPrint != null)
 			{
 				if (!lastPrint.PrintComplete // Top Print History Item is not complete
 					&& !string.IsNullOrEmpty(lastPrint.PrintingGCodeFileName) // PrintingGCodeFileName is set
@@ -60,7 +62,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 					&& lastPrint.PercentDone > 0 // we are actually part way into the print
 					&& ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.recover_is_enabled)
 					&& !ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_hardware_leveling))
-                {
+				{
 					lastPrintTask = lastPrint;
 					if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.z_homes_to_max))
 					{
@@ -93,7 +95,6 @@ namespace MatterHackers.MatterControl.PrintHistory
 				lastPrintTask.Commit();
 			}
 		}
-
 	}
 
 	public class PrintHistoryData
@@ -127,6 +128,12 @@ namespace MatterHackers.MatterControl.PrintHistory
 				query = string.Format("SELECT * FROM PrintTask ORDER BY PrintStart DESC LIMIT {0};", recordCount);
 			}
 
+			return Datastore.Instance.dbSQLite.Query<PrintTask>(query);
+		}
+
+		public IEnumerable<DataStorage.PrintTask> GetHistoryForPrinter(int printerID)
+		{
+			string query = string.Format("SELECT * FROM PrintTask WHERE PrinterID={0} ORDER BY PrintStart DESC LIMIT 1;", printerID);
 			return Datastore.Instance.dbSQLite.Query<PrintTask>(query);
 		}
 

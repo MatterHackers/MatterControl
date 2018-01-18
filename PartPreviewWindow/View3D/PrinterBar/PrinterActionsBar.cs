@@ -134,9 +134,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.OverflowMenu.Name = "Printer Overflow Menu";
 			this.OverflowMenu.DynamicPopupContent = () => GeneratePrinterOverflowMenu(theme);
 
-			ApplicationController.Instance.ActivePrinter.Connection.ConnectionSucceeded.RegisterEvent((s, e) =>
+			printer.Connection.ConnectionSucceeded.RegisterEvent((s, e) =>
 			{
-				UiThread.RunOnIdle(PrintRecovery.CheckIfNeedToRecoverPrint);
+				UiThread.RunOnIdle(() =>
+				{
+					PrintRecovery.CheckIfNeedToRecoverPrint(printer);
+				});
 			}, ref unregisterEvents);
 		}
 
