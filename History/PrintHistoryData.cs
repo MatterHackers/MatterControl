@@ -60,11 +60,11 @@ namespace MatterHackers.MatterControl.PrintHistory
 					&& !string.IsNullOrEmpty(lastPrint.PrintingGCodeFileName) // PrintingGCodeFileName is set
 					&& File.Exists(lastPrint.PrintingGCodeFileName) // PrintingGCodeFileName is still on disk
 					&& lastPrint.PercentDone > 0 // we are actually part way into the print
-					&& ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.recover_is_enabled)
-					&& !ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.has_hardware_leveling))
+					&& printer.Settings.GetValue<bool>(SettingsKey.recover_is_enabled)
+					&& !printer.Settings.GetValue<bool>(SettingsKey.has_hardware_leveling))
 				{
 					lastPrintTask = lastPrint;
-					if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.z_homes_to_max))
+					if (printer.Settings.GetValue<bool>(SettingsKey.z_homes_to_max))
 					{
 						StyledMessageBox.ShowMessageBox(RecoverPrintProcessDialogResponse, printRecoveryMessage, recoverPrintTitle, StyledMessageBox.MessageType.YES_NO, recoverPrint, cancelRecovery);
 					}
