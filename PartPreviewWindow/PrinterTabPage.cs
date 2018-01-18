@@ -504,7 +504,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					new ConfigurePrinterWidget(sliceSettingsWidget.settingsContext, printer, theme)
 					{
 						BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor,
-						Padding = new BorderDouble(top: 10),
 						HAnchor = HAnchor.Stretch,
 						VAnchor = VAnchor.Stretch,
 					});
