@@ -44,7 +44,6 @@ namespace MatterHackers.MatterControl.DataStorage
 		private string datastoreLocation = ApplicationDataStorage.Instance.DatastorePath;
 		private static Datastore globalInstance;
 		private ApplicationSession activeSession;
-		private bool TEST_FLAG = false;
 
 		private List<Type> dataStoreTables = new List<Type>
 		{
@@ -89,22 +88,6 @@ namespace MatterHackers.MatterControl.DataStorage
 
 				default:
 					throw new NotImplementedException();
-			}
-
-			if (TEST_FLAG)
-			{
-				//In test mode - attempt to drop all tables (in case db was locked when we tried to delete it)
-				foreach (Type table in dataStoreTables)
-				{
-					try
-					{
-						this.dbSQLite.DropTable(table);
-					}
-					catch
-					{
-						GuiWidget.BreakInDebugger();
-					}
-				}
 			}
 		}
 
@@ -165,15 +148,7 @@ namespace MatterHackers.MatterControl.DataStorage
 		//Run initial checks and operations on sqlite datastore
 		public void Initialize()
 		{
-			if (TEST_FLAG)
-			{
-				ValidateSchema();
-				GenerateSampleData();
-			}
-			else
-			{
-				ValidateSchema();
-			}
+			ValidateSchema();
 
 			// Contruct the root library collection if missing
 			var rootLibraryCollection = Datastore.Instance.dbSQLite.Table<PrintItemCollection>().Where(v => v.Name == "_library").Take(1).FirstOrDefault();
