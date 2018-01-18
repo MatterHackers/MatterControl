@@ -104,7 +104,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			SettingsKey.max_acceleration,
 			SettingsKey.ip_address,
 			SettingsKey.ip_port,
-
+			"load_filament_length",
+			"trim_image",
+			"insert_image",
+			"running_clean_image",
+			"unload_filament_length",
 		};
 
 		public SliceEngineMapping(string engineName)

@@ -1,0 +1,25 @@
+; host.choose_material(title:"Confirm the material you are unloading.")
+
+; host.show_message(title:"Waiting for extruder to heat to [temperature], before unloading.")
+G4 S1               ; wait message to display
+M109 S[temperature] ; heat up the extruder
+
+M302 S0  ; Allow extrusion at any temperature
+; host.show_message(title:"Unloading filament..." count_down:28)
+G92 E0              ; reset the extruder position to 0
+G91                 ; Relative positioning
+G1 E15 F600         ; push some out first
+G1 E-[unload_filament_length_over_six] F5000      ; unload the filament 
+G1 E-[unload_filament_length_over_six] F5000      ; unload the filament 
+G1 E-[unload_filament_length_over_six] F5000      ; unload the filament 
+G1 E-[unload_filament_length_over_six] F5000      ; unload the filament 
+G1 E-[unload_filament_length_over_six] F5000      ; unload the filament 
+G1 E-[unload_filament_length_over_six] F5000
+G1 E-[unload_filament_length_over_six] F5000      ; unload the filament 
+G4 S1               ; wait for move to finish
+G90                 ; Absolute positioning
+G92 E0              ; reset the extruder position to 0
+
+M302 S150  ; Set cold extrude temp back to reasonable
+
+M104 S0             ; turn the extruder temperature off
