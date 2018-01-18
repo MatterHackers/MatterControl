@@ -872,5 +872,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			this.AddChild(resetButton);
 		}
+
+		public override string Text
+		{
+			get => searchInput.ActualTextEditWidget.Text;
+			set => searchInput.ActualTextEditWidget.Text = value;
+		}
 	}
 }
