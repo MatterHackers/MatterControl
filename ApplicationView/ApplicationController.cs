@@ -316,6 +316,7 @@ namespace MatterHackers.MatterControl
 				IsEnabled = (scene) => scene.HasSelection,
 				Icon = AggContext.StaticData.LoadIcon("ungroup.png").SetPreMultiply(),
 			},
+			new SceneSelectionSeparator(),
 			new SceneSelectionOperation()
 			{
 				TitleResolver = () => "Duplicate".Localize(),
@@ -330,6 +331,7 @@ namespace MatterHackers.MatterControl
 				IsEnabled = (scene) => scene.HasSelection,
 				Icon = AggContext.StaticData.LoadIcon("remove.png").SetPreMultiply(),
 			},
+			new SceneSelectionSeparator(),
 			new SceneSelectionOperation()
 			{
 				TitleResolver = () => "Lay Flat".Localize(),
@@ -343,7 +345,21 @@ namespace MatterHackers.MatterControl
 				IsEnabled = (scene) => scene.HasSelection,
 				Icon = AggContext.StaticData.LoadIcon("lay_flat.png").SetPreMultiply(),
 			},
-
+			new SceneSelectionOperation()
+			{
+				TitleResolver = () => "Make Support".Localize(),
+				Action = (scene) =>
+				{
+					if (scene.SelectedItem != null
+						&& !scene.SelectedItem.VisibleMeshes().All(i => i.OutputType == PrintOutputTypes.Support))
+					{
+						scene.UndoBuffer.AddAndDo(new MakeSupport(scene.SelectedItem));
+					}
+				},
+				Icon = AggContext.StaticData.LoadIcon("support.png").SetPreMultiply(),
+				IsEnabled = (scene) => scene.HasSelection,
+			},
+			new SceneSelectionSeparator(),
 			new SceneSelectionOperation()
 			{
 				TitleResolver = () => "Subtract".Localize(),
@@ -364,20 +380,6 @@ namespace MatterHackers.MatterControl
 				Action = (scene) => DoOperation(scene, nameof(SubtractAndReplace), "Subtract & Replace"),
 				Icon = AggContext.StaticData.LoadIcon("paint.png").SetPreMultiply(),
 				IsEnabled = (scene) => scene.SelectedItem is SelectionGroup,
-			},
-			new SceneSelectionOperation()
-			{
-				TitleResolver = () => "Make Support".Localize(),
-				Action = (scene) =>
-				{
-					if (scene.SelectedItem != null
-						&& scene.SelectedItem.OutputType != PrintOutputTypes.Support)
-					{
-						scene.UndoBuffer.AddAndDo(new MakeSupport(scene.SelectedItem));
-					}
-				},
-				Icon = AggContext.StaticData.LoadIcon("support.png").SetPreMultiply(),
-				IsEnabled = (scene) => scene.HasSelection,
 			},
 #if DEBUG // keep this work in progress to the editor for now
 			new SceneSelectionSeparator(),

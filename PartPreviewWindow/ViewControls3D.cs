@@ -382,6 +382,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				button.Click += (s, e) =>
 				{
 					namedAction.Action.Invoke(sceneContext.Scene);
+					var partTab = button.Parents<PartTabPage>().FirstOrDefault();
+					var view3D = partTab.Descendants<View3DWidget>().FirstOrDefault();
+					view3D.InteractionLayer.Focus();
 				};
 				this.AddChild(button);
 			}
