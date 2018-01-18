@@ -38,22 +38,12 @@ namespace MatterHackers.MatterControl.DataStorage
 
 		//Describes the location for storing all local application data
 		private static ApplicationDataStorage globalInstance;
-		private static readonly string applicationDataFolderName = "MatterControl";
-		private readonly string datastoreName = "MatterControl.db";
+		private const string applicationDataFolderName = "MatterControl";
+		private const string datastoreName = "MatterControl.db";
 		private string applicationPath;
-		private static string applicationUserDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), applicationDataFolderName);
 
-		public ApplicationDataStorage()
-		//Constructor - validates that local storage folder exists, creates if necessary
-		{
-			DirectoryInfo dir = new DirectoryInfo(ApplicationUserDataPath);
-			if (!dir.Exists)
-			{
-				dir.Create();
-			}
-
-			Directory.CreateDirectory(this.LibraryAssetsPath);
-		}
+		private static string _applicationUserDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), applicationDataFolderName);
+		public static string ApplicationUserDataPath => EnsurePath(_applicationUserDataPath);
 
 		/// <summary>
 		/// Creates a global instance of ApplicationDataStorage
@@ -87,7 +77,7 @@ namespace MatterHackers.MatterControl.DataStorage
 			do
 			{
 				filePath = Path.Combine(
-					ApplicationDataStorage.Instance.ApplicationLibraryDataPath,
+					_applicationLibraryDataPath,
 					Path.ChangeExtension(Path.GetRandomFileName(), extension));
 
 			} while (File.Exists(filePath));
@@ -95,23 +85,21 @@ namespace MatterHackers.MatterControl.DataStorage
 			return filePath;
 		}
 
-		public string ApplicationLibraryDataPath
+		/// <summary>
+		/// Invokes CreateDirectory on all paths, creating if missing, before returning
+		/// </summary>
+		/// <returns></returns>
+		private static string EnsurePath(string fullPath)
 		{
-			get
-			{
-				string libraryPath = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "Library");
-
-				//Create library path if it doesn't exist
-				DirectoryInfo dir = new DirectoryInfo(libraryPath);
-				if (!dir.Exists)
-				{
-					dir.Create();
-				}
-				return libraryPath;
-			}
+			Directory.CreateDirectory(fullPath);
+			return fullPath;
 		}
 
-		public string LibraryAssetsPath => Path.Combine(this.ApplicationLibraryDataPath, "Assets");
+		private static string _applicationLibraryDataPath = Path.Combine(ApplicationUserDataPath, "Library");
+		public string ApplicationLibraryDataPath => EnsurePath(_applicationLibraryDataPath);
+
+		private static string _libraryAssetPath = Path.Combine(_applicationLibraryDataPath, "Assets");
+		public string LibraryAssetsPath => EnsurePath(_libraryAssetPath);
 
 		/// <summary>
 		/// Overrides the AppData location.
@@ -124,7 +112,7 @@ namespace MatterHackers.MatterControl.DataStorage
 			// Ensure the target directory exists
 			Directory.CreateDirectory(path);
 
-			applicationUserDataPath = path;
+			_applicationUserDataPath = path;
 
 			// Initialize a fresh datastore instance after overriding the AppData path
 			Datastore.Instance = new Datastore();
@@ -143,70 +131,25 @@ namespace MatterHackers.MatterControl.DataStorage
 			}
 		}
 
-		/// <summary>
-		/// Returns the application temp data folder
-		/// </summary>
-		/// <returns></returns>
-		public string ApplicationTempDataPath
-		{
-			get
-			{
-				return Path.Combine(applicationUserDataPath, "data", "temp");
-			}
-		}
+		private static string _applicationTempDataPath = Path.Combine(_applicationUserDataPath, "data", "temp");
+		public string ApplicationTempDataPath => EnsurePath(_applicationTempDataPath);
 
-		public string PlatingDirectory
-		{
-			get
-			{
-				string platingDirectory = Path.Combine(ApplicationTempDataPath, "Plating");
-				Directory.CreateDirectory(platingDirectory);
-
-				return platingDirectory;
-			}
-		}
+		private static string _platingDirectory = Path.Combine(_applicationLibraryDataPath, "Plating");
+		public string PlatingDirectory => EnsurePath(_platingDirectory);
 
 		public string DownloadsDirectory { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
 
-		public string CustomLibraryFoldersPath { get; } = Path.Combine(applicationUserDataPath, "LibraryFolders.conf");
+		public string CustomLibraryFoldersPath { get; } = Path.Combine(_applicationUserDataPath, "LibraryFolders.conf");
 
-		/// <summary>
-		/// Returns the application user data folder
-		/// </summary>
-		/// <returns></returns>
-		public static string ApplicationUserDataPath
-		{
-			get
-			{
-				return applicationUserDataPath;
-			}
-		}
 
 		/// <summary>
 		/// Returns the path to the sqlite database
 		/// </summary>
 		/// <returns></returns>
-		public string DatastorePath
-		{
-			get { return Path.Combine(ApplicationUserDataPath, datastoreName); }
-		}
+		public string DatastorePath { get; } = Path.Combine(_applicationUserDataPath, datastoreName);
 
-		/// <summary>
-		/// Returns the gcode output folder
-		/// </summary>
-		/// <returns></returns>
-		public string GCodeOutputPath
-		{
-			get
-			{
-				string gcodeOutputPath = Path.Combine(ApplicationUserDataPath, "data", "gcode");
-				if (!Directory.Exists(gcodeOutputPath))
-				{
-					Directory.CreateDirectory(gcodeOutputPath);
-				}
-				return gcodeOutputPath;
-			}
-		}
+		private static string _gcodeOutputPath = Path.Combine(_applicationUserDataPath, "data", "gcode");
+		public string GCodeOutputPath => EnsurePath(_gcodeOutputPath);
 
 #if __ANDROID__
 		/// <summary>

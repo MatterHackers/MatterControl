@@ -150,7 +150,7 @@ namespace MatterHackers.MatterControl.DataStorage
 		{
 			ValidateSchema();
 
-			// Contruct the root library collection if missing
+			// Construct the root library collection if missing
 			var rootLibraryCollection = Datastore.Instance.dbSQLite.Table<PrintItemCollection>().Where(v => v.Name == "_library").Take(1).FirstOrDefault();
 			if (rootLibraryCollection == null)
 			{
