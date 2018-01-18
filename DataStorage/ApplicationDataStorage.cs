@@ -38,6 +38,7 @@ namespace MatterHackers.MatterControl.DataStorage
 
 		//Describes the location for storing all local application data
 		private static ApplicationDataStorage globalInstance;
+
 		private const string applicationDataFolderName = "MatterControl";
 		private const string datastoreName = "MatterControl.db";
 
@@ -68,19 +69,23 @@ namespace MatterHackers.MatterControl.DataStorage
 		}
 
 		private static string _applicationUserDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), applicationDataFolderName);
+		private static string _applicationLibraryDataPath = Path.Combine(_applicationUserDataPath, "Library");
+		private static string _libraryAssetPath = Path.Combine(_applicationLibraryDataPath, "Assets");
+		private static string _platingDirectory = Path.Combine(_applicationLibraryDataPath, "Plating");
+		private static string _applicationTempDataPath = Path.Combine(_applicationUserDataPath, "data", "temp");
+		private static string _gcodeOutputPath = Path.Combine(_applicationUserDataPath, "data", "gcode");
+
 		public static string ApplicationUserDataPath => EnsurePath(_applicationUserDataPath);
 
-		private static string _applicationLibraryDataPath = Path.Combine(ApplicationUserDataPath, "Library");
 		public string ApplicationLibraryDataPath => EnsurePath(_applicationLibraryDataPath);
 
-		private static string _libraryAssetPath = Path.Combine(_applicationLibraryDataPath, "Assets");
 		public string LibraryAssetsPath => EnsurePath(_libraryAssetPath);
 
-		private static string _applicationTempDataPath = Path.Combine(_applicationUserDataPath, "data", "temp");
 		public string ApplicationTempDataPath => EnsurePath(_applicationTempDataPath);
 
-		private static string _platingDirectory = Path.Combine(_applicationLibraryDataPath, "Plating");
 		public string PlatingDirectory => EnsurePath(_platingDirectory);
+
+		public string GCodeOutputPath => EnsurePath(_gcodeOutputPath);
 
 		public string DownloadsDirectory { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
 
@@ -92,8 +97,6 @@ namespace MatterHackers.MatterControl.DataStorage
 		/// <returns></returns>
 		public string DatastorePath { get; } = Path.Combine(_applicationUserDataPath, datastoreName);
 
-		private static string _gcodeOutputPath = Path.Combine(_applicationUserDataPath, "data", "gcode");
-		public string GCodeOutputPath => EnsurePath(_gcodeOutputPath);
 
 #if __ANDROID__
 		/// <summary>
