@@ -382,6 +382,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				button.Click += (s, e) =>
 				{
 					namedAction.Action.Invoke(sceneContext.Scene);
+					sceneContext.Scene.Focus();
 				};
 				this.AddChild(button);
 			}

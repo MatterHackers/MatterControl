@@ -65,7 +65,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private Stopwatch timeSinceLastSpin = new Stopwatch();
 		private Stopwatch timeSinceReported = new Stopwatch();
 		private Matrix4X4 transformOnMouseDown = Matrix4X4.Identity;
-		private EventHandler unregisterEvents;
 
 		private ThemeConfig theme;
 
@@ -109,6 +108,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Name = "InteractionLayer",
 			};
 			this.InteractionLayer.AnchorAll();
+			this.Scene.Focused += (s, e) => this.InteractionLayer.Focus();
 
 			this.viewControls3D = viewControls3D;
 			this.theme = theme;
@@ -531,7 +531,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				meshViewerWidget.AfterDraw -= AfterDraw3DContent;
 			}
 
-			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
 		}
 
