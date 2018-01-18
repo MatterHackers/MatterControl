@@ -108,7 +108,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Name = "InteractionLayer",
 			};
 			this.InteractionLayer.AnchorAll();
-			this.Scene.Focused += (s, e) => this.InteractionLayer.Focus();
 
 			this.viewControls3D = viewControls3D;
 			this.theme = theme;
