@@ -43,8 +43,6 @@ namespace MatterHackers.MatterControl.PrintHistory
 {
 	public static class PrintRecovery
 	{
-		static PrintTask lastPrintTask;
-
 		public static void CheckIfNeedToRecoverPrint(PrinterConfig printer)
 		{
 			string recoverPrint = "Recover Print".Localize();
@@ -63,8 +61,6 @@ namespace MatterHackers.MatterControl.PrintHistory
 					&& printer.Settings.GetValue<bool>(SettingsKey.recover_is_enabled)
 					&& !printer.Settings.GetValue<bool>(SettingsKey.has_hardware_leveling))
 				{
-					lastPrintTask = lastPrint;
-
 					bool safeHomingDirection = printer.Settings.GetValue<bool>(SettingsKey.z_homes_to_max);
 
 					StyledMessageBox.ShowMessageBox(
@@ -77,14 +73,14 @@ namespace MatterHackers.MatterControl.PrintHistory
 									if (printer.Connection.CommunicationState == CommunicationStates.Connected)
 									{
 										printer.Connection.CommunicationState = CommunicationStates.PreparingToPrint;
-										printer.Connection.StartPrint(lastPrintTask.PrintingGCodeFileName, lastPrintTask);
+										printer.Connection.StartPrint(lastPrint.PrintingGCodeFileName, lastPrint);
 									}
 								});
 							}
 							else // the recovery has been canceled
 							{
-								lastPrintTask.PrintingGCodeFileName = null;
-								lastPrintTask.Commit();
+								lastPrint.PrintingGCodeFileName = null;
+								lastPrint.Commit();
 							}
 						},
 						(safeHomingDirection) ? printRecoveryMessage : printRecoveryMessage + "\n\n" + printRecoveryWarningMessage,
