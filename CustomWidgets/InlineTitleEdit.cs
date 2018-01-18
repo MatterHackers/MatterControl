@@ -45,14 +45,14 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		private TextButton saveButton;
 		private SearchInputBox searchPanel;
 
-		public InlineTitleEdit(string title, ThemeConfig theme)
+		public InlineTitleEdit(string title, ThemeConfig theme, bool boldFont = false)
 			: base(null)
 		{
 			this.Padding = theme.ToolbarPadding;
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Fit;
 
-			titleText = new TextWidget(title, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: theme.DefaultFontSize)
+			titleText = new TextWidget(title, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: theme.DefaultFontSize, bold: boldFont)
 			{
 				VAnchor = VAnchor.Center,
 				AutoExpandBoundsToText = true,
