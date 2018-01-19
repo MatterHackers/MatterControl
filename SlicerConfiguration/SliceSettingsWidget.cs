@@ -670,6 +670,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						break;
 
 					case SliceSettingData.DataEditTypes.STRING:
+					case SliceSettingData.DataEditTypes.WIDE_STRING:
 						uiField = new TextField();
 						break;
 
@@ -741,6 +742,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				uiField.Name = $"{settingData.PresentationName} Field";
 				uiField.Initialize(tabIndexForItem++);
+
+				if (settingData.DataEditType == SliceSettingData.DataEditTypes.WIDE_STRING)
+				{
+					uiField.Content.HAnchor = HAnchor.Stretch;
+					placeFieldInDedicatedRow = true;
+				}
 
 				uiField.SetValue(sliceSettingValue, userInitiated: false);
 

@@ -82,7 +82,7 @@
     "SlicerConfigName": "trim_image",
     "PresentationName": "Trim Image",
     "HelpText": "The image to show when explaining trimming.",
-    "DataEditType": "STRING",
+    "DataEditType": "WIDE_STRING",
     "ShowIfSet": "!sla_printer",
     "DefaultValue": "https://lh3.googleusercontent.com/7vFs0ih2mGseQBKo-0gHnzaT2SsuAPgeRuqFlVKG23c4brFnIaA2nlYIg8BUcdI-mVaDAadgu5bdBv_jZ69VOi3mYw"
   },
@@ -90,7 +90,7 @@
     "SlicerConfigName": "insert_image",
     "PresentationName": "Insert Image",
     "HelpText": "The image to show when explaining inserting.",
-    "DataEditType": "STRING",
+    "DataEditType": "WIDE_STRING",
     "ShowIfSet": "!sla_printer",
     "DefaultValue": "https://lh3.googleusercontent.com/S4eW9-uZ0lgpg_ws9Ss4LmUc_MiXCfHnfJmGVQ0XtOdpvr_XZQLuP5zWGv7eCSM65EbsWIdHVMC40EYL7u8k7LvMP4Y"
   },
@@ -98,7 +98,7 @@
     "SlicerConfigName": "running_clean_image",
     "PresentationName": "Running Clean Image",
     "HelpText": "The image to show when explaining filament running clean.",
-    "DataEditType": "STRING",
+    "DataEditType": "WIDE_STRING",
     "ShowIfSet": "!sla_printer",
     "DefaultValue": ""
   },
