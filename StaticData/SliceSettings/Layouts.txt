@@ -191,6 +191,14 @@ Printer
         max_acceleration
         max_velocity
         jerk_velocity
+    Loading
+      Loading
+        load_filament_length
+        load_filament_speed
+        trim_image
+        insert_image
+        running_clean_image
+        unload_filament_length
     Slicing
       Slicing Options
         output_only_first_layer

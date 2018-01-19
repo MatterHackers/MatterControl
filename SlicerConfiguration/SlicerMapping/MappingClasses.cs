@@ -39,7 +39,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	public static class GCodeProcessing
 	{
 		private static MappedSetting[] replaceWithSettingsStrings = new MappedSetting[]
-        {
+		{
 			// Have a mapping so that MatterSlice while always use a setting that can be set. (the user cannot set first_layer_bedTemperature in MatterSlice)
 			new AsPercentOfReferenceOrDirect(SettingsKey.first_layer_speed, "first_layer_speed", "infill_speed", 60),
 			new AsPercentOfReferenceOrDirect("external_perimeter_speed","external_perimeter_speed", "perimeter_speed", 60),
@@ -63,6 +63,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			new ScaledSingleNumber("retract_speed","retract_speed", 60),
 			new ScaledSingleNumber("support_material_speed","support_material_speed", 60),
 			new ScaledSingleNumber("travel_speed", "travel_speed", 60),
+			new AsPercentOfReferenceOrDirect("load_filament_length_over_six", "", "load_filament_length", 1.0/6.0, false),
+			new AsPercentOfReferenceOrDirect("unload_filament_length_over_six", "", "unload_filament_length", 1.0/6.0, false),
+			new ScaledSingleNumber("load_filament_speed", "load_filament_speed", 60),
+			new MappedSetting("trim_image", "trim_image"),
+			new MappedSetting("insert_image", "insert_image"),
+			new MappedSetting("running_clean_image", "running_clean_image"),
 		};
 
 		public static string ReplaceMacroValues(string gcodeWithMacros)

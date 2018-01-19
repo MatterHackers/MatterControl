@@ -37,8 +37,6 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl
 {
-	public enum MacroUiLocation { Controls, Extruder_1, Extruder_2, Extruder_3, Extruder_4 }
-
 	public class MacroDetailPage : DialogPage
 	{
 		private List<FormField> formFields;
@@ -109,27 +107,6 @@ namespace MatterHackers.MatterControl
 				HAnchor = HAnchor.Stretch
 			};
 
-			container.AddChild(new TextWidget("Where to show this macro:")
-			{
-				TextColor = theme.Colors.PrimaryTextColor,
-				VAnchor = VAnchor.Center
-			});
-
-			var macroUiLocation = new DropDownList("Default", theme.Colors.PrimaryTextColor, Direction.Up, pointSize: theme.DefaultFontSize)
-			{
-				TextColor = theme.Colors.PrimaryTextColor,
-				Margin = new BorderDouble(5, 0),
-				VAnchor = VAnchor.Center
-			};
-			foreach (var location in Enum.GetValues(typeof(MacroUiLocation)))
-			{
-				macroUiLocation.AddItem(location.ToString().Replace("_", " ").Localize(), location.ToString());
-			}
-
-			macroUiLocation.SelectedValue = gcodeMacro.MacroUiLocation.ToString();
-
-			container.AddChild(macroUiLocation);
-
 			contentRow.AddChild(container);
 
 			Button addMacroButton = textImageButtonFactory.Generate("Save".Localize());
@@ -142,13 +119,6 @@ namespace MatterHackers.MatterControl
 						// SaveActiveMacro
 						gcodeMacro.Name = macroNameInput.Text;
 						gcodeMacro.GCode = macroCommandInput.Text;
-
-						MacroUiLocation result;
-						if (!Enum.TryParse(macroUiLocation.SelectedValue, out result))
-						{
-							result = MacroUiLocation.Controls;
-						}
-						gcodeMacro.MacroUiLocation = result;
 
 						if (!printerSettings.Macros.Contains(gcodeMacro))
 						{

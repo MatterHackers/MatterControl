@@ -90,8 +90,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public List<GCodeMacro> Macros { get; set; } = new List<GCodeMacro>();
 
-		public IEnumerable<GCodeMacro> GetMacros(MacroUiLocation macroLocation) => Macros.Where(m => m.MacroUiLocation == macroLocation).OrderBy(p => p.Name);
-
 		/// <summary>
 		/// Restore deactivated user overrides by iterating the active preset and removing/restoring matching items
 		/// </summary>

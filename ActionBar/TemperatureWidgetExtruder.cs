@@ -28,8 +28,10 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.IO;
 using System.Linq;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage;
@@ -51,12 +53,9 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			this.printer = printer;
 
-			// add in any macros for this extruder
+			// add in load and unload buttons
 			var macroButtons = GetExtruderMacros(extruderIndex, buttonFactory);
-			if (macroButtons != null)
-			{
-				this.AddChild(new SettingsItem("Filament".Localize(), macroButtons, enforceGutter: false));
-			}
+			this.AddChild(new SettingsItem("Filament".Localize(), macroButtons, enforceGutter: false));
 
 			// Add the Extrude buttons
 			var moveButtonFactory = ApplicationController.Instance.Theme.MicroButtonMenu;
@@ -144,26 +143,22 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		private GuiWidget GetExtruderMacros(int extruderIndex, TextImageButtonFactory buttonFactory)
 		{
-			MacroUiLocation extruderUiMacros;
-			if (Enum.TryParse($"Extruder_{extruderIndex + 1}", out extruderUiMacros))
-			{
-				var macros = printer.Settings.GetMacros(extruderUiMacros);
-				if (macros.Any())
-				{
-					var row = new FlowLayoutWidget();
-					foreach (GCodeMacro macro in macros)
-					{
-						Button macroButton = buttonFactory.Generate(GCodeMacro.FixMacroName(macro.Name));
-						macroButton.Margin = new BorderDouble(left: 5);
-						macroButton.Click += (s, e) => macro.Run(printer.Connection);
+			var row = new FlowLayoutWidget();
 
-						row.AddChild(macroButton);
-					}
-					return row;
-				}
-			}
+			GCodeMacro loadFilament = new GCodeMacro();
+			loadFilament.GCode = AggContext.StaticData.ReadAllText(Path.Combine("SliceSettings", "load_filament.txt"));
+			Button loadButton = buttonFactory.Generate("Load".Localize());
+			loadButton.Margin = new BorderDouble(0, 8, 8, 4);
+			loadButton.Click += (s, e) => loadFilament.Run(printer.Connection);
+			row.AddChild(loadButton);
 
-			return null;
+			GCodeMacro unloadFilament = new GCodeMacro();
+			unloadFilament.GCode = AggContext.StaticData.ReadAllText(Path.Combine("SliceSettings", "unload_filament.txt"));
+			Button unloadButton = buttonFactory.Generate("Unload".Localize());
+			unloadButton.Click += (s, e) => unloadFilament.Run(printer.Connection);
+			row.AddChild(unloadButton);
+
+			return row;
 		}
 	}
 

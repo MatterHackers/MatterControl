@@ -34,6 +34,75 @@
     "DefaultValue": "70"
   },
   {
+    "SlicerConfigName": "load_filament_length",
+    "PresentationName": "Load Filament Length",
+    "HelpText": "The amount of filament to insert into the printer when loading.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "Units": "mm",
+    "ShowIfSet": "!sla_printer",
+    "DefaultValue": "20"
+  },
+  {
+    "SlicerConfigName": "load_filament_speed",
+    "PresentationName": "Load Filament Speed",
+    "HelpText": "The speed to run filament into the printer when loading.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "Units": "mm/s",
+    "ShowIfSet": "!sla_printer",
+    "DefaultValue": "80"
+  },
+  {
+    "SlicerConfigName": "load_filament_length_over_six",
+    "PresentationName": "Load Filament Length",
+    "HelpText": "Should be 100%. Not shown to user.",
+    "DataEditType": "DOUBLE_OR_PERCENT",
+    "Units": "%",
+    "ShowIfSet": "!sla_printer",
+    "DefaultValue": "100%"
+  },
+  {
+    "SlicerConfigName": "unload_filament_length",
+    "PresentationName": "Unload Filament Length",
+    "HelpText": "The amount of filament to remove from the printer while unloading.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "Units": "mm",
+    "ShowIfSet": "!sla_printer",
+    "DefaultValue": "70"
+  },
+  {
+    "SlicerConfigName": "unload_filament_length_over_six",
+    "PresentationName": "Unload Filament Length",
+    "HelpText": "Should be 100%. Not shown to user.",
+    "DataEditType": "DOUBLE_OR_PERCENT",
+    "Units": "%",
+    "ShowIfSet": "!sla_printer",
+    "DefaultValue": "100%"
+  },
+  {
+    "SlicerConfigName": "trim_image",
+    "PresentationName": "Trim Image",
+    "HelpText": "The image to show when explaining trimming.",
+    "DataEditType": "STRING",
+    "ShowIfSet": "!sla_printer",
+    "DefaultValue": "https://lh3.googleusercontent.com/7vFs0ih2mGseQBKo-0gHnzaT2SsuAPgeRuqFlVKG23c4brFnIaA2nlYIg8BUcdI-mVaDAadgu5bdBv_jZ69VOi3mYw"
+  },
+  {
+    "SlicerConfigName": "insert_image",
+    "PresentationName": "Insert Image",
+    "HelpText": "The image to show when explaining inserting.",
+    "DataEditType": "STRING",
+    "ShowIfSet": "!sla_printer",
+    "DefaultValue": "https://lh3.googleusercontent.com/S4eW9-uZ0lgpg_ws9Ss4LmUc_MiXCfHnfJmGVQ0XtOdpvr_XZQLuP5zWGv7eCSM65EbsWIdHVMC40EYL7u8k7LvMP4Y"
+  },
+  {
+    "SlicerConfigName": "running_clean_image",
+    "PresentationName": "Running Clean Image",
+    "HelpText": "The image to show when explaining filament running clean.",
+    "DataEditType": "STRING",
+    "ShowIfSet": "!sla_printer",
+    "DefaultValue": ""
+  },
+  {
     "SlicerConfigName": "bottom_solid_layers",
     "PresentationName": "Bottom Solid Layers",
     "HelpText": "The number of layers or the distance in millimeters to solid fill on the bottom surface(s) of the object. Add mm to the end of the number to specify distance in millimeters.",

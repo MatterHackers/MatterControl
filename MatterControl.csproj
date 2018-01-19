@@ -511,6 +511,8 @@
     </Content>
     <Content Include="StaticData\OEMSettings\AboutPage.html" />
     <Content Include="StaticData\SliceSettings\Layouts.txt" />
+    <Content Include="StaticData\SliceSettings\load_filament.txt" />
+    <Content Include="StaticData\SliceSettings\unload_filament.txt" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="config.json">

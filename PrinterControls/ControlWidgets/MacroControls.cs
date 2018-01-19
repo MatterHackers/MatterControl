@@ -45,13 +45,13 @@ namespace MatterHackers.MatterControl.PrinterControls
 			var noMacrosFound = new TextWidget("No macros are currently set up for this printer.".Localize(), pointSize: 10, textColor: theme.Colors.PrimaryTextColor);
 			this.AddChild(noMacrosFound);
 
-			if (printer.Settings?.GetMacros(MacroUiLocation.Controls).Any() != true)
+			if (printer.Settings?.Macros.Any() != true)
 			{
 				noMacrosFound.Visible = true;
 				return;
 			}
 
-			foreach (GCodeMacro macro in printer.Settings.GetMacros(MacroUiLocation.Controls))
+			foreach (GCodeMacro macro in printer.Settings.Macros)
 			{
 				var macroButton = new TextButton(GCodeMacro.FixMacroName(macro.Name), theme)
 				{

@@ -1,0 +1,34 @@
+; host.choose_material(title:"Choose the material that you are loading.")
+
+M104 S[temperature] ; start heating up the extruder
+
+; host.show_message(title:"Trim the end of the filament to ensure a good load.", image:"[trim_image]", wait_ok:"true")
+
+M302 S0  ; Allow extrusion at any temperature
+G91                 ; Relative positioning
+; host.show_message(title:"Put filament into extruder until you feel it start to feed and then click Continue.", repeat_gcode:"G1 E.1 F150|G4 P10", expire:"90", image:"[insert_image]")
+G90                 ; Absolute positioning
+; host.show_message(title:"Loading filament...", count_down:"28")
+G92 E0              ; reset the extruder position to 0
+G91                 ; Relative positioning
+G1 E[load_filament_length_over_six] F[load_filament_speed]       ; extrude the filament (pulse was 598)
+G1 E[load_filament_length_over_six] F[load_filament_speed]       ; extrude the filament 
+G1 E[load_filament_length_over_six] F[load_filament_speed]       ; extrude the filament 
+G1 E[load_filament_length_over_six] F[load_filament_speed]       ; extrude the filament 
+G1 E[load_filament_length_over_six] F[load_filament_speed]       ; extrude the filament
+G1 E[load_filament_length_over_six] F[load_filament_speed]       ; extrude the filament 
+G4 S1               ; wait for move to finish
+
+M302 S150  ; Set cold extrude temp back to reasonable
+; host.show_message(title:"Waiting for extruder to heat to [temperature].")
+G4 S1               ; wait message to display
+M109 S[temperature] ; heat up the extruder
+
+; extrude slowly so that we can prime the extruder
+; host.show_message(title:"Click 'Continue' when filament is running cleanly through the nozzle.", repeat_gcode:"G1 E1 F300|G4 P10", expire:"90", image:"[running_clean_image]")
+
+G4 S1               ; wait for move to finish
+G90                 ; Absolute positioning
+G92 E0              ; reset the extruder position to 0
+
+M104 S0             ; turn the extruder temperature off
