@@ -40,7 +40,7 @@ using MatterHackers.MatterControl.SetupWizard;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
-{
+{ 
 	public class SliceSettingsWidget : FlowLayoutWidget
 	{
 		internal PresetsToolbar settingsControlBar;
@@ -73,27 +73,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.AddChild(settingsControlBar);
 
 			this.RebuildSliceSettingsTabs();
-
-			ActiveSliceSettings.SettingChanged.RegisterEvent(
-				(s, e) =>
-				{
-					if (e is StringEventArgs stringEvent)
-					{
-						string settingsKey = stringEvent.Data;
-						if (sliceSettingsTabView.UIFields.TryGetValue(settingsKey, out UIField field2))
-						{
-							string currentValue = settingsContext.GetValue(settingsKey);
-							if (field2.Value != currentValue
-								|| settingsKey == "com_port")
-							{
-								field2.SetValue(
-									currentValue,
-									userInitiated: false);
-							}
-						}
-					}
-				},
-				ref unregisterEvents);
 
 			ApplicationController.Instance.ShowHelpChanged += ShowHelp_Changed;
 
@@ -217,6 +196,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private List<(GuiWidget widget, SliceSettingData settingData)> settingsRows;
 		private TextWidget filteredItemsHeading;
 		private ScrollableWidget scrollable;
+		private EventHandler unregisterEvents;
 
 		public SliceSettingsTabView(SettingsContext settingsContext, PrinterConfig printer, string UserLevel, ThemeConfig theme, bool isPrimarySettingsView, string databaseMRUKey)
 			: base(new SliceSettingsOverflowMenu(printer))
@@ -305,6 +285,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			this.settingsRows = new List<(GuiWidget, SliceSettingData)>();
 
+			allUiFields = new Dictionary<string, UIField>();
+
 			// Loop over categories creating a tab for each
 			foreach (var category in userLevel.Categories)
 			{
@@ -384,6 +366,27 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					UserSettings.Instance.set(databaseMRUKey, this.SelectedTabIndex.ToString());
 				}
 			};
+
+			ActiveSliceSettings.SettingChanged.RegisterEvent(
+				(s, e) =>
+				{
+					if (e is StringEventArgs stringEvent)
+					{
+						string settingsKey = stringEvent.Data;
+						if (this.allUiFields.TryGetValue(settingsKey, out UIField uifield))
+						{
+							string currentValue = settingsContext.GetValue(settingsKey);
+							if (uifield.Value != currentValue
+								|| settingsKey == "com_port")
+							{
+								uifield.SetValue(
+									currentValue,
+									userInitiated: false);
+							}
+						}
+					}
+				},
+				ref unregisterEvents);
 		}
 
 		public Dictionary<string, UIField> UIFields => allUiFields;
@@ -443,8 +446,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (EngineMappingsMatterSlice.Instance.MapContains(settingData.SlicerConfigName)
 					&& settingShouldBeShown)
 				{
-
-					var settingsRow = CreateItemRow(settingData, settingsContext, printer, theme.Colors.PrimaryTextColor, theme, ref tabIndexForItem);
+					var settingsRow = CreateItemRow(settingData);
 
 					this.settingsRows.Add((settingsRow, settingData));
 
@@ -569,7 +571,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return dataArea;
 		}
 
-		internal GuiWidget CreateItemRow(SliceSettingData settingData, ref int tabIndexForItem, ThemeConfig theme)
+		internal GuiWidget CreateItemRow(SliceSettingData settingData)
 		{
 			return CreateItemRow(settingData, settingsContext, printer, theme.Colors.PrimaryTextColor, theme, ref tabIndexForItem, allUiFields);
 		}
@@ -670,6 +672,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						break;
 
 					case SliceSettingData.DataEditTypes.STRING:
+					case SliceSettingData.DataEditTypes.WIDE_STRING:
 						uiField = new TextField();
 						break;
 
@@ -741,6 +744,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				uiField.Name = $"{settingData.PresentationName} Field";
 				uiField.Initialize(tabIndexForItem++);
+
+				if (settingData.DataEditType == SliceSettingData.DataEditTypes.WIDE_STRING)
+				{
+					uiField.Content.HAnchor = HAnchor.Stretch;
+					placeFieldInDedicatedRow = true;
+				}
 
 				uiField.SetValue(sliceSettingValue, userInitiated: false);
 
@@ -888,6 +897,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				scrollable.ScrollPosition = new Vector2(0, -scrollable.ScrollArea.Height);
 			}
 			base.OnActiveTabChanged();
+		}
+
+		public override void OnClosed(ClosedEventArgs e)
+		{
+			unregisterEvents?.Invoke(this, null);
+			base.OnClosed(e);
 		}
 
 		public void ClearFilter()

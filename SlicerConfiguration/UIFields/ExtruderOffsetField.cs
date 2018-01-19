@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			var column = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				Margin = new BorderDouble(20, 0, 0, 0),
-				HAnchor = HAnchor.Fit,
+				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit,
 			};
 
@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				var row = new FlowLayoutWidget()
 				{
-					HAnchor = HAnchor.Fit,
+					HAnchor = HAnchor.Fit | HAnchor.Right,
 					VAnchor = VAnchor.Fit,
 					MinimumSize = new Vector2(0, 28)
 				};
@@ -85,11 +85,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				var labelWidget = SliceSettingsTabView.CreateSettingsLabel($"Nozzle {i + 1}", "", textColor);
 				labelWidget.Name = $"Nozzle {i}";
-				labelWidget.Margin = new BorderDouble(right: 60, left: 20);
+				labelWidget.Margin = new BorderDouble(right: 60);
 				row.AddChild(labelWidget);
 
 				var field = new Vector2Field();
 				field.Initialize(tabIndex++);
+				field.Content.Margin = new BorderDouble(right: 55);
 				field.Content.VAnchor = VAnchor.Center;
 				field.ValueChanged += (s, e) =>
 				{

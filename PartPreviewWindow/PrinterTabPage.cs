@@ -555,13 +555,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			progressContainer.AddChild(timeContainer);
 
-			var timeImage = AggContext.StaticData.LoadImage(Path.Combine("Images", "Screensaver", "time.png"));
-			if (!ActiveTheme.Instance.IsDarkTheme)
+			timeContainer.AddChild(new ImageWidget(AggContext.StaticData.LoadIcon("fa-clock_24.png", IconColor.Theme))
 			{
-				timeImage.InvertLightness();
-			}
-
-			timeContainer.AddChild(new ImageWidget(timeImage));
+				VAnchor = VAnchor.Center
+			});
 
 			var timeWidget = new TextWidget("", pointSize: 22, textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
