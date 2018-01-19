@@ -270,15 +270,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static bool CompareExpectedSliceSettingValueWithActualVaue(string sliceSetting, string expectedValue)
 		{
-			string fullPath = TestContext.CurrentContext.ResolveProjectPath(4, "Tests", "temp", runName, "Test0", "data", "gcode");
-
-			foreach (string iniPath in Directory.GetFiles(fullPath, "*.ini"))
+			foreach (string iniPath in Directory.GetFiles(ApplicationDataStorage.Instance.GCodeOutputPath, "*.ini"))
 			{
 				var settings = PrinterSettingsLayer.LoadFromIni(iniPath);
 
-				string currentValue;
-
-				if (settings.TryGetValue(sliceSetting, out currentValue))
+				if (settings.TryGetValue(sliceSetting, out string currentValue))
 				{
 					return currentValue.Trim() == expectedValue;
 				}
