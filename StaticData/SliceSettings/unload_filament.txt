@@ -9,13 +9,12 @@ M302 S0  ; Allow extrusion at any temperature
 G92 E0              ; reset the extruder position to 0
 G91                 ; Relative positioning
 G1 E15 F600         ; push some out first
-G1 E-[unload_filament_length_over_six] F5000      ; unload the filament 
-G1 E-[unload_filament_length_over_six] F5000      ; unload the filament 
-G1 E-[unload_filament_length_over_six] F5000      ; unload the filament 
-G1 E-[unload_filament_length_over_six] F5000      ; unload the filament 
-G1 E-[unload_filament_length_over_six] F5000      ; unload the filament 
-G1 E-[unload_filament_length_over_six] F5000
-G1 E-[unload_filament_length_over_six] F5000      ; unload the filament 
+G1 E-[unload_filament_length_over_six] F[load_filament_speed]      ; unload the filament 
+G1 E-[unload_filament_length_over_six] F[load_filament_speed]      ; unload the filament 
+G1 E-[unload_filament_length_over_six] F[load_filament_speed]      ; unload the filament 
+G1 E-[unload_filament_length_over_six] F[load_filament_speed]      ; unload the filament 
+G1 E-[unload_filament_length_over_six] F[load_filament_speed]      ; unload the filament 
+G1 E-[unload_filament_length_over_six] F[load_filament_speed]      ; unload the filament 
 G4 S1               ; wait for move to finish
 G90                 ; Absolute positioning
 G92 E0              ; reset the extruder position to 0

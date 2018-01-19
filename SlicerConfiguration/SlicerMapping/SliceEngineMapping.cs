@@ -109,6 +109,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			"insert_image",
 			"running_clean_image",
 			"unload_filament_length",
+			"load_filament_speed",
 		};
 
 		public SliceEngineMapping(string engineName)

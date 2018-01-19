@@ -11,12 +11,12 @@ G90                 ; Absolute positioning
 ; host.show_message(title:"Loading filament...", count_down:"28")
 G92 E0              ; reset the extruder position to 0
 G91                 ; Relative positioning
-G1 E[load_filament_length_over_six] F5000       ; extrude the filament (pulse was 598)
-G1 E[load_filament_length_over_six] F5000       ; extrude the filament 
-G1 E[load_filament_length_over_six] F5000       ; extrude the filament 
-G1 E[load_filament_length_over_six] F5000       ; extrude the filament 
-G1 E[load_filament_length_over_six] F5000       ; extrude the filament
-G1 E[load_filament_length_over_six] F5000       ; extrude the filament 
+G1 E[load_filament_length_over_six] F[load_filament_speed]       ; extrude the filament (pulse was 598)
+G1 E[load_filament_length_over_six] F[load_filament_speed]       ; extrude the filament 
+G1 E[load_filament_length_over_six] F[load_filament_speed]       ; extrude the filament 
+G1 E[load_filament_length_over_six] F[load_filament_speed]       ; extrude the filament 
+G1 E[load_filament_length_over_six] F[load_filament_speed]       ; extrude the filament
+G1 E[load_filament_length_over_six] F[load_filament_speed]       ; extrude the filament 
 G4 S1               ; wait for move to finish
 
 M302 S150  ; Set cold extrude temp back to reasonable

@@ -65,6 +65,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			new ScaledSingleNumber("travel_speed", "travel_speed", 60),
 			new AsPercentOfReferenceOrDirect("load_filament_length_over_six", "", "load_filament_length", 1.0/6.0, false),
 			new AsPercentOfReferenceOrDirect("unload_filament_length_over_six", "", "unload_filament_length", 1.0/6.0, false),
+			new ScaledSingleNumber("load_filament_speed", "load_filament_speed", 60),
 			new MappedSetting("trim_image", "trim_image"),
 			new MappedSetting("insert_image", "insert_image"),
 			new MappedSetting("running_clean_image", "running_clean_image"),

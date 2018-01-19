@@ -43,6 +43,15 @@
     "DefaultValue": "20"
   },
   {
+    "SlicerConfigName": "load_filament_speed",
+    "PresentationName": "Load Filament Speed",
+    "HelpText": "The speed to run filament into the printer when loading.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "Units": "mm/s",
+    "ShowIfSet": "!sla_printer",
+    "DefaultValue": "80"
+  },
+  {
     "SlicerConfigName": "load_filament_length_over_six",
     "PresentationName": "Load Filament Length",
     "HelpText": "Should be 100%. Not shown to user.",
