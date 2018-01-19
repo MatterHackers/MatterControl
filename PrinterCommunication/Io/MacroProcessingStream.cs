@@ -177,6 +177,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						{
 							double.TryParse(value, out macroData.expireTime);
 							maxTimeToWaitForOk = macroData.expireTime;
+							timeHaveBeenWaiting.Restart();
 						}
 						if (TryGetAfterString(lineToSend, "count_down", out value))
 						{
