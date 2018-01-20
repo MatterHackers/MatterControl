@@ -968,6 +968,48 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
+		public override void OnMouseMove(MouseEventArgs mouseEvent)
+		{
+			// File system Drop validation
+			mouseEvent.AcceptDrop = this.AllowDragDrop()
+					&& mouseEvent.DragFiles?.Count > 0
+					&& mouseEvent.DragFiles.TrueForAll(filePath => ApplicationController.Instance.IsLoadableFile(filePath));
+
+			// View3DWidgets Filesystem DropDrop handler
+			if (mouseEvent.AcceptDrop
+				&& this.PositionWithinLocalBounds(mouseEvent.X, mouseEvent.Y))
+			{
+				if (this.DragOperationActive)
+				{
+					DragOver(screenSpaceMousePosition: this.TransformToScreenSpace(mouseEvent.Position));
+				}
+				else
+				{
+					// Project DragFiles to IEnumerable<FileSystemFileItem>
+					this.StartDragDrop(
+						mouseEvent.DragFiles.Select(path => new FileSystemFileItem(path)),
+						screenSpaceMousePosition: this.TransformToScreenSpace(mouseEvent.Position),
+						trackSourceFiles: true);
+				}
+			}
+
+			if (CurrentSelectInfo.DownOnPart && this.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None)
+			{
+				DragSelectedObject(new Vector2(mouseEvent.X, mouseEvent.Y));
+			}
+
+			if (DragSelectionInProgress)
+			{
+				DragSelectionEndPosition = mouseEvent.Position - OffsetToMeshViewerWidget();
+				DragSelectionEndPosition = new Vector2(
+					Math.Max(Math.Min(DragSelectionEndPosition.X, meshViewerWidget.LocalBounds.Right), meshViewerWidget.LocalBounds.Left),
+					Math.Max(Math.Min(DragSelectionEndPosition.Y, meshViewerWidget.LocalBounds.Top), meshViewerWidget.LocalBounds.Bottom));
+				Invalidate();
+			}
+
+			base.OnMouseMove(mouseEvent);
+		}
+
 		public IntersectInfo GetIntersectPosition(Vector2 screenSpacePosition)
 		{
 			//Vector2 meshViewerWidgetScreenPosition = meshViewerWidget.TransformFromParentSpace(this, new Vector2(mouseEvent.X, mouseEvent.Y));
@@ -1056,48 +1098,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				Invalidate();
 			}
-		}
-
-		public override void OnMouseMove(MouseEventArgs mouseEvent)
-		{
-			// File system Drop validation
-			mouseEvent.AcceptDrop = this.AllowDragDrop()
-					&& mouseEvent.DragFiles?.Count > 0
-					&& mouseEvent.DragFiles.TrueForAll(filePath => ApplicationController.Instance.IsLoadableFile(filePath));
-
-			// View3DWidgets Filesystem DropDrop handler
-			if (mouseEvent.AcceptDrop
-				&& this.PositionWithinLocalBounds(mouseEvent.X, mouseEvent.Y))
-			{
-				if (this.DragOperationActive)
-				{
-					DragOver(screenSpaceMousePosition: this.TransformToScreenSpace(mouseEvent.Position));
-				}
-				else
-				{ 
-					// Project DragFiles to IEnumerable<FileSystemFileItem>
-					this.StartDragDrop(
-						mouseEvent.DragFiles.Select(path => new FileSystemFileItem(path)),
-						screenSpaceMousePosition: this.TransformToScreenSpace(mouseEvent.Position),
-						trackSourceFiles: true);
-				}
-			}
-
-			if (CurrentSelectInfo.DownOnPart && this.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None)
-			{
-				DragSelectedObject(new Vector2(mouseEvent.X, mouseEvent.Y));
-			}
-
-			if (DragSelectionInProgress)
-			{
-				DragSelectionEndPosition = mouseEvent.Position - OffsetToMeshViewerWidget();
-				DragSelectionEndPosition = new Vector2(
-					Math.Max(Math.Min(DragSelectionEndPosition.X, meshViewerWidget.LocalBounds.Right), meshViewerWidget.LocalBounds.Left),
-					Math.Max(Math.Min(DragSelectionEndPosition.Y, meshViewerWidget.LocalBounds.Top), meshViewerWidget.LocalBounds.Bottom));
-				Invalidate();
-			}
-
-			base.OnMouseMove(mouseEvent);
 		}
 
 		Vector2 OffsetToMeshViewerWidget()

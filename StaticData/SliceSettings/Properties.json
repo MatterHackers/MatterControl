@@ -44,8 +44,8 @@
   },
   {
     "SlicerConfigName": "load_filament_speed",
-    "PresentationName": "Load Filament Speed",
-    "HelpText": "The speed to run filament into the printer when loading.",
+    "PresentationName": "Filament Speed",
+    "HelpText": "The speed to run filament into and out of the printer.",
     "DataEditType": "POSITIVE_DOUBLE",
     "Units": "mm/s",
     "ShowIfSet": "!sla_printer",
