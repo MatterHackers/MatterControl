@@ -1,6 +1,7 @@
 ; host.choose_material(title:"Confirm the material you are unloading.")
 
 ; host.show_message(title:"Waiting for extruder to heat to [temperature], before unloading.")
+M106 S0 ; turn off the fan
 G4 S1               ; wait message to display
 M109 S[temperature] ; heat up the extruder
 

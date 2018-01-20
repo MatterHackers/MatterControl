@@ -1,5 +1,6 @@
 ; host.choose_material(title:"Choose the material that you are loading.")
 
+M106 S0 ; turn off the fan
 M104 S[temperature] ; start heating up the extruder
 
 ; host.show_message(title:"Trim the end of the filament to ensure a good load.", image:"[trim_image]", wait_ok:"true")
