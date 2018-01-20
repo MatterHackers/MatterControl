@@ -270,6 +270,91 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 		}
 	}
 
+	public class PvcT : MatterCadObject3D
+	{
+		[DisplayName("Outer Radius")]
+		public double OuterDiameter { get; set; } = 20;
+
+		[DisplayName("Inner Radius")]
+		public double InnerDiameter { get; set; } = 15;
+
+		public double BottomReach { get; set; } = 30;
+		public double TopReach { get; set; } = 30;
+		public double FrontReach { get; set; } = 25;
+
+		private int sides = 50;
+
+		public PvcT()
+		{
+			RebuildMeshes();
+		}
+
+		public override void RebuildMeshes()
+		{
+			CsgObject topBottomConnect = new Cylinder(OuterDiameter/2, OuterDiameter, sides, Alignment.y);
+			CsgObject frontConnect = new Cylinder(OuterDiameter/2, OuterDiameter/2, sides, Alignment.x);
+			frontConnect = new Align(frontConnect, Face.Right, topBottomConnect, Face.Right);
+
+			CsgObject bottomReach = new Rotate(CreateReach(BottomReach), -MathHelper.Tau / 4);
+			bottomReach = new Align(bottomReach, Face.Back, topBottomConnect, Face.Front, 0, 1);
+
+			CsgObject topReach = new Rotate(CreateReach(TopReach), MathHelper.Tau / 4);
+			topReach = new Align(topReach, Face.Front, topBottomConnect, Face.Back, 0, -1);
+
+			CsgObject frontReach = new Rotate(CreateReach(FrontReach), 0, -MathHelper.Tau / 4);
+			frontReach = new Align(frontReach, Face.Left, topBottomConnect, Face.Right, -1);
+
+			// output multiple meshes for pipe connector
+			this.Children.Modify(list =>
+			{
+				list.Clear();
+				list.AddRange(new[]
+				{
+					new Object3D()
+					{
+						Mesh = CsgToMesh.Convert(topBottomConnect),
+						Color = Color.LightGray
+					},
+					new Object3D()
+					{
+						Mesh = CsgToMesh.Convert(frontConnect),
+						Color = Color.LightGray
+					},
+					new Object3D()
+					{
+						Mesh = CsgToMesh.Convert(bottomReach),
+						Color = Color.White
+					},
+					new Object3D()
+					{
+						Mesh = CsgToMesh.Convert(topReach),
+						Color = Color.White
+					},
+					new Object3D()
+					{
+						Mesh = CsgToMesh.Convert(frontReach),
+						Color = Color.White
+					}
+				});
+			});
+
+			this.Color = Color.Transparent;
+			this.Mesh = null;
+		}
+
+		private CsgObject CreateReach(double reach)
+		{
+			var finWidth = 4.0;
+			var finLength = InnerDiameter;
+			var fin1 = new Box(finWidth, finLength, reach);
+			fin1.ChamferEdge(Face.Top | Face.Back, finLength / 8);
+			fin1.ChamferEdge(Face.Top | Face.Front, finLength / 8);
+			CsgObject fin2 = new Rotate(fin1, 0, 0, MathHelper.Tau / 4);
+
+			return fin1 + fin2;
+		}
+	}
+
 	public class RibonWithName : MatterCadObject3D
 	{
 		[DisplayName("Name")]
