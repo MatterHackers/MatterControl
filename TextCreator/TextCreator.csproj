@@ -56,7 +56,9 @@
     <Compile Include="Braille\BrailleEditor.cs" />
     <Compile Include="Braille\BrailleGrade2.cs" />
     <Compile Include="Braille\BrailleGrade2Mapping.cs" />
-    <Compile Include="CardHolderTool\CardHolder.cs" />
+    <Compile Include="CardHolderTool\MatterCadEditor.cs" />
+    <Compile Include="CardHolderTool\MeshObjects.cs" />
+    <Compile Include="CardHolderTool\CsgObjects.cs" />
     <Compile Include="TextCreatorPlugin.cs" />
     <Compile Include="Text\TextGenerator.cs" />
     <Compile Include="Text\TextEditor.cs" />

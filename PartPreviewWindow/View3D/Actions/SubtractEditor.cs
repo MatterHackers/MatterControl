@@ -184,55 +184,66 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				var removeObjects = participants.Where((obj) => obj.OutputType == PrintOutputTypes.Hole).ToList();
 				var keepObjects = participants.Where((obj) => obj.OutputType != PrintOutputTypes.Hole).ToList();
 
-				if (removeObjects.Any()
-					&& keepObjects.Any())
-				{
-					var totalOperations = removeObjects.Count * keepObjects.Count;
-					double amountPerOperation = 1.0 / totalOperations;
-					double percentCompleted = 0;
-
-					foreach (var remove in removeObjects)
-					{
-						foreach (var keep in keepObjects)
-						{
-							progressStatus.Status = "Copy Remove";
-							reporter.Report(progressStatus);
-							var transformedRemove = Mesh.Copy(remove.Mesh, CancellationToken.None);
-							transformedRemove.Transform(remove.WorldMatrix(null));
-
-							progressStatus.Status = "Copy Keep";
-							reporter.Report(progressStatus);
-							var transformedKeep = Mesh.Copy(keep.Mesh, CancellationToken.None);
-							transformedKeep.Transform(keep.WorldMatrix(null));
-
-							progressStatus.Status = "Do CSG";
-							reporter.Report(progressStatus);
-							transformedKeep = PolygonMesh.Csg.CsgOperations.Subtract(transformedKeep, transformedRemove, (status, progress0To1) =>
-							{
-								// Abort if flagged
-								cancellationToken.ThrowIfCancellationRequested();
-
-								progressStatus.Status = status;
-								progressStatus.Progress0To1 = percentCompleted + amountPerOperation * progress0To1;
-								reporter.Report(progressStatus);
-							}, cancellationToken);
-							var inverse = keep.WorldMatrix(null);
-							inverse.Invert();
-							transformedKeep.Transform(inverse);
-
-							keep.Mesh = transformedKeep;
-							view3DWidget.Invalidate();
-
-							percentCompleted += amountPerOperation;
-							progressStatus.Progress0To1 = percentCompleted;
-							reporter.Report(progressStatus);
-						}
-
-						remove.Visible = false;
-					}
-				}
+				Subtract(keepObjects, removeObjects, cancellationToken, reporter);
 				return Task.CompletedTask;
 			});
+		}
+
+		public static void Subtract(List<IObject3D> keepObjects, List<IObject3D> removeObjects)
+		{
+			Subtract(keepObjects, removeObjects, CancellationToken.None, null);
+		}
+
+		public static void Subtract(List<IObject3D> keepObjects, List<IObject3D> removeObjects, CancellationToken cancellationToken, IProgress<ProgressStatus> reporter)
+		{
+			if (removeObjects.Any()
+				&& keepObjects.Any())
+			{
+				var totalOperations = removeObjects.Count * keepObjects.Count;
+				double amountPerOperation = 1.0 / totalOperations;
+				double percentCompleted = 0;
+
+				ProgressStatus progressStatus = new ProgressStatus();
+ 				foreach (var remove in removeObjects)
+				{
+					foreach (var keep in keepObjects)
+					{
+						progressStatus.Status = "Copy Remove";
+						reporter?.Report(progressStatus);
+						var transformedRemove = Mesh.Copy(remove.Mesh, CancellationToken.None);
+						transformedRemove.Transform(remove.WorldMatrix(null));
+
+						progressStatus.Status = "Copy Keep";
+						reporter?.Report(progressStatus);
+						var transformedKeep = Mesh.Copy(keep.Mesh, CancellationToken.None);
+						transformedKeep.Transform(keep.WorldMatrix(null));
+
+						progressStatus.Status = "Do CSG";
+						reporter?.Report(progressStatus);
+						transformedKeep = PolygonMesh.Csg.CsgOperations.Subtract(transformedKeep, transformedRemove, (status, progress0To1) =>
+						{
+							// Abort if flagged
+							cancellationToken.ThrowIfCancellationRequested();
+
+							progressStatus.Status = status;
+							progressStatus.Progress0To1 = percentCompleted + amountPerOperation * progress0To1;
+							reporter?.Report(progressStatus);
+						}, cancellationToken);
+						var inverse = keep.WorldMatrix(null);
+						inverse.Invert();
+						transformedKeep.Transform(inverse);
+
+						keep.Mesh = transformedKeep;
+						keep.Invalidate();
+
+						percentCompleted += amountPerOperation;
+						progressStatus.Progress0To1 = percentCompleted;
+						reporter?.Report(progressStatus);
+					}
+
+					remove.Visible = false;
+				}
+			}
 		}
 	}
 }
