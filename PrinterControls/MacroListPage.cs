@@ -90,6 +90,8 @@ namespace MatterHackers.MatterControl
 					// We make a local variable to create a closure around it to ensure we get the correct instance
 					var localMacroReference = macro;
 
+					var oldColor = linkButtonFactory.textColor;
+					linkButtonFactory.textColor = Color.Black;
 					Button editLink = linkButtonFactory.Generate("edit".Localize());
 					editLink.Margin = new BorderDouble(right: 5);
 					editLink.Click += (s, e) =>
@@ -106,6 +108,7 @@ namespace MatterHackers.MatterControl
 						this.RebuildList(printerSettings, linkButtonFactory);
 					};
 					macroRow.AddChild(removeLink);
+					linkButtonFactory.textColor = oldColor;
 
 					contentRow.AddChild(macroRow);
 				}
