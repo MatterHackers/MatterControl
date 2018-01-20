@@ -75,6 +75,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				this.Text = searchPanel.Text;
 				this.SetVisibility(showEditPanel: false);
+				this.TitleChanged?.Invoke(this, null);
 			};
 			searchPanel.resetButton.Click += (s, e) =>
 			{
@@ -98,6 +99,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				this.Text = searchPanel.Text;
 				this.SetVisibility(showEditPanel: false);
+				this.TitleChanged?.Invoke(this, null);
 			};
 			rightPanel.AddChild(saveButton);
 
@@ -112,7 +114,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				if (titleText.Text != value)
 				{
 					titleText.Text = value;
-					TitleChanged?.Invoke(this, null);
 				}
 			}
 		}
