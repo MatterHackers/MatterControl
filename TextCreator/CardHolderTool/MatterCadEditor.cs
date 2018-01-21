@@ -36,12 +36,11 @@ namespace MatterHackers.MatterControl.MatterCad
 				ModifyCadObject(view3DWidget, mainContainer, theme);
 			}
 
-			mainContainer.MinimumSize = new Vector2(250, 0);
 			return mainContainer;
 		}
 
 		public IEnumerable<Type> SupportedTypes() => new Type[]
-				{
+		{
 			typeof(MatterCadObject3D),
 		};
 
@@ -53,7 +52,7 @@ namespace MatterHackers.MatterControl.MatterCad
 				Padding = new BorderDouble(5)
 			};
 
-			var label = new TextWidget(labelText + ":", textColor: ActiveTheme.Instance.PrimaryTextColor)
+			var label = new TextWidget(labelText + ":", pointSize: 11, textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
 				Margin = new BorderDouble(0, 0, 3, 0),
 				VAnchor = VAnchor.Center
@@ -73,7 +72,7 @@ namespace MatterHackers.MatterControl.MatterCad
 
 		private void ModifyCadObject(View3DWidget view3DWidget, FlowLayoutWidget tabContainer, ThemeConfig theme)
 		{
-			var allowedTypes = new Type[] { typeof(double), typeof(string), typeof(bool) };
+			var allowedTypes = new Type[] { typeof(double), typeof(int), typeof(string), typeof(bool) };
 
 			var ownedPropertiesOnly = System.Reflection.BindingFlags.Public
 				| System.Reflection.BindingFlags.Instance
@@ -112,6 +111,27 @@ namespace MatterHackers.MatterControl.MatterCad
 					rowContainer.AddChild(doubleEditWidget);
 					tabContainer.AddChild(rowContainer);
 				}
+				// create a int editor
+				else if (property.Value is int intValue)
+				{
+					FlowLayoutWidget rowContainer = CreateSettingsRow(property.DisplayName.Localize());
+					var intEditWidget = new MHNumberEdit(intValue, pixelWidth: 50 * GuiWidget.DeviceScale, allowNegatives: true, allowDecimals: false, increment: 1)
+					{
+						SelectAllOnFocus = true,
+						VAnchor = VAnchor.Center
+					};
+					intEditWidget.ActuallNumberEdit.EditComplete += (s, e) =>
+					{
+						int editValue;
+						if (int.TryParse(intEditWidget.Text, out editValue))
+						{
+							property.PropertyInfo.GetSetMethod().Invoke(this.item, new Object[] { editValue });
+						}
+						((MatterCadObject3D)item).RebuildMeshes();
+					};
+					rowContainer.AddChild(intEditWidget);
+					tabContainer.AddChild(rowContainer);
+				}
 				// create a bool editor
 				else if (property.Value is bool boolValue)
 				{
@@ -127,7 +147,7 @@ namespace MatterHackers.MatterControl.MatterCad
 					rowContainer.AddChild(doubleEditWidget);
 					tabContainer.AddChild(rowContainer);
 				}
-				// create a bool editor
+				// create a string editor
 				else if (property.Value is string stringValue)
 				{
 					FlowLayoutWidget rowContainer = CreateSettingsRow(property.DisplayName.Localize());

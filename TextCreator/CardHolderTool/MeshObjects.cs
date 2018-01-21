@@ -296,6 +296,135 @@ public class ChairFoot2 : MatterCadObject3D
 }
 */
 
+	public class CubePrimitive : MatterCadObject3D
+	{
+		public CubePrimitive()
+		{
+			RebuildMeshes();
+		}
+
+		public double Width { get; set; } = 20;
+		public double Depth { get; set; } = 20;
+		public double Height { get; set; } = 20;
+
+		public override void RebuildMeshes()
+		{
+			var aabb = AxisAlignedBoundingBox.Zero;
+			if (Mesh != null)
+			{
+				this.GetAxisAlignedBoundingBox();
+			}
+			Mesh = PlatonicSolids.CreateCube(Width, Depth, Height);
+			Mesh.CleanAndMergMesh(CancellationToken.None);
+			PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
+		}
+	}
+
+	public class CylinderPrimitive : MatterCadObject3D
+	{
+		public CylinderPrimitive()
+		{
+			RebuildMeshes();
+		}
+
+		public double Diameter { get; set; } = 20;
+		public double Height { get; set; } = 20;
+		public int Sides { get; set; } = 30;
+
+		public override void RebuildMeshes()
+		{
+			var aabb = AxisAlignedBoundingBox.Zero;
+			if (Mesh != null)
+			{
+				this.GetAxisAlignedBoundingBox();
+			}
+			var path = new VertexStorage();
+			path.MoveTo(0, 0);
+			path.LineTo(Diameter / 2, 0);
+			path.LineTo(Diameter / 2, Height);
+			path.LineTo(0, Height);
+
+			Mesh = VertexSourceToMesh.Revolve(path, Sides);
+			Mesh.CleanAndMergMesh(CancellationToken.None);
+			PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
+		}
+	}
+
+	public class ConePrimitive : MatterCadObject3D
+	{
+		public ConePrimitive()
+		{
+			RebuildMeshes();
+		}
+
+		[DisplayName("Diameter")]
+		public double Diameter { get; set; } = 20;
+		//[DisplayName("Top")]
+		//public double TopDiameter { get; set; } = 0;
+		public double Height { get; set; } = 20;
+		public int Sides { get; set; } = 30;
+
+		public override void RebuildMeshes()
+		{
+			var aabb = AxisAlignedBoundingBox.Zero;
+			if (Mesh != null)
+			{
+				this.GetAxisAlignedBoundingBox();
+			}
+			var path = new VertexStorage();
+			path.MoveTo(0, 0);
+			path.LineTo(Diameter / 2, 0);
+			path.LineTo(Diameter / 2, Height);
+			path.LineTo(0, Height);
+
+			Mesh = VertexSourceToMesh.Revolve(path, Sides);
+			Mesh.CleanAndMergMesh(CancellationToken.None);
+			PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
+		}
+	}
+
+	public class TorusPrimitive : MatterCadObject3D
+	{
+		public TorusPrimitive()
+		{
+			RebuildMeshes();
+		}
+
+		[DisplayName("Inner Diameter")]
+		public double InnerDiameter { get; set; } = 10;
+		[DisplayName("Outer Diameter")]
+		public double OuterDiameter { get; set; } = 20;
+		[DisplayName("Ring Sides")]
+		public int ToroidSides { get; set; } = 10;
+		[DisplayName("Hoop Sides")]
+		public int PoleSides { get; set; } = 20;
+
+		public override void RebuildMeshes()
+		{
+			var aabb = AxisAlignedBoundingBox.Zero;
+			if (Mesh != null)
+			{
+				this.GetAxisAlignedBoundingBox();
+			}
+			var poleRadius = (OuterDiameter / 2 - InnerDiameter / 2) / 2;
+			var toroidRadius = InnerDiameter / 2 + poleRadius;
+			var path = new VertexStorage();
+			var angleDelta = MathHelper.Tau / PoleSides;
+			var angle = 0.0;
+			var circleCenter = new Vector2(toroidRadius, 0);
+			path.MoveTo(circleCenter + new Vector2(poleRadius * Math.Cos(angle), poleRadius * Math.Sin(angle)));
+			for(int i=0; i<PoleSides; i++)
+			{
+				angle += angleDelta;
+				path.LineTo(circleCenter + new Vector2(poleRadius * Math.Cos(angle), poleRadius * Math.Sin(angle)));
+			}
+
+			Mesh = VertexSourceToMesh.Revolve(path, ToroidSides);
+			Mesh.CleanAndMergMesh(CancellationToken.None);
+			PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
+		}
+	}
+
 	public class CurveTest : MatterCadObject3D
 	{
 		private PolygonMesh.Mesh inputMesh;
