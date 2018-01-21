@@ -40,7 +40,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	public class SliceSettingsOverflowMenu : OverflowMenuButton
 	{
 		// showHelpControls
-		public SliceSettingsOverflowMenu(PrinterConfig printer)
+		public SliceSettingsOverflowMenu(PrinterConfig printer, ThemeConfig theme)
+			: base(theme)
 		{
 			this.VAnchor = VAnchor.Fit | VAnchor.Center;
 			this.AlignToRightEdge = true;

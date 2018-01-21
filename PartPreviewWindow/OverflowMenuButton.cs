@@ -33,21 +33,22 @@ using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
+	/// <summary>
+	/// A PopupMenuButton with the standard overflow icon
+	/// </summary>
 	public class OverflowMenuButton : PopupMenuButton
 	{
-		public OverflowMenuButton(IconColor iconColor = IconColor.Theme)
-			: base(new ImageWidget(
-				AggContext.StaticData.LoadIcon(Path.Combine("ViewTransformControls", "overflow.png"), 32, 32, iconColor))
-				{
-					HAnchor = HAnchor.Left
-				},
-				ApplicationController.Instance.Theme)
+		public OverflowMenuButton(ThemeConfig theme)
+			: base(CreateOverflowIcon(), theme)
 		{
 		}
 
-		public OverflowMenuButton(GuiWidget viewWidget, ThemeConfig theme)
-			: base(viewWidget, theme)
+		private static ImageWidget CreateOverflowIcon()
 		{
+			return new ImageWidget(AggContext.StaticData.LoadIcon(Path.Combine("ViewTransformControls", "overflow.png"), 32, 32, IconColor.Theme))
+			{
+				HAnchor = HAnchor.Left
+			};
 		}
 	}
 }

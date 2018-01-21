@@ -199,7 +199,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private EventHandler unregisterEvents;
 
 		public SliceSettingsTabView(SettingsContext settingsContext, PrinterConfig printer, string UserLevel, ThemeConfig theme, bool isPrimarySettingsView, string databaseMRUKey)
-			: base(new SliceSettingsOverflowMenu(printer))
+			: base(new SliceSettingsOverflowMenu(printer, theme)
 		{
 			this.VAnchor = VAnchor.Stretch;
 			this.HAnchor = HAnchor.Stretch;
