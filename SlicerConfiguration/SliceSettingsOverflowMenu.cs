@@ -37,7 +37,7 @@ using MatterHackers.MatterControl.PartPreviewWindow;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class SliceSettingsOverflowMenu : OverflowMenu
+	public class SliceSettingsOverflowMenu : OverflowMenuButton
 	{
 		// showHelpControls
 		public SliceSettingsOverflowMenu(PrinterConfig printer)

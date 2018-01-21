@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.SetRightAnchorItem(this.OverflowMenu);
 		}
 
-		public OverflowMenu OverflowMenu { get; }
+		public OverflowMenuButton OverflowMenu { get; }
 
 		// On load walk back to the first ancestor with background colors and copy
 		public override void OnLoad(EventArgs args)

@@ -91,6 +91,7 @@
     <Compile Include="PartPreviewWindow\LibraryBrowserPage.cs" />
     <Compile Include="PartPreviewWindow\MaterialControls.cs" />
     <Compile Include="PartPreviewWindow\MoveItemPage.cs" />
+    <Compile Include="PartPreviewWindow\OverflowMenuButton.cs" />
     <Compile Include="PartPreviewWindow\View3D\Actions\SubtractAndReplace.cs" />
     <Compile Include="PartPreviewWindow\View3D\PrinterBar\OverflowBar.cs" />
     <Compile Include="PartPreviewWindow\View3D\PrinterBar\PrintPopupMenu.cs" />
@@ -230,7 +231,6 @@
     <Compile Include="Library\Providers\Zip\ZipMemoryContainer.cs" />
     <Compile Include="PartPreviewWindow\GCodeDetails.cs" />
     <Compile Include="PartPreviewWindow\GCodeDetailsView.cs" />
-    <Compile Include="PartPreviewWindow\OverflowMenu.cs" />
     <Compile Include="PartPreviewWindow\PlusTab\PlusTabPage.cs" />
     <Compile Include="PartPreviewWindow\MainTab.cs" />
     <Compile Include="PartPreviewWindow\PrinterTabPage.cs" />
