@@ -167,7 +167,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			double height = theme.ButtonFactory.Options.FixedHeight;
 
-			this.AddChild(CreateBedMenu(sceneContext, theme));
+			this.AddChild(CreateBedButton(sceneContext, theme));
 
 			this.AddChild(new VerticalLine(50)
 			{
@@ -423,7 +423,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private OverflowMenu CreateBedMenu(BedConfig sceneContext, ThemeConfig theme)
+		private GuiWidget CreateBedButton(BedConfig sceneContext, ThemeConfig theme)
 		{
 			var buttonView = new TextIconButton(
 				(IsPrinterMode) ? "Bed".Localize() : "Part".Localize(),
@@ -433,19 +433,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Remove right Padding for drop style
 			buttonView.Padding = buttonView.Padding.Clone(right: 0);
 
-			var overflowMenu = new OverflowMenu(buttonView, theme)
+			return new PopupMenuButton(buttonView, theme)
 			{
 				Name = "Bed Options Menu",
 				DynamicPopupContent = () => theme.CreatePopupMenu(this.BedMenuActions(sceneContext)),
 				BackgroundColor = theme.ToolbarButtonBackground,
 				HoverColor = theme.ToolbarButtonHover,
 				MouseDownColor = theme.ToolbarButtonDown,
-				GradientDistance = -1,
 				DrawArrow = true,
 				Margin = theme.ButtonSpacing,
 			};
-
-			return overflowMenu;
 		}
 
 		private void SwitchModes_Click(object sender, MouseEventArgs e)
