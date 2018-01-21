@@ -41,7 +41,6 @@ namespace MatterControl.Tests
 			string knownAssemblies = @"MatterHackers.VectorMath.dll
 						AGG.dll
 						MatterHackers.PolygonMesh.dll
-						MatterHackers.Csg.dll
 						clipper_library.dll
 						MatterHackers.Agg.UI.dll
 						Tesselate.dll
