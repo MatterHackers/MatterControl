@@ -17,6 +17,36 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.MeshObjects
 {
+	public enum Alignment { X, Y, Z, negX, negY, negZ };
+
+	[Flags]
+	public enum Face
+	{
+		Left = 0x01,
+		Right = 0x02,
+		Front = 0x04,
+		Back = 0x08,
+		Bottom = 0x10,
+		Top = 0x20,
+	};
+
+	[Flags]
+	public enum Edge
+	{
+		LeftFront = Face.Left | Face.Front,
+		LeftBack = Face.Left | Face.Back,
+		LeftBottom = Face.Left | Face.Bottom,
+		LeftTop = Face.Left | Face.Top,
+		RightFront = Face.Right | Face.Front,
+		RightBack = Face.Right | Face.Back,
+		RightBottom = Face.Right | Face.Bottom,
+		RightTop = Face.Right | Face.Top,
+		FrontBottom = Face.Front | Face.Bottom,
+		FrontTop = Face.Front | Face.Top,
+		BackBottom = Face.Back | Face.Bottom,
+		BackTop = Face.Back | Face.Top
+	}
+
 	public class BadSubtract : MatterCadObject3D
 	{
 		public BadSubtract()
@@ -39,9 +69,40 @@ namespace MatterHackers.MatterControl.MeshObjects
 
 	public class SetCenter : Object3D
 	{
+		public SetCenter()
+		{
+		}
+
 		public SetCenter(IObject3D item, Vector3 position)
 		{
 			Matrix *= Matrix4X4.CreateTranslation(position - item.GetCenter());
+			Children.Add(item.Clone());
+		}
+
+		public SetCenter(IObject3D item, double x, double y, double z)
+			: this(item, new Vector3(x, y, z))
+		{
+		}
+
+		public SetCenter(IObject3D item, Vector3 offset, bool onX = true, bool onY = true, bool onZ = true)
+		{
+			var center = item.GetAxisAlignedBoundingBox(Matrix4X4.Identity).Center;
+
+			Vector3 consideredOffset = Vector3.Zero; // zero out anything we don't want
+			if (onX)
+			{
+				consideredOffset.X = offset.X - center.X;
+			}
+			if (onY)
+			{
+				consideredOffset.Y = offset.Y - center.Y;
+			}
+			if (onZ)
+			{
+				consideredOffset.Z = offset.Z - center.Z;
+			}
+
+			Matrix *= Matrix4X4.CreateTranslation(consideredOffset);
 			Children.Add(item.Clone());
 		}
 	}
@@ -52,12 +113,12 @@ namespace MatterHackers.MatterControl.MeshObjects
 		{
 		}
 
-		public Cylinder(double radius, double height, int sides)
-			: this(radius, radius, height, sides)
+		public Cylinder(double radius, double height, int sides, Alignment alignment = Alignment.Z)
+			: this(radius, radius, height, sides, alignment)
 		{
 		}
 
-		public Cylinder(double radiusBottom, double radiusTop, double height, int sides)
+		public Cylinder(double radiusBottom, double radiusTop, double height, int sides, Alignment alignment = Alignment.Z)
 		{
 			var path = new VertexStorage();
 			path.MoveTo(0, -height/2);
@@ -66,70 +127,78 @@ namespace MatterHackers.MatterControl.MeshObjects
 			path.LineTo(0, height/2);
 
 			Mesh = VertexSourceToMesh.Revolve(path, sides);
+			switch (alignment)
+			{
+				case Alignment.X:
+					Matrix = Matrix4X4.CreateRotationY(MathHelper.Tau / 4);
+					break;
+				case Alignment.Y:
+					Matrix = Matrix4X4.CreateRotationX(MathHelper.Tau / 4);
+					break;
+				case Alignment.Z:
+					// This is the natural case (how it was modled)
+					break;
+				case Alignment.negX:
+					Matrix = Matrix4X4.CreateRotationY(-MathHelper.Tau / 4);
+					break;
+				case Alignment.negY:
+					Matrix = Matrix4X4.CreateRotationX(-MathHelper.Tau / 4);
+					break;
+				case Alignment.negZ:
+					Matrix = Matrix4X4.CreateRotationX(MathHelper.Tau / 2);
+					break;
+			}
+		}
+	}
+
+	public class CardHolder : MatterCadObject3D
+	{
+		public CardHolder()
+		{
+			RebuildMeshes();
+		}
+
+		[DisplayName("Name")]
+		public string NameToWrite { get; set; } = "MatterHackers";
+
+		public override void RebuildMeshes()
+		{
+			IObject3D plainCardHolder = Object3D.Load("C:/Temp/CardHolder.stl");
+
+			//TypeFace typeFace = TypeFace.LoadSVG("Viking_n.svg");
+
+			var letterPrinter = new TypeFacePrinter(NameToWrite);//, new StyledTypeFace(typeFace, 12));
+
+			IObject3D nameMesh = new Object3D()
+			{
+				Mesh = VertexSourceToMesh.Extrude(letterPrinter, 5)
+			};
+
+			AxisAlignedBoundingBox textBounds = nameMesh.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+			var textArea = new Vector2(90, 20);
+
+			// test the area that the names will go to
+			// nameMesh = new Box(textArea.X, textArea.Y, 5);
+
+			double scale = Math.Min(textArea.X / textBounds.XSize, textArea.Y / textBounds.YSize);
+			nameMesh = new Scale(nameMesh, scale, scale, 1);
+			nameMesh = new Align(nameMesh, Face.Bottom | Face.Front, plainCardHolder, Face.Bottom | Face.Front);
+			nameMesh = new SetCenter(nameMesh, plainCardHolder.GetCenter(), true, false, false);
+
+			nameMesh = new Rotate(nameMesh, MathHelper.DegreesToRadians(-16));
+			nameMesh = new Translate(nameMesh, 0, 4, 2);
+
+			// output two meshes for card holder and text
+			this.Children.Modify(list =>
+			{
+				list.Clear();
+				list.Add(plainCardHolder);
+				list.Add(nameMesh);
+			});
 		}
 	}
 
 	/*
-
-public class CardHolder2 : MatterCadObject3D
-{
-	public CardHolder()
-	{
-		RebuildMeshes();
-	}
-
-	[DisplayName("Name")]
-	public string NameToWrite { get; set; } = "MatterHackers";
-
-	public override void RebuildMeshes()
-	{
-		CsgObject plainCardHolder = new MeshContainer("C:/Temp/CardHolder.stl");
-
-		//TypeFace typeFace = TypeFace.LoadSVG("Viking_n.svg");
-
-		var letterPrinter = new TypeFacePrinter(NameToWrite);//, new StyledTypeFace(typeFace, 12));
-		PolygonMesh.Mesh textMesh = VertexSourceToMesh.Extrude(letterPrinter, 5);
-
-		CsgObject nameMesh = new MeshContainer(textMesh);
-
-		AxisAlignedBoundingBox textBounds = textMesh.GetAxisAlignedBoundingBox();
-		var textArea = new Vector2(85, 20);
-
-		// test the area that the names will go to
-		//nameMesh = new Box(textArea.x, textArea.y, 5);
-
-		double scale = Math.Min(textArea.X / textBounds.XSize, textArea.Y / textBounds.YSize);
-		nameMesh = new Scale(nameMesh, scale, scale, 1);
-		nameMesh = new Align(nameMesh, Face.Top | Face.Front, plainCardHolder, Face.Bottom | Face.Front);
-		nameMesh = new SetCenter(nameMesh, plainCardHolder.GetCenter(), true, false, false);
-
-		nameMesh = new Rotate(nameMesh, MathHelper.DegreesToRadians(18));
-		nameMesh = new Translate(nameMesh, 0, 2, 16);
-
-		// output one combined mesh
-		//plainCardHolder += nameMesh;
-		//SetAndInvalidateMesh(CsgToMesh.Convert(plainCardHolder));
-
-		// output two meshes for card holder and text
-		this.Children.Modify(list =>
-		{
-			list.Clear();
-			list.AddRange(new[]
-			{
-				new Object3D()
-				{
-					Mesh = CsgToMesh.Convert(plainCardHolder)
-				},
-				new Object3D()
-				{
-					Mesh = CsgToMesh.Convert(nameMesh)
-				}
-			});
-		});
-
-		this.Mesh = null;
-	}
-}
 
 public class ChairFoot2 : MatterCadObject3D
 {
@@ -171,12 +240,12 @@ public class ChairFoot2 : MatterCadObject3D
 			//chairFootBox.BevelEdge(Edge.LeftFront, 2);
 			//chairFootBox.BevelEdge(Edge.RightBack, 2);
 			//chairFootBox.BevelEdge(Edge.RightFront, 2);
-			CsgObject chairFoot = chairFootBox;
+			IObject3D chairFoot = chairFootBox;
 
-			CsgObject ring = new Cylinder(InnerSize / 2 - 1, InsideReach, 30);
+			IObject3D ring = new Cylinder(InnerSize / 2 - 1, InsideReach, 30);
 			ring -= new Cylinder(ring.XSize / 2 - 2, ring.ZSize + 1, 30);
 
-			CsgObject fins = new Box(3, 1, ring.ZSize);
+			IObject3D fins = new Box(3, 1, ring.ZSize);
 			fins = new Translate(fins, 0, 1) + new Translate(fins, 0, -1);
 			fins -= new Align(new Rotate(new Box(5, 5, 5), 0, MathHelper.DegreesToRadians(45)), Face.Bottom | Face.Left, fins, Face.Top | Face.Left, 0, 0, -fins.XSize);
 			fins = new Translate(fins, InnerSize / 2 - .1);
@@ -189,7 +258,7 @@ public class ChairFoot2 : MatterCadObject3D
 			chairFoot += new Align(ring, Face.Bottom, chairFoot, Face.Top, 0, 0, -.1);
 
 			chairFoot = new Rotate(chairFoot, 0, angleRadians, 0);
-			CsgObject clipBox = new Align(new Box(OuterSize * 2, OuterSize * 2, unclippedFootHeight), Face.Top, chairFoot, Face.Bottom, 0, 0, extraHeightForRotation);
+			IObject3D clipBox = new Align(new Box(OuterSize * 2, OuterSize * 2, unclippedFootHeight), Face.Top, chairFoot, Face.Bottom, 0, 0, extraHeightForRotation);
 			chairFoot -= clipBox;
 			chairFoot = new Translate(chairFoot, 0, 0, clipBox.GetAxisAlignedBoundingBox().maxXYZ.Z);
 
@@ -204,12 +273,12 @@ public class ChairFoot2 : MatterCadObject3D
 			chairFootBox.BevelEdge(Edge.LeftFront, 2);
 			chairFootBox.BevelEdge(Edge.RightBack, 2);
 			chairFootBox.BevelEdge(Edge.RightFront, 2);
-			CsgObject chairFoot = chairFootBox;
+			IObject3D chairFoot = chairFootBox;
 
-			CsgObject ring = new Cylinder(InnerSize / 2 - 1, insideHeight, 30);
+			IObject3D ring = new Cylinder(InnerSize / 2 - 1, insideHeight, 30);
 			ring -= new Cylinder(ring.XSize / 2 - 2, ring.ZSize + 1, 30);
 
-			CsgObject fins = new Box(3, 1, ring.ZSize);
+			IObject3D fins = new Box(3, 1, ring.ZSize);
 			fins = new Translate(fins, 0, 1) + new Translate(fins, 0, -1);
 			fins -= new Align(new Rotate(new Box(5, 5, 5), 0, MathHelper.DegreesToRadians(45)), Face.Bottom | Face.Left, fins, Face.Top | Face.Left, 0, 0, -fins.XSize);
 			fins = new Translate(fins, InnerSize / 2 - .1);
@@ -340,8 +409,7 @@ public class ChairFoot2 : MatterCadObject3D
 		}
 	}
 
-	/*
-	public class PvcT2 : MatterCadObject3D
+	public class PvcT : MatterCadObject3D
 	{
 		private int sides = 50;
 
@@ -350,89 +418,81 @@ public class ChairFoot2 : MatterCadObject3D
 			RebuildMeshes();
 		}
 
-		public double BottomReach { get; set; } = 30;
-
-		public double FrontReach { get; set; } = 25;
-
 		[DisplayName("Inner Radius")]
 		public double InnerDiameter { get; set; } = 15;
 
 		[DisplayName("Outer Radius")]
 		public double OuterDiameter { get; set; } = 20;
 
+		public double BottomReach { get; set; } = 30;
+
+		public double FrontReach { get; set; } = 25;
+
 		public double TopReach { get; set; } = 30;
 
 		public override void RebuildMeshes()
 		{
-			CsgObject topBottomConnect = new Cylinder(OuterDiameter / 2, OuterDiameter, sides, Alignment.y);
-			CsgObject frontConnect = new Cylinder(OuterDiameter / 2, OuterDiameter / 2, sides, Alignment.x);
+			IObject3D topBottomConnect = new Cylinder(OuterDiameter / 2, OuterDiameter, sides, Alignment.Y);
+			IObject3D frontConnect = new Cylinder(OuterDiameter / 2, OuterDiameter / 2, sides, Alignment.X);
 			frontConnect = new Align(frontConnect, Face.Right, topBottomConnect, Face.Right);
 
-			CsgObject bottomReach = new Rotate(CreateReach(BottomReach), -MathHelper.Tau / 4);
-			bottomReach = new Align(bottomReach, Face.Back, topBottomConnect, Face.Front, 0, 1);
+			IObject3D bottomReach = new Rotate(CreateReach(BottomReach), -MathHelper.Tau / 4);
+			bottomReach = new Align(bottomReach, Face.Back, topBottomConnect, Face.Front, 0, .1);
 
-			CsgObject topReach = new Rotate(CreateReach(TopReach), MathHelper.Tau / 4);
-			topReach = new Align(topReach, Face.Front, topBottomConnect, Face.Back, 0, -1);
+			IObject3D topReach = new Rotate(CreateReach(TopReach), MathHelper.Tau / 4);
+			topReach = new Align(topReach, Face.Front, topBottomConnect, Face.Back, 0, -.1);
 
-			CsgObject frontReach = new Rotate(CreateReach(FrontReach), 0, -MathHelper.Tau / 4);
-			frontReach = new Align(frontReach, Face.Left, topBottomConnect, Face.Right, -1);
+			IObject3D frontReach = new Rotate(CreateReach(FrontReach), 0, -MathHelper.Tau / 4);
+			frontReach = new Align(frontReach, Face.Left, topBottomConnect, Face.Right, -.1);
 
 			// output multiple meshes for pipe connector
 			this.Children.Modify(list =>
 			{
 				list.Clear();
-				list.AddRange(new[]
-				{
-					new Object3D()
-					{
-						Mesh = CsgToMesh.Convert(topBottomConnect),
-						Color = Color.LightGray
-					},
-					new Object3D()
-					{
-						Mesh = CsgToMesh.Convert(frontConnect),
-						Color = Color.LightGray
-					},
-					new Object3D()
-					{
-						Mesh = CsgToMesh.Convert(bottomReach),
-						Color = Color.White
-					},
-					new Object3D()
-					{
-						Mesh = CsgToMesh.Convert(topReach),
-						Color = Color.White
-					},
-					new Object3D()
-					{
-						Mesh = CsgToMesh.Convert(frontReach),
-						Color = Color.White
-					}
-				});
+				list.Add(topBottomConnect);
+				list.Add(frontConnect);
+				list.Add(bottomReach);
+				list.Add(topReach);
+				list.Add(frontReach);
 			});
 
 			this.Color = Color.Transparent;
 			this.Mesh = null;
 		}
 
-		private CsgObject CreateReach(double reach)
+		private IObject3D CreateReach(double reach)
 		{
 			var finWidth = 4.0;
 			var finLength = InnerDiameter;
-			var fin1 = new Box(finWidth, finLength, reach);
-			fin1.ChamferEdge(Face.Top | Face.Back, finLength / 8);
-			fin1.ChamferEdge(Face.Top | Face.Front, finLength / 8);
-			CsgObject fin2 = new Rotate(fin1, 0, 0, MathHelper.Tau / 4);
 
-			return fin1 + fin2;
+			var pattern = new VertexStorage();
+			pattern.MoveTo(0, 0);
+			pattern.LineTo(finLength/2, 0);
+			pattern.LineTo(finLength/2, reach - finLength / 8);
+			pattern.LineTo(finLength/2 - finLength / 8, reach);
+			pattern.LineTo(-finLength/2 + finLength / 8, reach);
+			pattern.LineTo(-finLength/2, reach - finLength / 8);
+			pattern.LineTo(-finLength/2, 0);
+
+			var fin1 = new Object3D()
+			{
+				Mesh = VertexSourceToMesh.Extrude(pattern, finWidth)
+			};
+			fin1 = new Translate(fin1, 0, 0, -finWidth / 2);
+			//fin1.ChamferEdge(Face.Top | Face.Back, finLength / 8);
+			//fin1.ChamferEdge(Face.Top | Face.Front, finLength / 8);
+			fin1 = new Rotate(fin1, -MathHelper.Tau / 4);
+			var fin2 = new SetCenter(new Rotate(fin1, 0, 0, MathHelper.Tau / 4), fin1.GetCenter());
+
+			return new Object3D().SetChildren(new List<IObject3D>() { fin1, fin2 });
 		}
 	}
 
-	public class RibonWithName2 : MatterCadObject3D
+	public class RibonWithName : MatterCadObject3D
 	{
 		private static TypeFace typeFace = null;
 
-		public RibonWithName2()
+		public RibonWithName()
 		{
 			RebuildMeshes();
 		}
@@ -452,11 +512,13 @@ public class ChairFoot2 : MatterCadObject3D
 			}
 
 			var letterPrinter = new TypeFacePrinter(NameToWrite.ToUpper(), new StyledTypeFace(typeFace, 12));
-			PolygonMesh.Mesh textMesh = VertexSourceToMesh.Extrude(letterPrinter, 5);
 
-			CsgObject nameMesh = new MeshContainer(textMesh);
+			IObject3D nameMesh = new Object3D()
+			{
+				Mesh = VertexSourceToMesh.Extrude(letterPrinter, 5)
+			};
 
-			AxisAlignedBoundingBox textBounds = textMesh.GetAxisAlignedBoundingBox();
+			AxisAlignedBoundingBox textBounds = nameMesh.GetAxisAlignedBoundingBox();
 			var textArea = new Vector2(25, 6);
 
 			double scale = Math.Min(textArea.X / textBounds.XSize, textArea.Y / textBounds.YSize);
@@ -467,29 +529,17 @@ public class ChairFoot2 : MatterCadObject3D
 			nameMesh = new Rotate(nameMesh, 0, 0, MathHelper.DegreesToRadians(50));
 			nameMesh = new Translate(nameMesh, -37, -14, -1);
 
-			// output two meshes
-
+			// output two meshes for card holder and text
 			this.Children.Modify(list =>
 			{
 				list.Clear();
-				list.AddRange(new[]
-				{
-				new Object3D()
-				{
-					Mesh = CsgToMesh.Convert(cancerRibonStl)
-				},
-				new Object3D()
-				{
-					Mesh = CsgToMesh.Convert(nameMesh)
-				}
-				});
+				list.Add(cancerRibonStl);
+				list.Add(nameMesh);
 			});
 
 			this.Mesh = null;
 		}
 	}
-	*/
-
 
 	public class Box : Object3D
 	{
@@ -525,13 +575,15 @@ public class ChairFoot2 : MatterCadObject3D
 			return item.GetAxisAlignedBoundingBox(Matrix4X4.Identity).Center;
 		}
 
-		public static void SetChildren(this IObject3D parent, IEnumerable<IObject3D> newChildren)
+		public static IObject3D SetChildren(this IObject3D parent, IEnumerable<IObject3D> newChildren)
 		{
 			parent.Children.Modify((list) =>
 			{
 				list.Clear();
 				list.AddRange(newChildren);
 			});
+
+			return parent;
 		}
 
 		public static void SetChildren(this IObject3D parent, IObject3D newChild)
@@ -546,15 +598,157 @@ public class ChairFoot2 : MatterCadObject3D
 
 	public class Translate : Object3D
 	{
-		public Translate(IObject3D objectToTranslate, double x = 0, double y = 0, double z = 0, string name = "")
-			: this(objectToTranslate, new Vector3(x, y, z), name)
+		public Translate()
+		{ }
+
+		public Translate(IObject3D item, double x = 0, double y = 0, double z = 0)
+			: this(item, new Vector3(x, y, z))
 		{
 		}
 
-		public Translate(IObject3D objectToTranslate, Vector3 translation, string name = "")
+		public Translate(IObject3D item, Vector3 translation)
 		{
 			Matrix *= Matrix4X4.CreateTranslation(translation);
-			Children.Add(objectToTranslate.Clone());
+			Children.Add(item.Clone());
+		}
+	}
+
+	public class Align : Object3D
+	{
+		public Align()
+		{
+		}
+
+		public Align(IObject3D objectToAlign, Face boundingFacesToAlign, IObject3D objectToAlignTo, Face boundingFacesToAlignTo, double offsetX = 0, double offsetY = 0, double offsetZ = 0, string name = "")
+			: this(objectToAlign, boundingFacesToAlign, GetPositionToAlignTo(objectToAlignTo, boundingFacesToAlignTo, new Vector3(offsetX, offsetY, offsetZ)), name)
+		{
+			if (objectToAlign == objectToAlignTo)
+			{
+				throw new Exception("You cannot align an object ot itself.");
+			}
+		}
+
+		public Align(IObject3D objectToAlign, Face boundingFacesToAlign, double offsetX = 0, double offsetY = 0, double offsetZ = 0, string name = "")
+			: this(objectToAlign, boundingFacesToAlign, new Vector3(offsetX, offsetY, offsetZ), name)
+		{
+		}
+
+		public Align(IObject3D objectToAlign, Face boundingFacesToAlign, Vector3 positionToAlignTo, double offsetX, double offsetY, double offsetZ, string name = "")
+			: this(objectToAlign, boundingFacesToAlign, positionToAlignTo + new Vector3(offsetX, offsetY, offsetZ), name)
+		{
+		}
+
+		public Align(IObject3D item, Face boundingFacesToAlign, Vector3 positionToAlignTo, string name = "")
+		{
+			AxisAlignedBoundingBox bounds = item.GetAxisAlignedBoundingBox();
+
+			if (IsSet(boundingFacesToAlign, Face.Left, Face.Right))
+			{
+				positionToAlignTo.X = positionToAlignTo.X - bounds.minXYZ.X;
+			}
+			if (IsSet(boundingFacesToAlign, Face.Right, Face.Left))
+			{
+				positionToAlignTo.X = positionToAlignTo.X - bounds.minXYZ.X - (bounds.maxXYZ.X - bounds.minXYZ.X);
+			}
+			if (IsSet(boundingFacesToAlign, Face.Front, Face.Back))
+			{
+				positionToAlignTo.Y = positionToAlignTo.Y - bounds.minXYZ.Y;
+			}
+			if (IsSet(boundingFacesToAlign, Face.Back, Face.Front))
+			{
+				positionToAlignTo.Y = positionToAlignTo.Y - bounds.minXYZ.Y - (bounds.maxXYZ.Y - bounds.minXYZ.Y);
+			}
+			if (IsSet(boundingFacesToAlign, Face.Bottom, Face.Top))
+			{
+				positionToAlignTo.Z = positionToAlignTo.Z - bounds.minXYZ.Z;
+			}
+			if (IsSet(boundingFacesToAlign, Face.Top, Face.Bottom))
+			{
+				positionToAlignTo.Z = positionToAlignTo.Z - bounds.minXYZ.Z - (bounds.maxXYZ.Z - bounds.minXYZ.Z);
+			}
+
+			Matrix *= Matrix4X4.CreateTranslation(positionToAlignTo);
+			Children.Add(item.Clone());
+		}
+
+		public static Vector3 GetPositionToAlignTo(IObject3D objectToAlignTo, Face boundingFacesToAlignTo, Vector3 extraOffset)
+		{
+			Vector3 positionToAlignTo = new Vector3();
+			if (IsSet(boundingFacesToAlignTo, Face.Left, Face.Right))
+			{
+				positionToAlignTo.X = objectToAlignTo.GetAxisAlignedBoundingBox().minXYZ.X;
+			}
+			if (IsSet(boundingFacesToAlignTo, Face.Right, Face.Left))
+			{
+				positionToAlignTo.X = objectToAlignTo.GetAxisAlignedBoundingBox().maxXYZ.X;
+			}
+			if (IsSet(boundingFacesToAlignTo, Face.Front, Face.Back))
+			{
+				positionToAlignTo.Y = objectToAlignTo.GetAxisAlignedBoundingBox().minXYZ.Y;
+			}
+			if (IsSet(boundingFacesToAlignTo, Face.Back, Face.Front))
+			{
+				positionToAlignTo.Y = objectToAlignTo.GetAxisAlignedBoundingBox().maxXYZ.Y;
+			}
+			if (IsSet(boundingFacesToAlignTo, Face.Bottom, Face.Top))
+			{
+				positionToAlignTo.Z = objectToAlignTo.GetAxisAlignedBoundingBox().minXYZ.Z;
+			}
+			if (IsSet(boundingFacesToAlignTo, Face.Top, Face.Bottom))
+			{
+				positionToAlignTo.Z = objectToAlignTo.GetAxisAlignedBoundingBox().maxXYZ.Z;
+			}
+			return positionToAlignTo + extraOffset;
+		}
+
+		private static bool IsSet(Face variableToCheck, Face faceToCheckFor, Face faceToAssertNot)
+		{
+			if ((variableToCheck & faceToCheckFor) != 0)
+			{
+				if ((variableToCheck & faceToAssertNot) != 0)
+				{
+					throw new Exception("You cannot have both " + faceToCheckFor.ToString() + " and " + faceToAssertNot.ToString() + " set when calling Align.  The are mutually exclusive.");
+				}
+				return true;
+			}
+
+			return false;
+		}
+	}
+
+	public class Rotate : Object3D
+	{
+		public Rotate()
+		{
+		}
+
+		public Rotate(IObject3D item, double x = 0, double y = 0, double z = 0, string name = "")
+			: this(item, new Vector3(x, y, z), name)
+		{
+		}
+
+		public Rotate(IObject3D item, Vector3 translation, string name = "")
+		{
+			Matrix *= Matrix4X4.CreateRotation(translation);
+			Children.Add(item.Clone());
+		}
+	}
+
+	public class Scale : Object3D
+	{
+		public Scale()
+		{
+		}
+
+		public Scale(IObject3D item, double x = 0, double y = 0, double z = 0, string name = "")
+			: this(item, new Vector3(x, y, z), name)
+		{
+		}
+
+		public Scale(IObject3D item, Vector3 translation, string name = "")
+		{
+			Matrix *= Matrix4X4.CreateScale(translation);
+			Children.Add(item.Clone());
 		}
 	}
 

@@ -58,7 +58,6 @@
     <Compile Include="Braille\BrailleGrade2Mapping.cs" />
     <Compile Include="CardHolderTool\MatterCadEditor.cs" />
     <Compile Include="CardHolderTool\MeshObjects.cs" />
-    <Compile Include="CardHolderTool\CsgObjects.cs" />
     <Compile Include="TextCreatorPlugin.cs" />
     <Compile Include="Text\TextGenerator.cs" />
     <Compile Include="Text\TextEditor.cs" />
@@ -71,10 +70,6 @@
     <ProjectReference Include="..\Submodules\agg-sharp\clipper_library\clipper_library.csproj">
       <Project>{9B062971-A88E-4A3D-B3C9-12B78D15FA66}</Project>
       <Name>clipper_library</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Submodules\agg-sharp\Csg\Csg.csproj">
-      <Project>{7E61A5BD-E78F-4B80-88C9-3821B4FA062E}</Project>
-      <Name>Csg</Name>
     </ProjectReference>
     <ProjectReference Include="..\Submodules\agg-sharp\DataConverters2D\DataConverters2D.csproj">
       <Project>{94838988-523C-4B11-AD82-8B9B76F23A31}</Project>

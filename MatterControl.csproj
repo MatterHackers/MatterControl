@@ -549,10 +549,6 @@
       <Project>{9B062971-A88E-4A3D-B3C9-12B78D15FA66}</Project>
       <Name>clipper_library</Name>
     </ProjectReference>
-    <ProjectReference Include="Submodules\agg-sharp\Csg\Csg.csproj">
-      <Project>{7E61A5BD-E78F-4B80-88C9-3821B4FA062E}</Project>
-      <Name>Csg</Name>
-    </ProjectReference>
     <ProjectReference Include="Submodules\agg-sharp\DataConverters3D\DataConverters3D.csproj">
       <Project>{04667764-DC7B-4B95-AEF6-B4E6C87A54E9}</Project>
       <Name>DataConverters3D</Name>

@@ -854,6 +854,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					activeButtonBeforeMouseOverride = viewControls3D.ActiveButton;
 					viewControls3D.ActiveButton = ViewControls3DButtons.Translate;
 				}
+				else if(Keyboard.IsKeyDown(Keys.Alt))
+				{
+					activeButtonBeforeMouseOverride = viewControls3D.ActiveButton;
+					viewControls3D.ActiveButton = ViewControls3DButtons.Scale;
+				}
 				else
 				{
 					activeButtonBeforeMouseOverride = viewControls3D.ActiveButton;
