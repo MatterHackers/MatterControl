@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Linq;
 using System.Threading;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
@@ -75,7 +76,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Padding = 5,
 					MinimumSize = new VectorMath.Vector2(400, 65),
 					Margin = new BorderDouble(top: 10),
-					BackgroundColor = theme.MinimalShade
 				};
 				column.AddChild(optionsPanel);
 
@@ -85,6 +85,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					var settingsData = SettingsOrganizer.Instance.GetSettingsData(key);
 					var row = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, Color.Black, theme, ref tabIndex);
+
+					var lightGray = new Color("#aaa");
+
+					foreach (var widget in row.Descendants<MHNumberEdit>())
+					{
+						widget.Border = 1;
+						widget.BorderColor = lightGray;
+					}
+
+					foreach (var widget in row.Descendants<MHTextEditWidget>())
+					{
+						widget.Border = 1;
+						widget.BorderColor = lightGray;
+					}
 
 					optionsPanel.AddChild(row);
 				}

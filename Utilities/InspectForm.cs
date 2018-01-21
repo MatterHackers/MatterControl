@@ -81,20 +81,6 @@ namespace MatterHackers.MatterControl
 
 		protected override bool ShowWithoutActivation => true;
 
-		protected override CreateParams CreateParams
-		{
-			get
-			{
-				CreateParams baseParams = base.CreateParams;
-
-				const int WS_EX_NOACTIVATE = 0x08000000;
-				const int WS_EX_TOOLWINDOW = 0x00000080;
-				baseParams.ExStyle |= (int)(WS_EX_NOACTIVATE); // | WS_EX_TOOLWINDOW);
-
-				return baseParams;
-			}
-		}
-
 		private HashSet<GuiWidget> aggAncestryTree = new HashSet<GuiWidget>();
 		//private HashSet<IObject3D> sceneAncestryTree = new HashSet<IObject3D>();
 
@@ -147,6 +133,11 @@ namespace MatterHackers.MatterControl
 					activeTreeNode = treeNode;
 					aggTreeView.Invalidate();
 				}
+				else
+				{
+					this.AddItemEnsureAncestors(_inspectedWidget);
+				}
+
 
 				_inspectedWidget.Invalidate();
 			}
@@ -172,9 +163,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private Font boldFont;
-
-		private void AddItem(GuiWidget widget, string text = null, TreeNode childNode = null, bool showAllParents = true)
+		private void AddItemEnsureAncestors(GuiWidget widget, string text = null, TreeNode childNode = null, bool showAllParents = true)
 		{
 			if (text == null)
 			{
@@ -196,11 +185,6 @@ namespace MatterHackers.MatterControl
 					Tag = widget
 				};
 
-				if (boldFont == null)
-				{
-					boldFont = new Font(node.NodeFont, FontStyle.Bold);
-				}
-
 				if (childNode != null)
 				{
 					node.Nodes.Add(childNode);
@@ -217,7 +201,7 @@ namespace MatterHackers.MatterControl
 					}
 					else
 					{
-						AddItem(parent, parent.Text, node);
+						AddItemEnsureAncestors(parent, null, node);
 					}
 				}
 				else
@@ -384,16 +368,6 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private void AddAllItems(IEnumerable<GuiWidget> items)
-		{
-			if (items != null)
-			{
-				foreach (var item in items)
-				{
-					this.AddItem(item);
-				}
-			}
-		}
 
 		protected override void OnFormClosing(FormClosingEventArgs e)
 		{
@@ -435,7 +409,7 @@ namespace MatterHackers.MatterControl
 				TextRenderer.DrawText(
 					e.Graphics,
 					node.Text,
-					node == activeTreeNode ? boldFont : node.NodeFont,
+					node.NodeFont,
 					new Point(node.Bounds.Left, node.Bounds.Top),
 					widget.ActuallyVisibleOnScreen() ? SystemColors.ControlText : SystemColors.GrayText,
 					System.Drawing.Color.Transparent);
@@ -455,7 +429,7 @@ namespace MatterHackers.MatterControl
 				TextRenderer.DrawText(
 					e.Graphics,
 					node.Text,
-					node == activeTreeNode ? boldFont : node.NodeFont,
+					node.NodeFont,
 					new Point(node.Bounds.Left, node.Bounds.Top),
 					SystemColors.ControlText,
 					System.Drawing.Color.Transparent);
@@ -488,6 +462,15 @@ namespace MatterHackers.MatterControl
 				widget.Invalidate();
 			}
 
+		}
+
+		protected override void OnKeyUp(System.Windows.Forms.KeyEventArgs e)
+		{
+			if (e.KeyCode == System.Windows.Forms.Keys.F1)
+			{
+				this.Inspecting = !this.Inspecting;
+			}
+			base.OnKeyUp(e);
 		}
 	}
 }
