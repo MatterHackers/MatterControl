@@ -30,7 +30,6 @@ either expressed or implied, of the FreeBSD Project.
 using System.IO;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
-using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -38,16 +37,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		public OverflowMenuButton(IconColor iconColor = IconColor.Theme)
 			: base(new ImageWidget(
-				AggContext.StaticData.LoadIcon(Path.Combine("ViewTransformControls", "overflow.png"), 
-					32, 
-					32, 
-					iconColor))
+				AggContext.StaticData.LoadIcon(Path.Combine("ViewTransformControls", "overflow.png"), 32, 32, iconColor))
 				{
 					HAnchor = HAnchor.Left
-				}, 
+				},
 				ApplicationController.Instance.Theme)
 		{
-			this.ToolTipText = "More...".Localize();
 		}
 
 		public OverflowMenuButton(GuiWidget viewWidget, ThemeConfig theme)
