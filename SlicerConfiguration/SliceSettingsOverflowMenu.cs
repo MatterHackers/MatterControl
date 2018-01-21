@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2018, Lars Brubaker, John Lewin
 
 All rights reserved.
 
@@ -30,7 +30,6 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Linq;
 using MatterHackers.Agg;
-using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
@@ -39,7 +38,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class SliceSettingsOverflowMenu : OverflowMenuButton
 	{
-		// showHelpControls
 		public SliceSettingsOverflowMenu(PrinterConfig printer, ThemeConfig theme)
 			: base(theme)
 		{
@@ -49,8 +47,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			var popupMenu = new PopupMenu(ApplicationController.Instance.Theme);
 
-			var checkedIcon = AggContext.StaticData.LoadIcon("fa-check_16.png");
-
 			popupMenu.CreateMenuItem("View Just My Settings".Localize()).Click += (s, e) =>
 			{
 				this.TabView.FilterToOverrides();
@@ -58,17 +54,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			popupMenu.CreateHorizontalLine();
 
-			var icon = (ApplicationController.Instance.ShowHelpControls) ? checkedIcon : null;
-
-			popupMenu.CreateMenuItem("Show Help".Localize(), icon).Click += (s, e) =>
-			{
-				ApplicationController.Instance.ShowHelpControls = !ApplicationController.Instance.ShowHelpControls;
-			};
+			popupMenu.CreateBoolMenuItem(
+				"Show Help".Localize(),
+				() => ApplicationController.Instance.ShowHelpControls,
+				(value) => ApplicationController.Instance.ShowHelpControls = value);
 
 			this.PopupContent = popupMenu;
 		}
-
-		public PopupMenu PopupMenu { get; }
 
 		// On load walk back to the first ancestor with background colors and copy
 		public override void OnLoad(EventArgs args)
