@@ -165,6 +165,7 @@
     <Compile Include="SetupWizard\DialogWindow.cs" />
     <Compile Include="SlicerConfiguration\SettingsOrganizer.cs" />
     <Compile Include="SlicerConfiguration\SlicerMapping\SliceEngineMapping.cs" />
+    <Compile Include="SlicerConfiguration\SliceSettingsOverflowMenuButton.cs" />
     <Compile Include="SlicerConfiguration\UIFields\IpAddessField.cs" />
     <Compile Include="Utilities\InspectForm.cs" Condition="'$(Configuration)' == 'Debug'">
       <SubType>Form</SubType>
@@ -333,7 +334,6 @@
     <Compile Include="SlicerConfiguration\Settings\ProfileManager.cs" />
     <Compile Include="SlicerConfiguration\Settings\PrinterSettingsLayer.cs" />
     <Compile Include="SlicerConfiguration\Settings\SettingsHelpers.cs" />
-    <Compile Include="SlicerConfiguration\SliceSettingsOverflowMenu.cs" />
     <Compile Include="SlicerConfiguration\Settings\ActiveSliceSettings.cs" />
     <Compile Include="SlicerConfiguration\Settings\PrinterSettings.cs" />
     <Compile Include="DataStorage\Classic\ClassicSqlitePrinterProfiles.cs" />

@@ -1,6 +1,5 @@
 ﻿/*
 Copyright (c) 2018, Lars Brubaker, John Lewin
-
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,6 +26,7 @@ The views and conclusions contained in the software and documentation are those
 of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
+
 using System;
 using System.Linq;
 using MatterHackers.Agg;
@@ -36,9 +36,9 @@ using MatterHackers.MatterControl.PartPreviewWindow;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class SliceSettingsOverflowMenu : OverflowMenuButton
+	public class SliceSettingsOverflowMenuButton : OverflowMenuButton
 	{
-		public SliceSettingsOverflowMenu(PrinterConfig printer, ThemeConfig theme)
+		public SliceSettingsOverflowMenuButton(PrinterConfig printer, ThemeConfig theme)
 			: base(theme)
 		{
 			this.VAnchor = VAnchor.Fit | VAnchor.Center;
