@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -28,10 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Linq;
 using MatterHackers.Agg;
-using MatterHackers.Agg.Platform;
-using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -52,14 +49,5 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		}
 
 		public OverflowMenuButton OverflowMenu { get; }
-
-		// On load walk back to the first ancestor with background colors and copy
-		public override void OnLoad(EventArgs args)
-		{
-			var firstBackgroundColor = this.Parents<GuiWidget>().Where(p => p.BackgroundColor.Alpha0To1 == 1).FirstOrDefault()?.BackgroundColor;
-			this.OverflowMenu.BackgroundColor = firstBackgroundColor ?? Color.Transparent;
-
-			base.OnLoad(args);
-		}
 	}
 }

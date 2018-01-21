@@ -142,7 +142,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			printerActionsBar = new PrinterActionsBar(printer, this, theme);
-			printerActionsBar.OverflowMenu.BackgroundColor = theme.ResolveColor(theme.TabBodyBackground, theme.TabBodyBackground);
 
 			// Must come after we have an instance of View3DWidget an its undo buffer
 			topToBottom.AddChild(printerActionsBar, 0);

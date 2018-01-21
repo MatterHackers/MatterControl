@@ -27,9 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.Linq;
-using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
@@ -60,15 +57,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				(value) => ApplicationController.Instance.ShowHelpControls = value);
 
 			this.PopupContent = popupMenu;
-		}
-
-		// On load walk back to the first ancestor with background colors and copy
-		public override void OnLoad(EventArgs args)
-		{
-			var firstBackgroundColor = this.Parents<GuiWidget>().Where(p => p.BackgroundColor.Alpha0To1 == 1).FirstOrDefault()?.BackgroundColor;
-			this.BackgroundColor = firstBackgroundColor ?? Color.Transparent;
-
-			base.OnLoad(args);
 		}
 
 		public SliceSettingsTabView TabView { get; internal set; }
