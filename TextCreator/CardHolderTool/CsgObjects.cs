@@ -14,26 +14,6 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.SimplePartScripting
 {
-	public class BadSubtract : MatterCadObject3D
-	{
-		public BadSubtract()
-		{
-			RebuildMeshes();
-		}
-
-		public double Sides { get; set; } = 4;
-
-		public override void RebuildMeshes()
-		{
-			int sides = 3;
-			CsgObject keep = new Cylinder(20, 20, sides);
-			CsgObject subtract = new Cylinder(10, 21, sides);
-			subtract = new SetCenter(subtract, keep.GetCenter());
-			CsgObject result = keep - subtract;
-			this.Mesh = CsgToMesh.Convert(result);
-		}
-	}
-
 	public class CardHolder : MatterCadObject3D
 	{
 		public CardHolder()
@@ -46,7 +26,7 @@ namespace MatterHackers.MatterControl.SimplePartScripting
 
 		public override void RebuildMeshes()
 		{
-			CsgObject plainCardHolder = new MeshContainer("PlainBusinessCardHolder.stl");
+			CsgObject plainCardHolder = new MeshContainer("C:/Temp/CardHolder.stl");
 
 			//TypeFace typeFace = TypeFace.LoadSVG("Viking_n.svg");
 

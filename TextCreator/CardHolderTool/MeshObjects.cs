@@ -7,6 +7,7 @@ using System.Threading;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
 using MatterHackers.Agg.Platform;
+using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.MatterCad;
 using MatterHackers.MatterControl.PartPreviewWindow.View3D;
@@ -16,8 +17,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.MeshObjects
 {
-	/*
-	public class BadSubtract2 : MatterCadObject3D
+	public class BadSubtract : MatterCadObject3D
 	{
 		public BadSubtract()
 		{
@@ -29,169 +29,203 @@ namespace MatterHackers.MatterControl.MeshObjects
 		public override void RebuildMeshes()
 		{
 			int sides = 3;
-			CsgObject keep = new Cylinder(20, 20, sides);
-			CsgObject subtract = new Cylinder(10, 21, sides);
+			IObject3D keep = new Cylinder(20, 20, sides);
+			IObject3D subtract = new Cylinder(10, 21, sides);
 			subtract = new SetCenter(subtract, keep.GetCenter());
-			CsgObject result = keep - subtract;
-			this.Mesh = CsgToMesh.Convert(result);
+			IObject3D result = keep.Minus(subtract);
+			this.SetChildren(result);
 		}
 	}
 
-	public class CardHolder2 : MatterCadObject3D
+	public class SetCenter : Object3D
 	{
-		public CardHolder()
+		public SetCenter(IObject3D item, Vector3 position)
 		{
-			RebuildMeshes();
+			Matrix *= Matrix4X4.CreateTranslation(position - item.GetCenter());
+			Children.Add(item.Clone());
+		}
+	}
+
+	public class Cylinder : Object3D
+	{
+		public Cylinder()
+		{
 		}
 
-		[DisplayName("Name")]
-		public string NameToWrite { get; set; } = "MatterHackers";
-
-		public override void RebuildMeshes()
+		public Cylinder(double radius, double height, int sides)
+			: this(radius, radius, height, sides)
 		{
-			CsgObject plainCardHolder = new MeshContainer("PlainBusinessCardHolder.stl");
+		}
 
-			//TypeFace typeFace = TypeFace.LoadSVG("Viking_n.svg");
+		public Cylinder(double radiusBottom, double radiusTop, double height, int sides)
+		{
+			var path = new VertexStorage();
+			path.MoveTo(0, -height/2);
+			path.LineTo(radiusBottom, -height/2);
+			path.LineTo(radiusTop, height/2);
+			path.LineTo(0, height/2);
 
-			var letterPrinter = new TypeFacePrinter(NameToWrite);//, new StyledTypeFace(typeFace, 12));
-			PolygonMesh.Mesh textMesh = VertexSourceToMesh.Extrude(letterPrinter, 5);
+			Mesh = VertexSourceToMesh.Revolve(path, sides);
+		}
+	}
 
-			CsgObject nameMesh = new MeshContainer(textMesh);
+	/*
 
-			AxisAlignedBoundingBox textBounds = textMesh.GetAxisAlignedBoundingBox();
-			var textArea = new Vector2(85, 20);
+public class CardHolder2 : MatterCadObject3D
+{
+	public CardHolder()
+	{
+		RebuildMeshes();
+	}
 
-			// test the area that the names will go to
-			//nameMesh = new Box(textArea.x, textArea.y, 5);
+	[DisplayName("Name")]
+	public string NameToWrite { get; set; } = "MatterHackers";
 
-			double scale = Math.Min(textArea.X / textBounds.XSize, textArea.Y / textBounds.YSize);
-			nameMesh = new Scale(nameMesh, scale, scale, 1);
-			nameMesh = new Align(nameMesh, Face.Top | Face.Front, plainCardHolder, Face.Bottom | Face.Front);
-			nameMesh = new SetCenter(nameMesh, plainCardHolder.GetCenter(), true, false, false);
+	public override void RebuildMeshes()
+	{
+		CsgObject plainCardHolder = new MeshContainer("C:/Temp/CardHolder.stl");
 
-			nameMesh = new Rotate(nameMesh, MathHelper.DegreesToRadians(18));
-			nameMesh = new Translate(nameMesh, 0, 2, 16);
+		//TypeFace typeFace = TypeFace.LoadSVG("Viking_n.svg");
 
-			// output one combined mesh
-			//plainCardHolder += nameMesh;
-			//SetAndInvalidateMesh(CsgToMesh.Convert(plainCardHolder));
+		var letterPrinter = new TypeFacePrinter(NameToWrite);//, new StyledTypeFace(typeFace, 12));
+		PolygonMesh.Mesh textMesh = VertexSourceToMesh.Extrude(letterPrinter, 5);
 
-			// output two meshes for card holder and text
-			this.Children.Modify(list =>
+		CsgObject nameMesh = new MeshContainer(textMesh);
+
+		AxisAlignedBoundingBox textBounds = textMesh.GetAxisAlignedBoundingBox();
+		var textArea = new Vector2(85, 20);
+
+		// test the area that the names will go to
+		//nameMesh = new Box(textArea.x, textArea.y, 5);
+
+		double scale = Math.Min(textArea.X / textBounds.XSize, textArea.Y / textBounds.YSize);
+		nameMesh = new Scale(nameMesh, scale, scale, 1);
+		nameMesh = new Align(nameMesh, Face.Top | Face.Front, plainCardHolder, Face.Bottom | Face.Front);
+		nameMesh = new SetCenter(nameMesh, plainCardHolder.GetCenter(), true, false, false);
+
+		nameMesh = new Rotate(nameMesh, MathHelper.DegreesToRadians(18));
+		nameMesh = new Translate(nameMesh, 0, 2, 16);
+
+		// output one combined mesh
+		//plainCardHolder += nameMesh;
+		//SetAndInvalidateMesh(CsgToMesh.Convert(plainCardHolder));
+
+		// output two meshes for card holder and text
+		this.Children.Modify(list =>
+		{
+			list.Clear();
+			list.AddRange(new[]
 			{
-				list.Clear();
-				list.AddRange(new[]
+				new Object3D()
 				{
-					new Object3D()
-					{
-						Mesh = CsgToMesh.Convert(plainCardHolder)
-					},
-					new Object3D()
-					{
-						Mesh = CsgToMesh.Convert(nameMesh)
-					}
-				});
+					Mesh = CsgToMesh.Convert(plainCardHolder)
+				},
+				new Object3D()
+				{
+					Mesh = CsgToMesh.Convert(nameMesh)
+				}
 			});
+		});
 
-			this.Mesh = null;
-		}
+		this.Mesh = null;
 	}
+}
 
-	public class ChairFoot2 : MatterCadObject3D
+public class ChairFoot2 : MatterCadObject3D
+{
+	public ChairFoot()
 	{
-		public ChairFoot()
+		RebuildMeshes();
+	}
+
+	[DisplayName("Angle")]
+	public double AngleDegrees { get; set; } = 3;
+
+	// these are the public variables that would be edited
+	[DisplayName("Final")]
+	public bool FinalPart { get; set; } = true;
+
+	[DisplayName("Height")]
+	public double HeightFromFloorToBottomOfLeg { get; set; } = 10;
+
+	[DisplayName("Inner Size")]
+	public double InnerSize { get; set; } = 20;
+
+	[DisplayName("Reach")]
+	public double InsideReach { get; set; } = 10;
+
+	[DisplayName("Outer Size")]
+	public double OuterSize { get; set; } = 22;
+
+	public override void RebuildMeshes()
+	{
+		// This would be better expressed as the desired offset height (height from ground to bottom of chair leg).
+		double angleRadians = MathHelper.DegreesToRadians(AngleDegrees);
+		double extraHeightForRotation = Math.Sinh(angleRadians) * OuterSize; // get the distance to clip off the extra bottom
+		double unclippedFootHeight = HeightFromFloorToBottomOfLeg + extraHeightForRotation;
+
+		if (FinalPart)
 		{
-			RebuildMeshes();
+			Box chairFootBox = new Box(OuterSize, OuterSize, unclippedFootHeight);
+			//chairFootBox.BevelEdge(Edge.LeftBack, 2);
+			//chairFootBox.BevelEdge(Edge.LeftFront, 2);
+			//chairFootBox.BevelEdge(Edge.RightBack, 2);
+			//chairFootBox.BevelEdge(Edge.RightFront, 2);
+			CsgObject chairFoot = chairFootBox;
+
+			CsgObject ring = new Cylinder(InnerSize / 2 - 1, InsideReach, 30);
+			ring -= new Cylinder(ring.XSize / 2 - 2, ring.ZSize + 1, 30);
+
+			CsgObject fins = new Box(3, 1, ring.ZSize);
+			fins = new Translate(fins, 0, 1) + new Translate(fins, 0, -1);
+			fins -= new Align(new Rotate(new Box(5, 5, 5), 0, MathHelper.DegreesToRadians(45)), Face.Bottom | Face.Left, fins, Face.Top | Face.Left, 0, 0, -fins.XSize);
+			fins = new Translate(fins, InnerSize / 2 - .1);
+
+			ring += new Rotate(fins, 0, 0, MathHelper.DegreesToRadians(45));
+			ring += new Rotate(fins, 0, 0, MathHelper.DegreesToRadians(45 + 90));
+			ring += new Rotate(fins, 0, 0, MathHelper.DegreesToRadians(45 + 180));
+			ring += new Rotate(fins, 0, 0, MathHelper.DegreesToRadians(45 - 90));
+
+			chairFoot += new Align(ring, Face.Bottom, chairFoot, Face.Top, 0, 0, -.1);
+
+			chairFoot = new Rotate(chairFoot, 0, angleRadians, 0);
+			CsgObject clipBox = new Align(new Box(OuterSize * 2, OuterSize * 2, unclippedFootHeight), Face.Top, chairFoot, Face.Bottom, 0, 0, extraHeightForRotation);
+			chairFoot -= clipBox;
+			chairFoot = new Translate(chairFoot, 0, 0, clipBox.GetAxisAlignedBoundingBox().maxXYZ.Z);
+
+			this.Mesh = CsgToMesh.Convert(chairFoot);
 		}
-
-		[DisplayName("Angle")]
-		public double AngleDegrees { get; set; } = 3;
-
-		// these are the public variables that would be edited
-		[DisplayName("Final")]
-		public bool FinalPart { get; set; } = true;
-
-		[DisplayName("Height")]
-		public double HeightFromFloorToBottomOfLeg { get; set; } = 10;
-
-		[DisplayName("Inner Size")]
-		public double InnerSize { get; set; } = 20;
-
-		[DisplayName("Reach")]
-		public double InsideReach { get; set; } = 10;
-
-		[DisplayName("Outer Size")]
-		public double OuterSize { get; set; } = 22;
-
-		public override void RebuildMeshes()
+		else // fit part
 		{
-			// This would be better expressed as the desired offset height (height from ground to bottom of chair leg).
-			double angleRadians = MathHelper.DegreesToRadians(AngleDegrees);
-			double extraHeightForRotation = Math.Sinh(angleRadians) * OuterSize; // get the distance to clip off the extra bottom
-			double unclippedFootHeight = HeightFromFloorToBottomOfLeg + extraHeightForRotation;
+			double baseHeight = 3;
+			double insideHeight = 4;
+			Box chairFootBox = new Box(OuterSize, OuterSize, baseHeight);
+			chairFootBox.BevelEdge(Edge.LeftBack, 2);
+			chairFootBox.BevelEdge(Edge.LeftFront, 2);
+			chairFootBox.BevelEdge(Edge.RightBack, 2);
+			chairFootBox.BevelEdge(Edge.RightFront, 2);
+			CsgObject chairFoot = chairFootBox;
 
-			if (FinalPart)
-			{
-				Box chairFootBox = new Box(OuterSize, OuterSize, unclippedFootHeight);
-				//chairFootBox.BevelEdge(Edge.LeftBack, 2);
-				//chairFootBox.BevelEdge(Edge.LeftFront, 2);
-				//chairFootBox.BevelEdge(Edge.RightBack, 2);
-				//chairFootBox.BevelEdge(Edge.RightFront, 2);
-				CsgObject chairFoot = chairFootBox;
+			CsgObject ring = new Cylinder(InnerSize / 2 - 1, insideHeight, 30);
+			ring -= new Cylinder(ring.XSize / 2 - 2, ring.ZSize + 1, 30);
 
-				CsgObject ring = new Cylinder(InnerSize / 2 - 1, InsideReach, 30);
-				ring -= new Cylinder(ring.XSize / 2 - 2, ring.ZSize + 1, 30);
+			CsgObject fins = new Box(3, 1, ring.ZSize);
+			fins = new Translate(fins, 0, 1) + new Translate(fins, 0, -1);
+			fins -= new Align(new Rotate(new Box(5, 5, 5), 0, MathHelper.DegreesToRadians(45)), Face.Bottom | Face.Left, fins, Face.Top | Face.Left, 0, 0, -fins.XSize);
+			fins = new Translate(fins, InnerSize / 2 - .1);
 
-				CsgObject fins = new Box(3, 1, ring.ZSize);
-				fins = new Translate(fins, 0, 1) + new Translate(fins, 0, -1);
-				fins -= new Align(new Rotate(new Box(5, 5, 5), 0, MathHelper.DegreesToRadians(45)), Face.Bottom | Face.Left, fins, Face.Top | Face.Left, 0, 0, -fins.XSize);
-				fins = new Translate(fins, InnerSize / 2 - .1);
+			ring += new Rotate(fins, 0, 0, MathHelper.DegreesToRadians(45));
+			ring += new Rotate(fins, 0, 0, MathHelper.DegreesToRadians(45 + 90));
+			ring += new Rotate(fins, 0, 0, MathHelper.DegreesToRadians(45 + 180));
+			ring += new Rotate(fins, 0, 0, MathHelper.DegreesToRadians(45 - 90));
 
-				ring += new Rotate(fins, 0, 0, MathHelper.DegreesToRadians(45));
-				ring += new Rotate(fins, 0, 0, MathHelper.DegreesToRadians(45 + 90));
-				ring += new Rotate(fins, 0, 0, MathHelper.DegreesToRadians(45 + 180));
-				ring += new Rotate(fins, 0, 0, MathHelper.DegreesToRadians(45 - 90));
+			chairFoot += new Align(ring, Face.Bottom, chairFoot, Face.Top, 0, 0, -.1);
 
-				chairFoot += new Align(ring, Face.Bottom, chairFoot, Face.Top, 0, 0, -.1);
-
-				chairFoot = new Rotate(chairFoot, 0, angleRadians, 0);
-				CsgObject clipBox = new Align(new Box(OuterSize * 2, OuterSize * 2, unclippedFootHeight), Face.Top, chairFoot, Face.Bottom, 0, 0, extraHeightForRotation);
-				chairFoot -= clipBox;
-				chairFoot = new Translate(chairFoot, 0, 0, clipBox.GetAxisAlignedBoundingBox().maxXYZ.Z);
-
-				this.Mesh = CsgToMesh.Convert(chairFoot);
-			}
-			else // fit part
-			{
-				double baseHeight = 3;
-				double insideHeight = 4;
-				Box chairFootBox = new Box(OuterSize, OuterSize, baseHeight);
-				chairFootBox.BevelEdge(Edge.LeftBack, 2);
-				chairFootBox.BevelEdge(Edge.LeftFront, 2);
-				chairFootBox.BevelEdge(Edge.RightBack, 2);
-				chairFootBox.BevelEdge(Edge.RightFront, 2);
-				CsgObject chairFoot = chairFootBox;
-
-				CsgObject ring = new Cylinder(InnerSize / 2 - 1, insideHeight, 30);
-				ring -= new Cylinder(ring.XSize / 2 - 2, ring.ZSize + 1, 30);
-
-				CsgObject fins = new Box(3, 1, ring.ZSize);
-				fins = new Translate(fins, 0, 1) + new Translate(fins, 0, -1);
-				fins -= new Align(new Rotate(new Box(5, 5, 5), 0, MathHelper.DegreesToRadians(45)), Face.Bottom | Face.Left, fins, Face.Top | Face.Left, 0, 0, -fins.XSize);
-				fins = new Translate(fins, InnerSize / 2 - .1);
-
-				ring += new Rotate(fins, 0, 0, MathHelper.DegreesToRadians(45));
-				ring += new Rotate(fins, 0, 0, MathHelper.DegreesToRadians(45 + 90));
-				ring += new Rotate(fins, 0, 0, MathHelper.DegreesToRadians(45 + 180));
-				ring += new Rotate(fins, 0, 0, MathHelper.DegreesToRadians(45 - 90));
-
-				chairFoot += new Align(ring, Face.Bottom, chairFoot, Face.Top, 0, 0, -.1);
-
-				this.Mesh = CsgToMesh.Convert(chairFoot);
-			}
+			this.Mesh = CsgToMesh.Convert(chairFoot);
 		}
 	}
-	*/
+}
+*/
 
 	public class CurveTest : MatterCadObject3D
 	{
@@ -398,7 +432,7 @@ namespace MatterHackers.MatterControl.MeshObjects
 	{
 		private static TypeFace typeFace = null;
 
-		public RibonWithName()
+		public RibonWithName2()
 		{
 			RebuildMeshes();
 		}
@@ -408,7 +442,7 @@ namespace MatterHackers.MatterControl.MeshObjects
 
 		public override void RebuildMeshes()
 		{
-			CsgObject cancerRibonStl = new MeshContainer("Cancer_Ribbon.stl");
+			IObject3D cancerRibonStl = Object3D.Load("Cancer_Ribbon.stl", CancellationToken.None);
 
 			cancerRibonStl = new Rotate(cancerRibonStl, MathHelper.DegreesToRadians(90));
 
@@ -454,8 +488,9 @@ namespace MatterHackers.MatterControl.MeshObjects
 			this.Mesh = null;
 		}
 	}
-
 	*/
+
+
 	public class Box : Object3D
 	{
 		public Box(double x, double y, double z)
@@ -483,6 +518,11 @@ namespace MatterHackers.MatterControl.MeshObjects
 			var resultsA = a.Clone();
 			SubtractEditor.Subtract(resultsA.VisibleMeshes().ToList(), b.VisibleMeshes().ToList());
 			return resultsA;
+		}
+
+		public static Vector3 GetCenter(this IObject3D item)
+		{
+			return item.GetAxisAlignedBoundingBox(Matrix4X4.Identity).Center;
 		}
 
 		public static void SetChildren(this IObject3D parent, IEnumerable<IObject3D> newChildren)
@@ -514,7 +554,7 @@ namespace MatterHackers.MatterControl.MeshObjects
 		public Translate(IObject3D objectToTranslate, Vector3 translation, string name = "")
 		{
 			Matrix *= Matrix4X4.CreateTranslation(translation);
-			Children.Add(objectToTranslate);
+			Children.Add(objectToTranslate.Clone());
 		}
 	}
 
