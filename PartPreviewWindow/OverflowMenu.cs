@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, John Lewin
+Copyright (c) 2018, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,10 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
 using System.IO;
-using MatterHackers.Agg;
-using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
@@ -39,10 +36,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class OverflowMenu : PopupMenuButton
 	{
-		private ImageBuffer gradientBackground;
-
 		public OverflowMenu(IconColor iconColor = IconColor.Theme)
-			: base(new ImageWidget(AggContext.StaticData.LoadIcon(Path.Combine("ViewTransformControls", "overflow.png"), 32, 32, iconColor)) { Margin = new BorderDouble(left: 5), HAnchor = HAnchor.Left }, ApplicationController.Instance.Theme)
+			: base(new ImageWidget(
+				AggContext.StaticData.LoadIcon(Path.Combine("ViewTransformControls", "overflow.png"), 
+					32, 
+					32, 
+					iconColor))
+				{
+					HAnchor = HAnchor.Left
+				}, 
+				ApplicationController.Instance.Theme)
 		{
 			this.ToolTipText = "More...".Localize();
 		}
@@ -50,36 +53,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public OverflowMenu(GuiWidget viewWidget, ThemeConfig theme)
 			: base(viewWidget, theme)
 		{
-		}
-
-		public int GradientDistance { get; set; } = 5;
-
-		public override void OnDrawBackground(Graphics2D graphics2D)
-		{
-			if (gradientBackground != null)
-			{
-				graphics2D.Render(gradientBackground, this.LocalBounds.Left, 0);
-			}
-			else
-			{
-				base.OnDrawBackground(graphics2D);
-			}
-		}
-
-		public override void OnLoad(EventArgs args)
-		{
-			base.OnLoad(args);
-
-			if (this.GradientDistance > 0)
-			{
-				gradientBackground = agg_basics.TrasparentToColorGradientX(
-						(int)this.LocalBounds.Width + this.GradientDistance,
-						(int)this.LocalBounds.Height,
-						this.BackgroundColor,
-						this.GradientDistance);
-
-				gradientBackground.SetRecieveBlender(new BlenderPreMultBGRA());
-			}
 		}
 	}
 }
