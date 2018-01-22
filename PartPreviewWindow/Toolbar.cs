@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -244,22 +244,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			var position = this.TabBar.ActionArea.GetChildIndex(plusTabButton);
 
-			if (tab is ChromeTab mainTab)
+			if (tab is ChromeTab chromeTab)
 			{
-				mainTab.PreviousTab = this.AllTabs.OfType<ChromeTab>().LastOrDefault();
-				if (mainTab.PreviousTab != null)
+				chromeTab.PreviousTab = this.AllTabs.OfType<ChromeTab>().LastOrDefault();
+				if (chromeTab.PreviousTab != null)
 				{
-					mainTab.PreviousTab.NextTab = mainTab;
+					chromeTab.PreviousTab.NextTab = chromeTab;
 				}
 
 				this.AddTab(tab, position);
 
-				mainTab.CloseClicked += MainTab_CloseClicked;
-				this.ActiveTab = mainTab;
+				chromeTab.CloseClicked += ChromeTab_CloseClicked;
+				this.ActiveTab = chromeTab;
 			}
 		}
 
-		private async void MainTab_CloseClicked(object sender, EventArgs e)
+		private async void ChromeTab_CloseClicked(object sender, EventArgs e)
 		{
 			if (sender is ITab tab
 				&& tab.TabContent is PrinterTabPage)
