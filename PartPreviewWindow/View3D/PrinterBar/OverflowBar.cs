@@ -28,7 +28,12 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.IO;
+using System.Linq;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
+using MatterHackers.Agg.UI;
+using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -37,17 +42,97 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public OverflowBar(ThemeConfig theme)
 		{
 			this.Padding = theme.ToolbarPadding.Clone(left: 0);
+			this.theme = theme;
 
-			this.OverflowMenu = new OverflowMenuButton(theme)
+			this.OverflowButton = this.OverflowMenu = new OverflowMenuButton(this, theme)
 			{
 				AlignToRightEdge = true,
-				Margin = theme.ButtonSpacing
 			};
 
 			this.ActionArea.Margin = new BorderDouble(right: this.OverflowMenu.Width);
 			this.SetRightAnchorItem(this.OverflowMenu);
 		}
 
-		public OverflowMenuButton OverflowMenu { get; }
+		private ThemeConfig theme;
+
+		public GuiWidget OverflowButton { get; }
+
+		protected OverflowMenuButton OverflowMenu { get; }
+
+		public Action<PopupMenu> ExtendOverflowMenu { get; set; }
+
+		protected virtual void OnExtendPopupMenu(PopupMenu popupMenu)
+		{
+			this.ExtendOverflowMenu(popupMenu);
+		}
+
+		public override void OnBoundsChanged(EventArgs e)
+		{
+			if (this.RightAnchorItem == null)
+			{
+				return;
+			}
+
+			double maxRight = this.Width - RightAnchorItem.Width;
+
+			foreach (var widget in this.ActionArea.Children)
+			{
+				// Widget is visible when its right edge is less than maxRight
+				widget.Visible = widget.Position.X + widget.Width < maxRight;
+			}
+			base.OnBoundsChanged(e);
+		}
+
+		/// <summary>
+		/// A PopupMenuButton with the standard overflow icon
+		/// </summary>
+		public class OverflowMenuButton : PopupMenuButton
+		{
+			public OverflowMenuButton(OverflowBar overflowBar, ThemeConfig theme)
+				: base(CreateOverflowIcon(), theme)
+			{
+				this.DynamicPopupContent = () =>
+				{
+					var popupMenu = new PopupMenu(theme);
+
+					bool hasOverflowItems = false;
+					foreach (var widget in overflowBar.ActionArea.Children.Where(c => !c.Visible && c.Enabled && !(c is VerticalLine || c is HorizontalSpacer)))
+					{
+						hasOverflowItems = true;
+
+						PopupMenu.MenuItem menuItem;
+
+						var iconButton = widget as IconButton;
+
+						menuItem = popupMenu.CreateMenuItem(
+							widget.ToolTipText ?? widget.Text,
+							iconButton?.IconImage);
+
+						menuItem.Click += (s, e) =>
+						{
+							widget.OnClick(e);
+						};
+					}
+
+					if (hasOverflowItems)
+					{
+						popupMenu.CreateHorizontalLine();
+					}
+
+					overflowBar.OnExtendPopupMenu(popupMenu);
+
+					return popupMenu;
+				};
+			}
+
+			private static ImageWidget CreateOverflowIcon()
+			{
+				return new ImageWidget(AggContext.StaticData.LoadIcon(Path.Combine("ViewTransformControls", "overflow.png"), 32, 32, IconColor.Theme))
+				{
+					HAnchor = HAnchor.Right,
+					VAnchor = VAnchor.Center
+				};
+			}
+		}
 	}
 }

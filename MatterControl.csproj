@@ -91,7 +91,6 @@
     <Compile Include="PartPreviewWindow\LibraryBrowserPage.cs" />
     <Compile Include="PartPreviewWindow\MaterialControls.cs" />
     <Compile Include="PartPreviewWindow\MoveItemPage.cs" />
-    <Compile Include="PartPreviewWindow\OverflowMenuButton.cs" />
     <Compile Include="PartPreviewWindow\View3D\Actions\SubtractAndReplace.cs" />
     <Compile Include="PartPreviewWindow\View3D\PrinterBar\OverflowBar.cs" />
     <Compile Include="PartPreviewWindow\View3D\PrinterBar\PrintPopupMenu.cs" />
@@ -165,7 +164,6 @@
     <Compile Include="SetupWizard\DialogWindow.cs" />
     <Compile Include="SlicerConfiguration\SettingsOrganizer.cs" />
     <Compile Include="SlicerConfiguration\SlicerMapping\SliceEngineMapping.cs" />
-    <Compile Include="SlicerConfiguration\SliceSettingsOverflowMenuButton.cs" />
     <Compile Include="SlicerConfiguration\UIFields\IpAddessField.cs" />
     <Compile Include="Utilities\InspectForm.cs" Condition="'$(Configuration)' == 'Debug'">
       <SubType>Form</SubType>
