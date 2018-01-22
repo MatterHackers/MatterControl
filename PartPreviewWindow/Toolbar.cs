@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public GuiWidget RightAnchorItem { get; private set; }
 
-		protected void SetRightAnchorItem(GuiWidget rightAnchorItem)
+		public void SetRightAnchorItem(GuiWidget rightAnchorItem)
 		{
 			if (rightAnchorItem != null)
 			{
@@ -84,16 +84,29 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	/// </summary>
 	public class SimpleTabs : FlowLayoutWidget
 	{
-		public SimpleTabs(GuiWidget rightAnchorItem)
+		public SimpleTabs(ThemeConfig theme, GuiWidget rightAnchorItem = null)
 			: base(FlowDirection.TopToBottom)
 		{
 			this.TabContainer = this;
 
-			this.AddChild(TabBar = new Toolbar(rightAnchorItem)
+			if (rightAnchorItem == null)
 			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit
-			});
+				TabBar = new OverflowBar(theme)
+				{
+					HAnchor = HAnchor.Stretch,
+					VAnchor = VAnchor.Fit
+				};
+			}
+			else
+			{
+				TabBar = new Toolbar(rightAnchorItem)
+				{
+					HAnchor = HAnchor.Stretch,
+					VAnchor = VAnchor.Fit
+				};
+			}
+
+			this.AddChild(this.TabBar);
 		}
 
 		public Toolbar TabBar { get; }
@@ -190,7 +203,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private NewTabButton plusTabButton;
 
 		public ChromeTabs(GuiWidget rightAnchorItem, ThemeConfig theme)
-			: base(rightAnchorItem)
+			: base(theme, rightAnchorItem)
 		{
 			// TODO: add in the printers and designs that are currently open (or were open last run).
 			var leadingTabAdornment = new GuiWidget()

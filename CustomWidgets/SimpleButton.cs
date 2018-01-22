@@ -208,6 +208,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			}
 		}
 
+		public ImageBuffer IconImage => this.Enabled ? image : this.DisabledImage;
+
 		private ImageBuffer _disabledImage;
 		public ImageBuffer DisabledImage
 		{
@@ -323,11 +325,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public override string Text
 		{
-			get => base.Text;
+			get => this.textWidget.Text;
 			set
 			{
 				this.textWidget.Text = value;
-				base.Text = value;
 			}
 		}
 

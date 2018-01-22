@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -28,49 +28,116 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.PrintLibrary;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class OverflowBar : Toolbar
 	{
-		public OverflowBar(ThemeConfig theme, GuiWidget viewWidget = null)
+		private static HashSet<Type> ignoredTypes = new HashSet<Type> { typeof(VerticalLine), typeof(HorizontalLine), typeof(SearchInputBox) };
+
+		public OverflowBar(ThemeConfig theme)
 		{
 			this.Padding = theme.ToolbarPadding.Clone(left: 0);
+			this.theme = theme;
 
-			if (viewWidget == null)
+			this.OverflowButton = this.OverflowMenu = new OverflowMenuButton(this, theme)
 			{
-				this.OverflowMenu = new OverflowMenu(IconColor.Theme)
-				{
-					AlignToRightEdge = true,
-					Margin = theme.ButtonSpacing
-				};
-			}
-			else
-			{
-				this.OverflowMenu = new OverflowMenu(viewWidget, theme)
-				{
-					AlignToRightEdge = true,
-					Margin = theme.ButtonSpacing
-				};
-			}
+				AlignToRightEdge = true,
+			};
 
 			this.ActionArea.Margin = new BorderDouble(right: this.OverflowMenu.Width);
 			this.SetRightAnchorItem(this.OverflowMenu);
 		}
 
-		public OverflowMenu OverflowMenu { get; }
+		private ThemeConfig theme;
 
-		// On load walk back to the first ancestor with background colors and copy
-		public override void OnLoad(EventArgs args)
+		public GuiWidget OverflowButton { get; }
+
+		protected OverflowMenuButton OverflowMenu { get; }
+
+		public Action<PopupMenu> ExtendOverflowMenu { get; set; }
+
+		protected virtual void OnExtendPopupMenu(PopupMenu popupMenu)
 		{
-			var firstBackgroundColor = this.Parents<GuiWidget>().Where(p => p.BackgroundColor.Alpha0To1 == 1).FirstOrDefault()?.BackgroundColor;
-			this.OverflowMenu.BackgroundColor = firstBackgroundColor ?? Color.Transparent;
+			this.ExtendOverflowMenu(popupMenu);
+		}
 
-			base.OnLoad(args);
+		public override void OnBoundsChanged(EventArgs e)
+		{
+			if (this.RightAnchorItem == null)
+			{
+				return;
+			}
+
+			double maxRight = this.Width - RightAnchorItem.Width;
+
+			foreach (var widget in this.ActionArea.Children.Where(c => !ignoredTypes.Contains(c.GetType())))
+			{
+				// Widget is visible when its right edge is less than maxRight
+				widget.Visible = widget.Position.X + widget.Width < maxRight;
+			}
+			base.OnBoundsChanged(e);
+		}
+
+		/// <summary>
+		/// A PopupMenuButton with the standard overflow icon
+		/// </summary>
+		public class OverflowMenuButton : PopupMenuButton
+		{
+			public OverflowMenuButton(OverflowBar overflowBar, ThemeConfig theme)
+				: base(CreateOverflowIcon(), theme)
+			{
+				this.DynamicPopupContent = () =>
+				{
+					var popupMenu = new PopupMenu(theme);
+
+					bool hasOverflowItems = false;
+					foreach (var widget in overflowBar.ActionArea.Children.Where(c => c.Enabled && !c.Visible && !ignoredTypes.Contains(c.GetType())))
+					{
+						hasOverflowItems = true;
+
+						PopupMenu.MenuItem menuItem;
+
+						var iconButton = widget as IconButton;
+
+						menuItem = popupMenu.CreateMenuItem(
+							widget.ToolTipText ?? widget.Text,
+							iconButton?.IconImage);
+
+						menuItem.Click += (s, e) =>
+						{
+							widget.OnClick(e);
+						};
+					}
+
+					if (hasOverflowItems)
+					{
+						popupMenu.CreateHorizontalLine();
+					}
+
+					overflowBar.OnExtendPopupMenu(popupMenu);
+
+					return popupMenu;
+				};
+			}
+
+
+			private static ImageWidget CreateOverflowIcon()
+			{
+				return new ImageWidget(AggContext.StaticData.LoadIcon(Path.Combine("ViewTransformControls", "overflow.png"), 32, 32, IconColor.Theme))
+				{
+					HAnchor = HAnchor.Right,
+					VAnchor = VAnchor.Center
+				};
+			}
 		}
 	}
 }

@@ -305,15 +305,8 @@ namespace MatterHackers.MatterControl
 			return new BlenderRGBA().Blend(background, overlay);
 		}
 
-		public FlowLayoutWidget CreatePopupMenu(IEnumerable<NamedAction> menuActions)
+		public FlowLayoutWidget CreateMenuItems(PopupMenu popupMenu, IEnumerable<NamedAction> menuActions)
 		{
-			var popupMenu = new PopupMenu(this)
-			{
-				HAnchor = HAnchor.Fit,
-				VAnchor = VAnchor.Fit,
-				BackgroundColor = Color.White
-			};
-
 			// Create menu items in the DropList for each element in this.menuActions
 			foreach (var menuAction in menuActions)
 			{

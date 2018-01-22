@@ -1338,10 +1338,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			viewControls3D.ActiveButton = ViewControls3DButtons.PartSelect;
 		}
 
-		internal GuiWidget ShowOverflowMenu()
+		internal GuiWidget ShowOverflowMenu(PopupMenu popupMenu)
 		{
-			var popupMenu = new PopupMenu(theme);
-
 			var meshViewer = meshViewerWidget;
 
 			popupMenu.CreateBoolMenuItem(

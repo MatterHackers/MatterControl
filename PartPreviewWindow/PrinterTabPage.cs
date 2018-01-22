@@ -142,7 +142,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			printerActionsBar = new PrinterActionsBar(printer, this, theme);
-			printerActionsBar.OverflowMenu.BackgroundColor = theme.ResolveColor(theme.TabBodyBackground, theme.TabBodyBackground);
 
 			// Must come after we have an instance of View3DWidget an its undo buffer
 			topToBottom.AddChild(printerActionsBar, 0);
@@ -324,10 +323,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		internal GuiWidget ShowGCodeOverflowMenu()
+		internal void ShowGCodeOverflowMenu(PopupMenu popupMenu)
 		{
-			var popupMenu = new PopupMenu(theme);
-
 			popupMenu.CreateBoolMenuItem(
 				"Show Print Bed".Localize(),
 				() => gcodeOptions.RenderBed,
@@ -386,8 +383,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						layerRenderRatioSlider.SecondValue = 1;
 					}
 				});
-
-			return popupMenu;
 		}
 
 		public override void OnDraw(Graphics2D graphics2D)
@@ -404,16 +399,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnDraw(graphics2D);
 		}
 
-		protected override GuiWidget GetViewControls3DOverflowMenu()
+		protected override void GetViewControls3DOverflowMenu(PopupMenu popupMenu)
 		{
 			if (gcode3DWidget.Visible
 				|| gcode2DWidget.Visible)
 			{
-				return this.ShowGCodeOverflowMenu();
+				this.ShowGCodeOverflowMenu(popupMenu);
 			}
 			else
 			{
-				return view3DWidget.ShowOverflowMenu();
+				view3DWidget.ShowOverflowMenu(popupMenu);
 			}
 		}
 

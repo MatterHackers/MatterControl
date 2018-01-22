@@ -71,9 +71,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					this.view3DWidget.ResetView();
 				}
 			};
-			viewControls3D.OverflowMenu.DynamicPopupContent = this.GetViewControls3DOverflowMenu;
-			viewControls3D.OverflowMenu.BackgroundColor = theme.ResolveColor(theme.TabBodyBackground, theme.TabBodyBackground);
-			viewControls3D.OverflowMenu.Name = "View3D Overflow Menu";
+			viewControls3D.ExtendOverflowMenu = this.GetViewControls3DOverflowMenu;
+			viewControls3D.OverflowButton.Name = "View3D Overflow Menu";
 
 			// The 3D model view
 			view3DWidget = new View3DWidget(
@@ -127,9 +126,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.AnchorAll();
 		}
 
-		protected virtual GuiWidget GetViewControls3DOverflowMenu()
+		protected virtual void GetViewControls3DOverflowMenu(PopupMenu popupMenu)
 		{
-			return view3DWidget.ShowOverflowMenu();
+			view3DWidget.ShowOverflowMenu(popupMenu);
 		}
 
 		public override void OnLoad(EventArgs args)
