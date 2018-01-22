@@ -81,12 +81,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				var settingsContext = new SettingsContext(printer, null, NamedSettingsLayers.All);
 
-				foreach (var key in new[] { "layer_height", "fill_density", "support_material", "create_raft", "spiral_vase", "layer_to_pause" })
+				var lightGray = new Color("#aaa");
+
+				foreach (var key in new[] { "layer_height", "fill_density", "support_material", "create_raft"})
 				{
 					var settingsData = SettingsOrganizer.Instance.GetSettingsData(key);
 					var row = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, Color.Black, theme, ref tabIndex);
 
-					var lightGray = new Color("#aaa");
 
 					foreach (var widget in row.Descendants<MHNumberEdit>())
 					{
@@ -102,6 +103,41 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					optionsPanel.AddChild(row);
 				}
+
+				var subPanel = new FlowLayoutWidget(FlowDirection.TopToBottom);
+
+				// TODO: lookup settings values
+				bool anySettingOverridden = false;
+
+				var sectionWidget = new SectionWidget("Advanced", subPanel, theme, expanded: anySettingOverridden)
+				{
+					HAnchor = HAnchor.Stretch,
+					VAnchor = VAnchor.Fit,
+					Margin = 0
+				};
+				column.AddChild(sectionWidget);
+
+				foreach (var key in new[] { "spiral_vase", "layer_to_pause" })
+				{
+					var settingsData = SettingsOrganizer.Instance.GetSettingsData(key);
+					var row = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, Color.Black, theme, ref tabIndex);
+
+					foreach (var widget in row.Descendants<MHNumberEdit>())
+					{
+						widget.Border = 1;
+						widget.BorderColor = lightGray;
+					}
+
+					foreach (var widget in row.Descendants<MHTextEditWidget>())
+					{
+						widget.Border = 1;
+						widget.BorderColor = lightGray;
+					}
+
+					subPanel.AddChild(row);
+				}
+
+				sectionWidget.ApplyBoxStyle();
 
 				var button = new TextButton("Start Print".Localize(), theme, Color.Black)
 				{

@@ -231,7 +231,7 @@
     <Compile Include="PartPreviewWindow\GCodeDetails.cs" />
     <Compile Include="PartPreviewWindow\GCodeDetailsView.cs" />
     <Compile Include="PartPreviewWindow\PlusTab\PlusTabPage.cs" />
-    <Compile Include="PartPreviewWindow\MainTab.cs" />
+    <Compile Include="PartPreviewWindow\Tabs.cs" />
     <Compile Include="PartPreviewWindow\PrinterTabPage.cs" />
     <Compile Include="PartPreviewWindow\View3D\BedMeshGenerator.cs" />
     <Compile Include="PartPreviewWindow\View3D\ColorSwatchSelector.cs" />
