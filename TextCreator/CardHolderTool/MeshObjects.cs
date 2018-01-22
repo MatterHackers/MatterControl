@@ -374,7 +374,6 @@ public class ChairFoot2 : MatterCadObject3D
 			var path = new VertexStorage();
 			path.MoveTo(0, 0);
 			path.LineTo(Diameter / 2, 0);
-			path.LineTo(Diameter / 2, Height);
 			path.LineTo(0, Height);
 
 			Mesh = VertexSourceToMesh.Revolve(path, Sides);
@@ -394,10 +393,10 @@ public class ChairFoot2 : MatterCadObject3D
 		public double InnerDiameter { get; set; } = 10;
 		[DisplayName("Outer Diameter")]
 		public double OuterDiameter { get; set; } = 20;
+		[DisplayName("Toroid Sides")]
+		public int ToroidSides { get; set; } = 20;
 		[DisplayName("Ring Sides")]
-		public int ToroidSides { get; set; } = 10;
-		[DisplayName("Hoop Sides")]
-		public int PoleSides { get; set; } = 20;
+		public int PoleSides { get; set; } = 16;
 
 		public override void RebuildMeshes()
 		{
@@ -413,7 +412,7 @@ public class ChairFoot2 : MatterCadObject3D
 			var angle = 0.0;
 			var circleCenter = new Vector2(toroidRadius, 0);
 			path.MoveTo(circleCenter + new Vector2(poleRadius * Math.Cos(angle), poleRadius * Math.Sin(angle)));
-			for(int i=0; i<PoleSides; i++)
+			for (int i = 0; i < PoleSides; i++)
 			{
 				angle += angleDelta;
 				path.LineTo(circleCenter + new Vector2(poleRadius * Math.Cos(angle), poleRadius * Math.Sin(angle)));
@@ -421,6 +420,41 @@ public class ChairFoot2 : MatterCadObject3D
 
 			Mesh = VertexSourceToMesh.Revolve(path, ToroidSides);
 			Mesh.CleanAndMergMesh(CancellationToken.None);
+			PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
+		}
+	}
+	public class SpherePrimitive : MatterCadObject3D
+	{
+		public SpherePrimitive()
+		{
+			RebuildMeshes();
+		}
+
+		public double Diameter { get; set; } = 20;
+		[DisplayName("Longitude Sides")]
+		public int LongitudeSides { get; set; } = 30;
+		[DisplayName("Latitude Sides")]
+		public int LatitudeSides { get; set; } = 20;
+
+		public override void RebuildMeshes()
+		{
+			var aabb = AxisAlignedBoundingBox.Zero;
+			if (Mesh != null)
+			{
+				this.GetAxisAlignedBoundingBox();
+			}
+			var path = new VertexStorage();
+			var angleDelta = MathHelper.Tau / 2 / LatitudeSides;
+			var angle = -MathHelper.Tau / 4;
+			var radius = Diameter / 2;
+			path.MoveTo(new Vector2(radius * Math.Cos(angle), radius * Math.Sin(angle)));
+			for (int i = 0; i < LatitudeSides; i++)
+			{
+				angle += angleDelta;
+				path.LineTo(new Vector2(radius * Math.Cos(angle), radius * Math.Sin(angle)));
+			}
+
+			Mesh = VertexSourceToMesh.Revolve(path, LongitudeSides);
 			PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
 		}
 	}
