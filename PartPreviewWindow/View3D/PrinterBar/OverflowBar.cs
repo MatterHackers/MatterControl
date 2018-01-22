@@ -41,7 +41,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class OverflowBar : Toolbar
 	{
-		private static HashSet<Type> ignoredTypes = new HashSet<Type> { typeof(VerticalLine), typeof(HorizontalLine), typeof(SearchInputBox) };
+		private static HashSet<Type> ignoredTypes = new HashSet<Type> { typeof(HorizontalLine), typeof(SearchInputBox) };
+		private static HashSet<Type> ignoredInMenuTypes = new HashSet<Type> { typeof(VerticalLine), typeof(HorizontalLine), typeof(SearchInputBox) };
 
 		public OverflowBar(ThemeConfig theme)
 		{
@@ -79,11 +80,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			double maxRight = this.Width - RightAnchorItem.Width;
 
+			double rightPos = 0;
+
 			foreach (var widget in this.ActionArea.Children.Where(c => !ignoredTypes.Contains(c.GetType())))
 			{
+				rightPos += widget.Width + widget.Margin.Width;
+
 				// Widget is visible when its right edge is less than maxRight
-				widget.Visible = widget.Position.X + widget.Width < maxRight;
+				widget.Visible = rightPos < maxRight; // widget.Position.X + widget.Width < maxRight;
 			}
+
+
 			base.OnBoundsChanged(e);
 		}
 
@@ -100,7 +107,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					var popupMenu = new PopupMenu(theme);
 
 					bool hasOverflowItems = false;
-					foreach (var widget in overflowBar.ActionArea.Children.Where(c => c.Enabled && !c.Visible && !ignoredTypes.Contains(c.GetType())))
+					foreach (var widget in overflowBar.ActionArea.Children.Where(c => c.Enabled && !c.Visible && !ignoredInMenuTypes.Contains(c.GetType())))
 					{
 						hasOverflowItems = true;
 
