@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private Vector2 lastMousePosition = new Vector2(0, 0);
 		private Vector2 mouseDownPosition = new Vector2(0, 0);
 
-		private double layerScale = 1;
+		private double layerScale { get; set; } = 1;
 		private Vector2 gridSizeMm;
 		private Vector2 gridCenterMm;
 
@@ -96,6 +96,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (loadedGCode != null)
 			{
+				if(layerScale == 0)
+				{
+					CenterPartInView();
+				}
 				//using (new PerformanceTimer("GCode Timer", "Total"))
 				{
 					Affine transform = totalTransform;

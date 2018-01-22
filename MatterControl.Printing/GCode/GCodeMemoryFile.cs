@@ -26,7 +26,6 @@ The views and conclusions contained in the software and documentation are those
 of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
-#define MULTI_THREAD
 #define DUMP_SLOW_TIMES
 
 using System;
@@ -727,28 +726,10 @@ namespace MatterControl.Printing
 		public override Vector2 GetWeightedCenter()
 		{
 			Vector2 total = new Vector2();
-#if !MULTI_THREAD
-            foreach (PrinterMachineInstruction state in GCodeCommandQueue)
-            {
-                total += new Vector2(state.Position.x, state.Position.y);
-            }
-#else
-			Parallel.For<Vector2>(
-				0,
-				GCodeCommandQueue.Count,
-				() => new Vector2(),
-				(int index, ParallelLoopState loop, Vector2 subtotal) =>
-				{
-					PrinterMachineInstruction state = GCodeCommandQueue[index];
-					subtotal += new Vector2(state.Position.X, state.Position.Y);
-					return subtotal;
-				},
-(Action<Vector2>)((x) =>
-					{
-						total += new Vector2(x.X, (double)x.Y);
-					})
-			);
-#endif
+			foreach (PrinterMachineInstruction state in GCodeCommandQueue)
+			{
+				total += new Vector2(state.Position.X, state.Position.Y);
+			}
 
 			return total / GCodeCommandQueue.Count;
 		}
@@ -756,38 +737,14 @@ namespace MatterControl.Printing
 		public override RectangleDouble GetBounds()
 		{
 			RectangleDouble bounds = new RectangleDouble(double.MaxValue, double.MaxValue, double.MinValue, double.MinValue);
-#if !MULTI_THREAD
-            foreach (PrinterMachineInstruction state in GCodeCommandQueue)
-            {
-                bounds.Left = Math.Min(state.Position.x, bounds.Left);
-                bounds.Right = Math.Max(state.Position.x, bounds.Right);
-                bounds.Bottom = Math.Min(state.Position.y, bounds.Bottom);
-                bounds.Top = Math.Max(state.Position.y, bounds.Top);
-            }
-#else
-			Parallel.For<RectangleDouble>(
-				0,
-				GCodeCommandQueue.Count,
-				() => new RectangleDouble(double.MaxValue, double.MaxValue, double.MinValue, double.MinValue),
-				(int index, ParallelLoopState loop, RectangleDouble subtotal) =>
-				{
-					PrinterMachineInstruction state = GCodeCommandQueue[index];
-					subtotal.Left = Math.Min(state.Position.X, subtotal.Left);
-					subtotal.Right = Math.Max(state.Position.X, subtotal.Right);
-					subtotal.Bottom = Math.Min(state.Position.Y, subtotal.Bottom);
-					subtotal.Top = Math.Max(state.Position.Y, subtotal.Top);
+			foreach (PrinterMachineInstruction state in GCodeCommandQueue)
+			{
+				bounds.Left = Math.Min(state.Position.X, bounds.Left);
+				bounds.Right = Math.Max(state.Position.X, bounds.Right);
+				bounds.Bottom = Math.Min(state.Position.Y, bounds.Bottom);
+				bounds.Top = Math.Max(state.Position.Y, bounds.Top);
+			}
 
-					return subtotal;
-				},
-					(x) =>
-					{
-						bounds.Left = Math.Min(x.Left, bounds.Left);
-						bounds.Right = Math.Max(x.Right, bounds.Right);
-						bounds.Bottom = Math.Min(x.Bottom, bounds.Bottom);
-						bounds.Top = Math.Max(x.Top, bounds.Top);
-					}
-			);
-#endif
 			return bounds;
 		}
 
