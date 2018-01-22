@@ -171,6 +171,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private bool IsActiveTab => this == parentTabControl.ActiveTab;
 
+		public override string Text { get => tabPill.Text; set => tabPill.Text = value; }
+
 		public override void OnDraw(Graphics2D graphics2D)
 		{
 			graphics2D.Render(

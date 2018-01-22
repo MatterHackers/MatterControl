@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
@@ -39,6 +40,7 @@ using MatterHackers.MatterControl.EeProm;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintHistory;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -132,7 +134,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			this.OverflowMenu.Name = "Printer Overflow Menu";
-			this.OverflowMenu.DynamicPopupContent = () => GeneratePrinterOverflowMenu(theme);
+			this.ExtendOverflowMenu = (popupMenu) =>
+			{
+				this.GeneratePrinterOverflowMenu(popupMenu, theme);
+			};
+			
 
 			printer.Connection.ConnectionSucceeded.RegisterEvent((s, e) =>
 			{
@@ -155,9 +161,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnClosed(e);
 		}
 
-		private GuiWidget GeneratePrinterOverflowMenu(ThemeConfig theme)
+		private void GeneratePrinterOverflowMenu(PopupMenu popupMenu, ThemeConfig theme)
 		{
-			var menuActions = new NamedAction[]
+			var menuActions = new List<NamedAction>()
 			{
 				new NamedAction()
 				{
@@ -215,7 +221,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			};
 
-			return ApplicationController.Instance.Theme.CreatePopupMenu(menuActions);
+			theme.CreateMenuItems(popupMenu, menuActions);
 		}
 
 		private void configureEePromButton_Click()

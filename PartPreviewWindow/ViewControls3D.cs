@@ -433,10 +433,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Remove right Padding for drop style
 			buttonView.Padding = buttonView.Padding.Clone(right: 0);
 
+			var popupMenu = new PopupMenu(theme)
+			{
+				HAnchor = HAnchor.Fit,
+				VAnchor = VAnchor.Fit,
+				BackgroundColor = Color.White
+			};
+
 			return new PopupMenuButton(buttonView, theme)
 			{
 				Name = "Bed Options Menu",
-				DynamicPopupContent = () => theme.CreatePopupMenu(this.BedMenuActions(sceneContext)),
+				DynamicPopupContent = () => theme.CreateMenuItems(popupMenu, this.BedMenuActions(sceneContext)),
 				BackgroundColor = theme.ToolbarButtonBackground,
 				HoverColor = theme.ToolbarButtonHover,
 				MouseDownColor = theme.ToolbarButtonDown,

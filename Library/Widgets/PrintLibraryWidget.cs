@@ -195,6 +195,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		private void ClearSearch()
 		{
+			if (searchContainer == null)
+			{
+				return;
+			}
+
 			UiThread.RunOnIdle(() =>
 			{
 				searchContainer.KeywordFilter = "";
@@ -809,38 +814,34 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			// Defer creating menu items until plugins have loaded
 			CreateMenuActions();
 
-			var popupMenu = new PopupMenu(theme);
-
-			// Create menu items in the DropList for each element in this.menuActions
-			foreach (var menuAction in menuActions)
+			navBar.OverflowButton.Name = "Print Library Overflow Menu";
+			navBar.ExtendOverflowMenu = (popupMenu) =>
 			{
-				if (menuAction is MenuSeparator)
+				// Create menu items in the DropList for each element in this.menuActions
+				foreach (var menuAction in menuActions)
 				{
-					popupMenu.CreateHorizontalLine();
-				}
-				else
-				{
-					var menuItem = popupMenu.CreateMenuItem(menuAction.Title);
-					menuItem.Name = $"{menuAction.Title} Menu Item";
-
-					menuItem.Enabled = menuAction.Action != null;
-					menuItem.ClearRemovedFlag();
-					menuItem.Click += (s, e) =>
+					if (menuAction is MenuSeparator)
 					{
-						menuAction.Action?.Invoke(libraryView.SelectedItems.Select(i => i.Model), libraryView);
-					};
+						popupMenu.CreateHorizontalLine();
+					}
+					else
+					{
+						var menuItem = popupMenu.CreateMenuItem(menuAction.Title);
+						menuItem.Name = $"{menuAction.Title} Menu Item";
 
-					// Store a reference to the newly created MenuItem back on the MenuAction definition
-					menuAction.MenuItem = menuItem;
+						menuItem.Enabled = menuAction.Action != null;
+						menuItem.ClearRemovedFlag();
+						menuItem.Click += (s, e) =>
+						{
+							menuAction.Action?.Invoke(libraryView.SelectedItems.Select(i => i.Model), libraryView);
+						};
+
+						// Store a reference to the newly created MenuItem back on the MenuAction definition
+						menuAction.MenuItem = menuItem;
+					}
 				}
-			}
-
-			navBar.OverflowMenu.Name = "Print Library Overflow Menu";
-			navBar.OverflowMenu.PopupContent = popupMenu;
-			navBar.OverflowMenu.BeforePopup += (s, e) =>
-			{
-				this.EnableMenus();
 			};
+			
 
 			base.OnLoad(args);
 		}

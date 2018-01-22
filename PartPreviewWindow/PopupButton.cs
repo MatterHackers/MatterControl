@@ -51,9 +51,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public PopupButton(GuiWidget buttonView)
 		{
-			this.Margin = 3;
 			this.HAnchor = HAnchor.Fit;
-			this.VAnchor = VAnchor.Fit;
+			this.VAnchor = VAnchor.Fit | VAnchor.Center;
 			this.buttonView = buttonView;
 			this.buttonView.Selectable = false;
 
@@ -61,12 +60,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		}
 
 		public bool AlignToRightEdge { get; set; }
-		public Func<GuiWidget> DynamicPopupContent { get; set; }
+		public virtual Func<GuiWidget> DynamicPopupContent { get; set; }
 		public IPopupLayoutEngine PopupLayoutEngine { get; set; }
 		public Direction PopDirection { get; set; } = Direction.Down;
 		public bool MakeScrollable { get; set; } = true;
-
-		public GuiWidget PopupContent { get; set; }
+		public virtual GuiWidget PopupContent { get; set; }
 
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
 		{

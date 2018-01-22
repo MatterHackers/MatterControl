@@ -28,17 +28,21 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.PrintLibrary;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class OverflowBar : Toolbar
 	{
+		private static HashSet<Type> ignoredTypes = new HashSet<Type> { typeof(VerticalLine), typeof(HorizontalLine), typeof(SearchInputBox) };
+
 		public OverflowBar(ThemeConfig theme)
 		{
 			this.Padding = theme.ToolbarPadding.Clone(left: 0);
@@ -75,7 +79,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			double maxRight = this.Width - RightAnchorItem.Width;
 
-			foreach (var widget in this.ActionArea.Children)
+			foreach (var widget in this.ActionArea.Children.Where(c => !ignoredTypes.Contains(c.GetType())))
 			{
 				// Widget is visible when its right edge is less than maxRight
 				widget.Visible = widget.Position.X + widget.Width < maxRight;
@@ -96,7 +100,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					var popupMenu = new PopupMenu(theme);
 
 					bool hasOverflowItems = false;
-					foreach (var widget in overflowBar.ActionArea.Children.Where(c => !c.Visible && c.Enabled && !(c is VerticalLine || c is HorizontalSpacer)))
+					foreach (var widget in overflowBar.ActionArea.Children.Where(c => c.Enabled && !c.Visible && !ignoredTypes.Contains(c.GetType())))
 					{
 						hasOverflowItems = true;
 
@@ -124,6 +128,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					return popupMenu;
 				};
 			}
+
 
 			private static ImageWidget CreateOverflowIcon()
 			{

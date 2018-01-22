@@ -96,14 +96,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					this.UserLevel,
 					theme,
 					isPrimarySettingsView: true,
-					databaseMRUKey: UserSettingsKey.SliceSettingsWidget_CurrentTab));
-
-			this.ExtendOverflowMenu();
+					databaseMRUKey: UserSettingsKey.SliceSettingsWidget_CurrentTab,
+					extendPopupMenu: this.ExtendOverflowMenu));
 		}
 
-		private void ExtendOverflowMenu()
+		private void ExtendOverflowMenu(PopupMenu popupMenu)
 		{
-			var popupMenu = sliceSettingsTabView.OverflowMenu.PopupContent as PopupMenu;
 			popupMenu.CreateHorizontalLine();
 			PopupMenu.MenuItem menuItem;
 
@@ -189,23 +187,29 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private bool isPrimarySettingsView;
 		private bool showSubGroupHeadings = false;
 
-		public SliceSettingsOverflowMenu OverflowMenu { get; }
-
 		private SearchInputBox searchPanel;
 		private int groupPanelCount = 0;
 		private List<(GuiWidget widget, SliceSettingData settingData)> settingsRows;
 		private TextWidget filteredItemsHeading;
 		private ScrollableWidget scrollable;
 		private EventHandler unregisterEvents;
+		private Action<PopupMenu> externalExtendMenu;
 
-		public SliceSettingsTabView(SettingsContext settingsContext, PrinterConfig printer, string UserLevel, ThemeConfig theme, bool isPrimarySettingsView, string databaseMRUKey)
-			: base(new SliceSettingsOverflowMenu(printer, theme)
+		public SliceSettingsTabView(SettingsContext settingsContext, PrinterConfig printer, string UserLevel, ThemeConfig theme, bool isPrimarySettingsView, string databaseMRUKey, Action<PopupMenu> extendPopupMenu = null)
+			: base (theme)
 		{
 			this.VAnchor = VAnchor.Stretch;
 			this.HAnchor = HAnchor.Stretch;
+			this.externalExtendMenu = extendPopupMenu;
 
-			this.OverflowMenu = this.TabBar.RightAnchorItem as SliceSettingsOverflowMenu;
-			this.OverflowMenu.TabView = this;
+			var overflowBar = this.TabBar as OverflowBar;
+			overflowBar.ExtendOverflowMenu = this.ExtendOverflowMenu;
+
+			var overflowButton = this.TabBar.RightAnchorItem;
+			overflowButton.Name = "Slice Settings Overflow Menu";
+
+
+			this.TabBar.Padding = this.TabBar.Margin.Clone(right: theme.ToolbarPadding.Right);
 
 			searchPanel = new SearchInputBox()
 			{
@@ -333,7 +337,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.TabBar.AddChild(new HorizontalSpacer());
 
 			var searchButton = ApplicationController.Instance.Theme.CreateSearchButton();
-			searchButton.Margin = new BorderDouble(right: 40);
 			searchButton.Click += (s, e) =>
 			{
 				filteredItemsHeading.Visible = false;
@@ -345,6 +348,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			};
 
 			this.TabBar.AddChild(searchButton);
+
+			searchButton.VAnchor = VAnchor.Center;
+
+			searchButton.VAnchorChanged += (s, e) => Console.WriteLine();
 
 			// Restore the last selected tab
 			if (int.TryParse(UserSettings.Instance.get(databaseMRUKey), out int tabIndex)
@@ -387,6 +394,23 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					}
 				},
 				ref unregisterEvents);
+		}
+
+		private void ExtendOverflowMenu(PopupMenu popupMenu)
+		{
+			popupMenu.CreateMenuItem("View Just My Settings".Localize()).Click += (s, e) =>
+			{
+				this.FilterToOverrides();
+			};
+
+			popupMenu.CreateHorizontalLine();
+
+			popupMenu.CreateBoolMenuItem(
+				"Show Help".Localize(),
+				() => ApplicationController.Instance.ShowHelpControls,
+				(value) => ApplicationController.Instance.ShowHelpControls = value);
+
+			externalExtendMenu?.Invoke(popupMenu);
 		}
 
 		public Dictionary<string, UIField> UIFields => allUiFields;
