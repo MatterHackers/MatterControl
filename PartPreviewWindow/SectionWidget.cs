@@ -7,7 +7,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 	/// <summary>
 	/// A container control having a header and a content panel, with optional collapse behavior and right aligned widget
 	/// </summary>
-	public class SectionWidget : FlowLayoutWidget
+	public class SectionWidget : FlowLayoutWidget, IIgnoredPopupChild
 	{
 		private ExpandCheckboxButton checkbox;
 
