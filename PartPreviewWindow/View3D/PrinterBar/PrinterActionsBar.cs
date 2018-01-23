@@ -171,27 +171,27 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Title = "Configure EEProm".Localize(),
 					Action = configureEePromButton_Click
 				},
-				new NamedAction()
-				{
-					Title = "Rename Printer".Localize(),
-					Action = () =>
-					{
-						DialogWindow.Show(
-							new InputBoxPage(
-								"Rename Printer".Localize(),
-								"Name".Localize(),
-								printer.Settings.GetValue(SettingsKey.printer_name),
-								"Enter New Name Here".Localize(),
-								"Rename".Localize(),
-								(newName) =>
-								{
-									if (!string.IsNullOrEmpty(newName))
-									{
-										printer.Settings.SetValue(SettingsKey.printer_name, newName);
-									}
-								}));
-					}
-				},
+				//new NamedAction()
+				//{
+				//	Title = "Rename Printer".Localize(),
+				//	Action = () =>
+				//	{
+				//		DialogWindow.Show(
+				//			new InputBoxPage(
+				//				"Rename Printer".Localize(),
+				//				"Name".Localize(),
+				//				printer.Settings.GetValue(SettingsKey.printer_name),
+				//				"Enter New Name Here".Localize(),
+				//				"Rename".Localize(),
+				//				(newName) =>
+				//				{
+				//					if (!string.IsNullOrEmpty(newName))
+				//					{
+				//						printer.Settings.SetValue(SettingsKey.printer_name, newName);
+				//					}
+				//				}));
+				//	}
+				//},
 				new NamedBoolAction()
 				{
 					Title = "Configure Printer".Localize(),
