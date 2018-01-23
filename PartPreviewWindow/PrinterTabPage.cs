@@ -203,9 +203,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				case PartViewMode.Layers2D:
 					UserSettings.Instance.set("LayerViewDefault", "2D Layer");
-					// HACK: Getting the Layer2D view to show content only works if CenterPartInView is called after the control is visible and after some cycles have passed
 					gcode2DWidget.Visible = true;
-					UiThread.RunOnIdle(gcode2DWidget.CenterPartInView);
 					break;
 
 				case PartViewMode.Layers3D:
