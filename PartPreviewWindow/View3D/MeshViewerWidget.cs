@@ -34,6 +34,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
 using MatterHackers.Agg.OpenGlGui;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
@@ -119,6 +120,8 @@ namespace MatterHackers.MeshVisualizer
 
 	public class MeshViewerWidget : GuiWidget
 	{
+		static ImageBuffer ViewOnlyTexture;
+
 		// TODO: Need to be instance based for multi-printer
 		public GuiWidget ParentSurface { get; set; }
 
@@ -153,6 +156,19 @@ namespace MatterHackers.MeshVisualizer
 
 			this.interactionLayer.DrawGlOpaqueContent += Draw_GlOpaqueContent;
 			this.interactionLayer.DrawGlTransparentContent += Draw_GlTransparentContent;
+
+			if (ViewOnlyTexture == null)
+			{
+				UiThread.RunOnIdle(() =>
+				{
+					ViewOnlyTexture = new ImageBuffer(32, 32, 32);
+					var graphics2D = ViewOnlyTexture.NewGraphics2D();
+					graphics2D.Clear(Color.White);
+					graphics2D.FillRectangle(0, 0, ViewOnlyTexture.Width / 2, ViewOnlyTexture.Height, Color.LightGray);
+					// request the texture so we can set it to repeat
+					var plugin = ImageGlPlugin.GetImageGlPlugin(ViewOnlyTexture, true, true, false);
+				});
+			}
 		}
 
 		public override void OnParentChanged(EventArgs e)
@@ -421,9 +437,9 @@ namespace MatterHackers.MeshVisualizer
 		{
 			var totalVertices = 0;
 
-			foreach (var renderData in object3D.VisibleMeshes())
+			foreach (var visibleMesh in object3D.VisibleMeshes())
 			{
-				totalVertices += renderData.Mesh.Vertices.Count;
+				totalVertices += visibleMesh.Mesh.Vertices.Count;
 
 				if (totalVertices > 1000)
 				{
@@ -446,6 +462,34 @@ namespace MatterHackers.MeshVisualizer
 
 			foreach (var item in object3D.VisibleMeshes())
 			{
+				// check for correct persistable rendering
+				if(MeshViewerWidget.ViewOnlyTexture != null)
+				{
+					ImageBuffer faceTexture = null;
+					item.Mesh.FaceTexture.TryGetValue((item.Mesh.Faces[0], 0), out faceTexture);
+					bool hasPersistableTexture = faceTexture == MeshViewerWidget.ViewOnlyTexture;
+
+					if (item.Persistable)
+					{
+						if (hasPersistableTexture)
+						{
+							// make sure it does not have the view only texture
+							item.Mesh.RemoveTexture(ViewOnlyTexture, 0);
+						}
+					}
+					else
+					{
+						if (!hasPersistableTexture)
+						{
+							// make sure it does have the view only texture
+							var aabb = item.Mesh.GetAxisAlignedBoundingBox();
+							var matrix = Matrix4X4.CreateScale(.5, .5, 1);
+							matrix *= Matrix4X4.CreateRotationZ(MathHelper.Tau / 8);
+							item.Mesh.PlaceTexture(ViewOnlyTexture, matrix);
+						}
+					}
+				}
+
 				bool isSelected = parentSelected ||
 					scene.HasSelection && (object3D == scene.SelectedItem || scene.SelectedItem.Children.Contains(object3D));
 
