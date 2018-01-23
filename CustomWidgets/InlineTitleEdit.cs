@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
@@ -41,8 +42,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		public event EventHandler TitleChanged;
 
 		private TextWidget titleText;
-		private TextButton editButton;
-		private TextButton saveButton;
+		private GuiWidget editButton;
+		private GuiWidget saveButton;
 		private SearchInputBox searchPanel;
 
 		public InlineTitleEdit(string title, ThemeConfig theme, bool boldFont = false)
@@ -64,12 +65,16 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.ActionArea.VAnchor = VAnchor.Stretch;
 			this.ActionArea.MinimumSize = new VectorMath.Vector2(0, titleText.Height);
 
-			saveButton = new TextButton("Save".Localize(), theme);
+			saveButton = new IconButton(AggContext.StaticData.LoadIcon("fa-save_16.png", 16, 16, IconColor.Theme), theme)
+			{
+				ToolTipText = "Save".Localize(),
+				Visible = false
+			};
 
 			searchPanel = new SearchInputBox()
 			{
 				Visible = false,
-				Margin = new BorderDouble(8, 0, saveButton.Width + 10, 0)
+				Margin = new BorderDouble(left: 4)
 			};
 			searchPanel.searchInput.ActualTextEditWidget.EnterPressed += (s, e) =>
 			{
@@ -77,15 +82,21 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				this.SetVisibility(showEditPanel: false);
 				this.TitleChanged?.Invoke(this, null);
 			};
-			searchPanel.resetButton.Click += (s, e) =>
+
+			searchPanel.ResetButton.Name = "Close Title Edit";
+			searchPanel.ResetButton.ToolTipText = "Close".Localize();
+			searchPanel.ResetButton.Click += (s, e) =>
 			{
 				this.SetVisibility(showEditPanel: false);
 			};
 			this.AddChild(searchPanel);
 
 			var rightPanel = new FlowLayoutWidget();
-			editButton = new TextButton("Edit".Localize(), theme);
-			editButton.BackgroundColor = theme.MinimalShade;
+
+			editButton = new IconButton(AggContext.StaticData.LoadIcon("icon_edit.png", 16, 16, IconColor.Theme), theme)
+			{
+				ToolTipText = "Edit".Localize(),
+			};
 			editButton.Click += (s, e) =>
 			{
 				searchPanel.Text = this.Text;
@@ -93,8 +104,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			};
 			rightPanel.AddChild(editButton);
 
-			saveButton.Visible = false;
-			saveButton.BackgroundColor = theme.MinimalShade;
 			saveButton.Click += (s, e) =>
 			{
 				this.Text = searchPanel.Text;
@@ -104,6 +113,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			rightPanel.AddChild(saveButton);
 
 			this.SetRightAnchorItem(rightPanel);
+
+			this.ActionArea.Margin = this.ActionArea.Margin.Clone(right: rightPanel.Width + 5);
 		}
 
 		public override string Text

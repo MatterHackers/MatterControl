@@ -234,7 +234,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				this.ShowFilteredView();
 			};
-			searchPanel.resetButton.Click += (s, e) =>
+			searchPanel.ResetButton.Click += (s, e) =>
 			{
 				searchPanel.Visible = false;
 				searchPanel.searchInput.Text = "";
