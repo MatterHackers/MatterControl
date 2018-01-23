@@ -353,7 +353,7 @@ namespace MatterHackers.MatterControl
 				foreach (string file in mouseEvent.DragFiles)
 				{
 					string extension = Path.GetExtension(file).ToUpper();
-					if ((extension != "" && MeshFileIo.ValidFileExtensions().Contains(extension))
+					if ((extension != "" && ApplicationSettings.ValidFileExtensions.Contains(extension))
 						|| extension == ".GCODE"
 						|| extension == ".ZIP")
 					{

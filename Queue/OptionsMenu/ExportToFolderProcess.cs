@@ -105,7 +105,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 				{
 					var printItemWrapper = new PrintItemWrapper(part);
 					string extension = Path.GetExtension(printItemWrapper.FileLocation).ToUpper();
-					if (extension != "" && MeshFileIo.ValidFileExtensions().Contains(extension))
+					if (extension != "" && ApplicationSettings.ValidFileExtensions.Contains(extension))
 					{
 						await ApplicationController.Instance.Tasks.Execute((reporter, cancellationToken) =>
 						{

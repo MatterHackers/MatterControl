@@ -273,7 +273,7 @@ namespace MatterHackers.MatterControl.Library
 
 			// Special load processing for mesh data, simple copy below for non-mesh
 			if (forceAMF
-				&& (extension != "" && MeshFileIo.ValidFileExtensions().Contains(extension.ToUpper())))
+				&& (extension != "" && ApplicationSettings.ValidFileExtensions.Contains(extension.ToUpper())))
 			{
 				try
 				{

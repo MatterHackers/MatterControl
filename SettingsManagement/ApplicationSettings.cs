@@ -20,6 +20,7 @@ namespace MatterHackers.MatterControl
 
 	public class ApplicationSettings
 	{
+		public static string ValidFileExtensions { get; } =  ".STL;.AMF;.OBJ";
 		public static string LibraryMeshFileExtensions { get; } = ".stl,.obj,.amf,.mcx";
 		public static string LibraryFilterFileExtensions { get; } = LibraryMeshFileExtensions + ",.gcode";
 		public static string OpenPrintableFileParams { get; } = "STL, AMF, OBJ, GCODE, MCX|*.stl;*.amf;*.obj;*.gcode;*.mcx";
