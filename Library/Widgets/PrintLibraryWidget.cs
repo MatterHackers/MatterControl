@@ -135,7 +135,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			{
 				this.PerformSearch();
 			};
-			searchPanel.resetButton.Click += (s, e) =>
+			searchPanel.ResetButton.Click += (s, e) =>
 			{
 				breadCrumbWidget.Visible = true;
 				searchPanel.Visible = false;
@@ -850,7 +850,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 	public class SearchInputBox : GuiWidget
 	{
 		internal MHTextEditWidget searchInput;
-		internal Button resetButton;
+		public Button ResetButton { get; }
 
 		public SearchInputBox()
 		{
@@ -865,13 +865,15 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			};
 			this.AddChild(searchInput);
 
-			resetButton = ApplicationController.Instance.Theme.CreateSmallResetButton();
+			var resetButton = ApplicationController.Instance.Theme.CreateSmallResetButton();
 			resetButton.HAnchor = HAnchor.Right | HAnchor.Fit;
 			resetButton.VAnchor = VAnchor.Center | VAnchor.Fit;
 			resetButton.Name = "Close Search";
 			resetButton.ToolTipText = "Clear".Localize();
 
 			this.AddChild(resetButton);
+
+			this.ResetButton = resetButton;
 		}
 
 		public override string Text
