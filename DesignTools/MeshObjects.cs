@@ -1,4 +1,33 @@
-﻿using System;
+﻿/*
+Copyright (c) 2018, Lars Brubaker, John Lewin
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+The views and conclusions contained in the software and documentation are those
+of the authors and should not be interpreted as representing official policies,
+either expressed or implied, of the FreeBSD Project.
+*/
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -9,13 +38,12 @@ using MatterHackers.Agg.Font;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
-using MatterHackers.MatterControl.MatterCad;
 using MatterHackers.MatterControl.PartPreviewWindow.View3D;
 using MatterHackers.PolygonMesh;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
 
-namespace MatterHackers.MatterControl.MeshObjects
+namespace MatterHackers.MatterControl.DesignTools
 {
 	public enum Alignment { X, Y, Z, negX, negY, negZ };
 
@@ -47,16 +75,18 @@ namespace MatterHackers.MatterControl.MeshObjects
 		BackTop = Face.Back | Face.Top
 	}
 
-	public class BadSubtract : MatterCadObject3D
+	public class BadSubtract : CanRebuildObject3D
 	{
+		public override string ActiveEditor => "PublicPropertyEditor";
+
 		public BadSubtract()
 		{
-			RebuildMeshes();
+			Rebuild();
 		}
 
 		public double Sides { get; set; } = 4;
 
-		public override void RebuildMeshes()
+		public override void Rebuild()
 		{
 			int sides = 3;
 			IObject3D keep = new Cylinder(20, 20, sides);
@@ -151,17 +181,19 @@ namespace MatterHackers.MatterControl.MeshObjects
 		}
 	}
 
-	public class CardHolder : MatterCadObject3D
+	public class CardHolder : CanRebuildObject3D
 	{
+		public override string ActiveEditor => "PublicPropertyEditor";
+
 		public CardHolder()
 		{
-			RebuildMeshes();
+			Rebuild();
 		}
 
 		[DisplayName("Name")]
 		public string NameToWrite { get; set; } = "MatterHackers";
 
-		public override void RebuildMeshes()
+		public override void Rebuild()
 		{
 			IObject3D plainCardHolder = Object3D.Load("C:/Temp/CardHolder.stl");
 
@@ -296,18 +328,20 @@ public class ChairFoot2 : MatterCadObject3D
 }
 */
 
-	public class CubePrimitive : MatterCadObject3D
+	public class CubePrimitive : CanRebuildObject3D
 	{
+		public override string ActiveEditor => "PublicPropertyEditor";
+
 		public CubePrimitive()
 		{
-			RebuildMeshes();
+			Rebuild();
 		}
 
 		public double Width { get; set; } = 20;
 		public double Depth { get; set; } = 20;
 		public double Height { get; set; } = 20;
 
-		public override void RebuildMeshes()
+		public override void Rebuild()
 		{
 			var aabb = AxisAlignedBoundingBox.Zero;
 			if (Mesh != null)
@@ -320,18 +354,20 @@ public class ChairFoot2 : MatterCadObject3D
 		}
 	}
 
-	public class CylinderPrimitive : MatterCadObject3D
+	public class CylinderPrimitive : CanRebuildObject3D
 	{
+		public override string ActiveEditor => "PublicPropertyEditor";
+
 		public CylinderPrimitive()
 		{
-			RebuildMeshes();
+			Rebuild();
 		}
 
 		public double Diameter { get; set; } = 20;
 		public double Height { get; set; } = 20;
 		public int Sides { get; set; } = 30;
 
-		public override void RebuildMeshes()
+		public override void Rebuild()
 		{
 			var aabb = AxisAlignedBoundingBox.Zero;
 			if (Mesh != null)
@@ -350,11 +386,13 @@ public class ChairFoot2 : MatterCadObject3D
 		}
 	}
 
-	public class ConePrimitive : MatterCadObject3D
+	public class ConePrimitive : CanRebuildObject3D
 	{
+		public override string ActiveEditor => "PublicPropertyEditor";
+
 		public ConePrimitive()
 		{
-			RebuildMeshes();
+			Rebuild();
 		}
 
 		[DisplayName("Diameter")]
@@ -364,7 +402,7 @@ public class ChairFoot2 : MatterCadObject3D
 		public double Height { get; set; } = 20;
 		public int Sides { get; set; } = 30;
 
-		public override void RebuildMeshes()
+		public override void Rebuild()
 		{
 			var aabb = AxisAlignedBoundingBox.Zero;
 			if (Mesh != null)
@@ -382,11 +420,13 @@ public class ChairFoot2 : MatterCadObject3D
 		}
 	}
 
-	public class TorusPrimitive : MatterCadObject3D
+	public class TorusPrimitive : CanRebuildObject3D
 	{
+		public override string ActiveEditor => "PublicPropertyEditor";
+
 		public TorusPrimitive()
 		{
-			RebuildMeshes();
+			Rebuild();
 		}
 
 		[DisplayName("Inner Diameter")]
@@ -398,7 +438,7 @@ public class ChairFoot2 : MatterCadObject3D
 		[DisplayName("Ring Sides")]
 		public int PoleSides { get; set; } = 16;
 
-		public override void RebuildMeshes()
+		public override void Rebuild()
 		{
 			var aabb = AxisAlignedBoundingBox.Zero;
 			if (Mesh != null)
@@ -423,11 +463,13 @@ public class ChairFoot2 : MatterCadObject3D
 			PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
 		}
 	}
-	public class SpherePrimitive : MatterCadObject3D
+	public class SpherePrimitive : CanRebuildObject3D
 	{
+		public override string ActiveEditor => "PublicPropertyEditor";
+
 		public SpherePrimitive()
 		{
-			RebuildMeshes();
+			Rebuild();
 		}
 
 		public double Diameter { get; set; } = 20;
@@ -436,7 +478,7 @@ public class ChairFoot2 : MatterCadObject3D
 		[DisplayName("Latitude Sides")]
 		public int LatitudeSides { get; set; } = 20;
 
-		public override void RebuildMeshes()
+		public override void Rebuild()
 		{
 			var aabb = AxisAlignedBoundingBox.Zero;
 			if (Mesh != null)
@@ -459,8 +501,10 @@ public class ChairFoot2 : MatterCadObject3D
 		}
 	}
 
-	public class CurveTest : MatterCadObject3D
+	public class CurveTest : CanRebuildObject3D
 	{
+		public override string ActiveEditor => "PublicPropertyEditor";
+
 		private PolygonMesh.Mesh inputMesh;
 
 		private PolygonMesh.Mesh transformedMesh;
@@ -471,7 +515,7 @@ public class ChairFoot2 : MatterCadObject3D
 			inputMesh = VertexSourceToMesh.Extrude(letterPrinter, 5);
 			transformedMesh = PolygonMesh.Mesh.Copy(inputMesh, CancellationToken.None);
 
-			RebuildMeshes();
+			Rebuild();
 		}
 
 		[DisplayName("Angle")]
@@ -480,7 +524,7 @@ public class ChairFoot2 : MatterCadObject3D
 		[DisplayName("Bend Up")]
 		public bool BendCW { get; set; } = true;
 
-		public override void RebuildMeshes()
+		public override void Rebuild()
 		{
 			if (AngleDegrees > 0)
 			{
@@ -529,8 +573,10 @@ public class ChairFoot2 : MatterCadObject3D
 		}
 	}
 
-	public class PinchTest : MatterCadObject3D
+	public class PinchTest : CanRebuildObject3D
 	{
+		public override string ActiveEditor => "PublicPropertyEditor";
+
 		private PolygonMesh.Mesh inputMesh;
 
 		private PolygonMesh.Mesh transformedMesh;
@@ -541,13 +587,13 @@ public class ChairFoot2 : MatterCadObject3D
 			inputMesh = VertexSourceToMesh.Extrude(letterPrinter, 5);
 			transformedMesh = PolygonMesh.Mesh.Copy(inputMesh, CancellationToken.None);
 
-			RebuildMeshes();
+			Rebuild();
 		}
 
 		[DisplayName("Back Ratio")]
 		public double PinchRatio { get; set; } = 1;
 
-		public override void RebuildMeshes()
+		public override void Rebuild()
 		{
 			var aabb = inputMesh.GetAxisAlignedBoundingBox();
 			for (int i = 0; i < transformedMesh.Vertices.Count; i++)
@@ -572,13 +618,15 @@ public class ChairFoot2 : MatterCadObject3D
 		}
 	}
 
-	public class PvcT : MatterCadObject3D
+	public class PvcT : CanRebuildObject3D
 	{
+		public override string ActiveEditor => "PublicPropertyEditor";
+
 		private int sides = 50;
 
 		public PvcT()
 		{
-			RebuildMeshes();
+			Rebuild();
 		}
 
 		[DisplayName("Inner Radius")]
@@ -593,7 +641,7 @@ public class ChairFoot2 : MatterCadObject3D
 
 		public double TopReach { get; set; } = 30;
 
-		public override void RebuildMeshes()
+		public override void Rebuild()
 		{
 			IObject3D topBottomConnect = new Cylinder(OuterDiameter / 2, OuterDiameter, sides, Alignment.Y);
 			IObject3D frontConnect = new Cylinder(OuterDiameter / 2, OuterDiameter / 2, sides, Alignment.X);
@@ -651,19 +699,21 @@ public class ChairFoot2 : MatterCadObject3D
 		}
 	}
 
-	public class RibonWithName : MatterCadObject3D
+	public class RibonWithName : CanRebuildObject3D
 	{
+		public override string ActiveEditor => "PublicPropertyEditor";
+
 		private static TypeFace typeFace = null;
 
 		public RibonWithName()
 		{
-			RebuildMeshes();
+			Rebuild();
 		}
 
 		[DisplayName("Name")]
 		public string NameToWrite { get; set; } = "MatterHackers";
 
-		public override void RebuildMeshes()
+		public override void Rebuild()
 		{
 			IObject3D cancerRibonStl = Object3D.Load("Cancer_Ribbon.stl", CancellationToken.None);
 
@@ -915,16 +965,18 @@ public class ChairFoot2 : MatterCadObject3D
 		}
 	}
 
-	public class TestPart : MatterCadObject3D
+	public class TestPart : CanRebuildObject3D
 	{
+		public override string ActiveEditor => "PublicPropertyEditor";
+
 		public TestPart()
 		{
-			RebuildMeshes();
+			Rebuild();
 		}
 
 		public double XOffset { get; set; } = -.4;
 
-		public override void RebuildMeshes()
+		public override void Rebuild()
 		{
 			IObject3D boxCombine = new Box(10, 10, 10);
 			boxCombine = boxCombine.Minus(new Translate(new Box(10, 10, 10), XOffset, -3, 2));

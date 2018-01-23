@@ -86,11 +86,14 @@
     <Compile Include="ApplicationView\OemProfileDictionary.cs" />
     <Compile Include="ApplicationView\WindowsPlatformsFeatures.cs" />
     <Compile Include="DataStorage\ApplicationDataStorage.cs" />
+    <Compile Include="DesignTools\MeshObjects.cs" />
+    <Compile Include="DesignTools\PubicPropertyEditor.cs" />
     <Compile Include="PartPreviewWindow\AlignControls.cs" />
     <Compile Include="CustomWidgets\InlineTitleEdit.cs" />
     <Compile Include="PartPreviewWindow\LibraryBrowserPage.cs" />
     <Compile Include="PartPreviewWindow\MaterialControls.cs" />
     <Compile Include="PartPreviewWindow\MoveItemPage.cs" />
+    <Compile Include="PartPreviewWindow\View3D\Actions\ProportionalEditor.cs" />
     <Compile Include="PartPreviewWindow\View3D\Actions\SubtractAndReplace.cs" />
     <Compile Include="PartPreviewWindow\View3D\PrinterBar\OverflowBar.cs" />
     <Compile Include="PartPreviewWindow\View3D\PrinterBar\PrintPopupMenu.cs" />
@@ -335,7 +338,7 @@
     <Compile Include="SlicerConfiguration\Settings\ActiveSliceSettings.cs" />
     <Compile Include="SlicerConfiguration\Settings\PrinterSettings.cs" />
     <Compile Include="DataStorage\Classic\ClassicSqlitePrinterProfiles.cs" />
-    <Compile Include="TextCreator\CardHolderTool\BendOperation.cs" />
+    <Compile Include="DesignTools\BendOperation.cs" />
     <Compile Include="Utilities\AuthenticationData.cs" />
     <Compile Include="Utilities\LimitCallFrequency.cs" />
     <Compile Include="Utilities\SelectedListItems.cs" />
