@@ -53,9 +53,14 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			this.printer = printer;
 
-			// add in load and unload buttons
-			var macroButtons = GetExtruderMacros(extruderIndex, buttonFactory);
-			this.AddChild(new SettingsItem("Filament".Localize(), macroButtons, enforceGutter: false));
+			GuiWidget macroButtons = null;
+			// We do not yet support loading filament into extruders other than 0, fix it when time.
+			if (extruderIndex == 0)
+			{
+				// add in load and unload buttons
+				macroButtons = GetExtruderMacros(extruderIndex, buttonFactory);
+				this.AddChild(new SettingsItem("Filament".Localize(), macroButtons, enforceGutter: false));
+			}
 
 			// Add the Extrude buttons
 			var moveButtonFactory = ApplicationController.Instance.Theme.MicroButtonMenu;
@@ -75,10 +80,12 @@ namespace MatterHackers.MatterControl.ActionBar
 			};
 			buttonContainer.AddChild(retractButton);
 
+			int extruderButtonTopMargin = macroButtons == null ? 8 : 0;
+
 			var extrudeButton = buttonFactory.Generate("Extrude".Localize());
 			extrudeButton.Name = "Extrude Button";
 			extrudeButton.ToolTipText = "Extrude filament".Localize();
-			extrudeButton.Margin = 0;
+			extrudeButton.Margin = new BorderDouble(0, 0, 0, extruderButtonTopMargin);
 			extrudeButton.Click += (s, e) =>
 			{
 				printer.Connection.MoveExtruderRelative(moveAmount, printer.Settings.EFeedRate(extruderIndex), extruderIndex);
