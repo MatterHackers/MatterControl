@@ -59,14 +59,13 @@ namespace MatterHackers.MatterControl
 	using MatterHackers.Agg.Platform;
 	using MatterHackers.DataConverters3D;
 	using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
+	using MatterHackers.MatterControl.DesignTools;
 	using MatterHackers.MatterControl.Library;
 	using MatterHackers.MatterControl.PartPreviewWindow;
 	using MatterHackers.MatterControl.PartPreviewWindow.View3D;
 	using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
-	using MatterHackers.MatterControl.SimplePartScripting;
 	using MatterHackers.MeshVisualizer;
 	using MatterHackers.SerialPortCommunication;
-	using MatterHackers.VectorMath;
 	using SettingsManagement;
 
 	public class AppContext
@@ -363,26 +362,33 @@ namespace MatterHackers.MatterControl
 			new SceneSelectionOperation()
 			{
 				TitleResolver = () => "Subtract".Localize(),
-				Action = (scene) => DoOperation(scene, nameof(SubtractEditor), "Subtract"),
+				Action = (scene) => DoMeshWrapOperation(scene, nameof(SubtractEditor), "Subtract"),
 				Icon = AggContext.StaticData.LoadIcon("subtract.png").SetPreMultiply(),
 				IsEnabled = (scene) => scene.SelectedItem is SelectionGroup,
 			},
 			new SceneSelectionOperation()
 			{
 				TitleResolver = () => "Intersect".Localize(),
-				Action = (scene) => DoOperation(scene, nameof(IntersectionEditor), "Intersect"),
+				Action = (scene) => DoMeshWrapOperation(scene, nameof(IntersectionEditor), "Intersect"),
 				Icon = AggContext.StaticData.LoadIcon("intersect.png"),
 				IsEnabled = (scene) => scene.SelectedItem is SelectionGroup,
 			},
 			new SceneSelectionOperation()
 			{
 				TitleResolver = () => "Subtract & Replace".Localize(),
-				Action = (scene) => DoOperation(scene, nameof(SubtractAndReplace), "Subtract & Replace"),
+				Action = (scene) => DoMeshWrapOperation(scene, nameof(SubtractAndReplace), "Subtract & Replace"),
 				Icon = AggContext.StaticData.LoadIcon("paint.png").SetPreMultiply(),
 				IsEnabled = (scene) => scene.SelectedItem is SelectionGroup,
 			},
 #if DEBUG // keep this work in progress to the editor for now
 			new SceneSelectionSeparator(),
+			new SceneSelectionOperation()
+			{
+				TitleResolver = () => "Proportional Scale".Localize(),
+				Action = (scene) => HoldChildProportional.AddSelectionAsChildren(scene, nameof(ProportionalEditor), "Proportional Scale"),
+				//Icon = AggContext.StaticData.LoadIcon("subtract.png").SetPreMultiply(),
+				IsEnabled = (scene) => scene.HasSelection,
+			},
 			new SceneSelectionOperation()
 			{
 				TitleResolver = () => "Bend".Localize(),
@@ -399,7 +405,7 @@ namespace MatterHackers.MatterControl
 #endif
 		};
 
-		private static void DoOperation(InteractiveScene scene, string classDescriptor, string editorName)
+		private static void DoMeshWrapOperation(InteractiveScene scene, string classDescriptor, string editorName)
 		{
 			if (scene.HasSelection && scene.SelectedItem.Children.Count() > 1)
 			{

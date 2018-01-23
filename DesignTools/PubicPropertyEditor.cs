@@ -1,4 +1,33 @@
-﻿using System;
+﻿/*
+Copyright (c) 2018, Lars Brubaker, John Lewin
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+The views and conclusions contained in the software and documentation are those
+of the authors and should not be interpreted as representing official policies,
+either expressed or implied, of the FreeBSD Project.
+*/
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -11,29 +40,34 @@ using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.VectorMath;
 
-namespace MatterHackers.MatterControl.MatterCad
+namespace MatterHackers.MatterControl.DesignTools
 {
-	public class MatterCadEditor : IObject3DEditor
+	public abstract class CanRebuildObject3D : Object3D
 	{
-		private IObject3D item;
+		public abstract void Rebuild();
+	}
+
+	public class PubicPropertyEditor : IObject3DEditor
+	{
+		private CanRebuildObject3D item;
 		private View3DWidget view3DWidget;
-		public string Name => "MatterCad";
+		public string Name => "Property Editor";
 
 		public bool Unlocked { get; } = true;
 
 		public GuiWidget Create(IObject3D item, View3DWidget view3DWidget, ThemeConfig theme)
 		{
 			this.view3DWidget = view3DWidget;
-			this.item = item;
+			this.item = item as CanRebuildObject3D;
 
 			var mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.Stretch
 			};
 
-			if (item is MatterCadObject3D)
+			if (this.item != null)
 			{
-				ModifyCadObject(view3DWidget, mainContainer, theme);
+				ModifyObject(view3DWidget, mainContainer, theme);
 			}
 
 			return mainContainer;
@@ -41,7 +75,7 @@ namespace MatterHackers.MatterControl.MatterCad
 
 		public IEnumerable<Type> SupportedTypes() => new Type[]
 		{
-			typeof(MatterCadObject3D),
+			typeof(CanRebuildObject3D),
 		};
 
 		private static FlowLayoutWidget CreateSettingsRow(string labelText)
@@ -70,7 +104,7 @@ namespace MatterHackers.MatterControl.MatterCad
 			return nameAttribute?.DisplayName ?? prop.Name;
 		}
 
-		private void ModifyCadObject(View3DWidget view3DWidget, FlowLayoutWidget tabContainer, ThemeConfig theme)
+		private void ModifyObject(View3DWidget view3DWidget, FlowLayoutWidget tabContainer, ThemeConfig theme)
 		{
 			var allowedTypes = new Type[] { typeof(double), typeof(int), typeof(string), typeof(bool) };
 
@@ -80,7 +114,8 @@ namespace MatterHackers.MatterControl.MatterCad
 
 			var editableProperties = this.item.GetType().GetProperties(ownedPropertiesOnly)
 				.Where(pi => allowedTypes.Contains(pi.PropertyType)
-					&& pi.GetGetMethod() != null)
+					&& pi.GetGetMethod() != null
+					&& pi.GetSetMethod() != null)
 				.Select(p => new
 				{
 					Value = p.GetGetMethod().Invoke(this.item, null),
@@ -106,7 +141,7 @@ namespace MatterHackers.MatterControl.MatterCad
 						{
 							property.PropertyInfo.GetSetMethod().Invoke(this.item, new Object[] { editValue });
 						}
-						((MatterCadObject3D)item).RebuildMeshes();
+						item.Rebuild();
 					};
 					rowContainer.AddChild(doubleEditWidget);
 					tabContainer.AddChild(rowContainer);
@@ -127,7 +162,7 @@ namespace MatterHackers.MatterControl.MatterCad
 						{
 							property.PropertyInfo.GetSetMethod().Invoke(this.item, new Object[] { editValue });
 						}
-						((MatterCadObject3D)item).RebuildMeshes();
+						item.Rebuild();
 					};
 					rowContainer.AddChild(intEditWidget);
 					tabContainer.AddChild(rowContainer);
@@ -142,7 +177,7 @@ namespace MatterHackers.MatterControl.MatterCad
 					doubleEditWidget.CheckedStateChanged += (s, e) =>
 					{
 						property.PropertyInfo.GetSetMethod().Invoke(this.item, new Object[] { doubleEditWidget.Checked });
-						((MatterCadObject3D)item).RebuildMeshes();
+						item.Rebuild();
 					};
 					rowContainer.AddChild(doubleEditWidget);
 					tabContainer.AddChild(rowContainer);
@@ -159,7 +194,7 @@ namespace MatterHackers.MatterControl.MatterCad
 					textEditWidget.ActualTextEditWidget.EditComplete += (s, e) =>
 					{
 						property.PropertyInfo.GetSetMethod().Invoke(this.item, new Object[] { textEditWidget.Text });
-						((MatterCadObject3D)item).RebuildMeshes();
+						item.Rebuild();
 					};
 					rowContainer.AddChild(textEditWidget);
 					tabContainer.AddChild(rowContainer);
@@ -171,16 +206,9 @@ namespace MatterHackers.MatterControl.MatterCad
 			updateButton.HAnchor = HAnchor.Right;
 			updateButton.Click += (s, e) =>
 			{
-				((MatterCadObject3D)item).RebuildMeshes();
+				item.Rebuild();
 			};
 			tabContainer.AddChild(updateButton);
 		}
-	}
-
-	public abstract class MatterCadObject3D : Object3D
-	{
-		public override string ActiveEditor { get; set; } = "MatterCadEditor";
-
-		public abstract void RebuildMeshes();
 	}
 }

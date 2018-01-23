@@ -8,7 +8,7 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.VectorMath;
 using MatterHackers.PolygonMesh;
 
-namespace MatterHackers.MatterControl.SimplePartScripting
+namespace MatterHackers.MatterControl.DesignTools
 {
 	public class BendOperation
 	{
