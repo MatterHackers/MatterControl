@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			searchPanel = new SearchInputBox()
 			{
 				Visible = false,
-				Margin = new BorderDouble(8, 0, saveButton.Width + 10, 0)
+				Margin = new BorderDouble(left: 4)
 			};
 			searchPanel.searchInput.ActualTextEditWidget.EnterPressed += (s, e) =>
 			{
@@ -113,6 +113,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			rightPanel.AddChild(saveButton);
 
 			this.SetRightAnchorItem(rightPanel);
+
+			this.ActionArea.Margin = this.ActionArea.Margin.Clone(right: rightPanel.Width + 5);
 		}
 
 		public override string Text
