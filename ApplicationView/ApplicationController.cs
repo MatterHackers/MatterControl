@@ -306,14 +306,14 @@ namespace MatterHackers.MatterControl
 				IsEnabled = (scene) => scene.HasSelection
 					&& scene.SelectedItem is SelectionGroup
 					&& scene.SelectedItem.Children.Count > 1,
-				Icon = AggContext.StaticData.LoadIcon("group.png").SetPreMultiply(),
+				Icon = AggContext.StaticData.LoadIcon("group.png", 16, 16).SetPreMultiply(),
 			},
 			new SceneSelectionOperation()
 			{
 				TitleResolver = () => "Ungroup".Localize(),
 				Action = (scene) => scene.UngroupSelection(),
 				IsEnabled = (scene) => scene.HasSelection,
-				Icon = AggContext.StaticData.LoadIcon("ungroup.png").SetPreMultiply(),
+				Icon = AggContext.StaticData.LoadIcon("ungroup.png", 16, 16).SetPreMultiply(),
 			},
 			new SceneSelectionSeparator(),
 			new SceneSelectionOperation()
@@ -359,6 +359,13 @@ namespace MatterHackers.MatterControl
 				IsEnabled = (scene) => scene.HasSelection,
 			},
 			new SceneSelectionSeparator(),
+			new SceneSelectionOperation()
+			{
+				TitleResolver = () => "Combine".Localize(),
+				Action = (scene) => DoMeshWrapOperation(scene, nameof(CombineEditor), "Combine"),
+				Icon = AggContext.StaticData.LoadIcon("combine.png").SetPreMultiply(),
+				IsEnabled = (scene) => scene.SelectedItem is SelectionGroup,
+			},
 			new SceneSelectionOperation()
 			{
 				TitleResolver = () => "Subtract".Localize(),
