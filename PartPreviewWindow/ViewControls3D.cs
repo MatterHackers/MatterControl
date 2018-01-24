@@ -513,7 +513,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				foreach (string loadedFileName in filesToLoadIncludingZips)
 				{
 					string extension = Path.GetExtension(loadedFileName).ToUpper();
-					if ((extension != "" && MeshFileIo.ValidFileExtensions().Contains(extension)))
+					if ((extension != "" && ApplicationSettings.ValidFileExtensions.Contains(extension)))
 					{
 						filesToLoad.Add(loadedFileName);
 					}

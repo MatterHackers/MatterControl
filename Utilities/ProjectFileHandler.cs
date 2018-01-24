@@ -251,7 +251,7 @@ namespace MatterHackers.MatterControl
 						//     - are named manifest.json
 						if (!string.IsNullOrWhiteSpace(zipEntry.Name) &&
 							(zipEntry.Name == "manifest.json"
-							|| MeshFileIo.ValidFileExtensions().Contains(sourceExtension)
+							|| ApplicationSettings.ValidFileExtensions.Contains(sourceExtension)
 							|| sourceExtension == ".GCODE"))
 						{
 							string extractedFileName = Path.Combine(stagingFolder, zipEntry.Name);

@@ -37,10 +37,7 @@ namespace MatterHackers.MatterControl
 {
 	using Agg.Image;
 	using MatterHackers.Agg.Platform;
-	using MatterHackers.DataConverters3D;
-	using MatterHackers.MatterControl.DataStorage;
 	using MatterHackers.MatterControl.PluginSystem;
-	using MatterHackers.MatterControl.PrintQueue;
 	using MatterHackers.RenderOpenGl.OpenGl;
 
 	public class WindowsPlatformsFeatures : INativePlatformFeatures
@@ -139,18 +136,6 @@ namespace MatterHackers.MatterControl
 						break;
 				}
 			}
-
-			// TODO: Do we still want to support command line arguments for adding to the queue?
-			foreach (string arg in commandLineArgs)
-			{
-				string argExtension = Path.GetExtension(arg).ToUpper();
-				if (argExtension.Length > 1
-					&& MeshFileIo.ValidFileExtensions().Contains(argExtension))
-				{
-					QueueData.Instance.AddItem(new PrintItemWrapper(new PrintItem(Path.GetFileName(arg), Path.GetFullPath(arg))));
-				}
-			}
-
 		}
 
 		public void ReportException(Exception e, string key = "", string value = "", ReportSeverity2 warningLevel = ReportSeverity2.Warning)

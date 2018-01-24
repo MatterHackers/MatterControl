@@ -121,7 +121,7 @@ namespace MatterHackers.MatterControl.Library.Export
 			string fileToProcess = "";
 
 			string sourceExtension = Path.GetExtension(libraryContent.FileName).ToUpper();
-			if (MeshFileIo.ValidFileExtensions().Contains(sourceExtension)
+			if (ApplicationSettings.ValidFileExtensions.Contains(sourceExtension)
 				|| sourceExtension == ".MCX")
 			{
 				// Conceptually we need to:
