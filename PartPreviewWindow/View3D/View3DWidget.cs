@@ -621,15 +621,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var intersectInfo = GetIntersectPosition(screenSpaceMousePosition);
 			if (intersectInfo != null)
 			{
-				// Set the initial transform on the inject part to the current transform mouse position
-				var sourceItemBounds = insertionGroup.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
-				var center = sourceItemBounds.Center;
-
-				insertionGroup.Matrix *= Matrix4X4.CreateTranslation(-center.X, -center.Y, -sourceItemBounds.minXYZ.Z);
-				insertionGroup.Matrix *= Matrix4X4.CreateTranslation(new Vector3(intersectInfo.HitPosition));
-
-				CurrentSelectInfo.PlaneDownHitPos = intersectInfo.HitPosition;
-				CurrentSelectInfo.LastMoveDelta = Vector3.Zero;
+				CalculateDragStartPosition(insertionGroup, intersectInfo);
+			}
+			else
+			{
+				CurrentSelectInfo.LastMoveDelta = Vector3.PositiveInfinity;
 			}
 
 			this.deferEditorTillMouseUp = true;
@@ -642,6 +638,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			Scene.SelectedItem = insertionGroup;
 
 			this.DragDropObject = insertionGroup;
+		}
+
+		private void CalculateDragStartPosition(IObject3D insertionGroup, IntersectInfo intersectInfo)
+		{
+			// Set the initial transform on the inject part to the current transform mouse position
+			var sourceItemBounds = insertionGroup.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+			var center = sourceItemBounds.Center;
+
+			insertionGroup.Matrix *= Matrix4X4.CreateTranslation(-center.X, -center.Y, -sourceItemBounds.minXYZ.Z);
+			insertionGroup.Matrix *= Matrix4X4.CreateTranslation(new Vector3(intersectInfo.HitPosition));
+
+			CurrentSelectInfo.PlaneDownHitPos = intersectInfo.HitPosition;
+			CurrentSelectInfo.LastMoveDelta = Vector3.Zero;
 		}
 
 		internal void FinishDrop(bool mouseUpInBounds)
@@ -1035,6 +1044,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			IntersectInfo info = CurrentSelectInfo.HitPlane.GetClosestIntersection(ray);
 			if (info != null)
 			{
+				if (CurrentSelectInfo.LastMoveDelta == Vector3.PositiveInfinity)
+				{
+					CalculateDragStartPosition(Scene.SelectedItem, info);
+				}
+
 				// move the mesh back to the start position
 				{
 					Matrix4X4 totalTransform = Matrix4X4.CreateTranslation(new Vector3(-CurrentSelectInfo.LastMoveDelta));

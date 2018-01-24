@@ -73,10 +73,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			return mainContainer;
 		}
 
-		public IEnumerable<Type> SupportedTypes() => new Type[]
-		{
-			typeof(CanRebuildObject3D),
-		};
+		public IEnumerable<Type> SupportedTypes() => new Type[] { typeof(CanRebuildObject3D) };
 
 		private static FlowLayoutWidget CreateSettingsRow(string labelText)
 		{
