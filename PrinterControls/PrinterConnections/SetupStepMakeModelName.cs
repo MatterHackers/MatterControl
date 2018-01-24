@@ -197,7 +197,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 			var validationTextWidget = new TextWidget(validationMessage, 0, 0, 10)
 			{
-				TextColor = ActiveTheme.Instance.SecondaryAccentColor,
+				TextColor = ActiveTheme.Instance.PrimaryAccentColor,
 				HAnchor = HAnchor.Stretch,
 				Margin = elementMargin
 			};

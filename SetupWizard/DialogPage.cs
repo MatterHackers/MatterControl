@@ -91,7 +91,7 @@ namespace MatterHackers.MatterControl
 				HAnchor = HAnchor.Stretch
 			};
 
-			headerLabel = new WrappedTextWidget("Setup Wizard".Localize(), pointSize: 24, textColor: theme.Colors.SecondaryAccentColor)
+			headerLabel = new WrappedTextWidget("Setup Wizard".Localize(), pointSize: 24, textColor: theme.Colors.PrimaryAccentColor)
 			{
 				HAnchor = HAnchor.Stretch
 			};

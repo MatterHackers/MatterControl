@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			var linkButtonFactory = new LinkButtonFactory()
 			{
 				fontSize = 8,
-				textColor = ActiveTheme.Instance.SecondaryAccentColor
+				textColor = ActiveTheme.Instance.PrimaryAccentColor
 			};
 
 			var buttonFactory = ApplicationController.Instance.Theme.ButtonFactory;

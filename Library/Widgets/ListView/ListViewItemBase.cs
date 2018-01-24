@@ -247,7 +247,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			if (mouseInBounds || (this.IsActivePrint && !this.EditMode))
 			{
 				//Draw interior border
-				graphics2D.Render(new Stroke(widgetBorder, 3), ActiveTheme.Instance.SecondaryAccentColor);
+				graphics2D.Render(new Stroke(widgetBorder, 3), ActiveTheme.Instance.PrimaryAccentColor);
 			}
 
 			if (this.IsHoverItem)
@@ -257,7 +257,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 				this.BackgroundColor = Color.White;
 
-				graphics2D.Render(new Stroke(rectBorder, 3), ActiveTheme.Instance.SecondaryAccentColor);
+				graphics2D.Render(new Stroke(rectBorder, 3), ActiveTheme.Instance.PrimaryAccentColor);
 			}
 		}
 
