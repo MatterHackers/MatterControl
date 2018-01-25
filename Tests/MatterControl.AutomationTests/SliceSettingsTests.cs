@@ -146,17 +146,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.ClickByName("Features Tab");
 
-				// Find any sibling toggle switch and scroll the parent to the bottom
-				var widget = testRunner.GetWidgetByName("has_fan Row", out _);
-				var scrollable = widget.Parents<ScrollableWidget>().First();
-				scrollable.ScrollPosition = new Vector2(0, -100);
-
 				CheckAndUncheckSetting(testRunner, SettingsKey.heat_extruder_before_homing, false);
 
 				CheckAndUncheckSetting(testRunner, SettingsKey.has_fan, true);
 
 				return Task.CompletedTask;
-			}, overrideWidth: 1224, overrideHeight: 900);
+			}, overrideWidth: 1224, overrideHeight: 900, maxTimeToRun: 600);
 		}
 
 		[Test]
@@ -371,6 +366,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			string checkBoxName = $"{settingsData.PresentationName} Field";
 
 			Assert.IsTrue(ActiveSliceSettings.Instance.GetValue<bool>(settingToChange) != valueToSet);
+
+			testRunner.ScrollIntoView(checkBoxName);
 
 			testRunner.ClickByName(checkBoxName);
 			// give some time for the ui to update if necessary

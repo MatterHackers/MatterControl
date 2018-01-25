@@ -63,6 +63,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					Padding = 10,
 				};
+
 				column.AddChild(new TextWidget("Options".Localize())
 				{
 					HAnchor = HAnchor.Left
@@ -111,6 +112,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				var sectionWidget = new SectionWidget("Advanced", subPanel, theme, expanded: anySettingOverridden)
 				{
+					Name = "Advanced Section",
 					HAnchor = HAnchor.Stretch,
 					VAnchor = VAnchor.Fit,
 					Margin = 0
