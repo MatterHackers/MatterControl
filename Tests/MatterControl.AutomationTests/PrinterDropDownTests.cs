@@ -23,11 +23,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.SwitchToPrinterSettings();
 
-				testRunner.ClickByName("Printer Name Field");
-
-				var textWidget = testRunner.GetWidgetByName("Printer Name Field", out _);
 				string newName = "Updated name";
-				textWidget.Text = newName;
+				testRunner.InlineTitleEdit("Printer Name", newName);
 
 				// Force loose focus
 				testRunner.ClickByName("Printer Tab");

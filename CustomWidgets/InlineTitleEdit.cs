@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		private GuiWidget saveButton;
 		private SearchInputBox searchPanel;
 
-		public InlineTitleEdit(string title, ThemeConfig theme, bool boldFont = false)
+		public InlineTitleEdit(string title, ThemeConfig theme, string automationName, bool boldFont = false)
 			: base(null)
 		{
 			this.Padding = theme.ToolbarPadding;
@@ -68,7 +68,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			saveButton = new IconButton(AggContext.StaticData.LoadIcon("fa-save_16.png", 16, 16, IconColor.Theme), theme)
 			{
 				ToolTipText = "Save".Localize(),
-				Visible = false
+				Visible = false,
+				Name = automationName + " Save",
 			};
 
 			searchPanel = new SearchInputBox()
@@ -83,6 +84,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				this.TitleChanged?.Invoke(this, null);
 			};
 
+			searchPanel.searchInput.Name = automationName + " Field";
+
 			searchPanel.ResetButton.Name = "Close Title Edit";
 			searchPanel.ResetButton.ToolTipText = "Close".Localize();
 			searchPanel.ResetButton.Click += (s, e) =>
@@ -96,6 +99,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			editButton = new IconButton(AggContext.StaticData.LoadIcon("icon_edit.png", 16, 16, IconColor.Theme), theme)
 			{
 				ToolTipText = "Edit".Localize(),
+				Name = automationName + " Edit"
 			};
 			editButton.Click += (s, e) =>
 			{

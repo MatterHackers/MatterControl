@@ -97,7 +97,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			middleRow.AnchorAll();
 			middleRow.AddChild(CreateSliceSettingsWidget(printer, presetsContext.PersistenceLayer));
 
-			inlineTitleEdit = new InlineTitleEdit(presetsContext.PersistenceLayer.Name, theme, boldFont: true);
+			inlineTitleEdit = new InlineTitleEdit(presetsContext.PersistenceLayer.Name, theme, presetsContext.LayerType.ToString() + " Name", boldFont: true);
 			inlineTitleEdit.TitleChanged += (s, e) =>
 			{
 				printer.Settings.SetValue(SettingsKey.layer_name, inlineTitleEdit.Text, presetsContext.PersistenceLayer);
