@@ -232,11 +232,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			if (this.IsActivePrint && !this.EditMode)
 			{
-				this.BackgroundColor = ActiveTheme.Instance.SecondaryAccentColor;
+				this.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
 				this.partLabel.TextColor = Color.White;
 				//this.partStatus.TextColor = Color.White;
 				this.viewButton.BackgroundColor = Color.White;
-				this.viewButtonLabel.TextColor = ActiveTheme.Instance.SecondaryAccentColor;
+				this.viewButtonLabel.TextColor = ActiveTheme.Instance.PrimaryAccentColor;
 			}
 			else if (this.IsSelected)
 			{
@@ -245,7 +245,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				//this.partStatus.TextColor = Color.White;
 				this.selectionCheckBox.TextColor = Color.White;
 				this.viewButton.BackgroundColor = Color.White;
-				this.viewButtonLabel.TextColor = ActiveTheme.Instance.SecondaryAccentColor;
+				this.viewButtonLabel.TextColor = ActiveTheme.Instance.PrimaryAccentColor;
 			}
 			else if (this.IsHoverItem)
 			{
@@ -253,7 +253,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				this.partLabel.TextColor = Color.Black;
 				this.selectionCheckBox.TextColor = Color.Black;
 				//this.partStatus.TextColor = Color.Black;
-				this.viewButton.BackgroundColor = ActiveTheme.Instance.SecondaryAccentColor;
+				this.viewButton.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
 				this.viewButtonLabel.TextColor = Color.White;
 			}
 			else
@@ -262,7 +262,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				this.partLabel.TextColor = Color.Black;
 				this.selectionCheckBox.TextColor = Color.Black;
 				//this.partStatus.TextColor = Color.Black;
-				this.viewButton.BackgroundColor = ActiveTheme.Instance.SecondaryAccentColor;
+				this.viewButton.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
 				this.viewButtonLabel.TextColor = Color.White;
 			}
 		}
@@ -296,7 +296,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			viewButton = new FatFlatClickWidget(viewButtonLabel)
 			{
 				VAnchor = VAnchor.Stretch,
-				BackgroundColor = ActiveTheme.Instance.SecondaryAccentColor,
+				BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor,
 				Width = 100,
 			};
 			viewButton.Click += onViewPartClick;

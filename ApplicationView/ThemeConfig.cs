@@ -295,7 +295,7 @@ namespace MatterHackers.MatterControl
 			this.HelpLinkFactory = new LinkButtonFactory()
 			{
 				fontSize = FontSize10,
-				textColor = colors.SecondaryAccentColor
+				textColor = colors.PrimaryAccentColor
 			};
 		}
 

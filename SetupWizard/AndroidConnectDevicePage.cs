@@ -95,7 +95,7 @@ namespace MatterHackers.MatterControl
 
 			generalError = new TextWidget("", 0, 0, errorFontSize)
 			{
-				TextColor = ActiveTheme.Instance.SecondaryAccentColor,
+				TextColor = ActiveTheme.Instance.PrimaryAccentColor,
 				HAnchor = HAnchor.Stretch,
 				Visible = false,
 				Margin = new BorderDouble(top: 20),

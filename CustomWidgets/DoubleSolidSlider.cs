@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl
 
 			TextColor = Color.Black;
 			TrackColor = new Color(220, 220, 220);
-			ThumbColor = ActiveTheme.Instance.SecondaryAccentColor;
+			ThumbColor = ActiveTheme.Instance.PrimaryAccentColor;
 
 			sliderWidget.FirstValueChanged += new EventHandler(sliderWidget_ValueChanged);
 			sliderWidget.SecondValueChanged += new EventHandler(sliderWidget_ValueChanged);

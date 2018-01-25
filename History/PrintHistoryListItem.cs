@@ -370,7 +370,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 				RectangleDouble Bounds = LocalBounds;
 				RoundedRect rectBorder = new RoundedRect(Bounds, 0);
 
-				this.BackgroundColor = ActiveTheme.Instance.SecondaryAccentColor;
+				this.BackgroundColor = ActiveTheme.Instance.PrimaryAccentColor;
 				this.partLabel.TextColor = Color.White;
 				this.selectionCheckBox.TextColor = Color.White;
 
