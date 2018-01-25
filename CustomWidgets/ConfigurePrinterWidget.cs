@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl
 		{
 			this.CloseAllChildren();
 
-			var inlineTitleEdit = new InlineTitleEdit(printer.Settings.GetValue(SettingsKey.printer_name), theme, boldFont: true);
+			var inlineTitleEdit = new InlineTitleEdit(printer.Settings.GetValue(SettingsKey.printer_name), theme, "Printer Name", boldFont: true);
 			inlineTitleEdit.TitleChanged += (s, e) =>
 			{
 				printer.Settings.SetValue(SettingsKey.printer_name, inlineTitleEdit.Text);

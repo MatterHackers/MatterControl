@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.scene = scene;
 			this.printer = printer;
 
-			this.AddChild(inlineTitleEdit = new InlineTitleEdit("", theme));
+			this.AddChild(inlineTitleEdit = new InlineTitleEdit("", theme, "Object Name"));
 			inlineTitleEdit.TitleChanged += (s, e) =>
 			{
 				if (item != null)

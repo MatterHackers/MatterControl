@@ -739,6 +739,15 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.ClickByName("Printer Tab");
 		}
 
+		public static void InlineTitleEdit(this AutomationRunner testRunner, string controlName, string replaceString)
+		{
+			testRunner.ClickByName(controlName + " Edit");
+			testRunner.ClickByName(controlName + " Field");
+			var textWidget = testRunner.GetWidgetByName(controlName + " Field", out _);
+			textWidget.Text = replaceString;
+			testRunner.ClickByName(controlName + " Save");
+		}
+
 		public static void SelectSliceSettingsField(this AutomationRunner testRunner, string userLevel, string slicerConfigName)
 		{
 			var rootLevel = SettingsOrganizer.Instance.UserLevels[userLevel];
