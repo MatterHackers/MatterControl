@@ -575,11 +575,16 @@ namespace MatterHackers.MatterControl
 
 		public bool DockWindowFloating { get; internal set; }
 
+		double DefaultSliceSettingsWidth => 450;
 		public double SliceSettingsWidth
 		{
 			get
 			{
 				double.TryParse(UserSettings.Instance.get(UserSettingsKey.SliceSettingsWidth), out double controlWidth);
+				if(controlWidth == 0)
+				{
+					controlWidth = DefaultSliceSettingsWidth;
+				}
 				return controlWidth;
 			}
 			set
