@@ -42,14 +42,14 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public abstract class CanRebuildObject3D : Object3D
+	public interface IRebuildable
 	{
-		public abstract void Rebuild();
+		void Rebuild();
 	}
 
 	public class PubicPropertyEditor : IObject3DEditor
 	{
-		private CanRebuildObject3D item;
+		private IObject3D item;
 		private View3DWidget view3DWidget;
 		public string Name => "Property Editor";
 
@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		public GuiWidget Create(IObject3D item, View3DWidget view3DWidget, ThemeConfig theme)
 		{
 			this.view3DWidget = view3DWidget;
-			this.item = item as CanRebuildObject3D;
+			this.item = item;
 
 			var mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			return mainContainer;
 		}
 
-		public IEnumerable<Type> SupportedTypes() => new Type[] { typeof(CanRebuildObject3D) };
+		public IEnumerable<Type> SupportedTypes() => new Type[] { typeof(IRebuildable) };
 
 		private static FlowLayoutWidget CreateSettingsRow(string labelText)
 		{
@@ -103,6 +103,8 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		private void ModifyObject(View3DWidget view3DWidget, FlowLayoutWidget tabContainer, ThemeConfig theme)
 		{
+			var rebuildable = item as IRebuildable;
+
 			var allowedTypes = new Type[] { typeof(double), typeof(int), typeof(string), typeof(bool) };
 
 			var ownedPropertiesOnly = System.Reflection.BindingFlags.Public
@@ -138,7 +140,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						{
 							property.PropertyInfo.GetSetMethod().Invoke(this.item, new Object[] { editValue });
 						}
-						item.Rebuild();
+						rebuildable?.Rebuild();
 					};
 					rowContainer.AddChild(doubleEditWidget);
 					tabContainer.AddChild(rowContainer);
@@ -159,7 +161,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						{
 							property.PropertyInfo.GetSetMethod().Invoke(this.item, new Object[] { editValue });
 						}
-						item.Rebuild();
+						rebuildable?.Rebuild();
 					};
 					rowContainer.AddChild(intEditWidget);
 					tabContainer.AddChild(rowContainer);
@@ -174,7 +176,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					doubleEditWidget.CheckedStateChanged += (s, e) =>
 					{
 						property.PropertyInfo.GetSetMethod().Invoke(this.item, new Object[] { doubleEditWidget.Checked });
-						item.Rebuild();
+						rebuildable?.Rebuild();
 					};
 					rowContainer.AddChild(doubleEditWidget);
 					tabContainer.AddChild(rowContainer);
@@ -191,7 +193,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					textEditWidget.ActualTextEditWidget.EditComplete += (s, e) =>
 					{
 						property.PropertyInfo.GetSetMethod().Invoke(this.item, new Object[] { textEditWidget.Text });
-						item.Rebuild();
+						rebuildable?.Rebuild();
 					};
 					rowContainer.AddChild(textEditWidget);
 					tabContainer.AddChild(rowContainer);
@@ -203,7 +205,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			updateButton.HAnchor = HAnchor.Right;
 			updateButton.Click += (s, e) =>
 			{
-				item.Rebuild();
+				rebuildable?.Rebuild();
 			};
 			tabContainer.AddChild(updateButton);
 		}

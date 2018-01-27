@@ -157,6 +157,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public ViewControls3D(BedConfig sceneContext, ThemeConfig theme, UndoBuffer undoBuffer, bool isPrinterType)
 			: base (theme)
 		{
+			this.ActionArea.Click += (s, e) =>
+			{
+				view3DWidget.InteractionLayer.Focus();
+			};
+
 			this.printer = sceneContext.Printer;
 			this.IsPrinterMode = isPrinterType;
 			this.sceneContext = sceneContext;
@@ -193,7 +198,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			undoButton.Click += (sender, e) =>
 			{
+				view3DWidget.Scene.SelectedItem = null;
 				undoBuffer.Undo();
+				view3DWidget.InteractionLayer.Focus();
 			};
 			this.AddChild(undoButton);
 
@@ -209,6 +216,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			redoButton.Click += (sender, e) =>
 			{
 				undoBuffer.Redo();
+				view3DWidget.InteractionLayer.Focus();
 			};
 			this.AddChild(redoButton);
 

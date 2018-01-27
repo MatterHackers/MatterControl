@@ -147,6 +147,16 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			CloseSignInAndPrinterSelect,
 		};
 
+		public static void ExpandEditTool(this AutomationRunner testRunner, string expandCheckboxButtonName)
+		{
+			var mirrorPanel = testRunner.GetWidgetByName(expandCheckboxButtonName, out _);
+			var checkBox = mirrorPanel.Children<ExpandCheckboxButton>().FirstOrDefault();
+			if (checkBox?.Checked != true)
+			{
+				testRunner.ClickByName(expandCheckboxButtonName);
+			}
+		}
+
 		public static void Select3DPart(this AutomationRunner testRunner, string partNameToSelect)
 		{
 			if (testRunner.NameExists("3D View Edit", .2))
