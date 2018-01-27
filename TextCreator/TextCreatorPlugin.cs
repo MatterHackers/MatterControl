@@ -48,16 +48,6 @@ namespace MatterHackers.Plugins.EditorTools
 
 			library.RegisterCreator(
 				new GeneratorItem(
-					() => "Text".Localize(), 
-					() =>
-					{
-						var generator = new TextGenerator();
-						return generator.CreateText("Text".Localize(), 1);
-					},
-					category));
-
-			library.RegisterCreator(
-				new GeneratorItem(
 					() => "Braille".Localize(), 
 					() =>
 					{

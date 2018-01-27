@@ -86,6 +86,7 @@
     <Compile Include="ApplicationView\OemProfileDictionary.cs" />
     <Compile Include="ApplicationView\WindowsPlatformsFeatures.cs" />
     <Compile Include="DataStorage\ApplicationDataStorage.cs" />
+    <Compile Include="DesignTools\PackageOperation.cs" />
     <Compile Include="DesignTools\MeshObjects.cs" />
     <Compile Include="DesignTools\PubicPropertyEditor.cs" />
     <Compile Include="PartPreviewWindow\AlignControls.cs" />
@@ -159,7 +160,6 @@
     <Compile Include="PartPreviewWindow\View3D\UndoCommands\MakeSupport.cs" />
     <Compile Include="PartPreviewWindow\View3D\TumbleCubeControl.cs" />
     <Compile Include="PartPreviewWindow\View3D\UndoCommands\DeleteCommand.cs" />
-    <Compile Include="PartPreviewWindow\View3D\UndoCommands\ReplaceCommand.cs" />
     <Compile Include="PartPreviewWindow\View3D\UndoCommands\TransformCommand.cs" />
     <Compile Include="PrinterControls\MacroDetailPage.cs" />
     <Compile Include="PrinterControls\MacroListPage.cs" />

@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		BackTop = Face.Back | Face.Top
 	}
 
-	public class BadSubtract : CanRebuildObject3D
+	public class BadSubtract : Object3D, IRebuildable
 	{
 		public override string ActiveEditor => "PublicPropertyEditor";
 
@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public double Sides { get; set; } = 4;
 
-		public override void Rebuild()
+		public void Rebuild()
 		{
 			int sides = 3;
 			IObject3D keep = new Cylinder(20, 20, sides);
@@ -181,7 +181,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 	}
 
-	public class CardHolder : CanRebuildObject3D
+	public class CardHolder : Object3D, IRebuildable
 	{
 		public override string ActiveEditor => "PublicPropertyEditor";
 
@@ -193,7 +193,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		[DisplayName("Name")]
 		public string NameToWrite { get; set; } = "MatterHackers";
 
-		public override void Rebuild()
+		public void Rebuild()
 		{
 			IObject3D plainCardHolder = Object3D.Load("C:/Temp/CardHolder.stl");
 
@@ -236,7 +236,7 @@ public class ChairFoot2 : MatterCadObject3D
 {
 	public ChairFoot()
 	{
-		RebuildMeshes();
+		Rebuild();
 	}
 
 	[DisplayName("Angle")]
@@ -258,7 +258,7 @@ public class ChairFoot2 : MatterCadObject3D
 	[DisplayName("Outer Size")]
 	public double OuterSize { get; set; } = 22;
 
-	public override void RebuildMeshes()
+	public void Rebuild()
 	{
 		// This would be better expressed as the desired offset height (height from ground to bottom of chair leg).
 		double angleRadians = MathHelper.DegreesToRadians(AngleDegrees);
@@ -328,7 +328,7 @@ public class ChairFoot2 : MatterCadObject3D
 }
 */
 
-	public class CubePrimitive : CanRebuildObject3D
+	public class CubePrimitive : Object3D, IRebuildable
 	{
 		public override string ActiveEditor => "PublicPropertyEditor";
 
@@ -341,7 +341,7 @@ public class ChairFoot2 : MatterCadObject3D
 		public double Depth { get; set; } = 20;
 		public double Height { get; set; } = 20;
 
-		public override void Rebuild()
+		public void Rebuild()
 		{
 			var aabb = AxisAlignedBoundingBox.Zero;
 			if (Mesh != null)
@@ -354,7 +354,7 @@ public class ChairFoot2 : MatterCadObject3D
 		}
 	}
 
-	public class CylinderPrimitive : CanRebuildObject3D
+	public class CylinderPrimitive : Object3D, IRebuildable
 	{
 		public override string ActiveEditor => "PublicPropertyEditor";
 
@@ -367,7 +367,7 @@ public class ChairFoot2 : MatterCadObject3D
 		public double Height { get; set; } = 20;
 		public int Sides { get; set; } = 30;
 
-		public override void Rebuild()
+		public void Rebuild()
 		{
 			var aabb = AxisAlignedBoundingBox.Zero;
 			if (Mesh != null)
@@ -386,7 +386,54 @@ public class ChairFoot2 : MatterCadObject3D
 		}
 	}
 
-	public class ConePrimitive : CanRebuildObject3D
+	public class TextPrimitive : Object3D, IRebuildable
+	{
+		[DisplayName("Name")]
+		public string NameToWrite { get; set; } = "Text";
+
+		public enum Style { Sans, SansBold, Mono };
+		public Style FontStyle = Style.Sans;
+
+		public bool Bold { get; set; } = false;
+		public bool Mono { get; set; } = false;
+
+		public double PointSize { get; set; } = 24;
+
+		public double Height { get; set; } = 5;
+
+		public override string ActiveEditor => "PublicPropertyEditor";
+
+		public TextPrimitive()
+		{
+			Rebuild();
+		}
+
+		public void Rebuild()
+		{
+
+			var letterPrinter = new TypeFacePrinter(NameToWrite, PointSize * 0.352778, bold: Bold);
+
+			if (Mono)
+			{
+				letterPrinter = new TypeFacePrinter(NameToWrite, new StyledTypeFace(ApplicationController.MonoSpacedTypeFace, PointSize * 0.352778));
+			}
+
+
+			IObject3D nameMesh = new Object3D()
+			{
+				Mesh = VertexSourceToMesh.Extrude(letterPrinter, Height)
+			};
+
+			// output two meshes for card holder and text
+			this.Children.Modify(list =>
+			{
+				list.Clear();
+				list.Add(nameMesh);
+			});
+		}
+	}
+
+	public class ConePrimitive : Object3D, IRebuildable
 	{
 		public override string ActiveEditor => "PublicPropertyEditor";
 
@@ -402,7 +449,7 @@ public class ChairFoot2 : MatterCadObject3D
 		public double Height { get; set; } = 20;
 		public int Sides { get; set; } = 30;
 
-		public override void Rebuild()
+		public void Rebuild()
 		{
 			var aabb = AxisAlignedBoundingBox.Zero;
 			if (Mesh != null)
@@ -420,7 +467,7 @@ public class ChairFoot2 : MatterCadObject3D
 		}
 	}
 
-	public class TorusPrimitive : CanRebuildObject3D
+	public class TorusPrimitive : Object3D, IRebuildable
 	{
 		public override string ActiveEditor => "PublicPropertyEditor";
 
@@ -438,7 +485,7 @@ public class ChairFoot2 : MatterCadObject3D
 		[DisplayName("Ring Sides")]
 		public int PoleSides { get; set; } = 16;
 
-		public override void Rebuild()
+		public void Rebuild()
 		{
 			var aabb = AxisAlignedBoundingBox.Zero;
 			if (Mesh != null)
@@ -463,7 +510,7 @@ public class ChairFoot2 : MatterCadObject3D
 			PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
 		}
 	}
-	public class SpherePrimitive : CanRebuildObject3D
+	public class SpherePrimitive : Object3D, IRebuildable
 	{
 		public override string ActiveEditor => "PublicPropertyEditor";
 
@@ -478,7 +525,7 @@ public class ChairFoot2 : MatterCadObject3D
 		[DisplayName("Latitude Sides")]
 		public int LatitudeSides { get; set; } = 20;
 
-		public override void Rebuild()
+		public void Rebuild()
 		{
 			var aabb = AxisAlignedBoundingBox.Zero;
 			if (Mesh != null)
@@ -501,7 +548,7 @@ public class ChairFoot2 : MatterCadObject3D
 		}
 	}
 
-	public class CurveTest : CanRebuildObject3D
+	public class CurveTest : Object3D, IRebuildable
 	{
 		public override string ActiveEditor => "PublicPropertyEditor";
 
@@ -524,7 +571,7 @@ public class ChairFoot2 : MatterCadObject3D
 		[DisplayName("Bend Up")]
 		public bool BendCW { get; set; } = true;
 
-		public override void Rebuild()
+		public void Rebuild()
 		{
 			if (AngleDegrees > 0)
 			{
@@ -573,7 +620,7 @@ public class ChairFoot2 : MatterCadObject3D
 		}
 	}
 
-	public class PinchTest : CanRebuildObject3D
+	public class PinchTest : Object3D, IRebuildable
 	{
 		public override string ActiveEditor => "PublicPropertyEditor";
 
@@ -593,7 +640,7 @@ public class ChairFoot2 : MatterCadObject3D
 		[DisplayName("Back Ratio")]
 		public double PinchRatio { get; set; } = 1;
 
-		public override void Rebuild()
+		public void Rebuild()
 		{
 			var aabb = inputMesh.GetAxisAlignedBoundingBox();
 			for (int i = 0; i < transformedMesh.Vertices.Count; i++)
@@ -618,7 +665,7 @@ public class ChairFoot2 : MatterCadObject3D
 		}
 	}
 
-	public class PvcT : CanRebuildObject3D
+	public class PvcT : Object3D, IRebuildable
 	{
 		public override string ActiveEditor => "PublicPropertyEditor";
 
@@ -641,7 +688,7 @@ public class ChairFoot2 : MatterCadObject3D
 
 		public double TopReach { get; set; } = 30;
 
-		public override void Rebuild()
+		public void Rebuild()
 		{
 			IObject3D topBottomConnect = new Cylinder(OuterDiameter / 2, OuterDiameter, sides, Alignment.Y);
 			IObject3D frontConnect = new Cylinder(OuterDiameter / 2, OuterDiameter / 2, sides, Alignment.X);
@@ -699,7 +746,7 @@ public class ChairFoot2 : MatterCadObject3D
 		}
 	}
 
-	public class RibonWithName : CanRebuildObject3D
+	public class RibonWithName : Object3D, IRebuildable
 	{
 		public override string ActiveEditor => "PublicPropertyEditor";
 
@@ -713,7 +760,7 @@ public class ChairFoot2 : MatterCadObject3D
 		[DisplayName("Name")]
 		public string NameToWrite { get; set; } = "MatterHackers";
 
-		public override void Rebuild()
+		public void Rebuild()
 		{
 			IObject3D cancerRibonStl = Object3D.Load("Cancer_Ribbon.stl", CancellationToken.None);
 
@@ -965,7 +1012,7 @@ public class ChairFoot2 : MatterCadObject3D
 		}
 	}
 
-	public class TestPart : CanRebuildObject3D
+	public class TestPart : Object3D, IRebuildable
 	{
 		public override string ActiveEditor => "PublicPropertyEditor";
 
@@ -976,7 +1023,7 @@ public class ChairFoot2 : MatterCadObject3D
 
 		public double XOffset { get; set; } = -.4;
 
-		public override void Rebuild()
+		public void Rebuild()
 		{
 			IObject3D boxCombine = new Box(10, 10, 10);
 			boxCombine = boxCombine.Minus(new Translate(new Box(10, 10, 10), XOffset, -3, 2));

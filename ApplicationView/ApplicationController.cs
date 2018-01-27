@@ -41,10 +41,7 @@ using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using Newtonsoft.Json;
-using MatterHackers.MatterControl.Library;
 using System.Collections.ObjectModel;
-using MatterHackers.MatterControl;
-using System.Threading;
 
 namespace MatterHackers.MatterControl
 {
@@ -58,13 +55,13 @@ namespace MatterHackers.MatterControl
 	using CustomWidgets;
 	using MatterHackers.Agg.Platform;
 	using MatterHackers.DataConverters3D;
+	using MatterHackers.DataConverters3D.UndoCommands;
 	using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 	using MatterHackers.MatterControl.DesignTools;
 	using MatterHackers.MatterControl.Library;
 	using MatterHackers.MatterControl.PartPreviewWindow;
 	using MatterHackers.MatterControl.PartPreviewWindow.View3D;
 	using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
-	using MatterHackers.MeshVisualizer;
 	using MatterHackers.SerialPortCommunication;
 	using SettingsManagement;
 
@@ -389,6 +386,15 @@ namespace MatterHackers.MatterControl
 			},
 #if DEBUG // keep this work in progress to the editor for now
 			new SceneSelectionSeparator(),
+			new SceneSelectionOperation()
+			{
+				TitleResolver = () => "Package".Localize(),
+				Action = (scene) =>
+				{
+					scene.WrapSelection(new Package());
+				},
+				IsEnabled = (scene) => scene.HasSelection,
+			},
 			new SceneSelectionOperation()
 			{
 				TitleResolver = () => "Proportional Scale".Localize(),

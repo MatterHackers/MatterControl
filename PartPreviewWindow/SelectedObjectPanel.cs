@@ -230,9 +230,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				return;
 			}
 
+			var selectedItemType = selectedItem.GetType();
+
 			editButton.Enabled = (selectedItem.Children.Count > 0);
 
-			inlineTitleEdit.Text = selectedItem.Name ?? selectedItem.GetType().Name;
+			inlineTitleEdit.Text = selectedItem.Name ?? selectedItemType.Name;
 
 			this.item = selectedItem;
 
@@ -241,15 +243,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.Parent.Visible = viewMode == null || viewMode == PartViewMode.Model;
 
 			HashSet<IObject3DEditor> mappedEditors;
-			objectEditorsByType.TryGetValue(selectedItem.GetType(), out mappedEditors);
+			objectEditorsByType.TryGetValue(selectedItemType, out mappedEditors);
 
 			if (mappedEditors == null)
 			{
-				foreach (var editor in objectEditorsByType)
+				foreach (var kvp in objectEditorsByType)
 				{
-					if (selectedItem.GetType().IsSubclassOf(editor.Key))
+					var editorType = kvp.Key;
+
+					if (editorType.IsAssignableFrom(selectedItemType))
 					{
-						mappedEditors = editor.Value;
+						mappedEditors = kvp.Value;
 						break;
 					}
 				}
