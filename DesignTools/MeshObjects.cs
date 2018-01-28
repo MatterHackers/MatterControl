@@ -42,6 +42,7 @@ using MatterHackers.MatterControl.PartPreviewWindow.View3D;
 using MatterHackers.PolygonMesh;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
+using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
@@ -386,16 +387,41 @@ public class ChairFoot2 : MatterCadObject3D
 		}
 	}
 
+	public enum NamedTypeFace { Liberation_Sans, Liberation_Sans_Bold, Liberation_Mono, Titillium, Damion };
+
+	public static class NamedTypeFaceCache
+	{
+		public static TypeFace GetTypeFace(NamedTypeFace Name)
+		{
+			switch (Name)
+			{
+				case NamedTypeFace.Liberation_Sans:
+					return LiberationSansFont.Instance;
+
+				case NamedTypeFace.Liberation_Sans_Bold:
+					return LiberationSansBoldFont.Instance;
+
+				case NamedTypeFace.Liberation_Mono:
+					return ApplicationController.MonoSpacedTypeFace;
+
+				case NamedTypeFace.Titillium:
+					return ApplicationController.TitilliumTypeFace;
+
+				case NamedTypeFace.Damion:
+					return ApplicationController.DamionTypeFace;
+
+				default:
+					return LiberationSansFont.Instance;
+			}
+		}
+	}
+
 	public class TextPrimitive : Object3D, IRebuildable
 	{
 		[DisplayName("Name")]
 		public string NameToWrite { get; set; } = "Text";
 
-		public enum Style { Sans, SansBold, Mono };
-		public Style FontStyle = Style.Sans;
-
-		public bool Bold { get; set; } = false;
-		public bool Mono { get; set; } = false;
+		public NamedTypeFace Font { get; set; } = new NamedTypeFace();
 
 		public double PointSize { get; set; } = 24;
 
@@ -410,14 +436,7 @@ public class ChairFoot2 : MatterCadObject3D
 
 		public void Rebuild()
 		{
-
-			var letterPrinter = new TypeFacePrinter(NameToWrite, PointSize * 0.352778, bold: Bold);
-
-			if (Mono)
-			{
-				letterPrinter = new TypeFacePrinter(NameToWrite, new StyledTypeFace(ApplicationController.MonoSpacedTypeFace, PointSize * 0.352778));
-			}
-
+			var letterPrinter = new TypeFacePrinter(NameToWrite, new StyledTypeFace(NamedTypeFaceCache.GetTypeFace(Font), PointSize * 0.352778));
 
 			IObject3D nameMesh = new Object3D()
 			{
@@ -750,8 +769,6 @@ public class ChairFoot2 : MatterCadObject3D
 	{
 		public override string ActiveEditor => "PublicPropertyEditor";
 
-		private static TypeFace typeFace = null;
-
 		public RibonWithName()
 		{
 			Rebuild();
@@ -760,18 +777,15 @@ public class ChairFoot2 : MatterCadObject3D
 		[DisplayName("Name")]
 		public string NameToWrite { get; set; } = "MatterHackers";
 
+		public NamedTypeFace Font { get; set; } = new NamedTypeFace();
+
 		public void Rebuild()
 		{
 			IObject3D cancerRibonStl = Object3D.Load("Cancer_Ribbon.stl", CancellationToken.None);
 
 			cancerRibonStl = new Rotate(cancerRibonStl, MathHelper.DegreesToRadians(90));
 
-			if (typeFace == null)
-			{
-				typeFace = TypeFace.LoadFrom(AggContext.StaticData.ReadAllText(Path.Combine("Fonts", "TitilliumWeb-Black.svg")));
-			}
-
-			var letterPrinter = new TypeFacePrinter(NameToWrite.ToUpper(), new StyledTypeFace(typeFace, 12));
+			var letterPrinter = new TypeFacePrinter(NameToWrite.ToUpper(), new StyledTypeFace(NamedTypeFaceCache.GetTypeFace(Font), 12));
 
 			IObject3D nameMesh = new Object3D()
 			{

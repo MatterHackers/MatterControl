@@ -55,6 +55,17 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public bool Unlocked { get; } = true;
 
+
+		static Type[] allowedTypes = 
+		{
+			typeof(double), typeof(int), typeof(string), typeof(bool),
+			typeof(NamedTypeFace)
+		};
+
+		static BindingFlags ownedPropertiesOnly = BindingFlags.Public
+			| System.Reflection.BindingFlags.Instance
+			| System.Reflection.BindingFlags.DeclaredOnly;
+
 		public GuiWidget Create(IObject3D item, View3DWidget view3DWidget, ThemeConfig theme)
 		{
 			this.view3DWidget = view3DWidget;
@@ -104,12 +115,6 @@ namespace MatterHackers.MatterControl.DesignTools
 		private void ModifyObject(View3DWidget view3DWidget, FlowLayoutWidget tabContainer, ThemeConfig theme)
 		{
 			var rebuildable = item as IRebuildable;
-
-			var allowedTypes = new Type[] { typeof(double), typeof(int), typeof(string), typeof(bool) };
-
-			var ownedPropertiesOnly = System.Reflection.BindingFlags.Public
-				| System.Reflection.BindingFlags.Instance
-				| System.Reflection.BindingFlags.DeclaredOnly;
 
 			var editableProperties = this.item.GetType().GetProperties(ownedPropertiesOnly)
 				.Where(pi => allowedTypes.Contains(pi.PropertyType)
@@ -196,6 +201,34 @@ namespace MatterHackers.MatterControl.DesignTools
 						rebuildable?.Rebuild();
 					};
 					rowContainer.AddChild(textEditWidget);
+					tabContainer.AddChild(rowContainer);
+				}
+				// create a NamedTypeFace editor
+				else if (property.Value is NamedTypeFace namedTypeFace)
+				{
+					FlowLayoutWidget rowContainer = CreateSettingsRow(property.DisplayName.Localize());
+					var availableFonts = new Dictionary<string, string>();
+					foreach (NamedTypeFace name in Enum.GetValues(typeof(NamedTypeFace)))
+					{
+						availableFonts.Add(name.ToString(), name.ToString().Replace('_', ' '));
+					}
+
+					var dropDownList = new DropDownList("Name".Localize(), theme.Colors.PrimaryTextColor, Direction.Down, pointSize: theme.DefaultFontSize);
+
+					foreach (var fontName in availableFonts.OrderBy((n) => n.Value))
+					{
+						MenuItem newItem = dropDownList.AddItem(fontName.Value);
+
+						var localFontName = fontName;
+						newItem.Selected += (sender, e) =>
+						{
+							NamedTypeFace key = (NamedTypeFace)Enum.Parse(typeof(NamedTypeFace), localFontName.Key);
+							property.PropertyInfo.GetSetMethod().Invoke(this.item, new Object[] { key });
+							rebuildable?.Rebuild();
+						};
+					}
+					dropDownList.SelectedValue = namedTypeFace.ToString().Replace('_', ' ');
+					rowContainer.AddChild(dropDownList);
 					tabContainer.AddChild(rowContainer);
 				}
 			}
