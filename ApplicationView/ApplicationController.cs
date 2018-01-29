@@ -58,6 +58,7 @@ namespace MatterHackers.MatterControl
 	using MatterHackers.DataConverters3D.UndoCommands;
 	using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 	using MatterHackers.MatterControl.DesignTools;
+	using MatterHackers.MatterControl.DesignTools.Operations;
 	using MatterHackers.MatterControl.Library;
 	using MatterHackers.MatterControl.PartPreviewWindow;
 	using MatterHackers.MatterControl.PartPreviewWindow.View3D;
@@ -665,6 +666,34 @@ namespace MatterHackers.MatterControl
 				}
 
 				return monoSpacedTypeFace;
+			}
+		}
+
+		private static TypeFace titilliumTypeFace = null;
+		public static TypeFace TitilliumTypeFace
+		{
+			get
+			{
+				if (titilliumTypeFace == null)
+				{
+					titilliumTypeFace = TypeFace.LoadFrom(AggContext.StaticData.ReadAllText(Path.Combine("Fonts", "TitilliumWeb-Black.svg")));
+				}
+
+				return titilliumTypeFace;
+			}
+		}
+
+		private static TypeFace damionTypeFace = null;
+		public static TypeFace DamionTypeFace
+		{
+			get
+			{
+				if (damionTypeFace == null)
+				{
+					damionTypeFace = TypeFace.LoadFrom(AggContext.StaticData.ReadAllText(Path.Combine("Fonts", "Damion-Regular.svg")));
+				}
+
+				return damionTypeFace;
 			}
 		}
 

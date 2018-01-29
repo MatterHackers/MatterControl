@@ -8,7 +8,7 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.VectorMath;
 using MatterHackers.PolygonMesh;
 
-namespace MatterHackers.MatterControl.DesignTools
+namespace MatterHackers.MatterControl.DesignTools.Operations
 {
 	public class Package : Object3D, IRebuildable
 	{
