@@ -66,7 +66,14 @@ namespace MatterHackers.MatterControl.DesignTools
 	{
 		public TextObject3D()
 		{
-			Rebuild();
+		}
+
+		public static TextObject3D Create()
+		{
+			var item = new TextObject3D();
+
+			item.Rebuild();
+			return item;
 		}
 
 		public override string ActiveEditor => "PublicPropertyEditor";

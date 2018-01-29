@@ -136,30 +136,44 @@ public class ChairFoot2 : MatterCadObject3D
 	{
 		public CubeObject3D()
 		{
-			Rebuild();
-		}
-
-		public CubeObject3D(double x, double y, double z)
-		{
-			Width = x;
-			Depth = y;
-			Height = z;
 		}
 
 		public override string ActiveEditor => "PublicPropertyEditor";
+
 		public double Width { get; set; } = 20;
 		public double Depth { get; set; } = 20;
 		public double Height { get; set; } = 20;
+
+		public static ConeObject3D Create()
+		{
+			var item = new ConeObject3D();
+			item.Rebuild();
+			return item;
+		}
+
+		public static CubeObject3D Create(double x, double y, double z)
+		{
+			var item = new CubeObject3D()
+			{
+				Width = x,
+				Depth = y,
+				Height = z,
+			};
+
+			item.Rebuild();
+			return item;
+		}
 
 		public void Rebuild()
 		{
 			var aabb = AxisAlignedBoundingBox.Zero;
 			if (Mesh != null)
 			{
+				// Keep track of the mesh height so it does not move around unexpectedly
 				this.GetAxisAlignedBoundingBox();
 			}
 			Mesh = PlatonicSolids.CreateCube(Width, Depth, Height);
-			Mesh.CleanAndMergMesh(CancellationToken.None);
+			Mesh.CleanAndMeregMesh(CancellationToken.None);
 			PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
 		}
 	}

@@ -42,23 +42,26 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public CylinderAdvancedObject3D()
 		{
-			Rebuild();
 		}
 
-		public CylinderAdvancedObject3D(double radius, double height, int sides, Alignment alignment = Alignment.Z)
-					: this(radius, radius, height, sides, alignment)
+		public static CylinderAdvancedObject3D Create(double radius, double height, int sides, Alignment alignment = Alignment.Z)
 		{
+			return Create(radius, radius, height, sides, alignment);
 		}
 
-		public CylinderAdvancedObject3D(double radiusBottom, double radiusTop, double height, int sides, Alignment alignment = Alignment.Z)
+		public static CylinderAdvancedObject3D Create(double radiusBottom, double radiusTop, double height, int sides, Alignment alignment = Alignment.Z)
 		{
-			RadiusBottom = radiusBottom;
-			RadiusTop = radiusTop;
-			Height = height;
-			Sides = sides;
-			Alignment = alignment;
+			var item = new CylinderAdvancedObject3D()
+			{
+				RadiusBottom = radiusBottom,
+				RadiusTop = radiusTop,
+				Height = height,
+				Sides = sides,
+				Alignment = alignment,
+			};
 
-			Rebuild();
+			item.Rebuild();
+			return item;
 		}
 
 		public Alignment Alignment { get; set; } = Alignment.Z;
@@ -72,6 +75,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			var aabb = AxisAlignedBoundingBox.Zero;
 			if (Mesh != null)
 			{
+				// Keep track of the mesh height so it does not move around unexpectedly
 				this.GetAxisAlignedBoundingBox();
 			}
 
@@ -104,7 +108,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					break;
 			}
 
-			Mesh.CleanAndMergMesh(CancellationToken.None);
+			Mesh.CleanAndMeregMesh(CancellationToken.None);
 			PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
 		}
 	}

@@ -45,8 +45,8 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public void Rebuild()
 		{
-			IObject3D boxCombine = new CubeObject3D(10, 10, 10);
-			boxCombine = boxCombine.Minus(new Translate(new CubeObject3D(10, 10, 10), XOffset, -3, 2));
+			IObject3D boxCombine = CubeObject3D.Create(10, 10, 10);
+			boxCombine = boxCombine.Minus(new Translate(CubeObject3D.Create(10, 10, 10), XOffset, -3, 2));
 			this.SetChildren(boxCombine);
 		}
 	}

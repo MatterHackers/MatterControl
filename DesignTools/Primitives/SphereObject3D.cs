@@ -41,7 +41,14 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public SphereObject3D()
 		{
-			Rebuild();
+		}
+
+		public static SphereObject3D Create()
+		{
+			var item = new SphereObject3D();
+
+			item.Rebuild();
+			return item;
 		}
 
 		public double Diameter { get; set; } = 20;
@@ -55,6 +62,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			var aabb = AxisAlignedBoundingBox.Zero;
 			if (Mesh != null)
 			{
+				// Keep track of the mesh height so it does not move around unexpectedly
 				this.GetAxisAlignedBoundingBox();
 			}
 			var path = new VertexStorage();

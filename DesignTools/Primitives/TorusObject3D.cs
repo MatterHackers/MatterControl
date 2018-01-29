@@ -43,7 +43,13 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public TorusObject3D()
 		{
-			Rebuild();
+		}
+
+		public static TorusObject3D Create()
+		{
+			var item = new TorusObject3D();
+			item.Rebuild();
+			return item;
 		}
 
 		[DisplayName("Inner Diameter")]
@@ -60,6 +66,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			var aabb = AxisAlignedBoundingBox.Zero;
 			if (Mesh != null)
 			{
+				// Keep track of the mesh height so it does not move around unexpectedly
 				this.GetAxisAlignedBoundingBox();
 			}
 			var poleRadius = (OuterDiameter / 2 - InnerDiameter / 2) / 2;
@@ -76,7 +83,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 
 			Mesh = VertexSourceToMesh.Revolve(path, ToroidSides);
-			Mesh.CleanAndMergMesh(CancellationToken.None);
+			Mesh.CleanAndMeregMesh(CancellationToken.None);
 			PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
 		}
 	}

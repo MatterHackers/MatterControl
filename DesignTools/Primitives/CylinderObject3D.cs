@@ -41,7 +41,14 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public CylinderObject3D()
 		{
-			Rebuild();
+		}
+
+		public static CylinderObject3D Create()
+		{
+			var item = new CylinderObject3D();
+
+			item.Rebuild();
+			return item;
 		}
 
 		public double Diameter { get; set; } = 20;
@@ -53,6 +60,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			var aabb = AxisAlignedBoundingBox.Zero;
 			if (Mesh != null)
 			{
+				// Keep track of the mesh height so it does not move around unexpectedly
 				this.GetAxisAlignedBoundingBox();
 			}
 			var path = new VertexStorage();
@@ -62,7 +70,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			path.LineTo(0, Height);
 
 			Mesh = VertexSourceToMesh.Revolve(path, Sides);
-			Mesh.CleanAndMergMesh(CancellationToken.None);
+			Mesh.CleanAndMeregMesh(CancellationToken.None);
 			PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
 		}
 	}
