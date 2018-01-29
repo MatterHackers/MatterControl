@@ -58,6 +58,7 @@ namespace MatterHackers.MatterControl
 	using MatterHackers.DataConverters3D.UndoCommands;
 	using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 	using MatterHackers.MatterControl.DesignTools;
+	using MatterHackers.MatterControl.DesignTools.Operations;
 	using MatterHackers.MatterControl.Library;
 	using MatterHackers.MatterControl.PartPreviewWindow;
 	using MatterHackers.MatterControl.PartPreviewWindow.View3D;
