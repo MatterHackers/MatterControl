@@ -72,7 +72,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			path.LineTo(0, Height);
 
 			Mesh = VertexSourceToMesh.Revolve(path, Sides);
-			Mesh.CleanAndMeregMesh(CancellationToken.None);
+			Mesh.CleanAndMergeMesh(CancellationToken.None);
 			PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
 		}
 	}

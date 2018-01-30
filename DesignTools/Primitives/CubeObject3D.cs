@@ -173,7 +173,7 @@ public class ChairFoot2 : MatterCadObject3D
 				this.GetAxisAlignedBoundingBox();
 			}
 			Mesh = PlatonicSolids.CreateCube(Width, Depth, Height);
-			Mesh.CleanAndMeregMesh(CancellationToken.None);
+			Mesh.CleanAndMergeMesh(CancellationToken.None);
 			PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
 		}
 	}
