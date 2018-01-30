@@ -60,12 +60,8 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public void Rebuild()
 		{
-			var aabb = AxisAlignedBoundingBox.Zero;
-			if (Mesh != null)
-			{
-				// Keep track of the mesh height so it does not move around unexpectedly
-				this.GetAxisAlignedBoundingBox();
-			}
+			var aabb = this.GetAxisAlignedBoundingBox();
+
 			var path = new VertexStorage();
 			path.MoveTo(0, 0);
 			path.LineTo(Diameter / 2, 0);
@@ -73,7 +69,11 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			Mesh = VertexSourceToMesh.Revolve(path, Sides);
 			Mesh.CleanAndMergeMesh(CancellationToken.None);
-			PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
+			if (aabb.ZSize > 0)
+			{
+				// If the part was already created and at a height, maintain the height.
+				PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
+			}
 		}
 	}
 }
