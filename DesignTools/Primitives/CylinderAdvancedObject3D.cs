@@ -108,7 +108,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					break;
 			}
 
-			Mesh.CleanAndMeregMesh(CancellationToken.None);
+			Mesh.CleanAndMergeMesh(CancellationToken.None);
 			PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
 		}
 	}

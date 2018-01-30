@@ -484,7 +484,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			boxB.Transform(transformB);
 
 			Mesh meshToAdd = meshOperation(boxA, boxB);
-			meshToAdd.CleanAndMeregMesh(CancellationToken.None);
+			meshToAdd.CleanAndMergeMesh(CancellationToken.None);
 
 			if (aabbOperation != null)
 			{
