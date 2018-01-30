@@ -46,8 +46,8 @@ namespace MatterHackers.MatterControl.DesignTools
 		public void Rebuild()
 		{
 			int sides = 3;
-			IObject3D keep = new CylinderAdvancedObject3D(20, 20, sides);
-			IObject3D subtract = new CylinderAdvancedObject3D(10, 21, sides);
+			IObject3D keep = CylinderAdvancedObject3D.Create(20, 20, sides);
+			IObject3D subtract = CylinderAdvancedObject3D.Create(10, 21, sides);
 			subtract = new SetCenter(subtract, keep.GetCenter());
 			IObject3D result = keep.Minus(subtract);
 			this.SetChildren(result);

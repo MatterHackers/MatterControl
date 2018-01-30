@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private static Dictionary<Mesh, MeshPrintOutputSettings> meshPrintOutputSettings = new Dictionary<Mesh, MeshPrintOutputSettings>();
 
 		public static List<bool> extrudersUsed = new List<bool>();
-		public static bool runInProcess = false;
+		public static bool runInProcess = true;
 
 		private static Process slicerProcess = null;
 

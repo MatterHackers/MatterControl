@@ -40,7 +40,14 @@ namespace MatterHackers.MatterControl.DesignTools
 	{
 		public PyramidObject3D()
 		{
-			Rebuild();
+		}
+
+		public static PyramidObject3D Create()
+		{
+			var item = new PyramidObject3D();
+
+			item.Rebuild();
+			return item;
 		}
 
 		public override string ActiveEditor => "PublicPropertyEditor";
@@ -53,9 +60,9 @@ namespace MatterHackers.MatterControl.DesignTools
 			var aabb = AxisAlignedBoundingBox.Zero;
 			if (Mesh != null)
 			{
+				// Keep track of the mesh height so it does not move around unexpectedly
 				this.GetAxisAlignedBoundingBox();
 			}
-			Mesh = PlatonicSolids.CreateCube(Width, Depth, Height);
 
 			var path = new VertexStorage();
 			path.MoveTo(0, 0);
@@ -65,7 +72,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			Mesh = VertexSourceToMesh.Revolve(path, 4);
 			Mesh.Transform(Matrix4X4.CreateRotationZ(MathHelper.DegreesToRadians(45)) * Matrix4X4.CreateScale(Width / 2, Depth / 2, 1));
 
-			Mesh.CleanAndMergMesh(CancellationToken.None);
+			Mesh.CleanAndMeregMesh(CancellationToken.None);
 			PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
 		}
 	}

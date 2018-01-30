@@ -62,8 +62,8 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public void Rebuild()
 		{
-			IObject3D topBottomConnect = new CylinderAdvancedObject3D(OuterDiameter / 2, OuterDiameter, sides, Alignment.Y);
-			IObject3D frontConnect = new CylinderAdvancedObject3D(OuterDiameter / 2, OuterDiameter / 2, sides, Alignment.X);
+			IObject3D topBottomConnect = CylinderAdvancedObject3D.Create(OuterDiameter / 2, OuterDiameter, sides, Alignment.Y);
+			IObject3D frontConnect = CylinderAdvancedObject3D.Create(OuterDiameter / 2, OuterDiameter / 2, sides, Alignment.X);
 			frontConnect = new Align(frontConnect, Face.Right, topBottomConnect, Face.Right);
 
 			IObject3D bottomReach = new Rotate(CreateReach(BottomReach), -MathHelper.Tau / 4);
