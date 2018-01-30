@@ -89,6 +89,8 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public void Rebuild()
 		{
+			var aabb = this.GetAxisAlignedBoundingBox();
+
 			var letterPrinter = new TypeFacePrinter(NameToWrite, new StyledTypeFace(NamedTypeFaceCache.GetTypeFace(Font), PointSize * 0.352778));
 
 			IObject3D nameMesh = new Object3D()
@@ -102,6 +104,11 @@ namespace MatterHackers.MatterControl.DesignTools
 				list.Clear();
 				list.Add(nameMesh);
 			});
+			if (aabb.ZSize > 0)
+			{
+				// If the part was already created and at a height, maintain the height.
+				PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
+			}
 		}
 	}
 }

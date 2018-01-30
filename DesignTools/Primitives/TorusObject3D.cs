@@ -63,12 +63,8 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public void Rebuild()
 		{
-			var aabb = AxisAlignedBoundingBox.Zero;
-			if (Mesh != null)
-			{
-				// Keep track of the mesh height so it does not move around unexpectedly
-				this.GetAxisAlignedBoundingBox();
-			}
+			var aabb = this.GetAxisAlignedBoundingBox();
+
 			var poleRadius = (OuterDiameter / 2 - InnerDiameter / 2) / 2;
 			var toroidRadius = InnerDiameter / 2 + poleRadius;
 			var path = new VertexStorage();
@@ -84,7 +80,11 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			Mesh = VertexSourceToMesh.Revolve(path, ToroidSides);
 			Mesh.CleanAndMergeMesh(CancellationToken.None);
-			PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
+			if (aabb.ZSize > 0)
+			{
+				// If the part was already created and at a height, maintain the height.
+				PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
+			}
 		}
 	}
 }
