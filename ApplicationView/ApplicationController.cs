@@ -489,6 +489,8 @@ namespace MatterHackers.MatterControl
 
 		public LibraryConfig Library { get; }
 
+		public GraphConfig Graph { get; }
+
 		private void InitializeLibrary()
 		{
 			if (Directory.Exists(ApplicationDataStorage.Instance.DownloadsDirectory))
@@ -590,6 +592,7 @@ namespace MatterHackers.MatterControl
 			Object3D.AssetsPath = ApplicationDataStorage.Instance.LibraryAssetsPath;
 
 			this.Library = new LibraryConfig();
+			this.Graph = new GraphConfig();
 			this.Library.ContentProviders.Add(new[] { "stl", "obj", "amf", "mcx" }, new MeshContentProvider());
 			this.Library.ContentProviders.Add("gcode", new GCodeContentProvider());
 

@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public InteractionLayer InteractionLayer { get; }
 
-		private BedConfig sceneContext;
+		public BedConfig sceneContext;
 
 		private PrinterConfig printer;
 
