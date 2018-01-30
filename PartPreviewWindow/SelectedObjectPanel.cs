@@ -37,6 +37,8 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.Library;
+using MatterHackers.MatterControl.DesignTools;
+using MatterHackers.MatterControl.DesignTools.Operations;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -52,6 +54,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private Dictionary<Type, HashSet<IObject3DEditor>> objectEditorsByType;
 		private SectionWidget editorSection;
 		private TextButton editButton;
+		private TextButton removeButton;
+
 		private GuiWidget editorPanel;
 		private InlineTitleEdit inlineTitleEdit;
 
@@ -155,8 +159,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			toolbar.AddChild(editButton);
 
+			removeButton = new TextButton("Remove".Localize(), theme)
+			{
+				BackgroundColor = theme.MinimalShade,
+				Margin = theme.ButtonSpacing
+			};
+			removeButton.Click += async (s, e) =>
+			{
+				this.item.Unwrap(printer.Bed);
+			};
+			toolbar.AddChild(removeButton);
+
+
 			// Add container used to host the current specialized editor for the selection
-			editorColumn.AddChild(editorPanel = new GuiWidget()
+			editorColumn.AddChild(editorPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit,
@@ -321,6 +337,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
+		private class OperationButton :TextButton
+		{
+			private GraphOperation graphOperation;
+			private IObject3D sceneItem;
+
+			public OperationButton(GraphOperation graphOperation, IObject3D sceneItem, ThemeConfig theme)
+				: base(graphOperation.Title, theme)
+			{
+				this.graphOperation = graphOperation;
+				this.sceneItem = sceneItem;
+			}
+
+			public void EnsureAvailablity()
+			{
+				this.Enabled = graphOperation.IsEnabled(sceneItem);
+			}
+		}
+
 		private void ShowObjectEditor(IObject3DEditor editor)
 		{
 			editorPanel.CloseAllChildren();
@@ -330,12 +364,57 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				return;
 			}
 
-			var editorWidget = editor.Create(scene.SelectedItem, view3DWidget, theme);
+			var selectedItem = scene.SelectedItem;
+
+			var editorWidget = editor.Create(selectedItem, view3DWidget, theme);
 			editorWidget.HAnchor = HAnchor.Stretch;
 			editorWidget.VAnchor = VAnchor.Fit;
 			editorWidget.Padding = 0;
 
 			editorPanel.AddChild(editorWidget);
+
+			var toolbar = new Toolbar()
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit,
+				Padding = theme.ToolbarPadding,
+				Margin = new BorderDouble(0, 8)
+			};
+
+			var selectedItemType = selectedItem.GetType();
+
+			foreach(var graphOperation in ApplicationController.Instance.Graph.Operations)
+			{
+				foreach(var type in graphOperation.MappedTypes)
+				{
+					if (type.IsAssignableFrom(selectedItemType))
+					{
+						var button = new OperationButton(graphOperation, selectedItem, theme);
+						button.BackgroundColor = theme.MinimalShade;
+						button.EnsureAvailablity();
+						button.Click += (s, e) =>
+						{
+							graphOperation.Operation(selectedItem).ConfigureAwait(false);
+						};
+
+						toolbar.AddChild(button);
+					}
+				}
+			}
+
+			if (toolbar.Children.Any())
+			{
+				editorPanel.AddChild(toolbar);
+			}
+
+			// TODO: Fix likely leak
+			selectedItem.Invalidated += (s, e) =>
+			{
+				foreach (var button in toolbar.ActionArea.Children.OfType<OperationButton>())
+				{
+					button.EnsureAvailablity();
+				}
+			};
 		}
 
 		public void Save(ILibraryItem item, IObject3D content)

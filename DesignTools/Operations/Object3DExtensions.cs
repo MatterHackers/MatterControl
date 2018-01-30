@@ -63,6 +63,39 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			return resultsA;
 		}
 
+		public static void WrapWith(this IObject3D originalItem, IObject3D wrapper, BedConfig sceneContext)
+		{
+			originalItem.Parent.Children.Modify(list =>
+			{
+				list.Remove(originalItem);
+
+				wrapper.Matrix = originalItem.Matrix;
+
+				originalItem.Matrix = Matrix4X4.Identity;
+				wrapper.Children.Add(originalItem);
+
+				list.Add(wrapper);
+			});
+
+			sceneContext.Scene.SelectedItem = wrapper;
+		}
+
+		public static void Unwrap(this IObject3D item, BedConfig sceneContext)
+		{
+			foreach (var child in item.Children)
+			{
+				child.Matrix *= item.Matrix;
+			}
+
+			item.Parent.Children.Modify(list =>
+			{
+				list.Remove(item);
+				list.AddRange(item.Children);
+			});
+
+			sceneContext.Scene.SelectedItem = null;
+		}
+
 		public static Vector3 GetCenter(this IObject3D item)
 		{
 			return item.GetAxisAlignedBoundingBox(Matrix4X4.Identity).Center;
