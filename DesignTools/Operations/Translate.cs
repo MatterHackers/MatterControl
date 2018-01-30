@@ -35,7 +35,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 	public class Translate : Object3D
 	{
 		public Translate()
-		{ }
+		{
+		}
 
 		public Translate(IObject3D item, double x = 0, double y = 0, double z = 0)
 			: this(item, new Vector3(x, y, z))

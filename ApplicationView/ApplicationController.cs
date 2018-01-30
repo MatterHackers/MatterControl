@@ -615,6 +615,63 @@ namespace MatterHackers.MatterControl
 				}
 			}, ref unregisterEvents);
 
+			PrinterConnection.DoDelayedTurnOffHeat.RegisterEvent((s, e) =>
+			{
+				var printerConnection = ApplicationController.Instance.ActivePrinter.Connection;
+				bool anyHeatersAreOn = false;
+				for (int i=0; i<printerConnection.ExtruderCount; i++)
+				{
+					anyHeatersAreOn |= printerConnection.GetTargetHotendTemperature(i) != 0;
+				}
+				anyHeatersAreOn |= printerConnection.TargetBedTemperature != 0;
+
+				if (anyHeatersAreOn)
+				{
+					bool continueWaiting = true;
+					Tasks.Execute((reporter, cancellationToken) =>
+					{
+						EventHandler cancel = (s2, e2) => { continueWaiting = false; };
+						printerConnection.BedTemperatureSet.RegisterEvent(cancel, ref unregisterEvent);
+						printerConnection.HotendTemperatureSet.RegisterEvent(cancel, ref unregisterEvent);
+						EventHandler stateChanged = (s2, e2) =>
+						{
+							if (printerConnection.CommunicationState == CommunicationStates.PreparingToPrint)
+							{
+								continueWaiting = false;
+							};
+						};
+						printerConnection.CommunicationStateChanged.RegisterEvent(stateChanged, ref unregisterEvent);
+
+						Stopwatch time = Stopwatch.StartNew();
+
+						var progressStatus = new ProgressStatus();
+
+						int secondsToWait = 60;
+						while (time.Elapsed.TotalSeconds < secondsToWait
+							&& !cancellationToken.IsCancellationRequested
+							&& continueWaiting)
+						{
+							reporter.Report(progressStatus);
+							progressStatus.Status = "Turn Off Heat in".Localize() + " " + (60 - time.Elapsed.TotalSeconds).ToString("0");
+							Thread.Sleep(100);
+						}
+
+						if (!cancellationToken.IsCancellationRequested
+							&& continueWaiting)
+						{
+							printerConnection.TurnOffBedAndExtruders(true);
+						}
+
+						printerConnection.BedTemperatureSet.UnregisterEvent(cancel, ref unregisterEvent);
+						printerConnection.HotendTemperatureSet.UnregisterEvent(cancel, ref unregisterEvent);
+						printerConnection.CommunicationStateChanged.UnregisterEvent(stateChanged, ref unregisterEvent);
+
+						return Task.CompletedTask;
+					});
+				}
+			}, ref unregisterEvents);
+
+
 			PrinterConnection.ErrorReported.RegisterEvent((s, e) =>
 			{
 				var foundStringEventArgs = e as FoundStringEventArgs;
