@@ -98,7 +98,8 @@ namespace MatterHackers.MatterControl
 			}
 			else
 			{
-				editContext.Content = await editContext.SourceItem.CreateContent(null);
+				// Load last item or fall back to empty if unsuccessful
+				editContext.Content = await editContext.SourceItem.CreateContent(null) ?? new Object3D();
 				this.Scene.Load(editContext.Content);
 				this.EditableScene = true;
 			}
