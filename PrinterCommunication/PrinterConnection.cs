@@ -75,6 +75,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 	/// </summary>
 	public class PrinterConnection
 	{
+		public static RootedObjectEventHandler DoDelayedTurnOffHeat = new RootedObjectEventHandler();
 		public static RootedObjectEventHandler ErrorReported = new RootedObjectEventHandler();
 
 		public static RootedObjectEventHandler AnyCommunicationStateChanged = new RootedObjectEventHandler();
@@ -210,7 +211,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private bool stopTryingToConnect = false;
 
-		private double targetBedTemperature;
+		private double _targetBedTemperature;
 
 		private double[] targetHotendTemperature = new double[MAX_EXTRUDERS];
 
@@ -421,7 +422,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					case CommunicationStates.Disconnected:
 						if (communicationPossible)
 						{
-							TurnOffBedAndExtruders();
+							TurnOffBedAndExtruders(true);
 							for (int hotendIndex = 0; hotendIndex < MAX_EXTRUDERS; hotendIndex++)
 							{
 								actualHotendTemperature[hotendIndex] = 0;
@@ -765,17 +766,17 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			get
 			{
-				return targetBedTemperature;
+				return _targetBedTemperature;
 			}
 			set
 			{
-				if (targetBedTemperature != value)
+				if (_targetBedTemperature != value)
 				{
-					targetBedTemperature = value;
+					_targetBedTemperature = value;
 					OnBedTemperatureSet(new TemperatureEventArgs(0, TargetBedTemperature));
 					if (PrinterIsConnected)
 					{
-						QueueLine("M140 S{0}".FormatWith(targetBedTemperature));
+						QueueLine("M140 S{0}".FormatWith(_targetBedTemperature));
 					}
 				}
 			}
@@ -835,7 +836,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					if (TargetBedTemperature != tempBeingSet)
 					{
 						// we set the private variable so that we don't get the callbacks called and get in a loop of setting the temp
-						targetBedTemperature = tempBeingSet;
+						_targetBedTemperature = tempBeingSet;
 						OnBedTemperatureSet(new TemperatureEventArgs(0, TargetBedTemperature));
 					}
 				}
@@ -970,7 +971,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 										CreateStreamProcessors(null, false);
 
-										TurnOffBedAndExtruders(); // make sure our ui and the printer agree and that the printer is in a known state (not heating).
+										TurnOffBedAndExtruders(true); // make sure our ui and the printer agree and that the printer is in a known state (not heating).
 										haveReportedError = false;
 
 										QueueLine(this.ConnectGCode);
@@ -1056,7 +1057,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				// the motors and heaters (a good idea and something for the future).
 				forceImmediateWrites = true;
 				ReleaseMotors();
-				TurnOffBedAndExtruders();
+				TurnOffBedAndExtruders(true);
 				FanSpeed0To255 = 0;
 				forceImmediateWrites = false;
 
@@ -1073,7 +1074,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			else
 			{
 				//Need to reset UI - even if manual disconnect
-				TurnOffBedAndExtruders();
+				TurnOffBedAndExtruders(true);
 				FanSpeed0To255 = 0;
 			}
 			OnEnabledChanged(null);
@@ -2086,7 +2087,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			this.PrintJobName = null;
 
 			// never leave the extruder and the bed hot
-			TurnOffBedAndExtruders();
+			TurnOffBedAndExtruders(false);
 
 			ReleaseMotors();
 		}
@@ -2422,7 +2423,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						CommunicationState = CommunicationStates.Connected;
 						// never leave the extruder and the bed hot
 						ReleaseMotors();
-						TurnOffBedAndExtruders();
+						TurnOffBedAndExtruders(false);
 						this.PrintWasCanceled = false;
 					}
 					else if (communicationState == CommunicationStates.Printing)// we finished printing normally
@@ -2436,19 +2437,26 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 						// never leave the extruder and the bed hot
 						ReleaseMotors();
-						TurnOffBedAndExtruders();
+						TurnOffBedAndExtruders(false);
 					}
 				}
 			}
 		}
 
-		private void TurnOffBedAndExtruders()
+		public void TurnOffBedAndExtruders(bool now)
 		{
-			for (int i = 0; i < this.ExtruderCount; i++)
+			if (now)
 			{
-				SetTargetHotendTemperature(i, 0, true);
+				for (int i = 0; i < this.ExtruderCount; i++)
+				{
+					SetTargetHotendTemperature(i, 0, true);
+				}
+				TargetBedTemperature = 0;
 			}
-			TargetBedTemperature = 0;
+			else
+			{
+				DoDelayedTurnOffHeat.CallEvents(this, null);
+			}
 		}
 
 		// this is to make it misbehave, chaos monkey, bad checksum
