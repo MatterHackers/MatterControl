@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private static Dictionary<Mesh, MeshPrintOutputSettings> meshPrintOutputSettings = new Dictionary<Mesh, MeshPrintOutputSettings>();
 
 		public static List<bool> extrudersUsed = new List<bool>();
-		public static bool runInProcess = true;
+		public static bool runInProcess = false;
 
 		private static Process slicerProcess = null;
 
@@ -289,6 +289,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					{
 						EventHandler WriteOutput = (s, e) =>
 						{
+							if(cancellationToken.IsCancellationRequested)
+							{
+								MatterSlice.MatterSlice.Stop();
+							}
 							if (s is string stringValue)
 							{
 								progressReporter?.Report(new ProgressStatus()
@@ -303,7 +307,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						MatterSlice.MatterSlice.ProcessArgs(commandArgs);
 
 						MatterSlice.LogOutput.GetLogWrites -= WriteOutput;
-
 					}
 					else
 					{
@@ -323,6 +326,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 						slicerProcess.OutputDataReceived += (s, e) =>
 						{
+							if(cancellationToken.IsCancellationRequested)
+							{
+								slicerProcess?.Kill();
+								slicerProcess?.Dispose();
+								slicerProcess = null;
+							}
 							if (e.Data is string stringValue)
 							{
 								string message = stringValue.Replace("=>", "").Trim();
