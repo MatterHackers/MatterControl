@@ -60,9 +60,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			typeof(NamedTypeFace)
 		};
 
-		static BindingFlags ownedPropertiesOnly = BindingFlags.Public
-			| System.Reflection.BindingFlags.Instance
-			| System.Reflection.BindingFlags.DeclaredOnly;
+		public const BindingFlags OwnedPropertiesOnly = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
 
 		public GuiWidget Create(IObject3D item, View3DWidget view3DWidget, ThemeConfig theme)
 		{
@@ -114,7 +112,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			var rebuildable = item as IRebuildable;
 
-			var editableProperties = this.item.GetType().GetProperties(ownedPropertiesOnly)
+			var editableProperties = this.item.GetType().GetProperties(OwnedPropertiesOnly)
 				.Where(pi => allowedTypes.Contains(pi.PropertyType)
 					&& pi.GetGetMethod() != null
 					&& pi.GetSetMethod() != null)
