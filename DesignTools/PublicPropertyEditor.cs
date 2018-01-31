@@ -38,7 +38,6 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
@@ -47,14 +46,13 @@ namespace MatterHackers.MatterControl.DesignTools
 		void Rebuild();
 	}
 
-	public class PubicPropertyEditor : IObject3DEditor
+	public class PublicPropertyEditor : IObject3DEditor
 	{
 		private IObject3D item;
 		private View3DWidget view3DWidget;
 		public string Name => "Property Editor";
 
 		public bool Unlocked { get; } = true;
-
 
 		static Type[] allowedTypes = 
 		{

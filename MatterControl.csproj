@@ -96,6 +96,7 @@
     <Compile Include="DesignTools\Primitives\SphereObject3D.cs" />
     <Compile Include="DesignTools\Primitives\TextObject3D.cs" />
     <Compile Include="DesignTools\Primitives\TorusObject3D.cs" />
+    <Compile Include="DesignTools\PublicPropertyEditor.cs" />
     <Compile Include="DesignTools\TestParts\TestPart.cs" />
     <Compile Include="DesignTools\TestParts\RibonWithName.cs" />
     <Compile Include="DesignTools\TestParts\PvcT.cs" />
@@ -107,7 +108,6 @@
     <Compile Include="DesignTools\TestParts\BadSubtract.cs" />
     <Compile Include="DesignTools\TestParts\CardHolder.cs" />
     <Compile Include="DesignTools\Operations\Package.cs" />
-    <Compile Include="DesignTools\PubicPropertyEditor.cs" />
     <Compile Include="DesignTools\Operations\Translate.cs" />
     <Compile Include="Library\Providers\GraphConfig.cs" />
     <Compile Include="PartPreviewWindow\AlignControls.cs" />
