@@ -60,7 +60,8 @@ namespace MatterHackers.MatterControl.Library
 			this.ChildContainers = new List<ILibraryContainerLink>();
 			this.Items = new List<ILibraryItem>();
 #if !__ANDROID__
-			if (AggContext.OperatingSystem == OSType.Windows)
+			if (AggContext.OperatingSystem == OSType.Windows
+				&& Directory.Exists(path))
 			{
 				directoryWatcher = new FileSystemWatcher(path);
 				directoryWatcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName;
