@@ -128,6 +128,7 @@ namespace MatterHackers.MatterControl.Library
 			if (isActiveContainer)
 			{
 				this.Load(false);
+				this.OnContentChanged();
 			}
 		}
 
