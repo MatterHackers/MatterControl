@@ -295,6 +295,7 @@ namespace MatterHackers.MatterControl.Library
 						MeshFileIo.Save(
 							new List<MeshGroup> { loadedItem.Flatten() }, 
 							printItem.FileLocation,
+							CancellationToken.None,
 							new MeshOutputSettings(MeshOutputSettings.OutputType.Binary, metaData));
 
 						printItem.Commit();

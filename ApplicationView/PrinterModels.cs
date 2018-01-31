@@ -380,9 +380,12 @@ namespace MatterHackers.MatterControl
 
 		public void LoadGCode(string filePath, CancellationToken cancellationToken, Action<double, string> progressReporter)
 		{
-			using (var stream = File.OpenRead(filePath))
+			if (File.Exists(filePath))
 			{
-				this.LoadGCode(stream, cancellationToken, progressReporter);
+				using (var stream = File.OpenRead(filePath))
+				{
+					this.LoadGCode(stream, cancellationToken, progressReporter);
+				}
 			}
 		}
 
