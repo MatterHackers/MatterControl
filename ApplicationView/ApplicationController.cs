@@ -615,7 +615,7 @@ namespace MatterHackers.MatterControl
 				}
 			}, ref unregisterEvents);
 
-			PrinterConnection.DoDelayedTurnOffHeat.RegisterEvent((s, e) =>
+			PrinterConnection.HeatTurningOffSoon.RegisterEvent((s, e) =>
 			{
 				var printerConnection = ApplicationController.Instance.ActivePrinter.Connection;
 				bool anyHeatersAreOn = false;
@@ -627,43 +627,43 @@ namespace MatterHackers.MatterControl
 
 				if (anyHeatersAreOn)
 				{
-					bool continueWaiting = true;
 					Tasks.Execute((reporter, cancellationToken) =>
 					{
-						EventHandler cancel = (s2, e2) => { continueWaiting = false; };
-						printerConnection.BedTemperatureSet.RegisterEvent(cancel, ref unregisterEvent);
-						printerConnection.HotendTemperatureSet.RegisterEvent(cancel, ref unregisterEvent);
+						EventHandler heatChanged = (s2, e2) => 
+						{
+							printerConnection.ContinuWaitingToTurnOffHeaters = false;
+						};
 						EventHandler stateChanged = (s2, e2) =>
 						{
 							if (printerConnection.CommunicationState == CommunicationStates.PreparingToPrint)
 							{
-								continueWaiting = false;
+								printerConnection.ContinuWaitingToTurnOffHeaters = false;
 							};
 						};
-						printerConnection.CommunicationStateChanged.RegisterEvent(stateChanged, ref unregisterEvent);
 
-						Stopwatch time = Stopwatch.StartNew();
+						printerConnection.BedTemperatureSet.RegisterEvent(heatChanged, ref unregisterEvent);
+						printerConnection.HotendTemperatureSet.RegisterEvent(heatChanged, ref unregisterEvent);
+						printerConnection.CommunicationStateChanged.RegisterEvent(stateChanged, ref unregisterEvent);
 
 						var progressStatus = new ProgressStatus();
 
-						int secondsToWait = 60;
-						while (time.Elapsed.TotalSeconds < secondsToWait
+						while (printerConnection.SecondsUntilTurnOffHeaters > 0
 							&& !cancellationToken.IsCancellationRequested
-							&& continueWaiting)
+							&& printerConnection.ContinuWaitingToTurnOffHeaters)
 						{
 							reporter.Report(progressStatus);
-							progressStatus.Status = "Turn Off Heat in".Localize() + " " + (60 - time.Elapsed.TotalSeconds).ToString("0");
+							progressStatus.Status = "Turn Off Heat in".Localize() + " " + printerConnection.SecondsUntilTurnOffHeaters.ToString("0");
 							Thread.Sleep(100);
 						}
 
 						if (!cancellationToken.IsCancellationRequested
-							&& continueWaiting)
+							&& printerConnection.ContinuWaitingToTurnOffHeaters)
 						{
 							printerConnection.TurnOffBedAndExtruders(true);
 						}
 
-						printerConnection.BedTemperatureSet.UnregisterEvent(cancel, ref unregisterEvent);
-						printerConnection.HotendTemperatureSet.UnregisterEvent(cancel, ref unregisterEvent);
+						printerConnection.BedTemperatureSet.UnregisterEvent(heatChanged, ref unregisterEvent);
+						printerConnection.HotendTemperatureSet.UnregisterEvent(heatChanged, ref unregisterEvent);
 						printerConnection.CommunicationStateChanged.UnregisterEvent(stateChanged, ref unregisterEvent);
 
 						return Task.CompletedTask;

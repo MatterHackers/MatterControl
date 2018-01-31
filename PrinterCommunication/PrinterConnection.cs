@@ -40,6 +40,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MatterControl.Printing;
 using MatterHackers.Agg;
+using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.SerialPortCommunication;
@@ -75,7 +76,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 	/// </summary>
 	public class PrinterConnection
 	{
-		public static RootedObjectEventHandler DoDelayedTurnOffHeat = new RootedObjectEventHandler();
+		public static RootedObjectEventHandler HeatTurningOffSoon = new RootedObjectEventHandler();
 		public static RootedObjectEventHandler ErrorReported = new RootedObjectEventHandler();
 
 		public static RootedObjectEventHandler AnyCommunicationStateChanged = new RootedObjectEventHandler();
@@ -2443,6 +2444,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
+		public bool ContinuWaitingToTurnOffHeaters { get; set; }
+
+		public double SecondsUntilTurnOffHeaters { get; private set; }
+
 		public void TurnOffBedAndExtruders(bool now)
 		{
 			if (now)
@@ -2455,7 +2460,34 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 			else
 			{
-				DoDelayedTurnOffHeat.CallEvents(this, null);
+				int secondsToWait = 60;
+				SecondsUntilTurnOffHeaters = secondsToWait;
+				ContinuWaitingToTurnOffHeaters = true;
+				Stopwatch time = Stopwatch.StartNew();
+				HeatTurningOffSoon.CallEvents(this, null);
+				// wait secondsToWait and turn off the heaters
+				Task.Run(() =>
+				{
+					while (time.Elapsed.TotalSeconds < secondsToWait
+						&& ContinuWaitingToTurnOffHeaters)
+					{
+						SecondsUntilTurnOffHeaters = ContinuWaitingToTurnOffHeaters ? Math.Max(0, secondsToWait - time.Elapsed.TotalSeconds) : 0;
+						Thread.Sleep(100);
+					}
+
+					// times up turn off heaters
+					if (ContinuWaitingToTurnOffHeaters)
+					{
+						UiThread.RunOnIdle(() =>
+						{
+							for (int i = 0; i < this.ExtruderCount; i++)
+							{
+								SetTargetHotendTemperature(i, 0, true);
+							}
+							TargetBedTemperature = 0;
+						});
+					}
+				});
 			}
 		}
 
