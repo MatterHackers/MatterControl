@@ -289,8 +289,35 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					UiThread.RunOnIdle(() =>
 					{
-						this.parentTabControl.RemoveTab(this);
-						this.CloseClicked?.Invoke(this, null);
+						if (TabContent is PrinterTabPage printerTab
+							&& printerTab.printer.Connection.PrinterIsPrinting)
+						{
+							StyledMessageBox.ShowMessageBox(
+								(bool response) =>
+								{
+									if (response)
+									{
+										UiThread.RunOnIdle(() =>
+										{
+											this.parentTabControl.RemoveTab(this);
+											this.CloseClicked?.Invoke(this, null);
+										});
+									}
+								},
+								"Cancel the current print?".Localize(),
+								"Cancel Print?".Localize(),
+								StyledMessageBox.MessageType.YES_NO,
+								"Cancel Print".Localize(),
+								"Continue Printing".Localize());
+						}
+						else // need to handle asking about saving a 
+						{
+							UiThread.RunOnIdle(() =>
+							{
+								this.parentTabControl.RemoveTab(this);
+								this.CloseClicked?.Invoke(this, null);
+							});
+						}
 					});
 				};
 
