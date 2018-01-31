@@ -78,11 +78,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			{
 				if (printerSettings.Helpers.UseZProbe())
 				{
-					return "{0}{1}\n\n{2}{3}".FormatWith(doneLine1, doneLine1b, doneLine3, doneLine3b);
+					return $"{doneLine1} {doneLine1b}\n\n{doneLine3} {doneLine3b}";
 				}
 				else
 				{
-					return "{0}{1}\n\n\t• {2}\n\n{3}{4}".FormatWith(doneLine1, doneLine1b, doneLine2, doneLine3, doneLine3b);
+					return $"{doneLine1} {doneLine1b}\n\n\t• {doneLine2}\n\n{doneLine3} {doneLine3b}";
 				}
 			}
 		}
