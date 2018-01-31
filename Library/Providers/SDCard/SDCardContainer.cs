@@ -48,8 +48,6 @@ namespace MatterHackers.MatterControl.Library
 
 		private PrinterConfig printer;
 
-		private AutoResetEvent autoResetEvent;
-
 		public SDCardContainer()
 		{
 			this.ChildContainers = new List<ILibraryContainerLink>();
@@ -57,6 +55,20 @@ namespace MatterHackers.MatterControl.Library
 			this.Name = "SD Card".Localize();
 
 			printer = ApplicationController.Instance.ActivePrinter;
+
+			printer.Connection.CommunicationStateChanged.RegisterEvent((s, e) =>
+			{
+				if (printer.Connection.CommunicationState == PrinterCommunication.CommunicationStates.Connected)
+				{
+					this.Load();
+				}
+
+				if (!printer.Connection.PrinterIsConnected && this.Items.Count > 0)
+				{
+					this.Items.Clear();
+					this.OnContentChanged();
+				}
+			}, ref unregisterEvents);
 		}
 
 		public override void Load()
@@ -64,15 +76,12 @@ namespace MatterHackers.MatterControl.Library
 			if (printer.Connection.PrinterIsConnected
 				&& !(printer.Connection.PrinterIsPrinting || printer.Connection.PrinterIsPaused))
 			{
-				autoResetEvent = new AutoResetEvent(false);
-
 				printer.Connection.LineReceived.RegisterEvent(Printer_LineRead, ref unregisterEvents);
 
 				gotBeginFileList = false;
-				printer.Connection.QueueLine("M21\r\nM20");
 
-				// Ask for files and wait for response
-				autoResetEvent.WaitOne();
+				// Ask for files
+				printer.Connection.QueueLine("M21\r\nM20");
 			}
 		}
 
@@ -100,9 +109,7 @@ namespace MatterHackers.MatterControl.Library
 
 						case "End file list":
 							printer.Connection.LineReceived.UnregisterEvent(Printer_LineRead, ref unregisterEvents);
-
-							// Release the Load WaitOne
-							autoResetEvent.Set();
+							this.OnContentChanged();
 							break;
 
 						default:
@@ -127,11 +134,7 @@ namespace MatterHackers.MatterControl.Library
 
 		public override void Dispose()
 		{
-			// In case "End file list" is never received
-			printer.Connection.LineReceived.UnregisterEvent(Printer_LineRead, ref unregisterEvents);
-
-			// Release the Load WaitOne
-			autoResetEvent?.Set();
+			unregisterEvents?.Invoke(this, null);
 		}
 	}
 }
