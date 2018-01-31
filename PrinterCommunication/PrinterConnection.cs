@@ -138,6 +138,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
+		public bool ContinuWaitingToTurnOffHeaters { get; set; }
+		public double SecondsUntilTurnOffHeaters { get; private set; }
+
 		public TerminalLog TerminalLog { get; }
 
 		public RootedObjectEventHandler AtxPowerStateChanged = new RootedObjectEventHandler();
@@ -179,6 +182,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		private bool forceImmediateWrites = false;
 
 		private string lastLineRead = "";
+
+		private Stopwatch TimeHaveBeenWaitingToTurnOffHeaters { get; set; }
 
 		private PrinterMove lastReportedPosition;
 
@@ -2444,10 +2449,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		public bool ContinuWaitingToTurnOffHeaters { get; set; }
-
-		public double SecondsUntilTurnOffHeaters { get; private set; }
-
 		public void TurnOffBedAndExtruders(bool now)
 		{
 			if (now)
@@ -2461,33 +2462,37 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			else
 			{
 				int secondsToWait = 60;
+				bool currentlyWaiting = ContinuWaitingToTurnOffHeaters && TimeHaveBeenWaitingToTurnOffHeaters.IsRunning && TimeHaveBeenWaitingToTurnOffHeaters.Elapsed.TotalSeconds < secondsToWait;
 				SecondsUntilTurnOffHeaters = secondsToWait;
 				ContinuWaitingToTurnOffHeaters = true;
-				Stopwatch time = Stopwatch.StartNew();
-				HeatTurningOffSoon.CallEvents(this, null);
-				// wait secondsToWait and turn off the heaters
-				Task.Run(() =>
+				TimeHaveBeenWaitingToTurnOffHeaters = Stopwatch.StartNew();
+				if (!currentlyWaiting)
 				{
-					while (time.Elapsed.TotalSeconds < secondsToWait
-						&& ContinuWaitingToTurnOffHeaters)
+					HeatTurningOffSoon.CallEvents(this, null);
+					// wait secondsToWait and turn off the heaters
+					Task.Run(() =>
 					{
-						SecondsUntilTurnOffHeaters = ContinuWaitingToTurnOffHeaters ? Math.Max(0, secondsToWait - time.Elapsed.TotalSeconds) : 0;
-						Thread.Sleep(100);
-					}
+						while (TimeHaveBeenWaitingToTurnOffHeaters.Elapsed.TotalSeconds < secondsToWait
+							&& ContinuWaitingToTurnOffHeaters)
+						{
+							SecondsUntilTurnOffHeaters = ContinuWaitingToTurnOffHeaters ? Math.Max(0, secondsToWait - TimeHaveBeenWaitingToTurnOffHeaters.Elapsed.TotalSeconds) : 0;
+							Thread.Sleep(100);
+						}
 
 					// times up turn off heaters
 					if (ContinuWaitingToTurnOffHeaters)
-					{
-						UiThread.RunOnIdle(() =>
 						{
-							for (int i = 0; i < this.ExtruderCount; i++)
+							UiThread.RunOnIdle(() =>
 							{
-								SetTargetHotendTemperature(i, 0, true);
-							}
-							TargetBedTemperature = 0;
-						});
-					}
-				});
+								for (int i = 0; i < this.ExtruderCount; i++)
+								{
+									SetTargetHotendTemperature(i, 0, true);
+								}
+								TargetBedTemperature = 0;
+							});
+						}
+					});
+				}
 			}
 		}
 
