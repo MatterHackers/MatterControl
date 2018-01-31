@@ -50,8 +50,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private Color textColor;
 		private SliceSettingsTabView sliceSettingsTabView;
 
-		private EventHandler unregisterEvents;
-
 		private ThemeConfig theme;
 
 		public SliceSettingsWidget(PrinterConfig printer, SettingsContext settingsContext, ThemeConfig theme)
@@ -172,7 +170,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public override void OnClosed(ClosedEventArgs e)
 		{
 			ApplicationController.Instance.ShowHelpChanged -= ShowHelp_Changed;
-			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
 		}
 	}
@@ -191,7 +188,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private int groupPanelCount = 0;
 		private List<(GuiWidget widget, SliceSettingData settingData)> settingsRows;
 		private TextWidget filteredItemsHeading;
-		private ScrollableWidget scrollable;
 		private EventHandler unregisterEvents;
 		private Action<PopupMenu> externalExtendMenu;
 
@@ -307,6 +303,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				};
 
 				// Loop over all groups in this tab and add their content
+				bool first = true;
+
 				foreach (var group in category.Groups)
 				{
 					if (group.Name == "Connection")
@@ -315,23 +313,35 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							this.CreateOemProfileInfoRow());
 					}
 
-					categoryPanel.AddChild(
-						this.CreateGroupContent(group));
+					var groupContent = this.CreateGroupContent(group);
+
+					if (groupContent.Descendants<SliceSettingsRow>().Any())
+					{
+						categoryPanel.AddChild(groupContent);
+						if(groupContent is SectionWidget sectionWidget)
+						{
+							sectionWidget.Checkbox.Checked = first;
+							first = false;
+						}
+					}
 				}
 
-				this.AddTab(
-					new ToolTab(
-						category.Name.Localize(),
-						this,
-						categoryPanel,
-						theme,
-						hasClose: false,
-						pointSize: theme.DefaultFontSize)
-					{
-						Name = category.Name + " Tab",
-						InactiveTabColor = Color.Transparent,
-						ActiveTabColor = theme.ActiveTabColor
-					});
+				if (categoryPanel.Descendants<SliceSettingsRow>().Any())
+				{
+					this.AddTab(
+						new ToolTab(
+							category.Name.Localize(),
+							this,
+							categoryPanel,
+							theme,
+							hasClose: false,
+							pointSize: theme.DefaultFontSize)
+						{
+							Name = category.Name + " Tab",
+							InactiveTabColor = Color.Transparent,
+							ActiveTabColor = theme.ActiveTabColor
+						});
+				}
 			}
 
 			this.TabBar.AddChild(new HorizontalSpacer());
@@ -898,13 +908,21 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.ShowFilteredView();
 		}
 
+		List<SectionWidget> widgetsThatWereExpanded = new List<SectionWidget>();
+
 		private void ShowFilteredView()
 		{
+			widgetsThatWereExpanded.Clear();
 			// Show any section with visible SliceSettingsRows
 			foreach (var section in this.Descendants<SectionWidget>())
 			{
 				// HACK: Include parent visibility in mix as complex fields that return wrapped SliceSettingsRows will be visible and their parent will be hidden
 				section.Visible = section.Descendants<SliceSettingsRow>().Any(row => row.Visible && row.Parent.Visible);
+				if (!section.Checkbox.Checked)
+				{
+					widgetsThatWereExpanded.Add(section);
+					section.Checkbox.Checked = true;
+				}
 			}
 
 			// Show all tab containers
@@ -912,15 +930,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				tab.TabContent.Visible = true;
 			}
-		}
-
-		protected override void OnActiveTabChanged()
-		{
-			if (scrollable != null)
-			{
-				scrollable.ScrollPosition = new Vector2(0, -scrollable.ScrollArea.Height);
-			}
-			base.OnActiveTabChanged();
 		}
 
 		public override void OnClosed(ClosedEventArgs e)
@@ -946,6 +955,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				// HACK: Include parent visibility in mix as complex fields that return wrapped SliceSettingsRows will be visible and their parent will be hidden
 				section.Visible = section.Descendants<SliceSettingsRow>().Any(row => row.Visible && row.Parent.Visible);
+			}
+
+			foreach (var section in widgetsThatWereExpanded)
+			{
+				section.Checkbox.Checked = false;
 			}
 
 			this.TabBar.Visible = true;
