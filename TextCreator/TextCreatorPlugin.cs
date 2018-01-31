@@ -61,14 +61,6 @@ namespace MatterHackers.Plugins.EditorTools
 					}, 
 					category));
 
-			// TODO: Filepath won't work on Android. Needs to load from/to stream via custom type
-			library.RegisterCreator(
-				new FileSystemFileItem(AggContext.StaticData.MapPath(Path.Combine("Images", "mh-logo.png")))
-				{
-					Name = "Image Converter".Localize(),
-					Category = category
-				});
-
 			base.Initialize(application);
 		}
 	}

@@ -38,7 +38,6 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
@@ -47,7 +46,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		void Rebuild();
 	}
 
-	public class PubicPropertyEditor : IObject3DEditor
+	public class PublicPropertyEditor : IObject3DEditor
 	{
 		private IObject3D item;
 		private View3DWidget view3DWidget;
@@ -55,16 +54,13 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public bool Unlocked { get; } = true;
 
-
 		static Type[] allowedTypes = 
 		{
 			typeof(double), typeof(int), typeof(string), typeof(bool),
 			typeof(NamedTypeFace)
 		};
 
-		static BindingFlags ownedPropertiesOnly = BindingFlags.Public
-			| System.Reflection.BindingFlags.Instance
-			| System.Reflection.BindingFlags.DeclaredOnly;
+		public const BindingFlags OwnedPropertiesOnly = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
 
 		public GuiWidget Create(IObject3D item, View3DWidget view3DWidget, ThemeConfig theme)
 		{
@@ -116,7 +112,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			var rebuildable = item as IRebuildable;
 
-			var editableProperties = this.item.GetType().GetProperties(ownedPropertiesOnly)
+			var editableProperties = this.item.GetType().GetProperties(OwnedPropertiesOnly)
 				.Where(pi => allowedTypes.Contains(pi.PropertyType)
 					&& pi.GetGetMethod() != null
 					&& pi.GetSetMethod() != null)
