@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl.Library.Export
 				{
 					// If the content is an IObject3D, the we need to load it and MeshFileIO save to the target path
 					var content = await contentItem.GetContent(null);
-					return MeshFileIo.Save(content, filePathToSave);
+					return MeshFileIo.Save(content, filePathToSave, CancellationToken.None);
 				}
 				else if (source is ILibraryContentStream streamContent)
 				{
@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl.Library.Export
 							using (var result = await streamContent.GetContentStream(null))
 							{
 								IObject3D item = Object3D.Load(result.Stream, Path.GetExtension(streamContent.FileName), CancellationToken.None);
-								return MeshFileIo.Save(item, filePathToSave);
+								return MeshFileIo.Save(item, filePathToSave, CancellationToken.None);
 							}
 						}
 					}

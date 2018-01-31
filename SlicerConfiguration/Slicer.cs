@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private static Dictionary<Mesh, MeshPrintOutputSettings> meshPrintOutputSettings = new Dictionary<Mesh, MeshPrintOutputSettings>();
 
 		public static List<bool> extrudersUsed = new List<bool>();
-		public static bool runInProcess = true;
+		public static bool runInProcess = false;
 
 		private static Process slicerProcess = null;
 
@@ -181,7 +181,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 									}
 									int meshExtruderIndex = meshPrintOutputSettings[mesh].ExtruderIndex;
 
-									extruderFilesToSlice.Add(SaveAndGetFilePathForMesh(mesh));
+									if(cancellationToken.IsCancellationRequested)
+									{
+										return new string[0];
+									}
+
+									var fileName = SaveAndGetFilePathForMesh(mesh, cancellationToken);
+									extruderFilesToSlice.Add(fileName);
 
 									savedStlCount++;
 								}
@@ -206,7 +212,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 									mergeRules += $"({savedStlCount})";
 								}
 								// save an empty mesh
-								extruderFilesToSlice.Add(SaveAndGetFilePathForMesh(PlatonicSolids.CreateCube(.001, .001, .001)));
+								extruderFilesToSlice.Add(SaveAndGetFilePathForMesh(PlatonicSolids.CreateCube(.001, .001, .001), cancellationToken));
 								savedStlCount++;
 							}
 						}
@@ -227,7 +233,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		private static string SaveAndGetFilePathForMesh(Mesh meshToSave)
+		private static string SaveAndGetFilePathForMesh(Mesh meshToSave, CancellationToken cancellationToken)
 		{
 			string folderToSaveStlsTo = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "amf_to_stl");
 
@@ -236,10 +242,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			string filePath = Path.Combine(folderToSaveStlsTo, Path.ChangeExtension(Path.GetRandomFileName(), ".stl"));
 
-			MeshFileIo.Save(meshToSave, filePath);
+			MeshFileIo.Save(meshToSave, filePath, cancellationToken);
 
 			return filePath;
 		}
+
+		public static string CompletedSuccessfullyString => "; MC Slice Completed Successfully";
 
 		public static Task SliceFile(string sourceFile, string gcodeFilePath, PrinterConfig printer, IProgress<ProgressStatus> progressReporter, CancellationToken cancellationToken)
 		{
@@ -247,8 +255,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			string[] stlFileLocations = GetStlFileLocations(sourceFile, ref mergeRules, printer, progressReporter, cancellationToken);
 
-			string fileToSlice = stlFileLocations[0];
-
+			if(stlFileLocations.Length > 0)
 			{
 				var progressStatus = new ProgressStatus()
 				{
@@ -263,7 +270,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				progressStatus.Status = "Starting slicer";
 				progressReporter.Report(progressStatus);
 
-				if (!File.Exists(gcodeFilePath))
+				if (!File.Exists(gcodeFilePath)
+					|| !HasCompletedSuccessfully(gcodeFilePath))
 				{
 					string commandArgs;
 
@@ -289,6 +297,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					{
 						EventHandler WriteOutput = (s, e) =>
 						{
+							if(cancellationToken.IsCancellationRequested)
+							{
+								MatterSlice.MatterSlice.Stop();
+							}
 							if (s is string stringValue)
 							{
 								progressReporter?.Report(new ProgressStatus()
@@ -303,7 +315,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						MatterSlice.MatterSlice.ProcessArgs(commandArgs);
 
 						MatterSlice.LogOutput.GetLogWrites -= WriteOutput;
-
 					}
 					else
 					{
@@ -323,6 +334,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 						slicerProcess.OutputDataReceived += (s, e) =>
 						{
+							if(cancellationToken.IsCancellationRequested)
+							{
+								slicerProcess?.Kill();
+								slicerProcess?.Dispose();
+								slicerProcess = null;
+							}
 							if (e.Data is string stringValue)
 							{
 								string message = stringValue.Replace("=>", "").Trim();
@@ -390,6 +407,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								{
 									gcodeWriter.WriteLine("; {0}", line);
 								}
+
+								gcodeWriter.WriteLine(CompletedSuccessfullyString);
 							}
 						}
 					}
@@ -402,21 +421,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return Task.CompletedTask;
 		}
 
-		internal static void CancelCurrentSlicing()
+		private static bool HasCompletedSuccessfully(string gcodeFilePath)
 		{
-			if (slicerProcess != null)
+			using (var reader = new StreamReader(gcodeFilePath))
 			{
-				lock(slicerProcess)
+				if (reader.BaseStream.Length > 1024)
 				{
-					if (slicerProcess != null && !slicerProcess.HasExited)
-					{
-						slicerProcess.Kill();
-					}
+					reader.BaseStream.Seek(-1024, SeekOrigin.End);
 				}
-			}
-			else
-			{
-				MatterHackers.MatterSlice.MatterSlice.Stop();
+				string endText = reader.ReadToEnd();
+
+				return endText.Contains(CompletedSuccessfullyString);
 			}
 		}
 	}
