@@ -563,10 +563,7 @@ namespace MatterHackers.MatterControl
 						() =>
 						{
 							var printer = this.ActivePrinter;
-
-							return printer.Settings.GetValue<bool>(SettingsKey.has_sd_card_reader)
-								&& printer.Connection.PrinterIsConnected
-								&& !(printer.Connection.PrinterIsPrinting || printer.Connection.PrinterIsPaused);
+							return printer.Settings.GetValue<bool>(SettingsKey.has_sd_card_reader);
 						})
 				{
 					IsReadOnly = true
