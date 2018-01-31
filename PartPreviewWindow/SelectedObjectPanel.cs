@@ -39,9 +39,14 @@ using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.DesignTools.Operations;
+using System.Reflection;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
+	public interface IObject3DComponent
+	{
+	}
+
 	public class SelectedObjectPanel : FlowLayoutWidget, IContentStore
 	{
 		private IObject3D item = new Object3D();
@@ -238,6 +243,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
+		private static Type componentType = typeof(IObject3DComponent);
+		private static Type iobject3DType = typeof(IObject3D);
+
 		public void SetActiveItem(IObject3D selectedItem)
 		{
 			if (!scene.HasSelection)
@@ -258,38 +266,41 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.Parent.Visible = viewMode == null || viewMode == PartViewMode.Model;
 
-			HashSet<IObject3DEditor> mappedEditors;
-			objectEditorsByType.TryGetValue(selectedItemType, out mappedEditors);
-
+			HashSet<IObject3DEditor> mappedEditors = GetEditorsForType(selectedItemType);
 			if (mappedEditors == null)
 			{
-				foreach (var kvp in objectEditorsByType)
+				if (componentType.IsAssignableFrom(selectedItemType))
 				{
-					var editorType = kvp.Key;
+					var members = from item in selectedItemType.GetProperties(PublicPropertyEditor.OwnedPropertiesOnly)
+								  let value = item.GetValue(selectedItem, null) as IObject3D
+								  let propertyType = item.PropertyType
+								  where iobject3DType.IsAssignableFrom(propertyType)
+								  select new
+								  {
+									  Type = propertyType,
+									  Value = value
+								  };
 
-					if (editorType.IsAssignableFrom(selectedItemType))
+					var editors = new List<(IObject3DEditor, IObject3D)>();
+
+					foreach (var member in members)
 					{
-						mappedEditors = kvp.Value;
-						break;
+						if (this.GetEditorsForType(member.Type)?.FirstOrDefault() is IObject3DEditor editor)
+						{
+							editors.Add((editor, member.Value));
+						}
 					}
-				}
-			}
 
-			// Add any editor mapped to Object3D to the list
-			if (objectEditorsByType.TryGetValue(typeof(Object3D), out HashSet<IObject3DEditor> globalEditors))
-			{
-				foreach (var editor in globalEditors)
+					// Show an editor for each public IObject3D member on the selected item
+					ShowObjectEditor(editors);
+				}
+				else
 				{
-					mappedEditors.Add(editor);
+					editorPanel.CloseAllChildren();
+					editorPanel.VAnchor = VAnchor.Absolute;
+					editorPanel.VAnchor = VAnchor.Fit;
+					editorPanel.Invalidate();
 				}
-			}
-
-			if (mappedEditors == null)
-			{
-				editorPanel.CloseAllChildren();
-				editorPanel.VAnchor = VAnchor.Absolute;
-				editorPanel.VAnchor = VAnchor.Fit;
-				editorPanel.Invalidate();
 			}
 			else
 			{
@@ -311,9 +322,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				// Select the active editor or fall back to the first if not found
 				var firstEditor = (from editor in mappedEditors
-											  let type = editor.GetType()
-											  where type.Name == selectedItem.ActiveEditor
-											  select editor).FirstOrDefault();
+								   let type = editor.GetType()
+								   where type.Name == selectedItem.ActiveEditor
+								   select editor).FirstOrDefault();
 
 				// Fall back to default editor?
 				if (firstEditor == null)
@@ -333,8 +344,30 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				//dropDownList.SelectedIndex = selectedIndex;
 
-				ShowObjectEditor(firstEditor);
+				ShowObjectEditor(new[] { (firstEditor, scene.SelectedItem) });
 			}
+		}
+
+		private HashSet<IObject3DEditor> GetEditorsForType(Type selectedItemType)
+		{
+			HashSet<IObject3DEditor> mappedEditors;
+			objectEditorsByType.TryGetValue(selectedItemType, out mappedEditors);
+
+			if (mappedEditors == null)
+			{
+				foreach (var kvp in objectEditorsByType)
+				{
+					var editorType = kvp.Key;
+
+					if (editorType.IsAssignableFrom(selectedItemType))
+					{
+						mappedEditors = kvp.Value;
+						break;
+					}
+				}
+			}
+
+			return mappedEditors;
 		}
 
 		private class OperationButton :TextButton
@@ -355,66 +388,74 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private void ShowObjectEditor(IObject3DEditor editor)
+		private void ShowObjectEditor(IEnumerable<(IObject3DEditor editor, IObject3D item)> scope)
 		{
 			editorPanel.CloseAllChildren();
 
-			if (editor == null)
+			if (scope == null)
 			{
 				return;
 			}
 
-			var selectedItem = scene.SelectedItem;
-
-			var editorWidget = editor.Create(selectedItem, view3DWidget, theme);
-			editorWidget.HAnchor = HAnchor.Stretch;
-			editorWidget.VAnchor = VAnchor.Fit;
-			editorWidget.Padding = 0;
-
-			editorPanel.AddChild(editorWidget);
-
-			var toolbar = new Toolbar()
+			foreach (var scopeItem in scope)
 			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit,
-				Padding = theme.ToolbarPadding,
-				Margin = new BorderDouble(0, 8)
-			};
+				var selectedItem = scopeItem.item;
+				var selectedItemType = selectedItem.GetType();
 
-			var selectedItemType = selectedItem.GetType();
+				var editorWidget = scopeItem.editor.Create(selectedItem, view3DWidget, theme);
+				editorWidget.HAnchor = HAnchor.Stretch;
+				editorWidget.VAnchor = VAnchor.Fit;
+				editorWidget.Padding = 0;
 
-			foreach(var graphOperation in ApplicationController.Instance.Graph.Operations)
-			{
-				foreach(var type in graphOperation.MappedTypes)
+				editorPanel.AddChild(editorWidget);
+
+				var buttons = new List<OperationButton>();
+
+				foreach (var graphOperation in ApplicationController.Instance.Graph.Operations)
 				{
-					if (type.IsAssignableFrom(selectedItemType))
+					foreach (var type in graphOperation.MappedTypes)
 					{
-						var button = new OperationButton(graphOperation, selectedItem, theme);
-						button.BackgroundColor = theme.MinimalShade;
-						button.EnsureAvailablity();
-						button.Click += (s, e) =>
+						if (type.IsAssignableFrom(selectedItemType))
 						{
-							graphOperation.Operation(selectedItem).ConfigureAwait(false);
-						};
+							var button = new OperationButton(graphOperation, selectedItem, theme);
+							button.BackgroundColor = theme.MinimalShade;
+							button.EnsureAvailablity();
+							button.Click += (s, e) =>
+							{
+								graphOperation.Operation(selectedItem).ConfigureAwait(false);
+							};
 
-						toolbar.AddChild(button);
+							buttons.Add(button);
+						}
 					}
 				}
-			}
 
-			if (toolbar.Children.Any())
-			{
-				editorPanel.AddChild(toolbar);
-			}
-
-			// TODO: Fix likely leak
-			selectedItem.Invalidated += (s, e) =>
-			{
-				foreach (var button in toolbar.ActionArea.Children.OfType<OperationButton>())
+				if (buttons.Any())
 				{
-					button.EnsureAvailablity();
+					var toolbar = new Toolbar()
+					{
+						HAnchor = HAnchor.Stretch,
+						VAnchor = VAnchor.Fit,
+						Padding = theme.ToolbarPadding,
+						Margin = new BorderDouble(0, 8)
+					};
+					editorPanel.AddChild(toolbar);
+
+					foreach (var button in buttons)
+					{
+						toolbar.AddChild(button);
+					}
+
+					// TODO: Fix likely leak
+					selectedItem.Invalidated += (s, e) =>
+					{
+						foreach (var button in toolbar.ActionArea.Children.OfType<OperationButton>())
+						{
+							button.EnsureAvailablity();
+						}
+					};
 				}
-			};
+			}
 		}
 
 		public void Save(ILibraryItem item, IObject3D content)
