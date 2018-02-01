@@ -287,22 +287,5 @@ namespace MatterHackers.MatterControl
 			return meshGroup.GetAxisAlignedBoundingBox(transform);
 		}
 		
-		public static Matrix4X4 ApplyAtCenter(IObject3D object3DToApplayTo, Matrix4X4 transformToApply)
-		{
-			return ApplyAtCenter(object3DToApplayTo.GetAxisAlignedBoundingBox(Matrix4X4.Identity), object3DToApplayTo.Matrix, transformToApply);
-		}
-
-		public static Matrix4X4 ApplyAtCenter(AxisAlignedBoundingBox boundsToApplyTo, Matrix4X4 currentTransform, Matrix4X4 transformToApply)
-		{
-			return ApplyAtPosition(currentTransform, transformToApply, boundsToApplyTo.Center);
-		}
-
-		public static Matrix4X4 ApplyAtPosition(Matrix4X4 currentTransform, Matrix4X4 transformToApply, Vector3 postionToApplyAt)
-		{
-			currentTransform *= Matrix4X4.CreateTranslation(-postionToApplyAt);
-			currentTransform *= transformToApply;
-			currentTransform *= Matrix4X4.CreateTranslation(postionToApplyAt);
-			return currentTransform;
-		}
 	}
 }

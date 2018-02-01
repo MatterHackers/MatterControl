@@ -145,6 +145,25 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			sceneContext.Scene.SelectedItem = null;
 		}
 
+		public static void ApplyAtBoundsCenter(this IObject3D object3DToApplayTo, Matrix4X4 transformToApply)
+		{
+			object3DToApplayTo.Matrix = ApplyAtCenter(object3DToApplayTo.GetAxisAlignedBoundingBox(Matrix4X4.Identity), object3DToApplayTo.Matrix, transformToApply);
+		}
+
+		public static Matrix4X4 ApplyAtCenter(AxisAlignedBoundingBox boundsToApplyTo, Matrix4X4 currentTransform, Matrix4X4 transformToApply)
+		{
+			return ApplyAtPosition(currentTransform, transformToApply, boundsToApplyTo.Center);
+		}
+
+		public static Matrix4X4 ApplyAtPosition(Matrix4X4 currentTransform, Matrix4X4 transformToApply, Vector3 postionToApplyAt)
+		{
+			currentTransform *= Matrix4X4.CreateTranslation(-postionToApplyAt);
+			currentTransform *= transformToApply;
+			currentTransform *= Matrix4X4.CreateTranslation(postionToApplyAt);
+
+			return currentTransform;
+		}
+
 		public static Vector3 GetCenter(this IObject3D item)
 		{
 			return item.GetAxisAlignedBoundingBox(Matrix4X4.Identity).Center;

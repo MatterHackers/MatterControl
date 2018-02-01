@@ -36,6 +36,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.DataConverters3D.UndoCommands;
+using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
 
@@ -255,10 +256,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				return;
 			}
 
-			Face faceToLayFlat = null;
+			PolygonMesh.Face faceToLayFlat = null;
 			double lowestAngleOfAnyFace = double.MaxValue;
 			// Check all the faces that are connected to the lowest point to find out which one to lay flat.
-			foreach (Face face in lowestVertex.ConnectedFaces())
+			foreach (var face in lowestVertex.ConnectedFaces())
 			{
 				double biggestAngleToFaceVertex = double.MinValue;
 				foreach (IVertex faceVertex in face.Vertices())
@@ -303,7 +304,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Matrix4X4 partLevelMatrix = Matrix4X4.CreateRotation(rotation);
 
 				// rotate it
-				objectToLayFlatGroup.Matrix = PlatingHelper.ApplyAtCenter(objectToLayFlatGroup, partLevelMatrix);
+				objectToLayFlatGroup.ApplyAtBoundsCenter(partLevelMatrix);
 
 				scene.Invalidate();
 			}

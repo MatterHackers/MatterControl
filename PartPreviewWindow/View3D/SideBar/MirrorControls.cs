@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
+using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
 using static MatterHackers.MatterControl.PrinterCommunication.PrinterConnection;
@@ -102,15 +103,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			switch (axis)
 			{
 				case Axis.Z:
-					item.Matrix = PlatingHelper.ApplyAtCenter(item, Matrix4X4.CreateScale(1, 1, -1));
+					item.ApplyAtBoundsCenter(Matrix4X4.CreateScale(1, 1, -1));
 
 					break;
 				case Axis.X:
-					item.Matrix = PlatingHelper.ApplyAtCenter(item, Matrix4X4.CreateScale(-1, 1, 1));
+					item.ApplyAtBoundsCenter(Matrix4X4.CreateScale(-1, 1, 1));
 					break;
 
 				case Axis.Y:
-					item.Matrix = PlatingHelper.ApplyAtCenter(item, Matrix4X4.CreateScale(1, -1, 1));
+					item.ApplyAtBoundsCenter(Matrix4X4.CreateScale(1, -1, 1));
 					break;
 			}
 

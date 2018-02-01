@@ -30,6 +30,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
@@ -238,7 +239,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			newScale[axis] = scaleIn;
 			Matrix4X4 totalScale = Matrix4X4.CreateScale(newScale);
 
-			selectedItem.Matrix = PlatingHelper.ApplyAtCenter(selectedItem, totalScale);
+			selectedItem.ApplyAtBoundsCenter(totalScale);
 
 			// keep the bottom where it was
 			AxisAlignedBoundingBox scaledBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
