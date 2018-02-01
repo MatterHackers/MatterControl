@@ -101,8 +101,7 @@ namespace MatterHackers.MatterControl.Library
 				if (keywordFilter != value)
 				{
 					keywordFilter = value;
-					this.Load();
-					this.OnContentChanged();
+					this.ReloadContent();
 				}
 			}
 		}
@@ -128,8 +127,7 @@ namespace MatterHackers.MatterControl.Library
 			// Only refresh content if we're the active container
 			if (isActiveContainer)
 			{
-				this.Load(false);
-				this.OnContentChanged();
+				this.ReloadContent();
 			}
 		}
 
@@ -277,7 +275,7 @@ namespace MatterHackers.MatterControl.Library
 
 			if (this.isDirty)
 			{
-				this.OnContentChanged();
+				this.ReloadContent();
 			}
 		}
 
@@ -309,7 +307,7 @@ namespace MatterHackers.MatterControl.Library
 
 					fileItem.Path = destFile;
 
-					this.OnContentChanged();
+					this.ReloadContent();
 				}
 			}
 		}

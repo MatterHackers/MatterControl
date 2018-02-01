@@ -92,7 +92,7 @@ namespace MatterHackers.MatterControl.Library
 				if (base.KeywordFilter != value)
 				{
 					base.KeywordFilter = value;
-					this.OnContentChanged();
+					this.ReloadContent();
 				}
 			}
 		}
@@ -200,7 +200,7 @@ namespace MatterHackers.MatterControl.Library
 					}
 				}
 
-				this.OnContentChanged();
+				this.ReloadContent();
 			});
 		}
 
@@ -233,7 +233,7 @@ namespace MatterHackers.MatterControl.Library
 				this.Items.Remove(item);
 			}
 
-			this.OnContentChanged();
+			this.ReloadContent();
 		}
 
 		public override void Rename(ILibraryItem selectedItem, string revisedName)
@@ -255,7 +255,7 @@ namespace MatterHackers.MatterControl.Library
 				}
 			}
 
-			this.OnContentChanged();
+			this.ReloadContent();
 		}
 
 		/// <summary>
