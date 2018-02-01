@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.Library
 		public override async void Add(IEnumerable<ILibraryItem> items)
 		{
 			await AddAllItems(items);
-			this.OnContentChanged();
+			this.ReloadContent();
 		}
 
 		public static async Task AddAllItems(IEnumerable<ILibraryItem> items)
@@ -123,7 +123,7 @@ namespace MatterHackers.MatterControl.Library
 				}
 			}
 
-			this.OnContentChanged();
+			this.ReloadContent();
 		}
 
 		public override bool AllowAction(ContainerActions containerActions)

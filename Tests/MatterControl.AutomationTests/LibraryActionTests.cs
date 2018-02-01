@@ -36,7 +36,7 @@ using NUnit.Framework;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Ignore("Product code still needs to be implemented"), Category("MatterControl.UI.Automation"), Category("MatterControl.Automation"), RunInApplicationDomain, Apartment(ApartmentState.STA)]
+	[TestFixture, Ignore("Product code still needs to be implemented"), Category("MatterControl.UI.Automation"), RunInApplicationDomain, Apartment(ApartmentState.STA)]
 	public class LibraryActionTests
 	{
 		[Test, Ignore("Not Finished")]

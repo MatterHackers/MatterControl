@@ -37,6 +37,7 @@ using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl.Library
 {
@@ -48,6 +49,8 @@ namespace MatterHackers.MatterControl.Library
 
 		private PrinterConfig printer;
 
+		private AutoResetEvent autoResetEvent;
+
 		public SDCardContainer()
 		{
 			this.ChildContainers = new List<ILibraryContainerLink>();
@@ -58,40 +61,51 @@ namespace MatterHackers.MatterControl.Library
 
 			printer.Connection.CommunicationStateChanged.RegisterEvent((s, e) =>
 			{
-				if (printer.Connection.CommunicationState == PrinterCommunication.CommunicationStates.Connected)
+				switch (printer.Connection.CommunicationState)
 				{
-					this.Load();
-				}
+					case CommunicationStates.Connected:
+						Task.Run(() =>
+						{
+							this.Load();
 
-				if (!printer.Connection.PrinterIsConnected && this.Items.Count > 0)
-				{
-					this.Items.Clear();
-					this.OnContentChanged();
+							UiThread.RunOnIdle(this.OnContentChanged);
+						});
+						break;
+
+					case CommunicationStates.Disconnected:
+						this.Items.Clear();
+						this.OnContentChanged();
+						break;
 				}
 			}, ref unregisterEvents);
 		}
 
 		public override void Load()
 		{
+			this.Items.Clear();
+
 			if (printer.Connection.PrinterIsConnected
 				&& !(printer.Connection.PrinterIsPrinting || printer.Connection.PrinterIsPaused))
 			{
-				printer.Connection.LineReceived.RegisterEvent(Printer_LineRead, ref unregisterEvents);
+				autoResetEvent = new AutoResetEvent(false);
 
+				// Ask for files and listen for response
 				gotBeginFileList = false;
-
-				// Ask for files
+				printer.Connection.LineReceived.RegisterEvent(Printer_LineRead, ref unregisterEvents);
 				printer.Connection.QueueLine("M21\r\nM20");
+
+				// Block and wait up to timeout for response
+				autoResetEvent.WaitOne(40 * 1000);
 			}
 		}
 
 		// Container override of child thumbnails
 		public override Task<ImageBuffer> GetThumbnail(ILibraryItem item, int width, int height)
 		{
-			bool largeIcon = width > 50 || height > 50;
-			var thumbnail = AggContext.StaticData.LoadIcon(Path.Combine(largeIcon ? "icon_sd_card_115x115.png" : "icon_sd_card_50x50.png"), IconColor.Theme);
-
-			return Task.FromResult(thumbnail);
+			return Task.FromResult(
+				AggContext.StaticData.LoadIcon(
+					Path.Combine((width > 50 || height > 50) ? "icon_sd_card_115x115.png" : "icon_sd_card_50x50.png"), 
+					IconColor.Theme));
 		}
 
 		private void Printer_LineRead(object sender, EventArgs e)
@@ -109,7 +123,9 @@ namespace MatterHackers.MatterControl.Library
 
 						case "End file list":
 							printer.Connection.LineReceived.UnregisterEvent(Printer_LineRead, ref unregisterEvents);
-							this.OnContentChanged();
+
+							// Release the Load WaitOne
+							autoResetEvent.Set();
 							break;
 
 						default:
@@ -135,6 +151,9 @@ namespace MatterHackers.MatterControl.Library
 		public override void Dispose()
 		{
 			unregisterEvents?.Invoke(this, null);
+
+			// Ensure released
+			autoResetEvent?.Set();
 		}
 	}
 }

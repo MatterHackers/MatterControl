@@ -66,12 +66,20 @@ namespace MatterHackers.MatterControl.Library
 
 		public virtual string KeywordFilter { get; set; } = "";
 
+		/// <summary>
+		/// Reloads the container when contents have changes and fires ContentChanged to notify listeners
+		/// </summary>
+		protected void ReloadContent()
+		{
+			// Call the container specific reload implementation
+			this.Load();
+
+			// Notify
+			this.OnContentChanged();
+		}
+
 		protected void OnContentChanged()
 		{
-			// Caller the reload then use OnContentChange to fire notification
-			//// Reload the container when new contents are available
-			//this.Load();
-
 			this.ContentChanged?.Invoke(this, null);
 		}
 
