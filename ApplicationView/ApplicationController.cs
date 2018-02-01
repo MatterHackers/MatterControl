@@ -399,7 +399,24 @@ namespace MatterHackers.MatterControl
 			new SceneSelectionOperation()
 			{
 				TitleResolver = () => "Proportional Scale".Localize(),
-				Action = (scene) => HoldChildProportional.AddSelectionAsChildren(scene, nameof(ProportionalEditor), "Proportional Scale"),
+				Action = (scene) =>
+				{
+					HoldChildProportional.AddSelectionAsChildren(scene, new HoldChildProportional(), nameof(ProportionalEditor), "Proportional Scale");
+				},
+				//Icon = AggContext.StaticData.LoadIcon("subtract.png").SetPreMultiply(),
+				IsEnabled = (scene) => scene.HasSelection,
+			},
+			new SceneSelectionOperation()
+			{
+				TitleResolver = () => "Array".Localize(),
+				Action = (scene) =>
+				{
+					HoldChildProportional.AddSelectionAsChildren(scene, new ArrayObject3D(), nameof(ArrayObject3D), "Array Part");
+					if(scene.SelectedItem is ArrayObject3D array)
+					{
+						array.SetCopy();
+					}
+				},
 				//Icon = AggContext.StaticData.LoadIcon("subtract.png").SetPreMultiply(),
 				IsEnabled = (scene) => scene.HasSelection,
 			},

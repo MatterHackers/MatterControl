@@ -80,11 +80,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			base.OnInvalidate();
 		}
 
-		public static void AddSelectionAsChildren(InteractiveScene scene, string classDescriptor, string editorName)
+		public static void AddSelectionAsChildren(InteractiveScene scene, IObject3D newParent, string classDescriptor, string editorName)
 		{
 			if (scene.HasSelection)
 			{
-				HoldChildProportional newParent = new HoldChildProportional();
 				IObject3D itemToHoldProportional;
 
 				List<IObject3D> itemsToReplace;
@@ -120,7 +119,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				newParent.Matrix = itemToHoldProportional.Matrix;
 				itemToHoldProportional.Matrix = Matrix4X4.Identity;
 
-				newParent.InitialChildBounds = itemToHoldProportional.GetAxisAlignedBoundingBox();
+				if (newParent is HoldChildProportional pe)
+				{
+					pe.InitialChildBounds = itemToHoldProportional.GetAxisAlignedBoundingBox();
+				}
 
 				scene.SelectedItem = newParent;
 			}
