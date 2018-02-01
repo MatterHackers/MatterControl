@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			: base(FlowDirection.TopToBottom)
 		{
 			this.printer = printer;
-			this.Enabled = printer.Connection.PrinterIsConnected;
+			this.Enabled = printer.Connection.IsConnected;
 
 			this.AddChild(
 				settingsItem = new SettingsItem(
@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 			printer.Connection.CommunicationStateChanged.RegisterEvent((s, e) =>
 			{
-				this.Enabled = printer.Connection.PrinterIsConnected 
+				this.Enabled = printer.Connection.IsConnected 
 					&& printer.Settings.GetValue<bool>(SettingsKey.has_power_control);
 			}, ref unregisterEvents);
 

@@ -147,7 +147,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			else
 			{
 				this.Enabled = true;
-				runPrintLevelingButton.Enabled = printer.Connection.PrinterIsConnected;
+				runPrintLevelingButton.Enabled = printer.Connection.IsConnected;
 			}
 		}
 	}

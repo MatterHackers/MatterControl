@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl.EeProm
 		{
 			printerConnection.CommunicationStateChanged.RegisterEvent((s, e) =>
 			{
-				if(!printerConnection.PrinterIsConnected)
+				if(!printerConnection.IsConnected)
 				{
 					this.CloseOnIdle();
 				}

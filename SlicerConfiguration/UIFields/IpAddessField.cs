@@ -33,7 +33,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			var theme = ApplicationController.Instance.Theme;
 
 			base.Initialize(tabIndex);
-			bool canChangeComPort = !printer.Connection.PrinterIsConnected && printer.Connection.CommunicationState != CommunicationStates.AttemptingToConnect;
+			bool canChangeComPort = !printer.Connection.IsConnected && printer.Connection.CommunicationState != CommunicationStates.AttemptingToConnect;
 			//This setting defaults to Manual
 			var selectedMachine = printer.Settings.GetValue(SettingsKey.selector_ip_address);
 			dropdownList = new DropDownList(selectedMachine, theme.Colors.PrimaryTextColor, maxHeight: 200, pointSize: theme.DefaultFontSize)
@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			// Prevent droplist interaction when connected
 			printer.Connection.CommunicationStateChanged.RegisterEvent((s, e) =>
 			{
-				canChangeComPort = !printer.Connection.PrinterIsConnected && printer.Connection.CommunicationState != CommunicationStates.AttemptingToConnect;
+				canChangeComPort = !printer.Connection.IsConnected && printer.Connection.CommunicationState != CommunicationStates.AttemptingToConnect;
 				dropdownList.Enabled = canChangeComPort;
 				dropdownList.TextColor = canChangeComPort ? theme.Colors.PrimaryTextColor : new Color(theme.Colors.PrimaryTextColor, 150);
 				dropdownList.BorderColor = canChangeComPort ? theme.Colors.SecondaryTextColor : new Color(theme.Colors.SecondaryTextColor, 150);

@@ -110,7 +110,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			{
 				if (disableablePanel != null)
 				{
-					disableablePanel.Enabled = printer.Connection.PrinterIsConnected;
+					disableablePanel.Enabled = printer.Connection.IsConnected;
 				}
 
 			}, ref unregisterEvents);
@@ -145,7 +145,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		public override void OnLoad(EventArgs args)
 		{
 			// Wrap popup content in a DisableablePanel
-			disableablePanel = new DisableablePanel(this.GetPopupContent(), printer.Connection.PrinterIsConnected, alpha: 140);
+			disableablePanel = new DisableablePanel(this.GetPopupContent(), printer.Connection.IsConnected, alpha: 140);
 
 			// Set as popup
 			this.PopupContent = disableablePanel;

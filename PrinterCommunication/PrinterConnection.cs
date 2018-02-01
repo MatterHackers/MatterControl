@@ -577,7 +577,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			{
 				fanSpeed = Math.Max(0, Math.Min(255, value));
 				OnFanSpeedSet(null);
-				if (PrinterIsConnected)
+				if (this.IsConnected)
 				{
 					QueueLine("M106 S{0}".FormatWith((int)(fanSpeed + .5)));
 				}
@@ -623,7 +623,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		public bool PrinterIsConnected
+		public bool IsConnected
 		{
 			get
 			{
@@ -780,7 +780,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				{
 					_targetBedTemperature = value;
 					OnBedTemperatureSet(new TemperatureEventArgs(0, TargetBedTemperature));
-					if (PrinterIsConnected)
+					if (this.IsConnected)
 					{
 						QueueLine("M140 S{0}".FormatWith(_targetBedTemperature));
 					}
@@ -902,7 +902,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 							// make sure we don't have a left over print task
 							activePrintTask = null;
 
-							if (PrinterIsConnected)
+							if (this.IsConnected)
 							{
 								this.OnConnectionFailed(ConnectionFailure.AlreadyConnected);
 								return;
@@ -916,7 +916,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 							if (serialPortIsAvailable && !serialPortIsAlreadyOpen)
 							{
-								if (!PrinterIsConnected)
+								if (!this.IsConnected)
 								{
 									try
 									{
@@ -1055,7 +1055,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public void Disable()
 		{
-			if (PrinterIsConnected)
+			if (this.IsConnected)
 			{
 				// Make sure we send this without waiting for the printer to respond. We want to try and turn off the heaters.
 				// It may be possible in the future to make this go into the printer queue for assured sending but it means
@@ -1278,7 +1278,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public void OnIdle()
 		{
-			if (PrinterIsConnected && ReadThread.NumRunning == 0)
+			if (this.IsConnected && ReadThread.NumRunning == 0)
 			{
 				ReadThread.Start(this);
 			}
@@ -1420,9 +1420,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			timeSinceLastReadAnything.Restart();
 			// we want this while loop to be as fast as possible. Don't allow any significant work to happen in here
 			while (CommunicationState == CommunicationStates.AttemptingToConnect
-				|| (PrinterIsConnected && serialPort != null && serialPort.IsOpen && !Disconnecting && readThreadHolder.IsCurrentThread()))
+				|| (this.IsConnected && serialPort != null && serialPort.IsOpen && !Disconnecting && readThreadHolder.IsCurrentThread()))
 			{
-				if ((PrinterIsConnected
+				if ((this.IsConnected
 					|| this.communicationState == CommunicationStates.AttemptingToConnect)
 					&& CommunicationState != CommunicationStates.PrintingFromSd)
 				{
@@ -1879,7 +1879,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			{
 				targetHotendTemperature[hotendIndex0Based] = temperature;
 				OnHotendTemperatureSet(new TemperatureEventArgs(hotendIndex0Based, temperature));
-				if (PrinterIsConnected)
+				if (this.IsConnected)
 				{
 					QueueLine("M104 T{0} S{1}".FormatWith(hotendIndex0Based, targetHotendTemperature[hotendIndex0Based]));
 				}
@@ -1890,7 +1890,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public async void StartPrint(string gcodeFilename, PrintTask printTaskToUse = null)
 		{
-			if (!PrinterIsConnected || PrinterIsPrinting)
+			if (!this.IsConnected || PrinterIsPrinting)
 			{
 				return;
 			}
@@ -1959,7 +1959,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public bool StartSdCardPrint(string m23FileName)
 		{
-			if (!PrinterIsConnected
+			if (!this.IsConnected
 				|| PrinterIsPrinting
 				|| string.IsNullOrEmpty(m23FileName))
 			{
@@ -2395,7 +2395,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					int waitTimeInMs = 60000; // 60 seconds
 					if (waitingForPosition.IsRunning
 						&& waitingForPosition.ElapsedMilliseconds < waitTimeInMs
-						&& PrinterIsConnected)
+						&& this.IsConnected)
 					{
 						// we are waiting for a position response don't print more
 						return;
@@ -2407,7 +2407,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					if (currentSentLine != null)
 					{
 						if (currentSentLine.Contains("M114")
-							&& PrinterIsConnected)
+							&& this.IsConnected)
 						{
 							waitingForPosition.Restart();
 						}
@@ -2558,7 +2558,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private void WriteRaw(string lineToWrite, string lineWithoutChecksum)
 		{
-			if (PrinterIsConnected || CommunicationState == CommunicationStates.AttemptingToConnect)
+			if (this.IsConnected || CommunicationState == CommunicationStates.AttemptingToConnect)
 			{
 				if (serialPort != null && serialPort.IsOpen)
 				{

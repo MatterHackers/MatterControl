@@ -168,7 +168,7 @@ namespace MatterHackers.MatterControl
 			connectButtonContainer.Visible = false;
 			retryButtonContainer.Visible = false;
 
-			if (ApplicationController.Instance.ActivePrinter.Connection.PrinterIsConnected)
+			if (ApplicationController.Instance.ActivePrinter.Connection.IsConnected)
 			{
 				generalError.Text = "{0}!".FormatWith ("Connection succeeded".Localize ());
 				generalError.Visible = true;
