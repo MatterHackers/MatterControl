@@ -40,8 +40,8 @@
     <Reference Include="NUnit.ApplicationDomain, Version=11.0.0.0, Culture=neutral, PublicKeyToken=afbd8211e0c40e2c, processorArchitecture=MSIL">
       <HintPath>..\..\packages\NUnit.ApplicationDomain.11.0.0\lib\net40\NUnit.ApplicationDomain.dll</HintPath>
     </Reference>
-    <Reference Include="nunit.framework, Version=3.8.1.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\NUnit.3.8.1\lib\net45\nunit.framework.dll</HintPath>
+    <Reference Include="nunit.framework, Version=3.9.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\NUnit.3.9.0\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
