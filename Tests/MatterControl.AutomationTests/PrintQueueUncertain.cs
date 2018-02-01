@@ -36,7 +36,7 @@ using NUnit.Framework;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Ignore("Not clear if these should be ported"), Category("MatterControl.UI.Automation"), Category("MatterControl.Automation"), RunInApplicationDomain]
+	[TestFixture, Ignore("Not clear if these should be ported"), Category("MatterControl.UI.Automation"), RunInApplicationDomain]
 	public class PrintQueueUncertain
 	{
 		/// <summary>

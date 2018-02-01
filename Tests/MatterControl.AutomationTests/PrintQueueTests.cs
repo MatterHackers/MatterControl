@@ -37,7 +37,7 @@ using NUnit.Framework;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
-	[TestFixture, Category("MatterControl.UI.Automation"), Category("MatterControl.Automation"), RunInApplicationDomain, Apartment(ApartmentState.STA)]
+	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain, Apartment(ApartmentState.STA)]
 	public class PrintQueueTests
 	{
 		[Test]
