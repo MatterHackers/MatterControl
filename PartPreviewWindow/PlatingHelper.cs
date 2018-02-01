@@ -162,14 +162,6 @@ namespace MatterHackers.MatterControl
 			objectToMove.Matrix *= Matrix4X4.CreateTranslation(new Vector3(0, 0, zHeight - bounds.minXYZ.Z));
 		}
 
-		public static void CenterMeshGroupXY(List<MeshGroup> meshesGroupList, List<Matrix4X4> meshTransforms, int index)
-		{
-			AxisAlignedBoundingBox bounds = GetAxisAlignedBoundingBox(meshesGroupList[index], meshTransforms[index]);
-			Vector3 boundsCenter = (bounds.maxXYZ + bounds.minXYZ) / 2;
-
-			meshTransforms[index] *= Matrix4X4.CreateTranslation(new Vector3(-boundsCenter.X + bounds.XSize / 2, -boundsCenter.Y + bounds.YSize / 2, 0));
-		}
-
 		/// <summary>
 		/// Moves the target object to the first non-colliding position, starting from the lower left corner of the bounding box containing all sceneItems
 		/// </summary>
@@ -282,10 +274,6 @@ namespace MatterHackers.MatterControl
 			return true;
 		}
 
-		static AxisAlignedBoundingBox GetAxisAlignedBoundingBox(MeshGroup meshGroup, Matrix4X4 transform)
-		{
-			return meshGroup.GetAxisAlignedBoundingBox(transform);
-		}
 		
 	}
 }
