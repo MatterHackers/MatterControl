@@ -15,7 +15,7 @@ namespace MatterHackers.MatterControl
 
 		private static int raygunNotificationCount = 0;
 
-		private static RaygunClient _raygunClient = GetCorrectClient();
+		private static RaygunClient _raygunClient;
 
 		/// <summary>
 		/// The main entry point for the application.
@@ -31,6 +31,15 @@ namespace MatterHackers.MatterControl
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 			Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
 
+			if (AggContext.OperatingSystem == OSType.Mac)
+			{
+				_raygunClient = new RaygunClient("qmMBpKy3OSTJj83+tkO7BQ=="); // this is the Mac key
+			}
+			else
+			{
+				_raygunClient = new RaygunClient("hQIlyUUZRGPyXVXbI6l1dA=="); // this is the PC key
+			}
+
 			AggContext.Init(embeddedResourceName: "config.json");
 
 			// Make sure we have the right working directory as we assume everything relative to the executable.
@@ -44,8 +53,21 @@ namespace MatterHackers.MatterControl
 			if (string.IsNullOrEmpty(channel) || channel != "release" || OemSettings.Instance.WindowTitleExtra == "Experimental")
 #endif
 			{
-				System.Windows.Forms.Application.ThreadException += new ThreadExceptionEventHandler(Application_ThreadException);
-				AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
+				System.Windows.Forms.Application.ThreadException += (s, e) =>
+				{
+					if(raygunNotificationCount++ < RaygunMaxNotifications)
+					{
+						_raygunClient.Send(e.Exception);
+					}
+				};
+
+				AppDomain.CurrentDomain.UnhandledException += (s, e) =>
+				{
+					if (raygunNotificationCount++ < RaygunMaxNotifications)
+					{
+						_raygunClient.Send(e.ExceptionObject as Exception);
+					}
+				};
 			}
 
 			// Get startup bounds from MatterControl and construct system window
@@ -54,38 +76,6 @@ namespace MatterHackers.MatterControl
 
 			var systemWindow = Application.LoadRootWindow(width, height);
 			systemWindow.ShowAsSystemWindow();
-		}
-
-		private static void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
-		{
-#if !DEBUG
-			if(raygunNotificationCount++ < RaygunMaxNotifications)
-			{
-				_raygunClient.Send(e.Exception);
-			}
-#endif
-		}
-
-		private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
-		{
-#if !DEBUG
-			if(raygunNotificationCount++ < RaygunMaxNotifications)
-			{
-				_raygunClient.Send(e.ExceptionObject as Exception);
-			}
-#endif
-		}
-
-		private static RaygunClient GetCorrectClient()
-		{
-			if (AggContext.OperatingSystem == OSType.Mac)
-			{
-				return new RaygunClient("qmMBpKy3OSTJj83+tkO7BQ=="); // this is the Mac key
-			}
-			else
-			{
-				return new RaygunClient("hQIlyUUZRGPyXVXbI6l1dA=="); // this is the PC key
-			}
 		}
 
 		// ** Standard Winforms Main ** //
