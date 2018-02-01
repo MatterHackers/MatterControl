@@ -1648,7 +1648,6 @@ namespace MatterHackers.MatterControl
 		bool IsNetworkConnected();
 		void FindAndInstantiatePlugins(SystemWindow systemWindow);
 		void ProcessCommandline();
-		void ReportException(Exception e, string key = "", string value = "", ReportSeverity2 warningLevel = ReportSeverity2.Warning);
 		void PlatformInit(Action<string> reporter);
 	}
 
