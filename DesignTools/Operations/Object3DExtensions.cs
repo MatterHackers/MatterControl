@@ -35,6 +35,7 @@ using System.Threading;
 using MatterHackers.Agg.Font;
 using MatterHackers.Agg.Platform;
 using MatterHackers.DataConverters3D;
+using MatterHackers.DataConverters3D.UndoCommands;
 using MatterHackers.MatterControl.PartPreviewWindow.View3D;
 using MatterHackers.PolygonMesh;
 using MatterHackers.RenderOpenGl;
@@ -61,6 +62,54 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			var resultsA = a.Clone();
 			SubtractEditor.Subtract(resultsA.VisibleMeshes().ToList(), b.VisibleMeshes().ToList());
 			return resultsA;
+		}
+
+		public static void AddSelectionAsChildren(this InteractiveScene scene, IObject3D newParent)
+		{
+			if (scene.HasSelection)
+			{
+				IObject3D item;
+
+				List<IObject3D> itemsToReplace;
+
+				if (scene.SelectedItem is SelectionGroup)
+				{
+					Object3D container = new Object3D();
+					itemsToReplace = scene.SelectedItem.Children.ToList();
+					foreach (var child in itemsToReplace)
+					{
+						container.Children.Add(child.Clone());
+					}
+					item = container;
+				}
+				else
+				{
+					itemsToReplace = new List<IObject3D> { scene.SelectedItem };
+					item = scene.SelectedItem.Clone();
+				}
+
+				scene.SelectedItem = null;
+
+				newParent.Children.Add(item);
+
+				newParent.MakeNameNonColliding();
+
+				scene.UndoBuffer.AddAndDo(
+					new ReplaceCommand(
+						itemsToReplace,
+						new List<IObject3D> { newParent }));
+
+				if (newParent is HoldChildProportional pe)
+				{
+					item.Matrix = Matrix4X4.Identity;
+
+					// Make the object have an identity matrix and keep its position in our new object
+					newParent.Matrix = item.Matrix;
+					pe.InitialChildBounds = item.GetAxisAlignedBoundingBox();
+				}
+
+				scene.SelectedItem = newParent;
+			}
 		}
 
 		public static void WrapWith(this IObject3D originalItem, IObject3D wrapper, BedConfig sceneContext)
@@ -94,6 +143,25 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			});
 
 			sceneContext.Scene.SelectedItem = null;
+		}
+
+		public static void ApplyAtBoundsCenter(this IObject3D object3DToApplayTo, Matrix4X4 transformToApply)
+		{
+			object3DToApplayTo.Matrix = ApplyAtCenter(object3DToApplayTo.GetAxisAlignedBoundingBox(Matrix4X4.Identity), object3DToApplayTo.Matrix, transformToApply);
+		}
+
+		public static Matrix4X4 ApplyAtCenter(AxisAlignedBoundingBox boundsToApplyTo, Matrix4X4 currentTransform, Matrix4X4 transformToApply)
+		{
+			return ApplyAtPosition(currentTransform, transformToApply, boundsToApplyTo.Center);
+		}
+
+		public static Matrix4X4 ApplyAtPosition(Matrix4X4 currentTransform, Matrix4X4 transformToApply, Vector3 postionToApplyAt)
+		{
+			currentTransform *= Matrix4X4.CreateTranslation(-postionToApplyAt);
+			currentTransform *= transformToApply;
+			currentTransform *= Matrix4X4.CreateTranslation(postionToApplyAt);
+
+			return currentTransform;
 		}
 
 		public static Vector3 GetCenter(this IObject3D item)

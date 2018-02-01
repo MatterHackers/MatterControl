@@ -79,54 +79,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 			base.OnInvalidate();
 		}
-
-		public static void AddSelectionAsChildren(InteractiveScene scene, IObject3D newParent, string classDescriptor, string editorName)
-		{
-			if (scene.HasSelection)
-			{
-				IObject3D itemToHoldProportional;
-
-				List<IObject3D> itemsToReplace;
-
-				if (scene.SelectedItem is SelectionGroup)
-				{
-					Object3D container = new Object3D();
-					itemsToReplace = scene.SelectedItem.Children.ToList();
-					foreach (var child in itemsToReplace)
-					{
-						container.Children.Add(child.Clone());
-					}
-					itemToHoldProportional = container;
-				}
-				else
-				{
-					itemsToReplace = new List<IObject3D> { scene.SelectedItem };
-					itemToHoldProportional = scene.SelectedItem.Clone();
-				}
-
-				scene.SelectedItem = null;
-
-				newParent.Children.Add(itemToHoldProportional);
-
-				newParent.MakeNameNonColliding();
-
-				scene.UndoBuffer.AddAndDo(
-					new ReplaceCommand(
-						itemsToReplace,
-						new List<IObject3D> { newParent }));
-
-				// Make the object have an identity matrix and keep its position in our new object
-				newParent.Matrix = itemToHoldProportional.Matrix;
-				itemToHoldProportional.Matrix = Matrix4X4.Identity;
-
-				if (newParent is HoldChildProportional pe)
-				{
-					pe.InitialChildBounds = itemToHoldProportional.GetAxisAlignedBoundingBox();
-				}
-
-				scene.SelectedItem = newParent;
-			}
-		}
 	}
 
 	public class ProportionalEditor : IObject3DEditor

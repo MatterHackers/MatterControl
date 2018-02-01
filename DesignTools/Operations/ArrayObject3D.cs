@@ -69,14 +69,17 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 							nextOffset *= Scale;
 						}
 					}
+
 					nextOffset.Rotate(rotateRadians * i);
 					var next = lastChild.Clone();
 					next.Matrix *= Matrix4X4.CreateTranslation(nextOffset.X, nextOffset.Y, 0);
+
 					if (RotatePart)
 					{
-						next.Matrix = PlatingHelper.ApplyAtCenter(next, Matrix4X4.CreateRotationZ(rotateRadians));
+						next.ApplyAtBoundsCenter(Matrix4X4.CreateRotationZ(rotateRadians));
 					}
-					next.Matrix = PlatingHelper.ApplyAtCenter(next, Matrix4X4.CreateScale(Scale));
+
+					next.ApplyAtBoundsCenter(Matrix4X4.CreateScale(Scale));
 					list.Add(next.Clone());
 					lastChild = next;
 				}
