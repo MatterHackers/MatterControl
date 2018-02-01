@@ -90,6 +90,8 @@
     <Compile Include="DesignTools\Operations\Align.cs" />
     <Compile Include="DesignTools\Operations\Scale.cs" />
     <Compile Include="DesignTools\Operations\Rotate.cs" />
+    <Compile Include="DesignTools\Operations\SmoothPath.cs" />
+    <Compile Include="DesignTools\Primitives\BaseObject3D.cs" />
     <Compile Include="DesignTools\Primitives\PyramidObject3D.cs" />
     <Compile Include="DesignTools\Primitives\CylinderAdvancedObject3D.cs" />
     <Compile Include="DesignTools\Primitives\CylinderObject3D.cs" />
