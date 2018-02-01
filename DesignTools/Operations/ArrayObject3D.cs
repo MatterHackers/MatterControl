@@ -36,11 +36,13 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 {
 	public class ArrayObject3D : Object3D, IRebuildable
 	{
-		IObject3D item;
-
 		public int Count { get; set; } = 3;
 		public double XOffset { get; set; } = 30;
-		public double YOffset { get; set; } = 30;
+		public double YOffset { get; set; } = 0;
+		public double Rotate { get; set; } = 0;
+		public double Scale { get; set; } = 1;
+		public bool RotatePart { get; set; } = false;
+		public bool ScaleOffset { get; set; } = false;
 
 		public override string ActiveEditor => "PublicPropertyEditor";
 
@@ -52,21 +54,33 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		{
 			this.Children.Modify(list =>
 			{
+				IObject3D lastChild = list.First();
 				list.Clear();
-				for(int i=0; i<Count; i++)
+				list.Add(lastChild);
+				var offset = Vector3.Zero;
+				for (int i=1; i<Count; i++)
 				{
-					var next = item.Clone();
-					next.Matrix = Matrix4X4.CreateTranslation(XOffset * i, YOffset * i, 0);
+					var rotateRadians = MathHelper.DegreesToRadians(Rotate);
+					var nextOffset = new Vector2(XOffset, YOffset);
+					if (ScaleOffset)
+					{
+						for (int j = 1; j < i; j++)
+						{
+							nextOffset *= Scale;
+						}
+					}
+					nextOffset.Rotate(rotateRadians * i);
+					var next = lastChild.Clone();
+					next.Matrix *= Matrix4X4.CreateTranslation(nextOffset.X, nextOffset.Y, 0);
+					if (RotatePart)
+					{
+						next.Matrix = PlatingHelper.ApplyAtCenter(next, Matrix4X4.CreateRotationZ(rotateRadians));
+					}
+					next.Matrix = PlatingHelper.ApplyAtCenter(next, Matrix4X4.CreateScale(Scale));
 					list.Add(next.Clone());
+					lastChild = next;
 				}
 			});
-		}
-
-		public void SetCopy()
-		{
-			item = Children.First();
-			Children.Remove(item);
-			Rebuild();
 		}
 	}
 }

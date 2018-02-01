@@ -414,11 +414,11 @@ namespace MatterHackers.MatterControl
 					HoldChildProportional.AddSelectionAsChildren(scene, new ArrayObject3D(), nameof(ArrayObject3D), "Array Part");
 					if(scene.SelectedItem is ArrayObject3D array)
 					{
-						array.SetCopy();
+						array.Rebuild();
 					}
 				},
 				//Icon = AggContext.StaticData.LoadIcon("subtract.png").SetPreMultiply(),
-				IsEnabled = (scene) => scene.HasSelection,
+				IsEnabled = (scene) => scene.HasSelection && !(scene.SelectedItem is SelectionGroup),
 			},
 			new SceneSelectionOperation()
 			{
