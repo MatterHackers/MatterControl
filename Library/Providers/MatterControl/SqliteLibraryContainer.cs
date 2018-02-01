@@ -59,19 +59,13 @@ namespace MatterHackers.MatterControl.Library
 	{
 		protected List<PrintItemCollection> childCollections = new List<PrintItemCollection>();
 
+		/*
+		// Use default rootCollectionID
 		public SqliteLibraryContainer()
-		{
-			var rootCollection = Datastore.Instance.dbSQLite.Table<PrintItemCollection>().Where(v => v.Name == "_library").Take(1).FirstOrDefault();
-
-			this.Initialize(rootCollection?.Id ?? 0);
-		}
+			: this(Datastore.Instance.dbSQLite.Table<PrintItemCollection>().Where(v => v.Name == "_library").Take(1).FirstOrDefault()?.Id ?? 0)
+		{ }*/
 
 		public SqliteLibraryContainer(int collectionID)
-		{
-			this.Initialize(collectionID);
-		}
-
-		private void Initialize(int collectionID)
 		{
 			this.ChildContainers = new List<ILibraryContainerLink>();
 			this.Items = new List<ILibraryItem>();
