@@ -799,14 +799,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				};
 
 				// After initializing the field, wrap with dropmenu if applicable
-				//if (settingData.QuickMenuSettings.Count > 0)
-				//{
-				//	var dropMenu = new DropMenuWrappedField(uiField, settingData, textColor);
-				//	dropMenu.Initialize(tabIndexForItem);
+				if (settingData.QuickMenuSettings.Count > 0 
+					&& settingData.SlicerConfigName == "baud_rate")
+				{
+					var dropMenu = new DropMenuWrappedField(uiField, settingData, textColor);
+					dropMenu.Initialize(tabIndexForItem);
 
-				//	settingsRow.AddContent(dropMenu.Content);
-				//}
-				//else
+					settingsRow.AddContent(dropMenu.Content);
+				}
+				else
 				{
 					if (!placeFieldInDedicatedRow)
 					{
