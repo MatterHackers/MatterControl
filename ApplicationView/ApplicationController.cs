@@ -401,7 +401,7 @@ namespace MatterHackers.MatterControl
 				TitleResolver = () => "Proportional Scale".Localize(),
 				Action = (scene) =>
 				{
-					HoldChildProportional.AddSelectionAsChildren(scene, new HoldChildProportional(), nameof(ProportionalEditor), "Proportional Scale");
+					scene.AddSelectionAsChildren(new HoldChildProportional());
 				},
 				//Icon = AggContext.StaticData.LoadIcon("subtract.png").SetPreMultiply(),
 				IsEnabled = (scene) => scene.HasSelection,
@@ -411,7 +411,7 @@ namespace MatterHackers.MatterControl
 				TitleResolver = () => "Array".Localize(),
 				Action = (scene) =>
 				{
-					HoldChildProportional.AddSelectionAsChildren(scene, new ArrayObject3D(), nameof(ArrayObject3D), "Array Part");
+					scene.AddSelectionAsChildren(new ArrayObject3D());
 					if(scene.SelectedItem is ArrayObject3D array)
 					{
 						array.Rebuild();
