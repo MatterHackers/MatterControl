@@ -89,7 +89,7 @@ namespace MatterHackers.MatterControl.Library
 		public override Task<ImageBuffer> GetThumbnail(ILibraryItem item, int width, int height)
 		{
 			bool largeIcon = width > 50 || height > 50;
-			var thumbnail = AggContext.StaticData.LoadIcon(Path.Combine(largeIcon ? "icon_sd_card_115x115.png" : "icon_sd_card_50x50.png"));
+			var thumbnail = AggContext.StaticData.LoadIcon(Path.Combine(largeIcon ? "icon_sd_card_115x115.png" : "icon_sd_card_50x50.png"), IconColor.Theme);
 
 			return Task.FromResult(thumbnail);
 		}
