@@ -138,10 +138,6 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public void ReportException(Exception e, string key = "", string value = "", ReportSeverity2 warningLevel = ReportSeverity2.Warning)
-		{
-		}
-
 		public void PlatformInit(Action<string> reporter)
 		{
 			if (AggContext.OperatingSystem == OSType.Mac && AggContext.StaticData == null)
