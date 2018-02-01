@@ -892,6 +892,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			var defaultCascade = printer.Settings.defaultLayerCascade;
 
+			var baseAndOem = new List<PrinterSettingsLayer>() { printer.Settings.OemLayer, printer.Settings.BaseLayer };
+
 			foreach (var item in this.settingsRows)
 			{
 				var settingData = item.settingData;
@@ -899,6 +901,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				var (currentValue, layerName) = printer.Settings.GetValueAndLayerName(settingData.SlicerConfigName, defaultCascade);
 
 				item.widget.Visible = layerName != "Oem" && layerName != "Base";
+
+				if(layerName == "User" 
+					&& currentValue == printer.Settings.GetValueAndLayerName(settingData.SlicerConfigName, baseAndOem).currentValue)
+				{
+					item.widget.Visible = false;
+					item.widget.Visible = true;
+					item.widget.Visible = false;
+				}
 			}
 
 			filteredItemsHeading.Visible = true;
