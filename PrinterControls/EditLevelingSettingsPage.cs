@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Kevin Pope
+Copyright (c) 2018, Kevin Pope, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,67 +27,29 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
-using System;
-using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl
 {
-	public class EditLevelingSettingsWindow : SystemWindow
+	public class EditLevelingSettingsPage : DialogPage
 	{
-		private List<Vector3> positions = new List<Vector3>();
-		PrinterSettings printerSettings;
-
-		public EditLevelingSettingsWindow(PrinterSettings printerSettings)
-			: base(400, 370)
+		public EditLevelingSettingsPage(PrinterConfig printer)
 		{
-			this.printerSettings = printerSettings;
 			var textImageButtonFactory = ApplicationController.Instance.Theme.ButtonFactory;
 
-			AlwaysOnTopOfMain = true;
-			Title = "Leveling Settings".Localize();
+			this.WindowTitle = "Leveling Settings".Localize();
+			this.HeaderText = "Sampled Positions".Localize();
 
-			FlowLayoutWidget topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			topToBottom.AnchorAll();
-			topToBottom.Padding = new BorderDouble(3, 0, 3, 5);
-
-			FlowLayoutWidget headerRow = new FlowLayoutWidget(FlowDirection.LeftToRight);
-			headerRow.HAnchor = HAnchor.Stretch;
-			headerRow.Margin = new BorderDouble(0, 3, 0, 0);
-			headerRow.Padding = new BorderDouble(0, 3, 0, 3);
-
-			{
-				var elementHeader = new TextWidget("Sampled Positions".Localize() + ":", pointSize: 14);
-				elementHeader.TextColor = ActiveTheme.Instance.PrimaryTextColor;
-				elementHeader.HAnchor = HAnchor.Stretch;
-				elementHeader.VAnchor = Agg.UI.VAnchor.Bottom;
-
-				headerRow.AddChild(elementHeader);
-			}
-
-			topToBottom.AddChild(headerRow);
-
-			FlowLayoutWidget presetsFormContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			//ListBox printerListContainer = new ListBox();
-			{
-				presetsFormContainer.HAnchor = HAnchor.Stretch;
-				presetsFormContainer.VAnchor = VAnchor.Stretch;
-				presetsFormContainer.Padding = new BorderDouble(3);
-				presetsFormContainer.BackgroundColor = ActiveTheme.Instance.SecondaryBackgroundColor;
-			}
-
-			topToBottom.AddChild(presetsFormContainer);
-
-			BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
+			var positions = new List<Vector3>();
 
 			// put in the movement edit controls
-			PrintLevelingData levelingData = printerSettings.Helpers.GetPrintLevelingData();
+			PrintLevelingData levelingData = printer.Settings.Helpers.GetPrintLevelingData();
 			for (int i = 0; i < levelingData.SampledPositions.Count; i++)
 			{
 				positions.Add(levelingData.SampledPositions[i]);
@@ -99,10 +61,8 @@ namespace MatterHackers.MatterControl
 				FlowLayoutWidget leftRightEdit = new FlowLayoutWidget();
 				leftRightEdit.Padding = new BorderDouble(3);
 				leftRightEdit.HAnchor |= Agg.UI.HAnchor.Stretch;
-				TextWidget positionLabel;
 
-				string whichPositionText = "Position".Localize();
-				positionLabel = new TextWidget("{0} {1,-5}".FormatWith(whichPositionText, row + 1), textColor: ActiveTheme.Instance.PrimaryTextColor);
+				var positionLabel = new TextWidget("{0} {1,-5}".FormatWith("Position".Localize(), row + 1), textColor: ActiveTheme.Instance.PrimaryTextColor);
 
 				positionLabel.VAnchor = VAnchor.Center;
 				leftRightEdit.AddChild(positionLabel);
@@ -133,52 +93,28 @@ namespace MatterHackers.MatterControl
 					leftRightEdit.AddChild(valueEdit);
 				}
 
-				presetsFormContainer.AddChild(leftRightEdit);
-
-				presetsFormContainer.AddChild(new CustomWidgets.HorizontalLine());
+				this.contentRow.AddChild(leftRightEdit);
 			}
 
-			ShowAsSystemWindow();
-			MinimumSize = new Vector2(Width, Height);
-
 			Button savePresetsButton = textImageButtonFactory.Generate("Save".Localize());
-			savePresetsButton.Click += (s,e) =>
+			savePresetsButton.Click += (s, e) =>
 			{
 				UiThread.RunOnIdle(() =>
 				{
-					PrintLevelingData newLevelingData = printerSettings.Helpers.GetPrintLevelingData();
+					PrintLevelingData newLevelingData = printer.Settings.Helpers.GetPrintLevelingData();
 
 					for (int i = 0; i < newLevelingData.SampledPositions.Count; i++)
 					{
 						newLevelingData.SampledPositions[i] = positions[i];
 					}
 
-					printerSettings.Helpers.SetPrintLevelingData(newLevelingData, false);
-					printerSettings.Helpers.UpdateLevelSettings();
-					Close();
+					printer.Settings.Helpers.SetPrintLevelingData(newLevelingData, false);
+					printer.Settings.Helpers.UpdateLevelSettings();
+					this.Close();
 				});
 			};
 
-			Button cancelPresetsButton = textImageButtonFactory.Generate("Cancel".Localize());
-			cancelPresetsButton.Click += (sender, e) =>
-			{
-				UiThread.RunOnIdle(Close);
-			};
-
-			FlowLayoutWidget buttonRow = new FlowLayoutWidget();
-			buttonRow.HAnchor = HAnchor.Stretch;
-			buttonRow.Padding = new BorderDouble(0, 3);
-
-			GuiWidget hButtonSpacer = new GuiWidget();
-			hButtonSpacer.HAnchor = HAnchor.Stretch;
-
-			buttonRow.AddChild(savePresetsButton);
-			buttonRow.AddChild(hButtonSpacer);
-			buttonRow.AddChild(cancelPresetsButton);
-
-			topToBottom.AddChild(buttonRow);
-
-			AddChild(topToBottom);
+			this.AddPageAction(savePresetsButton);
 		}
 	}
 }

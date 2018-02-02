@@ -13,7 +13,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 	public class CalibrationControls : FlowLayoutWidget
 	{
 		private EventHandler unregisterEvents;
-		private EditLevelingSettingsWindow editLevelingSettingsWindow;
 		private GuiWidget runPrintLevelingButton;
 
 		private TextImageButtonFactory buttonFactory;
@@ -94,7 +93,10 @@ namespace MatterHackers.MatterControl.PrinterControls
 			var editButton = new IconButton(AggContext.StaticData.LoadIcon("icon_edit.png", 16, 16, IconColor.Theme), theme);
 			editButton.Click += (s, e) =>
 			{
-				widget.EditOptions();
+				UiThread.RunOnIdle(() =>
+				{
+					DialogWindow.Show(new EditLevelingSettingsPage(printer));
+				});
 			};
 
 			return new SectionWidget(
@@ -108,25 +110,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 		{
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
-		}
-
-		private void EditOptions()
-		{
-			UiThread.RunOnIdle(() =>
-			{
-				if (editLevelingSettingsWindow == null)
-				{
-					editLevelingSettingsWindow = new EditLevelingSettingsWindow(printer.Settings);
-					editLevelingSettingsWindow.Closed += (s, e) =>
-					{
-						editLevelingSettingsWindow = null;
-					};
-				}
-				else
-				{
-					editLevelingSettingsWindow.BringToFront();
-				}
-			});
 		}
 
 		private void PrinterStatusChanged(object sender, EventArgs e)
