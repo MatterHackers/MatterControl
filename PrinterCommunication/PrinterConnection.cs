@@ -2449,6 +2449,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
+		public int TurnOffHeatDelay { get; set; } = 60;
+
 		public void TurnOffBedAndExtruders(bool now)
 		{
 			if (now)
@@ -2461,9 +2463,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 			else
 			{
-				int secondsToWait = 60;
-				bool currentlyWaiting = ContinuWaitingToTurnOffHeaters && TimeHaveBeenWaitingToTurnOffHeaters.IsRunning && TimeHaveBeenWaitingToTurnOffHeaters.Elapsed.TotalSeconds < secondsToWait;
-				SecondsUntilTurnOffHeaters = secondsToWait;
+				bool currentlyWaiting = ContinuWaitingToTurnOffHeaters && TimeHaveBeenWaitingToTurnOffHeaters.IsRunning && TimeHaveBeenWaitingToTurnOffHeaters.Elapsed.TotalSeconds < TurnOffHeatDelay;
+				SecondsUntilTurnOffHeaters = TurnOffHeatDelay;
 				ContinuWaitingToTurnOffHeaters = true;
 				TimeHaveBeenWaitingToTurnOffHeaters = Stopwatch.StartNew();
 				if (!currentlyWaiting)
@@ -2472,10 +2473,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					// wait secondsToWait and turn off the heaters
 					Task.Run(() =>
 					{
-						while (TimeHaveBeenWaitingToTurnOffHeaters.Elapsed.TotalSeconds < secondsToWait
+						while (TimeHaveBeenWaitingToTurnOffHeaters.Elapsed.TotalSeconds < TurnOffHeatDelay
 							&& ContinuWaitingToTurnOffHeaters)
 						{
-							SecondsUntilTurnOffHeaters = ContinuWaitingToTurnOffHeaters ? Math.Max(0, secondsToWait - TimeHaveBeenWaitingToTurnOffHeaters.Elapsed.TotalSeconds) : 0;
+							SecondsUntilTurnOffHeaters = ContinuWaitingToTurnOffHeaters ? Math.Max(0, TurnOffHeatDelay - TimeHaveBeenWaitingToTurnOffHeaters.Elapsed.TotalSeconds) : 0;
 							Thread.Sleep(100);
 						}
 
