@@ -576,7 +576,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			container.backButton.Enabled = false;
 			container.nextButton.Enabled = false;
 
-			if (printer.Connection.PrinterIsConnected
+			if (printer.Connection.IsConnected
 				&& !(printer.Connection.PrinterIsPrinting
 				|| printer.Connection.PrinterIsPaused))
 			{

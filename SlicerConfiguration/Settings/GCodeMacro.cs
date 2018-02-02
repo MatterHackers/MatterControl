@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public void Run(PrinterConnection printerConnection)
 		{
-			if (printerConnection.PrinterIsConnected)
+			if (printerConnection.IsConnected)
 			{
 				printerConnection.MacroStart();
 				printerConnection.QueueLine(GCode);

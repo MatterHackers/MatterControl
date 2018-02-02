@@ -167,7 +167,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 		private void onPrinterStatusChanged(object sender, EventArgs e)
 		{
-			if (printer.Connection.PrinterIsConnected)
+			if (printer.Connection.IsConnected)
 			{
 				printerComPortHelpLink.Visible = false;
 				printerComPortError.TextColor = ActiveTheme.Instance.PrimaryTextColor;

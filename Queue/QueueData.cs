@@ -133,7 +133,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		public void LoadFilesFromSD()
 		{
-			if (ApplicationController.Instance.ActivePrinter.Connection.PrinterIsConnected
+			if (ApplicationController.Instance.ActivePrinter.Connection.IsConnected
 				&& !(ApplicationController.Instance.ActivePrinter.Connection.PrinterIsPrinting
 				|| ApplicationController.Instance.ActivePrinter.Connection.PrinterIsPaused))
 			{

@@ -59,11 +59,10 @@ namespace MatterHackers.MatterControl.Library
 	{
 		protected List<PrintItemCollection> childCollections = new List<PrintItemCollection>();
 
-		/*
-		// Use default rootCollectionID
+		// Use default rootCollectionID - normally this constructor isn't used but exists to validate behavior in tests
 		public SqliteLibraryContainer()
 			: this(Datastore.Instance.dbSQLite.Table<PrintItemCollection>().Where(v => v.Name == "_library").Take(1).FirstOrDefault()?.Id ?? 0)
-		{ }*/
+		{ }
 
 		public SqliteLibraryContainer(int collectionID)
 		{

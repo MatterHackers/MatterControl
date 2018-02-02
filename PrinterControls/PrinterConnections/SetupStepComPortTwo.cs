@@ -159,7 +159,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 		private void onPrinterStatusChanged(object sender, EventArgs e)
 		{
-			if (printer.Connection.PrinterIsConnected)
+			if (printer.Connection.IsConnected)
 			{
 				printerErrorMessage.TextColor = ActiveTheme.Instance.PrimaryTextColor;
 				printerErrorMessage.Text = "Connection succeeded".Localize() + "!";
