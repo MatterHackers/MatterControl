@@ -13,7 +13,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 	public class CalibrationControls : FlowLayoutWidget
 	{
 		private EventHandler unregisterEvents;
-		private GuiWidget runPrintLevelingButton;
+		private GuiWidget configureButton;
 
 		private TextImageButtonFactory buttonFactory;
 		private PrinterConfig printer;
@@ -49,17 +49,20 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 			// configure button
 			var configureIcon = AggContext.StaticData.LoadIcon("fa-cog_16.png", IconColor.Raw);
-			runPrintLevelingButton = new IconButton(configureIcon, theme)
+			configureButton = new IconButton(configureIcon, theme)
 			{
 				ToolTipText = "Configure".Localize(),
 				Margin = theme.ButtonSpacing,
 				VAnchor = VAnchor.Center
 			};
-			runPrintLevelingButton.Click += (s, e) =>
+			configureButton.Click += (s, e) =>
 			{
-				UiThread.RunOnIdle(() => LevelWizardBase.ShowPrintLevelWizard(printer, LevelWizardBase.RuningState.UserRequestedCalibration));
+				UiThread.RunOnIdle(() =>
+				{
+					DialogWindow.Show(new EditLevelingSettingsPage(printer));
+				});
 			};
-			buttonRow.AddChild(runPrintLevelingButton);
+			buttonRow.AddChild(configureButton);
 
 			// put in the switch
 			CheckBox printLevelingSwitch = ImageButtonFactory.CreateToggleSwitch(printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled));
@@ -91,22 +94,10 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		public static SectionWidget CreateSection(PrinterConfig printer, ThemeConfig theme)
 		{
-			var widget = new CalibrationControls(printer, theme);
-
-			var editButton = new IconButton(AggContext.StaticData.LoadIcon("icon_edit.png", 16, 16, IconColor.Theme), theme);
-			editButton.Click += (s, e) =>
-			{
-				UiThread.RunOnIdle(() =>
-				{
-					DialogWindow.Show(new EditLevelingSettingsPage(printer));
-				});
-			};
-
 			return new SectionWidget(
 				"Calibration".Localize(),
-				widget,
-				theme,
-				editButton);
+				new CalibrationControls(printer, theme),
+				theme);
 		}
 
 		public override void OnClosed(ClosedEventArgs e)
@@ -128,12 +119,12 @@ namespace MatterHackers.MatterControl.PrinterControls
 				|| printer.Connection.PrinterIsPaused)
 			{
 				this.Enabled = false;
-				runPrintLevelingButton.Enabled = true; // setting this true when the element is disabled makes the colors stay correct
+				configureButton.Enabled = true; // setting this true when the element is disabled makes the colors stay correct
 			}
 			else
 			{
 				this.Enabled = true;
-				runPrintLevelingButton.Enabled = printer.Connection.IsConnected;
+				configureButton.Enabled = printer.Connection.IsConnected;
 			}
 		}
 	}

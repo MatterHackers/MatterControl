@@ -41,7 +41,8 @@ namespace MatterHackers.MatterControl
 	{
 		public EditLevelingSettingsPage(PrinterConfig printer)
 		{
-			var textImageButtonFactory = ApplicationController.Instance.Theme.ButtonFactory;
+			var theme = ApplicationController.Instance.Theme;
+			var textImageButtonFactory = theme.ButtonFactory;
 
 			this.WindowTitle = "Leveling Settings".Localize();
 			this.HeaderText = "Sampled Positions".Localize();
@@ -95,6 +96,24 @@ namespace MatterHackers.MatterControl
 
 				this.contentRow.AddChild(leftRightEdit);
 			}
+
+			var runWizardButton = new TextButton("Run Leveling Wizard".Localize(), theme)
+			{
+				VAnchor = VAnchor.Absolute,
+				HAnchor = HAnchor.Right,
+				BackgroundColor = theme.MinimalShade,
+				Margin = new BorderDouble(5, 0, 5, 20)
+			};
+			runWizardButton.Click += (s, e) =>
+			{
+				this.WizardWindow.CloseOnIdle();
+				UiThread.RunOnIdle(() =>
+				{
+					LevelWizardBase.ShowPrintLevelWizard(printer, LevelWizardBase.RuningState.UserRequestedCalibration);
+				});
+			};
+
+			this.contentRow.AddChild(runWizardButton);
 
 			Button savePresetsButton = textImageButtonFactory.Generate("Save".Localize());
 			savePresetsButton.Click += (s, e) =>
