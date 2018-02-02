@@ -54,10 +54,9 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public bool Unlocked { get; } = true;
 
-		static Type[] allowedTypes = 
+		private static Type[] allowedTypes = 
 		{
-			typeof(double), typeof(int), typeof(string), typeof(bool),
-			typeof(NamedTypeFace)
+			typeof(double), typeof(int), typeof(string), typeof(bool)
 		};
 
 		public const BindingFlags OwnedPropertiesOnly = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
@@ -113,13 +112,14 @@ namespace MatterHackers.MatterControl.DesignTools
 			var rebuildable = item as IRebuildable;
 
 			var editableProperties = this.item.GetType().GetProperties(OwnedPropertiesOnly)
-				.Where(pi => allowedTypes.Contains(pi.PropertyType)
+				.Where(pi => (allowedTypes.Contains(pi.PropertyType) || pi.PropertyType.IsEnum)
 					&& pi.GetGetMethod() != null
 					&& pi.GetSetMethod() != null)
 				.Select(p => new
 				{
 					Value = p.GetGetMethod().Invoke(this.item, null),
 					DisplayName = GetDisplayName(p),
+					PropertyType = p.PropertyType,
 					PropertyInfo = p
 				});
 
@@ -200,30 +200,37 @@ namespace MatterHackers.MatterControl.DesignTools
 					tabContainer.AddChild(rowContainer);
 				}
 				// create a NamedTypeFace editor
-				else if (property.Value is NamedTypeFace namedTypeFace)
+				else if (property.PropertyType.IsEnum)
 				{
-					FlowLayoutWidget rowContainer = CreateSettingsRow(property.DisplayName.Localize());
-					var availableFonts = new Dictionary<string, string>();
-					foreach (NamedTypeFace name in Enum.GetValues(typeof(NamedTypeFace)))
+					// Enum keyed on name to friendly name
+					var enumItems = Enum.GetNames(property.PropertyType).Select(enumName =>
 					{
-						availableFonts.Add(name.ToString(), name.ToString().Replace('_', ' '));
-					}
+						return new
+						{
+							Key = enumName,
+							Value = enumName.Replace('_', ' ')
+						};
+					});
+
+					FlowLayoutWidget rowContainer = CreateSettingsRow(property.DisplayName.Localize());
 
 					var dropDownList = new DropDownList("Name".Localize(), theme.Colors.PrimaryTextColor, Direction.Down, pointSize: theme.DefaultFontSize);
 
-					foreach (var fontName in availableFonts.OrderBy((n) => n.Value))
+					foreach (var fontName in enumItems.OrderBy(n => n.Value))
 					{
 						MenuItem newItem = dropDownList.AddItem(fontName.Value);
 
 						var localFontName = fontName;
 						newItem.Selected += (sender, e) =>
 						{
-							NamedTypeFace key = (NamedTypeFace)Enum.Parse(typeof(NamedTypeFace), localFontName.Key);
-							property.PropertyInfo.GetSetMethod().Invoke(this.item, new Object[] { key });
+							property.PropertyInfo.GetSetMethod().Invoke(
+								this.item, 
+								new Object[] { Enum.Parse(property.PropertyType, localFontName.Key) });
 							rebuildable?.Rebuild();
 						};
 					}
-					dropDownList.SelectedValue = namedTypeFace.ToString().Replace('_', ' ');
+
+					dropDownList.SelectedLabel = property.Value.ToString().Replace('_', ' ');
 					rowContainer.AddChild(dropDownList);
 					tabContainer.AddChild(rowContainer);
 				}
