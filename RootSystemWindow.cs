@@ -295,7 +295,6 @@ namespace MatterHackers.MatterControl
 							if (exitConfirmed)
 							{
 								ApplicationController.Instance.ApplicationExiting = true;
-
 								ApplicationController.Instance.Shutdown();
 
 								// Always call PrinterConnection.Disable on exit unless PrintingFromSd
@@ -322,6 +321,8 @@ namespace MatterHackers.MatterControl
 			else
 			{
 				ApplicationController.Instance.ApplicationExiting = true;
+				// Make sure we tell the Application Conroller to shut down. This will release the silcing thread if running.
+				ApplicationController.Instance.Shutdown();
 			}
 		}
 

@@ -247,8 +247,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return filePath;
 		}
 
-		public static string CompletedSuccessfullyString => "; MC Slice Completed Successfully";
-
 		public static Task SliceFile(string sourceFile, string gcodeFilePath, PrinterConfig printer, IProgress<ProgressStatus> progressReporter, CancellationToken cancellationToken)
 		{
 			string mergeRules = "";
@@ -407,8 +405,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								{
 									gcodeWriter.WriteLine("; {0}", line);
 								}
-
-								gcodeWriter.WriteLine(CompletedSuccessfullyString);
 							}
 						}
 					}
@@ -425,13 +421,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			using (var reader = new StreamReader(gcodeFilePath))
 			{
-				if (reader.BaseStream.Length > 1024)
+				if (reader.BaseStream.Length > 10000)
 				{
-					reader.BaseStream.Seek(-1024, SeekOrigin.End);
+					reader.BaseStream.Seek(-10000, SeekOrigin.End);
 				}
+
 				string endText = reader.ReadToEnd();
 
-				return endText.Contains(CompletedSuccessfullyString);
+				return endText.Contains("; MatterSlice Completed Successfully");
 			}
 		}
 	}
