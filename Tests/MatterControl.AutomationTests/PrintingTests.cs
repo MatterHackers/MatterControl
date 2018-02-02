@@ -35,21 +35,21 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.AddItemToBedplate();
 
+					// Sorten the delay so the test runs in a reasonable time
+					ApplicationController.Instance.ActivePrinter.Connection.TurnOffHeatDelay = 5;
+
 					testRunner.StartPrint();
 
 					// Wait for print to finish
 					testRunner.WaitForPrintFinished();
 
 					// Wait for expected temp
-					testRunner.WaitFor(() => ApplicationController.Instance.ActivePrinter.Connection.GetActualHotendTemperature(0) <= 0);
+					testRunner.WaitFor(() => ApplicationController.Instance.ActivePrinter.Connection.GetActualHotendTemperature(0) <= 0, 10);
 					Assert.Less(ApplicationController.Instance.ActivePrinter.Connection.GetActualHotendTemperature(0), 30);
 
 					// Wait for expected temp
 					testRunner.WaitFor(() => ApplicationController.Instance.ActivePrinter.Connection.ActualBedTemperature <= 10);
 					Assert.Less(ApplicationController.Instance.ActivePrinter.Connection.ActualBedTemperature, 10);
-
-					// Sorten the delay so the test runs in a reasonable time
-					ApplicationController.Instance.ActivePrinter.Connection.TurnOffHeatDelay = 5;
 
 					// Make sure we can run this whole thing again
 					testRunner.StartPrint();
