@@ -154,6 +154,7 @@ namespace MatterHackers.MatterControl.Library.Export
 					new Vector4(),
 					new Vector4(),
 					new Vector4(),
+					Vector4.One,
 					CancellationToken.None));
 
 				var printerSettings = ActiveSliceSettings.Instance;

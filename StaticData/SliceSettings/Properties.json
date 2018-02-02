@@ -1906,6 +1906,15 @@
     "RebuildGCodeOnChange": false
   },
   {
+    "SlicerConfigName": "print_time_estimate_multiplier",
+    "PresentationName": "Time Multiplier",
+    "HelpText": "Adjust this to correct differences between expected printing speeds and actual printing speeds.",
+    "DataEditType": "POSITIVE_DOUBLE",
+    "Units": "%",
+    "ShowIfSet": "!sla_printer",
+    "DefaultValue": "100"
+  },
+  {
     "SlicerConfigName": "manual_movement_speeds",
     "PresentationName": "Manual Movement Speeds",
     "HelpText": "Axis movement speeds",

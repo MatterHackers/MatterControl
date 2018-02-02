@@ -182,6 +182,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 								new Vector4(),
 								new Vector4(),
 								new Vector4(),
+								Vector4.One,
 								CancellationToken.None);
 
 							for (int j = 0; j < unleveledGCode.LineCount; j++)
