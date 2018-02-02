@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl.Library
 			this.nameResolver = nameResolver;
 			this.Collector = collector;
 			this.Category = category;
-			this.Color = ColorRange.NextColor();
+			//this.Color = ColorRange.NextColor();
 		}
 
 		public string ID => $"MatterHackers/ItemGenerator/{Name}".GetHashCode().ToString();
