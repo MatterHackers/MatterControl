@@ -1510,18 +1510,26 @@ namespace MatterHackers.MatterControl
 		public async Task SliceFileLoadOutput(PrinterConfig printer, string partFilePath, string gcodeFilePath)
 		{
 			// Slice
-			await ApplicationController.Instance.Tasks.Execute((reporter, cancellationToken) =>
+			bool slicingSucceeded = false;
+
+			await ApplicationController.Instance.Tasks.Execute(async (reporter, cancellationToken) =>
 			{
 				reporter.Report(new ProgressStatus() { Status = "Slicing".Localize() });
 
-				return Slicer.SliceFile(
+				slicingSucceeded = await Slicer.SliceFile(
 					partFilePath, 
 					gcodeFilePath, 
 					printer,
 					new SliceProgressReporter(reporter, printer),
 					cancellationToken);
 			});
-			
+
+			// Skip loading GCode output if slicing failed
+			if (!slicingSucceeded)
+			{
+				return;
+			}
+
 			await ApplicationController.Instance.Tasks.Execute((innerProgress, token) =>
 			{
 				var status = new ProgressStatus()
@@ -1530,8 +1538,6 @@ namespace MatterHackers.MatterControl
 				};
 
 				innerProgress.Report(status);
-
-				Thread.Sleep(800);
 
 				printer.Bed.LoadGCode(gcodeFilePath, token, (progress0to1, statusText) =>
 				{

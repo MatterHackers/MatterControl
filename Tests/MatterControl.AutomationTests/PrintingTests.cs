@@ -354,7 +354,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					// Wait for printing to complete
 					var printFinishedResetEvent = new AutoResetEvent(false);
-					ApplicationController.Instance.ActivePrinter.Connection.PrintFinished.RegisterEvent((s, e) => printFinishedResetEvent.Set(), ref unregisterEvents);
+					ApplicationController.Instance.ActivePrinter.Connection.PrintFinished.RegisterEvent((s, e) =>
+					{
+						printFinishedResetEvent.Set();
+					}, ref unregisterEvents);
 
 					testRunner.StartPrint();
 
@@ -393,7 +396,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate);
 
-					printFinishedResetEvent.WaitOne();
+					// Wait up to 60 seconds for the print to finish
+					printFinishedResetEvent.WaitOne(60 * 1000);
 
 					// Values should match entered values
 					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate);

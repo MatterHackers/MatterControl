@@ -185,6 +185,7 @@
     <Compile Include="PartPreviewWindow\View3D\TumbleCubeControl.cs" />
     <Compile Include="PartPreviewWindow\View3D\UndoCommands\DeleteCommand.cs" />
     <Compile Include="PartPreviewWindow\View3D\UndoCommands\TransformCommand.cs" />
+    <Compile Include="PrinterControls\EditLevelingSettingsPage.cs" />
     <Compile Include="PrinterControls\MacroDetailPage.cs" />
     <Compile Include="PrinterControls\MacroListPage.cs" />
     <Compile Include="PrinterControls\PrinterConnections\PrinterSetup.cs" />
@@ -370,7 +371,6 @@
     <Compile Include="Utilities\SelectedListItems.cs" />
     <Compile Include="Queue\OptionsMenu\ExportToFolderFeedbackWindow.cs" />
     <Compile Include="EeProm\EePromMarlinSettings.cs" />
-    <Compile Include="PrinterControls\EditLevelingSettingsWindow.cs" />
     <Compile Include="History\PrintHistoryListItem.cs" />
     <Compile Include="Queue\QueueData.cs" />
     <Compile Include="SettingsManagement\OemSettings.cs" />

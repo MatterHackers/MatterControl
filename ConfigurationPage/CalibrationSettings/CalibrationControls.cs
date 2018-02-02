@@ -13,8 +13,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 	public class CalibrationControls : FlowLayoutWidget
 	{
 		private EventHandler unregisterEvents;
-		private EditLevelingSettingsWindow editLevelingSettingsWindow;
-		private GuiWidget runPrintLevelingButton;
+		private GuiWidget configureButton;
 
 		private TextImageButtonFactory buttonFactory;
 		private PrinterConfig printer;
@@ -49,15 +48,21 @@ namespace MatterHackers.MatterControl.PrinterControls
 			buttonRow.AddChild(new HorizontalSpacer());
 
 			// configure button
-			runPrintLevelingButton = new TextButton("Configure".Localize(), theme);
-			runPrintLevelingButton.Margin = theme.ButtonSpacing;
-			runPrintLevelingButton.BackgroundColor = theme.MinimalShade;
-			runPrintLevelingButton.VAnchor = VAnchor.Center;
-			runPrintLevelingButton.Click += (sender, e) =>
+			var configureIcon = AggContext.StaticData.LoadIcon("fa-cog_16.png", IconColor.Raw);
+			configureButton = new IconButton(configureIcon, theme)
 			{
-				UiThread.RunOnIdle(() => LevelWizardBase.ShowPrintLevelWizard(printer, LevelWizardBase.RuningState.UserRequestedCalibration));
+				ToolTipText = "Configure".Localize(),
+				Margin = theme.ButtonSpacing,
+				VAnchor = VAnchor.Center
 			};
-			buttonRow.AddChild(runPrintLevelingButton);
+			configureButton.Click += (s, e) =>
+			{
+				UiThread.RunOnIdle(() =>
+				{
+					DialogWindow.Show(new EditLevelingSettingsPage(printer));
+				});
+			};
+			buttonRow.AddChild(configureButton);
 
 			// put in the switch
 			CheckBox printLevelingSwitch = ImageButtonFactory.CreateToggleSwitch(printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled));
@@ -89,44 +94,16 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		public static SectionWidget CreateSection(PrinterConfig printer, ThemeConfig theme)
 		{
-			var widget = new CalibrationControls(printer, theme);
-
-			var editButton = new IconButton(AggContext.StaticData.LoadIcon("icon_edit.png", 16, 16, IconColor.Theme), theme);
-			editButton.Click += (s, e) =>
-			{
-				widget.EditOptions();
-			};
-
 			return new SectionWidget(
 				"Calibration".Localize(),
-				widget,
-				theme,
-				editButton);
+				new CalibrationControls(printer, theme),
+				theme);
 		}
 
 		public override void OnClosed(ClosedEventArgs e)
 		{
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
-		}
-
-		private void EditOptions()
-		{
-			UiThread.RunOnIdle(() =>
-			{
-				if (editLevelingSettingsWindow == null)
-				{
-					editLevelingSettingsWindow = new EditLevelingSettingsWindow(printer.Settings);
-					editLevelingSettingsWindow.Closed += (s, e) =>
-					{
-						editLevelingSettingsWindow = null;
-					};
-				}
-				else
-				{
-					editLevelingSettingsWindow.BringToFront();
-				}
-			});
 		}
 
 		private void PrinterStatusChanged(object sender, EventArgs e)
@@ -142,12 +119,12 @@ namespace MatterHackers.MatterControl.PrinterControls
 				|| printer.Connection.PrinterIsPaused)
 			{
 				this.Enabled = false;
-				runPrintLevelingButton.Enabled = true; // setting this true when the element is disabled makes the colors stay correct
+				configureButton.Enabled = true; // setting this true when the element is disabled makes the colors stay correct
 			}
 			else
 			{
 				this.Enabled = true;
-				runPrintLevelingButton.Enabled = printer.Connection.IsConnected;
+				configureButton.Enabled = printer.Connection.IsConnected;
 			}
 		}
 	}
