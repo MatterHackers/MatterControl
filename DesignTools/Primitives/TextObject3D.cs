@@ -30,6 +30,8 @@ either expressed or implied, of the FreeBSD Project.
 using System.ComponentModel;
 using MatterHackers.Agg.Font;
 using MatterHackers.DataConverters3D;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
@@ -85,6 +87,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public double Height { get; set; } = 5;
 
+		[JsonConverter(typeof(StringEnumConverter))]
 		public NamedTypeFace Font { get; set; } = new NamedTypeFace();
 
 		public void Rebuild()
