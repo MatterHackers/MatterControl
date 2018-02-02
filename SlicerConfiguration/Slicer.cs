@@ -245,8 +245,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return filePath;
 		}
 
-		public static Task SliceFile(string sourceFile, string gcodeFilePath, PrinterConfig printer, IProgress<ProgressStatus> progressReporter, CancellationToken cancellationToken)
+		public static Task<bool> SliceFile(string sourceFile, string gcodeFilePath, PrinterConfig printer, IProgress<ProgressStatus> progressReporter, CancellationToken cancellationToken)
 		{
+			bool slicingSucceeded = true;
+
 			string mergeRules = "";
 
 			string[] stlFileLocations = GetStlFileLocations(sourceFile, ref mergeRules, printer, progressReporter, cancellationToken);
@@ -364,6 +366,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						{
 							slicerProcess.WaitForExit();
 						}
+
+						slicingSucceeded = !forcedExit;
 					}
 				}
 
@@ -414,7 +418,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 			}
 
-			return Task.CompletedTask;
+			return Task.FromResult(slicingSucceeded);
 		}
 
 		private static bool HasCompletedSuccessfully(string gcodeFilePath)
