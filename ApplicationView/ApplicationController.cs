@@ -727,6 +727,12 @@ namespace MatterHackers.MatterControl
 
 			// Release any waiting generator threads
 			thumbGenResetEvent?.Set();
+
+			// Kill all long running tasks (this will release the silcing thread if running)
+			foreach(var task in Tasks.RunningTasks)
+			{
+				task.CancelTask();
+			}
 		}
 
 		private static TypeFace monoSpacedTypeFace = null;
