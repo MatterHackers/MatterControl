@@ -28,15 +28,13 @@ either expressed or implied, of the FreeBSD Project.
 */
 //#define WITH_WRAPPER
 
+using System.Collections.Generic;
 using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.VectorMath;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System;
-using System.Diagnostics;
-using System.Threading;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -66,12 +64,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Top | VAnchor.Fit,
 				MinimumSize = new Vector2(250, 0)
 			};
-			view3DContainer.AddChild(pendingTasksContainer);
+			this.AddChild(pendingTasksContainer);
 
-			pendingTasksPanel = new SectionWidget("Running".Localize() + "...", ActiveTheme.Instance.PrimaryTextColor, pendingTasksList)
+			var pendingTasksPanel = new SectionWidget("Running".Localize() + "...", pendingTasksList, theme, expandingContent: false)
 			{
 				HAnchor = HAnchor.Stretch,
-				Padding = new BorderDouble(6, 0)
 			};
 			pendingTasksContainer.AddChild(pendingTasksPanel);
 
