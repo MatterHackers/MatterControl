@@ -97,6 +97,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string ip_address = nameof(ip_address);
 		public const string ip_port = nameof(ip_port);
 		public const string jerk_velocity = nameof(jerk_velocity);
+		public const string print_time_estimate_multiplier = nameof(print_time_estimate_multiplier);
 		public const string laser_speed_025 = nameof(laser_speed_025);
 		public const string laser_speed_100 = nameof(laser_speed_100);
 		public const string layer_gcode = nameof(layer_gcode);

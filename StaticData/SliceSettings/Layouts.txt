@@ -191,6 +191,7 @@ Printer
         max_acceleration
         max_velocity
         jerk_velocity
+        print_time_estimate_multiplier
     Slicing
       Slicing Options
         output_only_first_layer

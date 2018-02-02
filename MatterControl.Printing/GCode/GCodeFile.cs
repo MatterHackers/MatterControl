@@ -173,6 +173,7 @@ namespace MatterControl.Printing
 			Vector4 maxAccelerationMmPerS2,
 			Vector4 maxVelocityMmPerS,
 			Vector4 velocitySameAsStopMmPerS,
+			Vector4 speedMultiplier,
 			CancellationToken cancellationToken)
 		{
 			if (FileTooBigToLoad(fileName))
@@ -184,7 +185,9 @@ namespace MatterControl.Printing
 				return new GCodeMemoryFile(fileName,
 					maxAccelerationMmPerS2,
 					maxVelocityMmPerS,
-					velocitySameAsStopMmPerS, cancellationToken);
+					velocitySameAsStopMmPerS,
+					speedMultiplier,
+					cancellationToken);
 			}
 		}
 
@@ -218,13 +221,15 @@ namespace MatterControl.Printing
 			double feedRateMmPerMin,
 			Vector4 maxAccelerationMmPerS2,
 			Vector4 maxVelocityMmPerS,
-			Vector4 velocitySameAsStopMmPerS)
+			Vector4 velocitySameAsStopMmPerS,
+			Vector4 speedMultiplierV4)
 		{
 			double startingVelocityMmPerS = velocitySameAsStopMmPerS.X;
 			double endingVelocityMmPerS = velocitySameAsStopMmPerS.X;
 			double maxVelocityMmPerSx = Math.Min(feedRateMmPerMin / 60, maxVelocityMmPerS.X);
 			double acceleration = maxAccelerationMmPerS2.X;
 			double lengthOfThisMoveMm = Math.Max(deltaPositionThisLine.Length, deltaEPositionThisLine);
+			double speedMultiplier = speedMultiplierV4.X;
 
 			double distanceToMaxVelocity = GetDistanceToReachEndingVelocity(startingVelocityMmPerS, maxVelocityMmPerSx, acceleration);
 			if (distanceToMaxVelocity <= lengthOfThisMoveMm / 2)
@@ -232,13 +237,13 @@ namespace MatterControl.Printing
 				// we will reach max velocity then run at it and then decelerate
 				double accelerationTime = GetTimeToAccelerateDistance(startingVelocityMmPerS, distanceToMaxVelocity, acceleration) * 2;
 				double runningTime = (lengthOfThisMoveMm - (distanceToMaxVelocity * 2)) / maxVelocityMmPerSx;
-				return accelerationTime + runningTime;
+				return (accelerationTime + runningTime) * speedMultiplier;
 			}
 			else
 			{
 				// we will accelerate to the center then decelerate
 				double accelerationTime = GetTimeToAccelerateDistance(startingVelocityMmPerS, lengthOfThisMoveMm / 2, acceleration) * 2;
-				return accelerationTime;
+				return (accelerationTime) * speedMultiplier;
 			}
 		}
 

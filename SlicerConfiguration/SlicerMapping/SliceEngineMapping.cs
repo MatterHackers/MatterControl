@@ -101,6 +101,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			SettingsKey.enable_sailfish_communication,
 			SettingsKey.max_velocity,
 			SettingsKey.jerk_velocity,
+			SettingsKey.print_time_estimate_multiplier,
 			SettingsKey.max_acceleration,
 			SettingsKey.ip_address,
 			SettingsKey.ip_port,

@@ -429,11 +429,13 @@ namespace MatterHackers.MatterControl
 			var maxAcceleration = settings.GetValue<double>(SettingsKey.max_acceleration);
 			var maxVelocity = settings.GetValue<double>(SettingsKey.max_velocity);
 			var jerkVelocity = settings.GetValue<double>(SettingsKey.jerk_velocity);
+			var multiplier = settings.GetValue<double>(SettingsKey.print_time_estimate_multiplier) / 100.0;
 
 			var loadedGCode = GCodeMemoryFile.Load(stream,
 				new Vector4(maxAcceleration, maxAcceleration, maxAcceleration, maxAcceleration),
 				new Vector4(maxVelocity, maxVelocity, maxVelocity, maxVelocity),
 				new Vector4(jerkVelocity, jerkVelocity, jerkVelocity, jerkVelocity),
+				new Vector4(multiplier, multiplier, multiplier, multiplier),
 				cancellationToken, progressReporter);
 			this.GCodeRenderer = new GCodeRenderer(loadedGCode);
 			this.RenderInfo = new GCodeRenderInfo(

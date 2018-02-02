@@ -2151,6 +2151,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					new Vector4(),
 					new Vector4(),
 					new Vector4(),
+					Vector4.One,
 					CancellationToken.None));
 
 				if (this.RecoveryIsEnabled
