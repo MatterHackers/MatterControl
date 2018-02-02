@@ -91,33 +91,39 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			tasks.TasksChanged += (s, e) =>
 			{
-				var rows = pendingTasksList.Children.OfType<RunningTaskRow>().ToList();
-				var displayedTasks = new HashSet<RunningTaskDetails>(rows.Select(taskRow => taskRow.taskDetails));
-				var runningTasks = tasks.RunningTasks;
-
-				// Remove expired items
-				foreach (var row in rows)
-				{
-					if (!runningTasks.Contains(row.taskDetails))
-					{
-						row.Close();
-					}
-				}
-
-				// Add new items
-				foreach (var taskItem in tasks.RunningTasks.Where(t => !displayedTasks.Contains(t)))
-				{
-					var taskRow = new RunningTaskRow("", taskItem, theme)
-					{
-						HAnchor = HAnchor.Stretch
-					};
-
-					pendingTasksList.AddChild(taskRow);
-				}
-
-				pendingTasksList.Invalidate();
+				RenderRunningTasks(theme, tasks);
 			};
 
+			RenderRunningTasks(theme, tasks);
+		}
+
+		private void RenderRunningTasks(ThemeConfig theme, RunningTasksConfig tasks)
+		{
+			var rows = pendingTasksList.Children.OfType<RunningTaskRow>().ToList();
+			var displayedTasks = new HashSet<RunningTaskDetails>(rows.Select(taskRow => taskRow.taskDetails));
+			var runningTasks = tasks.RunningTasks;
+
+			// Remove expired items
+			foreach (var row in rows)
+			{
+				if (!runningTasks.Contains(row.taskDetails))
+				{
+					row.Close();
+				}
+			}
+
+			// Add new items
+			foreach (var taskItem in tasks.RunningTasks.Where(t => !displayedTasks.Contains(t)))
+			{
+				var taskRow = new RunningTaskRow("", taskItem, theme)
+				{
+					HAnchor = HAnchor.Stretch
+				};
+
+				pendingTasksList.AddChild(taskRow);
+			}
+
+			pendingTasksList.Invalidate();
 		}
 	}
 }
