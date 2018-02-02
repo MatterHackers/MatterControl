@@ -48,11 +48,14 @@ namespace MatterHackers.MatterControl.PrinterControls
 			buttonRow.AddChild(new HorizontalSpacer());
 
 			// configure button
-			runPrintLevelingButton = new TextButton("Configure".Localize(), theme);
-			runPrintLevelingButton.Margin = theme.ButtonSpacing;
-			runPrintLevelingButton.BackgroundColor = theme.MinimalShade;
-			runPrintLevelingButton.VAnchor = VAnchor.Center;
-			runPrintLevelingButton.Click += (sender, e) =>
+			var configureIcon = AggContext.StaticData.LoadIcon("fa-cog_16.png", IconColor.Raw);
+			runPrintLevelingButton = new IconButton(configureIcon, theme)
+			{
+				ToolTipText = "Configure".Localize(),
+				Margin = theme.ButtonSpacing,
+				VAnchor = VAnchor.Center
+			};
+			runPrintLevelingButton.Click += (s, e) =>
 			{
 				UiThread.RunOnIdle(() => LevelWizardBase.ShowPrintLevelWizard(printer, LevelWizardBase.RuningState.UserRequestedCalibration));
 			};
