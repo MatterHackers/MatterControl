@@ -51,8 +51,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public static List<bool> extrudersUsed = new List<bool>();
 		public static bool runInProcess = false;
 
-		private static Process slicerProcess = null;
-
 		public static string[] GetStlFileLocations(string fileToSlice, ref string mergeRules, PrinterConfig printer, IProgress<ProgressStatus> progressReporter, CancellationToken cancellationToken)
 		{
 			var progressStatus = new ProgressStatus();
@@ -316,7 +314,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					}
 					else
 					{
-						slicerProcess = new Process()
+						bool forcedExit = false;
+
+						var slicerProcess = new Process()
 						{
 							StartInfo = new ProcessStartInfo()
 							{
@@ -332,14 +332,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 						slicerProcess.OutputDataReceived += (s, e) =>
 						{
-							if(cancellationToken.IsCancellationRequested)
-							{
-								slicerProcess?.Kill();
-								slicerProcess?.Dispose();
-								slicerProcess = null;
-							}
 							if (e.Data is string stringValue)
 							{
+								if (cancellationToken.IsCancellationRequested)
+								{
+									slicerProcess?.Kill();
+									slicerProcess?.Dispose();
+									forcedExit = true;
+								}
+
 								string message = stringValue.Replace("=>", "").Trim();
 								if (message.Contains(".gcode"))
 								{
@@ -359,10 +360,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 						string stdError = slicerProcess.StandardError.ReadToEnd();
 
-						slicerProcess.WaitForExit();
-						lock (slicerProcess)
+						if (!forcedExit)
 						{
-							slicerProcess = null;
+							slicerProcess.WaitForExit();
 						}
 					}
 				}
