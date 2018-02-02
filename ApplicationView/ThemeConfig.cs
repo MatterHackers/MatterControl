@@ -308,6 +308,7 @@ namespace MatterHackers.MatterControl
 		public FlowLayoutWidget CreateMenuItems(PopupMenu popupMenu, IEnumerable<NamedAction> menuActions)
 		{
 			// Create menu items in the DropList for each element in this.menuActions
+			popupMenu.CloseAllChildren();
 			foreach (var menuAction in menuActions)
 			{
 				if (menuAction.Title == "----")
