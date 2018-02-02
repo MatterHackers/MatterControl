@@ -49,7 +49,6 @@ namespace MatterHackers.MatterControl
 
 			var positions = new List<Vector3>();
 
-			// put in the movement edit controls
 			PrintLevelingData levelingData = printer.Settings.Helpers.GetPrintLevelingData();
 			for (int i = 0; i < levelingData.SampledPositions.Count; i++)
 			{
@@ -59,9 +58,11 @@ namespace MatterHackers.MatterControl
 			int tab_index = 0;
 			for (int row = 0; row < positions.Count; row++)
 			{
-				FlowLayoutWidget leftRightEdit = new FlowLayoutWidget();
-				leftRightEdit.Padding = new BorderDouble(3);
-				leftRightEdit.HAnchor |= Agg.UI.HAnchor.Stretch;
+				var leftRightEdit = new FlowLayoutWidget
+				{
+					Padding = new BorderDouble(3),
+					HAnchor = HAnchor.Stretch
+				};
 
 				var positionLabel = new TextWidget("{0} {1,-5}".FormatWith("Position".Localize(), row + 1), textColor: ActiveTheme.Instance.PrimaryTextColor);
 
@@ -76,12 +77,15 @@ namespace MatterHackers.MatterControl
 					if (axis == 1) axisName = "y";
 					else if (axis == 2) axisName = "z";
 
-					TextWidget typeEdit = new TextWidget("  {0}: ".FormatWith(axisName), textColor: ActiveTheme.Instance.PrimaryTextColor);
-					typeEdit.VAnchor = VAnchor.Center;
-					leftRightEdit.AddChild(typeEdit);
+					leftRightEdit.AddChild(
+						new TextWidget($"  {axisName}: ", textColor: ActiveTheme.Instance.PrimaryTextColor)
+						{
+							VAnchor = VAnchor.Center
+						});
 
 					int linkCompatibleRow = row;
 					int linkCompatibleAxis = axis;
+
 					MHNumberEdit valueEdit = new MHNumberEdit(positions[linkCompatibleRow][linkCompatibleAxis], allowNegatives: true, allowDecimals: true, pixelWidth: 60, tabIndex: tab_index++);
 					valueEdit.ActuallNumberEdit.InternalTextEditWidget.EditComplete += (sender, e) =>
 					{
