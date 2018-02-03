@@ -250,14 +250,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private GuiWidget CreateActionSeparator()
-		{
-			return new VerticalLine(60)
-			{
-				Margin = new BorderDouble(3, 2, 0, 2),
-			};
-		}
-
 		private void ViewControls3D_TransformStateChanged(object sender, TransformStateChangedEventArgs e)
 		{
 			switch (e.TransformMode)
@@ -317,7 +309,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					zBuffer = true;
 				}
 			}
-
 
 			// This shows the BVH as rects around the scene items
 			//Scene?.TraceData().RenderBvhRecursive(0, 3);
