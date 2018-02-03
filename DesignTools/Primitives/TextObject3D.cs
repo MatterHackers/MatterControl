@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System.ComponentModel;
 using MatterHackers.Agg.Font;
 using MatterHackers.DataConverters3D;
+using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
@@ -94,19 +95,27 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			var aabb = this.GetAxisAlignedBoundingBox();
 
-			var letterPrinter = new TypeFacePrinter(NameToWrite, new StyledTypeFace(NamedTypeFaceCache.GetTypeFace(Font), PointSize * 0.352778));
-
-			IObject3D nameMesh = new Object3D()
-			{
-				Mesh = VertexSourceToMesh.Extrude(letterPrinter, Height)
-			};
-
-			// output two meshes for card holder and text
 			this.Children.Modify(list =>
 			{
 				list.Clear();
-				list.Add(nameMesh);
 			});
+
+			var offest = 0.0;
+			foreach (var letter in NameToWrite.ToCharArray())
+			{
+				var letterPrinter = new TypeFacePrinter(letter.ToString(), new StyledTypeFace(NamedTypeFaceCache.GetTypeFace(Font), PointSize * 0.352778));
+				IObject3D letterMesh = new Object3D()
+				{
+					Mesh = VertexSourceToMesh.Extrude(letterPrinter, Height)
+				};
+
+				letterMesh.Matrix = Matrix4X4.CreateTranslation(offest, 0, 0);
+				this.Children.Add(letterMesh);
+
+				offest += letterPrinter.GetSize(letter.ToString()).X;
+			}
+
+
 			if (aabb.ZSize > 0)
 			{
 				// If the part was already created and at a height, maintain the height.

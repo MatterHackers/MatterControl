@@ -435,35 +435,11 @@ namespace MatterHackers.MeshVisualizer
 
 		private void DrawObject(IObject3D object3D, List<IObject3D> transparentMeshes, bool parentSelected, DrawEventArgs e)
 		{
-			var totalVertices = 0;
-
-			foreach (var visibleMesh in object3D.VisibleMeshes())
-			{
-				totalVertices += visibleMesh.Mesh.Vertices.Count;
-
-				if (totalVertices > 1000)
-				{
-					break;
-				}
-			}
-
-			var frustum = World.GetClippingFrustum();
-
-			bool tooBigForComplexSelection = totalVertices > 1000;
-			if (tooBigForComplexSelection
-				&& scene.DebugItem == null
-				&& scene.HasSelection
-				&& (object3D == scene.SelectedItem || scene.SelectedItem.Children.Contains(object3D)))
-			{
-				GLHelper.PrepareFor3DLineRender(true);
-				RenderAABB(frustum, object3D.GetAxisAlignedBoundingBox(Matrix4X4.Identity), Matrix4X4.Identity, Color.White, selectionHighlightWidth);
-				GL.Enable(EnableCap.Lighting);
-			}
-
 			foreach (var item in object3D.VisibleMeshes())
 			{
 				// check for correct persistable rendering
-				if(MeshViewerWidget.ViewOnlyTexture != null)
+				if(MeshViewerWidget.ViewOnlyTexture != null
+					&& item.Mesh.Faces.Count > 0)
 				{
 					ImageBuffer faceTexture = null;
 					item.Mesh.FaceTexture.TryGetValue((item.Mesh.Faces[0], 0), out faceTexture);
@@ -490,9 +466,6 @@ namespace MatterHackers.MeshVisualizer
 					}
 				}
 
-				bool isSelected = parentSelected ||
-					scene.HasSelection && (object3D == scene.SelectedItem || scene.SelectedItem.Children.Contains(object3D));
-
 				Color drawColor = GetItemColor(item);
 
 				bool isDebugItem = false;
@@ -502,7 +475,6 @@ namespace MatterHackers.MeshVisualizer
 				renderAsSolid = (renderAsSolid && scene.DebugItem == null)
 									|| isDebugItem;
 #endif
-
 				if (renderAsSolid)
 				{
 					GLHelper.Render(item.Mesh, drawColor, item.WorldMatrix(scene.RootItem), RenderType, item.WorldMatrix(scene.RootItem) * World.ModelviewMatrix);
@@ -512,14 +484,44 @@ namespace MatterHackers.MeshVisualizer
 					transparentMeshes.Add(item);
 				}
 
-				if (isSelected && !tooBigForComplexSelection)
+				bool isSelected = parentSelected ||
+					scene.HasSelection && (object3D == scene.SelectedItem || scene.SelectedItem.Children.Contains(object3D));
+
+				if (isSelected)
 				{
-					RenderSelection(item, frustum);
+					var totalVertices = 0;
+
+					foreach (var visibleMesh in object3D.VisibleMeshes())
+					{
+						totalVertices += visibleMesh.Mesh.Vertices.Count;
+
+						if (totalVertices > 1000)
+						{
+							break;
+						}
+					}
+
+					var frustum = World.GetClippingFrustum();
+
+					bool tooBigForComplexSelection = totalVertices > 1000;
+					if (tooBigForComplexSelection
+						&& scene.DebugItem == null)
+					{
+						GLHelper.PrepareFor3DLineRender(true);
+						RenderAABB(frustum, object3D.GetAxisAlignedBoundingBox(Matrix4X4.Identity), Matrix4X4.Identity, Color.White, selectionHighlightWidth);
+						GL.Enable(EnableCap.Lighting);
+					}
+					else
+					{
+						RenderSelection(item, frustum);
+					}
 				}
 
 #if DEBUG
 				if (isDebugItem)
 				{
+					var frustum = World.GetClippingFrustum();
+
 					var aabb = object3D.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 
 					GLHelper.PrepareFor3DLineRender(true);
