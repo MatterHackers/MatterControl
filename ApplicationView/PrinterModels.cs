@@ -926,6 +926,16 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
+		public string GCodeModelView
+		{
+			get { return UserSettings.Instance.get("GcodeModelView"); }
+			set
+			{
+				UserSettings.Instance.set("GcodeModelView", value);
+				this.IsDirty = true;
+			}
+		}
+
 		public bool SimulateExtrusion
 		{
 			get { return (UserSettings.Instance.get("GcodeViewerSimulateExtrusion") == "True"); }

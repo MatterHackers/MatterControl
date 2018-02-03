@@ -350,6 +350,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			popupMenu.CreateHorizontalLine();
 
 			popupMenu.CreateBoolMenuItem(
+				"Wireframe".Localize(),
+				() => gcodeOptions.GCodeModelView == "Wireframe",
+				(value) => gcodeOptions.GCodeModelView = "Wireframe");
+
+			popupMenu.CreateBoolMenuItem(
+				"Semi-Transparent".Localize(),
+				() => gcodeOptions.GCodeModelView == "Semi-Transparent",
+				(value) => gcodeOptions.GCodeModelView = "Semi-Transparent");
+
+			popupMenu.CreateBoolMenuItem(
+				"None".Localize(),
+				() => gcodeOptions.GCodeModelView == "None",
+				(value) => gcodeOptions.GCodeModelView = "None");
+
+			popupMenu.CreateHorizontalLine();
+
+			popupMenu.CreateBoolMenuItem(
 				"Extrusion".Localize(),
 				() => gcodeOptions.SimulateExtrusion,
 				(value) => gcodeOptions.SimulateExtrusion = value);
