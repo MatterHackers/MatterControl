@@ -200,8 +200,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			sceneContext.LoadedGCodeChanged += SceneContext_LoadedGCodeChanged;
 
-			this.SwitchStateToEditing();
+			Scene.SelectFirstChild();
 
+			// TODO: Restore if issues arrive related to startup -> partselect, otherwise delete
+			//viewControls3D.ActiveButton = ViewControls3DButtons.PartSelect;
 
 			// Make sure the render mode is set correctly
 			string renderTypeString = UserSettings.Instance.get(UserSettingsKey.defaultRenderSetting);
@@ -1319,38 +1321,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public Vector2 DragSelectionStartPosition { get; private set; }
 		public bool DragSelectionInProgress { get; private set; }
 		public Vector2 DragSelectionEndPosition { get; private set; }
-
-		internal async void SwitchStateToEditing()
-		{
-			viewControls3D.ActiveButton = ViewControls3DButtons.PartSelect;
-
-			if (Scene.HasChildren())
-			{
-				// This should be very fast (only building up a trace data for non-meshes, mesh should happen as background task).
-				await Task.Run(() =>
-				{
-					Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-
-					// Force trace data generation
-					foreach (var object3D in Scene.Children)
-					{
-						object3D.TraceData();
-					}
-				});
-
-				if (this.HasBeenClosed)
-				{
-					return;
-				}
-
-				Scene.SelectFirstChild();
-			}
-
-			this.Invalidate();
-			Scene.Invalidate();
-
-			viewControls3D.ActiveButton = ViewControls3DButtons.PartSelect;
-		}
 
 		internal GuiWidget ShowOverflowMenu(PopupMenu popupMenu)
 		{
