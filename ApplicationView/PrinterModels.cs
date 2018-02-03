@@ -545,6 +545,12 @@ namespace MatterHackers.MatterControl
 					File.Delete(thumbnailPath);
 				}
 
+				// Purge any specifically sized thumbnails
+				foreach(var sizedThumbnail in Directory.GetFiles(Path.GetDirectoryName(thumbnailPath), Path.GetFileNameWithoutExtension(thumbnailPath) + "-*.png"))
+				{
+					File.Delete(sizedThumbnail);
+				}
+
 				// Call save on the provider
 				this.ContentStore.Save(this.SourceItem, this.Content);
 			}
@@ -922,6 +928,16 @@ namespace MatterHackers.MatterControl
 			set
 			{
 				UserSettings.Instance.set("GcodeViewerRenderSpeeds", value.ToString());
+				this.IsDirty = true;
+			}
+		}
+
+		public string GCodeModelView
+		{
+			get { return UserSettings.Instance.get("GcodeModelView"); }
+			set
+			{
+				UserSettings.Instance.set("GcodeModelView", value);
 				this.IsDirty = true;
 			}
 		}

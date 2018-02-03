@@ -41,6 +41,7 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.PolygonMesh;
+using MatterHackers.RayTracer;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.RenderOpenGl.OpenGl;
 using MatterHackers.VectorMath;
@@ -122,6 +123,10 @@ namespace MatterHackers.MeshVisualizer
 	{
 		static ImageBuffer ViewOnlyTexture;
 
+		private Color lightWireframe = new Color("#aaa4");
+		private Color darkWireframe = new Color("#3334");
+		private Color gCodeMeshColor;
+
 		// TODO: Need to be instance based for multi-printer
 		public GuiWidget ParentSurface { get; set; }
 
@@ -143,6 +148,10 @@ namespace MatterHackers.MeshVisualizer
 			this.sceneContext = sceneContext;
 			this.interactionLayer = interactionLayer;
 			this.World = interactionLayer.World;
+
+			var theme = ApplicationController.Instance.Theme;
+
+			gCodeMeshColor = new Color(theme.Colors.PrimaryAccentColor, 35);
 
 			scene.SelectionChanged += (sender, e) =>
 			{
@@ -433,7 +442,7 @@ namespace MatterHackers.MeshVisualizer
 
 		public bool ModelView { get; set; } = true;
 
-		private void DrawObject(IObject3D object3D, List<IObject3D> transparentMeshes, bool parentSelected, DrawEventArgs e)
+		private void DrawObject(IObject3D object3D, List<Object3DView> transparentMeshes, bool parentSelected, DrawEventArgs e)
 		{
 			foreach (var item in object3D.VisibleMeshes())
 			{
@@ -468,20 +477,30 @@ namespace MatterHackers.MeshVisualizer
 
 				Color drawColor = GetItemColor(item);
 
-				bool isDebugItem = false;
-				bool renderAsSolid = drawColor.alpha == 255;
-#if DEBUG
-				isDebugItem = scene.DebugItem == item;
-				renderAsSolid = (renderAsSolid && scene.DebugItem == null)
-									|| isDebugItem;
-#endif
-				if (renderAsSolid)
+				bool isDebugItem = (item == scene.DebugItem);
+
+				if (!this.ModelView)
 				{
-					GLHelper.Render(item.Mesh, drawColor, item.WorldMatrix(scene.RootItem), RenderType, item.WorldMatrix(scene.RootItem) * World.ModelviewMatrix);
+					if (modelRenderStyle == ModelRenderStyle.WireframeAndSolid)
+					{
+						drawColor = gCodeMeshColor;
+					}
+					else if (modelRenderStyle == ModelRenderStyle.None)
+					{
+						drawColor = Color.Transparent;
+					}
 				}
-				else
+
+				if (drawColor.alpha == 255
+					|| isDebugItem)
 				{
-					transparentMeshes.Add(item);
+					// Render as solid
+					GLHelper.Render(item.Mesh, drawColor, item.WorldMatrix(scene.RootItem), this.RenderType, item.WorldMatrix(scene.RootItem) * World.ModelviewMatrix, darkWireframe);
+				}
+				else if (drawColor != Color.Transparent)
+				{
+					// Queue for transparency
+					transparentMeshes.Add(new Object3DView(item, drawColor));
 				}
 
 				bool isSelected = parentSelected ||
@@ -663,13 +682,13 @@ namespace MatterHackers.MeshVisualizer
 
 		public EditorType EditorMode { get; set; } = EditorType.Part;
 
-		private int BackToFrontXY(IObject3D a, IObject3D b)
+		private int BackToFrontXY(Object3DView a, Object3DView b)
 		{
-			var aCenterWorld = Vector3.Transform(a.Mesh.GetAxisAlignedBoundingBox().Center, a.Matrix);
+			var aCenterWorld = Vector3.Transform(a.Object3D.Mesh.GetAxisAlignedBoundingBox().Center, a.Object3D.Matrix);
 			aCenterWorld.Z = 0; // we only want to look at the distance on xy in world space
 			var aCenterInViewSpace = Vector3.Transform(aCenterWorld, World.ModelviewMatrix);
 
-			var bCenterWorld = Vector3.Transform(b.Mesh.GetAxisAlignedBoundingBox().Center, b.Matrix);
+			var bCenterWorld = Vector3.Transform(b.Object3D.Mesh.GetAxisAlignedBoundingBox().Center, b.Object3D.Matrix);
 			bCenterWorld.Z = 0; // we only want to look at the distance on xy in world space
 			var bCenterInViewSpace = Vector3.Transform(bCenterWorld, World.ModelviewMatrix);
 
@@ -678,7 +697,25 @@ namespace MatterHackers.MeshVisualizer
 
 		private void Draw_GlTransparentContent(object sender, DrawEventArgs e)
 		{
-			List<IObject3D> transparentMeshes = new List<IObject3D>();
+			var gcodeOptions = sceneContext.RendererOptions;
+
+			switch(gcodeOptions.GCodeModelView)
+			{
+				case "Wireframe":
+					modelRenderStyle = ModelRenderStyle.Wireframe;
+					break;
+
+				case "Semi-Transparent":
+					modelRenderStyle = ModelRenderStyle.WireframeAndSolid;
+					break;
+
+				default:
+					modelRenderStyle = ModelRenderStyle.None;
+					break;
+			}
+
+			// Draw solid objects, extract transparent
+			var transparentMeshes = new List<Object3DView>();
 			foreach (var object3D in scene.Children)
 			{
 				if (object3D.Visible)
@@ -698,15 +735,17 @@ namespace MatterHackers.MeshVisualizer
 				RenderBedMesh(lookingDownOnBed);
 			}
 
-			// Transparent objects
-			foreach (var object3D in transparentMeshes)
+			// Draw transparent objects
+			foreach (var item in transparentMeshes)
 			{
+				var object3D = item.Object3D;
 				GLHelper.Render(
 					object3D.Mesh,
-					GetItemColor(object3D),
+					item.Color,
 					object3D.WorldMatrix(scene.RootItem),
 					RenderTypes.Outlines,
-					object3D.WorldMatrix(scene.RootItem) * World.ModelviewMatrix);
+					object3D.WorldMatrix(scene.RootItem) * World.ModelviewMatrix,
+					(modelRenderStyle == ModelRenderStyle.Solid) ? Color.Transparent : lightWireframe);
 			}
 
 			if (!lookingDownOnBed)
@@ -821,6 +860,36 @@ namespace MatterHackers.MeshVisualizer
 			foreach (InteractionVolume interactionVolume in interactionLayer.InteractionVolumes)
 			{
 				interactionVolume.DrawGlContent(new DrawGlContentEventArgs(true, e));
+			}
+		}
+
+		public enum ModelRenderStyle
+		{
+			Solid,
+			Wireframe,
+			WireframeAndSolid,
+			None
+		}
+
+		private ModelRenderStyle modelRenderStyle = MeshViewerWidget.ModelRenderStyle.Wireframe;
+
+		private class Object3DView
+		{
+			public Color Color { get; set; }
+
+			public IObject3D Object3D { get; }
+
+			public Object3DView(IObject3D source, Color color)
+			{
+				this.Object3D = source;
+				this.Color = color;
+
+				if (source is Object3D object3D
+					&& color != source.Color
+						&& color.alpha != 255)
+				{
+					object3D.EnsureTransparentSorting();
+				}
 			}
 		}
 	}

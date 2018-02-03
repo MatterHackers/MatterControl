@@ -250,14 +250,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private GuiWidget CreateActionSeparator()
-		{
-			return new VerticalLine(60)
-			{
-				Margin = new BorderDouble(3, 2, 0, 2),
-			};
-		}
-
 		private void ViewControls3D_TransformStateChanged(object sender, TransformStateChangedEventArgs e)
 		{
 			switch (e.TransformMode)
@@ -317,7 +309,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					zBuffer = true;
 				}
 			}
-
 
 			// This shows the BVH as rects around the scene items
 			//Scene?.TraceData().RenderBvhRecursive(0, 3);
@@ -1345,44 +1336,47 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			popupMenu.CreateHorizontalLine();
 
-			AddRadioButton("Shaded".Localize(), RenderTypes.Shaded, popupMenu);
-			AddRadioButton("Outlines".Localize(), RenderTypes.Outlines, popupMenu);
-			AddRadioButton("Polygons".Localize(), RenderTypes.Polygons, popupMenu);
-			AddRadioButton("Materials Option".Localize(), RenderTypes.Materials, popupMenu);
-			AddRadioButton("Overhang".Localize(), RenderTypes.Overhang, popupMenu);
+			void switchToRenderType(RenderTypes renderType)
+			{
+				meshViewerWidget.RenderType = renderType;
+				UserSettings.Instance.set(UserSettingsKey.defaultRenderSetting, renderType.ToString());
+			}
+
+			popupMenu.CreateBoolMenuItem(
+				"Shaded".Localize(), 
+				() => meshViewerWidget.RenderType == RenderTypes.Shaded,
+				(v) => switchToRenderType(RenderTypes.Shaded),
+				useRadioStyle: true);
+
+			popupMenu.CreateBoolMenuItem(
+				"Outlines".Localize(),
+				() => meshViewerWidget.RenderType == RenderTypes.Outlines,
+				(v) => switchToRenderType(RenderTypes.Outlines),
+				useRadioStyle: true);
+
+			popupMenu.CreateBoolMenuItem(
+				"Polygons".Localize(),
+				() => meshViewerWidget.RenderType == RenderTypes.Polygons,
+				(v) => switchToRenderType(RenderTypes.Polygons),
+				useRadioStyle: true);
+
+			popupMenu.CreateBoolMenuItem(
+				"Materials Option".Localize(),
+				() => meshViewerWidget.RenderType == RenderTypes.Materials,
+				(v) => switchToRenderType(RenderTypes.Materials),
+				useRadioStyle: true);
+
+			popupMenu.CreateBoolMenuItem(
+				"Overhang".Localize(),
+				() => meshViewerWidget.RenderType == RenderTypes.Overhang,
+				(value) => switchToRenderType(RenderTypes.Overhang),
+				useRadioStyle: true);
 
 			popupMenu.CreateHorizontalLine();
 
 			popupMenu.AddChild(new GridOptionsPanel(this.InteractionLayer));
 
 			return popupMenu;
-		}
-
-		private void AddRadioButton(string label, RenderTypes renderTypes, PopupMenu popupMenu, Action action = null)
-		{
-			var radioButton = new RadioButton(label, textColor: Color.Black)
-			{
-				Checked = (meshViewerWidget.RenderType == renderTypes),
-				HAnchor = HAnchor.MaxFitOrStretch,
-				Margin = 0
-			};
-			radioButton.CheckedStateChanged += (s, e) =>
-			{
-				if (radioButton.Checked)
-				{
-					if (action == null)
-					{
-						meshViewerWidget.RenderType = renderTypes;
-						UserSettings.Instance.set(UserSettingsKey.defaultRenderSetting, meshViewerWidget.RenderType.ToString());
-					}
-					else
-					{
-						action.Invoke();
-					}
-				}
-			};
-
-			popupMenu.CreateMenuItem(radioButton, $"{label}-Menu");
 		}
 
 		protected bool autoRotating = false;
