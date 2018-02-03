@@ -468,19 +468,17 @@ namespace MatterHackers.MeshVisualizer
 
 				Color drawColor = GetItemColor(item);
 
-				bool isDebugItem = false;
-				bool renderAsSolid = drawColor.alpha == 255;
-#if DEBUG
-				isDebugItem = scene.DebugItem == item;
-				renderAsSolid = (renderAsSolid && scene.DebugItem == null)
-									|| isDebugItem;
-#endif
-				if (renderAsSolid)
+				bool isDebugItem = (item == scene.DebugItem);
+
+				if (drawColor.alpha == 255
+					|| isDebugItem)
 				{
-					GLHelper.Render(item.Mesh, drawColor, item.WorldMatrix(scene.RootItem), RenderType, item.WorldMatrix(scene.RootItem) * World.ModelviewMatrix);
+					// Render as solid
+					GLHelper.Render(item.Mesh, drawColor, item.WorldMatrix(scene.RootItem), this.RenderType, item.WorldMatrix(scene.RootItem) * World.ModelviewMatrix);
 				}
 				else
 				{
+					// Queue for transparency
 					transparentMeshes.Add(item);
 				}
 
