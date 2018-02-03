@@ -94,7 +94,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private View3DWidget view3DWidget;
 		private BedConfig sceneContext;
 
-		private ViewControls3DButtons activeTransformState = ViewControls3DButtons.Rotate;
+		private ViewControls3DButtons activeTransformState = ViewControls3DButtons.PartSelect;
 		private List<(GuiWidget button, SceneSelectionOperation operation)> operationButtons;
 
 		public bool IsPrinterMode { get; }

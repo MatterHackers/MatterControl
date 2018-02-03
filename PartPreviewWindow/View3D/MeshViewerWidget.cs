@@ -148,13 +148,13 @@ namespace MatterHackers.MeshVisualizer
 			{
 				Invalidate();
 			};
+
 			RenderType = RenderTypes.Shaded;
 			RenderBed = true;
 			RenderBuildVolume = false;
 			BedColor = new ColorF(.8, .8, .8, .7).ToColor();
 			BuildVolumeColor = new ColorF(.2, .8, .3, .2).ToColor();
 
-			this.interactionLayer.DrawGlOpaqueContent += Draw_GlOpaqueContent;
 			this.interactionLayer.DrawGlTransparentContent += Draw_GlTransparentContent;
 
 			if (ViewOnlyTexture == null)
@@ -672,15 +672,6 @@ namespace MatterHackers.MeshVisualizer
 			var bCenterInViewSpace = Vector3.Transform(bCenterWorld, World.ModelviewMatrix);
 
 			return bCenterInViewSpace.LengthSquared.CompareTo(aCenterInViewSpace.LengthSquared);
-		}
-
-		private void Draw_GlOpaqueContent(object sender, DrawEventArgs e)
-		{
-			List<IObject3D> transparentMeshes = new List<IObject3D>();
-			foreach (var object3D in scene.Children)
-			{
-				DrawObject(object3D, transparentMeshes, false, e);
-			}
 		}
 
 		private void Draw_GlTransparentContent(object sender, DrawEventArgs e)
