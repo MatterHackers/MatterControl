@@ -33,6 +33,7 @@ using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.Library;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -84,10 +85,37 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return menuItem;
 		}
 
-		private static ImageBuffer checkedIcon = AggContext.StaticData.LoadIcon("fa-check_16.png");
+		private static ImageBuffer faChecked = AggContext.StaticData.LoadIcon("fa-check_16.png");
 
-		public MenuItem CreateBoolMenuItem(string name, Func<bool> getter, Action<bool> setter)
+		private static ImageBuffer radioIconChecked;
+
+		private static ImageBuffer radioIconUnchecked;
+
+		public MenuItem CreateBoolMenuItem(string name, Func<bool> getter, Action<bool> setter, bool useRadioStyle = false)
 		{
+			if (useRadioStyle
+				&& radioIconChecked == null)
+			{
+				radioIconChecked = new ImageBuffer(16, 16).SetPreMultiply();
+				radioIconUnchecked = new ImageBuffer(16, 16).SetPreMultiply();
+
+				var rect = new RectangleDouble(0, 0, 16, 16);
+
+				RadioImage.DrawCircle(
+					radioIconChecked.NewGraphics2D(),
+					rect.Center,
+					Color.Black,
+					isChecked: true,
+					isActive: false);
+
+				RadioImage.DrawCircle(
+					radioIconUnchecked.NewGraphics2D(),
+					rect.Center,
+					Color.Black,
+					isChecked: false,
+					isActive: false);
+			}
+
 			var textWidget = new TextWidget(name, pointSize: theme.DefaultFontSize)
 			{
 				Padding = MenuPadding,
@@ -95,10 +123,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			bool isChecked = (getter?.Invoke() == true);
 
+			ImageBuffer checkedIcon = (useRadioStyle) ? radioIconChecked : faChecked;
+			ImageBuffer uncheckedIcon = (useRadioStyle) ? radioIconUnchecked : null;
+
 			var menuItem = new MenuItem(textWidget, theme)
 			{
 				Name = name + " Menu Item",
-				Image = isChecked ? checkedIcon : null
+				Image = (isChecked) ? checkedIcon : uncheckedIcon
 			};
 
 			menuItem.Click += (s, e) =>
