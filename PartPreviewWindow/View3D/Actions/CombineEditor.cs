@@ -99,10 +99,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 						if (remove != first)
 						{
 							var transformedRemove = Mesh.Copy(remove.Mesh, CancellationToken.None);
-							transformedRemove.Transform(remove.WorldMatrix(null));
+							transformedRemove.Transform(remove.WorldMatrix());
 
 							var transformedKeep = Mesh.Copy(first.Mesh, CancellationToken.None);
-							transformedKeep.Transform(first.WorldMatrix(null));
+							transformedKeep.Transform(first.WorldMatrix());
 
 							transformedKeep = PolygonMesh.Csg.CsgOperations.Union(transformedKeep, transformedRemove, (status, progress0To1) =>
 							{
@@ -113,7 +113,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 								progressStatus.Progress0To1 = percentCompleted + amountPerOperation * progress0To1;
 								reporter.Report(progressStatus);
 							}, cancellationToken);
-							var inverse = first.WorldMatrix(null);
+							var inverse = first.WorldMatrix();
 							inverse.Invert();
 							transformedKeep.Transform(inverse);
 							first.Mesh = transformedKeep;

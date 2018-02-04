@@ -216,7 +216,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		public static void MakeLowestFaceFlat(this InteractiveScene scene, IObject3D objectToLayFlatGroup, IObject3D root)
+		public static void MakeLowestFaceFlat(this InteractiveScene scene, IObject3D objectToLayFlatGroup)
 		{
 			bool firstVertex = true;
 
@@ -233,7 +233,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				for (int testIndex = 0; testIndex < itemToCheck.Mesh.Vertices.Count; testIndex++)
 				{
 					var vertex = itemToCheck.Mesh.Vertices[testIndex];
-					Vector3 vertexPosition = Vector3.Transform(vertex.Position, itemToCheck.WorldMatrix(root));
+					Vector3 vertexPosition = Vector3.Transform(vertex.Position, itemToCheck.WorldMatrix());
 					if (firstVertex)
 					{
 						lowestVertex = itemToCheck.Mesh.Vertices[testIndex];
@@ -266,7 +266,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					if (faceVertex != lowestVertex)
 					{
-						Vector3 faceVertexPosition = Vector3.Transform(faceVertex.Position, itemToLayFlat.WorldMatrix(root));
+						Vector3 faceVertexPosition = Vector3.Transform(faceVertex.Position, itemToLayFlat.WorldMatrix());
 						Vector3 pointRelLowest = faceVertexPosition - lowestVertexPosition;
 						double xLeg = new Vector2(pointRelLowest.X, pointRelLowest.Y).Length;
 						double yLeg = pointRelLowest.Z;
@@ -288,7 +288,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			List<Vector3> faceVertices = new List<Vector3>();
 			foreach (IVertex vertex in faceToLayFlat.Vertices())
 			{
-				Vector3 vertexPosition = Vector3.Transform(vertex.Position, itemToLayFlat.WorldMatrix(root));
+				Vector3 vertexPosition = Vector3.Transform(vertex.Position, itemToLayFlat.WorldMatrix());
 				faceVertices.Add(vertexPosition);
 				maxDistFromLowestZ = Math.Max(maxDistFromLowestZ, vertexPosition.Z - lowestVertexPosition.Z);
 			}
