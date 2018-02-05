@@ -209,19 +209,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					foreach (var paint in paintObjects)
 					{
 						var transformedPaint = Mesh.Copy(paint.Mesh, cancellationToken);
-						transformedPaint.Transform(paint.WorldMatrix(null));
-						var inverseRemove = paint.WorldMatrix(null);
+						transformedPaint.Transform(paint.WorldMatrix());
+						var inverseRemove = paint.WorldMatrix();
 						inverseRemove.Invert();
 						Mesh paintMesh = null;
 
 						foreach (var keep in keepObjects)
 						{
 							var transformedKeep = Mesh.Copy(keep.Mesh, cancellationToken);
-							transformedKeep.Transform(keep.WorldMatrix(null));
+							transformedKeep.Transform(keep.WorldMatrix());
 
 							// remove the paint from the original
 							var intersectAndSubtract = PolygonMesh.Csg.CsgOperations.IntersectAndSubtract(transformedKeep, transformedPaint);
-							var inverseKeep = keep.WorldMatrix(null);
+							var inverseKeep = keep.WorldMatrix();
 							inverseKeep.Invert();
 							intersectAndSubtract.subtract.Transform(inverseKeep);
 							keep.Mesh = intersectAndSubtract.subtract;

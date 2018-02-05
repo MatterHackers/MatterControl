@@ -336,7 +336,7 @@ namespace MatterHackers.MatterControl
 				{
 					if (scene.HasSelection)
 					{
-						scene.MakeLowestFaceFlat(scene.SelectedItem, scene.RootItem);
+						scene.MakeLowestFaceFlat(scene.SelectedItem);
 					}
 				},
 				IsEnabled = (scene) => scene.HasSelection,
