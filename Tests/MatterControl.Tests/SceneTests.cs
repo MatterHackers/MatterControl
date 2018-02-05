@@ -435,7 +435,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			Assert.AreEqual(this.RedMatrix, redItem.Matrix, "Matrix property on node should be RedMatrix");
 
 			// Validate WorldColor with non-ancestor param
-			Assert.AreEqual(this.RedMatrix * this.GroupMatrix * this.SuperGroupMatrix, redItem.WorldMaterialIndex(nonAncestor), "WorldMaterialIndex on Red with non-ancestor should be RootMaterialIndex");
+			Assert.AreEqual(this.RedMatrix * this.GroupMatrix * this.SuperGroupMatrix, redItem.WorldMatrix(nonAncestor), "WorldMatrix on Red with non-ancestor should be RootMaterialIndex");
 
 			// ************************************* WorldOutputType *************************************
 			// Validate root
