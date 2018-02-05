@@ -202,8 +202,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			Scene.SelectFirstChild();
 
-			// TODO: Restore if issues arrive related to startup -> partselect, otherwise delete
-			//viewControls3D.ActiveButton = ViewControls3DButtons.PartSelect;
+			viewControls3D.ActiveButton = ViewControls3DButtons.PartSelect;
 
 			// Make sure the render mode is set correctly
 			string renderTypeString = UserSettings.Instance.get(UserSettingsKey.defaultRenderSetting);
