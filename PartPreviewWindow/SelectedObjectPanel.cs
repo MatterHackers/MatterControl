@@ -167,11 +167,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						ContentStore = new BranchEditContainer((libraryItem, object3D) =>
 						{
+							var replacement = object3D.Clone();
+
 							this.item.Parent.Children.Modify(list =>
 							{
 								list.Remove(item);
-
-								var replacement = object3D.Clone();
 
 								// Restore matrix of item being replaced
 								replacement.Matrix = item.Matrix;
@@ -180,6 +180,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 								item = replacement;
 							});
+
+							scene.SelectedItem = replacement;
 						}),
 						SourceItem = new InMemoryItem(clonedItem),
 					});
