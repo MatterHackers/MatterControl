@@ -40,6 +40,8 @@ using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using System.Reflection;
+using MatterHackers.VectorMath;
+using MatterHackers.Agg.Image;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -155,11 +157,33 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					bed,
 					theme);
 
+				var clonedItem = this.item.Clone();
+
+				// Edit in Identity transform
+				clonedItem.Matrix = Matrix4X4.Identity;
+
 				await bed.LoadContent(
 					new EditContext()
 					{
-						ContentStore = ApplicationController.Instance.Library.PlatingHistory,
-						SourceItem = new InMemoryItem(this.item),
+						ContentStore = new BranchEditContainer((libraryItem, object3D) =>
+						{
+							var replacement = object3D.Clone();
+
+							this.item.Parent.Children.Modify(list =>
+							{
+								list.Remove(item);
+
+								// Restore matrix of item being replaced
+								replacement.Matrix = item.Matrix;
+
+								list.Add(replacement);
+
+								item = replacement;
+							});
+
+							scene.SelectedItem = replacement;
+						}),
+						SourceItem = new InMemoryItem(clonedItem),
 					});
 			};
 			toolbar.AddChild(editButton);

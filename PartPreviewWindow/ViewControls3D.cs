@@ -198,7 +198,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			undoButton.Click += (sender, e) =>
 			{
-				view3DWidget.Scene.SelectedItem = null;
+				printer.Bed.Scene.SelectedItem = null;
 				undoBuffer.Undo();
 				view3DWidget.InteractionLayer.Focus();
 			};
