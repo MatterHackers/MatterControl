@@ -337,10 +337,41 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						}
 						break;
 
-					case Keys.Z:
+					case Keys.C:
 						if (keyEvent.Control)
 						{
-							scene.UndoBuffer.Undo();
+							scene.Copy();
+
+							keyEvent.Handled = true;
+							keyEvent.SuppressKeyPress = true;
+						}
+						break;
+
+					case Keys.S:
+						if (keyEvent.Control)
+						{
+							ApplicationController.Instance.Tasks.Execute(this.SaveChanges);
+
+							keyEvent.Handled = true;
+							keyEvent.SuppressKeyPress = true;
+						}
+						break;
+
+					case Keys.V:
+						if (keyEvent.Control)
+						{
+							scene.Paste();
+
+							keyEvent.Handled = true;
+							keyEvent.SuppressKeyPress = true;
+						}
+						break;
+
+					case Keys.X:
+						if (keyEvent.Control)
+						{
+							scene.Cut();
+
 							keyEvent.Handled = true;
 							keyEvent.SuppressKeyPress = true;
 						}
@@ -354,6 +385,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							keyEvent.SuppressKeyPress = true;
 						}
 						break;
+
+					case Keys.Z:
+						if (keyEvent.Control)
+						{
+							scene.UndoBuffer.Undo();
+							keyEvent.Handled = true;
+							keyEvent.SuppressKeyPress = true;
+						}
+						break;
+
+
 
 					case Keys.Delete:
 					case Keys.Back:

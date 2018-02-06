@@ -67,14 +67,36 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return line;
 		}
 
-		public MenuItem CreateMenuItem(string name, ImageBuffer icon = null)
+		public MenuItem CreateMenuItem(string name, ImageBuffer icon = null, string shortCut = null)
 		{
+			GuiWidget content;
+
 			var textWidget = new TextWidget(name, pointSize: theme.DefaultFontSize)
 			{
 				Padding = MenuPadding,
 			};
 
-			var menuItem = new MenuItem(textWidget, theme)
+			if (shortCut != null)
+			{
+				content = new GuiWidget()
+				{
+					HAnchor = HAnchor.Stretch,
+					VAnchor = VAnchor.Fit
+				};
+
+				content.AddChild(new TextWidget(shortCut, pointSize: theme.DefaultFontSize)
+				{
+					HAnchor = HAnchor.Right
+				});
+
+				content.AddChild(textWidget);
+			}
+			else
+			{
+				content = textWidget;
+			}
+
+			var menuItem = new MenuItem(content, theme)
 			{
 				Name = name + " Menu Item",
 				Image = icon
