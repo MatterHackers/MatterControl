@@ -94,10 +94,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					progressStatus.Status = "Loading";
 					progressReporter.Report(progressStatus);
 
-					var reloadedItem = Object3D.Load(fileToSlice, cancellationToken);
-
-					progressStatus.Status = "Flattening";
-					progressReporter.Report(progressStatus);
+					var reloadedItem = Object3D.Load(fileToSlice, cancellationToken, null, (ratio, status) =>
+					{
+						progressStatus.Progress0To1 = ratio;
+						progressStatus.Status = status;
+					});
 
 					// Flatten the scene, filtering out items outside of the build volume
 					var meshItemsOnBuildPlate = reloadedItem.VisibleMeshes().Where((item) => item.InsideBuildVolume(printer));
@@ -200,7 +201,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			// Create directory if needed
 			Directory.CreateDirectory(folderToSaveStlsTo);
 
-			string filePath = Path.Combine(folderToSaveStlsTo, Path.ChangeExtension(Path.GetRandomFileName(), ".stl"));
+			string filePath = Path.Combine(folderToSaveStlsTo, Path.ChangeExtension(meshToSave.GetLongHashCode().ToString(), ".stl"));
 
 			MeshFileIo.Save(meshToSave, filePath, cancellationToken);
 
