@@ -94,7 +94,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.sceneContext = sceneContext;
 			this.printerTabPage = printerTabBase as PrinterTabPage;
-			this.Scene = sceneContext.Scene;
 			this.printer = printer;
 
 			this.TrackballTumbleWidget = new TrackballTumbleWidget(sceneContext.World)
@@ -1383,7 +1382,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public MeshViewerWidget meshViewerWidget;
 
-		public InteractiveScene Scene { get; }
+		private InteractiveScene Scene => sceneContext.Scene;
 
 		protected ViewControls3D viewControls3D { get; }
 
