@@ -125,10 +125,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						var outputOptions = new List<(Matrix4X4 matrix, string fileName)>();
 
 						int savedStlCount = 0;
+						bool first = true;
 						for (int extruderIndex = 0; extruderIndex < itemsByExtruder.Count; extruderIndex++)
 						{
+							if (!first)
+							{
+								mergeRules += ",";
+							}
 							var itemsThisExtruder = itemsByExtruder[extruderIndex];
-							mergeRules += UnionAllObjects(itemsThisExtruder, outputOptions, ref savedStlCount) + " ";
+							mergeRules += AddObjectsForExtruder(itemsThisExtruder, outputOptions, ref savedStlCount);
+							first = false;
 						}
 
 						var supportObjects = meshItemsOnBuildPlate.Where((item) =>
@@ -139,9 +145,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						if (supportObjects.Any())
 						{
 							// add a flag to the merge rules to let us know there was support
-							mergeRules += "S ";
-							mergeRules += UnionAllObjects(supportObjects, outputOptions, ref savedStlCount) + " ";
+							mergeRules += "," + AddObjectsForExtruder(supportObjects, outputOptions, ref savedStlCount) + "S";
 						}
+
+						mergeRules += " ";
 
 						return outputOptions;
 					}
@@ -154,24 +161,34 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return new List<(Matrix4X4 matrix, string fileName)>();
 		}
 
-		private static string UnionAllObjects(IEnumerable<IObject3D> items,
+		private static string AddObjectsForExtruder(IEnumerable<IObject3D> items,
 			List<(Matrix4X4 matrix, string fileName)> outputItems,
 			ref int savedStlCount)
 		{
 			string mergeString = "";
-			bool first = true;
-			foreach(var item in items)
+			if (items.Any())
 			{
-				string assetsDirectory = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, "Assets");
-				outputItems.Add((item.WorldMatrix(), Path.Combine(assetsDirectory, item.MeshPath)));
-				mergeString += $"({savedStlCount++}";
-				if(!first)
+				bool first = true;
+				foreach (var item in items)
 				{
-					mergeString += ",";
+					if (!first)
+					{
+						mergeString += ",";
+					}
+					string assetsDirectory = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, "Assets");
+					outputItems.Add((item.WorldMatrix(), Path.Combine(assetsDirectory, item.MeshPath)));
+					mergeString += $"({savedStlCount++}";
+					first = false;
 				}
-			}
 
-			mergeString += new String(')', items.Count());
+				mergeString += new String(')', items.Count());
+			}
+			else
+			{
+				var tinyObjectFileName = SaveAndGetFilePathForMesh(PlatonicSolids.CreateCube(.001, .001, .001), CancellationToken.None);
+				outputItems.Add((Matrix4X4.Identity, tinyObjectFileName));
+				mergeString += $"({savedStlCount++})";
+			}
 
 			return mergeString;
 		}
