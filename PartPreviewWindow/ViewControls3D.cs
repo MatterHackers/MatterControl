@@ -451,7 +451,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return new PopupMenuButton(buttonView, theme)
 			{
 				Name = "Bed Options Menu",
-				DynamicPopupContent = () => theme.CreateMenuItems(popupMenu, this.BedMenuActions(sceneContext)),
+				DynamicPopupContent = () =>
+				{
+					var menuContent = theme.CreateMenuItems(popupMenu, this.BedMenuActions(sceneContext));
+					menuContent.MinimumSize = new Vector2(200, 0);
+
+					return menuContent;
+				},
 				BackgroundColor = theme.ToolbarButtonBackground,
 				HoverColor = theme.ToolbarButtonHover,
 				MouseDownColor = theme.ToolbarButtonDown,
@@ -577,7 +583,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private NamedAction[] BedMenuActions(BedConfig sceneContext)
 		{
-			// Bed menu
 			return new[]
 			{
 				new NamedAction()
@@ -597,9 +602,42 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						});
 					}
 				},
+				new NamedAction() { Title = "----" },
+				new NamedAction()
+				{
+					Title = "Cut".Localize(),
+					Shortcut = "Ctrl+X",
+					Action = async () =>
+					{
+						sceneContext.Scene.Cut();
+					},
+					IsEnabled = () => sceneContext.EditableScene
+				},
+				new NamedAction()
+				{
+					Title = "Copy".Localize(),
+					Shortcut = "Ctrl+C",
+					Action = async () =>
+					{
+						sceneContext.Scene.Copy();
+					},
+					IsEnabled = () => sceneContext.EditableScene
+				},
+				new NamedAction()
+				{
+					Title = "Paste".Localize(),
+					Shortcut = "Ctrl+V",
+					Action = async () =>
+					{
+						sceneContext.Scene.Paste();
+					},
+					IsEnabled = () => sceneContext.EditableScene
+				},
+				new NamedAction() { Title = "----" },
 				new NamedAction()
 				{
 					Title = "Save".Localize(),
+					Shortcut = "Ctrl+S",
 					Action = async () =>
 					{
 						await ApplicationController.Instance.Tasks.Execute(view3DWidget.SaveChanges);

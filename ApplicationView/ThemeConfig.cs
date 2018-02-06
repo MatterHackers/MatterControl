@@ -325,7 +325,7 @@ namespace MatterHackers.MatterControl
 					}
 					else
 					{
-						menuItem = popupMenu.CreateMenuItem(menuAction.Title, menuAction.Icon);
+						menuItem = popupMenu.CreateMenuItem(menuAction.Title, menuAction.Icon, menuAction.Shortcut);
 					}
 
 					menuItem.Name = $"{menuAction.Title} Menu Item";

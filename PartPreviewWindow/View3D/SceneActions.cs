@@ -125,20 +125,49 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			});
 		}
 
-		public static async void DuplicateSelection(this InteractiveScene Scene)
+		public static async void Cut(this InteractiveScene scene, IObject3D sourceItem = null)
 		{
-			if (Scene.HasSelection)
+			Clipboard.SetText("!--IObjectSelection--!");
+			ApplicationController.ClipboardItem = scene.SelectedItem.Clone();
+
+			scene.DeleteSelection();
+		}
+
+		public static async void Copy(this InteractiveScene scene, IObject3D sourceItem = null)
+		{
+			Clipboard.SetText("!--IObjectSelection--!");
+			ApplicationController.ClipboardItem = scene.SelectedItem.Clone();
+		}
+
+		public static async void Paste(this InteractiveScene scene)
+		{
+			if (Clipboard.GetText() == "!--IObjectSelection--!")
+			{
+				scene.DuplicateItem(ApplicationController.ClipboardItem);
+			}
+		}
+
+		public static async void DuplicateItem(this InteractiveScene Scene, IObject3D sourceItem = null)
+		{
+			if (sourceItem == null)
+			{
+				if (Scene.HasSelection)
+				{
+					sourceItem = Scene.SelectedItem;
+				}
+			}
+
+			if (sourceItem != null)
 			{
 				// Copy selected item
 				IObject3D newItem = await Task.Run(() =>
 				{
-					var originalItem = Scene.SelectedItem;
-					if (originalItem != null)
+					if (sourceItem != null)
 					{
-						if (originalItem is SelectionGroup)
+						if (sourceItem is SelectionGroup)
 						{
 							// the selection is a group of objects that need to be copied
-							var copyList = originalItem.Children.ToList();
+							var copyList = sourceItem.Children.ToList();
 							Scene.SelectedItem = null;
 							foreach(var item in copyList)
 							{
@@ -154,10 +183,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						}
 						else // the selection can be cloned easily
 						{
-							var clonedItem = originalItem.Clone();
+							var clonedItem = sourceItem.Clone();
 
 							// make the name unique
-							var newName = agg_basics.GetNonCollidingName(originalItem.Name, Scene.Descendants().Select((d) => d.Name));
+							var newName = agg_basics.GetNonCollidingName(sourceItem.Name, Scene.Descendants().Select((d) => d.Name));
 							clonedItem.Name = newName;
 
 							// More useful if it creates the part in the exact position and then the user can move it.

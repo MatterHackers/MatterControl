@@ -38,6 +38,7 @@ namespace MatterHackers.Agg.UI
 	public class NamedAction
 	{
 		public string Title { get; set; }
+		public string Shortcut { get; set; }
 		public Action Action { get; set; }
 		public ImageBuffer Icon { get; set; }
 		public Func<bool> IsEnabled { get; set; }

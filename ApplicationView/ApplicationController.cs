@@ -317,7 +317,7 @@ namespace MatterHackers.MatterControl
 			new SceneSelectionOperation()
 			{
 				TitleResolver = () => "Duplicate".Localize(),
-				Action = (scene) => scene.DuplicateSelection(),
+				Action = (scene) => scene.DuplicateItem(),
 				IsEnabled = (scene) => scene.HasSelection,
 				Icon = AggContext.StaticData.LoadIcon("duplicate.png").SetPreMultiply(),
 			},
@@ -1288,6 +1288,8 @@ namespace MatterHackers.MatterControl
 		}
 
 		public IEnumerable<SceneSelectionOperation> RegisteredSceneOperations => registeredSceneOperations;
+
+		public static IObject3D ClipboardItem { get; internal set; }
 
 		public event EventHandler<WidgetSourceEventArgs> AddPrintersTabRightElement;
 
