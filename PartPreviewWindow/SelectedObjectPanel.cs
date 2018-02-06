@@ -195,7 +195,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			removeButton.Click += async (s, e) =>
 			{
-				this.item.Unwrap(printer.Bed);
+				this.item.Unwrap(printer.Bed.Scene);
 			};
 			toolbar.AddChild(removeButton);
 
@@ -291,59 +291,32 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.Parent.Visible = viewMode == null || viewMode == PartViewMode.Model;
 
 			HashSet<IObject3DEditor> mappedEditors = GetEditorsForType(selectedItemType);
-			if (mappedEditors == null)
+
+			var activeEditors = new List<(IObject3DEditor, IObject3D)>();
+
+			if (componentType.IsAssignableFrom(selectedItemType))
 			{
-				if (componentType.IsAssignableFrom(selectedItemType))
+				var members = from item in selectedItemType.GetProperties(PublicPropertyEditor.OwnedPropertiesOnly)
+								let value = item.GetValue(selectedItem, null) as IObject3D
+								let propertyType = item.PropertyType
+								where iobject3DType.IsAssignableFrom(propertyType)
+								select new
+								{
+									Type = propertyType,
+									Value = value
+								};
+
+				foreach (var member in members)
 				{
-					var members = from item in selectedItemType.GetProperties(PublicPropertyEditor.OwnedPropertiesOnly)
-								  let value = item.GetValue(selectedItem, null) as IObject3D
-								  let propertyType = item.PropertyType
-								  where iobject3DType.IsAssignableFrom(propertyType)
-								  select new
-								  {
-									  Type = propertyType,
-									  Value = value
-								  };
-
-					var editors = new List<(IObject3DEditor, IObject3D)>();
-
-					foreach (var member in members)
+					if (this.GetEditorsForType(member.Type)?.FirstOrDefault() is IObject3DEditor editor)
 					{
-						if (this.GetEditorsForType(member.Type)?.FirstOrDefault() is IObject3DEditor editor)
-						{
-							editors.Add((editor, member.Value));
-						}
+						activeEditors.Add((editor, member.Value));
 					}
-
-					// Show an editor for each public IObject3D member on the selected item
-					ShowObjectEditor(editors);
-				}
-				else
-				{
-					editorPanel.CloseAllChildren();
-					editorPanel.VAnchor = VAnchor.Absolute;
-					editorPanel.VAnchor = VAnchor.Fit;
-					editorPanel.Invalidate();
 				}
 			}
-			else
+
+			if (mappedEditors?.Any() == true)
 			{
-				//var dropDownList = new DropDownList("", ActiveTheme.Instance.PrimaryTextColor, maxHeight: 300)
-				//{
-				//	HAnchor = HAnchor.Stretch
-				//};
-
-				//foreach (IObject3DEditor editor in mappedEditors)
-				//{
-				//	MenuItem menuItem = dropDownList.AddItem(editor.Name);
-				//	menuItem.Selected += (s, e2) =>
-				//	{
-				//		ShowObjectEditor(editor);
-				//	};
-				//}
-
-				//editorPanel.AddChild(dropDownList);
-
 				// Select the active editor or fall back to the first if not found
 				var firstEditor = (from editor in mappedEditors
 								   let type = editor.GetType()
@@ -354,22 +327,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (firstEditor == null)
 				{
 					firstEditor = mappedEditors.First();
+					activeEditors.Add((firstEditor, selectedItem));
 				}
-
-				//int selectedIndex = 0;
-				//for (int i = 0; i < dropDownList.MenuItems.Count; i++)
-				//{
-				//	if (dropDownList.MenuItems[i].Text == firstEditor.Name)
-				//	{
-				//		selectedIndex = i;
-				//		break;
-				//	}
-				//}
-
-				//dropDownList.SelectedIndex = selectedIndex;
-
-				ShowObjectEditor(new[] { (firstEditor, scene.SelectedItem) });
 			}
+
+			ShowObjectEditor(activeEditors);
 		}
 
 		private HashSet<IObject3DEditor> GetEditorsForType(Type selectedItemType)
@@ -441,12 +403,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						if (type.IsAssignableFrom(selectedItemType))
 						{
-							var button = new OperationButton(graphOperation, selectedItem, theme);
-							button.BackgroundColor = theme.MinimalShade;
+							var button = new OperationButton(graphOperation, selectedItem, theme)
+							{
+								BackgroundColor = theme.MinimalShade,
+								Margin = theme.ButtonSpacing
+							};
 							button.EnsureAvailablity();
 							button.Click += (s, e) =>
 							{
-								graphOperation.Operation(selectedItem).ConfigureAwait(false);
+								graphOperation.Operation(selectedItem, scene).ConfigureAwait(false);
 							};
 
 							buttons.Add(button);
