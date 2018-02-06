@@ -156,6 +156,7 @@ namespace MatterHackers.MeshVisualizer
 			scene.SelectionChanged += (sender, e) =>
 			{
 				Invalidate();
+				lastSelectionChangedMs = UiThread.CurrentTimerMs;
 			};
 
 			RenderType = RenderTypes.Shaded;
@@ -522,17 +523,34 @@ namespace MatterHackers.MeshVisualizer
 
 					var frustum = World.GetClippingFrustum();
 
+					var selectionColor = Color.White;
+					double secondsSinceSelectionChanged = (UiThread.CurrentTimerMs - lastSelectionChangedMs) / 1000.0;
+					if (secondsSinceSelectionChanged < .5)
+					{
+						//var accentColor = ApplicationController.Instance.Theme.Colors.PrimaryAccentColor;
+						var accentColor = Color.LightGray;
+						if (secondsSinceSelectionChanged < .25)
+						{
+							selectionColor = Color.White.Blend(accentColor, EaseInOut(secondsSinceSelectionChanged * 4));
+						}
+						else
+						{
+							selectionColor = accentColor.Blend(Color.White, EaseInOut((secondsSinceSelectionChanged - .25) * 4));
+						}
+						Invalidate();
+					}
+
 					bool tooBigForComplexSelection = totalVertices > 1000;
 					if (tooBigForComplexSelection
 						&& scene.DebugItem == null)
 					{
 						GLHelper.PrepareFor3DLineRender(true);
-						RenderAABB(frustum, object3D.GetAxisAlignedBoundingBox(Matrix4X4.Identity), Matrix4X4.Identity, Color.White, selectionHighlightWidth);
+						RenderAABB(frustum, object3D.GetAxisAlignedBoundingBox(Matrix4X4.Identity), Matrix4X4.Identity, selectionColor, selectionHighlightWidth);
 						GL.Enable(EnableCap.Lighting);
 					}
 					else
 					{
-						RenderSelection(item, frustum);
+						RenderSelection(item, frustum, selectionColor);
 					}
 				}
 
@@ -619,7 +637,7 @@ namespace MatterHackers.MeshVisualizer
 			}
 		}
 
-		private void RenderSelection(IObject3D renderData, Frustum frustum)
+		private void RenderSelection(IObject3D renderData, Frustum frustum, Color selectionColor)
 		{
 			if(renderData.Mesh == null)
 			{
@@ -630,10 +648,12 @@ namespace MatterHackers.MeshVisualizer
 
 			if (renderData.Mesh.Vertices.Count < 1000)
 			{
+				bool renderedAnything = false;
 				foreach (MeshEdge meshEdge in renderData.Mesh.MeshEdges)
 				{
 					if (meshEdge.GetNumFacesSharingEdge() == 2)
 					{
+						renderedAnything = true;
 						var meshToView = renderData.WorldMatrix() * World.ModelviewMatrix;
 
 						FaceEdge firstFaceEdge = meshEdge.firstFaceEdge;
@@ -652,15 +672,31 @@ namespace MatterHackers.MeshVisualizer
 							var transformed1 = Vector3.Transform(meshEdge.VertexOnEnd[0].Position, renderData.WorldMatrix());
 							var transformed2 = Vector3.Transform(meshEdge.VertexOnEnd[1].Position, renderData.WorldMatrix());
 
-							GLHelper.Render3DLineNoPrep(frustum, World, transformed1, transformed2, Color.White, selectionHighlightWidth);
+							GLHelper.Render3DLineNoPrep(frustum, World, transformed1, transformed2, selectionColor, selectionHighlightWidth);
 						}
 					}
+				}
+
+				if(!renderedAnything)
+				{
+					RenderAABB(frustum, renderData.Mesh.GetAxisAlignedBoundingBox(), renderData.WorldMatrix(), selectionColor, selectionHighlightWidth);
 				}
 			}
 			else // just render the bounding box
 			{
-				RenderAABB(frustum, renderData.Mesh.GetAxisAlignedBoundingBox(), renderData.WorldMatrix(), Color.White, selectionHighlightWidth);
+				RenderAABB(frustum, renderData.Mesh.GetAxisAlignedBoundingBox(), renderData.WorldMatrix(), selectionColor, selectionHighlightWidth);
 			}
+		}
+
+		private double EaseInOut(double t)
+		{
+			if (t <= 0.5f)
+			{
+				return 2.0f * (t * t);
+			}
+
+			t -= 0.5f;
+			return 2.0f * t * (1.0f - t) + 0.5;
 		}
 
 		void RenderAABB(Frustum frustum, AxisAlignedBoundingBox bounds, Matrix4X4 matrix, Color color, double width)
@@ -872,6 +908,7 @@ namespace MatterHackers.MeshVisualizer
 		}
 
 		private ModelRenderStyle modelRenderStyle = MeshViewerWidget.ModelRenderStyle.Wireframe;
+		private long lastSelectionChangedMs;
 
 		private class Object3DView
 		{
