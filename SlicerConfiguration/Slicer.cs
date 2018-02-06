@@ -31,6 +31,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
@@ -41,6 +42,7 @@ using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -51,7 +53,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public static List<bool> extrudersUsed = new List<bool>();
 		public static bool runInProcess = false;
 
-		public static string[] GetStlFileLocations(string fileToSlice, ref string mergeRules, PrinterConfig printer, IProgress<ProgressStatus> progressReporter, CancellationToken cancellationToken)
+		public static List<(Matrix4X4 matrix, string fileName)> GetStlFileLocations(string fileToSlice, ref string mergeRules, PrinterConfig printer, IProgress<ProgressStatus> progressReporter, CancellationToken cancellationToken)
 		{
 			var progressStatus = new ProgressStatus();
 
@@ -85,14 +87,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			switch (Path.GetExtension(fileToSlice).ToUpper())
 			{
-				case ".STL":
-				case ".GCODE":
-					extrudersUsed[0] = true;
-					return new string[] { fileToSlice };
-
 				case ".MCX":
-				case ".AMF":
-				case ".OBJ":
 					// TODO: Once graph parsing is added to MatterSlice we can remove and avoid this flattening
 					meshPrintOutputSettings.Clear();
 
@@ -105,130 +100,80 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					progressReporter.Report(progressStatus);
 
 					// Flatten the scene, filtering out items outside of the build volume
-					var flattenScene = reloadedItem.Flatten(meshPrintOutputSettings, (item) => item.InsideBuildVolume(printer));
+					var meshItemsOnBuildPlate = reloadedItem.VisibleMeshes().Where((item) => item.InsideBuildVolume(printer));
 
-					var meshGroups = new List<MeshGroup> { flattenScene };
-					if (meshGroups != null)
+					if (meshItemsOnBuildPlate.Any())
 					{
-						List<MeshGroup> extruderMeshGroups = new List<MeshGroup>();
-						for (int extruderIndex = 0; extruderIndex < extruderCount; extruderIndex++)
-						{
-							extruderMeshGroups.Add(new MeshGroup());
-						}
-
-						// and add one more extruder mesh group for user generated support (if exists)
-						extruderMeshGroups.Add(new MeshGroup());
-
 						int maxExtruderIndex = 0;
-						foreach (MeshGroup meshGroup in meshGroups)
-						{
-							foreach (Mesh mesh in meshGroup.Meshes)
-							{
-								MeshPrintOutputSettings material = meshPrintOutputSettings[mesh];
-								switch(material.PrintOutputTypes)
-								{
-									case PrintOutputTypes.Solid:
-										int extruderIndex = Math.Max(0, material.ExtruderIndex);
-										maxExtruderIndex = Math.Max(maxExtruderIndex, extruderIndex);
-										if (extruderIndex >= extruderCount)
-										{
-											extrudersUsed[0] = true;
-											extruderMeshGroups[0].Meshes.Add(mesh);
-										}
-										else
-										{
-											extrudersUsed[extruderIndex] = true;
-											extruderMeshGroups[extruderIndex].Meshes.Add(mesh);
-										}
-										break;
 
-									case PrintOutputTypes.Support:
-										// add it to the group reserved for user support
-										extruderMeshGroups[extruderCount].Meshes.Add(mesh);
-										break;
-								}
+						var itemsByExtruder = new List<IEnumerable<IObject3D>>();
+						for (int extruderIndexIn = 0; extruderIndexIn < extruderCount; extruderIndexIn++)
+						{
+							var extruderIndex = extruderIndexIn;
+							var itemsThisExtruder = meshItemsOnBuildPlate.Where((item) =>
+								(item.WorldMaterialIndex() == extruderIndex || (extruderIndex == 0 && item.WorldMaterialIndex() == -1))
+								&& (item.WorldOutputType() ==  PrintOutputTypes.Solid || item.WorldOutputType() == PrintOutputTypes.Default));
+
+							itemsByExtruder.Add(itemsThisExtruder);
+							extrudersUsed[extruderIndex] |= itemsThisExtruder.Any();
+							if(extrudersUsed[extruderIndex])
+							{
+								maxExtruderIndex = extruderIndex;
 							}
 						}
+
+						var outputOptions = new List<(Matrix4X4 matrix, string fileName)>();
 
 						int savedStlCount = 0;
-						List<string> extruderFilesToSlice = new List<string>();
-						for (int extruderIndex = 0; extruderIndex < extruderMeshGroups.Count; extruderIndex++)
+						for (int extruderIndex = 0; extruderIndex < itemsByExtruder.Count; extruderIndex++)
 						{
-							MeshGroup meshGroup = extruderMeshGroups[extruderIndex];
-
-							int meshCount = meshGroup.Meshes.Count;
-							if (meshCount > 0)
-							{
-								for (int meshIndex = 0; meshIndex < meshCount; meshIndex++)
-								{
-									Mesh mesh = meshGroup.Meshes[meshIndex];
-									if (meshIndex == 0)
-									{
-										mergeRules += "({0}".FormatWith(savedStlCount);
-									}
-									else
-									{
-										if (meshIndex < meshCount - 1)
-										{
-											mergeRules += ",({0}".FormatWith(savedStlCount);
-										}
-										else
-										{
-											mergeRules += ",{0}".FormatWith(savedStlCount);
-										}
-									}
-									int meshExtruderIndex = meshPrintOutputSettings[mesh].ExtruderIndex;
-
-									if(cancellationToken.IsCancellationRequested)
-									{
-										return new string[0];
-									}
-
-									var fileName = SaveAndGetFilePathForMesh(mesh, cancellationToken);
-									extruderFilesToSlice.Add(fileName);
-
-									savedStlCount++;
-								}
-
-								int closeParentsCount = (meshCount == 1 || meshCount == 2) ? 1 : meshCount - 1;
-								for (int i = 0; i < closeParentsCount; i++)
-								{
-									mergeRules += ")";
-								}
-							}
-							else if(extruderIndex <= maxExtruderIndex) // this extruder has no meshes
-							{
-								// check if there are any more meshes after this extruder that will be added
-								int otherMeshCounts = 0;
-								for (int otherExtruderIndex = extruderIndex + 1; otherExtruderIndex < extruderMeshGroups.Count; otherExtruderIndex++)
-								{
-									otherMeshCounts += extruderMeshGroups[otherExtruderIndex].Meshes.Count;
-								}
-								if (otherMeshCounts > 0) // there are more extrudes to use after this not used one
-								{
-									// add in a blank for this extruder
-									mergeRules += $"({savedStlCount})";
-								}
-								// save an empty mesh
-								extruderFilesToSlice.Add(SaveAndGetFilePathForMesh(PlatonicSolids.CreateCube(.001, .001, .001), cancellationToken));
-								savedStlCount++;
-							}
+							var itemsThisExtruder = itemsByExtruder[extruderIndex];
+							mergeRules += UnionAllObjects(itemsThisExtruder, outputOptions, ref savedStlCount) + " ";
 						}
+
+						var supportObjects = meshItemsOnBuildPlate.Where((item) =>
+								item.WorldOutputType() == PrintOutputTypes.Support);
+
 
 						// if we added user generated support 
-						if(extruderMeshGroups[extruderCount].Meshes.Count > 0)
+						if (supportObjects.Any())
 						{
 							// add a flag to the merge rules to let us know there was support
-							mergeRules += "S";
+							mergeRules += "S ";
+							mergeRules += UnionAllObjects(supportObjects, outputOptions, ref savedStlCount) + " ";
 						}
 
-						return extruderFilesToSlice.ToArray();
+						return outputOptions;
 					}
-					return new string[] { "" };
+					break;
 
 				default:
-					return new string[] { "" };
+					break;
 			}
+
+			return new List<(Matrix4X4 matrix, string fileName)>();
+		}
+
+		private static string UnionAllObjects(IEnumerable<IObject3D> items,
+			List<(Matrix4X4 matrix, string fileName)> outputItems,
+			ref int savedStlCount)
+		{
+			string mergeString = "";
+			bool first = true;
+			foreach(var item in items)
+			{
+				string assetsDirectory = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, "Assets");
+				outputItems.Add((item.WorldMatrix(), Path.Combine(assetsDirectory, item.MeshPath)));
+				mergeString += $"({savedStlCount++}";
+				if(!first)
+				{
+					mergeString += ",";
+				}
+			}
+
+			mergeString += new String(')', items.Count());
+
+			return mergeString;
 		}
 
 		private static string SaveAndGetFilePathForMesh(Mesh meshToSave, CancellationToken cancellationToken)
@@ -251,9 +196,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			string mergeRules = "";
 
-			string[] stlFileLocations = GetStlFileLocations(sourceFile, ref mergeRules, printer, progressReporter, cancellationToken);
+			var stlFileLocations = GetStlFileLocations(sourceFile, ref mergeRules, printer, progressReporter, cancellationToken);
 
-			if(stlFileLocations.Length > 0)
+			if(stlFileLocations.Count > 0)
 			{
 				var progressStatus = new ProgressStatus()
 				{
@@ -284,9 +229,25 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						commandArgs = $"-b {mergeRules} -v -o \"{gcodeFilePath}\" -c \"{configFilePath}\"";
 					}
 
-					foreach (string filename in stlFileLocations)
+					foreach (var matrixAndFile in stlFileLocations)
 					{
-						commandArgs += $" \"{filename}\"";
+						var matrixSting = "";
+						bool first = true;
+						for (int i = 0; i < 4; i++)
+						{
+							for (int j = 0; j < 4; j++)
+							{
+								if(!first)
+								{
+									matrixSting += ",";
+								}
+								matrixSting += matrixAndFile.matrix[i, j].ToString("0.######");
+								first = false;
+							}
+						}
+
+						commandArgs += $" -m \"{matrixSting}\"";
+						commandArgs += $" \"{matrixAndFile.fileName}\" ";
 					}
 
 					if (AggContext.OperatingSystem == OSType.Android
