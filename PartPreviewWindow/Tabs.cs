@@ -101,8 +101,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void TabWidget_Click(object sender, MouseEventArgs e)
 		{
-			this.ActiveTab = sender as ITab;
-			//this.SelectedTabIndex = this.Children.IndexOf(sender as GuiWidget);
+			var tab = sender as ITab;
+			this.ActiveTab = tab;
+
+			// Push focus to tab content on tab pill selection
+			tab.TabContent.Focus();
 		}
 
 		public int SelectedTabIndex
