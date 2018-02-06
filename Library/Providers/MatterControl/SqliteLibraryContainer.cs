@@ -285,11 +285,12 @@ namespace MatterHackers.MatterControl.Library
 						// save a copy to the library and update this to point at it
 						printItem.FileLocation = ApplicationDataStorage.Instance.GetNewLibraryFilePath(".amf");
 
-						MeshFileIo.Save(
-							new List<MeshGroup> { loadedItem.Flatten() }, 
-							printItem.FileLocation,
-							CancellationToken.None,
-							new MeshOutputSettings(MeshOutputSettings.OutputType.Binary, metaData));
+						throw new NotImplementedException("Do the right thing, save an MCX? Lars.");
+						//MeshFileIo.Save(
+							//new List<MeshGroup> { loadedItem.Flatten() }, 
+							//printItem.FileLocation,
+							//CancellationToken.None,
+							//new MeshOutputSettings(MeshOutputSettings.OutputType.Binary, metaData));
 
 						printItem.Commit();
 					}
