@@ -39,7 +39,7 @@ namespace MatterHackers.MatterControl.Library
 	{
 		public string Title { get; set; }
 		public List<Type> MappedTypes { get; set; }
-		public Func<IObject3D, Task> Operation { get; set; }
+		public Func<IObject3D, InteractiveScene, Task> Operation { get; set; }
 		public Func<IObject3D, bool> IsEnabled { get; set; }
 	}
 
@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl.Library
 
 		public IEnumerable<GraphOperation> Operations => _operations;
 
-		public void RegisterOperation(Type type, string title, Func<IObject3D, Task> operation, Func<IObject3D, bool> isEnabled)
+		public void RegisterOperation(Type type, string title, Func<IObject3D, InteractiveScene, Task> operation, Func<IObject3D, bool> isEnabled)
 		{
 			_operations.Add(new GraphOperation()
 			{
