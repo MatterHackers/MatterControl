@@ -112,7 +112,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
-		public static void WrapWith(this IObject3D originalItem, IObject3D wrapper, BedConfig sceneContext)
+		public static void WrapWith(this IObject3D originalItem, IObject3D wrapper, InteractiveScene scene)
 		{
 			originalItem.Parent.Children.Modify(list =>
 			{
@@ -126,10 +126,10 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				list.Add(wrapper);
 			});
 
-			sceneContext.Scene.SelectedItem = wrapper;
+			scene.SelectedItem = wrapper;
 		}
 
-		public static void Unwrap(this IObject3D item, BedConfig sceneContext)
+		public static void Unwrap(this IObject3D item, InteractiveScene scene)
 		{
 			foreach (var child in item.Children)
 			{
@@ -142,7 +142,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				list.AddRange(item.Children);
 			});
 
-			sceneContext.Scene.SelectedItem = null;
+			scene.SelectedItem = null;
 		}
 
 		public static void ApplyAtBoundsCenter(this IObject3D object3DToApplayTo, Matrix4X4 transformToApply)
