@@ -126,6 +126,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.AnchorAll();
 		}
 
+		public override void OnFocusChanged(EventArgs e)
+		{
+			base.OnFocusChanged(e);
+			view3DWidget.Focus();
+		}
+
 		protected virtual void GetViewControls3DOverflowMenu(PopupMenu popupMenu)
 		{
 			view3DWidget.ShowOverflowMenu(popupMenu);
