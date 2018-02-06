@@ -395,8 +395,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						}
 						break;
 
-
-
 					case Keys.Delete:
 					case Keys.Back:
 						scene.DeleteSelection();

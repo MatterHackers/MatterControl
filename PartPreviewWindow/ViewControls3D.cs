@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -607,7 +608,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					Title = "Cut".Localize(),
 					Shortcut = "Ctrl+X",
-					Action = async () =>
+					Action = () =>
 					{
 						sceneContext.Scene.Cut();
 					},
@@ -617,7 +618,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					Title = "Copy".Localize(),
 					Shortcut = "Ctrl+C",
-					Action = async () =>
+					Action = () =>
 					{
 						sceneContext.Scene.Copy();
 					},
@@ -627,7 +628,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					Title = "Paste".Localize(),
 					Shortcut = "Ctrl+V",
-					Action = async () =>
+					Action = () =>
 					{
 						sceneContext.Scene.Paste();
 					},

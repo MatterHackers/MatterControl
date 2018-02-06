@@ -96,6 +96,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				content = textWidget;
 			}
 
+			content.Selectable = false;
+
 			var menuItem = new MenuItem(content, theme)
 			{
 				Name = name + " Menu Item",
