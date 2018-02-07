@@ -66,6 +66,7 @@ namespace MatterHackers.MatterControl.Library
 
 		public SqliteLibraryContainer(int collectionID)
 		{
+			this.IsProtected = false;
 			this.ChildContainers = new List<ILibraryContainerLink>();
 			this.Items = new List<ILibraryItem>();
 			this.Name = "Local Library".Localize();
