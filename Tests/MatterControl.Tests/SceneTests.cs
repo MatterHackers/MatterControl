@@ -54,9 +54,12 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			scene.Children.Add(new Object3D());
 
 			string tempPath = GetSceneTempPath();
+
+			Object3D.AssetsPath = Path.Combine(tempPath, "Assets");
+
 			string filePath = Path.Combine(tempPath, "some.mcx");
 
-			scene.Save(filePath, tempPath);
+			scene.Save(filePath);
 
 			Assert.IsTrue(File.Exists(filePath));
 
@@ -78,7 +81,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
 
 			Object3D.AssetsPath = Path.Combine(tempPath, "Assets");
 
-			scene.Save(filePath, tempPath);
+			scene.Save(filePath);
 
 			Assert.IsTrue(File.Exists(filePath));
 
@@ -115,7 +118,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			string filePath = Path.Combine(tempPath, "some.mcx");
 
 			// Set directory for asset resolution
-			Object3D.AssetsPath = Path.Combine(tempPath, "assets");
+			Object3D.AssetsPath = Path.Combine(tempPath, "Assets");
 			Directory.CreateDirectory(Object3D.AssetsPath);
 
 			// Empty temp folder
@@ -124,7 +127,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
 				File.Delete(tempFile);
 			}
 
-			scene.Save(filePath, tempPath);
+			scene.Save(filePath);
 			Assert.AreEqual(1, Directory.GetFiles(tempPath).Length, "Only .mcx file should exists");
 			Assert.AreEqual(1, Directory.GetFiles(Path.Combine(tempPath, "Assets")).Length, "Only 1 asset should exist");
 
@@ -151,9 +154,10 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			//File.WriteAllText(@"c:\temp\file-b.txt", inMemoryData);
 
 			Assert.AreEqual(inMemoryData, onDiskData, "Serialized content should match");
+			Object3D.AssetsPath = tempPath;
 
 			// Save the scene a second time, validate that things remain the same
-			scene.Save(filePath, tempPath);
+			scene.Save(filePath);
 			onDiskData = loadedItem.ToJson();
 
 			Assert.IsTrue(inMemoryData == onDiskData);

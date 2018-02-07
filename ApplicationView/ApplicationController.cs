@@ -597,6 +597,8 @@ namespace MatterHackers.MatterControl
 
 		public ApplicationController()
 		{
+			Object3D.AssetsPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, "Assets");
+
 			ScrollBar.DefaultMargin = new BorderDouble(right: 1);
 			ScrollBar.ScrollBarWidth = 8 * GuiWidget.DeviceScale;
 			ScrollBar.GrowThumbBy = 2;

@@ -145,6 +145,9 @@ namespace MatterHackers.MatterControl.DataStorage
 		{
 			string filePath;
 
+			// Force lowercase file extensions
+			extension = extension.ToLower();
+
 			// Loop until we've found a non-conflicting library path for the given extension
 			do
 			{
