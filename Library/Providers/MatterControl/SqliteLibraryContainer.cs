@@ -252,73 +252,22 @@ namespace MatterHackers.MatterControl.Library
 		}
 
 		/// <summary>
-		/// Creates a database PrintItem entity, if forceAMF is set, converts to AMF otherwise just copies 
-		/// the source file to a new library path and updates the PrintItem to point at the new target
+		/// Creates a database PrintItem entity, copies the source file to a new library 
+		/// path and updates the PrintItem to point at the new target
 		/// </summary>
-		private void AddItem(Stream stream, string extension, string displayName, bool forceAMF = true)
+		private void AddItem(Stream stream, string extension, string displayName)
 		{
 			// Create a new entity for the database
 			var printItem = new PrintItem()
 			{
 				Name = displayName,
-				PrintItemCollectionID = this.CollectionID
+				PrintItemCollectionID = this.CollectionID,
+				FileLocation = ApplicationDataStorage.Instance.GetNewLibraryFilePath(extension)
 			};
 
-			// Special load processing for mesh data, simple copy below for non-mesh
-			if (forceAMF
-				&& (extension != "" && ApplicationSettings.ValidFileExtensions.Contains(extension.ToUpper())))
+			using (var outStream = File.Create(printItem.FileLocation))
 			{
-				try
-				{
-					// Load mesh
-					IObject3D loadedItem = MeshFileIo.Load(stream, extension, CancellationToken.None);
-
-					// Create a new PrintItemWrapper
-					if (!printItem.FileLocation.Contains(ApplicationDataStorage.Instance.ApplicationLibraryDataPath))
-					{
-						string[] metaData = { "Created By", "MatterControl" };
-						if (false) //AbsolutePositioned
-						{
-							metaData = new string[] { "Created By", "MatterControl", "BedPosition", "Absolute" };
-						}
-
-						// save a copy to the library and update this to point at it
-						printItem.FileLocation = ApplicationDataStorage.Instance.GetNewLibraryFilePath(".amf");
-
-						throw new NotImplementedException("Do the right thing, save an MCX? Lars.");
-						//MeshFileIo.Save(
-							//new List<MeshGroup> { loadedItem.Flatten() }, 
-							//printItem.FileLocation,
-							//CancellationToken.None,
-							//new MeshOutputSettings(MeshOutputSettings.OutputType.Binary, metaData));
-
-						printItem.Commit();
-					}
-				}
-				catch (UnauthorizedAccessException)
-				{
-					UiThread.RunOnIdle(() =>
-					{
-						//Do something special when unauthorized?
-						StyledMessageBox.ShowMessageBox("Oops! Unable to save changes, unauthorized access", "Unable to save");
-					});
-				}
-				catch
-				{
-					UiThread.RunOnIdle(() =>
-					{
-						StyledMessageBox.ShowMessageBox("Oops! Unable to save changes.", "Unable to save");
-					});
-				}
-			}
-			else // it is not a mesh so just add it
-			{
-				// Non-mesh content - copy stream to new Library path
-				printItem.FileLocation = ApplicationDataStorage.Instance.GetNewLibraryFilePath(extension);
-				using (var outStream = File.Create(printItem.FileLocation))
-				{
-					stream.CopyTo(outStream);
-				}
+				stream.CopyTo(outStream);
 			}
 
 			printItem.Commit();
