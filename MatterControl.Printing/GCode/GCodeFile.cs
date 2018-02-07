@@ -224,11 +224,17 @@ namespace MatterControl.Printing
 			Vector4 velocitySameAsStopMmPerS,
 			Vector4 speedMultiplierV4)
 		{
-			double startingVelocityMmPerS = velocitySameAsStopMmPerS.X;
-			double endingVelocityMmPerS = velocitySameAsStopMmPerS.X;
-			double maxVelocityMmPerSx = Math.Min(feedRateMmPerMin / 60, maxVelocityMmPerS.X);
-			double acceleration = maxAccelerationMmPerS2.X;
 			double lengthOfThisMoveMm = Math.Max(deltaPositionThisLine.Length, deltaEPositionThisLine);
+
+			if (lengthOfThisMoveMm == 0)
+			{
+				return 0;
+			}
+
+			double maxVelocityMmPerSx = Math.Min(feedRateMmPerMin / 60, maxVelocityMmPerS.X);
+			double startingVelocityMmPerS = Math.Min(velocitySameAsStopMmPerS.X, maxVelocityMmPerSx);
+			double endingVelocityMmPerS = startingVelocityMmPerS;
+			double acceleration = maxAccelerationMmPerS2.X;
 			double speedMultiplier = speedMultiplierV4.X;
 
 			double distanceToMaxVelocity = GetDistanceToReachEndingVelocity(startingVelocityMmPerS, maxVelocityMmPerSx, acceleration);
