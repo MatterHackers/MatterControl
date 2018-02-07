@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
@@ -39,37 +40,53 @@ namespace MatterHackers.MatterControl.PrinterControls
 {
 	public class MacroControls : FlowLeftRightWithWrapping
 	{
-		//private PrinterConfig printer;
+		private EventHandler unregisterEvents;
+		PrinterConfig printer;
+		ThemeConfig theme;
+
 		private MacroControls(PrinterConfig printer, ThemeConfig theme)
 		{
-			var noMacrosFound = new TextWidget("No macros are currently set up for this printer.".Localize(), pointSize: 10, textColor: theme.Colors.PrimaryTextColor);
-			this.AddChild(noMacrosFound);
+			this.printer = printer;
+			this.theme = theme;
+			Rebuild();
 
-			if (printer.Settings?.Macros.Any() != true)
+			ActiveSliceSettings.ActiveProfileModified.RegisterEvent((s, e) =>
 			{
-				noMacrosFound.Visible = true;
-				return;
+				UiThread.RunOnIdle(() => Rebuild());
+			}, ref unregisterEvents);
+		}
+
+		public override void OnClosed(ClosedEventArgs e)
+		{
+			unregisterEvents?.Invoke(this, null);
+			base.OnClosed(e);
+		}
+
+		void Rebuild()
+		{
+			addedChildren.Clear();
+
+			if (!printer.Settings.Macros.Any())
+			{
+				var noMacrosFound = new TextWidget("No macros are currently set up for this printer.".Localize(), pointSize: 10, textColor: theme.Colors.PrimaryTextColor);
+				this.AddChild(noMacrosFound);
 			}
-
-			foreach (GCodeMacro macro in printer.Settings.Macros)
+			else
 			{
-				var macroButton = new TextButton(GCodeMacro.FixMacroName(macro.Name), theme)
+				foreach (GCodeMacro macro in printer.Settings.Macros)
 				{
-					BackgroundColor = theme.MinimalShade,
-					Margin = new BorderDouble(right: 5)
-				};
-				macroButton.Click += (s, e) => macro.Run(printer.Connection);
+					var macroButton = new TextButton(GCodeMacro.FixMacroName(macro.Name), theme)
+					{
+						BackgroundColor = theme.MinimalShade,
+						Margin = new BorderDouble(right: 5)
+					};
+					macroButton.Click += (s, e) => macro.Run(printer.Connection);
 
-				this.AddChild(macroButton);
-			}
-
-			this.Children.CollectionChanged += (s, e) =>
-			{
-				if (!this.HasBeenClosed)
-				{
-					noMacrosFound.Visible = this.Children.Count == 0;
+					addedChildren.Add(macroButton);
 				}
-			};
+			}
+
+			DoWrappingLayout();
 		}
 
 		public static SectionWidget CreateSection(PrinterConfig printer, ThemeConfig theme)
