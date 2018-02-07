@@ -494,7 +494,7 @@ namespace MatterHackers.MatterControl
 		{
 			if (this.Scene.Persistable)
 			{
-				this.Scene.PersistAssets(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, progress);
+				this.Scene.PersistAssets(progress);
 				this.EditContext?.Save();
 			}
 		}
