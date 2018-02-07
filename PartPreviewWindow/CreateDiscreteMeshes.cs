@@ -113,7 +113,6 @@ namespace MatterHackers.MatterControl
 						}
 					}
 
-					meshFromCurrentVolume.CleanAndMergeMesh(cancellationToken);
 					discreetVolumes.Add(meshFromCurrentVolume);
 					meshFromCurrentVolume = null;
 				}

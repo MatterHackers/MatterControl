@@ -27,33 +27,33 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System.Threading;
+using System;
+using System.ComponentModel;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
-using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class CylinderObject3D : Object3D, IRebuildable
+	public class WedgeObject3D : Object3D, IRebuildable
 	{
 		public override string ActiveEditor => "PublicPropertyEditor";
 
-		public CylinderObject3D()
+		public WedgeObject3D()
 		{
 		}
 
-		public static CylinderObject3D Create()
+		public static WedgeObject3D Create()
 		{
-			var item = new CylinderObject3D();
+			var item = new WedgeObject3D();
 
 			item.Rebuild();
 			return item;
 		}
 
-		public double Diameter { get; set; } = 20;
+		public double Width { get; set; } = 20;
+		public double Depth { get; set; } = 20;
 		public double Height { get; set; } = 20;
-		public int Sides { get; set; } = 30;
 
 		public void Rebuild()
 		{
@@ -61,12 +61,10 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			var path = new VertexStorage();
 			path.MoveTo(0, 0);
-			path.LineTo(Diameter / 2, 0);
-			path.LineTo(Diameter / 2, Height);
+			path.LineTo(Width, 0);
 			path.LineTo(0, Height);
 
-			Mesh = VertexSourceToMesh.Revolve(path, Sides);
-
+			Mesh = VertexSourceToMesh.Extrude(path, Depth);
 			if (aabb.ZSize > 0)
 			{
 				// If the part was already created and at a height, maintain the height.

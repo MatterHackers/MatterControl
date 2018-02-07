@@ -67,7 +67,6 @@ namespace MatterHackers.MatterControl.DesignTools
 			Mesh = VertexSourceToMesh.Revolve(path, 4);
 			Mesh.Transform(Matrix4X4.CreateRotationZ(MathHelper.DegreesToRadians(45)) * Matrix4X4.CreateScale(Width / 2, Depth / 2, 1));
 
-			Mesh.CleanAndMergeMesh(CancellationToken.None);
 			if (aabb.ZSize > 0)
 			{
 				// If the part was already created and at a height, maintain the height.
