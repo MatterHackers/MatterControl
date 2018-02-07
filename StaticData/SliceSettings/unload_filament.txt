@@ -22,4 +22,5 @@ G92 E0              ; reset the extruder position to 0
 
 M302 S150  ; Set cold extrude temp back to reasonable
 
-M104 S0             ; turn the extruder temperature off
+; turn the extruder temperature off if not printing, else leave it at new load temp.
+; host.done_load_unload()
