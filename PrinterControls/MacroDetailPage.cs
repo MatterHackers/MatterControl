@@ -123,6 +123,7 @@ namespace MatterHackers.MatterControl
 						if (!printerSettings.Macros.Contains(gcodeMacro))
 						{
 							printerSettings.Macros.Add(gcodeMacro);
+							printerSettings.Save();
 						}
 
 						this.WizardWindow.ChangeToPage(new MacroListPage(printerSettings));

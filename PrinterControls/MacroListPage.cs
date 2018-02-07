@@ -105,6 +105,7 @@ namespace MatterHackers.MatterControl
 					removeLink.Click += (sender, e) =>
 					{
 						printerSettings.Macros.Remove(localMacroReference);
+						printerSettings.Save();
 						this.RebuildList(printerSettings, linkButtonFactory);
 					};
 					macroRow.AddChild(removeLink);
