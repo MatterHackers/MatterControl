@@ -240,7 +240,8 @@ namespace MatterHackers.MatterControl.PrintLibrary.Provider
 
 		public override LibraryProvider GetProviderForCollection(PrintItemCollection collection)
 		{
-			return new LibraryProviderFileSystem(Path.Combine(rootPath, collection.Key), collection.Name, this, SetCurrentLibraryProvider);
+			string folder = collection.Key.TrimStart('\\');
+			return new LibraryProviderFileSystem(Path.Combine(rootPath, folder), collection.Name, this, SetCurrentLibraryProvider);
 		}
 
 		public override void RenameCollection(int collectionIndexToRename, string newName)
