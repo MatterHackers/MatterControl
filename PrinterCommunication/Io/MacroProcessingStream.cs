@@ -221,6 +221,15 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 								AppContext.Platform.PlaySound("timer-done.wav");
 								break;
 
+							case "done_load_unload":
+								if (!printer.Connection.PrinterIsPrinting
+									&& !printer.Connection.PrinterIsPaused)
+								{
+									// turn off the extruder
+									printer.Connection.SetTargetHotendTemperature(0, 0);
+								}
+								break;
+
 							case "show_message":
 								waitingForUserInput = macroData.waitOk | macroData.expireTime > 0;
 
