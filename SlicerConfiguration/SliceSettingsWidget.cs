@@ -314,6 +314,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 					var groupContent = this.CreateGroupContent(group);
 
+					groupContent.Name = group.Name + " Panel";
+
 					if (groupContent.Descendants<SliceSettingsRow>().Any())
 					{
 						categoryPanel.AddChild(groupContent);

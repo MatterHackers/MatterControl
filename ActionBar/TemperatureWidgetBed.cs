@@ -50,6 +50,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		public TemperatureWidgetBed(PrinterConfig printer)
 			: base(printer, "150.3°")
 		{
+			this.Name = "Bed TemperatureWidget";
 			this.DisplayCurrentTemperature();
 			this.ToolTipText = "Current bed temperature".Localize();
 

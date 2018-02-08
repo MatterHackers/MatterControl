@@ -42,6 +42,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 	{
 		public PlusTabPage(PartPreviewContent partPreviewContent, SimpleTabs simpleTabs, ThemeConfig theme)
 		{
+			Name = "PlusTabPage";
 			var leftContent = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				VAnchor = VAnchor.Stretch,
