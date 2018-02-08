@@ -29,6 +29,8 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
@@ -54,7 +56,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private string noEepromMappingTitle = "Warning - No EEProm Mapping".Localize();
 
 		private PrinterTabPage printerTabPage;
+
 		internal GuiWidget sliceButton;
+
+		private RadioIconButton layers2DButton;
+		private RadioIconButton layers3DButton;
+		internal RadioIconButton modelViewButton;
 
 		public PrinterActionsBar(PrinterConfig printer, PrinterTabPage printerTabPage, ThemeConfig theme)
 			: base(theme)
@@ -94,6 +101,59 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Margin = theme.ButtonSpacing,
 			};
 			this.AddChild(sliceButton);
+
+			// Add vertical separator
+			this.AddChild(new VerticalLine(50)
+			{
+				Margin = 3,
+				VAnchor = VAnchor.Absolute,
+				Height = theme.ButtonHeight,
+			});
+
+			var buttonGroupB = new ObservableCollection<GuiWidget>();
+
+			var iconPath = Path.Combine("ViewTransformControls", "model.png");
+			modelViewButton = new RadioIconButton(AggContext.StaticData.LoadIcon(iconPath, IconColor.Theme), theme)
+			{
+				SiblingRadioButtonList = buttonGroupB,
+				Name = "Model View Button",
+				Checked = printer?.ViewState.ViewMode == PartViewMode.Model || printer == null,
+				ToolTipText = "Model View".Localize(),
+				Margin = theme.ButtonSpacing
+			};
+			modelViewButton.Click += SwitchModes_Click;
+			buttonGroupB.Add(modelViewButton);
+			AddChild(modelViewButton);
+
+			iconPath = Path.Combine("ViewTransformControls", "gcode_3d.png");
+			layers3DButton = new RadioIconButton(AggContext.StaticData.LoadIcon(iconPath, IconColor.Theme), theme)
+			{
+				SiblingRadioButtonList = buttonGroupB,
+				Name = "Layers3D Button",
+				Checked = printer?.ViewState.ViewMode == PartViewMode.Layers3D,
+				ToolTipText = "3D Layer View".Localize(),
+				Margin = theme.ButtonSpacing
+			};
+			layers3DButton.Click += SwitchModes_Click;
+			buttonGroupB.Add(layers3DButton);
+
+			if (!UserSettings.Instance.IsTouchScreen)
+			{
+				this.AddChild(layers3DButton);
+			}
+
+			iconPath = Path.Combine("ViewTransformControls", "gcode_2d.png");
+			layers2DButton = new RadioIconButton(AggContext.StaticData.LoadIcon(iconPath, IconColor.Theme), theme)
+			{
+				SiblingRadioButtonList = buttonGroupB,
+				Name = "Layers2D Button",
+				Checked = printer?.ViewState.ViewMode == PartViewMode.Layers2D,
+				ToolTipText = "2D Layer View".Localize(),
+				Margin = theme.ButtonSpacing,
+			};
+			layers2DButton.Click += SwitchModes_Click;
+			buttonGroupB.Add(layers2DButton);
+			this.AddChild(layers2DButton);
 
 			// put in the detail message
 			var printerConnectionDetail = new TextWidget("")
@@ -138,7 +198,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				this.GeneratePrinterOverflowMenu(popupMenu, theme);
 			};
-			
+
+			printer.ViewState.ViewModeChanged += (s, e) =>
+			{
+				if (e.ViewMode == PartViewMode.Layers2D)
+				{
+					this.layers2DButton.Checked = true;
+				}
+				else if (e.ViewMode == PartViewMode.Layers3D)
+				{
+					layers3DButton.Checked = true;
+				}
+				else
+				{
+					modelViewButton.Checked = true;
+				}
+			};
 
 			printer.Connection.ConnectionSucceeded.RegisterEvent((s, e) =>
 			{
@@ -147,6 +222,27 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					PrintRecovery.CheckIfNeedToRecoverPrint(printer);
 				});
 			}, ref unregisterEvents);
+		}
+
+		private void SwitchModes_Click(object sender, MouseEventArgs e)
+		{
+			if (sender is GuiWidget widget)
+			{
+				if (widget.Name == "Layers2D Button")
+				{
+					printer.ViewState.ViewMode = PartViewMode.Layers2D;
+					printer.Bed.EnsureGCodeLoaded();
+				}
+				else if (widget.Name == "Layers3D Button")
+				{
+					printer.ViewState.ViewMode = PartViewMode.Layers3D;
+					printer.Bed.EnsureGCodeLoaded();
+				}
+				else
+				{
+					printer.ViewState.ViewMode = PartViewMode.Model;
+				}
+			}
 		}
 
 		public override void AddChild(GuiWidget childToAdd, int indexInChildrenList = -1)

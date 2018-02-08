@@ -222,8 +222,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.InteractionLayer.DrawGlOpaqueContent += Draw_GlOpaqueContent;
 
 			this.sceneContext.SceneLoaded += SceneContext_SceneLoaded;
-
-			this.viewControls3D.modelViewButton.Enabled = sceneContext.EditableScene;
 		}
 
 		private void SceneContext_SceneLoaded(object sender, EventArgs e)
@@ -233,7 +231,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				sliceButton.Enabled = sceneContext.EditableScene;
 			}
 
-			this.viewControls3D.modelViewButton.Enabled = sceneContext.EditableScene;
+			if (this.printerTabPage?.printerActionsBar.modelViewButton is GuiWidget button)
+			{
+				button.Enabled = sceneContext.EditableScene;
+			}
+
 			this.Invalidate();
 		}
 
@@ -708,9 +710,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 					else if (this.DragDropObject.ContentAcquired)
 					{
+						// TODO: Unclear when this is needed and how it would be enabled if the content hadn't loaded by FinishDrop (i.e. how would long running InsertionGroup operations be doing the same thing?)
+						//this.viewControls3D.modelViewButton.Enabled = true;
 
 						// Drop handler for InsertionGroup - all normal content
-						this.viewControls3D.modelViewButton.Enabled = true;
 						this.DragDropObject.Collapse();
 					}
 				}

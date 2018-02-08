@@ -142,6 +142,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			printerActionsBar = new PrinterActionsBar(printer, this, theme);
+			printerActionsBar.modelViewButton.Enabled = sceneContext.EditableScene;
 
 			// Must come after we have an instance of View3DWidget an its undo buffer
 			topToBottom.AddChild(printerActionsBar, 0);
