@@ -31,6 +31,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg.UI;
@@ -136,60 +137,22 @@ namespace MatterHackers.MatterControl.Library
 
 							break;
 
-						case ILibraryContentStream streamItem:
+						case ILibraryReadOnlyStream streamItem:
 
-							string filePath;
+							var fileName = (streamItem as ILibraryContentStream)?.FileName; 
 
-							if (streamItem is FileSystemFileItem)
+							using (var streamInfo = await streamItem.GetContentStream(null))
 							{
-								// Get existing file path
-								var fileItem = streamItem as FileSystemFileItem;
-								filePath = fileItem.Path;
-							}
-							else
-							{
-								// Copy stream to library path
-								filePath = ApplicationDataStorage.Instance.GetNewLibraryFilePath("." + streamItem.ContentType);
-
-								using (var outputStream = File.OpenWrite(filePath))
-								using (var streamInteface = await streamItem.GetContentStream(null))
+								// If the passed in item name equals the fileName, perform friendly name conversion, otherwise use supplied value
+								string name = streamItem.Name;
+								if (name == fileName)
 								{
-									streamInteface.Stream.CopyTo(outputStream);
+									name = PrintItemWrapperExtensionMethods.GetFriendlyName(Path.GetFileNameWithoutExtension(fileName));
 								}
+
+								AddItem(streamInfo.Stream, streamItem.ContentType, name);
 							}
 
-							if (!string.IsNullOrEmpty(filePath) && File.Exists(filePath))
-							{
-								if (Path.GetExtension(filePath).ToUpper() == ".ZIP")
-								{
-									List<PrintItem> partFiles = ProjectFileHandler.ImportFromProjectArchive(filePath);
-									if (partFiles != null)
-									{
-										foreach (PrintItem part in partFiles)
-										{
-											string childFilePath = part.FileLocation;
-											using (var fileStream = File.OpenRead(part.FileLocation))
-											{
-												AddItem(fileStream, Path.GetExtension(childFilePath), PrintItemWrapperExtensionMethods.GetFriendlyName(Path.GetFileNameWithoutExtension(childFilePath)));
-											}
-										}
-									}
-								}
-								else
-								{
-									using (var stream = File.OpenRead(filePath))
-									{
-										// If the passed in item name equals the fileName, perform friendly name conversion, otherwise use supplied value
-										string itemName = streamItem.Name;
-										if (itemName == Path.GetFileName(filePath))
-										{
-											itemName = PrintItemWrapperExtensionMethods.GetFriendlyName(Path.GetFileNameWithoutExtension(filePath));
-										}
-
-										AddItem(stream, Path.GetExtension(filePath), itemName);
-									}
-								}
-							}
 							break;
 					}
 				}
