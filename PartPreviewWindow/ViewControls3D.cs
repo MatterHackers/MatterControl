@@ -85,10 +85,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private RadioIconButton scaleButton;
 		private RadioIconButton partSelectButton;
 
-		private RadioIconButton layers2DButton;
-		internal RadioIconButton modelViewButton;
-		private RadioIconButton layers3DButton;
-
 		private EventHandler unregisterEvents;
 
 		private PrinterConfig printer;
@@ -289,59 +285,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				AddChild(partSelectButton);
 			}
 
-			var buttonGroupB = new ObservableCollection<GuiWidget>();
-
-			iconPath = Path.Combine("ViewTransformControls", "model.png");
-			modelViewButton = new RadioIconButton(AggContext.StaticData.LoadIcon(iconPath, IconColor.Theme), theme)
-			{
-				SiblingRadioButtonList = buttonGroupB,
-				Name = "Model View Button",
-				Checked = printer?.ViewState.ViewMode == PartViewMode.Model || printer == null,
-				ToolTipText = "Model View".Localize(),
-				Margin = commonMargin
-			};
-			modelViewButton.Click += SwitchModes_Click;
-			buttonGroupB.Add(modelViewButton);
-			AddChild(modelViewButton);
-
-			iconPath = Path.Combine("ViewTransformControls", "gcode_3d.png");
-			layers3DButton = new RadioIconButton(AggContext.StaticData.LoadIcon(iconPath, IconColor.Theme), theme)
-			{
-				SiblingRadioButtonList = buttonGroupB,
-				Name = "Layers3D Button",
-				Checked = printer?.ViewState.ViewMode == PartViewMode.Layers3D,
-				ToolTipText = "3D Layer View".Localize(),
-				Margin = commonMargin,
-				Enabled = isPrinterType
-			};
-			layers3DButton.Click += SwitchModes_Click;
-			buttonGroupB.Add(layers3DButton);
-
-			if (!UserSettings.Instance.IsTouchScreen)
-			{
-				this.AddChild(layers3DButton);
-			}
-
-			iconPath = Path.Combine("ViewTransformControls", "gcode_2d.png");
-			layers2DButton = new RadioIconButton(AggContext.StaticData.LoadIcon(iconPath, IconColor.Theme), theme)
-			{
-				SiblingRadioButtonList = buttonGroupB,
-				Name = "Layers2D Button",
-				Checked = printer?.ViewState.ViewMode == PartViewMode.Layers2D,
-				ToolTipText = "2D Layer View".Localize(),
-				Margin = commonMargin,
-				Enabled = isPrinterType
-			};
-			layers2DButton.Click += SwitchModes_Click;
-			buttonGroupB.Add(layers2DButton);
-			this.AddChild(layers2DButton);
-
-			// Add vertical separator
-			this.AddChild(new VerticalLine(50)
-			{
-				Margin = 3
-			});
-
 			operationButtons = new List<(GuiWidget, SceneSelectionOperation)>();
 
 			// Add Selected IObject3D -> Operations to toolbar
@@ -398,24 +341,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.AddChild(button);
 			}
 
-			if (printer != null)
-			{
-				printer.ViewState.ViewModeChanged += (s, e) =>
-				{
-					if (e.ViewMode == PartViewMode.Layers2D)
-					{
-						this.layers2DButton.Checked = true;
-					}
-					else if (e.ViewMode == PartViewMode.Layers3D)
-					{
-						layers3DButton.Checked = true;
-					}
-					else
-					{
-						modelViewButton.Checked = true;
-					}
-				};
-			}
+			//////////////////// maybe set default printer view mode?
 
 			sceneContext.Scene.SelectionChanged += Scene_SelectionChanged;
 
@@ -465,32 +391,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				DrawArrow = true,
 				Margin = theme.ButtonSpacing,
 			};
-		}
-
-		private void SwitchModes_Click(object sender, MouseEventArgs e)
-		{
-			if (!IsPrinterMode)
-			{
-				return;
-			}
-
-			if (sender is GuiWidget widget)
-			{
-				if (widget.Name == "Layers2D Button")
-				{
-					printer.ViewState.ViewMode = PartViewMode.Layers2D;
-					printer.Bed.EnsureGCodeLoaded();
-				}
-				else if (widget.Name == "Layers3D Button")
-				{
-					printer.ViewState.ViewMode = PartViewMode.Layers3D;
-					printer.Bed.EnsureGCodeLoaded();
-				}
-				else
-				{
-					printer.ViewState.ViewMode = PartViewMode.Model;
-				}
-			}
 		}
 
 		private async void LoadAndAddPartsToPlate(string[] filesToLoad, InteractiveScene scene)

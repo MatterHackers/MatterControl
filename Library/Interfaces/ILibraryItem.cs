@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl.Library
 		void SetContent(IObject3D item);
 	}
 
-	public interface ILibraryContentStream : ILibraryItem
+	public interface ILibraryContentStream : ILibraryReadOnlyStream
 	{
 		/// <summary>
 		// Gets the size, in bytes, of the current file.
@@ -60,6 +60,12 @@ namespace MatterHackers.MatterControl.Library
 		string AssetPath { get; }
 		bool LocalContentExists { get; }
 
+		Task<StreamAndLength> GetContentStream(Action<double, string> progress);
+	}
+
+	public interface ILibraryReadOnlyStream : ILibraryItem
+	{
+		string ContentType { get; }
 		Task<StreamAndLength> GetContentStream(Action<double, string> progress);
 	}
 }

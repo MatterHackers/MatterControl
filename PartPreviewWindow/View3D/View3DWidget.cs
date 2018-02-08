@@ -30,6 +30,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -52,7 +53,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class View3DWidget : GuiWidget 
+	public class View3DWidget : GuiWidget
 	{
 		private bool DoBooleanTest = false;
 		private bool deferEditorTillMouseUp = false;
@@ -221,8 +222,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.InteractionLayer.DrawGlOpaqueContent += Draw_GlOpaqueContent;
 
 			this.sceneContext.SceneLoaded += SceneContext_SceneLoaded;
-
-			this.viewControls3D.modelViewButton.Enabled = sceneContext.EditableScene;
 		}
 
 		private void SceneContext_SceneLoaded(object sender, EventArgs e)
@@ -232,7 +231,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				sliceButton.Enabled = sceneContext.EditableScene;
 			}
 
-			this.viewControls3D.modelViewButton.Enabled = sceneContext.EditableScene;
+			if (this.printerTabPage?.printerActionsBar.modelViewButton is GuiWidget button)
+			{
+				button.Enabled = sceneContext.EditableScene;
+			}
+
 			this.Invalidate();
 		}
 
@@ -602,8 +605,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						ApplicationController.Instance.Library.ActiveViewWidget.SelectedItems.Select(l => l.Model),
 						screenSpaceMousePosition);
 				}
-
-				
 			}
 		}
 
@@ -709,9 +710,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 					else if (this.DragDropObject.ContentAcquired)
 					{
+						// TODO: Unclear when this is needed and how it would be enabled if the content hadn't loaded by FinishDrop (i.e. how would long running InsertionGroup operations be doing the same thing?)
+						//this.viewControls3D.modelViewButton.Enabled = true;
 
 						// Drop handler for InsertionGroup - all normal content
-						this.viewControls3D.modelViewButton.Enabled = true;
 						this.DragDropObject.Collapse();
 					}
 				}
@@ -886,7 +888,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
 		{
 			// Show transform override
-			if (activeButtonBeforeMouseOverride == null 
+			if (activeButtonBeforeMouseOverride == null
 				&& (mouseEvent.Button == MouseButtons.Right || Keyboard.IsKeyDown(Keys.Control)))
 			{
 				if (Keyboard.IsKeyDown(Keys.Shift))
@@ -894,7 +896,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					activeButtonBeforeMouseOverride = viewControls3D.ActiveButton;
 					viewControls3D.ActiveButton = ViewControls3DButtons.Translate;
 				}
-				else if(Keyboard.IsKeyDown(Keys.Alt))
+				else if (Keyboard.IsKeyDown(Keys.Alt))
 				{
 					activeButtonBeforeMouseOverride = viewControls3D.ActiveButton;
 					viewControls3D.ActiveButton = ViewControls3DButtons.Scale;
@@ -911,7 +913,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				viewControls3D.ActiveButton = ViewControls3DButtons.Translate;
 			}
 
-			if(mouseEvent.Button == MouseButtons.Right ||
+			if (mouseEvent.Button == MouseButtons.Right ||
 				mouseEvent.Button == MouseButtons.Middle)
 			{
 				meshViewerWidget.SuppressUiVolumes = true;
@@ -1125,9 +1127,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 
 				// if the shift key is down only move on the major axis of x or y
-				if(Keyboard.IsKeyDown(Keys.ShiftKey))
+				if (Keyboard.IsKeyDown(Keys.ShiftKey))
 				{
-					if(Math.Abs(delta.X) < Math.Abs(delta.Y))
+					if (Math.Abs(delta.X) < Math.Abs(delta.Y))
 					{
 						delta.X = 0;
 					}
@@ -1160,7 +1162,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				parent = parent.Parent;
 			}
 			Vector2 offset = new Vector2();
-			for(int i=parents.Count-1; i>=0; i--)
+			for (int i = parents.Count - 1; i >= 0; i--)
 			{
 				offset += parents[i].OriginRelativeParent;
 			}
@@ -1333,11 +1335,28 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							// save this part to correct library provider
 							if (destinationContainer is ILibraryWritableContainer writableContainer)
 							{
+								// Serialize to in memory stream
+								var memoryStream = new MemoryStream();
+								scene.Save(memoryStream);
+
+								// Reset to start of content
+								memoryStream.Position = 0;
+
+								// Wrap stream with ReadOnlyStream library item and add to container
+								sceneContext.Scene.Name = newName;
+
 								writableContainer.Add(new[]
 								{
-									new FileSystemFileItem(sceneContext.EditContext.PartFilePath)
+									new ReadOnlyStreamItem(() =>
 									{
-										Name = newName
+										return Task.FromResult(new StreamAndLength()
+										{
+											 Stream = memoryStream
+										});
+									})
+									{
+										Name = newName,
+										ContentType = "mcx"
 									}
 								});
 
@@ -1448,6 +1467,31 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			return null;
+		}
+
+		private class ReadOnlyStreamItem : ILibraryReadOnlyStream
+		{
+			private Func<Task<StreamAndLength>> streamSource;
+
+			public ReadOnlyStreamItem(Func<Task<StreamAndLength>> streamSource)
+			{
+				this.streamSource = streamSource;
+			}
+
+			public string ContentType { get; set; }
+
+			public string ID { get; set; }
+
+			public string Name { get; set; }
+
+			public bool IsProtected { get; set; }
+
+			public bool IsVisible { get; set; }
+
+			public Task<StreamAndLength> GetContentStream(Action<double, string> progress)
+			{
+				return streamSource?.Invoke();
+			}
 		}
 	}
 

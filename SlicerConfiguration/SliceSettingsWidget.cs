@@ -204,7 +204,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			var overflowButton = this.TabBar.RightAnchorItem;
 			overflowButton.Name = "Slice Settings Overflow Menu";
 
-
 			this.TabBar.Padding = this.TabBar.Margin.Clone(right: theme.ToolbarPadding.Right);
 
 			searchPanel = new SearchInputBox()
