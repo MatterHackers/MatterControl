@@ -318,17 +318,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (mappedEditors?.Any() == true)
 			{
 				// Select the active editor or fall back to the first if not found
-				var firstEditor = (from editor in mappedEditors
+				var firstFilteredEditor = (from editor in mappedEditors
 								   let type = editor.GetType()
 								   where type.Name == selectedItem.ActiveEditor
 								   select editor).FirstOrDefault();
 
-				// Fall back to default editor?
-				if (firstEditor == null)
-				{
-					firstEditor = mappedEditors.First();
-					activeEditors.Add((firstEditor, selectedItem));
-				}
+				// Use first filtered or fall back to unfiltered first
+				activeEditors.Add((firstFilteredEditor ?? mappedEditors.First(), selectedItem));
 			}
 
 			ShowObjectEditor(activeEditors);
