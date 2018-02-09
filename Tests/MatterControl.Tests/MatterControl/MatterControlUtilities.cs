@@ -195,6 +195,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			var plusTabRegion = testRunner.GetRegionByName("Initial Plus Tab");
 			testRunner.ClickByName("Close Tab Button", plusTabRegion);
+
+			testRunner.WaitForWidgetDisappear("Initial Plus Tab", 2);
 		}
 
 		public static void ChangeToQueueContainer(this AutomationRunner testRunner)
