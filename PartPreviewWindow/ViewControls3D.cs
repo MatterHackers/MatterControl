@@ -87,7 +87,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private EventHandler unregisterEvents;
 
-		private PrinterConfig printer;
 		private View3DWidget view3DWidget;
 		private BedConfig sceneContext;
 
@@ -159,7 +158,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				view3DWidget.InteractionLayer.Focus();
 			};
 
-			this.printer = sceneContext.Printer;
 			this.IsPrinterMode = isPrinterType;
 			this.sceneContext = sceneContext;
 
@@ -195,7 +193,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			undoButton.Click += (sender, e) =>
 			{
-				printer.Bed.Scene.SelectedItem = null;
+				sceneContext.Scene.SelectedItem = null;
 				undoBuffer.Undo();
 				view3DWidget.InteractionLayer.Focus();
 			};
