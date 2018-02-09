@@ -29,7 +29,6 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.VectorMath;
@@ -59,11 +58,11 @@ namespace MatterHackers.MatterControl.DesignTools
 		public int LatitudeSides { get; set; } = 20;
 
 		[DisplayName("Start Angle")]
-		[Range(0, 360, ErrorMessage = "Angle {0} must be between {1} and {2}.")]
+		//[Range(0, 360, ErrorMessage = "Angle {0} must be between {1} and {2}.")]
 		public double StartAngleDegrees { get; set; } = 0;
 
 		[DisplayName("End Angle")]
-		[Range(0, 360, ErrorMessage = "Angle {0} must be between {1} and {2}.")]
+		//[Range(0, 360, ErrorMessage = "Angle {0} must be between {1} and {2}.")]
 		public double EndAngleDegrees { get; set; } = 360;
 
 		public void Rebuild()

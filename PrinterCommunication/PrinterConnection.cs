@@ -2481,8 +2481,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 							Thread.Sleep(100);
 						}
 
-					// times up turn off heaters
-					if (ContinuWaitingToTurnOffHeaters)
+						// times up turn off heaters
+						if (ContinuWaitingToTurnOffHeaters)
 						{
 							UiThread.RunOnIdle(() =>
 							{

@@ -651,7 +651,8 @@ namespace MatterHackers.MatterControl
 						};
 						EventHandler stateChanged = (s2, e2) =>
 						{
-							if (printerConnection.CommunicationState == CommunicationStates.PreparingToPrint)
+							if (printerConnection.CommunicationState == CommunicationStates.PreparingToPrint
+								|| printerConnection.PrinterIsPrinting)
 							{
 								printerConnection.ContinuWaitingToTurnOffHeaters = false;
 							};
@@ -676,6 +677,11 @@ namespace MatterHackers.MatterControl
 							&& printerConnection.ContinuWaitingToTurnOffHeaters)
 						{
 							printerConnection.TurnOffBedAndExtruders(true);
+						}
+
+						if(cancellationToken.IsCancellationRequested)
+						{
+							printerConnection.ContinuWaitingToTurnOffHeaters = false;
 						}
 
 						printerConnection.BedTemperatureSet.UnregisterEvent(heatChanged, ref unregisterEvent);
