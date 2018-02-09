@@ -80,16 +80,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			double maxRight = this.Width - RightAnchorItem.Width;
 
-			double rightPos = 0;
+			double accumulatedX = 0;
+
+			bool withinLimits = true;
 
 			foreach (var widget in this.ActionArea.Children.Where(c => !ignoredTypes.Contains(c.GetType())))
 			{
-				rightPos += widget.Width + widget.Margin.Width;
+				var totalX = widget.Width + widget.Margin.Width;
 
-				// Widget is visible when its right edge is less than maxRight
-				widget.Visible = rightPos < maxRight; // widget.Position.X + widget.Width < maxRight;
+				withinLimits &= (accumulatedX + totalX) < maxRight;
+
+				// Widget is visible when no previous sibling has been rejected and its right edge is less than maxRight
+				widget.Visible = withinLimits; // widget.Position.X + widget.Width < maxRight;
+
+				// Ignore streched widgets
+				if (widget.HAnchor != HAnchor.Stretch)
+				{
+					accumulatedX += totalX;
+				}
 			}
-
 
 			base.OnBoundsChanged(e);
 		}
