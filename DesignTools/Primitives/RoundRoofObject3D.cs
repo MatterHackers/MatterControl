@@ -53,7 +53,6 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public double Width { get; set; } = 20;
 		public double Depth { get; set; } = 20;
-		public double Height { get; set; } = 10;
 		public int Sides { get; set; } = 15;
 
 		public void Rebuild()
@@ -63,10 +62,11 @@ namespace MatterHackers.MatterControl.DesignTools
 			var path = new VertexStorage();
 			path.MoveTo(0, 0);
 			path.LineTo(Width / 2, 0);
-			path.LineTo(Width / 2, Height);
-			path.LineTo(0, Height);
+			path.LineTo(Width / 2, Width/2);
+			path.LineTo(0, Width/2);
 
 			Mesh = VertexSourceToMesh.Revolve(path, Sides, 0, MathHelper.Tau / 2);
+			Mesh.Transform(Matrix4X4.CreateRotationX(MathHelper.Tau / 4));
 
 			if (aabb.ZSize > 0)
 			{
