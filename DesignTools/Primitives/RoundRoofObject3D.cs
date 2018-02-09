@@ -65,8 +65,9 @@ namespace MatterHackers.MatterControl.DesignTools
 			path.LineTo(Width / 2, Width/2);
 			path.LineTo(0, Width/2);
 
-			Mesh = VertexSourceToMesh.Revolve(path, Sides, 0, MathHelper.Tau / 2);
-			Mesh.Transform(Matrix4X4.CreateRotationX(MathHelper.Tau / 4));
+			var mesh = VertexSourceToMesh.Revolve(path, Sides, 0, MathHelper.Tau / 2);
+			mesh.Transform(Matrix4X4.CreateRotationX(MathHelper.Tau / 4));
+			Mesh = mesh;
 
 			if (aabb.ZSize > 0)
 			{

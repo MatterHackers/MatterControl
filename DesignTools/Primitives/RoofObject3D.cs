@@ -64,8 +64,9 @@ namespace MatterHackers.MatterControl.DesignTools
 			path.LineTo(Width, 0);
 			path.LineTo(Height, Height);
 
-			Mesh = VertexSourceToMesh.Extrude(path, Depth);
-			Mesh.Transform(Matrix4X4.CreateRotationX(MathHelper.Tau / 4));
+			var mesh = VertexSourceToMesh.Extrude(path, Depth);
+			mesh.Transform(Matrix4X4.CreateRotationX(MathHelper.Tau / 4));
+			Mesh = mesh;
 			if (aabb.ZSize > 0)
 			{
 				// If the part was already created and at a height, maintain the height.
