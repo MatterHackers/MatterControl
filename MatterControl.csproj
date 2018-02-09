@@ -93,9 +93,13 @@
     <Compile Include="DesignTools\Operations\Rotate.cs" />
     <Compile Include="DesignTools\Operations\SmoothPath.cs" />
     <Compile Include="DesignTools\Primitives\BaseObject3D.cs" />
+    <Compile Include="DesignTools\Primitives\RoofObject3D.cs" />
+    <Compile Include="DesignTools\Primitives\RoundRoofObject3D.cs" />
+    <Compile Include="DesignTools\Primitives\WedgeObject3D.cs" />
     <Compile Include="DesignTools\Primitives\PyramidObject3D.cs" />
     <Compile Include="DesignTools\Primitives\CylinderAdvancedObject3D.cs" />
     <Compile Include="DesignTools\Primitives\CylinderObject3D.cs" />
+    <Compile Include="DesignTools\Primitives\HalfSphereObject3D.cs" />
     <Compile Include="DesignTools\Primitives\SphereObject3D.cs" />
     <Compile Include="DesignTools\Primitives\TextObject3D.cs" />
     <Compile Include="DesignTools\Primitives\TorusObject3D.cs" />

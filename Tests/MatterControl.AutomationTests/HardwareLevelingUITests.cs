@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.GuiAutomation;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using NUnit.Framework;
 
 namespace MatterHackers.MatterControl.Tests.Automation
@@ -13,11 +14,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
+				testRunner.WaitForFirstDraw();
+
 				// Add printer that has hardware leveling
 				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
 
 				testRunner.SwitchToPrinterSettings();
 				testRunner.ClickByName("Features Tab");
+				testRunner.NavigateToSliceSettingsField("Printer", SettingsKey.sla_printer);
 				Assert.IsFalse(testRunner.WaitForName("print_leveling_solution Row", .5), "Print leveling should not exist for an Airwolf HD");
 
 				// Add printer that does not have hardware leveling

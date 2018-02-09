@@ -169,7 +169,6 @@ public class ChairFoot2 : MatterCadObject3D
 			var aabb = this.GetAxisAlignedBoundingBox();
 
 			Mesh = PlatonicSolids.CreateCube(Width, Depth, Height);
-			Mesh.CleanAndMergeMesh(CancellationToken.None);
 			if (aabb.ZSize > 0)
 			{
 				// If the part was already created and at a height, maintain the height.

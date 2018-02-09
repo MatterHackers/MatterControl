@@ -169,12 +169,17 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.ClickByName(partNameToSelect);
 		}
 
-		public static void CloseSignInAndPrinterSelect(this AutomationRunner testRunner, PrepAction preAction = PrepAction.CloseSignInAndPrinterSelect)
+		public static void WaitForFirstDraw(this AutomationRunner testRunner)
 		{
 			SystemWindow systemWindow;
-			testRunner.GetWidgetByName("View3DWidget", out systemWindow, 10);
+			testRunner.GetWidgetByName("PlusTabPage", out systemWindow, 10);
 			// make sure we wait for MC to be up and running
 			testRunner.WaitforDraw(systemWindow);
+		}
+
+		public static void CloseSignInAndPrinterSelect(this AutomationRunner testRunner, PrepAction preAction = PrepAction.CloseSignInAndPrinterSelect)
+		{
+			testRunner.WaitForFirstDraw();
 
 			// If there is a auth pannel make sure we try and close it
 			// Non-MCCentral builds won't have the plugin. Reduce the wait time for these cases
@@ -187,6 +192,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.ClickByName("Cancel Wizard Button");
 			}
+
+			var plusTabRegion = testRunner.GetRegionByName("Initial Plus Tab");
+			testRunner.ClickByName("Close Tab Button", plusTabRegion);
 		}
 
 		public static void ChangeToQueueContainer(this AutomationRunner testRunner)
@@ -210,6 +218,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static Emulator LaunchAndConnectToPrinterEmulator(this AutomationRunner testRunner, string make = "Airwolf 3D", string model = "HD", bool runSlow = false)
 		{
+			SystemWindow systemWindow;
+			testRunner.GetWidgetByName("PlusTabPage", out systemWindow, 10);
+			// make sure we wait for MC to be up and running
+			testRunner.WaitforDraw(systemWindow);
+
 			// Load the TestEnv config
 			var config = TestAutomationConfig.Load();
 
@@ -308,7 +321,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			if (!testRunner.NameExists("Select Make", 0.1))
 			{
 				// Go to the new tab screen
-				testRunner.ClickByName("Create New");
+				if (!testRunner.NameExists("Create Printer", 0.1))
+				{
+					testRunner.ClickByName("Create New");
+				}
 				testRunner.ClickByName("Create Printer");
 			}
 
@@ -758,7 +774,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.ClickByName(controlName + " Save");
 		}
 
-		public static void SelectSliceSettingsField(this AutomationRunner testRunner, string userLevel, string slicerConfigName)
+		public static SliceSettingData NavigateToSliceSettingsField(this AutomationRunner testRunner, string userLevel, string slicerConfigName)
 		{
 			var rootLevel = SettingsOrganizer.Instance.UserLevels[userLevel];
 
@@ -771,6 +787,24 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			// Click tab
 			testRunner.ClickByName(category.Name + " Tab");
 
+			// Open the subGroup if required
+			var foundWidget = testRunner.GetWidgetByName(subGroup.Name + " Panel", out _);
+			if (foundWidget != null)
+			{
+				var containerCheckBox = foundWidget.Descendants<ExpandCheckboxButton>().First();
+				if (!containerCheckBox.Checked)
+				{
+					containerCheckBox.Checked = true;
+					testRunner.Delay();
+				}
+			}
+
+			return settingData;
+		}
+
+		public static void SelectSliceSettingsField(this AutomationRunner testRunner, string userLevel, string slicerConfigName)
+		{
+			var settingData = NavigateToSliceSettingsField(testRunner, userLevel, slicerConfigName);
 			// Click field
 			testRunner.ClickByName($"{settingData.PresentationName} Field");
 		}

@@ -61,11 +61,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest(testRunner =>
 			{
+				testRunner.WaitForFirstDraw();
 				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
 
 				testRunner.ClickByName("Model View Button");
 				testRunner.ClickByName("View3D Overflow Menu");
-				Assert.IsTrue(testRunner.WaitForName("Overhang-Menu Menu Item"), "Model overflow menu should have Overhang item");
+				Assert.IsTrue(testRunner.WaitForName("Overhang Menu Item"), "Model overflow menu should have Overhang item");
 
 				testRunner.ClickByName("Layers3D Button");
 				testRunner.ClickByName("View3D Overflow Menu");

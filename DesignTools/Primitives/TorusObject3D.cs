@@ -79,7 +79,6 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 
 			Mesh = VertexSourceToMesh.Revolve(path, ToroidSides);
-			Mesh.CleanAndMergeMesh(CancellationToken.None);
 			if (aabb.ZSize > 0)
 			{
 				// If the part was already created and at a height, maintain the height.

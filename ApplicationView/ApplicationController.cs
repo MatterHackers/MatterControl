@@ -382,11 +382,25 @@ namespace MatterHackers.MatterControl
 			{
 				TitleResolver = () => "Subtract & Replace".Localize(),
 				Action = (scene) => DoMeshWrapOperation(scene, nameof(SubtractAndReplace), "Subtract & Replace"),
-				Icon = AggContext.StaticData.LoadIcon("paint.png").SetPreMultiply(),
+				Icon = AggContext.StaticData.LoadIcon("subtract_and_replace.png").SetPreMultiply(),
 				IsEnabled = (scene) => scene.SelectedItem is SelectionGroup,
 			},
 #if DEBUG // keep this work in progress to the editor for now
 			new SceneSelectionSeparator(),
+			new SceneSelectionOperation()
+			{
+				TitleResolver = () => "Array".Localize(),
+				Action = (scene) =>
+				{
+					scene.AddSelectionAsChildren(new ArrayObject3D());
+					if(scene.SelectedItem is ArrayObject3D array)
+					{
+						array.Rebuild();
+					}
+				},
+				Icon = AggContext.StaticData.LoadIcon("array.png").SetPreMultiply(),
+				IsEnabled = (scene) => scene.HasSelection && !(scene.SelectedItem is SelectionGroup),
+			},
 			new SceneSelectionOperation()
 			{
 				TitleResolver = () => "Package".Localize(),
@@ -405,20 +419,6 @@ namespace MatterHackers.MatterControl
 				},
 				//Icon = AggContext.StaticData.LoadIcon("subtract.png").SetPreMultiply(),
 				IsEnabled = (scene) => scene.HasSelection,
-			},
-			new SceneSelectionOperation()
-			{
-				TitleResolver = () => "Array".Localize(),
-				Action = (scene) =>
-				{
-					scene.AddSelectionAsChildren(new ArrayObject3D());
-					if(scene.SelectedItem is ArrayObject3D array)
-					{
-						array.Rebuild();
-					}
-				},
-				//Icon = AggContext.StaticData.LoadIcon("subtract.png").SetPreMultiply(),
-				IsEnabled = (scene) => scene.HasSelection && !(scene.SelectedItem is SelectionGroup),
 			},
 			new SceneSelectionOperation()
 			{

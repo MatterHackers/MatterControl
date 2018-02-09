@@ -27,46 +27,52 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System.Threading;
+using System;
+using System.ComponentModel;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
-using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class CylinderObject3D : Object3D, IRebuildable
+	public class HalfSphereObject3D : Object3D, IRebuildable
 	{
 		public override string ActiveEditor => "PublicPropertyEditor";
 
-		public CylinderObject3D()
+		public HalfSphereObject3D()
 		{
 		}
 
-		public static CylinderObject3D Create()
+		public static HalfSphereObject3D Create()
 		{
-			var item = new CylinderObject3D();
+			var item = new HalfSphereObject3D();
 
 			item.Rebuild();
 			return item;
 		}
 
 		public double Diameter { get; set; } = 20;
-		public double Height { get; set; } = 20;
-		public int Sides { get; set; } = 30;
+		[DisplayName("Longitude Sides")]
+		public int LongitudeSides { get; set; } = 30;
+		[DisplayName("Latitude Sides")]
+		public int LatitudeSides { get; set; } = 10;
 
 		public void Rebuild()
 		{
 			var aabb = this.GetAxisAlignedBoundingBox();
 
+			var radius = Diameter / 2;
+			var angleDelta = MathHelper.Tau / 4 / LatitudeSides;
+			var angle = 0.0;
 			var path = new VertexStorage();
-			path.MoveTo(0, 0);
-			path.LineTo(Diameter / 2, 0);
-			path.LineTo(Diameter / 2, Height);
-			path.LineTo(0, Height);
+			path.MoveTo(new Vector2(radius * Math.Cos(angle), radius * Math.Sin(angle)));
+			for (int i = 0; i < LatitudeSides; i++)
+			{
+				angle += angleDelta;
+				path.LineTo(new Vector2(radius * Math.Cos(angle), radius * Math.Sin(angle)));
+			}
 
-			Mesh = VertexSourceToMesh.Revolve(path, Sides);
-
+			Mesh = VertexSourceToMesh.Revolve(path, LongitudeSides);
 			if (aabb.ZSize > 0)
 			{
 				// If the part was already created and at a height, maintain the height.

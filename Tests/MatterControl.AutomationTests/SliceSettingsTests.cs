@@ -20,6 +20,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
+				testRunner.WaitForFirstDraw();
+
 				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
 
 				testRunner.AddTestAssetsToLibrary("Rook.amf");
@@ -137,7 +139,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				testRunner.CloseSignInAndPrinterSelect();
+				testRunner.WaitForFirstDraw();
 
 				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
 
@@ -146,9 +148,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.ClickByName("Features Tab");
 
-				CheckAndUncheckSetting(testRunner, SettingsKey.heat_extruder_before_homing, false);
+				CheckAndUncheckSetting(testRunner, SettingsKey.heat_extruder_before_homing, true, false);
 
-				CheckAndUncheckSetting(testRunner, SettingsKey.has_fan, true);
+				CheckAndUncheckSetting(testRunner, SettingsKey.has_fan, true, true);
 
 				return Task.CompletedTask;
 			}, overrideWidth: 1224, overrideHeight: 900, maxTimeToRun: 600);
@@ -165,6 +167,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					// only 1 hotend and 1 extruder
 					Assert.IsTrue(testRunner.NameExists("Hotend 0"));
+					Assert.IsTrue(testRunner.NameExists("Bed TemperatureWidget"));
 					Assert.IsFalse(testRunner.NameExists("Hotend 1", .1));
 
 					testRunner.ClickByName("Hotend 0");
@@ -247,7 +250,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("Hotend 0");
 					testRunner.ClickByName("General Tab");
 
-					testRunner.ClickByName(SettingsOrganizer.Instance.GetSettingsData(SettingsKey.extruder_count).PresentationName + " Field");
+					testRunner.SelectSliceSettingsField("Printer", SettingsKey.extruder_count);
 					testRunner.Type("2");
 					testRunner.Type("{Enter}");
 
@@ -255,7 +258,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					Assert.IsTrue(testRunner.NameExists("Hotend 0"));
 					Assert.IsTrue(testRunner.NameExists("Hotend 1"));
 
-					SetCheckBoxSetting(testRunner, SettingsKey.extruders_share_temperature, true);
+					SetCheckBoxSetting(testRunner, SettingsKey.extruders_share_temperature, true, true);
 
 					// there is one hotend and 2 extruders
 					Assert.IsTrue(testRunner.NameExists("Hotend 0"));
@@ -341,7 +344,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				testRunner.CloseSignInAndPrinterSelect();
+				testRunner.WaitForFirstDraw();
 
 				// assert no profiles
 				Assert.AreEqual(0, ProfileManager.Instance.ActiveProfiles.Count());
@@ -360,33 +363,36 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, overrideWidth: 1224, overrideHeight: 900);
 		}
 
-		private static void SetCheckBoxSetting(AutomationRunner testRunner, string settingToChange, bool valueToSet)
+		private static void SetCheckBoxSetting(AutomationRunner testRunner, string settingToChange, bool printer, bool valueToSet)
 		{
 			var settingsData = SettingsOrganizer.Instance.GetSettingsData(settingToChange);
 			string checkBoxName = $"{settingsData.PresentationName} Field";
 
 			Assert.IsTrue(ActiveSliceSettings.Instance.GetValue<bool>(settingToChange) != valueToSet);
 
-			testRunner.ScrollIntoView(checkBoxName);
-
-			testRunner.ClickByName(checkBoxName);
+			//testRunner.ScrollIntoView(checkBoxName);
+			//testRunner.ClickByName(checkBoxName);
+			testRunner.SelectSliceSettingsField(printer ? "Printer" : "Advanced", settingToChange);
+			
 			// give some time for the ui to update if necessary
 			testRunner.Delay(2);
 
 			Assert.IsTrue(ActiveSliceSettings.Instance.GetValue<bool>(settingToChange) == valueToSet);
 		}
 
-		private static void CheckAndUncheckSetting(AutomationRunner testRunner, string settingToChange, bool expected)
+		private static void CheckAndUncheckSetting(AutomationRunner testRunner, string settingToChange, bool printer, bool expected)
 		{
 			// Assert that the checkbox is currently unchecked, and there is no user override
 			Assert.IsTrue(ActiveSliceSettings.Instance.UserLayer.ContainsKey(settingToChange) == false);
 
 			// Click the checkbox
-			SetCheckBoxSetting(testRunner, settingToChange, !expected);
+			SetCheckBoxSetting(testRunner, settingToChange, printer, !expected);
 
 			// Assert the checkbox is checked and the user override is set
 			Assert.IsTrue(ActiveSliceSettings.Instance.UserLayer.ContainsKey(settingToChange) == true);
 
+			// make sure the setting is still open in case of a reload all
+			testRunner.NavigateToSliceSettingsField("Printer", settingToChange);
 			// Click the cancel user override button
 			testRunner.ClickByName("Restore " + settingToChange);
 			testRunner.Delay(2);
@@ -401,30 +407,24 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				testRunner.CloseSignInAndPrinterSelect();
+				testRunner.WaitForFirstDraw();
 
 				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
 
 				// Navigate to Settings Tab and make sure Bed Temp Text box is visible 
 				testRunner.SwitchToSliceSettings();
 
-				testRunner.SelectSliceSettingsField("Advanced", "bed_temperature");
-				testRunner.SelectSliceSettingsField("Advanced", "temperature");
+				testRunner.SelectSliceSettingsField("Advanced", SettingsKey.bed_temperature);
+				testRunner.SelectSliceSettingsField("Advanced", SettingsKey.temperature);
 
 				// Uncheck Has Heated Bed checkbox and make sure Bed Temp Textbox is not visible
 				testRunner.SwitchToPrinterSettings();
-				testRunner.ClickByName("Features Tab");
 
-				// Scroll the 'Has Heated Bed' field into view
-				testRunner.DragByName("Show Reset Connection Field", 1, offset: new Agg.Point2D(-40, 0));
-				testRunner.MoveToByName("Show Reset Connection Field", 1, offset: new Agg.Point2D(0, 120));
-				testRunner.Drop();
-
-				testRunner.ClickByName("Has Heated Bed Field");
+				testRunner.SelectSliceSettingsField("Printer", SettingsKey.has_heated_bed);
 				testRunner.Delay(.5);
 
 				testRunner.SwitchToSliceSettings();
-				testRunner.SelectSliceSettingsField("Advanced", "temperature");
+				testRunner.NavigateToSliceSettingsField("Advanced", SettingsKey.temperature);
 				Assert.IsFalse(testRunner.WaitForName("Bed Temperature Textbox", .5), "Filament -> Bed Temp should not be visible after Heated Bed unchecked");
 
 				// Make sure Bed Temperature Options are not visible in printer controls
@@ -441,7 +441,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				testRunner.CloseSignInAndPrinterSelect();
+				testRunner.WaitForFirstDraw();
 
 				// Add Guest printers
 				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");

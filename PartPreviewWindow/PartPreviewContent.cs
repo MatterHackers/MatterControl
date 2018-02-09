@@ -153,14 +153,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			ApplicationController.Instance.NotifyPrintersTabRightElement(extensionArea);
 
-			// TODO: Disable until automation tests workaround is implemented
 			// Show start page during initial application startup
-			if (false && AppContext.IsLoading)
+			if (AppContext.IsLoading)
 			{
 				tabControl.AddTab(
 					new ChromeTab("New Tab".Localize(), tabControl, tabControl.NewTabPage(), theme)
 					{
-						MinimumSize = new Vector2(0, theme.shortButtonHeight)
+						MinimumSize = new Vector2(0, theme.shortButtonHeight),
+						Name = "Initial Plus Tab"
 					});
 			}
 
