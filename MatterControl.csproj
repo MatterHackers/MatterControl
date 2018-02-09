@@ -95,6 +95,7 @@
     <Compile Include="DesignTools\Primitives\BaseObject3D.cs" />
     <Compile Include="DesignTools\Primitives\RoofObject3D.cs" />
     <Compile Include="DesignTools\Primitives\RoundRoofObject3D.cs" />
+    <Compile Include="DesignTools\Primitives\SphereAdvancedObject3D.cs" />
     <Compile Include="DesignTools\Primitives\WedgeObject3D.cs" />
     <Compile Include="DesignTools\Primitives\PyramidObject3D.cs" />
     <Compile Include="DesignTools\Primitives\CylinderAdvancedObject3D.cs" />
@@ -482,6 +483,7 @@
     </Reference>
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />

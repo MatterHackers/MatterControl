@@ -72,11 +72,13 @@ namespace MatterHackers.MatterControl.DesignTools
 			var angle = 0.0;
 			var circleCenter = new Vector2(toroidRadius, 0);
 			path.MoveTo(circleCenter + new Vector2(poleRadius * Math.Cos(angle), poleRadius * Math.Sin(angle)));
-			for (int i = 0; i < PoleSides; i++)
+			for (int i = 0; i < PoleSides - 1; i++)
 			{
 				angle += angleDelta;
 				path.LineTo(circleCenter + new Vector2(poleRadius * Math.Cos(angle), poleRadius * Math.Sin(angle)));
 			}
+
+			path.LineTo(circleCenter + new Vector2(poleRadius * Math.Cos(0), poleRadius * Math.Sin(0)));
 
 			Mesh = VertexSourceToMesh.Revolve(path, ToroidSides);
 			if (aabb.ZSize > 0)

@@ -62,8 +62,8 @@ namespace MatterHackers.MatterControl.DesignTools
 			var path = new VertexStorage();
 			path.MoveTo(0, 0);
 			path.LineTo(Width / 2, 0);
-			path.LineTo(Width / 2, Width/2);
-			path.LineTo(0, Width/2);
+			path.LineTo(Width / 2, Depth/2);
+			path.LineTo(0, Depth / 2);
 
 			var mesh = VertexSourceToMesh.Revolve(path, Sides, 0, MathHelper.Tau / 2);
 			mesh.Transform(Matrix4X4.CreateRotationX(MathHelper.Tau / 4));
