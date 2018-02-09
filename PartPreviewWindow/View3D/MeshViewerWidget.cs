@@ -699,11 +699,23 @@ namespace MatterHackers.MeshVisualizer
 
 		private int BackToFrontXY(Object3DView a, Object3DView b)
 		{
-			var aCenterWorld = Vector3.Transform(a.Object3D.Mesh.GetAxisAlignedBoundingBox().Center, a.Object3D.Matrix);
+			var meshA = a.Object3D.Mesh;
+			var meshB = b.Object3D.Mesh;
+
+			if (meshA == null)
+			{
+				return 1;
+			}
+			else if (meshB == null)
+			{
+				return -1;
+			}
+
+			var aCenterWorld = Vector3.Transform(meshA.GetAxisAlignedBoundingBox().Center, a.Object3D.Matrix);
 			aCenterWorld.Z = 0; // we only want to look at the distance on xy in world space
 			var aCenterInViewSpace = Vector3.Transform(aCenterWorld, World.ModelviewMatrix);
 
-			var bCenterWorld = Vector3.Transform(b.Object3D.Mesh.GetAxisAlignedBoundingBox().Center, b.Object3D.Matrix);
+			var bCenterWorld = Vector3.Transform(meshB.GetAxisAlignedBoundingBox().Center, b.Object3D.Matrix);
 			bCenterWorld.Z = 0; // we only want to look at the distance on xy in world space
 			var bCenterInViewSpace = Vector3.Transform(bCenterWorld, World.ModelviewMatrix);
 
