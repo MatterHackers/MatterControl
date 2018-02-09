@@ -70,7 +70,7 @@ namespace MatterHackers.MatterControl.Library
 			bool resizeRequired = (resizeWidth) ? width != expectedSize.X : height != expectedSize.Y;
 			if (resizeRequired)
 			{
-				var scaledImageBuffer = ImageBuffer.CreateScaledImage(imageBuffer, targetWidth, targetHeight);
+				var scaledImageBuffer = imageBuffer.CreateScaledImage(targetWidth, targetHeight);
 				scaledImageBuffer.SetRecieveBlender(new BlenderPreMultBGRA());
 
 				return scaledImageBuffer;
