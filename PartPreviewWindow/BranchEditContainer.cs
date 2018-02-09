@@ -52,6 +52,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public Type DefaultView => null;
 
+		public BranchEditContainer()
+		{
+		}
+
 		public BranchEditContainer(Action<ILibraryItem, IObject3D> saveAction)
 		{
 			this.saveAction = saveAction;
@@ -72,6 +76,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void Add(IEnumerable<ILibraryItem> items)
 		{
+			this.ContentChanged?.Invoke(this, null);
 		}
 
 		public bool AllowAction(ContainerActions containerActions)
