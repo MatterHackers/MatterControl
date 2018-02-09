@@ -197,27 +197,6 @@ namespace MatterHackers.MeshVisualizer
 
 		public Color BuildVolumeColor { get; set; }
 
-		public static AxisAlignedBoundingBox GetAxisAlignedBoundingBox(List<MeshGroup> meshGroups)
-		{
-			AxisAlignedBoundingBox totalMeshBounds = AxisAlignedBoundingBox.Empty;
-			bool first = true;
-			foreach (MeshGroup meshGroup in meshGroups)
-			{
-				AxisAlignedBoundingBox meshBounds = meshGroup.GetAxisAlignedBoundingBox();
-				if (first)
-				{
-					totalMeshBounds = meshBounds;
-					first = false;
-				}
-				else
-				{
-					totalMeshBounds = AxisAlignedBoundingBox.Union(totalMeshBounds, meshBounds);
-				}
-			}
-
-			return totalMeshBounds;
-		}
-
 		public override void OnLoad(EventArgs args)
 		{
 			// some debug code to be able to click on parts

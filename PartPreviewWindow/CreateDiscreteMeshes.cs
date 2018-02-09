@@ -47,29 +47,6 @@ namespace MatterHackers.MatterControl
 
 	public static class CreateDiscreteMeshes
 	{
-		public static List<Mesh> SplitConnectedIntoMeshes(MeshGroup meshGroupToSplit, CancellationToken cancellationToken, Action<double, string> reportProgress)
-		{
-			List<Mesh> discreteMeshes = new List<Mesh>();
-			double ratioPerDiscreetMesh = 1.0 / meshGroupToSplit.Meshes.Count;
-			double currentRatioDone = 0;
-			foreach (Mesh mesh in meshGroupToSplit.Meshes)
-			{
-				List<Mesh> discreteVolumes = SplitVolumesIntoMeshes(mesh, cancellationToken, (double progress0To1, string processingState) =>
-				{
-					if (reportProgress != null)
-					{
-						double progress = (currentRatioDone + ratioPerDiscreetMesh * progress0To1);
-						reportProgress.Invoke(progress, "Split Into Meshes");
-					}
-				});
-				discreteMeshes.AddRange(discreteVolumes);
-
-				currentRatioDone += ratioPerDiscreetMesh;
-			}
-
-			return discreteMeshes;
-		}
-
 		public static List<Mesh> SplitVolumesIntoMeshes(Mesh meshToSplit, CancellationToken cancellationToken, Action<double, string> reportProgress)
 		{
 			List<Mesh> discreetVolumes = new List<Mesh>();
