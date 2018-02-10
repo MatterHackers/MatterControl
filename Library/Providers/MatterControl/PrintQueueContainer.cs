@@ -70,7 +70,7 @@ namespace MatterHackers.MatterControl.Library
 				{
 					switch (item)
 					{
-						case ILibraryContentStream streamItem:
+						case ILibraryReadOnlyStream streamItem:
 							string itemPath;
 
 							if (streamItem is FileSystemFileItem fileItem)
