@@ -129,12 +129,17 @@ namespace MatterHackers.MatterControl.Library.Export
 				//  - If bedplate, save any pending changes before starting the print
 				await ApplicationController.Instance.Tasks.Execute(ApplicationController.Instance.ActiveView3DWidget.SaveChanges);
 
-				var context = ApplicationController.Instance.ActivePrinter.Bed.EditContext;
+				// Create a context to hold a temporary scene used during slicing to complete the export
+				var context = new EditContext()
+				{
+					ContentStore = ApplicationController.Instance.Library.PlatingHistory,
+					SourceItem = libraryContent
+				};
 
 				//  - Slice
 				await ApplicationController.Instance.Tasks.Execute((reporter, cancellationToken) =>
 				{
-					return Slicer.SliceFile(context.PartFilePath, context.GCodeFilePath, printer, reporter, cancellationToken);
+					return Slicer.SliceItem(context.Content, context.GCodeFilePath, printer, reporter, cancellationToken);
 				});
 
 				//  - Return

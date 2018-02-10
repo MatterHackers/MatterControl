@@ -64,11 +64,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				UiThread.RunOnIdle(async () =>
 				{
-					var context = printer.Bed.EditContext;
 					await ApplicationController.Instance.PrintPart(
-						context.PartFilePath,
-						context.GCodeFilePath,
-						context.SourceItem.Name,
+						printer.Bed.EditContext,
 						printer,
 						null,
 						CancellationToken.None);

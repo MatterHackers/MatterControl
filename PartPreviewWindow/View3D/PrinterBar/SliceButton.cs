@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public override async void OnClick(MouseEventArgs mouseEvent)
 		{
 			base.OnClick(mouseEvent);
-			await this.SliceFileTask();
+			await this.SliceBedplate();
 		}
 
 		public override void OnClosed(ClosedEventArgs e)
@@ -90,7 +90,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private async Task SliceFileTask()
+		private async Task SliceBedplate()
 		{
 			if (printer.Settings.PrinterSelected)
 			{
@@ -111,9 +111,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 						await ApplicationController.Instance.Tasks.Execute(printerTabPage.view3DWidget.SaveChanges);
 
-						await ApplicationController.Instance.SliceFileLoadOutput(
+						await ApplicationController.Instance.SliceItemLoadOutput(
 							printer,
-							printer.Bed.EditContext.PartFilePath,
+							printer.Bed.Scene,
 							printer.Bed.EditContext.GCodeFilePath);
 					}
 					catch (Exception ex)

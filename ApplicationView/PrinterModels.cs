@@ -186,11 +186,8 @@ namespace MatterHackers.MatterControl
 			this.Save();
 
 			// Slice and print
-			var context = this.EditContext;
 			await ApplicationController.Instance.PrintPart(
-				context.PartFilePath,
-				context.GCodeFilePath,
-				context.SourceItem.Name,
+				this.EditContext,
 				this.Printer,
 				null,
 				CancellationToken.None);
@@ -527,7 +524,7 @@ namespace MatterHackers.MatterControl
 
 		public string GCodeFilePath => printItem?.GetGCodePathAndFileName();
 
-		public string PartFilePath => printItem?.FileLocation;
+		public string SourceFilePath => printItem?.FileLocation;
 
 		/// <summary>
 		/// Short term stop gap that should only be used until GCode path helpers, hash code and print recovery components can be extracted

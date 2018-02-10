@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public static List<bool> extrudersUsed = new List<bool>();
 		public static bool runInProcess = true;
 
-		public static List<(Matrix4X4 matrix, string fileName)> GetStlFileLocations(string fileToSlice, ref string mergeRules, PrinterConfig printer, IProgress<ProgressStatus> progressReporter, CancellationToken cancellationToken)
+		public static List<(Matrix4X4 matrix, string fileName)> GetStlFileLocations(IObject3D reloadedItem, ref string mergeRules, PrinterConfig printer, IProgress<ProgressStatus> progressReporter, CancellationToken cancellationToken)
 		{
 			var progressStatus = new ProgressStatus();
 
@@ -85,20 +85,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 			}
 
-			switch (Path.GetExtension(fileToSlice).ToUpper())
 			{
-				case ".MCX":
 					// TODO: Once graph parsing is added to MatterSlice we can remove and avoid this flattening
 					meshPrintOutputSettings.Clear();
-
-					progressStatus.Status = "Loading";
-					progressReporter.Report(progressStatus);
-
-					var reloadedItem = Object3D.Load(fileToSlice, cancellationToken, null, (ratio, status) =>
-					{
-						progressStatus.Progress0To1 = ratio;
-						progressStatus.Status = status;
-					});
 
 					// Flatten the scene, filtering out items outside of the build volume
 					var meshItemsOnBuildPlate = reloadedItem.VisibleMeshes().Where((item) => item.InsideBuildVolume(printer));
@@ -153,10 +142,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 						return outputOptions;
 					}
-					break;
-
-				default:
-					break;
 			}
 
 			return new List<(Matrix4X4 matrix, string fileName)>();
@@ -210,11 +195,28 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public static Task<bool> SliceFile(string sourceFile, string gcodeFilePath, PrinterConfig printer, IProgress<ProgressStatus> progressReporter, CancellationToken cancellationToken)
 		{
+			var progressStatus = new ProgressStatus()
+			{
+				Status = "Loading"
+			};
+			progressReporter.Report(progressStatus);
+
+			var loadedItem = Object3D.Load(sourceFile, cancellationToken, null, (ratio, status) =>
+			{
+				progressStatus.Progress0To1 = ratio;
+				progressStatus.Status = status;
+			});
+
+			return SliceItem(loadedItem, gcodeFilePath, printer, progressReporter, cancellationToken);
+		}
+
+		public static Task<bool> SliceItem(IObject3D object3D, string gcodeFilePath, PrinterConfig printer, IProgress<ProgressStatus> progressReporter, CancellationToken cancellationToken)
+		{
 			bool slicingSucceeded = true;
 
 			string mergeRules = "";
 
-			var stlFileLocations = GetStlFileLocations(sourceFile, ref mergeRules, printer, progressReporter, cancellationToken);
+			var stlFileLocations = GetStlFileLocations(object3D, ref mergeRules, printer, progressReporter, cancellationToken);
 
 			if(stlFileLocations.Count > 0)
 			{
