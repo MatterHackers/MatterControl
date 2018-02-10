@@ -437,7 +437,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			};
 
 			var sectionWidget = new SectionWidget(group.Name, groupPanel, theme).ApplyBoxStyle();
-			
+
 			foreach (var subGroup in group.SubGroups)
 			{
 				var subGroupPanel = this.AddSettingRowsForSubgroup(subGroup);

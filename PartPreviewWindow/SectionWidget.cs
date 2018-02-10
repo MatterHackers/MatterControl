@@ -25,31 +25,22 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				// Add heading
 				var pointSize = (headingPointSize) == -1 ? theme.DefaultFontSize : headingPointSize;
 
-				GuiWidget heading;
-
-				if (expandingContent)
+				checkbox = new ExpandCheckboxButton(sectionTitle, pointSize: pointSize, expandable: expandingContent)
 				{
-					checkbox = new ExpandCheckboxButton(sectionTitle, pointSize: pointSize)
-					{
-						HAnchor = HAnchor.Stretch,
-						Checked = expanded,
-					};
-					checkbox.CheckedStateChanged += (s, e) =>
-					{
-						ContentPanel.Visible = checkbox.Checked;
-						// TODO: Remove this Height = 10 and figure out why the layout engine is not sizing these corretly without this.
-						ContentPanel.Height = 10;
-						this.BorderColor = (checkbox.Checked) ? Color.Transparent : SeperatorColor;
-					};
-
-					this.BorderColor = BorderColor = (expanded) ? Color.Transparent : SeperatorColor;
-
-					heading = checkbox;
-				}
-				else
+					HAnchor = HAnchor.Stretch,
+					Checked = expanded,
+				};
+				checkbox.CheckedStateChanged += (s, e) =>
 				{
-					heading = new TextWidget(sectionTitle, pointSize: pointSize, textColor: theme.Colors.PrimaryTextColor);
-				}
+					ContentPanel.Visible = checkbox.Checked;
+					// TODO: Remove this Height = 10 and figure out why the layout engine is not sizing these corretly without this.
+					ContentPanel.Height = 10;
+					this.BorderColor = (checkbox.Checked) ? Color.Transparent : SeperatorColor;
+				};
+
+				this.BorderColor = BorderColor = (expanded) ? Color.Transparent : SeperatorColor;
+
+				GuiWidget heading = checkbox;
 				heading.Padding = new BorderDouble(0, 5, 0, 6);
 
 				if (rightAlignedContent == null)

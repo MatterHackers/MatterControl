@@ -40,30 +40,33 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		private ImageWidget imageWidget;
 
-		private ImageBuffer arrowRight;
+		private GuiWidget imageButton;
 
-		private ImageBuffer arrowDown;
+		private ImageBuffer arrowRight = AggContext.StaticData.LoadIcon("fa-angle-right_12.png", IconColor.Theme);
+
+		private ImageBuffer arrowDown = AggContext.StaticData.LoadIcon("fa-angle-down_12.png", IconColor.Theme);
 
 		private TextWidget textWidget;
 
-		public ExpandCheckboxButton(string text, int pointSize = 11)
+		public ExpandCheckboxButton(string text, int pointSize = 11, bool expandable = true)
 		{
-			arrowRight = AggContext.StaticData.LoadIcon("fa-angle-right_12.png", IconColor.Theme);
-			arrowDown = AggContext.StaticData.LoadIcon("fa-angle-down_12.png", IconColor.Theme);
-
 			var theme = ApplicationController.Instance.Theme;
 
-			var button = new GuiWidget()
+			imageButton = new GuiWidget()
 			{
-				MinimumSize = new VectorMath.Vector2(theme.ButtonHeight, 20),
-				VAnchor = VAnchor.Center
+				MinimumSize = new VectorMath.Vector2((expandable) ? theme.ButtonHeight : 10, 20),
+				VAnchor = VAnchor.Center,
 			};
-			button.AddChild(imageWidget = new ImageWidget(arrowRight)
+			imageButton.AddChild(imageWidget = new ImageWidget(arrowRight)
 			{
 				VAnchor = VAnchor.Center,
-				HAnchor = HAnchor.Center
+				HAnchor = HAnchor.Center,
+				Visible = expandable
 			});
-			this.AddChild(button);
+			this.AddChild(imageButton);
+
+			_expandable = expandable;
+
 			this.AddChild(textWidget = new TextWidget(text, pointSize: pointSize, textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
 				VAnchor = VAnchor.Center,
@@ -73,6 +76,21 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			foreach(var child in this.Children)
 			{
 				child.Selectable = false;
+			}
+		}
+
+		private bool _expandable = true;
+		public bool Expandable
+		{
+			get => _expandable;
+			set
+			{
+				if (_expandable != value)
+				{
+					_expandable = value;
+					imageWidget.Visible = _expandable;
+					this.MinimumSize = new VectorMath.Vector2((_expandable) ? this.MinimumSize.X : 10, this.MinimumSize.Y);
+				}
 			}
 		}
 
@@ -103,7 +121,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				{
 					_checked = value;
 
-					imageWidget.Image = value ? arrowDown: arrowRight;
+					imageWidget.Image = value ? arrowDown : arrowRight;
 
 					Invalidate();
 
