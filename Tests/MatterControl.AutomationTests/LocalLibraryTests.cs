@@ -66,8 +66,13 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Delay(1);
 				testRunner.Type("{Enter}");
 
-				Assert.IsTrue(testRunner.WaitForName("Row Item Batman"), "Batman part should exist after adding");
-				Assert.IsTrue(testRunner.WaitForName("Row Item 2013-01-25 Mouthpiece V2"), "Mouthpiece part should exist after adding");
+				testRunner.WaitForName("Batman Row Item Collection");
+
+				testRunner.DoubleClickByName("Batman Row Item Collection");
+
+
+				Assert.IsTrue(testRunner.WaitForName("Row Item Batman.stl"), "Batman part should exist after adding");
+				Assert.IsTrue(testRunner.WaitForName("Row Item 2013-01-25_Mouthpiece_v2.stl"), "Mouthpiece part should exist after adding");
 
 				return Task.CompletedTask;
 			});

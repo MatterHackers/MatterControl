@@ -58,8 +58,6 @@ namespace MatterHackers.MatterControl.Library
 
 	public class SqliteLibraryContainer : WritableContainer
 	{
-		protected List<PrintItemCollection> childCollections = new List<PrintItemCollection>();
-
 		// Use default rootCollectionID - normally this constructor isn't used but exists to validate behavior in tests
 		public SqliteLibraryContainer()
 			: this(Datastore.Instance.dbSQLite.Table<PrintItemCollection>().Where(v => v.Name == "_library").Take(1).FirstOrDefault()?.Id ?? 0)
@@ -94,14 +92,25 @@ namespace MatterHackers.MatterControl.Library
 
 		public override void Load()
 		{
-			childCollections = GetChildCollections();
+			var childCollections = this.GetChildCollections();
 
-			this.ChildContainers = childCollections.Select(c => new SqliteLibraryContainerLink()
+			var allFiles = this.GetLibraryItems(KeywordFilter);
+
+			var zipFiles = allFiles.Where(f => string.Equals(Path.GetExtension(f.FileLocation), ".zip", StringComparison.OrdinalIgnoreCase));
+
+			var nonZipFiles = allFiles.Except(zipFiles);
+
+			IEnumerable<ILibraryContainerLink> childContainers = childCollections.Select(c => new SqliteLibraryContainerLink()
 			{
-				ContainerID = c.Id, Name = c.Name }).ToList<ILibraryContainerLink>(); //
+				ContainerID = c.Id,
+				Name = c.Name
+			});
+
+			this.ChildContainers = childContainers.Concat(
+				zipFiles.Select(f => new LocalZipContainerLink(f.FileLocation, f.Name))).OrderBy(d => d.Name).ToList();
 
 			// PrintItems projected onto FileSystemFileItem
-			Items = GetLibraryItems(KeywordFilter).Select<PrintItem, ILibraryItem>(printItem =>
+			this.Items = nonZipFiles.Select<PrintItem, ILibraryItem>(printItem =>
 			{
 				if (File.Exists(printItem.FileLocation))
 				{
@@ -163,7 +172,7 @@ namespace MatterHackers.MatterControl.Library
 
 		public List<PrintItem> GetLibraryItems(string keyphrase = null)
 		{
-			// TODO: String concatenation to build sql statements is the root of all sql injection attacts. This needs to be changed to use parameter objects as would be expected
+			// TODO: String concatenation to build sql statements is the root of all sql injection attacks. This needs to be changed to use parameter objects as would be expected
 			string query;
 			if (string.IsNullOrEmpty(keyphrase))
 			{
