@@ -156,11 +156,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						// Save any pending changes before starting print operation
 						await ApplicationController.Instance.Tasks.Execute(printerTabPage.view3DWidget.SaveChanges);
 
-						var context = printer.Bed.EditContext;
 						await ApplicationController.Instance.PrintPart(
-							context.PartFilePath,
-							context.GCodeFilePath,
-							context.SourceItem.Name,
+							printer.Bed.EditContext,
 							printer,
 							null,
 							CancellationToken.None);

@@ -559,7 +559,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							DialogWindow.Show(
 								new ExportPrintItemPage(new[]
 								{
-									new FileSystemFileItem(sceneContext.EditContext.PartFilePath)
+									new FileSystemFileItem(sceneContext.EditContext.SourceFilePath)
 								}));
 						});
 					},
