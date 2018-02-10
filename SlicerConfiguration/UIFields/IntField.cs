@@ -33,7 +33,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class IntField : NumberField
 	{
-		private int intValue;
+		int _intValue;
+		public int IntValue
+		{
+			get { return _intValue; }
+			set
+			{
+				if (_intValue != value)
+				{
+					_intValue = value;
+					numberEdit.Value = _intValue;
+				}
+			}
+		}
 
 		public int MinValue { get; set; } = int.MinValue;
 
@@ -44,15 +56,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			decimal.TryParse(newValue, out decimal currentValue);
 
 			// Clamp to range
-			intValue = Math.Min((int)currentValue, this.MaxValue);
-			intValue = Math.Max(intValue, this.MinValue);
+			IntValue = Math.Min((int)currentValue, this.MaxValue);
+			IntValue = Math.Max(IntValue, this.MinValue);
 
-			return intValue.ToString();
+			return IntValue.ToString();
 		}
 
 		protected override void OnValueChanged(FieldChangedEventArgs fieldChangedEventArgs)
 		{
-			numberEdit.ActuallNumberEdit.Value = intValue;
+			numberEdit.ActuallNumberEdit.Value = IntValue;
 			base.OnValueChanged(fieldChangedEventArgs);
 		}
 	}

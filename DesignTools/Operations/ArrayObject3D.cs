@@ -28,25 +28,35 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.ComponentModel;
 using System.Linq;
 using MatterHackers.DataConverters3D;
 using MatterHackers.VectorMath;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class ArrayObject3D : Object3D, IRebuildable
+	public class DirectionAxis
+	{
+		public Vector3 Origin { get; set; }
+		public Vector3 Normal { get; set; }
+	}
+
+	public class DirectionVector
+	{
+		public Vector3 Normal { get; set; }
+	}
+
+	public class ArrayLinearObject3D : Object3D, IRebuildable
 	{
 		public int Count { get; set; } = 3;
-		public double XOffset { get; set; } = 30;
-		public double YOffset { get; set; } = 0;
-		public double Rotate { get; set; } = 0;
-		public double Scale { get; set; } = 1;
-		public bool RotatePart { get; set; } = false;
-		public bool ScaleOffset { get; set; } = false;
+		public DirectionVector Direction { get; set; } = new DirectionVector { Normal = new Vector3(1, 0, 0) };
+		public double Distance { get; set; } = 30;
 
 		public override string ActiveEditor => "PublicPropertyEditor";
 
-		public ArrayObject3D()
+		public ArrayLinearObject3D()
 		{
 		}
 
@@ -59,6 +69,92 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				list.Add(lastChild);
 				var offset = Vector3.Zero;
 				for (int i=1; i<Count; i++)
+				{
+					var next = lastChild.Clone();
+					next.Matrix *= Matrix4X4.CreateTranslation(Direction.Normal.GetNormal() * Distance);
+					list.Add(next);
+					lastChild = next;
+				}
+			});
+		}
+	}
+
+	public class ArrayRadialObject3D : Object3D, IRebuildable
+	{
+		public int Count { get; set; } = 3;
+
+		public DirectionAxis Axis { get; set; } = new DirectionAxis() { Origin = new Vector3(-30, 0, 0), Normal = Vector3.UnitZ };
+		public double Angle { get; set; } = 360;
+
+		[DisplayName("Keep Within Angle")]
+		[Description("Keep the entire extents of the part within the angle described.")]
+		public bool KeepInAngle { get; set; } = false;
+
+		[DisplayName("Rotate Part")]
+		[Description("Rotate the part to the same angle as the array.")]
+		public bool RotatePart { get; set; } = true;
+
+		public override string ActiveEditor => "PublicPropertyEditor";
+
+		public ArrayRadialObject3D()
+		{
+		}
+
+		public void Rebuild()
+		{
+			this.Children.Modify(list =>
+			{
+				IObject3D lastChild = list.First();
+				var partCenter = lastChild.GetAxisAlignedBoundingBox().Center;
+
+				list.Clear();
+				list.Add(lastChild);
+				var offset = Vector3.Zero;
+				for (int i = 1; i < Count; i++)
+				{
+					var angleRadians = MathHelper.DegreesToRadians(Angle);
+					var nextOffset = Axis.Origin;
+
+					//nextOffset Rotate(angleRadians * i);
+					var next = lastChild.Clone();
+					next.Matrix *= Matrix4X4.CreateTranslation(nextOffset.X, nextOffset.Y, 0);
+
+					if (RotatePart)
+					{
+						next.ApplyAtBoundsCenter(Matrix4X4.CreateRotationZ(angleRadians));
+					}
+
+					lastChild = next;
+				}
+			});
+		}
+	}
+
+	public class ArrayAdvancedObject3D : Object3D, IRebuildable
+	{
+		public int Count { get; set; } = 3;
+		public double XOffset { get; set; } = 30;
+		public double YOffset { get; set; } = 0;
+		public double Rotate { get; set; } = 0;
+		public double Scale { get; set; } = 1;
+		public bool RotatePart { get; set; } = false;
+		public bool ScaleOffset { get; set; } = false;
+
+		public override string ActiveEditor => "PublicPropertyEditor";
+
+		public ArrayAdvancedObject3D()
+		{
+		}
+
+		public void Rebuild()
+		{
+			this.Children.Modify(list =>
+			{
+				IObject3D lastChild = list.First();
+				list.Clear();
+				list.Add(lastChild);
+				var offset = Vector3.Zero;
+				for (int i = 1; i < Count; i++)
 				{
 					var rotateRadians = MathHelper.DegreesToRadians(Rotate);
 					var nextOffset = new Vector2(XOffset, YOffset);
@@ -80,7 +176,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					}
 
 					next.ApplyAtBoundsCenter(Matrix4X4.CreateScale(Scale));
-					list.Add(next.Clone());
+					list.Add(next);
 					lastChild = next;
 				}
 			});

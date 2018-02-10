@@ -88,6 +88,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public double Height { get; set; } = 5;
 
+		[Sortable]
 		[JsonConverter(typeof(StringEnumConverter))]
 		public NamedTypeFace Font { get; set; } = new NamedTypeFace();
 

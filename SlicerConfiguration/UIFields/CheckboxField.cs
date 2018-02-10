@@ -37,6 +37,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	{
 		private CheckBox checkBoxWidget;
 
+		public bool Checked => checkBoxWidget.Checked;
+
 		public override void Initialize(int tabIndex)
 		{
 			checkBoxWidget = new CheckBox("")
@@ -68,6 +70,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	{
 		private CheckBox checkBoxWidget;
 		private Color textColor;
+
+		public bool Checked
+		{
+			get
+			{
+				return checkBoxWidget.Checked;
+			}
+			set
+			{
+				checkBoxWidget.Checked = value;
+			}
+		}
 
 		public ToggleboxField(Color textColor)
 		{
