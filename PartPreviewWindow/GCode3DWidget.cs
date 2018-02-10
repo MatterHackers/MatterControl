@@ -92,7 +92,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							Padding = new BorderDouble(15, 4)
 						},
 						theme,
-						expandingContent: false).ApplyBoxStyle(new BorderDouble(top: 10)));
+						expandingContent: false).ApplyBoxStyle(margin: new BorderDouble(top: 10)));
 
 				gcodeResultsPanel.AddChild(
 					speedsWidget = new SectionWidget(
@@ -104,7 +104,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							Padding = new BorderDouble(15, 4)
 						},
 						theme,
-						expandingContent: false).ApplyBoxStyle(new BorderDouble(top: 10)));
+						expandingContent: false).ApplyBoxStyle(margin: new BorderDouble(top: 10)));
 
 				speedsWidget.Visible = printer.Bed.RendererOptions.RenderSpeeds;
 			}

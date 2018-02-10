@@ -428,15 +428,15 @@ namespace MatterHackers.MatterControl
 	{
 		public static SectionWidget ApplyBoxStyle(this SectionWidget sectionWidget)
 		{
-			return ApplyBoxStyle(sectionWidget, ApplicationController.Instance.Theme.MinimalShade, new BorderDouble(10, 0, 10, 10));
+			return ApplyBoxStyle(sectionWidget, ApplicationController.Instance.Theme.MinimalShade, margin: new BorderDouble(10, 0, 10, 10));
 		}
 
-		public static SectionWidget ApplyBoxStyle(this SectionWidget sectionWidget, BorderDouble borderDouble)
+		public static SectionWidget ApplyBoxStyle(this SectionWidget sectionWidget, BorderDouble margin)
 		{
-			return ApplyBoxStyle(sectionWidget, ApplicationController.Instance.Theme.MinimalShade, borderDouble);
+			return ApplyBoxStyle(sectionWidget, ApplicationController.Instance.Theme.MinimalShade, margin);
 		}
 
-		public static SectionWidget ApplyBoxStyle(this SectionWidget sectionWidget, Color backgroundColor, BorderDouble borderDouble)
+		public static SectionWidget ApplyBoxStyle(this SectionWidget sectionWidget, Color backgroundColor, BorderDouble margin)
 		{
 			// Enforce panel padding
 			// sectionWidget.ContentPanel.Padding = new BorderDouble(10, 0, 10, 2);
@@ -444,7 +444,7 @@ namespace MatterHackers.MatterControl
 
 			sectionWidget.SeperatorColor = Color.Transparent;
 			sectionWidget.BorderRadius = 5;
-			sectionWidget.Margin = borderDouble;
+			sectionWidget.Margin = margin;
 			sectionWidget.BackgroundColor = backgroundColor;
 
 			return sectionWidget;
