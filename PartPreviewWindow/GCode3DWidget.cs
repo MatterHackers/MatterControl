@@ -42,11 +42,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private BedConfig sceneContext;
 		private ThemeConfig theme;
+		private PrinterConfig printer;
+		private SectionWidget speedsWidget;
 
 		public GCode3DWidget(PrinterConfig printer, BedConfig sceneContext, ThemeConfig theme)
 		{
 			this.sceneContext = sceneContext;
 			this.theme = theme;
+			this.printer = printer;
 
 			CreateAndAddChildren(printer);
 
@@ -60,6 +63,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 				}
 			}, ref unregisterEvents);
+
+			printer.Bed.RendererOptions.GCodeOptionsChanged += RendererOptions_GCodeOptionsChanged;
 		}
 
 		internal void CreateAndAddChildren(PrinterConfig printer)
@@ -90,7 +95,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						theme));
 
 				gcodeResultsPanel.AddChild(
-					new SectionWidget(
+					speedsWidget = new SectionWidget(
 						"Speeds".Localize(),
 						new SpeedsLegend(sceneContext.LoadedGCode, theme, pointSize: theme.FontSize12)
 						{
@@ -98,13 +103,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							Visible = sceneContext.RendererOptions.RenderSpeeds,
 						},
 						theme));
+
+				speedsWidget.Visible = printer.Bed.RendererOptions.RenderSpeeds;
 			}
 
 			this.Invalidate();
 		}
 
+		private void RendererOptions_GCodeOptionsChanged(object sender, EventArgs e)
+		{
+			if (speedsWidget != null)
+			{
+				speedsWidget.Visible = printer.Bed.RendererOptions.RenderSpeeds;
+			}
+		}
+
 		public override void OnClosed(ClosedEventArgs e)
 		{
+			printer.Bed.RendererOptions.GCodeOptionsChanged -= RendererOptions_GCodeOptionsChanged;
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
 		}
