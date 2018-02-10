@@ -51,10 +51,15 @@ namespace MatterHackers.MatterControl.Library
 
 		public override bool IsProtected { get; } = true;
 
-		public LocalZipContainerLink(string filePath)
+		public LocalZipContainerLink(string filePath, string nameOverride = null)
 			: base(filePath)
 		{
 			this.ThumbnailKey = null;
+
+			if (nameOverride != null)
+			{
+				this.Name = nameOverride;
+			}
 		}
 
 		private string currentDirectory = "";
