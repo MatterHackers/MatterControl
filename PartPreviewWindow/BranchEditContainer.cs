@@ -36,87 +36,18 @@ using MatterHackers.MatterControl.Library;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class BranchEditContainer : ILibraryWritableContainer
+	public class DynamicContentStore : IContentStore
 	{
 		private Action<ILibraryItem, IObject3D> saveAction;
 
-		public string ID => "";
-
-		public string Name => "";
-
-		public string StatusMessage => "";
-
-		public string KeywordFilter { get; set; }
-
-		public bool IsProtected => false;
-
-		public Type DefaultView => null;
-
-		public BranchEditContainer()
-		{
-		}
-
-		public BranchEditContainer(Action<ILibraryItem, IObject3D> saveAction)
+		public DynamicContentStore(Action<ILibraryItem, IObject3D> saveAction)
 		{
 			this.saveAction = saveAction;
 		}
 
-		public List<ILibraryContainerLink> ChildContainers { get; } = new List<ILibraryContainerLink>();
-
-		public List<ILibraryItem> Items { get; } = new List<ILibraryItem>();
-
-		public ILibraryContainer Parent { get; set; } = null;
-
-		public event EventHandler<ItemChangedEventArgs> ItemContentChanged;
-		public event EventHandler ContentChanged;
-
-		public void Activate()
-		{
-		}
-
-		public void Add(IEnumerable<ILibraryItem> items)
-		{
-			this.ContentChanged?.Invoke(this, null);
-		}
-
-		public bool AllowAction(ContainerActions containerActions)
-		{
-			return true;
-		}
-
-		public void Deactivate()
-		{
-		}
-
-		public void Dispose()
-		{
-		}
-
-		public Task<ImageBuffer> GetThumbnail(ILibraryItem item, int width, int height) => null;
-
-		public void Load()
-		{
-		}
-
-		public void Move(IEnumerable<ILibraryItem> items, ILibraryWritableContainer sourceContainer)
-		{
-		}
-
-		public void Remove(IEnumerable<ILibraryItem> items)
-		{
-		}
-
-		public void Rename(ILibraryItem item, string revisedName)
-		{
-		}
-
 		public void Save(ILibraryItem item, IObject3D content)
 		{
-			saveAction?.Invoke(item, content);
-		}
-
-		public void SetThumbnail(ILibraryItem item, int width, int height, ImageBuffer imageBuffer)
-		{
+			saveAction.Invoke(item, content);
 		}
 	}
 }

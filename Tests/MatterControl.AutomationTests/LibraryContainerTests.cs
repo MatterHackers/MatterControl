@@ -224,10 +224,6 @@ namespace MatterControl.Tests.MatterControl
 			onIdlePumpActive = false;
 		}
 
-		[Test, Ignore("Not implemented")]
-		public async Task BranchEditContainerTest()
-		{
-		}
 
 		[Test, Ignore("Not implemented")]
 		public async Task CalibrationPartsContainerTest()
