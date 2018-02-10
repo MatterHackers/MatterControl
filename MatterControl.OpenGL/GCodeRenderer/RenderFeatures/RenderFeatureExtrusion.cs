@@ -1,4 +1,5 @@
 ﻿using MatterHackers.Agg;
+using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
@@ -81,14 +82,23 @@ namespace MatterHackers.GCodeVisualizer
 				Vector3Float start = this.GetStart(renderInfo);
 				Vector3Float end = this.GetEnd(renderInfo);
 				double radius = GetRadius(renderInfo.CurrentRenderType);
-				if ((renderInfo.CurrentRenderType & RenderType.SpeedColors) == RenderType.SpeedColors)
+
+				Color lineColor;
+
+				if (renderInfo.CurrentRenderType.HasFlag(RenderType.SpeedColors))
 				{
-					CreateCylinder(colorVertexData, indexData, new Vector3(start), new Vector3(end), radius, 6, color, layerHeight);
+					lineColor = color;
+				}
+				else if (renderInfo.CurrentRenderType.HasFlag(RenderType.GrayColors))
+				{
+					lineColor = ActiveTheme.Instance.IsDarkTheme ? Color.DarkGray : Color.Gray;
 				}
 				else
 				{
-					CreateCylinder(colorVertexData, indexData, new Vector3(start), new Vector3(end), radius, 6, renderInfo.GetMaterialColor(extruderIndex), layerHeight);
+					lineColor = renderInfo.GetMaterialColor(extruderIndex);
 				}
+
+				CreateCylinder(colorVertexData, indexData, new Vector3(start), new Vector3(end), radius, 6, lineColor, layerHeight);
 			}
 		}
 
@@ -99,13 +109,18 @@ namespace MatterHackers.GCodeVisualizer
 				double extrusionLineWidths = GetExtrusionWidth(renderInfo.CurrentRenderType) * 2 * renderInfo.LayerScale;
 
 				Color extrusionColor = Color.Black;
-				if (extruderIndex > 0)
-				{
-					extrusionColor = renderInfo.GetMaterialColor(extruderIndex);
-				}
+
 				if (renderInfo.CurrentRenderType.HasFlag(RenderType.SpeedColors))
 				{
 					extrusionColor = color;
+				}
+				else if (renderInfo.CurrentRenderType.HasFlag(RenderType.GrayColors))
+				{
+					extrusionColor = Color.Gray;
+				}
+				else
+				{
+					extrusionColor = renderInfo.GetMaterialColor(extruderIndex);
 				}
 
 				if (renderInfo.CurrentRenderType.HasFlag(RenderType.TransparentExtrusion))

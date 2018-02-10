@@ -343,10 +343,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				() => gcodeOptions.RenderRetractions,
 				(value) => gcodeOptions.RenderRetractions = value);
 
+			popupMenu.CreateHorizontalLine();
+
 			popupMenu.CreateBoolMenuItem(
 				"Speeds".Localize(),
-				() => gcodeOptions.RenderSpeeds,
-				(value) => gcodeOptions.RenderSpeeds = value);
+				() => gcodeOptions.GCodeLineColorStyle == "Speeds",
+				(value) => gcodeOptions.GCodeLineColorStyle = "Speeds",
+				useRadioStyle: true);
+
+			popupMenu.CreateBoolMenuItem(
+				"Materials".Localize(),
+				() => gcodeOptions.GCodeLineColorStyle == "Materials",
+				(value) => gcodeOptions.GCodeLineColorStyle = "Materials",
+				useRadioStyle: true);
+
+			popupMenu.CreateBoolMenuItem(
+				"None".Localize(),
+				() => gcodeOptions.GCodeLineColorStyle == "None",
+				(value) => gcodeOptions.GCodeLineColorStyle = "None",
+				useRadioStyle: true);
 
 			popupMenu.CreateHorizontalLine();
 

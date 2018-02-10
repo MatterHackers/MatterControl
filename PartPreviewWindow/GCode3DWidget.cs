@@ -42,11 +42,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private BedConfig sceneContext;
 		private ThemeConfig theme;
+		private PrinterConfig printer;
+		private SectionWidget speedsWidget;
 
 		public GCode3DWidget(PrinterConfig printer, BedConfig sceneContext, ThemeConfig theme)
 		{
 			this.sceneContext = sceneContext;
 			this.theme = theme;
+			this.printer = printer;
 
 			CreateAndAddChildren(printer);
 
@@ -60,6 +63,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 				}
 			}, ref unregisterEvents);
+
+			printer.Bed.RendererOptions.GCodeOptionsChanged += RendererOptions_GCodeOptionsChanged;
 		}
 
 		internal void CreateAndAddChildren(PrinterConfig printer)
@@ -71,8 +76,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				var gcodeResultsPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 				{
 					Margin = new BorderDouble(0, 0, 35, 0),
-					Padding = new BorderDouble(10, 10, 10, 8),
-					BackgroundColor = theme.InteractionLayerOverlayColor,
 					HAnchor = HAnchor.Absolute | HAnchor.Right,
 					VAnchor = VAnchor.Top | VAnchor.Fit,
 					Width = 175
@@ -85,26 +88,41 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						new GCodeDetailsView(new GCodeDetails(printer, printer.Bed.LoadedGCode), theme.FontSize12, theme.FontSize9)
 						{
 							HAnchor = HAnchor.Fit,
-							Margin = new BorderDouble(bottom: 3)
+							Margin = new BorderDouble(bottom: 3),
+							Padding = new BorderDouble(15, 4)
 						},
-						theme));
+						theme,
+						expandingContent: false).ApplyBoxStyle(new BorderDouble(top: 10)));
 
 				gcodeResultsPanel.AddChild(
-					new SectionWidget(
+					speedsWidget = new SectionWidget(
 						"Speeds".Localize(),
 						new SpeedsLegend(sceneContext.LoadedGCode, theme, pointSize: theme.FontSize12)
 						{
 							HAnchor = HAnchor.Stretch,
 							Visible = sceneContext.RendererOptions.RenderSpeeds,
+							Padding = new BorderDouble(15, 4)
 						},
-						theme));
+						theme,
+						expandingContent: false).ApplyBoxStyle(new BorderDouble(top: 10)));
+
+				speedsWidget.Visible = printer.Bed.RendererOptions.RenderSpeeds;
 			}
 
 			this.Invalidate();
 		}
 
+		private void RendererOptions_GCodeOptionsChanged(object sender, EventArgs e)
+		{
+			if (speedsWidget != null)
+			{
+				speedsWidget.Visible = printer.Bed.RendererOptions.RenderSpeeds;
+			}
+		}
+
 		public override void OnClosed(ClosedEventArgs e)
 		{
+			printer.Bed.RendererOptions.GCodeOptionsChanged -= RendererOptions_GCodeOptionsChanged;
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
 		}

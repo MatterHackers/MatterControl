@@ -400,10 +400,16 @@ namespace MatterHackers.MatterControl
 			{
 				renderType |= RenderType.Retractions;
 			}
+
 			if (options.RenderSpeeds)
 			{
 				renderType |= RenderType.SpeedColors;
 			}
+			else if (options.GCodeLineColorStyle != "Materials")
+			{
+				renderType |= RenderType.GrayColors;
+			}
+
 			if (options.SimulateExtrusion)
 			{
 				renderType |= RenderType.SimulateExtrusion;
@@ -880,6 +886,8 @@ namespace MatterHackers.MatterControl
 	{
 		public bool IsDirty { get; internal set; }
 
+		public event EventHandler GCodeOptionsChanged;
+
 		public bool RenderBed
 		{
 			get
@@ -921,11 +929,11 @@ namespace MatterHackers.MatterControl
 
 		public bool RenderSpeeds
 		{
-			get { return (UserSettings.Instance.get("GcodeViewerRenderSpeeds") == "True"); }
+			get => this.GCodeLineColorStyle == "Speeds";
 			set
 			{
-				UserSettings.Instance.set("GcodeViewerRenderSpeeds", value.ToString());
-				this.IsDirty = true;
+				this.GCodeLineColorStyle = "Speeds";
+				GCodeOptionsChanged?.Invoke(this, null);
 			}
 		}
 
@@ -935,6 +943,17 @@ namespace MatterHackers.MatterControl
 			set
 			{
 				UserSettings.Instance.set("GcodeModelView", value);
+				this.IsDirty = true;
+			}
+		}
+
+		public string GCodeLineColorStyle
+		{
+			get { return UserSettings.Instance.get("GCodeLineColorStyle"); }
+			set
+			{
+				UserSettings.Instance.set("GCodeLineColorStyle", value);
+				GCodeOptionsChanged?.Invoke(this, null);
 				this.IsDirty = true;
 			}
 		}

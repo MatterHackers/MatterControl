@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using MatterHackers.Agg;
@@ -40,9 +41,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class PrintPopupMenu : PopupMenuButton
 	{
-		private TextImageButtonFactory buttonFactory = ApplicationController.Instance.Theme.ButtonFactory;
 		private PrinterConfig printer;
 		private PrinterTabPage printerTabPage;
+		private EventHandler unregisterEvents;
+		private Dictionary<string, UIField> allUiFields = new Dictionary<string, UIField>();
+		private SettingsContext settingsContext;
 
 		public PrintPopupMenu(PrinterConfig printer, ThemeConfig theme, PrinterTabPage printerTabPage)
 		{
@@ -55,9 +58,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.Name = "PrintPopupMenu";
 			this.HAnchor = HAnchor.Fit;
 			this.VAnchor = VAnchor.Fit;
+
+			settingsContext = new SettingsContext(printer, null, NamedSettingsLayers.All);
+
 			this.DynamicPopupContent = () =>
 			{
 				int tabIndex = 0;
+
+				allUiFields.Clear();
 
 				var column = new FlowLayoutWidget(FlowDirection.TopToBottom)
 				{
@@ -80,14 +88,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 				column.AddChild(optionsPanel);
 
-				var settingsContext = new SettingsContext(printer, null, NamedSettingsLayers.All);
-
 				var lightGray = new Color("#aaa");
 
 				foreach (var key in new[] { "layer_height", "fill_density", "support_material", "create_raft"})
 				{
 					var settingsData = SettingsOrganizer.Instance.GetSettingsData(key);
-					var row = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, Color.Black, theme, ref tabIndex);
+					var row = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, Color.Black, theme, ref tabIndex, allUiFields);
 
 
 					foreach (var widget in row.Descendants<MHNumberEdit>())
@@ -122,7 +128,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				foreach (var key in new[] { "spiral_vase", "layer_to_pause" })
 				{
 					var settingsData = SettingsOrganizer.Instance.GetSettingsData(key);
-					var row = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, Color.Black, theme, ref tabIndex);
+					var row = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, Color.Black, theme, ref tabIndex, allUiFields);
 
 					foreach (var widget in row.Descendants<MHNumberEdit>())
 					{
@@ -174,6 +180,32 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Selectable = false,
 				Padding = theme.ButtonFactory.Options.Margin.Clone(right: 5)
 			});
+
+			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
+			{
+				if (e is StringEventArgs stringEvent)
+				{
+					string settingsKey = stringEvent.Data;
+					if (allUiFields.TryGetValue(settingsKey, out UIField uifield))
+					{
+						string currentValue = settingsContext.GetValue(settingsKey);
+						if (uifield.Value != currentValue
+							|| settingsKey == "com_port")
+						{
+							uifield.SetValue(
+								currentValue,
+								userInitiated: false);
+						}
+					}
+				}
+			},
+			ref unregisterEvents);
+		}
+
+		public override void OnClosed(ClosedEventArgs e)
+		{
+			unregisterEvents?.Invoke(this, null);
+			base.OnClosed(e);
 		}
 
 		private class IgnoredFlowLayout : FlowLayoutWidget, IIgnoredPopupChild

@@ -48,6 +48,7 @@ namespace MatterHackers.GCodeVisualizer
 		SimulateExtrusion = 16,
 		HideExtruderOffsets = 32,
 		TransparentExtrusion = 64,
+		GrayColors = 128
 	};
 
 	public class GCodeRenderer : IDisposable

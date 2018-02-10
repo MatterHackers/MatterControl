@@ -165,7 +165,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				await bed.LoadContent(
 					new EditContext()
 					{
-						ContentStore = new BranchEditContainer((libraryItem, object3D) =>
+						ContentStore = new DynamicContentStore((libraryItem, object3D) =>
 						{
 							var replacement = object3D.Clone();
 
