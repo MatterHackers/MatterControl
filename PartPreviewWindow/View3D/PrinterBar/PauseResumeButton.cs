@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.AddChild(finishSetupButton);
 
 			// add the start print button
-			startPrintButton = new PrintPopupMenu(printer, theme, printerTabPage);
+			startPrintButton = new PrintPopupMenu(printer, theme);
 			startPrintButton.Margin = theme.ButtonSpacing;
 			this.AddChild(startPrintButton);
 

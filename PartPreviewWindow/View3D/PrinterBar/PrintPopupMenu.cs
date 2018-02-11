@@ -42,14 +42,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public class PrintPopupMenu : PopupMenuButton
 	{
 		private PrinterConfig printer;
-		private PrinterTabPage printerTabPage;
 		private EventHandler unregisterEvents;
 		private Dictionary<string, UIField> allUiFields = new Dictionary<string, UIField>();
 		private SettingsContext settingsContext;
 
-		public PrintPopupMenu(PrinterConfig printer, ThemeConfig theme, PrinterTabPage printerTabPage)
+		public PrintPopupMenu(PrinterConfig printer, ThemeConfig theme)
 		{
-			this.printerTabPage = printerTabPage;
 			this.printer = printer;
 			this.DrawArrow = true;
 			this.BackgroundColor = theme.ToolbarButtonBackground;
