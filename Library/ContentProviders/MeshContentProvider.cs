@@ -46,12 +46,11 @@ namespace MatterHackers.MatterControl
 	/// </summary>
 	public class MeshContentProvider : ISceneContentProvider
 	{
-		private const int tooBigAndroid = 50000000;
-		private const int tooBigDesktop = 250000000;
-
 		private static readonly bool Is32Bit = IntPtr.Size == 4;
-		private static readonly int MaxFileSize = (AggContext.OperatingSystem == OSType.Android) ? tooBigAndroid : tooBigDesktop;
 		private static readonly Point2D BigRenderSize = new Point2D(460, 460);
+
+		// TODO: Trying out an 8 MB mesh max for thumbnail generation
+		private long MaxFileSizeForTracing = 8 * 1000 * 1000;
 
 		public Task<IObject3D> CreateItem(ILibraryItem item, Action<double, string> progressReporter)
 		{
@@ -94,8 +93,6 @@ namespace MatterHackers.MatterControl
 			});
 		}
 
-		// TODO: Trying out an 8 MB mesh max for thumbnail generation
-		long MaxFileSizeForTracing = 8 * 1000 * 1000;
 
 		public async Task GetThumbnail(ILibraryItem item, int width, int height, Action<ImageBuffer> imageCallback)
 		{
@@ -157,16 +154,5 @@ namespace MatterHackers.MatterControl
 		}
 
 		public ImageBuffer DefaultImage => AggContext.StaticData.LoadIcon("mesh.png");
-
-		private static bool MeshIsTooBigToLoad(string fileLocation)
-		{
-			if (Is32Bit && File.Exists(fileLocation))
-			{
-				// Mesh is too big if the estimated size is greater than Max
-				return MeshFileIo.GetEstimatedMemoryUse(fileLocation) > MaxFileSize;
-			}
-
-			return false;
-		}
 	}
 }
