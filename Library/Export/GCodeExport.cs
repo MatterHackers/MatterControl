@@ -127,7 +127,7 @@ namespace MatterHackers.MatterControl.Library.Export
 				// Conceptually we need to:
 				//  - Check to see if the libraryContent is the bed plate, load into a scene if not or reference loaded scene
 				//  - If bedplate, save any pending changes before starting the print
-				await ApplicationController.Instance.Tasks.Execute(ApplicationController.Instance.ActiveView3DWidget.SaveChanges);
+				await ApplicationController.Instance.Tasks.Execute(printer.Bed.SaveChanges);
 
 				// Create a context to hold a temporary scene used during slicing to complete the export
 				var context = new EditContext()

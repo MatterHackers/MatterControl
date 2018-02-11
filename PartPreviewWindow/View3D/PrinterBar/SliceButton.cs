@@ -109,7 +109,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							printer.ViewState.ViewMode = PartViewMode.Layers3D;
 						}
 
-						await ApplicationController.Instance.Tasks.Execute(printerTabPage.view3DWidget.SaveChanges);
+						await ApplicationController.Instance.Tasks.Execute(printer.Bed.SaveChanges);
 
 						await ApplicationController.Instance.SliceItemLoadOutput(
 							printer,

@@ -160,7 +160,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					UiThread.RunOnIdle(async () =>
 					{
 						// Save any pending changes before starting print operation
-						await ApplicationController.Instance.Tasks.Execute(printerTabPage.view3DWidget.SaveChanges);
+						await ApplicationController.Instance.Tasks.Execute(printer.Bed.SaveChanges);
 
 						await ApplicationController.Instance.PrintPart(
 							printer.Bed.EditContext,

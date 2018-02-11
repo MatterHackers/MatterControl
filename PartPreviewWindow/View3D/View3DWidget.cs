@@ -353,7 +353,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					case Keys.S:
 						if (keyEvent.Control)
 						{
-							ApplicationController.Instance.Tasks.Execute(this.SaveChanges);
+							ApplicationController.Instance.Tasks.Execute(printer.Bed.SaveChanges);
 
 							keyEvent.Handled = true;
 							keyEvent.SuppressKeyPress = true;
@@ -1299,25 +1299,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private SelectedObjectPanel selectedObjectPanel;
 
 		internal GuiWidget selectedObjectContainer;
-
-		public Task SaveChanges(IProgress<ProgressStatus> progress, CancellationToken cancellationToken)
-		{
-			var progressStatus = new ProgressStatus()
-			{
-				Status = "Saving Changes"
-			};
-
-			progress.Report(progressStatus);
-
-			sceneContext.Save((progress0to1, status) =>
-			{
-				progressStatus.Status = status;
-				progressStatus.Progress0To1 = progress0to1;
-				progress.Report(progressStatus);
-			});
-
-			return Task.CompletedTask;
-		}
 
 		internal void OpenSaveAsWindow()
 		{

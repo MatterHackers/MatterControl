@@ -280,7 +280,6 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-
 		public InteractiveScene Scene { get; } = new InteractiveScene();
 
 		public GCodeRenderInfo RenderInfo { get; set; }
@@ -491,6 +490,26 @@ namespace MatterHackers.MatterControl
 		{
 			// Invalidate bed mesh cache
 			_bedMesh = null;
+		}
+
+		// Sort through why there's two save implementations and consolidate into one
+		public Task SaveChanges(IProgress<ProgressStatus> progress, CancellationToken cancellationToken)
+		{
+			var progressStatus = new ProgressStatus()
+			{
+				Status = "Saving Changes"
+			};
+
+			progress.Report(progressStatus);
+
+			this.Save((progress0to1, status) =>
+			{
+				progressStatus.Status = status;
+				progressStatus.Progress0To1 = progress0to1;
+				progress.Report(progressStatus);
+			});
+
+			return Task.CompletedTask;
 		}
 
 		internal void Save(Action<double, string> progress = null)

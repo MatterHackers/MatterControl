@@ -539,7 +539,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Shortcut = "Ctrl+S",
 					Action = async () =>
 					{
-						await ApplicationController.Instance.Tasks.Execute(view3DWidget.SaveChanges);
+						await ApplicationController.Instance.Tasks.Execute(sceneContext.SaveChanges);
 					},
 					IsEnabled = () => sceneContext.EditableScene
 				},
