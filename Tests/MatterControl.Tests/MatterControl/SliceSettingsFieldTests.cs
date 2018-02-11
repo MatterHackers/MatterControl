@@ -93,6 +93,11 @@ namespace MatterControl.Tests.MatterControl
 		}
 
 		[Test]
+		public async Task Vector3FieldTest()
+		{
+		}
+
+		[Test]
 		public async Task DoubleFieldTest()
 		{
 			await ValidateAgainstValueMap<DoubleField>(
