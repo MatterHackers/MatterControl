@@ -1272,28 +1272,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			selectedObjectPanel.SetActiveItem(selectedItem);
 		}
 
-
-		private void DrawStuffForSelectedPart(Graphics2D graphics2D)
-		{
-			if (scene.HasSelection)
-			{
-				AxisAlignedBoundingBox selectedBounds = scene.SelectedItem.GetAxisAlignedBoundingBox(scene.SelectedItem.Matrix);
-				Vector3 boundsCenter = selectedBounds.Center;
-				Vector3 centerTop = new Vector3(boundsCenter.X, boundsCenter.Y, selectedBounds.maxXYZ.Z);
-
-				Vector2 centerTopScreenPosition = this.World.GetScreenPosition(centerTop);
-				centerTopScreenPosition = meshViewerWidget.TransformToParentSpace(this, centerTopScreenPosition);
-				//graphics2D.Circle(screenPosition.x, screenPosition.y, 5, Color.Cyan);
-
-				VertexStorage zArrow = new VertexStorage();
-				zArrow.MoveTo(-6, -2);
-				zArrow.curve3(0, -4);
-				zArrow.LineTo(6, -2);
-				zArrow.LineTo(0, 12);
-				zArrow.LineTo(-6, -2);
-			}
-		}
-
 		public static Regex fileNameNumberMatch = new Regex("\\(\\d+\\)", RegexOptions.Compiled);
 
 		private SelectedObjectPanel selectedObjectPanel;
