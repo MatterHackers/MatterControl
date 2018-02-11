@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl.Library.Export
 		public string ExtensionFilter => "Save as ZIP|*.zip";
 
 		public ImageBuffer Icon { get; } = AggContext.StaticData.LoadIcon(Path.Combine("filetypes", "zip.png"));
-		
+
 		public bool EnabledForCurrentPart(ILibraryContentStream libraryContent)
 		{
 			return !libraryContent.IsProtected;

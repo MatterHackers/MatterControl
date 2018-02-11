@@ -146,7 +146,7 @@ namespace MatterHackers.MatterControl.Library
 
 							break;
 
-						case ILibraryReadOnlyStream streamItem:
+						case ILibraryContentStream streamItem:
 
 							var fileName = (streamItem as ILibraryContentStream)?.FileName; 
 

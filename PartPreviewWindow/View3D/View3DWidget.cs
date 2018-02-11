@@ -1449,7 +1449,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return null;
 		}
 
-		private class ReadOnlyStreamItem : ILibraryReadOnlyStream
+		public class ReadOnlyStreamItem : ILibraryContentStream
 		{
 			private Func<Task<StreamAndLength>> streamSource;
 
@@ -1464,9 +1464,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			public string Name { get; set; }
 
+			public string FileName { get; set; }
+
 			public bool IsProtected { get; set; }
 
 			public bool IsVisible { get; set; }
+
+			public long FileSize => 0;
+
+			public string AssetPath => "";
+
+			public bool LocalContentExists => true;
 
 			public Task<StreamAndLength> GetContentStream(Action<double, string> progress)
 			{
