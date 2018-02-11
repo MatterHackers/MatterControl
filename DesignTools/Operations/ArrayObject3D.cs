@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using MatterHackers.DataConverters3D;
@@ -37,6 +38,8 @@ using Newtonsoft.Json.Converters;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
+	using Aabb = AxisAlignedBoundingBox;
+
 	public class DirectionAxis
 	{
 		public Vector3 Origin { get; set; }
@@ -46,6 +49,108 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 	public class DirectionVector
 	{
 		public Vector3 Normal { get; set; }
+	}
+
+	public class ArangeObject3D : Object3D, IRebuildable
+	{
+		[JsonIgnoreAttribute]
+		Aabb startingBounds = Aabb.Empty;
+		[JsonIgnoreAttribute]
+		List<Aabb> childrenBounds = new List<Aabb>();
+
+		public enum AlignTo { First, Last, All_Bounds }
+		public enum Align { None, Min, Center, Max, Flow }
+
+		public Align AlignmentX { get; set; } = Align.None;
+		public AlignTo AlignToX { get; set; } = AlignTo.First;
+		public double OffsetX { get; set; } = 0;
+
+		public Align AlignmentY { get; set; } = Align.None;
+		public AlignTo AlignToY { get; set; } = AlignTo.First;
+		public double OffsetY { get; set; } = 0;
+
+		public Align AlignmentZ { get; set; } = Align.None;
+		public AlignTo AlignToZ { get; set; } = AlignTo.First;
+		public double OffsetZ { get; set; } = 0;
+
+		public override string ActiveEditor => "PublicPropertyEditor";
+
+		public ArangeObject3D()
+		{
+		}
+
+		public void Rebuild()
+		{
+			var aabb = this.GetAxisAlignedBoundingBox();
+
+			if (startingBounds == Aabb.Empty)
+			{
+				startingBounds = aabb;
+				this.Children.Modify(list =>
+				{
+					foreach (var child in list)
+					{
+						childrenBounds.Add(child.GetAxisAlignedBoundingBox());
+					}
+				});
+			}
+
+			this.Children.Modify(list =>
+			{
+				int i = 0;
+				foreach (var child in list)
+				{
+					var originalBounds = childrenBounds[i++];
+					AlignAxis(0, AlignmentX, GetCorrectAabb(AlignToX), OffsetX, child, originalBounds);
+					AlignAxis(1, AlignmentY, GetCorrectAabb(AlignToY), OffsetY, child, originalBounds);
+					AlignAxis(2, AlignmentZ, GetCorrectAabb(AlignToZ), OffsetZ, child, originalBounds);
+				}
+			});
+		}
+
+		private Aabb GetCorrectAabb(AlignTo alignTo)
+		{
+			switch (alignTo)
+			{
+				case AlignTo.First:
+					return childrenBounds.First();
+				case AlignTo.Last:
+					return childrenBounds.Last();
+				default:
+					return startingBounds;
+			}
+		}
+
+		private void AlignAxis(int axis, Align align, Aabb bounds, double offset, 
+			IObject3D item, Aabb originalBounds)
+		{
+			var aabb = item.GetAxisAlignedBoundingBox();
+			var translate = Vector3.Zero;
+
+			switch (align)
+			{
+				case Align.None:
+					translate[axis] = originalBounds.minXYZ[axis] - aabb.minXYZ[axis];
+					break;
+
+				case Align.Min:
+					translate[axis] = bounds.minXYZ[axis] - aabb.minXYZ[axis] + offset;
+					break;
+
+				case Align.Center:
+					translate[axis] = bounds.Center[axis] - aabb.Center[axis] + offset;
+					break;
+
+				case Align.Max:
+					translate[axis] = bounds.maxXYZ[axis] - aabb.maxXYZ[axis] + offset;
+					break;
+
+				case Align.Flow:
+					break;
+			}
+
+			item.Translate(translate);
+		}
 	}
 
 	public class ArrayLinearObject3D : Object3D, IRebuildable
@@ -68,7 +173,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				list.Clear();
 				list.Add(lastChild);
 				var offset = Vector3.Zero;
-				for (int i=1; i<Count; i++)
+				for (int i = 1; i < Count; i++)
 				{
 					var next = lastChild.Clone();
 					next.Matrix *= Matrix4X4.CreateTranslation(Direction.Normal.GetNormal() * Distance);

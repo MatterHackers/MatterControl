@@ -68,29 +68,23 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		{
 			if (scene.HasSelection)
 			{
-				IObject3D item;
-
 				List<IObject3D> itemsToReplace;
 
 				if (scene.SelectedItem is SelectionGroup)
 				{
-					Object3D container = new Object3D();
 					itemsToReplace = scene.SelectedItem.Children.ToList();
 					foreach (var child in itemsToReplace)
 					{
-						container.Children.Add(child.Clone());
+						newParent.Children.Add(child.Clone());
 					}
-					item = container;
 				}
 				else
 				{
 					itemsToReplace = new List<IObject3D> { scene.SelectedItem };
-					item = scene.SelectedItem.Clone();
+					newParent.Children.Add(scene.SelectedItem.Clone());
 				}
 
 				scene.SelectedItem = null;
-
-				newParent.Children.Add(item);
 
 				newParent.MakeNameNonColliding();
 
@@ -98,15 +92,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					new ReplaceCommand(
 						itemsToReplace,
 						new List<IObject3D> { newParent }));
-
-				if (newParent is HoldChildProportional pe)
-				{
-					item.Matrix = Matrix4X4.Identity;
-
-					// Make the object have an identity matrix and keep its position in our new object
-					newParent.Matrix = item.Matrix;
-					pe.InitialChildBounds = item.GetAxisAlignedBoundingBox();
-				}
 
 				scene.SelectedItem = newParent;
 			}

@@ -432,21 +432,26 @@ namespace MatterHackers.MatterControl
 			new SceneSelectionSeparator(),
 			new SceneSelectionOperation()
 			{
+				TitleResolver = () => "Align".Localize(),
+				Action = (scene) =>
+				{
+					scene.AddSelectionAsChildren(new ArangeObject3D());
+					if(scene.SelectedItem is ArangeObject3D arange)
+					{
+						arange.Rebuild();
+					}
+				},
+				//Icon = AggContext.StaticData.LoadIcon("array_linear.png").SetPreMultiply(),
+				IsEnabled = (scene) => scene.SelectedItem is SelectionGroup,
+			},
+			new SceneSelectionSeparator(),
+			new SceneSelectionOperation()
+			{
 				TitleResolver = () => "Package".Localize(),
 				Action = (scene) =>
 				{
 					scene.WrapSelection(new Package());
 				},
-				IsEnabled = (scene) => scene.HasSelection,
-			},
-			new SceneSelectionOperation()
-			{
-				TitleResolver = () => "Proportional Scale".Localize(),
-				Action = (scene) =>
-				{
-					scene.AddSelectionAsChildren(new HoldChildProportional());
-				},
-				//Icon = AggContext.StaticData.LoadIcon("subtract.png").SetPreMultiply(),
 				IsEnabled = (scene) => scene.HasSelection,
 			},
 			new SceneSelectionOperation()
