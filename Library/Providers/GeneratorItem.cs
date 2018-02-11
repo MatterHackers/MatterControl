@@ -71,6 +71,11 @@ namespace MatterHackers.MatterControl.Library
 	{
 		private Func<string> nameResolver;
 
+		/// <summary>
+		/// The delegate responsible for producing the item
+		/// </summary>
+		private Func<IObject3D> collector;
+
 		public GeneratorItem(Func<string> nameResolver)
 		{
 			this.nameResolver = nameResolver;
@@ -80,7 +85,7 @@ namespace MatterHackers.MatterControl.Library
 		public GeneratorItem(Func<string> nameResolver, Func<IObject3D> collector, string category = null)
 		{
 			this.nameResolver = nameResolver;
-			this.Collector = collector;
+			this.collector = collector;
 			this.Category = category;
 			//this.Color = ColorRange.NextColor();
 		}
@@ -95,16 +100,11 @@ namespace MatterHackers.MatterControl.Library
 		public bool IsProtected { get; set; }
 		public bool IsVisible => true;
 
-		/// <summary>
-		/// The delegate responsible for producing the item
-		/// </summary>
-		public Func<IObject3D> Collector { get; }
-
 		public Color Color { get; set; }
 
 		public Task<IObject3D> GetContent(Action<double, string> reportProgress)
 		{
-			var result = Collector?.Invoke();
+			var result = collector?.Invoke();
 
 			// If the content has not set a color, we'll assign from the running ColorRange
 			if (result.Color == Color.Transparent)
