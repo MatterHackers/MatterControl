@@ -251,7 +251,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 					foreach (var matrixAndFile in stlFileLocations)
 					{
-						var matrixSting = "";
+						var matrixString = "";
 						bool first = true;
 						for (int i = 0; i < 4; i++)
 						{
@@ -259,14 +259,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							{
 								if(!first)
 								{
-									matrixSting += ",";
+									matrixString += ",";
 								}
-								matrixSting += matrixAndFile.matrix[i, j].ToString("0.######");
+								matrixString += matrixAndFile.matrix[i, j].ToString("0.######");
 								first = false;
 							}
 						}
 
-						commandArgs += $" -m \"{matrixSting}\"";
+						commandArgs += $" -m \"{matrixString}\"";
 						commandArgs += $" \"{matrixAndFile.fileName}\" ";
 					}
 
