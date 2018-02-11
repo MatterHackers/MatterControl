@@ -385,7 +385,6 @@ namespace MatterHackers.MatterControl
 				Icon = AggContext.StaticData.LoadIcon("subtract_and_replace.png").SetPreMultiply(),
 				IsEnabled = (scene) => scene.SelectedItem is SelectionGroup,
 			},
-#if DEBUG // keep this work in progress to the editor for now
 			new SceneSelectionSeparator(),
 			new SceneSelectionOperation()
 			{
@@ -398,7 +397,7 @@ namespace MatterHackers.MatterControl
 						array.Rebuild();
 					}
 				},
-				Icon = AggContext.StaticData.LoadIcon("array.png").SetPreMultiply(),
+				Icon = AggContext.StaticData.LoadIcon("array_linear.png").SetPreMultiply(),
 				IsEnabled = (scene) => scene.HasSelection && !(scene.SelectedItem is SelectionGroup),
 			},
 			new SceneSelectionOperation()
@@ -412,10 +411,9 @@ namespace MatterHackers.MatterControl
 						array.Rebuild();
 					}
 				},
-				Icon = AggContext.StaticData.LoadIcon("array.png").SetPreMultiply(),
+				Icon = AggContext.StaticData.LoadIcon("array_radial.png").SetPreMultiply(),
 				IsEnabled = (scene) => scene.HasSelection && !(scene.SelectedItem is SelectionGroup),
 			},
-			new SceneSelectionSeparator(),
 			new SceneSelectionOperation()
 			{
 				TitleResolver = () => "Advanced Array".Localize(),
@@ -427,9 +425,10 @@ namespace MatterHackers.MatterControl
 						array.Rebuild();
 					}
 				},
-				Icon = AggContext.StaticData.LoadIcon("array.png").SetPreMultiply(),
+				Icon = AggContext.StaticData.LoadIcon("array_advanced.png").SetPreMultiply(),
 				IsEnabled = (scene) => scene.HasSelection && !(scene.SelectedItem is SelectionGroup),
 			},
+#if DEBUG // keep this work in progress to the editor for now
 			new SceneSelectionSeparator(),
 			new SceneSelectionOperation()
 			{

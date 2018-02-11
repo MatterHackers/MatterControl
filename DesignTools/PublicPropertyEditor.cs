@@ -89,12 +89,13 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public IEnumerable<Type> SupportedTypes() => new Type[] { typeof(IRebuildable) };
 
-		private static FlowLayoutWidget CreateSettingsRow(string labelText)
+		private static FlowLayoutWidget CreateSettingsRow(string labelText, string toolTipText = null)
 		{
 			var rowContainer = new FlowLayoutWidget(FlowDirection.LeftToRight)
 			{
 				HAnchor = HAnchor.Stretch,
-				Padding = new BorderDouble(5)
+				Padding = new BorderDouble(5),
+				ToolTipText = toolTipText
 			};
 
 			var label = new TextWidget(labelText + ":", pointSize: 11, textColor: ActiveTheme.Instance.PrimaryTextColor)
@@ -115,7 +116,13 @@ namespace MatterHackers.MatterControl.DesignTools
 			return nameAttribute?.DisplayName ?? prop.Name;
 		}
 
-		private void ModifyObject(View3DWidget view3DWidget, FlowLayoutWidget tabContainer, ThemeConfig theme)
+		private string GetDescription(PropertyInfo prop)
+		{
+			var nameAttribute = prop.GetCustomAttributes(true).OfType<DescriptionAttribute>().FirstOrDefault();
+			return nameAttribute?.Description ?? null;
+		}
+
+		private void ModifyObject(View3DWidget view3DWidget, FlowLayoutWidget editControlsContainer, ThemeConfig theme)
 		{
 			var rebuildable = item as IRebuildable;
 
@@ -127,6 +134,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					Value = p.GetGetMethod().Invoke(this.item, null),
 					DisplayName = GetDisplayName(p),
+					Description = GetDescription(p),
 					PropertyType = p.PropertyType,
 					PropertyInfo = p
 				});
@@ -148,7 +156,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					};
 
 					rowContainer.AddChild(field.Content);
-					tabContainer.AddChild(rowContainer);
+					editControlsContainer.AddChild(rowContainer);
 				}
 				else if (property.Value is Vector2 vector2)
 				{
@@ -164,7 +172,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					};
 
 					rowContainer.AddChild(field.Content);
-					tabContainer.AddChild(rowContainer);
+					editControlsContainer.AddChild(rowContainer);
 				}
 				else if (property.Value is Vector3 vector3)
 				{
@@ -180,23 +188,63 @@ namespace MatterHackers.MatterControl.DesignTools
 					};
 
 					rowContainer.AddChild(field.Content);
-					tabContainer.AddChild(rowContainer);
+					editControlsContainer.AddChild(rowContainer);
 				}
 				else if (property.Value is DirectionVector directionVector)
 				{
-					FlowLayoutWidget rowContainer = CreateSettingsRow(property.DisplayName.Localize());
-
-					var field = new Vector3Field();
-					field.Initialize(0);
-					field.Vector3 = directionVector.Normal;
-					field.ValueChanged += (s, e) =>
+					bool simpleEdit = true;
+					if (simpleEdit)
 					{
-						property.PropertyInfo.GetSetMethod().Invoke(this.item, new Object[] { new DirectionVector() { Normal = field.Vector3 } });
-						rebuildable?.Rebuild();
-					};
+						FlowLayoutWidget rowContainer = CreateSettingsRow(property.DisplayName.Localize());
 
-					rowContainer.AddChild(field.Content);
-					tabContainer.AddChild(rowContainer);
+						var dropDownList = new DropDownList("Name".Localize(), theme.Colors.PrimaryTextColor, Direction.Down, pointSize: theme.DefaultFontSize);
+
+						var orderedItems = new string[] { "Right", "Back", "Up" };
+
+						foreach (var orderItem in orderedItems)
+						{
+							MenuItem newItem = dropDownList.AddItem(orderItem);
+
+							var localOredrItem = orderItem;
+							newItem.Selected += (sender, e) =>
+							{
+								switch(dropDownList.SelectedValue)
+								{
+									case "Right":
+										property.PropertyInfo.GetSetMethod().Invoke(this.item, new Object[] { new DirectionVector() { Normal = Vector3.UnitX } });
+										break;
+									case "Back":
+										property.PropertyInfo.GetSetMethod().Invoke(this.item, new Object[] { new DirectionVector() { Normal = Vector3.UnitY } });
+										break;
+									case "Up":
+										property.PropertyInfo.GetSetMethod().Invoke(this.item, new Object[] { new DirectionVector() { Normal = Vector3.UnitZ } });
+										break;
+								}
+
+								rebuildable?.Rebuild();
+							};
+						}
+
+						dropDownList.SelectedLabel = "Right";
+						rowContainer.AddChild(dropDownList);
+						editControlsContainer.AddChild(rowContainer);
+					}
+					else // edit the vector
+					{
+						FlowLayoutWidget rowContainer = CreateSettingsRow(property.DisplayName.Localize());
+
+						var field = new Vector3Field();
+						field.Initialize(0);
+						field.Vector3 = directionVector.Normal;
+						field.ValueChanged += (s, e) =>
+						{
+							property.PropertyInfo.GetSetMethod().Invoke(this.item, new Object[] { new DirectionVector() { Normal = field.Vector3 } });
+							rebuildable?.Rebuild();
+						};
+
+						rowContainer.AddChild(field.Content);
+						editControlsContainer.AddChild(rowContainer);
+					}
 				}
 				else if (property.Value is DirectionAxis directionAxis)
 				{
@@ -218,7 +266,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					};
 
 					originRowContainer.AddChild(originField.Content);
-					tabContainer.AddChild(originRowContainer);
+					editControlsContainer.AddChild(originRowContainer);
 
 					// add in the direction
 					FlowLayoutWidget directionRowContainer = CreateSettingsRow(property.DisplayName.Localize());
@@ -230,7 +278,18 @@ namespace MatterHackers.MatterControl.DesignTools
 					};
 
 					directionRowContainer.AddChild(normalField.Content);
-					tabContainer.AddChild(directionRowContainer);
+					editControlsContainer.AddChild(directionRowContainer);
+
+					// update tihs when changed
+					EventHandler updateData = (object s, EventArgs e) =>
+					{
+						originField.Vector3 = ((DirectionAxis)property.PropertyInfo.GetGetMethod().Invoke(this.item, null)).Origin;
+					};
+					item.Invalidated += updateData;
+					editControlsContainer.Closed += (s, e) =>
+					{
+						item.Invalidated -= updateData;
+					};
 				}
 				// create a int editor
 				else if (property.Value is int intValue)
@@ -247,12 +306,12 @@ namespace MatterHackers.MatterControl.DesignTools
 					};
 
 					rowContainer.AddChild(field.Content);
-					tabContainer.AddChild(rowContainer);
+					editControlsContainer.AddChild(rowContainer);
 				}
 				// create a bool editor
 				else if (property.Value is bool boolValue)
 				{
-					FlowLayoutWidget rowContainer = CreateSettingsRow(property.DisplayName.Localize());
+					FlowLayoutWidget rowContainer = CreateSettingsRow(property.DisplayName.Localize(), property.Description.Localize());
 
 					var field = new ToggleboxField(ApplicationController.Instance.Theme.Colors.PrimaryTextColor);
 					field.Initialize(0);
@@ -264,7 +323,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					};
 
 					rowContainer.AddChild(field.Content);
-					tabContainer.AddChild(rowContainer);
+					editControlsContainer.AddChild(rowContainer);
 				}
 				// create a string editor
 				else if (property.Value is string stringValue)
@@ -281,7 +340,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						rebuildable?.Rebuild();
 					};
 					rowContainer.AddChild(textEditWidget);
-					tabContainer.AddChild(rowContainer);
+					editControlsContainer.AddChild(rowContainer);
 				}
 				// create a enum editor
 				else if (property.PropertyType.IsEnum)
@@ -319,7 +378,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 					dropDownList.SelectedLabel = property.Value.ToString().Replace('_', ' ');
 					rowContainer.AddChild(dropDownList);
-					tabContainer.AddChild(rowContainer);
+					editControlsContainer.AddChild(rowContainer);
 				}
 			}
 
@@ -330,7 +389,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				rebuildable?.Rebuild();
 			};
-			tabContainer.AddChild(updateButton);
+			editControlsContainer.AddChild(updateButton);
 		}
 	}
 }

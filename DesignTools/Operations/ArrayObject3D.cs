@@ -83,7 +83,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 	{
 		public int Count { get; set; } = 3;
 
-		public DirectionAxis Axis { get; set; } = new DirectionAxis() { Origin = new Vector3(-30, 0, 0), Normal = Vector3.UnitZ };
+		public DirectionAxis Axis { get; set; } = new DirectionAxis() { Origin = Vector3.NegativeInfinity, Normal = Vector3.UnitZ };
 		public double Angle { get; set; } = 360;
 
 		[DisplayName("Keep Within Angle")]
@@ -102,31 +102,36 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public void Rebuild()
 		{
+			if(Axis.Origin.X == double.NegativeInfinity)
+			{
+				// make it something reasonable (just to the left of the aabb of the object)
+				var aabb = this.GetAxisAlignedBoundingBox();
+				Axis.Origin = new Vector3(aabb.minXYZ.X - aabb.XSize / 2, aabb.Center.Y, 0);
+			}
 			this.Children.Modify(list =>
 			{
-				IObject3D lastChild = list.First();
-				var partCenter = lastChild.GetAxisAlignedBoundingBox().Center;
+				IObject3D first = list.First();
 
 				list.Clear();
-				list.Add(lastChild);
+				list.Add(first);
 				var offset = Vector3.Zero;
 				for (int i = 1; i < Count; i++)
 				{
-					var angleRadians = MathHelper.DegreesToRadians(Angle);
-					var nextOffset = Axis.Origin;
+					var next = first.Clone();
 
-					//nextOffset Rotate(angleRadians * i);
-					var next = lastChild.Clone();
-					next.Matrix *= Matrix4X4.CreateTranslation(nextOffset.X, nextOffset.Y, 0);
+					var normal = Axis.Normal.GetNormal();
+					var angleRadians = MathHelper.DegreesToRadians(Angle) / Count * i;
+					next.Rotate(Axis.Origin, normal, angleRadians);
 
-					if (RotatePart)
+					if (!RotatePart)
 					{
-						next.ApplyAtBoundsCenter(Matrix4X4.CreateRotationZ(angleRadians));
+						next.Rotate(next.GetAxisAlignedBoundingBox().Center, normal, -angleRadians);
 					}
 
-					lastChild = next;
+					list.Add(next);
 				}
 			});
+			this.Invalidate();
 		}
 	}
 

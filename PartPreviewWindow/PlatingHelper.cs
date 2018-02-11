@@ -273,7 +273,5 @@ namespace MatterHackers.MatterControl
 
 			return true;
 		}
-
-		
 	}
 }
