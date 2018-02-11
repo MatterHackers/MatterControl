@@ -385,22 +385,66 @@ namespace MatterHackers.MatterControl
 				Icon = AggContext.StaticData.LoadIcon("subtract_and_replace.png").SetPreMultiply(),
 				IsEnabled = (scene) => scene.SelectedItem is SelectionGroup,
 			},
-#if DEBUG // keep this work in progress to the editor for now
 			new SceneSelectionSeparator(),
 			new SceneSelectionOperation()
 			{
-				TitleResolver = () => "Array".Localize(),
+				TitleResolver = () => "Linear Array".Localize(),
 				Action = (scene) =>
 				{
-					scene.AddSelectionAsChildren(new ArrayObject3D());
-					if(scene.SelectedItem is ArrayObject3D array)
+					scene.AddSelectionAsChildren(new ArrayLinearObject3D());
+					if(scene.SelectedItem is ArrayLinearObject3D array)
 					{
 						array.Rebuild();
 					}
 				},
-				Icon = AggContext.StaticData.LoadIcon("array.png").SetPreMultiply(),
+				Icon = AggContext.StaticData.LoadIcon("array_linear.png").SetPreMultiply(),
 				IsEnabled = (scene) => scene.HasSelection && !(scene.SelectedItem is SelectionGroup),
 			},
+			new SceneSelectionOperation()
+			{
+				TitleResolver = () => "Radial Array".Localize(),
+				Action = (scene) =>
+				{
+					scene.AddSelectionAsChildren(new ArrayRadialObject3D());
+					if(scene.SelectedItem is ArrayRadialObject3D array)
+					{
+						array.Rebuild();
+					}
+				},
+				Icon = AggContext.StaticData.LoadIcon("array_radial.png").SetPreMultiply(),
+				IsEnabled = (scene) => scene.HasSelection && !(scene.SelectedItem is SelectionGroup),
+			},
+			new SceneSelectionOperation()
+			{
+				TitleResolver = () => "Advanced Array".Localize(),
+				Action = (scene) =>
+				{
+					scene.AddSelectionAsChildren(new ArrayAdvancedObject3D());
+					if(scene.SelectedItem is ArrayAdvancedObject3D array)
+					{
+						array.Rebuild();
+					}
+				},
+				Icon = AggContext.StaticData.LoadIcon("array_advanced.png").SetPreMultiply(),
+				IsEnabled = (scene) => scene.HasSelection && !(scene.SelectedItem is SelectionGroup),
+			},
+#if DEBUG // keep this work in progress to the editor for now
+			new SceneSelectionSeparator(),
+			new SceneSelectionOperation()
+			{
+				TitleResolver = () => "Align".Localize(),
+				Action = (scene) =>
+				{
+					scene.AddSelectionAsChildren(new ArangeObject3D());
+					if(scene.SelectedItem is ArangeObject3D arange)
+					{
+						arange.Rebuild();
+					}
+				},
+				//Icon = AggContext.StaticData.LoadIcon("array_linear.png").SetPreMultiply(),
+				IsEnabled = (scene) => scene.SelectedItem is SelectionGroup,
+			},
+			new SceneSelectionSeparator(),
 			new SceneSelectionOperation()
 			{
 				TitleResolver = () => "Package".Localize(),
@@ -408,16 +452,6 @@ namespace MatterHackers.MatterControl
 				{
 					scene.WrapSelection(new Package());
 				},
-				IsEnabled = (scene) => scene.HasSelection,
-			},
-			new SceneSelectionOperation()
-			{
-				TitleResolver = () => "Proportional Scale".Localize(),
-				Action = (scene) =>
-				{
-					scene.AddSelectionAsChildren(new HoldChildProportional());
-				},
-				//Icon = AggContext.StaticData.LoadIcon("subtract.png").SetPreMultiply(),
 				IsEnabled = (scene) => scene.HasSelection,
 			},
 			new SceneSelectionOperation()

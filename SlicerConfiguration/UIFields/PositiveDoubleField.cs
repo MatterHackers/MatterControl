@@ -42,9 +42,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		protected override string ConvertValue(string newValue)
 		{
 			base.ConvertValue(newValue);
-			doubleValue = doubleValue < 0 ? 0 : Math.Abs(doubleValue);
+			DoubleValue = DoubleValue < 0 ? 0 : Math.Abs(DoubleValue);
 
-			return doubleValue.ToString();
+			return DoubleValue.ToString();
 		}
 	}
 }

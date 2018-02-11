@@ -35,19 +35,31 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class DoubleField : NumberField
 	{
-		protected double doubleValue;
+		double _doubleValue;
+		public double DoubleValue
+		{
+			get { return _doubleValue; }
+			set
+			{
+				if (_doubleValue != value)
+				{
+					_doubleValue = value;
+					numberEdit.Value = _doubleValue;
+				}
+			}
+		}
 
 		protected override string ConvertValue(string newValue)
 		{
 			double.TryParse(newValue, out double currentValue);
-			doubleValue  = currentValue;
+			DoubleValue  = currentValue;
 
-			return doubleValue.ToString();
+			return DoubleValue.ToString();
 		}
 
 		protected override void OnValueChanged(FieldChangedEventArgs fieldChangedEventArgs)
 		{
-			numberEdit.ActuallNumberEdit.Value = doubleValue;
+			numberEdit.ActuallNumberEdit.Value = DoubleValue;
 			base.OnValueChanged(fieldChangedEventArgs);
 		}
 	}

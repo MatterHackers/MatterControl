@@ -33,25 +33,26 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class Vector2Field : UIField
+	public class Vector3Field : UIField
 	{
-		public static readonly int VectorXYEditWidth = (int)(60 * GuiWidget.DeviceScale + .5);
-
-		private MHNumberEdit yEditWidget;
+		public static readonly int VectorXYZEditWidth = (int)(60 * GuiWidget.DeviceScale + .5);
 
 		private MHNumberEdit xEditWidget;
+		private MHNumberEdit yEditWidget;
+		private MHNumberEdit zEditWidget;
 
-		public Vector2 Vector2
+		public Vector3 Vector3
 		{
 			get
 			{
-				return new Vector2(xEditWidget.Value, yEditWidget.Value);
+				return new Vector3(xEditWidget.Value, yEditWidget.Value, zEditWidget.Value);
 			}
 
 			set
 			{
 				xEditWidget.Value = value.X;
 				yEditWidget.Value = value.Y;
+				zEditWidget.Value = value.Z;
 			}
 		}
 
@@ -59,16 +60,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			var container = new FlowLayoutWidget();
 
-			string[] xyValueStrings = this.Value?.Split(',');
-			if (xyValueStrings == null 
-				|| xyValueStrings.Length != 2)
+			string[] xyzValueStrings = this.Value?.Split(',');
+			if (xyzValueStrings == null 
+				|| xyzValueStrings.Length != 3)
 			{
-				xyValueStrings = new string[] { "0", "0" };
+				xyzValueStrings = new string[] { "0", "0", "0" };
 			}
 
-			double.TryParse(xyValueStrings[0], out double currentXValue);
+			double.TryParse(xyzValueStrings[0], out double currentXValue);
 
-			xEditWidget = new MHNumberEdit(currentXValue, allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYEditWidth, tabIndex: tabIndex)
+			xEditWidget = new MHNumberEdit(currentXValue, allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYZEditWidth, tabIndex: tabIndex)
 			{
 				ToolTipText = this.HelpText,
 				TabIndex = tabIndex,
@@ -77,7 +78,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			xEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
 			{
 				this.SetValue(
-					string.Format("{0},{1}", xEditWidget.ActuallNumberEdit.Value.ToString(), yEditWidget.ActuallNumberEdit.Value.ToString()),
+					string.Format("{0},{1},{2}", 
+						xEditWidget.ActuallNumberEdit.Value.ToString(),
+						yEditWidget.ActuallNumberEdit.Value.ToString(),
+						zEditWidget.ActuallNumberEdit.Value.ToString()),
 					userInitiated: true);
 			};
 
@@ -88,9 +92,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			});
 			container.AddChild(xEditWidget);
 
-			double.TryParse(xyValueStrings[1], out double currentYValue);
+			double.TryParse(xyzValueStrings[1], out double currentYValue);
 
-			yEditWidget = new MHNumberEdit(currentYValue, allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYEditWidth, tabIndex: tabIndex)
+			yEditWidget = new MHNumberEdit(currentYValue, allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYZEditWidth, tabIndex: tabIndex)
 			{
 				ToolTipText = this.HelpText,
 				TabIndex = tabIndex + 1,
@@ -99,7 +103,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			yEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
 			{
 				this.SetValue(
-					string.Format("{0},{1}", xEditWidget.ActuallNumberEdit.Value.ToString(), yEditWidget.ActuallNumberEdit.Value.ToString()),
+					string.Format("{0},{1},{2}", 
+					xEditWidget.ActuallNumberEdit.Value.ToString(),
+					yEditWidget.ActuallNumberEdit.Value.ToString(),
+					zEditWidget.ActuallNumberEdit.Value.ToString()),
 					userInitiated: true);
 			};
 
@@ -110,28 +117,56 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			});
 			container.AddChild(yEditWidget);
 
+			double.TryParse(xyzValueStrings[2], out double currentZValue);
+
+			zEditWidget = new MHNumberEdit(currentZValue, allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYZEditWidth, tabIndex: tabIndex)
+			{
+				ToolTipText = this.HelpText,
+				TabIndex = tabIndex + 1,
+				SelectAllOnFocus = true,
+			};
+			zEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
+			{
+				this.SetValue(
+					string.Format("{0},{1},{2}", 
+					xEditWidget.ActuallNumberEdit.Value.ToString(),
+					yEditWidget.ActuallNumberEdit.Value.ToString(),
+					zEditWidget.ActuallNumberEdit.Value.ToString()),
+					userInitiated: true);
+			};
+
+			container.AddChild(new TextWidget("Z:", pointSize: 10, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			{
+				VAnchor = VAnchor.Center,
+				Margin = new BorderDouble(15, 0, 5, 0),
+			});
+			container.AddChild(zEditWidget);
+
 			this.Content = container;
 		}
 
 		protected override string ConvertValue(string newValue)
 		{
 			// Ensure we have a two value CSV or force to '0,0'
-			return (newValue?.Split(',').Length == 2) ? newValue.Trim() : "0,0";
+			return (newValue?.Split(',').Length == 3) ? newValue.Trim() : "0,0";
 		}
 
 		protected override void OnValueChanged(FieldChangedEventArgs fieldChangedEventArgs)
 		{
-			string[] xyValueStrings2 = this.Value.Split(',');
-			if (xyValueStrings2.Length != 2)
+			string[] xyzValueStrings3 = this.Value.Split(',');
+			if (xyzValueStrings3.Length != 3)
 			{
-				xyValueStrings2 = new string[] { "0", "0" };
+				xyzValueStrings3 = new string[] { "0", "0", "0" };
 			}
 
-			double.TryParse(xyValueStrings2[0], out double currentValue);
+			double.TryParse(xyzValueStrings3[0], out double currentValue);
 			xEditWidget.ActuallNumberEdit.Value = currentValue;
 
-			double.TryParse(xyValueStrings2[1], out currentValue);
+			double.TryParse(xyzValueStrings3[1], out currentValue);
 			yEditWidget.ActuallNumberEdit.Value = currentValue;
+
+			double.TryParse(xyzValueStrings3[2], out currentValue);
+			zEditWidget.ActuallNumberEdit.Value = currentValue;
 
 			base.OnValueChanged(fieldChangedEventArgs);
 		}

@@ -116,8 +116,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					var transformDatas = GetTransforms(axisIndex, alignment);
 					scene.UndoBuffer.AddAndDo(new TransformCommand(transformDatas));
 
-						//scene.SelectedItem.MaterialIndex = extruderIndexCanPassToClick;
-						scene.Invalidate();
+					//scene.SelectedItem.MaterialIndex = extruderIndexCanPassToClick;
+					scene.Invalidate();
 				}
 			};
 

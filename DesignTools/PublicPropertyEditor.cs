@@ -37,13 +37,21 @@ using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
 	public interface IRebuildable
 	{
 		void Rebuild();
+	}
+
+	[AttributeUsage(AttributeTargets.Property)]
+	public class SortableAttribute : Attribute
+	{
 	}
 
 	public class PublicPropertyEditor : IObject3DEditor
@@ -56,7 +64,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		private static Type[] allowedTypes = 
 		{
-			typeof(double), typeof(int), typeof(string), typeof(bool)
+			typeof(double), typeof(int), typeof(string), typeof(bool), typeof(DirectionVector), typeof(DirectionAxis)
 		};
 
 		public const BindingFlags OwnedPropertiesOnly = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
@@ -81,12 +89,13 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public IEnumerable<Type> SupportedTypes() => new Type[] { typeof(IRebuildable) };
 
-		private static FlowLayoutWidget CreateSettingsRow(string labelText)
+		private static FlowLayoutWidget CreateSettingsRow(string labelText, string toolTipText = null)
 		{
 			var rowContainer = new FlowLayoutWidget(FlowDirection.LeftToRight)
 			{
 				HAnchor = HAnchor.Stretch,
-				Padding = new BorderDouble(5)
+				Padding = new BorderDouble(5),
+				ToolTipText = toolTipText
 			};
 
 			var label = new TextWidget(labelText + ":", pointSize: 11, textColor: ActiveTheme.Instance.PrimaryTextColor)
@@ -107,7 +116,13 @@ namespace MatterHackers.MatterControl.DesignTools
 			return nameAttribute?.DisplayName ?? prop.Name;
 		}
 
-		private void ModifyObject(View3DWidget view3DWidget, FlowLayoutWidget tabContainer, ThemeConfig theme)
+		private string GetDescription(PropertyInfo prop)
+		{
+			var nameAttribute = prop.GetCustomAttributes(true).OfType<DescriptionAttribute>().FirstOrDefault();
+			return nameAttribute?.Description ?? null;
+		}
+
+		private void ModifyObject(View3DWidget view3DWidget, FlowLayoutWidget editControlsContainer, ThemeConfig theme)
 		{
 			var rebuildable = item as IRebuildable;
 
@@ -119,6 +134,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					Value = p.GetGetMethod().Invoke(this.item, null),
 					DisplayName = GetDisplayName(p),
+					Description = GetDescription(p),
 					PropertyType = p.PropertyType,
 					PropertyInfo = p
 				});
@@ -129,58 +145,185 @@ namespace MatterHackers.MatterControl.DesignTools
 				if (property.Value is double doubleValue)
 				{
 					FlowLayoutWidget rowContainer = CreateSettingsRow(property.DisplayName.Localize());
-					var doubleEditWidget = new MHNumberEdit(doubleValue, pixelWidth: 50 * GuiWidget.DeviceScale, allowNegatives: true, allowDecimals: true, increment: .05)
+
+					var field = new DoubleField();
+					field.Initialize(0);
+					field.DoubleValue = doubleValue;
+					field.ValueChanged += (s, e) =>
 					{
-						SelectAllOnFocus = true,
-						VAnchor = VAnchor.Center
-					};
-					doubleEditWidget.ActuallNumberEdit.EditComplete += (s, e) =>
-					{
-						double editValue;
-						if (double.TryParse(doubleEditWidget.Text, out editValue))
-						{
-							property.PropertyInfo.GetSetMethod().Invoke(this.item, new Object[] { editValue });
-						}
+						property.PropertyInfo.GetSetMethod().Invoke(this.item, new Object[] { field.DoubleValue });
 						rebuildable?.Rebuild();
 					};
-					rowContainer.AddChild(doubleEditWidget);
-					tabContainer.AddChild(rowContainer);
+
+					rowContainer.AddChild(field.Content);
+					editControlsContainer.AddChild(rowContainer);
+				}
+				else if (property.Value is Vector2 vector2)
+				{
+					FlowLayoutWidget rowContainer = CreateSettingsRow(property.DisplayName.Localize());
+
+					var field = new Vector2Field();
+					field.Initialize(0);
+					field.Vector2 = vector2;
+					field.ValueChanged += (s, e) =>
+					{
+						property.PropertyInfo.GetSetMethod().Invoke(this.item, new Object[] { field.Vector2 });
+						rebuildable?.Rebuild();
+					};
+
+					rowContainer.AddChild(field.Content);
+					editControlsContainer.AddChild(rowContainer);
+				}
+				else if (property.Value is Vector3 vector3)
+				{
+					FlowLayoutWidget rowContainer = CreateSettingsRow(property.DisplayName.Localize());
+
+					var field = new Vector3Field();
+					field.Initialize(0);
+					field.Vector3 = vector3;
+					field.ValueChanged += (s, e) =>
+					{
+						property.PropertyInfo.GetSetMethod().Invoke(this.item, new Object[] { field.Vector3 });
+						rebuildable?.Rebuild();
+					};
+
+					rowContainer.AddChild(field.Content);
+					editControlsContainer.AddChild(rowContainer);
+				}
+				else if (property.Value is DirectionVector directionVector)
+				{
+					bool simpleEdit = true;
+					if (simpleEdit)
+					{
+						FlowLayoutWidget rowContainer = CreateSettingsRow(property.DisplayName.Localize());
+
+						var dropDownList = new DropDownList("Name".Localize(), theme.Colors.PrimaryTextColor, Direction.Down, pointSize: theme.DefaultFontSize);
+
+						var orderedItems = new string[] { "Right", "Back", "Up" };
+
+						foreach (var orderItem in orderedItems)
+						{
+							MenuItem newItem = dropDownList.AddItem(orderItem);
+
+							var localOredrItem = orderItem;
+							newItem.Selected += (sender, e) =>
+							{
+								switch(dropDownList.SelectedValue)
+								{
+									case "Right":
+										property.PropertyInfo.GetSetMethod().Invoke(this.item, new Object[] { new DirectionVector() { Normal = Vector3.UnitX } });
+										break;
+									case "Back":
+										property.PropertyInfo.GetSetMethod().Invoke(this.item, new Object[] { new DirectionVector() { Normal = Vector3.UnitY } });
+										break;
+									case "Up":
+										property.PropertyInfo.GetSetMethod().Invoke(this.item, new Object[] { new DirectionVector() { Normal = Vector3.UnitZ } });
+										break;
+								}
+
+								rebuildable?.Rebuild();
+							};
+						}
+
+						dropDownList.SelectedLabel = "Right";
+						rowContainer.AddChild(dropDownList);
+						editControlsContainer.AddChild(rowContainer);
+					}
+					else // edit the vector
+					{
+						FlowLayoutWidget rowContainer = CreateSettingsRow(property.DisplayName.Localize());
+
+						var field = new Vector3Field();
+						field.Initialize(0);
+						field.Vector3 = directionVector.Normal;
+						field.ValueChanged += (s, e) =>
+						{
+							property.PropertyInfo.GetSetMethod().Invoke(this.item, new Object[] { new DirectionVector() { Normal = field.Vector3 } });
+							rebuildable?.Rebuild();
+						};
+
+						rowContainer.AddChild(field.Content);
+						editControlsContainer.AddChild(rowContainer);
+					}
+				}
+				else if (property.Value is DirectionAxis directionAxis)
+				{
+					// add in the position
+					FlowLayoutWidget originRowContainer = CreateSettingsRow(property.DisplayName.Localize());
+
+					var originField = new Vector3Field();
+					originField.Initialize(0);
+					originField.Vector3 = directionAxis.Origin;
+
+					var normalField = new Vector3Field();
+					normalField.Initialize(0);
+					normalField.Vector3 = directionAxis.Normal;
+
+					originField.ValueChanged += (s, e) =>
+					{
+						property.PropertyInfo.GetSetMethod().Invoke(this.item, new Object[] { new DirectionAxis() { Origin = originField.Vector3, Normal = normalField.Vector3 } });
+						rebuildable?.Rebuild();
+					};
+
+					originRowContainer.AddChild(originField.Content);
+					editControlsContainer.AddChild(originRowContainer);
+
+					// add in the direction
+					FlowLayoutWidget directionRowContainer = CreateSettingsRow(property.DisplayName.Localize());
+
+					normalField.ValueChanged += (s, e) =>
+					{
+						property.PropertyInfo.GetSetMethod().Invoke(this.item, new Object[] { new DirectionAxis() { Origin = originField.Vector3, Normal = normalField.Vector3 } });
+						rebuildable?.Rebuild();
+					};
+
+					directionRowContainer.AddChild(normalField.Content);
+					editControlsContainer.AddChild(directionRowContainer);
+
+					// update tihs when changed
+					EventHandler updateData = (object s, EventArgs e) =>
+					{
+						originField.Vector3 = ((DirectionAxis)property.PropertyInfo.GetGetMethod().Invoke(this.item, null)).Origin;
+					};
+					item.Invalidated += updateData;
+					editControlsContainer.Closed += (s, e) =>
+					{
+						item.Invalidated -= updateData;
+					};
 				}
 				// create a int editor
 				else if (property.Value is int intValue)
 				{
 					FlowLayoutWidget rowContainer = CreateSettingsRow(property.DisplayName.Localize());
-					var intEditWidget = new MHNumberEdit(intValue, pixelWidth: 50 * GuiWidget.DeviceScale, allowNegatives: true, allowDecimals: false, increment: 1)
+
+					var field = new IntField();
+					field.Initialize(0);
+					field.IntValue = intValue;
+					field.ValueChanged += (s, e) =>
 					{
-						SelectAllOnFocus = true,
-						VAnchor = VAnchor.Center
-					};
-					intEditWidget.ActuallNumberEdit.EditComplete += (s, e) =>
-					{
-						int editValue;
-						if (int.TryParse(intEditWidget.Text, out editValue))
-						{
-							property.PropertyInfo.GetSetMethod().Invoke(this.item, new Object[] { editValue });
-						}
+						property.PropertyInfo.GetSetMethod().Invoke(this.item, new Object[] { field.IntValue });
 						rebuildable?.Rebuild();
 					};
-					rowContainer.AddChild(intEditWidget);
-					tabContainer.AddChild(rowContainer);
+
+					rowContainer.AddChild(field.Content);
+					editControlsContainer.AddChild(rowContainer);
 				}
 				// create a bool editor
 				else if (property.Value is bool boolValue)
 				{
-					FlowLayoutWidget rowContainer = CreateSettingsRow(property.DisplayName.Localize());
+					FlowLayoutWidget rowContainer = CreateSettingsRow(property.DisplayName.Localize(), property.Description.Localize());
 
-					var doubleEditWidget = new CheckBox("");
-					doubleEditWidget.Checked = boolValue;
-					doubleEditWidget.CheckedStateChanged += (s, e) =>
+					var field = new ToggleboxField(ApplicationController.Instance.Theme.Colors.PrimaryTextColor);
+					field.Initialize(0);
+					field.Checked = boolValue;
+					field.ValueChanged += (s, e) =>
 					{
-						property.PropertyInfo.GetSetMethod().Invoke(this.item, new Object[] { doubleEditWidget.Checked });
+						property.PropertyInfo.GetSetMethod().Invoke(this.item, new Object[] { field.Checked });
 						rebuildable?.Rebuild();
 					};
-					rowContainer.AddChild(doubleEditWidget);
-					tabContainer.AddChild(rowContainer);
+
+					rowContainer.AddChild(field.Content);
+					editControlsContainer.AddChild(rowContainer);
 				}
 				// create a string editor
 				else if (property.Value is string stringValue)
@@ -197,9 +340,9 @@ namespace MatterHackers.MatterControl.DesignTools
 						rebuildable?.Rebuild();
 					};
 					rowContainer.AddChild(textEditWidget);
-					tabContainer.AddChild(rowContainer);
+					editControlsContainer.AddChild(rowContainer);
 				}
-				// create a NamedTypeFace editor
+				// create a enum editor
 				else if (property.PropertyType.IsEnum)
 				{
 					// Enum keyed on name to friendly name
@@ -216,23 +359,26 @@ namespace MatterHackers.MatterControl.DesignTools
 
 					var dropDownList = new DropDownList("Name".Localize(), theme.Colors.PrimaryTextColor, Direction.Down, pointSize: theme.DefaultFontSize);
 
-					foreach (var fontName in enumItems.OrderBy(n => n.Value))
-					{
-						MenuItem newItem = dropDownList.AddItem(fontName.Value);
+					var sortableAttribute = property.PropertyInfo.GetCustomAttributes(true).OfType<SortableAttribute>().FirstOrDefault();
+					var orderedItems = sortableAttribute != null ? enumItems.OrderBy(n => n.Value) : enumItems;
 
-						var localFontName = fontName;
+					foreach (var orderItem in orderedItems)
+					{
+						MenuItem newItem = dropDownList.AddItem(orderItem.Value);
+
+						var localOredrItem = orderItem;
 						newItem.Selected += (sender, e) =>
 						{
 							property.PropertyInfo.GetSetMethod().Invoke(
-								this.item, 
-								new Object[] { Enum.Parse(property.PropertyType, localFontName.Key) });
+								this.item,
+								new Object[] { Enum.Parse(property.PropertyType, localOredrItem.Key) });
 							rebuildable?.Rebuild();
 						};
 					}
 
 					dropDownList.SelectedLabel = property.Value.ToString().Replace('_', ' ');
 					rowContainer.AddChild(dropDownList);
-					tabContainer.AddChild(rowContainer);
+					editControlsContainer.AddChild(rowContainer);
 				}
 			}
 
@@ -243,7 +389,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				rebuildable?.Rebuild();
 			};
-			tabContainer.AddChild(updateButton);
+			editControlsContainer.AddChild(updateButton);
 		}
 	}
 }
