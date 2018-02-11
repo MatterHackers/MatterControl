@@ -139,6 +139,32 @@ namespace MatterHackers.MatterControl
 			return new FileSystemFileItem(mcxPath);
 		}
 
+		public async Task<ILibraryContentStream> ToPersistedLibraryItem(string newName)
+		{
+			// Save the scene to disk
+			await ApplicationController.Instance.Tasks.Execute(this.SaveChanges);
+
+			// Serialize to in memory stream--
+			var memoryStream = new MemoryStream();
+			this.Scene.Save(memoryStream);
+
+			// Reset to start of content
+			memoryStream.Position = 0;
+
+			var libraryItem = new View3DWidget.ReadOnlyStreamItem(() =>
+			{
+				return Task.FromResult(new StreamAndLength()
+				{
+					Stream = memoryStream
+				});
+			});
+			libraryItem.Name = newName;
+			libraryItem.FileName = $"{newName}.mcx";
+			libraryItem.ContentType = "mcx";
+
+			return libraryItem;
+		}
+
 		internal async Task ClearPlate()
 		{
 			// Clear existing

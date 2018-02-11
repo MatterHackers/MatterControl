@@ -1278,52 +1278,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		internal GuiWidget selectedObjectContainer;
 
-		internal void OpenSaveAsWindow()
-		{
-			DialogWindow.Show(
-				new SaveAsPage(
-					async (newName, destinationContainer) =>
-					{
-						// Save the scene to disk
-						await ApplicationController.Instance.Tasks.Execute(this.SaveChanges);
-
-						// Save to the destination provider
-						if (destinationContainer != null)
-						{
-							// save this part to correct library provider
-							if (destinationContainer is ILibraryWritableContainer writableContainer)
-							{
-								// Serialize to in memory stream
-								var memoryStream = new MemoryStream();
-								scene.Save(memoryStream);
-
-								// Reset to start of content
-								memoryStream.Position = 0;
-
-								// Wrap stream with ReadOnlyStream library item and add to container
-								sceneContext.Scene.Name = newName;
-
-								writableContainer.Add(new[]
-								{
-									new ReadOnlyStreamItem(() =>
-									{
-										return Task.FromResult(new StreamAndLength()
-										{
-											 Stream = memoryStream
-										});
-									})
-									{
-										Name = newName,
-										ContentType = "mcx"
-									}
-								});
-
-								destinationContainer.Dispose();
-							}
-						}
-					}));
-		}
-
 		public Vector2 DragSelectionStartPosition { get; private set; }
 		public bool DragSelectionInProgress { get; private set; }
 		public Vector2 DragSelectionEndPosition { get; private set; }

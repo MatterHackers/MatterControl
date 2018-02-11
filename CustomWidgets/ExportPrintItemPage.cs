@@ -106,7 +106,6 @@ namespace MatterHackers.MatterControl
 			}
 
 			//if (plugin.EnabledForCurrentPart(libraryContent))
-			
 
 			contentRow.AddChild(new VerticalSpacer());
 
@@ -184,7 +183,6 @@ namespace MatterHackers.MatterControl
 
 					return;
 				}
-
 
 				UiThread.RunOnIdle(() =>
 				{
