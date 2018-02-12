@@ -86,7 +86,7 @@
     <Compile Include="ApplicationView\OemProfileDictionary.cs" />
     <Compile Include="ApplicationView\WindowsPlatformsFeatures.cs" />
     <Compile Include="DataStorage\ApplicationDataStorage.cs" />
-    <Compile Include="DesignTools\Operations\ArangeObject3D.cs" />
+    <Compile Include="DesignTools\Operations\ArrangeObject3D.cs" />
     <Compile Include="DesignTools\Operations\ArrayAdvancedObject3D.cs" />
     <Compile Include="DesignTools\Operations\ArrayLinearObject3D.cs" />
     <Compile Include="DesignTools\Operations\ArrayRadialObject3D.cs" />
