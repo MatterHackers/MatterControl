@@ -144,7 +144,7 @@ namespace MatterHackers.MatterControl
 			// Save the scene to disk
 			await ApplicationController.Instance.Tasks.Execute(this.SaveChanges);
 
-			// Serialize to in memory stream--
+			// Serialize to in memory stream
 			var memoryStream = new MemoryStream();
 			this.Scene.Save(memoryStream);
 
