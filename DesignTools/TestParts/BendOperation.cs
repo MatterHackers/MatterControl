@@ -38,7 +38,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			scene.SelectedItem = operationContainer;
 
 			// wrap all the meshes with replacement meshes
-			foreach(var meshChild in child.Descendants().Where(x => x.Mesh != null).ToList())
+			foreach(var meshChild in child.DescendantsAndSelf().Where(x => x.Mesh != null).ToList())
 			{
 				var parent = meshChild.Parent;
 
@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			if(AngleDegrees > 0)
 			{
-				foreach (var meshChild in operationContainer.Descendants().Where(x => x.OwnerID == operationContainer.ID))
+				foreach (var meshChild in operationContainer.DescendantsAndSelf().Where(x => x.OwnerID == operationContainer.ID))
 				{
 					var firstChild = meshChild.Children.First();
 

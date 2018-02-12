@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,31 +27,39 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.MatterControl;
+using System.Linq;
+using MatterHackers.DataConverters3D;
+using MatterHackers.VectorMath;
 
-namespace MatterHackers.Localizations
+namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public static class LocalizedString
+	public class ArrayLinearObject3D : Object3D, IRebuildable
 	{
-		private static TranslationMap MatterControlTranslationMap;
-
-		private static readonly object syncRoot = new object();
-
-		static LocalizedString()
+		public ArrayLinearObject3D()
 		{
-			lock(syncRoot)
-			{
-				if (MatterControlTranslationMap == null)
-				{
-					MatterControlTranslationMap = new TranslationMap("Translations", UserSettings.Instance.Language);
-					TranslationMap.ActiveTranslationMap = MatterControlTranslationMap;
-				}
-			}
 		}
 
-		public static void ResetTranslationMap()
+		public override string ActiveEditor => "PublicPropertyEditor";
+		public int Count { get; set; } = 3;
+		public DirectionVector Direction { get; set; } = new DirectionVector { Normal = new Vector3(1, 0, 0) };
+		public double Distance { get; set; } = 30;
+
+		public void Rebuild()
 		{
-			MatterControlTranslationMap = new TranslationMap("Translations", UserSettings.Instance.Language);
+			this.Children.Modify(list =>
+			{
+				IObject3D lastChild = list.First();
+				list.Clear();
+				list.Add(lastChild);
+				var offset = Vector3.Zero;
+				for (int i = 1; i < Count; i++)
+				{
+					var next = lastChild.Clone();
+					next.Matrix *= Matrix4X4.CreateTranslation(Direction.Normal.GetNormal() * Distance);
+					list.Add(next);
+					lastChild = next;
+				}
+			});
 		}
 	}
 }

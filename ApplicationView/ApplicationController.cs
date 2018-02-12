@@ -435,10 +435,10 @@ namespace MatterHackers.MatterControl
 				TitleResolver = () => "Align".Localize(),
 				Action = (scene) =>
 				{
-					scene.AddSelectionAsChildren(new ArangeObject3D());
-					if(scene.SelectedItem is ArangeObject3D arange)
+					scene.AddSelectionAsChildren(new ArrangeObject3D());
+					if(scene.SelectedItem is ArrangeObject3D arrange)
 					{
-						arange.Rebuild();
+						arrange.Rebuild();
 					}
 				},
 				//Icon = AggContext.StaticData.LoadIcon("array_linear.png").SetPreMultiply(),

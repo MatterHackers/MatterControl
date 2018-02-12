@@ -86,9 +86,12 @@
     <Compile Include="ApplicationView\OemProfileDictionary.cs" />
     <Compile Include="ApplicationView\WindowsPlatformsFeatures.cs" />
     <Compile Include="DataStorage\ApplicationDataStorage.cs" />
+    <Compile Include="DesignTools\Operations\ArrangeObject3D.cs" />
+    <Compile Include="DesignTools\Operations\ArrayAdvancedObject3D.cs" />
+    <Compile Include="DesignTools\Operations\ArrayLinearObject3D.cs" />
+    <Compile Include="DesignTools\Operations\ArrayRadialObject3D.cs" />
     <Compile Include="DesignTools\Operations\Object3DExtensions.cs" />
     <Compile Include="DesignTools\Operations\Align.cs" />
-    <Compile Include="DesignTools\Operations\ArrayObject3D.cs" />
     <Compile Include="DesignTools\Operations\Scale.cs" />
     <Compile Include="DesignTools\Operations\Rotate.cs" />
     <Compile Include="DesignTools\Operations\SmoothPath.cs" />

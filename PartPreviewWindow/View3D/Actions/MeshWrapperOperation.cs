@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		public void ResetMeshWrappers()
 		{
 			this.Mesh = null;
-			var participants = this.Descendants().Where(o => o.OwnerID == this.ID).ToList();
+			var participants = this.DescendantsAndSelf().Where(o => o.OwnerID == this.ID).ToList();
 			foreach (var item in participants)
 			{
 				item.Visible = true;

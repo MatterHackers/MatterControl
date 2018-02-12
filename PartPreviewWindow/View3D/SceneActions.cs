@@ -173,7 +173,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							{
 								var clonedItem = item.Clone();
 								// make the name unique
-								var newName = agg_basics.GetNonCollidingName(item.Name, Scene.Descendants().Select((d) => d.Name));
+								var newName = agg_basics.GetNonCollidingName(item.Name, Scene.DescendantsAndSelf().Select((d) => d.Name));
 								clonedItem.Name = newName;
 								// add it to the scene
 								Scene.Children.Add(clonedItem);
@@ -186,7 +186,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							var clonedItem = sourceItem.Clone();
 
 							// make the name unique
-							var newName = agg_basics.GetNonCollidingName(sourceItem.Name, Scene.Descendants().Select((d) => d.Name));
+							var newName = agg_basics.GetNonCollidingName(sourceItem.Name, Scene.DescendantsAndSelf().Select((d) => d.Name));
 							clonedItem.Name = newName;
 
 							// More useful if it creates the part in the exact position and then the user can move it.
@@ -341,11 +341,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			PlatingHelper.PlaceOnBed(objectToLayFlatGroup);
 		}
 
-		internal class ArangeUndoCommand : IUndoRedoCommand
+		internal class ArrangeUndoCommand : IUndoRedoCommand
 		{
 			private List<TransformCommand> allUndoTransforms = new List<TransformCommand>();
 
-			public ArangeUndoCommand(View3DWidget view3DWidget, List<Matrix4X4> preArrangeTarnsforms, List<Matrix4X4> postArrangeTarnsforms)
+			public ArrangeUndoCommand(View3DWidget view3DWidget, List<Matrix4X4> preArrangeTarnsforms, List<Matrix4X4> postArrangeTarnsforms)
 			{
 				for (int i = 0; i < preArrangeTarnsforms.Count; i++)
 				{

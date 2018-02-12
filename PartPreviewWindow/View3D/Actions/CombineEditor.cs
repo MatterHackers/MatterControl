@@ -61,7 +61,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			{
 				bool first = true;
 				// set all but one mesh to look like holes
-				foreach (var item in group.Descendants().Where((obj) => obj.OwnerID == group.ID).ToList())
+				foreach (var item in group.DescendantsAndSelf().Where((obj) => obj.OwnerID == group.ID).ToList())
 				{
 					item.OutputType = first ? PrintOutputTypes.Solid : PrintOutputTypes.Hole;
 					first = false;
@@ -84,7 +84,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 				reporter.Report(progressStatus);
 
-				var participants = group.Descendants().Where((obj) => obj.OwnerID == group.ID);
+				var participants = group.DescendantsAndSelf().Where((obj) => obj.OwnerID == group.ID);
 
 				if (participants.Count() > 1)
 				{
