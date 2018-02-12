@@ -139,7 +139,7 @@ namespace MatterHackers.MatterControl.Library.Export
 					return Slicer.SliceItem(context.Content, context.GCodeFilePath, printer, reporter, cancellationToken);
 				});
 
-				//  - Return
+				// Return gcode path
 				fileToProcess = context.GCodeFilePath;
 			}
 

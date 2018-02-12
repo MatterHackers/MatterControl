@@ -67,7 +67,7 @@ namespace MatterHackers.MatterControl.Library
 		}
 	}
 
-	public class GeneratorItem : ILibraryContentItem
+	public class GeneratorItem : ILibraryObject3D
 	{
 		private Func<string> nameResolver;
 
@@ -110,7 +110,7 @@ namespace MatterHackers.MatterControl.Library
 
 		public bool LocalContentExists => true;
 
-		public Task<IObject3D> GetContent(Action<double, string> reportProgress)
+		public Task<IObject3D> GetObject3D(Action<double, string> reportProgress)
 		{
 			var result = collector?.Invoke();
 

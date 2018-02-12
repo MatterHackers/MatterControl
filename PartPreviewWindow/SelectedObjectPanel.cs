@@ -469,7 +469,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			});
 		}
 
-		public class InMemoryItem : ILibraryContentItem
+		public class InMemoryItem : ILibraryObject3D
 		{
 			private IObject3D existingItem;
 
@@ -494,7 +494,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			public string AssetPath { get; set; }
 
-			public Task<IObject3D> GetContent(Action<double, string> reportProgress)
+			public Task<IObject3D> GetObject3D(Action<double, string> reportProgress)
 			{
 				return Task.FromResult(existingItem);
 			}

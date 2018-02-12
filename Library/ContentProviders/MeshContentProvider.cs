@@ -74,8 +74,8 @@ namespace MatterHackers.MatterControl
 					}
 					else
 					{
-						var contentInterface = item as ILibraryContentItem;
-						loadedItem = await contentInterface?.GetContent(progressReporter);
+						var contentInterface = item as ILibraryObject3D;
+						loadedItem = await contentInterface?.GetObject3D(progressReporter);
 					}
 				}
 				catch { }
@@ -106,9 +106,9 @@ namespace MatterHackers.MatterControl
 				// TODO: Wire up limits for thumbnail generation. If content is too big, return null allowing the thumbnail to fall back to content default
 				object3D = await contentModel.CreateContent();
 			}
-			else if (item is ILibraryContentItem)
+			else if (item is ILibraryObject3D)
 			{
-				object3D = await (item as ILibraryContentItem)?.GetContent(null);
+				object3D = await (item as ILibraryObject3D)?.GetObject3D(null);
 			}
 
 			if (object3D != null)

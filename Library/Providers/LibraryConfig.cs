@@ -128,7 +128,7 @@ namespace MatterHackers.MatterControl.Library
 
 		public IContentProvider GetContentProvider(ILibraryItem item)
 		{
-			string contentType = (item as ILibraryContentStream)?.ContentType ?? (item as ILibraryContentItem)?.ContentType;
+			string contentType = (item as ILibraryContentStream)?.ContentType ?? (item as ILibraryObject3D)?.ContentType;
 			if (contentType == null)
 			{
 				return null;

@@ -41,9 +41,9 @@ namespace MatterHackers.MatterControl.Library
 		bool IsVisible { get; }
 	}
 
-	public interface ILibraryContentItem : ILibraryAsset
+	public interface ILibraryObject3D : ILibraryAsset
 	{
-		Task<IObject3D> GetContent(Action<double, string> reportProgress);
+		Task<IObject3D> GetObject3D(Action<double, string> reportProgress);
 	}
 
 	public interface ILibraryContentStream : ILibraryAsset
