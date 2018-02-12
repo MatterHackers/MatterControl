@@ -41,7 +41,7 @@ namespace MatterHackers.MatterControl
 		string ExtensionFilter { get; }
 		ImageBuffer Icon { get; }
 
-		Task<bool> Generate(IEnumerable<ILibraryItem> libraryItems, string x3gOutputPath);
+		Task<bool> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath);
 		bool EnabledForCurrentPart(ILibraryContentStream libraryContent);
 
 		GuiWidget GetOptionsPanel();
