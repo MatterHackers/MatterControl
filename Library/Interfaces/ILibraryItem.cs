@@ -46,7 +46,6 @@ namespace MatterHackers.MatterControl.Library
 		string ContentType { get; }
 		string Category { get; }
 		Task<IObject3D> GetContent(Action<double, string> reportProgress);
-		void SetContent(IObject3D item);
 	}
 
 	public interface ILibraryContentStream : ILibraryItem

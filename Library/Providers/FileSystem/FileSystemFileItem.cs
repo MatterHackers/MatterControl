@@ -73,15 +73,5 @@ namespace MatterHackers.MatterControl.Library
 
 			return Task.FromResult<StreamAndLength>(null);
 		}
-
-		public Task<IObject3D> GetContent(Action<double, string> reportProgress)
-		{
-			throw new NotImplementedException();
-		}
-
-		public void SetContent(IObject3D item)
-		{
-			throw new NotImplementedException();
-		}
 	}
 }

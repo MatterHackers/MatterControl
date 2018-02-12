@@ -114,9 +114,5 @@ namespace MatterHackers.MatterControl.Library
 
 			return Task.FromResult(result);
 		}
-
-		public void SetContent(IObject3D item)
-		{
-		}
 	}
 }

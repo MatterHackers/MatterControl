@@ -494,10 +494,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				return Task.FromResult(existingItem);
 			}
-
-			public void SetContent(IObject3D item)
-			{
-			}
 		}
 	}
 
