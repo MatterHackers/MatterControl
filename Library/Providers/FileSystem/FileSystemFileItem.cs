@@ -34,7 +34,7 @@ using MatterHackers.DataConverters3D;
 
 namespace MatterHackers.MatterControl.Library
 {
-	public class FileSystemFileItem : FileSystemItem, ILibraryContentStream
+	public class FileSystemFileItem : FileSystemItem, ILibraryAssetStream
 	{
 		public string FileName => System.IO.Path.GetFileName(this.Path);
 

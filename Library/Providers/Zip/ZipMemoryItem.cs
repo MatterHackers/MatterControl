@@ -35,7 +35,7 @@ using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.Library
 {
-	public class ZipMemoryItem : FileSystemItem, ILibraryContentStream
+	public class ZipMemoryItem : FileSystemItem, ILibraryAssetStream
 	{
 		public ZipMemoryItem(string filePath, string relativePath, long fileSize)
 			: base(filePath)

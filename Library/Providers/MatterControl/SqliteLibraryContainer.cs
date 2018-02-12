@@ -146,9 +146,9 @@ namespace MatterHackers.MatterControl.Library
 
 							break;
 
-						case ILibraryContentStream streamItem:
+						case ILibraryAssetStream streamItem:
 
-							var fileName = (streamItem as ILibraryContentStream)?.FileName; 
+							var fileName = (streamItem as ILibraryAssetStream)?.FileName; 
 
 							using (var streamInfo = await streamItem.GetContentStream(null))
 							{

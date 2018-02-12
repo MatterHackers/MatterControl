@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl
 
 				try
 				{
-					var streamInterface = item as ILibraryContentStream;
+					var streamInterface = item as ILibraryAssetStream;
 					if (streamInterface != null)
 					{
 						using (var contentStream = await streamInterface.GetContentStream(progressReporter))
@@ -98,7 +98,7 @@ namespace MatterHackers.MatterControl
 		{
 			IObject3D object3D = null;
 
-			if (item is ILibraryContentStream contentModel
+			if (item is ILibraryAssetStream contentModel
 				// Only load the stream if it's available - prevents download of internet content simply for thumbnails
 				&& contentModel.LocalContentExists
 				&& (!Is32Bit || contentModel.FileSize < MaxFileSizeForTracing))

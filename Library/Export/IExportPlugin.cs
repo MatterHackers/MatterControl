@@ -42,7 +42,7 @@ namespace MatterHackers.MatterControl
 		ImageBuffer Icon { get; }
 
 		Task<bool> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath);
-		bool EnabledForCurrentPart(ILibraryContentStream libraryContent);
+		bool EnabledForCurrentPart(ILibraryAssetStream libraryContent);
 
 		GuiWidget GetOptionsPanel();
 	}

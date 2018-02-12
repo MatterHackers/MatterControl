@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl.Library
 		Task<IObject3D> GetObject3D(Action<double, string> reportProgress);
 	}
 
-	public interface ILibraryContentStream : ILibraryAsset
+	public interface ILibraryAssetStream : ILibraryAsset
 	{
 		/// <summary>
 		// Gets the size, in bytes, of the current file.

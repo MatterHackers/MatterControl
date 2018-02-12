@@ -50,14 +50,14 @@ namespace MatterHackers.MatterControl.Library.Export
 
 		public ImageBuffer Icon { get; } = AggContext.StaticData.LoadIcon(Path.Combine("filetypes", "zip.png"));
 
-		public bool EnabledForCurrentPart(ILibraryContentStream libraryContent)
+		public bool EnabledForCurrentPart(ILibraryAssetStream libraryContent)
 		{
 			return !libraryContent.IsProtected;
 		}
 
 		public async Task<bool> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath)
 		{
-			var streamItems = libraryItems.OfType<ILibraryContentStream>();
+			var streamItems = libraryItems.OfType<ILibraryAssetStream>();
 			if (streamItems.Any())
 			{
 				await Task.Run(async () =>

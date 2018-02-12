@@ -50,13 +50,13 @@ namespace MatterHackers.MatterControl.Library
 			return item is ILibraryObject3D
 				|| item is SDCardFileItem
 				|| item is PrintHistoryItem
-				|| (item is ILibraryContentStream contentStream
+				|| (item is ILibraryAssetStream contentStream
 					&& ApplicationController.Instance.Library.IsContentFileType(contentStream.FileName));
 		}
 
 		public static bool IsMeshFileType(this ILibraryItem item)
 		{
-			return item is ILibraryContentStream contentStream
+			return item is ILibraryAssetStream contentStream
 					&& ApplicationController.Instance.Library.IsMeshFileType(contentStream.FileName);
 		}
 	}

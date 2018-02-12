@@ -573,7 +573,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public bool DragOperationActive { get; private set; }
 
 		public InsertionGroup DragDropObject { get; private set; }
-		public ILibraryContentStream SceneReplacement { get; private set; }
+		public ILibraryAssetStream SceneReplacement { get; private set; }
 
 		/// <summary>
 		/// Provides a View3DWidget specific drag implementation
@@ -624,12 +624,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var firstItem = items.FirstOrDefault();
 
-			if ((firstItem is ILibraryContentStream contentStream
+			if ((firstItem is ILibraryAssetStream contentStream
 				&& contentStream.ContentType == "gcode")
 				|| firstItem is SceneReplacementFileItem)
 			{
 				DragDropObject = null;
-				this.SceneReplacement = firstItem as ILibraryContentStream;
+				this.SceneReplacement = firstItem as ILibraryAssetStream;
 
 				// TODO: Figure out a mechanism to disable View3DWidget with dark overlay, displaying something like "Switch to xxx.gcode", make disappear on mouseLeaveBounds and dragfinish
 				this.InteractionLayer.BackgroundColor = new Color(Color.Black, 200);
@@ -1381,7 +1381,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return null;
 		}
 
-		public class ReadOnlyStreamItem : ILibraryContentStream
+		public class ReadOnlyStreamItem : ILibraryAssetStream
 		{
 			private Func<Task<StreamAndLength>> streamSource;
 

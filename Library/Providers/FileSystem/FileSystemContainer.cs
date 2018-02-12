@@ -240,7 +240,7 @@ namespace MatterHackers.MatterControl.Library
 
 							break;
 
-						case ILibraryContentStream streamItem:
+						case ILibraryAssetStream streamItem:
 							string targetPath = Path.Combine(this.fullPath, streamItem.FileName);
 
 							try

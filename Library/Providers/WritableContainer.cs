@@ -70,7 +70,7 @@ namespace MatterHackers.MatterControl.Library
 
 		public virtual void Move(IEnumerable<ILibraryItem> items, ILibraryWritableContainer sourceContainer)
 		{
-			foreach(var item in items.OfType<ILibraryContentStream>().ToList())
+			foreach(var item in items.OfType<ILibraryAssetStream>().ToList())
 			{
 				var enumerable = new[] { item };
 

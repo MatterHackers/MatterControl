@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl.Library.Export
 
 		public ImageBuffer Icon { get; } = AggContext.StaticData.LoadIcon(Path.Combine("filetypes", "gcode.png"));
 
-		public bool EnabledForCurrentPart(ILibraryContentStream libraryContent)
+		public bool EnabledForCurrentPart(ILibraryAssetStream libraryContent)
 		{
 			return !libraryContent.IsProtected;
 		}
@@ -85,7 +85,7 @@ namespace MatterHackers.MatterControl.Library.Export
 
 		public async Task<bool> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath)
 		{
-			ILibraryContentStream libraryContent = libraryItems.OfType<ILibraryContentStream>().FirstOrDefault();
+			ILibraryAssetStream libraryContent = libraryItems.OfType<ILibraryAssetStream>().FirstOrDefault();
 
 			if (libraryContent != null)
 			{
@@ -111,7 +111,7 @@ namespace MatterHackers.MatterControl.Library.Export
 			return false;
 		}
 
-		private async Task<string> SliceFileIfNeeded(ILibraryContentStream libraryContent, PrinterConfig printer)
+		private async Task<string> SliceFileIfNeeded(ILibraryAssetStream libraryContent, PrinterConfig printer)
 		{
 			// TODO: How to handle gcode files in library content?
 			//string fileToProcess = partIsGCode ?  printItemWrapper.FileLocation : "";

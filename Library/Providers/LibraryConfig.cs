@@ -128,7 +128,7 @@ namespace MatterHackers.MatterControl.Library
 
 		public IContentProvider GetContentProvider(ILibraryItem item)
 		{
-			string contentType = (item as ILibraryContentStream)?.ContentType ?? (item as ILibraryObject3D)?.ContentType;
+			string contentType = (item as ILibraryAssetStream)?.ContentType ?? (item as ILibraryObject3D)?.ContentType;
 			if (contentType == null)
 			{
 				return null;
@@ -163,13 +163,13 @@ namespace MatterHackers.MatterControl.Library
 			return 0;
 		}
 
-		public void RegisterCreator(ILibraryContentItem libraryItem)
+		public void RegisterCreator(ILibraryObject3D libraryItem)
 		{
 			this.RootLibaryContainer.Items.Add(libraryItem);
 			OnLibraryItemsChanged();
 		}
 
-		public void RegisterCreator(ILibraryContentStream libraryItem)
+		public void RegisterCreator(ILibraryAssetStream libraryItem)
 		{
 			this.RootLibaryContainer.Items.Add(libraryItem);
 			OnLibraryItemsChanged();

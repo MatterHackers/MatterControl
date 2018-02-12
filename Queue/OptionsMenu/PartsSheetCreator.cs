@@ -81,7 +81,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private IEnumerable<ILibraryContentStream> itemSource;
+		private IEnumerable<ILibraryAssetStream> itemSource;
 		private List<PartImage> partImagesToPrint = new List<PartImage>();
 		private const double inchesPerMm = 0.0393701;
 
@@ -111,7 +111,7 @@ namespace MatterHackers.MatterControl
 
 		public int SheetDpi { get; set; }
 
-		public PartsSheet(IEnumerable<ILibraryContentStream> itemSource, string pathAndFileToSaveTo)
+		public PartsSheet(IEnumerable<ILibraryAssetStream> itemSource, string pathAndFileToSaveTo)
 		{
 			this.pathAndFileToSaveTo = pathAndFileToSaveTo;
 			SheetDpi = 300;

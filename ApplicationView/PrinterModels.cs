@@ -85,7 +85,7 @@ namespace MatterHackers.MatterControl
 			this.EditContext = editContext;
 
 			// Load
-			if (editContext.SourceItem is ILibraryContentStream contentStream
+			if (editContext.SourceItem is ILibraryAssetStream contentStream
 				&& contentStream.ContentType == "gcode")
 			{
 				using (var task = await contentStream.GetContentStream(null))
@@ -139,7 +139,7 @@ namespace MatterHackers.MatterControl
 			return new FileSystemFileItem(mcxPath);
 		}
 
-		public async Task<ILibraryContentStream> ToPersistedLibraryItem(string newName)
+		public async Task<ILibraryAssetStream> ToPersistedLibraryItem(string newName)
 		{
 			// Save the scene to disk
 			await ApplicationController.Instance.Tasks.Execute(this.SaveChanges);

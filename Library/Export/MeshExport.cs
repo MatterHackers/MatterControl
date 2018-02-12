@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.Library.Export
 					var content = await contentItem.GetObject3D(null);
 					return MeshFileIo.Save(content, filePathToSave, CancellationToken.None);
 				}
-				else if (source is ILibraryContentStream streamContent)
+				else if (source is ILibraryAssetStream streamContent)
 				{
 					if (!string.IsNullOrEmpty(filePathToSave))
 					{

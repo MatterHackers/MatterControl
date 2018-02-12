@@ -33,7 +33,7 @@ using MatterHackers.MatterControl.DataStorage;
 
 namespace MatterHackers.MatterControl.Library
 {
-	public class PrintHistoryItem : ILibraryContentStream
+	public class PrintHistoryItem : ILibraryAssetStream
 	{
 		public PrintHistoryItem(PrintTask printTask)
 		{
