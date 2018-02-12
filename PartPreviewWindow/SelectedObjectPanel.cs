@@ -482,13 +482,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			public string Name => existingItem.Name;
 
+			public string FileName => $"{this.Name}.{this.ContentType}";
+
 			public bool IsProtected => !existingItem.Persistable;
 
 			public bool IsVisible => existingItem.Visible;
 
-			public string ContentType => "stl";
+			public string ContentType => "mcx";
 
-			public string Category => "";
+			public string Category => "General";
+
+			public string AssetPath { get; set; }
 
 			public Task<IObject3D> GetContent(Action<double, string> reportProgress)
 			{

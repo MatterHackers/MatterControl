@@ -95,12 +95,20 @@ namespace MatterHackers.MatterControl.Library
 		public string Name => nameResolver?.Invoke();
 		public string ThumbnailKey { get; } = "";
 
-		public string ContentType { get; set; } = "stl";
+		public string ContentType { get; set; } = "mcx";
 
 		public bool IsProtected { get; set; }
 		public bool IsVisible => true;
 
 		public Color Color { get; set; }
+
+		public long FileSize => 0;
+
+		public string FileName => $"{this.Name}.{this.ContentType}";
+
+		public string AssetPath => "";
+
+		public bool LocalContentExists => true;
 
 		public Task<IObject3D> GetContent(Action<double, string> reportProgress)
 		{

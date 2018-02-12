@@ -60,6 +60,8 @@ namespace MatterHackers.MatterControl.Library
 
 		public bool LocalContentExists => true;
 
+		public string Category => "General";
+
 		public Task<StreamAndLength> GetContentStream(Action<double, string> reportProgress)
 		{
 			throw new NotImplementedException();

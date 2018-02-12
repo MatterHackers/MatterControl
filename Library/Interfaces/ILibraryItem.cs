@@ -41,24 +41,28 @@ namespace MatterHackers.MatterControl.Library
 		bool IsVisible { get; }
 	}
 
-	public interface ILibraryContentItem : ILibraryItem
+	public interface ILibraryContentItem : ILibraryAsset
 	{
-		string ContentType { get; }
-		string Category { get; }
 		Task<IObject3D> GetContent(Action<double, string> reportProgress);
 	}
 
-	public interface ILibraryContentStream : ILibraryItem
+	public interface ILibraryContentStream : ILibraryAsset
 	{
 		/// <summary>
 		// Gets the size, in bytes, of the current file.
 		/// </summary>
 		long FileSize { get; }
-		string ContentType { get; }
-		string FileName { get; }
-		string AssetPath { get; }
+		
 		bool LocalContentExists { get; }
 
 		Task<StreamAndLength> GetContentStream(Action<double, string> progress);
+	}
+
+	public interface ILibraryAsset : ILibraryItem
+	{
+		string ContentType { get; }
+		string Category { get; }
+		string FileName { get; }
+		string AssetPath { get; }
 	}
 }

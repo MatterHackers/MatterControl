@@ -1408,6 +1408,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			public bool LocalContentExists => true;
 
+			public string Category => "General";
+
 			public Task<StreamAndLength> GetContentStream(Action<double, string> progress)
 			{
 				return streamSource?.Invoke();
