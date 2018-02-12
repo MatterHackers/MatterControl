@@ -37,8 +37,10 @@ using MatterControl.Printing;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
+using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
@@ -85,65 +87,72 @@ namespace MatterHackers.MatterControl.Library.Export
 
 		public async Task<bool> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath)
 		{
-			ILibraryAssetStream libraryContent = libraryItems.OfType<ILibraryAssetStream>().FirstOrDefault();
+			// TODO: Export operations need to resolve printer context interactively
+			var printer = ApplicationController.Instance.ActivePrinter;
 
-			if (libraryContent != null)
+			var firstItem = libraryItems.OfType<ILibraryAsset>().FirstOrDefault();
+			if (firstItem != null)
 			{
-				// TODO: Export operations need to resolve printer context interactively
-				var printer = ApplicationController.Instance.ActivePrinter;
+				IObject3D loadedItem = null;
 
-				try
+				if (firstItem.AssetPath == printer.Bed.EditContext.SourceFilePath)
 				{
-					string newGCodePath = await SliceFileIfNeeded(libraryContent, printer);
+					// If item is bedplate, save any pending changes before starting the print
+					await ApplicationController.Instance.Tasks.Execute(printer.Bed.SaveChanges);
+					loadedItem = printer.Bed.Scene;
+				}
+				else if (firstItem is ILibraryObject3D object3DItem)
+				{
+					loadedItem = await object3DItem.CreateContent(null);
+					loadedItem.PersistAssets(null);
+				}
+				else if (firstItem is ILibraryAssetStream assetStream)
+				{
+					loadedItem = await assetStream.CreateContent(null);
+				}
 
-					if (File.Exists(newGCodePath))
+				if (loadedItem != null)
+				{
+					try
 					{
-						SaveGCodeToNewLocation(newGCodePath, outputPath);
-						return true;
+						string sourceExtension = $".{firstItem.ContentType}";
+						string assetPath = loadedItem.SaveToAssets();
+
+						string fileHashCode = Path.GetFileNameWithoutExtension(assetPath);
+
+						string gcodePath = PrintItemWrapper.GCodePath(fileHashCode);
+
+						if (ApplicationSettings.ValidFileExtensions.IndexOf("string", StringComparison.OrdinalIgnoreCase) >= 0
+							|| string.Equals(sourceExtension, ".mcx", StringComparison.OrdinalIgnoreCase))
+						{
+							// Get Bounds
+							var aabb = loadedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+
+							// Move to bed center
+							var bedCenter = printer.Bed.BedCenter;
+							loadedItem.Matrix *= Matrix4X4.CreateTranslation((double)-aabb.Center.X, (double)-aabb.Center.Y, (double)-aabb.minXYZ.Z) * Matrix4X4.CreateTranslation(bedCenter.X, bedCenter.Y, 0);
+							loadedItem.Color = loadedItem.Color;
+
+							// Slice
+							await ApplicationController.Instance.Tasks.Execute((reporter, cancellationToken) =>
+							{
+								return Slicer.SliceItem(loadedItem, gcodePath, printer, reporter, cancellationToken);
+							});
+						}
+
+						if (File.Exists(gcodePath))
+						{
+							SaveGCodeToNewLocation(gcodePath, outputPath);
+							return true;
+						}
+					}
+					catch
+					{
 					}
 				}
-				catch
-				{
-				}
-
 			}
 
 			return false;
-		}
-
-		private async Task<string> SliceFileIfNeeded(ILibraryAssetStream libraryContent, PrinterConfig printer)
-		{
-			// TODO: How to handle gcode files in library content?
-			//string fileToProcess = partIsGCode ?  printItemWrapper.FileLocation : "";
-			string fileToProcess = "";
-
-			string sourceExtension = Path.GetExtension(libraryContent.FileName).ToUpper();
-			if (ApplicationSettings.ValidFileExtensions.Contains(sourceExtension)
-				|| sourceExtension == ".MCX")
-			{
-				// Conceptually we need to:
-				//  - Check to see if the libraryContent is the bed plate, load into a scene if not or reference loaded scene
-				//  - If bedplate, save any pending changes before starting the print
-				await ApplicationController.Instance.Tasks.Execute(printer.Bed.SaveChanges);
-
-				// Create a context to hold a temporary scene used during slicing to complete the export
-				var context = new EditContext()
-				{
-					ContentStore = ApplicationController.Instance.Library.PlatingHistory,
-					SourceItem = libraryContent
-				};
-
-				//  - Slice
-				await ApplicationController.Instance.Tasks.Execute((reporter, cancellationToken) =>
-				{
-					return Slicer.SliceItem(context.Content, context.GCodeFilePath, printer, reporter, cancellationToken);
-				});
-
-				// Return gcode path
-				fileToProcess = context.GCodeFilePath;
-			}
-
-			return fileToProcess;
 		}
 
 		public bool ApplyLeveling { get; set; } = true;
