@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl
 					var streamInterface = item as ILibraryAssetStream;
 					if (streamInterface != null)
 					{
-						using (var contentStream = await streamInterface.GetContentStream(progressReporter))
+						using (var contentStream = await streamInterface.GetStream(progressReporter))
 						{
 							if (contentStream != null)
 							{

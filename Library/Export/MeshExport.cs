@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.Library.Export
 						// If the file is already AMF, it just needs copied to the target path
 						if (Path.GetExtension(streamContent.FileName).ToUpper() == Path.GetExtension(filePathToSave).ToUpper())
 						{
-							using (var result = await streamContent.GetContentStream(null))
+							using (var result = await streamContent.GetStream(null))
 							using (var fileStream = File.Create(filePathToSave))
 							{
 								result.Stream.CopyTo(fileStream);
@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl.Library.Export
 						else
 						{
 							// Otherwise we need to load the content and MeshFileIO save to the target path
-							using (var result = await streamContent.GetContentStream(null))
+							using (var result = await streamContent.GetStream(null))
 							{
 								IObject3D item = Object3D.Load(result.Stream, Path.GetExtension(streamContent.FileName), CancellationToken.None);
 								return MeshFileIo.Save(item, filePathToSave, CancellationToken.None);

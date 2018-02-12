@@ -251,7 +251,7 @@ namespace MatterHackers.MatterControl.Library
 								}
 
 								using (var outputStream = File.OpenWrite(targetPath))
-								using (var contentStream = await streamItem.GetContentStream(null))
+								using (var contentStream = await streamItem.GetStream(null))
 								{
 									contentStream.Stream.CopyTo(outputStream);
 								}

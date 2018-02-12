@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.Library
 		
 		bool LocalContentExists { get; }
 
-		Task<StreamAndLength> GetContentStream(Action<double, string> progress);
+		Task<StreamAndLength> GetStream(Action<double, string> progress);
 	}
 
 	public interface ILibraryAsset : ILibraryItem

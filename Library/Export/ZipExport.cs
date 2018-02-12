@@ -76,7 +76,7 @@ namespace MatterHackers.MatterControl.Library.Export
 								// TODO: need to test for and resolve name conflicts
 								var entry = zipArchive.CreateEntry(item.FileName);
 
-								using (var sourceStream = await item.GetContentStream(null))
+								using (var sourceStream = await item.GetStream(null))
 								using (var outputStream = entry.Open())
 								{
 									sourceStream.Stream.CopyTo(outputStream);

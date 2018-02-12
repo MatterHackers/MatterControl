@@ -1410,7 +1410,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			public string Category => "General";
 
-			public Task<StreamAndLength> GetContentStream(Action<double, string> progress)
+			public Task<StreamAndLength> GetStream(Action<double, string> progress)
 			{
 				return streamSource?.Invoke();
 			}

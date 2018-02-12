@@ -190,7 +190,7 @@ namespace MatterHackers.MatterControl
 			try
 			{
 				var streamInterface = item.PrintItem as ILibraryAssetStream;
-				using (var streamAndLength = await streamInterface.GetContentStream(null))
+				using (var streamAndLength = await streamInterface.GetStream(null))
 				{
 					using (var outputStream = File.OpenWrite(Path.Combine(archiveStagingFolder, item.FileName)))
 					{

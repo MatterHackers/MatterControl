@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl.Library
 
 		public string Category => "General";
 
-		public Task<StreamAndLength> GetContentStream(Action<double, string> reportProgress)
+		public Task<StreamAndLength> GetStream(Action<double, string> reportProgress)
 		{
 			throw new NotImplementedException();
 		}

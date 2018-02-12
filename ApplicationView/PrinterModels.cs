@@ -88,7 +88,7 @@ namespace MatterHackers.MatterControl
 			if (editContext.SourceItem is ILibraryAssetStream contentStream
 				&& contentStream.ContentType == "gcode")
 			{
-				using (var task = await contentStream.GetContentStream(null))
+				using (var task = await contentStream.GetStream(null))
 				{
 					await LoadGCodeContent(task.Stream);
 				}

@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl.Library
 		/// </summary>
 		public long FileSize { get; private set; }
 
-		public async Task<StreamAndLength> GetContentStream(Action<double, string> reportProgress)
+		public async Task<StreamAndLength> GetStream(Action<double, string> reportProgress)
 		{
 			var memStream = await Task.Run(() =>
 			{

@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl.Library.Export
 						{
 							string path = Path.Combine(outputDirectory, item.FileName);
 
-							using (var sourceStream = await item.GetContentStream(null))
+							using (var sourceStream = await item.GetStream(null))
 							using (var outputStream = File.Create(path))
 							{
 								sourceStream.Stream.CopyTo(outputStream);

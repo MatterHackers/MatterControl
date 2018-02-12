@@ -84,7 +84,7 @@ namespace MatterHackers.MatterControl.Library
 								itemPath = ApplicationDataStorage.Instance.GetNewLibraryFilePath("." + streamItem.ContentType);
 
 								using (var outputStream = File.OpenWrite(itemPath))
-								using (var streamInteface = await streamItem.GetContentStream(null))
+								using (var streamInteface = await streamItem.GetStream(null))
 								{
 									streamInteface.Stream.CopyTo(outputStream);
 								}
