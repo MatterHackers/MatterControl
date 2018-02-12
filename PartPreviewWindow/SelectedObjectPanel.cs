@@ -42,6 +42,7 @@ using MatterHackers.MatterControl.DesignTools.Operations;
 using System.Reflection;
 using MatterHackers.VectorMath;
 using MatterHackers.Agg.Image;
+using MatterHackers.Agg.Platform;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -61,7 +62,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private Dictionary<Type, HashSet<IObject3DEditor>> objectEditorsByType;
 		private SectionWidget editorSection;
 		private TextButton editButton;
-		private TextButton removeButton;
 
 		private GuiWidget editorPanel;
 		private InlineTitleEdit inlineTitleEdit;
@@ -188,17 +188,34 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			toolbar.AddChild(editButton);
 
-			removeButton = new TextButton("Remove".Localize(), theme)
+			// put in a bake button
+			var icon = AggContext.StaticData.LoadIcon("bake.png", 16, 16).SetPreMultiply();
+			var bakeButton = new IconButton(icon, theme)
 			{
-				BackgroundColor = theme.MinimalShade,
-				Margin = theme.ButtonSpacing
+				Margin = theme.ButtonSpacing,
+				ToolTipText = "Bake operation into parts".Localize()
 			};
-			removeButton.Click += async (s, e) =>
+			bakeButton.Click += (s, e) =>
 			{
-				this.item.Unwrap(printer.Bed.Scene);
+				scene.SelectedItem = null;
+				this.item.Bake();
 			};
-			toolbar.AddChild(removeButton);
+			scene.SelectionChanged += (s, e) => bakeButton.Enabled = scene.SelectedItem?.CanBake == true;
+			toolbar.AddChild(bakeButton);
 
+			// put in a remove button
+			var removeButton = new IconButton(ThemeConfig.RestoreNormal, theme)
+			{
+				Margin = theme.ButtonSpacing,
+				ToolTipText = "Remove operation from parts".Localize()
+			};
+			removeButton.Click += (s, e) =>
+			{
+				scene.SelectedItem = null;
+				this.item.Remove();
+			};
+			scene.SelectionChanged += (s, e) => removeButton.Enabled = scene.SelectedItem?.CanRemove == true;
+			toolbar.AddChild(removeButton);
 
 			// Add container used to host the current specialized editor for the selection
 			editorColumn.AddChild(editorPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)

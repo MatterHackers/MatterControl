@@ -274,10 +274,10 @@ namespace MatterHackers.PolygonMesh.UnitTests
 		{
 			var scene = SampleScene();
 
-			var superGroup = scene.Descendants().Where(d => d.Name == "SuperGroup").FirstOrDefault();
-			var redItem = scene.Descendants().Where(d => d.Name == nameof(Color.Red)).FirstOrDefault();
-			var greenItem = scene.Descendants().Where(d => d.Name == nameof(Color.Green)).FirstOrDefault();
-			var blueItem = scene.Descendants().Where(d => d.Name == nameof(Color.Blue)).FirstOrDefault();
+			var superGroup = scene.DescendantsAndSelf().Where(d => d.Name == "SuperGroup").FirstOrDefault();
+			var redItem = scene.DescendantsAndSelf().Where(d => d.Name == nameof(Color.Red)).FirstOrDefault();
+			var greenItem = scene.DescendantsAndSelf().Where(d => d.Name == nameof(Color.Green)).FirstOrDefault();
+			var blueItem = scene.DescendantsAndSelf().Where(d => d.Name == nameof(Color.Blue)).FirstOrDefault();
 
 			// Validate root
 			Assert.AreEqual(Color.Black, scene.Color, "Color property on root should be Black");
@@ -307,10 +307,10 @@ namespace MatterHackers.PolygonMesh.UnitTests
 		{
 			var scene = SampleScene();
 
-			var superGroup = scene.Descendants().Where(d => d.Name == "SuperGroup").FirstOrDefault();
-			var redItem = scene.Descendants().Where(d => d.Name == nameof(Color.Red)).FirstOrDefault();
-			var greenItem = scene.Descendants().Where(d => d.Name == nameof(Color.Green)).FirstOrDefault();
-			var blueItem = scene.Descendants().Where(d => d.Name == nameof(Color.Blue)).FirstOrDefault();
+			var superGroup = scene.DescendantsAndSelf().Where(d => d.Name == "SuperGroup").FirstOrDefault();
+			var redItem = scene.DescendantsAndSelf().Where(d => d.Name == nameof(Color.Red)).FirstOrDefault();
+			var greenItem = scene.DescendantsAndSelf().Where(d => d.Name == nameof(Color.Green)).FirstOrDefault();
+			var blueItem = scene.DescendantsAndSelf().Where(d => d.Name == nameof(Color.Blue)).FirstOrDefault();
 
 			// Validate root
 			Assert.AreEqual(this.RootMaterialIndex, scene.MaterialIndex, "MaterialIndex property on root should be RootMaterialIndex");
@@ -340,10 +340,10 @@ namespace MatterHackers.PolygonMesh.UnitTests
 		{
 			var scene = SampleScene();
 
-			var superGroup = scene.Descendants().Where(d => d.Name == "SuperGroup").FirstOrDefault();
-			var redItem = scene.Descendants().Where(d => d.Name == nameof(Color.Red)).FirstOrDefault();
-			var greenItem = scene.Descendants().Where(d => d.Name == nameof(Color.Green)).FirstOrDefault();
-			var blueItem = scene.Descendants().Where(d => d.Name == nameof(Color.Blue)).FirstOrDefault();
+			var superGroup = scene.DescendantsAndSelf().Where(d => d.Name == "SuperGroup").FirstOrDefault();
+			var redItem = scene.DescendantsAndSelf().Where(d => d.Name == nameof(Color.Red)).FirstOrDefault();
+			var greenItem = scene.DescendantsAndSelf().Where(d => d.Name == nameof(Color.Green)).FirstOrDefault();
+			var blueItem = scene.DescendantsAndSelf().Where(d => d.Name == nameof(Color.Blue)).FirstOrDefault();
 
 			// Validate root
 			Assert.AreEqual(this.RootMatrix, scene.Matrix, "Matrix property on root should be RootMatrix");
@@ -373,10 +373,10 @@ namespace MatterHackers.PolygonMesh.UnitTests
 		{
 			var scene = SampleScene();
 
-			var superGroup = scene.Descendants().Where(d => d.Name == "SuperGroup").FirstOrDefault();
-			var redItem = scene.Descendants().Where(d => d.Name == nameof(Color.Red)).FirstOrDefault();
-			var greenItem = scene.Descendants().Where(d => d.Name == nameof(Color.Green)).FirstOrDefault();
-			var blueItem = scene.Descendants().Where(d => d.Name == nameof(Color.Blue)).FirstOrDefault();
+			var superGroup = scene.DescendantsAndSelf().Where(d => d.Name == "SuperGroup").FirstOrDefault();
+			var redItem = scene.DescendantsAndSelf().Where(d => d.Name == nameof(Color.Red)).FirstOrDefault();
+			var greenItem = scene.DescendantsAndSelf().Where(d => d.Name == nameof(Color.Green)).FirstOrDefault();
+			var blueItem = scene.DescendantsAndSelf().Where(d => d.Name == nameof(Color.Blue)).FirstOrDefault();
 
 			// Validate root
 			Assert.AreEqual(this.RootOutputType, scene.OutputType, "OutputType property on root should be RootOutputType");
@@ -405,7 +405,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
 		public void WorldFunctionNonExistingAncestorOverride()
 		{
 			var scene = SampleScene();
-			var redItem = scene.Descendants().Where(d => d.Name == nameof(Color.Red)).FirstOrDefault();
+			var redItem = scene.DescendantsAndSelf().Where(d => d.Name == nameof(Color.Red)).FirstOrDefault();
 			var nonAncestor = new Object3D();
 
 			// ************************************* WorldColor *************************************

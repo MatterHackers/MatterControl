@@ -45,8 +45,8 @@ namespace MatterHackers.MatterControl
 	{
 		protected static readonly int DefaultScrollBarWidth = 120;
 
-		private static ImageBuffer restoreNormal;
-		private static ImageBuffer restoreHover;
+		public static ImageBuffer RestoreNormal { get; private set; }
+		public static ImageBuffer RestoreHover { get; private set; }
 		private static ImageBuffer restorePressed;
 
 		private readonly int fizedHeightA = (int)(25 * GuiWidget.DeviceScale + .5);
@@ -140,13 +140,13 @@ namespace MatterHackers.MatterControl
 
 			if (AggContext.OperatingSystem == OSType.Android)
 			{
-				restoreNormal = ColorCircle(size, new Color(200, 0, 0));
+				RestoreNormal = ColorCircle(size, new Color(200, 0, 0));
 			}
 			else
 			{
-				restoreNormal = ColorCircle(size, Color.Transparent);
+				RestoreNormal = ColorCircle(size, Color.Transparent);
 			}
-			restoreHover = ColorCircle(size, new Color("#DB4437"));
+			RestoreHover = ColorCircle(size, new Color("#DB4437"));
 			restorePressed = ColorCircle(size, new Color(255, 0, 0));
 		}
 
@@ -375,10 +375,10 @@ namespace MatterHackers.MatterControl
 		{
 			return new Button(
 				new ButtonViewStates(
-					new ImageWidget(restoreNormal),
-					new ImageWidget(restoreHover),
+					new ImageWidget(RestoreNormal),
+					new ImageWidget(RestoreHover),
 					new ImageWidget(restorePressed),
-					new ImageWidget(restoreNormal)))
+					new ImageWidget(RestoreNormal)))
 			{
 				VAnchor = VAnchor.Center,
 				Margin = new BorderDouble(0, 0, 5, 0)

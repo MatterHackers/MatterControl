@@ -54,6 +54,28 @@ namespace MatterHackers.MatterControl.DesignTools
 	{
 	}
 
+	[AttributeUsage(AttributeTargets.Property)]
+	public class EnableIfAttribute : Attribute
+	{
+		public string PropertyName { get; private set; }
+		public string ExpectedValue { get; private set; }
+		public EnableIfAttribute(string propertyName, string expectedValue)
+		{
+			this.PropertyName = propertyName;
+			this.ExpectedValue = expectedValue;
+		}
+	}
+
+	[AttributeUsage(AttributeTargets.Property)]
+	public class IconsAttribute : Attribute
+	{
+		public string[] IconPaths { get; private set; }
+		public IconsAttribute(string[] iconPaths)
+		{
+			this.IconPaths = iconPaths;
+		}
+	}
+
 	public class PublicPropertyEditor : IObject3DEditor
 	{
 		private IObject3D item;
@@ -342,43 +364,12 @@ namespace MatterHackers.MatterControl.DesignTools
 					rowContainer.AddChild(textEditWidget);
 					editControlsContainer.AddChild(rowContainer);
 				}
-				// create a enum editor
+				// create an enum editor
 				else if (property.PropertyType.IsEnum)
 				{
-					// Enum keyed on name to friendly name
-					var enumItems = Enum.GetNames(property.PropertyType).Select(enumName =>
-					{
-						return new
-						{
-							Key = enumName,
-							Value = enumName.Replace('_', ' ')
-						};
-					});
-
-					FlowLayoutWidget rowContainer = CreateSettingsRow(property.DisplayName.Localize());
-
-					var dropDownList = new DropDownList("Name".Localize(), theme.Colors.PrimaryTextColor, Direction.Down, pointSize: theme.DefaultFontSize);
-
-					var sortableAttribute = property.PropertyInfo.GetCustomAttributes(true).OfType<SortableAttribute>().FirstOrDefault();
-					var orderedItems = sortableAttribute != null ? enumItems.OrderBy(n => n.Value) : enumItems;
-
-					foreach (var orderItem in orderedItems)
-					{
-						MenuItem newItem = dropDownList.AddItem(orderItem.Value);
-
-						var localOredrItem = orderItem;
-						newItem.Selected += (sender, e) =>
-						{
-							property.PropertyInfo.GetSetMethod().Invoke(
-								this.item,
-								new Object[] { Enum.Parse(property.PropertyType, localOredrItem.Key) });
-							rebuildable?.Rebuild();
-						};
-					}
-
-					dropDownList.SelectedLabel = property.Value.ToString().Replace('_', ' ');
-					rowContainer.AddChild(dropDownList);
-					editControlsContainer.AddChild(rowContainer);
+					editControlsContainer.AddChild(CreateEnumEditor(rebuildable,
+							property.PropertyInfo, property.PropertyType, property.Value, property.DisplayName,
+							theme));
 				}
 			}
 
@@ -390,6 +381,47 @@ namespace MatterHackers.MatterControl.DesignTools
 				rebuildable?.Rebuild();
 			};
 			editControlsContainer.AddChild(updateButton);
+		}
+
+		private GuiWidget CreateEnumEditor(IRebuildable item, 
+			PropertyInfo propertyInfo, Type propertyType, object value, string displayName, 
+			ThemeConfig theme)
+		{
+			// Enum keyed on name to friendly name
+			var enumItems = Enum.GetNames(propertyType).Select(enumName =>
+			{
+				return new
+				{
+					Key = enumName,
+					Value = enumName.Replace('_', ' ')
+				};
+			});
+
+			FlowLayoutWidget rowContainer = CreateSettingsRow(displayName);
+
+			var dropDownList = new DropDownList("Name".Localize(), theme.Colors.PrimaryTextColor, Direction.Down, pointSize: theme.DefaultFontSize);
+
+			var sortableAttribute = propertyInfo.GetCustomAttributes(true).OfType<SortableAttribute>().FirstOrDefault();
+			var orderedItems = sortableAttribute != null ? enumItems.OrderBy(n => n.Value) : enumItems;
+
+			foreach (var orderItem in orderedItems)
+			{
+				MenuItem newItem = dropDownList.AddItem(orderItem.Value);
+
+				var localOredrItem = orderItem;
+				newItem.Selected += (sender, e) =>
+				{
+					propertyInfo.GetSetMethod().Invoke(
+						this.item,
+						new Object[] { Enum.Parse(propertyType, localOredrItem.Key) });
+					item?.Rebuild();
+				};
+			}
+
+			dropDownList.SelectedLabel = value.ToString().Replace('_', ' ');
+			rowContainer.AddChild(dropDownList);
+
+			return rowContainer;
 		}
 	}
 }

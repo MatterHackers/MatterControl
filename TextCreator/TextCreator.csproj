@@ -85,6 +85,10 @@
       <Project>{036BCCBA-52D8-457C-84AE-8821F209FE4A}</Project>
       <Name>ImageProcessing</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Submodules\agg-sharp\Localizations\Localizations.csproj">
+      <Project>{ca96058c-1a37-465d-a357-d6d695b13d25}</Project>
+      <Name>Localizations</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Submodules\agg-sharp\MarchingSquares\MarchingSquares.csproj">
       <Project>{DF6845CD-64C6-4263-8357-DA8066855739}</Project>
       <Name>MarchingSquares</Name>

@@ -27,10 +27,8 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System.Threading;
 using MatterHackers.DataConverters3D;
 using MatterHackers.PolygonMesh;
-using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
@@ -140,9 +138,9 @@ public class ChairFoot2 : MatterCadObject3D
 
 		public override string ActiveEditor => "PublicPropertyEditor";
 
-		public double Width { get; set; } = 20;
 		public double Depth { get; set; } = 20;
 		public double Height { get; set; } = 20;
+		public double Width { get; set; } = 20;
 
 		public static CubeObject3D Create()
 		{

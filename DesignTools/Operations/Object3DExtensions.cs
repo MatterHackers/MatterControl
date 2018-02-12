@@ -114,22 +114,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			scene.SelectedItem = wrapper;
 		}
 
-		public static void Unwrap(this IObject3D item, InteractiveScene scene)
-		{
-			foreach (var child in item.Children)
-			{
-				child.Matrix *= item.Matrix;
-			}
-
-			item.Parent.Children.Modify(list =>
-			{
-				list.Remove(item);
-				list.AddRange(item.Children);
-			});
-
-			scene.SelectedItem = null;
-		}
-
 		public static void ApplyAtBoundsCenter(this IObject3D object3DToApplayTo, Matrix4X4 transformToApply)
 		{
 			object3DToApplayTo.Matrix = ApplyAtCenter(object3DToApplayTo.GetAxisAlignedBoundingBox(Matrix4X4.Identity), object3DToApplayTo.Matrix, transformToApply);

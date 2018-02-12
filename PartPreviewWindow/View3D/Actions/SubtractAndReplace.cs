@@ -146,14 +146,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					// make sure the mesh on the group is not visible
 					group.ResetMeshWrappers();
 
-					var wrappedItems = item.Descendants().Where((obj) => obj.OwnerID == group.ID).ToList();
+					var wrappedItems = item.DescendantsAndSelf().Where((obj) => obj.OwnerID == group.ID).ToList();
 					foreach (var meshWrapper in wrappedItems)
 					{
 						// and set the output type for this checkbox
 						meshWrapper.OutputType = checkBox.Checked ? PrintOutputTypes.Hole : PrintOutputTypes.Solid;
 					}
 
-					var allItems = group.Descendants().Where((obj) => obj.OwnerID == group.ID).ToList();
+					var allItems = group.DescendantsAndSelf().Where((obj) => obj.OwnerID == group.ID).ToList();
 					int holeCount = allItems.Where((o) => o.OutputType == PrintOutputTypes.Hole).Count();
 					int solidCount = allItems.Where((o) => o.OutputType != PrintOutputTypes.Hole).Count();
 					updateButton.Enabled = allItems.Count() != holeCount && allItems.Count() != solidCount;
@@ -162,11 +162,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				tabContainer.AddChild(rowContainer);
 			}
 
-			bool operationApplied = group.Descendants()
+			bool operationApplied = group.DescendantsAndSelf()
 				.Where((obj) => obj.OwnerID == group.ID)
 				.Where((objId) => objId.Mesh != objId.Children.First().Mesh).Any();
 
-			bool selectionHasBeenMade = group.Descendants()
+			bool selectionHasBeenMade = group.DescendantsAndSelf()
 				.Where((obj) => obj.OwnerID == group.ID && obj.OutputType == PrintOutputTypes.Hole)
 				.Any();
 
@@ -199,7 +199,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 				reporter.Report(progressStatus);
 
-				var participants = group.Descendants().Where((obj) => obj.OwnerID == group.ID).ToList();
+				var participants = group.DescendantsAndSelf().Where((obj) => obj.OwnerID == group.ID).ToList();
 				var paintObjects = participants.Where((obj) => obj.OutputType == PrintOutputTypes.Hole).ToList();
 				var keepObjects = participants.Where((obj) => obj.OutputType != PrintOutputTypes.Hole).ToList();
 

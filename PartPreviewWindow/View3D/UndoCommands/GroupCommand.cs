@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
+using MatterHackers.Localizations;
 using MatterHackers.MeshVisualizer;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
@@ -51,7 +52,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				// This is the original do() case. The selection needs to be changed into a group and selected
 				// change it to a standard group
-				var newGroup = new Object3D();
+				var newGroup = new Object3D()
+				{
+					Name = "Group".Localize()
+				};
 				newGroup.Children.Modify((gChildren) =>
 				{
 					selectedItem.Children.Modify((sChildren) =>
