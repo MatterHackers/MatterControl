@@ -34,58 +34,46 @@ using System.Linq;
 using MatterHackers.DataConverters3D;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
 	using Aabb = AxisAlignedBoundingBox;
 
-	public class DirectionAxis
-	{
-		public Vector3 Origin { get; set; }
-		public Vector3 Normal { get; set; }
-	}
-
-	public class DirectionVector
-	{
-		public Vector3 Normal { get; set; }
-	}
-
 	public class ArangeObject3D : Object3D, IRebuildable
 	{
 		[JsonIgnoreAttribute]
-		Aabb startingBounds = Aabb.Empty;
-		[JsonIgnoreAttribute]
-		List<Aabb> childrenBounds = new List<Aabb>();
-
-		public enum AlignTo { First, Last, All_Bounds }
-		public enum Align { None, Min, Center, Max, Flow }
-
-		public Align AlignmentX { get; set; } = Align.None;
-		public AlignTo AlignToX { get; set; } = AlignTo.First;
-		public double OffsetX { get; set; } = 0;
-
-		public Align AlignmentY { get; set; } = Align.None;
-		public AlignTo AlignToY { get; set; } = AlignTo.First;
-		public double OffsetY { get; set; } = 0;
-
-		public Align AlignmentZ { get; set; } = Align.None;
-		public AlignTo AlignToZ { get; set; } = AlignTo.First;
-		public double OffsetZ { get; set; } = 0;
-
-		public override string ActiveEditor => "PublicPropertyEditor";
+		private List<Aabb> childrenBounds = new List<Aabb>();
 
 		public ArangeObject3D()
 		{
 		}
 
+		public enum Align { None, Min, Center, Max }
+
+		public override string ActiveEditor => "PublicPropertyEditor";
+		// Attributes - [SameLineAsLast, Icons(new string[] {"LeftX", "CenterX", "RightX"})]
+		public Align XAlign { get; set; } = Align.None;
+		// Attributes - [EnableIfNot("XAlign", "None"), Icons(new string[] {"NoneX", "LeftX", "CenterX", "RightX"})]
+		public Align XAlignTo { get; set; } = Align.None;
+		// Attributes - [EnableIfNot("XAlign", "None")]
+		public double OffsetX { get; set; } = 0;
+
+		public Align YAlign { get; set; } = Align.None;
+		public Align YAlignTo { get; set; } = Align.None;
+		public double YOffset { get; set; } = 0;
+
+		public Align ZAlign { get; set; } = Align.None;
+		public Align ZAlignTo { get; set; } = Align.None;
+		public double ZOffset { get; set; } = 0;
+
+
 		public void Rebuild()
 		{
 			var aabb = this.GetAxisAlignedBoundingBox();
 
-			if (startingBounds == Aabb.Empty)
+			// TODO: check if the has code for the children
+			if (childrenBounds.Count == 0)
 			{
-				startingBounds = aabb;
 				this.Children.Modify(list =>
 				{
 					foreach (var child in list)
@@ -97,164 +85,100 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 			this.Children.Modify(list =>
 			{
+				var firstBounds = childrenBounds[0];
 				int i = 0;
 				foreach (var child in list)
 				{
-					var originalBounds = childrenBounds[i++];
-					AlignAxis(0, AlignmentX, GetCorrectAabb(AlignToX), OffsetX, child, originalBounds);
-					AlignAxis(1, AlignmentY, GetCorrectAabb(AlignToY), OffsetY, child, originalBounds);
-					AlignAxis(2, AlignmentZ, GetCorrectAabb(AlignToZ), OffsetZ, child, originalBounds);
+					if (i > 0)
+					{
+						if (XAlign == Align.None)
+						{
+							// make sure it is where it started
+							AlignAxis(0, Align.Min, childrenBounds[i].minXYZ.X, 0, child);
+						}
+						else
+						{
+							AlignAxis(0, XAlign, GetAlignToOffset(0, XAlignTo == Align.None ? XAlign : XAlignTo), OffsetX, child);
+						}
+						if (YAlign == Align.None)
+						{
+							AlignAxis(1, Align.Min, childrenBounds[i].minXYZ.Y, 0, child);
+						}
+						else
+						{
+							AlignAxis(1, YAlign, GetAlignToOffset(1, YAlignTo == Align.None ? YAlign : YAlignTo), YOffset, child);
+						}
+						if (ZAlign == Align.None)
+						{
+							AlignAxis(2, Align.Min, childrenBounds[i].minXYZ.Z, 0, child);
+						}
+						else
+						{
+							AlignAxis(2, ZAlign, GetAlignToOffset(2, ZAlignTo == Align.None ? ZAlign : ZAlignTo), ZOffset, child);
+						}
+					}
+					i++;
 				}
 			});
 		}
 
-		private Aabb GetCorrectAabb(AlignTo alignTo)
-		{
-			switch (alignTo)
-			{
-				case AlignTo.First:
-					return childrenBounds.First();
-				case AlignTo.Last:
-					return childrenBounds.Last();
-				default:
-					return startingBounds;
-			}
-		}
-
-		private void AlignAxis(int axis, Align align, Aabb bounds, double offset, 
-			IObject3D item, Aabb originalBounds)
+		private void AlignAxis(int axis, Align align, double alignTo, double offset,
+			IObject3D item)
 		{
 			var aabb = item.GetAxisAlignedBoundingBox();
 			var translate = Vector3.Zero;
 
 			switch (align)
 			{
-				case Align.None:
-					translate[axis] = originalBounds.minXYZ[axis] - aabb.minXYZ[axis];
-					break;
-
 				case Align.Min:
-					translate[axis] = bounds.minXYZ[axis] - aabb.minXYZ[axis] + offset;
+					translate[axis] = alignTo - aabb.minXYZ[axis] + offset;
 					break;
 
 				case Align.Center:
-					translate[axis] = bounds.Center[axis] - aabb.Center[axis] + offset;
+					translate[axis] = alignTo - aabb.Center[axis] + offset;
 					break;
 
 				case Align.Max:
-					translate[axis] = bounds.maxXYZ[axis] - aabb.maxXYZ[axis] + offset;
-					break;
-
-				case Align.Flow:
+					translate[axis] = alignTo - aabb.maxXYZ[axis] + offset;
 					break;
 			}
 
 			item.Translate(translate);
 		}
-	}
 
-	public class ArrayLinearObject3D : Object3D, IRebuildable
-	{
-		public int Count { get; set; } = 3;
-		public DirectionVector Direction { get; set; } = new DirectionVector { Normal = new Vector3(1, 0, 0) };
-		public double Distance { get; set; } = 30;
-
-		public override string ActiveEditor => "PublicPropertyEditor";
-
-		public ArrayLinearObject3D()
+		private double GetAlignToOffset(int axis, Align alignTo)
 		{
-		}
-
-		public void Rebuild()
-		{
-			this.Children.Modify(list =>
+			switch (alignTo)
 			{
-				IObject3D lastChild = list.First();
-				list.Clear();
-				list.Add(lastChild);
-				var offset = Vector3.Zero;
-				for (int i = 1; i < Count; i++)
-				{
-					var next = lastChild.Clone();
-					next.Matrix *= Matrix4X4.CreateTranslation(Direction.Normal.GetNormal() * Distance);
-					list.Add(next);
-					lastChild = next;
-				}
-			});
-		}
-	}
+				case Align.Min:
+					return childrenBounds[0].minXYZ[axis];
 
-	public class ArrayRadialObject3D : Object3D, IRebuildable
-	{
-		public int Count { get; set; } = 3;
+				case Align.Center:
+					return childrenBounds[0].Center[axis];
 
-		public DirectionAxis Axis { get; set; } = new DirectionAxis() { Origin = Vector3.NegativeInfinity, Normal = Vector3.UnitZ };
-		public double Angle { get; set; } = 360;
+				case Align.Max:
+					return childrenBounds[0].maxXYZ[axis];
 
-		[DisplayName("Keep Within Angle")]
-		[Description("Keep the entire extents of the part within the angle described.")]
-		public bool KeepInAngle { get; set; } = false;
-
-		[DisplayName("Rotate Part")]
-		[Description("Rotate the part to the same angle as the array.")]
-		public bool RotatePart { get; set; } = true;
-
-		public override string ActiveEditor => "PublicPropertyEditor";
-
-		public ArrayRadialObject3D()
-		{
-		}
-
-		public void Rebuild()
-		{
-			if(Axis.Origin.X == double.NegativeInfinity)
-			{
-				// make it something reasonable (just to the left of the aabb of the object)
-				var aabb = this.GetAxisAlignedBoundingBox();
-				Axis.Origin = new Vector3(aabb.minXYZ.X - aabb.XSize / 2, aabb.Center.Y, 0);
+				default:
+					throw new NotImplementedException();
 			}
-			this.Children.Modify(list =>
-			{
-				IObject3D first = list.First();
-
-				list.Clear();
-				list.Add(first);
-				var offset = Vector3.Zero;
-				for (int i = 1; i < Count; i++)
-				{
-					var next = first.Clone();
-
-					var normal = Axis.Normal.GetNormal();
-					var angleRadians = MathHelper.DegreesToRadians(Angle) / Count * i;
-					next.Rotate(Axis.Origin, normal, angleRadians);
-
-					if (!RotatePart)
-					{
-						next.Rotate(next.GetAxisAlignedBoundingBox().Center, normal, -angleRadians);
-					}
-
-					list.Add(next);
-				}
-			});
-			this.Invalidate();
 		}
 	}
 
 	public class ArrayAdvancedObject3D : Object3D, IRebuildable
 	{
-		public int Count { get; set; } = 3;
-		public double XOffset { get; set; } = 30;
-		public double YOffset { get; set; } = 0;
-		public double Rotate { get; set; } = 0;
-		public double Scale { get; set; } = 1;
-		public bool RotatePart { get; set; } = false;
-		public bool ScaleOffset { get; set; } = false;
-
-		public override string ActiveEditor => "PublicPropertyEditor";
-
 		public ArrayAdvancedObject3D()
 		{
 		}
+
+		public override string ActiveEditor => "PublicPropertyEditor";
+		public int Count { get; set; } = 3;
+		public double Rotate { get; set; } = 0;
+		public bool RotatePart { get; set; } = false;
+		public double Scale { get; set; } = 1;
+		public bool ScaleOffset { get; set; } = false;
+		public double XOffset { get; set; } = 30;
+		public double YOffset { get; set; } = 0;
 
 		public void Rebuild()
 		{
@@ -291,5 +215,100 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				}
 			});
 		}
+	}
+
+	public class ArrayLinearObject3D : Object3D, IRebuildable
+	{
+		public ArrayLinearObject3D()
+		{
+		}
+
+		public override string ActiveEditor => "PublicPropertyEditor";
+		public int Count { get; set; } = 3;
+		public DirectionVector Direction { get; set; } = new DirectionVector { Normal = new Vector3(1, 0, 0) };
+		public double Distance { get; set; } = 30;
+
+		public void Rebuild()
+		{
+			this.Children.Modify(list =>
+			{
+				IObject3D lastChild = list.First();
+				list.Clear();
+				list.Add(lastChild);
+				var offset = Vector3.Zero;
+				for (int i = 1; i < Count; i++)
+				{
+					var next = lastChild.Clone();
+					next.Matrix *= Matrix4X4.CreateTranslation(Direction.Normal.GetNormal() * Distance);
+					list.Add(next);
+					lastChild = next;
+				}
+			});
+		}
+	}
+
+	public class ArrayRadialObject3D : Object3D, IRebuildable
+	{
+		public ArrayRadialObject3D()
+		{
+		}
+
+		public override string ActiveEditor => "PublicPropertyEditor";
+		public double Angle { get; set; } = 360;
+		public DirectionAxis Axis { get; set; } = new DirectionAxis() { Origin = Vector3.NegativeInfinity, Normal = Vector3.UnitZ };
+		public int Count { get; set; } = 3;
+
+		[DisplayName("Keep Within Angle")]
+		[Description("Keep the entire extents of the part within the angle described.")]
+		public bool KeepInAngle { get; set; } = false;
+
+		[DisplayName("Rotate Part")]
+		[Description("Rotate the part to the same angle as the array.")]
+		public bool RotatePart { get; set; } = true;
+
+		public void Rebuild()
+		{
+			if (Axis.Origin.X == double.NegativeInfinity)
+			{
+				// make it something reasonable (just to the left of the aabb of the object)
+				var aabb = this.GetAxisAlignedBoundingBox();
+				Axis.Origin = new Vector3(aabb.minXYZ.X - aabb.XSize / 2, aabb.Center.Y, 0);
+			}
+			this.Children.Modify(list =>
+			{
+				IObject3D first = list.First();
+
+				list.Clear();
+				list.Add(first);
+				var offset = Vector3.Zero;
+				for (int i = 1; i < Count; i++)
+				{
+					var next = first.Clone();
+
+					var normal = Axis.Normal.GetNormal();
+					var angleRadians = MathHelper.DegreesToRadians(Angle) / Count * i;
+					next.Rotate(Axis.Origin, normal, angleRadians);
+
+					if (!RotatePart)
+					{
+						next.Rotate(next.GetAxisAlignedBoundingBox().Center, normal, -angleRadians);
+					}
+
+					list.Add(next);
+				}
+			});
+			this.Invalidate();
+		}
+	}
+
+	public class DirectionAxis
+	{
+		public Vector3 Normal { get; set; }
+		public Vector3 Origin { get; set; }
+	}
+
+	public class DirectionVector
+	{
+		public Vector3 Normal { get; set; }
 	}
 }
