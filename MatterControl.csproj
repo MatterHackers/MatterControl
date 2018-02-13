@@ -121,7 +121,6 @@
     <Compile Include="DesignTools\Operations\Package.cs" />
     <Compile Include="DesignTools\Operations\Translate.cs" />
     <Compile Include="Library\Providers\GraphConfig.cs" />
-    <Compile Include="PartPreviewWindow\AlignControls.cs" />
     <Compile Include="CustomWidgets\InlineTitleEdit.cs" />
     <Compile Include="PartPreviewWindow\BranchEditContainer.cs" />
     <Compile Include="PartPreviewWindow\LibraryBrowserPage.cs" />

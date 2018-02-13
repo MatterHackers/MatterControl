@@ -228,17 +228,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			editorSection = new SectionWidget("Editor", editorColumn, theme);
 			scrollableContent.AddChild(editorSection);
 
-			// TODO: Implements
-			//alignButton.Enabled = this.scene.HasSelection
-			//	&& this.scene.SelectedItem is SelectionGroup
-			//	&& this.scene.SelectedItem.Children.Count > 1;
-
-			var alignSection = new SectionWidget("Align".Localize(), new AlignControls(scene, theme), theme, expanded: false)
-			{
-				Name = "Align Panel",
-			};
-			scrollableContent.AddChild(alignSection);
-
 			var mirrorSection = new SectionWidget("Mirror".Localize(), new MirrorControls(scene, theme), theme, expanded: false)
 			{
 				Name = "Mirror Panel",

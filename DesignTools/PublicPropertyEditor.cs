@@ -50,21 +50,14 @@ namespace MatterHackers.MatterControl.DesignTools
 		void Rebuild();
 	}
 
-	[AttributeUsage(AttributeTargets.Property)]
-	public class SortableAttribute : Attribute
+	public interface IPropertyGridModifier
 	{
+		void UpdateControls(PublicPropertyEditor editor);
 	}
 
 	[AttributeUsage(AttributeTargets.Property)]
-	public class EnableIfAttribute : Attribute
+	public class SortableAttribute : Attribute
 	{
-		public string PropertyName { get; private set; }
-		public string ExpectedValue { get; private set; }
-		public EnableIfAttribute(string propertyName, string expectedValue)
-		{
-			this.PropertyName = propertyName;
-			this.ExpectedValue = expectedValue;
-		}
 	}
 
 	[AttributeUsage(AttributeTargets.Property)]
@@ -114,6 +107,19 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public IEnumerable<Type> SupportedTypes() => new Type[] { typeof(IRebuildable) };
 
+		Dictionary<string, GuiWidget> editRows = new Dictionary<string, GuiWidget>();
+
+		public GuiWidget GetEditRow(string propertyName)
+		{
+			GuiWidget value;
+			if (editRows.TryGetValue(propertyName, out value))
+			{
+				return value;
+			}
+
+			return null;
+		}
+
 		private static FlowLayoutWidget CreateSettingsRow(string labelText, string toolTipText = null)
 		{
 			var rowContainer = new FlowLayoutWidget(FlowDirection.LeftToRight)
@@ -149,7 +155,10 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		private void ModifyObject(View3DWidget view3DWidget, FlowLayoutWidget editControlsContainer, ThemeConfig theme)
 		{
+			editRows.Clear();
+
 			var rebuildable = item as IRebuildable;
+			var propertyGridModifier = item as IPropertyGridModifier;
 
 			var editableProperties = this.item.GetType().GetProperties(OwnedPropertiesOnly)
 				.Where(pi => (allowedTypes.Contains(pi.PropertyType) || pi.PropertyType.IsEnum)
@@ -164,12 +173,13 @@ namespace MatterHackers.MatterControl.DesignTools
 					PropertyInfo = p
 				});
 
+			GuiWidget rowContainer = null;
 			foreach (var property in editableProperties)
 			{
 				// create a double editor
 				if (property.Value is double doubleValue)
 				{
-					FlowLayoutWidget rowContainer = CreateSettingsRow(property.DisplayName.Localize());
+					rowContainer = CreateSettingsRow(property.DisplayName.Localize());
 
 					var field = new DoubleField();
 					field.Initialize(0);
@@ -178,6 +188,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					{
 						property.PropertyInfo.GetSetMethod().Invoke(this.item, new Object[] { field.DoubleValue });
 						rebuildable?.Rebuild();
+						propertyGridModifier?.UpdateControls(this);
 					};
 
 					rowContainer.AddChild(field.Content);
@@ -185,7 +196,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				}
 				else if (property.Value is Vector2 vector2)
 				{
-					FlowLayoutWidget rowContainer = CreateSettingsRow(property.DisplayName.Localize());
+					rowContainer = CreateSettingsRow(property.DisplayName.Localize());
 
 					var field = new Vector2Field();
 					field.Initialize(0);
@@ -194,6 +205,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					{
 						property.PropertyInfo.GetSetMethod().Invoke(this.item, new Object[] { field.Vector2 });
 						rebuildable?.Rebuild();
+						propertyGridModifier?.UpdateControls(this);
 					};
 
 					rowContainer.AddChild(field.Content);
@@ -201,7 +213,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				}
 				else if (property.Value is Vector3 vector3)
 				{
-					FlowLayoutWidget rowContainer = CreateSettingsRow(property.DisplayName.Localize());
+					rowContainer = CreateSettingsRow(property.DisplayName.Localize());
 
 					var field = new Vector3Field();
 					field.Initialize(0);
@@ -210,6 +222,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					{
 						property.PropertyInfo.GetSetMethod().Invoke(this.item, new Object[] { field.Vector3 });
 						rebuildable?.Rebuild();
+						propertyGridModifier?.UpdateControls(this);
 					};
 
 					rowContainer.AddChild(field.Content);
@@ -220,7 +233,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					bool simpleEdit = true;
 					if (simpleEdit)
 					{
-						FlowLayoutWidget rowContainer = CreateSettingsRow(property.DisplayName.Localize());
+						rowContainer = CreateSettingsRow(property.DisplayName.Localize());
 
 						var dropDownList = new DropDownList("Name".Localize(), theme.Colors.PrimaryTextColor, Direction.Down, pointSize: theme.DefaultFontSize);
 
@@ -247,6 +260,7 @@ namespace MatterHackers.MatterControl.DesignTools
 								}
 
 								rebuildable?.Rebuild();
+								propertyGridModifier?.UpdateControls(this);
 							};
 						}
 
@@ -256,7 +270,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					}
 					else // edit the vector
 					{
-						FlowLayoutWidget rowContainer = CreateSettingsRow(property.DisplayName.Localize());
+						rowContainer = CreateSettingsRow(property.DisplayName.Localize());
 
 						var field = new Vector3Field();
 						field.Initialize(0);
@@ -265,6 +279,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						{
 							property.PropertyInfo.GetSetMethod().Invoke(this.item, new Object[] { new DirectionVector() { Normal = field.Vector3 } });
 							rebuildable?.Rebuild();
+							propertyGridModifier?.UpdateControls(this);
 						};
 
 						rowContainer.AddChild(field.Content);
@@ -288,6 +303,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					{
 						property.PropertyInfo.GetSetMethod().Invoke(this.item, new Object[] { new DirectionAxis() { Origin = originField.Vector3, Normal = normalField.Vector3 } });
 						rebuildable?.Rebuild();
+						propertyGridModifier?.UpdateControls(this);
 					};
 
 					originRowContainer.AddChild(originField.Content);
@@ -300,6 +316,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					{
 						property.PropertyInfo.GetSetMethod().Invoke(this.item, new Object[] { new DirectionAxis() { Origin = originField.Vector3, Normal = normalField.Vector3 } });
 						rebuildable?.Rebuild();
+						propertyGridModifier?.UpdateControls(this);
 					};
 
 					directionRowContainer.AddChild(normalField.Content);
@@ -319,7 +336,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				// create a int editor
 				else if (property.Value is int intValue)
 				{
-					FlowLayoutWidget rowContainer = CreateSettingsRow(property.DisplayName.Localize());
+					rowContainer = CreateSettingsRow(property.DisplayName.Localize());
 
 					var field = new IntField();
 					field.Initialize(0);
@@ -328,6 +345,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					{
 						property.PropertyInfo.GetSetMethod().Invoke(this.item, new Object[] { field.IntValue });
 						rebuildable?.Rebuild();
+						propertyGridModifier?.UpdateControls(this);
 					};
 
 					rowContainer.AddChild(field.Content);
@@ -336,7 +354,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				// create a bool editor
 				else if (property.Value is bool boolValue)
 				{
-					FlowLayoutWidget rowContainer = CreateSettingsRow(property.DisplayName.Localize(), property.Description.Localize());
+					rowContainer = CreateSettingsRow(property.DisplayName.Localize(), property.Description.Localize());
 
 					var field = new ToggleboxField(ApplicationController.Instance.Theme.Colors.PrimaryTextColor);
 					field.Initialize(0);
@@ -345,6 +363,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					{
 						property.PropertyInfo.GetSetMethod().Invoke(this.item, new Object[] { field.Checked });
 						rebuildable?.Rebuild();
+						propertyGridModifier?.UpdateControls(this);
 					};
 
 					rowContainer.AddChild(field.Content);
@@ -353,7 +372,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				// create a string editor
 				else if (property.Value is string stringValue)
 				{
-					FlowLayoutWidget rowContainer = CreateSettingsRow(property.DisplayName.Localize());
+					rowContainer = CreateSettingsRow(property.DisplayName.Localize());
 					var textEditWidget = new MHTextEditWidget(stringValue, pixelWidth: 150 * GuiWidget.DeviceScale)
 					{
 						SelectAllOnFocus = true,
@@ -363,6 +382,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					{
 						property.PropertyInfo.GetSetMethod().Invoke(this.item, new Object[] { textEditWidget.Text });
 						rebuildable?.Rebuild();
+						propertyGridModifier?.UpdateControls(this);
 					};
 					rowContainer.AddChild(textEditWidget);
 					editControlsContainer.AddChild(rowContainer);
@@ -370,10 +390,14 @@ namespace MatterHackers.MatterControl.DesignTools
 				// create an enum editor
 				else if (property.PropertyType.IsEnum)
 				{
-					editControlsContainer.AddChild(CreateEnumEditor(rebuildable,
+					rowContainer = CreateEnumEditor(rebuildable,
 							property.PropertyInfo, property.PropertyType, property.Value, property.DisplayName,
-							theme));
+							theme);
+					editControlsContainer.AddChild(rowContainer);
 				}
+
+				// remember the row name and widget
+				editRows.Add(property.PropertyInfo.Name, rowContainer);
 			}
 
 			var updateButton = theme.ButtonFactory.Generate("Update".Localize());
@@ -384,6 +408,8 @@ namespace MatterHackers.MatterControl.DesignTools
 				rebuildable?.Rebuild();
 			};
 			editControlsContainer.AddChild(updateButton);
+			// make sure the ui is set right to start
+			propertyGridModifier?.UpdateControls(this);
 		}
 
 		private GuiWidget CreateEnumEditor(IRebuildable item, 
@@ -408,7 +434,8 @@ namespace MatterHackers.MatterControl.DesignTools
 				int index = 0;
 				foreach (var enumItem in enumItems)
 				{
-					var iconImage = AggContext.StaticData.LoadIcon(iconsAttribute.IconPaths[index++], 16, 16);
+					var localIndex = index;
+					var iconImage = AggContext.StaticData.LoadIcon(iconsAttribute.IconPaths[localIndex], 16, 16);
 					var radioButton = new RadioButton(new ImageWidget(iconImage));
 					rowContainer.AddChild(radioButton);
 
@@ -421,8 +448,17 @@ namespace MatterHackers.MatterControl.DesignTools
 								this.item,
 								new Object[] { Enum.Parse(propertyType, localItem.Key) });
 							item?.Rebuild();
+							if (localIndex != 0)
+							{
+								radioButton.BackgroundColor = new Color(Color.Black, 100);
+							}
+						}
+						else
+						{
+							radioButton.BackgroundColor = Color.Transparent;
 						}
 					};
+					index++;
 				}
 			}
 			else
