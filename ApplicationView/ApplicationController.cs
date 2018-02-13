@@ -331,6 +331,20 @@ namespace MatterHackers.MatterControl
 			new SceneSelectionSeparator(),
 			new SceneSelectionOperation()
 			{
+				TitleResolver = () => "Align".Localize(),
+				Action = (scene) =>
+				{
+					scene.AddSelectionAsChildren(new ArrangeObject3D());
+					if(scene.SelectedItem is ArrangeObject3D arange)
+					{
+						arange.Rebuild();
+					}
+				},
+				Icon = AggContext.StaticData.LoadIcon("align_left.png").SetPreMultiply(),
+				IsEnabled = (scene) => scene.SelectedItem is SelectionGroup,
+			},
+			new SceneSelectionOperation()
+			{
 				TitleResolver = () => "Lay Flat".Localize(),
 				Action = (scene) =>
 				{
@@ -429,21 +443,6 @@ namespace MatterHackers.MatterControl
 				IsEnabled = (scene) => scene.HasSelection && !(scene.SelectedItem is SelectionGroup),
 			},
 #if DEBUG // keep this work in progress to the editor for now
-			new SceneSelectionSeparator(),
-			new SceneSelectionOperation()
-			{
-				TitleResolver = () => "Align".Localize(),
-				Action = (scene) =>
-				{
-					scene.AddSelectionAsChildren(new ArrangeObject3D());
-					if(scene.SelectedItem is ArrangeObject3D arange)
-					{
-						arange.Rebuild();
-					}
-				},
-				//Icon = AggContext.StaticData.LoadIcon("array_linear.png").SetPreMultiply(),
-				IsEnabled = (scene) => scene.SelectedItem is SelectionGroup,
-			},
 			new SceneSelectionSeparator(),
 			new SceneSelectionOperation()
 			{
