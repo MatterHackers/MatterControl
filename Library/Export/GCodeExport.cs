@@ -95,11 +95,14 @@ namespace MatterHackers.MatterControl.Library.Export
 			{
 				IObject3D loadedItem = null;
 
+				bool centerOnBed = true;
+
 				if (firstItem.AssetPath == printer.Bed.EditContext.SourceFilePath)
 				{
 					// If item is bedplate, save any pending changes before starting the print
 					await ApplicationController.Instance.Tasks.Execute(printer.Bed.SaveChanges);
 					loadedItem = printer.Bed.Scene;
+					centerOnBed = false;
 				}
 				else if (firstItem is ILibraryObject3D object3DItem)
 				{
@@ -127,13 +130,16 @@ namespace MatterHackers.MatterControl.Library.Export
 						if (ApplicationSettings.ValidFileExtensions.IndexOf(sourceExtension, StringComparison.OrdinalIgnoreCase) >= 0
 							|| string.Equals(sourceExtension, ".mcx", StringComparison.OrdinalIgnoreCase))
 						{
-							// Get Bounds
-							var aabb = loadedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+							if (centerOnBed)
+							{
+								// Get Bounds
+								var aabb = loadedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 
-							// Move to bed center
-							var bedCenter = printer.Bed.BedCenter;
-							loadedItem.Matrix *= Matrix4X4.CreateTranslation((double)-aabb.Center.X, (double)-aabb.Center.Y, (double)-aabb.minXYZ.Z) * Matrix4X4.CreateTranslation(bedCenter.X, bedCenter.Y, 0);
-							loadedItem.Color = loadedItem.Color;
+								// Move to bed center
+								var bedCenter = printer.Bed.BedCenter;
+								loadedItem.Matrix *= Matrix4X4.CreateTranslation((double)-aabb.Center.X, (double)-aabb.Center.Y, (double)-aabb.minXYZ.Z) * Matrix4X4.CreateTranslation(bedCenter.X, bedCenter.Y, 0);
+								loadedItem.Color = loadedItem.Color;
+							}
 
 							// Slice
 							await ApplicationController.Instance.Tasks.Execute((reporter, cancellationToken) =>
