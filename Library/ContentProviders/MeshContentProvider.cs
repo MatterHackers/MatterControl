@@ -70,10 +70,6 @@ namespace MatterHackers.MatterControl
 								// TODO: Wire up caching
 								loadedItem = Object3D.Load(contentStream.Stream, Path.GetExtension(streamInterface.FileName), CancellationToken.None, null /*itemCache*/, progressReporter);
 
-								if (item is FileSystemFileItem fileItem)
-								{
-									loadedItem.MeshPath = fileItem.Path;
-								}
 							}
 						}
 					}
