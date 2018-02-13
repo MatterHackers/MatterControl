@@ -124,7 +124,7 @@ namespace MatterHackers.MatterControl.Library.Export
 
 						string gcodePath = PrintItemWrapper.GCodePath(fileHashCode);
 
-						if (ApplicationSettings.ValidFileExtensions.IndexOf("string", StringComparison.OrdinalIgnoreCase) >= 0
+						if (ApplicationSettings.ValidFileExtensions.IndexOf(sourceExtension, StringComparison.OrdinalIgnoreCase) >= 0
 							|| string.Equals(sourceExtension, ".mcx", StringComparison.OrdinalIgnoreCase))
 						{
 							// Get Bounds
