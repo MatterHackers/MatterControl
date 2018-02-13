@@ -41,12 +41,11 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public override string ActiveEditor => "PublicPropertyEditor";
 		public int Count { get; set; } = 3;
-		public double Rotate { get; set; } = 0;
-		public bool RotatePart { get; set; } = false;
+		public Vector3 Offset { get; set; } = new Vector3(30, 0, 0);
+		public Vector3 Rotate { get; set; } = Vector3.Zero;
 		public double Scale { get; set; } = 1;
-		public bool ScaleOffset { get; set; } = false;
-		public double XOffset { get; set; } = 30;
-		public double YOffset { get; set; } = 0;
+		public bool RotatePart { get; set; } = true;
+		public bool ScaleOffset { get; set; } = true;
 
 		public void Rebuild()
 		{
@@ -55,26 +54,22 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				IObject3D lastChild = list.First();
 				list.Clear();
 				list.Add(lastChild);
-				var offset = Vector3.Zero;
+				var offset = Offset;
 				for (int i = 1; i < Count; i++)
 				{
-					var rotateRadians = MathHelper.DegreesToRadians(Rotate);
-					var nextOffset = new Vector2(XOffset, YOffset);
+					var rotateRadians = new Vector3(MathHelper.DegreesToRadians(Rotate.X), MathHelper.DegreesToRadians(Rotate.Y), MathHelper.DegreesToRadians(Rotate.Z));
 					if (ScaleOffset)
 					{
-						for (int j = 1; j < i; j++)
-						{
-							nextOffset *= Scale;
-						}
+						offset *= Scale;
 					}
 
-					nextOffset.Rotate(rotateRadians * i);
+					offset = Vector3.Transform(offset, Matrix4X4.CreateRotation(rotateRadians * i));
 					var next = lastChild.Clone();
-					next.Matrix *= Matrix4X4.CreateTranslation(nextOffset.X, nextOffset.Y, 0);
+					next.Matrix *= Matrix4X4.CreateTranslation(offset);
 
 					if (RotatePart)
 					{
-						next.ApplyAtBoundsCenter(Matrix4X4.CreateRotationZ(rotateRadians));
+						next.ApplyAtBoundsCenter(Matrix4X4.CreateRotation(rotateRadians));
 					}
 
 					next.ApplyAtBoundsCenter(Matrix4X4.CreateScale(Scale));

@@ -33,6 +33,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
@@ -86,7 +87,9 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		private static Type[] allowedTypes = 
 		{
-			typeof(double), typeof(int), typeof(string), typeof(bool), typeof(DirectionVector), typeof(DirectionAxis)
+			typeof(double), typeof(int), typeof(string), typeof(bool),
+			typeof(Vector2), typeof(Vector3),
+			typeof(DirectionVector), typeof(DirectionAxis)
 		};
 
 		public const BindingFlags OwnedPropertiesOnly = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
@@ -399,27 +402,53 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			FlowLayoutWidget rowContainer = CreateSettingsRow(displayName);
 
-			var dropDownList = new DropDownList("Name".Localize(), theme.Colors.PrimaryTextColor, Direction.Down, pointSize: theme.DefaultFontSize);
-
-			var sortableAttribute = propertyInfo.GetCustomAttributes(true).OfType<SortableAttribute>().FirstOrDefault();
-			var orderedItems = sortableAttribute != null ? enumItems.OrderBy(n => n.Value) : enumItems;
-
-			foreach (var orderItem in orderedItems)
+			var iconsAttribute = propertyInfo.GetCustomAttributes(true).OfType<IconsAttribute>().FirstOrDefault();
+			if (iconsAttribute != null)
 			{
-				MenuItem newItem = dropDownList.AddItem(orderItem.Value);
-
-				var localOredrItem = orderItem;
-				newItem.Selected += (sender, e) =>
+				int index = 0;
+				foreach (var enumItem in enumItems)
 				{
-					propertyInfo.GetSetMethod().Invoke(
-						this.item,
-						new Object[] { Enum.Parse(propertyType, localOredrItem.Key) });
-					item?.Rebuild();
-				};
-			}
+					var iconImage = AggContext.StaticData.LoadIcon(iconsAttribute.IconPaths[index++], 16, 16);
+					var radioButton = new RadioButton(new ImageWidget(iconImage));
+					rowContainer.AddChild(radioButton);
 
-			dropDownList.SelectedLabel = value.ToString().Replace('_', ' ');
-			rowContainer.AddChild(dropDownList);
+					var localItem = enumItem;
+					radioButton.CheckedStateChanged += (sender, e) =>
+					{
+						if (radioButton.Checked)
+						{
+							propertyInfo.GetSetMethod().Invoke(
+								this.item,
+								new Object[] { Enum.Parse(propertyType, localItem.Key) });
+							item?.Rebuild();
+						}
+					};
+				}
+			}
+			else
+			{
+				var dropDownList = new DropDownList("Name".Localize(), theme.Colors.PrimaryTextColor, Direction.Down, pointSize: theme.DefaultFontSize);
+
+				var sortableAttribute = propertyInfo.GetCustomAttributes(true).OfType<SortableAttribute>().FirstOrDefault();
+				var orderedItems = sortableAttribute != null ? enumItems.OrderBy(n => n.Value) : enumItems;
+
+				foreach (var orderItem in orderedItems)
+				{
+					MenuItem newItem = dropDownList.AddItem(orderItem.Value);
+
+					var localOredrItem = orderItem;
+					newItem.Selected += (sender, e) =>
+					{
+						propertyInfo.GetSetMethod().Invoke(
+							this.item,
+							new Object[] { Enum.Parse(propertyType, localOredrItem.Key) });
+						item?.Rebuild();
+					};
+				}
+
+				dropDownList.SelectedLabel = value.ToString().Replace('_', ' ');
+				rowContainer.AddChild(dropDownList);
+			}
 
 			return rowContainer;
 		}
