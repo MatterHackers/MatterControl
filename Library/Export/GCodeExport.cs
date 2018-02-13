@@ -104,7 +104,6 @@ namespace MatterHackers.MatterControl.Library.Export
 				else if (firstItem is ILibraryObject3D object3DItem)
 				{
 					loadedItem = await object3DItem.CreateContent(null);
-					loadedItem.PersistAssets(null);
 				}
 				else if (firstItem is ILibraryAssetStream assetStream)
 				{
@@ -113,6 +112,9 @@ namespace MatterHackers.MatterControl.Library.Export
 
 				if (loadedItem != null)
 				{
+					// Necessary to ensure scene or non-persisted ILibraryObject3D content is on disk before slicing
+					loadedItem.PersistAssets(null);
+
 					try
 					{
 						string sourceExtension = $".{firstItem.ContentType}";
