@@ -39,7 +39,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 {
 	using Aabb = AxisAlignedBoundingBox;
 
-	public class ArrangeObject3D : Object3D, IRebuildable
+	public class ArrangeObject3D : Object3D, IRebuildable, IPropertyGridModifier
 	{
 		// We need to serialize this so we can remove the arrange and get back to the objects before arranging
 		public List<Aabb> ChildrenBounds = new List<Aabb>();

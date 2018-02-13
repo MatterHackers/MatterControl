@@ -437,6 +437,12 @@ namespace MatterHackers.MatterControl.DesignTools
 					var localIndex = index;
 					var iconImage = AggContext.StaticData.LoadIcon(iconsAttribute.IconPaths[localIndex], 16, 16);
 					var radioButton = new RadioButton(new ImageWidget(iconImage));
+					// set it if checked
+					if(enumItem.Value == value.ToString())
+					{
+						radioButton.Checked = true;
+					}
+
 					rowContainer.AddChild(radioButton);
 
 					var localItem = enumItem;
