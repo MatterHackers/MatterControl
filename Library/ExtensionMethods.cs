@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl.Library
 			}
 		}
 
-		public static Task<IObject3D> CreateContent(this ILibraryContentStream item, Action<double, string> reporter = null)
+		public static Task<IObject3D> CreateContent(this ILibraryAssetStream item, Action<double, string> reporter = null)
 		{
 			var contentProvider = ApplicationController.Instance.Library.GetContentProvider(item) as ISceneContentProvider;
 			return contentProvider?.CreateItem(item, reporter);

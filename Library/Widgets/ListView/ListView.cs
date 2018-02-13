@@ -375,7 +375,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				else
 				{
 					// List items
-					if (itemModel is ILibraryContentStream contentModel)
+					if (itemModel is ILibraryAssetStream contentModel)
 					{
 						var activeContext = ApplicationController.Instance.DragDropData;
 						if (activeContext.View3DWidget != null)

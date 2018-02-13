@@ -49,15 +49,15 @@ namespace MatterHackers.MatterControl.Library.Export
 		public string ExtensionFilter => "Save as ZIP|*.zip";
 
 		public ImageBuffer Icon { get; } = AggContext.StaticData.LoadIcon(Path.Combine("filetypes", "zip.png"));
-		
-		public bool EnabledForCurrentPart(ILibraryContentStream libraryContent)
+
+		public bool EnabledForCurrentPart(ILibraryAssetStream libraryContent)
 		{
 			return !libraryContent.IsProtected;
 		}
 
 		public async Task<bool> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath)
 		{
-			var streamItems = libraryItems.OfType<ILibraryContentStream>();
+			var streamItems = libraryItems.OfType<ILibraryAssetStream>();
 			if (streamItems.Any())
 			{
 				await Task.Run(async () =>
@@ -76,7 +76,7 @@ namespace MatterHackers.MatterControl.Library.Export
 								// TODO: need to test for and resolve name conflicts
 								var entry = zipArchive.CreateEntry(item.FileName);
 
-								using (var sourceStream = await item.GetContentStream(null))
+								using (var sourceStream = await item.GetStream(null))
 								using (var outputStream = entry.Open())
 								{
 									sourceStream.Stream.CopyTo(outputStream);

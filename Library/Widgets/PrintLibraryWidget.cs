@@ -521,7 +521,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				Title = "Move".Localize(),
 				Action = (selectedLibraryItems, listView) =>
 				{
-					var partItems = selectedLibraryItems.Where(item => item is ILibraryContentStream);
+					var partItems = selectedLibraryItems.Where(item => item is ILibraryAssetStream);
 					if (partItems.Any()
 						&& libraryView.ActiveContainer is ILibraryWritableContainer sourceContainer)
 					{
@@ -614,7 +614,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					{
 						UiThread.RunOnIdle(() =>
 						{
-							var printItems = selectedLibraryItems.OfType<ILibraryContentStream>();
+							var printItems = selectedLibraryItems.OfType<ILibraryAssetStream>();
 							if (printItems.Any())
 							{
 								AggContext.FileDialogs.SaveFileDialog(

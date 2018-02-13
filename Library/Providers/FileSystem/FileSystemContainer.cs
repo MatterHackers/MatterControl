@@ -240,7 +240,7 @@ namespace MatterHackers.MatterControl.Library
 
 							break;
 
-						case ILibraryContentStream streamItem:
+						case ILibraryAssetStream streamItem:
 							string targetPath = Path.Combine(this.fullPath, streamItem.FileName);
 
 							try
@@ -251,7 +251,7 @@ namespace MatterHackers.MatterControl.Library
 								}
 
 								using (var outputStream = File.OpenWrite(targetPath))
-								using (var contentStream = await streamItem.GetContentStream(null))
+								using (var contentStream = await streamItem.GetStream(null))
 								{
 									contentStream.Stream.CopyTo(outputStream);
 								}

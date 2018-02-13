@@ -34,7 +34,7 @@ using MatterHackers.DataConverters3D;
 
 namespace MatterHackers.MatterControl.Library
 {
-	public class FileSystemFileItem : FileSystemItem, ILibraryContentStream
+	public class FileSystemFileItem : FileSystemItem, ILibraryAssetStream
 	{
 		public string FileName => System.IO.Path.GetFileName(this.Path);
 
@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl.Library
 			}
 		}
 
-		public Task<StreamAndLength> GetContentStream(Action<double, string> reportProgress)
+		public Task<StreamAndLength> GetStream(Action<double, string> reportProgress)
 		{
 			if (File.Exists(this.Path)
 				&& (ApplicationController.Instance.IsLoadableFile(this.Path)
@@ -72,16 +72,6 @@ namespace MatterHackers.MatterControl.Library
 			}
 
 			return Task.FromResult<StreamAndLength>(null);
-		}
-
-		public Task<IObject3D> GetContent(Action<double, string> reportProgress)
-		{
-			throw new NotImplementedException();
-		}
-
-		public void SetContent(IObject3D item)
-		{
-			throw new NotImplementedException();
 		}
 	}
 }

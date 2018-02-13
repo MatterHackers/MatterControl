@@ -67,9 +67,14 @@ namespace MatterHackers.MatterControl.Library
 		}
 	}
 
-	public class GeneratorItem : ILibraryContentItem
+	public class GeneratorItem : ILibraryObject3D
 	{
 		private Func<string> nameResolver;
+
+		/// <summary>
+		/// The delegate responsible for producing the item
+		/// </summary>
+		private Func<IObject3D> collector;
 
 		public GeneratorItem(Func<string> nameResolver)
 		{
@@ -80,7 +85,7 @@ namespace MatterHackers.MatterControl.Library
 		public GeneratorItem(Func<string> nameResolver, Func<IObject3D> collector, string category = null)
 		{
 			this.nameResolver = nameResolver;
-			this.Collector = collector;
+			this.collector = collector;
 			this.Category = category;
 			//this.Color = ColorRange.NextColor();
 		}
@@ -90,21 +95,24 @@ namespace MatterHackers.MatterControl.Library
 		public string Name => nameResolver?.Invoke();
 		public string ThumbnailKey { get; } = "";
 
-		public string ContentType { get; set; } = "stl";
+		public string ContentType { get; set; } = "mcx";
 
 		public bool IsProtected { get; set; }
 		public bool IsVisible => true;
 
-		/// <summary>
-		/// The delegate responsible for producing the item
-		/// </summary>
-		public Func<IObject3D> Collector { get; }
-
 		public Color Color { get; set; }
 
-		public Task<IObject3D> GetContent(Action<double, string> reportProgress)
+		public long FileSize => 0;
+
+		public string FileName => $"{this.Name}.{this.ContentType}";
+
+		public string AssetPath => "";
+
+		public bool LocalContentExists => true;
+
+		public Task<IObject3D> GetObject3D(Action<double, string> reportProgress)
 		{
-			var result = Collector?.Invoke();
+			var result = collector?.Invoke();
 
 			// If the content has not set a color, we'll assign from the running ColorRange
 			if (result.Color == Color.Transparent)
@@ -113,10 +121,6 @@ namespace MatterHackers.MatterControl.Library
 			}
 
 			return Task.FromResult(result);
-		}
-
-		public void SetContent(IObject3D item)
-		{
 		}
 	}
 }

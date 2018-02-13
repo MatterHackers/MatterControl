@@ -201,22 +201,39 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			};
 			progressReporter.Report(progressStatus);
 
-			var loadedItem = Object3D.Load(sourceFile, cancellationToken, null, (ratio, status) =>
-			{
-				progressStatus.Progress0To1 = ratio;
-				progressStatus.Status = status;
-			});
+			IObject3D object3D;
 
-			return SliceItem(loadedItem, gcodeFilePath, printer, progressReporter, cancellationToken);
+			if (string.Equals(Path.GetExtension(sourceFile), ".mcx", StringComparison.OrdinalIgnoreCase))
+			{
+				object3D = Object3D.Load(sourceFile, cancellationToken, null, (ratio, status) =>
+				{
+					progressStatus.Progress0To1 = ratio;
+					progressStatus.Status = status;
+				});
+			}
+			else
+			{
+				object3D = new Object3D()
+				{
+					MeshPath = sourceFile
+				};
+			}
+
+			return SliceItem(object3D, gcodeFilePath, printer, progressReporter, cancellationToken);
 		}
 
 		public static Task<bool> SliceItem(IObject3D object3D, string gcodeFilePath, PrinterConfig printer, IProgress<ProgressStatus> progressReporter, CancellationToken cancellationToken)
 		{
-			bool slicingSucceeded = true;
-
 			string mergeRules = "";
 
 			var stlFileLocations = GetStlFileLocations(object3D, ref mergeRules, printer, progressReporter, cancellationToken);
+
+			return SliceItem(stlFileLocations, mergeRules, gcodeFilePath, printer, progressReporter, cancellationToken);
+		}
+
+		public static Task<bool> SliceItem(List<(Matrix4X4 matrix, string fileName)> stlFileLocations, string mergeRules, string gcodeFilePath, PrinterConfig printer, IProgress<ProgressStatus> progressReporter, CancellationToken cancellationToken)
+		{
+			bool slicingSucceeded = true;
 
 			if(stlFileLocations.Count > 0)
 			{
@@ -251,7 +268,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 					foreach (var matrixAndFile in stlFileLocations)
 					{
-						var matrixSting = "";
+						var matrixString = "";
 						bool first = true;
 						for (int i = 0; i < 4; i++)
 						{
@@ -259,14 +276,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							{
 								if(!first)
 								{
-									matrixSting += ",";
+									matrixString += ",";
 								}
-								matrixSting += matrixAndFile.matrix[i, j].ToString("0.######");
+								matrixString += matrixAndFile.matrix[i, j].ToString("0.######");
 								first = false;
 							}
 						}
 
-						commandArgs += $" -m \"{matrixSting}\"";
+						commandArgs += $" -m \"{matrixString}\"";
 						commandArgs += $" \"{matrixAndFile.fileName}\" ";
 					}
 

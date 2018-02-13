@@ -33,7 +33,7 @@ using MatterHackers.MatterControl.DataStorage;
 
 namespace MatterHackers.MatterControl.Library
 {
-	public class PrintHistoryItem : ILibraryContentStream
+	public class PrintHistoryItem : ILibraryAssetStream
 	{
 		public PrintHistoryItem(PrintTask printTask)
 		{
@@ -60,7 +60,9 @@ namespace MatterHackers.MatterControl.Library
 
 		public bool LocalContentExists => true;
 
-		public Task<StreamAndLength> GetContentStream(Action<double, string> reportProgress)
+		public string Category => "General";
+
+		public Task<StreamAndLength> GetStream(Action<double, string> reportProgress)
 		{
 			throw new NotImplementedException();
 		}

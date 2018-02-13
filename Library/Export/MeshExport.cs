@@ -42,20 +42,20 @@ namespace MatterHackers.MatterControl.Library.Export
 		{
 			try
 			{
-				if (source is ILibraryContentItem contentItem)
+				if (source is ILibraryObject3D contentItem)
 				{
 					// If the content is an IObject3D, the we need to load it and MeshFileIO save to the target path
-					var content = await contentItem.GetContent(null);
+					var content = await contentItem.GetObject3D(null);
 					return MeshFileIo.Save(content, filePathToSave, CancellationToken.None);
 				}
-				else if (source is ILibraryContentStream streamContent)
+				else if (source is ILibraryAssetStream streamContent)
 				{
 					if (!string.IsNullOrEmpty(filePathToSave))
 					{
 						// If the file is already AMF, it just needs copied to the target path
 						if (Path.GetExtension(streamContent.FileName).ToUpper() == Path.GetExtension(filePathToSave).ToUpper())
 						{
-							using (var result = await streamContent.GetContentStream(null))
+							using (var result = await streamContent.GetStream(null))
 							using (var fileStream = File.Create(filePathToSave))
 							{
 								result.Stream.CopyTo(fileStream);
@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl.Library.Export
 						else
 						{
 							// Otherwise we need to load the content and MeshFileIO save to the target path
-							using (var result = await streamContent.GetContentStream(null))
+							using (var result = await streamContent.GetStream(null))
 							{
 								IObject3D item = Object3D.Load(result.Stream, Path.GetExtension(streamContent.FileName), CancellationToken.None);
 								return MeshFileIo.Save(item, filePathToSave, CancellationToken.None);

@@ -469,7 +469,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			});
 		}
 
-		public class InMemoryItem : ILibraryContentItem
+		public class InMemoryItem : ILibraryObject3D
 		{
 			private IObject3D existingItem;
 
@@ -482,21 +482,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			public string Name => existingItem.Name;
 
+			public string FileName => $"{this.Name}.{this.ContentType}";
+
 			public bool IsProtected => !existingItem.Persistable;
 
 			public bool IsVisible => existingItem.Visible;
 
-			public string ContentType => "stl";
+			public string ContentType => "mcx";
 
-			public string Category => "";
+			public string Category => "General";
 
-			public Task<IObject3D> GetContent(Action<double, string> reportProgress)
+			public string AssetPath { get; set; }
+
+			public Task<IObject3D> GetObject3D(Action<double, string> reportProgress)
 			{
 				return Task.FromResult(existingItem);
-			}
-
-			public void SetContent(IObject3D item)
-			{
 			}
 		}
 	}

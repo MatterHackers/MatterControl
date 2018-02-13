@@ -146,11 +146,11 @@ namespace MatterHackers.MatterControl.Library
 
 							break;
 
-						case ILibraryReadOnlyStream streamItem:
+						case ILibraryAssetStream streamItem:
 
-							var fileName = (streamItem as ILibraryContentStream)?.FileName; 
+							var fileName = (streamItem as ILibraryAssetStream)?.FileName; 
 
-							using (var streamInfo = await streamItem.GetContentStream(null))
+							using (var streamInfo = await streamItem.GetStream(null))
 							{
 								// If the passed in item name equals the fileName, perform friendly name conversion, otherwise use supplied value
 								string name = streamItem.Name;

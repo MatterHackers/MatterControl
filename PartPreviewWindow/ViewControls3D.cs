@@ -539,14 +539,28 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Shortcut = "Ctrl+S",
 					Action = async () =>
 					{
-						await ApplicationController.Instance.Tasks.Execute(view3DWidget.SaveChanges);
+						await ApplicationController.Instance.Tasks.Execute(sceneContext.SaveChanges);
 					},
 					IsEnabled = () => sceneContext.EditableScene
 				},
 				new NamedAction()
 				{
 					Title = "Save As".Localize(),
-					Action = () => UiThread.RunOnIdle(view3DWidget.OpenSaveAsWindow),
+					Action = () => UiThread.RunOnIdle(() =>
+					{
+						DialogWindow.Show(
+							new SaveAsPage(
+								async (newName, destinationContainer) =>
+								{
+									// Save to the destination provider
+									if (destinationContainer is ILibraryWritableContainer writableContainer)
+									{
+										// Wrap stream with ReadOnlyStream library item and add to container
+										writableContainer.Add(new[] { await sceneContext.ToPersistedLibraryItem(newName) });
+										destinationContainer.Dispose();
+									}
+								}));
+					}),
 					IsEnabled = () => sceneContext.EditableScene
 				},
 				new NamedAction()

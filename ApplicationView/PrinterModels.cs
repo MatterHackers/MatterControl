@@ -85,10 +85,10 @@ namespace MatterHackers.MatterControl
 			this.EditContext = editContext;
 
 			// Load
-			if (editContext.SourceItem is ILibraryContentStream contentStream
+			if (editContext.SourceItem is ILibraryAssetStream contentStream
 				&& contentStream.ContentType == "gcode")
 			{
-				using (var task = await contentStream.GetContentStream(null))
+				using (var task = await contentStream.GetStream(null))
 				{
 					await LoadGCodeContent(task.Stream);
 				}
@@ -137,6 +137,32 @@ namespace MatterHackers.MatterControl
 			File.WriteAllText(mcxPath, new Object3D().ToJson());
 
 			return new FileSystemFileItem(mcxPath);
+		}
+
+		public async Task<ILibraryAssetStream> ToPersistedLibraryItem(string newName)
+		{
+			// Save the scene to disk
+			await ApplicationController.Instance.Tasks.Execute(this.SaveChanges);
+
+			// Serialize to in memory stream
+			var memoryStream = new MemoryStream();
+			this.Scene.Save(memoryStream);
+
+			// Reset to start of content
+			memoryStream.Position = 0;
+
+			var libraryItem = new View3DWidget.ReadOnlyStreamItem(() =>
+			{
+				return Task.FromResult(new StreamAndLength()
+				{
+					Stream = memoryStream
+				});
+			});
+			libraryItem.Name = newName;
+			libraryItem.FileName = $"{newName}.mcx";
+			libraryItem.ContentType = "mcx";
+
+			return libraryItem;
 		}
 
 		internal async Task ClearPlate()
@@ -279,7 +305,6 @@ namespace MatterHackers.MatterControl
 				}
 			}
 		}
-
 
 		public InteractiveScene Scene { get; } = new InteractiveScene();
 
@@ -491,6 +516,26 @@ namespace MatterHackers.MatterControl
 		{
 			// Invalidate bed mesh cache
 			_bedMesh = null;
+		}
+
+		// Sort through why there's two save implementations and consolidate into one
+		public Task SaveChanges(IProgress<ProgressStatus> progress, CancellationToken cancellationToken)
+		{
+			var progressStatus = new ProgressStatus()
+			{
+				Status = "Saving Changes"
+			};
+
+			progress.Report(progressStatus);
+
+			this.Save((progress0to1, status) =>
+			{
+				progressStatus.Status = status;
+				progressStatus.Progress0To1 = progress0to1;
+				progress.Report(progressStatus);
+			});
+
+			return Task.CompletedTask;
 		}
 
 		internal void Save(Action<double, string> progress = null)

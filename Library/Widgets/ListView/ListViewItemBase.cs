@@ -201,8 +201,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			get
 			{
-				bool isContentItem = listViewItem.Model is ILibraryContentItem;
-				bool isValidStream = (listViewItem.Model is ILibraryContentStream stream
+				bool isContentItem = listViewItem.Model is ILibraryObject3D;
+				bool isValidStream = (listViewItem.Model is ILibraryAssetStream stream
 					&& ApplicationController.Instance.Library.IsContentFileType(stream.FileName));
 				bool isContainerLink = listViewItem.Model is ILibraryContainerLink;
 

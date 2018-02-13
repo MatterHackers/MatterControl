@@ -46,12 +46,11 @@ namespace MatterHackers.MatterControl
 	/// </summary>
 	public class MeshContentProvider : ISceneContentProvider
 	{
-		private const int tooBigAndroid = 50000000;
-		private const int tooBigDesktop = 250000000;
-
 		private static readonly bool Is32Bit = IntPtr.Size == 4;
-		private static readonly int MaxFileSize = (AggContext.OperatingSystem == OSType.Android) ? tooBigAndroid : tooBigDesktop;
 		private static readonly Point2D BigRenderSize = new Point2D(460, 460);
+
+		// TODO: Trying out an 8 MB mesh max for thumbnail generation
+		private long MaxFileSizeForTracing = 8 * 1000 * 1000;
 
 		public Task<IObject3D> CreateItem(ILibraryItem item, Action<double, string> progressReporter)
 		{
@@ -61,22 +60,29 @@ namespace MatterHackers.MatterControl
 
 				try
 				{
-					var streamInterface = item as ILibraryContentStream;
+					var streamInterface = item as ILibraryAssetStream;
 					if (streamInterface != null)
 					{
-						using (var contentStream = await streamInterface.GetContentStream(progressReporter))
+						using (var contentStream = await streamInterface.GetStream(progressReporter))
 						{
 							if (contentStream != null)
 							{
 								// TODO: Wire up caching
 								loadedItem = Object3D.Load(contentStream.Stream, Path.GetExtension(streamInterface.FileName), CancellationToken.None, null /*itemCache*/, progressReporter);
+
+								// Set MeshPath for non-mcx content. Avoid on mcx to ensure serialization of children
+								if (item is FileSystemFileItem fileItem 
+									&& !string.Equals(Path.GetExtension(fileItem.FileName), ".mcx", StringComparison.OrdinalIgnoreCase))
+								{
+									loadedItem.MeshPath = fileItem.Path;
+								}
 							}
 						}
 					}
 					else
 					{
-						var contentInterface = item as ILibraryContentItem;
-						loadedItem = await contentInterface?.GetContent(progressReporter);
+						var contentInterface = item as ILibraryObject3D;
+						loadedItem = await contentInterface?.GetObject3D(progressReporter);
 					}
 				}
 				catch { }
@@ -94,14 +100,12 @@ namespace MatterHackers.MatterControl
 			});
 		}
 
-		// TODO: Trying out an 8 MB mesh max for thumbnail generation
-		long MaxFileSizeForTracing = 8 * 1000 * 1000;
 
 		public async Task GetThumbnail(ILibraryItem item, int width, int height, Action<ImageBuffer> imageCallback)
 		{
 			IObject3D object3D = null;
 
-			if (item is ILibraryContentStream contentModel
+			if (item is ILibraryAssetStream contentModel
 				// Only load the stream if it's available - prevents download of internet content simply for thumbnails
 				&& contentModel.LocalContentExists
 				&& (!Is32Bit || contentModel.FileSize < MaxFileSizeForTracing))
@@ -109,9 +113,9 @@ namespace MatterHackers.MatterControl
 				// TODO: Wire up limits for thumbnail generation. If content is too big, return null allowing the thumbnail to fall back to content default
 				object3D = await contentModel.CreateContent();
 			}
-			else if (item is ILibraryContentItem)
+			else if (item is ILibraryObject3D)
 			{
-				object3D = await (item as ILibraryContentItem)?.GetContent(null);
+				object3D = await (item as ILibraryObject3D)?.GetObject3D(null);
 			}
 
 			if (object3D != null)
@@ -157,16 +161,5 @@ namespace MatterHackers.MatterControl
 		}
 
 		public ImageBuffer DefaultImage => AggContext.StaticData.LoadIcon("mesh.png");
-
-		private static bool MeshIsTooBigToLoad(string fileLocation)
-		{
-			if (Is32Bit && File.Exists(fileLocation))
-			{
-				// Mesh is too big if the estimated size is greater than Max
-				return MeshFileIo.GetEstimatedMemoryUse(fileLocation) > MaxFileSize;
-			}
-
-			return false;
-		}
 	}
 }

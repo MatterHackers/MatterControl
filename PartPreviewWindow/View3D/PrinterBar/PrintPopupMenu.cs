@@ -42,14 +42,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public class PrintPopupMenu : PopupMenuButton
 	{
 		private PrinterConfig printer;
-		private PrinterTabPage printerTabPage;
 		private EventHandler unregisterEvents;
 		private Dictionary<string, UIField> allUiFields = new Dictionary<string, UIField>();
 		private SettingsContext settingsContext;
 
-		public PrintPopupMenu(PrinterConfig printer, ThemeConfig theme, PrinterTabPage printerTabPage)
+		public PrintPopupMenu(PrinterConfig printer, ThemeConfig theme)
 		{
-			this.printerTabPage = printerTabPage;
 			this.printer = printer;
 			this.DrawArrow = true;
 			this.BackgroundColor = theme.ToolbarButtonBackground;
@@ -160,7 +158,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					UiThread.RunOnIdle(async () =>
 					{
 						// Save any pending changes before starting print operation
-						await ApplicationController.Instance.Tasks.Execute(printerTabPage.view3DWidget.SaveChanges);
+						await ApplicationController.Instance.Tasks.Execute(printer.Bed.SaveChanges);
 
 						await ApplicationController.Instance.PrintPart(
 							printer.Bed.EditContext,

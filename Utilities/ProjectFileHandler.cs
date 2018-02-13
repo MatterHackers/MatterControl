@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl
 
 		public string FileName { get; set; }
 
-		internal ILibraryContentStream PrintItem { get; set; }
+		internal ILibraryAssetStream PrintItem { get; set; }
 	}
 
 	internal class Project
@@ -67,7 +67,7 @@ namespace MatterHackers.MatterControl
 		private Dictionary<string, ManifestItem> sourceFiles = new Dictionary<string, ManifestItem>();
 		private HashSet<string> addedFileNames = new HashSet<string>();
 
-		public ProjectFileHandler(IEnumerable<ILibraryContentStream> sourceItems)
+		public ProjectFileHandler(IEnumerable<ILibraryAssetStream> sourceItems)
 		{
 			if (sourceItems != null)
 			{
@@ -189,8 +189,8 @@ namespace MatterHackers.MatterControl
 		{
 			try
 			{
-				var streamInterface = item.PrintItem as ILibraryContentStream;
-				using (var streamAndLength = await streamInterface.GetContentStream(null))
+				var streamInterface = item.PrintItem as ILibraryAssetStream;
+				using (var streamAndLength = await streamInterface.GetStream(null))
 				{
 					using (var outputStream = File.OpenWrite(Path.Combine(archiveStagingFolder, item.FileName)))
 					{

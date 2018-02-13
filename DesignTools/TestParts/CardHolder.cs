@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.ComponentModel;
+using System.Threading;
 using MatterHackers.Agg.Font;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.DesignTools.Operations;
@@ -50,7 +51,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public void Rebuild()
 		{
-			IObject3D plainCardHolder = Object3D.Load("C:/Temp/CardHolder.stl");
+			IObject3D plainCardHolder = Object3D.Load("C:/Temp/CardHolder.stl", CancellationToken.None);
 
 			//TypeFace typeFace = TypeFace.LoadSVG("Viking_n.svg");
 

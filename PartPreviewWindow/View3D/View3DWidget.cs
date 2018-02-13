@@ -353,7 +353,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					case Keys.S:
 						if (keyEvent.Control)
 						{
-							ApplicationController.Instance.Tasks.Execute(this.SaveChanges);
+							ApplicationController.Instance.Tasks.Execute(printer.Bed.SaveChanges);
 
 							keyEvent.Handled = true;
 							keyEvent.SuppressKeyPress = true;
@@ -573,7 +573,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public bool DragOperationActive { get; private set; }
 
 		public InsertionGroup DragDropObject { get; private set; }
-		public ILibraryContentStream SceneReplacement { get; private set; }
+		public ILibraryAssetStream SceneReplacement { get; private set; }
 
 		/// <summary>
 		/// Provides a View3DWidget specific drag implementation
@@ -624,12 +624,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var firstItem = items.FirstOrDefault();
 
-			if ((firstItem is ILibraryContentStream contentStream
+			if ((firstItem is ILibraryAssetStream contentStream
 				&& contentStream.ContentType == "gcode")
 				|| firstItem is SceneReplacementFileItem)
 			{
 				DragDropObject = null;
-				this.SceneReplacement = firstItem as ILibraryContentStream;
+				this.SceneReplacement = firstItem as ILibraryAssetStream;
 
 				// TODO: Figure out a mechanism to disable View3DWidget with dark overlay, displaying something like "Switch to xxx.gcode", make disappear on mouseLeaveBounds and dragfinish
 				this.InteractionLayer.BackgroundColor = new Color(Color.Black, 200);
@@ -1272,98 +1272,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			selectedObjectPanel.SetActiveItem(selectedItem);
 		}
 
-
-		private void DrawStuffForSelectedPart(Graphics2D graphics2D)
-		{
-			if (scene.HasSelection)
-			{
-				AxisAlignedBoundingBox selectedBounds = scene.SelectedItem.GetAxisAlignedBoundingBox(scene.SelectedItem.Matrix);
-				Vector3 boundsCenter = selectedBounds.Center;
-				Vector3 centerTop = new Vector3(boundsCenter.X, boundsCenter.Y, selectedBounds.maxXYZ.Z);
-
-				Vector2 centerTopScreenPosition = this.World.GetScreenPosition(centerTop);
-				centerTopScreenPosition = meshViewerWidget.TransformToParentSpace(this, centerTopScreenPosition);
-				//graphics2D.Circle(screenPosition.x, screenPosition.y, 5, Color.Cyan);
-
-				VertexStorage zArrow = new VertexStorage();
-				zArrow.MoveTo(-6, -2);
-				zArrow.curve3(0, -4);
-				zArrow.LineTo(6, -2);
-				zArrow.LineTo(0, 12);
-				zArrow.LineTo(-6, -2);
-			}
-		}
-
 		public static Regex fileNameNumberMatch = new Regex("\\(\\d+\\)", RegexOptions.Compiled);
 
 		private SelectedObjectPanel selectedObjectPanel;
 
 		internal GuiWidget selectedObjectContainer;
-
-		public Task SaveChanges(IProgress<ProgressStatus> progress, CancellationToken cancellationToken)
-		{
-			var progressStatus = new ProgressStatus()
-			{
-				Status = "Saving Changes"
-			};
-
-			progress.Report(progressStatus);
-
-			sceneContext.Save((progress0to1, status) =>
-			{
-				progressStatus.Status = status;
-				progressStatus.Progress0To1 = progress0to1;
-				progress.Report(progressStatus);
-			});
-
-			return Task.CompletedTask;
-		}
-
-		internal void OpenSaveAsWindow()
-		{
-			DialogWindow.Show(
-				new SaveAsPage(
-					async (newName, destinationContainer) =>
-					{
-						// Save the scene to disk
-						await ApplicationController.Instance.Tasks.Execute(this.SaveChanges);
-
-						// Save to the destination provider
-						if (destinationContainer != null)
-						{
-							// save this part to correct library provider
-							if (destinationContainer is ILibraryWritableContainer writableContainer)
-							{
-								// Serialize to in memory stream
-								var memoryStream = new MemoryStream();
-								scene.Save(memoryStream);
-
-								// Reset to start of content
-								memoryStream.Position = 0;
-
-								// Wrap stream with ReadOnlyStream library item and add to container
-								sceneContext.Scene.Name = newName;
-
-								writableContainer.Add(new[]
-								{
-									new ReadOnlyStreamItem(() =>
-									{
-										return Task.FromResult(new StreamAndLength()
-										{
-											 Stream = memoryStream
-										});
-									})
-									{
-										Name = newName,
-										ContentType = "mcx"
-									}
-								});
-
-								destinationContainer.Dispose();
-							}
-						}
-					}));
-		}
 
 		public Vector2 DragSelectionStartPosition { get; private set; }
 		public bool DragSelectionInProgress { get; private set; }
@@ -1468,7 +1381,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return null;
 		}
 
-		private class ReadOnlyStreamItem : ILibraryReadOnlyStream
+		public class ReadOnlyStreamItem : ILibraryAssetStream
 		{
 			private Func<Task<StreamAndLength>> streamSource;
 
@@ -1483,11 +1396,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			public string Name { get; set; }
 
+			public string FileName { get; set; }
+
 			public bool IsProtected { get; set; }
 
 			public bool IsVisible { get; set; }
 
-			public Task<StreamAndLength> GetContentStream(Action<double, string> progress)
+			public long FileSize => 0;
+
+			public string AssetPath => "";
+
+			public bool LocalContentExists => true;
+
+			public string Category => "General";
+
+			public Task<StreamAndLength> GetStream(Action<double, string> progress)
 			{
 				return streamSource?.Invoke();
 			}
