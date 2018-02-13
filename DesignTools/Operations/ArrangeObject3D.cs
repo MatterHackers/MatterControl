@@ -50,22 +50,31 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public override string ActiveEditor => "PublicPropertyEditor";
 
-		[Icons(new string[] {"align_left.png", "align_center_x.png", "align_right.png"})]
+		[Icons(new string[] {"424.png", "align_left.png", "align_center_x.png", "align_right.png"})]
 		public Align XAlign { get; set; } = Align.None;
-		[Icons(new string[] { "align_left.png", "align_center_x.png", "align_right.png" })]
-		[EnableIf("XAlign", "!None")]
+		[Icons(new string[] { "424.png", "align_to_left.png", "align_to_center_x.png", "align_to_right.png" })]
+		[EnableIf("Advanced", "true")]
 		public Align XAlignTo { get; set; } = Align.None;
-		[EnableIf("XAlign", "!None")]
+		[EnableIf("Advanced", "true")]
 		public double OffsetX { get; set; } = 0;
 
+		[Icons(new string[] { "424.png", "align_bottom.png", "align_center_y.png", "align_top.png" })]
 		public Align YAlign { get; set; } = Align.None;
+		[Icons(new string[] { "424.png", "align_to_bottom.png", "align_to_center_y.png", "align_to_top.png" })]
+		[EnableIf("Advanced", "true")]
 		public Align YAlignTo { get; set; } = Align.None;
+		[EnableIf("Advanced", "true")]
 		public double YOffset { get; set; } = 0;
 
+		[Icons(new string[] { "424.png", "align_bottom.png", "align_center_y.png", "align_top.png" })]
 		public Align ZAlign { get; set; } = Align.None;
+		[Icons(new string[] { "424.png", "align_to_bottom.png", "align_to_center_y.png", "align_to_top.png" })]
+		[EnableIf("Advanced", "true")]
 		public Align ZAlignTo { get; set; } = Align.None;
+		[EnableIf("Advanced", "true")]
 		public double ZOffset { get; set; } = 0;
 
+		public bool Advanced { get; set; } = false;
 
 		public void Rebuild()
 		{

@@ -436,9 +436,9 @@ namespace MatterHackers.MatterControl
 				Action = (scene) =>
 				{
 					scene.AddSelectionAsChildren(new ArrangeObject3D());
-					if(scene.SelectedItem is ArrangeObject3D arrange)
+					if(scene.SelectedItem is ArrangeObject3D arange)
 					{
-						arrange.Rebuild();
+						arange.Rebuild();
 					}
 				},
 				//Icon = AggContext.StaticData.LoadIcon("array_linear.png").SetPreMultiply(),
