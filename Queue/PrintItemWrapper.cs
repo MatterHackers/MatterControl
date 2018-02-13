@@ -75,11 +75,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 		private bool doneSlicing;
 
-		private long fileHashCode;
-
 		private string fileType;
-
-		private long writeTime = 0;
 
 		public PrintItemWrapper(PrintItem printItem, ILibraryContainer sourceLibraryProviderLocator = null)
 		{
@@ -204,13 +200,21 @@ namespace MatterHackers.MatterControl.PrintQueue
 					return FileLocation;
 				}
 
-				string gcodeFileName = this.FileHashCode.ToString() + "_" + ActiveSliceSettings.Instance.GetLongHashCode();
-				return Path.Combine(ApplicationDataStorage.Instance.GCodeOutputPath, gcodeFileName + ".gcode");
+				return GCodePath(this.FileHashCode);
 			}
 			else
 			{
 				return null;
 			}
+		}
+
+		public static string GCodePath(string fileHashCode)
+		{
+			long settingsHashCode = ActiveSliceSettings.Instance.GetLongHashCode();
+
+			return Path.Combine(
+				ApplicationDataStorage.Instance.GCodeOutputPath, 
+				$"{fileHashCode}_{ settingsHashCode}.gcode");
 		}
 
 		public void OnSlicingOutputMessage(EventArgs e)
