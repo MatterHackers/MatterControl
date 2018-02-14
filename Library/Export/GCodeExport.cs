@@ -89,11 +89,8 @@ namespace MatterHackers.MatterControl.Library.Export
 			return null;
 		}
 
-		public async Task<bool> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath)
+		public async Task<bool> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath, PrinterConfig printer)
 		{
-			// TODO: Export operations need to resolve printer context interactively
-			var printer = ApplicationController.Instance.ActivePrinter;
-
 			var firstItem = libraryItems.OfType<ILibraryAsset>().FirstOrDefault();
 			if (firstItem != null)
 			{
@@ -154,7 +151,7 @@ namespace MatterHackers.MatterControl.Library.Export
 
 						if (File.Exists(gcodePath))
 						{
-							SaveGCodeToNewLocation(gcodePath, outputPath);
+							SaveGCodeToNewLocation(gcodePath, outputPath, printer);
 							return true;
 						}
 					}
@@ -169,7 +166,7 @@ namespace MatterHackers.MatterControl.Library.Export
 
 		public bool ApplyLeveling { get; set; } = true;
 
-		private void SaveGCodeToNewLocation(string gcodeFilename, string dest)
+		private void SaveGCodeToNewLocation(string gcodeFilename, string outputPath, PrinterConfig printer)
 		{
 			try
 			{
@@ -180,16 +177,15 @@ namespace MatterHackers.MatterControl.Library.Export
 					Vector4.One,
 					CancellationToken.None));
 
-				var printerSettings = ActiveSliceSettings.Instance;
-				bool addLevelingStream = printerSettings.GetValue<bool>(SettingsKey.print_leveling_enabled) && this.ApplyLeveling;
+				bool addLevelingStream = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled) && this.ApplyLeveling;
 				var queueStream = new QueuedCommandsStream(gCodeFileStream);
 
 				// this is added to ensure we are rewriting the G0 G1 commands as needed
 				GCodeStream finalStream = addLevelingStream
-					? new ProcessWriteRegexStream(printerSettings, new PrintLevelingStream(printerSettings, queueStream, false), queueStream)
-					: new ProcessWriteRegexStream(printerSettings, queueStream, queueStream);
+					? new ProcessWriteRegexStream(printer.Settings, new PrintLevelingStream(printer.Settings, queueStream, false), queueStream)
+					: new ProcessWriteRegexStream(printer.Settings, queueStream, queueStream);
 
-				using (StreamWriter file = new StreamWriter(dest))
+				using (var file = new StreamWriter(outputPath))
 				{
 					string nextLine = finalStream.ReadLine();
 					while (nextLine != null)

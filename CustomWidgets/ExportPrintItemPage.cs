@@ -171,12 +171,15 @@ namespace MatterHackers.MatterControl
 								ActionButtonLabel = "Export".Localize(),
 								Title = ApplicationController.Instance.ProductName + " - " + "Select A Folder".Localize()
 							},
-							(openParams) =>
+							async (openParams) =>
 							{
 								string path = openParams.FolderPath;
 								if (!string.IsNullOrEmpty(path))
 								{
-									activePlugin.Generate(libraryItems, path).ConfigureAwait(false);
+									// TODO: Someday export operations need to resolve printer context interactively
+									var printer = ApplicationController.Instance.ActivePrinter;
+
+									await activePlugin.Generate(libraryItems, path, printer);
 								}
 							});
 					});
@@ -213,7 +216,10 @@ namespace MatterHackers.MatterControl
 
 									if (activePlugin != null)
 									{
-										succeeded = await activePlugin.Generate(libraryItems, savePath);
+										// TODO: Someday export operations need to resolve printer context interactively
+										var printer = ApplicationController.Instance.ActivePrinter;
+
+										succeeded = await activePlugin.Generate(libraryItems, savePath, printer);
 									}
 
 									if (succeeded)
