@@ -128,9 +128,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			editorColumn.AddChild(toolbar);
 
 			// put in the button for making the behavior solid
-			var solidBehaviorButton = new PopupButton(new TextButton("Color".Localize(), theme))
+			var solidBehaviorButton = new PopupMenuButton("Color".Localize(), theme)
 			{
 				Name = "Solid Colors",
+				DrawArrow = true,
 				AlignToRightEdge = true,
 				PopupContent = new ColorSwatchSelector(scene)
 				{
