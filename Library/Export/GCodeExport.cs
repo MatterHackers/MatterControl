@@ -49,6 +49,9 @@ namespace MatterHackers.MatterControl.Library.Export
 {
 	public class GCodeExport : IExportPlugin, IExportWithOptions
 	{
+		private bool ForceSpiralVase;
+		private PrinterConfig printer;
+
 		public string ButtonText => "Machine File (G-Code)".Localize();
 
 		public string FileExtension => ".gcode";
@@ -57,39 +60,57 @@ namespace MatterHackers.MatterControl.Library.Export
 
 		public ImageBuffer Icon { get; } = AggContext.StaticData.LoadIcon(Path.Combine("filetypes", "gcode.png"));
 
-		public bool EnabledForCurrentPart(ILibraryAssetStream libraryContent)
+		public void Initialize(PrinterConfig printer)
 		{
-			return !libraryContent.IsProtected;
+			this.printer = printer;
 		}
+
+		public bool Enabled
+		{
+			get => printer.Settings.PrinterSelected
+				&& !printer.Settings.GetValue<bool>("enable_sailfish_communication");
+		}
+
+		public bool ExportPossible(ILibraryAsset libraryItem) => true;
 
 		public GuiWidget GetOptionsPanel()
 		{
-			// If print leveling is enabled then add in a check box 'Apply Leveling During Export' and default checked.
-			if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_enabled))
+			var container = new FlowLayoutWidget()
 			{
-				var container = new FlowLayoutWidget()
-				{
-					Margin = new BorderDouble(left: 40, bottom: 10)
-				};
+				Margin = new BorderDouble(left: 40, bottom: 10),
+			};
 
-				var checkbox = new CheckBox("Apply leveling to G-Code during export".Localize(), ActiveTheme.Instance.PrimaryTextColor, 10)
+			var spiralVaseCheckbox = new CheckBox("Spiral Vase".Localize(), ActiveTheme.Instance.PrimaryTextColor, 10)
+			{
+				Checked = false,
+				Cursor = Cursors.Hand,
+			};
+			spiralVaseCheckbox.CheckedStateChanged += (s, e) =>
+			{
+				this.ForceSpiralVase = spiralVaseCheckbox.Checked;
+			};
+			container.AddChild(spiralVaseCheckbox);
+
+			// If print leveling is enabled then add in a check box 'Apply Leveling During Export' and default checked.
+			if (printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled))
+			{
+				var levelingCheckbox = new CheckBox("Apply leveling to G-Code during export".Localize(), ActiveTheme.Instance.PrimaryTextColor, 10)
 				{
 					Checked = true,
 					Cursor = Cursors.Hand,
+					Margin = new BorderDouble(left: 10)
 				};
-				checkbox.CheckedStateChanged += (s, e) =>
+				levelingCheckbox.CheckedStateChanged += (s, e) =>
 				{
-					this.ApplyLeveling = checkbox.Checked;
+					this.ApplyLeveling = levelingCheckbox.Checked;
 				};
-				container.AddChild(checkbox);
-
-				return container;
+				container.AddChild(levelingCheckbox);
 			}
 
-			return null;
+			return container;
 		}
 
-		public async Task<bool> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath, PrinterConfig printer)
+		public async Task<bool> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath)
 		{
 			var firstItem = libraryItems.OfType<ILibraryAsset>().FirstOrDefault();
 			if (firstItem != null)
@@ -142,16 +163,33 @@ namespace MatterHackers.MatterControl.Library.Export
 								loadedItem.Color = loadedItem.Color;
 							}
 
+							string originalSpiralVase = printer.Settings.GetValue(SettingsKey.spiral_vase);
+
 							// Slice
-							await ApplicationController.Instance.Tasks.Execute((reporter, cancellationToken) =>
+							try
 							{
-								return Slicer.SliceItem(loadedItem, gcodePath, printer, reporter, cancellationToken);
-							});
+								if (this.ForceSpiralVase)
+								{
+									printer.Settings.SetValue(SettingsKey.spiral_vase, "1");
+								}
+
+								await ApplicationController.Instance.Tasks.Execute((reporter, cancellationToken) =>
+								{
+									return Slicer.SliceItem(loadedItem, gcodePath, printer, reporter, cancellationToken);
+								});
+							}
+							finally
+							{
+								if (this.ForceSpiralVase)
+								{
+									printer.Settings.SetValue(SettingsKey.spiral_vase, originalSpiralVase);
+								}
+							}
 						}
 
 						if (File.Exists(gcodePath))
 						{
-							SaveGCodeToNewLocation(gcodePath, outputPath, printer);
+							SaveGCodeToNewLocation(gcodePath, outputPath);
 							return true;
 						}
 					}
@@ -166,7 +204,7 @@ namespace MatterHackers.MatterControl.Library.Export
 
 		public bool ApplyLeveling { get; set; } = true;
 
-		private void SaveGCodeToNewLocation(string gcodeFilename, string outputPath, PrinterConfig printer)
+		private void SaveGCodeToNewLocation(string gcodeFilename, string outputPath)
 		{
 			try
 			{

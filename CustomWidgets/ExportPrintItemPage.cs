@@ -69,14 +69,26 @@ namespace MatterHackers.MatterControl
 
 			bool isFirstItem = true;
 
+			// TODO: Someday export operations need to resolve printer context interactively
+			var printer = ApplicationController.Instance.ActivePrinter;
+
 			// GCode export
-			bool showExportGCodeButton = ActiveSliceSettings.Instance.PrinterSelected;
+			bool showExportGCodeButton = printer.Settings.PrinterSelected;
 			if (showExportGCodeButton)
 			{
 				exportPluginButtons = new Dictionary<RadioButton, IExportPlugin>();
 
+
 				foreach (IExportPlugin plugin in PluginFinder.CreateInstancesOf<IExportPlugin>().OrderBy(p => p.ButtonText))
 				{
+					plugin.Initialize(printer);
+
+					// Skip plugins which are invalid for the current printer
+					if (!plugin.Enabled)
+					{
+						continue;
+					}
+
 					// Create export button for each plugin
 					var pluginButton = new RadioButton(new RadioImageWidget(plugin.ButtonText, plugin.Icon))
 					{
@@ -107,8 +119,6 @@ namespace MatterHackers.MatterControl
 					exportPluginButtons.Add(pluginButton, plugin);
 				}
 			}
-
-			//if (plugin.EnabledForCurrentPart(libraryContent))
 
 			contentRow.AddChild(new VerticalSpacer());
 
@@ -179,10 +189,7 @@ namespace MatterHackers.MatterControl
 								string path = openParams.FolderPath;
 								if (!string.IsNullOrEmpty(path))
 								{
-									// TODO: Someday export operations need to resolve printer context interactively
-									var printer = ApplicationController.Instance.ActivePrinter;
-
-									await activePlugin.Generate(libraryItems, path, printer);
+									await activePlugin.Generate(libraryItems, path);
 								}
 							});
 					});
@@ -219,10 +226,7 @@ namespace MatterHackers.MatterControl
 
 									if (activePlugin != null)
 									{
-										// TODO: Someday export operations need to resolve printer context interactively
-										var printer = ApplicationController.Instance.ActivePrinter;
-
-										succeeded = await activePlugin.Generate(libraryItems, savePath, printer);
+										succeeded = await activePlugin.Generate(libraryItems, savePath);
 									}
 
 									if (succeeded)
