@@ -44,7 +44,10 @@ namespace MatterHackers.MatterControl
 		void Initialize(PrinterConfig printer);
 
 		Task<bool> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath);
-		bool EnabledForCurrentPart(ILibraryAssetStream libraryContent);
+
+		bool Enabled { get; }
+
+		bool ExportPossible(ILibraryAsset libraryItem);
 	}
 
 	public interface IExportWithOptions

@@ -52,10 +52,9 @@ namespace MatterHackers.MatterControl.Library.Export
 		{
 		}
 
-		public bool EnabledForCurrentPart(ILibraryAssetStream libraryContent)
-		{
-			return !libraryContent.IsProtected;
-		}
+		public bool Enabled => true;
+
+		public bool ExportPossible(ILibraryAsset libraryItem) => true;
 
 		public Task<bool> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath)
 		{

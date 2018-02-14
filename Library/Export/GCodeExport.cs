@@ -65,10 +65,13 @@ namespace MatterHackers.MatterControl.Library.Export
 			this.printer = printer;
 		}
 
-		public bool EnabledForCurrentPart(ILibraryAssetStream libraryContent)
+		public bool Enabled
 		{
-			return !libraryContent.IsProtected;
+			get => printer.Settings.PrinterSelected
+				&& !printer.Settings.GetValue<bool>("enable_sailfish_communication");
 		}
+
+		public bool ExportPossible(ILibraryAsset libraryItem) => true;
 
 		public GuiWidget GetOptionsPanel()
 		{

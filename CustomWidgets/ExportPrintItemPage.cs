@@ -83,6 +83,12 @@ namespace MatterHackers.MatterControl
 				{
 					plugin.Initialize(printer);
 
+					// Skip plugins which are invalid for the current printer
+					if (!plugin.Enabled)
+					{
+						continue;
+					}
+
 					// Create export button for each plugin
 					var pluginButton = new RadioButton(new RadioImageWidget(plugin.ButtonText, plugin.Icon))
 					{
@@ -113,8 +119,6 @@ namespace MatterHackers.MatterControl
 					exportPluginButtons.Add(pluginButton, plugin);
 				}
 			}
-
-			//if (plugin.EnabledForCurrentPart(libraryContent))
 
 			contentRow.AddChild(new VerticalSpacer());
 
