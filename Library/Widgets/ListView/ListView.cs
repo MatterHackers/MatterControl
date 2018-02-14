@@ -166,8 +166,13 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			itemsContentView.BeginReload();
 
+			var containerItems = from item in sourceContainer.ChildContainers
+								 where item.IsVisible && this.ContainerFilter(item)
+								 orderby item.Name
+								 select item;
+
 			// Folder items
-			foreach (var childContainer in sourceContainer.ChildContainers.Where(c => c.IsVisible && this.ContainerFilter(c)))
+			foreach (var childContainer in containerItems)
 			{
 				var listViewItem = new ListViewItem(childContainer, this);
 				listViewItem.DoubleClick += listViewItem_DoubleClick;
