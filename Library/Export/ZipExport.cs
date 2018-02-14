@@ -96,7 +96,5 @@ namespace MatterHackers.MatterControl.Library.Export
 
 			return false;
 		}
-
-		public GuiWidget GetOptionsPanel() => null;
 	}
 }

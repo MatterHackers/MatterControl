@@ -43,7 +43,10 @@ namespace MatterHackers.MatterControl
 
 		Task<bool> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath, PrinterConfig printer);
 		bool EnabledForCurrentPart(ILibraryAssetStream libraryContent);
+	}
 
+	public interface IExportWithOptions
+	{
 		GuiWidget GetOptionsPanel();
 	}
 }

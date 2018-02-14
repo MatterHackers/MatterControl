@@ -93,12 +93,15 @@ namespace MatterHackers.MatterControl
 						isFirstItem = false;
 					}
 
-					var optionPanel = plugin.GetOptionsPanel();
-					if (optionPanel != null)
+					if (plugin is IExportWithOptions pluginWithOptions)
 					{
-						optionPanel.HAnchor = HAnchor.Stretch;
-						optionPanel.VAnchor = VAnchor.Fit;
-						contentRow.AddChild(optionPanel);
+						var optionPanel = pluginWithOptions.GetOptionsPanel();
+						if (optionPanel != null)
+						{
+							optionPanel.HAnchor = HAnchor.Stretch;
+							optionPanel.VAnchor = VAnchor.Fit;
+							contentRow.AddChild(optionPanel);
+						}
 					}
 
 					exportPluginButtons.Add(pluginButton, plugin);
