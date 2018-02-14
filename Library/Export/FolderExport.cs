@@ -49,12 +49,16 @@ namespace MatterHackers.MatterControl.Library.Export
 
 		public ImageBuffer Icon { get; } = AggContext.StaticData.LoadIcon(Path.Combine("FileDialog", "folder.png"), 25, 25, IconColor.Theme);
 
+		public void Initialize(PrinterConfig printer)
+		{
+		}
+
 		public bool EnabledForCurrentPart(ILibraryAssetStream libraryContent)
 		{
 			return !libraryContent.IsProtected;
 		}
 
-		public async Task<bool> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath, PrinterConfig printer)
+		public async Task<bool> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath)
 		{
 			var streamItems = libraryItems.OfType<ILibraryAssetStream>();
 			if (streamItems.Any())

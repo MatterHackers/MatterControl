@@ -41,7 +41,9 @@ namespace MatterHackers.MatterControl
 		string ExtensionFilter { get; }
 		ImageBuffer Icon { get; }
 
-		Task<bool> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath, PrinterConfig printer);
+		void Initialize(PrinterConfig printer);
+
+		Task<bool> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath);
 		bool EnabledForCurrentPart(ILibraryAssetStream libraryContent);
 	}
 
