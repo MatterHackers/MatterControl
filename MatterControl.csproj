@@ -122,7 +122,7 @@
     <Compile Include="DesignTools\Operations\Translate.cs" />
     <Compile Include="Library\Providers\GraphConfig.cs" />
     <Compile Include="CustomWidgets\InlineTitleEdit.cs" />
-    <Compile Include="PartPreviewWindow\BranchEditContainer.cs" />
+    <Compile Include="Library\DynamicContentStore.cs" />
     <Compile Include="PartPreviewWindow\LibraryBrowserPage.cs" />
     <Compile Include="PartPreviewWindow\MaterialControls.cs" />
     <Compile Include="PartPreviewWindow\MoveItemPage.cs" />

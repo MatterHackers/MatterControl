@@ -28,13 +28,9 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using MatterHackers.Agg.Image;
 using MatterHackers.DataConverters3D;
-using MatterHackers.MatterControl.Library;
 
-namespace MatterHackers.MatterControl.PartPreviewWindow
+namespace MatterHackers.MatterControl.Library
 {
 	public class DynamicContentStore : IContentStore
 	{
