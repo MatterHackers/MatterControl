@@ -34,6 +34,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MatterControl.Printing;
+using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -66,7 +67,10 @@ namespace MatterHackers.MatterControl.Library.Export
 			// If print leveling is enabled then add in a check box 'Apply Leveling During Export' and default checked.
 			if (ActiveSliceSettings.Instance.GetValue<bool>(SettingsKey.print_leveling_enabled))
 			{
-				var container = new FlowLayoutWidget();
+				var container = new FlowLayoutWidget()
+				{
+					Margin = new BorderDouble(left: 40, bottom: 10)
+				};
 
 				var checkbox = new CheckBox("Apply leveling to G-Code during export".Localize(), ActiveTheme.Instance.PrimaryTextColor, 10)
 				{
@@ -77,7 +81,7 @@ namespace MatterHackers.MatterControl.Library.Export
 				{
 					this.ApplyLeveling = checkbox.Checked;
 				};
-				//container.AddChild(checkbox);
+				container.AddChild(checkbox);
 
 				return container;
 			}
