@@ -114,18 +114,14 @@ namespace MatterHackers.MatterControl.PrintQueue
 					}
 					else if (Path.GetExtension(printItemWrapper.FileLocation).ToUpper() == ".GCODE")
 					{
-						sliceItem_Done(printItemWrapper, null);
+						this.SlicingCompleted(printItemWrapper);
 					}
 				}
 			}
 		}
 
-		private void sliceItem_Done(object sender, EventArgs e)
+		private void SlicingCompleted(PrintItemWrapper sliceItem)
 		{
-			PrintItemWrapper sliceItem = (PrintItemWrapper)sender;
-
-			sliceItem.SlicingDone -= sliceItem_Done;
-
 			if (File.Exists(sliceItem.FileLocation))
 			{
 				savedGCodeFileNames.Add(sliceItem.GetGCodePathAndFileName());
@@ -224,10 +220,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 						}
 					}
 
-					if (DoneSaving != null)
-					{
-						DoneSaving(this, new StringEventArgs(string.Format("{0:0.0}", total)));
-					}
+					DoneSaving?.Invoke(this, new StringEventArgs(string.Format("{0:0.0}", total)));
 				}
 			}
 		}
