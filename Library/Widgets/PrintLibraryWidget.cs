@@ -97,11 +97,83 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			allControls.AddChild(new HorizontalLine(20), 1);
 
-			var toolbar = new Toolbar()
+			var toolbar = new OverflowBar(theme)
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit
 			};
+
+			var firstChild = toolbar.OverflowButton.Children<ImageWidget>().FirstOrDefault();
+			firstChild.Image = AggContext.StaticData.LoadIcon("fa-sort_16.png", 32, 32, IconColor.Theme);
+
+			toolbar.OverflowButton.Name = "Print Library View Options";
+			toolbar.ExtendOverflowMenu = (popupMenu) =>
+			{
+				var sortActions = new List<PrintItemAction>()
+				{
+					new PrintItemAction()
+					{
+						Title = "Date Created",
+						Action = (items, listview) =>
+						{
+						}
+					},
+					new PrintItemAction()
+					{
+						Title = "Date Modified",
+						Action = (items, listview) =>
+						{
+						}
+					},
+					new PrintItemAction()
+					{
+						Title = "Name",
+						Action = (items, listview) =>
+						{
+						}
+					},
+					new MenuSeparator(""),
+					new PrintItemAction()
+					{
+						Title = "Ascending",
+						Action = (items, listview) =>
+						{
+						}
+					},
+					new PrintItemAction()
+					{
+						Title = "Descending",
+						Action = (items, listview) =>
+						{
+						}
+					}
+				};
+
+				// Create menu items in the DropList for each element in this.menuActions
+				foreach (var menuAction in sortActions)
+				{
+					if (menuAction is MenuSeparator)
+					{
+						popupMenu.CreateHorizontalLine();
+					}
+					else
+					{
+						var menuItem = popupMenu.CreateMenuItem(menuAction.Title);
+						menuItem.Name = $"{menuAction.Title} Menu Item";
+
+						menuItem.Enabled = menuAction.Action != null;
+						menuItem.ClearRemovedFlag();
+						menuItem.Click += (s, e) =>
+						{
+							menuAction.Action?.Invoke(libraryView.SelectedItems.Select(i => i.Model), libraryView);
+						};
+
+						// Store a reference to the newly created MenuItem back on the MenuAction definition
+						menuAction.MenuItem = menuItem;
+					}
+				}
+			};
+
 			toolbar.Padding = theme.ToolbarPadding;
 			allControls.AddChild(toolbar);
 
@@ -120,6 +192,43 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				await libraryView.Reload();
 			};
 			toolbar.AddChild(showFolders);
+
+			PopupMenuButton viewMenuButton;
+
+			toolbar.AddChild(
+				viewMenuButton = new PopupMenuButton(
+					new ImageWidget(AggContext.StaticData.LoadIcon("mi-view-list_10.png", 32, 32, IconColor.Theme))
+					{
+						//VAnchor = VAnchor.Center
+					},
+					theme)
+				{
+					AlignToRightEdge = true
+				});
+
+			viewMenuButton.DynamicPopupContent = () =>
+			{
+				var popupMenu = new PopupMenu(theme);
+
+				foreach (var menuAction in this.GetViewMenu())
+				{
+					if (menuAction is MenuSeparator)
+					{
+						popupMenu.CreateHorizontalLine();
+						continue;
+					}
+
+					var menuItem = popupMenu.CreateMenuItem(menuAction.Title.Replace("View ", ""));
+					menuItem.Name = $"{menuAction.Title} Menu Item";
+					menuItem.ClearRemovedFlag();
+					menuItem.Click += (s, e) =>
+					{
+						menuAction.Action(Enumerable.Empty<ILibraryItem>(), this.libraryView);
+					};
+				}
+
+				return popupMenu;
+			};
 
 			breadCrumbWidget = new FolderBreadCrumbWidget(libraryView);
 			navBar.AddChild(breadCrumbWidget);
@@ -655,6 +764,13 @@ namespace MatterHackers.MatterControl.PrintLibrary
 #endif
 
 			menuActions.Add(new MenuSeparator("ListView Options"));
+
+			menuActions.AddRange(this.GetViewMenu());
+		}
+
+		public List<PrintItemAction> GetViewMenu()
+		{
+			var menuActions = new List<PrintItemAction>();
 			menuActions.Add(new PrintItemAction()
 			{
 				Title = "View List".Localize(),
@@ -710,7 +826,10 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				},
 				IsEnabled = (selectedListItems, listView) => true
 			});
+
+			return menuActions;
 		}
+
 
 		public override void OnClosed(ClosedEventArgs e)
 		{
@@ -841,7 +960,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					}
 				}
 			};
-			
 
 			base.OnLoad(args);
 		}
