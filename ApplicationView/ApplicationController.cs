@@ -1113,7 +1113,7 @@ namespace MatterHackers.MatterControl
 				AuthenticationData.Instance.LastSessionUsername = AuthenticationData.Instance.ActiveSessionUsername;
 			}
 
-			UserChanged();
+			UiThread.RunOnIdle(this.UserChanged);
 		}
 
 		// Called after every startup and at the completion of every authentication change
