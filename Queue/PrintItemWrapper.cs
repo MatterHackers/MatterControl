@@ -67,14 +67,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 
 	public class PrintItemWrapper
 	{
-		public event EventHandler SlicingDone;
-
-		private string fileNotFound = "File Not Found\n'{0}'".Localize();
-		private string readyToPrint = "Ready to Print".Localize();
-		private string slicingError = "Slicing Error".Localize();
-
-		private bool doneSlicing;
-
 		private string fileType;
 
 		public PrintItemWrapper(PrintItem printItem, ILibraryContainer sourceLibraryProviderLocator = null)
@@ -101,51 +93,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 				Debug.Print(e.Message);
 				GuiWidget.BreakInDebugger();
 				//file not found
-			}
-		}
-
-		public bool CurrentlySlicing { get; set; }
-
-		public bool DoneSlicing
-		{
-			get
-			{
-				return doneSlicing;
-			}
-
-			set
-			{
-				if (value != doneSlicing)
-				{
-					doneSlicing = value;
-					if (doneSlicing)
-					{
-						string message = slicingError;
-						this.SlicingHadError = true;
-						if (File.Exists(FileLocation))
-						{
-							string gcodePathAndFileName = GetGCodePathAndFileName();
-							if (gcodePathAndFileName != "" && File.Exists(gcodePathAndFileName))
-							{
-								FileInfo info = new FileInfo(gcodePathAndFileName);
-								// This is really just to make sure it is bigger than nothing.
-								if (info.Length > 10)
-								{
-									message = readyToPrint;
-									this.SlicingHadError = false;
-								}
-							}
-						}
-						else
-						{
-							message = string.Format(fileNotFound, FileLocation);
-						}
-
-						OnSlicingOutputMessage(new StringEventArgs(message));
-
-						SlicingDone?.Invoke(this, null);
-					}
-				}
 			}
 		}
 
@@ -215,10 +162,6 @@ namespace MatterHackers.MatterControl.PrintQueue
 			return Path.Combine(
 				ApplicationDataStorage.Instance.GCodeOutputPath, 
 				$"{fileHashCode}_{ settingsHashCode}.gcode");
-		}
-
-		public void OnSlicingOutputMessage(EventArgs e)
-		{
 		}
 	}
 }

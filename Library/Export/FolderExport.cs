@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl.Library.Export
 			return !libraryContent.IsProtected;
 		}
 
-		public async Task<bool> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath)
+		public async Task<bool> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath, PrinterConfig printer)
 		{
 			var streamItems = libraryItems.OfType<ILibraryAssetStream>();
 			if (streamItems.Any())
@@ -87,7 +87,5 @@ namespace MatterHackers.MatterControl.Library.Export
 
 			return false;
 		}
-
-		public GuiWidget GetOptionsPanel() => null;
 	}
 }

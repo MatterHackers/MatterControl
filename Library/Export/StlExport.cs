@@ -53,18 +53,14 @@ namespace MatterHackers.MatterControl.Library.Export
 			return !libraryContent.IsProtected;
 		}
 
-		public Task<bool> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath)
+		public Task<bool> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath, PrinterConfig printer)
 		{
-			ILibraryAssetStream libraryContent = libraryItems.OfType<ILibraryAssetStream>().FirstOrDefault();
-
-			if (libraryContent != null)
+			if (libraryItems.OfType<ILibraryAssetStream>().FirstOrDefault() is ILibraryAssetStream libraryItem)
 			{
-				return MeshExport.ExportMesh(libraryContent, outputPath);
+				return MeshExport.ExportMesh(libraryItem, outputPath);
 			}
 
 			return null;
 		}
-
-		public GuiWidget GetOptionsPanel() => null;
 	}
 }
