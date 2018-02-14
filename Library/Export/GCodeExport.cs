@@ -47,7 +47,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.Library.Export
 {
-	public class GCodeExport : IExportPlugin
+	public class GCodeExport : IExportPlugin, IExportWithOptions
 	{
 		public string ButtonText => "Machine File (G-Code)".Localize();
 
