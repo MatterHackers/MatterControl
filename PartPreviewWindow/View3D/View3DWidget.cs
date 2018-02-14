@@ -1330,7 +1330,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				useRadioStyle: true);
 
 			popupMenu.CreateBoolMenuItem(
-				"Materials Option".Localize(),
+				"Materials".Localize(),
 				() => meshViewerWidget.RenderType == RenderTypes.Materials,
 				(v) => switchToRenderType(RenderTypes.Materials),
 				useRadioStyle: true);
