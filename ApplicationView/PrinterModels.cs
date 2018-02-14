@@ -209,7 +209,7 @@ namespace MatterHackers.MatterControl
 			await insertionGroup.LoadingItemsTask;
 
 			// Persist changes
-			this.Save();
+			await this.SaveChanges(null, CancellationToken.None);
 
 			// Slice and print
 			await ApplicationController.Instance.PrintPart(
@@ -518,7 +518,12 @@ namespace MatterHackers.MatterControl
 			_bedMesh = null;
 		}
 
-		// Sort through why there's two save implementations and consolidate into one
+		/// <summary>
+		/// Persists modified meshes to assets and saves pending changes back to the EditContext
+		/// </summary>
+		/// <param name="progress"></param>
+		/// <param name="cancellationToken"></param>
+		/// <returns></returns>
 		public Task SaveChanges(IProgress<ProgressStatus> progress, CancellationToken cancellationToken)
 		{
 			var progressStatus = new ProgressStatus()
@@ -526,25 +531,24 @@ namespace MatterHackers.MatterControl
 				Status = "Saving Changes"
 			};
 
-			progress.Report(progressStatus);
+			progress?.Report(progressStatus);
 
-			this.Save((progress0to1, status) =>
-			{
-				progressStatus.Status = status;
-				progressStatus.Progress0To1 = progress0to1;
-				progress.Report(progressStatus);
-			});
-
-			return Task.CompletedTask;
-		}
-
-		internal void Save(Action<double, string> progress = null)
-		{
 			if (this.Scene.Persistable)
 			{
-				this.Scene.PersistAssets(progress);
+				this.Scene.PersistAssets((progress0to1, status) =>
+				{
+					if (progress != null)
+					{
+						progressStatus.Status = status;
+						progressStatus.Progress0To1 = progress0to1;
+						progress.Report(progressStatus);
+					}
+				});
+
 				this.EditContext?.Save();
 			}
+
+			return Task.CompletedTask;
 		}
 	}
 

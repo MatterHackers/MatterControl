@@ -137,7 +137,7 @@ namespace MatterHackers.MatterControl
 				// TODO: Consider if autosave is appropriate
 				if (initialPrinter != emptyPrinter)
 				{
-					initialPrinter.Bed.Save();
+					await initialPrinter.Bed.SaveChanges(null, CancellationToken.None);
 				}
 
 				// If we have an active printer, run Disable
@@ -942,7 +942,7 @@ namespace MatterHackers.MatterControl
 
 		static int reloadCount = 0;
 
-		public void OnApplicationClosed()
+		public async void OnApplicationClosed()
 		{
 			// Release the waiting ThumbnailGeneration task so it can shutdown gracefully
 			thumbGenResetEvent?.Set();
@@ -951,7 +951,7 @@ namespace MatterHackers.MatterControl
 			if (this.ActivePrinter != null
 				&& this.ActivePrinter != emptyPrinter)
 			{
-				this.ActivePrinter.Bed.Save();
+				await this.ActivePrinter.Bed.SaveChanges(null, CancellationToken.None);
 			}
 
 			ApplicationSettings.Instance.ReleaseClientToken();
