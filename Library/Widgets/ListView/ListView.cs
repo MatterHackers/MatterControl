@@ -135,6 +135,15 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public IEnumerable<ListViewItem> Items => items;
 
+		public enum SortKey
+		{
+			Name,
+			CreatedDate,
+			ModifiedDate
+		}
+
+		public SortKey ActiveSort { get; set; } = SortKey.Name;
+
 		/// <summary>
 		/// Empties the list children and repopulates the list with the source container content
 		/// </summary>
@@ -190,6 +199,18 @@ namespace MatterHackers.MatterControl.CustomWidgets
 											&& item.IsContentFileType()
 											&& this.ItemFilter(item)
 									  select item;
+
+				filteredResults = filteredResults.OrderBy(item =>
+				{
+					switch (ActiveSort)
+					{
+						case SortKey.Name:
+							return item.Name;
+
+						default:
+							return item.Name;
+					}
+				});
 
 				foreach (var item in filteredResults)
 				{
