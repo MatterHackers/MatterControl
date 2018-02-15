@@ -63,6 +63,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				GetDisplayString = (value) => $"{value + 1}",
 				HAnchor = HAnchor.Absolute,
 				VAnchor = VAnchor.Absolute,
+				MinimumSize = new Vector2(50, 25),
 			};
 			currentLayerInfo.EditComplete += (s, e) =>
 			{
@@ -96,12 +97,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void SetPositionAndValue(object sender, EventArgs e)
 		{
-			UiThread.RunOnIdle((Action)(() =>
+			UiThread.RunOnIdle(() =>
 			{
 				currentLayerInfo.Value = sceneContext.ActiveLayerIndex;
 				currentLayerInfo.Position = new Vector2(0, (double)(layerSlider.Position.Y + layerSlider.PositionPixelsFromFirstValue - 3));
 				currentLayerInfo.Visible = true;
-			}));
+			});
 		}
 
 		private class LayerScrollbar : FlowLayoutWidget
