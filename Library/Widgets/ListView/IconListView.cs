@@ -192,6 +192,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		internal static int ItemPadding = 2;
 
+		private TextWidget text;
+
 		public IconViewItem(ListViewItem item, int thumbWidth, int thumbHeight)
 			: base(item, thumbWidth, thumbHeight)
 		{
@@ -227,7 +229,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				};
 				container.AddChild(imageWidget);
 
-				var text = new TextWidget(item.Model.Name, 0, 0, 9, textColor: ActiveTheme.Instance.PrimaryTextColor)
+				text = new TextWidget(item.Model.Name, 0, 0, 9, textColor: ActiveTheme.Instance.PrimaryTextColor)
 				{
 					AutoExpandBoundsToText = false,
 					EllipsisIfClipped = true,
@@ -246,6 +248,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			}
 
 			this.SetItemThumbnail(loadingImage);
+		}
+
+		public override string ToolTipText
+		{
+			get => text.ToolTipText;
+			set => text.ToolTipText = value;
 		}
 
 		public override async void OnLoad(EventArgs args)
