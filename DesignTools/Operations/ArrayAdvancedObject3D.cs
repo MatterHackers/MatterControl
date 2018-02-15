@@ -42,7 +42,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public override string ActiveEditor => "PublicPropertyEditor";
 		public int Count { get; set; } = 3;
 		public Vector3 Offset { get; set; } = new Vector3(30, 0, 0);
-		public Vector3 Rotate { get; set; } = Vector3.Zero;
+		public double Rotate { get; set; } = 0;
 		public double Scale { get; set; } = 1;
 		public bool RotatePart { get; set; } = true;
 		public bool ScaleOffset { get; set; } = true;
@@ -57,19 +57,19 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				var offset = Offset;
 				for (int i = 1; i < Count; i++)
 				{
-					var rotateRadians = new Vector3(MathHelper.DegreesToRadians(Rotate.X), MathHelper.DegreesToRadians(Rotate.Y), MathHelper.DegreesToRadians(Rotate.Z));
+					var rotateRadians = MathHelper.DegreesToRadians(Rotate);
 					if (ScaleOffset)
 					{
 						offset *= Scale;
 					}
 
-					offset = Vector3.Transform(offset, Matrix4X4.CreateRotation(rotateRadians * i));
 					var next = lastChild.Clone();
+					offset = Vector3.Transform(offset, Matrix4X4.CreateRotationZ(rotateRadians));
 					next.Matrix *= Matrix4X4.CreateTranslation(offset);
 
 					if (RotatePart)
 					{
-						next.ApplyAtBoundsCenter(Matrix4X4.CreateRotation(rotateRadians));
+						next.ApplyAtBoundsCenter(Matrix4X4.CreateRotationZ(rotateRadians));
 					}
 
 					next.ApplyAtBoundsCenter(Matrix4X4.CreateScale(Scale));

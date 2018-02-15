@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System.ComponentModel;
 using System.Linq;
 using MatterHackers.DataConverters3D;
+using MatterHackers.Localizations;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
@@ -41,13 +42,17 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		}
 
 		public override string ActiveEditor => "PublicPropertyEditor";
-		public double Angle { get; set; } = 360;
-		public DirectionAxis Axis { get; set; } = new DirectionAxis() { Origin = Vector3.NegativeInfinity, Normal = Vector3.UnitZ };
 		public int Count { get; set; } = 3;
+		// make this public when within angle works
+		private double Angle { get; set; } = 360;
 
+		[DisplayName("Rotate About")]
+		public DirectionAxis Axis { get; set; } = new DirectionAxis() { Origin = Vector3.NegativeInfinity, Normal = Vector3.UnitZ };
+
+		// make this public when it works
 		[DisplayName("Keep Within Angle")]
 		[Description("Keep the entire extents of the part within the angle described.")]
-		public bool KeepInAngle { get; set; } = false;
+		private bool KeepInAngle { get; set; } = false;
 
 		[DisplayName("Rotate Part")]
 		[Description("Rotate the part to the same angle as the array.")]
@@ -59,7 +64,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			{
 				// make it something reasonable (just to the left of the aabb of the object)
 				var aabb = this.GetAxisAlignedBoundingBox();
-				Axis.Origin = new Vector3(aabb.minXYZ.X - aabb.XSize / 2, aabb.Center.Y, 0);
+				Axis.Origin = aabb.Center - new Vector3(30, 0, 0);
 			}
 			this.Children.Modify(list =>
 			{
@@ -78,7 +83,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 					if (!RotatePart)
 					{
-						next.Rotate(next.GetAxisAlignedBoundingBox().Center, normal, -angleRadians);
+						var aabb = next.GetAxisAlignedBoundingBox();
+						next.Rotate(aabb.Center, normal, -angleRadians);
 					}
 
 					list.Add(next);
