@@ -63,6 +63,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				GetDisplayString = (value) => $"{value + 1}",
 				HAnchor = HAnchor.Absolute,
 				VAnchor = VAnchor.Absolute,
+				MinimumSize = new Vector2(50, 25),
 			};
 			currentLayerInfo.EditComplete += (s, e) =>
 			{
