@@ -841,19 +841,6 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		/// <summary>
-		/// Loads content to the bed and prepares the printer for use
-		/// </summary>
-		/// <param name="editContext"></param>
-		/// <returns></returns>
-		public async Task Initialize(EditContext editContext)
-		{
-			if (editContext != null)
-			{
-				await this.Bed.LoadContent(editContext);
-			}
-		}
-
 		internal void SwapToSettings(PrinterSettings printerSettings)
 		{
 			_settings = printerSettings;
@@ -928,6 +915,20 @@ namespace MatterHackers.MatterControl
 						break;
 				}
 			}
+		}
+
+		/// <summary>
+		/// Loads content to the bed and prepares edit/persistence context for use
+		/// </summary>
+		/// <param name="editContext"></param>
+		/// <returns></returns>
+		internal async Task LoadPlateFromHistory()
+		{
+			await this.Bed.LoadContent(new EditContext()
+			{
+				ContentStore = ApplicationController.Instance.Library.PlatingHistory,
+				SourceItem = BedConfig.GetLastPlateOrNew()
+			});
 		}
 	}
 
