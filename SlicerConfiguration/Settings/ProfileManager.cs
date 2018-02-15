@@ -71,13 +71,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				// TODO: This application init code should move to caller and be awaited
 				var printer = new PrinterConfig(await LoadProfileAsync(this.LastProfileID));
 
-				await printer.Initialize(new EditContext()
-				{
-					ContentStore = ApplicationController.Instance.Library.PlatingHistory,
-					SourceItem = BedConfig.GetLastPlateOrNew()
-				});
-
 				await ApplicationController.Instance.SetActivePrinter(printer);
+
+				// Non-blocking plate load on startup
+				printer.LoadPlateFromHistory().ConfigureAwait(false);
 			}
 		}
 
@@ -144,11 +141,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			var printer = new PrinterConfig(await ProfileManager.LoadProfileAsync(printerID));
 
-			await printer.Initialize(new EditContext()
-			{
-				ContentStore = ApplicationController.Instance.Library.PlatingHistory,
-				SourceItem = BedConfig.GetLastPlateOrNew()
-			});
+			await printer.LoadPlateFromHistory();
 
 			await ApplicationController.Instance.SetActivePrinter(printer);
 		}
@@ -478,11 +471,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			ProfileManager.Instance.LastProfileID = guid;
 
 			var printer = new PrinterConfig(printerSettings);
-			await printer.Initialize(new EditContext()
-			{
-				ContentStore = ApplicationController.Instance.Library.PlatingHistory,
-				SourceItem = BedConfig.GetLastPlateOrNew()
-			});
+			await printer.LoadPlateFromHistory();
 
 			await ApplicationController.Instance.SetActivePrinter(printer);
 
