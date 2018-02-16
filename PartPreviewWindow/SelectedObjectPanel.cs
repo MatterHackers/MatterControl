@@ -133,8 +133,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Name = "Solid Colors",
 				DrawArrow = true,
 				AlignToRightEdge = true,
-				PopupContent = new ColorSwatchSelector(scene)
+				PopupContent = new ColorSwatchSelector(scene, theme)
 				{
+					BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor,
 					HAnchor = HAnchor.Fit,
 					VAnchor = VAnchor.Fit,
 				},
@@ -228,6 +229,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			editorSection = new SectionWidget("Editor", editorColumn, theme);
 			scrollableContent.AddChild(editorSection);
+
+			var colorSection = new SectionWidget("Color".Localize(), new ColorSwatchSelector(scene, theme, buttonSize: 16, spacing: 0.5)
+			{
+				Margin = new BorderDouble(left: 10)
+			}, theme, expanded: false)
+			{
+				Name = "Color Panel",
+			};
+			scrollableContent.AddChild(colorSection);
 
 			var mirrorSection = new SectionWidget("Mirror".Localize(), new MirrorControls(scene, theme), theme, expanded: false)
 			{
