@@ -31,22 +31,14 @@ using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MeshVisualizer;
-using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class ColorSwatchSelector : FlowLayoutWidget
 	{
-		private const int colorSize = 32;
-
-		public ColorSwatchSelector(InteractiveScene scene)
+		public ColorSwatchSelector(InteractiveScene scene, ThemeConfig theme, BorderDouble buttonSpacing, int buttonSize = 32)
 			: base(FlowDirection.TopToBottom)
 		{
-			var theme = ApplicationController.Instance.Theme;
-
-			this.BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor;
-
 			int colorCount = 9;
 
 			double[] lightness = new double[] { .7, .5, .3 };
@@ -61,57 +53,55 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				for (int colorIndex = 0; colorIndex < colorCount; colorIndex++)
 				{
 					var color = ColorF.FromHSL(colorIndex / (double)colorCount, 1, lightness[rowIndex]).ToColor();
-					colorRow.AddChild(MakeColorButton(scene, color));
+					colorRow.AddChild(MakeColorButton(scene, color, buttonSize, buttonSpacing));
 				}
 
 				// put in white and black buttons
-				colorRow.AddChild(MakeColorButton(scene, grayLevel[rowIndex]));
+				colorRow.AddChild(MakeColorButton(scene, grayLevel[rowIndex], buttonSize, buttonSpacing));
 
 				switch(rowIndex)
 				{
 					case 0:
+						var resetButton = new IconButton(AggContext.StaticData.LoadIcon("transparent_grid.png"), theme)
 						{
-							var resetButton = new IconButton(AggContext.StaticData.LoadIcon("transparent_grid.png"), theme)
-							{
-								Width = colorSize,
-								Height = colorSize,
-								Margin = Button.DefaultMargin
-							};
-							resetButton.Click += (s, e) =>
-							{
-								scene.UndoBuffer.AddAndDo(new ChangeColor(scene.SelectedItem, Color.Transparent));
-							};
-							colorRow.AddChild(resetButton);
-						}
-
+							Width = buttonSize,
+							Height = buttonSize,
+							Margin = buttonSpacing
+						};
+						resetButton.Click += (s, e) =>
+						{
+							scene.UndoBuffer.AddAndDo(new ChangeColor(scene.SelectedItem, Color.Transparent));
+						};
+						colorRow.AddChild(resetButton);
 						break;
 
 					case 1:
-						colorRow.AddChild(MakeColorButton(scene, new Color("#555")));
+						colorRow.AddChild(MakeColorButton(scene, new Color("#555"), buttonSize, buttonSpacing));
 						break;
 
 					case 2:
-						colorRow.AddChild(MakeColorButton(scene, new Color("#222")));
+						colorRow.AddChild(MakeColorButton(scene, new Color("#222"), buttonSize, buttonSpacing));
 						break;
 				}
 			}
 		}
 
-		private Button MakeColorButton(InteractiveScene scene, Color color)
+		private GuiWidget MakeColorButton(InteractiveScene scene, Color color, int buttonSize, BorderDouble buttonSpacing)
 		{
-			GuiWidget colorWidget;
-			var button = new Button(colorWidget = new GuiWidget()
+			var colorWidget = new GuiWidget()
 			{
 				BackgroundColor = color,
-				Width = colorSize,
-				Height = colorSize,
-			});
+				Width = buttonSize,
+				Height = buttonSize,
+				Margin = buttonSpacing
+			};
 
-			button.Click += (s, e) =>
+			colorWidget.Click += (s, e) =>
 			{
 				scene.UndoBuffer.AddAndDo(new ChangeColor(scene.SelectedItem, colorWidget.BackgroundColor));
 			};
-			return button;
+
+			return colorWidget;
 		}
 	}
 }
