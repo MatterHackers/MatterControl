@@ -58,6 +58,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		internal PrinterActionsBar printerActionsBar;
 		private DockingTabControl sideBar;
 		private SliceSettingsWidget sliceSettingsWidget;
+		private EventHandler unregisterEvents;
 
 		public PrinterTabPage(PrinterConfig printer, ThemeConfig theme, string tabTitle)
 			: base(printer, printer.Bed, theme, tabTitle)
@@ -185,6 +186,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.SetViewMode(printer.ViewState.ViewMode);
 
 			printer.ViewState.ConfigurePrinterChanged += ConfigurePrinter_Changed;
+
+			printer.Connection.CommunicationStateChanged.RegisterEvent((s, e) =>
+			{
+				this.SetSliderVisibility();
+			}, ref unregisterEvents);
+
 		}
 
 		private void ConfigurePrinter_Changed(object sender, EventArgs e)
@@ -227,10 +234,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				printer.Bed.Scene.ClearSelection();
 			}
 
-			var slidersVisible = viewMode != PartViewMode.Model && printer.Bed.LoadedGCode?.LayerCount > 0;
-
-			layerScrollbar.Visible = slidersVisible;
-			layerRenderRatioSlider.Visible = slidersVisible;
+			this.SetSliderVisibility();
 
 			view3DWidget.selectedObjectContainer.Visible = view3DWidget.meshViewerWidget.ModelView
 				&& sceneContext.Scene.HasSelection
@@ -239,12 +243,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void BedPlate_LoadedGCodeChanged(object sender, EventArgs e)
 		{
-			bool gcodeLoaded = sceneContext.LoadedGCode != null;
+			this.SetSliderVisibility();
 
-			layerScrollbar.Visible = gcodeLoaded;
-			layerRenderRatioSlider.Visible = gcodeLoaded;
-
-			if (!gcodeLoaded)
+			if (sceneContext.LoadedGCode == null)
 			{
 				return;
 			}
@@ -252,7 +253,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			layerScrollbar.Maximum = sceneContext.LoadedGCode.LayerCount;
 		}
 
-		private void SetSyncToPrintVisibility()
+		private void SetSliderVisibility()
 		{
 			bool printerIsRunningPrint = printer.Connection.PrinterIsPaused || printer.Connection.PrinterIsPrinting;
 
@@ -270,8 +271,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					layerRenderRatioSlider.SecondValue = 1;
 				}
 
-				layerRenderRatioSlider.Visible = true;
-				layerScrollbar.Visible = true;
+				bool hasLayers = printer.Bed.LoadedGCode?.LayerCount > 0;
+
+				layerRenderRatioSlider.Visible = hasLayers && !view3DWidget.meshViewerWidget.ModelView;
+				layerScrollbar.Visible = hasLayers && !view3DWidget.meshViewerWidget.ModelView;
 			}
 		}
 
@@ -300,16 +303,27 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				return;
 			}
 
-			
 			layerRenderRatioSlider.OriginRelativeParent = new Vector2(11, 65);
 			layerRenderRatioSlider.TotalWidthInPixels = view3DWidget.Width - 45;
 		}
 
-		private void SetAnimationPosition()
+		private double lastPostion = 0;
+
+		private bool SetAnimationPosition()
 		{
 			layerScrollbar.Value = printer.Connection.CurrentlyPrintingLayer;
-			layerRenderRatioSlider.SecondValue = printer.Connection.RatioIntoCurrentLayer;
+
+			double currentPosition = printer.Connection.RatioIntoCurrentLayer;
 			layerRenderRatioSlider.FirstValue = 0;
+
+			if (lastPostion != currentPosition)
+			{
+				layerRenderRatioSlider.SecondValue = currentPosition;
+				lastPostion = currentPosition;
+				return true;
+			}
+
+			return false;
 		}
 
 		internal void ShowGCodeOverflowMenu(PopupMenu popupMenu)
@@ -416,8 +430,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				&& printerIsRunningPrint
 				&& (gcode3DWidget.Visible || gcode2DWidget.Visible))
 			{
-				SetAnimationPosition();
-				this.Invalidate();
+				if (this.SetAnimationPosition())
+				{
+					this.Invalidate();
+				}
 			}
 
 			base.OnDraw(graphics2D);
@@ -455,6 +471,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				parentSystemWindow.KeyDown -= Parent_KeyDown;
 			}
+
+			unregisterEvents?.Invoke(null, null);
 
 			sceneContext.LoadedGCodeChanged -= BedPlate_LoadedGCodeChanged;
 			printer.ViewState.ConfigurePrinterChanged -= ConfigurePrinter_Changed;
@@ -594,6 +612,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				int secondsPrinted = printer.Connection.SecondsPrinted;
 				int hoursPrinted = (int)(secondsPrinted / (60 * 60));
 				int minutesPrinted = (secondsPrinted / 60 - hoursPrinted * 60);
+
 				secondsPrinted = secondsPrinted % 60;
 
 				// TODO: Consider if the consistency of a common time format would look and feel better than changing formats based on elapsed duration
