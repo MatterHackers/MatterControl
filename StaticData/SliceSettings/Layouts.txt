@@ -192,6 +192,7 @@ Printer
         max_velocity
         jerk_velocity
         print_time_estimate_multiplier
+        gcode_buffer_size
     Slicing
       Slicing Options
         output_only_first_layer

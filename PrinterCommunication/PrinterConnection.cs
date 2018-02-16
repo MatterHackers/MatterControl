@@ -43,6 +43,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.SerialPortCommunication;
 using MatterHackers.SerialPortCommunication.FrostedSerial;
 using MatterHackers.VectorMath;
@@ -544,7 +545,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		public Vector3 CurrentDestination { get { return currentDestination.position; } }
+		public Vector3 CurrentDestination => currentDestination.position;
 
 		public int CurrentlyPrintingLayer
 		{
@@ -562,17 +563,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public string DeviceCode { get; private set; }
 
-		public bool Disconnecting
-		{
-			get
-			{
-				return CommunicationState == CommunicationStates.Disconnecting;
-			}
-		}
+		public bool Disconnecting => CommunicationState == CommunicationStates.Disconnecting;
 
 		public double FanSpeed0To255
 		{
-			get { return fanSpeed; }
+			get => fanSpeed;
 			set
 			{
 				fanSpeed = Math.Max(0, Math.Min(255, value));
@@ -650,13 +645,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		public bool PrinterIsPaused
-		{
-			get
-			{
-				return CommunicationState == CommunicationStates.Paused;
-			}
-		}
+		public bool PrinterIsPaused => CommunicationState == CommunicationStates.Paused;
 
 		public bool PrinterIsPrinting
 		{
@@ -687,11 +676,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public DetailedPrintingState DetailedPrintingState
 		{
-			get
-			{
-				return printingStatePrivate;
-			}
-
+			get => printingStatePrivate;
 			set
 			{
 				if (printingStatePrivate != value)
@@ -729,13 +714,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		public bool PrintIsFinished
-		{
-			get
-			{
-				return CommunicationState == CommunicationStates.FinishedPrint;
-			}
-		}
+		public bool PrintIsFinished => CommunicationState == CommunicationStates.FinishedPrint;
 
 		public string PrintJobName { get; private set; } = null;
 
@@ -770,10 +749,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public double TargetBedTemperature
 		{
-			get
-			{
-				return _targetBedTemperature;
-			}
+			get => _targetBedTemperature;
 			set
 			{
 				if (_targetBedTemperature != value)
@@ -1890,6 +1866,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public async void StartPrint(string gcodeFilename, PrintTask printTaskToUse = null)
 		{
+			backupAmount = printer.Settings.GetValue<int>(SettingsKey.gcode_buffer_size);
+
 			if (!this.IsConnected || PrinterIsPrinting)
 			{
 				return;

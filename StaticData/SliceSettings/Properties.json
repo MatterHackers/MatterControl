@@ -129,6 +129,15 @@
     "DefaultValue": "100"
   },
   {
+    "SlicerConfigName": "gcode_buffer_size",
+    "PresentationName": "G-Code Buffer Size",
+    "HelpText": "The number of instructions buffered by your printer. (BLOCK_BUFFER_SIZE in Marlin)",
+	"ShowIfSet": "!sla_printer",
+    "RebuildGCodeOnChange": false,
+    "DataEditType": "INT",
+    "DefaultValue": "16"
+  },
+{
     "SlicerConfigName": "bridge_speed",
     "PresentationName": "Bridges",
     "HelpText": "The speed at which bridging between walls will print.",
