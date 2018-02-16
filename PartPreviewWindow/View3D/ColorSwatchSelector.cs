@@ -36,7 +36,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class ColorSwatchSelector : FlowLayoutWidget
 	{
-		public ColorSwatchSelector(InteractiveScene scene, ThemeConfig theme, int buttonSize = 32, double spacing = 3)
+		public ColorSwatchSelector(InteractiveScene scene, ThemeConfig theme, BorderDouble buttonSpacing, int buttonSize = 32)
 			: base(FlowDirection.TopToBottom)
 		{
 			int colorCount = 9;
@@ -53,11 +53,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				for (int colorIndex = 0; colorIndex < colorCount; colorIndex++)
 				{
 					var color = ColorF.FromHSL(colorIndex / (double)colorCount, 1, lightness[rowIndex]).ToColor();
-					colorRow.AddChild(MakeColorButton(scene, color, buttonSize, spacing));
+					colorRow.AddChild(MakeColorButton(scene, color, buttonSize, buttonSpacing));
 				}
 
 				// put in white and black buttons
-				colorRow.AddChild(MakeColorButton(scene, grayLevel[rowIndex], buttonSize, spacing));
+				colorRow.AddChild(MakeColorButton(scene, grayLevel[rowIndex], buttonSize, buttonSpacing));
 
 				switch(rowIndex)
 				{
@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						{
 							Width = buttonSize,
 							Height = buttonSize,
-							Margin = spacing
+							Margin = buttonSpacing
 						};
 						resetButton.Click += (s, e) =>
 						{
@@ -76,26 +76,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						break;
 
 					case 1:
-						colorRow.AddChild(MakeColorButton(scene, new Color("#555"), buttonSize, spacing));
+						colorRow.AddChild(MakeColorButton(scene, new Color("#555"), buttonSize, buttonSpacing));
 						break;
 
 					case 2:
-						colorRow.AddChild(MakeColorButton(scene, new Color("#222"), buttonSize, spacing));
+						colorRow.AddChild(MakeColorButton(scene, new Color("#222"), buttonSize, buttonSpacing));
 						break;
 				}
 			}
 		}
 
-		private GuiWidget MakeColorButton(InteractiveScene scene, Color color, int buttonSize, double spacing)
+		private GuiWidget MakeColorButton(InteractiveScene scene, Color color, int buttonSize, BorderDouble buttonSpacing)
 		{
 			var colorWidget = new GuiWidget()
 			{
 				BackgroundColor = color,
 				Width = buttonSize,
 				Height = buttonSize,
-				Margin = spacing,
-				Border = new BorderDouble(1),
-				BorderColor = Color.Black,
+				Margin = buttonSpacing
 			};
 
 			colorWidget.Click += (s, e) =>

@@ -133,7 +133,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Name = "Solid Colors",
 				DrawArrow = true,
 				AlignToRightEdge = true,
-				PopupContent = new ColorSwatchSelector(scene, theme)
+				PopupContent = new ColorSwatchSelector(scene, theme, buttonSpacing: 3)
 				{
 					BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor,
 					HAnchor = HAnchor.Fit,
@@ -230,7 +230,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			editorSection = new SectionWidget("Editor", editorColumn, theme);
 			scrollableContent.AddChild(editorSection);
 
-			var colorSection = new SectionWidget("Color".Localize(), new ColorSwatchSelector(scene, theme, buttonSize: 16, spacing: 0.5)
+			var colorSection = new SectionWidget("Color".Localize(), new ColorSwatchSelector(scene, theme, buttonSize: 16, buttonSpacing: new BorderDouble(1, 1, 0, 0))
 			{
 				Margin = new BorderDouble(left: 10)
 			}, theme, expanded: false)
