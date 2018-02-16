@@ -269,6 +269,12 @@ namespace MatterControl.Printing
 						case ';':
 							if (gcodeHasExplicitLayerChangeInfo && IsLayerChange(lineString))
 							{
+								if (lineString.EndsWith("LAYER:0"))
+								{
+									loadedGCodeFile.IndexOfChangeInZ.Add(0);
+									break;
+								}
+
 								loadedGCodeFile.IndexOfChangeInZ.Add(loadedGCodeFile.GCodeCommandQueue.Count);
 							}
 							if (lineString.StartsWith("; layerThickness"))
@@ -914,21 +920,23 @@ namespace MatterControl.Printing
 		public override int GetLayerIndex(int instructionIndex)
 		{
 			if (instructionIndex >= 0
-				&& instructionIndex < LineCount)
+				&& instructionIndex <= LineCount)
 			{
-				for (int zIndex = 0; zIndex < LayerCount; zIndex++)
+				for(var i = IndexOfChangeInZ.Count - 1; i >=0; i--)
 				{
-					if (instructionIndex < IndexOfChangeInZ[zIndex])
+					var lineStart = indexOfChangeInZ[i];
+
+					if (instructionIndex >= lineStart)
 					{
-						return zIndex;
+						return i;
 					}
 				}
-
-				return LayerCount - 1;
 			}
 
 			return -1;
 		}
+
+		private static int lastPrintLine = -1;
 
 		public override double Ratio0to1IntoContainedLayer(int instructionIndex)
 		{
@@ -936,15 +944,30 @@ namespace MatterControl.Printing
 
 			if (currentLayer > -1)
 			{
-				int startIndex = 0;
-				if (currentLayer > 0)
-				{
-					startIndex = IndexOfChangeInZ[currentLayer - 1];
-				}
+				int startIndex = IndexOfChangeInZ[currentLayer];
+
 				int endIndex = LineCount - 1;
+
 				if (currentLayer < LayerCount - 1)
 				{
-					endIndex = IndexOfChangeInZ[currentLayer];
+					endIndex = IndexOfChangeInZ[currentLayer + 1];
+				}
+				else
+				{
+					// Improved last layer percent complete - seek endIndex to 'MatterSlice Completed' line, otherwise leave at LineCount - 1
+					if (lastPrintLine == -1)
+					{
+						string line = "";
+						lastPrintLine = instructionIndex;
+						do
+						{
+							line = GCodeCommandQueue[lastPrintLine++].Line;
+
+						} while (line != "; MatterSlice Completed Successfully" 
+							&& lastPrintLine < endIndex);
+					}
+
+					endIndex = lastPrintLine;
 				}
 
 				int deltaFromStart = Math.Max(0, instructionIndex - startIndex);

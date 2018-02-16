@@ -307,19 +307,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void SetAnimationPosition()
 		{
-			int currentLayer = printer.Connection.CurrentlyPrintingLayer;
-			if (currentLayer <= 0)
-			{
-				layerScrollbar.Value = 0;
-				layerRenderRatioSlider.SecondValue = 0;
-				layerRenderRatioSlider.FirstValue = 0;
-			}
-			else
-			{
-				layerScrollbar.Value = currentLayer - 1;
-				layerRenderRatioSlider.SecondValue = printer.Connection.RatioIntoCurrentLayer;
-				layerRenderRatioSlider.FirstValue = 0;
-			}
+			layerScrollbar.Value = printer.Connection.CurrentlyPrintingLayer;
+			layerRenderRatioSlider.SecondValue = printer.Connection.RatioIntoCurrentLayer;
+			layerRenderRatioSlider.FirstValue = 0;
 		}
 
 		internal void ShowGCodeOverflowMenu(PopupMenu popupMenu)
@@ -609,7 +599,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// TODO: Consider if the consistency of a common time format would look and feel better than changing formats based on elapsed duration
 				timeWidget.Text = (hoursPrinted <= 0) ? $"{minutesPrinted}:{secondsPrinted:00}" : $"{hoursPrinted}:{minutesPrinted:00}:{secondsPrinted:00}";
 
-				progressDial.LayerCount = printer.Connection.CurrentlyPrintingLayer;
+				progressDial.LayerCount = printer.Connection.CurrentlyPrintingLayer + 1;
 				progressDial.LayerCompletedRatio = printer.Connection.RatioIntoCurrentLayer;
 				progressDial.CompletedRatio = printer.Connection.PercentComplete / 100;
 

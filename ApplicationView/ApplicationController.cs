@@ -1462,7 +1462,7 @@ namespace MatterHackers.MatterControl
 											&& !cancellationTokenB.IsCancellationRequested)
 										{
 											//progressStatus.Status = $"{printing} Layer ({printer.Connection.CurrentlyPrintingLayer } of {totalLayers})";
-											progressStatus.Status = $"{printing} ({printer.Connection.CurrentlyPrintingLayer})";
+											progressStatus.Status = $"{printing} ({printer.Connection.CurrentlyPrintingLayer + 1})";
 											progressStatus.Progress0To1 = printer.Connection.PercentComplete / 100;
 											reporterB.Report(progressStatus);
 											Thread.Sleep(200);
