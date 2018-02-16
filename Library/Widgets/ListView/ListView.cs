@@ -196,7 +196,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				var filteredResults = from item in sourceContainer.Items
 									  where item.IsVisible
-											&& item.IsContentFileType()
+											&& (item.IsContentFileType() || item is MissingFileItem)
 											&& this.ItemFilter(item)
 									  select item;
 

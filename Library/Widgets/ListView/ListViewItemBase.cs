@@ -291,7 +291,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			var delta = mouseDownAt - mouseEvent.Position;
 
 			// If mouseDown on us and we've moved past are drag determination threshold, notify view3DWidget
-			if (mouseDownInBounds && delta.Length > 40)
+			if (mouseDownInBounds && delta.Length > 40
+				&& !(listViewItem.Model is MissingFileItem))
 			{
 				hitDragThreshold = true;
 

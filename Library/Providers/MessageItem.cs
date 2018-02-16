@@ -29,9 +29,20 @@ either expressed or implied, of the FreeBSD Project.
 
 using System.Threading.Tasks;
 using MatterHackers.Agg.Image;
+using MatterHackers.Agg.Platform;
+using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.Library
 {
+	public class MissingFileItem : MessageItem
+	{
+		public MissingFileItem(string name)
+			: base("Missing".Localize() + "-" + name)
+		{
+			this.Thumbnail = AggContext.StaticData.LoadIcon("part_icon_transparent_40x40.png");
+		}
+	}
+
 	public class MessageItem : ILibraryItem, IThumbnail
 	{
 		public string ID { get; set; }

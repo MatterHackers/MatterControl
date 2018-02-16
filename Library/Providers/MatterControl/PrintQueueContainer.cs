@@ -50,10 +50,18 @@ namespace MatterHackers.MatterControl.Library
 
 		public override void Load()
 		{
-			this.Items = QueueData.Instance.PrintItems.Select(p => new FileSystemFileItem(p.FileLocation)
+			var queueItems = QueueData.Instance.PrintItems.ToList();
+
+			var existingItems = queueItems.Where(p => File.Exists(p.FileLocation)).ToList();
+
+			var missingItems = queueItems.Except(existingItems).ToList();
+
+			this.Items = existingItems.Select(p => new FileSystemFileItem(p.FileLocation)
 			{
 				Name = p.Name
-			}).ToList<ILibraryItem>();
+			})
+			.Concat<ILibraryItem>(missingItems.Select(p => new MissingFileItem(p.Name)))
+			.ToList<ILibraryItem>();
 		}
 
 		public override async void Add(IEnumerable<ILibraryItem> items)
