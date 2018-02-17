@@ -712,6 +712,24 @@ namespace MatterHackers.MatterControl
 				UserSettings.Instance.set(UserSettingsKey.SelectedObjectPanelWidth, minimumValue.ToString());
 			}
 		}
+
+		public double GCodePanelWidth
+		{
+			get
+			{
+				if (double.TryParse(UserSettings.Instance.get(UserSettingsKey.GCodePanelWidth), out double controlWidth))
+				{
+					return Math.Max(controlWidth, 150);
+				}
+
+				return 150;
+			}
+			set
+			{
+				var minimumValue = Math.Max(value, 150);
+				UserSettings.Instance.set(UserSettingsKey.GCodePanelWidth, minimumValue.ToString());
+			}
+		}
 	}
 
 	public class PrinterConfig
