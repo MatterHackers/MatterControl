@@ -17,8 +17,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Fit;
 			this.Border = new BorderDouble(bottom: 1);
-
-			SeperatorColor = new Color(theme.Colors.SecondaryTextColor, 50);
+			this.SeperatorColor = new Color(theme.Colors.SecondaryTextColor, 50);
 
 			if (!string.IsNullOrEmpty(sectionTitle))
 			{
@@ -29,23 +28,18 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				{
 					HAnchor = HAnchor.Stretch,
 					Checked = expanded,
+					Padding = new BorderDouble(0, 5, 0, 6)
 				};
 				checkbox.CheckedStateChanged += (s, e) =>
 				{
 					ContentPanel.Visible = checkbox.Checked;
-					// TODO: Remove this Height = 10 and figure out why the layout engine is not sizing these corretly without this.
+					// TODO: Remove this Height = 10 and figure out why the layout engine is not sizing these correctly without this.
 					ContentPanel.Height = 10;
-					this.BorderColor = (checkbox.Checked) ? Color.Transparent : SeperatorColor;
 				};
-
-				this.BorderColor = BorderColor = (expanded) ? Color.Transparent : SeperatorColor;
-
-				GuiWidget heading = checkbox;
-				heading.Padding = new BorderDouble(0, 5, 0, 6);
 
 				if (rightAlignedContent == null)
 				{
-					this.AddChild(heading);
+					this.AddChild(checkbox);
 				}
 				else
 				{
@@ -53,7 +47,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					{
 						HAnchor = HAnchor.Stretch
 					};
-					headingRow.AddChild(heading);
+					headingRow.AddChild(checkbox);
 					headingRow.AddChild(new HorizontalSpacer());
 					headingRow.AddChild(rightAlignedContent);
 					this.AddChild(headingRow);
@@ -77,10 +71,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				{
 					_seperatorColor = value;
 					this.BorderColor = _seperatorColor;
-					if (this.ContentPanel != null)
-					{
-						this.ContentPanel.BorderColor = _seperatorColor;
-					}
 				}
 			}
 		}
@@ -95,9 +85,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			// Apply default rules for panel widget
 			guiWidget.HAnchor = HAnchor.Stretch;
 			guiWidget.VAnchor = VAnchor.Fit;
-			//guiWidget.BackgroundColor = ApplicationController.Instance.Theme.MinimalShade;
-			guiWidget.BorderColor = SeperatorColor;
-			guiWidget.Border = new BorderDouble(bottom: 1);
 
 			// Set
 			this.AddChild(guiWidget);
