@@ -60,12 +60,15 @@ namespace MatterHackers.MatterControl.DesignTools
 			var aabb = this.GetAxisAlignedBoundingBox();
 
 			var path = new VertexStorage();
-			path.MoveTo(0, 0);
-			path.LineTo(Width / 2, 0);
-			path.LineTo(Width / 2, Depth/2);
-			path.LineTo(0, Depth / 2);
+			path.MoveTo(Width / 2, 0);
 
-			var mesh = VertexSourceToMesh.Revolve(path, Sides, 0, MathHelper.Tau / 2);
+			for (int i = 1; i < Sides; i++)
+			{
+				var angle = MathHelper.Tau * i / 2 / (Sides-1);
+				path.LineTo(Math.Cos(angle) * Width / 2, Math.Sin(angle) * Width / 2);
+			}
+
+			var mesh = VertexSourceToMesh.Extrude(path, Depth);
 			mesh.Transform(Matrix4X4.CreateRotationX(MathHelper.Tau / 4));
 			Mesh = mesh;
 

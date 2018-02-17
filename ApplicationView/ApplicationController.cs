@@ -331,7 +331,7 @@ namespace MatterHackers.MatterControl
 			new SceneSelectionSeparator(),
 			new SceneSelectionOperation()
 			{
-				TitleResolver = () => "Align".Localize(),
+				TitleResolver = () => "Arrange".Localize(),
 				Action = (scene) =>
 				{
 					scene.AddSelectionAsChildren(new ArrangeObject3D());

@@ -92,8 +92,9 @@
     <Compile Include="DesignTools\Operations\ArrayRadialObject3D.cs" />
     <Compile Include="DesignTools\Operations\Object3DExtensions.cs" />
     <Compile Include="DesignTools\Operations\Align.cs" />
-    <Compile Include="DesignTools\Operations\Scale.cs" />
     <Compile Include="DesignTools\Operations\Rotate.cs" />
+    <Compile Include="DesignTools\Operations\Scale.cs" />
+    <Compile Include="DesignTools\Operations\ScaleObject3D.cs" />
     <Compile Include="DesignTools\Operations\SmoothPath.cs" />
     <Compile Include="DesignTools\Primitives\BaseObject3D.cs" />
     <Compile Include="DesignTools\Primitives\RoofObject3D.cs" />
