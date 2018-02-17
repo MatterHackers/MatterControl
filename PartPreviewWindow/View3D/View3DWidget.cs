@@ -113,37 +113,31 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.BackgroundColor = theme.ActiveTabColor;
 			this.Border = new BorderDouble(top: 1);
 			this.BorderColor = theme.MinimalShade;
+			this.HAnchor = HAnchor.Stretch; //	HAnchor.MaxFitOrStretch,
+			this.VAnchor = VAnchor.Stretch; //  VAnchor.MaxFitOrStretch
 
 			autoRotating = allowAutoRotate;
 			allowAutoRotate = (autoRotate == AutoRotate.Enabled);
 
 			viewControls3D.TransformStateChanged += ViewControls3D_TransformStateChanged;
 
-			var mainContainerTopToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				HAnchor = HAnchor.MaxFitOrStretch,
-				VAnchor = VAnchor.MaxFitOrStretch
-			};
-
 			// MeshViewer
 			meshViewerWidget = new MeshViewerWidget(sceneContext, this.InteractionLayer, editorType: editorType);
 			meshViewerWidget.RenderBed = sceneContext.RendererOptions.RenderBed;
 			meshViewerWidget.AnchorAll();
-			this.InteractionLayer.AddChild(meshViewerWidget);
+			this.AddChild(meshViewerWidget);
 
 			// TumbleWidget
 			this.InteractionLayer.AddChild(this.TrackballTumbleWidget);
 
 			this.InteractionLayer.SetRenderTarget(this.meshViewerWidget);
 
-			mainContainerTopToBottom.AddChild(this.InteractionLayer);
+			this.AddChild(this.InteractionLayer);
 
 			scene.SelectionChanged += Scene_SelectionChanged;
 
 			// if the scene is invalidated invalidate the widget
 			scene.Invalidated += (s, e) => Invalidate();
-
-			this.AddChild(mainContainerTopToBottom);
 
 			this.AnchorAll();
 
