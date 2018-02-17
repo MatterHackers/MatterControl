@@ -150,6 +150,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string z_probe_z_offset = nameof(z_probe_z_offset);
 		public const string z_servo_depolyed_angle = nameof(z_servo_depolyed_angle);
 		public const string z_servo_retracted_angle = nameof(z_servo_retracted_angle);
+		public const string gcode_buffer_size = nameof(gcode_buffer_size);
 	}
 
 	public static class PrinterSettigsExtensions

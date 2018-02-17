@@ -252,8 +252,14 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public override string ToolTipText
 		{
-			get => text.ToolTipText;
-			set => text.ToolTipText = value;
+			get => text?.ToolTipText;
+			set
+			{
+				if (text != null)
+				{
+					text.ToolTipText = value;
+				}
+			}
 		}
 
 		public override async void OnLoad(EventArgs args)
