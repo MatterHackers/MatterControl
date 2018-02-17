@@ -542,6 +542,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (printer != null)
 			{
 				printer.ViewState.SelectedObjectPanelWidth = selectedObjectPanel.Width;
+				printer.ViewState.GCodePanelWidth = printerTabPage.gcodeContainer.Width;
 			}
 
 			viewControls3D.TransformStateChanged -= ViewControls3D_TransformStateChanged;

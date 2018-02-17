@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private SliceLayerSelector layerScrollbar;
 		internal PrinterConfig printer;
 		internal GCode3DWidget gcode3DWidget;
-		private ResizeContainer gcodeContainer;
+		internal ResizeContainer gcodeContainer;
 		internal PrinterActionsBar printerActionsBar;
 		private DockingTabControl sideBar;
 		private SliceSettingsWidget sliceSettingsWidget;
