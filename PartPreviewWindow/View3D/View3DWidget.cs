@@ -91,8 +91,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public View3DWidget(PrinterConfig printer, BedConfig sceneContext, AutoRotate autoRotate, ViewControls3D viewControls3D, ThemeConfig theme, PartTabPage printerTabBase, MeshViewerWidget.EditorType editorType = MeshViewerWidget.EditorType.Part)
 		{
-			var smallMarginButtonFactory = theme.SmallMarginButtonFactory;
-
 			this.sceneContext = sceneContext;
 			this.printerTabPage = printerTabBase as PrinterTabPage;
 			this.printer = printer;
@@ -166,9 +164,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				SplitterWidth = theme.SplitterWidth,
 				Visible = false,
 			};
-
-			this.InteractionLayer.AddChild(selectedObjectContainer);
 			selectedObjectContainer.AddChild(selectedObjectPanel);
+			this.InteractionLayer.AddChild(selectedObjectContainer);
 
 			this.InteractionLayer.AddChild(new TumbleCubeControl(this.InteractionLayer)
 			{
@@ -418,11 +415,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						break;
 				}
 			}
-		}
-
-		public bool DragingPart
-		{
-			get { return CurrentSelectInfo.DownOnPart; }
 		}
 
 		public void AddUndoOperation(IUndoRedoCommand operation)

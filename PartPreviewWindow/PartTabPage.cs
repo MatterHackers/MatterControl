@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.Padding = 0;
 
 			bool isPrinterType = this is PrinterTabPage;
-			
+
 			viewControls3D = new ViewControls3D(sceneContext, theme, sceneContext.Scene.UndoBuffer, isPrinterType)
 			{
 				//BackgroundColor = new Color(0, 0, 0, theme.OverlayAlpha),
