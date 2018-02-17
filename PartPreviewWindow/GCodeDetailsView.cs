@@ -29,12 +29,110 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.ConfigurationPage;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
+
+	public interface IToggleOption
+	{
+		string Title { get; }
+		Func<bool> IsChecked { get; }
+		Action<bool> SetValue { get; }
+	}
+
+	public class BoolOption : IToggleOption
+	{
+		public string Title { get; }
+
+		public Func<bool> IsChecked { get; }
+
+		public Func<bool> IsVisible { get; }
+
+		public Action<bool> SetValue { get; }
+
+
+		public BoolOption(string title, Func<bool> isChecked, Action<bool> setValue)
+			: this(title, isChecked, setValue, () => true)
+		{
+		}
+
+		public BoolOption(string title, Func<bool> isChecked, Action<bool> setValue, Func<bool> isVisible)
+		{
+			this.Title = title;
+			this.IsChecked = isChecked;
+			this.SetValue = setValue;
+			this.IsVisible = isVisible;
+		}
+	}
+
+	public class GCodeOptionsPanel : FlowLayoutWidget
+	{
+		public GCodeOptionsPanel(BedConfig sceneContext, PrinterConfig printer)
+			: base(FlowDirection.TopToBottom)
+		{
+			var gcodeOptions = sceneContext.RendererOptions;
+
+			var viewOptions = new[]
+			{
+				new BoolOption(
+					"Moves".Localize(),
+					() => gcodeOptions.RenderMoves,
+					(value) => gcodeOptions.RenderMoves = value),
+				new BoolOption(
+					"Retractions".Localize(),
+					() => gcodeOptions.RenderRetractions,
+					(value) => gcodeOptions.RenderRetractions = value),
+				new BoolOption(
+					"Extrusion".Localize(),
+					() => gcodeOptions.SimulateExtrusion,
+					(value) => gcodeOptions.SimulateExtrusion = value),
+				new BoolOption(
+					"Transparent".Localize(),
+					() => gcodeOptions.TransparentExtrusion,
+					(value) => gcodeOptions.TransparentExtrusion = value),
+				new BoolOption(
+					"Hide Offsets".Localize(),
+					() => gcodeOptions.HideExtruderOffsets,
+					(value) => gcodeOptions.HideExtruderOffsets = value,
+					() => printer.Settings.GetValue<int>(SettingsKey.extruder_count) > 1),
+				new BoolOption(
+					"Sync To Print".Localize(),
+					() => gcodeOptions.SyncToPrint,
+					(value) =>
+					{
+						gcodeOptions.SyncToPrint = value;
+						if (!gcodeOptions.SyncToPrint)
+						{
+							// If we are turning off sync to print, set the slider to full.
+							//layerRenderRatioSlider.SecondValue = 1;
+						}
+					})
+			};
+
+			foreach(var option in viewOptions)
+			{
+				if (option.IsVisible())
+				{
+					this.AddChild(
+						new SettingsItem(
+							option.Title,
+							new SettingsItem.ToggleSwitchConfig()
+							{
+								Checked = option.IsChecked(),
+								ToggleAction = option.SetValue
+							},
+							enforceGutter: false)
+					);
+				}
+			}
+		}
+	}
+
 	public class GCodeDetailsView : FlowLayoutWidget
 	{
 		private TextWidget massTextWidget;

@@ -76,6 +76,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				this.AddChild(
 					new SectionWidget(
+						"Options".Localize(),
+						new GCodeOptionsPanel(sceneContext, printer),
+						theme)
+					{
+						HAnchor = HAnchor.Stretch,
+						VAnchor = VAnchor.Fit
+					});
+
+				this.AddChild(
+					new SectionWidget(
 						"Details".Localize(),
 						new GCodeDetailsView(new GCodeDetails(printer, printer.Bed.LoadedGCode), theme.FontSize12, theme.FontSize9)
 						{
