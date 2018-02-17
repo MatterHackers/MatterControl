@@ -47,32 +47,34 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			var margin = new BorderDouble(0, 9, 0, 3);
 
-			// put in the print time
-			this.AddChild(new TextWidget("Print Time".Localize() + ":", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: headingPointSize));
-			this.AddChild(new TextWidget(gcodeDetails.EstimatedPrintTime, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: dataPointSize)
+			TextWidget AddSetting(string title, string value, GuiWidget parentWidget)
 			{
-				Margin = margin
-			});
+				parentWidget.AddChild(
+					new TextWidget(title + ":", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: headingPointSize)
+					{
+						HAnchor = HAnchor.Left
+					});
+
+				var textWidget = new TextWidget(value, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: dataPointSize)
+				{
+					HAnchor = HAnchor.Left,
+					Margin = margin
+				};
+
+				parentWidget.AddChild(textWidget);
+
+				return textWidget;
+			}
+
+			// put in the print time
+			AddSetting("Print Time".Localize(), gcodeDetails.EstimatedPrintTime, this);
 
 			// show the filament used
-			this.AddChild(new TextWidget("Filament Length".Localize() + ":", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: headingPointSize));
-			this.AddChild(new TextWidget(gcodeDetails.FilamentUsed, pointSize: dataPointSize, textColor: ActiveTheme.Instance.PrimaryTextColor)
-			{
-				Margin = margin
-			});
+			AddSetting("Filament Length".Localize(), gcodeDetails.FilamentUsed, this);
 
-			this.AddChild(new TextWidget("Filament Volume".Localize() + ":", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: headingPointSize));
-			this.AddChild(new TextWidget(gcodeDetails.FilamentVolume, pointSize: dataPointSize, textColor: ActiveTheme.Instance.PrimaryTextColor)
-			{
-				Margin = margin
-			});
+			AddSetting("Filament Volume".Localize(), gcodeDetails.FilamentVolume, this);
 
-			this.AddChild(new TextWidget("Estimated Mass".Localize() + ":", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: headingPointSize));
-
-			this.AddChild(massTextWidget = new TextWidget(gcodeDetails.EstimatedMass, pointSize: dataPointSize, textColor: ActiveTheme.Instance.PrimaryTextColor)
-			{
-				Margin = new BorderDouble(margin.Left, 0, margin.Right, margin.Top)
-			});
+			massTextWidget = AddSetting("Estimated Mass".Localize(), gcodeDetails.EstimatedMass, this);
 
 			// Cost info is only displayed when available - conditionalCostPanel is invisible when cost <= 0
 			var conditionalCostPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
@@ -81,14 +83,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Fit,
 				Visible = gcodeDetails.TotalCost > 0
 			};
-
-			conditionalCostPanel.AddChild(new TextWidget("Estimated Cost".Localize() + ":", textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: headingPointSize));
-			conditionalCostPanel.AddChild(costTextWidget = new TextWidget(gcodeDetails.EstimatedCost, pointSize: dataPointSize, textColor: ActiveTheme.Instance.PrimaryTextColor)
-			{
-				Margin = new BorderDouble(top: 3)
-			});
-
 			this.AddChild(conditionalCostPanel);
+
+			costTextWidget = AddSetting("Estimated Cost".Localize(), gcodeDetails.EstimatedCost, conditionalCostPanel);
 
 			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
 			{

@@ -55,6 +55,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private SliceLayerSelector layerScrollbar;
 		internal PrinterConfig printer;
 		internal GCode3DWidget gcode3DWidget;
+		private ResizeContainer gcodeContainer;
 		internal PrinterActionsBar printerActionsBar;
 		private DockingTabControl sideBar;
 		private SliceSettingsWidget sliceSettingsWidget;
@@ -160,9 +161,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Name = "GCode3DWidget",
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Stretch,
+				BackgroundColor = theme.InteractionLayerOverlayColor,
 				Visible = false
 			};
-			view3DWidget.InteractionLayer.AddChild(gcode3DWidget, position);
+
+			gcodeContainer = new ResizeContainer(gcode3DWidget)
+			{
+				Width = printer?.ViewState.GCodePanelWidth ?? 200,
+				VAnchor = VAnchor.Stretch,
+				HAnchor = HAnchor.Right,
+				SpliterBarColor = theme.SplitterBackground,
+				SplitterWidth = theme.SplitterWidth,
+				Visible = false,
+			};
+			gcodeContainer.AddChild(gcode3DWidget);
+
+			view3DWidget.InteractionLayer.AddChild(gcodeContainer, position + 1);
 
 			var viewerVolume = sceneContext.ViewerVolume;
 
@@ -228,6 +242,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			gcode2DWidget.Visible = viewMode == PartViewMode.Layers2D;
 
 			view3DWidget.meshViewerWidget.ModelView = viewMode == PartViewMode.Model;
+
+			gcodeContainer.Visible = showSliceLayers;
 
 			if (showSliceLayers)
 			{

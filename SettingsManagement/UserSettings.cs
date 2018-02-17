@@ -24,6 +24,7 @@ namespace MatterHackers.MatterControl
 		public const string LibraryViewWidth = nameof(LibraryViewWidth);
 		public const string SelectedObjectPanelWidth = nameof(SelectedObjectPanelWidth);
 		public const string ConfigurePrinter_CurrentTab = nameof(ConfigurePrinter_CurrentTab);
+		public const string GCodePanelWidth = nameof(GCodePanelWidth);
 	}
 
 	public class UserSettings

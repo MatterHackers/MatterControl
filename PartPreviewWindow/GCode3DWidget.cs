@@ -36,7 +36,7 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class GCode3DWidget : GuiWidget
+	public class GCode3DWidget : FlowLayoutWidget
 	{
 		private EventHandler unregisterEvents;
 
@@ -46,6 +46,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private SectionWidget speedsWidget;
 
 		public GCode3DWidget(PrinterConfig printer, BedConfig sceneContext, ThemeConfig theme)
+			: base (FlowDirection.TopToBottom)
 		{
 			this.sceneContext = sceneContext;
 			this.theme = theme;
@@ -73,28 +74,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (sceneContext.LoadedGCode?.LineCount > 0)
 			{
-				var gcodeResultsPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
-				{
-					Margin = new BorderDouble(0, 0, 35, 0),
-					HAnchor = HAnchor.Absolute | HAnchor.Right,
-					VAnchor = VAnchor.Top | VAnchor.Fit,
-					Width = 175
-				};
-				this.AddChild(gcodeResultsPanel);
-
-				gcodeResultsPanel.AddChild(
+				this.AddChild(
 					new SectionWidget(
 						"Details".Localize(),
 						new GCodeDetailsView(new GCodeDetails(printer, printer.Bed.LoadedGCode), theme.FontSize12, theme.FontSize9)
 						{
-							HAnchor = HAnchor.Fit,
+							HAnchor = HAnchor.Stretch,
 							Margin = new BorderDouble(bottom: 3),
 							Padding = new BorderDouble(15, 4)
 						},
-						theme,
-						expandingContent: false).ApplyBoxStyle(margin: new BorderDouble(top: 10)));
+						theme)
+					{
+						HAnchor = HAnchor.Stretch,
+						VAnchor = VAnchor.Fit
+					});
 
-				gcodeResultsPanel.AddChild(
+				this.AddChild(
 					speedsWidget = new SectionWidget(
 						"Speeds".Localize(),
 						new SpeedsLegend(sceneContext.LoadedGCode, theme, pointSize: theme.FontSize12)
@@ -103,10 +98,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							Visible = sceneContext.RendererOptions.RenderSpeeds,
 							Padding = new BorderDouble(15, 4)
 						},
-						theme,
-						expandingContent: false).ApplyBoxStyle(margin: new BorderDouble(top: 10)));
+						theme)
+					{
+						HAnchor = HAnchor.Stretch,
+						VAnchor = VAnchor.Fit
+					});
 
 				speedsWidget.Visible = printer.Bed.RendererOptions.RenderSpeeds;
+			}
+
+			// Enforce panel padding in sidebar
+			foreach (var sectionWidget in this.Children<SectionWidget>())
+			{
+				sectionWidget.ContentPanel.Padding = new BorderDouble(10, 10, 10, 0);
 			}
 
 			this.Invalidate();
