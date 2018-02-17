@@ -228,7 +228,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				sliceButton.Enabled = sceneContext.EditableScene;
 			}
 
-			if (this.printerTabPage?.printerActionsBar.modelViewButton is GuiWidget button)
+			if (this.printerTabPage?.printerActionsBar?.modelViewButton is GuiWidget button)
 			{
 				button.Enabled = sceneContext.EditableScene;
 			}
