@@ -39,6 +39,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 	{
 		public ArrayRadialObject3D()
 		{
+			Name = "Radial Array".Localize();
 		}
 
 		public override string ActiveEditor => "PublicPropertyEditor";

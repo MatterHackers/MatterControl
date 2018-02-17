@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System.Linq;
 using MatterHackers.DataConverters3D;
+using MatterHackers.Localizations;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
@@ -37,6 +38,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 	{
 		public ArrayLinearObject3D()
 		{
+			Name = "Linear Array".Localize();
 		}
 
 		public override string ActiveEditor => "PublicPropertyEditor";
