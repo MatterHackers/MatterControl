@@ -27,39 +27,49 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System.Linq;
+using System;
 using MatterHackers.DataConverters3D;
-using MatterHackers.Localizations;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class ArrayLinearObject3D : Object3D, IRebuildable
+	public class ScaleObject3D : Object3D, IRebuildable
 	{
-		public ArrayLinearObject3D()
+		public ScaleObject3D()
 		{
-			Name = "Linear Array".Localize();
 		}
 
-		public override string ActiveEditor => "PublicPropertyEditor";
-		public int Count { get; set; } = 3;
-		public DirectionVector Direction { get; set; } = new DirectionVector { Normal = new Vector3(1, 0, 0) };
-		public double Distance { get; set; } = 30;
+		public override bool CanRemove => true;
+		public override bool CanBake => true;
+
+		public override void Remove()
+		{
+			throw new NotImplementedException();
+		}
 
 		public void Rebuild()
 		{
+			var aabb = this.GetAxisAlignedBoundingBox();
+
+			// TODO: check if the has code for the children
+			//if (ChildrenBounds.Count == 0)
+			{
+				this.Children.Modify(list =>
+				{
+					foreach (var child in list)
+					{
+						//ChildrenBounds.Add(child.GetAxisAlignedBoundingBox());
+					}
+				});
+			}
+
 			this.Children.Modify(list =>
 			{
-				IObject3D lastChild = list.First();
-				list.Clear();
-				list.Add(lastChild);
-				var offset = Vector3.Zero;
-				for (int i = 1; i < Count; i++)
+//				var firstBounds = ChildrenBounds[0];
+				int i = 0;
+				foreach (var child in list)
 				{
-					var next = lastChild.Clone();
-					next.Matrix *= Matrix4X4.CreateTranslation(Direction.Normal.GetNormal() * Distance);
-					list.Add(next);
-					lastChild = next;
+					i++;
 				}
 			});
 		}

@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
+using MatterHackers.Localizations;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 
@@ -46,6 +47,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public ArrangeObject3D()
 		{
+			Name = "Arrange".Localize();
 		}
 
 		public enum Align { None, Min, Center, Max }
