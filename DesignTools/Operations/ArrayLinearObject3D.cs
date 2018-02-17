@@ -42,6 +42,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		}
 
 		public override string ActiveEditor => "PublicPropertyEditor";
+		public override bool CanBake => true;
+		public override bool CanRemove => true;
 		public int Count { get; set; } = 3;
 		public DirectionVector Direction { get; set; } = new DirectionVector { Normal = new Vector3(1, 0, 0) };
 		public double Distance { get; set; } = 30;
@@ -62,6 +64,18 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					lastChild = next;
 				}
 			});
+		}
+
+		public override void Remove()
+		{
+			this.Children.Modify(list =>
+			{
+				IObject3D firstChild = list.First();
+				list.Clear();
+				list.Add(firstChild);
+			});
+
+			base.Remove();
 		}
 	}
 }
