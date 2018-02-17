@@ -132,7 +132,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.InteractionLayer.SetRenderTarget(this.meshViewerWidget);
 
-			this.AddChild(this.InteractionLayer);
+			// Add splitter support with the InteractionLayer on the left and resize containers on the right
+			var splitContainer = new FlowLayoutWidget()
+			{
+				Name = "SplitContainer",
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch,
+			};
+			splitContainer.AddChild(this.InteractionLayer);
+			this.AddChild(splitContainer);
 
 			scene.SelectionChanged += Scene_SelectionChanged;
 
@@ -153,13 +161,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				Width = printer?.ViewState.SelectedObjectPanelWidth ?? 200,
 				VAnchor = VAnchor.Stretch,
-				HAnchor = HAnchor.Right,
+				HAnchor = HAnchor.Absolute,
 				SpliterBarColor = theme.SplitterBackground,
 				SplitterWidth = theme.SplitterWidth,
 				Visible = false,
 			};
 			selectedObjectContainer.AddChild(selectedObjectPanel);
-			this.InteractionLayer.AddChild(selectedObjectContainer);
+			splitContainer.AddChild(selectedObjectContainer);
 
 			this.InteractionLayer.AddChild(new TumbleCubeControl(this.InteractionLayer)
 			{
