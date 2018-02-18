@@ -137,7 +137,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					"Color View".Localize(),
 					theme.Colors.PrimaryTextColor,
 					buttonPanel,
-					enforceGutter: false));
+					enforceGutter: false)
+				{
+					Margin = new BorderDouble(bottom: 2)
+				});
 
 			buttonPanel = new FlowLayoutWidget()
 			{
