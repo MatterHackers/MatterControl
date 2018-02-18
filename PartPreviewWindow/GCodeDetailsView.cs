@@ -80,6 +80,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var viewOptions = new[]
 			{
 				new BoolOption(
+					"Show Print Bed".Localize(),
+					() => gcodeOptions.RenderBed,
+					(value) =>
+					{
+						gcodeOptions.RenderBed = value;
+					}),
+				new BoolOption(
 					"Moves".Localize(),
 					() => gcodeOptions.RenderMoves,
 					(value) => gcodeOptions.RenderMoves = value),
