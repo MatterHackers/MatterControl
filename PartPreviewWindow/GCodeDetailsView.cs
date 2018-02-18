@@ -28,11 +28,13 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.ObjectModel;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
@@ -72,10 +74,125 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 	public class GCodeOptionsPanel : FlowLayoutWidget
 	{
-		public GCodeOptionsPanel(BedConfig sceneContext, PrinterConfig printer)
+		private RadioIconButton speedsButton;
+		private RadioIconButton materialsButton;
+		private RadioIconButton noColorButton;
+		private View3DConfig gcodeOptions;
+		private RadioIconButton solidButton;
+
+		public GCodeOptionsPanel(BedConfig sceneContext, PrinterConfig printer, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
 		{
-			var gcodeOptions = sceneContext.RendererOptions;
+			gcodeOptions = sceneContext.RendererOptions;
+
+			var buttonPanel = new FlowLayoutWidget()
+			{
+				HAnchor = HAnchor.Fit,
+				VAnchor = VAnchor.Fit
+			};
+
+			var buttonGroup = new ObservableCollection<GuiWidget>();
+
+			speedsButton = new RadioIconButton(AggContext.StaticData.LoadIcon("speeds.png", IconColor.Theme), theme)
+			{
+				SiblingRadioButtonList = buttonGroup,
+				Name = "Speeds Button",
+				Checked = gcodeOptions.GCodeLineColorStyle == "Speeds",
+				ToolTipText = "Show Speeds".Localize(),
+				Margin = theme.ButtonSpacing
+			};
+			speedsButton.Click += SwitchColorModes_Click;
+			buttonGroup.Add(speedsButton);
+
+			buttonPanel.AddChild(speedsButton);
+
+			materialsButton = new RadioIconButton(AggContext.StaticData.LoadIcon("materials.png", IconColor.Theme), theme)
+			{
+				SiblingRadioButtonList = buttonGroup,
+				Name = "Materials Button",
+				Checked = gcodeOptions.GCodeLineColorStyle == "Materials",
+				ToolTipText = "Show Materials".Localize(),
+				Margin = theme.ButtonSpacing
+			};
+			materialsButton.Click += SwitchColorModes_Click;
+			buttonGroup.Add(materialsButton);
+
+			buttonPanel.AddChild(materialsButton);
+
+			noColorButton = new RadioIconButton(AggContext.StaticData.LoadIcon("no-color.png", IconColor.Theme), theme)
+			{
+				SiblingRadioButtonList = buttonGroup,
+				Name = "No Color Button",
+				Checked = gcodeOptions.GCodeLineColorStyle == "None",
+				ToolTipText = "No Color".Localize(),
+				Margin = theme.ButtonSpacing
+			};
+			noColorButton.Click += SwitchColorModes_Click;
+			buttonGroup.Add(noColorButton);
+
+			buttonPanel.AddChild(noColorButton);
+
+			this.AddChild(
+				new SettingsItem(
+					"Color View".Localize(),
+					theme.Colors.PrimaryTextColor,
+					buttonPanel,
+					enforceGutter: false));
+
+			buttonPanel = new FlowLayoutWidget()
+			{
+				HAnchor = HAnchor.Fit,
+				VAnchor = VAnchor.Fit
+			};
+
+			// Reset to new button group
+			buttonGroup = new ObservableCollection<GuiWidget>();
+
+			solidButton = new RadioIconButton(AggContext.StaticData.LoadIcon("solid.png", IconColor.Theme), theme)
+			{
+				SiblingRadioButtonList = buttonGroup,
+				Name = "Solid Button",
+				Checked = gcodeOptions.GCodeModelView == "Semi-Transparent",
+				ToolTipText = "Show Semi-Transparent Model".Localize(),
+				Margin = theme.ButtonSpacing
+			};
+			solidButton.Click += SwitchModelModes_Click;
+			buttonGroup.Add(solidButton);
+
+			buttonPanel.AddChild(solidButton);
+
+			materialsButton = new RadioIconButton(AggContext.StaticData.LoadIcon("wireframe.png", IconColor.Theme), theme)
+			{
+				SiblingRadioButtonList = buttonGroup,
+				Name = "Wireframe Button",
+				Checked = gcodeOptions.GCodeModelView == "Wireframe",
+				ToolTipText = "Show Wireframe Model".Localize(),
+				Margin = theme.ButtonSpacing
+			};
+			materialsButton.Click += SwitchModelModes_Click;
+			buttonGroup.Add(materialsButton);
+
+			buttonPanel.AddChild(materialsButton);
+
+			noColorButton = new RadioIconButton(AggContext.StaticData.LoadIcon("no-color.png", IconColor.Theme), theme)
+			{
+				SiblingRadioButtonList = buttonGroup,
+				Name = "No Model Button",
+				Checked = gcodeOptions.GCodeModelView == "None",
+				ToolTipText = "No Model".Localize(),
+				Margin = theme.ButtonSpacing
+			};
+			noColorButton.Click += SwitchModelModes_Click;
+			buttonGroup.Add(noColorButton);
+
+			buttonPanel.AddChild(noColorButton);
+
+			this.AddChild(
+				new SettingsItem(
+					"Model View".Localize(),
+					theme.Colors.PrimaryTextColor,
+					buttonPanel,
+					enforceGutter: false));
 
 			var viewOptions = new[]
 			{
@@ -128,6 +245,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					this.AddChild(
 						new SettingsItem(
 							option.Title,
+							theme.Colors.PrimaryTextColor,
 							new SettingsItem.ToggleSwitchConfig()
 							{
 								Checked = option.IsChecked(),
@@ -135,6 +253,44 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							},
 							enforceGutter: false)
 					);
+				}
+			}
+		}
+
+		private void SwitchColorModes_Click(object sender, MouseEventArgs e)
+		{
+			if (sender is GuiWidget widget)
+			{
+				if (widget.Name == "Speeds Button")
+				{
+					gcodeOptions.GCodeLineColorStyle = "Speeds";
+				}
+				else if (widget.Name == "Materials Button")
+				{
+					gcodeOptions.GCodeLineColorStyle = "Materials";
+				}
+				else
+				{
+					gcodeOptions.GCodeLineColorStyle = "None";
+				}
+			}
+		}
+
+		private void SwitchModelModes_Click(object sender, MouseEventArgs e)
+		{
+			if (sender is GuiWidget widget)
+			{
+				if (widget.Name == "Solid Button")
+				{
+					gcodeOptions.GCodeModelView = "Semi-Transparent";
+				}
+				else if (widget.Name == "Wireframe Button")
+				{
+					gcodeOptions.GCodeModelView = "Wireframe";
+				}
+				else
+				{
+					gcodeOptions.GCodeModelView = "None";
 				}
 			}
 		}

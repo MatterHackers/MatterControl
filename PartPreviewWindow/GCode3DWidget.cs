@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.AddChild(
 					new SectionWidget(
 						"Options".Localize(),
-						new GCodeOptionsPanel(sceneContext, printer),
+						new GCodeOptionsPanel(sceneContext, printer, theme),
 						theme)
 					{
 						HAnchor = HAnchor.Stretch,
