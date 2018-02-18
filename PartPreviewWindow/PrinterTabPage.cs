@@ -353,7 +353,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				(value) =>
 				{
 					gcodeOptions.RenderBed = value;
-					view3DWidget.meshViewerWidget.RenderBed = value;
 				});
 
 			popupMenu.CreateBoolMenuItem(

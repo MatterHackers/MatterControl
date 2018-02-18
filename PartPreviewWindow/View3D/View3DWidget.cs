@@ -123,7 +123,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// MeshViewer
 			meshViewerWidget = new MeshViewerWidget(sceneContext, this.InteractionLayer, editorType: editorType);
-			meshViewerWidget.RenderBed = sceneContext.RendererOptions.RenderBed;
 			meshViewerWidget.AnchorAll();
 			this.AddChild(meshViewerWidget);
 
@@ -1286,7 +1285,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				() => sceneContext.RendererOptions.RenderBed,
 				(value) =>
 				{
-					meshViewer.RenderBed = value;
 					sceneContext.RendererOptions.RenderBed = value;
 				});
 

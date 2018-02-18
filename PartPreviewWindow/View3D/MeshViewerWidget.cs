@@ -160,7 +160,6 @@ namespace MatterHackers.MeshVisualizer
 			};
 
 			RenderType = RenderTypes.Shaded;
-			RenderBed = true;
 			RenderBuildVolume = false;
 			BedColor = new ColorF(.8, .8, .8, .7).ToColor();
 			BuildVolumeColor = new ColorF(.2, .8, .3, .2).ToColor();
@@ -315,8 +314,6 @@ namespace MatterHackers.MeshVisualizer
 		}
 
 		protected InteractiveScene scene { get; }
-
-		public bool RenderBed { get; set; }
 
 		public bool RenderBuildVolume { get; set; }
 
@@ -811,7 +808,7 @@ namespace MatterHackers.MeshVisualizer
 			if (this.EditorMode == EditorType.Printer)
 			{
 				// only render if we are above the bed
-				if (RenderBed)
+				if (sceneContext.RendererOptions.RenderBed)
 				{
 					var bedColor = this.BedColor;
 					if (!lookingDownOnBed)
