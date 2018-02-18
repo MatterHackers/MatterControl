@@ -42,11 +42,19 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		}
 
 		public override string ActiveEditor => "PublicPropertyEditor";
+		public override bool CanBake => true;
+		public override bool CanRemove => true;
+
 		public int Count { get; set; } = 3;
+
 		public Vector3 Offset { get; set; } = new Vector3(30, 0, 0);
+
 		public double Rotate { get; set; } = 0;
-		public double Scale { get; set; } = 1;
+
 		public bool RotatePart { get; set; } = true;
+
+		public double Scale { get; set; } = 1;
+
 		public bool ScaleOffset { get; set; } = true;
 
 		public void Rebuild()
@@ -79,6 +87,18 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					lastChild = next;
 				}
 			});
+		}
+
+		public override void Remove()
+		{
+			this.Children.Modify(list =>
+			{
+				IObject3D firstChild = list.First();
+				list.Clear();
+				list.Add(firstChild);
+			});
+
+			base.Remove();
 		}
 	}
 

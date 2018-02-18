@@ -43,21 +43,26 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		}
 
 		public override string ActiveEditor => "PublicPropertyEditor";
-		public int Count { get; set; } = 3;
-		// make this public when within angle works
-		private double Angle { get; set; } = 360;
 
 		[DisplayName("Rotate About")]
 		public DirectionAxis Axis { get; set; } = new DirectionAxis() { Origin = Vector3.NegativeInfinity, Normal = Vector3.UnitZ };
+
+		public override bool CanBake => true;
+		public override bool CanRemove => true;
+
+		public int Count { get; set; } = 3;
+
+		[DisplayName("Rotate Part")]
+		[Description("Rotate the part to the same angle as the array.")]
+		public bool RotatePart { get; set; } = true;
+
+		// make this public when within angle works
+		private double Angle { get; set; } = 360;
 
 		// make this public when it works
 		[DisplayName("Keep Within Angle")]
 		[Description("Keep the entire extents of the part within the angle described.")]
 		private bool KeepInAngle { get; set; } = false;
-
-		[DisplayName("Rotate Part")]
-		[Description("Rotate the part to the same angle as the array.")]
-		public bool RotatePart { get; set; } = true;
 
 		public void Rebuild()
 		{
@@ -92,6 +97,18 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				}
 			});
 			this.Invalidate();
+		}
+
+		public override void Remove()
+		{
+			this.Children.Modify(list =>
+			{
+				IObject3D firstChild = list.First();
+				list.Clear();
+				list.Add(firstChild);
+			});
+
+			base.Remove();
 		}
 	}
 }
