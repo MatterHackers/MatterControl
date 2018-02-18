@@ -79,7 +79,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private WorldView World => sceneContext.World;
 
-		public TrackballTumbleWidget TrackballTumbleWidget { get; }
+		private TrackballTumbleWidget trackballTumbleWidget;
 
 		public InteractionLayer InteractionLayer { get; }
 
@@ -95,11 +95,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.printerTabPage = printerTabBase as PrinterTabPage;
 			this.printer = printer;
 
-			this.TrackballTumbleWidget = new TrackballTumbleWidget(sceneContext.World)
+			trackballTumbleWidget = new TrackballTumbleWidget(sceneContext.World)
 			{
 				TransformState = TrackBallController.MouseDownType.Rotation
 			};
-			this.TrackballTumbleWidget.AnchorAll();
+			trackballTumbleWidget.AnchorAll();
 
 			this.InteractionLayer = new InteractionLayer(this.World, scene.UndoBuffer, scene)
 			{
@@ -113,41 +113,42 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.BackgroundColor = theme.ActiveTabColor;
 			this.Border = new BorderDouble(top: 1);
 			this.BorderColor = theme.MinimalShade;
+			this.HAnchor = HAnchor.Stretch; //	HAnchor.MaxFitOrStretch,
+			this.VAnchor = VAnchor.Stretch; //  VAnchor.MaxFitOrStretch
 
 			autoRotating = allowAutoRotate;
 			allowAutoRotate = (autoRotate == AutoRotate.Enabled);
 
 			viewControls3D.TransformStateChanged += ViewControls3D_TransformStateChanged;
 
-			var mainContainerTopToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				HAnchor = HAnchor.MaxFitOrStretch,
-				VAnchor = VAnchor.MaxFitOrStretch
-			};
-
 			// MeshViewer
 			meshViewerWidget = new MeshViewerWidget(sceneContext, this.InteractionLayer, editorType: editorType);
-			meshViewerWidget.RenderBed = sceneContext.RendererOptions.RenderBed;
 			meshViewerWidget.AnchorAll();
-			this.InteractionLayer.AddChild(meshViewerWidget);
+			this.AddChild(meshViewerWidget);
 
 			// TumbleWidget
-			this.InteractionLayer.AddChild(this.TrackballTumbleWidget);
+			this.InteractionLayer.AddChild(trackballTumbleWidget);
 
 			this.InteractionLayer.SetRenderTarget(this.meshViewerWidget);
 
-			mainContainerTopToBottom.AddChild(this.InteractionLayer);
+			// Add splitter support with the InteractionLayer on the left and resize containers on the right
+			var splitContainer = new FlowLayoutWidget()
+			{
+				Name = "SplitContainer",
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch,
+			};
+			splitContainer.AddChild(this.InteractionLayer);
+			this.AddChild(splitContainer);
 
 			scene.SelectionChanged += Scene_SelectionChanged;
 
 			// if the scene is invalidated invalidate the widget
 			scene.Invalidated += (s, e) => Invalidate();
 
-			this.AddChild(mainContainerTopToBottom);
-
 			this.AnchorAll();
 
-			this.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Rotation;
+			trackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Rotation;
 
 			selectedObjectPanel = new SelectedObjectPanel(this, scene, theme, printer)
 			{
@@ -159,13 +160,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				Width = printer?.ViewState.SelectedObjectPanelWidth ?? 200,
 				VAnchor = VAnchor.Stretch,
-				HAnchor = HAnchor.Right,
+				HAnchor = HAnchor.Absolute,
 				SpliterBarColor = theme.SplitterBackground,
 				SplitterWidth = theme.SplitterWidth,
 				Visible = false,
 			};
 			selectedObjectContainer.AddChild(selectedObjectPanel);
-			this.InteractionLayer.AddChild(selectedObjectContainer);
+			splitContainer.AddChild(selectedObjectContainer);
 
 			this.InteractionLayer.AddChild(new TumbleCubeControl(this.InteractionLayer)
 			{
@@ -253,19 +254,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			switch (e.TransformMode)
 			{
 				case ViewControls3DButtons.Rotate:
-					this.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Rotation;
+					trackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Rotation;
 					break;
 
 				case ViewControls3DButtons.Translate:
-					this.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Translation;
+					trackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Translation;
 					break;
 
 				case ViewControls3DButtons.Scale:
-					this.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Scale;
+					trackballTumbleWidget.TransformState = TrackBallController.MouseDownType.Scale;
 					break;
 
 				case ViewControls3DButtons.PartSelect:
-					this.TrackballTumbleWidget.TransformState = TrackBallController.MouseDownType.None;
+					trackballTumbleWidget.TransformState = TrackBallController.MouseDownType.None;
 					break;
 			}
 		}
@@ -282,7 +283,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private void Draw_GlOpaqueContent(object sender, DrawEventArgs e)
 		{
 			if (CurrentSelectInfo.DownOnPart
-				&& TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None
+				&& trackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None
 				&& Keyboard.IsKeyDown(Keys.ShiftKey))
 			{
 				// draw marks on the bed to show that the part is constrained to x and y
@@ -542,6 +543,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (printer != null)
 			{
 				printer.ViewState.SelectedObjectPanelWidth = selectedObjectPanel.Width;
+				printer.ViewState.GCodePanelWidth = printerTabPage.gcodeContainer.Width;
 			}
 
 			viewControls3D.TransformStateChanged -= ViewControls3D_TransformStateChanged;
@@ -913,14 +915,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			autoRotating = false;
 			base.OnMouseDown(mouseEvent);
 
-			if (this.TrackballTumbleWidget.UnderMouseState == UnderMouseState.FirstUnderMouse)
+			if (trackballTumbleWidget.UnderMouseState == UnderMouseState.FirstUnderMouse)
 			{
 				if (mouseEvent.Button == MouseButtons.Left
 					&& viewControls3D.ActiveButton == ViewControls3DButtons.PartSelect
 					&&
 					(ModifierKeys == Keys.Shift || ModifierKeys == Keys.Control)
 					|| (
-						this.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None
+						trackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None
 						&& ModifierKeys != Keys.Control
 						&& ModifierKeys != Keys.Alt))
 				{
@@ -1031,7 +1033,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
-			if (CurrentSelectInfo.DownOnPart && this.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None)
+			if (CurrentSelectInfo.DownOnPart && trackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None)
 			{
 				DragSelectedObject(new Vector2(mouseEvent.X, mouseEvent.Y));
 			}
@@ -1162,7 +1164,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void ResetView()
 		{
-			this.TrackballTumbleWidget.ZeroVelocity();
+			trackballTumbleWidget.ZeroVelocity();
 
 			var world = this.World;
 
@@ -1180,7 +1182,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.FinishDrop(mouseUpInBounds: true);
 			}
 
-			if (this.TrackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None)
+			if (trackballTumbleWidget.TransformState == TrackBallController.MouseDownType.None)
 			{
 				if (scene.SelectedItem != null
 					&& CurrentSelectInfo.DownOnPart
@@ -1283,7 +1285,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				() => sceneContext.RendererOptions.RenderBed,
 				(value) =>
 				{
-					meshViewer.RenderBed = value;
 					sceneContext.RendererOptions.RenderBed = value;
 				});
 

@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private SliceLayerSelector layerScrollbar;
 		internal PrinterConfig printer;
 		internal GCode3DWidget gcode3DWidget;
-		private ResizeContainer gcodeContainer;
+		internal ResizeContainer gcodeContainer;
 		internal PrinterActionsBar printerActionsBar;
 		private DockingTabControl sideBar;
 		private SliceSettingsWidget sliceSettingsWidget;
@@ -110,9 +110,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Margin = new BorderDouble(0, 80, 8, 42),
 				Maximum = sceneContext.LoadedGCode?.LayerCount ?? 1
 			};
-			view3DContainer.AddChild(layerScrollbar);
+			view3DWidget.InteractionLayer.AddChild(layerScrollbar);
 
 			layerRenderRatioSlider = new DoubleSolidSlider(new Vector2(), SliceLayerSelector.SliderWidth);
+			layerRenderRatioSlider.HAnchor = HAnchor.Stretch;
 			layerRenderRatioSlider.FirstValue = 0;
 			layerRenderRatioSlider.FirstValueChanged += (s, e) =>
 			{
@@ -132,7 +133,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				this.Invalidate();
 			};
-			view3DContainer.AddChild(layerRenderRatioSlider);
+			view3DWidget.InteractionLayer.AddChild(layerRenderRatioSlider);
 
 			sceneContext.LoadedGCodeChanged += BedPlate_LoadedGCodeChanged;
 
@@ -169,14 +170,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				Width = printer?.ViewState.GCodePanelWidth ?? 200,
 				VAnchor = VAnchor.Stretch,
-				HAnchor = HAnchor.Right,
+				HAnchor = HAnchor.Absolute,
 				SpliterBarColor = theme.SplitterBackground,
 				SplitterWidth = theme.SplitterWidth,
 				Visible = false,
 			};
 			gcodeContainer.AddChild(gcode3DWidget);
 
-			view3DWidget.InteractionLayer.AddChild(gcodeContainer, position + 1);
+			var splitContainer = view3DWidget.FindNamedChildRecursive("SplitContainer");
+
+			splitContainer.AddChild(gcodeContainer);
 
 			var viewerVolume = sceneContext.ViewerVolume;
 
@@ -350,7 +353,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				(value) =>
 				{
 					gcodeOptions.RenderBed = value;
-					view3DWidget.meshViewerWidget.RenderBed = value;
 				});
 
 			popupMenu.CreateBoolMenuItem(

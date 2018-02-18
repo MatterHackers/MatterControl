@@ -32,17 +32,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.DesignTools;
-using MatterHackers.MatterControl.DesignTools.Operations;
-using System.Reflection;
+using MatterHackers.MatterControl.Library;
 using MatterHackers.VectorMath;
-using MatterHackers.Agg.Image;
-using MatterHackers.Agg.Platform;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
