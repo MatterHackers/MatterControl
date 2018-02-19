@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System.Collections.Generic;
 using System.Linq;
 using MatterHackers.DataConverters3D;
+using MatterHackers.DataConverters3D.UndoCommands;
 using MatterHackers.PolygonMesh;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
@@ -38,6 +39,42 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 	{
 		public MeshWrapperOperation()
 		{
+		}
+
+		public override bool CanBake => true;
+		public override bool CanRemove => true;
+
+		public override void Bake()
+		{
+			base.Bake();
+		}
+
+		public override void Remove()
+		{
+			base.Remove();
+		}
+
+		public static void WrapSelection(InteractiveScene scene, string classDescriptor, string editorName)
+		{
+			if (scene.HasSelection && scene.SelectedItem.Children.Count() > 1)
+			{
+				var children = scene.SelectedItem.Children;
+				scene.SelectedItem = null;
+
+				var meshWrapperOperation = new MeshWrapperOperation(new List<IObject3D>(children.Select((i) => i.Clone())))
+				{
+					ActiveEditor = classDescriptor,
+					Name = editorName,
+				};
+
+				scene.UndoBuffer.AddAndDo(
+					new ReplaceCommand(
+						new List<IObject3D>(children),
+						new List<IObject3D> { meshWrapperOperation }));
+
+				meshWrapperOperation.MakeNameNonColliding();
+				scene.SelectedItem = meshWrapperOperation;
+			}
 		}
 
 		public MeshWrapperOperation(List<IObject3D> children)
@@ -65,7 +102,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		public void ResetMeshWrappers()
 		{
 			this.Mesh = null;
-			var participants = this.DescendantsAndSelf().Where(o => o.OwnerID == this.ID).ToList();
+			var participants = this.Descendants().Where(o => o.OwnerID == this.ID).ToList();
 			foreach (var item in participants)
 			{
 				item.Visible = true;
