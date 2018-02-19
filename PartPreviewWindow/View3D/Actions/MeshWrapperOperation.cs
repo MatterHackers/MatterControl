@@ -44,14 +44,35 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		public override bool CanBake => true;
 		public override bool CanRemove => true;
 
-		public override void Bake()
-		{
-			base.Bake();
-		}
-
 		public override void Remove()
 		{
 			base.Remove();
+		}
+
+		public override void Bake()
+		{
+			var meshWrappers = this.Descendants().Where(o => o.OwnerID == this.ID).ToList();
+
+			// remove all the meshWrappers (collapse the children)
+			foreach(var meshWrapper in meshWrappers)
+			{
+				if (meshWrapper.Visible)
+				{
+					// clear the children
+					meshWrapper.Children.Modify(list =>
+					{
+						list.Clear();
+					});
+					meshWrapper.OwnerID = null;
+				}
+				else
+				{
+					// remove it
+					meshWrapper.Parent.Children.Remove(meshWrapper);
+				}
+			}
+
+			base.Bake();
 		}
 
 		public static void WrapSelection(InteractiveScene scene, string classDescriptor, string editorName)
