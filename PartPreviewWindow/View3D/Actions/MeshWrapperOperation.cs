@@ -46,6 +46,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 		public override void Remove()
 		{
+			// remove all the mesh wrappers that we own
+			var meshWrappers = this.Descendants().Where(o => o.OwnerID == this.ID).ToList();
+			foreach(var meshWrapper in meshWrappers)
+			{
+				meshWrapper.Remove();
+			}
+			// collapes our children into our parent
 			base.Remove();
 		}
 
