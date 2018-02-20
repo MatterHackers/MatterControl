@@ -124,23 +124,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			editorColumn.AddChild(toolbar);
 
-			// put in the button for making the behavior solid
-			var solidBehaviorButton = new PopupMenuButton("Color".Localize(), theme)
-			{
-				Name = "Solid Colors",
-				DrawArrow = true,
-				AlignToRightEdge = true,
-				PopupContent = new ColorSwatchSelector(scene, theme, buttonSpacing: 3)
-				{
-					BackgroundColor = ActiveTheme.Instance.TertiaryBackgroundColor,
-					HAnchor = HAnchor.Fit,
-					VAnchor = VAnchor.Fit,
-				},
-				Margin = theme.ButtonSpacing.Clone(left: 0),
-				BackgroundColor = theme.MinimalShade
-			};
-			toolbar.AddChild(solidBehaviorButton);
-
 			editButton = new TextButton("Edit".Localize(), theme)
 			{
 				BackgroundColor = theme.MinimalShade,

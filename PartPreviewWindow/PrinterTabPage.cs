@@ -113,7 +113,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			view3DWidget.InteractionLayer.AddChild(layerScrollbar);
 
 			layerRenderRatioSlider = new DoubleSolidSlider(new Vector2(), SliceLayerSelector.SliderWidth);
-			layerRenderRatioSlider.HAnchor = HAnchor.Stretch;
 			layerRenderRatioSlider.FirstValue = 0;
 			layerRenderRatioSlider.FirstValueChanged += (s, e) =>
 			{
@@ -139,7 +138,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			AddSettingsTabBar(leftToRight, view3DWidget);
 
-			view3DWidget.BoundsChanged += (s, e) =>
+			view3DWidget.InteractionLayer.BoundsChanged += (s, e) =>
 			{
 				SetSliderSizes();
 			};
@@ -323,7 +322,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			layerRenderRatioSlider.OriginRelativeParent = new Vector2(11, 65);
-			layerRenderRatioSlider.TotalWidthInPixels = view3DWidget.Width - 45;
+			layerRenderRatioSlider.TotalWidthInPixels = view3DWidget.InteractionLayer.Width - 45;
 		}
 
 		private double lastPostion = 0;

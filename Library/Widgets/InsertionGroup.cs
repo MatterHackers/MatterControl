@@ -106,9 +106,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						// lets move the cube to the center of the loaded thing
 						placeholderItem.Matrix *= Matrix4X4.CreateTranslation(-10 + aabb.XSize/2, 0, 0);
 
-						// HACK: set Parent ourselves so it can be used in the progress control
-						loadedItem.Parent = this;
-
 						placeholderItem.Visible = false;
 
 						// Copy scale/rotation/translation from the source and Center
