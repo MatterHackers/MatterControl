@@ -374,28 +374,28 @@ namespace MatterHackers.MatterControl
 			new SceneSelectionOperation()
 			{
 				TitleResolver = () => "Combine".Localize(),
-				Action = (scene) => DoMeshWrapOperation(scene, nameof(CombineEditor), "Combine"),
+				Action = (scene) => MeshWrapperOperation.WrapSelection(scene, nameof(CombineEditor), "Combine"),
 				Icon = AggContext.StaticData.LoadIcon("combine.png").SetPreMultiply(),
 				IsEnabled = (scene) => scene.SelectedItem is SelectionGroup,
 			},
 			new SceneSelectionOperation()
 			{
 				TitleResolver = () => "Subtract".Localize(),
-				Action = (scene) => DoMeshWrapOperation(scene, nameof(SubtractEditor), "Subtract"),
+				Action = (scene) => MeshWrapperOperation.WrapSelection(scene, nameof(SubtractEditor), "Subtract"),
 				Icon = AggContext.StaticData.LoadIcon("subtract.png").SetPreMultiply(),
 				IsEnabled = (scene) => scene.SelectedItem is SelectionGroup,
 			},
 			new SceneSelectionOperation()
 			{
 				TitleResolver = () => "Intersect".Localize(),
-				Action = (scene) => DoMeshWrapOperation(scene, nameof(IntersectionEditor), "Intersect"),
+				Action = (scene) => MeshWrapperOperation.WrapSelection(scene, nameof(IntersectionEditor), "Intersect"),
 				Icon = AggContext.StaticData.LoadIcon("intersect.png"),
 				IsEnabled = (scene) => scene.SelectedItem is SelectionGroup,
 			},
 			new SceneSelectionOperation()
 			{
 				TitleResolver = () => "Subtract & Replace".Localize(),
-				Action = (scene) => DoMeshWrapOperation(scene, nameof(SubtractAndReplace), "Subtract & Replace"),
+				Action = (scene) => MeshWrapperOperation.WrapSelection(scene, nameof(SubtractAndReplace), "Subtract & Replace"),
 				Icon = AggContext.StaticData.LoadIcon("subtract_and_replace.png").SetPreMultiply(),
 				IsEnabled = (scene) => scene.SelectedItem is SelectionGroup,
 			},
@@ -468,29 +468,6 @@ namespace MatterHackers.MatterControl
 			}
 #endif
 		};
-
-		private static void DoMeshWrapOperation(InteractiveScene scene, string classDescriptor, string editorName)
-		{
-			if (scene.HasSelection && scene.SelectedItem.Children.Count() > 1)
-			{
-				var children = scene.SelectedItem.Children;
-				scene.SelectedItem = null;
-
-				var meshWrapperOperation = new MeshWrapperOperation(new List<IObject3D>(children.Select((i) => i.Clone())))
-				{
-					ActiveEditor = classDescriptor,
-					Name = editorName,
-				};
-
-				scene.UndoBuffer.AddAndDo(
-					new ReplaceCommand(
-						new List<IObject3D>(children),
-						new List<IObject3D> { meshWrapperOperation }));
-
-				meshWrapperOperation.MakeNameNonColliding();
-				scene.SelectedItem = meshWrapperOperation;
-			}
-		}
 
 		static int applicationInstanceCount = 0;
 		public static int ApplicationInstanceCount

@@ -134,7 +134,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 						meshWrapper.OutputType = checkBox.Checked ? PrintOutputTypes.Hole : PrintOutputTypes.Solid;
 					}
 
-					var allItems = group.DescendantsAndSelf().Where((obj) => obj.OwnerID == group.ID).ToList();
+					var allItems = group.Descendants().Where((obj) => obj.OwnerID == group.ID).ToList();
 					int holeCount = allItems.Where((o) => o.OutputType == PrintOutputTypes.Hole).Count();
 					int solidCount = allItems.Where((o) => o.OutputType != PrintOutputTypes.Hole).Count();
 					updateButton.Enabled = allItems.Count != holeCount && allItems.Count != solidCount;
@@ -143,11 +143,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				tabContainer.AddChild(rowContainer);
 			}
 
-			bool operationApplied = group.DescendantsAndSelf()
+			bool operationApplied = group.Descendants()
 				.Where((obj) => obj.OwnerID == group.ID)
 				.Where((objId) => objId.Mesh != objId.Children.First().Mesh).Any();
 
-			bool selectionHasBeenMade = group.DescendantsAndSelf()
+			bool selectionHasBeenMade = group.Descendants()
 				.Where((obj) => obj.OwnerID == group.ID && obj.OutputType == PrintOutputTypes.Hole)
 				.Any();
 
@@ -180,7 +180,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 				reporter.Report(progressStatus);
 
-				var participants = group.DescendantsAndSelf().Where(o => o.OwnerID == group.ID).ToList();
+				var participants = group.Descendants().Where(o => o.OwnerID == group.ID).ToList();
 				var removeObjects = participants.Where((obj) => obj.OutputType == PrintOutputTypes.Hole).ToList();
 				var keepObjects = participants.Where((obj) => obj.OutputType != PrintOutputTypes.Hole).ToList();
 
