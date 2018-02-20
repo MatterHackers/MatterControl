@@ -95,12 +95,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.printerTabPage = printerTabBase as PrinterTabPage;
 			this.printer = printer;
 
-			trackballTumbleWidget = new TrackballTumbleWidget(sceneContext.World)
-			{
-				TransformState = TrackBallController.MouseDownType.Rotation
-			};
-			trackballTumbleWidget.AnchorAll();
-
 			this.InteractionLayer = new InteractionLayer(this.World, scene.UndoBuffer, scene)
 			{
 				Name = "InteractionLayer",
@@ -125,6 +119,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			meshViewerWidget = new MeshViewerWidget(sceneContext, this.InteractionLayer, editorType: editorType);
 			meshViewerWidget.AnchorAll();
 			this.AddChild(meshViewerWidget);
+
+			trackballTumbleWidget = new TrackballTumbleWidget(sceneContext.World, meshViewerWidget)
+			{
+				TransformState = TrackBallController.MouseDownType.Rotation
+			};
+			trackballTumbleWidget.AnchorAll();
 
 			// TumbleWidget
 			this.InteractionLayer.AddChild(trackballTumbleWidget);

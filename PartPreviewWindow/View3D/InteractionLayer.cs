@@ -62,6 +62,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private UndoBuffer undoBuffer;
 
 		private LightingData lighting = new LightingData();
+		private GuiWidget renderSource;
 
 		public InteractionLayer(WorldView world, UndoBuffer undoBuffer, InteractiveScene scene)
 		{
@@ -73,6 +74,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		internal void SetRenderTarget(GuiWidget renderSource)
 		{
+			this.renderSource = renderSource;
 			renderSource.AfterDraw += RenderSource_DrawExtra;
 		}
 
@@ -80,7 +82,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (DoOpenGlDrawing)
 			{
-				SetGlContext(this.World, this.TransformToScreenSpace(LocalBounds), lighting);
+				SetGlContext(this.World, renderSource.TransformToScreenSpace(renderSource.LocalBounds), lighting);
 				OnDrawGlContent(e);
 				UnsetGlContext();
 			}
