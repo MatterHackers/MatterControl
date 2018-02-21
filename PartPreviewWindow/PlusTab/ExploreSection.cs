@@ -29,8 +29,12 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 {
@@ -44,16 +48,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 		private int leftRightMargin;
 		private FlowLayoutWidget rowButtonContainer = null;
 		private TextWidget heading;
+		private ThemeConfig theme;
+		private TextButton moreButton;
+		int maxStuff = 10;
 
 		public ExploreSection(ExploreFeedContent content, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
 		{
 			this.content = content;
 			this.HAnchor = HAnchor.Stretch;
+			this.theme = theme;
 
 			foreach (var item in content.group_items)
 			{
-				allIconViews.Add(new ExploreItem(item)
+				allIconViews.Add(new ExploreItem(item, theme)
 				{
 					BackgroundColor = theme.SlightShade,
 					VAnchor = VAnchor.Top | VAnchor.Fit,
@@ -84,23 +92,59 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 
 					if (content.group_title != null)
 					{
-						this.AddChild(heading = new TextWidget(content.group_title, pointSize: 16, textColor: ActiveTheme.Instance.PrimaryTextColor)
+						this.AddChild(heading = new TextWidget(content.group_title, pointSize: theme.H1PointSize, textColor: ActiveTheme.Instance.PrimaryTextColor, bold: true)
 						{
 							HAnchor = HAnchor.Left,
-							Margin = new BorderDouble(leftRightMargin, 5, leftRightMargin, 15)
+							Margin = new BorderDouble(leftRightMargin, 5)
 						});
 					}
 
+					int i = 0;
 					foreach (var iconView in allIconViews)
 					{
-						iconView.ClearRemovedFlag();
-						iconView.Margin = new BorderDouble(leftRightMargin, topBottomMargin);
-						AddColumnAndChild(iconView);
+						if (i < maxStuff)
+						{
+							iconView.ClearRemovedFlag();
+							iconView.Margin = new BorderDouble(leftRightMargin, topBottomMargin);
+							AddColumnAndChild(iconView);
+						}
+						i++;
+					}
+
+					if (content.group_items.Count > maxStuff)
+					{
+						moreButton = new TextButton("More".Localize() + "...", theme)
+						{
+							VAnchor = VAnchor.Absolute,
+							HAnchor = HAnchor.Right,
+							BackgroundColor = theme.MinimalShade,
+							Margin = new BorderDouble(right: leftRightMargin)
+						};
+						moreButton.Click += (s, e1) =>
+						{
+							maxStuff += 10;
+							lastReflowWidth = -1;
+							columnCount = 0;
+
+							var scroll = this.Parents<ScrollableWidget>().FirstOrDefault();
+							var position = scroll.ScrollPositionFromTop;
+							OnBoundsChanged(null);
+							scroll.ScrollPositionFromTop = position;
+						};
+						this.AddChild(moreButton);
 					}
 				}
 				else
 				{
-					heading.Margin = new BorderDouble(leftRightMargin, 5, leftRightMargin, 15);
+					if (moreButton != null)
+					{ 
+						moreButton.Margin = new BorderDouble(right: leftRightMargin);
+					}
+
+					if (heading != null)
+					{
+						heading.Margin = new BorderDouble(leftRightMargin, 5);
+					}
 
 					foreach (var iconView in allIconViews)
 					{
@@ -135,7 +179,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 
 		private int RecomputeFlowValues()
 		{
-			int itemWidth = (int)allIconViews[0].Width +16;
+			int MinimumMargin = 8;
+			int itemWidth = (int)allIconViews[0].Width + MinimumMargin * 2;
 
 			int newColumnCount = (int)Math.Floor(this.LocalBounds.Width / itemWidth);
 			int remainingSpace = (int)this.LocalBounds.Width - newColumnCount * itemWidth;
@@ -160,10 +205,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 			//
 			// TODO: Replace short term hack with new solution
 			//leftRightMargin = (int)(remainingSpace > 0 ? spacePerColumn / 2 : 0);
-			leftRightMargin = Math.Max(8, (int)(remainingSpace > 0 ? spacePerColumn / 2 : 0));
+			leftRightMargin = Math.Max(MinimumMargin, (int)(remainingSpace > 0 ? spacePerColumn / 2 + 8 : 0));
 
 			// put in padding to get the "other" side of the outside icons
-			this.Padding = new BorderDouble(leftRightMargin, 0);
+			this.Padding = new BorderDouble(leftRightMargin - MinimumMargin, 0);
 
 			return newColumnCount;
 		}
