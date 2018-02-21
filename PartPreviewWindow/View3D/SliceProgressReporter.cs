@@ -49,8 +49,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			double currentValue = 0;
 			double destValue = 10;
 
-			string statusText = progressStatus.Status;
-
+			string statusText = progressStatus.Status = progressStatus.Status.Trim().TrimEnd('.');
+			
 			if (GCodeFile.GetFirstNumberAfter("", statusText, ref currentValue)
 				&& GCodeFile.GetFirstNumberAfter("/", statusText, ref destValue))
 			{
@@ -59,7 +59,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					destValue = 1;
 				}
 
-				progressStatus.Status = progressStatus.Status.TrimEnd('.');
 				progressStatus.Progress0To1 = currentValue / destValue;
 			}
 			else

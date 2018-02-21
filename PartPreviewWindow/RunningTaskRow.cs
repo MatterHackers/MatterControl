@@ -41,7 +41,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private ProgressBar progressBar;
 
 		private ExpandCheckboxButton expandButton;
-		private TextWidget mainTitle;
 
 		internal RunningTaskDetails taskDetails;
 
@@ -85,16 +84,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			rowContainer.AddChild(progressBar);
 
-			mainTitle = new TextWidget("", pointSize: 7, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			var mainTitle = new TextWidget(taskDetails.Title, pointSize: 7, textColor: ActiveTheme.Instance.PrimaryTextColor)
 			{
-				HAnchor = HAnchor.Fit | HAnchor.Center,
+				HAnchor = HAnchor.Center,
 				VAnchor = VAnchor.Fit | VAnchor.Top,
-				Margin = new BorderDouble(top: 3),
+				Margin = new BorderDouble(0, 25, 0, 3),
 				AutoExpandBoundsToText = true
 			};
 			rowContainer.AddChild(mainTitle);
 
-			expandButton = new ExpandCheckboxButton(title, 10)
+			expandButton = new ExpandCheckboxButton(!string.IsNullOrWhiteSpace(title) ? title : taskDetails.Title, 10)
 			{
 				VAnchor = VAnchor.Center | VAnchor.Fit,
 				HAnchor = HAnchor.Fit,
@@ -177,10 +176,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (expandButton.Text != e.Status 
 				&& !string.IsNullOrEmpty(e.Status))
 			{
-				if (this.mainTitle.Text == "")
-				{
-					mainTitle.Text = expandButton.Text;
-				}
 				expandButton.Text = e.Status;
 			}
 
