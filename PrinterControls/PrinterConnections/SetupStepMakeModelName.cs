@@ -107,7 +107,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				if (controlsValid)
 				{
 					var printer = await ProfileManager.CreateProfileAsync(activeMake, activeModel, activeName);
-					if(printer == null)
+					if (printer == null)
 					{
 						this.printerNameError.Text = "Error creating profile".Localize();
 						this.printerNameError.Visible = true;
@@ -119,20 +119,10 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 #if __ANDROID__
 					UiThread.RunOnIdle(() => WizardWindow.ChangeToPage<AndroidConnectDevicePage>());
 #else
-					if (AggContext.OperatingSystem == OSType.Windows)
+					UiThread.RunOnIdle(() =>
 					{
-						UiThread.RunOnIdle(() =>
-						{
-							WizardWindow.ChangeToPage(new SetupStepInstallDriver(printer));
-						});
-					}
-					else
-					{
-						UiThread.RunOnIdle(() =>
-						{
-							WizardWindow.ChangeToPage(new SetupStepComPortOne(printer));
-						});
-					}
+						WizardWindow.ChangeToPage(new SetupStepComPortOne(printer));
+					});
 #endif
 				}
 			};
