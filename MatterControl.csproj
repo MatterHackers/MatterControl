@@ -432,7 +432,6 @@
     <Compile Include="PrinterControls\PrinterConnections\SetupStepComPortOne.cs" />
     <Compile Include="PrinterControls\PrinterConnections\SetupStepMakeModelName.cs" />
     <Compile Include="PrinterControls\PrinterConnections\SetupStepBaudRate.cs" />
-    <Compile Include="PrinterControls\PrinterConnections\SetupStepInstallDriver.cs" />
     <Compile Include="PrinterControls\ManualPrinterControls.cs" />
     <Compile Include="PrinterControls\PrinterConnections\BaseConnectionWidget.cs" />
     <Compile Include="PrinterControls\PrinterConnections\PrinterChooser.cs" />

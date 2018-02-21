@@ -65,15 +65,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 					{
 						UiThread.RunOnIdle(() =>
 						{
-							if (SetupStepInstallDriver.PrinterDrivers(printer).Count > 0
-								&& AggContext.OperatingSystem == OSType.Windows)
-							{
-								this.WizardWindow.ChangeToPage(new SetupStepInstallDriver(printer));
-							}
-							else
-							{
-								this.WizardWindow.ChangeToPage(new SetupStepComPortOne(printer));
-							}
+							this.WizardWindow.ChangeToPage(new SetupStepComPortOne(printer));
 						});
 					}
 				};

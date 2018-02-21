@@ -347,9 +347,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			// Block until ReloadAll has completed then close and return to the caller, at which point hopefully everything is reloaded.
 			testRunner.WaitForReloadAll(() => testRunner.ClickByName("Save & Continue Button"));
 
-			testRunner.WaitFor(() => testRunner.WidgetExists<SetupStepInstallDriver>());
+			testRunner.WaitFor(() => testRunner.WidgetExists<SetupStepComPortOne>());
 			testRunner.ClickByName("Cancel Wizard Button");
-			testRunner.WaitFor(() => !testRunner.WidgetExists<SetupStepInstallDriver>());
+			testRunner.WaitFor(() => !testRunner.WidgetExists<SetupStepComPortOne>());
 		}
 
 		public static void OpenPrintersDropdown(this AutomationRunner testRunner)
