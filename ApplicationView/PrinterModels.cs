@@ -110,12 +110,9 @@ namespace MatterHackers.MatterControl
 
 		private async Task LoadGCodeContent(Stream stream)
 		{
-			await ApplicationController.Instance.Tasks.Execute((reporter, cancellationToken) =>
+			await ApplicationController.Instance.Tasks.Execute("Loading G-Code".Localize(), (reporter, cancellationToken) =>
 			{
-				var progressStatus = new ProgressStatus()
-				{
-					Status = "Loading G-Code".Localize()
-				};
+				var progressStatus = new ProgressStatus();
 				reporter.Report(progressStatus);
 
 				this.LoadGCode(stream, cancellationToken, (progress0To1, status) =>
@@ -142,7 +139,7 @@ namespace MatterHackers.MatterControl
 		public async Task<ILibraryAssetStream> ToPersistedLibraryItem(string newName)
 		{
 			// Save the scene to disk
-			await ApplicationController.Instance.Tasks.Execute(this.SaveChanges);
+			await ApplicationController.Instance.Tasks.Execute("Saving".Localize(), this.SaveChanges);
 
 			// Serialize to in memory stream
 			var memoryStream = new MemoryStream();

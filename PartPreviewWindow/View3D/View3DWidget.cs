@@ -351,7 +351,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					case Keys.S:
 						if (keyEvent.Control)
 						{
-							ApplicationController.Instance.Tasks.Execute(printer.Bed.SaveChanges);
+							ApplicationController.Instance.Tasks.Execute("Saving".Localize(), printer.Bed.SaveChanges);
 
 							keyEvent.Handled = true;
 							keyEvent.SuppressKeyPress = true;

@@ -122,7 +122,7 @@ namespace MatterHackers.MatterControl.Library.Export
 				if (firstItem.AssetPath == printer.Bed.EditContext.SourceFilePath)
 				{
 					// If item is bedplate, save any pending changes before starting the print
-					await ApplicationController.Instance.Tasks.Execute(printer.Bed.SaveChanges);
+					await ApplicationController.Instance.Tasks.Execute("Saving".Localize(), printer.Bed.SaveChanges);
 					loadedItem = printer.Bed.Scene;
 					centerOnBed = false;
 				}
@@ -173,7 +173,7 @@ namespace MatterHackers.MatterControl.Library.Export
 									printer.Settings.SetValue(SettingsKey.spiral_vase, "1");
 								}
 
-								await ApplicationController.Instance.Tasks.Execute((reporter, cancellationToken) =>
+								await ApplicationController.Instance.Tasks.Execute("Slicing Item".Localize() + " " + loadedItem.Name, (reporter, cancellationToken) =>
 								{
 									return Slicer.SliceItem(loadedItem, gcodePath, printer, reporter, cancellationToken);
 								});

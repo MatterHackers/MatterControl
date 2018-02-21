@@ -35,6 +35,7 @@ using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
+using MatterHackers.Localizations;
 using MatterHackers.PolygonMesh;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
@@ -75,14 +76,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 		private void ProcessBooleans(IObject3D group)
 		{
-			ApplicationController.Instance.Tasks.Execute((reporter, cancellationToken) =>
+			ApplicationController.Instance.Tasks.Execute("Intersection".Localize(), (reporter, cancellationToken) =>
 			{
-				var progressStatus = new ProgressStatus()
-				{
-					Status = "Processing Booleans"
-				};
-
-				reporter.Report(progressStatus);
+				var progressStatus = new ProgressStatus();
 
 				var participants = group.DescendantsAndSelf().Where((obj) => obj.OwnerID == group.ID);
 

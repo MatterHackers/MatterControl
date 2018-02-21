@@ -453,12 +453,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					IObject3D object3D = null;
 
-					await ApplicationController.Instance.Tasks.Execute(async (progressReporter, cancellationToken) =>
+					await ApplicationController.Instance.Tasks.Execute("Loading".Localize() + " " + Path.GetFileName(filePath), async (progressReporter, cancellationToken) =>
 					{
-						var progressStatus = new ProgressStatus()
-						{
-							Status = "Loading ".Localize() + Path.GetFileName(filePath),
-						};
+						var progressStatus = new ProgressStatus();
 
 						progressReporter.Report(progressStatus);
 
@@ -539,7 +536,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Shortcut = "Ctrl+S",
 					Action = async () =>
 					{
-						await ApplicationController.Instance.Tasks.Execute(sceneContext.SaveChanges);
+						await ApplicationController.Instance.Tasks.Execute("Saving".Localize(), sceneContext.SaveChanges);
 					},
 					IsEnabled = () => sceneContext.EditableScene
 				},

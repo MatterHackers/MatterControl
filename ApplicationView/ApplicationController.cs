@@ -653,7 +653,7 @@ namespace MatterHackers.MatterControl
 
 				if (anyHeatersAreOn)
 				{
-					Tasks.Execute((reporter, cancellationToken) =>
+					Tasks.Execute("Disable Heaters".Localize(), (reporter, cancellationToken) =>
 					{
 						EventHandler heatChanged = (s2, e2) => 
 						{
@@ -1414,13 +1414,10 @@ namespace MatterHackers.MatterControl
 								this.ArchiveAndStartPrint(partFilePath, gcodeFilePath);
 							}
 
-							await ApplicationController.Instance.Tasks.Execute(
+							await ApplicationController.Instance.Tasks.Execute("Printing".Localize(),
 								(reporterB, cancellationTokenB) =>
 								{
-									var progressStatus = new ProgressStatus()
-									{
-										Status = "Printing".Localize()
-									};
+									var progressStatus = new ProgressStatus();
 									reporterB.Report(progressStatus);
 
 									return Task.Run(() =>
@@ -1541,10 +1538,8 @@ namespace MatterHackers.MatterControl
 			// Slice
 			bool slicingSucceeded = false;
 
-			await ApplicationController.Instance.Tasks.Execute(async (reporter, cancellationToken) =>
+			await ApplicationController.Instance.Tasks.Execute("Slicing".Localize(), async (reporter, cancellationToken) =>
 			{
-				reporter.Report(new ProgressStatus() { Status = "Slicing".Localize() });
-
 				slicingSucceeded = await Slicer.SliceItem(
 					object3D, 
 					gcodeFilePath, 
@@ -1559,12 +1554,9 @@ namespace MatterHackers.MatterControl
 				return;
 			}
 
-			await ApplicationController.Instance.Tasks.Execute((innerProgress, token) =>
+			await ApplicationController.Instance.Tasks.Execute("Loading GCode".Localize(), (innerProgress, token) =>
 			{
-				var status = new ProgressStatus()
-				{
-					Status = "Loading GCode"
-				};
+				var status = new ProgressStatus();
 
 				innerProgress.Report(status);
 
@@ -1666,13 +1658,14 @@ namespace MatterHackers.MatterControl
 			};
 		}
 
-		public Task Execute(Func<IProgress<ProgressStatus>, CancellationToken, Task> func, RunningTaskActions taskActions = null)
+		public Task Execute(string taskTitle, Func<IProgress<ProgressStatus>, CancellationToken, Task> func, RunningTaskActions taskActions = null)
 		{
 			var tokenSource = new CancellationTokenSource();
 
 			var taskDetails = new RunningTaskDetails(tokenSource)
 			{
 				TaskActions = taskActions,
+				Title = taskTitle
 			};
 
 			executingTasks.Add(taskDetails);

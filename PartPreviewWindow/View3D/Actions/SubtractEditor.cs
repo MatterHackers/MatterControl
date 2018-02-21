@@ -171,22 +171,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		private void ProcessBooleans(IObject3D group)
 		{
 			// spin up a task to remove holes from the objects in the group
-			ApplicationController.Instance.Tasks.Execute((reporter, cancellationToken) =>
-			{
-				var progressStatus = new ProgressStatus()
+			ApplicationController.Instance.Tasks.Execute(
+				"Subtract".Localize(),
+				(reporter, cancellationToken) =>
 				{
-					Status = "Processing Booleans"
-				};
+					var progressStatus = new ProgressStatus();
+					reporter.Report(progressStatus);
 
-				reporter.Report(progressStatus);
+					var participants = group.Descendants().Where(o => o.OwnerID == group.ID).ToList();
+					var removeObjects = participants.Where((obj) => obj.OutputType == PrintOutputTypes.Hole).ToList();
+					var keepObjects = participants.Where((obj) => obj.OutputType != PrintOutputTypes.Hole).ToList();
 
-				var participants = group.Descendants().Where(o => o.OwnerID == group.ID).ToList();
-				var removeObjects = participants.Where((obj) => obj.OutputType == PrintOutputTypes.Hole).ToList();
-				var keepObjects = participants.Where((obj) => obj.OutputType != PrintOutputTypes.Hole).ToList();
-
-				Subtract(keepObjects, removeObjects, cancellationToken, reporter);
-				return Task.CompletedTask;
-			});
+					Subtract(keepObjects, removeObjects, cancellationToken, reporter);
+					return Task.CompletedTask;
+				});
 		}
 
 		public static void Subtract(List<IObject3D> keepObjects, List<IObject3D> removeObjects)

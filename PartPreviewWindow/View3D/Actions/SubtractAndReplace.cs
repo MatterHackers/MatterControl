@@ -190,14 +190,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		private void ProcessBooleans(IObject3D group)
 		{
 			// spin up a task to calculate the paint
-			ApplicationController.Instance.Tasks.Execute((reporter, cancellationToken) =>
+			ApplicationController.Instance.Tasks.Execute("Subtract".Localize(), (reporter, cancellationToken) =>
 			{
-				var progressStatus = new ProgressStatus()
-				{
-					Status = "Processing Booleans"
-				};
-
-				reporter.Report(progressStatus);
+				var progressStatus = new ProgressStatus();
 
 				var participants = group.DescendantsAndSelf().Where((obj) => obj.OwnerID == group.ID).ToList();
 				var paintObjects = participants.Where((obj) => obj.OutputType == PrintOutputTypes.Hole).ToList();

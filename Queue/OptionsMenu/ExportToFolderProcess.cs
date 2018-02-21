@@ -35,6 +35,7 @@ using MatterControl.Printing;
 using MatterHackers.Agg;
 using MatterHackers.DataConverters3D;
 using MatterHackers.GCodeVisualizer;
+using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.SlicerConfiguration;
@@ -107,7 +108,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 					string extension = Path.GetExtension(printItemWrapper.FileLocation).ToUpper();
 					if (extension != "" && ApplicationSettings.ValidFileExtensions.Contains(extension))
 					{
-						await ApplicationController.Instance.Tasks.Execute((reporter, cancellationToken) =>
+						await ApplicationController.Instance.Tasks.Execute("Export to Folder".Localize() , (reporter, cancellationToken) =>
 						{
 							return Slicer.SliceFile(printItemWrapper.FileLocation, printItemWrapper.GetGCodePathAndFileName(), printer, reporter, cancellationToken);
 						});
