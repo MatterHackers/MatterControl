@@ -42,6 +42,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 	public class ExplorePanel : ScrollableWidget
 	{
 		private ThemeConfig theme;
+		private FlowLayoutWidget topToBottom;
 
 		public ExplorePanel(ThemeConfig theme)
 		{
@@ -54,6 +55,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 			this.ScrollArea.Padding = new BorderDouble(3);
 			this.ScrollArea.HAnchor = HAnchor.Stretch;
 			this.theme = theme;
+
+			topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.Stretch
+			};
+			this.AddChild(topToBottom);
 
 			WebClient client = new WebClient();
 			client.DownloadDataCompleted += (s, e) =>
@@ -94,11 +101,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 
 		private void AddControlsForContent(ExplorerFeed contentList)
 		{
-			var topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				HAnchor = HAnchor.Stretch
-			};
-			this.AddChild(topToBottom);
 			foreach (var content in contentList.Content)
 			{
 				switch (content.content_type)
