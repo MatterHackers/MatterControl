@@ -43,6 +43,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 		private int lastReflowWidth = -1;
 		private int leftRightMargin;
 		private FlowLayoutWidget rowButtonContainer = null;
+		private TextWidget heading;
 
 		public ExploreSection(ExploreFeedContent content, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
@@ -83,10 +84,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 
 					if (content.group_title != null)
 					{
-						this.AddChild(new TextWidget(content.group_title, pointSize: 16, textColor: ActiveTheme.Instance.PrimaryTextColor)
+						this.AddChild(heading = new TextWidget(content.group_title, pointSize: 16, textColor: ActiveTheme.Instance.PrimaryTextColor)
 						{
 							HAnchor = HAnchor.Left,
-							Margin = 5
+							Margin = new BorderDouble(leftRightMargin, 5, leftRightMargin, 15)
 						});
 					}
 
@@ -99,6 +100,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 				}
 				else
 				{
+					heading.Margin = new BorderDouble(leftRightMargin, 5, leftRightMargin, 15);
+
 					foreach (var iconView in allIconViews)
 					{
 						iconView.Margin = new BorderDouble(leftRightMargin, topBottomMargin);
