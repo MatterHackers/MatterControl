@@ -105,34 +105,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 			{
 				switch (content.content_type)
 				{
-					case "banner_image":
-						{
-							if ((content.theme_filter == "dark" && ActiveTheme.Instance.IsDarkTheme)
-								|| (content.theme_filter == "light" && !ActiveTheme.Instance.IsDarkTheme))
-							{
-								ImageBuffer image = new ImageBuffer(640, 480);
-								ImageWidget imageWidget = new ImageWidget(image)
-								{
-									Margin = new BorderDouble(5),
-									HAnchor = HAnchor.Center,
-								};
-
-								if (content.link != null)
-								{
-									imageWidget.Cursor = Cursors.Hand;
-									imageWidget.Click += (s, e) =>
-									{
-										ApplicationController.Instance.LaunchBrowser(content.link);
-									};
-								}
-
-								imageWidget.Load += (s, e) => ApplicationController.Instance.DownloadToImageAsync(image, content.image_url, false, new BlenderPreMultBGRA());
-								topToBottom.AddChild(imageWidget);
-							}
-						}
-
-						break;
-
 					case "article_group":
 					case "product_group":
 						topToBottom.AddChild(new ExploreSection(content, theme));
