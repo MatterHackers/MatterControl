@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 			this.theme = theme;
 
 			WebClient client = new WebClient();
-			client.DownloadDataCompleted += (object sender, DownloadDataCompletedEventArgs e) =>
+			client.DownloadDataCompleted += (s, e) =>
 			{
 				try // if we get a bad result we can get a target invocation exception. In that case just don't show anything
 				{
