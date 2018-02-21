@@ -145,6 +145,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 			if (newColumnCount < 1)
 			{
 				newColumnCount = 1;
+				remainingSpace = 0;
 			}
 
 			// Only center items if extra space exists

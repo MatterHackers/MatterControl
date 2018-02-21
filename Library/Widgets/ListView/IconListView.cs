@@ -118,6 +118,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			if (newColumnCount < 1)
 			{
 				newColumnCount = 1;
+				remainingSpace = 0;
 			}
 
 			// Only center items if extra space exists
