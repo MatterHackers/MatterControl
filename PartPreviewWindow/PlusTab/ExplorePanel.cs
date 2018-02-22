@@ -33,7 +33,11 @@ using System.IO;
 using System.Net;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 
@@ -43,8 +47,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 	{
 		private ThemeConfig theme;
 		private FlowLayoutWidget topToBottom;
+		private TextWidget headingA;
+		private Toolbar toolBarA;
 
-		public ExplorePanel(ThemeConfig theme)
+		public ExplorePanel(PartPreviewContent partPreviewContent, SimpleTabs simpleTabs, ThemeConfig theme)
 		{
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Stretch;
@@ -61,6 +67,147 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 				HAnchor = HAnchor.Stretch
 			};
 			this.AddChild(topToBottom);
+
+			var columnA = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				Margin = new BorderDouble(20, 10),
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit
+			};
+			topToBottom.AddChild(columnA);
+
+			columnA.AddChild(headingA = new TextWidget("Create".Localize(), pointSize: theme.H1PointSize, textColor: ActiveTheme.Instance.PrimaryTextColor, bold: true)
+			{
+				HAnchor = HAnchor.Left,
+				Margin = new BorderDouble(20, 5)
+			});
+
+			columnA.AddChild(toolBarA = new Toolbar()
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit
+			});
+
+			var createPart = new TextButton("Create Part".Localize(), theme)
+			{
+				Margin = theme.ButtonSpacing
+			};
+			createPart.Click += (s, e) =>
+			{
+				UiThread.RunOnIdle(() =>
+				{
+					BedConfig bed;
+					simpleTabs.RemoveTab(simpleTabs.ActiveTab);
+					partPreviewContent.CreatePartTab(
+						"New Part",
+						bed = new BedConfig(),
+						theme);
+
+					bed.LoadContent(
+						new EditContext()
+						{
+							ContentStore = ApplicationController.Instance.Library.PlatingHistory,
+							SourceItem = BedConfig.NewPlatingItem()
+						}).ConfigureAwait(false);
+				});
+			};
+			toolBarA.AddChild(createPart);
+
+			var createPrinter = new TextButton("Create Printer".Localize(), theme)
+			{
+				Name = "Create Printer",
+				Margin = theme.ButtonSpacing
+			};
+			createPrinter.Click += (s, e) =>
+			{
+				UiThread.RunOnIdle(() =>
+				{
+					simpleTabs.RemoveTab(simpleTabs.ActiveTab);
+
+					if (ApplicationController.Instance.ActivePrinter.Connection.PrinterIsPrinting
+					|| ApplicationController.Instance.ActivePrinter.Connection.PrinterIsPaused)
+					{
+						StyledMessageBox.ShowMessageBox("Please wait until the print has finished and try again.".Localize(), "Can't add printers while printing".Localize());
+					}
+					else
+					{
+						DialogWindow.Show(PrinterSetup.GetBestStartPage(PrinterSetup.StartPageOptions.ShowMakeModel));
+					}
+				});
+			};
+			toolBarA.AddChild(createPrinter);
+
+			var importButton = new TextButton("Import Printer".Localize(), theme)
+			{
+				Margin = theme.ButtonSpacing
+			};
+			importButton.Click += (s, e) =>
+			{
+				UiThread.RunOnIdle(() =>
+				{
+					AggContext.FileDialogs.OpenFileDialog(
+						new OpenFileDialogParams(
+							"settings files|*.ini;*.printer;*.slice"),
+							(result) =>
+							{
+								if (!string.IsNullOrEmpty(result.FileName)
+									&& File.Exists(result.FileName))
+								{
+									simpleTabs.RemoveTab(simpleTabs.ActiveTab);
+									ImportSettingsPage.ImportFromExisting(result.FileName);
+								}
+							});
+				});
+			};
+			toolBarA.AddChild(importButton);
+
+			toolBarA.AddChild(new VerticalLine(50) { Margin = new BorderDouble(12, 0) });
+
+			toolBarA.AddChild(new TextWidget("Open Existing".Localize() + ":", pointSize: theme.DefaultFontSize)
+			{
+				VAnchor = VAnchor.Center
+			});
+
+			var printerSelector = new PrinterSelector(theme)
+			{
+				Margin = new BorderDouble(left: 15)
+			};
+			toolBarA.AddChild(printerSelector);
+
+			toolBarA.AddChild(new VerticalLine(50) { Margin = new BorderDouble(12, 0) });
+
+			var redeemDesignCode = new TextButton("Redeem Design Code".Localize(), theme)
+			{
+				Name = "Redeem Design Code Button",
+				Margin = theme.ButtonSpacing
+			};
+			redeemDesignCode.Click += (s, e) =>
+			{
+				UiThread.RunOnIdle(() =>
+				{
+					simpleTabs.RemoveTab(simpleTabs.ActiveTab);
+					// Implementation already does RunOnIdle
+					ApplicationController.Instance.RedeemDesignCode?.Invoke();
+				});
+			};
+			toolBarA.AddChild(redeemDesignCode);
+
+			var redeemShareCode = new TextButton("Enter Share Code".Localize(), theme)
+			{
+				Name = "Enter Share Code Button",
+				Margin = theme.ButtonSpacing
+			};
+			redeemShareCode.Click += (s, e) =>
+			{
+				UiThread.RunOnIdle(() =>
+				{
+					simpleTabs.RemoveTab(simpleTabs.ActiveTab);
+
+					// Implementation already does RunOnIdle
+					ApplicationController.Instance.EnterShareCode?.Invoke();
+				});
+			};
+			toolBarA.AddChild(redeemShareCode);
 
 			WebClient client = new WebClient();
 			client.DownloadDataCompleted += (s, e) =>
