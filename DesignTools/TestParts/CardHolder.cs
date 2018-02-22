@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			IObject3D plainCardHolder = Object3D.Load("C:/Temp/CardHolder.stl", CancellationToken.None);
 
-			var letterPrinter = new TypeFacePrinter(NameToWrite.ToString(), new StyledTypeFace(NamedTypeFaceCache.GetTypeFace(Font)));
+			var letterPrinter = new TypeFacePrinter(NameToWrite.ToString(), new StyledTypeFace(NamedTypeFaceCache.GetTypeFace(Font), 12));
 
 			IObject3D nameMesh = new Object3D()
 			{

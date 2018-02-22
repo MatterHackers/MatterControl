@@ -41,8 +41,8 @@ namespace MatterHackers.MatterControl.Library
 	{
 		public static void RenderCentered(this Graphics2D graphics2D, ImageBuffer imageBuffer, double width, double height)
 		{
-			int targetWidth = graphics2D.DestImage.Width;
-			int targetHeight = graphics2D.DestImage.Height;
+			int targetWidth = graphics2D.Width;
+			int targetHeight = graphics2D.Height;
 
 			graphics2D.Render(
 				imageBuffer,
