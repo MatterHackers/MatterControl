@@ -1724,13 +1724,15 @@ namespace MatterHackers.MatterControl
 
 			systemWindow.AddChild(overlay);
 
-			var imageWidget = new ImageWidget(CreateBackgroundImage((int)systemWindow.Width, (int)systemWindow.Height));
-			overlay.AddChild(imageWidget);
+			var imagePath = AggContext.StaticData.MapPath(Path.Combine("Images", "splash.png"));
+			var sourceImage = AggContext.StaticData.LoadImage(imagePath);
 
-			systemWindow.BoundsChanged += (s, e) =>
+			overlay.BeforeDraw += (s, e) =>
 			{
-				// when we are full screen there is another bonuds change that happens and we still need the image to be the right size
-				imageWidget.Image = CreateBackgroundImage((int)systemWindow.Width, (int)systemWindow.Height);
+				var destCenter = new Vector2(systemWindow.Width / 2, systemWindow.Height / 2);
+				var imageCenter = new Vector2(sourceImage.Width / 2, sourceImage.Height / 2);
+				var scale = Math.Max(systemWindow.Width / sourceImage.Width, systemWindow.Height / sourceImage.Height);
+				e.graphics2D.RenderCentered(sourceImage, sourceImage.Width * scale, sourceImage.Height * scale);
 			};
 
 			progressPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
@@ -1791,19 +1793,6 @@ namespace MatterHackers.MatterControl
 			ReportStartupProgress(0, "ShowAsSystemWindow");
 
 			return systemWindow;
-		}
-
-		private static ImageBuffer CreateBackgroundImage(int width, int height)
-		{
-			var imagePath = AggContext.StaticData.MapPath(Path.Combine("Images", "splash.png"));
-			var sourceImage = AggContext.StaticData.LoadImage(imagePath);
-
-			ImageBuffer destImage = new ImageBuffer(width, height, 32, sourceImage.GetRecieveBlender());
-
-			Graphics2D renderGraphics = destImage.NewGraphics2D();
-			renderGraphics.Render(sourceImage, 0, 0, 0, destImage.Width / (double)sourceImage.Width, destImage.Height / (double)sourceImage.Height);
-
-			return destImage;
 		}
 
 		public static async Task<GuiWidget> Initialize(SystemWindow systemWindow, Action<double, string> reporter)
