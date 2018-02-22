@@ -294,12 +294,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.WaitForName("No Button", 90); // the no button is 'Resume'
 					
 					// validate the current layer
-					Assert.AreEqual(2, ApplicationController.Instance.ActivePrinter.Connection.CurrentlyPrintingLayer);
+					Assert.AreEqual(1, ApplicationController.Instance.ActivePrinter.Connection.CurrentlyPrintingLayer);
 					testRunner.ClickByName("No Button");
 
 					// the printer is now paused
 					// close the pause dialog pop-up do not resume
-					ClickDialogButton(testRunner, "Yes Button", 4);
+					ClickDialogButton(testRunner, "Yes Button", 3);
 
 					// Disconnect 
 					testRunner.ClickByName("Disconnect from printer button");
@@ -317,7 +317,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					// The first pause that we get after recovery should be layer 6.
 					// wait for the pause and continue
-					ClickDialogButton(testRunner, "No Button", 6);
+					ClickDialogButton(testRunner, "No Button", 5);
 
 					// Wait for done
 					testRunner.WaitForPrintFinished();

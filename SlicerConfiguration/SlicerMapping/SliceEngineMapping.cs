@@ -102,7 +102,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			SettingsKey.max_velocity,
 			SettingsKey.jerk_velocity,
 			SettingsKey.print_time_estimate_multiplier,
-			SettingsKey.gcode_buffer_size,
 			SettingsKey.max_acceleration,
 			SettingsKey.ip_address,
 			SettingsKey.ip_port,

@@ -44,13 +44,13 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public override string ActiveEditor => "PublicPropertyEditor";
 
-		[DisplayName("Rotate About")]
-		public DirectionAxis Axis { get; set; } = new DirectionAxis() { Origin = Vector3.NegativeInfinity, Normal = Vector3.UnitZ };
-
 		public override bool CanBake => true;
 		public override bool CanRemove => true;
 
 		public int Count { get; set; } = 3;
+
+		[DisplayName("Rotate About")]
+		public DirectionAxis Axis { get; set; } = new DirectionAxis() { Origin = Vector3.NegativeInfinity, Normal = Vector3.UnitZ };
 
 		[DisplayName("Rotate Part")]
 		[Description("Rotate the part to the same angle as the array.")]

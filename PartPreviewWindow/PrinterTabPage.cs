@@ -635,7 +635,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// TODO: Consider if the consistency of a common time format would look and feel better than changing formats based on elapsed duration
 				timeWidget.Text = (hoursPrinted <= 0) ? $"{minutesPrinted}:{secondsPrinted:00}" : $"{hoursPrinted}:{minutesPrinted:00}:{secondsPrinted:00}";
 
-				progressDial.LayerCount = printer.Connection.CurrentlyPrintingLayer + 1;
+				progressDial.LayerIndex = printer.Connection.CurrentlyPrintingLayer;
 				progressDial.LayerCompletedRatio = printer.Connection.RatioIntoCurrentLayer;
 				progressDial.CompletedRatio = printer.Connection.PercentComplete / 100;
 
