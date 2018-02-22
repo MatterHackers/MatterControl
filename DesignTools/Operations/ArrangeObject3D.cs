@@ -30,11 +30,9 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.VectorMath;
-using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
@@ -54,44 +52,44 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public override string ActiveEditor => "PublicPropertyEditor";
 
+		public bool Advanced { get; set; } = false;
+
+		public override bool CanBake => true;
+
+		public override bool CanRemove => true;
+
 		[DisplayName("X")]
-		[Icons(new string[] {"424.png", "align_left.png", "align_center_x.png", "align_right.png"})]
+		[Icons(new string[] { "424.png", "align_left.png", "align_center_x.png", "align_right.png" })]
 		public Align XAlign { get; set; } = Align.None;
+
 		[DisplayName("Start X")]
 		[Icons(new string[] { "424.png", "align_to_left.png", "align_to_center_x.png", "align_to_right.png" })]
 		public Align XAlignTo { get; set; } = Align.None;
+
 		[DisplayName("Offset X")]
 		public double XOffset { get; set; } = 0;
 
 		[DisplayName("Y")]
 		[Icons(new string[] { "424.png", "align_bottom.png", "align_center_y.png", "align_top.png" })]
 		public Align YAlign { get; set; } = Align.None;
+
 		[DisplayName("Start Y")]
 		[Icons(new string[] { "424.png", "align_to_bottom.png", "align_to_center_y.png", "align_to_top.png" })]
 		public Align YAlignTo { get; set; } = Align.None;
+
 		[DisplayName("Offset Y")]
 		public double YOffset { get; set; } = 0;
 
 		[DisplayName("Z")]
 		[Icons(new string[] { "424.png", "align_bottom.png", "align_center_y.png", "align_top.png" })]
 		public Align ZAlign { get; set; } = Align.None;
+
 		[DisplayName("Start Z")]
 		[Icons(new string[] { "424.png", "align_to_bottom.png", "align_to_center_y.png", "align_to_top.png" })]
 		public Align ZAlignTo { get; set; } = Align.None;
+
 		[DisplayName("Offset Z")]
 		public double ZOffset { get; set; } = 0;
-
-		public bool Advanced { get; set; } = false;
-
-		public void UpdateControls(PublicPropertyEditor editor)
-		{
-			editor.GetEditRow(nameof(XAlignTo)).Visible = Advanced;
-			editor.GetEditRow(nameof(XOffset)).Visible = Advanced;
-			editor.GetEditRow(nameof(YAlignTo)).Visible = Advanced;
-			editor.GetEditRow(nameof(YOffset)).Visible = Advanced;
-			editor.GetEditRow(nameof(ZAlignTo)).Visible = Advanced;
-			editor.GetEditRow(nameof(ZOffset)).Visible = Advanced;
-		}
 
 		public void Rebuild()
 		{
@@ -148,16 +146,13 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			});
 		}
 
-		public override bool CanRemove => true;
-		public override bool CanBake => true;
-
 		public override void Remove()
 		{
 			// put everything back to where it was before the arange started
-			if(ChildrenBounds.Count == Children.Count)
+			if (ChildrenBounds.Count == Children.Count)
 			{
 				int i = 0;
-				foreach(var child in Children)
+				foreach (var child in Children)
 				{
 					// Where you are minus where you started to get back to where you started
 					child.Translate(-(child.GetAxisAlignedBoundingBox().minXYZ - ChildrenBounds[i].minXYZ));
@@ -166,6 +161,16 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 
 			base.Remove();
+		}
+
+		public void UpdateControls(PublicPropertyEditor editor)
+		{
+			editor.GetEditRow(nameof(XAlignTo)).Visible = Advanced;
+			editor.GetEditRow(nameof(XOffset)).Visible = Advanced;
+			editor.GetEditRow(nameof(YAlignTo)).Visible = Advanced;
+			editor.GetEditRow(nameof(YOffset)).Visible = Advanced;
+			editor.GetEditRow(nameof(ZAlignTo)).Visible = Advanced;
+			editor.GetEditRow(nameof(ZOffset)).Visible = Advanced;
 		}
 
 		private void AlignAxis(int axis, Align align, double alignTo, double offset,

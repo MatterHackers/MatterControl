@@ -120,7 +120,7 @@ namespace MatterHackers.MatterControl
 
 			if (object3D != null)
 			{
-				bool RenderOrthographic = UserSettings.Instance.get(UserSettingsKey.ThumbnailRenderingMode) == "orthographic";
+				bool RenderOrthographic = UserSettings.Instance.get(UserSettingsKey.ThumbnailRenderingMode) == "raytraced";
 
 				var thumbnail = ThumbnailEngine.Generate(
 					object3D,

@@ -64,6 +64,7 @@ namespace MatterHackers.MatterControl
 	using MatterHackers.MatterControl.PartPreviewWindow.View3D;
 	using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 	using MatterHackers.SerialPortCommunication;
+	using MatterHackers.VectorMath;
 	using SettingsManagement;
 
 	public class AppContext
@@ -1716,36 +1717,46 @@ namespace MatterHackers.MatterControl
 		{
 			timer = Stopwatch.StartNew();
 
-			var systemWindow = new RootSystemWindow(width, height)
-			{
-				BackgroundColor = Color.DarkGray
-			};
+			var systemWindow = new RootSystemWindow(width, height);
 
 			var overlay = new GuiWidget();
 			overlay.AnchorAll();
 
 			systemWindow.AddChild(overlay);
 
+			var imageWidget = new ImageWidget(CreateBackgroundImage((int)systemWindow.Width, (int)systemWindow.Height));
+			overlay.AddChild(imageWidget);
+
+			systemWindow.BoundsChanged += (s, e) =>
+			{
+				// when we are full screen there is another bonuds change that happens and we still need the image to be the right size
+				imageWidget.Image = CreateBackgroundImage((int)systemWindow.Width, (int)systemWindow.Height);
+			};
+
 			progressPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				HAnchor = HAnchor.Center,
-				VAnchor = VAnchor.Center,
+				Position = new Vector2(0, height*.25),
+				HAnchor = HAnchor.Center | HAnchor.Fit,
+				VAnchor = VAnchor.Fit,
 				MinimumSize = new VectorMath.Vector2(400, 100),
+				Margin = new BorderDouble(0, 0, 0, 200)
 			};
 			overlay.AddChild(progressPanel);
 
-			progressPanel.AddChild(statusText = new TextWidget("", textColor: new Color("#bbb"))
+			progressPanel.AddChild(statusText = new TextWidget("", textColor: new Color("#9ad5dd"))
 			{
-				MinimumSize = new VectorMath.Vector2(200, 30)
+				MinimumSize = new VectorMath.Vector2(200, 30),
+				HAnchor = HAnchor.Center,
+				AutoExpandBoundsToText = true
 			});
 
 			progressPanel.AddChild(progressBar = new ProgressBar()
 			{
-				FillColor = new Color("#3D4B72"),
-				BorderColor = new Color("#777"),
+				FillColor = new Color("#049eb6"),
+				BorderColor = new Color("#006f83"),
 				Height = 11,
 				Width = 300,
-				HAnchor = HAnchor.Absolute,
+				HAnchor = HAnchor.Center,
 				VAnchor = VAnchor.Absolute
 			});
 
@@ -1780,6 +1791,19 @@ namespace MatterHackers.MatterControl
 			ReportStartupProgress(0, "ShowAsSystemWindow");
 
 			return systemWindow;
+		}
+
+		private static ImageBuffer CreateBackgroundImage(int width, int height)
+		{
+			var imagePath = AggContext.StaticData.MapPath(Path.Combine("Images", "splash.png"));
+			var sourceImage = AggContext.StaticData.LoadImage(imagePath);
+
+			ImageBuffer destImage = new ImageBuffer(width, height, 32, sourceImage.GetRecieveBlender());
+
+			Graphics2D renderGraphics = destImage.NewGraphics2D();
+			renderGraphics.Render(sourceImage, 0, 0, 0, destImage.Width / (double)sourceImage.Width, destImage.Height / (double)sourceImage.Height);
+
+			return destImage;
 		}
 
 		public static async Task<GuiWidget> Initialize(SystemWindow systemWindow, Action<double, string> reporter)
