@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			buttonRow.AddChild(new HorizontalSpacer());
 
 			// configure button
-			var configureIcon = AggContext.StaticData.LoadIcon("fa-cog_16.png", IconColor.Raw);
+			var configureIcon = AggContext.StaticData.LoadIcon("fa-cog_16.png", IconColor.Theme);
 			configureButton = new IconButton(configureIcon, theme)
 			{
 				ToolTipText = "Configure".Localize(),
