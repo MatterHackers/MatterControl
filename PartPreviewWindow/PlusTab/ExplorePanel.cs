@@ -163,7 +163,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 
 			toolBarA.AddChild(new VerticalLine(50) { Margin = new BorderDouble(12, 0) });
 
-			toolBarA.AddChild(new TextWidget("Open Existing".Localize() + ":", pointSize: theme.DefaultFontSize)
+			toolBarA.AddChild(new TextWidget("Open Existing".Localize() + ":", textColor: theme.Colors.PrimaryTextColor, pointSize: theme.DefaultFontSize)
 			{
 				VAnchor = VAnchor.Center
 			});

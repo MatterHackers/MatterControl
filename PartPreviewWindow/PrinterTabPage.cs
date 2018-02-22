@@ -107,7 +107,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Stretch,
 				HAnchor = HAnchor.Right | HAnchor.Absolute,
 				Width = 60,
-				Margin = new BorderDouble(0, 80, 8, 42),
+				Margin = new BorderDouble(0, 4, 4, 4),
 				Maximum = sceneContext.LoadedGCode?.LayerCount ?? 1
 			};
 			view3DWidget.InteractionLayer.AddChild(layerScrollbar);
@@ -321,8 +321,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				return;
 			}
 
-			layerRenderRatioSlider.OriginRelativeParent = new Vector2(11, 65);
-			layerRenderRatioSlider.TotalWidthInPixels = view3DWidget.InteractionLayer.Width - 45;
+			layerRenderRatioSlider.OriginRelativeParent = new Vector2(4, 13);
+			layerRenderRatioSlider.TotalWidthInPixels = view3DWidget.InteractionLayer.Width - 32;
 		}
 
 		private double lastPostion = 0;
