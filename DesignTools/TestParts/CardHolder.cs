@@ -30,10 +30,13 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.ComponentModel;
 using System.Threading;
+using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.VectorMath;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
@@ -49,17 +52,20 @@ namespace MatterHackers.MatterControl.DesignTools
 		[DisplayName("Name")]
 		public string NameToWrite { get; set; } = "MatterHackers";
 
+		[Sortable]
+		[JsonConverter(typeof(StringEnumConverter))]
+		public NamedTypeFace Font { get; set; } = new NamedTypeFace();
+
 		public void Rebuild()
 		{
 			IObject3D plainCardHolder = Object3D.Load("C:/Temp/CardHolder.stl", CancellationToken.None);
 
-			//TypeFace typeFace = TypeFace.LoadSVG("Viking_n.svg");
-
-			var letterPrinter = new TypeFacePrinter(NameToWrite);//, new StyledTypeFace(typeFace, 12));
+			var letterPrinter = new TypeFacePrinter(NameToWrite.ToString(), new StyledTypeFace(NamedTypeFaceCache.GetTypeFace(Font)));
 
 			IObject3D nameMesh = new Object3D()
 			{
-				Mesh = VertexSourceToMesh.Extrude(letterPrinter, 5)
+				Mesh = VertexSourceToMesh.Extrude(letterPrinter, 5),
+				Color = Color.LightBlue
 			};
 
 			AxisAlignedBoundingBox textBounds = nameMesh.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
