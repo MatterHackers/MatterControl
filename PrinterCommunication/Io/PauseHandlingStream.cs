@@ -181,7 +181,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				string layerNumber = lineToSend.Split(':')[1];
 				if (PauseOnLayer(layerNumber))
 				{
-					DoPause(PauseReason.PauseLayerReached, $" {layerNumber}");
+					// make the string 1 based (the internal code is 0 based)
+					int layerIndex;
+					int.TryParse(layerNumber, out layerIndex);
+					DoPause(PauseReason.PauseLayerReached, $" {layerIndex + 1}");
 				}
 			}
 			else if (lineToSend.StartsWith("M226")

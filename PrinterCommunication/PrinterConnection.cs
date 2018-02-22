@@ -164,8 +164,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private CheckSumLines allCheckSumLinesSent = new CheckSumLines();
 
-		private int backupAmount = 0;
-
 		private CommunicationStates communicationState = CommunicationStates.Disconnected;
 
 		private PrinterMove currentDestination;
@@ -553,8 +551,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			{
 				if (gCodeFileStream0 != null)
 				{
-					int instructionIndex = gCodeFileStream0.LineIndex - backupAmount;
-					return gCodeFileStream0?.GCodeFile?.GetLayerIndex(instructionIndex) ?? -1;
+					return gCodeFileStream0?.GCodeFile?.GetLayerIndex(gCodeFileStream0.LineIndex) ?? -1;
 				}
 
 				return -1;
@@ -729,8 +726,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					return 0;
 				}
 
-				int instructionIndex = gCodeFileStream0.LineIndex - backupAmount;
-				return gCodeFileStream0.GCodeFile.Ratio0to1IntoContainedLayer(instructionIndex);
+				return gCodeFileStream0.GCodeFile.Ratio0to1IntoContainedLayer(gCodeFileStream0.LineIndex);
 			}
 		}
 
@@ -1866,8 +1862,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public async void StartPrint(string gcodeFilename, PrintTask printTaskToUse = null)
 		{
-			backupAmount = printer.Settings.GetValue<int>(SettingsKey.gcode_buffer_size);
-
 			if (!this.IsConnected || PrinterIsPrinting)
 			{
 				return;

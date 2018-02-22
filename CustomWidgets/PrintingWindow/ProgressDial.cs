@@ -81,7 +81,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				Margin = new BorderDouble(top: 32)
 			};
 
-			LayerCount = 0;
+			LayerIndex = 0;
 
 			this.AddChild(percentCompleteWidget);
 			this.AddChild(layerCountWidget);
@@ -128,7 +128,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			}
 		}
 
-		public int LayerCount
+		public int LayerIndex
 		{
 			get { return layerCount; }
 			set
@@ -142,7 +142,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					}
 					else
 					{
-						layerCountWidget.Text = "Layer".Localize() + " " + layerCount;
+						layerCountWidget.Text = "Layer".Localize() + " " + (layerCount+1);
 					}
 				}
 			}
