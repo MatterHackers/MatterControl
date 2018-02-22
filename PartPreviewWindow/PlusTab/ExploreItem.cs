@@ -37,19 +37,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 	{
 		private ExplorerFeedItem item;
 
-		public ExploreItem(ExplorerFeedItem item)
+		public ExploreItem(ExplorerFeedItem item, ThemeConfig theme)
 		{
 			int spacing = 10;
 
 			this.HAnchor = HAnchor.Absolute;
-			this.Width = 250 * GuiWidget.DeviceScale;
+			this.Width = 400 * GuiWidget.DeviceScale;
 			//this.Border = spacing;
 			this.Padding = spacing;
 			this.item = item;
 
 			if (item.icon != null)
 			{
-				ImageBuffer image = new ImageBuffer((int)(64 * GuiWidget.DeviceScale), (int)(64 * GuiWidget.DeviceScale));
+				ImageBuffer image = new ImageBuffer((int)(40 * GuiWidget.DeviceScale), (int)(40 * GuiWidget.DeviceScale));
 
 				var imageWidget = new ImageWidget(image)
 				{
@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 				this.AddChild(imageWidget);
 			}
 
-			var wrappedText = new WrappedTextWidget(item.title, textColor: ActiveTheme.Instance.PrimaryTextColor)
+			var wrappedText = new WrappedTextWidget(item.title, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: theme.DefaultFontSize)
 			{
 				Selectable = false,
 				VAnchor = VAnchor.Center | VAnchor.Fit,

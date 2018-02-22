@@ -108,7 +108,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			int itemWidth = ThumbWidth + (iconViewPadding * 2);
 
 			int newColumnCount = (int)Math.Floor(this.LocalBounds.Width / itemWidth);
-			int remainingSpace = (int)this.LocalBounds.Width - columnCount * itemWidth;
+			int remainingSpace = (int)this.LocalBounds.Width - newColumnCount * itemWidth;
 
 			// Reset position before reflow
 			cellIndex = 0;
@@ -118,6 +118,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			if (newColumnCount < 1)
 			{
 				newColumnCount = 1;
+				remainingSpace = 0;
 			}
 
 			// Only center items if extra space exists
