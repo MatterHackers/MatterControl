@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl.Library
 
 		public Type DefaultView { get; protected set; }
 
-		public List<ILibraryContainerLink> ChildContainers { get; set; }
+		public List<ILibraryContainerLink> ChildContainers { get; set; } = new List<ILibraryContainerLink>();
 		public bool IsProtected { get; protected set; } = true;
 
 		public virtual Task<ImageBuffer> GetThumbnail(ILibraryItem item, int width, int height)
@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl.Library
 			return Task.FromResult<ImageBuffer>(null);
 		}
 
-		public List<ILibraryItem> Items { get; set; }
+		public List<ILibraryItem> Items { get; set; } = new List<ILibraryItem>();
 
 		public ILibraryContainer Parent { get; set; }
 

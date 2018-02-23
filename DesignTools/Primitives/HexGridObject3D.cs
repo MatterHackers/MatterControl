@@ -28,65 +28,94 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.ComponentModel;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
+using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class SphereAdvancedObject3D : Object3D, IRebuildable
+	public class HexagonPath : Object3D
 	{
-		public override string ActiveEditor => "PublicPropertyEditor";
+		IVertexSource Path { get; set; }
+		public double Radius { get; set; } = 10;
+		public double StrokeWidth { get; set; } = 2;
 
-		public SphereAdvancedObject3D()
+		public void Rebuild()
+		{
+			var path = new VertexStorage();
+			path.MoveTo(Radius, 0);
+			for(int i=1; i<6; i++)
+			{
+				var angle = MathHelper.Tau / 6 * i;
+				var next = new Vector2(Math.Cos(angle), Math.Sin(angle)) * Radius;
+				path.LineTo(next);
+			}
+
+			Path = new Stroke(path, StrokeWidth);
+		}
+	}
+
+	public class HexGridPath : Object3D
+	{
+		public double EdgeLength { get; set; } = 10;
+		public double StrokeWidth { get; set; } = 2;
+
+		public int GridWidth = 3;
+		public int GridHeight = 3;
+
+		public void Rebuild()
+		{
+			for(int y=0; y<GridHeight; y++)
+			{
+				for(int x=0; x<GridWidth; x++)
+				{
+
+				}
+			}
+
+			// convert it to a clipper array and union
+			// Convert back to a path
+		}
+	}
+
+	public class HexGridObject3D : Object3D, IRebuildable
+	{
+		public HexGridObject3D()
 		{
 		}
 
-		public static SphereAdvancedObject3D Create()
-		{
-			var item = new SphereAdvancedObject3D();
+		public override string ActiveEditor => "PublicPropertyEditor";
 
+		public double EdgeLength { get; set; } = 10;
+		public double StrokeWidth { get; set; } = 2;
+		public double Height { get; set; } = 5;
+
+		public int GridWidth = 3;
+		public int GridHeight = 3;
+
+		// 
+
+		public static HexGridObject3D Create()
+		{
+			var item = new HexGridObject3D();
 			item.Rebuild();
 			return item;
 		}
 
-		public double Diameter { get; set; } = 20;
-		[DisplayName("Longitude Sides")]
-		public int LongitudeSides { get; set; } = 30;
-		[DisplayName("Latitude Sides")]
-		public int LatitudeSides { get; set; } = 20;
-
-		[DisplayName("Start Angle")]
-		//[Range(0, 360, ErrorMessage = "Angle {0} must be between {1} and {2}.")]
-		public double StartAngleDegrees { get; set; } = 20;
-
-		[DisplayName("End Angle")]
-		//[Range(0, 360, ErrorMessage = "Angle {0} must be between {1} and {2}.")]
-		public double EndAngleDegrees { get; set; } = 240;
-
 		public void Rebuild()
 		{
+			var gridPath = new HexGridPath()
+			{
+				GridWidth = this.GridWidth,
+				GridHeight = this.GridHeight,
+				StrokeWidth = this.StrokeWidth,
+				EdgeLength = this.EdgeLength
+			};
+			gridPath.Rebuild();
 			var aabb = this.GetAxisAlignedBoundingBox();
 
-			var path = new VertexStorage();
-			var angleDelta = MathHelper.Tau / 2 / LatitudeSides;
-			var angle = -MathHelper.Tau / 4;
-			var radius = Diameter / 2;
-			path.MoveTo(new Vector2(radius * Math.Cos(angle), radius * Math.Sin(angle)));
-			for (int i = 0; i < LatitudeSides; i++)
-			{
-				angle += angleDelta;
-				path.LineTo(new Vector2(radius * Math.Cos(angle), radius * Math.Sin(angle)));
-			}
-
-			var startAngle = MathHelper.Range0ToTau(MathHelper.DegreesToRadians(StartAngleDegrees));
-			var endAngle = MathHelper.Range0ToTau(MathHelper.DegreesToRadians(EndAngleDegrees));
-			var steps = Math.Max(1, (int)(LongitudeSides * MathHelper.Tau / Math.Abs(MathHelper.GetDeltaAngle(startAngle, endAngle)) + .5));
-			Mesh = VertexSourceToMesh.Revolve(path, 
-				steps, 
-				startAngle,
-				endAngle);
+			Mesh = PlatonicSolids.CreateCube(Width, Depth, Height);
 			if (aabb.ZSize > 0)
 			{
 				// If the part was already created and at a height, maintain the height.

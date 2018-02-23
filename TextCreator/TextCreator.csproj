@@ -56,9 +56,6 @@
     <Compile Include="Braille\BrailleEditor.cs" />
     <Compile Include="Braille\BrailleGrade2.cs" />
     <Compile Include="Braille\BrailleGrade2Mapping.cs" />
-    <Compile Include="TextCreatorPlugin.cs" />
-    <Compile Include="Text\TextGenerator.cs" />
-    <Compile Include="Text\TextEditor.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Submodules\agg-sharp\agg\Agg.csproj">

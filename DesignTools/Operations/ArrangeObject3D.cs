@@ -52,8 +52,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public override string ActiveEditor => "PublicPropertyEditor";
 
-		public bool Advanced { get; set; } = false;
-
 		public override bool CanBake => true;
 
 		public override bool CanRemove => true;
@@ -90,6 +88,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		[DisplayName("Offset Z")]
 		public double ZOffset { get; set; } = 0;
+
+		public bool Advanced { get; set; } = false;
 
 		public void Rebuild()
 		{

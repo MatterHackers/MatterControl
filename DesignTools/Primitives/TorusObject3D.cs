@@ -60,6 +60,10 @@ namespace MatterHackers.MatterControl.DesignTools
 		public int ToroidSides { get; set; } = 20;
 		[DisplayName("Ring Sides")]
 		public int PoleSides { get; set; } = 16;
+		[DisplayName("Starting Angle")]
+		public double StartingAngle { get; set; } = 0;
+		[DisplayName("Ending Angle")]
+		public double EndingAngle { get; set; } = 360;
 
 		public void Rebuild()
 		{
@@ -80,7 +84,9 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			path.LineTo(circleCenter + new Vector2(poleRadius * Math.Cos(0), poleRadius * Math.Sin(0)));
 
-			Mesh = VertexSourceToMesh.Revolve(path, ToroidSides);
+			var startAngle = MathHelper.Range0ToTau(MathHelper.DegreesToRadians(StartingAngle));
+			var endAngle = MathHelper.Range0ToTau(MathHelper.DegreesToRadians(EndingAngle));
+			Mesh = VertexSourceToMesh.Revolve(path, ToroidSides, startAngle, endAngle);
 			if (aabb.ZSize > 0)
 			{
 				// If the part was already created and at a height, maintain the height.

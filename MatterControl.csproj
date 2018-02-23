@@ -90,6 +90,7 @@
     <Compile Include="DesignTools\Operations\ArrayAdvancedObject3D.cs" />
     <Compile Include="DesignTools\Operations\ArrayLinearObject3D.cs" />
     <Compile Include="DesignTools\Operations\ArrayRadialObject3D.cs" />
+    <Compile Include="DesignTools\Operations\BendObject3D.cs" />
     <Compile Include="DesignTools\Operations\Object3DExtensions.cs" />
     <Compile Include="DesignTools\Operations\Align.cs" />
     <Compile Include="DesignTools\Operations\Rotate.cs" />
@@ -109,16 +110,9 @@
     <Compile Include="DesignTools\Primitives\TextObject3D.cs" />
     <Compile Include="DesignTools\Primitives\TorusObject3D.cs" />
     <Compile Include="DesignTools\PublicPropertyEditor.cs" />
-    <Compile Include="DesignTools\TestParts\TestPart.cs" />
-    <Compile Include="DesignTools\TestParts\RibonWithName.cs" />
-    <Compile Include="DesignTools\TestParts\PvcT.cs" />
-    <Compile Include="DesignTools\TestParts\PinchTest.cs" />
-    <Compile Include="DesignTools\TestParts\CurveTest.cs" />
     <Compile Include="DesignTools\Primitives\ConeObject3D.cs" />
     <Compile Include="DesignTools\Primitives\CubeObject3D.cs" />
     <Compile Include="DesignTools\Operations\SetCenter.cs" />
-    <Compile Include="DesignTools\TestParts\BadSubtract.cs" />
-    <Compile Include="DesignTools\TestParts\CardHolder.cs" />
     <Compile Include="DesignTools\Operations\Package.cs" />
     <Compile Include="DesignTools\Operations\Translate.cs" />
     <Compile Include="Library\Providers\GraphConfig.cs" />
@@ -374,7 +368,6 @@
     <Compile Include="SlicerConfiguration\Settings\ActiveSliceSettings.cs" />
     <Compile Include="SlicerConfiguration\Settings\PrinterSettings.cs" />
     <Compile Include="DataStorage\Classic\ClassicSqlitePrinterProfiles.cs" />
-    <Compile Include="DesignTools\TestParts\BendOperation.cs" />
     <Compile Include="Utilities\AuthenticationData.cs" />
     <Compile Include="Utilities\LimitCallFrequency.cs" />
     <Compile Include="Utilities\SelectedListItems.cs" />
