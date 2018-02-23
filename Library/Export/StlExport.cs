@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl.Library.Export
 				return MeshExport.ExportMesh(libraryItem, outputPath);
 			}
 
-			return null;
+			return Task.FromResult(false);
 		}
 	}
 }
