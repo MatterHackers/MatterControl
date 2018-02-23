@@ -138,9 +138,9 @@ public class ChairFoot2 : MatterCadObject3D
 
 		public override string ActiveEditor => "PublicPropertyEditor";
 
+		public double Width { get; set; } = 20;
 		public double Depth { get; set; } = 20;
 		public double Height { get; set; } = 20;
-		public double Width { get; set; } = 20;
 
 		public static CubeObject3D Create()
 		{

@@ -28,8 +28,6 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.ComponentModel;
-using System.Threading;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.PolygonMesh;
@@ -37,56 +35,87 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class TorusObject3D : Object3D, IRebuildable
+	public class HexagonPath : Object3D
 	{
-		public override string ActiveEditor => "PublicPropertyEditor";
+		IVertexSource Path { get; set; }
+		public double Radius { get; set; } = 10;
+		public double StrokeWidth { get; set; } = 2;
 
-		public TorusObject3D()
+		public void Rebuild()
+		{
+			var path = new VertexStorage();
+			path.MoveTo(Radius, 0);
+			for(int i=1; i<6; i++)
+			{
+				var angle = MathHelper.Tau / 6 * i;
+				var next = new Vector2(Math.Cos(angle), Math.Sin(angle)) * Radius;
+				path.LineTo(next);
+			}
+
+			Path = new Stroke(path, StrokeWidth);
+		}
+	}
+
+	public class HexGridPath : Object3D
+	{
+		public double EdgeLength { get; set; } = 10;
+		public double StrokeWidth { get; set; } = 2;
+
+		public int GridWidth = 3;
+		public int GridHeight = 3;
+
+		public void Rebuild()
+		{
+			for(int y=0; y<GridHeight; y++)
+			{
+				for(int x=0; x<GridWidth; x++)
+				{
+
+				}
+			}
+
+			// convert it to a clipper array and union
+			// Convert back to a path
+		}
+	}
+
+	public class HexGridObject3D : Object3D, IRebuildable
+	{
+		public HexGridObject3D()
 		{
 		}
 
-		public static TorusObject3D Create()
+		public override string ActiveEditor => "PublicPropertyEditor";
+
+		public double EdgeLength { get; set; } = 10;
+		public double StrokeWidth { get; set; } = 2;
+		public double Height { get; set; } = 5;
+
+		public int GridWidth = 3;
+		public int GridHeight = 3;
+
+		// 
+
+		public static HexGridObject3D Create()
 		{
-			var item = new TorusObject3D();
+			var item = new HexGridObject3D();
 			item.Rebuild();
 			return item;
 		}
 
-		[DisplayName("Inner Diameter")]
-		public double InnerDiameter { get; set; } = 10;
-		[DisplayName("Outer Diameter")]
-		public double OuterDiameter { get; set; } = 20;
-		[DisplayName("Toroid Sides")]
-		public int ToroidSides { get; set; } = 20;
-		[DisplayName("Ring Sides")]
-		public int PoleSides { get; set; } = 16;
-		[DisplayName("Starting Angle")]
-		public double StartingAngle { get; set; } = 0;
-		[DisplayName("Ending Angle")]
-		public double EndingAngle { get; set; } = 360;
-
 		public void Rebuild()
 		{
+			var gridPath = new HexGridPath()
+			{
+				GridWidth = this.GridWidth,
+				GridHeight = this.GridHeight,
+				StrokeWidth = this.StrokeWidth,
+				EdgeLength = this.EdgeLength
+			};
+			gridPath.Rebuild();
 			var aabb = this.GetAxisAlignedBoundingBox();
 
-			var poleRadius = (OuterDiameter / 2 - InnerDiameter / 2) / 2;
-			var toroidRadius = InnerDiameter / 2 + poleRadius;
-			var path = new VertexStorage();
-			var angleDelta = MathHelper.Tau / PoleSides;
-			var angle = 0.0;
-			var circleCenter = new Vector2(toroidRadius, 0);
-			path.MoveTo(circleCenter + new Vector2(poleRadius * Math.Cos(angle), poleRadius * Math.Sin(angle)));
-			for (int i = 0; i < PoleSides - 1; i++)
-			{
-				angle += angleDelta;
-				path.LineTo(circleCenter + new Vector2(poleRadius * Math.Cos(angle), poleRadius * Math.Sin(angle)));
-			}
-
-			path.LineTo(circleCenter + new Vector2(poleRadius * Math.Cos(0), poleRadius * Math.Sin(0)));
-
-			var startAngle = MathHelper.Range0ToTau(MathHelper.DegreesToRadians(StartingAngle));
-			var endAngle = MathHelper.Range0ToTau(MathHelper.DegreesToRadians(EndingAngle));
-			Mesh = VertexSourceToMesh.Revolve(path, ToroidSides, startAngle, endAngle);
+			Mesh = PlatonicSolids.CreateCube(Width, Depth, Height);
 			if (aabb.ZSize > 0)
 			{
 				// If the part was already created and at a height, maintain the height.
