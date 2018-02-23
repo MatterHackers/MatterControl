@@ -59,11 +59,11 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		[DisplayName("Start Angle")]
 		//[Range(0, 360, ErrorMessage = "Angle {0} must be between {1} and {2}.")]
-		public double StartAngleDegrees { get; set; } = 0;
+		public double StartAngleDegrees { get; set; } = 20;
 
 		[DisplayName("End Angle")]
 		//[Range(0, 360, ErrorMessage = "Angle {0} must be between {1} and {2}.")]
-		public double EndAngleDegrees { get; set; } = 360;
+		public double EndAngleDegrees { get; set; } = 240;
 
 		public void Rebuild()
 		{
@@ -80,10 +80,11 @@ namespace MatterHackers.MatterControl.DesignTools
 				path.LineTo(new Vector2(radius * Math.Cos(angle), radius * Math.Sin(angle)));
 			}
 
-			var startAngle = MathHelper.DegreesToRadians(StartAngleDegrees);
-			var endAngle = MathHelper.DegreesToRadians(EndAngleDegrees);
+			var startAngle = MathHelper.Range0ToTau(MathHelper.DegreesToRadians(StartAngleDegrees));
+			var endAngle = MathHelper.Range0ToTau(MathHelper.DegreesToRadians(EndAngleDegrees));
+			var steps = Math.Max(1, (int)(LongitudeSides * MathHelper.Tau / Math.Abs(MathHelper.GetDeltaAngle(startAngle, endAngle)) + .5));
 			Mesh = VertexSourceToMesh.Revolve(path, 
-				Math.Max(1, (int)(LongitudeSides * MathHelper.GetDeltaAngle(startAngle, endAngle) / MathHelper.Tau)), 
+				steps, 
 				startAngle,
 				endAngle);
 			if (aabb.ZSize > 0)

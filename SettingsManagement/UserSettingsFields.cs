@@ -113,5 +113,23 @@ namespace MatterHackers.MatterControl
 
 			return result;
 		}
+
+		public void SetDouble(string keyToSet, double value)
+		{
+			UserSettings.Instance.set(keyToSet, value.ToString());
+		}
+
+		public double GetDouble(string keyToRead, double defaultValue = 0)
+		{
+			string currentValue = UserSettings.Instance.get(keyToRead);
+			double result = 0;
+			if (!double.TryParse(currentValue, out result))
+			{
+				result = defaultValue;
+				UserSettings.Instance.set(keyToRead, currentValue);
+			}
+
+			return result;
+		}
 	}
 }

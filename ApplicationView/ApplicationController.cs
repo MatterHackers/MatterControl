@@ -457,7 +457,7 @@ namespace MatterHackers.MatterControl
 			new SceneSelectionOperation()
 			{
 				TitleResolver = () => "Bend".Localize(),
-				Action = (scene) => new BendOperation(scene.SelectedItem),
+				Action = (scene) => new BendObject3D(scene.SelectedItem),
 				IsEnabled = (scene) => scene.HasSelection,
 			},
 			new SceneSelectionOperation()
@@ -1724,8 +1724,7 @@ namespace MatterHackers.MatterControl
 
 			systemWindow.AddChild(overlay);
 
-			var imagePath = AggContext.StaticData.MapPath(Path.Combine("Images", "splash.png"));
-			var sourceImage = AggContext.StaticData.LoadImage(imagePath);
+			var sourceImage = AggContext.StaticData.LoadImage(Path.Combine("Images", "splash.png"));
 
 			overlay.BeforeDraw += (s, e) =>
 			{

@@ -10,7 +10,7 @@ using MatterHackers.PolygonMesh;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class BendOperation
+	public class BendObject3D
 	{
 		[DisplayName("Bend Up")]
 		public bool BendCW { get; set; } = true;
@@ -20,7 +20,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		IObject3D operationContainer;
 
-		public BendOperation(IObject3D child)
+		public BendObject3D(IObject3D child)
 		{
 			var scene = ApplicationController.Instance.ActivePrinter.Bed.Scene;
 

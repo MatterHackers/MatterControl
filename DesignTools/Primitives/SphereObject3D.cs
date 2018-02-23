@@ -52,27 +52,25 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 
 		public double Diameter { get; set; } = 20;
-		[DisplayName("Longitude Sides")]
-		public int LongitudeSides { get; set; } = 30;
-		[DisplayName("Latitude Sides")]
-		public int LatitudeSides { get; set; } = 20;
+		[DisplayName("Sides")]
+		public int Sides { get; set; } = 30;
 
 		public void Rebuild()
 		{
 			var aabb = this.GetAxisAlignedBoundingBox();
 
 			var path = new VertexStorage();
-			var angleDelta = MathHelper.Tau / 2 / LatitudeSides;
+			var angleDelta = MathHelper.Tau / 2 / Sides;
 			var angle = -MathHelper.Tau / 4;
 			var radius = Diameter / 2;
 			path.MoveTo(new Vector2(radius * Math.Cos(angle), radius * Math.Sin(angle)));
-			for (int i = 0; i < LatitudeSides; i++)
+			for (int i = 0; i < Sides; i++)
 			{
 				angle += angleDelta;
 				path.LineTo(new Vector2(radius * Math.Cos(angle), radius * Math.Sin(angle)));
 			}
 
-			Mesh = VertexSourceToMesh.Revolve(path, LongitudeSides);
+			Mesh = VertexSourceToMesh.Revolve(path, Sides);
 			if (aabb.ZSize > 0)
 			{
 				// If the part was already created and at a height, maintain the height.
