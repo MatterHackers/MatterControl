@@ -763,9 +763,24 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			}
 #endif
 
-			menuActions.Add(new MenuSeparator("ListView Options"));
+			menuActions.Add(new PrintItemAction()
+			{
+				Title = "Open Package".Localize(),
+				Action = (selectedItems, listView) =>
+				{
+					var firstItem = selectedItems.First();
 
-			menuActions.AddRange(this.GetViewMenu());
+					if (firstItem is ILibraryAsset libraryAsset)
+					{
+						var container = new McxContainer(libraryAsset);
+						container.Load();
+
+						container.Parent = ApplicationController.Instance.Library.ActiveContainer;
+
+						ApplicationController.Instance.Library.ActiveContainer = container;
+					}
+				}
+			});
 		}
 
 		public List<PrintItemAction> GetViewMenu()
