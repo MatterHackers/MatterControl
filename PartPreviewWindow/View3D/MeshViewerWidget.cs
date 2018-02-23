@@ -431,7 +431,7 @@ namespace MatterHackers.MeshVisualizer
 					item.Mesh.FaceTexture.TryGetValue((item.Mesh.Faces[0], 0), out faceTexture);
 					bool hasPersistableTexture = faceTexture == MeshViewerWidget.ViewOnlyTexture;
 
-					if (item.Persistable)
+					if (item.WorldPersistable())
 					{
 						if (hasPersistableTexture)
 						{
