@@ -115,6 +115,7 @@
     <Compile Include="DesignTools\Operations\SetCenter.cs" />
     <Compile Include="DesignTools\Operations\Package.cs" />
     <Compile Include="DesignTools\Operations\Translate.cs" />
+    <Compile Include="Library\Providers\FileSystem\McxContainer.cs" />
     <Compile Include="Library\Providers\GraphConfig.cs" />
     <Compile Include="CustomWidgets\InlineTitleEdit.cs" />
     <Compile Include="Library\DynamicContentStore.cs" />

@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, John Lewin
+Copyright (c) 2018, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -28,41 +28,38 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Linq;
 using MatterHackers.DataConverters3D;
+using static MatterHackers.MatterControl.PartPreviewWindow.SelectedObjectPanel;
 
 namespace MatterHackers.MatterControl.Library
 {
-	public interface ILibraryItem
+	public class McxContainer : LibraryContainer
 	{
-		string ID { get; }
-		string Name { get; }
-		bool IsProtected { get; }
-		bool IsVisible { get; }
-	}
+		private IObject3D sourceItem;
 
-	public interface ILibraryObject3D : ILibraryAsset
-	{
-		Task<IObject3D> GetObject3D(Action<double, string> reportProgress);
-	}
+		public McxContainer(ILibraryAsset libraryAsset)
+		{
+			sourceItem = libraryAsset.CreateContent(null).Result;
+			this.Name = sourceItem.Name;
+		}
 
-	public interface ILibraryAssetStream : ILibraryAsset
-	{
-		/// <summary>
-		// Gets the size, in bytes, of the current file.
-		/// </summary>
-		long FileSize { get; }
-
-		bool LocalContentExists { get; }
-
-		Task<StreamAndLength> GetStream(Action<double, string> progress);
-	}
-
-	public interface ILibraryAsset : ILibraryItem
-	{
-		string ContentType { get; }
-		string Category { get; }
-		string FileName { get; }
-		string AssetPath { get; }
+		public override void Load()
+		{
+			try
+			{
+				this.ChildContainers = new List<ILibraryContainerLink>();
+				this.Items = sourceItem.Children.Select(m => new InMemoryItem(m)).ToList<ILibraryItem>();
+			}
+			catch (Exception ex)
+			{
+				this.ChildContainers = new List<ILibraryContainerLink>();
+				this.Items = new List<ILibraryItem>()
+				{
+					new MessageItem("Error loading container - " + ex.Message)
+				};
+			}
+		}
 	}
 }

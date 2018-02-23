@@ -459,7 +459,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			public string ID => existingItem.ID;
 
-			public string Name => existingItem.Name;
+			public string Name => existingItem.Name ?? "Unknown".Localize();
 
 			public string FileName => $"{this.Name}.{this.ContentType}";
 
