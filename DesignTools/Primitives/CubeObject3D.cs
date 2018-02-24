@@ -32,108 +32,18 @@ using MatterHackers.PolygonMesh;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	/*
-
-public class ChairFoot2 : MatterCadObject3D
-{
-	public ChairFoot()
-	{
-		Rebuild();
-	}
-
-	[DisplayName("Angle")]
-	public double AngleDegrees { get; set; } = 3;
-
-	// these are the public variables that would be edited
-	[DisplayName("Final")]
-	public bool FinalPart { get; set; } = true;
-
-	[DisplayName("Height")]
-	public double HeightFromFloorToBottomOfLeg { get; set; } = 10;
-
-	[DisplayName("Inner Size")]
-	public double InnerSize { get; set; } = 20;
-
-	[DisplayName("Reach")]
-	public double InsideReach { get; set; } = 10;
-
-	[DisplayName("Outer Size")]
-	public double OuterSize { get; set; } = 22;
-
-	public void Rebuild()
-	{
-		// This would be better expressed as the desired offset height (height from ground to bottom of chair leg).
-		double angleRadians = MathHelper.DegreesToRadians(AngleDegrees);
-		double extraHeightForRotation = Math.Sinh(angleRadians) * OuterSize; // get the distance to clip off the extra bottom
-		double unclippedFootHeight = HeightFromFloorToBottomOfLeg + extraHeightForRotation;
-
-		if (FinalPart)
-		{
-			Box chairFootBox = new Box(OuterSize, OuterSize, unclippedFootHeight);
-			//chairFootBox.BevelEdge(Edge.LeftBack, 2);
-			//chairFootBox.BevelEdge(Edge.LeftFront, 2);
-			//chairFootBox.BevelEdge(Edge.RightBack, 2);
-			//chairFootBox.BevelEdge(Edge.RightFront, 2);
-			IObject3D chairFoot = chairFootBox;
-
-			IObject3D ring = new Cylinder(InnerSize / 2 - 1, InsideReach, 30);
-			ring -= new Cylinder(ring.XSize / 2 - 2, ring.ZSize + 1, 30);
-
-			IObject3D fins = new Box(3, 1, ring.ZSize);
-			fins = new Translate(fins, 0, 1) + new Translate(fins, 0, -1);
-			fins -= new Align(new Rotate(new Box(5, 5, 5), 0, MathHelper.DegreesToRadians(45)), Face.Bottom | Face.Left, fins, Face.Top | Face.Left, 0, 0, -fins.XSize);
-			fins = new Translate(fins, InnerSize / 2 - .1);
-
-			ring += new Rotate(fins, 0, 0, MathHelper.DegreesToRadians(45));
-			ring += new Rotate(fins, 0, 0, MathHelper.DegreesToRadians(45 + 90));
-			ring += new Rotate(fins, 0, 0, MathHelper.DegreesToRadians(45 + 180));
-			ring += new Rotate(fins, 0, 0, MathHelper.DegreesToRadians(45 - 90));
-
-			chairFoot += new Align(ring, Face.Bottom, chairFoot, Face.Top, 0, 0, -.1);
-
-			chairFoot = new Rotate(chairFoot, 0, angleRadians, 0);
-			IObject3D clipBox = new Align(new Box(OuterSize * 2, OuterSize * 2, unclippedFootHeight), Face.Top, chairFoot, Face.Bottom, 0, 0, extraHeightForRotation);
-			chairFoot -= clipBox;
-			chairFoot = new Translate(chairFoot, 0, 0, clipBox.GetAxisAlignedBoundingBox().maxXYZ.Z);
-
-			this.Mesh = CsgToMesh.Convert(chairFoot);
-		}
-		else // fit part
-		{
-			double baseHeight = 3;
-			double insideHeight = 4;
-			Box chairFootBox = new Box(OuterSize, OuterSize, baseHeight);
-			chairFootBox.BevelEdge(Edge.LeftBack, 2);
-			chairFootBox.BevelEdge(Edge.LeftFront, 2);
-			chairFootBox.BevelEdge(Edge.RightBack, 2);
-			chairFootBox.BevelEdge(Edge.RightFront, 2);
-			IObject3D chairFoot = chairFootBox;
-
-			IObject3D ring = new Cylinder(InnerSize / 2 - 1, insideHeight, 30);
-			ring -= new Cylinder(ring.XSize / 2 - 2, ring.ZSize + 1, 30);
-
-			IObject3D fins = new Box(3, 1, ring.ZSize);
-			fins = new Translate(fins, 0, 1) + new Translate(fins, 0, -1);
-			fins -= new Align(new Rotate(new Box(5, 5, 5), 0, MathHelper.DegreesToRadians(45)), Face.Bottom | Face.Left, fins, Face.Top | Face.Left, 0, 0, -fins.XSize);
-			fins = new Translate(fins, InnerSize / 2 - .1);
-
-			ring += new Rotate(fins, 0, 0, MathHelper.DegreesToRadians(45));
-			ring += new Rotate(fins, 0, 0, MathHelper.DegreesToRadians(45 + 90));
-			ring += new Rotate(fins, 0, 0, MathHelper.DegreesToRadians(45 + 180));
-			ring += new Rotate(fins, 0, 0, MathHelper.DegreesToRadians(45 - 90));
-
-			chairFoot += new Align(ring, Face.Bottom, chairFoot, Face.Top, 0, 0, -.1);
-
-			this.Mesh = CsgToMesh.Convert(chairFoot);
-		}
-	}
-}
-*/
-
 	public class CubeObject3D : Object3D, IRebuildable
 	{
 		public CubeObject3D()
 		{
+		}
+
+		public CubeObject3D(double width, double depth, double height)
+		{
+			Width = width;
+			Depth = depth;
+			Height = height;
+			Rebuild();
 		}
 
 		public override string ActiveEditor => "PublicPropertyEditor";

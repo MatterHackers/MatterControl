@@ -129,6 +129,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				BackgroundColor = theme.MinimalShade,
 				Margin = theme.ButtonSpacing
 			};
+			scene.SelectionChanged += (s, e) => editButton.Enabled = scene.SelectedItem?.CanEdit == true;
 			editButton.Click += async (s, e) =>
 			{
 				var bed = new BedConfig();
