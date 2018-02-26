@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl.Library.Export
 
 		public Task<bool> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath)
 		{
-			if (libraryItems.OfType<ILibraryAssetStream>().FirstOrDefault() is ILibraryAssetStream libraryItem)
+			if (libraryItems.OfType<ILibraryAsset>().FirstOrDefault() is ILibraryAsset libraryItem)
 			{
 				return MeshExport.ExportMesh(libraryItem, outputPath);
 			}

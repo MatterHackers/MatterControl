@@ -64,6 +64,31 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			return resultsA;
 		}
 
+		public static IObject3D Plus(this IObject3D a, IObject3D b)
+		{
+			var results = new Object3D();
+
+			results.Children.Add(a.Clone());
+			results.Children.Add(b.Clone());
+
+			return results;
+		}
+
+		public static double XSize(this IObject3D item)
+		{
+			return item.GetAxisAlignedBoundingBox().XSize;
+		}
+
+		public static double YSize(this IObject3D item)
+		{
+			return item.GetAxisAlignedBoundingBox().YSize;
+		}
+
+		public static double ZSize(this IObject3D item)
+		{
+			return item.GetAxisAlignedBoundingBox().ZSize;
+		}
+
 		public static void AddSelectionAsChildren(this InteractiveScene scene, IObject3D newParent)
 		{
 			if (scene.HasSelection)

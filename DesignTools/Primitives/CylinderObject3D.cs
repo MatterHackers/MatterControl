@@ -43,6 +43,15 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 		}
 
+		public CylinderObject3D(double diameter, double height, int sides)
+		{
+			Diameter = diameter;
+			Height = height;
+			Sides = sides;
+
+			Rebuild();
+		}
+
 		public static CylinderObject3D Create()
 		{
 			var item = new CylinderObject3D();
@@ -60,10 +69,10 @@ namespace MatterHackers.MatterControl.DesignTools
 			var aabb = this.GetAxisAlignedBoundingBox();
 
 			var path = new VertexStorage();
-			path.MoveTo(0, 0);
-			path.LineTo(Diameter / 2, 0);
-			path.LineTo(Diameter / 2, Height);
-			path.LineTo(0, Height);
+			path.MoveTo(0, -Height / 2);
+			path.LineTo(Diameter / 2, -Height / 2);
+			path.LineTo(Diameter / 2, Height / 2);
+			path.LineTo(0, Height / 2);
 
 			Mesh = VertexSourceToMesh.Revolve(path, Sides);
 
