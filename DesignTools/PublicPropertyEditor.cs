@@ -70,6 +70,18 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 	}
 
+	[AttributeUsage(AttributeTargets.Class)]
+	public class UnlockLinkAttribute : Attribute
+	{
+		public static string DetailPageBaseUrl => "https://www.matterhackers.com/store/l/";
+
+		public string DetailsPageLink { get; private set; }
+		public UnlockLinkAttribute(string detailsPageLink)
+		{
+			DetailsPageLink = detailsPageLink;
+		}
+	}
+
 	public class PublicPropertyEditor : IObject3DEditor
 	{
 		private IObject3D item;
@@ -172,6 +184,8 @@ namespace MatterHackers.MatterControl.DesignTools
 					PropertyType = p.PropertyType,
 					PropertyInfo = p
 				});
+
+			AddUnlockLinkIfRequired(editControlsContainer, theme);
 
 			GuiWidget rowContainer = null;
 			foreach (var property in editableProperties)
@@ -452,6 +466,26 @@ namespace MatterHackers.MatterControl.DesignTools
 			editControlsContainer.AddChild(updateButton);
 			// make sure the ui is set right to start
 			propertyGridModifier?.UpdateControls(this);
+		}
+
+		private void AddUnlockLinkIfRequired(FlowLayoutWidget editControlsContainer, ThemeConfig theme)
+		{
+			var unlockLink = item.GetType().GetCustomAttributes(typeof(UnlockLinkAttribute), true).FirstOrDefault() as UnlockLinkAttribute;
+			if (unlockLink != null
+				&& !string.IsNullOrEmpty(unlockLink.DetailsPageLink)
+				&& !item.Persistable)
+			{
+				var row = CreateSettingsRow(item.Persistable ? "Registerd" : "Demo Mode");
+				Button detailsLink = theme.ButtonFactory.Generate("Unlock".Localize(), AggContext.StaticData.LoadIcon("locked.png", 16, 16));
+				detailsLink.BackgroundColor = theme.Colors.PrimaryAccentColor.AdjustContrast(theme.Colors.PrimaryTextColor, 8).ToColor();
+				detailsLink.Margin = new BorderDouble(5);
+				detailsLink.Click += (s, e) =>
+				{
+					ApplicationController.Instance.LaunchBrowser(UnlockLinkAttribute.DetailPageBaseUrl + unlockLink.DetailsPageLink);
+				};
+				row.AddChild(detailsLink);
+				editControlsContainer.AddChild(row);
+			}
 		}
 
 		private GuiWidget CreateEnumEditor(IRebuildable item, 
