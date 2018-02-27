@@ -1738,10 +1738,10 @@ namespace MatterHackers.MatterControl
 			// Position
 			var aabb = logoMesh.GetAxisAlignedBoundingBox();
 			logoMesh.Transform(Matrix4X4.CreateTranslation(-aabb.Center));
-			logoMesh.Transform(Matrix4X4.CreateScale(1.3 / aabb.XSize));
+			logoMesh.Transform(Matrix4X4.CreateScale(1.6 / aabb.XSize));
 
 			var loadTime = Stopwatch.StartNew();
-			var anglePerDraw = 1 / MathHelper.Tau;
+			var anglePerDraw = 1 / MathHelper.Tau * 0.6;
 			var angle = 0.0;
 
 			overlay.BeforeDraw += (s, e) =>
@@ -1753,7 +1753,7 @@ namespace MatterHackers.MatterControl
 				var screenSpaceBounds = overlay.TransformToScreenSpace(overlay.LocalBounds);
 				WorldView world = new WorldView(screenSpaceBounds.Width, screenSpaceBounds.Height);
 				world.Translate(new Vector3(0, 0.5, 0));
-				world.Rotate(Quaternion.FromEulerAngles(new Vector3(-0.4, 0, 0)));
+				world.Rotate(Quaternion.FromEulerAngles(new Vector3(-0.1, 0, 0)));
 
 				InteractionLayer.SetGlContext(world, screenSpaceBounds, lighting);
 				GLHelper.Render(logoMesh, Color.White, Matrix4X4.CreateRotationY(angle), RenderTypes.Shaded);
@@ -1783,7 +1783,7 @@ namespace MatterHackers.MatterControl
 
 			progressPanel.AddChild(statusText = new TextWidget("", textColor: new Color("#9ad5dd"))
 			{
-				MinimumSize = new VectorMath.Vector2(200, 30),
+				MinimumSize = new Vector2(200, 30),
 				HAnchor = HAnchor.Center,
 				AutoExpandBoundsToText = true
 			});
@@ -1793,7 +1793,7 @@ namespace MatterHackers.MatterControl
 				FillColor = new Color("#049eb6"),
 				BorderColor = new Color("#006f83"),
 				Height = 11,
-				Width = 300,
+				Width = 230,
 				HAnchor = HAnchor.Center,
 				VAnchor = VAnchor.Absolute
 			});
