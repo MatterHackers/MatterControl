@@ -37,25 +37,27 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 	{
 		private ExplorerFeedItem item;
 
+		public static int IconSize => (int)(40 * GuiWidget.DeviceScale);
+		public static int ItemSpacing { get; } = 10;
+
 		public ExploreItem(ExplorerFeedItem item, ThemeConfig theme)
 		{
-			int spacing = 10;
 
 			this.HAnchor = HAnchor.Absolute;
 			this.Width = 400 * GuiWidget.DeviceScale;
 			//this.Border = spacing;
-			this.Padding = spacing;
+			this.Padding = ItemSpacing;
 			this.item = item;
 
 			if (item.icon != null)
 			{
-				ImageBuffer image = new ImageBuffer((int)(40 * GuiWidget.DeviceScale), (int)(40 * GuiWidget.DeviceScale));
+				ImageBuffer image = new ImageBuffer(IconSize, IconSize);
 
 				var imageWidget = new ImageWidget(image)
 				{
 					Selectable = false,
 					VAnchor = VAnchor.Top,
-					Margin = new BorderDouble(right: spacing)
+					Margin = new BorderDouble(right: ItemSpacing)
 				};
 
 				imageWidget.Load += (s, e) => ApplicationController.Instance.DownloadToImageAsync(image, item.icon, true, new BlenderPreMultBGRA());
