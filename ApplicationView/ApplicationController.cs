@@ -63,6 +63,8 @@ namespace MatterHackers.MatterControl
 	using MatterHackers.MatterControl.PartPreviewWindow;
 	using MatterHackers.MatterControl.PartPreviewWindow.View3D;
 	using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
+	using MatterHackers.PolygonMesh;
+	using MatterHackers.RenderOpenGl;
 	using MatterHackers.SerialPortCommunication;
 	using MatterHackers.VectorMath;
 	using SettingsManagement;
@@ -1719,20 +1721,55 @@ namespace MatterHackers.MatterControl
 
 			var systemWindow = new RootSystemWindow(width, height);
 
-			var overlay = new GuiWidget();
+			var overlay = new GuiWidget()
+			{
+				BackgroundColor = Color.DarkGray
+			};
 			overlay.AnchorAll();
 
 			systemWindow.AddChild(overlay);
 
-			var sourceImage = AggContext.StaticData.LoadImage(Path.Combine("Images", "splash.png"));
+			// loading animation stuff
+			LightingData lighting = new LightingData();
+
+			var logoPath = AggContext.StaticData.MapPath(Path.Combine("OEMSettings", "SampleParts", "MH Logo.stl"));
+			var logoMesh = MeshFileIo.Load(logoPath, CancellationToken.None).Mesh;
+
+			// Position
+			var aabb = logoMesh.GetAxisAlignedBoundingBox();
+			logoMesh.Transform(Matrix4X4.CreateTranslation(-aabb.Center));
+			logoMesh.Transform(Matrix4X4.CreateScale(1.3 / aabb.XSize));
+
+			var loadTime = Stopwatch.StartNew();
+			var anglePerDraw = 1 / MathHelper.Tau;
+			var angle = 0.0;
 
 			overlay.BeforeDraw += (s, e) =>
 			{
-				var destCenter = new Vector2(systemWindow.Width / 2, systemWindow.Height / 2);
-				var imageCenter = new Vector2(sourceImage.Width / 2, sourceImage.Height / 2);
-				var scale = Math.Max(systemWindow.Width / sourceImage.Width, systemWindow.Height / sourceImage.Height);
-				e.graphics2D.RenderCentered(sourceImage, sourceImage.Width * scale, sourceImage.Height * scale);
+				var thisAngle = Math.Min(anglePerDraw, loadTime.Elapsed.TotalSeconds * MathHelper.Tau);
+				angle += thisAngle;
+				loadTime.Restart();
+
+				var screenSpaceBounds = overlay.TransformToScreenSpace(overlay.LocalBounds);
+				WorldView world = new WorldView(screenSpaceBounds.Width, screenSpaceBounds.Height);
+				world.Translate(new Vector3(0, 0.5, 0));
+				world.Rotate(Quaternion.FromEulerAngles(new Vector3(-0.4, 0, 0)));
+
+				InteractionLayer.SetGlContext(world, screenSpaceBounds, lighting);
+				GLHelper.Render(logoMesh, Color.White, Matrix4X4.CreateRotationY(angle), RenderTypes.Shaded);
+				InteractionLayer.UnsetGlContext();
 			};
+
+			Action action = null;
+			action = () =>
+			{
+				overlay.Invalidate();
+				if (!overlay.HasBeenClosed)
+				{
+					UiThread.RunOnIdle(action, .05);
+				}
+			};
+			UiThread.RunOnIdle(action, .05);
 
 			progressPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{

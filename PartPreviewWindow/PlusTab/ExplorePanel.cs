@@ -246,6 +246,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 			}
 		}
 
+		public override void OnMouseWheel(MouseEventArgs mouseEvent)
+		{
+			int direction = (mouseEvent.WheelDelta > 0) ? -1 : 1;
+			this.ScrollPosition += new Vector2(0, (ExploreItem.IconSize + (ExploreItem.ItemSpacing * 2)) * direction);
+		}
+
 		private void AddControlsForContent(ExplorerFeed contentList)
 		{
 			foreach (var content in contentList.Content)
