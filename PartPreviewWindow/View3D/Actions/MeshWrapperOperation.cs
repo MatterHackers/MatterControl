@@ -52,6 +52,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			{
 				meshWrapper.Remove();
 			}
+			foreach(var child in Children)
+			{
+				child.OutputType = PrintOutputTypes.Default;
+			}
 			// collapes our children into our parent
 			base.Remove();
 		}

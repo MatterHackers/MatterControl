@@ -146,17 +146,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					// make sure the mesh on the group is not visible
 					group.ResetMeshWrappers();
 
-					var wrappedItems = item.DescendantsAndSelf().Where((obj) => obj.OwnerID == group.ID).ToList();
-					foreach (var meshWrapper in wrappedItems)
-					{
-						// and set the output type for this checkbox
-						meshWrapper.OutputType = checkBox.Checked ? PrintOutputTypes.Hole : PrintOutputTypes.Solid;
-					}
+					// and set the output type for this checkbox
+					item.OutputType = checkBox.Checked ? PrintOutputTypes.Hole : PrintOutputTypes.Solid;
 
-					var allItems = group.DescendantsAndSelf().Where((obj) => obj.OwnerID == group.ID).ToList();
-					int holeCount = allItems.Where((o) => o.OutputType == PrintOutputTypes.Hole).Count();
-					int solidCount = allItems.Where((o) => o.OutputType != PrintOutputTypes.Hole).Count();
-					updateButton.Enabled = allItems.Count() != holeCount && allItems.Count() != solidCount;
+					int holeCount = children.Where((o) => o.OutputType == PrintOutputTypes.Hole).Count();
+					int solidCount = children.Where((o) => o.OutputType != PrintOutputTypes.Hole).Count();
+					updateButton.Enabled = children.Count != holeCount && children.Count != solidCount;
 				};
 
 				tabContainer.AddChild(rowContainer);
@@ -194,9 +189,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			{
 				var progressStatus = new ProgressStatus();
 
-				var participants = group.DescendantsAndSelf().Where((obj) => obj.OwnerID == group.ID).ToList();
-				var paintObjects = participants.Where((obj) => obj.OutputType == PrintOutputTypes.Hole).ToList();
-				var keepObjects = participants.Where((obj) => obj.OutputType != PrintOutputTypes.Hole).ToList();
+				var paintObjects = group.Children
+					.Where((i) => i.OutputType == PrintOutputTypes.Hole)
+					.SelectMany((h) => h.DescendantsAndSelf())
+					.Where((c) => c.OwnerID == group.ID).ToList();
+				var keepObjects = group.Children
+					.Where((i) => i.OutputType != PrintOutputTypes.Hole)
+					.SelectMany((h) => h.DescendantsAndSelf())
+					.Where((c) => c.OwnerID == group.ID).ToList();
 
 				if (paintObjects.Any()
 					&& keepObjects.Any())
@@ -247,6 +247,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 						// now set it to the new solid color
 						paint.OutputType = PrintOutputTypes.Solid;
 					}
+				}
+
+				// and finally make sure all children are visible
+				foreach(var child in group.Children)
+				{
+					child.OutputType = PrintOutputTypes.Default;
 				}
 
 				return Task.CompletedTask;

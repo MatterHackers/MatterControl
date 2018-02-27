@@ -127,17 +127,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					// make sure the mesh on the group is not visible
 					group.ResetMeshWrappers();
 
-					var wrappedItems = item.DescendantsAndSelf().Where((obj) => obj.OwnerID == group.ID).ToList();
-					foreach (var meshWrapper in wrappedItems)
-					{
-						// and set the output type for this checkbox
-						meshWrapper.OutputType = checkBox.Checked ? PrintOutputTypes.Hole : PrintOutputTypes.Solid;
-					}
+					// and set the output type for this checkbox
+					item.OutputType = checkBox.Checked ? PrintOutputTypes.Hole : PrintOutputTypes.Solid;
 
-					var allItems = group.Descendants().Where((obj) => obj.OwnerID == group.ID).ToList();
-					int holeCount = allItems.Where((o) => o.OutputType == PrintOutputTypes.Hole).Count();
-					int solidCount = allItems.Where((o) => o.OutputType != PrintOutputTypes.Hole).Count();
-					updateButton.Enabled = allItems.Count != holeCount && allItems.Count != solidCount;
+					int holeCount = children.Where((o) => o.OutputType == PrintOutputTypes.Hole).Count();
+					int solidCount = children.Where((o) => o.OutputType != PrintOutputTypes.Hole).Count();
+					updateButton.Enabled = children.Count != holeCount && children.Count != solidCount;
 				};
 
 				tabContainer.AddChild(rowContainer);
@@ -178,9 +173,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					var progressStatus = new ProgressStatus();
 					reporter.Report(progressStatus);
 
-					var participants = group.Descendants().Where(o => o.OwnerID == group.ID).ToList();
-					var removeObjects = participants.Where((obj) => obj.OutputType == PrintOutputTypes.Hole).ToList();
-					var keepObjects = participants.Where((obj) => obj.OutputType != PrintOutputTypes.Hole).ToList();
+					var removeObjects = group.Children
+						.Where((i) => i.OutputType == PrintOutputTypes.Hole)
+						.SelectMany((h) => h.DescendantsAndSelf())
+						.Where((c) => c.OwnerID == group.ID).ToList();
+					var keepObjects = group.Children
+						.Where((i) => i.OutputType != PrintOutputTypes.Hole)
+						.SelectMany((h) => h.DescendantsAndSelf())
+						.Where((c) => c.OwnerID == group.ID).ToList();
 
 					Subtract(keepObjects, removeObjects, cancellationToken, reporter);
 					return Task.CompletedTask;
