@@ -86,6 +86,10 @@
     <Compile Include="ApplicationView\OemProfileDictionary.cs" />
     <Compile Include="ApplicationView\WindowsPlatformsFeatures.cs" />
     <Compile Include="DataStorage\ApplicationDataStorage.cs" />
+    <Compile Include="DesignTools\Attributes\IconsAttribute.cs" />
+    <Compile Include="DesignTools\ImageAsset.cs" />
+    <Compile Include="DesignTools\Interfaces\IPropertyGridModifier.cs" />
+    <Compile Include="DesignTools\Interfaces\IRebuildable.cs" />
     <Compile Include="DesignTools\Operations\ArrangeObject3D.cs" />
     <Compile Include="DesignTools\Operations\ArrayAdvancedObject3D.cs" />
     <Compile Include="DesignTools\Operations\ArrayLinearObject3D.cs" />
@@ -115,6 +119,8 @@
     <Compile Include="DesignTools\Operations\SetCenter.cs" />
     <Compile Include="DesignTools\Operations\Package.cs" />
     <Compile Include="DesignTools\Operations\Translate.cs" />
+    <Compile Include="DesignTools\Attributes\SortableAttribute.cs" />
+    <Compile Include="DesignTools\Attributes\UnlockLinkAttribute.cs" />
     <Compile Include="Library\Providers\FileSystem\McxContainer.cs" />
     <Compile Include="Library\Providers\GraphConfig.cs" />
     <Compile Include="CustomWidgets\InlineTitleEdit.cs" />

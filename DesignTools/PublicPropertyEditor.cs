@@ -30,57 +30,24 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DesignTools.Operations;
+using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public interface IRebuildable
-	{
-		void Rebuild();
-	}
-
-	public interface IPropertyGridModifier
-	{
-		void UpdateControls(PublicPropertyEditor editor);
-	}
-
-	[AttributeUsage(AttributeTargets.Property)]
-	public class SortableAttribute : Attribute
-	{
-	}
-
-	[AttributeUsage(AttributeTargets.Property)]
-	public class IconsAttribute : Attribute
-	{
-		public string[] IconPaths { get; private set; }
-		public IconsAttribute(string[] iconPaths)
-		{
-			this.IconPaths = iconPaths;
-		}
-	}
-
-	[AttributeUsage(AttributeTargets.Class)]
-	public class UnlockLinkAttribute : Attribute
-	{
-		public static string DetailPageBaseUrl => "https://www.matterhackers.com/store/l/";
-
-		public string DetailsPageLink { get; private set; }
-		public UnlockLinkAttribute(string detailsPageLink)
-		{
-			DetailsPageLink = detailsPageLink;
-		}
-	}
 
 	public class PublicPropertyEditor : IObject3DEditor
 	{
@@ -90,11 +57,12 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public bool Unlocked { get; } = true;
 
-		private static Type[] allowedTypes = 
+		private static Type[] allowedTypes =
 		{
 			typeof(double), typeof(int), typeof(string), typeof(bool),
 			typeof(Vector2), typeof(Vector3),
-			typeof(DirectionVector), typeof(DirectionAxis)
+			typeof(DirectionVector), typeof(DirectionAxis),
+			typeof(ImageAsset)
 		};
 
 		public const BindingFlags OwnedPropertiesOnly = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
@@ -187,9 +155,10 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			AddUnlockLinkIfRequired(editControlsContainer, theme);
 
-			GuiWidget rowContainer = null;
 			foreach (var property in editableProperties)
 			{
+				GuiWidget rowContainer = null;
+
 				// create a double editor
 				if (property.Value is double doubleValue)
 				{
@@ -451,6 +420,14 @@ namespace MatterHackers.MatterControl.DesignTools
 							theme);
 					editControlsContainer.AddChild(rowContainer);
 				}
+				// create an image asset editor
+				else if(property.Value is ImageAsset imageAsset)
+				{
+					rowContainer = CreateImageEditor(rebuildable,
+							imageAsset,
+							theme);
+					editControlsContainer.AddChild(rowContainer);
+				}
 
 				// remember the row name and widget
 				editRows.Add(property.PropertyInfo.Name, rowContainer);
@@ -488,10 +465,141 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
+		private GuiWidget CreateImageEditor(IRebuildable item,
+			ImageAsset imageAsset,
+			ThemeConfig theme)
+		{
+			var column = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.Stretch
+			};
+
+			var imageSection = new SectionWidget(
+				"Image".Localize(),
+				new FlowLayoutWidget(FlowDirection.TopToBottom),
+				theme).ApplyBoxStyle(margin: 0);
+
+			column.AddChild(imageSection);
+
+			ImageBuffer thumbnailImage = SetImage(theme, imageAsset);
+
+			ImageWidget thumbnailWidget;
+			imageSection.ContentPanel.AddChild(thumbnailWidget = new ImageWidget(thumbnailImage)
+			{
+				Margin = new BorderDouble(bottom: 5),
+				HAnchor = HAnchor.Center
+			});
+
+			var changeImageButton = new TextButton("Change".Localize(), theme)
+			{
+				BackgroundColor = theme.MinimalShade
+			};
+			changeImageButton.Click += (sender, e) =>
+			{
+				UiThread.RunOnIdle(() =>
+				{
+					// we do this using to make sure that the stream is closed before we try and insert the Picture
+					AggContext.FileDialogs.OpenFileDialog(
+						new OpenFileDialogParams(
+							"Select an image file|*.jpg;*.png;*.bmp;*.gif;*.pdf",
+							multiSelect: false,
+							title: "Add Image".Localize()),
+						(openParams) =>
+						{
+							if (!File.Exists(openParams.FileName))
+							{
+								return;
+							}
+
+							imageAsset.AssetPath = openParams.FileName;
+							thumbnailWidget.Image = SetImage(theme, imageAsset);
+
+							item?.Rebuild();
+
+							column.Invalidate();
+						});
+				});
+			};
+
+			var row = new FlowLayoutWidget()
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit,
+			};
+			imageSection.ContentPanel.AddChild(row);
+
+			// Invert checkbox
+			var invertCheckbox = new CheckBox(new CheckBoxViewText("Invert".Localize(), textColor: theme.Colors.PrimaryTextColor))
+			{
+				Checked = imageAsset.Invert,
+				Margin = new BorderDouble(0),
+			};
+			invertCheckbox.CheckedStateChanged += (s, e) =>
+			{
+				imageAsset.Invert = invertCheckbox.Checked;
+				thumbnailWidget.Image = SetImage(theme, imageAsset);
+				item?.Rebuild();
+			};
+			row.AddChild(invertCheckbox);
+
+			row.AddChild(new HorizontalSpacer());
+
+			row.AddChild(changeImageButton);
+
+			return column;
+		}
+
+		private ImageBuffer SetImage(ThemeConfig theme, ImageAsset imageAsset)
+		{
+			var image = imageAsset.Image;
+			// Show image load error if needed
+			if (image == null)
+			{
+				image = new ImageBuffer(185, 185).SetPreMultiply();
+				var graphics2D = image.NewGraphics2D();
+
+				graphics2D.FillRectangle(0, 0, 185, 185, theme.MinimalShade);
+				graphics2D.Rectangle(0, 0, 185, 185, theme.SlightShade);
+				graphics2D.DrawString("Error Loading Image".Localize() + "...", 10, 185 / 2, baseline: Agg.Font.Baseline.BoundsCenter, color: Color.Red, pointSize: theme.DefaultFontSize, drawFromHintedCach: true);
+			}
+
+			return (image.Height <= 185) ? image : ScaleThumbnailImage(185, image);
+		}
+
+		private ImageBuffer ScaleThumbnailImage(int height, ImageBuffer imageBuffer)
+		{
+			if (imageBuffer.Height != height)
+			{
+				var factor = (double)height / imageBuffer.Height;
+
+				int width = (int)(imageBuffer.Width * factor);
+
+				var scaledImageBuffer = new ImageBuffer(width, height);
+				scaledImageBuffer.NewGraphics2D().Render(imageBuffer, 0, 0, width, height);
+				return scaledImageBuffer;
+			}
+
+			return imageBuffer;
+		}
+
+		private ImageBuffer ScaleThumbnailImage(int width, int height, ImageBuffer imageBuffer)
+		{
+			if (imageBuffer.Width != width)
+			{
+				var scaledImageBuffer = new ImageBuffer(width, height);
+				scaledImageBuffer.NewGraphics2D().Render(imageBuffer, 0, 0, scaledImageBuffer.Width, scaledImageBuffer.Height);
+				imageBuffer = scaledImageBuffer;
+			}
+
+			return imageBuffer;
+		}
+
 		private GuiWidget CreateEnumEditor(IRebuildable item, 
 			PropertyInfo propertyInfo, Type propertyType, object value, string displayName, 
 			ThemeConfig theme)
 		{
+			var propertyGridModifier = item as IPropertyGridModifier;
+
 			// Enum keyed on name to friendly name
 			var enumItems = Enum.GetNames(propertyType).Select(enumName =>
 			{
@@ -511,12 +619,25 @@ namespace MatterHackers.MatterControl.DesignTools
 				foreach (var enumItem in enumItems)
 				{
 					var localIndex = index;
-					var iconImage = AggContext.StaticData.LoadIcon(iconsAttribute.IconPaths[localIndex], 16, 16);
+					ImageBuffer iconImage = null;
+					if (iconsAttribute.Width > 0)
+					{
+						iconImage = AggContext.StaticData.LoadIcon(iconsAttribute.IconPaths[localIndex], iconsAttribute.Width, iconsAttribute.Height);
+					}
+					else
+					{
+						iconImage = AggContext.StaticData.LoadIcon(iconsAttribute.IconPaths[localIndex]);
+					}
 					var radioButton = new RadioButton(new ImageWidget(iconImage));
 					// set it if checked
 					if(enumItem.Value == value.ToString())
 					{
 						radioButton.Checked = true;
+						if (localIndex != 0
+							|| !iconsAttribute.Item0IsNone)
+						{
+							radioButton.BackgroundColor = new Color(Color.Black, 100);
+						}
 					}
 
 					rowContainer.AddChild(radioButton);
@@ -530,7 +651,9 @@ namespace MatterHackers.MatterControl.DesignTools
 								this.item,
 								new Object[] { Enum.Parse(propertyType, localItem.Key) });
 							item?.Rebuild();
-							if (localIndex != 0)
+							propertyGridModifier?.UpdateControls(this);
+							if (localIndex != 0
+								|| !iconsAttribute.Item0IsNone)
 							{
 								radioButton.BackgroundColor = new Color(Color.Black, 100);
 							}
@@ -561,6 +684,7 @@ namespace MatterHackers.MatterControl.DesignTools
 							this.item,
 							new Object[] { Enum.Parse(propertyType, localOredrItem.Key) });
 						item?.Rebuild();
+						propertyGridModifier?.UpdateControls(this);
 					};
 				}
 

@@ -1732,7 +1732,7 @@ namespace MatterHackers.MatterControl
 			// loading animation stuff
 			LightingData lighting = new LightingData();
 
-			var logoPath = AggContext.StaticData.MapPath(Path.Combine("OEMSettings", "SampleParts", "MH Logo.stl"));
+			var logoPath = AggContext.StaticData.MapPath(Path.Combine("Stls", "MH Logo.stl"));
 			var logoMesh = MeshFileIo.Load(logoPath, CancellationToken.None).Mesh;
 
 			// Position
