@@ -109,74 +109,37 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			toolbar.OverflowButton.Name = "Print Library View Options";
 			toolbar.ExtendOverflowMenu = (popupMenu) =>
 			{
-				var sortActions = new List<PrintItemAction>()
-				{
-					new PrintItemAction()
-					{
-						Title = "Date Created",
-						Action = (items, listview) =>
-						{
-							listview.ActiveSort = ListView.SortKey.CreatedDate;
-						}
-					},
-					new PrintItemAction()
-					{
-						Title = "Date Modified",
-						Action = (items, listview) =>
-						{
-							listview.ActiveSort = ListView.SortKey.ModifiedDate;
-						}
-					},
-					new PrintItemAction()
-					{
-						Title = "Name",
-						Action = (items, listview) =>
-						{
-							listview.ActiveSort = ListView.SortKey.Name;
-						}
-					},
-					new MenuSeparator(""),
-					new PrintItemAction()
-					{
-						Title = "Ascending",
-						Action = (items, listview) =>
-						{
-							listview.Ascending = true;
-						}
-					},
-					new PrintItemAction()
-					{
-						Title = "Descending",
-						Action = (items, listview) =>
-						{
-							listview.Ascending = false;
-						}
-					}
-				};
+				popupMenu.CreateBoolMenuItem(
+					"Date Created".Localize(),
+					() => libraryView.ActiveSort == ListView.SortKey.CreatedDate,
+					(v) => libraryView.ActiveSort = ListView.SortKey.CreatedDate,
+					useRadioStyle: true);
 
-				// Create menu items in the DropList for each element in this.menuActions
-				foreach (var menuAction in sortActions)
-				{
-					if (menuAction is MenuSeparator)
-					{
-						popupMenu.CreateHorizontalLine();
-					}
-					else
-					{
-						var menuItem = popupMenu.CreateMenuItem(menuAction.Title);
-						menuItem.Name = $"{menuAction.Title} Menu Item";
+				popupMenu.CreateBoolMenuItem(
+					"Date Modified".Localize(),
+					() => libraryView.ActiveSort == ListView.SortKey.ModifiedDate,
+					(v) => libraryView.ActiveSort = ListView.SortKey.ModifiedDate,
+					useRadioStyle: true);
 
-						menuItem.Enabled = menuAction.Action != null;
-						menuItem.ClearRemovedFlag();
-						menuItem.Click += (s, e) =>
-						{
-							menuAction.Action?.Invoke(libraryView.SelectedItems.Select(i => i.Model), libraryView);
-						};
+				popupMenu.CreateBoolMenuItem(
+					"Name".Localize(),
+					() => libraryView.ActiveSort == ListView.SortKey.Name,
+					(v) => libraryView.ActiveSort = ListView.SortKey.Name,
+					useRadioStyle: true);
 
-						// Store a reference to the newly created MenuItem back on the MenuAction definition
-						menuAction.MenuItem = menuItem;
-					}
-				}
+				popupMenu.CreateHorizontalLine();
+
+				popupMenu.CreateBoolMenuItem(
+					"Ascending".Localize(),
+					() => libraryView.Ascending,
+					(v) => libraryView.Ascending = true,
+					useRadioStyle: true);
+
+				popupMenu.CreateBoolMenuItem(
+					"Descending".Localize(),
+					() => !libraryView.Ascending,
+					(v) => libraryView.Ascending = false,
+					useRadioStyle: true);
 			};
 
 			toolbar.Padding = theme.ToolbarPadding;
