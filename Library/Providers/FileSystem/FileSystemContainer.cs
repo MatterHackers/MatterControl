@@ -159,10 +159,11 @@ namespace MatterHackers.MatterControl.Library
 					containers = new List<ILibraryContainerLink>();
 				}
 
-				var matchedFiles = (filter == "") ? nonZipFiles : nonZipFiles.Where(filePath =>
+				var matchedFiles = nonZipFiles.Where(filePath =>
 				{
 					string fileName = Path.GetFileName(filePath);
-					return FileNameContainsFilter(filePath, filter)
+
+					return (filter == "" || FileNameContainsFilter(filePath, filter))
 						&& ApplicationController.Instance.Library.IsContentFileType(fileName);
 				});
 
