@@ -42,6 +42,10 @@ namespace MatterHackers.MatterControl.Library
 
 		public bool IsReadOnly { get; set; } = false;
 
+		public DateTime DateCreated { get; } = DateTime.Now;
+
+		public DateTime DateModified { get; } = DateTime.Now;
+
 		private ImageBuffer thumbnail;
 		private Func<ILibraryContainer> containerCreator;
 		private Func<bool> visibilityResolver;

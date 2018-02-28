@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using System.IO;
 
 namespace MatterHackers.MatterControl.Library
@@ -48,9 +49,38 @@ namespace MatterHackers.MatterControl.Library
 		public FileSystemItem(string path)
 		{
 			this.Path = path;
+
+			var type = GetType();
+
+			try
+			{
+				if (type == typeof(FileSystemFileItem))
+				{
+					var fileInfo = new FileInfo(path);
+
+					this.DateCreated = fileInfo.CreationTime;
+					this.DateModified = fileInfo.LastWriteTime;
+				}
+				else
+				{
+					var directoryInfo = new DirectoryInfo(path);
+
+					this.DateCreated = directoryInfo.CreationTime;
+					this.DateModified = directoryInfo.LastWriteTime;
+				}
+			}
+			catch
+			{
+				this.DateCreated = DateTime.Now;
+				this.DateModified = DateTime.Now;
+			}
 		}
 
 		public virtual string ID => this.Path.GetHashCode().ToString();
+
+		public DateTime DateCreated { get; }
+
+		public DateTime DateModified { get; }
 
 		public virtual string Name
 		{
@@ -79,5 +109,9 @@ namespace MatterHackers.MatterControl.Library
 		public bool IsProtected => true;
 
 		public bool IsVisible => true;
+
+		public DateTime DateCreated { get; } = DateTime.Now;
+
+		public DateTime DateModified { get; } = DateTime.Now;
 	}
 }
