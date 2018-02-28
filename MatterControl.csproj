@@ -102,7 +102,7 @@
     <Compile Include="DesignTools\Operations\ScaleObject3D.cs" />
     <Compile Include="DesignTools\Operations\SmoothPath.cs" />
     <Compile Include="DesignTools\Primitives\BaseObject3D.cs" />
-    <Compile Include="DesignTools\Primitives\CylinderObject3D - Copy.cs" />
+    <Compile Include="DesignTools\Primitives\RingObject3D.cs" />
     <Compile Include="DesignTools\Primitives\RoofObject3D.cs" />
     <Compile Include="DesignTools\Primitives\RoundRoofObject3D.cs" />
     <Compile Include="DesignTools\Primitives\SphereAdvancedObject3D.cs" />
