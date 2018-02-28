@@ -31,16 +31,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
-using MatterHackers.Agg.UI;
-using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
-using MatterHackers.PolygonMesh;
-using MatterHackers.PolygonMesh.Processors;
 
 namespace MatterHackers.MatterControl.Library
 {
@@ -148,7 +142,7 @@ namespace MatterHackers.MatterControl.Library
 
 						case ILibraryAssetStream streamItem:
 
-							var fileName = (streamItem as ILibraryAssetStream)?.FileName; 
+							var fileName = (streamItem as ILibraryAssetStream)?.FileName;
 
 							using (var streamInfo = await streamItem.GetStream(null))
 							{
@@ -225,7 +219,7 @@ namespace MatterHackers.MatterControl.Library
 		}
 
 		/// <summary>
-		/// Creates a database PrintItem entity, copies the source file to a new library 
+		/// Creates a database PrintItem entity, copies the source file to a new library
 		/// path and updates the PrintItem to point at the new target
 		/// </summary>
 		private void AddItem(Stream stream, string extension, string displayName)
@@ -269,6 +263,10 @@ namespace MatterHackers.MatterControl.Library
 			public bool IsReadOnly { get; set; } = false;
 
 			public bool IsVisible { get; set; } = true;
+
+			public DateTime DateCreated { get; } = DateTime.Now;
+
+			public DateTime DateModified { get; } = DateTime.Now;
 
 			public Task<ILibraryContainer> GetContainer(Action<double, string> reportProgress)
 			{

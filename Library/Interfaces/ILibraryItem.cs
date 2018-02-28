@@ -39,6 +39,8 @@ namespace MatterHackers.MatterControl.Library
 		string Name { get; }
 		bool IsProtected { get; }
 		bool IsVisible { get; }
+		DateTime DateModified { get; }
+		DateTime DateCreated { get; }
 	}
 
 	public interface ILibraryObject3D : ILibraryAsset

@@ -58,6 +58,10 @@ namespace MatterHackers.MatterControl.Library
 
 		public bool IsVisible => true;
 
+		public DateTime DateCreated => this.PrintTask.PrintStart;
+
+		public DateTime DateModified => this.PrintTask.PrintEnd;
+
 		public bool LocalContentExists => true;
 
 		public string Category => "General";

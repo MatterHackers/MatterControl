@@ -1395,6 +1395,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			public bool IsVisible { get; set; }
 
+			public DateTime DateCreated { get; } = DateTime.Now;
+
+			public DateTime DateModified { get; } = DateTime.Now;
+
 			public long FileSize => 0;
 
 			public string AssetPath => "";

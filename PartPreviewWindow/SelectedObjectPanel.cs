@@ -468,6 +468,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			public bool IsVisible => existingItem.Visible;
 
+			public DateTime DateCreated { get; } = DateTime.Now;
+
+			public DateTime DateModified { get; } = DateTime.Now;
+
 			public string ContentType => "mcx";
 
 			public string Category => "General";

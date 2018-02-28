@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using System.Threading.Tasks;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
@@ -54,6 +55,10 @@ namespace MatterHackers.MatterControl.Library
 		public bool IsProtected  { get; set; }
 
 		public bool IsVisible { get; set; } = true;
+
+		public DateTime DateCreated { get; } = DateTime.Now;
+
+		public DateTime DateModified { get; } = DateTime.Now;
 
 		public ImageBuffer Thumbnail { get; set; }
 
