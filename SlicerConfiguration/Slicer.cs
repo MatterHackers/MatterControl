@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private static Dictionary<Mesh, MeshPrintOutputSettings> meshPrintOutputSettings = new Dictionary<Mesh, MeshPrintOutputSettings>();
 
 		public static List<bool> extrudersUsed = new List<bool>();
-		public static bool runInProcess = true;
+		public static bool runInProcess = false;
 
 		public static List<(Matrix4X4 matrix, string fileName)> GetStlFileLocations(IObject3D reloadedItem, ref string mergeRules, PrinterConfig printer, IProgress<ProgressStatus> progressReporter, CancellationToken cancellationToken)
 		{
@@ -102,7 +102,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						{
 							var extruderIndex = extruderIndexIn;
 							var itemsThisExtruder = meshItemsOnBuildPlate.Where((item) =>
-								(item.WorldMaterialIndex() == extruderIndex || (extruderIndex == 0 && item.WorldMaterialIndex() == -1))
+								(item.WorldMaterialIndex() == extruderIndex 
+									|| (extruderIndex == 0 
+										&& (item.WorldMaterialIndex() >= extruderCount || item.WorldMaterialIndex() == -1)))
 								&& (item.WorldOutputType() ==  PrintOutputTypes.Solid || item.WorldOutputType() == PrintOutputTypes.Default));
 
 							itemsByExtruder.Add(itemsThisExtruder);
