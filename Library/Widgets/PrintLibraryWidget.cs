@@ -116,6 +116,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						Title = "Date Created",
 						Action = (items, listview) =>
 						{
+							listview.ActiveSort = ListView.SortKey.CreatedDate;
 						}
 					},
 					new PrintItemAction()
@@ -123,6 +124,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						Title = "Date Modified",
 						Action = (items, listview) =>
 						{
+							listview.ActiveSort = ListView.SortKey.ModifiedDate;
 						}
 					},
 					new PrintItemAction()
@@ -130,6 +132,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						Title = "Name",
 						Action = (items, listview) =>
 						{
+							listview.ActiveSort = ListView.SortKey.Name;
 						}
 					},
 					new MenuSeparator(""),
@@ -138,6 +141,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						Title = "Ascending",
 						Action = (items, listview) =>
 						{
+							listview.Ascending = true;
 						}
 					},
 					new PrintItemAction()
@@ -145,6 +149,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						Title = "Descending",
 						Action = (items, listview) =>
 						{
+							listview.Ascending = false;
 						}
 					}
 				};

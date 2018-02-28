@@ -142,7 +142,38 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			ModifiedDate
 		}
 
-		public SortKey ActiveSort { get; set; } = SortKey.Name;
+		private SortKey _activeSort = SortKey.Name;
+		public SortKey ActiveSort
+		{
+			get => _activeSort;
+			set
+			{
+				if (_activeSort != value)
+				{
+					_activeSort = value;
+					this.ApplySort();
+				}
+			}
+		}
+
+		private bool _ascending = true;
+		public bool Ascending
+		{
+			get => _ascending;
+			set
+			{
+				if (_ascending != value)
+				{
+					_ascending = value;
+					this.ApplySort();
+				}
+			}
+		}
+
+		private void ApplySort()
+		{
+			this.Reload().ConfigureAwait(false);
+		}
 
 		/// <summary>
 		/// Empties the list children and repopulates the list with the source container content
@@ -175,14 +206,15 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			itemsContentView.BeginReload();
 
-			var containerItems = from item in sourceContainer.ChildContainers
+			IEnumerable<ILibraryItem> containerItems = from item in sourceContainer.ChildContainers
 								 where item.IsVisible && this.ContainerFilter(item)
-								 orderby item.Name
 								 select item;
 
 			// Folder items
-			foreach (var childContainer in containerItems)
+			foreach (var childContainer in this.SortItems(containerItems))
 			{
+				Console.WriteLine($"{childContainer.Name}:{childContainer.DateCreated}");
+
 				var listViewItem = new ListViewItem(childContainer, this);
 				listViewItem.DoubleClick += listViewItem_DoubleClick;
 				items.Add(listViewItem);
@@ -200,20 +232,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 											&& this.ItemFilter(item)
 									  select item;
 
-				filteredResults = filteredResults.OrderBy(item =>
+				foreach (var item in this.SortItems(filteredResults))
 				{
-					switch (ActiveSort)
-					{
-						case SortKey.Name:
-							return item.Name;
-
-						default:
-							return item.Name;
-					}
-				});
-
-				foreach (var item in filteredResults)
-				{
+					Console.WriteLine($"{item.Name}:{item.DateCreated}");
 					var listViewItem = new ListViewItem(item, this);
 					listViewItem.DoubleClick += listViewItem_DoubleClick;
 					items.Add(listViewItem);
@@ -223,7 +244,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				}
 
 				itemsContentView.EndReload();
-
 			}
 
 			if (sourceContainer is ILibraryWritableContainer writableContainer)
@@ -234,6 +254,30 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.Invalidate();
 
 			this.ContentReloaded?.Invoke(this, null);
+		}
+
+		private IEnumerable<ILibraryItem> SortItems(IEnumerable<ILibraryItem> items)
+		{
+			switch (ActiveSort)
+			{
+				case SortKey.CreatedDate when this.Ascending:
+					return items.OrderBy(item => item.DateCreated);
+
+				case SortKey.CreatedDate when !this.Ascending:
+					return items.OrderByDescending(item => item.DateCreated);
+
+				case SortKey.ModifiedDate when this.Ascending:
+					return items.OrderBy(item => item.DateModified);
+
+				case SortKey.ModifiedDate when !this.Ascending:
+					return items.OrderByDescending(item => item.DateModified);
+
+				case SortKey.Name when !this.Ascending:
+					return items.OrderByDescending(item => item.Name);
+
+				default:
+					return items.OrderBy(item => item.Name);
+			}
 		}
 
 		private void WritableContainer_ItemContentChanged(object sender, ItemChangedEventArgs e)
