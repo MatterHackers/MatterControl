@@ -265,7 +265,6 @@ namespace MatterHackers.MatterControl
 
 	public class ImportSettingsPage : DialogPage
 	{
-		private RadioButton newPrinterButton;
 		private RadioButton mergeButton;
 		private RadioButton newQualityPresetButton;
 		private RadioButton newMaterialPresetButton;
@@ -281,72 +280,30 @@ namespace MatterHackers.MatterControl
 			};
 			contentRow.AddChild(container);
 
-			if (true)
+			container.AddChild(new TextWidget("Merge Into:")
 			{
-				container.AddChild(new TextWidget("Merge Into:")
-				{
-					TextColor = ActiveTheme.Instance.PrimaryTextColor,
-					Margin = new BorderDouble(0, 0, 0, 5),
-				});
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				Margin = new BorderDouble(0, 0, 0, 5),
+			});
 
-				// merge into current settings
-				mergeButton = new RadioButton("Current".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
-				mergeButton.Checked = true;
-				container.AddChild(mergeButton);
+			// merge into current settings
+			mergeButton = new RadioButton("Current".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
+			mergeButton.Checked = true;
+			container.AddChild(mergeButton);
 
-				container.AddChild(new TextWidget("Create New:")
-				{
-					TextColor = ActiveTheme.Instance.PrimaryTextColor,
-					Margin = new BorderDouble(0, 0, 0, 15),
-				});
-
-				// add new profile
-				newPrinterButton = new RadioButton("Printer".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
-				container.AddChild(newPrinterButton);
-
-				// add as quality preset
-				newQualityPresetButton = new RadioButton("Quality preset".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
-				container.AddChild(newQualityPresetButton);
-
-				// add as material preset
-				newMaterialPresetButton = new RadioButton("Material preset".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
-				container.AddChild(newMaterialPresetButton);
-			}
-			else
+			container.AddChild(new TextWidget("Create New:")
 			{
-				// add new profile
-				newPrinterButton = new RadioButton("Import as new printer profile".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
-				newPrinterButton.Checked = true;
-				container.AddChild(newPrinterButton);
+				TextColor = ActiveTheme.Instance.PrimaryTextColor,
+				Margin = new BorderDouble(0, 0, 0, 15),
+			});
 
-				container.AddChild(
-					CreateDetailInfo("Add a new printer profile to your list of available printers.\nThis will not change your current settings.")
-					);
+			// add as quality preset
+			newQualityPresetButton = new RadioButton("Quality preset".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
+			container.AddChild(newQualityPresetButton);
 
-				// merge into current settings
-				mergeButton = new RadioButton("Merge into current printer profile".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
-				container.AddChild(mergeButton);
-
-				container.AddChild(
-					CreateDetailInfo("Merge settings and presets (if any) into your current profile. \nYou will still be able to revert to the factory settings at any time.")
-					);
-
-				// add as quality preset
-				newQualityPresetButton = new RadioButton("Import settings as new QUALITY preset".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
-				container.AddChild(newQualityPresetButton);
-
-				container.AddChild(
-					CreateDetailInfo("Add new quality preset with the settings from this import.")
-					);
-
-				// add as material preset
-				newMaterialPresetButton = new RadioButton("Import settings as new MATERIAL preset".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
-				container.AddChild(newMaterialPresetButton);
-
-				container.AddChild(
-					CreateDetailInfo("Add new material preset with the settings from this import.")
-					);
-			}
+			// add as material preset
+			newMaterialPresetButton = new RadioButton("Material preset".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
+			container.AddChild(newMaterialPresetButton);
 
 			var importButton = textImageButtonFactory.Generate("Choose File".Localize());
 			importButton.Click += (s, e) => UiThread.RunOnIdle(() =>
@@ -402,11 +359,7 @@ namespace MatterHackers.MatterControl
 
 		private void ImportSettingsFile(string settingsFilePath)
 		{
-			if (newPrinterButton.Checked)
-			{
-				ImportFromExisting(settingsFilePath);
-			}
-			else if (mergeButton.Checked)
+			if (mergeButton.Checked)
 			{
 				MergeSettings(settingsFilePath);
 			}
