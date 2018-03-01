@@ -260,6 +260,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				new NamedAction()
 				{
+					Title = "Import Printer Settings".Localize() + "...",
+					Action = importMaterialSettingsButton_Click
+				},
+				new NamedAction()
+				{
 					Icon = AggContext.StaticData.LoadIcon("memory_16x16.png", 16, 16),
 					Title = "Configure EEProm".Localize(),
 					Action = configureEePromButton_Click
@@ -315,6 +320,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			theme.CreateMenuItems(popupMenu, menuActions);
+		}
+
+		private void importMaterialSettingsButton_Click()
+		{
+			UiThread.RunOnIdle(() =>
+			{
+				DialogWindow.Show(new ImportSettingsPage());
+			});
 		}
 
 		private void configureEePromButton_Click()
