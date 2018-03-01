@@ -154,7 +154,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			//File.WriteAllText(@"c:\temp\file-b.txt", inMemoryData);
 
 			Assert.AreEqual(inMemoryData, onDiskData, "Serialized content should match");
-			Object3D.AssetsPath = tempPath;
+			Object3D.AssetsPath = Path.Combine(tempPath, "Assets");
 
 			// Save the scene a second time, validate that things remain the same
 			scene.Save(filePath);

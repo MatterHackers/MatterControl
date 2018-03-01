@@ -466,9 +466,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		private GuiWidget CreateImageEditor(IRebuildable item,
-			ImageAsset imageAsset,
-			ThemeConfig theme)
+		private GuiWidget CreateImageEditor(IRebuildable item, ImageAsset imageAsset, ThemeConfig theme)
 		{
 			var column = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{

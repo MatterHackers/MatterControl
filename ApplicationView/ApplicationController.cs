@@ -1681,7 +1681,6 @@ namespace MatterHackers.MatterControl
 				}
 				catch
 				{
-
 				}
 
 				executingTasks.Remove(taskDetails);

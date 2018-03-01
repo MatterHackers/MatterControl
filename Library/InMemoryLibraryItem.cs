@@ -28,41 +28,71 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.IO;
+using System.Threading.Tasks;
 using MatterHackers.DataConverters3D;
+using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.Library
 {
-	public class McxContainer : LibraryContainer
+	public class InMemoryLibraryItem : ILibraryObject3D, ILibraryAssetStream
 	{
-		private IObject3D sourceItem;
+		private IObject3D object3D;
 
-		public McxContainer()
+		public InMemoryLibraryItem(IObject3D object3D)
 		{
+			this.object3D = object3D;
+			this.Name = object3D.Name ?? "Unknown".Localize();
 		}
 
-		public McxContainer(ILibraryAsset libraryAsset)
+		public string ID => object3D.ID;
+
+		public string Name { get; set; }
+
+		public string FileName => $"{this.Name}.{this.ContentType}";
+
+		public bool IsProtected => !object3D.Persistable;
+
+		public bool IsVisible => object3D.Visible;
+
+		public DateTime DateCreated { get; } = DateTime.Now;
+
+		public DateTime DateModified { get; } = DateTime.Now;
+
+		public string ContentType => "mcx";
+
+		public string Category => "General";
+
+		public string AssetPath { get; set; }
+
+		public long FileSize => this.ToStream().Length;
+
+		public bool LocalContentExists => false;
+
+		public Task<IObject3D> GetObject3D(Action<double, string> reportProgress)
 		{
-			sourceItem = libraryAsset.CreateContent(null).Result;
-			this.Name = sourceItem.Name;
+			return Task.FromResult(object3D);
 		}
 
-		public override void Load()
+		public Task<StreamAndLength> GetStream(Action<double, string> progress)
 		{
-			try
+			return Task.FromResult(new StreamAndLength()
 			{
-				this.ChildContainers = new List<ILibraryContainerLink>();
-				this.Items = sourceItem.Children.Select(m => new InMemoryLibraryItem(m)).ToList<ILibraryItem>();
-			}
-			catch (Exception ex)
-			{
-				this.ChildContainers = new List<ILibraryContainerLink>();
-				this.Items = new List<ILibraryItem>()
-				{
-					new MessageItem("Error loading container - " + ex.Message)
-				};
-			}
+				Stream = this.ToStream()
+			});
+		}
+
+		private MemoryStream ToStream()
+		{
+			// Serialize to in memory stream
+			var memoryStream = new MemoryStream();
+
+			object3D.SaveTo(memoryStream);
+
+			// Reset to start of content
+			memoryStream.Position = 0;
+
+			return memoryStream;
 		}
 	}
 }

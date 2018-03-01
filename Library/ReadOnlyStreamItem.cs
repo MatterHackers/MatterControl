@@ -28,41 +28,46 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using MatterHackers.DataConverters3D;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.Library
 {
-	public class McxContainer : LibraryContainer
+	public class ReadOnlyStreamItem : ILibraryAssetStream
 	{
-		private IObject3D sourceItem;
+		private Func<Task<StreamAndLength>> streamSource;
 
-		public McxContainer()
+		public ReadOnlyStreamItem(Func<Task<StreamAndLength>> streamSource)
 		{
+			this.streamSource = streamSource;
 		}
 
-		public McxContainer(ILibraryAsset libraryAsset)
-		{
-			sourceItem = libraryAsset.CreateContent(null).Result;
-			this.Name = sourceItem.Name;
-		}
+		public string ContentType { get; set; }
 
-		public override void Load()
+		public string ID { get; set; }
+
+		public string Name { get; set; }
+
+		public string FileName { get; set; }
+
+		public bool IsProtected { get; set; }
+
+		public bool IsVisible { get; set; }
+
+		public DateTime DateCreated { get; } = DateTime.Now;
+
+		public DateTime DateModified { get; } = DateTime.Now;
+
+		public long FileSize => 0;
+
+		public string AssetPath => "";
+
+		public bool LocalContentExists => true;
+
+		public string Category => "General";
+
+		public Task<StreamAndLength> GetStream(Action<double, string> progress)
 		{
-			try
-			{
-				this.ChildContainers = new List<ILibraryContainerLink>();
-				this.Items = sourceItem.Children.Select(m => new InMemoryLibraryItem(m)).ToList<ILibraryItem>();
-			}
-			catch (Exception ex)
-			{
-				this.ChildContainers = new List<ILibraryContainerLink>();
-				this.Items = new List<ILibraryItem>()
-				{
-					new MessageItem("Error loading container - " + ex.Message)
-				};
-			}
+			return streamSource?.Invoke();
 		}
 	}
 }

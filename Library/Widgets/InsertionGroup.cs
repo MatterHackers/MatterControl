@@ -32,12 +32,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MatterHackers.DataConverters3D;
-using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
 
-namespace MatterHackers.MatterControl.PrintLibrary
+namespace MatterHackers.MatterControl.Library
 {
 	public class InsertionGroup : Object3D
 	{
