@@ -469,6 +469,7 @@ namespace MatterHackers.MeshVisualizer
 				}
 
 				if (drawColor.alpha == 255
+					|| item.Mesh.FaceTexture.Where((ft) => ft.Value.HasTransparency).Any()
 					|| isDebugItem)
 				{
 					// Render as solid
