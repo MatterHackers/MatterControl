@@ -484,15 +484,16 @@ namespace MatterHackers.MeshVisualizer
 				bool isSelected = parentSelected ||
 					scene.HasSelection && (object3D == scene.SelectedItem || scene.SelectedItem.Children.Contains(object3D));
 
-				if (isSelected)
+				if (isSelected && scene.DrawSelection)
 				{
 					var totalVertices = 0;
+					int maxVerticesToRenderOutline = 1000;
 
 					foreach (var visibleMesh in object3D.VisibleMeshes())
 					{
 						totalVertices += visibleMesh.Mesh.Vertices.Count;
 
-						if (totalVertices > 1000)
+						if (totalVertices > maxVerticesToRenderOutline)
 						{
 							break;
 						}
@@ -517,8 +518,7 @@ namespace MatterHackers.MeshVisualizer
 						Invalidate();
 					}
 
-					bool tooBigForComplexSelection = totalVertices > 1000;
-					if (tooBigForComplexSelection
+					if (totalVertices > maxVerticesToRenderOutline
 						&& scene.DebugItem == null)
 					{
 						GLHelper.PrepareFor3DLineRender(true);
