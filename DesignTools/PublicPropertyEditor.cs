@@ -452,7 +452,8 @@ namespace MatterHackers.MatterControl.DesignTools
 				&& !string.IsNullOrEmpty(unlockLink.DetailsPageLink)
 				&& !item.Persistable)
 			{
-				var row = CreateSettingsRow(item.Persistable ? "Registerd" : "Demo Mode");
+				var row = CreateSettingsRow(item.Persistable ? "Registered" : "Demo Mode");
+
 				Button detailsLink = theme.ButtonFactory.Generate("Unlock".Localize(), AggContext.StaticData.LoadIcon("locked.png", 16, 16));
 				detailsLink.BackgroundColor = theme.Colors.PrimaryAccentColor.AdjustContrast(theme.Colors.PrimaryTextColor, 8).ToColor();
 				detailsLink.Margin = new BorderDouble(5);
