@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MatterHackers.DataConverters3D;
+using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
@@ -107,6 +108,14 @@ namespace MatterHackers.MatterControl.Library
 
 						// Copy scale/rotation/translation from the source and Center
 						loadedItem.Matrix = loadedItem.Matrix * Matrix4X4.CreateTranslation((double)-aabb.Center.X, (double)-aabb.Center.Y, (double)-aabb.minXYZ.Z) * placeholderItem.Matrix;
+
+						// check if the item has 0 height (it is probably an image)
+						if(loadedItem.ZSize() == 0)
+						{
+							// raise it up a bit so it is not z fighting with the bed
+							loadedItem.Matrix *= Matrix4X4.CreateTranslation(0, 0, .1);
+						}
+
 						loadedItem.Color = loadedItem.Color;
 
 						// Set mesh path if tracking requested
