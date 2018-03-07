@@ -42,7 +42,7 @@ namespace MatterHackers.MatterControl.Library
 				return contentProvider?.CreateItem(libraryItem, progressReporter);
 			}
 
-			return null;
+			return Task.FromResult<IObject3D>(null);
 		}
 
 		public static bool IsContentFileType(this ILibraryItem item)

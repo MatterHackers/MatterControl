@@ -50,7 +50,6 @@ namespace MatterHackers.MatterControl
 	using MatterHackers.MatterControl.Library;
 	using MatterHackers.MatterControl.PartPreviewWindow;
 	using MatterHackers.MatterControl.PrinterCommunication;
-	using MatterHackers.MatterControl.PrintLibrary;
 	using MatterHackers.MeshVisualizer;
 	using MatterHackers.PolygonMesh;
 	using MatterHackers.VectorMath;
@@ -136,30 +135,16 @@ namespace MatterHackers.MatterControl
 			return new FileSystemFileItem(mcxPath);
 		}
 
-		public async Task<ILibraryAssetStream> ToPersistedLibraryItem(string newName)
+		public Task<ILibraryItem> ToPersistedLibraryItem(string newName)
 		{
 			// Save the scene to disk
-			await ApplicationController.Instance.Tasks.Execute("Saving".Localize(), this.SaveChanges);
+			//await ApplicationController.Instance.Tasks.Execute("Saving".Localize(), this.SaveChanges);
+			this.Scene.PersistAssets();
 
-			// Serialize to in memory stream
-			var memoryStream = new MemoryStream();
-			this.Scene.Save(memoryStream);
-
-			// Reset to start of content
-			memoryStream.Position = 0;
-
-			var libraryItem = new View3DWidget.ReadOnlyStreamItem(() =>
+			return Task.FromResult<ILibraryItem>(new InMemoryLibraryItem(this.Scene)
 			{
-				return Task.FromResult(new StreamAndLength()
-				{
-					Stream = memoryStream
-				});
+				Name = newName
 			});
-			libraryItem.Name = newName;
-			libraryItem.FileName = $"{newName}.mcx";
-			libraryItem.ContentType = "mcx";
-
-			return libraryItem;
 		}
 
 		internal async Task ClearPlate()

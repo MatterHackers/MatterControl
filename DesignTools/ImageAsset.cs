@@ -73,10 +73,6 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				return _image;
 			}
-
-			private set
-			{
-			}
 		}
 
 		public bool Invert
