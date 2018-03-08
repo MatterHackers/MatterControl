@@ -1055,6 +1055,11 @@ namespace MatterHackers.MatterControl
 				}, 2);
 			}
 
+			if (AssetObject3D.AssetManager == null)
+			{
+				AssetObject3D.AssetManager = new MockAssetManager(); 
+			}
+
 			//HtmlWindowTest();
 		}
 
