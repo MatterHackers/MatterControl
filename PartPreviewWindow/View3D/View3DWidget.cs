@@ -29,17 +29,11 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.OpenGlGui;
-using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
-using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
@@ -1374,47 +1368,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return null;
 		}
 
-		public class ReadOnlyStreamItem : ILibraryAssetStream
-		{
-			private Func<Task<StreamAndLength>> streamSource;
-
-			public ReadOnlyStreamItem(Func<Task<StreamAndLength>> streamSource)
-			{
-				this.streamSource = streamSource;
-			}
-
-			public string ContentType { get; set; }
-
-			public string ID { get; set; }
-
-			public string Name { get; set; }
-
-			public string FileName { get; set; }
-
-			public bool IsProtected { get; set; }
-
-			public bool IsVisible { get; set; }
-
-			public DateTime DateCreated { get; } = DateTime.Now;
-
-			public DateTime DateModified { get; } = DateTime.Now;
-
-			public long FileSize => 0;
-
-			public string AssetPath => "";
-
-			public bool LocalContentExists => true;
-
-			public string Category => "General";
-
-			public Task<StreamAndLength> GetStream(Action<double, string> progress)
-			{
-				return streamSource?.Invoke();
-			}
-		}
 	}
 
 	public enum HitQuadrant { LB, LT, RB, RT }
+
 	public class MeshSelectInfo
 	{
 		public HitQuadrant HitQuadrant;

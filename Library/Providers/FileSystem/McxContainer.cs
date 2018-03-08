@@ -31,7 +31,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using MatterHackers.DataConverters3D;
-using static MatterHackers.MatterControl.PartPreviewWindow.SelectedObjectPanel;
 
 namespace MatterHackers.MatterControl.Library
 {
@@ -54,7 +53,7 @@ namespace MatterHackers.MatterControl.Library
 			try
 			{
 				this.ChildContainers = new List<ILibraryContainerLink>();
-				this.Items = sourceItem.Children.Select(m => new InMemoryItem(m)).ToList<ILibraryItem>();
+				this.Items = sourceItem.Children.Select(m => new InMemoryLibraryItem(m)).ToList<ILibraryItem>();
 			}
 			catch (Exception ex)
 			{

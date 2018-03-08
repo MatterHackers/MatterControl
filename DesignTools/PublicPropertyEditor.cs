@@ -452,7 +452,8 @@ namespace MatterHackers.MatterControl.DesignTools
 				&& !string.IsNullOrEmpty(unlockLink.DetailsPageLink)
 				&& !item.Persistable)
 			{
-				var row = CreateSettingsRow(item.Persistable ? "Registerd" : "Demo Mode");
+				var row = CreateSettingsRow(item.Persistable ? "Registered".Localize() : "Demo Mode".Localize());
+
 				Button detailsLink = theme.ButtonFactory.Generate("Unlock".Localize(), AggContext.StaticData.LoadIcon("locked.png", 16, 16));
 				detailsLink.BackgroundColor = theme.Colors.PrimaryAccentColor.AdjustContrast(theme.Colors.PrimaryTextColor, 8).ToColor();
 				detailsLink.Margin = new BorderDouble(5);
@@ -465,9 +466,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		private GuiWidget CreateImageEditor(IRebuildable item,
-			ImageAsset imageAsset,
-			ThemeConfig theme)
+		private GuiWidget CreateImageEditor(IRebuildable item, ImageAsset imageAsset, ThemeConfig theme)
 		{
 			var column = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{

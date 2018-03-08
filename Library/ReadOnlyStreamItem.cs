@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, John Lewin
+Copyright (c) 2018, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -29,35 +29,45 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Threading.Tasks;
-using MatterHackers.DataConverters3D;
 
 namespace MatterHackers.MatterControl.Library
 {
-	public static class LibraryExtensionMethods
+	public class ReadOnlyStreamItem : ILibraryAssetStream
 	{
-		public static Task<IObject3D> CreateContent(this ILibraryItem libraryItem, Action<double, string> progressReporter)
-		{
-			if (ApplicationController.Instance.Library.GetContentProvider(libraryItem) is ISceneContentProvider contentProvider)
-			{
-				return contentProvider?.CreateItem(libraryItem, progressReporter);
-			}
+		private Func<Task<StreamAndLength>> streamSource;
 
-			return Task.FromResult<IObject3D>(null);
+		public ReadOnlyStreamItem(Func<Task<StreamAndLength>> streamSource)
+		{
+			this.streamSource = streamSource;
 		}
 
-		public static bool IsContentFileType(this ILibraryItem item)
-		{
-			return item is ILibraryObject3D
-				|| item is SDCardFileItem
-				|| item is PrintHistoryItem
-				|| (item is ILibraryAssetStream contentStream
-					&& ApplicationController.Instance.Library.IsContentFileType(contentStream.FileName));
-		}
+		public string ContentType { get; set; }
 
-		public static bool IsMeshFileType(this ILibraryItem item)
+		public string ID { get; set; }
+
+		public string Name { get; set; }
+
+		public string FileName { get; set; }
+
+		public bool IsProtected { get; set; }
+
+		public bool IsVisible { get; set; }
+
+		public DateTime DateCreated { get; } = DateTime.Now;
+
+		public DateTime DateModified { get; } = DateTime.Now;
+
+		public long FileSize => 0;
+
+		public string AssetPath => "";
+
+		public bool LocalContentExists => true;
+
+		public string Category => "General";
+
+		public Task<StreamAndLength> GetStream(Action<double, string> progress)
 		{
-			return item is ILibraryAssetStream contentStream
-					&& ApplicationController.Instance.Library.IsMeshFileType(contentStream.FileName);
+			return streamSource?.Invoke();
 		}
 	}
 }

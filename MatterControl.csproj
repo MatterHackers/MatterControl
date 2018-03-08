@@ -126,6 +126,7 @@
     <Compile Include="Library\Providers\GraphConfig.cs" />
     <Compile Include="CustomWidgets\InlineTitleEdit.cs" />
     <Compile Include="Library\DynamicContentStore.cs" />
+    <Compile Include="Library\InMemoryLibraryItem.cs" />
     <Compile Include="PartPreviewWindow\LibraryBrowserPage.cs" />
     <Compile Include="PartPreviewWindow\MaterialControls.cs" />
     <Compile Include="PartPreviewWindow\MoveItemPage.cs" />
@@ -188,6 +189,7 @@
     <Compile Include="PartPreviewWindow\View3D\LightingData.cs" />
     <Compile Include="PartPreviewWindow\View3D\PrinterBar\CancelButton.cs" />
     <Compile Include="PartPreviewWindow\View3D\PrinterBar\PauseResumeButton.cs" />
+    <Compile Include="Library\ReadOnlyStreamItem.cs" />
     <Compile Include="PartPreviewWindow\View3D\SideBar\ScaleControl.cs" />
     <Compile Include="PartPreviewWindow\View3D\SliceProgressReporter.cs" />
     <Compile Include="PartPreviewWindow\View3D\UndoCommands\ChangeColor.cs" />

@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, John Lewin
+Copyright (c) 2018, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -28,36 +28,71 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.IO;
 using System.Threading.Tasks;
 using MatterHackers.DataConverters3D;
+using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.Library
 {
-	public static class LibraryExtensionMethods
+	public class InMemoryLibraryItem : ILibraryObject3D, ILibraryAssetStream
 	{
-		public static Task<IObject3D> CreateContent(this ILibraryItem libraryItem, Action<double, string> progressReporter)
+		private IObject3D object3D;
+
+		public InMemoryLibraryItem(IObject3D object3D)
 		{
-			if (ApplicationController.Instance.Library.GetContentProvider(libraryItem) is ISceneContentProvider contentProvider)
+			this.object3D = object3D;
+			this.Name = object3D.Name ?? "Unknown".Localize();
+		}
+
+		public string ID => object3D.ID;
+
+		public string Name { get; set; }
+
+		public string FileName => $"{this.Name}.{this.ContentType}";
+
+		public bool IsProtected => !object3D.Persistable;
+
+		public bool IsVisible => object3D.Visible;
+
+		public DateTime DateCreated { get; } = DateTime.Now;
+
+		public DateTime DateModified { get; } = DateTime.Now;
+
+		public string ContentType => "mcx";
+
+		public string Category => "General";
+
+		public string AssetPath { get; set; }
+
+		public long FileSize => this.ToStream().Length;
+
+		public bool LocalContentExists => false;
+
+		public Task<IObject3D> GetObject3D(Action<double, string> reportProgress)
+		{
+			return Task.FromResult(object3D);
+		}
+
+		public Task<StreamAndLength> GetStream(Action<double, string> progress)
+		{
+			return Task.FromResult(new StreamAndLength()
 			{
-				return contentProvider?.CreateItem(libraryItem, progressReporter);
-			}
-
-			return Task.FromResult<IObject3D>(null);
+				Stream = this.ToStream()
+			});
 		}
 
-		public static bool IsContentFileType(this ILibraryItem item)
+		private MemoryStream ToStream()
 		{
-			return item is ILibraryObject3D
-				|| item is SDCardFileItem
-				|| item is PrintHistoryItem
-				|| (item is ILibraryAssetStream contentStream
-					&& ApplicationController.Instance.Library.IsContentFileType(contentStream.FileName));
-		}
+			// Serialize to in memory stream
+			var memoryStream = new MemoryStream();
 
-		public static bool IsMeshFileType(this ILibraryItem item)
-		{
-			return item is ILibraryAssetStream contentStream
-					&& ApplicationController.Instance.Library.IsMeshFileType(contentStream.FileName);
+			object3D.SaveTo(memoryStream);
+
+			// Reset to start of content
+			memoryStream.Position = 0;
+
+			return memoryStream;
 		}
 	}
 }

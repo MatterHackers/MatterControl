@@ -70,6 +70,8 @@ namespace MatterHackers.PolygonMesh.UnitTests
 		[Test]
 		public void CreatesAndLinksAmfsForUnsavedMeshes()
 		{
+			AssetObject3D.AssetManager = new MockAssetManager();
+
 			var scene = new InteractiveScene();
 			scene.Children.Add(new Object3D
 			{
@@ -105,6 +107,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 #endif
+			AssetObject3D.AssetManager = new MockAssetManager();
 
 			var sceneContext = new BedConfig(null);
 
@@ -122,7 +125,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			Directory.CreateDirectory(Object3D.AssetsPath);
 
 			// Empty temp folder
-			foreach (string tempFile in Directory.GetFiles(tempPath).ToList())
+			foreach (string tempFile in Directory.GetFiles(Object3D.AssetsPath).ToList())
 			{
 				File.Delete(tempFile);
 			}
@@ -154,7 +157,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			//File.WriteAllText(@"c:\temp\file-b.txt", inMemoryData);
 
 			Assert.AreEqual(inMemoryData, onDiskData, "Serialized content should match");
-			Object3D.AssetsPath = tempPath;
+			Object3D.AssetsPath = Path.Combine(tempPath, "Assets");
 
 			// Save the scene a second time, validate that things remain the same
 			scene.Save(filePath);

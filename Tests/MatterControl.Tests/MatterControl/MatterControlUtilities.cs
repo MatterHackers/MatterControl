@@ -53,6 +53,7 @@ using Newtonsoft.Json.Converters;
 using NUnit.Framework;
 using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
+using MatterHackers.MatterControl.Library;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {

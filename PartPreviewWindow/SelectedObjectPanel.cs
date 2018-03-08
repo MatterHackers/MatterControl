@@ -30,7 +30,6 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -166,7 +165,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 							scene.SelectedItem = replacement;
 						}),
-						SourceItem = new InMemoryItem(clonedItem),
+						SourceItem = new InMemoryLibraryItem(clonedItem),
 					});
 			};
 			toolbar.AddChild(editButton);
@@ -447,41 +446,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				children.Remove(this.item);
 				children.Add(content);
 			});
-		}
-
-		public class InMemoryItem : ILibraryObject3D
-		{
-			private IObject3D existingItem;
-
-			public InMemoryItem(IObject3D existingItem)
-			{
-				this.existingItem = existingItem;
-			}
-
-			public string ID => existingItem.ID;
-
-			public string Name => existingItem.Name ?? "Unknown".Localize();
-
-			public string FileName => $"{this.Name}.{this.ContentType}";
-
-			public bool IsProtected => !existingItem.Persistable;
-
-			public bool IsVisible => existingItem.Visible;
-
-			public DateTime DateCreated { get; } = DateTime.Now;
-
-			public DateTime DateModified { get; } = DateTime.Now;
-
-			public string ContentType => "mcx";
-
-			public string Category => "General";
-
-			public string AssetPath { get; set; }
-
-			public Task<IObject3D> GetObject3D(Action<double, string> reportProgress)
-			{
-				return Task.FromResult(existingItem);
-			}
 		}
 	}
 
