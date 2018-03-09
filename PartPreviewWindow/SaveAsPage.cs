@@ -32,6 +32,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.Library;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
@@ -42,7 +43,7 @@ namespace MatterHackers.MatterControl
 		{
 			this.WindowTitle = "MatterControl - " + "Save As".Localize();
 			this.Name = "Save As Window";
-			this.WindowSize = new VectorMath.Vector2(480, 500);
+			this.WindowSize = new Vector2(480, 500);
 			this.HeaderText = "Save New Design".Localize() + ":";
 
 			// put in the area to type in the new name

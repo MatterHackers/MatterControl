@@ -34,6 +34,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrintLibrary;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.CustomWidgets
 {
@@ -63,7 +64,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.AddChild(titleText);
 
 			this.ActionArea.VAnchor = VAnchor.Stretch;
-			this.ActionArea.MinimumSize = new VectorMath.Vector2(0, titleText.Height);
+			this.ActionArea.MinimumSize = new Vector2(0, titleText.Height);
 
 			saveButton = new IconButton(AggContext.StaticData.LoadIcon("fa-save_16.png", 16, 16, IconColor.Theme), theme)
 			{

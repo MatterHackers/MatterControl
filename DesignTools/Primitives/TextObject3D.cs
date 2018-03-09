@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System.ComponentModel;
 using MatterHackers.Agg.Font;
+using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
@@ -75,7 +76,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			var item = new TextObject3D();
 
-			item.Rebuild();
+			item.Rebuild(null);
 			return item;
 		}
 
@@ -92,7 +93,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		[JsonConverter(typeof(StringEnumConverter))]
 		public NamedTypeFace Font { get; set; } = new NamedTypeFace();
 
-		public void Rebuild()
+		public void Rebuild(UndoBuffer undoBuffer)
 		{
 			var aabb = this.GetAxisAlignedBoundingBox();
 

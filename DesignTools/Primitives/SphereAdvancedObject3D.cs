@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.ComponentModel;
+using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.VectorMath;
@@ -47,7 +48,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			var item = new SphereAdvancedObject3D();
 
-			item.Rebuild();
+			item.Rebuild(null);
 			return item;
 		}
 
@@ -65,7 +66,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		//[Range(0, 360, ErrorMessage = "Angle {0} must be between {1} and {2}.")]
 		public double EndAngleDegrees { get; set; } = 240;
 
-		public void Rebuild()
+		public void Rebuild(UndoBuffer undoBuffer)
 		{
 			var aabb = this.GetAxisAlignedBoundingBox();
 

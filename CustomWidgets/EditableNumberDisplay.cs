@@ -1,6 +1,7 @@
 ﻿using System;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
@@ -87,7 +88,7 @@ namespace MatterHackers.MatterControl
 
 			// This is a hack to make sure the control is tall enough.
 			// TODO: This hack needs a unit test and then pass and then remove this line.
-			this.MinimumSize = new VectorMath.Vector2(0, numberInputField.Height);
+			this.MinimumSize = new Vector2(0, numberInputField.Height);
 
 			numberInputField.ActuallNumberEdit.EnterPressed += (s, e) => UpdateDisplayString();
 			numberInputField.ContainsFocusChanged += (s1, e1) =>

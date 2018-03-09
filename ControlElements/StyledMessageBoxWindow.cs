@@ -31,6 +31,7 @@ using System;
 using MatterHackers.Agg.Font;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
@@ -63,7 +64,7 @@ namespace MatterHackers.MatterControl
 			public MessageBoxPage(Action<bool> callback, string message, string caption, MessageType messageType, GuiWidget[] extraWidgetsToAdd, double width, double height, string yesOk, string noCancel, ThemeConfig theme)
 				: base((noCancel == "") ? "No".Localize() : noCancel)
 			{
-				this.WindowSize = new VectorMath.Vector2(width, height);
+				this.WindowSize = new Vector2(width, height);
 
 				if (yesOk == "")
 				{

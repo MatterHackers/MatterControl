@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System.ComponentModel;
 using System.Threading;
+using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.PolygonMesh;
@@ -47,7 +48,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		public static ConeObject3D Create()
 		{
 			var item = new ConeObject3D();
-			item.Rebuild();
+			item.Rebuild(null);
 			return item;
 		}
 
@@ -58,7 +59,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		public double Height { get; set; } = 20;
 		public int Sides { get; set; } = 30;
 
-		public void Rebuild()
+		public void Rebuild(UndoBuffer undoBuffer)
 		{
 			var aabb = this.GetAxisAlignedBoundingBox();
 

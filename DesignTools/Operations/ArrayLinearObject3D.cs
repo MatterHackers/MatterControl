@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Linq;
+using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.VectorMath;
@@ -48,7 +49,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public DirectionVector Direction { get; set; } = new DirectionVector { Normal = new Vector3(1, 0, 0) };
 		public double Distance { get; set; } = 30;
 
-		public void Rebuild()
+		public void Rebuild(UndoBuffer undoBuffer)
 		{
 			this.Children.Modify(list =>
 			{

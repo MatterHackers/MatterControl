@@ -17,7 +17,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		}
 
-		public void Rebuild()
+		public void Rebuild(UndoBuffer undoBuffer)
 		{
 			return;
 		}

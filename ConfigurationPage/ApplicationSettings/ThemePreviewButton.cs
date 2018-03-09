@@ -31,6 +31,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.ConfigurationPage
 {
@@ -119,7 +120,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				{
 					HAnchor = HAnchor.Absolute,
 					VAnchor = VAnchor.Absolute,
-					OriginRelativeParent = new VectorMath.Vector2(45, 20)
+					OriginRelativeParent = new Vector2(45, 20)
 				});
 			}
 

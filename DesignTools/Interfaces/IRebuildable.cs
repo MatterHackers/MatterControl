@@ -28,10 +28,12 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 
+using MatterHackers.Agg.UI;
+
 namespace MatterHackers.MatterControl.DesignTools
 {
 	public interface IRebuildable
 	{
-		void Rebuild();
+		void Rebuild(UndoBuffer undoBuffer);
 	}
 }

@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.ComponentModel;
+using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.VectorMath;
@@ -47,7 +48,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			var item = new WedgeObject3D();
 
-			item.Rebuild();
+			item.Rebuild(null);
 			return item;
 		}
 
@@ -55,7 +56,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		public double Depth { get; set; } = 20;
 		public double Height { get; set; } = 20;
 
-		public void Rebuild()
+		public void Rebuild(UndoBuffer undoBuffer)
 		{
 			var aabb = this.GetAxisAlignedBoundingBox();
 

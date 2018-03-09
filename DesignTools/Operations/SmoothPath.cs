@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System.Collections.Generic;
 using ClipperLib;
+using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.VectorMath;
 
@@ -45,7 +46,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		{
 		}
 
-		public void Rebuild()
+		public void Rebuild(UndoBuffer undoBuffer)
 		{
 		}
 
