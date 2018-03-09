@@ -153,6 +153,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var trackball = view3DWidget.InteractionLayer.Children<TrackballTumbleWidget>().FirstOrDefault();
 
+			tumbleCubeControl = view3DWidget.InteractionLayer.Children<TumbleCubeControl>().FirstOrDefault();
+
 			var position = view3DWidget.InteractionLayer.Children.IndexOf(trackball);
 
 			// The slice layers view
@@ -162,7 +164,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Stretch,
 				BackgroundColor = theme.InteractionLayerOverlayColor,
-				Visible = false
 			};
 
 			gcodeContainer = new ResizeContainer(gcode3DWidget)
@@ -195,7 +196,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				Visible = (printer.ViewState.ViewMode == PartViewMode.Layers2D)
 			};
-			view3DWidget.InteractionLayer.AddChild(gcode2DWidget);
+			view3DWidget.InteractionLayer.AddChild(gcode2DWidget, position + 1);
 
 			SetSliderSizes();
 
@@ -238,16 +239,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					break;
 			}
 
-			bool showSliceLayers = viewMode == PartViewMode.Layers3D;
-
-			gcode3DWidget.Visible = viewMode == PartViewMode.Layers3D;
 			gcode2DWidget.Visible = viewMode == PartViewMode.Layers2D;
 
 			view3DWidget.meshViewerWidget.ModelView = viewMode == PartViewMode.Model;
 
-			gcodeContainer.Visible = showSliceLayers;
+			gcodeContainer.Visible = viewMode != PartViewMode.Model;
 
-			if (showSliceLayers)
+			tumbleCubeControl.Visible = !gcode2DWidget.Visible;
+
+			if (viewMode == PartViewMode.Layers3D)
 			{
 				printer.Bed.Scene.ClearSelection();
 			}
@@ -326,6 +326,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		}
 
 		private double lastPostion = 0;
+		private TumbleCubeControl tumbleCubeControl;
 
 		private bool SetAnimationPosition()
 		{
