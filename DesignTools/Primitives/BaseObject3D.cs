@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using System.Threading;
 using ClipperLib;
 using MatterHackers.Agg.Transform;
+using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.PolygonMesh;
@@ -61,11 +62,11 @@ namespace MatterHackers.MatterControl.DesignTools
 		public static BaseObject3D Create()
 		{
 			var item = new BaseObject3D();
-			item.Rebuild();
+			item.Rebuild(null);
 			return item;
 		}
 
-		public void Rebuild()
+		public void Rebuild(UndoBuffer undoBuffer)
 		{
 			var aabb = this.GetAxisAlignedBoundingBox();
 

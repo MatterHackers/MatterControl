@@ -37,6 +37,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ContactForm;
 using MatterHackers.MatterControl.HtmlParsing;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
@@ -136,7 +137,7 @@ namespace MatterHackers.MatterControl
 							Button linkButton = linkButtonFactory.Generate(decodedHtml.Replace("\r\n", "\n"));
 							StyledTypeFace styled = new StyledTypeFace(LiberationSansFont.Instance, elementState.PointSize);
 							double descentInPixels = styled.DescentInPixels;
-							linkButton.OriginRelativeParent = new VectorMath.Vector2(linkButton.OriginRelativeParent.X, linkButton.OriginRelativeParent.Y + descentInPixels);
+							linkButton.OriginRelativeParent = new Vector2((double)linkButton.OriginRelativeParent.X, (double)(linkButton.OriginRelativeParent.Y + descentInPixels));
 							linkButton.Click += (sender, mouseEvent) =>
 							{
 								ApplicationController.Instance.LaunchBrowser(elementState.Href);
@@ -247,7 +248,7 @@ namespace MatterHackers.MatterControl
 						createdButton = linkButtonFactory.Generate(decodedHtml);
 						StyledTypeFace styled = new StyledTypeFace(LiberationSansFont.Instance, elementState.PointSize);
 						double descentInPixels = styled.DescentInPixels;
-						createdButton.OriginRelativeParent = new VectorMath.Vector2(createdButton.OriginRelativeParent.X, createdButton.OriginRelativeParent.Y + descentInPixels);
+						createdButton.OriginRelativeParent = new Vector2((double)createdButton.OriginRelativeParent.X, (double)(createdButton.OriginRelativeParent.Y + descentInPixels));
 						widgetToAdd = createdButton;
 						linkButtonFactory.fontSize = oldFontSize;
 					}

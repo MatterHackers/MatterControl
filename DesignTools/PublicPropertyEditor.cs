@@ -135,6 +135,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		private void ModifyObject(View3DWidget view3DWidget, FlowLayoutWidget editControlsContainer, ThemeConfig theme)
 		{
+			var undoBuffer = view3DWidget.sceneContext.Scene.UndoBuffer;
 			editRows.Clear();
 
 			var rebuildable = item as IRebuildable;
@@ -170,7 +171,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					field.ValueChanged += (s, e) =>
 					{
 						property.PropertyInfo.GetSetMethod().Invoke(this.item, new Object[] { field.DoubleValue });
-						rebuildable?.Rebuild();
+						rebuildable?.Rebuild(undoBuffer);
 						propertyGridModifier?.UpdateControls(this);
 					};
 
@@ -187,7 +188,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					field.ValueChanged += (s, e) =>
 					{
 						property.PropertyInfo.GetSetMethod().Invoke(this.item, new Object[] { field.Vector2 });
-						rebuildable?.Rebuild();
+						rebuildable?.Rebuild(undoBuffer);
 						propertyGridModifier?.UpdateControls(this);
 					};
 
@@ -204,7 +205,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					field.ValueChanged += (s, e) =>
 					{
 						property.PropertyInfo.GetSetMethod().Invoke(this.item, new Object[] { field.Vector3 });
-						rebuildable?.Rebuild();
+						rebuildable?.Rebuild(undoBuffer);
 						propertyGridModifier?.UpdateControls(this);
 					};
 
@@ -229,7 +230,7 @@ namespace MatterHackers.MatterControl.DesignTools
 							var localOredrItem = orderItem;
 							newItem.Selected += (sender, e) =>
 							{
-								switch(dropDownList.SelectedValue)
+								switch (dropDownList.SelectedValue)
 								{
 									case "Right":
 										property.PropertyInfo.GetSetMethod().Invoke(this.item, new Object[] { new DirectionVector() { Normal = Vector3.UnitX } });
@@ -242,7 +243,7 @@ namespace MatterHackers.MatterControl.DesignTools
 										break;
 								}
 
-								rebuildable?.Rebuild();
+								rebuildable?.Rebuild(undoBuffer);
 								propertyGridModifier?.UpdateControls(this);
 							};
 						}
@@ -261,7 +262,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						field.ValueChanged += (s, e) =>
 						{
 							property.PropertyInfo.GetSetMethod().Invoke(this.item, new Object[] { new DirectionVector() { Normal = field.Vector3 } });
-							rebuildable?.Rebuild();
+							rebuildable?.Rebuild(undoBuffer);
 							propertyGridModifier?.UpdateControls(this);
 						};
 
@@ -292,7 +293,7 @@ namespace MatterHackers.MatterControl.DesignTools
 										Normal = Vector3.UnitZ, Origin = item.Children.First().GetAxisAlignedBoundingBox().Center + new Vector3(field.DoubleValue, 0, 0)
 									}
 								});
-							rebuildable?.Rebuild();
+							rebuildable?.Rebuild(undoBuffer);
 							propertyGridModifier?.UpdateControls(this);
 						};
 
@@ -326,7 +327,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						originField.ValueChanged += (s, e) =>
 						{
 							property.PropertyInfo.GetSetMethod().Invoke(this.item, new Object[] { new DirectionAxis() { Origin = originField.Vector3, Normal = normalField.Vector3 } });
-							rebuildable?.Rebuild();
+							rebuildable?.Rebuild(undoBuffer);
 							propertyGridModifier?.UpdateControls(this);
 						};
 
@@ -339,7 +340,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						normalField.ValueChanged += (s, e) =>
 						{
 							property.PropertyInfo.GetSetMethod().Invoke(this.item, new Object[] { new DirectionAxis() { Origin = originField.Vector3, Normal = normalField.Vector3 } });
-							rebuildable?.Rebuild();
+							rebuildable?.Rebuild(undoBuffer);
 							propertyGridModifier?.UpdateControls(this);
 						};
 
@@ -369,7 +370,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					field.ValueChanged += (s, e) =>
 					{
 						property.PropertyInfo.GetSetMethod().Invoke(this.item, new Object[] { field.IntValue });
-						rebuildable?.Rebuild();
+						rebuildable?.Rebuild(undoBuffer);
 						propertyGridModifier?.UpdateControls(this);
 					};
 
@@ -387,7 +388,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					field.ValueChanged += (s, e) =>
 					{
 						property.PropertyInfo.GetSetMethod().Invoke(this.item, new Object[] { field.Checked });
-						rebuildable?.Rebuild();
+						rebuildable?.Rebuild(undoBuffer);
 						propertyGridModifier?.UpdateControls(this);
 					};
 
@@ -406,7 +407,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					textEditWidget.ActualTextEditWidget.EditComplete += (s, e) =>
 					{
 						property.PropertyInfo.GetSetMethod().Invoke(this.item, new Object[] { textEditWidget.Text });
-						rebuildable?.Rebuild();
+						rebuildable?.Rebuild(undoBuffer);
 						propertyGridModifier?.UpdateControls(this);
 					};
 					rowContainer.AddChild(textEditWidget);
@@ -417,15 +418,16 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					rowContainer = CreateEnumEditor(rebuildable,
 							property.PropertyInfo, property.PropertyType, property.Value, property.DisplayName,
-							theme);
+							theme, undoBuffer);
 					editControlsContainer.AddChild(rowContainer);
 				}
 				// create an image asset editor
-				else if(property.Value is ImageAsset imageAsset)
+				else if (property.Value is ImageAsset imageAsset)
 				{
 					rowContainer = CreateImageEditor(rebuildable,
 							imageAsset,
-							theme);
+							theme,
+							undoBuffer);
 					editControlsContainer.AddChild(rowContainer);
 				}
 
@@ -433,14 +435,18 @@ namespace MatterHackers.MatterControl.DesignTools
 				editRows.Add(property.PropertyInfo.Name, rowContainer);
 			}
 
-			var updateButton = theme.ButtonFactory.Generate("Update".Localize());
-			updateButton.Margin = new BorderDouble(5);
-			updateButton.HAnchor = HAnchor.Right;
-			updateButton.Click += (s, e) =>
+			var hideUpdate = item.GetType().GetCustomAttributes(typeof(HideUpdateButtonAttribute), true).FirstOrDefault() as HideUpdateButtonAttribute;
+			if (hideUpdate == null)
 			{
-				rebuildable?.Rebuild();
-			};
-			editControlsContainer.AddChild(updateButton);
+				var updateButton = theme.ButtonFactory.Generate("Update".Localize());
+				updateButton.Margin = new BorderDouble(5);
+				updateButton.HAnchor = HAnchor.Right;
+				updateButton.Click += (s, e) =>
+				{
+					rebuildable?.Rebuild(undoBuffer);
+				};
+				editControlsContainer.AddChild(updateButton);
+			}
 			// make sure the ui is set right to start
 			propertyGridModifier?.UpdateControls(this);
 		}
@@ -466,7 +472,10 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		private GuiWidget CreateImageEditor(IRebuildable item, ImageAsset imageAsset, ThemeConfig theme)
+		private GuiWidget CreateImageEditor(IRebuildable item,
+			ImageAsset imageAsset,
+			ThemeConfig theme,
+			UndoBuffer undoBuffer)
 		{
 			var column = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -489,6 +498,28 @@ namespace MatterHackers.MatterControl.DesignTools
 				HAnchor = HAnchor.Center
 			});
 
+			// add a search Google box
+			var searchRow = new FlowLayoutWidget()
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit,
+			};
+			imageSection.ContentPanel.AddChild(searchRow);
+
+			MHTextEditWidget textToAddWidget = new MHTextEditWidget("", pixelWidth: 300, messageWhenEmptyAndNotSelected: "Search Google".Localize());
+			textToAddWidget.HAnchor = HAnchor.Stretch;
+			searchRow.AddChild(textToAddWidget);
+			textToAddWidget.ActualTextEditWidget.EnterPressed += (object sender, KeyEventArgs keyEvent) =>
+			{
+				UiThread.RunOnIdle(() =>
+				{
+					textToAddWidget.Unfocus();
+					string search = "http://www.google.com/search?q={0} silhouette&tbm=isch".FormatWith(textToAddWidget.Text);
+					ApplicationController.Instance.LaunchBrowser(search);
+				});
+			};
+
+			// add in the invert checkbox and change image button 
 			var changeImageButton = new TextButton("Change".Localize(), theme)
 			{
 				BackgroundColor = theme.MinimalShade
@@ -513,7 +544,7 @@ namespace MatterHackers.MatterControl.DesignTools
 							imageAsset.AssetPath = openParams.FileName;
 							thumbnailWidget.Image = SetImage(theme, imageAsset);
 
-							item?.Rebuild();
+							item?.Rebuild(undoBuffer);
 
 							column.Invalidate();
 						});
@@ -537,7 +568,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				imageAsset.Invert = invertCheckbox.Checked;
 				thumbnailWidget.Image = SetImage(theme, imageAsset);
-				item?.Rebuild();
+				item?.Rebuild(undoBuffer);
 			};
 			row.AddChild(invertCheckbox);
 
@@ -593,9 +624,10 @@ namespace MatterHackers.MatterControl.DesignTools
 			return imageBuffer;
 		}
 
-		private GuiWidget CreateEnumEditor(IRebuildable item, 
-			PropertyInfo propertyInfo, Type propertyType, object value, string displayName, 
-			ThemeConfig theme)
+		private GuiWidget CreateEnumEditor(IRebuildable item,
+			PropertyInfo propertyInfo, Type propertyType, object value, string displayName,
+			ThemeConfig theme,
+			UndoBuffer undoBuffer)
 		{
 			var propertyGridModifier = item as IPropertyGridModifier;
 
@@ -629,7 +661,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					}
 					var radioButton = new RadioButton(new ImageWidget(iconImage));
 					// set it if checked
-					if(enumItem.Value == value.ToString())
+					if (enumItem.Value == value.ToString())
 					{
 						radioButton.Checked = true;
 						if (localIndex != 0
@@ -649,7 +681,7 @@ namespace MatterHackers.MatterControl.DesignTools
 							propertyInfo.GetSetMethod().Invoke(
 								this.item,
 								new Object[] { Enum.Parse(propertyType, localItem.Key) });
-							item?.Rebuild();
+							item?.Rebuild(undoBuffer);
 							propertyGridModifier?.UpdateControls(this);
 							if (localIndex != 0
 								|| !iconsAttribute.Item0IsNone)
@@ -682,7 +714,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						propertyInfo.GetSetMethod().Invoke(
 							this.item,
 							new Object[] { Enum.Parse(propertyType, localOredrItem.Key) });
-						item?.Rebuild();
+						item?.Rebuild(undoBuffer);
 						propertyGridModifier?.UpdateControls(this);
 					};
 				}

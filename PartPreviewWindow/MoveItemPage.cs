@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.Library;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
@@ -40,7 +41,7 @@ namespace MatterHackers.MatterControl
 		{
 			this.WindowTitle = "MatterControl - " + "Move Item".Localize();
 			this.Name = "Move Item Window";
-			this.WindowSize = new VectorMath.Vector2(480, 500);
+			this.WindowSize = new Vector2(480, 500);
 			this.HeaderText = "Select a new Destination".Localize() + ":";
 		}
 	}

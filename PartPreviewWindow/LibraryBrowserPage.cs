@@ -32,6 +32,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.Library;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
@@ -47,7 +48,7 @@ namespace MatterHackers.MatterControl
 			FolderBreadCrumbWidget breadCrumbWidget = null;
 			var buttonFactory = ApplicationController.Instance.Theme.ButtonFactory;
 
-			this.WindowSize = new VectorMath.Vector2(480, 500);
+			this.WindowSize = new Vector2(480, 500);
 
 			contentRow.Padding = 0;
 

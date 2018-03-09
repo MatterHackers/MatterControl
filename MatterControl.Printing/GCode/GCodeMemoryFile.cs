@@ -44,7 +44,7 @@ namespace MatterControl.Printing
 		private double amountOfAccumulatedEWhileParsing = 0;
 
 		private List<int> indexOfChangeInZ = new List<int>();
-		private Vector2 center = Vector2.Zero;
+		private MatterHackers.VectorMath.Vector2 center = MatterHackers.VectorMath.Vector2.Zero;
 		private double parsingLastZ;
 		private bool gcodeHasExplicitLayerChangeInfo = false;
 		private double firstLayerThickness;
@@ -740,10 +740,10 @@ namespace MatterControl.Printing
 
 		public override Vector2 GetWeightedCenter()
 		{
-			Vector2 total = new Vector2();
+			MatterHackers.VectorMath.Vector2 total = new MatterHackers.VectorMath.Vector2();
 			foreach (PrinterMachineInstruction state in GCodeCommandQueue)
 			{
-				total += new Vector2(state.Position.X, state.Position.Y);
+				total += new MatterHackers.VectorMath.Vector2(state.Position.X, state.Position.Y);
 			}
 
 			return total / GCodeCommandQueue.Count;

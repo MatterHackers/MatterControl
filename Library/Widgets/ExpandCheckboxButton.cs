@@ -31,6 +31,7 @@ using System;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.CustomWidgets
 {
@@ -54,7 +55,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			imageButton = new GuiWidget()
 			{
-				MinimumSize = new VectorMath.Vector2((expandable) ? theme.ButtonHeight : 10, 20),
+				MinimumSize = new Vector2((expandable) ? theme.ButtonHeight : 10, 20),
 				VAnchor = VAnchor.Center,
 			};
 			imageButton.AddChild(imageWidget = new ImageWidget(arrowRight)
@@ -89,7 +90,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				{
 					_expandable = value;
 					imageWidget.Visible = _expandable;
-					this.MinimumSize = new VectorMath.Vector2((_expandable) ? this.MinimumSize.X : 10, this.MinimumSize.Y);
+					this.MinimumSize = new Vector2((double)((_expandable) ? this.MinimumSize.X : 10), (double)this.MinimumSize.Y);
 				}
 			}
 		}

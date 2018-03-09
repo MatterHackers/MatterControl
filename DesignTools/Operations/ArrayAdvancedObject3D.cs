@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Linq;
+using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.VectorMath;
@@ -57,7 +58,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public bool ScaleOffset { get; set; } = true;
 
-		public void Rebuild()
+		public void Rebuild(UndoBuffer undoBuffer)
 		{
 			this.Children.Modify(list =>
 			{

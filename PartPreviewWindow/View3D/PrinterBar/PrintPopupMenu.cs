@@ -36,6 +36,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -81,7 +82,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					HAnchor = HAnchor.Fit | HAnchor.Left,
 					VAnchor = VAnchor.Fit,
 					Padding = 5,
-					MinimumSize = new VectorMath.Vector2(400, 65),
+					MinimumSize = new Vector2(400, 65),
 					Margin = new BorderDouble(top: 10),
 				};
 				column.AddChild(optionsPanel);

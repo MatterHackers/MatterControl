@@ -28,57 +28,14 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.ComponentModel;
-using MatterHackers.Agg.UI;
-using MatterHackers.Agg.VertexSource;
-using MatterHackers.DataConverters3D;
-using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class HalfSphereObject3D : Object3D, IRebuildable
+	[AttributeUsage(AttributeTargets.Class)]
+	public class HideUpdateButtonAttribute : Attribute
 	{
-		public override string ActiveEditor => "PublicPropertyEditor";
-
-		public HalfSphereObject3D()
+		public HideUpdateButtonAttribute()
 		{
-		}
-
-		public static HalfSphereObject3D Create()
-		{
-			var item = new HalfSphereObject3D();
-
-			item.Rebuild(null);
-			return item;
-		}
-
-		public double Diameter { get; set; } = 20;
-		[DisplayName("Longitude Sides")]
-		public int LongitudeSides { get; set; } = 30;
-		[DisplayName("Latitude Sides")]
-		public int LatitudeSides { get; set; } = 10;
-
-		public void Rebuild(UndoBuffer undoBuffer)
-		{
-			var aabb = this.GetAxisAlignedBoundingBox();
-
-			var radius = Diameter / 2;
-			var angleDelta = MathHelper.Tau / 4 / LatitudeSides;
-			var angle = 0.0;
-			var path = new VertexStorage();
-			path.MoveTo(new Vector2(radius * Math.Cos(angle), radius * Math.Sin(angle)));
-			for (int i = 0; i < LatitudeSides; i++)
-			{
-				angle += angleDelta;
-				path.LineTo(new Vector2(radius * Math.Cos(angle), radius * Math.Sin(angle)));
-			}
-
-			Mesh = VertexSourceToMesh.Revolve(path, LongitudeSides);
-			if (aabb.ZSize > 0)
-			{
-				// If the part was already created and at a height, maintain the height.
-				PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
-			}
 		}
 	}
 }

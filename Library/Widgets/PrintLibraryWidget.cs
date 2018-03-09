@@ -40,6 +40,7 @@ using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintQueue;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PrintLibrary
 {
@@ -152,7 +153,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				Padding = new BorderDouble(left: 2, bottom: 2, top: 6), // Same padding as toolbar above
 				Name = "Show Folders Toggle",
 				Checked = UserSettings.Instance.get("ShowContainers") == "1",
-				MinimumSize = new VectorMath.Vector2(0, theme.ButtonHeight)
+				MinimumSize = new Vector2(0, theme.ButtonHeight)
 			};
 			showFolders.CheckedStateChanged += async (s, e) =>
 			{

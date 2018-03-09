@@ -34,6 +34,7 @@ using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.Library;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -191,7 +192,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.BackgroundColor = Color.White;
 				this.HAnchor = HAnchor.MaxFitOrStretch;
 				this.VAnchor = VAnchor.Fit;
-				this.MinimumSize = new VectorMath.Vector2(150, 32);
+				this.MinimumSize = new Vector2(150, 32);
 				this.content = content;
 
 				content.VAnchor = VAnchor.Center;

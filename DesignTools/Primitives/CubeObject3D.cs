@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.PolygonMesh;
 
@@ -43,7 +44,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			Width = width;
 			Depth = depth;
 			Height = height;
-			Rebuild();
+			Rebuild(null);
 		}
 
 		public override string ActiveEditor => "PublicPropertyEditor";
@@ -55,7 +56,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		public static CubeObject3D Create()
 		{
 			var item = new CubeObject3D();
-			item.Rebuild();
+			item.Rebuild(null);
 			return item;
 		}
 
@@ -68,11 +69,11 @@ namespace MatterHackers.MatterControl.DesignTools
 				Height = z,
 			};
 
-			item.Rebuild();
+			item.Rebuild(null);
 			return item;
 		}
 
-		public void Rebuild()
+		public void Rebuild(UndoBuffer undoBuffer)
 		{
 			var aabb = this.GetAxisAlignedBoundingBox();
 

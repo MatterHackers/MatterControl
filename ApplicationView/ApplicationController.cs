@@ -340,7 +340,7 @@ namespace MatterHackers.MatterControl
 					scene.AddSelectionAsChildren(new ArrangeObject3D());
 					if(scene.SelectedItem is ArrangeObject3D arange)
 					{
-						arange.Rebuild();
+						arange.Rebuild(null);
 					}
 				},
 				Icon = AggContext.StaticData.LoadIcon("align_left.png").SetPreMultiply(),
@@ -411,7 +411,7 @@ namespace MatterHackers.MatterControl
 					scene.AddSelectionAsChildren(new ArrayLinearObject3D());
 					if(scene.SelectedItem is ArrayLinearObject3D array)
 					{
-						array.Rebuild();
+						array.Rebuild(null);
 					}
 				},
 				Icon = AggContext.StaticData.LoadIcon("array_linear.png").SetPreMultiply(),
@@ -425,7 +425,7 @@ namespace MatterHackers.MatterControl
 					scene.AddSelectionAsChildren(new ArrayRadialObject3D());
 					if(scene.SelectedItem is ArrayRadialObject3D array)
 					{
-						array.Rebuild();
+						array.Rebuild(null);
 					}
 				},
 				Icon = AggContext.StaticData.LoadIcon("array_radial.png").SetPreMultiply(),
@@ -439,7 +439,7 @@ namespace MatterHackers.MatterControl
 					scene.AddSelectionAsChildren(new ArrayAdvancedObject3D());
 					if(scene.SelectedItem is ArrayAdvancedObject3D array)
 					{
-						array.Rebuild();
+						array.Rebuild(null);
 					}
 				},
 				Icon = AggContext.StaticData.LoadIcon("array_advanced.png").SetPreMultiply(),
@@ -1780,7 +1780,7 @@ namespace MatterHackers.MatterControl
 				Position = new Vector2(0, height*.25),
 				HAnchor = HAnchor.Center | HAnchor.Fit,
 				VAnchor = VAnchor.Fit,
-				MinimumSize = new VectorMath.Vector2(400, 100),
+				MinimumSize = new Vector2(400, 100),
 				Margin = new BorderDouble(0, 0, 0, 200)
 			};
 			overlay.AddChild(progressPanel);

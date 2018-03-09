@@ -80,7 +80,7 @@ namespace MatterHackers.MatterControl
 
 			imageBuffer = new ImageBuffer(width, height);
 
-			this.MinimumSize = new VectorMath.Vector2(width, height);
+			this.MinimumSize = new Vector2(width, height);
 
 			var graphics2D = imageBuffer.NewGraphics2D();
 

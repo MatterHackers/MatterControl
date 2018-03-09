@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System.ComponentModel;
 using System.Linq;
+using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.VectorMath;
@@ -64,7 +65,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		[Description("Keep the entire extents of the part within the angle described.")]
 		private bool KeepInAngle { get; set; } = false;
 
-		public void Rebuild()
+		public void Rebuild(UndoBuffer undoBuffer)
 		{
 			if (Axis.Origin.X == double.NegativeInfinity)
 			{

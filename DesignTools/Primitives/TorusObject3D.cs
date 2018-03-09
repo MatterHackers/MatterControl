@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.ComponentModel;
 using System.Threading;
+using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.PolygonMesh;
@@ -48,7 +49,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		public static TorusObject3D Create()
 		{
 			var item = new TorusObject3D();
-			item.Rebuild();
+			item.Rebuild(null);
 			return item;
 		}
 
@@ -65,7 +66,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		[DisplayName("Ending Angle")]
 		public double EndingAngle { get; set; } = 360;
 
-		public void Rebuild()
+		public void Rebuild(UndoBuffer undoBuffer)
 		{
 			var aabb = this.GetAxisAlignedBoundingBox();
 
