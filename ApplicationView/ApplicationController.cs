@@ -365,7 +365,7 @@ namespace MatterHackers.MatterControl
 				Action = (scene) =>
 				{
 					if (scene.SelectedItem != null
-						&& !scene.SelectedItem.VisibleMeshes().All(i => i.OutputType == PrintOutputTypes.Support))
+						&& !scene.SelectedItem.VisibleMeshes().All(i => i.object3D.OutputType == PrintOutputTypes.Support))
 					{
 						scene.UndoBuffer.AddAndDo(new MakeSupport(scene.SelectedItem));
 					}

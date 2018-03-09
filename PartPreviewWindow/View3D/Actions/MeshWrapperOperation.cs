@@ -123,10 +123,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			foreach (var child in this.VisibleMeshes().ToList())
 			{
 				// wrap the child in a DifferenceItem
-				child.Parent.Children.Modify((list) =>
+				child.object3D.Parent.Children.Modify((list) =>
 				{
-					list.Remove(child);
-					list.Add(new MeshWrapper(child, this.ID));
+					list.Remove(child.object3D);
+					list.Add(new MeshWrapper(child.object3D, this.ID));
 				});
 			}
 		}
