@@ -60,7 +60,6 @@ namespace MatterHackers.MatterControl.Library
 		public InsertionGroup(IEnumerable<ILibraryItem> items, View3DWidget view3DWidget, InteractiveScene scene, Vector2 bedCenter, Func<bool> dragOperationActive, bool trackSourceFiles = false)
 		{
 			// Add a temporary placeholder to give us some bounds
-			this.Mesh = InsertionGroup.placeHolderMesh;
 			this.scene = scene;
 			this.view3DWidget = view3DWidget;
 
@@ -87,7 +86,6 @@ namespace MatterHackers.MatterControl.Library
 				// Filter to content file types only
 				foreach (var item in items.Where(item => item.IsContentFileType()).ToList())
 				{
-					this.Mesh = null;
 
 					// Acquire
 					var progressControl = new DragDropLoadProgress(view3DWidget, null);
