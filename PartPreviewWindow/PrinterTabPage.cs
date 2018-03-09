@@ -153,6 +153,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var trackball = view3DWidget.InteractionLayer.Children<TrackballTumbleWidget>().FirstOrDefault();
 
+			tumbleCubeControl = view3DWidget.InteractionLayer.Children<TumbleCubeControl>().FirstOrDefault();
+
 			var position = view3DWidget.InteractionLayer.Children.IndexOf(trackball);
 
 			// The slice layers view
@@ -162,7 +164,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Stretch,
 				BackgroundColor = theme.InteractionLayerOverlayColor,
-				Visible = false
 			};
 
 			gcodeContainer = new ResizeContainer(gcode3DWidget)
@@ -195,7 +196,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				Visible = (printer.ViewState.ViewMode == PartViewMode.Layers2D)
 			};
-			view3DWidget.InteractionLayer.AddChild(gcode2DWidget);
+			view3DWidget.InteractionLayer.AddChild(gcode2DWidget, position + 1);
 
 			SetSliderSizes();
 
@@ -238,16 +239,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					break;
 			}
 
-			bool showSliceLayers = viewMode == PartViewMode.Layers3D;
-
-			gcode3DWidget.Visible = viewMode == PartViewMode.Layers3D;
 			gcode2DWidget.Visible = viewMode == PartViewMode.Layers2D;
 
 			view3DWidget.meshViewerWidget.ModelView = viewMode == PartViewMode.Model;
 
-			gcodeContainer.Visible = showSliceLayers;
+			gcodeContainer.Visible = viewMode != PartViewMode.Model;
 
-			if (showSliceLayers)
+			tumbleCubeControl.Visible = !gcode2DWidget.Visible;
+
+			if (viewMode == PartViewMode.Layers3D)
 			{
 				printer.Bed.Scene.ClearSelection();
 			}
@@ -326,6 +326,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		}
 
 		private double lastPostion = 0;
+		private TumbleCubeControl tumbleCubeControl;
 
 		private bool SetAnimationPosition()
 		{
@@ -346,98 +347,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		internal void ShowGCodeOverflowMenu(PopupMenu popupMenu)
 		{
-			popupMenu.CreateBoolMenuItem(
-				"Show Print Bed".Localize(),
-				() => gcodeOptions.RenderBed,
-				(value) =>
-				{
-					gcodeOptions.RenderBed = value;
-				});
-
-			popupMenu.CreateBoolMenuItem(
-				"Moves".Localize(),
-				() => gcodeOptions.RenderMoves,
-				(value) => gcodeOptions.RenderMoves = value);
-
-			popupMenu.CreateBoolMenuItem(
-				"Retractions".Localize(),
-				() => gcodeOptions.RenderRetractions,
-				(value) => gcodeOptions.RenderRetractions = value);
-
-			popupMenu.CreateHorizontalLine();
-
-			popupMenu.CreateBoolMenuItem(
-				"Speeds".Localize(),
-				() => gcodeOptions.GCodeLineColorStyle == "Speeds",
-				(value) => gcodeOptions.GCodeLineColorStyle = "Speeds",
-				useRadioStyle: true);
-
-			popupMenu.CreateBoolMenuItem(
-				"Materials".Localize(),
-				() => gcodeOptions.GCodeLineColorStyle == "Materials",
-				(value) => gcodeOptions.GCodeLineColorStyle = "Materials",
-				useRadioStyle: true);
-
-			popupMenu.CreateBoolMenuItem(
-				"None".Localize(),
-				() => gcodeOptions.GCodeLineColorStyle == "None",
-				(value) => gcodeOptions.GCodeLineColorStyle = "None",
-				useRadioStyle: true);
-
-			popupMenu.CreateHorizontalLine();
-
-			popupMenu.CreateBoolMenuItem(
-				"Wireframe".Localize(),
-				() => gcodeOptions.GCodeModelView == "Wireframe",
-				(value) => gcodeOptions.GCodeModelView = "Wireframe",
-				useRadioStyle: true);
-
-			popupMenu.CreateBoolMenuItem(
-				"Semi-Transparent".Localize(),
-				() => gcodeOptions.GCodeModelView == "Semi-Transparent",
-				(value) => gcodeOptions.GCodeModelView = "Semi-Transparent", 
-				useRadioStyle: true);
-
-			popupMenu.CreateBoolMenuItem(
-				"None".Localize(),
-				() => gcodeOptions.GCodeModelView == "None",
-				(value) => gcodeOptions.GCodeModelView = "None",
-				useRadioStyle: true);
-
-			popupMenu.CreateHorizontalLine();
-
-			popupMenu.CreateBoolMenuItem(
-				"Extrusion".Localize(),
-				() => gcodeOptions.SimulateExtrusion,
-				(value) => gcodeOptions.SimulateExtrusion = value);
-
-			popupMenu.CreateBoolMenuItem(
-				"Transparent".Localize(),
-				() => gcodeOptions.TransparentExtrusion,
-				(value) => gcodeOptions.TransparentExtrusion = value);
-
-			popupMenu.CreateHorizontalLine();
-
-			if (printer.Settings.GetValue<int>(SettingsKey.extruder_count) > 1)
-			{
-				popupMenu.CreateBoolMenuItem(
-					"Hide Offsets".Localize(),
-					() => gcodeOptions.HideExtruderOffsets,
-					(value) => gcodeOptions.HideExtruderOffsets = value);
-			}
-
-			popupMenu.CreateBoolMenuItem(
-				"Sync To Print".Localize(),
-				() => gcodeOptions.SyncToPrint,
-				(value) =>
-				{
-					gcodeOptions.SyncToPrint = value;
-					if (!gcodeOptions.SyncToPrint)
-					{
-						// If we are turning off sync to print, set the slider to full.
-						layerRenderRatioSlider.SecondValue = 1;
-					}
-				});
 		}
 
 		public override void OnDraw(Graphics2D graphics2D)
