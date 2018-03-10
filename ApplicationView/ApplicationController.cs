@@ -1057,7 +1057,7 @@ namespace MatterHackers.MatterControl
 
 			if (AssetObject3D.AssetManager == null)
 			{
-				AssetObject3D.AssetManager = new MockAssetManager(); 
+				AssetObject3D.AssetManager = new AssetManager(); 
 			}
 
 			//HtmlWindowTest();

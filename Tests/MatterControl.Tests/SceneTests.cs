@@ -70,7 +70,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
 		[Test]
 		public void CreatesAndLinksAmfsForUnsavedMeshes()
 		{
-			AssetObject3D.AssetManager = new MockAssetManager();
+			AssetObject3D.AssetManager = new AssetManager();
 
 			var scene = new InteractiveScene();
 			scene.Children.Add(new Object3D
@@ -107,7 +107,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 #endif
-			AssetObject3D.AssetManager = new MockAssetManager();
+			AssetObject3D.AssetManager = new AssetManager();
 
 			var sceneContext = new BedConfig(null);
 
