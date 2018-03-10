@@ -259,22 +259,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			foreach (var itemToCheck in objectToLayFlat.VisibleMeshes())
 			{
 				// find the lowest point on the model
-				for (int testIndex = 0; testIndex < itemToCheck.Mesh.Vertices.Count; testIndex++)
+				for (int testIndex = 0; testIndex < itemToCheck.mesh.Vertices.Count; testIndex++)
 				{
-					var vertex = itemToCheck.Mesh.Vertices[testIndex];
-					Vector3 vertexPosition = Vector3.Transform(vertex.Position, itemToCheck.WorldMatrix());
+					var vertex = itemToCheck.mesh.Vertices[testIndex];
+					Vector3 vertexPosition = Vector3.Transform(vertex.Position, itemToCheck.object3D.WorldMatrix());
 					if (firstVertex)
 					{
-						lowestVertex = itemToCheck.Mesh.Vertices[testIndex];
+						lowestVertex = itemToCheck.mesh.Vertices[testIndex];
 						lowestVertexPosition = vertexPosition;
-						itemToLayFlat = itemToCheck;
+						itemToLayFlat = itemToCheck.object3D;
 						firstVertex = false;
 					}
 					else if (vertexPosition.Z < lowestVertexPosition.Z)
 					{
-						lowestVertex = itemToCheck.Mesh.Vertices[testIndex];
+						lowestVertex = itemToCheck.mesh.Vertices[testIndex];
 						lowestVertexPosition = vertexPosition;
-						itemToLayFlat = itemToCheck;
+						itemToLayFlat = itemToCheck.object3D;
 					}
 				}
 			}

@@ -13,7 +13,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 	public class CalibrationControls : FlowLayoutWidget
 	{
 		private EventHandler unregisterEvents;
-		private GuiWidget configureButton;
+		private GuiWidget configureLevelingButton;
 
 		private TextImageButtonFactory buttonFactory;
 		private PrinterConfig printer;
@@ -24,67 +24,70 @@ namespace MatterHackers.MatterControl.PrinterControls
 			this.printer = printer;
 			this.buttonFactory = theme.ButtonFactory;
 
-			var buttonRow = new FlowLayoutWidget()
+			// add in the controls for configuring auto leveling
 			{
-				Name = "AutoLevelRowItem",
-				HAnchor = HAnchor.Stretch,
-			};
-
-			buttonRow.AddChild(
-				new IconButton(AggContext.StaticData.LoadIcon("leveling_32x32.png", 24, 24, IconColor.Theme), theme)
+				var autoLevelRow = new FlowLayoutWidget()
 				{
-					Margin = new BorderDouble(right: 6),
+					Name = "AutoLevelRowItem",
+					HAnchor = HAnchor.Stretch,
+				};
+
+				autoLevelRow.AddChild(
+					new IconButton(AggContext.StaticData.LoadIcon("leveling_32x32.png", 24, 24, IconColor.Theme), theme)
+					{
+						Margin = new BorderDouble(right: 6),
+						VAnchor = VAnchor.Center
+					});
+
+				// label
+				autoLevelRow.AddChild(
+					new TextWidget("Software Print Leveling".Localize(), textColor: theme.Colors.PrimaryTextColor, pointSize: theme.DefaultFontSize)
+					{
+						AutoExpandBoundsToText = true,
+						VAnchor = VAnchor.Center,
+					});
+
+				autoLevelRow.AddChild(new HorizontalSpacer());
+
+				// configure button
+				var configureIcon = AggContext.StaticData.LoadIcon("fa-cog_16.png", IconColor.Theme);
+				configureLevelingButton = new IconButton(configureIcon, theme)
+				{
+					ToolTipText = "Configure".Localize(),
+					Margin = theme.ButtonSpacing,
 					VAnchor = VAnchor.Center
-				});
-
-			// label
-			buttonRow.AddChild(
-				new TextWidget("Software Print Leveling".Localize(), textColor: theme.Colors.PrimaryTextColor, pointSize: theme.DefaultFontSize)
+				};
+				configureLevelingButton.Click += (s, e) =>
 				{
-					AutoExpandBoundsToText = true,
-					VAnchor = VAnchor.Center,
-				});
+					UiThread.RunOnIdle(() =>
+					{
+						DialogWindow.Show(new EditLevelingSettingsPage(printer));
+					});
+				};
+				autoLevelRow.AddChild(configureLevelingButton);
 
-			buttonRow.AddChild(new HorizontalSpacer());
-
-			// configure button
-			var configureIcon = AggContext.StaticData.LoadIcon("fa-cog_16.png", IconColor.Theme);
-			configureButton = new IconButton(configureIcon, theme)
-			{
-				ToolTipText = "Configure".Localize(),
-				Margin = theme.ButtonSpacing,
-				VAnchor = VAnchor.Center
-			};
-			configureButton.Click += (s, e) =>
-			{
-				UiThread.RunOnIdle(() =>
+				// put in the switch
+				CheckBox printLevelingSwitch = ImageButtonFactory.CreateToggleSwitch(printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled));
+				printLevelingSwitch.VAnchor = VAnchor.Center;
+				printLevelingSwitch.Margin = new BorderDouble(left: 16);
+				printLevelingSwitch.CheckedStateChanged += (sender, e) =>
 				{
-					DialogWindow.Show(new EditLevelingSettingsPage(printer));
-				});
-			};
-			buttonRow.AddChild(configureButton);
+					printer.Settings.Helpers.DoPrintLeveling(printLevelingSwitch.Checked);
+				};
 
-			// put in the switch
-			CheckBox printLevelingSwitch = ImageButtonFactory.CreateToggleSwitch(printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled));
-			printLevelingSwitch.VAnchor = VAnchor.Center;
-			printLevelingSwitch.Margin = new BorderDouble(left: 16);
-			printLevelingSwitch.CheckedStateChanged += (sender, e) =>
-			{
-				printer.Settings.Helpers.DoPrintLeveling(printLevelingSwitch.Checked);
-			};
+				printer.Settings.PrintLevelingEnabledChanged.RegisterEvent((sender, e) =>
+				{
+					printLevelingSwitch.Checked = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled);
+				}, ref unregisterEvents);
 
-			printer.Settings.PrintLevelingEnabledChanged.RegisterEvent((sender, e) =>
-			{
-				printLevelingSwitch.Checked = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled);
-			}, ref unregisterEvents);
+				// only show the switch if leveling can be turned off (it can't if it is required).
+				if (!printer.Settings.GetValue<bool>(SettingsKey.print_leveling_required_to_print))
+				{
+					autoLevelRow.AddChild(printLevelingSwitch);
+				}
 
-			// only show the switch if leveling can be turned off (it can't if it is required).
-			if (!printer.Settings.GetValue<bool>(SettingsKey.print_leveling_required_to_print))
-			{
-				buttonRow.AddChild(printLevelingSwitch);
+				this.AddChild(autoLevelRow);
 			}
-
-			this.AddChild(buttonRow);
 
 			printer.Connection.CommunicationStateChanged.RegisterEvent(PrinterStatusChanged, ref unregisterEvents);
 			printer.Connection.EnableChanged.RegisterEvent(PrinterStatusChanged, ref unregisterEvents);
@@ -119,12 +122,12 @@ namespace MatterHackers.MatterControl.PrinterControls
 				|| printer.Connection.PrinterIsPaused)
 			{
 				this.Enabled = false;
-				configureButton.Enabled = true; // setting this true when the element is disabled makes the colors stay correct
+				configureLevelingButton.Enabled = true; // setting this true when the element is disabled makes the colors stay correct
 			}
 			else
 			{
 				this.Enabled = true;
-				configureButton.Enabled = printer.Connection.IsConnected;
+				configureLevelingButton.Enabled = printer.Connection.IsConnected;
 			}
 		}
 	}

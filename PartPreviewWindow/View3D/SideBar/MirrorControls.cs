@@ -97,7 +97,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			foreach (var meshItems in item.VisibleMeshes())
 			{
-				meshItems.Mesh.ReverseFaceEdges();
+				meshItems.mesh.ReverseFaceEdges();
 			}
 
 			switch (axis)

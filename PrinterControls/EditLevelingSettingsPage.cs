@@ -33,6 +33,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
@@ -46,6 +47,20 @@ namespace MatterHackers.MatterControl
 
 			this.WindowTitle = "Leveling Settings".Localize();
 			this.HeaderText = "Sampled Positions".Localize();
+
+			var scrollableWidget = new ScrollableWidget()
+			{
+				AutoScroll = true,
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch,
+			};
+			scrollableWidget.ScrollArea.HAnchor = HAnchor.Stretch;
+			contentRow.AddChild(scrollableWidget);
+			var scrollArrea = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.Stretch,
+			};
+			scrollableWidget.AddChild(scrollArrea);
 
 			var positions = new List<Vector3>();
 
@@ -98,7 +113,7 @@ namespace MatterHackers.MatterControl
 					leftRightEdit.AddChild(valueEdit);
 				}
 
-				this.contentRow.AddChild(leftRightEdit);
+				scrollArrea.AddChild(leftRightEdit);
 			}
 
 			var runWizardButton = new TextButton("Run Leveling Wizard".Localize(), theme)
@@ -117,7 +132,31 @@ namespace MatterHackers.MatterControl
 				});
 			};
 
-			this.contentRow.AddChild(runWizardButton);
+			scrollArrea.AddChild(runWizardButton);
+
+			// add in the controls for configuring probe offset
+			if (printer.Settings.GetValue<bool>(SettingsKey.has_z_probe)
+				&& printer.Settings.GetValue<bool>(SettingsKey.use_z_probe)
+				&& printer.Settings.GetValue<bool>(SettingsKey.has_z_servo))
+			{
+				var runCalibrateProbeButton = new TextButton("Re-Calibrate Probe".Localize(), theme)
+				{
+					VAnchor = VAnchor.Absolute,
+					HAnchor = HAnchor.Right,
+					BackgroundColor = theme.MinimalShade,
+					Margin = new BorderDouble(5, 0, 5, 20)
+				};
+				runCalibrateProbeButton.Click += (s, e) =>
+				{
+					this.WizardWindow.CloseOnIdle();
+					UiThread.RunOnIdle(() =>
+					{
+						ProbeCalibrationWizard.ShowProbeCalibrationWizard(printer);
+					});
+				};
+
+				scrollArrea.AddChild(runCalibrateProbeButton);
+			}
 
 			Button savePresetsButton = textImageButtonFactory.Generate("Save".Localize());
 			savePresetsButton.Click += (s, e) =>

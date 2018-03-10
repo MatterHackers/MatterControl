@@ -215,6 +215,41 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		}
 	}
 
+	public class CalibrateProbeLastPagelInstructions : InstructionsPage
+	{
+		protected WizardControl container;
+		private List<ProbePosition> autoProbePositions;
+		private List<ProbePosition> manualProbePositions;
+
+		public CalibrateProbeLastPagelInstructions(PrinterConfig printer, WizardControl container, string pageDescription, string instructionsText, 
+			List<ProbePosition> autoProbePositions,
+			List<ProbePosition> manualProbePositions)
+			: base(printer, pageDescription, instructionsText)
+		{
+			this.autoProbePositions = autoProbePositions;
+			this.manualProbePositions = manualProbePositions;
+			this.container = container;
+		}
+
+		public override void PageIsBecomingActive()
+		{
+			PrintLevelingData levelingData = printer.Settings.Helpers.GetPrintLevelingData();
+			levelingData.SampledPositions.Clear();
+
+			double newProbeOffset = autoProbePositions[0].position.Z - manualProbePositions[0].position.Z;
+			printer.Settings.SetValue(SettingsKey.z_probe_z_offset, newProbeOffset.ToString("0.###"));
+
+			if (printer.Settings.GetValue<bool>(SettingsKey.z_homes_to_max))
+			{
+				printer.Connection.HomeAxis(PrinterConnection.Axis.XYZ);
+			}
+
+			container.backButton.Enabled = false;
+
+			base.PageIsBecomingActive();
+		}
+	}
+
 	public class GettingThirdPointFor2PointCalibration : InstructionsPage
 	{
 		protected Vector3 probeStartPosition;

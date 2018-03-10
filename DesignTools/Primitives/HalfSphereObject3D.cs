@@ -66,7 +66,8 @@ namespace MatterHackers.MatterControl.DesignTools
 			var angleDelta = MathHelper.Tau / 4 / LatitudeSides;
 			var angle = 0.0;
 			var path = new VertexStorage();
-			path.MoveTo(new Vector2(radius * Math.Cos(angle), radius * Math.Sin(angle)));
+			path.MoveTo(0, 0);
+			path.LineTo(new Vector2(radius * Math.Cos(angle), radius * Math.Sin(angle)));
 			for (int i = 0; i < LatitudeSides; i++)
 			{
 				angle += angleDelta;
