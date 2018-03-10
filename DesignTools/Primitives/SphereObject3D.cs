@@ -44,6 +44,14 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 		}
 
+		public SphereObject3D(double diameter, int sides)
+		{
+			Diameter = diameter;
+			Sides = sides;
+
+			Rebuild(null);
+		}
+
 		public static SphereObject3D Create()
 		{
 			var item = new SphereObject3D();
