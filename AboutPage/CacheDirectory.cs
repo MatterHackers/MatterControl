@@ -191,9 +191,9 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public static string GetImageFileName(PrintItemWrapper item)
+		private static string GetImageFileName(PrintItemWrapper item)
 		{
-			return GetImageFileName(item.FileHashCode.ToString());
+			return GetImageFileName(item.FileHashCode);
 		}
 
 		private static string GetImageFileName(string stlHashCode)
