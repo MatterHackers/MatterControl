@@ -72,8 +72,8 @@ namespace MatterHackers.MatterControl
 			{
 				HAnchor = HAnchor.Center | HAnchor.Fit
 			};
-			productTitle.AddChild(new TextWidget("MatterControl".Localize(), pointSize: 20) { Margin = new BorderDouble(right: 3) });
-			productTitle.AddChild(new TextWidget("TM".Localize(), pointSize: 7) { VAnchor = VAnchor.Top });
+			productTitle.AddChild(new TextWidget("MatterControl".Localize(), textColor: theme.Colors.PrimaryTextColor, pointSize: 20) { Margin = new BorderDouble(right: 3) });
+			productTitle.AddChild(new TextWidget("TM".Localize(), textColor: theme.Colors.PrimaryTextColor, pointSize: 7) { VAnchor = VAnchor.Top });
 
 			altHeadingRow.AddChild(productInfo);
 			productInfo.AddChild(productTitle);
@@ -89,13 +89,13 @@ namespace MatterHackers.MatterControl
 			altHeadingRow.AddChild(spinnerPanel);
 
 			productInfo.AddChild(
-				new TextWidget("Version".Localize() + " " + VersionInfo.Instance.BuildVersion, pointSize: theme.DefaultFontSize)
+				new TextWidget("Version".Localize() + " " + VersionInfo.Instance.BuildVersion, textColor: theme.Colors.PrimaryTextColor, pointSize: theme.DefaultFontSize)
 				{
 					HAnchor = HAnchor.Center
 				});
 
 			productInfo.AddChild(
-				new TextWidget("Developed By".Localize() + ": " + "MatterHackers", pointSize: theme.DefaultFontSize)
+				new TextWidget("Developed By".Localize() + ": " + "MatterHackers", textColor: theme.Colors.PrimaryTextColor, pointSize: theme.DefaultFontSize)
 				{
 					HAnchor = HAnchor.Center
 				});
@@ -108,7 +108,7 @@ namespace MatterHackers.MatterControl
 			contentRow.AddChild(infoRow);
 
 			infoRow.AddChild(
-				new TextWidget("MatterControl is made possible by the team at MatterHackers and".Localize(), pointSize: theme.FontSize10));
+				new TextWidget("MatterControl is made possible by the team at MatterHackers and".Localize(), textColor: theme.Colors.PrimaryTextColor, pointSize: theme.FontSize10));
 
 			var originalFontSize = theme.LinkButtonFactory.fontSize;
 
@@ -157,7 +157,7 @@ namespace MatterHackers.MatterControl
 			contentRow.AddChild(siteLink);
 
 			contentRow.AddChild(
-				new TextWidget("Copyright © 2018 MatterHackers, Inc.", pointSize: theme.DefaultFontSize)
+				new TextWidget("Copyright © 2018 MatterHackers, Inc.", textColor: theme.Colors.PrimaryTextColor, pointSize: theme.DefaultFontSize)
 				{
 					HAnchor = HAnchor.Center,
 				});
