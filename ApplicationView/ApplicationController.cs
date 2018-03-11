@@ -1733,47 +1733,7 @@ namespace MatterHackers.MatterControl
 
 			systemWindow.AddChild(overlay);
 
-			// loading animation stuff
-			LightingData lighting = new LightingData();
-
-			var logoPath = AggContext.StaticData.MapPath(Path.Combine("Stls", "MH Logo.stl"));
-			var logoMesh = MeshFileIo.Load(logoPath, CancellationToken.None).Mesh;
-
-			// Position
-			var aabb = logoMesh.GetAxisAlignedBoundingBox();
-			logoMesh.Transform(Matrix4X4.CreateTranslation(-aabb.Center));
-			logoMesh.Transform(Matrix4X4.CreateScale(1.6 / aabb.XSize));
-
-			var loadTime = Stopwatch.StartNew();
-			var anglePerDraw = 1 / MathHelper.Tau * 0.6;
-			var angle = 0.0;
-
-			overlay.BeforeDraw += (s, e) =>
-			{
-				var thisAngle = Math.Min(anglePerDraw, loadTime.Elapsed.TotalSeconds * MathHelper.Tau);
-				angle += thisAngle;
-				loadTime.Restart();
-
-				var screenSpaceBounds = overlay.TransformToScreenSpace(overlay.LocalBounds);
-				WorldView world = new WorldView(screenSpaceBounds.Width, screenSpaceBounds.Height);
-				world.Translate(new Vector3(0, 0.5, 0));
-				world.Rotate(Quaternion.FromEulerAngles(new Vector3(-0.1, 0, 0)));
-
-				InteractionLayer.SetGlContext(world, screenSpaceBounds, lighting);
-				GLHelper.Render(logoMesh, Color.White, Matrix4X4.CreateRotationY(angle), RenderTypes.Shaded);
-				InteractionLayer.UnsetGlContext();
-			};
-
-			Action action = null;
-			action = () =>
-			{
-				overlay.Invalidate();
-				if (!overlay.HasBeenClosed)
-				{
-					UiThread.RunOnIdle(action, .05);
-				}
-			};
-			UiThread.RunOnIdle(action, .05);
+			var spinner = new LogoSpinner(overlay);
 
 			progressPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
