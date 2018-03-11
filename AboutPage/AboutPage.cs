@@ -47,33 +47,89 @@ namespace MatterHackers.MatterControl
 
 			var theme = ApplicationController.Instance.Theme;
 
+			this.MinimumSize = new Vector2(480 * GuiWidget.DeviceScale, 520 * GuiWidget.DeviceScale);
 			this.WindowSize = new Vector2(500 * GuiWidget.DeviceScale, 550 * GuiWidget.DeviceScale);
 
-			headerRow.CloseAllChildren();
+			contentRow.BackgroundColor = Color.Transparent;
 
-			headerRow.HAnchor = HAnchor.Center | HAnchor.Fit;
-			headerRow.AddChild(new TextWidget("MatterControl".Localize(), pointSize: 20) { Margin = new BorderDouble(right: 3) });
-			headerRow.AddChild(new TextWidget("TM".Localize(), pointSize: 7) { VAnchor = VAnchor.Top });
+			headerRow.Visible = false;
 
-			contentRow.AddChild(
+			var altHeadingRow = new GuiWidget()
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Absolute,
+				Height = 100,
+			};
+			contentRow.AddChild(altHeadingRow);
+
+			var productInfo = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.Center | HAnchor.Fit,
+				VAnchor = VAnchor.Center | VAnchor.Fit
+			};
+
+			var productTitle = new FlowLayoutWidget()
+			{
+				HAnchor = HAnchor.Center | HAnchor.Fit
+			};
+			productTitle.AddChild(new TextWidget("MatterControl".Localize(), pointSize: 20) { Margin = new BorderDouble(right: 3) });
+			productTitle.AddChild(new TextWidget("TM".Localize(), pointSize: 7) { VAnchor = VAnchor.Top });
+
+			altHeadingRow.AddChild(productInfo);
+			productInfo.AddChild(productTitle);
+
+			var spinnerPanel = new GuiWidget()
+			{
+				HAnchor = HAnchor.Absolute | HAnchor.Left,
+				VAnchor = VAnchor.Absolute,
+				Height = 100,
+				Width = 100,
+			};
+			var spinner = new LogoSpinner(spinnerPanel, 4, 0.2, 0);
+			altHeadingRow.AddChild(spinnerPanel);
+
+			productInfo.AddChild(
 				new TextWidget("Version".Localize() + " " + VersionInfo.Instance.BuildVersion, pointSize: theme.DefaultFontSize)
 				{
 					HAnchor = HAnchor.Center
 				});
 
-			contentRow.AddChild(
+			productInfo.AddChild(
 				new TextWidget("Developed By".Localize() + ": " + "MatterHackers", pointSize: theme.DefaultFontSize)
 				{
 					HAnchor = HAnchor.Center
 				});
 
-			contentRow.AddChild(
-				new ImageWidget(
-					AggContext.StaticData.LoadIcon(Path.Combine("..", "Images", "mh-logo.png"), 250, 250))
-				{
-					HAnchor = HAnchor.Center,
-					Margin = new BorderDouble(0, 25)
-				});
+			var infoRow = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.Center |HAnchor.Fit,
+				Margin = new BorderDouble(top: 20)
+			};
+			contentRow.AddChild(infoRow);
+
+			infoRow.AddChild(
+				new TextWidget("MatterControl is made possible by the team at MatterHackers and".Localize(), pointSize: theme.FontSize10));
+
+			var originalFontSize = theme.LinkButtonFactory.fontSize;
+
+			theme.LinkButtonFactory.fontSize = theme.FontSize10;
+
+			var ossLink = theme.LinkButtonFactory.Generate("other open source software".Localize());
+			ossLink.Margin = new BorderDouble(left: 3, top: 3);
+			ossLink.Cursor = Cursors.Hand;
+			ossLink.Click += (s, e) => UiThread.RunOnIdle(() =>
+			{
+				// Show attributes
+			});
+			infoRow.AddChild(ossLink);
+
+			//contentRow.AddChild(
+			//	new ImageWidget(
+			//		AggContext.StaticData.LoadIcon(Path.Combine("..", "Images", "mh-logo.png"), 250, 250))
+			//	{
+			//		HAnchor = HAnchor.Center,
+			//		Margin = new BorderDouble(0, 25)
+			//	});
 
 			contentRow.AddChild(new VerticalSpacer());
 
@@ -111,9 +167,11 @@ namespace MatterHackers.MatterControl
 			clearCacheLink.Cursor = Cursors.Hand;
 			clearCacheLink.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
-				AboutWidget.DeleteCacheData(0);
+				CacheDirectory.DeleteCacheData(0);
 			});
 			contentRow.AddChild(clearCacheLink);
+
+			theme.LinkButtonFactory.fontSize = originalFontSize;
 		}
 	}
 }
