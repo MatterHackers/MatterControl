@@ -159,11 +159,11 @@ namespace MatterHackers.MatterControl.DesignTools
 				this.Children.Add(textObject);
 				// add a plate under the dots
 				IObject3D basePlate = new CubeObject3D(textObject.XSize() + pointSize * pointsToMm / 2, textObject.YSize() + pointSize * pointsToMm / 2, BaseHeight);
-				basePlate = new SetCenter(basePlate, textObject.GetCenter() - new Vector3(0, 0, textObject.ZSize() / 2 + basePlate.ZSize() / 2));
+				basePlate = new SetCenter(basePlate, textObject.GetCenter() - new Vector3(0, 0, textObject.ZSize() / 2 + basePlate.ZSize() / 2 - .01));
 				this.Children.Add(basePlate);
 			}
 
-			this.Matrix *= Matrix4X4.CreateRotationX(MathHelper.Tau / 4);
+			//this.Matrix *= Matrix4X4.CreateRotationX(-MathHelper.Tau / 4);
 
 			if (aabb.ZSize > 0)
 			{
