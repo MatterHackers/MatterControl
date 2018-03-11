@@ -143,7 +143,7 @@ namespace MatterHackers.MatterControl.Library.Export
 					try
 					{
 						string sourceExtension = $".{firstItem.ContentType}";
-						string assetPath = await AssetObject3D.AssetManager.StoreMcx(loadedItem);
+						string assetPath = await AssetObject3D.AssetManager.StoreMcx(loadedItem, false);
 
 						string fileHashCode = Path.GetFileNameWithoutExtension(assetPath);
 
