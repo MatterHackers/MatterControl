@@ -5,7 +5,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 
-namespace MatterHackers.MatterControl.AboutPage
+namespace MatterHackers.MatterControl
 {
 	public class CheckForUpdatesPage : DialogPage
 	{

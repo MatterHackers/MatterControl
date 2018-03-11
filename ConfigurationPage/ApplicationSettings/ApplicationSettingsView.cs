@@ -36,7 +36,6 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.AboutPage;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
@@ -336,7 +335,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			}
 			aboutMatterControl.Click += (s, e) =>
 			{
-				UiThread.RunOnIdle(AboutWindow.Show);
+				UiThread.RunOnIdle(() => DialogWindow.Show<AboutPage>());
 			};
 			this.AddSettingsRow(aboutMatterControl);
 		}

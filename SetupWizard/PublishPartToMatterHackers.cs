@@ -39,7 +39,7 @@ namespace MatterHackers.MatterControl
 	public class PublishPartToMatterHackers : DialogPage
 	{
 		string publishMessage = "Publish a copy of this part to MatterHackers.".Localize();
-		string publicPublish = "\n\nThis copy will be made availble under the terms of the 'Creative Commons Attribution 4.0 International Public License', click the link below for details.".Localize();
+		string publicPublish = "\n\nThis copy will be made available under the terms of the 'Creative Commons Attribution 4.0 International Public License', click the link below for details.".Localize();
 
 		List<CheckBox> iAgreeCheckbox = new List<CheckBox>();
 
