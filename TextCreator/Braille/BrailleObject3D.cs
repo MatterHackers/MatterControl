@@ -163,6 +163,8 @@ namespace MatterHackers.MatterControl.DesignTools
 				this.Children.Add(basePlate);
 			}
 
+			this.Matrix *= Matrix4X4.CreateRotationX(MathHelper.Tau / 4);
+
 			if (aabb.ZSize > 0)
 			{
 				// If the part was already created and at a height, maintain the height.
