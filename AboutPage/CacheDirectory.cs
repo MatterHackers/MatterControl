@@ -37,18 +37,8 @@ using MatterHackers.MatterControl.PrintQueue;
 
 namespace MatterHackers.MatterControl
 {
-
 	public static class CacheDirectory
 	{
-		private static readonly Point2D BigRenderSize = new Point2D(460, 460);
-
-		private static readonly string ThumbnailsPath = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "thumbnails");
-
-		private static HashSet<string> folderNamesToPreserve = new HashSet<string>()
-		{
-			"profiles",
-		};
-
 		public static void DeleteCacheData(int daysOldToDelete)
 		{
 			// TODO: Enable once the cache mechanism is scene graph aware
@@ -106,6 +96,15 @@ namespace MatterHackers.MatterControl
 				CleanDirectory(userDataPath, referencedFilePaths, daysOldToDelete);
 			}
 		}
+
+		private static readonly Point2D BigRenderSize = new Point2D(460, 460);
+
+		private static readonly string ThumbnailsPath = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "thumbnails");
+
+		private static HashSet<string> folderNamesToPreserve = new HashSet<string>()
+		{
+			"profiles",
+		};
 
 		private static int CleanDirectory(string path, HashSet<string> referencedFilePaths, int daysOldToDelete)
 		{
