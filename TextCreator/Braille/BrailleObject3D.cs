@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System.ComponentModel;
 using System.IO;
+using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.Transform;
@@ -63,7 +64,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		[DisplayName("Name")]
 		public string TextToEncode { get; set; } = "Braille";
 
-		public double BaseHeight { get; set; } = 5;
+		public double BaseHeight { get; set; } = 3;
 
 		[Description("Use Braille grade 2 (contractions)")]
 		public bool UseGrade2 { get; set; }
@@ -90,7 +91,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			int pointSize = 28;
 			double pointsToMm = 0.352778;
-			IObject3D textObject = RenderAsBraille ? new Object3D() : this;
+			IObject3D textObject = new Object3D();
 			var offest = 0.0;
 			foreach (var letter in brailleText.ToCharArray())
 			{
@@ -116,11 +117,14 @@ namespace MatterHackers.MatterControl.DesignTools
 							case Agg.ShapePath.FlagsAndCommand.CommandEndPoly:
 							case Agg.ShapePath.FlagsAndCommand.FlagClose:
 							case Agg.ShapePath.FlagsAndCommand.CommandMoveTo:
-								if(vertexCount > 0)
+								if (vertexCount > 0)
 								{
 									var center = positionSum / vertexCount;
 									double radius = (center - lastPosition).Length;
-									var sphere = new HalfSphereObject3D(radius * 2, 15);
+									var sphere = new HalfSphereObject3D(radius * 2, 15)
+									{
+										Color = Color.LightBlue
+									};
 									sphere.Translate(center.X, center.Y);
 									letterObject.Children.Add(sphere);
 								}
@@ -139,11 +143,12 @@ namespace MatterHackers.MatterControl.DesignTools
 				}
 				else
 				{
-					letterPrinter = new TypeFacePrinter(letter.ToString(), pointSize);
+					letterPrinter = new TypeFacePrinter(letter.ToString(), new StyledTypeFace(ApplicationController.MonoSpacedTypeFace, pointSize));
 					var scalledLetterPrinter = new VertexSourceApplyTransform(letterPrinter, Affine.NewScaling(pointsToMm));
 					letterObject = new Object3D()
 					{
-						Mesh = VertexSourceToMesh.Extrude(scalledLetterPrinter, BaseHeight)
+						Mesh = VertexSourceToMesh.Extrude(scalledLetterPrinter, 1),
+						Color = Color.LightBlue
 					};
 				}
 
@@ -153,17 +158,16 @@ namespace MatterHackers.MatterControl.DesignTools
 				offest += letterPrinter.GetSize(letter.ToString()).X * pointsToMm;
 			}
 
-			if (RenderAsBraille)
-			{
-				// add the object that is the dots
-				this.Children.Add(textObject);
-				// add a plate under the dots
-				IObject3D basePlate = new CubeObject3D(textObject.XSize() + pointSize * pointsToMm / 2, textObject.YSize() + pointSize * pointsToMm / 2, BaseHeight);
-				basePlate = new SetCenter(basePlate, textObject.GetCenter() - new Vector3(0, 0, textObject.ZSize() / 2 + basePlate.ZSize() / 2));
-				this.Children.Add(basePlate);
-			}
+			// add a plate under the dots
+			IObject3D basePlate = new CubeObject3D(textObject.XSize() + pointSize * pointsToMm / 2, textObject.YSize() + pointSize * pointsToMm / 2, BaseHeight);
+			basePlate = new SetCenter(basePlate, textObject.GetCenter() - new Vector3(0, 0, textObject.ZSize() / 2 + basePlate.ZSize() / 2 - .01));
+			this.Children.Add(basePlate);
 
-			this.Matrix *= Matrix4X4.CreateRotationX(MathHelper.Tau / 4);
+			basePlate.Matrix *= Matrix4X4.CreateRotationX(MathHelper.Tau / 4);
+
+			// add the object that is the dots
+			this.Children.Add(textObject);
+			textObject.Matrix *= Matrix4X4.CreateRotationX(MathHelper.Tau / 4);
 
 			if (aabb.ZSize > 0)
 			{
