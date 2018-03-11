@@ -116,7 +116,7 @@ namespace MatterHackers.MatterControl
 		public void ProcessCommandline()
 		{
 			var commandLineArgs = Environment.GetCommandLineArgs();
-			
+
 			for (int currentCommandIndex = 0; currentCommandIndex < commandLineArgs.Length; currentCommandIndex++)
 			{
 				string command = commandLineArgs[currentCommandIndex];
@@ -128,7 +128,7 @@ namespace MatterHackers.MatterControl
 						break;
 
 					case "CLEAR_CACHE":
-						AboutWidget.DeleteCacheData(0);
+						CacheDirectory.DeleteCacheData(0);
 						break;
 
 					case "SHOW_MEMORY":

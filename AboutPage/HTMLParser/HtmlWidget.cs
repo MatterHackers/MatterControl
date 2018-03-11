@@ -266,7 +266,7 @@ namespace MatterHackers.MatterControl
 						}
 						else if (elementState.Id == "clearCache")
 						{
-							createdButton.Click += (s, e) => AboutWidget.DeleteCacheData(0);
+							createdButton.Click += (s, e) => CacheDirectory.DeleteCacheData(0);
 						}
 					}
 
