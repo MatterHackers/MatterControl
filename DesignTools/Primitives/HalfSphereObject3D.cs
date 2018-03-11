@@ -44,6 +44,15 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 		}
 
+
+		public HalfSphereObject3D(double diametar, int sides)
+		{
+			this.Diameter = diametar;
+			this.LatitudeSides = sides;
+			this.LongitudeSides = sides;
+			Rebuild(null);
+		}
+
 		public static HalfSphereObject3D Create()
 		{
 			var item = new HalfSphereObject3D();
@@ -53,9 +62,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 
 		public double Diameter { get; set; } = 20;
-		[DisplayName("Longitude Sides")]
 		public int LongitudeSides { get; set; } = 30;
-		[DisplayName("Latitude Sides")]
 		public int LatitudeSides { get; set; } = 10;
 
 		public void Rebuild(UndoBuffer undoBuffer)

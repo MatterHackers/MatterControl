@@ -29,7 +29,9 @@ either expressed or implied, of the FreeBSD Project.
 
 using System.ComponentModel;
 using MatterHackers.Agg.Font;
+using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
+using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
@@ -103,18 +105,20 @@ namespace MatterHackers.MatterControl.DesignTools
 			});
 
 			var offest = 0.0;
+			double pointsToMm = 0.352778;
 			foreach (var letter in NameToWrite.ToCharArray())
 			{
-				var letterPrinter = new TypeFacePrinter(letter.ToString(), new StyledTypeFace(NamedTypeFaceCache.GetTypeFace(Font), PointSize * 0.352778));
-				IObject3D letterMesh = new Object3D()
+				var letterPrinter = new TypeFacePrinter(letter.ToString(), new StyledTypeFace(NamedTypeFaceCache.GetTypeFace(Font), PointSize));
+				var scalledLetterPrinter = new VertexSourceApplyTransform(letterPrinter, Affine.NewScaling(pointsToMm));
+				IObject3D letterObject = new Object3D()
 				{
-					Mesh = VertexSourceToMesh.Extrude(letterPrinter, Height)
+					Mesh = VertexSourceToMesh.Extrude(scalledLetterPrinter, Height)
 				};
 
-				letterMesh.Matrix = Matrix4X4.CreateTranslation(offest, 0, 0);
-				this.Children.Add(letterMesh);
+				letterObject.Matrix = Matrix4X4.CreateTranslation(offest, 0, 0);
+				this.Children.Add(letterObject);
 
-				offest += letterPrinter.GetSize(letter.ToString()).X;
+				offest += letterPrinter.GetSize(letter.ToString()).X * pointsToMm;
 			}
 
 

@@ -89,6 +89,7 @@
     <Compile Include="DataStorage\ApplicationDataStorage.cs" />
     <Compile Include="DesignTools\Attributes\HideUpdateButtonAttribute.cs" />
     <Compile Include="DesignTools\Attributes\IconsAttribute.cs" />
+    <Compile Include="DesignTools\Attributes\WebPageLinkAttribute.cs" />
     <Compile Include="DesignTools\ImageAsset.cs" />
     <Compile Include="DesignTools\Interfaces\IPropertyGridModifier.cs" />
     <Compile Include="DesignTools\Interfaces\IRebuildable.cs" />
