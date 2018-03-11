@@ -64,9 +64,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			return item;
 		}
 
-		[DisplayName("Outer Diameter")]
 		public double OuterDiameter { get; set; } = 20;
-		[DisplayName("Inner Diameter")]
 		public double InnerDiameter { get; set; } = 25;
 		public double Height { get; set; } = 20;
 		public int Sides { get; set; } = 30;

@@ -34,12 +34,12 @@ namespace MatterHackers.MatterControl.DesignTools
 	[AttributeUsage(AttributeTargets.Class)]
 	public class UnlockLinkAttribute : Attribute
 	{
-		public static string DetailPageBaseUrl => "https://www.matterhackers.com/store/l/";
+		public static string UnlockPageBaseUrl => "https://www.matterhackers.com/store/l/";
 
-		public string DetailsPageLink { get; private set; }
-		public UnlockLinkAttribute(string detailsPageLink)
+		public string UnlockPageLink { get; private set; }
+		public UnlockLinkAttribute(string unlockPageLink)
 		{
-			DetailsPageLink = detailsPageLink;
+			UnlockPageLink = unlockPageLink;
 		}
 	}
 }

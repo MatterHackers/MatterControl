@@ -53,17 +53,12 @@ namespace MatterHackers.MatterControl.DesignTools
 			return item;
 		}
 
-		[DisplayName("Inner Diameter")]
 		public double InnerDiameter { get; set; } = 10;
-		[DisplayName("Outer Diameter")]
 		public double OuterDiameter { get; set; } = 20;
-		[DisplayName("Toroid Sides")]
 		public int ToroidSides { get; set; } = 20;
 		[DisplayName("Ring Sides")]
 		public int PoleSides { get; set; } = 16;
-		[DisplayName("Starting Angle")]
 		public double StartingAngle { get; set; } = 0;
-		[DisplayName("Ending Angle")]
 		public double EndingAngle { get; set; } = 360;
 
 		public void Rebuild(UndoBuffer undoBuffer)

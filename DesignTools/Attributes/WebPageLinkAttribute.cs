@@ -27,52 +27,19 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System.ComponentModel;
-using System.Threading;
-using MatterHackers.Agg.UI;
-using MatterHackers.Agg.VertexSource;
-using MatterHackers.DataConverters3D;
-using MatterHackers.PolygonMesh;
-using MatterHackers.VectorMath;
+using System;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class ConeObject3D : Object3D, IRebuildable
+	[AttributeUsage(AttributeTargets.Class)]
+	public class WebPageLinkAttribute : Attribute
 	{
-		public override string ActiveEditor => "PublicPropertyEditor";
-
-		public ConeObject3D()
+		public string Url { get; private set; }
+		public string Name { get; private set; }
+		public WebPageLinkAttribute(string name, string url)
 		{
-		}
-
-		public static ConeObject3D Create()
-		{
-			var item = new ConeObject3D();
-			item.Rebuild(null);
-			return item;
-		}
-
-		public double Diameter { get; set; } = 20;
-		//[DisplayName("Top")]
-		//public double TopDiameter { get; set; } = 0;
-		public double Height { get; set; } = 20;
-		public int Sides { get; set; } = 30;
-
-		public void Rebuild(UndoBuffer undoBuffer)
-		{
-			var aabb = this.GetAxisAlignedBoundingBox();
-
-			var path = new VertexStorage();
-			path.MoveTo(0, 0);
-			path.LineTo(Diameter / 2, 0);
-			path.LineTo(0, Height);
-
-			Mesh = VertexSourceToMesh.Revolve(path, Sides);
-			if (aabb.ZSize > 0)
-			{
-				// If the part was already created and at a height, maintain the height.
-				PlatingHelper.PlaceMeshAtHeight(this, aabb.minXYZ.Z);
-			}
+			Name = name;
+			Url = url;
 		}
 	}
 }

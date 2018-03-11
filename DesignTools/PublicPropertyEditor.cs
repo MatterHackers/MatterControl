@@ -124,7 +124,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		private string GetDisplayName(PropertyInfo prop)
 		{
 			var nameAttribute = prop.GetCustomAttributes(true).OfType<DisplayNameAttribute>().FirstOrDefault();
-			return nameAttribute?.DisplayName ?? prop.Name;
+			return nameAttribute?.DisplayName ?? prop.Name.SplitCamelCase();
 		}
 
 		private string GetDescription(PropertyInfo prop)
@@ -154,6 +154,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					PropertyInfo = p
 				});
 
+			AddWebPageLinkIfRequired(editControlsContainer, theme);
 			AddUnlockLinkIfRequired(editControlsContainer, theme);
 
 			foreach (var property in editableProperties)
@@ -455,7 +456,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			var unlockLink = item.GetType().GetCustomAttributes(typeof(UnlockLinkAttribute), true).FirstOrDefault() as UnlockLinkAttribute;
 			if (unlockLink != null
-				&& !string.IsNullOrEmpty(unlockLink.DetailsPageLink)
+				&& !string.IsNullOrEmpty(unlockLink.UnlockPageLink)
 				&& !item.Persistable)
 			{
 				var row = CreateSettingsRow(item.Persistable ? "Registered".Localize() : "Demo Mode".Localize());
@@ -465,7 +466,25 @@ namespace MatterHackers.MatterControl.DesignTools
 				detailsLink.Margin = new BorderDouble(5);
 				detailsLink.Click += (s, e) =>
 				{
-					ApplicationController.Instance.LaunchBrowser(UnlockLinkAttribute.DetailPageBaseUrl + unlockLink.DetailsPageLink);
+					ApplicationController.Instance.LaunchBrowser(UnlockLinkAttribute.UnlockPageBaseUrl + unlockLink.UnlockPageLink);
+				};
+				row.AddChild(detailsLink);
+				editControlsContainer.AddChild(row);
+			}
+		}
+
+		private void AddWebPageLinkIfRequired(FlowLayoutWidget editControlsContainer, ThemeConfig theme)
+		{
+			var unlockLink = item.GetType().GetCustomAttributes(typeof(WebPageLinkAttribute), true).FirstOrDefault() as WebPageLinkAttribute;
+			if (unlockLink != null)
+			{
+				var row = CreateSettingsRow(unlockLink.Name.Localize());
+
+				Button detailsLink = theme.ButtonFactory.Generate("Open", AggContext.StaticData.LoadIcon("internet.png", 16, 16));
+				detailsLink.Margin = new BorderDouble(5);
+				detailsLink.Click += (s, e) =>
+				{
+					ApplicationController.Instance.LaunchBrowser(unlockLink.Url);
 				};
 				row.AddChild(detailsLink);
 				editControlsContainer.AddChild(row);

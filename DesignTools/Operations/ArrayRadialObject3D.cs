@@ -53,7 +53,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		[DisplayName("Rotate About")]
 		public DirectionAxis Axis { get; set; } = new DirectionAxis() { Origin = Vector3.NegativeInfinity, Normal = Vector3.UnitZ };
 
-		[DisplayName("Rotate Part")]
 		[Description("Rotate the part to the same angle as the array.")]
 		public bool RotatePart { get; set; } = true;
 

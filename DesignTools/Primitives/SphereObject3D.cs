@@ -61,7 +61,6 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 
 		public double Diameter { get; set; } = 20;
-		[DisplayName("Sides")]
 		public int Sides { get; set; } = 30;
 
 		public void Rebuild(UndoBuffer undoBuffer)
