@@ -71,8 +71,10 @@
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Compile Include="AboutPage\AboutWindow.cs" />
+    <Compile Include="AboutPage\AboutPage.cs" />
+    <Compile Include="AboutPage\CacheDirectory.cs" />
     <Compile Include="AboutPage\CheckForUpdatesPage.cs" />
+    <Compile Include="ApplicationView\LogoSpinner.cs" />
     <Compile Include="ConfigurationPage\CalibrationSettings\CalibrationControls.cs" />
     <Compile Include="ConfigurationPage\PrintLeveling\ProbeCalibrationWizard.cs" />
     <Compile Include="CustomWidgets\ConfigurePrinterWidget.cs" />
@@ -459,7 +461,6 @@
     <Compile Include="VersionManagement\ClientTokenRequest.cs" />
     <Compile Include="VersionManagement\WebRequestHandler.cs" />
     <Compile Include="VersionManagement\VersionFileHandler.cs" />
-    <Compile Include="AboutPage\AboutWidget.cs" />
     <Compile Include="CustomWidgets\ThemeColorSelectorWidget.cs" />
     <Compile Include="ControlElements\TextImageButtonFactory.cs" />
     <Compile Include="EeProm\EePromMarlinWindow.cs" />

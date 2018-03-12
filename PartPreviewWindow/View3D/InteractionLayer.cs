@@ -328,7 +328,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			DrawGlTransparentContent?.Invoke(this, e);
 		}
 
+		private static float[] ambientColor = new float[] { 0, 0, 0, 0 };
+
 		public static void SetGlContext(WorldView worldView, RectangleDouble screenRect, LightingData lighting)
+		{
+			SetGlContext(worldView, screenRect, lighting, ambientColor);
+		}
+
+		public static void SetGlContext(WorldView worldView, RectangleDouble screenRect, LightingData lighting, float[] ambientColor)
 		{
 			GL.ClearDepth(1.0);
 			GL.Clear(ClearBufferMask.DepthBufferBit);   // Clear the Depth Buffer
@@ -351,7 +358,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			GL.Light(LightName.Light0, LightParameter.Diffuse, lighting.diffuseLight0);
 			GL.Light(LightName.Light0, LightParameter.Specular, lighting.specularLight0);
 
-			GL.Light(LightName.Light0, LightParameter.Ambient, new float[] { 0, 0, 0, 0 });
+			GL.Light(LightName.Light0, LightParameter.Ambient, ambientColor);
 			GL.Light(LightName.Light1, LightParameter.Diffuse, lighting.diffuseLight1);
 			GL.Light(LightName.Light1, LightParameter.Specular, lighting.specularLight1);
 

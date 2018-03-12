@@ -38,7 +38,7 @@ namespace MatterHackers.MatterControl
 {
 	public class DialogPage : GuiWidget
 	{
-		private FlowLayoutWidget headerRow;
+		protected FlowLayoutWidget headerRow;
 		protected FlowLayoutWidget contentRow;
 		private FlowLayoutWidget footerRow;
 

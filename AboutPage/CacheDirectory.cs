@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2015, Lars Brubaker
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -31,68 +31,14 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using MatterHackers.Agg;
-using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
 
 namespace MatterHackers.MatterControl
 {
-	public class AboutWidget : GuiWidget
+	public static class CacheDirectory
 	{
-		private static readonly string ThumbnailsPath = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "thumbnails");
-		private static readonly Point2D BigRenderSize = new Point2D(460, 460);
-
-		public AboutWidget()
-		{
-			this.HAnchor = HAnchor.Stretch;
-			this.VAnchor = VAnchor.Top;
-
-			this.Padding = new BorderDouble(5);
-			this.BackgroundColor = ActiveTheme.Instance.PrimaryBackgroundColor;
-
-			FlowLayoutWidget customInfoTopToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			customInfoTopToBottom.Name = "AboutPageCustomInfo";
-			customInfoTopToBottom.HAnchor = HAnchor.Stretch;
-			customInfoTopToBottom.VAnchor = VAnchor.MaxFitOrStretch;
-			customInfoTopToBottom.Padding = new BorderDouble(5, 10, 5, 0);
-
-			if (UserSettings.Instance.IsTouchScreen)
-			{
-				customInfoTopToBottom.AddChild(new UpdateControlView(ApplicationController.Instance.Theme));
-			}
-
-			//AddMatterHackersInfo(customInfoTopToBottom);
-			customInfoTopToBottom.AddChild(new GuiWidget(1, 10));
-
-			string aboutHtmlFile = Path.Combine("OEMSettings", "AboutPage.html");
-			string htmlContent = AggContext.StaticData.ReadAllText(aboutHtmlFile);
-
-#if false // test
-			{
-				SystemWindow releaseNotes = new SystemWindow(640, 480);
-				string releaseNotesFile = Path.Combine("OEMSettings", "ReleaseNotes.html");
-				string releaseNotesContent = AggContext.StaticData.ReadAllText(releaseNotesFile);
-				HtmlWidget content = new HtmlWidget(releaseNotesContent, Color.Black);
-				content.AddChild(new GuiWidget(HAnchor.AbsolutePosition, VAnchor.Stretch));
-				content.VAnchor |= VAnchor.Top;
-				content.BackgroundColor = Color.White;
-				releaseNotes.AddChild(content);
-				releaseNotes.BackgroundColor = Color.Cyan;
-				UiThread.RunOnIdle((state) =>
-				{
-					releaseNotes.ShowAsSystemWindow();
-				}, 1);
-			}
-#endif
-
-			HtmlWidget htmlWidget = new HtmlWidget(htmlContent, ActiveTheme.Instance.PrimaryTextColor);
-
-			customInfoTopToBottom.AddChild(htmlWidget);
-
-			this.AddChild(customInfoTopToBottom);
-		}
-
 		public static void DeleteCacheData(int daysOldToDelete)
 		{
 			// TODO: Enable once the cache mechanism is scene graph aware
@@ -151,54 +97,9 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public static string GetImageFileName(PrintItemWrapper item)
-		{
-			return GetImageFileName(item.FileHashCode.ToString());
-		}
+		private static readonly Point2D BigRenderSize = new Point2D(460, 460);
 
-		private static string GetImageFileName(string stlHashCode)
-		{
-			string imageFileName = Path.Combine(ThumbnailsPath, "{0}_{1}x{2}.png".FormatWith(stlHashCode, BigRenderSize.x, BigRenderSize.y));
-
-			string folderToSavePrintsTo = Path.GetDirectoryName(imageFileName);
-
-			if (!Directory.Exists(folderToSavePrintsTo))
-			{
-				Directory.CreateDirectory(folderToSavePrintsTo);
-			}
-
-			return imageFileName;
-		}
-
-		public string CreateCenteredButton(string content)
-		{
-			throw new NotImplementedException();
-		}
-
-		public string CreateLinkButton(string content)
-		{
-			throw new NotImplementedException();
-		}
-
-		public string DoToUpper(string content)
-		{
-			throw new NotImplementedException();
-		}
-
-		public string DoTranslate(string content)
-		{
-			throw new NotImplementedException();
-		}
-
-		public string GetBuildString(string content)
-		{
-			return VersionInfo.Instance.BuildVersion;
-		}
-
-		public string GetVersionString(string content)
-		{
-			return VersionInfo.Instance.ReleaseVersion;
-		}
+		private static readonly string ThumbnailsPath = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "thumbnails");
 
 		private static HashSet<string> folderNamesToPreserve = new HashSet<string>()
 		{
@@ -287,6 +188,25 @@ namespace MatterHackers.MatterControl
 			{
 				GuiWidget.BreakInDebugger();
 			}
+		}
+
+		private static string GetImageFileName(PrintItemWrapper item)
+		{
+			return GetImageFileName(item.FileHashCode);
+		}
+
+		private static string GetImageFileName(string stlHashCode)
+		{
+			string imageFileName = Path.Combine(ThumbnailsPath, "{0}_{1}x{2}.png".FormatWith(stlHashCode, BigRenderSize.x, BigRenderSize.y));
+
+			string folderToSavePrintsTo = Path.GetDirectoryName(imageFileName);
+
+			if (!Directory.Exists(folderToSavePrintsTo))
+			{
+				Directory.CreateDirectory(folderToSavePrintsTo);
+			}
+
+			return imageFileName;
 		}
 	}
 }
