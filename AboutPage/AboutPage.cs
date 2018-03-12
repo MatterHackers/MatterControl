@@ -85,8 +85,8 @@ namespace MatterHackers.MatterControl
 				Height = 100,
 				Width = 100,
 			};
-			var spinner = new LogoSpinner(spinnerPanel, 4, 0.2, 0);
 			altHeadingRow.AddChild(spinnerPanel);
+			var spinner = new LogoSpinner(spinnerPanel, 4, 0.2, 0, rotateX: 0)
 
 			productInfo.AddChild(
 				new TextWidget("Version".Localize() + " " + VersionInfo.Instance.BuildVersion, textColor: theme.Colors.PrimaryTextColor, pointSize: theme.DefaultFontSize)

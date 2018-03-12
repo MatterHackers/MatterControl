@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl
 
 	public class LogoSpinner
 	{
-		public LogoSpinner(GuiWidget widget, double scale = 1.6, double spinSpeed = 0.6, double yOffset = 0.5)
+		public LogoSpinner(GuiWidget widget, double scale = 1.6, double spinSpeed = 0.6, double yOffset = 0.5, double rotateX = -0.1)
 		{
 			// loading animation stuff
 			LightingData lighting = new LightingData();
@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl
 				var screenSpaceBounds = widget.TransformToScreenSpace(widget.LocalBounds);
 				WorldView world = new WorldView(screenSpaceBounds.Width, screenSpaceBounds.Height);
 				world.Translate(new Vector3(0, yOffset, 0));
-				world.Rotate(Quaternion.FromEulerAngles(new Vector3(-0.1, 0, 0)));
+				world.Rotate(Quaternion.FromEulerAngles(new Vector3(rotateX, 0, 0)));
 
 				InteractionLayer.SetGlContext(world, screenSpaceBounds, lighting);
 				GLHelper.Render(logoMesh, Color.White, Matrix4X4.CreateRotationY(angle), RenderTypes.Shaded);

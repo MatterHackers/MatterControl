@@ -1733,7 +1733,7 @@ namespace MatterHackers.MatterControl
 
 			systemWindow.AddChild(overlay);
 
-			var spinner = new LogoSpinner(overlay);
+			var spinner = new LogoSpinner(overlay, rotateX: -0.05);
 
 			progressPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
