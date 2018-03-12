@@ -233,8 +233,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public override void PageIsBecomingActive()
 		{
+			// make sure we don't have leveling data
 			PrintLevelingData levelingData = printer.Settings.Helpers.GetPrintLevelingData();
 			levelingData.SampledPositions.Clear();
+			printer.Settings.Helpers.SetPrintLevelingData(levelingData, true);
 
 			double newProbeOffset = autoProbePositions[0].position.Z - manualProbePositions[0].position.Z;
 			printer.Settings.SetValue(SettingsKey.z_probe_z_offset, newProbeOffset.ToString("0.###"));
@@ -315,10 +317,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	{
 		protected WizardControl container;
 		private EventHandler unregisterEvents;
+		bool autoAdvance;
 
-		public HomePrinterPage(PrinterConfig printer, WizardControl container, string pageDescription, string instructionsText)
+		public HomePrinterPage(PrinterConfig printer, WizardControl container, string pageDescription, string instructionsText, bool autoAdvance)
 			: base(printer, pageDescription, instructionsText)
 		{
+			this.autoAdvance = autoAdvance;
 			this.container = container;
 		}
 
@@ -337,7 +341,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			printer.Connection.HomeAxis(PrinterConnection.Axis.XYZ);
 
-			if (printer.Settings.Helpers.UseZProbe())
+			if (autoAdvance)
 			{
 				container.nextButton.Enabled = false;
 			}
@@ -639,6 +643,16 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public override void PageIsBecomingActive()
 		{
 			base.PageIsBecomingActive();
+
+			// make sure the probe is not deployed
+			if (printer.Settings.GetValue<bool>(SettingsKey.has_z_probe)
+				&& printer.Settings.GetValue<bool>(SettingsKey.use_z_probe)
+				&& printer.Settings.GetValue<bool>(SettingsKey.has_z_servo))
+			{
+				// make sure the servo is retracted
+				var servoRetract = printer.Settings.GetValue<double>(SettingsKey.z_servo_retracted_angle);
+				printer.Connection.QueueLine($"M280 P0 S{servoRetract}");
+			}
 
 			var feedRates = printer.Settings.Helpers.ManualMovementSpeeds();
 

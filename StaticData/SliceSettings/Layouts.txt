@@ -156,6 +156,7 @@ Printer
         recover_is_enabled
         recover_first_layer_speed
         recover_position_before_z_home
+    Leveling
       Print Leveling
         print_leveling_solution
         leveling_manual_positions
