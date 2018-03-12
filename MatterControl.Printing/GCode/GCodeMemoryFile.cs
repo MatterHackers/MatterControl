@@ -33,7 +33,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
-using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.VectorMath;
 
@@ -44,7 +43,7 @@ namespace MatterControl.Printing
 		private double amountOfAccumulatedEWhileParsing = 0;
 
 		private List<int> indexOfChangeInZ = new List<int>();
-		private MatterHackers.VectorMath.Vector2 center = MatterHackers.VectorMath.Vector2.Zero;
+		private MatterHackers.VectorMath.Vector2 center = Vector2.Zero;
 		private double parsingLastZ;
 		private bool gcodeHasExplicitLayerChangeInfo = false;
 		private double firstLayerThickness;
