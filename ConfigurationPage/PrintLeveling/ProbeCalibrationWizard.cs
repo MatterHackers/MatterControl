@@ -68,8 +68,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			printLevelWizard = new WizardControl();
 			AddChild(printLevelWizard);
 
-			printLevelWizard.AddPage(new FirstPageInstructions(printer, levelingStrings.OverviewText, levelingStrings.WelcomeText(3, 3)));
-			printLevelWizard.AddPage(new HomePrinterPage(printer, printLevelWizard, levelingStrings.homingPageStepText, levelingStrings.homingPageInstructions));
+			printLevelWizard.AddPage(new FirstPageInstructions(printer,
+				"Probe Calibration Overview".Localize(), levelingStrings.CalibrateProbeWelcomText()));
+
+			bool useZProbe = printer.Settings.Helpers.UseZProbe();
+			printLevelWizard.AddPage(new HomePrinterPage(printer, printLevelWizard, 
+				levelingStrings.HomingPageStepText, 
+				levelingStrings.HomingPageInstructions(useZProbe),
+				false));
 
 			string positionLabel = "Position".Localize();
 			string autoCalibrateLabel = "Auto Calibrate".Localize();
@@ -90,7 +96,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			printLevelWizard.AddPage(new GetFineBedHeight(printer, printLevelWizard, string.Format("{0} {1} {2} - {3}", levelingStrings.GetStepString(totalSteps), positionLabel, i + 1, medPrecisionLabel), manualProbePositions, i, levelingStrings));
 			printLevelWizard.AddPage(new GetUltraFineBedHeight(printer, printLevelWizard, string.Format("{0} {1} {2} - {3}", levelingStrings.GetStepString(totalSteps), positionLabel, i + 1, highPrecisionLabel), manualProbePositions, i, levelingStrings));
 
-			printLevelWizard.AddPage(new CalibrateProbeLastPagelInstructions(printer, printLevelWizard, "Done".Localize(), levelingStrings.DoneInstructions, autoProbePositions, manualProbePositions));
+			printLevelWizard.AddPage(new CalibrateProbeLastPagelInstructions(printer, printLevelWizard, 
+				"Done".Localize(),
+				"Your Probe is now calibrated.".Localize()  + "\n\n\t• " + "Remove the paper".Localize() + "\n\n" + "Click 'Done' to close this window.".Localize(), 
+				autoProbePositions, 
+				manualProbePositions));
 		}
 
 		private static SystemWindow probeCalibrationWizardWindow;

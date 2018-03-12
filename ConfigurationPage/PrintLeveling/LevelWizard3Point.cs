@@ -70,7 +70,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				string filamentSelectionPage = "{0}\n\n{1}".FormatWith(levelingStrings.materialPageInstructions1, levelingStrings.materialPageInstructions2);
 				printLevelWizard.AddPage(new SelectMaterialPage(printer, levelingStrings.materialStepText, filamentSelectionPage));
 			}
-			printLevelWizard.AddPage(new HomePrinterPage(printer, printLevelWizard, levelingStrings.homingPageStepText, levelingStrings.homingPageInstructions));
+			bool useZProbe = printer.Settings.Helpers.UseZProbe();
+			printLevelWizard.AddPage(new HomePrinterPage(printer, printLevelWizard, 
+				levelingStrings.HomingPageStepText, 
+				levelingStrings.HomingPageInstructions(useZProbe),
+				useZProbe));
 			if (hasHeatedBed)
 			{
 				printLevelWizard.AddPage(new WaitForTempPage(printer, printLevelWizard, levelingStrings));

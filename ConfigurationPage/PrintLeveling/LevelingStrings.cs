@@ -36,7 +36,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class LevelingStrings
 	{
-		public string homingPageStepText = "Homing The Printer".Localize();
+		public string HomingPageStepText = "Homing The Printer".Localize();
 		public string WaitingForTempPageStepText = "Waiting For Bed To Heat".Localize();
 		public string initialPrinterSetupStepText = "Initial Printer Setup".Localize();
 		public string materialStepText = "Select Material".Localize();
@@ -56,6 +56,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		private string homingLine2 = "A standard sheet of paper".Localize();
 		private string homingLine3 = "We will use this paper to measure the distance between the extruder and the bed.";
 		private int stepNumber = 1;
+		private string probeWelcomeLine1 = "Welcome to the probe calibration wizard. Here is a quick overview on what we are going to do.".Localize();
 		private string welcomeLine1 = "Welcome to the print leveling wizard. Here is a quick overview on what we are going to do.".Localize();
 		private string selectMaterial = "Select the material you are printing".Localize();
 		private string homeThePrinter = "Home the printer".Localize();
@@ -105,18 +106,15 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 		}
 
-		public string homingPageInstructions
+		public string HomingPageInstructions(bool useZProbe)
 		{
-			get
+			if (useZProbe)
 			{
-				if (printerSettings.Helpers.UseZProbe())
-				{
-					return homingLine1;
-				}
-				else
-				{
-					return "{0}\n\n{1}:\n\n\t• {2}\n\n{3}\n\n{4}".FormatWith(homingLine1, homingLine1b, homingLine2, homingLine3, clickNext);
-				}
+				return homingLine1;
+			}
+			else
+			{
+				return "{0}\n\n{1}:\n\n\t• {2}\n\n{3}\n\n{4}".FormatWith(homingLine1, homingLine1b, homingLine2, homingLine3, clickNext);
 			}
 		}
 
@@ -151,6 +149,18 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public string GetStepString(int totalSteps)
 		{
 			return "{0} {1} {2} {3}:".FormatWith(stepTextBeg, stepNumber++, stepTextEnd, totalSteps);
+		}
+
+		public string CalibrateProbeWelcomText()
+		{
+			return "{0}\n\n\t• {1}\n\t• {2}\n\t• {3}\n\n{4}\n\n{5}\n\n{6}".FormatWith(
+				this.probeWelcomeLine1,
+				this.homeThePrinter,
+				"Probe the bed at the center".Localize(),
+				"Manually measure the extruder at the center".Localize(),
+				this.WelcomeLine7(1),
+				this.cleanExtruder,
+				this.clickNext);
 		}
 
 		public string WelcomeText(int numberOfSteps, int numberOfMinutes)
