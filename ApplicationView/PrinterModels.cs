@@ -657,7 +657,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public bool _configurePrinterVisible = false;
+		public bool _configurePrinterVisible = UserSettings.Instance.get(UserSettingsKey.ConfigurePrinterTabVisible) == "true";
 
 		public bool ConfigurePrinterVisible
 		{
@@ -672,6 +672,9 @@ namespace MatterHackers.MatterControl
 					}
 
 					_configurePrinterVisible = value;
+
+					UserSettings.Instance.set(UserSettingsKey.ConfigurePrinterTabVisible, _configurePrinterVisible ? "true" : "false");
+
 					ConfigurePrinterChanged?.Invoke(this, null);
 				}
 			}
