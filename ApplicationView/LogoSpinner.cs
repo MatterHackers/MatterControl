@@ -46,6 +46,8 @@ namespace MatterHackers.MatterControl
 	{
 		public Color MeshColor { get; set; } = Color.White;
 
+		public float[] AmbientColor { get; set; } = new float[] { 0, 0, 0, 0 };
+
 		public LogoSpinner(GuiWidget widget, double scale = 1.6, double spinSpeed = 0.6, double yOffset = 0.5, double rotateX = -0.1)
 		{
 			// loading animation stuff
@@ -75,7 +77,7 @@ namespace MatterHackers.MatterControl
 				world.Translate(new Vector3(0, yOffset, 0));
 				world.Rotate(Quaternion.FromEulerAngles(new Vector3(rotateX, 0, 0)));
 
-				InteractionLayer.SetGlContext(world, screenSpaceBounds, lighting);
+				InteractionLayer.SetGlContext(world, screenSpaceBounds, lighting, this.AmbientColor);
 				GLHelper.Render(logoMesh, this.MeshColor, Matrix4X4.CreateRotationY(angle), RenderTypes.Shaded);
 				InteractionLayer.UnsetGlContext();
 			};

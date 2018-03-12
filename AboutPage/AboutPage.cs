@@ -86,7 +86,20 @@ namespace MatterHackers.MatterControl
 				Width = 100,
 			};
 			altHeadingRow.AddChild(spinnerPanel);
+			var accentColor = theme.Colors.PrimaryAccentColor;
+
 			var spinner = new LogoSpinner(spinnerPanel, 4, 0.2, 0, rotateX: 0)
+			{
+				/*
+				MeshColor = new Color(175, 175, 175, 255),
+				AmbientColor = new float[]
+				{
+					accentColor.Red0To1,
+					accentColor.Green0To1,
+					accentColor.Blue0To1,
+					0
+				}*/
+			};
 
 			productInfo.AddChild(
 				new TextWidget("Version".Localize() + " " + VersionInfo.Instance.BuildVersion, textColor: theme.Colors.PrimaryTextColor, pointSize: theme.DefaultFontSize)
