@@ -55,6 +55,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		// Year|month|day|versionForDay (to support multiple revisions on a given day)
 		public static int LatestVersion { get; } = 201606271;
 
+		[JsonIgnore]
 		public RootedObjectEventHandler PrintLevelingEnabledChanged = new RootedObjectEventHandler();
 
 		public static PrinterSettings Empty { get; }
@@ -493,13 +494,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private static bool warningWindowOpen = false;
 
 		public static void WarnAboutRevert(PrinterInfo profile)
-		{ 
+		{
 			if (!warningWindowOpen)
 			{
 				warningWindowOpen = true;
 				UiThread.RunOnIdle(() =>
 				{
-					StyledMessageBox.ShowMessageBox((clicedOk) => 
+					StyledMessageBox.ShowMessageBox((clicedOk) =>
 					{
 						warningWindowOpen = false;
 					}, String.Format("The profile you are attempting to load has been corrupted. We loaded your last usable {0} {1} profile from your recent profile history instead.".Localize(), profile.Make, profile.Model), "Recovered printer profile".Localize(), messageType: StyledMessageBox.MessageType.OK);
@@ -743,7 +744,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		#region Migrate to LayeredProfile 
+		#region Migrate to LayeredProfile
 
 		static Dictionary<string, Type> expectedMappingTypes = new Dictionary<string, Type>()
 		{
@@ -820,7 +821,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					{
 						return (T)(object)(GetValue<double>(SettingsKey.layer_height) * ratio);
 					}
-					else if (settingsKey == SettingsKey.first_layer_extrusion_width 
+					else if (settingsKey == SettingsKey.first_layer_extrusion_width
 						|| settingsKey == SettingsKey.external_perimeter_extrusion_width)
 					{
 						return (T)(object)(GetValue<double>(SettingsKey.nozzle_diameter) * ratio);
