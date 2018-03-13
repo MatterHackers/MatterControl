@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		private static Type[] allowedTypes =
 		{
-			typeof(double), typeof(int), typeof(string), typeof(bool),
+			typeof(double), typeof(int), typeof(char), typeof(string), typeof(bool),
 			typeof(Vector2), typeof(Vector3),
 			typeof(DirectionVector), typeof(DirectionAxis),
 			typeof(ImageAsset)
@@ -408,6 +408,32 @@ namespace MatterHackers.MatterControl.DesignTools
 					textEditWidget.ActualTextEditWidget.EditComplete += (s, e) =>
 					{
 						property.PropertyInfo.GetSetMethod().Invoke(this.item, new Object[] { textEditWidget.Text });
+						rebuildable?.Rebuild(undoBuffer);
+						propertyGridModifier?.UpdateControls(this);
+					};
+					rowContainer.AddChild(textEditWidget);
+					editControlsContainer.AddChild(rowContainer);
+				}
+				// create a char editor
+				else if (property.Value is char charValue)
+				{
+					rowContainer = CreateSettingsRow(property.DisplayName.Localize());
+					var textEditWidget = new MHTextEditWidget(charValue.ToString(), pixelWidth: 150 * GuiWidget.DeviceScale)
+					{
+						SelectAllOnFocus = true,
+						VAnchor = VAnchor.Center
+					};
+					textEditWidget.ActualTextEditWidget.EditComplete += (s, e) =>
+					{
+						if (textEditWidget.Text.Length < 1)
+						{
+							textEditWidget.Text = "a";
+						}
+						if (textEditWidget.Text.Length > 1)
+						{
+							textEditWidget.Text = textEditWidget.Text.Substring(0, 1);
+						}
+						property.PropertyInfo.GetSetMethod().Invoke(this.item, new Object[] { textEditWidget.Text[0] });
 						rebuildable?.Rebuild(undoBuffer);
 						propertyGridModifier?.UpdateControls(this);
 					};

@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public char Letter { get; set; } = 'a';
 
-		public double BaseHeight { get; set; } = 3;
+		public double BaseHeight { get; set; } = 4;
 
 		public void Rebuild(UndoBuffer undoBuffer)
 		{
@@ -80,14 +80,38 @@ namespace MatterHackers.MatterControl.DesignTools
 				BaseHeight = BaseHeight,
 			};
 			brailleLetter.Rebuild(null);
+			this.Children.Add(brailleLetter);
 
-			var padding = 10;
-			IObject3D basePlate = new CubeObject3D(brailleLetter.XSize() + padding, BaseHeight, brailleLetter.ZSize() + padding);
-			basePlate = new SetCenter(basePlate, brailleLetter.GetCenter() - new Vector3(0, 0, brailleLetter.ZSize() / 2 + basePlate.ZSize() / 2 - .01));
+			var textObject = new TextObject3D()
+			{
+				PointSize = 46,
+				Color = Color.LightBlue,
+				NameToWrite = Letter.ToString(),
+				Height = BaseHeight
+			};
+			textObject.Rebuild(null);
+			IObject3D letterObject = new Rotate(textObject, -MathHelper.Tau / 4);
+			letterObject = new Align(letterObject, Face.Bottom | Face.Front, brailleLetter, Face.Top | Face.Front, 0, 0, 3.5);
+			letterObject = new SetCenter(letterObject, brailleLetter.GetCenter(), true, false, false);
+			this.Children.Add(letterObject);
+
+			// 10x bigger to make better rounding
+			var basePath = new RoundedRect(0, 0, 220, 340, 30);
+
+			IObject3D basePlate = new Object3D()
+			{
+				Mesh = VertexSourceToMesh.Extrude(basePath, BaseHeight * 10),
+				Matrix = Matrix4X4.CreateScale(.1) * Matrix4X4.CreateRotationX(MathHelper.Tau / 4)
+			};
+
+			basePlate = new Align(basePlate, Face.Bottom | Face.Back, brailleLetter, Face.Bottom | Face.Back);
+			basePlate = new SetCenter(basePlate, brailleLetter.GetCenter(), true, false, false);
 			this.Children.Add(basePlate);
 
-			// add the object that is the dots
-			this.Children.Add(brailleLetter);
+			IObject3D underline = new CubeObject3D(basePlate.XSize(), .2, 1);
+			underline = new Align(underline, Face.Bottom, brailleLetter, Face.Top);
+			underline = new Align(underline, Face.Back | Face.Left, basePlate, Face.Front | Face.Left, 0, .01);
+			this.Children.Add(underline);
 
 			if (aabb.ZSize > 0)
 			{
