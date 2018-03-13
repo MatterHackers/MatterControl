@@ -39,6 +39,7 @@ using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ContactForm;
 using MatterHackers.MatterControl.SettingsManagement;
@@ -335,29 +336,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public List<string> MaterialSettingsKeys { get; set; } = new List<string>();
 
-		private string GenerateSha1()
-		{
-			// Maybe be UTF8 encoded, may not...
-			using (var fileStream = new FileStream(DocumentPath, FileMode.Open))
-			using (var bufferedStream = new BufferedStream(fileStream, 1200000))
-			{
-				return GenerateSha1(bufferedStream);
-			}
-		}
-
-		private string GenerateSha1(Stream stream)
-		{
-			// var timer = Stopwatch.StartNew();
-			using (var sha1 = System.Security.Cryptography.SHA1.Create())
-			{
-				byte[] hash = sha1.ComputeHash(stream);
-				string SHA1 = BitConverter.ToString(hash).Replace("-", String.Empty);
-
-				// Console.WriteLine("{0} {1} {2}", SHA1, timer.ElapsedMilliseconds, filePath);
-				return SHA1;
-			}
-		}
-
 		[JsonIgnore]
 		public string DocumentPath => ProfileManager.Instance.ProfilePath(this.ID);
 
@@ -384,7 +362,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				var printerInfo = ProfileManager.Instance[this.ID];
 				if (printerInfo != null)
 				{
-					printerInfo.ContentSHA1 = this.ComputeSha1(json);
+					printerInfo.ContentSHA1 = this.ComputeSHA1(json);
 					ProfileManager.Instance.Save();
 				}
 
@@ -397,17 +375,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public string ComputeSha1()
+		internal string ComputeSHA1()
 		{
-			return ComputeSha1(this.ToJson());
+			return ComputeSHA1(this.ToJson());
 		}
 
-		private string ComputeSha1(string json)
+		private string ComputeSHA1(string json)
 		{
 			// SHA1 value is based on UTF8 encoded file contents
 			using (var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(json)))
 			{
-				return GenerateSha1(memoryStream);
+				return Object3D.ComputeSHA1(memoryStream);
 			}
 		}
 

@@ -33,6 +33,7 @@ using System.Globalization;
 using System.IO;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.Library;
@@ -102,7 +103,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			{
 				if (File.Exists(this.FileLocation))
 				{
-					return ApplicationController.Instance.ComputeFileSha1(this.FileLocation);
+					return Object3D.ComputeSHA1(this.FileLocation);
 				}
 
 				return "file-missing";
