@@ -251,6 +251,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							theme.Colors.PrimaryTextColor,
 							new SettingsItem.ToggleSwitchConfig()
 							{
+								Name = option.Title + " Toggle",
 								Checked = option.IsChecked(),
 								ToggleAction = option.SetValue
 							},
