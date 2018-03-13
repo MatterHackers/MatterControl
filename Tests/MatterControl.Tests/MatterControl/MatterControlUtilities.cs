@@ -178,7 +178,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.WaitforDraw(systemWindow);
 		}
 
-		public static void CloseSignInAndPrinterSelect(this AutomationRunner testRunner, PrepAction preAction = PrepAction.CloseSignInAndPrinterSelect)
+		public static void CloseSignInAndPrinterSelect(this AutomationRunner testRunner, bool closeInitialPlusTab = true)
 		{
 			testRunner.WaitForFirstDraw();
 
@@ -194,10 +194,13 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Cancel Wizard Button");
 			}
 
-			var plusTabRegion = testRunner.GetRegionByName("Initial Plus Tab");
-			testRunner.ClickByName("Close Tab Button", plusTabRegion);
+			if (closeInitialPlusTab)
+			{
+				var plusTabRegion = testRunner.GetRegionByName("Initial Plus Tab");
+				testRunner.ClickByName("Close Tab Button", plusTabRegion);
 
-			testRunner.WaitForWidgetDisappear("Initial Plus Tab", 2);
+				testRunner.WaitForWidgetDisappear("Initial Plus Tab", 2);
+			}
 		}
 
 		public static void ChangeToQueueContainer(this AutomationRunner testRunner)
@@ -821,6 +824,20 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			// Change to Printer Controls
 			EnsurePrinterSidebarOpen(testRunner);
 			testRunner.ClickByName("Controls Tab");
+		}
+
+		/// <summary>
+		/// Switch to Printer -> GCode Tab - NOTE: as a short term hack this helper as adds content to the bed and slices to ensure GCode view options appear as expected
+		/// </summary>
+		/// <param name="testRunner"></param>
+		public static void SwitchToGCodeTab(this AutomationRunner testRunner)
+		{
+			testRunner.ClickByName("Layers3D Button");
+
+			// TODO: Remove workaround needed to force GCode options to appear {{
+			testRunner.AddItemToBedplate();
+			testRunner.ClickByName("Generate Gcode Button");
+			// TODO: Remove workaround needed to force GCode options to appear }}
 		}
 
 		private static void EnsurePrinterSidebarOpen(AutomationRunner testRunner)

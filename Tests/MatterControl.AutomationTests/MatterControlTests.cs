@@ -66,15 +66,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.ClickByName("Model View Button");
 				testRunner.ClickByName("View3D Overflow Menu");
-				Assert.IsTrue(testRunner.WaitForName("Overhang Menu Item"), "Model overflow menu should have Overhang item");
-
-				testRunner.ClickByName("Layers3D Button");
-				testRunner.ClickByName("View3D Overflow Menu");
-				Assert.IsTrue(testRunner.WaitForName("Sync To Print Menu Item"), "GCode3D overflow menu should have sync-to-print item");
-
-				testRunner.ClickByName("Layers2D Button");
-				testRunner.ClickByName("View3D Overflow Menu");
-				Assert.IsTrue(testRunner.WaitForName("Sync To Print Menu Item"), "GCode2D overflow menu should have sync-to-print item");
 
 				return Task.CompletedTask;
 			});

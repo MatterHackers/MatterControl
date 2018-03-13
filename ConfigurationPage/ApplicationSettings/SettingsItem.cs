@@ -13,6 +13,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		public class ToggleSwitchConfig
 		{
 			public bool Checked { get; set; }
+			public string Name { get; set; }
 			public Action<bool> ToggleAction { get; set; }
 		}
 
@@ -90,6 +91,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			var toggleSwitch = ImageButtonFactory.CreateToggleSwitch(toggleSwitchConfig.Checked, textColor);
 			toggleSwitch.VAnchor = VAnchor.Center;
+			toggleSwitch.Name = toggleSwitchConfig.Name;
 			toggleSwitch.Margin = new BorderDouble(left: 16);
 			toggleSwitch.CheckedStateChanged += (sender, e) =>
 			{
