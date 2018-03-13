@@ -103,7 +103,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 			{
 				if (File.Exists(this.FileLocation))
 				{
-					return Object3D.ComputeSHA1(this.FileLocation);
+					return Object3D.ComputeFileSHA1(this.FileLocation);
 				}
 
 				return "file-missing";
