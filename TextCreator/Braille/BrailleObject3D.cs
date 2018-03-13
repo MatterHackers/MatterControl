@@ -51,6 +51,12 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 		}
 
+		public BrailleObject3D(string textToEncode)
+		{
+			TextToEncode = textToEncode;
+			Rebuild(null);
+		}
+
 		public static BrailleObject3D Create()
 		{
 			var item = new BrailleObject3D();
@@ -93,6 +99,17 @@ namespace MatterHackers.MatterControl.DesignTools
 			double pointsToMm = 0.352778;
 			IObject3D textObject = new Object3D();
 			var offest = 0.0;
+
+			TypeFacePrinter textPrinter;
+			if (RenderAsBraille)
+			{
+				textPrinter = new TypeFacePrinter(brailleText, new StyledTypeFace(typeFace, pointSize));
+			}
+			else
+			{
+				textPrinter = new TypeFacePrinter(brailleText, new StyledTypeFace(ApplicationController.MonoSpacedTypeFace, pointSize));
+			}
+
 			foreach (var letter in brailleText.ToCharArray())
 			{
 				IObject3D letterObject;
@@ -120,7 +137,7 @@ namespace MatterHackers.MatterControl.DesignTools
 								if (vertexCount > 0)
 								{
 									var center = positionSum / vertexCount;
-									double radius = 1.44/2;// (center - lastPosition).Length;
+									double radius = 1.44 / 2;// (center - lastPosition).Length;
 									var sphere = new HalfSphereObject3D(radius * 2, 15)
 									{
 										Color = Color.LightBlue
@@ -159,8 +176,26 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 
 			// add a plate under the dots
-			IObject3D basePlate = new CubeObject3D(textObject.XSize() + pointSize * pointsToMm / 2, textObject.YSize() + 1.7 * pointSize * pointsToMm / 2, BaseHeight);
-			basePlate = new SetCenter(basePlate, textObject.GetCenter() - new Vector3(0, 0, textObject.ZSize() / 2 + basePlate.ZSize() / 2 - .01));
+			var padding = .9 * pointSize * pointsToMm / 2;
+			var size = textPrinter.LocalBounds * pointsToMm;
+
+			// make the base
+			var basePath = new VertexStorage();
+			basePath.MoveTo(0, 0);
+			basePath.LineTo(size.Width + padding, 0);
+			basePath.LineTo(size.Width + padding, size.Height + padding);
+			basePath.LineTo(padding, size.Height + padding);
+			basePath.LineTo(0, size.Height);
+
+			IObject3D basePlate = new Object3D()
+			{
+				Mesh = VertexSourceToMesh.Extrude(basePath, BaseHeight)
+			};
+
+			basePlate = new Align(basePlate, Face.Top, textObject, Face.Bottom, 0, 0, .01);
+			basePlate = new Align(basePlate, Face.Left | Face.Front,
+				size.Left - padding/2,
+				size.Bottom - padding/2);
 			this.Children.Add(basePlate);
 
 			basePlate.Matrix *= Matrix4X4.CreateRotationX(MathHelper.Tau / 4);
