@@ -826,6 +826,20 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.ClickByName("Controls Tab");
 		}
 
+		/// <summary>
+		/// Switch to Printer -> GCode Tab - NOTE: as a short term hack this helper as adds content to the bed and slices to ensure GCode view options appear as expected
+		/// </summary>
+		/// <param name="testRunner"></param>
+		public static void SwitchToGCodeTab(this AutomationRunner testRunner)
+		{
+			testRunner.ClickByName("Layers3D Button");
+
+			// TODO: Remove workaround needed to force GCode options to appear {{
+			testRunner.AddItemToBedplate();
+			testRunner.ClickByName("Generate Gcode Button");
+			// TODO: Remove workaround needed to force GCode options to appear }}
+		}
+
 		private static void EnsurePrinterSidebarOpen(AutomationRunner testRunner)
 		{
 			// If the sidebar exists, we need to expand and pin it

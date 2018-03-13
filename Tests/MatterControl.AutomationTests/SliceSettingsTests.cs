@@ -58,8 +58,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.AddItemToBedplate();
 
-					testRunner.OpenGCode3DOverflowMenu();
-					testRunner.ClickByName("Sync To Print Menu Item");
+					// Toggle Sync-to-print
+					testRunner.SwitchToGCodeTab();
+					testRunner.ClickByName("Sync To Print Toggle");
 
 					testRunner.StartPrint();
 
@@ -94,9 +95,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.AddItemToBedplate();
 
-					// Turn on Sync-to-print
-					testRunner.OpenGCode3DOverflowMenu();
-					testRunner.ClickByName("Sync To Print Menu Item");
+					// Toggle Sync-to-print
+					testRunner.SwitchToGCodeTab();
+					testRunner.ClickByName("Sync To Print Toggle");
 
 					testRunner.StartPrint();
 
@@ -123,7 +124,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		private static void WaitForLayerAndResume(AutomationRunner testRunner, int indexToWaitFor)
 		{
 			testRunner.WaitForName("No Button", 30);
-			
+
 			var printer = ApplicationController.Instance.ActivePrinter;
 
 			// Wait for layer
