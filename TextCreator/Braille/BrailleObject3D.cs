@@ -89,7 +89,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				brailleText = BrailleGrade2.ConvertString(brailleText);
 			}
 
-			int pointSize = 28;
+			double pointSize = 18.5;
 			double pointsToMm = 0.352778;
 			IObject3D textObject = new Object3D();
 			var offest = 0.0;
@@ -120,7 +120,7 @@ namespace MatterHackers.MatterControl.DesignTools
 								if (vertexCount > 0)
 								{
 									var center = positionSum / vertexCount;
-									double radius = (center - lastPosition).Length;
+									double radius = 1.44/2;// (center - lastPosition).Length;
 									var sphere = new HalfSphereObject3D(radius * 2, 15)
 									{
 										Color = Color.LightBlue
@@ -159,7 +159,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 
 			// add a plate under the dots
-			IObject3D basePlate = new CubeObject3D(textObject.XSize() + pointSize * pointsToMm / 2, textObject.YSize() + pointSize * pointsToMm / 2, BaseHeight);
+			IObject3D basePlate = new CubeObject3D(textObject.XSize() + pointSize * pointsToMm / 2, textObject.YSize() + 1.7 * pointSize * pointsToMm / 2, BaseHeight);
 			basePlate = new SetCenter(basePlate, textObject.GetCenter() - new Vector3(0, 0, textObject.ZSize() / 2 + basePlate.ZSize() / 2 - .01));
 			this.Children.Add(basePlate);
 
