@@ -78,8 +78,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
-		public Align(IObject3D objectToAlign, Face boundingFacesToAlign, double offsetX = 0, double offsetY = 0, double offsetZ = 0, string name = "")
-			: this(objectToAlign, boundingFacesToAlign, new Vector3(offsetX, offsetY, offsetZ), name)
+		public Align(IObject3D objectToAlign, Face boundingFacesToAlign, double positionToAlignToX = 0, double positionToAlignToY = 0, double positionToAlignToZ = 0, string name = "")
+			: this(objectToAlign, boundingFacesToAlign, new Vector3(positionToAlignToX, positionToAlignToY, positionToAlignToZ), name)
 		{
 		}
 
