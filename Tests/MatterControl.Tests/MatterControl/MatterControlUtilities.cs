@@ -178,7 +178,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.WaitforDraw(systemWindow);
 		}
 
-		public static void CloseSignInAndPrinterSelect(this AutomationRunner testRunner, PrepAction preAction = PrepAction.CloseSignInAndPrinterSelect)
+		public static void CloseSignInAndPrinterSelect(this AutomationRunner testRunner, bool closeInitialPlusTab = true)
 		{
 			testRunner.WaitForFirstDraw();
 
@@ -194,10 +194,13 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Cancel Wizard Button");
 			}
 
-			var plusTabRegion = testRunner.GetRegionByName("Initial Plus Tab");
-			testRunner.ClickByName("Close Tab Button", plusTabRegion);
+			if (closeInitialPlusTab)
+			{
+				var plusTabRegion = testRunner.GetRegionByName("Initial Plus Tab");
+				testRunner.ClickByName("Close Tab Button", plusTabRegion);
 
-			testRunner.WaitForWidgetDisappear("Initial Plus Tab", 2);
+				testRunner.WaitForWidgetDisappear("Initial Plus Tab", 2);
+			}
 		}
 
 		public static void ChangeToQueueContainer(this AutomationRunner testRunner)
