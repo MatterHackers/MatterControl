@@ -1,0 +1,18 @@
+[
+	{
+		"Name": "Clipper",
+		"Url": "https://sourceforge.net/projects/polyclipping/?source=directory"
+	},
+	{
+		"Name": "MatterSlice",
+		"Url": "https://github.com/MatterHackers/MatterSlice"
+	},
+	{
+		"Name": "OpenTK",
+		"Url": "https://github.com/opentk/opentk"
+	},
+	{
+		"Name": "agg-sharp",
+		"Url": "https://github.com/MatterHackers/agg-sharp"
+	},
+]

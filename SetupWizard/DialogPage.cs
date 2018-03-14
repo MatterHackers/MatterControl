@@ -146,7 +146,7 @@ namespace MatterHackers.MatterControl
 			set => headerLabel.Text = value;
 		}
 
-		public void AddPageAction(Button button)
+		public void AddPageAction(GuiWidget button)
 		{
 			button.Margin = new BorderDouble(right: ApplicationController.Instance.Theme.ButtonSpacing.Left);
 			footerRow.AddChild(button);
