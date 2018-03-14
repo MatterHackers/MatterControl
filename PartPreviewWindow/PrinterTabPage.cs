@@ -359,7 +359,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			bool printerIsRunningPrint = printer.Connection.PrinterIsPaused || printer.Connection.PrinterIsPrinting;
 			if (gcodeOptions.SyncToPrint
 				&& printerIsRunningPrint
-				&& (gcodePanel.Visible || gcode2DWidget.Visible))
+				&& printer.ViewState.ViewMode != PartViewMode.Model)
 			{
 				if (this.SetAnimationPosition())
 				{
@@ -413,14 +413,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private void Parent_KeyDown(object sender, KeyEventArgs keyEvent)
 		{
 			if (!keyEvent.Handled
-				&& (gcodePanel.Visible
-				|| gcode2DWidget.Visible))
+				&& printer.ViewState.ViewMode != PartViewMode.Model)
 			{
 				switch (keyEvent.KeyCode)
 				{
 					case Keys.Up:
 						layerScrollbar.Value += 1;
 						break;
+
 					case Keys.Down:
 						layerScrollbar.Value -= 1;
 						break;
