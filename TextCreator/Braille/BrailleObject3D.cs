@@ -206,7 +206,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			if (AddHook)
 			{
 				// x 10 to make it smoother
-				double edgeWidth = 2;
+				double edgeWidth = 3;
 				double height = basePlate.ZSize();
 				IVertexSource leftSideObject = new RoundedRect(0, 0, height / 2, height, 0)
 				{
@@ -223,7 +223,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					ResolutionScale = 10
 				};
-				holeObject = new SetCenter2D(holeObject, cicleObject.Bounds().Center);
+				holeObject = new SetCenter2D(holeObject, cicleObject.GetBounds().Center);
 
 				IVertexSource hookPath = leftSideObject.Plus(cicleObject);
 				hookPath = hookPath.Minus(holeObject);

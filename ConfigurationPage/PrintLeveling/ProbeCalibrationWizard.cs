@@ -32,6 +32,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
@@ -70,6 +71,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			printLevelWizard.AddPage(new FirstPageInstructions(printer,
 				"Probe Calibration Overview".Localize(), levelingStrings.CalibrateProbeWelcomText()));
+
+			printLevelWizard.AddPage(new CleanExtruderInstructionPage(printer, "Check Nozzle".Localize(), levelingStrings.CleanExtruder));
 
 			bool useZProbe = printer.Settings.Helpers.UseZProbe();
 			printLevelWizard.AddPage(new HomePrinterPage(printer, printLevelWizard, 

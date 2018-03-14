@@ -237,7 +237,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						printer,
 						Affine.NewRotation(MathHelper.DegreesToRadians(-90)));
 
-					var textBounds = rotatedLabel.Bounds();
+					var textBounds = rotatedLabel.GetBounds();
 					var bounds = new RectangleDouble(printer.TypeFaceStyle.DescentInPixels, textBounds.Bottom, printer.TypeFaceStyle.AscentInPixels, textBounds.Top);
 					rotatedLabel.Transform = ((Affine)rotatedLabel.Transform)
 						* Affine.NewTranslation(new Vector2(-printer.TypeFaceStyle.DescentInPixels, -bounds.Bottom));

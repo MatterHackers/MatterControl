@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public SetCenter2D(IVertexSource item, Vector2 position)
 		{
-			Transform = Affine.NewTranslation(position - item.Bounds().Center);
+			Transform = Affine.NewTranslation(position - item.GetBounds().Center);
 			VertexSource = item;
 		}
 
@@ -93,7 +93,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public SetCenter2D(IVertexSource item, Vector2 offset, bool onX = true, bool onY = true)
 		{
-			var center = item.Bounds().Center;
+			var center = item.GetBounds().Center;
 
 			Vector2 consideredOffset = Vector2.Zero; // zero out anything we don't want
 			if (onX)

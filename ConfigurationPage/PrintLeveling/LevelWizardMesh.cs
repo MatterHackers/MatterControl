@@ -174,6 +174,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			printLevelWizard.AddPage(new FirstPageInstructions(printer, levelingStrings.OverviewText, levelingStrings.WelcomeText(probeCount, 5)));
 
+			bool useZProbe = printer.Settings.Helpers.UseZProbe();
+			if (!useZProbe)
+			{
+				printLevelWizard.AddPage(new CleanExtruderInstructionPage(printer, "Check Nozzle".Localize(), levelingStrings.CleanExtruder));
+			}
+
 			var printerSettings = printer.Settings;
 
 			// To make sure the bed is at the correct temp, put in a filament selection page.
@@ -183,7 +189,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				string filamentSelectionPage = "{0}\n\n{1}".FormatWith(levelingStrings.materialPageInstructions1, levelingStrings.materialPageInstructions2);
 				printLevelWizard.AddPage(new SelectMaterialPage(printer, levelingStrings.materialStepText, filamentSelectionPage));
 			}
-			bool useZProbe = printer.Settings.Helpers.UseZProbe();
 			printLevelWizard.AddPage(new HomePrinterPage(printer, printLevelWizard, 
 				levelingStrings.HomingPageStepText, 
 				levelingStrings.HomingPageInstructions(useZProbe),
