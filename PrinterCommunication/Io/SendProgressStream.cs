@@ -36,32 +36,30 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 	public class SendProgressStream : GCodeStreamProxy
 	{
 		private double nextPercent = -1;
-		PrinterConnection printerConnection;
-		PrinterSettings printerSettings;
+		PrinterConfig printer;
 		PrintTask activePrintTask;
 
-		public SendProgressStream(PrinterConnection printerConnection, PrinterSettings printerSettings, GCodeStream internalStream)
+		public SendProgressStream(PrinterConfig printer, GCodeStream internalStream)
 			: base(internalStream)
 		{
-			this.printerConnection = printerConnection;
-			this.printerSettings = printerSettings;
+			this.printer = printer;
 		}
 
 		public override string ReadLine()
 		{
-			if (printerSettings.GetValue(SettingsKey.progress_reporting) != "None"
-				&& printerConnection.CommunicationState == CommunicationStates.Printing
-				&& printerConnection.activePrintTask != null
-				&& printerConnection.activePrintTask.PercentDone > nextPercent)
+			if (printer.Settings.GetValue(SettingsKey.progress_reporting) != "None"
+				&& printer.Connection.CommunicationState == CommunicationStates.Printing
+				&& printer.Connection.activePrintTask != null
+				&& printer.Connection.activePrintTask.PercentDone > nextPercent)
 			{
-				nextPercent = Math.Round(printerConnection.activePrintTask.PercentDone) + 0.5;
-				if (printerSettings.GetValue(SettingsKey.progress_reporting) == "M73")
+				nextPercent = Math.Round(printer.Connection.activePrintTask.PercentDone) + 0.5;
+				if (printer.Settings.GetValue(SettingsKey.progress_reporting) == "M73")
 				{
-					return String.Format("M73 P{0:0}", printerConnection.activePrintTask.PercentDone);
+					return String.Format("M73 P{0:0}", printer.Connection.activePrintTask.PercentDone);
 				}
 				else
 				{
-					return String.Format("M117 Printing: {0:0}%", printerConnection.activePrintTask.PercentDone);
+					return String.Format("M117 Printing: {0:0}%", printer.Connection.activePrintTask.PercentDone);
 				}
 			}
 
