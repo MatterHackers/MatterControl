@@ -29,10 +29,13 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterControl.Printing;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Font;
+using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
 using MatterHackers.GCodeVisualizer;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 using System;
@@ -46,6 +49,27 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public FirstPageInstructions(PrinterConfig printer, string pageDescription, string instructionsText)
 			: base(printer, pageDescription, instructionsText)
 		{
+		}
+	}
+
+	public class CleanExtruderInstructionPage : InstructionsPage
+	{
+		public CleanExtruderInstructionPage(PrinterConfig printer, string title, string body)
+			: base(printer, title, body)
+		{
+			ImageBuffer imageBuffer = MacroProcessingStream.LoadImageAsset(printer.Settings.GetValue("clean_nozzle_image"));
+
+			var levelingStrings = new LevelingStrings(printer.Settings);
+
+			GuiWidget spacer = new GuiWidget(10, 10);
+			topToBottomControls.AddChild(spacer);
+
+			topToBottomControls.AddChild(new ImageWidget(imageBuffer)
+			{
+				HAnchor = HAnchor.Center
+			});
+
+			AddTextField(levelingStrings.ClickNext, 10);
 		}
 	}
 

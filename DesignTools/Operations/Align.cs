@@ -204,7 +204,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public Align2D(IVertexSource item, Side2D boundingFacesToAlign, Vector2 positionToAlignTo, string name = "")
 		{
-			var bounds = item.Bounds();
+			var bounds = item.GetBounds();
 
 			if (IsSet(boundingFacesToAlign, Side2D.Left, Side2D.Right))
 			{
@@ -232,19 +232,19 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			Vector2 positionToAlignTo = new Vector2();
 			if (IsSet(boundingFacesToAlignTo, Side2D.Left, Side2D.Right))
 			{
-				positionToAlignTo.X = objectToAlignTo.Bounds().Left;
+				positionToAlignTo.X = objectToAlignTo.GetBounds().Left;
 			}
 			if (IsSet(boundingFacesToAlignTo, Side2D.Right, Side2D.Left))
 			{
-				positionToAlignTo.X = objectToAlignTo.Bounds().Right;
+				positionToAlignTo.X = objectToAlignTo.GetBounds().Right;
 			}
 			if (IsSet(boundingFacesToAlignTo, Side2D.Bottom, Side2D.Top))
 			{
-				positionToAlignTo.Y = objectToAlignTo.Bounds().Bottom;
+				positionToAlignTo.Y = objectToAlignTo.GetBounds().Bottom;
 			}
 			if (IsSet(boundingFacesToAlignTo, Side2D.Top, Side2D.Bottom))
 			{
-				positionToAlignTo.Y = objectToAlignTo.Bounds().Top;
+				positionToAlignTo.Y = objectToAlignTo.GetBounds().Top;
 			}
 
 			return positionToAlignTo + extraOffset;

@@ -64,8 +64,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		private string sampelAtPoints = "Sample the bed at {0} points".Localize();
 		private string turnOnLeveling = "Turn auto leveling on".Localize();
 		private string timeToDone = "We should be done in less than {0} minutes.".Localize();
-		private string cleanExtruder = "Note: Be sure the tip of the extruder is clean and the bed is clear.".Localize();
-		private string clickNext = "Click 'Next' to continue.".Localize();
+		public string CleanExtruder => "Be sure the tip of the extruder is clean and the bed is clear.".Localize();
+		public string ClickNext => "Click 'Next' to continue.".Localize();
 
 		PrinterSettings printerSettings;
 		public LevelingStrings(PrinterSettings printerSettings)
@@ -114,7 +114,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 			else
 			{
-				return "{0}\n\n{1}:\n\n\t• {2}\n\n{3}\n\n{4}".FormatWith(homingLine1, homingLine1b, homingLine2, homingLine3, clickNext);
+				return "{0}\n\n{1}:\n\n\t• {2}\n\n{3}\n\n{4}".FormatWith(homingLine1, homingLine1b, homingLine2, homingLine3, ClickNext);
 			}
 		}
 
@@ -153,14 +153,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public string CalibrateProbeWelcomText()
 		{
-			return "{0}\n\n\t• {1}\n\t• {2}\n\t• {3}\n\n{4}\n\n{5}\n\n{6}".FormatWith(
+			return "{0}\n\n\t• {1}\n\t• {2}\n\t• {3}\n\n{4}\n\n{5}".FormatWith(
 				this.probeWelcomeLine1,
 				this.homeThePrinter,
 				"Probe the bed at the center".Localize(),
 				"Manually measure the extruder at the center".Localize(),
 				this.WelcomeLine7(1),
-				this.cleanExtruder,
-				this.clickNext);
+				this.ClickNext);
 		}
 
 		public string WelcomeText(int numberOfSteps, int numberOfMinutes)
@@ -172,7 +171,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			if (printerSettings.GetValue<bool>(SettingsKey.has_heated_bed))
 			{
-				return "{0}\n\n\t• {1}\n\t• {2}\n\t• {3}\n\t• {4}\n\t• {5}\n\n{6}\n\n{7}\n\n{8}".FormatWith(
+				return "{0}\n\n\t• {1}\n\t• {2}\n\t• {3}\n\t• {4}\n\t• {5}\n\n{6}\n\n{7}".FormatWith(
 					this.welcomeLine1,
 					this.selectMaterial,
 					this.homeThePrinter,
@@ -180,19 +179,17 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					this.WelcomeLine5(numberOfSteps),
 					this.turnOnLeveling,
 					this.WelcomeLine7(numberOfMinutes),
-					this.cleanExtruder,
-					this.clickNext);
+					this.ClickNext);
 			}
 			else
 			{
-				return "{0}\n\n\t• {1}\n\t• {2}\n\t• {3}\n\n{4}\n\n{5}\n\n{6}".FormatWith(
+				return "{0}\n\n\t• {1}\n\t• {2}\n\t• {3}\n\n{4}\n\n{5}".FormatWith(
 					this.welcomeLine1,
 					this.homeThePrinter,
 					this.WelcomeLine5(numberOfSteps),
 					this.turnOnLeveling,
 					this.WelcomeLine7(numberOfMinutes),
-					this.cleanExtruder,
-					this.clickNext);
+					this.ClickNext);
 			}
 		}
 

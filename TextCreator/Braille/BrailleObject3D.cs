@@ -223,7 +223,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					ResolutionScale = 10
 				};
-				holeObject = new SetCenter2D(holeObject, cicleObject.Bounds().Center);
+				holeObject = new SetCenter2D(holeObject, cicleObject.GetBounds().Center);
 
 				IVertexSource hookPath = leftSideObject.Plus(cicleObject);
 				hookPath = hookPath.Minus(holeObject);

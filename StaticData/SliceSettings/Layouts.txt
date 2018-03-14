@@ -169,6 +169,7 @@ Printer
         z_probe_z_offset
         z_servo_depolyed_angle
         z_servo_retracted_angle
+        clean_nozzle_image
     Hardware
       Hardware
         has_fan
