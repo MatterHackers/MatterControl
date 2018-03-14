@@ -28,6 +28,8 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using MatterHackers.Agg.Transform;
+using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.VectorMath;
 
@@ -63,6 +65,15 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		Top = 0x20,
 	};
 
+	[Flags]
+	public enum Side2D
+	{
+		Left = 0x01,
+		Right = 0x02,
+		Bottom = 0x10,
+		Top = 0x20,
+	};
+
 	public class Align : Object3D
 	{
 		public Align()
@@ -74,7 +85,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		{
 			if (objectToAlign == objectToAlignTo)
 			{
-				throw new Exception("You cannot align an object ot itself.");
+				throw new Exception("You cannot align an object to itself.");
 			}
 		}
 
@@ -152,6 +163,94 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		}
 
 		private static bool IsSet(Face variableToCheck, Face faceToCheckFor, Face faceToAssertNot)
+		{
+			if ((variableToCheck & faceToCheckFor) != 0)
+			{
+				if ((variableToCheck & faceToAssertNot) != 0)
+				{
+					throw new Exception("You cannot have both " + faceToCheckFor.ToString() + " and " + faceToAssertNot.ToString() + " set when calling Align.  The are mutually exclusive.");
+				}
+				return true;
+			}
+
+			return false;
+		}
+	}
+
+	public class Align2D : VertexSourceApplyTransform
+	{
+		public Align2D()
+		{
+		}
+
+		public Align2D(IVertexSource objectToAlign, Side2D boundingFacesToAlign, IVertexSource objectToAlignTo, Side2D boundingFacesToAlignTo, double offsetX = 0, double offsetY = 0, string name = "")
+			: this(objectToAlign, boundingFacesToAlign, GetPositionToAlignTo(objectToAlignTo, boundingFacesToAlignTo, new Vector2(offsetX, offsetY)), name)
+		{
+			if (objectToAlign == objectToAlignTo)
+			{
+				throw new Exception("You cannot align an object to itself.");
+			}
+		}
+
+		public Align2D(IVertexSource objectToAlign, Side2D boundingFacesToAlign, double positionToAlignToX = 0, double positionToAlignToY = 0, string name = "")
+			: this(objectToAlign, boundingFacesToAlign, new Vector2(positionToAlignToX, positionToAlignToY), name)
+		{
+		}
+
+		public Align2D(IVertexSource objectToAlign, Side2D boundingFacesToAlign, Vector2 positionToAlignTo, double offsetX, double offsetY, string name = "")
+			: this(objectToAlign, boundingFacesToAlign, positionToAlignTo + new Vector2(offsetX, offsetY), name)
+		{
+		}
+
+		public Align2D(IVertexSource item, Side2D boundingFacesToAlign, Vector2 positionToAlignTo, string name = "")
+		{
+			var bounds = item.Bounds();
+
+			if (IsSet(boundingFacesToAlign, Side2D.Left, Side2D.Right))
+			{
+				positionToAlignTo.X = positionToAlignTo.X - bounds.Left;
+			}
+			if (IsSet(boundingFacesToAlign, Side2D.Right, Side2D.Left))
+			{
+				positionToAlignTo.X = positionToAlignTo.X - bounds.Left - (bounds.Right - bounds.Left);
+			}
+			if (IsSet(boundingFacesToAlign, Side2D.Bottom, Side2D.Top))
+			{
+				positionToAlignTo.Y = positionToAlignTo.Y - bounds.Bottom;
+			}
+			if (IsSet(boundingFacesToAlign, Side2D.Top, Side2D.Bottom))
+			{
+				positionToAlignTo.Y = positionToAlignTo.Y - bounds.Bottom - (bounds.Top - bounds.Bottom);
+			}
+
+			Transform = Affine.NewTranslation(positionToAlignTo);
+			VertexSource = item;
+		}
+
+		public static Vector2 GetPositionToAlignTo(IVertexSource objectToAlignTo, Side2D boundingFacesToAlignTo, Vector2 extraOffset)
+		{
+			Vector2 positionToAlignTo = new Vector2();
+			if (IsSet(boundingFacesToAlignTo, Side2D.Left, Side2D.Right))
+			{
+				positionToAlignTo.X = objectToAlignTo.Bounds().Left;
+			}
+			if (IsSet(boundingFacesToAlignTo, Side2D.Right, Side2D.Left))
+			{
+				positionToAlignTo.X = objectToAlignTo.Bounds().Right;
+			}
+			if (IsSet(boundingFacesToAlignTo, Side2D.Bottom, Side2D.Top))
+			{
+				positionToAlignTo.Y = objectToAlignTo.Bounds().Bottom;
+			}
+			if (IsSet(boundingFacesToAlignTo, Side2D.Top, Side2D.Bottom))
+			{
+				positionToAlignTo.Y = objectToAlignTo.Bounds().Top;
+			}
+
+			return positionToAlignTo + extraOffset;
+		}
+
+		private static bool IsSet(Side2D variableToCheck, Side2D faceToCheckFor, Side2D faceToAssertNot)
 		{
 			if ((variableToCheck & faceToCheckFor) != 0)
 			{
