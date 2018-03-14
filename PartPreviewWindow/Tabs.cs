@@ -117,14 +117,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		internal void RemoveTab(ITab tab)
+		internal virtual void RemoveTab(ITab tab)
 		{
 			_allTabs.Remove(tab);
 
 			TabBar.ActionArea.RemoveChild(tab as GuiWidget);
 			this.TabContainer.RemoveChild(tab.TabContent);
 
-			ActiveTab = _allTabs.LastOrDefault();
+			if (tab is ChromeTab chromeTab)
+			{
+				// Activate next or last tab
+				ActiveTab = chromeTab.NextTab ?? _allTabs.LastOrDefault();
+			}
+			else
+			{
+				// Activate last tab
+				ActiveTab = _allTabs.LastOrDefault();
+			}
 		}
 
 		private ITab _activeTab;
@@ -225,6 +234,28 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				chromeTab.CloseClicked += ChromeTab_CloseClicked;
 				this.ActiveTab = chromeTab;
+			}
+		}
+
+		internal override void RemoveTab(ITab tab)
+		{
+			base.RemoveTab(tab);
+
+			// Update pointers - collapse out removed tab
+			if (tab is ChromeTab removedTab)
+			{
+				var tabA = removedTab.PreviousTab;
+				var tabB = removedTab.NextTab;
+
+				if (tabA != null)
+				{
+					tabA.NextTab = tabB;
+				}
+
+				if (tabB != null)
+				{
+					tabB.PreviousTab = tabA;
+				}
 			}
 		}
 

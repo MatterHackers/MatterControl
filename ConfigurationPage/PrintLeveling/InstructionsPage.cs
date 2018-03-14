@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl
 
 			topToBottomControls = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			topToBottomControls.Padding = new BorderDouble(3);
-			topToBottomControls.HAnchor |= HAnchor.Left;
+			topToBottomControls.HAnchor = HAnchor.Stretch;
 			topToBottomControls.VAnchor |= VAnchor.Top;
 
 			AddTextField(instructionsText, 10);
@@ -61,15 +61,12 @@ namespace MatterHackers.MatterControl
 			GuiWidget spacer = new GuiWidget(10, pixelsFromLast);
 			topToBottomControls.AddChild(spacer);
 
-			EnglishTextWrapping wrapper = new EnglishTextWrapping(12);
-			string wrappedInstructions = wrapper.InsertCRs(instructionsText, 400);
-			string wrappedInstructionsTabsToSpaces = wrappedInstructions.Replace("\t", "    ");
+			string wrappedInstructionsTabsToSpaces = instructionsText.Replace("\t", "    ");
 
-			topToBottomControls.AddChild(
-				new TextWidget(wrappedInstructionsTabsToSpaces, textColor: ActiveTheme.Instance.PrimaryTextColor, pointSize: 12 * GuiWidget.DeviceScale)
-				{
-					HAnchor = HAnchor.Left
-				});
+			topToBottomControls.AddChild(new WrappedTextWidget(wrappedInstructionsTabsToSpaces)
+			{
+				HAnchor = HAnchor.Stretch
+			});
 		}
 	}
 }

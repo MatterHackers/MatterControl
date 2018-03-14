@@ -27,6 +27,8 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.Agg.Transform;
+using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.VectorMath;
 
@@ -40,7 +42,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public SetCenter(IObject3D item, Vector3 position)
 		{
-			Matrix *= Matrix4X4.CreateTranslation(position - item.GetCenter());
+			Matrix = Matrix4X4.CreateTranslation(position - item.GetCenter());
 			Children.Add(item.Clone());
 		}
 
@@ -67,8 +69,44 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				consideredOffset.Z = offset.Z - center.Z;
 			}
 
-			Matrix *= Matrix4X4.CreateTranslation(consideredOffset);
+			Matrix = Matrix4X4.CreateTranslation(consideredOffset);
 			Children.Add(item.Clone());
+		}
+	}
+
+	public class SetCenter2D : VertexSourceApplyTransform
+	{
+		public SetCenter2D()
+		{
+		}
+
+		public SetCenter2D(IVertexSource item, Vector2 position)
+		{
+			Transform = Affine.NewTranslation(position - item.GetBounds().Center);
+			VertexSource = item;
+		}
+
+		public SetCenter2D(IVertexSource item, double x, double y)
+			: this(item, new Vector2(x, y))
+		{
+		}
+
+		public SetCenter2D(IVertexSource item, Vector2 offset, bool onX = true, bool onY = true)
+		{
+			var center = item.GetBounds().Center;
+
+			Vector2 consideredOffset = Vector2.Zero; // zero out anything we don't want
+			if (onX)
+			{
+				consideredOffset.X = offset.X - center.X;
+			}
+			if (onY)
+			{
+				consideredOffset.Y = offset.Y - center.Y;
+			}
+
+			Transform = Affine.NewTranslation(consideredOffset);
+			VertexSource = item;
 		}
 	}
 }

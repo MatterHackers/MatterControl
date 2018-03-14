@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			commandsToRepeat.Clear();
 		}
 
-		public ImageBuffer LoadImageAsset(string uri)
+		public static ImageBuffer LoadImageAsset(string uri)
 		{
 			string filePath = Path.Combine("Images", "Macros", uri);
 			bool imageOnDisk = false;

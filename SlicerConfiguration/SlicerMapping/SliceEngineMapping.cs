@@ -108,6 +108,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			SettingsKey.progress_reporting,
 			"load_filament_length",
 			"trim_image",
+			"clean_nozzle_image",
 			"insert_image",
 			"running_clean_image",
 			"unload_filament_length",

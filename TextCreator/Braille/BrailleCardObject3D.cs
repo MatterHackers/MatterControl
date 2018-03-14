@@ -95,13 +95,15 @@ namespace MatterHackers.MatterControl.DesignTools
 			letterObject = new SetCenter(letterObject, brailleLetter.GetCenter(), true, false, false);
 			this.Children.Add(letterObject);
 
-			// 10x bigger to make better rounding
-			var basePath = new RoundedRect(0, 0, 220, 340, 30);
+			var basePath = new RoundedRect(0, 0, 22, 34, 3)
+			{
+				ResolutionScale = 10
+			};
 
 			IObject3D basePlate = new Object3D()
 			{
-				Mesh = VertexSourceToMesh.Extrude(basePath, BaseHeight * 10),
-				Matrix = Matrix4X4.CreateScale(.1) * Matrix4X4.CreateRotationX(MathHelper.Tau / 4)
+				Mesh = VertexSourceToMesh.Extrude(basePath, BaseHeight),
+				Matrix = Matrix4X4.CreateRotationX(MathHelper.Tau / 4)
 			};
 
 			basePlate = new Align(basePlate, Face.Bottom | Face.Back, brailleLetter, Face.Bottom | Face.Back);

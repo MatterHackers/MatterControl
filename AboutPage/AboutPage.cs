@@ -27,14 +27,19 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.ConfigurationPage;
 using MatterHackers.MatterControl.ContactForm;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.VectorMath;
+using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl
 {
@@ -113,52 +118,69 @@ namespace MatterHackers.MatterControl
 					HAnchor = HAnchor.Center
 				});
 
-			var infoRow = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				HAnchor = HAnchor.Center |HAnchor.Fit,
-				Margin = new BorderDouble(top: 20)
-			};
-			contentRow.AddChild(infoRow);
-
-			infoRow.AddChild(
-				new TextWidget("MatterControl is made possible by the team at MatterHackers and".Localize(), textColor: theme.Colors.PrimaryTextColor, pointSize: theme.FontSize10));
+			contentRow.AddChild(
+				new WrappedTextWidget(
+					"MatterControl is made possible by the team at MatterHackers and other open source software".Localize() + ":",
+					pointSize: theme.DefaultFontSize,
+					textColor: theme.Colors.PrimaryTextColor)
+				{
+					HAnchor = HAnchor.Stretch,
+					Margin = new BorderDouble(0, 15)
+				});
 
 			var originalFontSize = theme.LinkButtonFactory.fontSize;
 
-			theme.LinkButtonFactory.fontSize = theme.FontSize10;
+			theme.LinkButtonFactory.fontSize = theme.DefaultFontSize;
 
-			var ossLink = theme.LinkButtonFactory.Generate("other open source software".Localize());
-			ossLink.Margin = new BorderDouble(left: 3, top: 3);
-			ossLink.Cursor = Cursors.Hand;
-			ossLink.Click += (s, e) => UiThread.RunOnIdle(() =>
+			var licensePanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				// Show attributes
-			});
-			infoRow.AddChild(ossLink);
-
-			//contentRow.AddChild(
-			//	new ImageWidget(
-			//		AggContext.StaticData.LoadIcon(Path.Combine("..", "Images", "mh-logo.png"), 250, 250))
-			//	{
-			//		HAnchor = HAnchor.Center,
-			//		Margin = new BorderDouble(0, 25)
-			//	});
-
-			contentRow.AddChild(new VerticalSpacer());
-
-			var button = new TextButton("Send Feedback", theme)
-			{
-				HAnchor = HAnchor.Center,
-				VAnchor = VAnchor.Absolute,
-				BackgroundColor = theme.MinimalShade,
-				Margin = new BorderDouble(bottom: 20)
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit,
+				Margin = new BorderDouble(bottom: 15)
 			};
-			button.Click += (s, e) => UiThread.RunOnIdle(() =>
+
+			var data = JsonConvert.DeserializeObject<List<LibraryLicense>>(AggContext.StaticData.ReadAllText(Path.Combine("License", "license.json")));
+
+			var linkIcon = AggContext.StaticData.LoadIcon("fa-link_16.png", 16, 16, IconColor.Theme);
+
+			foreach (var item in data.OrderBy(i => i.Name))
+			{
+				var linkButton = new IconButton(linkIcon, theme);
+				linkButton.Click += (s, e) => UiThread.RunOnIdle(() =>
+				{
+					ApplicationController.Instance.LaunchBrowser(item.Url);
+				});
+
+				var section = new SectionWidget(item.Title ?? item.Name, new LazyLicenseText(item.Name, theme), theme, linkButton, expanded: false)
+				{
+					HAnchor = HAnchor.Stretch
+				};
+				licensePanel.AddChild(section);
+			}
+
+			var scrollable = new ScrollableWidget(autoScroll: true)
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch,
+				Margin = new BorderDouble(bottom: 10),
+				Border = new BorderDouble(top: 1),
+				BorderColor = new Color(theme.Colors.SecondaryTextColor, 50)
+			};
+			scrollable.ScrollArea.HAnchor = HAnchor.Stretch;
+			scrollable.AddChild(licensePanel);
+			contentRow.AddChild( scrollable);
+
+			var feedbackButton = new TextButton("Send Feedback", theme)
+			{
+				BackgroundColor = theme.SlightShade,
+				HAnchor = HAnchor.Absolute,
+			};
+			feedbackButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
 				ContactFormWindow.Open();
 			});
 
-			contentRow.AddChild(button);
+			this.AddPageAction(feedbackButton);
 
 			var siteLink = theme.LinkButtonFactory.Generate("www.matterhackers.com");
 			siteLink.HAnchor = HAnchor.Center;
@@ -185,6 +207,45 @@ namespace MatterHackers.MatterControl
 			contentRow.AddChild(clearCacheLink);
 
 			theme.LinkButtonFactory.fontSize = originalFontSize;
+		}
+
+		private class LazyLicenseText : GuiWidget
+		{
+			private string sourceName;
+			private ThemeConfig theme;
+
+			public LazyLicenseText(string sourceName, ThemeConfig theme)
+			{
+				this.sourceName = sourceName;
+				this.theme = theme;
+
+				this.HAnchor = HAnchor.Stretch;
+				this.VAnchor = VAnchor.Fit;
+				this.MinimumSize = new Vector2(0, 10);
+			}
+
+			public override void OnLoad(EventArgs args)
+			{
+				string filePath = Path.Combine("License", $"{sourceName}.txt");
+				if (AggContext.StaticData.FileExists(filePath))
+				{
+					string content = AggContext.StaticData.ReadAllText(filePath);
+
+					this.AddChild(new WrappedTextWidget(content, theme.DefaultFontSize, textColor: theme.Colors.PrimaryTextColor)
+					{
+						HAnchor = HAnchor.Stretch
+					});
+				}
+
+				base.OnLoad(args);
+			}
+		}
+
+		private class LibraryLicense
+		{
+			public string Url { get; set; }
+			public string Name { get; set; }
+			public string Title { get; set; }
 		}
 	}
 }

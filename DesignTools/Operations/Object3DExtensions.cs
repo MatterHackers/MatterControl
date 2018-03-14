@@ -27,20 +27,16 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Threading;
-using MatterHackers.Agg.Font;
-using MatterHackers.Agg.Platform;
+using ClipperLib;
+using MatterHackers.Agg;
+using MatterHackers.Agg.VertexSource;
+using MatterHackers.DataConverters2D;
 using MatterHackers.DataConverters3D;
 using MatterHackers.DataConverters3D.UndoCommands;
 using MatterHackers.MatterControl.PartPreviewWindow.View3D;
-using MatterHackers.PolygonMesh;
-using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
-using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
@@ -64,6 +60,26 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			return resultsA;
 		}
 
+		private static VertexStorage CombinePaths(IVertexSource a, IVertexSource b, ClipType clipType)
+		{
+			List<List<IntPoint>> aPolys = VertexSourceToClipperPolygons.CreatePolygons(a);
+			List<List<IntPoint>> bPolys = VertexSourceToClipperPolygons.CreatePolygons(b);
+
+			Clipper clipper = new Clipper();
+
+			clipper.AddPaths(aPolys, PolyType.ptSubject, true);
+			clipper.AddPaths(bPolys, PolyType.ptClip, true);
+
+			List<List<IntPoint>> intersectedPolys = new List<List<IntPoint>>();
+			clipper.Execute(clipType, intersectedPolys);
+
+			VertexStorage output = VertexSourceToClipperPolygons.CreateVertexStorage(intersectedPolys);
+
+			output.Add(0, 0, ShapePath.FlagsAndCommand.CommandStop);
+
+			return output;
+		}
+
 		public static IObject3D Plus(this IObject3D a, IObject3D b)
 		{
 			var results = new Object3D();
@@ -72,6 +88,16 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			results.Children.Add(b.Clone());
 
 			return results;
+		}
+
+		public static IVertexSource Minus(this IVertexSource a, IVertexSource b)
+		{
+			return CombinePaths(a, b, ClipType.ctDifference);
+		}
+
+		public static IVertexSource Plus(this IVertexSource a, IVertexSource b)
+		{
+			return CombinePaths(a, b, ClipType.ctUnion);
 		}
 
 		public static double XSize(this IObject3D item)
