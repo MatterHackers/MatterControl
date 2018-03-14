@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		private string doneLine1 = "Congratulations!";
 		private string doneLine1b = "Auto Print Leveling is now configured and enabled.".Localize();
 		private string doneLine2 = "Remove the paper".Localize();
-		private string doneLine3 = "To re-calibrate the printer, or to turn off Auto Print Leveling, the print leveling controls can be found under 'Options'->'Calibration'.";
+		private string doneLine3 = "To recalibrate the printer, or to turn off Auto Print Leveling, the print leveling controls can be found under 'Options'->'Calibration'.";
 		private string doneLine3b = "Click 'Done' to close this window.".Localize();
 		private string homingLine1 = "The printer should now be 'homing'. Once it is finished homing we will heat the bed.";
 		private string homingLine1b = "To complete the next few steps you will need".Localize();
