@@ -367,7 +367,7 @@ namespace MatterHackers.MatterControl
 
 		public bool EditableScene { get; private set; }
 
-		internal void Render3DLayerFeatures(DrawEventArgs e)
+		internal void RenderGCode3D(DrawEventArgs e)
 		{
 			if (this.RenderInfo != null)
 			{

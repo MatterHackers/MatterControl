@@ -308,7 +308,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				&& sceneContext.GCodeRenderer != null
 				&& printerTabPage?.printer.ViewState.ViewMode == PartViewMode.Layers3D)
 			{
-				sceneContext.Render3DLayerFeatures(e);
+				sceneContext.RenderGCode3D(e);
 			}
 
 			// This shows the BVH as rects around the scene items
