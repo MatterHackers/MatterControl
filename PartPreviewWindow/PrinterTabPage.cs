@@ -367,8 +367,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		protected override void GetViewControls3DOverflowMenu(PopupMenu popupMenu)
 		{
-			if (gcode3DWidget.Visible
-				|| gcode2DWidget.Visible)
+			if (printer?.ViewState.ViewMode != PartViewMode.Model)
 			{
 				this.ShowGCodeOverflowMenu(popupMenu);
 			}
