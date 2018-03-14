@@ -154,7 +154,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private object locker = new object();
 
-		private PrintTask activePrintTask;
+		public PrintTask activePrintTask;
 
 		private double actualBedTemperature;
 
@@ -197,7 +197,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		private ExtrusionMultiplyerStream extrusionMultiplyerStream8 = null;
 		private FeedRateMultiplyerStream feedrateMultiplyerStream9 = null;
 		private RequestTemperaturesStream requestTemperaturesStream10 = null;
-		private ProcessWriteRegexStream processWriteRegExStream11 = null;
+		private SendProgressStream sendProgressStream11 = null;
+		private ProcessWriteRegexStream processWriteRegExStream12 = null;
 
 		private GCodeStream totalGCodeStream = null;
 
@@ -2161,11 +2162,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			extrusionMultiplyerStream8 = new ExtrusionMultiplyerStream(babyStepsStream7);
 			feedrateMultiplyerStream9 = new FeedRateMultiplyerStream(extrusionMultiplyerStream8);
 			requestTemperaturesStream10 = new RequestTemperaturesStream(this, feedrateMultiplyerStream9);
-			processWriteRegExStream11 = new ProcessWriteRegexStream(this.printer.Settings, requestTemperaturesStream10, queuedCommandStream2);
-			totalGCodeStream = processWriteRegExStream11;
+			sendProgressStream11 = new SendProgressStream(this, printer.Settings, requestTemperaturesStream10);
+			processWriteRegExStream12 = new ProcessWriteRegexStream(this.printer.Settings, sendProgressStream11, queuedCommandStream2);
+			totalGCodeStream = processWriteRegExStream12;
 
 			// Force a reset of the printer checksum state (but allow it to be write regexed)
-			var transformedCommand = processWriteRegExStream11?.ProcessWriteRegEx("M110 N1");
+			var transformedCommand = processWriteRegExStream12?.ProcessWriteRegEx("M110 N1");
 			if (transformedCommand != null)
 			{
 				foreach (var line in transformedCommand)

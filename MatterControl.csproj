@@ -40,7 +40,6 @@
     <SchemaVersion>2.0</SchemaVersion>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <TargetFrameworkProfile />
-    <ReleaseVersion>1.2.0</ReleaseVersion>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">.\</SolutionDir>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -474,6 +473,7 @@
     <Compile Include="CustomWidgets\SplitButton.cs" />
     <Compile Include="ControlElements\DropDownMenuFactory.cs" />
     <Compile Include="ControlElements\SplitButtonFactory.cs" />
+    <Compile Include="PrinterCommunication\Io\SendProgressStream.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />

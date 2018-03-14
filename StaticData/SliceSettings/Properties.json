@@ -1920,5 +1920,14 @@
     "DataEditType": "STRING",
     "DefaultValue": "x,3000,y,3000,z,315,e0,150",
     "RebuildGCodeOnChange": false
+  },
+  {
+    "SlicerConfigName": "progress_reporting",
+    "PresentationName": "Progress Reporting",
+    "HelpText": "Choose the command for showing the print progress on the printer's LCD screen, if it has one.",
+    "DataEditType": "LIST",
+    "ListValues": "None,M73,M117",
+    "DefaultValue": "M117",
+    "RebuildGCodeOnChange": false
   }
 ]
