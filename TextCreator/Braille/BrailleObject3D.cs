@@ -206,7 +206,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			if (AddHook)
 			{
 				// x 10 to make it smoother
-				double edgeWidth = 2;
+				double edgeWidth = 3;
 				double height = basePlate.ZSize();
 				IVertexSource leftSideObject = new RoundedRect(0, 0, height / 2, height, 0)
 				{
