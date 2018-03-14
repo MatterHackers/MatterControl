@@ -49,8 +49,10 @@ namespace MatterHackers.MatterControl
 		private static readonly bool Is32Bit = IntPtr.Size == 4;
 		private static readonly Point2D BigRenderSize = new Point2D(460, 460);
 
-		// TODO: Trying out an 8 MB mesh max for thumbnail generation
-		private long MaxFileSizeForTracing = 8 * 1000 * 1000;
+		// For 32 bit max size to ray trace is 8 MB mesh for 64 bit the max size is 40 MB.
+		private long MaxFileSizeForTracing => Is32Bit ? 8 * 1000 * 1000 : 40 * 1000 * 1000;
+
+		private long MaxFileSizeForThumbnail => Is32Bit ? 16 * 1000 * 1000 : 100 * 1000 * 1000;
 
 		public Task<IObject3D> CreateItem(ILibraryItem item, Action<double, string> progressReporter)
 		{
@@ -105,11 +107,13 @@ namespace MatterHackers.MatterControl
 		{
 			IObject3D object3D = null;
 
+			long fileSize = 0;
 			if (item is ILibraryAssetStream contentModel
 				// Only load the stream if it's available - prevents download of internet content simply for thumbnails
 				&& contentModel.LocalContentExists
-				&& (!Is32Bit || contentModel.FileSize < MaxFileSizeForTracing))
+				&& contentModel.FileSize < MaxFileSizeForThumbnail)
 			{
+				fileSize = contentModel.FileSize;
 				// TODO: Wire up limits for thumbnail generation. If content is too big, return null allowing the thumbnail to fall back to content default
 				object3D = await contentModel.CreateContent();
 			}
@@ -121,6 +125,14 @@ namespace MatterHackers.MatterControl
 			if (object3D != null)
 			{
 				bool RenderOrthographic = UserSettings.Instance.get(UserSettingsKey.ThumbnailRenderingMode) == "orthographic";
+
+				// if we are tracing and the file is too big
+				if(!RenderOrthographic
+					&& fileSize > MaxFileSizeForTracing)
+				{
+					// switch to orthographic
+					RenderOrthographic = true;
+				}
 
 				var thumbnail = ThumbnailEngine.Generate(
 					object3D,
