@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if ((mouseUpInBounds || buttonView?.MouseCaptured == true)
 				&& !menuVisibileAtMouseDown)
 			{
-				ShowPopup();
+				UiThread.RunOnIdle(this.ShowPopup);
 			}
 
 			base.OnMouseUp(mouseEvent);
@@ -133,6 +133,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				this.PopupWindowClosed?.Invoke(this, null);
 			};
+
 			popupWidget.Focus();
 		}
 
