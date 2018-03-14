@@ -113,8 +113,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.PopupContent = this.DynamicPopupContent();
 			}
 
-			if (this.PopupContent == null)
+			if (this.PopupContent == null
+				|| this.PopupContent.Children.Count <= 0)
 			{
+				menuVisible = false;
 				return;
 			}
 
