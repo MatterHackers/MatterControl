@@ -235,10 +235,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (printerTabPage != null)
 			{
-				if (printerTabPage.gcode3DWidget != null)
+				if (printerTabPage.gcodePanel != null)
 				{
 					// HACK: directly fire method which previously ran on SlicingDone event on PrintItemWrapper
-					UiThread.RunOnIdle(() => printerTabPage.gcode3DWidget.CreateAndAddChildren(printer));
+					UiThread.RunOnIdle(() => printerTabPage.gcodePanel.CreateAndAddChildren(printer));
 				}
 			}
 		}

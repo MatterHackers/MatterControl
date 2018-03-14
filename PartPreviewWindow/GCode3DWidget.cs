@@ -36,7 +36,7 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class GCode3DWidget : FlowLayoutWidget
+	public class GCodePanel : FlowLayoutWidget
 	{
 		private EventHandler unregisterEvents;
 
@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private PrinterConfig printer;
 		private SectionWidget speedsWidget;
 
-		public GCode3DWidget(PrinterConfig printer, BedConfig sceneContext, ThemeConfig theme)
+		public GCodePanel(PrinterConfig printer, BedConfig sceneContext, ThemeConfig theme)
 			: base (FlowDirection.TopToBottom)
 		{
 			this.sceneContext = sceneContext;
