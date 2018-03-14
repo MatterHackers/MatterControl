@@ -77,6 +77,8 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public bool RenderAsBraille { get; set; } = true;
 
+		public bool AddHook { get; set; }
+
 		static TypeFace typeFace = TypeFace.LoadFrom(AggContext.StaticData.ReadAllText(Path.Combine("Fonts", "Braille.svg")));
 
 
@@ -199,6 +201,43 @@ namespace MatterHackers.MatterControl.DesignTools
 			this.Children.Add(basePlate);
 
 			basePlate.Matrix *= Matrix4X4.CreateRotationX(MathHelper.Tau / 4);
+
+			// add an optional chain hook
+			if (AddHook)
+			{
+				// x 10 to make it smoother
+				double edgeWidth = 2;
+				double height = basePlate.ZSize();
+				IVertexSource leftSideObject = new RoundedRect(0, 0, height / 2, height, 0)
+				{
+					ResolutionScale = 10
+				};
+
+				IVertexSource cicleObject = new Ellipse(0, 0, height / 2, height / 2)
+				{
+					ResolutionScale = 10
+				};
+
+				cicleObject = new Align2D(cicleObject, Side2D.Left | Side2D.Bottom, leftSideObject, Side2D.Left | Side2D.Bottom, -.01);
+				IVertexSource holeObject = new Ellipse(0, 0, height / 2 - edgeWidth, height / 2 - edgeWidth)
+				{
+					ResolutionScale = 10
+				};
+				holeObject = new SetCenter2D(holeObject, cicleObject.Bounds().Center);
+
+				IVertexSource hookPath = leftSideObject.Plus(cicleObject);
+				hookPath = hookPath.Minus(holeObject);
+
+				IObject3D chainHook = new Object3D()
+				{
+					Mesh = VertexSourceToMesh.Extrude(hookPath, BaseHeight),
+					Matrix = Matrix4X4.CreateRotationX(MathHelper.Tau / 4)
+				};
+
+				chainHook = new Align(chainHook, Face.Left | Face.Bottom | Face.Back, basePlate, Face.Right | Face.Bottom | Face.Back, -.01);
+
+				this.Children.Add(chainHook);
+			}
 
 			// add the object that is the dots
 			this.Children.Add(textObject);

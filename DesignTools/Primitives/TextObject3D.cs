@@ -108,7 +108,10 @@ namespace MatterHackers.MatterControl.DesignTools
 			double pointsToMm = 0.352778;
 			foreach (var letter in NameToWrite.ToCharArray())
 			{
-				var letterPrinter = new TypeFacePrinter(letter.ToString(), new StyledTypeFace(NamedTypeFaceCache.GetTypeFace(Font), PointSize));
+				var letterPrinter = new TypeFacePrinter(letter.ToString(), new StyledTypeFace(NamedTypeFaceCache.GetTypeFace(Font), PointSize))
+				{
+					ResolutionScale = 10
+				};
 				var scalledLetterPrinter = new VertexSourceApplyTransform(letterPrinter, Affine.NewScaling(pointsToMm));
 				IObject3D letterObject = new Object3D()
 				{
