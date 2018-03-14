@@ -190,8 +190,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			meshViewerWidget.AfterDraw += AfterDraw3DContent;
 
-			sceneContext.LoadedGCodeChanged += SceneContext_LoadedGCodeChanged;
-
 			scene.SelectFirstChild();
 
 			viewControls3D.ActiveButton = ViewControls3DButtons.PartSelect;
@@ -229,18 +227,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			this.Invalidate();
-		}
-
-		private void SceneContext_LoadedGCodeChanged(object sender, EventArgs e)
-		{
-			if (printerTabPage != null)
-			{
-				if (printerTabPage.gcodePanel != null)
-				{
-					// HACK: directly fire method which previously ran on SlicingDone event on PrintItemWrapper
-					UiThread.RunOnIdle(() => printerTabPage.gcodePanel.CreateAndAddChildren(printer));
-				}
-			}
 		}
 
 		private void ViewControls3D_TransformStateChanged(object sender, TransformStateChangedEventArgs e)
@@ -542,7 +528,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			viewControls3D.TransformStateChanged -= ViewControls3D_TransformStateChanged;
-			sceneContext.LoadedGCodeChanged -= SceneContext_LoadedGCodeChanged;
 			scene.SelectionChanged -= Scene_SelectionChanged;
 			this.InteractionLayer.DrawGlOpaqueContent -= Draw_GlOpaqueContent;
 			this.sceneContext.SceneLoaded -= SceneContext_SceneLoaded;

@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private SystemWindow parentSystemWindow;
 		private SliceLayerSelector layerScrollbar;
 		internal PrinterConfig printer;
-		internal GCodePanel gcodePanel;
+		private GCodePanel gcodePanel;
 		internal ResizeContainer gcodeContainer;
 		internal PrinterActionsBar printerActionsBar;
 		private DockingTabControl sideBar;
@@ -261,6 +261,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private void BedPlate_LoadedGCodeChanged(object sender, EventArgs e)
 		{
 			this.SetSliderVisibility();
+
+			if (gcodePanel != null)
+			{
+				// HACK: directly fire method which previously ran on SlicingDone event on PrintItemWrapper
+				UiThread.RunOnIdle(() => gcodePanel.CreateAndAddChildren(printer));
+			}
 
 			if (sceneContext.LoadedGCode == null)
 			{
