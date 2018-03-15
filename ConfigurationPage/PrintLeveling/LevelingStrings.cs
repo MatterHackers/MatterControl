@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		private string doneLine1 = "Congratulations!";
 		private string doneLine1b = "Auto Print Leveling is now configured and enabled.".Localize();
 		private string doneLine2 = "Remove the paper".Localize();
-		private string doneLine3 = "To recalibrate the printer, or to turn off Auto Print Leveling, the print leveling controls can be found under 'Options'->'Calibration'.";
+		private string doneLine3 = "If you need to recalibrate the printer in the future, the print leveling controls can be found under: Controls, Calibration";
 		private string doneLine3b = "Click 'Done' to close this window.".Localize();
 		private string homingLine1 = "The printer should now be 'homing'. Once it is finished homing we will heat the bed.";
 		private string homingLine1b = "To complete the next few steps you will need".Localize();
@@ -79,11 +79,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			{
 				if (printerSettings.Helpers.UseZProbe())
 				{
-					return $"{doneLine1} {doneLine1b}\n\n{doneLine3} {doneLine3b}";
+					return $"{doneLine1} {doneLine1b}\n\n{doneLine3}\n\n{doneLine3b}";
 				}
 				else
 				{
-					return $"{doneLine1} {doneLine1b}\n\n\t• {doneLine2}\n\n{doneLine3} {doneLine3b}";
+					return $"{doneLine1} {doneLine1b}\n\n\t• {doneLine2}\n\n{doneLine3}\n\n{doneLine3b}";
 				}
 			}
 		}
