@@ -39,7 +39,7 @@ namespace MatterHackers.MatterControl.DesignTools
 {
 	public class CylinderAdvancedObject3D : Object3D, IRebuildable
 	{
-		public override string ActiveEditor => "PublicPropertyEditor";
+		
 
 		public CylinderAdvancedObject3D()
 		{

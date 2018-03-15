@@ -40,7 +40,7 @@ namespace MatterHackers.MatterControl.DesignTools
 {
 	public class TorusObject3D : Object3D, IRebuildable
 	{
-		public override string ActiveEditor => "PublicPropertyEditor";
+		
 
 		public TorusObject3D()
 		{

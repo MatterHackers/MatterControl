@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			return item;
 		}
 
-		public override string ActiveEditor => "PublicPropertyEditor";
+		
 
 		[DisplayName("Name")]
 		public string TextToEncode { get; set; } = "Braille";

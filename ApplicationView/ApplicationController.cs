@@ -377,28 +377,28 @@ namespace MatterHackers.MatterControl
 			new SceneSelectionOperation()
 			{
 				TitleResolver = () => "Combine".Localize(),
-				Action = (scene) => MeshWrapperOperation.WrapSelection(scene, nameof(CombineEditor), "Combine"),
+				Action = (scene) => MeshWrapperObject3D.WrapSelection(new CombineObject3D(), scene),
 				Icon = AggContext.StaticData.LoadIcon("combine.png").SetPreMultiply(),
 				IsEnabled = (scene) => scene.SelectedItem is SelectionGroup,
 			},
 			new SceneSelectionOperation()
 			{
 				TitleResolver = () => "Subtract".Localize(),
-				Action = (scene) => MeshWrapperOperation.WrapSelection(scene, nameof(SubtractEditor), "Subtract"),
+				Action = (scene) => MeshWrapperObject3D.WrapSelection(new SubtractObject3D(), scene),
 				Icon = AggContext.StaticData.LoadIcon("subtract.png").SetPreMultiply(),
 				IsEnabled = (scene) => scene.SelectedItem is SelectionGroup,
 			},
 			new SceneSelectionOperation()
 			{
 				TitleResolver = () => "Intersect".Localize(),
-				Action = (scene) => MeshWrapperOperation.WrapSelection(scene, nameof(IntersectionEditor), "Intersect"),
+				Action = (scene) => MeshWrapperObject3D.WrapSelection(new IntersectionObject3D(), scene),
 				Icon = AggContext.StaticData.LoadIcon("intersect.png"),
 				IsEnabled = (scene) => scene.SelectedItem is SelectionGroup,
 			},
 			new SceneSelectionOperation()
 			{
 				TitleResolver = () => "Subtract & Replace".Localize(),
-				Action = (scene) => MeshWrapperOperation.WrapSelection(scene, nameof(SubtractAndReplace), "Subtract & Replace"),
+				Action = (scene) => MeshWrapperObject3D.WrapSelection(new SubtractAndReplaceObject3D(), scene),
 				Icon = AggContext.StaticData.LoadIcon("subtract_and_replace.png").SetPreMultiply(),
 				IsEnabled = (scene) => scene.SelectedItem is SelectionGroup,
 			},

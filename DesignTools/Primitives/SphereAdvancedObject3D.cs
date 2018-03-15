@@ -38,7 +38,7 @@ namespace MatterHackers.MatterControl.DesignTools
 {
 	public class SphereAdvancedObject3D : Object3D, IRebuildable
 	{
-		public override string ActiveEditor => "PublicPropertyEditor";
+		
 
 		public SphereAdvancedObject3D()
 		{

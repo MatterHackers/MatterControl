@@ -38,7 +38,7 @@ namespace MatterHackers.MatterControl.DesignTools
 {
 	public class WedgeObject3D : Object3D, IRebuildable
 	{
-		public override string ActiveEditor => "PublicPropertyEditor";
+		
 
 		public WedgeObject3D()
 		{

@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			Name = "Radial Array".Localize();
 		}
 
-		public override string ActiveEditor => "PublicPropertyEditor";
+		
 
 		public override bool CanBake => true;
 		public override bool CanRemove => true;

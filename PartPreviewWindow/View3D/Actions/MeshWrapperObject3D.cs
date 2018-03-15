@@ -35,9 +35,9 @@ using MatterHackers.PolygonMesh;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
-	public class MeshWrapperOperation : Object3D
+	public class MeshWrapperObject3D : Object3D
 	{
-		public MeshWrapperOperation()
+		public MeshWrapperObject3D()
 		{
 		}
 
@@ -86,33 +86,31 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			base.Bake();
 		}
 
-		public static void WrapSelection(InteractiveScene scene, string classDescriptor, string editorName)
+		public static void WrapSelection(MeshWrapperObject3D meshWrapper,  InteractiveScene scene)
 		{
 			if (scene.HasSelection && scene.SelectedItem.Children.Count() > 1)
 			{
 				var children = scene.SelectedItem.Children;
 				scene.SelectedItem = null;
 
-				var meshWrapperOperation = new MeshWrapperOperation(new List<IObject3D>(children.Select((i) => i.Clone())))
-				{
-					ActiveEditor = classDescriptor,
-					Name = editorName,
-				};
+				meshWrapper.WrapAndAddAsChildren(new List<IObject3D>(children.Select((i) => i.Clone())));
 
 				scene.UndoBuffer.AddAndDo(
 					new ReplaceCommand(
 						new List<IObject3D>(children),
-						new List<IObject3D> { meshWrapperOperation }));
+						new List<IObject3D> { meshWrapper }));
 
-				meshWrapperOperation.MakeNameNonColliding();
-				scene.SelectedItem = meshWrapperOperation;
+				meshWrapper.MakeNameNonColliding();
+				scene.SelectedItem = meshWrapper;
 			}
 		}
 
-		public MeshWrapperOperation(List<IObject3D> children)
+		public void WrapAndAddAsChildren(List<IObject3D> children)
 		{
 			Children.Modify((list) =>
 			{
+				list.Clear();
+
 				foreach (var child in children)
 				{
 					list.Add(child);

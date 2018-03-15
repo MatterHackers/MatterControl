@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			return item;
 		}
 
-		public override string ActiveEditor => "PublicPropertyEditor";
+		
 
 		[DisplayName("Name")]
 		public string NameToWrite { get; set; } = "Text";
