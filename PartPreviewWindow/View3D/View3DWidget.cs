@@ -190,8 +190,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			meshViewerWidget.AfterDraw += AfterDraw3DContent;
 
-			sceneContext.LoadedGCodeChanged += SceneContext_LoadedGCodeChanged;
-
 			scene.SelectFirstChild();
 
 			viewControls3D.ActiveButton = ViewControls3DButtons.PartSelect;
@@ -229,18 +227,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			this.Invalidate();
-		}
-
-		private void SceneContext_LoadedGCodeChanged(object sender, EventArgs e)
-		{
-			if (printerTabPage != null)
-			{
-				if (printerTabPage.gcode3DWidget != null)
-				{
-					// HACK: directly fire method which previously ran on SlicingDone event on PrintItemWrapper
-					UiThread.RunOnIdle(() => printerTabPage.gcode3DWidget.CreateAndAddChildren(printer));
-				}
-			}
 		}
 
 		private void ViewControls3D_TransformStateChanged(object sender, TransformStateChangedEventArgs e)
@@ -303,15 +289,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
-			// This shows the BVH as rects around the scene items
-			//Scene?.TraceData().RenderBvhRecursive(0, 3);
-
-			if (sceneContext.LoadedGCode == null || sceneContext.GCodeRenderer == null || printerTabPage?.gcode3DWidget.Visible == false)
+			// Render 3D GCode if applicable
+			if (sceneContext.LoadedGCode != null
+				&& sceneContext.GCodeRenderer != null
+				&& printerTabPage?.printer.ViewState.ViewMode == PartViewMode.Layers3D)
 			{
-				return;
+				sceneContext.RenderGCode3D(e);
 			}
 
-			sceneContext.Render3DLayerFeatures(e);
+			// This shows the BVH as rects around the scene items
+			//Scene?.TraceData().RenderBvhRecursive(0, 3);
 		}
 
 		public override void OnKeyDown(KeyEventArgs keyEvent)
@@ -541,7 +528,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			viewControls3D.TransformStateChanged -= ViewControls3D_TransformStateChanged;
-			sceneContext.LoadedGCodeChanged -= SceneContext_LoadedGCodeChanged;
 			scene.SelectionChanged -= Scene_SelectionChanged;
 			this.InteractionLayer.DrawGlOpaqueContent -= Draw_GlOpaqueContent;
 			this.sceneContext.SceneLoaded -= SceneContext_SceneLoaded;
@@ -1299,7 +1285,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			popupMenu.CreateBoolMenuItem(
-				"Shaded".Localize(), 
+				"Shaded".Localize(),
 				() => meshViewerWidget.RenderType == RenderTypes.Shaded,
 				(v) => switchToRenderType(RenderTypes.Shaded),
 				useRadioStyle: true);

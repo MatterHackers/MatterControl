@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private SystemWindow parentSystemWindow;
 		private SliceLayerSelector layerScrollbar;
 		internal PrinterConfig printer;
-		internal GCode3DWidget gcode3DWidget;
+		private GCodePanel gcodePanel;
 		internal ResizeContainer gcodeContainer;
 		internal PrinterActionsBar printerActionsBar;
 		private DockingTabControl sideBar;
@@ -157,8 +157,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var position = view3DWidget.InteractionLayer.Children.IndexOf(trackball);
 
-			// The slice layers view
-			gcode3DWidget = new GCode3DWidget(printer, sceneContext, theme)
+			gcodePanel = new GCodePanel(printer, sceneContext, theme)
 			{
 				Name = "GCode3DWidget",
 				HAnchor = HAnchor.Stretch,
@@ -166,7 +165,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				BackgroundColor = theme.InteractionLayerOverlayColor,
 			};
 
-			gcodeContainer = new ResizeContainer(gcode3DWidget)
+			gcodeContainer = new ResizeContainer(gcodePanel)
 			{
 				Width = printer?.ViewState.GCodePanelWidth ?? 200,
 				VAnchor = VAnchor.Stretch,
@@ -175,7 +174,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				SplitterWidth = theme.SplitterWidth,
 				Visible = false,
 			};
-			gcodeContainer.AddChild(gcode3DWidget);
+			gcodeContainer.AddChild(gcodePanel);
 
 			var splitContainer = view3DWidget.FindNamedChildRecursive("SplitContainer");
 
@@ -218,7 +217,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void SetViewMode(PartViewMode viewMode)
 		{
-			if (gcode3DWidget == null || gcode2DWidget == null)
+			if (gcodePanel == null || gcode2DWidget == null)
 			{
 				// Wait for controls to initialize
 				return;
@@ -262,6 +261,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private void BedPlate_LoadedGCodeChanged(object sender, EventArgs e)
 		{
 			this.SetSliderVisibility();
+
+			if (gcodePanel != null)
+			{
+				// HACK: directly fire method which previously ran on SlicingDone event on PrintItemWrapper
+				UiThread.RunOnIdle(() => gcodePanel.CreateAndAddChildren(printer));
+			}
 
 			if (sceneContext.LoadedGCode == null)
 			{
@@ -354,7 +359,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			bool printerIsRunningPrint = printer.Connection.PrinterIsPaused || printer.Connection.PrinterIsPrinting;
 			if (gcodeOptions.SyncToPrint
 				&& printerIsRunningPrint
-				&& (gcode3DWidget.Visible || gcode2DWidget.Visible))
+				&& printer.ViewState.ViewMode != PartViewMode.Model)
 			{
 				if (this.SetAnimationPosition())
 				{
@@ -367,8 +372,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		protected override void GetViewControls3DOverflowMenu(PopupMenu popupMenu)
 		{
-			if (gcode3DWidget.Visible
-				|| gcode2DWidget.Visible)
+			if (printer?.ViewState.ViewMode != PartViewMode.Model)
 			{
 				this.ShowGCodeOverflowMenu(popupMenu);
 			}
@@ -409,14 +413,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private void Parent_KeyDown(object sender, KeyEventArgs keyEvent)
 		{
 			if (!keyEvent.Handled
-				&& (gcode3DWidget.Visible
-				|| gcode2DWidget.Visible))
+				&& printer.ViewState.ViewMode != PartViewMode.Model)
 			{
 				switch (keyEvent.KeyCode)
 				{
 					case Keys.Up:
 						layerScrollbar.Value += 1;
 						break;
+
 					case Keys.Down:
 						layerScrollbar.Value -= 1;
 						break;
