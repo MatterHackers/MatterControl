@@ -105,6 +105,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			SettingsKey.max_acceleration,
 			SettingsKey.ip_address,
 			SettingsKey.ip_port,
+			SettingsKey.progress_reporting,
 			"load_filament_length",
 			"trim_image",
 			"clean_nozzle_image",

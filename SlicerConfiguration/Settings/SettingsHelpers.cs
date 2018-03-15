@@ -124,6 +124,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string print_leveling_required_to_print = nameof(print_leveling_required_to_print);
 		public const string print_leveling_solution = nameof(print_leveling_solution);
 		public const string printer_name = nameof(printer_name);
+		public const string progress_reporting = nameof(progress_reporting);
 		public const string publish_bed_image = nameof(publish_bed_image);
 		public const string read_regex = nameof(read_regex);
 		public const string recover_first_layer_speed = nameof(recover_first_layer_speed);
