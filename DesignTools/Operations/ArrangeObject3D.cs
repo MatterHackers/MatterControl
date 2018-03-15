@@ -51,8 +51,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public enum Align { None, Min, Center, Max }
 
-		public override string ActiveEditor => "PublicPropertyEditor";
-
 		public override bool CanBake => true;
 
 		public override bool CanRemove => true;

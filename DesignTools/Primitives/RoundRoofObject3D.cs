@@ -38,7 +38,7 @@ namespace MatterHackers.MatterControl.DesignTools
 {
 	public class RoundRoofObject3D : Object3D, IRebuildable
 	{
-		public override string ActiveEditor => "PublicPropertyEditor";
+		
 
 		public RoundRoofObject3D()
 		{

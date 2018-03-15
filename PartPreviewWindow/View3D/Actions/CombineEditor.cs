@@ -40,24 +40,32 @@ using MatterHackers.PolygonMesh;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
+	public class CombineObject3D : MeshWrapperObject3D
+	{
+		public CombineObject3D()
+		{
+			Name = "Combine";
+		}
+	}
+
 	public class CombineEditor : IObject3DEditor
 	{
-		private MeshWrapperOperation group;
+		private CombineObject3D group;
 		private View3DWidget view3DWidget;
 		public string Name => "Combine";
 
 		public bool Unlocked { get; } = true;
 
-		public IEnumerable<Type> SupportedTypes() => new Type[] { typeof(MeshWrapperOperation) };
+		public IEnumerable<Type> SupportedTypes() => new Type[] { typeof(CombineObject3D) };
 
 		public GuiWidget Create(IObject3D group, View3DWidget view3DWidget, ThemeConfig theme)
 		{
 			this.view3DWidget = view3DWidget;
-			this.group = group as MeshWrapperOperation;
+			this.group = group as CombineObject3D;
 
 			var mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 
-			if (group is MeshWrapperOperation operationNode
+			if (group is CombineObject3D operationNode
 				&& operationNode.Descendants().Where((obj) => obj.OwnerID == group.ID).All(c => c.OutputType != PrintOutputTypes.Hole))
 			{
 				bool first = true;

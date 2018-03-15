@@ -40,7 +40,7 @@ namespace MatterHackers.MatterControl.DesignTools
 {
 	public class RingObject3D : Object3D, IRebuildable
 	{
-		public override string ActiveEditor => "PublicPropertyEditor";
+		
 
 		public RingObject3D()
 		{

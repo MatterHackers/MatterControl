@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 		}
 
-		public override string ActiveEditor => "PublicPropertyEditor";
+		
 
 		public double ExtrusionHeight { get; set; } = 5;
 		public int InfillAmount { get; internal set; }

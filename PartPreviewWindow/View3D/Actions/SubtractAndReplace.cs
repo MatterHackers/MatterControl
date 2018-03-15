@@ -40,9 +40,17 @@ using MatterHackers.PolygonMesh;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
-	public class SubtractAndReplace : IObject3DEditor
+	public class SubtractAndReplaceObject3D : MeshWrapperObject3D
 	{
-		private MeshWrapperOperation group;
+		public SubtractAndReplaceObject3D()
+		{
+			Name = "Subtract and Replace";
+		}
+	}
+
+	public class SubtractAndReplaceEditor : IObject3DEditor
+	{
+		private SubtractAndReplaceObject3D group;
 		private View3DWidget view3DWidget;
 		public string Name => "Subtract & Replace";
 
@@ -51,11 +59,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		public GuiWidget Create(IObject3D group, View3DWidget view3DWidget, ThemeConfig theme)
 		{
 			this.view3DWidget = view3DWidget;
-			this.group = group as MeshWrapperOperation;
+			this.group = group as SubtractAndReplaceObject3D;
 
 			var mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 
-			if (group is MeshWrapperOperation)
+			if (group is SubtractAndReplaceObject3D)
 			{
 				AddPaintSelector(view3DWidget, mainContainer, theme);
 			}
@@ -65,7 +73,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 		public IEnumerable<Type> SupportedTypes() => new Type[]
 		{
-			typeof(MeshWrapperOperation),
+			typeof(SubtractAndReplaceObject3D),
 		};
 
 		private static FlowLayoutWidget CreateSettingsRow(string labelText)

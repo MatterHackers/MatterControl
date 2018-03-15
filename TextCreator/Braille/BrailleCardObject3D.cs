@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			return item;
 		}
 
-		public override string ActiveEditor => "PublicPropertyEditor";
+		
 
 		public char Letter { get; set; } = 'a';
 

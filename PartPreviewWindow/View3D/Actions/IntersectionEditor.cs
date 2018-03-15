@@ -40,24 +40,32 @@ using MatterHackers.PolygonMesh;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
+	public class IntersectionObject3D : MeshWrapperObject3D
+	{
+		public IntersectionObject3D()
+		{
+			Name = "Intersection";
+		}
+	}
+
 	public class IntersectionEditor : IObject3DEditor
 	{
-		private MeshWrapperOperation group;
+		private IntersectionObject3D group;
 		private View3DWidget view3DWidget;
 		public string Name => "Intersection";
 
 		public bool Unlocked { get; } = true;
 
-		public IEnumerable<Type> SupportedTypes() => new Type[] { typeof(MeshWrapperOperation) };
+		public IEnumerable<Type> SupportedTypes() => new Type[] { typeof(IntersectionObject3D) };
 
 		public GuiWidget Create(IObject3D group, View3DWidget view3DWidget, ThemeConfig theme)
 		{
 			this.view3DWidget = view3DWidget;
-			this.group = group as MeshWrapperOperation;
+			this.group = group as IntersectionObject3D;
 
 			var mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 
-			if (group is MeshWrapperOperation operationNode
+			if (group is IntersectionObject3D operationNode
 				&& operationNode.Descendants().Where((obj) => obj.OwnerID == group.ID).All(c => c.OutputType != PrintOutputTypes.Hole))
 			{
 				bool first = true;
