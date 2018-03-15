@@ -139,7 +139,7 @@ namespace MatterHackers.MatterControl
 				&& printer.Settings.GetValue<bool>(SettingsKey.use_z_probe)
 				&& printer.Settings.GetValue<bool>(SettingsKey.has_z_servo))
 			{
-				var runCalibrateProbeButton = new TextButton("Re-Calibrate Probe".Localize(), theme)
+				var runCalibrateProbeButton = new TextButton("Recalibrate Probe".Localize(), theme)
 				{
 					VAnchor = VAnchor.Absolute,
 					HAnchor = HAnchor.Right,
