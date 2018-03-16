@@ -1,8 +1,9 @@
 {
   "ShowShopButton": true,
+  "AffiliateCode": "7423",
   "PreloadedLibraryFiles": [
     "MatterControl - Coin.stl",
     "MatterControl - Stand.stl",
     "Calibration - Box.stl"
-  ],
+  ]
 }

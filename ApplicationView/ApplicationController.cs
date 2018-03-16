@@ -194,6 +194,19 @@ namespace MatterHackers.MatterControl
 		{
 			UiThread.RunOnIdle(() =>
 			{
+				if(!string.IsNullOrEmpty(OemSettings.Instance.AffiliateCode)
+					&& targetUri.Contains("matterhackers.com"))
+				{
+					if(targetUri.Contains("?"))
+					{
+						targetUri += $"&aff={OemSettings.Instance.AffiliateCode}";
+					}
+					else
+					{
+						targetUri += $"?aff={OemSettings.Instance.AffiliateCode}";
+					}
+
+				}
 				Process.Start(targetUri);
 			});
 		}
