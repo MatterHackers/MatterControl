@@ -38,6 +38,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 
@@ -154,7 +155,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 									&& File.Exists(result.FileName))
 								{
 									simpleTabs.RemoveTab(simpleTabs.ActiveTab);
-									ImportSettingsPage.ImportFromExisting(result.FileName);
+									if (ProfileManager.ImportFromExisting(result.FileName))
+									{
+										string importPrinterSuccessMessage = "You have successfully imported a new printer profile. You can find '{0}' in your list of available printers.".Localize();
+										DialogWindow.Show(
+											new ImportSucceeded(importPrinterSuccessMessage.FormatWith(Path.GetFileNameWithoutExtension(result.FileName))));
+									}
+									else
+									{
+										StyledMessageBox.ShowMessageBox("Oops! Settings file '{0}' did not contain any settings we could import.".Localize().FormatWith(Path.GetFileName(result.FileName)), "Unable to Import".Localize());
+									}
 								}
 							});
 				});
