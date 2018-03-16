@@ -252,6 +252,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 						paint.Mesh = paintMesh;
 
+						paint.Color = paint.WorldColor().AdjustContrast(keepObjects.First().WorldColor(), 2).ToColor();
+
 						// now set it to the new solid color
 						paint.OutputType = PrintOutputTypes.Solid;
 					}

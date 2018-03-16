@@ -138,6 +138,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				item.Visible = true;
 				// set the mesh back to the child mesh
 				item.Mesh = item.Children.First().Mesh;
+				// and set the color back
+				item.Color = item.Children.First().Color;
 			}
 		}
 	}
