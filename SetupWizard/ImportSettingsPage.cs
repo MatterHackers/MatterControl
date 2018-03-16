@@ -48,22 +48,24 @@ namespace MatterHackers.MatterControl
 		private int selectedMaterial = -1;
 		private int selectedQuality = -1;
 
-		private PrinterSettingsLayer destinationLayer;
-		private string sectionName;
-
-		private bool isMergeIntoUserLayer = false;
-
-		public SelectPartsOfPrinterToImport(string settingsFilePath, PrinterSettingsLayer destinationLayer, string sectionName = null)
+		public SelectPartsOfPrinterToImport(string settingsFilePath)
 		{
 			this.WindowTitle = "Import Wizard";
 			this.HeaderText = "Select What to Import".Localize();
 
-			this.isMergeIntoUserLayer = destinationLayer == ActiveSliceSettings.Instance.UserLayer;
-			this.destinationLayer = destinationLayer;
-			this.sectionName = sectionName;
-
 			// TODO: Need to handle load failures for import attempts
 			settingsToImport = PrinterSettings.LoadFile(settingsFilePath);
+
+			// if there are no settings to import
+			if (settingsToImport.QualityLayers.Count == 0 && settingsToImport.MaterialLayers.Count == 0)
+			{
+				// Only main setting so don't ask what to merge just do it.
+				UiThread.RunOnIdle(() =>
+				{
+					DisplayFailedToImportMessage(settingsFilePath);
+					this.Parents<SystemWindow>().First().Close();
+				});
+			}
 
 			this.settingsFilePath = settingsFilePath;
 
@@ -82,27 +84,6 @@ namespace MatterHackers.MatterControl
 			};
 			scrollWindow.AddChild(container);
 
-			if (isMergeIntoUserLayer)
-			{
-				container.AddChild(new WrappedTextWidget(importMessage, textColor: ActiveTheme.Instance.PrimaryTextColor));
-			}
-
-			// add in the check boxes to select what to import
-			container.AddChild(new TextWidget("Main Settings:")
-			{
-				TextColor = ActiveTheme.Instance.PrimaryTextColor,
-				Margin = new BorderDouble(0, 3, 0, isMergeIntoUserLayer ? 10 : 0),
-			});
-
-			var mainProfileRadioButton = new RadioButton("Printer Profile")
-			{
-				TextColor = ActiveTheme.Instance.PrimaryTextColor,
-				Margin = new BorderDouble(5, 0),
-				HAnchor = HAnchor.Left,
-				Checked = true,
-			};
-			container.AddChild(mainProfileRadioButton);
-
 			if (settingsToImport.QualityLayers.Count > 0)
 			{
 				container.AddChild(new TextWidget("Quality Presets:")
@@ -114,7 +95,7 @@ namespace MatterHackers.MatterControl
 				int buttonIndex = 0;
 				foreach (var qualitySetting in settingsToImport.QualityLayers)
 				{
-					RadioButton qualityButton = new RadioButton(qualitySetting.Name)
+					RadioButton qualityButton = new RadioButton(string.IsNullOrEmpty(qualitySetting.Name) ? "no name" : qualitySetting.Name)
 					{
 						TextColor = ActiveTheme.Instance.PrimaryTextColor,
 						Margin = new BorderDouble(5, 0, 0, 0),
@@ -150,7 +131,7 @@ namespace MatterHackers.MatterControl
 				int buttonIndex = 0;
 				foreach (var materialSetting in settingsToImport.MaterialLayers)
 				{
-					RadioButton materialButton = new RadioButton(materialSetting.Name)
+					RadioButton materialButton = new RadioButton(string.IsNullOrEmpty(materialSetting.Name) ? "no name" : materialSetting.Name)
 					{
 						TextColor = ActiveTheme.Instance.PrimaryTextColor,
 						Margin = new BorderDouble(5, 0),
@@ -176,13 +157,14 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
-			var mergeButtonTitle = this.isMergeIntoUserLayer ? "Merge".Localize() : "Import".Localize();
-			var mergeButton = textImageButtonFactory.Generate(mergeButtonTitle);
+			var importButtonTitle = "Import".Localize();
+			var mergeButton = textImageButtonFactory.Generate(importButtonTitle);
 			mergeButton.Name = "Merge Profile";
 			mergeButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
 				bool copyName = false;
 				PrinterSettingsLayer sourceLayer = null;
+				bool destIsMaterial = true;
 				if (selectedMaterial > -1)
 				{
 					sourceLayer = settingsToImport.MaterialLayers[selectedMaterial];
@@ -190,6 +172,7 @@ namespace MatterHackers.MatterControl
 				}
 				else if (selectedQuality > -1)
 				{
+					destIsMaterial = false;
 					sourceLayer = settingsToImport.QualityLayers[selectedQuality];
 					copyName = true;
 				}
@@ -212,43 +195,73 @@ namespace MatterHackers.MatterControl
 					};
 				}
 
-				ActiveSliceSettings.Instance.Merge(destinationLayer, settingsToImport, sourceFilter, copyName);
+				PrinterSettingsLayer printerSettingsLayer = ImportSettings(destIsMaterial, settingsFilePath);
+				if (printerSettingsLayer != null)
+				{
+					ActiveSliceSettings.Instance.Merge(printerSettingsLayer, settingsToImport, sourceFilter, copyName);
 
-				this.Parents<SystemWindow>().FirstOrDefault()?.CloseOnIdle();
+					var layerName = (printerSettingsLayer.ContainsKey(SettingsKey.layer_name)) ? printerSettingsLayer[SettingsKey.layer_name] : "none";
+					Success(settingsFilePath, layerName, destIsMaterial ? "Material".Localize() : "Quality".Localize());
+				}
+				else
+				{
+					UiThread.RunOnIdle(() =>
+					{
+						DisplayFailedToImportMessage(settingsFilePath);
+						this.Parents<SystemWindow>().First().Close();
+					});
+				}
 			});
 
 			this.AddPageAction(mergeButton);
-			
-			if (settingsToImport.QualityLayers.Count == 0 && settingsToImport.MaterialLayers.Count == 0)
-			{
-				// Only main setting so don't ask what to merge just do it.
-				UiThread.RunOnIdle(() =>
-				{
-					var sourceFilter = new List<PrinterSettingsLayer>()
-					{
-						settingsToImport.OemLayer ?? new PrinterSettingsLayer(),
-						settingsToImport.UserLayer ?? new PrinterSettingsLayer()
-					};
-
-					ActiveSliceSettings.Instance.Merge(destinationLayer, settingsToImport, sourceFilter, false);
-
-					string successMessage = importPrinterSuccessMessage.FormatWith(Path.GetFileNameWithoutExtension(settingsFilePath));
-					if (!isMergeIntoUserLayer)
-					{
-						string sourceName = isMergeIntoUserLayer ? Path.GetFileNameWithoutExtension(settingsFilePath) : destinationLayer[SettingsKey.layer_name];
-						string importSettingSuccessMessage = "You have successfully imported a new {1} setting. You can find '{0}' in your list of {1} settings.".Localize();
-						successMessage = importSettingSuccessMessage.FormatWith(sourceName, sectionName);
-					}
-
-					WizardWindow.ChangeToPage(new ImportSucceeded(successMessage)
-					{
-						WizardWindow = this.WizardWindow,
-					});
-				});
-			}
 		}
 
-		private string importPrinterSuccessMessage = "Settings have been merged into your current printer.".Localize();
+		private void Success(string settingsFilePath, string sourceName, string sectionName)
+		{
+			string importSettingSuccessMessage = $"You have successfully imported a new {sectionName} setting. You can find '{sourceName}' in your list of {sectionName} settings.".Localize();
+
+			WizardWindow.ChangeToPage(new ImportSucceeded(importSettingSuccessMessage)
+			{
+				WizardWindow = this.WizardWindow,
+			});
+		}
+
+		private static void DisplayFailedToImportMessage(string settingsFilePath)
+		{
+			StyledMessageBox.ShowMessageBox("Oops! Settings file '{0}' did not contain any settings we could import.".Localize().FormatWith(Path.GetFileName(settingsFilePath)), "Unable to Import".Localize());
+		}
+
+		public PrinterSettingsLayer ImportSettings(bool destIsMaterial, string settingsFilePath)
+		{
+			PrinterSettingsLayer printerSettingsLayer = null;
+			if (!string.IsNullOrEmpty(settingsFilePath) && File.Exists(settingsFilePath))
+			{
+				string importType = Path.GetExtension(settingsFilePath).ToLower();
+				switch (importType)
+				{
+					case ProfileManager.ProfileExtension:
+						printerSettingsLayer = new PrinterSettingsLayer();
+						printerSettingsLayer[SettingsKey.layer_name] = Path.GetFileNameWithoutExtension(settingsFilePath);
+
+						if (destIsMaterial)
+						{
+							ActiveSliceSettings.Instance.MaterialLayers.Add(printerSettingsLayer);
+						}
+						else
+						{
+							ActiveSliceSettings.Instance.QualityLayers.Add(printerSettingsLayer);
+						}
+						break;
+
+					default:
+						// Did not figure out what this file is, let the user know we don't understand it
+						StyledMessageBox.ShowMessageBox("Oops! Unable to recognize settings file '{0}'.".Localize().FormatWith(Path.GetFileName(settingsFilePath)), "Unable to Import".Localize());
+						break;
+				}
+			}
+
+			return printerSettingsLayer;
+		}
 	}
 
 	public class ImportSucceeded : DialogPage
@@ -260,278 +273,6 @@ namespace MatterHackers.MatterControl
 			this.HeaderText = "Import Successful".Localize();
 
 			contentRow.AddChild(new WrappedTextWidget(successMessage, textColor: ActiveTheme.Instance.PrimaryTextColor));
-		}
-	}
-
-	public class ImportSettingsPage : DialogPage
-	{
-		private RadioButton mergeButton;
-		private RadioButton newQualityPresetButton;
-		private RadioButton newMaterialPresetButton;
-
-		public ImportSettingsPage()
-		{
-			this.WindowTitle = "Import Settings".Localize();
-			this.HeaderText = "Import Wizard".Localize();
-
-			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				HAnchor = HAnchor.Stretch,
-			};
-			contentRow.AddChild(container);
-
-			container.AddChild(new TextWidget("Merge Into:")
-			{
-				TextColor = ActiveTheme.Instance.PrimaryTextColor,
-				Margin = new BorderDouble(0, 0, 0, 5),
-			});
-
-			// merge into current settings
-			mergeButton = new RadioButton("Current".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
-			mergeButton.Checked = true;
-			container.AddChild(mergeButton);
-
-			container.AddChild(new TextWidget("Create New:")
-			{
-				TextColor = ActiveTheme.Instance.PrimaryTextColor,
-				Margin = new BorderDouble(0, 0, 0, 15),
-			});
-
-			// add as quality preset
-			newQualityPresetButton = new RadioButton("Quality preset".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
-			container.AddChild(newQualityPresetButton);
-
-			// add as material preset
-			newMaterialPresetButton = new RadioButton("Material preset".Localize(), textColor: ActiveTheme.Instance.PrimaryTextColor);
-			container.AddChild(newMaterialPresetButton);
-
-			var importButton = textImageButtonFactory.Generate("Choose File".Localize());
-			importButton.Click += (s, e) => UiThread.RunOnIdle(() =>
-			{
-				AggContext.FileDialogs.OpenFileDialog(
-						new OpenFileDialogParams("settings files|*.ini;*.printer;*.slice"),
-						(dialogParams) =>
-						{
-							if (!string.IsNullOrEmpty(dialogParams.FileName))
-							{
-								ImportSettingsFile(dialogParams.FileName);
-							}
-						});
-			});
-
-			importButton.Visible = true;
-
-			this.AddPageAction(importButton);
-		}
-
-		private GuiWidget CreateDetailInfo(string detailText)
-		{
-			var wrappedText = new WrappedTextWidget(detailText)
-			{
-				TextColor = ActiveTheme.Instance.PrimaryTextColor,
-			};
-
-			var container = new GuiWidget()
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit,
-				Margin = new BorderDouble(25, 15, 5, 5),
-			};
-
-			container.AddChild(wrappedText);
-
-			return container;
-		}
-
-		public static void ImportFromExisting(string settingsFilePath)
-		{
-			if (ProfileManager.ImportFromExisting(settingsFilePath))
-			{
-				string importPrinterSuccessMessage = "You have successfully imported a new printer profile. You can find '{0}' in your list of available printers.".Localize();
-				DialogWindow.Show(
-					new ImportSucceeded(importPrinterSuccessMessage.FormatWith(Path.GetFileNameWithoutExtension(settingsFilePath))));
-			}
-			else
-			{
-				displayFailedToImportMessage(settingsFilePath);
-			}
-		}
-
-		private void ImportSettingsFile(string settingsFilePath)
-		{
-			if (mergeButton.Checked)
-			{
-				MergeSettings(settingsFilePath);
-			}
-			else if (newQualityPresetButton.Checked)
-			{
-				ImportToPreset(settingsFilePath);
-			}
-			else if (newMaterialPresetButton.Checked)
-			{
-				ImportToPreset(settingsFilePath);
-			}
-		}
-
-		private void ImportToPreset(string settingsFilePath)
-		{
-			if (!string.IsNullOrEmpty(settingsFilePath) && File.Exists(settingsFilePath))
-			{
-				PrinterSettingsLayer newLayer;
-
-				string sectionName = (newMaterialPresetButton.Checked) ? "Material".Localize() : "Quality".Localize();
-
-				string importType = Path.GetExtension(settingsFilePath).ToLower();
-				switch (importType)
-				{
-					case ProfileManager.ProfileExtension:
-						newLayer = new PrinterSettingsLayer();
-						newLayer[SettingsKey.layer_name] = Path.GetFileNameWithoutExtension(settingsFilePath);
-
-						if (newQualityPresetButton.Checked)
-						{
-							ActiveSliceSettings.Instance.QualityLayers.Add(newLayer);
-						}
-						else
-						{
-							// newMaterialPresetButton.Checked
-							ActiveSliceSettings.Instance.MaterialLayers.Add(newLayer);
-						}
-
-						// open a wizard to ask what to import to the preset
-						WizardWindow.ChangeToPage(new SelectPartsOfPrinterToImport(settingsFilePath, newLayer, sectionName));
-
-						break;
-
-					case ".slice": // legacy presets file extension
-					case ".ini":
-						var settingsToImport = PrinterSettingsLayer.LoadFromIni(settingsFilePath);
-
-						bool containsValidSetting = false;
-						{
-							newLayer = new PrinterSettingsLayer();
-							newLayer.Name = Path.GetFileNameWithoutExtension(settingsFilePath);
-
-							// Only be the base and oem layers (not the user, quality or material layer)
-							var baseAndOEMCascade = new List<PrinterSettingsLayer>
-							{
-								ActiveSliceSettings.Instance.OemLayer,
-								ActiveSliceSettings.Instance.BaseLayer
-							};
-
-							foreach (var keyName in PrinterSettings.KnownSettings)
-							{
-								if (ActiveSliceSettings.Instance.Contains(keyName))
-								{
-									containsValidSetting = true;
-									string currentValue = ActiveSliceSettings.Instance.GetValue(keyName, baseAndOEMCascade).Trim();
-									string newValue;
-									// Compare the value to import to the layer cascade value and only set if different
-									if (settingsToImport.TryGetValue(keyName, out newValue)
-										&& currentValue != newValue)
-									{
-										newLayer[keyName] = newValue;
-									}
-								}
-							}
-
-							if (containsValidSetting)
-							{
-								if (newMaterialPresetButton.Checked)
-								{
-									ActiveSliceSettings.Instance.MaterialLayers.Add(newLayer);
-								}
-								else
-								{
-									ActiveSliceSettings.Instance.QualityLayers.Add(newLayer);
-								}
-
-								ActiveSliceSettings.Instance.Save();
-
-								string importSettingSuccessMessage = "You have successfully imported a new {1} setting. You can find '{0}' in your list of {1} settings.".Localize();
-								WizardWindow.ChangeToPage(new ImportSucceeded(importSettingSuccessMessage.FormatWith(Path.GetFileNameWithoutExtension(settingsFilePath), sectionName))
-								{
-									WizardWindow = this.WizardWindow,
-								});
-							}
-							else
-							{
-								displayFailedToImportMessage(settingsFilePath);
-							}
-						}
-
-						break;
-
-					default:
-						// Did not figure out what this file is, let the user know we don't understand it
-						StyledMessageBox.ShowMessageBox("Oops! Unable to recognize settings file '{0}'.".Localize().FormatWith(Path.GetFileName(settingsFilePath)), "Unable to Import".Localize());
-						break;
-				}
-			}
-			Invalidate();
-		}
-
-		private void MergeSettings(string settingsFilePath)
-		{
-			if (!string.IsNullOrEmpty(settingsFilePath) && File.Exists(settingsFilePath))
-			{
-				string importType = Path.GetExtension(settingsFilePath).ToLower();
-				switch (importType)
-				{
-					case ProfileManager.ProfileExtension:
-						WizardWindow.ChangeToPage(new SelectPartsOfPrinterToImport(settingsFilePath, ActiveSliceSettings.Instance.UserLayer));
-						break;
-
-					case ".slice": // old presets format
-					case ".ini":
-						// create a scope for variables
-						{
-							var settingsToImport = PrinterSettingsLayer.LoadFromIni(settingsFilePath);
-
-							bool containsValidSetting = false;
-							var activeSettings = ActiveSliceSettings.Instance;
-
-							foreach (var keyName in PrinterSettings.KnownSettings)
-							{
-								if (activeSettings.Contains(keyName))
-								{
-									containsValidSetting = true;
-									string currentValue = activeSettings.GetValue(keyName).Trim();
-
-									string newValue;
-									// Compare the value to import to the layer cascade value and only set if different
-									if (settingsToImport.TryGetValue(keyName, out newValue)
-										&& currentValue != newValue)
-									{
-										activeSettings.UserLayer[keyName] = newValue;
-									}
-								}
-							}
-							if (containsValidSetting)
-							{
-								activeSettings.Save();
-							}
-							else
-							{
-								displayFailedToImportMessage(settingsFilePath);
-							}
-							WizardWindow.Close();
-						}
-						break;
-
-					default:
-						WizardWindow.Close();
-						// Did not figure out what this file is, let the user know we don't understand it
-						StyledMessageBox.ShowMessageBox("Oops! Unable to recognize settings file '{0}'.".Localize().FormatWith(Path.GetFileName(settingsFilePath)), "Unable to Import".Localize());
-						break;
-				}
-			}
-			Invalidate();
-		}
-
-		private static void displayFailedToImportMessage(string settingsFilePath)
-		{
-			StyledMessageBox.ShowMessageBox("Oops! Settings file '{0}' did not contain any settings we could import.".Localize().FormatWith(Path.GetFileName(settingsFilePath)), "Unable to Import".Localize());
 		}
 	}
 }

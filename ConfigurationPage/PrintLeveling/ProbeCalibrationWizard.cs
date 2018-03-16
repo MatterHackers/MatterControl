@@ -48,8 +48,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		protected int totalSteps { get; private set; }
 		protected PrinterConfig printer;
 
-		private LevelingStrings levelingStrings;
-
 		public ProbeCalibrationWizard(PrinterConfig printer)
 			: base(500, 370)
 		{
@@ -57,7 +55,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			AlwaysOnTopOfMain = true;
 			this.totalSteps = 3;
 
-			levelingStrings = new LevelingStrings(printer.Settings);
+			LevelingStrings levelingStrings = new LevelingStrings(printer.Settings);
 			string printLevelWizardTitle = ApplicationController.Instance.ProductName;
 			string printLevelWizardTitleFull = "Probe Calibration Wizard".Localize();
 			Title = string.Format("{0} - {1}", printLevelWizardTitle, printLevelWizardTitleFull);

@@ -326,7 +326,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			UiThread.RunOnIdle(() =>
 			{
-				DialogWindow.Show(new ImportSettingsPage());
+				AggContext.FileDialogs.OpenFileDialog(
+						new OpenFileDialogParams("settings files|*.printer"),
+						(dialogParams) =>
+						{
+							if (!string.IsNullOrEmpty(dialogParams.FileName))
+							{
+								DialogWindow.Show(new SelectPartsOfPrinterToImport(dialogParams.FileName));
+							}
+						});
 			});
 		}
 
