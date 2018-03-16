@@ -115,8 +115,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					var popupMenu = new PopupMenu(theme);
 
+					// Perform overflow
 					bool hasOverflowItems = false;
-					foreach (var widget in overflowBar.ActionArea.Children.Where(c => c.Enabled && !c.Visible && !ignoredInMenuTypes.Contains(c.GetType())))
+					foreach (var widget in overflowBar.ActionArea.Children.Where(c => !c.Visible && !ignoredInMenuTypes.Contains(c.GetType())))
 					{
 						hasOverflowItems = true;
 
@@ -127,6 +128,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						menuItem = popupMenu.CreateMenuItem(
 							widget.ToolTipText ?? widget.Text,
 							iconButton?.IconImage);
+
+						menuItem.Enabled = widget.Enabled;
 
 						menuItem.Click += (s, e) =>
 						{
@@ -139,6 +142,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						popupMenu.CreateHorizontalLine();
 					}
 
+					// Extend menu with non-overflow/standard items
 					overflowBar.OnExtendPopupMenu(popupMenu);
 
 					return popupMenu;

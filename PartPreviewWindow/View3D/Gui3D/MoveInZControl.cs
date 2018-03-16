@@ -135,7 +135,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			DrawOnTop = true;
 
 			string arrowFile = Path.Combine("Icons", "3D Icons", "up_pointer.stl");
-			using (Stream arrowStream = AggContext.StaticData.OpenSteam(arrowFile))
+			using (Stream arrowStream = AggContext.StaticData.OpenStream(arrowFile))
 			{
 				upArrowMesh = MeshFileIo.Load(arrowStream, Path.GetExtension(arrowFile), CancellationToken.None).Mesh;
 			}

@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl
 		{
 			if (AggContext.OperatingSystem == OSType.Windows)
 			{
-				using (var mediaStream = AggContext.StaticData.OpenSteam(Path.Combine("Sounds", fileName)))
+				using (var mediaStream = AggContext.StaticData.OpenStream(Path.Combine("Sounds", fileName)))
 				{
 					(new System.Media.SoundPlayer(mediaStream)).Play();
 				}
