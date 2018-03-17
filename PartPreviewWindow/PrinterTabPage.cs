@@ -262,12 +262,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			this.SetSliderVisibility();
 
-			if (gcodePanel != null)
-			{
-				// HACK: directly fire method which previously ran on SlicingDone event on PrintItemWrapper
-				UiThread.RunOnIdle(() => gcodePanel.CreateAndAddChildren(printer));
-			}
-
 			if (sceneContext.LoadedGCode == null)
 			{
 				return;

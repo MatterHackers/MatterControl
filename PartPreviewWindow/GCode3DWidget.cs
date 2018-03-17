@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -83,6 +83,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}, ref unregisterEvents);
 
+			printer.Bed.LoadedGCodeChanged += Bed_LoadedGCodeChanged;
 			printer.Bed.RendererOptions.GCodeOptionsChanged += RendererOptions_GCodeOptionsChanged;
 		}
 
@@ -134,6 +135,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.Invalidate();
 		}
 
+		private void Bed_LoadedGCodeChanged(object sender, EventArgs e)
+		{
+			UiThread.RunOnIdle(() => this.RefreshGCodeDetails(printer));
+		}
+
 		private void RendererOptions_GCodeOptionsChanged(object sender, EventArgs e)
 		{
 			if (speedsWidget != null)
@@ -145,6 +151,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public override void OnClosed(ClosedEventArgs e)
 		{
 			printer.Bed.RendererOptions.GCodeOptionsChanged -= RendererOptions_GCodeOptionsChanged;
+			printer.Bed.LoadedGCodeChanged -= Bed_LoadedGCodeChanged;
+
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
 		}
