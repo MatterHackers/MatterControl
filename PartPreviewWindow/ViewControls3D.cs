@@ -565,12 +565,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Title = "Export".Localize(),
 					Action = () =>
 					{
-						UiThread.RunOnIdle(() =>
+						UiThread.RunOnIdle(async () =>
 						{
 							DialogWindow.Show(
 								new ExportPrintItemPage(new[]
 								{
-									new FileSystemFileItem(sceneContext.EditContext.SourceFilePath)
+									await sceneContext.ToPersistedLibraryItem(Path.GetFileName(sceneContext.EditContext.SourceFilePath)) 
 								}));
 						});
 					},
