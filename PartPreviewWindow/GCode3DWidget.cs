@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -44,6 +44,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private ThemeConfig theme;
 		private PrinterConfig printer;
 		private SectionWidget speedsWidget;
+		private GuiWidget loadedGCodeSection;
 
 		public GCodePanel(PrinterConfig printer, BedConfig sceneContext, ThemeConfig theme)
 			: base (FlowDirection.TopToBottom)
@@ -52,7 +53,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.theme = theme;
 			this.printer = printer;
 
-			CreateAndAddChildren(printer);
+			this.AddChild(
+				new SectionWidget(
+					"Options".Localize(),
+					new GCodeOptionsPanel(sceneContext, printer, theme),
+					theme)
+				{
+					HAnchor = HAnchor.Stretch,
+					VAnchor = VAnchor.Fit
+				});
+
+			this.AddChild(
+				loadedGCodeSection = new FlowLayoutWidget(FlowDirection.TopToBottom)
+				{
+					HAnchor = HAnchor.Stretch,
+					VAnchor = VAnchor.Fit
+				});
+
+			this.RefreshGCodeDetails(printer);
 
 			ActiveSliceSettings.SettingChanged.RegisterEvent((s, e) =>
 			{
@@ -65,26 +83,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}, ref unregisterEvents);
 
+			printer.Bed.LoadedGCodeChanged += Bed_LoadedGCodeChanged;
 			printer.Bed.RendererOptions.GCodeOptionsChanged += RendererOptions_GCodeOptionsChanged;
 		}
 
-		internal void CreateAndAddChildren(PrinterConfig printer)
+		private void RefreshGCodeDetails(PrinterConfig printer)
 		{
-			this.CloseAllChildren();
+			loadedGCodeSection.CloseAllChildren();
 
 			if (sceneContext.LoadedGCode?.LineCount > 0)
 			{
-				this.AddChild(
-					new SectionWidget(
-						"Options".Localize(),
-						new GCodeOptionsPanel(sceneContext, printer, theme),
-						theme)
-					{
-						HAnchor = HAnchor.Stretch,
-						VAnchor = VAnchor.Fit
-					});
-
-				this.AddChild(
+				loadedGCodeSection.AddChild(
 					new SectionWidget(
 						"Details".Localize(),
 						new GCodeDetailsView(new GCodeDetails(printer, printer.Bed.LoadedGCode), theme.FontSize12, theme.FontSize9)
@@ -99,7 +108,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						VAnchor = VAnchor.Fit
 					});
 
-				this.AddChild(
+				loadedGCodeSection.AddChild(
 					speedsWidget = new SectionWidget(
 						"Speeds".Localize(),
 						new SpeedsLegend(sceneContext.LoadedGCode, theme, pointSize: theme.FontSize12)
@@ -126,6 +135,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.Invalidate();
 		}
 
+		private void Bed_LoadedGCodeChanged(object sender, EventArgs e)
+		{
+			UiThread.RunOnIdle(() => this.RefreshGCodeDetails(printer));
+		}
+
 		private void RendererOptions_GCodeOptionsChanged(object sender, EventArgs e)
 		{
 			if (speedsWidget != null)
@@ -137,6 +151,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public override void OnClosed(ClosedEventArgs e)
 		{
 			printer.Bed.RendererOptions.GCodeOptionsChanged -= RendererOptions_GCodeOptionsChanged;
+			printer.Bed.LoadedGCodeChanged -= Bed_LoadedGCodeChanged;
+
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
 		}
