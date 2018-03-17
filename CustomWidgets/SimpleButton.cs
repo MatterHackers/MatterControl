@@ -228,7 +228,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 	public class RadioIconButton : IconButton, IRadioButton
 	{
-		public IEnumerable<GuiWidget> SiblingRadioButtonList { get; set; }
+		public IList<GuiWidget> SiblingRadioButtonList { get; set; }
 
 		public event EventHandler CheckedStateChanged;
 
